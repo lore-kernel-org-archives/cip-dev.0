@@ -1,144 +1,26 @@
-From: fukuyasu@linuxfoundation.org (Noriaki Fukuyasu)
-Date: Thu, 8 Sep 2016 23:45:15 +0900
-Subject: [cip-dev] CIP Endeavour decision
-In-Reply-To: <1eacb2d932fc712ee1c6bc8fbcc9d9da@codethink.co.uk>
-References: <1eacb2d932fc712ee1c6bc8fbcc9d9da@codethink.co.uk>
-Message-ID: <CAFo+snVG-5RwcpTL7ScXY2HRUAd2yxyVAyUNXO1ZhBxZvJ9v0g@mail.gmail.com>
+From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
+Date: Mon, 12 Sep 2016 15:33:17 +0200
+Subject: [cip-dev] Very interesting thread about different kernel
+ maintenance strategies for corporate usage
+Message-ID: <57D6AE9D.3070802@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Paul
+Hi,
 
-Thanks for bring this back up :)
+this thread is a gem, in my opinion. Please read it. It will become 
+important for CIP in the coming months.
 
-Hi Mathias
+Link: 
+https://lists.linuxfoundation.org/pipermail/ltsi-dev/2016-September/005786.html
 
-SO SORRY for not responding to your email for a long time.
+It will help you understand the different strategies that Linaro, LTSI 
+or SUSE are following and the opinions for each one of those approaches 
+of key kernel developers.
 
->Are extraneous forces really welcome?
-
-You ARE very welcome :)
-We are looking to reach out to more friends to work together.
-
->Are there opportunities for individuals or is it rather meant to cheaply
->tap into ressources? Can one ascend therein?
-
-Yes, the participation of individual developer is very welcome.
-You will see the technical discussions will be started to be thrown to this
-mailing list from now on. So we are looking forward to collaborate with you!
-
-regards
-
-Nori
-
-
-On Thu, Sep 8, 2016 at 5:26 PM, Paul Sherwood <paul.sherwood@codethink.co.uk
-> wrote:
-
-> Matthias,
->
-> I only came across your email from June [1] today, which is sad, because
-> if I had seen it earlier I would have encouraged others to reply to your
-> reasonable questions.
->
-> I'm quoting your original text below, and hopefully this will kick the
-> discussion into action.
->
-> who I am: I work as a operartions engineer at a data centre in Europe
->> and formerly I worked for several years as a development engineer in SDN
->> networking area.
->>
->> Your project has caught my attention for its corageous mission. I am
->> strongly interested in bringing forward civic from a computing
->> technicial perspective and I see me fit to do so.
->>
->
-> I haven't had any experience in working in linux collab projects yet and
->> there are quite many projects in linux collab. So to help me decide if
->> participating in your project is the right endeavor for me: please,
->> answer me a few questions, although those can seem a little blunt.
->>
->
-> I think it is very wise for anyone considering participating in a
-> community, to understand the agenda and scope before committing. So your
-> questions are entirely reasonable. I'm not sure CIP yet has thorough
-> answers, but I will try....
->
-> Is it at all imperative for you gathering together individuals to solve
->> technicial intricacies or is it rather a tightly financial sponsor
->> interests guided project, and therefore for the members of the sponsors?
->>
->
-> CIP is a Linux Foundation Collaborative Project, with a small number of
-> founder member organisations [2] who are in effect the sponsors. As you can
-> see from [2] the emphasis is currently on companies rather than individuals.
->
-> Are extraneous forces really welcome?
->>
->
-> I consider myself an extraneous force also, and am waiting to see what the
-> answer is :-)
->
-> Our lack of response to your original email must have been a disappointing
-> welcome for you, and I hope some other participants will respond to clarify
-> properly.
->
-> To what level in software terms do you want to bring about innovations?
->> You are speaking abstractly about a platform and glue mechanisms. To
->> what extend? Down to the driver level?
->>
->
-> Overall I think CIP is aiming more to increase confidence and reliability
-> in relevant software, rather than bring about innovations. IMO it would be
-> clearly unwise to put absolutely latest/unstable software into (for
-> example) a nuclear power station before verifying its performance over a
-> period of time. But I think we *need* to see some innovations in processes,
-> and validation, and reproducibility, and long term maintenance of deep
-> systems software - including all the way down to how driver level code is
-> done.
->
-> Others may disagree of course - i hope they speak up! :)
->
-> Are there opportunities for individuals or is it rather meant to cheaply
->> tap into ressources? Can one ascend therein?
->>
->
-> For CIP I must leave this to other members. However you may be interested
-> a separate thread of discussions on another community list, about Trustable
-> Software Engineering [2] which I think has some complementary and
-> overlapping aims. For sure I can say that individual contributors are
-> welcome there, and I'm hoping that the content will prove to be of interest
-> to the CIP community also.
->
-> br
-> Paul
->
->
-> [1] http://lists.cip-project.org/pipermail/cip-dev/2016-June/000003.html
-> [2] https://www.cip-project.org/faq
-> [3] https://lists.veristac.io/cgi-bin/mailman/listinfo/trustable-software
->
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
->
-
-
+Best Regards
 
 -- 
-Noriaki Fukuyasu
-
-The Linux Foundation
-Mail: fukuyasu at linuxfoundation.org
-Tel: +81-80-4350-1133
-Twitter: nori_fukuyasu
-Facebook: linuxfoundationjp
-
-Please visit our web sites:
-http://www.linuxfoundation.jp
-http://events.linuxfoundation.jp
-http://jp.linux.com
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20160908/50d3765c/attachment.html>
+Agustin Benito Bethencourt
+Principal Consultant - FOSS at Codethink
+agustin.benito at codethink.co.uk
