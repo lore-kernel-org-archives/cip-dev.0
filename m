@@ -1,78 +1,37 @@
-From: fukuyasu@linuxfoundation.org (Noriaki Fukuyasu)
-Date: Thu, 15 Sep 2016 21:12:15 +0900
-Subject: [cip-dev] Introduction
-In-Reply-To: <1473851440.4719.37.camel@codethink.co.uk>
-References: <1473851440.4719.37.camel@codethink.co.uk>
-Message-ID: <CAFo+snU-JDfTd7He4KAZhK=_yGDTxGfe-Ue+SB4ae0Ef1m_n5Q@mail.gmail.com>
+From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
+Date: Thu, 15 Sep 2016 15:39:50 +0200
+Subject: [cip-dev] Use cases behind CIP story
+Message-ID: <57DAA4A6.8090807@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Ben
+Hi,
 
-Welcome on board! Thank you very much for joining the team.
-We are all very excited to have you at this project :)
+CIP is doing a significant effort to be present in many events to 
+explain what are the motivations and goals of the group. The technical 
+activity is about to start so there is very little to show and it will 
+be the case for some time.
 
-Hi all:
+What can we focus on the coming months from the communication point of view?
 
-My name is Noriaki (Nori) Fukuyasu. I work at The Linux Foundation.
-I am currently helping the CIP members to operate this project..
-If anyone has any thoughts on CIP (in terms of the project operation)
-please let me know.
-Also if any company wish to support this project as a corporate member,
-please let me know.
+I think there is a huge value in advertising the use cases that justify 
+the commitment from companies like Toshiba, Hitachi and Siemens in CIP.
 
-Thanks!
+Some of those use cases are completely unknown for a wide range of 
+developers, even many of those who are "Open Source veterans".
 
-Nori
+By exposing some of the challenges involved in those use cases CIP would 
+not just provide a meaningful inside about our environment but also the 
+opportunity to have a fruitful conversation with many of those engineers 
+who might think that CIP idea of a Super Long Term Support kernel 
+(system) is "anti-cultural".
 
+So I would like to encourage CIP main drivers to provide and advertise 
+some of those unique use cases. I find them extremely interesting. I 
+hope many others will too.
 
-
-
-
-On Wed, Sep 14, 2016 at 8:10 PM, Ben Hutchings <
-ben.hutchings@codethink.co.uk> wrote:
-
-> I've been asked to introduce myself to the list, before getting into
-> discussions.  So here's a very brief summary.
->
-> I've been working on the Linux kernel for about 10 years, including
-> co-maintenance of Debian's kernel package for most of that time.  Debian
-> provides security support for each stable release for 5 years, and in
-> support of that I backported many fixes to 2.6.32-longterm and took on
-> maintenance of the 3.2-longterm and 3.16-longterm branches.
->
-> I'm now adding another part-time role as lead kernel maintainer for the
-> CIP.  I look forward to working with you all to establish a project and
-> process that can extend the support lifetime even further.
->
-> Ben.
->
-> --
-> Ben Hutchings
-> Software Developer, Codethink Ltd.
->
->
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
->
-
-
-
+Best Regards
 -- 
-Noriaki Fukuyasu
-
-The Linux Foundation
-Mail: fukuyasu at linuxfoundation.org
-Tel: +81-80-4350-1133
-Twitter: nori_fukuyasu
-Facebook: linuxfoundationjp
-
-Please visit our web sites:
-http://www.linuxfoundation.jp
-http://events.linuxfoundation.jp
-http://jp.linux.com
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20160915/9dd52a52/attachment.html>
+Agustin Benito Bethencourt
+Principal Consultant - FOSS at Codethink
+agustin.benito at codethink.co.uk
