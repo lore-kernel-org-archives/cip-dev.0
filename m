@@ -1,76 +1,85 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Fri, 16 Sep 2016 07:03:48 +0200
+From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
+Date: Fri, 16 Sep 2016 14:15:34 +0900
 Subject: [cip-dev] Introduction
-In-Reply-To: <1473978694.23987.41.camel@codethink.co.uk>
-References: <1473851440.4719.37.camel@codethink.co.uk>
-	<005e01d20f1d$64afb270$2e0f1750$@toshiba.co.jp>
-	<57DA5C43.5010001@codethink.co.uk>
+In-Reply-To: <2db652238ec32fb02f30541a75454292@codethink.co.uk>
+References: <1473851440.4719.37.camel@codethink.co.uk>	<005e01d20f1d$64afb270$2e0f1750$@toshiba.co.jp>	<57DA5C43.5010001@codethink.co.uk>
 	<2db652238ec32fb02f30541a75454292@codethink.co.uk>
-	<1473978694.23987.41.camel@codethink.co.uk>
-Message-ID: <a2d29f67-3aab-20d9-6cba-162c0dcc7fb5@siemens.com>
+Message-ID: <005d01d20fd9$5a18a490$0e49edb0$@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+Hi Paul,
 
-my name is Jan Kiszka. I'm working for Siemens Corporate Technology on
-enabling and enhancing open source components for the use in our
-embedded products, and that primarily at lower levels like the kernel.
+> To introduce myself, I'm CEO at Codethink, but to the best of my
+> ability I'll be commenting here from a personal perspective, independent
+> of Codethink's official involvement in CIP.
+> 
+> To start the ball rolling, I'm personally worried about how we are
+> actually going to achieve super-long-term-support and am happy that we
+> can discuss the issues in public.
+> 
+> Greg K-H, Ben Hutchings and others have contributed a huge amount to
+> Long Term Stable and followon initiatives in the community over the
+> years. But when I first started exploring how things like LTS and LTSI
+> can work for embedded and automotive in 2012/2013, I hit some
+> fundamental questions, not least - how in practice can a complex
+> embedded project consume a 'stable' kernel that's being released **
+> every couple of weeks ** with the words 'users of this series must
+> upgrade'? I presented some work at an  automotive GENIVI event in Oct
+> 2013 [1] but the audience at that time literally refused to accept that
+> the idea of whole-of-life  updates.
 
-On 2016-09-16 00:31, Ben Hutchings wrote:
-> On Thu, 2016-09-15 at 17:17 +0100, Paul Sherwood wrote:
-> [...]
->   [Greg K-H wrote:]
->> "But if we didn't provide an LTS, would companies constantly update 
->> their kernels to newer releases to keep up with the security and 
->> bugfixes? That goes against everything those managers/PMs have ever been 
->> used to in the past, yet it's actually the best thing they could do."
-> 
-> Linux does have a very good record of maintaining application binary
-> compatibility, which should make it safe to upgrade.  But every new
-> release from Linus brings some or all of the following problems:
-> 
-> - feature regressions
-> - performance regressions
-> - security regressions
-> - increased resource consumption
-> - removal of deprecated features
-> - driver API churn
-> 
-> Most of the regressions get fixed quickly, but some linger long after
-> support for the previous stable branch has ended.
-> 
-> So I don't think it's generally sensible to use the latest stable update
-> in production, and that's why I care about longterm branches (and I
-> don't know why Greg does).
+As for the embedded systems I deal with, a 2-weeks release is definitely not 
+required. A 6 six months cycle, complemented with aperiodic patch releases 
+for really *important* issues, would be good enough. 
+Of course, different use cases may have different requirements so we
+will probably need to reach a consensus on that.
 
-Exactly.
+> And as Greg said at the time:
+> 
+> "The patches that apply for stuff after 2 years drops off dramatically,
+> and the work involved in keeping stuff working and testing for problems
+> increases greatly.?
+> Just yesterday there was a very interesting post about backports and
+> long term stable kernels on LWN [2]. Greg is quoted there considering:
+> 
+> "But if we didn't provide an LTS, would companies constantly update
+> their kernels to newer releases to keep up with the security and
+> bugfixes? That goes against everything those managers/PMs have ever been
+> used to in the past, yet it's actually the best thing they could do."
+> 
+> I've been recommending the constant update route route to customers
+> over the last few years, with some success, but many ecosystem members
+> are extremely uncomfortable with the whole idea of aligning with
+> mainline. I think this is broadly because as embedded engineers we've
+> learned over many years that it's best to change the platform as little
+> as possible.  I wrote an article trying to challenge this traditional
+> embedded thinking earlier this year [3]
+
+Thanks, interesting article.
+
+" All of which makes perfect sense for traditional embedded projects."
+
+I just wanted to clarify that these 'traditional embedded projects' are actually 
+in the scope of the CIP project. I believe embedded systems where
+continuous updates are hard to implement, should still benefit from other 
+CIP activities (e.g. testing, RAS, real-time partitioning support or kernel 
+self-protection).
+
+Best regards,
+Daniel
 
 > 
->> I've been recommending the constant update route route to customers 
->> over the last few years, with some success, but many ecosystem members 
->> are extremely uncomfortable with the whole idea of aligning with 
->> mainline.  I think this is broadly because as embedded engineers we've 
->> learned over many years that it's best to change the platform as little 
->> as possible.  I wrote an article trying to challenge this traditional 
->> embedded thinking earlier this year [3]
->>
->> Would be very interested in others' thoughts on this.
+> Would be very interested in others' thoughts on this.
 > 
-> I agree it's possible to do rolling upgrades, but it's very dependent on
-> the capability and the will (1) to do regular regression testing on the
-> target systems and (2) to address the regressions that are found without
-> waiting for them to be fixed upstream.  Where a performance regression
-> or increased resource consumption stretches an existing system so that
-> it no longer meets its requirements, this might not be practically
-> possible.  This also applies where non-upstream code is broken by
-> upstream API changes, and that issue is not going away soon.
-
-And while we are investing in extending long-term support with our SLTS
-versions, we have to improve regression testing as well to ensure the
-quality of those releases. But nothing prevents to use the results also
-for latest upstream versions. That can also contribute to making rolling
-updates more realistic in the future, I we should point this out
-whenever folks complain that SLTS would be against the upstream trend.
-
-Jan
+> br
+> Paul
+> 
+> [1]
+> http://www.devcurmudgeon.com/pdfs/mainline-lts-ltsi-genivi-20131025.pdf
+> [2] https://lwn.net/SubscriberLink/700557/091f804480fab479/
+> [3] http://www.devcurmudgeon.com/technical-debt-for-whole-systems.html
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
