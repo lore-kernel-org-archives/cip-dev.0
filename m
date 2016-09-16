@@ -1,96 +1,54 @@
 From: yoshitake.kobayashi@toshiba.co.jp (KOBAYASHI Yoshitake)
-Date: Fri, 16 Sep 2016 16:53:24 +0900
-Subject: [cip-dev] Introduction
-In-Reply-To: <57DA5C43.5010001@codethink.co.uk>
-References: <1473851440.4719.37.camel@codethink.co.uk>
-	<005e01d20f1d$64afb270$2e0f1750$@toshiba.co.jp>
-	<57DA5C43.5010001@codethink.co.uk>
-Message-ID: <4c241bed-c527-8384-2a52-344831b132c2@toshiba.co.jp>
+Date: Fri, 16 Sep 2016 17:04:05 +0900
+Subject: [cip-dev] Use cases behind CIP story
+In-Reply-To: <57DADC13.3080306@codethink.co.uk>
+References: <57DAA4A6.8090807@codethink.co.uk>
+	<CAFo+snWE2xPXgjjbmi2SgLrxMD6O5Oa5CHEyjZ32JN=aw7TYRQ@mail.gmail.com>
+	<9c215d3f195ef8f6475a80df95ac9f2e@codethink.co.uk>
+	<57DADC13.3080306@codethink.co.uk>
+Message-ID: <515105dd-94a6-d53a-9e13-abed4e7f1eeb@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi all,
 
-My name is Yoshitake Kobayashi. I am working for Toshiba.
-I've been working on operating system related topics for more than 20 years.
-Currently, I've been leading an embedded Linux team in Toshiba to provide Linux
-environments for our embedded products.
-For open source related projects, I represent Toshiba for three projects which
-include CIP, Debian-LTS [1] and Linux Foundation CE Linux project [2].
-I've also made several presentations at Embedded Linux Conferences [3].
-In retrospect, the most of my presentations relate to start CIP.
+On 2016/09/16 2:36, Agustin Benito Bethencourt wrote:
+> Hi,
+>
+> On 15/09/16 17:44, Paul Sherwood wrote:
+>> On 2016-09-15 16:23, Noriaki Fukuyasu wrote:
+>>> I think this is an extremely helpful post.
+>>>
+>>> Why dont we start bring the stories of "Linux in the civil
+>>> infrastructures in the world" together, and start a series of blog
+>>> posts at the CIP website?
+>>
+>> I'd personally prefer to see the discussion start on this list, rather
+>> than blog posts, since that way people can question, comment and discuss.
+>>
+>>> If people/companies are willing to contribute the stories, I would be
+>>> more than happy to set up a blog section to the CIP web.
+>>> I would be very interested in hearing & promoting the use cases
+>>> regardless of members and non-members.
+>
+> If the use cases are so complex that requires a blog or authors want to use them internally for marketing/promo, then a blog would be probably the best option.
+>
+> Starting a blog is a big commitment over time though. I would start a little smaller using:
+> * This mailing list, as Paul suggested.
+> * CIP presentations at events.
+> ** Slides and videos of our talks where the cases are described.
+>
+> Once we get more robust as project, we can create a blog. Meanwhile, we can post the outcome of our presentations and use this mailing list.
+>
+> I suggest to bring here (mailing list) a couple of cases and getting one of them into the ELCE or LinuxCon presentation, for instance, or something in this line.
 
-For CIP, I am one of the founding member. So, CIP is really exciting and
-challenging project for us. I am looking forward to working with you.
+I am planning to show a demo at ELC-E which explains a candidate use case of CIP.
+The demo will be a full power plant simulator and controller. In this demo,
+Linux runs on all controllers to control plant systems.
+The above demo is just an example.
 
-----------------------------------------------------------------
-[1] https://www.freexian.com/en/services/debian-lts.html
-[2] https://www.linuxfoundation.org/projects/core-embedded-linux
-[3] http://www.embeddedlinuxconference.com/
-----------------------------------------------------------------
+It might be better to provide some typical development and maintenance schedule/process
+to explain why CIP is important for civil infrastructure systems.
 
 Best regards,
 Yoshi
-
-On 2016/09/15 17:30, Agustin Benito Bethencourt wrote:
-> Hi,
->
-> On 15/09/16 08:50, Daniel Sangorrin wrote:
->> Hi Ben,
->>
->>> I've been asked to introduce myself to the list, before getting into
->>> discussions.  So here's a very brief summary.
->>>
->>> I've been working on the Linux kernel for about 10 years, including
->>> co-maintenance of Debian's kernel package for most of that time.  Debian
->>> provides security support for each stable release for 5 years, and in
->>> support of that I backported many fixes to 2.6.32-longterm and took on
->>> maintenance of the 3.2-longterm and 3.16-longterm branches.
->>>
->>> I'm now adding another part-time role as lead kernel maintainer for the
->>> CIP.  I look forward to working with you all to establish a project and
->>> process that can extend the support lifetime even further.
->>>
->>> Ben.
->>
->> Welcome to the CIP project. It's great to have such an experienced maintainer
->> in the project. Looking forward to working with you too!
->
-> Daniel, can you tell us a little about yourself?
->
-> My name is Agust?n Benito Bethencourt. I represent Codethink at CIP. I've managed teams-programs-projects for some years ago, the last in the open.
->
-> I am looking forward to find out how we are going to deal with this outstanding challenge, keeping a Linux system alive and healthy for many years in mission critical environments. I think it is an exciting one.
->
-> Best Regards
->
-> Agustin
->
->>
->> Best regards,
->> Daniel
->>
->> --
->> IoT Technology center
->> Toshiba Corp. Industrial ICT solutions,
->> Daniel SANGORRIN
->>
->>
->>>
->>> --
->>> Ben Hutchings
->>> Software Developer, Codethink Ltd.
->>>
->>>
->>> _______________________________________________
->>> cip-dev mailing list
->>> cip-dev at lists.cip-project.org
->>> https://lists.cip-project.org/mailman/listinfo/cip-dev
->>
->>
->> _______________________________________________
->> cip-dev mailing list
->> cip-dev at lists.cip-project.org
->> https://lists.cip-project.org/mailman/listinfo/cip-dev
->>
->
