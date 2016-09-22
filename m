@@ -1,39 +1,35 @@
 From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
-Date: Thu, 22 Sep 2016 11:31:32 +0200
-Subject: [cip-dev] Maintenance policies and early considerations I
-Message-ID: <57E3A4F4.6050109@codethink.co.uk>
+Date: Thu, 22 Sep 2016 11:42:55 +0200
+Subject: [cip-dev] Maintenance policies and early considerations II
+Message-ID: <57E3A79F.1020602@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi,
 
-during the Technical Committee Meeting, last Monday, Ben Hutchings 
-brought to the attention of the participants several topics to consider. 
-I would like to bring them here. This is the first one
+a second consideration discussed during the meeting. Feel free to 
+provide your opinions or considerations about them.
 
-++ When do CIP should pick up a kernel?
+++ How should the kernel be released?
 
-+++ Maintainability effort
++++ Binaries or sources
 
-New major versions of commercial Linux Distributions are released at 3-4 
-year intervals, so that typically only 4 versions need to be supported 
-at one time.  Given that CIP's support period is meant to be even 
-longer, it won?t be sustainable to extend every 'long term' branch, but 
-only takes on a new branch every 2-4 years.
+While commercial distributions like RHEL/SLE include a small number of 
+supported kernel configurations in binary form, the CIP kernel should be 
+primarily released as source, with the configuration controlled by its 
+users.
 
-+++ Backport effort
++++ Kernel features
 
-The longer the intervals between new CIP branches, the greater need 
-there will be for CIP or individual members to backport new hardware 
-support (which carries its own risks).
-
-+++ Trade-off
-
-This trade-off is perhaps the most difficult issue to decide.
+The project needs to decide which architectures, drivers and other 
+kernel features are to be supported by the core team and its releases. 
+This could be documented purely as human-readable text or in a 
+machine-readable form so that the kernel build process can warn when 
+building an unsupported configuration.  It may also be sensible to 
+specify the supported toolchain versions.
 
 
 Best Regards
-
 -- 
 Agustin Benito Bethencourt
 Principal Consultant - FOSS at Codethink
