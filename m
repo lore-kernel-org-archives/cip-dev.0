@@ -1,56 +1,45 @@
 From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
-Date: Thu, 22 Sep 2016 14:56:12 +0200
-Subject: [cip-dev] Maintenance policies and early considerations III
-Message-ID: <57E3D4EC.2080008@codethink.co.uk>
+Date: Thu, 22 Sep 2016 14:59:38 +0200
+Subject: [cip-dev] Maintenance policies and early considerations IV
+Message-ID: <57E3D5BA.2050905@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi,
 
-the below considerations were discussed during the Members meeting. 
-There is no conclusion yet about how to proceed.
+at CIP we need to have a clear view of what "Support" means in the 
+context of the Super Long Term Support kernel.
 
-++ Security fixes
+++ What kind of support will CIP provide? To whom?
 
-+++ Out-of-tree drivers
+CIP will support its members and their developers, not system 
+administrators or end users.  With the current number of members, there 
+should not be a need for a 'first line' of support between them and the 
+CIP core developers, though that may change if membership grows 
+significantly.
 
-The embedded systems that CIP will be used in will also often require 
-out-of-tree drivers and will sometimes include other changes of unknown 
-quality to their kernel.  It needs to be made clear to members that 
-these modifications are unsupported, and that when they want the CIP 
-core team to address a bug found in such a modified kernel they must 
-first demonstrate that it exists in the CIP source release.
+Commercial Linux based distributions like RHEL promise that a subset of 
+the kernel module API and ABI remains stable within a major release, so 
+that many out-of-tree modules can be used without needing to update the 
+module source or binaries along with the kernel.  Some IHVs rely on this 
+to distribute driver modules in binary form.
 
-+++ Security updates
+CIP should avoid making any such promise because:
 
-Commercial Linux based distributions like RHEL/SLE typically has 
-security updates available for the most serious issues (such as 
-privilege escalation) within a few days of them being publicly known, if 
-not on the first day.
+* Upstream fixes frequently change the kernel module API and/or ABI and 
+backporting them in a way that does not is difficult and risky   - CIP 
+users set their own kernel configurations, so there will not be a single 
+kernel ABI for IHVs to target anyway
 
-CIP may be able to achieve this with its source releases but its members 
-may take much longer to release and deploy binary updates, maybe due to 
-valid concerns about the risk of regression or limited opportunities to 
-deploy updates.   In the worst case, they may use CIP as an 
-advertising/compliance point but rarely bother to update.  For this 
-reason Ben H. thinks it's important to draw on the work of the Kernel 
-Self-Protection Project to add mitigations against common types of 
-vulnerability.  That work is slowly filtering into mainline and at least 
-some of it could be backported.
+* CIP users are responsible for binary releases of both the kernel and 
+out-of-tree modules, so can ensure that they are properly synchronised.
 
-+++ Request to members from maintainer
-
-During the meeting Ben requested CIP members to provide him some 
-guidelines or policies currently followed to choose security patches. 
-This information will hopefully provide some light that help maintainers 
-to define some basic policies for choosing security fixes. This policies 
-need to be tested over time.
-
-Due to the length of the maintenance period, it is unlikely that the 
-same person/team maintain the kernel for the entire life cycle so the 
-main policies at least need to be left written.
+* The criteria for backporting bug fixes will presumably be based on 
+'stable-kernel-rules.txt'.  However, In CIP context, it is recommended 
+to be more precise than that.
 
 Best Regards
+
 -- 
 Agustin Benito Bethencourt
 Principal Consultant - FOSS at Codethink
