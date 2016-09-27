@@ -1,39 +1,60 @@
-From: paul.sherwood@codethink.co.uk (Paul Sherwood)
-Date: Sat, 24 Sep 2016 18:53:20 +0100
-Subject: [cip-dev] New IRC channel for #cip
-In-Reply-To: <3f48e9be-d159-c3a9-ce76-79fe6e2f17f6@siemens.com>
-References: <57E01325.20400@codethink.co.uk>
-	<3f48e9be-d159-c3a9-ce76-79fe6e2f17f6@siemens.com>
-Message-ID: <c34a68bfe1821819a7f2397f111a9f54@codethink.co.uk>
+From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
+Date: Tue, 27 Sep 2016 10:29:54 +0200
+Subject: [cip-dev] Maintenance policies and early considerations IV
+In-Reply-To: <57E3D5BA.2050905@codethink.co.uk>
+References: <57E3D5BA.2050905@codethink.co.uk>
+Message-ID: <57EA2E02.9020604@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 2016-09-24 12:52, Gleim, Urs wrote:
-> just a remark: we have some proxy restrictions in the company which
-> result in the fact that IRC is not really practically usable. So our
-> main communication channel would be the mailing list I am afraid.
+Hi,
 
-This is a problem for many companies, actually, but I hope we can still 
-encourage people to participate in IRC, mainly because there are so many 
-established FOSS projects and contributors actively using IRC. It's 
-old-school, but it has been working very well for several decades now. 
-Using the newer services (Slack, Google Groups etc) may seem to achieve 
-similar functionality but they don't achieve the same direct connection 
-to other communities.
+On 22/09/16 14:59, Agustin Benito Bethencourt wrote:
+> Hi,
+>
+> at CIP we need to have a clear view of what "Support" means in the
+> context of the Super Long Term Support kernel.
+>
+> ++ What kind of support will CIP provide? To whom?
+>
+> CIP will support its members and their developers, not system
+> administrators or end users.  With the current number of members, there
+> should not be a need for a 'first line' of support between them and the
+> CIP core developers, though that may change if membership grows
+> significantly.
+>
+> Commercial Linux based distributions like RHEL promise that a subset of
+> the kernel module API and ABI remains stable within a major release, so
+> that many out-of-tree modules can be used without needing to update the
+> module source or binaries along with the kernel.  Some IHVs rely on this
+> to distribute driver modules in binary form.
+>
+> CIP should avoid making any such promise because:
+>
+> * Upstream fixes frequently change the kernel module API and/or ABI and
+> backporting them in a way that does not is difficult and risky   - CIP
+> users set their own kernel configurations, so there will not be a single
+> kernel ABI for IHVs to target anyway
 
-Codethink's default recommendation to get IRC in the situation you have 
-at Siemens would be to setup a web-based service. We've had success with 
-Shout [1] and its fork The Lounge [2]. Basically these allow people to 
-participate in IRC directly from a web-browser. Normally people run the 
-server on a tiny/cheap cloud machine, eg AWS. Both relatively easy to 
-setup, either by members directly, or maybe by Linux Foundation?
+Correction:
 
-Alternatively we'd be happy to create accounts on our existing Shout 
-instance [3] if that's of interest.
+Upstream fixes frequently change the kernel module API and/or ABI and 
+backporting them in a way that is difficult and risky   - CIP users set 
+their own kernel configurations, so there will not be a single kernel 
+ABI for IHVs to target anyway
 
-br
-Paul
-
-[1] https://github.com/erming/shout
-[2] https://thelounge.github.io
-[3] https://chat.codethink.co.uk
+>
+> * CIP users are responsible for binary releases of both the kernel and
+> out-of-tree modules, so can ensure that they are properly synchronised.
+>
+> * The criteria for backporting bug fixes will presumably be based on
+> 'stable-kernel-rules.txt'.  However, In CIP context, it is recommended
+> to be more precise than that.
+>
+> Best Regards
+>
+Best regards
+-- 
+Agustin Benito Bethencourt
+Principal Consultant - FOSS at Codethink
+agustin.benito at codethink.co.uk
