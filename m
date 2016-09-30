@@ -1,60 +1,43 @@
-From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
-Date: Tue, 27 Sep 2016 10:29:54 +0200
-Subject: [cip-dev] Maintenance policies and early considerations IV
-In-Reply-To: <57E3D5BA.2050905@codethink.co.uk>
-References: <57E3D5BA.2050905@codethink.co.uk>
-Message-ID: <57EA2E02.9020604@codethink.co.uk>
+From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
+Date: Fri, 30 Sep 2016 10:05:06 +0900
+Subject: [cip-dev] Maintenance policies and early considerations III
+In-Reply-To: <57E3D4EC.2080008@codethink.co.uk>
+References: <57E3D4EC.2080008@codethink.co.uk>
+Message-ID: <002101d21ab6$af105960$0d310c20$@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+Hi Agustin,
 
-On 22/09/16 14:59, Agustin Benito Bethencourt wrote:
-> Hi,
->
-> at CIP we need to have a clear view of what "Support" means in the
-> context of the Super Long Term Support kernel.
->
-> ++ What kind of support will CIP provide? To whom?
->
-> CIP will support its members and their developers, not system
-> administrators or end users.  With the current number of members, there
-> should not be a need for a 'first line' of support between them and the
-> CIP core developers, though that may change if membership grows
-> significantly.
->
-> Commercial Linux based distributions like RHEL promise that a subset of
-> the kernel module API and ABI remains stable within a major release, so
-> that many out-of-tree modules can be used without needing to update the
-> module source or binaries along with the kernel.  Some IHVs rely on this
-> to distribute driver modules in binary form.
->
-> CIP should avoid making any such promise because:
->
-> * Upstream fixes frequently change the kernel module API and/or ABI and
-> backporting them in a way that does not is difficult and risky   - CIP
-> users set their own kernel configurations, so there will not be a single
-> kernel ABI for IHVs to target anyway
+Sorry for the late reply.
 
-Correction:
+> +++ Request to members from maintainer
+> 
+> During the meeting Ben requested CIP members to provide him some
+> guidelines or policies currently followed to choose security patches.
+> This information will hopefully provide some light that help maintainers
+> to define some basic policies for choosing security fixes. This policies
+> need to be tested over time.
+> 
+> Due to the length of the maintenance period, it is unlikely that the
+> same person/team maintain the kernel for the entire life cycle so the
+> main policies at least need to be left written.
 
-Upstream fixes frequently change the kernel module API and/or ABI and 
-backporting them in a way that is difficult and risky   - CIP users set 
-their own kernel configurations, so there will not be a single kernel 
-ABI for IHVs to target anyway
+I think that one possible guideline for backporting security patches to the CIP kernel
+is to look at kernel CVEs [1]. A table (probably only accessible by members) 
+indicating whether a CIP kernel is vulnerable or not to a CVE would be of great help.
 
->
-> * CIP users are responsible for binary releases of both the kernel and
-> out-of-tree modules, so can ensure that they are properly synchronised.
->
-> * The criteria for backporting bug fixes will presumably be based on
-> 'stable-kernel-rules.txt'.  However, In CIP context, it is recommended
-> to be more precise than that.
->
-> Best Regards
->
+Another source of bug/security fixes will be the PREEMPT RT patch. We will probably
+need to check whether bugs found in new versions are properly backported to our
+CIP kernels. 
+# I see that Ben is already doing this! [2]
+
+Finally, we may need to decide how to disclosure bugs that we may find ourselves 
+while testing the CIP kernels. I guess we will need to make sure that all members are
+ready for the disclosure.
+
 Best regards
--- 
-Agustin Benito Bethencourt
-Principal Consultant - FOSS at Codethink
-agustin.benito at codethink.co.uk
+Daniel
+
+[1] http://www.cvedetails.com/product/47/Linux-Linux-Kernel.html?vendor_id=33
+[2] https://lkml.org/lkml/2016/9/29/473
