@@ -1,19 +1,19 @@
 From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
-Date: Mon, 24 Oct 2016 13:18:47 +0200
-Subject: [cip-dev] ELCE talk about embedded systems long term maintenance
-Message-ID: <580DEE17.3090609@codethink.co.uk>
+Date: Wed, 26 Oct 2016 11:35:04 +0200
+Subject: [cip-dev] First CIP kernel will be 4.4
+Message-ID: <581078C8.7060807@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi,
 
-the slides[1] from the talk "Long-Term Maintenance, or how to 
-(mis-)manage embedded systems for 10+ years" by Jan Luebbe are available.
+At LinuxCon EU, during the CIP talk it was announced that the first CIP 
+kernel will be 4.4
 
-I assume by next week we will have the video.
+Please find the slides of all the 2016 talks about CIP in our wiki[1].
 
 [1] 
-http://events.linuxfoundation.org/sites/events/files/slides/PRE-trunk-ELCE-LongTermMaintenance.pdf
+https://wiki.linuxfoundation.org/civilinfrastructureplatform/cipconferences
 -- 
 Agustin Benito Bethencourt
 Principal Consultant - FOSS at Codethink
