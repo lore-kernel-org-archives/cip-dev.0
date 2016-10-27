@@ -1,54 +1,51 @@
 From: hidehiro.kawai.ez@hitachi.com (Hidehiro Kawai)
-Date: Thu, 27 Oct 2016 15:07:49 +0900
-Subject: [cip-dev] Maintenance policies and early considerations I
-In-Reply-To: <57E3A4F4.6050109@codethink.co.uk>
-References: <57E3A4F4.6050109@codethink.co.uk>
-Message-ID: <581199B5.5070000@hitachi.com>
+Date: Thu, 27 Oct 2016 15:23:51 +0900
+Subject: [cip-dev] Maintenance policies and early considerations II
+In-Reply-To: <57E3A79F.1020602@codethink.co.uk>
+References: <57E3A79F.1020602@codethink.co.uk>
+Message-ID: <58119D77.4070806@hitachi.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi,
 
-I'm sorry for the late response.
-
-(2016/09/22 18:31), Agustin Benito Bethencourt wrote:
+(2016/09/22 18:42), Agustin Benito Bethencourt wrote:
 > Hi,
 > 
-> during the Technical Committee Meeting, last Monday, Ben Hutchings 
-> brought to the attention of the participants several topics to consider. 
-> I would like to bring them here. This is the first one
+> a second consideration discussed during the meeting. Feel free to 
+> provide your opinions or considerations about them.
 > 
-> ++ When do CIP should pick up a kernel?
+> ++ How should the kernel be released?
 > 
-> +++ Maintainability effort
+> +++ Binaries or sources
 > 
-> New major versions of commercial Linux Distributions are released at 3-4 
-> year intervals, so that typically only 4 versions need to be supported 
-> at one time.  Given that CIP's support period is meant to be even 
-> longer, it won?t be sustainable to extend every 'long term' branch, but 
-> only takes on a new branch every 2-4 years.
+> While commercial distributions like RHEL/SLE include a small number of 
+> supported kernel configurations in binary form, the CIP kernel should be 
+> primarily released as source, with the configuration controlled by its 
+> users.
 
-Assuming we release new products in every 2 years, 2-3-year release
-cycle would be feasible.
+Basically, releasing the kernel as source is sufficient.  But if we
+release it as binary only for the specific reference board, users may be happy.
 
-Maintaining multiple branches is hard work, but its effort would be
-decreased after 5 years from the release.
+> +++ Kernel features
+> 
+> The project needs to decide which architectures, drivers and other 
+> kernel features are to be supported by the core team and its releases. 
+> This could be documented purely as human-readable text or in a 
+> machine-readable form so that the kernel build process can warn when 
+> building an unsupported configuration.  It may also be sensible to 
+> specify the supported toolchain versions.
+
+To reduce the maintenance effort, we should limit drivers and features
+to be supported (`support' in this context means tracking security/critical
+bug fixes, backporting requested patches, and so on).
+
+One idea is to express the supported features in the form of kernel
+config.  It is machine-readable, and it's not so difficult to covert
+it to human-readable.  But I'm not sure if it actually work well because
+there are non-configurable features.
 
 Best regards,
 
 Hidehiro Kawai
 Hitachi, Ltd. Research & Development Group
-
-> +++ Backport effort
-> 
-> The longer the intervals between new CIP branches, the greater need 
-> there will be for CIP or individual members to backport new hardware 
-> support (which carries its own risks).
-> 
-> +++ Trade-off
-> 
-> This trade-off is perhaps the most difficult issue to decide.
-> 
-> 
-> Best Regards
-> 
