@@ -1,49 +1,69 @@
 From: hidehiro.kawai.ez@hitachi.com (Hidehiro Kawai)
-Date: Thu, 27 Oct 2016 15:23:51 +0900
-Subject: [cip-dev] Maintenance policies and early considerations II
-In-Reply-To: <57E3A79F.1020602@codethink.co.uk>
-References: <57E3A79F.1020602@codethink.co.uk>
-Message-ID: <58119D77.4070806@hitachi.com>
+Date: Thu, 27 Oct 2016 15:42:28 +0900
+Subject: [cip-dev] Maintenance policies and early considerations III
+In-Reply-To: <57E3D4EC.2080008@codethink.co.uk>
+References: <57E3D4EC.2080008@codethink.co.uk>
+Message-ID: <5811A1D4.9070303@hitachi.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi,
 
-(2016/09/22 18:42), Agustin Benito Bethencourt wrote:
+(2016/09/22 21:56), Agustin Benito Bethencourt wrote:
 > Hi,
 > 
-> a second consideration discussed during the meeting. Feel free to 
-> provide your opinions or considerations about them.
+> the below considerations were discussed during the Members meeting. 
+> There is no conclusion yet about how to proceed.
 > 
-> ++ How should the kernel be released?
+> ++ Security fixes
 > 
-> +++ Binaries or sources
+> +++ Out-of-tree drivers
 > 
-> While commercial distributions like RHEL/SLE include a small number of 
-> supported kernel configurations in binary form, the CIP kernel should be 
-> primarily released as source, with the configuration controlled by its 
-> users.
+> The embedded systems that CIP will be used in will also often require 
+> out-of-tree drivers and will sometimes include other changes of unknown 
+> quality to their kernel.  It needs to be made clear to members that 
+> these modifications are unsupported, and that when they want the CIP 
+> core team to address a bug found in such a modified kernel they must 
+> first demonstrate that it exists in the CIP source release.
 
-Basically, releasing the kernel as source is sufficient.  But if we
-release it as binary only for the specific reference board, users may be happy.
+I agree on that.  CIP don't need to care about out-of-tree drivers.
 
-> +++ Kernel features
+> +++ Security updates
 > 
-> The project needs to decide which architectures, drivers and other 
-> kernel features are to be supported by the core team and its releases. 
-> This could be documented purely as human-readable text or in a 
-> machine-readable form so that the kernel build process can warn when 
-> building an unsupported configuration.  It may also be sensible to 
-> specify the supported toolchain versions.
+> Commercial Linux based distributions like RHEL/SLE typically has 
+> security updates available for the most serious issues (such as 
+> privilege escalation) within a few days of them being publicly known, if 
+> not on the first day.
+> 
+> CIP may be able to achieve this with its source releases but its members 
+> may take much longer to release and deploy binary updates, maybe due to 
+> valid concerns about the risk of regression or limited opportunities to 
+> deploy updates.   In the worst case, they may use CIP as an 
+> advertising/compliance point but rarely bother to update.  For this 
+> reason Ben H. thinks it's important to draw on the work of the Kernel 
+> Self-Protection Project to add mitigations against common types of 
+> vulnerability.  That work is slowly filtering into mainline and at least 
+> some of it could be backported.
 
-To reduce the maintenance effort, we should limit drivers and features
-to be supported (`support' in this context means tracking security/critical
-bug fixes, backporting requested patches, and so on).
+I think it is important to prepare for zero-day attacks, and the Kernel
+Self-Protection Project would help it.  If it could be backported,
+doing it is preferred.  But does it make the long-term maintenance difficult?
 
-One idea is to express the supported features in the form of kernel
-config.  It is machine-readable, and it's not so difficult to covert
-it to human-readable.  But I'm not sure if it actually work well because
-there are non-configurable features.
+> +++ Request to members from maintainer
+> 
+> During the meeting Ben requested CIP members to provide him some 
+> guidelines or policies currently followed to choose security patches. 
+> This information will hopefully provide some light that help maintainers 
+> to define some basic policies for choosing security fixes. This policies 
+> need to be tested over time.
+> 
+> Due to the length of the maintenance period, it is unlikely that the 
+> same person/team maintain the kernel for the entire life cycle so the 
+> main policies at least need to be left written.
+
+Basically, I expect CIP supports all CVEs which are related to supported
+features by CIP.  But human resources are limited, so CIP members might
+need to prioritize them depending on their impact.
 
 Best regards,
 
