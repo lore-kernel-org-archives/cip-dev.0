@@ -1,33 +1,45 @@
 From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
-Date: Fri, 18 Nov 2016 12:43:29 +0100
-Subject: [cip-dev] Common Vulnerabilities and Exposures
-Message-ID: <582EE961.3090602@codethink.co.uk>
+Date: Fri, 18 Nov 2016 13:26:16 +0100
+Subject: [cip-dev] Features backports
+Message-ID: <582EF368.4090006@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi,
 
-one of the key parts of the maintenance work is to follow the Common 
-Vulnerabilities and Exposures (CVE)[1] and the fixes that comes out of 
-them, in this case, to the kernel.
+as you probably know, the more features we backport, the higher will be 
+the maintenance cost overtime so as a strategy, we need to be very 
+conservative.
 
-We can check against CVE and commit lists from Debian[2]. Currently 
-there is no good distribution-neutral tracker for this and MITRE is not 
-that fast in publishing details of CVEs.
+I sent a mail some days ago about the features backported already by 
+Linaro for their LSK (Linaro Stable Kernel) for your evaluation. I bring 
+today some potential backports related with security features and 
+hardware support that has been identified by Ben H.
 
-One step that Members can take is to identify the person within their 
-organizations that deal with low level security issues and put them in 
-contact with Ben so:
-* They can provide input to Ben.
-* Ben H. can explain them how a kernel in maintenance work in this regard.
+* UBSAN support:
+<https://git.kernel.org/linus/c6d308534aef6c99904bf5862066360ae067abc4>
 
-A long term point for CIP Members is to get a CNA ID[3] and act as a CNA 
-or participate through a liaison if you do not want to dedicate people 
-to this.
+* Increased user-space ASLR range for ARM:
+<https://lwn.net/Articles/667790/>
 
-[1] https://cve.mitre.org/about/faqs.html
-[2] svn://scm.alioth.debian.org/svn/kernel-sec/
-[3] https://cve.mitre.org/cve/cna.html
+* Page poisoning on free:
+<https://git.kernel.org/linus/8823b1dbc05fab1a8bec275eeae4709257c2661d>,
+<https://git.kernel.org/linus/1414c7f4f7d72d138fff35f00151d15749b5beda>
+
+* SLAB/SLUB freelist randomisation
+
+* Hardened usercopy
+
+* Do Members use SLUB? if not, we should take a look at KASAN support 
+for SLAB
+
+* drm/tilcdc update? (many bug fixes post-4.4)
+
+* AM33xx RTC support:
+
+<https://git.kernel.org/linus/461932dfb54ebaf7da438fd8b769a01ce97a9360>,
+<https://git.kernel.org/linus/b5a553c08bec14a058501df3fa6eb39f63f00a98>
+
 
 Best Regards
 -- 
