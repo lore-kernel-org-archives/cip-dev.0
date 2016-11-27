@@ -1,47 +1,57 @@
 From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
-Date: Fri, 18 Nov 2016 13:26:16 +0100
-Subject: [cip-dev] Features backports
-Message-ID: <582EF368.4090006@codethink.co.uk>
+Date: Sun, 27 Nov 2016 11:16:32 +0000
+Subject: [cip-dev] Update week 47
+Message-ID: <583AC090.6050608@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi,
 
-as you probably know, the more features we backport, the higher will be 
-the maintenance cost overtime so as a strategy, we need to be very 
-conservative.
+++ Meetings
 
-I sent a mail some days ago about the features backported already by 
-Linaro for their LSK (Linaro Stable Kernel) for your evaluation. I bring 
-today some potential backports related with security features and 
-hardware support that has been identified by Ben H.
+* This week the team at Codethink working on CIP has met f2f for the 
+first time in Manchester, since three of us work remotely from home.
+** Agreed on basic management processes we will follow.
+** We have worked on the roadmap for the coming weeks.
+** Moved forward the work on testing.
+** You can find us in IRC channel #cip in freenode.
 
-* UBSAN support:
-<https://git.kernel.org/linus/c6d308534aef6c99904bf5862066360ae067abc4>
+++ Kernel maintenance
 
-* Increased user-space ASLR range for ARM:
-<https://lwn.net/Articles/667790/>
+  * There is a consolidation effort of the policies that has been 
+discussed in this mailing list in our public wiki[1]. Ben H. and myself 
+will look into them the following days to polish them.
 
-* Page poisoning on free:
-<https://git.kernel.org/linus/8823b1dbc05fab1a8bec275eeae4709257c2661d>,
-<https://git.kernel.org/linus/1414c7f4f7d72d138fff35f00151d15749b5beda>
+++ Testing
 
-* SLAB/SLUB freelist randomisation
+  * The testing project has been created in Gitlab. A couple of 
+colleagues at Codethink has picked up the initial effort done by Siemens 
+and move it forward, in order to create a virtual machine with kernelci[2].
+**The goal of the first milestone is that any developer with a board at 
+her desk can test a kernel and see the results of those tests in her own 
+machine.
+** A tutorial will be published for those of you not familiar with the 
+tools involved.
 
-* Hardened usercopy
+If you are interested in using kernelci in your company, please join our 
+effort. Collaboration is working.
 
-* Do Members use SLUB? if not, we should take a look at KASAN support 
-for SLAB
+++ Other topics
 
-* drm/tilcdc update? (many bug fixes post-4.4)
+* The CIP whitepaper keeps moving forward.
 
-* AM33xx RTC support:
-
-<https://git.kernel.org/linus/461932dfb54ebaf7da438fd8b769a01ce97a9360>,
-<https://git.kernel.org/linus/b5a553c08bec14a058501df3fa6eb39f63f00a98>
-
+* As reported, CIP Members took as strategic decision to use the tools 
+that for each software component, each upstream community uses. I order 
+to consolidate our work upstream in one place, we will use Gitlab[3].
+** The Gitlab instance is up and running. Feel free to join.
 
 Best Regards
+
+[1] 
+https://wiki.linuxfoundation.org/civilinfrastructureplatform/cipkernelmaintenance
+[2] https://gitlab.com/cip-project/testing/tree/master
+[3] https://gitlab.com/cip-project
+
 -- 
 Agustin Benito Bethencourt
 Principal Consultant - FOSS at Codethink
