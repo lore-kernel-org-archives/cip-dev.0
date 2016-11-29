@@ -1,78 +1,68 @@
-From: takuo.koguchi.sw@hitachi.com (=?iso-2022-jp?B?GyRCPi44fUJ2SVcbKEIgLyBLT0dVQ0hJGyRCISQbKEJUQUtVTw==?=)
-Date: Tue, 29 Nov 2016 02:57:51 +0000
-Subject: [cip-dev] Features backports
-In-Reply-To: <582EF368.4090006@codethink.co.uk>
-References: <582EF368.4090006@codethink.co.uk>
-Message-ID: <390B4EACA1A32748BA6BC7F859F7D71655274E10@GSjpTKYDCembx31.service.hitachi.net>
+From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
+Date: Tue, 29 Nov 2016 12:28:49 +0900
+Subject: [cip-dev] Update week 47
+In-Reply-To: <583AC090.6050608@codethink.co.uk>
+References: <583AC090.6050608@codethink.co.uk>
+Message-ID: <002401d249f0$b34b9760$19e2c620$@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi,
 
-Regarding to Altera Socfpga Cyclone V, we might want to backport from 4.9;
-- L2cache ECC(./arch/arm/mm/cache-l2x0.c)
-- QSPI Flash controller(drivers/mtd/spi-nor/cadence-quadspi.c)
-
-4.9 is still missing the followings which exist in the verdor tree(linux-socfpga);
-- HPS2FPGA(drivers/fpga/altera-hps2fpga.c)
-- NAND Flash controller(drivers/mtd/nand/denali_dt.c)
-I hope we can encourage Altera to push these features upstream or do it ourselves.
-
-Takuo
-
+(Cc'ed to Fuego and LTSI mailing lists).
 
 > -----Original Message-----
-> From: cip-dev-bounces at lists.cip-project.org
-> [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Agustin Benito
-> Bethencourt
-> Sent: Friday, November 18, 2016 9:26 PM
+> From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Agustin Benito Bethencourt
+> Sent: Sunday, November 27, 2016 8:17 PM
 > To: cip-dev at lists.cip-project.org
-> Subject: [!][cip-dev] Features backports
+> Subject: [cip-dev] Update week 47
+...
+> ++ Testing
 > 
-> Hi,
+>   * The testing project has been created in Gitlab. A couple of
+> colleagues at Codethink has picked up the initial effort done by Siemens
+> and move it forward, in order to create a virtual machine with kernelci[2].
+> **The goal of the first milestone is that any developer with a board at
+> her desk can test a kernel and see the results of those tests in her own
+> machine.
+> ** A tutorial will be published for those of you not familiar with the
+> tools involved.
 > 
-> as you probably know, the more features we backport, the higher will be the
-> maintenance cost overtime so as a strategy, we need to be very
-> conservative.
-> 
-> I sent a mail some days ago about the features backported already by Linaro
-> for their LSK (Linaro Stable Kernel) for your evaluation. I bring today some
-> potential backports related with security features and hardware support that
-> has been identified by Ben H.
-> 
-> * UBSAN support:
-> <https://git.kernel.org/linus/c6d308534aef6c99904bf5862066360ae067abc4
-> >
-> 
-> * Increased user-space ASLR range for ARM:
-> <https://lwn.net/Articles/667790/>
-> 
-> * Page poisoning on free:
-> <https://git.kernel.org/linus/8823b1dbc05fab1a8bec275eeae4709257c2661
-> d>,
-> <https://git.kernel.org/linus/1414c7f4f7d72d138fff35f00151d15749b5beda>
-> 
-> * SLAB/SLUB freelist randomisation
-> 
-> * Hardened usercopy
-> 
-> * Do Members use SLUB? if not, we should take a look at KASAN support for
-> SLAB
-> 
-> * drm/tilcdc update? (many bug fixes post-4.4)
-> 
-> * AM33xx RTC support:
-> 
-> <https://git.kernel.org/linus/461932dfb54ebaf7da438fd8b769a01ce97a9360
-> >,
-> <https://git.kernel.org/linus/b5a553c08bec14a058501df3fa6eb39f63f00a98>
-> 
-> 
-> Best Regards
-> --
-> Agustin Benito Bethencourt
-> Principal Consultant - FOSS at Codethink agustin.benito at codethink.co.uk
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
+> If you are interested in using kernelci in your company, please join our
+> effort. Collaboration is working.
+> [2] https://gitlab.com/cip-project/testing/tree/master
+
+I am planning to add support for kernel-ci on Fuego (Jenkins + a bunch of tests)
+using "https://ci.linaro.org/view/kernel-ci/" as a reference. That is, Fuego will git-trigger
+and perform kernel builds, and then send the results to a kernel-ci server (e.g. a 
+local vagrant server or https://kernelci.org) using its REST API.
+
+My short-term vision is:
+
+[Fuego at toshiba]
+....                                   ----build results--------> [Kernel-ci at server]
+[Fuego@<company X>]
+
+Fuego can also be used for visualizing the local build results (maybe not as pretty as kernel-ci's dashboard) but 
+as far as I know it doesn't have the kind of back-end API that kernel-ci has. For that reason, although for
+local testing Fuego is enough, we need a way to publish the results (mostly so that
+maintainers can see them).
+
+However, my long-term vision would be:
+
+[Fuego at toshiba]
+....                                   ----build/boot/LTP/Cyclictest/other_tests results--------> [Fuego OR modified kernel-ci at server]
+[Fuego@<company X>]
+
+In other words, Build and Boot tests are good but not enough. There are many other tests that we
+want to run (e.g. tests in Fuego for both the kernel and the root filesystem).  I can see at least two options 
+for implementing that:
+   Option 1: Extend kernel-ci to support other type of tests.
+   Option 2: Add a backend REST API to Fuego similar to the one kernel-ci has.
+
+Any feedback would be welcome.
+
+Best regards,
+Daniel
+
+[1] http://bird.org/ffiles/Introduction-to-Fuego-LCJ-2016.pdf
