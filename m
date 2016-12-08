@@ -1,54 +1,65 @@
-From: yoshitake.kobayashi@toshiba.co.jp (KOBAYASHI Yoshitake)
-Date: Fri, 2 Dec 2016 17:44:26 +0900
-Subject: [cip-dev] Features backports
-In-Reply-To: <582EF368.4090006@codethink.co.uk>
-References: <582EF368.4090006@codethink.co.uk>
-Message-ID: <9d9eb566-1db4-9973-a7c2-02a03e7d9309@toshiba.co.jp>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Thu, 08 Dec 2016 23:56:20 +0000
+Subject: [cip-dev] [PATCH 4.4-cip 0/6] Extend user-space ASLR range
+Message-ID: <1481241380.1860.120.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+This is a backport of changes in 4.5 to extend the range of Address
+Space Layout Randomisation for user-space processes.  When enabled, this
+should make some user-space vulnerabilities harder to exploit, but it
+can also cause some applications to fail if they currently use a large
+proportion of the virtual address space.
 
-Since the Intel Apollo Lake has already released, we started to check the
-patches for that. I think the basic functionality has already upstreamed
-and it might be enough for expected use cases.
+The default ASLR range remains the same, but it can be changed through
+kernel config (CONFIG_ARCH_MMAP_RND_BITS) or at run-time through sysctl
+(vm.mmap_rnd_bits).  (For 32-bit compat tasks, the range is controlled
+through CONFIG_ARCH_MMAP_RND_COMPAT_BITS and vm.mmap_rnd_compat_bits.)
 
-http://git.yoctoproject.org/cgit/cgit.cgi/linux-yocto-4.4/log/?h=standard/intel/bxt-rebase
+This includes support for arm, arm64 and x86 (32- and 64-bit).  (arm64
+is not currently supported by CIP, but it was easier to include it in
+the backport than to leave it out.)
 
-I continue to clarify more details.
+For this and other backports, I'm looking for feedback like:
+- Did I miss a follow-up fix or an earlier dependency?
+- Does this cause a regression (other than as explained above)?
+- Are you likely to use it?
+- Are there related features you want in 4.4?
 
-Best regards,
-Yoshi
+Ben.
 
-On 2016/11/18 21:26, Agustin Benito Bethencourt wrote:
-> Hi,
->
-> as you probably know, the more features we backport, the higher will be the maintenance cost overtime so as a strategy, we need to be very conservative.
->
-> I sent a mail some days ago about the features backported already by Linaro for their LSK (Linaro Stable Kernel) for your evaluation. I bring today some potential backports related with security features and hardware support that has been identified by Ben H.
->
-> * UBSAN support:
-> <https://git.kernel.org/linus/c6d308534aef6c99904bf5862066360ae067abc4>
->
-> * Increased user-space ASLR range for ARM:
-> <https://lwn.net/Articles/667790/>
->
-> * Page poisoning on free:
-> <https://git.kernel.org/linus/8823b1dbc05fab1a8bec275eeae4709257c2661d>,
-> <https://git.kernel.org/linus/1414c7f4f7d72d138fff35f00151d15749b5beda>
->
-> * SLAB/SLUB freelist randomisation
->
-> * Hardened usercopy
->
-> * Do Members use SLUB? if not, we should take a look at KASAN support for SLAB
->
-> * drm/tilcdc update? (many bug fixes post-4.4)
->
-> * AM33xx RTC support:
->
-> <https://git.kernel.org/linus/461932dfb54ebaf7da438fd8b769a01ce97a9360>,
-> <https://git.kernel.org/linus/b5a553c08bec14a058501df3fa6eb39f63f00a98>
->
->
-> Best Regards
+Daniel Cashman (6):
+  mm: mmap: add new /proc tunable for mmap_base ASLR
+  arm: mm: support ARCH_MMAP_RND_BITS
+  arm64: mm: support ARCH_MMAP_RND_BITS
+  x86: mm: support ARCH_MMAP_RND_BITS
+  drivers: char: random: add get_random_long()
+  mm: ASLR: use get_random_long()
+
+ Documentation/sysctl/vm.txt      | 29 +++++++++++++++++
+ arch/Kconfig                     | 68 ++++++++++++++++++++++++++++++++++++++++
+ arch/arm/Kconfig                 |  9 ++++++
+ arch/arm/mm/mmap.c               |  3 +-
+ arch/arm64/Kconfig               | 29 +++++++++++++++++
+ arch/arm64/mm/mmap.c             |  8 +++--
+ arch/mips/mm/mmap.c              |  4 +--
+ arch/powerpc/kernel/process.c    |  4 +--
+ arch/powerpc/mm/mmap.c           |  4 +--
+ arch/sparc/kernel/sys_sparc_64.c |  2 +-
+ arch/x86/Kconfig                 | 16 ++++++++++
+ arch/x86/mm/mmap.c               | 12 +++----
+ drivers/char/random.c            | 22 +++++++++++++
+ fs/binfmt_elf.c                  |  2 +-
+ include/linux/mm.h               | 11 +++++++
+ include/linux/random.h           |  1 +
+ kernel/sysctl.c                  | 22 +++++++++++++
+ mm/mmap.c                        | 12 +++++++
+ 18 files changed, 240 insertions(+), 18 deletions(-)
+
+-- 
+2.10.2
+
+
+-- 
+Ben Hutchings
+Software Developer, Codethink Ltd.
