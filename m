@@ -1,74 +1,66 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Fri, 09 Dec 2016 00:41:19 +0000
-Subject: [cip-dev] [PATCH 4.4-cip 23/23] mlx4: remove unused fields
-In-Reply-To: <1481243545.1860.156.camel@codethink.co.uk>
-References: <1481243545.1860.156.camel@codethink.co.uk>
-Message-ID: <1481244079.1860.182.camel@codethink.co.uk>
+From: don.brown@codethink.com (Don Brown)
+Date: Thu, 08 Dec 2016 09:44:10 -0500
+Subject: [cip-dev] The Problem with build.log
+Message-ID: <01e40d42ba066478e3aa474b7b6fea5e@codethink.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: David Decotigny <decot@googlers.com>
+Hi Robert,
 
-commit 5038056e6bd45788235e97e3bcfc43f96c52ca84 upstream.
+I may have found the problem with the links to the build.log,
+kernel.config and zImage files.
 
-This also can address following UBSAN warnings:
-[   36.640343] ================================================================================
-[   36.648772] UBSAN: Undefined behaviour in drivers/net/ethernet/mellanox/mlx4/fw.c:857:26
-[   36.656853] shift exponent 64 is too large for 32-bit type 'int'
-[   36.663348] ================================================================================
-[   36.671783] ================================================================================
-[   36.680213] UBSAN: Undefined behaviour in drivers/net/ethernet/mellanox/mlx4/fw.c:861:27
-[   36.688297] shift exponent 35 is too large for 32-bit type 'int'
-[   36.694702] ================================================================================
+As you can see from the attached Screenshots, when I hover over the
+links, the URL has some duplicated information in it.
 
-Tested:
-  reboot with UBSAN, no warning.
+  * For instance, the link to the build.log file is shown as:
+      o
+/localhost:5000/build/cip-dreiwettertaft/kernel/v4.4.27/localhost/cip-dreiwettertaft/kernel/v4.4.27/arm-tinyconfig/build.log/
+  * The kernel.config link is shown as:
+      o
+/localhost:5000/build/cip-dreiwettertaft/kernel/v4.4.27/localhost/cip-dreiwettertaft/kernel/v4.4.27/arm-tinyconfig/kernel.config/
+  * The zImage link is shown as:
+      o
+/localhost:5000/build/cip-dreiwettertaft/kernel/v4.4.27/localhost/cip-dreiwettertaft/kernel/v4.4.27/arm-tinyconfig/zImage/
 
-Signed-off-by: David Decotigny <decot@googlers.com>
-Acked-by: Eric Dumazet <edumazet@google.com>
-Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
----
- drivers/net/ethernet/mellanox/mlx4/fw.c | 4 ----
- drivers/net/ethernet/mellanox/mlx4/fw.h | 2 --
- 2 files changed, 6 deletions(-)
+The files are actually stored in the following location on disk:
 
-diff --git a/drivers/net/ethernet/mellanox/mlx4/fw.c b/drivers/net/ethernet/mellanox/mlx4/fw.c
-index 90db94e83fde..ebff502db8ff 100644
---- a/drivers/net/ethernet/mellanox/mlx4/fw.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/fw.c
-@@ -760,12 +760,8 @@ int mlx4_QUERY_DEV_CAP(struct mlx4_dev *dev, struct mlx4_dev_cap *dev_cap)
- 	dev_cap->max_eqs = 1 << (field & 0xf);
- 	MLX4_GET(field, outbox, QUERY_DEV_CAP_RSVD_MTT_OFFSET);
- 	dev_cap->reserved_mtts = 1 << (field >> 4);
--	MLX4_GET(field, outbox, QUERY_DEV_CAP_MAX_MRW_SZ_OFFSET);
--	dev_cap->max_mrw_sz = 1 << field;
- 	MLX4_GET(field, outbox, QUERY_DEV_CAP_RSVD_MRW_OFFSET);
- 	dev_cap->reserved_mrws = 1 << (field & 0xf);
--	MLX4_GET(field, outbox, QUERY_DEV_CAP_MAX_MTT_SEG_OFFSET);
--	dev_cap->max_mtt_seg = 1 << (field & 0x3f);
- 	MLX4_GET(size, outbox, QUERY_DEV_CAP_NUM_SYS_EQ_OFFSET);
- 	dev_cap->num_sys_eqs = size & 0xfff;
- 	MLX4_GET(field, outbox, QUERY_DEV_CAP_MAX_REQ_QP_OFFSET);
-diff --git a/drivers/net/ethernet/mellanox/mlx4/fw.h b/drivers/net/ethernet/mellanox/mlx4/fw.h
-index 08de5555c2f4..711af4e506f3 100644
---- a/drivers/net/ethernet/mellanox/mlx4/fw.h
-+++ b/drivers/net/ethernet/mellanox/mlx4/fw.h
-@@ -78,9 +78,7 @@ struct mlx4_dev_cap {
- 	int max_eqs;
- 	int num_sys_eqs;
- 	int reserved_mtts;
--	int max_mrw_sz;
- 	int reserved_mrws;
--	int max_mtt_seg;
- 	int max_requester_per_qp;
- 	int max_responder_per_qp;
- 	int max_rdma_global;
--- 
-2.10.2
+//var/www/images/kernel-ci/cip-dreiwettertaft/v4.4.27/arm-tinyconfig/
 
+So I think they are grabbing a string to append to the site URL and they
+are grabbing more than they wanted.
+
+P.S. I also created an Issue (#2) in the GitLab site for this, but I
+wasn't sure how attaching the pics would go.
 
 -- 
-Ben Hutchings
-Software Developer, Codethink Ltd.
+Don Brown
+Codethink, Ltd.
+Software Engineering Consultant
+Indianapolis, IN USA
+Email: don.brown at codethink.co.uk
+Mobile: +1 317-560-0513
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20161208/34a8a26f/attachment-0001.html>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Screenshot #1 from 2016-12-07 19-50-36.png
+Type: image/png
+Size: 120710 bytes
+Desc: not available
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20161208/34a8a26f/attachment-0003.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Screenshot #2 from 2016-12-07 19-50-57.png
+Type: image/png
+Size: 115470 bytes
+Desc: not available
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20161208/34a8a26f/attachment-0004.png>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Screenshot #3 from 2016-12-07 19-51-08.png
+Type: image/png
+Size: 120762 bytes
+Desc: not available
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20161208/34a8a26f/attachment-0005.png>
