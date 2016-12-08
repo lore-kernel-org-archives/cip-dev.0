@@ -1,41 +1,19 @@
 From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Thu, 08 Dec 2016 23:58:17 +0000
-Subject: [cip-dev] [PATCH 4.4-cip 5/6] drivers: char: random: add
-	get_random_long()
+Date: Thu, 08 Dec 2016 23:58:30 +0000
+Subject: [cip-dev] [PATCH 4.4-cip 6/6] mm: ASLR: use get_random_long()
 In-Reply-To: <1481241380.1860.120.camel@codethink.co.uk>
 References: <1481241380.1860.120.camel@codethink.co.uk>
-Message-ID: <1481241497.1860.125.camel@codethink.co.uk>
+Message-ID: <1481241510.1860.126.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Daniel Cashman <dcashman@android.com>
+From: Daniel Cashman <dcashman@android.com>
 
-commit ec9ee4acd97c0039a61c0ae4f12705767ae62153 upstream.
+commit 5ef11c35ce86b94bfb878b684de4cdaf96f54b2f upstream.
 
-Commit d07e22597d1d ("mm: mmap: add new /proc tunable for mmap_base
-ASLR") added the ability to choose from a range of values to use for
-entropy count in generating the random offset to the mmap_base address.
-
-The maximum value on this range was set to 32 bits for 64-bit x86
-systems, but this value could be increased further, requiring more than
-the 32 bits of randomness provided by get_random_int(), as is already
-possible for arm64.  Add a new function: get_random_long() which more
-naturally fits with the mmap usage of get_random_int() but operates
-exactly the same as get_random_int().
-
-Also, fix the shifting constant in mmap_rnd() to be an unsigned long so
-that values greater than 31 bits generate an appropriate mask without
-overflow.  This is especially important on x86, as its shift instruction
-uses a 5-bit mask for the shift operand, which meant that any value for
-mmap_rnd_bits over 31 acts as a no-op and effectively disables mmap_base
-randomization.
-
-Finally, replace calls to get_random_int() with get_random_long() where
-appropriate.
-
-This patch (of 2):
-
-Add get_random_long().
+Replace calls to get_random_int() followed by a cast to (unsigned long)
+with calls to get_random_long().  Also address shifting bug which, in
+case of x86 removed entropy mask for mmap_rnd_bits values > 31 bits.
 
 Signed-off-by: Daniel Cashman <dcashman@android.com>
 Acked-by: Kees Cook <keescook@chromium.org>
@@ -60,58 +38,148 @@ Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 ---
- drivers/char/random.c  | 22 ++++++++++++++++++++++
- include/linux/random.h |  1 +
- 2 files changed, 23 insertions(+)
+ arch/arm/mm/mmap.c               | 2 +-
+ arch/arm64/mm/mmap.c             | 4 ++--
+ arch/mips/mm/mmap.c              | 4 ++--
+ arch/powerpc/kernel/process.c    | 4 ++--
+ arch/powerpc/mm/mmap.c           | 4 ++--
+ arch/sparc/kernel/sys_sparc_64.c | 2 +-
+ arch/x86/mm/mmap.c               | 6 +++---
+ fs/binfmt_elf.c                  | 2 +-
+ 8 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/char/random.c b/drivers/char/random.c
-index 491a4dce13fe..d93dfebae0bb 100644
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -1825,6 +1825,28 @@ unsigned int get_random_int(void)
- EXPORT_SYMBOL(get_random_int);
+diff --git a/arch/arm/mm/mmap.c b/arch/arm/mm/mmap.c
+index 4b4058db0781..66353caa35b9 100644
+--- a/arch/arm/mm/mmap.c
++++ b/arch/arm/mm/mmap.c
+@@ -173,7 +173,7 @@ unsigned long arch_mmap_rnd(void)
+ {
+ 	unsigned long rnd;
  
- /*
-+ * Same as get_random_int(), but returns unsigned long.
-+ */
-+unsigned long get_random_long(void)
-+{
-+	__u32 *hash;
-+	unsigned long ret;
-+
-+	if (arch_get_random_long(&ret))
-+		return ret;
-+
-+	hash = get_cpu_var(get_random_int_hash);
-+
-+	hash[0] += current->pid + jiffies + random_get_entropy();
-+	md5_transform(hash, random_int_secret);
-+	ret = *(unsigned long *)hash;
-+	put_cpu_var(get_random_int_hash);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL(get_random_long);
-+
-+/*
-  * randomize_range() returns a start address such that
-  *
-  *    [...... <range> .....]
-diff --git a/include/linux/random.h b/include/linux/random.h
-index a75840c1aa71..9c29122037f9 100644
---- a/include/linux/random.h
-+++ b/include/linux/random.h
-@@ -34,6 +34,7 @@ extern const struct file_operations random_fops, urandom_fops;
+-	rnd = (unsigned long)get_random_int() & ((1 << mmap_rnd_bits) - 1);
++	rnd = get_random_long() & ((1UL << mmap_rnd_bits) - 1);
+ 
+ 	return rnd << PAGE_SHIFT;
+ }
+diff --git a/arch/arm64/mm/mmap.c b/arch/arm64/mm/mmap.c
+index 4c893b5189dd..232f787a088a 100644
+--- a/arch/arm64/mm/mmap.c
++++ b/arch/arm64/mm/mmap.c
+@@ -53,10 +53,10 @@ unsigned long arch_mmap_rnd(void)
+ 
+ #ifdef CONFIG_COMPAT
+ 	if (test_thread_flag(TIF_32BIT))
+-		rnd = (unsigned long)get_random_int() & ((1 << mmap_rnd_compat_bits) - 1);
++		rnd = get_random_long() & ((1UL << mmap_rnd_compat_bits) - 1);
+ 	else
  #endif
+-		rnd = (unsigned long)get_random_int() & ((1 << mmap_rnd_bits) - 1);
++		rnd = get_random_long() & ((1UL << mmap_rnd_bits) - 1);
+ 	return rnd << PAGE_SHIFT;
+ }
  
- unsigned int get_random_int(void);
-+unsigned long get_random_long(void);
- unsigned long randomize_range(unsigned long start, unsigned long end, unsigned long len);
+diff --git a/arch/mips/mm/mmap.c b/arch/mips/mm/mmap.c
+index 5c81fdd032c3..353037699512 100644
+--- a/arch/mips/mm/mmap.c
++++ b/arch/mips/mm/mmap.c
+@@ -146,7 +146,7 @@ unsigned long arch_mmap_rnd(void)
+ {
+ 	unsigned long rnd;
  
- u32 prandom_u32(void);
+-	rnd = (unsigned long)get_random_int();
++	rnd = get_random_long();
+ 	rnd <<= PAGE_SHIFT;
+ 	if (TASK_IS_32BIT_ADDR)
+ 		rnd &= 0xfffffful;
+@@ -174,7 +174,7 @@ void arch_pick_mmap_layout(struct mm_struct *mm)
+ 
+ static inline unsigned long brk_rnd(void)
+ {
+-	unsigned long rnd = get_random_int();
++	unsigned long rnd = get_random_long();
+ 
+ 	rnd = rnd << PAGE_SHIFT;
+ 	/* 8MB for 32bit, 256MB for 64bit */
+diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
+index cf788d7d7e56..b7abf3cd2a67 100644
+--- a/arch/powerpc/kernel/process.c
++++ b/arch/powerpc/kernel/process.c
+@@ -1651,9 +1651,9 @@ static inline unsigned long brk_rnd(void)
+ 
+ 	/* 8MB for 32bit, 1GB for 64bit */
+ 	if (is_32bit_task())
+-		rnd = (long)(get_random_int() % (1<<(23-PAGE_SHIFT)));
++		rnd = (get_random_long() % (1UL<<(23-PAGE_SHIFT)));
+ 	else
+-		rnd = (long)(get_random_int() % (1<<(30-PAGE_SHIFT)));
++		rnd = (get_random_long() % (1UL<<(30-PAGE_SHIFT)));
+ 
+ 	return rnd << PAGE_SHIFT;
+ }
+diff --git a/arch/powerpc/mm/mmap.c b/arch/powerpc/mm/mmap.c
+index 0f0502e12f6c..4087705ba90f 100644
+--- a/arch/powerpc/mm/mmap.c
++++ b/arch/powerpc/mm/mmap.c
+@@ -59,9 +59,9 @@ unsigned long arch_mmap_rnd(void)
+ 
+ 	/* 8MB for 32bit, 1GB for 64bit */
+ 	if (is_32bit_task())
+-		rnd = (unsigned long)get_random_int() % (1<<(23-PAGE_SHIFT));
++		rnd = get_random_long() % (1<<(23-PAGE_SHIFT));
+ 	else
+-		rnd = (unsigned long)get_random_int() % (1<<(30-PAGE_SHIFT));
++		rnd = get_random_long() % (1UL<<(30-PAGE_SHIFT));
+ 
+ 	return rnd << PAGE_SHIFT;
+ }
+diff --git a/arch/sparc/kernel/sys_sparc_64.c b/arch/sparc/kernel/sys_sparc_64.c
+index c690c8e16a96..b489e9759518 100644
+--- a/arch/sparc/kernel/sys_sparc_64.c
++++ b/arch/sparc/kernel/sys_sparc_64.c
+@@ -264,7 +264,7 @@ static unsigned long mmap_rnd(void)
+ 	unsigned long rnd = 0UL;
+ 
+ 	if (current->flags & PF_RANDOMIZE) {
+-		unsigned long val = get_random_int();
++		unsigned long val = get_random_long();
+ 		if (test_thread_flag(TIF_32BIT))
+ 			rnd = (val % (1UL << (23UL-PAGE_SHIFT)));
+ 		else
+diff --git a/arch/x86/mm/mmap.c b/arch/x86/mm/mmap.c
+index 389939f74dd5..d2dc0438d654 100644
+--- a/arch/x86/mm/mmap.c
++++ b/arch/x86/mm/mmap.c
+@@ -71,12 +71,12 @@ unsigned long arch_mmap_rnd(void)
+ 
+ 	if (mmap_is_ia32())
+ #ifdef CONFIG_COMPAT
+-		rnd = (unsigned long)get_random_int() & ((1 << mmap_rnd_compat_bits) - 1);
++		rnd = get_random_long() & ((1UL << mmap_rnd_compat_bits) - 1);
+ #else
+-		rnd = (unsigned long)get_random_int() & ((1 << mmap_rnd_bits) - 1);
++		rnd = get_random_long() & ((1UL << mmap_rnd_bits) - 1);
+ #endif
+ 	else
+-		rnd = (unsigned long)get_random_int() & ((1 << mmap_rnd_bits) - 1);
++		rnd = get_random_long() & ((1UL << mmap_rnd_bits) - 1);
+ 
+ 	return rnd << PAGE_SHIFT;
+ }
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 3a93755e880f..0c52941dd62c 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -651,7 +651,7 @@ static unsigned long randomize_stack_top(unsigned long stack_top)
+ 
+ 	if ((current->flags & PF_RANDOMIZE) &&
+ 		!(current->personality & ADDR_NO_RANDOMIZE)) {
+-		random_variable = (unsigned long) get_random_int();
++		random_variable = get_random_long();
+ 		random_variable &= STACK_RND_MASK;
+ 		random_variable <<= PAGE_SHIFT;
+ 	}
 -- 
 2.10.2
-
 
 
 -- 
