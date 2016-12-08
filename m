@@ -1,22 +1,22 @@
 From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Thu, 08 Dec 2016 23:57:51 +0000
-Subject: [cip-dev] [PATCH 4.4-cip 3/6] arm64: mm: support ARCH_MMAP_RND_BITS
+Date: Thu, 08 Dec 2016 23:58:06 +0000
+Subject: [cip-dev] [PATCH 4.4-cip 4/6] x86: mm: support ARCH_MMAP_RND_BITS
 In-Reply-To: <1481241380.1860.120.camel@codethink.co.uk>
 References: <1481241380.1860.120.camel@codethink.co.uk>
-Message-ID: <1481241471.1860.123.camel@codethink.co.uk>
+Message-ID: <1481241486.1860.124.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Daniel Cashman <dcashman@google.com>
 
-commit 8f0d3aa9de57662fe35d8bacfbd9d7ef85ffe98f upstream.
+commit 9e08f57d684ac2f40685f55f659564bfd91a971e upstream.
 
-arm64: arch_mmap_rnd() uses STACK_RND_MASK to generate the random offset
-for the mmap base address.  This value represents a compromise between
-increased ASLR effectiveness and avoiding address-space fragmentation.
-Replace it with a Kconfig option, which is sensibly bounded, so that
-platform developers may choose where to place this compromise.  Keep
-default values as new minimums.
+x86: arch_mmap_rnd() uses hard-coded values, 8 for 32-bit and 28 for
+64-bit, to generate the random offset for the mmap base address.  This
+value represents a compromise between increased ASLR effectiveness and
+avoiding address-space fragmentation.  Replace it with a Kconfig option,
+which is sensibly bounded, so that platform developers may choose where
+to place this compromise.  Keep default values as new minimums.
 
 Signed-off-by: Daniel Cashman <dcashman@google.com>
 Cc: Russell King <linux@arm.linux.org.uk>
@@ -49,76 +49,69 @@ Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 ---
- arch/arm64/Kconfig   | 29 +++++++++++++++++++++++++++++
- arch/arm64/mm/mmap.c |  8 ++++++--
- 2 files changed, 35 insertions(+), 2 deletions(-)
+ arch/x86/Kconfig   | 16 ++++++++++++++++
+ arch/x86/mm/mmap.c | 12 ++++++------
+ 2 files changed, 22 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 14cdc6dea493..edf62be35adc 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -51,6 +51,8 @@ config ARM64
- 	select HAVE_ARCH_JUMP_LABEL
- 	select HAVE_ARCH_KASAN if SPARSEMEM_VMEMMAP && !(ARM64_16K_PAGES && ARM64_VA_BITS_48)
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 436639a31624..ffbfa85271a3 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -82,6 +82,8 @@ config X86
+ 	select HAVE_ARCH_KASAN			if X86_64 && SPARSEMEM_VMEMMAP
  	select HAVE_ARCH_KGDB
-+	select HAVE_ARCH_MMAP_RND_BITS
-+	select HAVE_ARCH_MMAP_RND_COMPAT_BITS if COMPAT
+ 	select HAVE_ARCH_KMEMCHECK
++	select HAVE_ARCH_MMAP_RND_BITS		if MMU
++	select HAVE_ARCH_MMAP_RND_COMPAT_BITS	if MMU && COMPAT
  	select HAVE_ARCH_SECCOMP_FILTER
+ 	select HAVE_ARCH_SOFT_DIRTY		if X86_64
  	select HAVE_ARCH_TRACEHOOK
- 	select HAVE_BPF_JIT
-@@ -104,6 +106,33 @@ config ARCH_PHYS_ADDR_T_64BIT
+@@ -183,6 +185,20 @@ config HAVE_LATENCYTOP_SUPPORT
  config MMU
  	def_bool y
  
 +config ARCH_MMAP_RND_BITS_MIN
-+       default 14 if ARM64_64K_PAGES
-+       default 16 if ARM64_16K_PAGES
-+       default 18
++	default 28 if 64BIT
++	default 8
 +
-+# max bits determined by the following formula:
-+#  VA_BITS - PAGE_SHIFT - 3
 +config ARCH_MMAP_RND_BITS_MAX
-+       default 19 if ARM64_VA_BITS=36
-+       default 24 if ARM64_VA_BITS=39
-+       default 27 if ARM64_VA_BITS=42
-+       default 30 if ARM64_VA_BITS=47
-+       default 29 if ARM64_VA_BITS=48 && ARM64_64K_PAGES
-+       default 31 if ARM64_VA_BITS=48 && ARM64_16K_PAGES
-+       default 33 if ARM64_VA_BITS=48
-+       default 14 if ARM64_64K_PAGES
-+       default 16 if ARM64_16K_PAGES
-+       default 18
++	default 32 if 64BIT
++	default 16
 +
 +config ARCH_MMAP_RND_COMPAT_BITS_MIN
-+       default 7 if ARM64_64K_PAGES
-+       default 9 if ARM64_16K_PAGES
-+       default 11
++	default 8
 +
 +config ARCH_MMAP_RND_COMPAT_BITS_MAX
-+       default 16
++	default 16
 +
- config NO_IOPORT_MAP
- 	def_bool y if !PCI
+ config SBUS
+ 	bool
  
-diff --git a/arch/arm64/mm/mmap.c b/arch/arm64/mm/mmap.c
-index ed177475dd8c..4c893b5189dd 100644
---- a/arch/arm64/mm/mmap.c
-+++ b/arch/arm64/mm/mmap.c
-@@ -51,8 +51,12 @@ unsigned long arch_mmap_rnd(void)
+diff --git a/arch/x86/mm/mmap.c b/arch/x86/mm/mmap.c
+index 307f60ecfc6d..389939f74dd5 100644
+--- a/arch/x86/mm/mmap.c
++++ b/arch/x86/mm/mmap.c
+@@ -69,14 +69,14 @@ unsigned long arch_mmap_rnd(void)
  {
  	unsigned long rnd;
  
--	rnd = (unsigned long)get_random_int() & STACK_RND_MASK;
--
+-	/*
+-	 *  8 bits of randomness in 32bit mmaps, 20 address space bits
+-	 * 28 bits of randomness in 64bit mmaps, 40 address space bits
+-	 */
+ 	if (mmap_is_ia32())
+-		rnd = (unsigned long)get_random_int() % (1<<8);
 +#ifdef CONFIG_COMPAT
-+	if (test_thread_flag(TIF_32BIT))
 +		rnd = (unsigned long)get_random_int() & ((1 << mmap_rnd_compat_bits) - 1);
-+	else
-+#endif
++#else
 +		rnd = (unsigned long)get_random_int() & ((1 << mmap_rnd_bits) - 1);
++#endif
+ 	else
+-		rnd = (unsigned long)get_random_int() % (1<<28);
++		rnd = (unsigned long)get_random_int() & ((1 << mmap_rnd_bits) - 1);
+ 
  	return rnd << PAGE_SHIFT;
  }
- 
 -- 
 2.10.2
 
