@@ -1,117 +1,114 @@
 From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Thu, 08 Dec 2016 23:58:06 +0000
-Subject: [cip-dev] [PATCH 4.4-cip 4/6] x86: mm: support ARCH_MMAP_RND_BITS
+Date: Thu, 08 Dec 2016 23:58:17 +0000
+Subject: [cip-dev] [PATCH 4.4-cip 5/6] drivers: char: random: add
+	get_random_long()
 In-Reply-To: <1481241380.1860.120.camel@codethink.co.uk>
 References: <1481241380.1860.120.camel@codethink.co.uk>
-Message-ID: <1481241486.1860.124.camel@codethink.co.uk>
+Message-ID: <1481241497.1860.125.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Daniel Cashman <dcashman@google.com>
+Daniel Cashman <dcashman@android.com>
 
-commit 9e08f57d684ac2f40685f55f659564bfd91a971e upstream.
+commit ec9ee4acd97c0039a61c0ae4f12705767ae62153 upstream.
 
-x86: arch_mmap_rnd() uses hard-coded values, 8 for 32-bit and 28 for
-64-bit, to generate the random offset for the mmap base address.  This
-value represents a compromise between increased ASLR effectiveness and
-avoiding address-space fragmentation.  Replace it with a Kconfig option,
-which is sensibly bounded, so that platform developers may choose where
-to place this compromise.  Keep default values as new minimums.
+Commit d07e22597d1d ("mm: mmap: add new /proc tunable for mmap_base
+ASLR") added the ability to choose from a range of values to use for
+entropy count in generating the random offset to the mmap_base address.
 
-Signed-off-by: Daniel Cashman <dcashman@google.com>
-Cc: Russell King <linux@arm.linux.org.uk>
+The maximum value on this range was set to 32 bits for 64-bit x86
+systems, but this value could be increased further, requiring more than
+the 32 bits of randomness provided by get_random_int(), as is already
+possible for arm64.  Add a new function: get_random_long() which more
+naturally fits with the mmap usage of get_random_int() but operates
+exactly the same as get_random_int().
+
+Also, fix the shifting constant in mmap_rnd() to be an unsigned long so
+that values greater than 31 bits generate an appropriate mask without
+overflow.  This is especially important on x86, as its shift instruction
+uses a 5-bit mask for the shift operand, which meant that any value for
+mmap_rnd_bits over 31 acts as a no-op and effectively disables mmap_base
+randomization.
+
+Finally, replace calls to get_random_int() with get_random_long() where
+appropriate.
+
+This patch (of 2):
+
+Add get_random_long().
+
+Signed-off-by: Daniel Cashman <dcashman@android.com>
 Acked-by: Kees Cook <keescook@chromium.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Don Zickus <dzickus@redhat.com>
-Cc: Eric W. Biederman <ebiederm@xmission.com>
-Cc: Heinrich Schuchardt <xypron.glpk@gmx.de>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Mark Salyzyn <salyzyn@android.com>
-Cc: Jeff Vander Stoep <jeffv@google.com>
-Cc: Nick Kralevich <nnk@google.com>
+Cc: "Theodore Ts'o" <tytso@mit.edu>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Hector Marco-Gisbert <hecmargi@upv.es>
-Cc: Borislav Petkov <bp@suse.de>
 Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Nick Kralevich <nnk@google.com>
+Cc: Jeff Vander Stoep <jeffv@google.com>
+Cc: Mark Salyzyn <salyzyn@android.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 ---
- arch/x86/Kconfig   | 16 ++++++++++++++++
- arch/x86/mm/mmap.c | 12 ++++++------
- 2 files changed, 22 insertions(+), 6 deletions(-)
+ drivers/char/random.c  | 22 ++++++++++++++++++++++
+ include/linux/random.h |  1 +
+ 2 files changed, 23 insertions(+)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 436639a31624..ffbfa85271a3 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -82,6 +82,8 @@ config X86
- 	select HAVE_ARCH_KASAN			if X86_64 && SPARSEMEM_VMEMMAP
- 	select HAVE_ARCH_KGDB
- 	select HAVE_ARCH_KMEMCHECK
-+	select HAVE_ARCH_MMAP_RND_BITS		if MMU
-+	select HAVE_ARCH_MMAP_RND_COMPAT_BITS	if MMU && COMPAT
- 	select HAVE_ARCH_SECCOMP_FILTER
- 	select HAVE_ARCH_SOFT_DIRTY		if X86_64
- 	select HAVE_ARCH_TRACEHOOK
-@@ -183,6 +185,20 @@ config HAVE_LATENCYTOP_SUPPORT
- config MMU
- 	def_bool y
+diff --git a/drivers/char/random.c b/drivers/char/random.c
+index 491a4dce13fe..d93dfebae0bb 100644
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -1825,6 +1825,28 @@ unsigned int get_random_int(void)
+ EXPORT_SYMBOL(get_random_int);
  
-+config ARCH_MMAP_RND_BITS_MIN
-+	default 28 if 64BIT
-+	default 8
+ /*
++ * Same as get_random_int(), but returns unsigned long.
++ */
++unsigned long get_random_long(void)
++{
++	__u32 *hash;
++	unsigned long ret;
 +
-+config ARCH_MMAP_RND_BITS_MAX
-+	default 32 if 64BIT
-+	default 16
++	if (arch_get_random_long(&ret))
++		return ret;
 +
-+config ARCH_MMAP_RND_COMPAT_BITS_MIN
-+	default 8
++	hash = get_cpu_var(get_random_int_hash);
 +
-+config ARCH_MMAP_RND_COMPAT_BITS_MAX
-+	default 16
++	hash[0] += current->pid + jiffies + random_get_entropy();
++	md5_transform(hash, random_int_secret);
++	ret = *(unsigned long *)hash;
++	put_cpu_var(get_random_int_hash);
 +
- config SBUS
- 	bool
++	return ret;
++}
++EXPORT_SYMBOL(get_random_long);
++
++/*
+  * randomize_range() returns a start address such that
+  *
+  *    [...... <range> .....]
+diff --git a/include/linux/random.h b/include/linux/random.h
+index a75840c1aa71..9c29122037f9 100644
+--- a/include/linux/random.h
++++ b/include/linux/random.h
+@@ -34,6 +34,7 @@ extern const struct file_operations random_fops, urandom_fops;
+ #endif
  
-diff --git a/arch/x86/mm/mmap.c b/arch/x86/mm/mmap.c
-index 307f60ecfc6d..389939f74dd5 100644
---- a/arch/x86/mm/mmap.c
-+++ b/arch/x86/mm/mmap.c
-@@ -69,14 +69,14 @@ unsigned long arch_mmap_rnd(void)
- {
- 	unsigned long rnd;
+ unsigned int get_random_int(void);
++unsigned long get_random_long(void);
+ unsigned long randomize_range(unsigned long start, unsigned long end, unsigned long len);
  
--	/*
--	 *  8 bits of randomness in 32bit mmaps, 20 address space bits
--	 * 28 bits of randomness in 64bit mmaps, 40 address space bits
--	 */
- 	if (mmap_is_ia32())
--		rnd = (unsigned long)get_random_int() % (1<<8);
-+#ifdef CONFIG_COMPAT
-+		rnd = (unsigned long)get_random_int() & ((1 << mmap_rnd_compat_bits) - 1);
-+#else
-+		rnd = (unsigned long)get_random_int() & ((1 << mmap_rnd_bits) - 1);
-+#endif
- 	else
--		rnd = (unsigned long)get_random_int() % (1<<28);
-+		rnd = (unsigned long)get_random_int() & ((1 << mmap_rnd_bits) - 1);
- 
- 	return rnd << PAGE_SHIFT;
- }
+ u32 prandom_u32(void);
 -- 
 2.10.2
 
