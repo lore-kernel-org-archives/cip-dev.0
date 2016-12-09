@@ -1,72 +1,62 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Fri, 9 Dec 2016 13:20:17 +0100
-Subject: [cip-dev] [PATCH 4.4-cip 0/6] Extend user-space ASLR range
-In-Reply-To: <1481241380.1860.120.camel@codethink.co.uk>
-References: <1481241380.1860.120.camel@codethink.co.uk>
-Message-ID: <7c58c7d6-92fa-4b99-aa15-25c41243810c@siemens.com>
+From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
+Date: Fri, 9 Dec 2016 16:01:34 +0100
+Subject: [cip-dev] Update week 49
+Message-ID: <584AC74E.8080109@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 2016-12-09 00:56, Ben Hutchings wrote:
-> This is a backport of changes in 4.5 to extend the range of Address
-> Space Layout Randomisation for user-space processes.  When enabled, this
-> should make some user-space vulnerabilities harder to exploit, but it
-> can also cause some applications to fail if they currently use a large
-> proportion of the virtual address space.
-> 
-> The default ASLR range remains the same, but it can be changed through
-> kernel config (CONFIG_ARCH_MMAP_RND_BITS) or at run-time through sysctl
-> (vm.mmap_rnd_bits).  (For 32-bit compat tasks, the range is controlled
-> through CONFIG_ARCH_MMAP_RND_COMPAT_BITS and vm.mmap_rnd_compat_bits.)
-> 
-> This includes support for arm, arm64 and x86 (32- and 64-bit).  (arm64
-> is not currently supported by CIP, but it was easier to include it in
-> the backport than to leave it out.)
-> 
-> For this and other backports, I'm looking for feedback like:
-> - Did I miss a follow-up fix or an earlier dependency?
-> - Does this cause a regression (other than as explained above)?
-> - Are you likely to use it?
-> - Are there related features you want in 4.4?
-> 
-> Ben.
-> 
-> Daniel Cashman (6):
->   mm: mmap: add new /proc tunable for mmap_base ASLR
->   arm: mm: support ARCH_MMAP_RND_BITS
->   arm64: mm: support ARCH_MMAP_RND_BITS
->   x86: mm: support ARCH_MMAP_RND_BITS
->   drivers: char: random: add get_random_long()
->   mm: ASLR: use get_random_long()
-> 
->  Documentation/sysctl/vm.txt      | 29 +++++++++++++++++
->  arch/Kconfig                     | 68 ++++++++++++++++++++++++++++++++++++++++
->  arch/arm/Kconfig                 |  9 ++++++
->  arch/arm/mm/mmap.c               |  3 +-
->  arch/arm64/Kconfig               | 29 +++++++++++++++++
->  arch/arm64/mm/mmap.c             |  8 +++--
->  arch/mips/mm/mmap.c              |  4 +--
->  arch/powerpc/kernel/process.c    |  4 +--
->  arch/powerpc/mm/mmap.c           |  4 +--
->  arch/sparc/kernel/sys_sparc_64.c |  2 +-
->  arch/x86/Kconfig                 | 16 ++++++++++
->  arch/x86/mm/mmap.c               | 12 +++----
->  drivers/char/random.c            | 22 +++++++++++++
->  fs/binfmt_elf.c                  |  2 +-
->  include/linux/mm.h               | 11 +++++++
->  include/linux/random.h           |  1 +
->  kernel/sysctl.c                  | 22 +++++++++++++
->  mm/mmap.c                        | 12 +++++++
->  18 files changed, 240 insertions(+), 18 deletions(-)
-> 
+Hi,
 
-Did you try to discuss the back-port topic with the KSPP folks or other
-key persons involved in these patches? In the ideal case, the authors
-can be CC'ed, do not get annoyed by "these crazy people doing legacy
-stuff", and may even do some reviews.
+this is an overview of what is happening at CIP. Feel free to answer 
+this mail with your bits.
 
-Jan
+++ Meetings
+
+* Members meeting on Mon Nov 28th
+** The next f2f meeting will take place at ELC in Portland in February
+** Testing effort status
+
+++ Kernel Maintenance
+
+* First backports to provide hardware support for Beaglebone Black sent 
+to the list for comments and evaluation.
+
+* CIP repository already mirrored in Gitlab.com: 
+https://gitlab.com/cip-project/linux-cip/commits/linux-4.4.y-cip Thanks 
+Yoshi!
+
+++ Testing
+
+* Progress in the VM with kernelci
+** Have browser on host able to view kernelci pages
+** Some work (not yet complete) on getting  this setup to happen on 
+provisioning of the vm).
+** Investigating issues with retrieving the build artifacts.
+** Installing of lava2 on the vm
+
+* Added a project in Gitlab.com to mirror the kernelci front end repository.
+
+* Introduction to CIP testing effort published on the wiki: 
+https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptesting
+
+++ Other topics
+
+* Robert Marshall, that is currently working on the kernelci VM will be 
+at FOSDEM, like myself.
+
+++ Next Tasks
+
+* In the coming days CIP kernel will update from 4.4.30 to 4.4.37 Once 
+we have testing in place it will make sense to test every release and 
+update as soon as is everything ok from our side.
+
+* Keep working on the kernelci VM
+
+* Patches review/merge
+
+Best Regards
 
 -- 
-Siemens AG, Corporate Technology, CT RDA ITP SES-DE
-Corporate Competence Center Embedded Linux
+Agustin Benito Bethencourt
+Principal Consultant - FOSS at Codethink
+agustin.benito at codethink.co.uk
