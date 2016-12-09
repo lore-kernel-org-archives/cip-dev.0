@@ -1,55 +1,87 @@
 From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Fri, 09 Dec 2016 00:15:03 +0000
-Subject: [cip-dev] [PATCH 4.4-cip 0/5] Faster page poisoning for security
-Message-ID: <1481242503.1860.139.camel@codethink.co.uk>
+Date: Fri, 09 Dec 2016 00:15:47 +0000
+Subject: [cip-dev] [PATCH 4.4-cip 1/5] mm/slab: activate debug_pagealloc in
+ SLAB when it is actually enabled
+In-Reply-To: <1481242503.1860.139.camel@codethink.co.uk>
+References: <1481242503.1860.139.camel@codethink.co.uk>
+Message-ID: <1481242547.1860.140.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This is a backport of changes in 4.6 to add new config options to page
-poisoning.  Page poisoning was originally intended a debug feature for
-finding use-after-free bugs in the kernel, but it can also be a security
-feature, mitigating the security impact of such bugs.  Unfortunately, it
-normally has a significant performance cost.  The new options
-(CONFIG_PAGE_POISONING_NO_SANITY and CONFIG_PAGE_POISONING_ZERO) can be
-enabled to reduce the performance cost, though they also reduce the
-likelihood of detecting when such a bug has been triggered.
+From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
 
-Enable CONFIG_PAGE_POISONING plus the new options can make some such
-bugs harder to exploit, at a small performance cost (you'll need to
-measure it yourself).
+commit a307ebd468e0b97c203f5a99a56a6017e4d1991a upstream.
 
-For this and other backports, I'm looking for feedback like:
-- Did I miss a follow-up fix or an earlier dependency?
-- Does this cause a regression (other than as explained above)?
-- Are you likely to use it?
-- Are there related features you want in 4.4?
+Signed-off-by: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Acked-by: Christoph Lameter <cl@linux.com>
+Cc: Pekka Enberg <penberg@kernel.org>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: Jesper Dangaard Brouer <brouer@redhat.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+---
+ mm/slab.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-Ben.
-
-Joonsoo Kim (3):
-  mm/slab: activate debug_pagealloc in SLAB when it is actually enabled
-  mm/slab: use more appropriate condition check for debug_pagealloc
-  mm/slab: clean up DEBUG_PAGEALLOC processing code
-
-Laura Abbott (2):
-  mm/page_poison.c: enable PAGE_POISONING as a separate option
-  mm/page_poisoning.c: allow for zero poisoning
-
- Documentation/kernel-parameters.txt     |  5 ++
- include/linux/mm.h                      | 23 ++++++--
- include/linux/poison.h                  |  4 ++
- kernel/power/hibernate.c                | 17 ++++++
- mm/Kconfig.debug                        | 39 ++++++++++++-
- mm/Makefile                             |  2 +-
- mm/page_alloc.c                         | 13 ++++-
- mm/page_ext.c                           | 10 +++-
- mm/{debug-pagealloc.c => page_poison.c} | 67 +++++++++++++++++-----
- mm/slab.c                               | 98 +++++++++++++++++----------------
- 10 files changed, 208 insertions(+), 70 deletions(-)
- rename mm/{debug-pagealloc.c => page_poison.c} (64%)
-
+diff --git a/mm/slab.c b/mm/slab.c
+index 4765c97ce690..ed7eb6c92c81 100644
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -1847,7 +1847,8 @@ static void slab_destroy_debugcheck(struct kmem_cache *cachep,
+ 
+ 		if (cachep->flags & SLAB_POISON) {
+ #ifdef CONFIG_DEBUG_PAGEALLOC
+-			if (cachep->size % PAGE_SIZE == 0 &&
++			if (debug_pagealloc_enabled() &&
++				cachep->size % PAGE_SIZE == 0 &&
+ 					OFF_SLAB(cachep))
+ 				kernel_map_pages(virt_to_page(objp),
+ 					cachep->size / PAGE_SIZE, 1);
+@@ -2187,7 +2188,8 @@ __kmem_cache_create (struct kmem_cache *cachep, unsigned long flags)
+ 	 * to check size >= 256. It guarantees that all necessary small
+ 	 * sized slab is initialized in current slab initialization sequence.
+ 	 */
+-	if (!slab_early_init && size >= kmalloc_size(INDEX_NODE) &&
++	if (debug_pagealloc_enabled() &&
++		!slab_early_init && size >= kmalloc_size(INDEX_NODE) &&
+ 		size >= 256 && cachep->object_size > cache_line_size() &&
+ 		ALIGN(size, cachep->align) < PAGE_SIZE) {
+ 		cachep->obj_offset += PAGE_SIZE - ALIGN(size, cachep->align);
+@@ -2243,7 +2245,8 @@ __kmem_cache_create (struct kmem_cache *cachep, unsigned long flags)
+ 		 * poisoning, then it's going to smash the contents of
+ 		 * the redzone and userword anyhow, so switch them off.
+ 		 */
+-		if (size % PAGE_SIZE == 0 && flags & SLAB_POISON)
++		if (debug_pagealloc_enabled() &&
++			size % PAGE_SIZE == 0 && flags & SLAB_POISON)
+ 			flags &= ~(SLAB_RED_ZONE | SLAB_STORE_USER);
+ #endif
+ 	}
+@@ -2737,7 +2740,8 @@ static void *cache_free_debugcheck(struct kmem_cache *cachep, void *objp,
+ 	set_obj_status(page, objnr, OBJECT_FREE);
+ 	if (cachep->flags & SLAB_POISON) {
+ #ifdef CONFIG_DEBUG_PAGEALLOC
+-		if ((cachep->size % PAGE_SIZE)==0 && OFF_SLAB(cachep)) {
++		if (debug_pagealloc_enabled() &&
++			(cachep->size % PAGE_SIZE) == 0 && OFF_SLAB(cachep)) {
+ 			store_stackinfo(cachep, objp, caller);
+ 			kernel_map_pages(virt_to_page(objp),
+ 					 cachep->size / PAGE_SIZE, 0);
+@@ -2874,7 +2878,8 @@ static void *cache_alloc_debugcheck_after(struct kmem_cache *cachep,
+ 		return objp;
+ 	if (cachep->flags & SLAB_POISON) {
+ #ifdef CONFIG_DEBUG_PAGEALLOC
+-		if ((cachep->size % PAGE_SIZE) == 0 && OFF_SLAB(cachep))
++		if (debug_pagealloc_enabled() &&
++			(cachep->size % PAGE_SIZE) == 0 && OFF_SLAB(cachep))
+ 			kernel_map_pages(virt_to_page(objp),
+ 					 cachep->size / PAGE_SIZE, 1);
+ 		else
 -- 
 2.10.2
+
 
 
 -- 
