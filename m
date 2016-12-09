@@ -1,67 +1,74 @@
 From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Fri, 09 Dec 2016 00:34:44 +0000
-Subject: [cip-dev] [PATCH 4.4-cip 05/23] mm/page-writeback: fix
- dirty_ratelimit calculation
+Date: Fri, 09 Dec 2016 00:34:57 +0000
+Subject: [cip-dev] [PATCH 4.4-cip 06/23] perf/core: Fix Undefined behaviour
+ in rb_alloc()
 In-Reply-To: <1481243545.1860.156.camel@codethink.co.uk>
 References: <1481243545.1860.156.camel@codethink.co.uk>
-Message-ID: <1481243684.1860.161.camel@codethink.co.uk>
+Message-ID: <1481243697.1860.162.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Andrey Ryabinin <aryabinin@virtuozzo.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit d59b1087a98e402ed9a7cc577f4da435f9a555f5 upstream.
+commit 8184059e93c200757f5c0805dae0f14e880eab5d upstream.
 
-Calculation of dirty_ratelimit sometimes is not correct.  E.g.  initial
-values of dirty_ratelimit == INIT_BW and step == 0, lead to the
-following result:
+Sasha reported:
 
-   UBSAN: Undefined behaviour in ../mm/page-writeback.c:1286:7
-   shift exponent 25600 is too large for 64-bit type 'long unsigned int'
+ [ 3494.030114] UBSAN: Undefined behaviour in kernel/events/ring_buffer.c:685:22
+ [ 3494.030647] shift exponent -1 is negative
 
-The fix is straightforward - make step 0 if the shift exponent is too
-big.
+Andrey spotted that this is because:
 
-Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Wu Fengguang <fengguang.wu@intel.com>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+  It happens if nr_pages = 0:
+     rb->page_order = ilog2(nr_pages);
+
+Fix it by making both assignments conditional on nr_pages; since
+otherwise they should both be 0 anyway, and will be because of the
+kzalloc() used to allocate the structure.
+
+Reported-by: Sasha Levin <sasha.levin@oracle.com>
+Reported-by: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Link: http://lkml.kernel.org/r/20160129141751.GA407 at worktop
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 ---
- mm/page-writeback.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ kernel/events/ring_buffer.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index fd51ebfc423f..6d0dbde4503b 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -1162,6 +1162,7 @@ static void wb_update_dirty_ratelimit(struct dirty_throttle_control *dtc,
- 	unsigned long balanced_dirty_ratelimit;
- 	unsigned long step;
- 	unsigned long x;
-+	unsigned long shift;
+diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
+index 014b69528194..7beb02f40cb4 100644
+--- a/kernel/events/ring_buffer.c
++++ b/kernel/events/ring_buffer.c
+@@ -754,8 +754,10 @@ struct ring_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
  
- 	/*
- 	 * The dirty rate will match the writeout rate in long term, except
-@@ -1286,11 +1287,11 @@ static void wb_update_dirty_ratelimit(struct dirty_throttle_control *dtc,
- 	 * rate itself is constantly fluctuating. So decrease the track speed
- 	 * when it gets close to the target. Helps eliminate pointless tremors.
- 	 */
--	step >>= dirty_ratelimit / (2 * step + 1);
--	/*
--	 * Limit the tracking speed to avoid overshooting.
--	 */
--	step = (step + 7) / 8;
-+	shift = dirty_ratelimit / (2 * step + 1);
-+	if (shift < BITS_PER_LONG)
-+		step = DIV_ROUND_UP(step >> shift, 8);
-+	else
-+		step = 0;
+ 	rb->user_page = all_buf;
+ 	rb->data_pages[0] = all_buf + PAGE_SIZE;
+-	rb->page_order = ilog2(nr_pages);
+-	rb->nr_pages = !!nr_pages;
++	if (nr_pages) {
++		rb->nr_pages = 1;
++		rb->page_order = ilog2(nr_pages);
++	}
  
- 	if (dirty_ratelimit < balanced_dirty_ratelimit)
- 		dirty_ratelimit += step;
+ 	ring_buffer_init(rb, watermark, flags);
+ 
 -- 
 2.10.2
 
