@@ -1,50 +1,63 @@
 From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Fri, 09 Dec 2016 00:36:08 +0000
-Subject: [cip-dev] [PATCH 4.4-cip 12/23] blk-mq: fix undefined behaviour in
- order_to_size()
+Date: Fri, 09 Dec 2016 00:36:21 +0000
+Subject: [cip-dev] [PATCH 4.4-cip 13/23] batman-adv: Fix integer overflow in
+ batadv_iv_ogm_calc_tq
 In-Reply-To: <1481243545.1860.156.camel@codethink.co.uk>
 References: <1481243545.1860.156.camel@codethink.co.uk>
-Message-ID: <1481243768.1860.168.camel@codethink.co.uk>
+Message-ID: <1481243781.1860.169.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Sven Eckelmann <sven.eckelmann@open-mesh.com>
 
-commit b3a834b1596ac668df206aa2bb1f191c31f5f5e4 upstream.
+commit d285f52cc0f23564fd61976d43fd5b991b4828f6 upstream.
 
-When this_order variable in blk_mq_init_rq_map() becomes zero
-the code incorrectly decrements the variable and passes the result
-to order_to_size() helper causing undefined behaviour:
+The undefined behavior sanatizer detected an signed integer overflow in a
+setup with near perfect link quality
 
- UBSAN: Undefined behaviour in block/blk-mq.c:1459:27
- shift exponent 4294967295 is too large for 32-bit type 'unsigned int'
- CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.6.0-rc6-00072-g33656a1 #22
+    UBSAN: Undefined behaviour in net/batman-adv/bat_iv_ogm.c:1246:25
+    signed integer overflow:
+    8713350 * 255 cannot be represented in type 'int'
 
-Fix the code by checking this_order variable for not having the zero
-value first.
+The problems happens because the calculation of mixed unsigned and signed
+integers resulted in an integer multiplication.
 
-Reported-by: Meelis Roos <mroos@linux.ee>
-Fixes: 320ae51feed5 ("blk-mq: new multi-queue block IO queueing mechanism")
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Jens Axboe <axboe@fb.com>
+      batadv_ogm_packet::tq (u8 255)
+    * tq_own (u8 255)
+    * tq_asym_penalty (int 134; max 255)
+    * tq_iface_penalty (int 255; max 255)
+
+The tq_iface_penalty, tq_asym_penalty and inv_asym_penalty can just be
+changed to unsigned int because they are not expected to become negative.
+
+Fixes: c039876892e3 ("batman-adv: add WiFi penalty")
+Signed-off-by: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+Signed-off-by: Marek Lindner <mareklindner@neomailbox.ch>
+Signed-off-by: Antonio Quartulli <a@unstable.cc>
+[bwh: Backported to 4.4: adjust context]
+
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 ---
- block/blk-mq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/batman-adv/bat_iv_ogm.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index c3e461ec40e4..c58fdfdd9ea6 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -1494,7 +1494,7 @@ static struct blk_mq_tags *blk_mq_init_rq_map(struct blk_mq_tag_set *set,
- 		int to_do;
- 		void *p;
+diff --git a/net/batman-adv/bat_iv_ogm.c b/net/batman-adv/bat_iv_ogm.c
+index 912d9c36fb1c..3fb6e9e8df7e 100644
+--- a/net/batman-adv/bat_iv_ogm.c
++++ b/net/batman-adv/bat_iv_ogm.c
+@@ -1140,9 +1140,10 @@ static int batadv_iv_ogm_calc_tq(struct batadv_orig_node *orig_node,
+ 	u8 total_count;
+ 	u8 orig_eq_count, neigh_rq_count, neigh_rq_inv, tq_own;
+ 	unsigned int neigh_rq_inv_cube, neigh_rq_max_cube;
+-	int tq_asym_penalty, inv_asym_penalty, if_num, ret = 0;
++	int if_num, ret = 0;
++	unsigned int tq_asym_penalty, inv_asym_penalty;
+ 	unsigned int combined_tq;
+-	int tq_iface_penalty;
++	unsigned int tq_iface_penalty;
  
--		while (left < order_to_size(this_order - 1) && this_order)
-+		while (this_order && left < order_to_size(this_order - 1))
- 			this_order--;
- 
- 		do {
+ 	/* find corresponding one hop neighbor */
+ 	rcu_read_lock();
 -- 
 2.10.2
 
