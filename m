@@ -1,97 +1,95 @@
 From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Fri, 09 Dec 2016 00:39:37 +0000
-Subject: [cip-dev] [PATCH 4.4-cip 20/23] drm: fix signed integer overflow
+Date: Fri, 09 Dec 2016 00:39:50 +0000
+Subject: [cip-dev] [PATCH 4.4-cip 21/23] xfs: fix signed integer overflow
 In-Reply-To: <1481243545.1860.156.camel@codethink.co.uk>
 References: <1481243545.1860.156.camel@codethink.co.uk>
-Message-ID: <1481243977.1860.177.camel@codethink.co.uk>
+Message-ID: <1481243990.1860.179.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Xie XiuQi <xiexiuqi@huawei.com>
 
-commit ae0119f5f73b1e9cf7177fbbeea68d74c5751def upstream.
+commit 79c350e45ebc5a718cc2d7114b45ad560069423d upstream.
 
-Use 1UL for unsigned long, or we'll meet a overflow issue with UBSAN.
+Use 1U for unsigned int to avoid a overflow warning from UBSAN.
 
-[   15.589489] UBSAN: Undefined behaviour in drivers/gpu/drm/drm_hashtab.c:145:35
-[   15.589500] signed integer overflow:
-[   15.589999] -2147483648 - 1 cannot be represented in type 'int'
-[   15.590434] CPU: 2 PID: 294 Comm: plymouthd Not tainted 3.10.0-327.28.3.el7.x86_64 #1
-[   15.590653] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 01/07/2011
-[   15.591001]  1ffff1000670fe83 000000000d6b385e ffff88003387f3e0 ffffffff81ee3140
-[   15.591028]  ffff88003387f3f8 ffffffff81ee31fd ffffffffa032f460 ffff88003387f560
-[   15.591044]  ffffffff81ee46e2 0000002d00000009 0000000000000001 0000000041b58ab3
-[   15.591059] Call Trace:
-[   15.591078]  [<ffffffff81ee3140>] dump_stack+0x1e/0x20
-[   15.591093]  [<ffffffff81ee31fd>] ubsan_epilogue+0x12/0x55
-[   15.591109]  [<ffffffff81ee46e2>] handle_overflow+0x1ba/0x215
-[   15.591126]  [<ffffffff81ee4528>] ? __ubsan_handle_negate_overflow+0x162/0x162
-[   15.591146]  [<ffffffff8103416c>] ? print_context_stack+0x9c/0x160
-[   15.591163]  [<ffffffff81031df2>] ? dump_trace+0x252/0x750
-[   15.591181]  [<ffffffff81739023>] ? __list_add+0x93/0x160
-[   15.591197]  [<ffffffff81ee4798>] __ubsan_handle_sub_overflow+0x2a/0x31
-[   15.591261]  [<ffffffffa0282140>] drm_ht_just_insert_please+0x1e0/0x200 [drm]
-[   15.591290]  [<ffffffffa0528c7a>] ttm_base_object_init+0x10a/0x270 [ttm]
-[   15.591316]  [<ffffffffa052a34c>] ttm_vt_lock+0x28c/0x3a0 [ttm]
-[   15.591343]  [<ffffffffa052a0c0>] ? ttm_write_lock+0x180/0x180 [ttm]
-[   15.591362]  [<ffffffff81419526>] ? kasan_unpoison_shadow+0x36/0x50
-[   15.591379]  [<ffffffff81419526>] ? kasan_unpoison_shadow+0x36/0x50
-[   15.591396]  [<ffffffff81419526>] ? kasan_unpoison_shadow+0x36/0x50
-[   15.591413]  [<ffffffff81419526>] ? kasan_unpoison_shadow+0x36/0x50
-[   15.591442]  [<ffffffffa061cbe1>] vmw_master_set+0x121/0x470 [vmwgfx]
-[   15.591459]  [<ffffffff811773a5>] ? __init_waitqueue_head+0x45/0x70
-[   15.591487]  [<ffffffffa061cac0>] ? vmw_master_drop+0x310/0x310 [vmwgfx]
-[   15.591535]  [<ffffffffa026946a>] drm_open+0x92a/0xc00 [drm]
-[   15.591563]  [<ffffffffa0619ff0>] ? vmw_driver_open+0x170/0x170 [vmwgfx]
-[   15.591610]  [<ffffffffa0268b40>] ? drm_poll+0xe0/0xe0 [drm]
-[   15.591661]  [<ffffffffa02797b4>] drm_stub_open+0x224/0x330 [drm]
-[   15.591711]  [<ffffffffa0279590>] ? drm_minor_acquire+0x240/0x240 [drm]
-[   15.591727]  [<ffffffff8145fa8a>] chrdev_open+0x1fa/0x3f0
-[   15.591742]  [<ffffffff8145f890>] ? cdev_put+0x50/0x50
-[   15.591761]  [<ffffffff814f6dc3>] ? __fsnotify_parent+0x53/0x210
-[   15.591778]  [<ffffffff8144fde1>] do_dentry_open+0x351/0x670
-[   15.591792]  [<ffffffff8145f890>] ? cdev_put+0x50/0x50
-[   15.591807]  [<ffffffff814503c2>] vfs_open+0xa2/0x170
-[   15.591824]  [<ffffffff8147b5df>] do_last+0xccf/0x2c80
-[   15.591842]  [<ffffffff8147a910>] ? filename_create+0x320/0x320
-[   15.591858]  [<ffffffff81472549>] ? path_init+0x1b9/0xa90
-[   15.591875]  [<ffffffff81472390>] ? mountpoint_last+0x9a0/0x9a0
-[   15.591894]  [<ffffffff815f9ccf>] ? selinux_file_alloc_security+0xcf/0x130
-[   15.591911]  [<ffffffff8147d777>] path_openat+0x1e7/0xcc0
-[   15.591927]  [<ffffffff81031df2>] ? dump_trace+0x252/0x750
-[   15.591943]  [<ffffffff8147d590>] ? do_last+0x2c80/0x2c80
-[   15.591959]  [<ffffffff81739023>] ? __list_add+0x93/0x160
-[   15.591974]  [<ffffffff8104b48d>] ? save_stack_trace+0x7d/0xb0
-[   15.591989]  [<ffffffff81480824>] do_filp_open+0xa4/0x160
-[   15.592004]  [<ffffffff81480780>] ? user_path_mountpoint_at+0x50/0x50
-[   15.592022]  [<ffffffff8149d755>] ? __alloc_fd+0x175/0x300
-[   15.592039]  [<ffffffff81453127>] do_sys_open+0x1b7/0x3f0
-[   15.592054]  [<ffffffff81452f70>] ? filp_open+0x80/0x80
-[   15.592070]  [<ffffffff81453392>] SyS_open+0x32/0x40
-[   15.592088]  [<ffffffff81f08989>] system_call_fastpath+0x16/0x1b
+[   31.910858] UBSAN: Undefined behaviour in fs/xfs/xfs_buf_item.c:889:25
+[   31.911252] signed integer overflow:
+[   31.911478] -2147483648 - 1 cannot be represented in type 'int'
+[   31.911846] CPU: 1 PID: 1011 Comm: tuned Tainted: G    B          ---- -------   3.10.0-327.28.3.el7.x86_64 #1
+[   31.911857] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 01/07/2011
+[   31.911866]  1ffff1004069cd3b 0000000076bec3fd ffff8802034e69a0 ffffffff81ee3140
+[   31.911883]  ffff8802034e69b8 ffffffff81ee31fd ffffffffa0ad79e0 ffff8802034e6b20
+[   31.911898]  ffffffff81ee46e2 0000002d515470c0 0000000000000001 0000000041b58ab3
+[   31.911913] Call Trace:
+[   31.911932]  [<ffffffff81ee3140>] dump_stack+0x1e/0x20
+[   31.911947]  [<ffffffff81ee31fd>] ubsan_epilogue+0x12/0x55
+[   31.911964]  [<ffffffff81ee46e2>] handle_overflow+0x1ba/0x215
+[   31.912083]  [<ffffffff81ee4798>] __ubsan_handle_sub_overflow+0x2a/0x31
+[   31.912204]  [<ffffffffa08676fb>] xfs_buf_item_log+0x34b/0x3f0 [xfs]
+[   31.912314]  [<ffffffffa0880490>] xfs_trans_log_buf+0x120/0x260 [xfs]
+[   31.912402]  [<ffffffffa079a890>] xfs_btree_log_recs+0x80/0xc0 [xfs]
+[   31.912490]  [<ffffffffa07a29f8>] xfs_btree_delrec+0x11a8/0x2d50 [xfs]
+[   31.913589]  [<ffffffffa07a86f9>] xfs_btree_delete+0xc9/0x260 [xfs]
+[   31.913762]  [<ffffffffa075b5cf>] xfs_free_ag_extent+0x63f/0xe20 [xfs]
+[   31.914339]  [<ffffffffa075ec0f>] xfs_free_extent+0x2af/0x3e0 [xfs]
+[   31.914641]  [<ffffffffa0801b2b>] xfs_bmap_finish+0x32b/0x4b0 [xfs]
+[   31.914841]  [<ffffffffa083c2e7>] xfs_itruncate_extents+0x3b7/0x740 [xfs]
+[   31.915216]  [<ffffffffa08342fa>] xfs_setattr_size+0x60a/0x860 [xfs]
+[   31.915471]  [<ffffffffa08345ea>] xfs_vn_setattr+0x9a/0xe0 [xfs]
+[   31.915590]  [<ffffffff8149ad38>] notify_change+0x5c8/0x8a0
+[   31.915607]  [<ffffffff81450f22>] do_truncate+0x122/0x1d0
+[   31.915640]  [<ffffffff8147beee>] do_last+0x15de/0x2c80
+[   31.915707]  [<ffffffff8147d777>] path_openat+0x1e7/0xcc0
+[   31.915802]  [<ffffffff81480824>] do_filp_open+0xa4/0x160
+[   31.915848]  [<ffffffff81453127>] do_sys_open+0x1b7/0x3f0
+[   31.915879]  [<ffffffff81453392>] SyS_open+0x32/0x40
+[   31.915897]  [<ffffffff81f08989>] system_call_fastpath+0x16/0x1b
+
+[  240.086809] UBSAN: Undefined behaviour in fs/xfs/xfs_buf_item.c:866:34
+[  240.086820] signed integer overflow:
+[  240.086830] -2147483648 - 1 cannot be represented in type 'int'
+[  240.086846] CPU: 1 PID: 12969 Comm: rm Tainted: G    B          ---- -------   3.10.0-327.28.3.el7.x86_64 #1
+[  240.086857] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 01/07/2011
+[  240.086868]  1ffff10040491def 00000000e2ea59c1 ffff88020248ef40 ffffffff81ee3140
+[  240.086885]  ffff88020248ef58 ffffffff81ee31fd ffffffffa0ad79e0 ffff88020248f0c0
+[  240.086901]  ffffffff81ee46e2 0000002d02488000 0000000000000001 0000000041b58ab3
+[  240.086915] Call Trace:
+[  240.086938]  [<ffffffff81ee3140>] dump_stack+0x1e/0x20
+[  240.086953]  [<ffffffff81ee31fd>] ubsan_epilogue+0x12/0x55
+[  240.086971]  [<ffffffff81ee46e2>] handle_overflow+0x1ba/0x215
+...
 
 Signed-off-by: Xie XiuQi <xiexiuqi@huawei.com>
-[seanpaul tweaked subject to remove "gpu/"]
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Link: http://patchwork.freedesktop.org/patch/msgid/1473152138-25335-1-git-send-email-xiexiuqi at huawei.com
+Reviewed-by: Dave Chinner <dchinner@redhat.com>
+Signed-off-by: Dave Chinner <david@fromorbit.com>
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 ---
- drivers/gpu/drm/drm_hashtab.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/xfs/xfs_buf_item.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_hashtab.c b/drivers/gpu/drm/drm_hashtab.c
-index c3b80fd65d62..fbbd9f0c2eef 100644
---- a/drivers/gpu/drm/drm_hashtab.c
-+++ b/drivers/gpu/drm/drm_hashtab.c
-@@ -142,7 +142,7 @@ int drm_ht_just_insert_please(struct drm_open_hash *ht, struct drm_hash_item *it
- 			      unsigned long add)
- {
- 	int ret;
--	unsigned long mask = (1 << bits) - 1;
-+	unsigned long mask = (1UL << bits) - 1;
- 	unsigned long first, unshifted_key;
- 
- 	unshifted_key = hash_long(seed, bits);
+diff --git a/fs/xfs/xfs_buf_item.c b/fs/xfs/xfs_buf_item.c
+index 7e986da34f6c..04b1d96e49c1 100644
+--- a/fs/xfs/xfs_buf_item.c
++++ b/fs/xfs/xfs_buf_item.c
+@@ -865,7 +865,7 @@ xfs_buf_item_log_segment(
+ 	 */
+ 	if (bit) {
+ 		end_bit = MIN(bit + bits_to_set, (uint)NBWORD);
+-		mask = ((1 << (end_bit - bit)) - 1) << bit;
++		mask = ((1U << (end_bit - bit)) - 1) << bit;
+ 		*wordp |= mask;
+ 		wordp++;
+ 		bits_set = end_bit - bit;
+@@ -888,7 +888,7 @@ xfs_buf_item_log_segment(
+ 	 */
+ 	end_bit = bits_to_set - bits_set;
+ 	if (end_bit) {
+-		mask = (1 << end_bit) - 1;
++		mask = (1U << end_bit) - 1;
+ 		*wordp |= mask;
+ 	}
+ }
 -- 
 2.10.2
 
