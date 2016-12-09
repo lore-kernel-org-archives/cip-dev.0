@@ -1,63 +1,70 @@
 From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Fri, 09 Dec 2016 00:36:21 +0000
-Subject: [cip-dev] [PATCH 4.4-cip 13/23] batman-adv: Fix integer overflow in
- batadv_iv_ogm_calc_tq
+Date: Fri, 09 Dec 2016 00:36:32 +0000
+Subject: [cip-dev] [PATCH 4.4-cip 14/23] signal: move the "sig < SIGRTMIN"
+ check into siginmask(sig)
 In-Reply-To: <1481243545.1860.156.camel@codethink.co.uk>
 References: <1481243545.1860.156.camel@codethink.co.uk>
-Message-ID: <1481243781.1860.169.camel@codethink.co.uk>
+Message-ID: <1481243792.1860.170.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+From: Oleg Nesterov <oleg@redhat.com>
 
-commit d285f52cc0f23564fd61976d43fd5b991b4828f6 upstream.
+commit 5c8ccefdf46c5f87d87b694c7fbc04941c2c99a5 upstream.
 
-The undefined behavior sanatizer detected an signed integer overflow in a
-setup with near perfect link quality
+All the users of siginmask() must ensure that sig < SIGRTMIN.  sig_fatal()
+doesn't and this is wrong:
 
-    UBSAN: Undefined behaviour in net/batman-adv/bat_iv_ogm.c:1246:25
-    signed integer overflow:
-    8713350 * 255 cannot be represented in type 'int'
+	UBSAN: Undefined behaviour in kernel/signal.c:911:6
+	shift exponent 32 is too large for 32-bit type 'long unsigned int'
 
-The problems happens because the calculation of mixed unsigned and signed
-integers resulted in an integer multiplication.
+the patch doesn't add the neccesary check to sig_fatal(), it moves the
+check into siginmask() and updates other callers.
 
-      batadv_ogm_packet::tq (u8 255)
-    * tq_own (u8 255)
-    * tq_asym_penalty (int 134; max 255)
-    * tq_iface_penalty (int 255; max 255)
-
-The tq_iface_penalty, tq_asym_penalty and inv_asym_penalty can just be
-changed to unsigned int because they are not expected to become negative.
-
-Fixes: c039876892e3 ("batman-adv: add WiFi penalty")
-Signed-off-by: Sven Eckelmann <sven.eckelmann@open-mesh.com>
-Signed-off-by: Marek Lindner <mareklindner@neomailbox.ch>
-Signed-off-by: Antonio Quartulli <a@unstable.cc>
-[bwh: Backported to 4.4: adjust context]
-
+Link: http://lkml.kernel.org/r/20160517195052.GA15187 at redhat.com
+Reported-by: Meelis Roos <mroos@linux.ee>
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 ---
- net/batman-adv/bat_iv_ogm.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ include/linux/signal.h | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-diff --git a/net/batman-adv/bat_iv_ogm.c b/net/batman-adv/bat_iv_ogm.c
-index 912d9c36fb1c..3fb6e9e8df7e 100644
---- a/net/batman-adv/bat_iv_ogm.c
-+++ b/net/batman-adv/bat_iv_ogm.c
-@@ -1140,9 +1140,10 @@ static int batadv_iv_ogm_calc_tq(struct batadv_orig_node *orig_node,
- 	u8 total_count;
- 	u8 orig_eq_count, neigh_rq_count, neigh_rq_inv, tq_own;
- 	unsigned int neigh_rq_inv_cube, neigh_rq_max_cube;
--	int tq_asym_penalty, inv_asym_penalty, if_num, ret = 0;
-+	int if_num, ret = 0;
-+	unsigned int tq_asym_penalty, inv_asym_penalty;
- 	unsigned int combined_tq;
--	int tq_iface_penalty;
-+	unsigned int tq_iface_penalty;
+diff --git a/include/linux/signal.h b/include/linux/signal.h
+index d80259afb9e5..d822bd15dddc 100644
+--- a/include/linux/signal.h
++++ b/include/linux/signal.h
+@@ -400,7 +400,9 @@ int unhandled_signal(struct task_struct *tsk, int sig);
+ #else
+ #define rt_sigmask(sig)	sigmask(sig)
+ #endif
+-#define siginmask(sig, mask) (rt_sigmask(sig) & (mask))
++
++#define siginmask(sig, mask) \
++	((sig) < SIGRTMIN && (rt_sigmask(sig) & (mask)))
  
- 	/* find corresponding one hop neighbor */
- 	rcu_read_lock();
+ #define SIG_KERNEL_ONLY_MASK (\
+ 	rt_sigmask(SIGKILL)   |  rt_sigmask(SIGSTOP))
+@@ -421,14 +423,10 @@ int unhandled_signal(struct task_struct *tsk, int sig);
+         rt_sigmask(SIGCONT)   |  rt_sigmask(SIGCHLD)   | \
+ 	rt_sigmask(SIGWINCH)  |  rt_sigmask(SIGURG)    )
+ 
+-#define sig_kernel_only(sig) \
+-	(((sig) < SIGRTMIN) && siginmask(sig, SIG_KERNEL_ONLY_MASK))
+-#define sig_kernel_coredump(sig) \
+-	(((sig) < SIGRTMIN) && siginmask(sig, SIG_KERNEL_COREDUMP_MASK))
+-#define sig_kernel_ignore(sig) \
+-	(((sig) < SIGRTMIN) && siginmask(sig, SIG_KERNEL_IGNORE_MASK))
+-#define sig_kernel_stop(sig) \
+-	(((sig) < SIGRTMIN) && siginmask(sig, SIG_KERNEL_STOP_MASK))
++#define sig_kernel_only(sig)		siginmask(sig, SIG_KERNEL_ONLY_MASK)
++#define sig_kernel_coredump(sig)	siginmask(sig, SIG_KERNEL_COREDUMP_MASK)
++#define sig_kernel_ignore(sig)		siginmask(sig, SIG_KERNEL_IGNORE_MASK)
++#define sig_kernel_stop(sig)		siginmask(sig, SIG_KERNEL_STOP_MASK)
+ 
+ #define sig_user_defined(t, signr) \
+ 	(((t)->sighand->action[(signr)-1].sa.sa_handler != SIG_DFL) &&	\
 -- 
 2.10.2
 
