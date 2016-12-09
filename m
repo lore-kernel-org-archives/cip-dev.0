@@ -1,70 +1,100 @@
 From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Fri, 09 Dec 2016 00:39:23 +0000
-Subject: [cip-dev] [PATCH 4.4-cip 19/23] pwm: samsung: Fix to use lowest div
- for large enough modulation bits
+Date: Fri, 09 Dec 2016 00:39:37 +0000
+Subject: [cip-dev] [PATCH 4.4-cip 20/23] drm: fix signed integer overflow
 In-Reply-To: <1481243545.1860.156.camel@codethink.co.uk>
 References: <1481243545.1860.156.camel@codethink.co.uk>
-Message-ID: <1481243963.1860.176.camel@codethink.co.uk>
+Message-ID: <1481243977.1860.177.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Seung-Woo Kim <sw0312.kim@samsung.com>
+From: Xie XiuQi <xiexiuqi@huawei.com>
 
-commit 04d68dea26b0a409d44e87ea573a131b6dc67e78 upstream.
+commit ae0119f5f73b1e9cf7177fbbeea68d74c5751def upstream.
 
->From pwm_samsung_calc_tin(), there is routine to find the lowest divider
-possible to generate lower frequency than requested one. But it is
-always possible to generate requested frequency with large enough
-modulation bits except on s3c24xx, so this patch fixes to use lowest div
-for the case. This patch removes following UBSAN warning:
+Use 1UL for unsigned long, or we'll meet a overflow issue with UBSAN.
 
-   UBSAN: Undefined behaviour in drivers/pwm/pwm-samsung.c:197:13
-   shift exponent 32 is too large for 32-bit type 'long unsigned int'
-   [...]
-   [<c0670248>] (ubsan_epilogue) from [<c06707b4>] (__ubsan_handle_shift_out_of_bounds+0xd8/0x120)
-   [<c06707b4>] (__ubsan_handle_shift_out_of_bounds) from [<c0694b28>] (pwm_samsung_config+0x508/0x6a4)
-   [<c0694b28>] (pwm_samsung_config) from [<c069286c>] (pwm_apply_state+0x174/0x40c)
-   [<c069286c>] (pwm_apply_state) from [<c0b2e070>] (pwm_fan_probe+0xc8/0x488)
-   [<c0b2e070>] (pwm_fan_probe) from [<c07ba8b0>] (platform_drv_probe+0x70/0x150)
-   [...]
+[   15.589489] UBSAN: Undefined behaviour in drivers/gpu/drm/drm_hashtab.c:145:35
+[   15.589500] signed integer overflow:
+[   15.589999] -2147483648 - 1 cannot be represented in type 'int'
+[   15.590434] CPU: 2 PID: 294 Comm: plymouthd Not tainted 3.10.0-327.28.3.el7.x86_64 #1
+[   15.590653] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 01/07/2011
+[   15.591001]  1ffff1000670fe83 000000000d6b385e ffff88003387f3e0 ffffffff81ee3140
+[   15.591028]  ffff88003387f3f8 ffffffff81ee31fd ffffffffa032f460 ffff88003387f560
+[   15.591044]  ffffffff81ee46e2 0000002d00000009 0000000000000001 0000000041b58ab3
+[   15.591059] Call Trace:
+[   15.591078]  [<ffffffff81ee3140>] dump_stack+0x1e/0x20
+[   15.591093]  [<ffffffff81ee31fd>] ubsan_epilogue+0x12/0x55
+[   15.591109]  [<ffffffff81ee46e2>] handle_overflow+0x1ba/0x215
+[   15.591126]  [<ffffffff81ee4528>] ? __ubsan_handle_negate_overflow+0x162/0x162
+[   15.591146]  [<ffffffff8103416c>] ? print_context_stack+0x9c/0x160
+[   15.591163]  [<ffffffff81031df2>] ? dump_trace+0x252/0x750
+[   15.591181]  [<ffffffff81739023>] ? __list_add+0x93/0x160
+[   15.591197]  [<ffffffff81ee4798>] __ubsan_handle_sub_overflow+0x2a/0x31
+[   15.591261]  [<ffffffffa0282140>] drm_ht_just_insert_please+0x1e0/0x200 [drm]
+[   15.591290]  [<ffffffffa0528c7a>] ttm_base_object_init+0x10a/0x270 [ttm]
+[   15.591316]  [<ffffffffa052a34c>] ttm_vt_lock+0x28c/0x3a0 [ttm]
+[   15.591343]  [<ffffffffa052a0c0>] ? ttm_write_lock+0x180/0x180 [ttm]
+[   15.591362]  [<ffffffff81419526>] ? kasan_unpoison_shadow+0x36/0x50
+[   15.591379]  [<ffffffff81419526>] ? kasan_unpoison_shadow+0x36/0x50
+[   15.591396]  [<ffffffff81419526>] ? kasan_unpoison_shadow+0x36/0x50
+[   15.591413]  [<ffffffff81419526>] ? kasan_unpoison_shadow+0x36/0x50
+[   15.591442]  [<ffffffffa061cbe1>] vmw_master_set+0x121/0x470 [vmwgfx]
+[   15.591459]  [<ffffffff811773a5>] ? __init_waitqueue_head+0x45/0x70
+[   15.591487]  [<ffffffffa061cac0>] ? vmw_master_drop+0x310/0x310 [vmwgfx]
+[   15.591535]  [<ffffffffa026946a>] drm_open+0x92a/0xc00 [drm]
+[   15.591563]  [<ffffffffa0619ff0>] ? vmw_driver_open+0x170/0x170 [vmwgfx]
+[   15.591610]  [<ffffffffa0268b40>] ? drm_poll+0xe0/0xe0 [drm]
+[   15.591661]  [<ffffffffa02797b4>] drm_stub_open+0x224/0x330 [drm]
+[   15.591711]  [<ffffffffa0279590>] ? drm_minor_acquire+0x240/0x240 [drm]
+[   15.591727]  [<ffffffff8145fa8a>] chrdev_open+0x1fa/0x3f0
+[   15.591742]  [<ffffffff8145f890>] ? cdev_put+0x50/0x50
+[   15.591761]  [<ffffffff814f6dc3>] ? __fsnotify_parent+0x53/0x210
+[   15.591778]  [<ffffffff8144fde1>] do_dentry_open+0x351/0x670
+[   15.591792]  [<ffffffff8145f890>] ? cdev_put+0x50/0x50
+[   15.591807]  [<ffffffff814503c2>] vfs_open+0xa2/0x170
+[   15.591824]  [<ffffffff8147b5df>] do_last+0xccf/0x2c80
+[   15.591842]  [<ffffffff8147a910>] ? filename_create+0x320/0x320
+[   15.591858]  [<ffffffff81472549>] ? path_init+0x1b9/0xa90
+[   15.591875]  [<ffffffff81472390>] ? mountpoint_last+0x9a0/0x9a0
+[   15.591894]  [<ffffffff815f9ccf>] ? selinux_file_alloc_security+0xcf/0x130
+[   15.591911]  [<ffffffff8147d777>] path_openat+0x1e7/0xcc0
+[   15.591927]  [<ffffffff81031df2>] ? dump_trace+0x252/0x750
+[   15.591943]  [<ffffffff8147d590>] ? do_last+0x2c80/0x2c80
+[   15.591959]  [<ffffffff81739023>] ? __list_add+0x93/0x160
+[   15.591974]  [<ffffffff8104b48d>] ? save_stack_trace+0x7d/0xb0
+[   15.591989]  [<ffffffff81480824>] do_filp_open+0xa4/0x160
+[   15.592004]  [<ffffffff81480780>] ? user_path_mountpoint_at+0x50/0x50
+[   15.592022]  [<ffffffff8149d755>] ? __alloc_fd+0x175/0x300
+[   15.592039]  [<ffffffff81453127>] do_sys_open+0x1b7/0x3f0
+[   15.592054]  [<ffffffff81452f70>] ? filp_open+0x80/0x80
+[   15.592070]  [<ffffffff81453392>] SyS_open+0x32/0x40
+[   15.592088]  [<ffffffff81f08989>] system_call_fastpath+0x16/0x1b
 
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
+Signed-off-by: Xie XiuQi <xiexiuqi@huawei.com>
+[seanpaul tweaked subject to remove "gpu/"]
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Link: http://patchwork.freedesktop.org/patch/msgid/1473152138-25335-1-git-send-email-xiexiuqi at huawei.com
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 ---
- drivers/pwm/pwm-samsung.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/drm_hashtab.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
-index ada2d326dc3e..f113cda47032 100644
---- a/drivers/pwm/pwm-samsung.c
-+++ b/drivers/pwm/pwm-samsung.c
-@@ -193,9 +193,18 @@ static unsigned long pwm_samsung_calc_tin(struct samsung_pwm_chip *chip,
- 	 * divider settings and choose the lowest divisor that can generate
- 	 * frequencies lower than requested.
- 	 */
--	for (div = variant->div_base; div < 4; ++div)
--		if ((rate >> (variant->bits + div)) < freq)
--			break;
-+	if (variant->bits < 32) {
-+		/* Only for s3c24xx */
-+		for (div = variant->div_base; div < 4; ++div)
-+			if ((rate >> (variant->bits + div)) < freq)
-+				break;
-+	} else {
-+		/*
-+		 * Other variants have enough counter bits to generate any
-+		 * requested rate, so no need to check higher divisors.
-+		 */
-+		div = variant->div_base;
-+	}
+diff --git a/drivers/gpu/drm/drm_hashtab.c b/drivers/gpu/drm/drm_hashtab.c
+index c3b80fd65d62..fbbd9f0c2eef 100644
+--- a/drivers/gpu/drm/drm_hashtab.c
++++ b/drivers/gpu/drm/drm_hashtab.c
+@@ -142,7 +142,7 @@ int drm_ht_just_insert_please(struct drm_open_hash *ht, struct drm_hash_item *it
+ 			      unsigned long add)
+ {
+ 	int ret;
+-	unsigned long mask = (1 << bits) - 1;
++	unsigned long mask = (1UL << bits) - 1;
+ 	unsigned long first, unshifted_key;
  
- 	pwm_samsung_set_divisor(chip, chan, BIT(div));
- 
+ 	unshifted_key = hash_long(seed, bits);
 -- 
 2.10.2
+
 
 
 -- 
