@@ -1,90 +1,97 @@
 From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Fri, 09 Dec 2016 00:37:04 +0000
-Subject: [cip-dev] [PATCH 4.4-cip 17/23] rhashtable: fix shift by 64 when
-	shrinking
+Date: Fri, 09 Dec 2016 00:37:20 +0000
+Subject: [cip-dev] [PATCH 4.4-cip 18/23] time: Avoid undefined behaviour in
+ ktime_add_safe()
 In-Reply-To: <1481243545.1860.156.camel@codethink.co.uk>
 References: <1481243545.1860.156.camel@codethink.co.uk>
-Message-ID: <1481243824.1860.173.camel@codethink.co.uk>
+Message-ID: <1481243840.1860.174.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Vegard Nossum <vegard.nossum@oracle.com>
 
-commit 12311959ecf8a3a64676c01b62ce67a0c5f0fd49 upstream.
+commit 979515c5645830465739254abc1b1648ada41518 upstream.
 
-I got this:
+I ran into this:
 
     ================================================================================
-    UBSAN: Undefined behaviour in ./include/linux/log2.h:63:13
-    shift exponent 64 is too large for 64-bit type 'long unsigned int'
-    CPU: 1 PID: 721 Comm: kworker/1:1 Not tainted 4.8.0-rc1+ #87
+    UBSAN: Undefined behaviour in kernel/time/hrtimer.c:310:16
+    signed integer overflow:
+    9223372036854775807 + 50000 cannot be represented in type 'long long int'
+    CPU: 2 PID: 4798 Comm: trinity-c2 Not tainted 4.8.0-rc1+ #91
     Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.9.3-0-ge2fc41e-prebuilt.qemu-project.org 04/01/2014
-    Workqueue: events rht_deferred_worker
-     0000000000000000 ffff88011661f8d8 ffffffff82344f50 0000000041b58ab3
-     ffffffff84f98000 ffffffff82344ea4 ffff88011661f900 ffff88011661f8b0
-     0000000000000001 ffff88011661f6b8 dffffc0000000000 ffffffff867f7640
+     0000000000000000 ffff88010ce6fb88 ffffffff82344740 0000000041b58ab3
+     ffffffff84f97a20 ffffffff82344694 ffff88010ce6fbb0 ffff88010ce6fb60
+     000000000000c350 ffff88010ce6f968 dffffc0000000000 ffffffff857bc320
     Call Trace:
-     [<ffffffff82344f50>] dump_stack+0xac/0xfc
-     [<ffffffff82344ea4>] ? _atomic_dec_and_lock+0xc4/0xc4
-     [<ffffffff8242f5b8>] ubsan_epilogue+0xd/0x8a
-     [<ffffffff82430c41>] __ubsan_handle_shift_out_of_bounds+0x255/0x29a
-     [<ffffffff824309ec>] ? __ubsan_handle_out_of_bounds+0x180/0x180
-     [<ffffffff84003436>] ? nl80211_req_set_reg+0x256/0x2f0
-     [<ffffffff812112ba>] ? print_context_stack+0x8a/0x160
-     [<ffffffff81200031>] ? amd_pmu_reset+0x341/0x380
-     [<ffffffff823af808>] rht_deferred_worker+0x1618/0x1790
-     [<ffffffff823af808>] ? rht_deferred_worker+0x1618/0x1790
-     [<ffffffff823ae1f0>] ? rhashtable_jhash2+0x370/0x370
-     [<ffffffff8134c12d>] ? process_one_work+0x6fd/0x1970
-     [<ffffffff8134c1cf>] process_one_work+0x79f/0x1970
-     [<ffffffff8134c12d>] ? process_one_work+0x6fd/0x1970
-     [<ffffffff8134ba30>] ? try_to_grab_pending+0x4c0/0x4c0
-     [<ffffffff8134d564>] ? worker_thread+0x1c4/0x1340
-     [<ffffffff8134d8ff>] worker_thread+0x55f/0x1340
-     [<ffffffff845e904f>] ? __schedule+0x4df/0x1d40
-     [<ffffffff8134d3a0>] ? process_one_work+0x1970/0x1970
-     [<ffffffff8134d3a0>] ? process_one_work+0x1970/0x1970
-     [<ffffffff813642f7>] kthread+0x237/0x390
-     [<ffffffff813640c0>] ? __kthread_parkme+0x280/0x280
-     [<ffffffff845f8c93>] ? _raw_spin_unlock_irq+0x33/0x50
-     [<ffffffff845f95df>] ret_from_fork+0x1f/0x40
-     [<ffffffff813640c0>] ? __kthread_parkme+0x280/0x280
+     [<ffffffff82344740>] dump_stack+0xac/0xfc
+     [<ffffffff82344694>] ? _atomic_dec_and_lock+0xc4/0xc4
+     [<ffffffff8242df78>] ubsan_epilogue+0xd/0x8a
+     [<ffffffff8242e6b4>] handle_overflow+0x202/0x23d
+     [<ffffffff8242e4b2>] ? val_to_string.constprop.6+0x11e/0x11e
+     [<ffffffff8236df71>] ? timerqueue_add+0x151/0x410
+     [<ffffffff81485c48>] ? hrtimer_start_range_ns+0x3b8/0x1380
+     [<ffffffff81795631>] ? memset+0x31/0x40
+     [<ffffffff8242e6fd>] __ubsan_handle_add_overflow+0xe/0x10
+     [<ffffffff81488ac9>] hrtimer_nanosleep+0x5d9/0x790
+     [<ffffffff814884f0>] ? hrtimer_init_sleeper+0x80/0x80
+     [<ffffffff813a9ffb>] ? __might_sleep+0x5b/0x260
+     [<ffffffff8148be10>] common_nsleep+0x20/0x30
+     [<ffffffff814906c7>] SyS_clock_nanosleep+0x197/0x210
+     [<ffffffff81490530>] ? SyS_clock_getres+0x150/0x150
+     [<ffffffff823c7113>] ? __this_cpu_preempt_check+0x13/0x20
+     [<ffffffff8162ef60>] ? __context_tracking_exit.part.3+0x30/0x1b0
+     [<ffffffff81490530>] ? SyS_clock_getres+0x150/0x150
+     [<ffffffff81007bd3>] do_syscall_64+0x1b3/0x4b0
+     [<ffffffff845f85aa>] entry_SYSCALL64_slow_path+0x25/0x25
     ================================================================================
 
-roundup_pow_of_two() is undefined when called with an argument of 0, so
-let's avoid the call and just fall back to ht->p.min_size (which should
-never be smaller than HASH_MIN_SIZE).
+Add a new ktime_add_unsafe() helper which doesn't check for overflow, but
+doesn't throw a UBSAN warning when it does overflow either.
 
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Richard Cochran <richardcochran@gmail.com>
+Cc: Prarit Bhargava <prarit@redhat.com>
 Signed-off-by: Vegard Nossum <vegard.nossum@oracle.com>
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: John Stultz <john.stultz@linaro.org>
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 ---
- lib/rhashtable.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ include/linux/ktime.h | 7 +++++++
+ kernel/time/hrtimer.c | 2 +-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/lib/rhashtable.c b/lib/rhashtable.c
-index 51282f579760..d7f5b4d035ff 100644
---- a/lib/rhashtable.c
-+++ b/lib/rhashtable.c
-@@ -324,12 +324,14 @@ static int rhashtable_expand(struct rhashtable *ht)
- static int rhashtable_shrink(struct rhashtable *ht)
+diff --git a/include/linux/ktime.h b/include/linux/ktime.h
+index 2b6a204bd8d4..3ffc69ebe967 100644
+--- a/include/linux/ktime.h
++++ b/include/linux/ktime.h
+@@ -64,6 +64,13 @@ static inline ktime_t ktime_set(const s64 secs, const unsigned long nsecs)
+ 		({ (ktime_t){ .tv64 = (lhs).tv64 + (rhs).tv64 }; })
+ 
+ /*
++ * Same as ktime_add(), but avoids undefined behaviour on overflow; however,
++ * this means that you must check the result for overflow yourself.
++ */
++#define ktime_add_unsafe(lhs, rhs) \
++		({ (ktime_t){ .tv64 = (u64) (lhs).tv64 + (rhs).tv64 }; })
++
++/*
+  * Add a ktime_t variable and a scalar nanosecond value.
+  * res = kt + nsval:
+  */
+diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+index 17f7bcff1e02..1dc94768b5a3 100644
+--- a/kernel/time/hrtimer.c
++++ b/kernel/time/hrtimer.c
+@@ -312,7 +312,7 @@ EXPORT_SYMBOL_GPL(__ktime_divns);
+  */
+ ktime_t ktime_add_safe(const ktime_t lhs, const ktime_t rhs)
  {
- 	struct bucket_table *new_tbl, *old_tbl = rht_dereference(ht->tbl, ht);
--	unsigned int size;
-+	unsigned int nelems = atomic_read(&ht->nelems);
-+	unsigned int size = 0;
- 	int err;
+-	ktime_t res = ktime_add(lhs, rhs);
++	ktime_t res = ktime_add_unsafe(lhs, rhs);
  
- 	ASSERT_RHT_MUTEX(ht);
- 
--	size = roundup_pow_of_two(atomic_read(&ht->nelems) * 3 / 2);
-+	if (nelems)
-+		size = roundup_pow_of_two(nelems * 3 / 2);
- 	if (size < ht->p.min_size)
- 		size = ht->p.min_size;
- 
+ 	/*
+ 	 * We use KTIME_SEC_MAX here, the maximum timeout which we can
 -- 
 2.10.2
 
