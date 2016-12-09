@@ -1,46 +1,50 @@
 From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Fri, 09 Dec 2016 00:35:58 +0000
-Subject: [cip-dev] [PATCH 4.4-cip 11/23] btrfs: fix int32 overflow in
- shrink_delalloc().
+Date: Fri, 09 Dec 2016 00:36:08 +0000
+Subject: [cip-dev] [PATCH 4.4-cip 12/23] blk-mq: fix undefined behaviour in
+ order_to_size()
 In-Reply-To: <1481243545.1860.156.camel@codethink.co.uk>
 References: <1481243545.1860.156.camel@codethink.co.uk>
-Message-ID: <1481243758.1860.167.camel@codethink.co.uk>
+Message-ID: <1481243768.1860.168.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Adam Borowski <kilobyte@angband.pl>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-commit 8eb0dfdbda3f56bf7d248ed87fcc383df114ecbb upstream.
+commit b3a834b1596ac668df206aa2bb1f191c31f5f5e4 upstream.
 
-UBSAN: Undefined behaviour in fs/btrfs/extent-tree.c:4623:21
-signed integer overflow:
-10808 * 262144 cannot be represented in type 'int [8]'
+When this_order variable in blk_mq_init_rq_map() becomes zero
+the code incorrectly decrements the variable and passes the result
+to order_to_size() helper causing undefined behaviour:
 
-If 8192<=items<16384, we request a writeback of an insane number of pages
-which is benign (everything will be written).  But if items>=16384, the
-space reservation won't be enough.
+ UBSAN: Undefined behaviour in block/blk-mq.c:1459:27
+ shift exponent 4294967295 is too large for 32-bit type 'unsigned int'
+ CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.6.0-rc6-00072-g33656a1 #22
 
-Signed-off-by: Adam Borowski <kilobyte@angband.pl>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fix the code by checking this_order variable for not having the zero
+value first.
+
+Reported-by: Meelis Roos <mroos@linux.ee>
+Fixes: 320ae51feed5 ("blk-mq: new multi-queue block IO queueing mechanism")
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Jens Axboe <axboe@fb.com>
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 ---
- fs/btrfs/extent-tree.c | 2 +-
+ block/blk-mq.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
-index 47cdc6f3390b..a4d7dbe2619e 100644
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -4568,7 +4568,7 @@ static void shrink_delalloc(struct btrfs_root *root, u64 to_reclaim, u64 orig,
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index c3e461ec40e4..c58fdfdd9ea6 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -1494,7 +1494,7 @@ static struct blk_mq_tags *blk_mq_init_rq_map(struct blk_mq_tag_set *set,
+ 		int to_do;
+ 		void *p;
  
- 	/* Calc the number of the pages we need flush for space reservation */
- 	items = calc_reclaim_items_nr(root, to_reclaim);
--	to_reclaim = items * EXTENT_SIZE_PER_ITEM;
-+	to_reclaim = (u64)items * EXTENT_SIZE_PER_ITEM;
+-		while (left < order_to_size(this_order - 1) && this_order)
++		while (this_order && left < order_to_size(this_order - 1))
+ 			this_order--;
  
- 	trans = (struct btrfs_trans_handle *)current->journal_info;
- 	block_rsv = &root->fs_info->delalloc_block_rsv;
+ 		do {
 -- 
 2.10.2
 
