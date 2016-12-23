@@ -1,31 +1,38 @@
-From: robert.marshall@codethink.co.uk (Robert Marshall)
-Date: Thu, 22 Dec 2016 15:43:53 +0000
-Subject: [cip-dev] CIP Developer update
-Message-ID: <87a8bo0y12.fsf@codethink.co.uk>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Fri, 23 Dec 2016 16:46:45 +0000
+Subject: [cip-dev] [PATCH 4.4-cip 0/6] Extend user-space ASLR range
+In-Reply-To: <7c58c7d6-92fa-4b99-aa15-25c41243810c@siemens.com>
+References: <1481241380.1860.120.camel@codethink.co.uk>
+	<7c58c7d6-92fa-4b99-aa15-25c41243810c@siemens.com>
+Message-ID: <1482511605.1860.200.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-As before we're including outstanding problems as gitlab
-issues - read them for more information!
+[Sorry for the delay; I haven't been feeling well.]
 
-CIP
+On Fri, 2016-12-09 at 13:20 +0100, Jan Kiszka wrote:
+> Did you try to discuss the back-port topic with the KSPP folks or other
+> key persons involved in these patches? In the ideal case, the authors
+> can be CC'ed, do not get annoyed by "these crazy people doing legacy
+> stuff", and may even do some reviews.
 
-        - build artifacts - we're still unable to retrieve these.
-        We have manually installed later versions of chef and worked
-        around issues with the validation.pem not being available but
-        are still getting 404 errors.
-           https://gitlab.com/cip-project/testing/issues/2
+I would normally cc the upstream developers, but I was hesitant to do so
+for CIP because this is not related to an official stable branch.
+Perhaps I should ask on the KSPP list whether a cc for such feature
+backports would be appreciated?
 
-        bson not installed error
-           https://gitlab.com/cip-project/testing/issues/3
-        still being investigated.
+On Mon, 2016-12-19 at 11:52 +0100, Jan Kiszka wrote:
+> I've chatted with Elena over this last week, and she talked to Kees
+> who
+> pointed out that the Android people are also doing KSPP backports to
+> 4.4
+> (thanks, folks!). I didn't check any details, just a heads-up to avoid
+> duplicate work.
 
-LAVA
-        LAVA2 tests now run, currently working around issues
-        with a DeviceDictionary error
-           https://gitlab.com/cip-project/testing/issues/5
+Thanks for letting me know.
 
-        Smoke test for QEMU created
+Ben.
 
-
-Robert
+-- 
+Ben Hutchings
+Software Developer, Codethink Ltd.
