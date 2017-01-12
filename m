@@ -1,59 +1,52 @@
-From: robert.marshall@codethink.co.uk (Robert Marshall)
-Date: Fri, 06 Jan 2017 14:57:18 +0000
-Subject: [cip-dev] CIP update 07 WK 01
-In-Reply-To: <87a8b4e479.fsf@codethink.co.uk> (Robert Marshall's message of
-	"Fri, 06 Jan 2017 12:57:30 +0000")
-References: <87a8bo0y12.fsf@codethink.co.uk> <87a8b4e479.fsf@codethink.co.uk>
-Message-ID: <8760lsdynl.fsf@codethink.co.uk>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Thu, 12 Jan 2017 13:40:48 +0000
+Subject: [cip-dev] [PATCH 4.4-cip 0/6] Extend user-space ASLR range
+In-Reply-To: <CAGXu5j+bcjMQAahRnWnBzV9YD38_OhPiHkKSSURnRCFBD-pDdA@mail.gmail.com>
+References: <1481241380.1860.120.camel@codethink.co.uk>
+	<7c58c7d6-92fa-4b99-aa15-25c41243810c@siemens.com>
+	<155216cf-3c1a-7f41-3ff2-956f92e3c7cb@siemens.com>
+	<CAGXu5j+bcjMQAahRnWnBzV9YD38_OhPiHkKSSURnRCFBD-pDdA@mail.gmail.com>
+Message-ID: <1484228448.10206.24.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Apologies, the following item was missed out of the report:
+On Tue, 2017-01-03 at 15:56 -0800, Kees Cook wrote:
+> On Mon, Dec 19, 2016 at 2:52 AM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+> > On 2016-12-09 13:20, Jan Kiszka wrote:
+[...]
+> >> Did you try to discuss the back-port topic with the KSPP folks or other
+> >> key persons involved in these patches? In the ideal case, the authors
+> >> can be CC'ed, do not get annoyed by "these crazy people doing legacy
+> >> stuff", and may even do some reviews.
+> >>
+> >
+> > I've chatted with Elena over this last week, and she talked to Kees who
+> > pointed out that the Android people are also doing KSPP backports to 4.4
+> > (thanks, folks!). I didn't check any details, just a heads-up to avoid
+> > duplicate work.
+> 
+> Hi!
+> 
+> The Android common kernel tree is visible here:
+> 
+> https://android.googlesource.com/kernel/common/
+> 
+> In the android-4.4 branch, the backport are these:
+> 
+> b471fcd FROMLIST: mm: ASLR: use get_random_long()
+> 9a3fe39 FROMLIST: drivers: char: random: add get_random_long()
+> d51891f FROMLIST: x86: mm: support ARCH_MMAP_RND_BITS.
+> e2240a1 FROMLIST: arm64: mm: support ARCH_MMAP_RND_BITS.
+> 25106ff FROMLIST: arm: mm: support ARCH_MMAP_RND_BITS.
+> d49d887 FROMLIST: mm: mmap: Add new /proc tunable for mmap_base ASLR.
+>
+> Hopefully that helps!
 
-        * build artifacts - we're still unable to retrieve these and get
-          404 errors on selecting the link:
-              https://gitlab.com/cip-project/testing/issues/2
-           
+Thanks.  My backports are identical aside from the placement of some
+changes in Kconfig files, which shouldn't make a functional difference.
 
-Robert Marshall <robert.marshall@codethink.co.uk> writes:
+Ben.
 
-> * Virtual machine creation for the testing
->   We've created 2 vagrant instances one for kernelci and the other for lava
->   (lava is Debian based and kernelci is ubuntu based) work is in
->   progress on merging these to make developer setup simpler and reduce
->   the memory requirements.
->       https://gitlab.com/cip-project/testing/issues/7
->
-> * There's a github branch to allow the host to view the kernelci vm webserver
->   https://github.com/RobertAJMarshall/kernelci-frontend-config/tree/external-http
->   this will be merged with the gitlab repository when
->       https://gitlab.com/cip-project/testing/issues/3
->   has been resolved.
->
-> * The DeviceDictionary error 
->       https://gitlab.com/cip-project/testing/issues/5
->   is still outstanding
->
-> * Devices have been added to lava VM but are not yet running
->       https://gitlab.com/cip-project/testing/issues/9
->
-> * the lava gitlab and the vagrant instance now has been updated 
->   with health check tests and extra documentation.
->   
-> * The QEMU health check results in a KVM module not found failure
->       https://gitlab.com/cip-project/testing/issues/8
->
-> * Discussions in progress on adding a 'howto'
->   The developers have a document enumerating the steps involved in
->   getting the testing environment up and running, this document will
->   be streamlined and published to the wiki. Meanwhile, we will add the
->   WIP content to the repository so you can follow it.
->
-> * Minor additions to the wiki has been made, specially in the kernel
->   maintenance page.
->
-> Robert
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
+-- 
+Ben Hutchings
+Software Developer, Codethink Ltd.
