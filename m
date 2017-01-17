@@ -1,46 +1,46 @@
-From: daniel.wagner@siemens.com (Daniel Wagner)
-Date: Tue, 17 Jan 2017 17:36:54 +0100
+From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
+Date: Tue, 17 Jan 2017 18:14:11 +0100
 Subject: [cip-dev] kernelci setup fails
-In-Reply-To: <e50a3001-d769-5a28-7dde-0850f5247324@siemens.com>
-References: <f6c5c137-3fc9-c175-4889-5cf16480f167@monom.org>
-	<587E248C.2090002@codethink.co.uk>
-	<e50a3001-d769-5a28-7dde-0850f5247324@siemens.com>
-Message-ID: <9cf9f75f-30bd-9be5-cbe2-4ca1baa6d193@siemens.com>
+In-Reply-To: <bf0051c6-fa6f-3ed0-a578-b1cc5e9142bc@siemens.com>
+References: <CANm2L4=-ZamtbxhvuY7wVRBja3P1YiL0cGkgVb_FPrFciFS3nA@mail.gmail.com>
+	<bf0051c6-fa6f-3ed0-a578-b1cc5e9142bc@siemens.com>
+Message-ID: <587E50E3.3080202@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 01/17/2017 03:43 PM, Daniel Wagner wrote:
-> http://packages.ubuntu.com/search?keywords=python3-setproctitle
-> 
->     xenial (16.04LTS) (python): A setproctitle implementation for Python
-> (Python 3) [universe]
->     1.1.8-1build2: amd64 arm64 armhf i386 powerpc ppc64el s390x
->     yakkety (16.10) (python): A setproctitle implementation for Python
-> (Python 3)
->     1.1.8-1ubuntu2: amd64 arm64 armhf i386 powerpc ppc64el s390x
->     zesty (python): Setproctitle implementation for Python 3
->     1.1.10-1: amd64 arm64 armhf i386 powerpc ppc64el s390x
-> 
-> So this package is just not part of the trusty version. Is there a
-> specific reason to stick to trusty?
+Hi,
 
-I gave it a try, no luck though:
+On 17/01/17 17:32, Daniel Wagner wrote:
+> Hi Don,
+>
+> On 01/17/2017 05:04 PM, Don Brown wrote:
+>> I have the same problem and worked on it yesterday from several angles.
+>> My notes are logged in Issue #12 in the GitLab repo. The link is:
+>>
+>> https://gitlab.com/cip-project/testing/issues/12
+>
+> I'll create a gitlab account soon, so that I can collaborate via the
+> ticket system.
 
-==> default: TASK [install-deps : Install MongoDB]
-******************************************
-==> default: failed: [kernel-ci-backend] (item=[u'mongodb-org',
-u'libsnappy1']) => {"failed": true, "item": ["mongodb-org",
-"libsnappy1"], "msg": "No package matching 'libsnappy1' is available"}
+until then...
 
+We have discussed what to do. There are several options:
+1 Make Python 3.5.2 work on trusty.
+2 Move on to Ubuntu 16.04
+3 Move to an in-between version.
+4 Try to move it into Debian so we can go for a single VM for the whole 
+kernelci tolling.
 
-So I am stuck at the same level as Don is. Anyway, I was wondering how
-to be able to have local copies of the kernelci code and use that one as
-source instead of the hard coded git urls. It seems rather hard to work
-on the setup if you can't change it :)
+Don is describing in the gitlab ticket his early tries of each option to 
+determine which way to go. Although #4 is the desired one, it seems the 
+most difficult one as well, so we decided to focus on the initial three.
 
-What about having an option which mounts the local kernelci repos into
-the virtual machine? Obviously, the kernelci ansible script would also
-need to be modified to allow overwrites.
+We want to have the system working first and then we will figure out how 
+we can simplify the deployment.
 
-Thanks,
-Daniel
+Best Regards
+
+-- 
+Agustin Benito Bethencourt
+Principal Consultant - FOSS at Codethink
+agustin.benito at codethink.co.uk
