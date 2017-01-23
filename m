@@ -1,99 +1,67 @@
-From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
-Date: Fri, 20 Jan 2017 17:00:27 +0100
-Subject: [cip-dev] CIP update 08 WK 03
-In-Reply-To: <87a8b4e479.fsf@codethink.co.uk>
-References: <87a8bo0y12.fsf@codethink.co.uk> <87a8b4e479.fsf@codethink.co.uk>
-Message-ID: <5882341B.50201@codethink.co.uk>
+From: daniel.wagner@siemens.com (Daniel Wagner)
+Date: Mon, 23 Jan 2017 10:50:28 +0100
+Subject: [cip-dev] [PATCH] Use local copy of kernel-ci if present
+In-Reply-To: <2a5ecb13-29c2-d80d-ffb4-b3459eb0e03d@siemens.com>
+References: <20170119145744.6754-1-daniel.wagner@siemens.com>
+	<69aca7a7-5d83-190e-733f-85d0b57891b8@linux-kernel.net>
+	<2a5ecb13-29c2-d80d-ffb4-b3459eb0e03d@siemens.com>
+Message-ID: <4566da15-839f-e88f-f812-095d7ee770ba@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+Hi Don,
 
-this is the report from the activities that Codethink is driving on and 
-or involved. This week is not that we worked more but that we completed 
-more tasks.
+Over the weekend I had an idea to improve it even more:
 
-++ Meetings
 
-* Members meeting on Monday January 16th
-** ELC booth/sponsorship logistics as main topic
-** Report about testing and kernel maintenance efforts.
+GIT_SRC="https://github.com/kernelci/kernelci-backend-config.git"
+if [ -d /vagrant/kernelci-backend-config ]; then
+    GIT_SRC=/vagrant/kernelci-backend-config
+fi
+git clone $GIT_SRC kernelci-backend
 
-* Next Members meeting on Monday January 23rd
-** Ben Hutchings attending to provide update about the kernel 
-maintenance effort
 
-++ Kernel maintenance
+If there is a repo available on /vagrant we clone from it. I 
+think it would be even better just to copy the working
+directory instead of cloning. That would allow to hack on the
+files without committing all the time.
 
-* 4.4 CIP kernel updated to the latest LTS.
+So this would change to:
 
-* Backported patches being merged.
+if [ -d /vagrant/kernelci-backend-config ]; then
+    cp -r /vagrant/kernelci-backend-config kernelci-backend
+else
+    git clone https://github.com/kernelci/kernelci-backend-config.git kernelci-backend
+fi
 
-* Kernel maintenance policies under review.
+What do you think about this?
 
-The goal is to arrive to ELC with the policies finished and the 
-backported patches merged. Some additional tasks might be done meanwhile.
+And another idea I had: we should create a mirror of kernelci sources
+clone from the mirror. I am pretty sure soon we have some patches
+which need to be around to get our setup running which aren't 
+available in the upstream repository. For example I had to do this here:
 
-++ Testing: Board @desk - Single Developer
 
-* KernelCI Virtual Machine Setup & Configuration Howto published[1]
-** You can follow other tasks related with the beta release in the 
-ticket #10
+--- a/roles/install-deps/tasks/install-mongodb.yml
++++ b/roles/install-deps/tasks/install-mongodb.yml
+@@ -2,7 +2,7 @@
+ 
+ - name: Add MongoDB apt key (Ubuntu)
+   apt_key:  id=7F0CEB10
+-            keyserver=hkp://keyserver.ubuntu.com
++            keyserver=hkp://keyserver.ubuntu.com:80
+   when: ansible_lsb.id == "Ubuntu"
+   tags:
+     - install
+@@ -11,7 +11,7 @@
+ 
+ - name: Add MongoDB apt key (Debian)
+   apt_key:  id=EA312927
+-            keyserver=hkp://keyserver.ubuntu.com
++            keyserver=hkp://keyserver.ubuntu.com:80
+   when: ansible_lsb.id == "Debian"
+   tags:
+     - install
 
-* Improvements in the Kernel CI & LAVA v2 configuration.
-** LAVA v2 Web Server now sees the devices that are available in the 
-application #4
-** LAVA v2 tests now complete #5
-** QEMU health check are executing and does not get a KVM kernel module 
-related error any more. #8 #9
-** KernelCI VM now boots in Debian Jessie #12
-
-* Beta release initially set for February 4th #10
-** The plan at this point is to release right before ELC.
-
-++ Other topics
-
-* Robert Marshall has is no longer part of the team. Christos Karamitsos 
-has substituted him. Chris is also based in Manchester. He will be 
-focused in the issues we have in the kernelci front and back-en related 
-with DDBB.
-** Thanks Robert for your effort in pushing the development further. 
-Welcome Christos. Please introduce yourself to the audience (when you 
-recover from that flu).
-
-* Ben H. and Don Brown has now edit access to the public wiki. If you 
-have a Linux Foundation ID, please review if you have them too. If not, 
-please let us know through this list. #11
-
-* Agustin (and Yoshi) will attend to FOSDEM. What about you?
-
-++ Coming activities
-
-* Investigate DDBB related issues #2 and #3
-
-* Consolidate the KernelCI & LAVA v2 servers into one VM #12
-
-* Add documentation #10
-
-* Preparation of the slides for the Open Source Leadership Summit 
-(Agustin and Nori).
-
-#2 https://gitlab.com/cip-project/testing/issues/2
-#3 https://gitlab.com/cip-project/testing/issues/3
-#4 https://gitlab.com/cip-project/testing/issues/4
-#5 https://gitlab.com/cip-project/testing/issues/5
-#8 https://gitlab.com/cip-project/testing/issues/8
-#9 https://gitlab.com/cip-project/testing/issues/9
-#10 https://gitlab.com/cip-project/testing/issues/10
-#11 https://gitlab.com/cip-project/testing/issues/11
-#12 https://gitlab.com/cip-project/testing/issues/12
-
-[1] 
-https://wiki.linuxfoundation.org/civilinfrastructureplatform/testinglavav2vmsetup
-
-Best Regards
-
--- 
-Agustin Benito Bethencourt
-Principal Consultant - FOSS at Codethink
-agustin.benito at codethink.co.uk
+Thanks,
+Daniel
