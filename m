@@ -1,32 +1,57 @@
-From: daniel.wagner@siemens.com (Daniel Wagner)
-Date: Mon, 23 Jan 2017 14:14:32 +0100
-Subject: [cip-dev] Update on Patch and mirroring KernelCI code
-In-Reply-To: <CANm2L4nyRJ2rSE6QqWZBQ2_HqhRB7vA41ois4i85Ls6Y73WG+A@mail.gmail.com>
-References: <CANm2L4nyRJ2rSE6QqWZBQ2_HqhRB7vA41ois4i85Ls6Y73WG+A@mail.gmail.com>
-Message-ID: <6ea9e1f8-8853-d65c-2bdd-bf936742799f@siemens.com>
+From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
+Date: Tue, 24 Jan 2017 17:58:19 +0100
+Subject: [cip-dev] Y2038. a risk that requires attention today and would
+ benefit from CIP participation
+Message-ID: <588787AB.1050400@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Don,
+Hi,
 
-On 01/23/2017 01:39 PM, Don Brown wrote:
-> I like the change to the patch and I'll incorporate it tonight.
+during the past CIP Members meeting call, Monday 23rd January, Members 
+agreed on bringing to the attention of CIP contributors and friends the 
+Y2038 topic.
 
-Great.
+What is Y2038 refers to?
 
-> We are already mirroring the KernelCI Backend and Frontend and I had
-> almost the exact same thought this weekend that we already need to
-> modify the code to get ours working. I don't mind doing this in the
-> short term. However, this can be a slippery slope since we could easily
-> get to the point where we've essentially forked their code.
+"Y2038 refers to an issue related to the way time is handled by 
+computers. Time is often represented as the number of seconds since Jan 
+1, 1970. Whenever a 32-bit signed integer is used for this, the maximum 
+value that can be represented is ? ~68 years, 19 days from the epoch, 
+which corresponds to Jan 19, 2038. What happens after that is system 
+dependent, but generally not good. A computer may act as if its time got 
+reset to Dec 1901, or possibly to the epoch of Jan 1, 1970. It may give 
+unexpected results or crash."
 
-I agree. There needs to be some strict rules for applying patches.
+Definition extracted from http://www.y2038.com[1]. Check more about the 
+description of the problem in Wikipedia[2].
 
-> I would prefer to work with the KernelCI upstream to incorporate our
-> modifications into their code for the long-term.
+The Linux Kernel community is already acting on this topic since version 
+3.17[3] at least. One of the most interesting activities is to define 
+tasks for newbies[4] related with this topic. You can read in this 
+article[5] an update about what is being done, from 2015 and another 
+reference[6] from 2016.
 
-Okay, understood. What about introducing a default configuration that
-clones for upstream but it could be overwritten as config option?
+CIP Members has expressed their interest for Y2038 on user space too.
 
-Thanks,
-Daniel
+Arnd Bergmann, in CC, is one of the advocates of the Y2038 initiative.
+
+@Arnd, is there any further documentation we should read about this 
+topic? What are the key activities at this point within the Linux Kernel 
+related with the topic? Who can we talk to related with user space? Any 
+light you can provide us would be helpful.
+
+
+[1] https://y2038.com/faq/
+[2] https://en.wikipedia.org/wiki/Year_2038_problem
+[3] https://lwn.net/Articles/607741/
+[4] https://kernelnewbies.org/y2038
+[5] https://lwn.net/Articles/643234/
+[6] 
+https://www.phoronix.com/scan.php?page=news_item&px=Linux-4.7-More-Y2038-Work
+
+Best Regards
+-- 
+Agustin Benito Bethencourt
+Principal Consultant - FOSS at Codethink
+agustin.benito at codethink.co.uk
