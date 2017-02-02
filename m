@@ -1,84 +1,55 @@
-From: don.brown@codethink.com (Don Brown)
-Date: Mon, 30 Jan 2017 05:51:21 -0500
-Subject: [cip-dev] Status Update on CIP - Continuous Integration of the CIP
- kernel using KernelCI and Testing the CIP kernel using LAVA Server v2
-Message-ID: <66b290263f02290c10066cda87792e3e@codethink.com>
+From: arnd@arndb.de (Arnd Bergmann)
+Date: Thu, 2 Feb 2017 13:43:15 +0100
+Subject: [cip-dev] Y2038. a risk that requires attention today and would
+ benefit from CIP participation
+In-Reply-To: <588787AB.1050400@codethink.co.uk>
+References: <588787AB.1050400@codethink.co.uk>
+Message-ID: <CAK8P3a2phA+AuH5YPgvFm+x7QvfP-TjkRX9CSSRuvb2cnykXHA@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Civil Infrastructure Platform (CIP)
-Continuous Integration of the CIP kernel using KernelCI and Testing the 
-CIP kernel using LAVA Server v2
+On Tue, Jan 24, 2017 at 5:58 PM, Agustin Benito Bethencourt
+<agustin.benito@codethink.co.uk> wrote:
+> @Arnd, is there any further documentation we should read about this topic?
+> What are the key activities at this point within the Linux Kernel related
+> with the topic? Who can we talk to related with user space? Any light you
+> can provide us would be helpful.
 
-Hi Everyone,
+Deepa Dinamani has done some important work on the kernel, but had a hard
+time getting some of the patches accepted at first. With her work, we now have
+some of the basics of converting over VFS, which I assume is one of the hardest
+parts.
 
-I am writing to give you an update on where we stand with the Civil 
-Infrastructure Platform (CIP).
+She is also looking into refactoring my system call series now, which
+is the other hard and absolutely essential part of the kernel work. Besides
+those there are a couple of areas that are tricky and spread out
+across the kerne
+ (rtc, key management, probably one more), a couple that require small interface
+changes (input, v4l) and have to be done carefully, and lots of drivers that
+need to be individually fixed. Once those are done, 32-bit kernels and 64-bit
+kernels are equally good at dealing with y2038. I actually have an
+older prototype series that removes the definition of 'time_t' inside the kernel
+to ensure that there are no type confusions.
 
-As many of you know, we are using KernelCI for the Continuous 
-Integration component and LAVA v2 for the kernel Testing platform. 
-KernelCI performs the kernel builds against specific configurations and 
-can verify boots and SOC's as well. Both come with complete results 
-reporting to document what went wrong in the build, deployment or 
-testing portion with a great level of granularity.
+Then there are issues that affect both 32-bit and 64-bit systems and that have
+to be fixed regardless. This mostly affects file systems (e.g. XFS), and many of
+them won't ever get fixed (e.g. ext3 is broken, but ext4 is a working
+replacement, same for NFSv2 vs NFSv3/4). The problem also exists in some
+network protocols and common file formats (e.g. CPIO). Again, these have to
+be dealt with individually.
 
-Our Focus:
-We started working on this with the scenario of a "Single-Developer at 
-their Desk with a Board" needing to build and test a kernel for a 
-specific project. This has sharpened our focus on making it "just work," 
-understanding that the developer does not have time to devote to the 
-setup, configuration and maintenance of a KernelCI and LAVA server and 
-cannot use a public service for whatever reason. However, in this day 
-and age, we realize how desparately needed these tools are for embedded 
-systems providers.
+In user space, Albert Aribaud has an initial glibc patch set [1], which is
+most of what we require for typical 32-bit applications. glibc will
+allow building
+with either 32-bit or 64-bit time_t and support both at runtime
+(including on old
+kernels). In order to actually make it work beyond 2038, all user space has
+ to be recompiled against the new glibc. Once that is done, we still
+have to deal with application specific bugs, where either timestamps are encoded
+as 32-bit integers on-disk, or the application uses its own types
+internally instead
+of time_t.
 
-Where We Stand:
-We currently have a KernelCI Virtual Machine running with a few sample 
-test builds to verify that everything is working. We also have a LAVA v2 
-Server Virtual Machine running with a QEMU device and a Beaglebone-Black 
-device pre-loaded. Both have a YAML health-check job loaded into their 
-respective device types.
+     Arnd
 
-This setup allows a developer to compile the kernel in multiple 
-configurations to suit the specification of their particular project and 
-to write tests for the appropriate actions in LAVA to thouroughly prove 
-the kernel. The tests can help fulfill and properly document any 
-customer specifications or regulatory requirements built into the 
-specific project.
-
-We are approaching a beta release of the CIP Kernel along with the 
-KernelCI & LAVA v2 Virtual Machine in Week 6 of 2017 before the Embedded 
-Linux Conference. For the early adopters, we've provided links to the 
-CIP-Kernel[1], the KernelCI[2] project, and the LAVA v2[3] Project. 
-Tutorials have been created for both the KernelCI[4] and LAVA v2[5] 
-Virtual Machines setup and configuration.
-
-On a technical note, we are working on merging the two Virtual Machines 
-together to ease the burden on the "Single Developer at their Desk with 
-a Board" scenario.
-
-Links:
-[1] The CIP Kernel: https://gitlab.com/cip-project/linux-cip
-
-[2] The KernelCI Virtual Machine files: 
-https://gitlab.com/cip-project/kernelci-debian
-
-[3] The LAVA v2 Virtual Machine files: 
-https://gitlab.com/cip-project/lava2-badsd
-
-[4] Tutorial: How to Set up and Configure a KernelCI Virtual Machine: 
-https://wiki.linuxfoundation.org/civilinfrastructureplatform/testingkernelcivmsetup
-
-[5] Tutorial: How to Set up and Configure a LAVA v2 Virtual Machine: 
-https://wiki.linuxfoundation.org/civilinfrastructureplatform/testinglavav2vmsetup
-
-Thank you!
-
-
--- 
-Don Brown
-Codethink, Ltd.
-Software Engineering Consultant
-Indianapolis, IN USA
-Email: don.brown at codethink.co.uk
-Mobile: +1 317-560-0513
+[1] https://sourceware.org/glibc/wiki/Y2038ProofnessDesign
