@@ -1,122 +1,61 @@
 From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
-Date: Mon, 20 Feb 2017 15:25:29 -0800
-Subject: [cip-dev] Fwd: (Feb 21, 4pm) LTSI Workshop @ ELC Portland
-In-Reply-To: <CAFo+snXyhq4bexWnfLU_Q2Z++5=3_oh23DJbdJRUj4N=t+NrEA@mail.gmail.com>
-References: <CAFo+snXizTfpdtu7Wiuxhd3H-7BQLuqRUuMpw21h6wp+37Rc8A@mail.gmail.com>
-	<CAFo+snXyhq4bexWnfLU_Q2Z++5=3_oh23DJbdJRUj4N=t+NrEA@mail.gmail.com>
-Message-ID: <58AB7AE9.6090101@codethink.co.uk>
+Date: Wed, 22 Feb 2017 10:51:19 -0800
+Subject: [cip-dev] Board at desk - Single dev. beta release: KernelCI +
+ LAVAv2 on your machine to test kernels
+Message-ID: <58ADDDA7.3020808@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+Dear CIP friends,
 
-On 20/02/17 13:16, Noriaki Fukuyasu wrote:
-> Hi
->
-> Please let me forward below.
+The Civil Infrastructure Platform project[1], a Linux Foundation 
+Initiative, is happy to announce the publication of a customised and 
+easy to deploy instance of the KernelCI + LAVAv2 projects as a vagrant 
+VM image/recipe, containing the tools and configurations used and 
+developed by the kernelci project, the biggest collaborative testing effort.
 
-I will attend to the LTSI workshop.
+This VM is configured so any developer can deploy it in her machine and 
+test a specific kernel on a board physically connected to it.
 
->
-> Regards
->
-> Nori
->
->
-> ---------- Forwarded message ---------
-> From: Noriaki Fukuyasu <fukuyasu@linuxfoundation.org
-> <mailto:fukuyasu@linuxfoundation.org>>
-> Date: 2017?1?25?(?) 5:29
-> Subject: (Feb 21, 4pm) LTSI Workshop @ ELC Portland
-> To: ltsi-dev at lists.linuxfoundation.org
-> <mailto:ltsi-dev@lists.linuxfoundation.org>
-> <ltsi-dev@lists.linuxfoundation.org
-> <mailto:ltsi-dev@lists.linuxfoundation.org>>
->
->
-> Hi LTSI developers!
->
->
-> We are going to have another LTSI Workshop next month at ELC Portland.
->
-> If you are attending ELC, please come join!
->
-> (If you are interested in joining the workshop, please send me a note. )
->
->
-> Date: Feb 21st, 2017
->
-> Time: 4pm to 6pm
->
-> Venue: Director's Suite on the 3rd floor.
->
->
-> Agenda:
->
->   * Brief Status Update & LTSI Development Schedule
->   * Exchange thoughts ?Upstream First? (*1). There will be 2-3 guest
->     speakers to talk about their experiences and thoughts on "Upstream
->     First" to kick the discussions.
->
->
-> NOTE (*1):  This year, LTSI would like to spend sometime on gathering
-> the information of how companies are taking advantage of upstream
-> development. Particularly, we are interested in the following questions:
->
->   * What is the business value
->   * What are the challenges
->   * What makes it successful (from the real company experiences) etc
->
-> We are planning to write up a white paper on this subject later this
-> year based on the information we gather from the workshop.
->
->
-> See you there!!
->
->
-> regards
->
->
-> Noriaki Fukuyasu
->
->
->
-> --
-> Noriaki Fukuyasu
->
-> The Linux Foundation
-> Mail: fukuyasu at linuxfoundation.org <mailto:fukuyasu@linuxfoundation.org>
-> Tel: +81-80-4350-1133
-> Twitter: nori_fukuyasu
-> Facebook: linuxfoundationjp
->
-> Please visit our web sites:
-> http://www.linuxfoundation.jp
-> http://events.linuxfoundation.jp
-> http://jp.linux.com
->
-> --
-> Noriaki Fukuyasu
->
-> The Linux Foundation
-> Mail: fukuyasu at linuxfoundation.org <mailto:fukuyasu@linuxfoundation.org>
-> Tel: +81-80-4350-1133
-> Twitter: nori_fukuyasu
-> Facebook: linuxfoundationjp
->
-> Please visit our web sites:
-> http://www.linuxfoundation.jp
-> http://events.linuxfoundation.jp
-> http://jp.linux.com
->
->
->
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
->
+Please visit the Download page[2] if you are interested in using 
+kernelci on your own machine. To learn more about the current release 
+please visit the feature page[3].
 
+Goal of this effort
+
+kernelci.org[4] is designed as a "open collaborative service", mostly 
+used by the Linux Kernel community. At CIP, we believe this effort we 
+now publish under beta state will help:
+
+a.- To create a first step towards "trusted testing" within CIP for 
+every member and the CIP kernel maintainer.
+
+b.- To extend and simplify the current use case satisfied by 
+kernelci.org, focusing on those embedded developers that have direct 
+access to boards, by reducing the deployment, configuration and 
+maintenance costs.
+
+c.- To severely increase the number of developers and organizations 
+willing to participate in kernelci.org by providing a simple mechanism 
+to evaluate the technologies involved and to test Linux kernels.
+
+The final release date will depend on the feedback received. Check the 
+roadmap[5] for further details. CIP is a community project so we welcome 
+contributions[6] to this effort.
+
+Download kernelci Board @desk - Single dev[2]
+
+[1] https://www.cip-project.org/
+[2] https://wiki.linuxfoundation.org/civilinfrastructureplatform/cipdownload
+[2] 
+https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptestingboardatdesksingledevfeaturepage
+[4] https://kernelci.org/
+[5] 
+https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptesting#testing-at-cipactions
+[6] 
+https://wiki.linuxfoundation.org/civilinfrastructureplatform/start#participate-in-cip
+
+Best Regards
 -- 
 Agustin Benito Bethencourt
 Principal Consultant - FOSS at Codethink
