@@ -1,24 +1,25 @@
 From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Fri, 24 Mar 2017 13:16:19 +0000
+Date: Fri, 24 Mar 2017 13:17:11 +0000
 Subject: [cip-dev] Kernel feature support
-In-Reply-To: <HK2PR0601MB1329D4E7B2FC29BE6F011CFBB73F0@HK2PR0601MB1329.apcprd06.prod.outlook.com>
+In-Reply-To: <04EAB7311EE43145B2D3536183D1A84454EA4E9C@GSjpTKYDCembx31.service.hitachi.net>
 References: <1489070021.2949.73.camel@codethink.co.uk>
 	<58C9695D.9090908@codethink.co.uk>
-	<HK2PR0601MB1329D4E7B2FC29BE6F011CFBB73F0@HK2PR0601MB1329.apcprd06.prod.outlook.com>
-Message-ID: <1490361379.3749.97.camel@codethink.co.uk>
+	<04EAB7311EE43145B2D3536183D1A84454EA4E9C@GSjpTKYDCembx31.service.hitachi.net>
+Message-ID: <1490361431.3749.98.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Thu, 2017-03-23 at 16:32 +0000, Chris Paterson wrote:
+On Fri, 2017-03-24 at 03:39 +0000, ???? / KAWAI?HIDEHIRO wrote:
 [...]
-> From an SoC vendor point of view, ideally we'd like the interfaces
-> provided by the reference platform to be included. As support for our
-> CIP reference platform is not yet mainlined, I can't provide the
-> exact .config yet. However it will likely be very similar to
-> shmobile_defconfig [1].
-[...]
+> I attached a defconfig for one of our products running on 4.4.12.
+> This config is based on omap2plus_defconfig, and a diff from
+> omap2plus_defconfig is also attached.
+>
+> Currently, each config item has not been prioritized yet, and it
+> may contain non-important items.  Please treat our defconfig
+> as a reference at this point.
 
-Thanks, I'll look through this config.
+Thanks, this is useful.
 
 Ben.
 
