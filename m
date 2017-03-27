@@ -1,77 +1,56 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Mon, 27 Mar 2017 13:40:52 +0200
-Subject: [cip-dev] Kernel feature support
-In-Reply-To: <d71c9a03-d9cb-2793-dd9e-9d198e8079f1@siemens.com>
-References: <1489070021.2949.73.camel@codethink.co.uk>
-	<58C9695D.9090908@codethink.co.uk>
-	<d71c9a03-d9cb-2793-dd9e-9d198e8079f1@siemens.com>
-Message-ID: <da4b949b-a763-9c55-b96e-bf41cf0f6af8@siemens.com>
+From: robert.marshall@codethink.co.uk (Robert Marshall)
+Date: Mon, 27 Mar 2017 15:02:46 +0100
+Subject: [cip-dev] Update 2017 wk12
+Message-ID: <87mvc6n7g9.fsf@ctlt579.codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 2017-03-27 12:31, Gernot Hillier wrote:
-> On 15.03.2017 17:18, Agustin Benito Bethencourt wrote:
->> Hi,
->>
->> On 09/03/17 15:33, Ben Hutchings wrote:
->>> We've previously agreed that not all kernel features (drivers,
->>> filesystems, network protocols, etc.) can be supported in an SLTS
->>> branch.  I'd like to start working out what the supported features
->>> should be for the 4.4 branch.
->>>
->>> Are members able to share their kernel .config files, showing which
->>> features are enabled?  Or would you prefer to specify your needs at a
->>> slightly higher level?
->>
->> Answering this question is important to discard features in 4.4 that are
->> not of CIP interest so we can severely reduce the amount of effort that
->> we will need to do in terms of fixes analysis, security etc. in the future.
->>
->> Please take some time to provide feedback.
-> 
-> Sorry for the late reply!
+Dear CIP friends,
 
-Fell through my cracks as well, just sending out another internal call
-for more product configs. One is attached already, derived from
-github.com/siemens/meta-iot2000.
+here is the report of those tasks related with Testing and kernel
+maintenance that we have been working on the past two weeks:
 
-> 
-> Please find attached an x86 kernel configuration from early product
-> development using kernel 4.4.
-> 
-> This product uses nearly-COTS server hardware due to needed computation
-> power, but also comes with nice embedded requirements like longterm
-> maintenance - and as a special need, real-time support, so we use
-> Linux-Ipipe/Xenomai here.
-> 
-> This means two things:
-> * many included drivers (especially in net and storage) are only
->   activated "to be prepared" for future hw replacements
-> * Feel free to either include Xenomai on your list as a used "kernel
->   feature" or to ignore the related options.
+The whole team has been in Manchester for a week and has taken advantage
+of that to have various face2face meetings.
 
-Xenomai is not in CIP scope right now (though Siemens would welcome
-anyone interested in collaborating on it).
+CIP Testing
 
-In general, anything in a config not part of upstream is filtered out
-"automatically", I would say. There are switches for out-of-tree
-features in the iot2000 config as well (we are still in the process of
-upstreaming).
+The following issues are being actively worked on:
+* Issue #18 Exported vagrant box for an already loaded instance of CIP -
+  the size of this instance has been reduced and a script is being
+  prepared for the initial setup. (Issue #50)
+* Issue #43 Refining test so that it uses the kernelci locally built kernel
+* Issue #37 prepared checklist for release
+* Issue #28 is still being investigated - to either document the
+  requirement or alter the test script so if necessary it performs a
+  'manual' login.
+  
 
-> 
-> So same as with the config from Hidehiro Kawai: please let me know if
-> you need prioritized list of drivers or other features!
-> 
+* Awaiting edit rights for Robert on the CIP public wiki
 
-Jan
+* Closed various solved issues
+** #16 - Beaglebone black health check failing
+** #22 - support arm64 build
+** #33 - the VM requiring a weird mixture of debian versions
+** #49 - deleted the VagrantFile sets up a USB passthru which is never used 
+** #47 - document the possible timeouts on the QEMU test
 
--- 
-Siemens AG, Corporate Technology, CT RDA ITP SES-DE
-Corporate Competence Center Embedded Linux
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: .config.bz2
-Type: application/x-bzip
-Size: 21169 bytes
-Desc: not available
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20170327/64a8370d/attachment-0001.bin>
+
+CIP kernel maintenance
+
+* Ben has the VM working under Debian stable
+
+Remember you can:
+* Download the beta version of Board at Desk - Single dev VM at the
+CIP testing Download page:
+https://wiki.linuxfoundation.org/civilinfrastructureplatform/cipdownload
+* All issues/tickets referred in this report can be found in our
+gitlab.com testing project:
+https://gitlab.com/cip-project/testing/boards
+
+Codethink has published a blog post related with CIP:
+https://www.codethink.co.uk/blog/articles/2017/why-codethink-founding-member-civil-infrastructure-platform/
+
+Best Regards
+
+Robert
