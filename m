@@ -1,68 +1,94 @@
-From: takuo.koguchi.sw@hitachi.com (=?iso-2022-jp?B?GyRCPi44fUJ2SVcbKEIgLyBLT0dVQ0hJGyRCISQbKEJUQUtVTw==?=)
-Date: Thu, 6 Apr 2017 05:53:32 +0000
-Subject: [cip-dev] CIP TSC meeting minutes (3 April 2017)
-In-Reply-To: <950bbc30-3c43-9b30-9b27-c27cf4e3c773@toshiba.co.jp>
-References: <950bbc30-3c43-9b30-9b27-c27cf4e3c773@toshiba.co.jp>
-Message-ID: <390B4EACA1A32748BA6BC7F859F7D71655306C33@GSjpTKYDCembx31.service.hitachi.net>
+From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
+Date: Mon, 10 Apr 2017 11:28:24 +0100
+Subject: [cip-dev] Update 2017wk14
+Message-ID: <58EB5E48.4070201@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Yoshi,
+Dear CIP friends,
 
-Regarding to my project-x action item, recipes-kernel for BBB and CycloneV is already posted.
+here is the report of those tasks related with Testing and kernel 
+maintenance that Don, Ben, Robert, Lachlan and myself has been working 
+on the past two weeks (12 and 13):
 
-If you copy recipes-kernel to your usual poky build (i.e. DISTRO = poky without meta-debian,)
-you will be able to bitbake virtual/kernel.
+++ Board At Desk - Single Dev
 
-But it you want to use this recipe with meta-debian, there are some issues.
-1) you have to add meta-PROJECTX/conf/local.conf.sample and bblayer.conf.sample manually.
- This is my fault. I forgot to include these files. You can copy these files from deby-qemux86-64/meta-PROJECTX/conf
+The B.A.D.-S.D. team were facing the last few tasks before the release 
+when upstream updated kernelci. Some of the changes impacted us. I 
+decided to include the updates in this coming release despite having 
+past Beta milestone in order to match upstream, which will delay our 
+release, scheduled for mid April. In any case, we expect to be testing 
+the kernel on regular basis by the time we reach Open Source Summit 
+Japan. That has not changed.
 
-If you do the above, you can bitbake virtual/kernel if the followings are in conf/local.conf
-MACHINE="beaglebone"
-LINUX_DEFCONFIG="omap2plus_defconfig"
+This is always a challenging situation for any downstream project, when 
+you get an important update from upstream in the middle of the release 
+process, as we currently are.
 
-But this is still not what I meant for.
-In the above mentioned build my "linux-cip" recipe is not used even if 
-PREFERRED_PROVIDER_virtual/kernel = "linux-cip"
-is defined in local.conf because PREFERRED_PROVIDER _virtual/kernel is overwritten 
-by meta-debian/conf\/distro/include/debian-preferred-provider.inc:2
-to     "linux-base"
+The reason I took this decision is that we, as CIP project, will heavily 
+depend on upstream to provide support on LAVA and KernelCI to our 
+consumers, due to the complexity of the tooling. We will not be able to 
+become the default support channel. It is far from being our goal 
+either. I believe it is better for CIP to participate in the existing 
+support channel upstream has.
 
-I hope you can change 
-PREFERRED_PROVIDER_virtual/kernel = "linux-base"
-for 
-PREFERRED_PROVIDER_virtual/kernel ?= "linux-base"
+Being up to date with them is the only reasonable way to get that 
+support for our future users. Since there is no release from our side 
+yet, doing this right will help us in our credibility as project from 
+the very beginning.
 
-Unfortunately there are still some issue to build kernel with meta-debian. I am working on it.
+After taken the decision, the following question is, what will we do if 
+this situation happens again in the future? And it will.
 
+It would be very unfortunate if this happens again before our release, 
+based on our conversations with upstream. In any case, we will provide 
+an stable VM, now that have a "download service", as soon as the issues 
+related with the recent update are fixed (we are currently fixing what 
+we believe it is the last one, #65).
 
-Best Regard,
+In general, the VM images will work as stable releases while the 
+"development VM" will be provided through Vagrant. This way those 
+interested in the development of the tooling itself will be able to get 
+the latest commits as they are merged, while those only interested in 
+using Board At Desk - Single Dev as consumers will always have an 
+"stable image" working, independently of what upstream or our team does.
 
-Takuo Koguchi
- 
-> -----Original Message-----
-> From: cip-dev-bounces at lists.cip-project.org
-> [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of KOBAYASHI Yoshitake
-> Sent: Thursday, April 06, 2017 2:07 PM
-> To: cip-dev at lists.cip-project.org
-> Subject: [!][cip-dev] CIP TSC meeting minutes (3 April 2017)
-> 
-> Hi everyone,
-> 
-> I uploaded the meeting minutes for CIP Technical Steering Committee meeting held 3
-> April, 2017 at the following link.
-> https://wiki.linuxfoundation.org/civilinfrastructureplatform/tsc-meetings/tsc_mm_apr03201
-> 7
-> 
-> Past TSC meeting minutes can be find at the following link.
-> https://wiki.linuxfoundation.org/civilinfrastructureplatform/tsc-meetings.
-> 
-> Best regards,
-> Yoshi
-> 
-> 
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
+We will inform through this mailing list as soon as the VM gets to the 
+state prior to the upstream update. We will re-focus then on the release.
+
+I apologise for the inconveniences. I understand some of you are looking 
+forward to use the VM to test the CIP kernel. It was a tough decision to 
+make, with a high impact in the short term, but a higher risk for the 
+project in the mid term, in my modest opinion.
+
+Issues closed:
+* #49 USB passthrough config needs correcting
+* #60 Kernel build failure
+* #61 Error on running install_frontend.sh
+* #57 Missing error checks in provisioning scripts
+* #55 fix behaviour of vm with ifup failures
+* #64 The KernelCI Backend fails on missing Ansible variable error_email
+* #63 the kernelci webserver will no longer display builds that have 
+been performed. This is fact is the same issue that #65
+
+Other issues
+* #58 ser2net integration script may generate incorrect configuration 
+was reopened.
+
+++ Kernel maintenance
+
+Main tasks:
+* Kernel security tracker: Ben H. wrote a template and implemented importers
+* Kernel feature support: Ben H. collected and began reviewing members' 
+configurations
+* Ben Hutchings participated in the last TSC bi-weekly call. He answered 
+questions at members' phone meeting. Please check the minutes for 
+further details: 
+https://wiki.linuxfoundation.org/civilinfrastructureplatform/tsc-meetings/tsc_mm_apr032017
+* Ben H. reviewed changes for Linux 4.4.60
+
+Best Regards
+-- 
+Agustin Benito Bethencourt
+Principal Consultant - FOSS at Codethink
+agustin.benito at codethink.co.uk
