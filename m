@@ -1,32 +1,20 @@
-From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
-Date: Tue, 18 Apr 2017 17:13:37 +0100
-Subject: [cip-dev] CIP workshop on 30th May at the OSSJ venue
-Message-ID: <58F63B31.8040102@codethink.co.uk>
+From: tuan.leminh@toshiba-tsdv.com (Tuan Le Minh)
+Date: Mon, 17 Apr 2017 10:13:03 +0700
+Subject: [cip-dev] Test mail from TSDV
+Message-ID: <003101d2b728$86ecb3c0$94c61b40$@toshiba-tsdv.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Dear CIP friends,
+Test
 
-as you can read in the meeting minutes of yesterday's TSC meeting[1], 
-the day before the Open Source Summit Japan starts, May 30th, we will 
-organise some specific sessions related with CIP in the same venue.
+ 
 
-We are in the process of defining what we will do from 11:00 to 17:00. 
-Feel free to:
-* Let us know if you are interested in attending.
-* Provide input on the topics you would like to work on, discuss or 
-receive information.
+Tuan | IS team
 
-Maybe creating a wiki page to coordinate the activities would be wise, 
-right?
-
-Best Regards
-
-
-[1] 
-https://wiki.linuxfoundation.org/civilinfrastructureplatform/tsc-meetings/tsc_mm_apr172017 
-
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20170417/c5bac953/attachment.html>
+-------------- next part --------------
 -- 
-Agustin Benito Bethencourt
-Principal Consultant - FOSS at Codethink
-agustin.benito at codethink.co.uk
+This mail was scanned by BitDefender
+For more information please visit http://www.bitdefender.com
