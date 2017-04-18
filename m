@@ -1,26 +1,30 @@
 From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
-Date: Tue, 18 Apr 2017 17:06:34 +0100
-Subject: [cip-dev] CIP TSC meeting minutes (17 April 2017)
-In-Reply-To: <268e138b-7f80-e674-6772-97806b659711@toshiba.co.jp>
-References: <268e138b-7f80-e674-6772-97806b659711@toshiba.co.jp>
-Message-ID: <58F6398A.2080601@codethink.co.uk>
+Date: Tue, 18 Apr 2017 17:13:37 +0100
+Subject: [cip-dev] CIP workshop on 30th May at the OSSJ venue
+Message-ID: <58F63B31.8040102@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+Dear CIP friends,
 
-On 18/04/17 15:42, KOBAYASHI Yoshitake wrote:
-> Hi all,
->
-> I have uploaded meeting minutes for yesterday's CIP TSC conference call.
-> https://wiki.linuxfoundation.org/civilinfrastructureplatform/tsc-meetings/tsc_mm_apr172017
->
-> If you have any comments, please let us know.
+as you can read in the meeting minutes of yesterday's TSC meeting[1], 
+the day before the Open Source Summit Japan starts, May 30th, we will 
+organise some specific sessions related with CIP in the same venue.
 
-Thank you very much for formatting and publishing the minutes. I see 
-this as a small but relevant improvement towards transparency.
+We are in the process of defining what we will do from 11:00 to 17:00. 
+Feel free to:
+* Let us know if you are interested in attending.
+* Provide input on the topics you would like to work on, discuss or 
+receive information.
+
+Maybe creating a wiki page to coordinate the activities would be wise, 
+right?
 
 Best Regards
+
+
+[1] 
+https://wiki.linuxfoundation.org/civilinfrastructureplatform/tsc-meetings/tsc_mm_apr172017 
 
 -- 
 Agustin Benito Bethencourt
