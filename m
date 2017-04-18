@@ -1,15 +1,16 @@
-From: robert.marshall@codethink.co.uk (Robert Marshall)
-Date: Tue, 18 Apr 2017 15:00:35 +0100
-Subject: [cip-dev] telnet connection and bbb testing
-Message-ID: <87inm1izng.fsf@ctlt579.codethink.co.uk>
+From: yoshitake.kobayashi@toshiba.co.jp (KOBAYASHI Yoshitake)
+Date: Tue, 18 Apr 2017 23:42:51 +0900
+Subject: [cip-dev] CIP TSC meeting minutes (17 April 2017)
+Message-ID: <268e138b-7f80-e674-6772-97806b659711@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Don
+Hi all,
 
-Our bbb_debian_ramdisk_test2.yaml has a auto_login section defining a
-login prompt username and password - was this approach tried and abandoned before
-starting to use keeping a telnet session active on the beaglebone-black
-tests?
+I have uploaded meeting minutes for yesterday's CIP TSC conference call.
+https://wiki.linuxfoundation.org/civilinfrastructureplatform/tsc-meetings/tsc_mm_apr172017
 
-Robert
+If you have any comments, please let us know.
+
+Best regards,
+Yoshi
