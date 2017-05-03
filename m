@@ -1,27 +1,59 @@
-From: robert.marshall@codethink.co.uk (Robert Marshall)
-Date: Wed, 03 May 2017 10:27:31 +0100
-Subject: [cip-dev] Update 2017wk17
-In-Reply-To: <5908B6CE.5080802@codethink.co.uk> (Agustin Benito Bethencourt's
-	message of "Tue, 2 May 2017 17:41:50 +0100")
-References: <5908B6CE.5080802@codethink.co.uk>
-Message-ID: <871ss6thmk.fsf@ctlt579.codethink.co.uk>
+From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
+Date: Wed, 3 May 2017 11:16:45 +0100
+Subject: [cip-dev] CIP open workshop at OSSJ: May 30th from 15:00 to 17:00
+	hours
+Message-ID: <5909AE0D.7010905@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Agustin Benito Bethencourt <agustin.benito@codethink.co.uk> writes:
+Dear CIP friends,
 
->
-> * Instructions for downloading the VM box #74
-> https://gitlab.com/cip-project/testing/issues/74 ---> Feel free to
-> download the VM and test it!
->
-....
-> * Prior to Health Check, you must telnet into the BBB as root, then
-> quit telnet without logging out. Fixed #28
-> https://gitlab.com/cip-project/testing/issues/28
+the day before the OSSJ starts, on May 30th, CIP will have a full day of 
+meetings.
 
-I've updated https://gitlab.com/cip-project/testing/issues/74 with a
-comment so that the VM box can be issued with the fix for #28 as the
-current box was exported before the fix was made.
+We are organising an open workshop to talk, present, demo and work on 
+technical topics that might be of interest to this Initiative.
 
-Robert
+The workshop will take place from 15:00 hours to 17:00 hours on May 30th 
+in a room (to be determined) at the OSSJ venue.
+
+Please follow up the news about this activity in our wiki page[1]
+
+++ Open workshop. Who can participate?
+
+The workshop is open to all of you who are interested, no matter if you 
+are CIP Members or not. For those of you who are not yet part of CIP, it 
+will be a great opportunity to know a little more about who we are and 
+what we do.
+
+++ How can I register?
+
+If you are attending, it is very important that you tell us in advance 
+since we need to plan the room capacity accordingly. There are two ways 
+in which you can confirm your participation:
+
+1.- Through this mailing list, by providing the following information:
+    * Name.
+    * Company.
+    * Position/role.
+    * Topics you are interested on.
+
+2.- Directly adding your name to the participants table on the wiki[1].
+
+Please check the wiki page anyway for updates. Again, this is an open 
+workshop. Feel free to join.
+
+++ Can I propose topics?
+
+Yes. Please send your suggestions to this cip-dev mailing list so we 
+create the agenda as soon as possible.
+
+[1] 
+https://wiki.linuxfoundation.org/civilinfrastructureplatform/cipconferences#workshops-and-meetings
+
+Best Regards
+
+-- 
+Agustin Benito Bethencourt
+Principal Consultant - FOSS at Codethink
+agustin.benito at codethink.co.uk
