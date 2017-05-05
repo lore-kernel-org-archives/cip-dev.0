@@ -1,59 +1,41 @@
-From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
-Date: Wed, 3 May 2017 11:16:45 +0100
-Subject: [cip-dev] CIP open workshop at OSSJ: May 30th from 15:00 to 17:00
-	hours
-Message-ID: <5909AE0D.7010905@codethink.co.uk>
+From: don.brown@codethink.com (Don Brown)
+Date: Fri, 05 May 2017 16:57:54 -0400
+Subject: [cip-dev] Creating a Linux kernel from the stock linux-cip repo
+Message-ID: <e9a6f6eff0f21155d7b6b77282912377@codethink.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Dear CIP friends,
+Hi Ben,
 
-the day before the OSSJ starts, on May 30th, CIP will have a full day of 
-meetings.
+As I was working with the Beaglebone Black trying to get the health 
+check to pass, it occurred to me that I don't know how to create a 
+kernel specifically for the BBB using just the stock CIP Kernel from 
+https://gitlab.com/cip-project/linux-cip
 
-We are organising an open workshop to talk, present, demo and work on 
-technical topics that might be of interest to this Initiative.
+The linux-cip kernel doesn't have a defconfig for the Beaglebone Black, 
+or for the AM335x CPU as far as I can tell.
 
-The workshop will take place from 15:00 hours to 17:00 hours on May 30th 
-in a room (to be determined) at the OSSJ venue.
+The Linaro BBB Health Check pulls the am335x-boneblack.dtb from their 
+repository, but it isn't clear what we need to add to the linux-cip to 
+have KernelCI build the kernel from scratch. Can you please take a look 
+and let us know?
 
-Please follow up the news about this activity in our wiki page[1]
+The official repo is at:
+https://github.com/beagleboard/linux
 
-++ Open workshop. Who can participate?
+It has a bb.org_defconfig here: 
+https://github.com/beagleboard/linux/blob/4.4/arch/arm/configs/bb.org_defconfig
+Is that all we need?
 
-The workshop is open to all of you who are interested, no matter if you 
-are CIP Members or not. For those of you who are not yet part of CIP, it 
-will be a great opportunity to know a little more about who we are and 
-what we do.
 
-++ How can I register?
+Thank you!
 
-If you are attending, it is very important that you tell us in advance 
-since we need to plan the room capacity accordingly. There are two ways 
-in which you can confirm your participation:
 
-1.- Through this mailing list, by providing the following information:
-    * Name.
-    * Company.
-    * Position/role.
-    * Topics you are interested on.
-
-2.- Directly adding your name to the participants table on the wiki[1].
-
-Please check the wiki page anyway for updates. Again, this is an open 
-workshop. Feel free to join.
-
-++ Can I propose topics?
-
-Yes. Please send your suggestions to this cip-dev mailing list so we 
-create the agenda as soon as possible.
-
-[1] 
-https://wiki.linuxfoundation.org/civilinfrastructureplatform/cipconferences#workshops-and-meetings
-
-Best Regards
 
 -- 
-Agustin Benito Bethencourt
-Principal Consultant - FOSS at Codethink
-agustin.benito at codethink.co.uk
+Don Brown
+Codethink, Ltd.
+Software Engineering Consultant
+Indianapolis, IN USA
+Email: don.brown at codethink.co.uk
+Mobile: +1 317-560-0513
