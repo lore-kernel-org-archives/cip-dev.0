@@ -1,23 +1,40 @@
-From: yoshitake.kobayashi@toshiba.co.jp (KOBAYASHI Yoshitake)
-Date: Wed, 10 May 2017 01:05:03 +0900
-Subject: [cip-dev] CIP TSC meeting minutes (08 May 2017)
-In-Reply-To: <268e138b-7f80-e674-6772-97806b659711@toshiba.co.jp>
-References: <268e138b-7f80-e674-6772-97806b659711@toshiba.co.jp>
-Message-ID: <5f640004-73fc-b7b3-019c-a604c56af52e@toshiba.co.jp>
+From: robert.marshall@codethink.co.uk (Robert Marshall)
+Date: Wed, 10 May 2017 14:20:14 +0100
+Subject: [cip-dev] script for health check (or any script which involves
+	uploading kernel to BBB)
+Message-ID: <87bmr0u9v5.fsf@ctlt579.codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+The kernelci-build uploads the kernel (for a BBB build) to
 
-I have uploaded meeting minutes for CIP TSC conference call on 8th May.
-https://wiki.linuxfoundation.org/civilinfrastructureplatform/tsc-meetings/tsc_mm_may082017
+http://localhost:8010/cip-bbb1/cip_v4.4.27/v4.4.27/arm/omap2plus_defconfig/
 
-As Agustin announced in this mail list, CIP workshop will be held on 30th May.
-https://wiki.linuxfoundation.org/civilinfrastructureplatform/cipconferences/cipwsossj2017
+So that's
 
-This workshop is open to all of you.
-If you plan to attend the workshop, please feel free contact us by email.
-If you aren't a CIP member, I will update above wiki page for you.
+http://localhost:8010/$TREE_NAME/$BRANCH/$TAG/$ARCH/omap2plus_defconfig/
 
-Best regards,
-Yoshi
+I think the ARCH can be embedded in the script (otherwise we'd need to
+embed omap2plus_defconfig too..) so we just need a script using the
+other 3 values which can then sed a base yaml file creating the
+correct urls outputting it to a new file and then running lava-tool on
+that will upload and test that kernel build to the BBB
+
+TREE_NAME can be taken from the environment variable (if it's not set -
+if for example the kernel wasn't build on this login) request the user
+to set it before running the script
+
+BRANCH and TAG can be retrieved via git commands much as build.py does
+
+So my intention is to create a script in /vagrant/scripts which is run
+
+/vagrant/scripts/create_test.sh input.yaml output.yaml which takes a
+yaml file - which could be in the release or a new one created by a B at D
+user and outputs a file (the second parameter) which can then be used in
+a lava-tool command
+
+
+Thoughts? Counter suggestions?
+
+
+Robert
