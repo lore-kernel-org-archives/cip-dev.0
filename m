@@ -1,37 +1,23 @@
 From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
-Date: Wed, 10 May 2017 15:00:24 +0100
-Subject: [cip-dev] CIP testing team meetings
-In-Reply-To: <5901BFF4.3030506@codethink.co.uk>
-References: <5901BFF4.3030506@codethink.co.uk>
-Message-ID: <59131CF8.8040104@codethink.co.uk>
+Date: Thu, 11 May 2017 13:16:53 +0100
+Subject: [cip-dev] Board at desk v0.9 release schedule
+Message-ID: <59145635.9090801@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi,
 
-On 27/04/17 10:55, Agustin Benito Bethencourt wrote:
-> Hi,
->
-> since we are geographically distributed, the guys from Codethink
-> involved in the Board at Desk development meet through Google Hangout
-> Tuesdays and Thursdays.
->
-> If any of you is interested in asking questions to the developers
-> directly or simply follow up where we are at, feel free to join on
-> Thursdays at 11:00 UK time (12:00 CEST). That is in a few minutes today.
->
+during today's meeting, I got input from the engineers about the two 
+ship-stoppers we have been facing the last few days:
+* lava-tool integration #76: 
+https://gitlab.com/cip-project/testing/issues/76
+* Issues related with different U-boot version associated to BBB #53: 
+https://gitlab.com/cip-project/testing/issues/53
 
-We will have a meeting through hangout tomorrow Thursday at 10:00 UTC
+They are no longer ship-stoppers so we will declare gold master on 
+Monday May 15th and release on Tuesday May 23rd.
 
-Link to the hangout:
-https://plus.google.com/hangouts/_/codethink.co.uk/team-event-cip?hceid=YWd1c3Rpbi5iZW5pdG9AY29kZXRoaW5rLmNvLnVr.6nlrt0lrh4sf9dd71qruh3qbm4&authuser=1 
-
->
->
-> We will approve your join request right away.
->
-> Best Regards
->
+Best Regards
 
 -- 
 Agustin Benito Bethencourt
