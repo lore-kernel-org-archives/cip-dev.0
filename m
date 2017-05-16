@@ -1,16 +1,16 @@
-From: yoshitake.kobayashi@toshiba.co.jp (KOBAYASHI Yoshitake)
-Date: Tue, 16 May 2017 18:00:18 +0900
-Subject: [cip-dev] CIP TSC meeting minutes (15 May 2017)
-In-Reply-To: <5f640004-73fc-b7b3-019c-a604c56af52e@toshiba.co.jp>
-References: <5f640004-73fc-b7b3-019c-a604c56af52e@toshiba.co.jp>
-Message-ID: <0cf435ba-004f-652f-d529-d1544ee98caa@toshiba.co.jp>
+From: robert.marshall@codethink.co.uk (Robert Marshall)
+Date: Tue, 16 May 2017 15:01:33 +0100
+Subject: [cip-dev] B @ D 0.9 Gold Master
+Message-ID: <87r2zo3npe.fsf@ctlt579.codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+We are about to close https://gitlab.com/cip-project/testing/issues/85 -
+B @ D 0.9 Gold Master declaration and thus we are declaring that the Gold
+Master for release 0.9 is ready and we will move onto the deployment
+phase (issue 86).
 
-I uploaded meeting minutes for CIP TSC conference call on 15th May.
-https://wiki.linuxfoundation.org/civilinfrastructureplatform/tsc-meetings/tsc_mm_may152017
+Thank you for your support, encouragement and even (especially?) the bug
+reports.
 
-Best regards,
-Yoshi
+Robert
