@@ -1,48 +1,33 @@
 From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
-Date: Thu, 18 May 2017 12:06:54 +0100
-Subject: [cip-dev] B @ D 0.9 deployment (was Re: B @ D 0.9 Gold Master)
-In-Reply-To: <87wp9e1lja.fsf@ctlt579.codethink.co.uk>
-References: <87r2zo3npe.fsf@ctlt579.codethink.co.uk>
-	<87wp9e1lja.fsf@ctlt579.codethink.co.uk>
-Message-ID: <591D804E.4080508@codethink.co.uk>
+Date: Fri, 19 May 2017 16:23:42 +0100
+Subject: [cip-dev] Call for translations: social media messages
+Message-ID: <591F0DFE.8030904@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi,
 
-On 18/05/17 11:55, Robert Marshall wrote:
-> Robert Marshall <robert.marshall@codethink.co.uk> writes:
->
->> We are about to close https://gitlab.com/cip-project/testing/issues/85 -
->> B @ D 0.9 Gold Master declaration and thus we are declaring that the Gold
->> Master for release 0.9 is ready and we will move onto the deployment
->> phase (issue 86).
->>
->> Thank you for your support, encouragement and even (especially?) the bug
->> reports.
->>
->
-> The package and the sources are now deployed and we will close
-> https://gitlab.com/cip-project/testing/issues/86 - you can find the
-> links to the downloadable files with that issue - and we will now move
-> onto the release documentation -
-> https://gitlab.com/cip-project/testing/issues/37
->
-> The release of B at D is scheduled for May 23rd at 11:00 UTC.
+any news have a greater impact if it is communicated in the readers 
+native language.
 
-Please do not spread the links on #86 before the release. The will be 
-structured and described in the Download page and promoted on the 
-Release Day.
+I have published some social media messages in the wiki[1] that will be 
+used to spread the word about the testing tools we are about to release 
+(May 23rd at 11:00 UTC), hoping that you you could help the CIP testing 
+team to translate them to other languages.
 
->
-> Robert
->
->
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
->
+This way not just the Linux Foundation but any of you can spread the 
+word in your own language.
+
+Feel free to add a new column for the translation of the messages into 
+your own language. I added also the release announcement in case you 
+want to translate it also.
+
+Thank you very much in advance for your collaboration.
+
+[1] 
+https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptestingmanagement#marketing-material-and-plan
+
+Best regards
 
 -- 
 Agustin Benito Bethencourt
