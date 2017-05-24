@@ -1,97 +1,159 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Wed, 24 May 2017 14:04:56 +0000
+From: fukuyasu@linuxfoundation.org (Noriaki Fukuyasu)
+Date: Thu, 25 May 2017 00:06:26 +0900
 Subject: [cip-dev] Toolchain Version
-In-Reply-To: <CAFo+snWy87+GFYkSibPvhJHMOAUhAiSMTJPhoxZNShFbjW8Z4A@mail.gmail.com>
+In-Reply-To: <HK2PR0601MB1329F6FBB83D77B68D15A3B1B7FE0@HK2PR0601MB1329.apcprd06.prod.outlook.com>
 References: <HK2PR0601MB132900113ED2A346CB849193B7FE0@HK2PR0601MB1329.apcprd06.prod.outlook.com>
 	<59255F72.1010306@codethink.co.uk>
 	<HK2PR0601MB1329C7E4934B2DCDD0D5947AB7FE0@HK2PR0601MB1329.apcprd06.prod.outlook.com>
 	<CAFo+snWy87+GFYkSibPvhJHMOAUhAiSMTJPhoxZNShFbjW8Z4A@mail.gmail.com>
-Message-ID: <HK2PR0601MB1329F6FBB83D77B68D15A3B1B7FE0@HK2PR0601MB1329.apcprd06.prod.outlook.com>
+	<HK2PR0601MB1329F6FBB83D77B68D15A3B1B7FE0@HK2PR0601MB1329.apcprd06.prod.outlook.com>
+Message-ID: <CAFo+snXqayeJ9gombMyU7KwertPCW+KHxGxgBg2L=4mmgOKocw@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Nori-san,
-
-I?m afraid that I cannot make OSS-J, so won?t be able to drive this conversation next week!
-
-I agree that it would be worth a discussion though.
-
-Kind regards, Chris
-
-From: Noriaki Fukuyasu [mailto:fukuyasu at linuxfoundation.org]
-Sent: 24 May 2017 15:03
-To: Chris Paterson <Chris.Paterson2@renesas.com>
-Cc: Agustin Benito Bethencourt <agustin.benito@codethink.co.uk>; cip-dev at lists.cip-project.org
-Subject: Re: [cip-dev] Toolchain Version
-
-Hi Chris
-
-I think is must be a great agenda for our open workshop next week.
-May be you can take an ownership of the agenda during the workshop.
-
-What do you think?
-
-regards
-
-Nori
+>I?m afraid that I cannot make OSS-J, so won?t be able to drive this
+conversation next week!
 
 
 
-On Wed, May 24, 2017 at 9:34 PM, Chris Paterson <Chris.Paterson2 at renesas.com<mailto:Chris.Paterson2@renesas.com>> wrote:
-Hello,
+Ah, too bad!
 
-> From: cip-dev-bounces at lists.cip-project.org<mailto:cip-dev-bounces@lists.cip-project.org> [mailto:cip-dev-<mailto:cip-dev->
-> bounces at lists.cip-project.org<mailto:bounces@lists.cip-project.org>] On Behalf Of Agustin Benito Bethencourt
-> Sent: 24 May 2017 11:25
-> Hi,
+
+
+
+On Wed, May 24, 2017 at 11:04 PM, Chris Paterson <
+Chris.Paterson2@renesas.com> wrote:
+
+> Hello Nori-san,
 >
-> On 24/05/17 09:16, Chris Paterson wrote:
-> > Hello all,
-> >
-> > Has the project decided upon the compiler/toolchain (and version) that
-> > will be used?
 >
-> No.
-
-Should it? I would have thought that as part of CIPs reproducible build/test environment we should be aiming to standardise all tools?
-
-What toolchain is everyone using at the moment?
-
-Kind regards, Chris
-
+>
+> I?m afraid that I cannot make OSS-J, so won?t be able to drive this
+> conversation next week!
+>
+>
+>
+> I agree that it would be worth a discussion though.
+>
+>
+>
+> Kind regards, Chris
+>
+>
+>
+> *From:* Noriaki Fukuyasu [mailto:fukuyasu at linuxfoundation.org]
+> *Sent:* 24 May 2017 15:03
+> *To:* Chris Paterson <Chris.Paterson2@renesas.com>
+> *Cc:* Agustin Benito Bethencourt <agustin.benito@codethink.co.uk>;
+> cip-dev at lists.cip-project.org
+> *Subject:* Re: [cip-dev] Toolchain Version
+>
+>
+>
+> Hi Chris
+>
+>
+>
+> I think is must be a great agenda for our open workshop next week.
+>
+> May be you can take an ownership of the agenda during the workshop.
+>
+>
+>
+> What do you think?
+>
+>
+>
+> regards
+>
+>
+>
+> Nori
+>
+>
+>
+>
+>
+>
+>
+> On Wed, May 24, 2017 at 9:34 PM, Chris Paterson <
+> Chris.Paterson2 at renesas.com> wrote:
+>
+> Hello,
+>
+> > From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-
+> > bounces at lists.cip-project.org] On Behalf Of Agustin Benito Bethencourt
+> > Sent: 24 May 2017 11:25
+> > Hi,
+> >
+> > On 24/05/17 09:16, Chris Paterson wrote:
+> > > Hello all,
+> > >
+> > > Has the project decided upon the compiler/toolchain (and version) that
+> > > will be used?
+> >
+> > No.
+>
+> Should it? I would have thought that as part of CIPs reproducible
+> build/test environment we should be aiming to standardise all tools?
+>
+> What toolchain is everyone using at the moment?
+>
+> Kind regards, Chris
+>
 >
 > >
-> > Thanks, Chris
+> > >
+> > > Thanks, Chris
+> > >
+> > >
+> > >
+> > > _______________________________________________
+> > > cip-dev mailing list
+> > > cip-dev at lists.cip-project.org
+> > > https://lists.cip-project.org/mailman/listinfo/cip-dev
+> > >
 > >
-> >
-> >
+> > --
+> > Agustin Benito Bethencourt
+> > Principal Consultant - FOSS at Codethink agustin.benito at codethink.co.uk
 > > _______________________________________________
 > > cip-dev mailing list
-> > cip-dev at lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>
+> > cip-dev at lists.cip-project.org
 > > https://lists.cip-project.org/mailman/listinfo/cip-dev
-> >
->
-> --
-> Agustin Benito Bethencourt
-> Principal Consultant - FOSS at Codethink agustin.benito at codethink.co.uk<mailto:agustin.benito@codethink.co.uk>
 > _______________________________________________
 > cip-dev mailing list
-> cip-dev at lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>
+> cip-dev at lists.cip-project.org
 > https://lists.cip-project.org/mailman/listinfo/cip-dev
-_______________________________________________
-cip-dev mailing list
-cip-dev at lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>
-https://lists.cip-project.org/mailman/listinfo/cip-dev
+>
+>
+>
+>
+>
+> --
+>
+> Noriaki Fukuyasu
+>
+>
+>
+> VP of Japan Operations
+>
+> The Linux Foundation
+>
+> Mail: fukuyasu at linuxfoundation.org
+>
+> Tel: +81-80-4350-1133 <080-4350-1133>
+>
 
 
 
---
+-- 
 Noriaki Fukuyasu
 
 VP of Japan Operations
 The Linux Foundation
-Mail: fukuyasu at linuxfoundation.org<mailto:fukuyasu@linuxfoundation.org>
+Mail: fukuyasu at linuxfoundation.org
 Tel: +81-80-4350-1133
 -------------- next part --------------
 An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20170524/680f90fc/attachment-0001.html>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20170525/c42bc114/attachment.html>
