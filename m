@@ -1,20 +1,21 @@
 From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
-Date: Mon, 29 May 2017 18:00:06 +0900
-Subject: [cip-dev] Please promote the workshop
-Message-ID: <592BE316.9060900@codethink.co.uk>
+Date: Mon, 29 May 2017 18:22:10 +0900
+Subject: [cip-dev] Picture for the announcement and blog post
+Message-ID: <592BE842.1090706@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+Hi Robert,
 
-if you have time, specially if you are in Japan this week, please 
-promote our open workshop through twitter, which takes place tomorrow 
-afternoon (Japan time).
+can you take a couple of pictures of your laptop connected to a screen 
+and the BBB where we can see something on the screen recognisable as B at D?
 
-Use the hashtag of the event #ossummmit and the user @cip_project so we 
-can see it and re-tweet it.
+I will use one for the release announcement and a second one for the 
+blog post I wrote, which mean the cannot be too heavy but good enough 
+for those which use high resolution screens.
 
 Best Regards
+
 -- 
 Agustin Benito Bethencourt
 Principal Consultant - FOSS at Codethink
