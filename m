@@ -1,26 +1,24 @@
-From: robert.marshall@codethink.co.uk (Robert Marshall)
-Date: Tue, 30 May 2017 09:39:15 +0100
-Subject: [cip-dev] CIP testing: output of the workshop
-In-Reply-To: <592D1993.2070804@codethink.co.uk> (Agustin Benito Bethencourt's
-	message of "Tue, 30 May 2017 16:04:51 +0900")
-References: <592D1993.2070804@codethink.co.uk>
-Message-ID: <87k24yivrg.fsf@ctlt579.codethink.co.uk>
+From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
+Date: Tue, 30 May 2017 17:42:59 +0900
+Subject: [cip-dev] picture of the first ever CIP open workshop
+Message-ID: <E6C2674B-A014-40E5-82D3-AF972B1EE5D6@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Agustin Benito Bethencourt <agustin.benito@codethink.co.uk> writes:
+Hi,
 
-> Hi,
->
-> as output of the workshop I have created two tickets:
-> * Add page numbers to examples output (.pdf docs):
-> https://gitlab.com/cip-project/cip-testing/testing/issues/97
-> * Have a single .pdf document per example:
-> https://gitlab.com/cip-project/cip-testing/testing/issues/98
->
+this is the picture taken with my mobile. I assume the one  taken with the camera has a higher resolution.
 
-These issues have now both been cleared
-
-Thanks to the participants for raising them
-
-Robert
+Best regards
+-- 
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20170530/a944baca/attachment-0001.html>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: IMG_20170530_161704.jpg
+Type: image/jpeg
+Size: 3900824 bytes
+Desc: not available
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20170530/a944baca/attachment-0001.jpg>
