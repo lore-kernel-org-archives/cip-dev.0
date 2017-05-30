@@ -1,24 +1,29 @@
 From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
-Date: Tue, 30 May 2017 17:42:59 +0900
-Subject: [cip-dev] picture of the first ever CIP open workshop
-Message-ID: <E6C2674B-A014-40E5-82D3-AF972B1EE5D6@codethink.co.uk>
+Date: Tue, 30 May 2017 18:46:16 +0900
+Subject: [cip-dev] License cleared. Release of B@D tomorrow at around 8 am
+	Tokyo time
+Message-ID: <592D3F68.5090704@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi,
 
-this is the picture taken with my mobile. I assume the one  taken with the camera has a higher resolution.
+the license review process has finished. We will release B at D v0.9.1 
+tomorrow at 8 am Japan time (UTC+9)
+
+SZ Lin has translated the social media messages to traditional Chinese 
+so we can promote the release in that language.
+
+The wiki support for the characters is not perfect so there is one of 
+the messages that it does not show up and breaks the table. If you edit 
+the page, you can copy-paste the affected message.
+
+Feel free to pick up the messages or retweet them from the @cip_project 
+account.
 
 Best regards
+
 -- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20170530/a944baca/attachment-0001.html>
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: IMG_20170530_161704.jpg
-Type: image/jpeg
-Size: 3900824 bytes
-Desc: not available
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20170530/a944baca/attachment-0001.jpg>
+Agustin Benito Bethencourt
+Principal Consultant - FOSS at Codethink
+agustin.benito at codethink.co.uk
