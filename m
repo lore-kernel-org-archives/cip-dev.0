@@ -1,49 +1,40 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Wed, 31 May 2017 11:17:29 +0100
+From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
+Date: Thu, 1 Jun 2017 22:30:58 +0900
 Subject: [cip-dev] Kernel feature support - filesystems and networking
-In-Reply-To: <592B9C66.709@codethink.co.uk>
-References: <1496023981.2083.43.camel@codethink.co.uk>
-	<390B4EACA1A32748BA6BC7F859F7D71656BF302D@GSjpTKYDCembx32.service.hitachi.net>
-	<592B9C66.709@codethink.co.uk>
-Message-ID: <1496225849.2790.1.camel@codethink.co.uk>
+In-Reply-To: <1496225732.2083.58.camel@codethink.co.uk>
+References: <1496023981.2083.43.camel@codethink.co.uk>	<390B4EACA1A32748BA6BC7F859F7D71656BF302D@GSjpTKYDCembx32.service.hitachi.net>
+	<1496225732.2083.58.camel@codethink.co.uk>
+Message-ID: <009f01d2dadb$5843d860$08cb8920$@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Mon, 2017-05-29 at 04:58 +0100, Agustin Benito Bethencourt wrote:
-> Hi Ben,
+> -----Original Message-----
+> From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Ben Hutchings
+> Sent: Wednesday, May 31, 2017 7:16 PM
+> To: ???? / KOGUCHI?TAKUO
+> Cc: cip-dev at lists.cip-project.org
+> Subject: Re: [cip-dev] Kernel feature support - filesystems and networking
 > 
-> On 29/05/17 03:40, ???? / KOGUCHI?TAKUO wrote:
+> On Mon, 2017-05-29 at 02:40 +0000, ???? / KOGUCHI?TAKUO wrote:
 > > Hi Ben,
 > >
 > > Thanks for your efforts.
 > >
-> >> - overlayfs (CONFIG_OVERLAY_FS)
->  >>   - I found many apparently important bug fixes in later kernel
->      versions that have not been backported
-> 
-> Is there a technical reason for these patches not being backported or is 
-> it simply that never was requested/needed before?
-
-I don't know yet.  I will ask upstream.
-
+> > > - overlayfs (CONFIG_OVERLAY_FS)
 > > OVERLAY_FS is one of the features Hitachi wants to use.
 > > I hope you look into this further and I would like to know if other members also want it.
 > 
-> Based on this request, is it possible for you to estimate the effort to 
-> do this?
+> Yes, I thought this was popular.  I think we will have to find some way
+> to support it.
+> 
 
-Not yet, but I will try to get an idea of how large a change is needed.
+During the CIP TSC meeting I proposed using Ubuntu kernel backports.
+http://kernel.ubuntu.com/git/ubuntu/ubuntu-xenial.git/log/fs/overlayfs
 
-Ben.
+What do you think?
 
-> @Takuo is there a kernel developer from Hitachi that would be willing to 
-> work under Ben's supervision/review in backporting these patches?
-
--- 
-Ben Hutchings
-Software Developer, Codethink Ltd.
+Thanks,
+Daniel
 
 
--- 
-Ben Hutchings
-Software Developer, Codethink Ltd.
+ 
