@@ -1,36 +1,49 @@
-From: robert.marshall@codethink.co.uk (Robert Marshall)
-Date: Mon, 12 Jun 2017 11:34:22 +0100
-Subject: [cip-dev] The Beaglebone black health check supplied in b@d 0.9.1
-	will no longer run
-Message-ID: <877f0hbikx.fsf@ctlt579.codethink.co.uk>
+From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
+Date: Tue, 13 Jun 2017 14:15:54 +0200
+Subject: [cip-dev] Request to create two new repositories
+In-Reply-To: <592E5385.6030704@codethink.co.uk>
+References: <592E5385.6030704@codethink.co.uk>
+Message-ID: <593FD77A.1070904@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-The 0.9.1 release of b at d contains a health check for the beaglebone
-black which uses various build artifacts on the linaro website at:
+Hi,
 
-http://snapshots.linaro.org/components/lava/standard/debian/jessie/armhf/4
+On 31/05/17 07:24, Agustin Benito Bethencourt wrote:
+> Hi,
+>
+> in order to start working on CIP testing Action 2, we will need to
+> create a new repository to host tests and another one for logs.
 
-this directory has been moved and the files are now at
+It was requested at the last CIP TSC meeting that I provide further 
+information for the needed repositories to be approved.
 
-http://snapshots.linaro.org/components/lava/standard/debian/jessie/armhf/1
+1.- We will need one repository to collect and store existing tests with 
+Open Source licenses that are not included in the CIP charter.
 
-If you have the Vagrant install you will need to change the suggested
-test at tests/bbb_debian_ramdisk_test.yaml to reflect the new location
-and edit the BBB health check if you have already installed that.
+Name: upstream-kernel-tests
+Location: https://gitlab.com/cip-project/cip-testing
 
-    https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptestingboardatdesksingledevsetup#configure-the-lava-health-check-jobs-for-both-devices
+2.- We will need a repository to collect the tests developed within the 
+CIP project, that will be published under CIP approved licenses.
 
-bbb_debian_local.yaml makes one reference to the linaro location which
-will also need changing if you use that file in association with
-lava-tool.
+Name: cip-kernel-tests
+Location: https://gitlab.com/cip-project
 
-    https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptestingreferencetestcases#test-5use-lava-tool-utility
+3.- We will need a repository to collect the logs of the reference tests 
+for each feature. From the compliance perspective, it is uncertain to me 
+the license that these logs will have since it might be tied up to the 
+license of the tests and the license of the code being tested. To reduce 
+the risks I propose to add this repo in the Gitlab third party license 
+code subgroup, cip-testing.
 
-The issue https://gitlab.com/cip-project/cip-testing/testing/issues/103
-has been created to track this issue.
+Name: CIP-kernel-test-logs
+Location: https://gitlab.com/cip-project/cip-testing
 
-We intend to update the git repository and release a new provisioned box
-later this week to resolve this issue.
+Please consider this proposal for potential approval.
 
-Robert
+Best Regards
+-- 
+Agustin Benito Bethencourt
+Principal Consultant - FOSS at Codethink
+agustin.benito at codethink.co.uk
