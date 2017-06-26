@@ -1,68 +1,44 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Wed, 21 Jun 2017 07:25:53 +0000
-Subject: [cip-dev] Backporting to the CIP Kernel
-In-Reply-To: <1497971699.1935.21.camel@codethink.co.uk>
-References: <TY1PR06MB07026D57AD5E2BD2F2BEBFCCB7C50@TY1PR06MB0702.apcprd06.prod.outlook.com>
-	<1497971699.1935.21.camel@codethink.co.uk>
-Message-ID: <TY1PR06MB0702D4E555445F404D1B2F73B7DA0@TY1PR06MB0702.apcprd06.prod.outlook.com>
+From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
+Date: Mon, 26 Jun 2017 12:28:34 +0200
+Subject: [cip-dev] CIP testing effort weeks 23 and 24
+Message-ID: <5950E1D2.8090400@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Ben.
+Dear CIP friends,
 
-Thank you for the quick feedback.
+I should have sent this report last week but I was travelling.
 
-Kind regards, Chris
+For those of you who are not following our work closely at gitlab.com 
+here is a summary of the main work that Don, Robert and myself have been 
+doing.
 
-> From: Ben Hutchings [mailto:ben.hutchings at codethink.co.uk]
-> Sent: 20 June 2017 16:15
-> 
-> On Tue, 2017-06-20 at 14:53 +0000, Chris Paterson wrote:
-> > Hello Ben,
-> >
-> > I hope the move went okay.
-> 
-> Thanks.  It didn't entirely, but the worst is over.
-> 
-> > I plan to start backporting some patches to the CIP Kernel soon, to
-> > begin adding support for the Renesas CIP reference platform.
-> >
-> > I?ve had a look at [1] and have a few of queries?
-> >
-> > 1)
-> > >11. It or an equivalent fix must already exist in Linus' tree (upstream).
-> > Is this rule set in stone? Or can patches that have been accepted into
-> > the relevant maintainer?s branches be backported?
-> >
-> > Positive: We don?t have to wait up to 10 weeks for the new merge
-> > window before backporting patches
-> > Negative: There is a small chance that the patches will be rebased in
-> > the move from linux-next to linux
-> 
-> I think it would be fine to relax this for new hardware support.  There isn't
-> the same risk of regression if the kernel didn't support the hardware before.
-> 
-> > 2)
-> > For submitting patches, I assume you would like them sent to cip-dev?
-> 
-> Yes.  You can send a git pull request, but I would like to see the patches on
-> the list even then.
-> 
-> > 3)
-> > For patches that add support for a new platform, would you like them
-> > submitted in small series, as they were upstreamed? Or in one big pull
-> > request once major support for the platform has been added upstream?
-> 
-> Shorter series are more easy for me to digest.
-> 
-> Ben.
-> 
-> > [1]
-> > https://wiki.linuxfoundation.org/civilinfrastructureplatform/cipkernel
-> > maintenance
-> 
-> 
-> --
-> Ben Hutchings
-> Software Developer, Codethink Ltd.
-> 
+* Supporting B at D 0.9.1 Release through cip-dev Mailing List & #cip channel.
+** Updated CIP Diagram and tweaked documentation to enhance clarity and 
+accuracy.
+** Provided support to Daniel Wagner. Thanks you for your contributions.
+
+* Emailing of test results to a mailing list. Created a manual method, 
+now working on automated method.
+
+* Generating a CIP initramfs for use in our VM and how to build one from 
+scratch.
+
+* Linaro changed the links to their build artifacts - Uploaded updated 
+tests-0.1.tgz to download site that contain new links.
+
+* Request process to get some additional repositories we will need for 
+the Action 2.
+** The new mailing list for sharing test results is already in place. As 
+soon as we can share test results we will publish it.
+
+The coming weeks we will keep working on setting up the test results 
+reporting, testing B at D on Windows, setting up the new repositories and 
+define how the reports should look like.
+
+Best Regards
+
+-- 
+Agustin Benito Bethencourt
+Principal Consultant - FOSS at Codethink
+agustin.benito at codethink.co.uk
