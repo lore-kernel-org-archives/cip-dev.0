@@ -1,44 +1,108 @@
-From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
-Date: Wed, 28 Jun 2017 17:57:55 +0900
-Subject: [cip-dev] Renesas dev CIP repository announcement
-In-Reply-To: <TY1PR06MB07026065C017B261EB74E3F8B7DD0@TY1PR06MB0702.apcprd06.prod.outlook.com>
-References: <TY1PR06MB0702667AD2F56BEBDFFCF9A1B7C50@TY1PR06MB0702.apcprd06.prod.outlook.com>
-	<001c01d2efbb$9603f410$c20bdc30$@toshiba.co.jp>
-	<TY1PR06MB07026065C017B261EB74E3F8B7DD0@TY1PR06MB0702.apcprd06.prod.outlook.com>
-Message-ID: <004201d2efec$a247cae0$e6d760a0$@toshiba.co.jp>
+From: takuo.koguchi.sw@hitachi.com (=?utf-8?B?5bCP5Y+j55Ci5aSrIC8gS09HVUNISe+8jFRBS1VP?=)
+Date: Wed, 28 Jun 2017 09:07:53 +0000
+Subject: [cip-dev] Project-X (minimal root filesystem) for renesas board
+In-Reply-To: <004101d2efeb$c53518b0$4f9f4a10$@toshiba.co.jp>
+References: <001001d2efdc$d8312a30$88937e90$@toshiba.co.jp>
+	<390B4EACA1A32748BA6BC7F859F7D7165D08C00F@GSJPOSKDCEMBX16.service.hitachi.net>
+	<004101d2efeb$c53518b0$4f9f4a10$@toshiba.co.jp>
+Message-ID: <390B4EACA1A32748BA6BC7F859F7D7165D08C27D@GSJPOSKDCEMBX16.service.hitachi.net>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
+Daniel-san,
+
+> I think this is not a good approach. We would need to have a new linux-cip folder for each
+> release.
+Let make it clear. Will you please describe your recommendation?
+
+> Patches for the cyclone board should be on its own CIP kernel repository (where you can
+> merge cip releases and add tags). Then, we can choose which version we want by
+> specifying the repository and tag/commit_id.
+Good point.  But  CIP kernel repository is curerntly used for release assuming it is tested. And CycloneV is not supported by CIP at this moment. So I put the patches in the yocto project way.
+
+> I don't think it is necessary since the CIP root filesystem only supports a few packages.
+> Do you mind if I rewrite this and other unnecessary definitions?
+I am happy if you go ahead and fix it!
+
+Best regards,
+Takuo Koguchi
+
+
+
 > -----Original Message-----
-> From: Chris Paterson [mailto:Chris.Paterson2 at renesas.com]
-> Sent: Wednesday, June 28, 2017 2:47 PM
-..
-> >    - reboot doesn't seem to work (it works on the factory kernel 3.10).
+> From: Daniel Sangorrin [mailto:daniel.sangorrin at toshiba.co.jp]
+> Sent: Wednesday, June 28, 2017 5:52 PM
+> To: ???? / KOGUCHI?TAKUO; cip-dev at lists.cip-project.org
+> Cc: 'Chris Paterson'
+> Subject: [!]RE: Project-X (minimal root filesystem) for renesas board
 > 
-> This is a known issue that we currently have a workaround for. For development we could add this to [4], but it's a bit ugly.
-
-OK. I think it's not so important, but it could help during CI testing to reboot the board in a soft manner.
-
-> > By the way, do you have some test script to check that every module is
-> > working fine?
+> Ho Koguchi-san
 > 
-> Not at the moment, we are currently working on adding support for the CIP test framework, but this won't be ready for a while yet
-> I'm afraid.
-
-Maybe it would be nice to have them inside the kernel as kselftests.
-
-Thanks,
-Daniel
-
+> > -----Original Message-----
+> > From: ???? / KOGUCHI?TAKUO [mailto:takuo.koguchi.sw at hitachi.com]
+> > Sent: Wednesday, June 28, 2017 5:35 PM
+> > To: Daniel Sangorrin; cip-dev at lists.cip-project.org
+> > Cc: 'Chris Paterson'
+> > Subject: RE: Project-X (minimal root filesystem) for renesas board
+> >
+> > Hi Daniel-san,
+> >
+> > > I have a few questions:
+> > >   - Why do you have two directories "linux-cip" and "linux-cip2" that are almost
+> identical?
+> >
+> > linux-cip directory is for linux-4.4.55-cip3.
+> > linux-cip2 is for the previous release and it is not necessary if you update linux-cip.
 > 
+> I think this is not a good approach. We would need to have a new linux-cip folder for each
+> release.
 > 
-> [3] http://www.iwavesystems.com/downloads//products/cpu-modules/renesas/rz-g1m-q7-som/g20d-rz-g1m-som-block-diagram-
-> R1.1.pdf
-> [4] https://github.com/renesas-rz/renesas-cip
+> Patches for the cyclone board should be on its own CIP kernel repository (where you can
+> merge cip releases and add tags). Then, we can choose which version we want by
+> specifying the repository and tag/commit_id.
 > 
-> Kind regards, Chris
+> > >   - I can see some xserver-related definitions on the board's
+> > > configuration file. Are those necessary?
+> > beaglebone.conf is based on poky/meta-yocto-bsp/conf/machine.
+> > xserver-related definition was inculude in the original.  I am not sure if it is necessary.
+> 
+> I don't think it is necessary since the CIP root filesystem only supports a few packages.
+> Do you mind if I rewrite this and other unnecessary definitions?
+> 
+> Thanks,
+> Daniel
 > 
 > >
-> > Thanks,
-> > Daniel
 > >
+> > Takuo Koguchi
+> >
+> >
+> > > -----Original Message-----
+> > > From: Daniel Sangorrin [mailto:daniel.sangorrin at toshiba.co.jp]
+> > > Sent: Wednesday, June 28, 2017 4:05 PM
+> > > To: cip-dev at lists.cip-project.org; ???? / KOGUCHI?TAKUO
+> > > Cc: 'Chris Paterson'
+> > > Subject: [!]Project-X (minimal root filesystem) for renesas board
+> > >
+> > > Hi Koguchi-san,
+> > > Cc: Chris, cip-dev
+> > >
+> > > I'm going to add support to project-X for the Renesas iwg20m board
+> > > which is equipped with an armv7 chip.
+> > > I have noticed that you added support for beaglebone and cyclone on
+> > > the deby-armv7 folder [1].
+> > >
+> > > I have a few questions:
+> > >   - Why do you have two directories "linux-cip" and "linux-cip2" that are almost
+> identical?
+> > >   - I can see some xserver-related definitions on the board's
+> > > configuration file. Are those necessary?
+> > >
+> > > Thanks,
+> > > Daniel
+> > >
+> > > [1]
+> > > https://gitlab.com/cip-playground/project-x/tree/master/deby-armv7
+> > >
+> 
+> 
