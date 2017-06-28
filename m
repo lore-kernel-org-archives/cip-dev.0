@@ -1,108 +1,93 @@
-From: takuo.koguchi.sw@hitachi.com (=?utf-8?B?5bCP5Y+j55Ci5aSrIC8gS09HVUNISe+8jFRBS1VP?=)
-Date: Wed, 28 Jun 2017 09:07:53 +0000
-Subject: [cip-dev] Project-X (minimal root filesystem) for renesas board
-In-Reply-To: <004101d2efeb$c53518b0$4f9f4a10$@toshiba.co.jp>
-References: <001001d2efdc$d8312a30$88937e90$@toshiba.co.jp>
-	<390B4EACA1A32748BA6BC7F859F7D7165D08C00F@GSJPOSKDCEMBX16.service.hitachi.net>
-	<004101d2efeb$c53518b0$4f9f4a10$@toshiba.co.jp>
-Message-ID: <390B4EACA1A32748BA6BC7F859F7D7165D08C27D@GSJPOSKDCEMBX16.service.hitachi.net>
+From: Chris.Paterson2@renesas.com (Chris Paterson)
+Date: Wed, 28 Jun 2017 16:42:59 +0000
+Subject: [cip-dev] CIP Kernel release cadence
+In-Reply-To: <594955E2.9070101@codethink.co.uk>
+References: <TY1PR06MB070244570A65174FAA8CBCF4B7C50@TY1PR06MB0702.apcprd06.prod.outlook.com>
+	<1497971890.1935.24.camel@codethink.co.uk>
+	<594955E2.9070101@codethink.co.uk>
+Message-ID: <TY1PR06MB0702D47B4DB9475087CE065DB7DD0@TY1PR06MB0702.apcprd06.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Daniel-san,
+Hello Agustin,
 
-> I think this is not a good approach. We would need to have a new linux-cip folder for each
-> release.
-Let make it clear. Will you please describe your recommendation?
+Thank you for your feedback, apologies for the delayed response.
 
-> Patches for the cyclone board should be on its own CIP kernel repository (where you can
-> merge cip releases and add tags). Then, we can choose which version we want by
-> specifying the repository and tag/commit_id.
-Good point.  But  CIP kernel repository is curerntly used for release assuming it is tested. And CycloneV is not supported by CIP at this moment. So I put the patches in the yocto project way.
+> From: Agustin Benito Bethencourt [mailto:agustin.benito at codethink.co.uk]
+> Sent: 20 June 2017 18:06
+> 
+> Hi Chris,
+> 
+> I think I mentioned before some of the below arguments when this topic
+> was risen months ago. It is a good time to publish them here.
+> 
+> On 20/06/17 17:18, Ben Hutchings wrote:
+> > On Tue, 2017-06-20 at 09:12 +0000, Chris Paterson wrote:
+> >> Hello Ben,
+> >>
+> >> Do you have a plan for when future releases of the CIP Kernel will be
+> >> made?
+> >>
+> >> It would be good to have a fixed release cadence or roadmap, so
+> >> people using the Kernel can plan their activities accordingly.
+> >
+> > I expect to release about every month, and whenever there's an urgent
+> > security update (which there will be soon, for the "stack clash" issue).
+> 
+> I would like to keep flexibility here, that is, do not tight ourselves to releases
+> yet for a variety of reasons. These are the main ones I can think of right now:
+> 
+> * We are in an LTS phase. Defining a cadence at this point might reinforce the
+> idea that our kernel maintenance process is somehow different than LTS
+> when, except for a few packages, it is not yet. That was intentional.
+> 
+> * I would like to be able to consistently test the kernel, even with a single
+> test, before claiming to make releases, that is, before making a public
+> commitment on any delivery process. The expectations can be higher that
+> we can commit to.
+> 
+> * We do not know at this point what the maintenance cycle is going to be
+> from the kernel community. I am not suggesting that we have to follow it,
+> but before defining our cadence, I would have a clear idea about what
+> upstream will do.
+> 
+> * A kernel release for SLTS has severe implications in other areas, like the
+> testing tools, testing results, tests, etc. We need also to freeze/store/release
+> them, together with the build instructions, metadata, artifacts, source
+> code.... In other words, we need to define what "a release" means for CIP
+> and how much effort requires.
 
-> I don't think it is necessary since the CIP root filesystem only supports a few packages.
-> Do you mind if I rewrite this and other unnecessary definitions?
-I am happy if you go ahead and fix it!
+This is a good point. I guess I was referring to rebasing the CIP Kernel itself to the latest LTS tag, and when this would be done. E.g. LTS tag + x weeks?
 
-Best regards,
-Takuo Koguchi
+> 
+> * With the above and the fact that we are starting to put effort in -RT, I
+> wonder if we will talk about releasing the CIP kernel or we will talk about
+> releasing the CIP platform (assuming that at the beginning the kernel is the
+> main bit).
 
+I think that the CIP Kernel could/should be updated constantly, like LTS is now.
 
+Periodically a complete 'CIP platform' release should be made. I think this should be done to a schedule so that users of the CIP project can plan their activities accordingly.
 
-> -----Original Message-----
-> From: Daniel Sangorrin [mailto:daniel.sangorrin at toshiba.co.jp]
-> Sent: Wednesday, June 28, 2017 5:52 PM
-> To: ???? / KOGUCHI?TAKUO; cip-dev at lists.cip-project.org
-> Cc: 'Chris Paterson'
-> Subject: [!]RE: Project-X (minimal root filesystem) for renesas board
 > 
-> Ho Koguchi-san
+> Defining a release today might play against us in a year or two.
 > 
-> > -----Original Message-----
-> > From: ???? / KOGUCHI?TAKUO [mailto:takuo.koguchi.sw at hitachi.com]
-> > Sent: Wednesday, June 28, 2017 5:35 PM
-> > To: Daniel Sangorrin; cip-dev at lists.cip-project.org
-> > Cc: 'Chris Paterson'
-> > Subject: RE: Project-X (minimal root filesystem) for renesas board
-> >
-> > Hi Daniel-san,
-> >
-> > > I have a few questions:
-> > >   - Why do you have two directories "linux-cip" and "linux-cip2" that are almost
-> identical?
-> >
-> > linux-cip directory is for linux-4.4.55-cip3.
-> > linux-cip2 is for the previous release and it is not necessary if you update linux-cip.
+> Once this said, if Members require at this point a cadence, we will provide
+> one but I think that sticking to LTS cycle until Feb'18 and assuming that we will
+> catch up every 4-8 weeks is the way to go. Once the 4.4 maintainer is
+> published, let's talk to him/her and take decisions.
 > 
-> I think this is not a good approach. We would need to have a new linux-cip folder for each
-> release.
+> Is there a specific reason why you need a cadence now beyond what LTS
+> provides? I am trying to understand the details in order to think about a
+> solution for Renesas compatible with the above.
+
+Is there an actual release cycle for LTS? As far as I can see, new releases are made randomly.
+
+Kind regards, Chris
+
 > 
-> Patches for the cyclone board should be on its own CIP kernel repository (where you can
-> merge cip releases and add tags). Then, we can choose which version we want by
-> specifying the repository and tag/commit_id.
+> Best Regards
 > 
-> > >   - I can see some xserver-related definitions on the board's
-> > > configuration file. Are those necessary?
-> > beaglebone.conf is based on poky/meta-yocto-bsp/conf/machine.
-> > xserver-related definition was inculude in the original.  I am not sure if it is necessary.
-> 
-> I don't think it is necessary since the CIP root filesystem only supports a few packages.
-> Do you mind if I rewrite this and other unnecessary definitions?
-> 
-> Thanks,
-> Daniel
-> 
-> >
-> >
-> > Takuo Koguchi
-> >
-> >
-> > > -----Original Message-----
-> > > From: Daniel Sangorrin [mailto:daniel.sangorrin at toshiba.co.jp]
-> > > Sent: Wednesday, June 28, 2017 4:05 PM
-> > > To: cip-dev at lists.cip-project.org; ???? / KOGUCHI?TAKUO
-> > > Cc: 'Chris Paterson'
-> > > Subject: [!]Project-X (minimal root filesystem) for renesas board
-> > >
-> > > Hi Koguchi-san,
-> > > Cc: Chris, cip-dev
-> > >
-> > > I'm going to add support to project-X for the Renesas iwg20m board
-> > > which is equipped with an armv7 chip.
-> > > I have noticed that you added support for beaglebone and cyclone on
-> > > the deby-armv7 folder [1].
-> > >
-> > > I have a few questions:
-> > >   - Why do you have two directories "linux-cip" and "linux-cip2" that are almost
-> identical?
-> > >   - I can see some xserver-related definitions on the board's
-> > > configuration file. Are those necessary?
-> > >
-> > > Thanks,
-> > > Daniel
-> > >
-> > > [1]
-> > > https://gitlab.com/cip-playground/project-x/tree/master/deby-armv7
-> > >
-> 
-> 
+> --
+> Agustin Benito Bethencourt
+> Principal Consultant - FOSS at Codethink agustin.benito at codethink.co.uk
