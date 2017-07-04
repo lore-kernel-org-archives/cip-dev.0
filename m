@@ -1,73 +1,64 @@
 From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
-Date: Tue, 4 Jul 2017 11:48:34 +0200
-Subject: [cip-dev] B@D on Windows 10
-In-Reply-To: <87lgo45yz2.fsf@ctlt579.codethink.co.uk>
-References: <878tk97v1o.fsf@ctlt579.codethink.co.uk>
-	<87lgo45yz2.fsf@ctlt579.codethink.co.uk>
-Message-ID: <595B6472.3040006@codethink.co.uk>
+Date: Tue, 4 Jul 2017 14:18:43 +0200
+Subject: [cip-dev] Fwd: [Lava-users] OE/Yocto testcase
+In-Reply-To: <798686ec-e4c1-91f2-ed5d-99feee607cd8@gmail.com>
+References: <798686ec-e4c1-91f2-ed5d-99feee607cd8@gmail.com>
+Message-ID: <595B87A3.4010207@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
+Dear CIP friends,
+
+please check below. This is a use case we will meet in a few 
+weeks/months. It is important to see others walking the same route.
+
+
+-------- Forwarded Message --------
+Subject: [Lava-users] OE/Yocto testcase
+Date: Mon, 3 Jul 2017 20:19:31 +0300
+From: Robert Berger <lava.users.mailinglist@gmail.com>
+To: Lava-users at lists.linaro.org
+
 Hi,
 
-On 04/07/17 11:32, Robert Marshall wrote:
-> Robert Marshall <robert.marshall@codethink.co.uk> writes:
->
->> The B at D development team has been investigating if there are any issues
->> with the use of the B at D VM on Windows. The ticket
->> https://gitlab.com/cip-project/cip-testing/testing/issues/106
->> is being used to collect information and workarounds.
->>
->> Briefly the current issues/state is as follows:
->>
->> - We are using virtualbox rather than rsync for config.vm.synced_folder
->> - core.autocrlf=input is needed in the git settings for the scripts to
->>    run under Debian (and an ssh client either via git or another route)
->> - We need to look at a substitute for ser2net running on the host in
->>    order to open a connection from the VM to the BBB
->> - The VM installs and both the KernelCI webserver and Lava2 run
->> - Having built a kernel the build does not appear in the KernelCI web
->>    interface, there's a long delay before it times out
->> - Health checks can be created but they don't appear to run, the admin
->>    interface knows about the devices but they don't appear in
->>    Scheduler->All Devices
->>
->> This testing has been carried out directly from the pure Vagrant install
->> - once this is running the pre-loaded Vagrant box will also be tested.
->>
->> Further work is continuing to get B at D fully operational on a Windows 10 host.
->>
->
-> To report on the progress since Friday:
->
-> - KernelCI does not work with Microsoft Edge or Internet Explorer - we
->    recommend the use of firefox to display kernel build results - where
->    the KernelCI web interface does work.
-> - The hostname in the VM is different when run from windows a MR
->    has been created to deal with both versions of this
-> - The QEMU health check now runs on the W10 virtual machine
-> - The BBB health check will run when connecting to a BBB attached to a
->    debian machine from the Windows VM both with the linaro kernel and a
->    locally built one
+I succeeded in running the example Lava tests[1][2] on a Beagle Bone
+Black in my lab.
 
-Can someone confirm the above results, please? Now that Robert is the 
-only person working on the testing front, double checking his results by 
-other companies/contributors becomes almost imperative.
+Now I would like to test a core-image-minimal I built with Yocto and
+cooked up something like this[3][4].
 
-Thank you Robert, good progress this week.
+The result is unfortunately this[5].
 
-As usual, you can also meet us at #cip in freenode.
+I guess one of the problems I have is this:
 
-> - We are still in progress of creating and testing a local initiramfs
->    and configuring the FTDI connection correctly
->
->
-> Robert
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
->
+lava-test: # ls -l /lava-38/
+export SHELL=/bin/sh
+/lava-38/bin/lava-test-runner /lava-38/0ls: cannot access '/lava-38/':
+No such file or directory
+lava-test: # export SHELL=/bin/sh
+lava-test: # /lava-38/bin/lava-test-runner /lava-38/0
+-sh: /lava-38/bin/lava-test-runner: No such file or directory
+
+Regards,
+
+Robert
+
+
+[1]
+https://validation.linaro.org/static/docs/v2/examples/test-jobs/standard-armmp-ramdisk-bbb.yaml
+[2]
+https://validation.linaro.org/static/docs/v2/examples/test-jobs/standard-armmp-nfs-bbb.yaml
+
+[3]
+https://github.com/RobertBerger/git.linaro.org-lava-team-refactoring/blob/master/bbb-core-image-minimal-1.yaml
+[4]
+https://github.com/RobertBerger/git.linaro.org-qa-test-definitions/blob/master/openembedded/smoke-tests-basic-core-image-minimal.yaml
+
+[5] https://pastebin.com/14pjxhiN
+_______________________________________________
+Lava-users mailing list
+Lava-users at lists.linaro.org
+https://lists.linaro.org/mailman/listinfo/lava-users
 
 -- 
 Agustin Benito Bethencourt
