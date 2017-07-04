@@ -1,20 +1,53 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Sun, 02 Jul 2017 18:38:08 +0100
-Subject: [cip-dev] Linux 4.4.75-cip6
-Message-ID: <1499017088.1935.73.camel@codethink.co.uk>
+From: robert.marshall@codethink.co.uk (Robert Marshall)
+Date: Tue, 04 Jul 2017 10:32:33 +0100
+Subject: [cip-dev] B@D on Windows 10
+In-Reply-To: <878tk97v1o.fsf@ctlt579.codethink.co.uk> (Robert Marshall's
+	message of "Fri, 30 Jun 2017 09:13:07 +0100")
+References: <878tk97v1o.fsf@ctlt579.codethink.co.uk>
+Message-ID: <87lgo45yz2.fsf@ctlt579.codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-I've released Linux version 4.4.75-cip6.  This adds the fixes from
-stable versions 4.4.70-4.4.75 inclusive, plus two regression fixes that
-were missing from the 4.4 stable branch.  I reviewed those fixes, but
-have only done very basic manual testing of the result.
+Robert Marshall <robert.marshall@codethink.co.uk> writes:
 
-(I also tagged a version 4.4.75-cip5 which doesn't include the two extra
-fixes.)
+> The B at D development team has been investigating if there are any issues
+> with the use of the B at D VM on Windows. The ticket
+> https://gitlab.com/cip-project/cip-testing/testing/issues/106
+> is being used to collect information and workarounds.
+>
+> Briefly the current issues/state is as follows:
+>
+> - We are using virtualbox rather than rsync for config.vm.synced_folder
+> - core.autocrlf=input is needed in the git settings for the scripts to
+>   run under Debian (and an ssh client either via git or another route)
+> - We need to look at a substitute for ser2net running on the host in
+>   order to open a connection from the VM to the BBB
+> - The VM installs and both the KernelCI webserver and Lava2 run
+> - Having built a kernel the build does not appear in the KernelCI web
+>   interface, there's a long delay before it times out
+> - Health checks can be created but they don't appear to run, the admin
+>   interface knows about the devices but they don't appear in
+>   Scheduler->All Devices
+>
+> This testing has been carried out directly from the pure Vagrant install
+> - once this is running the pre-loaded Vagrant box will also be tested.
+>
+> Further work is continuing to get B at D fully operational on a Windows 10 host.
+>
 
-Ben.
+To report on the progress since Friday:
 
--- 
-Ben Hutchings
-Software Developer, Codethink Ltd.
+- KernelCI does not work with Microsoft Edge or Internet Explorer - we
+  recommend the use of firefox to display kernel build results - where
+  the KernelCI web interface does work.
+- The hostname in the VM is different when run from windows a MR
+  has been created to deal with both versions of this
+- The QEMU health check now runs on the W10 virtual machine
+- The BBB health check will run when connecting to a BBB attached to a
+  debian machine from the Windows VM both with the linaro kernel and a
+  locally built one
+- We are still in progress of creating and testing a local initiramfs
+  and configuring the FTDI connection correctly
+  
+
+Robert
