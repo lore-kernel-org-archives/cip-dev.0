@@ -1,54 +1,95 @@
-From: lava.users.mailinglist@gmail.com (Robert Berger)
-Date: Tue, 4 Jul 2017 21:49:15 +0300
-Subject: [cip-dev] Fwd: [Lava-users] OE/Yocto testcase
-In-Reply-To: <595B87A3.4010207@codethink.co.uk>
-References: <798686ec-e4c1-91f2-ed5d-99feee607cd8@gmail.com>
-	<595B87A3.4010207@codethink.co.uk>
-Message-ID: <7175adaf-2948-72e0-cace-7fe1ae282aed@gmail.com>
+From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
+Date: Wed, 5 Jul 2017 09:44:13 +0900
+Subject: [cip-dev] B@D on Windows 10
+In-Reply-To: <595B6472.3040006@codethink.co.uk>
+References: <878tk97v1o.fsf@ctlt579.codethink.co.uk>	<87lgo45yz2.fsf@ctlt579.codethink.co.uk>
+	<595B6472.3040006@codethink.co.uk>
+Message-ID: <004901d2f527$d2b78d60$7826a820$@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+Hi Agustin,
 
-On 2017-07-04 15:18, Agustin Benito Bethencourt wrote:
-> Dear CIP friends,
+> -----Original Message-----
+> From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Agustin Benito Bethencourt
+> Sent: Tuesday, July 04, 2017 6:49 PM
+> To: cip dev
+> Subject: Re: [cip-dev] B at D on Windows 10
 > 
-> please check below. This is a use case we will meet in a few 
-> weeks/months. It is important to see others walking the same route.
+> Hi,
+> 
+> On 04/07/17 11:32, Robert Marshall wrote:
+> > Robert Marshall <robert.marshall@codethink.co.uk> writes:
+> >
+> >> The B at D development team has been investigating if there are any issues
+> >> with the use of the B at D VM on Windows. The ticket
+> >> https://gitlab.com/cip-project/cip-testing/testing/issues/106
+> >> is being used to collect information and workarounds.
+> >>
+> >> Briefly the current issues/state is as follows:
+> >>
+> >> - We are using virtualbox rather than rsync for config.vm.synced_folder
+> >> - core.autocrlf=input is needed in the git settings for the scripts to
+> >>    run under Debian (and an ssh client either via git or another route)
+> >> - We need to look at a substitute for ser2net running on the host in
+> >>    order to open a connection from the VM to the BBB
+> >> - The VM installs and both the KernelCI webserver and Lava2 run
+> >> - Having built a kernel the build does not appear in the KernelCI web
+> >>    interface, there's a long delay before it times out
+> >> - Health checks can be created but they don't appear to run, the admin
+> >>    interface knows about the devices but they don't appear in
+> >>    Scheduler->All Devices
+> >>
+> >> This testing has been carried out directly from the pure Vagrant install
+> >> - once this is running the pre-loaded Vagrant box will also be tested.
+> >>
+> >> Further work is continuing to get B at D fully operational on a Windows 10 host.
+> >>
+> >
+> > To report on the progress since Friday:
+> >
+> > - KernelCI does not work with Microsoft Edge or Internet Explorer - we
+> >    recommend the use of firefox to display kernel build results - where
+> >    the KernelCI web interface does work.
+> > - The hostname in the VM is different when run from windows a MR
+> >    has been created to deal with both versions of this
+> > - The QEMU health check now runs on the W10 virtual machine
+> > - The BBB health check will run when connecting to a BBB attached to a
+> >    debian machine from the Windows VM both with the linaro kernel and a
+> >    locally built one
+> 
+> Can someone confirm the above results, please? Now that Robert is the
+> only person working on the testing front, double checking his results by
+> other companies/contributors becomes almost imperative.
 
-My simple tests are running now thanks to the help of the nice people 
-from the #linaro-lava chat.
+Unfortunately I don't have a Windows 10 machine to test it. 
+But if the proxy problem is fixed has been fixed I can try instralling B at D again 
+on my Ubuntu machine.
 
-1) Crazy me decided to use upstream u-boot 2017.05 instead of running 
-some ancient version from 2014;)
+Thanks,
+Daniel
 
-1.1) which happens to have a different AUTOBOOT_PROMPT than the one Lava 
-expects "Press SPACE to abort autoboot in %d seconds\n" instead of "Hit 
-any key to stop autoboot" so (since) I would like to be able to stay as 
-close as possible to upstream LAVA 2017.06 I patched u-boot[1]. Note 
-that this could be fixed with LAVA as well - interrupt_prompt: {{ 
-interrupt_prompt|default('Hit any key to stop autoboot') }}
 
-1.2) also the SYS_PROMPT of upstream u-boot is different than the one 
-expected by LAVA and again I made a u-boot patch[2]. Note that this 
-could be fixed with LAVA as well - {% set bootloader_prompt = 
-bootloader_prompt|default('U-Boot') %}
-
-2) After some searching it turned out that LAVA set some funny variables 
-in u-boot which made my kernel crash. (Crazy me decided to use a 4.9.x 
-uImage without baked in address).
-
-Adding this:
-{% set base_high_limits = false %}
-to my bbb03.jinja2 file fixed it.
-
-... obviously ;)
-
-Regards,
-
-Robert
-
-[1] 
-https://github.com/RobertBerger/meta-mainline/blob/pyro-training-v4.9.x/u-boot-wic-bsp/recipes-bsp/u-boot/2017.05/beagle-bone-black/0002-default-AUTOBOOT_PROMPT-for-LAVA.patch
-[2] 
-https://github.com/RobertBerger/meta-mainline/blob/pyro-training-v4.9.x/u-boot-wic-bsp/recipes-bsp/u-boot/2017.05/beagle-bone-black/0003-SYS_PROMPT-LAVA-compatible.patch
+> Thank you Robert, good progress this week.
+> 
+> As usual, you can also meet us at #cip in freenode.
+> 
+> > - We are still in progress of creating and testing a local initiramfs
+> >    and configuring the FTDI connection correctly
+> >
+> >
+> > Robert
+> > _______________________________________________
+> > cip-dev mailing list
+> > cip-dev at lists.cip-project.org
+> > https://lists.cip-project.org/mailman/listinfo/cip-dev
+> >
+> 
+> --
+> Agustin Benito Bethencourt
+> Principal Consultant - FOSS at Codethink
+> agustin.benito at codethink.co.uk
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
