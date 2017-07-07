@@ -1,34 +1,205 @@
-From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
-Date: Fri, 7 Jul 2017 17:50:57 +0900
-Subject: [cip-dev] Project-X (minimal root filesystem) : rewrite and renesas
-	iwg20m board support
-Message-ID: <006f01d2f6fe$264d6c60$72e84520$@toshiba.co.jp>
+From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
+Date: Fri, 7 Jul 2017 10:54:54 +0200
+Subject: [cip-dev] Project-X (minimal root filesystem) for renesas board
+In-Reply-To: <004101d2f6ca$76f8f6e0$64eae4a0$@toshiba.co.jp>
+References: <001001d2efdc$d8312a30$88937e90$@toshiba.co.jp>
+	<390B4EACA1A32748BA6BC7F859F7D7165D08C00F@GSJPOSKDCEMBX16.service.hitachi.net>
+	<004101d2efeb$c53518b0$4f9f4a10$@toshiba.co.jp>
+	<390B4EACA1A32748BA6BC7F859F7D7165D08C27D@GSJPOSKDCEMBX16.service.hitachi.net>
+	<003c01d2f06f$ddc420e0$994c62a0$@toshiba.co.jp>
+	<5954B871.2000601@codethink.co.uk>
+	<004101d2f6ca$76f8f6e0$64eae4a0$@toshiba.co.jp>
+Message-ID: <595F4C5E.8010500@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi, 
+Hi,
 
-I've been working on a minimal root filesystem made with "deby". 
-The code is here and it includes BSP meta layers for qemux86-64, Beaglebone black,
-Renesas iwg20m board and CycloneV.
+On 07/07/17 04:40, Daniel Sangorrin wrote:
+> Hi Agustin, Chris
+>
+>> -----Original Message-----
+>> From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Agustin Benito Bethencourt
+>> Sent: Thursday, June 29, 2017 5:21 PM
+>> To: cip-dev at lists.cip-project.org
+>> Subject: Re: [cip-dev] Project-X (minimal root filesystem) for renesas board
+>>
+>> Hi,
+>>
+>> On 29/06/17 02:37, Daniel Sangorrin wrote:
+>>> Hi Koguchi-san,
+>>>
+>>>> -----Original Message-----
+>>>> From: ???? / KOGUCHI?TAKUO [mailto:takuo.koguchi.sw at hitachi.com]
+>>>> Sent: Wednesday, June 28, 2017 6:08 PM
+>>>> To: 'Daniel Sangorrin'; cip-dev at lists.cip-project.org
+>>>> Cc: 'Chris Paterson'
+>>>> Subject: RE: RE: Project-X (minimal root filesystem) for renesas board
+>>>>
+>>>> Daniel-san,
+>>>>
+>>>>> I think this is not a good approach. We would need to have a new linux-cip folder for each
+>>>>> release.
+>>>> Let make it clear. Will you please describe your recommendation?
+>>>
+>>> Yes, please see below.
+>>>
+>>>>> Patches for the cyclone board should be on its own CIP kernel repository (where you can
+>>>>> merge cip releases and add tags). Then, we can choose which version we want by
+>>>>> specifying the repository and tag/commit_id.
+>>>> Good point.  But  CIP kernel repository is curerntly used for release assuming it is tested. And CycloneV is not supported by CIP at
+>> this
+>>>> moment. So I put the patches in the yocto project way.
+>>>
+>>> I didn't mean to put it on Ben's CIP repository rather on github. This way you can better maintain your "out-of-tree" cyclone V
+>> patches
+>>> and merge (do not rebase please) changes from Ben's CIP kernel regularly. In other words, do the same as Renesas is doing at [1].
+>>>
+>>> [1] https://github.com/renesas-rz/renesas-cip
+>>
+>> In order to have all the cip related code in one place, it would be
+>> good, if anybody is using github, that at least there is a mirror of
+>> that repo in gitlab. When we start automating builds/test, that would be
+>> helpful.
+>
+> Agustin: I don't mind, but is this necessary?.
 
-https://gitlab.com/cip-playground/project-x/tree/master/deby
+Necessary? not in my opinion. I think that development should take place 
+whenever is best for the developers.
 
-The meta-cip-common layer is where we put the packages that will be included
-for all targets. The BSP meta-layers contain settings related to the architecture of
-the processor, and Linux/u-boot configuration.
+Two considerations:
 
-Currently, I have tested qemux86-64 and Renesas iwg20m. Both of them worked fine
-so in the next step I will try to run tests on them using B at D.
-# Beaglebone should work fine, but I haven't tested it yet.
+TSC agreed to use Gitlab for mainly one reason: services built with 
+gitlab can be replicated by Members in-house. That is not the case for 
+GitHub.
 
-For Cyclone V, I need a kernel repository.
-Koguchi-san: could you create it on https://gitlab.com/cip-playground/linux-cip-cyclonev
+Once the code is developed and the developer want to distribute it in 
+the context of the CIP, CIP needs to host the source code and the 
+binaries for compliance reasons. In that case having a mirror in GitLab 
+would be a requirement.
 
-Finally, for U-boot I need repositories to fetch the sources.
-Should we have separate repositories for each board? For example:
-https://gitlab.com/cip-playground/u-boot-iwg20m
-https://gitlab.com/cip-playground/u-boot-cyclonev
+> Chris: Will you create another repository for u-boot?
+>
+> Thanks,
+> Daniel
+>
+>
+>
+>>
+>>>
+>>>>> I don't think it is necessary since the CIP root filesystem only supports a few packages.
+>>>>> Do you mind if I rewrite this and other unnecessary definitions?
+>>>> I am happy if you go ahead and fix it!
+>>>
+>>> OK, thanks. I will also separate Beaglebone from Cyclone V.
+>>>
+>>> Thanks,
+>>> Daniel
+>>>
+>>>> Best regards,
+>>>> Takuo Koguchi
+>>>>
+>>>>
+>>>>
+>>>>> -----Original Message-----
+>>>>> From: Daniel Sangorrin [mailto:daniel.sangorrin at toshiba.co.jp]
+>>>>> Sent: Wednesday, June 28, 2017 5:52 PM
+>>>>> To: ???? / KOGUCHI?TAKUO; cip-dev at lists.cip-project.org
+>>>>> Cc: 'Chris Paterson'
+>>>>> Subject: [!]RE: Project-X (minimal root filesystem) for renesas board
+>>>>>
+>>>>> Ho Koguchi-san
+>>>>>
+>>>>>> -----Original Message-----
+>>>>>> From: ???? / KOGUCHI?TAKUO [mailto:takuo.koguchi.sw at hitachi.com]
+>>>>>> Sent: Wednesday, June 28, 2017 5:35 PM
+>>>>>> To: Daniel Sangorrin; cip-dev at lists.cip-project.org
+>>>>>> Cc: 'Chris Paterson'
+>>>>>> Subject: RE: Project-X (minimal root filesystem) for renesas board
+>>>>>>
+>>>>>> Hi Daniel-san,
+>>>>>>
+>>>>>>> I have a few questions:
+>>>>>>>     - Why do you have two directories "linux-cip" and "linux-cip2" that are almost
+>>>>> identical?
+>>>>>>
+>>>>>> linux-cip directory is for linux-4.4.55-cip3.
+>>>>>> linux-cip2 is for the previous release and it is not necessary if you update linux-cip.
+>>>>>
+>>>>> I think this is not a good approach. We would need to have a new linux-cip folder for each
+>>>>> release.
+>>>>>
+>>>>> Patches for the cyclone board should be on its own CIP kernel repository (where you can
+>>>>> merge cip releases and add tags). Then, we can choose which version we want by
+>>>>> specifying the repository and tag/commit_id.
+>>>>>
+>>>>>>>     - I can see some xserver-related definitions on the board's
+>>>>>>> configuration file. Are those necessary?
+>>>>>> beaglebone.conf is based on poky/meta-yocto-bsp/conf/machine.
+>>>>>> xserver-related definition was inculude in the original.  I am not sure if it is necessary.
+>>>>>
+>>>>> I don't think it is necessary since the CIP root filesystem only supports a few packages.
+>>>>> Do you mind if I rewrite this and other unnecessary definitions?
+>>>>>
+>>>>> Thanks,
+>>>>> Daniel
+>>>>>
+>>>>>>
+>>>>>>
+>>>>>> Takuo Koguchi
+>>>>>>
+>>>>>>
+>>>>>>> -----Original Message-----
+>>>>>>> From: Daniel Sangorrin [mailto:daniel.sangorrin at toshiba.co.jp]
+>>>>>>> Sent: Wednesday, June 28, 2017 4:05 PM
+>>>>>>> To: cip-dev at lists.cip-project.org; ???? / KOGUCHI?TAKUO
+>>>>>>> Cc: 'Chris Paterson'
+>>>>>>> Subject: [!]Project-X (minimal root filesystem) for renesas board
+>>>>>>>
+>>>>>>> Hi Koguchi-san,
+>>>>>>> Cc: Chris, cip-dev
+>>>>>>>
+>>>>>>> I'm going to add support to project-X for the Renesas iwg20m board
+>>>>>>> which is equipped with an armv7 chip.
+>>>>>>> I have noticed that you added support for beaglebone and cyclone on
+>>>>>>> the deby-armv7 folder [1].
+>>>>>>>
+>>>>>>> I have a few questions:
+>>>>>>>     - Why do you have two directories "linux-cip" and "linux-cip2" that are almost
+>>>>> identical?
+>>>>>>>     - I can see some xserver-related definitions on the board's
+>>>>>>> configuration file. Are those necessary?
+>>>>>>>
+>>>>>>> Thanks,
+>>>>>>> Daniel
+>>>>>>>
+>>>>>>> [1]
+>>>>>>> https://gitlab.com/cip-playground/project-x/tree/master/deby-armv7
+>>>>>>>
+>>>>>
+>>>>>
+>>>
+>>>
+>>>
+>>> _______________________________________________
+>>> cip-dev mailing list
+>>> cip-dev at lists.cip-project.org
+>>> https://lists.cip-project.org/mailman/listinfo/cip-dev
+>>>
+>>
+>> --
+>> Agustin Benito Bethencourt
+>> Principal Consultant - FOSS at Codethink
+>> agustin.benito at codethink.co.uk
+>> _______________________________________________
+>> cip-dev mailing list
+>> cip-dev at lists.cip-project.org
+>> https://lists.cip-project.org/mailman/listinfo/cip-dev
+>
+>
+>
 
-Thanks,
-Daniel
+-- 
+Agustin Benito Bethencourt
+Principal Consultant - FOSS at Codethink
+agustin.benito at codethink.co.uk
