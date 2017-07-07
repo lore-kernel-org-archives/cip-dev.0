@@ -1,207 +1,91 @@
-From: yoshitake.kobayashi@toshiba.co.jp (KOBAYASHI Yoshitake)
-Date: Fri, 7 Jul 2017 22:16:37 +0900
-Subject: [cip-dev] Project-X (minimal root filesystem) for renesas board
-In-Reply-To: <595F4C5E.8010500@codethink.co.uk>
-References: <001001d2efdc$d8312a30$88937e90$@toshiba.co.jp>
-	<390B4EACA1A32748BA6BC7F859F7D7165D08C00F@GSJPOSKDCEMBX16.service.hitachi.net>
-	<004101d2efeb$c53518b0$4f9f4a10$@toshiba.co.jp>
-	<390B4EACA1A32748BA6BC7F859F7D7165D08C27D@GSJPOSKDCEMBX16.service.hitachi.net>
-	<003c01d2f06f$ddc420e0$994c62a0$@toshiba.co.jp>
-	<5954B871.2000601@codethink.co.uk>
-	<004101d2f6ca$76f8f6e0$64eae4a0$@toshiba.co.jp>
-	<595F4C5E.8010500@codethink.co.uk>
-Message-ID: <61369f01-f898-9dd6-035a-340a724c9d49@toshiba.co.jp>
+From: Chris.Paterson2@renesas.com (Chris Paterson)
+Date: Fri, 7 Jul 2017 13:20:25 +0000
+Subject: [cip-dev] Renesas dev CIP repository announcement
+In-Reply-To: <b33ff48c-eb23-2fa8-0fc8-f062a95e1444@toshiba.co.jp>
+References: <TY1PR06MB0702667AD2F56BEBDFFCF9A1B7C50@TY1PR06MB0702.apcprd06.prod.outlook.com>
+	<b33ff48c-eb23-2fa8-0fc8-f062a95e1444@toshiba.co.jp>
+Message-ID: <TY1PR06MB070290B803A18D2EE9C54A6BB7AA0@TY1PR06MB0702.apcprd06.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 2017/07/07 17:54, Agustin Benito Bethencourt wrote:
-> Hi,
-> 
-> On 07/07/17 04:40, Daniel Sangorrin wrote:
->> Hi Agustin, Chris
->>
->>> -----Original Message-----
->>> From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Agustin Benito Bethencourt
->>> Sent: Thursday, June 29, 2017 5:21 PM
->>> To: cip-dev at lists.cip-project.org
->>> Subject: Re: [cip-dev] Project-X (minimal root filesystem) for renesas board
->>>
->>> Hi,
->>>
->>> On 29/06/17 02:37, Daniel Sangorrin wrote:
->>>> Hi Koguchi-san,
->>>>
->>>>> -----Original Message-----
->>>>> From: ???? / KOGUCHI?TAKUO [mailto:takuo.koguchi.sw at hitachi.com]
->>>>> Sent: Wednesday, June 28, 2017 6:08 PM
->>>>> To: 'Daniel Sangorrin'; cip-dev at lists.cip-project.org
->>>>> Cc: 'Chris Paterson'
->>>>> Subject: RE: RE: Project-X (minimal root filesystem) for renesas board
->>>>>
->>>>> Daniel-san,
->>>>>
->>>>>> I think this is not a good approach. We would need to have a new linux-cip folder for each
->>>>>> release.
->>>>> Let make it clear. Will you please describe your recommendation?
->>>>
->>>> Yes, please see below.
->>>>
->>>>>> Patches for the cyclone board should be on its own CIP kernel repository (where you can
->>>>>> merge cip releases and add tags). Then, we can choose which version we want by
->>>>>> specifying the repository and tag/commit_id.
->>>>> Good point.  But  CIP kernel repository is curerntly used for release assuming it is tested. And CycloneV is not supported by CIP at
->>> this
->>>>> moment. So I put the patches in the yocto project way.
->>>>
->>>> I didn't mean to put it on Ben's CIP repository rather on github. This way you can better maintain your "out-of-tree" cyclone V
->>> patches
->>>> and merge (do not rebase please) changes from Ben's CIP kernel regularly. In other words, do the same as Renesas is doing at [1].
->>>>
->>>> [1] https://github.com/renesas-rz/renesas-cip
->>>
->>> In order to have all the cip related code in one place, it would be
->>> good, if anybody is using github, that at least there is a mirror of
->>> that repo in gitlab. When we start automating builds/test, that would be
->>> helpful.
->>
->> Agustin: I don't mind, but is this necessary?.
-> 
-> Necessary? not in my opinion. I think that development should take place whenever is best for the developers.
-> 
-> Two considerations:
-> 
-> TSC agreed to use Gitlab for mainly one reason: services built with gitlab can be replicated by Members in-house. That is not the case for GitHub.
-> 
-> Once the code is developed and the developer want to distribute it in the context of the CIP, CIP needs to host the source code and the binaries for compliance reasons. In that case having a mirror in GitLab would be a requirement.
+Hello Yoshi-san,
 
-I agree with you. But I have a consideration for current status for renesas-cip repository.
-I think the current repository is under development. It looks Renesas's upstreaming effort for CIP. We can refer the repository to test the CIP kernel with Renesas backported patches on Renesas RZ/G as one of CIP reference board.
-In this case, the repository can be mirroed Renesas's account or cip-playground on GitLab. But I also think GitHub (or any other place) is still an option for them, if it is under development.
-Once the backported patches succesfully merged with linux-cip, we can use linux-cip on GitLab to test the Renesas RZ/G.
+> From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-
+> bounces at lists.cip-project.org] On Behalf Of KOBAYASHI Yoshitake
+> Sent: 07 July 2017 14:07
+> 
+> Hi Chris and all,
+> 
+> > [1] https://github.com/renesas-rz/renesas-cip
+> 
+> I had looked the repository and have a suggestion.
+> When you backport patches from upstream, could you add the following line
+> in commit message?
+> 
+>   (cherry picked from commit UPSTREAM_COMMIT_ID)
+> 
+> I think this approach might be better for the tracablity reason. But this is just
+> a suggestion and I would like to know others opinion.
 
-Best regards,
-Yoshi
+Agreed. We intend to follow the proper process when backporting to the actual CIP Kernel.
+
+The repository above is just a quick release to allow users to get the iWave RZ/G1M board up and running for now. Most of the patches haven't come from upstream as there is no upstream support for the iWave RZ/G1M board yet (in progress).
+
+Kind regards, Chris
 
 
 > 
->> Chris: Will you create another repository for u-boot?
->>
->> Thanks,
->> Daniel
->>
->>
->>
->>>
->>>>
->>>>>> I don't think it is necessary since the CIP root filesystem only supports a few packages.
->>>>>> Do you mind if I rewrite this and other unnecessary definitions?
->>>>> I am happy if you go ahead and fix it!
->>>>
->>>> OK, thanks. I will also separate Beaglebone from Cyclone V.
->>>>
->>>> Thanks,
->>>> Daniel
->>>>
->>>>> Best regards,
->>>>> Takuo Koguchi
->>>>>
->>>>>
->>>>>
->>>>>> -----Original Message-----
->>>>>> From: Daniel Sangorrin [mailto:daniel.sangorrin at toshiba.co.jp]
->>>>>> Sent: Wednesday, June 28, 2017 5:52 PM
->>>>>> To: ???? / KOGUCHI?TAKUO; cip-dev at lists.cip-project.org
->>>>>> Cc: 'Chris Paterson'
->>>>>> Subject: [!]RE: Project-X (minimal root filesystem) for renesas board
->>>>>>
->>>>>> Ho Koguchi-san
->>>>>>
->>>>>>> -----Original Message-----
->>>>>>> From: ???? / KOGUCHI?TAKUO [mailto:takuo.koguchi.sw at hitachi.com]
->>>>>>> Sent: Wednesday, June 28, 2017 5:35 PM
->>>>>>> To: Daniel Sangorrin; cip-dev at lists.cip-project.org
->>>>>>> Cc: 'Chris Paterson'
->>>>>>> Subject: RE: Project-X (minimal root filesystem) for renesas board
->>>>>>>
->>>>>>> Hi Daniel-san,
->>>>>>>
->>>>>>>> I have a few questions:
->>>>>>>>     - Why do you have two directories "linux-cip" and "linux-cip2" that are almost
->>>>>> identical?
->>>>>>>
->>>>>>> linux-cip directory is for linux-4.4.55-cip3.
->>>>>>> linux-cip2 is for the previous release and it is not necessary if you update linux-cip.
->>>>>>
->>>>>> I think this is not a good approach. We would need to have a new linux-cip folder for each
->>>>>> release.
->>>>>>
->>>>>> Patches for the cyclone board should be on its own CIP kernel repository (where you can
->>>>>> merge cip releases and add tags). Then, we can choose which version we want by
->>>>>> specifying the repository and tag/commit_id.
->>>>>>
->>>>>>>>     - I can see some xserver-related definitions on the board's
->>>>>>>> configuration file. Are those necessary?
->>>>>>> beaglebone.conf is based on poky/meta-yocto-bsp/conf/machine.
->>>>>>> xserver-related definition was inculude in the original.  I am not sure if it is necessary.
->>>>>>
->>>>>> I don't think it is necessary since the CIP root filesystem only supports a few packages.
->>>>>> Do you mind if I rewrite this and other unnecessary definitions?
->>>>>>
->>>>>> Thanks,
->>>>>> Daniel
->>>>>>
->>>>>>>
->>>>>>>
->>>>>>> Takuo Koguchi
->>>>>>>
->>>>>>>
->>>>>>>> -----Original Message-----
->>>>>>>> From: Daniel Sangorrin [mailto:daniel.sangorrin at toshiba.co.jp]
->>>>>>>> Sent: Wednesday, June 28, 2017 4:05 PM
->>>>>>>> To: cip-dev at lists.cip-project.org; ???? / KOGUCHI?TAKUO
->>>>>>>> Cc: 'Chris Paterson'
->>>>>>>> Subject: [!]Project-X (minimal root filesystem) for renesas board
->>>>>>>>
->>>>>>>> Hi Koguchi-san,
->>>>>>>> Cc: Chris, cip-dev
->>>>>>>>
->>>>>>>> I'm going to add support to project-X for the Renesas iwg20m board
->>>>>>>> which is equipped with an armv7 chip.
->>>>>>>> I have noticed that you added support for beaglebone and cyclone on
->>>>>>>> the deby-armv7 folder [1].
->>>>>>>>
->>>>>>>> I have a few questions:
->>>>>>>>     - Why do you have two directories "linux-cip" and "linux-cip2" that are almost
->>>>>> identical?
->>>>>>>>     - I can see some xserver-related definitions on the board's
->>>>>>>> configuration file. Are those necessary?
->>>>>>>>
->>>>>>>> Thanks,
->>>>>>>> Daniel
->>>>>>>>
->>>>>>>> [1]
->>>>>>>> https://gitlab.com/cip-playground/project-x/tree/master/deby-armv7
->>>>>>>>
->>>>>>
->>>>>>
->>>>
->>>>
->>>>
->>>> _______________________________________________
->>>> cip-dev mailing list
->>>> cip-dev at lists.cip-project.org
->>>> https://lists.cip-project.org/mailman/listinfo/cip-dev
->>>>
->>>
->>> -- 
->>> Agustin Benito Bethencourt
->>> Principal Consultant - FOSS at Codethink
->>> agustin.benito at codethink.co.uk
->>> _______________________________________________
->>> cip-dev mailing list
->>> cip-dev at lists.cip-project.org
->>> https://lists.cip-project.org/mailman/listinfo/cip-dev
->>
->>
->>
+> Best regards,
+> Yoshi
 > 
+> On 2017/06/20 17:49, Chris Paterson wrote:
+> > Dear CIP friends,
+> >
+> >
+> >
+> > I'd like to announce the availability of a development repo [1] based on the
+> CIP Kernel for the iWave RZ/G1M Qseven Development Platform [2].
+> >
+> >
+> >
+> > The main aim of this repository is to allow CIP users to get up and running
+> with the Renesas CIP reference platform. Please note that this is just an
+> interim step as support for the platform is added upstream/backported to
+> the CIP Kernel.
+> >
+> >
+> >
+> > Currently there are two branches, one based on v4.4.55-cip3, and the other
+> based on v4.4.69-cip4.
+> >
+> >
+> >
+> > Please use the "shmobile_defconfig" configuration when compiling, and
+> use r8a7743-iwg20m.dtb. uImage LOADADDR should be set to "0x40008000".
+> For u-boot environment settings, please see the iWave documentation that
+> should come with the boards.
+> >
+> >
+> >
+> >
+> >
+> > [1] https://github.com/renesas-rz/renesas-cip
+> >
+> > [2] http://www.iwavesystems.com/rz-g1m-qseven-development-kit.html
+> >
+> >
+> >
+> > Kind regards, Chris
+> >
+> >
+> >
+> > _______________________________________________
+> > cip-dev mailing list
+> > cip-dev at lists.cip-project.org
+> > https://lists.cip-project.org/mailman/listinfo/cip-dev
+> >
+> 
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
