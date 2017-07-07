@@ -1,41 +1,51 @@
-From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
-Date: Thu, 6 Jul 2017 17:49:40 +0200
-Subject: [cip-dev] New repos for tests and logs
-In-Reply-To: <5954CB11.8050409@codethink.co.uk>
-References: <5954CB11.8050409@codethink.co.uk>
-Message-ID: <595E5C14.5050004@codethink.co.uk>
+From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
+Date: Fri, 7 Jul 2017 09:27:28 +0900
+Subject: [cip-dev] running health checks from behind a web proxy
+In-Reply-To: <87fueb6k6b.fsf@ctlt579.codethink.co.uk>
+References: <87fueb6k6b.fsf@ctlt579.codethink.co.uk>
+Message-ID: <002c01d2f6b7$d0586df0$710949d0$@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+Thanks Robert, I will try today and see if it works.
+# I'll close the gitlab issue in that case.
 
-On 29/06/17 11:40, Agustin Benito Bethencourt wrote:
-> Hi,
->
-> three new repositories has been created:
->
-> * https://gitlab.com/cip-project/cip-testing/imported-kernel-tests
->
-> For those third party tests we will use to test the CIP kernel
->
-> * https://gitlab.com/cip-project/cip-testing/CIP-kernel-test-logs
->
-> For the canonical logs we will compare results against.
->
-> * https://gitlab.com/cip-project/cip-kernel-tests
->
-> Test developed within the CIP project under CIP approved licenses.
-
-A new repository has been created to mirror some kernelci frontend 
-config files that we use so we can control which upstream changes should 
-be applied when. It is called kernelci-frontend-config
-
-Link: 
-https://gitlab.com/cip-project/cip-testing/kernelci-frontend-config/tree/master
-
-Best Regards
-
--- 
-Agustin Benito Bethencourt
-Principal Consultant - FOSS at Codethink
-agustin.benito at codethink.co.uk
+> -----Original Message-----
+> From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Robert Marshall
+> Sent: Wednesday, July 05, 2017 11:19 PM
+> To: cip dev
+> Subject: [cip-dev] running health checks from behind a web proxy
+> 
+> There is a known issue with b at d when running a lava QEMU health check
+> from behind a web proxy.
+> 
+> When attempting to retrieve the kernel, it produces the error
+> 
+> Invalid job data:
+>   ["HTTPSConnectionPool(host='images.validation.linaro.org', port=443):
+>   Max retries exceeded with url: /kvm/standard/stretch-2.img.gz
+>    (Caused by NewConnectionError('<requests.packages.urllib3.connection.VerifiedHTTPSConnection
+>   object at 0x7f430c9b9c50>: Failed to establish a new connection: [Errno -5] No address associated with hostname',))"]
+> 
+> see:
+> https://gitlab.com/cip-project/cip-testing/testing/issues/99
+> 
+> As b at d is intended to use locally built artefacts and the default QEMU health
+> check uses a remote kernel, a suggested work around for this test would be to copy
+> https://images.validation.linaro.org/kvm/standard/stretch-2.img.gz
+> locally to /var/www/images/kernel-ci/qemu (a new directory)
+> and alter the health check to use the url
+> http://localhost:8010/qemu/stretch-2.img.gz
+> 
+> which should avoid the use of any web proxies.
+> 
+> You'll probably need a fairly clean copy of the VM with plenty of free
+> disk space to manage the extra copy of the kernel.
+> 
+> Thoughts? Hoping to discuss this further at tomorrow's open meeting.
+> 
+> Robert
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
