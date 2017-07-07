@@ -1,68 +1,76 @@
-From: robert.marshall@codethink.co.uk (Robert Marshall)
-Date: Fri, 07 Jul 2017 11:47:26 +0100
-Subject: [cip-dev] B@D on Windows 10
-In-Reply-To: <87lgo45yz2.fsf@ctlt579.codethink.co.uk> (Robert Marshall's
-	message of "Tue, 04 Jul 2017 10:32:33 +0100")
-References: <878tk97v1o.fsf@ctlt579.codethink.co.uk>
-	<87lgo45yz2.fsf@ctlt579.codethink.co.uk>
-Message-ID: <87mv8g5xs1.fsf@ctlt579.codethink.co.uk>
+From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
+Date: Fri, 7 Jul 2017 13:16:36 +0200
+Subject: [cip-dev] Kernel maintenance and CIP testing report weeks 25 to 27
+Message-ID: <595F6D94.4040401@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Robert Marshall <robert.marshall@codethink.co.uk> writes:
+Hi,
 
-> Robert Marshall <robert.marshall@codethink.co.uk> writes:
->
->> The B at D development team has been investigating if there are any issues
->> with the use of the B at D VM on Windows. The ticket
->> https://gitlab.com/cip-project/cip-testing/testing/issues/106
->> is being used to collect information and workarounds.
->>
->> Briefly the current issues/state is as follows:
->>
->> - We are using virtualbox rather than rsync for config.vm.synced_folder
->> - core.autocrlf=input is needed in the git settings for the scripts to
->>   run under Debian (and an ssh client either via git or another route)
->> - We need to look at a substitute for ser2net running on the host in
->>   order to open a connection from the VM to the BBB
->> - The VM installs and both the KernelCI webserver and Lava2 run
->> - Having built a kernel the build does not appear in the KernelCI web
->>   interface, there's a long delay before it times out
->> - Health checks can be created but they don't appear to run, the admin
->>   interface knows about the devices but they don't appear in
->>   Scheduler->All Devices
->>
->> This testing has been carried out directly from the pure Vagrant install
->> - once this is running the pre-loaded Vagrant box will also be tested.
->>
->> Further work is continuing to get B at D fully operational on a Windows 10 host.
->>
->
-> To report on the progress since Friday:
->
-> - KernelCI does not work with Microsoft Edge or Internet Explorer - we
->   recommend the use of firefox to display kernel build results - where
->   the KernelCI web interface does work.
-> - The hostname in the VM is different when run from windows a MR
->   has been created to deal with both versions of this
-> - The QEMU health check now runs on the W10 virtual machine
-> - The BBB health check will run when connecting to a BBB attached to a
->   debian machine from the Windows VM both with the linaro kernel and a
->   locally built one
-> - We are still in progress of creating and testing a local initiramfs
->   and configuring the FTDI connection correctly
->   
+Kernel maintenance
 
-A further update on progress on this issue:
+1. We have a new CIP kernel v4.4.75cip6 As anecdote, the kernel includes 
+two patches that fix two regressions introduced by LTS patches. These 
+fixes will be part of the next LTS version.
 
- We've configured the Windows 10 virtual machine with ser2net (running
- on the vm and enabling usb in the Vagrantfile) and now the beaglebone
- black health check runs - and has been used to health check the new
- v4.4.75-cip6 (together with a locally built initramfs).
+2. Ben is focused now on the evaluation of the kernel features. The goal 
+is to send the evaluation by mail and then attend to the CIP TSC 
+bi-weekly call on July 24th to answer questions.
 
- I've exported a box from the W10 VM and successfully reimported it and
- run a HC. We're still having problems with boxes exported from Debian
- which give an error that port 8888 is in use or it attempts to
- re-provision the box.
+3. Ben keeps reviewing 4.4 LTS patches on ongoing basis.
 
-Robert
+Testing
+
+1. As informed this week, Robert has been for some weeks now running the 
+health-check on daily basis, building and booting the CIP kernel on the 
+BBB, including the locally built initramfs.
+
+2. Don's last task was to investigate how to configure LAVA API to send 
+mails. Robert will pick up this task in the coming weeks. 
+https://gitlab.com/cip-project/cip-testing/testing/issues/102
+
+3. As reported by Robert, he has been focused in making B at D work on 
+Windows 10, which was a request from Hitachi. There is significant 
+progress in that front. 
+https://gitlab.com/cip-project/cip-testing/testing/issues/106
+
+4. After some discussion within the team, we provided a workaround to 
+overcome the webproxy issue reported by Daniel Sangorrin. We will find 
+out if the workaround is a good one or we need to put more effort on 
+this topic. https://gitlab.com/cip-project/cip-testing/testing/issues/99
+
+5. After going through the TSC request/approval process some new 
+repositories has been created to overcome past issues with B at D and to 
+start working on Action 2. In a couple of cases we have submitted 
+upstream the license file which has been merged right away. 
+https://gitlab.com/cip-project/cip-testing/testing/issues/100
+
+6. Other topics
+* Now the creation of initramfs is manual. Robert is working in 
+automating the process 
+https://gitlab.com/cip-project/cip-testing/testing/issues/111
+* Addressing a contribution from Daniel Wargner 
+https://gitlab.com/cip-project/cip-testing/testing/issues/107
+* The testing team is starting the discussion about how to technically 
+implement the check required to achieve the fully distributed service 
+architecture, specially focusing now in the health-check. An e-mail has 
+been sent about it to the cip-dev mailing list.
+
+
+Other topics
+
+1. Don is no longer working at Codethink, I would like to take this 
+opportunity to thank him for his effort, commitment and contributions to 
+the project. The engineering team behind CIP testing is now limited to 
+Robert Marshall.
+
+2. Ben H. and myself created an abstract that we have presented for ELCE.
+
+3. CIP is a DebConf sponsor. Plat'Home was last year and Codethink is 
+also sponsoring this edition.
+
+Best Regards
+-- 
+Agustin Benito Bethencourt
+Principal Consultant - FOSS at Codethink
+agustin.benito at codethink.co.uk
