@@ -1,90 +1,75 @@
 From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Fri, 7 Jul 2017 13:20:25 +0000
-Subject: [cip-dev] Renesas dev CIP repository announcement
-In-Reply-To: <b33ff48c-eb23-2fa8-0fc8-f062a95e1444@toshiba.co.jp>
-References: <TY1PR06MB0702667AD2F56BEBDFFCF9A1B7C50@TY1PR06MB0702.apcprd06.prod.outlook.com>
-	<b33ff48c-eb23-2fa8-0fc8-f062a95e1444@toshiba.co.jp>
-Message-ID: <TY1PR06MB070290B803A18D2EE9C54A6BB7AA0@TY1PR06MB0702.apcprd06.prod.outlook.com>
+Date: Fri, 7 Jul 2017 13:31:35 +0000
+Subject: [cip-dev] Distribution of binaries: support to Renesas board in
+ B@D
+In-Reply-To: <TY1PR06MB07027A21095D39452693D12FB7AA0@TY1PR06MB0702.apcprd06.prod.outlook.com>
+References: <595F5A3D.80802@codethink.co.uk>
+	<TY1PR06MB07027A21095D39452693D12FB7AA0@TY1PR06MB0702.apcprd06.prod.outlook.com>
+Message-ID: <TY1PR06MB0702EED921E1268AA7957875B7AA0@TY1PR06MB0702.apcprd06.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Yoshi-san,
+Hello Agustin,
 
 > From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-
-> bounces at lists.cip-project.org] On Behalf Of KOBAYASHI Yoshitake
-> Sent: 07 July 2017 14:07
+> bounces at lists.cip-project.org] On Behalf Of Chris Paterson
+> Sent: 07 July 2017 11:19
 > 
-> Hi Chris and all,
+> Hello Agustin,
 > 
-> > [1] https://github.com/renesas-rz/renesas-cip
+> > From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-
+> > bounces at lists.cip-project.org] On Behalf Of Agustin Benito Bethencourt
+> > Sent: 07 July 2017 10:54
+> >
+> > Hi Chris,
+> >
+> > one of the things we need to figure out is how we will distribute the
+> > kernel including the support for the Renesas board at CIP.
+> >
+> > We have three options to provide the kernel with the board support to
+> > those users that download the B at D box from the CIP site, to test the
+> kernel:
+> > 1. Include the binary (kernel + board support) in the box itself.
+> > 2. Download the binaries from the CIP download page.
+> > 3. Download from a third party site.
+> > 4. Users have to build the kernel themselves.
+> >
+> > Since we have a very limited amount of reference boards and kernels,
+> > we would like to see option one as the default one. Option 2 would
+> > also work fine. The other two are not ideal for the box (might be for
+> > deployment through Vagrant).
+> >
+> > What are the restrictions we need to face in order to distribute the
+> > Renesas
+> > (source) code and binaries?
 > 
-> I had looked the repository and have a suggestion.
-> When you backport patches from upstream, could you add the following line
-> in commit message?
-> 
->   (cherry picked from commit UPSTREAM_COMMIT_ID)
-> 
-> I think this approach might be better for the tracablity reason. But this is just
-> a suggestion and I would like to know others opinion.
+> Let me check internally as to what we can provide.
 
-Agreed. We intend to follow the proper process when backporting to the actual CIP Kernel.
+As long as the binaries don't include Renesas' proprietary libraries for graphics or multimedia [1] we are happy for CIP to distribute them as per option 1) above.
 
-The repository above is just a quick release to allow users to get the iWave RZ/G1M board up and running for now. Most of the patches haven't come from upstream as there is no upstream support for the iWave RZ/G1M board yet (in progress).
+For the Kernel, this can be based on renesas-cip [2]. For the RFS, as meta-renesas-cip-private [3] is not open I would recommend that the output from Project-X is used. 
 
-Kind regards, Chris
+
+[1] http://elinux.org/RZ-G/Boards/Yocto_2.0#Preliminary_steps "2. Download the proprietary Multimedia and Graphics evaluation libraries for RZ/G from Renesas"
+[2] https://github.com/renesas-rz/renesas-cip 
+[3] https://github.com/renesas-rz/meta-renesas-cip-private 
+
+Kind regards, Chris 
 
 
 > 
-> Best regards,
-> Yoshi
+> Kind regards, Chris
 > 
-> On 2017/06/20 17:49, Chris Paterson wrote:
-> > Dear CIP friends,
 > >
-> >
-> >
-> > I'd like to announce the availability of a development repo [1] based on the
-> CIP Kernel for the iWave RZ/G1M Qseven Development Platform [2].
-> >
-> >
-> >
-> > The main aim of this repository is to allow CIP users to get up and running
-> with the Renesas CIP reference platform. Please note that this is just an
-> interim step as support for the platform is added upstream/backported to
-> the CIP Kernel.
-> >
-> >
-> >
-> > Currently there are two branches, one based on v4.4.55-cip3, and the other
-> based on v4.4.69-cip4.
-> >
-> >
-> >
-> > Please use the "shmobile_defconfig" configuration when compiling, and
-> use r8a7743-iwg20m.dtb. uImage LOADADDR should be set to "0x40008000".
-> For u-boot environment settings, please see the iWave documentation that
-> should come with the boards.
-> >
-> >
-> >
-> >
-> >
-> > [1] https://github.com/renesas-rz/renesas-cip
-> >
-> > [2] http://www.iwavesystems.com/rz-g1m-qseven-development-kit.html
-> >
-> >
-> >
-> > Kind regards, Chris
-> >
-> >
-> >
+> > Best Regards
+> > --
+> > Agustin Benito Bethencourt
+> > Principal Consultant - FOSS at Codethink
+> > agustin.benito at codethink.co.uk
 > > _______________________________________________
 > > cip-dev mailing list
 > > cip-dev at lists.cip-project.org
 > > https://lists.cip-project.org/mailman/listinfo/cip-dev
-> >
-> 
 > _______________________________________________
 > cip-dev mailing list
 > cip-dev at lists.cip-project.org
