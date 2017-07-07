@@ -1,50 +1,68 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Fri, 7 Jul 2017 12:40:01 +0200
-Subject: [cip-dev] Project-X (minimal root filesystem) : rewrite and
- renesas iwg20m board support
-In-Reply-To: <006f01d2f6fe$264d6c60$72e84520$@toshiba.co.jp>
-References: <006f01d2f6fe$264d6c60$72e84520$@toshiba.co.jp>
-Message-ID: <3a3fd45a-c550-07cc-5b34-de176818d1fd@siemens.com>
+From: robert.marshall@codethink.co.uk (Robert Marshall)
+Date: Fri, 07 Jul 2017 11:47:26 +0100
+Subject: [cip-dev] B@D on Windows 10
+In-Reply-To: <87lgo45yz2.fsf@ctlt579.codethink.co.uk> (Robert Marshall's
+	message of "Tue, 04 Jul 2017 10:32:33 +0100")
+References: <878tk97v1o.fsf@ctlt579.codethink.co.uk>
+	<87lgo45yz2.fsf@ctlt579.codethink.co.uk>
+Message-ID: <87mv8g5xs1.fsf@ctlt579.codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 2017-07-07 10:50, Daniel Sangorrin wrote:
-> Hi, 
-> 
-> I've been working on a minimal root filesystem made with "deby". 
-> The code is here and it includes BSP meta layers for qemux86-64, Beaglebone black,
-> Renesas iwg20m board and CycloneV.
-> 
-> https://gitlab.com/cip-playground/project-x/tree/master/deby
-> 
-> The meta-cip-common layer is where we put the packages that will be included
-> for all targets. The BSP meta-layers contain settings related to the architecture of
-> the processor, and Linux/u-boot configuration.
-> 
-> Currently, I have tested qemux86-64 and Renesas iwg20m. Both of them worked fine
-> so in the next step I will try to run tests on them using B at D.
-> # Beaglebone should work fine, but I haven't tested it yet.
-> 
-> For Cyclone V, I need a kernel repository.
-> Koguchi-san: could you create it on https://gitlab.com/cip-playground/linux-cip-cyclonev
-> 
-> Finally, for U-boot I need repositories to fetch the sources.
-> Should we have separate repositories for each board? For example:
-> https://gitlab.com/cip-playground/u-boot-iwg20m
-> https://gitlab.com/cip-playground/u-boot-cyclonev
+Robert Marshall <robert.marshall@codethink.co.uk> writes:
 
-Nice work! Maybe I find the time to model a binary Debian variant as
-well, using Isar [1] - ideally prior to DebConf.
+> Robert Marshall <robert.marshall@codethink.co.uk> writes:
+>
+>> The B at D development team has been investigating if there are any issues
+>> with the use of the B at D VM on Windows. The ticket
+>> https://gitlab.com/cip-project/cip-testing/testing/issues/106
+>> is being used to collect information and workarounds.
+>>
+>> Briefly the current issues/state is as follows:
+>>
+>> - We are using virtualbox rather than rsync for config.vm.synced_folder
+>> - core.autocrlf=input is needed in the git settings for the scripts to
+>>   run under Debian (and an ssh client either via git or another route)
+>> - We need to look at a substitute for ser2net running on the host in
+>>   order to open a connection from the VM to the BBB
+>> - The VM installs and both the KernelCI webserver and Lava2 run
+>> - Having built a kernel the build does not appear in the KernelCI web
+>>   interface, there's a long delay before it times out
+>> - Health checks can be created but they don't appear to run, the admin
+>>   interface knows about the devices but they don't appear in
+>>   Scheduler->All Devices
+>>
+>> This testing has been carried out directly from the pure Vagrant install
+>> - once this is running the pre-loaded Vagrant box will also be tested.
+>>
+>> Further work is continuing to get B at D fully operational on a Windows 10 host.
+>>
+>
+> To report on the progress since Friday:
+>
+> - KernelCI does not work with Microsoft Edge or Internet Explorer - we
+>   recommend the use of firefox to display kernel build results - where
+>   the KernelCI web interface does work.
+> - The hostname in the VM is different when run from windows a MR
+>   has been created to deal with both versions of this
+> - The QEMU health check now runs on the W10 virtual machine
+> - The BBB health check will run when connecting to a BBB attached to a
+>   debian machine from the Windows VM both with the linaro kernel and a
+>   locally built one
+> - We are still in progress of creating and testing a local initiramfs
+>   and configuring the FTDI connection correctly
+>   
 
-Btw, instead of having yet another setup.sh, you may want to have a look
-at kas [2]. There is no release yet (next week, hopefully), but it is
-fairly mature. Moreover, you can build inside Docker, removing most of
-the host dependencies. We are using this now with both Yocto and Isar
-projects, often in layered ways [3] that enable reuse.
+A further update on progress on this issue:
 
-Jan
+ We've configured the Windows 10 virtual machine with ser2net (running
+ on the vm and enabling usb in the Vagrantfile) and now the beaglebone
+ black health check runs - and has been used to health check the new
+ v4.4.75-cip6 (together with a locally built initramfs).
 
-[1] https://github.com/ilbers/isar
-[2] https://github.com/siemens/kas
-[3]
-https://github.com/siemens/meta-iot2000/commit/eb4c3df4a62d0e5c32c74082e4c5c467627b9a84
+ I've exported a box from the W10 VM and successfully reimported it and
+ run a HC. We're still having problems with boxes exported from Debian
+ which give an error that port 8888 is in use or it attempts to
+ re-provision the box.
+
+Robert
