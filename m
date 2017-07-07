@@ -1,50 +1,49 @@
 From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
-Date: Fri, 7 Jul 2017 09:27:28 +0900
-Subject: [cip-dev] running health checks from behind a web proxy
-In-Reply-To: <87fueb6k6b.fsf@ctlt579.codethink.co.uk>
-References: <87fueb6k6b.fsf@ctlt579.codethink.co.uk>
-Message-ID: <002c01d2f6b7$d0586df0$710949d0$@toshiba.co.jp>
+Date: Fri, 7 Jul 2017 11:37:49 +0900
+Subject: [cip-dev] CIP testing project: outcome of the OSSJ
+In-Reply-To: <595E5766.7020705@codethink.co.uk>
+References: <5941561C.2000608@codethink.co.uk>
+	<595E5766.7020705@codethink.co.uk>
+Message-ID: <004001d2f6ca$05fe3c20$11fab460$@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Thanks Robert, I will try today and see if it works.
-# I'll close the gitlab issue in that case.
+Hi Agustin,
 
 > -----Original Message-----
-> From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Robert Marshall
-> Sent: Wednesday, July 05, 2017 11:19 PM
-> To: cip dev
-> Subject: [cip-dev] running health checks from behind a web proxy
+> From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Agustin Benito Bethencourt
+> Sent: Friday, July 07, 2017 12:30 AM
+> To: cip-dev at lists.cip-project.org
+> Subject: Re: [cip-dev] CIP testing project: outcome of the OSSJ
 > 
-> There is a known issue with b at d when running a lava QEMU health check
-> from behind a web proxy.
+> Hi,
 > 
-> When attempting to retrieve the kernel, it produces the error
+> On 14/06/17 17:28, Agustin Benito Bethencourt wrote:
+> > I plan to submit a talk about our progress in the testing front for
+> > ELCE. Action 2:
+> > https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptesting
 > 
-> Invalid job data:
->   ["HTTPSConnectionPool(host='images.validation.linaro.org', port=443):
->   Max retries exceeded with url: /kvm/standard/stretch-2.img.gz
->    (Caused by NewConnectionError('<requests.packages.urllib3.connection.VerifiedHTTPSConnection
->   object at 0x7f430c9b9c50>: Failed to establish a new connection: [Errno -5] No address associated with hostname',))"]
+> I just submitted a technical talk in which Ben H. and myself will be
+> talking about kernel maintenance & testing using the CIP work as
+> example. Let's see if it gets approved.
 > 
-> see:
-> https://gitlab.com/cip-project/cip-testing/testing/issues/99
+> If Chris, both Daniels or others have something to report about in the
+> kernel maintenance/testing front related with CIP, maybe you can help us
+> to deliver the talk.
+
+Sure, I think I will have several things that can be presented during the talk
+and a demo.
+
+Thanks,
+Daniel
+
 > 
-> As b at d is intended to use locally built artefacts and the default QEMU health
-> check uses a remote kernel, a suggested work around for this test would be to copy
-> https://images.validation.linaro.org/kvm/standard/stretch-2.img.gz
-> locally to /var/www/images/kernel-ci/qemu (a new directory)
-> and alter the health check to use the url
-> http://localhost:8010/qemu/stretch-2.img.gz
+> Best regards
 > 
-> which should avoid the use of any web proxies.
-> 
-> You'll probably need a fairly clean copy of the VM with plenty of free
-> disk space to manage the extra copy of the kernel.
-> 
-> Thoughts? Hoping to discuss this further at tomorrow's open meeting.
-> 
-> Robert
+> --
+> Agustin Benito Bethencourt
+> Principal Consultant - FOSS at Codethink
+> agustin.benito at codethink.co.uk
 > _______________________________________________
 > cip-dev mailing list
 > cip-dev at lists.cip-project.org
