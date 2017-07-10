@@ -1,76 +1,73 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Fri, 7 Jul 2017 13:31:35 +0000
-Subject: [cip-dev] Distribution of binaries: support to Renesas board in
- B@D
-In-Reply-To: <TY1PR06MB07027A21095D39452693D12FB7AA0@TY1PR06MB0702.apcprd06.prod.outlook.com>
-References: <595F5A3D.80802@codethink.co.uk>
-	<TY1PR06MB07027A21095D39452693D12FB7AA0@TY1PR06MB0702.apcprd06.prod.outlook.com>
-Message-ID: <TY1PR06MB0702EED921E1268AA7957875B7AA0@TY1PR06MB0702.apcprd06.prod.outlook.com>
+From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
+Date: Tue, 11 Jul 2017 08:36:34 +0900
+Subject: [cip-dev] Project-X (minimal root filesystem) : rewrite and
+	renesas iwg20m board support
+In-Reply-To: <3a3fd45a-c550-07cc-5b34-de176818d1fd@siemens.com>
+References: <006f01d2f6fe$264d6c60$72e84520$@toshiba.co.jp>
+	<3a3fd45a-c550-07cc-5b34-de176818d1fd@siemens.com>
+Message-ID: <001f01d2f9d5$5de03250$19a096f0$@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Agustin,
+Hi Jan,
 
-> From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-
-> bounces at lists.cip-project.org] On Behalf Of Chris Paterson
-> Sent: 07 July 2017 11:19
+> -----Original Message-----
+> From: Jan Kiszka [mailto:jan.kiszka at siemens.com]
+> Sent: Friday, July 07, 2017 7:40 PM
+> To: Daniel Sangorrin; cip-dev at lists.cip-project.org
+> Subject: Re: [cip-dev] Project-X (minimal root filesystem) : rewrite and renesas iwg20m board support
 > 
-> Hello Agustin,
+> On 2017-07-07 10:50, Daniel Sangorrin wrote:
+> > Hi,
+> >
+> > I've been working on a minimal root filesystem made with "deby".
+> > The code is here and it includes BSP meta layers for qemux86-64, Beaglebone black,
+> > Renesas iwg20m board and CycloneV.
+> >
+> > https://gitlab.com/cip-playground/project-x/tree/master/deby
+> >
+> > The meta-cip-common layer is where we put the packages that will be included
+> > for all targets. The BSP meta-layers contain settings related to the architecture of
+> > the processor, and Linux/u-boot configuration.
+> >
+> > Currently, I have tested qemux86-64 and Renesas iwg20m. Both of them worked fine
+> > so in the next step I will try to run tests on them using B at D.
+> > # Beaglebone should work fine, but I haven't tested it yet.
+> >
+> > For Cyclone V, I need a kernel repository.
+> > Koguchi-san: could you create it on https://gitlab.com/cip-playground/linux-cip-cyclonev
+> >
+> > Finally, for U-boot I need repositories to fetch the sources.
+> > Should we have separate repositories for each board? For example:
+> > https://gitlab.com/cip-playground/u-boot-iwg20m
+> > https://gitlab.com/cip-playground/u-boot-cyclonev
 > 
-> > From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-
-> > bounces at lists.cip-project.org] On Behalf Of Agustin Benito Bethencourt
-> > Sent: 07 July 2017 10:54
-> >
-> > Hi Chris,
-> >
-> > one of the things we need to figure out is how we will distribute the
-> > kernel including the support for the Renesas board at CIP.
-> >
-> > We have three options to provide the kernel with the board support to
-> > those users that download the B at D box from the CIP site, to test the
-> kernel:
-> > 1. Include the binary (kernel + board support) in the box itself.
-> > 2. Download the binaries from the CIP download page.
-> > 3. Download from a third party site.
-> > 4. Users have to build the kernel themselves.
-> >
-> > Since we have a very limited amount of reference boards and kernels,
-> > we would like to see option one as the default one. Option 2 would
-> > also work fine. The other two are not ideal for the box (might be for
-> > deployment through Vagrant).
-> >
-> > What are the restrictions we need to face in order to distribute the
-> > Renesas
-> > (source) code and binaries?
-> 
-> Let me check internally as to what we can provide.
+> Nice work! Maybe I find the time to model a binary Debian variant as
+> well, using Isar [1] - ideally prior to DebConf.
 
-As long as the binaries don't include Renesas' proprietary libraries for graphics or multimedia [1] we are happy for CIP to distribute them as per option 1) above.
-
-For the Kernel, this can be based on renesas-cip [2]. For the RFS, as meta-renesas-cip-private [3] is not open I would recommend that the output from Project-X is used. 
-
-
-[1] http://elinux.org/RZ-G/Boards/Yocto_2.0#Preliminary_steps "2. Download the proprietary Multimedia and Graphics evaluation libraries for RZ/G from Renesas"
-[2] https://github.com/renesas-rz/renesas-cip 
-[3] https://github.com/renesas-rz/meta-renesas-cip-private 
-
-Kind regards, Chris 
-
+Cool. By the way, I put all of the layers under /deby so that you could
+create the isar version under the /isar folder.
 
 > 
-> Kind regards, Chris
+> Btw, instead of having yet another setup.sh, you may want to have a look
+> at kas [2]. There is no release yet (next week, hopefully), but it is
+> fairly mature. Moreover, you can build inside Docker, removing most of
+> the host dependencies. We are using this now with both Yocto and Isar
+> projects, often in layered ways [3] that enable reuse.
+
+Yesterday I managed to build the qemux86-64 meta layer using the following
+kas project configuration. Could you check it please?
+
+https://gitlab.com/cip-playground/project-x/commit/de611ae06040f6e426d3c5d1b77eb20b4af31a19
+
+Thanks,
+Daniel
+
+
 > 
-> >
-> > Best Regards
-> > --
-> > Agustin Benito Bethencourt
-> > Principal Consultant - FOSS at Codethink
-> > agustin.benito at codethink.co.uk
-> > _______________________________________________
-> > cip-dev mailing list
-> > cip-dev at lists.cip-project.org
-> > https://lists.cip-project.org/mailman/listinfo/cip-dev
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
+> Jan
+> 
+> [1] https://github.com/ilbers/isar
+> [2] https://github.com/siemens/kas
+> [3]
+> https://github.com/siemens/meta-iot2000/commit/eb4c3df4a62d0e5c32c74082e4c5c467627b9a84
