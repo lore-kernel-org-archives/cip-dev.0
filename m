@@ -1,67 +1,133 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Wed, 12 Jul 2017 10:21:11 +0100
-Subject: [cip-dev] [PATCH  6/6] ARM: shmobile: r8a7745: basic SoC support
-In-Reply-To: <1499851271-20037-1-git-send-email-biju.das@bp.renesas.com>
-References: <1499851271-20037-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1499851271-20037-7-git-send-email-biju.das@bp.renesas.com>
+From: Chris.Paterson2@renesas.com (Chris Paterson)
+Date: Wed, 12 Jul 2017 10:51:06 +0000
+Subject: [cip-dev] About the U-Boot policy
+In-Reply-To: <002c01d2f9e1$87b26920$97173b60$@toshiba.co.jp>
+References: <002c01d2f9e1$87b26920$97173b60$@toshiba.co.jp>
+Message-ID: <TY1PR06MB0702A80EA41BB632AA9727D1B7AF0@TY1PR06MB0702.apcprd06.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Hello Daniel,
 
-Add minimal support for the RZ/G1E (R8A7745) SoC.
+> From: Daniel Sangorrin [mailto:daniel.sangorrin at toshiba.co.jp]
+> Sent: 11 July 2017 02:04
+> 
+> Hi all,
+> 
+> # Chris, I wanted to discuss about the U-Boot policy last night during the
+> online meeting but somehow I missed the URL change.
+Sorry we missed you!
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 47802fd7c7c4735ddaf004e0f61371dcaa86f4ad)
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
- arch/arm/mach-shmobile/Kconfig                     | 4 ++++
- arch/arm/mach-shmobile/setup-rcar-gen2.c           | 1 +
- 3 files changed, 7 insertions(+)
+> 
+> We have had some discussions about U-boot for a while but I would like to
+> achieve some consensus about what we should do about it.
+> 
+> U-boot is a rather big project that resembles the Linux kernel in some
+> aspects. For example, unlike generic software (e.g. openssh) a big bunch of
+> its code is hardware dependent. U-boot releases have a cadence of 2
+> months (for example v2017.07 was released on Mon, 10 July 2017) but there
+> is no LTS project as far as I know. The closest to an LTS project that I know of
+> is the U-Boot packages maintained by distros (e.g. Debian) , which seem (see
+> changelog [1]) to focus on bug fixing and backporting new hardware support.
+> 
+> I'm going to throw some mud at the wall and see what sticks after our
+> discussion.
+Thank you for resuming the conversation.
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 07b5818..b29d9c7 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -15,6 +15,8 @@ SoCs:
-     compatible = "renesas,r8a7740"
-   - RZ/G1M (R8A77430)
-     compatible = "renesas,r8a7743"
-+  - RZ/G1E (R8A77450)
-+    compatible = "renesas,r8a7745"
-   - R-Car M1A (R8A77781)
-     compatible = "renesas,r8a7778"
-   - R-Car H1 (R8A77790)
-diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
-index 09929a3..602fc2d 100644
---- a/arch/arm/mach-shmobile/Kconfig
-+++ b/arch/arm/mach-shmobile/Kconfig
-@@ -68,6 +68,10 @@ config ARCH_R8A7743
- 	bool "RZ/G1M (R8A77430)"
- 	select ARCH_RCAR_GEN2
- 
-+config ARCH_R8A7745
-+	bool "RZ/G1E (R8A77450)"
-+	select ARCH_RCAR_GEN2
-+
- config ARCH_R8A7778
- 	bool "R-Car M1A (R8A77781)"
- 	select ARCH_RCAR_GEN1
-diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-index 3b5f6ac..3911716 100644
---- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-@@ -221,6 +221,7 @@ MACHINE_END
- 
- static const char * const rz_g1_boards_compat_dt[] __initconst = {
- 	"renesas,r8a7743",
-+	"renesas,r8a7745",
- 	NULL,
- };
- 
--- 
-1.9.1
+> 
+> 1. Should we focus on supporting our reference boards only?
+> Sangorrin: yes.
+Chris: Agreed.
+
+
+> 
+> 2. Should all reference boards use the same source code base line?
+> Sangorrin: yes, unless the porting effort for a board is too complicated in
+> which case we are better off providing a separate repo.
+Chris: Ideally yes, but currently I don't think all of the reference boards are in mainline u-boot, and I'm not sure CIP should be doing/funding the upstreaming of the reference boards. This should ideally be done by the board vendors.
+One option could be to create a cip-u-boot repo and manually add support for the different boards, but obviously this work would need to be repeated if we were ever to upgrade the base u-boot version for future CIP releases.
+
+
+> 
+> 3. In case the answer to question 2 is 'yes': what's the base line that we
+> should use?
+> Sangorrin: the source code from a Debian u-boot package that better
+> supports our current reference boards and CIP kernel.
+> 
+> 4. Should we focus on backporting security/bug  fixes, or new HW support?
+> Sangorrin: No. I think that we should only make sure that our reference
+> boards are able to boot the CIP kernel during its lifetime.
+Chris: Given the resources and aims of the project, I think you are right. We should just make sure that the platform boots. Many production devices probably won't use u-boot in the field anyway, at least not our version.
+
+
+> 
+> 5. Should we upstream our fixes?
+> Sangorrin: Yes. For future maintainability and as a quality assurance step. But
+> while the patches are getting accepted we should also have our own repos
+> on gitlab's playground.
+Chris: Yes, this will help us in the future if we are to upgrade versions.
+
+
+> 
+> 6. What functionality in U-Boot is important for us?
+> Sangorrin: network support for tftpboot would be great to have. Specially for
+> debugging and for the CI tests.
+Chris: In addition, being able to boot from mmc/usb will help with demo work.
+
+Kind regards, Chris
+
+
+> 
+> Please add your answers!
+> 
+> Thanks,
+> Daniel
+> 
+> [1] http://metadata.ftp-master.debian.org/changelogs/main/u/u-boot/u-
+> boot_2014.10+dfsg1-5_changelog
+> 
+> 
+> 
+> 
+> > -----Original Message-----
+> > From: Chris Paterson [mailto:Chris.Paterson2 at renesas.com]
+> > Sent: Friday, July 07, 2017 6:00 PM
+> > > From: Daniel Sangorrin [mailto:daniel.sangorrin at toshiba.co.jp]
+> > > Sent: 07 July 2017 09:51
+> > > Finally, for U-boot I need repositories to fetch the sources.
+> > > Should we have separate repositories for each board? For example:
+> > > https://gitlab.com/cip-playground/u-boot-iwg20m
+> > > https://gitlab.com/cip-playground/u-boot-cyclonev
+> >
+> > If the consensus is to use different u-boot versions/repos for each
+> > platform, (rather than push vendors to add support upstream), then this
+> approach makes sense.
+> 
+> 
+> > However, perhaps we should try and use exiting repositories provided
+> > by the vendors, rather than CIP create and maintain them. If we start
+> hosting these repositories we will have to continue to maintain them
+> forever.
+> 
+> 
+> > Of course, the downside of using externally maintained repositories is
+> > that support may end at any time. Perhaps bringing this
+> ownership/maintenance into the CIP project is something we want to
+> do/fund.
+> 
+> 
+> I'm not sure what maintenance is required for u-boot
+> 
+> 
+> 
+> >
+> >
+> > Kind regards, Chris
+> >
+> > >
+> > > Thanks,
+> > > Daniel
+> > >
+> > >
+> 
+> 
