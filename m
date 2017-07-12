@@ -1,83 +1,40 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Wed, 12 Jul 2017 11:12:37 +0200
-Subject: [cip-dev] Project-X (minimal root filesystem) : rewrite and
- renesas iwg20m board support
-In-Reply-To: <002001d2fa13$55b084c0$01118e40$@toshiba.co.jp>
-References: <006f01d2f6fe$264d6c60$72e84520$@toshiba.co.jp>
-	<3a3fd45a-c550-07cc-5b34-de176818d1fd@siemens.com>
-	<001f01d2f9d5$5de03250$19a096f0$@toshiba.co.jp>
-	<71df6523-5844-01a2-8c67-d6ebc0a2a4f1@siemens.com>
-	<001f01d2fa0f$ae4a6410$0adf2c30$@toshiba.co.jp>
-	<f8e19682-8fcb-24dd-8567-0d28d9567571@siemens.com>
-	<002001d2fa13$55b084c0$01118e40$@toshiba.co.jp>
-Message-ID: <cf2e5e11-508b-45b2-2e98-76a9287be45a@siemens.com>
+From: biju.das@bp.renesas.com (Biju Das)
+Date: Wed, 12 Jul 2017 10:21:05 +0100
+Subject: [cip-dev] [PATCH  0/6] Basic SoC support for r8a7743/r8a7745
+Message-ID: <1499851271-20037-1-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 2017-07-11 09:00, Daniel Sangorrin wrote:
->> -----Original Message-----
->> From: Jan Kiszka [mailto:jan.kiszka at siemens.com]
->> Sent: Tuesday, July 11, 2017 3:42 PM
->> To: Daniel Sangorrin; cip-dev at lists.cip-project.org
->> Cc: 'kas-devel'
->> Subject: Re: [cip-dev] Project-X (minimal root filesystem) : rewrite and renesas iwg20m board support
->>
->> On 2017-07-11 08:34, Daniel Sangorrin wrote:
->>> Hi Jan,
->>>
->>>> -----Original Message-----
->>>> From: Jan Kiszka [mailto:jan.kiszka at siemens.com]
->>>> Sent: Tuesday, July 11, 2017 3:20 PM
->>>> To: Daniel Sangorrin; cip-dev at lists.cip-project.org
->>>> Cc: kas-devel
->>>> Subject: Re: [cip-dev] Project-X (minimal root filesystem) : rewrite and renesas iwg20m board support
->>>>
->>>> On 2017-07-11 01:36, Daniel Sangorrin wrote:
->>>>>> Btw, instead of having yet another setup.sh, you may want to have a look
->>>>>> at kas [2]. There is no release yet (next week, hopefully), but it is
->>>>>> fairly mature. Moreover, you can build inside Docker, removing most of
->>>>>> the host dependencies. We are using this now with both Yocto and Isar
->>>>>> projects, often in layered ways [3] that enable reuse.
->>>>>
->>>>> Yesterday I managed to build the qemux86-64 meta layer using the following
->>>>> kas project configuration. Could you check it please?
->>>>>
->>>>> https://gitlab.com/cip-playground/project-x/commit/de611ae06040f6e426d3c5d1b77eb20b4af31a19
->>>>
->>>> Looks good. You should just set version to 0.10 and use yesterday's
->>>> release. You can pull the corresponding docker image from
->>>> https://hub.docker.com/r/kasproject/, and there should be a pip package
->>>> as well soon.
->>>
->>> That was fast. I was using the next branch and built the Dockerfile included in kas.
->>>
->>> I had to create a daemon.json to set overlay2 as the storage driver, pass the USER_ID variable,
->>
->> We should probably suggest to call "USER_ID=$(id -u) docker run ..." -
->> it there a way to achieve this in an easier way? Still learning all this
->> docker stuff.
-> 
-> I was using the -e flag:
->   docker run -e USER_ID=`id -u $USER` -it kas sh
+This series aims to add basic SoC support for  
+r8a7743/r8a7745. All the patches in this series
+are cherry-picked from the upstream kernel.
 
-Err, right, that's what I meant.
+This series has been tested against linux-cip tag v4.4.75-cip6.
 
-> 
->>> volume mount the project-x folder and manually set the proxy settings (for some reason using
->>> build-args didn't work for me).
->>
->> Hmm, they should, I'm using them for builds all the time (along with
->> corresponding settings for the docker daemon).
-> 
-> Are you sure you didn't set them somewhere else in the docker configuration?
-> As far as I can see the Dockerfile is not using any ARG instruction at all.
+Laurent Pinchart (1):
+  ARM: shmobile: Consolidate R8A7743 and R8A779[234] machine definitions
 
-Yes, I'm sure. I've just written the doc for a product SDK, and that
-uses no further settings as well, see
-https://github.com/siemens/meta-iot2000/blob/jan/staging/README.md#docker-build.
+Sergei Shtylyov (5):
+  sh_eth: add R8A7743/5 support
+  DT: irqchip: renesas-irqc: document R8A7743/5 support
+  sh-sci: document R8A7743/5 support
+  ARM: shmobile: r8a7743: basic SoC support
+  ARM: shmobile: r8a7745: basic SoC support
 
-Jan
+ Documentation/devicetree/bindings/arm/shmobile.txt |  4 +++
+ .../bindings/interrupt-controller/renesas,irqc.txt |  4 ++-
+ Documentation/devicetree/bindings/net/sh_eth.txt   |  2 ++
+ .../bindings/serial/renesas,sci-serial.txt         |  8 ++++++
+ arch/arm/mach-shmobile/Kconfig                     |  8 ++++++
+ arch/arm/mach-shmobile/Makefile                    |  2 --
+ arch/arm/mach-shmobile/setup-r8a7793.c             | 33 ----------------------
+ arch/arm/mach-shmobile/setup-r8a7794.c             | 33 ----------------------
+ arch/arm/mach-shmobile/setup-rcar-gen2.c           | 33 ++++++++++++++++++++++
+ drivers/net/ethernet/renesas/Kconfig               |  2 +-
+ drivers/net/ethernet/renesas/sh_eth.c              |  2 ++
+ 11 files changed, 61 insertions(+), 70 deletions(-)
+ delete mode 100644 arch/arm/mach-shmobile/setup-r8a7793.c
+ delete mode 100644 arch/arm/mach-shmobile/setup-r8a7794.c
 
 -- 
-Siemens AG, Corporate Technology, CT RDA ITP SES-DE
-Corporate Competence Center Embedded Linux
+1.9.1
