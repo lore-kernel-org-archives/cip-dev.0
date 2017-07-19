@@ -1,29 +1,73 @@
-From: robert.marshall@codethink.co.uk (Robert Marshall)
-Date: Wed, 19 Jul 2017 13:01:13 +0100
-Subject: [cip-dev] Procedure to use B@D in Windows 10
-Message-ID: <87o9sg1vqu.fsf@ctlt579.codethink.co.uk>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Wed, 19 Jul 2017 14:54:27 +0100
+Subject: [cip-dev] [PATCH  0/6] Basic SoC support for r8a7743/r8a7745
+In-Reply-To: <KL1PR06MB1702DE0CA0C499B831FFC8F4B8A60@KL1PR06MB1702.apcprd06.prod.outlook.com>
+References: <1499851271-20037-1-git-send-email-biju.das@bp.renesas.com>
+	<1500391823.1935.111.camel@codethink.co.uk>
+	<1500393500.1935.119.camel@codethink.co.uk>
+	<KL1PR06MB1702DE0CA0C499B831FFC8F4B8A60@KL1PR06MB1702.apcprd06.prod.outlook.com>
+Message-ID: <1500472467.1935.124.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-The 0.9.1 release box of B at D has been successfully imported into Windows
-10 and both a QEMU and BBB health check have been run on that virtual machine.
-This setup also works when provisioning a box from a clone of the git repository.
+On Wed, 2017-07-19 at 08:24 +0000, Biju Das wrote:
+[...]
+> > Actually, there's something not quite right here.  With just
+> > CONFIG_ARCH_R8A7743 and CONFIG_ARCH_R8A7745 enabled (but no other R-
+> > Car
+> > platforms) I get:
+> 
+> The patches are for Basic SoC support. Next I am planning Clock driver, then DT support for SoC, then Board DTS
+> and then Enabling the config option(CONFIG_ARCH_R8A7743 and CONFIG_ARCH_R8A7745) .
+> >
+> > arch/arm/mach-shmobile/built-in.o: In function `rcar_gen2_timer_init':
+> > /home/bwh/ln001-cip/kernel/arch/arm/mach-shmobile/setup-rcar-gen2.c:131:
+> > undefined reference to `rcar_gen2_clocks_init'
+> >
+> > There seems to have been a lot of refactoring of drivers/clk/{shmobile,renesas}
+> > since 4.4 so I'm not sure how this should be fixed.
+> 
+> Current upstreamed RZ/G1M clock driver uses the new Renesas CPG/MSSR clock  driver frame work.
+> Backporting requires lot of refactoring of drivers/clk/{shmobile,renesas}.
+> So I don't think backporting the RZ/G1M clock driver is the right choice.
 
-The steps to get B at D running on Windows 10 are as follows:
+OK.
 
-- Install the guest additions `vagrant plugin install vagrant-vbguest`
-- Install rsync/ssh/git in cygwin.
-- core.autocrlf=input is needed in the git settings for the scripts to
-    run under the Debian of the virtual machine.
-- Once the vm is up then in virtualbox add a USB filter for the FTDI device.
-- For kernelci access you need to use either Firefox or Chrome - the Microsoft
-    browsers will not work.
-- You may need the vagrant scp command (if you wish to copy other files
-   onto the VM) if so -
-    vagrant plugin install vagrant-scp
-- setup mybbb.dat to use the IP address of the VM rather than that of
-    the host.
+> However r8a7743( RZ/G1M) is identical to r8a7791(RCar-M2) platform. We ported r8a7743( RZ/G1M) clk driver based on this.
+> The current patch series, which I submitted is tested with this clk driver.
 
-The wiki has been updated to document these steps.
+Then I think I should just make this change:
 
-Robert
+Subject: CIP: Build essential clock driver for Renesas RZ/G1 platforms
+
+In mainline, clk-rcar-gen2 is selected by CONFIG_CLK_RCAR_GEN2 but
+here there is no such common config symbol and we need to select
+it for each platform.
+
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+---
+ drivers/clk/shmobile/Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/shmobile/Makefile b/drivers/clk/shmobile/Makefile
+index 97c71c885e4f..b339c0b6bb2f 100644
+--- a/drivers/clk/shmobile/Makefile
++++ b/drivers/clk/shmobile/Makefile
+@@ -2,6 +2,8 @@ obj-$(CONFIG_ARCH_EMEV2)		+= clk-emev2.o
+ obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o
+ obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o
+ obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o
++obj-$(CONFIG_ARCH_R8A7743)		+= clk-rcar-gen2.o
++obj-$(CONFIG_ARCH_R8A7745)		+= clk-rcar-gen2.o
+ obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
+ obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
+ obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o
+--- END ---
+
+Right?
+
+Ben.
+
+-- 
+Ben Hutchings
+Software Developer, Codethink Ltd.
