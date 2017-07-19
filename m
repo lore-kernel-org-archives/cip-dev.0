@@ -1,30 +1,52 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Wed, 19 Jul 2017 15:23:33 +0100
-Subject: [cip-dev] [PATCH  0/6] Basic SoC support for r8a7743/r8a7745
-In-Reply-To: <KL1PR06MB1702CAD91500A927559B835FB8A60@KL1PR06MB1702.apcprd06.prod.outlook.com>
-References: <1499851271-20037-1-git-send-email-biju.das@bp.renesas.com>
-	<1500391823.1935.111.camel@codethink.co.uk>
-	<1500393500.1935.119.camel@codethink.co.uk>
-	<KL1PR06MB1702DE0CA0C499B831FFC8F4B8A60@KL1PR06MB1702.apcprd06.prod.outlook.com>
-	<1500472467.1935.124.camel@codethink.co.uk>
-	<KL1PR06MB1702CAD91500A927559B835FB8A60@KL1PR06MB1702.apcprd06.prod.outlook.com>
-Message-ID: <1500474213.1935.125.camel@codethink.co.uk>
+From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
+Date: Wed, 19 Jul 2017 19:49:57 +0200
+Subject: [cip-dev] Procedure to use B@D in Windows 10
+In-Reply-To: <87o9sg1vqu.fsf@ctlt579.codethink.co.uk>
+References: <87o9sg1vqu.fsf@ctlt579.codethink.co.uk>
+Message-ID: <CB0A9D4E-597D-4C15-9257-62E079196E6A@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Wed, 2017-07-19 at 13:59 +0000, Biju Das wrote:
-[...]
-> > Then I think I should just make this change:
-> >
-> > Subject: CIP: Build essential clock driver for Renesas RZ/G1 platforms
-[...]
-> > Right?
-> Yes. That is correct.
+Hi Robert,
 
-I've applied this.
+On 19 July 2017 14:01:13 CEST, Robert Marshall <robert.marshall@codethink.co.uk> wrote:
+>The 0.9.1 release box of B at D has been successfully imported into
+>Windows
+>10 and both a QEMU and BBB health check have been run on that virtual
+>machine.
+>This setup also works when provisioning a box from a clone of the git
+>repository.
+>
+>The steps to get B at D running on Windows 10 are as follows:
+>
+>- Install the guest additions `vagrant plugin install vagrant-vbguest`
+>- Install rsync/ssh/git in cygwin.
+>- core.autocrlf=input is needed in the git settings for the scripts to
+>    run under the Debian of the virtual machine.
+>- Once the vm is up then in virtualbox add a USB filter for the FTDI
+>device.
+>- For kernelci access you need to use either Firefox or Chrome - the
+>Microsoft
+>    browsers will not work.
+>- You may need the vagrant scp command (if you wish to copy other files
+>   onto the VM) if so -
+>    vagrant plugin install vagrant-scp
+>- setup mybbb.dat to use the IP address of the VM rather than that of
+>    the host.
 
-Ben.
+Congratulations for this accomplishment.
+
+>
+>The wiki has been updated to document these steps.
+
+So the former 5 steps documentation now includes the specific steps to take if you are a Windows 10 user. There is no separate documentation since most of the instructions to execute are the same in both cases (Windows and Linux).   
+
+>
+>Robert
+>_______________________________________________
+>cip-dev mailing list
+>cip-dev at lists.cip-project.org
+>https://lists.cip-project.org/mailman/listinfo/cip-dev
 
 -- 
-Ben Hutchings
-Software Developer, Codethink Ltd.
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
