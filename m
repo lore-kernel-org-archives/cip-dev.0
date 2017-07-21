@@ -1,32 +1,28 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Fri, 21 Jul 2017 14:55:11 +0100
-Subject: [cip-dev] [PATCH 0/3] Add iWave RZ/G1M documentation
-In-Reply-To: <1500540535-18905-1-git-send-email-chris.paterson2@renesas.com>
-References: <1500540535-18905-1-git-send-email-chris.paterson2@renesas.com>
-Message-ID: <1500645311.12197.127.camel@codethink.co.uk>
+From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
+Date: Fri, 21 Jul 2017 16:24:21 +0200
+Subject: [cip-dev] Kernel feature support - architecture options and
+ drivers
+In-Reply-To: <1500643130.12197.123.camel@codethink.co.uk>
+References: <1500643130.12197.123.camel@codethink.co.uk>
+Message-ID: <59720E95.5030700@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Thu, 2017-07-20 at 09:48 +0100, Chris Paterson wrote:
-> This series adds iWave to the vendor list, and documents the iWave RZ/G1M
-> board.
-> 
-> Patches based on linux-4.4.y-cip 7bac4ad.
+Dear CIP friends,
 
-Applied and pushed, thanks.
+On 21/07/17 15:18, Ben Hutchings wrote:
+> Sorry for the delay in reviewing feature support.  I previously reviewed
+> filesystems and networking options, and this covers most of the rest.  I
+> will send one more mail after this covering the remaining options.
 
-Ben.
 
-> Biju Das (3):
->   of: Add vendor prefix for iWave Systems Technologies Pvt. Ltd
->   ARM: shmobile: document iW-RainboW-G20M-Qseven-RZG1M system on module
->   ARM: shmobile: document iW-RainboW-G20D-Qseven-RZG1M board
-> 
->  Documentation/devicetree/bindings/arm/shmobile.txt    | 4 ++++
->  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
->  2 files changed, 5 insertions(+)
-> 
+please remember that Ben H. will join us at the TSC bi-weekly call next 
+Monday. It would be very good if you can take a look at this mail before 
+the meeting.
+
+Best Regards
 
 -- 
-Ben Hutchings
-Software Developer, Codethink Ltd.
+Agustin Benito Bethencourt
+Principal Consultant - FOSS at Codethink
+agustin.benito at codethink.co.uk
