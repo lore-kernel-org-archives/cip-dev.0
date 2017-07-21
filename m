@@ -1,65 +1,63 @@
 From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Fri, 21 Jul 2017 16:54:49 +0100
-Subject: [cip-dev] Kernel feature support - core features and debugging
-Message-ID: <1500652489.12197.162.camel@codethink.co.uk>
+Date: Fri, 21 Jul 2017 18:11:11 +0100
+Subject: [cip-dev] Kernel feature support - architecture options and
+ drivers
+In-Reply-To: <2b838876-3237-ab6f-4377-0bbbdc7c6e65@siemens.com>
+References: <1500643130.12197.123.camel@codethink.co.uk>
+	<2b838876-3237-ab6f-4377-0bbbdc7c6e65@siemens.com>
+Message-ID: <1500657071.12197.183.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This is the third and last part.  There are actually a few features that
-I'm recommending to *enable* here.
+On Fri, 2017-07-21 at 17:19 +0200, Jan Kiszka wrote:
+> On 2017-07-21 15:18, Ben Hutchings wrote:
+> > Intel Quark support (CONFIG_X86_INTEL_QUARK) is enabled in the
+> > siemens_iot2000 config.  Are you really using Quark SoCs?
+> 
+> Yeah...
+> http://w3.siemens.com/mcms/pc-based-automation/en/industrial-iot/pages/default.aspx.
+> This revision will stop being shipped at latest in 2020, but there will
+> be a lot of these chips in the field until then.
+>
+> Likely all needed patches will be in 4.13 (just still struggling to get
+> userspace software ported from the Intel BSP to mainline). So I'm
+> planning to submit the essential patches for CIP integration "soon".
 
-All the configs I was given *disable* the stack protector
-(CONFIG_CC_STACKPROTECTOR_NONE enabled).  Please enable
-CONFIG_CC_STACKPROTECTOR_REGULAR or CONFIG_CC_STACKPROTECTOR_STRONG
-instead.
+I assume you're aware of erratum #24 affecting the LOCK prefix?  There
+seems to be no solution except to use Intel's forked version of binutils
+which deletes the LOCK prefix.  I don't know if it's an issue for kernel
+code, but probably not - the kernel shouldn't use LOCK if CONFIG_SMP is
+not enabled, and in any case shouldn't get a page fault on such an
+instruction..
 
-Some configs disable heap randomisation (CONFIG_COMPAT_BRK enabled), but
-this is only necessary for old C libraries and it weakens.  Please
-enable heap randomisation by default, i.e. disable CONFIG_COMPAT_BRK.
+> > uhci-hcd (CONFIG_USB_UHCI_HCD) is for obsolete hardware (so far as I
+> > know) but is enabled in the plathome_obsvx1, siemens_server and toshiba
+> > x86 configs.  Please disable it.
+> 
+> You need it for old USB 2.0 chipsets that have separate USB 1.1 and 2.0
+> interfaces. Those would then no longer word with 1.1 devices. But I bet
+> none of the provided products contain that.
 
-Module symbol versioning (CONFIG_MODVERSIONS) is disabled in some
-configs.  Consider enabling it in order to catch mistakes.
+I know there were some UHCI/EHCI pairings but I haven't seen a UHCI in a
+long time.
 
-Performance events (CONFIG_PERF_EVENTS) provide a significant attack
-surface and generally allow unprivileged users to crash the system.  If
-you do need them enabled in production - which I can understand - you
-might want to apply the Grsecurity/Debian/Android patch that disables
-use by unprivileged users.
+> > KVM (CONFIG_VIRTUALIZATION) adds a large attack surface (guest-to-host)
+> > and is likely to be hard to maintain in the long term.  Several of the
+> > configurations (hitachi_omap, plathome_obsvx1, siemens_iot2000,
+> > siemens_server) enable this.  Do you need it?
+> 
+> Not on the IOT2000 (f...ine Yocto rules made that pop up, I still need
+> to convert to a plain defconfig), not for production purposes on our
+> server, but we do have products (not listed so far) with KVM.
+> 
+> With - buzzword alarm - "edge computing", it is getting more and more
+> important as isolation tool for "apps". Containers/namespaces are
+> sometimes not strong enough.
+[...]
 
-Obsolete syscalls (CONFIG_SGETMASK_SYSCALL, CONFIG_SYSCTL_SYSCALL,
-CONFIG_SYSFS_SYSCALL, CONFIG_UID16, CONFIG_USELIB) are enabled in some
-configs.  Consider disabling these.
+I understand that - just trying to check that is actually being used.
 
-Deprecated sysfs entries (CONFIG_SYSFS_DEPRECATED,
-CONFIG_SYSFS_DEPRECATED_V2) are enabled in the toshiba powerpc config.
-This is incompatible with current udev and other tools.  Please disable
-them.
-
-User namespaces (CONFIG_USER_NS) open up a huge attack surface to
-unprivileged users, which has resulted in a large number of privilege
-escalation vulnerabilities.  This is enabled in the plathome_obsvx1,
-siemens_iot2000 and siemens_server configs.  Do you need it?
-
-Magic Sysrq (CONFIG_MAGIC_SYSRQ) can leak sensitive information if it's
-possible for an untrusted user to invoke it.  Consider setting
-CONFIG_MAGIC_SYSRQ_DEFAULT_ENABLE=0x01b6 (this is what Debian uses) or
-some other restrictive mask for production builds.
-
-Linked list debug checks (CONFIG_LIST_DEBUG) are disabled in all
-configs.  Consider enabling them as these can make it harder to exploit
-some bugs.
-
-Kernel timer statistics (CONFIG_TIMER_STATS) have been removed upstream,
-but are enabled in toshiba_zynq and plathome_obsvx1 configs.  Apparently
-there are tracepoints that provide similar functionality.  Please
-disable this.
-
-Kernel shared memory (CONFIG_KSM) has an inherent security problem that
-the merging of memory introduces a timing side-channel between VMs.  On
-systems vulnerable to Rowhammer, it can also be used to *modify* memory
-belonging to other VMs.  This is enabled in the toshiba_tegra,
-plathome_obsvx1 and siemens_server configs.  Please consider disabling
-it.
+Ben.
 
 -- 
 Ben Hutchings
