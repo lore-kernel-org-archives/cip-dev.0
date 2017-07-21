@@ -1,68 +1,66 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Fri, 21 Jul 2017 17:19:15 +0200
-Subject: [cip-dev] Kernel feature support - architecture options and
- drivers
-In-Reply-To: <1500643130.12197.123.camel@codethink.co.uk>
-References: <1500643130.12197.123.camel@codethink.co.uk>
-Message-ID: <2b838876-3237-ab6f-4377-0bbbdc7c6e65@siemens.com>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Fri, 21 Jul 2017 16:54:49 +0100
+Subject: [cip-dev] Kernel feature support - core features and debugging
+Message-ID: <1500652489.12197.162.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 2017-07-21 15:18, Ben Hutchings wrote:
-> Intel Quark support (CONFIG_X86_INTEL_QUARK) is enabled in the
-> siemens_iot2000 config.  Are you really using Quark SoCs?
+This is the third and last part.  There are actually a few features that
+I'm recommending to *enable* here.
 
-Yeah...
-http://w3.siemens.com/mcms/pc-based-automation/en/industrial-iot/pages/default.aspx.
-This revision will stop being shipped at latest in 2020, but there will
-be a lot of these chips in the field until then.
+All the configs I was given *disable* the stack protector
+(CONFIG_CC_STACKPROTECTOR_NONE enabled).  Please enable
+CONFIG_CC_STACKPROTECTOR_REGULAR or CONFIG_CC_STACKPROTECTOR_STRONG
+instead.
 
-Likely all needed patches will be in 4.13 (just still struggling to get
-userspace software ported from the Intel BSP to mainline). So I'm
-planning to submit the essential patches for CIP integration "soon".
+Some configs disable heap randomisation (CONFIG_COMPAT_BRK enabled), but
+this is only necessary for old C libraries and it weakens.  Please
+enable heap randomisation by default, i.e. disable CONFIG_COMPAT_BRK.
 
-> uhci-hcd (CONFIG_USB_UHCI_HCD) is for obsolete hardware (so far as I
-> know) but is enabled in the plathome_obsvx1, siemens_server and toshiba
-> x86 configs.  Please disable it.
+Module symbol versioning (CONFIG_MODVERSIONS) is disabled in some
+configs.  Consider enabling it in order to catch mistakes.
 
-You need it for old USB 2.0 chipsets that have separate USB 1.1 and 2.0
-interfaces. Those would then no longer word with 1.1 devices. But I bet
-none of the provided products contain that.
+Performance events (CONFIG_PERF_EVENTS) provide a significant attack
+surface and generally allow unprivileged users to crash the system.  If
+you do need them enabled in production - which I can understand - you
+might want to apply the Grsecurity/Debian/Android patch that disables
+use by unprivileged users.
 
-> KVM (CONFIG_VIRTUALIZATION) adds a large attack surface (guest-to-host)
-> and is likely to be hard to maintain in the long term.  Several of the
-> configurations (hitachi_omap, plathome_obsvx1, siemens_iot2000,
-> siemens_server) enable this.  Do you need it?
+Obsolete syscalls (CONFIG_SGETMASK_SYSCALL, CONFIG_SYSCTL_SYSCALL,
+CONFIG_SYSFS_SYSCALL, CONFIG_UID16, CONFIG_USELIB) are enabled in some
+configs.  Consider disabling these.
 
-Not on the IOT2000 (f...ine Yocto rules made that pop up, I still need
-to convert to a plain defconfig), not for production purposes on our
-server, but we do have products (not listed so far) with KVM.
+Deprecated sysfs entries (CONFIG_SYSFS_DEPRECATED,
+CONFIG_SYSFS_DEPRECATED_V2) are enabled in the toshiba powerpc config.
+This is incompatible with current udev and other tools.  Please disable
+them.
 
-With - buzzword alarm - "edge computing", it is getting more and more
-important as isolation tool for "apps". Containers/namespaces are
-sometimes not strong enough.
+User namespaces (CONFIG_USER_NS) open up a huge attack surface to
+unprivileged users, which has resulted in a large number of privilege
+escalation vulnerabilities.  This is enabled in the plathome_obsvx1,
+siemens_iot2000 and siemens_server configs.  Do you need it?
 
-I can contribute to reviewing patches when needed or talk to the current
-maintainers to have a look as well. At least on x86, it is mature by
-now. ARM seems to be catching up quickly.
+Magic Sysrq (CONFIG_MAGIC_SYSRQ) can leak sensitive information if it's
+possible for an untrusted user to invoke it.  Consider setting
+CONFIG_MAGIC_SYSRQ_DEFAULT_ENABLE=0x01b6 (this is what Debian uses) or
+some other restrictive mask for production builds.
 
-> /dev/mem (CONFIG_DEVMEM) is needed by some userland drivers, though UIO
-> provides a cleaner way to do this.  Please check whether you can disable
-> it.
+Linked list debug checks (CONFIG_LIST_DEBUG) are disabled in all
+configs.  Consider enabling them as these can make it harder to exploit
+some bugs.
 
-I just explained this these days to someone who wanted to build an API
-around it. In current embedded, it can be tricky, but I'm with you and
-will promote its removal further.
+Kernel timer statistics (CONFIG_TIMER_STATS) have been removed upstream,
+but are enabled in toshiba_zynq and plathome_obsvx1 configs.  Apparently
+there are tracepoints that provide similar functionality.  Please
+disable this.
 
-> 
-> Chrome platform support (CONFIG_CHROME_PLATFORMS) is enabled in the
-> siemens_server config.  Assuming you don't need to support these
-> platforms, please disable it.
-
-Ack.
-
-Jan
+Kernel shared memory (CONFIG_KSM) has an inherent security problem that
+the merging of memory introduces a timing side-channel between VMs.  On
+systems vulnerable to Rowhammer, it can also be used to *modify* memory
+belonging to other VMs.  This is enabled in the toshiba_tegra,
+plathome_obsvx1 and siemens_server configs.  Please consider disabling
+it.
 
 -- 
-Siemens AG, Corporate Technology, CT RDA ITP SES-DE
-Corporate Competence Center Embedded Linux
+Ben Hutchings
+Software Developer, Codethink Ltd.
