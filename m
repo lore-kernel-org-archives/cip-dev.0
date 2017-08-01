@@ -1,36 +1,79 @@
-From: hidehiro.kawai.ez@hitachi.com (=?utf-8?B?5rKz5ZCI6Iux5a6PIC8gS0FXQUnvvIxISURFSElSTw==?=)
-Date: Fri, 28 Jul 2017 05:10:44 +0000
-Subject: [cip-dev] Kernel feature support - core features and debugging
-In-Reply-To: <1500652489.12197.162.camel@codethink.co.uk>
-References: <1500652489.12197.162.camel@codethink.co.uk>
-Message-ID: <04EAB7311EE43145B2D3536183D1A8445B9660D5@GSjpTKYDCembx31.service.hitachi.net>
+From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
+Date: Tue, 1 Aug 2017 16:10:41 +0100
+Subject: [cip-dev] Kernel maintenance and CIP testing report weeks 28,
+	29 and 30
+Message-ID: <598099F1.7010908@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Ben,
+Dear CIP friends,
 
-Thanks for the consideration and suggestion.
+this is the report of the major actions related with those activities 
+led by Codethink Ltd. Some of the reported topics were already 
+communicated through this mailing list.
 
-> From: Ben Hutchings
-> Performance events (CONFIG_PERF_EVENTS) provide a significant attack
-> surface and generally allow unprivileged users to crash the system.  If
-> you do need them enabled in production - which I can understand - you
-> might want to apply the Grsecurity/Debian/Android patch that disables
-> use by unprivileged users.
+++ Kernel maintenance
 
-Is it difficult to support for super long term?  I think it is up to
-users to enable it or not.
+1. Backported of the basic support for the Renesas board (family) has 
+been merged.
 
-> User namespaces (CONFIG_USER_NS) open up a huge attack surface to
-> unprivileged users, which has resulted in a large number of privilege
-> escalation vulnerabilities.  This is enabled in the plathome_obsvx1,
-> siemens_iot2000 and siemens_server configs.  Do you need it?
+2. The first round of kernel features review has been provided. Some 
+feedback is still pending. Ben H. participated in the CIP TSC bi-weekly 
+call.
 
-I'm not sure how vulnerable it is, but I think we may want to adopt the
-same approach with the CONFIG_PERF_EVENTS case.
-https://github.com/copperhead/linux-hardened/commit/358b303ebdc0b4a74b66a41ddfd2a69322d5404a.patch
+3. Now we need to define the next steps in the kernel maintenance front.
 
-Best regards,
+4. As usual, Ben H. is contributing to the upstream 4.4 LTS cycle.
 
-Hidehiro Kawai
-Hitachi, Ltd. Research & Development Group
+++ CIP Testing
+
+1. E-mail configuration in LAVA is done. Robert Marshall is publishing 
+the outcome of the basic health checks in the cip-testing-results 
+mailing list. Feel free to join: 
+https://lists.cip-project.org/mailman/listinfo/cip-testing-results The 
+documentation for CIP members to send reports through mail is work in 
+progress. https://gitlab.com/cip-project/cip-testing/testing/issues/102
+
+2. B at D now works on a W10 machine with little additional configurations. 
+Both, Windows and Linux users share the same installations and 
+configuration steps except when specifically mentioned. Waiting to 
+receive feedback from Members. 
+https://gitlab.com/cip-project/cip-testing/testing/issues/106
+
+3. A change in git://git.linaro.org/qa/test-definitions.git had a major 
+impact in B at D. It has been fixed now. 
+https://gitlab.com/cip-project/cip-testing/testing/issues/116
+
+4. There is progress in using B at D behind a web proxy. 
+https://gitlab.com/cip-project/cip-testing/testing/issues/99
+
+5. Robert has started the trials to update the LAVA version shipped with 
+B at D. It includes several fixed to issues we are facing plus several 
+improvements we will need in the near future. 
+https://gitlab.com/cip-project/cip-testing/testing/issues/114
+
+6. Other topics
+
+* Some weeks ago we reported to the LAVA team an issue that has already 
+been fixed upstream. Another good reason for updating LAVA. 
+https://gitlab.com/cip-project/cip-testing/testing/issues/84
+
+* Several issues has been fixed like tickets #112, #92
+
+* As reported, new repositories has been created and populated. 
+https://gitlab.com/cip-project/cip-testing/testing/issues/100
+** We are starting to populate CIP-kernel-test-logs repository as a 
+first step towards publishing the "passed test" logs in a public repo in 
+order to compare the logs from tests done by other  Members.
+
+* There is no room for celebrating the CIP workshop at ELCE during the 
+even. We will need to include it the previous day, right after the CIP 
+TSC f2f meeting.
+
+* At least Agustin B.B. and Ben H. will attend to ELCE.
+
+Best Regards
+-- 
+Agustin Benito Bethencourt
+Principal Consultant - FOSS at Codethink
+agustin.benito at codethink.co.uk
