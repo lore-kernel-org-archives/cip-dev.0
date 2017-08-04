@@ -1,243 +1,80 @@
-From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
-Date: Fri, 4 Aug 2017 16:18:48 +0900
-Subject: [cip-dev] Project-X (minimal root filesystem) for renesas board
-In-Reply-To: <TY1PR06MB07022139C523225AAC899853B7B10@TY1PR06MB0702.apcprd06.prod.outlook.com>
-References: <001001d2efdc$d8312a30$88937e90$@toshiba.co.jp>	<390B4EACA1A32748BA6BC7F859F7D7165D08C00F@GSJPOSKDCEMBX16.service.hitachi.net>	<004101d2efeb$c53518b0$4f9f4a10$@toshiba.co.jp>	<390B4EACA1A32748BA6BC7F859F7D7165D08C27D@GSJPOSKDCEMBX16.service.hitachi.net>	<003c01d2f06f$ddc420e0$994c62a0$@toshiba.co.jp>	<5954B871.2000601@codethink.co.uk>
-	<004101d2f6ca$76f8f6e0$64eae4a0$@toshiba.co.jp>
-	<TY1PR06MB07022139C523225AAC899853B7B10@TY1PR06MB0702.apcprd06.prod.outlook.com>
-Message-ID: <004801d30cf1$eab94b60$c02be220$@toshiba.co.jp>
+From: binh.nguyen.uw@rvc.renesas.com (Binh Thanh. Nguyen)
+Date: Fri, 4 Aug 2017 19:22:43 +0700
+Subject: [cip-dev] B@D support Renesas iwg20m board - issue
+Message-ID: <FD48CE4B67D3004BAA683CC1E3106E2D07BABEAB32@RVC-MBS-CL.rvc.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Chris,
+Hello all,
 
-> -----Original Message-----
-> From: Chris Paterson [mailto:Chris.Paterson2 at renesas.com]
-> Sent: Thursday, August 03, 2017 10:19 PM
-> To: Daniel Sangorrin; 'Agustin Benito Bethencourt'
-> Cc: cip-dev at lists.cip-project.org
-> Subject: RE: [cip-dev] Project-X (minimal root filesystem) for renesas board
-> 
-> Hello Daniel, all,
-> 
-> > From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-
-> > project.org] On Behalf Of Daniel Sangorrin
-> > Sent: 07 July 2017 03:41
-> >
-> > Hi Agustin, Chris
-> >
-> > > -----Original Message-----
-> > > From: cip-dev-bounces at lists.cip-project.org
-> > > [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Agustin
-> > > Benito Bethencourt
-> > > Sent: Thursday, June 29, 2017 5:21 PM
-> > > To: cip-dev at lists.cip-project.org
-> > > Subject: Re: [cip-dev] Project-X (minimal root filesystem) for renesas
-> > > board
-> > >
-> > > Hi,
-> > >
-> > > On 29/06/17 02:37, Daniel Sangorrin wrote:
-> > > > Hi Koguchi-san,
-> > > >
-> > > >> -----Original Message-----
-> > > >> From: ???? / KOGUCHI?TAKUO
-> > [mailto:takuo.koguchi.sw at hitachi.com]
-> > > >> Sent: Wednesday, June 28, 2017 6:08 PM
-> > > >> To: 'Daniel Sangorrin'; cip-dev at lists.cip-project.org
-> > > >> Cc: 'Chris Paterson'
-> > > >> Subject: RE: RE: Project-X (minimal root filesystem) for renesas
-> > > >> board
-> > > >>
-> > > >> Daniel-san,
-> > > >>
-> > > >>> I think this is not a good approach. We would need to have a new
-> > > >>> linux-cip folder for each release.
-> > > >> Let make it clear. Will you please describe your recommendation?
-> > > >
-> > > > Yes, please see below.
-> > > >
-> > > >>> Patches for the cyclone board should be on its own CIP kernel
-> > > >>> repository (where you can merge cip releases and add tags). Then,
-> > > >>> we can choose which version we want by specifying the repository and
-> > tag/commit_id.
-> > > >> Good point.  But  CIP kernel repository is curerntly used for
-> > > >> release assuming it is tested. And CycloneV is not supported by CIP
-> > > >> at
-> > > this
-> > > >> moment. So I put the patches in the yocto project way.
-> > > >
-> > > > I didn't mean to put it on Ben's CIP repository rather on github.
-> > > > This way you can better maintain your "out-of-tree" cyclone V
-> > > patches
-> > > > and merge (do not rebase please) changes from Ben's CIP kernel regularly.
-> > In other words, do the same as Renesas is doing at [1].
-> > > >
-> > > > [1] https://github.com/renesas-rz/renesas-cip
-> > >
-> > > In order to have all the cip related code in one place, it would be
-> > > good, if anybody is using github, that at least there is a mirror of
-> > > that repo in gitlab. When we start automating builds/test, that would
-> > > be helpful.
-> >
-> > Agustin: I don't mind, but is this necessary?.
-> > Chris: Will you create another repository for u-boot?
-> 
-> Sorry for the delay.
-> 
-> u-boot source for the RZ/G1-M iWave platform is now available [1].
-> 
-> We've tested this using the gcc-arm-none-eabi-5_4-2016q3 [2] compiler:
-> 
-> export PATH=/opt/gcc-arm-none-eabi-5_4-2016q3/bin:$PATH
-> export CROSS_COMPILE=arm-none-eabi-
-> export ARCH=arm
-> make iwg20m_q7_config
-> make
-> 
-> The u-boot binary can be loaded onto the platform using JTAG or by writing it to the eMMC (be very careful though as this overwrites
-> the current u-boot, so if it goes wrong you'll need JTAG to un-brick the board). Instructions can be found in the Software User Guide
-> included on the CD which comes with the platform.
-> 
-> 
-> [1] https://github.com/renesas-rz/renesas-u-boot-cip/tree/2013.01.01/rzg1-iwave
-> [2] https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads
-> 
-> Kind regards, Chris
+I am trying to add support healthcheck for Renesas iwg20m board into [1]. My current healthcheck is just simply boot up the board (no deploy and test definition).
+And I still meet one issue with that booting action. The issue is whenever I run healthcheck, It always run soft-reboot and failed. 'reboot' command is just supported after booting board. So if I booted the board first, then run the healthcheck, it will pass.
 
-Thank you!
+Anyone have advices for me?
 
-I have updated the project-x with the u-boot definitions. 
-I'm a bit scared of bricking the board and not being able to recover because
-I probably don't have an appropriate JTAG ICE/cable. For that reason, I will
-leave the flashing part for the future.
+Please find my patches to apply for [1] in attached files.
 
-Thanks,
-Daniel
+[1] https://gitlab.com/cip-project/cip-testing/board-at-desk-single-dev/
 
-> > > >>> I don't think it is necessary since the CIP root filesystem only supports a
-> > few packages.
-> > > >>> Do you mind if I rewrite this and other unnecessary definitions?
-> > > >> I am happy if you go ahead and fix it!
-> > > >
-> > > > OK, thanks. I will also separate Beaglebone from Cyclone V.
-> > > >
-> > > > Thanks,
-> > > > Daniel
-> > > >
-> > > >> Best regards,
-> > > >> Takuo Koguchi
-> > > >>
-> > > >>
-> > > >>
-> > > >>> -----Original Message-----
-> > > >>> From: Daniel Sangorrin [mailto:daniel.sangorrin at toshiba.co.jp]
-> > > >>> Sent: Wednesday, June 28, 2017 5:52 PM
-> > > >>> To: ???? / KOGUCHI?TAKUO; cip-dev at lists.cip-project.org
-> > > >>> Cc: 'Chris Paterson'
-> > > >>> Subject: [!]RE: Project-X (minimal root filesystem) for renesas
-> > > >>> board
-> > > >>>
-> > > >>> Ho Koguchi-san
-> > > >>>
-> > > >>>> -----Original Message-----
-> > > >>>> From: ???? / KOGUCHI?TAKUO
-> > [mailto:takuo.koguchi.sw at hitachi.com]
-> > > >>>> Sent: Wednesday, June 28, 2017 5:35 PM
-> > > >>>> To: Daniel Sangorrin; cip-dev at lists.cip-project.org
-> > > >>>> Cc: 'Chris Paterson'
-> > > >>>> Subject: RE: Project-X (minimal root filesystem) for renesas
-> > > >>>> board
-> > > >>>>
-> > > >>>> Hi Daniel-san,
-> > > >>>>
-> > > >>>>> I have a few questions:
-> > > >>>>>    - Why do you have two directories "linux-cip" and
-> > > >>>>> "linux-cip2" that are almost
-> > > >>> identical?
-> > > >>>>
-> > > >>>> linux-cip directory is for linux-4.4.55-cip3.
-> > > >>>> linux-cip2 is for the previous release and it is not necessary if you
-> > update linux-cip.
-> > > >>>
-> > > >>> I think this is not a good approach. We would need to have a new
-> > > >>> linux-cip folder for each release.
-> > > >>>
-> > > >>> Patches for the cyclone board should be on its own CIP kernel
-> > > >>> repository (where you can merge cip releases and add tags). Then,
-> > > >>> we can choose which version we want by specifying the repository and
-> > tag/commit_id.
-> > > >>>
-> > > >>>>>    - I can see some xserver-related definitions on the board's
-> > > >>>>> configuration file. Are those necessary?
-> > > >>>> beaglebone.conf is based on poky/meta-yocto-bsp/conf/machine.
-> > > >>>> xserver-related definition was inculude in the original.  I am not sure if
-> > it is necessary.
-> > > >>>
-> > > >>> I don't think it is necessary since the CIP root filesystem only supports a
-> > few packages.
-> > > >>> Do you mind if I rewrite this and other unnecessary definitions?
-> > > >>>
-> > > >>> Thanks,
-> > > >>> Daniel
-> > > >>>
-> > > >>>>
-> > > >>>>
-> > > >>>> Takuo Koguchi
-> > > >>>>
-> > > >>>>
-> > > >>>>> -----Original Message-----
-> > > >>>>> From: Daniel Sangorrin [mailto:daniel.sangorrin at toshiba.co.jp]
-> > > >>>>> Sent: Wednesday, June 28, 2017 4:05 PM
-> > > >>>>> To: cip-dev at lists.cip-project.org; ???? / KOGUCHI?TAKUO
-> > > >>>>> Cc: 'Chris Paterson'
-> > > >>>>> Subject: [!]Project-X (minimal root filesystem) for renesas
-> > > >>>>> board
-> > > >>>>>
-> > > >>>>> Hi Koguchi-san,
-> > > >>>>> Cc: Chris, cip-dev
-> > > >>>>>
-> > > >>>>> I'm going to add support to project-X for the Renesas iwg20m
-> > > >>>>> board which is equipped with an armv7 chip.
-> > > >>>>> I have noticed that you added support for beaglebone and cyclone
-> > > >>>>> on the deby-armv7 folder [1].
-> > > >>>>>
-> > > >>>>> I have a few questions:
-> > > >>>>>    - Why do you have two directories "linux-cip" and
-> > > >>>>> "linux-cip2" that are almost
-> > > >>> identical?
-> > > >>>>>    - I can see some xserver-related definitions on the board's
-> > > >>>>> configuration file. Are those necessary?
-> > > >>>>>
-> > > >>>>> Thanks,
-> > > >>>>> Daniel
-> > > >>>>>
-> > > >>>>> [1]
-> > > >>>>> https://gitlab.com/cip-playground/project-x/tree/master/deby-arm
-> > > >>>>> v7
-> > > >>>>>
-> > > >>>
-> > > >>>
-> > > >
-> > > >
-> > > >
-> > > > _______________________________________________
-> > > > cip-dev mailing list
-> > > > cip-dev at lists.cip-project.org
-> > > > https://lists.cip-project.org/mailman/listinfo/cip-dev
-> > > >
-> > >
-> > > --
-> > > Agustin Benito Bethencourt
-> > > Principal Consultant - FOSS at Codethink
-> > > agustin.benito at codethink.co.uk
-> > > _______________________________________________
-> > > cip-dev mailing list
-> > > cip-dev at lists.cip-project.org
-> > > https://lists.cip-project.org/mailman/listinfo/cip-dev
-> >
-> >
-> > _______________________________________________
-> > cip-dev mailing list
-> > cip-dev at lists.cip-project.org
-> > https://lists.cip-project.org/mailman/listinfo/cip-dev
+Below is the log:
+
+start: 0 validate
+device may need manual intervention to reboot validate duration: 0.00
+start: 1 uboot-action (max 120s)
+start: 1.1 uboot-prepare-kernel (max 120s) uboot-prepare-kernel duration: 0.00
+start: 1.2 uboot-from-media (max 120s)
+uboot-from-media duration: 0.00
+start: 1.3 uboot-overlay (max 120s)
+Parsed boot commands: setenv autoload no; setenv initrd_high '0xffffffff'; setenv fdt_high '0xffffffff'; setenv bootargs 'console=ttySC0,115200n8 vmalloc=384M root=/dev/mmcblk0p2 '; setenv loadkernel 'fatload mmc 2:1 0x40007fc0 uImage'; setenv loadfdt 'fatload mmc 2:1 0x40f00000 r8a7743-iwg20m.dtb'; setenv bootcmd 'run loadkernel; run loadfdt; bootm 0x40007fc0 - 0x40f00000'; run bootcmd uboot-overlay duration: 0.00
+start: 1.4 connect-device (max 120s)
+connect-device Connecting to device using 'telnet localhost 8020'
+connect-device duration: 0.00
+start: 1.5 uboot-retry (max 120s)
+start: 1.5.1 reboot-device (max 120s)
+start: 1.5.1.1 soft-reboot (max 120s)
+reboot
+reboot
+reboot -n
+reboot -n
+reboot -n -f
+reboot -n -f
+soft-reboot: Wait for prompt Restarting system. 120 seconds Trying ::1...
+Connected to localhost.
+Escape character is '^]'.
+ser2net port 8020 device /dev/ttyUSB0 [115200 N81] (Debian GNU/Linux)
+case: soft-reboot
+definition: lava
+result: fail
+level: 1.5.1.1
+duration: 120.000326157
+extra: ...
+soft-reboot timed out after 120 seconds
+soft-reboot timed out after 120 seconds
+uboot-retry failed: 1 of 2 attempts. 'soft-reboot timed out after 120 seconds'
+start: 1.5.1 reboot-device (max 120s)
+start: 1.5.1.1 soft-reboot (max 120s)
+...
+
+Best regards,
+Binh Nguyen
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: 0001-device-types-renesas-iwg20m-add-new-device-types-fil.patch
+Type: application/octet-stream
+Size: 3511 bytes
+Desc: 0001-device-types-renesas-iwg20m-add-new-device-types-fil.patch
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20170804/c3fe3b08/attachment.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: 0002-intergration-scripts-add-renesas-iwg20m-device-type-.patch
+Type: application/octet-stream
+Size: 2243 bytes
+Desc: 0002-intergration-scripts-add-renesas-iwg20m-device-type-.patch
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20170804/c3fe3b08/attachment-0001.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: 0003-tests-add-iwg20m-healthcheck-script.patch
+Type: application/octet-stream
+Size: 1080 bytes
+Desc: 0003-tests-add-iwg20m-healthcheck-script.patch
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20170804/c3fe3b08/attachment-0002.obj>
