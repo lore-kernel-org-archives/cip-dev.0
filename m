@@ -1,57 +1,59 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Tue,  8 Aug 2017 10:50:24 +0100
-Subject: [cip-dev] [PATCH  10/14] ARM: dts: r8a7743: add IRQC support
+Date: Tue,  8 Aug 2017 10:50:25 +0100
+Subject: [cip-dev] [PATCH 11/14] ARM: dts: iwg20m: Add iWave RZG1M Qseven SOM
 In-Reply-To: <1502185828-45443-1-git-send-email-biju.das@bp.renesas.com>
 References: <1502185828-45443-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1502185828-45443-11-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1502185828-45443-12-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Add support for iWave RZG1M Qseven System On Module.
+http://www.iwavesystems.com/rz-g1m-qseven-module.html
 
-Describe the IRQC interrupt controller in the R8A7743 device tree.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit ef0ca50774495c4ca4d1211252c8ee5af5136187)
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-
-Conflicts:
-	arch/arm/boot/dts/r8a7743.dtsi
+(cherry picked from commit aabf13bac0046a1add4a3c39881ffb0abe692542)
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ arch/arm/boot/dts/r8a7743-iwg20m.dtsi | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r8a7743-iwg20m.dtsi
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 88406e32..64182bf 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -56,6 +56,25 @@
- 				    IRQ_TYPE_LEVEL_LOW)>;
- 	};
- 
-+	irqc: interrupt-controller at e61c0000 {
-+		compatible = "renesas,irqc-r8a7743", "renesas,irqc";
-+		#interrupt-cells = <2>;
-+		interrupt-controller;
-+		reg = <0 0xe61c0000 0 0x200>;
-+		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp4_clks R8A7743_CLK_IRQC>;
-+		power-domains = <&cpg_clocks>;
+diff --git a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
+new file mode 100644
+index 0000000..001ca91
+--- /dev/null
++++ b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
+@@ -0,0 +1,29 @@
++/*
++ * Device Tree Source for the iWave-RZG1M-20M Qseven SOM
++ *
++ * Copyright (C) 2017 Renesas Electronics Corp.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++#include "r8a7743.dtsi"
++
++/ {
++	compatible = "iwave,g20m", "renesas,r8a7743";
++
++	memory at 40000000 {
++		device_type = "memory";
++		reg = <0 0x40000000 0 0x20000000>;
 +	};
 +
- 	dmac0: dma-controller at e6700000 {
- 		compatible = "renesas,rcar-dmac";
- 		reg = <0 0xe6700000 0 0x20000>;
++	memory at 200000000 {
++		device_type = "memory";
++		reg = <2 0x00000000 0 0x20000000>;
++	};
++};
++
++&extal_clk {
++	clock-frequency = <20000000>;
++};
 -- 
 1.9.1
