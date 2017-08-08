@@ -1,40 +1,55 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Mon, 7 Aug 2017 10:59:46 -0400
-Subject: [cip-dev] How to back-port upstream BSP patches to CIP kernel
-Message-ID: <90c61c7e-2459-b2dd-56e9-f07b1d5770bd@siemens.com>
+From: biju.das@bp.renesas.com (Biju Das)
+Date: Tue,  8 Aug 2017 10:50:14 +0100
+Subject: [cip-dev] [PATCH 00/14] Add Device tree support for iWave G20D-Q7
+	board
+Message-ID: <1502185828-45443-1-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Ben,
+This patch series aims to add initial SoC DT/Clock and iWave G20D-Q7 
+DT.
 
-after getting basically all patches for our Quark-based IOT2000 device
-into upstream, I did the exercise of constructing a corresponding CIP
-queue from that. The result is an almost 60 patches long series. Now I
-was wondering if that is palatable for the CIP kernel and if I'm using
-the right back-port approaches in all cases. Here is queue, first of all:
+The clock patch is based on the similar work done on r8a7791(R-Car M2)
+SoC.
 
-https://github.com/siemens/linux/commits/queues/iot2000-cip
-(just ignore the "iot2000-hack" tip)
+This series has been tested against linux-cip tag v4.4.y-cip master branch.
 
-There are a number of (presumably) non-brainer patches. But then there
-are also more invasive back-ports that pulled some refactorings, such as
+Biju Das (8):
+  ARM: dts: r8a7743: initial SoC device tree
+  ARM: shmobile: r8a7743: Add clock index macros for DT sources
+  clk: shmobile: Document r8a7743 CPG clock support
+  clk: shmobile: Document r8a7743 CPG DIV6 clock support
+  clk: shmobile: Document r8a7743 MSTP clock support
+  ARM: dts: r8a7743: Add clocks
+  ARM: dts: iwg20m: Add iWave RZG1M Qseven SOM
+  ARM: dts: iwg20d-q7: Add support for iWave G20D-Q7 board based on
+    RZ/G1M
 
-- serial exar split-out
-- support for platform device properties
-- GPIO API extension (converts gpiochip_add into a static inline wrapper
-  around gpiochip_add_data -> module ABI change)
-- the whole series of EFI capsule changes
+Sergei Shtylyov (4):
+  ARM: dts: r8a7743: add SYS-DMAC support
+  ARM: dts: r8a7743: add [H]SCIF{A|B} support
+  ARM: dts: r8a7743: add Ether support
+  ARM: dts: r8a7743: add IRQC support
 
-Besides looking at the concrete case of this queue, I was wondering if
-some general guidelines for back-porting changes from upstream could be
-derived from that.
+Simon Horman (2):
+  ARM: shmobile: defconfig: Enable r8a774[35] SoCs
+  ARM: multi_v7_defconfig: Enable r8a774[35] SoCs
 
-Thanks in advance,
-Jan
-
-PS: I can send the series, likely in chunks, in a couple of weeks, once
-I had a chance to test the stuff on real hw (out of reach right now).
+ .../bindings/clock/renesas,cpg-div6-clocks.txt     |   1 +
+ .../bindings/clock/renesas,cpg-mstp-clocks.txt     |   1 +
+ .../clock/renesas,rcar-gen2-cpg-clocks.txt         |   1 +
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/r8a7743-iwg20d-q7.dts            |  25 +
+ arch/arm/boot/dts/r8a7743-iwg20m.dtsi              |  29 +
+ arch/arm/boot/dts/r8a7743.dtsi                     | 871 +++++++++++++++++++++
+ arch/arm/configs/multi_v7_defconfig                |   2 +
+ arch/arm/configs/shmobile_defconfig                |   2 +
+ include/dt-bindings/clock/r8a7743-clock.h          | 166 ++++
+ 10 files changed, 1099 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
+ create mode 100644 arch/arm/boot/dts/r8a7743-iwg20m.dtsi
+ create mode 100644 arch/arm/boot/dts/r8a7743.dtsi
+ create mode 100644 include/dt-bindings/clock/r8a7743-clock.h
 
 -- 
-Siemens AG, Corporate Technology, CT RDA ITP SES-DE
-Corporate Competence Center Embedded Linux
+1.9.1
