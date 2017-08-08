@@ -1,55 +1,81 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Tue,  8 Aug 2017 10:50:14 +0100
-Subject: [cip-dev] [PATCH 00/14] Add Device tree support for iWave G20D-Q7
-	board
-Message-ID: <1502185828-45443-1-git-send-email-biju.das@bp.renesas.com>
+Date: Tue,  8 Aug 2017 10:50:15 +0100
+Subject: [cip-dev] [PATCH 01/14] ARM: dts: r8a7743: initial SoC device tree
+In-Reply-To: <1502185828-45443-1-git-send-email-biju.das@bp.renesas.com>
+References: <1502185828-45443-1-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1502185828-45443-2-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This patch series aims to add initial SoC DT/Clock and iWave G20D-Q7 
-DT.
+The  initial r8A7743 SoC device tree including CPU0, GIC and timer.
 
-The clock patch is based on the similar work done on r8a7791(R-Car M2)
-SoC.
-
-This series has been tested against linux-cip tag v4.4.y-cip master branch.
-
-Biju Das (8):
-  ARM: dts: r8a7743: initial SoC device tree
-  ARM: shmobile: r8a7743: Add clock index macros for DT sources
-  clk: shmobile: Document r8a7743 CPG clock support
-  clk: shmobile: Document r8a7743 CPG DIV6 clock support
-  clk: shmobile: Document r8a7743 MSTP clock support
-  ARM: dts: r8a7743: Add clocks
-  ARM: dts: iwg20m: Add iWave RZG1M Qseven SOM
-  ARM: dts: iwg20d-q7: Add support for iWave G20D-Q7 board based on
-    RZ/G1M
-
-Sergei Shtylyov (4):
-  ARM: dts: r8a7743: add SYS-DMAC support
-  ARM: dts: r8a7743: add [H]SCIF{A|B} support
-  ARM: dts: r8a7743: add Ether support
-  ARM: dts: r8a7743: add IRQC support
-
-Simon Horman (2):
-  ARM: shmobile: defconfig: Enable r8a774[35] SoCs
-  ARM: multi_v7_defconfig: Enable r8a774[35] SoCs
-
- .../bindings/clock/renesas,cpg-div6-clocks.txt     |   1 +
- .../bindings/clock/renesas,cpg-mstp-clocks.txt     |   1 +
- .../clock/renesas,rcar-gen2-cpg-clocks.txt         |   1 +
- arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/r8a7743-iwg20d-q7.dts            |  25 +
- arch/arm/boot/dts/r8a7743-iwg20m.dtsi              |  29 +
- arch/arm/boot/dts/r8a7743.dtsi                     | 871 +++++++++++++++++++++
- arch/arm/configs/multi_v7_defconfig                |   2 +
- arch/arm/configs/shmobile_defconfig                |   2 +
- include/dt-bindings/clock/r8a7743-clock.h          | 166 ++++
- 10 files changed, 1099 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
- create mode 100644 arch/arm/boot/dts/r8a7743-iwg20m.dtsi
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+---
+ arch/arm/boot/dts/r8a7743.dtsi | 56 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
  create mode 100644 arch/arm/boot/dts/r8a7743.dtsi
- create mode 100644 include/dt-bindings/clock/r8a7743-clock.h
 
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+new file mode 100644
+index 0000000..8575a2f
+--- /dev/null
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -0,0 +1,56 @@
++/*
++ * Device Tree Source for the r8a7743 SoC
++ *
++ * Copyright (C) 2017 Renesas Electronics Corp.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/interrupt-controller/irq.h>
++
++/ {
++	compatible = "renesas,r8a7743";
++	interrupt-parent = <&gic>;
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu0: cpu at 0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a15";
++			reg = <0>;
++			clock-frequency = <1500000000>;
++		};
++	};
++
++	gic: interrupt-controller at f1001000 {
++		compatible = "arm,gic-400";
++		#interrupt-cells = <3>;
++		#address-cells = <0>;
++		interrupt-controller;
++		reg = <0 0xf1001000 0 0x1000>,
++		      <0 0xf1002000 0 0x1000>,
++		      <0 0xf1004000 0 0x2000>,
++		      <0 0xf1006000 0 0x2000>;
++		interrupts = <1 9 (GIC_CPU_MASK_SIMPLE(2) |
++				   IRQ_TYPE_LEVEL_HIGH)>;
++	};
++
++	timer {
++		compatible = "arm,armv7-timer";
++		interrupts = <1 13 (GIC_CPU_MASK_SIMPLE(2) |
++				    IRQ_TYPE_LEVEL_LOW)>,
++			     <1 14 (GIC_CPU_MASK_SIMPLE(2) |
++				    IRQ_TYPE_LEVEL_LOW)>,
++			     <1 11 (GIC_CPU_MASK_SIMPLE(2) |
++				    IRQ_TYPE_LEVEL_LOW)>,
++			     <1 10 (GIC_CPU_MASK_SIMPLE(2) |
++				    IRQ_TYPE_LEVEL_LOW)>;
++	};
++};
 -- 
 1.9.1
