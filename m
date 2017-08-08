@@ -1,59 +1,37 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Tue,  8 Aug 2017 10:50:25 +0100
-Subject: [cip-dev] [PATCH 11/14] ARM: dts: iwg20m: Add iWave RZG1M Qseven SOM
+Date: Tue,  8 Aug 2017 10:50:28 +0100
+Subject: [cip-dev] [PATCH 14/14] ARM: multi_v7_defconfig: Enable r8a774[35]
+	SoCs
 In-Reply-To: <1502185828-45443-1-git-send-email-biju.das@bp.renesas.com>
 References: <1502185828-45443-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1502185828-45443-12-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1502185828-45443-15-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Add support for iWave RZG1M Qseven System On Module.
-http://www.iwavesystems.com/rz-g1m-qseven-module.html
+From: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Enable recently added r8a7743 (RZ/G1M) and r8a7745 (RZ/G1E) SoCs.
+
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit aabf13bac0046a1add4a3c39881ffb0abe692542)
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+(cherry picked from commit 0a2cd376019d5bfe8ddcf96a525c8dbd9b295e28)
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7743-iwg20m.dtsi | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a7743-iwg20m.dtsi
+ arch/arm/configs/multi_v7_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-new file mode 100644
-index 0000000..001ca91
---- /dev/null
-+++ b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-@@ -0,0 +1,29 @@
-+/*
-+ * Device Tree Source for the iWave-RZG1M-20M Qseven SOM
-+ *
-+ * Copyright (C) 2017 Renesas Electronics Corp.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+#include "r8a7743.dtsi"
-+
-+/ {
-+	compatible = "iwave,g20m", "renesas,r8a7743";
-+
-+	memory at 40000000 {
-+		device_type = "memory";
-+		reg = <0 0x40000000 0 0x20000000>;
-+	};
-+
-+	memory at 200000000 {
-+		device_type = "memory";
-+		reg = <2 0x00000000 0 0x20000000>;
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <20000000>;
-+};
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index cd7b198..f1ba3fb 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -80,6 +80,8 @@ CONFIG_ARCH_EMEV2=y
+ CONFIG_ARCH_R7S72100=y
+ CONFIG_ARCH_R8A73A4=y
+ CONFIG_ARCH_R8A7740=y
++CONFIG_ARCH_R8A7743=y
++CONFIG_ARCH_R8A7745=y
+ CONFIG_ARCH_R8A7778=y
+ CONFIG_ARCH_R8A7779=y
+ CONFIG_ARCH_R8A7790=y
 -- 
 1.9.1
