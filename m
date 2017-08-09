@@ -1,63 +1,74 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Tue, 8 Aug 2017 10:18:03 +0000
-Subject: [cip-dev] [PATCH 00/14] Add Device tree support for iWave
-	G20D-Q7 board
-In-Reply-To: <1502185828-45443-1-git-send-email-biju.das@bp.renesas.com>
-References: <1502185828-45443-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <TY1PR06MB0702B115FD3694B9778C66DFB78A0@TY1PR06MB0702.apcprd06.prod.outlook.com>
+From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
+Date: Wed, 9 Aug 2017 14:29:01 +0100
+Subject: [cip-dev] Workshop requirements
+Message-ID: <598B0E1D.3050901@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
+Hi,
 
-> From: Biju Das [mailto:biju.das at bp.renesas.com]
-> Sent: 08 August 2017 10:50
-> 
-> This patch series aims to add initial SoC DT/Clock and iWave G20D-Q7 DT.
-> 
-> The clock patch is based on the similar work done on r8a7791(R-Car M2) SoC.
-> 
-> This series has been tested against linux-cip tag v4.4.y-cip master branch.
+I would like to share this idea of an activity for the workshop at ELCE.
 
-For the series: Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+Title: B at D 101: how to test the CIP kernel using B at D
+
+Goal: learn the basics of B at D in order to test the CIP kernel and CIP 
+system.
+
+Description: B at D is a testing environment based on LAVA + KernelCI that 
+allows you to test a kernel or a simple system in a board set up 
+locally, like for example, connected to your own laptop. The workshop 
+will guide you on the installation and configuration of the environment. 
+Using the CIP kernel and system, those participating in the training 
+session will learn how to execute tests on the board, get the results 
+and interpret them.
+
+Number of participants: 8 - 10
+
+Pre-requisites:
+
+Participants:
+* A laptop with enough space to install B at D (I will provide on time 
+exactly how much)
+* BBB and cables to connect it to the laptop (I will provide more 
+details when the time comes)
+* We should have CIP reference boards for those who cannot take theirs. 
+The idea would be to have 3 to 5. I am in discussion with Chris to 
+evaluate the possibility of having some Renesas boards and basic support 
+there to set them up.
+
+Room:
+* A power strip per participant (2 power sockets per participant, 1 for 
+the laptop and one for the board). 4 power sockets for the trainer.
+* Wifi
+* Projector
+
+Duration: 90 or 120 min
+Date: Sunday Oct 22nd in the afternoon
+
+Considerations:
+* Robert Marshall from Codethink would be the trainer.
+* The room needs to afford the power strips required. We will need 
+confirmation about this specific point. (Annie?)
+* CIP would have to assume the material costs:
+** Power strips
+** Some serial cables
+** USB sticks to have the needed software pre-loaded
+* Codethink can take care of buying and bringing this material if there 
+is no other alternative. We would provide an invoice later on to CIP.
+* If we go for this activity, maybe we can somehow re-use it to another 
+activity related with kernel maintenance of Project X.
+
+What do you think about this? It is something Members and wider CIP 
+community consider as of value? Is it worth the effort? Will we have 
+enough audience the day before ELCE?
+
+I will create the wiki page for coordinating the workshop in the coming 
+days.
 
 
-> 
-> Biju Das (8):
->   ARM: dts: r8a7743: initial SoC device tree
->   ARM: shmobile: r8a7743: Add clock index macros for DT sources
->   clk: shmobile: Document r8a7743 CPG clock support
->   clk: shmobile: Document r8a7743 CPG DIV6 clock support
->   clk: shmobile: Document r8a7743 MSTP clock support
->   ARM: dts: r8a7743: Add clocks
->   ARM: dts: iwg20m: Add iWave RZG1M Qseven SOM
->   ARM: dts: iwg20d-q7: Add support for iWave G20D-Q7 board based on
->     RZ/G1M
-> 
-> Sergei Shtylyov (4):
->   ARM: dts: r8a7743: add SYS-DMAC support
->   ARM: dts: r8a7743: add [H]SCIF{A|B} support
->   ARM: dts: r8a7743: add Ether support
->   ARM: dts: r8a7743: add IRQC support
-> 
-> Simon Horman (2):
->   ARM: shmobile: defconfig: Enable r8a774[35] SoCs
->   ARM: multi_v7_defconfig: Enable r8a774[35] SoCs
-> 
->  .../bindings/clock/renesas,cpg-div6-clocks.txt     |   1 +
->  .../bindings/clock/renesas,cpg-mstp-clocks.txt     |   1 +
->  .../clock/renesas,rcar-gen2-cpg-clocks.txt         |   1 +
->  arch/arm/boot/dts/Makefile                         |   1 +
->  arch/arm/boot/dts/r8a7743-iwg20d-q7.dts            |  25 +
->  arch/arm/boot/dts/r8a7743-iwg20m.dtsi              |  29 +
->  arch/arm/boot/dts/r8a7743.dtsi                     | 871 +++++++++++++++++++++
->  arch/arm/configs/multi_v7_defconfig                |   2 +
->  arch/arm/configs/shmobile_defconfig                |   2 +
->  include/dt-bindings/clock/r8a7743-clock.h          | 166 ++++
->  10 files changed, 1099 insertions(+)
->  create mode 100644 arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
->  create mode 100644 arch/arm/boot/dts/r8a7743-iwg20m.dtsi
->  create mode 100644 arch/arm/boot/dts/r8a7743.dtsi  create mode 100644
-> include/dt-bindings/clock/r8a7743-clock.h
-> 
-> --
-> 1.9.1
+Best regards
+
+-- 
+Agustin Benito Bethencourt
+Principal Consultant - FOSS at Codethink
+agustin.benito at codethink.co.uk
