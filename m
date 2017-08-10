@@ -1,60 +1,67 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 10 Aug 2017 14:14:59 +0100
-Subject: [cip-dev] [PATCH 06/11] pinctrl: sh-pfc: r8a7791: Add missing
-	HSCIF1 pinmux data
+Date: Thu, 10 Aug 2017 14:15:00 +0100
+Subject: [cip-dev] [PATCH 07/11] pinctrl: sh-pfc: r8a7791: Add missing
+	DVC_MUTE signal
 In-Reply-To: <1502370904-41653-1-git-send-email-biju.das@bp.renesas.com>
 References: <1502370904-41653-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1502370904-41653-7-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1502370904-41653-8-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
 The R8A7791 PFC driver  was apparently based on the preliminary revisions
-of  the  user's manual, which  omitted the HSCIF1 group E signals in  the
-IPSR4 register description. This would cause HSCIF1's probe  to fail with
-the messages like below:
-
-sh-pfc e6060000.pfc: cannot locate data/mark enum_id for mark 1989
-sh-sci e62c8000.serial: Error applying setting, reverse things back
-sh-sci: probe of e62c8000.serial failed with error -22
-
-Add the neceassary PINMUX_IPSR_MSEL() invocations for the HSCK1_E,
-HCTS1#_E, and HRTS1#_E signals...
+of  the user's  manual, which  omitted the DVC_MUTE signal  altogether in
+the PFC section. The modern manual has the signal described,  so just add
+the necassary data to the driver...
 
 Fixes: 508845196238 ("pinctrl: sh-pfc: r8a7791 PFC support")
 Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-(cherry picked from commit da7a692fbbab07f4e9798b5b52798f6e3256dd8f)
+(cherry picked from commit 3908632fb829d73317c64c3d04f584b49f62e4ae)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-
-Conflicts:
-	drivers/pinctrl/sh-pfc/pfc-r8a7791.c
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index 9884967..233cdbf 100644
+index 233cdbf..1c8dd39 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -1014,14 +1014,17 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_MSEL(IP4_12_10, SCL2, SEL_IIC2_0),
- 	PINMUX_IPSR_MSEL(IP4_12_10, GPS_CLK_B, SEL_GPS_1),
- 	PINMUX_IPSR_MSEL(IP4_12_10, GLO_Q0_D, SEL_GPS_3),
-+	PINMUX_IPSR_MSEL(IP4_12_10, HSCK1_E, SEL_HSCIF1_4),
- 	PINMUX_IPSR_DATA(IP4_15_13, SSI_WS2),
- 	PINMUX_IPSR_MSEL(IP4_15_13, SDA2, SEL_IIC2_0),
- 	PINMUX_IPSR_MSEL(IP4_15_13, GPS_SIGN_B, SEL_GPS_1),
- 	PINMUX_IPSR_MSEL(IP4_15_13, RX2_E, SEL_SCIF2_4),
- 	PINMUX_IPSR_MSEL(IP4_15_13, GLO_Q1_D, SEL_GPS_3),
-+	PINMUX_IPSR_MSEL(IP4_15_13, HCTS1_N_E, SEL_HSCIF1_4),
- 	PINMUX_IPSR_DATA(IP4_18_16, SSI_SDATA2),
- 	PINMUX_IPSR_MSEL(IP4_18_16, GPS_MAG_B, SEL_GPS_1),
- 	PINMUX_IPSR_MSEL(IP4_18_16, TX2_E, SEL_SCIF2_4),
-+	PINMUX_IPSR_MSEL(IP4_18_16, HRTS1_N_E, SEL_HSCIF1_4),
- 	PINMUX_IPSR_DATA(IP4_19, SSI_SCK34),
- 	PINMUX_IPSR_DATA(IP4_20, SSI_WS34),
- 	PINMUX_IPSR_DATA(IP4_21, SSI_SDATA3),
+@@ -207,7 +207,7 @@ enum {
+ 
+ 	/* IPSR6 */
+ 	FN_AUDIO_CLKB, FN_STP_OPWM_0_B, FN_MSIOF1_SCK_B,
+-	FN_SCIF_CLK, FN_BPFCLK_E,
++	FN_SCIF_CLK, FN_DVC_MUTE, FN_BPFCLK_E,
+ 	FN_AUDIO_CLKC, FN_SCIFB0_SCK_C, FN_MSIOF1_SYNC_B, FN_RX2,
+ 	FN_SCIFA2_RXD, FN_FMIN_E,
+ 	FN_AUDIO_CLKOUT, FN_MSIOF1_SS1_B, FN_TX2, FN_SCIFA2_TXD,
+@@ -577,7 +577,7 @@ enum {
+ 
+ 	/* IPSR6 */
+ 	AUDIO_CLKB_MARK, STP_OPWM_0_B_MARK, MSIOF1_SCK_B_MARK,
+-	SCIF_CLK_MARK, BPFCLK_E_MARK,
++	SCIF_CLK_MARK, DVC_MUTE_MARK, BPFCLK_E_MARK,
+ 	AUDIO_CLKC_MARK, SCIFB0_SCK_C_MARK, MSIOF1_SYNC_B_MARK, RX2_MARK,
+ 	SCIFA2_RXD_MARK, FMIN_E_MARK,
+ 	AUDIO_CLKOUT_MARK, MSIOF1_SS1_B_MARK, TX2_MARK, SCIFA2_TXD_MARK,
+@@ -1097,6 +1097,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_MSEL(IP6_2_0, STP_OPWM_0_B, SEL_SSP_1),
+ 	PINMUX_IPSR_MSEL(IP6_2_0, MSIOF1_SCK_B, SEL_SOF1_1),
+ 	PINMUX_IPSR_MSEL(IP6_2_0, SCIF_CLK, SEL_SCIF_0),
++	PINMUX_IPSR_DATA(IP6_2_0, DVC_MUTE),
+ 	PINMUX_IPSR_MSEL(IP6_2_0, BPFCLK_E, SEL_FM_4),
+ 	PINMUX_IPSR_DATA(IP6_5_3, AUDIO_CLKC),
+ 	PINMUX_IPSR_MSEL(IP6_5_3, SCIFB0_SCK_C, SEL_SCIFB_2),
+@@ -5903,7 +5904,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		0, 0,
+ 		/* IP6_2_0 [3] */
+ 		FN_AUDIO_CLKB, FN_STP_OPWM_0_B, FN_MSIOF1_SCK_B,
+-		FN_SCIF_CLK, 0, FN_BPFCLK_E,
++		FN_SCIF_CLK, FN_DVC_MUTE, FN_BPFCLK_E,
+ 		0, 0, }
+ 	},
+ 	{ PINMUX_CFG_REG_VAR("IPSR7", 0xE606003C, 32,
 -- 
 1.9.1
