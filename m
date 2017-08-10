@@ -1,68 +1,83 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 10 Aug 2017 14:14:55 +0100
-Subject: [cip-dev] [PATCH 02/11] pinctrl: sh-pfc: r8a7791: Use
-	PINMUX_SINGLE() instead of raw PINMUX_DATA()
+Date: Thu, 10 Aug 2017 14:14:56 +0100
+Subject: [cip-dev] [PATCH 03/11] pinctrl: sh-pfc: r8a7791: Add SCIF_CLK
+	support
 In-Reply-To: <1502370904-41653-1-git-send-email-biju.das@bp.renesas.com>
 References: <1502370904-41653-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1502370904-41653-3-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1502370904-41653-4-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Add pins, groups, and a function for SCIF_CLK, which is the external
+clock source for the Baud Rate Generator for External Clock (BRG) on
+(H)SCIF.
+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-(cherry picked from commit bc3341ddaea26756c76965a7e0e95c6a8e01c857)
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+(cherry picked from commit a4c8a6d2f6ed3686ce0cc789ed9213f579ebd4ad)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 34 +++++++++++++++++-----------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index 87a4f44..ebadd28 100644
+index ebadd28..74704b0 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -787,23 +787,23 @@ enum {
- static const u16 pinmux_data[] = {
- 	PINMUX_DATA_GP_ALL(), /* PINMUX_DATA(GP_M_N_DATA, GP_M_N_FN...), */
+@@ -3602,6 +3602,23 @@ static const unsigned int scifb2_data_d_pins[] = {
+ static const unsigned int scifb2_data_d_mux[] = {
+ 	SCIFB2_RXD_D_MARK, SCIFB2_TXD_D_MARK,
+ };
++
++/* - SCIF Clock ------------------------------------------------------------- */
++static const unsigned int scif_clk_pins[] = {
++	/* SCIF_CLK */
++	RCAR_GP_PIN(2, 29),
++};
++static const unsigned int scif_clk_mux[] = {
++	SCIF_CLK_MARK,
++};
++static const unsigned int scif_clk_b_pins[] = {
++	/* SCIF_CLK */
++	RCAR_GP_PIN(7, 19),
++};
++static const unsigned int scif_clk_b_mux[] = {
++	SCIF_CLK_B_MARK,
++};
++
+ /* - SDHI0 ------------------------------------------------------------------ */
+ static const unsigned int sdhi0_data1_pins[] = {
+ 	/* D0 */
+@@ -4510,6 +4527,8 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(scifb2_data_c),
+ 	SH_PFC_PIN_GROUP(scifb2_clk_c),
+ 	SH_PFC_PIN_GROUP(scifb2_data_d),
++	SH_PFC_PIN_GROUP(scif_clk),
++	SH_PFC_PIN_GROUP(scif_clk_b),
+ 	SH_PFC_PIN_GROUP(sdhi0_data1),
+ 	SH_PFC_PIN_GROUP(sdhi0_data4),
+ 	SH_PFC_PIN_GROUP(sdhi0_ctrl),
+@@ -4976,6 +4995,11 @@ static const char * const scifb2_groups[] = {
+ 	"scifb2_data_d",
+ };
  
--	PINMUX_DATA(EX_CS0_N_MARK, FN_EX_CS0_N),
--	PINMUX_DATA(RD_N_MARK, FN_RD_N),
--	PINMUX_DATA(AUDIO_CLKA_MARK, FN_AUDIO_CLKA),
--	PINMUX_DATA(VI0_CLK_MARK, FN_VI0_CLK),
--	PINMUX_DATA(VI0_DATA0_VI0_B0_MARK, FN_VI0_DATA0_VI0_B0),
--	PINMUX_DATA(VI0_DATA1_VI0_B1_MARK, FN_VI0_DATA1_VI0_B1),
--	PINMUX_DATA(VI0_DATA2_VI0_B2_MARK, FN_VI0_DATA2_VI0_B2),
--	PINMUX_DATA(VI0_DATA4_VI0_B4_MARK, FN_VI0_DATA4_VI0_B4),
--	PINMUX_DATA(VI0_DATA5_VI0_B5_MARK, FN_VI0_DATA5_VI0_B5),
--	PINMUX_DATA(VI0_DATA6_VI0_B6_MARK, FN_VI0_DATA6_VI0_B6),
--	PINMUX_DATA(VI0_DATA7_VI0_B7_MARK, FN_VI0_DATA7_VI0_B7),
--	PINMUX_DATA(USB0_PWEN_MARK, FN_USB0_PWEN),
--	PINMUX_DATA(USB0_OVC_MARK, FN_USB0_OVC),
--	PINMUX_DATA(USB1_PWEN_MARK, FN_USB1_PWEN),
--	PINMUX_DATA(USB1_OVC_MARK, FN_USB1_OVC),
--	PINMUX_DATA(DU0_DOTCLKIN_MARK, FN_DU0_DOTCLKIN),
--	PINMUX_DATA(SD1_CLK_MARK, FN_SD1_CLK),
-+	PINMUX_SINGLE(EX_CS0_N),
-+	PINMUX_SINGLE(RD_N),
-+	PINMUX_SINGLE(AUDIO_CLKA),
-+	PINMUX_SINGLE(VI0_CLK),
-+	PINMUX_SINGLE(VI0_DATA0_VI0_B0),
-+	PINMUX_SINGLE(VI0_DATA1_VI0_B1),
-+	PINMUX_SINGLE(VI0_DATA2_VI0_B2),
-+	PINMUX_SINGLE(VI0_DATA4_VI0_B4),
-+	PINMUX_SINGLE(VI0_DATA5_VI0_B5),
-+	PINMUX_SINGLE(VI0_DATA6_VI0_B6),
-+	PINMUX_SINGLE(VI0_DATA7_VI0_B7),
-+	PINMUX_SINGLE(USB0_PWEN),
-+	PINMUX_SINGLE(USB0_OVC),
-+	PINMUX_SINGLE(USB1_PWEN),
-+	PINMUX_SINGLE(USB1_OVC),
-+	PINMUX_SINGLE(DU0_DOTCLKIN),
-+	PINMUX_SINGLE(SD1_CLK),
- 
- 	/* IPSR0 */
- 	PINMUX_IPSR_DATA(IP0_0, D0),
++static const char * const scif_clk_groups[] = {
++	"scif_clk",
++	"scif_clk_b",
++};
++
+ static const char * const sdhi0_groups[] = {
+ 	"sdhi0_data1",
+ 	"sdhi0_data4",
+@@ -5126,6 +5150,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(scifb0),
+ 	SH_PFC_FUNCTION(scifb1),
+ 	SH_PFC_FUNCTION(scifb2),
++	SH_PFC_FUNCTION(scif_clk),
+ 	SH_PFC_FUNCTION(sdhi0),
+ 	SH_PFC_FUNCTION(sdhi1),
+ 	SH_PFC_FUNCTION(sdhi2),
 -- 
 1.9.1
