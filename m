@@ -1,40 +1,44 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 10 Aug 2017 14:14:53 +0100
-Subject: [cip-dev] [PATCH  00/11] Add Pinctrl support for r8a7743
-Message-ID: <1502370904-41653-1-git-send-email-biju.das@bp.renesas.com>
+Date: Thu, 10 Aug 2017 14:14:54 +0100
+Subject: [cip-dev] [PATCH  01/11] pinctrl: sh-pfc: Add PINMUX_SINGLE()
+In-Reply-To: <1502370904-41653-1-git-send-email-biju.das@bp.renesas.com>
+References: <1502370904-41653-1-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1502370904-41653-2-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This series aims to add Pinctrl support for r8a7743.
-All the patches in this series are cherry-picked from 
-upstream kernel
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Geert Uytterhoeven (3):
-  pinctrl: sh-pfc: Add PINMUX_SINGLE()
-  pinctrl: sh-pfc: r8a7791: Use PINMUX_SINGLE() instead of raw
-    PINMUX_DATA()
-  pinctrl: sh-pfc: r8a7791: Add SCIF_CLK support
+Add a macro to describe a pinmux configuration for a single-function
+pin.
 
-Jacopo Mondi (1):
-  pinctrl: sh-pfc: r8a7791: Add ADI pinconf support
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+(cherry picked from commit dcd803bebcfc0fae9c2d3d5063210e9225fe4b1b)
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+---
+ drivers/pinctrl/sh-pfc/sh_pfc.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Sergei Shtylyov (7):
-  pinctrl: sh-pfc: r8a7791: add EtherAVB pin groups
-  pinctrl: sh-pfc: r8a7791: Add missing HSCIF1 pinmux data
-  pinctrl: sh-pfc: r8a7791: Add missing DVC_MUTE signal
-  pinctrl: sh-pfc: r8a7791: Fix SCIF2 pinmux data
-  pinctrl: sh-pfc: r8a7791: Fix IPSR comment typos
-  pinctrl: sh-pfc: r8a7791: Grand I2C rename
-  pinctrl: sh-pfc: r8a7791: Add R8A7743 support
-
- .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |    1 +
- drivers/pinctrl/sh-pfc/Kconfig                     |    5 +
- drivers/pinctrl/sh-pfc/Makefile                    |    1 +
- drivers/pinctrl/sh-pfc/core.c                      |    6 +
- drivers/pinctrl/sh-pfc/core.h                      |    1 +
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c               | 1558 ++++++++++++--------
- drivers/pinctrl/sh-pfc/sh_pfc.h                    |    8 +
- 7 files changed, 928 insertions(+), 652 deletions(-)
-
+diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
+index 7b373d43..fb2de52 100644
+--- a/drivers/pinctrl/sh-pfc/sh_pfc.h
++++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+@@ -199,6 +199,14 @@ struct sh_pfc_soc_info {
+ 	PINMUX_DATA(fn##_MARK, FN_##ms, FN_##ipsr, FN_##fn)
+ 
+ /*
++ * Describe a pinmux configuration for a single-function pin with GPIO
++ * capability.
++ *   - fn: Function name
++ */
++#define PINMUX_SINGLE(fn)						\
++	PINMUX_DATA(fn##_MARK, FN_##fn)
++
++/*
+  * GP port style (32 ports banks)
+  */
+ 
 -- 
 1.9.1
