@@ -1,158 +1,143 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 10 Aug 2017 14:14:57 +0100
-Subject: [cip-dev] [PATCH 04/11] pinctrl: sh-pfc: r8a7791: add EtherAVB pin
-	groups
+Date: Thu, 10 Aug 2017 14:14:58 +0100
+Subject: [cip-dev] [PATCH 05/11] pinctrl: sh-pfc: r8a7791: Add ADI pinconf
+	support
 In-Reply-To: <1502370904-41653-1-git-send-email-biju.das@bp.renesas.com>
 References: <1502370904-41653-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1502370904-41653-5-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1502370904-41653-6-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Jacopo Mondi <jacopo@jmondi.org>
 
-Add the EtherAVB pin groups to the R8A7791 PFC driver.
+Add pin configuration support for Gyro-ADC, named ADI on r8a7791 SoC.
 
-Also add the copyright for all the Cogent Embedded's past work on this file.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
+Tested-by: Marek Vasut <marek.vasut@gmail.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-(cherry picked from commit 59508084e10642e8533cfd82327486ed24c73af4)
+(cherry picked from commit 07254d835dfc1e06a8cdfb565e7371176a4b93f9)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 93 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 93 insertions(+)
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 86 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 86 insertions(+)
 
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index 74704b0..977707f 100644
+index 977707f..9884967 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -2,6 +2,7 @@
-  * r8a7791 processor support - PFC hardware block.
-  *
-  * Copyright (C) 2013 Renesas Electronics Corporation
-+ * Copyright (C) 2014-2015 Cogent Embedded, Inc.
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2
-@@ -1740,6 +1741,82 @@ static const unsigned int audio_clkout_mux[] = {
- 	AUDIO_CLKOUT_MARK,
+@@ -1695,6 +1695,72 @@ static const struct sh_pfc_pin pinmux_pins[] = {
+ 	PINMUX_GPIO_GP_ALL(),
  };
  
-+/* - AVB -------------------------------------------------------------------- */
-+static const unsigned int avb_link_pins[] = {
-+	RCAR_GP_PIN(5, 14),
++/* - ADI -------------------------------------------------------------------- */
++static const unsigned int adi_common_pins[] = {
++	/* ADIDATA, ADICS/SAMP, ADICLK */
++	RCAR_GP_PIN(6, 24), RCAR_GP_PIN(6, 25), RCAR_GP_PIN(6, 26),
 +};
-+static const unsigned int avb_link_mux[] = {
-+	AVB_LINK_MARK,
++static const unsigned int adi_common_mux[] = {
++	/* ADIDATA, ADICS/SAMP, ADICLK */
++	ADIDATA_MARK, ADICS_SAMP_MARK, ADICLK_MARK,
 +};
-+static const unsigned int avb_magic_pins[] = {
-+	RCAR_GP_PIN(5, 11),
++static const unsigned int adi_chsel0_pins[] = {
++	/* ADICHS 0 */
++	RCAR_GP_PIN(6, 27),
 +};
-+static const unsigned int avb_magic_mux[] = {
-+	AVB_MAGIC_MARK,
++static const unsigned int adi_chsel0_mux[] = {
++	/* ADICHS 0 */
++	ADICHS0_MARK,
 +};
-+static const unsigned int avb_phy_int_pins[] = {
-+	RCAR_GP_PIN(5, 16),
++static const unsigned int adi_chsel1_pins[] = {
++	/* ADICHS 1 */
++	RCAR_GP_PIN(6, 28),
 +};
-+static const unsigned int avb_phy_int_mux[] = {
-+	AVB_PHY_INT_MARK,
++static const unsigned int adi_chsel1_mux[] = {
++	/* ADICHS 1 */
++	ADICHS1_MARK,
 +};
-+static const unsigned int avb_mdio_pins[] = {
-+	RCAR_GP_PIN(5, 12), RCAR_GP_PIN(5, 9),
++static const unsigned int adi_chsel2_pins[] = {
++	/* ADICHS 2 */
++	RCAR_GP_PIN(6, 29),
 +};
-+static const unsigned int avb_mdio_mux[] = {
-+	AVB_MDC_MARK, AVB_MDIO_MARK,
++static const unsigned int adi_chsel2_mux[] = {
++	/* ADICHS 2 */
++	ADICHS2_MARK,
 +};
-+static const unsigned int avb_mii_pins[] = {
-+	RCAR_GP_PIN(5, 18), RCAR_GP_PIN(5, 19), RCAR_GP_PIN(5, 20),
-+	RCAR_GP_PIN(5, 21),
-+
-+	RCAR_GP_PIN(5, 0), RCAR_GP_PIN(5, 1), RCAR_GP_PIN(5, 2),
-+	RCAR_GP_PIN(5, 3),
-+
-+	RCAR_GP_PIN(5, 8), RCAR_GP_PIN(5, 13), RCAR_GP_PIN(5, 10),
-+	RCAR_GP_PIN(5, 15), RCAR_GP_PIN(5, 26), RCAR_GP_PIN(5, 27),
-+	RCAR_GP_PIN(5, 28), RCAR_GP_PIN(5, 29),
++static const unsigned int adi_common_b_pins[] = {
++	/* ADIDATA B, ADICS/SAMP B, ADICLK B */
++	RCAR_GP_PIN(5, 25), RCAR_GP_PIN(5, 26), RCAR_GP_PIN(5, 27),
 +};
-+static const unsigned int avb_mii_mux[] = {
-+	AVB_TXD0_MARK, AVB_TXD1_MARK, AVB_TXD2_MARK,
-+	AVB_TXD3_MARK,
-+
-+	AVB_RXD0_MARK, AVB_RXD1_MARK, AVB_RXD2_MARK,
-+	AVB_RXD3_MARK,
-+
-+	AVB_RX_ER_MARK, AVB_RX_CLK_MARK, AVB_RX_DV_MARK,
-+	AVB_CRS_MARK, AVB_TX_EN_MARK, AVB_TX_ER_MARK,
-+	AVB_TX_CLK_MARK, AVB_COL_MARK,
++static const unsigned int adi_common_b_mux[] = {
++	/* ADIDATA B, ADICS/SAMP B, ADICLK B */
++	ADIDATA_B_MARK, ADICS_SAMP_B_MARK, ADICLK_B_MARK,
 +};
-+static const unsigned int avb_gmii_pins[] = {
-+	RCAR_GP_PIN(5, 18), RCAR_GP_PIN(5, 19), RCAR_GP_PIN(5, 20),
-+	RCAR_GP_PIN(5, 21), RCAR_GP_PIN(5, 22), RCAR_GP_PIN(5, 23),
-+	RCAR_GP_PIN(5, 24), RCAR_GP_PIN(5, 25),
-+
-+	RCAR_GP_PIN(5, 0), RCAR_GP_PIN(5, 1), RCAR_GP_PIN(5, 2),
-+	RCAR_GP_PIN(5, 3), RCAR_GP_PIN(5, 4), RCAR_GP_PIN(5, 5),
-+	RCAR_GP_PIN(5, 6), RCAR_GP_PIN(5, 7),
-+
-+	RCAR_GP_PIN(5, 8), RCAR_GP_PIN(5, 13), RCAR_GP_PIN(5, 10),
-+	RCAR_GP_PIN(5, 15), RCAR_GP_PIN(5, 30), RCAR_GP_PIN(5, 17),
-+	RCAR_GP_PIN(5, 26), RCAR_GP_PIN(5, 27), RCAR_GP_PIN(5, 28),
++static const unsigned int adi_chsel0_b_pins[] = {
++	/* ADICHS B 0 */
++	RCAR_GP_PIN(5, 28),
++};
++static const unsigned int adi_chsel0_b_mux[] = {
++	/* ADICHS B 0 */
++	ADICHS0_B_MARK,
++};
++static const unsigned int adi_chsel1_b_pins[] = {
++	/* ADICHS B 1 */
 +	RCAR_GP_PIN(5, 29),
 +};
-+static const unsigned int avb_gmii_mux[] = {
-+	AVB_TXD0_MARK, AVB_TXD1_MARK, AVB_TXD2_MARK,
-+	AVB_TXD3_MARK, AVB_TXD4_MARK, AVB_TXD5_MARK,
-+	AVB_TXD6_MARK, AVB_TXD7_MARK,
-+
-+	AVB_RXD0_MARK, AVB_RXD1_MARK, AVB_RXD2_MARK,
-+	AVB_RXD3_MARK, AVB_RXD4_MARK, AVB_RXD5_MARK,
-+	AVB_RXD6_MARK, AVB_RXD7_MARK,
-+
-+	AVB_RX_ER_MARK, AVB_RX_CLK_MARK, AVB_RX_DV_MARK,
-+	AVB_CRS_MARK, AVB_GTX_CLK_MARK, AVB_GTXREFCLK_MARK,
-+	AVB_TX_EN_MARK, AVB_TX_ER_MARK, AVB_TX_CLK_MARK,
-+	AVB_COL_MARK,
++static const unsigned int adi_chsel1_b_mux[] = {
++	/* ADICHS B 1 */
++	ADICHS1_B_MARK,
++};
++static const unsigned int adi_chsel2_b_pins[] = {
++	/* ADICHS B 2 */
++	RCAR_GP_PIN(5, 30),
++};
++static const unsigned int adi_chsel2_b_mux[] = {
++	/* ADICHS B 2 */
++	ADICHS2_B_MARK,
 +};
 +
- /* - CAN -------------------------------------------------------------------- */
- 
- static const unsigned int can0_data_pins[] = {
-@@ -4275,6 +4352,12 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(audio_clk_b_b),
- 	SH_PFC_PIN_GROUP(audio_clk_c),
- 	SH_PFC_PIN_GROUP(audio_clkout),
-+	SH_PFC_PIN_GROUP(avb_link),
-+	SH_PFC_PIN_GROUP(avb_magic),
-+	SH_PFC_PIN_GROUP(avb_phy_int),
-+	SH_PFC_PIN_GROUP(avb_mdio),
-+	SH_PFC_PIN_GROUP(avb_mii),
-+	SH_PFC_PIN_GROUP(avb_gmii),
- 	SH_PFC_PIN_GROUP(can0_data),
- 	SH_PFC_PIN_GROUP(can0_data_b),
- 	SH_PFC_PIN_GROUP(can0_data_c),
-@@ -4616,6 +4699,15 @@ static const char * const audio_clk_groups[] = {
- 	"audio_clkout",
+ /* - Audio Clock ------------------------------------------------------------ */
+ static const unsigned int audio_clk_a_pins[] = {
+ 	/* CLK */
+@@ -4347,6 +4413,14 @@ static const unsigned int vin2_clk_mux[] = {
  };
  
-+static const char * const avb_groups[] = {
-+	"avb_link",
-+	"avb_magic",
-+	"avb_phy_int",
-+	"avb_mdio",
-+	"avb_mii",
-+	"avb_gmii",
+ static const struct sh_pfc_pin_group pinmux_groups[] = {
++	SH_PFC_PIN_GROUP(adi_common),
++	SH_PFC_PIN_GROUP(adi_chsel0),
++	SH_PFC_PIN_GROUP(adi_chsel1),
++	SH_PFC_PIN_GROUP(adi_chsel2),
++	SH_PFC_PIN_GROUP(adi_common_b),
++	SH_PFC_PIN_GROUP(adi_chsel0_b),
++	SH_PFC_PIN_GROUP(adi_chsel1_b),
++	SH_PFC_PIN_GROUP(adi_chsel2_b),
+ 	SH_PFC_PIN_GROUP(audio_clk_a),
+ 	SH_PFC_PIN_GROUP(audio_clk_b),
+ 	SH_PFC_PIN_GROUP(audio_clk_b_b),
+@@ -4691,6 +4765,17 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(vin2_clk),
+ };
+ 
++static const char * const adi_groups[] = {
++	"adi_common",
++	"adi_chsel0",
++	"adi_chsel1",
++	"adi_chsel2",
++	"adi_common_b",
++	"adi_chsel0_b",
++	"adi_chsel1_b",
++	"adi_chsel2_b",
 +};
 +
- static const char * const can0_groups[] = {
- 	"can0_data",
- 	"can0_data_b",
-@@ -5105,6 +5197,7 @@ static const char * const vin2_groups[] = {
+ static const char * const audio_clk_groups[] = {
+ 	"audio_clk_a",
+ 	"audio_clk_b",
+@@ -5196,6 +5281,7 @@ static const char * const vin2_groups[] = {
+ };
  
  static const struct sh_pfc_function pinmux_functions[] = {
++	SH_PFC_FUNCTION(adi),
  	SH_PFC_FUNCTION(audio_clk),
-+	SH_PFC_FUNCTION(avb),
+ 	SH_PFC_FUNCTION(avb),
  	SH_PFC_FUNCTION(can0),
- 	SH_PFC_FUNCTION(can1),
- 	SH_PFC_FUNCTION(du),
 -- 
 1.9.1
