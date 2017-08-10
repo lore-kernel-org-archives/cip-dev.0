@@ -1,83 +1,158 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 10 Aug 2017 14:14:56 +0100
-Subject: [cip-dev] [PATCH 03/11] pinctrl: sh-pfc: r8a7791: Add SCIF_CLK
-	support
+Date: Thu, 10 Aug 2017 14:14:57 +0100
+Subject: [cip-dev] [PATCH 04/11] pinctrl: sh-pfc: r8a7791: add EtherAVB pin
+	groups
 In-Reply-To: <1502370904-41653-1-git-send-email-biju.das@bp.renesas.com>
 References: <1502370904-41653-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1502370904-41653-4-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1502370904-41653-5-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Add pins, groups, and a function for SCIF_CLK, which is the external
-clock source for the Baud Rate Generator for External Clock (BRG) on
-(H)SCIF.
+Add the EtherAVB pin groups to the R8A7791 PFC driver.
 
+Also add the copyright for all the Cogent Embedded's past work on this file.
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-(cherry picked from commit a4c8a6d2f6ed3686ce0cc789ed9213f579ebd4ad)
+(cherry picked from commit 59508084e10642e8533cfd82327486ed24c73af4)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 93 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 93 insertions(+)
 
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index ebadd28..74704b0 100644
+index 74704b0..977707f 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -3602,6 +3602,23 @@ static const unsigned int scifb2_data_d_pins[] = {
- static const unsigned int scifb2_data_d_mux[] = {
- 	SCIFB2_RXD_D_MARK, SCIFB2_TXD_D_MARK,
- };
-+
-+/* - SCIF Clock ------------------------------------------------------------- */
-+static const unsigned int scif_clk_pins[] = {
-+	/* SCIF_CLK */
-+	RCAR_GP_PIN(2, 29),
-+};
-+static const unsigned int scif_clk_mux[] = {
-+	SCIF_CLK_MARK,
-+};
-+static const unsigned int scif_clk_b_pins[] = {
-+	/* SCIF_CLK */
-+	RCAR_GP_PIN(7, 19),
-+};
-+static const unsigned int scif_clk_b_mux[] = {
-+	SCIF_CLK_B_MARK,
-+};
-+
- /* - SDHI0 ------------------------------------------------------------------ */
- static const unsigned int sdhi0_data1_pins[] = {
- 	/* D0 */
-@@ -4510,6 +4527,8 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(scifb2_data_c),
- 	SH_PFC_PIN_GROUP(scifb2_clk_c),
- 	SH_PFC_PIN_GROUP(scifb2_data_d),
-+	SH_PFC_PIN_GROUP(scif_clk),
-+	SH_PFC_PIN_GROUP(scif_clk_b),
- 	SH_PFC_PIN_GROUP(sdhi0_data1),
- 	SH_PFC_PIN_GROUP(sdhi0_data4),
- 	SH_PFC_PIN_GROUP(sdhi0_ctrl),
-@@ -4976,6 +4995,11 @@ static const char * const scifb2_groups[] = {
- 	"scifb2_data_d",
+@@ -2,6 +2,7 @@
+  * r8a7791 processor support - PFC hardware block.
+  *
+  * Copyright (C) 2013 Renesas Electronics Corporation
++ * Copyright (C) 2014-2015 Cogent Embedded, Inc.
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2
+@@ -1740,6 +1741,82 @@ static const unsigned int audio_clkout_mux[] = {
+ 	AUDIO_CLKOUT_MARK,
  };
  
-+static const char * const scif_clk_groups[] = {
-+	"scif_clk",
-+	"scif_clk_b",
++/* - AVB -------------------------------------------------------------------- */
++static const unsigned int avb_link_pins[] = {
++	RCAR_GP_PIN(5, 14),
++};
++static const unsigned int avb_link_mux[] = {
++	AVB_LINK_MARK,
++};
++static const unsigned int avb_magic_pins[] = {
++	RCAR_GP_PIN(5, 11),
++};
++static const unsigned int avb_magic_mux[] = {
++	AVB_MAGIC_MARK,
++};
++static const unsigned int avb_phy_int_pins[] = {
++	RCAR_GP_PIN(5, 16),
++};
++static const unsigned int avb_phy_int_mux[] = {
++	AVB_PHY_INT_MARK,
++};
++static const unsigned int avb_mdio_pins[] = {
++	RCAR_GP_PIN(5, 12), RCAR_GP_PIN(5, 9),
++};
++static const unsigned int avb_mdio_mux[] = {
++	AVB_MDC_MARK, AVB_MDIO_MARK,
++};
++static const unsigned int avb_mii_pins[] = {
++	RCAR_GP_PIN(5, 18), RCAR_GP_PIN(5, 19), RCAR_GP_PIN(5, 20),
++	RCAR_GP_PIN(5, 21),
++
++	RCAR_GP_PIN(5, 0), RCAR_GP_PIN(5, 1), RCAR_GP_PIN(5, 2),
++	RCAR_GP_PIN(5, 3),
++
++	RCAR_GP_PIN(5, 8), RCAR_GP_PIN(5, 13), RCAR_GP_PIN(5, 10),
++	RCAR_GP_PIN(5, 15), RCAR_GP_PIN(5, 26), RCAR_GP_PIN(5, 27),
++	RCAR_GP_PIN(5, 28), RCAR_GP_PIN(5, 29),
++};
++static const unsigned int avb_mii_mux[] = {
++	AVB_TXD0_MARK, AVB_TXD1_MARK, AVB_TXD2_MARK,
++	AVB_TXD3_MARK,
++
++	AVB_RXD0_MARK, AVB_RXD1_MARK, AVB_RXD2_MARK,
++	AVB_RXD3_MARK,
++
++	AVB_RX_ER_MARK, AVB_RX_CLK_MARK, AVB_RX_DV_MARK,
++	AVB_CRS_MARK, AVB_TX_EN_MARK, AVB_TX_ER_MARK,
++	AVB_TX_CLK_MARK, AVB_COL_MARK,
++};
++static const unsigned int avb_gmii_pins[] = {
++	RCAR_GP_PIN(5, 18), RCAR_GP_PIN(5, 19), RCAR_GP_PIN(5, 20),
++	RCAR_GP_PIN(5, 21), RCAR_GP_PIN(5, 22), RCAR_GP_PIN(5, 23),
++	RCAR_GP_PIN(5, 24), RCAR_GP_PIN(5, 25),
++
++	RCAR_GP_PIN(5, 0), RCAR_GP_PIN(5, 1), RCAR_GP_PIN(5, 2),
++	RCAR_GP_PIN(5, 3), RCAR_GP_PIN(5, 4), RCAR_GP_PIN(5, 5),
++	RCAR_GP_PIN(5, 6), RCAR_GP_PIN(5, 7),
++
++	RCAR_GP_PIN(5, 8), RCAR_GP_PIN(5, 13), RCAR_GP_PIN(5, 10),
++	RCAR_GP_PIN(5, 15), RCAR_GP_PIN(5, 30), RCAR_GP_PIN(5, 17),
++	RCAR_GP_PIN(5, 26), RCAR_GP_PIN(5, 27), RCAR_GP_PIN(5, 28),
++	RCAR_GP_PIN(5, 29),
++};
++static const unsigned int avb_gmii_mux[] = {
++	AVB_TXD0_MARK, AVB_TXD1_MARK, AVB_TXD2_MARK,
++	AVB_TXD3_MARK, AVB_TXD4_MARK, AVB_TXD5_MARK,
++	AVB_TXD6_MARK, AVB_TXD7_MARK,
++
++	AVB_RXD0_MARK, AVB_RXD1_MARK, AVB_RXD2_MARK,
++	AVB_RXD3_MARK, AVB_RXD4_MARK, AVB_RXD5_MARK,
++	AVB_RXD6_MARK, AVB_RXD7_MARK,
++
++	AVB_RX_ER_MARK, AVB_RX_CLK_MARK, AVB_RX_DV_MARK,
++	AVB_CRS_MARK, AVB_GTX_CLK_MARK, AVB_GTXREFCLK_MARK,
++	AVB_TX_EN_MARK, AVB_TX_ER_MARK, AVB_TX_CLK_MARK,
++	AVB_COL_MARK,
 +};
 +
- static const char * const sdhi0_groups[] = {
- 	"sdhi0_data1",
- 	"sdhi0_data4",
-@@ -5126,6 +5150,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(scifb0),
- 	SH_PFC_FUNCTION(scifb1),
- 	SH_PFC_FUNCTION(scifb2),
-+	SH_PFC_FUNCTION(scif_clk),
- 	SH_PFC_FUNCTION(sdhi0),
- 	SH_PFC_FUNCTION(sdhi1),
- 	SH_PFC_FUNCTION(sdhi2),
+ /* - CAN -------------------------------------------------------------------- */
+ 
+ static const unsigned int can0_data_pins[] = {
+@@ -4275,6 +4352,12 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(audio_clk_b_b),
+ 	SH_PFC_PIN_GROUP(audio_clk_c),
+ 	SH_PFC_PIN_GROUP(audio_clkout),
++	SH_PFC_PIN_GROUP(avb_link),
++	SH_PFC_PIN_GROUP(avb_magic),
++	SH_PFC_PIN_GROUP(avb_phy_int),
++	SH_PFC_PIN_GROUP(avb_mdio),
++	SH_PFC_PIN_GROUP(avb_mii),
++	SH_PFC_PIN_GROUP(avb_gmii),
+ 	SH_PFC_PIN_GROUP(can0_data),
+ 	SH_PFC_PIN_GROUP(can0_data_b),
+ 	SH_PFC_PIN_GROUP(can0_data_c),
+@@ -4616,6 +4699,15 @@ static const char * const audio_clk_groups[] = {
+ 	"audio_clkout",
+ };
+ 
++static const char * const avb_groups[] = {
++	"avb_link",
++	"avb_magic",
++	"avb_phy_int",
++	"avb_mdio",
++	"avb_mii",
++	"avb_gmii",
++};
++
+ static const char * const can0_groups[] = {
+ 	"can0_data",
+ 	"can0_data_b",
+@@ -5105,6 +5197,7 @@ static const char * const vin2_groups[] = {
+ 
+ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(audio_clk),
++	SH_PFC_FUNCTION(avb),
+ 	SH_PFC_FUNCTION(can0),
+ 	SH_PFC_FUNCTION(can1),
+ 	SH_PFC_FUNCTION(du),
 -- 
 1.9.1
