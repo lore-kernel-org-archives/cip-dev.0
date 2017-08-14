@@ -1,23 +1,41 @@
-From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
-Date: Mon, 14 Aug 2017 12:47:13 +0100
+From: Chris.Paterson2@renesas.com (Chris Paterson)
+Date: Mon, 14 Aug 2017 15:50:51 +0000
 Subject: [cip-dev] ELCE Workshop wiki page
-Message-ID: <59918DC1.4030107@codethink.co.uk>
+In-Reply-To: <59918DC1.4030107@codethink.co.uk>
+References: <59918DC1.4030107@codethink.co.uk>
+Message-ID: <TY1PR06MB0702EB8004DE22EDF23FB894B78C0@TY1PR06MB0702.apcprd06.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
-one of the ToDos coming from the last CIP TSC meeting was to create the 
-wiki page to manage the ELCE workshop.
+Hello Agustin,
 
-Waiting for the formal approval of the B at D 1:1 activity, I created the 
-page taking the OSSJ one as template.
+> From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-
+> project.org] On Behalf Of Agustin Benito Bethencourt
+> Sent: 14 August 2017 12:47
+> 
+> Hi,
+> one of the ToDos coming from the last CIP TSC meeting was to create the wiki
+> page to manage the ELCE workshop.
+> 
+> Waiting for the formal approval of the B at D 1:1 activity, I created the page
+> taking the OSSJ one as template.
 
-Please check: 
-https://wiki.linuxfoundation.org/civilinfrastructureplatform/cipconferences/cipwselce2017#elce-2017-cip-workshop
+Thank you for creating this. Do you want me (or other CIP members) to sign up for this workshop? Or is it assumed we'll be there anyway?
 
-Best Regards
+Kind regards, Chris
 
--- 
-Agustin Benito Bethencourt
-Principal Consultant - FOSS at Codethink
-agustin.benito at codethink.co.uk
+
+> 
+> Please check:
+> https://wiki.linuxfoundation.org/civilinfrastructureplatform/cipconferences/cip
+> wselce2017#elce-2017-cip-workshop
+> 
+> Best Regards
+> 
+> --
+> Agustin Benito Bethencourt
+> Principal Consultant - FOSS at Codethink agustin.benito at codethink.co.uk
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
