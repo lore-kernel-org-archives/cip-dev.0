@@ -1,54 +1,64 @@
-From: hidehiro.kawai.ez@hitachi.com (=?utf-8?B?5rKz5ZCI6Iux5a6PIC8gS0FXQUnvvIxISURFSElSTw==?=)
-Date: Mon, 21 Aug 2017 07:46:30 +0000
-Subject: [cip-dev] Kernel feature support - architecture options and
- drivers
-In-Reply-To: <1503063539.2047.90.camel@codethink.co.uk>
-References: <1500643130.12197.123.camel@codethink.co.uk>
-	<04EAB7311EE43145B2D3536183D1A8445B96609D@GSjpTKYDCembx31.service.hitachi.net>
-	<1503063539.2047.90.camel@codethink.co.uk>
-Message-ID: <04EAB7311EE43145B2D3536183D1A8445B9A0441@GSjpTKYDCembx31.service.hitachi.net>
+From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
+Date: Mon, 21 Aug 2017 11:17:09 +0100
+Subject: [cip-dev] Kernel maintenance and CIP testing report weeks 31,
+	32 and 33
+Message-ID: <599AB325.9060902@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Ben and folks,
+Hi all,
 
-> From: Ben Hutchings [mailto:ben.hutchings at codethink.co.uk]
-> Sent: Friday, August 18, 2017 10:39 PM
-> On Fri, 2017-07-28 at 04:49 +0000, ???? / KAWAI?HIDEHIRO wrote:
+these are the main tasks done in the areas where Codethink is focusing 
+the effort the past three weeks (Weeks 31 to 33)
 
-> > By the way, I think that `supporting a feature' is not the same as
-> > `enabling a feature'.  Does `please disable it' mean that this is a
-> > suggestion for a secure config, or imply that CIP shouldn't support
-> > this feature?
-> 
-> Where I said 'please disable it' with no qualification, I think the
-> feature is inherently insecure and I don't think CIP should pretend to
-> provide security support for it.
-> 
-> Where I said something like 'check whether you can disable it', I
-> consider the feature to be high risk, but CIP should try to support it
-> if members need it.
+++Kernel maintenance
 
-Let me clarify the level of support.  I think there are multiple
-support levels:
+* The review of the LTS patches to update a CIP kernel is ongoing. We 
+are expecting an update soon
+* Some support through the mailing list to pending questions has been 
+provided. Question about BSP patches backport pending.
+* The following needs has been identified as coming tasks: Implement 
+kconfig support checker and Implement mapping from kconfig symbols to 
+source files.
+* Ben Hutchings will participate at the Maintainer Summit on Oct 26th 
+http://events.linuxfoundation.org/events/linux-kernel-summit/program/about
+* Talk about Kernel maintenance using CIP kernel as example has been 
+approved by the ELCE content committee.
 
-(1) Backporting security fix
-(2) Backporting other bug fix
-(3) Backporting additional functionality related to the feature
-(4) Answering questions, trouble shooting, ... (should be done by
-    community)
+++CIP testing project
 
-If CIP only supports (1), your opinion is reasonable.
-If CIP also supports (2), supporting even insecure features will make
-sense.  For example, if we want to use a debugging feature which has a
-security risk during the development phase, we hope that we can use it
-without hitting bugs.
+* Focused on LAVA update in order to fix several issues. 
+https://gitlab.com/cip-project/cip-testing/testing/issues/114
+** QEMU health check works. 
+https://gitlab.com/cip-project/cip-testing/testing/issues/121 Focus now 
+is making the health check works on BBB with updated LAVA.
+** Discussions with upstream on some of the issues found.
+** Summary about the work done sent to cip-dev mailing list.
+* Progress on having B at D working behind a web-proxy 
+https://gitlab.com/cip-project/cip-testing/testing/issues/99
+* Daily health checks sent to the cip-testing-results mailing list
+* Build artifacts referenced in the Beaglebone black health check are no 
+longer accessible. Issue closed
+* Issue in kernelci with csrf token is under investigation 
+https://gitlab.com/cip-project/cip-testing/testing/issues/128
 
-However, I'm not sure which support levels should be supported by CIP.
-Have we defined it clearly?  If so, I'm sorry.
+As usual, for a fine grain tracking of this project you can check the 
+CIP testing project progress board: 
+https://gitlab.com/cip-project/cip-testing/testing/boards
 
-Best regards,
+++Other tasks
 
---
-Hidehiro Kawai
-Hitachi, Ltd. Research & Development Group
+* Data flow diagram for B at D (level 0) sent to cip-dev ML
+* B at D planning and progress added to the wiki: 
+https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptestingmanagement
+* ELCE workshop
+** ELCE 2017 workshop page created: 
+https://wiki.linuxfoundation.org/civilinfrastructureplatform/cipconferences/cipwselce2017
+** B at D 101 training session proposal sent. To be confirmed by TSC/Board 
+https://gitlab.com/cip-project/cip-testing/testing/issues/126
+
+Best Regards
+-- 
+Agustin Benito Bethencourt
+Principal Consultant - FOSS at Codethink
+agustin.benito at codethink.co.uk
