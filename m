@@ -1,25 +1,18 @@
-From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
-Date: Mon, 21 Aug 2017 13:04:41 +0100
-Subject: [cip-dev] Kernel maintenance and CIP testing report weeks 31,
- 32 and 33
-In-Reply-To: <599AB325.9060902@codethink.co.uk>
-References: <599AB325.9060902@codethink.co.uk>
-Message-ID: <599ACC59.5030309@codethink.co.uk>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Mon, 21 Aug 2017 16:46:58 +0100
+Subject: [cip-dev] Linux 4.4.83-cip8
+Message-ID: <1503330418.2047.134.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+I've released Linux version 4.4.83-cip8.  This adds some backported
+Renesas platform support plus the fixes from stable versions
+4.4.76-4.4.83 inclusive.
 
-On 21/08/17 11:17, Agustin Benito Bethencourt wrote:
-> * Some support through the mailing list to pending questions has been
-> provided. Question about BSP patches backport pending.
+(I also tagged a version 4.4.75-cip7 which only includes the Renesas patches.)
 
-Ah, this is already ongoing.
-
-Best Regards
-
+Ben.
 
 -- 
-Agustin Benito Bethencourt
-Principal Consultant - FOSS at Codethink
-agustin.benito at codethink.co.uk
+Ben Hutchings
+Software Developer, Codethink Ltd.
