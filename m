@@ -1,29 +1,55 @@
-From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
-Date: Mon, 21 Aug 2017 11:57:02 +0100
-Subject: [cip-dev] ToDos from the previous CIP TSC bi-weekly call
-Message-ID: <599ABC7E.2040200@codethink.co.uk>
+From: robert.marshall@codethink.co.uk (Robert Marshall)
+Date: Mon, 21 Aug 2017 11:29:39 +0100
+Subject: [cip-dev] Kernel maintenance and CIP testing report weeks 31,
+	32 and 33
+In-Reply-To: <599AB325.9060902@codethink.co.uk> (Agustin Benito Bethencourt's
+	message of "Mon, 21 Aug 2017 11:17:09 +0100")
+References: <599AB325.9060902@codethink.co.uk>
+Message-ID: <87fucltdrg.fsf@ctlt579.codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+Agustin Benito Bethencourt <agustin.benito@codethink.co.uk> writes:
 
-(Apologies if yo receive this mail twice, I have experienced some 
-technical issues.)
+<snip>
+> ++CIP testing project
+>
+> * Focused on LAVA update in order to fix several
+> issues. https://gitlab.com/cip-project/cip-testing/testing/issues/114
+> ** QEMU health check
+> works. https://gitlab.com/cip-project/cip-testing/testing/issues/121
+> Focus now is making the health check works on BBB with updated LAVA.
+> ** Discussions with upstream on some of the issues found.
+> ** Summary about the work done sent to cip-dev mailing list.
+> * Progress on having B at D working behind a web-proxy
+> https://gitlab.com/cip-project/cip-testing/testing/issues/99
+> * Daily health checks sent to the cip-testing-results mailing list
+> * Build artifacts referenced in the Beaglebone black health check are
+> no longer accessible. Issue closed
 
-in the previous TSC bi-weekly call there were two To-dos in the kernel 
-maintenance section I would like to get some clarification from those 
-who reported them:
+#129 is also associated with this but for the moment leaving it open hoping for feedback from the reporter
 
-* ToDo: set up on building time warnings for unsecure/unsupported configs
-* ToDo: before the 4.4 LTS period ends, map supported config symbols to 
-supported files/directories so that upstream fixes to unsupported parts 
-of the kernel can be ignored when backporting fixes to 4.4-cip
+> * Issue in kernelci with csrf token is under investigation
+> https://gitlab.com/cip-project/cip-testing/testing/issues/128
+>
 
-Who reported them? Can you develop a little through the mailing list?
+This just needs the tested changes integrated into the provisioning script
 
-Best Regards
 
--- 
-Agustin Benito Bethencourt
-Principal Consultant - FOSS at Codethink
-agustin.benito at codethink.co.uk
+> As usual, for a fine grain tracking of this project you can check the
+> CIP testing project progress board:
+> https://gitlab.com/cip-project/cip-testing/testing/boards
+>
+> ++Other tasks
+>
+> * Data flow diagram for B at D (level 0) sent to cip-dev ML
+> * B at D planning and progress added to the wiki:
+> https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptestingmanagement
+> * ELCE workshop
+> ** ELCE 2017 workshop page created:
+> https://wiki.linuxfoundation.org/civilinfrastructureplatform/cipconferences/cipwselce2017
+> ** B at D 101 training session proposal sent. To be confirmed by
+> TSC/Board
+> https://gitlab.com/cip-project/cip-testing/testing/issues/126
+>
+> Best Regards
