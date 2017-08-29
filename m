@@ -1,26 +1,31 @@
 From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
-Date: Tue, 29 Aug 2017 14:17:32 +0100
-Subject: [cip-dev] CIP Testing: Thursday meetings schedule change.
-Message-ID: <59A5696C.3070602@codethink.co.uk>
+Date: Tue, 29 Aug 2017 14:28:03 +0100
+Subject: [cip-dev] B@D introduced at AGL CIAT meeting
+Message-ID: <59A56BE3.4070002@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi,
 
-we had more quorum when we used to organise the CIP testing meetings in 
-the former time than in the new schedule so we will move it back.
+today Robert M. Daniel S. and myself attended to the AGL CIAT (Cont. 
+Integration and testing) meeting. Robert and I prepared some slides this 
+morning (based on the deck I introduced at Hitachi offices in June) to 
+introduce in the meeting B at D.
 
-* Thursdays at 10:00 UTC
-* Video chat: 
-https://plus.google.com/hangouts/_/codethink.co.uk/team-event-cip?hceid=YWd1c3Rpbi5iZW5pdG9AY29kZXRoaW5rLmNvLnVr.m6jv292u7masvpa1lb221rom1g&authuser=0
+Check the slides: 
+https://wiki.linuxfoundation.org/civilinfrastructureplatform/cipconferences#meetings
 
-Agenda for this coming Thursday in the new schedule:
-* Testing project technical status
-* Summary of the latest AGL CIAT meeting where B at D was (kind of) introduced.
-* Activities at ELCE.
+Sadly the connectivity did not work well most of the meeting for Robert 
+and I. We managed to introduce the concept and talk to one of the 
+BayLibre guys (Patrick Titiano, I believe), who was there about the "lab 
+in a box" concept they are developing.
 
-As always, if you cannot access through Google hangout, please let me 
-know and we try an alternative.
+This concept was discussed some time ago at the CIAT group and now is 
+part of the assignment Bay Libre is responsible for at AGL.
+
+There will be a talk about it at ELCE. We should keep a close eye on it 
+because there is a chance we can reuse part of their work and 
+collaborate with them.
 
 Best Regards
 
