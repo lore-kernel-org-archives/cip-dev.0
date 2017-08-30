@@ -1,74 +1,102 @@
 From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Wed, 30 Aug 2017 21:13:45 +0200
-Subject: [cip-dev] [PATCH 03/14] x86/efi: Force EFI reboot to process
-	pending capsules
+Date: Wed, 30 Aug 2017 21:13:51 +0200
+Subject: [cip-dev] [PATCH 09/14] efi/capsule: Clean up pr_err/_info()
+	messages
 In-Reply-To: <cover.1504120436.git.jan.kiszka@siemens.com>
 References: <cover.1504120436.git.jan.kiszka@siemens.com>
-Message-ID: <5bf9526467655ef151fd8ce59c91f5473f8f86e5.1504120436.git.jan.kiszka@siemens.com>
+Message-ID: <6df1733d8c500d8fb1c0898443765fc0c6843c32.1504120436.git.jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Matt Fleming <matt@codeblueprint.co.uk>
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-commit 87615a34d561ef59bd0cffc73256a21220dfdffd upstream.
+commit 5dce14b9d1a29cf76331f0fe8eb7efd63e0fcb9a upstream.
 
-If an EFI capsule has been sent to the firmware we must match the type
-of EFI reset against that required by the capsule to ensure it is
-processed correctly.
+Avoid __func__, improve the information provided by some of the
+messages.
 
-Force an EFI reboot if a capsule is pending for the next reset.
-
-Signed-off-by: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Kweh Hock Leong <hock.leong.kweh@intel.com>
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Reviewed-by: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: joeyli <jlee@suse.com>
 Cc: linux-efi at vger.kernel.org
-Link: http://lkml.kernel.org/r/1461614832-17633-29-git-send-email-matt at codeblueprint.co.uk
+Link: http://lkml.kernel.org/r/20170602135207.21708-5-ard.biesheuvel at linaro.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/kernel/reboot.c | 9 +++++++++
- include/linux/efi.h      | 6 ++++++
- 2 files changed, 15 insertions(+)
+ drivers/firmware/efi/capsule-loader.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
-diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
-index f660d63f40fe..01d9e1edda07 100644
---- a/arch/x86/kernel/reboot.c
-+++ b/arch/x86/kernel/reboot.c
-@@ -535,6 +535,15 @@ static void native_machine_emergency_restart(void)
- 	mode = reboot_mode == REBOOT_WARM ? 0x1234 : 0;
- 	*((unsigned short *)__va(0x472)) = mode;
+diff --git a/drivers/firmware/efi/capsule-loader.c b/drivers/firmware/efi/capsule-loader.c
+index 7b57dda2417d..3fb91e1597a9 100644
+--- a/drivers/firmware/efi/capsule-loader.c
++++ b/drivers/firmware/efi/capsule-loader.c
+@@ -70,7 +70,7 @@ static ssize_t efi_capsule_setup_info(struct capsule_info *cap_info,
+ 	pages_needed = ALIGN(cap_hdr->imagesize, PAGE_SIZE) >> PAGE_SHIFT;
  
-+	/*
-+	 * If an EFI capsule has been registered with the firmware then
-+	 * override the reboot= parameter.
-+	 */
-+	if (efi_capsule_pending(NULL)) {
-+		pr_info("EFI capsule is pending, forcing EFI reboot.\n");
-+		reboot_type = BOOT_EFI;
-+	}
-+
- 	for (;;) {
- 		/* Could also try the reset bit in the Hammer NB */
- 		switch (reboot_type) {
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index 4899c679622d..5a0b8f7a54c8 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -1004,6 +1004,12 @@ static inline bool efi_enabled(int feature)
+ 	if (pages_needed == 0) {
+-		pr_err("%s: pages count invalid\n", __func__);
++		pr_err("invalid capsule size");
+ 		return -EINVAL;
+ 	}
+ 
+@@ -79,8 +79,7 @@ static ssize_t efi_capsule_setup_info(struct capsule_info *cap_info,
+ 				    cap_hdr->imagesize,
+ 				    &cap_info->reset_type);
+ 	if (ret) {
+-		pr_err("%s: efi_capsule_supported() failed\n",
+-		       __func__);
++		pr_err("capsule not supported\n");
+ 		return ret;
+ 	}
+ 
+@@ -115,14 +114,14 @@ static ssize_t efi_capsule_submit_update(struct capsule_info *cap_info)
+ 	ret = efi_capsule_update(cap_hdr_temp, cap_info->pages);
+ 	vunmap(cap_hdr_temp);
+ 	if (ret) {
+-		pr_err("%s: efi_capsule_update() failed\n", __func__);
++		pr_err("capsule update failed\n");
+ 		return ret;
+ 	}
+ 
+ 	/* Indicate capsule binary uploading is done */
+ 	cap_info->index = NO_FURTHER_WRITE_ACTION;
+-	pr_info("%s: Successfully upload capsule file with reboot type '%s'\n",
+-		__func__, !cap_info->reset_type ? "RESET_COLD" :
++	pr_info("Successfully upload capsule file with reboot type '%s'\n",
++		!cap_info->reset_type ? "RESET_COLD" :
+ 		cap_info->reset_type == 1 ? "RESET_WARM" :
+ 		"RESET_SHUTDOWN");
+ 	return 0;
+@@ -207,8 +206,7 @@ static ssize_t efi_capsule_write(struct file *file, const char __user *buff,
+ 	if (cap_info->header_obtained &&
+ 	    cap_info->count >= cap_info->total_size) {
+ 		if (cap_info->count > cap_info->total_size) {
+-			pr_err("%s: upload size exceeded header defined size\n",
+-			       __func__);
++			pr_err("capsule upload size exceeded header defined size\n");
+ 			ret = -EINVAL;
+ 			goto failed;
+ 		}
+@@ -242,7 +240,7 @@ static int efi_capsule_flush(struct file *file, fl_owner_t id)
+ 	struct capsule_info *cap_info = file->private_data;
+ 
+ 	if (cap_info->index > 0) {
+-		pr_err("%s: capsule upload not complete\n", __func__);
++		pr_err("capsule upload not complete\n");
+ 		efi_free_all_buff_pages(cap_info);
+ 		ret = -ECANCELED;
+ 	}
+@@ -321,8 +319,7 @@ static int __init efi_capsule_loader_init(void)
+ 
+ 	ret = misc_register(&efi_capsule_misc);
+ 	if (ret)
+-		pr_err("%s: Failed to register misc char file note\n",
+-		       __func__);
++		pr_err("Unable to register capsule loader device\n");
+ 
+ 	return ret;
  }
- static inline void
- efi_reboot(enum reboot_mode reboot_mode, const char *__unused) {}
-+
-+static inline bool
-+efi_capsule_pending(int *reset_type)
-+{
-+	return false;
-+}
- #endif
- 
- extern int efi_status_to_err(efi_status_t status);
 -- 
 2.12.3
