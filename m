@@ -1,71 +1,109 @@
 From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Wed, 30 Aug 2017 21:06:02 +0200
-Subject: [cip-dev] [PATCH 05/25] serial: exar: Fix initialization of EXAR
-	registers for ports > 0
+Date: Wed, 30 Aug 2017 21:05:59 +0200
+Subject: [cip-dev] [PATCH 02/25] serial: 8250_pci: Use symbolic constants
+	for EXAR's MPIO registers
 In-Reply-To: <cover.1504119982.git.jan.kiszka@siemens.com>
 References: <cover.1504119982.git.jan.kiszka@siemens.com>
-Message-ID: <8ad4efe06739a452a078cb7e29947b7cdb7c7497.1504119982.git.jan.kiszka@siemens.com>
+Message-ID: <dd1ef73e412d2e51dd26ea0792e126a3333eda0b.1504119982.git.jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Jan Kiszka <jan.kiszka@siemens.com>
 
-commit 5b5f252d67afd7bd5b923c664206d60800bf5054 upstream.
+commit b6fce7382d72274336aeafe6e44da755a371ed32 upstream.
 
-So far, pci_xr17v35x_setup always initialized 8XMODE, FCTR & Co. for
-port 0 because it used the address of that port instead of moving the
-pointer according to the port number. Fix this and remove the unneeded
-temporary ioremap by moving default_setup up and reusing the membase it
-fills into the port structure.
+Less magic that only requires comments.
 
-Fixes: 14faa8cce88e ("tty/8250 Add support for Commtech's Fastcom Async-335 and Fastcom Async-PCIe cards")
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/serial/8250/8250_exar.c | 22 +++++++++-------------
- 1 file changed, 9 insertions(+), 13 deletions(-)
+ drivers/tty/serial/8250/8250_pci.c | 55 +++++++++++++++++++++++---------------
+ 1 file changed, 34 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/tty/serial/8250/8250_exar.c b/drivers/tty/serial/8250/8250_exar.c
-index 58469d9d6515..f489f25643c5 100644
---- a/drivers/tty/serial/8250/8250_exar.c
-+++ b/drivers/tty/serial/8250/8250_exar.c
-@@ -157,27 +157,23 @@ pci_xr17v35x_setup(struct exar8250 *priv, struct pci_dev *pcidev,
- 	if (board->has_slave && idx >= 8)
- 		port->port.uartclk /= 2;
+diff --git a/drivers/tty/serial/8250/8250_pci.c b/drivers/tty/serial/8250/8250_pci.c
+index cf3da51a3536..cf7f6151e66a 100644
+--- a/drivers/tty/serial/8250/8250_pci.c
++++ b/drivers/tty/serial/8250/8250_pci.c
+@@ -1755,6 +1755,19 @@ static int pci_eg20t_init(struct pci_dev *dev)
+ #define PCI_DEVICE_ID_EXAR_XR17V4358	0x4358
+ #define PCI_DEVICE_ID_EXAR_XR17V8358	0x8358
  
--	p = pci_ioremap_bar(pcidev, 0);
--	if (!p)
--		return -ENOMEM;
-+	ret = default_setup(priv, pcidev, idx, offset, port);
-+	if (ret)
-+		return ret;
- 
--	/* Setup Multipurpose Input/Output pins. */
--	if (idx == 0)
--		setup_gpio(p);
-+	p = port->port.membase;
- 
++#define UART_EXAR_MPIOINT_7_0	0x8f	/* MPIOINT[7:0] */
++#define UART_EXAR_MPIOLVL_7_0	0x90	/* MPIOLVL[7:0] */
++#define UART_EXAR_MPIO3T_7_0	0x91	/* MPIO3T[7:0] */
++#define UART_EXAR_MPIOINV_7_0	0x92	/* MPIOINV[7:0] */
++#define UART_EXAR_MPIOSEL_7_0	0x93	/* MPIOSEL[7:0] */
++#define UART_EXAR_MPIOOD_7_0	0x94	/* MPIOOD[7:0] */
++#define UART_EXAR_MPIOINT_15_8	0x95	/* MPIOINT[15:8] */
++#define UART_EXAR_MPIOLVL_15_8	0x96	/* MPIOLVL[15:8] */
++#define UART_EXAR_MPIO3T_15_8	0x97	/* MPIO3T[15:8] */
++#define UART_EXAR_MPIOINV_15_8	0x98	/* MPIOINV[15:8] */
++#define UART_EXAR_MPIOSEL_15_8	0x99	/* MPIOSEL[15:8] */
++#define UART_EXAR_MPIOOD_15_8	0x9a	/* MPIOOD[15:8] */
++
+ static int
+ pci_xr17c154_setup(struct serial_private *priv,
+ 		  const struct pciserial_board *board,
+@@ -1797,18 +1810,18 @@ pci_xr17v35x_setup(struct serial_private *priv,
+ 	 * Setup Multipurpose Input/Output pins.
+ 	 */
+ 	if (idx == 0) {
+-		writeb(0x00, p + 0x8f); /*MPIOINT[7:0]*/
+-		writeb(0x00, p + 0x90); /*MPIOLVL[7:0]*/
+-		writeb(0x00, p + 0x91); /*MPIO3T[7:0]*/
+-		writeb(0x00, p + 0x92); /*MPIOINV[7:0]*/
+-		writeb(0x00, p + 0x93); /*MPIOSEL[7:0]*/
+-		writeb(0x00, p + 0x94); /*MPIOOD[7:0]*/
+-		writeb(0x00, p + 0x95); /*MPIOINT[15:8]*/
+-		writeb(0x00, p + 0x96); /*MPIOLVL[15:8]*/
+-		writeb(0x00, p + 0x97); /*MPIO3T[15:8]*/
+-		writeb(0x00, p + 0x98); /*MPIOINV[15:8]*/
+-		writeb(0x00, p + 0x99); /*MPIOSEL[15:8]*/
+-		writeb(0x00, p + 0x9a); /*MPIOOD[15:8]*/
++		writeb(0x00, p + UART_EXAR_MPIOINT_7_0);
++		writeb(0x00, p + UART_EXAR_MPIOLVL_7_0);
++		writeb(0x00, p + UART_EXAR_MPIO3T_7_0);
++		writeb(0x00, p + UART_EXAR_MPIOINV_7_0);
++		writeb(0x00, p + UART_EXAR_MPIOSEL_7_0);
++		writeb(0x00, p + UART_EXAR_MPIOOD_7_0);
++		writeb(0x00, p + UART_EXAR_MPIOINT_15_8);
++		writeb(0x00, p + UART_EXAR_MPIOLVL_15_8);
++		writeb(0x00, p + UART_EXAR_MPIO3T_15_8);
++		writeb(0x00, p + UART_EXAR_MPIOINV_15_8);
++		writeb(0x00, p + UART_EXAR_MPIOSEL_15_8);
++		writeb(0x00, p + UART_EXAR_MPIOOD_15_8);
+ 	}
  	writeb(0x00, p + UART_EXAR_8XMODE);
  	writeb(UART_FCTR_EXAR_TRGD, p + UART_EXAR_FCTR);
- 	writeb(128, p + UART_EXAR_TXTRG);
- 	writeb(128, p + UART_EXAR_RXTRG);
--	iounmap(p);
- 
--	ret = default_setup(priv, pcidev, idx, offset, port);
--	if (ret)
--		return ret;
-+	if (idx == 0) {
-+		/* Setup Multipurpose Input/Output pins. */
-+		setup_gpio(p);
- 
--	if (idx == 0)
--		port->port.private_data =
--			xr17v35x_register_gpio(pcidev);
-+		port->port.private_data = xr17v35x_register_gpio(pcidev);
-+	}
- 
- 	return 0;
- }
+@@ -1844,20 +1857,20 @@ pci_fastcom335_setup(struct serial_private *priv,
+ 		switch (priv->dev->device) {
+ 		case PCI_DEVICE_ID_COMMTECH_4222PCI335:
+ 		case PCI_DEVICE_ID_COMMTECH_4224PCI335:
+-			writeb(0x78, p + 0x90); /* MPIOLVL[7:0] */
+-			writeb(0x00, p + 0x92); /* MPIOINV[7:0] */
+-			writeb(0x00, p + 0x93); /* MPIOSEL[7:0] */
++			writeb(0x78, p + UART_EXAR_MPIOLVL_7_0);
++			writeb(0x00, p + UART_EXAR_MPIOINV_7_0);
++			writeb(0x00, p + UART_EXAR_MPIOSEL_7_0);
+ 			break;
+ 		case PCI_DEVICE_ID_COMMTECH_2324PCI335:
+ 		case PCI_DEVICE_ID_COMMTECH_2328PCI335:
+-			writeb(0x00, p + 0x90); /* MPIOLVL[7:0] */
+-			writeb(0xc0, p + 0x92); /* MPIOINV[7:0] */
+-			writeb(0xc0, p + 0x93); /* MPIOSEL[7:0] */
++			writeb(0x00, p + UART_EXAR_MPIOLVL_7_0);
++			writeb(0xc0, p + UART_EXAR_MPIOINV_7_0);
++			writeb(0xc0, p + UART_EXAR_MPIOSEL_7_0);
+ 			break;
+ 		}
+-		writeb(0x00, p + 0x8f); /* MPIOINT[7:0] */
+-		writeb(0x00, p + 0x91); /* MPIO3T[7:0] */
+-		writeb(0x00, p + 0x94); /* MPIOOD[7:0] */
++		writeb(0x00, p + UART_EXAR_MPIOINT_7_0);
++		writeb(0x00, p + UART_EXAR_MPIO3T_7_0);
++		writeb(0x00, p + UART_EXAR_MPIOOD_7_0);
+ 	}
+ 	writeb(0x00, p + UART_EXAR_8XMODE);
+ 	writeb(UART_FCTR_EXAR_TRGD, p + UART_EXAR_FCTR);
 -- 
 2.12.3
