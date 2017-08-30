@@ -1,67 +1,50 @@
 From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Wed, 30 Aug 2017 21:06:13 +0200
-Subject: [cip-dev] [PATCH 16/25] gpio: exar: Set proper output level in
-	exar_direction_output
+Date: Wed, 30 Aug 2017 21:06:15 +0200
+Subject: [cip-dev] [PATCH 18/25] gpio: exar: Allocate resources on behalf of
+	the platform device
 In-Reply-To: <cover.1504119982.git.jan.kiszka@siemens.com>
 References: <cover.1504119982.git.jan.kiszka@siemens.com>
-Message-ID: <e22647dc53be3355c29b0cfd2e7bba2cb7cb1e7a.1504119982.git.jan.kiszka@siemens.com>
+Message-ID: <63c276f06a8c9d4e4ea4c93efe427037fd2cd92d.1504119982.git.jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Axel Lin <axel.lin@ingics.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-commit eddeae073760aa3186e2fa0d14a12794687fa786 upstream.
+commit 5dab5872e59390aa9cca26ee629b95f7179f6c77 upstream.
 
-Current code does not set output level in exar_direction_output, fix it.
-Also move the direction_output/direction_input code block to avoid forward
-declaration for exar_set_value().
+Do not allocate resources on behalf of the parent device but on our own.
+Otherwise, cleanup does not properly work if gpio-exar is removed but
+not the parent device.
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-exar.c | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+ drivers/gpio/gpio-exar.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpio/gpio-exar.c b/drivers/gpio/gpio-exar.c
-index 4fd6aea59c75..866302332373 100644
+index f956b8fd67ca..01f60ac86430 100644
 --- a/drivers/gpio/gpio-exar.c
 +++ b/drivers/gpio/gpio-exar.c
-@@ -59,17 +59,6 @@ static int exar_set_direction(struct gpio_chip *chip, int direction,
- 	return 0;
- }
+@@ -139,7 +139,7 @@ static int gpio_exar_probe(struct platform_device *pdev)
+ 	if (!p)
+ 		return -ENOMEM;
  
--static int exar_direction_output(struct gpio_chip *chip, unsigned int offset,
--				 int value)
--{
--	return exar_set_direction(chip, 0, offset);
--}
--
--static int exar_direction_input(struct gpio_chip *chip, unsigned int offset)
--{
--	return exar_set_direction(chip, 1, offset);
--}
--
- static int exar_get(struct gpio_chip *chip, unsigned int reg)
- {
- 	struct exar_gpio_chip *exar_gpio = gpiochip_get_data(chip);
-@@ -116,6 +105,18 @@ static void exar_set_value(struct gpio_chip *chip, unsigned int offset,
- 	exar_update(chip, addr, value, offset % 8);
- }
+-	exar_gpio = devm_kzalloc(&pcidev->dev, sizeof(*exar_gpio), GFP_KERNEL);
++	exar_gpio = devm_kzalloc(&pdev->dev, sizeof(*exar_gpio), GFP_KERNEL);
+ 	if (!exar_gpio)
+ 		return -ENOMEM;
  
-+static int exar_direction_output(struct gpio_chip *chip, unsigned int offset,
-+				 int value)
-+{
-+	exar_set_value(chip, offset, value);
-+	return exar_set_direction(chip, 0, offset);
-+}
-+
-+static int exar_direction_input(struct gpio_chip *chip, unsigned int offset)
-+{
-+	return exar_set_direction(chip, 1, offset);
-+}
-+
- static int gpio_exar_probe(struct platform_device *pdev)
- {
- 	struct pci_dev *pcidev = platform_get_drvdata(pdev);
+@@ -160,7 +160,7 @@ static int gpio_exar_probe(struct platform_device *pdev)
+ 	exar_gpio->regs = p;
+ 	exar_gpio->index = index;
+ 
+-	ret = devm_gpiochip_add_data(&pcidev->dev,
++	ret = devm_gpiochip_add_data(&pdev->dev,
+ 				     &exar_gpio->gpio_chip, exar_gpio);
+ 	if (ret)
+ 		goto err_destroy;
 -- 
 2.12.3
