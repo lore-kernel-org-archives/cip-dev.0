@@ -1,90 +1,110 @@
 From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Wed, 30 Aug 2017 20:52:28 +0200
-Subject: [cip-dev] [PATCH 1/8] stmmac: Add support for SIMATIC IOT2000
-	platform
+Date: Wed, 30 Aug 2017 20:52:29 +0200
+Subject: [cip-dev] [PATCH 2/8] iio: core: implement
+	iio_device_{claim|release}_direct_mode()
 In-Reply-To: <cover.1504119155.git.jan.kiszka@siemens.com>
 References: <cover.1504119155.git.jan.kiszka@siemens.com>
-Message-ID: <7b485935cf98525babb58689b7f9b10594cdca4e.1504119155.git.jan.kiszka@siemens.com>
+Message-ID: <f65f45d276ccb2179f31a379cfcd27e4845eccea.1504119155.git.jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+From: Alison Schofield <amsfield22@gmail.com>
 
-commit 212c7fd614377fef4415d94856a59e9f484aa439 upstream.
+commit 08a33805518e7845486f88287e8aace6f8439391 upstream.
 
-The IOT2000 is industrial controller platform, derived from the Intel
-Galileo Gen2 board. The variant IOT2020 comes with one LAN port, the
-IOT2040 has two of them. They can be told apart based on the board asset
-tag in the DMI table.
+It is often the case that the driver wants to be sure a device stays
+in direct mode while it is executing a task or series of tasks.  To
+accomplish this today, the driver performs this sequence: 1) take the
+device state lock, 2) verify it is not in a buffered mode, 3) execute
+some tasks, and 4) release that lock.
 
-Based on patch by Sascha Weisenberger.
+This patch introduces a pair of helper functions that simplify these
+steps and make it more semantically expressive.
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-Signed-off-by: Sascha Weisenberger <sascha.weisenberger@siemens.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+iio_device_claim_direct_mode()
+        If the device is not in any buffered mode it is guaranteed
+        to stay that way until iio_release_direct_mode() is called.
+
+iio_device_release_direct_mode()
+        Release the claim. Device is no longer guaranteed to stay
+        in direct mode.
+
+Signed-off-by: Alison Schofield <amsfield22@gmail.com>
+Signed-off-by: Jonathan Cameron <jic23@kernel.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c | 26 +++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
+ drivers/iio/industrialio-core.c | 39 +++++++++++++++++++++++++++++++++++++++
+ include/linux/iio/iio.h         |  2 ++
+ 2 files changed, 41 insertions(+)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-index d71a721ea61c..3491e98bffc5 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-@@ -36,6 +36,7 @@
-  */
- struct stmmac_pci_dmi_data {
- 	const char *name;
-+	const char *asset_tag;
- 	unsigned int func;
- 	int phy_addr;
- };
-@@ -50,6 +51,7 @@ struct stmmac_pci_info {
- static int stmmac_pci_find_phy_addr(struct stmmac_pci_info *info)
- {
- 	const char *name = dmi_get_system_info(DMI_BOARD_NAME);
-+	const char *asset_tag = dmi_get_system_info(DMI_BOARD_ASSET_TAG);
- 	unsigned int func = PCI_FUNC(info->pdev->devfn);
- 	struct stmmac_pci_dmi_data *dmi;
+diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
+index 131b434af994..dc0701f0ab03 100644
+--- a/drivers/iio/industrialio-core.c
++++ b/drivers/iio/industrialio-core.c
+@@ -25,6 +25,7 @@
+ #include <linux/slab.h>
+ #include <linux/anon_inodes.h>
+ #include <linux/debugfs.h>
++#include <linux/mutex.h>
+ #include <linux/iio/iio.h>
+ #include "iio_core.h"
+ #include "iio_core_trigger.h"
+@@ -1363,6 +1364,44 @@ void devm_iio_device_unregister(struct device *dev, struct iio_dev *indio_dev)
+ }
+ EXPORT_SYMBOL_GPL(devm_iio_device_unregister);
  
-@@ -61,8 +63,12 @@ static int stmmac_pci_find_phy_addr(struct stmmac_pci_info *info)
- 		return 1;
++/**
++ * iio_device_claim_direct_mode - Keep device in direct mode
++ * @indio_dev:	the iio_dev associated with the device
++ *
++ * If the device is in direct mode it is guaranteed to stay
++ * that way until iio_device_release_direct_mode() is called.
++ *
++ * Use with iio_device_release_direct_mode()
++ *
++ * Returns: 0 on success, -EBUSY on failure
++ */
++int iio_device_claim_direct_mode(struct iio_dev *indio_dev)
++{
++	mutex_lock(&indio_dev->mlock);
++
++	if (iio_buffer_enabled(indio_dev)) {
++		mutex_unlock(&indio_dev->mlock);
++		return -EBUSY;
++	}
++	return 0;
++}
++EXPORT_SYMBOL_GPL(iio_device_claim_direct_mode);
++
++/**
++ * iio_device_release_direct_mode - releases claim on direct mode
++ * @indio_dev:	the iio_dev associated with the device
++ *
++ * Release the claim. Device is no longer guaranteed to stay
++ * in direct mode.
++ *
++ * Use with iio_device_claim_direct_mode()
++ */
++void iio_device_release_direct_mode(struct iio_dev *indio_dev)
++{
++	mutex_unlock(&indio_dev->mlock);
++}
++EXPORT_SYMBOL_GPL(iio_device_release_direct_mode);
++
+ subsys_initcall(iio_init);
+ module_exit(iio_exit);
  
- 	for (dmi = info->dmi; dmi->name && *dmi->name; dmi++) {
--		if (!strcmp(dmi->name, name) && dmi->func == func)
-+		if (!strcmp(dmi->name, name) && dmi->func == func) {
-+			/* If asset tag is provided, match on it as well. */
-+			if (dmi->asset_tag && strcmp(dmi->asset_tag, asset_tag))
-+				continue;
- 			return dmi->phy_addr;
-+		}
- 	}
+diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
+index 19c94c9acc81..b6edc8dcbe61 100644
+--- a/include/linux/iio/iio.h
++++ b/include/linux/iio/iio.h
+@@ -527,6 +527,8 @@ void iio_device_unregister(struct iio_dev *indio_dev);
+ int devm_iio_device_register(struct device *dev, struct iio_dev *indio_dev);
+ void devm_iio_device_unregister(struct device *dev, struct iio_dev *indio_dev);
+ int iio_push_event(struct iio_dev *indio_dev, u64 ev_code, s64 timestamp);
++int iio_device_claim_direct_mode(struct iio_dev *indio_dev);
++void iio_device_release_direct_mode(struct iio_dev *indio_dev);
  
- 	return -ENODEV;
-@@ -138,6 +144,24 @@ static struct stmmac_pci_dmi_data quark_pci_dmi_data[] = {
- 		.func = 6,
- 		.phy_addr = 1,
- 	},
-+	{
-+		.name = "SIMATIC IOT2000",
-+		.asset_tag = "6ES7647-0AA00-0YA2",
-+		.func = 6,
-+		.phy_addr = 1,
-+	},
-+	{
-+		.name = "SIMATIC IOT2000",
-+		.asset_tag = "6ES7647-0AA00-1YA2",
-+		.func = 6,
-+		.phy_addr = 1,
-+	},
-+	{
-+		.name = "SIMATIC IOT2000",
-+		.asset_tag = "6ES7647-0AA00-1YA2",
-+		.func = 7,
-+		.phy_addr = 1,
-+	},
- 	{}
- };
+ extern struct bus_type iio_bus_type;
  
 -- 
 2.12.3
