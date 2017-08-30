@@ -1,91 +1,78 @@
 From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Wed, 30 Aug 2017 21:13:46 +0200
-Subject: [cip-dev] [PATCH 04/14] efi: Add misc char driver interface to
-	update EFI firmware
+Date: Wed, 30 Aug 2017 21:13:44 +0200
+Subject: [cip-dev] [PATCH 02/14] efi: Add 'capsule' update support
 In-Reply-To: <cover.1504120436.git.jan.kiszka@siemens.com>
 References: <cover.1504120436.git.jan.kiszka@siemens.com>
-Message-ID: <c76233f2ae6e54e5086fb39364f0a82c5ea9191c.1504120436.git.jan.kiszka@siemens.com>
+Message-ID: <d10ae922ff7e5f18a6bb71f6e1c96287f99b4f55.1504120436.git.jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Kweh, Hock Leong <hock.leong.kweh@intel.com>
+From: Matt Fleming <matt@codeblueprint.co.uk>
 
-commit 65117f1aa1b2d145fd5ca376bde642794d0aae1b upstream.
+commit f0133f3c5b8bb34ec4dec50c27e7a655aeee8935 upstream.
 
-This patch introduces a kernel module to expose a capsule loader
-interface (misc char device file note) for users to upload capsule
-binaries.
+The EFI capsule mechanism allows data blobs to be passed to the EFI
+firmware. A common use case is performing firmware updates. This patch
+just introduces the main infrastructure for interacting with the
+firmware, and a driver that allows users to upload capsules will come
+in a later patch.
 
-Example:
+Once a capsule has been passed to the firmware, the next reboot must
+be performed using the ResetSystem() EFI runtime service, which may
+involve overriding the reboot type specified by reboot=. This ensures
+the reset value returned by QueryCapsuleCapabilities() is used to
+reset the system, which is required for the capsule to be processed.
+efi_capsule_pending() is provided for this purpose.
 
-  cat firmware.bin > /dev/efi_capsule_loader
+At the moment we only allow a single capsule blob to be sent to the
+firmware despite the fact that UpdateCapsule() takes a 'CapsuleCount'
+parameter. This simplifies the API and shouldn't result in any
+downside since it is still possible to send multiple capsules by
+repeatedly calling UpdateCapsule().
 
-Any upload error will be returned while doing "cat" through file
-operation write() function call.
-
-Signed-off-by: Kweh, Hock Leong <hock.leong.kweh@intel.com>
-[ Update comments and Kconfig text ]
 Signed-off-by: Matt Fleming <matt@codeblueprint.co.uk>
-Reviewed-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
 Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Cc: Borislav Petkov <bp@alien8.de>
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Kweh Hock Leong <hock.leong.kweh@intel.com>
+Cc: Mark Salter <msalter@redhat.com>
 Cc: Peter Jones <pjones@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sam Protsenko <semen.protsenko@linaro.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: joeyli <jlee@suse.com>
 Cc: linux-efi at vger.kernel.org
-Link: http://lkml.kernel.org/r/1461614832-17633-30-git-send-email-matt at codeblueprint.co.uk
+Link: http://lkml.kernel.org/r/1461614832-17633-28-git-send-email-matt at codeblueprint.co.uk
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- drivers/firmware/efi/Kconfig          |  10 +
- drivers/firmware/efi/Makefile         |   1 +
- drivers/firmware/efi/capsule-loader.c | 343 ++++++++++++++++++++++++++++++++++
- 3 files changed, 354 insertions(+)
- create mode 100644 drivers/firmware/efi/capsule-loader.c
+ drivers/firmware/efi/Makefile  |   1 +
+ drivers/firmware/efi/capsule.c | 300 +++++++++++++++++++++++++++++++++++++++++
+ drivers/firmware/efi/reboot.c  |  12 +-
+ include/linux/efi.h            |  14 ++
+ 4 files changed, 326 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/firmware/efi/capsule.c
 
-diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
-index e1670d533f97..de221bbde9c9 100644
---- a/drivers/firmware/efi/Kconfig
-+++ b/drivers/firmware/efi/Kconfig
-@@ -87,6 +87,16 @@ config EFI_RUNTIME_WRAPPERS
- config EFI_ARMSTUB
- 	bool
- 
-+config EFI_CAPSULE_LOADER
-+	tristate "EFI capsule loader"
-+	depends on EFI
-+	help
-+	  This option exposes a loader interface "/dev/efi_capsule_loader" for
-+	  users to load EFI capsules. This driver requires working runtime
-+	  capsule support in the firmware, which many OEMs do not provide.
-+
-+	  Most users should say N.
-+
- endmenu
- 
- config UEFI_CPER
 diff --git a/drivers/firmware/efi/Makefile b/drivers/firmware/efi/Makefile
-index 54b19cdbfcf8..2c8562de3a5f 100644
+index ec379a4164cc..54b19cdbfcf8 100644
 --- a/drivers/firmware/efi/Makefile
 +++ b/drivers/firmware/efi/Makefile
-@@ -19,3 +19,4 @@ obj-$(CONFIG_EFI_RUNTIME_MAP)		+= runtime-map.o
- obj-$(CONFIG_EFI_RUNTIME_WRAPPERS)	+= runtime-wrappers.o
- obj-$(CONFIG_EFI_STUB)			+= libstub/
- obj-$(CONFIG_EFI_FAKE_MEMMAP)		+= fake_mem.o
-+obj-$(CONFIG_EFI_CAPSULE_LOADER)	+= capsule-loader.o
-diff --git a/drivers/firmware/efi/capsule-loader.c b/drivers/firmware/efi/capsule-loader.c
+@@ -10,6 +10,7 @@
+ KASAN_SANITIZE_runtime-wrappers.o	:= n
+ 
+ obj-$(CONFIG_EFI)			+= efi.o vars.o reboot.o
++obj-$(CONFIG_EFI)			+= capsule.o
+ obj-$(CONFIG_EFI_VARS)			+= efivars.o
+ obj-$(CONFIG_EFI_ESRT)			+= esrt.o
+ obj-$(CONFIG_EFI_VARS_PSTORE)		+= efi-pstore.o
+diff --git a/drivers/firmware/efi/capsule.c b/drivers/firmware/efi/capsule.c
 new file mode 100644
-index 000000000000..c99c24bc79b0
+index 000000000000..0de55944ac0b
 --- /dev/null
-+++ b/drivers/firmware/efi/capsule-loader.c
-@@ -0,0 +1,343 @@
++++ b/drivers/firmware/efi/capsule.c
+@@ -0,0 +1,300 @@
 +/*
-+ * EFI capsule loader driver.
++ * EFI capsule support.
 + *
-+ * Copyright 2015 Intel Corporation
++ * Copyright 2013 Intel Corporation; author Matt Fleming
 + *
 + * This file is part of the Linux kernel, and is made available under
 + * the terms of the GNU General Public License version 2.
@@ -93,337 +80,356 @@ index 000000000000..c99c24bc79b0
 +
 +#define pr_fmt(fmt) "efi: " fmt
 +
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/miscdevice.h>
-+#include <linux/highmem.h>
 +#include <linux/slab.h>
 +#include <linux/mutex.h>
++#include <linux/highmem.h>
 +#include <linux/efi.h>
++#include <linux/vmalloc.h>
++#include <asm/io.h>
 +
-+#define NO_FURTHER_WRITE_ACTION -1
++typedef struct {
++	u64 length;
++	u64 data;
++} efi_capsule_block_desc_t;
 +
-+struct capsule_info {
-+	bool		header_obtained;
-+	int		reset_type;
-+	long		index;
-+	size_t		count;
-+	size_t		total_size;
-+	struct page	**pages;
-+	size_t		page_bytes_remain;
-+};
++static bool capsule_pending;
++static int efi_reset_type = -1;
++
++/*
++ * capsule_mutex serialises access to both capsule_pending and
++ * efi_reset_type.
++ */
++static DEFINE_MUTEX(capsule_mutex);
 +
 +/**
-+ * efi_free_all_buff_pages - free all previous allocated buffer pages
-+ * @cap_info: pointer to current instance of capsule_info structure
++ * efi_capsule_pending - has a capsule been passed to the firmware?
++ * @reset_type: store the type of EFI reset if capsule is pending
 + *
-+ *	In addition to freeing buffer pages, it flags NO_FURTHER_WRITE_ACTION
-+ *	to cease processing data in subsequent write(2) calls until close(2)
-+ *	is called.
-+ **/
-+static void efi_free_all_buff_pages(struct capsule_info *cap_info)
++ * To ensure that the registered capsule is processed correctly by the
++ * firmware we need to perform a specific type of reset. If a capsule is
++ * pending return the reset type in @reset_type.
++ *
++ * This function will race with callers of efi_capsule_update(), for
++ * example, calling this function while somebody else is in
++ * efi_capsule_update() but hasn't reached efi_capsue_update_locked()
++ * will miss the updates to capsule_pending and efi_reset_type after
++ * efi_capsule_update_locked() completes.
++ *
++ * A non-racy use is from platform reboot code because we use
++ * system_state to ensure no capsules can be sent to the firmware once
++ * we're at SYSTEM_RESTART. See efi_capsule_update_locked().
++ */
++bool efi_capsule_pending(int *reset_type)
 +{
-+	while (cap_info->index > 0)
-+		__free_page(cap_info->pages[--cap_info->index]);
++	bool rv = false;
 +
-+	cap_info->index = NO_FURTHER_WRITE_ACTION;
++	mutex_lock(&capsule_mutex);
++	if (!capsule_pending)
++		goto out;
++
++	if (reset_type)
++		*reset_type = efi_reset_type;
++	rv = true;
++out:
++	mutex_unlock(&capsule_mutex);
++	return rv;
++}
++
++/*
++ * Whitelist of EFI capsule flags that we support.
++ *
++ * We do not handle EFI_CAPSULE_INITIATE_RESET because that would
++ * require us to prepare the kernel for reboot. Refuse to load any
++ * capsules with that flag and any other flags that we do not know how
++ * to handle.
++ */
++#define EFI_CAPSULE_SUPPORTED_FLAG_MASK			\
++	(EFI_CAPSULE_PERSIST_ACROSS_RESET | EFI_CAPSULE_POPULATE_SYSTEM_TABLE)
++
++/**
++ * efi_capsule_supported - does the firmware support the capsule?
++ * @guid: vendor guid of capsule
++ * @flags: capsule flags
++ * @size: size of capsule data
++ * @reset: the reset type required for this capsule
++ *
++ * Check whether a capsule with @flags is supported by the firmware
++ * and that @size doesn't exceed the maximum size for a capsule.
++ *
++ * No attempt is made to check @reset against the reset type required
++ * by any pending capsules because of the races involved.
++ */
++int efi_capsule_supported(efi_guid_t guid, u32 flags, size_t size, int *reset)
++{
++	efi_capsule_header_t *capsule;
++	efi_status_t status;
++	u64 max_size;
++	int rv = 0;
++
++	if (flags & ~EFI_CAPSULE_SUPPORTED_FLAG_MASK)
++		return -EINVAL;
++
++	capsule = kmalloc(sizeof(*capsule), GFP_KERNEL);
++	if (!capsule)
++		return -ENOMEM;
++
++	capsule->headersize = capsule->imagesize = sizeof(*capsule);
++	memcpy(&capsule->guid, &guid, sizeof(efi_guid_t));
++	capsule->flags = flags;
++
++	status = efi.query_capsule_caps(&capsule, 1, &max_size, reset);
++	if (status != EFI_SUCCESS) {
++		rv = efi_status_to_err(status);
++		goto out;
++	}
++
++	if (size > max_size)
++		rv = -ENOSPC;
++out:
++	kfree(capsule);
++	return rv;
++}
++EXPORT_SYMBOL_GPL(efi_capsule_supported);
++
++/*
++ * Every scatter gather list (block descriptor) page must end with a
++ * continuation pointer. The last continuation pointer of the last
++ * page must be zero to mark the end of the chain.
++ */
++#define SGLIST_PER_PAGE	((PAGE_SIZE / sizeof(efi_capsule_block_desc_t)) - 1)
++
++/*
++ * How many scatter gather list (block descriptor) pages do we need
++ * to map @count pages?
++ */
++static inline unsigned int sg_pages_num(unsigned int count)
++{
++	return DIV_ROUND_UP(count, SGLIST_PER_PAGE);
 +}
 +
 +/**
-+ * efi_capsule_setup_info - obtain the efi capsule header in the binary and
-+ *			    setup capsule_info structure
-+ * @cap_info: pointer to current instance of capsule_info structure
-+ * @kbuff: a mapped first page buffer pointer
-+ * @hdr_bytes: the total received number of bytes for efi header
-+ **/
-+static ssize_t efi_capsule_setup_info(struct capsule_info *cap_info,
-+				      void *kbuff, size_t hdr_bytes)
++ * efi_capsule_update_locked - pass a single capsule to the firmware
++ * @capsule: capsule to send to the firmware
++ * @sg_pages: array of scatter gather (block descriptor) pages
++ * @reset: the reset type required for @capsule
++ *
++ * Since this function must be called under capsule_mutex check
++ * whether efi_reset_type will conflict with @reset, and atomically
++ * set it and capsule_pending if a capsule was successfully sent to
++ * the firmware.
++ *
++ * We also check to see if the system is about to restart, and if so,
++ * abort. This avoids races between efi_capsule_update() and
++ * efi_capsule_pending().
++ */
++static int
++efi_capsule_update_locked(efi_capsule_header_t *capsule,
++			  struct page **sg_pages, int reset)
 +{
-+	efi_capsule_header_t *cap_hdr;
-+	size_t pages_needed;
-+	int ret;
-+	void *temp_page;
++	efi_physical_addr_t sglist_phys;
++	efi_status_t status;
 +
-+	/* Only process data block that is larger than efi header size */
-+	if (hdr_bytes < sizeof(efi_capsule_header_t))
-+		return 0;
++	lockdep_assert_held(&capsule_mutex);
 +
-+	/* Reset back to the correct offset of header */
-+	cap_hdr = kbuff - cap_info->count;
-+	pages_needed = ALIGN(cap_hdr->imagesize, PAGE_SIZE) >> PAGE_SHIFT;
-+
-+	if (pages_needed == 0) {
-+		pr_err("%s: pages count invalid\n", __func__);
++	/*
++	 * If someone has already registered a capsule that requires a
++	 * different reset type, we're out of luck and must abort.
++	 */
++	if (efi_reset_type >= 0 && efi_reset_type != reset) {
++		pr_err("Conflicting capsule reset type %d (%d).\n",
++		       reset, efi_reset_type);
 +		return -EINVAL;
 +	}
 +
-+	/* Check if the capsule binary supported */
-+	ret = efi_capsule_supported(cap_hdr->guid, cap_hdr->flags,
-+				    cap_hdr->imagesize,
-+				    &cap_info->reset_type);
-+	if (ret) {
-+		pr_err("%s: efi_capsule_supported() failed\n",
-+		       __func__);
-+		return ret;
++	/*
++	 * If the system is getting ready to restart it may have
++	 * called efi_capsule_pending() to make decisions (such as
++	 * whether to force an EFI reboot), and we're racing against
++	 * that call. Abort in that case.
++	 */
++	if (unlikely(system_state == SYSTEM_RESTART)) {
++		pr_warn("Capsule update raced with reboot, aborting.\n");
++		return -EINVAL;
 +	}
 +
-+	cap_info->total_size = cap_hdr->imagesize;
-+	temp_page = krealloc(cap_info->pages,
-+			     pages_needed * sizeof(void *),
-+			     GFP_KERNEL | __GFP_ZERO);
-+	if (!temp_page) {
-+		pr_debug("%s: krealloc() failed\n", __func__);
-+		return -ENOMEM;
++	sglist_phys = page_to_phys(sg_pages[0]);
++
++	status = efi.update_capsule(&capsule, 1, sglist_phys);
++	if (status == EFI_SUCCESS) {
++		capsule_pending = true;
++		efi_reset_type = reset;
 +	}
 +
-+	cap_info->pages = temp_page;
-+	cap_info->header_obtained = true;
-+
-+	return 0;
++	return efi_status_to_err(status);
 +}
 +
 +/**
-+ * efi_capsule_submit_update - invoke the efi_capsule_update API once binary
-+ *			       upload done
-+ * @cap_info: pointer to current instance of capsule_info structure
-+ **/
-+static ssize_t efi_capsule_submit_update(struct capsule_info *cap_info)
-+{
-+	int ret;
-+	void *cap_hdr_temp;
-+
-+	cap_hdr_temp = kmap(cap_info->pages[0]);
-+	if (!cap_hdr_temp) {
-+		pr_debug("%s: kmap() failed\n", __func__);
-+		return -EFAULT;
-+	}
-+
-+	ret = efi_capsule_update(cap_hdr_temp, cap_info->pages);
-+	kunmap(cap_info->pages[0]);
-+	if (ret) {
-+		pr_err("%s: efi_capsule_update() failed\n", __func__);
-+		return ret;
-+	}
-+
-+	/* Indicate capsule binary uploading is done */
-+	cap_info->index = NO_FURTHER_WRITE_ACTION;
-+	pr_info("%s: Successfully upload capsule file with reboot type '%s'\n",
-+		__func__, !cap_info->reset_type ? "RESET_COLD" :
-+		cap_info->reset_type == 1 ? "RESET_WARM" :
-+		"RESET_SHUTDOWN");
-+	return 0;
-+}
-+
-+/**
-+ * efi_capsule_write - store the capsule binary and pass it to
-+ *		       efi_capsule_update() API
-+ * @file: file pointer
-+ * @buff: buffer pointer
-+ * @count: number of bytes in @buff
-+ * @offp: not used
++ * efi_capsule_update - send a capsule to the firmware
++ * @capsule: capsule to send to firmware
++ * @pages: an array of capsule data pages
 + *
-+ *	Expectation:
-+ *	- A user space tool should start at the beginning of capsule binary and
-+ *	  pass data in sequentially.
-+ *	- Users should close and re-open this file note in order to upload more
-+ *	  capsules.
-+ *	- After an error returned, user should close the file and restart the
-+ *	  operation for the next try otherwise -EIO will be returned until the
-+ *	  file is closed.
-+ *	- An EFI capsule header must be located at the beginning of capsule
-+ *	  binary file and passed in as first block data of write operation.
-+ **/
-+static ssize_t efi_capsule_write(struct file *file, const char __user *buff,
-+				 size_t count, loff_t *offp)
++ * Build a scatter gather list with EFI capsule block descriptors to
++ * map the capsule described by @capsule with its data in @pages and
++ * send it to the firmware via the UpdateCapsule() runtime service.
++ *
++ * @capsule must be a virtual mapping of the first page in @pages
++ * (@pages[0]) in the kernel address space. That is, a
++ * capsule_header_t that describes the entire contents of the capsule
++ * must be at the start of the first data page.
++ *
++ * Even though this function will validate that the firmware supports
++ * the capsule guid, users will likely want to check that
++ * efi_capsule_supported() returns true before calling this function
++ * because it makes it easier to print helpful error messages.
++ *
++ * If the capsule is successfully submitted to the firmware, any
++ * subsequent calls to efi_capsule_pending() will return true. @pages
++ * must not be released or modified if this function returns
++ * successfully.
++ *
++ * Callers must be prepared for this function to fail, which can
++ * happen if we raced with system reboot or if there is already a
++ * pending capsule that has a reset type that conflicts with the one
++ * required by @capsule. Do NOT use efi_capsule_pending() to detect
++ * this conflict since that would be racy. Instead, submit the capsule
++ * to efi_capsule_update() and check the return value.
++ *
++ * Return 0 on success, a converted EFI status code on failure.
++ */
++int efi_capsule_update(efi_capsule_header_t *capsule, struct page **pages)
 +{
-+	int ret = 0;
-+	struct capsule_info *cap_info = file->private_data;
-+	struct page *page;
-+	void *kbuff = NULL;
-+	size_t write_byte;
++	u32 imagesize = capsule->imagesize;
++	efi_guid_t guid = capsule->guid;
++	unsigned int count, sg_count;
++	u32 flags = capsule->flags;
++	struct page **sg_pages;
++	int rv, reset_type;
++	int i, j;
 +
-+	if (count == 0)
-+		return 0;
++	rv = efi_capsule_supported(guid, flags, imagesize, &reset_type);
++	if (rv)
++		return rv;
 +
-+	/* Return error while NO_FURTHER_WRITE_ACTION is flagged */
-+	if (cap_info->index < 0)
-+		return -EIO;
++	count = DIV_ROUND_UP(imagesize, PAGE_SIZE);
++	sg_count = sg_pages_num(count);
 +
-+	/* Only alloc a new page when previous page is full */
-+	if (!cap_info->page_bytes_remain) {
-+		page = alloc_page(GFP_KERNEL);
-+		if (!page) {
-+			pr_debug("%s: alloc_page() failed\n", __func__);
-+			ret = -ENOMEM;
-+			goto failed;
++	sg_pages = kzalloc(sg_count * sizeof(*sg_pages), GFP_KERNEL);
++	if (!sg_pages)
++		return -ENOMEM;
++
++	for (i = 0; i < sg_count; i++) {
++		sg_pages[i] = alloc_page(GFP_KERNEL);
++		if (!sg_pages[i]) {
++			rv = -ENOMEM;
++			goto out;
++		}
++	}
++
++	for (i = 0; i < sg_count; i++) {
++		efi_capsule_block_desc_t *sglist;
++
++		sglist = kmap(sg_pages[i]);
++		if (!sglist) {
++			rv = -ENOMEM;
++			goto out;
 +		}
 +
-+		cap_info->pages[cap_info->index++] = page;
-+		cap_info->page_bytes_remain = PAGE_SIZE;
-+	}
++		for (j = 0; j < SGLIST_PER_PAGE && count > 0; j++) {
++			u64 sz = min_t(u64, imagesize, PAGE_SIZE);
 +
-+	page = cap_info->pages[cap_info->index - 1];
++			sglist[j].length = sz;
++			sglist[j].data = page_to_phys(*pages++);
 +
-+	kbuff = kmap(page);
-+	if (!kbuff) {
-+		pr_debug("%s: kmap() failed\n", __func__);
-+		ret = -EFAULT;
-+		goto failed;
-+	}
-+	kbuff += PAGE_SIZE - cap_info->page_bytes_remain;
-+
-+	/* Copy capsule binary data from user space to kernel space buffer */
-+	write_byte = min_t(size_t, count, cap_info->page_bytes_remain);
-+	if (copy_from_user(kbuff, buff, write_byte)) {
-+		pr_debug("%s: copy_from_user() failed\n", __func__);
-+		ret = -EFAULT;
-+		goto fail_unmap;
-+	}
-+	cap_info->page_bytes_remain -= write_byte;
-+
-+	/* Setup capsule binary info structure */
-+	if (!cap_info->header_obtained) {
-+		ret = efi_capsule_setup_info(cap_info, kbuff,
-+					     cap_info->count + write_byte);
-+		if (ret)
-+			goto fail_unmap;
-+	}
-+
-+	cap_info->count += write_byte;
-+	kunmap(page);
-+
-+	/* Submit the full binary to efi_capsule_update() API */
-+	if (cap_info->header_obtained &&
-+	    cap_info->count >= cap_info->total_size) {
-+		if (cap_info->count > cap_info->total_size) {
-+			pr_err("%s: upload size exceeded header defined size\n",
-+			       __func__);
-+			ret = -EINVAL;
-+			goto failed;
++			imagesize -= sz;
++			count--;
 +		}
 +
-+		ret = efi_capsule_submit_update(cap_info);
-+		if (ret)
-+			goto failed;
++		/* Continuation pointer */
++		sglist[j].length = 0;
++
++		if (i + 1 == sg_count)
++			sglist[j].data = 0;
++		else
++			sglist[j].data = page_to_phys(sg_pages[i + 1]);
++
++		kunmap(sg_pages[i]);
 +	}
 +
-+	return write_byte;
++	mutex_lock(&capsule_mutex);
++	rv = efi_capsule_update_locked(capsule, sg_pages, reset_type);
++	mutex_unlock(&capsule_mutex);
 +
-+fail_unmap:
-+	kunmap(page);
-+failed:
-+	efi_free_all_buff_pages(cap_info);
-+	return ret;
-+}
-+
-+/**
-+ * efi_capsule_flush - called by file close or file flush
-+ * @file: file pointer
-+ * @id: not used
-+ *
-+ *	If a capsule is being partially uploaded then calling this function
-+ *	will be treated as upload termination and will free those completed
-+ *	buffer pages and -ECANCELED will be returned.
-+ **/
-+static int efi_capsule_flush(struct file *file, fl_owner_t id)
-+{
-+	int ret = 0;
-+	struct capsule_info *cap_info = file->private_data;
-+
-+	if (cap_info->index > 0) {
-+		pr_err("%s: capsule upload not complete\n", __func__);
-+		efi_free_all_buff_pages(cap_info);
-+		ret = -ECANCELED;
++out:
++	for (i = 0; rv && i < sg_count; i++) {
++		if (sg_pages[i])
++			__free_page(sg_pages[i]);
 +	}
 +
-+	return ret;
++	kfree(sg_pages);
++	return rv;
 +}
-+
-+/**
-+ * efi_capsule_release - called by file close
-+ * @inode: not used
-+ * @file: file pointer
-+ *
-+ *	We will not free successfully submitted pages since efi update
-+ *	requires data to be maintained across system reboot.
-+ **/
-+static int efi_capsule_release(struct inode *inode, struct file *file)
-+{
-+	struct capsule_info *cap_info = file->private_data;
-+
-+	kfree(cap_info->pages);
-+	kfree(file->private_data);
-+	file->private_data = NULL;
-+	return 0;
-+}
-+
-+/**
-+ * efi_capsule_open - called by file open
-+ * @inode: not used
-+ * @file: file pointer
-+ *
-+ *	Will allocate each capsule_info memory for each file open call.
-+ *	This provided the capability to support multiple file open feature
-+ *	where user is not needed to wait for others to finish in order to
-+ *	upload their capsule binary.
-+ **/
-+static int efi_capsule_open(struct inode *inode, struct file *file)
-+{
-+	struct capsule_info *cap_info;
-+
-+	cap_info = kzalloc(sizeof(*cap_info), GFP_KERNEL);
-+	if (!cap_info)
-+		return -ENOMEM;
-+
-+	cap_info->pages = kzalloc(sizeof(void *), GFP_KERNEL);
-+	if (!cap_info->pages) {
-+		kfree(cap_info);
-+		return -ENOMEM;
++EXPORT_SYMBOL_GPL(efi_capsule_update);
+diff --git a/drivers/firmware/efi/reboot.c b/drivers/firmware/efi/reboot.c
+index 9c59d1c795d1..62ead9b9d871 100644
+--- a/drivers/firmware/efi/reboot.c
++++ b/drivers/firmware/efi/reboot.c
+@@ -9,7 +9,8 @@ int efi_reboot_quirk_mode = -1;
+ 
+ void efi_reboot(enum reboot_mode reboot_mode, const char *__unused)
+ {
+-	int efi_mode;
++	const char *str[] = { "cold", "warm", "shutdown", "platform" };
++	int efi_mode, cap_reset_mode;
+ 
+ 	if (!efi_enabled(EFI_RUNTIME_SERVICES))
+ 		return;
+@@ -30,6 +31,15 @@ void efi_reboot(enum reboot_mode reboot_mode, const char *__unused)
+ 	if (efi_reboot_quirk_mode != -1)
+ 		efi_mode = efi_reboot_quirk_mode;
+ 
++	if (efi_capsule_pending(&cap_reset_mode)) {
++		if (efi_mode != cap_reset_mode)
++			printk(KERN_CRIT "efi: %s reset requested but pending "
++			       "capsule update requires %s reset... Performing "
++			       "%s reset.\n", str[efi_mode], str[cap_reset_mode],
++			       str[cap_reset_mode]);
++		efi_mode = cap_reset_mode;
 +	}
 +
-+	file->private_data = cap_info;
+ 	efi.reset_system(efi_mode, EFI_SUCCESS, 0, NULL);
+ }
+ 
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index 774e9a0d49f1..4899c679622d 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -123,6 +123,13 @@ typedef struct {
+ } efi_capsule_header_t;
+ 
+ /*
++ * EFI capsule flags
++ */
++#define EFI_CAPSULE_PERSIST_ACROSS_RESET	0x00010000
++#define EFI_CAPSULE_POPULATE_SYSTEM_TABLE	0x00020000
++#define EFI_CAPSULE_INITIATE_RESET		0x00040000
 +
-+	return 0;
-+}
++/*
+  * Allocation types for calls to boottime->allocate_pages.
+  */
+ #define EFI_ALLOCATE_ANY_PAGES		0
+@@ -1215,6 +1222,13 @@ int efivars_sysfs_init(void);
+ #define EFIVARS_DATA_SIZE_MAX 1024
+ 
+ #endif /* CONFIG_EFI_VARS */
++extern bool efi_capsule_pending(int *reset_type);
 +
-+static const struct file_operations efi_capsule_fops = {
-+	.owner = THIS_MODULE,
-+	.open = efi_capsule_open,
-+	.write = efi_capsule_write,
-+	.flush = efi_capsule_flush,
-+	.release = efi_capsule_release,
-+	.llseek = no_llseek,
-+};
++extern int efi_capsule_supported(efi_guid_t guid, u32 flags,
++				 size_t size, int *reset);
 +
-+static struct miscdevice efi_capsule_misc = {
-+	.minor = MISC_DYNAMIC_MINOR,
-+	.name = "efi_capsule_loader",
-+	.fops = &efi_capsule_fops,
-+};
-+
-+static int __init efi_capsule_loader_init(void)
-+{
-+	int ret;
-+
-+	if (!efi_enabled(EFI_RUNTIME_SERVICES))
-+		return -ENODEV;
-+
-+	ret = misc_register(&efi_capsule_misc);
-+	if (ret)
-+		pr_err("%s: Failed to register misc char file note\n",
-+		       __func__);
-+
-+	return ret;
-+}
-+module_init(efi_capsule_loader_init);
-+
-+static void __exit efi_capsule_loader_exit(void)
-+{
-+	misc_deregister(&efi_capsule_misc);
-+}
-+module_exit(efi_capsule_loader_exit);
-+
-+MODULE_DESCRIPTION("EFI capsule firmware binary loader");
-+MODULE_LICENSE("GPL v2");
++extern int efi_capsule_update(efi_capsule_header_t *capsule,
++			      struct page **pages);
+ 
+ #ifdef CONFIG_EFI_RUNTIME_MAP
+ int efi_runtime_map_init(struct kobject *);
 -- 
 2.12.3
