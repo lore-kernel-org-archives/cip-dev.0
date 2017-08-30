@@ -1,47 +1,141 @@
 From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Wed, 30 Aug 2017 21:13:52 +0200
-Subject: [cip-dev] [PATCH 10/14] efi/capsule: Adjust return type of
-	efi_capsule_setup_info()
+Date: Wed, 30 Aug 2017 21:13:53 +0200
+Subject: [cip-dev] [PATCH 11/14] efi/capsule-loader: Use a cached copy of
+	the capsule header
 In-Reply-To: <cover.1504120436.git.jan.kiszka@siemens.com>
 References: <cover.1504120436.git.jan.kiszka@siemens.com>
-Message-ID: <7452bbd08d42bed92938078b1484ccdad81d0176.1504120436.git.jan.kiszka@siemens.com>
+Message-ID: <77c3d7dfbafc5d23298ef751b68e3484d6939dae.1504120436.git.jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-commit 41b0c376951417d1b37448957b30f766b10d3090 upstream.
+commit 82c3768b8d68c40ecde92338899c838b7c674ffb upstream.
 
-We actually expect int at the caller and never return any size
-information.
+Instead of kmapping the capsule data twice, copy the capsule header
+into the capsule info struct we keep locally. This is an improvement
+by itself, but will also enable handling of non-standard header formats
+more easily.
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Reviewed-by: Matt Fleming <matt@codeblueprint.co.uk>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-efi at vger.kernel.org
-Link: http://lkml.kernel.org/r/20170602135207.21708-6-ard.biesheuvel at linaro.org
+Link: http://lkml.kernel.org/r/20170602135207.21708-7-ard.biesheuvel at linaro.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- drivers/firmware/efi/capsule-loader.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/firmware/efi/capsule-loader.c | 41 +++++++++++++++--------------------
+ 1 file changed, 17 insertions(+), 24 deletions(-)
 
 diff --git a/drivers/firmware/efi/capsule-loader.c b/drivers/firmware/efi/capsule-loader.c
-index 3fb91e1597a9..37d3f6ec2d28 100644
+index 37d3f6ec2d28..5b012a467d7d 100644
 --- a/drivers/firmware/efi/capsule-loader.c
 +++ b/drivers/firmware/efi/capsule-loader.c
-@@ -53,8 +53,8 @@ static void efi_free_all_buff_pages(struct capsule_info *cap_info)
-  * @kbuff: a mapped first page buffer pointer
-  * @hdr_bytes: the total received number of bytes for efi header
-  **/
--static ssize_t efi_capsule_setup_info(struct capsule_info *cap_info,
--				      void *kbuff, size_t hdr_bytes)
-+static int efi_capsule_setup_info(struct capsule_info *cap_info,
-+				  void *kbuff, size_t hdr_bytes)
+@@ -21,13 +21,13 @@
+ #define NO_FURTHER_WRITE_ACTION -1
+ 
+ struct capsule_info {
+-	bool		header_obtained;
+-	int		reset_type;
+-	long		index;
+-	size_t		count;
+-	size_t		total_size;
+-	struct page	**pages;
+-	size_t		page_bytes_remain;
++	efi_capsule_header_t	header;
++	int			reset_type;
++	long			index;
++	size_t			count;
++	size_t			total_size;
++	struct page		**pages;
++	size_t			page_bytes_remain;
+ };
+ 
+ /**
+@@ -56,7 +56,6 @@ static void efi_free_all_buff_pages(struct capsule_info *cap_info)
+ static int efi_capsule_setup_info(struct capsule_info *cap_info,
+ 				  void *kbuff, size_t hdr_bytes)
  {
- 	efi_capsule_header_t *cap_hdr;
+-	efi_capsule_header_t *cap_hdr;
  	size_t pages_needed;
+ 	int ret;
+ 	void *temp_page;
+@@ -66,8 +65,9 @@ static int efi_capsule_setup_info(struct capsule_info *cap_info,
+ 		return 0;
+ 
+ 	/* Reset back to the correct offset of header */
+-	cap_hdr = kbuff - cap_info->count;
+-	pages_needed = ALIGN(cap_hdr->imagesize, PAGE_SIZE) >> PAGE_SHIFT;
++	kbuff -= cap_info->count;
++	memcpy(&cap_info->header, kbuff, sizeof(cap_info->header));
++	pages_needed = ALIGN(cap_info->header.imagesize, PAGE_SIZE) / PAGE_SIZE;
+ 
+ 	if (pages_needed == 0) {
+ 		pr_err("invalid capsule size");
+@@ -75,15 +75,16 @@ static int efi_capsule_setup_info(struct capsule_info *cap_info,
+ 	}
+ 
+ 	/* Check if the capsule binary supported */
+-	ret = efi_capsule_supported(cap_hdr->guid, cap_hdr->flags,
+-				    cap_hdr->imagesize,
++	ret = efi_capsule_supported(cap_info->header.guid,
++				    cap_info->header.flags,
++				    cap_info->header.imagesize,
+ 				    &cap_info->reset_type);
+ 	if (ret) {
+ 		pr_err("capsule not supported\n");
+ 		return ret;
+ 	}
+ 
+-	cap_info->total_size = cap_hdr->imagesize;
++	cap_info->total_size = cap_info->header.imagesize;
+ 	temp_page = krealloc(cap_info->pages,
+ 			     pages_needed * sizeof(void *),
+ 			     GFP_KERNEL | __GFP_ZERO);
+@@ -91,7 +92,6 @@ static int efi_capsule_setup_info(struct capsule_info *cap_info,
+ 		return -ENOMEM;
+ 
+ 	cap_info->pages = temp_page;
+-	cap_info->header_obtained = true;
+ 
+ 	return 0;
+ }
+@@ -104,15 +104,8 @@ static int efi_capsule_setup_info(struct capsule_info *cap_info,
+ static ssize_t efi_capsule_submit_update(struct capsule_info *cap_info)
+ {
+ 	int ret;
+-	void *cap_hdr_temp;
+ 
+-	cap_hdr_temp = vmap(cap_info->pages, cap_info->index,
+-			VM_MAP, PAGE_KERNEL);
+-	if (!cap_hdr_temp)
+-		return -ENOMEM;
+-
+-	ret = efi_capsule_update(cap_hdr_temp, cap_info->pages);
+-	vunmap(cap_hdr_temp);
++	ret = efi_capsule_update(&cap_info->header, cap_info->pages);
+ 	if (ret) {
+ 		pr_err("capsule update failed\n");
+ 		return ret;
+@@ -192,7 +185,7 @@ static ssize_t efi_capsule_write(struct file *file, const char __user *buff,
+ 	cap_info->page_bytes_remain -= write_byte;
+ 
+ 	/* Setup capsule binary info structure */
+-	if (!cap_info->header_obtained) {
++	if (cap_info->header.headersize == 0) {
+ 		ret = efi_capsule_setup_info(cap_info, kbuff,
+ 					     cap_info->count + write_byte);
+ 		if (ret)
+@@ -203,7 +196,7 @@ static ssize_t efi_capsule_write(struct file *file, const char __user *buff,
+ 	kunmap(page);
+ 
+ 	/* Submit the full binary to efi_capsule_update() API */
+-	if (cap_info->header_obtained &&
++	if (cap_info->header.headersize > 0 &&
+ 	    cap_info->count >= cap_info->total_size) {
+ 		if (cap_info->count > cap_info->total_size) {
+ 			pr_err("capsule upload size exceeded header defined size\n");
 -- 
 2.12.3
