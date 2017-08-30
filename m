@@ -1,135 +1,75 @@
 From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Wed, 30 Aug 2017 21:06:10 +0200
-Subject: [cip-dev] [PATCH 13/25] gpio: add a data pointer to gpio_chip
-In-Reply-To: <cover.1504119982.git.jan.kiszka@siemens.com>
-References: <cover.1504119982.git.jan.kiszka@siemens.com>
-Message-ID: <1d0bee182996abd1ad75f2966f74cad95e634540.1504119982.git.jan.kiszka@siemens.com>
+Date: Wed, 30 Aug 2017 21:05:57 +0200
+Subject: [cip-dev] [PATCH 00/25] EXAR UART support for IOT2040 device
+Message-ID: <cover.1504119982.git.jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Linus Walleij <linus.walleij@linaro.org>
+Second chunk: This imports a number of preparatory patches in order to
+fully exploit the PCI-attached dual-port EXAR with RS232/422/485 on the
+IOT2040.
 
-commit b08ea35a3296ee25c4cb53a977b752266dafa2c2 upstream.
+To avoid having to backport also API-changing patches for platform
+devices, I've slightly modified two patches to use a communication
+pattern that does not require these changes.
 
-This adds a void * pointer to gpio_chip so that driver can
-assign and retrieve some states. This is done to get rid of
-container_of() calls for gpio_chips embedded inside state
-containers, so we can remove the need to have the gpio_chip
-or later (planned) struct gpio_device be dynamically allocated
-at registration time, so that its struct device can be properly
-reference counted and not bound to its parent device (e.g.
-a platform_device) but instead live on after unregistration
-if it is opened by e.g. a char device or sysfs.
+Jan
 
-The data is added with the new function gpiochip_add_data()
-and for compatibility we add static inline wrapper function
-gpiochip_add() that will call gpiochip_add_data() with
-NULL as argument. The latter will be removed once we have
-exorcised gpiochip_add() from the kernel.
+Axel Lin (1):
+  gpio: exar: Set proper output level in exar_direction_output
 
-gpiochip_get_data() is added as a static inline accessor
-for drivers to quickly get their data out.
+Jan Kiszka (18):
+  serial: 8250_pci: Use symbolic constants for EXAR's MPIO registers
+  serial: exar: Fix mapping of port I/O resources
+  serial: exar: Fix initialization of EXAR registers for ports > 0
+  serial: exar: Fix feature control register constants
+  serial: exar: Move Commtech adapters to 8250_exar as well
+  serial: pci: Remove unused pci_boards entries
+  serial: exar: Preconfigure xr17v35x MPIOs as output
+  serial: exar: Leave MPIOs as output for Commtech adapters
+  serial: uapi: Add support for bus termination
+  gpio-exar/8250-exar: Fix passing in of parent PCI device
+  gpio: exar: Allocate resources on behalf of the platform device
+  gpio: exar: Fix reading of directions and values
+  gpio-exar/8250-exar: Do not even instantiate a GPIO device for
+    Commtech cards
+  gpio: exar: Fix iomap request
+  gpio-exar/8250-exar: Rearrange gpiochip parenthood
+  serial: exar: Factor out platform hooks
+  gpio-exar/8250-exar: Make set of exported GPIOs configurable
+  serial: exar: Add support for IOT2040 device
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpiolib.c      | 10 ++++++----
- include/linux/gpio/driver.h | 14 +++++++++++++-
- 2 files changed, 19 insertions(+), 5 deletions(-)
+Laxman Dewangan (1):
+  gpio: Add devm_ apis for gpiochip_add_data and gpiochip_remove
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 06d345b087f8..66fa17615d7c 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -280,7 +280,7 @@ static int gpiochip_set_desc_names(struct gpio_chip *gc)
- }
- 
- /**
-- * gpiochip_add() - register a gpio_chip
-+ * gpiochip_add_data() - register a gpio_chip
-  * @chip: the chip to register, with chip->base initialized
-  * Context: potentially before irqs will work
-  *
-@@ -288,7 +288,7 @@ static int gpiochip_set_desc_names(struct gpio_chip *gc)
-  * because the chip->base is invalid or already associated with a
-  * different chip.  Otherwise it returns zero as a success code.
-  *
-- * When gpiochip_add() is called very early during boot, so that GPIOs
-+ * When gpiochip_add_data() is called very early during boot, so that GPIOs
-  * can be freely used, the chip->dev device must be registered before
-  * the gpio framework's arch_initcall().  Otherwise sysfs initialization
-  * for GPIOs will fail rudely.
-@@ -296,7 +296,7 @@ static int gpiochip_set_desc_names(struct gpio_chip *gc)
-  * If chip->base is negative, this requests dynamic assignment of
-  * a range of valid GPIOs.
-  */
--int gpiochip_add(struct gpio_chip *chip)
-+int gpiochip_add_data(struct gpio_chip *chip, void *data)
- {
- 	unsigned long	flags;
- 	int		status = 0;
-@@ -308,6 +308,8 @@ int gpiochip_add(struct gpio_chip *chip)
- 	if (!descs)
- 		return -ENOMEM;
- 
-+	chip->data = data;
-+
- 	spin_lock_irqsave(&gpio_lock, flags);
- 
- 	if (base < 0) {
-@@ -389,7 +391,7 @@ err_free_descs:
- 		chip->label ? : "generic");
- 	return status;
- }
--EXPORT_SYMBOL_GPL(gpiochip_add);
-+EXPORT_SYMBOL_GPL(gpiochip_add_data);
- 
- /**
-  * gpiochip_remove() - unregister a gpio_chip
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index d1baebf350d8..424d11f4fa05 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -23,6 +23,7 @@ struct seq_file;
-  * @dev: optional device providing the GPIOs
-  * @cdev: class device used by sysfs interface (may be NULL)
-  * @owner: helps prevent removal of modules exporting active GPIOs
-+ * @data: per-instance data assigned by the driver
-  * @list: links gpio_chips together for traversal
-  * @request: optional hook for chip-specific activation, such as
-  *	enabling module power and clock; may sleep
-@@ -92,6 +93,7 @@ struct gpio_chip {
- 	struct device		*dev;
- 	struct device		*cdev;
- 	struct module		*owner;
-+	void			*data;
- 	struct list_head        list;
- 
- 	int			(*request)(struct gpio_chip *chip,
-@@ -166,7 +168,11 @@ extern const char *gpiochip_is_requested(struct gpio_chip *chip,
- 			unsigned offset);
- 
- /* add/remove chips */
--extern int gpiochip_add(struct gpio_chip *chip);
-+extern int gpiochip_add_data(struct gpio_chip *chip, void *data);
-+static inline int gpiochip_add(struct gpio_chip *chip)
-+{
-+	return gpiochip_add_data(chip, NULL);
-+}
- extern void gpiochip_remove(struct gpio_chip *chip);
- extern struct gpio_chip *gpiochip_find(void *data,
- 			      int (*match)(struct gpio_chip *chip, void *data));
-@@ -175,6 +181,12 @@ extern struct gpio_chip *gpiochip_find(void *data,
- int gpiochip_lock_as_irq(struct gpio_chip *chip, unsigned int offset);
- void gpiochip_unlock_as_irq(struct gpio_chip *chip, unsigned int offset);
- 
-+/* get driver data */
-+static inline void *gpiochip_get_data(struct gpio_chip *chip)
-+{
-+	return chip->data;
-+}
-+
- struct gpio_chip *gpiod_to_chip(const struct gpio_desc *desc);
- 
- #ifdef CONFIG_GPIOLIB_IRQCHIP
+Linus Walleij (1):
+  gpio: add a data pointer to gpio_chip
+
+Paul Gortmaker (1):
+  serial: 8250_EXAR: fix duplicate Kconfig text and add missing help
+    text
+
+Sudip Mukherjee (3):
+  serial: exar: split out the exar code from 8250_pci
+  serial: 8250_pci: remove exar code
+  gpio: exar: add gpio for exar cards
+
+ drivers/gpio/Kconfig                    |   7 +
+ drivers/gpio/Makefile                   |   1 +
+ drivers/gpio/gpio-exar.c                | 196 ++++++++++
+ drivers/gpio/gpiolib.c                  |  84 ++++-
+ drivers/tty/serial/8250/8250_exar.c     | 636 ++++++++++++++++++++++++++++++++
+ drivers/tty/serial/8250/8250_pci.c      | 484 +-----------------------
+ drivers/tty/serial/8250/Kconfig         |   9 +
+ drivers/tty/serial/8250/Makefile        |   1 +
+ include/linux/gpio/driver.h             |  18 +-
+ include/linux/platform_data/gpio-exar.h |  21 ++
+ include/uapi/linux/serial.h             |   3 +
+ include/uapi/linux/serial_reg.h         |   4 +-
+ 12 files changed, 977 insertions(+), 487 deletions(-)
+ create mode 100644 drivers/gpio/gpio-exar.c
+ create mode 100644 drivers/tty/serial/8250/8250_exar.c
+ create mode 100644 include/linux/platform_data/gpio-exar.h
+
 -- 
 2.12.3
