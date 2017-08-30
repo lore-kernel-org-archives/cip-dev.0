@@ -1,220 +1,158 @@
 From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Wed, 30 Aug 2017 21:13:56 +0200
-Subject: [cip-dev] [PATCH 14/14] efi/capsule: Add support for Quark security
-	header
+Date: Wed, 30 Aug 2017 21:13:54 +0200
+Subject: [cip-dev] [PATCH 12/14] efi/capsule-loader: Redirect calls to
+	efi_capsule_setup_info() via weak alias
 In-Reply-To: <cover.1504120436.git.jan.kiszka@siemens.com>
 References: <cover.1504120436.git.jan.kiszka@siemens.com>
-Message-ID: <403b06c18f031e036bf930f2694d9877f6e2f594.1504120436.git.jan.kiszka@siemens.com>
+Message-ID: <643351f334592960d2fa1a2d2eecf9c8df25745f.1504120436.git.jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-commit 2959c95d510cc45b246ba727eb8fdf8b601c6eec upstream.
+commit 3fabd628d5ea24b02ddb1230ffca1df0f779f84e upstream.
 
-The firmware for Quark X102x prepends a security header to the capsule
-which is needed to support the mandatory secure boot on this processor.
-The header can be detected by checking for the "_CSH" signature and -
-to avoid any GUID conflict - validating its size field to contain the
-expected value. Then we need to look for the EFI header right after the
-security header and pass the real header to __efi_capsule_setup_info.
-
-To be minimal invasive and maximal safe, the quirk version of
-efi_capsule_setup_info() is only effective on Quark processors.
+To allow platform specific code to hook into the capsule loading
+routines, indirect calls to efi_capsule_setup_info() via a weak alias
+of __efi_capsule_setup_info(), allowing platforms to redefine the former
+but still use the latter.
 
 Tested-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Matt Fleming <matt@codeblueprint.co.uk>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-efi at vger.kernel.org
-Link: http://lkml.kernel.org/r/20170602135207.21708-11-ard.biesheuvel at linaro.org
+Link: http://lkml.kernel.org/r/20170602135207.21708-9-ard.biesheuvel at linaro.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/platform/efi/quirks.c | 137 +++++++++++++++++++++++++++++++++++++++++
- drivers/firmware/efi/Kconfig   |   9 +++
- 2 files changed, 146 insertions(+)
+ drivers/firmware/efi/capsule-loader.c | 56 +++++++++++++++++------------------
+ include/linux/efi.h                   | 12 ++++++++
+ 2 files changed, 39 insertions(+), 29 deletions(-)
 
-diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
-index 1c7380da65ff..f0361323a805 100644
---- a/arch/x86/platform/efi/quirks.c
-+++ b/arch/x86/platform/efi/quirks.c
-@@ -10,12 +10,66 @@
- #include <linux/acpi.h>
- #include <asm/efi.h>
- #include <asm/uv/uv.h>
-+#include <asm/cpu_device_id.h>
+diff --git a/drivers/firmware/efi/capsule-loader.c b/drivers/firmware/efi/capsule-loader.c
+index 5b012a467d7d..f7fdeab0bc37 100644
+--- a/drivers/firmware/efi/capsule-loader.c
++++ b/drivers/firmware/efi/capsule-loader.c
+@@ -20,16 +20,6 @@
  
- #define EFI_MIN_RESERVE 5120
+ #define NO_FURTHER_WRITE_ACTION -1
  
- #define EFI_DUMMY_GUID \
- 	EFI_GUID(0x4424ac57, 0xbe4b, 0x47dd, 0x9e, 0x97, 0xed, 0x50, 0xf0, 0x9f, 0x92, 0xa9)
- 
-+#define QUARK_CSH_SIGNATURE		0x5f435348	/* _CSH */
-+#define QUARK_SECURITY_HEADER_SIZE	0x400
-+
-+/*
-+ * Header prepended to the standard EFI capsule on Quark systems the are based
-+ * on Intel firmware BSP.
-+ * @csh_signature:	Unique identifier to sanity check signed module
-+ * 			presence ("_CSH").
-+ * @version:		Current version of CSH used. Should be one for Quark A0.
-+ * @modulesize:		Size of the entire module including the module header
-+ * 			and payload.
-+ * @security_version_number_index: Index of SVN to use for validation of signed
-+ * 			module.
-+ * @security_version_number: Used to prevent against roll back of modules.
-+ * @rsvd_module_id:	Currently unused for Clanton (Quark).
-+ * @rsvd_module_vendor:	Vendor Identifier. For Intel products value is
-+ * 			0x00008086.
-+ * @rsvd_date:		BCD representation of build date as yyyymmdd, where
-+ * 			yyyy=4 digit year, mm=1-12, dd=1-31.
-+ * @headersize:		Total length of the header including including any
-+ * 			padding optionally added by the signing tool.
-+ * @hash_algo:		What Hash is used in the module signing.
-+ * @cryp_algo:		What Crypto is used in the module signing.
-+ * @keysize:		Total length of the key data including including any
-+ * 			padding optionally added by the signing tool.
-+ * @signaturesize:	Total length of the signature including including any
-+ * 			padding optionally added by the signing tool.
-+ * @rsvd_next_header:	32-bit pointer to the next Secure Boot Module in the
-+ * 			chain, if there is a next header.
-+ * @rsvd:		Reserved, padding structure to required size.
-+ *
-+ * See also QuartSecurityHeader_t in
-+ * Quark_EDKII_v1.2.1.1/QuarkPlatformPkg/Include/QuarkBootRom.h
-+ * from https://downloadcenter.intel.com/download/23197/Intel-Quark-SoC-X1000-Board-Support-Package-BSP
-+ */
-+struct quark_security_header {
-+	u32 csh_signature;
-+	u32 version;
-+	u32 modulesize;
-+	u32 security_version_number_index;
-+	u32 security_version_number;
-+	u32 rsvd_module_id;
-+	u32 rsvd_module_vendor;
-+	u32 rsvd_date;
-+	u32 headersize;
-+	u32 hash_algo;
-+	u32 cryp_algo;
-+	u32 keysize;
-+	u32 signaturesize;
-+	u32 rsvd_next_header;
-+	u32 rsvd[2];
-+};
-+
- static efi_char16_t efi_dummy_name[6] = { 'D', 'U', 'M', 'M', 'Y', 0 };
- 
- static bool efi_no_storage_paranoia;
-@@ -288,3 +342,86 @@ bool efi_poweroff_required(void)
- {
- 	return !!acpi_gbl_reduced_hardware;
+-struct capsule_info {
+-	efi_capsule_header_t	header;
+-	int			reset_type;
+-	long			index;
+-	size_t			count;
+-	size_t			total_size;
+-	struct page		**pages;
+-	size_t			page_bytes_remain;
+-};
+-
+ /**
+  * efi_free_all_buff_pages - free all previous allocated buffer pages
+  * @cap_info: pointer to current instance of capsule_info structure
+@@ -46,28 +36,13 @@ static void efi_free_all_buff_pages(struct capsule_info *cap_info)
+ 	cap_info->index = NO_FURTHER_WRITE_ACTION;
  }
-+
-+#ifdef CONFIG_EFI_CAPSULE_QUIRK_QUARK_CSH
-+
-+static int qrk_capsule_setup_info(struct capsule_info *cap_info, void **pkbuff,
+ 
+-/**
+- * efi_capsule_setup_info - obtain the efi capsule header in the binary and
+- *			    setup capsule_info structure
+- * @cap_info: pointer to current instance of capsule_info structure
+- * @kbuff: a mapped first page buffer pointer
+- * @hdr_bytes: the total received number of bytes for efi header
+- **/
+-static int efi_capsule_setup_info(struct capsule_info *cap_info,
+-				  void *kbuff, size_t hdr_bytes)
++int __efi_capsule_setup_info(struct capsule_info *cap_info)
+ {
+ 	size_t pages_needed;
+ 	int ret;
+ 	void *temp_page;
+ 
+-	/* Only process data block that is larger than efi header size */
+-	if (hdr_bytes < sizeof(efi_capsule_header_t))
+-		return 0;
+-
+-	/* Reset back to the correct offset of header */
+-	kbuff -= cap_info->count;
+-	memcpy(&cap_info->header, kbuff, sizeof(cap_info->header));
+-	pages_needed = ALIGN(cap_info->header.imagesize, PAGE_SIZE) / PAGE_SIZE;
++	pages_needed = ALIGN(cap_info->total_size, PAGE_SIZE) / PAGE_SIZE;
+ 
+ 	if (pages_needed == 0) {
+ 		pr_err("invalid capsule size");
+@@ -84,7 +59,6 @@ static int efi_capsule_setup_info(struct capsule_info *cap_info,
+ 		return ret;
+ 	}
+ 
+-	cap_info->total_size = cap_info->header.imagesize;
+ 	temp_page = krealloc(cap_info->pages,
+ 			     pages_needed * sizeof(void *),
+ 			     GFP_KERNEL | __GFP_ZERO);
+@@ -97,6 +71,30 @@ static int efi_capsule_setup_info(struct capsule_info *cap_info,
+ }
+ 
+ /**
++ * efi_capsule_setup_info - obtain the efi capsule header in the binary and
++ *			    setup capsule_info structure
++ * @cap_info: pointer to current instance of capsule_info structure
++ * @kbuff: a mapped first page buffer pointer
++ * @hdr_bytes: the total received number of bytes for efi header
++ *
++ * Platforms with non-standard capsule update mechanisms can override
++ * this __weak function so they can perform any required capsule
++ * image munging. See quark_quirk_function() for an example.
++ **/
++int __weak efi_capsule_setup_info(struct capsule_info *cap_info, void *kbuff,
 +				  size_t hdr_bytes)
 +{
-+	struct quark_security_header *csh = *pkbuff;
-+
-+	/* Only process data block that is larger than the security header */
-+	if (hdr_bytes < sizeof(struct quark_security_header))
-+		return 0;
-+
-+	if (csh->csh_signature != QUARK_CSH_SIGNATURE ||
-+	    csh->headersize != QUARK_SECURITY_HEADER_SIZE)
-+		return 1;
-+
-+	/* Only process data block if EFI header is included */
-+	if (hdr_bytes < QUARK_SECURITY_HEADER_SIZE +
-+			sizeof(efi_capsule_header_t))
-+		return 0;
-+
-+	pr_debug("Quark security header detected\n");
-+
-+	if (csh->rsvd_next_header != 0) {
-+		pr_err("multiple Quark security headers not supported\n");
-+		return -EINVAL;
-+	}
-+
-+	*pkbuff += csh->headersize;
-+	cap_info->total_size = csh->headersize;
-+
-+	/*
-+	 * Update the first page pointer to skip over the CSH header.
-+	 */
-+	cap_info->pages[0] += csh->headersize;
-+
-+	return 1;
-+}
-+
-+#define ICPU(family, model, quirk_handler) \
-+	{ X86_VENDOR_INTEL, family, model, X86_FEATURE_ANY, \
-+	  (unsigned long)&quirk_handler }
-+
-+static const struct x86_cpu_id efi_capsule_quirk_ids[] = {
-+	ICPU(5, 9, qrk_capsule_setup_info),	/* Intel Quark X1000 */
-+	{ }
-+};
-+
-+int efi_capsule_setup_info(struct capsule_info *cap_info, void *kbuff,
-+			   size_t hdr_bytes)
-+{
-+	int (*quirk_handler)(struct capsule_info *, void **, size_t);
-+	const struct x86_cpu_id *id;
-+	int ret;
-+
++	/* Only process data block that is larger than efi header size */
 +	if (hdr_bytes < sizeof(efi_capsule_header_t))
 +		return 0;
 +
-+	cap_info->total_size = 0;
-+
-+	id = x86_match_cpu(efi_capsule_quirk_ids);
-+	if (id) {
-+		/*
-+		 * The quirk handler is supposed to return
-+		 *  - a value > 0 if the setup should continue, after advancing
-+		 *    kbuff as needed
-+		 *  - 0 if not enough hdr_bytes are available yet
-+		 *  - a negative error code otherwise
-+		 */
-+		quirk_handler = (typeof(quirk_handler))id->driver_data;
-+		ret = quirk_handler(cap_info, &kbuff, hdr_bytes);
-+		if (ret <= 0)
-+			return ret;
-+	}
-+
 +	memcpy(&cap_info->header, kbuff, sizeof(cap_info->header));
-+
-+	cap_info->total_size += cap_info->header.imagesize;
++	cap_info->total_size = cap_info->header.imagesize;
 +
 +	return __efi_capsule_setup_info(cap_info);
 +}
 +
-+#endif
-diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
-index de221bbde9c9..8dfeee3b9e54 100644
---- a/drivers/firmware/efi/Kconfig
-+++ b/drivers/firmware/efi/Kconfig
-@@ -97,6 +97,15 @@ config EFI_CAPSULE_LOADER
++/**
+  * efi_capsule_submit_update - invoke the efi_capsule_update API once binary
+  *			       upload done
+  * @cap_info: pointer to current instance of capsule_info structure
+@@ -186,7 +184,7 @@ static ssize_t efi_capsule_write(struct file *file, const char __user *buff,
  
- 	  Most users should say N.
+ 	/* Setup capsule binary info structure */
+ 	if (cap_info->header.headersize == 0) {
+-		ret = efi_capsule_setup_info(cap_info, kbuff,
++		ret = efi_capsule_setup_info(cap_info, kbuff - cap_info->count,
+ 					     cap_info->count + write_byte);
+ 		if (ret)
+ 			goto fail_unmap;
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index 5a0b8f7a54c8..b386097e45bc 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -129,6 +129,18 @@ typedef struct {
+ #define EFI_CAPSULE_POPULATE_SYSTEM_TABLE	0x00020000
+ #define EFI_CAPSULE_INITIATE_RESET		0x00040000
  
-+config EFI_CAPSULE_QUIRK_QUARK_CSH
-+	boolean "Add support for Quark capsules with non-standard headers"
-+	depends on X86 && !64BIT
-+	select EFI_CAPSULE_LOADER
-+	default y
-+	help
-+	  Add support for processing Quark X1000 EFI capsules, whose header
-+	  layout deviates from the layout mandated by the UEFI specification.
++struct capsule_info {
++	efi_capsule_header_t	header;
++	int			reset_type;
++	long			index;
++	size_t			count;
++	size_t			total_size;
++	struct page		**pages;
++	size_t			page_bytes_remain;
++};
 +
- endmenu
- 
- config UEFI_CPER
++int __efi_capsule_setup_info(struct capsule_info *cap_info);
++
+ /*
+  * Allocation types for calls to boottime->allocate_pages.
+  */
 -- 
 2.12.3
