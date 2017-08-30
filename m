@@ -1,102 +1,134 @@
 From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Wed, 30 Aug 2017 21:13:51 +0200
-Subject: [cip-dev] [PATCH 09/14] efi/capsule: Clean up pr_err/_info()
-	messages
+Date: Wed, 30 Aug 2017 21:13:43 +0200
+Subject: [cip-dev] [PATCH 01/14] efi: Move efi_status_to_err() to
+	drivers/firmware/efi/
 In-Reply-To: <cover.1504120436.git.jan.kiszka@siemens.com>
 References: <cover.1504120436.git.jan.kiszka@siemens.com>
-Message-ID: <6df1733d8c500d8fb1c0898443765fc0c6843c32.1504120436.git.jan.kiszka@siemens.com>
+Message-ID: <da99d306c14f65a0092415fc581b57b2446c642c.1504120436.git.jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+From: Matt Fleming <matt@codeblueprint.co.uk>
 
-commit 5dce14b9d1a29cf76331f0fe8eb7efd63e0fcb9a upstream.
+commit 806b0351c9ff9890c1ef0ba2c46237baef49ac79 upstream.
 
-Avoid __func__, improve the information provided by some of the
-messages.
+Move efi_status_to_err() to the architecture independent code as it's
+generally useful in all bits of EFI code where there is a need to
+convert an efi_status_t to a kernel error value.
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Reviewed-by: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Matt Fleming <matt@codeblueprint.co.uk>
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Kweh Hock Leong <hock.leong.kweh@intel.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: joeyli <jlee@suse.com>
 Cc: linux-efi at vger.kernel.org
-Link: http://lkml.kernel.org/r/20170602135207.21708-5-ard.biesheuvel at linaro.org
+Link: http://lkml.kernel.org/r/1461614832-17633-27-git-send-email-matt at codeblueprint.co.uk
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- drivers/firmware/efi/capsule-loader.c | 19 ++++++++-----------
- 1 file changed, 8 insertions(+), 11 deletions(-)
+ drivers/firmware/efi/efi.c  | 33 +++++++++++++++++++++++++++++++++
+ drivers/firmware/efi/vars.c | 33 ---------------------------------
+ include/linux/efi.h         |  2 ++
+ 3 files changed, 35 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/firmware/efi/capsule-loader.c b/drivers/firmware/efi/capsule-loader.c
-index 7b57dda2417d..3fb91e1597a9 100644
---- a/drivers/firmware/efi/capsule-loader.c
-+++ b/drivers/firmware/efi/capsule-loader.c
-@@ -70,7 +70,7 @@ static ssize_t efi_capsule_setup_info(struct capsule_info *cap_info,
- 	pages_needed = ALIGN(cap_hdr->imagesize, PAGE_SIZE) >> PAGE_SHIFT;
- 
- 	if (pages_needed == 0) {
--		pr_err("%s: pages count invalid\n", __func__);
-+		pr_err("invalid capsule size");
- 		return -EINVAL;
+diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+index 3b52677f459a..33d60992a580 100644
+--- a/drivers/firmware/efi/efi.c
++++ b/drivers/firmware/efi/efi.c
+@@ -663,3 +663,36 @@ u64 __weak efi_mem_attributes(unsigned long phys_addr)
  	}
- 
-@@ -79,8 +79,7 @@ static ssize_t efi_capsule_setup_info(struct capsule_info *cap_info,
- 				    cap_hdr->imagesize,
- 				    &cap_info->reset_type);
- 	if (ret) {
--		pr_err("%s: efi_capsule_supported() failed\n",
--		       __func__);
-+		pr_err("capsule not supported\n");
- 		return ret;
- 	}
- 
-@@ -115,14 +114,14 @@ static ssize_t efi_capsule_submit_update(struct capsule_info *cap_info)
- 	ret = efi_capsule_update(cap_hdr_temp, cap_info->pages);
- 	vunmap(cap_hdr_temp);
- 	if (ret) {
--		pr_err("%s: efi_capsule_update() failed\n", __func__);
-+		pr_err("capsule update failed\n");
- 		return ret;
- 	}
- 
- 	/* Indicate capsule binary uploading is done */
- 	cap_info->index = NO_FURTHER_WRITE_ACTION;
--	pr_info("%s: Successfully upload capsule file with reboot type '%s'\n",
--		__func__, !cap_info->reset_type ? "RESET_COLD" :
-+	pr_info("Successfully upload capsule file with reboot type '%s'\n",
-+		!cap_info->reset_type ? "RESET_COLD" :
- 		cap_info->reset_type == 1 ? "RESET_WARM" :
- 		"RESET_SHUTDOWN");
  	return 0;
-@@ -207,8 +206,7 @@ static ssize_t efi_capsule_write(struct file *file, const char __user *buff,
- 	if (cap_info->header_obtained &&
- 	    cap_info->count >= cap_info->total_size) {
- 		if (cap_info->count > cap_info->total_size) {
--			pr_err("%s: upload size exceeded header defined size\n",
--			       __func__);
-+			pr_err("capsule upload size exceeded header defined size\n");
- 			ret = -EINVAL;
- 			goto failed;
- 		}
-@@ -242,7 +240,7 @@ static int efi_capsule_flush(struct file *file, fl_owner_t id)
- 	struct capsule_info *cap_info = file->private_data;
- 
- 	if (cap_info->index > 0) {
--		pr_err("%s: capsule upload not complete\n", __func__);
-+		pr_err("capsule upload not complete\n");
- 		efi_free_all_buff_pages(cap_info);
- 		ret = -ECANCELED;
- 	}
-@@ -321,8 +319,7 @@ static int __init efi_capsule_loader_init(void)
- 
- 	ret = misc_register(&efi_capsule_misc);
- 	if (ret)
--		pr_err("%s: Failed to register misc char file note\n",
--		       __func__);
-+		pr_err("Unable to register capsule loader device\n");
- 
- 	return ret;
  }
++
++int efi_status_to_err(efi_status_t status)
++{
++	int err;
++
++	switch (status) {
++	case EFI_SUCCESS:
++		err = 0;
++		break;
++	case EFI_INVALID_PARAMETER:
++		err = -EINVAL;
++		break;
++	case EFI_OUT_OF_RESOURCES:
++		err = -ENOSPC;
++		break;
++	case EFI_DEVICE_ERROR:
++		err = -EIO;
++		break;
++	case EFI_WRITE_PROTECTED:
++		err = -EROFS;
++		break;
++	case EFI_SECURITY_VIOLATION:
++		err = -EACCES;
++		break;
++	case EFI_NOT_FOUND:
++		err = -ENOENT;
++		break;
++	default:
++		err = -EINVAL;
++	}
++
++	return err;
++}
+diff --git a/drivers/firmware/efi/vars.c b/drivers/firmware/efi/vars.c
+index 6f182fd91a6d..38e36526ba02 100644
+--- a/drivers/firmware/efi/vars.c
++++ b/drivers/firmware/efi/vars.c
+@@ -318,39 +318,6 @@ check_var_size(u32 attributes, unsigned long size)
+ 	return fops->query_variable_store(attributes, size);
+ }
+ 
+-static int efi_status_to_err(efi_status_t status)
+-{
+-	int err;
+-
+-	switch (status) {
+-	case EFI_SUCCESS:
+-		err = 0;
+-		break;
+-	case EFI_INVALID_PARAMETER:
+-		err = -EINVAL;
+-		break;
+-	case EFI_OUT_OF_RESOURCES:
+-		err = -ENOSPC;
+-		break;
+-	case EFI_DEVICE_ERROR:
+-		err = -EIO;
+-		break;
+-	case EFI_WRITE_PROTECTED:
+-		err = -EROFS;
+-		break;
+-	case EFI_SECURITY_VIOLATION:
+-		err = -EACCES;
+-		break;
+-	case EFI_NOT_FOUND:
+-		err = -ENOENT;
+-		break;
+-	default:
+-		err = -EINVAL;
+-	}
+-
+-	return err;
+-}
+-
+ static bool variable_is_present(efi_char16_t *variable_name, efi_guid_t *vendor,
+ 				struct list_head *head)
+ {
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index 47be3ad7d3e5..774e9a0d49f1 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -999,6 +999,8 @@ static inline void
+ efi_reboot(enum reboot_mode reboot_mode, const char *__unused) {}
+ #endif
+ 
++extern int efi_status_to_err(efi_status_t status);
++
+ /*
+  * Variable Attributes
+  */
 -- 
 2.12.3
