@@ -1,62 +1,135 @@
 From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Wed, 30 Aug 2017 21:06:06 +0200
-Subject: [cip-dev] [PATCH 09/25] serial: 8250_EXAR: fix duplicate Kconfig
-	text and add missing help text
+Date: Wed, 30 Aug 2017 21:06:10 +0200
+Subject: [cip-dev] [PATCH 13/25] gpio: add a data pointer to gpio_chip
 In-Reply-To: <cover.1504119982.git.jan.kiszka@siemens.com>
 References: <cover.1504119982.git.jan.kiszka@siemens.com>
-Message-ID: <f68578f71bba1a0b5ff743eeda329f921a24adb7.1504119982.git.jan.kiszka@siemens.com>
+Message-ID: <1d0bee182996abd1ad75f2966f74cad95e634540.1504119982.git.jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-commit 49e1590c2ead870f4ae5568816241c4cb9bc1606 upstream.
+commit b08ea35a3296ee25c4cb53a977b752266dafa2c2 upstream.
 
-In commit d0aeaa83f0b0f7a92615bbdd6b1f96812f7dcfd2 ("serial: exar:
-split out the exar code from 8250_pci") the exar driver got its own
-Kconfig.  However the text for the new option was never changed from
-the original 8250_PCI text, and hence it appears confusing when you
-get asked the same question twice:
+This adds a void * pointer to gpio_chip so that driver can
+assign and retrieve some states. This is done to get rid of
+container_of() calls for gpio_chips embedded inside state
+containers, so we can remove the need to have the gpio_chip
+or later (planned) struct gpio_device be dynamically allocated
+at registration time, so that its struct device can be properly
+reference counted and not bound to its parent device (e.g.
+a platform_device) but instead live on after unregistration
+if it is opened by e.g. a char device or sysfs.
 
-  8250/16550 PCI device support (SERIAL_8250_PCI) [Y/n/m/?] (NEW)
-    8250/16550 PCI device support (SERIAL_8250_EXAR) [Y/n/m] (NEW)
+The data is added with the new function gpiochip_add_data()
+and for compatibility we add static inline wrapper function
+gpiochip_add() that will call gpiochip_add_data() with
+NULL as argument. The latter will be removed once we have
+exorcised gpiochip_add() from the kernel.
 
-Adding to the confusion, is that there is no help text for this new
-option to indicate it is specific to a certain family of cards.
+gpiochip_get_data() is added as a static inline accessor
+for drivers to quickly get their data out.
 
-Fix both issues at the same time, as well as the space vs. tab issues
-introduced in the same commit.
-
-Fixes: d0aeaa83f0b0 ("serial: exar: split out the exar code from 8250_pci")
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: linux-serial at vger.kernel.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-Acked-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/tty/serial/8250/Kconfig | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/gpio/gpiolib.c      | 10 ++++++----
+ include/linux/gpio/driver.h | 14 +++++++++++++-
+ 2 files changed, 19 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/tty/serial/8250/Kconfig b/drivers/tty/serial/8250/Kconfig
-index f69b0905468f..bf7b5b5f2868 100644
---- a/drivers/tty/serial/8250/Kconfig
-+++ b/drivers/tty/serial/8250/Kconfig
-@@ -117,9 +117,13 @@ config SERIAL_8250_PCI
- 	  by the parport_serial driver, enabled with CONFIG_PARPORT_SERIAL.
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 06d345b087f8..66fa17615d7c 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -280,7 +280,7 @@ static int gpiochip_set_desc_names(struct gpio_chip *gc)
+ }
  
- config SERIAL_8250_EXAR
--        tristate "8250/16550 PCI device support"
--        depends on SERIAL_8250_PCI
-+	tristate "8250/16550 Exar/Commtech PCI/PCIe device support"
-+	depends on SERIAL_8250_PCI
- 	default SERIAL_8250
-+	help
-+	  This builds support for XR17C1xx, XR17V3xx and some Commtech
-+	  422x PCIe serial cards that are not covered by the more generic
-+	  SERIAL_8250_PCI option.
+ /**
+- * gpiochip_add() - register a gpio_chip
++ * gpiochip_add_data() - register a gpio_chip
+  * @chip: the chip to register, with chip->base initialized
+  * Context: potentially before irqs will work
+  *
+@@ -288,7 +288,7 @@ static int gpiochip_set_desc_names(struct gpio_chip *gc)
+  * because the chip->base is invalid or already associated with a
+  * different chip.  Otherwise it returns zero as a success code.
+  *
+- * When gpiochip_add() is called very early during boot, so that GPIOs
++ * When gpiochip_add_data() is called very early during boot, so that GPIOs
+  * can be freely used, the chip->dev device must be registered before
+  * the gpio framework's arch_initcall().  Otherwise sysfs initialization
+  * for GPIOs will fail rudely.
+@@ -296,7 +296,7 @@ static int gpiochip_set_desc_names(struct gpio_chip *gc)
+  * If chip->base is negative, this requests dynamic assignment of
+  * a range of valid GPIOs.
+  */
+-int gpiochip_add(struct gpio_chip *chip)
++int gpiochip_add_data(struct gpio_chip *chip, void *data)
+ {
+ 	unsigned long	flags;
+ 	int		status = 0;
+@@ -308,6 +308,8 @@ int gpiochip_add(struct gpio_chip *chip)
+ 	if (!descs)
+ 		return -ENOMEM;
  
- config SERIAL_8250_HP300
- 	tristate
++	chip->data = data;
++
+ 	spin_lock_irqsave(&gpio_lock, flags);
+ 
+ 	if (base < 0) {
+@@ -389,7 +391,7 @@ err_free_descs:
+ 		chip->label ? : "generic");
+ 	return status;
+ }
+-EXPORT_SYMBOL_GPL(gpiochip_add);
++EXPORT_SYMBOL_GPL(gpiochip_add_data);
+ 
+ /**
+  * gpiochip_remove() - unregister a gpio_chip
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index d1baebf350d8..424d11f4fa05 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -23,6 +23,7 @@ struct seq_file;
+  * @dev: optional device providing the GPIOs
+  * @cdev: class device used by sysfs interface (may be NULL)
+  * @owner: helps prevent removal of modules exporting active GPIOs
++ * @data: per-instance data assigned by the driver
+  * @list: links gpio_chips together for traversal
+  * @request: optional hook for chip-specific activation, such as
+  *	enabling module power and clock; may sleep
+@@ -92,6 +93,7 @@ struct gpio_chip {
+ 	struct device		*dev;
+ 	struct device		*cdev;
+ 	struct module		*owner;
++	void			*data;
+ 	struct list_head        list;
+ 
+ 	int			(*request)(struct gpio_chip *chip,
+@@ -166,7 +168,11 @@ extern const char *gpiochip_is_requested(struct gpio_chip *chip,
+ 			unsigned offset);
+ 
+ /* add/remove chips */
+-extern int gpiochip_add(struct gpio_chip *chip);
++extern int gpiochip_add_data(struct gpio_chip *chip, void *data);
++static inline int gpiochip_add(struct gpio_chip *chip)
++{
++	return gpiochip_add_data(chip, NULL);
++}
+ extern void gpiochip_remove(struct gpio_chip *chip);
+ extern struct gpio_chip *gpiochip_find(void *data,
+ 			      int (*match)(struct gpio_chip *chip, void *data));
+@@ -175,6 +181,12 @@ extern struct gpio_chip *gpiochip_find(void *data,
+ int gpiochip_lock_as_irq(struct gpio_chip *chip, unsigned int offset);
+ void gpiochip_unlock_as_irq(struct gpio_chip *chip, unsigned int offset);
+ 
++/* get driver data */
++static inline void *gpiochip_get_data(struct gpio_chip *chip)
++{
++	return chip->data;
++}
++
+ struct gpio_chip *gpiod_to_chip(const struct gpio_desc *desc);
+ 
+ #ifdef CONFIG_GPIOLIB_IRQCHIP
 -- 
 2.12.3
