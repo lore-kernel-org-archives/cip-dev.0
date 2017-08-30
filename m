@@ -1,43 +1,44 @@
 From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Wed, 30 Aug 2017 21:06:09 +0200
-Subject: [cip-dev] [PATCH 12/25] serial: uapi: Add support for bus
-	termination
+Date: Wed, 30 Aug 2017 21:06:07 +0200
+Subject: [cip-dev] [PATCH 10/25] serial: exar: Preconfigure xr17v35x MPIOs
+	as output
 In-Reply-To: <cover.1504119982.git.jan.kiszka@siemens.com>
 References: <cover.1504119982.git.jan.kiszka@siemens.com>
-Message-ID: <b613d65c2de745dfcf413ae2e85480455d450d0a.1504119982.git.jan.kiszka@siemens.com>
+Message-ID: <c26872cb5ae27f2aa840a10bdf18ebfb25ad38e8.1504119982.git.jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Jan Kiszka <jan.kiszka@siemens.com>
 
-commit e8759ad17d41913dfeb49736ca7fbfbc96f32c54 upstream.
+commit 7dea8165f1d6434dc7572004363f86339f0f4322 upstream.
 
-The Siemens IOT2040 comes with a RS485 interface that allows to enable
-or disable bus termination via software. Add a bit to the flags field of
-serial_rs485 that applications can set in order to request this feature
-from the hardware. This seems generic enough to add it for everyone.
-Existing driver will simply ignore it when set.
+This is the safe default for GPIOs with unknown external wiring.
 
-Signed-off-by: Sascha Weisenberger <sascha.weisenberger@siemens.com>
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/uapi/linux/serial.h | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/tty/serial/8250/8250_exar.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/uapi/linux/serial.h b/include/uapi/linux/serial.h
-index 25331f9faa76..7934e3247b45 100644
---- a/include/uapi/linux/serial.h
-+++ b/include/uapi/linux/serial.h
-@@ -121,6 +121,9 @@ struct serial_rs485 {
- #define SER_RS485_RTS_AFTER_SEND	(1 << 2)	/* Logical level for
- 							   RTS pin after sent*/
- #define SER_RS485_RX_DURING_TX		(1 << 4)
-+#define SER_RS485_TERMINATE_BUS		(1 << 5)	/* Enable bus
-+							   termination
-+							   (if supported) */
- 	__u32	delay_rts_before_send;	/* Delay before send (milliseconds) */
- 	__u32	delay_rts_after_send;	/* Delay after send (milliseconds) */
- 	__u32	padding[5];		/* Memory is cheap, new structs
+diff --git a/drivers/tty/serial/8250/8250_exar.c b/drivers/tty/serial/8250/8250_exar.c
+index 9af4266eff96..8d392ad207cf 100644
+--- a/drivers/tty/serial/8250/8250_exar.c
++++ b/drivers/tty/serial/8250/8250_exar.c
+@@ -164,13 +164,13 @@ static void setup_gpio(u8 __iomem *p)
+ 	writeb(0x00, p + UART_EXAR_MPIOLVL_7_0);
+ 	writeb(0x00, p + UART_EXAR_MPIO3T_7_0);
+ 	writeb(0x00, p + UART_EXAR_MPIOINV_7_0);
+-	writeb(0x00, p + UART_EXAR_MPIOSEL_7_0);
++	writeb(0xff, p + UART_EXAR_MPIOSEL_7_0);
+ 	writeb(0x00, p + UART_EXAR_MPIOOD_7_0);
+ 	writeb(0x00, p + UART_EXAR_MPIOINT_15_8);
+ 	writeb(0x00, p + UART_EXAR_MPIOLVL_15_8);
+ 	writeb(0x00, p + UART_EXAR_MPIO3T_15_8);
+ 	writeb(0x00, p + UART_EXAR_MPIOINV_15_8);
+-	writeb(0x00, p + UART_EXAR_MPIOSEL_15_8);
++	writeb(0xff, p + UART_EXAR_MPIOSEL_15_8);
+ 	writeb(0x00, p + UART_EXAR_MPIOOD_15_8);
+ }
+ 
 -- 
 2.12.3
