@@ -1,109 +1,249 @@
 From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Wed, 30 Aug 2017 20:52:35 +0200
-Subject: [cip-dev] [PATCH 8/8] gpio: pca953x: add PCAL9535 interrupt support
-	for Galileo Gen2
+Date: Wed, 30 Aug 2017 20:52:34 +0200
+Subject: [cip-dev] [PATCH 7/8] pwm: pca9685: Fix GPIO-only operation
 In-Reply-To: <cover.1504119155.git.jan.kiszka@siemens.com>
 References: <cover.1504119155.git.jan.kiszka@siemens.com>
-Message-ID: <780bc8985646599c7c73da61d0d598f090c80d1f.1504119155.git.jan.kiszka@siemens.com>
+Message-ID: <35d3825c86a681c4c8ec0221046b270d2926c123.1504119155.git.jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Yong Li <yong.b.li@intel.com>
+From: Sven Van Asbroeck <thesven73@gmail.com>
 
-commit 44896beae605b93f2232301befccb7ef42953198 upstream.
+commit c40c461e1944b9cfb520e04184ec1e5c80fb210b upstream.
 
-Galileo Gen2 board uses the PCAL9535 as the GPIO expansion,
-it is different from PCA9535 and includes interrupt mask/status registers,
-The current driver does not support the interrupt registers configuration,
-it causes some gpio pins cannot trigger interrupt events,
-this patch fix this issue.
+GPIO-only driver operation never clears the SLEEP bit, which can cause
+the GPIOs to become unusable.
 
-The original patch was submitted by
-Josef Ahmad <josef.ahmad@linux.intel.com>
-http://git.yoctoproject.org/cgit/cgit.cgi/meta-intel-quark/tree/recipes-kernel/linux/files/0015-Quark-GPIO-1-2-quark.patch
+Example:
+1. user requests first PWM  ->      driver clears SLEEP bit
+2. user frees last PWM      ->      driver sets SLEEP bit
+3. user requests GPIO
+4. user switches GPIO on    ->      output does not turn on
+                                    because SLEEP bit is set
 
-Signed-off-by: Yong Li <yong.b.li@intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Prevent this behaviour by letting the runtime PM framework control the
+SLEEP bit. This will put the chip to SLEEP if no PWMs/GPIOs are exported
+or in use.
+
+Fixes: bccec89f0a35 ("Allow any of the 16 PWMs to be used as a GPIO")
+Reported-by: Sven Van Asbroeck <TheSven73@googlemail.com>
+Signed-off-by: Sven Van Asbroeck <TheSven73@googlemail.com>
+Suggested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
 ---
- drivers/gpio/gpio-pca953x.c | 42 +++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 41 insertions(+), 1 deletion(-)
+ drivers/pwm/pwm-pca9685.c | 112 ++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 79 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index c844d7eccb6c..b45ba6be69ef 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -39,8 +39,13 @@
- #define PCA957X_MSK		6
- #define PCA957X_INTS		7
+diff --git a/drivers/pwm/pwm-pca9685.c b/drivers/pwm/pwm-pca9685.c
+index cad6cdf06d03..d2b92e940e38 100644
+--- a/drivers/pwm/pwm-pca9685.c
++++ b/drivers/pwm/pwm-pca9685.c
+@@ -30,6 +30,7 @@
+ #include <linux/regmap.h>
+ #include <linux/slab.h>
+ #include <linux/delay.h>
++#include <linux/pm_runtime.h>
  
-+#define PCAL953X_IN_LATCH	34
-+#define PCAL953X_INT_MASK	37
-+#define PCAL953X_INT_STAT	38
-+
- #define PCA_GPIO_MASK		0x00FF
- #define PCA_INT			0x0100
-+#define PCA_PCAL			0x0200
- #define PCA953X_TYPE		0x1000
- #define PCA957X_TYPE		0x2000
- #define PCA_TYPE_MASK		0xF000
-@@ -78,7 +83,7 @@ static const struct i2c_device_id pca953x_id[] = {
- MODULE_DEVICE_TABLE(i2c, pca953x_id);
+ /*
+  * Because the PCA9685 has only one prescaler per chip, changing the period of
+@@ -79,7 +80,6 @@
+ struct pca9685 {
+ 	struct pwm_chip chip;
+ 	struct regmap *regmap;
+-	int active_cnt;
+ 	int duty_ns;
+ 	int period_ns;
+ #if IS_ENABLED(CONFIG_GPIOLIB)
+@@ -111,20 +111,10 @@ static int pca9685_pwm_gpio_request(struct gpio_chip *gpio, unsigned int offset)
+ 	pwm_set_chip_data(pwm, (void *)1);
  
- static const struct acpi_device_id pca953x_acpi_ids[] = {
--	{ "INT3491", 16 | PCA953X_TYPE | PCA_INT, },
-+	{ "INT3491", 16 | PCA953X_TYPE | PCA_INT | PCA_PCAL, },
- 	{ }
- };
- MODULE_DEVICE_TABLE(acpi, pca953x_acpi_ids);
-@@ -403,6 +408,18 @@ static void pca953x_irq_bus_sync_unlock(struct irq_data *d)
- 	struct pca953x_chip *chip = to_pca(gc);
- 	u8 new_irqs;
- 	int level, i;
-+	u8 invert_irq_mask[MAX_BANK];
+ 	mutex_unlock(&pca->lock);
++	pm_runtime_get_sync(pca->chip.dev);
+ 	return 0;
+ }
+ 
+-static void pca9685_pwm_gpio_free(struct gpio_chip *gpio, unsigned int offset)
+-{
+-	struct pca9685 *pca = gpiochip_get_data(gpio);
+-	struct pwm_device *pwm;
+-
+-	mutex_lock(&pca->lock);
+-	pwm = &pca->chip.pwms[offset];
+-	pwm_set_chip_data(pwm, NULL);
+-	mutex_unlock(&pca->lock);
+-}
+-
+ static bool pca9685_pwm_is_gpio(struct pca9685 *pca, struct pwm_device *pwm)
+ {
+ 	bool is_gpio = false;
+@@ -177,6 +167,19 @@ static void pca9685_pwm_gpio_set(struct gpio_chip *gpio, unsigned int offset,
+ 	regmap_write(pca->regmap, LED_N_ON_H(pwm->hwpwm), on);
+ }
+ 
++static void pca9685_pwm_gpio_free(struct gpio_chip *gpio, unsigned int offset)
++{
++	struct pca9685 *pca = gpiochip_get_data(gpio);
++	struct pwm_device *pwm;
 +
-+	if (chip->driver_data & PCA_PCAL) {
-+		/* Enable latch on interrupt-enabled inputs */
-+		pca953x_write_regs(chip, PCAL953X_IN_LATCH, chip->irq_mask);
++	pca9685_pwm_gpio_set(gpio, offset, 0);
++	pm_runtime_put(pca->chip.dev);
++	mutex_lock(&pca->lock);
++	pwm = &pca->chip.pwms[offset];
++	pwm_set_chip_data(pwm, NULL);
++	mutex_unlock(&pca->lock);
++}
 +
-+		for (i = 0; i < NBANK(chip); i++)
-+			invert_irq_mask[i] = ~chip->irq_mask[i];
-+
-+		/* Unmask enabled interrupts */
-+		pca953x_write_regs(chip, PCAL953X_INT_MASK, invert_irq_mask);
+ static int pca9685_pwm_gpio_get_direction(struct gpio_chip *chip,
+ 					  unsigned int offset)
+ {
+@@ -238,6 +241,16 @@ static inline int pca9685_pwm_gpio_probe(struct pca9685 *pca)
+ }
+ #endif
+ 
++static void pca9685_set_sleep_mode(struct pca9685 *pca, int sleep)
++{
++	regmap_update_bits(pca->regmap, PCA9685_MODE1,
++			   MODE1_SLEEP, sleep ? MODE1_SLEEP : 0);
++	if (!sleep) {
++		/* Wait 500us for the oscillator to be back up */
++		udelay(500);
 +	}
++}
++
+ static int pca9685_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 			      int duty_ns, int period_ns)
+ {
+@@ -252,19 +265,20 @@ static int pca9685_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
  
- 	/* Look for any newly setup interrupt */
- 	for (i = 0; i < NBANK(chip); i++) {
-@@ -464,6 +481,29 @@ static bool pca953x_irq_pending(struct pca953x_chip *chip, u8 *pending)
- 	u8 trigger[MAX_BANK];
- 	int ret, i, offset = 0;
+ 		if (prescale >= PCA9685_PRESCALE_MIN &&
+ 			prescale <= PCA9685_PRESCALE_MAX) {
++			/*
++			 * putting the chip briefly into SLEEP mode
++			 *@this point won't interfere with the
++			 * pm_runtime framework, because the pm_runtime
++			 * state is guaranteed active here.
++			 */
+ 			/* Put chip into sleep mode */
+-			regmap_update_bits(pca->regmap, PCA9685_MODE1,
+-					   MODE1_SLEEP, MODE1_SLEEP);
++			pca9685_set_sleep_mode(pca, 1);
  
-+	if (chip->driver_data & PCA_PCAL) {
-+		/* Read the current interrupt status from the device */
-+		ret = pca953x_read_regs(chip, PCAL953X_INT_STAT, trigger);
-+		if (ret)
-+			return false;
-+
-+		/* Check latched inputs and clear interrupt status */
-+		ret = pca953x_read_regs(chip, PCA953X_INPUT, cur_stat);
-+		if (ret)
-+			return false;
-+
-+		for (i = 0; i < NBANK(chip); i++) {
-+			/* Apply filter for rising/falling edge selection */
-+			pending[i] = (~cur_stat[i] & chip->irq_trig_fall[i]) |
-+				(cur_stat[i] & chip->irq_trig_raise[i]);
-+			pending[i] &= trigger[i];
-+			if (pending[i])
-+				pending_seen = true;
-+		}
-+
-+		return pending_seen;
+ 			/* Change the chip-wide output frequency */
+ 			regmap_write(pca->regmap, PCA9685_PRESCALE, prescale);
+ 
+ 			/* Wake the chip up */
+-			regmap_update_bits(pca->regmap, PCA9685_MODE1,
+-					   MODE1_SLEEP, 0x0);
+-
+-			/* Wait 500us for the oscillator to be back up */
+-			udelay(500);
++			pca9685_set_sleep_mode(pca, 0);
+ 
+ 			pca->period_ns = period_ns;
+ 		} else {
+@@ -406,21 +420,15 @@ static int pca9685_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
+ 
+ 	if (pca9685_pwm_is_gpio(pca, pwm))
+ 		return -EBUSY;
+-
+-	if (pca->active_cnt++ == 0)
+-		return regmap_update_bits(pca->regmap, PCA9685_MODE1,
+-					  MODE1_SLEEP, 0x0);
++	pm_runtime_get_sync(chip->dev);
+ 
+ 	return 0;
+ }
+ 
+ static void pca9685_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
+ {
+-	struct pca9685 *pca = to_pca(chip);
+-
+-	if (--pca->active_cnt == 0)
+-		regmap_update_bits(pca->regmap, PCA9685_MODE1, MODE1_SLEEP,
+-				   MODE1_SLEEP);
++	pca9685_pwm_disable(chip, pwm);
++	pm_runtime_put(chip->dev);
+ }
+ 
+ static const struct pwm_ops pca9685_pwm_ops = {
+@@ -493,22 +501,54 @@ static int pca9685_pwm_probe(struct i2c_client *client,
+ 		return ret;
+ 
+ 	ret = pca9685_pwm_gpio_probe(pca);
+-	if (ret < 0)
++	if (ret < 0) {
+ 		pwmchip_remove(&pca->chip);
++		return ret;
 +	}
 +
- 	switch (chip->chip_type) {
- 	case PCA953X_TYPE:
- 		offset = PCA953X_INPUT;
++	/* the chip comes out of power-up in the active state */
++	pm_runtime_set_active(&client->dev);
++	/*
++	 * enable will put the chip into suspend, which is what we
++	 * want as all outputs are disabled at this point
++	 */
++	pm_runtime_enable(&client->dev);
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static int pca9685_pwm_remove(struct i2c_client *client)
+ {
+ 	struct pca9685 *pca = i2c_get_clientdata(client);
++	int ret;
+ 
+-	regmap_update_bits(pca->regmap, PCA9685_MODE1, MODE1_SLEEP,
+-			   MODE1_SLEEP);
++	ret = pwmchip_remove(&pca->chip);
++	if (ret)
++		return ret;
++	pm_runtime_disable(&client->dev);
++	return 0;
++}
+ 
+-	return pwmchip_remove(&pca->chip);
++#ifdef CONFIG_PM
++static int pca9685_pwm_runtime_suspend(struct device *dev)
++{
++	struct i2c_client *client = to_i2c_client(dev);
++	struct pca9685 *pca = i2c_get_clientdata(client);
++
++	pca9685_set_sleep_mode(pca, 1);
++	return 0;
+ }
+ 
++static int pca9685_pwm_runtime_resume(struct device *dev)
++{
++	struct i2c_client *client = to_i2c_client(dev);
++	struct pca9685 *pca = i2c_get_clientdata(client);
++
++	pca9685_set_sleep_mode(pca, 0);
++	return 0;
++}
++#endif
++
+ static const struct i2c_device_id pca9685_id[] = {
+ 	{ "pca9685", 0 },
+ 	{ /* sentinel */ },
+@@ -531,11 +571,17 @@ static const struct of_device_id pca9685_dt_ids[] = {
+ MODULE_DEVICE_TABLE(of, pca9685_dt_ids);
+ #endif
+ 
++static const struct dev_pm_ops pca9685_pwm_pm = {
++	SET_RUNTIME_PM_OPS(pca9685_pwm_runtime_suspend,
++			   pca9685_pwm_runtime_resume, NULL)
++};
++
+ static struct i2c_driver pca9685_i2c_driver = {
+ 	.driver = {
+ 		.name = "pca9685-pwm",
+ 		.acpi_match_table = ACPI_PTR(pca9685_acpi_ids),
+ 		.of_match_table = of_match_ptr(pca9685_dt_ids),
++		.pm = &pca9685_pwm_pm,
+ 	},
+ 	.probe = pca9685_pwm_probe,
+ 	.remove = pca9685_pwm_remove,
 -- 
 2.12.3
