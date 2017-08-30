@@ -1,75 +1,71 @@
 From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Wed, 30 Aug 2017 21:05:57 +0200
-Subject: [cip-dev] [PATCH 00/25] EXAR UART support for IOT2040 device
-Message-ID: <cover.1504119982.git.jan.kiszka@siemens.com>
+Date: Wed, 30 Aug 2017 21:06:02 +0200
+Subject: [cip-dev] [PATCH 05/25] serial: exar: Fix initialization of EXAR
+	registers for ports > 0
+In-Reply-To: <cover.1504119982.git.jan.kiszka@siemens.com>
+References: <cover.1504119982.git.jan.kiszka@siemens.com>
+Message-ID: <8ad4efe06739a452a078cb7e29947b7cdb7c7497.1504119982.git.jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Second chunk: This imports a number of preparatory patches in order to
-fully exploit the PCI-attached dual-port EXAR with RS232/422/485 on the
-IOT2040.
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-To avoid having to backport also API-changing patches for platform
-devices, I've slightly modified two patches to use a communication
-pattern that does not require these changes.
+commit 5b5f252d67afd7bd5b923c664206d60800bf5054 upstream.
 
-Jan
+So far, pci_xr17v35x_setup always initialized 8XMODE, FCTR & Co. for
+port 0 because it used the address of that port instead of moving the
+pointer according to the port number. Fix this and remove the unneeded
+temporary ioremap by moving default_setup up and reusing the membase it
+fills into the port structure.
 
-Axel Lin (1):
-  gpio: exar: Set proper output level in exar_direction_output
+Fixes: 14faa8cce88e ("tty/8250 Add support for Commtech's Fastcom Async-335 and Fastcom Async-PCIe cards")
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/tty/serial/8250/8250_exar.c | 22 +++++++++-------------
+ 1 file changed, 9 insertions(+), 13 deletions(-)
 
-Jan Kiszka (18):
-  serial: 8250_pci: Use symbolic constants for EXAR's MPIO registers
-  serial: exar: Fix mapping of port I/O resources
-  serial: exar: Fix initialization of EXAR registers for ports > 0
-  serial: exar: Fix feature control register constants
-  serial: exar: Move Commtech adapters to 8250_exar as well
-  serial: pci: Remove unused pci_boards entries
-  serial: exar: Preconfigure xr17v35x MPIOs as output
-  serial: exar: Leave MPIOs as output for Commtech adapters
-  serial: uapi: Add support for bus termination
-  gpio-exar/8250-exar: Fix passing in of parent PCI device
-  gpio: exar: Allocate resources on behalf of the platform device
-  gpio: exar: Fix reading of directions and values
-  gpio-exar/8250-exar: Do not even instantiate a GPIO device for
-    Commtech cards
-  gpio: exar: Fix iomap request
-  gpio-exar/8250-exar: Rearrange gpiochip parenthood
-  serial: exar: Factor out platform hooks
-  gpio-exar/8250-exar: Make set of exported GPIOs configurable
-  serial: exar: Add support for IOT2040 device
-
-Laxman Dewangan (1):
-  gpio: Add devm_ apis for gpiochip_add_data and gpiochip_remove
-
-Linus Walleij (1):
-  gpio: add a data pointer to gpio_chip
-
-Paul Gortmaker (1):
-  serial: 8250_EXAR: fix duplicate Kconfig text and add missing help
-    text
-
-Sudip Mukherjee (3):
-  serial: exar: split out the exar code from 8250_pci
-  serial: 8250_pci: remove exar code
-  gpio: exar: add gpio for exar cards
-
- drivers/gpio/Kconfig                    |   7 +
- drivers/gpio/Makefile                   |   1 +
- drivers/gpio/gpio-exar.c                | 196 ++++++++++
- drivers/gpio/gpiolib.c                  |  84 ++++-
- drivers/tty/serial/8250/8250_exar.c     | 636 ++++++++++++++++++++++++++++++++
- drivers/tty/serial/8250/8250_pci.c      | 484 +-----------------------
- drivers/tty/serial/8250/Kconfig         |   9 +
- drivers/tty/serial/8250/Makefile        |   1 +
- include/linux/gpio/driver.h             |  18 +-
- include/linux/platform_data/gpio-exar.h |  21 ++
- include/uapi/linux/serial.h             |   3 +
- include/uapi/linux/serial_reg.h         |   4 +-
- 12 files changed, 977 insertions(+), 487 deletions(-)
- create mode 100644 drivers/gpio/gpio-exar.c
- create mode 100644 drivers/tty/serial/8250/8250_exar.c
- create mode 100644 include/linux/platform_data/gpio-exar.h
-
+diff --git a/drivers/tty/serial/8250/8250_exar.c b/drivers/tty/serial/8250/8250_exar.c
+index 58469d9d6515..f489f25643c5 100644
+--- a/drivers/tty/serial/8250/8250_exar.c
++++ b/drivers/tty/serial/8250/8250_exar.c
+@@ -157,27 +157,23 @@ pci_xr17v35x_setup(struct exar8250 *priv, struct pci_dev *pcidev,
+ 	if (board->has_slave && idx >= 8)
+ 		port->port.uartclk /= 2;
+ 
+-	p = pci_ioremap_bar(pcidev, 0);
+-	if (!p)
+-		return -ENOMEM;
++	ret = default_setup(priv, pcidev, idx, offset, port);
++	if (ret)
++		return ret;
+ 
+-	/* Setup Multipurpose Input/Output pins. */
+-	if (idx == 0)
+-		setup_gpio(p);
++	p = port->port.membase;
+ 
+ 	writeb(0x00, p + UART_EXAR_8XMODE);
+ 	writeb(UART_FCTR_EXAR_TRGD, p + UART_EXAR_FCTR);
+ 	writeb(128, p + UART_EXAR_TXTRG);
+ 	writeb(128, p + UART_EXAR_RXTRG);
+-	iounmap(p);
+ 
+-	ret = default_setup(priv, pcidev, idx, offset, port);
+-	if (ret)
+-		return ret;
++	if (idx == 0) {
++		/* Setup Multipurpose Input/Output pins. */
++		setup_gpio(p);
+ 
+-	if (idx == 0)
+-		port->port.private_data =
+-			xr17v35x_register_gpio(pcidev);
++		port->port.private_data = xr17v35x_register_gpio(pcidev);
++	}
+ 
+ 	return 0;
+ }
 -- 
 2.12.3
