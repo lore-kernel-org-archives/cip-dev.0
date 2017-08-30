@@ -1,110 +1,109 @@
 From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Wed, 30 Aug 2017 20:52:29 +0200
-Subject: [cip-dev] [PATCH 2/8] iio: core: implement
-	iio_device_{claim|release}_direct_mode()
+Date: Wed, 30 Aug 2017 20:52:35 +0200
+Subject: [cip-dev] [PATCH 8/8] gpio: pca953x: add PCAL9535 interrupt support
+	for Galileo Gen2
 In-Reply-To: <cover.1504119155.git.jan.kiszka@siemens.com>
 References: <cover.1504119155.git.jan.kiszka@siemens.com>
-Message-ID: <f65f45d276ccb2179f31a379cfcd27e4845eccea.1504119155.git.jan.kiszka@siemens.com>
+Message-ID: <780bc8985646599c7c73da61d0d598f090c80d1f.1504119155.git.jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Alison Schofield <amsfield22@gmail.com>
+From: Yong Li <yong.b.li@intel.com>
 
-commit 08a33805518e7845486f88287e8aace6f8439391 upstream.
+commit 44896beae605b93f2232301befccb7ef42953198 upstream.
 
-It is often the case that the driver wants to be sure a device stays
-in direct mode while it is executing a task or series of tasks.  To
-accomplish this today, the driver performs this sequence: 1) take the
-device state lock, 2) verify it is not in a buffered mode, 3) execute
-some tasks, and 4) release that lock.
+Galileo Gen2 board uses the PCAL9535 as the GPIO expansion,
+it is different from PCA9535 and includes interrupt mask/status registers,
+The current driver does not support the interrupt registers configuration,
+it causes some gpio pins cannot trigger interrupt events,
+this patch fix this issue.
 
-This patch introduces a pair of helper functions that simplify these
-steps and make it more semantically expressive.
+The original patch was submitted by
+Josef Ahmad <josef.ahmad@linux.intel.com>
+http://git.yoctoproject.org/cgit/cgit.cgi/meta-intel-quark/tree/recipes-kernel/linux/files/0015-Quark-GPIO-1-2-quark.patch
 
-iio_device_claim_direct_mode()
-        If the device is not in any buffered mode it is guaranteed
-        to stay that way until iio_release_direct_mode() is called.
-
-iio_device_release_direct_mode()
-        Release the claim. Device is no longer guaranteed to stay
-        in direct mode.
-
-Signed-off-by: Alison Schofield <amsfield22@gmail.com>
-Signed-off-by: Jonathan Cameron <jic23@kernel.org>
+Signed-off-by: Yong Li <yong.b.li@intel.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/iio/industrialio-core.c | 39 +++++++++++++++++++++++++++++++++++++++
- include/linux/iio/iio.h         |  2 ++
- 2 files changed, 41 insertions(+)
+ drivers/gpio/gpio-pca953x.c | 42 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 41 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
-index 131b434af994..dc0701f0ab03 100644
---- a/drivers/iio/industrialio-core.c
-+++ b/drivers/iio/industrialio-core.c
-@@ -25,6 +25,7 @@
- #include <linux/slab.h>
- #include <linux/anon_inodes.h>
- #include <linux/debugfs.h>
-+#include <linux/mutex.h>
- #include <linux/iio/iio.h>
- #include "iio_core.h"
- #include "iio_core_trigger.h"
-@@ -1363,6 +1364,44 @@ void devm_iio_device_unregister(struct device *dev, struct iio_dev *indio_dev)
- }
- EXPORT_SYMBOL_GPL(devm_iio_device_unregister);
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index c844d7eccb6c..b45ba6be69ef 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -39,8 +39,13 @@
+ #define PCA957X_MSK		6
+ #define PCA957X_INTS		7
  
-+/**
-+ * iio_device_claim_direct_mode - Keep device in direct mode
-+ * @indio_dev:	the iio_dev associated with the device
-+ *
-+ * If the device is in direct mode it is guaranteed to stay
-+ * that way until iio_device_release_direct_mode() is called.
-+ *
-+ * Use with iio_device_release_direct_mode()
-+ *
-+ * Returns: 0 on success, -EBUSY on failure
-+ */
-+int iio_device_claim_direct_mode(struct iio_dev *indio_dev)
-+{
-+	mutex_lock(&indio_dev->mlock);
++#define PCAL953X_IN_LATCH	34
++#define PCAL953X_INT_MASK	37
++#define PCAL953X_INT_STAT	38
 +
-+	if (iio_buffer_enabled(indio_dev)) {
-+		mutex_unlock(&indio_dev->mlock);
-+		return -EBUSY;
+ #define PCA_GPIO_MASK		0x00FF
+ #define PCA_INT			0x0100
++#define PCA_PCAL			0x0200
+ #define PCA953X_TYPE		0x1000
+ #define PCA957X_TYPE		0x2000
+ #define PCA_TYPE_MASK		0xF000
+@@ -78,7 +83,7 @@ static const struct i2c_device_id pca953x_id[] = {
+ MODULE_DEVICE_TABLE(i2c, pca953x_id);
+ 
+ static const struct acpi_device_id pca953x_acpi_ids[] = {
+-	{ "INT3491", 16 | PCA953X_TYPE | PCA_INT, },
++	{ "INT3491", 16 | PCA953X_TYPE | PCA_INT | PCA_PCAL, },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(acpi, pca953x_acpi_ids);
+@@ -403,6 +408,18 @@ static void pca953x_irq_bus_sync_unlock(struct irq_data *d)
+ 	struct pca953x_chip *chip = to_pca(gc);
+ 	u8 new_irqs;
+ 	int level, i;
++	u8 invert_irq_mask[MAX_BANK];
++
++	if (chip->driver_data & PCA_PCAL) {
++		/* Enable latch on interrupt-enabled inputs */
++		pca953x_write_regs(chip, PCAL953X_IN_LATCH, chip->irq_mask);
++
++		for (i = 0; i < NBANK(chip); i++)
++			invert_irq_mask[i] = ~chip->irq_mask[i];
++
++		/* Unmask enabled interrupts */
++		pca953x_write_regs(chip, PCAL953X_INT_MASK, invert_irq_mask);
 +	}
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(iio_device_claim_direct_mode);
+ 
+ 	/* Look for any newly setup interrupt */
+ 	for (i = 0; i < NBANK(chip); i++) {
+@@ -464,6 +481,29 @@ static bool pca953x_irq_pending(struct pca953x_chip *chip, u8 *pending)
+ 	u8 trigger[MAX_BANK];
+ 	int ret, i, offset = 0;
+ 
++	if (chip->driver_data & PCA_PCAL) {
++		/* Read the current interrupt status from the device */
++		ret = pca953x_read_regs(chip, PCAL953X_INT_STAT, trigger);
++		if (ret)
++			return false;
 +
-+/**
-+ * iio_device_release_direct_mode - releases claim on direct mode
-+ * @indio_dev:	the iio_dev associated with the device
-+ *
-+ * Release the claim. Device is no longer guaranteed to stay
-+ * in direct mode.
-+ *
-+ * Use with iio_device_claim_direct_mode()
-+ */
-+void iio_device_release_direct_mode(struct iio_dev *indio_dev)
-+{
-+	mutex_unlock(&indio_dev->mlock);
-+}
-+EXPORT_SYMBOL_GPL(iio_device_release_direct_mode);
++		/* Check latched inputs and clear interrupt status */
++		ret = pca953x_read_regs(chip, PCA953X_INPUT, cur_stat);
++		if (ret)
++			return false;
 +
- subsys_initcall(iio_init);
- module_exit(iio_exit);
- 
-diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
-index 19c94c9acc81..b6edc8dcbe61 100644
---- a/include/linux/iio/iio.h
-+++ b/include/linux/iio/iio.h
-@@ -527,6 +527,8 @@ void iio_device_unregister(struct iio_dev *indio_dev);
- int devm_iio_device_register(struct device *dev, struct iio_dev *indio_dev);
- void devm_iio_device_unregister(struct device *dev, struct iio_dev *indio_dev);
- int iio_push_event(struct iio_dev *indio_dev, u64 ev_code, s64 timestamp);
-+int iio_device_claim_direct_mode(struct iio_dev *indio_dev);
-+void iio_device_release_direct_mode(struct iio_dev *indio_dev);
- 
- extern struct bus_type iio_bus_type;
- 
++		for (i = 0; i < NBANK(chip); i++) {
++			/* Apply filter for rising/falling edge selection */
++			pending[i] = (~cur_stat[i] & chip->irq_trig_fall[i]) |
++				(cur_stat[i] & chip->irq_trig_raise[i]);
++			pending[i] &= trigger[i];
++			if (pending[i])
++				pending_seen = true;
++		}
++
++		return pending_seen;
++	}
++
+ 	switch (chip->chip_type) {
+ 	case PCA953X_TYPE:
+ 		offset = PCA953X_INPUT;
 -- 
 2.12.3
