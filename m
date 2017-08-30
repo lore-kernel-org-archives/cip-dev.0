@@ -1,44 +1,266 @@
 From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Wed, 30 Aug 2017 21:06:07 +0200
-Subject: [cip-dev] [PATCH 10/25] serial: exar: Preconfigure xr17v35x MPIOs
-	as output
+Date: Wed, 30 Aug 2017 21:06:12 +0200
+Subject: [cip-dev] [PATCH 15/25] gpio: exar: add gpio for exar cards
 In-Reply-To: <cover.1504119982.git.jan.kiszka@siemens.com>
 References: <cover.1504119982.git.jan.kiszka@siemens.com>
-Message-ID: <c26872cb5ae27f2aa840a10bdf18ebfb25ad38e8.1504119982.git.jan.kiszka@siemens.com>
+Message-ID: <81980bb63581a0aa42b9cb00709d1512d73823d0.1504119982.git.jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+From: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
 
-commit 7dea8165f1d6434dc7572004363f86339f0f4322 upstream.
+commit 6596e59e63cd4c0c0b787ce8c1e8bdd1d957b16e upstream.
 
-This is the safe default for GPIOs with unknown external wiring.
+Exar XR17V352/354/358 chips have 16 multi-purpose inputs/outputs which
+can be controlled using gpio interface.
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Add the gpio specific code.
+
+Signed-off-by: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+[Jan: adjusted gpio_chip.parent to .dev for 4.4]
 ---
- drivers/tty/serial/8250/8250_exar.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/Kconfig     |   7 ++
+ drivers/gpio/Makefile    |   1 +
+ drivers/gpio/gpio-exar.c | 200 +++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 208 insertions(+)
+ create mode 100644 drivers/gpio/gpio-exar.c
 
-diff --git a/drivers/tty/serial/8250/8250_exar.c b/drivers/tty/serial/8250/8250_exar.c
-index 9af4266eff96..8d392ad207cf 100644
---- a/drivers/tty/serial/8250/8250_exar.c
-+++ b/drivers/tty/serial/8250/8250_exar.c
-@@ -164,13 +164,13 @@ static void setup_gpio(u8 __iomem *p)
- 	writeb(0x00, p + UART_EXAR_MPIOLVL_7_0);
- 	writeb(0x00, p + UART_EXAR_MPIO3T_7_0);
- 	writeb(0x00, p + UART_EXAR_MPIOINV_7_0);
--	writeb(0x00, p + UART_EXAR_MPIOSEL_7_0);
-+	writeb(0xff, p + UART_EXAR_MPIOSEL_7_0);
- 	writeb(0x00, p + UART_EXAR_MPIOOD_7_0);
- 	writeb(0x00, p + UART_EXAR_MPIOINT_15_8);
- 	writeb(0x00, p + UART_EXAR_MPIOLVL_15_8);
- 	writeb(0x00, p + UART_EXAR_MPIO3T_15_8);
- 	writeb(0x00, p + UART_EXAR_MPIOINV_15_8);
--	writeb(0x00, p + UART_EXAR_MPIOSEL_15_8);
-+	writeb(0xff, p + UART_EXAR_MPIOSEL_15_8);
- 	writeb(0x00, p + UART_EXAR_MPIOOD_15_8);
- }
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 469dc378adeb..398b909ddecb 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -184,6 +184,13 @@ config GPIO_ETRAXFS
+ 	help
+ 	  Say yes here to support the GPIO controller on Axis ETRAX FS SoCs.
  
++config GPIO_EXAR
++	tristate "Support for GPIO pins on XR17V352/354/358"
++	depends on SERIAL_8250_EXAR
++	help
++	  Selecting this option will enable handling of GPIO pins present
++	  on Exar XR17V352/354/358 chips.
++
+ config GPIO_GE_FPGA
+ 	bool "GE FPGA based GPIO"
+ 	depends on GE_FPGA
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 986dbd838cea..68efdb54f8a7 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -37,6 +37,7 @@ obj-$(CONFIG_GPIO_DWAPB)	+= gpio-dwapb.o
+ obj-$(CONFIG_GPIO_EM)		+= gpio-em.o
+ obj-$(CONFIG_GPIO_EP93XX)	+= gpio-ep93xx.o
+ obj-$(CONFIG_GPIO_ETRAXFS)	+= gpio-etraxfs.o
++obj-$(CONFIG_GPIO_EXAR)		+= gpio-exar.o
+ obj-$(CONFIG_GPIO_F7188X)	+= gpio-f7188x.o
+ obj-$(CONFIG_GPIO_GE_FPGA)	+= gpio-ge.o
+ obj-$(CONFIG_GPIO_GRGPIO)	+= gpio-grgpio.o
+diff --git a/drivers/gpio/gpio-exar.c b/drivers/gpio/gpio-exar.c
+new file mode 100644
+index 000000000000..4fd6aea59c75
+--- /dev/null
++++ b/drivers/gpio/gpio-exar.c
+@@ -0,0 +1,200 @@
++/*
++ * GPIO driver for Exar XR17V35X chip
++ *
++ * Copyright (C) 2015 Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++#include <linux/bitops.h>
++#include <linux/device.h>
++#include <linux/gpio/driver.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/pci.h>
++#include <linux/platform_device.h>
++
++#define EXAR_OFFSET_MPIOLVL_LO 0x90
++#define EXAR_OFFSET_MPIOSEL_LO 0x93
++#define EXAR_OFFSET_MPIOLVL_HI 0x96
++#define EXAR_OFFSET_MPIOSEL_HI 0x99
++
++#define DRIVER_NAME "gpio_exar"
++
++static DEFINE_IDA(ida_index);
++
++struct exar_gpio_chip {
++	struct gpio_chip gpio_chip;
++	struct mutex lock;
++	int index;
++	void __iomem *regs;
++	char name[20];
++};
++
++static void exar_update(struct gpio_chip *chip, unsigned int reg, int val,
++			unsigned int offset)
++{
++	struct exar_gpio_chip *exar_gpio = gpiochip_get_data(chip);
++	int temp;
++
++	mutex_lock(&exar_gpio->lock);
++	temp = readb(exar_gpio->regs + reg);
++	temp &= ~BIT(offset);
++	if (val)
++		temp |= BIT(offset);
++	writeb(temp, exar_gpio->regs + reg);
++	mutex_unlock(&exar_gpio->lock);
++}
++
++static int exar_set_direction(struct gpio_chip *chip, int direction,
++			      unsigned int offset)
++{
++	unsigned int bank = offset / 8;
++	unsigned int addr;
++
++	addr = bank ? EXAR_OFFSET_MPIOSEL_HI : EXAR_OFFSET_MPIOSEL_LO;
++	exar_update(chip, addr, direction, offset % 8);
++	return 0;
++}
++
++static int exar_direction_output(struct gpio_chip *chip, unsigned int offset,
++				 int value)
++{
++	return exar_set_direction(chip, 0, offset);
++}
++
++static int exar_direction_input(struct gpio_chip *chip, unsigned int offset)
++{
++	return exar_set_direction(chip, 1, offset);
++}
++
++static int exar_get(struct gpio_chip *chip, unsigned int reg)
++{
++	struct exar_gpio_chip *exar_gpio = gpiochip_get_data(chip);
++	int value;
++
++	mutex_lock(&exar_gpio->lock);
++	value = readb(exar_gpio->regs + reg);
++	mutex_unlock(&exar_gpio->lock);
++
++	return !!value;
++}
++
++static int exar_get_direction(struct gpio_chip *chip, unsigned int offset)
++{
++	unsigned int bank = offset / 8;
++	unsigned int addr;
++	int val;
++
++	addr = bank ? EXAR_OFFSET_MPIOSEL_HI : EXAR_OFFSET_MPIOSEL_LO;
++	val = exar_get(chip, addr) >> (offset % 8);
++
++	return !!val;
++}
++
++static int exar_get_value(struct gpio_chip *chip, unsigned int offset)
++{
++	unsigned int bank = offset / 8;
++	unsigned int addr;
++	int val;
++
++	addr = bank ? EXAR_OFFSET_MPIOLVL_LO : EXAR_OFFSET_MPIOLVL_HI;
++	val = exar_get(chip, addr) >> (offset % 8);
++
++	return !!val;
++}
++
++static void exar_set_value(struct gpio_chip *chip, unsigned int offset,
++			   int value)
++{
++	unsigned int bank = offset / 8;
++	unsigned int addr;
++
++	addr = bank ? EXAR_OFFSET_MPIOLVL_HI : EXAR_OFFSET_MPIOLVL_LO;
++	exar_update(chip, addr, value, offset % 8);
++}
++
++static int gpio_exar_probe(struct platform_device *pdev)
++{
++	struct pci_dev *pcidev = platform_get_drvdata(pdev);
++	struct exar_gpio_chip *exar_gpio;
++	void __iomem *p;
++	int index, ret;
++
++	if (pcidev->vendor != PCI_VENDOR_ID_EXAR)
++		return -ENODEV;
++
++	/*
++	 * Map the pci device to get the register addresses.
++	 * We will need to read and write those registers to control
++	 * the GPIO pins.
++	 * Using managed functions will save us from unmaping on exit.
++	 * As the device is enabled using managed functions by the
++	 * UART driver we can also use managed functions here.
++	 */
++	p = pcim_iomap(pcidev, 0, 0);
++	if (!p)
++		return -ENOMEM;
++
++	exar_gpio = devm_kzalloc(&pcidev->dev, sizeof(*exar_gpio), GFP_KERNEL);
++	if (!exar_gpio)
++		return -ENOMEM;
++
++	mutex_init(&exar_gpio->lock);
++
++	index = ida_simple_get(&ida_index, 0, 0, GFP_KERNEL);
++
++	sprintf(exar_gpio->name, "exar_gpio%d", index);
++	exar_gpio->gpio_chip.label = exar_gpio->name;
++	exar_gpio->gpio_chip.dev = &pcidev->dev;
++	exar_gpio->gpio_chip.direction_output = exar_direction_output;
++	exar_gpio->gpio_chip.direction_input = exar_direction_input;
++	exar_gpio->gpio_chip.get_direction = exar_get_direction;
++	exar_gpio->gpio_chip.get = exar_get_value;
++	exar_gpio->gpio_chip.set = exar_set_value;
++	exar_gpio->gpio_chip.base = -1;
++	exar_gpio->gpio_chip.ngpio = 16;
++	exar_gpio->regs = p;
++	exar_gpio->index = index;
++
++	ret = devm_gpiochip_add_data(&pcidev->dev,
++				     &exar_gpio->gpio_chip, exar_gpio);
++	if (ret)
++		goto err_destroy;
++
++	platform_set_drvdata(pdev, exar_gpio);
++
++	return 0;
++
++err_destroy:
++	ida_simple_remove(&ida_index, index);
++	mutex_destroy(&exar_gpio->lock);
++	return ret;
++}
++
++static int gpio_exar_remove(struct platform_device *pdev)
++{
++	struct exar_gpio_chip *exar_gpio = platform_get_drvdata(pdev);
++
++	ida_simple_remove(&ida_index, exar_gpio->index);
++	mutex_destroy(&exar_gpio->lock);
++
++	return 0;
++}
++
++static struct platform_driver gpio_exar_driver = {
++	.probe	= gpio_exar_probe,
++	.remove	= gpio_exar_remove,
++	.driver	= {
++		.name = DRIVER_NAME,
++	},
++};
++
++module_platform_driver(gpio_exar_driver);
++
++MODULE_ALIAS("platform:" DRIVER_NAME);
++MODULE_DESCRIPTION("Exar GPIO driver");
++MODULE_AUTHOR("Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>");
++MODULE_LICENSE("GPL");
 -- 
 2.12.3
