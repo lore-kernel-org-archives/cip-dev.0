@@ -1,102 +1,71 @@
 From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Wed, 30 Aug 2017 21:06:20 +0200
-Subject: [cip-dev] [PATCH 23/25] serial: exar: Factor out platform hooks
+Date: Wed, 30 Aug 2017 21:06:08 +0200
+Subject: [cip-dev] [PATCH 11/25] serial: exar: Leave MPIOs as output for
+	Commtech adapters
 In-Reply-To: <cover.1504119982.git.jan.kiszka@siemens.com>
 References: <cover.1504119982.git.jan.kiszka@siemens.com>
-Message-ID: <aa6c51db76eb4049c15cb393251d6e52224d4261.1504119982.git.jan.kiszka@siemens.com>
+Message-ID: <dd7d73e982576e80761df1b482a846c6a1c48f2c.1504119982.git.jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Jan Kiszka <jan.kiszka@siemens.com>
 
-commit 0d963ebf57d4c6374b3a33050a18af23c1e2ede1 upstream.
+commit bea8be656185a2808a2f255f4a91ff18215a9d0c upstream.
 
-This prepares the addition of IOT2040 platform support by preparing the
-needed setup and rs485_config hooks.
+Commtech adapters apparently need the original setting as outputs, see
+https://marc.info/?l=linux-gpio&m=149557425201323&w=2. Account for that.
 
+Fixes: 7dea8165f1d6 ("serial: exar: Preconfigure xr17v35x MPIOs as output")
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/serial/8250/8250_exar.c | 32 +++++++++++++++++++++++++++-----
- 1 file changed, 27 insertions(+), 5 deletions(-)
+ drivers/tty/serial/8250/8250_exar.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/tty/serial/8250/8250_exar.c b/drivers/tty/serial/8250/8250_exar.c
-index 477d1b8af107..fd721097f179 100644
+index 8d392ad207cf..e78ed54a696b 100644
 --- a/drivers/tty/serial/8250/8250_exar.c
 +++ b/drivers/tty/serial/8250/8250_exar.c
-@@ -50,6 +50,11 @@
- 
- struct exar8250;
- 
-+struct exar8250_platform {
-+	int (*rs485_config)(struct uart_port *, struct serial_rs485 *);
-+	int (*register_gpio)(struct pci_dev *, struct uart_8250_port *);
-+};
-+
- /**
-  * struct exar8250_board - board information
-  * @num_ports: number of serial ports
-@@ -183,7 +188,7 @@ static void setup_gpio(struct pci_dev *pcidev, u8 __iomem *p)
+@@ -158,19 +158,26 @@ pci_xr17c154_setup(struct exar8250 *priv, struct pci_dev *pcidev,
+ 	return default_setup(priv, pcidev, idx, offset, port);
  }
  
- static void *
--xr17v35x_register_gpio(struct pci_dev *pcidev)
-+__xr17v35x_register_gpio(struct pci_dev *pcidev)
+-static void setup_gpio(u8 __iomem *p)
++static void setup_gpio(struct pci_dev *pcidev, u8 __iomem *p)
  {
- 	struct platform_device *pdev;
- 
-@@ -202,17 +207,36 @@ xr17v35x_register_gpio(struct pci_dev *pcidev)
- 	return pdev;
++	/*
++	 * The Commtech adapters required the MPIOs to be driven low. The Exar
++	 * devices will export them as GPIOs, so we pre-configure them safely
++	 * as inputs.
++	 */
++	u8 dir = pcidev->vendor == PCI_VENDOR_ID_EXAR ? 0xff : 0x00;
++
+ 	writeb(0x00, p + UART_EXAR_MPIOINT_7_0);
+ 	writeb(0x00, p + UART_EXAR_MPIOLVL_7_0);
+ 	writeb(0x00, p + UART_EXAR_MPIO3T_7_0);
+ 	writeb(0x00, p + UART_EXAR_MPIOINV_7_0);
+-	writeb(0xff, p + UART_EXAR_MPIOSEL_7_0);
++	writeb(dir,  p + UART_EXAR_MPIOSEL_7_0);
+ 	writeb(0x00, p + UART_EXAR_MPIOOD_7_0);
+ 	writeb(0x00, p + UART_EXAR_MPIOINT_15_8);
+ 	writeb(0x00, p + UART_EXAR_MPIOLVL_15_8);
+ 	writeb(0x00, p + UART_EXAR_MPIO3T_15_8);
+ 	writeb(0x00, p + UART_EXAR_MPIOINV_15_8);
+-	writeb(0xff, p + UART_EXAR_MPIOSEL_15_8);
++	writeb(dir,  p + UART_EXAR_MPIOSEL_15_8);
+ 	writeb(0x00, p + UART_EXAR_MPIOOD_15_8);
  }
  
-+static int xr17v35x_register_gpio(struct pci_dev *pcidev,
-+				  struct uart_8250_port *port)
-+{
-+	if (pcidev->vendor == PCI_VENDOR_ID_EXAR)
-+		port->port.private_data =
-+			__xr17v35x_register_gpio(pcidev);
-+
-+	return 0;
-+}
-+
-+static const struct exar8250_platform exar8250_default_platform = {
-+	.register_gpio = xr17v35x_register_gpio,
-+};
-+
- static int
- pci_xr17v35x_setup(struct exar8250 *priv, struct pci_dev *pcidev,
- 		   struct uart_8250_port *port, int idx)
- {
- 	const struct exar8250_board *board = priv->board;
-+	const struct exar8250_platform *platform;
- 	unsigned int offset = idx * 0x400;
- 	unsigned int baud = 7812500;
- 	u8 __iomem *p;
- 	int ret;
+@@ -223,7 +230,7 @@ pci_xr17v35x_setup(struct exar8250 *priv, struct pci_dev *pcidev,
  
-+	platform = &exar8250_default_platform;
-+
- 	port->port.uartclk = baud * 16;
-+	port->port.rs485_config = platform->rs485_config;
-+
- 	/*
- 	 * Setup the uart clock for the devices on expansion slot to
- 	 * half the clock speed of the main chip (which is 125MHz)
-@@ -235,12 +259,10 @@ pci_xr17v35x_setup(struct exar8250 *priv, struct pci_dev *pcidev,
+ 	if (idx == 0) {
  		/* Setup Multipurpose Input/Output pins. */
- 		setup_gpio(pcidev, p);
+-		setup_gpio(p);
++		setup_gpio(pcidev, p);
  
--		if (pcidev->vendor == PCI_VENDOR_ID_EXAR)
--			port->port.private_data =
--				xr17v35x_register_gpio(pcidev);
-+		ret = platform->register_gpio(pcidev, port);
+ 		port->port.private_data = xr17v35x_register_gpio(pcidev);
  	}
- 
--	return 0;
-+	return ret;
- }
- 
- static void pci_xr17v35x_exit(struct pci_dev *pcidev)
 -- 
 2.12.3
