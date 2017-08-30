@@ -1,134 +1,105 @@
 From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Wed, 30 Aug 2017 21:13:43 +0200
-Subject: [cip-dev] [PATCH 01/14] efi: Move efi_status_to_err() to
-	drivers/firmware/efi/
+Date: Wed, 30 Aug 2017 21:13:47 +0200
+Subject: [cip-dev] [PATCH 05/14] efi/capsule: Move 'capsule' to the stack in
+	efi_capsule_supported()
 In-Reply-To: <cover.1504120436.git.jan.kiszka@siemens.com>
 References: <cover.1504120436.git.jan.kiszka@siemens.com>
-Message-ID: <da99d306c14f65a0092415fc581b57b2446c642c.1504120436.git.jan.kiszka@siemens.com>
+Message-ID: <40745c1b71f7fbebd2db1ee464ce1bb78fdc6f7f.1504120436.git.jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Matt Fleming <matt@codeblueprint.co.uk>
 
-commit 806b0351c9ff9890c1ef0ba2c46237baef49ac79 upstream.
+commit fb7a84cac03541f4da18dfa25b3f4767d4efc6fc upstream.
 
-Move efi_status_to_err() to the architecture independent code as it's
-generally useful in all bits of EFI code where there is a need to
-convert an efi_status_t to a kernel error value.
+Dan Carpenter reports that passing the address of the pointer to the
+kmalloc()'d memory for 'capsule' is dangerous:
 
+ "drivers/firmware/efi/capsule.c:109 efi_capsule_supported()
+  warn: did you mean to pass the address of 'capsule'
+
+   108
+   109          status = efi.query_capsule_caps(&capsule, 1, &max_size, reset);
+                                                ^^^^^^^^
+  If we modify capsule inside this function call then at the end of the
+  function we aren't freeing the original pointer that we allocated."
+
+Ard Biesheuvel noted that we don't even need to call kmalloc() since the
+object we allocate isn't very big and doesn't need to persist after the
+function returns.
+
+Place 'capsule' on the stack instead.
+
+Suggested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Matt Fleming <matt@codeblueprint.co.uk>
 Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Andy Lutomirski <luto@amacapital.net>
 Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Kweh Hock Leong <hock.leong.kweh@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: joeyli <jlee@suse.com>
 Cc: linux-efi at vger.kernel.org
-Link: http://lkml.kernel.org/r/1461614832-17633-27-git-send-email-matt at codeblueprint.co.uk
+Link: http://lkml.kernel.org/r/1462570771-13324-4-git-send-email-matt at codeblueprint.co.uk
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- drivers/firmware/efi/efi.c  | 33 +++++++++++++++++++++++++++++++++
- drivers/firmware/efi/vars.c | 33 ---------------------------------
- include/linux/efi.h         |  2 ++
- 3 files changed, 35 insertions(+), 33 deletions(-)
+ drivers/firmware/efi/capsule.c | 29 +++++++++++------------------
+ 1 file changed, 11 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index 3b52677f459a..33d60992a580 100644
---- a/drivers/firmware/efi/efi.c
-+++ b/drivers/firmware/efi/efi.c
-@@ -663,3 +663,36 @@ u64 __weak efi_mem_attributes(unsigned long phys_addr)
- 	}
- 	return 0;
- }
-+
-+int efi_status_to_err(efi_status_t status)
-+{
-+	int err;
-+
-+	switch (status) {
-+	case EFI_SUCCESS:
-+		err = 0;
-+		break;
-+	case EFI_INVALID_PARAMETER:
-+		err = -EINVAL;
-+		break;
-+	case EFI_OUT_OF_RESOURCES:
-+		err = -ENOSPC;
-+		break;
-+	case EFI_DEVICE_ERROR:
-+		err = -EIO;
-+		break;
-+	case EFI_WRITE_PROTECTED:
-+		err = -EROFS;
-+		break;
-+	case EFI_SECURITY_VIOLATION:
-+		err = -EACCES;
-+		break;
-+	case EFI_NOT_FOUND:
-+		err = -ENOENT;
-+		break;
-+	default:
-+		err = -EINVAL;
-+	}
-+
-+	return err;
-+}
-diff --git a/drivers/firmware/efi/vars.c b/drivers/firmware/efi/vars.c
-index 6f182fd91a6d..38e36526ba02 100644
---- a/drivers/firmware/efi/vars.c
-+++ b/drivers/firmware/efi/vars.c
-@@ -318,39 +318,6 @@ check_var_size(u32 attributes, unsigned long size)
- 	return fops->query_variable_store(attributes, size);
- }
- 
--static int efi_status_to_err(efi_status_t status)
--{
--	int err;
--
--	switch (status) {
--	case EFI_SUCCESS:
--		err = 0;
--		break;
--	case EFI_INVALID_PARAMETER:
--		err = -EINVAL;
--		break;
--	case EFI_OUT_OF_RESOURCES:
--		err = -ENOSPC;
--		break;
--	case EFI_DEVICE_ERROR:
--		err = -EIO;
--		break;
--	case EFI_WRITE_PROTECTED:
--		err = -EROFS;
--		break;
--	case EFI_SECURITY_VIOLATION:
--		err = -EACCES;
--		break;
--	case EFI_NOT_FOUND:
--		err = -ENOENT;
--		break;
--	default:
--		err = -EINVAL;
--	}
--
--	return err;
--}
--
- static bool variable_is_present(efi_char16_t *variable_name, efi_guid_t *vendor,
- 				struct list_head *head)
- {
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index 47be3ad7d3e5..774e9a0d49f1 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -999,6 +999,8 @@ static inline void
- efi_reboot(enum reboot_mode reboot_mode, const char *__unused) {}
- #endif
- 
-+extern int efi_status_to_err(efi_status_t status);
-+
- /*
-  * Variable Attributes
+diff --git a/drivers/firmware/efi/capsule.c b/drivers/firmware/efi/capsule.c
+index 0de55944ac0b..61e51249ef40 100644
+--- a/drivers/firmware/efi/capsule.c
++++ b/drivers/firmware/efi/capsule.c
+@@ -90,33 +90,26 @@ out:
   */
+ int efi_capsule_supported(efi_guid_t guid, u32 flags, size_t size, int *reset)
+ {
+-	efi_capsule_header_t *capsule;
++	efi_capsule_header_t capsule;
++	efi_capsule_header_t *cap_list[] = { &capsule };
+ 	efi_status_t status;
+ 	u64 max_size;
+-	int rv = 0;
+ 
+ 	if (flags & ~EFI_CAPSULE_SUPPORTED_FLAG_MASK)
+ 		return -EINVAL;
+ 
+-	capsule = kmalloc(sizeof(*capsule), GFP_KERNEL);
+-	if (!capsule)
+-		return -ENOMEM;
+-
+-	capsule->headersize = capsule->imagesize = sizeof(*capsule);
+-	memcpy(&capsule->guid, &guid, sizeof(efi_guid_t));
+-	capsule->flags = flags;
++	capsule.headersize = capsule.imagesize = sizeof(capsule);
++	memcpy(&capsule.guid, &guid, sizeof(efi_guid_t));
++	capsule.flags = flags;
+ 
+-	status = efi.query_capsule_caps(&capsule, 1, &max_size, reset);
+-	if (status != EFI_SUCCESS) {
+-		rv = efi_status_to_err(status);
+-		goto out;
+-	}
++	status = efi.query_capsule_caps(cap_list, 1, &max_size, reset);
++	if (status != EFI_SUCCESS)
++		return efi_status_to_err(status);
+ 
+ 	if (size > max_size)
+-		rv = -ENOSPC;
+-out:
+-	kfree(capsule);
+-	return rv;
++		return -ENOSPC;
++
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(efi_capsule_supported);
+ 
 -- 
 2.12.3
