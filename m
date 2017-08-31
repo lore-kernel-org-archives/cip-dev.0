@@ -1,42 +1,58 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 31 Aug 2017 15:34:16 +0100
-Subject: [cip-dev] [PATCH v2 11/18] ARM: dts: r8a7743: Link ARM GIC to clock
-	and clock domain
+Date: Thu, 31 Aug 2017 15:34:17 +0100
+Subject: [cip-dev] [PATCH v2 12/18] ARM: DTS: Fix register map for
+	virt-capable GIC
 In-Reply-To: <1504190063-61519-1-git-send-email-biju.das@bp.renesas.com>
 References: <1504190063-61519-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1504190063-61519-12-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1504190063-61519-13-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-Link the ARM GIC to the INTC-SYS module clock, and add it to the SYSC
-"always-on" PM Domain, so it can be power managed using that clock.
+Since everybody copied my own mistake from the DT binding example,
+let's address all the offenders in one swift go.
 
-Note that currently the GIC-400 driver doesn't support module clocks nor
-Runtime PM, so this must be handled as a critical clock.
+Most of them got the CPU interface size wrong (4kB, while it should
+be 8kB), except for both keystone platforms which got the control
+interface wrong (4kB instead of 8kB).
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 7add1da17ac8d5c4a2ecc967843ca5b55ce35fa6)
+In a few cases where I knew for sure what implementation was used,
+I've added the "arm,gic-400" compatible string. I'm 99% sure that
+this is what everyone is using, but short of having the TRM for
+all the other SoCs, I've left them alone.
+
+Acked-by: Shawn Guo <shawnguo@kernel.org>
+Acked-by: Tony Lindgren <tony@atomide.com>
+Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Acked-by: Antoine Tenart <antoine.tenart@free-electrons.com>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Matthias Brugger <matthias.bgg@gmail.com>
+Acked-by: Heiko Stuebner <heiko@sntech.de>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+(cherry picked from commit 387720c93812f1e702c20c667cb003a356e24a6c)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+[Backported only for r8a7743 SoC]
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/r8a7743.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index c58f150..5230822 100644
+index 5230822..8aa869e 100644
 --- a/arch/arm/boot/dts/r8a7743.dtsi
 +++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -58,6 +58,9 @@
+@@ -53,7 +53,7 @@
+ 			#address-cells = <0>;
+ 			interrupt-controller;
+ 			reg = <0 0xf1001000 0 0x1000>,
+-			      <0 0xf1002000 0 0x1000>,
++			      <0 0xf1002000 0 0x2000>,
+ 			      <0 0xf1004000 0 0x2000>,
  			      <0 0xf1006000 0 0x2000>;
  			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) |
- 						 IRQ_TYPE_LEVEL_HIGH)>;
-+			clocks = <&mstp4_clks R8A7743_CLK_INTC_SYS>;
-+			clock-names = "clk";
-+			power-domains = <&cpg_clocks>;
- 		};
- 
- 		irqc: interrupt-controller at e61c0000 {
 -- 
 1.9.1
