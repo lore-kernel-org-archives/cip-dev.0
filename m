@@ -1,64 +1,133 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 31 Aug 2017 15:34:05 +0100
-Subject: [cip-dev] [PATCH v2 00/18] Add Device tree support for
-	iWave	G20D-Q7 board
-Message-ID: <1504190063-61519-1-git-send-email-biju.das@bp.renesas.com>
+Date: Thu, 31 Aug 2017 15:34:06 +0100
+Subject: [cip-dev] [PATCH v2 01/18] ARM: dts: r8a7743: initial SoC device
+	tree
+In-Reply-To: <1504190063-61519-1-git-send-email-biju.das@bp.renesas.com>
+References: <1504190063-61519-1-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1504190063-61519-2-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This patch series aims to add initial SoC DT/Clock and iWave G20D-Q7 DT.
-The clock patch is based on the similar work done on r8a7791(R-Car M2) SoC.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
- This series has been tested against linux-cip tag v4.4.83-cip8 branch.
+The  initial R8A7743 SoC device tree including CPU0, GIC, timer, SYSC, RST,
+CPG, and the required clock descriptions.
 
-V1-->V2
-     Added SoC node
-	 https://lists.cip-project.org/pipermail/cip-dev/2017-August/000461.html
+Based on the original (and large) patch by Dmitry Shifrin
+<dmitry.shifrin@cogentembedded.com>.
 
-Biju Das (7):
-  ARM: shmobile: r8a7743: Add clock index macros for DT sources
-  clk: shmobile: Document r8a7743 CPG clock support
-  clk: shmobile: Document r8a7743 CPG DIV6 clock support
-  clk: shmobile: Document r8a7743 MSTP clock support
-  ARM: dts: r8a7743: Add clocks
-  ARM: dts: iwg20m: Add iWave RZG1M Qseven SOM
-  ARM: dts: iwg20d-q7: Add support for iWave G20D-Q7 board based on
-    RZ/G1M
-
-Geert Uytterhoeven (3):
-  ARM: dts: r8a7743: Link ARM GIC to clock and clock domain
-  ARM: dts: r8a7743: Fix SCIFB0 dmas indentation
-  ARM: dts: r8a7743: Remove unit-address and reg from integrated cache
-
-Marc Zyngier (1):
-  ARM: DTS: Fix register map for virt-capable GIC
-
-Sergei Shtylyov (5):
-  ARM: dts: r8a7743: initial SoC device tree
-  ARM: dts: r8a7743: add SYS-DMAC support
-  ARM: dts: r8a7743: add [H]SCIF{A|B} support
-  ARM: dts: r8a7743: add Ether support
-  ARM: dts: r8a7743: add IRQC support
-
-Simon Horman (2):
-  ARM: shmobile: defconfig: Enable r8a774[35] SoCs
-  ARM: multi_v7_defconfig: Enable r8a774[35] SoCs
-
- .../bindings/clock/renesas,cpg-div6-clocks.txt     |   1 +
- .../bindings/clock/renesas,cpg-mstp-clocks.txt     |   1 +
- .../clock/renesas,rcar-gen2-cpg-clocks.txt         |   1 +
- arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/r8a7743-iwg20d-q7.dts            |  25 +
- arch/arm/boot/dts/r8a7743-iwg20m.dtsi              |  29 +
- arch/arm/boot/dts/r8a7743.dtsi                     | 866 +++++++++++++++++++++
- arch/arm/configs/multi_v7_defconfig                |   2 +
- arch/arm/configs/shmobile_defconfig                |   2 +
- include/dt-bindings/clock/r8a7743-clock.h          | 166 ++++
- 10 files changed, 1094 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
- create mode 100644 arch/arm/boot/dts/r8a7743-iwg20m.dtsi
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+(cherry picked from commit 34e8d993a68ae459ad98c27afc07647e439deacc)
+(removed SYSC, RST and CPG nodes)
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+---
+ arch/arm/boot/dts/r8a7743.dtsi | 96 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 96 insertions(+)
  create mode 100644 arch/arm/boot/dts/r8a7743.dtsi
- create mode 100644 include/dt-bindings/clock/r8a7743-clock.h
 
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+new file mode 100644
+index 0000000..337e614
+--- /dev/null
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -0,0 +1,96 @@
++/*
++ * Device Tree Source for the r8a7743 SoC
++ *
++ * Copyright (C) 2016 Cogent Embedded Inc.
++ * Copyright (C) 2017 Renesas Electronics Corp.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2. This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++#include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++
++/ {
++	compatible = "renesas,r8a7743";
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu0: cpu at 0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a15";
++			reg = <0>;
++			clock-frequency = <1500000000>;
++			next-level-cache = <&L2_CA15>;
++		};
++
++		L2_CA15: cache-controller at 0 {
++			compatible = "cache";
++			reg = <0>;
++			cache-unified;
++			cache-level = <2>;
++		};
++	};
++
++	soc {
++		compatible = "simple-bus";
++		interrupt-parent = <&gic>;
++
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		gic: interrupt-controller at f1001000 {
++			compatible = "arm,gic-400";
++			#interrupt-cells = <3>;
++			#address-cells = <0>;
++			interrupt-controller;
++			reg = <0 0xf1001000 0 0x1000>,
++			      <0 0xf1002000 0 0x1000>,
++			      <0 0xf1004000 0 0x2000>,
++			      <0 0xf1006000 0 0x2000>;
++			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) |
++						 IRQ_TYPE_LEVEL_HIGH)>;
++		};
++
++		timer {
++			compatible = "arm,armv7-timer";
++			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
++						  IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) |
++						  IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) |
++						  IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) |
++						  IRQ_TYPE_LEVEL_LOW)>;
++		};
++	};
++
++	/* External root clock */
++	extal_clk: extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	/* External USB clock - can be overridden by the board */
++	usb_extal_clk: usb_extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <48000000>;
++	};
++
++	/* External SCIF clock */
++	scif_clk: scif {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++};
 -- 
 1.9.1
