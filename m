@@ -1,133 +1,195 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 31 Aug 2017 15:34:06 +0100
-Subject: [cip-dev] [PATCH v2 01/18] ARM: dts: r8a7743: initial SoC device
-	tree
+Date: Thu, 31 Aug 2017 15:34:07 +0100
+Subject: [cip-dev] [PATCH v2 02/18] ARM: shmobile: r8a7743: Add clock index
+	macros for DT sources
 In-Reply-To: <1504190063-61519-1-git-send-email-biju.das@bp.renesas.com>
 References: <1504190063-61519-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1504190063-61519-2-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1504190063-61519-3-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Add macros usable by device tree sources to reference r8a7743 clocks by
+index.
 
-The  initial R8A7743 SoC device tree including CPU0, GIC, timer, SYSC, RST,
-CPG, and the required clock descriptions.
+This is based on the work done by Laurent Pinchart for the r8a7791 SoC.
 
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 34e8d993a68ae459ad98c27afc07647e439deacc)
-(removed SYSC, RST and CPG nodes)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 96 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 96 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a7743.dtsi
+ include/dt-bindings/clock/r8a7743-clock.h | 166 ++++++++++++++++++++++++++++++
+ 1 file changed, 166 insertions(+)
+ create mode 100644 include/dt-bindings/clock/r8a7743-clock.h
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+diff --git a/include/dt-bindings/clock/r8a7743-clock.h b/include/dt-bindings/clock/r8a7743-clock.h
 new file mode 100644
-index 0000000..337e614
+index 0000000..a5c7e38
 --- /dev/null
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -0,0 +1,96 @@
++++ b/include/dt-bindings/clock/r8a7743-clock.h
+@@ -0,0 +1,166 @@
 +/*
-+ * Device Tree Source for the r8a7743 SoC
-+ *
-+ * Copyright (C) 2016 Cogent Embedded Inc.
 + * Copyright (C) 2017 Renesas Electronics Corp.
++ * Copyright 2013 Ideas On Board SPRL
 + *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2. This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
 + */
 +
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
++#ifndef __DT_BINDINGS_CLOCK_R8A7743_H__
++#define __DT_BINDINGS_CLOCK_R8A7743_H__
 +
-+/ {
-+	compatible = "renesas,r8a7743";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
++/* CPG */
++#define R8A7743_CLK_MAIN		0
++#define R8A7743_CLK_PLL0		1
++#define R8A7743_CLK_PLL1		2
++#define R8A7743_CLK_PLL3		3
++#define R8A7743_CLK_LB			4
++#define R8A7743_CLK_QSPI		5
++#define R8A7743_CLK_SDH			6
++#define R8A7743_CLK_SD0			7
++#define R8A7743_CLK_Z			8
++#define R8A7743_CLK_RCAN		9
 +
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++/* MSTP0 */
++#define R8A7743_CLK_MSIOF0		0
 +
-+		cpu0: cpu at 0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <0>;
-+			clock-frequency = <1500000000>;
-+			next-level-cache = <&L2_CA15>;
-+		};
++/* MSTP1 */
++#define R8A7743_CLK_VCP0		1
++#define R8A7743_CLK_VPC0		3
++#define R8A7743_CLK_ADG			6
++#define R8A7743_CLK_TSIF0		8
++#define R8A7743_CLK_TMU1		11
++#define R8A7743_CLK_3DG			12
++#define R8A7743_CLK_2DDMAC		15
++#define R8A7743_CLK_FDP1_1		18
++#define R8A7743_CLK_FDP1_0		19
++#define R8A7743_CLK_TMU3		21
++#define R8A7743_CLK_TMU2		22
++#define R8A7743_CLK_CMT0		24
++#define R8A7743_CLK_TMU0		25
++#define R8A7743_CLK_VSP1_DU1		27
++#define R8A7743_CLK_VSP1_DU0		28
++#define R8A7743_CLK_VSP1_S		31
 +
-+		L2_CA15: cache-controller at 0 {
-+			compatible = "cache";
-+			reg = <0>;
-+			cache-unified;
-+			cache-level = <2>;
-+		};
-+	};
++/* MSTP2 */
++#define R8A7743_CLK_SCIFA2		2
++#define R8A7743_CLK_SCIFA1		3
++#define R8A7743_CLK_SCIFA0		4
++#define R8A7743_CLK_MSIOF2		5
++#define R8A7743_CLK_SCIFB0		6
++#define R8A7743_CLK_SCIFB1		7
++#define R8A7743_CLK_MSIOF1		8
++#define R8A7743_CLK_SCIFB2		16
++#define R8A7743_CLK_SYS_DMAC1		18
++#define R8A7743_CLK_SYS_DMAC0		19
 +
-+	soc {
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
++/* MSTP3 */
++#define R8A7743_CLK_TPU0		4
++#define R8A7743_CLK_SDHI3		11
++#define R8A7743_CLK_SDHI2		12
++#define R8A7743_CLK_SDHI0		14
++#define R8A7743_CLK_MMCIF0		15
++#define R8A7743_CLK_IIC0		18
++#define R8A7743_CLK_PCIEC		19
++#define R8A7743_CLK_IIC1		23
++#define R8A7743_CLK_SSUSB		28
++#define R8A7743_CLK_CMT1		29
++#define R8A7743_CLK_USBDMAC0		30
++#define R8A7743_CLK_USBDMAC1		31
 +
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
++/* MSTP4 */
++#define R8A7743_CLK_RWDT		4
++#define R8A7743_CLK_USB_DDM		6
++#define R8A7743_CLK_IRQC		7
++#define R8A7743_CLK_INTC_SYS		8
 +
-+		gic: interrupt-controller at f1001000 {
-+			compatible = "arm,gic-400";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0 0xf1001000 0 0x1000>,
-+			      <0 0xf1002000 0 0x1000>,
-+			      <0 0xf1004000 0 0x2000>,
-+			      <0 0xf1006000 0 0x2000>;
-+			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) |
-+						 IRQ_TYPE_LEVEL_HIGH)>;
-+		};
++/* MSTP5 */
++#define R8A7743_CLK_AUDIO_DMAC1		1
++#define R8A7743_CLK_AUDIO_DMAC0		2
++#define R8A7743_CLK_THERMAL		22
++#define R8A7743_CLK_PWM			23
++#define R8A7743_CLK_BOOT_ROM		26
 +
-+		timer {
-+			compatible = "arm,armv7-timer";
-+			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
-+						  IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) |
-+						  IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) |
-+						  IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) |
-+						  IRQ_TYPE_LEVEL_LOW)>;
-+		};
-+	};
++/* MSTP7 */
++#define R8A7743_CLK_USB_EHCI		3
++#define R8A7743_CLK_HSUSB		4
++#define R8A7743_CLK_HSCIF2		13
++#define R8A7743_CLK_SCIF5		14
++#define R8A7743_CLK_SCIF4		15
++#define R8A7743_CLK_HSCIF1		16
++#define R8A7743_CLK_HSCIF0		17
++#define R8A7743_CLK_SCIF3		18
++#define R8A7743_CLK_SCIF2		19
++#define R8A7743_CLK_SCIF1		20
++#define R8A7743_CLK_SCIF0		21
++#define R8A7743_CLK_DU1			23
++#define R8A7743_CLK_DU0			24
++#define R8A7743_CLK_LVDS0		26
 +
-+	/* External root clock */
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
++/* MSTP8 */
++#define R8A7743_CLK_IPMMU_SGX		0
++#define R8A7743_CLK_VIN2		9
++#define R8A7743_CLK_VIN1		10
++#define R8A7743_CLK_VIN0		11
++#define R8A7743_CLK_ETHERAVB		12
++#define R8A7743_CLK_ETHER		13
++#define R8A7743_CLK_SATA1		14
++#define R8A7743_CLK_SATA0		15
++#define R8A7743_CLK_DCU			30
 +
-+	/* External USB clock - can be overridden by the board */
-+	usb_extal_clk: usb_extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <48000000>;
-+	};
++/* MSTP9 */
++#define R8A7743_CLK_GPIO7		4
++#define R8A7743_CLK_GPIO6		5
++#define R8A7743_CLK_GPIO5		7
++#define R8A7743_CLK_GPIO4		8
++#define R8A7743_CLK_GPIO3		9
++#define R8A7743_CLK_GPIO2		10
++#define R8A7743_CLK_GPIO1		11
++#define R8A7743_CLK_GPIO0		12
++#define R8A7743_CLK_RCAN1		15
++#define R8A7743_CLK_RCAN0		16
++#define R8A7743_CLK_QSPI_MOD		17
++#define R8A7743_CLK_I2C5		25
++#define R8A7743_CLK_IICDVFS		26
++#define R8A7743_CLK_I2C4		27
++#define R8A7743_CLK_I2C3		28
++#define R8A7743_CLK_I2C2		29
++#define R8A7743_CLK_I2C1		30
++#define R8A7743_CLK_I2C0		31
 +
-+	/* External SCIF clock */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+};
++/* MSTP10 */
++#define R8A7743_CLK_SSI_ALL		5
++#define R8A7743_CLK_SSI9		6
++#define R8A7743_CLK_SSI8		7
++#define R8A7743_CLK_SSI7		8
++#define R8A7743_CLK_SSI6		9
++#define R8A7743_CLK_SSI5		10
++#define R8A7743_CLK_SSI4		11
++#define R8A7743_CLK_SSI3		12
++#define R8A7743_CLK_SSI2		13
++#define R8A7743_CLK_SSI1		14
++#define R8A7743_CLK_SSI0		15
++#define R8A7743_CLK_SCU_ALL		17
++#define R8A7743_CLK_SCU_DVC1		18
++#define R8A7743_CLK_SCU_DVC0		19
++#define R8A7743_CLK_SCU_CTU1_MIX1	20
++#define R8A7743_CLK_SCU_CTU0_MIX0	21
++#define R8A7743_CLK_SCU_SRC9		22
++#define R8A7743_CLK_SCU_SRC8		23
++#define R8A7743_CLK_SCU_SRC7		24
++#define R8A7743_CLK_SCU_SRC6		25
++#define R8A7743_CLK_SCU_SRC5		26
++#define R8A7743_CLK_SCU_SRC4		27
++#define R8A7743_CLK_SCU_SRC3		28
++#define R8A7743_CLK_SCU_SRC2		29
++#define R8A7743_CLK_SCU_SRC1		30
++#define R8A7743_CLK_SCU_SRC0		31
++
++/* MSTP11 */
++#define R8A7743_CLK_SCIFA3		6
++#define R8A7743_CLK_SCIFA4		7
++#define R8A7743_CLK_SCIFA5		8
++
++#endif /* __DT_BINDINGS_CLOCK_R8A7743_H__ */
 -- 
 1.9.1
