@@ -1,10 +1,10 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 31 Aug 2017 15:34:22 +0100
-Subject: [cip-dev] [PATCH v2 17/18] ARM: shmobile: defconfig: Enable
+Date: Thu, 31 Aug 2017 15:34:23 +0100
+Subject: [cip-dev] [PATCH v2 18/18] ARM: multi_v7_defconfig: Enable
 	r8a774[35] SoCs
 In-Reply-To: <1504190063-61519-1-git-send-email-biju.das@bp.renesas.com>
 References: <1504190063-61519-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1504190063-61519-18-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1504190063-61519-19-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
@@ -14,17 +14,17 @@ Enable recently added r8a7743 (RZ/G1M) and r8a7745 (RZ/G1E) SoCs.
 
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-(cherry picked from commit d234e29dae04b224a63e39bc29938fa77819b3f1)
+(cherry picked from commit 0a2cd376019d5bfe8ddcf96a525c8dbd9b295e28)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- arch/arm/configs/shmobile_defconfig | 2 ++
+ arch/arm/configs/multi_v7_defconfig | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index 3aef019..fb8094a 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -14,6 +14,8 @@ CONFIG_ARCH_EMEV2=y
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index cd7b198..f1ba3fb 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -80,6 +80,8 @@ CONFIG_ARCH_EMEV2=y
  CONFIG_ARCH_R7S72100=y
  CONFIG_ARCH_R8A73A4=y
  CONFIG_ARCH_R8A7740=y
