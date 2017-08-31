@@ -1,54 +1,42 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 31 Aug 2017 15:34:15 +0100
-Subject: [cip-dev] [PATCH v2 10/18] ARM: dts: r8a7743: add IRQC support
+Date: Thu, 31 Aug 2017 15:34:16 +0100
+Subject: [cip-dev] [PATCH v2 11/18] ARM: dts: r8a7743: Link ARM GIC to clock
+	and clock domain
 In-Reply-To: <1504190063-61519-1-git-send-email-biju.das@bp.renesas.com>
 References: <1504190063-61519-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1504190063-61519-11-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1504190063-61519-12-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Describe the IRQC interrupt controller in the R8A7743 device tree.
+Link the ARM GIC to the INTC-SYS module clock, and add it to the SYSC
+"always-on" PM Domain, so it can be power managed using that clock.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Note that currently the GIC-400 driver doesn't support module clocks nor
+Runtime PM, so this must be handled as a critical clock.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit ef0ca50774495c4ca4d1211252c8ee5af5136187)
+(cherry picked from commit 7add1da17ac8d5c4a2ecc967843ca5b55ce35fa6)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ arch/arm/boot/dts/r8a7743.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 91ee567..c58f150 100644
+index c58f150..5230822 100644
 --- a/arch/arm/boot/dts/r8a7743.dtsi
 +++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -60,6 +60,25 @@
+@@ -58,6 +58,9 @@
+ 			      <0 0xf1006000 0 0x2000>;
+ 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) |
  						 IRQ_TYPE_LEVEL_HIGH)>;
++			clocks = <&mstp4_clks R8A7743_CLK_INTC_SYS>;
++			clock-names = "clk";
++			power-domains = <&cpg_clocks>;
  		};
  
-+		irqc: interrupt-controller at e61c0000 {
-+			compatible = "renesas,irqc-r8a7743", "renesas,irqc";
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			reg = <0 0xe61c0000 0 0x200>;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp4_clks R8A7743_CLK_IRQC>;
-+			power-domains = <&cpg_clocks>;
-+		};
-+
- 		timer {
- 			compatible = "arm,armv7-timer";
- 			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
+ 		irqc: interrupt-controller at e61c0000 {
 -- 
 1.9.1
