@@ -1,37 +1,27 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 31 Aug 2017 15:34:23 +0100
-Subject: [cip-dev] [PATCH v2 18/18] ARM: multi_v7_defconfig: Enable
-	r8a774[35] SoCs
-In-Reply-To: <1504190063-61519-1-git-send-email-biju.das@bp.renesas.com>
-References: <1504190063-61519-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1504190063-61519-19-git-send-email-biju.das@bp.renesas.com>
+From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
+Date: Mon, 4 Sep 2017 17:42:37 +0900
+Subject: [cip-dev] B@D: mapping serial device to the VM for ser2net
+Message-ID: <000801d32559$c31e3450$495a9cf0$@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Simon Horman <horms+renesas@verge.net.au>
+Hi,
 
-Enable recently added r8a7743 (RZ/G1M) and r8a7745 (RZ/G1E) SoCs.
+I'm trying to setup ser2net for LAVA to access the serial port output of the 
+Renesas iwg20m board via local telnet from within the B at D virtual machine.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-(cherry picked from commit 0a2cd376019d5bfe8ddcf96a525c8dbd9b295e28)
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm/configs/multi_v7_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+I managed to get it working by using the Serial port settings window at
+the Oracle VM Virtualbox Manager (GUI). In particular, I used port mode 'Host Device'
+and '/dev/ttyUSB1' for the Path/Address (the device file name on the host).
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index cd7b198..f1ba3fb 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -80,6 +80,8 @@ CONFIG_ARCH_EMEV2=y
- CONFIG_ARCH_R7S72100=y
- CONFIG_ARCH_R8A73A4=y
- CONFIG_ARCH_R8A7740=y
-+CONFIG_ARCH_R8A7743=y
-+CONFIG_ARCH_R8A7745=y
- CONFIG_ARCH_R8A7778=y
- CONFIG_ARCH_R8A7779=y
- CONFIG_ARCH_R8A7790=y
--- 
-1.9.1
+That maps the host's /dev/ttyUSB1 to the VM's /dev/ttyS0, so I also had
+to modify the /etc/ser2net.conf file and specify that port 2000 is supposed
+to use a 115200 baud rate.
+
+Although works fine (telnet localhost 2000), I see that you guys are using the 
+port 8020 for /dev/ttyUSB0 by default so I was wondering if there is a better strategy. 
+# I have also tried using the "USB" settings in the Virtualbox Manager (after installing 
+# the extension pack), but I haven't figured out how to it works yet
+
+Thanks,
+Daniel
