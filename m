@@ -1,70 +1,27 @@
 From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
-Date: Tue, 5 Sep 2017 11:23:01 +0900
-Subject: [cip-dev] B@D: mapping serial device to the VM for ser2net
-In-Reply-To: <8760cyu015.fsf@ctlt579.codethink.co.uk>
-References: <000801d32559$c31e3450$495a9cf0$@toshiba.co.jp>
-	<8760cyu015.fsf@ctlt579.codethink.co.uk>
-Message-ID: <000601d325ed$e5eeddb0$b1cc9910$@toshiba.co.jp>
+Date: Thu, 7 Sep 2017 17:43:52 +0900
+Subject: [cip-dev] Project-X: Deby-based reference filesystems milestone
+	achieved
+Message-ID: <001e01d327b5$6ec674e0$4c535ea0$@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Robert,
+Hi all,
 
-> -----Original Message-----
-> From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Robert Marshall
-> Sent: Monday, September 04, 2017 9:22 PM
-> To: cip dev
-> Subject: Re: [cip-dev] B at D: mapping serial device to the VM for ser2net
-> 
-> Daniel
-> 
-> "Daniel Sangorrin" <daniel.sangorrin@toshiba.co.jp> writes:
-> 
-> > Hi,
-> >
-> > I'm trying to setup ser2net for LAVA to access the serial port output of the
-> > Renesas iwg20m board via local telnet from within the B at D virtual machine.
-> >
-> > I managed to get it working by using the Serial port settings window at
-> > the Oracle VM Virtualbox Manager (GUI). In particular, I used port mode 'Host Device'
-> > and '/dev/ttyUSB1' for the Path/Address (the device file name on the host).
-> >
-> > That maps the host's /dev/ttyUSB1 to the VM's /dev/ttyS0, so I also had
-> > to modify the /etc/ser2net.conf file and specify that port 2000 is supposed
-> > to use a 115200 baud rate.
-> >
-> > Although works fine (telnet localhost 2000), I see that you guys are using the
-> > port 8020 for /dev/ttyUSB0 by default so I was wondering if there is a better strategy.
-> > # I have also tried using the "USB" settings in the Virtualbox Manager (after installing
-> > # the extension pack), but I haven't figured out how to it works yet
-> >
-> 
-> For the USB settings have you tried the config suggestions at the end of this page:
-> https://wiki.linuxfoundation.org/civilinfrastructureplatform/beagleboneblackboard
-> points 15-16 intended for windows but should also work with debian
-> 
-> I don't remember changing my local ser2net.conf and wondered whether
-> 8020 was a default (or is that what you're saying), but it's been quite
-> a few months since I set it up!
+I just added support in Project-X for the NE0-Nano-SoC Cyclone V board using the
+CIP patched kernel provided by Koguchi-san (https://gitlab.com/cip-playground/linux-cip-cyclonev).
+# Koguchi-san: thanks!
 
-Yes, I had already tried those instructions but I couldn't see any devices showing up on my Virtualbox manager.
-I solved the problem with these instructions:
+This completes the first milestone for Project-X, which added support for the Beaglebone Black,
+Qemux86_64, Renesas iwg10m and NE0-Nano-SoC boards using Deby. All of them can be built with the
+KAS tool (https://kas.readthedocs.io/en/latest/userguide.html) provided by Siemens 
+(or alternatively with a setup.sh script).
 
-$ sudo apt install virtualbox-ext-pack
-$ sudo adduser $USER vboxusers
+https://gitlab.com/cip-playground/project-x
 
-Now I can see the USB devices as in the instructions. Thanks for your help.
+The next milestones are:
+- to integrate them with B at D (I am currently working on the renesas board integration)
+- to provide ISAR reference file systems (Jan: any plans about this? I can try but I have no experience with ISAR)
 
-Regards,
+Thanks,
 Daniel
-
-
-
-
-> 
-> Robert
-> 
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
