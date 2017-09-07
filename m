@@ -1,27 +1,16 @@
-From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
-Date: Thu, 7 Sep 2017 17:43:52 +0900
-Subject: [cip-dev] Project-X: Deby-based reference filesystems milestone
-	achieved
-Message-ID: <001e01d327b5$6ec674e0$4c535ea0$@toshiba.co.jp>
+From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
+Date: Thu, 7 Sep 2017 09:45:25 +0100
+Subject: [cip-dev] Y2038 BoF at DebConf 2017
+Message-ID: <59B10725.9020604@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+Hi,
 
-I just added support in Project-X for the NE0-Nano-SoC Cyclone V board using the
-CIP patched kernel provided by Koguchi-san (https://gitlab.com/cip-playground/linux-cip-cyclonev).
-# Koguchi-san: thanks!
+summary of the BoF: https://lwn.net/Articles/732794/
 
-This completes the first milestone for Project-X, which added support for the Beaglebone Black,
-Qemux86_64, Renesas iwg10m and NE0-Nano-SoC boards using Deby. All of them can be built with the
-KAS tool (https://kas.readthedocs.io/en/latest/userguide.html) provided by Siemens 
-(or alternatively with a setup.sh script).
-
-https://gitlab.com/cip-playground/project-x
-
-The next milestones are:
-- to integrate them with B at D (I am currently working on the renesas board integration)
-- to provide ISAR reference file systems (Jan: any plans about this? I can try but I have no experience with ISAR)
-
-Thanks,
-Daniel
+Best Regards
+-- 
+Agustin Benito Bethencourt
+Principal Consultant - FOSS at Codethink
+agustin.benito at codethink.co.uk
