@@ -1,26 +1,24 @@
 From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Thu, 14 Sep 2017 16:55:44 +0100
-Subject: [cip-dev] [PATCH 0/8] Basic support for IOT2000 devices
-In-Reply-To: <cover.1504119155.git.jan.kiszka@siemens.com>
-References: <cover.1504119155.git.jan.kiszka@siemens.com>
-Message-ID: <1505404544.1807.53.camel@codethink.co.uk>
+Date: Thu, 14 Sep 2017 17:55:32 +0100
+Subject: [cip-dev] [PATCH 00/25] EXAR UART support for IOT2040 device
+In-Reply-To: <cover.1504119982.git.jan.kiszka@siemens.com>
+References: <cover.1504119982.git.jan.kiszka@siemens.com>
+Message-ID: <1505408132.1860.3.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Wed, 2017-08-30 at 20:52 +0200, Jan Kiszka wrote:
-> This is the first of 3 chunks to enable the CIP kernel for the IOT2000
-> devices. It has the side effect of improving also the support of the
-> by now discontinued Galileo Gen 2 board.
+On Wed, 2017-08-30 at 21:05 +0200, Jan Kiszka wrote:
+> Second chunk: This imports a number of preparatory patches in order to
+> fully exploit the PCI-attached dual-port EXAR with RS232/422/485 on the
+> IOT2040.
 > 
-> Features added:
->  - Ethernet MACs on IOT2000
->  - TI ADC108S102 on IOT2000 and Galileo
->  - I2C frequency tuning on IOT2000
->  - GPIO support for pca9685 PWMs on IOT2000 and Galileo
->  - interrupt support for PCAL9535 on IOT2000 and Galileo
+> To avoid having to backport also API-changing patches for platform
+> devices, I've slightly modified two patches to use a communication
+> pattern that does not require these changes.
 [...]
 
-Applied this series, along with the gpiolib additions already noted.
+Applied this series, except the gpiolib additions which were needed
+earlier.
 
 Ben.
 
