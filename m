@@ -1,30 +1,29 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Thu, 14 Sep 2017 19:42:46 +0100
-Subject: [cip-dev] [PATCH 00/14] EFI capsule update support for IOT2000
-	devices
-In-Reply-To: <cover.1504120436.git.jan.kiszka@siemens.com>
-References: <cover.1504120436.git.jan.kiszka@siemens.com>
-Message-ID: <1505414566.1860.5.camel@codethink.co.uk>
+From: jan.kiszka@siemens.com (Jan Kiszka)
+Date: Thu, 14 Sep 2017 21:37:18 +0200
+Subject: [cip-dev] [PATCH 00/25] EXAR UART support for IOT2040 device
+In-Reply-To: <1505408132.1860.3.camel@codethink.co.uk>
+References: <cover.1504119982.git.jan.kiszka@siemens.com>
+	<1505408132.1860.3.camel@codethink.co.uk>
+Message-ID: <cfcee753-5c1a-1b72-2ed0-521ff941930c@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Wed, 2017-08-30 at 21:13 +0200, Jan Kiszka wrote:
-> Last chunk: This backports EFI capsule updates, primarily for the use
-> with the IOT2020 and IOT2040, the latter with Quark-proprietary security
-> header format. The feature should also work for the Galileo Gen 2 and,
-> at least conceptually, for any EFI capsule update compatible firmware.
-[...]
+On 2017-09-14 18:55, Ben Hutchings wrote:
+> On Wed, 2017-08-30 at 21:05 +0200, Jan Kiszka wrote:
+>> Second chunk: This imports a number of preparatory patches in order to
+>> fully exploit the PCI-attached dual-port EXAR with RS232/422/485 on the
+>> IOT2040.
+>>
+>> To avoid having to backport also API-changing patches for platform
+>> devices, I've slightly modified two patches to use a communication
+>> pattern that does not require these changes.
+> [...]
+> 
+> Applied this series, except the gpiolib additions which were needed
+> earlier.
 
-Applied these, but shouldn't I also apply:
+Yeah, sorry, this dependency slipped through (only tested the complete
+series).
 
-commit 62075e581802ea1842d5d3c490a7e46330bdb9e1
-Author: Matt Fleming <matt@codeblueprint.co.uk>
-Date:   Fri May 6 22:39:27 2016 +0100
-
-    efi/capsule: Make efi_capsule_pending() lockless
-
-Ben.
-
--- 
-Ben Hutchings
-Software Developer, Codethink Ltd.
+Thanks,
+Jan
