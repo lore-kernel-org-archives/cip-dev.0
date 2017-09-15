@@ -1,24 +1,33 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Fri, 15 Sep 2017 15:41:56 +0100
-Subject: [cip-dev] [PATCH v2 00/18] Add Device tree support for
-	iWave	G20D-Q7 board
-In-Reply-To: <KL1PR06MB17024B5A7950AF05BA980730B86C0@KL1PR06MB1702.apcprd06.prod.outlook.com>
-References: <1504190063-61519-1-git-send-email-biju.das@bp.renesas.com>
-	<KL1PR06MB17024B5A7950AF05BA980730B86C0@KL1PR06MB1702.apcprd06.prod.outlook.com>
-Message-ID: <1505486516.1860.9.camel@codethink.co.uk>
+From: henning.schild@siemens.com (Henning Schild)
+Date: Fri, 15 Sep 2017 17:10:43 +0200
+Subject: [cip-dev] CIP kernel debian packages available?
+In-Reply-To: <1505483563.1860.7.camel@codethink.co.uk>
+References: <20170915093555.5beb3b4e@md1em3qc>
+	<1505483563.1860.7.camel@codethink.co.uk>
+Message-ID: <20170915171043.395a0144@md1em3qc>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Fri, 2017-09-15 at 13:58 +0000, Biju Das wrote:
-> Hi Ben,
+Am Fri, 15 Sep 2017 14:52:43 +0100
+schrieb Ben Hutchings <ben.hutchings@codethink.co.uk>:
+
+> On Fri, 2017-09-15 at 09:35 +0200, Henning Schild wrote:
+> > Hi,
+> > 
+> > i would like to integrate a CIP kernel into an x86_64 debian9, for
+> > starters a defconfig would be good enough. Is there by any chance a
+> > debian repo with cip kernels in it?  
 > 
-> Any update on this?
-[...]
+> Is this intended for Siemens use or for all CIP members with
+> applications using x86_64?
 
-I've just applied this series.  Sorry for the delay.
+Seems like the answer is, No there is no such repo.
+Ideally such a repo would be for all archs and all CIP members, or
+basically just for everyone. But i understand that building kernel
+packages and maintaining configs causes more work. And i do not even
+know whether other CIP members are even interested in debian.
 
-Ben.
+Henning
 
--- 
-Ben Hutchings
-Software Developer, Codethink Ltd.
+> Ben.
+> 
