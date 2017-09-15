@@ -1,33 +1,22 @@
-From: henning.schild@siemens.com (Henning Schild)
-Date: Fri, 15 Sep 2017 17:10:43 +0200
-Subject: [cip-dev] CIP kernel debian packages available?
-In-Reply-To: <1505483563.1860.7.camel@codethink.co.uk>
-References: <20170915093555.5beb3b4e@md1em3qc>
-	<1505483563.1860.7.camel@codethink.co.uk>
-Message-ID: <20170915171043.395a0144@md1em3qc>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Fri, 15 Sep 2017 16:11:19 +0100
+Subject: [cip-dev] [PATCH  00/11] Add Pinctrl support for r8a7743
+In-Reply-To: <1502370904-41653-1-git-send-email-biju.das@bp.renesas.com>
+References: <1502370904-41653-1-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1505488279.1860.10.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Am Fri, 15 Sep 2017 14:52:43 +0100
-schrieb Ben Hutchings <ben.hutchings@codethink.co.uk>:
+On Thu, 2017-08-10 at 14:14 +0100, Biju Das wrote:
+> This series aims to add Pinctrl support for r8a7743.
+> All the patches in this series are cherry-picked from 
+> upstream kernel
+[...]
 
-> On Fri, 2017-09-15 at 09:35 +0200, Henning Schild wrote:
-> > Hi,
-> > 
-> > i would like to integrate a CIP kernel into an x86_64 debian9, for
-> > starters a defconfig would be good enough. Is there by any chance a
-> > debian repo with cip kernels in it?  
-> 
-> Is this intended for Siemens use or for all CIP members with
-> applications using x86_64?
+I've applied this series, thanks.
 
-Seems like the answer is, No there is no such repo.
-Ideally such a repo would be for all archs and all CIP members, or
-basically just for everyone. But i understand that building kernel
-packages and maintaining configs causes more work. And i do not even
-know whether other CIP members are even interested in debian.
+Ben.
 
-Henning
-
-> Ben.
-> 
+-- 
+Ben Hutchings
+Software Developer, Codethink Ltd.
