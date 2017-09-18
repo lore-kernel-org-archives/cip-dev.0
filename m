@@ -1,58 +1,85 @@
-From: henning.schild@siemens.com (Henning Schild)
-Date: Fri, 15 Sep 2017 17:43:23 +0200
-Subject: [cip-dev] CIP kernel debian packages available?
-In-Reply-To: <1505489264.1860.23.camel@codethink.co.uk>
-References: <20170915093555.5beb3b4e@md1em3qc>
-	<1505483563.1860.7.camel@codethink.co.uk>
-	<9892e86c-97dc-5715-dd11-fe892c39d549@siemens.com>
-	<1505489264.1860.23.camel@codethink.co.uk>
-Message-ID: <20170915174323.2b9fdab5@md1em3qc>
+From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
+Date: Mon, 18 Sep 2017 12:27:41 +0100
+Subject: [cip-dev] IP testing and kernel maintenance report week 36 and 37
+Message-ID: <59BFADAD.3000702@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Am Fri, 15 Sep 2017 16:27:44 +0100
-schrieb Ben Hutchings <ben.hutchings@codethink.co.uk>:
+Hi,
 
-> On Fri, 2017-09-15 at 16:04 +0200, Jan Kiszka wrote:
-> > On 2017-09-15 15:52, Ben Hutchings wrote:  
-> > > On Fri, 2017-09-15 at 09:35 +0200, Henning Schild wrote:  
-> > >> Hi,
-> > >>
-> > >> i would like to integrate a CIP kernel into an x86_64 debian9,
-> > >> for starters a defconfig would be good enough. Is there by any
-> > >> chance a debian repo with cip kernels in it?  
-> > > 
-> > > Is this intended for Siemens use or for all CIP members with
-> > > applications using x86_64?  
-> > 
-> > We are currently the one with the immediate use case, but I could
-> > imagine that having such packages for x86-64 and maybe later on also
-> > i386 and arm64 would be beneficial for others as well. It's a
-> > matter of logistics and effort (at least initially).  
-> 
-> So long as you want your own kernel config, I would suggest building
-> packages using
-> 'make foo_defconfig && make deb-pkg' (substitute your preferred name
-> for 'foo').  Since Linux 4.3 this builds both source and binary
-> packages, so it should be easy to satisfy your source distribution
-> requirements this way.
+this is a a summary of the main tasks performed by the Codethink guys 
+during the last couple of weeks.
 
-Thanks, that is exactly what i was doing already.
+Week 36 and 37 2017
 
-> If we get to a point where members can use the CIP branch without
-> further patches and can share common configuration per-architecture,
-> then it may be worth making a fork of Debian's official kernel
-> packaging.  But if not, I think that will be more trouble to maintain
-> than it's worth.
+++ Kernel Maintenance
 
-Sure, i never wanted to suggest that we need that, i just wanted to
-know whether it already exists.
+* Renesas patch-set merged
 
-Henning
+* Siemens patch-sets reviewed.
+** Patch-sets merge is in progress. One re-submission by Siemens required.
 
-> Ben.
-> 
-> > What do others think?
-> > 
-> > Jan  
-> 
+* Discussion about CIP kernel into an x86_64 debian9 in progress.
+
+++ CIP testing project
+
+* B at D with new LAVA works. #114
+** In order to merge the new version, we ned initramfs to work which is 
+the current focus.
+** link https://gitlab.com/cip-project/cip-testing/testing/issues/114
+
+* Currently facing issues with locally built initramfs #136
+** Asked upstream
+** Link: https://gitlab.com/cip-project/cip-testing/testing/issues/136
+
+* As usual, we are sending the outcome of the daily health-check to the 
+cip-testing-results mailing list for the latest CIP kernel.
+** Link: 
+https://lists.cip-project.org/pipermail/cip-testing-results/2017-September/thread.html
+** More verbose mode implemented. More improvements required.
+
+* Other tasks
+
+** Improvements on the the device dictionary for BBB to remove 
+unnecessary commands. In progress. #138
+*** Link: https://gitlab.com/cip-project/cip-testing/testing/issues/138
+
+** #127 bug closed
+*** Link: https://gitlab.com/cip-project/cip-testing/testing/issues/127
+
+++ Other tasks
+
+* B at D and AGL lab in a box
+**  Incorporate notification callbacks into b at d #137 would help AGL
+** Link: https://gitlab.com/cip-project/cip-testing/testing/issues/137
+
+* We are starting to be involved upstream not just by requesting help 
+but also providing it when it comes to our use case. Small but 
+significant step.
+
+* We have started to check how to improve reports/notifications.
+
+* ELCE
+
+** B at D training session
+*** Doing some tests useful to preparing the set up at the CIP room 
+related with wifi and cable connectivity
+*** Schedule set. Needs announcement.
+
+** Kernel maintenance meeting schedule set. Needs announcement.
+
+** Waiting for confirmation about the Y2038 meeting. Room availability 
+known.
+
+** To follow closely the work done in the CIP testing front you can 
+check the project journal. Feel free to add your bits there if you 
+anything related with this effort so the rest of the team read it.
+*** Link: 
+https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptesting/journal
+
+Best regards
+
+-- 
+Agustin Benito Bethencourt
+Principal Consultant - FOSS at Codethink
+agustin.benito at codethink.co.uk
