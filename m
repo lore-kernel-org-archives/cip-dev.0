@@ -1,75 +1,37 @@
 From: chris.paterson2@renesas.com (Chris Paterson)
-Date: Fri, 29 Sep 2017 18:28:12 +0100
-Subject: [cip-dev] [PATCH 10/15] pinctrl: sh-pfc: r8a7791: Add missing
-	mmc_data8_b pin group
+Date: Fri, 29 Sep 2017 18:28:13 +0100
+Subject: [cip-dev] [PATCH 11/15] dt-bindings: mmc: sh_mmcif: Document
+	r8a7743 DT bindings
 In-Reply-To: <1506706097-29770-1-git-send-email-chris.paterson2@renesas.com>
 References: <1506706097-29770-1-git-send-email-chris.paterson2@renesas.com>
-Message-ID: <1506706097-29770-11-git-send-email-chris.paterson2@renesas.com>
+Message-ID: <1506706097-29770-12-git-send-email-chris.paterson2@renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Pins D6 and D7 of the MMC interface can be muxed to two different sets
-of pins, but currently only one set is supported.
-Add a pin group for the alternative set to fix this.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
-Tested-by: Chris Paterson <chris.paterson2@renesas.com>
-(cherry picked from commit 2bf147a836918b14aae7aba2e598fa18a73e4f19)
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+(cherry picked from commit 62b1ab2a71c4d3acb59e109fadb5fec3430642ed)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index 33d1357..351842e 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -2593,6 +2593,17 @@ static const unsigned int mmc_data8_mux[] = {
- 	MMC_D0_MARK, MMC_D1_MARK, MMC_D2_MARK, MMC_D3_MARK,
- 	MMC_D4_MARK, MMC_D5_MARK, MMC_D6_MARK, MMC_D7_MARK,
- };
-+static const unsigned int mmc_data8_b_pins[] = {
-+	/* D[0:7] */
-+	RCAR_GP_PIN(6, 18), RCAR_GP_PIN(6, 19),
-+	RCAR_GP_PIN(6, 20), RCAR_GP_PIN(6, 21),
-+	RCAR_GP_PIN(6, 22), RCAR_GP_PIN(6, 23),
-+	RCAR_GP_PIN(6, 6), RCAR_GP_PIN(6, 7),
-+};
-+static const unsigned int mmc_data8_b_mux[] = {
-+	MMC_D0_MARK, MMC_D1_MARK, MMC_D2_MARK, MMC_D3_MARK,
-+	MMC_D4_MARK, MMC_D5_MARK, MMC_D6_B_MARK, MMC_D7_B_MARK,
-+};
- static const unsigned int mmc_ctrl_pins[] = {
- 	/* CLK, CMD */
- 	RCAR_GP_PIN(6, 16), RCAR_GP_PIN(6, 17),
-@@ -4424,7 +4435,7 @@ static const unsigned int vin2_clk_mux[] = {
- };
- 
- static const struct {
--	struct sh_pfc_pin_group common[341];
-+	struct sh_pfc_pin_group common[342];
- 	struct sh_pfc_pin_group r8a779x[9];
- } pinmux_groups = {
- 	.common = {
-@@ -4527,6 +4538,7 @@ static const struct {
- 		SH_PFC_PIN_GROUP(mmc_data1),
- 		SH_PFC_PIN_GROUP(mmc_data4),
- 		SH_PFC_PIN_GROUP(mmc_data8),
-+		SH_PFC_PIN_GROUP(mmc_data8_b),
- 		SH_PFC_PIN_GROUP(mmc_ctrl),
- 		SH_PFC_PIN_GROUP(msiof0_clk),
- 		SH_PFC_PIN_GROUP(msiof0_sync),
-@@ -4959,6 +4971,7 @@ static const char * const mmc_groups[] = {
- 	"mmc_data1",
- 	"mmc_data4",
- 	"mmc_data8",
-+	"mmc_data8_b",
- 	"mmc_ctrl",
- };
- 
+Conflicts:
+	Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
+---
+ Documentation/devicetree/bindings/mmc/renesas,mmcif.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt b/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
+index cae29eb..0c9ac54 100644
+--- a/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
++++ b/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
+@@ -9,6 +9,7 @@ Required properties:
+ - compatible: should be "renesas,mmcif-<soctype>", "renesas,sh-mmcif" as a
+   fallback. Examples with <soctype> are:
+ 	- "renesas,mmcif-r8a7740" for the MMCIF found in r8a7740 SoCs
++	- "renesas,mmcif-r8a7743" for the MMCIF found in r8a7743 SoCs
+ 	- "renesas,mmcif-r8a7790" for the MMCIF found in r8a7790 SoCs
+ 	- "renesas,mmcif-r8a7791" for the MMCIF found in r8a7791 SoCs
+ 	- "renesas,mmcif-r8a7794" for the MMCIF found in r8a7794 SoCs
 -- 
 1.9.1
