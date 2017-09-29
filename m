@@ -1,62 +1,47 @@
 From: chris.paterson2@renesas.com (Chris Paterson)
-Date: Fri, 29 Sep 2017 18:28:15 +0100
-Subject: [cip-dev] [PATCH 13/15] ARM: dts: iwg20m: Add MMCIF0 support
+Date: Fri, 29 Sep 2017 18:28:16 +0100
+Subject: [cip-dev] [PATCH 14/15] ARM: dts: iwg20m: Correct indentation of
+	mmcif0 properties
 In-Reply-To: <1506706097-29770-1-git-send-email-chris.paterson2@renesas.com>
 References: <1506706097-29770-1-git-send-email-chris.paterson2@renesas.com>
-Message-ID: <1506706097-29770-14-git-send-email-chris.paterson2@renesas.com>
+Message-ID: <1506706097-29770-15-git-send-email-chris.paterson2@renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Define the iwg20m board dependent part of the MMCIF0 device node.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: 4658c4b789d8e2ae ("ARM: dts: iwg20m: Add MMCIF0 support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit a03633abae89b5ab9d99c95e6dbf7cf15e5a441e)
+(cherry picked from commit bf38b9ac16c5c8a82d63c79391dd64c5924fc00b)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 ---
- arch/arm/boot/dts/r8a7743-iwg20m.dtsi | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ arch/arm/boot/dts/r8a7743-iwg20m.dtsi | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-index 001ca91..f78dbc5 100644
+index f78dbc5..ff79938 100644
 --- a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
 +++ b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-@@ -22,8 +22,34 @@
- 		device_type = "memory";
- 		reg = <2 0x00000000 0 0x20000000>;
- 	};
-+
-+	reg_3p3v: 3p3v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "3P3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
+@@ -45,11 +45,11 @@
  };
  
- &extal_clk {
- 	clock-frequency = <20000000>;
+ &mmcif0 {
+-		pinctrl-0 = <&mmcif0_pins>;
+-		pinctrl-names = "default";
++	pinctrl-0 = <&mmcif0_pins>;
++	pinctrl-names = "default";
+ 
+-		vmmc-supply = <&reg_3p3v>;
+-		bus-width = <8>;
+-		non-removable;
+-		status = "okay";
++	vmmc-supply = <&reg_3p3v>;
++	bus-width = <8>;
++	non-removable;
++	status = "okay";
  };
-+
-+&pfc {
-+	mmcif0_pins: mmc {
-+		groups = "mmc_data8_b", "mmc_ctrl";
-+		function = "mmc";
-+	};
-+};
-+
-+&mmcif0 {
-+		pinctrl-0 = <&mmcif0_pins>;
-+		pinctrl-names = "default";
-+
-+		vmmc-supply = <&reg_3p3v>;
-+		bus-width = <8>;
-+		non-removable;
-+		status = "okay";
-+};
 -- 
 1.9.1
