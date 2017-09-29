@@ -1,70 +1,47 @@
-From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
-Date: Fri, 29 Sep 2017 10:03:28 +0200
-Subject: [cip-dev] CIP Workshop at ELCE: B@D 101 training session. Call
- for registration
-In-Reply-To: <59CD0E40.8010506@codethink.co.uk>
-References: <59CD0E40.8010506@codethink.co.uk>
-Message-ID: <59CDFE50.70406@codethink.co.uk>
+From: chris.paterson2@renesas.com (Chris Paterson)
+Date: Fri, 29 Sep 2017 18:28:04 +0100
+Subject: [cip-dev] [PATCH 02/15] ARM: dts: iwg20d-q7: Add pinctl support for
+	scif0
+In-Reply-To: <1506706097-29770-1-git-send-email-chris.paterson2@renesas.com>
+References: <1506706097-29770-1-git-send-email-chris.paterson2@renesas.com>
+Message-ID: <1506706097-29770-3-git-send-email-chris.paterson2@renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+From: Biju Das <biju.das@bp.renesas.com>
 
-On 28/09/17 16:59, Agustin Benito Bethencourt wrote:
-> Dear CIP friends,
->
-> ELCE is approaching and CIP will organise a Workshop on Sunday 22nd
-> October at the ELCE location. This is the day before the event starts.
->
-> ++ B at D 101 training session
->
-> One of the main activities of that workshop is a Board At Desk (our CIP
-> testing environment) training session. We have called the activity "B at D
-> 101 training".
->
-> There will have room for 10 participants and Robert Marshall will be the
-> one providing it. He is the main developer behind B at D.
->
-> You can find all the information in the CIP wiki[1], including the time
-> and some instructions.
->
-> I will send to this mailing list and will add to the wiki the room at
-> the ELCE venue where the workshop will take place.
+Adding pinctrl support for scif0 interface.
 
-Room Athens.
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+(cherry picked from commit 7095f279c03a05cf9007001852b939236edc2897)
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+---
+ arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
->
-> ++ What do I need to do to participate?
->
-> As described on the wiki, you will need to send to this mailing list a
-> mail with some basic information about yourself.
->
-> * Name
-> * Company
-> * Position/role
-> * Why you are interested on this workshop.
-> * Are you coming with your own board or do you need one?
->
-> Please keep in mind that you need to bring your laptop and a BeagleBone
-> Black. If you do not have such board, we will have 5 spare Renesas
-> boards (thanks Renesas).
->
-> This is why it will be important that you tell us if you are coming with
-> your own board or not. After sending the mail, I will add you to the
-> wiki on first comes first served basis.
->
-> Do not hesitate to ask any question through this mailing list or
-> directly to me. I will answer them as soon as possible.
->
-> I hope to see you there.
->
-> [1]
-> https://wiki.linuxfoundation.org/civilinfrastructureplatform/cipconferences/cipwselce2017#b-d-101how-to-test-the-cip-kernel-using-b-d
->
->
-> Best Regards
-
+diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
+index 9b54783..497aec0 100644
+--- a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
++++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
+@@ -20,6 +20,16 @@
+ 	};
+ };
+ 
++&pfc {
++	scif0_pins: scif0 {
++		groups = "scif0_data_d";
++		function = "scif0";
++	};
++};
++
+ &scif0 {
++	pinctrl-0 = <&scif0_pins>;
++	pinctrl-names = "default";
++
+ 	status = "okay";
+ };
 -- 
-Agustin Benito Bethencourt
-Principal Consultant - FOSS at Codethink
-agustin.benito at codethink.co.uk
+1.9.1
