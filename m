@@ -1,150 +1,69 @@
 From: chris.paterson2@renesas.com (Chris Paterson)
-Date: Fri, 29 Sep 2017 18:28:06 +0100
-Subject: [cip-dev] [PATCH 04/15] ARM: dts: r8a7743: Add GPIO support
+Date: Fri, 29 Sep 2017 18:28:07 +0100
+Subject: [cip-dev] [PATCH 05/15] ravb: add fallback compatibility strings
 In-Reply-To: <1506706097-29770-1-git-send-email-chris.paterson2@renesas.com>
 References: <1506706097-29770-1-git-send-email-chris.paterson2@renesas.com>
-Message-ID: <1506706097-29770-5-git-send-email-chris.paterson2@renesas.com>
+Message-ID: <1506706097-29770-6-git-send-email-chris.paterson2@renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Simon Horman <horms+renesas@verge.net.au>
 
-Describe GPIO blocks in the R8A7743 device tree.
+Add fallback compatibility strings for R-Car Gen 2 & 3 SoC Families.
+This is in keeping with the fallback scheme being adopted wherever appropriate
+for drivers for Renesas SoCs.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 16ffb25335d7e91cebae9c29252536ddbeac96fa)
-(modified the clocks and power-domains property, removed resets property)
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+(cherry picked from commit 0e8743611a76ced8b0971b6894f982ce89624cc4)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 112 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 112 insertions(+)
+ Documentation/devicetree/bindings/net/renesas,ravb.txt | 9 ++++++++-
+ drivers/net/ethernet/renesas/ravb_main.c               | 2 ++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 7f4d8c0..7fc00ee 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -62,6 +62,118 @@
- 			power-domains = <&cpg_clocks>;
- 		};
+diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+index b486f3f..7555116 100644
+--- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
++++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+@@ -7,6 +7,13 @@ Required properties:
+ - compatible: "renesas,etheravb-r8a7790" if the device is a part of R8A7790 SoC.
+ 	      "renesas,etheravb-r8a7794" if the device is a part of R8A7794 SoC.
+ 	      "renesas,etheravb-r8a7795" if the device is a part of R8A7795 SoC.
++	      "renesas,etheravb-rcar-gen2" for generic R-Car Gen 2 compatible interface.
++	      "renesas,etheravb-rcar-gen3" for generic R-Car Gen 3 compatible interface.
++
++	      When compatible with the generic version, nodes must list the
++	      SoC-specific version corresponding to the platform first
++	      followed by the generic version.
++
+ - reg: offset and length of (1) the register block and (2) the stream buffer.
+ - interrupts: A list of interrupt-specifiers, one for each entry in
+ 	      interrupt-names.
+@@ -37,7 +44,7 @@ Optional properties:
+ Example:
  
-+		gpio0: gpio at e6050000 {
-+			compatible = "renesas,gpio-r8a7743",
-+				     "renesas,gpio-rcar";
-+			reg = <0 0xe6050000 0 0x50>;
-+			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 0 32>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&mstp9_clks R8A7743_CLK_GPIO0>;
-+			power-domains = <&cpg_clocks>;
-+		};
-+
-+		gpio1: gpio at e6051000 {
-+			compatible = "renesas,gpio-r8a7743",
-+				     "renesas,gpio-rcar";
-+			reg = <0 0xe6051000 0 0x50>;
-+			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 32 26>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&mstp9_clks R8A7743_CLK_GPIO1>;
-+			power-domains = <&cpg_clocks>;
-+		};
-+
-+		gpio2: gpio at e6052000 {
-+			compatible = "renesas,gpio-r8a7743",
-+				     "renesas,gpio-rcar";
-+			reg = <0 0xe6052000 0 0x50>;
-+			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 64 32>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&mstp9_clks R8A7743_CLK_GPIO2>;
-+			power-domains = <&cpg_clocks>;
-+		};
-+
-+		gpio3: gpio at e6053000 {
-+			compatible = "renesas,gpio-r8a7743",
-+				     "renesas,gpio-rcar";
-+			reg = <0 0xe6053000 0 0x50>;
-+			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 96 32>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&mstp9_clks R8A7743_CLK_GPIO3>;
-+			power-domains = <&cpg_clocks>;
-+		};
-+
-+		gpio4: gpio at e6054000 {
-+			compatible = "renesas,gpio-r8a7743",
-+				     "renesas,gpio-rcar";
-+			reg = <0 0xe6054000 0 0x50>;
-+			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 128 32>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&mstp9_clks R8A7743_CLK_GPIO4>;
-+			power-domains = <&cpg_clocks>;
-+		};
-+
-+		gpio5: gpio at e6055000 {
-+			compatible = "renesas,gpio-r8a7743",
-+				     "renesas,gpio-rcar";
-+			reg = <0 0xe6055000 0 0x50>;
-+			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 160 32>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&mstp9_clks R8A7743_CLK_GPIO5>;
-+			power-domains = <&cpg_clocks>;
-+		};
-+
-+		gpio6: gpio at e6055400 {
-+			compatible = "renesas,gpio-r8a7743",
-+				     "renesas,gpio-rcar";
-+			reg = <0 0xe6055400 0 0x50>;
-+			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 192 32>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&mstp9_clks R8A7743_CLK_GPIO6>;
-+			power-domains = <&cpg_clocks>;
-+		};
-+
-+		gpio7: gpio at e6055800 {
-+			compatible = "renesas,gpio-r8a7743",
-+				     "renesas,gpio-rcar";
-+			reg = <0 0xe6055800 0 0x50>;
-+			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 224 26>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&mstp9_clks R8A7743_CLK_GPIO7>;
-+			power-domains = <&cpg_clocks>;
-+		};
-+
- 		irqc: interrupt-controller at e61c0000 {
- 			compatible = "renesas,irqc-r8a7743", "renesas,irqc";
- 			#interrupt-cells = <2>;
+ 	ethernet at e6800000 {
+-		compatible = "renesas,etheravb-r8a7795";
++		compatible = "renesas,etheravb-r8a7795", "renesas,etheravb-rcar-gen3";
+ 		reg = <0 0xe6800000 0 0x800>, <0 0xe6a00000 0 0x10000>;
+ 		interrupt-parent = <&gic>;
+ 		interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index 585e90f..c7b3c25 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -1688,7 +1688,9 @@ static int ravb_mdio_release(struct ravb_private *priv)
+ static const struct of_device_id ravb_match_table[] = {
+ 	{ .compatible = "renesas,etheravb-r8a7790", .data = (void *)RCAR_GEN2 },
+ 	{ .compatible = "renesas,etheravb-r8a7794", .data = (void *)RCAR_GEN2 },
++	{ .compatible = "renesas,etheravb-rcar-gen2", .data = (void *)RCAR_GEN2 },
+ 	{ .compatible = "renesas,etheravb-r8a7795", .data = (void *)RCAR_GEN3 },
++	{ .compatible = "renesas,etheravb-rcar-gen3", .data = (void *)RCAR_GEN3 },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, ravb_match_table);
 -- 
 1.9.1
