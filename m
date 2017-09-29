@@ -1,71 +1,75 @@
 From: chris.paterson2@renesas.com (Chris Paterson)
-Date: Fri, 29 Sep 2017 18:28:11 +0100
-Subject: [cip-dev] [PATCH 09/15] ARM: dts: iwg20d-q7: Add Ethernet AVB
-	support
+Date: Fri, 29 Sep 2017 18:28:12 +0100
+Subject: [cip-dev] [PATCH 10/15] pinctrl: sh-pfc: r8a7791: Add missing
+	mmc_data8_b pin group
 In-Reply-To: <1506706097-29770-1-git-send-email-chris.paterson2@renesas.com>
 References: <1506706097-29770-1-git-send-email-chris.paterson2@renesas.com>
-Message-ID: <1506706097-29770-10-git-send-email-chris.paterson2@renesas.com>
+Message-ID: <1506706097-29770-11-git-send-email-chris.paterson2@renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Define the iWave RainboW-G20D-Qseven board dependent part of the Ethernet
-AVB device node.
+Pins D6 and D7 of the MMC interface can be muxed to two different sets
+of pins, but currently only one set is supported.
+Add a pin group for the alternative set to fix this.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 9e70afe39eeb33488f0d18131b023b92c1493db8)
+Tested-by: Chris Paterson <chris.paterson2@renesas.com>
+(cherry picked from commit 2bf147a836918b14aae7aba2e598fa18a73e4f19)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 ---
- arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-index 497aec0..081af01 100644
---- a/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-+++ b/arch/arm/boot/dts/r8a7743-iwg20d-q7.dts
-@@ -17,6 +17,7 @@
- 
- 	aliases {
- 		serial0 = &scif0;
-+		ethernet0 = &avb;
- 	};
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+index 33d1357..351842e 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+@@ -2593,6 +2593,17 @@ static const unsigned int mmc_data8_mux[] = {
+ 	MMC_D0_MARK, MMC_D1_MARK, MMC_D2_MARK, MMC_D3_MARK,
+ 	MMC_D4_MARK, MMC_D5_MARK, MMC_D6_MARK, MMC_D7_MARK,
  };
- 
-@@ -25,6 +26,11 @@
- 		groups = "scif0_data_d";
- 		function = "scif0";
- 	};
-+
-+	avb_pins: avb {
-+		groups = "avb_mdio", "avb_gmii";
-+		function = "avb";
-+	};
- };
- 
- &scif0 {
-@@ -33,3 +39,18 @@
- 
- 	status = "okay";
- };
-+
-+&avb {
-+	pinctrl-0 = <&avb_pins>;
-+	pinctrl-names = "default";
-+
-+	phy-handle = <&phy3>;
-+	phy-mode = "gmii";
-+	renesas,no-ether-link;
-+	status = "okay";
-+
-+	phy3: ethernet-phy at 3 {
-+		reg = <3>;
-+		micrel,led-mode = <1>;
-+	};
++static const unsigned int mmc_data8_b_pins[] = {
++	/* D[0:7] */
++	RCAR_GP_PIN(6, 18), RCAR_GP_PIN(6, 19),
++	RCAR_GP_PIN(6, 20), RCAR_GP_PIN(6, 21),
++	RCAR_GP_PIN(6, 22), RCAR_GP_PIN(6, 23),
++	RCAR_GP_PIN(6, 6), RCAR_GP_PIN(6, 7),
 +};
++static const unsigned int mmc_data8_b_mux[] = {
++	MMC_D0_MARK, MMC_D1_MARK, MMC_D2_MARK, MMC_D3_MARK,
++	MMC_D4_MARK, MMC_D5_MARK, MMC_D6_B_MARK, MMC_D7_B_MARK,
++};
+ static const unsigned int mmc_ctrl_pins[] = {
+ 	/* CLK, CMD */
+ 	RCAR_GP_PIN(6, 16), RCAR_GP_PIN(6, 17),
+@@ -4424,7 +4435,7 @@ static const unsigned int vin2_clk_mux[] = {
+ };
+ 
+ static const struct {
+-	struct sh_pfc_pin_group common[341];
++	struct sh_pfc_pin_group common[342];
+ 	struct sh_pfc_pin_group r8a779x[9];
+ } pinmux_groups = {
+ 	.common = {
+@@ -4527,6 +4538,7 @@ static const struct {
+ 		SH_PFC_PIN_GROUP(mmc_data1),
+ 		SH_PFC_PIN_GROUP(mmc_data4),
+ 		SH_PFC_PIN_GROUP(mmc_data8),
++		SH_PFC_PIN_GROUP(mmc_data8_b),
+ 		SH_PFC_PIN_GROUP(mmc_ctrl),
+ 		SH_PFC_PIN_GROUP(msiof0_clk),
+ 		SH_PFC_PIN_GROUP(msiof0_sync),
+@@ -4959,6 +4971,7 @@ static const char * const mmc_groups[] = {
+ 	"mmc_data1",
+ 	"mmc_data4",
+ 	"mmc_data8",
++	"mmc_data8_b",
+ 	"mmc_ctrl",
+ };
+ 
 -- 
 1.9.1
