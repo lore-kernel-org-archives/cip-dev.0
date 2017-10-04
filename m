@@ -1,98 +1,111 @@
 From: mosipov@ilbers.de (Maxim Yu. Osipov)
-Date: Wed,  4 Oct 2017 16:41:04 +0200
-Subject: [cip-dev] [PATCH 10/10] watchdog: core: add option to avoid early
-	handling of watchdog
+Date: Wed,  4 Oct 2017 16:40:59 +0200
+Subject: [cip-dev] [PATCH 05/10] watchdog: core: Fix circular locking
+	dependency
 In-Reply-To: <20171004144104.14403-1-mosipov@ilbers.de>
 References: <20171004144104.14403-1-mosipov@ilbers.de>
-Message-ID: <20171004144104.14403-11-mosipov@ilbers.de>
+Message-ID: <20171004144104.14403-6-mosipov@ilbers.de>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+From: Guenter Roeck <linux@roeck-us.net>
 
-Backport from kernel.org, upstream commit 2501b015313f
+Backport from kernel.org, upstream commit e1f30282a1d3
 
-On some systems its desirable to have watchdog reboot the system
-when it does not come up fast enough. This adds a kernel parameter
-to disable the auto-update of watchdog before userspace takes over
-and a kernel option to set the default. The info messages were
-added to shorten error searching on misconfigured systems.
+lockdep reports the following circular locking dependency.
 
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+======================================================
+INFO: possible circular locking dependency detected ]
+4.6.0-rc3-00191-gfabf418 #162 Not tainted
+-------------------------------------------------------
+systemd/1 is trying to acquire lock:
+((&(&wd_data->work)->work)){+.+...}, at: [<80141650>] flush_work+0x0/0x280
+
+but task is already holding lock:
+
+(&wd_data->lock){+.+...}, at: [<804acfa8>] watchdog_release+0x18/0x190
+
+which lock already depends on the new lock.
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&wd_data->lock){+.+...}:
+>-------[<80662310>] mutex_lock_nested+0x64/0x4a8
+>-------[<804aca4c>] watchdog_ping_work+0x18/0x4c
+>-------[<80143128>] process_one_work+0x1ac/0x500
+>-------[<801434b4>] worker_thread+0x38/0x554
+>-------[<80149510>] kthread+0xf4/0x108
+>-------[<80107c10>] ret_from_fork+0x14/0x24
+
+-> #0 ((&(&wd_data->work)->work)){+.+...}:
+>-------[<8017c4e8>] lock_acquire+0x70/0x90
+>-------[<8014169c>] flush_work+0x4c/0x280
+>-------[<801440f8>] __cancel_work_timer+0x9c/0x1e0
+>-------[<804acfcc>] watchdog_release+0x3c/0x190
+>-------[<8022c5e8>] __fput+0x80/0x1c8
+>-------[<80147b28>] task_work_run+0x94/0xc8
+>-------[<8010b998>] do_work_pending+0x8c/0xb4
+>-------[<80107ba8>] slow_work_pending+0xc/0x20
+
+other info that might help us debug this:
+Possible unsafe locking scenario:
+
+CPU0                    CPU1
+----                    ----
+lock(&wd_data->lock);
+                        lock((&(&wd_data->work)->work));
+                        lock(&wd_data->lock);
+lock((&(&wd_data->work)->work));
+
+*** DEADLOCK ***
+
+1 lock held by systemd/1:
+
+stack backtrace:
+CPU: 2 PID: 1 Comm: systemd Not tainted 4.6.0-rc3-00191-gfabf418 #162
+Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
+[<8010f5e4>] (unwind_backtrace) from [<8010c038>] (show_stack+0x10/0x14)
+[<8010c038>] (show_stack) from [<8039d7fc>] (dump_stack+0xa8/0xd4)
+[<8039d7fc>] (dump_stack) from [<80177ee0>] (print_circular_bug+0x214/0x334)
+[<80177ee0>] (print_circular_bug) from [<80179230>] (check_prevs_add+0x4dc/0x8e8)
+[<80179230>] (check_prevs_add) from [<8017b3d8>] (__lock_acquire+0xc6c/0x14ec)
+[<8017b3d8>] (__lock_acquire) from [<8017c4e8>] (lock_acquire+0x70/0x90)
+[<8017c4e8>] (lock_acquire) from [<8014169c>] (flush_work+0x4c/0x280)
+[<8014169c>] (flush_work) from [<801440f8>] (__cancel_work_timer+0x9c/0x1e0)
+[<801440f8>] (__cancel_work_timer) from [<804acfcc>] (watchdog_release+0x3c/0x190)
+[<804acfcc>] (watchdog_release) from [<8022c5e8>] (__fput+0x80/0x1c8)
+[<8022c5e8>] (__fput) from [<80147b28>] (task_work_run+0x94/0xc8)
+[<80147b28>] (task_work_run) from [<8010b998>] (do_work_pending+0x8c/0xb4)
+[<8010b998>] (do_work_pending) from [<80107ba8>] (slow_work_pending+0xc/0x20)
+
+Turns out the call to cancel_delayed_work_sync() in watchdog_release()
+is not necessary and can be dropped. If the worker is no longer necessary,
+the subsequent call to watchdog_update_worker() will cancel it. If it is
+already running, it won't do anything, since the worker function checks
+if it needs to ping the watchdog or not.
+
+Reported-by: Clemens Gruber <clemens.gruber@pqgruber.com>
+Tested-by: Clemens Gruber <clemens.gruber@pqgruber.com>
+Fixes: 11d7aba9ceb7 ("watchdog: imx2: Convert to use infrastructure triggered keepalives")
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
+Cc: stable <stable@vger.kernel.org>
 [mosipov at ilbers.de backported to 4.4.y]
 Signed-off-by: Maxim Yu. Osipov <mosipov@ilbers.de>
 ---
- drivers/watchdog/Kconfig        | 11 +++++++++++
- drivers/watchdog/watchdog_dev.c | 21 +++++++++++++++++----
- 2 files changed, 28 insertions(+), 4 deletions(-)
+ drivers/watchdog/watchdog_dev.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index 1c427beffadd..88743cd0a7e6 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -46,6 +46,17 @@ config WATCHDOG_NOWAYOUT
- 	  get killed. If you say Y here, the watchdog cannot be stopped once
- 	  it has been started.
- 
-+config WATCHDOG_HANDLE_BOOT_ENABLED
-+	bool "Update boot-enabled watchdog until userspace takes over"
-+	default y
-+	help
-+	  The default watchdog behaviour (which you get if you say Y here) is
-+	  to ping watchdog devices that were enabled before the driver has
-+	  been loaded until control is taken over from userspace using the
-+	  /dev/watchdog file. If you say N here, the kernel will not update
-+	  the watchdog on its own. Thus if your userspace does not start fast
-+	  enough your device will reboot.
-+
- #
- # General Watchdog drivers
- #
 diff --git a/drivers/watchdog/watchdog_dev.c b/drivers/watchdog/watchdog_dev.c
-index e65a14f213ff..28eaed17c4fe 100644
+index ca64724bf59a..2eca04d869d9 100644
 --- a/drivers/watchdog/watchdog_dev.c
 +++ b/drivers/watchdog/watchdog_dev.c
-@@ -53,6 +53,9 @@ static struct watchdog_device *old_wdd;
+@@ -596,7 +596,6 @@ static int watchdog_release(struct inode *inode, struct file *file)
+ 	if (!watchdog_hw_running(wdd))
+ 		module_put(wdd->ops->owner);
  
- static struct workqueue_struct *watchdog_wq;
+-	cancel_delayed_work_sync(&wdd->work);
+ 	watchdog_update_worker(wdd);
  
-+static bool handle_boot_enabled =
-+	IS_ENABLED(CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED);
-+
- static inline bool watchdog_need_worker(struct watchdog_device *wdd)
- {
- 	/* All variables in milli-seconds */
-@@ -685,10 +688,15 @@ int watchdog_dev_register(struct watchdog_device *wdd)
- 	 * and schedule an immediate ping.
- 	 */
- 	if (watchdog_hw_running(wdd)) {
--		__module_get(wdd->ops->owner);
--		if (wdd->ops->ref)
--			wdd->ops->ref(wdd);
--		queue_delayed_work(watchdog_wq, &wdd->work, 0);
-+		if (handle_boot_enabled) {
-+			__module_get(wdd->ops->owner);
-+			if (wdd->ops->ref)
-+				wdd->ops->ref(wdd);
-+			queue_delayed_work(watchdog_wq, &wdd->work, 0);
-+		} else {
-+			pr_info("watchdog%d running and kernel based pre-userspace handler disabled\n",
-+					wdd->id);
-+		}
- 	}
- 
- 	return 0;
-@@ -758,3 +766,8 @@ void __exit watchdog_dev_exit(void)
- 	unregister_chrdev_region(watchdog_devt, MAX_DOGS);
- 	destroy_workqueue(watchdog_wq);
- }
-+
-+module_param(handle_boot_enabled, bool, 0444);
-+MODULE_PARM_DESC(handle_boot_enabled,
-+	"Watchdog core auto-updates boot enabled watchdogs before userspace takes over (default="
-+	__MODULE_STRING(IS_ENABLED(CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED)) ")");
+ 	/* make sure that /dev/watchdog can be re-opened */
 -- 
 2.11.0
