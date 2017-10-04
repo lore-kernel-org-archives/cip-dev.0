@@ -1,58 +1,95 @@
 From: mosipov@ilbers.de (Maxim Yu. Osipov)
-Date: Wed,  4 Oct 2017 16:41:03 +0200
-Subject: [cip-dev] [PATCH 09/10] watchdog: core: Clear WDOG_HW_RUNNING
-	before calling the stop function
-In-Reply-To: <20171004144104.14403-1-mosipov@ilbers.de>
-References: <20171004144104.14403-1-mosipov@ilbers.de>
-Message-ID: <20171004144104.14403-10-mosipov@ilbers.de>
+Date: Wed,  4 Oct 2017 16:40:54 +0200
+Subject: [cip-dev] [PATCH 00/10] Backport of watchdog core triggered
+	keepalive infrastructure
+Message-ID: <20171004144104.14403-1-mosipov@ilbers.de>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Guenter Roeck <linux@roeck-us.net>
+Hello Ben,
 
-Backport from kernel.org, upstream commit 3c10bbde10fe
+This series contains 
 
-WDOG_HW_RUNNING indicates that the hardware watchdog is running while the
-watchdog device is closed. The flag may be set by the driver when it is
-instantiated to indicate that the watchdog is running, and that the
-watchdog core needs to send heartbeat requests to the driver until the
-watchdog device is opened.
+* backport of patches of watchdog core infrastructure 
+supporting handling watchdog keepalive. 
 
-When the watchdog device is closed, the flag can be used by the driver's
-stop function to indicate to the watchdog core that it was unable to stop
-the watchdog, and that the watchdog core needs to send heartbeat requests.
-This only works if the flag is actually cleared when the watchdog is
-stopped. To avoid having to clear the flag in each driver's stop function,
-clear it in the watchdog core before calling the stop function.
+* imx21_wdt converted to use infrastructure triggered keepalives.
 
-Reported-by: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Fixes: ee142889e32f ("watchdog: Introduce WDOG_HW_RUNNING flag")
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
-[mosipov at ilbers.de backported to 4.4.y]
-Signed-off-by: Maxim Yu. Osipov <mosipov@ilbers.de>
----
- drivers/watchdog/watchdog_dev.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/watchdog/watchdog_dev.c b/drivers/watchdog/watchdog_dev.c
-index 6cc5ad34c5bc..e65a14f213ff 100644
---- a/drivers/watchdog/watchdog_dev.c
-+++ b/drivers/watchdog/watchdog_dev.c
-@@ -241,10 +241,12 @@ static int watchdog_stop(struct watchdog_device *wdd)
- 		goto out_stop;
- 	}
+* backported support of WATCHDOG_HANDLE_BOOT_ENABLED option 
  
--	if (wdd->ops->stop)
-+	if (wdd->ops->stop) {
-+		clear_bit(WDOG_HW_RUNNING, &wdd->status);
- 		err = wdd->ops->stop(wdd);
--	else
-+	} else {
- 		set_bit(WDOG_HW_RUNNING, &wdd->status);
-+	}
- 
- 	if (err == 0) {
- 		clear_bit(WDOG_ACTIVE, &wdd->status);
+On some systems it's desirable to have watchdog reboot the system
+when it does not come up fast enough. This adds a kernel parameter
+to disable the auto-update of watchdog before userspace takes over
+and a kernel option to set the default.
+
+One of the important use cases is safe system update.
+In that case, the bootloader enables the watchdog, and Linux should only
+take it over at the point the whole Linux system is sure to be able to
+have a fully working system again, including userspace services that
+could take the next update. If we start the trigger the watchdog too
+early, like it was so far, we risk to enter a system state where the
+kernel works but not all other services we need.
+
+i.MX6 based board was used as a test platform. 
+
+We suppose that watchdog is enabled in bootloader and set to 120 seconds 
+(maximum timeout supported by i.MX watchdog timer)
+
+After applying these patches, built-in i.MX watchdog (imx21_wdt) into 
+kernel and perform the following test cases:
+
+1) option WATCHDOG_HANDLE_BOOT_ENABLED is turned off in kernel configuration
+w/o userspace application triggering the watchdog. 
+
+Make sure that no userspace application is triggering watchdog.
+
+After around 120 seconds (timeout set in bootloader) board will reboot.
+
+2) option WATCHDOG_HANDLE_BOOT_ENABLED is turned off in kernel configuration
+but userspace application is triggering watchdog more frequently that watchdog's
+timeout (by default set to 60 seconds for imx21_wdt).
+
+Watchdog will not reboot the board until the application re-arms 
+the watchdog.
+
+3) option WATCHDOG_HANDLE_BOOT_ENABLED is turned on in kernel configuration
+w/o userspace application triggering the watchdog. 
+
+Make sure that no userspace application is triggering watchdog.
+Board will not reboot (watchdog keepalive is supported by watchdog core 
+infrastructure, not by driver itself)
+
+Kind regards,
+Maxim.
+
+Guenter Roeck (6):
+  watchdog: Introduce hardware maximum heartbeat in watchdog core
+  watchdog: Introduce WDOG_HW_RUNNING flag
+  watchdog: Make stop function optional
+  watchdog: imx2: Convert to use infrastructure triggered keepalives
+  watchdog: core: Fix circular locking dependency
+  watchdog: core: Clear WDOG_HW_RUNNING before calling the stop function
+
+Pratyush Anand (1):
+  watchdog: skip min and max timeout validity check when
+    max_hw_heartbeat_ms is defined
+
+Rasmus Villemoes (1):
+  watchdog: change watchdog_need_worker logic
+
+Sebastian Reichel (1):
+  watchdog: core: add option to avoid early handling of watchdog
+
+Wei Yongjun (1):
+  watchdog: core: Fix error handling of watchdog_dev_init()
+
+ Documentation/watchdog/watchdog-kernel-api.txt |  51 +++++--
+ drivers/watchdog/Kconfig                       |  11 ++
+ drivers/watchdog/imx2_wdt.c                    |  74 ++-------
+ drivers/watchdog/watchdog_core.c               |   4 +-
+ drivers/watchdog/watchdog_dev.c                | 198 +++++++++++++++++++++++--
+ include/linux/watchdog.h                       |  40 ++++-
+ 6 files changed, 279 insertions(+), 99 deletions(-)
+
 -- 
 2.11.0
