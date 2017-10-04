@@ -1,46 +1,91 @@
 From: mosipov@ilbers.de (Maxim Yu. Osipov)
-Date: Wed,  4 Oct 2017 16:41:00 +0200
-Subject: [cip-dev] [PATCH 06/10] watchdog: skip min and max timeout validity
-	check when max_hw_heartbeat_ms is defined
+Date: Wed,  4 Oct 2017 16:41:01 +0200
+Subject: [cip-dev] [PATCH 07/10] watchdog: change watchdog_need_worker logic
 In-Reply-To: <20171004144104.14403-1-mosipov@ilbers.de>
 References: <20171004144104.14403-1-mosipov@ilbers.de>
-Message-ID: <20171004144104.14403-7-mosipov@ilbers.de>
+Message-ID: <20171004144104.14403-8-mosipov@ilbers.de>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Pratyush Anand <panand@redhat.com>
+From: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
 
-Backport from kernel.org, upstream commit 1894cad9bf2c
+Backport from kernel.org, upstream commit 3fbfe9264756
 
-When max_hw_heartbeat_ms has a none zero value, max_timeout is not used.
-So it's value can be 0. In such case if a driver uses min_timeout
-functionality, then check will always fail.
+If the driver indicates that the watchdog is running, the framework
+should feed it until userspace opens the device, regardless of whether
+the driver has set max_hw_heartbeat_ms.
 
-This patch fixes above issue.
+This patch only affects the case where wdd->max_hw_heartbeat_ms is
+zero, wdd->timeout is non-zero, the watchdog is not active and the
+hardware device is running (*):
 
-Signed-off-by: Pratyush Anand <panand@redhat.com>
-Signed-off-by: Fu Wei <fu.wei@linaro.org>
+- If wdd->timeout is zero, watchdog_need_worker() returns false both
+before and after this patch, and watchdog_next_keepalive() is not
+called.
+
+- If watchdog_active(wdd), the return value from watchdog_need_worker
+is also the same as before (namely, hm && t > hm). Hence in that case,
+watchdog_next_keepalive() is only called if hm == max_hw_heartbeat_ms
+is non-zero, so the change to min_not_zero there is a no-op.
+
+- If the watchdog is not active and the device is not running, we
+return false from watchdog_need_worker just as before.
+
+That leaves the watchdog_hw_running(wdd) && !watchdog_active(wdd) &&
+wdd->timeout case. Again, it's easy to see that if
+wdd->max_hw_heartbeat_ms is non-zero, we return true from
+watchdog_need_worker with and without this patch, and the logic in
+watchdog_next_keepalive is unchanged. Finally, if
+wdd->max_hw_heartbeat_ms is 0, we used to end up in the
+cancel_delayed_work branch, whereas with this patch we end up
+scheduling a ping timeout_ms/2 from now.
+
+(*) This should imply that no current kernel drivers are affected,
+since the only drivers which explicitly set WDOG_HW_RUNNING are
+imx2_wdt.c and dw_wdt.c, both of which also provide a non-zero value
+for max_hw_heartbeat_ms. The watchdog core also sets WDOG_HW_RUNNING,
+but only when the driver doesn't provide ->stop, in which case it
+must, according to Documentation/watchdog/watchdog-kernel-api.txt, set
+max_hw_heartbeat_ms.
+
+Signed-off-by: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
 Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
 [mosipov at ilbers.de backported to 4.4.y]
 Signed-off-by: Maxim Yu. Osipov <mosipov@ilbers.de>
 ---
- drivers/watchdog/watchdog_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/watchdog/watchdog_dev.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/watchdog/watchdog_core.c b/drivers/watchdog/watchdog_core.c
-index 41f1854d026b..5de14c51bf95 100644
---- a/drivers/watchdog/watchdog_core.c
-+++ b/drivers/watchdog/watchdog_core.c
-@@ -88,7 +88,7 @@ static void watchdog_check_min_max_timeout(struct watchdog_device *wdd)
- 	 * Check that we have valid min and max timeout values, if
- 	 * not reset them both to 0 (=not used or unknown)
+diff --git a/drivers/watchdog/watchdog_dev.c b/drivers/watchdog/watchdog_dev.c
+index 2eca04d869d9..e3eacf27b1e7 100644
+--- a/drivers/watchdog/watchdog_dev.c
++++ b/drivers/watchdog/watchdog_dev.c
+@@ -67,9 +67,13 @@ static inline bool watchdog_need_worker(struct watchdog_device *wdd)
+ 	 *   thus is aware that the framework supports generating heartbeat
+ 	 *   requests.
+ 	 * - Userspace requests a longer timeout than the hardware can handle.
++	 *
++	 * Alternatively, if userspace has not opened the watchdog
++	 * device, we take care of feeding the watchdog if it is
++	 * running.
  	 */
--	if (wdd->min_timeout > wdd->max_timeout) {
-+	if (!wdd->max_hw_heartbeat_ms && wdd->min_timeout > wdd->max_timeout) {
- 		pr_info("Invalid min and max timeout values, resetting to 0!\n");
- 		wdd->min_timeout = 0;
- 		wdd->max_timeout = 0;
+-	return hm && ((watchdog_active(wdd) && t > hm) ||
+-		      (t && !watchdog_active(wdd) && watchdog_hw_running(wdd)));
++	return (hm && watchdog_active(wdd) && t > hm) ||
++		(t && !watchdog_active(wdd) && watchdog_hw_running(wdd));
+ }
+ 
+ static long watchdog_next_keepalive(struct watchdog_device *wdd)
+@@ -81,7 +85,7 @@ static long watchdog_next_keepalive(struct watchdog_device *wdd)
+ 	unsigned int hw_heartbeat_ms;
+ 
+ 	virt_timeout = wdd->last_keepalive + msecs_to_jiffies(timeout_ms);
+-	hw_heartbeat_ms = min(timeout_ms, wdd->max_hw_heartbeat_ms);
++	hw_heartbeat_ms = min_not_zero(timeout_ms, wdd->max_hw_heartbeat_ms);
+ 	keepalive_interval = msecs_to_jiffies(hw_heartbeat_ms / 2);
+ 
+ 	if (!watchdog_active(wdd))
 -- 
 2.11.0
