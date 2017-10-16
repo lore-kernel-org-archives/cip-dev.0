@@ -1,16 +1,25 @@
-From: takuo.koguchi.sw@hitachi.com (=?iso-2022-jp?B?GyRCPi44fUJ2SVcbKEIgLyBLT0dVQ0hJGyRCISQbKEJUQUtVTw==?=)
-Date: Mon, 16 Oct 2017 08:58:38 +0000
-Subject: [cip-dev] Application for CIP Kernel maintenance Q&A session
-Message-ID: <390B4EACA1A32748BA6BC7F859F7D7165D17891E@GSjpTKYDCembx31.service.hitachi.net>
+From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
+Date: Mon, 16 Oct 2017 12:13:25 +0200
+Subject: [cip-dev] CIP FAQ
+Message-ID: <59E48645.3000804@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Please add me to the list of participants;
+Hi,
 
-Name, Company, Position/role
-Takuo Koguchi, Hitachi, Chief Researcher
+it would be beneficial to update the CIP FAQ section of the CIP website 
+before ELCE. I just went over it and it seems it was done some time ago.
 
-Best Regards,
+Adding a link to the white-paper, another one to the Participate section 
+of the wiki front page, another to the current members web page.... can 
+be some obvious improvements.
 
-Takuo Koguchi,
-Hitachi, Ltd.
+I also think it is important to provide a more accurate answer to the 
+first question.
+
+Best Regards
+
+-- 
+Agustin Benito Bethencourt
+Principal Consultant - FOSS at Codethink
+agustin.benito at codethink.co.uk
