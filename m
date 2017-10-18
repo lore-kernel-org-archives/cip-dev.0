@@ -1,34 +1,40 @@
-From: yoshitake.kobayashi@gmail.com (Yoshitake Kobayashi)
-Date: Mon, 16 Oct 2017 10:37:56 +0000
-Subject: [cip-dev] Application for CIP Kernel maintenance Q&A session
-In-Reply-To: <390B4EACA1A32748BA6BC7F859F7D7165D17891E@GSjpTKYDCembx31.service.hitachi.net>
-References: <390B4EACA1A32748BA6BC7F859F7D7165D17891E@GSjpTKYDCembx31.service.hitachi.net>
-Message-ID: <CACbBqgXKyH1syHQd_yf+oL=1kY1=K1PDFi6X+vUjSTN_em441g@mail.gmail.com>
+From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
+Date: Wed, 18 Oct 2017 14:38:12 +0700
+Subject: [cip-dev] Wiki for Project X
+In-Reply-To: <59D64F99.9010909@codethink.co.uk>
+References: <59D64F99.9010909@codethink.co.uk>
+Message-ID: <001601d347e4$0e0376e0$2a0a64a0$@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-I updated the list.
-https://wiki.linuxfoundation.org/civilinfrastructureplatform/cipconferences/cipwselce2017
+Hi,
 
-Best regards,
-Yoshi
+> -----Original Message-----
+> From: Agustin Benito Bethencourt [mailto:agustin.benito at codethink.co.uk]
+> Sent: Thursday, October 05, 2017 10:28 PM
+> To: Daniel Sangorrin
+> Cc: cip-dev at lists.cip-project.org
+> Subject: Wiki for Project X
+> 
+> Hi Daniel,
+> 
+> once you want to release Project-X, besides moving the gitlab project
+> away from cip-playground, remember that you need to move the content to
+> the CIP wiki. We are not using the gitlab wiki in order to keep the
+> content in a central place.
+> 
+> You can tell gitlab to use an external wiki URL (specific page) in the
+> settings section of your project so the wiki tab, when clicked, will
+> point to the CIP wiki.
+> 
+> The current content won't be erased but it won't be reachable unless you
+> disable the external link option back again.
+> 
+> Feel free to ask you you have any question about it.
 
-2017?10?16?(?) 17:59 ???? / KOGUCHI?TAKUO <takuo.koguchi.sw@hitachi.com>:
+Thanks, I have moved the repository and the wiki page.
+By the way, I upload by mistake one image into the civilinfrastructureplatform:cip-core namespace 
+but I didn't know how to delete it.
 
-> Please add me to the list of participants;
->
-> Name, Company, Position/role
-> Takuo Koguchi, Hitachi, Chief Researcher
->
-> Best Regards,
->
-> Takuo Koguchi,
-> Hitachi, Ltd.
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
->
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20171016/bc57ae24/attachment.html>
+Regards,
+Daniel
