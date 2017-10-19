@@ -1,130 +1,87 @@
-From: afisher@linuxfoundation.org (Annie Fisher)
-Date: Wed, 18 Oct 2017 08:27:59 -0700
-Subject: [cip-dev] New CIP releases: CIP kernel 4.4.92-cip11 and B@D v1.0
-In-Reply-To: <59E7480B.50405@codethink.co.uk>
-References: <59E7480B.50405@codethink.co.uk>
-Message-ID: <CANJgSsQ7wMDzpBrF2FVcJNBPk1+VLKc4K4NC7gNaQW51xpoRaQ@mail.gmail.com>
+From: binh.nguyen.uw@rvc.renesas.com (Binh Thanh. Nguyen)
+Date: Thu, 19 Oct 2017 05:45:47 +0000
+Subject: [cip-dev] [cip-members] CIP Workshop at ELCE: B@D 101 training
+ session. Call	for registration
+In-Reply-To: <59CD06B6.5020805@codethink.co.uk>
+References: <59CD06B6.5020805@codethink.co.uk>
+Message-ID: <c797bb40d22d4ed8946079f54b42f4c6@RVC-EX13-M02.rvc.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Fantastic news!  Well done, team!!
+Hello,
 
-Annie Fisher, MPA CSM
-Program Manager, The Linux Foundation
-Location & Time-zone: San Francisco, CA, PT
-web: https://www.linuxfoundation.org/
-email: afisher at linuxfoundation.org
+I hope it still has a slot for me.
+* Name : Binh Nguyen
+* Company : Renesas Design Vietnam
+* Position/role : Developer
+* Why you are interested on this workshop : we are working to make CIP B at D support Renesas board, It is helpful to do some practice with main developer behind B at D
+* Are you coming with your own board or do you need one? I Renesas board, but unfortunately I cannot carry it on flight. So I will need a board.
+
+Best regards,
+Binh Nguyen
 
 
-On Wed, Oct 18, 2017 at 5:24 AM, Agustin Benito Bethencourt <
-agustin.benito@codethink.co.uk> wrote:
-
+> -----Original Message-----
+> From: cip-members-bounces at lists.cip-project.org [mailto:cip-members-
+> bounces at lists.cip-project.org] On Behalf Of Agustin Benito Bethencourt
+> Sent: Thursday, September 28, 2017 9:27 PM
+> To: cip-members at lists.cip-project.org
+> Subject: [cip-members] CIP Workshop at ELCE: B at D 101 training session. Call
+> for registration
+> 
 > Dear CIP friends,
->
-> CIP is happy to announce the release of a new CIP kernel (v4.4.92-cip11)
-> together with a new version of the testing environment B at D v1.0
->
-> ++ CIP kernel v4.4.92-cip11
->
-> The Civil Infrastructure Platform project[1], a Linux Foundation
-> Initiative, is happy to announce the publication of a new version of the
-> CIP Kernel, based on 4.4 LTS, labelled as v4.4.92-cip11.
->
-> Ben Hutchings, the CIP kernel maintainer, has merged changes from the
-> stable 4.4.y branch up to v4.4.92. He has also added a few further fixes
-> and tagged the result as v4.4.92-cip11[2].
->
-> The main changes since the last announced update are:
->
->  * Many fixes from 4.4.y, including security fixes for:
->   CVE-2017-9984 CVE-2017-9985 CVE-2017-11600 CVE-2017-12134
->   CVE-2017-12153 CVE-2017-12154 CVE-2017-12192 CVE-2017-14051
->   CVE-2017-14106 CVE-2017-14140 CVE-2017-14156 CVE-2017-14340
->   CVE-2017-14489 CVE-2017-14991 CVE-2017-15537 CVE-2017-1000251
->   CVE-2017-1000252
->  * Fixes for some regressions Ben Hutchings found when reviewing the above
-> changes.
->  * Support for the Renesas RZ/G1M SoC and the iWave RZG1M Qseven SOM
->  * Support for the Siemens IOT2040 board
->  * Support for EFI capsules, including the variant used for the Intel
-> Quark SoC
->
-> [1] https://www.cip-project.org/
-> [2] https://gitlab.com/cip-project/linux-cip
->
-> ++ Board At Desk (B at D) v1.0
->
-> The Civil Infrastructure Platform project[1], a Linux Foundation
-> Initiative, is happy to announce the publication of a new version of Board
-> At Desk v1.0, a customised and easy to deploy instance of the kernelci.org[2]
-> and LAVA[3] projects that should allow developers to test Linux kernels on
-> boards connected to their own development machines using the tooling
-> provided by one of the most successful Open Source testing projects.
->
-> Board at Desk (B at D) v1.0 is provided in two forms:
->   * As a vagrant VM recipe.
->   * As a VM image, widely called a "B at D box".
->
-> Please visit the CIP Testing project Download page[4] to download the
-> latest Board At Desk (B at D v1.0).
->
-> Some of the most important new features shipped[5] with this B at D v1.0 are:
->   * LAVA has been updated to 2017.7 version which will allow in the future
-> significant improvements in the reporting area, among others.
->   * B at D now works on Windows 10 as Host OS which increases the number of
-> potential users, including engineers from several CIP Members..
->   * B at D now works behind a webproxy which is a common use case among CIP
-> Members.
->   * initramfs is now built locally, increasing reliability and opening the
-> door to use B at D in the future to test the CIP core system, not just the
-> CIP Kernel.
->
-> In addition to the above, other features has been added and several bugs
-> has been fixed, making Board at Desk more robust and reliable than before.
-> Further information about this new Board At Desk (B at D v1.0) version can
-> be found at the B at D Feature Page[5].
->
-> With this release, the CIP Testing Project covers a key milestone which is
-> releasing a working testing tool to be used locally by kernel developers
-> from any CIP Member. In the current strategy, the following key milestone
-> refers to setting up the conditions and technical measures that would allow
-> all those developers to share and analyse the test results at any point in
-> time within a fully distributed environment. This version of B at D includes
-> some initial steps towards achieving that goal.
->
-> Find more information about B at D v1.0 reading the web release
-> announcement: https://www.cip-project.org/blog/2017/10/18/cip-launches-bd-
-> v1-0
->
-> If you are interested in testing kernels using Board at Desk, meet the
-> developers at the cip-dev mailing list[6]. If you find bugs in KernelCI or
-> LAVAv2 themselves, please report them upstream. If you find them in the
-> configuration or any of the previously described features, please report
-> them in the CIP-testing bug tracker[7]. More general information about the
-> CIP testing project can be found in the CIP wiki[8].
->
-> [1] https://www.cip-project.org/
-> [2] https://kernelci.org/
-> [3] https://validation.linaro.org/
-> [4] https://wiki.linuxfoundation.org/civilinfrastructureplatform
-> /cipdownload
-> [5] https://wiki.linuxfoundation.org/civilinfrastructureplatform
-> /ciptestingboardatdesksingledevfeaturepage
-> [6] https://lists.cip-project.org/mailman/listinfo/cip-dev
-> [7] https://gitlab.com/cip-project/cip-testing/testing/boards
-> [8] https://wiki.linuxfoundation.org/civilinfrastructureplatform
-> /ciptesting
->
+> 
+> ELCE is approaching and CIP will organise a Workshop on Sunday 22nd October
+> at the ELCE location. This is the day before the event starts.
+> 
+> ++ B at D 101 training session
+> 
+> One of the main activities of that workshop is a Board At Desk (our CIP testing
+> environment) training session. We have called the activity "B at D
+> 101 training".
+> 
+> There will have room for 10 participants and Robert Marshall will be the one
+> providing it. He is the main developer behind B at D.
+> 
+> You can find all the information in the CIP wiki[1], including the time and some
+> instructions.
+> 
+> I will send to this mailing list and will add to the wiki the room at the ELCE
+> venue where the workshop will take place.
+> 
+> ++ What do I need to do to participate?
+> 
+> As described on the wiki, you will need to send to this mailing list a mail with
+> some basic information about yourself.
+> 
+> * Name
+> * Company
+> * Position/role
+> * Why you are interested on this workshop.
+> * Are you coming with your own board or do you need one?
+> 
+> Please keep in mind that you need to bring your laptop and a BeagleBone
+> Black. If you do not have such board, we will have 5 spare Renesas boards
+> (thanks Renesas).
+> 
+> This is why it will be important that you tell us if you are coming with your own
+> board or not. After sending the mail, I will add you to the wiki on first comes
+> first served basis.
+> 
+> Do not hesitate to ask any question through this mailing list or directly to me. I
+> will answer them as soon as possible.
+> 
+> I hope to see you there.
+> 
+> [1]
+> https://wiki.linuxfoundation.org/civilinfrastructureplatform/cipconferences/ci
+> pwselce2017#b-d-101how-to-test-the-cip-kernel-using-b-d
+> 
 > Best Regards
 > --
 > Agustin Benito Bethencourt
-> Principal Consultant - FOSS at Codethink
-> agustin.benito at codethink.co.uk
+> Principal Consultant - FOSS at Codethink agustin.benito at codethink.co.uk
 > _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
->
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20171018/9aa46e35/attachment.html>
+> cip-members mailing list
+> cip-members at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-members
