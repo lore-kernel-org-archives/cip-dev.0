@@ -1,27 +1,28 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Fri, 20 Oct 2017 13:28:28 +0000
-Subject: [cip-dev] CIP press mention: Renesas press release
-In-Reply-To: <59E73683.8030001@codethink.co.uk>
-References: <59E73683.8030001@codethink.co.uk>
-Message-ID: <TY1PR06MB070208ED51782B09C4046433B7430@TY1PR06MB0702.apcprd06.prod.outlook.com>
+From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
+Date: Fri, 20 Oct 2017 18:54:54 +0200
+Subject: [cip-dev] B@D 101 training session cancelled
+Message-ID: <59EA2A5E.2040703@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Agustin, all,
+Dear CIP friends,
 
-> From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-
-> bounces at lists.cip-project.org] On Behalf Of Agustin Benito Bethencourt
-> Sent: 18 October 2017 12:10
-> 
-> Hi,
-> 
-> mention on the press:
-> 
-> http://linuxgizmos.com/renesas-taps-new-10-year-slts-kernel-from-the-
-> civil-infrastructure-platform/
+I have some dab news. The B at D 101 training session has been cancelled.
 
-Thank you for sharing this article. It provides a good high level summary of the release made this week.
+Codethink was not able to tackle the training session after the release 
+on Wednesday with the minimum level of quality that such activity requires.
 
-Katayama-san and I will be more than happy to discuss the Renesas RZ/G Linux Platform with CIP community at ELC-E next week, if anyone has any questions.
+I sincerely apologise for the inconveniences to those of you who planned 
+to come.
 
-Kind regards, Chris
+Robert Marshall and I will be at ELCE. Feel free to to ping us so we can 
+show you the latest B at D v1.0 working with the default set up. Please 
+remember that my colleague Robert Marshall will do a couple of demos at 
+the CIP booth of B at Dv1.0.
+
+Best Regards
+
+-- 
+Agustin Benito Bethencourt
+Principal Consultant - FOSS at Codethink
+agustin.benito at codethink.co.uk
