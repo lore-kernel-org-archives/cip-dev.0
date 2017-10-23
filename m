@@ -1,45 +1,45 @@
-From: Lukas.Bulwahn@bmw-carit.de (Lukas Bulwahn)
-Date: Sun, 22 Oct 2017 11:02:30 +0000
-Subject: [cip-dev] Safety-Critical Linux & Invitation to Project Management
-	Meeting
-Message-ID: <4CDD13EB-9D8D-4471-A72B-F3D700177F27@bmw-carit.de>
+From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
+Date: Mon, 23 Oct 2017 18:38:25 +0900
+Subject: [cip-dev] Status of cip-core
+Message-ID: <003901d34be2$acfa4010$06eec030$@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Dear all,
+Hi all,
 
-As electronic follow-up to the today's CIP meeting, here a bit more information. I only sketched the presentation that I will give on Tuesday at ELCE and the slides can be found here:
+I have updated the cip-core quickstart instructions:
+Ref: https://wiki.linuxfoundation.org/civilinfrastructureplatform/cip-core-quickstart
 
-https://osseu17.sched.com/event/ByYv/is-linux-kernel-development-good-enough-to-make-your-life-depend-on-it-progress-on-procedures-methods-to-qualify-the-linux-kernel-development-process-lukas-bulwahn-bmw-car-it-gmbh
+I have checked that they work for iwg20m and bbb. They should work for qemu and
+cyclonev as well, but building targets takes a long time so I couldn't finish it today.
 
-I hereby invite everyone to our project management meeting; you are free to distribute this invitation to any other company that is interested in Safety-Critical Linux. There is a technical hands-on workshop on December 5th to 7th, where we will apply and investigate further quality assurance activities. I will clarify with the current members if we accept to invite interested people to this workshop on a single free-trial-basis. Once this is clarified, I will let you know and invite you this meeting as well.
+Additionally, I have upgraded cip-core to morty and KAS files to 0.13.0.
+# now jethro (legacy) files are on their own branch, and morty (next release) is on the master branch
 
-The SIL2LinuxMP Safety-Critical Linux project management meeting is planned on:
+You can test the morty version as follows:
+host$ git clone https://gitlab.com/cip-project/cip-core.git
+host$ docker run -v $PWD/cip-core:/cip-core -e USER_ID=`id -u $USER` -e http_proxy=$http_proxy -e https_proxy=$https_proxy -e NO_PROXY="$no_proxy" -it kasproject/kas:0.13.0 sh
+docker$ cd /cip-core/deby/poky/
+docker$ kas build --target core-image-minimal meta-cip-iwg20m/kas-iwg20m.yml
+[Alt] kas build --target core-image-minimal meta-cip-bbb/kas-bbb.yml
 
-Date: Wednesday, November 8th, 2017 9:00 to 17:00
-Location: BMW Car IT GmbH, Moosacher Stra?e 86, 80809 Munich, Germany
+Current issues:
+- KAS is using a single the same "build" folder for all targets, and this causes conflicts.
+Until I figure out how to specify the name of the build folder, please delete the build/tmp
+folder before building each target.
+Jan: what is KAS_WORK_DIR in http://kas.readthedocs.io/en/latest/userguide.html#environment-variables?
+- modules.tgz is not generated for iwg20m (for bbb it is): I have to investigate why but I think 
+it is not a big problem since they are included in the file system images. Probably the reason
+is just that shmobile_defconfig has modules disabled.
+- B at D: there are some slight changes needed so I will send an updated version of the patches.
 
-Please write me an email if you are interested to join.
-
-If needed, we can setup an online meeting for remote participation. Please contact me for the online meeting so that I can send you the online meeting information.
-
-The currently planned agenda roughly is:
-
-Continuation of Safety Critical Linux activities in a third phase
-- Third phase of SIL2LinuxMP project
-  - Letter of Intent
-  - Current Interest for continuation by existing members
-  - Current Interest of new members
-- Goals, Activities and Risks for third phase of SIL2LinuxMP project
-- Dissemination of Safety Critical Linux in 2018:
-  Possible organisation of new members and working groups, Dissemination of project results
-- Decision on Hardware Selection
-
-Please prepare a set of questions that are important for you to be answered for the continuation or joining as new member. If you can send them to me beforehand, I can send you the answers if it is already decided and available. Furthermore, I can consolidate the open questions for the meeting and already collect possible answers on them or provide a set on possible alternatives to be discussed.
-
-Nevertheless, we do not expect to have much time for detailed technical discussions (e.g., discussion on hardware options). Hence, if there is need to clarify some technical questions, we can set up some online meetings until November 8th, 2017. In that case, please also let me know which technical questions in the project are unclear to you.
-
-Best regards,
+Cheers,
+Daniel
 
 
-Lukas
+
+
+
+
+
+ 
