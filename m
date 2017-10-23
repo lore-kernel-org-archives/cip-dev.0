@@ -1,45 +1,21 @@
-From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
-Date: Mon, 23 Oct 2017 18:38:25 +0900
+From: Chris.Paterson2@renesas.com (Chris Paterson)
+Date: Mon, 23 Oct 2017 18:23:11 +0000
 Subject: [cip-dev] Status of cip-core
-Message-ID: <003901d34be2$acfa4010$06eec030$@toshiba.co.jp>
+In-Reply-To: <003901d34be2$acfa4010$06eec030$@toshiba.co.jp>
+References: <003901d34be2$acfa4010$06eec030$@toshiba.co.jp>
+Message-ID: <TY1PR06MB0702C3FFC11A847C16DBD931B7460@TY1PR06MB0702.apcprd06.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+Hello Daniel,
 
-I have updated the cip-core quickstart instructions:
-Ref: https://wiki.linuxfoundation.org/civilinfrastructureplatform/cip-core-quickstart
+Thank you for the update.
 
-I have checked that they work for iwg20m and bbb. They should work for qemu and
-cyclonev as well, but building targets takes a long time so I couldn't finish it today.
+> - modules.tgz is not generated for iwg20m (for bbb it is): I have to investigate
+> why but I think it is not a big problem since they are included in the file
+> system images. Probably the reason is just that shmobile_defconfig has
+> modules disabled.
 
-Additionally, I have upgraded cip-core to morty and KAS files to 0.13.0.
-# now jethro (legacy) files are on their own branch, and morty (next release) is on the master branch
+Correct :)
 
-You can test the morty version as follows:
-host$ git clone https://gitlab.com/cip-project/cip-core.git
-host$ docker run -v $PWD/cip-core:/cip-core -e USER_ID=`id -u $USER` -e http_proxy=$http_proxy -e https_proxy=$https_proxy -e NO_PROXY="$no_proxy" -it kasproject/kas:0.13.0 sh
-docker$ cd /cip-core/deby/poky/
-docker$ kas build --target core-image-minimal meta-cip-iwg20m/kas-iwg20m.yml
-[Alt] kas build --target core-image-minimal meta-cip-bbb/kas-bbb.yml
-
-Current issues:
-- KAS is using a single the same "build" folder for all targets, and this causes conflicts.
-Until I figure out how to specify the name of the build folder, please delete the build/tmp
-folder before building each target.
-Jan: what is KAS_WORK_DIR in http://kas.readthedocs.io/en/latest/userguide.html#environment-variables?
-- modules.tgz is not generated for iwg20m (for bbb it is): I have to investigate why but I think 
-it is not a big problem since they are included in the file system images. Probably the reason
-is just that shmobile_defconfig has modules disabled.
-- B at D: there are some slight changes needed so I will send an updated version of the patches.
-
-Cheers,
-Daniel
-
-
-
-
-
-
-
- 
+Kind regards, Chris
