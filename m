@@ -1,150 +1,45 @@
-From: binh.nguyen.uw@rvc.renesas.com (Binh Thanh. Nguyen)
-Date: Tue, 24 Oct 2017 12:32:38 +0000
-Subject: [cip-dev] cip-dev Digest, Vol 17, Issue 22
-In-Reply-To: <mailman.97.1508846411.22291.cip-dev@lists.cip-project.org>
-References: <mailman.97.1508846411.22291.cip-dev@lists.cip-project.org>
-Message-ID: <acf459a2e3ca4c3b8c23a4fa5c01225a@RVC-EX13-M01.rvc.renesas.com>
+From: Lukas.Bulwahn@bmw-carit.de (Lukas Bulwahn)
+Date: Wed, 25 Oct 2017 07:09:08 +0000
+Subject: [cip-dev] Invitation to Safety-Critical Linux Technical Workshop
+ (was: Safety-Critical Linux & Invitation to Project Management Meeting)
+Message-ID: <36F11ED0-8EE5-4AA8-8FF1-5961F2B1F5B9@bmw-carit.de>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Daniel,
+Dear all,
 
-> -----Original Message-----
-> From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-
-> bounces at lists.cip-project.org] On Behalf Of cip-dev-request at lists.cip-
-> project.org
-> Sent: Tuesday, October 24, 2017 2:00 PM
-> To: cip-dev at lists.cip-project.org
-> Subject: cip-dev Digest, Vol 17, Issue 22
-> 
-> Send cip-dev mailing list submissions to
-> 	cip-dev at lists.cip-project.org
-> 
-> To subscribe or unsubscribe via the World Wide Web, visit
-> 	https://lists.cip-project.org/mailman/listinfo/cip-dev
-> or, via email, send a message with subject or body 'help' to
-> 	cip-dev-request at lists.cip-project.org
-> 
-> You can reach the person managing the list at
-> 	cip-dev-owner at lists.cip-project.org
-> 
-> When replying, please edit your Subject line so it is more specific than "Re:
-> Contents of cip-dev digest..."
-> 
-> 
-> Today's Topics:
-> 
->    1. Re: Status of cip-core (Daniel Sangorrin)
->    2. B at D demos (Robert Marshall)
-> 
-> 
-> ----------------------------------------------------------------------
-> 
-> Message: 1
-> Date: Tue, 24 Oct 2017 14:17:17 +0900
-> From: "Daniel Sangorrin" <daniel.sangorrin@toshiba.co.jp>
-> To: "'Chris Paterson'" <Chris.Paterson2@renesas.com>,
-> 	<cip-dev@lists.cip-project.org>
-> Subject: Re: [cip-dev] Status of cip-core
-> Message-ID: <004001d34c87$5c8fcbe0$15af63a0$@toshiba.co.jp>
-> Content-Type: text/plain;	charset="UTF-8"
-> 
-> Hello Chris,
-> 
-> > -----Original Message-----
-> > From: Chris Paterson [mailto:Chris.Paterson2 at renesas.com]
-> > Sent: Tuesday, October 24, 2017 3:23 AM
-> > To: Daniel Sangorrin; cip-dev at lists.cip-project.org; 'Jan Kiszka'
-> > Subject: RE: [cip-dev] Status of cip-core
-> >
-> > Hello Daniel,
-> >
-> > Thank you for the update.
-> >
-> > > - modules.tgz is not generated for iwg20m (for bbb it is): I have to
-> > > investigate why but I think it is not a big problem since they are
-> > > included in the file system images. Probably the reason is just that
-> > > shmobile_defconfig has modules disabled.
-> >
-> > Correct :)
-> 
-> I have noticed that the shmobile_defconfig from the official linux-cip repo is
-> quite different from the one at https://github.com/renesas-rz/renesas-cip.
-> 
-> Previously I tested the official kernel using a ramdisk and it was successful so I
-> didn't notice the difference. But today I've tried to boot the official kernel
-> with the SD Card file system and it didn't work.
-> 
-> One problem was that EXT3/4 wasn't enabled. I decided to use renesas-cip's
-> shmobile_defconfig to build the official linux-cip kernel. However, I got a build
-> error because https://gitlab.com/cip-project/linux-cip/blob/linux-4.4.y-
-> cip/drivers/usb/host/xhci-rcar.c
-> references a firmware called  "r8a779x_usb3_v1.dlmem" which wasn't
-> available on the official kernel. I could solve that either by copying the
-> firmware from renesas-cip or by commenting out the corresponding
-> configuration flags.
-> 
-> I managed to build the official kernel but still I couldn't get it to boot from the
-> SD Card.
-> # By the way, I noticed that the mmc numbering also changed (mmcblk0p2
-> was working on renesas-cip kernel as the 2nd partition of the SD Card, but for
-> the official kernel that was a partition on the eMMC and the kernel could not
-> recognize mmcblk2p2).
-> 
-> I wonder if this problem comes from the device tree. On the renesas-cip
-> repository there was a r8a7743-iwgm.dts file that worked fine, but on the
-> official repository the one with the closest name was r8a7743-iwg20d-q7.dts.
-> This one worked fine when I boot from a ramdisk but not when I boot from
-> the SD Card.
+As announced on Sunday, people interested in Safety-Critical Linux from the project management perspective are already invited to the SIL2LinuxMP project meeting on November 8th. If you are interested to understand the technical activities that we already started and would like to continue to pursue (hopefully in collaboration with the CIP project), I would also like to invite the CIP members and all your friends to our next technical hands-on workshop. We will provide those guests access to the presentations shown and the artefacts & documents that are needed for their activity during the workshop.
 
-We are still working on upstream work on mainline and backport work on official cip-kernel.
-So, I think the official repo not work now for Renesas board.
+This offer is going to be limited to a single workshop. For participation in any further follow-up activities, we really want to have you officially join the Safety-Critical Working Group.
 
-> 
-> Should I use renesas-cip kernel again?
-> I noticed that the new versions are been merged. I was using renesas-cip's
-> v4.4.69-cip4 but I can see a newer branch called  v4.4.83-cip8
+The technical hands-on workshop will take place:
 
-The version 4.4.83-cip8 is not working now, we detected some issues and still working on it.
-The older versions work OK, please use them. 
+Date: Tuesday, December 5th, 2017 to Thursday, December 7th, 2017
+Location: BMW Car IT GmbH, Moosacher Stra?e 86, 80809 Munich, Germany
 
-> 
-> Thanks,
-> Daniel
-> 
-> 
-> 
-> 
-> ------------------------------
-> 
-> Message: 2
-> Date: Tue, 24 Oct 2017 07:09:26 +0100
-> From: Robert Marshall <robert.marshall@codethink.co.uk>
-> To: cip dev <cip-dev@lists.cip-project.org>
-> Subject: [cip-dev] B at D demos
-> Message-ID: <8760b55b6x.fsf@ctlt579.codethink.co.uk>
-> Content-Type: text/plain
-> 
-> Morning!
-> 
-> I shall be running Board at Desk demos with the beaglebone black board this
-> afternoon at the CIP stand at ELCE between 15:00 and 16:30.
-> 
-> Hope to see you there!
-> 
-> Robert
-> 
-> 
-> ------------------------------
-> 
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
-> 
-> 
-> End of cip-dev Digest, Vol 17, Issue 22
-> ***************************************
+For accommodation, here are three hotels very close to our offices (about 50-100 meters):
+  
+  - Leonardo Royal Hotel Munich, https://www.leonardo-hotels.com/leonardo-royal-hotel-munich, Moosacher Stra?e 90, 80809 Munich, Germany
+  - Hotel Adagio access M?nchen City Olympiapark, http://www.adagio-city.com/gb/hotel-9274-adagio-access-munich-city-olympiapark-dec-2014/index.shtml, Am Oberwiesenfeld 20, 80809 Munich, Germany
+  - Hotel ibis budget M?nchen City Olympiapark, http://www.ibis.com/gb/hotel-8726-ibis-budget-muenchen-city-olympiapark/index.shtml, Am Oberwiesenfeld 22, 80809 Munich, Germany
+
+Here is a further pointer how to reach us by car and public transportation:
+http://www.bmw-carit.com/downloads/Anfahrtsplan_Car_IT_en.pdf
+
+The workshop will have a short general assembly with an introduction for new collaborators, and then we will again split into working groups and the groups will start working on the selected topics.
+
+Currently, we foresee these to continue and/or initialize on the most interesting selection of the following topics:
+
+  - Static Analysis of Linux Kernel: Combining Coccinelle and Patch Impact Tester
+  - Symbolic Execution with KLEE and S2E (http://s2e.epfl.ch)
+  - Linux Test Project and openPOSIX test suite
+  - Root Cause Analysis of Kernel Bugs
+  - Software Layer of Protection Analysis
+  - Linux Driver Verification (if Alexey Khoroshilov can join the workshop)
+
+We do not expect to have many more talks on the different topics, but we will rather work on the different topics, produce some initial/intermediate results (learning-by-doing), and exchange our findings in short presentations.
+
 
 Best regards,
-Binh Nguyen
+
+Lukas
