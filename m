@@ -1,22 +1,21 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Wed, 25 Oct 2017 11:46:12 +0200
-Subject: [cip-dev] [PATCH 00/10] Backport of watchdog core triggered
- keepalive infrastructure
-In-Reply-To: <20171004144104.14403-1-mosipov@ilbers.de>
-References: <20171004144104.14403-1-mosipov@ilbers.de>
-Message-ID: <1508924772.22379.81.camel@codethink.co.uk>
+From: daniel.wagner@siemens.com (Daniel Wagner)
+Date: Fri, 27 Oct 2017 14:57:08 +0200
+Subject: [cip-dev] Status of cip-core
+In-Reply-To: <003901d34be2$acfa4010$06eec030$@toshiba.co.jp>
+References: <003901d34be2$acfa4010$06eec030$@toshiba.co.jp>
+Message-ID: <b10de86c-b50e-33a0-fd74-826d7f4aaa86@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Please use one of these formats for upstream references in the commit
-messages:
+Hi Daniel,
 
-    commit 0123456789012345678901234567890123456789 upstream.
+On 10/23/2017 11:38 AM, Daniel Sangorrin wrote:
+> Jan: what is KAS_WORK_DIR in http://kas.readthedocs.io/en/latest/userguide.html#environment-variables?
 
-    [ Upstream commit 0123456789012345678901234567890123456789 ]
+kas is designed so that you need to run it always from the same
+directory you invoked it first. Basically the root folder for the
+project. But if you like me, not always running kas from the same folder
+KAS_WORK_DIR can be used to point to the root folder of the project.
 
-Ben.
-
--- 
-Ben Hutchings
-Software Developer, Codethink Ltd.
+Thanks,
+Daniel
