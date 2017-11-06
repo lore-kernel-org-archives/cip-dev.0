@@ -1,58 +1,100 @@
 From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
-Date: Mon, 6 Nov 2017 11:18:58 +0900
-Subject: [cip-dev] B@D run on Renesas board - issue
-In-Reply-To: <87k1z7nyad.fsf@ctlt579.codethink.co.uk>
-References: <d06c1efd762e425b9fdbc5c263747828@RVC-EX13-M02.rvc.renesas.com>
-	<87k1z7nyad.fsf@ctlt579.codethink.co.uk>
-Message-ID: <014601d356a5$9a4349d0$cec9dd70$@toshiba.co.jp>
+Date: Mon, 6 Nov 2017 15:14:51 +0900
+Subject: [cip-dev] CIP kernel maintenance and testing report. Weeks 43
+	and 44
+In-Reply-To: <59FC8EC0.8090007@codethink.co.uk>
+References: <59FC8EC0.8090007@codethink.co.uk>
+Message-ID: <015d01d356c6$8eff3680$acfda380$@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Binh-san,
+Hi Agustin, Tom:
 
-> -----Original Message-----
-> From: Robert Marshall [mailto:robert.marshall at codethink.co.uk]
-> Sent: Saturday, November 04, 2017 1:05 AM
-> To: Binh Thanh. Nguyen
-> Cc: Daniel Sangorrin; O365-Toru Oishi; Chris Paterson; Trung. Huynh; cip-dev at lists.cip-project.org
-> Subject: Re: B at D run on Renesas board - issue
-> 
-> "Binh Thanh. Nguyen" <binh.nguyen.uw@rvc.renesas.com> writes:
-> 
-> > Hello Daniel, Robert,
-> >
-> > We are facing an issue when trying to run healthcheck using B at D on Renesas board.
-> > I would like to attach the log and the healthcheck script (we modified the healthcheck from Daniel)
-> >
-> > The boot action was passed, but after that, look like LAVA cannot send
-> > command to Board, only send "#" (it supposed to be "uname").
-> > I wonder if you met same issue before?
-> > And if possible, please give us any hints you may have for debugging this issue!
-> >
-> > Best regards,
-> > Binh Nguyen
-> 
-> Thanh
-> 
-> Sorry for the delay in responding!
-> 
-> That test is missing a deploy section (all commented out) are you trying
-> to make the test too minimal? LAVA tends to swallow output if it is what
-> is expected.
-> 
-> Robert
+> ** Link: https://gitlab.com/cip-project/cip-testing/testing/issues/167
 
-As Robert said, please do not comment out the deploy section. LAVA does not just deploy
-the binaries as they are, it also copies some scripts (LAVA Test shell) into the ramdisk (or network filesystem).
-# LAVA does not use scp (or a serial protocol) to copy them into the target
+>From the link above: "As it stands b at d is about testing the kernel, b at d should use kernel-ci to provision the 
+kernel without the overhead of bitbake/docker..."
 
-For deploying you need a PDU (remote power switch). If you don't have one you need to 
-buy one and then add the corresponding commands. 
-# Note: I use an IP Power 9258 remote PDU.
-# Note: do not think you can get around without a PDU*
+I agree that you don't need to rebuild cip-core just to check that the kernel's build or boot does not fail.
+
+"... After that the issue of the minimal image / ramfs can be discussed"
+
+Maybe we should also discuss whether B at D is appropriate for testing cip-core packages as well.
 
 Thanks,
 Daniel
 
-*There are ways to do it but they have limitations
-https://validation.linaro.org/static/docs/v2/dispatcher-design.html#primary-connection
+> -----Original Message-----
+> From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Agustin Benito Bethencourt
+> Sent: Saturday, November 04, 2017 12:44 AM
+> To: cip-dev at lists.cip-project.org
+> Subject: [cip-dev] CIP kernel maintenance and testing report. Weeks 43 and 44
+> 
+> Hi,
+> 
+> 
+> this report covers the activities done by Codethink that are not related
+> with B at D v1.0 release nor our presence at ELCE. This is why week 42 and
+> most of week 43 are not included.
+> 
+> ++ CIP Kernel maintenance
+> 
+> * Renesas supported Kernel build for using it at B at D v1.0
+> ** Decided to take the same approach as BBB kernel. #167
+> ** Link: https://gitlab.com/cip-project/cip-testing/testing/issues/167
+> 
+> * Further review of watchdog core triggered keepalive infrastructure
+> backports.
+> 
+> ++ CIP Testing project
+> 
+> * Renesas board support
+> ** Remote power cycle of Renesas board done using IP Power 9258 Remote
+> PDU. Working on remotely power cycling BBB. This is a request from
+> Daniel W. and a suggestion from AGL CIAT folks. #166
+> ** Link: https://gitlab.com/cip-project/cip-testing/testing/issues/166
+> * Renesas supported Kernel build for testing it at B at D v1.0
+> ** Decided to take the same approach as BBB kernel.
+> 
+> * Our daily reports sent to cip-tests-results mailing lists are now
+> referred to the latest CIP kernel 4.4.92-cip11
+> 
+> * Several bugs and improves in configurations has been added to gitlab
+> out of the demos and suggestion at ELCE 2017. The most relevant are:
+> ** B at D should use its own test-definitions repo and should be local #158
+> *** Link: https://gitlab.com/cip-project/cip-testing/testing/issues/158
+> ** kernelci webserver should start at VM boot time #160
+> *** Link: https://gitlab.com/cip-project/cip-testing/testing/issues/160
+> ** Builds older than 5 days does not appear on kernelci #164
+> *** Link: https://gitlab.com/cip-project/cip-testing/testing/issues/164
+> 
+> * Several small improvements in the documentation as consequence of the
+> ELCE demos like #120
+> ** Link: https://gitlab.com/cip-project/cip-testing/testing/issues/120
+> 
+> * Some support actions taken after ELCE 2017.
+> 
+> ++ Other activities
+> 
+> * Preparation of an online training session.
+> 
+> * Trying out CIP Core to evaluate future challenges for testing it with B at D
+> ** Discussion about the challenges that dependencies bring for testing
+> the kernel and/or  system when the underlying OS is not Debian, the CIP
+> default distro.
+> 
+> * Planning the coming key actions for the CIP Testing project based on
+> the input got at ELCE 2017
+> 
+> Tom Pollard is still helping us in different areas, focused in the
+> coming online training session.
+> 
+> Best Regards
+> --
+> Agustin Benito Bethencourt
+> Principal Consultant - FOSS at Codethink
+> agustin.benito at codethink.co.uk
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
