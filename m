@@ -1,74 +1,82 @@
 From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Tue, 07 Nov 2017 17:41:50 +0000
-Subject: [cip-dev] Automating Open Source License Compliance - Kate Stewart
+Date: Tue, 07 Nov 2017 17:42:25 +0000
+Subject: [cip-dev] Detecting Performance Regressions in the Linux Kernel -
+	Jan Kara
 In-Reply-To: <1510076438.2465.31.camel@codethink.co.uk>
 References: <1510076438.2465.31.camel@codethink.co.uk>
-Message-ID: <1510076510.2465.32.camel@codethink.co.uk>
+Message-ID: <1510076545.2465.33.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-## Automating Open Source License Compliance - Kate Stewart
+## Detecting Performance Regressions in the Linux Kernel - Jan Kara
 
-[Description](https://osseu17.sched.com/event/BxI3/)
+[Description](https://osseu17.sched.com/event/BxIY/)
 
-A product distribution may need to include copyright statements,
-licence statements, disclaimers.
+SUSE runs performance tests on a "grid" of different machines (10 x86,
+1 ARM).??The x86 machines have a wide range of CPUs, memory size,
+storage performance.??There are two back-to-back connected pairs for
+network tests.
 
-Why is this a problem???Open source projects are changing quickly,
-bringing in more copyrights and licenses.??Sometimes a project's
-license doesn't actually apply to every source file.
+Other instances of the same models are available for debugging.
 
-Different sponsoring organisations and distributions have different
-policies for which licenses they accept and how they're recorded.
-Language specific package repositories also have their own standards
-for recording licenses.
+### Software used
 
-Wish lists for automation:
+"Marvin" is their framework for deploying, scheduling tests, bisecting.
 
-* Developers want a simple concise way to mark source files with
-? license, checked at build time
-* Open Source Offices want accurate license summary for third party
-? software, and their own.??She referred to "Trusted Upstream
-? Processes" but didn't expand on that.
+"MMTests" is a framework for benchmarks - parses results and generates
+comparisons - <https://github.com/gormanm/mmtests>.
 
-SPDX (Software Package Data eXchange) provides standard ways to
-identify licenses, to tag source files and to summarise this
-information in a manifest.??Common OSS licenses are assigned short
-names; custom licenses are also supported.
+CPU benchmarks: hackbench. libmicro, kernel page alloc benchmark (with
+special module), PFT, SPECcpu2016, and others,
 
-SPDX license identifiers supported by Debian (DEP-5), and other
-distributions and organisations considering adopting them.??U-Boot
-uses them, Linux is starting to use them, Eclipse Package Manager(?)
-will start soon.
+IO benchmarks: Iozone, Bonnie, Postmark, Reaim, Dbench4.??These are
+run for all supported filesystems (ext3, ext4, xfs, btrfs) and
+different RAID and non-RAID configurations.
 
-"Open Government Partnership" created a best practices template
-that includes use of SPDX license identifiers.
+Network benchmarks: sockperf, netperf, netpipe, siege.??These are run
+over loopback and 10 gigabit Ethernet using Unix domain sockets (where
+applicable), TCP, and UDP.??siege doesn't scale well so will be
+replaced.
 
-An SPDX v2.1 document has metadata for itself, each package covered,
-each source file included in packages, and any "snippets" (parts of
-a source file) with a different license.
+Complex benchmarks: kernbench, SPECjvm, Pgebcnh, sqlite insertion,
+Postgres & MariaDB OLTP, ...
 
-Various tooling is needed and available.??Open source tools include
-FOSSology, ScanCode, SPDXTools; more are listed at
-<https://wiki.debian.org/CopyrightReviewTools>.??Proprietary tools
-are available from Wind River, Black Duck, others.
+### How to detect performance changes?
 
-How accurate are the scanning tools???All are based partly on
-heuristics.??She recomends testing them against a known set of source
-files.
+Comparing a single benchmark result from each version is no good -
+there is often significant variance in results.??It is necessary to
+take multiple measurements, calculate average and s.d.
 
-She mentioned some other types of tools, but I wasn't clear on what
-they do.
+Caches and other features for increasing performance involve
+prediction, which creates strong statistical dependencies.
+Some statistical tests assume samples come from a normal
+distribution, but performance results often don't.
 
-The OpenChain project documents the process of license compliance(?),
-which is useful for a supply chain.
+It is sometimes possible to use Welch's T-test for significance of a
+difference, but it is often necessary to plot a graph to understand
+how the performance distribution is different - it can be due to
+small numbers of outliers.
 
-Missing pieces:
+Some benchmarks take multiple (but not enough) results and average
+them internally.??Ideally a benchmark framework will get all the
+results and do its own statistical analysis.??For this reason, MMTests
+uses modified versions of some benchmarks.
 
-* Trusted SPDX importers (for reviewed documents?)
-* CI/CD build tool integration (check for tags at build time?)
-* Curated real world examples
-* End-to-end case studies using SPDX documents
+### Reducing variance in benchmarks
+
+Filesystems: create from scratch each time
+
+Scheduling: bind tasks to specific NUMA nodes; disable background
+services; reboot before starting
+
+It's generally not possible to control memory layout (which affects
+cache performance) or interrupt timing.
+
+### Benchmarks are buggy
+
+* Setup can take most of the time
+* Averages are not always calculated correctly
+* Output is sometimes not flushed at exit, causing it to be truncated
 
 -- 
 Ben Hutchings
