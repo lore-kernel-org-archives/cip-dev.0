@@ -1,21 +1,61 @@
-From: daniel.wagner@siemens.com (Daniel Wagner)
-Date: Tue, 7 Nov 2017 12:42:38 +0100
+From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
+Date: Tue, 7 Nov 2017 12:58:24 +0100
 Subject: [cip-dev] B@D network setup
-In-Reply-To: <87y3nixstd.fsf@ctlt579.codethink.co.uk>
+In-Reply-To: <efdd1725-f2c0-e3aa-0e6f-871106ad3d2e@siemens.com>
 References: <0fa1ed54-2ab2-06fb-edb4-8db76d760d0c@siemens.com>
 	<008201d35771$b8d90e30$2a8b2a90$@toshiba.co.jp>
 	<efdd1725-f2c0-e3aa-0e6f-871106ad3d2e@siemens.com>
-	<87y3nixstd.fsf@ctlt579.codethink.co.uk>
-Message-ID: <bff8f43d-0c60-6864-812a-ced13e204be1@siemens.com>
+Message-ID: <5A019FE0.9020503@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-> We've opened a ticket for this
-> https://gitlab.com/cip-project/cip-testing/testing/issues/169 
-> 
-> so that we can investigate and you can keep track!
+Hi,
 
-Excellent!
+On 07/11/17 09:47, Daniel Wagner wrote:
+> Hi Daniel,
+>
+> On 11/07/2017 03:40 AM, Daniel Sangorrin wrote:
+>>> So my question is, couldn't we add additional network interface, e.g.
+>>> USB Ethernet adapter, and attach the device under test to this
+>>> interface? I don't know if Vagrant is offering such an option. In the
+>>> past I've done this with Qemu.
+>>
+>> If your network is using the MAC address for authentication you could also
+>> put the MAC address of your USB ethernet adapter into the Virtualbox
+>> ethernet interface (adapter 2).
+>
+> Unfortunately, we do have proper security in place :) The device needs
+> to do EAP and I don't think u-boot is able to this.
+>
+> Having a dedicated network interface (maybe attached to a standalone
+> switch) has also the beauty that you have it complete under control what
+> is happening on the test network.
 
-Thanks,
-Daniel
+When designing B at D, we assumed the most simple network configuration. 
+Since the system is based on a VM, the network set up is something that 
+can be adapted. Looking at this assumption now, we probably were 
+optimistic. Yes it can be customised, but the complexity might be high 
+to expect a user to do it on her own.
+
+Let's see how we can help. Probably the first step is clearly 
+documenting the network set up we currently have in B at D pointing at the 
+scripts responsible for such configuration. We will take decision from 
+that point.
+
+Robert, what is your take on this approach?
+
+
+>
+> Thanks,
+> Daniel
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
+>
+
+
+-- 
+Agustin Benito Bethencourt
+Principal Consultant - FOSS at Codethink
+agustin.benito at codethink.co.uk
