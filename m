@@ -1,82 +1,52 @@
 From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Tue, 07 Nov 2017 17:42:25 +0000
-Subject: [cip-dev] Detecting Performance Regressions in the Linux Kernel -
-	Jan Kara
+Date: Tue, 07 Nov 2017 17:43:15 +0000
+Subject: [cip-dev] Improve Regression Tracking - Thorsten Leemhuis
 In-Reply-To: <1510076438.2465.31.camel@codethink.co.uk>
 References: <1510076438.2465.31.camel@codethink.co.uk>
-Message-ID: <1510076545.2465.33.camel@codethink.co.uk>
+Message-ID: <1510076595.2465.34.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-## Detecting Performance Regressions in the Linux Kernel - Jan Kara
+## Improve Regression Tracking - Thorsten Leemhuis
 
-[Description](https://osseu17.sched.com/event/BxIY/)
+[Description](https://osseu17.sched.com/event/CnFn/)
 
-SUSE runs performance tests on a "grid" of different machines (10 x86,
-1 ARM).??The x86 machines have a wide range of CPUs, memory size,
-storage performance.??There are two back-to-back connected pairs for
-network tests.
+Thorsten has started tracking regressions in the kernel, in his spare
+time.??He is not a programmer but a journalist (for c't) and community
+manager.??He started doing this because Linus said he would like to
+see someone do the job which Rafael Wysocki used to.
 
-Other instances of the same models are available for debugging.
+He expected it to be hard and frustrating, and it's even worse than that!
+He needs to search through LKML, subsystem MLs, multiple Bugzillas.
+It's very time consuming and he's still missing a lot of regressions.
 
-### Software used
+Discussion of a single issue might change forum and it's not obvious
+so he doesn't see that.??An issue might get quietly resolved by commit
+without any message to a bug tracker.
 
-"Marvin" is their framework for deploying, scheduling tests, bisecting.
+He requested people to use a regression ID (which he assigns) and put
+it in discussions and commit messages.??This hasn't happened (yet).
+Someone suggested to make wider use of `[REGRESSION]` for reports
+of recent regressions.??(Both of the above should be added to in-tree
+documentation.)
 
-"MMTests" is a framework for benchmarks - parses results and generates
-comparisons - <https://github.com/gormanm/mmtests>.
+Someone suggested to add another mailing list specifically for
+regression reports, that may be cc'd(?) along with specific ML.
 
-CPU benchmarks: hackbench. libmicro, kernel page alloc benchmark (with
-special module), PFT, SPECcpu2016, and others,
+The upstream bug reporting process differs a lot across subsystems -
+frustrating for distribution maintainers forwarding reports.??It is
+also hard to see current regression status of the next stable release
+when considering whether to update the kernel package.
 
-IO benchmarks: Iozone, Bonnie, Postmark, Reaim, Dbench4.??These are
-run for all supported filesystems (ext3, ext4, xfs, btrfs) and
-different RAID and non-RAID configurations.
+Regression tracking is also needed for the "long tail" of bugs that
+don't get reported so quickly (within 1 or 2 release cycles).??This
+will require a team of people, not just one.
 
-Network benchmarks: sockperf, netperf, netpipe, siege.??These are run
-over loopback and 10 gigabit Ethernet using Unix domain sockets (where
-applicable), TCP, and UDP.??siege doesn't scale well so will be
-replaced.
+There needs to be some kind of database to collect information, if
+only references to discussions elsewhere.??Rafael used to create
+tracking bugs on <https://bugzilla.kernel.org>.??Thorsten is using
+a spreadsheet.
 
-Complex benchmarks: kernbench, SPECjvm, Pgebcnh, sqlite insertion,
-Postgres & MariaDB OLTP, ...
-
-### How to detect performance changes?
-
-Comparing a single benchmark result from each version is no good -
-there is often significant variance in results.??It is necessary to
-take multiple measurements, calculate average and s.d.
-
-Caches and other features for increasing performance involve
-prediction, which creates strong statistical dependencies.
-Some statistical tests assume samples come from a normal
-distribution, but performance results often don't.
-
-It is sometimes possible to use Welch's T-test for significance of a
-difference, but it is often necessary to plot a graph to understand
-how the performance distribution is different - it can be due to
-small numbers of outliers.
-
-Some benchmarks take multiple (but not enough) results and average
-them internally.??Ideally a benchmark framework will get all the
-results and do its own statistical analysis.??For this reason, MMTests
-uses modified versions of some benchmarks.
-
-### Reducing variance in benchmarks
-
-Filesystems: create from scratch each time
-
-Scheduling: bind tasks to specific NUMA nodes; disable background
-services; reboot before starting
-
-It's generally not possible to control memory layout (which affects
-cache performance) or interrupt timing.
-
-### Benchmarks are buggy
-
-* Setup can take most of the time
-* Averages are not always calculated correctly
-* Output is sometimes not flushed at exit, causing it to be truncated
 
 -- 
 Ben Hutchings
