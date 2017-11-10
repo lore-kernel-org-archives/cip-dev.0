@@ -1,98 +1,58 @@
 From: mosipov@ilbers.de (Maxim Yu. Osipov)
-Date: Fri, 10 Nov 2017 13:10:04 +0100
-Subject: [cip-dev] [PATCH 10/10] watchdog: core: add option to avoid early
-	handling of watchdog
+Date: Fri, 10 Nov 2017 13:10:03 +0100
+Subject: [cip-dev] [PATCH 09/10] watchdog: core: Clear WDOG_HW_RUNNING
+	before calling the stop function
 In-Reply-To: <20171110121004.17775-1-mosipov@ilbers.de>
 References: <20171110121004.17775-1-mosipov@ilbers.de>
-Message-ID: <20171110121004.17775-11-mosipov@ilbers.de>
+Message-ID: <20171110121004.17775-10-mosipov@ilbers.de>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+From: Guenter Roeck <linux@roeck-us.net>
 
-commit 2501b015313fe2fa40ed11fa4dd1748e09b7c773 upstream.
+commit 3c10bbde10fe4dca52726e246cefa6b0a1dfbd3e upstream.
 
-On some systems its desirable to have watchdog reboot the system
-when it does not come up fast enough. This adds a kernel parameter
-to disable the auto-update of watchdog before userspace takes over
-and a kernel option to set the default. The info messages were
-added to shorten error searching on misconfigured systems.
+WDOG_HW_RUNNING indicates that the hardware watchdog is running while the
+watchdog device is closed. The flag may be set by the driver when it is
+instantiated to indicate that the watchdog is running, and that the
+watchdog core needs to send heartbeat requests to the driver until the
+watchdog device is opened.
 
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+When the watchdog device is closed, the flag can be used by the driver's
+stop function to indicate to the watchdog core that it was unable to stop
+the watchdog, and that the watchdog core needs to send heartbeat requests.
+This only works if the flag is actually cleared when the watchdog is
+stopped. To avoid having to clear the flag in each driver's stop function,
+clear it in the watchdog core before calling the stop function.
+
+Reported-by: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Fixes: ee142889e32f ("watchdog: Introduce WDOG_HW_RUNNING flag")
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
 [mosipov at ilbers.de backported to 4.4.y]
 Signed-off-by: Maxim Yu. Osipov <mosipov@ilbers.de>
 ---
- drivers/watchdog/Kconfig        | 11 +++++++++++
- drivers/watchdog/watchdog_dev.c | 21 +++++++++++++++++----
- 2 files changed, 28 insertions(+), 4 deletions(-)
+ drivers/watchdog/watchdog_dev.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index 1c427beffadd..88743cd0a7e6 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -46,6 +46,17 @@ config WATCHDOG_NOWAYOUT
- 	  get killed. If you say Y here, the watchdog cannot be stopped once
- 	  it has been started.
- 
-+config WATCHDOG_HANDLE_BOOT_ENABLED
-+	bool "Update boot-enabled watchdog until userspace takes over"
-+	default y
-+	help
-+	  The default watchdog behaviour (which you get if you say Y here) is
-+	  to ping watchdog devices that were enabled before the driver has
-+	  been loaded until control is taken over from userspace using the
-+	  /dev/watchdog file. If you say N here, the kernel will not update
-+	  the watchdog on its own. Thus if your userspace does not start fast
-+	  enough your device will reboot.
-+
- #
- # General Watchdog drivers
- #
 diff --git a/drivers/watchdog/watchdog_dev.c b/drivers/watchdog/watchdog_dev.c
-index 1edc3d78636b..8ca87ae467f2 100644
+index 263d7fa0ef31..1edc3d78636b 100644
 --- a/drivers/watchdog/watchdog_dev.c
 +++ b/drivers/watchdog/watchdog_dev.c
-@@ -53,6 +53,9 @@ static struct watchdog_device *old_wdd;
- 
- static struct workqueue_struct *watchdog_wq;
- 
-+static bool handle_boot_enabled =
-+	IS_ENABLED(CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED);
-+
- static inline bool watchdog_need_worker(struct watchdog_device *wdd)
- {
- 	/* All variables in milli-seconds */
-@@ -683,10 +686,15 @@ int watchdog_dev_register(struct watchdog_device *wdd)
- 	 * and schedule an immediate ping.
- 	 */
- 	if (watchdog_hw_running(wdd)) {
--		__module_get(wdd->ops->owner);
--		if (wdd->ops->ref)
--			wdd->ops->ref(wdd);
--		queue_delayed_work(watchdog_wq, &wdd->work, 0);
-+		if (handle_boot_enabled) {
-+			__module_get(wdd->ops->owner);
-+			if (wdd->ops->ref)
-+				wdd->ops->ref(wdd);
-+			queue_delayed_work(watchdog_wq, &wdd->work, 0);
-+		} else {
-+			pr_info("watchdog%d running and kernel based pre-userspace handler disabled\n",
-+					wdd->id);
-+		}
+@@ -241,10 +241,12 @@ static int watchdog_stop(struct watchdog_device *wdd)
+ 		goto out_stop;
  	}
  
- 	return 0;
-@@ -756,3 +764,8 @@ void __exit watchdog_dev_exit(void)
- 	unregister_chrdev_region(watchdog_devt, MAX_DOGS);
- 	destroy_workqueue(watchdog_wq);
- }
-+
-+module_param(handle_boot_enabled, bool, 0444);
-+MODULE_PARM_DESC(handle_boot_enabled,
-+	"Watchdog core auto-updates boot enabled watchdogs before userspace takes over (default="
-+	__MODULE_STRING(IS_ENABLED(CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED)) ")");
+-	if (wdd->ops->stop)
++	if (wdd->ops->stop) {
++		clear_bit(WDOG_HW_RUNNING, &wdd->status);
+ 		err = wdd->ops->stop(wdd);
+-	else
++	} else {
+ 		set_bit(WDOG_HW_RUNNING, &wdd->status);
++	}
+ 
+ 	if (err == 0) {
+ 		clear_bit(WDOG_ACTIVE, &wdd->status);
 -- 
 2.11.0
