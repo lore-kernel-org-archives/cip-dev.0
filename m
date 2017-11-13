@@ -1,157 +1,263 @@
 From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
-Date: Mon, 13 Nov 2017 15:21:35 +0100
-Subject: [cip-dev] CIP Testing Project: recap
-Message-ID: <5A09AA6F.6040603@codethink.co.uk>
+Date: Mon, 13 Nov 2017 17:52:37 +0100
+Subject: [cip-dev] CIP Testing Project next steps: some ideas
+Message-ID: <5A09CDD5.3000502@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi,
 
-(this i a long mail)
+(this is a long mail)
 
-As the below summary shows with more or less accuracy, the steps taken 
-on the CIP Testing Project front has been:
+in order to understand the ideas about the future of the CIP Testing 
+project, let me enumerate the basic requirements that led CIP to pursue 
+the current strategy, now under revision.
 
-1 Discuss the testing strategy. (completed)
+++ Fully de-centralise service architecture
 
-2 Identify as initial need the availability of a testing framework that 
-would allow us to test at least, the CIP kernel. Identify other steps to 
-be taken. (completed)
+A decision to go for a transparent & fully de-centralised service 
+architecture as testing service architecture for CIP based on LAVA + 
+KernelCI was based in the following arguments:
 
-3 Define the testing service architecture. (completed)
+  - Conclusion from evaluating other projects: kernelci.org , LTSI, AGL, 
+openSUSE, openStack.
+    - Back then, AGL picture around testing was unclear.
+    - FUEGO back then had 3 different repositories/forks.
+  - Cost and current manpower availability.
+    - After evaluating costs, it was easy to come to the conclusion that 
+CIP could not create its own (semi)centralised service. This was the 
+main driver to design a fully distributed service architecture for CIP 
+testing at that point.
+    - Priorities within CIP.
+       - Back then the priority was to test the CIP kernel.
+    - Adaptability to CIP nature.
+       - The CIP Testing team concluded that LAVA+KernelCI could be 
+adapted to our use case and service architecture.
+    - Dependencies.
+       - Back then we agreed that we could only maintain the kernel for 
+a very long time if we took ownership of the kernel maintenance 
+activities. The same principle applies to the testing service, 
+environment, tests...
 
-4 Work on the test environment according to the above requirements and 
-strategy. (completed - ongoing). Action 1.
+I summarised the above arguments in the following text that some of you 
+have read before:
 
-5 Release the test environment. (completed - ongoing).
-    Action 1: 
-https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptesting#action-1board-at-desk-single-developer-b-d
+Sharing results is far from enough. CIP needs to ensure transparently 
+that any engineer is:
+...using the same tests...
+...to test the same CIP system...
+...on the same boards...
+...with the same tool set...
+...under the same environment...
+...producing the same reports...
+...comparable through canonical logs.
 
-6 Basic kernel testing (in progress).
-    Action 2: 
-https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptesting#action-2cip-kernel-testing
+++ New picture
 
-7 Extend the number of technologies used to deploy B at D.
-    Action 3: 
-https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptesting#action-3extend-the-number-of-technologies-used-to-deploy-b-d
+Over a year later there are some new elements to consider
 
-8 From kernel testing to system testing.
-    Action 4: 
-https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptesting#action-4from-kernel-testing-to-system-testing
+1. AGL is making a significant investment in a semi-centralised testing 
+service, based on LAVA+KernelCI. They are committed to maintain it.
 
-9 Define kernel/system testing as a semi-distributed service within CIP.
-    Action 5: 
-https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptesting#action-5define-kernelsystem-testing-as-a-semi-distributed-service-within-cip
+2. As part of that work, several containers (KernelCI) to be maintained 
+by AGL will be available soon, which would open the door for CIP to 
+adopt a container based solution instead of a VM based one, reducing the 
+effort to meet our use case.
 
-So point 6 (action 2) is where the CIP Testing project is today.
+Part of the work Codethink did in the provisioning and deployment front 
+could then be delegated to AGL, reducing the effort to the configuration 
+side only.
 
-At ELCE 2017, based in several news and trends, and since the current 
-service contract with Codethink was coming to an end, we all agreed that 
-it was time to re-evaluate the current plan. As mentioned during today's 
-TSC meeting, I will send a second e-mail with my views.
+3. As part of the AGL work, KernelCI (data visualization) is being 
+improved. The expectation is that these improvements end upstream, in 
+kernelci.org
 
-+ Historical view of the CIP Testing Project
+4.There are plans to integrate LAVA and FUEGO in the future according to 
+FUEGO maintainer, Tim Bird.
 
-A few months ago I did the following description that I now update and 
-send to this list. The goal was back then, and now, to provide a 
-historical overview of where are we in the CIP Testing Project. To do 
-so, I have used the slides[1] from the different talks CIP has 
-delivered, which are public.
+5. LAVA development seem to go through a more stable phase. Dramatic 
+changes in core areas has not been the norm in the last few months, once 
+the transition from V1 to V2 was completed.
 
-++ July 2016 LinuxCon Japan[2]
+6. kernelci.org today includes older kernels like 4.4, 3.2...
 
-* Slides 16 and 17 define the goals and plans. No specific mention to 
-testing or how the kernel maintenance will be carried on
-* Speakers: Yoshitake Kobayashi, Toshiba, Hiroshi Mine, Hitachi, Ltd. 
-and Jan Kiszka, Siemens AG.
+7. KernelCI maintainer is no longer a Linaro employee.
 
-++ Aug 2016 LinuxCon North America[3]
+8. Toshiba, a CIP Member, is investing directly in FUEGO.
 
-* Slide 14 defines the Validation (testing) goals, defining as initial 
-step of the testing project to set up the test infrastructure.
-* Slide 17 describes the testing project steps in more detail. What 
-later was called B at D is already mentioned, based on the goals previously 
-set in slide 14.
-* Jan from Siemens delivered the talk.
+++ Conversations at ELCE 2017
 
-++ Oct 6th LinuxCon EU[4]
+* CIP and AGL CIAT held a meeting to stablish areas of collaboration. 
+The main conclusion was that CIP can adopt the containers based 
+architecture in B at D, relying on AGL on maintaining each container 
+(KernelCI).
 
-* No new content on the testing front was introduced in this event but 
-the slides 14 and 17 of the deck used in August are described here 
-again: slide 14 and 17.
-* Talk delivered by Urs Gleim, Siemens AG, Corporate Technology & 
-Yoshitake Kobayashi, Toshiba
+On the other hand, CIP could focus more on the reporting side and also 
+on creating tests. These two areas should be shared with AGL and 
+upstream to kernelci.org
 
-++ Oct 2016 ELCE[5]
+I see this agreement as a natural step forward. Action 2 of CIP Testing 
+strategy already defined those two work areas as ToDo. It would be about 
+raising their priority.
 
-* Slide 30. The testing strategy figures as a milestone.
-* Slide 23 replicates the strategy for kernel validation, which 
-establishes that setting up the infrastructure is the first goal.
-* Slide 24 develops those goals.
-* Slide 25 shows the current steps. It even shows screenshots of the, by 
-then, already functional solution.
-* Slide 29 reflects the discussion points. You can see how the 
-discussions point on the direction of future extensions of the already 
-work in progress solution (KernelCI, with other solutions).
-* The talk is delivered by Urs from Siemens and Yoshi from Toshiba.
+By relying on AGL on the provisioning and deployment side (containers) 
+it is expected that the current workload on B at D could be reduced in the 
+mid term. There is an initial technical work to be done that would take 
+effort, in order to release B at D v2.0 as containers.
 
-++ Feb 2017 OSLS[6]
+Keeping a similar effort than in the past, the amount of effort 
+available for Action 2 would then be greater than Codethink could put 
+during the past year.
 
-* Slide 18 describes the work in progress on the testing front
-* Slide 20 defines the next steps to be taken in the CIP testing project.
-* The talk was delivered by Noriaki Fukuyasu (Linux Foundation) and 
-Agustin Benito Bethencourt (Codethink)
+++ Collaborating with kernelci.org
 
-++ Feb 2017 ELC[7]
+There are several collaboration points with kernelci.org:
 
-* Slide 17 defines the initial steps in the strategy towards validating 
-the base layer (not the kernel alone). Again, it defines to create a 
-test framework as initial step, like in the case of the kernel a year 
-earlier.
-* Slide 25 defines a more specific goals for CIP testing than before.
-* Slide 26 provides an overview of the four key actions that the CIP 
-testing project has defined.
-* Slide 27 describes the status of the "test framework definition work" 
-and the next steps.
-* Slide 36 describes a little better some of the next steps planned 
-related with the CIP testing project.
+a. Upstream any work done by CIP on the testing creation front.
+b. Upstream any work done by CIP on the reporting side.
+c. Sharing CIP results from B at D through kernelci.org
+d. Include the CIP kernel tree in kernelci.org Some consideration about 
+this will be done later.
+e. Fully participate in kernelci.org
 
-++ May 2017 OSSJ 2017[8]
+Let me add some considerations for each point.
 
-* Slide 26 replicates the specific goals of the CIP testing project when 
-it comes to the kernel.
-* Slide 27 should be compared to slide 26 of the previous deck. It shows 
-the progress on the CIP testing front.
-* Slide 28 Reflects the release of CIP kernel testing framework called B at D.
-* Slide 29 describes the next steps on the CIP kernel testing front.
-* Slide 37 enumerates the key news from the project, being one of the 
-the release of the kernel testing framework for the CIP kernel.
-* Slide 39 describes the next steps to be taken.
+a. Upstream any work done by CIP on the testing creation front.
 
-++ October 2017 ELCE [9]
+I do not see in theory any significant issue in this front as long as 
+the tests we create refers to upstream kernel code. If tests refers to 
+code that is not upstream, I see some challenges in using them upstream.
 
-* Slide 34: enumerates the key actions of the CIP Testing Project plan.
-* Slide 35: highlights of B at D v1.0 release.
-* Slide 36: next steps of the CIP Testing project.
-* The talk was delivered by Yoshi (Toshiba) and Urs (Siemens)
+b. Upstream any work done by CIP on the reporting side
 
-[1] 
-https://wiki.linuxfoundation.org/civilinfrastructureplatform/cipconferences
-[2] 
-http://events.linuxfoundation.org/sites/events/files/slides/Intriducing_the_CIP-LCJ2016.pdf
-[3] 
-http://events.linuxfoundation.org/sites/events/files/slides/CIP-LinuxConNA.pdf
-[4] 
-https://wiki.linuxfoundation.org/_media/civilinfrastructureplatform/2016-10-06_cip-linuxconeu-r06.pdf
-[5] 
-https://wiki.linuxfoundation.org/_media/civilinfrastructureplatform/2016-10-06_cip-linuxconeu-r06.pdf
-[6] https://wiki.linuxfoundation.org/_media/cip/osls2017_cip_v1_0.pdf
-[7] 
-http://events.linuxfoundation.jp/sites/events/files/slides/2017-02-22_CIP-ELC-r7.pdf
-[8] 
-http://events.linuxfoundation.org/sites/events/files/slides/2017-06-02_CIP-OSSJ-final_1.pdf
-[9] 
-http://events.linuxfoundation.org/sites/events/files/slides/2017-10-24_CIP-ELCE%20-%20v10.3.pdf
+The question CIP will need to answer is if the reports CIP kernel 
+maintainers need are generic enough that will be also useful for other 
+old kernel maintainers and kernel developers.
+
+In general the answer should be yes, they should be useful, so it would 
+surprise me if most of our reports does not end up upstream. Obviously 
+we would need to comply with some technical decisions implemented in 
+kernelci.org.
+
+c. Sharing CIP results through kernelci.org
+
+kernelci.org has a specific service architecture. B at D does not match 
+that architecture since it was designed to test kernel locally.
+
+I am not very optimistic about being able to use only the visualization 
+part of the kernelci.org service since B at D uses its own LAVA, not Linaro 
+one.
+
+CIP would need to raise this use case upstream and evaluate the answer 
+from Linaro and the kernelci.org project.
+
+d. Include the CIP kernel tree in kernelci.org
+
+I see no problem in including Ben's tree in kernelci.org. The 4.4 LTS 
+tree is already there.
+
+The problem comes with the fact that CIP/Ben H. would be expected of 
+taking care of the results analysis associated with that tree. That is 
+what good Open Source citizens would do, assume the workload of their 
+requests. I doubt we can assume that workload anytime soon. In any case 
+  we only care about specific boards.
+
+Managing this use case would require some discussion with the 
+kernelci.org community. I would explore it.
+
+e. Fully participate in kernelci.org
+
+With the above in mind, any organization, company or individual can 
+participate in kernelci.org. CIP can too. But different requirements 
+lead to adaptations which cannot be done and maintained without control 
+over the service.
+
+Linaro and the CIP project (Linux Foundation) do not necessarily have 
+the same requirements today (or in 15 years). No matter if CIP fully 
+participates upstream or not, my opinion is that the same strategy than 
+in CIP Core applies here.
+
+CIP needs control over its own testing service.
+
+++ Current options
+
+1. If kernelci.org is the answer, I propose to explore an agreement with 
+Linaro. That would provide CIP some level of control.
+
+Participating directly upstream in the current setup of the project, 
+where it is Linaro the organization providing the service and the main 
+investment without such agreement has risks. CIP should become upstream.
+
+2. If the idea is joining forces with AGL, then an agreement with them 
+should be the way to go.
+
+I see two approaches:
+    i The one discussed during ELCE 2017, described above, where both 
+organization collaborate but each one has its own strategy. Both of them 
+upstream as much as possible.
+    ii One in which AGL provides the service to CIP, becoming AGL CIAT 
+service consumers, contributing where we can and make sense to us.
+
+3. Set up our own (semi)centralised testing service.
+
+I think the same rationale CIP applied over a year ago is valid today. 
+Setting up our own service is not an option unless the current level of 
+investment in the CIP Testing project significantly increases, via 
+monetary investment or/and contributions from Member.
+
+Now we have a clear cost example in AGL. We just need to ask to find out 
+how much we are talking about for the set up. In a couple of years we 
+will know more about its maintenance.
+
+++ Final remarks
+
+I am glad that the technical and strategic decisions we took over a year 
+ago has not closed CIP any door in the current scenario. Back then the 
+situation was more blur than it is today.
+
+Based on my experience, a (semi)centralised testing service is very 
+expensive. I wonder how viable it is to have several LF initiatives 
+setting up and maintaining independent embedded focused testing 
+services. I hope the situation in a year is significantly better than 
+today in this regard across initiatives.
+
+When AGL decided to go for LAVA + KernelCI for its testing service, as 
+CIP did, several new options opened for us. They need to be carefully 
+considered. We are in a good position to share costs and risks with them.
+
+As we have done in the kernel maintenance front, the closer we stay to 
+upstream in the testing front, the less work we will do and the greater 
+support we will get. kernelci.org is upstream in this regard. We can 
+contribute in key areas, like tests, with very little cost and great 
+benefit.
+
+As in any Open Source project, before relying completely on upstream, an 
+evaluation of the ownership and set up (ground rules) of that upstream 
+project need to be carefully considered to understand, and ultimately 
+assume, the potential risks inherited at the organization, legal... 
+levels. This is true also for kernelci.org
+
+I believe that with the current level of investment, CIP needs to share 
+part of the workload related with the tooling in order to make 
+meaningful contributions in the testing front, which is at the very end 
+what we all want.
+
+The CIP investment will need to grow in order to raise the quality 
+threshold of what we are shipping. We all agree that testing is a 
+central part of the CIP activity. It is not just a technical commitment. 
+It is also about credibility.
+
+Based on the new facts, if as a result of the re-thinking of the current 
+testing strategy, B at D stop being a central part of the picture, that is 
+fine for Codethink. My company is not afraid of killing their own babies 
+when better options appear. What over a year ago made sense might not 
+next year. We've been there several times before. The tragedy would be 
+carrying on an iron ball chained to our foot.
+
+I would explore in depth options 2.i and 2.ii, in that order, as initial 
+steps.
+
+Excuses for these two long mails. There will be no more :-)
 
 Best Regards
 -- 
