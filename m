@@ -1,58 +1,20 @@
-From: mosipov@ilbers.de (Maxim Yu. Osipov)
-Date: Fri, 10 Nov 2017 13:10:03 +0100
-Subject: [cip-dev] [PATCH 09/10] watchdog: core: Clear WDOG_HW_RUNNING
-	before calling the stop function
-In-Reply-To: <20171110121004.17775-1-mosipov@ilbers.de>
-References: <20171110121004.17775-1-mosipov@ilbers.de>
-Message-ID: <20171110121004.17775-10-mosipov@ilbers.de>
+From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
+Date: Mon, 13 Nov 2017 14:54:10 +0100
+Subject: [cip-dev] CIP kernel maintenance talk at ELCE 2017 in our wiki
+Message-ID: <5A09A402.2020408@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Guenter Roeck <linux@roeck-us.net>
+Hi,
 
-commit 3c10bbde10fe4dca52726e246cefa6b0a1dfbd3e upstream.
+I just uploaded the links to the slides and video of the talk delivered 
+by Ben H. and myself at ELCE 2017.
 
-WDOG_HW_RUNNING indicates that the hardware watchdog is running while the
-watchdog device is closed. The flag may be set by the driver when it is
-instantiated to indicate that the watchdog is running, and that the
-watchdog core needs to send heartbeat requests to the driver until the
-watchdog device is opened.
+Check them out: 
+https://wiki.linuxfoundation.org/civilinfrastructureplatform/cipconferences#presentations
 
-When the watchdog device is closed, the flag can be used by the driver's
-stop function to indicate to the watchdog core that it was unable to stop
-the watchdog, and that the watchdog core needs to send heartbeat requests.
-This only works if the flag is actually cleared when the watchdog is
-stopped. To avoid having to clear the flag in each driver's stop function,
-clear it in the watchdog core before calling the stop function.
-
-Reported-by: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Fixes: ee142889e32f ("watchdog: Introduce WDOG_HW_RUNNING flag")
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
-[mosipov at ilbers.de backported to 4.4.y]
-Signed-off-by: Maxim Yu. Osipov <mosipov@ilbers.de>
----
- drivers/watchdog/watchdog_dev.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/watchdog/watchdog_dev.c b/drivers/watchdog/watchdog_dev.c
-index 263d7fa0ef31..1edc3d78636b 100644
---- a/drivers/watchdog/watchdog_dev.c
-+++ b/drivers/watchdog/watchdog_dev.c
-@@ -241,10 +241,12 @@ static int watchdog_stop(struct watchdog_device *wdd)
- 		goto out_stop;
- 	}
- 
--	if (wdd->ops->stop)
-+	if (wdd->ops->stop) {
-+		clear_bit(WDOG_HW_RUNNING, &wdd->status);
- 		err = wdd->ops->stop(wdd);
--	else
-+	} else {
- 		set_bit(WDOG_HW_RUNNING, &wdd->status);
-+	}
- 
- 	if (err == 0) {
- 		clear_bit(WDOG_ACTIVE, &wdd->status);
+Best Regards
 -- 
-2.11.0
+Agustin Benito Bethencourt
+Principal Consultant - FOSS at Codethink
+agustin.benito at codethink.co.uk
