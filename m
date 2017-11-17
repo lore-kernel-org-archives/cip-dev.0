@@ -1,40 +1,18 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Thu, 16 Nov 2017 13:06:00 +0100
-Subject: [cip-dev] [PATCH] spi: pxa2xx-pci: fix ACPI-based enumeration of
-	SPI devices
-Message-ID: <f901fec0-86ea-ab4c-5130-1b10b4b0c065@siemens.com>
+From: tiejunc@vmware.com (Tiejun Chen)
+Date: Fri, 17 Nov 2017 07:05:50 +0000
+Subject: [cip-dev] Applying for CIP work
+Message-ID: <DM5PR0501MB37344E0B91EF88799DA1A27BC52F0@DM5PR0501MB3734.namprd05.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Hi,
 
-commit b70cd2de0ea85f5ab51a1d01893cba6415011b9d upstream.
+I'm very interest in participating in CIP.
 
-Slave devices are not enumerated by ACPI data because the ACPI handle for the
-core driver is NULL if it was enumerated by PCI.
+Name: Tiejun Chen
+Company: VMware
+Position/Role: Staff Engineer/Technical Leader
+Why you are interested on: I'm working on some industrial IoT projects and explorations at VMware. It involves Linux development like trimming down/Paravirtualizing Preempt-RT Linux as Guest OS. And I'm also working on my personal Unikernel project, UniLinux, Unilernelize Linux. And,  I ever was responsible of Wind River Linux Kernel/BSP development including Preempt-RT kernel. After that I also working on enabling HW feature to KVM/Xen/Qemu at Intel OTC. So I'd like to continue this kind of job. Especially, I totally agree that we need this industrial grade Linux.
 
-Propagate firmware node handle of the PCI device to the platform device.
-
-Suggested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
-
-Required for our IOT2000 devices to work properly.
-
- drivers/spi/spi-pxa2xx-pci.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/spi/spi-pxa2xx-pci.c b/drivers/spi/spi-pxa2xx-pci.c
-index d19d7f28aecb..ac0658ead1b9 100644
---- a/drivers/spi/spi-pxa2xx-pci.c
-+++ b/drivers/spi/spi-pxa2xx-pci.c
-@@ -167,6 +167,7 @@ static int pxa2xx_spi_pci_probe(struct pci_dev *dev,
- 		return PTR_ERR(ssp->clk);
- 
- 	memset(&pi, 0, sizeof(pi));
-+	pi.fwnode = dev->dev.fwnode;
- 	pi.parent = &dev->dev;
- 	pi.name = "pxa2xx-spi";
- 	pi.id = ssp->port_id;
+Thanks
+Tiejun
