@@ -1,19 +1,139 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Fri, 17 Nov 2017 19:02:09 +0000
-Subject: [cip-dev] Linux 4.4.98-cip13
-Message-ID: <1510945329.18523.107.camel@codethink.co.uk>
+From: jan.kiszka@siemens.com (Jan Kiszka)
+Date: Fri, 17 Nov 2017 21:45:39 +0100
+Subject: [cip-dev] [PATCH] spi: pxa2xx: Add support for GPIO descriptor chip
+	selects
+Message-ID: <bbecd99d-a170-8b72-2b38-a9e4fbfd3074@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-I've released Linux version 4.4.98-cip13.??This removes the in-tree
-firmware, adds support for some new hardware watchdog features, and
-includes all the fixes from stable versions 4.4.93-4.4.98 inclusive.
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-(I also tagged a version 4.4.92-cip12 immediately before merging from
-the 4.4 stable branch.)
+commit 99f499cd650405bbe6a9b5386d4b11ee81514fb7 upstream.
 
-Ben.
+The driver uses custom chip_info coming from platform data for chip selects
+implemented as GPIOs. If the system lacks board files setting up the
+platform data, it is not possible to use GPIOs as chip selects.
 
--- 
-Ben Hutchings
-Software Developer, Codethink Ltd.
+This adds support for GPIO descriptors so that regardless of the underlying
+firmware interface (DT, ACPI or platform data) the driver can request GPIOs
+used as chip selects and configure them accordingly.
+
+The custom chip_info GPIO support is still left there to make sure the
+existing systems keep working as expected.
+
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
+
+...and another one I missed as dependency for our IOT2000.
+
+ drivers/spi/spi-pxa2xx.c | 57 +++++++++++++++++++++++++++++++++++++++++++++---
+ drivers/spi/spi-pxa2xx.h |  3 +++
+ 2 files changed, 57 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/spi/spi-pxa2xx.c b/drivers/spi/spi-pxa2xx.c
+index 3cac73e4c3e4..21339ca204d9 100644
+--- a/drivers/spi/spi-pxa2xx.c
++++ b/drivers/spi/spi-pxa2xx.c
+@@ -1122,9 +1122,26 @@ static int pxa2xx_spi_unprepare_transfer(struct spi_master *master)
+ static int setup_cs(struct spi_device *spi, struct chip_data *chip,
+ 		    struct pxa2xx_spi_chip *chip_info)
+ {
++	struct driver_data *drv_data = spi_master_get_devdata(spi->master);
+ 	int err = 0;
+ 
+-	if (chip == NULL || chip_info == NULL)
++	if (chip == NULL)
++		return 0;
++
++	if (drv_data->cs_gpiods) {
++		struct gpio_desc *gpiod;
++
++		gpiod = drv_data->cs_gpiods[spi->chip_select];
++		if (gpiod) {
++			chip->gpio_cs = desc_to_gpio(gpiod);
++			chip->gpio_cs_inverted = spi->mode & SPI_CS_HIGH;
++			gpiod_set_value(gpiod, chip->gpio_cs_inverted);
++		}
++
++		return 0;
++	}
++
++	if (chip_info == NULL)
+ 		return 0;
+ 
+ 	/* NOTE: setup() can be called multiple times, possibly with
+@@ -1305,7 +1322,8 @@ static void cleanup(struct spi_device *spi)
+ 	if (!chip)
+ 		return;
+ 
+-	if (drv_data->ssp_type != CE4100_SSP && gpio_is_valid(chip->gpio_cs))
++	if (drv_data->ssp_type != CE4100_SSP && !drv_data->cs_gpiods &&
++	    gpio_is_valid(chip->gpio_cs))
+ 		gpio_free(chip->gpio_cs);
+ 
+ 	kfree(chip);
+@@ -1453,7 +1471,7 @@ static int pxa2xx_spi_probe(struct platform_device *pdev)
+ 	struct driver_data *drv_data;
+ 	struct ssp_device *ssp;
+ 	const struct lpss_config *config;
+-	int status;
++	int status, count;
+ 	u32 tmp;
+ 
+ 	platform_info = dev_get_platdata(dev);
+@@ -1590,6 +1608,39 @@ static int pxa2xx_spi_probe(struct platform_device *pdev)
+ 	}
+ 	master->num_chipselect = platform_info->num_chipselect;
+ 
++	count = gpiod_count(&pdev->dev, "cs");
++	if (count > 0) {
++		int i;
++
++		master->num_chipselect = max_t(int, count,
++			master->num_chipselect);
++
++		drv_data->cs_gpiods = devm_kcalloc(&pdev->dev,
++			master->num_chipselect, sizeof(struct gpio_desc *),
++			GFP_KERNEL);
++		if (!drv_data->cs_gpiods) {
++			status = -ENOMEM;
++			goto out_error_clock_enabled;
++		}
++
++		for (i = 0; i < master->num_chipselect; i++) {
++			struct gpio_desc *gpiod;
++
++			gpiod = devm_gpiod_get_index(dev, "cs", i,
++						     GPIOD_OUT_HIGH);
++			if (IS_ERR(gpiod)) {
++				/* Means use native chip select */
++				if (PTR_ERR(gpiod) == -ENOENT)
++					continue;
++
++				status = (int)PTR_ERR(gpiod);
++				goto out_error_clock_enabled;
++			} else {
++				drv_data->cs_gpiods[i] = gpiod;
++			}
++		}
++	}
++
+ 	tasklet_init(&drv_data->pump_transfers, pump_transfers,
+ 		     (unsigned long)drv_data);
+ 
+diff --git a/drivers/spi/spi-pxa2xx.h b/drivers/spi/spi-pxa2xx.h
+index 58efa98313aa..1320538f8623 100644
+--- a/drivers/spi/spi-pxa2xx.h
++++ b/drivers/spi/spi-pxa2xx.h
+@@ -80,6 +80,9 @@ struct driver_data {
+ 	void (*cs_control)(u32 command);
+ 
+ 	void __iomem *lpss_base;
++
++	/* GPIOs for chip selects */
++	struct gpio_desc **cs_gpiods;
+ };
+ 
+ struct chip_data {
