@@ -1,106 +1,100 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Wed, 22 Nov 2017 17:15:01 +0000
-Subject: [cip-dev] [PATCH] spi: pxa2xx: Add support for GPIO descriptor
- chip selects
-In-Reply-To: <cc87e6fb-a800-11e6-44c6-150377672ea6@siemens.com>
-References: <bbecd99d-a170-8b72-2b38-a9e4fbfd3074@siemens.com>
-	<1511369638.18523.121.camel@codethink.co.uk>
-	<cc87e6fb-a800-11e6-44c6-150377672ea6@siemens.com>
-Message-ID: <1511370901.18523.124.camel@codethink.co.uk>
+From: tiejunc@vmware.com (Tiejun Chen)
+Date: Sat, 18 Nov 2017 07:01:58 +0000
+Subject: [cip-dev] Applying for CIP work
+In-Reply-To: <5A0EC9D9.5070708@codethink.co.uk>
+References: <DM5PR0501MB37344E0B91EF88799DA1A27BC52F0@DM5PR0501MB3734.namprd05.prod.outlook.com>
+	<5A0EC9D9.5070708@codethink.co.uk>
+Message-ID: <DM5PR0501MB37341EF656B618DF85E4D6B9C52C0@DM5PR0501MB3734.namprd05.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Wed, 2017-11-22 at 18:01 +0100, Jan Kiszka wrote:
-> On 2017-11-22 17:53, Ben Hutchings wrote:
-> > On Fri, 2017-11-17 at 21:45 +0100, Jan Kiszka wrote:
-> > > From: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > > 
-> > > commit 99f499cd650405bbe6a9b5386d4b11ee81514fb7 upstream.
-> > > 
-> > > The driver uses custom chip_info coming from platform data for chip selects
-> > > implemented as GPIOs. If the system lacks board files setting up the
-> > > platform data, it is not possible to use GPIOs as chip selects.
-> > > 
-> > > This adds support for GPIO descriptors so that regardless of the underlying
-> > > firmware interface (DT, ACPI or platform data) the driver can request GPIOs
-> > > used as chip selects and configure them accordingly.
-> > > 
-> > > The custom chip_info GPIO support is still left there to make sure the
-> > > existing systems keep working as expected.
-> > > 
-> > > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > > Signed-off-by: Mark Brown <broonie@kernel.org>
-> > > Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> > > ---
-> > > 
-> > > ...and another one I missed as dependency for our IOT2000.
-> > > 
-> > > ?drivers/spi/spi-pxa2xx.c | 57 +++++++++++++++++++++++++++++++++++++++++++++---
-> > > ?drivers/spi/spi-pxa2xx.h |??3 +++
-> > > ?2 files changed, 57 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/spi/spi-pxa2xx.c b/drivers/spi/spi-pxa2xx.c
-> > > index 3cac73e4c3e4..21339ca204d9 100644
-> > > --- a/drivers/spi/spi-pxa2xx.c
-> > > +++ b/drivers/spi/spi-pxa2xx.c
-> > > @@ -1122,9 +1122,26 @@ static int pxa2xx_spi_unprepare_transfer(struct spi_master *master)
-> > > ?static int setup_cs(struct spi_device *spi, struct chip_data *chip,
-> > > > > > ?		????struct pxa2xx_spi_chip *chip_info)
-> > > ?{
-> > > > > > +	struct driver_data *drv_data = spi_master_get_devdata(spi->master);
-> > > > > > ?	int err = 0;
-> > > ?
-> > > > > > -	if (chip == NULL || chip_info == NULL)
-> > > > > > +	if (chip == NULL)
-> > > > > > +		return 0;
-> > > +
-> > > +	if (drv_data->cs_gpiods) {
-> > > +		struct gpio_desc *gpiod;
-> > > +
-> > > +		gpiod = drv_data->cs_gpiods[spi->chip_select];
-> > > +		if (gpiod) {
-> > > +			chip->gpio_cs = desc_to_gpio(gpiod);
-> > > +			chip->gpio_cs_inverted = spi->mode & SPI_CS_HIGH;
-> > 
-> > This assigns a value of 0 or 4 to chip->gpio_cs_inverted, when it
-> > surely should be 0 or 1.??With the current gpiolib implementation this
-> > appears to work anyway, but I wouldn't want to assume that's true.
-> 
-> Indeed.
-> 
-> > 
-> > [...]
-> > > @@ -1305,7 +1322,8 @@ static void cleanup(struct spi_device *spi)
-> > > ????????if (!chip)
-> > > ????????????????return;
-> > > ?
-> > > -???????if (drv_data->ssp_type != CE4100_SSP && gpio_is_valid(chip->gpio_cs))
-> > > +???????if (drv_data->ssp_type != CE4100_SSP && !drv_data->cs_gpiods &&
-> > > +???????????gpio_is_valid(chip->gpio_cs))
-> > > ????????????????gpio_free(chip->gpio_cs);
-> > 
-> > [...]
-> > 
-> > This is really weird; I think the driver should consistently use
-> > managed or unmanaged allocation of GPIOs.
-> 
-> Yes, there is another patch in upstream to improve this:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c18d925fca20d33c3d04e5002a883f62d699543e
+Agustin,
 
-I'm talking about use of devm_gpio_get() (with automatic free) vs
-gpio_request()/gpio_free().
+Very  glad to meet you guys. I hope I can contribute to CIP.
 
-Ben.
+I'm trying to understand insight of CIP based some public materials from your team. And then I will go to check kernel project. On my side I'm curious if anyone started working Preempt RT CIP Kernel. In addition, I'd like to take look at if CIP need virtualization support. Based on my job, I think HW virtualization can play very important role in some IoT cases. In addition, KSPP is also my interest.
 
-> > 
-> > But I don't think these are blockers for backporting, so I've applied
-> > this anyway.
-> > 
+Go back to Unikernel exploration, I think at least you can find this,
+
+https://wiki.linuxfoundation.org/realtime/events/rt-summit2017/schedule
+
+Actually this is my personal proposal so it's still at the early stage. Maybe you also can find this somewhere else because this year I talked this similar presentation at LinuxCon China, Open Source Summit North America, Open Source Summit Europe & Embedded Linux Conference Europe and RT-Summit Europe. You know, I was trying to collect some valuable comments and feedback to issue my development. So I'm also looking forward to any thought from you. Thank you in advance. 
+
+Thanks
+Tiejun
+
+> -----Original Message-----
+> From: Agustin Benito Bethencourt [mailto:agustin.benito at codethink.co.uk]
+> Sent: Friday, November 17, 2017 7:37 PM
+> To: Tiejun Chen <tiejunc@vmware.com>
+> Cc: cip-dev at lists.cip-project.org
+> Subject: Re: [cip-dev] Applying for CIP work
 > 
-> Thanks (also for cross-checking),
-> Jan
+> Hi Tiejun Chen,
 > 
--- 
-Ben Hutchings
-Software Developer, Codethink Ltd.
+> On 17/11/17 08:05, Tiejun Chen wrote:
+> > Hi,
+> >
+> > I'm very interest in participating in CIP.
+> >
+> > Name: Tiejun Chen
+> > Company: VMware
+> > Position/Role: Staff Engineer/Technical Leader Why you are interested
+> > on: I'm working on some industrial IoT projects and explorations at VMware. It
+> involves Linux development like trimming down/Paravirtualizing Preempt-RT
+> Linux as Guest OS. And I'm also working on my personal Unikernel project,
+> UniLinux, Unilernelize Linux. And,  I ever was responsible of Wind River Linux
+> Kernel/BSP development including Preempt-RT kernel. After that I also working
+> on enabling HW feature to KVM/Xen/Qemu at Intel OTC. So I'd like to continue
+> this kind of job. Especially, I totally agree that we need this industrial grade
+> Linux.
+> 
+> nice to meet you. Thanks for your kind offering.
+> 
+> Please check the following links in case you see something you might be
+> interested on or call your attention:
+> * CIP kernel maintenance:
+> https://urldefense.proofpoint.com/v2/url?u=https-
+> 3A__wiki.linuxfoundation.org_civilinfrastructureplatform_cipkernelmaintenanc
+> e&d=DwICaQ&c=uilaK90D4TOVoH58JNXRgQ&r=07uia9Ug44gDTos4Skoc-
+> UHWYOhje6rSAfMw5lKjUlo&m=_s3PV5euN3CS1h0XgeeBsnF45zK0ANnvy9zAqL
+> DgFIQ&s=WxhqZznW8JMh2YtycmrT7YfdiK8sXQ00Dlwc14ZXYBQ&e=
+> 
+> Maybe you can start by checking the kernel. Feel free to ask questions through
+> this list. Ben Hutchings and Daniel Wagner are the maintainers.
+> is the
+> 
+> * CIP Testing project:
+> https://urldefense.proofpoint.com/v2/url?u=https-
+> 3A__wiki.linuxfoundation.org_civilinfrastructureplatform_ciptesting&d=DwICa
+> Q&c=uilaK90D4TOVoH58JNXRgQ&r=07uia9Ug44gDTos4Skoc-
+> UHWYOhje6rSAfMw5lKjUlo&m=_s3PV5euN3CS1h0XgeeBsnF45zK0ANnvy9zAqL
+> DgFIQ&s=rPH_97_RlO3OzK2gR68M5vSUWpR-3kXimT9XCrnPi-Q&e=
+> 
+> Maybe you can check the latest version and downloading B at D v1.0 if you are
+> interested in kernel testing.
+> 
+> * CIP Core:
+> https://urldefense.proofpoint.com/v2/url?u=https-
+> 3A__wiki.linuxfoundation.org_civilinfrastructureplatform_cip-
+> 2Dcore&d=DwICaQ&c=uilaK90D4TOVoH58JNXRgQ&r=07uia9Ug44gDTos4Skoc-
+> UHWYOhje6rSAfMw5lKjUlo&m=_s3PV5euN3CS1h0XgeeBsnF45zK0ANnvy9zAqL
+> DgFIQ&s=g64lFK8R4NnFr5s1GNMv-SC70AEHQDQ9BgVaugpFenw&e=
+> 
+> We released a few days ago a first attempt of what should become CIP base
+> system. Feel free to check it out and let us know what you think about it.
+> 
+> Maybe you already have something else in mind where you can contribute to. In
+> such case, please let us know. It would be great to find an area of interest for
+> you that makes an impact in the project. This is frequently the hardest part
+> about joining a project. Let's try to find it together.
+> 
+> By the way, is your unikernel project open? It would be interesting if you can
+> provide us some links. It sounds interesting.
+> 
+> Best Regards
+> 
+> 
+> --
+> Agustin Benito Bethencourt
+> Principal Consultant - FOSS at Codethink agustin.benito at codethink.co.uk
