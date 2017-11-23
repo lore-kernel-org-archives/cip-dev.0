@@ -1,103 +1,45 @@
 From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
-Date: Thu, 23 Nov 2017 12:23:03 +0100
+Date: Thu, 23 Nov 2017 12:34:26 +0100
 Subject: [cip-dev] Applying for CIP work
-In-Reply-To: <DM5PR0501MB3734844C617F645EB9E4FFF8C52C0@DM5PR0501MB3734.namprd05.prod.outlook.com>
+In-Reply-To: <DM5PR0501MB37341EF656B618DF85E4D6B9C52C0@DM5PR0501MB3734.namprd05.prod.outlook.com>
 References: <DM5PR0501MB37344E0B91EF88799DA1A27BC52F0@DM5PR0501MB3734.namprd05.prod.outlook.com>
-	<CAFo+snVFmEQ2xffvbam1U1O=-NEcFqBJLXAYoJ4gu0kP2eRo5g@mail.gmail.com>
-	<DM5PR0501MB3734844C617F645EB9E4FFF8C52C0@DM5PR0501MB3734.namprd05.prod.outlook.com>
-Message-ID: <5A16AF97.9090007@codethink.co.uk>
+	<5A0EC9D9.5070708@codethink.co.uk>
+	<DM5PR0501MB37341EF656B618DF85E4D6B9C52C0@DM5PR0501MB3734.namprd05.prod.outlook.com>
+Message-ID: <5A16B242.9050502@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi Tiejun,
 
+On 18/11/17 08:01, Tiejun Chen wrote:
+> Agustin,
+>
+> Very  glad to meet you guys. I hope I can contribute to CIP.
+>
+> I'm trying to understand insight of CIP based some public materials from your team. And then I will go to check kernel project. On my side I'm curious if anyone started working Preempt RT CIP Kernel.
 
-On 18/11/17 07:47, Tiejun Chen wrote:
-> Nori,
->
-> Thank you. Do we have sort  the weekly meeting?
+Daniel Wagner, in CC, is the CIP RT kernel maintainer. Daniel, can you 
+provide an update on where you are at or tell Tiejun?
 
-We used to until ELCE, on Thursdays. But we do not now.
+> In addition, I'd like to take look at if CIP need virtualization support. Based on my job, I think HW virtualization can play very important role in some IoT cases.
 
->
-> Thanks
->
-> Tiejun
->
-> *From:* Noriaki Fukuyasu [mailto:fukuyasu at linuxfoundation.org]
-> *Sent:* Friday, November 17, 2017 7:36 PM
-> *To:* Tiejun Chen <tiejunc@vmware.com>
-> *Cc:* cip-dev at lists.cip-project.org
-> *Subject:* Re: [cip-dev] Applying for CIP work
->
-> Hi Tiejun
->
-> Welcome to CIP developer community!
->
-> We are so happy to have an experienced kernel engineer like you!
->
-> We've doing several different sub projects centered toward SLTS and
-> industrial grade linux, and in all the area, we will definitely need
-> more help!
->
-> Ben, Daniel, Jan, Yoshi (or anyone)
->
-> Please chime in and suggest Teijun where might be the areas to start for
-> him.
->
-> Thanks!
->
-> Nori
->
-> On Fri, Nov 17, 2017 at 4:05 PM, Tiejun Chen <tiejunc@vmware.com
-> <mailto:tiejunc@vmware.com>> wrote:
->
->     Hi,
->
->     I'm very interest in participating in CIP.
->
->     Name: Tiejun Chen
->     Company: VMware
->     Position/Role: Staff Engineer/Technical Leader
->     Why you are interested on: I'm working on some industrial IoT
->     projects and explorations at VMware. It involves Linux development
->     like trimming down/Paravirtualizing Preempt-RT Linux as Guest OS.
->     And I'm also working on my personal Unikernel project, UniLinux,
->     Unilernelize Linux. And,  I ever was responsible of Wind River Linux
->     Kernel/BSP development including Preempt-RT kernel. After that I
->     also working on enabling HW feature to KVM/Xen/Qemu at Intel OTC. So
->     I'd like to continue this kind of job. Especially, I totally agree
->     that we need this industrial grade Linux.
->
->     Thanks
->     Tiejun
->     _______________________________________________
->     cip-dev mailing list
->     cip-dev at lists.cip-project.org <mailto:cip-dev@lists.cip-project.org>
->     https://lists.cip-project.org/mailman/listinfo/cip-dev
->     <https://urldefense.proofpoint.com/v2/url?u=https-3A__lists.cip-2Dproject.org_mailman_listinfo_cip-2Ddev&d=DwMFaQ&c=uilaK90D4TOVoH58JNXRgQ&r=07uia9Ug44gDTos4Skoc-UHWYOhje6rSAfMw5lKjUlo&m=2eg3xa_FP9aZ3ZRtf6k15VyWeCO3t1jNfAf2dozBQXQ&s=scjBWyTuCKyBCvKiXRKvbMphN8G_NXQaDyTDmVe-cJg&e=>
->
->
->
-> --
->
-> Noriaki Fukuyasu
->
-> VP of Japan Operations
->
-> The Linux Foundation
->
-> Mail: fukuyasu at linuxfoundation.org <mailto:fukuyasu@linuxfoundation.org>
->
-> Tel: +81-80-4350-1133
->
->
->
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
->
+This is an area that I do not recall to hear any solid discussion about 
+in this forum. That does not mean there is no interest, just that we 
+have been focused in other priorities.
+
+I think you should take a first step here and propose what can be done 
+in this regard and why. That way a discussion in this list can be open 
+about it.
+
+> In addition, KSPP is also my interest.
+
+In this area there are a couple of small bits done. Ben Hutchings, the 
+CIP kernel maintainer, included several KSPP backports late last year in 
+the CIP kernel. Additional contributions can be done on that side. I 
+think is a very interesting area to contribute to.
+
+
+Best Regards
 
 
 -- 
