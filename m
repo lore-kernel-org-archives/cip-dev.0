@@ -1,48 +1,47 @@
-From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
-Date: Thu, 23 Nov 2017 12:34:26 +0100
+From: wagi@monom.org (Daniel Wagner)
+Date: Fri, 24 Nov 2017 09:48:20 +0100
 Subject: [cip-dev] Applying for CIP work
-In-Reply-To: <DM5PR0501MB37341EF656B618DF85E4D6B9C52C0@DM5PR0501MB3734.namprd05.prod.outlook.com>
+In-Reply-To: <5A16B242.9050502@codethink.co.uk>
 References: <DM5PR0501MB37344E0B91EF88799DA1A27BC52F0@DM5PR0501MB3734.namprd05.prod.outlook.com>
 	<5A0EC9D9.5070708@codethink.co.uk>
 	<DM5PR0501MB37341EF656B618DF85E4D6B9C52C0@DM5PR0501MB3734.namprd05.prod.outlook.com>
-Message-ID: <5A16B242.9050502@codethink.co.uk>
+	<5A16B242.9050502@codethink.co.uk>
+Message-ID: <687ad80d-4618-59aa-f13b-6fb437eb5437@monom.org>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi Tiejun,
 
-On 18/11/17 08:01, Tiejun Chen wrote:
-> Agustin,
->
-> Very  glad to meet you guys. I hope I can contribute to CIP.
->
-> I'm trying to understand insight of CIP based some public materials from your team. And then I will go to check kernel project. On my side I'm curious if anyone started working Preempt RT CIP Kernel.
+Sorry for the late response. Just in the middle of a release...
 
-Daniel Wagner, in CC, is the CIP RT kernel maintainer. Daniel, can you 
-provide an update on where you are at or tell Tiejun?
+On 11/23/2017 12:34 PM, Agustin Benito Bethencourt wrote:
+> Hi Tiejun,
+> 
+> On 18/11/17 08:01, Tiejun Chen wrote:
+>> Agustin,
+>>
+>> Very? glad to meet you guys. I hope I can contribute to CIP.
+>>
+>> I'm trying to understand insight of CIP based some public materials
+>> from your team. And then I will go to check kernel project. On my side
+>> I'm curious if anyone started working Preempt RT CIP Kernel.
+> 
+> Daniel Wagner, in CC, is the CIP RT kernel maintainer. Daniel, can you
+> provide an update on where you are at or tell Tiejun?
 
-> In addition, I'd like to take look at if CIP need virtualization support. Based on my job, I think HW virtualization can play very important role in some IoT cases.
+Sure. So far I create an initial cip-rt tree. It is not to do date. Ben
+already created a cip-13, I am still on cip7-rt2. Those version are only
+compile tested and not tested on real hardware. Currently, I am setting
+up a test environment for the bbb. That is, I have all in place I am
+working on finding a base config for the kernel. After that I'll update
+my tree on Ben's tree. Also I need to apply the stable-rt patches from
+Steven.
 
-This is an area that I do not recall to hear any solid discussion about 
-in this forum. That does not mean there is no interest, just that we 
-have been focused in other priorities.
+Yeah and I should move my tree kernel.org today... busy times :)
 
-I think you should take a first step here and propose what can be done 
-in this regard and why. That way a discussion in this list can be open 
-about it.
+One thing we could work together is writing/collecting tests which are
+relevant for rt. Anyway, I have Steven's ktest running but I didn't
+grasp Steven's test suite so far.
 
-> In addition, KSPP is also my interest.
-
-In this area there are a couple of small bits done. Ben Hutchings, the 
-CIP kernel maintainer, included several KSPP backports late last year in 
-the CIP kernel. Additional contributions can be done on that side. I 
-think is a very interesting area to contribute to.
-
-
-Best Regards
-
-
--- 
-Agustin Benito Bethencourt
-Principal Consultant - FOSS at Codethink
-agustin.benito at codethink.co.uk
+Thanks,
+Daniel
