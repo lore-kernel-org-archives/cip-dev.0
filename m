@@ -1,148 +1,44 @@
-From: mosipov@ilbers.de (Maxim Yu. Osipov)
-Date: Mon, 27 Nov 2017 17:31:01 +0100
-Subject: [cip-dev] [PATCH v2] wireless: change cfg80211 regulatory domain
-	info as debug messages
-Message-ID: <20171127163101.16834-1-mosipov@ilbers.de>
+From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
+Date: Mon, 27 Nov 2017 21:12:04 +0100
+Subject: [cip-dev] Report weeks 45, 46 and 47
+Message-ID: <5A1C7194.5090203@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Dave Young <dyoung@redhat.com>
+Dear CIP friends,
 
-commit 94c4fd641e1bc438092f0214bb5ec77ea73b13cf upstream.
+On week 46 I updated the CIP TSC about progress on the Kernel 
+Maintenance front but did not do it here.
 
-cfg80211 module prints a lot of messages like below. Actually printing
-once is acceptable but sometimes it will print again and again, it looks
-very annoying. It is better to change these detail messages to debugging
-only.
+++ Kernel Maintenance
 
-cfg80211: World regulatory domain updated:
-cfg80211:  DFS Master region: unset
-cfg80211:   (start_freq - end_freq @ bandwidth), (max_antenna_gain, max_eirp), (dfs_cac_time)
-cfg80211:   (2402000 KHz - 2472000 KHz @ 40000 KHz), (N/A, 2000 mBm), (N/A)
-cfg80211:   (2457000 KHz - 2482000 KHz @ 40000 KHz), (N/A, 2000 mBm), (N/A)
-cfg80211:   (2474000 KHz - 2494000 KHz @ 20000 KHz), (N/A, 2000 mBm), (N/A)
-cfg80211:   (5170000 KHz - 5250000 KHz @ 80000 KHz, 160000 KHz AUTO), (N/A, 2000 mBm), (N/A)
-cfg80211:   (5250000 KHz - 5330000 KHz @ 80000 KHz, 160000 KHz AUTO), (N/A, 2000 mBm), (0 s)
-cfg80211:   (5490000 KHz - 5730000 KHz @ 160000 KHz), (N/A, 2000 mBm), (0 s)
-cfg80211:   (5735000 KHz - 5835000 KHz @ 80000 KHz), (N/A, 2000 mBm), (N/A)
-cfg80211:   (57240000 KHz - 63720000 KHz @ 2160000 KHz), (N/A, 0 mBm), (N/A)
+* Ben H. sent notes on Y2038 meeting and various talks to the cip-dev list
+* CIP kernel version 4.4.98-cip13 released
+** Ben H. Reviewed changes in Linux 4.4.93-4.4.98 inclusive.
+** Applied patches to remove firmware from kernel source.
+** watchdog feature backport (v2) from Siemens reviewed and applied
+** kernel security tracker updated.
+** Backported various security fixes and sent them to Greg Kroah-Hartman
+for the 4.4 stable branch
+* Future CIP kernel maintainers training
+** Patch review guidelines in progress, as first step towards training 
+kernel devs from Members as future CIP kernel maintainers in progress.
+* Kernel maintenance wiki page reviewed. Agustin will update it.
 
-The changes in this patch is to replace pr_info with pr_debug in function
-print_rd_rules and print_regdomain_info
+++ CIP Testing project
 
-Signed-off-by: Dave Young <dyoung@redhat.com>
-[change some pr_err() statements to at least keep the alpha2]
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Maxim Yu. Osipov <mosipov@ilbers.de>
----
- net/wireless/reg.c | 33 ++++++++++++++++++---------------
- 1 file changed, 18 insertions(+), 15 deletions(-)
+* Robert Marshall has been doing some support on this list.
+* Went over the open tasks and documenting them to be pick up when the 
+project gets re-started.
+** Agustin sent a mail on this mailing list summarising:
+*** CIP Testing project background.
+*** Current status
+*** Options for the future
 
-diff --git a/net/wireless/reg.c b/net/wireless/reg.c
-index 06d050da0d94..40e5b36ddbba 100644
---- a/net/wireless/reg.c
-+++ b/net/wireless/reg.c
-@@ -2763,7 +2763,7 @@ static void print_rd_rules(const struct ieee80211_regdomain *rd)
- 	const struct ieee80211_power_rule *power_rule = NULL;
- 	char bw[32], cac_time[32];
- 
--	pr_info("  (start_freq - end_freq @ bandwidth), (max_antenna_gain, max_eirp), (dfs_cac_time)\n");
-+	pr_debug("  (start_freq - end_freq @ bandwidth), (max_antenna_gain, max_eirp), (dfs_cac_time)\n");
- 
- 	for (i = 0; i < rd->n_reg_rules; i++) {
- 		reg_rule = &rd->reg_rules[i];
-@@ -2790,7 +2790,7 @@ static void print_rd_rules(const struct ieee80211_regdomain *rd)
- 		 * in certain regions
- 		 */
- 		if (power_rule->max_antenna_gain)
--			pr_info("  (%d KHz - %d KHz @ %s), (%d mBi, %d mBm), (%s)\n",
-+			pr_debug("  (%d KHz - %d KHz @ %s), (%d mBi, %d mBm), (%s)\n",
- 				freq_range->start_freq_khz,
- 				freq_range->end_freq_khz,
- 				bw,
-@@ -2798,7 +2798,7 @@ static void print_rd_rules(const struct ieee80211_regdomain *rd)
- 				power_rule->max_eirp,
- 				cac_time);
- 		else
--			pr_info("  (%d KHz - %d KHz @ %s), (N/A, %d mBm), (%s)\n",
-+			pr_debug("  (%d KHz - %d KHz @ %s), (N/A, %d mBm), (%s)\n",
- 				freq_range->start_freq_khz,
- 				freq_range->end_freq_khz,
- 				bw,
-@@ -2831,35 +2831,35 @@ static void print_regdomain(const struct ieee80211_regdomain *rd)
- 			struct cfg80211_registered_device *rdev;
- 			rdev = cfg80211_rdev_by_wiphy_idx(lr->wiphy_idx);
- 			if (rdev) {
--				pr_info("Current regulatory domain updated by AP to: %c%c\n",
-+				pr_debug("Current regulatory domain updated by AP to: %c%c\n",
- 					rdev->country_ie_alpha2[0],
- 					rdev->country_ie_alpha2[1]);
- 			} else
--				pr_info("Current regulatory domain intersected:\n");
-+				pr_debug("Current regulatory domain intersected:\n");
- 		} else
--			pr_info("Current regulatory domain intersected:\n");
-+			pr_debug("Current regulatory domain intersected:\n");
- 	} else if (is_world_regdom(rd->alpha2)) {
--		pr_info("World regulatory domain updated:\n");
-+		pr_debug("World regulatory domain updated:\n");
- 	} else {
- 		if (is_unknown_alpha2(rd->alpha2))
--			pr_info("Regulatory domain changed to driver built-in settings (unknown country)\n");
-+			pr_debug("Regulatory domain changed to driver built-in settings (unknown country)\n");
- 		else {
- 			if (reg_request_cell_base(lr))
--				pr_info("Regulatory domain changed to country: %c%c by Cell Station\n",
-+				pr_debug("Regulatory domain changed to country: %c%c by Cell Station\n",
- 					rd->alpha2[0], rd->alpha2[1]);
- 			else
--				pr_info("Regulatory domain changed to country: %c%c\n",
-+				pr_debug("Regulatory domain changed to country: %c%c\n",
- 					rd->alpha2[0], rd->alpha2[1]);
- 		}
- 	}
- 
--	pr_info(" DFS Master region: %s", reg_dfs_region_str(rd->dfs_region));
-+	pr_debug(" DFS Master region: %s", reg_dfs_region_str(rd->dfs_region));
- 	print_rd_rules(rd);
- }
- 
- static void print_regdomain_info(const struct ieee80211_regdomain *rd)
- {
--	pr_info("Regulatory domain: %c%c\n", rd->alpha2[0], rd->alpha2[1]);
-+	pr_debug("Regulatory domain: %c%c\n", rd->alpha2[0], rd->alpha2[1]);
- 	print_rd_rules(rd);
- }
- 
-@@ -2880,7 +2880,8 @@ static int reg_set_rd_user(const struct ieee80211_regdomain *rd,
- 		return -EALREADY;
- 
- 	if (!is_valid_rd(rd)) {
--		pr_err("Invalid regulatory domain detected:\n");
-+		pr_err("Invalid regulatory domain detected: %c%c\n",
-+		       rd->alpha2[0], rd->alpha2[1]);
- 		print_regdomain_info(rd);
- 		return -EINVAL;
- 	}
-@@ -2916,7 +2917,8 @@ static int reg_set_rd_driver(const struct ieee80211_regdomain *rd,
- 		return -EALREADY;
- 
- 	if (!is_valid_rd(rd)) {
--		pr_err("Invalid regulatory domain detected:\n");
-+		pr_err("Invalid regulatory domain detected: %c%c\n",
-+		       rd->alpha2[0], rd->alpha2[1]);
- 		print_regdomain_info(rd);
- 		return -EINVAL;
- 	}
-@@ -2974,7 +2976,8 @@ static int reg_set_rd_country_ie(const struct ieee80211_regdomain *rd,
- 	 */
- 
- 	if (!is_valid_rd(rd)) {
--		pr_err("Invalid regulatory domain detected:\n");
-+		pr_err("Invalid regulatory domain detected: %c%c\n",
-+		       rd->alpha2[0], rd->alpha2[1]);
- 		print_regdomain_info(rd);
- 		return -EINVAL;
- 	}
+As usual, you can follow our work more closely through the project journal.
+
+Best Regards
 -- 
-2.11.0
+Agustin Benito Bethencourt
+Principal Consultant - FOSS at Codethink
+agustin.benito at codethink.co.uk
