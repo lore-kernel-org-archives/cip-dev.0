@@ -1,47 +1,191 @@
-From: wagi@monom.org (Daniel Wagner)
-Date: Fri, 24 Nov 2017 09:48:20 +0100
-Subject: [cip-dev] Applying for CIP work
-In-Reply-To: <5A16B242.9050502@codethink.co.uk>
-References: <DM5PR0501MB37344E0B91EF88799DA1A27BC52F0@DM5PR0501MB3734.namprd05.prod.outlook.com>
-	<5A0EC9D9.5070708@codethink.co.uk>
-	<DM5PR0501MB37341EF656B618DF85E4D6B9C52C0@DM5PR0501MB3734.namprd05.prod.outlook.com>
-	<5A16B242.9050502@codethink.co.uk>
-Message-ID: <687ad80d-4618-59aa-f13b-6fb437eb5437@monom.org>
+From: trung.huynh.uw@rvc.renesas.com (Trung. Huynh)
+Date: Mon, 27 Nov 2017 10:45:27 +0000
+Subject: [cip-dev] B@D run on Renesas board - issue
+In-Reply-To: <87mv3ljmb3.fsf@ctlt579.codethink.co.uk>
+References: <d06c1efd762e425b9fdbc5c263747828@RVC-EX13-M02.rvc.renesas.com>
+	<87k1z7nyad.fsf@ctlt579.codethink.co.uk>
+	<014601d356a5$9a4349d0$cec9dd70$@toshiba.co.jp>
+	<8a55899a02944c42911a1d0ec002d703@RVC-EX13-M02.rvc.renesas.com>
+	<008801d35eb2$73f63020$5be29060$@toshiba.co.jp>
+	<d279e51b2e1b4d6394b0d77606efac0b@RVC-EX13-M02.rvc.renesas.com>
+	<009c01d35eb8$82d1b050$887510f0$@toshiba.co.jp>
+	<87mv3ljmb3.fsf@ctlt579.codethink.co.uk>
+Message-ID: <dee93a68610e47209dd15daddc393837@RVC-EX13-M01.rvc.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Tiejun,
+Dear Daniel, Robert,
 
-Sorry for the late response. Just in the middle of a release...
+Thank for your advices.
+BTW, could you please give me uImage and device tree file as well as file system you have already built to use in your sample test?
+I appreciate that.
 
-On 11/23/2017 12:34 PM, Agustin Benito Bethencourt wrote:
-> Hi Tiejun,
-> 
-> On 18/11/17 08:01, Tiejun Chen wrote:
->> Agustin,
->>
->> Very? glad to meet you guys. I hope I can contribute to CIP.
->>
->> I'm trying to understand insight of CIP based some public materials
->> from your team. And then I will go to check kernel project. On my side
->> I'm curious if anyone started working Preempt RT CIP Kernel.
-> 
-> Daniel Wagner, in CC, is the CIP RT kernel maintainer. Daniel, can you
-> provide an update on where you are at or tell Tiejun?
+Regards,
+Trung
 
-Sure. So far I create an initial cip-rt tree. It is not to do date. Ben
-already created a cip-13, I am still on cip7-rt2. Those version are only
-compile tested and not tested on real hardware. Currently, I am setting
-up a test environment for the bbb. That is, I have all in place I am
-working on finding a base config for the kernel. After that I'll update
-my tree on Ben's tree. Also I need to apply the stable-rt patches from
-Steven.
+-----Original Message-----
+From: Robert Marshall [mailto:robert.marshall at codethink.co.uk] 
+Sent: Friday, November 17, 2017 4:18 PM
+To: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
+Cc: Trung. Huynh <trung.huynh.uw@rvc.renesas.com>; Binh Thanh. Nguyen <binh.nguyen.uw@rvc.renesas.com>; O365-Toru Oishi <toru.oishi.zj@renesas.com>; 'Chris Paterson' <Chris.Paterson2@renesas.com>; cip-dev at lists.cip-project.org
+Subject: Re: B at D run on Renesas board - issue
 
-Yeah and I should move my tree kernel.org today... busy times :)
+Hi
 
-One thing we could work together is writing/collecting tests which are
-relevant for rt. Anyway, I have Steven's ktest running but I didn't
-grasp Steven's test suite so far.
+"Daniel Sangorrin" <daniel.sangorrin@toshiba.co.jp> writes:
 
-Thanks,
-Daniel
+> Dear Trung san
+>
+>> -----Original Message-----
+>> From: Trung. Huynh [mailto:trung.huynh.uw at rvc.renesas.com]
+>> Sent: Thursday, November 16, 2017 5:49 PM
+>> To: Daniel Sangorrin; 'Robert Marshall'; Binh Thanh. Nguyen
+>> Cc: O365-Toru Oishi; 'Chris Paterson'; cip-dev at lists.cip-project.org
+>> Subject: RE: B at D run on Renesas board - issue
+>> 
+>> Dear Daniel,
+>> 
+>> Thank for your reply.
+>> The log in attachment is took from lava for easily observing instead of html page.
+>> Regarding deploy section, YES, as you can see the log showing that 
+>> has passed over it already to get into test section.
+>> 
+>> Is there anything going wrong?
+>> Looking for your feedback
+>> 
+>
+> It seems that you are not booting from a ramdisk, but rather the rootfs installed on the eMMC or SD Card.
+>
+
+It would be useful to see the test yaml as it is now, but looking back in the thread the original has in the boot section:
+
+    commands: sd
+
+you should change that to
+
+    commands: ramdisk
+
+Robert
+
+> Regards,
+> Daniel
+>
+>> Best Regards,
+>> Trung
+>> 
+>> -----Original Message-----
+>> From: Daniel Sangorrin [mailto:daniel.sangorrin at toshiba.co.jp]
+>> Sent: Thursday, November 16, 2017 3:11 PM
+>> To: Trung. Huynh <trung.huynh.uw@rvc.renesas.com>; 'Robert Marshall'
+>> <robert.marshall@codethink.co.uk>; Binh Thanh. Nguyen 
+>> <binh.nguyen.uw@rvc.renesas.com>
+>> Cc: O365-Toru Oishi <toru.oishi.zj@renesas.com>; 'Chris Paterson'
+>> <Chris.Paterson2@renesas.com>; cip-dev at lists.cip-project.org
+>> Subject: RE: B at D run on Renesas board - issue
+>> 
+>> Dear Trung san,
+>> 
+>> > -----Original Message-----
+>> > From: Trung. Huynh [mailto:trung.huynh.uw at rvc.renesas.com]
+>> > Sent: Wednesday, November 15, 2017 7:21 PM
+>> > To: Daniel Sangorrin; 'Robert Marshall'; Binh Thanh. Nguyen
+>> > Cc: O365-Toru Oishi; 'Chris Paterson'; 
+>> > cip-dev at lists.cip-project.org
+>> > Subject: RE: B at D run on Renesas board - issue
+>> >
+>> > Hi Daniel, Robert,
+>> >
+>> > We got into test section already, but have no idea why it attempts to execute the thing non-exist at all:
+>> > # /lava-237/bin/lava-test-runner /lava-237/0 as you can see our 
+>> > error log in attachment.
+>> > I also take example log over here 
+>> > https://gitlab.com/snippets/1679749
+>> > to see that it can create a directory by mkdir /lava-1
+>> >
+>> > Could you please tell us what does it make scene? How can we fix it?
+>> > Thank you.
+>> 
+>> Please could you send the complete log?
+>> 
+>> > P/S: healthcheck script same as Binh-san attached to you before
+>> 
+>> Did you make sure to uncomment the deploy section?
+>> 
+>> Regards,
+>> Daniel
+>> 
+>> >
+>> > Best Regards,
+>> > Trung
+>> >
+>> > -----Original Message-----
+>> > From: Daniel Sangorrin [mailto:daniel.sangorrin at toshiba.co.jp]
+>> > Sent: Monday, November 6, 2017 9:19 AM
+>> > To: 'Robert Marshall' <robert.marshall@codethink.co.uk>; Binh Thanh.
+>> > Nguyen <binh.nguyen.uw@rvc.renesas.com>
+>> > Cc: O365-Toru Oishi <toru.oishi.zj@renesas.com>; 'Chris Paterson'
+>> > <Chris.Paterson2@renesas.com>; Trung. Huynh 
+>> > <trung.huynh.uw@rvc.renesas.com>; cip-dev at lists.cip-project.org
+>> > Subject: RE: B at D run on Renesas board - issue
+>> >
+>> > Hello Binh-san,
+>> >
+>> > > -----Original Message-----
+>> > > From: Robert Marshall [mailto:robert.marshall at codethink.co.uk]
+>> > > Sent: Saturday, November 04, 2017 1:05 AM
+>> > > To: Binh Thanh. Nguyen
+>> > > Cc: Daniel Sangorrin; O365-Toru Oishi; Chris Paterson; Trung. 
+>> > > Huynh; cip-dev at lists.cip-project.org
+>> > > Subject: Re: B at D run on Renesas board - issue
+>> > >
+>> > > "Binh Thanh. Nguyen" <binh.nguyen.uw@rvc.renesas.com> writes:
+>> > >
+>> > > > Hello Daniel, Robert,
+>> > > >
+>> > > > We are facing an issue when trying to run healthcheck using B at D on Renesas board.
+>> > > > I would like to attach the log and the healthcheck script (we 
+>> > > > modified the healthcheck from Daniel)
+>> > > >
+>> > > > The boot action was passed, but after that, look like LAVA 
+>> > > > cannot send command to Board, only send "#" (it supposed to be "uname").
+>> > > > I wonder if you met same issue before?
+>> > > > And if possible, please give us any hints you may have for debugging this issue!
+>> > > >
+>> > > > Best regards,
+>> > > > Binh Nguyen
+>> > >
+>> > > Thanh
+>> > >
+>> > > Sorry for the delay in responding!
+>> > >
+>> > > That test is missing a deploy section (all commented out) are you 
+>> > > trying to make the test too minimal? LAVA tends to swallow output 
+>> > > if it is what is expected.
+>> > >
+>> > > Robert
+>> >
+>> > As Robert said, please do not comment out the deploy section. LAVA 
+>> > does not just deploy the binaries as they are, it also copies some 
+>> > scripts (LAVA Test shell) into the ramdisk (or network filesystem).
+>> > # LAVA does not use scp (or a serial protocol) to copy them into 
+>> > the target
+>> >
+>> > For deploying you need a PDU (remote power switch). If you don't 
+>> > have one you need to buy one and then add the corresponding commands.
+>> > # Note: I use an IP Power 9258 remote PDU.
+>> > # Note: do not think you can get around without a PDU*
+>> >
+>> > Thanks,
+>> > Daniel
+>> >
+>> > *There are ways to do it but they have limitations 
+>> > https://validation.linaro.org/static/docs/v2/dispatcher-design.html
+>> > #pr
+>> > imary-
+>> > connection
+>> >
+>> >
+>> >
+>> >
+>> 
+>> 
