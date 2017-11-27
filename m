@@ -1,106 +1,148 @@
-From: henning.schild@siemens.com (Henning Schild)
-Date: Mon, 27 Nov 2017 17:30:37 +0100
-Subject: [cip-dev] [PATCH] builddeb: introduce variables for
- control-file customization
-In-Reply-To: <20171127161345.17880-1-henning.schild@siemens.com>
-References: <20171127161345.17880-1-henning.schild@siemens.com>
-Message-ID: <20171127173037.019c138b@md1em3qc>
+From: mosipov@ilbers.de (Maxim Yu. Osipov)
+Date: Mon, 27 Nov 2017 17:31:01 +0100
+Subject: [cip-dev] [PATCH v2] wireless: change cfg80211 regulatory domain
+	info as debug messages
+Message-ID: <20171127163101.16834-1-mosipov@ilbers.de>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Ben,
+From: Dave Young <dyoung@redhat.com>
 
-could you please have a look at that patch. I actually need that or
-something similar to build a cip-kernel for an embedded target. But i
-thought i start off with an upstream patch and ask for a backport later.
+commit 94c4fd641e1bc438092f0214bb5ec77ea73b13cf upstream.
 
-Henning
+cfg80211 module prints a lot of messages like below. Actually printing
+once is acceptable but sometimes it will print again and again, it looks
+very annoying. It is better to change these detail messages to debugging
+only.
 
-Am Mon, 27 Nov 2017 17:13:45 +0100
-schrieb Henning Schild <henning.schild@siemens.com>:
+cfg80211: World regulatory domain updated:
+cfg80211:  DFS Master region: unset
+cfg80211:   (start_freq - end_freq @ bandwidth), (max_antenna_gain, max_eirp), (dfs_cac_time)
+cfg80211:   (2402000 KHz - 2472000 KHz @ 40000 KHz), (N/A, 2000 mBm), (N/A)
+cfg80211:   (2457000 KHz - 2482000 KHz @ 40000 KHz), (N/A, 2000 mBm), (N/A)
+cfg80211:   (2474000 KHz - 2494000 KHz @ 20000 KHz), (N/A, 2000 mBm), (N/A)
+cfg80211:   (5170000 KHz - 5250000 KHz @ 80000 KHz, 160000 KHz AUTO), (N/A, 2000 mBm), (N/A)
+cfg80211:   (5250000 KHz - 5330000 KHz @ 80000 KHz, 160000 KHz AUTO), (N/A, 2000 mBm), (0 s)
+cfg80211:   (5490000 KHz - 5730000 KHz @ 160000 KHz), (N/A, 2000 mBm), (0 s)
+cfg80211:   (5735000 KHz - 5835000 KHz @ 80000 KHz), (N/A, 2000 mBm), (N/A)
+cfg80211:   (57240000 KHz - 63720000 KHz @ 2160000 KHz), (N/A, 0 mBm), (N/A)
 
-> The debian packages coming out of "make *deb-pkg" lack some critical
-> information in the control-files e.g. the "Depends:" field. If one
-> tries to install a fresh system with such a "linux-image" debootstrap
-> or multistrap might try to install the kernel before its deps and the
-> package hooks will fail.
-> 
-> Different debian-based distros use different values for the missing
-> fields. And the values differ between distro versions as well. So
-> hardcoding of e.g. "Depends" is not possible.
-> 
-> This patch introduces an option variable for every debian package
-> built by builddeb. That allows advanced users to pass additional
-> arguments to "dpkg-gencontrol" e.g. to set "Depends". All the new
-> variables are optional.
-> 
-> for example:
-> make \
-> 	KDEB_OPTS_IMAGE=\
-> "-DDepends='initramfs-tools | linux-initramfs-tool, kmod,
-> linux-base'" \ KDEB_OPTS_LIBC_HEADERS="-DMaintainer='root at machine'
-> -v42" \ bindeb-pkg
-> 
-> Signed-off-by: Henning Schild <henning.schild@siemens.com>
-> Signed-off-by: Konrad Schwarz <konrad.schwarz@siemens.com>
-> ---
->  scripts/package/builddeb | 19 +++++++++++++------
->  1 file changed, 13 insertions(+), 6 deletions(-)
-> 
-> diff --git a/scripts/package/builddeb b/scripts/package/builddeb
-> index b4f0f2b3f8d2..037e722bbd8f 100755
-> --- a/scripts/package/builddeb
-> +++ b/scripts/package/builddeb
-> @@ -13,7 +13,10 @@
->  set -e
->  
->  create_package() {
-> -	local pname="$1" pdir="$2"
-> +	local pname="$1"
-> +	shift
-> +	local pdir="$1"
-> +	shift
->  
->  	mkdir -m 755 -p "$pdir/DEBIAN"
->  	mkdir -p "$pdir/usr/share/doc/$pname"
-> @@ -30,7 +33,8 @@ create_package() {
->  	chmod -R a+rX "$pdir"
->  
->  	# Create the package
-> -	dpkg-gencontrol $forcearch -Vkernel:debarch="${debarch}"
-> -p$pname -P"$pdir"
-> +	dpkg-gencontrol $forcearch -Vkernel:debarch="${debarch}"
-> -p$pname \
-> +		-P"$pdir" "$@"
->  	dpkg --build "$pdir" ..
->  }
->  
-> @@ -353,11 +357,13 @@ Description: Linux support headers for
-> userspace development EOF
->  
->  if [ "$ARCH" != "um" ]; then
-> -	create_package "$kernel_headers_packagename"
-> "$kernel_headers_dir"
-> -	create_package "$libc_headers_packagename"
-> "$libc_headers_dir"
-> +	eval 'create_package "$kernel_headers_packagename" \
-> +		"$kernel_headers_dir"' "$KDEB_OPTS_IMAGE_HEADERS"
-> +	eval 'create_package "$libc_headers_packagename" \
-> +		"$libc_headers_dir"' "$KDEB_OPTS_LIBC_HEADERS"
->  fi
->  
-> -create_package "$packagename" "$tmpdir"
-> +eval 'create_package "$packagename" "$tmpdir"' "$KDEB_OPTS_IMAGE"
->  
->  if [ -n "$BUILD_DEBUG" ] ; then
->  	# Build debug package
-> @@ -381,7 +387,8 @@ Description: Linux kernel debugging symbols for
-> $version all the necessary debug symbols for the kernel and its
-> modules. EOF
->  
-> -	create_package "$dbg_packagename" "$dbg_dir"
-> +	eval 'create_package "$dbg_packagename" "$dbg_dir" \
-> +		' "$KDEB_OPTS_IMAGE_DBG"
->  fi
->  
->  if [ "x$1" = "xdeb-pkg" ]
+The changes in this patch is to replace pr_info with pr_debug in function
+print_rd_rules and print_regdomain_info
+
+Signed-off-by: Dave Young <dyoung@redhat.com>
+[change some pr_err() statements to at least keep the alpha2]
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Maxim Yu. Osipov <mosipov@ilbers.de>
+---
+ net/wireless/reg.c | 33 ++++++++++++++++++---------------
+ 1 file changed, 18 insertions(+), 15 deletions(-)
+
+diff --git a/net/wireless/reg.c b/net/wireless/reg.c
+index 06d050da0d94..40e5b36ddbba 100644
+--- a/net/wireless/reg.c
++++ b/net/wireless/reg.c
+@@ -2763,7 +2763,7 @@ static void print_rd_rules(const struct ieee80211_regdomain *rd)
+ 	const struct ieee80211_power_rule *power_rule = NULL;
+ 	char bw[32], cac_time[32];
+ 
+-	pr_info("  (start_freq - end_freq @ bandwidth), (max_antenna_gain, max_eirp), (dfs_cac_time)\n");
++	pr_debug("  (start_freq - end_freq @ bandwidth), (max_antenna_gain, max_eirp), (dfs_cac_time)\n");
+ 
+ 	for (i = 0; i < rd->n_reg_rules; i++) {
+ 		reg_rule = &rd->reg_rules[i];
+@@ -2790,7 +2790,7 @@ static void print_rd_rules(const struct ieee80211_regdomain *rd)
+ 		 * in certain regions
+ 		 */
+ 		if (power_rule->max_antenna_gain)
+-			pr_info("  (%d KHz - %d KHz @ %s), (%d mBi, %d mBm), (%s)\n",
++			pr_debug("  (%d KHz - %d KHz @ %s), (%d mBi, %d mBm), (%s)\n",
+ 				freq_range->start_freq_khz,
+ 				freq_range->end_freq_khz,
+ 				bw,
+@@ -2798,7 +2798,7 @@ static void print_rd_rules(const struct ieee80211_regdomain *rd)
+ 				power_rule->max_eirp,
+ 				cac_time);
+ 		else
+-			pr_info("  (%d KHz - %d KHz @ %s), (N/A, %d mBm), (%s)\n",
++			pr_debug("  (%d KHz - %d KHz @ %s), (N/A, %d mBm), (%s)\n",
+ 				freq_range->start_freq_khz,
+ 				freq_range->end_freq_khz,
+ 				bw,
+@@ -2831,35 +2831,35 @@ static void print_regdomain(const struct ieee80211_regdomain *rd)
+ 			struct cfg80211_registered_device *rdev;
+ 			rdev = cfg80211_rdev_by_wiphy_idx(lr->wiphy_idx);
+ 			if (rdev) {
+-				pr_info("Current regulatory domain updated by AP to: %c%c\n",
++				pr_debug("Current regulatory domain updated by AP to: %c%c\n",
+ 					rdev->country_ie_alpha2[0],
+ 					rdev->country_ie_alpha2[1]);
+ 			} else
+-				pr_info("Current regulatory domain intersected:\n");
++				pr_debug("Current regulatory domain intersected:\n");
+ 		} else
+-			pr_info("Current regulatory domain intersected:\n");
++			pr_debug("Current regulatory domain intersected:\n");
+ 	} else if (is_world_regdom(rd->alpha2)) {
+-		pr_info("World regulatory domain updated:\n");
++		pr_debug("World regulatory domain updated:\n");
+ 	} else {
+ 		if (is_unknown_alpha2(rd->alpha2))
+-			pr_info("Regulatory domain changed to driver built-in settings (unknown country)\n");
++			pr_debug("Regulatory domain changed to driver built-in settings (unknown country)\n");
+ 		else {
+ 			if (reg_request_cell_base(lr))
+-				pr_info("Regulatory domain changed to country: %c%c by Cell Station\n",
++				pr_debug("Regulatory domain changed to country: %c%c by Cell Station\n",
+ 					rd->alpha2[0], rd->alpha2[1]);
+ 			else
+-				pr_info("Regulatory domain changed to country: %c%c\n",
++				pr_debug("Regulatory domain changed to country: %c%c\n",
+ 					rd->alpha2[0], rd->alpha2[1]);
+ 		}
+ 	}
+ 
+-	pr_info(" DFS Master region: %s", reg_dfs_region_str(rd->dfs_region));
++	pr_debug(" DFS Master region: %s", reg_dfs_region_str(rd->dfs_region));
+ 	print_rd_rules(rd);
+ }
+ 
+ static void print_regdomain_info(const struct ieee80211_regdomain *rd)
+ {
+-	pr_info("Regulatory domain: %c%c\n", rd->alpha2[0], rd->alpha2[1]);
++	pr_debug("Regulatory domain: %c%c\n", rd->alpha2[0], rd->alpha2[1]);
+ 	print_rd_rules(rd);
+ }
+ 
+@@ -2880,7 +2880,8 @@ static int reg_set_rd_user(const struct ieee80211_regdomain *rd,
+ 		return -EALREADY;
+ 
+ 	if (!is_valid_rd(rd)) {
+-		pr_err("Invalid regulatory domain detected:\n");
++		pr_err("Invalid regulatory domain detected: %c%c\n",
++		       rd->alpha2[0], rd->alpha2[1]);
+ 		print_regdomain_info(rd);
+ 		return -EINVAL;
+ 	}
+@@ -2916,7 +2917,8 @@ static int reg_set_rd_driver(const struct ieee80211_regdomain *rd,
+ 		return -EALREADY;
+ 
+ 	if (!is_valid_rd(rd)) {
+-		pr_err("Invalid regulatory domain detected:\n");
++		pr_err("Invalid regulatory domain detected: %c%c\n",
++		       rd->alpha2[0], rd->alpha2[1]);
+ 		print_regdomain_info(rd);
+ 		return -EINVAL;
+ 	}
+@@ -2974,7 +2976,8 @@ static int reg_set_rd_country_ie(const struct ieee80211_regdomain *rd,
+ 	 */
+ 
+ 	if (!is_valid_rd(rd)) {
+-		pr_err("Invalid regulatory domain detected:\n");
++		pr_err("Invalid regulatory domain detected: %c%c\n",
++		       rd->alpha2[0], rd->alpha2[1]);
+ 		print_regdomain_info(rd);
+ 		return -EINVAL;
+ 	}
+-- 
+2.11.0
