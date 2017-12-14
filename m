@@ -1,123 +1,99 @@
 From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
-Date: Thu, 14 Dec 2017 14:57:12 +0900
-Subject: [cip-dev] B@D: iwg20m support
-Message-ID: <1513231035-42479-1-git-send-email-daniel.sangorrin@toshiba.co.jp>
+Date: Thu, 14 Dec 2017 15:06:19 +0900
+Subject: [cip-dev] [PATCH 2/3] iwg20m: add device type and
+	dictionary	template
+In-Reply-To: <1513231035-42479-3-git-send-email-daniel.sangorrin@toshiba.co.jp>
+References: <1513231035-42479-1-git-send-email-daniel.sangorrin@toshiba.co.jp>
+	<1513231035-42479-3-git-send-email-daniel.sangorrin@toshiba.co.jp>
+Message-ID: <001301d374a1$a8a21eb0$f9e65c10$@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Trung-san, Robert and all
+> -----Original Message-----
+> From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Daniel Sangorrin
+> Sent: Thursday, December 14, 2017 2:57 PM
+> To: cip-dev at lists.cip-project.org
+> Subject: [cip-dev] [PATCH 2/3] iwg20m: add device type and dictionary template
+> 
+> The user will have to modify myiwg20m.jinja2 according
+> to its environment (ip address, PDU, etc)
+> 
+> Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
+> ---
+>  device-dictionary/myiwg20m.jinja2     |  9 +++++++++
+>  device-types/renesas-iwg20m.jinja2    | 15 +++++++++++++++
+>  integration-scripts/configure_lava.sh |  6 ++++++
+>  3 files changed, 30 insertions(+)
+>  create mode 100644 device-dictionary/myiwg20m.jinja2
+>  create mode 100644 device-types/renesas-iwg20m.jinja2
+> 
+> diff --git a/device-dictionary/myiwg20m.jinja2 b/device-dictionary/myiwg20m.jinja2
+> new file mode 100644
+> index 0000000..fc0de62
+> --- /dev/null
+> +++ b/device-dictionary/myiwg20m.jinja2
+> @@ -0,0 +1,9 @@
+> +{% extends 'renesas-iwg20m.jinja2' %}
+> +{% set connection_command = 'telnet localhost 8020' %}
+> +{% set power_on_command = 'curl http://admin:<password>@<ip>/set.cmd?cmd=setpower+p61=1' %}
+> +{% set power_off_command = 'curl http://admin:<password>@<ip>/set.cmd?cmd=setpower+p61=0' %}
+> +{% set hard_reset_command = 'curl http://admin:<password>@<ip>/set.cmd?cmd=setpower+p61=0; curl
+> http://admin:12345678 at 192.168.11.68/set.cmd?cmd=setpower+p61=1' %}
 
-I received the AWS credentials from Agustin and uploaded
-the cip-core binaries for the Renesas iwg20m board.
+Sorry, please change "12345678" to <password>
 
-https://s3-us-west-2.amazonaws.com/download.cip-project.org/cip-core/iwg20m/core-image-minimal-iwg20m.cpio.gz
-https://s3-us-west-2.amazonaws.com/download.cip-project.org/cip-core/iwg20m/r8a7743-iwg20d-q7.dtb
-https://s3-us-west-2.amazonaws.com/download.cip-project.org/cip-core/iwg20m/uImage
-
-You will need to patch the master branch of the B at D git
-repository with the next three patches. Please re-install
-from the latest code just to make sure we are on the same page.
-Robert: please, could you ask Tom to merge them?
-
-[PATCH 1/3] Vagrantfile: support the http proxy plugin
-[PATCH 2/3] iwg20m: add device type and dictionary template
-[PATCH 3/3] iwg20m: add a test that boots a cip-core ramdisk
-
-Making it work is a bit complicated so I have prepared a guide
-for you. Check it below and make sure you don't skip any step or
-modify any file without a reason.
-
-Regards,
-Daniel
-
-Enabling Renesas board
-======================
-
-Prepare your IP Power 9258 PDU
-    - Set the password
-    - Set the IP address to 192.168.11.68
-
-Virtualbox serial port (ser2net) setup
-    host$ sudo apt install virtualbox-ext-pack
-    host$ sudo adduser <user> vboxusers
-    - Oracle VM Virtualbox manager
-        Settings > USB > add the device USB-UART device
-        (/dev/ttyUSB1 on the host will become /dev/ttyUSB0 inside the VM)
-
-Prepare network interfaces for tftp and for controlling the remote power switch (PDU)
-    host$ vagrant up
-    host$ vagrant ssh
-    vagrant$ sudo -s
-    vagrant# ifconfig eth1:1 192.168.11.76/24 <-- PDU ip: 192.168.11.68
-    vagrant# export no_proxy="192.168.11.68, $no_proxy"
-    vagrant# curl http://admin:<password>@192.168.11.68/set.cmd?cmd=setpower+p61=1 (switch on)
-    vagrant# curl http://admin:<password>@192.168.11.68/set.cmd?cmd=setpower+p61=0 (switch off)
-
-Check ser2net is working
-    vagrant# curl http://admin:<password>@192.168.11.68/set.cmd?cmd=setpower+p61=1 (switch on)
-    vagrant# telnet localhost 8020
-        [IMP] you should be able to see u-boot and kernel messages
-        [Note] to quit: Ctrl-] and quit
-
-Prepare the tftp server
-    host$ sudo service tftpd-hpa stop <-- to avoid conflicts
-
-Check the status of the device
-    - make sure that your device type definitions are updated
-        vagrant# less /etc/lava-server/dispatcher-config/device-types/renesas-iwg20m.jinja2 <-- renesas-iwg20m.jinja2
-        vagrant# less /etc/lava-server/dispatcher-config/devices/iwg20m01.jinja2 <-- myiwg20m.jinja2
-    - check the workers
-        vagrant# lava-server manage workers list
-            Workers:
-                * stretch.localdomain (3 devices) (master) <-- hostname --long
-    - check the device list
-        vagrant# lava-server manage device-types list
-            * beaglebone-black (1 devices)
-            * qemu (1 devices)
-            * renesas-iwg20m (1 devices)
-
-Changing SERVER_IP so that the target downloads from the proper address
-    - SERVER_IP corresponds to the address of the dispatcher
-    - LAVA V2 settings
-        Ref: https://validation.linaro.org/static//docs/v2/pipeline-admin.html#extra-dispatcher-configuration
-        vagrant# cp /usr/share/lava-dispatcher/dispatcher.yaml /etc/lava-server/dispatcher.d/stretch.localdomain.yaml <-- the name of the worker!!
-        vagrant# vi /etc/lava-server/dispatcher.d/stretch.localdomain.yaml
-            dispatcher_ip: 192.168.1.66
-        vagrant# ifconfig eth1:2 192.168.1.66/24
-        vagrant# service lava-server restart
-        vagrant# service lava-slave restart
-        vagrant# service tftpd-hpa restart
-
-Add binaries to the kernel-ci storage server
-    host$ cp -rf path/to/binaries board-at-desk-single-dev/
-        [Note] The binaries must be as follows (see test definition):
-            - iwg20m/r8a7743-iwg20d-q7.dtb (rename from uImage-r8a7743-iwg20d-q7.dtb)
-            - iwg20m/uImage
-            - iwg20m/core-image-minimal-iwg20m.cpio.gz
-        [Note] You can download them from here
-            https://s3-us-west-2.amazonaws.com/download.cip-project.org/cip-core/iwg20m/core-image-minimal-iwg20m.cpio.gz
-            https://s3-us-west-2.amazonaws.com/download.cip-project.org/cip-core/iwg20m/r8a7743-iwg20d-q7.dtb
-            https://s3-us-west-2.amazonaws.com/download.cip-project.org/cip-core/iwg20m/uImage
-    host$ cd board-at-desk-single-dev/
-    host$ vagrant rsync
-    vagrant# cp -r /vagrant/binaries/iwg20m/ /var/www/images/kernel-ci/
-    vagrant# ls /var/www/images/kernel-ci/iwg20m/
-        core-image-minimal-iwg20m.cpio.gz  r8a7743-iwg20d-q7.dtb  uImage
-        [Note] Use http://localhost:8010/iwg20m/ in the tests
-    vagrant# service nginx restart
-
-Login into LAVA
-    host$ firefox http://localhost:8080/
-        lavauser:mylava1234
-        Scheduler > Submit job
-            - Copy and paste tests/iwg20m-test-ramdisk.yaml
-            - It should work as follows:
-                + LAVA causes the board to switch on
-                + LAVA downloads the kernel/dt/ramdisk from the storage server
-                  and overlays necessary LAVA binaries
-                + LAVA interrupts u-boot and executes 'run bootcmd'
-                + The board downloads the files by TFTPBOOT
-                + LAVA detects the login prompt and logs in
-                + LAVA detects the shell prompt and executes its test (uname -a)
-                + LAVA causes the board to switch off
-                (IT WORKS)
+> +{% set test_delay = 500 %}
+> +{% set uboot_ipaddr_cmd = 'setenv ipaddr 192.168.1.55' %}
+> +{% set base_ip_args = 'ip=192.168.1.55' %}
+> +{% set extra_kernel_args = 'ignore_loglevel vmalloc=384M' %}
+> diff --git a/device-types/renesas-iwg20m.jinja2 b/device-types/renesas-iwg20m.jinja2
+> new file mode 100644
+> index 0000000..f1506ae
+> --- /dev/null
+> +++ b/device-types/renesas-iwg20m.jinja2
+> @@ -0,0 +1,15 @@
+> +{% extends 'base-uboot.jinja2' %}
+> +
+> +{% set console_device = console_device|default('ttySC0') %}
+> +{% set baud_rate = baud_rate|default(115200) %}
+> +{% set device_type = "renesas-iwg20m" %}
+> +{% set bootloader_prompt = bootloader_prompt|default('iWave-G20M >') %}
+> +{% set kernel_file = kernel_file | default('uImage') %}
+> +{% set dtb_file = dtb_file | default('r8a7743-iwg20d-q7.dtb') %}
+> +{% set bootm_kernel_addr = '0x40007fc0' %}
+> +{% set bootm_ramdisk_addr = '0x41000000' %}
+> +{% set bootm_dtb_addr = '0x40f00000' %}
+> +{% set bootz_kernel_addr = '0x40007fc0' %}
+> +{% set bootz_ramdisk_addr = '0x81600000' %}
+> +{% set bootz_dtb_addr = '0x40f00000' %}
+> +{% set uboot_mkimage_arch = 'arm' %}
+> diff --git a/integration-scripts/configure_lava.sh b/integration-scripts/configure_lava.sh
+> index 8d75b76..b13acdd 100755
+> --- a/integration-scripts/configure_lava.sh
+> +++ b/integration-scripts/configure_lava.sh
+> @@ -51,6 +51,12 @@ sudo DEBIAN_FRONTEND=noninteractive cp mybbb.dat /etc/lava-server/dispatcher-con
+>  sudo DEBIAN_FRONTEND=noninteractive chown lavaserver.lavaserver /etc/lava-server/dispatcher-config/devices/*
+>  # lava-tool device-dictionary --update mybbb.dat http://lavauser at localhost:8080/RPC2 bbb01
+> 
+> +# Renesas iwg20m
+> +sudo DEBIAN_FRONTEND=noninteractive cp -v /vagrant/device-types/renesas-iwg20m.jinja2 /etc/lava-server/dispatcher-
+> config/device-types/
+> +sudo DEBIAN_FRONTEND=noninteractive lava-server manage device-types add renesas-iwg20m
+> +sudo DEBIAN_FRONTEND=noninteractive lava-server manage devices add --device-type renesas-iwg20m --worker $(hostname --
+> long) iwg20m01
+> +sudo DEBIAN_FRONTEND=noninteractive cp -v /vagrant/device-dictionary/myiwg20m.jinja2 /etc/lava-server/dispatcher-
+> config/devices/iwg20m01.jinja2
+> +
+>  # Change the default shutdown message for kernel v4.4 - comment these lines out if using older kernel with a Shutdown message of
+> "The system is going down for reboot NOW"
+>  cd /usr/lib/python2.7/dist-packages/lava_dispatcher/pipeline/utils/
+>  sudo DEBIAN_FRONTEND=noninteractive sed -ie "/SHUTDOWN_MESSAGE/s/The system is going down for reboot NOW/Restarting
+> system/" constants.py
+> --
+> 2.7.4
+> 
+> 
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
