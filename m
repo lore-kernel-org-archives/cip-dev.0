@@ -1,34 +1,100 @@
 From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
-Date: Thu, 14 Dec 2017 14:57:13 +0900
-Subject: [cip-dev] [PATCH 1/3] Vagrantfile: support the http proxy plugin
+Date: Thu, 14 Dec 2017 14:57:15 +0900
+Subject: [cip-dev] [PATCH 3/3] iwg20m: add a test that boots a cip-core
+	ramdisk
 In-Reply-To: <1513231035-42479-1-git-send-email-daniel.sangorrin@toshiba.co.jp>
 References: <1513231035-42479-1-git-send-email-daniel.sangorrin@toshiba.co.jp>
-Message-ID: <1513231035-42479-2-git-send-email-daniel.sangorrin@toshiba.co.jp>
+Message-ID: <1513231035-42479-4-git-send-email-daniel.sangorrin@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-The proxy settings are collected from the environment.
-
 Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
 ---
- Vagrantfile | 5 +++++
- 1 file changed, 5 insertions(+)
+ tests/iwg20m-test-ramdisk.yaml | 76 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 76 insertions(+)
+ create mode 100644 tests/iwg20m-test-ramdisk.yaml
 
-diff --git a/Vagrantfile b/Vagrantfile
-index 2771600..1e1a491 100644
---- a/Vagrantfile
-+++ b/Vagrantfile
-@@ -23,6 +23,11 @@ SCRIPT
- Vagrant.configure(2) do |config|
-   config.vm.provider :virtualbox do |vbox, override|
-     config.vm.box = "debian/stretch64"
-+    if Vagrant.has_plugin?("vagrant-proxyconf")
-+      config.proxy.http     = ENV["http_proxy"]
-+      config.proxy.https    = ENV["https_proxy"]
-+      config.proxy.no_proxy = ENV["no_proxy"]
-+    end
-     
-     vbox.customize ["modifyvm", :id, "--vram", "12"]
-     vbox.customize ["modifyvm", :id, "--memory", "2048"]
+diff --git a/tests/iwg20m-test-ramdisk.yaml b/tests/iwg20m-test-ramdisk.yaml
+new file mode 100644
+index 0000000..f016ea7
+--- /dev/null
++++ b/tests/iwg20m-test-ramdisk.yaml
+@@ -0,0 +1,76 @@
++# Copyright (C) 2017, Codethink, Ltd., Robert Marshall <robert.marshall@codethink.co.uk>
++# Copyright (C) 2017, Toshiba corp., Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
++# SPDX-License-Identifier:	AGPL-3.0
++# This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, version 3.
++# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
++
++# You should have received a copy of the GNU Affero General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
++
++device_type: renesas-iwg20m
++job_name: Kernel version test
++timeouts:
++  job:
++    minutes: 10
++  action:
++    minutes: 5
++  connection:
++    minutes: 2
++priority: medium
++visibility: public
++
++
++# ACTION_BLOCK
++actions:
++- deploy:
++    timeout:
++      minutes: 4
++    to: tftp
++    os: oe
++    kernel:
++      url: http://localhost:8010/iwg20m/uImage
++      type: uImage
++    ramdisk:
++      url: http://localhost:8010/iwg20m/core-image-minimal-iwg20m.cpio.gz
++      compression: gz
++      # the bootloader needs a u-boot header on the modified ramdisk
++      add-header: u-boot
++    #modules:
++    #  url: http://localhost:8010/iwg20m/modules-iwg20m.tgz
++    #  compression: gz
++    dtb:
++      url: http://localhost:8010/iwg20m/r8a7743-iwg20d-q7.dtb
++
++# BOOT_BLOCK
++- boot:
++    auto_login:
++      login_prompt: '\(none\) login: '
++      username: root
++    prompts:
++      - 'cip# '
++    method: u-boot
++    commands: ramdisk
++    type: uimage
++    timeout:
++      minutes: 1
++
++# TEST_BLOCK
++- test:
++    timeout:
++      minutes: 5
++    definitions:
++    - repository:
++        metadata:
++          format: Lava-Test Test Definition 1.0
++          name: kernel-version-basic
++          version: "1.0"
++          description: "check kernel version"
++          os:
++            - oe
++          scope:
++            - functional
++        run:
++          steps:
++            - lava-test-case uname --shell uname -a
++      from: inline
++      name: kernel-version-inline
++      path: inline/kernel-version-basic.yaml
 -- 
 2.7.4
