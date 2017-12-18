@@ -1,40 +1,37 @@
-From: agustin.benito@codethink.co.uk (=?ISO-8859-1?Q?Agust=EDn?= Benito Bethencourt)
-Date: Fri, 15 Dec 2017 15:39:38 +0000
-Subject: [cip-dev] Report weeks 48, 49 and 50
-Message-ID: <5116224.p3DWxpMqFQ@linux-if6s>
+From: daniel.wagner@siemens.com (Daniel Wagner)
+Date: Mon, 18 Dec 2017 12:36:21 +0100
+Subject: [cip-dev] B@D: iwg20m support
+In-Reply-To: <1513231035-42479-1-git-send-email-daniel.sangorrin@toshiba.co.jp>
+References: <1513231035-42479-1-git-send-email-daniel.sangorrin@toshiba.co.jp>
+Message-ID: <8334d32c-edfb-76dd-3246-dca7cd9a9d62@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+Hi Daniel,
 
-although last week I provided an update to the TSC and the main outcome was 
-published this past Wednesday, let me summarise the last three weeks of work 
-very briefly:
+On 12/14/2017 06:57 AM, Daniel Sangorrin wrote:
+> Hi Trung-san, Robert and all
+> 
+> I received the AWS credentials from Agustin and uploaded
+> the cip-core binaries for the Renesas iwg20m board.
+> 
+> https://s3-us-west-2.amazonaws.com/download.cip-project.org/cip-core/iwg20m/core-image-minimal-iwg20m.cpio.gz
+> https://s3-us-west-2.amazonaws.com/download.cip-project.org/cip-core/iwg20m/r8a7743-iwg20d-q7.dtb
+> https://s3-us-west-2.amazonaws.com/download.cip-project.org/cip-core/iwg20m/uImage
 
-* Patches sent to CIP-dev mailing list in previous weeks reviewed. Not those 
-from week 50.
+Just out of curiosity: how did you build the root fs? The naming
+indicates that you used Yocto. I am still setting up my test environment
+for rt testing and wrote two kas files to create me a root fs:
 
-* CIP kernel version 4.4.105-cip15 released. Highlights:
-** Updated spi-pxa2xx driver to support the IOT2000 platform
-** Disable verbose loging in the wireless regulatory code
-** Merge fixes from stable versions 4.4.99-4.4.105 inclusive
-** Revert a change made in 4.4-stable to the x86 EFI calling code that would 
-cause regressions
+https://github.com/igaw/cip-rt-misc/blob/master/docs/kas-bbb.yml
+https://github.com/igaw/cip-rt-misc/blob/master/docs/kas-minnowboard.yml
 
-* Kernel maintenance wiki page improved, including a Kernel patch review 
-howto.
-** Next step is for CIP Members to assign kernel developers so Ben H. send 
-them patches to review and guide them. 
-** Feedback is welcome. Please take a look: https://wiki.linuxfoundation.org/
-civilinfrastructureplatform/cipkernelmaintenance
+They are not self contained yet. Will fixed that right now. The idea
+that you can write
 
-* Ben H. and myself will be on vacation the rest of the month. Robert will be 
-around a few more days.
+	kas build kas-bbb.yml
 
-Talk to you all next year!
+and you get a root fs for testing.
 
-Best Regards
--- 
-Agust?n Benito Bethencourt
-Principal Consultant
-Codethink Ltd
+Thanks,
+Daniel
