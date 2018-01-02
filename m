@@ -1,79 +1,54 @@
 From: daniel.wagner@siemens.com (Daniel Wagner)
-Date: Tue, 2 Jan 2018 12:26:17 +0100
-Subject: [cip-dev] B@D: iwg20m support
-In-Reply-To: <006d01d3786a$533dec70$f9b9c550$@toshiba.co.jp>
-References: <1513231035-42479-1-git-send-email-daniel.sangorrin@toshiba.co.jp>
-	<8334d32c-edfb-76dd-3246-dca7cd9a9d62@siemens.com>
-	<006d01d3786a$533dec70$f9b9c550$@toshiba.co.jp>
-Message-ID: <387700ca-752d-39a5-012d-280ee75a7653@siemens.com>
+Date: Tue, 2 Jan 2018 12:56:11 +0100
+Subject: [cip-dev] [ANNOUNCE] Linux 4.4.15-cip15-rt10
+Message-ID: <b4cf2728-0d0c-5128-d007-818e66da5613@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Daniel,
+Hello CIP RT Folks!
+	
+I'm pleased to announce the Linux 4.4.15-cip15-rt10 stable release.
+	
+You can get this release via the git tree at:
+	
+  git://git.kernel.org/pub/scm/linux/kernel/git/wagi/linux-cip-rt.git
+  https://git.kernel.org/pub/scm/linux/kernel/git/wagi/linux-cip-rt.git
+	
+  branch: linux-4.4.y-cip-rt
+  Head SHA1: 6c97018d1d4626e21b5233eb28e607e412c79ebe
 
-On 12/19/2017 02:40 AM, Daniel Sangorrin wrote:
-> Dear Daniel Wagner,
-> 
->> -----Original Message-----
->> From: Daniel Wagner [mailto:daniel.wagner at siemens.com]
->> Sent: Monday, December 18, 2017 8:36 PM
->> To: Daniel Sangorrin
->> Cc: cip-dev at lists.cip-project.org
->> Subject: Re: [cip-dev] B at D: iwg20m support
->>
->> Hi Daniel,
->>
->> On 12/14/2017 06:57 AM, Daniel Sangorrin wrote:
->>> Hi Trung-san, Robert and all
->>>
->>> I received the AWS credentials from Agustin and uploaded
->>> the cip-core binaries for the Renesas iwg20m board.
->>>
->>> https://s3-us-west-2.amazonaws.com/download.cip-project.org/cip-core/iwg20m/core-image-minimal-iwg20m.cpio.gz
->>> https://s3-us-west-2.amazonaws.com/download.cip-project.org/cip-core/iwg20m/r8a7743-iwg20d-q7.dtb
->>> https://s3-us-west-2.amazonaws.com/download.cip-project.org/cip-core/iwg20m/uImage
->>
->> Just out of curiosity: how did you build the root fs? The naming
->> indicates that you used Yocto. I am still setting up my test environment
->> for rt testing and wrote two kas files to create me a root fs:
->>
->> https://github.com/igaw/cip-rt-misc/blob/master/docs/kas-bbb.yml
->> https://github.com/igaw/cip-rt-misc/blob/master/docs/kas-minnowboard.yml
->>
->> They are not self contained yet. Will fixed that right now. The idea
->> that you can write
->>
->> 	kas build kas-bbb.yml
->>
->> and you get a root fs for testing.
-> 
-> The CIP Core rootfs was built using Deby (poky build system + meta-debian). You can see
-> a tutorial in the CIP wiki and a more up-to-date README and kas file in the source code.
-> 
-> https://wiki.linuxfoundation.org/civilinfrastructureplatform/cip-core-quickstart
-> https://gitlab.com/cip-project/cip-core/blob/master/deby/poky/meta-cip-iwg20m/README.IWG20M.txt
-> https://gitlab.com/cip-project/cip-core/blob/master/deby/poky/meta-cip-iwg20m/kas-iwg20m.yml
-> 
-> An overview of the CIP Core is here:
-> https://wiki.linuxfoundation.org/civilinfrastructureplatform/cip-core
-> https://gitlab.com/cip-project/cip-core/blob/master/deby/README.md
-> 
-> For the BBB please check this other Readme and kas file:
-> https://gitlab.com/cip-project/cip-core/blob/master/deby/poky/meta-cip-bbb/README.BBB.txt
-> https://gitlab.com/cip-project/cip-core/blob/master/deby/poky/meta-cip-bbb/kas-bbb.yml
-> 
-> You can add the packages "openssh nfs-utils rt-tests strace procps", they are available in meta-debian.
+Currently, I don't have uploaded the patches, because I need to figure
+out how this works on kernel.org.
+	
+The release is based on the Linux 4.4.75-rt88 version. That is I
+applied the -rt88 patch on the 4.4.75-cip6 kernel and merged in all
+CIP releases.
 
-Thanks a lot for all the pointers. Very useful!
+Note we got via the stable tree the new RT pull/push logic
+from upstream cb1831a83e54 ("sched/rt: Simplify the IPI based RT
+balancing logic").
 
-Happy to see that kas works for you :)
+I spend quite a while to get a baseline configuration working and 
+the testing up and running.  I have a BeagleBone Black and a MinnowBoard
+Turbot as test target. On the BBB, cyclictest reports reasonable
+numbers, though not the MinnowBoard Turbot. It seems the bios/uefi
+or so is eating CPU time. The exact same kernel works on different
+x86 hardware just fine. 
 
-> Unfortunately, you cannot simply add "meta-qt5" because it may conflict with meta-debian. Instead you 
-> would need to use meta-debian qt5 recipes (only if you really need qt5 for testing RT).
+Furthermore, I let the kernel run on the Real-Time Linux Continuous
+Integration servers:
 
-I don't think I need meta-qt5, I just used the default settings I found.
-So far I am happy with the rootfs I have. Maybe if I need more stuff I
-switch over to deby.
+  https://ci-rt.linutronix.de/RT-Test/kbuild.jsp?id=112
+
+Some of the builds are failing (allmodconfig), though it
+doesn't look cip-rt specific, eg:
+
+    kernel/utilities/compiletest-runner at 2/build/../include/linux/compiler.h:484 call to ?__compiletime_assert_150? declared with attribute error: BUILD_BUG_ON failed: hw_flag_names[NUM_IEEE80211_HW_FLAGS] != (void *)0x1
+
+Not sure how to handle those. IIRC, we don't support allmodconfig.
+
+Next steps are improving my tests and identifying which 4.4.${x}-rt${y}
+changes should be added to the cip-rt kernel.
 
 Thanks,
 Daniel
