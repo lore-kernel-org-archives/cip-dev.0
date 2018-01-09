@@ -1,74 +1,131 @@
-From: agustin.benito@codethink.co.uk (=?ISO-8859-1?Q?Agust=EDn?= Benito Bethencourt)
-Date: Mon, 08 Jan 2018 14:56:16 +0000
-Subject: [cip-dev] [ANNOUNCE] Linux 4.4.15-cip15-rt10
-In-Reply-To: <20180108105621.osnfazlumesxkwv3@linutronix.de>
-References: <b4cf2728-0d0c-5128-d007-818e66da5613@siemens.com>
-	<94212c58-73c7-7356-b325-9e7f18c9bfbc@siemens.com>
-	<20180108105621.osnfazlumesxkwv3@linutronix.de>
-Message-ID: <1725080.uxjZYIP43C@linux-if6s>
+From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
+Date: Tue, 9 Jan 2018 17:40:30 +0900
+Subject: [cip-dev] B@D: iwg20m support
+In-Reply-To: <69bab283668346d480ae1f5957b054fb@rvc.renesas.com>
+References: <1513231035-42479-1-git-send-email-daniel.sangorrin@toshiba.co.jp>	<8334d32c-edfb-76dd-3246-dca7cd9a9d62@siemens.com>
+	<006d01d3786a$533dec70$f9b9c550$@toshiba.co.jp>
+	<69bab283668346d480ae1f5957b054fb@rvc.renesas.com>
+Message-ID: <018401d38925$8188fc70$849af550$@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Sebastian,
+Dear Trung san,
 
-On Monday, 8 January 2018 10:56:22 WET Sebastian Andrzej Siewior wrote:
-> On 2018-01-08 11:13:12 [+0100], Daniel Wagner wrote:
-> > Hi Sebastian,
-> 
-> Hi Daniel,
-> 
-> > On 01/08/2018 10:33 AM, Sebastian Andrzej Siewior wrote:
-> > > On 2018-01-02 12:56:11 [+0100], Daniel Wagner wrote:
-> > >> The release is based on the Linux 4.4.75-rt88 version. That is I
-> > >> applied the -rt88 patch on the 4.4.75-cip6 kernel and merged in all
-> > >> CIP releases.
-> > > 
-> > > what is cip6?
-> > 
-> > CIP stands for Civil Infrastructure Platform [1]. Ben Hutchings maintains
-> > the 4.4.x-cip kernel tree which is a super long stable tree [2].
-> 
-> So 4.4.x is maintained until Feb, 2022. I assumed that `cip' will take
-> over / help Greg with the v4.4 tree and won't include its "own" things.
+First of all, please could you give me some feedback about the LAVA configuration files and AWS links that I sent to the list before holidays?. Did you try them and did they work for you?.
 
-Main CIP kernel policies can be found in the wiki: https://
-wiki.linuxfoundation.org/civilinfrastructureplatform/cipkernelmaintenance
+See my answers below.
 
+> -----Original Message-----
+> From: Trung. Huynh [mailto:trung.huynh.uw at rvc.renesas.com]
+> Sent: Tuesday, January 02, 2018 6:37 PM
+> To: Daniel Sangorrin
+> Cc: cip-dev at lists.cip-project.org; O365-Chan Duc. Vu; O365-Minh Thuy Dinh. Tran; O365-Anh The. Tran; Binh Thanh. Nguyen; O365-
+> Yoshinori Kaneko; O365-Yasushi Onishi
+> Subject: RE: [cip-dev] B at D: iwg20m support
 > 
-> > >>   https://ci-rt.linutronix.de/RT-Test/kbuild.jsp?id=112
-> > >> 
-> > >> Some of the builds are failing (allmodconfig), though it
-> > >> 
-> > >> doesn't look cip-rt specific, eg:
-> > >>     kernel/utilities/compiletest-runner at 2/build/../include/linux/compil
-> > >>     er.h:484 call to ?__compiletime_assert_150? declared with attribute
-> > >>     error: BUILD_BUG_ON failed: hw_flag_names[NUM_IEEE80211_HW_FLAGS]
-> > >>     != (void *)0x1> >> 
-> > >> Not sure how to handle those. IIRC, we don't support allmodconfig.
-> > > 
-> > > yes but adding
-> > > 
-> > >   68920c973254 ("net/mac80211/debugfs.c: prevent build failure with
-> > >   CONFIG_UBSAN=y")
-> > > 
-> > > could solve the issue.
-> > 
-> > Okay, I just don't know if Ben wants to add the patch to his tree though.
+> Dear Daniel,
 > 
-> If the patch solves the issue then please forward the patch upstream.
-> The "normal" v4.4 stable tree is affected by this, too.
+> One important thing is how big is root fs size get maximal? Is it limited?
+> Your configuration on iwg20m is to assign 8 ramdisks with enlargement of each block 100MB approx:
 > 
-> > Thanks,
-> > Daniel
+> CONFIG_BLK_DEV_RAM=y
+> CONFIG_BLK_DEV_RAM_COUNT=8
+> CONFIG_BLK_DEV_RAM_SIZE=102400
+> CONFIG_EXT4_FS=y
+> CONFIG_EXT4_USE_FOR_EXT2=y
+> CONFIG_USB_XHCI_RCAR=n
+
+Currently, "my configuration" is just the mainstream shmobile_defconfig (as suggested by Chris if I remember correctly). If you need to change the default
+configuration on cip-core upstream, please send me a defconfig (make savedefconfig) or a list of configuration options that
+should be added to shmobile_defconfig. However, in this case I think those options are very dependent on what you are putting on your filesystem so it might
+be a better idea if you create your own private branch and change the configuration as you need.
+
+If you actually plan to submit the tests/dependencies to cip-core then adding those config options to cip-core would actually make sense. Is this your plan?
+
+> If we try to test more function as our wish (more dependencies in ramdisk), assuming that the root fs size could be 150MB.
+> For G1M 1GB of RAM, just increase CONFIG_BLK_DEV_RAM_SIZE to 250000 and reduce CONFIG_BLK_DEV_RAM_COUNT to 4 iWave.
+
+By the way, you might also need to modify the u-boot settings so that the ramdisk does not overlap with the kernel or the device tree. And the LAVA configuration files.
+
+Thanks,
+Daniel
+
+
+> -----Original Message-----
+> From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Daniel Sangorrin
+> Sent: Tuesday, December 19, 2017 8:40 AM
+> To: 'Daniel Wagner' <daniel.wagner@siemens.com>
+> Cc: cip-dev at lists.cip-project.org
+> Subject: Re: [cip-dev] B at D: iwg20m support
 > 
-> Sebastian
+> Dear Daniel Wagner,
+> 
+> > -----Original Message-----
+> > From: Daniel Wagner [mailto:daniel.wagner at siemens.com]
+> > Sent: Monday, December 18, 2017 8:36 PM
+> > To: Daniel Sangorrin
+> > Cc: cip-dev at lists.cip-project.org
+> > Subject: Re: [cip-dev] B at D: iwg20m support
+> >
+> > Hi Daniel,
+> >
+> > On 12/14/2017 06:57 AM, Daniel Sangorrin wrote:
+> > > Hi Trung-san, Robert and all
+> > >
+> > > I received the AWS credentials from Agustin and uploaded the
+> > > cip-core binaries for the Renesas iwg20m board.
+> > >
+> > > https://s3-us-west-2.amazonaws.com/download.cip-project.org/cip-core
+> > > /iwg20m/core-image-minimal-iwg20m.cpio.gz
+> > > https://s3-us-west-2.amazonaws.com/download.cip-project.org/cip-core
+> > > /iwg20m/r8a7743-iwg20d-q7.dtb
+> > > https://s3-us-west-2.amazonaws.com/download.cip-project.org/cip-core
+> > > /iwg20m/uImage
+> >
+> > Just out of curiosity: how did you build the root fs? The naming
+> > indicates that you used Yocto. I am still setting up my test
+> > environment for rt testing and wrote two kas files to create me a root fs:
+> >
+> > https://github.com/igaw/cip-rt-misc/blob/master/docs/kas-bbb.yml
+> > https://github.com/igaw/cip-rt-misc/blob/master/docs/kas-minnowboard.y
+> > ml
+> >
+> > They are not self contained yet. Will fixed that right now. The idea
+> > that you can write
+> >
+> > 	kas build kas-bbb.yml
+> >
+> > and you get a root fs for testing.
+> 
+> The CIP Core rootfs was built using Deby (poky build system + meta-debian). You can see a tutorial in the CIP wiki and a more up-to-
+> date README and kas file in the source code.
+> 
+> https://wiki.linuxfoundation.org/civilinfrastructureplatform/cip-core-quickstart
+> https://gitlab.com/cip-project/cip-core/blob/master/deby/poky/meta-cip-iwg20m/README.IWG20M.txt
+> https://gitlab.com/cip-project/cip-core/blob/master/deby/poky/meta-cip-iwg20m/kas-iwg20m.yml
+> 
+> An overview of the CIP Core is here:
+> https://wiki.linuxfoundation.org/civilinfrastructureplatform/cip-core
+> https://gitlab.com/cip-project/cip-core/blob/master/deby/README.md
+> 
+> For the BBB please check this other Readme and kas file:
+> https://gitlab.com/cip-project/cip-core/blob/master/deby/poky/meta-cip-bbb/README.BBB.txt
+> https://gitlab.com/cip-project/cip-core/blob/master/deby/poky/meta-cip-bbb/kas-bbb.yml
+> 
+> You can add the packages "openssh nfs-utils rt-tests strace procps", they are available in meta-debian.
+> 
+> Unfortunately, you cannot simply add "meta-qt5" because it may conflict with meta-debian. Instead you would need to use meta-
+> debian qt5 recipes (only if you really need qt5 for testing RT).
+> 
+> Thanks,
+> Daniel Sangorrin
+> 
+> 
+> 
+> 
+> 
+> 
 > _______________________________________________
 > cip-dev mailing list
 > cip-dev at lists.cip-project.org
 > https://lists.cip-project.org/mailman/listinfo/cip-dev
-
-
--- 
-Agust?n Benito Bethencourt
-Principal Consultant
-Codethink Ltd
