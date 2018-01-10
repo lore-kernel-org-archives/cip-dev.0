@@ -1,51 +1,41 @@
-From: daniel.wagner@siemens.com (Daniel Wagner)
-Date: Wed, 10 Jan 2018 10:04:44 +0100
-Subject: [cip-dev] [ANNOUNCE] Linux 4.4.15-cip15-rt10
-In-Reply-To: <1515531937.12097.1.camel@codethink.co.uk>
-References: <b4cf2728-0d0c-5128-d007-818e66da5613@siemens.com>
-	<20180108093350.lxjocaxlvrmjwpav@linutronix.de>
-	<94212c58-73c7-7356-b325-9e7f18c9bfbc@siemens.com>
-	<20180108105621.osnfazlumesxkwv3@linutronix.de>
-	<1515531937.12097.1.camel@codethink.co.uk>
-Message-ID: <b755c1e1-1246-b230-b8ab-2154d8ce37ad@siemens.com>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Wed, 10 Jan 2018 14:16:58 +0000
+Subject: [cip-dev] Meltdown and Spectre in CIP
+Message-ID: <1515593818.12097.10.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Ben,
+I expect that everyone's heard about the above security issues and I
+understand there have been questions about how and when these will be
+addressed in CIP.
 
->>>>> ? https://ci-rt.linutronix.de/RT-Test/kbuild.jsp?id=112
->>>>>
->>>>> Some of the builds are failing (allmodconfig), though it
->>>>> doesn't look cip-rt specific, eg:
->>>>>
->>>>>>>>> ????kernel/utilities/compiletest-runner at 2/build/../include/linux/compiler.h:484 call to ?__compiletime_assert_150? declared with attribute error: BUILD_BUG_ON failed: hw_flag_names[NUM_IEEE80211_HW_FLAGS] != (void *)0x1
->>>>>
->>>>> Not sure how to handle those. IIRC, we don't support allmodconfig.
->>>>
->>>> yes but adding
->>>> ? 68920c973254 ("net/mac80211/debugfs.c: prevent build failure with
->>>> ? CONFIG_UBSAN=y")
->>>>
->>>> could solve the issue.
->>>
->>> Okay, I just don't know if Ben wants to add the patch to his tree though.
->>
->> If the patch solves the issue then please forward the patch upstream.
->> The "normal" v4.4 stable tree is affected by this, too.
-> 
-> 4.4-stable doesn't have UBSAN.  Are some other configurations (or
-> compiler versions) where this code fails to build?  (I'm a bit
-> surprised that it ever compiled!)
+My thinking is that for these are *not* serious issues for embedded
+systems, though they do weaken the "defence in depth" that is normally
+provided by memory protection and user privilege separation.??We do
+need to get fixes out, but not urgently.
 
-The problem was introduced by 30686bf7f5b3 ("mac80211: convert HW flags
-to unsigned long bitmap"). The only LTS kernel which is missing the
-68920c973254 ("net/mac80211/debugfs.c: prevent build failure with
-CONFIG_UBSAN=y") fix is the 4.4. The other don't have 30686bf7f5b3, e.g.
-4.1, or have 30686bf7f5b3 and 68920c973254, e.g. 4.9.
+(When we discussed kernel configurations and maintainability, there was
+consensus that no-one using KVM was relying on it being secure against
+malicious guests - the guests were trusted.)
 
-I've sent 68920c973254 to stable for inclusion into 4.4.
+This is the current status of mitigations for these issues, as I
+understand it:
 
-	https://www.spinics.net/lists/stable/msg209228.html
+Meltdown:
+- arm 32-bit: Not affected?  (ARM reports that only the Cortex-A75 is
+  affected, but I haven't seen information from other architecture
+  licensees.)
+- x86 32-bit: Not fixed, no plans to fix.  There are two affected
+  configurations that I'm aware of: Siemens' i386-rt and iot2000.
+  I doubt that the Quark processor in iot2000 is affected.
+- x86 64-bit: Fully mitigated in mainline and 4.4-stable.
 
-Thanks,
-Daniel
+Spectre: will be mitigated in mainline, but still under discussion. 
+Based on what I've seen, I expect that it will be possible to backport
+most of these to 4.4.
+
+Ben.
+
+-- 
+Ben Hutchings
+Software Developer, Codethink Ltd.
