@@ -1,41 +1,42 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Wed, 10 Jan 2018 14:16:58 +0000
-Subject: [cip-dev] Meltdown and Spectre in CIP
-Message-ID: <1515593818.12097.10.camel@codethink.co.uk>
+From: bigeasy@linutronix.de (Sebastian Andrzej Siewior)
+Date: Wed, 10 Jan 2018 18:32:32 +0100
+Subject: [cip-dev] [ANNOUNCE] Linux 4.4.15-cip15-rt10
+In-Reply-To: <D5D6254030DBC644B6EE58B333BFBB1E9D97B5AF@ORSMSX101.amr.corp.intel.com>
+References: <b4cf2728-0d0c-5128-d007-818e66da5613@siemens.com>
+	<20180108093350.lxjocaxlvrmjwpav@linutronix.de>
+	<94212c58-73c7-7356-b325-9e7f18c9bfbc@siemens.com>
+	<20180108105621.osnfazlumesxkwv3@linutronix.de>
+	<1515531937.12097.1.camel@codethink.co.uk>
+	<D5D6254030DBC644B6EE58B333BFBB1E9D97B5AF@ORSMSX101.amr.corp.intel.com>
+Message-ID: <20180110173232.krwpnlfeijdseinv@linutronix.de>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-I expect that everyone's heard about the above security issues and I
-understand there have been questions about how and when these will be
-addressed in CIP.
+On 2018-01-09 21:31:34 [+0000], Hindman, Gavin wrote:
+> Sorry for the top-post.  Seems like maybe we are causing confusion by regularly announcing CIP releases on rt-users.  Wouldn't anyone interested in CIP already be subscribed to that mailing list and getting announcements that way?   Maybe it just needs a clearer header, if we think it should stay on rt-users?
 
-My thinking is that for these are *not* serious issues for embedded
-systems, though they do weaken the "defence in depth" that is normally
-provided by memory protection and user privilege separation.??We do
-need to get fixes out, but not urgently.
+I think the announcement was just fine. Now I do know what it does and
+what will happen after Greg decides to put 4.4 EOL.
 
-(When we discussed kernel configurations and maintainability, there was
-consensus that no-one using KVM was relying on it being secure against
-malicious guests - the guests were trusted.)
+A pointer to [0] as part of the announcement might be help full. In the
+end I think it should remain on rt-users since Steven won't continue
+doing 4.4 stable. So Daniel's 4.4-RT on top of the CIP tree will be the
+only source of a maintained 4.4-RT tree.
 
-This is the current status of mitigations for these issues, as I
-understand it:
+[0] wiki.linuxfoundation.org/civilinfrastructureplatform/cipkernelmaintenance
 
-Meltdown:
-- arm 32-bit: Not affected?  (ARM reports that only the Cortex-A75 is
-  affected, but I haven't seen information from other architecture
-  licensees.)
-- x86 32-bit: Not fixed, no plans to fix.  There are two affected
-  configurations that I'm aware of: Siemens' i386-rt and iot2000.
-  I doubt that the Quark processor in iot2000 is affected.
-- x86 64-bit: Fully mitigated in mainline and 4.4-stable.
+> Maybe a "related projects" section should be created at https://wiki.linuxfoundation.org/realtime/preempt_rt_versions ?  
 
-Spectre: will be mitigated in mainline, but still under discussion. 
-Based on what I've seen, I expect that it will be possible to backport
-most of these to 4.4.
+So what do have in mind? Moving v4.4-RT over to the "No longer
+maintained PREEMPT_RT versions" section and adding a new one with
+"related projects" where we add the 4.4-cip-rt tree?
+Daniel: you have the release currently in a git tree within his "user"
+namespace and did not upload it to k.o. Do you plan upload it to the
+stable-rt tree like Julia does and upload it to the "projects/rt/4.4"
+folder on k.o.? If so we might just add a link to the cip wiki next to
+4.4 and be done with it.
+Other suggestions?
 
-Ben.
+> -gavin
 
--- 
-Ben Hutchings
-Software Developer, Codethink Ltd.
+Sebastian
