@@ -1,40 +1,44 @@
-From: nobodyless@gmail.com (_nobody_ _nobody_)
-Date: Thu, 11 Jan 2018 16:09:30 +0100
-Subject: [cip-dev] Submitting two patches to
-	https://gitlab.com/cip-project/cip-testing/board-at-desk-single-dev/
-Message-ID: <CABpTzB1oN+_KY-TGLwtvTnbtO0jHJ5E7GLrcEr4skNdKTOgWUA@mail.gmail.com>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Thu, 11 Jan 2018 16:51:43 +0000
+Subject: [cip-dev] [ANNOUNCE] Linux 4.4.15-cip15-rt10
+In-Reply-To: <09576c61-f200-2465-b181-76e2d47b08ec@siemens.com>
+References: <b4cf2728-0d0c-5128-d007-818e66da5613@siemens.com>
+	<20180108093350.lxjocaxlvrmjwpav@linutronix.de>
+	<94212c58-73c7-7356-b325-9e7f18c9bfbc@siemens.com>
+	<20180108105621.osnfazlumesxkwv3@linutronix.de>
+	<1515531937.12097.1.camel@codethink.co.uk>
+	<D5D6254030DBC644B6EE58B333BFBB1E9D97B5AF@ORSMSX101.amr.corp.intel.com>
+	<20180110173232.krwpnlfeijdseinv@linutronix.de>
+	<09576c61-f200-2465-b181-76e2d47b08ec@siemens.com>
+Message-ID: <1515689503.12097.16.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Folks,
+On Thu, 2018-01-11 at 09:07 +0100, Daniel Wagner wrote:
+> Good morning everyone,
+> 
+> On 01/10/2018 06:32 PM, Sebastian Andrzej Siewior wrote:
+[...]
+> > Daniel: you have the release currently in a git tree within his "user"
+> > namespace and did not upload it to k.o. Do you plan upload it to the
+> > stable-rt tree like Julia does and upload it to the "projects/rt/4.4"
+> > folder on k.o.? If so we might just add a link to the cip wiki next to
+> > 4.4 and be done with it.
+> 
+> Steven will ask the k.o folks to give me permission to upload to
+> projects/rt/4.4. In short nothing should change for 4.4-rt support as
+> long Greg is releasing 4.4.
+> 
+> As for 4.4-cip(-rt), it might make sense to have a project/cip shared
+> folder with the 4.4-cip and 4.4-cip-rt tree.
+> 
+> Ben, what's your stand on this?
 
-I decided to submit two patches, as my genesis to this group (warming
-up period). Please, review the patches, and tell me (if any?) your
-opinion. My aim is customize the repo to be as much generic as
-possible (there are other aims, not important for the momentum being).
+No-one's asked for tarballs and patches, so I don't really want to add
+that step to the release process.
 
-Thank you,
-Zoran Stojsavljevic
-_______
+Ben.
 
-[1] https://gitlab.com/cip-project/cip-testing/board-at-desk-single-dev/merge_requests/52
-
-Improving importbox.sh script
-
-This is since I think (I hope) i have improved the initial
-importbox.sh. This one is more descriptive, and has few more options.
-Also, the attempt was made to create a more generic bash script which
-uses Vagrant.generic file (the actual name of known vagrant
-repositories names is changed to generic newBox).
-
-Please, do note that the step [6]: "Executing the command: vagrant up
---provider which provider?" could be improved, but still one can have
-argument that there are so far 4 providers, and more than 1 can be
-present at the time of testing. The improvements will be to scan
-through "vagrant box list command and find out if only one provider is
-present, or more?
-
-Please, also note that the first line uses bash.
-_______
-
-[2] https://gitlab.com/zoran.stojsavljevic/board-at-desk-single-dev/commit/0307e18883c69a882d3927be657cef6e615863fa
+-- 
+Ben Hutchings
+Software Developer, Codethink Ltd.
