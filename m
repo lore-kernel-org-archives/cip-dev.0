@@ -1,61 +1,40 @@
-From: daniel.wagner@siemens.com (Daniel Wagner)
-Date: Thu, 11 Jan 2018 09:07:22 +0100
-Subject: [cip-dev] [ANNOUNCE] Linux 4.4.15-cip15-rt10
-In-Reply-To: <20180110173232.krwpnlfeijdseinv@linutronix.de>
-References: <b4cf2728-0d0c-5128-d007-818e66da5613@siemens.com>
-	<20180108093350.lxjocaxlvrmjwpav@linutronix.de>
-	<94212c58-73c7-7356-b325-9e7f18c9bfbc@siemens.com>
-	<20180108105621.osnfazlumesxkwv3@linutronix.de>
-	<1515531937.12097.1.camel@codethink.co.uk>
-	<D5D6254030DBC644B6EE58B333BFBB1E9D97B5AF@ORSMSX101.amr.corp.intel.com>
-	<20180110173232.krwpnlfeijdseinv@linutronix.de>
-Message-ID: <09576c61-f200-2465-b181-76e2d47b08ec@siemens.com>
+From: nobodyless@gmail.com (_nobody_ _nobody_)
+Date: Thu, 11 Jan 2018 16:09:30 +0100
+Subject: [cip-dev] Submitting two patches to
+	https://gitlab.com/cip-project/cip-testing/board-at-desk-single-dev/
+Message-ID: <CABpTzB1oN+_KY-TGLwtvTnbtO0jHJ5E7GLrcEr4skNdKTOgWUA@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Good morning everyone,
+Hello Folks,
 
-On 01/10/2018 06:32 PM, Sebastian Andrzej Siewior wrote:
-> On 2018-01-09 21:31:34 [+0000], Hindman, Gavin wrote:
->> Sorry for the top-post.  Seems like maybe we are causing confusion by regularly announcing CIP releases on rt-users.  Wouldn't anyone interested in CIP already be subscribed to that mailing list and getting announcements that way?   Maybe it just needs a clearer header, if we think it should stay on rt-users?
-> 
-> I think the announcement was just fine. Now I do know what it does and
-> what will happen after Greg decides to put 4.4 EOL.
-> 
-> A pointer to [0] as part of the announcement might be help full. In the
-> end I think it should remain on rt-users since Steven won't continue
-> doing 4.4 stable. So Daniel's 4.4-RT on top of the CIP tree will be the
-> only source of a maintained 4.4-RT tree.
-> 
-> [0] wiki.linuxfoundation.org/civilinfrastructureplatform/cipkernelmaintenance
-> 
->> Maybe a "related projects" section should be created at https://wiki.linuxfoundation.org/realtime/preempt_rt_versions ?  
-> 
-> So what do have in mind? Moving v4.4-RT over to the "No longer
-> maintained PREEMPT_RT versions" section and adding a new one with
-> "related projects" where we add the 4.4-cip-rt tree?
+I decided to submit two patches, as my genesis to this group (warming
+up period). Please, review the patches, and tell me (if any?) your
+opinion. My aim is customize the repo to be as much generic as
+possible (there are other aims, not important for the momentum being).
 
-Steven is handing over the 4.4 to me (*). So I'll maintain the 4.4-rt
-and 4.4-cip-rt. I'll expect that they wont differ too much. Famous last
-words.
+Thank you,
+Zoran Stojsavljevic
+_______
 
-> Daniel: you have the release currently in a git tree within his "user"
-> namespace and did not upload it to k.o. Do you plan upload it to the
-> stable-rt tree like Julia does and upload it to the "projects/rt/4.4"
-> folder on k.o.? If so we might just add a link to the cip wiki next to
-> 4.4 and be done with it.
+[1] https://gitlab.com/cip-project/cip-testing/board-at-desk-single-dev/merge_requests/52
 
-Steven will ask the k.o folks to give me permission to upload to
-projects/rt/4.4. In short nothing should change for 4.4-rt support as
-long Greg is releasing 4.4.
+Improving importbox.sh script
 
-As for 4.4-cip(-rt), it might make sense to have a project/cip shared
-folder with the 4.4-cip and 4.4-cip-rt tree.
+This is since I think (I hope) i have improved the initial
+importbox.sh. This one is more descriptive, and has few more options.
+Also, the attempt was made to create a more generic bash script which
+uses Vagrant.generic file (the actual name of known vagrant
+repositories names is changed to generic newBox).
 
-Ben, what's your stand on this?
+Please, do note that the step [6]: "Executing the command: vagrant up
+--provider which provider?" could be improved, but still one can have
+argument that there are so far 4 providers, and more than 1 can be
+present at the time of testing. The improvements will be to scan
+through "vagrant box list command and find out if only one provider is
+present, or more?
 
-Thanks,
-Daniel
+Please, also note that the first line uses bash.
+_______
 
-(*) I finally figured out the last pieces how to do a release and
-upload to k.o.
+[2] https://gitlab.com/zoran.stojsavljevic/board-at-desk-single-dev/commit/0307e18883c69a882d3927be657cef6e615863fa
