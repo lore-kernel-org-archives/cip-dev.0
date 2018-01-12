@@ -1,44 +1,209 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Thu, 11 Jan 2018 16:51:43 +0000
-Subject: [cip-dev] [ANNOUNCE] Linux 4.4.15-cip15-rt10
-In-Reply-To: <09576c61-f200-2465-b181-76e2d47b08ec@siemens.com>
-References: <b4cf2728-0d0c-5128-d007-818e66da5613@siemens.com>
-	<20180108093350.lxjocaxlvrmjwpav@linutronix.de>
-	<94212c58-73c7-7356-b325-9e7f18c9bfbc@siemens.com>
-	<20180108105621.osnfazlumesxkwv3@linutronix.de>
-	<1515531937.12097.1.camel@codethink.co.uk>
-	<D5D6254030DBC644B6EE58B333BFBB1E9D97B5AF@ORSMSX101.amr.corp.intel.com>
-	<20180110173232.krwpnlfeijdseinv@linutronix.de>
-	<09576c61-f200-2465-b181-76e2d47b08ec@siemens.com>
-Message-ID: <1515689503.12097.16.camel@codethink.co.uk>
+From: trung.huynh.uw@rvc.renesas.com (Trung. Huynh)
+Date: Fri, 12 Jan 2018 02:16:08 +0000
+Subject: [cip-dev] B@D: iwg20m support
+In-Reply-To: <008f01d38a9f$fdce8680$f96b9380$@toshiba.co.jp>
+References: <1513231035-42479-1-git-send-email-daniel.sangorrin@toshiba.co.jp>
+	<8334d32c-edfb-76dd-3246-dca7cd9a9d62@siemens.com>
+	<006d01d3786a$533dec70$f9b9c550$@toshiba.co.jp>
+	<69bab283668346d480ae1f5957b054fb@rvc.renesas.com>
+	<018401d38925$8188fc70$849af550$@toshiba.co.jp>
+	<0f469353c2f94f64a2a55a3eb3f02317@rvc.renesas.com>
+	<001801d389a5$45b84630$d128d290$@toshiba.co.jp>
+	<e50cd71ea4d444889b39b3a96876a59f@rvc.renesas.com>
+	<000f01d389d3$715dbdf0$541939d0$@toshiba.co.jp>
+	<bacb02dc0d194be8b13138e98cf8aa33@rvc.renesas.com>
+	<008f01d38a9f$fdce8680$f96b9380$@toshiba.co.jp>
+Message-ID: <8681e318c0eb4598af7883c30aea66be@rvc.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Thu, 2018-01-11 at 09:07 +0100, Daniel Wagner wrote:
-> Good morning everyone,
-> 
-> On 01/10/2018 06:32 PM, Sebastian Andrzej Siewior wrote:
-[...]
-> > Daniel: you have the release currently in a git tree within his "user"
-> > namespace and did not upload it to k.o. Do you plan upload it to the
-> > stable-rt tree like Julia does and upload it to the "projects/rt/4.4"
-> > folder on k.o.? If so we might just add a link to the cip wiki next to
-> > 4.4 and be done with it.
-> 
-> Steven will ask the k.o folks to give me permission to upload to
-> projects/rt/4.4. In short nothing should change for 4.4-rt support as
-> long Greg is releasing 4.4.
-> 
-> As for 4.4-cip(-rt), it might make sense to have a project/cip shared
-> folder with the 4.4-cip and 4.4-cip-rt tree.
-> 
-> Ben, what's your stand on this?
+Dear Daniel
 
-No-one's asked for tarballs and patches, so I don't really want to add
-that step to the release process.
+> -----Original Message-----
+> From: Daniel Sangorrin [mailto:daniel.sangorrin at toshiba.co.jp] 
+> Sent: Thursday, January 11, 2018 12:50 PM
+> To: Trung. Huynh <trung.huynh.uw@rvc.renesas.com>
+> Cc: cip-dev at lists.cip-project.org; O365-Chan Duc. Vu <chan.vu.xv@renesas.com>; O365-Minh Thuy Dinh. Tran <minh.tran.xc@renesas.com>; O365-Anh The. Tran <anh.tran.jc@renesas.com>; Binh Thanh. Nguyen <binh.nguyen.uw@rvc.renesas.com>; O365-Yoshinori Kaneko <yoshinori.kaneko.xg@renesas.com>; O365-Yasushi Onishi <yasushi.onishi.xc@renesas.com>
+> Subject: RE: [cip-dev] B at D: iwg20m support
+> 
+> Dear Trung san,
+> 
+> > -----Original Message-----
+> > From: Trung. Huynh [mailto:trung.huynh.uw at rvc.renesas.com]
+> ..
+> > >
+> > > Please let me confirm just in case. Am I right if I say that you 
+> > > plan to you submit not only the kernel configuration flags but also test dependency definitions to cip core, and the corresponding yaml files for B at D?.
+> > > If that's correct I will be glad to accept them.
+> > 
+> > Yes, we would love to be apart in B at D with our contribution for who need to take our test suites as a testing plan.
+> > We do not promise this is to become excellent suites but we do our 
+> > best to have a good things that somebody to think about at first
+> 
+> OK, that's great!
+> 
+> > > > Regarding shmobile_defconfig, attachment shows up for you.
+> > >
+> > > Thanks, you only changed these flags right?
+> > > CONFIG_BLK_DEV_RAM_SIZE=250000
+> > > CONFIG_BLK_DEV_RAM_COUNT=4
+> > 
+> > You're right, the cip-core I pulled down from global site without 
+> > changing anything, it just be changed those flags and built under standalone of Linaro's cross compiler.
+> 
+> I just realized that you might be using the wrong branch of cip-core. You should be using the "master" branch not the "jethro"
+> one which was used and frozen for the cip-core release and the quickstart wiki page (the master branch depends on "morty"). 
+> The jethro branch was using a non-official CIP kernel repository (https://github.com/renesas-rz/renesas-cip) but on the master branch we are using the official CIP kernel.  For that reason, shmobile_defconfig on the main branch is different and some drivers have not been merged yet. 
+> Please could you check which branch you are using?
 
-Ben.
+Is v4.4.55-cip3 the "Jethro" one? Because I saw this is the build I was use.
 
--- 
-Ben Hutchings
-Software Developer, Codethink Ltd.
+> 
+> I have added your kernel configuration changes:
+> https://gitlab.com/cip-project/cip-core/commit/c1efa6325909815731abe0b69ec7e19e2e56aee7
+> Please let me know if that works for you.
+
+Anyway, let get back to master branch with flags from your suggestion, the issue seems get to worse than previous one:
+After uboot pull necessary packages on RAM up, it get stuck at:
+
+Starting kernel ...
+
+Nothing print out after this, so we didn't explore what occurring 
+I also tried to test with v4.4.83-cip8 if any possibility to solve the problem but same things
+
+> 
+> Could you show me how you built cip-core using Linaro's cross compiler?
+> By the way, cip-core builds its own toolchain, are you using Linaro's to reduce build time? 
+
+In circle development process, we build up our target packages by Yocto
+But for this cip-core testing with B at D, I'm using the compiler which to be installed via Ubuntu's repository:
+gcc version 4.8.4 (Ubuntu/Linaro 4.8.4-2ubuntu1~14.04.1)
+
+> 
+> Thanks,
+> Daniel
+> 
+> > > > > > -----Original Message-----
+> > > > > > From: cip-dev-bounces at lists.cip-project.org
+> > > > > > [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of 
+> > > > > > Daniel Sangorrin
+> > > > > > Sent: Tuesday, December 19, 2017 8:40 AM
+> > > > > > To: 'Daniel Wagner' <daniel.wagner@siemens.com>
+> > > > > > Cc: cip-dev at lists.cip-project.org
+> > > > > > Subject: Re: [cip-dev] B at D: iwg20m support
+> > > > > >
+> > > > > > Dear Daniel Wagner,
+> > > > > >
+> > > > > > > -----Original Message-----
+> > > > > > > From: Daniel Wagner [mailto:daniel.wagner at siemens.com]
+> > > > > > > Sent: Monday, December 18, 2017 8:36 PM
+> > > > > > > To: Daniel Sangorrin
+> > > > > > > Cc: cip-dev at lists.cip-project.org
+> > > > > > Subject: Re: [cip-dev] B at D: iwg20m support
+> > > > > > >
+> > > > > > > Hi Daniel,
+> > > > > > >
+> > > > > > > On 12/14/2017 06:57 AM, Daniel Sangorrin wrote:
+> > > > > > > > Hi Trung-san, Robert and all
+> > > > > > > >
+> > > > > > > > I received the AWS credentials from Agustin and uploaded 
+> > > > > > > > the cip-core binaries for the Renesas iwg20m board.
+> > > > > > > >
+> > > > > > > > https://s3-us-west-2.amazonaws.com/download.cip-project.or
+> > > > > > > > g/ci
+> > > > > > > > p- co re /iwg20m/core-image-minimal-iwg20m.cpio.gz
+> > > > > > > > https://s3-us-west-2.amazonaws.com/download.cip-project.or
+> > > > > > > > g/ci
+> > > > > > > > p-
+> > > > > > > > co
+> > > > > > > > re
+> > > > > > > > /iwg20m/r8a7743-iwg20d-q7.dtb 
+> > > > > > > > https://s3-us-west-2.amazonaws.com/download.cip-project.or
+> > > > > > > > g/ci
+> > > > > > > > p-
+> > > > > > > > co
+> > > > > > > > re
+> > > > > > > > /iwg20m/uImage
+> > > > > > >
+> > > > > > > Just out of curiosity: how did you build the root fs? The 
+> > > > > > > naming indicates that you used Yocto. I am still setting up 
+> > > > > > > my test environment for rt testing and wrote two kas files to create me a root fs:
+> > > > > > >
+> > > > > > > https://github.com/igaw/cip-rt-misc/blob/master/docs/kas-bbb
+> > > > > > > .yml 
+> > > > > > > https://github.com/igaw/cip-rt-misc/blob/master/docs/kas-min
+> > > > > > > nowb
+> > > > > > > oa
+> > > > > > > rd
+> > > > > > > .y
+> > > > > > > ml
+> > > > > > >
+> > > > > > > They are not self contained yet. Will fixed that right now. 
+> > > > > > > The idea that you can write
+> > > > > > >
+> > > > > > > 	kas build kas-bbb.yml
+> > > > > > >
+> > > > > > > and you get a root fs for testing.
+> > > > > >
+> > > > > > The CIP Core rootfs was built using Deby (poky build system + 
+> > > > > > meta-debian). You can see a tutorial in the CIP wiki and a more up-to- date README and kas file in the source code.
+> > > > > >
+> > > > > > https://wiki.linuxfoundation.org/civilinfrastructureplatform/c
+> > > > > > ip-c
+> > > > > > or
+> > > > > > e-
+> > > > > > quickstart
+> > > > > > https://gitlab.com/cip-project/cip-core/blob/master/deby/poky/
+> > > > > > meta
+> > > > > > -c
+> > > > > > ip
+> > > > > > -iwg20m/README.IWG20M.txt
+> > > > > > https://gitlab.com/cip-project/cip-core/blob/master/deby/poky/
+> > > > > > meta
+> > > > > > -c
+> > > > > > ip
+> > > > > > -iwg20m/kas-iwg20m.yml
+> > > > > >
+> > > > > > An overview of the CIP Core is here:
+> > > > > > https://wiki.linuxfoundation.org/civilinfrastructureplatform/c
+> > > > > > ip-c
+> > > > > > or e
+> > > > > > https://gitlab.com/cip-project/cip-core/blob/master/deby/READM
+> > > > > > E.md
+> > > > > >
+> > > > > > For the BBB please check this other Readme and kas file:
+> > > > > > https://gitlab.com/cip-project/cip-core/blob/master/deby/poky/
+> > > > > > meta
+> > > > > > -c
+> > > > > > ip
+> > > > > > -bbb/README.BBB.txt
+> > > > > > https://gitlab.com/cip-project/cip-core/blob/master/deby/poky/
+> > > > > > meta
+> > > > > > -c
+> > > > > > ip
+> > > > > > -bbb/kas-bbb.yml
+> > > > > >
+> > > > > > You can add the packages "openssh nfs-utils rt-tests strace procps", they are available in meta-debian.
+> > > > > >
+> > > > > > Unfortunately, you cannot simply add "meta-qt5" because it may 
+> > > > > > conflict with meta-debian. Instead you would need to use meta- debian qt5 recipes (only if you really need qt5 for testing RT).
+> > > > > >
+> > > > > > Thanks,
+> > > > > > Daniel Sangorrin
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > > _______________________________________________
+> > > > > > cip-dev mailing list
+> > > > > > cip-dev at lists.cip-project.org
+> > > > > > https://lists.cip-project.org/mailman/listinfo/cip-dev
+> > > > >
+> > > > >
+> > > >
+> > > >
+> > 
+> > 
+> 
