@@ -1,42 +1,38 @@
-From: daniel.wagner@siemens.com (Daniel Wagner)
-Date: Wed, 17 Jan 2018 10:18:48 +0100
-Subject: [cip-dev] [ANNOUNCE] Linux 4.4.15-cip15-rt10
-In-Reply-To: <1515689503.12097.16.camel@codethink.co.uk>
-References: <b4cf2728-0d0c-5128-d007-818e66da5613@siemens.com>
-	<20180108093350.lxjocaxlvrmjwpav@linutronix.de>
-	<94212c58-73c7-7356-b325-9e7f18c9bfbc@siemens.com>
-	<20180108105621.osnfazlumesxkwv3@linutronix.de>
-	<1515531937.12097.1.camel@codethink.co.uk>
-	<D5D6254030DBC644B6EE58B333BFBB1E9D97B5AF@ORSMSX101.amr.corp.intel.com>
-	<20180110173232.krwpnlfeijdseinv@linutronix.de>
-	<09576c61-f200-2465-b181-76e2d47b08ec@siemens.com>
-	<1515689503.12097.16.camel@codethink.co.uk>
-Message-ID: <3524be1e-4935-8941-89be-51e51d180af3@siemens.com>
+From: maemalynn@linuxfoundation.org (Maemalynn Meanor)
+Date: Thu, 18 Jan 2018 09:22:48 -0800
+Subject: [cip-dev] Today's CIP News
+Message-ID: <8DEC926E-06C3-456B-A814-544ED225DA32@linuxfoundation.org>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 01/11/2018 05:51 PM, Ben Hutchings wrote:
-> On Thu, 2018-01-11 at 09:07 +0100, Daniel Wagner wrote:
->> Good morning everyone,
->>
->> On 01/10/2018 06:32 PM, Sebastian Andrzej Siewior wrote:
-> [...]
->>> Daniel: you have the release currently in a git tree within his "user"
->>> namespace and did not upload it to k.o. Do you plan upload it to the
->>> stable-rt tree like Julia does and upload it to the "projects/rt/4.4"
->>> folder on k.o.? If so we might just add a link to the cip wiki next to
->>> 4.4 and be done with it.
->>
->> Steven will ask the k.o folks to give me permission to upload to
->> projects/rt/4.4. In short nothing should change for 4.4-rt support as
->> long Greg is releasing 4.4.
->>
->> As for 4.4-cip(-rt), it might make sense to have a project/cip shared
->> folder with the 4.4-cip and 4.4-cip-rt tree.
->>
->> Ben, what's your stand on this?
-> 
-> No-one's asked for tarballs and patches, so I don't really want to add
-> that step to the release process.
+CIP Community: 
 
-Fair enough ;)
+Today, the CIP project announced Moxa has joined as a Silver Member. You can view the full press release here: https://www.cip-project.org/announcement/2018/01/18/industry-leader-moxa-joins-civil-infrastructure-platform-project <https://www.cip-project.org/announcement/2018/01/18/industry-leader-moxa-joins-civil-infrastructure-platform-project>
+
+Please share this news with your social networks. Sample promotions are below. 
+
+You can retweet us here: https://twitter.com/cip_project/status/954037508702162944 <https://twitter.com/cip_project/status/954037508702162944>
+
+welcome @moxainc to the @cip_project! We look forward to working with you to develop an #interoperable #opensource platform that is #secure, #reliable #sustainable for more than 10 years: http://bit.ly/2DhwOx0 <http://bit.ly/2DhwOx0> 
+. at cip_project <mailto:.@cip_project> welcomes @moxainc as a silver member that will #collaborate with other industry leaders to create a reliable, secure, #Linux based #embedded #software platform: http://bit.ly/2DhwOx0 <http://bit.ly/2DhwOx0> #industrial
+
+LinkedIn or Facebook: 
+Today, the Civil Infrastructure Platform (CIP) project welcomes Moxa as a Silver Member. The membership strengthen?s Moxa?s commitment to building smart cities and offers CIP additional leadership to help develop industrial grade open source software. http://bit.ly/2DhwOx0 <http://bit.ly/2DhwOx0> 
+
+Thanks for your help in spreading the great news!
+Maemalynn
+
+Maemalynn Meanor
+PR Manager 
+The Linux Foundation
+Maemalynn at linuxfoundation.org
+(602) 541-0356
+Skype: Maemalynn
+
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180118/24fd509e/attachment.html>
