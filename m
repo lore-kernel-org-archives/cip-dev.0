@@ -1,65 +1,23 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Thu, 25 Jan 2018 09:38:02 +0000
-Subject: [cip-dev] [PATCH] ARM: shmobile: r8a7743: Fix Watchdog timer
-	clock
-In-Reply-To: <1516831338.3417.49.camel@codethink.co.uk>
-References: <1515498517-23722-1-git-send-email-chris.paterson2@renesas.com>
-	<1516831338.3417.49.camel@codethink.co.uk>
-Message-ID: <TY1PR06MB0702A9A542BF73825BF01420B7E10@TY1PR06MB0702.apcprd06.prod.outlook.com>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Fri, 26 Jan 2018 17:42:32 +0000
+Subject: [cip-dev] Linux 4.4.112-cip18
+Message-ID: <1516988552.3417.54.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Ben,
+I've released Linux version 4.4.112-cip18.??A summary of the changes
+since 4.4.105-cip15:
 
-> From: Ben Hutchings [mailto:ben.hutchings at codethink.co.uk]
-> Sent: 24 January 2018 22:02
-> 
-> On Tue, 2018-01-09 at 11:48 +0000, Chris Paterson wrote:
-> > R8A7743_CLK_RWDT should be 2 as specified in the hardware manual.
-> 
-> This macro doesn't seem to be used in any in-tree device trees.
-You're right; it isn't at the moment.
+- Merge fixes from stable versions 4.4.106-4.4.112 inclusive
+  - Includes mitigation for Meltdown on x86_64 only
+- Apply related fixes to hpsa driver and deadline scheduler
+- Fix regressions in nfsd, x86 microcode loader, and x86_64 vsyscall
+- Fix r8a7743 watchdog timer clock definition
 
-At some point in the future we'll be adding support for RWDT to the iwg20m, so I thought I'd get this fix submitted now before I forgot.
+I also tagged intermediate versions 4.4.109-cip16 and 4.4.112-cip17.
 
-> Should it be?
-If we weren't planning to use it - good question!
+Ben.
 
-I guess usually a fix like this would come down the v4.4 LTS route? But as this file has been added directly to CIP this won't happen.
-
-Presumably similar bug fix patches will have to be directly applied to CIP Kernels in the future anyway (once LTS support has ended), even if there is no known use case. There may be users of the CIP Kernel that we aren't aware of?
-
-> 
-> I've applied this anyway.
-Thank you!
-
-Kind regards, Chris
-
-> 
-> Ben.
-> 
-> > Fixes: 9683f2eba952bc0d ("ARM: shmobile: r8a7743: Add clock index
-> > macros for DT sources")
-> > Reported-by: Thong Ho <thong.ho.px@rvc.renesas.com>
-> > Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-> > ---
-> > ?include/dt-bindings/clock/r8a7743-clock.h | 2 +-
-> > ?1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/include/dt-bindings/clock/r8a7743-clock.h
-> > b/include/dt-bindings/clock/r8a7743-clock.h
-> > index a5c7e387e66dfd55..53f54dfce59245d8 100644
-> > --- a/include/dt-bindings/clock/r8a7743-clock.h
-> > +++ b/include/dt-bindings/clock/r8a7743-clock.h
-> > @@ -71,7 +71,7 @@
-> > > ?#define R8A7743_CLK_USBDMAC1		31
-> >
-> > ?/* MSTP4 */
-> > -#define R8A7743_CLK_RWDT		4
-> > +#define R8A7743_CLK_RWDT		2
-> > ?#define R8A7743_CLK_USB_DDM		6
-> > ?#define R8A7743_CLK_IRQC		7
-> > ?#define R8A7743_CLK_INTC_SYS		8
-> --
-> Ben Hutchings
-> Software Developer, Codethink Ltd.
+-- 
+Ben Hutchings
+Software Developer, Codethink Ltd.
