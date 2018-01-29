@@ -1,16 +1,31 @@
-From: wagi@monom.org (Daniel Wagner)
-Date: Sun, 28 Jan 2018 19:02:38 +0100
-Subject: [cip-dev] [ANNOUNCE] 4.4.112-cip18-rt11
-In-Reply-To: <20180128111920.36DF85009B1@mail.monom.org>
-References: <20180128111920.36DF85009B1@mail.monom.org>
-Message-ID: <5bb2eb02-d58e-ab17-d842-e435003c1021@monom.org>
+From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
+Date: Mon, 29 Jan 2018 17:31:09 +0900
+Subject: [cip-dev] [PATCH] Dockerfile: add iproute2
+In-Reply-To: <1517214669-12918-1-git-send-email-daniel.sangorrin@toshiba.co.jp>
+References: <1517214669-12918-1-git-send-email-daniel.sangorrin@toshiba.co.jp>
+Message-ID: <1517214669-12918-2-git-send-email-daniel.sangorrin@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-> You can get this release via the git tree at:
-> 
->    git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+runqemu requires /sbin/ip
 
-My scripts still need some love. The tree is here
+Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
+---
+ Dockerfile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-git://git.kernel.org/pub/scm/linux/kernel/git/wagi/linux-cip-rt.git
+diff --git a/Dockerfile b/Dockerfile
+index dbadb55..30fac76 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -15,7 +15,7 @@ RUN apt-get update && \
+                        tar bzip2 curl dosfstools mtools parted \
+                        syslinux tree python3-pip bc python3-yaml \
+                        lsb-release python3-setuptools ssh-client \
+-                       vim less mercurial && \
++                       vim less mercurial iproute2 && \
+     echo 'deb http://deb.debian.org/debian stretch main' >> /etc/apt/sources.list.d/backports.list && \
+     apt-get update && \
+     apt-get install -y -f --no-install-recommends --target-release stretch \
+-- 
+2.7.4
