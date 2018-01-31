@@ -1,55 +1,78 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Wed, 31 Jan 2018 11:15:50 +0000
-Subject: [cip-dev] [PATCH 05/10] ARM: shmobile: apmu: Allow booting
-	secondary CPU cores in debug mode
+Date: Wed, 31 Jan 2018 11:15:51 +0000
+Subject: [cip-dev] [PATCH 06/10] devicetree: bindings: Renesas APMU and SMP
+	Enable method
 In-Reply-To: <1517397355-23341-1-git-send-email-biju.das@bp.renesas.com>
 References: <1517397355-23341-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1517397355-23341-6-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1517397355-23341-7-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Now debug resource reset is handled properly, allow booting secondary
-CPU cores when hardware debug mode is enabled (MD21=1) on SoCs using the
-"renesas,apmu" enable method.
+Add DT binding documentation for the APMU hardware and add "renesas,apmu"
+to the list of enable methods for the ARM cpus.
 
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Hiep Cao Minh <cm-hiep@jinso.co.jp>
+Acked-by: Rob Herring <robh@kernel.org>
+Cc: devicetree at vger.kernel.org
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit d03c8f78d03af2a46127537dd1daa67164e53c09)
+(cherry picked from commit e454b359b7a0a6f59e3d83394e6d4e598554cb33)
+[removed r8a7792,r8a7793 and r8a7794 devices]
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
 ---
- arch/arm/mach-shmobile/platsmp-apmu.c | 14 +-------------
- 1 file changed, 1 insertion(+), 13 deletions(-)
+ Documentation/devicetree/bindings/arm/cpus.txt     |  1 +
+ .../devicetree/bindings/power/renesas,apmu.txt     | 28 ++++++++++++++++++++++
+ 2 files changed, 29 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power/renesas,apmu.txt
 
-diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
-index 81a687f..331409a 100644
---- a/arch/arm/mach-shmobile/platsmp-apmu.c
-+++ b/arch/arm/mach-shmobile/platsmp-apmu.c
-@@ -216,21 +216,9 @@ static void __init shmobile_smp_apmu_prepare_cpus_dt(unsigned int max_cpus)
- 	rcar_gen2_pm_init();
- }
+diff --git a/Documentation/devicetree/bindings/arm/cpus.txt b/Documentation/devicetree/bindings/arm/cpus.txt
+index 3a07a87..9ef9a20 100644
+--- a/Documentation/devicetree/bindings/arm/cpus.txt
++++ b/Documentation/devicetree/bindings/arm/cpus.txt
+@@ -200,6 +200,7 @@ nodes to be present and contain the properties described below.
+ 			    "qcom,gcc-msm8660"
+ 			    "qcom,kpss-acc-v1"
+ 			    "qcom,kpss-acc-v2"
++			    "renesas,apmu"
+ 			    "rockchip,rk3066-smp"
+ 			    "ste,dbx500-smp"
  
--static int shmobile_smp_apmu_boot_secondary_md21(unsigned int cpu,
--						 struct task_struct *idle)
--{
--	/* Error out when hardware debug mode is enabled */
--	if (rcar_gen2_read_mode_pins() & BIT(21)) {
--		pr_warn("Unable to boot CPU%u when MD21 is set\n", cpu);
--		return -ENOTSUPP;
--	}
--
--	return shmobile_smp_apmu_boot_secondary(cpu, idle);
--}
--
- static struct smp_operations apmu_smp_ops __initdata = {
- 	.smp_prepare_cpus	= shmobile_smp_apmu_prepare_cpus_dt,
--	.smp_boot_secondary	= shmobile_smp_apmu_boot_secondary_md21,
-+	.smp_boot_secondary	= shmobile_smp_apmu_boot_secondary,
- #ifdef CONFIG_HOTPLUG_CPU
- 	.cpu_can_disable	= shmobile_smp_cpu_can_disable,
- 	.cpu_die		= shmobile_smp_apmu_cpu_die,
+diff --git a/Documentation/devicetree/bindings/power/renesas,apmu.txt b/Documentation/devicetree/bindings/power/renesas,apmu.txt
+new file mode 100644
+index 0000000..bc8de21
+--- /dev/null
++++ b/Documentation/devicetree/bindings/power/renesas,apmu.txt
+@@ -0,0 +1,28 @@
++DT bindings for the Renesas Advanced Power Management Unit
++
++Renesas R-Car line of SoCs utilize one or more APMU hardware units
++for CPU core power domain control including SMP boot and CPU Hotplug.
++
++Required properties:
++
++- compatible: Should be "renesas,<soctype>-apmu", "renesas,apmu" as fallback.
++	      Examples with soctypes are:
++		- "renesas,r8a7790-apmu" (R-Car H2)
++		- "renesas,r8a7791-apmu" (R-Car M2-W)
++
++- reg: Base address and length of the I/O registers used by the APMU.
++
++- cpus: This node contains a list of CPU cores, which should match the order
++  of CPU cores used by the WUPCR and PSTR registers in the Advanced Power
++  Management Unit section of the device's datasheet.
++
++
++Example:
++
++This shows the r8a7791 APMU that can control CPU0 and CPU1.
++
++	apmu at e6152000 {
++		compatible = "renesas,r8a7791-apmu", "renesas,apmu";
++		reg = <0 0xe6152000 0 0x188>;
++		cpus = <&cpu0 &cpu1>;
++	};
 -- 
 2.7.4
