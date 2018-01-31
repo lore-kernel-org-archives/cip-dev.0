@@ -1,156 +1,77 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Wed, 31 Jan 2018 11:15:48 +0000
-Subject: [cip-dev] [PATCH 03/10] ARM: shmobile: apmu: Add APMU DT support
-	via Enable method
+Date: Wed, 31 Jan 2018 11:15:49 +0000
+Subject: [cip-dev] [PATCH 04/10] ARM: shmobile: apmu: Add debug resource
+	reset for secondary CPU boot
 In-Reply-To: <1517397355-23341-1-git-send-email-biju.das@bp.renesas.com>
 References: <1517397355-23341-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1517397355-23341-4-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1517397355-23341-5-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Magnus Damm <damm+renesas@opensource.se>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Allow DT configuration of the APMU hardware in the case when the APMU is
-pointed out in the DTB via the enable-method. The ability to configure
-the APMU via C code is still kept intact to prevent DTB breakage for older
-SoCs that do not rely on the enable-method for SMP support.
+In debug mode (MD21=1), reset requests derived from power-shutoff to the
+AP-system CPU cores must be enabled before the AP-system CPU cores
+resume from power-shutoff for the first time. Else resume may fail,
+causing the system to hang during boot.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-[geert: Fix CONFIG_SMP=n build]
+As setting these bits is a no-op in normal mode, there's no need to
+check the actual state of MD21 first.
+
+Inspired by CPU-specific patches in the BSP by Hisashi Nakamura
+<hisashi.nakamura.ak@renesas.com>.
+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Hiep Cao Minh <cm-hiep@jinso.co.jp>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-
-(cherry picked from commit 5f3bca0db8ac01a73622361f6062939638bf4730)
-(Backported APMU DT support via Enable method)
+(cherry picked from commit 10f778a97845e8b10af8878af99c9cfe6c31baf9)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
 
 Conflicts:
 	arch/arm/mach-shmobile/platsmp-apmu.c
 ---
- arch/arm/mach-shmobile/platsmp-apmu.c | 90 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 89 insertions(+), 1 deletion(-)
+ arch/arm/mach-shmobile/platsmp-apmu.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
 diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
-index cff623f..444765e 100644
+index 444765e..81a687f 100644
 --- a/arch/arm/mach-shmobile/platsmp-apmu.c
 +++ b/arch/arm/mach-shmobile/platsmp-apmu.c
-@@ -24,6 +24,7 @@
- #include <asm/suspend.h>
- #include "common.h"
- #include "platsmp-apmu.h"
-+#include "rcar-gen2.h"
+@@ -35,6 +35,13 @@ static struct {
+ #define PSTR_OFFS 0x40
+ #define CPUNCR_OFFS(n) (0x100 + (0x10 * (n)))
  
- static struct {
- 	void __iomem *iomem;
-@@ -118,12 +119,68 @@ static void apmu_parse_cfg(void (*fn)(struct resource *res, int cpu, int bit),
- 	}
- }
- 
-+static const struct of_device_id apmu_ids[] = {
-+	{ .compatible = "renesas,apmu" },
-+	{ /*sentinel*/ }
-+};
++#define DBGRCR_OFFS	0x180		/* Debug Resource Reset Control Reg. */
 +
-+static void apmu_parse_dt(void (*fn)(struct resource *res, int cpu, int bit))
-+{
-+	struct device_node *np_apmu, *np_cpu;
-+	struct resource res;
-+	int bit, index;
-+	u32 id;
++/* Debug Resource Reset Control Register */
++#define DBGCPUREN	BIT(24)		/* CPU Other Reset Request Enable */
++#define DBGCPUNREN(n)	BIT((n) + 20)	/* CPUn Reset Request Enable */
++#define DBGCPUPREN	BIT(19)		/* CPU Peripheral Reset Req. Enable */
 +
-+	for_each_matching_node(np_apmu, apmu_ids) {
-+		/* only enable the cluster that includes the boot CPU */
-+		bool is_allowed = false;
-+
-+		for (bit = 0; bit < CONFIG_NR_CPUS; bit++) {
-+			np_cpu = of_parse_phandle(np_apmu, "cpus", bit);
-+			if (np_cpu) {
-+				if (!of_property_read_u32(np_cpu, "reg", &id)) {
-+					if (id == cpu_logical_map(0)) {
-+						is_allowed = true;
-+						of_node_put(np_cpu);
-+						break;
-+					}
-+
-+				}
-+				of_node_put(np_cpu);
-+			}
-+		}
-+		if (!is_allowed)
-+			continue;
-+
-+		for (bit = 0; bit < CONFIG_NR_CPUS; bit++) {
-+			np_cpu = of_parse_phandle(np_apmu, "cpus", bit);
-+			if (np_cpu) {
-+				if (!of_property_read_u32(np_cpu, "reg", &id)) {
-+					index = get_logical_index(id);
-+					if ((index >= 0) &&
-+					    !of_address_to_resource(np_apmu,
-+								    0, &res))
-+						fn(&res, index, bit);
-+				}
-+				of_node_put(np_cpu);
-+			}
-+		}
-+	}
-+}
-+
-+static void __init shmobile_smp_apmu_setup_boot(void)
-+{
-+	/* install boot code shared by all CPUs */
-+	shmobile_boot_fn = virt_to_phys(shmobile_smp_boot);
-+	shmobile_boot_arg = MPIDR_HWID_BITMASK;
-+}
-+
- void __init shmobile_smp_apmu_prepare_cpus(unsigned int max_cpus,
- 					   struct rcar_apmu_config *apmu_config,
- 					   int num)
+ static int __maybe_unused apmu_power_on(void __iomem *p, int bit)
  {
- 	/* install boot code shared by all CPUs */
--	shmobile_boot_fn = virt_to_phys(shmobile_smp_boot);
-+	shmobile_smp_apmu_setup_boot();
- 	shmobile_boot_arg = MPIDR_HWID_BITMASK;
+ 	/* request power on */
+@@ -78,6 +85,8 @@ static int __maybe_unused apmu_wrap(int cpu, int (*fn)(void __iomem *p, int cpu)
+ #ifdef CONFIG_SMP
+ static void apmu_init_cpu(struct resource *res, int cpu, int bit)
+ {
++	u32 x;
++
+ 	if ((cpu >= ARRAY_SIZE(apmu_cpus)) || apmu_cpus[cpu].iomem)
+ 		return;
  
- 	/* perform per-cpu setup */
-@@ -137,7 +194,38 @@ int shmobile_smp_apmu_boot_secondary(unsigned int cpu, struct task_struct *idle)
+@@ -85,6 +94,11 @@ static void apmu_init_cpu(struct resource *res, int cpu, int bit)
+ 	apmu_cpus[cpu].bit = bit;
  
- 	return apmu_wrap(cpu, apmu_power_on);
+ 	pr_debug("apmu ioremap %d %d %pr\n", cpu, bit, res);
++
++	/* Setup for debug mode */
++	x = readl(apmu_cpus[cpu].iomem + DBGRCR_OFFS);
++	x |= DBGCPUREN | DBGCPUNREN(bit) | DBGCPUPREN;
++	writel(x, apmu_cpus[cpu].iomem + DBGRCR_OFFS);
  }
-+
-+static void __init shmobile_smp_apmu_prepare_cpus_dt(unsigned int max_cpus)
-+{
-+	shmobile_smp_apmu_setup_boot();
-+	apmu_parse_dt(apmu_init_cpu);
-+	rcar_gen2_pm_init();
-+}
-+
-+static int shmobile_smp_apmu_boot_secondary_md21(unsigned int cpu,
-+						 struct task_struct *idle)
-+{
-+	/* Error out when hardware debug mode is enabled */
-+	if (rcar_gen2_read_mode_pins() & BIT(21)) {
-+		pr_warn("Unable to boot CPU%u when MD21 is set\n", cpu);
-+		return -ENOTSUPP;
-+	}
-+
-+	return shmobile_smp_apmu_boot_secondary(cpu, idle);
-+}
-+
-+static struct smp_operations apmu_smp_ops __initdata = {
-+	.smp_prepare_cpus	= shmobile_smp_apmu_prepare_cpus_dt,
-+	.smp_boot_secondary	= shmobile_smp_apmu_boot_secondary_md21,
-+#ifdef CONFIG_HOTPLUG_CPU
-+	.cpu_can_disable	= shmobile_smp_cpu_can_disable,
-+	.cpu_die		= shmobile_smp_apmu_cpu_die,
-+	.cpu_kill		= shmobile_smp_apmu_cpu_kill,
- #endif
-+};
-+
-+CPU_METHOD_OF_DECLARE(shmobile_smp_apmu, "renesas,apmu", &apmu_smp_ops);
-+#endif /* CONFIG_SMP */
  
- #if defined(CONFIG_HOTPLUG_CPU) || defined(CONFIG_SUSPEND)
- /* nicked from arch/arm/mach-exynos/hotplug.c */
+ static void apmu_parse_cfg(void (*fn)(struct resource *res, int cpu, int bit),
 -- 
 2.7.4
