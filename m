@@ -1,43 +1,35 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Wed, 31 Jan 2018 11:15:55 +0000
-Subject: [cip-dev] [PATCH 10/10] ARM: dts: r8a7743: Add missing clock for
-	secondary CA15 CPU core
-In-Reply-To: <1517397355-23341-1-git-send-email-biju.das@bp.renesas.com>
-References: <1517397355-23341-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1517397355-23341-11-git-send-email-biju.das@bp.renesas.com>
+From: zoran.stojsavljevic@gmail.com (Zoran Stojsavljevic)
+Date: Wed, 31 Jan 2018 13:31:20 +0100
+Subject: [cip-dev] [yocto] Generating Yocto SDK as .deb (Debian) pacakge
+In-Reply-To: <CAE_REAvLSX=QE=8dhf0EeOATfJKJTOn_cB=o71c5VCDhu6R9Gw@mail.gmail.com>
+References: <CAE_REAvLSX=QE=8dhf0EeOATfJKJTOn_cB=o71c5VCDhu6R9Gw@mail.gmail.com>
+Message-ID: <CAGAf8LyQJKTyvTEfXjUgHYTz12wBbyozNKLwTnhspFSyneeWew@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+I'll add here another list, since these people might be interested in
+this thread/topic.
 
-Currently only the primary CPU in the CA15 cluster has a clocks
-property, while the secondary CPU core is driven by the same clock.
-Add the missing clocks property to fix this.
+Best Regards,
+Zoran
+_______
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit a60ddf507dda0ede43b72d348283d8725a5a83c7)
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
-
-Conflicts:
-	arch/arm/boot/dts/r8a7743.dtsi
----
- arch/arm/boot/dts/r8a7743.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index e4e0dc3..e755cb9 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -46,6 +46,7 @@
- 			compatible = "arm,cortex-a15";
- 			reg = <1>;
- 			clock-frequency = <1500000000>;
-+			clocks = <&cpg_clocks R8A7743_CLK_Z>;
- 			next-level-cache = <&L2_CA15>;
- 		};
- 
--- 
-2.7.4
+On Wed, Jan 31, 2018 at 9:05 AM, Gaurang Shastri <gmshastri@gmail.com> wrote:
+> Hi Team,
+>
+> How can I generate Yocto generated SDK as .deb package? Currently it is in
+> the form of installable shell script but I want to generate it as .deb
+> package so that I can directly install it on my Ubuntu VM using "apt-get"
+> command.
+>
+> Is this supported? Any documentation?
+>
+> Regards,
+> Gaurang
+>
+> --
+> _______________________________________________
+> yocto mailing list
+> yocto at yoctoproject.org
+> https://lists.yoctoproject.org/listinfo/yocto
+>
