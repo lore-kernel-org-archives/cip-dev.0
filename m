@@ -1,52 +1,41 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Thu, 1 Feb 2018 08:46:37 +0000
-Subject: [cip-dev] CIP in the News
-In-Reply-To: <080EC12E-C8E8-4E1F-BF4B-BC1A4415D9F4@linuxfoundation.org>
-References: <080EC12E-C8E8-4E1F-BF4B-BC1A4415D9F4@linuxfoundation.org>
-Message-ID: <TY1PR06MB0702FB2305E2F23756287F84B7FA0@TY1PR06MB0702.apcprd06.prod.outlook.com>
+From: biju.das@bp.renesas.com (Biju Das)
+Date: Thu,  1 Feb 2018 13:46:22 +0000
+Subject: [cip-dev] [PATCH  0/7] Add i2c/iic support for r8a7743
+Message-ID: <1517492789-44830-1-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello all,
+This patch series aims to add i2c/iic support for r8a7743 SoC.
 
-Yoshi-san's and Urs' talk also got a mention in Eric Brown's article:
+Backported dt-bindings patch
+Backported per-Generation fallbacks
 
-https://www.linux.com/blog/event/elc-open-iot/2018/1/elc-openiot-cloud-computing-robot-apocalypse
+It is tested against linux-v4.4.112-cip18
 
-Kind regards, Chris
+This patch depends on the below patch series
+https://lists.cip-project.org/pipermail/cip-dev/2018-January/000820.html
 
-From: cip-dev-bounces@lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Maemalynn Meanor
-Sent: 01 February 2018 04:40
-To: cip-members at lists.cip-project.org; cip-dev at lists.cip-project.org
-Cc: Jeff ErnstFriedman <jernstfriedman@linuxfoundation.org>
-Subject: [cip-dev] CIP in the News
+Biju Das (4):
+  dt-bindings: i2c: Document r8a7743/5 support
+  ARM: dts: r8a7743: Add I2C DT support
+  dt-bindings: i2c: sh_mobile: Document r8a7743/5 support
+  ARM: dts: r8a7743: Add IIC cores to dtsi
 
-CIP Community:
+Geert Uytterhoeven (1):
+  dt-bindings: i2c: Spelling s/propoerty/property/
 
-IoT Evolution World showcased CIP in a feature article today. You can read the article here: http://www.iotevolutionworld.com/iot/articles/436745-smart-city-iot-infrastructure-moxa-joins-linux-foundations.htm
+Simon Horman (2):
+  i2c: rcar: Add per-Generation fallback bindings
+  i2c: sh_mobile: Add per-Generation fallback bindings
 
-We ask that you please share this article with your social followers. You can retweet us here: https://twitter.com/cip_project/status/958920358769451008
+ Documentation/devicetree/bindings/i2c/i2c-imx.txt  |   2 +-
+ Documentation/devicetree/bindings/i2c/i2c-rcar.txt |  35 ++++--
+ .../devicetree/bindings/i2c/i2c-sh_mobile.txt      |  20 ++-
+ Documentation/devicetree/bindings/i2c/i2c-sirf.txt |   2 +-
+ arch/arm/boot/dts/r8a7743.dtsi                     | 137 +++++++++++++++++++++
+ drivers/i2c/busses/i2c-rcar.c                      |   5 +-
+ drivers/i2c/busses/i2c-sh_mobile.c                 |   4 +-
+ 7 files changed, 186 insertions(+), 19 deletions(-)
 
-Or, use the below suggested posts:
-
-Twitter: . at cip_project<mailto:.@cip_project> was featured in @IoTEvolution for its news about @MoxaInc joining the project. Learn more:  http://bit.ly/2nqRA7x #opensource #smartcities #IoT #Infrastructure
-
-
-LinkedIn: IoT Evolution World features the news that Moxa joined the CIP Project in a new article. Read it here: http://bit.ly/2nqRA7x
-
-Thanks so much for your help!
-Maemalynn
-
-Maemalynn Meanor
-PR Manager
-The Linux Foundation
-Maemalynn at linuxfoundation.org<mailto:Maemalynn@linuxfoundation.org>
-(602) 541-0356
-Skype: Maemalynn
-
-
-
-
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180201/d797442b/attachment-0001.html>
+-- 
+2.7.4
