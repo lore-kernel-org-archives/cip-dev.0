@@ -1,20 +1,33 @@
-From: afisher@linuxfoundation.org (Annie Fisher)
-Date: Thu, 01 Feb 2018 23:30:03 +0000
-Subject: [cip-dev] CIP: Will miss meeting on Monday
-Message-ID: <df5cd592-6d13-c95a-07f9-f13ca2830d96@mixmax.com>
+From: jernstfriedman@linuxfoundation.org (Jeff ErnstFriedman)
+Date: Thu, 1 Feb 2018 15:46:41 -0800
+Subject: [cip-dev] Unable to attend Feb. 5 TSC
+Message-ID: <CAEeDQDFiA8NbR8wq1-fkeATEbB8yRUhFgSyVfLRsGWj3uDkPqg@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Greetings all,
-Unfortunately, I have a conflict for the TSC and Marketing Meetings on Monday,
-so will not be able to attend.
-Cheers,Annie
-Annie Fisher, MPA CSM
-Program Manager, The Linux FoundationLocation & Time-zone: San Francisco, CA, PT
-web: https://www.linuxfoundation.org/email:afisher at linuxfoundation.org
+Dear members of the CIP TSC,
 
+My name is Jeff ErnstFriedman and I will be stepping in with program
+management for CIP. I am pleased to meet everyone and would like to make
+myself available for any questions/comments.
 
-Sent with Mixmax
+Unfortunately for this upcoming TSC meeting on Feb 5. I will not be able to
+attend as I have a prescheduled appt. to get some tests done, it is an
+overnight on Sunday and I will not be cleared to leave until after the
+meeting concludes. Unfortunately these things are difficult to reschedule.
+
+If you record the meeting in Zoom, I will followup with minutes and action
+items.
+
+Please accept my apologies and I look forward to working with this project
+going forward.
+
+*Jeff ErnstFriedman*
+*jernstfriedman at linuxfoundation.org <jernstfriedman@linuxfoundation.org> *
+*2201 Broadway #604, Oakland, CA 94612*
+*mobile: 510.593.1367*
+*skype: jeffrey.ernstfriedman*
+*twitter: @namdeirf*
 -------------- next part --------------
 An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180201/3b8707c5/attachment.html>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180201/03bafbd8/attachment.html>
