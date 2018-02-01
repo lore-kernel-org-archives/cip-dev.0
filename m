@@ -1,50 +1,52 @@
-From: raj.khem@gmail.com (Khem Raj)
-Date: Wed, 31 Jan 2018 10:51:29 -0800
-Subject: [cip-dev] [yocto] Generating Yocto SDK as .deb (Debian) pacakge
-In-Reply-To: <CAGAf8LyQJKTyvTEfXjUgHYTz12wBbyozNKLwTnhspFSyneeWew@mail.gmail.com>
-References: <CAE_REAvLSX=QE=8dhf0EeOATfJKJTOn_cB=o71c5VCDhu6R9Gw@mail.gmail.com>
-	<CAGAf8LyQJKTyvTEfXjUgHYTz12wBbyozNKLwTnhspFSyneeWew@mail.gmail.com>
-Message-ID: <CAMKF1srPv6qDZqC87PeHB1jE_5YkCbn0awVH4X6qWjwW6KgrWw@mail.gmail.com>
+From: Chris.Paterson2@renesas.com (Chris Paterson)
+Date: Thu, 1 Feb 2018 08:46:37 +0000
+Subject: [cip-dev] CIP in the News
+In-Reply-To: <080EC12E-C8E8-4E1F-BF4B-BC1A4415D9F4@linuxfoundation.org>
+References: <080EC12E-C8E8-4E1F-BF4B-BC1A4415D9F4@linuxfoundation.org>
+Message-ID: <TY1PR06MB0702FB2305E2F23756287F84B7FA0@TY1PR06MB0702.apcprd06.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Wed, Jan 31, 2018 at 4:31 AM, Zoran Stojsavljevic
-<zoran.stojsavljevic@gmail.com> wrote:
-> I'll add here another list, since these people might be interested in
-> this thread/topic.
->
+Hello all,
 
-thats a fine idea you might want to look into
+Yoshi-san's and Urs' talk also got a mention in Eric Brown's article:
 
-http://downloads.yoctoproject.org/releases/yocto/yocto-2.4.1/toolchain/
+https://www.linux.com/blog/event/elc-open-iot/2018/1/elc-openiot-cloud-computing-robot-apocalypse
 
-for prebuilt SDKs
+Kind regards, Chris
 
-> Best Regards,
-> Zoran
-> _______
->
-> On Wed, Jan 31, 2018 at 9:05 AM, Gaurang Shastri <gmshastri@gmail.com> wrote:
->> Hi Team,
->>
->> How can I generate Yocto generated SDK as .deb package? Currently it is in
->> the form of installable shell script but I want to generate it as .deb
->> package so that I can directly install it on my Ubuntu VM using "apt-get"
->> command.
->>
->> Is this supported? Any documentation?
->>
->> Regards,
->> Gaurang
->>
->> --
->> _______________________________________________
->> yocto mailing list
->> yocto at yoctoproject.org
->> https://lists.yoctoproject.org/listinfo/yocto
->>
-> --
-> _______________________________________________
-> yocto mailing list
-> yocto at yoctoproject.org
-> https://lists.yoctoproject.org/listinfo/yocto
+From: cip-dev-bounces@lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Maemalynn Meanor
+Sent: 01 February 2018 04:40
+To: cip-members at lists.cip-project.org; cip-dev at lists.cip-project.org
+Cc: Jeff ErnstFriedman <jernstfriedman@linuxfoundation.org>
+Subject: [cip-dev] CIP in the News
+
+CIP Community:
+
+IoT Evolution World showcased CIP in a feature article today. You can read the article here: http://www.iotevolutionworld.com/iot/articles/436745-smart-city-iot-infrastructure-moxa-joins-linux-foundations.htm
+
+We ask that you please share this article with your social followers. You can retweet us here: https://twitter.com/cip_project/status/958920358769451008
+
+Or, use the below suggested posts:
+
+Twitter: . at cip_project<mailto:.@cip_project> was featured in @IoTEvolution for its news about @MoxaInc joining the project. Learn more:  http://bit.ly/2nqRA7x #opensource #smartcities #IoT #Infrastructure
+
+
+LinkedIn: IoT Evolution World features the news that Moxa joined the CIP Project in a new article. Read it here: http://bit.ly/2nqRA7x
+
+Thanks so much for your help!
+Maemalynn
+
+Maemalynn Meanor
+PR Manager
+The Linux Foundation
+Maemalynn at linuxfoundation.org<mailto:Maemalynn@linuxfoundation.org>
+(602) 541-0356
+Skype: Maemalynn
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180201/d797442b/attachment-0001.html>
