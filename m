@@ -1,51 +1,92 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu,  1 Feb 2018 13:46:28 +0000
-Subject: [cip-dev] [PATCH 6/7] dt-bindings: i2c: sh_mobile: Document
-	r8a7743/5 support
+Date: Thu,  1 Feb 2018 13:46:29 +0000
+Subject: [cip-dev] [PATCH  7/7] ARM: dts: r8a7743: Add IIC cores to dtsi
 In-Reply-To: <1517492789-44830-1-git-send-email-biju.das@bp.renesas.com>
 References: <1517492789-44830-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1517492789-44830-7-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1517492789-44830-8-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Document i2c Device Tree support for RZ/G1[ME]
-(also known as r8a774[35]) SoCs. They are compatible with
-R-Car Gen2 SoC family. No driver change is required as the
-initialisation sequence is currently the same as for the
-R-Car Gen2 fallback binding.
-
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-(cherry picked from commit 6c448f04c83713c49be7baf341ed6a04d7493a15)
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+(cherry picked from commit f523405f2a22cc0c30701ea0cb3671dc0abbcda1)
+(Modified clocks,power domain property and removed resets property)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
 ---
- Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7743.dtsi | 52 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt b/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt
-index 7716acc..4bfb89e 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt
-@@ -4,6 +4,8 @@ Required properties:
- - compatible      :
- 			- "renesas,iic-r8a73a4" (R-Mobile APE6)
- 			- "renesas,iic-r8a7740" (R-Mobile A1)
-+			- "renesas,iic-r8a7743" (RZ/G1M)
-+			- "renesas,iic-r8a7745" (RZ/G1E)
- 			- "renesas,iic-r8a7790" (R-Car H2)
- 			- "renesas,iic-r8a7791" (R-Car M2-W)
- 			- "renesas,iic-r8a7792" (R-Car V2H)
-@@ -11,7 +13,8 @@ Required properties:
- 			- "renesas,iic-r8a7794" (R-Car E2)
- 			- "renesas,iic-r8a7795" (R-Car H3)
- 			- "renesas,iic-sh73a0" (SH-Mobile AG5)
--			- "renesas,rcar-gen2-iic" (generic R-Car Gen2 compatible device)
-+			- "renesas,rcar-gen2-iic" (generic R-Car Gen2 or RZ/G1
-+							compatible device)
- 			- "renesas,rcar-gen3-iic" (generic R-Car Gen3 compatible device)
- 			- "renesas,rmobile-iic" (generic device)
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index b7be573..9255582 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -25,6 +25,9 @@
+ 		i2c3 = &i2c3;
+ 		i2c4 = &i2c4;
+ 		i2c5 = &i2c5;
++		i2c6 = &iic0;
++		i2c7 = &iic1;
++		i2c8 = &iic3;
+ 	};
  
+ 	cpus {
+@@ -382,6 +385,55 @@
+ 			status = "disabled";
+ 		};
+ 
++		iic0: i2c at e6500000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,iic-r8a7743",
++				     "renesas,rcar-gen2-iic",
++				     "renesas,rmobile-iic";
++			reg = <0 0xe6500000 0 0x425>;
++			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp3_clks R8A7743_CLK_IIC0>;
++			dmas = <&dmac0 0x61>, <&dmac0 0x62>,
++			       <&dmac1 0x61>, <&dmac1 0x62>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&cpg_clocks>;
++			status = "disabled";
++		};
++
++		iic1: i2c at e6510000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,iic-r8a7743",
++				     "renesas,rcar-gen2-iic",
++				     "renesas,rmobile-iic";
++			reg = <0 0xe6510000 0 0x425>;
++			interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp3_clks R8A7743_CLK_IIC1>;
++			dmas = <&dmac0 0x65>, <&dmac0 0x66>,
++			       <&dmac1 0x65>, <&dmac1 0x66>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&cpg_clocks>;
++			status = "disabled";
++		};
++
++		iic3: i2c at e60b0000 {
++			/* doesn't need pinmux */
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,iic-r8a7743",
++				     "renesas,rcar-gen2-iic",
++				     "renesas,rmobile-iic";
++			reg = <0 0xe60b0000 0 0x425>;
++			interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp9_clks R8A7743_CLK_IICDVFS>;
++			dmas = <&dmac0 0x77>, <&dmac0 0x78>,
++			       <&dmac1 0x77>, <&dmac1 0x78>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&cpg_clocks>;
++			status = "disabled";
++		};
++
+ 		scifa0: serial at e6c40000 {
+ 			compatible = "renesas,scifa-r8a7743", "renesas,scifa";
+ 			reg = <0 0xe6c40000 0 0x40>;
 -- 
 2.7.4
