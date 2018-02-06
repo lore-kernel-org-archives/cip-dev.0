@@ -1,40 +1,38 @@
-From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
-Date: Tue, 6 Feb 2018 10:58:45 +0900
+From: daniel.wagner@siemens.com (Daniel Wagner)
+Date: Tue, 6 Feb 2018 11:27:33 +0100
 Subject: [cip-dev] [ANNOUNCE] 4.4.112-cip18-rt11
-In-Reply-To: <5bb2eb02-d58e-ab17-d842-e435003c1021@monom.org>
+In-Reply-To: <001c01d39eea$6803ed20$380bc760$@toshiba.co.jp>
 References: <20180128111920.36DF85009B1@mail.monom.org>
-	<5bb2eb02-d58e-ab17-d842-e435003c1021@monom.org>
-Message-ID: <001d01d39eee$05d4e600$117eb200$@toshiba.co.jp>
+	<001c01d39eea$6803ed20$380bc760$@toshiba.co.jp>
+Message-ID: <9010a9d0-1ea4-bbe3-454d-5720085ed3bd@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
+Hi Daniel,
 
-
-> -----Original Message-----
-> From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Daniel Wagner
-> Sent: Monday, January 29, 2018 3:03 AM
-> To: Daniel Wagner
-> Cc: cip-dev at lists.cip-project.org
-> Subject: Re: [cip-dev] [ANNOUNCE] 4.4.112-cip18-rt11
+On 02/06/2018 02:32 AM, Daniel Sangorrin wrote:
+>> -----Original Message-----
+>> From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Daniel Wagner
+> ...
+>> Or to build 4.4.112-cip18-rt11 directly, the following patches should be applied:
+>>
+>>   http://www.kernel.org/pub/linux/kernel/v4.x/linux-4.4.tar.xz
+>>
+>>   http://www.kernel.org/pub/linux/kernel/v4.x/patch-4.4.112-cip18.xz
 > 
-> > You can get this release via the git tree at:
-> >
-> >    git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
-> 
-> My scripts still need some love. The tree is here
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/wagi/linux-cip-rt.git
+> This URL doesn't work.
 
+Thanks for letting me know. The correct URL is
 
->   branch: v4.4-rt
->   Head SHA1: 92b397fd34fac354e00f1ffdd51e2121e01a5ee5
-Not only the repository, but the branch is also mistaken. It should be linux-4.4.y-cip-rt.
+https://www.kernel.org/pub/linux/kernel/people/wagi/cip-rt/4.4/
+
+> Also shouldn't we have 3 patches? lts + cip + rt
+
+I just create the patches on top of the CIP version. The scripts for
+this are the ones we use for the stable-rt trees. I don't know the
+patches are useful or not. I don't mind dropping the patch services if
+no one needs it. Neither Greg nor Ben are creating patch releases so
+doing the cip-rt patches seems like a waste of time.
 
 Thanks,
-Daniel Sangorrin
-
-
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
+Daniel
