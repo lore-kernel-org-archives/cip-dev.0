@@ -1,31 +1,39 @@
 From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
-Date: Tue, 6 Feb 2018 10:32:52 +0900
+Date: Tue, 6 Feb 2018 10:58:45 +0900
 Subject: [cip-dev] [ANNOUNCE] 4.4.112-cip18-rt11
-In-Reply-To: <20180128111920.36DF85009B1@mail.monom.org>
+In-Reply-To: <5bb2eb02-d58e-ab17-d842-e435003c1021@monom.org>
 References: <20180128111920.36DF85009B1@mail.monom.org>
-Message-ID: <001c01d39eea$6803ed20$380bc760$@toshiba.co.jp>
+	<5bb2eb02-d58e-ab17-d842-e435003c1021@monom.org>
+Message-ID: <001d01d39eee$05d4e600$117eb200$@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
+
+
 > -----Original Message-----
 > From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Daniel Wagner
-...
-> Or to build 4.4.112-cip18-rt11 directly, the following patches should be applied:
+> Sent: Monday, January 29, 2018 3:03 AM
+> To: Daniel Wagner
+> Cc: cip-dev at lists.cip-project.org
+> Subject: Re: [cip-dev] [ANNOUNCE] 4.4.112-cip18-rt11
 > 
->   http://www.kernel.org/pub/linux/kernel/v4.x/linux-4.4.tar.xz
+> > You can get this release via the git tree at:
+> >
+> >    git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
 > 
->   http://www.kernel.org/pub/linux/kernel/v4.x/patch-4.4.112-cip18.xz
+> My scripts still need some love. The tree is here
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/wagi/linux-cip-rt.git
 
-This URL doesn't work.
-Also shouldn't we have 3 patches? lts + cip + rt
+
+>   branch: v4.4-rt
+>   Head SHA1: 92b397fd34fac354e00f1ffdd51e2121e01a5ee5
+Not only the repository, but the branch is also mistaken. It should be linux-4.4.y-cip-rt.
 
 Thanks,
 Daniel Sangorrin
 
->   http://www.kernel.org/pub/linux/kernel/people/wagi/cip-rt/4.4/patch-4.4.112-cip18-rt11.patch.xz
 
-> Enjoy!
->    Daniel
 > _______________________________________________
 > cip-dev mailing list
 > cip-dev at lists.cip-project.org
