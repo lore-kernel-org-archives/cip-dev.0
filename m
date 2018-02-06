@@ -1,33 +1,32 @@
-From: jernstfriedman@linuxfoundation.org (Jeff ErnstFriedman)
-Date: Thu, 1 Feb 2018 15:46:41 -0800
-Subject: [cip-dev] Unable to attend Feb. 5 TSC
-Message-ID: <CAEeDQDFiA8NbR8wq1-fkeATEbB8yRUhFgSyVfLRsGWj3uDkPqg@mail.gmail.com>
+From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
+Date: Tue, 6 Feb 2018 10:32:52 +0900
+Subject: [cip-dev] [ANNOUNCE] 4.4.112-cip18-rt11
+In-Reply-To: <20180128111920.36DF85009B1@mail.monom.org>
+References: <20180128111920.36DF85009B1@mail.monom.org>
+Message-ID: <001c01d39eea$6803ed20$380bc760$@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Dear members of the CIP TSC,
+> -----Original Message-----
+> From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Daniel Wagner
+...
+> Or to build 4.4.112-cip18-rt11 directly, the following patches should be applied:
+> 
+>   http://www.kernel.org/pub/linux/kernel/v4.x/linux-4.4.tar.xz
+> 
+>   http://www.kernel.org/pub/linux/kernel/v4.x/patch-4.4.112-cip18.xz
 
-My name is Jeff ErnstFriedman and I will be stepping in with program
-management for CIP. I am pleased to meet everyone and would like to make
-myself available for any questions/comments.
+This URL doesn't work.
+Also shouldn't we have 3 patches? lts + cip + rt
 
-Unfortunately for this upcoming TSC meeting on Feb 5. I will not be able to
-attend as I have a prescheduled appt. to get some tests done, it is an
-overnight on Sunday and I will not be cleared to leave until after the
-meeting concludes. Unfortunately these things are difficult to reschedule.
+Thanks,
+Daniel Sangorrin
 
-If you record the meeting in Zoom, I will followup with minutes and action
-items.
+>   http://www.kernel.org/pub/linux/kernel/people/wagi/cip-rt/4.4/patch-4.4.112-cip18-rt11.patch.xz
 
-Please accept my apologies and I look forward to working with this project
-going forward.
-
-*Jeff ErnstFriedman*
-*jernstfriedman at linuxfoundation.org <jernstfriedman@linuxfoundation.org> *
-*2201 Broadway #604, Oakland, CA 94612*
-*mobile: 510.593.1367*
-*skype: jeffrey.ernstfriedman*
-*twitter: @namdeirf*
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180201/03bafbd8/attachment.html>
+> Enjoy!
+>    Daniel
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
