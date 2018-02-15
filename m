@@ -1,27 +1,42 @@
-From: zoran.stojsavljevic.de@gmail.com (Zoran S)
-Date: Wed, 14 Feb 2018 14:04:13 +0100
-Subject: [cip-dev] [test issue #99] Issues with installing when running
-	behind a web proxy
-Message-ID: <CAEss1E+4z6r9=UhnMxnh_Pco=i_usk3Pn05tb=q8h1t0CjV_Dg@mail.gmail.com>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Thu, 15 Feb 2018 11:44:51 +0000
+Subject: [cip-dev] Meltdown and Spectre in CIP
+In-Reply-To: <TY1PR06MB07021E0DE8BDB329DFC8A32FB7EA0@TY1PR06MB0702.apcprd06.prod.outlook.com>
+References: <1515593818.12097.10.camel@codethink.co.uk>
+	<TY1PR06MB07021E0DE8BDB329DFC8A32FB7EA0@TY1PR06MB0702.apcprd06.prod.outlook.com>
+Message-ID: <1518695091.3422.24.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-https://gitlab.com/cip-project/cip-testing/testing/issues/99
+On Tue, 2018-01-16 at 08:01 +0000, Chris Paterson wrote:
+[...]
+> > Meltdown:
+> > - arm 32-bit: Not affected???(ARM reports that only the Cortex-A75 is
+> > ? affected, but I haven't seen information from other architecture
+> > ? licensees.)
+> 
+> ARM also lists that meltdown subvariant '3a' affects some arm 32-bit
+> processors [1], but say that "In general, it is not believed that
+> software mitigations for this issue are necessary".
+> 
+> The whitepaper ARM link to [2] implies that ARM don't think this is
+> an issue worth worrying about as the information that can be obtained
+> from the system registers is "not material".
+> 
+> Have you heard/seen anything to contradict this statement?
 
-Also from:
-https://lists.cip-project.org/pipermail/cip-dev/2017-July/000338.html
+No I haven't.
 
-At the end of test issue #99, I added the solution to this problem.
+[...]
+> Will you be keeping an eye on Spectre patches on behalf of CIP as
+> part of your maintainer role? I guess you may be in the loop a bit
+> more than the rest of us?
 
-Lava does NOT read VM's ENV variables. It ignores them. Lava reads
-/etc/lava-server/env.yaml as setup proxy file!
+I will look at the mitigations as they land upstream, but I still think
+these are low priority security issues for CIP.
 
-Included there also /etc/lava-server/env.yaml file example.
+Ben.
 
-It could be done also DIRECTLY (every time bringing up the VM) using
-python, tapping into the urllib3 python code (example given):
-https://stackoverflow.com/questions/31151615/how-to-handle-proxies-in-urllib3
-
-I've tried this, using in-line python interpreter, it worked.
-
-Zoran
+-- 
+Ben Hutchings
+Software Developer, Codethink Ltd.
