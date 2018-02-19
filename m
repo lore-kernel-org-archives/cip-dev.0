@@ -1,61 +1,24 @@
-From: agustin.benito@codethink.co.uk (=?ISO-8859-1?Q?Agust=EDn?= Benito Bethencourt)
-Date: Mon, 19 Feb 2018 09:53:28 +0100
-Subject: [cip-dev] Codethink: report weeks 6 and 7
-Message-ID: <6359446.CMKDBkSaUH@linux-if6s>
+From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
+Date: Mon, 19 Feb 2018 18:45:48 +0000
+Subject: [cip-dev] [PATCH 0/3] Add RTC support to iwg20d
+Message-ID: <1519065951-9897-1-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+This patch series aims at adding RTC support to the iwg20d
+board from iWave.
+The commits from this series backport board specific DT
+support and defconfig support.
 
-this is a summary of the CIP related work we've done the last couple of weeks:
+Biju Das (3):
+  ARM: dts: iwg20d-q7: Add RTC support
+  ARM: shmobile: Enable BQ32000 rtc in shmobile_defconfig
+  ARM: multi_v7_defconfig: Enable BQ32000 RTC driver
 
-## Kernel maintenance
+ arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 18 ++++++++++++++++++
+ arch/arm/configs/multi_v7_defconfig     |  1 +
+ arch/arm/configs/shmobile_defconfig     |  1 +
+ 3 files changed, 20 insertions(+)
 
-* Reviewed patches from Renesas to add support for SMP and I?C masters
-on R8A7743 SoC, and applied them to the CIP kernel branch
-
-* Reviewed Robert's merge request for B at D
-
-* Discussed opportunities for CIP member participation at DebConf
-
-* Reviewed the changes in stable release 4.4.113 (but didn't yet merge
-them)
-
-## CIP testing
-
-* Went through the open tickets and sent to backlog all those that are related 
-with B at D development.
-** Confirmed #157 is still an issue: https://gitlab.com/cip-project/cip-testing/testing/issues/157
-** Unable to replicate #170 so far: https://gitlab.com/cip-project/cip-testing/testing/issues/170
-
-* Working on #173 opened by Zoran: https://gitlab.com/cip-project/cip-testing/
-testing/issues/173
-
-* B at D working with new kernelci version. Consolidation required.
-** Latest kernel tested and report by e-mail sent to mailing list.
-
-* Relaxed permissions in /etc/linaro to adapt them to B at D use case #165: 
-https://gitlab.com/cip-project/cip-testing/testing/issues/165
-
-* Busybox updated to a newer version.
-
-## Others
-
-* Updated milestones in the CIP testing project to adapt them to the new 
-maintenance mode.
-
-* Although our participation was approved, in the last minute a collision in 
-my schedule prevent me from attending to OpenExpo in Madrid. No one else can 
-so I communicated to the organization we cannot attend.
-
-* Open question: should we send Gitlab notifications to the mailing list?
-
-As usual you can fin more accurate info about our work by reading the journal: 
-https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptesting/
-journal
-
-Best Regards
 -- 
-Agust?n Benito Bethencourt
-Principal Consultant
-Codethink Ltd
+2.7.4
