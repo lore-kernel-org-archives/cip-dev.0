@@ -1,67 +1,79 @@
 From: gitlab@mg.gitlab.com (Agustin Benito Bethencourt)
-Date: Tue, 20 Feb 2018 09:18:52 +0000
-Subject: [cip-dev] [Git][cip-project/cip-kernel-sec][master] 2 commits: Add
- fixed-by commit hash for CVE-2017-17857 in 4.14
-Message-ID: <5a8be7fcf195f_1705e3fab2564860084799f7@sidekiq-asap-03.mail>
+Date: Tue, 20 Feb 2018 09:19:57 +0000
+Subject: [cip-dev]
+ [Git][cip-project/cip-testing/board-at-desk-single-dev][master] 3 commits:
+ Install python-selinux to fix kernelci-backend issue #168
+Message-ID: <5a8be83dba5ae_1adde3fe19ebdc5e471648ef@sidekiq-asap-01.mail>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Agustin Benito Bethencourt pushed to branch master at cip-project / cip-kernel-sec
+Agustin Benito Bethencourt pushed to branch master at cip-project / cip-testing / board-at-desk-single-dev
 
 
 Commits:
-7f1b8a46 by Ben Hutchings at 2018-01-31T16:38:01+00:00
-Add fixed-by commit hash for CVE-2017-17857 in 4.14
+645520c6 by Robert Marshall at 2017-11-06T15:19:06+00:00
+Install python-selinux to fix kernelci-backend issue #168
 
 - - - - -
-fd19a3eb by Ben Hutchings at 2018-02-15T16:56:41+00:00
-Import more data
+c3d64a3b by Robert Marshall at 2017-11-07T10:55:53+00:00
+Merge branch &#39;fix-selinux-error&#39; into &#39;master&#39;
+
+Install python-selinux to fix kernelci-backend issue #168
+
+See merge request cip-project/cip-testing/board-at-desk-single-dev!51
+- - - - -
+a2b0bba4 by Robert Marshall at 2018-02-07T13:42:22+00:00
+Fix comment typo (port now 8080)
 
 - - - - -
 
 
-30 changed files:
+2 changed files:
 
-- + issues/CVE-2015-9016.yml
-- issues/CVE-2017-1000405.yml
-- issues/CVE-2017-1000407.yml
-- issues/CVE-2017-1000410.yml
-- + issues/CVE-2017-13166.yml
-- issues/CVE-2017-13216.yml
-- issues/CVE-2017-15126.yml
-- issues/CVE-2017-15127.yml
-- issues/CVE-2017-15128.yml
-- issues/CVE-2017-15129.yml
-- issues/CVE-2017-15868.yml
-- issues/CVE-2017-16644.yml
-- + issues/CVE-2017-16911.yml
-- + issues/CVE-2017-16912.yml
-- + issues/CVE-2017-16913.yml
-- + issues/CVE-2017-16914.yml
-- issues/CVE-2017-16994.yml
-- issues/CVE-2017-16995.yml
-- issues/CVE-2017-16996.yml
-- issues/CVE-2017-17053.yml
-- issues/CVE-2017-17449.yml
-- issues/CVE-2017-17558.yml
-- issues/CVE-2017-17805.yml
-- issues/CVE-2017-17806.yml
-- issues/CVE-2017-17807.yml
-- issues/CVE-2017-17852.yml
-- issues/CVE-2017-17853.yml
-- issues/CVE-2017-17854.yml
-- issues/CVE-2017-17855.yml
-- issues/CVE-2017-17856.yml
+- Vagrantfile
+- integration-scripts/install_dependencies.sh
 
 
-The diff was not included because it is too large.
+Changes:
+
+=====================================
+Vagrantfile
+=====================================
+--- a/Vagrantfile
++++ b/Vagrantfile
+@@ -41,7 +41,7 @@ Vagrant.configure(2) do |config|
+   config.vm.network :forwarded_port, guest: 8010, host: 8010
+   # Forward port 5000 for the KernelCI Frontend Web Server
+   config.vm.network :forwarded_port, guest: 5000, host: 5000
+-  # Forward port 80 for the http Lava Frontend Web Server
++  # Forward port 8080 for the http Lava Frontend Web Server
+   config.vm.network :forwarded_port, guest: 8080, host: 8080
+   # Forward port 443 for the https Lava Frontend Web Server
+   config.vm.network :forwarded_port, guest: 443, host: 4443
 
 
-View it on GitLab: https://gitlab.com/cip-project/cip-kernel-sec/compare/eb0865b2a0a3525ef4c1c69054674f132d851a04...fd19a3eb21f70c65de21f87f4dbbeef0f4f39c24
+=====================================
+integration-scripts/install_dependencies.sh
+=====================================
+--- a/integration-scripts/install_dependencies.sh
++++ b/integration-scripts/install_dependencies.sh
+@@ -32,7 +32,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get -y update
+ sudo DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
+ 
+ # Install the dependencies
+-sudo DEBIAN_FRONTEND=noninteractive apt-get -y install git python-pip python-dev python-concurrent.futures python-tornado libffi-dev libyaml-dev libssl-dev rng-tools python-requests ser2net telnet screen
++sudo DEBIAN_FRONTEND=noninteractive apt-get -y install git python-pip python-dev python-concurrent.futures python-tornado libffi-dev libyaml-dev libssl-dev rng-tools python-requests ser2net telnet screen python-selinux
+ 
+ # Install the ARM, ARM-HF & ARM64 Toolchain
+ sudo DEBIAN_FRONTEND=noninteractive apt-get -y install gcc-arm-linux-gnueabi gcc-arm-linux-gnueabihf gcc-aarch64-linux-gnu
+
+
+
+View it on GitLab: https://gitlab.com/cip-project/cip-testing/board-at-desk-single-dev/compare/9d233b0c7039095546f7d7fb171a05a1f993e0ed...a2b0bba4506b27d3308f35f6c17f4bc4729b3c44
 
 ---
-View it on GitLab: https://gitlab.com/cip-project/cip-kernel-sec/compare/eb0865b2a0a3525ef4c1c69054674f132d851a04...fd19a3eb21f70c65de21f87f4dbbeef0f4f39c24
+View it on GitLab: https://gitlab.com/cip-project/cip-testing/board-at-desk-single-dev/compare/9d233b0c7039095546f7d7fb171a05a1f993e0ed...a2b0bba4506b27d3308f35f6c17f4bc4729b3c44
 You're receiving this email because of your account on gitlab.com.
 -------------- next part --------------
 An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180220/b3de1359/attachment-0001.html>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180220/275163f7/attachment-0001.html>
