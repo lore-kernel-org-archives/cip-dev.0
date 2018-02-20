@@ -1,27 +1,79 @@
-From: Chris.Brandt@renesas.com (Chris Brandt)
-Date: Fri, 9 Feb 2018 14:37:00 +0000
-Subject: [cip-dev] How to develop on the RT version
-Message-ID: <SG2PR06MB1165F30CAFCC145F81AE021E8AF20@SG2PR06MB1165.apcprd06.prod.outlook.com>
+From: gitlab@mg.gitlab.com (Agustin Benito Bethencourt)
+Date: Tue, 20 Feb 2018 09:16:09 +0000
+Subject: [cip-dev]
+ [Git][cip-project/cip-testing/board-at-desk-single-dev][master] 3 commits:
+ Install python-selinux to fix kernelci-backend issue #168
+Message-ID: <5a8be7593932b_1adde3fe18f6f9ce871459c@sidekiq-asap-01.mail>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello CIP members,
-
-As I look at the git repository, there are multiple PREEMPT_RT branches:
-
- * linux-4.4.y-cip-rt-rebase
- * linux-4.4.y-cip-rt
- * linux-4.4.y-cip-rt-patches
-
-I'm trying to understand if I want to develop a product using RT, what branch should I be tracking and pulling into my local git repo?
+Agustin Benito Bethencourt pushed to branch master at cip-project / cip-testing / board-at-desk-single-dev
 
 
-I would think that locally, I would have some git repository that I will pull from CIP and merge into my own tree. I would also be pushing that to some local server to share with the other team members in my group.
+Commits:
+645520c6 by Robert Marshall at 2017-11-06T15:19:06+00:00
+Install python-selinux to fix kernelci-backend issue #168
 
-Therefore, the 'rebase' thing doesn't make sense to me because if you are pushing a rebased tree, that means you are changing the existing parent history and doing a simple 'git pull' doesn't work so well (like what you have with the linux-next tree).
+- - - - -
+c3d64a3b by Robert Marshall at 2017-11-07T10:55:53+00:00
+Merge branch &#39;fix-selinux-error&#39; into &#39;master&#39;
+
+Install python-selinux to fix kernelci-backend issue #168
+
+See merge request cip-project/cip-testing/board-at-desk-single-dev!51
+- - - - -
+a2b0bba4 by Robert Marshall at 2018-02-07T13:42:22+00:00
+Fix comment typo (port now 8080)
+
+- - - - -
 
 
-Do I just fetch and merge from 'linux-4.4.y-cip-rt' periodically as I develop my product, and that will play nicely with the local commits that I am also making and pushing locally to my repository?
+2 changed files:
 
-Thank you,
-Chris
+- Vagrantfile
+- integration-scripts/install_dependencies.sh
+
+
+Changes:
+
+=====================================
+Vagrantfile
+=====================================
+--- a/Vagrantfile
++++ b/Vagrantfile
+@@ -41,7 +41,7 @@ Vagrant.configure(2) do |config|
+   config.vm.network :forwarded_port, guest: 8010, host: 8010
+   # Forward port 5000 for the KernelCI Frontend Web Server
+   config.vm.network :forwarded_port, guest: 5000, host: 5000
+-  # Forward port 80 for the http Lava Frontend Web Server
++  # Forward port 8080 for the http Lava Frontend Web Server
+   config.vm.network :forwarded_port, guest: 8080, host: 8080
+   # Forward port 443 for the https Lava Frontend Web Server
+   config.vm.network :forwarded_port, guest: 443, host: 4443
+
+
+=====================================
+integration-scripts/install_dependencies.sh
+=====================================
+--- a/integration-scripts/install_dependencies.sh
++++ b/integration-scripts/install_dependencies.sh
+@@ -32,7 +32,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get -y update
+ sudo DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
+ 
+ # Install the dependencies
+-sudo DEBIAN_FRONTEND=noninteractive apt-get -y install git python-pip python-dev python-concurrent.futures python-tornado libffi-dev libyaml-dev libssl-dev rng-tools python-requests ser2net telnet screen
++sudo DEBIAN_FRONTEND=noninteractive apt-get -y install git python-pip python-dev python-concurrent.futures python-tornado libffi-dev libyaml-dev libssl-dev rng-tools python-requests ser2net telnet screen python-selinux
+ 
+ # Install the ARM, ARM-HF & ARM64 Toolchain
+ sudo DEBIAN_FRONTEND=noninteractive apt-get -y install gcc-arm-linux-gnueabi gcc-arm-linux-gnueabihf gcc-aarch64-linux-gnu
+
+
+
+View it on GitLab: https://gitlab.com/cip-project/cip-testing/board-at-desk-single-dev/compare/9d233b0c7039095546f7d7fb171a05a1f993e0ed...a2b0bba4506b27d3308f35f6c17f4bc4729b3c44
+
+---
+View it on GitLab: https://gitlab.com/cip-project/cip-testing/board-at-desk-single-dev/compare/9d233b0c7039095546f7d7fb171a05a1f993e0ed...a2b0bba4506b27d3308f35f6c17f4bc4729b3c44
+You're receiving this email because of your account on gitlab.com.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180220/da9a562a/attachment-0001.html>
