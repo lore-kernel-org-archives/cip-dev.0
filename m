@@ -1,38 +1,41 @@
-From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon, 19 Feb 2018 18:45:51 +0000
-Subject: [cip-dev] [PATCH 3/3] ARM: multi_v7_defconfig: Enable BQ32000 RTC
-	driver
+From: Chris.Paterson2@renesas.com (Chris Paterson)
+Date: Tue, 20 Feb 2018 09:21:46 +0000
+Subject: [cip-dev] [PATCH 0/3] Add RTC support to iwg20d
 In-Reply-To: <1519065951-9897-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1519065951-9897-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1519065951-9897-4-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <TY1PR06MB07028F631235BA42342E216BB7CF0@TY1PR06MB0702.apcprd06.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Biju Das <biju.das@bp.renesas.com>
 
-The iWave RZ/G1M Q7 SOM supports RTC (TI BQ32000).
-To increase hardware support enable the driver in the
-multi_v7_defconfig multiplatform configuration.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 545dc83ed09b5c04f663b766a92cbc8bb02c5f15)
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+> From: Fabrizio Castro [mailto:fabrizio.castro at bp.renesas.com]
+> Sent: 19 February 2018 18:46
+> To: Ben Hutchings <ben.hutchings@codethink.co.uk>
+> Cc: cip-dev at lists.cip-project.org; Chris Paterson
+> <Chris.Paterson2@renesas.com>; Biju Das <biju.das@bp.renesas.com>;
+> Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Subject: [cip-dev][PATCH 0/3] Add RTC support to iwg20d
+> 
+> This patch series aims at adding RTC support to the iwg20d board from iWave.
+> The commits from this series backport board specific DT support and
+> defconfig support.
+> 
+> Biju Das (3):
+>   ARM: dts: iwg20d-q7: Add RTC support
+>   ARM: shmobile: Enable BQ32000 rtc in shmobile_defconfig
+>   ARM: multi_v7_defconfig: Enable BQ32000 RTC driver
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index f1ba3fb..ba520f6 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -607,6 +607,7 @@ CONFIG_RTC_DRV_MAX77686=y
- CONFIG_RTC_DRV_RK808=m
- CONFIG_RTC_DRV_MAX77802=m
- CONFIG_RTC_DRV_RS5C372=m
-+CONFIG_RTC_DRV_BQ32K=m
- CONFIG_RTC_DRV_PALMAS=y
- CONFIG_RTC_DRV_ST_LPC=y
- CONFIG_RTC_DRV_TWL4030=y
--- 
-2.7.4
+Series looks okay to me.
+
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+
+
+> 
+>  arch/arm/boot/dts/r8a7743-iwg20d-q7.dts | 18 ++++++++++++++++++
+>  arch/arm/configs/multi_v7_defconfig     |  1 +
+>  arch/arm/configs/shmobile_defconfig     |  1 +
+>  3 files changed, 20 insertions(+)
+> 
+> --
+> 2.7.4
