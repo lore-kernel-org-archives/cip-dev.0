@@ -1,39 +1,79 @@
-From: Chris.Brandt@renesas.com (Chris Brandt)
-Date: Thu, 22 Feb 2018 15:41:53 +0000
-Subject: [cip-dev] How to develop on the RT version
-In-Reply-To: <4d0bdf7a-81db-ee4b-4846-cfdde236b201@siemens.com>
-References: <SG2PR06MB1165F30CAFCC145F81AE021E8AF20@SG2PR06MB1165.apcprd06.prod.outlook.com>
-	<001f01d3ab83$89b7b5a0$9d2720e0$@toshiba.co.jp>
-	<SG2PR06MB11654A3FF485063C01FFC5C58ACD0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-	<4d0bdf7a-81db-ee4b-4846-cfdde236b201@siemens.com>
-Message-ID: <SG2PR06MB11657EA2D59CBCDD60ED8DDC8ACD0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+From: jernstfriedman@linuxfoundation.org (Jeff ErnstFriedman)
+Date: Tue, 27 Feb 2018 16:57:56 -0800
+Subject: [cip-dev] Increase of visibility of the work done in Gitlab:
+	proposal
+In-Reply-To: <9432912.GZ65LRfG6Y@linux-if6s>
+References: <9432912.GZ65LRfG6Y@linux-if6s>
+Message-ID: <CAEeDQDGeCrUHS3cWtvpsy+ROHNak7Vf6DMPD04qraAtTq7d0aQ@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Daniel,
+Agustin,
 
-On Thursday, February 22, 2018, Daniel Wagner wrote:
-> In short: linux-4.4.y-cip-rt wont be rebased. linux-4.4.y-cip-rt-rebase
-> tree contains the extracted patches from linux-4.4.y.cip-rt. Some people
-> like to get a patchset which they can apply on top of some tree. But it
-> looks no one here around is particular interested in this.
-> 
-> The linux-4.4.y-cip-patches is just a variation from the rebase branch.
-> Probably not really useful to anyone. I just archived all the a patches
-> in that branch. It was useful for me when I started with the scripting
-> to have a backup but I don't think I need it anymore. So if no one needs
-> I can drop it completely to avoid further confusion.
+Following up on this thread, I would like to raise the option of the
+project moving from a Mailman mailing list (currently use) to Group.io. We
+would see about a 50% savings over the course of the year and lower the
+effort to create and maintain lists.
+
+I leverage Groups.io with other LF projects and find it a better
+experience. It is my understanding we can migrate all the existing content
+to Groups.io for a one-time fee.
+
+Please let me know if there is any interest in me exploring further.
 
 
-Thank you for this information.
 
-I admit, I had 2 purposes for the question:
+*Jeff ErnstFriedman*
+*jernstfriedman at linuxfoundation.org <jernstfriedman@linuxfoundation.org> *
+*2201 Broadway #604, Oakland, CA 94612*
+*mobile: 510.593.1367 <(510)%20593-1367>*
+*skype: jeffrey.ernstfriedman*
+*twitter: @namdeirf*
 
-1. To be able to guild RZ/G customers on how to develop on the RT branch.
+On Thu, Feb 8, 2018 at 8:25 AM, Agust?n Benito Bethencourt <
+agustin.benito@codethink.co.uk> wrote:
 
-2. To get an idea of how to maintain the public repos for the RZ/A BSP with an RT branch. The 'rebase' branch thing didn't seem to make sense to me that anyone would want to follow that.
-
-The current official RZ/A1 BSPs are 3.14, 4.9 and 4.14, although most of the drivers are mainlined at this point. So, maybe on the next CIP cycle, we'll support CIP for RZ/A as well.
-
-Thanks,
-Chris
+> Hi,
+>
+>
+>
+> in order to increase the visibility of the work done in Gitlab I suggest
+> one of these two actions:
+>
+> * Create a mailing list for development notifications where we can send
+> the notifications of the commits made in gitlab, including the diffs.
+>
+> * Send the notifications to this mailing list and let users filter them.
+>
+>
+>
+> I do not expect heavy traffic as long as we do not include Ben's repo.
+>
+>
+>
+> In the same line, I suggest to do the same with IRC, expecting limited
+> traffic.
+>
+>
+>
+> Best Regards
+>
+>
+>
+> --
+>
+> Agust?n Benito Bethencourt
+>
+> Principal Consultant
+>
+> Codethink Ltd
+>
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180227/89ddc87a/attachment.html>
