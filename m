@@ -1,51 +1,38 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Fri,  2 Mar 2018 11:44:47 +0000
-Subject: [cip-dev] [PATCH 1/6] ARM: shmobile: r8a7743: Rename SDHI clocks
+Date: Fri,  2 Mar 2018 11:44:48 +0000
+Subject: [cip-dev] [PATCH 2/6] mmc: renesas_sdhi: Add r8a7743/5 support
 In-Reply-To: <1519991092-4465-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1519991092-4465-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1519991092-4465-2-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1519991092-4465-3-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This commit renames R8A7743_CLK_SDHI2 to R8A7743_CLK_SDHI1 and
-R8A7743_CLK_SDHI3 to R8A7743_CLK_SDHI2. This is to make the SDHI
-clock names of the r8a7743 more similar to upstream definitions.
+From: Biju Das <biju.das@bp.renesas.com>
 
+Add support for r8a7743/5 SoC.Renesas RZ/G1[ME] (R8A7743/5) SDHI
+is identical to the R-Car Gen2 family.
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+(cherry picked from commit c16a854e4463078aedad601fac76341760a66dd1)
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7743.dtsi            | 4 ++--
- include/dt-bindings/clock/r8a7743-clock.h | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/mmc/host/sh_mobile_sdhi.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 9255582..b1534a0 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -958,8 +958,8 @@
- 					 <&hp_clk>, <&hp_clk>;
- 				#clock-cells = <1>;
- 				clock-indices = <
--					R8A7743_CLK_TPU0 R8A7743_CLK_SDHI3
--					R8A7743_CLK_SDHI2 R8A7743_CLK_SDHI0
-+					R8A7743_CLK_TPU0 R8A7743_CLK_SDHI2
-+					R8A7743_CLK_SDHI1 R8A7743_CLK_SDHI0
- 					R8A7743_CLK_MMCIF0 R8A7743_CLK_IIC0
- 					R8A7743_CLK_PCIEC R8A7743_CLK_IIC1
- 					R8A7743_CLK_SSUSB R8A7743_CLK_CMT1
-diff --git a/include/dt-bindings/clock/r8a7743-clock.h b/include/dt-bindings/clock/r8a7743-clock.h
-index 53f54df..8e4b843 100644
---- a/include/dt-bindings/clock/r8a7743-clock.h
-+++ b/include/dt-bindings/clock/r8a7743-clock.h
-@@ -58,8 +58,8 @@
- 
- /* MSTP3 */
- #define R8A7743_CLK_TPU0		4
--#define R8A7743_CLK_SDHI3		11
--#define R8A7743_CLK_SDHI2		12
-+#define R8A7743_CLK_SDHI2		11
-+#define R8A7743_CLK_SDHI1		12
- #define R8A7743_CLK_SDHI0		14
- #define R8A7743_CLK_MMCIF0		15
- #define R8A7743_CLK_IIC0		18
+diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
+index 354f4f3..e43aff4 100644
+--- a/drivers/mmc/host/sh_mobile_sdhi.c
++++ b/drivers/mmc/host/sh_mobile_sdhi.c
+@@ -73,6 +73,8 @@ static const struct of_device_id sh_mobile_sdhi_of_match[] = {
+ 	{ .compatible = "renesas,sdhi-r8a7740", .data = &sh_mobile_sdhi_of_cfg[0], },
+ 	{ .compatible = "renesas,sdhi-r8a7778", .data = &of_rcar_gen1_compatible, },
+ 	{ .compatible = "renesas,sdhi-r8a7779", .data = &of_rcar_gen1_compatible, },
++	{ .compatible = "renesas,sdhi-r8a7743", .data = &of_rcar_gen2_compatible, },
++	{ .compatible = "renesas,sdhi-r8a7745", .data = &of_rcar_gen2_compatible, },
+ 	{ .compatible = "renesas,sdhi-r8a7790", .data = &of_rcar_gen2_compatible, },
+ 	{ .compatible = "renesas,sdhi-r8a7791", .data = &of_rcar_gen2_compatible, },
+ 	{ .compatible = "renesas,sdhi-r8a7792", .data = &of_rcar_gen2_compatible, },
 -- 
 2.7.4
