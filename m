@@ -1,102 +1,40 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Fri, 2 Mar 2018 11:33:15 +0100
-Subject: [cip-dev] Increase of visibility of the work done in Gitlab:
- proposal
-In-Reply-To: <CAEeDQDGeCrUHS3cWtvpsy+ROHNak7Vf6DMPD04qraAtTq7d0aQ@mail.gmail.com>
-References: <9432912.GZ65LRfG6Y@linux-if6s>
-	<CAEeDQDGeCrUHS3cWtvpsy+ROHNak7Vf6DMPD04qraAtTq7d0aQ@mail.gmail.com>
-Message-ID: <9e0d80c6-a8c9-a5d7-a6be-50fdde31fb41@siemens.com>
+From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
+Date: Fri,  2 Mar 2018 11:44:46 +0000
+Subject: [cip-dev] [PATCH 0/6] Add SDHI support to r8a7743
+Message-ID: <1519991092-4465-1-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 2018-02-28 01:57, Jeff ErnstFriedman wrote:
-> Agustin,
-> 
-> Following up on this thread, I would like to raise the option of the
-> project moving from a Mailman mailing list (currently use) to Group.io.
-> We would see about a 50% savings over the course of the year and lower
-> the effort to create and maintain lists. 
+Dear All,
 
-Maybe we should discuss the numbers at board level.
+this patch series adds SDHI support to the r8a7743 SoC.
 
-> 
-> I leverage Groups.io with other LF projects and find it a better
-> experience. It is my understanding we can migrate all the existing
-> content to Groups.io for a one-time fee. 
+The only patch that hasn't been backported in this series is:
+"ARM: shmobile: r8a7743: Rename SDHI clocks"
 
-Seems like a an interesting project, but it's a one-man show, and I
-would be careful with relying on it at that point.
+This work has been based on top of this series:
+https://lists.cip-project.org/pipermail/cip-dev/2018-February/000863.html
 
-Jan
+Thanks,
+Fabrizio
 
-> 
-> Please let me know if there is any interest in me exploring further.
-> 
-> 
-> 
-> /Jeff ErnstFriedman/
-> /jernstfriedman at linuxfoundation.org
-> <mailto:jernstfriedman@linuxfoundation.org>?/
-> /2201 Broadway #604, Oakland, CA 94612//
-> /
-> /mobile: 510.593.1367 <tel:(510)%20593-1367>/
-> /skype:?jeffrey.ernstfriedman/
-> /twitter: @namdeirf/
-> 
-> On Thu, Feb 8, 2018 at 8:25 AM, Agust?n Benito Bethencourt
-> <agustin.benito at codethink.co.uk <mailto:agustin.benito@codethink.co.uk>>
-> wrote:
-> 
->     __
-> 
->     Hi,
-> 
->     ?
-> 
->     in order to increase the visibility of the work done in Gitlab I
->     suggest one of these two actions:
-> 
->     * Create a mailing list for development notifications where we can
->     send the notifications of the commits made in gitlab, including the
->     diffs.
-> 
->     * Send the notifications to this mailing list and let users filter them.
-> 
->     ?
-> 
->     I do not expect heavy traffic as long as we do not include Ben's repo.
-> 
->     ?
-> 
->     In the same line, I suggest to do the same with IRC, expecting
->     limited traffic.
-> 
->     ?
-> 
->     Best Regards
-> 
->     ?
-> 
->     -- 
-> 
->     Agust?n Benito Bethencourt
-> 
->     Principal Consultant
-> 
->     Codethink Ltd
-> 
-> 
->     _______________________________________________
->     cip-dev mailing list
->     cip-dev at lists.cip-project.org <mailto:cip-dev@lists.cip-project.org>
->     https://lists.cip-project.org/mailman/listinfo/cip-dev
->     <https://lists.cip-project.org/mailman/listinfo/cip-dev>
-> 
-> 
-> 
-> 
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
-> 
+Biju Das (5):
+  mmc: renesas_sdhi: Add r8a7743/5 support
+  mmc: renesas_sdhi: Add r8a7743/5 support
+  ARM: dts: r8a7743: Add SDHI controllers
+  ARM: dts: iwg20m: Enable SDHI0 controller
+  ARM: dts: iwg20d-q7: Add SDHI1 support
+
+Fabrizio Castro (1):
+  ARM: shmobile: r8a7743: Rename SDHI clocks
+
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt |  2 +
+ arch/arm/boot/dts/r8a7743-iwg20d-q7.dts            | 40 ++++++++++++++++++++
+ arch/arm/boot/dts/r8a7743-iwg20m.dtsi              | 17 +++++++++
+ arch/arm/boot/dts/r8a7743.dtsi                     | 43 +++++++++++++++++++++-
+ drivers/mmc/host/sh_mobile_sdhi.c                  |  2 +
+ include/dt-bindings/clock/r8a7743-clock.h          |  4 +-
+ 6 files changed, 104 insertions(+), 4 deletions(-)
+
+-- 
+2.7.4
