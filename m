@@ -1,67 +1,57 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon,  5 Mar 2018 11:39:12 +0000
-Subject: [cip-dev] [PATCH 08/10] ARM: dts: r8a7743: Link PCI USB devices to
-	USB PHY
+Date: Mon,  5 Mar 2018 11:39:13 +0000
+Subject: [cip-dev] [PATCH 09/10] ARM: dts: iwg20d-q7: Enable internal PCI
 In-Reply-To: <1520249954-29357-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1520249954-29357-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1520249954-29357-9-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1520249954-29357-10-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Biju Das <biju.das@bp.renesas.com>
 
-Describe the PCI USB devices that are behind the PCI bridges, adding
-necessary links to the USB PHY device.
+Enable internal AHB-PCI bridges for the USB EHCI/OHCI controllers
+attached to them.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 96963454655c10663f1bc2eea57ac734cab171a7)
+(cherry picked from commit 35a8eeeac89c56435277fa76f8d557bf00530320)
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ arch/arm/boot/dts/iwg20d-q7-common.dtsi | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index be8881a..1b17a20 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -1229,6 +1229,18 @@
- 			    0x0800 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
- 			    0x1000 0 0 2 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
- 			>;
-+
-+			usb at 1,0 {
-+				reg = <0x800 0 0 0 0>;
-+				phys = <&usb0 0>;
-+				phy-names = "usb";
-+			};
-+
-+			usb at 2,0 {
-+				reg = <0x1000 0 0 0 0>;
-+				phys = <&usb0 0>;
-+				phy-names = "usb";
-+			};
- 		};
- 
- 		pci1: pci at ee0d0000 {
-@@ -1254,6 +1266,18 @@
- 			    0x0800 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
- 			    0x1000 0 0 2 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
- 			>;
-+
-+			usb at 1,0 {
-+				reg = <0x10800 0 0 0 0>;
-+				phys = <&usb2 0>;
-+				phy-names = "usb";
-+			};
-+
-+			usb at 2,0 {
-+				reg = <0x11000 0 0 0 0>;
-+				phys = <&usb2 0>;
-+				phy-names = "usb";
-+			};
- 		};
+diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+index 5dec247..ecd7bd8 100644
+--- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
++++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+@@ -98,6 +98,28 @@
+ 		function = "sdhi1";
+ 		power-source = <3300>;
  	};
++
++	usb0_pins: usb0 {
++		groups = "usb0";
++		function = "usb0";
++	};
++
++	usb1_pins: usb1 {
++		groups = "usb1";
++		function = "usb1";
++	};
++};
++
++&pci0 {
++	status = "okay";
++	pinctrl-0 = <&usb0_pins>;
++	pinctrl-names = "default";
++};
++
++&pci1 {
++	status = "okay";
++	pinctrl-0 = <&usb1_pins>;
++	pinctrl-names = "default";
+ };
  
+ &scif0 {
 -- 
 2.7.4
