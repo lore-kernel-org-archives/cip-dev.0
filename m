@@ -1,56 +1,37 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Mon, 5 Mar 2018 11:16:48 +0000
-Subject: [cip-dev] [PATCH 0/6] Add SDHI support to r8a7743
-In-Reply-To: <1519991092-4465-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1519991092-4465-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <TY1PR06MB07020FEC041CF5090732C5F6B7DA0@TY1PR06MB0702.apcprd06.prod.outlook.com>
+From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
+Date: Mon,  5 Mar 2018 11:39:04 +0000
+Subject: [cip-dev] [PATCH 00/10] Add PCI and USB PHY support to iwg20d
+Message-ID: <1520249954-29357-1-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Fabrizio,
+This series backports patches necessary to add PCI and USB PHY support
+to iWave's iwg20d board.
 
-> From: Fabrizio Castro [mailto:fabrizio.castro at bp.renesas.com]
-> Sent: 02 March 2018 11:45
-> 
-> Dear All,
-> 
-> this patch series adds SDHI support to the r8a7743 SoC.
+Thanks,
+Fabrizio
 
-Thank you for the patches.
+Biju Das (7):
+  PCI: rcar: Add device tree support for r8a7743/5
+  ARM: dts: r8a7743: Add internal PCI bridge nodes
+  phy: rcar-gen2: Add r8a7743/5 support
+  ARM: dts: r8a7743: Add USB PHY DT support
+  ARM: dts: r8a7743: Link PCI USB devices to USB PHY
+  ARM: dts: iwg20d-q7: Enable internal PCI
+  ARM: dts: iwg20d-q7: Enable USB PHY
 
-> 
-> The only patch that hasn't been backported in this series is:
-> "ARM: shmobile: r8a7743: Rename SDHI clocks"
-> 
-> This work has been based on top of this series:
-> https://lists.cip-project.org/pipermail/cip-dev/2018-February/000863.html
-> 
-> Thanks,
-> Fabrizio
-> 
-> Biju Das (5):
->   mmc: renesas_sdhi: Add r8a7743/5 support
->   mmc: renesas_sdhi: Add r8a7743/5 support
->   ARM: dts: r8a7743: Add SDHI controllers
->   ARM: dts: iwg20m: Enable SDHI0 controller
->   ARM: dts: iwg20d-q7: Add SDHI1 support
-> 
-> Fabrizio Castro (1):
->   ARM: shmobile: r8a7743: Rename SDHI clocks
+Simon Horman (3):
+  PCI: rcar: Add gen2 fallback compatibility string for pci-rcar-gen2
+  PCI: rcar-gen2: Use gen2 fallback compatibility last
+  phy: rcar-gen2: add fallback binding
 
-Series: Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+ .../devicetree/bindings/pci/pci-rcar-gen2.txt      | 15 +++-
+ .../devicetree/bindings/phy/rcar-gen2-phy.txt      | 12 ++-
+ arch/arm/boot/dts/iwg20d-q7-common.dtsi            | 26 ++++++
+ arch/arm/boot/dts/r8a7743.dtsi                     | 95 ++++++++++++++++++++++
+ drivers/pci/host/pci-rcar-gen2.c                   |  1 +
+ drivers/phy/phy-rcar-gen2.c                        |  1 +
+ 6 files changed, 145 insertions(+), 5 deletions(-)
 
-Kind regards, Chris
-
-> 
->  Documentation/devicetree/bindings/mmc/tmio_mmc.txt |  2 +
->  arch/arm/boot/dts/r8a7743-iwg20d-q7.dts            | 40
-> ++++++++++++++++++++
->  arch/arm/boot/dts/r8a7743-iwg20m.dtsi              | 17 +++++++++
->  arch/arm/boot/dts/r8a7743.dtsi                     | 43 +++++++++++++++++++++-
->  drivers/mmc/host/sh_mobile_sdhi.c                  |  2 +
->  include/dt-bindings/clock/r8a7743-clock.h          |  4 +-
->  6 files changed, 104 insertions(+), 4 deletions(-)
-> 
-> --
-> 2.7.4
+-- 
+2.7.4
