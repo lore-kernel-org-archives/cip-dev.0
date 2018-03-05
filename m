@@ -1,31 +1,57 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Fri, 2 Mar 2018 18:52:19 +0100
-Subject: [cip-dev] Meltdown and Spectre in CIP
-In-Reply-To: <1518695091.3422.24.camel@codethink.co.uk>
-References: <1515593818.12097.10.camel@codethink.co.uk>
-	<TY1PR06MB07021E0DE8BDB329DFC8A32FB7EA0@TY1PR06MB0702.apcprd06.prod.outlook.com>
-	<1518695091.3422.24.camel@codethink.co.uk>
-Message-ID: <32855182-84ed-f190-d5b8-b5c166a4749c@siemens.com>
+From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
+Date: Mon,  5 Mar 2018 11:01:56 +0000
+Subject: [cip-dev] [PATCH 00/15] Add UART support to r8a7743
+Message-ID: <1520247731-25239-1-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 2018-02-15 12:44, Ben Hutchings wrote:
-> [...]
->> Will you be keeping an eye on Spectre patches on behalf of CIP as
->> part of your maintainer role? I guess you may be in the loop a bit
->> more than the rest of us?
-> 
-> I will look at the mitigations as they land upstream, but I still think
-> these are low priority security issues for CIP.
+This series aims at adding UART support to r8a7743 by backporting
+the relevant patches from upstream.
+As per upstream, since two of the serial interfaces live on the
+camera daughter board, we rework the DT architecture to better
+accomodate all the possible HW variants.
 
-The priority starts to rise here because new system are coming out that
-need to start system testing and other processes on a CIP kernel with
-Spectre mitigations (x86 so far). Can you estimate the time needed for a
-cip19 release?
+Finally, in order to get CTS/RTS to work this series backports
+fixes made by Geert some time ago.
 
 Thanks,
-Jan
+Fabrizio
+
+Biju Das (1):
+  ARM: dts: iwg20d-q7: Add chosen node
+
+Fabrizio Castro (3):
+  ARM: dts: iwg20d-q7: Rework DT architecture
+  ARM: dts: iwg20d-q7-dbcm-ca: Add device trees for camera DB
+  ARM: dts: iwg20d-q7: Add support for ttySC3
+
+Geert Uytterhoeven (11):
+  serial: sh-sci: Update DT binding documentation for GPIO modem lines
+  serial: sh-sci: Update DT binding documentation for dedicated RTS/CTS
+  serial: sh-sci: Always set TIOCM_CTS in .get_mctrl() callback
+  serial: sh-sci: Add support for GPIO-controlled modem lines
+  serial: sh-sci: Do not open-code sci_getreg()
+  serial: sh-sci: Add more Serial Port Register documentation
+  serial: sh-sci: Add more Serial Port Control/Data Register
+    documentation
+  serial: sh-sci: Correct pin initialization on (H)SCIF
+  serial: sh-sci: Add pin initialization for SCIFA/SCIFB
+  serial: sh-sci: Fix support for hardware-assisted RTS/CTS
+  serial: sh-sci: Add DT support for dedicated RTS/CTS
+
+ .../bindings/serial/renesas,sci-serial.txt         |   4 +
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/iwg20d-q7-common.dtsi            | 127 +++++++++++++++
+ arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi           |  43 +++++
+ arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts    |  19 +++
+ arch/arm/boot/dts/r8a7743-iwg20d-q7.dts            | 100 +-----------
+ drivers/tty/serial/Kconfig                         |   1 +
+ drivers/tty/serial/sh-sci.c                        | 177 ++++++++++++++++++---
+ drivers/tty/serial/sh-sci.h                        |  24 ++-
+ 9 files changed, 365 insertions(+), 131 deletions(-)
+ create mode 100644 arch/arm/boot/dts/iwg20d-q7-common.dtsi
+ create mode 100644 arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi
+ create mode 100644 arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts
 
 -- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+2.7.4
