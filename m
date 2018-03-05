@@ -1,57 +1,33 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon,  5 Mar 2018 11:39:13 +0000
-Subject: [cip-dev] [PATCH 09/10] ARM: dts: iwg20d-q7: Enable internal PCI
+Date: Mon,  5 Mar 2018 11:39:14 +0000
+Subject: [cip-dev] [PATCH 10/10] ARM: dts: iwg20d-q7: Enable USB PHY
 In-Reply-To: <1520249954-29357-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1520249954-29357-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1520249954-29357-10-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1520249954-29357-11-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Biju Das <biju.das@bp.renesas.com>
 
-Enable internal AHB-PCI bridges for the USB EHCI/OHCI controllers
-attached to them.
-
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 35a8eeeac89c56435277fa76f8d557bf00530320)
+(cherry picked from commit 51be0086e6d2ebb3f0ddbeedab8d7c4232c1c5f6)
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- arch/arm/boot/dts/iwg20d-q7-common.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ arch/arm/boot/dts/iwg20d-q7-common.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-index 5dec247..ecd7bd8 100644
+index ecd7bd8..fbb5215 100644
 --- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
 +++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-@@ -98,6 +98,28 @@
- 		function = "sdhi1";
- 		power-source = <3300>;
- 	};
-+
-+	usb0_pins: usb0 {
-+		groups = "usb0";
-+		function = "usb0";
-+	};
-+
-+	usb1_pins: usb1 {
-+		groups = "usb1";
-+		function = "usb1";
-+	};
-+};
-+
-+&pci0 {
-+	status = "okay";
-+	pinctrl-0 = <&usb0_pins>;
-+	pinctrl-names = "default";
-+};
-+
-+&pci1 {
-+	status = "okay";
-+	pinctrl-0 = <&usb1_pins>;
-+	pinctrl-names = "default";
+@@ -147,3 +147,7 @@
+ 	wp-gpios = <&gpio6 15 GPIO_ACTIVE_HIGH>;
+ 	status = "okay";
  };
- 
- &scif0 {
++
++&usbphy {
++	status = "okay";
++};
 -- 
 2.7.4
