@@ -1,48 +1,56 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon,  5 Mar 2018 11:02:02 +0000
-Subject: [cip-dev] [PATCH 06/15] serial: sh-sci: Add more Serial Port
-	Register documentation
+Date: Mon,  5 Mar 2018 11:02:03 +0000
+Subject: [cip-dev] [PATCH 07/15] serial: sh-sci: Add more Serial Port
+	Control/Data Register documentation
 In-Reply-To: <1520247731-25239-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1520247731-25239-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1520247731-25239-7-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1520247731-25239-8-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Improve documentation for the (H)SCIF Serial Port Register:
-  - Make it clear the RTS and CTS lines are active-low,
-  - Document the bits related to the serial port's clock pin.
+Improve documentation for the SCIFA/SCIFB Serial Port Control and Data
+Registers:
+  - State clearly that the RTS and CTS lines are active-low,
+  - Document the bits related to the serial port's SCK, RXD, and TXD
+    pins.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Peter Hurley <peter@hurleysoftware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-(cherry picked from commit ef5e90e8ccb7b715c0a1509339f730b2bf9698a2)
+(cherry picked from commit 4780c09f7a0926674c96c0a40dfeb7469f759c8e)
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/tty/serial/sh-sci.h | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/tty/serial/sh-sci.h | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/tty/serial/sh-sci.h b/drivers/tty/serial/sh-sci.h
-index bf69bbd..fa560c0 100644
+index fa560c0..1b699ea 100644
 --- a/drivers/tty/serial/sh-sci.h
 +++ b/drivers/tty/serial/sh-sci.h
-@@ -91,10 +91,12 @@ enum {
- #define SCLSR_ORER	BIT(0)	/* Overrun Error */
+@@ -104,12 +104,18 @@ enum {
+ #define HSCIF_SRE	BIT(15)	/* Sampling Rate Register Enable */
  
- /* SCSPTR (Serial Port Register), optional */
--#define SCSPTR_RTSIO	BIT(7)	/* Serial Port RTS Pin Input/Output */
--#define SCSPTR_RTSDT	BIT(6)	/* Serial Port RTS Pin Data */
--#define SCSPTR_CTSIO	BIT(5)	/* Serial Port CTS Pin Input/Output */
--#define SCSPTR_CTSDT	BIT(4)	/* Serial Port CTS Pin Data */
-+#define SCSPTR_RTSIO	BIT(7)	/* Serial Port RTS# Pin Input/Output */
-+#define SCSPTR_RTSDT	BIT(6)	/* Serial Port RTS# Pin Data */
-+#define SCSPTR_CTSIO	BIT(5)	/* Serial Port CTS# Pin Input/Output */
-+#define SCSPTR_CTSDT	BIT(4)	/* Serial Port CTS# Pin Data */
-+#define SCSPTR_SCKIO	BIT(3)	/* Serial Port Clock Pin Input/Output */
-+#define SCSPTR_SCKDT	BIT(2)	/* Serial Port Clock Pin Data */
- #define SCSPTR_SPB2IO	BIT(1)	/* Serial Port Break Input/Output */
- #define SCSPTR_SPB2DT	BIT(0)	/* Serial Port Break Data */
+ /* SCPCR (Serial Port Control Register), SCIFA/SCIFB only */
+-#define SCPCR_RTSC	BIT(4)	/* Serial Port RTS Pin / Output Pin */
+-#define SCPCR_CTSC	BIT(3)	/* Serial Port CTS Pin / Input Pin */
++#define SCPCR_RTSC	BIT(4)	/* Serial Port RTS# Pin / Output Pin */
++#define SCPCR_CTSC	BIT(3)	/* Serial Port CTS# Pin / Input Pin */
++#define SCPCR_SCKC	BIT(2)	/* Serial Port SCK Pin / Output Pin */
++#define SCPCR_RXDC	BIT(1)	/* Serial Port RXD Pin / Input Pin */
++#define SCPCR_TXDC	BIT(0)	/* Serial Port TXD Pin / Output Pin */
  
+ /* SCPDR (Serial Port Data Register), SCIFA/SCIFB only */
+-#define SCPDR_RTSD	BIT(4)	/* Serial Port RTS Output Pin Data */
+-#define SCPDR_CTSD	BIT(3)	/* Serial Port CTS Input Pin Data */
++#define SCPDR_RTSD	BIT(4)	/* Serial Port RTS# Output Pin Data */
++#define SCPDR_CTSD	BIT(3)	/* Serial Port CTS# Input Pin Data */
++#define SCPDR_SCKD	BIT(2)	/* Serial Port SCK Output Pin Data */
++#define SCPDR_RXDD	BIT(1)	/* Serial Port RXD Input Pin Data */
++#define SCPDR_TXDD	BIT(0)	/* Serial Port TXD Output Pin Data */
+ 
+ 
+ #define SCxSR_TEND(port)	(((port)->type == PORT_SCI) ? SCI_TEND   : SCIF_TEND)
 -- 
 2.7.4
