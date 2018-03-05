@@ -1,67 +1,55 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon,  5 Mar 2018 11:02:04 +0000
-Subject: [cip-dev] [PATCH 08/15] serial: sh-sci: Correct pin initialization
-	on (H)SCIF
+Date: Mon,  5 Mar 2018 11:02:05 +0000
+Subject: [cip-dev] [PATCH 09/15] serial: sh-sci: Add pin initialization for
+	SCIFA/SCIFB
 In-Reply-To: <1520247731-25239-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1520247731-25239-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1520247731-25239-9-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1520247731-25239-10-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Correct pin initialization on (H)SCIF:
-  - RTS must be deasserted (it's active low),
-  - SCK must be an input, as it may be used as the optional external
-    clock input.
+Before, the driver relied on initialization by the boot loader, or by
+implicit reset state.
 
-Initial pin configuration must always be done:
-  - Regardless of the presence of dedicated RTS and CTS pins: if the
-    register exists, the RTS/CTS bits exist, too,
-  - Regardless of hardware flow control being enabled or not: RTS must
-    be deasserted.
+Note that unlike on (H)SCIF, the RTS/CTS bits exist only if dedicated
+RTS/CTS pins are available, which depends on the SoC and UART instance.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-(cherry picked from commit d2b9775d795ec05fb42504c0f47dd06ba5fd709e)
+(cherry picked from commit e9d7a45a039913497a57887d85f5decfda4679f0)
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/tty/serial/sh-sci.c | 23 ++++++++---------------
- 1 file changed, 8 insertions(+), 15 deletions(-)
+ drivers/tty/serial/sh-sci.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index f96f44c..e725023 100644
+index e725023..e351c6f 100644
 --- a/drivers/tty/serial/sh-sci.c
 +++ b/drivers/tty/serial/sh-sci.c
-@@ -633,21 +633,14 @@ static void sci_init_pins(struct uart_port *port, unsigned int cflag)
+@@ -633,7 +633,21 @@ static void sci_init_pins(struct uart_port *port, unsigned int cflag)
  		return;
  	}
  
--	/*
--	 * For the generic path SCSPTR is necessary. Bail out if that's
--	 * unavailable, too.
--	 */
--	if (!sci_getreg(port, SCSPTR)->size)
--		return;
--
--	if ((s->cfg->capabilities & SCIx_HAVE_RTSCTS) &&
--	    ((!(cflag & CRTSCTS)))) {
--		unsigned short status;
--
--		status = serial_port_in(port, SCSPTR);
--		status &= ~SCSPTR_CTSIO;
--		status |= SCSPTR_RTSIO;
--		serial_port_out(port, SCSPTR, status); /* Set RTS = 1 */
-+	if (sci_getreg(port, SCSPTR)->size) {
-+		u16 status = serial_port_in(port, SCSPTR);
+-	if (sci_getreg(port, SCSPTR)->size) {
++	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB) {
++		u16 ctrl = serial_port_in(port, SCPCR);
 +
-+		/* RTS# is output, driven 1 */
-+		status |= SCSPTR_RTSIO | SCSPTR_RTSDT;
-+		/* CTS# and SCK are inputs */
-+		status &= ~(SCSPTR_CTSIO | SCSPTR_SCKIO);
-+		serial_port_out(port, SCSPTR, status);
- 	}
- }
++		/* Enable RXD and TXD pin functions */
++		ctrl &= ~(SCPCR_RXDC | SCPCR_TXDC);
++		if (to_sci_port(port)->cfg->capabilities & SCIx_HAVE_RTSCTS) {
++			/* RTS# is output, driven 1 */
++			ctrl |= SCPCR_RTSC;
++			serial_port_out(port, SCPDR,
++				serial_port_in(port, SCPDR) | SCPDR_RTSD);
++			/* Enable CTS# pin function */
++			ctrl &= ~SCPCR_CTSC;
++		}
++		serial_port_out(port, SCPCR, ctrl);
++	} else if (sci_getreg(port, SCSPTR)->size) {
+ 		u16 status = serial_port_in(port, SCSPTR);
  
+ 		/* RTS# is output, driven 1 */
 -- 
 2.7.4
