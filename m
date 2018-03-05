@@ -1,55 +1,67 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon,  5 Mar 2018 11:39:11 +0000
-Subject: [cip-dev] [PATCH 07/10] ARM: dts: r8a7743: Add USB PHY DT support
+Date: Mon,  5 Mar 2018 11:39:12 +0000
+Subject: [cip-dev] [PATCH 08/10] ARM: dts: r8a7743: Link PCI USB devices to
+	USB PHY
 In-Reply-To: <1520249954-29357-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1520249954-29357-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1520249954-29357-8-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1520249954-29357-9-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Biju Das <biju.das@bp.renesas.com>
 
-Define the r8a7743 generic part of the USB PHY device node.
+Describe the PCI USB devices that are behind the PCI bridges, adding
+necessary links to the USB PHY device.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 9412c391af67fc8aa4e2d8975ba6143cd5289296)
+(cherry picked from commit 96963454655c10663f1bc2eea57ac734cab171a7)
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ arch/arm/boot/dts/r8a7743.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
 diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index d90310c..be8881a 100644
+index be8881a..1b17a20 100644
 --- a/arch/arm/boot/dts/r8a7743.dtsi
 +++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -1185,6 +1185,27 @@
- 			};
+@@ -1229,6 +1229,18 @@
+ 			    0x0800 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
+ 			    0x1000 0 0 2 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
+ 			>;
++
++			usb at 1,0 {
++				reg = <0x800 0 0 0 0>;
++				phys = <&usb0 0>;
++				phy-names = "usb";
++			};
++
++			usb at 2,0 {
++				reg = <0x1000 0 0 0 0>;
++				phys = <&usb0 0>;
++				phy-names = "usb";
++			};
  		};
  
-+		usbphy: usb-phy at e6590100 {
-+			compatible = "renesas,usb-phy-r8a7743",
-+				     "renesas,rcar-gen2-usb-phy";
-+			reg = <0 0xe6590100 0 0x100>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			clocks = <&mstp7_clks R8A7743_CLK_HSUSB>;
-+			clock-names = "usbhs";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
+ 		pci1: pci at ee0d0000 {
+@@ -1254,6 +1266,18 @@
+ 			    0x0800 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
+ 			    0x1000 0 0 2 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
+ 			>;
 +
-+			usb0: usb-channel at 0 {
-+				reg = <0>;
-+				#phy-cells = <1>;
++			usb at 1,0 {
++				reg = <0x10800 0 0 0 0>;
++				phys = <&usb2 0>;
++				phy-names = "usb";
 +			};
-+			usb2: usb-channel at 2 {
-+				reg = <2>;
-+				#phy-cells = <1>;
-+			};
-+		};
 +
- 		pci0: pci at ee090000 {
- 			compatible = "renesas,pci-r8a7743",
- 				     "renesas,pci-rcar-gen2";
++			usb at 2,0 {
++				reg = <0x11000 0 0 0 0>;
++				phys = <&usb2 0>;
++				phy-names = "usb";
++			};
+ 		};
+ 	};
+ 
 -- 
 2.7.4
