@@ -1,46 +1,51 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon,  5 Mar 2018 11:01:58 +0000
-Subject: [cip-dev] [PATCH 02/15] serial: sh-sci: Update DT binding
-	documentation for dedicated RTS/CTS
+Date: Mon,  5 Mar 2018 11:01:59 +0000
+Subject: [cip-dev] [PATCH 03/15] serial: sh-sci: Always set TIOCM_CTS in
+	.get_mctrl() callback
 In-Reply-To: <1520247731-25239-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1520247731-25239-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1520247731-25239-3-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1520247731-25239-4-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Some Renesas SCIF UARTs have dedicated lines for RTS/CTS hardware flow
-control.  Whether these lines exist depends on SoC and UART instance
-inside the SoC.  Whether these lines can be used for hardware flow
-control depends on board wiring.
+Documentation/serial/driver clearly states:
 
-Amend the DT bindings with an optional property to indicate that RTS/CTS
-hardware flow control lines exist, and can be used as such, according to
-the Generic Serial DT Bindings.
+    If the port does not support CTS, DCD or DSR, the driver should
+    indicate that the signal is permanently active.
+
+Hence always set TIOCM_CTS, as we currently don't look at the CTS
+hardware line state at all.
+
+FWIW, this fixes the transmit path when hardware-assisted flow control
+is enabled, and userspace enables CRTSCTS.
+The receive path is still broken, as RTS is never asserted.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Rob Herring <robh@kernel.org>
-Cc: devicetree at vger.kernel.org
+Reviewed-by: Peter Hurley <peter@hurleysoftware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-(cherry picked from commit b0405dc998e425bbb1f64488b6fda781b627056b)
+(cherry picked from commit 71e98e0e2aede08d6e0a0f3d94ea28b591ef4306)
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/serial/renesas,sci-serial.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/tty/serial/sh-sci.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-index e0fd7ee..211f193 100644
---- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-+++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-@@ -61,6 +61,8 @@ Optional properties:
-   - dma-names: Must contain a list of two DMA names, "tx" and "rx".
-   - {cts,dsr,dcd,rng,rts,dtr}-gpios: Specify GPIOs for modem lines, cfr. the
-     generic serial DT bindings in serial.txt.
-+  - uart-has-rtscts: Indicates dedicated lines for RTS/CTS hardware flow
-+    control, cfr. the generic serial DT bindings in serial.txt.
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 80d0ffe..5f148f3 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -1756,9 +1756,9 @@ static unsigned int sci_get_mctrl(struct uart_port *port)
+ {
+ 	/*
+ 	 * CTS/RTS is handled in hardware when supported, while nothing
+-	 * else is wired up. Keep it simple and simply assert DSR/CAR.
++	 * else is wired up. Keep it simple and simply assert CTS/DSR/CAR.
+ 	 */
+-	return TIOCM_DSR | TIOCM_CAR;
++	return TIOCM_CTS | TIOCM_DSR | TIOCM_CAR;
+ }
  
- Example:
- 	aliases {
+ static void sci_break_ctl(struct uart_port *port, int break_state)
 -- 
 2.7.4
