@@ -1,35 +1,45 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Tue,  6 Mar 2018 11:34:40 +0000
-Subject: [cip-dev] [PATCH 0/7] Add HSUSB to r8a7743
-Message-ID: <1520336087-12870-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Date: Tue,  6 Mar 2018 11:34:41 +0000
+Subject: [cip-dev] [PATCH 1/7] usb: renesas_usbhs: add SoC names to
+	compatibility string documentation
+In-Reply-To: <1520336087-12870-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1520336087-12870-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1520336087-12870-2-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Dear All,
+From: Simon Horman <horms+renesas@verge.net.au>
 
-this series backports all the patches necessary to add HSUSB support
-to the r8a7743.
+This extends the documentation of compatibility strings a little to
+include the SoC names.
 
-Thanks,
-Fabrizio
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Felipe Balbi <balbi@ti.com>
+(cherry picked from commit 89d75bf18d0e3e9a02961f537c87d7991df3bd32)
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/usb/renesas_usbhs.txt | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Biju Das (5):
-  usb: renesas_usbhs: Add compatible string for r8a7743/5
-  ARM: dts: r8a7743: Add HS-USB device node
-  ARM: dts: iwg20d-q7: Enable HS-USB
-  ARM: dts: r8a7743: Add USB-DMAC device nodes
-  ARM: dts: r8a7743: Enable DMA for HSUSB
-
-Simon Horman (2):
-  usb: renesas_usbhs: add SoC names to compatibility string
-    documentation
-  usb: renesas_usbhs: add fallback compatibility strings
-
- .../devicetree/bindings/usb/renesas_usbhs.txt      | 22 ++++++++----
- arch/arm/boot/dts/iwg20d-q7-common.dtsi            |  7 +++-
- arch/arm/boot/dts/r8a7743.dtsi                     | 40 ++++++++++++++++++++++
- drivers/usb/renesas_usbhs/common.c                 |  9 +++++
- 4 files changed, 71 insertions(+), 7 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/usb/renesas_usbhs.txt b/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
+index 7d48f63..a14c0bb 100644
+--- a/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
++++ b/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
+@@ -2,10 +2,10 @@ Renesas Electronics USBHS driver
+ 
+ Required properties:
+   - compatible: Must contain one of the following:
+-	- "renesas,usbhs-r8a7790"
+-	- "renesas,usbhs-r8a7791"
+-	- "renesas,usbhs-r8a7794"
+-	- "renesas,usbhs-r8a7795"
++	- "renesas,usbhs-r8a7790" for r8a7790 (R-Car H2) compatible device
++	- "renesas,usbhs-r8a7791" for r8a7791 (R-Car M2-W) compatible device
++	- "renesas,usbhs-r8a7794" for r8a7794 (R-Car E2) compatible device
++	- "renesas,usbhs-r8a7795" for r8a7795 (R-Car H3) compatible device
+   - reg: Base address and length of the register for the USBHS
+   - interrupts: Interrupt specifier for the USBHS
+   - clocks: A list of phandle + clock specifier pairs
 -- 
 2.7.4
