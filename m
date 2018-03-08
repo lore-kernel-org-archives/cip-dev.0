@@ -1,58 +1,68 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Thu,  8 Mar 2018 17:54:38 +0000
-Subject: [cip-dev] [PATCH 2/3] ARM: dts: r8a7743: Add QSPI support
+Date: Thu,  8 Mar 2018 17:54:39 +0000
+Subject: [cip-dev] [PATCH 3/3] ARM: dts: iwg20m: Add SPI NOR support
 In-Reply-To: <1520531679-9452-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1520531679-9452-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1520531679-9452-3-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1520531679-9452-4-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Add the DT node for the QSPI interface to the SoC dtsi.
+Add support for the SPI NOR device used to boot up the system
+to the System on Module DT.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 450c03718e971880ae067dc5f94a86f961acd6c3)
-(changed clocks and power-domains property, removed resets property)
+(cherry picked from commit 781e923a5fe4751d3aaa740ca3de0f9d179c34ef)
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/arm/boot/dts/r8a7743-iwg20m.dtsi | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 0cdfb6b..a6f953b 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -28,6 +28,7 @@
- 		i2c6 = &iic0;
- 		i2c7 = &iic1;
- 		i2c8 = &iic3;
-+		spi0 = &qspi;
- 		spi1 = &msiof0;
- 		spi2 = &msiof1;
- 		spi3 = &msiof2;
-@@ -782,6 +783,21 @@
- 			status = "disabled";
- 		};
+diff --git a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
+index 4119737..75a8ca5 100644
+--- a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
++++ b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
+@@ -44,6 +44,11 @@
+ 		function = "mmc";
+ 	};
  
-+		qspi: spi at e6b10000 {
-+			compatible = "renesas,qspi-r8a7743", "renesas,qspi";
-+			reg = <0 0xe6b10000 0 0x2c>;
-+			interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp9_clks R8A7743_CLK_QSPI_MOD>;
-+			dmas = <&dmac0 0x17>, <&dmac0 0x18>,
-+			       <&dmac1 0x17>, <&dmac1 0x18>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&cpg_clocks>;
-+			num-cs = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
++	qspi_pins: qspi {
++		groups = "qspi_ctrl", "qspi_data2";
++		function = "qspi";
++	};
 +
- 		msiof0: spi at e6e20000 {
- 			compatible = "renesas,msiof-r8a7743",
- 				     "renesas,rcar-gen2-msiof";
+ 	sdhi0_pins: sd0 {
+ 		groups = "sdhi0_data4", "sdhi0_ctrl";
+ 		function = "sdhi0";
+@@ -61,6 +66,27 @@
+ 	status = "okay";
+ };
+ 
++&qspi {
++	pinctrl-0 = <&qspi_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++
++	/* WARNING - This device contains the bootloader. Handle with care. */
++	flash: flash at 0 {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "sst,sst25vf016b", "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <50000000>;
++		spi-tx-bus-width = <1>;
++		spi-rx-bus-width = <1>;
++		m25p,fast-read;
++		spi-cpol;
++		spi-cpha;
++	};
++};
++
+ &sdhi0 {
+ 	pinctrl-0 = <&sdhi0_pins>;
+ 	pinctrl-names = "default";
 -- 
 2.7.4
