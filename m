@@ -1,68 +1,29 @@
-From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Thu,  8 Mar 2018 17:54:39 +0000
-Subject: [cip-dev] [PATCH 3/3] ARM: dts: iwg20m: Add SPI NOR support
-In-Reply-To: <1520531679-9452-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1520531679-9452-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1520531679-9452-4-git-send-email-fabrizio.castro@bp.renesas.com>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Thu, 08 Mar 2018 22:05:38 +0000
+Subject: [cip-dev] Linux 4.4.120-cip20
+Message-ID: <1520546738.23626.65.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Add support for the SPI NOR device used to boot up the system
-to the System on Module DT.
+I've released Linux version 4.4.120-cip20.??A summary of the changes
+since 4.4.112-cip18:
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 781e923a5fe4751d3aaa740ca3de0f9d179c34ef)
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- arch/arm/boot/dts/r8a7743-iwg20m.dtsi | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+- Merge fixes from stable versions 4.4.113-4.4.120 inclusive
+? - Includes some mitigations for Spectre v1 and v2 on x86
+- Fix stable regressions in x86/apic, arm/omap2, tca8418_keypad, leds
+- Backport additional mitigations for Spectre on x86, and related
+  fixes
+- Add SMP, I2C/IIC, RTC and SDHI support for R8A7743 and iWave board
 
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-index 4119737..75a8ca5 100644
---- a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-+++ b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-@@ -44,6 +44,11 @@
- 		function = "mmc";
- 	};
- 
-+	qspi_pins: qspi {
-+		groups = "qspi_ctrl", "qspi_data2";
-+		function = "qspi";
-+	};
-+
- 	sdhi0_pins: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
-@@ -61,6 +66,27 @@
- 	status = "okay";
- };
- 
-+&qspi {
-+	pinctrl-0 = <&qspi_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+
-+	/* WARNING - This device contains the bootloader. Handle with care. */
-+	flash: flash at 0 {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "sst,sst25vf016b", "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <50000000>;
-+		spi-tx-bus-width = <1>;
-+		spi-rx-bus-width = <1>;
-+		m25p,fast-read;
-+		spi-cpol;
-+		spi-cpha;
-+	};
-+};
-+
- &sdhi0 {
- 	pinctrl-0 = <&sdhi0_pins>;
- 	pinctrl-names = "default";
+I also tagged an intermediate version 4.4.112-cip19 before merging from
+4.4-stable.
+
+(If you were expecting this last week, I apologise - I came back from
+holiday to a huge backlog of changes from 4.4-stable, and it's taken a
+lot of time to review those and to find some missing pieces.)
+
+Ben.
+
 -- 
-2.7.4
+Ben Hutchings
+Software Developer, Codethink Ltd.
