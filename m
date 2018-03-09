@@ -1,37 +1,23 @@
-From: zoran.stojsavljevic.de@gmail.com (Zoran S)
-Date: Fri, 9 Mar 2018 11:17:25 +0100
-Subject: [cip-dev] Moxa: Join CIP Kernel maintenance team
-In-Reply-To: <5942081F7727964D830FC876E62CA8560119E2B6FF@MHQMBX02.moxa.com>
-References: <5942081F7727964D830FC876E62CA8560119E2B6FF@MHQMBX02.moxa.com>
-Message-ID: <CAEss1EJ3BZFbHuMNcgWcPp37KL5XFDV2sNHVuYwKwFGFVZmRGQ@mail.gmail.com>
+From: wagi@monom.org (Daniel Wagner)
+Date: Fri, 09 Mar 2018 15:36:53 +0100
+Subject: [cip-dev] [ANNOUNCE] 4.4.120-cip20-rt13
+Message-ID: <20180309144337.7FEBD500C74@mail.monom.org>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-https://www.cip-project.org/
-https://wiki.linuxfoundation.org/civilinfrastructureplatform/start
-https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptesting
-https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptestingboardatdeskdingledevdeployment#b-d-standalone-virtual-machine-box
+Hello CIP RT Folks!
 
-Etc (pages 2/5 through 5/5].
+I'm pleased to announce the 4.4.120-cip20-rt13 stable release.
 
-Zoran
-_______
+This release is just an update to the new stable 4.4.120-cip20 version
+and no RT specific changes have been made.
 
-On Fri, Mar 9, 2018 at 10:54 AM, SZ Lin (???) <SZ.Lin@moxa.com> wrote:
+You can get this release via the git tree at:
 
-> Hi all,
->
-> We are highly interested in joining CIP {standard, rt} kernel maintenance
-> team; therefore, I would like to ask how to get started with it.
->
-> Is there any guidance?
->
-> SZ Lin
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
->
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180309/df1054f9/attachment.html>
+  git://git.kernel.org/pub/scm/linux/kernel/git/wagi/linux-cip-rt.git
+
+  branch: linux-4.4.y-cip-rt
+  Head SHA1: e716c559d17b43bbf1c6b803040597a97d9c3767
+
+Enjoy!
+   Daniel
