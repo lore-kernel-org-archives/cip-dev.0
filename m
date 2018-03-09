@@ -1,14 +1,36 @@
-From: SZ.Lin@moxa.com (=?big5?B?U1ogTGluICiqTKRXtLwp?=)
-Date: Fri, 9 Mar 2018 09:54:53 +0000
-Subject: [cip-dev] Moxa: Join CIP Kernel maintenance team
-Message-ID: <5942081F7727964D830FC876E62CA8560119E2B6FF@MHQMBX02.moxa.com>
+From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
+Date: Fri,  9 Mar 2018 09:57:00 +0000
+Subject: [cip-dev] [PATCH 0/4] Add XHCI support to r8a7743
+Message-ID: <1520589424-15807-1-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+Dear All,
 
-We are highly interested in joining CIP {standard, rt} kernel maintenance team; therefore, I would like to ask how to get started with it.
+this series adds XHCI support to r8a7743.
+The only patch that hasn't been backported is:
+"usb: host: xhci-plat: Add r8a7743 support"
 
-Is there any guidance?
+The reason for the new commit is that the backporting of the generic
+compatible string for R-Car Gen2 would have brought along a few
+unnecessary bits and pieces, a new commit seemed to address the goal
+more reliably.
 
-SZ Lin
+Thanks,
+
+Fabrizio Castro (3):
+  usb: host: xhci-plat: Add r8a7743 support
+  dt-bindings: usb-xhci: Document r8a7743 support
+  ARM: dts: r8a7743: Add xhci support to SoC dtsi
+
+Simon Horman (1):
+  ARM: shmobile: enable XHCI_RCAR in defconfig
+
+ Documentation/devicetree/bindings/usb/usb-xhci.txt |  4 ++--
+ arch/arm/boot/dts/r8a7743.dtsi                     | 18 ++++++++++++++++++
+ arch/arm/configs/shmobile_defconfig                |  2 ++
+ drivers/usb/host/xhci-plat.c                       |  7 +++++--
+ 4 files changed, 27 insertions(+), 4 deletions(-)
+
+-- 
+2.7.4
