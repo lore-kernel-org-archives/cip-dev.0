@@ -1,33 +1,37 @@
-From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Fri,  9 Mar 2018 09:57:04 +0000
-Subject: [cip-dev] [PATCH 4/4] ARM: shmobile: enable XHCI_RCAR in defconfig
-In-Reply-To: <1520589424-15807-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1520589424-15807-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1520589424-15807-5-git-send-email-fabrizio.castro@bp.renesas.com>
+From: zoran.stojsavljevic.de@gmail.com (Zoran S)
+Date: Fri, 9 Mar 2018 11:17:25 +0100
+Subject: [cip-dev] Moxa: Join CIP Kernel maintenance team
+In-Reply-To: <5942081F7727964D830FC876E62CA8560119E2B6FF@MHQMBX02.moxa.com>
+References: <5942081F7727964D830FC876E62CA8560119E2B6FF@MHQMBX02.moxa.com>
+Message-ID: <CAEss1EJ3BZFbHuMNcgWcPp37KL5XFDV2sNHVuYwKwFGFVZmRGQ@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Simon Horman <horms+renesas@verge.net.au>
+https://www.cip-project.org/
+https://wiki.linuxfoundation.org/civilinfrastructureplatform/start
+https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptesting
+https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptestingboardatdeskdingledevdeployment#b-d-standalone-virtual-machine-box
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit ae6b99bc6928d13856172f287ee21be2eac39673)
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- arch/arm/configs/shmobile_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+Etc (pages 2/5 through 5/5].
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index 2e79332..30a3424 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -162,6 +162,8 @@ CONFIG_SND_SOC_RSRC_CARD=y
- CONFIG_SND_SOC_AK4642=y
- CONFIG_SND_SOC_WM8978=y
- CONFIG_USB=y
-+CONFIG_USB_XHCI_HCD=y
-+CONFIG_USB_XHCI_RCAR=y
- CONFIG_USB_EHCI_HCD=y
- CONFIG_USB_OHCI_HCD=y
- CONFIG_USB_R8A66597_HCD=y
--- 
-2.7.4
+Zoran
+_______
+
+On Fri, Mar 9, 2018 at 10:54 AM, SZ Lin (???) <SZ.Lin@moxa.com> wrote:
+
+> Hi all,
+>
+> We are highly interested in joining CIP {standard, rt} kernel maintenance
+> team; therefore, I would like to ask how to get started with it.
+>
+> Is there any guidance?
+>
+> SZ Lin
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180309/df1054f9/attachment.html>
