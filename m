@@ -1,107 +1,71 @@
-From: wagi@monom.org (Daniel Wagner)
-Date: Mon, 12 Mar 2018 17:47:32 +0100
-Subject: [cip-dev] [ANNOUNCE] 4.4.120-cip20-rt13
-In-Reply-To: <CAEss1ELR0=AJEacFu0sF-9=wkuqmePSYKrV_KQdochKZVaxpyw@mail.gmail.com>
-References: <20180309144337.7FEBD500C74@mail.monom.org>
-	<CAEss1ELR0=AJEacFu0sF-9=wkuqmePSYKrV_KQdochKZVaxpyw@mail.gmail.com>
-Message-ID: <766d9022-b640-fdb0-0599-c5e5f64db58c@monom.org>
+From: agustin.benito@codethink.co.uk (=?ISO-8859-1?Q?Agust=EDn?= Benito Bethencourt)
+Date: Tue, 13 Mar 2018 15:58:45 +0100
+Subject: [cip-dev] Progress on the CIP kernel maintenance and testing for
+	your ELC talk
+Message-ID: <52450414.TvpEuUOuAV@linux-if6s>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Zoran,
+Hi Yoshi,
 
-On 03/12/2018 01:25 PM, Zoran S wrote:
-> Hello Daniel,
-> 
-> I did some tests using what I built here, on BeagleBone Black, namely
-> two tests, to assure that kernel 4.4.120-cip20-rt13 works correctly.
+since you usually provide an update of the technical work done within CIP in 
+your talks, here are some bullet points you can add in tomorrow's talk at ELC 
+if you like.
 
-Excellen!
+## Kernel maintenance
 
+* CIP 4.4.120-cip20 released last week.
 
-> I did build this kernel using your own repo, adding it to my local
-> Debian VM with Lava test framework, namely to the:
-> http://localhost:8010/cip-example/cip_v4.4.120/v4.4.120-cip20-rt13/arm/omap2plus_defconfig/
-> 
+Link: https://gitlab.com/cip-project/linux-cip
 
-That is a good starting point. For -rt testing you should set following
-options:
+Comment: Ben Hutchings, from Codethink, releases a kernel version every 4 to 6 
+weeks approx., depending on the amount and relevance of upstream patches 
+landing on 4.4 LTS. Ben H. collaborates in the 4.4 LTS process directly.
 
-CONFIG_SMP=n
-CONFIG_MODULES=n
+* Effort in ensuring Meltdown and Spectre fixes land in the CIP kernel and CIP 
+Members are informed about the current situation.
 
-CONFIG_DEBUG_ATOMIC_SLEEP=y
-CONFIG_DEBUG_LOCK_ALLOC=n
-CONFIG_PROVE_LOCKING=n
-CONFIG_LOCKDEP=n
+* Review of platform specific backported patches, specially from Renesas 
+platforms.
 
-CONFIG_CPU_FREQ=n
-CONFIG_CPU_IDLE=n
+Comment: Renesas backports patches to 4.4 from mainline that are reviewed and 
+merged into CIP kernel when appropriate.
 
-CONFIG_NO_HZ=n
-CONFIG_HZ_PERIODIC=y
+* CIP 4.4.120-cip120-rt13 released
 
-CONFIG_HZ_250=y
-CONFIG_HZ=250
+Link: git://git.kernel.org/pub/scm/linux/kernel/git/wagi/linux-cip-rt.git
 
-CONFIG_SUSPEND=n
-CONFIG_HIBERNATION=n
-CONFIG_PM=n
+Comment: I would name Daniel Wagner, Siemens, as maintainer and say a few 
+words about the release process if you have time.
 
-CONFIG_FTRACE=n
+## Kernel testing
 
-CONFIG_PREEMPT_RT_FULL=y
+* B at D is being updated to include the latest kernelci
 
-> Both tests I have used are attached to this email:
-> simple_test1.yaml
-> mytest-bbb.yaml
+Link: https://gitlab.com/cip-project/cip-testing/board-at-desk-single-dev/
+merge_requests/53
 
-Looks promising. So I got two major tests right now for -rt:
+* Work in progress to support Renesas iw20gm in B at D in the coming weeks. 
 
-In one shell I run
+Link: https://gitlab.com/cip-project/cip-testing/testing/issues/167
 
-	cyclictest -p 80 -n -m -S
+* Improvements in networking and Vagrant configurations.
 
-Let it run for 30 minutes and see if the numbers are really bad or not.
-Obviosly, you can start with smaller runtimes eg. 1 minute.
+* Next steps: deployment through containers.
 
-In other shell we need generate some load.  For the beginning we can use
-something simple as hackbench
+* B at D description and deploy.
 
-	while true; do hackbench ; done
+Description: https://wiki.linuxfoundation.org/civilinfrastructureplatform/
+ciptestingboardatdesksingledevfeaturepage
 
-Both tools are part or rt-tests package.
+Deploy: https://wiki.linuxfoundation.org/civilinfrastructureplatform/
+ciptestingboardatdeskdingledevdeployment#b-d-deployment-method-2-building-vm-
+from-scratch-using-vagrant-15
 
-There is an example of the whole setup in ci-rt framework:
+Any additional feedback from participants on this list is welcome.
 
-https://ci-rt.linutronix.de/RT-Test/kb_details.jsp?id=123&b_id=4543&bt_id=326
-
-> 
-> The ingredients used for the test are:
-> |http://localhost:8010/initramfs/initramfs.cpio.gz
-> ||http://localhost:8010/cip-example/cip_v4.4.120/v4.4.120-cip20-rt13/arm/omap2plus_defconfig/zImage
-> ||http://localhost:8010/cip-example/cip_v4.4.120/v4.4.120-cip20-rt13/arm/omap2plus_defconfig/dtbs/am335x-boneblack.dtb
-> ||http://localhost:8010/cip-example/cip_v4.4.120/v4.4.120-cip20-rt13/arm/omap2plus_defconfig/modules.tar.xz
-> exists|
-> 
-> The first test is simplistic one (simple_test1.yaml), just to determine
-> the few simple shell commands, where I also issued uname -a to be sure
-> that I am testing the correct RT kernel:
-> |uname -a| |
-> Linux 192.168.15.159 4.4.120-cip20-rt13 #1 SMP Mon Mar 12 10:12:17 GMT
-> 2018 armv7l GNU/Linux
-> |
-> 
-> Result from this test are here: https://pastebin.com/eEz1NNWM||||
-> 
-> The second one (mytest-bbb.yaml) is one executing from Linaro site:
-> |https://git.linaro.org/qa/test-definitions.git|
-> 
-> Result from this test are here: https://pastebin.com/5u51pnpb
-> 
-> I'll try the same tests on Renesas iW-RainboW-G20D-Qseven module.
-
-Yes please. This looks really great.
-
-Thanks,
-Daniel
+Best Regards
+-- 
+Agust?n Benito Bethencourt
+Principal Consultant
+Codethink Ltd
