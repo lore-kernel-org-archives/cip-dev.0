@@ -1,39 +1,41 @@
-From: gitlab@mg.gitlab.com (Robert Marshall)
-Date: Wed, 14 Mar 2018 11:28:23 +0000
-Subject: [cip-dev]
- [Git][cip-project/cip-testing/CIP-kernel-test-logs][master] Update
- vagrant-up.output
-Message-ID: <5aa9075792086_18d023fdd0c2309dc86431e@sidekiq-asap-03.mail>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Wed, 14 Mar 2018 22:26:23 +0000
+Subject: [cip-dev] [PATCH 06/10] phy: rcar-gen2: add fallback binding
+In-Reply-To: <1520249954-29357-7-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1520249954-29357-1-git-send-email-fabrizio.castro@bp.renesas.com>
+	<1520249954-29357-7-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1521066383.23626.109.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Robert Marshall pushed to branch master at cip-project / cip-testing / CIP-kernel-test-logs
+On Mon, 2018-03-05 at 11:39 +0000, Fabrizio Castro wrote:
+> From: Simon Horman <horms+renesas@verge.net.au>
+> 
+> In the case of Renesas R-Car hardware we know that there are generations of
+> SoCs, e.g. Gen 2 and Gen 3. But beyond that its not clear what the
+> relationship between IP blocks might be. For example, I believe that
+> r8a7790 is older than r8a7791 but that doesn't imply that the latter is a
+> descendant of the former or vice versa.
+> 
+> We can, however, by examining the documentation and behaviour of the
+> hardware at run-time observe that the current driver implementation appears
+> to be compatible with the IP blocks on SoCs within a given generation.
+> 
+> For the above reasons and convenience when enabling new SoCs a
+> per-generation fallback compatibility string scheme being adopted for
+> drivers for Renesas SoCs.
+> 
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+[...]
 
+This is missing a reference to the upstream commit
+(7777cb8ba08dabcab8dc0e91ac0a26dde675edb6).
 
-Commits:
-700a52a0 by Robert Marshall at 2018-03-14T11:28:22Z
-Update vagrant-up.output
-- - - - -
+Ben.
 
-
-1 changed file:
-
-- vagrant-up.output
-
-
-Changes:
-
-=====================================
-vagrant-up.output
-=====================================
-The diff for this file was not included because it is too large.
-
-
-View it on GitLab: https://gitlab.com/cip-project/cip-testing/CIP-kernel-test-logs/commit/700a52a00b720f944ae98cae8bbe1f67863ce6f8
-
----
-View it on GitLab: https://gitlab.com/cip-project/cip-testing/CIP-kernel-test-logs/commit/700a52a00b720f944ae98cae8bbe1f67863ce6f8
-You're receiving this email because of your account on gitlab.com.
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180314/2501acb6/attachment.html>
+-- 
+Ben Hutchings
+Software Developer, Codethink Ltd.
