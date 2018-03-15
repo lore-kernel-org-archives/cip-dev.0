@@ -1,46 +1,48 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Thu, 15 Mar 2018 14:33:37 +0000
-Subject: [cip-dev] [PATCH 09/15] serial: sh-sci: Add pin initialization
- for SCIFA/SCIFB
-In-Reply-To: <1520871976.23626.79.camel@codethink.co.uk>
-References: <1520247731-25239-1-git-send-email-fabrizio.castro@bp.renesas.com>
-	<1520247731-25239-10-git-send-email-fabrizio.castro@bp.renesas.com>
-	<1520871976.23626.79.camel@codethink.co.uk>
-Message-ID: <TYXPR01MB1775A455092699B98F41D92DC0D00@TYXPR01MB1775.jpnprd01.prod.outlook.com>
+Date: Thu, 15 Mar 2018 15:47:37 +0000
+Subject: [cip-dev] [PATCH 06/10] phy: rcar-gen2: add fallback binding
+In-Reply-To: <1521066383.23626.109.camel@codethink.co.uk>
+References: <1520249954-29357-1-git-send-email-fabrizio.castro@bp.renesas.com>
+	<1520249954-29357-7-git-send-email-fabrizio.castro@bp.renesas.com>
+	<1521066383.23626.109.camel@codethink.co.uk>
+Message-ID: <TY1PR01MB1770EF67E38A208CC3E14718C0D00@TY1PR01MB1770.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi Ben,
 
-> Subject: Re: [cip-dev][PATCH 09/15] serial: sh-sci: Add pin initialization for SCIFA/SCIFB
+> Subject: Re: [cip-dev][PATCH 06/10] phy: rcar-gen2: add fallback binding
 >
 > [This sender failed our fraud detection checks and may not be who they appear to be. Learn about spoofing at
 > http://aka.ms/LearnAboutSpoofing]
 >
-> On Mon, 2018-03-05 at 11:02 +0000, Fabrizio Castro wrote:
-> > From: Geert Uytterhoeven <geert+renesas@glider.be>
+> On Mon, 2018-03-05 at 11:39 +0000, Fabrizio Castro wrote:
+> > From: Simon Horman <horms+renesas@verge.net.au>
 > >
-> > Before, the driver relied on initialization by the boot loader, or by
-> > implicit reset state.
+> > In the case of Renesas R-Car hardware we know that there are generations of
+> > SoCs, e.g. Gen 2 and Gen 3. But beyond that its not clear what the
+> > relationship between IP blocks might be. For example, I believe that
+> > r8a7790 is older than r8a7791 but that doesn't imply that the latter is a
+> > descendant of the former or vice versa.
 > >
-> > Note that unlike on (H)SCIF, the RTS/CTS bits exist only if dedicated
-> > RTS/CTS pins are available, which depends on the SoC and UART instance.
+> > We can, however, by examining the documentation and behaviour of the
+> > hardware at run-time observe that the current driver implementation appears
+> > to be compatible with the IP blocks on SoCs within a given generation.
 > >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > (cherry picked from commit e9d7a45a039913497a57887d85f5decfda4679f0)
-> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > For the above reasons and convenience when enabling new SoCs a
+> > per-generation fallback compatibility string scheme being adopted for
+> > drivers for Renesas SoCs.
+> >
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> > Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Acked-by: Rob Herring <robh@kernel.org>
+> > Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 > [...]
 >
-> Shouldn't we also take:
->
-> 5f76895e4c71 serial: sh-sci: Fix late enablement of AUTORTS
-> cfa6eb239154 serial: sh-sci: Fix (AUTO)RTS in sci_init_pins()
+> This is missing a reference to the upstream commit
+> (7777cb8ba08dabcab8dc0e91ac0a26dde675edb6).
 
-I had a quick look at those patches before submitting the series, and it looks
-like the second patch comes with a little bit of baggage (more backporting),
-and I wasn't sure where to draw the line.
-If you feel like those fixes are necessary I'll backport them, just let me know.
+I will send a v2 after series "Add UART support to r8a7743" gets accepted.
 
 Thanks,
 Fab
