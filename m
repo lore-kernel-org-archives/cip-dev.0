@@ -1,60 +1,212 @@
-From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Thu, 15 Mar 2018 15:47:37 +0000
-Subject: [cip-dev] [PATCH 06/10] phy: rcar-gen2: add fallback binding
-In-Reply-To: <1521066383.23626.109.camel@codethink.co.uk>
-References: <1520249954-29357-1-git-send-email-fabrizio.castro@bp.renesas.com>
-	<1520249954-29357-7-git-send-email-fabrizio.castro@bp.renesas.com>
-	<1521066383.23626.109.camel@codethink.co.uk>
-Message-ID: <TY1PR01MB1770EF67E38A208CC3E14718C0D00@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+From: zoran.stojsavljevic.de@gmail.com (Zoran S)
+Date: Thu, 15 Mar 2018 16:52:23 +0100
+Subject: [cip-dev] [cip-testing] Issue #167 - Build & test iw20gm kernel
+ outside of cip-core/bitbake env
+Message-ID: <CAEss1EK8ZXrCrtB4MxvW5FB0aqjzb7s=xyRcq0sSrx8eNrGvrA@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Ben,
+Hello to everyone,
 
-> Subject: Re: [cip-dev][PATCH 06/10] phy: rcar-gen2: add fallback binding
+I did some testing on this issue: 167, which appear to be a show stopper
+for Renesas iwg20m platform. I did change several times shmobile_defconfig
+in order to build better CIP 4.4.120 kernel. Unfortunately, every time (4
+in total) I failed.
+
+Both me (testing CIP 4.4.120) and Robert (testing CIP 4.4.112) have
+problems with iwg20m ETH1000 port. I am able to progress up to running the
+"starting kernel" message, then my tests fail (they hang).
+
+I have a gut feeling that some untested RT patch, influencing the iwg20m
+clocking tree, makes this mess. I guess, the ETH1000 problems are NOT the
+cause, rather the effect of this timing caused by buggy clocking tree
+iwg20m patch.
+
+I need to think more about all of this. The next obvious step is to start
+switching off/changing some of the timers' options in kernel's .config. To
+have bare minimum/simplistic/minimalistic clocking tree which still makes
+iwg20m platform to perform. In other words, failsafe clocking tree option.
+
+Next week I'll continue the research, switching/changing/eliminating some
+of the clocking tree options, where possible.
+
+If anybody from developers can recall any of such clocking tree patch,
+which made to the kernel prior CIP 4.4.112 version, this will be a great
+test to point to it, so I can try to revert such a patch, and see what
+happens.
+
+Thank you,
+Zoran
+_______
+
+On Tue, Mar 13, 2018 at 5:26 PM, Zoran S <zoran.stojsavljevic.de@gmail.com>
+wrote:
+
+> Hello Augustin,
 >
-> [This sender failed our fraud detection checks and may not be who they appear to be. Learn about spoofing at
-> http://aka.ms/LearnAboutSpoofing]
+> I have update on iwg20m... Straight to the newest kernel
+> 4.4.120-cip20-rt13! ;-)
 >
-> On Mon, 2018-03-05 at 11:39 +0000, Fabrizio Castro wrote:
-> > From: Simon Horman <horms+renesas@verge.net.au>
-> >
-> > In the case of Renesas R-Car hardware we know that there are generations of
-> > SoCs, e.g. Gen 2 and Gen 3. But beyond that its not clear what the
-> > relationship between IP blocks might be. For example, I believe that
-> > r8a7790 is older than r8a7791 but that doesn't imply that the latter is a
-> > descendant of the former or vice versa.
-> >
-> > We can, however, by examining the documentation and behaviour of the
-> > hardware at run-time observe that the current driver implementation appears
-> > to be compatible with the IP blocks on SoCs within a given generation.
-> >
-> > For the above reasons and convenience when enabling new SoCs a
-> > per-generation fallback compatibility string scheme being adopted for
-> > drivers for Renesas SoCs.
-> >
-> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> > Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Acked-by: Rob Herring <robh@kernel.org>
-> > Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-> [...]
+> You write:
 >
-> This is missing a reference to the upstream commit
-> (7777cb8ba08dabcab8dc0e91ac0a26dde675edb6).
-
-I will send a v2 after series "Add UART support to r8a7743" gets accepted.
-
-Thanks,
-Fab
-
+> > Work in progress to support Renesas iw20gm in B at D in the coming weeks.
+> > Link: https://gitlab.com/cip-project/cip-testing/testing/issues/167
 >
-> Ben.
+> I spent today whole day home alone to play with board (called
+> iW-RainboW-G20D), based on iwg20m which was given to me by Jan (Kiszka).
 >
-> --
-> Ben Hutchings
-> Software Developer, Codethink Ltd.
-
-
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, Buckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered No. 04586709.
+> It has RENESAS r8a7743 (armv7h, if I am not mistaken), and it is quite an
+> interesting board, I must admit).
+>
+> The task: make it compliant with CIP VM Lava testing in one (1) one single
+> day, since I do not have too much experience with this board.
+>
+> This one is initial which was used by Lava 2017.7 bring-up.
+>
+> I was able today to do the following:
+> [1] Add passthrough to the Vagrantfile, so I can have iwg20m ser2net on
+> the VM;
+> [2] Create the new device-type in Lava: /etc/lava-server/dispatcher-co
+> nfig/device-types/iwg2x.jinja
+> [3] Add this device type to Lava using Django management, with several
+> tests to see how the device type iwg2x behaves;
+> [4] Add the concrete device to device type: /etc/lava-server/dispatcher-co
+> nfig/devices/iwg20m.jinja;
+> [5] Handled/prepared the newest kernel CIP 4.4.120-cip20 (released last
+> week, by Daniel Wagner);
+>      v4.4.120-cip20-iwg20m/v4.4.120-cip20-rt13
+>      https://pastebin.com/gv0cg3PD
+>
+> Now, after some triages, and some .jinja2 fixes, some u-boot adjustments
+> in the device-type script, I was able to run the Lava .yaml test on
+> raminitfs.
+>
+> It behaves correctly (local/private network is the problem here) till it
+> needs to start kernel, which it tftp-ed correctly from localhost://8010 ---
+> where kernel ingredients are located.
+>
+> But, it fails since it looses a mac/physical address, it seems. So,
+> something is not correct with ETH100/ETH1000 driver, since I see these
+> problems popping up again, and again, and again... But my dhcpd daemon is
+> very robust, and it keeps pounding/adding lost address to the ETH on
+> Renesas board.
+>
+> The .yaml test I am running to test this board is here: job_name:
+> local test of ramdisk test on iwg20
+> https://pastebin.com/8ngYQzha
+>
+> And the Lava initramfs test results are captured here:
+> https://pastebin.com/AjRdTZKx
+>
+> Please, note the point of failure:
+>
+> ## Flattened Device Tree blob at 40f00000
+>    Booting using the fdt blob at 0x40f00000
+>    Using Device Tree in place at 40f00000, end 40f09094
+> *Unable to update property <NULL>:mac-address, err=FDT_ERR_BADPATH*
+> *Unable to update property <NULL>:local-mac-address, err=FDT_ERR_BADPATH*
+> *Unable to update property /iwg20m_q7_common:vin2-ov5640,
+> err=FDT_ERR_NOTFOUND*
+> *Starting kernel ...*
+> end: 2.4.3 bootloader-commands (duration 00:00:58) [common]
+> start: 2.4.4 auto-login-action (timeout 00:04:00) [common]
+> boot_message is being deprecated in favour of kernel-start-message in
+> constants
+> auto-login-action: Wait for prompt ['Booting Linux', 'Resetting CPU', *'Must
+> RESET board to recover', 'TIMEOUT', 'Retry count exceeded', 'ERROR: The
+> remote end did not respond in time.'] *(timeout 00:05:00)
+> auto-login-action timed out after 240 seconds
+>
+> Any guidance/help from Renesas people and others on The Far East using
+> this iwg20m technology is appreciated and welcome!
+>
+> Thank you,
+> Zoran Stojsavljevic
+> _______
+>
+> On Tue, Mar 13, 2018 at 3:58 PM, Agust?n Benito Bethencourt <
+> agustin.benito at codethink.co.uk> wrote:
+>
+>> Hi Yoshi,
+>>
+>> since you usually provide an update of the technical work done within CIP
+>> in
+>> your talks, here are some bullet points you can add in tomorrow's talk at
+>> ELC
+>> if you like.
+>>
+>> ## Kernel maintenance
+>>
+>> * CIP 4.4.120-cip20 released last week.
+>>
+>> Link: https://gitlab.com/cip-project/linux-cip
+>>
+>> Comment: Ben Hutchings, from Codethink, releases a kernel version every 4
+>> to 6
+>> weeks approx., depending on the amount and relevance of upstream patches
+>> landing on 4.4 LTS. Ben H. collaborates in the 4.4 LTS process directly.
+>>
+>> * Effort in ensuring Meltdown and Spectre fixes land in the CIP kernel
+>> and CIP
+>> Members are informed about the current situation.
+>>
+>> * Review of platform specific backported patches, specially from Renesas
+>> platforms.
+>>
+>> Comment: Renesas backports patches to 4.4 from mainline that are reviewed
+>> and
+>> merged into CIP kernel when appropriate.
+>>
+>> * CIP 4.4.120-cip120-rt13 released
+>>
+>> Link: git://git.kernel.org/pub/scm/linux/kernel/git/wagi/linux-cip-rt.git
+>>
+>> Comment: I would name Daniel Wagner, Siemens, as maintainer and say a few
+>> words about the release process if you have time.
+>>
+>> ## Kernel testing
+>>
+>> * B at D is being updated to include the latest kernelci
+>>
+>> Link: https://gitlab.com/cip-project/cip-testing/board-at-desk-sin
+>> gle-dev/
+>> merge_requests/53
+>> <https://gitlab.com/cip-project/cip-testing/board-at-desk-single-dev/merge_requests/53>
+>>
+>> * Work in progress to support Renesas iw20gm in B at D in the coming weeks.
+>>
+>> Link: https://gitlab.com/cip-project/cip-testing/testing/issues/167
+>>
+>> * Improvements in networking and Vagrant configurations.
+>>
+>> * Next steps: deployment through containers.
+>>
+>> * B at D description and deploy.
+>>
+>> Description: https://wiki.linuxfoundation.org/civilinfrastructureplatform
+>> /
+>> ciptestingboardatdesksingledevfeaturepage
+>>
+>> Deploy: https://wiki.linuxfoundation.org/civilinfrastructureplatform/
+>> ciptestingboardatdeskdingledevdeployment#b-d-deployment-meth
+>> od-2-building-vm-
+>> from-scratch-using-vagrant-15
+>> <https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptestingboardatdeskdingledevdeployment#b-d-deployment-method-2-building-vm-from-scratch-using-vagrant-15>
+>>
+>> Any additional feedback from participants on this list is welcome.
+>>
+>> Best Regards
+>> --
+>> Agust?n Benito Bethencourt
+>> Principal Consultant
+>> Codethink Ltd
+>> _______________________________________________
+>> cip-dev mailing list
+>> cip-dev at lists.cip-project.org
+>> https://lists.cip-project.org/mailman/listinfo/cip-dev
+>>
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180315/1a509adf/attachment-0001.html>
