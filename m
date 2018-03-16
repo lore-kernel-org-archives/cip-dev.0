@@ -1,66 +1,84 @@
-From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Thu, 15 Mar 2018 16:07:08 +0000
-Subject: [cip-dev] [PATCH 6/7] ARM: dts: r8a7743: Add USB-DMAC device
-	nodes
-In-Reply-To: <1521067650.23626.110.camel@codethink.co.uk>
-References: <1520336087-12870-1-git-send-email-fabrizio.castro@bp.renesas.com>
-	<1520336087-12870-7-git-send-email-fabrizio.castro@bp.renesas.com>
-	<1521067650.23626.110.camel@codethink.co.uk>
-Message-ID: <TY1PR01MB17708DE86986BEB8D5702986C0D00@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
+Date: Fri, 16 Mar 2018 08:46:27 +0000
+Subject: [cip-dev] [Cip-testing-results] LAVA notification for Test Job
+	72
+In-Reply-To: <20180316074541.1233.62178@stretch.localdomain>
+References: <20180316074541.1233.62178@stretch.localdomain>
+Message-ID: <C7D59721-F8AC-453D-A867-C2D2CA9B89B5@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi Ben,
 
-> Subject: Re: [cip-dev][PATCH 6/7] ARM: dts: r8a7743: Add USB-DMAC device nodes
+in order for these mails to be useful (successful build/boot), beside the kernel version, which info would be useful to you?
+
+On 16 March 2018 07:45:41 GMT+00:00, srv_ln001 at codethink.co.uk wrote:
 >
-> [This sender failed our fraud detection checks and may not be who they appear to be. Learn about spoofing at
-> http://aka.ms/LearnAboutSpoofing]
+>Hello,
 >
-> On Tue, 2018-03-06 at 11:34 +0000, Fabrizio Castro wrote:
-> > From: Biju Das <biju.das@bp.renesas.com>
-> >
-> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> > Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> > (cherry picked from commit 310861003a0d59cb410538bcdf73a218157a111d)
-> > (modified clocks and power-domains properties, removed resets property)
-> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > ---
-> >  arch/arm/boot/dts/r8a7743.dtsi | 24 ++++++++++++++++++++++++
-> >  1 file changed, 24 insertions(+)
-> >
-> > diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-> > index 1237746..db00959 100644
-> > --- a/arch/arm/boot/dts/r8a7743.dtsi
-> > +++ b/arch/arm/boot/dts/r8a7743.dtsi
-> > @@ -309,6 +309,30 @@
-> >                       dma-channels = <15>;
-> >               };
-> >
-> > +             usb_dmac0: dma-controller at e65a0000 {
-> > +                     compatible = "renesas,usb-dmac";
-> [...]
+>The job with ID # 72 is now in status Complete. Job was submitted by
+>lava-health.
 >
-> Why no "renesas,r8a7743-usb-dmac" compatible string?
-
-It's down to the dt-bindings, commit 0b2eed49875ec3605b7a71bdf05adc8c1cbd49fc
-introduces SoC specific support, this would trigger changes to the corresponding SoC
-specific DT touched by such a change, and as usual, where do we draw the line with
-the backporting? Would you rather I used "renesas,r8a7743-usb-dmac" instead?
-
-Thanks,
-Fab
-
+>Job details and log file: http://localhost/scheduler/job/72
 >
-> Ben.
 >
-> --
-> Ben Hutchings
-> Software Developer, Codethink Ltd.
+>
+>Device details:
+>Hostname: bbb01
+>Type: beaglebone-black
+>Owner: lavauser
+>Worker: stretch.localdomain
+>
+>Job details:
+>Priority: Medium
+>Visibility: Publicly visible
+>Description: local test of ramdisk test on bbb
+>Submitted: 2018-03-16 07:42:11 (+0000 UTC)
+>Started: 2018-03-16 07:42:28 (+0000 UTC)
+>Finished: 2018-03-16 07:45:00 (+0000 UTC)
+>Duration: 0:02:31.960506
+>
+>Results:
+>
+>
+>Test Suite lava: http://localhost/results/72/lava
+>Test Case job: Test passed
+>Test Case power-off: Test passed
+>Test Case 0_smoke-tests: Test passed
+>Measurement: 0.0900000000 seconds
+>Test Case auto-login-action: Test passed
+>Measurement: 105.2600000000 seconds
+>Test Case send-reboot-commands: Test passed
+>Measurement: 2.5500000000 seconds
+>Test Case bootloader-overlay: Test passed
+>Test Case test-runscript-overlay: Test passed
+>Measurement: 0.0300000000 seconds
+>Test Case test-install-overlay: Test passed
+>Measurement: 0.0300000000 seconds
+>Test Case test-overlay: Test passed
+>Measurement: 0.0200000000 seconds
+>Test Case git-repo-action: Test passed
+>Measurement: 2.6500000000 seconds
+>Test Case http-download: Test passed
+>Measurement: 0.2600000000 seconds
+>Test Case http-download: Test passed
+>Measurement: 0.0100000000 seconds
+>Test Case http-download: Test passed
+>Measurement: 0.0500000000 seconds
+>Test Case http-download: Test passed
+>Measurement: 0.1200000000 seconds
+>Test Case validate: Test passed
+>No query is set for results comparing.
+>
+>LAVA
+>Linaro Automated Validation Architecture
+>_______________________________________________
+>Cip-testing-results mailing list
+>Cip-testing-results at lists.cip-project.org
+>https://lists.cip-project.org/mailman/listinfo/cip-testing-results
 
-
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, Buckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered No. 04586709.
+-- 
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180316/e41e15eb/attachment.html>
