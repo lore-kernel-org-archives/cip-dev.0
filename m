@@ -1,49 +1,51 @@
-From: tom.pollard@codethink.co.uk (Tom Pollard)
-Date: Fri, 23 Mar 2018 15:09:22 +0000
+From: robert.marshall@codethink.co.uk (Robert Marshall)
+Date: Fri, 23 Mar 2018 15:53:30 +0000
 Subject: [cip-dev] Progress on the CIP kernel maintenance and testing
- for your ELC talk
+	for your ELC talk
 In-Reply-To: <CAEss1EJp_mvN66au1VxyMR2Btzz_ZC57V=mhyqT90JFmF2M_=Q@mail.gmail.com>
+	(Zoran S.'s message of "Fri, 23 Mar 2018 15:39:48 +0100")
 References: <52450414.TvpEuUOuAV@linux-if6s>
 	<CAEss1ELvyixTSJcK4OerZJ8qDwf_6kGmVP0Syc0KzSswELhtYA@mail.gmail.com>
 	<TY1PR06MB07023674D891E7E86BB52934B7A80@TY1PR06MB0702.apcprd06.prod.outlook.com>
 	<CAEss1E+aiDsAkVZmD_Z9AWjCwTvJWWRB3jqNYswUDxvzYMbgNw@mail.gmail.com>
 	<87605myilu.fsf@ctlt579.codethink.co.uk>
 	<CAEss1EJp_mvN66au1VxyMR2Btzz_ZC57V=mhyqT90JFmF2M_=Q@mail.gmail.com>
-Message-ID: <7e611cc4-f442-f19e-fbed-f9d36b37aef7@codethink.co.uk>
+Message-ID: <871sgayeit.fsf@ctlt579.codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Zoran
+Zoran
 
-On 23/03/18 14:39, Zoran S wrote:
+Hi!
+
+Zoran S <zoran.stojsavljevic.de@gmail.com> writes:
+
 > Hello Robert,
-> 
+>
 > The initramfs I use (since I am just about to start talking on the
 > YOCTO list why I am failing on ncurses-native-5.9 while building the
 > iwg20d YOCTO /Jethro/Morty kas based build) is this one (the Busybox
 > generic one):
-
-I definitely had this issue when I built cip-core last year, but I can't 
-remember the exact fix. I believe the fix was applied in recipes-core in jethro 
-from poky however meta-debian provides its own ncurses recipe (a point of 
-divergence which adds another overhead of maintenance). A good starting point is 
-to turn parallel make off for problematic recipes I find, the host gcc version 
-is also a usual suspect. Have you tried using the container provided to rule out 
-host dependency mismatches?
-
-Tom
-
-> 
+>
 > Creating an initramfs with BusyBox for the Beaglebone Black
 > https://wiki.linuxfoundation.org/civilinfrastructureplatform/cipsystembuildhowto
-> 
+>
 > Everything else is true RT-4.4.120-rt13 (zImage and .dtb - both of
 > them: the correct rt one, and the old one from ages ago (5 years ago
 > generated for kernel 3.2)).
-> 
+>
+
+Can you update the  #167 ticket with the full settings that you're using
+- so device and device-type as well as the health check - or link them to
+pastebins and I'll take a look at it when I'm back on Wednesday
+
+Have a good weekend!
+
+Robert
+
 > Zoran
 > ______
-> 
+>
 > On Fri, Mar 23, 2018 at 3:25 PM, Robert Marshall
 > <robert.marshall@codethink.co.uk> wrote:
 >> Zoran,
@@ -85,18 +87,18 @@ Tom
 >>> Filename '149/tftp-deploy-rkMXw2/dtb/r8a7743-iwg20d-q7.dtb'.
 >>> Load address: 0x40f00000
 >>> Loading: * T ##
->>>       3.9 KiB/s
+>>>      3.9 KiB/s
 >>> done
 >>> Bytes transferred = 24725 (6095 hex)
 >>> ## Loading init Ramdisk from Legacy Image at 41000000 ...
->>>     Image Name:
->>>     Image Type:   ARM Linux RAMDisk Image (uncompressed)
->>>     Data Size:    5861271 Bytes = 5.6 MiB
->>>     Load Address: 00000000
->>>     Entry Point:  00000000
+>>>    Image Name:
+>>>    Image Type:   ARM Linux RAMDisk Image (uncompressed)
+>>>    Data Size:    5861271 Bytes = 5.6 MiB
+>>>    Load Address: 00000000
+>>>    Entry Point:  00000000
 >>> ## Flattened Device Tree blob at 40f00000
->>>     Booting using the fdt blob at 0x40f00000
->>>     Using Device Tree in place at 40f00000, end 40f09094
+>>>    Booting using the fdt blob at 0x40f00000
+>>>    Using Device Tree in place at 40f00000, end 40f09094
 >>> Unable to update property <NULL>:mac-address, err=FDT_ERR_BADPATH
 >>> Unable to update property <NULL>:local-mac-address, err=FDT_ERR_BADPATH
 >>> Unable to update property /iwg20m_q7_common:vin2-ov5640, err=FDT_ERR_NOTFOUND
@@ -126,227 +128,222 @@ Tom
 >>>
 >>> On Fri, Mar 23, 2018 at 11:55 AM, Chris Paterson <Chris.Paterson2@renesas.com> wrote:
 >>>
->>>   Hello Zoran,
+>>>  Hello Zoran,
 >>>
 >>>
 >>>
->>>   Sorry for the slow response.
+>>>  Sorry for the slow response.
 >>>
 >>>
 >>>
->>>   Could you try setting the following in u-boot?
+>>>  Could you try setting the following in u-boot?
 >>>
 >>>
 >>>
->>>   setenv bootm_low '0x41e00000'
+>>>  setenv bootm_low '0x41e00000'
 >>>
->>>   setenv bootm_size '0x1000000'
+>>>  setenv bootm_size '0x1000000'
 >>>
 >>>
 >>>
 >>>
 >>>
->>>   Looking at https://pastebin.com/AjRdTZKx, line 268, you are setting:
+>>>  Looking at https://pastebin.com/AjRdTZKx, line 268, you are setting:
 >>>
->>>   setenv bootargs 'console=ttyO0,115200n8 root=/dev/ram0  ip=dhcp';
+>>>  setenv bootargs 'console=ttyO0,115200n8 root=/dev/ram0  ip=dhcp';
 >>>
 >>>
 >>>
->>>   I?m guessing the console should be set to ttySC0.
+>>>  I?m guessing the console should be set to ttySC0.
 >>>
 >>>
 >>>
 >>>
 >>>
->>>   If you still see no output from the Kernel, have you tried enabling low-level debugging?
+>>>  If you still see no output from the Kernel, have you tried enabling low-level debugging?
 >>>
 >>>
 >>>
->>>   CONFIG_DEBUG_LL, CONFIG_DEBUG_RCAR_GEN2_SCIF0, CONFIG_EARLY_PRINTK
+>>>  CONFIG_DEBUG_LL, CONFIG_DEBUG_RCAR_GEN2_SCIF0, CONFIG_EARLY_PRINTK
 >>>
 >>>
 >>>
 >>>
 >>>
->>>   Kind regards, Chris
+>>>  Kind regards, Chris
 >>>
 >>>
 >>>
->>>   From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Zoran S
->>>   Sent: 13 March 2018 16:26
->>>   To: Agustin Benito Bethencourt Codethink <agustin.benito@codethink.co.uk>
->>>   Cc: cip-dev at lists.cip-project.org
->>>   Subject: Re: [cip-dev] Progress on the CIP kernel maintenance and testing for your ELC talk
+>>>  From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Zoran S
+>>>  Sent: 13 March 2018 16:26
+>>>  To: Agustin Benito Bethencourt Codethink <agustin.benito@codethink.co.uk>
+>>>  Cc: cip-dev at lists.cip-project.org
+>>>  Subject: Re: [cip-dev] Progress on the CIP kernel maintenance and testing for your ELC talk
 >>>
 >>>
 >>>
->>>   Hello Augustin,
+>>>  Hello Augustin,
 >>>
->>>   I have update on iwg20m... Straight to the newest kernel 4.4.120-cip20-rt13! ;-)
+>>>  I have update on iwg20m... Straight to the newest kernel 4.4.120-cip20-rt13! ;-)
 >>>
 >>>
 >>>
->>>   You write:
+>>>  You write:
 >>>
->>>   > Work in progress to support Renesas iw20gm in B at D in the coming weeks.
->>>   > Link: https://gitlab.com/cip-project/cip-testing/testing/issues/167
+>>>  > Work in progress to support Renesas iw20gm in B at D in the coming weeks.
+>>>  > Link: https://gitlab.com/cip-project/cip-testing/testing/issues/167
 >>>
->>>   I spent today whole day home alone to play with board (called iW-RainboW-G20D), based on iwg20m which was given to me by Jan
->>>   (Kiszka).
+>>>  I spent today whole day home alone to play with board (called iW-RainboW-G20D), based on iwg20m which was given to me by Jan
+>>>  (Kiszka).
 >>>
->>>   It has RENESAS r8a7743 (armv7h, if I am not mistaken), and it is quite an interesting board, I must admit).
+>>>  It has RENESAS r8a7743 (armv7h, if I am not mistaken), and it is quite an interesting board, I must admit).
 >>>
->>>   The task: make it compliant with CIP VM Lava testing in one (1) one single day, since I do not have too much experience with this
->>>   board.
+>>>  The task: make it compliant with CIP VM Lava testing in one (1) one single day, since I do not have too much experience with this
+>>>  board.
 >>>
->>>   This one is initial which was used by Lava 2017.7 bring-up.
+>>>  This one is initial which was used by Lava 2017.7 bring-up.
 >>>
->>>   I was able today to do the following:
+>>>  I was able today to do the following:
 >>>
->>>   [1] Add passthrough to the Vagrantfile, so I can have iwg20m ser2net on the VM;
+>>>  [1] Add passthrough to the Vagrantfile, so I can have iwg20m ser2net on the VM;
 >>>
->>>   [2] Create the new device-type in Lava: /etc/lava-server/dispatcher-config/device-types/iwg2x.jinja
+>>>  [2] Create the new device-type in Lava: /etc/lava-server/dispatcher-config/device-types/iwg2x.jinja
 >>>
->>>   [3] Add this device type to Lava using Django management, with several tests to see how the device type iwg2x behaves;
+>>>  [3] Add this device type to Lava using Django management, with several tests to see how the device type iwg2x behaves;
 >>>
->>>   [4] Add the concrete device to device type: /etc/lava-server/dispatcher-config/devices/iwg20m.jinja;
+>>>  [4] Add the concrete device to device type: /etc/lava-server/dispatcher-config/devices/iwg20m.jinja;
 >>>
->>>   [5] Handled/prepared the newest kernel CIP 4.4.120-cip20 (released last week, by Daniel Wagner);
+>>>  [5] Handled/prepared the newest kernel CIP 4.4.120-cip20 (released last week, by Daniel Wagner);
 >>>
->>>        v4.4.120-cip20-iwg20m/v4.4.120-cip20-rt13
->>>        https://pastebin.com/gv0cg3PD
+>>>       v4.4.120-cip20-iwg20m/v4.4.120-cip20-rt13
+>>>       https://pastebin.com/gv0cg3PD
 >>>
 >>>
 >>>
->>>   Now, after some triages, and some .jinja2 fixes, some u-boot adjustments in the device-type script, I was able to run the Lava .yaml
->>>   test on raminitfs.
+>>>  Now, after some triages, and some .jinja2 fixes, some u-boot adjustments in the device-type script, I was able to run the Lava .yaml
+>>>  test on raminitfs.
 >>>
->>>   It behaves correctly (local/private network is the problem here) till it needs to start kernel, which it tftp-ed correctly from
->>>   localhost://8010 --- where kernel ingredients are located.
+>>>  It behaves correctly (local/private network is the problem here) till it needs to start kernel, which it tftp-ed correctly from
+>>>  localhost://8010 --- where kernel ingredients are located.
 >>>
->>>   But, it fails since it looses a mac/physical address, it seems. So, something is not correct with ETH100/ETH1000 driver, since I see these
->>>   problems popping up again, and again, and again... But my dhcpd daemon is very robust, and it keeps pounding/adding lost address to
->>>   the ETH on Renesas board.
+>>>  But, it fails since it looses a mac/physical address, it seems. So, something is not correct with ETH100/ETH1000 driver, since I see these
+>>>  problems popping up again, and again, and again... But my dhcpd daemon is very robust, and it keeps pounding/adding lost address to
+>>>  the ETH on Renesas board.
 >>>
->>>   The .yaml test I am running to test this board is here: job_name:
->>>   local test of ramdisk test on iwg20
->>>   https://pastebin.com/8ngYQzha
+>>>  The .yaml test I am running to test this board is here: job_name:
+>>>  local test of ramdisk test on iwg20
+>>>  https://pastebin.com/8ngYQzha
 >>>
 >>>
 >>>
->>>   And the Lava initramfs test results are captured here: https://pastebin.com/AjRdTZKx
+>>>  And the Lava initramfs test results are captured here: https://pastebin.com/AjRdTZKx
 >>>
->>>   Please, note the point of failure:
+>>>  Please, note the point of failure:
 >>>
->>>   ## Flattened Device Tree blob at 40f00000
+>>>  ## Flattened Device Tree blob at 40f00000
 >>>
->>>      Booting using the fdt blob at 0x40f00000
+>>>     Booting using the fdt blob at 0x40f00000
 >>>
->>>      Using Device Tree in place at 40f00000, end 40f09094
+>>>     Using Device Tree in place at 40f00000, end 40f09094
 >>>
->>>   Unable to update property <NULL>:mac-address, err=FDT_ERR_BADPATH
+>>>  Unable to update property <NULL>:mac-address, err=FDT_ERR_BADPATH
 >>>
->>>   Unable to update property <NULL>:local-mac-address, err=FDT_ERR_BADPATH
+>>>  Unable to update property <NULL>:local-mac-address, err=FDT_ERR_BADPATH
 >>>
->>>   Unable to update property /iwg20m_q7_common:vin2-ov5640, err=FDT_ERR_NOTFOUND
+>>>  Unable to update property /iwg20m_q7_common:vin2-ov5640, err=FDT_ERR_NOTFOUND
 >>>
->>>   Starting kernel ...
+>>>  Starting kernel ...
 >>>
->>>   end: 2.4.3 bootloader-commands (duration 00:00:58) [common]
+>>>  end: 2.4.3 bootloader-commands (duration 00:00:58) [common]
 >>>
->>>   start: 2.4.4 auto-login-action (timeout 00:04:00) [common]
+>>>  start: 2.4.4 auto-login-action (timeout 00:04:00) [common]
 >>>
->>>   boot_message is being deprecated in favour of kernel-start-message in constants
+>>>  boot_message is being deprecated in favour of kernel-start-message in constants
 >>>
->>>   auto-login-action: Wait for prompt ['Booting Linux', 'Resetting CPU', 'Must RESET board to recover', 'TIMEOUT', 'Retry count
->>>   exceeded', 'ERROR: The remote end did not respond in time.'] (timeout 00:05:00)
+>>>  auto-login-action: Wait for prompt ['Booting Linux', 'Resetting CPU', 'Must RESET board to recover', 'TIMEOUT', 'Retry count
+>>>  exceeded', 'ERROR: The remote end did not respond in time.'] (timeout 00:05:00)
 >>>
->>>   auto-login-action timed out after 240 seconds
+>>>  auto-login-action timed out after 240 seconds
 >>>
->>>   Any guidance/help from Renesas people and others on The Far East using this iwg20m technology is appreciated and welcome!
+>>>  Any guidance/help from Renesas people and others on The Far East using this iwg20m technology is appreciated and welcome!
 >>>
->>>   Thank you,
+>>>  Thank you,
 >>>
->>>   Zoran Stojsavljevic
+>>>  Zoran Stojsavljevic
 >>>
->>>   _______
+>>>  _______
 >>>
->>>   On Tue, Mar 13, 2018 at 3:58 PM, Agust?n Benito Bethencourt <agustin.benito@codethink.co.uk> wrote:
+>>>  On Tue, Mar 13, 2018 at 3:58 PM, Agust?n Benito Bethencourt <agustin.benito@codethink.co.uk> wrote:
 >>>
->>>   Hi Yoshi,
+>>>  Hi Yoshi,
 >>>
->>>   since you usually provide an update of the technical work done within CIP in
->>>   your talks, here are some bullet points you can add in tomorrow's talk at ELC
->>>   if you like.
+>>>  since you usually provide an update of the technical work done within CIP in
+>>>  your talks, here are some bullet points you can add in tomorrow's talk at ELC
+>>>  if you like.
 >>>
->>>   ## Kernel maintenance
+>>>  ## Kernel maintenance
 >>>
->>>   * CIP 4.4.120-cip20 released last week.
+>>>  * CIP 4.4.120-cip20 released last week.
 >>>
->>>   Link: https://gitlab.com/cip-project/linux-cip
+>>>  Link: https://gitlab.com/cip-project/linux-cip
 >>>
->>>   Comment: Ben Hutchings, from Codethink, releases a kernel version every 4 to 6
->>>   weeks approx., depending on the amount and relevance of upstream patches
->>>   landing on 4.4 LTS. Ben H. collaborates in the 4.4 LTS process directly.
+>>>  Comment: Ben Hutchings, from Codethink, releases a kernel version every 4 to 6
+>>>  weeks approx., depending on the amount and relevance of upstream patches
+>>>  landing on 4.4 LTS. Ben H. collaborates in the 4.4 LTS process directly.
 >>>
->>>   * Effort in ensuring Meltdown and Spectre fixes land in the CIP kernel and CIP
->>>   Members are informed about the current situation.
+>>>  * Effort in ensuring Meltdown and Spectre fixes land in the CIP kernel and CIP
+>>>  Members are informed about the current situation.
 >>>
->>>   * Review of platform specific backported patches, specially from Renesas
->>>   platforms.
+>>>  * Review of platform specific backported patches, specially from Renesas
+>>>  platforms.
 >>>
->>>   Comment: Renesas backports patches to 4.4 from mainline that are reviewed and
->>>   merged into CIP kernel when appropriate.
+>>>  Comment: Renesas backports patches to 4.4 from mainline that are reviewed and
+>>>  merged into CIP kernel when appropriate.
 >>>
->>>   * CIP 4.4.120-cip120-rt13 released
+>>>  * CIP 4.4.120-cip120-rt13 released
 >>>
->>>   Link: git://git.kernel.org/pub/scm/linux/kernel/git/wagi/linux-cip-rt.git
+>>>  Link: git://git.kernel.org/pub/scm/linux/kernel/git/wagi/linux-cip-rt.git
 >>>
->>>   Comment: I would name Daniel Wagner, Siemens, as maintainer and say a few
->>>   words about the release process if you have time.
+>>>  Comment: I would name Daniel Wagner, Siemens, as maintainer and say a few
+>>>  words about the release process if you have time.
 >>>
->>>   ## Kernel testing
+>>>  ## Kernel testing
 >>>
->>>   * B at D is being updated to include the latest kernelci
+>>>  * B at D is being updated to include the latest kernelci
 >>>
->>>   Link: https://gitlab.com/cip-project/cip-testing/board-at-desk-single-dev/
->>>   merge_requests/53
+>>>  Link: https://gitlab.com/cip-project/cip-testing/board-at-desk-single-dev/
+>>>  merge_requests/53
 >>>
->>>   * Work in progress to support Renesas iw20gm in B at D in the coming weeks.
+>>>  * Work in progress to support Renesas iw20gm in B at D in the coming weeks.
 >>>
->>>   Link: https://gitlab.com/cip-project/cip-testing/testing/issues/167
+>>>  Link: https://gitlab.com/cip-project/cip-testing/testing/issues/167
 >>>
->>>   * Improvements in networking and Vagrant configurations.
+>>>  * Improvements in networking and Vagrant configurations.
 >>>
->>>   * Next steps: deployment through containers.
+>>>  * Next steps: deployment through containers.
 >>>
->>>   * B at D description and deploy.
+>>>  * B at D description and deploy.
 >>>
->>>   Description: https://wiki.linuxfoundation.org/civilinfrastructureplatform/
->>>   ciptestingboardatdesksingledevfeaturepage
+>>>  Description: https://wiki.linuxfoundation.org/civilinfrastructureplatform/
+>>>  ciptestingboardatdesksingledevfeaturepage
 >>>
->>>   Deploy: https://wiki.linuxfoundation.org/civilinfrastructureplatform/
->>>   ciptestingboardatdeskdingledevdeployment#b-d-deployment-method-2-building-vm-
->>>   from-scratch-using-vagrant-15
+>>>  Deploy: https://wiki.linuxfoundation.org/civilinfrastructureplatform/
+>>>  ciptestingboardatdeskdingledevdeployment#b-d-deployment-method-2-building-vm-
+>>>  from-scratch-using-vagrant-15
 >>>
->>>   Any additional feedback from participants on this list is welcome.
+>>>  Any additional feedback from participants on this list is welcome.
 >>>
->>>   Best Regards
->>>   --
->>>   Agust?n Benito Bethencourt
->>>   Principal Consultant
->>>   Codethink Ltd
->>>   _______________________________________________
->>>   cip-dev mailing list
->>>   cip-dev at lists.cip-project.org
->>>   https://lists.cip-project.org/mailman/listinfo/cip-dev
+>>>  Best Regards
+>>>  --
+>>>  Agust?n Benito Bethencourt
+>>>  Principal Consultant
+>>>  Codethink Ltd
+>>>  _______________________________________________
+>>>  cip-dev mailing list
+>>>  cip-dev at lists.cip-project.org
+>>>  https://lists.cip-project.org/mailman/listinfo/cip-dev
 >>>
 >>> _______________________________________________
 >>> cip-dev mailing list
 >>> cip-dev at lists.cip-project.org
 >>> https://lists.cip-project.org/mailman/listinfo/cip-dev
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
-> 
