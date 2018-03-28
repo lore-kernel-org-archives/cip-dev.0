@@ -1,47 +1,41 @@
-From: zoran.stojsavljevic.de@gmail.com (Zoran S)
-Date: Wed, 28 Mar 2018 13:52:26 +0200
-Subject: [cip-dev] B@D: iwg20m support
-In-Reply-To: <6afbe7517b484b508ce366d33c2e9c12@rvc.renesas.com>
-References: <1513231035-42479-1-git-send-email-daniel.sangorrin@toshiba.co.jp>
-	<8334d32c-edfb-76dd-3246-dca7cd9a9d62@siemens.com>
-	<006d01d3786a$533dec70$f9b9c550$@toshiba.co.jp>
-	<69bab283668346d480ae1f5957b054fb@rvc.renesas.com>
-	<018401d38925$8188fc70$849af550$@toshiba.co.jp>
-	<0f469353c2f94f64a2a55a3eb3f02317@rvc.renesas.com>
-	<001801d389a5$45b84630$d128d290$@toshiba.co.jp>
-	<e50cd71ea4d444889b39b3a96876a59f@rvc.renesas.com>
-	<000f01d389d3$715dbdf0$541939d0$@toshiba.co.jp>
-	<bacb02dc0d194be8b13138e98cf8aa33@rvc.renesas.com>
-	<008f01d38a9f$fdce8680$f96b9380$@toshiba.co.jp>
-	<8681e318c0eb4598af7883c30aea66be@rvc.renesas.com>
-	<71f8826a9cbe47599f4e3e45b3dc8209@rvc.renesas.com>
-	<006601d3c49e$eca85cd0$c5f91670$@toshiba.co.jp>
-	<CAEss1E+RhozLMoMKrKz1P4gUgtM_mSdCuS7y37GDh=pts2Urzw@mail.gmail.com>
-	<fb8c257078ca461caafeb60c7dd5cf3c@rvc.renesas.com>
-	<00ac01d3c4de$c0237790$406a66b0$@toshiba.co.jp>
-	<9151f4fcd8244ed9985ea3c81ce44e34@rvc.renesas.com>
-	<00ae01d3c4e0$b48d8bd0$1da8a370$@toshiba.co.jp>
-	<6afbe7517b484b508ce366d33c2e9c12@rvc.renesas.com>
-Message-ID: <CAEss1EJRp0ehW4fmPQZV7z=s+RyjOSTpJyDFD_oB7tCZA69qsg@mail.gmail.com>
+From: maemalynn@linuxfoundation.org (Maemalynn Meanor)
+Date: Wed, 28 Mar 2018 16:15:10 -0700
+Subject: [cip-dev] CIP in the News
+Message-ID: <E2C34246-7FF8-4803-AF9D-8E728240C351@linuxfoundation.org>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Tram,
+Hi CIP community!
 
-Could you, please, do me a favour?
+We have a few awesome pieces of content that we wanted to share with you. Today, Linux.com <http://linux.com/> ran an article that highlighted Yoshi?s CIP session from ELC/OpenIoT Summit. You can view it here: https://www.linux.com/blog/event/elc-open-iot/2018/3/civil-infrastructure-platform-sets-out-save-civilization <https://www.linux.com/blog/event/elc-open-iot/2018/3/civil-infrastructure-platform-sets-out-save-civilization>. 
 
-Could you, please, find for me the kernel tree after you did build
-your kas SDK (supposed to be 4.4.-x) tree, and from there to retrieve
-for me the following .dts files:
+Additionally, LWM.net <http://lwm.net/> did a nice feature on CIP. If you have a subscription, uou can view it here: https://lwn.net/Articles/749530/ <https://lwn.net/Articles/749530/>
 
-path: kernel-top-dir/arch/arm/boot/dts, the files:
+We also featured Codethink in this month?s member spotlight. Here?s the link to the blog: https://www.cip-project.org/blog/2018/03/20/cip-member-spotlight-codethink <https://www.cip-project.org/blog/2018/03/20/cip-member-spotlight-codethink>
 
-r8a7743.dtsi
-r8a7743-iwg20d-q7.dts
-r8a7743-iwg20m.dtsi
+We ask that you please share these with your social networks. 
 
-And, please, attach them for me to the email for inspection?
+You can retweet us below:
+Linux.com <http://linux.com/> article: https://twitter.com/cip_project/status/979131216703172608 <https://twitter.com/cip_project/status/979131216703172608>
+LWM.net <http://lwm.net/>: https://twitter.com/cip_project/status/977092606571302912 <https://twitter.com/cip_project/status/977092606571302912> 
+Codethink: https://twitter.com/cip_project/status/976323771614277632 <https://twitter.com/cip_project/status/976323771614277632>
 
-Thank you,
-Zoran
-_______
+If you chose to create your own promotions, please just don?t forget to tag @cip_project. 
+
+Thanks!
+Mae
+
+Maemalynn Meanor
+PR Manager 
+The Linux Foundation
+Maemalynn at linuxfoundation.org
+(602) 541-0356
+Skype: Maemalynn
+
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180328/59c1eab9/attachment.html>
