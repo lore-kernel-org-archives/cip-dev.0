@@ -1,19 +1,19 @@
-From: takuo.koguchi.sw@hitachi.com (=?iso-2022-jp?B?GyRCPi44fUJ2SVcbKEIgLyBLT0dVQ0hJGyRCISQbKEJUQUtVTw==?=)
-Date: Mon, 2 Apr 2018 09:22:25 +0000
-Subject: [cip-dev] socfpga-4.4-cip-rt branch is now available at the
-	cip-playground
-Message-ID: <390B4EACA1A32748BA6BC7F859F7D7165D2B136F@GSjpTKYDCembx31.service.hitachi.net>
+From: agustin.benito@codethink.co.uk (=?ISO-8859-1?Q?Agust=EDn?= Benito Bethencourt)
+Date: Tue, 03 Apr 2018 11:01:02 +0200
+Subject: [cip-dev] Kernel maintenance weekly meeting through IRC
+Message-ID: <1637483.JF1BPEa7VF@linux-if6s>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
-Did you know CIP kernel for Intel SoC FPGA have been available at the cip-playground?
-https://gitlab.com/cip-playground/linux-cip-cyclonev
-WARNING: This is not an official CIP release.
+Dear colleagues at Moxa,
 
-I have just added socfpga-4.4-cip-rt branch which is basically merging linux-cip-rt.git v4.4.120-cip20-rt13 on top of the release at the https://github.com/altera-opensource/linux-socfpga (socfpga-4.4 branch seems no more available)
-Many thanks to Ben and Daniel.
+what about having the agreed weekly IRC meeting on Thursdays at 10 BST (UTC
++1), which is 11 CEST (UTC+2) and 17:00 CST (UTC+8) , in the #cip channel at 
+freenode ?
 
-Enjoy, if you have a board with cyclone5!
 
-Takuo Koguchi
+Best Regards
+-- 
+Agust?n Benito Bethencourt
+Principal Consultant
+Codethink Ltd
