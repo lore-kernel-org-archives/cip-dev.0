@@ -1,18 +1,15 @@
 From: agustin.benito@codethink.co.uk (=?ISO-8859-1?Q?Agust=EDn?= Benito Bethencourt)
-Date: Tue, 03 Apr 2018 11:50:58 +0200
-Subject: [cip-dev] CIP Member Spotlight: Codethink
-Message-ID: <2050341.u93dI1MffN@linux-if6s>
+Date: Wed, 04 Apr 2018 16:27:40 +0200
+Subject: [cip-dev] Article about CIP at ELC
+Message-ID: <1994279.b6tIllqenT@linux-if6s>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi,
 
-I assume most of you have seen it already, but for those who do not...
+have you read this?
 
-There is a new article from the CIP Member Spotlight series, this time from 
-Codethink.
-
-Link: https://www.cip-project.org/blog/2018/03/20/cip-member-spotlight-codethink
+Link: http://linuxgizmos.com/civil-infrastructure-platform-wants-linux-to-save-civilization/
 
 Best Regards
 
