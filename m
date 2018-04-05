@@ -1,26 +1,35 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Wed, 04 Apr 2018 19:48:45 +0200
-Subject: [cip-dev] Kernel feature support
-In-Reply-To: <FAF29B5BFF9BF5439C88554EE7A20506F86B25E4@MHQMBX02.moxa.com>
-References: <FAF29B5BFF9BF5439C88554EE7A20506F86B25E4@MHQMBX02.moxa.com>
-Message-ID: <1522864125.2654.178.camel@codethink.co.uk>
+From: maemalynn@linuxfoundation.org (Maemalynn Meanor)
+Date: Wed, 4 Apr 2018 22:12:55 -0700
+Subject: [cip-dev] New CIP Blog Post
+Message-ID: <5004DB23-EC64-48CA-8E5E-8217D800CFBC@linuxfoundation.org>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Sat, 2018-03-31 at 07:56 +0000, Wes Huang (???) wrote:
-> Hi,
-> ?
-> Sorry for the late reply.
-> ?
-> Please find attached a Moxa kernel configuration using CIP kernel
-> 4.4.
+Hi All:
 
-Thanks, I've added that to my collection.
+Our latest CIP blog recapping ELC-NA/OpenIoT Summit is now live. You can view it here: https://www.cip-project.org/blog/2018/04/04/cip-on-display-at-elc-na <https://www.cip-project.org/blog/2018/04/04/cip-on-display-at-elc-na>
 
-(I should really put these up on Gitlab somewhere.)
+You can retweet us here: https://twitter.com/cip_project/status/981584938939142146 <https://twitter.com/cip_project/status/981584938939142146>
 
-Ben.
+If you chose to promote the blog on your own, we just ask that you tag @cip_project. We?ll monitor the tweets and will retweet content that you promote. 
 
--- 
-Ben Hutchings
-Software Developer, Codethink Ltd.
+Also, we?re always looking for technical writers. If you?d like to contribute a technical CIP blog post, please email me and let me know the topic. I?m happy to help coordinate a timeline that works for you. 
+
+Thank you!
+Mae
+
+
+Maemalynn Meanor
+PR Manager 
+The Linux Foundation
+Maemalynn at linuxfoundation.org
+(602) 541-0356
+Skype: Maemalynn
+
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180404/e28d3872/attachment.html>
