@@ -1,68 +1,65 @@
 From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Tue, 10 Apr 2018 17:51:33 +0100
-Subject: [cip-dev] [PATCH 6/7] ARM: dts: r8a7743: Add USB-DMAC device
- nodes
-In-Reply-To: <TY1PR01MB17708DE86986BEB8D5702986C0D00@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1520336087-12870-1-git-send-email-fabrizio.castro@bp.renesas.com>
-	<1520336087-12870-7-git-send-email-fabrizio.castro@bp.renesas.com>
-	<1521067650.23626.110.camel@codethink.co.uk>
-	<TY1PR01MB17708DE86986BEB8D5702986C0D00@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-Message-ID: <1523379093.2654.186.camel@codethink.co.uk>
+Date: Tue, 10 Apr 2018 18:13:00 +0100
+Subject: [cip-dev] [PATCH 00/15] Add UART support to r8a7743
+In-Reply-To: <1520247731-25239-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1520247731-25239-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1523380380.2654.187.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Thu, 2018-03-15 at 16:07 +0000, Fabrizio Castro wrote:
-> Hi Ben,
-> 
-> > Subject: Re: [cip-dev][PATCH 6/7] ARM: dts: r8a7743: Add USB-DMAC device nodes
-> > 
-> > [This sender failed our fraud detection checks and may not be who they appear to be. Learn about spoofing at
-> > http://aka.ms/LearnAboutSpoofing]
-> > 
-> > On Tue, 2018-03-06 at 11:34 +0000, Fabrizio Castro wrote:
-> > > From: Biju Das <biju.das@bp.renesas.com>
-> > > 
-> > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> > > Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> > > (cherry picked from commit 310861003a0d59cb410538bcdf73a218157a111d)
-> > > (modified clocks and power-domains properties, removed resets property)
-> > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > > ---
-> > > ?arch/arm/boot/dts/r8a7743.dtsi | 24 ++++++++++++++++++++++++
-> > > ?1 file changed, 24 insertions(+)
-> > > 
-> > > diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-> > > index 1237746..db00959 100644
-> > > --- a/arch/arm/boot/dts/r8a7743.dtsi
-> > > +++ b/arch/arm/boot/dts/r8a7743.dtsi
-> > > @@ -309,6 +309,30 @@
-> > > ??????????????????????dma-channels = <15>;
-> > > ??????????????};
-> > > 
-> > > +?????????????usb_dmac0: dma-controller at e65a0000 {
-> > > +?????????????????????compatible = "renesas,usb-dmac";
-> > 
-> > [...]
-> > 
-> > Why no "renesas,r8a7743-usb-dmac" compatible string?
-> 
-> It's down to the dt-bindings, commit 0b2eed49875ec3605b7a71bdf05adc8c1cbd49fc
-> introduces SoC specific support, this would trigger changes to the corresponding SoC
-> specific DT touched by such a change,
-
-It adds documentation of the string.  It wouldn't trigger anything.
-
-> and as usual, where do we draw the line with
-> the backporting? Would you rather I used "renesas,r8a7743-usb-dmac" instead?
-
-In general we should make the minimum necessary changes to a backported
-commit.  Deleting one of the compatible strings does not appear to be
-necessary.
+I've applied this series, thanks.
 
 Ben.
 
+On Mon, 2018-03-05 at 11:01 +0000, Fabrizio Castro wrote:
+> This series aims at adding UART support to r8a7743 by backporting
+> the relevant patches from upstream.
+> As per upstream, since two of the serial interfaces live on the
+> camera daughter board, we rework the DT architecture to better
+> accomodate all the possible HW variants.
+> 
+> Finally, in order to get CTS/RTS to work this series backports
+> fixes made by Geert some time ago.
+> 
+> Thanks,
+> Fabrizio
+> 
+> Biju Das (1):
+> ? ARM: dts: iwg20d-q7: Add chosen node
+> 
+> Fabrizio Castro (3):
+> ? ARM: dts: iwg20d-q7: Rework DT architecture
+> ? ARM: dts: iwg20d-q7-dbcm-ca: Add device trees for camera DB
+> ? ARM: dts: iwg20d-q7: Add support for ttySC3
+> 
+> Geert Uytterhoeven (11):
+> ? serial: sh-sci: Update DT binding documentation for GPIO modem lines
+> ? serial: sh-sci: Update DT binding documentation for dedicated RTS/CTS
+> ? serial: sh-sci: Always set TIOCM_CTS in .get_mctrl() callback
+> ? serial: sh-sci: Add support for GPIO-controlled modem lines
+> ? serial: sh-sci: Do not open-code sci_getreg()
+> ? serial: sh-sci: Add more Serial Port Register documentation
+> ? serial: sh-sci: Add more Serial Port Control/Data Register
+> ????documentation
+> ? serial: sh-sci: Correct pin initialization on (H)SCIF
+> ? serial: sh-sci: Add pin initialization for SCIFA/SCIFB
+> ? serial: sh-sci: Fix support for hardware-assisted RTS/CTS
+> ? serial: sh-sci: Add DT support for dedicated RTS/CTS
+> 
+> ?.../bindings/serial/renesas,sci-serial.txt?????????|???4 +
+> ?arch/arm/boot/dts/Makefile?????????????????????????|???1 +
+> ?arch/arm/boot/dts/iwg20d-q7-common.dtsi????????????| 127 +++++++++++++++
+> ?arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi???????????|??43 +++++
+> ?arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts????|??19 +++
+> ?arch/arm/boot/dts/r8a7743-iwg20d-q7.dts????????????| 100 +-----------
+> ?drivers/tty/serial/Kconfig?????????????????????????|???1 +
+> ?drivers/tty/serial/sh-sci.c????????????????????????| 177 ++++++++++++++++++---
+> ?drivers/tty/serial/sh-sci.h????????????????????????|??24 ++-
+> ?9 files changed, 365 insertions(+), 131 deletions(-)
+> ?create mode 100644 arch/arm/boot/dts/iwg20d-q7-common.dtsi
+> ?create mode 100644 arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi
+> ?create mode 100644 arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts
+> 
 -- 
 Ben Hutchings
 Software Developer, Codethink Ltd.
