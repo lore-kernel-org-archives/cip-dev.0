@@ -1,35 +1,55 @@
-From: maemalynn@linuxfoundation.org (Maemalynn Meanor)
-Date: Wed, 4 Apr 2018 22:12:55 -0700
-Subject: [cip-dev] New CIP Blog Post
-Message-ID: <5004DB23-EC64-48CA-8E5E-8217D800CFBC@linuxfoundation.org>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Tue, 10 Apr 2018 17:39:55 +0100
+Subject: [cip-dev] [PATCH 09/15] serial: sh-sci: Add pin initialization
+ for SCIFA/SCIFB
+In-Reply-To: <TYXPR01MB1775A455092699B98F41D92DC0D00@TYXPR01MB1775.jpnprd01.prod.outlook.com>
+References: <1520247731-25239-1-git-send-email-fabrizio.castro@bp.renesas.com>
+	<1520247731-25239-10-git-send-email-fabrizio.castro@bp.renesas.com>
+	<1520871976.23626.79.camel@codethink.co.uk>
+	<TYXPR01MB1775A455092699B98F41D92DC0D00@TYXPR01MB1775.jpnprd01.prod.outlook.com>
+Message-ID: <1523378395.2654.184.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi All:
+On Thu, 2018-03-15 at 14:33 +0000, Fabrizio Castro wrote:
+> Hi Ben,
+> 
+> > Subject: Re: [cip-dev][PATCH 09/15] serial: sh-sci: Add pin initialization for SCIFA/SCIFB
+> > 
+> > [This sender failed our fraud detection checks and may not be who they appear to be. Learn about spoofing at
+> > http://aka.ms/LearnAboutSpoofing]
+> > 
+> > On Mon, 2018-03-05 at 11:02 +0000, Fabrizio Castro wrote:
+> > > From: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > 
+> > > Before, the driver relied on initialization by the boot loader, or by
+> > > implicit reset state.
+> > > 
+> > > Note that unlike on (H)SCIF, the RTS/CTS bits exist only if dedicated
+> > > RTS/CTS pins are available, which depends on the SoC and UART instance.
+> > > 
+> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > (cherry picked from commit e9d7a45a039913497a57887d85f5decfda4679f0)
+> > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > 
+> > [...]
+> > 
+> > Shouldn't we also take:
+> > 
+> > 5f76895e4c71 serial: sh-sci: Fix late enablement of AUTORTS
+> > cfa6eb239154 serial: sh-sci: Fix (AUTO)RTS in sci_init_pins()
+> 
+> I had a quick look at those patches before submitting the series, and it looks
+> like the second patch comes with a little bit of baggage (more backporting),
+> and I wasn't sure where to draw the line.
+> If you feel like those fixes are necessary I'll backport them, just let me know.
 
-Our latest CIP blog recapping ELC-NA/OpenIoT Summit is now live. You can view it here: https://www.cip-project.org/blog/2018/04/04/cip-on-display-at-elc-na <https://www.cip-project.org/blog/2018/04/04/cip-on-display-at-elc-na>
+I'll accept your decision; I just wanted to make sure you didn't
+accidentally leave them out.
 
-You can retweet us here: https://twitter.com/cip_project/status/981584938939142146 <https://twitter.com/cip_project/status/981584938939142146>
+Ben.
 
-If you chose to promote the blog on your own, we just ask that you tag @cip_project. We?ll monitor the tweets and will retweet content that you promote. 
-
-Also, we?re always looking for technical writers. If you?d like to contribute a technical CIP blog post, please email me and let me know the topic. I?m happy to help coordinate a timeline that works for you. 
-
-Thank you!
-Mae
-
-
-Maemalynn Meanor
-PR Manager 
-The Linux Foundation
-Maemalynn at linuxfoundation.org
-(602) 541-0356
-Skype: Maemalynn
-
-
-
-
-
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180404/e28d3872/attachment.html>
+-- 
+Ben Hutchings
+Software Developer, Codethink Ltd.
