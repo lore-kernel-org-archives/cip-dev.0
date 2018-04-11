@@ -1,44 +1,56 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Tue, 10 Apr 2018 19:04:38 +0100
-Subject: [cip-dev] [PATCH 0/4] Add XHCI support to r8a7743
-In-Reply-To: <1520589424-15807-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1520589424-15807-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1523383478.2654.197.camel@codethink.co.uk>
+From: sz.lin@moxa.com (=?UTF-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Thu, 12 Apr 2018 01:43:25 +0800
+Subject: [cip-dev] Kernel maintenance weekly meeting through IRC
+In-Reply-To: <1637483.JF1BPEa7VF@linux-if6s>
+References: <1637483.JF1BPEa7VF@linux-if6s>
+Message-ID: <CAFk6z8PjT2xqGXF6rrKvjaSXfaGfdTOaGHe=MwLq-fZuSMKBnA@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Fri, 2018-03-09 at 09:57 +0000, Fabrizio Castro wrote:
-> Dear All,
-> 
-> this series adds XHCI support to r8a7743.
-> The only patch that hasn't been backported is:
-> "usb: host: xhci-plat: Add r8a7743 support"
-> 
-> The reason for the new commit is that the backporting of the generic
-> compatible string for R-Car Gen2 would have brought along a few
-> unnecessary bits and pieces, a new commit seemed to address the goal
-> more reliably.
+Hi Agustin,
 
-That seems reasonable.  I've applied this series, thanks.
+I've organized the current member candidates and preferred subsystem in below
 
-Ben.
+Member candidates/ subsystem
+--------------------------------------------
+Tzongyen/ RT preempt/ xenomai
+Gavin/ Networking
+Vidda/ Wireless networking
+Taiyi/ Storage
+Harry/ Linux Security Modules (LSM)
+SZ/ Cellular
+Wes/ Ethernet driver
 
-> Thanks,
-> 
-> Fabrizio Castro (3):
-> ? usb: host: xhci-plat: Add r8a7743 support
-> ? dt-bindings: usb-xhci: Document r8a7743 support
-> ? ARM: dts: r8a7743: Add xhci support to SoC dtsi
-> 
-> Simon Horman (1):
-> ? ARM: shmobile: enable XHCI_RCAR in defconfig
-> 
-> ?Documentation/devicetree/bindings/usb/usb-xhci.txt |??4 ++--
-> ?arch/arm/boot/dts/r8a7743.dtsi?????????????????????| 18 ++++++++++++++++++
-> ?arch/arm/configs/shmobile_defconfig????????????????|??2 ++
-> ?drivers/usb/host/xhci-plat.c???????????????????????|??7 +++++--
-> ?4 files changed, 27 insertions(+), 4 deletions(-)
-> 
--- 
-Ben Hutchings
-Software Developer, Codethink Ltd.
+We have learned maintenance policy of LTS;therefore, I think the next
+step is to discuss how to start hands-on tasks.
+
+Here is the proposed agenda for the meeting:
+
+1. CIP kernel maintenance team working flow
+e.g., by subsystem driven.
+
+2. Hands-on tasks for team member
+
+Any suggestions are welcome.
+
+SZ
+
+2018-04-03 17:01 GMT+08:00 Agust?n Benito Bethencourt
+<agustin.benito@codethink.co.uk>:
+>
+> Dear colleagues at Moxa,
+>
+> what about having the agreed weekly IRC meeting on Thursdays at 10 BST (UTC
+> +1), which is 11 CEST (UTC+2) and 17:00 CST (UTC+8) , in the #cip channel at
+> freenode ?
+>
+>
+> Best Regards
+> --
+> Agust?n Benito Bethencourt
+> Principal Consultant
+> Codethink Ltd
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
