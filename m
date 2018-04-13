@@ -1,43 +1,31 @@
-From: agustin.benito@codethink.co.uk (=?ISO-8859-1?Q?Agust=EDn?= Benito Bethencourt)
-Date: Thu, 12 Apr 2018 17:37:41 +0200
-Subject: [cip-dev] Important: planned movement of the cip-kernel repo on
-	Gitlab: Thursday 19th April 10:00 UTC
-Message-ID: <2728424.ub8oesVq9r@linux-if6s>
+From: maemalynn@linuxfoundation.org (Maemalynn Meanor)
+Date: Thu, 12 Apr 2018 19:10:42 -0700
+Subject: [cip-dev] CIP Coverage - Linux.com
+Message-ID: <24C7774A-EB27-4CCF-B591-FCEEC8B46475@linuxfoundation.org>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Dear CIP lovers,
+CIP Community members:
 
-this week Ben H. and I agreed that we need a new repo to store the current 
-kernel-configs provided by Members. Since we already have several repos related 
-with the kernel, the right thing to do is to create a sub-project and store 
-them there, so we decrease entropy.
+Today, CIP was featured in another Linux.com article, which featured an interview with Wolfgang Mauerer from Siemens. You can read the article here: https://www.linux.com/blog/2018/4/civil-infrastructure-platform-looks-takes-open-source-industrial-scale <https://www.linux.com/blog/2018/4/civil-infrastructure-platform-looks-takes-open-source-industrial-scale>.
 
-The new sub-project for CIP kernel related repositories is: https://
-gitlab.com/cip-project/cip-kernel
+We?ve already promoted this on @cip_project, so if you?d like to retweet us, you can do so here: https://twitter.com/cip_project/status/984529145454583809 <https://twitter.com/cip_project/status/984529145454583809>
 
-Moving the CIP kernel repo to this new sub-project might affect users that are 
-pointing to it. The planned movement date is:
+Thank you!
+Mae
 
-* Thursday 19th April 2018 at 10:00 UTC.
 
-In case you can automate the change, here are the links you need to have in 
-consideration:
-* The current repo URL is:  https://gitlab.com/cip-project/linux-cip 
-* The new URL will be: https://gitlab.com/cip-project/cip-kernel/linux-cip 
+Maemalynn Meanor
+PR Manager 
+The Linux Foundation
+Maemalynn at linuxfoundation.org
+(602) 541-0356
+Skype: Maemalynn
 
-Please plan accordingly.
 
-I have no previous experience moving such big repos on gitlab.com so expect 
-some downtine. In the worst scenario, please remember that you can point to 
-Ben H. repo: git://git.kernel.org/pub/scm/linux/kernel/git/bwh/linux-cip.git
 
-The reasons why we do not copy the repo into a new location and then deprecate 
-the old one, instead of going for a hard/hot move, are storage limitations and 
-failure rate on Gitlab when mirroring such big repos.
 
-Best Regards
--- 
-Agust?n Benito Bethencourt
-Principal Consultant
-Codethink Ltd
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180412/c0189ad5/attachment.html>
