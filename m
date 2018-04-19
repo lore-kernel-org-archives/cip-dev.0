@@ -1,28 +1,25 @@
-From: fw@deneb.enyo.de (Florian Weimer)
-Date: Wed, 18 Apr 2018 19:29:29 +0200
-Subject: [cip-dev] ARM64 and Debian LTS
-In-Reply-To: <1524062830.2587.7.camel@codethink.co.uk> (Ben Hutchings's
-	message of "Wed, 18 Apr 2018 15:47:10 +0100")
-References: <1536891.WlvLrdFcEH@linux-if6s>
-	<606a799a-cf5c-4f10-3789-19084d3f38e4@siemens.com>
-	<3200087.i7ITxrmn3d@linux-if6s>
-	<1524062830.2587.7.camel@codethink.co.uk>
-Message-ID: <87efjcjudi.fsf@mid.deneb.enyo.de>
+From: agustin.benito@codethink.co.uk (=?ISO-8859-1?Q?Agust=EDn?= Benito Bethencourt)
+Date: Thu, 19 Apr 2018 10:46:38 +0200
+Subject: [cip-dev] cip-dev IRC meeting agenda: week 16
+Message-ID: <2298811.xL9SSsxIgg@linux-if6s>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-* Ben Hutchings:
+Hi,
 
-> The list of architectures for jessie LTS is not decided and I haven't
-> seen any discussion of it yet.  The starting point for discussion would
-> be the list of architectures included in Debian 7 LTS, and that didn't
-> include arm64 because it wasn't in Debian 7 to start with.
->
-> I think that a proposal to include arm64 in Debian 8 LTS would probably
-> be accepted.  There should be no practical issues with maintaining the
-> infrastructure for it as arm64 hardware is only becoming more easily
-> available.
+Meeting on chat.freenode.net/#cip
 
-Does it?  I don't think there is any commercially viable, server-class
-arm64 hardware you can buy today.  How can you promise long-term
-support for hardware that does not actually exist?
+agenda for today's meeting:
+* Remaining questions to bwh about Debian LTS, if any.
+* Kernel LTS interim patch review process: discussion.
+** Please review the thread about this topic on cip-dev
+* AOB
+
+Any other point?
+
+Best Regards
+
+-- 
+Agust?n Benito Bethencourt
+Principal Consultant
+Codethink Ltd
