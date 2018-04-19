@@ -1,197 +1,23 @@
-From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Thu, 19 Apr 2018 10:33:01 +0100
-Subject: [cip-dev] [PATCH 6/6] i2c: rcar: init new messages in irq
-In-Reply-To: <1524130381-4346-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1524130381-4346-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1524130381-4346-7-git-send-email-fabrizio.castro@bp.renesas.com>
+From: agustin.benito@codethink.co.uk (=?ISO-8859-1?Q?Agust=EDn?= Benito Bethencourt)
+Date: Thu, 19 Apr 2018 11:37:19 +0200
+Subject: [cip-dev] Minutes: Re:  cip-dev IRC meeting agenda: week 16
+In-Reply-To: <2298811.xL9SSsxIgg@linux-if6s>
+References: <2298811.xL9SSsxIgg@linux-if6s>
+Message-ID: <2599913.44DkEt70JB@linux-if6s>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Hi,
 
-Setting up new messages was done in process context while handling a
-message was in interrupt context. Because of the HW design, this IP core
-is sensitive to timing, so the context switches were too expensive. Move
-this setup to interrupt context as well.
+please find the minutes of the cip-dev meeting 
 
-In my test setup, this fixed the occasional 'data byte sent twice' issue
-which a number of people have seen. It also fixes to send REP_START
-after a read message which was wrongly send as a STOP + START sequence
-before.
+https://irclogs.baserock.org/cip/%23cip.
+2018-04-19.log.html#t2018-04-19T09:00:48
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-(cherry picked from commit cc21d0b4b62e41e5013d763adade5ea4462c33a4)
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reported-by: Zoran Stojsavljevic <zoran.stojsavljevic.de@gmail.com>
----
- drivers/i2c/busses/i2c-rcar.c | 90 +++++++++++++++++++++----------------------
- 1 file changed, 43 insertions(+), 47 deletions(-)
+Best Regards
 
-diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-index c57ba96..37aa8a3 100644
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -267,10 +267,17 @@ static void rcar_i2c_prepare_msg(struct rcar_i2c_priv *priv)
- 	rcar_i2c_write(priv, ICMIER, read ? RCAR_IRQ_RECV : RCAR_IRQ_SEND);
- }
- 
-+static void rcar_i2c_next_msg(struct rcar_i2c_priv *priv)
-+{
-+	priv->msg++;
-+	priv->msgs_left--;
-+	rcar_i2c_prepare_msg(priv);
-+}
-+
- /*
-  *		interrupt functions
-  */
--static int rcar_i2c_irq_send(struct rcar_i2c_priv *priv, u32 msr)
-+static void rcar_i2c_irq_send(struct rcar_i2c_priv *priv, u32 msr)
- {
- 	struct i2c_msg *msg = priv->msg;
- 
-@@ -280,7 +287,7 @@ static int rcar_i2c_irq_send(struct rcar_i2c_priv *priv, u32 msr)
- 	 * Do nothing
- 	 */
- 	if (!(msr & MDE))
--		return 0;
-+		return;
- 
- 	/*
- 	 * If address transfer phase finished,
-@@ -309,29 +316,23 @@ static int rcar_i2c_irq_send(struct rcar_i2c_priv *priv, u32 msr)
- 		 * [ICRXTX] -> [SHIFT] -> [I2C bus]
- 		 */
- 
--		if (priv->flags & ID_LAST_MSG)
-+		if (priv->flags & ID_LAST_MSG) {
- 			/*
- 			 * If current msg is the _LAST_ msg,
- 			 * prepare stop condition here.
- 			 * ID_DONE will be set on STOP irq.
- 			 */
- 			rcar_i2c_write(priv, ICMCR, RCAR_BUS_PHASE_STOP);
--		else
--			/*
--			 * If current msg is _NOT_ last msg,
--			 * it doesn't call stop phase.
--			 * thus, there is no STOP irq.
--			 * return ID_DONE here.
--			 */
--			return ID_DONE;
-+		} else {
-+			rcar_i2c_next_msg(priv);
-+			return;
-+		}
- 	}
- 
- 	rcar_i2c_write(priv, ICMSR, RCAR_IRQ_ACK_SEND);
--
--	return 0;
- }
- 
--static int rcar_i2c_irq_recv(struct rcar_i2c_priv *priv, u32 msr)
-+static void rcar_i2c_irq_recv(struct rcar_i2c_priv *priv, u32 msr)
- {
- 	struct i2c_msg *msg = priv->msg;
- 
-@@ -341,7 +342,7 @@ static int rcar_i2c_irq_recv(struct rcar_i2c_priv *priv, u32 msr)
- 	 * Do nothing
- 	 */
- 	if (!(msr & MDR))
--		return 0;
-+		return;
- 
- 	if (msr & MAT) {
- 		/*
-@@ -367,9 +368,10 @@ static int rcar_i2c_irq_recv(struct rcar_i2c_priv *priv, u32 msr)
- 	else
- 		rcar_i2c_write(priv, ICMCR, RCAR_BUS_PHASE_DATA);
- 
--	rcar_i2c_write(priv, ICMSR, RCAR_IRQ_ACK_RECV);
--
--	return 0;
-+	if (priv->pos == msg->len && !(priv->flags & ID_LAST_MSG))
-+		rcar_i2c_next_msg(priv);
-+	else
-+		rcar_i2c_write(priv, ICMSR, RCAR_IRQ_ACK_RECV);
- }
- 
- static bool rcar_i2c_slave_irq(struct rcar_i2c_priv *priv)
-@@ -462,14 +464,15 @@ static irqreturn_t rcar_i2c_irq(int irq, void *ptr)
- 
- 	/* Stop */
- 	if (msr & MST) {
-+		priv->msgs_left--; /* The last message also made it */
- 		rcar_i2c_flags_set(priv, ID_DONE);
- 		goto out;
- 	}
- 
- 	if (rcar_i2c_is_recv(priv))
--		rcar_i2c_flags_set(priv, rcar_i2c_irq_recv(priv, msr));
-+		rcar_i2c_irq_recv(priv, msr);
- 	else
--		rcar_i2c_flags_set(priv, rcar_i2c_irq_send(priv, msr));
-+		rcar_i2c_irq_send(priv, msr);
- 
- out:
- 	if (rcar_i2c_flags_has(priv, ID_DONE)) {
-@@ -501,35 +504,28 @@ static int rcar_i2c_master_xfer(struct i2c_adapter *adap,
- 		/* This HW can't send STOP after address phase */
- 		if (msgs[i].len == 0) {
- 			ret = -EOPNOTSUPP;
--			break;
--		}
--
--		/* init each data */
--		priv->msg = &msgs[i];
--		priv->msgs_left = num - i;
--
--		rcar_i2c_prepare_msg(priv);
--
--		time_left = wait_event_timeout(priv->wait,
--					     rcar_i2c_flags_has(priv, ID_DONE),
--					     adap->timeout);
--		if (!time_left) {
--			rcar_i2c_init(priv);
--			ret = -ETIMEDOUT;
--			break;
--		}
--
--		if (rcar_i2c_flags_has(priv, ID_NACK)) {
--			ret = -ENXIO;
--			break;
--		}
--
--		if (rcar_i2c_flags_has(priv, ID_ARBLOST)) {
--			ret = -EAGAIN;
--			break;
-+			goto out;
- 		}
-+	}
- 
--		ret = i + 1; /* The number of transfer */
-+	/* init data */
-+	priv->msg = msgs;
-+	priv->msgs_left = num;
-+
-+	rcar_i2c_prepare_msg(priv);
-+
-+	time_left = wait_event_timeout(priv->wait,
-+				     rcar_i2c_flags_has(priv, ID_DONE),
-+				     num * adap->timeout);
-+	if (!time_left) {
-+		rcar_i2c_init(priv);
-+		ret = -ETIMEDOUT;
-+	} else if (rcar_i2c_flags_has(priv, ID_NACK)) {
-+		ret = -ENXIO;
-+	} else if (rcar_i2c_flags_has(priv, ID_ARBLOST)) {
-+		ret = -EAGAIN;
-+	} else {
-+		ret = num - priv->msgs_left; /* The number of transfer */
- 	}
- out:
- 	pm_runtime_put(dev);
+
 -- 
-2.7.4
+Agust?n Benito Bethencourt
+Principal Consultant
+Codethink Ltd
