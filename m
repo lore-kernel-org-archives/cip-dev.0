@@ -1,53 +1,32 @@
-From: agustin.benito@codethink.co.uk (=?ISO-8859-1?Q?Agust=EDn?= Benito Bethencourt)
-Date: Thu, 19 Apr 2018 10:51:28 +0200
-Subject: [cip-dev] Important: planned movement of the cip-kernel repo on
-	Gitlab: Thursday 19th April 10:00 UTC
-In-Reply-To: <2728424.ub8oesVq9r@linux-if6s>
-References: <2728424.ub8oesVq9r@linux-if6s>
-Message-ID: <2715410.MnXGQhdvXK@linux-if6s>
+From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
+Date: Thu, 19 Apr 2018 10:32:55 +0100
+Subject: [cip-dev] [PATCH 0/6] Fix R-Car I2C data byte sent twice issue
+Message-ID: <1524130381-4346-1-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+Hello Ben,
 
-On Thursday, 12 April 2018 17:37:41 CEST Agust?n Benito Bethencourt wrote:
-> Dear CIP lovers,
-> 
-> this week Ben H. and I agreed that we need a new repo to store the current
-> kernel-configs provided by Members. Since we already have several repos
-> related with the kernel, the right thing to do is to create a sub-project
-> and store them there, so we decrease entropy.
-> 
-> The new sub-project for CIP kernel related repositories is: https://
-> gitlab.com/cip-project/cip-kernel
-> 
-> Moving the CIP kernel repo to this new sub-project might affect users that
-> are pointing to it. The planned movement date is:
-> 
-> * Thursday 19th April 2018 at 10:00 UTC.
+a few weeks ago Zoran Stojsavljevic reported a problem with the RTC
+on the iwg20d that turned out to be a problem with the I2C driver
+sporadically sending data twice. This series backports the commits
+from Wolfram that make up for the fix.
 
-Reminder: this will take place later today.
+This series applies on top of v4.4.126-cip22.
 
-> 
-> In case you can automate the change, here are the links you need to have in
-> consideration:
-> * The current repo URL is:  https://gitlab.com/cip-project/linux-cip
-> * The new URL will be: https://gitlab.com/cip-project/cip-kernel/linux-cip
-> 
-> Please plan accordingly.
-> 
-> I have no previous experience moving such big repos on gitlab.com so expect
-> some downtine. In the worst scenario, please remember that you can point to
-> Ben H. repo: git://git.kernel.org/pub/scm/linux/kernel/git/bwh/linux-cip.git
-> 
-> The reasons why we do not copy the repo into a new location and then
-> deprecate the old one, instead of going for a hard/hot move, are storage
-> limitations and failure rate on Gitlab when mirroring such big repos.
-> 
-> Best Regards
+Thanks,
+Fabrizio
 
+Wolfram Sang (6):
+  i2c: rcar: make sure clocks are on when doing clock calculation
+  i2c: rcar: rework hw init
+  i2c: rcar: remove unused IOERROR state
+  i2c: rcar: remove spinlock
+  i2c: rcar: refactor setup of a msg
+  i2c: rcar: init new messages in irq
+
+ drivers/i2c/busses/i2c-rcar.c | 166 ++++++++++++++++++------------------------
+ 1 file changed, 72 insertions(+), 94 deletions(-)
 
 -- 
-Agust?n Benito Bethencourt
-Principal Consultant
-Codethink Ltd
+2.7.4
