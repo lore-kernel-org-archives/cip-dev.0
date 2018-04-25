@@ -1,121 +1,31 @@
-From: zoran.stojsavljevic.de@gmail.com (Zoran S)
-Date: Tue, 24 Apr 2018 04:18:51 +0200
-Subject: [cip-dev] Important: planned movement of the cip-kernel repo on
- Gitlab: Thursday 19th April 10:00 UTC
-In-Reply-To: <1764316.KvSMvmO5Pl@linux-if6s>
-References: <2728424.ub8oesVq9r@linux-if6s> <1871248.M76jf90Ws8@linux-if6s>
-	<CAEss1EKhK1b7v99TiDMUnDvNDq7B4tz=i4bYb_HhuiLK+4okeA@mail.gmail.com>
-	<1764316.KvSMvmO5Pl@linux-if6s>
-Message-ID: <CAEss1EJmB=jmwYQu4jrcKmppA6ga+A8unihstoUaEUqpv_A9KA@mail.gmail.com>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Wed, 25 Apr 2018 14:18:49 +0100
+Subject: [cip-dev] Reviewing 4.4 stable updates
+Message-ID: <1524662329.2587.28.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-> And the arguments for such reconsideration in your opinion are.... ?
+I intended to bounce the review messages for 4.4.128 to this list so
+everyone could see them, but this seems to be blocked by some mail
+filter.
 
-Freedom of choice, for the comfortability and usability reasons.
+Instead I've saved them to an mbox file which is available from:
+http://download.cip-project.org/cip-kernel/stable-4.4.128-review.mbox
+This can be imported into:
 
-Zoran
-_______
+- Apple Mail: https://support.apple.com/kb/PH22318?locale=en_US
+- Evolution: https://help.gnome.org/users/evolution/stable/import-single-files.html.en
+- Thunderbird: http://kb.mozillazine.org/Thunderbird_:_FAQs_:_Migration#Manually_importing_and_exporting
 
-On Mon, Apr 23, 2018 at 6:56 PM, Agust?n Benito Bethencourt
-<agustin.benito@codethink.co.uk> wrote:
-> Hi,
->
-> On Monday, 23 April 2018 16:00:12 CEST Zoran S wrote:
->> > We use gitlab based on a TSC (Technical Steering Committee) decision.
->>
->> TSC should reconsider (at least to duplicate).
->
-> And the arguments for such reconsideration in your opinion are.... ?
->
->>
->> Zoran
->> _______
->>
->> On Thu, Apr 19, 2018 at 12:08 PM, Agust?n Benito Bethencourt
->>
->> <agustin.benito@codethink.co.uk> wrote:
->> > Hi Zoran
->> >
->> > On Thursday, 19 April 2018 12:03:46 CEST Zoran S wrote:
->> >> Here, I would like to propose the same to be replicated on GitHub.
->> >>
->> >> Personally, I do like much more GitHub... But this is me and my
->> >> wishes, only! ;-)
->> >
->> > We use gitlab based on a TSC (Technical Steering Committee) decision.
->> >
->> >> Zoran
->> >>
->> >> On Thu, Apr 19, 2018 at 10:51 AM, Agust?n Benito Bethencourt
->> >>
->> >> <agustin.benito@codethink.co.uk> wrote:
->> >> > Hi,
->> >> >
->> >> > On Thursday, 12 April 2018 17:37:41 CEST Agust?n Benito Bethencourt
-> wrote:
->> >> >> Dear CIP lovers,
->> >> >>
->> >> >> this week Ben H. and I agreed that we need a new repo to store the
->> >> >> current
->> >> >> kernel-configs provided by Members. Since we already have several
->> >> >> repos
->> >> >> related with the kernel, the right thing to do is to create a
->> >> >> sub-project
->> >> >> and store them there, so we decrease entropy.
->> >> >>
->> >> >> The new sub-project for CIP kernel related repositories is: https://
->> >> >> gitlab.com/cip-project/cip-kernel
->> >> >>
->> >> >> Moving the CIP kernel repo to this new sub-project might affect users
->> >> >> that
->> >> >> are pointing to it. The planned movement date is:
->> >> >>
->> >> >> * Thursday 19th April 2018 at 10:00 UTC.
->> >> >
->> >> > Reminder: this will take place later today.
->> >> >
->> >> >> In case you can automate the change, here are the links you need to
->> >> >> have
->> >> >> in
->> >> >> consideration:
->> >> >> * The current repo URL is:  https://gitlab.com/cip-project/linux-cip
->> >> >> * The new URL will be:
->> >> >> https://gitlab.com/cip-project/cip-kernel/linux-cip
->> >> >>
->> >> >> Please plan accordingly.
->> >> >>
->> >> >> I have no previous experience moving such big repos on gitlab.com so
->> >> >> expect
->> >> >> some downtine. In the worst scenario, please remember that you can
->> >> >> point
->> >> >> to
->> >> >> Ben H. repo:
->> >> >> git://git.kernel.org/pub/scm/linux/kernel/git/bwh/linux-cip.git
->> >> >>
->> >> >> The reasons why we do not copy the repo into a new location and then
->> >> >> deprecate the old one, instead of going for a hard/hot move, are
->> >> >> storage
->> >> >> limitations and failure rate on Gitlab when mirroring such big repos.
->> >> >>
->> >> >> Best Regards
->> >> >
->> >> > --
->> >> > Agust?n Benito Bethencourt
->> >> > Principal Consultant
->> >> > Codethink Ltd
->> >> > _______________________________________________
->> >> > cip-dev mailing list
->> >> > cip-dev at lists.cip-project.org
->> >> > https://lists.cip-project.org/mailman/listinfo/cip-dev
->> >
->> > --
->> > Agust?n Benito Bethencourt
->> > Principal Consultant
->> > Codethink Ltd
->
->
-> --
-> Agust?n Benito Bethencourt
-> Principal Consultant
-> Codethink Ltd
+For GMail and Outlook there are third party products but no built-in
+support for mbox file formats.
+
+However, the review for 4.4.129 has now started so if all reviewers
+have subscribed to stable at vger.kernel.org then we can start with that
+instead.
+
+Ben.
+
+-- 
+Ben Hutchings
+Software Developer, Codethink Ltd.
