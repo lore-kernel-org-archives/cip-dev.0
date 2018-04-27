@@ -1,53 +1,65 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Thu, 26 Apr 2018 15:30:15 +0100
-Subject: [cip-dev] Reviewing 4.4 stable updates
-In-Reply-To: <000701d3dcf0$88242bd0$986c8370$@toshiba.co.jp>
-References: <1524662329.2587.28.camel@codethink.co.uk>
-	<000701d3dcf0$88242bd0$986c8370$@toshiba.co.jp>
-Message-ID: <1524753015.6671.2.camel@codethink.co.uk>
+From: agustin.benito@codethink.co.uk (=?ISO-8859-1?Q?Agust=EDn?= Benito Bethencourt)
+Date: Fri, 27 Apr 2018 10:53:45 +0200
+Subject: [cip-dev] Codethink report weeks 14 - 17
+Message-ID: <1566127.uQPWh3l9jc@linux-if6s>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Thu, 2018-04-26 at 08:52 +0900, Daniel Sangorrin wrote:
-> Hi Ben,
-> 
-> > -----Original Message-----
-> > From: cip-dev-bounces at lists.cip-project.org
-> > [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Ben Hutchings
-> > Sent: Wednesday, April 25, 2018 10:19 PM
-> > To: cip-dev at lists.cip-project.org
-> > Subject: [cip-dev] Reviewing 4.4 stable updates
-> > 
-> > I intended to bounce the review messages for 4.4.128 to this list so
-> > everyone could see them, but this seems to be blocked by some mail
-> > filter.
-> 
-> We received a message from Greg on the cip-dev list saying:
+Hi,
 
-Oh, that's strange.  Agustin and I each tried sending it and neither of
-us saw it come back from the list.
+several interesting accomplishments these past weeks. Here is the report about 
+Codethink's activities at CIP.
 
-[...]
-> > Instead I've saved them to an mbox file which is available from:
-> > http://download.cip-project.org/cip-kernel/stable-4.4.128-review.mbox
-> 
-> Just for those who don't know, you can open it with a text editor.?
-> Or you can just use linux-stable-rc.git for testing the patches.
-> 
-> > However, the review for 4.4.129 has now started so if all reviewers
-> > > > have subscribed to stable at vger.kernel.org then we can start with that
-> > instead.
-> 
-> I saw there is already a 4.4.129 on the linux-stable-rc.git linux-4.4.y.
-> Test results so far show no regressions (altough i see failures that might need investigation?):
-[...]
+## CIP kernel maintenance
 
-Yes, 4.4.129 is released and there will be a 4.4.130 review some time
-soon.  But it's never too late to review, and we just need to agree one
-set of patches that we can review together.
+* New CIP kernel released: 4.4.126-cip22
 
-Ben.
+* Kernel configurations are now collected in Gitlab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-config
+** Moxa's kernel configuration evaluation pending.
 
+* New cip-kernel sub-directory created in gitlab for kernel related repos: 
+https://gitlab.com/cip-project/cip-kernel
+
+* Moxa developers on-boarding process to the CIP kernel maintenance team has 
+started. 
+** Moxa developers can review patches having Ben H. as mentor through the cip-
+dev mailing list.  
+
+## CIP kernel testing
+
+* B at D now fully supports Renesas board #167
+** There are no dependencies related with bitbake/YOCTO
+** Set up description sent to Renesas asking for confirmation.
+** Link: https://gitlab.com/cip-project/cip-testing/testing/issues/167
+** User's documentation pending.
+
+* Tests reports sent to cip-testing-results now include the new board support.
+
+* Vagrant updated in B at D 
+
+## Other topics
+
+* Now the developers involved in kernel work are meeting weekly through IRC in 
+the chat.freenode.net/#cip channel on Thursdays for 30 min.
+** Yesterday's meeting log: https://irclogs.baserock.org/cip/%23cip.
+2018-04-26.log.html#t2018-04-26T09:02:24
+
+* Ben H. has participated in several discussions and questions through 
+different CIP channels related with Debian LTS, since he is part of that 
+effort at the Debian project.
+
+* Ben H. and Agustin participated in the discussion that J. Colbert's article 
+at LWN.net has generated: https://lwn.net/Articles/749530/
+
+* Talk related with the CIP kernel process approved by the OSSJ 2018 content 
+committee: https://ossalsjp19.sched.com/event/EaYy/in-need-for-a-linux-kernel-maintained-for-a-very-long-time-cip-kernel-maintenance-overview-agustin-benito-bethencourt-codethink-ltd?iframe=no&w=100%&sidebar=yes&bg=no
+
+* Introductory talk about CIP at the OpenSouthCode (Open Source event in 
+Malaga, Spain) approved: https://www.opensouthcode.org/conferences/
+opensouthcode2018/program/proposals/119
+
+Best Regards
 -- 
-Ben Hutchings
-Software Developer, Codethink Ltd.
+Agust?n Benito Bethencourt
+Principal Consultant
+Codethink Ltd
