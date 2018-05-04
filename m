@@ -1,22 +1,50 @@
-From: SZ.Lin@moxa.com (=?big5?B?U1ogTGluICiqTKRXtLwp?=)
-Date: Thu, 3 May 2018 08:45:52 +0000
-Subject: [cip-dev] Result of Kernel Patch Review - 4.4.129
-Message-ID: <5942081F7727964D830FC876E62CA856014CC3913F@MHQMBX02.moxa.com>
+From: wagi@monom.org (Daniel Wagner)
+Date: Fri, 4 May 2018 12:16:04 +0200
+Subject: [cip-dev] iWave RZ/G1M hrtimers
+Message-ID: <288bed25-0560-69a2-7239-d25387f9ab64@monom.org>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+Hi Biju,
 
-The following items in 4.4.129 are reviewed and mark as LGTM:
+Not sure if I ping the right person about this problem.
 
-6f051f8986a8 writeback: safer lock nesting
-4533f7e1785f watchdog: f71808e_wdt: Fix WD_EN register read
-b7b4411c8990 clk: mvebu: armada-38x: add support for missing clocks
-60f6c860c258 HID: core: Fix size as type u32
-0ab6b8c91ecf usb: dwc3: pci: Properly cleanup resource
-318a306c53d1 ARM: dts: at91: sama5d4: fix pinctrl compatible string
-31118e88019f ARM: dts: at91: at91sam9g25: fix mux-mask pinctrl property
-e23007895028 usb: musb: gadget: misplaced out of bounds check
-085c9c4b9e7e cdc_ether: flag the Cinterion AHS8 modem by gemalto as WWAN
+I am doing some realtime testing on the iWave RZ/G1M board and noticed 
+quite high latency values for cyclictest (around 3ms).
 
-SZ
+As it turns out there is no hrtimer clock source available. Just the 
+arch cp8 clock source. The timer subsystem then decides to set the 
+resolution of the clocksource to 4000000 nsecs which explains the rather 
+bad value for cyclictest.
+
+
+clocksource: arch_sys_counter: mask: 0xffffffffffffff max_cycles: 
+0x24e6a1710, max_idle_ns: 440795202120 ns
+sched_clock: 56 bits at 10MHz, resolution 100ns, wraps every 4398046511100ns
+Switching to timer-based delay loop, resolution 100ns
+
+# cat current_clocksource
+arch_sys_counter
+
+# cat available_clocksource
+arch_sys_counter jiffies
+
+# cat /proc/timer_list
+Timer List Version: v0.8
+HRTIMER_MAX_CLOCK_BASES: 4
+now at 1705568146462 nsecs
+
+cpu: 0
+  clock 0:
+   .base:       dfbcbe40
+   .index:      0
+   .resolution: 4000000 nsecs
+   .get_time:   ktime_get
+   .offset:     0 nsecs
+
+
+The question is do I miss some magic CONFIG option or is the support not 
+yet in v4.4-cip ?
+
+Thanks,
+Daniel
