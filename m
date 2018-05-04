@@ -1,26 +1,29 @@
 From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Fri, 04 May 2018 15:55:33 +0100
-Subject: [cip-dev] Linux 4.4.126-cip22
-In-Reply-To: <9aba8765-9a92-aa39-121e-df397fafddf5@monom.org>
-References: <1523476441.2951.8.camel@codethink.co.uk>
-	<1523477437.2951.10.camel@codethink.co.uk>
-	<90f2920d-abbb-affc-35f7-54161a13173c@monom.org>
-	<1fe18b95-eb3d-09a8-7e78-e686a8fc41ff@monom.org>
-	<b0cba6f1-3614-786c-b665-5189b168afe0@monom.org>
-	<9aba8765-9a92-aa39-121e-df397fafddf5@monom.org>
-Message-ID: <1525445733.6671.9.camel@codethink.co.uk>
+Date: Fri, 04 May 2018 17:12:18 +0100
+Subject: [cip-dev] [PATCH 0/6] Fix R-Car I2C data byte sent twice issue
+In-Reply-To: <1524130381-4346-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1524130381-4346-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1525450338.6671.19.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Fri, 2018-04-27 at 15:29 +0200, Daniel Wagner wrote:
-> > 82a3f87f6e80 ("serial: mctrl_gpio: Add missing module license")
-> > f71a2e0a282 ("serial: mctrl_gpio: export mctrl_gpio_disable_ms and
-> > mctrl_gpio_init")
+On Thu, 2018-04-19 at 10:32 +0100, Fabrizio Castro wrote:
+> Hello Ben,
 > 
-> I'll send out the patches to Greg since they are also missing in v4.4?
-> stable as soon I have build tested this here. takes a while...
+> a few weeks ago Zoran Stojsavljevic reported a problem with the RTC
+> on the iwg20d that turned out to be a problem with the I2C driver
+> sporadically sending data twice. This series backports the commits
+> from Wolfram that make up for the fix.
+> 
+> This series applies on top of v4.4.126-cip22.
+[...]
 
-Yes, please send stable-suitable patches to Greg.
+These changes appear to be suitable for 4.4-stable too.  Please can you
+send them to Greg and the stable list?
+
+I can *also* apply them directly to the 4.4-cip branch rather than
+waiting for them to get into a stable release, but I don't think we
+should be keeping fixes to ourselves.
 
 Ben.
 
