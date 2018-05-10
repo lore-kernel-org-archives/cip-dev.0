@@ -1,43 +1,71 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 10 May 2018 16:08:50 +0100
-Subject: [cip-dev] [PATCH 61/62] dt-bindings: thermal: rcar: Add device tree
-	support for r8a7743
+Date: Thu, 10 May 2018 16:08:51 +0100
+Subject: [cip-dev] [PATCH 62/62] ARM: dts: r8a7743: Add thermal device to DT
 In-Reply-To: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
 References: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1525964931-14960-62-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1525964931-14960-63-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Add thermal sensor support for r8a7743 SoC. The Renesas RZ/G1M
-(r8a7743) thermal sensor module is identical to the R-Car Gen2 family.
+This patch instantiates the thermal sensor module with thermal-zone
+support.
 
-No driver change is needed due to the fallback compatible value
-"renesas,rcar-gen2-thermal".
+This patch is based on the commit cac68a56e34b
+("ARM: dts: r8a7791: enable to use thermal-zone") by Kuninori Morimoto.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Simon Horman <simon.horman@netronome.com>
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
-(cherry picked from commit 2d14a0ee5e73d5224873777892fd86d3a283b059)
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+(cherry picked from commit 6c76b4f7d89e89f0ae405dfc7a64c6d2b5d02813)
+(updated clocks and power-domains property.removed resets property)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/thermal/rcar-thermal.txt | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/r8a7743.dtsi | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/thermal/rcar-thermal.txt b/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
-index e5ee3f1..689e7e8 100644
---- a/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
-+++ b/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
-@@ -6,6 +6,7 @@ Required properties:
- 			   "renesas,rcar-thermal" (without thermal-zone) as fallback.
- 			  Examples with soctypes are:
- 			    - "renesas,thermal-r8a73a4" (R-Mobile APE6)
-+			    - "renesas,thermal-r8a7743" (RZ/G1M)
- 			    - "renesas,thermal-r8a7779" (R-Car H1)
- 			    - "renesas,thermal-r8a7790" (R-Car H2)
- 			    - "renesas,thermal-r8a7791" (R-Car M2-W)
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 17be22c..1d9adcc 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -237,6 +237,37 @@
+ 			power-domains = <&cpg_clocks>;
+ 		};
+ 
++		thermal: thermal at e61f0000 {
++			compatible = "renesas,thermal-r8a7743",
++				     "renesas,rcar-gen2-thermal",
++				     "renesas,rcar-thermal";
++			reg = <0 0xe61f0000 0 0x10>, <0 0xe61f0100 0 0x38>;
++			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp5_clks R8A7743_CLK_THERMAL>;
++			power-domains = <&cpg_clocks>;
++			#thermal-sensor-cells = <0>;
++		};
++
++		thermal-zones {
++			cpu_thermal: cpu-thermal {
++				polling-delay-passive = <0>;
++				polling-delay = <0>;
++
++				thermal-sensors = <&thermal>;
++
++				trips {
++					cpu-crit {
++						temperature = <95000>;
++						hysteresis = <0>;
++						type = "critical";
++					};
++				};
++
++				cooling-maps {
++				};
++			};
++		};
++
+ 		timer {
+ 			compatible = "arm,armv7-timer";
+ 			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
 -- 
 2.7.4
