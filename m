@@ -1,220 +1,72 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 10 May 2018 16:07:57 +0100
-Subject: [cip-dev] [PATCH 08/62] PCI: rcar: Convert to DT resource parsing
-	API
+Date: Thu, 10 May 2018 16:07:58 +0100
+Subject: [cip-dev] [PATCH 09/62] PCI: rcar: Add gen2 fallback compatibility
+	string for pcie-rcar
 In-Reply-To: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
 References: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1525964931-14960-9-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1525964931-14960-10-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Phil Edworthy <phil.edworthy@renesas.com>
+From: Simon Horman <horms+renesas@verge.net.au>
 
-The main purpose of this change is to avoid calling pci_ioremap_io() as
-this is not available on arm64.  However, instead of doing the range
-parsing in this driver we can utilise of_pci_get_host_bridge_resources().
+Add fallback compatibility string for R-Car Gen 2 family.  This is in
+keeping with the fallback scheme being adopted wherever appropriate for
+drivers for Renesas SoCs.
 
-This is similar to changes made to the generic PCI host driver in commit
-dbf9826d5797 ("PCI: generic: Convert to DT resource parsing API")
-
-Reported-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 5d2917d469faab72ac6efd95ef1f8319c16a29eb)
+(cherry picked from commit a37b3eafe8e9cbe7c7754bc6003c125b23749554)
+(removed r8a7795 soc from DT binding documentation)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/pci/host/pcie-rcar.c | 116 +++++++++++++++++++++++++++----------------
- 1 file changed, 73 insertions(+), 43 deletions(-)
+ Documentation/devicetree/bindings/pci/rcar-pci.txt | 13 ++++++++++---
+ drivers/pci/host/pcie-rcar.c                       |  1 +
+ 2 files changed, 11 insertions(+), 3 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt b/Documentation/devicetree/bindings/pci/rcar-pci.txt
+index 29d3b98..6b4d2f7 100644
+--- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
++++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
+@@ -1,8 +1,15 @@
+ * Renesas RCar PCIe interface
+ 
+ Required properties:
+-- compatible: should contain one of the following
+-	"renesas,pcie-r8a7779", "renesas,pcie-r8a7790", "renesas,pcie-r8a7791"
++compatible: "renesas,pcie-r8a7779" for the R8A7779 SoC;
++	    "renesas,pcie-r8a7790" for the R8A7790 SoC;
++	    "renesas,pcie-r8a7791" for the R8A7791 SoC;
++	    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 compatible device.
++
++	    When compatible with the generic version, nodes must list the
++	    SoC-specific version corresponding to the platform first
++	    followed by the generic version.
++
+ - reg: base address and length of the pcie controller registers.
+ - #address-cells: set to <3>
+ - #size-cells: set to <2>
+@@ -25,7 +32,7 @@ Example:
+ SoC specific DT Entry:
+ 
+ 	pcie: pcie at fe000000 {
+-		compatible = "renesas,pcie-r8a7791";
++		compatible = "renesas,pcie-r8a7791", "renesas,pcie-rcar-gen2";
+ 		reg = <0 0xfe000000 0 0x80000>;
+ 		#address-cells = <3>;
+ 		#size-cells = <2>;
 diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 414c336..5e4f02d 100644
+index 5e4f02d..ae095fc 100644
 --- a/drivers/pci/host/pcie-rcar.c
 +++ b/drivers/pci/host/pcie-rcar.c
-@@ -108,8 +108,6 @@
- #define RCAR_PCI_MAX_RESOURCES 4
- #define MAX_NR_INBOUND_MAPS 6
+@@ -917,6 +917,7 @@ static int rcar_pcie_parse_map_dma_ranges(struct rcar_pcie *pcie,
  
--static unsigned long global_io_offset;
--
- struct rcar_msi {
- 	DECLARE_BITMAP(used, INT_PCI_MSI_NR);
- 	struct irq_domain *domain;
-@@ -138,8 +136,7 @@ struct rcar_pcie {
- #endif
- 	struct device		*dev;
- 	void __iomem		*base;
--	struct resource		res[RCAR_PCI_MAX_RESOURCES];
--	struct resource		busn;
-+	struct list_head	resources;
- 	int			root_bus_nr;
- 	struct clk		*clk;
- 	struct clk		*bus_clk;
-@@ -323,10 +320,9 @@ static struct pci_ops rcar_pcie_ops = {
- 	.write	= rcar_pcie_write_conf,
- };
- 
--static void rcar_pcie_setup_window(int win, struct rcar_pcie *pcie)
-+static void rcar_pcie_setup_window(int win, struct rcar_pcie *pcie,
-+				   struct resource *res)
- {
--	struct resource *res = &pcie->res[win];
--
- 	/* Setup PCIe address space mappings for each resource */
- 	resource_size_t size;
- 	resource_size_t res_start;
-@@ -359,31 +355,33 @@ static void rcar_pcie_setup_window(int win, struct rcar_pcie *pcie)
- 	rcar_pci_write_reg(pcie, mask, PCIEPTCTLR(win));
- }
- 
--static int rcar_pcie_setup(struct list_head *resource, struct rcar_pcie *pcie)
-+static int rcar_pcie_setup(struct list_head *resource, struct rcar_pcie *pci)
- {
--	struct resource *res;
--	int i;
--
--	pcie->root_bus_nr = pcie->busn.start;
-+	struct resource_entry *win;
-+	int i = 0;
- 
- 	/* Setup PCI resources */
--	for (i = 0; i < RCAR_PCI_MAX_RESOURCES; i++) {
-+	resource_list_for_each_entry(win, &pci->resources) {
-+		struct resource *res = win->res;
- 
--		res = &pcie->res[i];
- 		if (!res->flags)
- 			continue;
- 
--		rcar_pcie_setup_window(i, pcie);
--
--		if (res->flags & IORESOURCE_IO) {
--			phys_addr_t io_start = pci_pio_to_address(res->start);
--			pci_ioremap_io(global_io_offset, io_start);
--			global_io_offset += SZ_64K;
-+		switch (resource_type(res)) {
-+		case IORESOURCE_IO:
-+		case IORESOURCE_MEM:
-+			rcar_pcie_setup_window(i, pci, res);
-+			i++;
-+			break;
-+		case IORESOURCE_BUS:
-+			pci->root_bus_nr = res->start;
-+			break;
-+		default:
-+			continue;
- 		}
- 
- 		pci_add_resource(resource, res);
- 	}
--	pci_add_resource(resource, &pcie->busn);
- 
- 	return 1;
- }
-@@ -925,14 +923,63 @@ static const struct of_device_id rcar_pcie_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, rcar_pcie_of_match);
- 
-+static void rcar_pcie_release_of_pci_ranges(struct rcar_pcie *pci)
-+{
-+	pci_free_resource_list(&pci->resources);
-+}
-+
-+static int rcar_pcie_parse_request_of_pci_ranges(struct rcar_pcie *pci)
-+{
-+	int err;
-+	struct device *dev = pci->dev;
-+	struct device_node *np = dev->of_node;
-+	resource_size_t iobase;
-+	struct resource_entry *win;
-+
-+	err = of_pci_get_host_bridge_resources(np, 0, 0xff, &pci->resources, &iobase);
-+	if (err)
-+		return err;
-+
-+	resource_list_for_each_entry(win, &pci->resources) {
-+		struct resource *parent, *res = win->res;
-+
-+		switch (resource_type(res)) {
-+		case IORESOURCE_IO:
-+			parent = &ioport_resource;
-+			err = pci_remap_iospace(res, iobase);
-+			if (err) {
-+				dev_warn(dev, "error %d: failed to map resource %pR\n",
-+					 err, res);
-+				continue;
-+			}
-+			break;
-+		case IORESOURCE_MEM:
-+			parent = &iomem_resource;
-+			break;
-+
-+		case IORESOURCE_BUS:
-+		default:
-+			continue;
-+		}
-+
-+		err = devm_request_resource(dev, parent, res);
-+		if (err)
-+			goto out_release_res;
-+	}
-+
-+	return 0;
-+
-+out_release_res:
-+	rcar_pcie_release_of_pci_ranges(pci);
-+	return err;
-+}
-+
- static int rcar_pcie_probe(struct platform_device *pdev)
- {
- 	struct rcar_pcie *pcie;
- 	unsigned int data;
--	struct of_pci_range range;
--	struct of_pci_range_parser parser;
- 	const struct of_device_id *of_id;
--	int err, win = 0;
-+	int err;
- 	int (*hw_init_fn)(struct rcar_pcie *);
- 
- 	pcie = devm_kzalloc(&pdev->dev, sizeof(*pcie), GFP_KERNEL);
-@@ -942,16 +989,9 @@ static int rcar_pcie_probe(struct platform_device *pdev)
- 	pcie->dev = &pdev->dev;
- 	platform_set_drvdata(pdev, pcie);
- 
--	/* Get the bus range */
--	if (of_pci_parse_bus_range(pdev->dev.of_node, &pcie->busn)) {
--		dev_err(&pdev->dev, "failed to parse bus-range property\n");
--		return -EINVAL;
--	}
-+	INIT_LIST_HEAD(&pcie->resources);
- 
--	if (of_pci_range_parser_init(&parser, pdev->dev.of_node)) {
--		dev_err(&pdev->dev, "missing ranges property\n");
--		return -EINVAL;
--	}
-+	rcar_pcie_parse_request_of_pci_ranges(pcie);
- 
- 	err = rcar_pcie_get_resources(pdev, pcie);
- 	if (err < 0) {
-@@ -959,16 +999,6 @@ static int rcar_pcie_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
--	for_each_of_pci_range(&parser, &range) {
--		err = of_pci_range_to_resource(&range, pdev->dev.of_node,
--						&pcie->res[win++]);
--		if (err < 0)
--			return err;
--
--		if (win > RCAR_PCI_MAX_RESOURCES)
--			break;
--	}
--
- 	 err = rcar_pcie_parse_map_dma_ranges(pcie, pdev->dev.of_node);
- 	 if (err)
- 		return err;
+ static const struct of_device_id rcar_pcie_of_match[] = {
+ 	{ .compatible = "renesas,pcie-r8a7779", .data = rcar_pcie_hw_init_h1 },
++	{ .compatible = "renesas,pcie-rcar-gen2", .data = rcar_pcie_hw_init },
+ 	{ .compatible = "renesas,pcie-r8a7790", .data = rcar_pcie_hw_init },
+ 	{ .compatible = "renesas,pcie-r8a7791", .data = rcar_pcie_hw_init },
+ 	{},
 -- 
 2.7.4
