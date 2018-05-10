@@ -1,43 +1,52 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 10 May 2018 16:08:38 +0100
-Subject: [cip-dev] [PATCH  49/62] pwm: rcar: Make use of pwm_is_enabled()
+Date: Thu, 10 May 2018 16:08:39 +0100
+Subject: [cip-dev] [PATCH 50/62] pwm: rcar: Use PM Runtime to control module
+	clock
 In-Reply-To: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
 References: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1525964931-14960-50-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1525964931-14960-51-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Boris BREZILLON <boris.brezillon@free-electrons.com>
+From: Hien Dang <hien.dang.eb@renesas.com>
 
-Commit 5c31252c4a86 ("pwm: Add the pwm_is_enabled() helper") introduced
-a new function to test whether a PWM device is enabled or not without
-manipulating PWM internal fields.
+Runtime PM API (pm_runtime_get_sync/pm_runtime_put) should be used
+to control module clock instead of clk_prepare_enable and
+clk_disable_unprepare.
 
-Hiding this is necessary if we want to smoothly move to the atomic PWM
-config approach without impacting PWM drivers. Fix this driver to use
-pwm_is_enabled() instead of directly accessing the ->flags field.
-
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
-(cherry picked from commit 3587c260906259632df07652743269627f408d85)
+(cherry picked from commit f2e6142cdc10b1b7edea8d65b07293f152e4d110)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/pwm/pwm-rcar.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pwm/pwm-rcar.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
-index 7b8ac06..1c85ecc 100644
+index 1c85ecc..b942010 100644
 --- a/drivers/pwm/pwm-rcar.c
 +++ b/drivers/pwm/pwm-rcar.c
-@@ -157,7 +157,7 @@ static int rcar_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 		return div;
+@@ -134,16 +134,12 @@ static int rcar_pwm_set_counter(struct rcar_pwm_chip *rp, int div, int duty_ns,
  
- 	/* Let the core driver set pwm->period if disabled and duty_ns == 0 */
--	if (!test_bit(PWMF_ENABLED, &pwm->flags) && !duty_ns)
-+	if (!pwm_is_enabled(pwm) && !duty_ns)
- 		return 0;
+ static int rcar_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
+ {
+-	struct rcar_pwm_chip *rp = to_rcar_pwm_chip(chip);
+-
+-	return clk_prepare_enable(rp->clk);
++	return pm_runtime_get_sync(chip->dev);
+ }
  
- 	rcar_pwm_update(rp, RCAR_PWMCR_SYNC, RCAR_PWMCR_SYNC, RCAR_PWMCR);
+ static void rcar_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
+ {
+-	struct rcar_pwm_chip *rp = to_rcar_pwm_chip(chip);
+-
+-	clk_disable_unprepare(rp->clk);
++	pm_runtime_put(chip->dev);
+ }
+ 
+ static int rcar_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
 -- 
 2.7.4
