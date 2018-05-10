@@ -1,52 +1,94 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 10 May 2018 16:08:22 +0100
-Subject: [cip-dev] [PATCH  33/62] sgtl5000: add Lineout volume control
+Date: Thu, 10 May 2018 16:08:24 +0100
+Subject: [cip-dev] [PATCH 35/62] ARM: dts: r8a7743: Add audio DMAC support
 In-Reply-To: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
 References: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1525964931-14960-34-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1525964931-14960-36-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Kalle Kankare <kalle.kankare@vincit.fi>
+Instantiate the two audio DMA controllers on the r8a7743 device tree.
 
-This controls the volume for the line out pins of SGTL5000.
-
-Signed-off-by: Fabien Lahoudere <fabien.lahoudere@collabora.co.uk>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-(cherry picked from commit 0593d4612146dc16ff6bd23423bdd434dd7b8c7b)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+(cherry picked from commit 1a86529ed8bc982c690a540ab472cd5a2d93c6cb)
+(updated clocks and power-domains property. removed resets property)
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- sound/soc/codecs/sgtl5000.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm/boot/dts/r8a7743.dtsi | 60 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
-diff --git a/sound/soc/codecs/sgtl5000.c b/sound/soc/codecs/sgtl5000.c
-index 39a178a..527b759 100644
---- a/sound/soc/codecs/sgtl5000.c
-+++ b/sound/soc/codecs/sgtl5000.c
-@@ -385,6 +385,9 @@ static const DECLARE_TLV_DB_RANGE(mic_gain_tlv,
- /* tlv for hp volume, -51.5db to 12.0db, step .5db */
- static const DECLARE_TLV_DB_SCALE(headphone_volume, -5150, 50, 0);
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index e0531e7..625d5ac 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -316,6 +316,66 @@
+ 			dma-channels = <15>;
+ 		};
  
-+/* tlv for lineout volume, 31 steps of .5db each */
-+static const DECLARE_TLV_DB_SCALE(lineout_volume, -1550, 50, 0);
++		audma0: dma-controller at ec700000 {
++			compatible = "renesas,dmac-r8a7743",
++				     "renesas,rcar-dmac";
++			reg = <0 0xec700000 0 0x10000>;
++			interrupts = <GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					  "ch0", "ch1", "ch2", "ch3",
++					  "ch4", "ch5", "ch6", "ch7",
++					  "ch8", "ch9", "ch10", "ch11",
++					  "ch12";
++			clocks = <&mstp5_clks R8A7743_CLK_AUDIO_DMAC0>;
++			clock-names = "fck";
++			power-domains = <&cpg_clocks>;
++			#dma-cells = <1>;
++			dma-channels = <13>;
++		};
 +
- static const struct snd_kcontrol_new sgtl5000_snd_controls[] = {
- 	/* SOC_DOUBLE_S8_TLV with invert */
- 	{
-@@ -413,6 +416,13 @@ static const struct snd_kcontrol_new sgtl5000_snd_controls[] = {
- 
- 	SOC_SINGLE_TLV("Mic Volume", SGTL5000_CHIP_MIC_CTRL,
- 			0, 3, 0, mic_gain_tlv),
++		audma1: dma-controller at ec720000 {
++			compatible = "renesas,dmac-r8a7743",
++				     "renesas,rcar-dmac";
++			reg = <0 0xec720000 0 0x10000>;
++			interrupts = <GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					  "ch0", "ch1", "ch2", "ch3",
++					  "ch4", "ch5", "ch6", "ch7",
++					  "ch8", "ch9", "ch10", "ch11",
++					  "ch12";
++			clocks = <&mstp5_clks R8A7743_CLK_AUDIO_DMAC1>;
++			clock-names = "fck";
++			power-domains = <&cpg_clocks>;
++			#dma-cells = <1>;
++			dma-channels = <13>;
++		};
 +
-+	SOC_DOUBLE_TLV("Lineout Playback Volume",
-+			SGTL5000_CHIP_LINE_OUT_VOL,
-+			SGTL5000_LINE_OUT_VOL_LEFT_SHIFT,
-+			SGTL5000_LINE_OUT_VOL_RIGHT_SHIFT,
-+			0x1f, 1,
-+			lineout_volume),
- };
- 
- /* mute the codec used by alsa core */
+ 		usb_dmac0: dma-controller at e65a0000 {
+ 			compatible = "renesas,r8a7743-usb-dmac",
+ 				     "renesas,usb-dmac";
 -- 
 2.7.4
