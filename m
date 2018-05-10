@@ -1,72 +1,57 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 10 May 2018 16:07:58 +0100
-Subject: [cip-dev] [PATCH 09/62] PCI: rcar: Add gen2 fallback compatibility
-	string for pcie-rcar
+Date: Thu, 10 May 2018 16:07:59 +0100
+Subject: [cip-dev] [PATCH 10/62] PCI: rcar: Remove unused pci_sys_data
+	struct from pcie-rcar
 In-Reply-To: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
 References: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1525964931-14960-10-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1525964931-14960-11-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Simon Horman <horms+renesas@verge.net.au>
+From: Phil Edworthy <phil.edworthy@renesas.com>
 
-Add fallback compatibility string for R-Car Gen 2 family.  This is in
-keeping with the fallback scheme being adopted wherever appropriate for
-drivers for Renesas SoCs.
+The pci_sys_data struct was previously used by pci_common_init_dev() and by
+the ARM pcibios_align_resource(), but recent commits removed those uses:
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+  cbce7900598c ("PCI: designware: Make driver arch-agnostic")
+  b3a72384fe29 ("ARM/PCI: Replace pci_sys_data->align_resource with global function pointer")
+
+cbce7900598c removed the use of pci_common_init_dev() by DesignWare
+drivers, including pcie-rcar.c, and b3a72384fe29 removed the use of struct
+pci_sys_data by the ARM pcibios_align_resource().
+
+Remove struct pci_sys_data from pcie-rcar.c.
+
+[bhelgaas: changelog]
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-(cherry picked from commit a37b3eafe8e9cbe7c7754bc6003c125b23749554)
-(removed r8a7795 soc from DT binding documentation)
+(cherry picked from commit 049f419399e937e333bf121b7b234888d804a25e)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/pci/rcar-pci.txt | 13 ++++++++++---
- drivers/pci/host/pcie-rcar.c                       |  1 +
- 2 files changed, 11 insertions(+), 3 deletions(-)
+ drivers/pci/host/pcie-rcar.c | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-index 29d3b98..6b4d2f7 100644
---- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
-+++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-@@ -1,8 +1,15 @@
- * Renesas RCar PCIe interface
- 
- Required properties:
--- compatible: should contain one of the following
--	"renesas,pcie-r8a7779", "renesas,pcie-r8a7790", "renesas,pcie-r8a7791"
-+compatible: "renesas,pcie-r8a7779" for the R8A7779 SoC;
-+	    "renesas,pcie-r8a7790" for the R8A7790 SoC;
-+	    "renesas,pcie-r8a7791" for the R8A7791 SoC;
-+	    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 compatible device.
-+
-+	    When compatible with the generic version, nodes must list the
-+	    SoC-specific version corresponding to the platform first
-+	    followed by the generic version.
-+
- - reg: base address and length of the pcie controller registers.
- - #address-cells: set to <3>
- - #size-cells: set to <2>
-@@ -25,7 +32,7 @@ Example:
- SoC specific DT Entry:
- 
- 	pcie: pcie at fe000000 {
--		compatible = "renesas,pcie-r8a7791";
-+		compatible = "renesas,pcie-r8a7791", "renesas,pcie-rcar-gen2";
- 		reg = <0 0xfe000000 0 0x80000>;
- 		#address-cells = <3>;
- 		#size-cells = <2>;
 diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 5e4f02d..ae095fc 100644
+index ae095fc..83ba747 100644
 --- a/drivers/pci/host/pcie-rcar.c
 +++ b/drivers/pci/host/pcie-rcar.c
-@@ -917,6 +917,7 @@ static int rcar_pcie_parse_map_dma_ranges(struct rcar_pcie *pcie,
+@@ -124,16 +124,7 @@ static inline struct rcar_msi *to_rcar_msi(struct msi_controller *chip)
+ }
  
- static const struct of_device_id rcar_pcie_of_match[] = {
- 	{ .compatible = "renesas,pcie-r8a7779", .data = rcar_pcie_hw_init_h1 },
-+	{ .compatible = "renesas,pcie-rcar-gen2", .data = rcar_pcie_hw_init },
- 	{ .compatible = "renesas,pcie-r8a7790", .data = rcar_pcie_hw_init },
- 	{ .compatible = "renesas,pcie-r8a7791", .data = rcar_pcie_hw_init },
- 	{},
+ /* Structure representing the PCIe interface */
+-/*
+- * ARM pcibios functions expect the ARM struct pci_sys_data as the PCI
+- * sysdata.  Add pci_sys_data as the first element in struct gen_pci so
+- * that when we use a gen_pci pointer as sysdata, it is also a pointer to
+- * a struct pci_sys_data.
+- */
+ struct rcar_pcie {
+-#ifdef CONFIG_ARM
+-	struct pci_sys_data	sys;
+-#endif
+ 	struct device		*dev;
+ 	void __iomem		*base;
+ 	struct list_head	resources;
 -- 
 2.7.4
