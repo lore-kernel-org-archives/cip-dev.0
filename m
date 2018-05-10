@@ -1,71 +1,157 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 10 May 2018 16:08:18 +0100
-Subject: [cip-dev] [PATCH 29/62] ASoC: sgtl5000: Write all default registers
+Date: Thu, 10 May 2018 16:08:19 +0100
+Subject: [cip-dev] [PATCH 30/62] ASoC: sgtl5000: Initialize CHIP_ANA_POWER
+	to power-on defaults
 In-Reply-To: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
 References: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1525964931-14960-30-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1525964931-14960-31-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Eric Nelson <eric@nelint.com>
 
-If an error occurs writing defaults, produce an error message but
-continue writing other registers. The failure of a single write should
-not cause catastrophic device failure.
+Initialize CHIP_ANA_POWER to match power on defaults, which disables
+ADC, DAC, and charge pumps.
 
-In at least one occurrence, I2C writes of CHIP_ANA_POWER were nacked,
-though continuing allowed the device to operate properly.
+In the process, remove references to the following register/bitfields
+from the sgtl5000_set_power_regs routine:
+	CHIP_ANA_POWER/LINREG_SIMPLE_POWERUP and
+	CHIP_LINREG_CTRL/LINREG_VDD_MASK
+
+And remove CHIP_ANA_POWER and CHIP_LINREG_CTRL from the set of default
+registers so they don't get clobbered by sgtl5000_fill_defaults().
 
 Signed-off-by: Eric Nelson <eric@nelint.com>
 Signed-off-by: Clemens Gruber <clemens.gruber@pqgruber.com>
 Tested-by: Fabio Estevam <fabio.estevam@nxp.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
-(cherry picked from commit f219b16959ee3df2fd49f09493b3f6b28487c416)
+(cherry picked from commit 3d632cc87204b51a4b32bdaa970fe6b8d879347e)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- sound/soc/codecs/sgtl5000.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ sound/soc/codecs/sgtl5000.c | 56 +++++++++++++++++----------------------------
+ sound/soc/codecs/sgtl5000.h |  1 +
+ 2 files changed, 22 insertions(+), 35 deletions(-)
 
 diff --git a/sound/soc/codecs/sgtl5000.c b/sound/soc/codecs/sgtl5000.c
-index 77bdd1d..56d61a2 100644
+index 56d61a2..42f2eb6 100644
 --- a/sound/soc/codecs/sgtl5000.c
 +++ b/sound/soc/codecs/sgtl5000.c
-@@ -1219,8 +1219,9 @@ static const struct regmap_config sgtl5000_regmap = {
-  * and avoid problems like, not being able to probe after an audio playback
-  * followed by a system reset or a 'reboot' command in Linux
-  */
--static int sgtl5000_fill_defaults(struct sgtl5000_priv *sgtl5000)
-+static void sgtl5000_fill_defaults(struct i2c_client *client)
- {
-+	struct sgtl5000_priv *sgtl5000 = i2c_get_clientdata(client);
- 	int i, ret, val, index;
+@@ -47,12 +47,10 @@ static const struct reg_default sgtl5000_reg_defaults[] = {
+ 	{ SGTL5000_CHIP_ANA_ADC_CTRL,		0x0000 },
+ 	{ SGTL5000_CHIP_ANA_HP_CTRL,		0x1818 },
+ 	{ SGTL5000_CHIP_ANA_CTRL,		0x0111 },
+-	{ SGTL5000_CHIP_LINREG_CTRL,		0x0000 },
+ 	{ SGTL5000_CHIP_REF_CTRL,		0x0000 },
+ 	{ SGTL5000_CHIP_MIC_CTRL,		0x0000 },
+ 	{ SGTL5000_CHIP_LINE_OUT_CTRL,		0x0000 },
+ 	{ SGTL5000_CHIP_LINE_OUT_VOL,		0x0404 },
+-	{ SGTL5000_CHIP_ANA_POWER,		0x7060 },
+ 	{ SGTL5000_CHIP_PLL_CTRL,		0x5000 },
+ 	{ SGTL5000_CHIP_CLK_TOP_CTRL,		0x0000 },
+ 	{ SGTL5000_CHIP_ANA_STATUS,		0x0000 },
+@@ -93,6 +91,7 @@ static const char *supply_names[SGTL5000_SUPPLY_NUM] = {
+ };
  
- 	for (i = 0; i < ARRAY_SIZE(sgtl5000_reg_defaults); i++) {
-@@ -1228,10 +1229,10 @@ static int sgtl5000_fill_defaults(struct sgtl5000_priv *sgtl5000)
- 		index = sgtl5000_reg_defaults[i].reg;
- 		ret = regmap_write(sgtl5000->regmap, index, val);
- 		if (ret)
--			return ret;
-+			dev_err(&client->dev,
-+				"%s: error %d setting reg 0x%02x to 0x%04x\n",
-+				__func__, ret, index, val);
- 	}
+ #define LDO_VOLTAGE		1200000
++#define LINREG_VDDD	((1600 - LDO_VOLTAGE / 1000) / 50)
+ 
+ enum sgtl5000_micbias_resistor {
+ 	SGTL5000_MICBIAS_OFF = 0,
+@@ -1002,25 +1001,6 @@ static int sgtl5000_set_power_regs(struct snd_soc_codec *codec)
+ 
+ 	snd_soc_write(codec, SGTL5000_CHIP_ANA_POWER, ana_pwr);
+ 
+-	/* set voltage to register */
+-	snd_soc_update_bits(codec, SGTL5000_CHIP_LINREG_CTRL,
+-				SGTL5000_LINREG_VDDD_MASK, 0x8);
 -
--	return 0;
- }
+-	/*
+-	 * if vddd linear reg has been enabled,
+-	 * simple digital supply should be clear to get
+-	 * proper VDDD voltage.
+-	 */
+-	if (ana_pwr & SGTL5000_LINEREG_D_POWERUP)
+-		snd_soc_update_bits(codec, SGTL5000_CHIP_ANA_POWER,
+-				SGTL5000_LINREG_SIMPLE_POWERUP,
+-				0);
+-	else
+-		snd_soc_update_bits(codec, SGTL5000_CHIP_ANA_POWER,
+-				SGTL5000_LINREG_SIMPLE_POWERUP |
+-				SGTL5000_STARTUP_POWERUP,
+-				0);
+-
+ 	/*
+ 	 * set ADC/DAC VAG to vdda / 2,
+ 	 * should stay in range (0.8v, 1.575v)
+@@ -1242,6 +1222,7 @@ static int sgtl5000_i2c_probe(struct i2c_client *client,
+ 	int ret, reg, rev;
+ 	struct device_node *np = client->dev.of_node;
+ 	u32 value;
++	u16 ana_pwr;
  
- static int sgtl5000_i2c_probe(struct i2c_client *client,
-@@ -1364,9 +1365,7 @@ static int sgtl5000_i2c_probe(struct i2c_client *client,
+ 	sgtl5000 = devm_kzalloc(&client->dev, sizeof(*sgtl5000), GFP_KERNEL);
+ 	if (!sgtl5000)
+@@ -1299,29 +1280,34 @@ static int sgtl5000_i2c_probe(struct i2c_client *client,
+ 	sgtl5000->revision = rev;
+ 
+ 	/* Follow section 2.2.1.1 of AN3663 */
++	ana_pwr = SGTL5000_ANA_POWER_DEFAULT;
+ 	if (sgtl5000->num_supplies <= VDDD) {
+ 		/* internal VDDD@1.2V */
+-		regmap_update_bits(sgtl5000->regmap,
+-				   SGTL5000_CHIP_LINREG_CTRL,
+-				   SGTL5000_LINREG_VDDD_MASK, 8);
+-		regmap_update_bits(sgtl5000->regmap,
+-				   SGTL5000_CHIP_ANA_POWER,
+-				   SGTL5000_LINEREG_D_POWERUP
+-				   | SGTL5000_LINREG_SIMPLE_POWERUP,
+-				   SGTL5000_LINEREG_D_POWERUP);
+-		dev_info(&client->dev, "Using internal LDO instead of VDDD: check ER1\n");
++		ret = regmap_update_bits(sgtl5000->regmap,
++					 SGTL5000_CHIP_LINREG_CTRL,
++					 SGTL5000_LINREG_VDDD_MASK,
++					 LINREG_VDDD);
++		if (ret)
++			dev_err(&client->dev,
++				"Error %d setting LINREG_VDDD\n", ret);
++
++		ana_pwr |= SGTL5000_LINEREG_D_POWERUP;
++		dev_info(&client->dev,
++			 "Using internal LDO instead of VDDD: check ER1\n");
+ 	} else {
+ 		/* using external LDO for VDDD
+ 		 * Clear startup powerup and simple powerup
+ 		 * bits to save power
+ 		 */
+-		regmap_update_bits(sgtl5000->regmap,
+-				   SGTL5000_CHIP_ANA_POWER,
+-				   SGTL5000_STARTUP_POWERUP
+-				   | SGTL5000_LINREG_SIMPLE_POWERUP,
+-				   0);
++		ana_pwr &= ~(SGTL5000_STARTUP_POWERUP
++			     | SGTL5000_LINREG_SIMPLE_POWERUP);
+ 		dev_dbg(&client->dev, "Using external VDDD\n");
  	}
++	ret = regmap_write(sgtl5000->regmap, SGTL5000_CHIP_ANA_POWER, ana_pwr);
++	if (ret)
++		dev_err(&client->dev,
++			"Error %d setting CHIP_ANA_POWER to %04x\n",
++			ret, ana_pwr);
  
- 	/* Ensure sgtl5000 will start with sane register values */
--	ret = sgtl5000_fill_defaults(sgtl5000);
--	if (ret)
--		goto disable_clk;
-+	sgtl5000_fill_defaults(client);
- 
- 	ret = snd_soc_register_codec(&client->dev,
- 			&sgtl5000_driver, &sgtl5000_dai, 1);
+ 	if (np) {
+ 		if (!of_property_read_u32(np,
+diff --git a/sound/soc/codecs/sgtl5000.h b/sound/soc/codecs/sgtl5000.h
+index 1c317de..1be8237 100644
+--- a/sound/soc/codecs/sgtl5000.h
++++ b/sound/soc/codecs/sgtl5000.h
+@@ -325,6 +325,7 @@
+ /*
+  * SGTL5000_CHIP_ANA_POWER
+  */
++#define SGTL5000_ANA_POWER_DEFAULT		0x7060
+ #define SGTL5000_DAC_STEREO			0x4000
+ #define SGTL5000_LINREG_SIMPLE_POWERUP		0x2000
+ #define SGTL5000_STARTUP_POWERUP		0x1000
 -- 
 2.7.4
