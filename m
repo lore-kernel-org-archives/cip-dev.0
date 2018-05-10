@@ -1,114 +1,48 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 10 May 2018 16:08:32 +0100
-Subject: [cip-dev] [PATCH 43/62] pinctrl: sh-pfc: r8a7791: Add tpu groups
-	and function
+Date: Thu, 10 May 2018 16:08:33 +0100
+Subject: [cip-dev] [PATCH 44/62] dt-bindings: pwm: renesas-tpu: Document
+	r8a774[35] support
 In-Reply-To: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
 References: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1525964931-14960-44-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1525964931-14960-45-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-This patch adds tpu groups and function to r8a7743/r8a7791/r8a7793.
+Document r8a774[35] specific compatible strings. No driver change is
+needed as the fallback compatible string "renesas,tpu" activates the
+right code in the driver.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-(cherry picked from commit 21047d5736918b19a3efe11e8ace856cb1b4b403)
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
+(cherry picked from commit 3ba111a0182265b65e303c969294b8033ce9d122)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 42 ++++++++++++++++++++++++++++++++++--
- 1 file changed, 40 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index 39fc9ad..4f971a9 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -4149,6 +4149,32 @@ static const unsigned int ssi9_ctrl_b_mux[] = {
- 	SSI_SCK9_B_MARK, SSI_WS9_B_MARK,
- };
+diff --git a/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt b/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt
+index b067e84..90e0a0a 100644
+--- a/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt
++++ b/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt
+@@ -5,9 +5,11 @@ Required Properties:
+   - compatible: should be one of the following.
+     - "renesas,tpu-r8a73a4": for R8A77A4 (R-Mobile APE6) compatible PWM controller.
+     - "renesas,tpu-r8a7740": for R8A7740 (R-Mobile A1) compatible PWM controller.
++    - "renesas,tpu-r8a7743": for R8A7743 (RZ/G1M) compatible PWM controller.
++    - "renesas,tpu-r8a7745": for R8A7745 (RZ/G1E) compatible PWM controller.
+     - "renesas,tpu-r8a7790": for R8A7790 (R-Car H2) compatible PWM controller.
+     - "renesas,tpu-sh7372": for SH7372 (SH-Mobile AP4) compatible PWM controller.
+-    - "renesas,tpu": for generic R-Car TPU PWM controller.
++    - "renesas,tpu": for generic R-Car and RZ/G1 TPU PWM controller.
  
-+/* - TPU -------------------------------------------------------------------- */
-+static const unsigned int tpu_to0_pins[] = {
-+	RCAR_GP_PIN(6, 14),
-+};
-+static const unsigned int tpu_to0_mux[] = {
-+	TPU_TO0_MARK,
-+};
-+static const unsigned int tpu_to1_pins[] = {
-+	RCAR_GP_PIN(1, 17),
-+};
-+static const unsigned int tpu_to1_mux[] = {
-+	TPU_TO1_MARK,
-+};
-+static const unsigned int tpu_to2_pins[] = {
-+	RCAR_GP_PIN(1, 18),
-+};
-+static const unsigned int tpu_to2_mux[] = {
-+	TPU_TO2_MARK,
-+};
-+static const unsigned int tpu_to3_pins[] = {
-+	RCAR_GP_PIN(1, 24),
-+};
-+static const unsigned int tpu_to3_mux[] = {
-+	TPU_TO3_MARK,
-+};
-+
- /* - USB0 ------------------------------------------------------------------- */
- static const unsigned int usb0_pins[] = {
- 	RCAR_GP_PIN(7, 23), /* PWEN */
-@@ -4435,7 +4461,7 @@ static const unsigned int vin2_clk_mux[] = {
- };
- 
- static const struct {
--	struct sh_pfc_pin_group common[342];
-+	struct sh_pfc_pin_group common[346];
- 	struct sh_pfc_pin_group r8a779x[9];
- } pinmux_groups = {
- 	.common = {
-@@ -4747,6 +4773,10 @@ static const struct {
- 		SH_PFC_PIN_GROUP(ssi9_data_b),
- 		SH_PFC_PIN_GROUP(ssi9_ctrl),
- 		SH_PFC_PIN_GROUP(ssi9_ctrl_b),
-+		SH_PFC_PIN_GROUP(tpu_to0),
-+		SH_PFC_PIN_GROUP(tpu_to1),
-+		SH_PFC_PIN_GROUP(tpu_to2),
-+		SH_PFC_PIN_GROUP(tpu_to3),
- 		SH_PFC_PIN_GROUP(usb0),
- 		SH_PFC_PIN_GROUP(usb1),
- 		VIN_DATA_PIN_GROUP(vin0_data, 24),
-@@ -5282,6 +5312,13 @@ static const char * const ssi_groups[] = {
- 	"ssi9_ctrl_b",
- };
- 
-+static const char * const tpu_groups[] = {
-+	"tpu_to0",
-+	"tpu_to1",
-+	"tpu_to2",
-+	"tpu_to3",
-+};
-+
- static const char * const usb0_groups[] = {
- 	"usb0",
- };
-@@ -5331,7 +5368,7 @@ static const char * const vin2_groups[] = {
- };
- 
- static const struct {
--	struct sh_pfc_function common[57];
-+	struct sh_pfc_function common[58];
- 	struct sh_pfc_function r8a779x[2];
- } pinmux_functions = {
- 	.common = {
-@@ -5387,6 +5424,7 @@ static const struct {
- 		SH_PFC_FUNCTION(sdhi1),
- 		SH_PFC_FUNCTION(sdhi2),
- 		SH_PFC_FUNCTION(ssi),
-+		SH_PFC_FUNCTION(tpu),
- 		SH_PFC_FUNCTION(usb0),
- 		SH_PFC_FUNCTION(usb1),
- 		SH_PFC_FUNCTION(vin0),
+   - reg: Base address and length of each memory resource used by the PWM
+     controller hardware module.
 -- 
 2.7.4
