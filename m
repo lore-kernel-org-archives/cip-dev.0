@@ -1,50 +1,45 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 10 May 2018 16:08:11 +0100
-Subject: [cip-dev] [PATCH 22/62] ASoC: rsnd: add missing DT example for
-	Simple Card with TDM
+Date: Thu, 10 May 2018 16:08:12 +0100
+Subject: [cip-dev] [PATCH 23/62] ASoC: rsnd: Add device tree support for
+	r8a774[35]
 In-Reply-To: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
 References: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1525964931-14960-23-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1525964931-14960-24-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Document r8a774[35] specific compatible strings. The Renesas RZ/G1[ME]
+(r8a774[35]) sound modules are identical to the R-Car Gen2 family.
+No driver change is needed as the fallback compatible string
+"renesas,rcar_sound-gen2" activates the right code in the driver.
 
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Mark Brown <broonie@kernel.org>
-(cherry picked from commit 44bf5361e21d507e23f8cf8d696c0600f3795e54)
+(cherry picked from commit b0a858a47a7889757dbc9ac9872685955eaa5cc0)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- .../devicetree/bindings/sound/renesas,rsnd.txt        | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ Documentation/devicetree/bindings/sound/renesas,rsnd.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-index 27c45cb..3f03fd0 100644
+index 3f03fd0..649cd3a 100644
 --- a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
 +++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-@@ -286,3 +286,22 @@ Example: simple sound card
- &ssi1 {
- 	shared-pin;
- };
-+
-+Example: simple sound card for TDM
-+
-+	rsnd_tdm: sound {
-+		compatible = "simple-audio-card";
-+
-+		simple-audio-card,format = "left_j";
-+		simple-audio-card,bitclock-master = <&sndcodec>;
-+		simple-audio-card,frame-master = <&sndcodec>;
-+
-+		sndcpu: simple-audio-card,cpu {
-+			sound-dai = <&rcar_sound>;
-+			dai-tdm-slot-num = <6>;
-+		};
-+
-+		sndcodec: simple-audio-card,codec {
-+			sound-dai = <&xxx>;
-+		};
-+	};
+@@ -3,9 +3,11 @@ Renesas R-Car sound
+ Required properties:
+ - compatible			: "renesas,rcar_sound-<soctype>", fallbacks
+ 				  "renesas,rcar_sound-gen1" if generation1, and
+-				  "renesas,rcar_sound-gen2" if generation2
++				  "renesas,rcar_sound-gen2" if generation2 (or RZ/G1)
+ 				  "renesas,rcar_sound-gen3" if generation3
+ 				  Examples with soctypes are:
++				    - "renesas,rcar_sound-r8a7743" (RZ/G1M)
++				    - "renesas,rcar_sound-r8a7745" (RZ/G1E)
+ 				    - "renesas,rcar_sound-r8a7778" (R-Car M1A)
+ 				    - "renesas,rcar_sound-r8a7790" (R-Car H2)
+ 				    - "renesas,rcar_sound-r8a7791" (R-Car M2-W)
 -- 
 2.7.4
