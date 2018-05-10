@@ -1,81 +1,50 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 10 May 2018 16:07:51 +0100
-Subject: [cip-dev] [PATCH 02/62] can: rcar: add gen[12] fallback
-	compatibility strings
+Date: Thu, 10 May 2018 16:07:52 +0100
+Subject: [cip-dev] [PATCH 03/62] dt-bindings: can: rcar_can: document
+	r8a774[35] can support
 In-Reply-To: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
 References: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1525964931-14960-3-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1525964931-14960-4-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Simon Horman <horms+renesas@verge.net.au>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Add fallback compatibility string for R-Car Gen 1 and Gen2.
+Document "renesas,can-r8a7743" and "renesas,can-r8a7745" compatible
+strings. Since the fallback compatible string ("renesas,rcar-gen2-can")
+activates the right code in the driver, no driver change is needed.
 
-In the case of Renesas R-Car hardware we know that there are generations of
-SoCs, e.g. Gen 1 and Gen 2. But beyond that its not clear what the
-relationship between IP blocks might be. For example, I believe that
-r8a7779 is older than r8a7778 but that doesn't imply that the latter is a
-descendant of the former or vice versa.
-
-We can, however, by examining the documentation and behaviour of the
-hardware at run-time observe that the current driver implementation appears
-to be compatible with the IP blocks on SoCs within a given generation.
-
-For the above reasons and convenience when enabling new SoCs a
-per-generation fallback compatibility string scheme being adopted for
-drivers for Renesas SoCs.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
-(cherry picked from commit 0dfa61bba38513957240660a9cad82dd408789ca)
+(cherry picked from commit 216bf2f490c214b8a0702b52cc957138ba24bc3f)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/net/can/rcar_can.txt | 8 +++++++-
- drivers/net/can/rcar_can.c                             | 2 ++
- 2 files changed, 9 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/net/can/rcar_can.txt | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-index 002d844..f2172fb 100644
+index f2172fb..6f81b1f 100644
 --- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
 +++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-@@ -6,6 +6,12 @@ Required properties:
+@@ -2,12 +2,15 @@ Renesas R-Car CAN controller Device Tree Bindings
+ -------------------------------------------------
+ 
+ Required properties:
+-- compatible: "renesas,can-r8a7778" if CAN controller is a part of R8A7778 SoC.
++- compatible: "renesas,can-r8a7743" if CAN controller is a part of R8A7743 SoC.
++	      "renesas,can-r8a7745" if CAN controller is a part of R8A7745 SoC.
++	      "renesas,can-r8a7778" if CAN controller is a part of R8A7778 SoC.
  	      "renesas,can-r8a7779" if CAN controller is a part of R8A7779 SoC.
  	      "renesas,can-r8a7790" if CAN controller is a part of R8A7790 SoC.
  	      "renesas,can-r8a7791" if CAN controller is a part of R8A7791 SoC.
-+	      "renesas,rcar-gen1-can" for a generic R-Car Gen1 compatible device.
-+	      "renesas,rcar-gen2-can" for a generic R-Car Gen2 compatible device.
-+	      When compatible with the generic version, nodes must list the
-+	      SoC-specific version corresponding to the platform first
-+	      followed by the generic version.
-+
- - reg: physical base address and size of the R-Car CAN register map.
- - interrupts: interrupt specifier for the sole interrupt.
- - clocks: phandles and clock specifiers for 3 CAN clock inputs.
-@@ -25,7 +31,7 @@ Example
- SoC common .dtsi file:
- 
- 	can0: can at e6e80000 {
--		compatible = "renesas,can-r8a7791";
-+		compatible = "renesas,can-r8a7791", "renesas,rcar-gen2-can";
- 		reg = <0 0xe6e80000 0 0x1000>;
- 		interrupts = <0 186 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7791_CLK_RCAN0>,
-diff --git a/drivers/net/can/rcar_can.c b/drivers/net/can/rcar_can.c
-index bc46be3..ad3d2e0 100644
---- a/drivers/net/can/rcar_can.c
-+++ b/drivers/net/can/rcar_can.c
-@@ -904,6 +904,8 @@ static const struct of_device_id rcar_can_of_table[] __maybe_unused = {
- 	{ .compatible = "renesas,can-r8a7779" },
- 	{ .compatible = "renesas,can-r8a7790" },
- 	{ .compatible = "renesas,can-r8a7791" },
-+	{ .compatible = "renesas,rcar-gen1-can" },
-+	{ .compatible = "renesas,rcar-gen2-can" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, rcar_can_of_table);
+ 	      "renesas,rcar-gen1-can" for a generic R-Car Gen1 compatible device.
+-	      "renesas,rcar-gen2-can" for a generic R-Car Gen2 compatible device.
++	      "renesas,rcar-gen2-can" for a generic R-Car Gen2 or RZ/G1
++	      compatible device.
+ 	      When compatible with the generic version, nodes must list the
+ 	      SoC-specific version corresponding to the platform first
+ 	      followed by the generic version.
 -- 
 2.7.4
