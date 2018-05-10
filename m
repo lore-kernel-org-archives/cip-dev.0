@@ -1,66 +1,103 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 10 May 2018 16:08:26 +0100
-Subject: [cip-dev] [PATCH 37/62] ARM: dts: iwg20d-q7-common: Enable SGTL5000
-	audio codec
+Date: Thu, 10 May 2018 16:08:27 +0100
+Subject: [cip-dev] [PATCH 38/62] ARM: dts: iwg20d-q7-common: Sound PIO
+	support
 In-Reply-To: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
 References: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1525964931-14960-38-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1525964931-14960-39-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This patch enables SGTL5000 audio codec on the carrier board.
+Enable sound PIO support on carrier board.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 3091626868981e086f57d580cb1711b4553c5663)
+(cherry picked from commit cfa2e2f7cf22d0523a88c6284606baa9b2698866)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- arch/arm/boot/dts/iwg20d-q7-common.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ arch/arm/boot/dts/iwg20d-q7-common.dtsi | 46 +++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
 diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-index 624907b..8d69a67 100644
+index 8d69a67..01f60ce 100644
 --- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
 +++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-@@ -20,6 +20,20 @@
- 		stdout-path = "serial0:115200n8";
+@@ -34,6 +34,22 @@
+ 		regulator-always-on;
  	};
  
-+	audio_clock: audio_clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <26000000>;
-+	};
++	rsnd_sgtl5000: sound {
++		compatible = "simple-audio-card";
 +
-+	reg_1p5v: 1p5v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "1P5V";
-+		regulator-min-microvolt = <1500000>;
-+		regulator-max-microvolt = <1500000>;
-+		regulator-always-on;
++		simple-audio-card,format = "i2s";
++		simple-audio-card,bitclock-master = <&sndcodec>;
++		simple-audio-card,frame-master = <&sndcodec>;
++
++		sndcpu: simple-audio-card,cpu {
++			sound-dai = <&rcar_sound>;
++		};
++
++		sndcodec: simple-audio-card,codec {
++			sound-dai = <&sgtl5000>;
++		};
 +	};
 +
  	vcc_sdhi1: regulator-vcc-sdhi1 {
  		compatible = "regulator-fixed";
  
-@@ -83,6 +97,16 @@
- 		compatible = "bq32000";
- 		reg = <0x68>;
+@@ -160,6 +176,11 @@
+ 		power-source = <3300>;
  	};
-+
-+	sgtl5000: codec at a {
-+		compatible = "fsl,sgtl5000";
-+		#sound-dai-cells = <0>;
-+		reg = <0x0a>;
-+		clocks = <&audio_clock>;
-+		VDDA-supply = <&reg_3p3v>;
-+		VDDIO-supply = <&reg_3p3v>;
-+		VDDD-supply = <&reg_1p5v>;
+ 
++	sound_pins: sound {
++		groups = "ssi0129_ctrl", "ssi0_data", "ssi1_data";
++		function = "ssi";
 +	};
++
+ 	usb0_pins: usb0 {
+ 		groups = "usb0";
+ 		function = "usb0";
+@@ -171,6 +192,22 @@
+ 	};
  };
  
- &pci0 {
++&rcar_sound {
++	pinctrl-0 = <&sound_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	/* Single DAI */
++	#sound-dai-cells = <0>;
++
++	rcar_sound,dai {
++		dai0 {
++			playback = <&ssi1>;
++			capture = <&ssi0>;
++		};
++	};
++};
++
+ &scif0 {
+ 	pinctrl-0 = <&scif0_pins>;
+ 	pinctrl-names = "default";
+@@ -197,6 +234,15 @@
+ 	status = "okay";
+ };
+ 
++&ssi0 {
++	pio-transfer;
++};
++
++&ssi1 {
++	pio-transfer;
++	shared-pin;
++};
++
+ &usbphy {
+ 	status = "okay";
+ };
 -- 
 2.7.4
