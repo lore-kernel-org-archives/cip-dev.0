@@ -1,48 +1,47 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 10 May 2018 16:08:33 +0100
-Subject: [cip-dev] [PATCH 44/62] dt-bindings: pwm: renesas-tpu: Document
-	r8a774[35] support
+Date: Thu, 10 May 2018 16:08:34 +0100
+Subject: [cip-dev] [PATCH  45/62] ARM: dts: r8a7743: Add TPU support
 In-Reply-To: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
 References: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1525964931-14960-45-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1525964931-14960-46-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Document r8a774[35] specific compatible strings. No driver change is
-needed as the fallback compatible string "renesas,tpu" activates the
-right code in the driver.
+Add TPU support to SoC DT.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
-(cherry picked from commit 3ba111a0182265b65e303c969294b8033ce9d122)
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+(cherry picked from commit ba8f6bda525121e310cec7532bf218d0bace4ff1)
+(updated clock and power-domains property. removed resets property)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7743.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt b/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt
-index b067e84..90e0a0a 100644
---- a/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt
-+++ b/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt
-@@ -5,9 +5,11 @@ Required Properties:
-   - compatible: should be one of the following.
-     - "renesas,tpu-r8a73a4": for R8A77A4 (R-Mobile APE6) compatible PWM controller.
-     - "renesas,tpu-r8a7740": for R8A7740 (R-Mobile A1) compatible PWM controller.
-+    - "renesas,tpu-r8a7743": for R8A7743 (RZ/G1M) compatible PWM controller.
-+    - "renesas,tpu-r8a7745": for R8A7745 (RZ/G1E) compatible PWM controller.
-     - "renesas,tpu-r8a7790": for R8A7790 (R-Car H2) compatible PWM controller.
-     - "renesas,tpu-sh7372": for SH7372 (SH-Mobile AP4) compatible PWM controller.
--    - "renesas,tpu": for generic R-Car TPU PWM controller.
-+    - "renesas,tpu": for generic R-Car and RZ/G1 TPU PWM controller.
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 73c658b..c0e53ee 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -254,6 +254,15 @@
+ 			reg = <0 0xe6060000 0 0x250>;
+ 		};
  
-   - reg: Base address and length of each memory resource used by the PWM
-     controller hardware module.
++		tpu: pwm at e60f0000 {
++			compatible = "renesas,tpu-r8a7743", "renesas,tpu";
++			reg = <0 0xe60f0000 0 0x148>;
++			clocks = <&mstp3_clks R8A7743_CLK_TPU0>;
++			power-domains = <&cpg_clocks>;
++			#pwm-cells = <3>;
++			status = "disabled";
++		};
++
+ 		dmac0: dma-controller at e6700000 {
+ 			compatible = "renesas,rcar-dmac";
+ 			reg = <0 0xe6700000 0 0x20000>;
 -- 
 2.7.4
