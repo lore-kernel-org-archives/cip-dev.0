@@ -1,61 +1,55 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 10 May 2018 16:08:44 +0100
-Subject: [cip-dev] [PATCH 55/62] thermal: rcar: check irq possibility in
-	rcar_thermal_irq_xxx()
+Date: Thu, 10 May 2018 16:08:45 +0100
+Subject: [cip-dev] [PATCH 56/62] thermal: rcar: rcar_thermal_get_temp()
+	return error if strange temp
 In-Reply-To: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
 References: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1525964931-14960-56-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1525964931-14960-57-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Current rcar thermal driver sometimes checks irq possibility when it
-calls rcar_thermal_irq_enable/disable(), but sometimes not.
-This patch checks it inside rcar_thermal_irq_enable/disable().
-
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
-(cherry picked from commit ffbcdf8a759c6dde71c6c4f646a552f7637bcca7)
+(cherry picked from commit 5440c40b900fa561add48a7e70e9c892f0551387)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/thermal/rcar_thermal.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/thermal/rcar_thermal.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/thermal/rcar_thermal.c b/drivers/thermal/rcar_thermal.c
-index b012d90..fb81fd7 100644
+index fb81fd7..44b9c48 100644
 --- a/drivers/thermal/rcar_thermal.c
 +++ b/drivers/thermal/rcar_thermal.c
-@@ -290,6 +290,9 @@ static void _rcar_thermal_irq_ctrl(struct rcar_thermal_priv *priv, int enable)
- 	unsigned long flags;
- 	u32 mask = 0x3 << rcar_id_to_shift(priv); /* enable Rising/Falling */
+@@ -203,6 +203,7 @@ err_out_unlock:
+ static int rcar_thermal_get_temp(struct thermal_zone_device *zone, int *temp)
+ {
+ 	struct rcar_thermal_priv *priv = rcar_zone_to_priv(zone);
++	int tmp;
+ 	int ret;
  
-+	if (!rcar_has_irq_support(priv))
-+		return;
+ 	ret = rcar_thermal_update_temp(priv);
+@@ -210,9 +211,18 @@ static int rcar_thermal_get_temp(struct thermal_zone_device *zone, int *temp)
+ 		return ret;
+ 
+ 	mutex_lock(&priv->lock);
+-	*temp =  MCELSIUS((priv->ctemp * 5) - 65);
++	tmp =  MCELSIUS((priv->ctemp * 5) - 65);
+ 	mutex_unlock(&priv->lock);
+ 
++	if ((tmp < MCELSIUS(-45)) || (tmp > MCELSIUS(125))) {
++		struct device *dev = rcar_priv_to_dev(priv);
 +
- 	spin_lock_irqsave(&common->lock, flags);
- 
- 	rcar_thermal_common_bset(common, INTMSK, mask, enable ? 0 : mask);
-@@ -374,8 +377,7 @@ static int rcar_thermal_remove(struct platform_device *pdev)
- 	struct rcar_thermal_priv *priv;
- 
- 	rcar_thermal_for_each_priv(priv, common) {
--		if (rcar_has_irq_support(priv))
--			rcar_thermal_irq_disable(priv);
-+		rcar_thermal_irq_disable(priv);
- 		thermal_zone_device_unregister(priv->zone);
- 	}
- 
-@@ -461,8 +463,7 @@ static int rcar_thermal_probe(struct platform_device *pdev)
- 			goto error_unregister;
- 		}
- 
--		if (rcar_has_irq_support(priv))
--			rcar_thermal_irq_enable(priv);
-+		rcar_thermal_irq_enable(priv);
- 
- 		list_move_tail(&priv->list, &common->head);
++		dev_err(dev, "it couldn't measure temperature correctly\n");
++		return -EIO;
++	}
++
++	*temp = tmp;
++
+ 	return 0;
+ }
  
 -- 
 2.7.4
