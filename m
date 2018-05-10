@@ -1,58 +1,66 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 10 May 2018 16:08:23 +0100
-Subject: [cip-dev] [PATCH  34/62] ARM: dts: r8a7743: Add audio clocks
+Date: Thu, 10 May 2018 16:08:26 +0100
+Subject: [cip-dev] [PATCH 37/62] ARM: dts: iwg20d-q7-common: Enable SGTL5000
+	audio codec
 In-Reply-To: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
 References: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1525964931-14960-35-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1525964931-14960-38-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Describe the external audio clocks required by the sound driver.
-Boards that provide audio clocks need to override the clock frequencies.
+This patch enables SGTL5000 audio codec on the carrier board.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit f27244593782059ad9e4d176006814609f4abfa1)
+(cherry picked from commit 3091626868981e086f57d580cb1711b4553c5663)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ arch/arm/boot/dts/iwg20d-q7-common.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 9724609..e0531e7 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -1499,6 +1499,29 @@
- 		clock-frequency = <0>;
+diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+index 624907b..8d69a67 100644
+--- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
++++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+@@ -20,6 +20,20 @@
+ 		stdout-path = "serial0:115200n8";
  	};
  
-+	/*
-+	 * The external audio clocks are configured as 0 Hz fixed frequency
-+	 * clocks by default.
-+	 * Boards that provide audio clocks should override them.
-+	 */
-+	audio_clk_a: audio_clk_a {
++	audio_clock: audio_clock {
 +		compatible = "fixed-clock";
 +		#clock-cells = <0>;
-+		clock-frequency = <0>;
++		clock-frequency = <26000000>;
 +	};
 +
-+	audio_clk_b: audio_clk_b {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
++	reg_1p5v: 1p5v {
++		compatible = "regulator-fixed";
++		regulator-name = "1P5V";
++		regulator-min-microvolt = <1500000>;
++		regulator-max-microvolt = <1500000>;
++		regulator-always-on;
 +	};
 +
-+	audio_clk_c: audio_clk_c {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
+ 	vcc_sdhi1: regulator-vcc-sdhi1 {
+ 		compatible = "regulator-fixed";
+ 
+@@ -83,6 +97,16 @@
+ 		compatible = "bq32000";
+ 		reg = <0x68>;
+ 	};
 +
- 	/* External USB clock - can be overridden by the board */
- 	usb_extal_clk: usb_extal {
- 		compatible = "fixed-clock";
++	sgtl5000: codec at a {
++		compatible = "fsl,sgtl5000";
++		#sound-dai-cells = <0>;
++		reg = <0x0a>;
++		clocks = <&audio_clock>;
++		VDDA-supply = <&reg_3p3v>;
++		VDDIO-supply = <&reg_3p3v>;
++		VDDD-supply = <&reg_1p5v>;
++	};
+ };
+ 
+ &pci0 {
 -- 
 2.7.4
