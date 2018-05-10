@@ -1,42 +1,46 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 10 May 2018 16:08:47 +0100
-Subject: [cip-dev] [PATCH 58/62] thermal: rcar_thermal: don't open code
-	of_device_get_match_data()
+Date: Thu, 10 May 2018 16:08:48 +0100
+Subject: [cip-dev] [PATCH 59/62] thermal: rcar_thermal: Fix priv->zone error
+	handling
 In-Reply-To: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
 References: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1525964931-14960-59-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1525964931-14960-60-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Dirk Behme <dirk.behme@de.bosch.com>
 
-This change will also make Coverity happy by avoiding a theoretical NULL
-pointer dereference; yet another reason is to use the above helper function
-to tighten the code and make it more readable.
+In case thermal_zone_xxx_register() returns an error, priv->zone
+isn't NULL any more, but contains the error code.
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
-(cherry picked from commit 67bc3f4226c1d29ee820eff98fcaf8a9283938fe)
+This is passed to thermal_zone_device_unregister(), then. This checks
+for priv->zone being NULL, but the error code is != NULL. So it works
+with the error code as a pointer. Crashing immediately.
+
+To fix this, reset priv->zone to NULL before entering
+rcar_gen3_thermal_remove().
+
+Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+(cherry picked from commit 87260d3f7aecba9a5fadc6886c338b2a8fccfca9)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/thermal/rcar_thermal.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/thermal/rcar_thermal.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/thermal/rcar_thermal.c b/drivers/thermal/rcar_thermal.c
-index 0e735ac..82daba0 100644
+index 82daba0..f0f0743 100644
 --- a/drivers/thermal/rcar_thermal.c
 +++ b/drivers/thermal/rcar_thermal.c
-@@ -430,8 +430,7 @@ static int rcar_thermal_probe(struct platform_device *pdev)
- 	struct rcar_thermal_priv *priv;
- 	struct device *dev = &pdev->dev;
- 	struct resource *res, *irq;
--	const struct of_device_id *of_id = of_match_device(rcar_thermal_dt_ids, dev);
--	unsigned long of_data = (unsigned long)of_id->data;
-+	unsigned long of_data = (unsigned long)of_device_get_match_data(dev);
- 	int mres = 0;
- 	int i;
- 	int ret = -ENODEV;
+@@ -504,6 +504,7 @@ static int rcar_thermal_probe(struct platform_device *pdev)
+ 		if (IS_ERR(priv->zone)) {
+ 			dev_err(dev, "can't register thermal zone\n");
+ 			ret = PTR_ERR(priv->zone);
++			priv->zone = NULL;
+ 			goto error_unregister;
+ 		}
+ 
 -- 
 2.7.4
