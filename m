@@ -1,78 +1,57 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 10 May 2018 16:07:53 +0100
-Subject: [cip-dev] [PATCH 04/62] ARM: dts: r8a7743: Add CAN[01] SoC support
+Date: Thu, 10 May 2018 16:07:54 +0100
+Subject: [cip-dev] [PATCH 05/62] ARM: dts: iwg20d-q7-common: Add can0
+	support to carrier board
 In-Reply-To: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
 References: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1525964931-14960-5-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1525964931-14960-6-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Add the definitions for can0 and can1 to the SoC .dtsi.
+This patch enables CAN0 interface exposed through connector J20 on the
+carrier board.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 6ee6959fb85c3e03ec0674d329dc96c733f51dce)
-(updated clocks and power-domains property. removed resets property)
+(cherry picked from commit 47f3c7b66b6d316f86b0ce957c99958da0268e36)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+ arch/arm/boot/dts/iwg20d-q7-common.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index eb3cdc8..94ccda0 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -1330,6 +1330,32 @@
- 			};
- 		};
- 
-+		can0: can at e6e80000 {
-+			compatible = "renesas,can-r8a7743",
-+				     "renesas,rcar-gen2-can";
-+			reg = <0 0xe6e80000 0 0x1000>;
-+			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp9_clks R8A7743_CLK_RCAN0>,
-+				 <&cpg_clocks R8A7743_CLK_RCAN>,
-+				 <&can_clk>;
-+			clock-names = "clkp1", "clkp2", "can_clk";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
-+
-+		can1: can at e6e88000 {
-+			compatible = "renesas,can-r8a7743",
-+				     "renesas,rcar-gen2-can";
-+			reg = <0 0xe6e88000 0 0x1000>;
-+			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp9_clks R8A7743_CLK_RCAN1>,
-+				 <&cpg_clocks R8A7743_CLK_RCAN>,
-+				 <&can_clk>;
-+			clock-names = "clkp1", "clkp2", "can_clk";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
-+
- 		pci0: pci at ee090000 {
- 			compatible = "renesas,pci-r8a7743",
- 				     "renesas,pci-rcar-gen2";
-@@ -1420,6 +1446,14 @@
- 		clock-frequency = <48000000>;
+diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+index 8f203c5..0bcb42f 100644
+--- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
++++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+@@ -59,6 +59,13 @@
  	};
+ };
  
-+	/* External CAN clock */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
++&can0 {
++	pinctrl-0 = <&can0_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
+ &hsusb {
+ 	status = "okay";
+ 	pinctrl-0 = <&usb0_pins>;
+@@ -79,6 +86,11 @@
+ };
+ 
+ &pfc {
++	can0_pins: can0 {
++		groups = "can0_data_d";
++		function = "can0";
 +	};
 +
- 	/* External SCIF clock */
- 	scif_clk: scif {
- 		compatible = "fixed-clock";
+ 	avb_pins: avb {
+ 		groups = "avb_mdio", "avb_gmii";
+ 		function = "avb";
 -- 
 2.7.4
