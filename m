@@ -1,50 +1,101 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 10 May 2018 16:08:40 +0100
-Subject: [cip-dev] [PATCH 51/62] dt-bindings: pwm: rcar: Document r8a774[35]
-	PWM bindings
+Date: Thu, 10 May 2018 16:08:41 +0100
+Subject: [cip-dev] [PATCH  52/62] ARM: dts: r8a7743: Add PWM SoC support
 In-Reply-To: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
 References: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1525964931-14960-52-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1525964931-14960-53-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-This patch adds compatible strings specific to r8a774[35], no driver
-change is needed as the fallback compatible string will activate the
-right code.
-
-Also, this patch replaces the example with a DT snippet used
-for adding PWM0 support to an r8a7743 based platform as the r8a7743 is
-now the first platform fully compatible with this driver and its PWM DT
-nodes refer to up-to-date code.
+Add the definitions for pwm[0123456] to the SoC .dtsi.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
-(cherry picked from commit 9d7e72858d9d84abbbb49e98e2dafeee2f7fd9b6)
-(removed r8a7743 example,since it is based on cpg-mssr framework)
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+(cherry picked from commit ea16b5896267a2358fc17cf5340b27b906513119)
+(updated clocks and power-domains property.removed resets property)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/r8a7743.dtsi | 63 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt b/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
-index 0822a08..4493fc5 100644
---- a/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
-+++ b/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
-@@ -2,6 +2,8 @@
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index c0e53ee..17be22c 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -917,6 +917,69 @@
+ 			status = "disabled";
+ 		};
  
- Required Properties:
- - compatible: should be "renesas,pwm-rcar" and one of the following.
-+ - "renesas,pwm-r8a7743": for RZ/G1M
-+ - "renesas,pwm-r8a7745": for RZ/G1E
-  - "renesas,pwm-r8a7778": for R-Car M1A
-  - "renesas,pwm-r8a7779": for R-Car H1
-  - "renesas,pwm-r8a7790": for R-Car H2
++		pwm0: pwm at e6e30000 {
++			compatible = "renesas,pwm-r8a7743", "renesas,pwm-rcar";
++			reg = <0 0xe6e30000 0 0x8>;
++			clocks = <&mstp5_clks R8A7743_CLK_PWM>;
++			power-domains = <&cpg_clocks>;
++			#pwm-cells = <2>;
++			status = "disabled";
++		};
++
++		pwm1: pwm at e6e31000 {
++			compatible = "renesas,pwm-r8a7743", "renesas,pwm-rcar";
++			reg = <0 0xe6e31000 0 0x8>;
++			clocks = <&mstp5_clks R8A7743_CLK_PWM>;
++			power-domains = <&cpg_clocks>;
++			#pwm-cells = <2>;
++			status = "disabled";
++		};
++
++		pwm2: pwm at e6e32000 {
++			compatible = "renesas,pwm-r8a7743", "renesas,pwm-rcar";
++			reg = <0 0xe6e32000 0 0x8>;
++			clocks = <&mstp5_clks R8A7743_CLK_PWM>;
++			power-domains = <&cpg_clocks>;
++			#pwm-cells = <2>;
++			status = "disabled";
++		};
++
++		pwm3: pwm at e6e33000 {
++			compatible = "renesas,pwm-r8a7743", "renesas,pwm-rcar";
++			reg = <0 0xe6e33000 0 0x8>;
++			clocks = <&mstp5_clks R8A7743_CLK_PWM>;
++			power-domains = <&cpg_clocks>;
++			#pwm-cells = <2>;
++			status = "disabled";
++		};
++
++		pwm4: pwm at e6e34000 {
++			compatible = "renesas,pwm-r8a7743", "renesas,pwm-rcar";
++			reg = <0 0xe6e34000 0 0x8>;
++			clocks = <&mstp5_clks R8A7743_CLK_PWM>;
++			power-domains = <&cpg_clocks>;
++			#pwm-cells = <2>;
++			status = "disabled";
++		};
++
++		pwm5: pwm at e6e35000 {
++			compatible = "renesas,pwm-r8a7743", "renesas,pwm-rcar";
++			reg = <0 0xe6e35000 0 0x8>;
++			clocks = <&mstp5_clks R8A7743_CLK_PWM>;
++			power-domains = <&cpg_clocks>;
++			#pwm-cells = <2>;
++			status = "disabled";
++		};
++
++		pwm6: pwm at e6e36000 {
++			compatible = "renesas,pwm-r8a7743", "renesas,pwm-rcar";
++			reg = <0 0xe6e36000 0 0x8>;
++			clocks = <&mstp5_clks R8A7743_CLK_PWM>;
++			power-domains = <&cpg_clocks>;
++			#pwm-cells = <2>;
++			status = "disabled";
++		};
++
+ 		/*
+ 		 * pci1 and xhci share the same phy, therefore only one of them
+ 		 * can be active at any one time. If both of them are enabled,
 -- 
 2.7.4
