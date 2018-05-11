@@ -1,71 +1,20 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 10 May 2018 16:08:51 +0100
-Subject: [cip-dev] [PATCH 62/62] ARM: dts: r8a7743: Add thermal device to DT
-In-Reply-To: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
-References: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1525964931-14960-63-git-send-email-biju.das@bp.renesas.com>
+From: daniel.wagner@siemens.com (Daniel Wagner)
+Date: Fri, 11 May 2018 09:34:24 +0200
+Subject: [cip-dev] linux-cip-rt mirror on gitlab.com?
+Message-ID: <d76b3c2f-72d8-3db8-6cb1-10417018b189@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This patch instantiates the thermal sensor module with thermal-zone
-support.
+Hi Augstin,
 
-This patch is based on the commit cac68a56e34b
-("ARM: dts: r8a7791: enable to use thermal-zone") by Kuninori Morimoto.
+I just received an private message asking where the linux-cip-rt kernel
+is hosted.  I wonder if it would be possible to mirror the linux-cip-rt
+as well in the cip-project group on gitlab.com. The wiki points only to
+the gitlab.com side.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 6c76b4f7d89e89f0ae405dfc7a64c6d2b5d02813)
-(updated clocks and power-domains property.removed resets property)
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- arch/arm/boot/dts/r8a7743.dtsi | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+My linux-cip-rt tree is here:
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 17be22c..1d9adcc 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -237,6 +237,37 @@
- 			power-domains = <&cpg_clocks>;
- 		};
- 
-+		thermal: thermal at e61f0000 {
-+			compatible = "renesas,thermal-r8a7743",
-+				     "renesas,rcar-gen2-thermal",
-+				     "renesas,rcar-thermal";
-+			reg = <0 0xe61f0000 0 0x10>, <0 0xe61f0100 0 0x38>;
-+			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp5_clks R8A7743_CLK_THERMAL>;
-+			power-domains = <&cpg_clocks>;
-+			#thermal-sensor-cells = <0>;
-+		};
-+
-+		thermal-zones {
-+			cpu_thermal: cpu-thermal {
-+				polling-delay-passive = <0>;
-+				polling-delay = <0>;
-+
-+				thermal-sensors = <&thermal>;
-+
-+				trips {
-+					cpu-crit {
-+						temperature = <95000>;
-+						hysteresis = <0>;
-+						type = "critical";
-+					};
-+				};
-+
-+				cooling-maps {
-+				};
-+			};
-+		};
-+
- 		timer {
- 			compatible = "arm,armv7-timer";
- 			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
--- 
-2.7.4
+  https://git.kernel.org/pub/scm/linux/kernel/git/wagi/linux-cip-rt.git
+
+Thanks,
+Daniel
