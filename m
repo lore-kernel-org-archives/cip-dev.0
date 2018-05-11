@@ -1,61 +1,58 @@
-From: gitlab@mg.gitlab.com (Robert Marshall)
-Date: Fri, 11 May 2018 16:36:09 +0000
-Subject: [cip-dev]
- [Git][cip-project/cip-testing/board-at-desk-single-dev][master] 2 commits:
- Change necessary now that LAVA has moved to python 3 #184
-Message-ID: <5af5c679b57d9_7c9b3fcc1bec8e6c86311@sidekiq-asap-05.mail>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Fri, 11 May 2018 20:11:57 +0100
+Subject: [cip-dev] [PATCH 57/62] thermal: rcar: enable to use
+	thermal-zone on DT
+In-Reply-To: <1525964931-14960-58-git-send-email-biju.das@bp.renesas.com>
+References: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
+	<1525964931-14960-58-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1526065917.6671.30.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Robert Marshall pushed to branch master at cip-project / cip-testing / board-at-desk-single-dev
+On Thu, 2018-05-10 at 16:08 +0100, Biju Das wrote:
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> This patch enables to use thermal-zone on DT if it was calles as
+> "renesas,rcar-thermal-gen2".
+> Previous style (= non thermal-zone) is still supported by
+> "renesas,rcar-thermal" to keep compatibility for "git bisect".
+> 
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+> (cherry picked from commit 8b477ea56383dc8b838f1f8b506e4571c14ceb30)
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+[...]
+> --- a/drivers/thermal/rcar_thermal.c
+> +++ b/drivers/thermal/rcar_thermal.c
+[...]
+> @@ -463,7 +492,13 @@ static int rcar_thermal_probe(struct platform_device *pdev)
+> ?		if (ret < 0)
+> ?			goto error_unregister;
+> ?
+> -		priv->zone = thermal_zone_device_register("rcar_thermal",
+> +		if (of_data == USE_OF_THERMAL)
+> +			priv->zone = thermal_zone_of_sensor_register(
+> +						dev, i, priv,
+> +						&rcar_thermal_zone_of_ops);
 
+Doesn't this require a corresponding change to use
+thermal_zone_of_sensor_unregister()?
 
-Commits:
-304b6d65 by Robert Marshall at 2018-05-09T12:46:03Z
-Change necessary now that LAVA has moved to python 3 #184
+It looks like this was fixed upstream by commits 5e325868aa59
+("thermal: convert rcar_thermal to use
+devm_thermal_zone_of_sensor_register") and d4b23c5c434a ("thermal:
+rcar_thermal: don't call thermal_zone_device_unregister when
+USE_OF_THERMAL").
 
-The change to the shutdown message does not appear to be necessary.
+Ben.
 
-- - - - -
-42e332d7 by Robert Marshall at 2018-05-11T16:36:04Z
-Merge branch &#39;lava2018.4change&#39; into &#39;master&#39;
-
-Change necessary now that LAVA has moved to python 3 #184
-
-See merge request cip-project/cip-testing/board-at-desk-single-dev!59
-- - - - -
-
-
-1 changed file:
-
-- integration-scripts/configure_lava.sh
-
-
-Changes:
-
-=====================================
-integration-scripts/configure_lava.sh
-=====================================
---- a/integration-scripts/configure_lava.sh
-+++ b/integration-scripts/configure_lava.sh
-@@ -62,9 +62,4 @@ cp -v /vagrant/device-dictionary/myiwg20m.jinja2 ~/myrenesas.dat
- sudo DEBIAN_FRONTEND=noninteractive chown lavaserver.lavaserver /etc/lava-server/dispatcher-config/devices/*
- sudo DEBIAN_FRONTEND=noninteractive chown lavaserver.lavaserver /etc/lava-server/dispatcher-config/device-types/*
- 
--# Change the default shutdown message for kernel v4.4 - comment these lines out if using older kernel with a Shutdown message of "The system is going down for reboot NOW"
--cd /usr/lib/python2.7/dist-packages/lava_dispatcher/pipeline/utils/
--sudo DEBIAN_FRONTEND=noninteractive sed -ie "/SHUTDOWN_MESSAGE/s/The system is going down for reboot NOW/Restarting system/" constants.py
--cd ~
--
- echo "END: configure_lava.sh"
-
-
-
-View it on GitLab: https://gitlab.com/cip-project/cip-testing/board-at-desk-single-dev/compare/4dbfc937754626b0284a8e307cd3ca2048a2f5a7...42e332d726083b8ccca95d783f9c0fd1c7af9bcf
-
+> +		else
+> +			priv->zone = thermal_zone_device_register(
+> +						"rcar_thermal",
+> ?						1, 0, priv,
+> ?						&rcar_thermal_zone_ops, NULL, 0,
+> ?						idle);
 -- 
-View it on GitLab: https://gitlab.com/cip-project/cip-testing/board-at-desk-single-dev/compare/4dbfc937754626b0284a8e307cd3ca2048a2f5a7...42e332d726083b8ccca95d783f9c0fd1c7af9bcf
-You're receiving this email because of your account on gitlab.com.
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180511/22afe064/attachment.html>
+Ben Hutchings
+Software Developer, Codethink Ltd.
