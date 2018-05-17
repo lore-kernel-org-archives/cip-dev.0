@@ -1,35 +1,75 @@
 From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
-Date: Thu, 17 May 2018 17:33:10 +0900
-Subject: [cip-dev] Backport for LTS 4.4.129 for LTP fnctl35 tests
-Message-ID: <1526545991-13743-1-git-send-email-daniel.sangorrin@toshiba.co.jp>
+Date: Thu, 17 May 2018 17:33:11 +0900
+Subject: [cip-dev] [PATCH] pipe: cap initial pipe capacity according to
+	pipe-max-size limit
+In-Reply-To: <1526545991-13743-1-git-send-email-daniel.sangorrin@toshiba.co.jp>
+References: <1526545991-13743-1-git-send-email-daniel.sangorrin@toshiba.co.jp>
+Message-ID: <1526545991-13743-2-git-send-email-daniel.sangorrin@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Dear Ben,
+From: "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
 
-The other day I mentioned on the list[1] that after running LTP with
-Fuego there were a few test cases failing that needed investigation.
+[ Upstream commit 086e774a57fba4695f14383c0818994c0b31da7c]
 
-I reviewed the first one (fcntl35 and fcntl35_64). According to the
-comments on the LTP fcntl35.c file (by Xiao Yang <yangx.jy@cn.fujitsu.com>)
-the bug tested by this test case was fixed by:
-    commit 086e774a57fba4695f14383c0818994c0b31da7c
-    Author: Michael Kerrisk (man-pages) <mtk.manpages@gmail.com>
-    Date:   Tue Oct 11 13:53:43 2016 -0700
+This is a patch that provides behavior that is more consistent, and
+probably less surprising to users. I consider the change optional, and
+welcome opinions about whether it should be applied.
 
-I backported that patch, see next e-mail:
-[PATCH] pipe: cap initial pipe capacity according to pipe-max-size
+By default, pipes are created with a capacity of 64 kiB.  However,
+/proc/sys/fs/pipe-max-size may be set smaller than this value.  In this
+scenario, an unprivileged user could thus create a pipe whose initial
+capacity exceeds the limit. Therefore, it seems logical to cap the
+initial pipe capacity according to the value of pipe-max-size.
 
-I tested again and confirmed that the patch fixed the bug.
+The test program shown earlier in this patch series can be used to
+demonstrate the effect of the change brought about with this patch:
 
-Before:
-fcntl35.c:98: FAIL: an unprivileged user init the capacity of a pipe to 65536 unexpectedly, expected 4096
-After:
-fcntl35.c:101: PASS: an unprivileged user init the capacity of a pipe to 4096 successfully
+    # cat /proc/sys/fs/pipe-max-size
+    1048576
+    # sudo -u mtk ./test_F_SETPIPE_SZ 1
+    Initial pipe capacity: 65536
+    # echo 10000 > /proc/sys/fs/pipe-max-size
+    # cat /proc/sys/fs/pipe-max-size
+    16384
+    # sudo -u mtk ./test_F_SETPIPE_SZ 1
+    Initial pipe capacity: 16384
+    # ./test_F_SETPIPE_SZ 1
+    Initial pipe capacity: 65536
 
-If you think the patch is OK (as mentor) I can send it to the LTS mailing list myself.
+The last two executions of 'test_F_SETPIPE_SZ' show that pipe-max-size
+caps the initial allocation for a new pipe for unprivileged users, but
+not for privileged users.
 
-Thanks,
-Daniel Sangorrin
+Link: http://lkml.kernel.org/r/31dc7064-2a17-9c5b-1df1-4e3012ee992c at gmail.com
+Signed-off-by: Michael Kerrisk <mtk.manpages@gmail.com>
+Reviewed-by: Vegard Nossum <vegard.nossum@oracle.com>
+Cc: Willy Tarreau <w@1wt.eu>
+Cc: <socketpair@gmail.com>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Jens Axboe <axboe@fb.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
+(Backported from commit 086e774a57fba4695f14383c0818994c0b31da7c)
+---
+ fs/pipe.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-[1] https://lists.cip-project.org/pipermail/cip-dev/2018-May/001181.html
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 39eff9a..1e7263b 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -616,6 +616,9 @@ struct pipe_inode_info *alloc_pipe_info(void)
+ 		unsigned long pipe_bufs = PIPE_DEF_BUFFERS;
+ 		struct user_struct *user = get_current_user();
+ 
++		if (pipe_bufs * PAGE_SIZE > pipe_max_size && !capable(CAP_SYS_RESOURCE))
++			pipe_bufs = pipe_max_size >> PAGE_SHIFT;
++
+ 		if (!too_many_pipe_buffers_hard(user)) {
+ 			if (too_many_pipe_buffers_soft(user))
+ 				pipe_bufs = 1;
+-- 
+2.7.4
