@@ -1,63 +1,77 @@
-From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
-Date: Fri, 18 May 2018 09:04:34 +0900
-Subject: [cip-dev] Backport for LTS 4.4.129 for LTP fnctl35 tests
-In-Reply-To: <1526580927.9159.169.camel@codethink.co.uk>
-References: <1526545991-13743-1-git-send-email-daniel.sangorrin@toshiba.co.jp>	
-	<3cb5d568-1658-93b1-5d64-eec4eda4d9d4@siemens.com>
-	<1526580927.9159.169.camel@codethink.co.uk>
-Message-ID: <003c01d3ee3b$cddb2a50$69917ef0$@toshiba.co.jp>
+From: biju.das@bp.renesas.com (Biju Das)
+Date: Mon, 21 May 2018 13:46:01 +0000
+Subject: [cip-dev] [PATCH 57/62] thermal: rcar: enable to use
+	thermal-zone on DT
+In-Reply-To: <1526065917.6671.30.camel@codethink.co.uk>
+References: <1525964931-14960-1-git-send-email-biju.das@bp.renesas.com>
+	<1525964931-14960-58-git-send-email-biju.das@bp.renesas.com>
+	<1526065917.6671.30.camel@codethink.co.uk>
+Message-ID: <OSBPR01MB21031EC0D28B91DAFEF38990B8950@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Ben, Daniel:
+Hi Ben,
 
-> -----Original Message-----
-> From: Ben Hutchings [mailto:ben.hutchings at codethink.co.uk]
-> Sent: Friday, May 18, 2018 3:15 AM
-> To: Daniel Wagner <daniel.wagner@siemens.com>; Daniel Sangorrin
-> <daniel.sangorrin@toshiba.co.jp>; cip-dev at lists.cip-project.org
-> Cc: fuego at lists.linuxfoundation.org
-> Subject: Re: [cip-dev] Backport for LTS 4.4.129 for LTP fnctl35 tests
-> 
-> On Thu, 2018-05-17 at 10:53 +0200, Daniel Wagner wrote:
-> > Hi Daniel,
+Thanks for the feedback.
+
+> Subject: Re: [PATCH 57/62] thermal: rcar: enable to use thermal-zone on DT
+>
+> On Thu, 2018-05-10 at 16:08 +0100, Biju Das wrote:
+> > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 > >
-> > On 05/17/2018 10:33 AM, Daniel Sangorrin wrote:
-> > > Dear Ben,
-> > >
-> > > The other day I mentioned on the list[1] that after running LTP with
-> > > Fuego there were a few test cases failing that needed investigation.
-> > >
-> > > I reviewed the first one (fcntl35 and fcntl35_64). According to the
-> > > comments on the LTP fcntl35.c file (by Xiao Yang <yangx.jy@cn.fujitsu.com>)
-> > > the bug tested by this test case was fixed by:
-> > >     commit 086e774a57fba4695f14383c0818994c0b31da7c
-> > >     Author: Michael Kerrisk (man-pages) <mtk.manpages@gmail.com>
-> > >     Date:   Tue Oct 11 13:53:43 2016 -0700
-> > >
-> > > I backported that patch, see next e-mail:
-> > > [PATCH] pipe: cap initial pipe capacity according to pipe-max-size
-> > >
-> > > I tested again and confirmed that the patch fixed the bug.
-> > >
-> > > Before:
-> > > fcntl35.c:98: FAIL: an unprivileged user init the capacity of a pipe to 65536
-> unexpectedly, expected 4096
-> > > After:
-> > > fcntl35.c:101: PASS: an unprivileged user init the capacity of a pipe to 4096
-> successfully
-> > >
-> > > If you think the patch is OK (as mentor) I can send it to the LTS mailing list
-> myself.
+> > This patch enables to use thermal-zone on DT if it was calles as
+> > "renesas,rcar-thermal-gen2".
+> > Previous style (= non thermal-zone) is still supported by
+> > "renesas,rcar-thermal" to keep compatibility for "git bisect".
 > >
-> > Wouldn't it make sense to send it (also?) to Greg to include into the
-> > stable trees?
-> 
-> I agree, this looks like suitable for stable.
+> > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> > Signed-off-by: Eduardo Valentin <edubezval@gmail.com> (cherry picked
+> > from commit 8b477ea56383dc8b838f1f8b506e4571c14ceb30)
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> [...]
+> > --- a/drivers/thermal/rcar_thermal.c
+> > +++ b/drivers/thermal/rcar_thermal.c
+> [...]
+> > @@ -463,7 +492,13 @@ static int rcar_thermal_probe(struct
+> platform_device *pdev)
+> >  if (ret < 0)
+> >  goto error_unregister;
+> >
+> > -priv->zone = thermal_zone_device_register("rcar_thermal",
+> > +if (of_data == USE_OF_THERMAL)
+> > +priv->zone = thermal_zone_of_sensor_register(
+> > +dev, i, priv,
+> > +
+> &rcar_thermal_zone_of_ops);
+>
+> Doesn't this require a corresponding change to use
+> thermal_zone_of_sensor_unregister()?
 
-OK, I got confused by this e-mail.
-https://lists.cip-project.org/pipermail/cip-dev/2018-April/001061.html
-I will send the patch directly to the stable mailing list then.
+As per  the commit(d4b23c5c434a) message "devm_thermal_zone_of_sensor_register() case doesn't need to call   thermal_zone_device_unregister()"
 
-Thanks,
-Daniel
+We are not using devm version of thermal_zone_of_sensor_register, so  I guess the below commit is not required.
+d4b23c5c434a ("thermal: rcar_thermal: don't call thermal_zone_device_unregister when USE_OF_THERMAL")
+
+> It looks like this was fixed upstream by commits 5e325868aa59
+> ("thermal: convert rcar_thermal to use
+> devm_thermal_zone_of_sensor_register") and d4b23c5c434a ("thermal:
+> rcar_thermal: don't call thermal_zone_device_unregister when
+> USE_OF_THERMAL").
+
+The commit 5e325868aa59 ("thermal: convert rcar_thermal to use devm_thermal_zone_of_sensor_register")
+depend upon the commit e498b4984 ("thermal: of-thermal: Add devm version of  thermal_zone_of_sensor_register")
+which is outside the scope of renesas thermal driver.
+
+ Are you ok for backporting the above patch? If yes, then it make sense to backport the commits 5e325868aa59 and d4b23c5c434a.
+
+Regards,
+Biju
+
+
+
+
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, Buckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered No. 04586709.
