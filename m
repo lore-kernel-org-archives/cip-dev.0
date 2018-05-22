@@ -1,44 +1,132 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Tue, 22 May 2018 11:09:42 +0000
-Subject: [cip-dev] FW: Your message to cip-dev awaits moderator approval
-In-Reply-To: <TY1PR01MB17702AC5DF1984B99A189BD6C0940@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <mailman.317.1526985765.5576.cip-dev@lists.cip-project.org>
-	<TY1PR01MB17702AC5DF1984B99A189BD6C0940@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-Message-ID: <TYAPR01MB2285A04E920469AAFEB35D22B7940@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
+Date: Tue, 22 May 2018 11:41:50 +0100
+Subject: [cip-dev] [PATCH repost] time: Fix CLOCK_MONOTONIC_RAW
+	sub-nanosecond accounting
+Message-ID: <1526985710-15696-1-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi guys,
+From: John Stultz <john.stultz@linaro.org>
 
-Anyone know why mailman is queuing emails with lot of recipients? (In this case 16)
+commit 3d88d56c5873f6eebe23e05c3da701960146b801 upstream.
 
-I'm not sure this is a great feature for a Kernel mailing list.
+Due to how the MONOTONIC_RAW accumulation logic was handled,
+there is the potential for a 1ns discontinuity when we do
+accumulations. This small discontinuity has for the most part
+gone un-noticed, but since ARM64 enabled CLOCK_MONOTONIC_RAW
+in their vDSO clock_gettime implementation, we've seen failures
+with the inconsistency-check test in kselftest.
 
-Chris
+This patch addresses the issue by using the same sub-ns
+accumulation handling that CLOCK_MONOTONIC uses, which avoids
+the issue for in-kernel users.
 
+Since the ARM64 vDSO implementation has its own clock_gettime
+calculation logic, this patch reduces the frequency of errors,
+but failures are still seen. The ARM64 vDSO will need to be
+updated to include the sub-nanosecond xtime_nsec values in its
+calculation for this issue to be completely fixed.
 
-> -----Original Message-----
-> From: cip-dev-bounces at lists.cip-project.org 
-> [mailto:cip-dev-bounces at lists.cip-project.org]
-> Sent: 22 May 2018 11:43
-> To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Subject: Your message to cip-dev awaits moderator approval
-> 
-> Your mail to 'cip-dev' with the subject
-> 
->     [PATCH repost] time: Fix CLOCK_MONOTONIC_RAW sub-nanosecond 
-> accounting
-> 
-> Is being held until the list moderator can review it for approval.
-> 
-> The reason it is being held:
-> 
->     Too many recipients to the message
-> 
-> Either the message will get posted to the list, or you will receive 
-> notification of the moderator's decision.  If you would like to cancel 
-> this posting, please visit the following URL:
-> 
->     
-> https://lists.cip-project.org/mailman/confirm/cip-dev/0257364596438021
-> 78ae057c2e864048647b60c2
+Signed-off-by: John Stultz <john.stultz@linaro.org>
+Tested-by: Daniel Mentz <danielmentz@google.com>
+Cc: Prarit Bhargava <prarit@redhat.com>
+Cc: Kevin Brodsky <kevin.brodsky@arm.com>
+Cc: Richard Cochran <richardcochran@gmail.com>
+Cc: Stephen Boyd <stephen.boyd@linaro.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: "stable #4 . 8+" <stable@vger.kernel.org>
+Cc: Miroslav Lichvar <mlichvar@redhat.com>
+Link: http://lkml.kernel.org/r/1496965462-20003-3-git-send-email-john.stultz at linaro.org
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+[fabrizio: cherry-pick to 4.4. Kept cycle_t type for function
+logarithmic_accumulation local variable "interval". Dropped
+casting of "interval" variable]
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+---
+Hello Greg,
+
+I am reposting this patch to include the relevant people in the email.
+Could you please consider this patch for 4.4.y?
+Testing 4.4.y without this patch makes tool
+tools/testing/selftests/timers/clocksource-switch.c fail on Koelsch board
+while running "Consistent CLOCK_MONOTONIC_RAW" with message "Delta: 1 ns".
+This patch fixes the problem.
+
+Thanks,
+Fab
+
+ include/linux/timekeeper_internal.h |  4 ++--
+ kernel/time/timekeeping.c           | 20 ++++++++++----------
+ 2 files changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/include/linux/timekeeper_internal.h b/include/linux/timekeeper_internal.h
+index f0f1793..115216e 100644
+--- a/include/linux/timekeeper_internal.h
++++ b/include/linux/timekeeper_internal.h
+@@ -56,7 +56,7 @@ struct tk_read_base {
+  *			interval.
+  * @xtime_remainder:	Shifted nano seconds left over when rounding
+  *			@cycle_interval
+- * @raw_interval:	Raw nano seconds accumulated per NTP interval.
++ * @raw_interval:	Shifted raw nano seconds accumulated per NTP interval.
+  * @ntp_error:		Difference between accumulated time and NTP time in ntp
+  *			shifted nano seconds.
+  * @ntp_error_shift:	Shift conversion between clock shifted nano seconds and
+@@ -97,7 +97,7 @@ struct timekeeper {
+ 	cycle_t			cycle_interval;
+ 	u64			xtime_interval;
+ 	s64			xtime_remainder;
+-	u32			raw_interval;
++	u64			raw_interval;
+ 	/* The ntp_tick_length() value currently being used.
+ 	 * This cached copy ensures we consistently apply the tick
+ 	 * length for an entire tick, as ntp_tick_length may change
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 6e48668..fed86b2 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -277,8 +277,7 @@ static void tk_setup_internals(struct timekeeper *tk, struct clocksource *clock)
+ 	/* Go back from cycles -> shifted ns */
+ 	tk->xtime_interval = (u64) interval * clock->mult;
+ 	tk->xtime_remainder = ntpinterval - tk->xtime_interval;
+-	tk->raw_interval =
+-		((u64) interval * clock->mult) >> clock->shift;
++	tk->raw_interval = interval * clock->mult;
+ 
+ 	 /* if changing clocks, convert xtime_nsec shift units */
+ 	if (old_clock) {
+@@ -1767,7 +1766,7 @@ static cycle_t logarithmic_accumulation(struct timekeeper *tk, cycle_t offset,
+ 						unsigned int *clock_set)
+ {
+ 	cycle_t interval = tk->cycle_interval << shift;
+-	u64 raw_nsecs;
++	u64 snsec_per_sec;
+ 
+ 	/* If the offset is smaller than a shifted interval, do nothing */
+ 	if (offset < interval)
+@@ -1782,14 +1781,15 @@ static cycle_t logarithmic_accumulation(struct timekeeper *tk, cycle_t offset,
+ 	*clock_set |= accumulate_nsecs_to_secs(tk);
+ 
+ 	/* Accumulate raw time */
+-	raw_nsecs = (u64)tk->raw_interval << shift;
+-	raw_nsecs += tk->raw_time.tv_nsec;
+-	if (raw_nsecs >= NSEC_PER_SEC) {
+-		u64 raw_secs = raw_nsecs;
+-		raw_nsecs = do_div(raw_secs, NSEC_PER_SEC);
+-		tk->raw_time.tv_sec += raw_secs;
++	tk->tkr_raw.xtime_nsec += (u64)tk->raw_time.tv_nsec << tk->tkr_raw.shift;
++	tk->tkr_raw.xtime_nsec += tk->raw_interval << shift;
++	snsec_per_sec = (u64)NSEC_PER_SEC << tk->tkr_raw.shift;
++	while (tk->tkr_raw.xtime_nsec >= snsec_per_sec) {
++		tk->tkr_raw.xtime_nsec -= snsec_per_sec;
++		tk->raw_time.tv_sec++;
+ 	}
+-	tk->raw_time.tv_nsec = raw_nsecs;
++	tk->raw_time.tv_nsec = tk->tkr_raw.xtime_nsec >> tk->tkr_raw.shift;
++	tk->tkr_raw.xtime_nsec -= (u64)tk->raw_time.tv_nsec << tk->tkr_raw.shift;
+ 
+ 	/* Accumulate error between NTP and clock interval */
+ 	tk->ntp_error += tk->ntp_tick << shift;
+-- 
+2.7.4
