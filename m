@@ -1,42 +1,68 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 24 May 2018 17:05:07 +0100
-Subject: [cip-dev] [RFC PATCH 4/7] usb: renesas_usbhs: set
-	quirk_avoids_skb_reserve if USB-DMAC is used
+Date: Thu, 24 May 2018 17:05:08 +0100
+Subject: [cip-dev] [RFC PATCH 5/7] usb: gadget: f_ncm/u_ether: Move 'SKB
+	reserve' quirk setup to u_ether
 In-Reply-To: <1527177910-65275-1-git-send-email-biju.das@bp.renesas.com>
 References: <1527177910-65275-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1527177910-65275-5-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1527177910-65275-6-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Dmitry Osipenko <digetx@gmail.com>
 
-This patch sets the quirk_avoids_skb_reserve flag to improve performance
-of a network gadget driver (e.g. f_ncm.c) if USB-DMAC is used.
+That quirk is required to make USB Ethernet gadget working on HW that
+can't cope with unaligned DMA. For some reason only f_ncm sets up that
+quirk, let's setup it directly in u_ether so other network models would
+have that quirk applied as well. All network models have been tested with
+ChipIdea UDC driver on NVIDIA Tegra20 SoC that require DMA to be aligned.
 
-For example (on r8a7795 board + f_ncm.c + iperf udp mode / receiving):
-  - without this patch:  90.3 Mbits/sec
-  - with    this patch: 273   Mbits/sec
-
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-(cherry picked from commit ee5acabf5805612c72084276e0c215367a042d71)
+(cherry picked from commit 0852659ef071ccd84e85e37195e7c2f3e7c64d1f)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/usb/renesas_usbhs/mod_gadget.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/usb/gadget/function/f_ncm.c   | 2 --
+ drivers/usb/gadget/function/u_ether.c | 2 +-
+ drivers/usb/gadget/function/u_ether.h | 1 -
+ 3 files changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/usb/renesas_usbhs/mod_gadget.c b/drivers/usb/renesas_usbhs/mod_gadget.c
-index 8647d2c..8cb3815 100644
---- a/drivers/usb/renesas_usbhs/mod_gadget.c
-+++ b/drivers/usb/renesas_usbhs/mod_gadget.c
-@@ -1122,6 +1122,8 @@ int usbhs_mod_gadget_probe(struct usbhs_priv *priv)
- 	gpriv->gadget.name		= "renesas_usbhs_udc";
- 	gpriv->gadget.ops		= &usbhsg_gadget_ops;
- 	gpriv->gadget.max_speed		= USB_SPEED_HIGH;
-+	gpriv->gadget.quirk_avoids_skb_reserve = usbhs_get_dparam(priv,
-+								has_usb_dmac);
+diff --git a/drivers/usb/gadget/function/f_ncm.c b/drivers/usb/gadget/function/f_ncm.c
+index 025047f..7ad798a 100644
+--- a/drivers/usb/gadget/function/f_ncm.c
++++ b/drivers/usb/gadget/function/f_ncm.c
+@@ -852,8 +852,6 @@ static int ncm_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
+ 			 */
+ 			ncm->port.is_zlp_ok =
+ 				gadget_is_zlp_supported(cdev->gadget);
+-			ncm->port.no_skb_reserve =
+-				gadget_avoids_skb_reserve(cdev->gadget);
+ 			ncm->port.cdc_filter = DEFAULT_FILTER;
+ 			DBG(cdev, "activate ncm\n");
+ 			net = gether_connect(&ncm->port);
+diff --git a/drivers/usb/gadget/function/u_ether.c b/drivers/usb/gadget/function/u_ether.c
+index 96ec10d..be41ae5 100644
+--- a/drivers/usb/gadget/function/u_ether.c
++++ b/drivers/usb/gadget/function/u_ether.c
+@@ -1067,7 +1067,7 @@ struct net_device *gether_connect(struct gether *link)
  
- 	INIT_LIST_HEAD(&gpriv->gadget.ep_list);
+ 	if (result == 0) {
+ 		dev->zlp = link->is_zlp_ok;
+-		dev->no_skb_reserve = link->no_skb_reserve;
++		dev->no_skb_reserve = gadget_avoids_skb_reserve(dev->gadget);
+ 		DBG(dev, "qlen %d\n", qlen(dev->gadget, dev->qmult));
+ 
+ 		dev->header_len = link->header_len;
+diff --git a/drivers/usb/gadget/function/u_ether.h b/drivers/usb/gadget/function/u_ether.h
+index 81d94a7..c77145b 100644
+--- a/drivers/usb/gadget/function/u_ether.h
++++ b/drivers/usb/gadget/function/u_ether.h
+@@ -64,7 +64,6 @@ struct gether {
+ 	struct usb_ep			*out_ep;
+ 
+ 	bool				is_zlp_ok;
+-	bool				no_skb_reserve;
+ 
+ 	u16				cdc_filter;
  
 -- 
 2.7.4
