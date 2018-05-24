@@ -1,49 +1,39 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 24 May 2018 17:05:09 +0100
-Subject: [cip-dev] [RFC PATCH 6/7] dmaengine: usb-dmac: fix endless loop in
-	usb_dmac_chan_terminate_all()
+Date: Thu, 24 May 2018 17:05:10 +0100
+Subject: [cip-dev] [RFC PATCH 7/7] ARM: shmobile: defconfig: Enable missing
+	support based on DTSes
 In-Reply-To: <1527177910-65275-1-git-send-email-biju.das@bp.renesas.com>
 References: <1527177910-65275-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1527177910-65275-7-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1527177910-65275-8-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch fixes an issue that list_for_each_entry() in
-usb_dmac_chan_terminate_all() is possible to cause endless loop because
-this will move own desc to the desc_freed. So, this driver should use
-list_for_each_entry_safe() instead of list_for_each_entry().
+Enable all missing support, extracted from the various Renesas ARM DTSes
+using linux-config-from-dt.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
-(cherry picked from commit d9f5efade2cfd729138a7cafb46d01044da40f5e)
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+(cherry picked from commit 6161cc147277e7537d73a45d732a7112997c20f6)
+(enabled only USB-DMAC apart from previously enabled CAN and
+ CAN_RCAR)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/dma/sh/usb-dmac.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/configs/shmobile_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/dma/sh/usb-dmac.c b/drivers/dma/sh/usb-dmac.c
-index 56410ea..6682b3e 100644
---- a/drivers/dma/sh/usb-dmac.c
-+++ b/drivers/dma/sh/usb-dmac.c
-@@ -448,7 +448,7 @@ usb_dmac_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
- static int usb_dmac_chan_terminate_all(struct dma_chan *chan)
- {
- 	struct usb_dmac_chan *uchan = to_usb_dmac_chan(chan);
--	struct usb_dmac_desc *desc;
-+	struct usb_dmac_desc *desc, *_desc;
- 	unsigned long flags;
- 	LIST_HEAD(head);
- 	LIST_HEAD(list);
-@@ -459,7 +459,7 @@ static int usb_dmac_chan_terminate_all(struct dma_chan *chan)
- 	if (uchan->desc)
- 		uchan->desc = NULL;
- 	list_splice_init(&uchan->desc_got, &list);
--	list_for_each_entry(desc, &list, node)
-+	list_for_each_entry_safe(desc, _desc, &list, node)
- 		list_move_tail(&desc->node, &uchan->desc_freed);
- 	spin_unlock_irqrestore(&uchan->vc.lock, flags);
- 	vchan_dma_desc_free_list(&uchan->vc, &head);
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index 31d7ccc..69b95f5 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -189,6 +189,7 @@ CONFIG_RTC_DRV_RX8581=y
+ CONFIG_DMADEVICES=y
+ CONFIG_SH_DMAE=y
+ CONFIG_RCAR_DMAC=y
++CONFIG_RENESAS_USB_DMAC=y
+ # CONFIG_IOMMU_SUPPORT is not set
+ CONFIG_IIO=y
+ CONFIG_AK8975=y
 -- 
 2.7.4
