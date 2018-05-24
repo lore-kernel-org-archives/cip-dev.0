@@ -1,50 +1,74 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 24 May 2018 17:05:03 +0100
-Subject: [cip-dev] [RFC PATCH 0/7] 'SKB reserve' quirk setup to u_ether
-Message-ID: <1527177910-65275-1-git-send-email-biju.das@bp.renesas.com>
+Date: Thu, 24 May 2018 17:05:04 +0100
+Subject: [cip-dev] [RFC PATCH 1/7] usb: gadget: add a new quirk to avoid
+	skb_reserve in u_ether.c
+In-Reply-To: <1527177910-65275-1-git-send-email-biju.das@bp.renesas.com>
+References: <1527177910-65275-1-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1527177910-65275-2-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi All,
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Some platforms (e.g. USB-DMAC on R-Car and RZ/G1 SoCs) has memory
-alignment restriction. If memory alignment is not match, the usb
-peripheral driver decides not to use the DMA controller.
-Then, the performance is not good.
+Some platforms (e.g. USB-DMAC on R-Car SoCs) has memory alignment
+restriction. If memory alignment is not match, the usb peripheral
+driver decides not to use the DMA controller. Then, the performance
+is not good.
 
-Patch 1-4 --> basically add support only for NCM network model.
+In the case of u_ether.c, since it calls skb_reserve() in rx_submit(),
+it is possible to cause memory alignment mismatch.
 
-Patch 5--> supports for all network models.
+So, this patch adds a new quirk "quirk_avoids_skb_reserve" to avoid
+skb_reserve() calling in u_ether.c to improve performance.
 
-Patch 6-->fixes cpulock up condition on the USB DMAC driver
+A peripheral driver will set this flag and network gadget drivers
+(e.g. f_ncm.c) will reference the flag via gadget_avoids_skb_reserve().
 
-Patch 7--> enables USB DMAC
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+(cherry picked from commit 60e7396f820fa67a007f2a2eb5d97d3e77a74881)
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+---
+ include/linux/usb/gadget.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-Renesas USB DMAC driver is not enabled in 4.4 stable kernel.
-So not planning to send the patch set to stable kernel.
-
-Cheers,
-Biju
-
-Dmitry Osipenko (1):
-  usb: gadget: f_ncm/u_ether: Move 'SKB reserve' quirk setup to u_ether
-
-Geert Uytterhoeven (1):
-  ARM: shmobile: defconfig: Enable missing support based on DTSes
-
-Yoshihiro Shimoda (5):
-  usb: gadget: add a new quirk to avoid skb_reserve in u_ether.c
-  usb: gadget: u_ether: add a flag to avoid skb_reserve() calling
-  usb: gadget: f_ncm: add support for no_skb_reserve
-  usb: renesas_usbhs: set quirk_avoids_skb_reserve if USB-DMAC is used
-  dmaengine: usb-dmac: fix endless loop in usb_dmac_chan_terminate_all()
-
- arch/arm/configs/shmobile_defconfig    |  1 +
- drivers/dma/sh/usb-dmac.c              |  4 ++--
- drivers/usb/gadget/function/u_ether.c  |  5 ++++-
- drivers/usb/renesas_usbhs/mod_gadget.c |  2 ++
- include/linux/usb/gadget.h             | 13 +++++++++++++
- 5 files changed, 22 insertions(+), 3 deletions(-)
-
+diff --git a/include/linux/usb/gadget.h b/include/linux/usb/gadget.h
+index 3d583a1..2ba866f 100644
+--- a/include/linux/usb/gadget.h
++++ b/include/linux/usb/gadget.h
+@@ -594,6 +594,8 @@ struct usb_gadget_ops {
+  *	enabled HNP support.
+  * @quirk_ep_out_aligned_size: epout requires buffer size to be aligned to
+  *	MaxPacketSize.
++ * @quirk_avoids_skb_reserve: udc/platform wants to avoid skb_reserve() in
++ *	u_ether.c to improve performance.
+  * @is_selfpowered: if the gadget is self-powered.
+  * @deactivated: True if gadget is deactivated - in deactivated state it cannot
+  *	be connected.
+@@ -643,6 +645,7 @@ struct usb_gadget {
+ 	unsigned			quirk_altset_not_supp:1;
+ 	unsigned			quirk_stall_not_supp:1;
+ 	unsigned			quirk_zlp_not_supp:1;
++	unsigned			quirk_avoids_skb_reserve:1;
+ 	unsigned			is_selfpowered:1;
+ 	unsigned			deactivated:1;
+ 	unsigned			connected:1;
+@@ -708,6 +711,16 @@ static inline int gadget_is_zlp_supported(struct usb_gadget *g)
+ }
+ 
+ /**
++ * gadget_avoids_skb_reserve - return true iff the hardware would like to avoid
++ *	skb_reserve to improve performance.
++ * @g: controller to check for quirk
++ */
++static inline int gadget_avoids_skb_reserve(struct usb_gadget *g)
++{
++	return g->quirk_avoids_skb_reserve;
++}
++
++/**
+  * gadget_is_dualspeed - return true iff the hardware handles high speed
+  * @g: controller that might support both high and full speeds
+  */
 -- 
 2.7.4
