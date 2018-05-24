@@ -1,74 +1,50 @@
-From: jernstfriedman@linuxfoundation.org (Jeff ErnstFriedman)
-Date: Tue, 22 May 2018 09:54:35 -0700
-Subject: [cip-dev] FW: Your message to cip-dev awaits moderator approval
-In-Reply-To: <TYAPR01MB2285A04E920469AAFEB35D22B7940@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-References: <mailman.317.1526985765.5576.cip-dev@lists.cip-project.org>
-	<TY1PR01MB17702AC5DF1984B99A189BD6C0940@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-	<TYAPR01MB2285A04E920469AAFEB35D22B7940@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-Message-ID: <CAEeDQDEFsX1CEsQy9i6CcbDnOyqbxoJTf+o22JmXnNNtfGpbFA@mail.gmail.com>
+From: biju.das@bp.renesas.com (Biju Das)
+Date: Thu, 24 May 2018 17:05:03 +0100
+Subject: [cip-dev] [RFC PATCH 0/7] 'SKB reserve' quirk setup to u_ether
+Message-ID: <1527177910-65275-1-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Thank you Chris for your comments.
+Hi All,
 
-The value of the recipient limit is set to avoid spam, the current setting
-is '10' and can be adjusted. I don't see a view into how often this
-threshold has been triggered to see if this is a first time offense, or
-that we regularly are missing good content, or if we are somewhere
-inbetween.
+Some platforms (e.g. USB-DMAC on R-Car and RZ/G1 SoCs) has memory
+alignment restriction. If memory alignment is not match, the usb
+peripheral driver decides not to use the DMA controller.
+Then, the performance is not good.
 
-Without objection, I will raise it to 20 and see if that is a workable
-solution.
+Patch 1-4 --> basically add support only for NCM network model.
 
+Patch 5--> supports for all network models.
 
+Patch 6-->fixes cpulock up condition on the USB DMAC driver
 
-*Jeff ErnstFriedman*
-*jernstfriedman at linuxfoundation.org <jernstfriedman@linuxfoundation.org> *
-*2201 Broadway #604, Oakland, CA 94612*
-*mobile: 510.593.1367*
-*skype: jeffrey.ernstfriedman*
-*twitter: @namdeirf*
+Patch 7--> enables USB DMAC
 
-On Tue, May 22, 2018 at 4:09 AM, Chris Paterson <Chris.Paterson2@renesas.com
-> wrote:
+Renesas USB DMAC driver is not enabled in 4.4 stable kernel.
+So not planning to send the patch set to stable kernel.
 
-> Hi guys,
->
-> Anyone know why mailman is queuing emails with lot of recipients? (In this
-> case 16)
->
-> I'm not sure this is a great feature for a Kernel mailing list.
->
-> Chris
->
->
-> > -----Original Message-----
-> > From: cip-dev-bounces at lists.cip-project.org
-> > [mailto:cip-dev-bounces at lists.cip-project.org]
-> > Sent: 22 May 2018 11:43
-> > To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > Subject: Your message to cip-dev awaits moderator approval
-> >
-> > Your mail to 'cip-dev' with the subject
-> >
-> >     [PATCH repost] time: Fix CLOCK_MONOTONIC_RAW sub-nanosecond
-> > accounting
-> >
-> > Is being held until the list moderator can review it for approval.
-> >
-> > The reason it is being held:
-> >
-> >     Too many recipients to the message
-> >
-> > Either the message will get posted to the list, or you will receive
-> > notification of the moderator's decision.  If you would like to cancel
-> > this posting, please visit the following URL:
-> >
-> >
-> > https://lists.cip-project.org/mailman/confirm/cip-dev/0257364596438021
-> > 78ae057c2e864048647b60c2
->
->
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180522/67dcf26c/attachment.html>
+Cheers,
+Biju
+
+Dmitry Osipenko (1):
+  usb: gadget: f_ncm/u_ether: Move 'SKB reserve' quirk setup to u_ether
+
+Geert Uytterhoeven (1):
+  ARM: shmobile: defconfig: Enable missing support based on DTSes
+
+Yoshihiro Shimoda (5):
+  usb: gadget: add a new quirk to avoid skb_reserve in u_ether.c
+  usb: gadget: u_ether: add a flag to avoid skb_reserve() calling
+  usb: gadget: f_ncm: add support for no_skb_reserve
+  usb: renesas_usbhs: set quirk_avoids_skb_reserve if USB-DMAC is used
+  dmaengine: usb-dmac: fix endless loop in usb_dmac_chan_terminate_all()
+
+ arch/arm/configs/shmobile_defconfig    |  1 +
+ drivers/dma/sh/usb-dmac.c              |  4 ++--
+ drivers/usb/gadget/function/u_ether.c  |  5 ++++-
+ drivers/usb/renesas_usbhs/mod_gadget.c |  2 ++
+ include/linux/usb/gadget.h             | 13 +++++++++++++
+ 5 files changed, 22 insertions(+), 3 deletions(-)
+
+-- 
+2.7.4
