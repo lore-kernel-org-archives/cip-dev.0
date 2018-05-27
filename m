@@ -1,39 +1,24 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 24 May 2018 17:05:10 +0100
-Subject: [cip-dev] [RFC PATCH 7/7] ARM: shmobile: defconfig: Enable missing
-	support based on DTSes
-In-Reply-To: <1527177910-65275-1-git-send-email-biju.das@bp.renesas.com>
-References: <1527177910-65275-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1527177910-65275-8-git-send-email-biju.das@bp.renesas.com>
+From: jernstfriedman@linuxfoundation.org (Jeff ErnstFriedman)
+Date: Sun, 27 May 2018 15:04:39 -0700
+Subject: [cip-dev] Memorial Day: May 28
+Message-ID: <CAEeDQDFRv9xOimKKy5msj72exz0aLGctV4kq4jxxddM9NLACiA@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Due to the Memorial Day holiday in the US, I will not be available for the
+Monday May 28 TSC meeting.
 
-Enable all missing support, extracted from the various Renesas ARM DTSes
-using linux-config-from-dt.
+However please indicate if there are any action items you would like me to
+followup on and I will get to them ASAP.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 6161cc147277e7537d73a45d732a7112997c20f6)
-(enabled only USB-DMAC apart from previously enabled CAN and
- CAN_RCAR)
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Thank you.
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index 31d7ccc..69b95f5 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -189,6 +189,7 @@ CONFIG_RTC_DRV_RX8581=y
- CONFIG_DMADEVICES=y
- CONFIG_SH_DMAE=y
- CONFIG_RCAR_DMAC=y
-+CONFIG_RENESAS_USB_DMAC=y
- # CONFIG_IOMMU_SUPPORT is not set
- CONFIG_IIO=y
- CONFIG_AK8975=y
--- 
-2.7.4
+*Jeff ErnstFriedman*
+*jernstfriedman at linuxfoundation.org <jernstfriedman@linuxfoundation.org> *
+*2201 Broadway #604, Oakland, CA 94612*
+*mobile: 510.593.1367*
+*skype: jeffrey.ernstfriedman*
+*twitter: @namdeirf*
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180527/94424469/attachment.html>
