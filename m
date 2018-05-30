@@ -1,44 +1,43 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Wed, 30 May 2018 18:36:01 +0100
-Subject: [cip-dev] [PATCH v2 05/11] thermal: rcar_thermal: don't call
-	thermal_zone_device_unregister when USE_OF_THERMAL
+Date: Wed, 30 May 2018 18:36:02 +0100
+Subject: [cip-dev] [PATCH v2 06/11] dt-bindings: thermal: rcar: Add device
+	tree support for r8a7743
 In-Reply-To: <1527701767-41785-1-git-send-email-biju.das@bp.renesas.com>
 References: <1527701767-41785-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1527701767-41785-6-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1527701767-41785-7-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Bui Duc Phuc <bd-phuc@jinso.co.jp>
+Add thermal sensor support for r8a7743 SoC. The Renesas RZ/G1M
+(r8a7743) thermal sensor module is identical to the R-Car Gen2 family.
 
-devm_thermal_zone_of_sensor_register() case doesn't need to call
-thermal_zone_device_unregister().
-Otherwise, rcar-thermal can't register thermal zone again after rebind.
-This patch fixes it.
+No driver change is needed due to the fallback compatible value
+"renesas,rcar-gen2-thermal".
 
-Signed-off-by: Bui Duc Phuc <bd-phuc@jinso.co.jp>
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Zhang Rui <rui.zhang@intel.com>
-(cherry picked from commit d4b23c5c434a7af053782cc0f9eebee51ec71bb2)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Simon Horman <simon.horman@netronome.com>
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+(cherry picked from commit 2d14a0ee5e73d5224873777892fd86d3a283b059)
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/thermal/rcar_thermal.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/thermal/rcar-thermal.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/thermal/rcar_thermal.c b/drivers/thermal/rcar_thermal.c
-index 4048003..e895830 100644
---- a/drivers/thermal/rcar_thermal.c
-+++ b/drivers/thermal/rcar_thermal.c
-@@ -419,9 +419,10 @@ static int rcar_thermal_remove(struct platform_device *pdev)
- 
- 	rcar_thermal_for_each_priv(priv, common) {
- 		rcar_thermal_irq_disable(priv);
--		thermal_zone_device_unregister(priv->zone);
- 		if (rcar_use_of_thermal(dev))
- 			thermal_remove_hwmon_sysfs(priv->zone);
-+		else
-+			thermal_zone_device_unregister(priv->zone);
- 	}
- 
- 	pm_runtime_put(dev);
+diff --git a/Documentation/devicetree/bindings/thermal/rcar-thermal.txt b/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
+index e5ee3f1..689e7e8 100644
+--- a/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
++++ b/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
+@@ -6,6 +6,7 @@ Required properties:
+ 			   "renesas,rcar-thermal" (without thermal-zone) as fallback.
+ 			  Examples with soctypes are:
+ 			    - "renesas,thermal-r8a73a4" (R-Mobile APE6)
++			    - "renesas,thermal-r8a7743" (RZ/G1M)
+ 			    - "renesas,thermal-r8a7779" (R-Car H1)
+ 			    - "renesas,thermal-r8a7790" (R-Car H2)
+ 			    - "renesas,thermal-r8a7791" (R-Car M2-W)
 -- 
 2.7.4
