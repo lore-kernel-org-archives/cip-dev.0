@@ -1,67 +1,28 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Thu, 31 May 2018 13:56:15 +0100
-Subject: [cip-dev] [PATCH 4.4-cip 2/2] watchdog: Fix kref imbalance seen if
- handle_boot_enabled=0
-In-Reply-To: <20180531125458.gohmb46oplx4iv4x@xylophone.i.decadent.org.uk>
-References: <20180531125458.gohmb46oplx4iv4x@xylophone.i.decadent.org.uk>
-Message-ID: <20180531125615.efqb373lp2ov3zoy@xylophone.i.decadent.org.uk>
+From: maemalynn@linuxfoundation.org (Maemalynn Meanor)
+Date: Thu, 31 May 2018 16:16:09 -0700
+Subject: [cip-dev] New CIP Blog Post
+Message-ID: <117CBBC8-F027-4659-A61E-E27F88C09D5C@linuxfoundation.org>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Guenter Roeck <linux@roeck-us.net>
+CIP Community:
 
-commit 914d65f3f013ba2556c7beec5d3baac7b3292504 upstream.
+This month, we are featuring Moxa in CIP?s Member Spotlight series. You read the blog here: https://www.cip-project.org/blog/2018/05/30/cip-member-spotlight-moxa <https://www.cip-project.org/blog/2018/05/30/cip-member-spotlight-moxa>.
 
-If handle_boot_enabled is set to 0, the watchdog driver module use
-counter will not be increased and kref_get() will not be called when
-registering the watchdog. Subsequently, on open, this does not happen
-either because the code believes that it was already done because the
-hardware watchdog is marked as running.
+If you?d like to share the blog with your network, you can retweet us here: https://twitter.com/cip_project/status/1002067191586488320 <https://twitter.com/cip_project/status/1002067191586488320> (Thank you in advance for sharing!)
 
-We could introduce a state variable to indicate this state, but let's
-just increase the module use counter and call kref_get() unconditionally
-if the hardware watchdog is running when a driver is registering itself
-to keep the code simple.
+For June, CIP will feature a technical update blog from Codethink and will highlight Hitachi for the member spotlight. If you would like to contribute a blog post - either a technical one, a trends article, or a recap of an industry event, please let me know. We are always looking for great content. 
 
-Fixes: 2501b015313fe ("watchdog: core: add option to avoid early ...")
-Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
-[bwh: Backported to 4.4:
- - We still use ref/unref callbacks instead of a kref
- - Adjust context]
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
----
- drivers/watchdog/watchdog_dev.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+Thank you,
+Mae
 
-diff --git a/drivers/watchdog/watchdog_dev.c b/drivers/watchdog/watchdog_dev.c
-index b9b34aa07d48..60a32917d3d5 100644
---- a/drivers/watchdog/watchdog_dev.c
-+++ b/drivers/watchdog/watchdog_dev.c
-@@ -688,15 +688,14 @@ int watchdog_dev_register(struct watchdog_device *wdd)
- 	 * and schedule an immediate ping.
- 	 */
- 	if (watchdog_hw_running(wdd)) {
--		if (handle_boot_enabled) {
--			__module_get(wdd->ops->owner);
--			if (wdd->ops->ref)
--				wdd->ops->ref(wdd);
-+		__module_get(wdd->ops->owner);
-+		if (wdd->ops->ref)
-+			wdd->ops->ref(wdd);
-+		if (handle_boot_enabled)
- 			queue_delayed_work(watchdog_wq, &wdd->work, 0);
--		} else {
-+		else
- 			pr_info("watchdog%d running and kernel based pre-userspace handler disabled\n",
--					wdd->id);
--		}
-+				wdd->id);
- 	}
- 
- 	return 0;
--- 
-Ben Hutchings, Software Developer                         Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+
+Maemalynn Meanor
+PR Manager 
+The Linux Foundation
+Maemalynn at linuxfoundation.org
+(602) 541-0356
+Skype: Maemalynn
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180531/2e64a8a5/attachment.html>
