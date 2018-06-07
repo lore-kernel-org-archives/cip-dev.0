@@ -1,28 +1,24 @@
-From: maemalynn@linuxfoundation.org (Maemalynn Meanor)
-Date: Thu, 31 May 2018 16:16:09 -0700
-Subject: [cip-dev] New CIP Blog Post
-Message-ID: <117CBBC8-F027-4659-A61E-E27F88C09D5C@linuxfoundation.org>
+From: agustin.benito@codethink.co.uk (=?ISO-8859-1?Q?Agust=EDn?= Benito Bethencourt)
+Date: Thu, 07 Jun 2018 17:10:10 +0200
+Subject: [cip-dev] Evaluation of the code review from Moxa so far
+Message-ID: <1862979.Hem8Rly24N@linux-if6s>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-CIP Community:
+Hi SZ Lin,
 
-This month, we are featuring Moxa in CIP?s Member Spotlight series. You read the blog here: https://www.cip-project.org/blog/2018/05/30/cip-member-spotlight-moxa <https://www.cip-project.org/blog/2018/05/30/cip-member-spotlight-moxa>.
+it would be useful for us and also for the coming TSC meeting at OSSJ if you 
+could provide to this list a report about the experience of Moxa devs reviewing 
+stable kernel patches, including the challenges and the highlights.
 
-If you?d like to share the blog with your network, you can retweet us here: https://twitter.com/cip_project/status/1002067191586488320 <https://twitter.com/cip_project/status/1002067191586488320> (Thank you in advance for sharing!)
+Do you think is this a good idea? Is it doable before the OSSJ 2018?
 
-For June, CIP will feature a technical update blog from Codethink and will highlight Hitachi for the member spotlight. If you would like to contribute a blog post - either a technical one, a trends article, or a recap of an industry event, please let me know. We are always looking for great content. 
-
-Thank you,
-Mae
-
-
-Maemalynn Meanor
-PR Manager 
-The Linux Foundation
-Maemalynn at linuxfoundation.org
-(602) 541-0356
-Skype: Maemalynn
+Best Regards
+-- 
+Agust?n Benito Bethencourt
+Principal Consultant
+Codethink Ltd
+We respect your privacy.   See https://www.codethink.co.uk/privacy.html
 -------------- next part --------------
 An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180531/2e64a8a5/attachment.html>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180607/11fe0b9d/attachment.html>
