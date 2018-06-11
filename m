@@ -1,59 +1,33 @@
-From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
-Date: Fri, 08 Jun 2018 06:50:28 +0200
-Subject: [cip-dev] Evaluation of the code review from Moxa so far
-In-Reply-To: <CAFk6z8NDnARaYdUO2mD_X_dairmFD1QgB+OD9Mi4YcwS0nu3RQ@mail.gmail.com>
-References: <1862979.Hem8Rly24N@linux-if6s>
-	<CAFk6z8NDnARaYdUO2mD_X_dairmFD1QgB+OD9Mi4YcwS0nu3RQ@mail.gmail.com>
-Message-ID: <FD43C973-47A3-4989-9DAF-5906E27180A2@codethink.co.uk>
+From: maemalynn@linuxfoundation.org (Maemalynn Meanor)
+Date: Mon, 11 Jun 2018 10:04:47 -0700
+Subject: [cip-dev] CIP Blog Post: Codethink's Technical Report Card
+Message-ID: <7CDD29C8-274E-48D3-83D6-D9BB74226F24@linuxfoundation.org>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+HI CIP Community!
 
-On 7 June 2018 18:35:37 CEST, "SZ Lin (???)" <sz.lin@moxa.com> wrote:
->Hi Agustin,
->
->By all means, I can prepare the information for you.
->
->Could you please let me know deadline for it?
+We posted a new blog this morning from Agustin Benito Bethancourt that offers a technical update from Codethink. You can read the blog post here: https://www.cip-project.org/blog/2018/06/11/cip-member-codethink-reveals-technical-report-card <https://www.cip-project.org/blog/2018/06/11/cip-member-codethink-reveals-technical-report-card>. 
 
-The OSSJ starts on June 20th. Reading it before that date would be ideal.
+As always, we ask that you share this with your social networks. You can retweet us: https://twitter.com/cip_project/status/1006212020545511430 <https://twitter.com/cip_project/status/1006212020545511430>
 
->
->SZ
+We also have big news coming out of Open Source Summit Japan next week. Please stay tuned for more!
 
-Best Regards
->
->
->2018-06-07 23:10 GMT+08:00 Agust?n Benito Bethencourt
-><agustin.benito@codethink.co.uk>:
->> Hi SZ Lin,
->>
->>
->>
->> it would be useful for us and also for the coming TSC meeting at OSSJ
->if you
->> could provide to this list a report about the experience of Moxa devs
->> reviewing stable kernel patches, including the challenges and the
->> highlights.
->>
->>
->>
->> Do you think is this a good idea? Is it doable before the OSSJ 2018?
->>
->>
->>
->> Best Regards
->>
->> --
->>
->> Agust?n Benito Bethencourt
->>
->> Principal Consultant
->>
->> Codethink Ltd
->>
->> We respect your privacy. See https://www.codethink.co.uk/privacy.html
+Thanks,
+Mae
 
--- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+
+Maemalynn Meanor
+PR Manager 
+The Linux Foundation
+Maemalynn at linuxfoundation.org
+(602) 541-0356
+Skype: Maemalynn
+
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180611/cf5044b4/attachment.html>
