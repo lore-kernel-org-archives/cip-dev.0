@@ -1,21 +1,28 @@
 From: maemalynn@linuxfoundation.org (Maemalynn Meanor)
-Date: Mon, 11 Jun 2018 10:04:47 -0700
-Subject: [cip-dev] CIP Blog Post: Codethink's Technical Report Card
-Message-ID: <7CDD29C8-274E-48D3-83D6-D9BB74226F24@linuxfoundation.org>
+Date: Fri, 15 Jun 2018 09:45:15 -0400
+Subject: [cip-dev] Upcoming Meetups
+Message-ID: <575B2F7A-8FAF-4C2C-9221-8F0FDB0A3017@linuxfoundation.org>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-HI CIP Community!
+Hi CIP Community: 
 
-We posted a new blog this morning from Agustin Benito Bethancourt that offers a technical update from Codethink. You can read the blog post here: https://www.cip-project.org/blog/2018/06/11/cip-member-codethink-reveals-technical-report-card <https://www.cip-project.org/blog/2018/06/11/cip-member-codethink-reveals-technical-report-card>. 
+EdgeX Foundry is planning a few IoT meet ups in China and Japan in the next few weeks. If you are interested in attending these events, please see below for the registration information. Space is limited, so I suggest registering soon. 
 
-As always, we ask that you share this with your social networks. You can retweet us: https://twitter.com/cip_project/status/1006212020545511430 <https://twitter.com/cip_project/status/1006212020545511430>
+IoT Meetup in China on June 26:
+EdgeX Foundry member VMware <https://www.vmware.com/> will host an IoT meetup at their offices on Tuesday, June 26 from 6 ? 9 p.m. Attendees will learn more about EdgeX Foundry <https://www.edgexfoundry.org/> and the Zephyr Project <https://www.zephyrproject.org/> as well as meet companies and individuals who are active in both groups to show off their work. 
 
-We also have big news coming out of Open Source Summit Japan next week. Please stay tuned for more!
+Register now: https://www.bagevent.com/event/1491965 ?? <https://www.bagevent.com/event/1491965>? <https://www.bagevent.com/event/1491965>
 
-Thanks,
+EdgeX Foundry Meetup in Tokyo on July 3:
+EdgeX Foundry will host a meetup on Tuesday, July 3 from 1:30 - 4 p.m. at TKP Garden City Shinagawa. Attendees will learn more about EdgeX Foundry <https://www.edgexfoundry.org/> and industrial IoT and network with peers. 
+
+Register now: https://docs.google.com/forms/d/e/1FAIpQLSdgTku_8Je6DS4rMOMGosaEF3BeFsSY3AwBe9rzYCQM44U2cQ/viewform <https://docs.google.com/forms/d/e/1FAIpQLSdgTku_8Je6DS4rMOMGosaEF3BeFsSY3AwBe9rzYCQM44U2cQ/viewform>
+
+Please let me know if you have any questions.
+
+Thanks!
 Mae
-
 
 Maemalynn Meanor
 PR Manager 
@@ -30,4 +37,4 @@ Skype: Maemalynn
 
 -------------- next part --------------
 An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180611/cf5044b4/attachment.html>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180615/413b7546/attachment.html>
