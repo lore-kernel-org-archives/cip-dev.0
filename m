@@ -1,34 +1,73 @@
-From: maemalynn@linuxfoundation.org (Maemalynn Meanor)
-Date: Wed, 27 Jun 2018 15:43:01 -0400
-Subject: [cip-dev] FYI - two more CIP articles
-Message-ID: <942B5E6A-297E-4235-AE7F-2A70971F21EC@linuxfoundation.org>
+From: john@optinlist.us (John Hughes)
+Date: Thu, 28 Jun 2018 07:25:30 -0600
+Subject: [cip-dev] Open Source Summit North America - Attendees List
+Message-ID: <!&!AAAAAAAAAAAYAAAAAAAAAFZH0bV4uMBEsBu8H+dEx6DCgAAAEAAAAPUcKon0QrhLlKEmPHzvzHABAAAAAA==@optinlist.us>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
+ 
 
-CIP Community:
+ 
 
-We received a few more media hits from the press release last week. Please see below for links to the article and a link to retweet. 
+ 
 
-Linux.com: https://www.linux.com/blog/2018/6/cip-keeping-lights-linux <https://www.linux.com/blog/2018/6/cip-keeping-lights-linux>
-Retweet us here: https://twitter.com/cip_project/status/1012026031065255936 <https://twitter.com/cip_project/status/1012026031065255936>
+Hi
 
-Japanese article: https://www.weeklybcn.com/journal/news/detail/20180621_162880.html <https://www.weeklybcn.com/journal/news/detail/20180621_162880.html> 
+ 
 
-Thank you,
-Mae
+Hope this note finds you well.
 
-Maemalynn Meanor
-PR Manager 
-The Linux Foundation
-Maemalynn at linuxfoundation.org
-(602) 541-0356
-Skype: Maemalynn
+ 
+
+I thought I'd check if you are interested in acquiring the attendees list of
+"Open Source Summit North America" for pre-show marketing campaign,
+Appointment Setting, Networking and various Marketing initiative which is
+held on 29th - 31st  August in Canada.
+
+ 
+
+Complete Data fields with 90% accuracy guaranteed on emails:
 
 
+Company name
 
+Website URL
 
+Contact name
+
+Specialty
+
+Postal address
+
+Phone number
+
+Fax Number
+
+Email Address
+
+ 
+
+ If you are interested, drop me a line. We will get back to you with
+pricing, counts and other information for your review.
+
+ 
+
+Thank you and I look forward to hear from you soon.
+
+ 
+
+Regards,
+
+John Hughes| Inside Sales | USA, UK & Europe|
+
+Email Id: john at optinlist.us
+
+ 
+
+ "If you don't wish to receive emails from us reply back with LEAVE OUT "
+
+ 
 
 -------------- next part --------------
 An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180627/400aec85/attachment.html>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180628/0b9f810f/attachment.html>
