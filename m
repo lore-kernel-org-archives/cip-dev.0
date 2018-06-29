@@ -1,43 +1,56 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Fri, 29 Jun 2018 15:38:21 +0100
-Subject: [cip-dev] [PATCH 20/86] ARM: dts: r8a7745: Remove unit-address and
-	reg from integrated cache
+Date: Fri, 29 Jun 2018 15:38:22 +0100
+Subject: [cip-dev] [PATCH 21/86] ARM: dts: iwg22m: Add iWave RZG1E SODIMM SOM
 In-Reply-To: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1530283167-14050-21-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1530283167-14050-22-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Biju Das <biju.das@bp.renesas.com>
 
-The Cortex-A7 cache controller is an integrated controller, and thus the
-device node representing it should not have a unit-addresses or reg
-property.
+Add support for iWave RZG1E SODIMM System On Module.
+http://www.iwavesystems.com/rz-g1e-sodimm-module.html
 
-Fixes: c95360247bdd67d3 ("ARM: dts: r8a7745: initial SoC device tree")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 51c00a9f730dd27da23e9dec593c22c0f9f5a1b1)
+(cherry picked from commit c9a41f515d1e5955c44cb04926f5f5f4be4a0cd0)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7745.dtsi | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7745-iwg22m.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r8a7745-iwg22m.dtsi
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 804baab..e5dcbca 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -30,9 +30,8 @@
- 			next-level-cache = <&L2_CA7>;
- 		};
- 
--		L2_CA7: cache-controller at 0 {
-+		L2_CA7: cache-controller-0 {
- 			compatible = "cache";
--			reg = <0>;
- 			cache-unified;
- 			cache-level = <2>;
- 		};
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
+new file mode 100644
+index 0000000..9dbd854
+--- /dev/null
++++ b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
+@@ -0,0 +1,24 @@
++/*
++ * Device Tree Source for the iWave-RZG1E-G22M SODIMM SOM
++ *
++ * Copyright (C) 2017 Renesas Electronics Corp.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++#include "r8a7745.dtsi"
++
++/ {
++	compatible = "iwave,g22m", "renesas,r8a7745";
++
++	memory at 40000000 {
++		device_type = "memory";
++		reg = <0 0x40000000 0 0x20000000>;
++	};
++};
++
++&extal_clk {
++	clock-frequency = <20000000>;
++};
 -- 
 2.7.4
