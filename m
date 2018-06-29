@@ -1,86 +1,33 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Fri, 29 Jun 2018 15:38:58 +0100
-Subject: [cip-dev] [PATCH 57/86] ARM: shmobile: Move shmobile_smp_{mpidr, fn,
-	arg}[] from .text to .bss
+Date: Fri, 29 Jun 2018 15:38:59 +0100
+Subject: [cip-dev] [PATCH 58/86] ARM: shmobile: Add pm support for r8a7745
 In-Reply-To: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1530283167-14050-58-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1530283167-14050-59-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+This patch adds pm support for r8a7745 SoC.
 
-If CONFIG_DEBUG_RODATA=y, the kernel crashes during system suspend:
-
-    Freezing user space processes ... (elapsed 0.004 seconds) done.
-    Freezing remaining freezable tasks ... (elapsed 0.002 seconds)
-    done.
-    PM: suspend of devices complete after 111.948 msecs
-    PM: late suspend of devices complete after 1.086 msecs
-    PM: noirq suspend of devices complete after 11.576 msecs
-    Disabling non-boot CPUs ...
-    Kernel panic - not syncing: Attempted to kill the idle task!
-    1014ec ---[ end Kernel panic - not syncing: Attempted to kill the idle task!
-    CPU0: stopping
-
-This happens because the .text section is marked read-only, while the
-arrays shmobile_smp_mpidr[], shmobile_smp_fn[], and shmobile_smp_arg[]
-are being written to.
-
-Fix this by moving these arrays from the .text to the .bss section.
-This requires accessing them through PC-relative offsets.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Nicolas Pitre <nico@linaro.org>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 4e960f52fce16a3bf3261fa92c34cf2306059ba2)
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 ---
- arch/arm/mach-shmobile/headsmp.S | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+ arch/arm/mach-shmobile/pm-rcar-gen2.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm/mach-shmobile/headsmp.S b/arch/arm/mach-shmobile/headsmp.S
-index 330c1fc..94d86ed 100644
---- a/arch/arm/mach-shmobile/headsmp.S
-+++ b/arch/arm/mach-shmobile/headsmp.S
-@@ -50,9 +50,11 @@ ENTRY(shmobile_smp_boot)
- 	mrc	p15, 0, r1, c0, c0, 5		@ r1 = MPIDR
- 	and	r0, r1, r0			@ r0 = cpu_logical_map() value
- 	mov	r1, #0				@ r1 = CPU index
--	adr	r5, 1f				@ array of per-cpu mpidr values
--	adr	r6, 2f				@ array of per-cpu functions
--	adr	r7, 3f				@ array of per-cpu arguments
-+	adr	r2, 1f
-+	ldmia	r2, {r5, r6, r7}
-+	add	r5, r5, r2			@ array of per-cpu mpidr values
-+	add	r6, r6, r2			@ array of per-cpu functions
-+	add	r7, r7, r2			@ array of per-cpu arguments
+diff --git a/arch/arm/mach-shmobile/pm-rcar-gen2.c b/arch/arm/mach-shmobile/pm-rcar-gen2.c
+index 94a2759..f1bee67 100644
+--- a/arch/arm/mach-shmobile/pm-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/pm-rcar-gen2.c
+@@ -85,6 +85,9 @@ void __init rcar_gen2_pm_init(void)
+ 	} else if (of_machine_is_compatible("renesas,r8a7743")) {
+ 		boot_vector_addr = RAM;
+ 		syscier = 0x00101003;
++	} else if (of_machine_is_compatible("renesas,r8a7745")) {
++		boot_vector_addr = RAM;
++		syscier = 0x00300060;
+ 	}
  
- shmobile_smp_boot_find_mpidr:
- 	ldr	r8, [r5, r1, lsl #2]
-@@ -80,12 +82,18 @@ ENTRY(shmobile_smp_sleep)
- 	b	shmobile_smp_boot
- ENDPROC(shmobile_smp_sleep)
- 
-+	.align	2
-+1:	.long	shmobile_smp_mpidr - .
-+	.long	shmobile_smp_fn - 1b
-+	.long	shmobile_smp_arg - 1b
-+
-+	.bss
- 	.globl	shmobile_smp_mpidr
- shmobile_smp_mpidr:
--1:	.space	NR_CPUS * 4
-+	.space	NR_CPUS * 4
- 	.globl	shmobile_smp_fn
- shmobile_smp_fn:
--2:	.space	NR_CPUS * 4
-+	.space	NR_CPUS * 4
- 	.globl	shmobile_smp_arg
- shmobile_smp_arg:
--3:	.space	NR_CPUS * 4
-+	.space	NR_CPUS * 4
+ 	/* RAM for jump stub, because BAR requires 256KB aligned address */
 -- 
 2.7.4
