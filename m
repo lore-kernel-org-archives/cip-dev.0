@@ -1,51 +1,46 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Fri, 29 Jun 2018 15:38:41 +0100
-Subject: [cip-dev] [PATCH 40/86] ARM: dts: r8a7745: add PFC support
+Date: Fri, 29 Jun 2018 15:38:42 +0100
+Subject: [cip-dev] [PATCH 41/86] ARM: dts: iwg22d-sodimm: Add pinctl support
+	for scif4
 In-Reply-To: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1530283167-14050-41-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1530283167-14050-42-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Biju Das <biju.das@bp.renesas.com>
 
-Define the generic R8A7745 part of the PFC device node.
+Adding pinctrl support for scif4 interface.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 95b94ed9abb58d2f5372a980a0af037e76c0beaf)
-(moved pfc node to improve DT nodes sorting)
+(cherry picked from commit 67dbb081815e013e1e7911305b43b44537a78ed2)
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7745.dtsi | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index e5dcbca..0b1b5b4 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -1,7 +1,7 @@
- /*
-  * Device Tree Source for the r8a7745 SoC
-  *
-- * Copyright (C) 2016 Cogent Embedded Inc.
-+ * Copyright (C) 2016-2017 Cogent Embedded Inc.
-  *
-  * This file is licensed under the terms of the GNU General Public License
-  * version 2. This program is licensed "as is" without any warranty of any
-@@ -45,6 +45,11 @@
- 		#size-cells = <2>;
- 		ranges;
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+index cbc19fe..442a5cb 100644
+--- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
++++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+@@ -24,6 +24,16 @@
+ 	};
+ };
  
-+		pfc: pin-controller at e6060000 {
-+			compatible = "renesas,pfc-r8a7745";
-+			reg = <0 0xe6060000 0 0x11c>;
-+		};
++&pfc {
++	scif4_pins: scif4 {
++		groups = "scif4_data_b";
++		function = "scif4";
++	};
++};
 +
- 		gic: interrupt-controller at f1001000 {
- 			compatible = "arm,gic-400";
- 			#interrupt-cells = <3>;
+ &scif4 {
++	pinctrl-0 = <&scif4_pins>;
++	pinctrl-names = "default";
++
+ 	status = "okay";
+ };
 -- 
 2.7.4
