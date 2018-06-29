@@ -1,108 +1,135 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Fri, 29 Jun 2018 15:38:44 +0100
-Subject: [cip-dev] [PATCH 43/86] gpio: rcar: add gen[123] fallback
-	compatibility strings
+Date: Fri, 29 Jun 2018 15:38:45 +0100
+Subject: [cip-dev] [PATCH 44/86] ARM: dts: r8a7745: Add GPIO support
 In-Reply-To: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1530283167-14050-44-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1530283167-14050-45-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Simon Horman <horms+renesas@verge.net.au>
+From: Biju Das <biju.das@bp.renesas.com>
 
-Add fallback compatibility string for R-Car Gen 1, 2 and 3.
+Describe GPIO blocks in the R8A7745 device tree.
 
-In the case of Renesas R-Car hardware we know that there are generations of
-SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationship
-between IP blocks might be. For example, I believe that r8a7790 is older
-than r8a7791 but that doesn't imply that the latter is a descendant of the
-former or vice versa.
-
-We can, however, by examining the documentation and behaviour of the
-hardware at run-time observe that the current driver implementation appears
-to be compatible with the IP blocks on SoCs within a given generation.
-
-For the above reasons and convenience when enabling new SoCs a
-per-generation fallback compatibility string scheme being adopted for
-drivers for Renesas SoCs.
-
-Also deprecate renesas,gpio-rcar as its name is more generic than its
-implementation.
-
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-(cherry picked from commit dbd1dad2ab8ffca57e0aa386df0d7ec621c26ca8)
-(taken out R-Car Gen3 support)
+(cherry picked from commit 3163c03ec37aef502474122b857452fb948c7596)
+(moved DT nodes to the top of soc node. removed resets properties.
+modified power-domains and clocks properties)
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 ---
- .../devicetree/bindings/gpio/renesas,gpio-rcar.txt         | 14 ++++++++++----
- drivers/gpio/gpio-rcar.c                                   |  6 ++++++
- 2 files changed, 16 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/r8a7745.dtsi | 98 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 98 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-index 046fef9..68eb3a8 100644
---- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-+++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-@@ -2,7 +2,7 @@
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 0b1b5b4..112a612 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -45,6 +45,104 @@
+ 		#size-cells = <2>;
+ 		ranges;
  
- Required Properties:
- 
--  - compatible: should contain one of the following.
-+  - compatible: should contain one or more of the following:
-     - "renesas,gpio-r8a7743": for R8A7743 (RZ/G1M) compatible GPIO controller.
-     - "renesas,gpio-r8a7745": for R8A7745 (RZ/G1E) compatible GPIO controller.
-     - "renesas,gpio-r8a7778": for R8A7778 (R-Mobile M1) compatible GPIO controller.
-@@ -12,7 +12,13 @@ Required Properties:
-     - "renesas,gpio-r8a7793": for R8A7793 (R-Car M2-N) compatible GPIO controller.
-     - "renesas,gpio-r8a7794": for R8A7794 (R-Car E2) compatible GPIO controller.
-     - "renesas,gpio-r8a7795": for R8A7795 (R-Car H3) compatible GPIO controller.
--    - "renesas,gpio-rcar": for generic R-Car GPIO controller.
-+    - "renesas,rcar-gen1-gpio": for a generic R-Car Gen1 GPIO controller.
-+    - "renesas,rcar-gen2-gpio": for a generic R-Car Gen2 or RZ/G1 GPIO controller.
-+    - "renesas,gpio-rcar": deprecated.
++		gpio0: gpio at e6050000 {
++			compatible = "renesas,gpio-r8a7745",
++				     "renesas,rcar-gen2-gpio";
++			reg = <0 0xe6050000 0 0x50>;
++			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 0 32>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&mstp9_clks R8A7745_CLK_GPIO0>;
++			power-domains = <&cpg_clocks>;
++		};
 +
-+    When compatible with the generic version nodes must list the
-+    SoC-specific version corresponding to the platform first followed by
-+    the generic version.
- 
-   - reg: Base address and length of each memory resource used by the GPIO
-     controller hardware module.
-@@ -42,7 +48,7 @@ interrupt-controller/interrupts.txt.
- Example: R8A7779 (R-Car H1) GPIO controller nodes
- 
- 	gpio0: gpio at ffc40000 {
--		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
- 		reg = <0xffc40000 0x2c>;
- 		interrupt-parent = <&gic>;
- 		interrupts = <0 141 0x4>;
-@@ -54,7 +60,7 @@ Example: R8A7779 (R-Car H1) GPIO controller nodes
- 	};
- 	...
- 	gpio6: gpio at ffc46000 {
--		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
-+		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
- 		reg = <0xffc46000 0x2c>;
- 		interrupt-parent = <&gic>;
- 		interrupts = <0 147 0x4>;
-diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index 9555cd8..c0fd5a5 100644
---- a/drivers/gpio/gpio-rcar.c
-+++ b/drivers/gpio/gpio-rcar.c
-@@ -392,6 +392,12 @@ static const struct of_device_id gpio_rcar_of_table[] = {
- 		/* Gen3 GPIO is identical to Gen2. */
- 		.data = &gpio_rcar_info_gen2,
- 	}, {
-+		.compatible = "renesas,rcar-gen1-gpio",
-+		.data = &gpio_rcar_info_gen1,
-+	}, {
-+		.compatible = "renesas,rcar-gen2-gpio",
-+		.data = &gpio_rcar_info_gen2,
-+	}, {
- 		.compatible = "renesas,gpio-rcar",
- 		.data = &gpio_rcar_info_gen1,
- 	}, {
++		gpio1: gpio at e6051000 {
++			compatible = "renesas,gpio-r8a7745",
++				     "renesas,rcar-gen2-gpio";
++			reg = <0 0xe6051000 0 0x50>;
++			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 32 26>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&mstp9_clks R8A7745_CLK_GPIO1>;
++			power-domains = <&cpg_clocks>;
++		};
++
++		gpio2: gpio at e6052000 {
++			compatible = "renesas,gpio-r8a7745",
++				     "renesas,rcar-gen2-gpio";
++			reg = <0 0xe6052000 0 0x50>;
++			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 64 32>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&mstp9_clks R8A7745_CLK_GPIO2>;
++			power-domains = <&cpg_clocks>;
++		};
++
++		gpio3: gpio at e6053000 {
++			compatible = "renesas,gpio-r8a7745",
++				     "renesas,rcar-gen2-gpio";
++			reg = <0 0xe6053000 0 0x50>;
++			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 96 32>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&mstp9_clks R8A7745_CLK_GPIO3>;
++			power-domains = <&cpg_clocks>;
++		};
++
++		gpio4: gpio at e6054000 {
++			compatible = "renesas,gpio-r8a7745",
++				     "renesas,rcar-gen2-gpio";
++			reg = <0 0xe6054000 0 0x50>;
++			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 128 32>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&mstp9_clks R8A7745_CLK_GPIO4>;
++			power-domains = <&cpg_clocks>;
++		};
++
++		gpio5: gpio at e6055000 {
++			compatible = "renesas,gpio-r8a7745",
++				     "renesas,rcar-gen2-gpio";
++			reg = <0 0xe6055000 0 0x50>;
++			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 160 28>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&mstp9_clks R8A7745_CLK_GPIO5>;
++			power-domains = <&cpg_clocks>;
++		};
++
++		gpio6: gpio at e6055400 {
++			compatible = "renesas,gpio-r8a7745",
++				     "renesas,rcar-gen2-gpio";
++			reg = <0 0xe6055400 0 0x50>;
++			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 192 26>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&mstp9_clks R8A7745_CLK_GPIO6>;
++			power-domains = <&cpg_clocks>;
++		};
++
+ 		pfc: pin-controller at e6060000 {
+ 			compatible = "renesas,pfc-r8a7745";
+ 			reg = <0 0xe6060000 0 0x11c>;
 -- 
 2.7.4
