@@ -1,386 +1,187 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Fri, 29 Jun 2018 15:38:26 +0100
-Subject: [cip-dev] [PATCH 25/86] pinctrl: sh-pfc: r8a7794: Add SSI pin groups
+Date: Fri, 29 Jun 2018 15:38:27 +0100
+Subject: [cip-dev] [PATCH 26/86] pinctrl: sh-pfc: r8a7794: Add audio clock
+	pin groups
 In-Reply-To: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1530283167-14050-26-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1530283167-14050-27-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Ryo Kataoka <ryo.kataoka.wt@renesas.com>
 
-Add the SSI pin groups to the R8A7794 PFC driver.
+Add the audio clock pin groups to the R8A7794 PFC driver.
 
-[Sergei: fixed inconsistent alternate pin group naming, split SSI5/6 pin
-groups into data/control ones, moved SSI7 data B group to its proper place,
-fixed  pin names in  the comments to *_pins[], extended Cogent Embedded's
-copyright, added the changelog, renamed the patch.]
+[Sergei:  fixed pin group names to reflect the reality, fixed pin names in
+the comments to *_pins[], lowercased the separator comment, resolved rejects,
+added the changelog, renamed the patch.]
 
 Signed-off-by: Ryo Kataoka <ryo.kataoka.wt@renesas.com>
 Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Acked-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-(cherry picked from commit a79ef339ddc60515ba23b137ba4feed11454d2de)
+(cherry picked from commit 73cfc55ae0680584f2d47aeaf65c5419ab129d8e)
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+(cherry picked from commit add096ddcb7f39b0b47850017654b18bc017ecc3)
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 315 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 313 insertions(+), 2 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 122 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 122 insertions(+)
 
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-index acd104b..cfc2e66 100644
+index cfc2e66..4a3c7ab 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-@@ -1,9 +1,9 @@
- /*
-  * r8a7794 processor support - PFC hardware block.
-  *
-- * Copyright (C) 2014 Renesas Electronics Corporation
-+ * Copyright (C) 2014-2015 Renesas Electronics Corporation
-  * Copyright (C) 2015 Renesas Solutions Corp.
-- * Copyright (C) 2015 Cogent  Embedded, Inc., <source@cogentembedded.com>
-+ * Copyright (C) 2015-2016 Cogent Embedded, Inc., <source@cogentembedded.com>
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2
-@@ -2770,6 +2770,245 @@ static const unsigned int sdhi2_wp_pins[] = {
- static const unsigned int sdhi2_wp_mux[] = {
- 	SD2_WP_MARK,
- };
-+/* - SSI -------------------------------------------------------------------- */
-+static const unsigned int ssi0_data_pins[] = {
-+	/* SDATA0 */
-+	RCAR_GP_PIN(5, 3),
-+};
-+static const unsigned int ssi0_data_mux[] = {
-+	SSI_SDATA0_MARK,
-+};
-+static const unsigned int ssi0129_ctrl_pins[] = {
-+	/* SCK0129, WS0129 */
-+	RCAR_GP_PIN(5, 1), RCAR_GP_PIN(5, 2),
-+};
-+static const unsigned int ssi0129_ctrl_mux[] = {
-+	SSI_SCK0129_MARK, SSI_WS0129_MARK,
-+};
-+static const unsigned int ssi1_data_pins[] = {
-+	/* SDATA1 */
-+	RCAR_GP_PIN(5, 13),
-+};
-+static const unsigned int ssi1_data_mux[] = {
-+	SSI_SDATA1_MARK,
-+};
-+static const unsigned int ssi1_ctrl_pins[] = {
-+	/* SCK1, WS1 */
-+	RCAR_GP_PIN(5, 11), RCAR_GP_PIN(5, 12),
-+};
-+static const unsigned int ssi1_ctrl_mux[] = {
-+	SSI_SCK1_MARK, SSI_WS1_MARK,
-+};
-+static const unsigned int ssi1_data_b_pins[] = {
-+	/* SDATA1 */
-+	RCAR_GP_PIN(4, 13),
-+};
-+static const unsigned int ssi1_data_b_mux[] = {
-+	SSI_SDATA1_B_MARK,
-+};
-+static const unsigned int ssi1_ctrl_b_pins[] = {
-+	/* SCK1, WS1 */
-+	RCAR_GP_PIN(4, 11), RCAR_GP_PIN(4, 12),
-+};
-+static const unsigned int ssi1_ctrl_b_mux[] = {
-+	SSI_SCK1_B_MARK, SSI_WS1_B_MARK,
-+};
-+static const unsigned int ssi2_data_pins[] = {
-+	/* SDATA2 */
-+	RCAR_GP_PIN(5, 16),
-+};
-+static const unsigned int ssi2_data_mux[] = {
-+	SSI_SDATA2_MARK,
-+};
-+static const unsigned int ssi2_ctrl_pins[] = {
-+	/* SCK2, WS2 */
-+	RCAR_GP_PIN(5, 14), RCAR_GP_PIN(5, 15),
-+};
-+static const unsigned int ssi2_ctrl_mux[] = {
-+	SSI_SCK2_MARK, SSI_WS2_MARK,
-+};
-+static const unsigned int ssi2_data_b_pins[] = {
-+	/* SDATA2 */
-+	RCAR_GP_PIN(4, 16),
-+};
-+static const unsigned int ssi2_data_b_mux[] = {
-+	SSI_SDATA2_B_MARK,
-+};
-+static const unsigned int ssi2_ctrl_b_pins[] = {
-+	/* SCK2, WS2 */
-+	RCAR_GP_PIN(4, 14), RCAR_GP_PIN(4, 15),
-+};
-+static const unsigned int ssi2_ctrl_b_mux[] = {
-+	SSI_SCK2_B_MARK, SSI_WS2_B_MARK,
-+};
-+static const unsigned int ssi3_data_pins[] = {
-+	/* SDATA3 */
-+	RCAR_GP_PIN(5, 6),
-+};
-+static const unsigned int ssi3_data_mux[] = {
-+	SSI_SDATA3_MARK
-+};
-+static const unsigned int ssi34_ctrl_pins[] = {
-+	/* SCK34, WS34 */
-+	RCAR_GP_PIN(5, 4), RCAR_GP_PIN(5, 5),
-+};
-+static const unsigned int ssi34_ctrl_mux[] = {
-+	SSI_SCK34_MARK, SSI_WS34_MARK,
-+};
-+static const unsigned int ssi4_data_pins[] = {
-+	/* SDATA4 */
-+	RCAR_GP_PIN(5, 9),
-+};
-+static const unsigned int ssi4_data_mux[] = {
-+	SSI_SDATA4_MARK,
-+};
-+static const unsigned int ssi4_ctrl_pins[] = {
-+	/* SCK4, WS4 */
-+	RCAR_GP_PIN(5, 7), RCAR_GP_PIN(5, 8),
-+};
-+static const unsigned int ssi4_ctrl_mux[] = {
-+	SSI_SCK4_MARK, SSI_WS4_MARK,
-+};
-+static const unsigned int ssi4_data_b_pins[] = {
-+	/* SDATA4 */
-+	RCAR_GP_PIN(4, 22),
-+};
-+static const unsigned int ssi4_data_b_mux[] = {
-+	SSI_SDATA4_B_MARK,
-+};
-+static const unsigned int ssi4_ctrl_b_pins[] = {
-+	/* SCK4, WS4 */
-+	RCAR_GP_PIN(4, 20), RCAR_GP_PIN(4, 21),
-+};
-+static const unsigned int ssi4_ctrl_b_mux[] = {
-+	SSI_SCK4_B_MARK, SSI_WS4_B_MARK,
-+};
-+static const unsigned int ssi5_data_pins[] = {
-+	/* SDATA5 */
-+	RCAR_GP_PIN(4, 26),
-+};
-+static const unsigned int ssi5_data_mux[] = {
-+	SSI_SDATA5_MARK,
-+};
-+static const unsigned int ssi5_ctrl_pins[] = {
-+	/* SCK5, WS5 */
-+	RCAR_GP_PIN(4, 24), RCAR_GP_PIN(4, 25),
-+};
-+static const unsigned int ssi5_ctrl_mux[] = {
-+	SSI_SCK5_MARK, SSI_WS5_MARK,
-+};
-+static const unsigned int ssi5_data_b_pins[] = {
-+	/* SDATA5 */
-+	RCAR_GP_PIN(3, 21),
-+};
-+static const unsigned int ssi5_data_b_mux[] = {
-+	SSI_SDATA5_B_MARK,
-+};
-+static const unsigned int ssi5_ctrl_b_pins[] = {
-+	/* SCK5, WS5 */
-+	RCAR_GP_PIN(3, 19), RCAR_GP_PIN(3, 20),
-+};
-+static const unsigned int ssi5_ctrl_b_mux[] = {
-+	SSI_SCK5_B_MARK, SSI_WS5_B_MARK,
-+};
-+static const unsigned int ssi6_data_pins[] = {
-+	/* SDATA6 */
-+	RCAR_GP_PIN(4, 29),
-+};
-+static const unsigned int ssi6_data_mux[] = {
-+	SSI_SDATA6_MARK,
-+};
-+static const unsigned int ssi6_ctrl_pins[] = {
-+	/* SCK6, WS6 */
-+	RCAR_GP_PIN(4, 27), RCAR_GP_PIN(4, 28),
-+};
-+static const unsigned int ssi6_ctrl_mux[] = {
-+	SSI_SCK6_MARK, SSI_WS6_MARK,
-+};
-+static const unsigned int ssi6_data_b_pins[] = {
-+	/* SDATA6 */
-+	RCAR_GP_PIN(3, 24),
-+};
-+static const unsigned int ssi6_data_b_mux[] = {
-+	SSI_SDATA6_B_MARK,
-+};
-+static const unsigned int ssi6_ctrl_b_pins[] = {
-+	/* SCK6, WS6 */
-+	RCAR_GP_PIN(3, 22), RCAR_GP_PIN(3, 23),
-+};
-+static const unsigned int ssi6_ctrl_b_mux[] = {
-+	SSI_SCK6_B_MARK, SSI_WS6_B_MARK,
-+};
-+static const unsigned int ssi7_data_pins[] = {
-+	/* SDATA7 */
-+	RCAR_GP_PIN(5, 0),
-+};
-+static const unsigned int ssi7_data_mux[] = {
-+	SSI_SDATA7_MARK,
-+};
-+static const unsigned int ssi78_ctrl_pins[] = {
-+	/* SCK78, WS78 */
-+	RCAR_GP_PIN(4, 30), RCAR_GP_PIN(4, 31),
-+};
-+static const unsigned int ssi78_ctrl_mux[] = {
-+	SSI_SCK78_MARK, SSI_WS78_MARK,
-+};
-+static const unsigned int ssi7_data_b_pins[] = {
-+	/* SDATA7 */
-+	RCAR_GP_PIN(3, 27),
-+};
-+static const unsigned int ssi7_data_b_mux[] = {
-+	SSI_SDATA7_B_MARK,
-+};
-+static const unsigned int ssi78_ctrl_b_pins[] = {
-+	/* SCK78, WS78 */
-+	RCAR_GP_PIN(3, 25), RCAR_GP_PIN(3, 26),
-+};
-+static const unsigned int ssi78_ctrl_b_mux[] = {
-+	SSI_SCK78_B_MARK, SSI_WS78_B_MARK,
-+};
-+static const unsigned int ssi8_data_pins[] = {
-+	/* SDATA8 */
-+	RCAR_GP_PIN(5, 10),
-+};
-+static const unsigned int ssi8_data_mux[] = {
-+	SSI_SDATA8_MARK,
-+};
-+static const unsigned int ssi8_data_b_pins[] = {
-+	/* SDATA8 */
-+	RCAR_GP_PIN(3, 28),
-+};
-+static const unsigned int ssi8_data_b_mux[] = {
-+	SSI_SDATA8_B_MARK,
-+};
-+static const unsigned int ssi9_data_pins[] = {
-+	/* SDATA9 */
-+	RCAR_GP_PIN(5, 19),
-+};
-+static const unsigned int ssi9_data_mux[] = {
-+	SSI_SDATA9_MARK,
-+};
-+static const unsigned int ssi9_ctrl_pins[] = {
-+	/* SCK9, WS9 */
-+	RCAR_GP_PIN(5, 17), RCAR_GP_PIN(5, 18),
-+};
-+static const unsigned int ssi9_ctrl_mux[] = {
-+	SSI_SCK9_MARK, SSI_WS9_MARK,
-+};
-+static const unsigned int ssi9_data_b_pins[] = {
-+	/* SDATA9 */
-+	RCAR_GP_PIN(4, 19),
-+};
-+static const unsigned int ssi9_data_b_mux[] = {
-+	SSI_SDATA9_B_MARK,
-+};
-+static const unsigned int ssi9_ctrl_b_pins[] = {
-+	/* SCK9, WS9 */
-+	RCAR_GP_PIN(4, 17), RCAR_GP_PIN(4, 18),
-+};
-+static const unsigned int ssi9_ctrl_b_mux[] = {
-+	SSI_SCK9_B_MARK, SSI_WS9_B_MARK,
-+};
- /* - USB0 ------------------------------------------------------------------- */
- static const unsigned int usb0_pins[] = {
- 	RCAR_GP_PIN(5, 24), /* PWEN */
-@@ -3103,6 +3342,40 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(sdhi2_ctrl),
- 	SH_PFC_PIN_GROUP(sdhi2_cd),
- 	SH_PFC_PIN_GROUP(sdhi2_wp),
-+	SH_PFC_PIN_GROUP(ssi0_data),
-+	SH_PFC_PIN_GROUP(ssi0129_ctrl),
-+	SH_PFC_PIN_GROUP(ssi1_data),
-+	SH_PFC_PIN_GROUP(ssi1_ctrl),
-+	SH_PFC_PIN_GROUP(ssi1_data_b),
-+	SH_PFC_PIN_GROUP(ssi1_ctrl_b),
-+	SH_PFC_PIN_GROUP(ssi2_data),
-+	SH_PFC_PIN_GROUP(ssi2_ctrl),
-+	SH_PFC_PIN_GROUP(ssi2_data_b),
-+	SH_PFC_PIN_GROUP(ssi2_ctrl_b),
-+	SH_PFC_PIN_GROUP(ssi3_data),
-+	SH_PFC_PIN_GROUP(ssi34_ctrl),
-+	SH_PFC_PIN_GROUP(ssi4_data),
-+	SH_PFC_PIN_GROUP(ssi4_ctrl),
-+	SH_PFC_PIN_GROUP(ssi4_data_b),
-+	SH_PFC_PIN_GROUP(ssi4_ctrl_b),
-+	SH_PFC_PIN_GROUP(ssi5_data),
-+	SH_PFC_PIN_GROUP(ssi5_ctrl),
-+	SH_PFC_PIN_GROUP(ssi5_data_b),
-+	SH_PFC_PIN_GROUP(ssi5_ctrl_b),
-+	SH_PFC_PIN_GROUP(ssi6_data),
-+	SH_PFC_PIN_GROUP(ssi6_ctrl),
-+	SH_PFC_PIN_GROUP(ssi6_data_b),
-+	SH_PFC_PIN_GROUP(ssi6_ctrl_b),
-+	SH_PFC_PIN_GROUP(ssi7_data),
-+	SH_PFC_PIN_GROUP(ssi78_ctrl),
-+	SH_PFC_PIN_GROUP(ssi7_data_b),
-+	SH_PFC_PIN_GROUP(ssi78_ctrl_b),
-+	SH_PFC_PIN_GROUP(ssi8_data),
-+	SH_PFC_PIN_GROUP(ssi8_data_b),
-+	SH_PFC_PIN_GROUP(ssi9_data),
-+	SH_PFC_PIN_GROUP(ssi9_ctrl),
-+	SH_PFC_PIN_GROUP(ssi9_data_b),
-+	SH_PFC_PIN_GROUP(ssi9_ctrl_b),
- 	SH_PFC_PIN_GROUP(usb0),
- 	SH_PFC_PIN_GROUP(usb1),
- 	VIN_DATA_PIN_GROUP(vin0_data, 24),
-@@ -3400,6 +3673,43 @@ static const char * const sdhi2_groups[] = {
- 	"sdhi2_wp",
+@@ -1510,6 +1510,98 @@ static const struct sh_pfc_pin pinmux_pins[] = {
+ 	PINMUX_GPIO_GP_ALL(),
  };
  
-+static const char * const ssi_groups[] = {
-+	"ssi0_data",
-+	"ssi0129_ctrl",
-+	"ssi1_data",
-+	"ssi1_ctrl",
-+	"ssi1_data_b",
-+	"ssi1_ctrl_b",
-+	"ssi2_data",
-+	"ssi2_ctrl",
-+	"ssi2_data_b",
-+	"ssi2_ctrl_b",
-+	"ssi3_data",
-+	"ssi34_ctrl",
-+	"ssi4_data",
-+	"ssi4_ctrl",
-+	"ssi4_data_b",
-+	"ssi4_ctrl_b",
-+	"ssi5_data",
-+	"ssi5_ctrl",
-+	"ssi5_data_b",
-+	"ssi5_ctrl_b",
-+	"ssi6_data",
-+	"ssi6_ctrl",
-+	"ssi6_data_b",
-+	"ssi6_ctrl_b",
-+	"ssi7_data",
-+	"ssi78_ctrl",
-+	"ssi7_data_b",
-+	"ssi78_ctrl_b",
-+	"ssi8_data",
-+	"ssi8_data_b",
-+	"ssi9_data",
-+	"ssi9_ctrl",
-+	"ssi9_data_b",
-+	"ssi9_ctrl_b",
++/* - Audio Clock ------------------------------------------------------------ */
++static const unsigned int audio_clka_pins[] = {
++	/* CLKA */
++	RCAR_GP_PIN(5, 20),
++};
++static const unsigned int audio_clka_mux[] = {
++	AUDIO_CLKA_MARK,
++};
++static const unsigned int audio_clka_b_pins[] = {
++	/* CLKA */
++	RCAR_GP_PIN(3, 25),
++};
++static const unsigned int audio_clka_b_mux[] = {
++	AUDIO_CLKA_B_MARK,
++};
++static const unsigned int audio_clka_c_pins[] = {
++	/* CLKA */
++	RCAR_GP_PIN(4, 20),
++};
++static const unsigned int audio_clka_c_mux[] = {
++	AUDIO_CLKA_C_MARK,
++};
++static const unsigned int audio_clka_d_pins[] = {
++	/* CLKA */
++	RCAR_GP_PIN(5, 0),
++};
++static const unsigned int audio_clka_d_mux[] = {
++	AUDIO_CLKA_D_MARK,
++};
++static const unsigned int audio_clkb_pins[] = {
++	/* CLKB */
++	RCAR_GP_PIN(5, 21),
++};
++static const unsigned int audio_clkb_mux[] = {
++	AUDIO_CLKB_MARK,
++};
++static const unsigned int audio_clkb_b_pins[] = {
++	/* CLKB */
++	RCAR_GP_PIN(3, 26),
++};
++static const unsigned int audio_clkb_b_mux[] = {
++	AUDIO_CLKB_B_MARK,
++};
++static const unsigned int audio_clkb_c_pins[] = {
++	/* CLKB */
++	RCAR_GP_PIN(4, 21),
++};
++static const unsigned int audio_clkb_c_mux[] = {
++	AUDIO_CLKB_C_MARK,
++};
++static const unsigned int audio_clkc_pins[] = {
++	/* CLKC */
++	RCAR_GP_PIN(5, 22),
++};
++static const unsigned int audio_clkc_mux[] = {
++	AUDIO_CLKC_MARK,
++};
++static const unsigned int audio_clkc_b_pins[] = {
++	/* CLKC */
++	RCAR_GP_PIN(3, 29),
++};
++static const unsigned int audio_clkc_b_mux[] = {
++	AUDIO_CLKC_B_MARK,
++};
++static const unsigned int audio_clkc_c_pins[] = {
++	/* CLKC */
++	RCAR_GP_PIN(4, 22),
++};
++static const unsigned int audio_clkc_c_mux[] = {
++	AUDIO_CLKC_C_MARK,
++};
++static const unsigned int audio_clkout_pins[] = {
++	/* CLKOUT */
++	RCAR_GP_PIN(5, 23),
++};
++static const unsigned int audio_clkout_mux[] = {
++	AUDIO_CLKOUT_MARK,
++};
++static const unsigned int audio_clkout_b_pins[] = {
++	/* CLKOUT */
++	RCAR_GP_PIN(3, 12),
++};
++static const unsigned int audio_clkout_b_mux[] = {
++	AUDIO_CLKOUT_B_MARK,
++};
++static const unsigned int audio_clkout_c_pins[] = {
++	/* CLKOUT */
++	RCAR_GP_PIN(4, 23),
++};
++static const unsigned int audio_clkout_c_mux[] = {
++	AUDIO_CLKOUT_C_MARK,
++};
+ /* - ETH -------------------------------------------------------------------- */
+ static const unsigned int eth_link_pins[] = {
+ 	/* LINK */
+@@ -3169,6 +3261,19 @@ static const unsigned int vin1_clk_mux[] = {
+ };
+ 
+ static const struct sh_pfc_pin_group pinmux_groups[] = {
++	SH_PFC_PIN_GROUP(audio_clka),
++	SH_PFC_PIN_GROUP(audio_clka_b),
++	SH_PFC_PIN_GROUP(audio_clka_c),
++	SH_PFC_PIN_GROUP(audio_clka_d),
++	SH_PFC_PIN_GROUP(audio_clkb),
++	SH_PFC_PIN_GROUP(audio_clkb_b),
++	SH_PFC_PIN_GROUP(audio_clkb_c),
++	SH_PFC_PIN_GROUP(audio_clkc),
++	SH_PFC_PIN_GROUP(audio_clkc_b),
++	SH_PFC_PIN_GROUP(audio_clkc_c),
++	SH_PFC_PIN_GROUP(audio_clkout),
++	SH_PFC_PIN_GROUP(audio_clkout_b),
++	SH_PFC_PIN_GROUP(audio_clkout_c),
+ 	SH_PFC_PIN_GROUP(eth_link),
+ 	SH_PFC_PIN_GROUP(eth_magic),
+ 	SH_PFC_PIN_GROUP(eth_mdio),
+@@ -3398,6 +3503,22 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(vin1_clk),
+ };
+ 
++static const char * const audio_clk_groups[] = {
++	"audio_clka",
++	"audio_clka_b",
++	"audio_clka_c",
++	"audio_clka_d",
++	"audio_clkb",
++	"audio_clkb_b",
++	"audio_clkb_c",
++	"audio_clkc",
++	"audio_clkc_b",
++	"audio_clkc_c",
++	"audio_clkout",
++	"audio_clkout_b",
++	"audio_clkout_c",
 +};
 +
- static const char * const usb0_groups[] = {
- 	"usb0",
+ static const char * const eth_groups[] = {
+ 	"eth_link",
+ 	"eth_magic",
+@@ -3743,6 +3864,7 @@ static const char * const vin1_groups[] = {
  };
-@@ -3467,6 +3777,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(sdhi0),
- 	SH_PFC_FUNCTION(sdhi1),
- 	SH_PFC_FUNCTION(sdhi2),
-+	SH_PFC_FUNCTION(ssi),
- 	SH_PFC_FUNCTION(usb0),
- 	SH_PFC_FUNCTION(usb1),
- 	SH_PFC_FUNCTION(vin0),
+ 
+ static const struct sh_pfc_function pinmux_functions[] = {
++	SH_PFC_FUNCTION(audio_clk),
+ 	SH_PFC_FUNCTION(eth),
+ 	SH_PFC_FUNCTION(hscif0),
+ 	SH_PFC_FUNCTION(hscif1),
 -- 
 2.7.4
