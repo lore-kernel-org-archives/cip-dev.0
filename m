@@ -1,33 +1,35 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Fri, 29 Jun 2018 15:38:59 +0100
-Subject: [cip-dev] [PATCH 58/86] ARM: shmobile: Add pm support for r8a7745
+Date: Fri, 29 Jun 2018 15:39:00 +0100
+Subject: [cip-dev] [PATCH 59/86] dt-bindings: apmu: Document r8a7745 support
 In-Reply-To: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1530283167-14050-59-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1530283167-14050-60-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This patch adds pm support for r8a7745 SoC.
+Document APMU and SMP enable method for RZ/G1E (also known as
+r8a7745) SoC.
 
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+(cherry picked from commit 055fb568157c3a6754228138b3ca51247cb4f466)
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 ---
- arch/arm/mach-shmobile/pm-rcar-gen2.c | 3 +++
- 1 file changed, 3 insertions(+)
+ Documentation/devicetree/bindings/power/renesas,apmu.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-shmobile/pm-rcar-gen2.c b/arch/arm/mach-shmobile/pm-rcar-gen2.c
-index 94a2759..f1bee67 100644
---- a/arch/arm/mach-shmobile/pm-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/pm-rcar-gen2.c
-@@ -85,6 +85,9 @@ void __init rcar_gen2_pm_init(void)
- 	} else if (of_machine_is_compatible("renesas,r8a7743")) {
- 		boot_vector_addr = RAM;
- 		syscier = 0x00101003;
-+	} else if (of_machine_is_compatible("renesas,r8a7745")) {
-+		boot_vector_addr = RAM;
-+		syscier = 0x00300060;
- 	}
+diff --git a/Documentation/devicetree/bindings/power/renesas,apmu.txt b/Documentation/devicetree/bindings/power/renesas,apmu.txt
+index e3a0e55..342aa85 100644
+--- a/Documentation/devicetree/bindings/power/renesas,apmu.txt
++++ b/Documentation/devicetree/bindings/power/renesas,apmu.txt
+@@ -8,6 +8,7 @@ Required properties:
+ - compatible: Should be "renesas,<soctype>-apmu", "renesas,apmu" as fallback.
+ 	      Examples with soctypes are:
+ 		- "renesas,r8a7743-apmu" (RZ/G1M)
++		- "renesas,r8a7745-apmu" (RZ/G1E)
+ 		- "renesas,r8a7790-apmu" (R-Car H2)
+ 		- "renesas,r8a7791-apmu" (R-Car M2-W)
  
- 	/* RAM for jump stub, because BAR requires 256KB aligned address */
 -- 
 2.7.4
