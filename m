@@ -1,66 +1,134 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Fri, 29 Jun 2018 15:39:25 +0100
-Subject: [cip-dev] [PATCH 84/86] drm: rcar-du: Add R8A7745 support
+Date: Fri, 29 Jun 2018 15:39:27 +0100
+Subject: [cip-dev] [PATCH 86/86] ARM: dts: iwg22d-sodimm-dbhd-ca: Add HDMI
+	video output
 In-Reply-To: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1530283167-14050-85-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1530283167-14050-87-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Add support for the R8A7745 DU (which is very similar to the R8A7794 DU);
-it has 2 RGB outputs.
+This patch enables the HDMI interface found on the expansion board.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-(cherry picked from commit cdd90700157293dc7cb67d932b4f2fc44bd2a623)
-(removed .gen and added .encoder_type to rzg1_du_r8a7745_info.)
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+(cherry picked from commit 97b94d256d432ba9e1b37f9b21c3b285caf11de6)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_drv.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ .../arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts | 85 ++++++++++++++++++++++
+ 1 file changed, 85 insertions(+)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index eee90f5..5187ed3 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -57,6 +57,28 @@ static const struct rcar_du_device_info rzg1_du_r8a7743_info = {
- 	.num_lvds = 1,
- };
- 
-+static const struct rcar_du_device_info rzg1_du_r8a7745_info = {
-+	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
-+		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
-+	.num_crtcs = 2,
-+	.routes = {
-+		/*
-+		 * R8A7745 has two RGB outputs
-+		 */
-+		[RCAR_DU_OUTPUT_DPAD0] = {
-+			.possible_crtcs = BIT(0),
-+			.encoder_type = DRM_MODE_ENCODER_NONE,
-+			.port = 0,
-+		},
-+		[RCAR_DU_OUTPUT_DPAD1] = {
-+			.possible_crtcs = BIT(1),
-+			.encoder_type = DRM_MODE_ENCODER_NONE,
-+			.port = 1,
-+		},
-+	},
-+	.num_lvds = 0,
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
+index f925388..a8a4ec8 100644
+--- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
++++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
+@@ -20,6 +20,38 @@
+ 		serial4 = &scif5;
+ 		serial6 = &hscif2;
+ 	};
++
++	cec_clock: cec-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <12000000>;
++	};
++
++	hdmi-out {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con: endpoint {
++				remote-endpoint = <&adv7511_out>;
++			};
++		};
++	};
 +};
 +
- static const struct rcar_du_device_info rcar_du_r8a7779_info = {
- 	.features = 0,
- 	.num_crtcs = 2,
-@@ -153,6 +175,7 @@ static const struct rcar_du_device_info rcar_du_r8a7794_info = {
++&du {
++	pinctrl-0 = <&du0_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++
++	ports {
++		port at 0 {
++			endpoint {
++				remote-endpoint = <&adv7511_in>;
++			};
++		};
++	};
+ };
  
- static const struct of_device_id rcar_du_of_table[] = {
- 	{ .compatible = "renesas,du-r8a7743", .data = &rzg1_du_r8a7743_info },
-+	{ .compatible = "renesas,du-r8a7745", .data = &rzg1_du_r8a7745_info },
- 	{ .compatible = "renesas,du-r8a7779", .data = &rcar_du_r8a7779_info },
- 	{ .compatible = "renesas,du-r8a7790", .data = &rcar_du_r8a7790_info },
- 	{ .compatible = "renesas,du-r8a7791", .data = &rcar_du_r8a7791_info },
+ &hscif2 {
+@@ -29,12 +61,65 @@
+ 	status = "okay";
+ };
+ 
++&i2c1 {
++	pinctrl-0 = <&i2c1_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++	clock-frequency = <400000>;
++
++	hdmi at 39 {
++		compatible = "adi,adv7511w";
++		reg = <0x39>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++		clocks = <&cec_clock>;
++		clock-names = "cec";
++		pd-gpios = <&gpio2 24 GPIO_ACTIVE_HIGH>;
++
++		adi,input-depth = <8>;
++		adi,input-colorspace = "rgb";
++		adi,input-clock = "1x";
++		adi,input-style = <1>;
++		adi,input-justification = "evenly";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port at 0 {
++				reg = <0>;
++				adv7511_in: endpoint {
++					remote-endpoint = <&du_out_rgb0>;
++				};
++			};
++
++			port at 1 {
++				reg = <1>;
++				adv7511_out: endpoint {
++					remote-endpoint = <&hdmi_con>;
++				};
++			};
++		};
++	};
++};
++
+ &pfc {
++	du0_pins: du0 {
++		groups = "du0_rgb888", "du0_sync", "du0_disp", "du0_clk0_out";
++		function = "du0";
++	};
++
+ 	hscif2_pins: hscif2 {
+ 		groups = "hscif2_data";
+ 		function = "hscif2";
+ 	};
+ 
++	i2c1_pins: i2c1 {
++		groups = "i2c1_d";
++		function = "i2c1";
++	};
++
+ 	scif1_pins: scif1 {
+ 		groups = "scif1_data";
+ 		function = "scif1";
 -- 
 2.7.4
