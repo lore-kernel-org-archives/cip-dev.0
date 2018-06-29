@@ -1,74 +1,79 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Fri, 29 Jun 2018 15:38:23 +0100
-Subject: [cip-dev] [PATCH 22/86] ARM: dts: iwg22d-sodimm: Add support for
-	iWave G22D-SODIMM board
+Date: Fri, 29 Jun 2018 15:38:24 +0100
+Subject: [cip-dev] [PATCH 23/86] pinctrl: sh-pfc: r8a7794: Use
+	PINMUX_SINGLE() instead of raw PINMUX_DATA()
 In-Reply-To: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1530283167-14050-23-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1530283167-14050-24-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add support for iWave RainboW-G22D-SODIMM board based on RZ/G1E.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit a59eb272a4eae10eb4f7a3e7b15aa47d57b32699)
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+(cherry picked from commit 61a483ff80e19846de5ab9c9ccadd11f3c11f982)
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 ---
- arch/arm/boot/dts/Makefile                  |  1 +
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 29 +++++++++++++++++++++++++++++
- 2 files changed, 30 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 44 ++++++++++++++++++------------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 22fc8ab..20ca8fc 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -546,6 +546,7 @@ dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) += \
- 	r8a7740-armadillo800eva.dtb \
- 	r8a7743-iwg20d-q7.dtb \
- 	r8a7743-iwg20d-q7-dbcm-ca.dtb \
-+	r8a7745-iwg22d-sodimm.dtb \
- 	r8a7778-bockw.dtb \
- 	r8a7779-marzen.dtb \
- 	r8a7790-lager.dtb \
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-new file mode 100644
-index 0000000..cbc19fe
---- /dev/null
-+++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-@@ -0,0 +1,29 @@
-+/*
-+ * Device Tree Source for the iWave-RZG1E SODIMM carrier board
-+ *
-+ * Copyright (C) 2017 Renesas Electronics Corp.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+/dts-v1/;
-+#include "r8a7745-iwg22m.dtsi"
-+
-+/ {
-+	model = "iWave Systems RainboW-G22D-SODIMM board based on RZ/G1E";
-+	compatible = "iwave,g22d", "iwave,g22m", "renesas,r8a7745";
-+
-+	aliases {
-+		serial0 = &scif4;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+};
-+
-+&scif4 {
-+	status = "okay";
-+};
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+index 086f679..3324ee7 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+@@ -618,28 +618,28 @@ enum {
+ static const u16 pinmux_data[] = {
+ 	PINMUX_DATA_GP_ALL(), /* PINMUX_DATA(GP_M_N_DATA, GP_M_N_FN...), */
+ 
+-	PINMUX_DATA(A2_MARK, FN_A2),
+-	PINMUX_DATA(WE0_N_MARK, FN_WE0_N),
+-	PINMUX_DATA(WE1_N_MARK, FN_WE1_N),
+-	PINMUX_DATA(DACK0_MARK, FN_DACK0),
+-	PINMUX_DATA(USB0_PWEN_MARK, FN_USB0_PWEN),
+-	PINMUX_DATA(USB0_OVC_MARK, FN_USB0_OVC),
+-	PINMUX_DATA(USB1_PWEN_MARK, FN_USB1_PWEN),
+-	PINMUX_DATA(USB1_OVC_MARK, FN_USB1_OVC),
+-	PINMUX_DATA(SD0_CLK_MARK, FN_SD0_CLK),
+-	PINMUX_DATA(SD0_CMD_MARK, FN_SD0_CMD),
+-	PINMUX_DATA(SD0_DATA0_MARK, FN_SD0_DATA0),
+-	PINMUX_DATA(SD0_DATA1_MARK, FN_SD0_DATA1),
+-	PINMUX_DATA(SD0_DATA2_MARK, FN_SD0_DATA2),
+-	PINMUX_DATA(SD0_DATA3_MARK, FN_SD0_DATA3),
+-	PINMUX_DATA(SD0_CD_MARK, FN_SD0_CD),
+-	PINMUX_DATA(SD0_WP_MARK, FN_SD0_WP),
+-	PINMUX_DATA(SD1_CLK_MARK, FN_SD1_CLK),
+-	PINMUX_DATA(SD1_CMD_MARK, FN_SD1_CMD),
+-	PINMUX_DATA(SD1_DATA0_MARK, FN_SD1_DATA0),
+-	PINMUX_DATA(SD1_DATA1_MARK, FN_SD1_DATA1),
+-	PINMUX_DATA(SD1_DATA2_MARK, FN_SD1_DATA2),
+-	PINMUX_DATA(SD1_DATA3_MARK, FN_SD1_DATA3),
++	PINMUX_SINGLE(A2),
++	PINMUX_SINGLE(WE0_N),
++	PINMUX_SINGLE(WE1_N),
++	PINMUX_SINGLE(DACK0),
++	PINMUX_SINGLE(USB0_PWEN),
++	PINMUX_SINGLE(USB0_OVC),
++	PINMUX_SINGLE(USB1_PWEN),
++	PINMUX_SINGLE(USB1_OVC),
++	PINMUX_SINGLE(SD0_CLK),
++	PINMUX_SINGLE(SD0_CMD),
++	PINMUX_SINGLE(SD0_DATA0),
++	PINMUX_SINGLE(SD0_DATA1),
++	PINMUX_SINGLE(SD0_DATA2),
++	PINMUX_SINGLE(SD0_DATA3),
++	PINMUX_SINGLE(SD0_CD),
++	PINMUX_SINGLE(SD0_WP),
++	PINMUX_SINGLE(SD1_CLK),
++	PINMUX_SINGLE(SD1_CMD),
++	PINMUX_SINGLE(SD1_DATA0),
++	PINMUX_SINGLE(SD1_DATA1),
++	PINMUX_SINGLE(SD1_DATA2),
++	PINMUX_SINGLE(SD1_DATA3),
+ 
+ 	/* IPSR0 */
+ 	PINMUX_IPSR_DATA(IP0_0, SD1_CD),
 -- 
 2.7.4
