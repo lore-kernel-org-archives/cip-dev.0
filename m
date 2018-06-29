@@ -1,58 +1,111 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Fri, 29 Jun 2018 15:39:10 +0100
-Subject: [cip-dev] [PATCH 69/86] ARM: dts: iwg22d: Add /dev/ttySC5 support
+Date: Fri, 29 Jun 2018 15:39:11 +0100
+Subject: [cip-dev] [PATCH 70/86] ARM: dts: iwg22d-sodimm-dbhd-ca: Add device
+	tree for HDMI DB
 In-Reply-To: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1530283167-14050-70-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1530283167-14050-71-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Add support for HSCIF1 as /dev/ttySC5, keeping the same naming
-scheme adopted by iWave in their BSP release. This interface
-uses RTS/CTS.
+Add file r8a7745-iwg22d-sodimm-dbhd-ca.dts to provide support for
+iW-RainboW-G22D with HDMI daughter board plugged in.
+
+The interfaces defined in the new .dts file are: scif1, scif5,
+and hscif2.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit c7a5ddfbf171c222772087ba8697b163e8785caa)
+(cherry picked from commit ea03afbeb80edfb460570082855b4b1dd19fc7e7)
+(moved r8a7745-iwg22d-sodimm-dbhd-ca.dtb under
+CONFIG_ARCH_SHMOBILE_MULTI as CONFIG_ARCH_RENESAS doesn't exist)
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/arm/boot/dts/Makefile                         |  1 +
+ .../arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts | 61 ++++++++++++++++++++++
+ 2 files changed, 62 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
 
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-index 0d0bd18..bebea47 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-+++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-@@ -17,6 +17,7 @@
- 
- 	aliases {
- 		serial3 = &scif4;
-+		serial5 = &hscif1;
- 		ethernet0 = &avb;
- 	};
- 
-@@ -39,7 +40,20 @@
- 	};
- };
- 
-+&hscif1 {
-+	pinctrl-0 = <&hscif1_pins>;
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 20ca8fc..e0a0dea 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -547,6 +547,7 @@ dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) += \
+ 	r8a7743-iwg20d-q7.dtb \
+ 	r8a7743-iwg20d-q7-dbcm-ca.dtb \
+ 	r8a7745-iwg22d-sodimm.dtb \
++	r8a7745-iwg22d-sodimm-dbhd-ca.dtb \
+ 	r8a7778-bockw.dtb \
+ 	r8a7779-marzen.dtb \
+ 	r8a7790-lager.dtb \
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
+new file mode 100644
+index 0000000..f925388
+--- /dev/null
++++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
+@@ -0,0 +1,61 @@
++/*
++ * Device Tree Source for the iWave-RZG1E SODIMM carrier board + HDMI daughter
++ * board
++ *
++ * Copyright (C) 2017 Renesas Electronics Corp.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++#include "r8a7745-iwg22d-sodimm.dts"
++
++/ {
++	model = "iWave RainboW-G22D-SODIMM RZ/G1E based board with HDMI add-on";
++	compatible = "iwave,g22d", "iwave,g22m", "renesas,r8a7745";
++
++	aliases {
++		serial0 = &scif1;
++		serial4 = &scif5;
++		serial6 = &hscif2;
++	};
++};
++
++&hscif2 {
++	pinctrl-0 = <&hscif2_pins>;
 +	pinctrl-names = "default";
 +
-+	uart-has-rtscts;
 +	status = "okay";
 +};
 +
- &pfc {
-+	hscif1_pins: hscif1 {
-+		groups = "hscif1_data", "hscif1_ctrl";
-+		function = "hscif1";
++&pfc {
++	hscif2_pins: hscif2 {
++		groups = "hscif2_data";
++		function = "hscif2";
 +	};
 +
- 	scif4_pins: scif4 {
- 		groups = "scif4_data_b";
- 		function = "scif4";
++	scif1_pins: scif1 {
++		groups = "scif1_data";
++		function = "scif1";
++	};
++
++	scif5_pins: scif5 {
++		groups = "scif5_data_d";
++		function = "scif5";
++	};
++};
++
++&scif1 {
++	pinctrl-0 = <&scif1_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
++&scif5 {
++	pinctrl-0 = <&scif5_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
 -- 
 2.7.4
