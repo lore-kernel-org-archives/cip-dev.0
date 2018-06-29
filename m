@@ -1,70 +1,53 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Fri, 29 Jun 2018 15:39:17 +0100
-Subject: [cip-dev] [PATCH 76/86] ARM: dts: r8a7745: Link PCI USB devices to
-	USB PHY
+Date: Fri, 29 Jun 2018 15:39:18 +0100
+Subject: [cip-dev] [PATCH 77/86] ARM: dts: iwg22d-sodimm: Enable internal PCI
 In-Reply-To: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1530283167-14050-77-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1530283167-14050-78-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Biju Das <biju.das@bp.renesas.com>
 
-Describe the PCI USB devices that are behind the PCI bridges, adding
-necessary links to the USB PHY device.
+Enable internal AHB-PCI bridges for the USB EHCI/OHCI controllers
+attached to them.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit c3e35873e37b77581be942b7284e705e997014fc)
+(cherry picked from commit bc058f6f03e47610c994a97ecf3bf8a3ea44efee)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7745.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 6915a9c..9d2b8b1 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -703,6 +703,18 @@
- 			interrupt-map = <0x0000 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
- 					 0x0800 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
- 					 0x1000 0 0 2 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+index bebea47..ceca4ec 100644
+--- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
++++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
+@@ -69,6 +69,11 @@
+ 		function = "sdhi0";
+ 		power-source = <3300>;
+ 	};
 +
-+			usb at 1,0 {
-+				reg = <0x800 0 0 0 0>;
-+				phys = <&usb0 0>;
-+				phy-names = "usb";
-+			};
-+
-+			usb at 2,0 {
-+				reg = <0x1000 0 0 0 0>;
-+				phys = <&usb0 0>;
-+				phy-names = "usb";
-+			};
- 		};
++	usb1_pins: usb1 {
++		groups = "usb1";
++		function = "usb1";
++	};
+ };
  
- 		pci1: pci at ee0d0000 {
-@@ -725,6 +737,18 @@
- 			interrupt-map = <0x0000 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
- 					 0x0800 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
- 					 0x1000 0 0 2 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
+ &scif4 {
+@@ -106,3 +111,9 @@
+ 	cd-gpios = <&gpio6 6 GPIO_ACTIVE_LOW>;
+ 	status = "okay";
+ };
 +
-+			usb at 1,0 {
-+				reg = <0x10800 0 0 0 0>;
-+				phys = <&usb2 0>;
-+				phy-names = "usb";
-+			};
-+
-+			usb at 2,0 {
-+				reg = <0x11000 0 0 0 0>;
-+				phys = <&usb2 0>;
-+				phy-names = "usb";
-+			};
- 		};
- 
- 		sdhi0: sd at ee100000 {
++&pci1 {
++	status = "okay";
++	pinctrl-0 = <&usb1_pins>;
++	pinctrl-names = "default";
++};
 -- 
 2.7.4
