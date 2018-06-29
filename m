@@ -1,73 +1,28 @@
-From: john@optinlist.us (John Hughes)
-Date: Thu, 28 Jun 2018 07:25:30 -0600
-Subject: [cip-dev] Open Source Summit North America - Attendees List
-Message-ID: <!&!AAAAAAAAAAAYAAAAAAAAAFZH0bV4uMBEsBu8H+dEx6DCgAAAEAAAAPUcKon0QrhLlKEmPHzvzHABAAAAAA==@optinlist.us>
+From: biju.das@bp.renesas.com (Biju Das)
+Date: Fri, 29 Jun 2018 14:58:59 +0100
+Subject: [cip-dev] [PATCH  0/3] Document CMT and VIN
+Message-ID: <1530280742-6540-1-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
- 
+Hi,
 
- 
+This patch series aim to Document the CMT and
+VIN deviced present in r8a774[35] SoC.
 
- 
-
-Hi
-
- 
-
-Hope this note finds you well.
-
- 
-
-I thought I'd check if you are interested in acquiring the attendees list of
-"Open Source Summit North America" for pre-show marketing campaign,
-Appointment Setting, Networking and various Marketing initiative which is
-held on 29th - 31st  August in Canada.
-
- 
-
-Complete Data fields with 90% accuracy guaranteed on emails:
+regards,
+Biju
 
 
-Company name
+Fabrizio Castro (3):
+  dt-bindings: timer: renesas, cmt: Document r8a774[35] CMT support
+  media: dt-bindings: media: rcar_vin: Reverse SoC part number list
+  media: dt-bindings: media: rcar_vin: add device tree support for
+    r8a774[35]
 
-Website URL
+ Documentation/devicetree/bindings/media/rcar_vin.txt    | 12 +++++++-----
+ Documentation/devicetree/bindings/timer/renesas,cmt.txt |  4 ++++
+ 2 files changed, 11 insertions(+), 5 deletions(-)
 
-Contact name
-
-Specialty
-
-Postal address
-
-Phone number
-
-Fax Number
-
-Email Address
-
- 
-
- If you are interested, drop me a line. We will get back to you with
-pricing, counts and other information for your review.
-
- 
-
-Thank you and I look forward to hear from you soon.
-
- 
-
-Regards,
-
-John Hughes| Inside Sales | USA, UK & Europe|
-
-Email Id: john at optinlist.us
-
- 
-
- "If you don't wish to receive emails from us reply back with LEAVE OUT "
-
- 
-
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180628/0b9f810f/attachment.html>
+-- 
+2.7.4
