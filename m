@@ -1,75 +1,86 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Fri, 29 Jun 2018 15:38:03 +0100
-Subject: [cip-dev] [PATCH 02/86] dt: Add of_device_compatible_match()
+Date: Fri, 29 Jun 2018 15:38:04 +0100
+Subject: [cip-dev] [PATCH 03/86] clk: renesas: rcar-gen2: Fix PLL0 on R-Car
+	V2H and E2
 In-Reply-To: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1530283167-14050-3-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1530283167-14050-4-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This provides an equivalent of of_fdt_match() for non-flat trees.
+R-Car V2H and E2 do not have the PLL0CR register, but use a fixed
+multiplier (depending on mode pins) and divider.
 
-This is more practical than matching an array of of_device_id structs
-when converting a bunch of existing users of of_fdt_match().
+This corrects the clock rate of "pll0" (PLL0 VCO after post divider) on
+R-Car V2H and E2 from 1.5 GHz to 1 GHz.
 
-Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-(cherry picked from commit b9c13fe32faaa71c4e4f8a426d79f8c93495e9f9)
+Inspired by Sergei Shtylyov's work for the common R-Car Gen2 and RZ/G
+Clock Pulse Generator support core.
+
+Fixes: 7c4163aae3d8e5b9 ("ARM: dts: r8a7792: initial SoC device tree")
+Fixes: 0dce5454d5c25858 ("ARM: shmobile: Initial r8a7794 SoC device tree")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+(cherry picked from commit b7c563c489e94417efbad68d057ea5d2030ae44c)
+(modified file path)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/of/base.c  | 22 ++++++++++++++++++++++
- include/linux/of.h |  2 ++
- 2 files changed, 24 insertions(+)
+ drivers/clk/shmobile/clk-rcar-gen2.c | 23 +++++++++++++++++++----
+ 1 file changed, 19 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index 3134129..c8b01c9 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -498,6 +498,28 @@ int of_device_is_compatible(const struct device_node *device,
- }
- EXPORT_SYMBOL(of_device_is_compatible);
+diff --git a/drivers/clk/shmobile/clk-rcar-gen2.c b/drivers/clk/shmobile/clk-rcar-gen2.c
+index 745496f..a874c66 100644
+--- a/drivers/clk/shmobile/clk-rcar-gen2.c
++++ b/drivers/clk/shmobile/clk-rcar-gen2.c
+@@ -271,11 +271,14 @@ struct cpg_pll_config {
+ 	unsigned int extal_div;
+ 	unsigned int pll1_mult;
+ 	unsigned int pll3_mult;
++	unsigned int pll0_mult;		/* For R-Car V2H and E2 only */
+ };
  
-+/** Checks if the device is compatible with any of the entries in
-+ *  a NULL terminated array of strings. Returns the best match
-+ *  score or 0.
-+ */
-+int of_device_compatible_match(struct device_node *device,
-+			       const char *const *compat)
-+{
-+	unsigned int tmp, score = 0;
+ static const struct cpg_pll_config cpg_pll_configs[8] __initconst = {
+-	{ 1, 208, 106 }, { 1, 208,  88 }, { 1, 156,  80 }, { 1, 156,  66 },
+-	{ 2, 240, 122 }, { 2, 240, 102 }, { 2, 208, 106 }, { 2, 208,  88 },
++	{ 1, 208, 106, 200 }, { 1, 208,  88, 200 },
++	{ 1, 156,  80, 150 }, { 1, 156,  66, 150 },
++	{ 2, 240, 122, 230 }, { 2, 240, 102, 230 },
++	{ 2, 208, 106, 200 }, { 2, 208,  88, 200 },
+ };
+ 
+ /* SDHI divisors */
+@@ -297,6 +300,12 @@ static const struct clk_div_table cpg_sd01_div_table[] = {
+ 
+ static u32 cpg_mode __initdata;
+ 
++static const char * const pll0_mult_match[] = {
++	"renesas,r8a7792-cpg-clocks",
++	"renesas,r8a7794-cpg-clocks",
++	NULL
++};
 +
-+	if (!compat)
-+		return 0;
-+
-+	while (*compat) {
-+		tmp = of_device_is_compatible(device, *compat);
-+		if (tmp > score)
-+			score = tmp;
-+		compat++;
-+	}
-+
-+	return score;
-+}
-+
- /**
-  * of_machine_is_compatible - Test root of device tree for a given compatible value
-  * @compat: compatible string to look for in root node's compatible property.
-diff --git a/include/linux/of.h b/include/linux/of.h
-index dd10626..4954287 100644
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@ -307,6 +307,8 @@ extern int of_property_read_string_helper(struct device_node *np,
- 					      const char **out_strs, size_t sz, int index);
- extern int of_device_is_compatible(const struct device_node *device,
- 				   const char *);
-+extern int of_device_compatible_match(struct device_node *device,
-+				      const char *const *compat);
- extern bool of_device_is_available(const struct device_node *device);
- extern bool of_device_is_big_endian(const struct device_node *device);
- extern const void *of_get_property(const struct device_node *node,
+ static struct clk * __init
+ rcar_gen2_cpg_register_clock(struct device_node *np, struct rcar_gen2_cpg *cpg,
+ 			     const struct cpg_pll_config *config,
+@@ -317,9 +326,15 @@ rcar_gen2_cpg_register_clock(struct device_node *np, struct rcar_gen2_cpg *cpg,
+ 		 * clock implementation and we currently have no need to change
+ 		 * the multiplier value.
+ 		 */
+-		u32 value = clk_readl(cpg->reg + CPG_PLL0CR);
++		if (of_device_compatible_match(np, pll0_mult_match)) {
++			/* R-Car V2H and E2 do not have PLL0CR */
++			mult = config->pll0_mult;
++			div = 3;
++		} else {
++			u32 value = clk_readl(cpg->reg + CPG_PLL0CR);
++			mult = ((value >> 24) & ((1 << 7) - 1)) + 1;
++		}
+ 		parent_name = "main";
+-		mult = ((value >> 24) & ((1 << 7) - 1)) + 1;
+ 	} else if (!strcmp(name, "pll1")) {
+ 		parent_name = "main";
+ 		mult = config->pll1_mult / 2;
 -- 
 2.7.4
