@@ -1,57 +1,86 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Fri, 29 Jun 2018 15:38:57 +0100
-Subject: [cip-dev] [PATCH 56/86] ARM: shmobile: rcar-gen2: Make
-	rcar_gen2_dma_contiguous static
+Date: Fri, 29 Jun 2018 15:38:58 +0100
+Subject: [cip-dev] [PATCH 57/86] ARM: shmobile: Move shmobile_smp_{mpidr, fn,
+	arg}[] from .text to .bss
 In-Reply-To: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1530283167-14050-57-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1530283167-14050-58-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-make C=1:
+If CONFIG_DEBUG_RODATA=y, the kernel crashes during system suspend:
 
-    arch/arm/mach-shmobile/setup-rcar-gen2.c:186:12: warning: symbol 'rcar_gen2_dma_contiguous' was not declared. Should it be static?
+    Freezing user space processes ... (elapsed 0.004 seconds) done.
+    Freezing remaining freezable tasks ... (elapsed 0.002 seconds)
+    done.
+    PM: suspend of devices complete after 111.948 msecs
+    PM: late suspend of devices complete after 1.086 msecs
+    PM: noirq suspend of devices complete after 11.576 msecs
+    Disabling non-boot CPUs ...
+    Kernel panic - not syncing: Attempted to kill the idle task!
+    1014ec ---[ end Kernel panic - not syncing: Attempted to kill the idle task!
+    CPU0: stopping
 
-Make it static, and move it inside the function to avoid a "defined but
-not used" warning if CONFIG_DMA_CMA=n.
+This happens because the .text section is marked read-only, while the
+arrays shmobile_smp_mpidr[], shmobile_smp_fn[], and shmobile_smp_arg[]
+are being written to.
+
+Fix this by moving these arrays from the .text to the .bss section.
+This requires accessing them through PC-relative offsets.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Nicolas Pitre <nico@linaro.org>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 0c1690705417ac1b33f01125552349e3cfc9766d)
+(cherry picked from commit 4e960f52fce16a3bf3261fa92c34cf2306059ba2)
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 ---
- arch/arm/mach-shmobile/setup-rcar-gen2.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ arch/arm/mach-shmobile/headsmp.S | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-index 828ce09..50d7438 100644
---- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-@@ -168,8 +168,6 @@ static int __init rcar_gen2_scan_mem(unsigned long node, const char *uname,
- 	return 0;
- }
+diff --git a/arch/arm/mach-shmobile/headsmp.S b/arch/arm/mach-shmobile/headsmp.S
+index 330c1fc..94d86ed 100644
+--- a/arch/arm/mach-shmobile/headsmp.S
++++ b/arch/arm/mach-shmobile/headsmp.S
+@@ -50,9 +50,11 @@ ENTRY(shmobile_smp_boot)
+ 	mrc	p15, 0, r1, c0, c0, 5		@ r1 = MPIDR
+ 	and	r0, r1, r0			@ r0 = cpu_logical_map() value
+ 	mov	r1, #0				@ r1 = CPU index
+-	adr	r5, 1f				@ array of per-cpu mpidr values
+-	adr	r6, 2f				@ array of per-cpu functions
+-	adr	r7, 3f				@ array of per-cpu arguments
++	adr	r2, 1f
++	ldmia	r2, {r5, r6, r7}
++	add	r5, r5, r2			@ array of per-cpu mpidr values
++	add	r6, r6, r2			@ array of per-cpu functions
++	add	r7, r7, r2			@ array of per-cpu arguments
  
--struct cma *rcar_gen2_dma_contiguous;
--
- void __init rcar_gen2_reserve(void)
- {
- 	struct memory_reserve_config mrc;
-@@ -180,9 +178,12 @@ void __init rcar_gen2_reserve(void)
+ shmobile_smp_boot_find_mpidr:
+ 	ldr	r8, [r5, r1, lsl #2]
+@@ -80,12 +82,18 @@ ENTRY(shmobile_smp_sleep)
+ 	b	shmobile_smp_boot
+ ENDPROC(shmobile_smp_sleep)
  
- 	of_scan_flat_dt(rcar_gen2_scan_mem, &mrc);
- #ifdef CONFIG_DMA_CMA
--	if (mrc.size && memblock_is_region_memory(mrc.base, mrc.size))
-+	if (mrc.size && memblock_is_region_memory(mrc.base, mrc.size)) {
-+		static struct cma *rcar_gen2_dma_contiguous;
++	.align	2
++1:	.long	shmobile_smp_mpidr - .
++	.long	shmobile_smp_fn - 1b
++	.long	shmobile_smp_arg - 1b
 +
- 		dma_contiguous_reserve_area(mrc.size, mrc.base, 0,
- 					    &rcar_gen2_dma_contiguous, true);
-+	}
- #endif
- }
- 
++	.bss
+ 	.globl	shmobile_smp_mpidr
+ shmobile_smp_mpidr:
+-1:	.space	NR_CPUS * 4
++	.space	NR_CPUS * 4
+ 	.globl	shmobile_smp_fn
+ shmobile_smp_fn:
+-2:	.space	NR_CPUS * 4
++	.space	NR_CPUS * 4
+ 	.globl	shmobile_smp_arg
+ shmobile_smp_arg:
+-3:	.space	NR_CPUS * 4
++	.space	NR_CPUS * 4
 -- 
 2.7.4
