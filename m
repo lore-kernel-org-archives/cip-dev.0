@@ -1,118 +1,74 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Fri, 29 Jun 2018 15:39:04 +0100
-Subject: [cip-dev] [PATCH 63/86] ARM: dts: r8a7745: Add I2C DT support
+Date: Fri, 29 Jun 2018 15:39:05 +0100
+Subject: [cip-dev] [PATCH 64/86] ARM: dts: r8a7745: Add IIC cores to dtsi
 In-Reply-To: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1530283167-14050-64-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1530283167-14050-65-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Add I2C[0-5] devices to the r8a7745 device tree.
+Add iic0 and iic1 nodes to SoC dtsi. Also, define aliases i2c6
+and i2c7. Board specific DT files will enable the interfaces
+if needed.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 282fbf4066e58b4c60683ab5cba30c5c998c7250)
+(cherry picked from commit 0ee0aff583ddb6e92a5d05a1f2147a772413ab40)
 (moved the node to a better location to allow for better sorting.
-removed resets and i2c-scl-internal-delay-ns properties. modified
-clocks and power-domains properties.)
+removed resets property. modified clocks and power-domains
+properties.)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7745.dtsi | 81 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 81 insertions(+)
+ arch/arm/boot/dts/r8a7745.dtsi | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
 diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 5f1cc84..aa3c1685 100644
+index aa3c1685..27a62ae 100644
 --- a/arch/arm/boot/dts/r8a7745.dtsi
 +++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -17,6 +17,15 @@
- 	#address-cells = <2>;
- 	#size-cells = <2>;
+@@ -24,6 +24,8 @@
+ 		i2c3 = &i2c3;
+ 		i2c4 = &i2c4;
+ 		i2c5 = &i2c5;
++		i2c6 = &iic0;
++		i2c7 = &iic1;
+ 	};
  
-+	aliases {
-+		i2c0 = &i2c0;
-+		i2c1 = &i2c1;
-+		i2c2 = &i2c2;
-+		i2c3 = &i2c3;
-+		i2c4 = &i2c4;
-+		i2c5 = &i2c5;
-+	};
-+
  	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -200,6 +209,78 @@
- 			power-domains = <&cpg_clocks>;
+@@ -281,6 +283,38 @@
+ 			status = "disabled";
  		};
  
-+		i2c0: i2c at e6508000 {
++		iic0: i2c at e6500000 {
 +			#address-cells = <1>;
 +			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a7745",
-+				     "renesas,rcar-gen2-i2c";
-+			reg = <0 0xe6508000 0 0x40>;
-+			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp9_clks R8A7745_CLK_I2C0>;
++			compatible = "renesas,iic-r8a7745",
++				     "renesas,rcar-gen2-iic",
++				     "renesas,rmobile-iic";
++			reg = <0 0xe6500000 0 0x425>;
++			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp3_clks R8A7745_CLK_IIC0>;
++			dmas = <&dmac0 0x61>, <&dmac0 0x62>,
++			       <&dmac1 0x61>, <&dmac1 0x62>;
++			dma-names = "tx", "rx", "tx", "rx";
 +			power-domains = <&cpg_clocks>;
 +			status = "disabled";
 +		};
 +
-+		i2c1: i2c at e6518000 {
++		iic1: i2c at e6510000 {
 +			#address-cells = <1>;
 +			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a7745",
-+				     "renesas,rcar-gen2-i2c";
-+			reg = <0 0xe6518000 0 0x40>;
-+			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp9_clks R8A7745_CLK_I2C1>;
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
-+
-+		i2c2: i2c at e6530000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a7745",
-+				     "renesas,rcar-gen2-i2c";
-+			reg = <0 0xe6530000 0 0x40>;
-+			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp9_clks R8A7745_CLK_I2C2>;
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
-+
-+		i2c3: i2c at e6540000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a7745",
-+				     "renesas,rcar-gen2-i2c";
-+			reg = <0 0xe6540000 0 0x40>;
-+			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp9_clks R8A7745_CLK_I2C3>;
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
-+
-+		i2c4: i2c at e6520000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a7745",
-+				     "renesas,rcar-gen2-i2c";
-+			reg = <0 0xe6520000 0 0x40>;
-+			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp9_clks R8A7745_CLK_I2C4>;
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
-+
-+		i2c5: i2c at e6528000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a7745",
-+				     "renesas,rcar-gen2-i2c";
-+			reg = <0 0xe6528000 0 0x40>;
-+			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp9_clks R8A7745_CLK_I2C5>;
++			compatible = "renesas,iic-r8a7745",
++				     "renesas,rcar-gen2-iic",
++				     "renesas,rmobile-iic";
++			reg = <0 0xe6510000 0 0x425>;
++			interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp3_clks R8A7745_CLK_IIC1>;
++			dmas = <&dmac0 0x65>, <&dmac0 0x66>,
++			       <&dmac1 0x65>, <&dmac1 0x66>;
++			dma-names = "tx", "rx", "tx", "rx";
 +			power-domains = <&cpg_clocks>;
 +			status = "disabled";
 +		};
