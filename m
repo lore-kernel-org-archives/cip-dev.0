@@ -1,60 +1,69 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Fri, 29 Jun 2018 15:39:12 +0100
-Subject: [cip-dev] [PATCH 71/86] ARM: dts: r8a7745: Add QSPI support
+Date: Fri, 29 Jun 2018 15:39:13 +0100
+Subject: [cip-dev] [PATCH 72/86] ARM: dts: iwg22m: Add SPI NOR support
 In-Reply-To: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1530283167-14050-72-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1530283167-14050-73-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Add the DT node for the QSPI interface to the SoC dtsi.
+Add support for the SPI NOR device used to boot up the system
+to the System on Module DT.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 2391d0269a85c3a7942cb7e2bbac5751a7191e10)
-(removed resets property. modified clocks and power-domains
-properties.)
+(cherry picked from commit cf1cc6f1da41ceb60f6389b6b46f4f6dc06a2b63)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7745.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/arm/boot/dts/r8a7745-iwg22m.dtsi | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index c369eca..869eb88 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -26,6 +26,7 @@
- 		i2c5 = &i2c5;
- 		i2c6 = &iic0;
- 		i2c7 = &iic1;
-+		spi0 = &qspi;
+diff --git a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
+index f7f9cef..ed9a8cf 100644
+--- a/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
++++ b/arch/arm/boot/dts/r8a7745-iwg22m.dtsi
+@@ -39,6 +39,11 @@
+ 		function = "mmc";
  	};
  
- 	cpus {
-@@ -646,6 +647,21 @@
- 			status = "disabled";
- 		};
- 
-+		qspi: spi at e6b10000 {
-+			compatible = "renesas,qspi-r8a7745", "renesas,qspi";
-+			reg = <0 0xe6b10000 0 0x2c>;
-+			interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp9_clks R8A7745_CLK_QSPI_MOD>;
-+			dmas = <&dmac0 0x17>, <&dmac0 0x18>,
-+			       <&dmac1 0x17>, <&dmac1 0x18>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&cpg_clocks>;
-+			num-cs = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
++	qspi_pins: qspi {
++		groups = "qspi_ctrl", "qspi_data2";
++		function = "qspi";
++	};
 +
- 		sdhi0: sd at ee100000 {
- 			compatible = "renesas,sdhi-r8a7745";
- 			reg = <0 0xee100000 0 0x328>;
+ 	sdhi1_pins: sd1 {
+ 		groups = "sdhi1_data4", "sdhi1_ctrl";
+ 		function = "sdhi1";
+@@ -61,6 +66,27 @@
+ 	status = "okay";
+ };
+ 
++&qspi {
++	pinctrl-0 = <&qspi_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++
++	/* WARNING - This device contains the bootloader. Handle with care. */
++	flash: flash at 0 {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "sst,sst25vf016b", "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <50000000>;
++		spi-tx-bus-width = <1>;
++		spi-rx-bus-width = <1>;
++		m25p,fast-read;
++		spi-cpol;
++		spi-cpha;
++	};
++};
++
+ &sdhi1 {
+ 	pinctrl-0 = <&sdhi1_pins>;
+ 	pinctrl-names = "default";
 -- 
 2.7.4
