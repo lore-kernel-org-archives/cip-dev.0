@@ -1,69 +1,22 @@
-From: zoran.stojsavljevic.de@gmail.com (Zoran S)
-Date: Mon, 2 Jul 2018 08:33:51 +0200
-Subject: [cip-dev] [CIP testing strategy] Vagrant disksize plugin introduced,
- and some other (Vagrant-less) ideas
-Message-ID: <CAEss1ELeFbS2zc6sxtUtCKWs+evBAzWepHEM5F-RtefipZ1d1w@mail.gmail.com>
+From: arilican@club-internet.fr (Albrecht)
+Date: Mon, 2 Jul 2018 17:37:11 +0300
+Subject: [cip-dev] gemsetnptcp Hello cip-dev@lists.cip-project.org
+Message-ID: <E21873D3598DA2419D98D1396D260346@club-internet.fr>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello CIP members,
-
-Recently, I have learned that vagrant disksize plugin was introduced.
-https://github.com/sprotheroe/vagrant-disksize
-
-This, actually, replaces two native VBox commands (example given below):
-
-  VBoxManage clonehd stretch.vmdk stretch.vdi --format VDI --variant Standard
-  VBoxManage modifyhd stretch.vdi --resize 81920
-
-The disksize plugin creates .VDI type of virtual HDD with the
-stretched virtual size of 80GB (default .VMDK has limited 10GB size).
-
-Please, do note that third party tool is required to extend the actual
-virtual disk limit (as tool example: gparted).
-
-In Vagrant file, you could create/add some code like this:
-
-if !Vagrant.has_plugin?("vagrant-disksize")
-   system('vagrant plugin install vagrant-disksize');
-end
-
-Vagrant.configure(2) do |config|
-  config.vm.provider :virtualbox do |vbox, override|
-    config.vm.box = "debian/stretch64"
-    config.disksize.size = '80GB'
-
-    vbox.customize ["modifyvm", :id, "--vram", "32"]
-    vbox.customize ["modifyvm", :id, "--memory", "4096"]
-    vbox.customize ["modifyvm", :id, "--cpus", "4"]
-    vbox.customize ["modifyvm", :id, "--firmware", "bios"]
-    vbox.customize ["modifyvm", :id, "--acpi", "on"]
-    vbox.customize ["modifyvm", :id, "--ioapic", "on"]
-    vbox.customize ["modifyvm", :id, "--cpuexecutioncap", "75"]
-    vbox.customize ["modifyvm", :id, "--rtcuseutc", "on"]
-    vbox.customize ["modifyvm", :id, "--cpuhotplug", "on"]
-    vbox.customize ["modifyvm", :id, "--pae", "on"]
-    vbox.customize ["modifyvm", :id, "--hwvirtex", "on"]
-    vbox.customize ["modifyvm", :id, "--accelerate3d", "on"]
-    vbox.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
-    vbox.customize ["modifyvm", :id, "--draganddrop", "bidirectional"]
-    vbox.customize ["modifyvm", :id, "--usb", "on"]
-    vbox.customize ["modifyvm", :id, "--usbehci", "on"]
-    ...
-_______
-
-I also created [1] VBox VMM configuration and [2] Debian Stretch VM
-configuration stages with pre-seed script (both stages execute with
-one single command respectively), but [3] Lava VM test machine
-creation without Vagrant assistance failed!
-
-In other words I was not able to create [3] Lava VM provisioning stage
-(in my first Vagrant-less attempt), using blindly unchanged CIP test
-integration scripts.
-
-I need to revisit integration scripts, my best guess. But I'll
-continue to work on Vagrant-less test strategy, as my time allows
-(engaged in several other projects).
-
-Thank you,
-Zoran
+movuzh 
+lyp We sell E-mail databases from $10 per country. fcqads 
+wzxndrlq 
+rbfnka $450 for the whole WORLD. [srtzqtdh] 
+dyeojb 
+qqspsoap For marketing, advertising, newsletters. [wmzhqsn] 
+hiryprmi 
+xnxfubqAnd also 50000 valid email accounts in e_mail:password for $150 sassjh 
+yzkfk 
+vjrphyv Our contacts: andrey100077 at gmail.com urtcfgnc 
+sahmlvnuhjga 
+uhsj  
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180702/a7156ff2/attachment.html>
