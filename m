@@ -1,134 +1,69 @@
-From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Fri, 29 Jun 2018 15:39:27 +0100
-Subject: [cip-dev] [PATCH 86/86] ARM: dts: iwg22d-sodimm-dbhd-ca: Add HDMI
-	video output
-In-Reply-To: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1530283167-14050-87-git-send-email-fabrizio.castro@bp.renesas.com>
+From: zoran.stojsavljevic.de@gmail.com (Zoran S)
+Date: Mon, 2 Jul 2018 08:33:51 +0200
+Subject: [cip-dev] [CIP testing strategy] Vagrant disksize plugin introduced,
+ and some other (Vagrant-less) ideas
+Message-ID: <CAEss1ELeFbS2zc6sxtUtCKWs+evBAzWepHEM5F-RtefipZ1d1w@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This patch enables the HDMI interface found on the expansion board.
+Hello CIP members,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 97b94d256d432ba9e1b37f9b21c3b285caf11de6)
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- .../arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts | 85 ++++++++++++++++++++++
- 1 file changed, 85 insertions(+)
+Recently, I have learned that vagrant disksize plugin was introduced.
+https://github.com/sprotheroe/vagrant-disksize
 
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
-index f925388..a8a4ec8 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
-+++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
-@@ -20,6 +20,38 @@
- 		serial4 = &scif5;
- 		serial6 = &hscif2;
- 	};
-+
-+	cec_clock: cec-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <12000000>;
-+	};
-+
-+	hdmi-out {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con: endpoint {
-+				remote-endpoint = <&adv7511_out>;
-+			};
-+		};
-+	};
-+};
-+
-+&du {
-+	pinctrl-0 = <&du0_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+
-+	ports {
-+		port at 0 {
-+			endpoint {
-+				remote-endpoint = <&adv7511_in>;
-+			};
-+		};
-+	};
- };
- 
- &hscif2 {
-@@ -29,12 +61,65 @@
- 	status = "okay";
- };
- 
-+&i2c1 {
-+	pinctrl-0 = <&i2c1_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	hdmi at 39 {
-+		compatible = "adi,adv7511w";
-+		reg = <0x39>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+		clocks = <&cec_clock>;
-+		clock-names = "cec";
-+		pd-gpios = <&gpio2 24 GPIO_ACTIVE_HIGH>;
-+
-+		adi,input-depth = <8>;
-+		adi,input-colorspace = "rgb";
-+		adi,input-clock = "1x";
-+		adi,input-style = <1>;
-+		adi,input-justification = "evenly";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port at 0 {
-+				reg = <0>;
-+				adv7511_in: endpoint {
-+					remote-endpoint = <&du_out_rgb0>;
-+				};
-+			};
-+
-+			port at 1 {
-+				reg = <1>;
-+				adv7511_out: endpoint {
-+					remote-endpoint = <&hdmi_con>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
- &pfc {
-+	du0_pins: du0 {
-+		groups = "du0_rgb888", "du0_sync", "du0_disp", "du0_clk0_out";
-+		function = "du0";
-+	};
-+
- 	hscif2_pins: hscif2 {
- 		groups = "hscif2_data";
- 		function = "hscif2";
- 	};
- 
-+	i2c1_pins: i2c1 {
-+		groups = "i2c1_d";
-+		function = "i2c1";
-+	};
-+
- 	scif1_pins: scif1 {
- 		groups = "scif1_data";
- 		function = "scif1";
--- 
-2.7.4
+This, actually, replaces two native VBox commands (example given below):
+
+  VBoxManage clonehd stretch.vmdk stretch.vdi --format VDI --variant Standard
+  VBoxManage modifyhd stretch.vdi --resize 81920
+
+The disksize plugin creates .VDI type of virtual HDD with the
+stretched virtual size of 80GB (default .VMDK has limited 10GB size).
+
+Please, do note that third party tool is required to extend the actual
+virtual disk limit (as tool example: gparted).
+
+In Vagrant file, you could create/add some code like this:
+
+if !Vagrant.has_plugin?("vagrant-disksize")
+   system('vagrant plugin install vagrant-disksize');
+end
+
+Vagrant.configure(2) do |config|
+  config.vm.provider :virtualbox do |vbox, override|
+    config.vm.box = "debian/stretch64"
+    config.disksize.size = '80GB'
+
+    vbox.customize ["modifyvm", :id, "--vram", "32"]
+    vbox.customize ["modifyvm", :id, "--memory", "4096"]
+    vbox.customize ["modifyvm", :id, "--cpus", "4"]
+    vbox.customize ["modifyvm", :id, "--firmware", "bios"]
+    vbox.customize ["modifyvm", :id, "--acpi", "on"]
+    vbox.customize ["modifyvm", :id, "--ioapic", "on"]
+    vbox.customize ["modifyvm", :id, "--cpuexecutioncap", "75"]
+    vbox.customize ["modifyvm", :id, "--rtcuseutc", "on"]
+    vbox.customize ["modifyvm", :id, "--cpuhotplug", "on"]
+    vbox.customize ["modifyvm", :id, "--pae", "on"]
+    vbox.customize ["modifyvm", :id, "--hwvirtex", "on"]
+    vbox.customize ["modifyvm", :id, "--accelerate3d", "on"]
+    vbox.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
+    vbox.customize ["modifyvm", :id, "--draganddrop", "bidirectional"]
+    vbox.customize ["modifyvm", :id, "--usb", "on"]
+    vbox.customize ["modifyvm", :id, "--usbehci", "on"]
+    ...
+_______
+
+I also created [1] VBox VMM configuration and [2] Debian Stretch VM
+configuration stages with pre-seed script (both stages execute with
+one single command respectively), but [3] Lava VM test machine
+creation without Vagrant assistance failed!
+
+In other words I was not able to create [3] Lava VM provisioning stage
+(in my first Vagrant-less attempt), using blindly unchanged CIP test
+integration scripts.
+
+I need to revisit integration scripts, my best guess. But I'll
+continue to work on Vagrant-less test strategy, as my time allows
+(engaged in several other projects).
+
+Thank you,
+Zoran
