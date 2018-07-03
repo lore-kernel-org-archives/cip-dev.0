@@ -1,22 +1,23 @@
-From: arilican@club-internet.fr (Albrecht)
-Date: Mon, 2 Jul 2018 17:37:11 +0300
-Subject: [cip-dev] gemsetnptcp Hello cip-dev@lists.cip-project.org
-Message-ID: <E21873D3598DA2419D98D1396D260346@club-internet.fr>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Tue, 03 Jul 2018 18:23:38 +0100
+Subject: [cip-dev] [PATCH  0/3] Document CMT and VIN
+In-Reply-To: <1530280742-6540-1-git-send-email-biju.das@bp.renesas.com>
+References: <1530280742-6540-1-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1530638618.2833.21.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-movuzh 
-lyp We sell E-mail databases from $10 per country. fcqads 
-wzxndrlq 
-rbfnka $450 for the whole WORLD. [srtzqtdh] 
-dyeojb 
-qqspsoap For marketing, advertising, newsletters. [wmzhqsn] 
-hiryprmi 
-xnxfubqAnd also 50000 valid email accounts in e_mail:password for $150 sassjh 
-yzkfk 
-vjrphyv Our contacts: andrey100077 at gmail.com urtcfgnc 
-sahmlvnuhjga 
-uhsj  
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180702/a7156ff2/attachment.html>
+On Fri, 2018-06-29 at 14:58 +0100, Biju Das wrote:
+> Hi,
+> 
+> This patch series aim to Document the CMT and
+> VIN deviced present in r8a774[35] SoC.
+
+Applied, thanks.
+
+Ben.
+
+-- 
+Ben Hutchings, Software Developer                ?        Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
