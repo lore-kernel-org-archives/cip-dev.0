@@ -1,47 +1,33 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Thu, 05 Jul 2018 22:45:45 +0100
-Subject: [cip-dev] [PATCH 62/86] ARM: dts: r8a7745: Add operating-points
- to cpu0
-In-Reply-To: <1530283167-14050-63-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
-	<1530283167-14050-63-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1530827145.21552.2.camel@codethink.co.uk>
+From: jan.kiszka@siemens.com (Jan Kiszka)
+Date: Fri, 6 Jul 2018 08:09:31 +0200
+Subject: [cip-dev] Altera CIP branch vs. Denali NAND driver
+Message-ID: <95cf4467-b48b-6a80-931c-a7f664048c6d@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Fri, 2018-06-29 at 15:39 +0100, Fabrizio Castro wrote:
-> shmobile_defconfig builds cpu freq into the kernel by default,
-> therefore we get error and warning messages at boot, when
-> hotplugging cpus, and when waking up from suspend to RAM.
-> 
-> Although the r8a7745 SoC does not support DVFS, defining one
-> operating point makes cpu freq happy and therefore all of the
-> nasty messages disappear.
+Hi Koguchi-san,
 
-Why was this not needed upstream?
+we have been using two commits [1][2] from the linux-cip-cyclonev branch
+at cip-playground to add denali support for an Arria 10 design here that
+uses 4.4-cip. However, it turned out that ECC is not working properly
+with that BSP driver. Are you aware of this?
 
-Ben.
+Meanwhile I started the endeavor to backport the upstream denali driver
+to 4.4 which /seems/ to work (upstream definitely works) but is a >110
+commit long queue and ignores other NAND drivers. Lot's of mtd/nand
+subsystem changes unfortunately makes it unpalatable for cip upstream.
+But I wonder if there is common interest in a solution that is
+maintained - maybe in cip-playground - by more than a single product
+crew on our side.
 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-> ---
-> ?arch/arm/boot/dts/r8a7745.dtsi | 1 +
-> ?1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm/boot/dts/r8a7745.dtsi
-> b/arch/arm/boot/dts/r8a7745.dtsi
-> index 077a28a..5f1cc84 100644
-> --- a/arch/arm/boot/dts/r8a7745.dtsi
-> +++ b/arch/arm/boot/dts/r8a7745.dtsi
-> @@ -29,6 +29,7 @@
-> ?			clock-frequency = <1000000000>;
-> ?			clocks = <&z2_clk>;
-> ?			next-level-cache = <&L2_CA7>;
-> +			operating-points = <1000000 1000000>;
-> ?		};
-> ?
-> ?		cpu1: cpu at 1 {
+Best regards,
+Jan
+
+[1]
+https://gitlab.com/cip-playground/linux-cip-cyclonev/commit/d6459dde24c46991b1976f780e74d02b9ebbed2e
+[2]
+https://gitlab.com/cip-playground/linux-cip-cyclonev/commit/c9bc5beb34d70efc11370cafb3f087657a80f112
+
 -- 
-Ben Hutchings, Software Developer                ?        Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+Corporate Competence Center Embedded Linux
