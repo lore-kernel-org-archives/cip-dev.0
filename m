@@ -1,38 +1,66 @@
-From: takuo.koguchi.sw@hitachi.com (=?utf-8?B?5bCP5Y+j55Ci5aSrIC8gS09HVUNISe+8jFRBS1VP?=)
-Date: Fri, 6 Jul 2018 08:53:40 +0000
-Subject: [cip-dev] Altera CIP branch vs. Denali NAND driver
-In-Reply-To: <fd6af125-0a28-d4a5-85cc-13e94778c7be@siemens.com>
-References: <95cf4467-b48b-6a80-931c-a7f664048c6d@siemens.com>
-	<TYAPR01MB2160D07D4F9524CBF5A860D0D7470@TYAPR01MB2160.jpnprd01.prod.outlook.com>
-	<fd6af125-0a28-d4a5-85cc-13e94778c7be@siemens.com>
-Message-ID: <TYAPR01MB21605130719706B6F02E8F78D7470@TYAPR01MB2160.jpnprd01.prod.outlook.com>
+From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
+Date: Fri, 6 Jul 2018 09:23:55 +0000
+Subject: [cip-dev] [PATCH 12/86] ARM: dts: r8a7745: Add clocks
+In-Reply-To: <1530823362.21552.1.camel@codethink.co.uk>
+References: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
+	<1530283167-14050-13-git-send-email-fabrizio.castro@bp.renesas.com>
+	<1530823362.21552.1.camel@codethink.co.uk>
+Message-ID: <TY1PR01MB17704D6670B07C08A690E410C0470@TY1PR01MB1770.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Jan,
+Hello Ben,
+
+Thank you for your feedback.
 
 > -----Original Message-----
-> From: Jan Kiszka <jan.kiszka@siemens.com>
-> Sent: Friday, July 06, 2018 5:06 PM
-> > (2) Bootloader needs to set SPARE_AREA_SKIP_BYTES properly, which is used by denali_hw_init.
-> (I do not remember the actual value off the top of my head). Without this, it resulted in
-> ECC errors as far as I remember.
-> 
-> We are using upstream U-boot (Marek sorted out the BSP U-boot
-> differences for us). I suppose you were using the Altera's version,
-> right? Marek, any comment on this tuning?
-Yes. I am using u-boot which came with Altera SoCSDK for the custom boards.
-
-> 
-> >
-> > Regarding to Denali Driver backport, "ignores other NAND drivers" is not a  good idea even
-> for the playground, though I am not quite sure.
-> 
-> I know, but this is related to the fact that the backport started as
-> proof-of-concept and targets that single device only so far. This would
-> have to be resolved when we wanted broader use, but it only makes sense
-> if there is interest.
+> From: Ben Hutchings [mailto:ben.hutchings at codethink.co.uk]
+> Sent: 05 July 2018 21:43
+> To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Cc: cip-dev at lists.cip-project.org; Chris Paterson <Chris.Paterson2@renesas.com>; Biju Das <biju.das@bp.renesas.com>
+> Subject: Re: [cip-dev][PATCH 12/86] ARM: dts: r8a7745: Add clocks
 >
-At lease I am interested.
+> On Fri, 2018-06-29 at 15:38 +0100, Fabrizio Castro wrote:
+> > From: Biju Das <biju.das@bp.renesas.com>
+> >
+> > Declare all core clocks and DIV6 clocks, as well as all MSTP clocks.
+> >
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > ---
+> >  arch/arm/boot/dts/r8a7745.dtsi | 432 +++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 432 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+> > index 281ab59..5c50fd3 100644
+> > --- a/arch/arm/boot/dts/r8a7745.dtsi
+> > +++ b/arch/arm/boot/dts/r8a7745.dtsi
+> [...]
+> > +mstp2_clks: mstp2_clks at e6150138 {
+> > +compatible = "renesas,r8a7743-mstp-clocks",
+> > +     "renesas,cpg-mstp-clocks";
+> > >
+> [...]
+>
+> This and the following 9 device nodes have compatible =
+> "renesas,r8a7743-mstp-clocks" which should presumably be
+> "renesas,r8a7745-mstp-clocks".
 
-Takuo Koguchi
+Doh!
+Thankfully you spotted this, we will send a v2 to fix this.
+
+
+Thanks,
+Fab
+
+>
+> Ben.
+>
+> --
+> Ben Hutchings, Software Developer                         Codethink Ltd
+> https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+>                                      Manchester, M1 2HF, United Kingdom
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, Buckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered No. 04586709.
