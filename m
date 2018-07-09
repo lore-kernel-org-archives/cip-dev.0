@@ -1,28 +1,40 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Sun, 08 Jul 2018 21:02:47 +0100
-Subject: [cip-dev] [RFC PATCH 0/7] 'SKB reserve' quirk setup to u_ether
-In-Reply-To: <OSBPR01MB210369213CA8FB32405EEA8BB8490@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-References: <1527177910-65275-1-git-send-email-biju.das@bp.renesas.com>
-	<1527702257.2289.24.camel@codethink.co.uk>
-	<OSBPR01MB210369213CA8FB32405EEA8BB8490@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-Message-ID: <1531080167.21552.11.camel@codethink.co.uk>
+From: Chris.Paterson2@renesas.com (Chris Paterson)
+Date: Mon, 9 Jul 2018 07:40:47 +0000
+Subject: [cip-dev] [PATCH 00/86] First patch set for iwg22d
+In-Reply-To: <1531079279.21552.8.camel@codethink.co.uk>
+References: <1530283167-14050-1-git-send-email-fabrizio.castro@bp.renesas.com>
+	<1531079279.21552.8.camel@codethink.co.uk>
+Message-ID: <TYAPR01MB22859AAE5B7EE04EDE11B593B7440@TYAPR01MB2285.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Tue, 2018-06-26 at 09:13 +0000, Biju Das wrote:
-> Hi Ben,
+Hello Ben,
+
+> From: Ben Hutchings [mailto:ben.hutchings at codethink.co.uk]
+> Sent: 08 July 2018 20:48
 > 
-> Is it the right time to apply this patch series?
-> Patch1-4,5 and 7.
+> On Fri, 2018-06-29 at 15:38 +0100, Fabrizio Castro wrote:
+> > Dear Ben,
+> >
+> > this series aims at adding initial support for the iwg22d, powered by
+> > the RZ/G1E (r8a7745).
+> > I hope this patch set is not too big, please let me know if you prefer
+> > smaller chunks.
 > 
-> Patch 6 is present in latest cip kernel.
-[...]
+> I've applied this series, aside from "ARM: dts: r8a7745: Add operating- points to
+> cpu0", and with the three v2 patches that you sent on the 6th substituted for the
+> original versions.
 
-Thanks for the reminder.  I've now applied this patch series.
+Thank you for your thorough (and fast) review!
 
-Ben.
+Kind regards, Chris
 
--- 
-Ben Hutchings, Software Developer                ?        Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+> 
+> Thanks!
+> 
+> Ben.
+> 
+> --
+> Ben Hutchings, Software Developer                ?        Codethink Ltd
+> https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+>                                      Manchester, M1 2HF, United Kingdom
