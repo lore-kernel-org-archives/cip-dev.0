@@ -1,9 +1,9 @@
 From: gitlab@mg.gitlab.com (Robert Marshall)
-Date: Wed, 18 Jul 2018 07:26:20 +0000
+Date: Wed, 18 Jul 2018 09:40:22 +0000
 Subject: [cip-dev]
  [Git][cip-project/cip-testing/board-at-desk-single-dev][master] 2 commits:
- Use 2018.4 version of LAVA #185
-Message-ID: <5b4eeb9c3cab9_2b033faa38295230830062@sidekiq-asap-01.mail>
+ More helpful final output #178
+Message-ID: <5b4f0b06e1faf_1ce6c3fbbe92caa80279542@sidekiq-asap-03.mail>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
@@ -11,74 +11,54 @@ Robert Marshall pushed to branch master at cip-project / cip-testing / board-at-
 
 
 Commits:
-d7d61d0b by Robert Marshall at 2018-07-18T07:26:18Z
-Use 2018.4 version of LAVA #185
+db10d21f by Robert Marshall at 2018-06-13T14:08:31Z
+More helpful final output #178
+
+Tailor the output depending whether there&#39;s an authentication token
+for lavauser.
 
 - - - - -
-ed0c61c4 by Robert Marshall at 2018-07-18T07:26:18Z
-Merge branch &#39;stableLAVA&#39; into &#39;master&#39;
+f6ac0420 by Robert Marshall at 2018-07-18T09:40:21Z
+Merge branch &#39;betterTest&#39; into &#39;master&#39;
 
-Use 2018.4 version of LAVA #185
+More helpful final output #178
 
-See merge request cip-project/cip-testing/board-at-desk-single-dev!60
+See merge request cip-project/cip-testing/board-at-desk-single-dev!61
 - - - - -
 
 
-2 changed files:
+1 changed file:
 
-- integration-scripts/install_dependencies.sh
-- integration-scripts/install_lava.sh
+- scripts/create_test.sh
 
 
 Changes:
 
 =====================================
-integration-scripts/install_dependencies.sh
+scripts/create_test.sh
 =====================================
-@@ -22,8 +22,6 @@ if [ -f ~/git-repos/kernelci-backend/tmphosts ] ; then
-     echo continuing kernelci-backend provisioning
-     exit 0
- fi
--# Add backports repository - main branch
--echo "deb http://deb.debian.org/debian stretch-backports main" | sudo DEBIAN_FRONTEND=noninteractive tee -a /etc/apt/sources.list
+@@ -29,4 +29,12 @@ sed -i $OUP -e 's/TAG/'"$TAG"'/'
+ sed -i $OUP -e 's/BRANCH/'"$BRANCH"'/' 
  
- # Add Architectures that you will be building
- sudo DEBIAN_FRONTEND=noninteractive dpkg --add-architecture armel
-
-
-=====================================
-integration-scripts/install_lava.sh
-=====================================
-@@ -15,16 +15,18 @@ set -e
- # Stop nginx
- sudo DEBIAN_FRONTEND=noninteractive systemctl stop nginx.service
  
--# Update the system
--sudo DEBIAN_FRONTEND=noninteractive apt-get -y update
-+# retrieve 2018.4 of LAVA from here
-+echo "deb     http://snapshot.debian.org/archive/debian/20180526T153644Z/ stretch-backports main " | sudo DEBIAN_FRONTEND=noninteractive tee -a /etc/apt/sources.list
-+sudo DEBIAN_FRONTEND=noninteractive apt-get -o Acquire::Check-Valid-Until=false -y update
- sudo DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
- 
- # Install postgresql & tftp
- sudo DEBIAN_FRONTEND=noninteractive apt-get -y install postgresql tftp
- 
-+
- # Install qemu, KVM & LAVA
- sudo DEBIAN_FRONTEND=noninteractive apt-get -y install qemu-kvm libvirt-clients libvirt-daemon libvirt-daemon-system
--sudo DEBIAN_FRONTEND=noninteractive apt-get -y install lava -t stretch-backports
-+sudo DEBIAN_FRONTEND=noninteractive apt-get -y install lava=2018.4-1~bpo9+1 -t stretch-backports
- 
- # Add the vagrant user to the libvirtd and kvm groups
- sudo DEBIAN_FRONTEND=noninteractive usermod -a -G libvirt,kvm vagrant
+-echo now run lava-tool submit-job http://lavauser at localhost:8080/RPC2 $OUP
++# assumes that lavauser is being used (as specified in the wiki)
++AUTH=$(lava-tool auth-list | grep -c lavauser)
++if [ $AUTH -eq 1 ]
++then
++   echo now run lava-tool submit-job http://lavauser at localhost:8080/RPC2 $OUP
++else
++   echo move $OUP to /etc/lava-server/dispatcher-config/health-checks/ naming it device-type.yaml
++   echo if you want to use lava-tool you need to add an authentication token
++fi
 
 
 
-View it on GitLab: https://gitlab.com/cip-project/cip-testing/board-at-desk-single-dev/compare/01551476f285f2cb5caa5f0e99bf483f24735123...ed0c61c4022e45dcf9e089f983ed0bc557aacf63
+View it on GitLab: https://gitlab.com/cip-project/cip-testing/board-at-desk-single-dev/compare/ed0c61c4022e45dcf9e089f983ed0bc557aacf63...f6ac04206848442dff3b5f18880274d9f64df61b
 
 -- 
-View it on GitLab: https://gitlab.com/cip-project/cip-testing/board-at-desk-single-dev/compare/01551476f285f2cb5caa5f0e99bf483f24735123...ed0c61c4022e45dcf9e089f983ed0bc557aacf63
+View it on GitLab: https://gitlab.com/cip-project/cip-testing/board-at-desk-single-dev/compare/ed0c61c4022e45dcf9e089f983ed0bc557aacf63...f6ac04206848442dff3b5f18880274d9f64df61b
 You're receiving this email because of your account on gitlab.com.
 -------------- next part --------------
 An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180718/5e1c9b95/attachment-0001.html>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180718/dcaac8ca/attachment.html>
