@@ -1,9 +1,9 @@
 From: gitlab@mg.gitlab.com (Robert Marshall)
-Date: Wed, 18 Jul 2018 07:25:46 +0000
+Date: Wed, 18 Jul 2018 07:26:20 +0000
 Subject: [cip-dev]
  [Git][cip-project/cip-testing/board-at-desk-single-dev][master] 2 commits:
- Use a local test for the BBB health check
-Message-ID: <5b4eeb7a98f0d_ac5f3fcfb201b3c0106010@sidekiq-asap-02.mail>
+ Use 2018.4 version of LAVA #185
+Message-ID: <5b4eeb9c3cab9_2b033faa38295230830062@sidekiq-asap-01.mail>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
@@ -11,81 +11,74 @@ Robert Marshall pushed to branch master at cip-project / cip-testing / board-at-
 
 
 Commits:
-f9d2bb54 by Robert Marshall at 2018-07-18T07:25:45Z
-Use a local test for the BBB health check
+d7d61d0b by Robert Marshall at 2018-07-18T07:26:18Z
+Use 2018.4 version of LAVA #185
 
 - - - - -
-01551476 by Robert Marshall at 2018-07-18T07:25:45Z
-Merge branch &#39;localTest&#39; into &#39;master&#39;
+ed0c61c4 by Robert Marshall at 2018-07-18T07:26:18Z
+Merge branch &#39;stableLAVA&#39; into &#39;master&#39;
 
-Use a local test for the BBB health check
+Use 2018.4 version of LAVA #185
 
-See merge request cip-project/cip-testing/board-at-desk-single-dev!62
+See merge request cip-project/cip-testing/board-at-desk-single-dev!60
 - - - - -
 
 
-1 changed file:
+2 changed files:
 
-- tests/bbb_debian_local.yaml
+- integration-scripts/install_dependencies.sh
+- integration-scripts/install_lava.sh
 
 
 Changes:
 
 =====================================
-tests/bbb_debian_local.yaml
+integration-scripts/install_dependencies.sh
 =====================================
-@@ -1,4 +1,4 @@
--# Copyright (C) 2017, Codethink, Ltd., Robert Marshall <robert.marshall@codethink.co.uk>
-+# Copyright (C) 2018, Codethink, Ltd., Robert Marshall <robert.marshall@codethink.co.uk>
- # SPDX-License-Identifier:	AGPL-3.0
- # This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, version 3.
+@@ -22,8 +22,6 @@ if [ -f ~/git-repos/kernelci-backend/tmphosts ] ; then
+     echo continuing kernelci-backend provisioning
+     exit 0
+ fi
+-# Add backports repository - main branch
+-echo "deb http://deb.debian.org/debian stretch-backports main" | sudo DEBIAN_FRONTEND=noninteractive tee -a /etc/apt/sources.list
  
-@@ -10,7 +10,7 @@ device_type: beaglebone-black
+ # Add Architectures that you will be building
+ sudo DEBIAN_FRONTEND=noninteractive dpkg --add-architecture armel
+
+
+=====================================
+integration-scripts/install_lava.sh
+=====================================
+@@ -15,16 +15,18 @@ set -e
+ # Stop nginx
+ sudo DEBIAN_FRONTEND=noninteractive systemctl stop nginx.service
  
- # NFS fails on panda and arndale.
+-# Update the system
+-sudo DEBIAN_FRONTEND=noninteractive apt-get -y update
++# retrieve 2018.4 of LAVA from here
++echo "deb     http://snapshot.debian.org/archive/debian/20180526T153644Z/ stretch-backports main " | sudo DEBIAN_FRONTEND=noninteractive tee -a /etc/apt/sources.list
++sudo DEBIAN_FRONTEND=noninteractive apt-get -o Acquire::Check-Valid-Until=false -y update
+ sudo DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
  
--job_name: local test of ramdisk test on bbb using /TREE/BRANCH/TAG/arm/omap2plus_defconfig/zImage
-+job_name: test of bbb using /TREE/BRANCH/TAG/arm/omap2plus_defconfig/zImage
- timeouts:
-   job:
-     minutes: 10
-@@ -62,11 +62,22 @@ actions:
+ # Install postgresql & tftp
+ sudo DEBIAN_FRONTEND=noninteractive apt-get -y install postgresql tftp
  
- # TEST_BLOCK
- - test:
--    # defines the tests to be run once the health check passes
-     timeout:
--      minutes: 5
-+      minutes: 2
-     definitions:
--    - repository: git://git.linaro.org/qa/test-definitions.git
--      from: git
--      path: common/dt-selftests.yaml
--      name: smoke-tests
-+    - repository:
-+        metadata:
-+          format: Lava-Test Test Definition 1.0
-+          name: kernel-version-basic
-+          version: "1.0"
-+          description: "check kernel version"
-+          os:
-+            - oe
-+          scope:
-+            - functional
-+        run:
-+          steps:
-+            - lava-test-case uname --shell uname -a
-+      from: inline
-+      name: kernel-version-inline
-+      path: inline/kernel-version-basic.yaml
++
+ # Install qemu, KVM & LAVA
+ sudo DEBIAN_FRONTEND=noninteractive apt-get -y install qemu-kvm libvirt-clients libvirt-daemon libvirt-daemon-system
+-sudo DEBIAN_FRONTEND=noninteractive apt-get -y install lava -t stretch-backports
++sudo DEBIAN_FRONTEND=noninteractive apt-get -y install lava=2018.4-1~bpo9+1 -t stretch-backports
+ 
+ # Add the vagrant user to the libvirtd and kvm groups
+ sudo DEBIAN_FRONTEND=noninteractive usermod -a -G libvirt,kvm vagrant
 
 
 
-View it on GitLab: https://gitlab.com/cip-project/cip-testing/board-at-desk-single-dev/compare/42e332d726083b8ccca95d783f9c0fd1c7af9bcf...01551476f285f2cb5caa5f0e99bf483f24735123
+View it on GitLab: https://gitlab.com/cip-project/cip-testing/board-at-desk-single-dev/compare/01551476f285f2cb5caa5f0e99bf483f24735123...ed0c61c4022e45dcf9e089f983ed0bc557aacf63
 
 -- 
-View it on GitLab: https://gitlab.com/cip-project/cip-testing/board-at-desk-single-dev/compare/42e332d726083b8ccca95d783f9c0fd1c7af9bcf...01551476f285f2cb5caa5f0e99bf483f24735123
+View it on GitLab: https://gitlab.com/cip-project/cip-testing/board-at-desk-single-dev/compare/01551476f285f2cb5caa5f0e99bf483f24735123...ed0c61c4022e45dcf9e089f983ed0bc557aacf63
 You're receiving this email because of your account on gitlab.com.
 -------------- next part --------------
 An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180718/1841d680/attachment-0001.html>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180718/5e1c9b95/attachment-0001.html>
