@@ -1,47 +1,48 @@
-From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
-Date: Fri, 20 Jul 2018 17:20:34 +0900
-Subject: [cip-dev] [CIP Core] Criteria for prioritizing security fixes in
-	Debian LTS
-Message-ID: <000301d42002$87e767e0$97b637a0$@toshiba.co.jp>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Fri, 20 Jul 2018 12:52:22 +0100
+Subject: [cip-dev] DebConf 2018
+Message-ID: <1532087542.21552.27.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Ben,
+For those of you attending DebConf or interested in watching the live
+video streams, the schedule is now available.
 
-As platinum-level sponsors of the Debian LTS, we (CIP members) can provide a list of packages that we rely on and that should be prioritized in terms of security support.
-[Note] The list of packages from each member can be found here:
-Ref: https://docs.google.com/spreadsheets/d/1hrhYnDYSxeA-ZXaHB329-CzgY8H4H5iHXP1AeFFdJDc/
-[Note] The list can be updated at any time (by notifying deblts at freexian.com)
-[Note] The votes will be weighted by the amount of money contributed.
-[Note] The Customer recognizes that this contract is a best-effort contract
+The following sessions may be of particular interest to CIP members:
 
-During the Open Source Summit in Japan, we discussed about how to prioritize those packages. I proposed to create a set of criteria and Agustin mentioned that it would be a good idea to have you (Ben) evaluate these criteria and its impact before attending to DebConf. 
-[Note] Based on your feedback, CIP will decide to contact the Freexian leads before the DebConf or not.
+Arm ports BoF
+https://debconf18.debconf.org/talks/93-arm-ports-bof/
 
-Without further delay, I would appreciate it if you reviewed the criteria below to prioritize security fixes:
-1)  Packages that are popular among members' package lists
-	[Rationale] popular packages are often the target of exploits
-	- Examples: bash, busybox[-static], zlib, sqlite3, iptables, net-tools, libcap2, util-linux, dropbear, libsqlite3, tzdata
-2) CVEs with high "base score", high "impact score", 
-   high "exploitability score", and low "attack complexity"
-	[Rationale] these CVEs usually refer to bugs that are easy to exploit
-	or have a high impact.
-3) Network software (CVEs with "Access Vector (AV): Network")
-	[Rationale] bugs that can be exploited remotely are the most dangerous
-	- Network servers examples: apache2, nginx, openssh-server, openssh-sftp-server,
-	  tftp-hpa, postgresql, nfs-kernel-server, strongswan, netcat,vsftpd
-	- Network libs examples: libssh, libssl, zeromq3, libsocketcan, net-snmp,
-	  libnet, libnss, openldap, openvpn, libcurl..
-	- Network clients examples: openssh-client, sshpass, ntp, wireless-tools,
-	  wget, obexftp, iproute2...
-	- Update software examples: apt, unattended-upgrades...
-4) Security software
-	[Rationale] LSM modules, encryption, and authorization are the
-	foundation of a security-hardened system
-	- Examples: apparmor, libseccomp, libselinux, *crypt*, libnettle4, libkeyutils1, tpm2-tools, pam, login, passwd, pwauth, xauth, libsasl, php-auth, shadow, sudo...
-5) Language runtimes/compilers
-	[Rationale] they are common to many applications.
-	- Examples: gcc, libc, libstdc++, lua, nodejs, openjdk, perl, python, tcl...
+Backporting hardware support in Debian (BoF)
+https://debconf18.debconf.org/talks/92-backporting-hardware-support-in-debian/
 
-Best regards,
-Daniel Sangorrin
+Building Debian-based system images (BoF)
+https://debconf18.debconf.org/talks/89-building-debian-based-system-images/
+
+Civilization runs on Debian (talk)
+https://debconf18.debconf.org/talks/112-civilization-runs-on-debian/
+I would guess that the talk itself won't be news to us, but the
+questions from attendees may still be interesting.
+
+How to engage developers to contribute effectively to Debian and other
+open source projects in Asia?(talk)
+https://debconf18.debconf.org/talks/36-how-to-engage-developers-to-contribute-effectively-to-debian-and-other-open-source-projects-in-asia/
+This talk will *not* be video recorded or streamed.
+
+Running tests and analysing results on an Embedded Debian system with
+BMW/Genivi tooling?(talk)
+https://debconf18.debconf.org/talks/17-running-tests-and-analysing-results-on-an-embedded-debian-system-with-bmwgenivi-tooling/
+
+Using FAI?to build Live debian images for ARM developer boards (talk)
+https://debconf18.debconf.org/talks/84-using-fai-to-build-live-debian-images-for-arm-developer-boards/
+
+I was surprised to see that there is no LTS (long-term support) BoF
+scheduled.  It should be possible to add a BoF to the schedule, though
+without video coverage.
+
+Ben.
+
+-- 
+Ben Hutchings, Software Developer                ?        Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
