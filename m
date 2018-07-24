@@ -1,100 +1,46 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Tue, 24 Jul 2018 11:32:32 +0100
-Subject: [cip-dev] [PATCH 1/2] ARM: dts: r8a7745: Add PWM SoC support
+Date: Tue, 24 Jul 2018 11:32:33 +0100
+Subject: [cip-dev] [PATCH 2/2] ARM: dts: r8a7745: Add TPU support
 In-Reply-To: <1532428353-30716-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1532428353-30716-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1532428353-30716-2-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1532428353-30716-3-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Add the definitions for pwm[0123456] to the SoC .dtsi.
+Add TPU support to SoC DT.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 3711d0ede24d2e3c90ae10e1a79746ac87169609)
-(modified clocks and power-domains properties. removed resets
-property)
+(cherry picked from commit b9db514555274eb325c9b13a0b0587c0e600d75a)
+(moved node to a better location to allow for better sorting. modified
+clocks and power-domains properties. removed resets property)
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7745.dtsi | 63 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
+ arch/arm/boot/dts/r8a7745.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 68ef545..4163ae4 100644
+index 4163ae4..6fdd3c2 100644
 --- a/arch/arm/boot/dts/r8a7745.dtsi
 +++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -772,6 +772,69 @@
- 			status = "disabled";
+@@ -173,6 +173,15 @@
+ 			reg = <0 0xe6060000 0 0x11c>;
  		};
  
-+		pwm0: pwm at e6e30000 {
-+			compatible = "renesas,pwm-r8a7745", "renesas,pwm-rcar";
-+			reg = <0 0xe6e30000 0 0x8>;
-+			clocks = <&mstp5_clks R8A7745_CLK_PWM>;
++		tpu: pwm at e60f0000 {
++			compatible = "renesas,tpu-r8a7745", "renesas,tpu";
++			reg = <0 0xe60f0000 0 0x148>;
++			clocks = <&mstp3_clks R8A7745_CLK_TPU0>;
 +			power-domains = <&cpg_clocks>;
-+			#pwm-cells = <2>;
++			#pwm-cells = <3>;
 +			status = "disabled";
 +		};
 +
-+		pwm1: pwm at e6e31000 {
-+			compatible = "renesas,pwm-r8a7745", "renesas,pwm-rcar";
-+			reg = <0 0xe6e31000 0 0x8>;
-+			clocks = <&mstp5_clks R8A7745_CLK_PWM>;
-+			power-domains = <&cpg_clocks>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm2: pwm at e6e32000 {
-+			compatible = "renesas,pwm-r8a7745", "renesas,pwm-rcar";
-+			reg = <0 0xe6e32000 0 0x8>;
-+			clocks = <&mstp5_clks R8A7745_CLK_PWM>;
-+			power-domains = <&cpg_clocks>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm3: pwm at e6e33000 {
-+			compatible = "renesas,pwm-r8a7745", "renesas,pwm-rcar";
-+			reg = <0 0xe6e33000 0 0x8>;
-+			clocks = <&mstp5_clks R8A7745_CLK_PWM>;
-+			power-domains = <&cpg_clocks>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm4: pwm at e6e34000 {
-+			compatible = "renesas,pwm-r8a7745", "renesas,pwm-rcar";
-+			reg = <0 0xe6e34000 0 0x8>;
-+			clocks = <&mstp5_clks R8A7745_CLK_PWM>;
-+			power-domains = <&cpg_clocks>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm5: pwm at e6e35000 {
-+			compatible = "renesas,pwm-r8a7745", "renesas,pwm-rcar";
-+			reg = <0 0xe6e35000 0 0x8>;
-+			clocks = <&mstp5_clks R8A7745_CLK_PWM>;
-+			power-domains = <&cpg_clocks>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm6: pwm at e6e36000 {
-+			compatible = "renesas,pwm-r8a7745", "renesas,pwm-rcar";
-+			reg = <0 0xe6e36000 0 0x8>;
-+			clocks = <&mstp5_clks R8A7745_CLK_PWM>;
-+			power-domains = <&cpg_clocks>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
- 		pci0: pci at ee090000 {
- 			compatible = "renesas,pci-r8a7745",
- 				     "renesas,pci-rcar-gen2";
+ 		gic: interrupt-controller at f1001000 {
+ 			compatible = "arm,gic-400";
+ 			#interrupt-cells = <3>;
 -- 
 2.7.4
