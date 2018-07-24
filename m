@@ -1,48 +1,26 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Fri, 20 Jul 2018 12:52:22 +0100
-Subject: [cip-dev] DebConf 2018
-Message-ID: <1532087542.21552.27.camel@codethink.co.uk>
+From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
+Date: Tue, 24 Jul 2018 11:32:31 +0100
+Subject: [cip-dev] [PATCH 0/2] Add PWM and TPU support
+Message-ID: <1532428353-30716-1-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-For those of you attending DebConf or interested in watching the live
-video streams, the schedule is now available.
+Hello Ben,
 
-The following sessions may be of particular interest to CIP members:
+this series backports PWM and TPU support for the r8a7745 SoC,
+and it applies on top of branch linux-4.4.y-cip, commit
+4d769b2b8749e89dfc7ea179a44f652dcfbedb37 ("PM / OPP: Move error
+message to debug level").
 
-Arm ports BoF
-https://debconf18.debconf.org/talks/93-arm-ports-bof/
+Thanks,
+Fab
 
-Backporting hardware support in Debian (BoF)
-https://debconf18.debconf.org/talks/92-backporting-hardware-support-in-debian/
+Fabrizio Castro (2):
+  ARM: dts: r8a7745: Add PWM SoC support
+  ARM: dts: r8a7745: Add TPU support
 
-Building Debian-based system images (BoF)
-https://debconf18.debconf.org/talks/89-building-debian-based-system-images/
-
-Civilization runs on Debian (talk)
-https://debconf18.debconf.org/talks/112-civilization-runs-on-debian/
-I would guess that the talk itself won't be news to us, but the
-questions from attendees may still be interesting.
-
-How to engage developers to contribute effectively to Debian and other
-open source projects in Asia?(talk)
-https://debconf18.debconf.org/talks/36-how-to-engage-developers-to-contribute-effectively-to-debian-and-other-open-source-projects-in-asia/
-This talk will *not* be video recorded or streamed.
-
-Running tests and analysing results on an Embedded Debian system with
-BMW/Genivi tooling?(talk)
-https://debconf18.debconf.org/talks/17-running-tests-and-analysing-results-on-an-embedded-debian-system-with-bmwgenivi-tooling/
-
-Using FAI?to build Live debian images for ARM developer boards (talk)
-https://debconf18.debconf.org/talks/84-using-fai-to-build-live-debian-images-for-arm-developer-boards/
-
-I was surprised to see that there is no LTS (long-term support) BoF
-scheduled.  It should be possible to add a BoF to the schedule, though
-without video coverage.
-
-Ben.
+ arch/arm/boot/dts/r8a7745.dtsi | 72 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 72 insertions(+)
 
 -- 
-Ben Hutchings, Software Developer                ?        Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+2.7.4
