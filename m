@@ -1,56 +1,33 @@
-From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Tue, 24 Jul 2018 12:03:53 +0100
-Subject: [cip-dev] [PATCH 3/3] ARM: dts: iwg22d-sodimm-dbhd-ca: Add can1
-	support to HDMI DB
-In-Reply-To: <1532430233-32277-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1532430233-32277-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1532430233-32277-4-git-send-email-fabrizio.castro@bp.renesas.com>
+From: robert.marshall@codethink.co.uk (Robert Marshall)
+Date: Wed, 25 Jul 2018 13:31:41 +0100
+Subject: [cip-dev] cip-dev progress report weeks 20 - 29
+Message-ID: <871sbrbioi.fsf@ctlt579.codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-CAN1 interface is exposed via connector J1 found on the HDMI daughter
-board. This patch enables can1 DT node from within the daughter board
-specific device tree.
+Hi! Here's a report on the Codethink CIP testing development over the
+past few weeks.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit d6033e7c6589c74299635eb3d84c56ccac8db5e4)
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+CIP kernel testing
 
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
-index fc0f559..654d28b 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
-+++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
-@@ -54,6 +54,13 @@
- 	};
- };
- 
-+&can1 {
-+	pinctrl-0 = <&can1_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
- &hscif2 {
- 	pinctrl-0 = <&hscif2_pins>;
- 	pinctrl-names = "default";
-@@ -103,6 +110,11 @@
- };
- 
- &pfc {
-+	can1_pins: can1 {
-+		groups = "can1_data_b";
-+		function = "can1";
-+	};
-+
- 	du0_pins: du0 {
- 		groups = "du0_rgb888", "du0_sync", "du0_disp", "du0_clk0_out";
- 		function = "du0";
+- The master of B at D now installs 2018.4 rather the latest from
+  debian-backports making the tool more resilient to upstream changes
+  and allowing us to evaluate an upstream change before it goes live.
+
+- Also linked to the above the beaglebone black health check now uses an
+  inline test; this both breaks the reliance upon an upstream test repos
+  structure and making testing less dependent upon needing an internet connection.
+
+- Renesas board - this hardware continued to not give consistent results in B at D
+  tests so for the moment development has been suspended.
+
+- Development has started on using docker containers for B at D - the
+  kernelci one is up and kernel builds have successfully been uploaded
+  to it, there is an outstanding issue with retrieving those builds from
+  the container. Work is also being carried out on the lava docker container.
+
+Robert
 -- 
-2.7.4
+Robert Marshall, Software Developer                       Codethink Ltd
+Telephone: +44 7762 840 414       3rd Floor, Dale House, 35 Dale Street
+https://www.codethink.co.uk/         MANCHESTER, M1 2HF. United Kingdom
