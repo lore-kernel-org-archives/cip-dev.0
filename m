@@ -1,113 +1,165 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Thu, 26 Jul 2018 18:42:18 +0100
-Subject: [cip-dev] [PATCH 00/42] Add watchdog support to iwg20m and iwg22m
-Message-ID: <1532626980-17190-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Date: Thu, 26 Jul 2018 18:42:23 +0100
+Subject: [cip-dev] [PATCH 05/42] soc: renesas: Add R-Car RST driver
+In-Reply-To: <1532626980-17190-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1532626980-17190-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1532626980-17190-6-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Ben,
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-this series backports watchdog support for iwg20m and iwg22m.
+Add a driver for the Renesas R-Car Gen1 RESET/WDT and R-Car Gen2/Gen3
+and RZ/G RST module.
 
-There is a dependency with series:
-https://lists.cip-project.org/pipermail/cip-dev/2018-July/001415.html
+For now this driver just provides an API to obtain the state of the mode
+pins, as latched at reset time.  As this is typically called from the
+probe function of a clock driver, which can run much earlier than any
+initcall, calling rcar_rst_read_mode_pins() just forces an early
+initialization of the driver.
 
-This work is based on top of linux-4.4.y-cip, commit
-4d769b2b8749e89dfc7ea179a44f652dcfbedb37 ("PM / OPP: Move error
-message to debug level").
+Despite the current simple and almost identical handling for all
+supported SoCs, the driver matches against SoC-specific compatible
+values, as the features provided by the hardware module differ a lot
+across the various SoC families and members.
 
-Thanks,
-Fab
-
-Fabrizio Castro (15):
-  ARM: shmobile: Remove shmobile_boot_arg from
-    shmobile_smp_apmu_setup_boot
-  ARM: shmobile: Add watchdog support
-  clk: shmobile: rcar-gen2: Init R-Car reset IP
-  ARM: dts: r8a7743: Register rwdt and intc-sys clocks
-  ARM: dts: r8a7745: Register rwdt and intc-sys clocks
-  watchdog: renesas_wdt: Add suspend/resume support
-  watchdog: renesas_wdt: Add restart handler
-  ARM: shmobile: rcar-gen2: Add watchdog support
-  ARM: dts: r8a7743: Adjust SMP routine size
-  ARM: dts: r8a7745: Adjust SMP routine size
-  ARM: dts: r8a7743: Add watchdog support to SoC dtsi
-  ARM: dts: r8a7745: Add watchdog support to SoC dtsi
-  ARM: dts: iwg20m: Add watchdog support to SoM dtsi
-  ARM: dts: iwg22m: Add watchdog support to SoM dtsi
-  ARM: shmobile: defconfig: Enable RENESAS_WDT_GEN
-
-Geert Uytterhoeven (12):
-  ARM: shmobile: Remove shmobile_boot_arg
-  ARM: shmobile: r8a7779: Remove remainings of removed SCU boot setup
-    code
-  soc: renesas: Add R-Car RST driver
-  reset: Add renesas,rst DT bindings
-  clk: renesas: mstp: Make INTC-SYS a critical clock
-  ARM: shmobile: rcar-gen2: Add more register documentation
-  ARM: shmobile: rcar-gen2: Use ICRAM1 for jump stub on all SoCs
-  ARM: shmobile: rcar-gen2: Obtain jump stub region from DT
-  ARM: dts: r8a7743: Add Inter Connect RAM
-  ARM: dts: r8a7743: Reserve SRAM for the SMP jump stub
-  ARM: dts: r8a7745: Add Inter Connect RAM
-  ARM: dts: r8a7745: Reserve SRAM for the SMP jump stub
-
-Lee Jones (2):
-  clk: Allow clocks to be marked as CRITICAL
-  clk: WARN_ON about to disable a critical clock
-
-Maxime Ripard (1):
-  clk: fix critical clock locking
-
-Sergei Shtylyov (2):
-  ARM: dts: r8a7743: initial SoC device tree
-  ARM: dts: r8a7745: initial SoC device tree
-
-Veeraiyan Chidambaram (1):
-  watchdog: renesas-wdt: Add support for WDIOF_CARDRESET
-
-Wolfram Sang (9):
-  watchdog: renesas-wdt: add driver
-  watchdog: renesas_wdt: avoid (theoretical) type overflow
-  watchdog: renesas_wdt: check rate also for upper limit
-  watchdog: renesas_wdt: don't round closest with get_timeleft
-  watchdog: renesas_wdt: apply better precision
-  watchdog: renesas_wdt: add another divider option
-  watchdog: renesas_wdt: consistently use RuntimePM for clock management
-  watchdog: renesas_wdt: make 'clk' a variable local to probe()
-  watchdog: renesas_wdt: update copyright dates
-
- .../devicetree/bindings/reset/renesas,rst.txt      |  24 ++
- .../devicetree/bindings/watchdog/renesas-wdt.txt   |  33 +++
- arch/arm/boot/dts/r8a7743-iwg20m.dtsi              |   5 +
- arch/arm/boot/dts/r8a7743.dtsi                     |  46 +++-
- arch/arm/boot/dts/r8a7745-iwg22m.dtsi              |   5 +
- arch/arm/boot/dts/r8a7745.dtsi                     |  44 +++-
- arch/arm/configs/shmobile_defconfig                |   1 +
- arch/arm/mach-shmobile/common.h                    |   5 +-
- arch/arm/mach-shmobile/headsmp.S                   |  63 ++++-
- arch/arm/mach-shmobile/platsmp-apmu.c              |   3 +-
- arch/arm/mach-shmobile/platsmp-scu.c               |   1 -
- arch/arm/mach-shmobile/pm-rcar-gen2.c              |  97 +++++--
- arch/arm/mach-shmobile/smp-r8a7779.c               |   2 -
- drivers/clk/clk.c                                  |  16 ++
- drivers/clk/shmobile/clk-mstp.c                    |   5 +
- drivers/clk/shmobile/clk-rcar-gen2.c               |   3 +
- drivers/soc/Makefile                               |   1 +
- drivers/soc/renesas/Makefile                       |   1 +
- drivers/soc/renesas/rcar-rst.c                     |  81 ++++++
- drivers/watchdog/Kconfig                           |   8 +
- drivers/watchdog/Makefile                          |   1 +
- drivers/watchdog/renesas_wdt.c                     | 285 +++++++++++++++++++++
- include/linux/clk-provider.h                       |   1 +
- include/linux/soc/renesas/rcar-rst.h               |   6 +
- 24 files changed, 694 insertions(+), 43 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/reset/renesas,rst.txt
- create mode 100644 Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
+(cherry picked from commit 527c02f66d263d2eeff237a2326c3278cfc03d3b)
+(Added renesas directory to driver/soc/Makefile. Modified
+drivers/soc/renesas/Makefile to only compile rcar-rst.c for R-Car
+Gen2. Removed R-Car Gen3 and R-Car Gen1 from rcar_rst_matches and
+stripped read mode pins logic from the driver. Got rid of
+rcar_rst_read_mode_pins, advertising rcar_rst_init instead)
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+---
+ drivers/soc/Makefile                 |  1 +
+ drivers/soc/renesas/Makefile         |  1 +
+ drivers/soc/renesas/rcar-rst.c       | 81 ++++++++++++++++++++++++++++++++++++
+ include/linux/soc/renesas/rcar-rst.h |  6 +++
+ 4 files changed, 89 insertions(+)
  create mode 100644 drivers/soc/renesas/Makefile
  create mode 100644 drivers/soc/renesas/rcar-rst.c
- create mode 100644 drivers/watchdog/renesas_wdt.c
  create mode 100644 include/linux/soc/renesas/rcar-rst.h
 
+diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
+index f2ba2e9..c87aada 100644
+--- a/drivers/soc/Makefile
++++ b/drivers/soc/Makefile
+@@ -6,6 +6,7 @@ obj-$(CONFIG_SOC_BRCMSTB)	+= brcmstb/
+ obj-$(CONFIG_MACH_DOVE)		+= dove/
+ obj-$(CONFIG_ARCH_MEDIATEK)	+= mediatek/
+ obj-$(CONFIG_ARCH_QCOM)		+= qcom/
++obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= renesas/
+ obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
+ obj-$(CONFIG_ARCH_SUNXI)	+= sunxi/
+ obj-$(CONFIG_ARCH_TEGRA)	+= tegra/
+diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
+new file mode 100644
+index 0000000..8751756
+--- /dev/null
++++ b/drivers/soc/renesas/Makefile
+@@ -0,0 +1 @@
++obj-$(CONFIG_ARCH_RCAR_GEN2)	+= rcar-rst.o
+diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
+new file mode 100644
+index 0000000..7fea1d2
+--- /dev/null
++++ b/drivers/soc/renesas/rcar-rst.c
+@@ -0,0 +1,81 @@
++/*
++ * R-Car Gen2 and RZ/G RST Driver
++ *
++ * Copyright (C) 2016 Glider bvba
++ *
++ * This file is subject to the terms and conditions of the GNU General Public
++ * License.  See the file "COPYING" in the main directory of this archive
++ * for more details.
++ */
++
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/of_address.h>
++#include <linux/soc/renesas/rcar-rst.h>
++
++#define WDTRSTCR_RESET		0xA55A0002
++#define WDTRSTCR		0x0054
++
++static int rcar_rst_enable_wdt_reset(void __iomem *base)
++{
++	iowrite32(WDTRSTCR_RESET, base + WDTRSTCR);
++	return 0;
++}
++
++struct rst_config {
++	int (*configure)(void *base);	/* Platform specific configuration */
++};
++
++static const struct rst_config rcar_rst_gen1 __initconst = {
++	.configure = NULL,
++};
++
++static const struct rst_config rcar_rst_gen2 __initconst = {
++	.configure = rcar_rst_enable_wdt_reset,
++};
++
++static const struct of_device_id rcar_rst_matches[] __initconst = {
++	/* RZ/G is handled like R-Car Gen2 */
++	{ .compatible = "renesas,r8a7743-rst", .data = &rcar_rst_gen2 },
++	{ .compatible = "renesas,r8a7745-rst", .data = &rcar_rst_gen2 },
++	/* R-Car Gen2 */
++	{ .compatible = "renesas,r8a7790-rst", .data = &rcar_rst_gen2 },
++	{ .compatible = "renesas,r8a7791-rst", .data = &rcar_rst_gen2 },
++	{ .compatible = "renesas,r8a7792-rst", .data = &rcar_rst_gen2 },
++	{ .compatible = "renesas,r8a7793-rst", .data = &rcar_rst_gen2 },
++	{ .compatible = "renesas,r8a7794-rst", .data = &rcar_rst_gen2 },
++	{ /* sentinel */ }
++};
++
++static void __iomem *rcar_rst_base __initdata;
++
++void __init rcar_rst_init(void)
++{
++	const struct of_device_id *match;
++	const struct rst_config *cfg;
++	struct device_node *np;
++	void __iomem *base;
++
++	if (rcar_rst_base)
++		return;
++
++	np = of_find_matching_node_and_match(NULL, rcar_rst_matches, &match);
++	if (!np)
++		return;
++
++	base = of_iomap(np, 0);
++	if (!base) {
++		pr_warn("%s: Cannot map regs\n", np->full_name);
++		goto out_put;
++	}
++
++	rcar_rst_base = base;
++	cfg = match->data;
++	if (cfg->configure)
++		if (cfg->configure(base))
++			pr_warn("%pOF: Cannot run SoC specific configuration\n",
++				np);
++
++out_put:
++	of_node_put(np);
++}
+diff --git a/include/linux/soc/renesas/rcar-rst.h b/include/linux/soc/renesas/rcar-rst.h
+new file mode 100644
+index 0000000..6b1f492
+--- /dev/null
++++ b/include/linux/soc/renesas/rcar-rst.h
+@@ -0,0 +1,6 @@
++#ifndef __LINUX_SOC_RENESAS_RCAR_RST_H__
++#define __LINUX_SOC_RENESAS_RCAR_RST_H__
++
++void rcar_rst_init(void);
++
++#endif /* __LINUX_SOC_RENESAS_RCAR_RST_H__ */
 -- 
 2.7.4
