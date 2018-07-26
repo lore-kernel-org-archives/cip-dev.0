@@ -1,135 +1,113 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Thu, 26 Jul 2018 18:42:22 +0100
-Subject: [cip-dev] [PATCH 04/42] ARM: shmobile: Add watchdog support
-In-Reply-To: <1532626980-17190-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1532626980-17190-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1532626980-17190-5-git-send-email-fabrizio.castro@bp.renesas.com>
+Date: Thu, 26 Jul 2018 18:42:18 +0100
+Subject: [cip-dev] [PATCH 00/42] Add watchdog support to iwg20m and iwg22m
+Message-ID: <1532626980-17190-1-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On R-Car Gen2 and RZ/G1 platforms, we use the SBAR registers to make non
-boot CPUs run a routine designed to bring up SMP and deal with hot plug.
-The value contained in the SBAR registers is not initialized by a WDT
-triggered reset, which means that after a WDT triggered reset we jump
-to the SMP bring up routine, preventing the system from executing the
-bootrom code.
+Hello Ben,
 
-The purpose of this patch is to jump to the bootrom code in case of a
-WDT triggered reset, and keep the SMP functionality untouched.
-In order to tell if the code had been called due to the WDT overflowing
-we are testing WOVF from register RWTCSRA.
+this series backports watchdog support for iwg20m and iwg22m.
 
-The new function shmobile_boot_vector_gen2 isn't replacing
-shmobile_boot_vector for backward compatibility reasons. The kernel
-will install the best option (either shmobile_boot_vector or
-shmobile_boot_vector_gen2) to ICRAM1 after parsing the device tree,
-according to the amount of memory available.
+There is a dependency with series:
+https://lists.cip-project.org/pipermail/cip-dev/2018-July/001415.html
 
-Since shmobile_boot_vector has become bigger, "reg" property of nodes
-compatible with "renesas,smp-sram" now need to be set to a value
-greater or equal to "<0 0x60>".
+This work is based on top of linux-4.4.y-cip, commit
+4d769b2b8749e89dfc7ea179a44f652dcfbedb37 ("PM / OPP: Move error
+message to debug level").
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[simon: dropped #ifdef from common.h]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Thanks,
+Fab
 
-(cherry picked from commit 58adf1ba0d227754d9bc763c667f10efe0053ce5)
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm/mach-shmobile/common.h  |  4 +++
- arch/arm/mach-shmobile/headsmp.S | 55 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 59 insertions(+)
+Fabrizio Castro (15):
+  ARM: shmobile: Remove shmobile_boot_arg from
+    shmobile_smp_apmu_setup_boot
+  ARM: shmobile: Add watchdog support
+  clk: shmobile: rcar-gen2: Init R-Car reset IP
+  ARM: dts: r8a7743: Register rwdt and intc-sys clocks
+  ARM: dts: r8a7745: Register rwdt and intc-sys clocks
+  watchdog: renesas_wdt: Add suspend/resume support
+  watchdog: renesas_wdt: Add restart handler
+  ARM: shmobile: rcar-gen2: Add watchdog support
+  ARM: dts: r8a7743: Adjust SMP routine size
+  ARM: dts: r8a7745: Adjust SMP routine size
+  ARM: dts: r8a7743: Add watchdog support to SoC dtsi
+  ARM: dts: r8a7745: Add watchdog support to SoC dtsi
+  ARM: dts: iwg20m: Add watchdog support to SoM dtsi
+  ARM: dts: iwg22m: Add watchdog support to SoM dtsi
+  ARM: shmobile: defconfig: Enable RENESAS_WDT_GEN
 
-diff --git a/arch/arm/mach-shmobile/common.h b/arch/arm/mach-shmobile/common.h
-index f1ffff7..5c7f24e 100644
---- a/arch/arm/mach-shmobile/common.h
-+++ b/arch/arm/mach-shmobile/common.h
-@@ -6,6 +6,10 @@ extern void shmobile_init_delay(void);
- extern void shmobile_boot_vector(void);
- extern unsigned long shmobile_boot_fn;
- extern unsigned long shmobile_boot_size;
-+extern void shmobile_boot_vector_gen2(void);
-+extern unsigned long shmobile_boot_fn_gen2;
-+extern unsigned long shmobile_boot_cpu_gen2;
-+extern unsigned long shmobile_boot_size_gen2;
- extern void shmobile_smp_boot(void);
- extern void shmobile_smp_sleep(void);
- extern void shmobile_smp_hook(unsigned int cpu, unsigned long fn,
-diff --git a/arch/arm/mach-shmobile/headsmp.S b/arch/arm/mach-shmobile/headsmp.S
-index 32e0bf6..cef8e8c 100644
---- a/arch/arm/mach-shmobile/headsmp.S
-+++ b/arch/arm/mach-shmobile/headsmp.S
-@@ -16,6 +16,11 @@
- #include <asm/assembler.h>
- #include <asm/memory.h>
- 
-+#define SCTLR_MMU	0x01
-+#define BOOTROM_ADDRESS	0xE6340000
-+#define RWTCSRA_ADDRESS 0xE6020004
-+#define RWTCSRA_WOVF	0x10
-+
- /*
-  * Reset vector for secondary CPUs.
-  * This will be mapped at address 0 by SBAR register.
-@@ -37,6 +42,56 @@ shmobile_boot_fn:
- shmobile_boot_size:
- 	.long	. - shmobile_boot_vector
- 
-+#ifdef CONFIG_ARCH_RCAR_GEN2
-+/*
-+ * Reset vector for R-Car Gen2 and RZ/G1 secondary CPUs.
-+ * This will be mapped at address 0 by SBAR register.
-+ */
-+ENTRY(shmobile_boot_vector_gen2)
-+	mrc	p15, 0, r0, c0, c0, 5		@ r0 = MPIDR
-+	ldr	r1, shmobile_boot_cpu_gen2
-+	cmp	r0, r1
-+	bne	shmobile_smp_continue_gen2
-+
-+	mrc	p15, 0, r1, c1, c0, 0		@ r1 = SCTLR
-+	and	r0, r1, #SCTLR_MMU
-+	cmp	r0, #SCTLR_MMU
-+	beq	shmobile_smp_continue_gen2
-+
-+	ldr	r0, rwtcsra
-+	mov	r1, #0
-+	ldrb	r1, [r0]
-+	and	r0, r1, #RWTCSRA_WOVF
-+	cmp	r0, #RWTCSRA_WOVF
-+	bne	shmobile_smp_continue_gen2
-+
-+	ldr	r0, bootrom
-+	bx	r0
-+
-+shmobile_smp_continue_gen2:
-+	ldr     r1, shmobile_boot_fn_gen2
-+	bx	r1
-+
-+ENDPROC(shmobile_boot_vector_gen2)
-+
-+	.align	4
-+rwtcsra:
-+	.word	RWTCSRA_ADDRESS
-+bootrom:
-+	.word	BOOTROM_ADDRESS
-+	.globl	shmobile_boot_cpu_gen2
-+shmobile_boot_cpu_gen2:
-+	.word	0x00000000
-+
-+	.align	2
-+	.globl	shmobile_boot_fn_gen2
-+shmobile_boot_fn_gen2:
-+	.space	4
-+	.globl	shmobile_boot_size_gen2
-+shmobile_boot_size_gen2:
-+	.long	. - shmobile_boot_vector_gen2
-+#endif /* CONFIG_ARCH_RCAR_GEN2 */
-+
- /*
-  * Per-CPU SMP boot function/argument selection code based on MPIDR
-  */
+Geert Uytterhoeven (12):
+  ARM: shmobile: Remove shmobile_boot_arg
+  ARM: shmobile: r8a7779: Remove remainings of removed SCU boot setup
+    code
+  soc: renesas: Add R-Car RST driver
+  reset: Add renesas,rst DT bindings
+  clk: renesas: mstp: Make INTC-SYS a critical clock
+  ARM: shmobile: rcar-gen2: Add more register documentation
+  ARM: shmobile: rcar-gen2: Use ICRAM1 for jump stub on all SoCs
+  ARM: shmobile: rcar-gen2: Obtain jump stub region from DT
+  ARM: dts: r8a7743: Add Inter Connect RAM
+  ARM: dts: r8a7743: Reserve SRAM for the SMP jump stub
+  ARM: dts: r8a7745: Add Inter Connect RAM
+  ARM: dts: r8a7745: Reserve SRAM for the SMP jump stub
+
+Lee Jones (2):
+  clk: Allow clocks to be marked as CRITICAL
+  clk: WARN_ON about to disable a critical clock
+
+Maxime Ripard (1):
+  clk: fix critical clock locking
+
+Sergei Shtylyov (2):
+  ARM: dts: r8a7743: initial SoC device tree
+  ARM: dts: r8a7745: initial SoC device tree
+
+Veeraiyan Chidambaram (1):
+  watchdog: renesas-wdt: Add support for WDIOF_CARDRESET
+
+Wolfram Sang (9):
+  watchdog: renesas-wdt: add driver
+  watchdog: renesas_wdt: avoid (theoretical) type overflow
+  watchdog: renesas_wdt: check rate also for upper limit
+  watchdog: renesas_wdt: don't round closest with get_timeleft
+  watchdog: renesas_wdt: apply better precision
+  watchdog: renesas_wdt: add another divider option
+  watchdog: renesas_wdt: consistently use RuntimePM for clock management
+  watchdog: renesas_wdt: make 'clk' a variable local to probe()
+  watchdog: renesas_wdt: update copyright dates
+
+ .../devicetree/bindings/reset/renesas,rst.txt      |  24 ++
+ .../devicetree/bindings/watchdog/renesas-wdt.txt   |  33 +++
+ arch/arm/boot/dts/r8a7743-iwg20m.dtsi              |   5 +
+ arch/arm/boot/dts/r8a7743.dtsi                     |  46 +++-
+ arch/arm/boot/dts/r8a7745-iwg22m.dtsi              |   5 +
+ arch/arm/boot/dts/r8a7745.dtsi                     |  44 +++-
+ arch/arm/configs/shmobile_defconfig                |   1 +
+ arch/arm/mach-shmobile/common.h                    |   5 +-
+ arch/arm/mach-shmobile/headsmp.S                   |  63 ++++-
+ arch/arm/mach-shmobile/platsmp-apmu.c              |   3 +-
+ arch/arm/mach-shmobile/platsmp-scu.c               |   1 -
+ arch/arm/mach-shmobile/pm-rcar-gen2.c              |  97 +++++--
+ arch/arm/mach-shmobile/smp-r8a7779.c               |   2 -
+ drivers/clk/clk.c                                  |  16 ++
+ drivers/clk/shmobile/clk-mstp.c                    |   5 +
+ drivers/clk/shmobile/clk-rcar-gen2.c               |   3 +
+ drivers/soc/Makefile                               |   1 +
+ drivers/soc/renesas/Makefile                       |   1 +
+ drivers/soc/renesas/rcar-rst.c                     |  81 ++++++
+ drivers/watchdog/Kconfig                           |   8 +
+ drivers/watchdog/Makefile                          |   1 +
+ drivers/watchdog/renesas_wdt.c                     | 285 +++++++++++++++++++++
+ include/linux/clk-provider.h                       |   1 +
+ include/linux/soc/renesas/rcar-rst.h               |   6 +
+ 24 files changed, 694 insertions(+), 43 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/reset/renesas,rst.txt
+ create mode 100644 Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+ create mode 100644 drivers/soc/renesas/Makefile
+ create mode 100644 drivers/soc/renesas/rcar-rst.c
+ create mode 100644 drivers/watchdog/renesas_wdt.c
+ create mode 100644 include/linux/soc/renesas/rcar-rst.h
+
 -- 
 2.7.4
