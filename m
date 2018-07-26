@@ -1,69 +1,39 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Thu, 26 Jul 2018 18:42:24 +0100
-Subject: [cip-dev] [PATCH 06/42] reset: Add renesas,rst DT bindings
+Date: Thu, 26 Jul 2018 18:42:25 +0100
+Subject: [cip-dev] [PATCH 07/42] clk: shmobile: rcar-gen2: Init R-Car reset
+	IP
 In-Reply-To: <1532626980-17190-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1532626980-17190-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1532626980-17190-7-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1532626980-17190-8-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Initialize R-Car reset IP by calling rcar_rst_init.
 
-Add DT bindings for the Renesas R-Car Reset Controller (R-Car Gen1
-RESET/WDT and R-Car Gen2/Gen3 and RZ/G RST).
-
-As the features provided by the hardware module differ a lot across the
-various SoC families and members, only SoC-specific compatible values
-are defined.
-
-For now we use the RST only for providing access to the state of the
-mode pins, which is needed by the clock driver.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Magnus Damm <damm+renesas@opensource.se>
-Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
-Acked-by: Rob Herring <robh@kernel.org>
-(cherry picked from commit 362922a1a5345d17a9d4ad7e3f848aa4fdf79d75)
-(dropped R-Car Gen1 and Gen3 support, replaced R-Car3 example with
-RZ/G1M, dropped mode pins functionality description)
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 ---
- .../devicetree/bindings/reset/renesas,rst.txt      | 24 ++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/reset/renesas,rst.txt
+ drivers/clk/shmobile/clk-rcar-gen2.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.txt b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-new file mode 100644
-index 0000000..fff2e8e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-@@ -0,0 +1,24 @@
-+DT bindings for the Renesas R-Car and RZ/G Reset Controllers
+diff --git a/drivers/clk/shmobile/clk-rcar-gen2.c b/drivers/clk/shmobile/clk-rcar-gen2.c
+index 636070b..6ab0199 100644
+--- a/drivers/clk/shmobile/clk-rcar-gen2.c
++++ b/drivers/clk/shmobile/clk-rcar-gen2.c
+@@ -19,6 +19,7 @@
+ #include <linux/of_address.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
++#include <linux/soc/renesas/rcar-rst.h>
+ 
+ struct rcar_gen2_cpg {
+ 	struct clk_onecell_data data;
+@@ -442,4 +443,6 @@ void __init rcar_gen2_clocks_init(u32 mode)
+ 	cpg_mode = mode;
+ 
+ 	of_clk_init(NULL);
 +
-+The R-Car and RZ/G Reset Controllers provide reset control.
-+
-+Required properties:
-+  - compatible: Should be
-+		  - "renesas,<soctype>-rst" for R-Car Gen2 and RZ/G
-+		Examples with soctypes are:
-+		  - "renesas,r8a7743-rst" (RZ/G1M)
-+		  - "renesas,r8a7745-rst" (RZ/G1E)
-+		  - "renesas,r8a7790-rst" (R-Car H2)
-+		  - "renesas,r8a7791-rst" (R-Car M2-W)
-+		  - "renesas,r8a7792-rst" (R-Car V2H
-+		  - "renesas,r8a7793-rst" (R-Car M2-N)
-+		  - "renesas,r8a7794-rst" (R-Car E2)
-+  - reg: Address start and address range for the device.
-+
-+
-+Example:
-+
-+	rst: reset-controller at e6160000 {
-+		compatible = "renesas,r8a7743-rst";
-+		reg = <0 0xe6160000 0 0x100>;
-+	};
++	rcar_rst_init();
+ }
 -- 
 2.7.4
