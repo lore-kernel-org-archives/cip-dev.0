@@ -1,64 +1,95 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Thu, 26 Jul 2018 18:42:43 +0100
-Subject: [cip-dev] [PATCH 25/42] watchdog: renesas-wdt: Add support for
-	WDIOF_CARDRESET
+Date: Thu, 26 Jul 2018 18:42:44 +0100
+Subject: [cip-dev] [PATCH 26/42] ARM: shmobile: rcar-gen2: Add more register
+	documentation
 In-Reply-To: <1532626980-17190-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1532626980-17190-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1532626980-17190-26-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1532626980-17190-27-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Veeraiyan Chidambaram <veeraiyan.chidambaram@in.bosch.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch adds the WDIOF_CARDRESET support for the Renesas platform
-watchdog, to know if the board reboot is due to a watchdog reset.
-
-This is done via the WOVF bit (bit 4) of the RWTCSRA register, which
-indicates if RWTCNT overflowed, triggering the reset in last boot.
-
-Signed-off-by: Veeraiyan Chidambaram <veeraiyan.chidambaram@in.bosch.com>
-[takeshi.kihara.df: changed to read the RWTCSRA register while clock is
- enabled]
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Reviewed-by: Vladimir Zapolskiy <vz@mleia.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
-
-(cherry picked from commit fdac6a90d2d151abdbb7e5ec14bb9ab64e2931ec)
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+(cherry picked from commit aa7f39d51e33555fc45645c08bc74a74e22b166f)
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/watchdog/renesas_wdt.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/arm/mach-shmobile/pm-rcar-gen2.c | 40 +++++++++++++++++++++++++----------
+ 1 file changed, 29 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-index 88b9c7d..e334a83 100644
---- a/drivers/watchdog/renesas_wdt.c
-+++ b/drivers/watchdog/renesas_wdt.c
-@@ -130,7 +130,8 @@ static int rwdt_restart(struct notifier_block *this, unsigned long mode,
- }
+diff --git a/arch/arm/mach-shmobile/pm-rcar-gen2.c b/arch/arm/mach-shmobile/pm-rcar-gen2.c
+index f1bee67..cb7e764 100644
+--- a/arch/arm/mach-shmobile/pm-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/pm-rcar-gen2.c
+@@ -20,15 +20,31 @@
  
- static const struct watchdog_info rwdt_ident = {
--	.options = WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT,
-+	.options = WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT |
-+		WDIOF_CARDRESET,
- 	.identity = "Renesas WDT Watchdog",
- };
+ /* RST */
+ #define RST		0xe6160000
+-#define CA15BAR		0x0020
+-#define CA7BAR		0x0030
+-#define CA15RESCNT	0x0040
+-#define CA7RESCNT	0x0044
++
++#define CA15BAR		0x0020		/* CA15 Boot Address Register */
++#define CA7BAR		0x0030		/* CA7 Boot Address Register */
++#define CA15RESCNT	0x0040		/* CA15 Reset Control Register */
++#define CA7RESCNT	0x0044		/* CA7 Reset Control Register */
++
++/* SYS Boot Address Register */
++#define SBAR_BAREN	BIT(4)		/* SBAR is valid */
++
++/* Reset Control Registers */
++#define CA15RESCNT_CODE	0xa5a50000
++#define CA15RESCNT_CPUS	0xf		/* CPU0-3 */
++#define CA7RESCNT_CODE	0x5a5a0000
++#define CA7RESCNT_CPUS	0xf		/* CPU0-3 */
++
  
-@@ -165,9 +166,10 @@ static int rwdt_probe(struct platform_device *pdev)
- 		return PTR_ERR(clk);
+ /* On-chip RAM */
+ #define MERAM		0xe8080000
+ #define RAM		0xe6300000
  
- 	pm_runtime_enable(&pdev->dev);
--
- 	pm_runtime_get_sync(&pdev->dev);
- 	priv->clk_rate = clk_get_rate(clk);
-+	priv->wdev.bootstatus = (readb_relaxed(priv->base + RWTCSRA) &
-+				RWTCSRA_WOVF) ? WDIOF_CARDRESET : 0;
- 	pm_runtime_put(&pdev->dev);
++static inline u32 phys_to_sbar(phys_addr_t addr)
++{
++	return (addr >> 8) & 0xfffffc00;
++}
++
+ /* SYSC */
+ #define SYSCIER 0x0c
+ #define SYSCIMR 0x10
+@@ -97,22 +113,24 @@ void __init rcar_gen2_pm_init(void)
  
- 	if (!priv->clk_rate) {
+ 	/* setup reset vectors */
+ 	p = ioremap_nocache(RST, 0x63);
+-	bar = (boot_vector_addr >> 8) & 0xfffffc00;
++	bar = phys_to_sbar(boot_vector_addr);
+ 	if (has_a15) {
+ 		writel_relaxed(bar, p + CA15BAR);
+-		writel_relaxed(bar | 0x10, p + CA15BAR);
++		writel_relaxed(bar | SBAR_BAREN, p + CA15BAR);
+ 
+ 		/* de-assert reset for CA15 CPUs */
+-		writel_relaxed((readl_relaxed(p + CA15RESCNT) & ~0x0f) |
+-				0xa5a50000, p + CA15RESCNT);
++		writel_relaxed((readl_relaxed(p + CA15RESCNT) &
++				~CA15RESCNT_CPUS) | CA15RESCNT_CODE,
++			       p + CA15RESCNT);
+ 	}
+ 	if (has_a7) {
+ 		writel_relaxed(bar, p + CA7BAR);
+-		writel_relaxed(bar | 0x10, p + CA7BAR);
++		writel_relaxed(bar | SBAR_BAREN, p + CA7BAR);
+ 
+ 		/* de-assert reset for CA7 CPUs */
+-		writel_relaxed((readl_relaxed(p + CA7RESCNT) & ~0x0f) |
+-				0x5a5a0000, p + CA7RESCNT);
++		writel_relaxed((readl_relaxed(p + CA7RESCNT) &
++				~CA7RESCNT_CPUS) | CA7RESCNT_CODE,
++			       p + CA7RESCNT);
+ 	}
+ 	iounmap(p);
+ 
 -- 
 2.7.4
