@@ -1,39 +1,36 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Thu, 26 Jul 2018 09:36:33 +0000
-Subject: [cip-dev] Patch reviews on CIP
-In-Reply-To: <1856843.1O4O1bm6lc@linux-if6s>
-References: <1856843.1O4O1bm6lc@linux-if6s>
-Message-ID: <TY1PR01MB1770CDAA190ECB21DE06EB99C02B0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+Date: Thu, 26 Jul 2018 15:28:04 +0100
+Subject: [cip-dev] [PATCH 0/3] Add CMT support to iwg22m
+Message-ID: <1532615287-1183-1-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Agust?n,
+Hello Ben,
 
-> -----Original Message-----
-> From: Agust?n Benito Bethencourt [mailto:agustin.benito at codethink.co.uk]
-> Sent: 26 July 2018 08:49
-> To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Cc: cip-dev at lists.cip-project.org
-> Subject: Patch reviews on CIP
->
-> Hi Fabrizio,
->
-> Ben H. is at DebConf 2018. I assume he will review your patches when he is
-> back. It will take a few days.
+this series backports all that is required for CMT to work on the iwg22m
+powered by the r8a7745.
 
-Thank you for letting me know this.
+This series depends on patch:
+https://lists.cip-project.org/pipermail/cip-dev/2018-July/001408.html
 
-Cheers,
+and it applies on top of branch linux-4.4.y-cip, commit
+4d769b2b8749e89dfc7ea179a44f652dcfbedb37 ("PM / OPP: Move error
+message to debug level").
+
+Thanks,
 Fab
 
->
-> Best Regards
-> --
-> Agust?n Benito Bethencourt
-> Principal Consultant
-> Codethink Ltd
-> We respect your privacy.   See https://www.codethink.co.uk/privacy.html
+Benjamin Gaignard (1):
+  selftests/timers: make loop consistent with array size
 
+Fabrizio Castro (2):
+  ARM: dts: r8a7745: Add CMT SoC specific support
+  ARM: dts: iwg22m: Enable cmt0
 
+ arch/arm/boot/dts/r8a7745-iwg22m.dtsi              |  4 +++
+ arch/arm/boot/dts/r8a7745.dtsi                     | 32 ++++++++++++++++++++++
+ .../testing/selftests/timers/clocksource-switch.c  |  2 +-
+ 3 files changed, 37 insertions(+), 1 deletion(-)
 
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, Buckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered No. 04586709.
+-- 
+2.7.4
