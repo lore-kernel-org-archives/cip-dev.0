@@ -1,38 +1,36 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Thu, 26 Jul 2018 18:43:00 +0100
-Subject: [cip-dev] [PATCH 42/42] ARM: shmobile: defconfig: Enable
-	RENESAS_WDT_GEN
-In-Reply-To: <1532626980-17190-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1532626980-17190-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1532626980-17190-43-git-send-email-fabrizio.castro@bp.renesas.com>
+Date: Fri, 27 Jul 2018 17:27:13 +0100
+Subject: [cip-dev] [PATCH 0/3] RZ/G1 and R-Car VSP related changes
+Message-ID: <1532708836-25349-1-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-R-Car Gen2 and RZ/G1 platforms come with a watchdog IP, therefore enable
-its driver by default.
+Hello Ben,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 0743559383d4e5371b120b8d452262a85c5d3951)
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+this series backports VSP support for r8a7745 and fixes wrong
+definitions in r8a7743 and r8a7791 related device trees.
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index 3282a4f..223fbc8 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -127,6 +127,7 @@ CONFIG_CPU_THERMAL=y
- CONFIG_RCAR_THERMAL=y
- CONFIG_WATCHDOG=y
- CONFIG_DA9063_WATCHDOG=y
-+CONFIG_RENESAS_WDT=y
- CONFIG_MFD_AS3711=y
- CONFIG_MFD_DA9063=y
- CONFIG_REGULATOR_FIXED_VOLTAGE=y
+There is a dependency with series:
+https://lists.cip-project.org/pipermail/cip-dev/2018-July/001423.html
+
+This work is based on top of linux-4.4.y-cip, commit
+4d769b2b8749e89dfc7ea179a44f652dcfbedb37 ("PM / OPP: Move error
+message to debug level").
+
+Thanks,
+Fab
+
+Biju Das (1):
+  ARM: dts: r8a7745: Add VSP support
+
+Fabrizio Castro (2):
+  ARM: dts: r8a7743: Fix vsp1 properties
+  ARM: dts: r8a7791: Fix vsp1 properties
+
+ arch/arm/boot/dts/r8a7743.dtsi |  6 +++---
+ arch/arm/boot/dts/r8a7745.dtsi | 28 ++++++++++++++++++++++++++++
+ arch/arm/boot/dts/r8a7791.dtsi |  6 +++---
+ 3 files changed, 34 insertions(+), 6 deletions(-)
+
 -- 
 2.7.4
