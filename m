@@ -1,54 +1,88 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Sat, 28 Jul 2018 09:37:01 +0800
-Subject: [cip-dev] How to add CVEs in cip-kernel-sec
-In-Reply-To: <DFBF451ECD52064BBBA7B78676D4DA731A1F05BA@SIMTCSMB06.napa.ad.etn.com>
-References: <DFBF451ECD52064BBBA7B78676D4DA731A1F05BA@SIMTCSMB06.napa.ad.etn.com>
-Message-ID: <1532741821.21552.59.camel@codethink.co.uk>
+From: robert.marshall@codethink.co.uk (Robert Marshall)
+Date: Thu, 02 Aug 2018 16:00:26 +0100
+Subject: [cip-dev] cip-dev progress report weeks 20 - 29
+In-Reply-To: <CAEss1E+w1ujdzO8DbkPa7Sm9v8DdUVhg2Tfyy-Pj8peBGXkNmw@mail.gmail.com>
+	(Zoran S.'s message of "Wed, 25 Jul 2018 15:27:58 +0200")
+References: <871sbrbioi.fsf@ctlt579.codethink.co.uk>
+	<CAEss1E+w1ujdzO8DbkPa7Sm9v8DdUVhg2Tfyy-Pj8peBGXkNmw@mail.gmail.com>
+Message-ID: <87y3dozud1.fsf@ctlt579.codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Thu, 2018-07-26 at 08:56 +0000, Kassabji, Christophe wrote:
-> ?Hello,
-> 
-> I am new to this mailing list, so maybe you already discussed about
-> this topic, but I couldn't find an archive to search so I post here.
-> Please apologize if the topic is already discussed or if it is not
-> the correct place to discuss this.
-> If it is the case, please give me a place where I could post my
-> questions.
-> 
-> We are planning to use the CIP kernel project for some of our
-> products in order to benefit of the SLTS.
-> In particular we are interested in using the cip-kernel-sec tool to
-> track the CVEs which are backported to the linux-cip branch.
-> AFAIU this tool needs an updated "issues" directory with a yml per
-> CVE. These yml files are added by hand.
+Zoran
 
-They can also be added using import_debian.py and import_ubuntu.py (and
-potentially other importers).
+Thanks for this.
 
-> We have crossed the results of the import_stable.py script with the
-> NIST database using the cve-search project.
-> There are more than 100 CVEs missing in the yml files.
+Zoran S <zoran.stojsavljevic.de@gmail.com> writes:
+
+>> The master of B at D now installs 2018.4 rather the latest from
+>>  debian-backports making the tool more resilient to upstream changes
+>>  and allowing us to evaluate an upstream change before it goes live.
 >
-> So these are my questions:
-> - is there a periodic plan for updating these yml files?
+> I absolutely agree with this approach, only I would use the following
+> Lava release:
+>
+> ii  lava-dispatcher
+> 2018.5.post1-1+stretch      amd64                   Linaro Automated
+> Validation Architecture dispatcher
+> ii  lava-server
+> 2018.5.post1-1+stretch      all                         Linaro
+> Automated Validation Architecture server
+>
+> Thus making this line in the integration scripts as following:
+>
+> sudo DEBIAN_FRONTEND=noninteractive apt-get -y install
+> lava=2018.5.post1-1+stretch -t stretch-backports
+>
+> I have tested this release, and with exclusion of minor bugs it works
+> very fine (these bugs are also present in 2018.4).
 
-Not really.  You're the first person to express interest in it, so I
-haven't been updating it regularly.
+We've stuck with 2018-4 as it has worked but will evaluate newer
+versions at appropriate times rather than finding the version has
+changed on a fresh provision and potentially having to fix things quickly!
 
-> - what are the criteria to add a new CVE in the issue directory?
+>
+> Do NOT use Lava 2018.7 (I guess, it is a mess)!
+>
+Thanks for this information - I'll see when we get to it!
 
-I think any CVEs that affect an actively maintained branch should be
-added.  Historical data is not important.
+Robert
 
-> - how can we contribute?
 
-I would be happy to receive merge requests on Gitlab or by email.
-
-Ben.
-
--- 
-Ben Hutchings, Software Developer                ?        Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+> Thank you,
+> Zoran
+> _______
+>
+> On Wed, Jul 25, 2018 at 2:31 PM, Robert Marshall
+> <robert.marshall@codethink.co.uk> wrote:
+>> Hi! Here's a report on the Codethink CIP testing development over the
+>> past few weeks.
+>>
+>> CIP kernel testing
+>>
+>> - The master of B at D now installs 2018.4 rather the latest from
+>>   debian-backports making the tool more resilient to upstream changes
+>>   and allowing us to evaluate an upstream change before it goes live.
+>>
+>> - Also linked to the above the beaglebone black health check now uses an
+>>   inline test; this both breaks the reliance upon an upstream test repos
+>>   structure and making testing less dependent upon needing an internet connection.
+>>
+>> - Renesas board - this hardware continued to not give consistent results in B at D
+>>   tests so for the moment development has been suspended.
+>>
+>> - Development has started on using docker containers for B at D - the
+>>   kernelci one is up and kernel builds have successfully been uploaded
+>>   to it, there is an outstanding issue with retrieving those builds from
+>>   the container. Work is also being carried out on the lava docker container.
+>>
+>> Robert
+>> --
+>> Robert Marshall, Software Developer                       Codethink Ltd
+>> Telephone: +44 7762 840 414       3rd Floor, Dale House, 35 Dale Street
+>> https://www.codethink.co.uk/         MANCHESTER, M1 2HF. United Kingdom
+>> _______________________________________________
+>> cip-dev mailing list
+>> cip-dev at lists.cip-project.org
+>> https://lists.cip-project.org/mailman/listinfo/cip-dev
+>
