@@ -1,39 +1,43 @@
 From: zoran.stojsavljevic.de@gmail.com (Zoran S)
-Date: Fri, 3 Aug 2018 10:27:40 +0200
+Date: Wed, 8 Aug 2018 09:59:38 +0200
 Subject: [cip-dev] cip-dev progress report weeks 20 - 29
 In-Reply-To: <87y3dozud1.fsf@ctlt579.codethink.co.uk>
 References: <871sbrbioi.fsf@ctlt579.codethink.co.uk>
 	<CAEss1E+w1ujdzO8DbkPa7Sm9v8DdUVhg2Tfyy-Pj8peBGXkNmw@mail.gmail.com>
 	<87y3dozud1.fsf@ctlt579.codethink.co.uk>
-Message-ID: <CAEss1ELue1Zn6A5PXZqTSQQLds7or7tkHW8RDFiY51zU=uAaRQ@mail.gmail.com>
+Message-ID: <CAEss1EKz10LB=HZwV5MvPOe5uthQRY_mfHFgBCBVyrN4MKMg+w@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Robert,
+> We've stuck with 2018-4 as it has worked but will evaluate newer
+> versions at appropriate times rather than finding the version has
+> changed on a fresh provision and potentially having to fix things quickly!
 
-I start talking with Linaro VPs (at least, there are @ replies to my
-inquires),
+Please, try these commands:
+$ apt-cache madison lava-server
+$ apt-cache madison lava-dispatcher
 
-Here is the latest I sent to them:
+Example:
 
+vagrant at stretch:~$ apt-cache madison lava-dispatcher
+lava-dispatcher | 2018.5.post1-2~bpo9+1 | http://deb.debian.org/debian
+stretch-backports/main amd64 Packages
+lava-dispatcher |  2016.12-1 | http://deb.debian.org/debian stretch/main
+amd64 Packages
+lava-dispatcher |  2016.12-1 | http://deb.debian.org/debian stretch/main
+Sources
 
+In integration script, in install_lava.sh script, use the following line:
 
+## retrieve the latest lava version from here
+echo "deb http://deb.debian.org/debian stretch-backports main " | sudo
+DEBIAN_FRONTEND=noninteractive tee -a /etc/apt/sources.list
 
-
-
-
-
-*The proposal is the following: Can you. Linaro guys, work out thestrategy
-with Debian, so Debian can include in their repos at most 6months old
-Linaro Lava release?Let say, Lava-2018.4. Yes, there are the bugs, but
-people can be verycomfortable with main Debian Lava release. And watch
-aside what ishappening in your Linaro backport development? So there is
-alwaysfall-back, using Debian Lava?*
-
-Does this sound reasonable?
+According to madison option, it'll give you 2018.5.post1-2~bpo9+1 versions.
 
 Thank you,
 Zoran
+_______
 
 On Thu, Aug 2, 2018 at 5:00 PM, Robert Marshall <
 robert.marshall@codethink.co.uk> wrote:
@@ -126,4 +130,4 @@ robert.marshall@codethink.co.uk> wrote:
 >
 -------------- next part --------------
 An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180803/3220e5b5/attachment.html>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180808/fbf93b15/attachment.html>
