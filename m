@@ -1,32 +1,61 @@
-From: agustin.benito@codethink.co.uk (=?ISO-8859-1?Q?Agust=EDn?= Benito Bethencourt)
-Date: Thu, 09 Aug 2018 11:21:50 +0200
-Subject: [cip-dev] Proposal: Gitlab role policy
-Message-ID: <2718361.41IWGt5yYx@linux-if6s>
+From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
+Date: Fri, 10 Aug 2018 10:52:43 +0100
+Subject: [cip-dev] [PATCH 00/19] Add sound support to iwg22d
+Message-ID: <1533894782-26239-1-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+Hello Ben,
 
-now that we have new kernel maintainers it might be time to pay a little attention  to the user permissions/roles policy at Gitlab.com.
+this series adds sound support to the iwg22d board by backporting all the
+necessary patches, including some fixes.
 
-Some time ago we agreed to divide the different repositories in subgroups in preparation for this time. We can segment the permissions we provide to CIP contributors by subgroup. We have the following subgroups:
-* 3rd party software (mostly related with testing for now (special case)
-* cip-testing
-* cip-kernel
-* cip-core
+There is a dependency with series:
+https://lists.cip-project.org/pipermail/cip-dev/2018-July/001462.html
 
-For simplicity, I suggest the following:
-* TSC representatives from each company will be owners, as well as the tool admin, at group level.
-* We will have no group maintainers by default since we will not have repos at this level but we will enclose them in subgroups. So at this group level we will provide Developer or Reporter roles only to CIP participants.
-* We assign the maintainer role to those who should have it, because they are responsible of a specific area, at subgroup level. 
-* Specific people can hold the maintainer role at repo (project) level based on the subgroup maintainer decision. 
+This work is based on top of linux-4.4.y-cip, commit
+4d769b2b8749e89dfc7ea179a44f652dcfbedb37 ("PM / OPP: Move error
+message to debug level").
 
-This simple policy can be extended as more people join.
+Thanks,
+Fab
 
-Best Regards
- 
+Biju Das (9):
+  ARM: dts: r8a7745: Add audio clocks
+  ARM: dts: r8a7745: Add audio DMAC support
+  ARM: dts: r8a7745: Add sound support
+  ARM: dts: iwg22d-sodimm: Enable SGTL5000 audio codec
+  ARM: dts: iwg22d-sodimm: Sound PIO support
+  ARM: dts: iwg22d-sodimm: Sound DMA support on DTS
+  ARM: dts: iwg22d-sodimm: Sound DMA support via BUSIF on DTS
+  ARM: dts: iwg22d-sodimm: Sound DMA support via SRC on DTS
+  ARM: dts: iwg22d-sodimm: Sound DMA support via DVC on DTS
+
+Kuninori Morimoto (5):
+  ASoC: rsnd: remove platform boot support from src.c
+  dmaengine: rcar-dmac: clear pertinence number of channels
+  dmaengine: rcar-dmac: use list_add() on rcar_dmac_desc_put()
+  dmaengine: rcar-dmac: ensure CHCR DE bit is actually 0 after clearing
+  dmaengine: rcar-dmac: use TCRB instead of TCR for residue
+
+Laurent Pinchart (1):
+  dmaengine: rcar-dmac: Fix residue reporting for pending descriptors
+
+Muhammad Hamza Farooq (2):
+  dmaengine: rcar-dmac: use result of updated get_residue in tx_status
+  dmaengine: rcar-dmac: Fixed active descriptor initializing
+
+Niklas S?derlund (1):
+  dmaengine: rcar-dmac: warn if transfer cannot start as TE = 1
+
+Sergei Shtylyov (1):
+  rcar: src: skip disabled-SRC nodes
+
+ arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts |  92 ++++++++++++
+ arch/arm/boot/dts/r8a7745.dtsi              | 222 ++++++++++++++++++++++++++++
+ drivers/dma/sh/rcar-dmac.c                  |  87 ++++++++++-
+ sound/soc/sh/rcar/src.c                     | 165 +++++++--------------
+ 4 files changed, 451 insertions(+), 115 deletions(-)
+
 -- 
-Agust?n Benito Bethencourt
-Principal Consultant
-Codethink Ltd
-We respect your privacy.   See https://www.codethink.co.uk/privacy.html
+2.7.4
