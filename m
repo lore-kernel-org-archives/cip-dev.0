@@ -1,95 +1,117 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Fri, 10 Aug 2018 10:52:52 +0100
-Subject: [cip-dev] [PATCH 09/19] dmaengine: rcar-dmac: ensure CHCR DE bit is
-	actually 0 after clearing
+Date: Fri, 10 Aug 2018 10:52:53 +0100
+Subject: [cip-dev] [PATCH 10/19] dmaengine: rcar-dmac: use TCRB instead of
+	TCR for residue
 In-Reply-To: <1533894782-26239-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1533894782-26239-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1533894782-26239-10-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1533894782-26239-11-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-DMAC reads data from source device, and buffered it until transferable
-size for sink device. Because of this behavior, DMAC is including
-buffered data .
+SYS/RT/Audio DMAC includes independent data buffers for reading
+and writing. Therefore, the read transfer counter and write transfer
+counter have different values.
+TCR indicates read counter, and TCRB indicates write counter.
+The relationship is like below.
 
-Now, CHCR DE bit is controlling DMA transfer enable/disable.
+	        TCR       TCRB
+	[SOURCE] -> [DMAC] -> [SINK]
 
-If DE bit was cleared during data transferring, or during buffering,
-it will flush buffered data if source device was peripheral device
-(The buffered data will be removed if source device was memory).
-Because of this behavior, driver should ensure that DE bit is actually
-0 after clearing.
+In the MEM_TO_DEV direction, what really matters is how much data has
+been written to the device. If the DMA is interrupted between read and
+write, then, the data doesn't end up in the destination, so shouldn't
+be counted. TCRB is thus the register we should use in this cases.
 
-This patch adds new rcar_dmac_chcr_de_barrier() and call it after CHCR
-register access.
+In the DEV_TO_MEM direction, the situation is more complex. Both the
+read and write side are important. What matters from a data consumer
+point of view is how much data has been written to memory.
+On the other hand, if the transfer is interrupted between read and
+write, we'll end up losing data. It can also be important to report.
+
+In the MEM_TO_MEM direction, what matters is of course how much data
+has been written to memory from data consumer point of view.
+Here, because read and write have independent data buffers, it will
+take a while for TCR and TCRB to become equal. Thus we should check
+TCRB in this case, too.
+
+Thus, all cases we should check TCRB instead of TCR.
+
+Without this patch, Sound Capture has noise after PulseAudio support
+(= 07b7acb51d2 ("ASoC: rsnd: update pointer more accurate")), because
+the recorder will use wrong residue counter which indicates transferred
+from sound device, but in reality the data was not yet put to memory
+and recorder will record it.
+
+However, because DMAC is buffering data until it can be transferable
+size, TCRB might not be updated.
+For example, if consumer doesn't know how much data can be received,
+it requests enough size to DMAC. But in reality, it might receive very
+few data. In such case, DMAC just buffered it until transferable size,
+and no TCRB updated.
+
+In such case, this buffered data will be transferred if CHCR::DE bit was
+cleared, and this is happen if rcar_dmac_chan_halt(). In other word, it
+happen when consumer called dmaengine_terminate_all().
+
+Because of this behavior, it need to flush buffered data when it returns
+"residue" (= dmaengine_tx_status()).
+Otherwise, consumer might calculate wrong things if it called
+dmaengine_tx_status() and dmaengine_terminate_all() consecutively.
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
 Tested-by: Ryo Kodama <ryo.kodama.vz@renesas.com>
 Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Vinod Koul <vinod.koul@intel.com>
-(cherry picked from commit a8d46a7f5d17ca9cbe9e9c7d1d23dc6ea437e141)
+(cherry picked from commit 73a47bd0da668c99f04e9076f2b02101a5b2749b)
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/dma/sh/rcar-dmac.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ drivers/dma/sh/rcar-dmac.c | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index 7ad7b2f..15b9751dc 100644
+index 15b9751dc..da0b9f7 100644
 --- a/drivers/dma/sh/rcar-dmac.c
 +++ b/drivers/dma/sh/rcar-dmac.c
-@@ -10,6 +10,7 @@
-  * published by the Free Software Foundation.
-  */
- 
-+#include <linux/delay.h>
- #include <linux/dma-mapping.h>
- #include <linux/dmaengine.h>
- #include <linux/interrupt.h>
-@@ -716,6 +717,24 @@ static int rcar_dmac_fill_hwdesc(struct rcar_dmac_chan *chan,
- /* -----------------------------------------------------------------------------
-  * Stop and reset
-  */
-+static void rcar_dmac_chcr_de_barrier(struct rcar_dmac_chan *chan)
-+{
-+	u32 chcr;
-+	unsigned int i;
-+
-+	/*
-+	 * Ensure that the setting of the DE bit is actually 0 after
-+	 * clearing it.
-+	 */
-+	for (i = 0; i < 1024; i++) {
-+		chcr = rcar_dmac_chan_read(chan, RCAR_DMACHCR);
-+		if (!(chcr & RCAR_DMACHCR_DE))
-+			return;
-+		udelay(1);
-+	}
-+
-+	dev_err(chan->chan.device->dev, "CHCR DE check error\n");
-+}
- 
- static void rcar_dmac_chan_halt(struct rcar_dmac_chan *chan)
- {
-@@ -724,6 +743,7 @@ static void rcar_dmac_chan_halt(struct rcar_dmac_chan *chan)
- 	chcr &= ~(RCAR_DMACHCR_DSE | RCAR_DMACHCR_DSIE | RCAR_DMACHCR_IE |
- 		  RCAR_DMACHCR_TE | RCAR_DMACHCR_DE);
- 	rcar_dmac_chan_write(chan, RCAR_DMACHCR, chcr);
-+	rcar_dmac_chcr_de_barrier(chan);
+@@ -736,6 +736,23 @@ static void rcar_dmac_chcr_de_barrier(struct rcar_dmac_chan *chan)
+ 	dev_err(chan->chan.device->dev, "CHCR DE check error\n");
  }
  
- static void rcar_dmac_chan_reinit(struct rcar_dmac_chan *chan)
-@@ -1373,6 +1393,8 @@ static irqreturn_t rcar_dmac_isr_channel(int irq, void *dev)
- 	if (chcr & RCAR_DMACHCR_TE)
- 		mask |= RCAR_DMACHCR_DE;
- 	rcar_dmac_chan_write(chan, RCAR_DMACHCR, chcr & ~mask);
-+	if (mask & RCAR_DMACHCR_DE)
-+		rcar_dmac_chcr_de_barrier(chan);
++static void rcar_dmac_sync_tcr(struct rcar_dmac_chan *chan)
++{
++	u32 chcr = rcar_dmac_chan_read(chan, RCAR_DMACHCR);
++
++	if (!(chcr & RCAR_DMACHCR_DE))
++		return;
++
++	/* set DE=0 and flush remaining data */
++	rcar_dmac_chan_write(chan, RCAR_DMACHCR, (chcr & ~RCAR_DMACHCR_DE));
++
++	/* make sure all remaining data was flushed */
++	rcar_dmac_chcr_de_barrier(chan);
++
++	/* back DE */
++	rcar_dmac_chan_write(chan, RCAR_DMACHCR, chcr);
++}
++
+ static void rcar_dmac_chan_halt(struct rcar_dmac_chan *chan)
+ {
+ 	u32 chcr = rcar_dmac_chan_read(chan, RCAR_DMACHCR);
+@@ -1228,8 +1245,11 @@ static unsigned int rcar_dmac_chan_get_residue(struct rcar_dmac_chan *chan,
+ 		residue += chunk->size;
+ 	}
  
- 	if (chcr & RCAR_DMACHCR_DSE)
- 		ret |= rcar_dmac_isr_desc_stage_end(chan);
++	if (desc->direction == DMA_DEV_TO_MEM)
++		rcar_dmac_sync_tcr(chan);
++
+ 	/* Add the residue for the current chunk. */
+-	residue += rcar_dmac_chan_read(chan, RCAR_DMATCR) << desc->xfer_shift;
++	residue += rcar_dmac_chan_read(chan, RCAR_DMATCRB) << desc->xfer_shift;
+ 
+ 	return residue;
+ }
 -- 
 2.7.4
