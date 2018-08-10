@@ -1,51 +1,42 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Fri, 10 Aug 2018 10:52:45 +0100
-Subject: [cip-dev] [PATCH 02/19] rcar: src: skip disabled-SRC nodes
+Date: Fri, 10 Aug 2018 10:52:46 +0100
+Subject: [cip-dev] [PATCH 03/19] dmaengine: rcar-dmac: clear pertinence
+	number of channels
 In-Reply-To: <1533894782-26239-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1533894782-26239-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1533894782-26239-3-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1533894782-26239-4-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-The current device tree representation of the R-Car Sample Rate Converters
-(SRC) assumes that they are numbered consecutively, starting from 0. Alas,
-this  is not  the case with the R8A7794 SoC where SRC0 isn't present.  In
-order to keep the existing  device trees working, I'm suggesting to use a
-disabled node for SRC0.  Teach the SRC probe  to just skip disabled nodes.
+DMACHCLR clears each channels, but its channel number is based on
+its SoC or IP. Current driver is using fixed 0x7fff (= for 15ch),
+it is not good match for Gen3 or Gen2 Audio DMAC. This patch fixes it
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-(cherry picked from commit de1965159a34951a86267d13db4f2a67234139d3)
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+(cherry picked from commit 20c169aceb459575681c4f4578d0e312bd1436c1)
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 ---
- sound/soc/sh/rcar/src.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/dma/sh/rcar-dmac.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/sh/rcar/src.c b/sound/soc/sh/rcar/src.c
-index 2fcd3d3..68d46e1d 100644
---- a/sound/soc/sh/rcar/src.c
-+++ b/sound/soc/sh/rcar/src.c
-@@ -1011,6 +1011,9 @@ int rsnd_src_probe(struct platform_device *pdev,
+diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+index 2b36d1c..115ddaa 100644
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -413,7 +413,7 @@ static int rcar_dmac_init(struct rcar_dmac *dmac)
+ 	u16 dmaor;
  
- 	i = 0;
- 	for_each_child_of_node(node, np) {
-+		if (!of_device_is_available(np))
-+			goto skip;
-+
- 		src = rsnd_src_get(priv, i);
- 
- 		snprintf(name, RSND_SRC_NAME_SIZE, "%s.%d",
-@@ -1034,6 +1037,7 @@ int rsnd_src_probe(struct platform_device *pdev,
- 		if (ret)
- 			goto rsnd_src_probe_done;
- 
-+skip:
- 		i++;
- 	}
+ 	/* Clear all channels and enable the DMAC globally. */
+-	rcar_dmac_write(dmac, RCAR_DMACHCLR, 0x7fff);
++	rcar_dmac_write(dmac, RCAR_DMACHCLR, GENMASK(dmac->n_channels - 1, 0));
+ 	rcar_dmac_write(dmac, RCAR_DMAOR,
+ 			RCAR_DMAOR_PRI_FIXED | RCAR_DMAOR_DME);
  
 -- 
 2.7.4
