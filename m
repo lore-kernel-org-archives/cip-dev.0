@@ -1,80 +1,103 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Fri, 10 Aug 2018 10:52:57 +0100
-Subject: [cip-dev] [PATCH 14/19] ARM: dts: iwg22d-sodimm: Enable SGTL5000
-	audio codec
+Date: Fri, 10 Aug 2018 10:52:58 +0100
+Subject: [cip-dev] [PATCH 15/19] ARM: dts: iwg22d-sodimm: Sound PIO support
 In-Reply-To: <1533894782-26239-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1533894782-26239-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1533894782-26239-15-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1533894782-26239-16-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Biju Das <biju.das@bp.renesas.com>
 
-This patch enables SGTL5000 audio codec on the carrier board.
+Enable sound PIO support on carrier board.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 55e37da0309a2237cc8f14a43ba04b2fd2083c1c)
+(cherry picked from commit 3838ef590119420031ad2a51ea19a9be2ea9acef)
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 46 +++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
 diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-index 1486565..21e484f 100644
+index 21e484f..8ec45a3 100644
 --- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
 +++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-@@ -26,6 +26,12 @@
- 		stdout-path = "serial3:115200n8";
+@@ -32,6 +32,21 @@
+ 		clock-frequency = <26000000>;
  	};
  
-+	audio_clock: audio_clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <26000000>;
++	rsnd_sgtl5000: sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,format = "i2s";
++		simple-audio-card,bitclock-master = <&sndcodec>;
++		simple-audio-card,frame-master = <&sndcodec>;
++
++		sndcpu: simple-audio-card,cpu {
++			sound-dai = <&rcar_sound>;
++		};
++
++		sndcodec: simple-audio-card,codec {
++			sound-dai = <&sgtl5000>;
++		};
 +	};
 +
  	vccq_sdhi0: regulator-vccq-sdhi0 {
  		compatible = "regulator-gpio";
  
-@@ -55,6 +61,23 @@
- 	status = "okay";
+@@ -110,6 +125,11 @@
+ 		power-source = <3300>;
+ 	};
+ 
++	sound_pins: sound {
++		groups = "ssi34_ctrl", "ssi3_data", "ssi4_data";
++		function = "ssi";
++	};
++
+ 	usb0_pins: usb0 {
+ 		groups = "usb0";
+ 		function = "usb0";
+@@ -121,6 +141,23 @@
+ 	};
  };
  
-+&i2c5 {
-+	pinctrl-0 = <&i2c5_pins>;
++&rcar_sound {
++	pinctrl-0 = <&sound_pins>;
 +	pinctrl-names = "default";
-+
 +	status = "okay";
-+	clock-frequency = <400000>;
 +
-+	sgtl5000: codec at a {
-+		compatible = "fsl,sgtl5000";
-+		#sound-dai-cells = <0>;
-+		reg = <0x0a>;
-+		clocks = <&audio_clock>;
-+		VDDA-supply = <&reg_3p3v>;
-+		VDDIO-supply = <&reg_3p3v>;
++	/* Single DAI */
++
++	#sound-dai-cells = <0>;
++
++	rcar_sound,dai {
++		dai0 {
++			playback = <&ssi3>;
++			capture = <&ssi4>;
++		};
 +	};
 +};
 +
- &pfc {
- 	can0_pins: can0 {
- 		groups = "can0_data";
-@@ -66,6 +89,11 @@
- 		function = "hscif1";
- 	};
+ &scif4 {
+ 	pinctrl-0 = <&scif4_pins>;
+ 	pinctrl-names = "default";
+@@ -169,6 +206,15 @@
+ 	pinctrl-names = "default";
+ };
  
-+	i2c5_pins: i2c5 {
-+		groups = "i2c5_b";
-+		function = "i2c5";
-+	};
++&ssi3 {
++	pio-transfer;
++};
 +
- 	scif4_pins: scif4 {
- 		groups = "scif4_data_b";
- 		function = "scif4";
++&ssi4 {
++	pio-transfer;
++	shared-pin;
++};
++
+ &usbphy {
+ 	status = "okay";
+ };
 -- 
 2.7.4
