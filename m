@@ -1,44 +1,42 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Fri, 10 Aug 2018 10:52:49 +0100
-Subject: [cip-dev] [PATCH 06/19] dmaengine: rcar-dmac: warn if transfer
-	cannot start as TE = 1
+Date: Fri, 10 Aug 2018 10:52:50 +0100
+Subject: [cip-dev] [PATCH 07/19] dmaengine: rcar-dmac: Fixed active
+	descriptor initializing
 In-Reply-To: <1533894782-26239-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1533894782-26239-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1533894782-26239-7-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1533894782-26239-8-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Niklas S?derlund <niklas.soderlund+renesas@ragnatech.se>
+From: Muhammad Hamza Farooq <mfarooq@visteon.com>
 
-The documentation states one should make sure both DE and TE are cleared
-before starting a transaction. This patch extends the current warning to
-look at both DE and TE.
+Running descriptor pointer is set to NULL upon freeing resources. Other-
+wise, rcar_dmac_issue_pending might not start new transfers
 
-Based on previous work from Muhammad Hamza Farooq.
-
-Suggested-by: Muhammad Hamza Farooq <mfarooq@visteon.com>
+Signed-off-by: Muhammad Hamza Farooq <mfarooq@visteon.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Niklas S?derlund <niklas.soderlund+renesas@ragnatech.se>
 Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Vinod Koul <vinod.koul@intel.com>
-(cherry picked from commit 0f78e3b58f5f99c991613db4477f893b53da5520)
+(cherry picked from commit 48c73659abae103a2f8531f825ce7a3f8dedbb39)
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/dma/sh/rcar-dmac.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/dma/sh/rcar-dmac.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index e465aaf..8959262 100644
+index 8959262..0ba6b8c 100644
 --- a/drivers/dma/sh/rcar-dmac.c
 +++ b/drivers/dma/sh/rcar-dmac.c
-@@ -311,7 +311,7 @@ static bool rcar_dmac_chan_is_busy(struct rcar_dmac_chan *chan)
- {
- 	u32 chcr = rcar_dmac_chan_read(chan, RCAR_DMACHCR);
+@@ -990,6 +990,8 @@ static void rcar_dmac_free_chan_resources(struct dma_chan *chan)
+ 	list_splice_init(&rchan->desc.done, &list);
+ 	list_splice_init(&rchan->desc.wait, &list);
  
--	return (chcr & (RCAR_DMACHCR_DE | RCAR_DMACHCR_TE)) == RCAR_DMACHCR_DE;
-+	return !!(chcr & (RCAR_DMACHCR_DE | RCAR_DMACHCR_TE));
- }
++	rchan->desc.running = NULL;
++
+ 	list_for_each_entry(desc, &list, node)
+ 		rcar_dmac_realloc_hwdesc(rchan, desc, 0);
  
- static void rcar_dmac_chan_start_xfer(struct rcar_dmac_chan *chan)
 -- 
 2.7.4
