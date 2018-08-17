@@ -1,18 +1,17 @@
-From: daniel.wagner@siemens.com (Daniel Wagner)
-Date: Fri, 10 Aug 2018 14:25:03 +0200
-Subject: [cip-dev] CIP maintainer meetup at ELCE?
-Message-ID: <15c4f110-9c2a-b3c8-ad5b-dec19d723e32@siemens.com>
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Fri, 17 Aug 2018 12:11:00 +0000
+Subject: [cip-dev]  CIP-dev IRC weekly meeting log: week 33
+Message-ID: <TY2PR0101MB2526C787DF7BADC03D741193E23D0@TY2PR0101MB2526.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi,
 
-I am planing my trip to ELCE this year. Just wondering who else of the
-CIP kernel maintainers will be there and if there is interest to meet.
-If so, when would be a good time? For I could arrive a day earlier on
-Sunday if necessary.
+Please find the logs of CIP meeting this week in below link:
 
-Thursday after ELCE wont work for me (rt summit).
+https://irclogs.baserock.org/cip/%23cip.2018-08-16.log.html#t2018-08-16T08:00:14
 
-Thanks,
-Daniel
+Best regards, 
+
+SZ Lin
+Moxa 
