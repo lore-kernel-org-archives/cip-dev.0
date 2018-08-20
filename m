@@ -1,11 +1,11 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon, 20 Aug 2018 09:57:06 +0000
-Subject: [cip-dev] [PATCH 05/42] soc: renesas: Add R-Car RST driver
-In-Reply-To: <1534558024.3135.18.camel@codethink.co.uk>
+Date: Mon, 20 Aug 2018 10:19:15 +0000
+Subject: [cip-dev] [PATCH 14/42] watchdog: renesas-wdt: add driver
+In-Reply-To: <1534558800.3135.20.camel@codethink.co.uk>
 References: <1532626980-17190-1-git-send-email-fabrizio.castro@bp.renesas.com>
-	<1532626980-17190-6-git-send-email-fabrizio.castro@bp.renesas.com>
-	<1534558024.3135.18.camel@codethink.co.uk>
-Message-ID: <TY1PR01MB177095E6C3752C5572C7CBBEC0320@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+	<1532626980-17190-15-git-send-email-fabrizio.castro@bp.renesas.com>
+	<1534558800.3135.20.camel@codethink.co.uk>
+Message-ID: <TY1PR01MB177018DB7CBB3AE63D1B5AB1C0320@TY1PR01MB1770.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
@@ -15,90 +15,51 @@ Thank you for your feedback.
 
 > -----Original Message-----
 > From: Ben Hutchings <ben.hutchings@codethink.co.uk>
-> Sent: 18 August 2018 03:07
+> Sent: 18 August 2018 03:20
 > To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 > Cc: cip-dev at lists.cip-project.org; Chris Paterson <Chris.Paterson2@renesas.com>; Biju Das <biju.das@bp.renesas.com>
-> Subject: Re: [PATCH 05/42] soc: renesas: Add R-Car RST driver
+> Subject: Re: [PATCH 14/42] watchdog: renesas-wdt: add driver
 >
 > On Thu, 2018-07-26 at 18:42 +0100, Fabrizio Castro wrote:
-> > From: Geert Uytterhoeven <geert+renesas@glider.be>
+> > From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > >
-> > Add a driver for the Renesas R-Car Gen1 RESET/WDT and R-Car Gen2/Gen3
-> > and RZ/G RST module.
+> > Add support for watchdogs (RWDT and SWDT) found on RCar Gen3 based SoCs
+> > from Renesas.
 > >
-> > For now this driver just provides an API to obtain the state of the mode
-> > pins, as latched at reset time.  As this is typically called from the
-> > probe function of a clock driver, which can run much earlier than any
-> > initcall, calling rcar_rst_read_mode_pins() just forces an early
-> > initialization of the driver.
-> >
-> > Despite the current simple and almost identical handling for all
-> > supported SoCs, the driver matches against SoC-specific compatible
-> > values, as the features provided by the hardware module differ a lot
-> > across the various SoC families and members.
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
-> > (cherry picked from commit 527c02f66d263d2eeff237a2326c3278cfc03d3b)
-> > (Added renesas directory to driver/soc/Makefile. Modified
-> > drivers/soc/renesas/Makefile to only compile rcar-rst.c for R-Car
-> > Gen2. Removed R-Car Gen3 and R-Car Gen1 from rcar_rst_matches and
-> > stripped read mode pins logic from the driver. Got rid of
-> > rcar_rst_read_mode_pins, advertising rcar_rst_init instead)
-> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-> [...]
-> > --- /dev/null
-> > +++ b/drivers/soc/renesas/rcar-rst.c
-> > @@ -0,0 +1,81 @@
-> > +/*
-> > + * R-Car Gen2 and RZ/G RST Driver
-> > + *
-> > + * Copyright (C) 2016 Glider bvba
-> > + *
-> > + * This file is subject to the terms and conditions of the GNU General Public
-> > + * License.  See the file "COPYING" in the main directory of this archive
-> > + * for more details.
-> > + */
-> > +
-> > +#include <linux/err.h>
-> > +#include <linux/io.h>
-> > +#include <linux/of_address.h>
-> > +#include <linux/soc/renesas/rcar-rst.h>
-> > +
-> > +#define WDTRSTCR_RESET0xA55A0002
-> > +#define WDTRSTCR0x0054
-> > +
-> > +static int rcar_rst_enable_wdt_reset(void __iomem *base)
-> > +{
-> > +iowrite32(WDTRSTCR_RESET, base + WDTRSTCR);
-> > +return 0;
-> > +}
-> > +
-> > +struct rst_config {
-> > +int (*configure)(void *base);/* Platform specific configuration */
-> > +};
-> > +
-> > +static const struct rst_config rcar_rst_gen1 __initconst = {
-> > +.configure = NULL,
-> > +};
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> > Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
+> > (cherry picked from commit bd99b68ed7f96c9c845aad2a25f84145213058f2)
+> > (reworked dt-bindings to refer to R-Car Gen2 and RZ/G1 only.
 >
-> This variable is unused here, so please delete it.
+> Well, gen2 support was added upstream by commit
+> 3fe95e6c68e6258410e85488af9e1b1ff545b831, so that should be mentioned
+> here too.
 
-Good catch. Will delete it.
+Will do
+
+> It also blacklisted some early gen2 chips; shouldn't that code be included in this
+> backport?
+
+There is more work to do to backport that neatly, and also the goal is to support
+r8a774[35] (which is covered by this commit). On top of that, the blacklisted
+chips are not found in real products, only in early prototypes of development
+boards. The plan is to look into this iff interests arises.
 
 >
-> > +static const struct rst_config rcar_rst_gen2 __initconst = {
-> > +.configure = rcar_rst_enable_wdt_reset,
-> > +};
+> > replaced ARCH_RENESAS with ARCH_SHMOBILE in Kconfig. changes to
+> > the driver:
+> > * replaced "renesas,rcar-gen3-wdt" with "renesas,rcar-gen2-wdt"
+> > * added rwdt_set_timeout
+> > * modified rwdt_ping and rwdt_start to leverage rwdt_set_timeout)
 > [...]
 >
-> The configure operation was added in commit
-> 69e0d1b8db8f8cc319f966ec3eb2fffce28c4f28 upstream.  So I think it
-> should be added in a separate commit here, or at least both upstream
-> commits should be mentioned in the commit message for the backport.
+> You explain what you changed, but it's more helpful to explain why.  If
+> I'm reading correctly, the set_timeout operation for watchdog drivers
+> is now optional, but was required in 4.4.  Could you put that in the
+> commit message?
 
-Will mention that in the commit message of V2.
+I will put the reason in the commit message of V2.
 
 Thanks,
 Fab
