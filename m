@@ -1,28 +1,22 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 23 Aug 2018 01:58:26 +0000
-Subject: [cip-dev] =?utf-8?b?44CQQ0lQLWRlduOAkUNJUCBrZXJuZWwgSVJDIHdlZWts?=
- =?utf-8?q?y_meeting_today?=
-Message-ID: <TY2PR0101MB2526CF6A340632B16105ECF4E2370@TY2PR0101MB2526.apcprd01.prod.exchangelabs.com>
+From: agustin.benito@codethink.co.uk (=?ISO-8859-1?Q?Agust=EDn?= Benito Bethencourt)
+Date: Thu, 23 Aug 2018 09:49:51 +0100
+Subject: [cip-dev] Can CIP have a group account in kernel.org
+Message-ID: <13123422.r87sqmyfEU@linux-if6s>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi All,
+Hi Ben,
 
-Kindly be reminded to attend weekly meeting through IRC to discuss technical topics with CIP kernel today.
+it seems that LTSI[1] and XEN[2] has group accounts at kernel.org
 
-US-West US-East  UK     DE    TW     JP
-01:00    04:00   09:00   10:00   16:00   17:00
+At today's IRC meeting, some of the attendees were wondering if we can also have one so we can transfer the kernel from your personal account to the group account, having the new kernel maintainer as "account admin". Is that possible? Do we need to ask somebody about it?
 
-Channel:
-* irc:chat.freenode.net:6667/cip
+Best Regards 
 
-Agenda:
-* Kernel maintenance updates
-* Kernel testing
-* AOB
-
-The meeting will take 30 min although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
-
-Best regards, 
-
-SZ Lin
+[1] http://git.linuxfoundation.org/?p=ltsi-kernel.git
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git/about/
+-- 
+Agust?n Benito Bethencourt
+Principal Consultant
+Codethink Ltd
+We respect your privacy.   See https://www.codethink.co.uk/privacy.html
