@@ -1,26 +1,29 @@
 From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Fri, 24 Aug 2018 20:05:14 +0100
-Subject: [cip-dev] [PATCH 0/3] Add CMT support to iwg22m
-In-Reply-To: <1532615287-1183-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1532615287-1183-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1535137514.2902.45.camel@codethink.co.uk>
+Date: Fri, 24 Aug 2018 20:07:50 +0100
+Subject: [cip-dev] [PATCH 00/42] Add watchdog support to iwg20m and
+	iwg22m
+In-Reply-To: <1532626980-17190-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1532626980-17190-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1535137670.2902.47.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Thu, 2018-07-26 at 15:28 +0100, Fabrizio Castro wrote:
+On Thu, 2018-07-26 at 18:42 +0100, Fabrizio Castro wrote:
 > Hello Ben,
 > 
-> this series backports all that is required for CMT to work on the iwg22m
-> powered by the r8a7745.
+> this series backports watchdog support for iwg20m and iwg22m.
 > 
-> This series depends on patch:
-> https://lists.cip-project.org/pipermail/cip-dev/2018-July/001408.html
+> There is a dependency with series:
+> https://lists.cip-project.org/pipermail/cip-dev/2018-July/001415.html
 > 
-> and it applies on top of branch linux-4.4.y-cip, commit
+> This work is based on top of linux-4.4.y-cip, commit
 > 4d769b2b8749e89dfc7ea179a44f652dcfbedb37 ("PM / OPP: Move error
 > message to debug level").
 
-Applied, thanks.
+Thanks.  I've applied these, with the updated (v2) commit messages
+for?"soc: renesas: Add R-Car RST driver" and "watchdog: renesas-wdt:
+add driver" and the fix I mentioned for "watchdog: renesas_wdt: Add
+restart handler".
 
 Ben.
 
