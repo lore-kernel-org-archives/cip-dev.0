@@ -1,21 +1,36 @@
-From: daniel.wagner@siemens.com (Daniel Wagner)
-Date: Fri, 24 Aug 2018 09:33:48 +0200
-Subject: [cip-dev] CIP-dev IRC weekly meeting log: week 34
-In-Reply-To: <TY2PR0101MB252651B797856AFD0A8DCFDAE2360@TY2PR0101MB2526.apcprd01.prod.exchangelabs.com>
-References: <TY2PR0101MB252651B797856AFD0A8DCFDAE2360@TY2PR0101MB2526.apcprd01.prod.exchangelabs.com>
-Message-ID: <0ff5a002-2cdc-d1e9-a7a6-ed39c97edc1b@siemens.com>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Fri, 24 Aug 2018 18:28:44 +0100
+Subject: [cip-dev] [PATCH 01/19] ASoC: rsnd: remove platform boot
+ support from src.c
+In-Reply-To: <1533894782-26239-2-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1533894782-26239-1-git-send-email-fabrizio.castro@bp.renesas.com>
+	<1533894782-26239-2-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1535131724.2902.38.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+On Fri, 2018-08-10 at 10:52 +0100, Fabrizio Castro wrote:
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> No board is using Renesas sound driver via platform boot now.
+> This means all user is using DT boot. Platform boot support is
+> no longer needed. But, it strongly depends on platform boot style.
+> This patch removes platform boot support from src.c
+> 
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> (cherry picked from commit adf6a6815952c6c6092ae15e27c1b782fd96c6a3)
+> (reworked to fit the context)
+[...]
 
-On 24.08.2018 04:20, SZ Lin (???) wrote:
-> https://irclogs.baserock.org/cip/%23cip.2018-08-23.log.html#t2018-08-23T08:01:16
+This isn't a sufficient explanation of the backporting change.  The
+upstream version appears to remove all use of struct
+rsnd_src_platform_info from the driver, but this version extends the
+use of that structure.
 
-On the topic of shared trees on korg: If I am not complete mistaken we
-should just send an email to helpdesk at kernel.org with our request.
+Ben.
 
-Obviously, we should add some 'sponsers' to our request such as Greg.
-
-Thanks,
-Daniel
+-- 
+Ben Hutchings, Software Developer                ?        Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
