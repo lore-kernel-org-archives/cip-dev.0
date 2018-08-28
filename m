@@ -1,24 +1,9 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Mon, 27 Aug 2018 08:32:20 +0200
-Subject: [cip-dev] Next LTS will be 4.19
-Message-ID: <e985b01d-b60a-1411-bab3-b60977c1d8fd@siemens.com>
+From: info@transcribebetter.info (Lily Lewis)
+Date: Tue, 28 Aug 2018 06:55:20 +0000
+Subject: [cip-dev] Audio Transcription Service Provider
+Message-ID: <d2ad6e9a5f5b7a03e3ec5b090c4baa06@transcribebetter.info>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
-
-just a heads-up in case you didn't see read this yet, the next LTS is 
-coming earlier: https://www.kernel.org/category/releases.html
-
-I suspect that this increases the chances of Debian choosing the same 
-version for buster because it gives more time to validate/stabilize it. 
-And that should also help us picking it as next SLTS.
-
-Jan
-
-PS: 4.9 is now receiving 6 years maintenance from Greg as well, again 
-due to Android needs.
-
--- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180828/c2ede031/attachment.html>
