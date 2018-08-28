@@ -1,95 +1,53 @@
-From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Tue, 28 Aug 2018 09:00:01 +0000
-Subject: [cip-dev] [PATCH 24/42] watchdog: renesas_wdt: Add restart
-	handler
-In-Reply-To: <1535134633.2902.41.camel@codethink.co.uk>
-References: <1532626980-17190-1-git-send-email-fabrizio.castro@bp.renesas.com>
-	<1532626980-17190-25-git-send-email-fabrizio.castro@bp.renesas.com>
-	<1535134633.2902.41.camel@codethink.co.uk>
-Message-ID: <TY1PR01MB1770BF8D5C5A94E3F916C3D1C00A0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+From: zoran.stojsavljevic.de@gmail.com (Zoran S)
+Date: Tue, 28 Aug 2018 19:14:32 +0200
+Subject: [cip-dev] Next LTS will be 4.19
+In-Reply-To: <e985b01d-b60a-1411-bab3-b60977c1d8fd@siemens.com>
+References: <e985b01d-b60a-1411-bab3-b60977c1d8fd@siemens.com>
+Message-ID: <CAEss1EKU+nhf8www2F2_HQVRi-CxsMvatWsSNC1CwDDMwe5eZg@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Ben,
+Hello Jan,
 
-Thank you for your feedback.
+I see that there is correction to CIP initial plan/strategy. I should
+say... Sounds much more realistic. :-)
 
-> -----Original Message-----
-> From: Ben Hutchings <ben.hutchings@codethink.co.uk>
-> Sent: 24 August 2018 19:17
-> To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Cc: cip-dev at lists.cip-project.org; Chris Paterson <Chris.Paterson2@renesas.com>; Biju Das <biju.das@bp.renesas.com>
-> Subject: Re: [PATCH 24/42] watchdog: renesas_wdt: Add restart handler
+Well... This is the Right Direction. There is no way to support old LTS
+kernels for 20+ years (who, the heck, will support any RT Linux kernel for
+the once released equipment for 20+ years, only critical bugs), Rather for
+2 to 4. Then, the final freeze should come. IMHO.
+
+As Fedora does (as example), correct (even for 14 months per release, at
+most)? ;-)
+
+Best Regards,
+Zoran
+_______
+
+On Mon, Aug 27, 2018 at 8:32 AM Jan Kiszka <jan.kiszka@siemens.com> wrote:
+
+> Hi all,
 >
-> On Thu, 2018-07-26 at 18:42 +0100, Fabrizio Castro wrote:
-> > On iWave's boards iwg20d and iwg22d the only way to reboot the system is
-> > by means of the watchdog.
-> > This patch adds a restart handler to rwdt_ops, and also makes sure we
-> > keep its priority to the lowest level, in order to not override other
-> > more effective handlers.
-> >
-> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-> > Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-> > Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> > Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
-> > (cherry picked from commit 089bcaa87e772beb005068a5ef28c71bb895d01d)
-> > (changed restart handler implementation as .restart is not available
-> > from struct watchdog_ops)
-> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-> > ---
-> >  drivers/watchdog/renesas_wdt.c | 26 ++++++++++++++++++++++++++
-> >  1 file changed, 26 insertions(+)
-> [...]
-> > @@ -205,6 +229,8 @@ static int rwdt_remove(struct platform_device *pdev)
-> >  {
-> >  struct rwdt_priv *priv = platform_get_drvdata(pdev);
-> >
-> > +if (priv->restart_handler.notifier_call);
-
-Good catch!
-
+> just a heads-up in case you didn't see read this yet, the next LTS is
+> coming earlier: https://www.kernel.org/category/releases.html
 >
-> There is a rogue semi-colon at the end of the line, so this if-
-> statement doesn't have any effect!
+> I suspect that this increases the chances of Debian choosing the same
+> version for buster because it gives more time to validate/stabilize it.
+> And that should also help us picking it as next SLTS.
 >
-> gcc 6 warns about this:
+> Jan
 >
-> drivers/watchdog/renesas_wdt.c: In function ?rwdt_remove?:
-> drivers/watchdog/renesas_wdt.c:234:2: warning: this ?if? clause does not guard... [-Wmisleading-indentation]
->   if (priv->restart_handler.notifier_call);
->   ^~
-> drivers/watchdog/renesas_wdt.c:235:3: note: ...this statement, but the latter is misleadingly indented as if it is guarded by the ?if?
->    unregister_restart_handler(&priv->restart_handler);
->    ^~~~~~~~~~~~~~~~~~~~~~~~~~
+> PS: 4.9 is now receiving 6 years maintenance from Greg as well, again
+> due to Android needs.
 >
-> but perhaps you are using an older compiler?
-
-Yes I am unfortunately
-
->
-> I'll fix this up since it's obvious what you intended.
-
-
-Thank you!
-
-Fab
-
->
-> Ben.
->
-> > +unregister_restart_handler(&priv->restart_handler);
-> >  watchdog_unregister_device(&priv->wdev);
-> >  pm_runtime_disable(&pdev->dev);
-> >
 > --
-> Ben Hutchings, Software Developer                         Codethink Ltd
-> https://www.codethink.co.uk/                 Dale House, 35 Dale Street
->                                      Manchester, M1 2HF, United Kingdom
-
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, Buckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered No. 04586709.
+> Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+> Corporate Competence Center Embedded Linux
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180828/3edc9f0e/attachment.html>
