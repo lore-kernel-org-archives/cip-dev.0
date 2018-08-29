@@ -1,132 +1,40 @@
-From: zoran.stojsavljevic.de@gmail.com (Zoran S)
-Date: Wed, 29 Aug 2018 11:00:21 +0200
+From: jan.kiszka@siemens.com (Jan Kiszka)
+Date: Wed, 29 Aug 2018 12:38:03 +0200
 Subject: [cip-dev] Next LTS will be 4.19
-In-Reply-To: <TYAPR01MB228505B161C7A11F25FAA9A9B7090@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+In-Reply-To: <CAEss1EKf4kry6+d0KLuC=BRV6oSE0xtzZxu-XS640098adRK-w@mail.gmail.com>
 References: <e985b01d-b60a-1411-bab3-b60977c1d8fd@siemens.com>
 	<CAEss1EKU+nhf8www2F2_HQVRi-CxsMvatWsSNC1CwDDMwe5eZg@mail.gmail.com>
 	<9a3bf8aa-7151-7faa-3c67-9915c85312f5@siemens.com>
 	<CAEss1EKf4kry6+d0KLuC=BRV6oSE0xtzZxu-XS640098adRK-w@mail.gmail.com>
-	<TYAPR01MB228505B161C7A11F25FAA9A9B7090@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-Message-ID: <CAEss1EJEZLzpfh3Rftdu8YO_wZX_aZT31WM3+8gcfsoCwf3uXg@mail.gmail.com>
+Message-ID: <1811d00d-731e-fe2b-bf83-05bfeca8e3e9@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-> If we only planned to support Kernels for 5 years, there would be little need for CIP as Greg is already supporting select LTS Kernels for 6 years!
+On 2018-08-29 10:26, Zoran S wrote:
+> As I recall Daniel (Wagner), in early stages said that CIP has
+> committed to 15+ (20+, I should say, let me be very defensive on what
+> I heard about strategy) years of support.
 
-5 years are silicon/Linux technology (endless time) ages, almost
-unlimited... But, as INTEL failed repeatedly on 10nm UV silicon
-technology (and Brian Krzanich was expelled as being INTEL CEO "INTEL
-Inside" as indecent CoC performance (CoC = Code of Conduct))...
+That's not originating from Daniel, it was rather some possibly unclear 
+statements on early CIP publications.
 
-I asked Brian F2F some very important questions in Y2015, now 3+years
-passed.... Brian did NOT have the answers. Because of that, maybe I
-allow in my mind that you are very correct. If?
+At this point, we as CIP commit to 10 years, but we cannot promise 
+anything beyond. That does not mean we categorically exclude it, but we 
+first of all need to collect enough experience both with the long-term 
+maintenance in the embedded context and with the value a support time 
+frame of >10 years will have - in some 7 years from now.
 
-It is, after all, in this stage of the game, up to the top noch
-silicon tech companies:
-GlobalFoundries;
-TSMC;
-Samsung;
-INTEL.
+I assume everyone would be happy if the whole software stack could have 
+shorter major update cycles than a decade. Things like improving test 
+coverage and automation is an important building block not only for 
+long-term support but also for safer earlier updates. But there will be 
+more needed, and that not only in the OSS part of the stack. Time will 
+tell how industry will evolve and what will be the optimal balance 
+between stability and maintainability (and "freshness") in the future.
 
-And this slowdown... Maybe it has some (serious) influence on CIP
-strategy? No clear vision from my side (could not tell). :-(
+HTH,
+Jan
 
-Time Will Tell,
-Zoran
-_______
-On Wed, Aug 29, 2018 at 10:31 AM Chris Paterson
-<Chris.Paterson2@renesas.com> wrote:
->
-> Hello Zoran,
->
-> > From: cip-dev-bounces at lists.cip-project.org <cip-dev-bounces@lists.cip-
-> > project.org> On Behalf Of Zoran S
-> > Sent: 29 August 2018 09:27
-> >
-> > As I recall Daniel (Wagner), in early stages said that CIP has committed to 15+
-> > (20+, I should say, let me be very defensive on what I heard about strategy)
-> > years of support.
-> >
-> > But, anyway (discarded above statement as unreliable) even 10 years is way too
-> > long. Half of it/committed time is more appropriate (if ?).
-> > IMHO. You do (you/Siemens AG pay(s), CIP pays) as you intend. :-)
->
-> One of the main points of CIP is to provide a maintained Kernel for 10+ years to be used in industries with very long product lifecycles.
->
-> If we only planned to support Kernels for 5 years, there would be little need for CIP as Greg is already supporting select LTS Kernels for 6 years!
->
-> Kind regards, Chris
->
->
-> >
-> > I am, after all, Nobody. But anyway, Nobody's two cent opinion.
-> >
-> > Thank you,
-> > Zoran
-> > _______
-> >
-> > On Wed, Aug 29, 2018 at 8:26 AM Jan Kiszka <jan.kiszka@siemens.com> wrote:
-> > >
-> > > Hi Zoran,
-> > >
-> > > On 2018-08-28 19:14, Zoran S wrote:
-> > > > Hello Jan,
-> > > >
-> > > > I see that there is correction to CIP initial plan/strategy. I
-> > > > should say... Sounds much more realistic. :-)
-> > > > > Well... This is the Right Direction. There is no way to support
-> > > > > old LTS
-> > > > kernels for 20+ years (who, the heck, will support any RT Linux
-> > > > kernel for the once released equipment for 20+ years, only critical
-> > > > bugs), Rather for 2 to 4. Then, the final freeze should come. IMHO.
-> > > >
-> > > > As Fedora does (as example), correct (even for 14 months per
-> > > > release, at most)? ;-)
-> > >
-> > > There is no change to the CIP strategy. We are committed to 10 years
-> > > maintenance for each kernel we pick up. The release of the next CIP
-> > > kernel will not end the maintenance of the current 4.4 one. We will
-> > > "only" stop taking feature backports at that point, because new
-> > > developments should start on the new version.
-> > >
-> > > Jan
-> > >
-> > > >
-> > > > Best Regards,
-> > > > Zoran
-> > > > _______
-> > > >
-> > > > On Mon, Aug 27, 2018 at 8:32 AM Jan Kiszka <jan.kiszka@siemens.com
-> > > > <mailto:jan.kiszka@siemens.com>> wrote:
-> > > >
-> > > >     Hi all,
-> > > >
-> > > >     just a heads-up in case you didn't see read this yet, the next LTS is
-> > > >     coming earlier: https://www.kernel.org/category/releases.html
-> > > >
-> > > >     I suspect that this increases the chances of Debian choosing the same
-> > > >     version for buster because it gives more time to validate/stabilize it.
-> > > >     And that should also help us picking it as next SLTS.
-> > > >
-> > > >     Jan
-> > > >
-> > > >     PS: 4.9 is now receiving 6 years maintenance from Greg as well, again
-> > > >     due to Android needs.
-> > > >
-> > > >     --
-> > > >     Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-> > > >     Corporate Competence Center Embedded Linux
-> > > >     _______________________________________________
-> > > >     cip-dev mailing list
-> > > >     cip-dev at lists.cip-project.org <mailto:cip-dev@lists.cip-project.org>
-> > > >     https://lists.cip-project.org/mailman/listinfo/cip-dev
-> > > >
-> > >
-> > > --
-> > > Siemens AG, Corporate Technology, CT RDA IOT SES-DE Corporate
-> > > Competence Center Embedded Linux
-> > _______________________________________________
-> > cip-dev mailing list
-> > cip-dev at lists.cip-project.org
-> > https://lists.cip-project.org/mailman/listinfo/cip-dev
+-- 
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+Corporate Competence Center Embedded Linux
