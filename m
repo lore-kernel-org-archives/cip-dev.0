@@ -1,40 +1,34 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Wed, 29 Aug 2018 12:38:03 +0200
-Subject: [cip-dev] Next LTS will be 4.19
-In-Reply-To: <CAEss1EKf4kry6+d0KLuC=BRV6oSE0xtzZxu-XS640098adRK-w@mail.gmail.com>
-References: <e985b01d-b60a-1411-bab3-b60977c1d8fd@siemens.com>
-	<CAEss1EKU+nhf8www2F2_HQVRi-CxsMvatWsSNC1CwDDMwe5eZg@mail.gmail.com>
-	<9a3bf8aa-7151-7faa-3c67-9915c85312f5@siemens.com>
-	<CAEss1EKf4kry6+d0KLuC=BRV6oSE0xtzZxu-XS640098adRK-w@mail.gmail.com>
-Message-ID: <1811d00d-731e-fe2b-bf83-05bfeca8e3e9@siemens.com>
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Thu, 30 Aug 2018 01:52:57 +0000
+Subject: [cip-dev] CIP kernel IRC weekly meeting today
+Message-ID: <PS2PR01MB25197BA7C875A30C4CFD116DE2080@PS2PR01MB2519.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 2018-08-29 10:26, Zoran S wrote:
-> As I recall Daniel (Wagner), in early stages said that CIP has
-> committed to 15+ (20+, I should say, let me be very defensive on what
-> I heard about strategy) years of support.
-
-That's not originating from Daniel, it was rather some possibly unclear 
-statements on early CIP publications.
-
-At this point, we as CIP commit to 10 years, but we cannot promise 
-anything beyond. That does not mean we categorically exclude it, but we 
-first of all need to collect enough experience both with the long-term 
-maintenance in the embedded context and with the value a support time 
-frame of >10 years will have - in some 7 years from now.
-
-I assume everyone would be happy if the whole software stack could have 
-shorter major update cycles than a decade. Things like improving test 
-coverage and automation is an important building block not only for 
-long-term support but also for safer earlier updates. But there will be 
-more needed, and that not only in the OSS part of the stack. Time will 
-tell how industry will evolve and what will be the optimal balance 
-between stability and maintainability (and "freshness") in the future.
-
-HTH,
-Jan
-
--- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+Hi All,
+ 
+Kindly be reminded to attend weekly meeting through IRC to discuss technical topics with
+CIP kernel today.
+ 
+US-West US-East  UK     DE    TW     JP
+01:00    04:00   09:00   10:00   16:00   17:00
+ 
+Channel:
+* irc:chat.freenode.net:6667/cip
+ 
+Agenda:
+* Action item review
+  - https://irclogs.baserock.org/cip/%23cip.2018-08-23.log.html#t2018-08-23T08:01:16
+* Kernel maintenance updates
+  - Next stable kernel might be 4.19 [1]
+  [1] https://www.kernel.org/category/releases.html
+* Kernel testing
+* AOB
+ 
+The meeting will take 30 min although it can be extended to an hour if it makes sense and
+those involved in the topics can stay. Otherwise, the topic will be taken offline or in the
+next meeting.
+ 
+Best regards,
+ 
+SZ Lin
