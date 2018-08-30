@@ -1,74 +1,58 @@
-From: agustin.benito@codethink.co.uk (=?ISO-8859-1?Q?Agust=EDn?= Benito Bethencourt)
-Date: Thu, 30 Aug 2018 10:18:47 +0100
-Subject: [cip-dev] Proposal: Gitlab role policy
-In-Reply-To: <2718361.41IWGt5yYx@linux-if6s>
-References: <2718361.41IWGt5yYx@linux-if6s>
-Message-ID: <1653033.Wyh2qVulZg@linux-if6s>
+From: zoran.stojsavljevic.de@gmail.com (Zoran S)
+Date: Thu, 30 Aug 2018 20:38:47 +0200
+Subject: [cip-dev] Next LTS will be 4.19
+In-Reply-To: <1811d00d-731e-fe2b-bf83-05bfeca8e3e9@siemens.com>
+References: <e985b01d-b60a-1411-bab3-b60977c1d8fd@siemens.com>
+	<CAEss1EKU+nhf8www2F2_HQVRi-CxsMvatWsSNC1CwDDMwe5eZg@mail.gmail.com>
+	<9a3bf8aa-7151-7faa-3c67-9915c85312f5@siemens.com>
+	<CAEss1EKf4kry6+d0KLuC=BRV6oSE0xtzZxu-XS640098adRK-w@mail.gmail.com>
+	<1811d00d-731e-fe2b-bf83-05bfeca8e3e9@siemens.com>
+Message-ID: <CAEss1EJ9i-BJckMBKucyNkxb0EdXpYwTd9_rmFEMb+unEx_DZQ@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+> At this point, we as CIP commit to 10 years, but we cannot promise
+> anything beyond. That does not mean we categorically exclude it, but we
+> first of all need to collect enough experience both with the long-term
+> maintenance in the embedded context and with the value a support time
+> frame of >10 years will have - in some 7 years from now.
 
-This is a summary of the application of the policy.
+Fair enough. The only addendum to your last @.... For 7+ years old
+support, you/CIP have to have rock solid history and documentation
+written down. ;-)
 
-On Thursday, 9 August 2018 10:21:50 WEST Agust?n Benito Bethencourt wrote:
-> Hi,
-> 
-> now that we have new kernel maintainers it might be time to pay a little attention  to the user permissions/roles policy at Gitlab.com.
-> 
-> Some time ago we agreed to divide the different repositories in subgroups in preparation for this time. We can segment the permissions we provide to CIP contributors by subgroup. We have the following subgroups:
-> * 3rd party software (mostly related with testing for now (special case)
-> * cip-testing
-> * cip-kernel
-> * cip-core
-> 
-> For simplicity, I suggest the following:
-> * TSC representatives from each company will be owners, as well as the tool admin, at group level.
+Please, please... Do NOT forget this rule.
 
-I have applied Owner rights to the CIP group to the following people:
-* Jan K - Siemens
-* Yoshi - Toshiba
-* Takehisa K - Renesas
-* Sz Lin - Moxa
-* myself - Codethink
-*  - Hitachi
-* - Cybertrust
-* - Pla'Home
-
-Who should I add from these three Members?
-
-> * We will have no group maintainers by default since we will not have repos at this level but we will enclose them in subgroups. So at this group level we will provide Developer or Reporter roles only to CIP participants.
-
-I have removed the Maintainers.
-
-> * We assign the maintainer role to those who should have it, because they are responsible of a specific area, at subgroup level. 
-
-** cip-testing subgroup:
-
-There are no maintainers at a subgroup level. I have not changed anything here.
-
-** cip-kernel
-
-bwh and iwamatsu have maintainers rights at subgroup level. I have not changed anything here. Please let me know if there are additional people who should be maintainers. Please remember that there are other maintainers but at a repo (project) level.
-
-** 3rd- party
-
-There are no maintainers at a subgroup level. I have not changed anything here.
-
-> * Specific people can hold the maintainer role at repo (project) level based on the subgroup maintainer decision. 
-
-cip-core is a repo and not a subgroup. I have not modified the roles to comply to the policy. I recommend first to move the repo into a subgroup so this effort can apply its own policies, labels, board structure or workflows without affecting others.
-
-> 
-> This simple policy can be extended as more people join.
-> 
-> Best Regards
->  
-> 
-
-Best Regards
--- 
-Agust?n Benito Bethencourt
-Principal Consultant
-Codethink Ltd
-We respect your privacy.   See https://www.codethink.co.uk/privacy.html
+Thank you,
+Zoran
+_______
+On Wed, Aug 29, 2018 at 12:38 PM Jan Kiszka <jan.kiszka@siemens.com> wrote:
+>
+> On 2018-08-29 10:26, Zoran S wrote:
+> > As I recall Daniel (Wagner), in early stages said that CIP has
+> > committed to 15+ (20+, I should say, let me be very defensive on what
+> > I heard about strategy) years of support.
+>
+> That's not originating from Daniel, it was rather some possibly unclear
+> statements on early CIP publications.
+>
+> At this point, we as CIP commit to 10 years, but we cannot promise
+> anything beyond. That does not mean we categorically exclude it, but we
+> first of all need to collect enough experience both with the long-term
+> maintenance in the embedded context and with the value a support time
+> frame of >10 years will have - in some 7 years from now.
+>
+> I assume everyone would be happy if the whole software stack could have
+> shorter major update cycles than a decade. Things like improving test
+> coverage and automation is an important building block not only for
+> long-term support but also for safer earlier updates. But there will be
+> more needed, and that not only in the OSS part of the stack. Time will
+> tell how industry will evolve and what will be the optimal balance
+> between stability and maintainability (and "freshness") in the future.
+>
+> HTH,
+> Jan
+>
+> --
+> Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+> Corporate Competence Center Embedded Linux
