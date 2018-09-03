@@ -1,140 +1,95 @@
-From: agustin.benito@codethink.co.uk (=?ISO-8859-1?Q?Agust=EDn?= Benito Bethencourt)
-Date: Mon, 03 Sep 2018 08:45:18 +0100
-Subject: [cip-dev] Proposal: Gitlab role policy
-In-Reply-To: <OSAPR01MB22442513D456A36A3387094CB50C0@OSAPR01MB2244.jpnprd01.prod.outlook.com>
-References: <2718361.41IWGt5yYx@linux-if6s> <1653033.Wyh2qVulZg@linux-if6s>
-	<OSAPR01MB22442513D456A36A3387094CB50C0@OSAPR01MB2244.jpnprd01.prod.outlook.com>
-Message-ID: <11381191.9JQy6d6fcj@linux-if6s>
+From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
+Date: Mon, 3 Sep 2018 10:10:54 +0000
+Subject: [cip-dev] [PATCH 01/19] ASoC: rsnd: remove platform
+ boot	support from src.c
+In-Reply-To: <TY1PR01MB17702CAFA22A50A8B7AA62FAC00A0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <1533894782-26239-1-git-send-email-fabrizio.castro@bp.renesas.com>
+	<1533894782-26239-2-git-send-email-fabrizio.castro@bp.renesas.com>
+	<1535131724.2902.38.camel@codethink.co.uk>
+	<TY1PR01MB17702CAFA22A50A8B7AA62FAC00A0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+Message-ID: <TYXPR01MB1775D760CF6B7FDD86DCBCADC00C0@TYXPR01MB1775.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+Hello Ben,
 
-On Monday, 3 September 2018 07:50:22 WEST ???? / KAWAI?HIDEHIRO wrote:
-> Hello Agustin,
-> 
-> > > * TSC representatives from each company will be owners, as well as the tool admin, at group level.
-> > 
-> > I have applied Owner rights to the CIP group to the following people:
-> > * Jan K - Siemens
-> > * Yoshi - Toshiba
-> > * Takehisa K - Renesas
-> > * Sz Lin - Moxa
-> > * myself - Codethink
-> > *  - Hitachi
-> > * - Cybertrust
-> > * - Pla'Home
-> > 
-> > Who should I add from these three Members?
-> 
-> Could you add me (user name: h-kawai) as TSC representative from Hitachi?
+I am  sorry about the delay of my answer.
 
-Done
-
-> 
-> Best regards,
-> 
-> Hidehiro Kawai
-> Hitachi, Ltd. Research & Development Group
-> 
+> Subject: Re: [cip-dev] [PATCH 01/19] ASoC: rsnd: remove platform boot support from src.c
+>
+> Hello Ben,
+>
+>
+> Thank you for your feedback.
+>
 > > -----Original Message-----
-> > From: cip-dev-bounces at lists.cip-project.org <cip-dev-bounces@lists.cip-project.org> On Behalf Of Agustin Benito
-> > Bethencourt
-> > Sent: Thursday, August 30, 2018 6:19 PM
-> > To: cip-dev at lists.cip-project.org
-> > Subject: [!]Re: [cip-dev] Proposal: Gitlab role policy
-> > 
-> > Hi,
-> > 
-> > This is a summary of the application of the policy.
-> > 
-> > On Thursday, 9 August 2018 10:21:50 WEST Agust?n Benito Bethencourt wrote:
-> > > Hi,
+> > From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+> > Sent: 24 August 2018 18:29
+> > To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Cc: cip-dev at lists.cip-project.org; Chris Paterson <Chris.Paterson2@renesas.com>; Biju Das <biju.das@bp.renesas.com>
+> > Subject: Re: [PATCH 01/19] ASoC: rsnd: remove platform boot support from src.c
+> >
+> > On Fri, 2018-08-10 at 10:52 +0100, Fabrizio Castro wrote:
+> > > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 > > >
-> > > now that we have new kernel maintainers it might be time to pay a little attention  to the user permissions/roles policy
-> > at Gitlab.com.
+> > > No board is using Renesas sound driver via platform boot now.
+> > > This means all user is using DT boot. Platform boot support is
+> > > no longer needed. But, it strongly depends on platform boot style.
+> > > This patch removes platform boot support from src.c
 > > >
-> > > Some time ago we agreed to divide the different repositories in subgroups in preparation for this time. We can segment
-> > the permissions we provide to CIP contributors by subgroup. We have the following subgroups:
-> > > * 3rd party software (mostly related with testing for now (special case)
-> > > * cip-testing
-> > > * cip-kernel
-> > > * cip-core
-> > >
-> > > For simplicity, I suggest the following:
-> > > * TSC representatives from each company will be owners, as well as the tool admin, at group level.
-> > 
-> > I have applied Owner rights to the CIP group to the following people:
-> > * Jan K - Siemens
-> > * Yoshi - Toshiba
-> > * Takehisa K - Renesas
-> > * Sz Lin - Moxa
-> > * myself - Codethink
-> > *  - Hitachi
-> > * - Cybertrust
-> > * - Pla'Home
-> > 
-> > Who should I add from these three Members?
-> > 
-> > > * We will have no group maintainers by default since we will not have repos at this level but we will enclose them in
-> > subgroups. So at this group level we will provide Developer or Reporter roles only to CIP participants.
-> > 
-> > I have removed the Maintainers.
-> > 
-> > > * We assign the maintainer role to those who should have it, because they are responsible of a specific area, at subgroup
-> > level.
-> > 
-> > ** cip-testing subgroup:
-> > 
-> > There are no maintainers at a subgroup level. I have not changed anything here.
-> > 
-> > ** cip-kernel
-> > 
-> > bwh and iwamatsu have maintainers rights at subgroup level. I have not changed anything here. Please let me know if there
-> > are additional people who should be maintainers. Please remember that there are other maintainers but at a repo (project)
-> > level.
-> > 
-> > ** 3rd- party
-> > 
-> > There are no maintainers at a subgroup level. I have not changed anything here.
-> > 
-> > > * Specific people can hold the maintainer role at repo (project) level based on the subgroup maintainer decision.
-> > 
-> > cip-core is a repo and not a subgroup. I have not modified the roles to comply to the policy. I recommend first to move
-> > the repo into a subgroup so this effort can apply its own policies, labels, board structure or workflows without affecting
-> > others.
-> > 
-> > >
-> > > This simple policy can be extended as more people join.
-> > >
-> > > Best Regards
-> > >
-> > >
-> > 
-> > Best Regards
+> > > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> > > Signed-off-by: Mark Brown <broonie@kernel.org>
+> > > (cherry picked from commit adf6a6815952c6c6092ae15e27c1b782fd96c6a3)
+> > > (reworked to fit the context)
+> > [...]
+> >
+> > This isn't a sufficient explanation of the backporting change.  The
+> > upstream version appears to remove all use of struct
+> > rsnd_src_platform_info from the driver, but this version extends the
+> > use of that structure.
+
+r8a7745 doesn't have clock "src.0" leaving a gap in the clock names.
+The fix for this was made upstream with commit de1965159a34 ("rcar: src:
+skip disabled-SRC nodes"). This patch prepares the context for the fix,
+however since it is applied to quite a different version of the file
+it has been reworked to support the replacing of for_each_rsnd_src
+with for_each_child_of_node loop.
+
+I could try and backport lots more patches to get a cleaner history, but I fear
+that would actually make the code unstable.
+
+Do you have any recommendation for a better log?
+
+The other thing I could do is try and fix the problem in a different way
+without backporting any patch. What are your thoughts about this?
+
+Thanks,
+Fab
+
+>
+>
+> Will send a v2 to improve the description.
+>
+> Cheers,
+> Fab
+>
+> >
+> > Ben.
+> >
 > > --
-> > Agust?n Benito Bethencourt
-> > Principal Consultant
-> > Codethink Ltd
-> > We respect your privacy.   See
-> > https://clicktime.symantec.com/a/1/cZRl3u9FbI4Z8fStnZRhFy76EznwsKdpgzGMvzj_EA4=?d=ak3XbcvGccy-5_wze_f-C3aIlMwZLBXENy
-> > WLIBUd9UGEbSmYY2-mSx4Yh-67Oymj319OmVzK47zvdjinZba6EU3wCjMi5myuMPiEGVzW2Yjj8BBbJhcHIs-DpWbCEj71XD-7vXWptJLQF2uIlCBkTP
-> > Gn7CRp58nfASMYAypB2KP32iXUtEWG66_xVIfRIzMxd8UhVjAodDh4UUNARLy813lzJzAcWujBN71lVWxFwdjXEGxQxINm6tCqi_K_vJGLoOBxtRS_Tc
-> > q8p7qdOgzpIOPyd5JgAtSt6cCNeXOarInhuEipnN47XELFU33OMInKBA_deFl3NlLrIWT2KNK510C5tPVaFtq_-YdPWj0ssEx4A7rqGvo15QDmep9lWw
-> > 3P__5u&u=https%3A%2F%2Fwww.codethink.co.uk%2Fprivacy.html
-> > _______________________________________________
-> > cip-dev mailing list
-> > cip-dev at lists.cip-project.org
-> > https://clicktime.symantec.com/a/1/y7OElHgttAbHjaG0DrzHTY7PY8m02DW98eVSG_oA6zM=?d=ak3XbcvGccy-5_wze_f-C3aIlMwZLBXENy
-> > WLIBUd9UGEbSmYY2-mSx4Yh-67Oymj319OmVzK47zvdjinZba6EU3wCjMi5myuMPiEGVzW2Yjj8BBbJhcHIs-DpWbCEj71XD-7vXWptJLQF2uIlCBkTP
-> > Gn7CRp58nfASMYAypB2KP32iXUtEWG66_xVIfRIzMxd8UhVjAodDh4UUNARLy813lzJzAcWujBN71lVWxFwdjXEGxQxINm6tCqi_K_vJGLoOBxtRS_Tc
-> > q8p7qdOgzpIOPyd5JgAtSt6cCNeXOarInhuEipnN47XELFU33OMInKBA_deFl3NlLrIWT2KNK510C5tPVaFtq_-YdPWj0ssEx4A7rqGvo15QDmep9lWw
-> > 3P__5u&u=https%3A%2F%2Flists.cip-project.org%2Fmailman%2Flistinfo%2Fcip-dev
-> 
+> > Ben Hutchings, Software Developer                         Codethink Ltd
+> > https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+> >                                      Manchester, M1 2HF, United Kingdom
+>
+>
+>
+> Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, Buckinghamshire, SL8 5FH, UK. Registered in England &
+> Wales under Registered No. 04586709.
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
 
 
--- 
-Agust?n Benito Bethencourt
-Principal Consultant
-Codethink Ltd
-We respect your privacy.   See https://www.codethink.co.uk/privacy.html
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, Buckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered No. 04586709.
