@@ -1,55 +1,45 @@
-From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Thu, 13 Sep 2018 08:02:06 +0000
-Subject: [cip-dev] [PATCH 01/19] ASoC: rsnd: remove platform
- boot	support from src.c
-In-Reply-To: <1536774725.3024.201.camel@codethink.co.uk>
-References: <1533894782-26239-1-git-send-email-fabrizio.castro@bp.renesas.com>
-	<1533894782-26239-2-git-send-email-fabrizio.castro@bp.renesas.com>
-	<1535131724.2902.38.camel@codethink.co.uk>
-	<TY1PR01MB17702CAFA22A50A8B7AA62FAC00A0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-	<TYXPR01MB1775D760CF6B7FDD86DCBCADC00C0@TYXPR01MB1775.jpnprd01.prod.outlook.com>
-	<1536774725.3024.201.camel@codethink.co.uk>
-Message-ID: <TY1PR01MB1770CA54DB57630FD6121543C01A0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Thu, 13 Sep 2018 16:32:36 +0100
+Subject: [cip-dev] Can CIP have a group account in kernel.org
+In-Reply-To: <13123422.r87sqmyfEU@linux-if6s>
+References: <13123422.r87sqmyfEU@linux-if6s>
+Message-ID: <1536852756.3024.210.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Thank you Ben!
+On Thu, 2018-08-23 at 09:49 +0100, Agust?n Benito Bethencourt wrote:
+> Hi Ben,
+> 
+> it seems that LTSI[1] and XEN[2] has group accounts at kernel.org
+> 
+> At today's IRC meeting, some of the attendees were wondering if we
+> can also have one so we can transfer the kernel from your personal
+> account to the group account, having the new kernel maintainer as
+> "account admin". Is that possible? Do we need to ask somebody about
+> it?
 
-Cheers,
-Fab
+Sorry for the slow response.
 
-> Subject: Re: [cip-dev] [PATCH 01/19] ASoC: rsnd: remove platform boot support from src.c
->
-> On Mon, 2018-09-03 at 10:10 +0000, Fabrizio Castro wrote:
-> [...]
-> > > > This isn't a sufficient explanation of the backporting change.  The
-> > > > upstream version appears to remove all use of struct
-> > > > rsnd_src_platform_info from the driver, but this version extends the
-> > > > use of that structure.
-> >
-> > r8a7745 doesn't have clock "src.0" leaving a gap in the clock names.
-> > The fix for this was made upstream with commit de1965159a34 ("rcar: src:
-> > skip disabled-SRC nodes"). This patch prepares the context for the fix,
-> > however since it is applied to quite a different version of the file
-> > it has been reworked to support the replacing of for_each_rsnd_src
-> > with for_each_child_of_node loop.
-> >
-> > I could try and backport lots more patches to get a cleaner history, but I fear
-> > that would actually make the code unstable.
-> >
-> > Do you have any recommendation for a better log?
-> [...]
->
-> The above is roughly what I was looking for, so I've gone ahead and
-> replaced the upstream commit message.  Thanks.
->
-> Ben.
->
-> --
-> Ben Hutchings, Software Developer                         Codethink Ltd
-> https://www.codethink.co.uk/                 Dale House, 35 Dale Street
->                                      Manchester, M1 2HF, United Kingdom
+All members of a group need to already have kernel.org accounts.  The
+process for getting an account is described at
+<https://korg.wiki.kernel.org/userdoc/accounts>.  There is no guarantee
+that developers contracted to maintain the CIP kernel would be approved
+to get an account.  Getting the necessary PGP key signatures, which
+requires in-person meetings, could be difficult for some.
 
+My understanding is that there is no such thing as a group
+administrator.  Group membership is managed directly by the kernel.org
+administrators at the request of the existing members.  However, in my
+experience with the linux-firmware.git repository, Konstantin responds
+to these requests quickly.
 
+I understand the desire to have the CIP kernel hosted on
+git.kernel.org, to convey that we're part of the kernel development
+community.  But I'm not sure that it's actually worth the trouble.
 
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, Buckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered No. 04586709.
+Ben.
+
+-- 
+Ben Hutchings, Software Developer                ?        Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
