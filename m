@@ -1,31 +1,31 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Wed, 12 Sep 2018 21:25:32 +0100
-Subject: [cip-dev] Linux 4.4.154-cip28
-Message-ID: <1536783932.3024.208.camel@codethink.co.uk>
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Thu, 13 Sep 2018 01:27:56 +0000
+Subject: [cip-dev] CIP kernel IRC weekly meeting today
+Message-ID: <TY2PR0101MB252666101163B21F62DEF2F2E21A0@TY2PR0101MB2526.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-I've released Linux version 4.4.154-cip28.??A summary of the changes
-since 4.4.138-cip25:
+Hi All,
 
-- Add alignment quirk for USB network gadget drivers on Renesas USBHS,
-  so they can use DMA
-- Fix log level for an error message in PM/OPP core
-- Add support for critical clocks
-- Add support for the Renesas R8A7745 (RZ/G1E) and iW-RainboW-G22D
-- Merge fixes from stable versions 4.4.139-4.4.154 inclusive
-- Fix some stable regressions
+Kindly be reminded to attend weekly meeting through IRC to discuss technical topics with CIP kernel today.
+US-West US-East  UK     DE    TW     JP
+01:00    04:00   09:00   10:00   16:00   17:00
+Channel:
+* irc:chat.freenode.net:6667/cip
+Agenda:
+* Action item review
+  - https://irclogs.baserock.org/cip/%23cip.2018-08-30.log.html#t2018-08-30T08:30:12
+* Kernel maintenance updates
+* Kernel testing
+* AOB
 
-I also tagged two intermediate versions:
--?4.4.138-cip26: before merging from 4.4-stable
-- 4.4.154-cip27: missing R8A7745 sound support (which I accidentally
-  dropped while rebasing)
+The meeting will take 30 min although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
 
-Apologies for the long wait.
+Since I?ve meeting conflict today, Gavin Lai will chair this meeting.
 
-Ben.
+Best regards,
 
--- 
-Ben Hutchings, Software Developer                ?        Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+SZ Lin
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180913/e335cd89/attachment.html>
