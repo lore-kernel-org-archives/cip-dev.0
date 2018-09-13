@@ -1,31 +1,55 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 13 Sep 2018 01:27:56 +0000
-Subject: [cip-dev] CIP kernel IRC weekly meeting today
-Message-ID: <TY2PR0101MB252666101163B21F62DEF2F2E21A0@TY2PR0101MB2526.apcprd01.prod.exchangelabs.com>
+From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
+Date: Thu, 13 Sep 2018 08:02:06 +0000
+Subject: [cip-dev] [PATCH 01/19] ASoC: rsnd: remove platform
+ boot	support from src.c
+In-Reply-To: <1536774725.3024.201.camel@codethink.co.uk>
+References: <1533894782-26239-1-git-send-email-fabrizio.castro@bp.renesas.com>
+	<1533894782-26239-2-git-send-email-fabrizio.castro@bp.renesas.com>
+	<1535131724.2902.38.camel@codethink.co.uk>
+	<TY1PR01MB17702CAFA22A50A8B7AA62FAC00A0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+	<TYXPR01MB1775D760CF6B7FDD86DCBCADC00C0@TYXPR01MB1775.jpnprd01.prod.outlook.com>
+	<1536774725.3024.201.camel@codethink.co.uk>
+Message-ID: <TY1PR01MB1770CA54DB57630FD6121543C01A0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi All,
+Thank you Ben!
 
-Kindly be reminded to attend weekly meeting through IRC to discuss technical topics with CIP kernel today.
-US-West US-East  UK     DE    TW     JP
-01:00    04:00   09:00   10:00   16:00   17:00
-Channel:
-* irc:chat.freenode.net:6667/cip
-Agenda:
-* Action item review
-  - https://irclogs.baserock.org/cip/%23cip.2018-08-30.log.html#t2018-08-30T08:30:12
-* Kernel maintenance updates
-* Kernel testing
-* AOB
+Cheers,
+Fab
 
-The meeting will take 30 min although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
+> Subject: Re: [cip-dev] [PATCH 01/19] ASoC: rsnd: remove platform boot support from src.c
+>
+> On Mon, 2018-09-03 at 10:10 +0000, Fabrizio Castro wrote:
+> [...]
+> > > > This isn't a sufficient explanation of the backporting change.  The
+> > > > upstream version appears to remove all use of struct
+> > > > rsnd_src_platform_info from the driver, but this version extends the
+> > > > use of that structure.
+> >
+> > r8a7745 doesn't have clock "src.0" leaving a gap in the clock names.
+> > The fix for this was made upstream with commit de1965159a34 ("rcar: src:
+> > skip disabled-SRC nodes"). This patch prepares the context for the fix,
+> > however since it is applied to quite a different version of the file
+> > it has been reworked to support the replacing of for_each_rsnd_src
+> > with for_each_child_of_node loop.
+> >
+> > I could try and backport lots more patches to get a cleaner history, but I fear
+> > that would actually make the code unstable.
+> >
+> > Do you have any recommendation for a better log?
+> [...]
+>
+> The above is roughly what I was looking for, so I've gone ahead and
+> replaced the upstream commit message.  Thanks.
+>
+> Ben.
+>
+> --
+> Ben Hutchings, Software Developer                         Codethink Ltd
+> https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+>                                      Manchester, M1 2HF, United Kingdom
 
-Since I?ve meeting conflict today, Gavin Lai will chair this meeting.
 
-Best regards,
 
-SZ Lin
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180913/e335cd89/attachment.html>
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, Buckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered No. 04586709.
