@@ -1,26 +1,16 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Thu, 13 Sep 2018 17:31:42 +0100
-Subject: [cip-dev] Next Debian kernel: when will it be announced?
-In-Reply-To: <2887169.qepfFsszbe@linux-if6s>
-References: <2887169.qepfFsszbe@linux-if6s>
-Message-ID: <1536856302.3024.212.camel@codethink.co.uk>
+From: GavinCY.Lai@moxa.com (=?utf-8?B?R2F2aW4gQ1kgTGFpICjos7Tlu7rlrocp?=)
+Date: Fri, 14 Sep 2018 09:01:54 +0000
+Subject: [cip-dev]  CIP-dev IRC weekly meeting log: week 37
+Message-ID: <HK0PR01MB23238A04001017EA048C2F6889190@HK0PR01MB2323.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Thu, 2018-09-13 at 18:21 +0200, Agust?n Benito Bethencourt wrote:
-> Hi Ben,
-> 
-> do you know when approximately will the Debian project announce the
-> version of the new kernel?
+Hi,
 
-The Debian project will announce it when Debian 10 is released. :-)
-But the kernel team will obviously make the decision long before then. 
-I will propose to use 4.19 and I don't anticipate any disagreement with
-that.
+Please find the logs of CIP meeting this week in below link:
 
-Ben.
+https://irclogs.baserock.org/cip/%23cip.2018-09-13.log.html#t2018-09-13T08:01:27
 
--- 
-Ben Hutchings, Software Developer                ?        Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+Best regards,
+Gavin Lai
+Moxa
