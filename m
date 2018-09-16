@@ -1,74 +1,60 @@
-From: takuo.koguchi.sw@hitachi.com (=?utf-8?B?5bCP5Y+j55Ci5aSrIC8gS09HVUNISe+8jFRBS1VP?=)
-Date: Fri, 14 Sep 2018 21:15:31 +0000
-Subject: [cip-dev] Altera CIP branch vs. Denali NAND driver
-In-Reply-To: <b8b335cd-ed91-a520-0f3b-42cae5064623@siemens.com>
-References: <95cf4467-b48b-6a80-931c-a7f664048c6d@siemens.com>
-	<TYAPR01MB2160D07D4F9524CBF5A860D0D7470@TYAPR01MB2160.jpnprd01.prod.outlook.com>
-	<fd6af125-0a28-d4a5-85cc-13e94778c7be@siemens.com>
-	<TYAPR01MB21605130719706B6F02E8F78D7470@TYAPR01MB2160.jpnprd01.prod.outlook.com>
-	<2426c261-d153-24e3-4ce3-6cbf8f52d7c7@siemens.com>
-	<TYAPR01MB216052195F4D0BADFC698B29D7590@TYAPR01MB2160.jpnprd01.prod.outlook.com>
-	<5f005779-cbd2-430d-73a7-394696ff108a@siemens.com>
-	<TYAPR01MB2160616915C67118BF018AB0D7590@TYAPR01MB2160.jpnprd01.prod.outlook.com>
-	<TYAPR01MB216020E4806DE9DD3777D83ED7190@TYAPR01MB2160.jpnprd01.prod.outlook.com>,
-	<b8b335cd-ed91-a520-0f3b-42cae5064623@siemens.com>
-Message-ID: <532A3268-0497-4FF5-B107-E4EEEFE133B2@hitachi.com>
+From: zoran.stojsavljevic.de@gmail.com (Zoran S)
+Date: Sun, 16 Sep 2018 20:09:19 +0200
+Subject: [cip-dev] Next Debian kernel: when will it be announced?
+In-Reply-To: <1536856302.3024.212.camel@codethink.co.uk>
+References: <2887169.qepfFsszbe@linux-if6s>
+	<1536856302.3024.212.camel@codethink.co.uk>
+Message-ID: <CAEss1ELH7TP8Ot6a5=Q=A-B30p7Ef_Gak7pAQbRA8cGb5nN-4Q@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Jan,
+Hello ABB,
 
-Masaharu Yamada the maintainer of denali driver was reported this on 2018-09-12 by another user and the same fix likely comes to soon!
-https://www.spinics.net/lists/linux-mtd/msg01718.html
-
-Takuo
-
-2018/09/15 1:44?Jan Kiszka <jan.kiszka at siemens.com<mailto:jan.kiszka@siemens.com>>????:
-
-On 14.09.18 12:45, ???? / KOGUCHI?TAKUO wrote:
-Jan,
-Have you been making progress with this?
-I have confirmed that;
-(1) linux-4.13 and linux-4.14 works on my board without any modification to the denali driver.
-(2) linux-4.15 to linux-4.19-rc3 need a single extra line. I do not know a better fix.
-If you have an update, I would like to try it on my board.
-
-Marek may be able to comment on the details of your change better than I.
-
-We are using the queue now with some extensions. I need to dig them out and will try to refresh the queue I published.
-
-Thanks,
-Jan
-
-Best regard,
-Takuo
----------------------------------
-From: Takuo Koguchi <takuo.koguchi.sw at hitachi.com<mailto:takuo.koguchi.sw@hitachi.com>>
-Date: Fri, 14 Sep 2018 18:38:43 +0900
-Subject: [PATCH] MTD NAND Denali fix for Cyclonev
-Reading back DMA_ENABLE register just after enabling it, this is removed
-by commit: [586a2c52909df453ed1b6239283744b0851ccf81]
-mtd: nand: denali: squash denali_enable_dma() helper into caller
-Without this denali_wait_for_irq timeout for INTR__DMA_CMD_COMP.
-Signed-off-by: Takuo Koguchi <takuo.koguchi.sw at hitachi.com<mailto:takuo.koguchi.sw@hitachi.com>>
----
- drivers/mtd/nand/raw/denali.c | 1 +
- 1 file changed, 1 insertion(+)
-diff --git a/drivers/mtd/nand/raw/denali.c b/drivers/mtd/nand/raw/denali.c
-index 67b2065..4ba997b 100644
---- a/drivers/mtd/nand/raw/denali.c
-+++ b/drivers/mtd/nand/raw/denali.c
-@@ -596,6 +596,7 @@ static int denali_dma_xfer(struct denali_nand_info *denali, void *buf,
-     }
-       iowrite32(DMA_ENABLE__FLAG, denali->reg + DMA_ENABLE);
-+    ioread32(denali->reg + DMA_ENABLE);
-       denali_reset_irq(denali);
-     denali->setup_dma(denali, dma_addr, page, write);
+According what my best friend (google.com) in similar affairs says:
+https://linuxhint.com/debian-10-release-date/
 
 
---
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+
+*In a recent announcement, the Debian team stated, ?In order to minimize
+the freeze length, we have shortened the transition freeze by one month.?
+As such, the transition freeze of Debian 10 is planned on January 12, 2019,
+with Buster?s soft-freeze scheduled for February 12.?We do not have a fixed
+release date, but, given the cadence of previous releases, it is likely
+that the release date will be some time mid-2019.  We certainly hope to
+improve the length of the full freeze, and you can help with that by
+ensuring that you are ready for these milestones,? added the Debian team in
+the same announcement.*
+
+Best Regards,
+Zoran
+_______
+
+
+On Thu, Sep 13, 2018 at 6:31 PM Ben Hutchings <ben.hutchings@codethink.co.uk>
+wrote:
+
+> On Thu, 2018-09-13 at 18:21 +0200, Agust?n Benito Bethencourt wrote:
+> > Hi Ben,
+> >
+> > do you know when approximately will the Debian project announce the
+> > version of the new kernel?
+>
+> The Debian project will announce it when Debian 10 is released. :-)
+> But the kernel team will obviously make the decision long before then.
+> I will propose to use 4.19 and I don't anticipate any disagreement with
+> that.
+>
+> Ben.
+>
+> --
+> Ben Hutchings, Software Developer                         Codethink Ltd
+> https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+>                                      Manchester, M1 2HF, United Kingdom
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
+>
 -------------- next part --------------
 An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180914/38ae23aa/attachment.html>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20180916/b6e243f6/attachment.html>
