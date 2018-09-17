@@ -1,23 +1,58 @@
-From: wagi@monom.org (Daniel Wagner)
-Date: Mon, 17 Sep 2018 10:44:19 +0200
-Subject: [cip-dev] [ANNOUNCE] 4.4.154-cip28-rt20
-Message-ID: <20180917084420.87EFF500BBB@mail.monom.org>
+From: patryk.mungai-ndungu.kx@renesas.com (Patryk Mungai)
+Date: Mon, 17 Sep 2018 14:47:38 +0100
+Subject: [cip-dev] [PATCH] ARM: dts: r8a77(43|9[013]): Add missing OPP
+	properties for CPUs
+Message-ID: <1537192058-20997-1-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello CIP RT Folks!
+From: Viresh Kumar <viresh.kumar@linaro.org>
 
-I'm pleased to announce the 4.4.154-cip28-rt20 stable release.
+The OPP properties, like "operating-points", should either be present
+for all the CPUs of a cluster or none. If these are present only for a
+subset of CPUs of a cluster then things will start falling apart as soon
+as the CPUs are brought online in a different order. For example, this
+will happen because the operating system looks for such properties in
+the CPU node it is trying to bring up, so that it can create an OPP
+table.
 
-This release is just an update to the new stable 4.4.154-cip28 version
-and no RT specific changes have been made.
+Add such missing properties.
 
-You can get this release via the git tree at:
+Fix other missing properties (like, clock latency, voltage tolerance,
+etc) as well to make it all work.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/wagi/linux-cip-rt.git
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+(cherry picked from commit 8199e49ff1f654bbe8bed90fd6710bc097a89d02)
+(dropped changes to r8a779[013] SoCs dtsi)
+Signed-off-by: Patryk Mungai <patryk.mungai-ndungu.kx@renesas.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+---
+ arch/arm/boot/dts/r8a7743.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-  branch: linux-4.4.y-cip-rt
-  Head SHA1: f91c5e39c7d6c8abb875b51ee36df09e6d8e74fb
-
-Enjoy!
-   Daniel
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index c78de96..f41e3a5 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -66,7 +66,16 @@
+ 			reg = <1>;
+ 			clock-frequency = <1500000000>;
+ 			clocks = <&cpg_clocks R8A7743_CLK_Z>;
++			clock-latency = <300000>; /* 300 us */
+ 			next-level-cache = <&L2_CA15>;
++
++			/* kHz - uV - OPPs unknown yet */
++			operating-points = <1500000 1000000>,
++					   <1312500 1000000>,
++					   <1125000 1000000>,
++					   < 937500 1000000>,
++					   < 750000 1000000>,
++					   < 375000 1000000>;
+ 		};
+ 
+ 		L2_CA15: cache-controller-0 {
+-- 
+2.7.4
