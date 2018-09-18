@@ -1,58 +1,44 @@
-From: patryk.mungai-ndungu.kx@renesas.com (Patryk Mungai)
-Date: Mon, 17 Sep 2018 14:47:38 +0100
-Subject: [cip-dev] [PATCH] ARM: dts: r8a77(43|9[013]): Add missing OPP
-	properties for CPUs
-Message-ID: <1537192058-20997-1-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
+From: kazuhiro3.hayashi@toshiba.co.jp (Kazuhiro Hayashi)
+Date: Tue, 18 Sep 2018 04:10:10 +0000
+Subject: [cip-dev] [PATCH] spi: pxa2xx: Fix build error because of missing
+	header
+Message-ID: <1537243810-2074-1-git-send-email-kazuhiro3.hayashi@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Viresh Kumar <viresh.kumar@linaro.org>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-The OPP properties, like "operating-points", should either be present
-for all the CPUs of a cluster or none. If these are present only for a
-subset of CPUs of a cluster then things will start falling apart as soon
-as the CPUs are brought online in a different order. For example, this
-will happen because the operating system looks for such properties in
-the CPU node it is trying to bring up, so that it can create an OPP
-table.
+commit 089bd46d8bc1fe5a28351e82e4adcaa5a40121b5 upstream.
 
-Add such missing properties.
+Kbuild test robot reports:
 
-Fix other missing properties (like, clock latency, voltage tolerance,
-etc) as well to make it all work.
+  drivers/spi/spi-pxa2xx.c: In function ?setup_cs?:
+  drivers/spi/spi-pxa2xx.c:1190:20: error: implicit declaration of function ?desc_to_gpio?
+  ...
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 8199e49ff1f654bbe8bed90fd6710bc097a89d02)
-(dropped changes to r8a779[013] SoCs dtsi)
-Signed-off-by: Patryk Mungai <patryk.mungai-ndungu.kx@renesas.com>
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Reason for this is the fact that those functions are declared in
+linux/gpio/consumer.h which is not included in the driver. Fix this by
+including it.
+
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Kazuhiro Hayashi <kazuhiro3.hayashi@toshiba.co.jp>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/spi/spi-pxa2xx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index c78de96..f41e3a5 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -66,7 +66,16 @@
- 			reg = <1>;
- 			clock-frequency = <1500000000>;
- 			clocks = <&cpg_clocks R8A7743_CLK_Z>;
-+			clock-latency = <300000>; /* 300 us */
- 			next-level-cache = <&L2_CA15>;
-+
-+			/* kHz - uV - OPPs unknown yet */
-+			operating-points = <1500000 1000000>,
-+					   <1312500 1000000>,
-+					   <1125000 1000000>,
-+					   < 937500 1000000>,
-+					   < 750000 1000000>,
-+					   < 375000 1000000>;
- 		};
- 
- 		L2_CA15: cache-controller-0 {
+diff --git a/drivers/spi/spi-pxa2xx.c b/drivers/spi/spi-pxa2xx.c
+index 5e2ed7d..dd7b5b4 100644
+--- a/drivers/spi/spi-pxa2xx.c
++++ b/drivers/spi/spi-pxa2xx.c
+@@ -28,6 +28,7 @@
+ #include <linux/spi/spi.h>
+ #include <linux/delay.h>
+ #include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/slab.h>
+ #include <linux/clk.h>
+ #include <linux/pm_runtime.h>
 -- 
-2.7.4
+2.1.4
