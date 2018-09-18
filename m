@@ -1,17 +1,37 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Tue, 18 Sep 2018 07:18:57 +0200
+From: nobuhiro.iwamatsu@cybertrust.co.jp (nobuhiro.iwamatsu at cybertrust.co.jp)
+Date: Tue, 18 Sep 2018 07:07:41 +0000
 Subject: [cip-dev] [PATCH] spi: pxa2xx: Fix build error because of
  missing header
-In-Reply-To: <201809180425.w8I4PFGc005979@toshiba.co.jp>
+In-Reply-To: <a6f0bf07-7d99-9672-68d5-73f95f586723@siemens.com>
 References: <1537243810-2074-1-git-send-email-kazuhiro3.hayashi@toshiba.co.jp>
-	<201809180425.w8I4PFGc005979@toshiba.co.jp>
-Message-ID: <a6f0bf07-7d99-9672-68d5-73f95f586723@siemens.com>
+	<201809180425.w8I4PFGc005979@toshiba.co.jp>,
+	<a6f0bf07-7d99-9672-68d5-73f95f586723@siemens.com>
+Message-ID: <OSBPR01MB211716E3C2F945A9914235E9D21D0@OSBPR01MB2117.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
+Hi,
+
+>> Please consider to apply the patch to 4.4-cip as well.
+>>
+>> [1] https://lists.01.org/pipermail/kbuild-all/2016-September/025744.html
+>
+> We are building that config, and I just checked my last log for 138-cip25 -
+> nothing. Maybe it was surfaced by some change after that release.
+
+I could confirm with x86, arm does not have this problem.
+
+Best regards,
+  Nobuhiro
+________________________________________
+???: cip-dev-bounces at lists.cip-project.org <cip-dev-bounces@lists.cip-project.org> ? Jan Kiszka <jan.kiszka@siemens.com> ??????
+????: 2018?9?18? 14:18
+??: HAYASHI Kazuhiro; cip-dev at lists.cip-project.org
+??: Re: [cip-dev] [PATCH] spi: pxa2xx: Fix build error because of missing header
+
 On 18.09.18 06:25, HAYASHI Kazuhiro wrote:
 > Hi,
-> 
+>
 > On 2018/09/18 13:10, Kazuhiro Hayashi wrote:
 >> From: Mika Westerberg <mika.westerberg@linux.intel.com>
 >>
@@ -19,33 +39,37 @@ On 18.09.18 06:25, HAYASHI Kazuhiro wrote:
 >>
 >> Kbuild test robot reports:
 >>
->> ?? drivers/spi/spi-pxa2xx.c: In function ?setup_cs?:
->> ?? drivers/spi/spi-pxa2xx.c:1190:20: error: implicit declaration of function 
+>>    drivers/spi/spi-pxa2xx.c: In function ?setup_cs?:
+>>    drivers/spi/spi-pxa2xx.c:1190:20: error: implicit declaration of function
 >> ?desc_to_gpio?
->> ?? ...
+>>    ...
 > I got the above error when I enabled pxa2xx by
 > CONFIG_SPI_PXA2XX_DMA=y
 > CONFIG_SPI_PXA2XX=y
 > CONFIG_SPI_PXA2XX_PCI=y
 > and confirmed that the patch fixes the issue.
-> 
+>
 > Kernel version: 4.4.138-cip25-rt19
 > Architecture: x86_64
 > gcc: 4.9.2 (Debian 8)
-> 
+>
 > This issue seems to be caused by 3d3bc507 in CIP (99f499cd in upstream) [1],
 > and the patch is already merged in the upstream.
-> https://git.kernel.org/pub/scm/linux/kernel/git/bwh/linux-cip.git/commit/?id=3d3bc50700ba7e7c370229f20f0b3ddafc1562cd 
-> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/bwh/linux-cip.git/commit/?id=3d3bc50700ba7e7c370229f20f0b3ddafc1562cd
+>
 > Please consider to apply the patch to 4.4-cip as well.
-> 
+>
 > [1] https://lists.01.org/pipermail/kbuild-all/2016-September/025744.html
 
-We are building that config, and I just checked my last log for 138-cip25 - 
+We are building that config, and I just checked my last log for 138-cip25 -
 nothing. Maybe it was surfaced by some change after that release.
 
 Jan
 
--- 
+--
 Siemens AG, Corporate Technology, CT RDA IOT SES-DE
 Corporate Competence Center Embedded Linux
+_______________________________________________
+cip-dev mailing list
+cip-dev at lists.cip-project.org
+https://lists.cip-project.org/mailman/listinfo/cip-dev
