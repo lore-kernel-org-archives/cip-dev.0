@@ -1,100 +1,86 @@
-From: kazuhiro3.hayashi@toshiba.co.jp (Kazuhiro Hayashi)
-Date: Tue, 18 Sep 2018 17:16:00 +0900
-Subject: [cip-dev] [PATCH] spi: pxa2xx: Fix build error because of
- missing header
-In-Reply-To: <OSBPR01MB211716E3C2F945A9914235E9D21D0@OSBPR01MB2117.jpnprd01.prod.outlook.com>
-References: <1537243810-2074-1-git-send-email-kazuhiro3.hayashi@toshiba.co.jp>
-	<201809180425.w8I4PFGc005979@toshiba.co.jp>
-	<a6f0bf07-7d99-9672-68d5-73f95f586723@siemens.com>
-	<OSBPR01MB211716E3C2F945A9914235E9D21D0@OSBPR01MB2117.jpnprd01.prod.outlook.com>
-Message-ID: <c42e3d3b-22d0-427c-a231-5f06bbe37725@toshiba.co.jp>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Wed, 19 Sep 2018 14:32:49 +0100
+Subject: [cip-dev] DebConf trip report
+Message-ID: <1537363969.3024.234.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Jan, Nobuhiro,
+I attended DebConf (and the preceding DebCamp) in Taiwan in July-August 
+this year, and met developers from several of the other CIP members.
 
-Thank you for your confirmation.
+As a sponsor of the event, CIP had a table set up in an open area to
+promote itself (seen in <https://photos.app.goo.gl/mk9BdTAt3bHhtqVu6>).
+There was a fair amount of traffic to these tables, but I don't know
+how many people stopped to ask about CIP.
 
-The error occurs only when CONFIG_GPIOLIB=n,
-so the patch should be applied for such configs.
+---
 
-If CONFIG_GPIOLIB=y, pxa2xx.c indirectly includes <linux/gpio/consumer.h>:
-(linux/gpio.h => asm-generic/gpio.h => linux/gpio/consumer.h)
+The CIP developers present met to discuss future maintenance of kernel
+branches.  It was initially proposed that Nobuhiro Iwamatsu and others
+would take over maintenance of the 4.4 branch, while I would provide
+guidance to them as needed and would also start maintaining a new
+branch based on the next longterm stable kernel.
 
-Best regards,
-Kazu
+I said that I did not wish to take on a new branch myself, and that I
+thought having separate maintainers for the two branches would result
+in duplicated effort.  My experience with maintaining two stable
+branches at the same time is that much of the work done on one is
+directly applicable to the other, so it doesn't take nearly twice as
+much work as maintaining a single branch.  So I proposed instead that
+Iwamatsu-san and the other new maintainers should take on both 4.4 and
+the new branch, and I should only act as a mentor.  This was
+provisionally accepted.
 
-On 2018/09/18 16:07, nobuhiro.iwamatsu at cybertrust.co.jp wrote:
-> Hi,
-> 
->>> Please consider to apply the patch to 4.4-cip as well.
->>>
->>> [1] https://lists.01.org/pipermail/kbuild-all/2016-September/025744.html
->>
->> We are building that config, and I just checked my last log for 138-cip25 -
->> nothing. Maybe it was surfaced by some change after that release.
-> 
-> I could confirm with x86, arm does not have this problem.
-> 
-> Best regards,
->    Nobuhiro
-> ________________________________________
-> ???: cip-dev-bounces at lists.cip-project.org <cip-dev-bounces@lists.cip-project.org> ? Jan Kiszka <jan.kiszka@siemens.com> ??????
-> ????: 2018?9?18? 14:18
-> ??: HAYASHI Kazuhiro; cip-dev at lists.cip-project.org
-> ??: Re: [cip-dev] [PATCH] spi: pxa2xx: Fix build error because of missing header
-> 
-> On 18.09.18 06:25, HAYASHI Kazuhiro wrote:
->> Hi,
->>
->> On 2018/09/18 13:10, Kazuhiro Hayashi wrote:
->>> From: Mika Westerberg <mika.westerberg@linux.intel.com>
->>>
->>> commit 089bd46d8bc1fe5a28351e82e4adcaa5a40121b5 upstream.
->>>
->>> Kbuild test robot reports:
->>>
->>>     drivers/spi/spi-pxa2xx.c: In function ?setup_cs?:
->>>     drivers/spi/spi-pxa2xx.c:1190:20: error: implicit declaration of function
->>> ?desc_to_gpio?
->>>     ...
->> I got the above error when I enabled pxa2xx by
->> CONFIG_SPI_PXA2XX_DMA=y
->> CONFIG_SPI_PXA2XX=y
->> CONFIG_SPI_PXA2XX_PCI=y
->> and confirmed that the patch fixes the issue.
->>
->> Kernel version: 4.4.138-cip25-rt19
->> Architecture: x86_64
->> gcc: 4.9.2 (Debian 8)
->>
->> This issue seems to be caused by 3d3bc507 in CIP (99f499cd in upstream) [1],
->> and the patch is already merged in the upstream.
->> https://git.kernel.org/pub/scm/linux/kernel/git/bwh/linux-cip.git/commit/?id=3d3bc50700ba7e7c370229f20f0b3ddafc1562cd
->>
->> Please consider to apply the patch to 4.4-cip as well.
->>
->> [1] https://lists.01.org/pipermail/kbuild-all/2016-September/025744.html
-> 
-> We are building that config, and I just checked my last log for 138-cip25 -
-> nothing. Maybe it was surfaced by some change after that release.
-> 
-> Jan
-> 
-> --
-> Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-> Corporate Competence Center Embedded Linux
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
-> 
-> 
+---
 
+Yoshitake Kobayashi gave a talk about how Debian is used in civil
+infrastructure, and about CIP specifically:
+<https://debconf18.debconf.org/talks/112-civilization-runs-on-debian/>.
+The talk itself is probably not news to anyone on this list.  There
+were a fair number of attendees, who asked some interesting questions
+(starting at around 35 minutes into the video).
+
+Ian Jackson and Sean Whitton talked about a new tool called git-
+debrebase, which implements a new approach to managing patches in
+Debian packages
+<https://debconf18.debconf.org/talks/60-git-debrebase-new-tool-for-managing-debian-packaging-in-git/>.
+I think this has the potential to close the gap between normal git-
+based development and Debian source packaging, for those trying to do
+both.
+
+I organised a BoF on "Building Debian-based system images"
+<https://debconf18.debconf.org/talks/89-building-debian-based-system-images/>,
+mostly concerned with comparing the different tools available. ?The
+notes taken at this BoF are available at
+<https://gobby.debian.org/export/debconf18/bof/building-debian-images>
+and I intend to incorporate these into the Debian wiki later.
+
+Relatedly, Kazuhiro Hayashi talked about "Build tools for applying
+Debian to Embedded Systems"
+<https://debconf18.debconf.org/talks/159-build-tools-for-applying-debian-to-embedded-systems/>
+but I didn't attend.
+
+I gave my annual talk on "What's new in the Linux kernel"
+<https://debconf18.debconf.org/talks/91-whats-new-in-the-linux-kernel/>.
+This is mostly concerned with how kernel changes relate to the rest of
+the Debian system.
+
+I organised a BoF on "Backporting hardware support in Debian", but not
+many people participated in this.  There did not seem to be much
+interest in spending more effort on backporting changes in individual
+drivers.  It seems more likely that Debian will add support for
+installing a stable release together with a newer kernel version. 
+(This should not mean that the kernel team will refuse clean backports
+to the stable kernel version, though.)
+
+Steve McIntyre organised the regular BoF for Arm porters
+<https://debconf18.debconf.org/talks/93-arm-ports-bof/>, but I didn't
+attend it.  The notes taken at this BoF are at
+<https://gobby.debian.org/export/debconf18/bof/arm-ports>.
+
+Ben.
 
 -- 
-  Kazuhiro Hayashi
-  Corporate Software Engineering & Technology Center
-  Toshiba Corporation
-  Tel: +8144-549-2476
-  E-mail: kazuhiro3.hayashi at toshiba.co.jp
+Ben Hutchings, Software Developer                ?        Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
