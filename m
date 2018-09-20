@@ -1,51 +1,43 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Wed, 19 Sep 2018 17:48:11 +0100
-Subject: [cip-dev] Linux 4.4.154-cip28
-In-Reply-To: <5034259.PfxreIE8h7@linux-if6s>
-References: <1536783932.3024.208.camel@codethink.co.uk>
-	<5034259.PfxreIE8h7@linux-if6s>
-Message-ID: <1537375691.3024.237.camel@codethink.co.uk>
+From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
+Date: Thu, 20 Sep 2018 11:42:44 +0900
+Subject: [cip-dev] DebConf trip report
+In-Reply-To: <1537363969.3024.234.camel@codethink.co.uk>
+References: <1537363969.3024.234.camel@codethink.co.uk>
+Message-ID: <000601d4508b$9baab840$d30028c0$@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Wed, 2018-09-19 at 17:59 +0200, Agust?n Benito Bethencourt wrote:
-> Hi Ben,
-> 
-> On Wednesday, 12 September 2018 22:25:32 CEST Ben Hutchings wrote:
-> > I've released Linux version 4.4.154-cip28.??A summary of the changes
-> > since 4.4.138-cip25:
-> > 
-> > - Add alignment quirk for USB network gadget drivers on Renesas USBHS,
-> > ? so they can use DMA
-> > - Fix log level for an error message in PM/OPP core
-> > - Add support for critical clocks
-> > - Add support for the Renesas R8A7745 (RZ/G1E) and iW-RainboW-G22D
-> > - Merge fixes from stable versions 4.4.139-4.4.154 inclusive
-> > - Fix some stable regressions
-> > 
-> > I also tagged two intermediate versions:
-> > - 4.4.138-cip26: before merging from 4.4-stable
-> > - 4.4.154-cip27: missing R8A7745 sound support (which I accidentally
-> > ? dropped while rebasing)
-> > 
-> > Apologies for the long wait.
-> 
-> for those who are not following the kernel maintenance process
-> closely, what is the current state of the CIP kernel when it comes
-> to the mitigation of the L1 Terminal Fault[1]?
+Hello Ben,
 
-The initial mitigation for this was backported into 4.4.148.  Some
-fixes for that were applied in subsequent updates, including 4.4.154
-and 4.4.155.  I cherry-picked the two critical fixes from 4.4.155 into
-4.4.154-cip27, so I believe we have a complete and stable mitigation
-for this issue.
+Thank you very much for your report, I wish I had been there.
+Luckily, everything was videotaped.
 
-Ben.
+[...]
+> I said that I did not wish to take on a new branch myself, and that I
+> thought having separate maintainers for the two branches would result
+> in duplicated effort.  My experience with maintaining two stable
+> branches at the same time is that much of the work done on one is
+> directly applicable to the other, so it doesn't take nearly twice as
+> much work as maintaining a single branch.  So I proposed instead that
+> Iwamatsu-san and the other new maintainers should take on both 4.4 and
+> the new branch, and I should only act as a mentor.  This was
+> provisionally accepted.
 
-> [1] https://software.intel.com/security-software-guidance/software-guidance/l1-terminal-fault
-> 
-> Best Regards
--- 
-Ben Hutchings, Software Developer                ?        Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+That was a very good tip. Most of us were thinking that we would need separate maintainers for each kernel branch, but what you mention makes complete sense.
+
+> Ian Jackson and Sean Whitton talked about a new tool called git-
+> debrebase, which implements a new approach to managing patches in
+> Debian packages
+> <https://debconf18.debconf.org/talks/60-git-debrebase-new-tool-for-managing-d
+> ebian-packaging-in-git/>.
+> I think this has the potential to close the gap between normal git-
+> based development and Debian source packaging, for those trying to do
+> both.
+
+This tool looks very interesting.
+
+>From what I see in the link below, and correct me if I'm wrong, you are using quilt to manage the Debian patches for both the normal and the real-time version of the Debian kernel. Do you have any plans to move to git-debrebase?
+https://salsa.debian.org/kernel-team/linux/tree/master/debian
+
+Thanks,
+Daniel
