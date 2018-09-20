@@ -1,16 +1,29 @@
-From: GavinCY.Lai@moxa.com (=?utf-8?B?R2F2aW4gQ1kgTGFpICjos7Tlu7rlrocp?=)
-Date: Thu, 20 Sep 2018 08:35:31 +0000
-Subject: [cip-dev]  CIP-dev IRC weekly meeting log: week 38
-Message-ID: <HK0PR01MB23235C454BDEB61EE0CDDD5B89130@HK0PR01MB2323.apcprd01.prod.exchangelabs.com>
+From: yoshitake.kobayashi@gmail.com (Yoshitake Kobayashi)
+Date: Fri, 21 Sep 2018 01:06:28 +0900
+Subject: [cip-dev] TSC minutes not being published
+In-Reply-To: <2203098.jSrZHb4zJS@linux-if6s>
+References: <2203098.jSrZHb4zJS@linux-if6s>
+Message-ID: <CACbBqgV==mQ+9Ob13nNLqX2VAUgL4imX8RP+BVZS+7=K0rQE7w@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+Thanks for ping me. Uploaded.
 
-Please find the logs of CIP meeting this week in below link:
-
-https://irclogs.baserock.org/cip/%23cip.2018-09-20.log.html#t2018-09-20T08:00:35
-
-Best regards,
-Gavin Lai
-Moxa
+-- Yoshi
+On Thu, Sep 20, 2018 at 5:10 PM Agust?n Benito Bethencourt
+<agustin.benito@codethink.co.uk> wrote:
+>
+> Hi,
+>
+> it would be a good sign of transparency to publish the minutes of the TSC meetings. Check the current status: https://wiki.linuxfoundation.org/civilinfrastructureplatform/tsc-meetings
+>
+> Best Regards
+> --
+> Agust?n Benito Bethencourt
+> Principal Consultant
+> Codethink Ltd
+> We respect your privacy.   See https://www.codethink.co.uk/privacy.html
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
