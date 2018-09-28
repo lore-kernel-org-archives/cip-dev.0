@@ -1,19 +1,27 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 27 Sep 2018 14:41:21 +0000
-Subject: [cip-dev]  CIP-dev IRC weekly meeting log: week 39
-Message-ID: <TY2PR0101MB25268E682359860A4BE48808E2140@TY2PR0101MB2526.apcprd01.prod.exchangelabs.com>
+From: robert.marshall@codethink.co.uk (Robert Marshall)
+Date: Fri, 28 Sep 2018 11:13:36 +0100
+Subject: [cip-dev] iwg20m now working with b@d health checks
+Message-ID: <87tvmarktr.fsf@ctlt579.codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+Thanks to Nguyen Tan Loc who investigated the unreliability of iwg20m in
+the B at D LAVA health check
+https://gitlab.com/cip-project/cip-testing/testing/issues/186
+and suggested manually converting the zImage to a uImage using the
+correct address - this also worked for me and I've altered the
+device-type so that LAVA doesn't convert the zImage and uses that
+directly.
 
-Please find the logs of CIP meeting this week in below link:
+I've created a merge request:
+https://gitlab.com/cip-project/cip-testing/board-at-desk-single-dev/merge_requests/63
+and, so far, have had 6 consecutive test successes with that change.
+emails are now going to the cip-testing-results list for that board.
 
-https://irclogs.baserock.org/cip/%23cip.2018-09-27.log.html#t2018-09-27T08:00:17
+Thanks 
 
-We have 2 action items:
-
-#action SZ Lin create a wiki page for collaboration	
-#action Discuss patchwork item in TSC meeting	
-
-SZ Lin, Moxa
+Robert
+-- 
+Robert Marshall, Software Developer                       Codethink Ltd
+Telephone: +44 7762 840 414       3rd Floor, Dale House, 35 Dale Street
+https://www.codethink.co.uk/         MANCHESTER, M1 2HF. United Kingdom
