@@ -1,27 +1,23 @@
-From: agustin.benito@codethink.co.uk (=?ISO-8859-1?Q?Agust=EDn?= Benito Bethencourt)
-Date: Tue, 02 Oct 2018 09:50:42 +0200
-Subject: [cip-dev] CIP TSC: Minutes October 1, 2018
-In-Reply-To: <74336f25-8391-9fd8-866b-13661504bfdd@toshiba.co.jp>
-References: <74336f25-8391-9fd8-866b-13661504bfdd@toshiba.co.jp>
-Message-ID: <2038650.mlddPxj5IQ@linux-if6s>
+From: Lukas.Bulwahn@bmw-carit.de (Lukas Bulwahn)
+Date: Tue, 2 Oct 2018 18:53:16 +0000
+Subject: [cip-dev] Kernel configurations in the CIP project
+Message-ID: <6D182B05-3DE6-4377-9BFA-AF45139C9960@bmw-carit.de>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Yoshi,
+Hi Robert,
 
-On Tuesday, 2 October 2018 07:57:37 CEST KOBAYASHI Yoshitake wrote:
-> Hi CIP-dev members,
-> 
-> I have uploaded minutes for October 1st.
-> https://wiki.linuxfoundation.org/civilinfrastructureplatform/tsc-meetings/tsc_mm_oct012018
+If I recall our conversation and follow the discussion on cip-dev correctly, you are still maintaining the test builds and infrastructure from the CIP project, right?
 
-Thanks for taking care of this.
+Could you provide to Markus Kreidl, Nicholas McGuire (see CC) and me the kernel configurations you use in the test builds for the different CIP members?
 
-Best Regards
+Background:
 
+Markus Kreidl has written a tool that determines which patches, which hunks of those patches are relevant to a given configuration. We would be interested in providing an overview of which patches are especially relevant for the given configs of a new CIP kernel patchlevel release, and hence, the CIP maintainers (hopefully, it is not just Ben) are informed about those and can have a good look at those specific patches when they provide a new kernel release version.
 
--- 
-Agust?n Benito Bethencourt
-Principal Consultant
-Codethink Ltd
-We respect your privacy.   See https://www.codethink.co.uk/privacy.html
+If it useful, we would follow-up how to make that fit nicely into the existing review and reporting process. If it not useful, we learned a lesson about our tool.
+
+Best regards,
+
+Lukas
+?
