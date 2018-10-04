@@ -1,64 +1,80 @@
-From: robert.marshall@codethink.co.uk (Robert Marshall)
-Date: Thu, 04 Oct 2018 12:43:10 +0100
-Subject: [cip-dev] Kernel configurations in the CIP project
-In-Reply-To: <6D182B05-3DE6-4377-9BFA-AF45139C9960@bmw-carit.de> (Lukas
-	Bulwahn's message of "Tue, 2 Oct 2018 18:53:16 +0000")
-References: <6D182B05-3DE6-4377-9BFA-AF45139C9960@bmw-carit.de>
-Message-ID: <877eiyos35.fsf@ctlt579.codethink.co.uk>
+From: gitlab@mg.gitlab.com (Robert Marshall)
+Date: Thu, 04 Oct 2018 13:44:53 +0000
+Subject: [cip-dev]
+ [Git][cip-project/cip-testing/board-at-desk-single-dev][master] 2 commits:
+ Use zImage to fix the iwg20m health check failures #186
+Message-ID: <5bb6195519ff_1b513fcb3a3d88cc6071b2@sidekiq-asap-03-sv-gprd.mail>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Lukas
-
-Thanks for your email, comments below.
-
-Lukas Bulwahn <Lukas.Bulwahn@bmw-carit.de> writes:
-
-> Hi Robert,
->
-> If I recall our conversation and follow the discussion on cip-dev
-> correctly, you are still maintaining the test builds and
-> infrastructure from the CIP project, right?
->
-
-That's correct
-
-> Could you provide to Markus Kreidl, Nicholas McGuire (see CC) and me
-> the kernel configurations you use in the test builds for the different
-> CIP members?
->
-
-I'm using the kernel versions with the latest CIP tag, I use exactly
-the procedure described on this page
-
-https://wiki.linuxfoundation.org/civilinfrastructureplatform/cipsystembuildhowto#building-the-cip-kernel-with-kernel-ci
-
-building for the beaglebone black and the Renesas iwg20m board.
+Robert Marshall pushed to branch master at cip-project / cip-testing / board-at-desk-single-dev
 
 
-Robert
+Commits:
+924551c5 by Robert Marshall at 2018-09-28T09:26:20Z
+Use zImage to fix the iwg20m health check failures #186
 
-> Background:
->
-> Markus Kreidl has written a tool that determines which patches, which
-> hunks of those patches are relevant to a given configuration. We would
-> be interested in providing an overview of which patches are especially
-> relevant for the given configs of a new CIP kernel patchlevel release,
-> and hence, the CIP maintainers (hopefully, it is not just Ben) are
-> informed about those and can have a good look at those specific
-> patches when they provide a new kernel release version.
->
-> If it useful, we would follow-up how to make that fit nicely into the
-> existing review and reporting process. If it not useful, we learned a
-> lesson about our tool.
->
-> Best regards,
->
-> Lukas
-> ?
->
+LAVA converts the zImage to a uImage using bootm_kernel_addr
+which can cause iwg20m not to boot.
+
+- - - - -
+333024a2 by Robert Marshall at 2018-10-04T13:44:50Z
+Merge branch &#39;iwg20m-usezImage&#39; into &#39;master&#39;
+
+Use zImage to fix the iwg20m health check failures #186
+
+See merge request cip-project/cip-testing/board-at-desk-single-dev!63
+- - - - -
+
+
+2 changed files:
+
+- device-types/renesas-iwg20m.jinja2
+- tests/iwg20m-test-ramdisk.yaml
+
+
+Changes:
+
+=====================================
+device-types/renesas-iwg20m.jinja2
+=====================================
+@@ -4,11 +4,11 @@
+ {% set baud_rate = baud_rate|default(115200) %}
+ {% set device_type = "renesas-iwg20m" %}
+ {% set bootloader_prompt = bootloader_prompt|default('iWave-G20M >') %}
+-{% set kernel_file = kernel_file | default('uImage') %}
++{% set kernel_file = kernel_file | default('zImage') %}
+ {% set dtb_file = dtb_file | default('r8a7743-iwg20d-q7.dtb') %}
+-{% set bootm_kernel_addr = '0x40007fc0' %}
+-{% set bootm_ramdisk_addr = '0x41000000' %}
+-{% set bootm_dtb_addr = '0x40f00000' %}
++{% set bootz_kernel_addr = '0x40008000' %}
++{% set bootz_ramdisk_addr = '0x41000000' %}
++{% set bootz_dtb_addr = '0x40f00000' %}
+ {% set bootm_low = '0x41e00000' %}
+ {% set bootm_size = '0x100000' %}
+ {% set fdt_addr = '0x40f00000' %}
+
+
+=====================================
+tests/iwg20m-test-ramdisk.yaml
+=====================================
+@@ -47,7 +47,6 @@ actions:
+       - '\(initramfs\)'
+     method: u-boot
+     commands: ramdisk
+-    type: uimage
+     timeout:
+       minutes: 5
+ 
+
+
+
+View it on GitLab: https://gitlab.com/cip-project/cip-testing/board-at-desk-single-dev/compare/f6ac04206848442dff3b5f18880274d9f64df61b...333024a28086e6f98ec9b871d5467e0544c2ac9e
 
 -- 
-Robert Marshall, Software Developer                       Codethink Ltd
-Telephone: +44 7762 840 414       3rd Floor, Dale House, 35 Dale Street
-https://www.codethink.co.uk/         MANCHESTER, M1 2HF. United Kingdom
+View it on GitLab: https://gitlab.com/cip-project/cip-testing/board-at-desk-single-dev/compare/f6ac04206848442dff3b5f18880274d9f64df61b...333024a28086e6f98ec9b871d5467e0544c2ac9e
+You're receiving this email because of your account on gitlab.com.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20181004/5ee4abd4/attachment.html>
