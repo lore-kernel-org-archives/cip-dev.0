@@ -1,89 +1,40 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Thu, 04 Oct 2018 15:43:55 +0100
-Subject: [cip-dev] Kernel feature support
-In-Reply-To: <FAF29B5BFF9BF5439C88554EE7A20506F86B25E4@MHQMBX02.moxa.com>
-References: <FAF29B5BFF9BF5439C88554EE7A20506F86B25E4@MHQMBX02.moxa.com>
-Message-ID: <1538371468.3024.251.camel@codethink.co.uk>
+From: Lukas.Bulwahn@bmw-carit.de (Lukas Bulwahn)
+Date: Thu, 4 Oct 2018 21:48:27 +0000
+Subject: [cip-dev] Kernel configurations in the CIP project
+In-Reply-To: <1538661106.3024.266.camel@codethink.co.uk>
+References: <6D182B05-3DE6-4377-9BFA-AF45139C9960@bmw-carit.de>
+	<005801d45aa8$51f7b1e0$f5e715a0$@toshiba.co.jp>
+	<1538661106.3024.266.camel@codethink.co.uk>
+Message-ID: <735BF412-ED43-4A54-A825-078B1047D253@bmw-carit.de>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Sat, 2018-03-31 at 07:56 +0000, Wes Huang (???) wrote:
-> Hi,
-> ?
-> Sorry for the late reply.
-> ?
-> Please find attached a Moxa kernel configuration using CIP kernel
-> 4.4.
 
-And sorry for this extremely late response.
 
-I will recommend disabling various features.  I recognise that you may
-have applications that already require the features, and it may be
-impractical to change that.  But you should consider seriously that
-they may reduce the long-term security and reliability of those
-applications.
+?On 2018-10-04, 15:52, "Ben Hutchings" <ben.hutchings@codethink.co.uk> wrote:
 
-Filesystems: I recommend disabling btrfs (CONFIG_BTRFS_FS), ceph
-(CONFIG_CEPH_LIB, CONFIG_CEPH_FS), cifs (CONFIG_CIFS_FS), nfs
-(CONFIG_NFS_FS, CONFIG_NFSD), ntfs (CONFIG_NTFS_FS), and xfs
-(CONFIG_XFS_FS), for the reasons given in
-<https://lists.cip-project.org/pipermail/cip-dev/2017-May/000263.html>.
-I would add to that list afs (CONFIG_AFS_FS), coda (CONFIG_CODA_FS),
-gfs2 (CONFIG_GFS2_FS), ncpfs (CONFIG_NCPFS_FS), and ocfs2
-(CONFIG_OCFS2_FS) which have the same issue as the other network
-filesystems.
+    On Wed, 2018-10-03 at 08:33 +0900, Daniel Sangorrin wrote:
+    > Hello Lukas,
+    > 
+    > > -----Original Message-----
+    > > From: cip-dev-bounces at lists.cip-project.org
+    > > Hi Robert,
+    > > 
+    > > If I recall our conversation and follow the discussion on cip-dev correctly, you are still
+    > > maintaining the test builds and infrastructure from the CIP project, right?
+    > > 
+    > > Could you provide to Markus Kreidl, Nicholas McGuire (see CC) and me the kernel
+    > > configurations you use in the test builds for the different CIP members?
+    > 
+    > Not sure about the configs that Robert uses for testing, but the configurations from CIP members can be found here.
+    > https://gitlab.com/cip-project/cip-kernel/cip-kernel-config
+    [...]
+    
+    I think these are the configurations that Lukas needs - they are the
+    configurations that should be used for determining whether commits are
+    relevant to CIP.
+    
+Thanks for all the responses. I believe Markus Kreidl is already looking how he can produce useful information for the cip releases and those configs.
+ 
 
-Network protocols: I recommend disabling batman-adv
-(CONFIG_BATMAN_ADV), dcb (CONFIG_DCB), hsr (CONFIG_HSR), phonet
-(CONFIG_PHONET), sctp (CONFIG_IP_SCTP), for the reasons given in
-<https://lists.cip-project.org/pipermail/cip-dev/2017-May/000263.html>.
-I would now add to the list dccp (CONFIG_IP_DCCP), which has a poor
-security record.
-
-Storage drivers: I recommend disabling dm-cache (CONFIG_DM_CACHE),
-dm-switch (CONFIG_DM_SWITCH), MD multipath (CONFIG_MD_MULTIPATH) for
-the reasons given in
-<https://lists.cip-project.org/pipermail/cip-dev/2017-July/000387.html>.
-
-Network drivers: I recommend disabling USB-attached network drivers
-and wireless networking if possible, for the reasons given in
-<https://lists.cip-project.org/pipermail/cip-dev/2017-July/000387.html>.
-
-I recommend disabling CONFIG_DEVKMEM and CONFIG_DEVMEM, for the reasons
-given in
-<https://lists.cip-project.org/pipermail/cip-dev/2017-July/000387.html>.
-
-I recommend enabling the kernel stack protector (either
-CONFIG_CC_STACKPROTECTOR_REGULAR or CONFIG_CC_STACKPROTECTOR_STRONG)
-and enabling heap address randomisation for user-space by default, by
-*disabling* CONFIG_COMPAT_BRK.
-
-I recommend enabling module symbol versioning (CONFIG_MODVERSIONS) in
-order to catch mistakes.
-
-Since you have CONFIG_PERF_EVENTS enabled, consider restricting use of
-performance events to privileged users.  (This requires a patch that
-was not accepted upstream, so unfortunately it's not suitable for CIP
-kernel branches.  It's in the Debian and Android kernel sources.)
-
-I recommend disabling obsolete system calls (CONFIG_SYSFS_SYSCALL,
-CONFIG_UID16, and CONFIG_USELIB).
-
-You have user namespaces (CONFIG_USER_NS) enabled.  Consider disabling
-it or restricting creation of user namespaces to privileged users. 
-(This also requires a patch that was not accepted upstream.  It's in
-the Debian kernel sources.)
-
-I recommend enabling linked list debug checks (CONFIG_LIST_DEBUG),
-which can make it harder to exploit some bugs.
-
-I recommend disabling timer statistics (CONFIG_TIMER_STATS).  This
-feature has been removed upstream, so is not maintainable.??Apparently
-there are tracepoints that provide similar functionality.?
-
-Ben. 
-
--- 
-Ben Hutchings, Software Developer                ?        Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+Lukas
