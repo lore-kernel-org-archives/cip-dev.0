@@ -1,80 +1,37 @@
-From: gitlab@mg.gitlab.com (Robert Marshall)
-Date: Thu, 04 Oct 2018 13:44:53 +0000
-Subject: [cip-dev]
- [Git][cip-project/cip-testing/board-at-desk-single-dev][master] 2 commits:
- Use zImage to fix the iwg20m health check failures #186
-Message-ID: <5bb6195519ff_1b513fcb3a3d88cc6071b2@sidekiq-asap-03-sv-gprd.mail>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Thu, 04 Oct 2018 14:51:46 +0100
+Subject: [cip-dev] Kernel configurations in the CIP project
+In-Reply-To: <005801d45aa8$51f7b1e0$f5e715a0$@toshiba.co.jp>
+References: <6D182B05-3DE6-4377-9BFA-AF45139C9960@bmw-carit.de>
+	<005801d45aa8$51f7b1e0$f5e715a0$@toshiba.co.jp>
+Message-ID: <1538661106.3024.266.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Robert Marshall pushed to branch master at cip-project / cip-testing / board-at-desk-single-dev
+On Wed, 2018-10-03 at 08:33 +0900, Daniel Sangorrin wrote:
+> Hello Lukas,
+> 
+> > -----Original Message-----
+> > From: cip-dev-bounces at lists.cip-project.org
+> > Hi Robert,
+> > 
+> > If I recall our conversation and follow the discussion on cip-dev correctly, you are still
+> > maintaining the test builds and infrastructure from the CIP project, right?
+> > 
+> > Could you provide to Markus Kreidl, Nicholas McGuire (see CC) and me the kernel
+> > configurations you use in the test builds for the different CIP members?
+> 
+> Not sure about the configs that Robert uses for testing, but the configurations from CIP members can be found here.
+> https://gitlab.com/cip-project/cip-kernel/cip-kernel-config
+[...]
 
+I think these are the configurations that Lukas needs - they are the
+configurations that should be used for determining whether commits are
+relevant to CIP.
 
-Commits:
-924551c5 by Robert Marshall at 2018-09-28T09:26:20Z
-Use zImage to fix the iwg20m health check failures #186
-
-LAVA converts the zImage to a uImage using bootm_kernel_addr
-which can cause iwg20m not to boot.
-
-- - - - -
-333024a2 by Robert Marshall at 2018-10-04T13:44:50Z
-Merge branch &#39;iwg20m-usezImage&#39; into &#39;master&#39;
-
-Use zImage to fix the iwg20m health check failures #186
-
-See merge request cip-project/cip-testing/board-at-desk-single-dev!63
-- - - - -
-
-
-2 changed files:
-
-- device-types/renesas-iwg20m.jinja2
-- tests/iwg20m-test-ramdisk.yaml
-
-
-Changes:
-
-=====================================
-device-types/renesas-iwg20m.jinja2
-=====================================
-@@ -4,11 +4,11 @@
- {% set baud_rate = baud_rate|default(115200) %}
- {% set device_type = "renesas-iwg20m" %}
- {% set bootloader_prompt = bootloader_prompt|default('iWave-G20M >') %}
--{% set kernel_file = kernel_file | default('uImage') %}
-+{% set kernel_file = kernel_file | default('zImage') %}
- {% set dtb_file = dtb_file | default('r8a7743-iwg20d-q7.dtb') %}
--{% set bootm_kernel_addr = '0x40007fc0' %}
--{% set bootm_ramdisk_addr = '0x41000000' %}
--{% set bootm_dtb_addr = '0x40f00000' %}
-+{% set bootz_kernel_addr = '0x40008000' %}
-+{% set bootz_ramdisk_addr = '0x41000000' %}
-+{% set bootz_dtb_addr = '0x40f00000' %}
- {% set bootm_low = '0x41e00000' %}
- {% set bootm_size = '0x100000' %}
- {% set fdt_addr = '0x40f00000' %}
-
-
-=====================================
-tests/iwg20m-test-ramdisk.yaml
-=====================================
-@@ -47,7 +47,6 @@ actions:
-       - '\(initramfs\)'
-     method: u-boot
-     commands: ramdisk
--    type: uimage
-     timeout:
-       minutes: 5
- 
-
-
-
-View it on GitLab: https://gitlab.com/cip-project/cip-testing/board-at-desk-single-dev/compare/f6ac04206848442dff3b5f18880274d9f64df61b...333024a28086e6f98ec9b871d5467e0544c2ac9e
+Ben.
 
 -- 
-View it on GitLab: https://gitlab.com/cip-project/cip-testing/board-at-desk-single-dev/compare/f6ac04206848442dff3b5f18880274d9f64df61b...333024a28086e6f98ec9b871d5467e0544c2ac9e
-You're receiving this email because of your account on gitlab.com.
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20181004/5ee4abd4/attachment.html>
+Ben Hutchings, Software Developer                ?        Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
