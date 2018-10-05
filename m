@@ -1,38 +1,29 @@
-From: der.herr@hofr.at (Nicholas Mc Guire)
-Date: Fri, 5 Oct 2018 04:10:38 +0000
-Subject: [cip-dev] Kernel configurations in the CIP project
-In-Reply-To: <1538661106.3024.266.camel@codethink.co.uk>
-References: <6D182B05-3DE6-4377-9BFA-AF45139C9960@bmw-carit.de>
-	<005801d45aa8$51f7b1e0$f5e715a0$@toshiba.co.jp>
-	<1538661106.3024.266.camel@codethink.co.uk>
-Message-ID: <20181005041038.GB30868@osadl.at>
+From: robert.marshall@codethink.co.uk (Robert Marshall)
+Date: Fri, 05 Oct 2018 16:26:01 +0100
+Subject: [cip-dev] cip-dev progress report weeks 39-40
+Message-ID: <87bm88o1o6.fsf@ctlt579.codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Thu, Oct 04, 2018 at 02:51:46PM +0100, Ben Hutchings wrote:
-> On Wed, 2018-10-03 at 08:33 +0900, Daniel Sangorrin wrote:
-> > Hello Lukas,
-> > 
-> > > -----Original Message-----
-> > > From: cip-dev-bounces at lists.cip-project.org
-> > > Hi Robert,
-> > > 
-> > > If I recall our conversation and follow the discussion on cip-dev correctly, you are still
-> > > maintaining the test builds and infrastructure from the CIP project, right?
-> > > 
-> > > Could you provide to Markus Kreidl, Nicholas McGuire (see CC) and me the kernel
-> > > configurations you use in the test builds for the different CIP members?
-> > 
-> > Not sure about the configs that Robert uses for testing, but the configurations from CIP members can be found here.
-> > https://gitlab.com/cip-project/cip-kernel/cip-kernel-config
-> [...]
-> 
-> I think these are the configurations that Lukas needs - they are the
-> configurations that should be used for determining whether commits are
-> relevant to CIP.
->
-ok - we started playing with them the siemens iot config seems very large to me is that
-a designed config or did that "happen" ?
+Hi! Reporting on the Codethink CIP testing development over the
+past 2 weeks.
 
-thx!
-hofrat
+CIP kernel testing
+
+   - A provisioned box with the latest master is in preparation and
+     should be available early next week.
+
+Renesas Board
+
+   - The iwg20m board now works reliably with board at desk an MR
+     having been made and accepted - thanks to Nguyen for assistance with this.
+
+Health Checks
+   - Regular health checks are now performed with the iwg20m board as
+      well as the beaglebone.
+
+Robert
+-- 
+Robert Marshall, Software Developer                       Codethink Ltd
+Telephone: +44 7762 840 414       3rd Floor, Dale House, 35 Dale Street
+https://www.codethink.co.uk/         MANCHESTER, M1 2HF. United Kingdom
