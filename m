@@ -1,29 +1,32 @@
-From: robert.marshall@codethink.co.uk (Robert Marshall)
-Date: Fri, 05 Oct 2018 16:26:01 +0100
-Subject: [cip-dev] cip-dev progress report weeks 39-40
-Message-ID: <87bm88o1o6.fsf@ctlt579.codethink.co.uk>
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Mon, 8 Oct 2018 09:56:18 +0000
+Subject: [cip-dev]  CIP-dev IRC weekly meeting log: week 40
+Message-ID: <TY2PR0101MB252639F463EB4DC78C475B73E2E60@TY2PR0101MB2526.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi! Reporting on the Codethink CIP testing development over the
-past 2 weeks.
+Hi,
 
-CIP kernel testing
 
-   - A provisioned box with the latest master is in preparation and
-     should be available early next week.
 
-Renesas Board
+Sorry for the late, please find the logs of CIP meeting last week in below link:
 
-   - The iwg20m board now works reliably with board at desk an MR
-     having been made and accepted - thanks to Nguyen for assistance with this.
 
-Health Checks
-   - Regular health checks are now performed with the iwg20m board as
-      well as the beaglebone.
 
-Robert
--- 
-Robert Marshall, Software Developer                       Codethink Ltd
-Telephone: +44 7762 840 414       3rd Floor, Dale House, 35 Dale Street
-https://www.codethink.co.uk/         MANCHESTER, M1 2HF. United Kingdom
+https://irclogs.baserock.org/cip/%23cip.2018-10-04.log.html#t2018-10-04T08:00:06
+
+
+
+We have 1 action item:
+
+
+
+#action patersonc will apply patchwork for CIP kernel maintenance team
+
+
+
+SZ Lin, Moxa
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20181008/34b16743/attachment.html>
