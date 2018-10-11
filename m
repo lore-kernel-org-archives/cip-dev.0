@@ -1,62 +1,32 @@
-From: chris.paterson2@renesas.com (Chris Paterson)
-Date: Thu, 11 Oct 2018 21:40:03 +0100
-Subject: [cip-dev] [PATCH] ARM: dts: r8a77(43|9[013]): Add missing OPP
-	properties for CPUs
-Message-ID: <1539290403-5450-1-git-send-email-chris.paterson2@renesas.com>
+From: Chris.Paterson2@renesas.com (Chris Paterson)
+Date: Thu, 11 Oct 2018 20:51:28 +0000
+Subject: [cip-dev] cip-dev Patchwork
+Message-ID: <TYAPR01MB2285CC7FCE2B66D7099CC9DDB7E10@TYAPR01MB2285.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Viresh Kumar <viresh.kumar@linaro.org>
+Hello all,
 
-commit 8199e49ff1f654bbe8bed90fd6710bc097a89d02 upstream.
+We now have a working instance of Patchwork for the cip-dev mailing list.
 
-The OPP properties, like "operating-points", should either be present
-for all the CPUs of a cluster or none. If these are present only for a
-subset of CPUs of a cluster then things will start falling apart as soon
-as the CPUs are brought online in a different order. For example, this
-will happen because the operating system looks for such properties in
-the CPU node it is trying to bring up, so that it can create an OPP
-table.
+>From the Patchwork documentation:
+"Patchwork is a patch tracking system for community-based projects. It is intended to make the patch management process easier for both the project's contributors and maintainers, leaving time for the more important (and more interesting) stuff.
 
-Add such missing properties.
+Patches that have been sent to a mailing list are 'caught' by the system, and appear on a web page. Any comments posted that reference the patch are appended to the patch page too. The project's maintainer can then scan through the list of patches, marking each with a certain state, such as Accepted, Rejected or Under Review. Old patches can be sent to the archive or deleted."
 
-Fix other missing properties (like, clock latency, voltage tolerance,
-etc) as well to make it all work.
+Submitted patches should automatically be picked up and listed on kernel.org [1].
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Full documentation on how to use Patchwork is available on readthedocs [2].
 
-[Backport to CIP: dropped changes to r8a779[013] SoCs dtsi]
-Signed-off-by: Patryk Mungai <patryk.mungai-ndungu.kx@renesas.com>
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
----
-Resending this patch to test patchwork (and because it needs reviewing).
----
- arch/arm/boot/dts/r8a7743.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Acked-by/Reviewed-by/Tested-by tags should automatically be picked up through cip-dev.
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index c78de96bfc29e47a..f41e3a5cdf9c053d 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -66,7 +66,16 @@
- 			reg = <1>;
- 			clock-frequency = <1500000000>;
- 			clocks = <&cpg_clocks R8A7743_CLK_Z>;
-+			clock-latency = <300000>; /* 300 us */
- 			next-level-cache = <&L2_CA15>;
-+
-+			/* kHz - uV - OPPs unknown yet */
-+			operating-points = <1500000 1000000>,
-+					   <1312500 1000000>,
-+					   <1125000 1000000>,
-+					   < 937500 1000000>,
-+					   < 750000 1000000>,
-+					   < 375000 1000000>;
- 		};
- 
- 		L2_CA15: cache-controller-0 {
--- 
-1.9.1
+Maintainers can mark patches as accepted/rejected/under review etc. If you'd like to be a maintainer please let myself or Iwamatsu-san know.
+
+
+[1] https://patchwork.kernel.org/project/cip-dev/list/
+[2] https://patchwork.readthedocs.io/en/latest/
+
+Kind regards, Chris
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20181011/8ce33feb/attachment.html>
