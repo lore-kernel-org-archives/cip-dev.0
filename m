@@ -1,18 +1,19 @@
-From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
-Date: Mon, 15 Oct 2018 13:42:44 +0900
-Subject: [cip-dev]  wiki updates
-Message-ID: <013601d46441$83d7b230$8b871690$@toshiba.co.jp>
+From: patryk.mungai-ndungu.kx@renesas.com (Patryk Mungai)
+Date: Mon, 15 Oct 2018 11:23:26 +0100
+Subject: [cip-dev] [PATCH 0/2] Add PMU support to iwg2[02]m
+Message-ID: <1539599008-8382-1-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello all,
+Backport PMU support for iwg2[02]m to the CIP Kernel from mainline.
 
-I have added a few updates to the wiki [1]. In particular:
-- Added a link to the kernel configuration files sent by all members
-- Added links to Ben's kernel configuration suggestions.
-- Added a link to our new patchwork website (thanks Chris!)
+Geert Uytterhoeven (2):
+  ARM: dts: r8a7745: Add PMU device node
+  ARM: dts: r8a7743: Add PMU device node
 
-Best regards,
-Daniel
+ arch/arm/boot/dts/r8a7743.dtsi | 7 +++++++
+ arch/arm/boot/dts/r8a7745.dtsi | 7 +++++++
+ 2 files changed, 14 insertions(+)
 
-[1] https://wiki.linuxfoundation.org/civilinfrastructureplatform/cipkernelmaintenance#maintenance-scope
+-- 
+2.7.4
