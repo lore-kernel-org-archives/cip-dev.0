@@ -1,67 +1,30 @@
-From: jernstfriedman@linuxfoundation.org (jernstfriedman at linuxfoundation.org)
-Date: Mon, 15 Oct 2018 22:20:58 +0000
-Subject: [cip-dev] Invitation: CIP: F2F - TSC Meeting @ Sun Oct 21,
- 2018 7am - 10am (PDT) (cip-dev@lists.cip-project.org)
-Message-ID: <000000000000fcaa4705784bd9ce@google.com>
+From: jernstfriedman@linuxfoundation.org (Jeff ErnstFriedman)
+Date: Mon, 15 Oct 2018 15:21:19 -0700
+Subject: [cip-dev] f2f TSC Meeting in Scotland on Sunday
+Message-ID: <CAEeDQDEbbioXh_7T7Bqyg5Dq5pQnDd7rr2ov=hN-f5sb_Wrubw@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-You have been invited to the following event.
+Dear members of the CIP community.
 
-Title: CIP: F2F - TSC Meeting
-Topic: CIP: F2F - TSC Meeting
+I created an invite with the videoconference details and shared with
+members/dev email lists. I did the same with the board meeting meeting that
+will immediately proceed for those that pertains to.
 
 
-Join from PC, Mac, Linux, iOS or Android: https://zoom.us/j/135813681
+   - *IF you would like me to extend an invite to anyone for the TSC
+   meeting* please let me know ASAP.
 
-Or iPhone one-tap :
-     US: +16699006833,,135813681#  or +16465588656,,135813681#
-Or Telephone:
-     Dial(for higher quality, dial a number based on your current location):
-         US: +1 669 900 6833  or +1 646 558 8656  or +1 877 369 0926 (Toll  
-Free) or +1 855 880 1246 (Toll Free)
-     Meeting ID: 135 813 681
-     International numbers available: https://zoom.us/u/aez3uoLO8E
-When: Sun Oct 21, 2018 7am ? 10am Pacific Time - Los Angeles
-Where: Edinburgh International Conference Centre, 150 Morrison St,  
-Edinburgh EH3 8EE, UK - Carrick 2 Suite
-Calendar: cip-dev at lists.cip-project.org
-Who:
-     * jernstfriedman at linuxfoundation.org - organizer
-     * findlay.shearer at intel.com
-     * cip-members at lists.cip-project.org
-     * cip-dev at lists.cip-project.org
 
-Event details:  
-https://www.google.com/calendar/event?action=VIEW&eid=M3V0ZXFoMDRxNW1pZmU2dGFjcXE2bmRxdGwgY2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmc&tok=MzQjamVybnN0ZnJpZWRtYW5AbGludXhmb3VuZGF0aW9uLm9yZzVmYjAxNjU4ZmY0MTQ5Y2ExYjAxNzc3ZmJlOTc1NTdiNzcxZDQ4YzI&ctz=America%2FLos_Angeles&hl=en&es=0
+Excited to see everyone and meet the new members next week.
 
-Invitation from Google Calendar: https://www.google.com/calendar/
 
-You are receiving this courtesy email at the account  
-cip-dev at lists.cip-project.org because you are an attendee of this event.
-
-To stop receiving future updates for this event, decline this event.  
-Alternatively you can sign up for a Google account at  
-https://www.google.com/calendar/ and control your notification settings for  
-your entire calendar.
-
-Forwarding this invitation could allow any recipient to modify your RSVP  
-response. Learn more at  
-https://support.google.com/calendar/answer/37135#forwarding
+*Jeff ErnstFriedman*
+*jernstfriedman at linuxfoundation.org <jernstfriedman@linuxfoundation.org> *
+*2201 Broadway #M05, Oakland, CA 94612*
+*mobile: 510.593.1367*
+*skype: jeffrey.ernstfriedman*
+*twitter: @namdeirf*
 -------------- next part --------------
 An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20181015/deb23a53/attachment.html>
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: not available
-Type: text/calendar
-Size: 2352 bytes
-Desc: not available
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20181015/deb23a53/attachment.ics>
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: invite.ics
-Type: application/ics
-Size: 2399 bytes
-Desc: not available
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20181015/deb23a53/attachment.bin>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20181015/ea551a3a/attachment-0001.html>
