@@ -1,22 +1,28 @@
-From: robert.marshall@codethink.co.uk (Robert Marshall)
-Date: Fri, 19 Oct 2018 11:42:41 +0100
-Subject: [cip-dev] Update - progress summary June-Oct '18
-Message-ID: <87woqemd3y.fsf@ctlt579.codethink.co.uk>
+From: agustin.benito@codethink.co.uk (=?ISO-8859-1?Q?Agust=EDn?= Benito Bethencourt)
+Date: Sat, 20 Oct 2018 22:23:40 +0100
+Subject: [cip-dev] CIP activities panel
+In-Reply-To: <002101d4677f$d4ccdc10$7e669430$@toshiba.co.jp>
+References: <002101d4677f$d4ccdc10$7e669430$@toshiba.co.jp>
+Message-ID: <30201277.TcC8zjZEDM@linux-if6s>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Here's a summary of board at desk kernel testing progress in the last 4
-months:
+Hi,
 
-- The Renesas iwg20m board is now working with board-at-desk.
-- Regular heath checks on both the beaglebone black and iwg20m are being
-     performed and results being sent to the cip-testing-results email list.
-- Work is proceeding on moving board-at-desk to docker containers.
-- Journal at - https://wiki.linuxfoundation.org/civilinfrastructureplatform/journal
-  Issues recorded here - https://gitlab.com/cip-project/cip-testing/testing/issues
+On Friday, 19 October 2018 08:46:22 BST Daniel Sangorrin wrote:
+> Hi all,
+> 
+> I have prepared a small panel to show at ELCE. Please let me know if you want to add or modify something.
 
-Robert
+You might want to add that CIP is a Linux Foundation Initiative. For some potential new Members, it could be a nice tag.
+
+Thanks for the effort.
+
+Best Regards
+
+
 -- 
-Robert Marshall, Software Developer                       Codethink Ltd
-Telephone: +44 7762 840 414       3rd Floor, Dale House, 35 Dale Street
-https://www.codethink.co.uk/         MANCHESTER, M1 2HF. United Kingdom
+Agust?n Benito Bethencourt
+Principal Consultant
+Codethink Ltd
+We respect your privacy.   See https://www.codethink.co.uk/privacy.html
