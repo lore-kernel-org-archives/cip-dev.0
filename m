@@ -1,28 +1,53 @@
-From: agustin.benito@codethink.co.uk (=?ISO-8859-1?Q?Agust=EDn?= Benito Bethencourt)
-Date: Sat, 20 Oct 2018 22:23:40 +0100
-Subject: [cip-dev] CIP activities panel
-In-Reply-To: <002101d4677f$d4ccdc10$7e669430$@toshiba.co.jp>
-References: <002101d4677f$d4ccdc10$7e669430$@toshiba.co.jp>
-Message-ID: <30201277.TcC8zjZEDM@linux-if6s>
+From: sz.lin@moxa.com (=?UTF-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Sun, 21 Oct 2018 15:49:13 +0800
+Subject: [cip-dev] [PATCH 1/2] ARM: dts: r8a7745: Add PMU device node
+In-Reply-To: <1539599008-8382-2-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
+References: <1539599008-8382-1-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
+	<1539599008-8382-2-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
+Message-ID: <CAFk6z8PO4U+9Tkh3P_v7VSp8nV8tPQk7kX8+26WHZZeDQL3QdQ@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi,
 
-On Friday, 19 October 2018 08:46:22 BST Daniel Sangorrin wrote:
-> Hi all,
-> 
-> I have prepared a small panel to show at ELCE. Please let me know if you want to add or modify something.
+>
+> [Backport to CIP]
 
-You might want to add that CIP is a Linux Foundation Initiative. For some potential new Members, it could be a nice tag.
+I suggest to address what you've modified from the upstream patch, it
+would be helpful for maintainer's review task.
 
-Thanks for the effort.
+For example: [Context changes]
 
-Best Regards
+Just my two cents.
 
-
--- 
-Agust?n Benito Bethencourt
-Principal Consultant
-Codethink Ltd
-We respect your privacy.   See https://www.codethink.co.uk/privacy.html
+> Signed-off-by: Patryk Mungai <patryk.mungai-ndungu.kx@renesas.com>
+> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+> ---
+>  arch/arm/boot/dts/r8a7745.dtsi | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+> index 69b383c..54b556b 100644
+> --- a/arch/arm/boot/dts/r8a7745.dtsi
+> +++ b/arch/arm/boot/dts/r8a7745.dtsi
+> @@ -93,6 +93,13 @@
+>                 };
+>         };
+>
+> +       pmu {
+> +               compatible = "arm,cortex-a7-pmu";
+> +               interrupts-extended = <&gic GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
+> +                                     <&gic GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
+> +               interrupt-affinity = <&cpu0>, <&cpu1>;
+> +       };
+> +
+>         soc {
+>                 compatible = "simple-bus";
+>                 interrupt-parent = <&gic>;
+> --
+> 2.7.4
+>
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
