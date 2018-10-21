@@ -1,43 +1,37 @@
 From: sz.lin@moxa.com (=?UTF-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Sun, 21 Oct 2018 15:49:13 +0800
-Subject: [cip-dev] [PATCH 1/2] ARM: dts: r8a7745: Add PMU device node
-In-Reply-To: <1539599008-8382-2-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
+Date: Sun, 21 Oct 2018 15:50:20 +0800
+Subject: [cip-dev] [PATCH 2/2] ARM: dts: r8a7743: Add PMU device node
+In-Reply-To: <1539599008-8382-3-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
 References: <1539599008-8382-1-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
-	<1539599008-8382-2-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
-Message-ID: <CAFk6z8PO4U+9Tkh3P_v7VSp8nV8tPQk7kX8+26WHZZeDQL3QdQ@mail.gmail.com>
+	<1539599008-8382-3-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
+Message-ID: <CAFk6z8PbY4a1ziWb0SqzjSmV1vPAUKkw4hUX-hp-qN6MPxbvEQ@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi,
 
->
 > [Backport to CIP]
 
-I suggest to address what you've modified from the upstream patch, it
-would be helpful for maintainer's review task.
-
-For example: [Context changes]
-
-Just my two cents.
+Ditto.
 
 > Signed-off-by: Patryk Mungai <patryk.mungai-ndungu.kx@renesas.com>
 > Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 > ---
->  arch/arm/boot/dts/r8a7745.dtsi | 7 +++++++
+>  arch/arm/boot/dts/r8a7743.dtsi | 7 +++++++
 >  1 file changed, 7 insertions(+)
 >
-> diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-> index 69b383c..54b556b 100644
-> --- a/arch/arm/boot/dts/r8a7745.dtsi
-> +++ b/arch/arm/boot/dts/r8a7745.dtsi
-> @@ -93,6 +93,13 @@
+> diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+> index c78de96..264c8e0 100644
+> --- a/arch/arm/boot/dts/r8a7743.dtsi
+> +++ b/arch/arm/boot/dts/r8a7743.dtsi
+> @@ -76,6 +76,13 @@
 >                 };
 >         };
 >
 > +       pmu {
-> +               compatible = "arm,cortex-a7-pmu";
-> +               interrupts-extended = <&gic GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
-> +                                     <&gic GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
+> +               compatible = "arm,cortex-a15-pmu";
+> +               interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
+> +                                     <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
 > +               interrupt-affinity = <&cpu0>, <&cpu1>;
 > +       };
 > +
