@@ -1,20 +1,20 @@
 From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Mon, 22 Oct 2018 09:17:46 +0100
-Subject: [cip-dev] Rebased 4.4 kernel branch
-Message-ID: <1540196266.4503.16.camel@codethink.co.uk>
+Date: Mon, 22 Oct 2018 12:15:27 +0100
+Subject: [cip-dev] CIP activities panel
+In-Reply-To: <002101d4677f$d4ccdc10$7e669430$@toshiba.co.jp>
+References: <002101d4677f$d4ccdc10$7e669430$@toshiba.co.jp>
+Message-ID: <1540206927.4503.17.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Yesterday we discussed how to find the changes in the 4.4-cip branch
-relative to 4.4-stable.  To this end, I rebased our changes on v4.4.154
-(the last version I merged into the -cip branch).  I pushed the result
-to the linux-4.4.y-cip-rebase branch:
-<https://git.kernel.org/pub/scm/linux/kernel/git/bwh/linux-cip.git/log/?h=linux-4.4.y-cip-rebase>.
-The tree is identical to v4.4.154-cip28 but duplicate commits were
-dropped and I squashed together all the version updates together.
+On Fri, 2018-10-19 at 16:46 +0900, Daniel Sangorrin wrote:
+> Hi all,
+> 
+> I have prepared a small panel to show at ELCE. Please let me know if
+> you want to add or modify something.
 
-I don't think this is something that needs to be maintained, but it can
-provide a basis for summarising the changes we have currently.
+It's probably too late now, but for the IRC contact you need to specify
+the network (Freenode) as well as the channel name.
 
 Ben.
 
