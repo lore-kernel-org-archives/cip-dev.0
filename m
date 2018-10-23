@@ -1,21 +1,48 @@
 From: patryk.mungai-ndungu.kx@renesas.com (Patryk Mungai)
-Date: Tue, 23 Oct 2018 15:30:33 +0100
-Subject: [cip-dev] [PATCH 0/2] Add PMU support to iwg2[02]m
-Message-ID: <1540305035-22457-1-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
+Date: Tue, 23 Oct 2018 15:30:34 +0100
+Subject: [cip-dev] [PATCH 1/2] ARM: dts: r8a7745: Add PMU device node
+In-Reply-To: <1540305035-22457-1-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
+References: <1540305035-22457-1-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
+Message-ID: <1540305035-22457-2-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Backport PMU support for iwg2[02]m to the CIP Kernel from mainline.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Removed [Backported to CIP] from original patches
+Commit 9562a6b1d0f6a287f5dda16a4538526c59408927 upstream.
 
-Geert Uytterhoeven (2):
-  ARM: dts: r8a7745: Add PMU device node
-  ARM: dts: r8a7743: Add PMU device node
+Enable support for the ARM Performance Monitor Units in the Cortex-A7
+CPU cores on RZ/G1E by adding a device node for the PMU.
 
- arch/arm/boot/dts/r8a7743.dtsi | 7 +++++++
+New Linux output:
+
+    hw perfevents: enabled with armv7_cortex_a7 PMU driver, 5 counters available
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Patryk Mungai <patryk.mungai-ndungu.kx@renesas.com>
+Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+---
  arch/arm/boot/dts/r8a7745.dtsi | 7 +++++++
- 2 files changed, 14 insertions(+)
+ 1 file changed, 7 insertions(+)
 
+diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
+index 69b383c..54b556b 100644
+--- a/arch/arm/boot/dts/r8a7745.dtsi
++++ b/arch/arm/boot/dts/r8a7745.dtsi
+@@ -93,6 +93,13 @@
+ 		};
+ 	};
+ 
++	pmu {
++		compatible = "arm,cortex-a7-pmu";
++		interrupts-extended = <&gic GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&cpu0>, <&cpu1>;
++	};
++
+ 	soc {
+ 		compatible = "simple-bus";
+ 		interrupt-parent = <&gic>;
 -- 
 2.7.4
