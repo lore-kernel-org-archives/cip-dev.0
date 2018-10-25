@@ -1,48 +1,49 @@
-From: patryk.mungai-ndungu.kx@renesas.com (Patryk Mungai)
-Date: Tue, 23 Oct 2018 15:30:35 +0100
-Subject: [cip-dev] [PATCH 2/2] ARM: dts: r8a7743: Add PMU device node
-In-Reply-To: <1540305035-22457-1-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
-References: <1540305035-22457-1-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
-Message-ID: <1540305035-22457-3-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Thu, 25 Oct 2018 02:12:38 +0000
+Subject: [cip-dev] CIP kernel IRC weekly meeting today
+Message-ID: <HK0PR01MB29793167AC55456164CE05E5E2F70@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi All,
 
-Commit fe60e933b053f00e53cd01fe323f25ebe8fecd52 upstream.
 
-Enable support for the ARM Performance Monitor Units in the Cortex-A15
-CPU cores on RZ/G1M by adding a device node for the PMU.
 
-New Linux output:
+Kindly be reminded to attend weekly meeting through IRC to discuss technical topics with CIP kernel today.
 
-    hw perfevents: enabled with armv7_cortex_a15 PMU driver, 7 counters available
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Patryk Mungai <patryk.mungai-ndungu.kx@renesas.com>
-Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
----
- arch/arm/boot/dts/r8a7743.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index c78de96..264c8e0 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -76,6 +76,13 @@
- 		};
- 	};
- 
-+	pmu {
-+		compatible = "arm,cortex-a15-pmu";
-+		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&cpu0>, <&cpu1>;
-+	};
-+
- 	soc {
- 		compatible = "simple-bus";
- 		interrupt-parent = <&gic>;
--- 
-2.7.4
+US-West US-East  UK    DE     TW     JP
+
+01:00    04:00   09:00   10:00   16:00   17:00
+
+
+
+Channel:
+
+* irc:chat.freenode.net:6667/cip
+
+
+
+Agenda:
+
+* Kernel maintenance updates
+
+* Kernel testing
+
+* AOB
+
+
+
+The meeting will take 30 min although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
+
+
+
+Best regards,
+
+
+
+SZ Lin
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20181025/559722af/attachment.html>
