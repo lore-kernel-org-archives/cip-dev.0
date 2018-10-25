@@ -1,30 +1,47 @@
-From: nobuhiro.iwamatsu@miraclelinux.com (Nobuhiro Iwamatsu)
-Date: Thu, 25 Oct 2018 15:43:46 +0900
-Subject: [cip-dev] [PATCH 0/2] Add PMU support to iwg2[02]m
-In-Reply-To: <1540305035-22457-1-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
-References: <1540305035-22457-1-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
-Message-ID: <CAGDrK-ZgvA3vyw4X4rQStfvm47iU0+qJtu72U7RU=srnSMcQ6g@mail.gmail.com>
+From: iwamatsu@nigauri.org (Nobuhiro Iwamatsu)
+Date: Thu, 25 Oct 2018 15:52:29 +0900
+Subject: [cip-dev] Rebased 4.4 kernel branch
+In-Reply-To: <1540196266.4503.16.camel@codethink.co.uk>
+References: <1540196266.4503.16.camel@codethink.co.uk>
+Message-ID: <CABMQnV+WeKwGTd3eUe322AJCQ3DC487ZfWcTHVzn52ThTdyeDw@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi, Patryk.
+Hi, Ben.
 
-2018?10?23?(?) 23:30 Patryk Mungai <patryk.mungai-ndungu.kx@renesas.com>:
->
-> Backport PMU support for iwg2[02]m to the CIP Kernel from mainline.
->
-> Removed [Backported to CIP] from original patches
->
-> Geert Uytterhoeven (2):
->   ARM: dts: r8a7745: Add PMU device node
->   ARM: dts: r8a7743: Add PMU device node
->
->  arch/arm/boot/dts/r8a7743.dtsi | 7 +++++++
->  arch/arm/boot/dts/r8a7745.dtsi | 7 +++++++
->  2 files changed, 14 insertions(+)
->
-
-Applied to linux-4.4.y-cip, thanks.
+Thanks for your work.
+I also synced this branch to cip repository.
 
 Best regards,
   Nobuhiro
+
+2018?10?22?(?) 17:17 Ben Hutchings <ben.hutchings@codethink.co.uk>:
+>
+> Yesterday we discussed how to find the changes in the 4.4-cip branch
+> relative to 4.4-stable.  To this end, I rebased our changes on v4.4.154
+> (the last version I merged into the -cip branch).  I pushed the result
+> to the linux-4.4.y-cip-rebase branch:
+> <https://git.kernel.org/pub/scm/linux/kernel/git/bwh/linux-cip.git/log/?h=linux-4.4.y-cip-rebase>.
+> The tree is identical to v4.4.154-cip28 but duplicate commits were
+> dropped and I squashed together all the version updates together.
+>
+> I don't think this is something that needs to be maintained, but it can
+> provide a basis for summarising the changes we have currently.
+>
+> Ben.
+>
+> --
+> Ben Hutchings, Software Developer                         Codethink Ltd
+> https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+>                                      Manchester, M1 2HF, United Kingdom
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
+
+
+
+-- 
+Nobuhiro Iwamatsu
+   iwamatsu at {nigauri.org / debian.org}
+   GPG ID: 40AD1FA6
