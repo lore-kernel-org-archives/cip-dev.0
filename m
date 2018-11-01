@@ -1,37 +1,40 @@
-From: robert.marshall@codethink.co.uk (Robert Marshall)
-Date: Thu, 01 Nov 2018 10:42:16 +0000
+From: agustin.benito@codethink.co.uk (=?ISO-8859-1?Q?Agust=EDn?= Benito Bethencourt)
+Date: Thu, 01 Nov 2018 12:04:03 +0100
 Subject: [cip-dev] IRC logger down?
-In-Reply-To: <TYAPR01MB22854AEFD0047EEEF1555EEBB7CE0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-	(Chris Paterson's message of "Thu, 1 Nov 2018 10:24:32 +0000")
+In-Reply-To: <874ld1hyev.fsf@ctlt579.codethink.co.uk>
 References: <TYAPR01MB22854AEFD0047EEEF1555EEBB7CE0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-Message-ID: <874ld1hyev.fsf@ctlt579.codethink.co.uk>
+	<874ld1hyev.fsf@ctlt579.codethink.co.uk>
+Message-ID: <7521143.K5AAHm3Ef1@linux-if6s>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Broken for me too!
+Hi,
 
-Chris Paterson <Chris.Paterson2@renesas.com> writes:
+On Thursday, 1 November 2018 11:42:16 CET Robert Marshall wrote:
+> Broken for me too!
+> 
+> Chris Paterson <Chris.Paterson2@renesas.com> writes:
+> 
+> > Hello all,
+> >
+> >  
+> >
+> > Is anyone else getting a 503 error when trying to view the CIP irclogs?
+> >
+> > https://irclogs.baserock.org/cip/
+> >
+> >  
+> >
+> > 503 Service Unavailable
+> >
+> > No server is available to handle this request.
 
-> Hello all,
->
->  
->
-> Is anyone else getting a 503 error when trying to view the CIP irclogs?
->
-> https://irclogs.baserock.org/cip/
->
->  
->
-> 503 Service Unavailable
->
-> No server is available to handle this request.
->
->  
->
-> Regards, Chris
->
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
->
+I just reported it internally at Codethink to get it back.
+
+Best Regards
+
+-- 
+Agust?n Benito Bethencourt
+Principal Consultant
+Codethink Ltd
+We respect your privacy.   See https://www.codethink.co.uk/privacy.html
