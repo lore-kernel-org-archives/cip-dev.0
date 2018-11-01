@@ -1,40 +1,26 @@
-From: agustin.benito@codethink.co.uk (=?ISO-8859-1?Q?Agust=EDn?= Benito Bethencourt)
-Date: Thu, 01 Nov 2018 12:04:03 +0100
-Subject: [cip-dev] IRC logger down?
-In-Reply-To: <874ld1hyev.fsf@ctlt579.codethink.co.uk>
-References: <TYAPR01MB22854AEFD0047EEEF1555EEBB7CE0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-	<874ld1hyev.fsf@ctlt579.codethink.co.uk>
-Message-ID: <7521143.K5AAHm3Ef1@linux-if6s>
+From: robert.marshall@codethink.co.uk (Robert Marshall)
+Date: Thu, 01 Nov 2018 15:20:16 +0000
+Subject: [cip-dev] Slide for CIP presentation at Open Source Summit
+	Europe 2018
+In-Reply-To: <fec36648-eeb5-cb0c-9a6e-79e04bb6cfd6@toshiba.co.jp> (KOBAYASHI
+	Yoshitake's message of "Tue, 23 Oct 2018 18:19:31 +0900")
+References: <fec36648-eeb5-cb0c-9a6e-79e04bb6cfd6@toshiba.co.jp>
+Message-ID: <87k1lwhljj.fsf@ctlt579.codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp> writes:
 
-On Thursday, 1 November 2018 11:42:16 CET Robert Marshall wrote:
-> Broken for me too!
-> 
-> Chris Paterson <Chris.Paterson2@renesas.com> writes:
-> 
-> > Hello all,
-> >
-> >  
-> >
-> > Is anyone else getting a 503 error when trying to view the CIP irclogs?
-> >
-> > https://irclogs.baserock.org/cip/
-> >
-> >  
-> >
-> > 503 Service Unavailable
-> >
-> > No server is available to handle this request.
+> Hi All,
+>
+> I have uploaded the slide for OSSE ath the following URL:
+>   https://schd.ws/hosted_files/osseu18/9b/2018-10-22_CIP_OSSEU18.pdf
+>
+> In this presentation, we show how CIP works with upstream projects.
+> Please take a look.
+>
 
-I just reported it internally at Codethink to get it back.
+Another comment - I think on slide 20 - the text bubble 2/3s of the way
+down - should read 'mentored by Ben Hutchings'
 
-Best Regards
-
--- 
-Agust?n Benito Bethencourt
-Principal Consultant
-Codethink Ltd
-We respect your privacy.   See https://www.codethink.co.uk/privacy.html
+Robert
