@@ -1,35 +1,19 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 1 Nov 2018 03:43:28 +0000
-Subject: [cip-dev] CIP kernel IRC weekly meeting today
-Message-ID: <HK0PR01MB29790EB3958B19CAB3F774D6E2CE0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+From: Chris.Paterson2@renesas.com (Chris Paterson)
+Date: Thu, 1 Nov 2018 10:24:32 +0000
+Subject: [cip-dev] IRC logger down?
+Message-ID: <TYAPR01MB22854AEFD0047EEEF1555EEBB7CE0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi All,
+Hello all,
 
-Kindly be reminded to attend weekly meeting through IRC to discuss technical topics with CIP kernel today.
+Is anyone else getting a 503 error when trying to view the CIP irclogs?
+https://irclogs.baserock.org/cip/
 
-*Please note that  IRC meeting is rescheduled to 18:00 (JST) starting from first week of Nov. according F2F meeting discussion in ELCE.*
+503 Service Unavailable
+No server is available to handle this request.
 
-US-West US-East? UK??? DE???? TW???? JP
-02:00??? 05:00?? 09:00?? 10:00?? 17:00?? 18:00
-
-Channel:
-* irc:chat.freenode.net:6667/cip
-
-Agenda:
-* Kernel maintenance updates
-* Kernel testing
-* AOB
-
-The meeting will take 30 min although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
-
-Agusin,
-
-Could you please resend the meeting invitation with new schedule?
-
-Thanks.
-
-Best regards,
-
-SZ Lin
+Regards, Chris
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20181101/9ccce490/attachment.html>
