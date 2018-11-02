@@ -1,26 +1,24 @@
 From: robert.marshall@codethink.co.uk (Robert Marshall)
-Date: Thu, 01 Nov 2018 15:20:16 +0000
-Subject: [cip-dev] Slide for CIP presentation at Open Source Summit
-	Europe 2018
-In-Reply-To: <fec36648-eeb5-cb0c-9a6e-79e04bb6cfd6@toshiba.co.jp> (KOBAYASHI
-	Yoshitake's message of "Tue, 23 Oct 2018 18:19:31 +0900")
-References: <fec36648-eeb5-cb0c-9a6e-79e04bb6cfd6@toshiba.co.jp>
-Message-ID: <87k1lwhljj.fsf@ctlt579.codethink.co.uk>
+Date: Fri, 02 Nov 2018 10:12:22 +0000
+Subject: [cip-dev] personal announcement
+Message-ID: <87ftwjhjp5.fsf@ctlt579.codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp> writes:
+Hi!
 
-> Hi All,
->
-> I have uploaded the slide for OSSE ath the following URL:
->   https://schd.ws/hosted_files/osseu18/9b/2018-10-22_CIP_OSSEU18.pdf
->
-> In this presentation, we show how CIP works with upstream projects.
-> Please take a look.
->
+Some may have already heard - but to make it generally known - I shall
+be retiring from here and Codethink at the end of this month. I've
+enjoyed the last 18 months working with CIP but, on my 67th birthday
+yesterday, am looking forward to taking things a little easier.
 
-Another comment - I think on slide 20 - the text bubble 2/3s of the way
-down - should read 'mentored by Ben Hutchings'
+Thanks to all who have been of assistance to me and I wish the project
+much success. I'm hoping to spend my leisure on more musical activities
+some hill walking and maybe some gentle open source activity.
 
-Robert
+Robert 
+-- 
+Robert Marshall, Software Developer                       Codethink Ltd
+Personal twitter a/c: @rajm
+Telephone: +44 7762 840 414       3rd Floor, Dale House, 35 Dale Street
+https://www.codethink.co.uk/         MANCHESTER, M1 2HF. United Kingdom
