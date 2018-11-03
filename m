@@ -1,24 +1,75 @@
-From: robert.marshall@codethink.co.uk (Robert Marshall)
-Date: Fri, 02 Nov 2018 10:12:22 +0000
-Subject: [cip-dev] personal announcement
-Message-ID: <87ftwjhjp5.fsf@ctlt579.codethink.co.uk>
+From: wminer@linuxfoundation.org (Walt Miner)
+Date: Sat, 3 Nov 2018 08:11:32 -0400
+Subject: [cip-dev] IRC logger down?
+In-Reply-To: <7521143.K5AAHm3Ef1@linux-if6s>
+References: <TYAPR01MB22854AEFD0047EEEF1555EEBB7CE0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+	<874ld1hyev.fsf@ctlt579.codethink.co.uk>
+	<7521143.K5AAHm3Ef1@linux-if6s>
+Message-ID: <CAC_dYdp0eet0D9d86i2zcRck908EuxJjO-JP4h2zVQrjzo+nYg@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi!
+The #automotive irc logger has been down since August. I figure it was a
+side effect of the freenode spam problem. I changed the topic in
+#automotive to not include a link to the logger. If you get it back up and
+running let me know.
 
-Some may have already heard - but to make it generally known - I shall
-be retiring from here and Codethink at the end of this month. I've
-enjoyed the last 18 months working with CIP but, on my 67th birthday
-yesterday, am looking forward to taking things a little easier.
+Regards,
+Walt
 
-Thanks to all who have been of assistance to me and I wish the project
-much success. I'm hoping to spend my leisure on more musical activities
-some hill walking and maybe some gentle open source activity.
+On Thu, Nov 1, 2018 at 7:04 AM Agust?n Benito Bethencourt <
+agustin.benito@codethink.co.uk> wrote:
 
-Robert 
+> Hi,
+>
+> On Thursday, 1 November 2018 11:42:16 CET Robert Marshall wrote:
+> > Broken for me too!
+> >
+> > Chris Paterson <Chris.Paterson2@renesas.com> writes:
+> >
+> > > Hello all,
+> > >
+> > >
+> > >
+> > > Is anyone else getting a 503 error when trying to view the CIP irclogs?
+> > >
+> > > https://irclogs.baserock.org/cip/
+> > >
+> > >
+> > >
+> > > 503 Service Unavailable
+> > >
+> > > No server is available to handle this request.
+>
+> I just reported it internally at Codethink to get it back.
+>
+> Best Regards
+>
+> --
+> Agust?n Benito Bethencourt
+> Principal Consultant
+> Codethink Ltd
+> We respect your privacy.   See https://www.codethink.co.uk/privacy.html
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
+>
+
+
 -- 
-Robert Marshall, Software Developer                       Codethink Ltd
-Personal twitter a/c: @rajm
-Telephone: +44 7762 840 414       3rd Floor, Dale House, 35 Dale Street
-https://www.codethink.co.uk/         MANCHESTER, M1 2HF. United Kingdom
+Walt Miner
+
+  <https://twitter.com/VStarWalt>
+
+Engineering Project Manager
+The Linux Foundation
+mobile: +1.847.502.7087
+
+
+Visit us at:
+automotive.linuxfoundation.org
+www.linuxfoundation.org
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20181103/5511aa6b/attachment.html>
