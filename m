@@ -1,14 +1,18 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Mon, 12 Nov 2018 05:35:47 +0000
-Subject: [cip-dev] CIP-dev IRC weekly meeting log: week 45
-Message-ID: <HK0PR01MB29791A24CACAD9E460D13A11E2C10@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
+Date: Mon, 12 Nov 2018 18:15:04 +0900
+Subject: [cip-dev] List of patches that failed to apply to 4.4-stable
+Message-ID: <002501d47a68$32e653d0$98b2fb70$@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+To: CIP Kernel team
 
-Please find the logs of CIP meeting last week in below link:
+I have prepared a list of patches that failed to apply to 4.4-stable in the past. The list is based on the corresponding e-mails sent to the stable mailing list (since I subscribed, there may be more failed patches before my subscription). We can discuss today at the TSC meeting, and on Thursday during the IRC meeting whether we want to backport any of them or not.
+[Note] I still have to check if some of them were applied by any other means.
 
-https://irclogs.baserock.org/cip/%23cip.2018-11-08.log.html#t2018-11-08T09:00:19
-
-SZ Lin, Moxa
+Best regards,
+Daniel
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: failed-subjects.txt
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20181112/82ba90fc/attachment.txt>
