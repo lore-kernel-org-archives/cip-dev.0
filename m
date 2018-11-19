@@ -1,36 +1,38 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Mon, 19 Nov 2018 09:52:58 +0100
-Subject: [cip-dev] CIP-dev IRC weekly meeting log: week 46
-In-Reply-To: <HK0PR01MB297977BFF65F27987171DBEAE2D80@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-References: <HK0PR01MB297977BFF65F27987171DBEAE2D80@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-Message-ID: <8644c672-422a-5089-bc1e-b90f7e78c0bc@siemens.com>
+From: agustin.benito@codethink.co.uk (=?ISO-8859-1?Q?Agust=EDn?= Benito Bethencourt)
+Date: Mon, 19 Nov 2018 16:31:39 +0000
+Subject: [cip-dev] List of patches that failed to apply to 4.4-stable
+In-Reply-To: <000901d47d73$eadf22b0$c09d6810$@toshiba.co.jp>
+References: <002501d47a68$32e653d0$98b2fb70$@toshiba.co.jp>
+	<CAFk6z8N7i2zQJhxSax3DNYPRg5piVMOzzbS9u=20hx5yY8z4vg@mail.gmail.com>
+	<000901d47d73$eadf22b0$c09d6810$@toshiba.co.jp>
+Message-ID: <2102685.09LOIKHG4k@linux-if6s>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 19.11.18 09:14, SZ Lin (???) wrote:
-> Hi,
-> 
-> Please find the logs of CIP meeting last week in below link:
-> 
-> https://irclogs.baserock.org/cip/%23cip.2018-11-15.log.html#t2018-11-15T09:00:17
-> 
-> #action Confirm the next official CIP kernel announcement in TSC meeting.
-> #action Make sure armhf is available in Debian 10 (or not)
-> https://release.debian.org/buster/arch_qualify.html
+Hi,
 
-Huh?! Can we support them with hardware to avoid that?
-
-Jan
-
-> #action Daniel will send cip-core questions to cip-members ML
+On Friday, 16 November 2018 06:16:31 WET Daniel Sangorrin wrote:
+> To kernel team,
 > 
-> SZ Lin, Moxa
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
+> @SZLin: thanks for creating a page on the wiki just for that.
 > 
+> Yesterday, I checked the patches in my "failed to apply to 4.4-stable" list against the actual git repository using a short python script.
+> It turns out that some of the patches in the "to apply" list were already there applied.
+> 
+> I have updated our wiki page accordingly
+> https://wiki.linuxfoundation.org/civilinfrastructureplatform/linux-4.4-failed-patches
+> 
+> For the curious minds, you can find my (dirty) script attached to this e-mail.
+
+If you can put the patches list as a repo on gitlab, and since the target repo is already being mirrored, I wonder if we can create a job that executes the script when the origin list gets updated. We can create a notification with the outcome to our testing mailing list. This way we just need to focus on having the origin in shape. If we add to this a way to parser the outcome in .md format and published as result in gitlab when the job "succeeds", we significantly reduce the effort associated to the wiki page.
+
+@Daniel W. is the above possible, based on your experience with Gitlab?
+
+Best Regards
+
 
 -- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+Agust?n Benito Bethencourt
+Principal Consultant
+Codethink Ltd
+We respect your privacy.   See https://www.codethink.co.uk/privacy.html
