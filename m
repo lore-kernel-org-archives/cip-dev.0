@@ -1,54 +1,53 @@
-From: nobuhiro.iwamatsu@miraclelinux.com (Nobuhiro Iwamatsu)
-Date: Tue, 20 Nov 2018 07:17:18 +0900
-Subject: [cip-dev] CIP-dev IRC weekly meeting log: week 46
-In-Reply-To: <8644c672-422a-5089-bc1e-b90f7e78c0bc@siemens.com>
-References: <HK0PR01MB297977BFF65F27987171DBEAE2D80@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-	<8644c672-422a-5089-bc1e-b90f7e78c0bc@siemens.com>
-Message-ID: <CAGDrK-ZwTxeqPCZ89x571UUXHJ+nuNXOwe+wK4+ePf_J0hmyhA@mail.gmail.com>
+From: Chris.Paterson2@renesas.com (Chris Paterson)
+Date: Tue, 20 Nov 2018 11:53:46 +0000
+Subject: [cip-dev] FW: [Lava-users] Git authentication
+In-Reply-To: <CAJrz+7L86+dWGESRHFOw4JUuKnVOp=YQDmrDuvqR4X44OsRDqw@mail.gmail.com>
+References: <CAFzu0rb=_FvcLuookQyUU7Lv6xrp10Mhzbs+EsXbwZpH0fyo4g@mail.gmail.com>
+	<CAJrz+7L86+dWGESRHFOw4JUuKnVOp=YQDmrDuvqR4X44OsRDqw@mail.gmail.com>
+Message-ID: <TYAPR01MB228546EDFD91988000F7E8B4B7D90@TYAPR01MB2285.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+Hello all,
 
-2018?11?19?(?) 17:53 Jan Kiszka <jan.kiszka@siemens.com>:
+It was asked last week about if it is possible to keep jobs secret in the CIP LAVA test setup.
+
+Test results/definitions can indeed be kept private, either on an individual or group bases.
+https://lava.ciplatform.org/static/docs/v2/glossary.html#term-visibility
+
+If a test job is kept private it is also possible to share 'secret' information with the board. For example, a private git repository.
+https://lava.ciplatform.org/static/docs/v2/publishing-artifacts.html?highlight=secrets
+
+Please see the mail below for more information.
+
+Kind regards, Chris
+
+-----Original Message-----
+From: Lava-users <lava-users-bounces@lists.lavasoftware.org> On Behalf Of Milosz Wasilewski
+Sent: 20 November 2018 10:46
+To: axel.lebourhis at linaro.org
+Cc: lava-users at lists.lavasoftware.org
+Subject: Re: [Lava-users] Git authentication
+
+On Tue, 20 Nov 2018 at 10:42, Axel Lebourhis <axel.lebourhis@linaro.org> wrote:
 >
-> On 19.11.18 09:14, SZ Lin (???) wrote:
-> > Hi,
-> >
-> > Please find the logs of CIP meeting last week in below link:
-> >
-> > https://irclogs.baserock.org/cip/%23cip.2018-11-15.log.html#t2018-11-15T09:00:17
-> >
-> > #action Confirm the next official CIP kernel announcement in TSC meeting.
-> > #action Make sure armhf is available in Debian 10 (or not)
-> > https://release.debian.org/buster/arch_qualify.html
+> Hi everyone,
 >
-> Huh?! Can we support them with hardware to avoid that?
+> Is it possible to handle git authentication in a test job ?
+> I need LAVA to clone a repo that can't be set to public,
+> and obviously it won't work because of the authentication step.
+> So is it possible to specify a password or a token ?
 
-We can see the current hardware problem of armel / armhf from the following.
+You can use 'secrets' section in the job definition. Docs here:
+https://master.lavasoftware.org/static/docs/v2/publishing-artifacts.html?highlight=secrets
 
-https://lists.debian.org/debian-arm/2018/09/msg00049.html
+It might be also a good idea to limit access to the job to user or
+group so the password doesn't leak. It has to be plain text
+unfortunately.
 
-Best regards,
-  Nobuhiro
+milosz
 
-
->
-> Jan
->
-> > #action Daniel will send cip-core questions to cip-members ML
-> >
-> > SZ Lin, Moxa
-> > _______________________________________________
-> > cip-dev mailing list
-> > cip-dev at lists.cip-project.org
-> > https://lists.cip-project.org/mailman/listinfo/cip-dev
-> >
->
-> --
-> Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-> Corporate Competence Center Embedded Linux
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
+_______________________________________________
+Lava-users mailing list
+Lava-users at lists.lavasoftware.org
+https://lists.lavasoftware.org/mailman/listinfo/lava-users
