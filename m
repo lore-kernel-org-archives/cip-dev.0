@@ -1,51 +1,48 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Tue, 20 Nov 2018 13:03:52 +0100
-Subject: [cip-dev] CIP-dev IRC weekly meeting log: week 46
-In-Reply-To: <CAGDrK-ZwTxeqPCZ89x571UUXHJ+nuNXOwe+wK4+ePf_J0hmyhA@mail.gmail.com>
-References: <HK0PR01MB297977BFF65F27987171DBEAE2D80@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-	<8644c672-422a-5089-bc1e-b90f7e78c0bc@siemens.com>
-	<CAGDrK-ZwTxeqPCZ89x571UUXHJ+nuNXOwe+wK4+ePf_J0hmyhA@mail.gmail.com>
-Message-ID: <25c0605c-0016-7958-d2ee-c0c01f398405@siemens.com>
+From: paul.sherwood@codethink.co.uk (Paul Sherwood)
+Date: Tue, 20 Nov 2018 18:45:16 +0000
+Subject: [cip-dev] [SystemSafety] Critical systems Linux
+In-Reply-To: <037a01d480f8$1f486570$5dd93050$@phaedsys.com>
+References: <037a01d480f8$1f486570$5dd93050$@phaedsys.com>
+Message-ID: <1793f9677177e46904ff76e9ed88c51a@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Nobuhiro,
-
-On 19.11.18 23:17, Nobuhiro Iwamatsu wrote:
-> Hi,
+On 2018-11-20 17:40, Chris Hills wrote:
+> A subversion of the thread to answer one of the points raised by Paul 
+> and
+> almost every Linux aficionado
 > 
-> 2018?11?19?(?) 17:53 Jan Kiszka <jan.kiszka@siemens.com>:
->>
->> On 19.11.18 09:14, SZ Lin (???) wrote:
->>> Hi,
->>>
->>> Please find the logs of CIP meeting last week in below link:
->>>
->>> https://irclogs.baserock.org/cip/%23cip.2018-11-15.log.html#t2018-11-15T09:00:17
->>>
->>> #action Confirm the next official CIP kernel announcement in TSC meeting.
->>> #action Make sure armhf is available in Debian 10 (or not)
->>> https://release.debian.org/buster/arch_qualify.html
->>
->> Huh?! Can we support them with hardware to avoid that?
+>> -----Original Message-----
+>> bielefeld.de] On Behalf Of Paul Sherwood
+>> Sent: Sunday, November 4, 2018 8:54 PM
 > 
-> We can see the current hardware problem of armel / armhf from the following.
+>> One anti-pattern I've grown a bit tired of is people choosing a
+> micro-kernel instead of Linux, because of the notional 'safety cert',
+>> and then having to implement tons of custom software in attempting to
+> match off-the-shelf Linux functionality or performance. When 
+> application
+>> of the standards leads to "develop new, from scratch" instead of using
+> existing code which is widely used and known to be reliable, something
+>> is clearly weird imo.
 > 
-> https://lists.debian.org/debian-arm/2018/09/msg00049.html
+> The question is:-
 > 
+> As Linux is monolithic, already written  (with minimal 
+> requirements/design
+> docs) and not to any coding standard
+> How would the world go about making a Certifiable Linux?
+> 
+> Is it possible?
+> 
+> 
+> And the question I asked: why do it at all when there are plenty of 
+> other
+> POSIX Compliant RTOS and OS out there that have full Safety 
+> Certification to
+> 61508 SIL3 and  Do178  etc.?
 
-Hmm, that message does not yet read to me like a blocker. It's a list of 
-complications, yes.
-
-I also wonder what makes this buster-specific. The issues with the build 
-environment should be generic, shared with supported arm* for stretch or even older.
-
-Again, if there is any concrete thing we could help with here, please let us 
-discuss proposals at TSC level and with Debian folks. armhf is critical for most 
-of us, and that for quite a few years onward.
-
-Jan
-
--- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+While systemsafety may be the leading community for public discussion 
+around systems (and software) safety, it is not the only ML that has an 
+interest in this topic so I'm cross-posting to some other (including 
+Linux) lists in the hope that we may see wider discussion and 
+contribution.
