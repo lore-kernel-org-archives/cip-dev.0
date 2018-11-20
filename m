@@ -1,53 +1,51 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Tue, 20 Nov 2018 11:53:46 +0000
-Subject: [cip-dev] FW: [Lava-users] Git authentication
-In-Reply-To: <CAJrz+7L86+dWGESRHFOw4JUuKnVOp=YQDmrDuvqR4X44OsRDqw@mail.gmail.com>
-References: <CAFzu0rb=_FvcLuookQyUU7Lv6xrp10Mhzbs+EsXbwZpH0fyo4g@mail.gmail.com>
-	<CAJrz+7L86+dWGESRHFOw4JUuKnVOp=YQDmrDuvqR4X44OsRDqw@mail.gmail.com>
-Message-ID: <TYAPR01MB228546EDFD91988000F7E8B4B7D90@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+From: jan.kiszka@siemens.com (Jan Kiszka)
+Date: Tue, 20 Nov 2018 13:03:52 +0100
+Subject: [cip-dev] CIP-dev IRC weekly meeting log: week 46
+In-Reply-To: <CAGDrK-ZwTxeqPCZ89x571UUXHJ+nuNXOwe+wK4+ePf_J0hmyhA@mail.gmail.com>
+References: <HK0PR01MB297977BFF65F27987171DBEAE2D80@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+	<8644c672-422a-5089-bc1e-b90f7e78c0bc@siemens.com>
+	<CAGDrK-ZwTxeqPCZ89x571UUXHJ+nuNXOwe+wK4+ePf_J0hmyhA@mail.gmail.com>
+Message-ID: <25c0605c-0016-7958-d2ee-c0c01f398405@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello all,
+Hi Nobuhiro,
 
-It was asked last week about if it is possible to keep jobs secret in the CIP LAVA test setup.
+On 19.11.18 23:17, Nobuhiro Iwamatsu wrote:
+> Hi,
+> 
+> 2018?11?19?(?) 17:53 Jan Kiszka <jan.kiszka@siemens.com>:
+>>
+>> On 19.11.18 09:14, SZ Lin (???) wrote:
+>>> Hi,
+>>>
+>>> Please find the logs of CIP meeting last week in below link:
+>>>
+>>> https://irclogs.baserock.org/cip/%23cip.2018-11-15.log.html#t2018-11-15T09:00:17
+>>>
+>>> #action Confirm the next official CIP kernel announcement in TSC meeting.
+>>> #action Make sure armhf is available in Debian 10 (or not)
+>>> https://release.debian.org/buster/arch_qualify.html
+>>
+>> Huh?! Can we support them with hardware to avoid that?
+> 
+> We can see the current hardware problem of armel / armhf from the following.
+> 
+> https://lists.debian.org/debian-arm/2018/09/msg00049.html
+> 
 
-Test results/definitions can indeed be kept private, either on an individual or group bases.
-https://lava.ciplatform.org/static/docs/v2/glossary.html#term-visibility
+Hmm, that message does not yet read to me like a blocker. It's a list of 
+complications, yes.
 
-If a test job is kept private it is also possible to share 'secret' information with the board. For example, a private git repository.
-https://lava.ciplatform.org/static/docs/v2/publishing-artifacts.html?highlight=secrets
+I also wonder what makes this buster-specific. The issues with the build 
+environment should be generic, shared with supported arm* for stretch or even older.
 
-Please see the mail below for more information.
+Again, if there is any concrete thing we could help with here, please let us 
+discuss proposals at TSC level and with Debian folks. armhf is critical for most 
+of us, and that for quite a few years onward.
 
-Kind regards, Chris
+Jan
 
------Original Message-----
-From: Lava-users <lava-users-bounces@lists.lavasoftware.org> On Behalf Of Milosz Wasilewski
-Sent: 20 November 2018 10:46
-To: axel.lebourhis at linaro.org
-Cc: lava-users at lists.lavasoftware.org
-Subject: Re: [Lava-users] Git authentication
-
-On Tue, 20 Nov 2018 at 10:42, Axel Lebourhis <axel.lebourhis@linaro.org> wrote:
->
-> Hi everyone,
->
-> Is it possible to handle git authentication in a test job ?
-> I need LAVA to clone a repo that can't be set to public,
-> and obviously it won't work because of the authentication step.
-> So is it possible to specify a password or a token ?
-
-You can use 'secrets' section in the job definition. Docs here:
-https://master.lavasoftware.org/static/docs/v2/publishing-artifacts.html?highlight=secrets
-
-It might be also a good idea to limit access to the job to user or
-group so the password doesn't leak. It has to be plain text
-unfortunately.
-
-milosz
-
-_______________________________________________
-Lava-users mailing list
-Lava-users at lists.lavasoftware.org
-https://lists.lavasoftware.org/mailman/listinfo/lava-users
+-- 
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+Corporate Competence Center Embedded Linux
