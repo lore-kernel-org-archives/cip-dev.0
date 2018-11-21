@@ -1,60 +1,72 @@
-From: paul.sherwood@codethink.co.uk (Paul Sherwood)
-Date: Tue, 20 Nov 2018 18:58:05 +0000
-Subject: [cip-dev] [SystemSafety] Critical systems Linux
-In-Reply-To: <1793f9677177e46904ff76e9ed88c51a@codethink.co.uk>
-References: <037a01d480f8$1f486570$5dd93050$@phaedsys.com>
-	<1793f9677177e46904ff76e9ed88c51a@codethink.co.uk>
-Message-ID: <e5bcaec2b35a99e151627fbab8047e72@codethink.co.uk>
+From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
+Date: Wed, 21 Nov 2018 09:22:03 +0900
+Subject: [cip-dev] FW: [Lava-users] Git authentication
+In-Reply-To: <TYAPR01MB228546EDFD91988000F7E8B4B7D90@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+References: <CAFzu0rb=_FvcLuookQyUU7Lv6xrp10Mhzbs+EsXbwZpH0fyo4g@mail.gmail.com>	<CAJrz+7L86+dWGESRHFOw4JUuKnVOp=YQDmrDuvqR4X44OsRDqw@mail.gmail.com>
+	<TYAPR01MB228546EDFD91988000F7E8B4B7D90@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+Message-ID: <005c01d48130$3a1f9a70$ae5ecf50$@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Now to attempt to answer the question...
+Good to know, thank you Chris.
 
-On 2018-11-20 18:45, Paul Sherwood wrote:
->> The question is:-
->> 
->> As Linux is monolithic, already written  (with minimal 
->> requirements/design
->> docs) and not to any coding standard
->> How would the world go about making a Certifiable Linux?
-
->> Is it possible?
->> 
-
-Some initiatives have already started down this road, for example 
-SIL2LINUXMP (in cc)
-
-But my personal perspective is
-
-1) it may be the the certifications themselves are inappropriate. It's 
-far from clear to me that the current standards are fit for purpose.
-
-2) there are many cases of folks retrofitting documentation to support 
-compliance with standards, so perhaps that would be a feasible thing to 
-attempt (although there is far too much code in the Linux kernel and 
-associated FOSS tooling and userland components to make this something 
-which could be achieved in a short time)
-
-3) if we could establish justifiable concrete improvements to make in 
-Linux (and the tools, and the userland), we could hope to persuade the 
-upstreams to make them, or accept our patches.
-
-4) we could construct new software to meet the ABI commitments of Linux 
-(and other components) while adhering to some specific standards and/or 
-processes, but I'm unconvinced this could be achieved in a 
-time/cost-effective way.
-
->> And the question I asked: why do it at all when there are plenty of 
->> other
->> POSIX Compliant RTOS and OS out there that have full Safety 
->> Certification to
->> 61508 SIL3 and  Do178  etc.?
-
-My understanding is that existing certified RTOS/OS tend to be 
-microkernels with limited functionality, limited hardware support, and 
-performance limitations for some usecases. I'd be happy to be wrong, and 
-no-doubt advocates of some of those technologies can explain the reality 
-by return.
-
-br
-Paul
+> -----Original Message-----
+> From: cip-dev-bounces at lists.cip-project.org
+> <cip-dev-bounces@lists.cip-project.org> On Behalf Of Chris Paterson
+> Sent: Tuesday, November 20, 2018 8:54 PM
+> To: cip-dev at lists.cip-project.org
+> Subject: [cip-dev] FW: [Lava-users] Git authentication
+> 
+> Hello all,
+> 
+> It was asked last week about if it is possible to keep jobs secret in the CIP LAVA test
+> setup.
+> 
+> Test results/definitions can indeed be kept private, either on an individual or group
+> bases.
+> https://lava.ciplatform.org/static/docs/v2/glossary.html#term-visibility
+> 
+> If a test job is kept private it is also possible to share 'secret' information with the
+> board. For example, a private git repository.
+> https://lava.ciplatform.org/static/docs/v2/publishing-artifacts.html?highlight=sec
+> rets
+> 
+> Please see the mail below for more information.
+> 
+> Kind regards, Chris
+> 
+> -----Original Message-----
+> From: Lava-users <lava-users-bounces@lists.lavasoftware.org> On Behalf Of
+> Milosz Wasilewski
+> Sent: 20 November 2018 10:46
+> To: axel.lebourhis at linaro.org
+> Cc: lava-users at lists.lavasoftware.org
+> Subject: Re: [Lava-users] Git authentication
+> 
+> On Tue, 20 Nov 2018 at 10:42, Axel Lebourhis <axel.lebourhis@linaro.org> wrote:
+> >
+> > Hi everyone,
+> >
+> > Is it possible to handle git authentication in a test job ?
+> > I need LAVA to clone a repo that can't be set to public,
+> > and obviously it won't work because of the authentication step.
+> > So is it possible to specify a password or a token ?
+> 
+> You can use 'secrets' section in the job definition. Docs here:
+> https://master.lavasoftware.org/static/docs/v2/publishing-artifacts.html?highligh
+> t=secrets
+> 
+> It might be also a good idea to limit access to the job to user or
+> group so the password doesn't leak. It has to be plain text
+> unfortunately.
+> 
+> milosz
+> 
+> _______________________________________________
+> Lava-users mailing list
+> Lava-users at lists.lavasoftware.org
+> https://lists.lavasoftware.org/mailman/listinfo/lava-users
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
