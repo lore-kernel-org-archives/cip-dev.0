@@ -1,32 +1,24 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 29 Nov 2018 01:27:58 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-Message-ID: <SL2PR01MB298749FA1ADA9B1DF7F556F4E2D20@SL2PR01MB2987.apcprd01.prod.exchangelabs.com>
+From: robert.marshall@codethink.co.uk (Robert Marshall)
+Date: Fri, 30 Nov 2018 11:54:15 +0000
+Subject: [cip-dev] Snapshot release of B@D
+Message-ID: <87pnumn5lk.fsf@ctlt579.codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi All,
+Hi
 
-Kindly be reminded to attend weekly meeting through IRC to discuss technical topics with CIP kernel today.
+The wiki has been updated with a snapshot release of Board at desk
+https://wiki.linuxfoundation.org/civilinfrastructureplatform/cipdownload#snapshot-b-d-box
 
-*Please note that  IRC meeting was rescheduled to 18:00 (JST) starting from first week of Nov. according F2F meeting discussion in ELCE.*
+the rest of the wiki has been updated to refer to this. The snapshot was
+created in early October. Testing and comments are welcomed!
 
-US-West US-East  UK    DE     TW     JP
-02:00    05:00   09:00   10:00   17:00   18:00
+However, from the end of today I shall be leaving codethink and retiring!
+I wish CIP well and have appreciated being part of it over the last 2
+years. 
 
-Channel:
-* irc:chat.freenode.net:6667/cip
-
-Agenda:
-
-* Kernel maintenance updates
-* Kernel testing
-* Software update 
-* CIP Core
-* AOB
-
-The meeting will take 30 min although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting..
-
-Best regards,
-
-SZ Lin, Moxa.
+Robert (contactible via twitter at @rajm )
+-- 
+Robert Marshall, Software Developer                       Codethink Ltd
+Telephone: +44 7762 840 414       3rd Floor, Dale House, 35 Dale Street
+https://www.codethink.co.uk/         MANCHESTER, M1 2HF. United Kingdom
