@@ -1,1436 +1,394 @@
-From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
-Date: Thu,  6 Dec 2018 16:00:23 +0900
-Subject: [cip-dev] [PATCH] common: improve initialization and add more
-	packages
-In-Reply-To: <1544079623-24800-1-git-send-email-daniel.sangorrin@toshiba.co.jp>
-References: <1544079623-24800-1-git-send-email-daniel.sangorrin@toshiba.co.jp>
-Message-ID: <1544079623-24800-2-git-send-email-daniel.sangorrin@toshiba.co.jp>
+From: gitlab@mg.gitlab.com (Ben Hutchings)
+Date: Thu, 06 Dec 2018 14:22:08 +0000
+Subject: [cip-dev] [Git][cip-project/cip-kernel/cip-kernel-sec][master] 2
+ commits: Fill in and correct commit lists for various issues
+Message-ID: <5c093090c1278_60643ff150672d581073492@sidekiq-asap-03-sv-gprd.mail>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-The previous rootfs images where too limited for some tasks
-such as testing. Add a few utils and prepare a custome
-init script
+Ben Hutchings pushed to branch master at cip-project / cip-kernel / cip-kernel-sec
 
-Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
----
- .../images/core-image-minimal.bbappend             |   37 +-
- .../recipes-core/init-files/init-files/fstab.base  |   13 +
- .../recipes-core/init-files/init-files/interfaces  |    9 +
- .../recipes-core/init-files/init-files_1.0.bb      |   38 +
- .../packagegroups/packagegroup-core-boot.bbappend  |   58 +-
- ...ackagegroup-core-standalone-sdk-target.bbappend |   26 +-
- .../recipes-debian/busybox/busybox_debian.bbappend |   14 +
- .../recipes-debian/busybox/files/defconfig         | 1059 ++++++++++++++++++++
- .../recipes-debian/busybox/files/inittab           |    5 +
- .../recipes-debian/busybox/files/rcE               |    8 +
- .../recipes-debian/busybox/files/rcS               |   32 +
- .../recipes-debian/openssh/openssh_debian.bbappend |   12 +
- 12 files changed, 1280 insertions(+), 31 deletions(-)
- create mode 100644 deby/poky/meta-cip-common/recipes-core/init-files/init-files/fstab.base
- create mode 100644 deby/poky/meta-cip-common/recipes-core/init-files/init-files/interfaces
- create mode 100644 deby/poky/meta-cip-common/recipes-core/init-files/init-files_1.0.bb
- create mode 100644 deby/poky/meta-cip-common/recipes-debian/busybox/busybox_debian.bbappend
- create mode 100644 deby/poky/meta-cip-common/recipes-debian/busybox/files/defconfig
- create mode 100644 deby/poky/meta-cip-common/recipes-debian/busybox/files/inittab
- create mode 100644 deby/poky/meta-cip-common/recipes-debian/busybox/files/rcE
- create mode 100644 deby/poky/meta-cip-common/recipes-debian/busybox/files/rcS
- create mode 100644 deby/poky/meta-cip-common/recipes-debian/openssh/openssh_debian.bbappend
 
-diff --git a/deby/poky/meta-cip-common/recipes-core/images/core-image-minimal.bbappend b/deby/poky/meta-cip-common/recipes-core/images/core-image-minimal.bbappend
-index eab998f..4d57207 100644
---- a/deby/poky/meta-cip-common/recipes-core/images/core-image-minimal.bbappend
-+++ b/deby/poky/meta-cip-common/recipes-core/images/core-image-minimal.bbappend
-@@ -1,30 +1,23 @@
- # Copyright (C) 2016-2018, TOSHIBA Corp., Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
- # SPDX-License-Identifier:	MIT
- 
--#
--# Misc
--#
--setup_misc() {
--	# add mdev because when using a ramdisk dev is not populated properly
--	echo "echo /sbin/mdev > /proc/sys/kernel/hotplug" >> ${IMAGE_ROOTFS}/etc/init.d/rcS
--	echo "mdev -s" >> ${IMAGE_ROOTFS}/etc/init.d/rcS
--	# modify PS1 to something easy to recognize by LAVA (cip# or cip$)
--	sed -i 's/PS1='\''# '\''/PS1='\''cip# '\''/g' ${IMAGE_ROOTFS}/etc/profile
--	sed -i 's/PS1='\''\$ '\''/PS1='\''cip\$ '\''/g' ${IMAGE_ROOTFS}/etc/profile
--}
--
--# Setup misc files after package install
--do_setup() {
--	cd ${WORKDIR}/rootfs
--	setup_misc
--}
--
--ROOTFS_POSTPROCESS_COMMAND += "do_setup;"
--
-+# Adjustments for the ramdisk to work
- create_init_link() {
--       # link for the initramdisk
-        ln -s /sbin/init ${IMAGE_ROOTFS}/init
-+       rm ${IMAGE_ROOTFS}/linuxrc
-+       ln -s /bin/busybox ${IMAGE_ROOTFS}/linuxrc
- }
-+ROOTFS_POSTPROCESS_COMMAND += "create_init_link;"
- 
--ROOTFS_POSTPROCESS_COMMAND += "create_init_link ;"
-+# modify PS1 to something easy to recognize by LAVA (cip-project# or cip-project$)
-+setup_prompt() {
-+	sed -i 's/PS1='\''# '\''/PS1='\''cip-project# '\''/g' ${IMAGE_ROOTFS}/etc/profile
-+	sed -i 's/PS1='\''\$ '\''/PS1='\''cip-project\$ '\''/g' ${IMAGE_ROOTFS}/etc/profile
-+}
-+ROOTFS_POSTPROCESS_COMMAND += "setup_prompt;"
- 
-+# Remove Linux images from rootfs to save space
-+remove_boot() {
-+	rm -rf ${IMAGE_ROOTFS}/boot/*
-+}
-+IMAGE_POSTPROCESS_COMMAND += "remove_boot;"
-diff --git a/deby/poky/meta-cip-common/recipes-core/init-files/init-files/fstab.base b/deby/poky/meta-cip-common/recipes-core/init-files/init-files/fstab.base
-new file mode 100644
-index 0000000..8f37dba
---- /dev/null
-+++ b/deby/poky/meta-cip-common/recipes-core/init-files/init-files/fstab.base
-@@ -0,0 +1,13 @@
-+# Copyright (C) 2016-2018, TOSHIBA Corp., Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-+# SPDX-License-Identifier:	MIT
-+# <file system> <mount point> <type> <options> <dump> <pass>
-+# root/boot partitions are commented for the ramdisk to work
-+# LABEL=root      /             ext4   defaults,ro                                 0      1
-+# LABEL=boot      /boot         vfat   defaults,ro                                 0      2
-+proc            /proc         proc   rw,nosuid,nodev,noexec,relatime             0      0
-+sysfs           /sys          sysfs  rw,nosuid,nodev,noexec,relatime             0      0
-+devpts          /dev/pts      devpts rw,nosuid,noexec,relatime,gid=5,mode=620    0      0
-+tmpfs           /run          tmpfs  defaults                                    0      0
-+tmpfs           /tmp          tmpfs  defaults                                    0      0
-+tmpfs           /var/log      tmpfs  defaults                                    0      0
-+tmpfs           /dev/shm      tmpfs  defaults                                    0      0
-diff --git a/deby/poky/meta-cip-common/recipes-core/init-files/init-files/interfaces b/deby/poky/meta-cip-common/recipes-core/init-files/init-files/interfaces
-new file mode 100644
-index 0000000..0f34667
---- /dev/null
-+++ b/deby/poky/meta-cip-common/recipes-core/init-files/init-files/interfaces
-@@ -0,0 +1,9 @@
-+# Copyright (C) 2016-2018, TOSHIBA Corp., Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-+# SPDX-License-Identifier:	MIT
-+auto lo
-+iface lo inet loopback
-+
-+auto eth0
-+iface eth0 inet static
-+address 192.168.1.55
-+netmask 255.255.255.0
-diff --git a/deby/poky/meta-cip-common/recipes-core/init-files/init-files_1.0.bb b/deby/poky/meta-cip-common/recipes-core/init-files/init-files_1.0.bb
-new file mode 100644
-index 0000000..521331f
---- /dev/null
-+++ b/deby/poky/meta-cip-common/recipes-core/init-files/init-files_1.0.bb
-@@ -0,0 +1,38 @@
-+# Copyright (C) 2016-2018, TOSHIBA Corp., Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-+# SPDX-License-Identifier:	MIT
-+
-+LICENSE = "MIT"
-+LIC_FILES_CHKSUM = " \
-+file://${COREBASE}/LICENSE;md5=4d92cd373abda3937c2bc47fbc49d690 \
-+file://${COREBASE}/meta/COPYING.MIT;md5=3da9cfbcb788c80a0384361b4de20420 \
-+"
-+
-+PR = "r0"
-+FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
-+S = "${WORKDIR}"
-+
-+SRC_URI += "file://fstab.base"
-+install_fstab() {
-+	install -d ${D}/${sysconfdir}
-+	install -m 0644 ${WORKDIR}/fstab.base ${D}/${sysconfdir}/fstab
-+}
-+
-+SRC_URI += "file://interfaces"
-+install_interfaces () {
-+        install -d ${D}${sysconfdir}/network
-+        install -m 0644 ${WORKDIR}/interfaces ${D}${sysconfdir}/network/interfaces
-+}
-+
-+do_configure() {
-+	:
-+}
-+
-+do_compile() {
-+	:
-+}
-+
-+do_install() {
-+	install_fstab
-+	install_interfaces
-+	ln -s /proc/mounts ${D}/${sysconfdir}/mtab
-+}
-diff --git a/deby/poky/meta-cip-common/recipes-core/packagegroups/packagegroup-core-boot.bbappend b/deby/poky/meta-cip-common/recipes-core/packagegroups/packagegroup-core-boot.bbappend
-index 191f546..a023028 100644
---- a/deby/poky/meta-cip-common/recipes-core/packagegroups/packagegroup-core-boot.bbappend
-+++ b/deby/poky/meta-cip-common/recipes-core/packagegroups/packagegroup-core-boot.bbappend
-@@ -1,8 +1,58 @@
- # Copyright (C) 2016-2018, TOSHIBA Corp., Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
- # SPDX-License-Identifier:	MIT
-+RDEPENDS_${PN} += "${PKG_BOOT} ${PKG_SYSTEM} ${PKG_MIN} ${PKG_DEBUG}"
- 
--RDEPENDS_${PN} += "kernel-image"
--RDEPENDS_${PN} += "kernel-modules"
--# Add required packages for rootfs here
--RDEPENDS_${PN} += "openssh-server"
-+# required for system to boot up
-+#--------------------------------
-+PKG_BOOT = "\
-+	kernel-image \
-+	kernel-modules \
-+	kernel-vmlinux \
-+"
- 
-+# system requirements
-+#--------------------
-+PKG_SYSTEM = "\
-+	busybox \
-+	init-files \
-+	glib-2.0 \
-+	libgcc \
-+	libstdc++ \
-+"
-+
-+# minimum package list
-+# TODO: agree on cip-core tiny profile minimal list
-+#--------------------------------------------------
-+PKG_MIN = "\
-+	openssh-server \
-+	openssh-client \
-+	gzip \
-+	e2fsprogs \
-+	libaio \
-+	wget \
-+	curl \
-+	bash \
-+	procps \
-+	coreutils \
-+	findutils \
-+	iproute2 \
-+	iptables \
-+	gawk \
-+"
-+
-+# packages for debugging purposes
-+#--------------------------------
-+PKG_DEBUG = "\
-+	strace \
-+	ltrace \
-+	netbase \
-+	ethtool \
-+	libpcap \
-+	tcpdump \
-+	pciutils \
-+	i2c-tools \
-+	htop \
-+	ncurses-term \
-+	traceroute \
-+	iputils-ping \
-+"
-diff --git a/deby/poky/meta-cip-common/recipes-core/packagegroups/packagegroup-core-standalone-sdk-target.bbappend b/deby/poky/meta-cip-common/recipes-core/packagegroups/packagegroup-core-standalone-sdk-target.bbappend
-index fea0fd2..1cffb89 100644
---- a/deby/poky/meta-cip-common/recipes-core/packagegroups/packagegroup-core-standalone-sdk-target.bbappend
-+++ b/deby/poky/meta-cip-common/recipes-core/packagegroups/packagegroup-core-standalone-sdk-target.bbappend
-@@ -1,8 +1,24 @@
- # Copyright (C) 2016-2018, TOSHIBA Corp., Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
- # SPDX-License-Identifier:	MIT
- 
--RDEPENDS_${PN} += "linux-libc-headers-base-dev"
--RDEPENDS_${PN} += "kernel-dev"
--RDEPENDS_${PN} += "libc6-dev"
--# Add required packages for toolchain
--RDEPENDS_${PN} += "openssh-dev"
-+RDEPENDS_${PN} += " \
-+glibc-staticdev \
-+binutils-dev \
-+glib-2.0-dev \
-+kernel-dev \
-+i2c-tools-dev \
-+libc6-dev \
-+libdw-dev \
-+libedit-dev \
-+libelf-dev \
-+libncurses5-dev \
-+libncursesw5-dev \
-+libstdc++-dev \
-+linux-libc-headers-base-dev \
-+bash-dev \
-+ethtool-dev \
-+pciutils-dev \
-+strace-dev \
-+libaio-dev \
-+openssh-dev \
-+"
-diff --git a/deby/poky/meta-cip-common/recipes-debian/busybox/busybox_debian.bbappend b/deby/poky/meta-cip-common/recipes-debian/busybox/busybox_debian.bbappend
-new file mode 100644
-index 0000000..68c1603
---- /dev/null
-+++ b/deby/poky/meta-cip-common/recipes-debian/busybox/busybox_debian.bbappend
-@@ -0,0 +1,14 @@
-+# Copyright (C) 2016-2018, TOSHIBA Corp., Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-+# SPDX-License-Identifier:	MIT
-+FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
-+
-+# Note: inittab and rcS also overwrite the original ones.
-+SRC_URI_append += " \
-+	file://rcE \
-+	"
-+
-+do_install_append () {
-+	if [ "${VIRTUAL-RUNTIME_init_manager}" = "busybox" ]; then
-+		install -m 0755 ${WORKDIR}/rcE ${D}${sysconfdir}/init.d
-+        fi
-+}
-diff --git a/deby/poky/meta-cip-common/recipes-debian/busybox/files/defconfig b/deby/poky/meta-cip-common/recipes-debian/busybox/files/defconfig
-new file mode 100644
-index 0000000..bef1b2a
---- /dev/null
-+++ b/deby/poky/meta-cip-common/recipes-debian/busybox/files/defconfig
-@@ -0,0 +1,1059 @@
-+# Copyright (C) 2016-2018, TOSHIBA Corp., Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-+# SPDX-License-Identifier:	MIT
-+#
-+# The default configuration for busybox
-+#
-+# This file is based on debian/config/pkg/deb in Debian busybox package.
-+# The following configurations are modified so that
-+# the default system works correctly.
-+#
-+# CONFIG_MESG=y
-+#   .profile in base-files depends on mesg command
-+# CONFIG_IFUPDOWN=y
-+#   needed for configuring network interfaces by most embedded system
-+# CONFIG_FEATURE_SH_STANDALONE is not set
-+#   The standalone shell searches available applets without PATH.
-+#   update-alternatives doesn't work with this feature.
-+# CONFIG_FEATURE_TOP_SMP_CPU=y
-+# CONFIG_FEATURE_TOP_DECIMALS=y
-+# CONFIG_FEATURE_TOP_SMP_PROCESS=y
-+#   multi core CPU becomes general also in embedded system
-+#
-+# Extra changes for zynq boards
-+# CONFIG_UDHCPD=n (only dhcp client)
-+# CONFIG_CROND=y (enable cron)
-+
-+#
-+# Automatically generated make config: don't edit
-+# Busybox version: 1.22.1
-+# Thu Mar 17 14:00:34 2016
-+#
-+CONFIG_HAVE_DOT_CONFIG=y
-+
-+#
-+# Busybox Settings
-+#
-+
-+#
-+# General Configuration
-+#
-+CONFIG_DESKTOP=y
-+CONFIG_EXTRA_COMPAT=y
-+CONFIG_INCLUDE_SUSv2=y
-+# CONFIG_USE_PORTABLE_CODE is not set
-+CONFIG_PLATFORM_LINUX=y
-+CONFIG_FEATURE_BUFFERS_USE_MALLOC=y
-+# CONFIG_FEATURE_BUFFERS_GO_ON_STACK is not set
-+# CONFIG_FEATURE_BUFFERS_GO_IN_BSS is not set
-+CONFIG_SHOW_USAGE=y
-+CONFIG_FEATURE_VERBOSE_USAGE=y
-+CONFIG_FEATURE_COMPRESS_USAGE=y
-+CONFIG_FEATURE_INSTALLER=y
-+# CONFIG_INSTALL_NO_USR is not set
-+# CONFIG_LOCALE_SUPPORT is not set
-+CONFIG_UNICODE_SUPPORT=y
-+# CONFIG_UNICODE_USING_LOCALE is not set
-+CONFIG_FEATURE_CHECK_UNICODE_IN_ENV=y
-+CONFIG_SUBST_WCHAR=63
-+CONFIG_LAST_SUPPORTED_WCHAR=767
-+CONFIG_UNICODE_COMBINING_WCHARS=y
-+CONFIG_UNICODE_WIDE_WCHARS=y
-+# CONFIG_UNICODE_BIDI_SUPPORT is not set
-+# CONFIG_UNICODE_NEUTRAL_TABLE is not set
-+# CONFIG_UNICODE_PRESERVE_BROKEN is not set
-+CONFIG_LONG_OPTS=y
-+CONFIG_FEATURE_DEVPTS=y
-+# CONFIG_FEATURE_CLEAN_UP is not set
-+CONFIG_FEATURE_UTMP=y
-+CONFIG_FEATURE_WTMP=y
-+CONFIG_FEATURE_PIDFILE=y
-+CONFIG_PID_FILE_PATH="/var/run"
-+CONFIG_FEATURE_SUID=y
-+CONFIG_FEATURE_SUID_CONFIG=y
-+CONFIG_FEATURE_SUID_CONFIG_QUIET=y
-+# CONFIG_SELINUX is not set
-+CONFIG_FEATURE_PREFER_APPLETS=y
-+CONFIG_BUSYBOX_EXEC_PATH="/proc/self/exe"
-+CONFIG_FEATURE_SYSLOG=y
-+CONFIG_FEATURE_HAVE_RPC=y
-+
-+#
-+# Build Options
-+#
-+# CONFIG_STATIC is not set
-+# CONFIG_PIE is not set
-+# CONFIG_NOMMU is not set
-+# CONFIG_BUILD_LIBBUSYBOX is not set
-+# CONFIG_FEATURE_INDIVIDUAL is not set
-+# CONFIG_FEATURE_SHARED_BUSYBOX is not set
-+CONFIG_LFS=y
-+CONFIG_CROSS_COMPILER_PREFIX=""
-+CONFIG_SYSROOT=""
-+CONFIG_EXTRA_CFLAGS=""
-+CONFIG_EXTRA_LDFLAGS=""
-+CONFIG_EXTRA_LDLIBS=""
-+
-+#
-+# Debugging Options
-+#
-+# CONFIG_DEBUG is not set
-+# CONFIG_DEBUG_PESSIMIZE is not set
-+# CONFIG_WERROR is not set
-+CONFIG_NO_DEBUG_LIB=y
-+# CONFIG_DMALLOC is not set
-+# CONFIG_EFENCE is not set
-+
-+#
-+# Installation Options ("make install" behavior)
-+#
-+# CONFIG_INSTALL_APPLET_SYMLINKS is not set
-+# CONFIG_INSTALL_APPLET_HARDLINKS is not set
-+# CONFIG_INSTALL_APPLET_SCRIPT_WRAPPERS is not set
-+CONFIG_INSTALL_APPLET_DONT=y
-+# CONFIG_INSTALL_SH_APPLET_SYMLINK is not set
-+# CONFIG_INSTALL_SH_APPLET_HARDLINK is not set
-+# CONFIG_INSTALL_SH_APPLET_SCRIPT_WRAPPER is not set
-+CONFIG_PREFIX="./_install"
-+
-+#
-+# Busybox Library Tuning
-+#
-+# CONFIG_FEATURE_SYSTEMD is not set
-+# CONFIG_FEATURE_RTMINMAX is not set
-+CONFIG_PASSWORD_MINLEN=6
-+CONFIG_MD5_SMALL=1
-+CONFIG_SHA3_SMALL=1
-+# CONFIG_FEATURE_FAST_TOP is not set
-+# CONFIG_FEATURE_ETC_NETWORKS is not set
-+CONFIG_FEATURE_USE_TERMIOS=y
-+CONFIG_FEATURE_EDITING=y
-+CONFIG_FEATURE_EDITING_MAX_LEN=1024
-+# CONFIG_FEATURE_EDITING_VI is not set
-+CONFIG_FEATURE_EDITING_HISTORY=15
-+# CONFIG_FEATURE_EDITING_SAVEHISTORY is not set
-+# CONFIG_FEATURE_EDITING_SAVE_ON_EXIT is not set
-+# CONFIG_FEATURE_REVERSE_SEARCH is not set
-+CONFIG_FEATURE_TAB_COMPLETION=y
-+CONFIG_FEATURE_USERNAME_COMPLETION=y
-+CONFIG_FEATURE_EDITING_FANCY_PROMPT=y
-+CONFIG_FEATURE_EDITING_ASK_TERMINAL=y
-+# CONFIG_FEATURE_NON_POSIX_CP is not set
-+CONFIG_FEATURE_VERBOSE_CP_MESSAGE=y
-+CONFIG_FEATURE_COPYBUF_KB=64
-+CONFIG_FEATURE_SKIP_ROOTFS=y
-+CONFIG_MONOTONIC_SYSCALL=y
-+CONFIG_IOCTL_HEX2STR_ERROR=y
-+CONFIG_FEATURE_HWIB=y
-+
-+#
-+# Applets
-+#
-+
-+#
-+# Archival Utilities
-+#
-+CONFIG_FEATURE_SEAMLESS_XZ=y
-+CONFIG_FEATURE_SEAMLESS_LZMA=y
-+CONFIG_FEATURE_SEAMLESS_BZ2=y
-+CONFIG_FEATURE_SEAMLESS_GZ=y
-+CONFIG_FEATURE_SEAMLESS_Z=y
-+CONFIG_AR=y
-+CONFIG_FEATURE_AR_LONG_FILENAMES=y
-+# CONFIG_FEATURE_AR_CREATE is not set
-+CONFIG_UNCOMPRESS=y
-+CONFIG_GUNZIP=y
-+CONFIG_BUNZIP2=y
-+CONFIG_UNLZMA=y
-+CONFIG_FEATURE_LZMA_FAST=y
-+CONFIG_LZMA=y
-+CONFIG_UNXZ=y
-+CONFIG_XZ=y
-+CONFIG_BZIP2=y
-+CONFIG_CPIO=y
-+CONFIG_FEATURE_CPIO_O=y
-+# CONFIG_FEATURE_CPIO_P is not set
-+# CONFIG_DPKG is not set
-+# CONFIG_DPKG_DEB is not set
-+# CONFIG_FEATURE_DPKG_DEB_EXTRACT_ONLY is not set
-+CONFIG_GZIP=y
-+CONFIG_FEATURE_GZIP_LONG_OPTIONS=y
-+CONFIG_GZIP_FAST=2
-+CONFIG_LZOP=y
-+# CONFIG_LZOP_COMPR_HIGH is not set
-+CONFIG_RPM=y
-+CONFIG_RPM2CPIO=y
-+CONFIG_TAR=y
-+CONFIG_FEATURE_TAR_CREATE=y
-+# CONFIG_FEATURE_TAR_AUTODETECT is not set
-+# CONFIG_FEATURE_TAR_FROM is not set
-+# CONFIG_FEATURE_TAR_OLDGNU_COMPATIBILITY is not set
-+# CONFIG_FEATURE_TAR_OLDSUN_COMPATIBILITY is not set
-+CONFIG_FEATURE_TAR_GNU_EXTENSIONS=y
-+CONFIG_FEATURE_TAR_LONG_OPTIONS=y
-+CONFIG_FEATURE_TAR_TO_COMMAND=y
-+CONFIG_FEATURE_TAR_UNAME_GNAME=y
-+CONFIG_FEATURE_TAR_NOPRESERVE_TIME=y
-+# CONFIG_FEATURE_TAR_SELINUX is not set
-+CONFIG_UNZIP=y
-+
-+#
-+# Coreutils
-+#
-+CONFIG_BASENAME=y
-+CONFIG_CAT=y
-+CONFIG_DATE=y
-+CONFIG_FEATURE_DATE_ISOFMT=y
-+# CONFIG_FEATURE_DATE_NANO is not set
-+CONFIG_FEATURE_DATE_COMPAT=y
-+CONFIG_HOSTID=y
-+CONFIG_ID=y
-+CONFIG_GROUPS=y
-+CONFIG_TEST=y
-+CONFIG_FEATURE_TEST_64=y
-+CONFIG_TOUCH=y
-+CONFIG_FEATURE_TOUCH_NODEREF=y
-+CONFIG_FEATURE_TOUCH_SUSV3=y
-+CONFIG_TR=y
-+# CONFIG_FEATURE_TR_CLASSES is not set
-+# CONFIG_FEATURE_TR_EQUIV is not set
-+# CONFIG_BASE64 is not set
-+CONFIG_WHO=y
-+# CONFIG_USERS is not set
-+CONFIG_CAL=y
-+# CONFIG_CATV is not set
-+CONFIG_CHGRP=y
-+CONFIG_CHMOD=y
-+CONFIG_CHOWN=y
-+CONFIG_FEATURE_CHOWN_LONG_OPTIONS=y
-+CONFIG_CHROOT=y
-+# CONFIG_CKSUM is not set
-+# CONFIG_COMM is not set
-+CONFIG_CP=y
-+CONFIG_FEATURE_CP_LONG_OPTIONS=y
-+CONFIG_CUT=y
-+CONFIG_DD=y
-+CONFIG_FEATURE_DD_SIGNAL_HANDLING=y
-+# CONFIG_FEATURE_DD_THIRD_STATUS_LINE is not set
-+CONFIG_FEATURE_DD_IBS_OBS=y
-+CONFIG_DF=y
-+CONFIG_FEATURE_DF_FANCY=y
-+CONFIG_DIRNAME=y
-+CONFIG_DOS2UNIX=y
-+CONFIG_UNIX2DOS=y
-+CONFIG_DU=y
-+CONFIG_FEATURE_DU_DEFAULT_BLOCKSIZE_1K=y
-+CONFIG_ECHO=y
-+CONFIG_FEATURE_FANCY_ECHO=y
-+CONFIG_ENV=y
-+CONFIG_FEATURE_ENV_LONG_OPTIONS=y
-+CONFIG_EXPAND=y
-+CONFIG_FEATURE_EXPAND_LONG_OPTIONS=y
-+CONFIG_EXPR=y
-+CONFIG_EXPR_MATH_SUPPORT_64=y
-+CONFIG_FALSE=y
-+CONFIG_FOLD=y
-+CONFIG_FSYNC=y
-+CONFIG_HEAD=y
-+CONFIG_FEATURE_FANCY_HEAD=y
-+CONFIG_INSTALL=y
-+CONFIG_FEATURE_INSTALL_LONG_OPTIONS=y
-+CONFIG_LN=y
-+CONFIG_LOGNAME=y
-+CONFIG_LS=y
-+CONFIG_FEATURE_LS_FILETYPES=y
-+CONFIG_FEATURE_LS_FOLLOWLINKS=y
-+CONFIG_FEATURE_LS_RECURSIVE=y
-+CONFIG_FEATURE_LS_SORTFILES=y
-+CONFIG_FEATURE_LS_TIMESTAMPS=y
-+CONFIG_FEATURE_LS_USERNAME=y
-+CONFIG_FEATURE_LS_COLOR=y
-+CONFIG_FEATURE_LS_COLOR_IS_DEFAULT=y
-+CONFIG_MD5SUM=y
-+CONFIG_MKDIR=y
-+CONFIG_FEATURE_MKDIR_LONG_OPTIONS=y
-+CONFIG_MKFIFO=y
-+CONFIG_MKNOD=y
-+CONFIG_MV=y
-+CONFIG_FEATURE_MV_LONG_OPTIONS=y
-+CONFIG_NICE=y
-+CONFIG_NOHUP=y
-+CONFIG_OD=y
-+CONFIG_PRINTENV=y
-+CONFIG_PRINTF=y
-+CONFIG_PWD=y
-+CONFIG_READLINK=y
-+CONFIG_FEATURE_READLINK_FOLLOW=y
-+CONFIG_REALPATH=y
-+CONFIG_RM=y
-+CONFIG_RMDIR=y
-+CONFIG_FEATURE_RMDIR_LONG_OPTIONS=y
-+CONFIG_SEQ=y
-+CONFIG_SHA1SUM=y
-+CONFIG_SHA256SUM=y
-+CONFIG_SHA512SUM=y
-+# CONFIG_SHA3SUM is not set
-+CONFIG_SLEEP=y
-+CONFIG_FEATURE_FANCY_SLEEP=y
-+CONFIG_FEATURE_FLOAT_SLEEP=y
-+CONFIG_SORT=y
-+CONFIG_FEATURE_SORT_BIG=y
-+CONFIG_SPLIT=y
-+CONFIG_FEATURE_SPLIT_FANCY=y
-+CONFIG_STAT=y
-+CONFIG_FEATURE_STAT_FORMAT=y
-+CONFIG_STTY=y
-+CONFIG_SUM=y
-+CONFIG_SYNC=y
-+CONFIG_TAC=y
-+CONFIG_TAIL=y
-+CONFIG_FEATURE_FANCY_TAIL=y
-+CONFIG_TEE=y
-+CONFIG_FEATURE_TEE_USE_BLOCK_IO=y
-+CONFIG_TRUE=y
-+CONFIG_TTY=y
-+CONFIG_UNAME=y
-+CONFIG_UNEXPAND=y
-+CONFIG_FEATURE_UNEXPAND_LONG_OPTIONS=y
-+CONFIG_UNIQ=y
-+CONFIG_USLEEP=y
-+CONFIG_UUDECODE=y
-+CONFIG_UUENCODE=y
-+CONFIG_WC=y
-+CONFIG_FEATURE_WC_LARGE=y
-+CONFIG_WHOAMI=y
-+CONFIG_YES=y
-+
-+#
-+# Common options for cp and mv
-+#
-+CONFIG_FEATURE_PRESERVE_HARDLINKS=y
-+
-+#
-+# Common options for ls, more and telnet
-+#
-+CONFIG_FEATURE_AUTOWIDTH=y
-+
-+#
-+# Common options for df, du, ls
-+#
-+CONFIG_FEATURE_HUMAN_READABLE=y
-+
-+#
-+# Common options for md5sum, sha1sum, sha256sum, sha512sum, sha3sum
-+#
-+CONFIG_FEATURE_MD5_SHA1_SUM_CHECK=y
-+
-+#
-+# Console Utilities
-+#
-+CONFIG_CHVT=y
-+# CONFIG_FGCONSOLE is not set
-+CONFIG_CLEAR=y
-+CONFIG_DEALLOCVT=y
-+CONFIG_DUMPKMAP=y
-+# CONFIG_KBD_MODE is not set
-+CONFIG_LOADFONT=y
-+CONFIG_LOADKMAP=y
-+CONFIG_OPENVT=y
-+CONFIG_RESET=y
-+CONFIG_RESIZE=y
-+CONFIG_FEATURE_RESIZE_PRINT=y
-+CONFIG_SETCONSOLE=y
-+CONFIG_FEATURE_SETCONSOLE_LONG_OPTIONS=y
-+CONFIG_SETFONT=y
-+CONFIG_FEATURE_SETFONT_TEXTUAL_MAP=y
-+CONFIG_DEFAULT_SETFONT_DIR=""
-+CONFIG_SETKEYCODES=y
-+CONFIG_SETLOGCONS=y
-+CONFIG_SHOWKEY=y
-+
-+#
-+# Common options for loadfont and setfont
-+#
-+CONFIG_FEATURE_LOADFONT_PSF2=y
-+CONFIG_FEATURE_LOADFONT_RAW=y
-+
-+#
-+# Debian Utilities
-+#
-+CONFIG_MKTEMP=y
-+CONFIG_PIPE_PROGRESS=y
-+CONFIG_RUN_PARTS=y
-+CONFIG_FEATURE_RUN_PARTS_LONG_OPTIONS=y
-+CONFIG_FEATURE_RUN_PARTS_FANCY=y
-+CONFIG_START_STOP_DAEMON=y
-+CONFIG_FEATURE_START_STOP_DAEMON_FANCY=y
-+CONFIG_FEATURE_START_STOP_DAEMON_LONG_OPTIONS=y
-+CONFIG_WHICH=y
-+
-+#
-+# Editors
-+#
-+CONFIG_AWK=y
-+CONFIG_FEATURE_AWK_LIBM=y
-+CONFIG_FEATURE_AWK_GNU_EXTENSIONS=y
-+CONFIG_CMP=y
-+CONFIG_DIFF=y
-+CONFIG_FEATURE_DIFF_LONG_OPTIONS=y
-+CONFIG_FEATURE_DIFF_DIR=y
-+CONFIG_ED=y
-+CONFIG_PATCH=y
-+CONFIG_SED=y
-+CONFIG_VI=y
-+CONFIG_FEATURE_VI_MAX_LEN=4096
-+# CONFIG_FEATURE_VI_8BIT is not set
-+CONFIG_FEATURE_VI_COLON=y
-+CONFIG_FEATURE_VI_YANKMARK=y
-+CONFIG_FEATURE_VI_SEARCH=y
-+CONFIG_FEATURE_VI_REGEX_SEARCH=y
-+CONFIG_FEATURE_VI_USE_SIGNALS=y
-+CONFIG_FEATURE_VI_DOT_CMD=y
-+CONFIG_FEATURE_VI_READONLY=y
-+CONFIG_FEATURE_VI_SETOPTS=y
-+CONFIG_FEATURE_VI_SET=y
-+CONFIG_FEATURE_VI_WIN_RESIZE=y
-+CONFIG_FEATURE_VI_ASK_TERMINAL=y
-+CONFIG_FEATURE_ALLOW_EXEC=y
-+
-+#
-+# Finding Utilities
-+#
-+CONFIG_FIND=y
-+CONFIG_FEATURE_FIND_PRINT0=y
-+CONFIG_FEATURE_FIND_MTIME=y
-+CONFIG_FEATURE_FIND_MMIN=y
-+CONFIG_FEATURE_FIND_PERM=y
-+CONFIG_FEATURE_FIND_TYPE=y
-+CONFIG_FEATURE_FIND_XDEV=y
-+CONFIG_FEATURE_FIND_MAXDEPTH=y
-+CONFIG_FEATURE_FIND_NEWER=y
-+CONFIG_FEATURE_FIND_INUM=y
-+CONFIG_FEATURE_FIND_EXEC=y
-+CONFIG_FEATURE_FIND_USER=y
-+CONFIG_FEATURE_FIND_GROUP=y
-+CONFIG_FEATURE_FIND_NOT=y
-+CONFIG_FEATURE_FIND_DEPTH=y
-+CONFIG_FEATURE_FIND_PAREN=y
-+CONFIG_FEATURE_FIND_SIZE=y
-+CONFIG_FEATURE_FIND_PRUNE=y
-+CONFIG_FEATURE_FIND_DELETE=y
-+CONFIG_FEATURE_FIND_PATH=y
-+CONFIG_FEATURE_FIND_REGEX=y
-+# CONFIG_FEATURE_FIND_CONTEXT is not set
-+CONFIG_FEATURE_FIND_LINKS=y
-+CONFIG_GREP=y
-+CONFIG_FEATURE_GREP_EGREP_ALIAS=y
-+CONFIG_FEATURE_GREP_FGREP_ALIAS=y
-+CONFIG_FEATURE_GREP_CONTEXT=y
-+CONFIG_XARGS=y
-+CONFIG_FEATURE_XARGS_SUPPORT_CONFIRMATION=y
-+CONFIG_FEATURE_XARGS_SUPPORT_QUOTES=y
-+CONFIG_FEATURE_XARGS_SUPPORT_TERMOPT=y
-+CONFIG_FEATURE_XARGS_SUPPORT_ZERO_TERM=y
-+
-+#
-+# Init Utilities
-+#
-+# CONFIG_BOOTCHARTD is not set
-+# CONFIG_FEATURE_BOOTCHARTD_BLOATED_HEADER is not set
-+# CONFIG_FEATURE_BOOTCHARTD_CONFIG_FILE is not set
-+CONFIG_HALT=y
-+# CONFIG_FEATURE_CALL_TELINIT is not set
-+CONFIG_TELINIT_PATH=""
-+CONFIG_INIT=y
-+CONFIG_FEATURE_USE_INITTAB=y
-+CONFIG_FEATURE_KILL_REMOVED=y
-+CONFIG_FEATURE_KILL_DELAY=0
-+CONFIG_FEATURE_INIT_SCTTY=y
-+CONFIG_FEATURE_INIT_SYSLOG=y
-+CONFIG_FEATURE_EXTRA_QUIET=y
-+CONFIG_FEATURE_INIT_COREDUMPS=y
-+CONFIG_FEATURE_INITRD=y
-+CONFIG_INIT_TERMINAL_TYPE="linux"
-+CONFIG_MESG=y
-+# CONFIG_FEATURE_MESG_ENABLE_ONLY_GROUP is not set
-+
-+#
-+# Login/Password Management Utilities
-+#
-+# CONFIG_ADD_SHELL is not set
-+# CONFIG_REMOVE_SHELL is not set
-+CONFIG_FEATURE_SHADOWPASSWDS=y
-+# CONFIG_USE_BB_PWD_GRP is not set
-+# CONFIG_USE_BB_SHADOW is not set
-+CONFIG_USE_BB_CRYPT=y
-+CONFIG_USE_BB_CRYPT_SHA=y
-+# CONFIG_ADDUSER is not set
-+# CONFIG_FEATURE_ADDUSER_LONG_OPTIONS is not set
-+# CONFIG_FEATURE_CHECK_NAMES is not set
-+CONFIG_FIRST_SYSTEM_ID=0
-+CONFIG_LAST_SYSTEM_ID=0
-+# CONFIG_ADDGROUP is not set
-+# CONFIG_FEATURE_ADDGROUP_LONG_OPTIONS is not set
-+# CONFIG_FEATURE_ADDUSER_TO_GROUP is not set
-+# CONFIG_DELUSER is not set
-+# CONFIG_DELGROUP is not set
-+# CONFIG_FEATURE_DEL_USER_FROM_GROUP is not set
-+CONFIG_GETTY=y
-+CONFIG_LOGIN=y
-+CONFIG_LOGIN_SESSION_AS_CHILD=y
-+# CONFIG_PAM is not set
-+# CONFIG_LOGIN_SCRIPTS is not set
-+CONFIG_FEATURE_NOLOGIN=y
-+CONFIG_FEATURE_SECURETTY=y
-+# CONFIG_PASSWD is not set
-+# CONFIG_FEATURE_PASSWD_WEAK_CHECK is not set
-+# CONFIG_CRYPTPW is not set
-+# CONFIG_CHPASSWD is not set
-+CONFIG_FEATURE_DEFAULT_PASSWD_ALGO=""
-+# CONFIG_SU is not set
-+# CONFIG_FEATURE_SU_SYSLOG is not set
-+# CONFIG_FEATURE_SU_CHECKS_SHELLS is not set
-+# CONFIG_SULOGIN is not set
-+# CONFIG_VLOCK is not set
-+
-+#
-+# Linux Ext2 FS Progs
-+#
-+CONFIG_CHATTR=y
-+CONFIG_FSCK=y
-+CONFIG_LSATTR=y
-+# CONFIG_TUNE2FS is not set
-+
-+#
-+# Linux Module Utilities
-+#
-+CONFIG_MODINFO=y
-+# CONFIG_MODPROBE_SMALL is not set
-+# CONFIG_FEATURE_MODPROBE_SMALL_OPTIONS_ON_CMDLINE is not set
-+# CONFIG_FEATURE_MODPROBE_SMALL_CHECK_ALREADY_LOADED is not set
-+CONFIG_INSMOD=y
-+CONFIG_RMMOD=y
-+CONFIG_LSMOD=y
-+CONFIG_FEATURE_LSMOD_PRETTY_2_6_OUTPUT=y
-+CONFIG_MODPROBE=y
-+CONFIG_FEATURE_MODPROBE_BLACKLIST=y
-+CONFIG_DEPMOD=y
-+
-+#
-+# Options common to multiple modutils
-+#
-+# CONFIG_FEATURE_2_4_MODULES is not set
-+# CONFIG_FEATURE_INSMOD_TRY_MMAP is not set
-+# CONFIG_FEATURE_INSMOD_VERSION_CHECKING is not set
-+# CONFIG_FEATURE_INSMOD_KSYMOOPS_SYMBOLS is not set
-+# CONFIG_FEATURE_INSMOD_LOADINKMEM is not set
-+# CONFIG_FEATURE_INSMOD_LOAD_MAP is not set
-+# CONFIG_FEATURE_INSMOD_LOAD_MAP_FULL is not set
-+CONFIG_FEATURE_CHECK_TAINTED_MODULE=y
-+CONFIG_FEATURE_MODUTILS_ALIAS=y
-+CONFIG_FEATURE_MODUTILS_SYMBOLS=y
-+CONFIG_DEFAULT_MODULES_DIR="/lib/modules"
-+CONFIG_DEFAULT_DEPMOD_FILE="modules.dep"
-+
-+#
-+# Linux System Utilities
-+#
-+CONFIG_BLOCKDEV=y
-+CONFIG_FSTRIM=y
-+CONFIG_MDEV=y
-+CONFIG_FEATURE_MDEV_CONF=y
-+CONFIG_FEATURE_MDEV_RENAME=y
-+CONFIG_FEATURE_MDEV_RENAME_REGEXP=y
-+CONFIG_FEATURE_MDEV_EXEC=y
-+CONFIG_FEATURE_MDEV_LOAD_FIRMWARE=y
-+CONFIG_REV=y
-+CONFIG_ACPID=y
-+CONFIG_FEATURE_ACPID_COMPAT=y
-+CONFIG_BLKID=y
-+# CONFIG_FEATURE_BLKID_TYPE is not set
-+CONFIG_DMESG=y
-+CONFIG_FEATURE_DMESG_PRETTY=y
-+# CONFIG_FBSET is not set
-+# CONFIG_FEATURE_FBSET_FANCY is not set
-+# CONFIG_FEATURE_FBSET_READMODE is not set
-+CONFIG_FDFLUSH=y
-+CONFIG_FDFORMAT=y
-+CONFIG_FDISK=y
-+CONFIG_FDISK_SUPPORT_LARGE_DISKS=y
-+CONFIG_FEATURE_FDISK_WRITABLE=y
-+# CONFIG_FEATURE_AIX_LABEL is not set
-+# CONFIG_FEATURE_SGI_LABEL is not set
-+# CONFIG_FEATURE_SUN_LABEL is not set
-+# CONFIG_FEATURE_OSF_LABEL is not set
-+# CONFIG_FEATURE_GPT_LABEL is not set
-+CONFIG_FEATURE_FDISK_ADVANCED=y
-+CONFIG_FINDFS=y
-+CONFIG_FLOCK=y
-+CONFIG_FREERAMDISK=y
-+# CONFIG_FSCK_MINIX is not set
-+# CONFIG_MKFS_EXT2 is not set
-+# CONFIG_MKFS_MINIX is not set
-+# CONFIG_FEATURE_MINIX2 is not set
-+# CONFIG_MKFS_REISER is not set
-+CONFIG_MKFS_VFAT=y
-+CONFIG_GETOPT=y
-+CONFIG_FEATURE_GETOPT_LONG=y
-+CONFIG_HEXDUMP=y
-+# CONFIG_FEATURE_HEXDUMP_REVERSE is not set
-+# CONFIG_HD is not set
-+CONFIG_HWCLOCK=y
-+CONFIG_FEATURE_HWCLOCK_LONG_OPTIONS=y
-+# CONFIG_FEATURE_HWCLOCK_ADJTIME_FHS is not set
-+CONFIG_IPCRM=y
-+CONFIG_IPCS=y
-+CONFIG_LOSETUP=y
-+CONFIG_LSPCI=y
-+CONFIG_LSUSB=y
-+CONFIG_MKSWAP=y
-+CONFIG_FEATURE_MKSWAP_UUID=y
-+CONFIG_MORE=y
-+CONFIG_MOUNT=y
-+CONFIG_FEATURE_MOUNT_FAKE=y
-+CONFIG_FEATURE_MOUNT_VERBOSE=y
-+CONFIG_FEATURE_MOUNT_HELPERS=y
-+CONFIG_FEATURE_MOUNT_LABEL=y
-+CONFIG_FEATURE_MOUNT_NFS=y
-+CONFIG_FEATURE_MOUNT_CIFS=y
-+CONFIG_FEATURE_MOUNT_FLAGS=y
-+CONFIG_FEATURE_MOUNT_FSTAB=y
-+CONFIG_PIVOT_ROOT=y
-+CONFIG_RDATE=y
-+CONFIG_RDEV=y
-+CONFIG_READPROFILE=y
-+CONFIG_RTCWAKE=y
-+CONFIG_SCRIPT=y
-+CONFIG_SCRIPTREPLAY=y
-+CONFIG_SETARCH=y
-+CONFIG_SWAPONOFF=y
-+# CONFIG_FEATURE_SWAPON_PRI is not set
-+CONFIG_SWITCH_ROOT=y
-+CONFIG_UMOUNT=y
-+CONFIG_FEATURE_UMOUNT_ALL=y
-+
-+#
-+# Common options for mount/umount
-+#
-+CONFIG_FEATURE_MOUNT_LOOP=y
-+CONFIG_FEATURE_MOUNT_LOOP_CREATE=y
-+# CONFIG_FEATURE_MTAB_SUPPORT is not set
-+CONFIG_VOLUMEID=y
-+
-+#
-+# Filesystem/Volume identification
-+#
-+CONFIG_FEATURE_VOLUMEID_BTRFS=y
-+CONFIG_FEATURE_VOLUMEID_CRAMFS=y
-+CONFIG_FEATURE_VOLUMEID_EXFAT=y
-+CONFIG_FEATURE_VOLUMEID_EXT=y
-+CONFIG_FEATURE_VOLUMEID_F2FS=y
-+CONFIG_FEATURE_VOLUMEID_FAT=y
-+CONFIG_FEATURE_VOLUMEID_HFS=y
-+CONFIG_FEATURE_VOLUMEID_ISO9660=y
-+CONFIG_FEATURE_VOLUMEID_JFS=y
-+CONFIG_FEATURE_VOLUMEID_LINUXRAID=y
-+CONFIG_FEATURE_VOLUMEID_LINUXSWAP=y
-+CONFIG_FEATURE_VOLUMEID_LUKS=y
-+CONFIG_FEATURE_VOLUMEID_NILFS=y
-+CONFIG_FEATURE_VOLUMEID_NTFS=y
-+CONFIG_FEATURE_VOLUMEID_OCFS2=y
-+CONFIG_FEATURE_VOLUMEID_REISERFS=y
-+CONFIG_FEATURE_VOLUMEID_ROMFS=y
-+# CONFIG_FEATURE_VOLUMEID_SQUASHFS is not set
-+CONFIG_FEATURE_VOLUMEID_SYSV=y
-+CONFIG_FEATURE_VOLUMEID_UDF=y
-+CONFIG_FEATURE_VOLUMEID_XFS=y
-+
-+#
-+# Miscellaneous Utilities
-+#
-+# CONFIG_CONSPY is not set
-+CONFIG_LESS=y
-+CONFIG_FEATURE_LESS_MAXLINES=9999999
-+CONFIG_FEATURE_LESS_BRACKETS=y
-+CONFIG_FEATURE_LESS_FLAGS=y
-+CONFIG_FEATURE_LESS_MARKS=y
-+CONFIG_FEATURE_LESS_REGEXP=y
-+CONFIG_FEATURE_LESS_WINCH=y
-+CONFIG_FEATURE_LESS_ASK_TERMINAL=y
-+CONFIG_FEATURE_LESS_DASHCMD=y
-+CONFIG_FEATURE_LESS_LINENUMS=y
-+# CONFIG_NANDWRITE is not set
-+# CONFIG_NANDDUMP is not set
-+# CONFIG_RFKILL is not set
-+CONFIG_SETSERIAL=y
-+# CONFIG_UBIATTACH is not set
-+# CONFIG_UBIDETACH is not set
-+# CONFIG_UBIMKVOL is not set
-+# CONFIG_UBIRMVOL is not set
-+# CONFIG_UBIRSVOL is not set
-+# CONFIG_UBIUPDATEVOL is not set
-+# CONFIG_WALL is not set
-+CONFIG_ADJTIMEX=y
-+# CONFIG_BBCONFIG is not set
-+# CONFIG_FEATURE_COMPRESS_BBCONFIG is not set
-+# CONFIG_BEEP is not set
-+CONFIG_FEATURE_BEEP_FREQ=0
-+CONFIG_FEATURE_BEEP_LENGTH_MS=0
-+# CONFIG_CHAT is not set
-+# CONFIG_FEATURE_CHAT_NOFAIL is not set
-+# CONFIG_FEATURE_CHAT_TTY_HIFI is not set
-+# CONFIG_FEATURE_CHAT_IMPLICIT_CR is not set
-+# CONFIG_FEATURE_CHAT_SWALLOW_OPTS is not set
-+# CONFIG_FEATURE_CHAT_SEND_ESCAPES is not set
-+# CONFIG_FEATURE_CHAT_VAR_ABORT_LEN is not set
-+# CONFIG_FEATURE_CHAT_CLR_ABORT is not set
-+CONFIG_CHRT=y
-+CONFIG_CROND=y
-+CONFIG_FEATURE_CROND_D=y
-+CONFIG_FEATURE_CROND_CALL_SENDMAIL=y
-+CONFIG_FEATURE_CROND_DIR="/var/spool/cron"
-+CONFIG_CRONTAB=y
-+CONFIG_DC=y
-+# CONFIG_FEATURE_DC_LIBM is not set
-+# CONFIG_DEVFSD is not set
-+# CONFIG_DEVFSD_MODLOAD is not set
-+# CONFIG_DEVFSD_FG_NP is not set
-+# CONFIG_DEVFSD_VERBOSE is not set
-+# CONFIG_FEATURE_DEVFS is not set
-+CONFIG_DEVMEM=y
-+# CONFIG_EJECT is not set
-+# CONFIG_FEATURE_EJECT_SCSI is not set
-+# CONFIG_FBSPLASH is not set
-+# CONFIG_FLASHCP is not set
-+# CONFIG_FLASH_LOCK is not set
-+# CONFIG_FLASH_UNLOCK is not set
-+# CONFIG_FLASH_ERASEALL is not set
-+CONFIG_IONICE=y
-+# CONFIG_INOTIFYD is not set
-+CONFIG_LAST=y
-+CONFIG_FEATURE_LAST_SMALL=y
-+# CONFIG_FEATURE_LAST_FANCY is not set
-+# CONFIG_HDPARM is not set
-+# CONFIG_FEATURE_HDPARM_GET_IDENTITY is not set
-+# CONFIG_FEATURE_HDPARM_HDIO_SCAN_HWIF is not set
-+# CONFIG_FEATURE_HDPARM_HDIO_UNREGISTER_HWIF is not set
-+# CONFIG_FEATURE_HDPARM_HDIO_DRIVE_RESET is not set
-+# CONFIG_FEATURE_HDPARM_HDIO_TRISTATE_HWIF is not set
-+# CONFIG_FEATURE_HDPARM_HDIO_GETSET_DMA is not set
-+# CONFIG_MAKEDEVS is not set
-+# CONFIG_FEATURE_MAKEDEVS_LEAF is not set
-+# CONFIG_FEATURE_MAKEDEVS_TABLE is not set
-+# CONFIG_MAN is not set
-+CONFIG_MICROCOM=y
-+CONFIG_MOUNTPOINT=y
-+CONFIG_MT=y
-+# CONFIG_RAIDAUTORUN is not set
-+# CONFIG_READAHEAD is not set
-+# CONFIG_RUNLEVEL is not set
-+# CONFIG_RX is not set
-+CONFIG_SETSID=y
-+CONFIG_STRINGS=y
-+CONFIG_TASKSET=y
-+CONFIG_FEATURE_TASKSET_FANCY=y
-+CONFIG_TIME=y
-+CONFIG_TIMEOUT=y
-+# CONFIG_TTYSIZE is not set
-+# CONFIG_VOLNAME is not set
-+CONFIG_WATCHDOG=y
-+
-+#
-+# Networking Utilities
-+#
-+CONFIG_NAMEIF=y
-+# CONFIG_FEATURE_NAMEIF_EXTENDED is not set
-+# CONFIG_NBDCLIENT is not set
-+CONFIG_NC=y
-+CONFIG_NC_SERVER=y
-+CONFIG_NC_EXTRA=y
-+# CONFIG_NC_110_COMPAT is not set
-+CONFIG_PING=y
-+CONFIG_PING6=y
-+CONFIG_FEATURE_FANCY_PING=y
-+# CONFIG_WHOIS is not set
-+CONFIG_FEATURE_IPV6=y
-+# CONFIG_FEATURE_UNIX_LOCAL is not set
-+# CONFIG_FEATURE_PREFER_IPV4_ADDRESS is not set
-+# CONFIG_VERBOSE_RESOLUTION_ERRORS is not set
-+CONFIG_ARP=y
-+CONFIG_ARPING=y
-+CONFIG_BRCTL=y
-+# CONFIG_FEATURE_BRCTL_FANCY is not set
-+# CONFIG_FEATURE_BRCTL_SHOW is not set
-+# CONFIG_DNSD is not set
-+# CONFIG_ETHER_WAKE is not set
-+# CONFIG_FAKEIDENTD is not set
-+# CONFIG_FTPD is not set
-+# CONFIG_FEATURE_FTP_WRITE is not set
-+# CONFIG_FEATURE_FTPD_ACCEPT_BROKEN_LIST is not set
-+CONFIG_FTPGET=y
-+CONFIG_FTPPUT=y
-+CONFIG_FEATURE_FTPGETPUT_LONG_OPTIONS=y
-+CONFIG_HOSTNAME=y
-+CONFIG_HTTPD=y
-+CONFIG_FEATURE_HTTPD_RANGES=y
-+CONFIG_FEATURE_HTTPD_USE_SENDFILE=y
-+CONFIG_FEATURE_HTTPD_SETUID=y
-+CONFIG_FEATURE_HTTPD_BASIC_AUTH=y
-+CONFIG_FEATURE_HTTPD_AUTH_MD5=y
-+CONFIG_FEATURE_HTTPD_CGI=y
-+CONFIG_FEATURE_HTTPD_CONFIG_WITH_SCRIPT_INTERPR=y
-+CONFIG_FEATURE_HTTPD_SET_REMOTE_PORT_TO_ENV=y
-+CONFIG_FEATURE_HTTPD_ENCODE_URL_STR=y
-+CONFIG_FEATURE_HTTPD_ERROR_PAGES=y
-+# CONFIG_FEATURE_HTTPD_PROXY is not set
-+CONFIG_FEATURE_HTTPD_GZIP=y
-+CONFIG_IFCONFIG=y
-+CONFIG_FEATURE_IFCONFIG_STATUS=y
-+CONFIG_FEATURE_IFCONFIG_SLIP=y
-+CONFIG_FEATURE_IFCONFIG_MEMSTART_IOADDR_IRQ=y
-+CONFIG_FEATURE_IFCONFIG_HW=y
-+CONFIG_FEATURE_IFCONFIG_BROADCAST_PLUS=y
-+# CONFIG_IFENSLAVE is not set
-+# CONFIG_IFPLUGD is not set
-+CONFIG_IFUPDOWN=y
-+CONFIG_IFUPDOWN_IFSTATE_PATH="/var/run/ifstate"
-+CONFIG_FEATURE_IFUPDOWN_IP=y
-+CONFIG_FEATURE_IFUPDOWN_IP_BUILTIN=y
-+# CONFIG_FEATURE_IFUPDOWN_IFCONFIG_BUILTIN is not set
-+CONFIG_FEATURE_IFUPDOWN_IPV4=y
-+CONFIG_FEATURE_IFUPDOWN_IPV6=y
-+CONFIG_FEATURE_IFUPDOWN_MAPPING=y
-+# CONFIG_FEATURE_IFUPDOWN_EXTERNAL_DHCP is not set
-+# CONFIG_INETD is not set
-+# CONFIG_FEATURE_INETD_SUPPORT_BUILTIN_ECHO is not set
-+# CONFIG_FEATURE_INETD_SUPPORT_BUILTIN_DISCARD is not set
-+# CONFIG_FEATURE_INETD_SUPPORT_BUILTIN_TIME is not set
-+# CONFIG_FEATURE_INETD_SUPPORT_BUILTIN_DAYTIME is not set
-+# CONFIG_FEATURE_INETD_SUPPORT_BUILTIN_CHARGEN is not set
-+# CONFIG_FEATURE_INETD_RPC is not set
-+CONFIG_IP=y
-+CONFIG_FEATURE_IP_ADDRESS=y
-+CONFIG_FEATURE_IP_LINK=y
-+CONFIG_FEATURE_IP_ROUTE=y
-+CONFIG_FEATURE_IP_TUNNEL=y
-+CONFIG_FEATURE_IP_RULE=y
-+# CONFIG_FEATURE_IP_SHORT_FORMS is not set
-+# CONFIG_FEATURE_IP_RARE_PROTOCOLS is not set
-+# CONFIG_IPADDR is not set
-+# CONFIG_IPLINK is not set
-+# CONFIG_IPROUTE is not set
-+# CONFIG_IPTUNNEL is not set
-+# CONFIG_IPRULE is not set
-+CONFIG_IPCALC=y
-+CONFIG_FEATURE_IPCALC_FANCY=y
-+CONFIG_FEATURE_IPCALC_LONG_OPTIONS=y
-+CONFIG_NETSTAT=y
-+# CONFIG_FEATURE_NETSTAT_WIDE is not set
-+# CONFIG_FEATURE_NETSTAT_PRG is not set
-+CONFIG_NSLOOKUP=y
-+# CONFIG_NTPD is not set
-+# CONFIG_FEATURE_NTPD_SERVER is not set
-+# CONFIG_PSCAN is not set
-+CONFIG_ROUTE=y
-+# CONFIG_SLATTACH is not set
-+# CONFIG_TCPSVD is not set
-+CONFIG_TELNET=y
-+CONFIG_FEATURE_TELNET_TTYPE=y
-+CONFIG_FEATURE_TELNET_AUTOLOGIN=y
-+# CONFIG_TELNETD is not set
-+# CONFIG_FEATURE_TELNETD_STANDALONE is not set
-+# CONFIG_FEATURE_TELNETD_INETD_WAIT is not set
-+CONFIG_TFTP=y
-+# CONFIG_TFTPD is not set
-+
-+#
-+# Common options for tftp/tftpd
-+#
-+CONFIG_FEATURE_TFTP_GET=y
-+CONFIG_FEATURE_TFTP_PUT=y
-+CONFIG_FEATURE_TFTP_BLOCKSIZE=y
-+CONFIG_FEATURE_TFTP_PROGRESS_BAR=y
-+# CONFIG_TFTP_DEBUG is not set
-+CONFIG_TRACEROUTE=y
-+CONFIG_TRACEROUTE6=y
-+CONFIG_FEATURE_TRACEROUTE_VERBOSE=y
-+# CONFIG_FEATURE_TRACEROUTE_SOURCE_ROUTE is not set
-+# CONFIG_FEATURE_TRACEROUTE_USE_ICMP is not set
-+CONFIG_TUNCTL=y
-+CONFIG_FEATURE_TUNCTL_UG=y
-+# CONFIG_UDHCPC6 is not set
-+# CONFIG_UDHCPD is not set
-+# CONFIG_DHCPRELAY is not set
-+# CONFIG_DUMPLEASES is not set
-+# CONFIG_FEATURE_UDHCPD_WRITE_LEASES_EARLY is not set
-+# CONFIG_FEATURE_UDHCPD_BASE_IP_ON_MAC is not set
-+CONFIG_DHCPD_LEASES_FILE=""
-+CONFIG_UDHCPC=y
-+CONFIG_FEATURE_UDHCPC_ARPING=y
-+# CONFIG_FEATURE_UDHCP_PORT is not set
-+CONFIG_UDHCP_DEBUG=0
-+CONFIG_FEATURE_UDHCP_RFC3397=y
-+CONFIG_FEATURE_UDHCP_8021Q=y
-+CONFIG_UDHCPC_DEFAULT_SCRIPT="/etc/udhcpc/default.script"
-+CONFIG_UDHCPC_SLACK_FOR_BUGGY_SERVERS=80
-+CONFIG_IFUPDOWN_UDHCPC_CMD_OPTIONS="-R -n"
-+# CONFIG_UDPSVD is not set
-+CONFIG_VCONFIG=y
-+CONFIG_WGET=y
-+CONFIG_FEATURE_WGET_STATUSBAR=y
-+CONFIG_FEATURE_WGET_AUTHENTICATION=y
-+CONFIG_FEATURE_WGET_LONG_OPTIONS=y
-+# CONFIG_FEATURE_WGET_TIMEOUT is not set
-+# CONFIG_ZCIP is not set
-+
-+#
-+# Print Utilities
-+#
-+# CONFIG_LPD is not set
-+# CONFIG_LPR is not set
-+# CONFIG_LPQ is not set
-+
-+#
-+# Mail Utilities
-+#
-+# CONFIG_MAKEMIME is not set
-+CONFIG_FEATURE_MIME_CHARSET=""
-+# CONFIG_POPMAILDIR is not set
-+# CONFIG_FEATURE_POPMAILDIR_DELIVERY is not set
-+# CONFIG_REFORMIME is not set
-+# CONFIG_FEATURE_REFORMIME_COMPAT is not set
-+# CONFIG_SENDMAIL is not set
-+
-+#
-+# Process Utilities
-+#
-+CONFIG_IOSTAT=y
-+CONFIG_LSOF=y
-+# CONFIG_MPSTAT is not set
-+# CONFIG_NMETER is not set
-+# CONFIG_PMAP is not set
-+CONFIG_POWERTOP=y
-+CONFIG_PSTREE=y
-+# CONFIG_PWDX is not set
-+# CONFIG_SMEMCAP is not set
-+CONFIG_TOP=y
-+CONFIG_FEATURE_TOP_CPU_USAGE_PERCENTAGE=y
-+CONFIG_FEATURE_TOP_CPU_GLOBAL_PERCENTS=y
-+CONFIG_FEATURE_TOP_SMP_CPU=y
-+CONFIG_FEATURE_TOP_DECIMALS=y
-+CONFIG_FEATURE_TOP_SMP_PROCESS=y
-+CONFIG_FEATURE_TOPMEM=y
-+CONFIG_UPTIME=y
-+CONFIG_FEATURE_UPTIME_UTMP_SUPPORT=y
-+CONFIG_FREE=y
-+CONFIG_FUSER=y
-+CONFIG_KILL=y
-+CONFIG_KILLALL=y
-+# CONFIG_KILLALL5 is not set
-+CONFIG_PGREP=y
-+CONFIG_PIDOF=y
-+# CONFIG_FEATURE_PIDOF_SINGLE is not set
-+# CONFIG_FEATURE_PIDOF_OMIT is not set
-+CONFIG_PKILL=y
-+CONFIG_PS=y
-+CONFIG_FEATURE_PS_LONG=y
-+CONFIG_FEATURE_PS_WIDE=y
-+CONFIG_FEATURE_PS_TIME=y
-+CONFIG_FEATURE_PS_ADDITIONAL_COLUMNS=y
-+# CONFIG_FEATURE_PS_UNUSUAL_SYSTEMS is not set
-+CONFIG_RENICE=y
-+CONFIG_BB_SYSCTL=y
-+CONFIG_FEATURE_SHOW_THREADS=y
-+CONFIG_WATCH=y
-+
-+#
-+# Runit Utilities
-+#
-+# CONFIG_RUNSV is not set
-+# CONFIG_RUNSVDIR is not set
-+# CONFIG_FEATURE_RUNSVDIR_LOG is not set
-+# CONFIG_SV is not set
-+CONFIG_SV_DEFAULT_SERVICE_DIR=""
-+# CONFIG_SVLOGD is not set
-+# CONFIG_CHPST is not set
-+# CONFIG_SETUIDGID is not set
-+# CONFIG_ENVUIDGID is not set
-+# CONFIG_ENVDIR is not set
-+# CONFIG_SOFTLIMIT is not set
-+# CONFIG_CHCON is not set
-+# CONFIG_FEATURE_CHCON_LONG_OPTIONS is not set
-+# CONFIG_GETENFORCE is not set
-+# CONFIG_GETSEBOOL is not set
-+# CONFIG_LOAD_POLICY is not set
-+# CONFIG_MATCHPATHCON is not set
-+# CONFIG_RESTORECON is not set
-+# CONFIG_RUNCON is not set
-+# CONFIG_FEATURE_RUNCON_LONG_OPTIONS is not set
-+# CONFIG_SELINUXENABLED is not set
-+# CONFIG_SETENFORCE is not set
-+# CONFIG_SETFILES is not set
-+# CONFIG_FEATURE_SETFILES_CHECK_OPTION is not set
-+# CONFIG_SETSEBOOL is not set
-+# CONFIG_SESTATUS is not set
-+
-+#
-+# Shells
-+#
-+CONFIG_ASH=y
-+CONFIG_ASH_BASH_COMPAT=y
-+# CONFIG_ASH_IDLE_TIMEOUT is not set
-+CONFIG_ASH_JOB_CONTROL=y
-+CONFIG_ASH_ALIAS=y
-+CONFIG_ASH_GETOPTS=y
-+CONFIG_ASH_BUILTIN_ECHO=y
-+CONFIG_ASH_BUILTIN_PRINTF=y
-+CONFIG_ASH_BUILTIN_TEST=y
-+CONFIG_ASH_CMDCMD=y
-+CONFIG_ASH_MAIL=y
-+CONFIG_ASH_OPTIMIZE_FOR_SIZE=y
-+CONFIG_ASH_RANDOM_SUPPORT=y
-+CONFIG_ASH_EXPAND_PRMT=y
-+CONFIG_CTTYHACK=y
-+# CONFIG_HUSH is not set
-+# CONFIG_HUSH_BASH_COMPAT is not set
-+# CONFIG_HUSH_BRACE_EXPANSION is not set
-+# CONFIG_HUSH_HELP is not set
-+# CONFIG_HUSH_INTERACTIVE is not set
-+# CONFIG_HUSH_SAVEHISTORY is not set
-+# CONFIG_HUSH_JOB is not set
-+# CONFIG_HUSH_TICK is not set
-+# CONFIG_HUSH_IF is not set
-+# CONFIG_HUSH_LOOPS is not set
-+# CONFIG_HUSH_CASE is not set
-+# CONFIG_HUSH_FUNCTIONS is not set
-+# CONFIG_HUSH_LOCAL is not set
-+# CONFIG_HUSH_RANDOM_SUPPORT is not set
-+# CONFIG_HUSH_EXPORT_N is not set
-+# CONFIG_HUSH_MODE_X is not set
-+# CONFIG_MSH is not set
-+CONFIG_FEATURE_SH_IS_ASH=y
-+# CONFIG_FEATURE_SH_IS_HUSH is not set
-+# CONFIG_FEATURE_SH_IS_NONE is not set
-+# CONFIG_FEATURE_BASH_IS_ASH is not set
-+# CONFIG_FEATURE_BASH_IS_HUSH is not set
-+CONFIG_FEATURE_BASH_IS_NONE=y
-+CONFIG_SH_MATH_SUPPORT=y
-+CONFIG_SH_MATH_SUPPORT_64=y
-+CONFIG_FEATURE_SH_EXTRA_QUIET=y
-+# CONFIG_FEATURE_SH_STANDALONE is not set
-+# CONFIG_FEATURE_SH_NOFORK is not set
-+CONFIG_FEATURE_SH_HISTFILESIZE=y
-+
-+#
-+# System Logging Utilities
-+#
-+CONFIG_SYSLOGD=y
-+CONFIG_FEATURE_ROTATE_LOGFILE=y
-+CONFIG_FEATURE_REMOTE_LOG=y
-+# CONFIG_FEATURE_SYSLOGD_DUP is not set
-+# CONFIG_FEATURE_SYSLOGD_CFG is not set
-+CONFIG_FEATURE_SYSLOGD_READ_BUFFER_SIZE=1024
-+CONFIG_FEATURE_IPC_SYSLOG=y
-+CONFIG_FEATURE_IPC_SYSLOG_BUFFER_SIZE=64
-+CONFIG_LOGREAD=y
-+CONFIG_FEATURE_LOGREAD_REDUCED_LOCKING=y
-+# CONFIG_FEATURE_KMSG_SYSLOG is not set
-+CONFIG_KLOGD=y
-+CONFIG_FEATURE_KLOGD_KLOGCTL=y
-+CONFIG_LOGGER=y
-diff --git a/deby/poky/meta-cip-common/recipes-debian/busybox/files/inittab b/deby/poky/meta-cip-common/recipes-debian/busybox/files/inittab
-new file mode 100644
-index 0000000..467643a
---- /dev/null
-+++ b/deby/poky/meta-cip-common/recipes-debian/busybox/files/inittab
-@@ -0,0 +1,5 @@
-+# Copyright (C) 2016-2018, TOSHIBA Corp., Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-+# SPDX-License-Identifier:	MIT
-+::sysinit:/etc/init.d/rcS
-+::shutdown:/etc/init.d/rcE
-+::ctrlaltdel:/sbin/reboot
-diff --git a/deby/poky/meta-cip-common/recipes-debian/busybox/files/rcE b/deby/poky/meta-cip-common/recipes-debian/busybox/files/rcE
-new file mode 100644
-index 0000000..597a8e7
---- /dev/null
-+++ b/deby/poky/meta-cip-common/recipes-debian/busybox/files/rcE
-@@ -0,0 +1,8 @@
-+#!/bin/sh
-+# Copyright (C) 2016-2018, TOSHIBA Corp., Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-+# SPDX-License-Identifier:	MIT
-+echo "Unmounting filesystem..."
-+sync; sync; sync
-+umount -a -f -r 2> /dev/null || true
-+sync; sync; sync
-+
-diff --git a/deby/poky/meta-cip-common/recipes-debian/busybox/files/rcS b/deby/poky/meta-cip-common/recipes-debian/busybox/files/rcS
-new file mode 100644
-index 0000000..cb3e21e
---- /dev/null
-+++ b/deby/poky/meta-cip-common/recipes-debian/busybox/files/rcS
-@@ -0,0 +1,32 @@
-+#!/bin/sh
-+# Copyright (C) 2016-2018, TOSHIBA Corp., Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-+# SPDX-License-Identifier:	MIT
-+# minimal bootup script to mount file systems
-+
-+# mount filesystem
-+echo "Mounting filesystem..."
-+if [ ! -d /dev/shm ]; then mkdir -p /dev/shm; fi
-+if [ ! -d /dev/pts ]; then mkdir -p /dev/pts; fi
-+mount -a
-+
-+echo /sbin/mdev > /proc/sys/kernel/hotplug
-+mdev -s
-+
-+mkdir /run/lock
-+mkdir /run/sshd
-+
-+# set hostname so that hostid works (tuned for CIP)
-+hostname ciphost
-+
-+# sysctl settings
-+/etc/init.d/procps start
-+
-+# start logger. Note that logs do not persist across boots.
-+/sbin/klogd
-+/sbin/syslogd
-+
-+# rise up all network interfaces available
-+ifup -a
-+
-+# start the ssh server
-+/etc/init.d/ssh start
-diff --git a/deby/poky/meta-cip-common/recipes-debian/openssh/openssh_debian.bbappend b/deby/poky/meta-cip-common/recipes-debian/openssh/openssh_debian.bbappend
-new file mode 100644
-index 0000000..bbb8a7c
---- /dev/null
-+++ b/deby/poky/meta-cip-common/recipes-debian/openssh/openssh_debian.bbappend
-@@ -0,0 +1,12 @@
-+# Copyright (C) 2016-2018, TOSHIBA Corp., Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-+# SPDX-License-Identifier:	MIT
-+
-+# modify sshd_config
-+do_install_append() {
-+    # remove hmac-sha2-512 from MACs.
-+    # ssh client teraterm cannot connect to the ssh server via hmac-sha2-512.
-+    APPEND_LINE="# Remove hmac-sha2-512 as a workaround to enforced disconnection from teraterm"
-+    sed -i '$ a '"$APPEND_LINE"'' ${D}${sysconfdir}/ssh/sshd_config
-+    APPEND_LINE="MACs umac-64-etm at openssh.com,umac-128-etm at openssh.com,hmac-sha2-256-etm at openssh.com,hmac-sha2-512-etm at openssh.com,umac-64 at openssh.com,umac-128 at openssh.com,hmac-sha2-256"
-+    sed -i '$ a '"$APPEND_LINE"'' ${D}${sysconfdir}/ssh/sshd_config
-+}
+Commits:
+6a687350 by Ben Hutchings at 2018-12-06T13:39:35Z
+Fill in and correct commit lists for various issues
+
+- - - - -
+efeeb55f by Ben Hutchings at 2018-12-06T14:21:45Z
+Import data from stable
+
+Record the fixes I backported for 4.14.85.
+
+- - - - -
+
+
+24 changed files:
+
+- issues/CVE-2017-13166.yml
+- issues/CVE-2017-13216.yml
+- issues/CVE-2017-18174.yml
+- issues/CVE-2017-18232.yml
+- issues/CVE-2017-18257.yml
+- issues/CVE-2018-1128.yml
+- issues/CVE-2018-1129.yml
+- issues/CVE-2018-12232.yml
+- issues/CVE-2018-13096.yml
+- issues/CVE-2018-13097.yml
+- issues/CVE-2018-13098.yml
+- issues/CVE-2018-13100.yml
+- issues/CVE-2018-14610.yml
+- issues/CVE-2018-14611.yml
+- issues/CVE-2018-14612.yml
+- issues/CVE-2018-14613.yml
+- issues/CVE-2018-14614.yml
+- issues/CVE-2018-14615.yml
+- issues/CVE-2018-18445.yml
+- issues/CVE-2018-18690.yml
+- issues/CVE-2018-3639.yml
+- issues/CVE-2018-5703.yml
+- issues/CVE-2018-5848.yml
+- issues/CVE-2018-7740.yml
+
+
+Changes:
+
+=====================================
+issues/CVE-2017-13166.yml
+=====================================
+@@ -8,6 +8,8 @@ comments:
+     by commit 7e6a68210784 "[media] videodev2.h: add initial support for
+     compound controls".  Hans Verkuil is working on stable backports.
+   Debian-carnil: 'Patch series backported to: 4.15.4'
++introduced-by:
++  mainline: [fdf82dc2e2d43cf135b5fd352dea523642bb553a]
+ fixed-by:
+   linux-3.16.y: [5e5747642716c7a5ee61b8eb42f6b5d32136b150, 182f3143bcbc783ee18c1b8af52734929813541e,
+     846e214562b1fd6d49ec2dd334bc5fe1ab1707f3, f64f7bd54eca5210397b060ca0a9aab8e633c772,
+
+
+=====================================
+issues/CVE-2017-13216.yml
+=====================================
+@@ -10,6 +10,8 @@ comments:
+     ashmem driver source-wise introduced in 3.3-rc1 with
+     11980c2ac4ccfad21a5f8ee9e12059f1e687bb40
+   Debian-jmm: Only present in drivers/staging/android/ashmem.c
++introduced-by:
++  mainline: [11980c2ac4ccfad21a5f8ee9e12059f1e687bb40]
+ fixed-by:
+   linux-3.16.y: [63aa20e4f4760249339c7771bd7e4a01d82a95ad]
+   linux-3.18.y: [6dc42f889217a0a077bc75c6fa5239ade762fff4]
+
+
+=====================================
+issues/CVE-2017-18174.yml
+=====================================
+@@ -13,5 +13,7 @@ comments:
+     Issue fixed in 251e22abde21833b3d29577e4d8c7aaccd650eee (4.7-rc1).
+     Was shortly introduced in a rc version with 3bfd44306c65d073008b9ca8f062249f35576b61
+     in 4.11-rc1 and fixed in same rc version with 8dca4a41f1ad65043a78c2338d9725f859c8d2c3
++introduced-by:
++  mainline: [3bfd44306c65d073008b9ca8f062249f35576b61]
+ fixed-by:
+-  mainline: [251e22abde21833b3d29577e4d8c7aaccd650eee]
++  mainline: [8dca4a41f1ad65043a78c2338d9725f859c8d2c3]
+
+
+=====================================
+issues/CVE-2017-18232.yml
+=====================================
+@@ -6,5 +6,7 @@ comments:
+   Debian-bwh: |-
+     Commit message says this was introduced by commit 87c8331fcf72
+     (Linux 3.4).  For stretch, this requires an ABI bump.
++introduced-by:
++  mainline: [87c8331fcf72e501c3a3c0cdc5c9391ec72f7cf2]
+ fixed-by:
+   mainline: [0558f33c06bb910e2879e355192227a8e8f0219d]
+
+
+=====================================
+issues/CVE-2017-18257.yml
+=====================================
+@@ -11,6 +11,8 @@ comments:
+   Debian-bwh: |-
+     Appears to be a regression introduced in Linux 4.2 by commit
+     003a3e1d60b0 "f2fs: add f2fs_map_blocks".
++introduced-by:
++  mainline: [003a3e1d60b0bb5cfb4feffb05a2083db2346364]
+ fixed-by:
+   linux-4.4.y: [0678adf8f8a99c66c48c608ea9a79588743bc615]
+   linux-4.9.y: [b8bf4b886b82585202ab4ee169718656661cb89e]
+
+
+=====================================
+issues/CVE-2018-1128.yml
+=====================================
+@@ -9,13 +9,15 @@ comments:
+     I don't think this is practical for 3.16 as the protocol change
+     seems to depend on message signatures which were added in 3.19.
+ fixed-by:
++  linux-4.14.y: [2fd0d0f9bb59ec5b628622e30f22158cb564c4ea, 66abd96062b627f0ee20a684ebba48cec80233d7,
++    0858417b5c2e7bcc0b9e52c4b76e2af3d69e138b, a55056e1523990e1ef9d70531ffaf27fd1ddff55,
++    3fd73c8a71f299e30359a63add1f33e3fd834831]
+   mainline: [262614c4294d33b1f19e0d18c0091d9c329b544a, c0f56b483aa09c99bfe97409a43ad786f33b8a5a,
+     c571fe24d243bfe7017f0e67fe800b3cc2a1d1f7, 149cac4a50b0b4081b38b2f38de6ef71c27eaa85,
+     6daca13d2e72bedaaacfc08f873114c9307d5aea]
++fix-depends-on:
++  0dde584882ade13dc9708d611fbf69b0ae8a9e48: Avoids textual conflicts when picking
++    6daca13d2e72.
++  b3bbd3f2ab19c8ca319003b4b51ce4c4ca74da06: Simplifies backporting of 262614c4294d.
+ ignore:
+   linux-3.16.y: Protocol change is too difficult
+-fix-depends-on:
+-  0dde584882ade13dc9708d611fbf69b0ae8a9e48: |-
+-    Avoids textual conflicts when picking 6daca13d2e72.
+-  b3bbd3f2ab19c8ca319003b4b51ce4c4ca74da06: |-
+-    Simplifies backporting of 262614c4294d.
+
+
+=====================================
+issues/CVE-2018-1129.yml
+=====================================
+@@ -2,4 +2,5 @@ description: 'libceph: implement CEPHX_V2 calculation mode'
+ references:
+ - http://tracker.ceph.com/issues/24837
+ fixed-by:
++  linux-4.14.y: [b16d0c5d32468a0624505a7b6b211e20488295e9]
+   mainline: [cc255c76c70f7a87d97939621eae04b600d9f4a1]
+
+
+=====================================
+issues/CVE-2018-12232.yml
+=====================================
+@@ -15,6 +15,8 @@ comments:
+   Debian-bwh: |-
+     Introduced in 4.10 by commit 86741ec25462 "net: core: Add a UID
+     field to struct sock."
++introduced-by:
++  mainline: [86741ec25462e4c8cdce6df2f41ead05568c7d5e]
+ fixed-by:
+   linux-4.14.y: [91717ffc9057f38a0203a40ef36ae2e482fd7cbe]
+   linux-4.16.y: [abaa1bb5e3652593a22a51e289bf9dfd4d4a8542]
+
+
+=====================================
+issues/CVE-2018-13096.yml
+=====================================
+@@ -3,4 +3,5 @@ references:
+ - https://bugzilla.kernel.org/show_bug.cgi?id=200167
+ - https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/commit/?h=f2fs-dev&id=8c9c95d5f4e68d22f22091546ce554ac9222689c
+ fixed-by:
++  linux-4.14.y: [b8321ccd045710ee04fd5322c34cadd13a5e58af]
+   mainline: [e34438c903b653daca2b2a7de95aed46226f8ed3]
+
+
+=====================================
+issues/CVE-2018-13097.yml
+=====================================
+@@ -3,4 +3,5 @@ references:
+ - https://bugzilla.kernel.org/show_bug.cgi?id=200171
+ - https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/commit/?h=f2fs-dev&id=d5c28acdb832800fbbcf831f20f75080cba54f04
+ fixed-by:
++  linux-4.14.y: [f9cf5462b51d98026275cc51437fc531e808b64a]
+   mainline: [9dc956b2c8523aed39d1e6508438be9fea28c8fc]
+
+
+=====================================
+issues/CVE-2018-13098.yml
+=====================================
+@@ -3,5 +3,6 @@ references:
+ - https://bugzilla.kernel.org/show_bug.cgi?id=200173
+ - https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/commit/?h=f2fs-dev&id=190286a242344d42aad83c8e70169d6d72a63d05
+ fixed-by:
++  linux-4.14.y: [0081c90ebacebb3a82d0d24bf0f42273ce2d902e]
+   linux-4.18.y: [b6f493453c78311598fdd204f7815e683818512a]
+   mainline: [76d56d4ab4f2a9e4f085c7d77172194ddaccf7d2]
+
+
+=====================================
+issues/CVE-2018-13100.yml
+=====================================
+@@ -3,5 +3,6 @@ references:
+ - https://bugzilla.kernel.org/show_bug.cgi?id=200183
+ - https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/commit/?h=f2fs-dev&id=e72ba39212abc9e77f367cd95d7d3c8689aba14a
+ fixed-by:
++  linux-4.14.y: [f3d6361a96a455c8ba12226a04efa67a0ada4966]
+   linux-4.18.y: [0342426f2bf7298a91efee659ddc033082f6918b]
+   mainline: [42bf546c1fe3f3654bdf914e977acbc2b80a5be5]
+
+
+=====================================
+issues/CVE-2018-14610.yml
+=====================================
+@@ -8,4 +8,5 @@ comments:
+     Upstream fix depends on (at least) commit fce466eab7ac
+     "btrfs: tree-checker: Verify block_group_item".
+ fixed-by:
++  linux-4.14.y: [34407a175a59b668a1a2bbf0d0e495d87a7777d8]
+   mainline: [514c7dca85a0bf40be984dab0b477403a6db901f]
+
+
+=====================================
+issues/CVE-2018-14611.yml
+=====================================
+@@ -8,4 +8,5 @@ comments:
+     Upstream fix depends on (at least) commit e06cd3dd7cea
+     "Btrfs: add validadtion checks for chunk loading".
+ fixed-by:
++  linux-4.14.y: [f7eef132ccc95c9af50b647c5da0511d2b8492f8]
+   mainline: [315409b0098fb2651d86553f0436b70502b29bb2]
+
+
+=====================================
+issues/CVE-2018-14612.yml
+=====================================
+@@ -10,4 +10,5 @@ comments:
+     what happened for the second one, resp. not yet checked if
+     that applies.
+ fixed-by:
++  linux-4.14.y: [c0dfb99847851fb830d1e8ea7d5e0571f50c325a, 895586ecb7a4528336d41f81d0ce3985e8abbed6]
+   mainline: [ba480dd4db9f1798541eb2d1c423fc95feee8d36, 7ef49515fa6727cb4b6f2f5b0ffbc5fc20a9f8c6]
+
+
+=====================================
+issues/CVE-2018-14613.yml
+=====================================
+@@ -4,4 +4,5 @@ references:
+ - https://bugzilla.kernel.org/show_bug.cgi?id=199849
+ - https://patchwork.kernel.org/patch/10503147/
+ fixed-by:
++  linux-4.14.y: [9f268b5cf2d6a716779dfe11f4bc02d6461db693]
+   mainline: [fce466eab7ac6baa9d2dcd88abcf945be3d4a089]
+
+
+=====================================
+issues/CVE-2018-14614.yml
+=====================================
+@@ -4,4 +4,5 @@ references:
+ - https://bugzilla.kernel.org/show_bug.cgi?id=200419
+ - https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/commit/?h=f2fs-dev&id=bf2d987b270ed14fb205c83c6dcfbfa6dfcd9f8c
+ fixed-by:
++  linux-4.14.y: [30130700acfad8a705c109325379f5bbe21b3ccc]
+   mainline: [e494c2f995d6181d6e29c4927d68e0f295ecf75b]
+
+
+=====================================
+issues/CVE-2018-14615.yml
+=====================================
+@@ -4,4 +4,5 @@ references:
+ - https://bugzilla.kernel.org/show_bug.cgi?id=200421
+ - https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/commit/?h=f2fs-dev&id=a80a2ff8e0a1265a4e92f4b8ae7caacc83a19503
+ fixed-by:
++  linux-4.14.y: [d7d9d29a837358636e12fe09c90a7882b53b2220]
+   mainline: [18dd6470c2d14d10f5a2dd926925dc80dbd3abfd]
+
+
+=====================================
+issues/CVE-2018-18445.yml
+=====================================
+@@ -2,6 +2,8 @@ description: BPF verifier bug leads to out-of-bounds access
+ references:
+ - https://www.openwall.com/lists/oss-security/2018/10/17/9
+ - https://bugs.chromium.org/p/project-zero/issues/detail?id=1686
++introduced-by:
++  mainline: [468f6eafa6c44cb2c5d8aad35e12f06c240a812a]
+ fixed-by:
+   linux-4.14.y: [10fdfea70d4667abf3724c31443e5d5922fecebd]
+   linux-4.18.y: [11b165210c7214645c183dc7f74aca8d51381691]
+
+
+=====================================
+issues/CVE-2018-18690.yml
+=====================================
+@@ -4,4 +4,5 @@ references:
+ - https://bugzilla.kernel.org/show_bug.cgi?id=199119
+ - https://bugzilla.suse.com/show_bug.cgi?id=1105025
+ fixed-by:
++  linux-4.14.y: [cb7ccb9924bb3596f211badf0d2becf131a979cd]
+   mainline: [7b38460dc8e4eafba06c78f8e37099d3b34d473c]
+
+
+=====================================
+issues/CVE-2018-3639.yml
+=====================================
+@@ -64,6 +64,31 @@ fixed-by:
+     4e99bb051d3e60dbb323c5562375c96f56d56ec4, fbb7b98887d4fe5e556b2146857b9c43b6c469f3,
+     8963b10319ec195059f8a65c049303f84cb02d38, dde241727d8213c0f29102642a6be2629df4c596,
+     5a9cbccff42fdecd30daaf8e88d4779cce055ac7]
++  linux-4.14.y: [8410540f5aaf06ab01197443371be89822971e58, 69dc73805969ea919786c56d18e5a51fb8c128f2,
++    3ce1634f6165ba638546bf83123f1e5c51b1afcd, 7c9b4959cda48f22ecd6ceb88bda7f939f2016b3,
++    94ae9d26284369da199dfb2581fe0b7ea66f7733, c6dc89dd04e3adfb713c40c20817a8791a8deda6,
++    832b579e1e83f17e14a8c054ccc768eaf5e80269, 65f747a6b1089f13e80b0b2e0c4128e72d135a70,
++    128e69909f7c245765f75d7f350dd67eb8fe8a7b, fa2f1c65246d956106fa964cf0ed953162af88e5,
++    716bfae3b3f40de8c0a6ae83f199d96fd152b3cc, 97224b3da69810155b44f173cc8959eea565a98d,
++    81c3c2b5917af382a90d116a5ccd034fe5d32c2a, 33f6a06810cb3f3f0ba20914db334c7c4855ba80,
++    704609d396801c86bca6dcdb14676489dd623da5, d8553911627ab1d9789d08c9902f5e43194f99f7,
++    7d1254a1489c4ecc23a6afdfd1a17bdbb4cd186d, dd88d569eeff59a03b897ba0168547a465091aca,
++    87895ae1e9b22a04441992921b79b6d32e22142a, c024722ffecd484fcb35ad61e822c214b6913196,
++    20d036a2e223a5c4327bcf432ef995f59f51d1d1, d829fcceb8f532966bfb07fb67cb968374fcbbd2,
++    9939db75cd5b686ca43c4aa26e24d6b73ffa66e0, 61dfdc12ff35cd6f196a543271174ae611e36fb1,
++    0f18f44ce076e48d25c1b03e15f3b588ba0f9df1, 89ba80e61a395afc40a865d008931c576d20724d,
++    43c47eb2a274fa12029ac5485ae4360048a398af, 8dc742f930ccbb6b41d538bb35b81693cd8bad43,
++    4fbc01632e779977bbdcbb14877dcc80d7beeb0b, f69c4dd36766666077b96e30e7d0d1122642c00a,
++    5a53a5fefb73c150d754907916188d0cf3fb36d8, bd2059282934fc009d755d24527187df5fe448de,
++    b1a6028c23748afc3b970bf2a740a3ebc7424e12, b1d1984f389865e655076ae18d4626b1a65ba82c,
++    8e0836d1413b86ef6e85142c3902990815cf1cba, bbc0d1c335664660acc2c6e68901d350805a1ff1,
++    7f1efb5e74e3e1a01b73d3364d223f71044f5049, b213ab46cde40368b793daac516be9218beaa750,
++    72f46c229ac286c0a734888f50a3af274036290f, 8e1c285a050ca8bcbe30c47f102497e44319f12c,
++    3e6ab4ca1345b8b7ff09ea00e0abffa276c6919c, 6befd3a735e0228b8128f2916309ed218d9c49dd,
++    987f49474b0680db37f9bfcecc8e563803c55f52, d13f068b94a18b8d9fafaf2519fd1f43d4965f36,
++    71179d5dcbb96afc70c3344fd4b35db0c33d6008, 3f44c1a3c29379aa976be27df1da0fc4b9e7c364,
++    e8837f0a000f79e1e629ad8a00eceb3c452bf3bc, 92a3c944d6d5d3e08335cd3b6a75df907a43a960,
++    83b570c004da47b51d7417ac18d8491d9fc91420]
+   linux-4.16.y: [2cd883a4cc87871db17dbc52398a58321af209b1, d1ee580200e9937cc4e3f0ff1d45c3cfb2532f9e,
+     0e303bbda22ac4a655f0a2bfdd51cda209562ddb, 4fa760f200941e88187c0241ce5df72e8ec9cd97,
+     2460962b14b78b47ebfeb744bd9e09d813c8236d, 569e3b16770b6d3c8ea08bb41678473f786868a3,
+
+
+=====================================
+issues/CVE-2018-5703.yml
+=====================================
+@@ -9,5 +9,6 @@ comments:
+ introduced-by:
+   mainline: [3c4d7559159bfe1e3b94df3a657b2cda3a34e218]
+ fixed-by:
++  linux-4.14.y: [2a0f5919e1e6a1c0423d895ab75eb15f94a67c69]
+   linux-4.15.y: [c5f3a16c047dfa7f309a2e1ca7d43e7db92ec35b]
+   mainline: [c113187d38ff85dc302a1bb55864b203ebb2ba10]
+
+
+=====================================
+issues/CVE-2018-5848.yml
+=====================================
+@@ -5,4 +5,5 @@ references:
+ - https://www.codeaurora.org/security-bulletin/2018/05/11/may-2018-code-aurora-security-bulletin-2#_CVE-2018-5848
+ - https://marc.info/?l=linux-wireless&m=151066597529493&w=2
+ fixed-by:
++  linux-4.14.y: [107b02c81a8761f1f7efc1e8b54d435324ccd13e]
+   mainline: [b5a8ffcae4103a9d823ea3aa3a761f65779fbe2a]
+
+
+=====================================
+issues/CVE-2018-7740.yml
+=====================================
+@@ -17,6 +17,8 @@ comments:
+     045c7a3f tried to catch issues like this, but missed this case.
+     ff8c0c53c475 and 045c7a3f may also be needed for older
+       releases
++introduced-by:
++  mainline: [ff8c0c53c47530ffea82c22a0a6df6332b56c957]
+ fixed-by:
+   linux-3.16.y: [363ed2044f82d8997e9ea8231dc1abeab4993755, 8cca49ea37415645203520bff04309c8a87f7677]
+   linux-3.2.y: [4cba2554682469496ff48536d50c399110d20043, 131802b8292d35e8a407469c485565b199ed79cf]
+
+
+
+View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/compare/cfd826db2fb01bbdc297234e20a6e0add27bffca...efeeb55f65f8bb4e27558d190d89c91515285abb
+
 -- 
-2.7.4
+View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/compare/cfd826db2fb01bbdc297234e20a6e0add27bffca...efeeb55f65f8bb4e27558d190d89c91515285abb
+You're receiving this email because of your account on gitlab.com.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20181206/1fcf4fe3/attachment-0001.html>
