@@ -1,11 +1,29 @@
-From: nobuhiro.iwamatsu@miraclelinux.com (Nobuhiro Iwamatsu)
-Date: Thu, 6 Dec 2018 14:41:34 +0900
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Thu, 6 Dec 2018 06:10:41 +0000
 Subject: [cip-dev] CIP IRC weekly meeting today
-In-Reply-To: <HK0PR01MB2979BE5FC61588CE401E5DC5E2A90@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+In-Reply-To: <CAGDrK-bq8UAFQYUT-yVyzs-=-iM3zVrtDm_gBJhcb5BenELuRw@mail.gmail.com>
 References: <HK0PR01MB2979BE5FC61588CE401E5DC5E2A90@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-Message-ID: <CAGDrK-bq8UAFQYUT-yVyzs-=-iM3zVrtDm_gBJhcb5BenELuRw@mail.gmail.com>
+	<CAGDrK-bq8UAFQYUT-yVyzs-=-iM3zVrtDm_gBJhcb5BenELuRw@mail.gmail.com>
+Message-ID: <HK0PR01MB29792EF9A52AC2E4D5CB4843E2A90@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
+
+Hi Nobuhiro,
+
+Thanks for the heads up.
+
+Could you update the status of below action item?
+
+#action Iwamatsu will send the merging schedule of CIP kernel to ML (cip-dev) this week
+
+SZ
+
+-----Original Message-----
+From: Nobuhiro Iwamatsu [mailto:nobuhiro.iwamatsu at miraclelinux.com] 
+Sent: Thursday, December 06, 2018 1:42 PM
+To: SZ Lin (???) <SZ.Lin@moxa.com>
+Cc: cip-dev at lists.cip-project.org
+Subject: Re: [cip-dev] CIP IRC weekly meeting today
 
 Hi,  SZ.
 
