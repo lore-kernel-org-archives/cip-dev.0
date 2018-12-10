@@ -1,107 +1,38 @@
-From: nobuhiro.iwamatsu@miraclelinux.com (Nobuhiro Iwamatsu)
-Date: Mon, 10 Dec 2018 21:30:35 +0900
-Subject: [cip-dev] CIP IRC weekly meeting today
-In-Reply-To: <HK0PR01MB29792EF9A52AC2E4D5CB4843E2A90@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-References: <HK0PR01MB2979BE5FC61588CE401E5DC5E2A90@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-	<CAGDrK-bq8UAFQYUT-yVyzs-=-iM3zVrtDm_gBJhcb5BenELuRw@mail.gmail.com>
-	<HK0PR01MB29792EF9A52AC2E4D5CB4843E2A90@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-Message-ID: <CAGDrK-ZixKnFfCVPGVPOVwoGcQLvceqq_2D_61MGVmLiHO6meA@mail.gmail.com>
+From: Chris.Paterson2@renesas.com (Chris Paterson)
+Date: Mon, 10 Dec 2018 13:09:56 +0000
+Subject: [cip-dev] CIP kernel merging schedule
+In-Reply-To: <CAGDrK-ZjLAk6QoYC-NUYKHMFCVj7u_Y3BzGco_rAs2+NMiXYAA@mail.gmail.com>
+References: <CAGDrK-ZjLAk6QoYC-NUYKHMFCVj7u_Y3BzGco_rAs2+NMiXYAA@mail.gmail.com>
+Message-ID: <OSBPR01MB2280782B4F8423F2ECE29951B7A50@OSBPR01MB2280.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi, SZ.
+Hello Iwamatsu-san,
 
-2018?12?6?(?) 15:10 SZ Lin (???) <SZ.Lin@moxa.com>:
->
-> Hi Nobuhiro,
->
-> Thanks for the heads up.
->
-> Could you update the status of below action item?
->
-> #action Iwamatsu will send the merging schedule of CIP kernel to ML (cip-dev) this week
->
+> From: Nobuhiro Iwamatsu <nobuhiro.iwamatsu@miraclelinux.com>
+> Sent: 10 December 2018 09:51
+> 
+> Hi, all.
+> 
+> About the release of the CIP kernel, I am planning to do the following.
+> 
+> for 4.4:
+> Currently, the kernel based on 4.4.154 is committed to the repository.
+> I plan to release it as kernel 4.4.166-cip29 which merged 4.4.166 into
+> current version this weekend.
+> 
+> for 4.19:
+> I am planning to release a CIP kernel based on 4.19 in January next
+> year.
+Do you have a specific date in mind that we can work to?
 
-I sent mail about this  a few hours ago. Sorry for the delay.
+Thanks, Chris
 
-Best regards,
-  Nobuhiro
-
-> SZ
->
-> -----Original Message-----
-> From: Nobuhiro Iwamatsu [mailto:nobuhiro.iwamatsu at miraclelinux.com]
-> Sent: Thursday, December 06, 2018 1:42 PM
-> To: SZ Lin (???) <SZ.Lin@moxa.com>
-> Cc: cip-dev at lists.cip-project.org
-> Subject: Re: [cip-dev] CIP IRC weekly meeting today
->
-> Hi,  SZ.
->
-> I have other schedule today so I can not participate in the meeting.
-> Sorry.
->
+>If you already have a patch, please create a patch for the current
+> latest 4.19.8. I will update linux-4.19.y-cip branch to 4.19.8 soon.
+> And I also update cip-kernel-config for 4.19.x.
+> 
+> What do you think about this?
+> 
 > Best regards,
 >   Nobuhiro
-> 2018?12?6?(?) 12:23 SZ Lin (???) <SZ.Lin@moxa.com>:
-> >
-> > Hi All,
-> >
-> >
-> >
-> > Kindly be reminded to attend weekly meeting through IRC to discuss technical topics with CIP kernel today.
-> >
-> >
-> >
-> > *Please note that  IRC meeting was rescheduled to 18:00 (JST) starting from first week of Nov. according F2F meeting discussion in ELCE.*
-> >
-> >
-> >
-> > US-West US-East  UK    DE     TW     JP
-> >
-> > 02:00    05:00   09:00   10:00   17:00   18:00
-> >
-> >
-> >
-> > Channel:
-> >
-> > * irc:chat.freenode.net:6667/cip
-> >
-> >
-> >
-> > Agenda:
-> >
-> >
-> >
-> > * AI review
-> >
-> > #action Iwamatsu will send the merging schedule of CIP kernel to ML (cip-dev) this week
-> >
-> > #action CIP members fill out the SW Updates requirements survey before 12/10.
-> >
-> > * Kernel maintenance updates
-> >
-> > * Kernel testing
-> >
-> > * Software update
-> >
-> > * CIP Core
-> >
-> > * AOB
-> >
-> >
-> >
-> > The meeting will take 30 min although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting..
-> >
-> >
-> >
-> > Best regards,
-> >
-> >
-> >
-> > SZ Lin, Moxa.
-> >
-> > _______________________________________________
-> > cip-dev mailing list
-> > cip-dev at lists.cip-project.org
-> > https://lists.cip-project.org/mailman/listinfo/cip-dev
