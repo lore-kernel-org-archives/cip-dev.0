@@ -1,54 +1,107 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Mon, 10 Dec 2018 11:25:06 +0100
-Subject: [cip-dev] [PATCH 4.4-cip v2] ARM: dts: socfpga: Rename
- socfpga_cyclone5_de0_{sockit, nano_soc}
-Message-ID: <b9e891af-405c-57b4-ae67-d61b2d989f7a@siemens.com>
+From: nobuhiro.iwamatsu@miraclelinux.com (Nobuhiro Iwamatsu)
+Date: Mon, 10 Dec 2018 21:30:35 +0900
+Subject: [cip-dev] CIP IRC weekly meeting today
+In-Reply-To: <HK0PR01MB29792EF9A52AC2E4D5CB4843E2A90@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+References: <HK0PR01MB2979BE5FC61588CE401E5DC5E2A90@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+	<CAGDrK-bq8UAFQYUT-yVyzs-=-iM3zVrtDm_gBJhcb5BenELuRw@mail.gmail.com>
+	<HK0PR01MB29792EF9A52AC2E4D5CB4843E2A90@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+Message-ID: <CAGDrK-ZixKnFfCVPGVPOVwoGcQLvceqq_2D_61MGVmLiHO6meA@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Marek Vasut <marex@denx.de>
+Hi, SZ.
 
-Rename DT source for DE0 Nano SoC . The board name is really DE0-Nano-SoC
-or Atlas SoC, and it is not to be confused with SoCkit board, which is a
-different one. Rename the DT source file to match the board name and to
-avoid this possible mixup with another different board.
+2018?12?6?(?) 15:10 SZ Lin (???) <SZ.Lin@moxa.com>:
+>
+> Hi Nobuhiro,
+>
+> Thanks for the heads up.
+>
+> Could you update the status of below action item?
+>
+> #action Iwamatsu will send the merging schedule of CIP kernel to ML (cip-dev) this week
+>
 
-Upstream commit 202eb5481421040e115526b75317b5ca72584806
+I sent mail about this  a few hours ago. Sorry for the delay.
 
-This commit is needed because it aligns the device tree name of U-Boot
-and kernel which helps distro boot procedures (fdtfile as set by U-Boot
-will match the kernel-provided dtb).
+Best regards,
+  Nobuhiro
 
-Signed-off-by: Marek Vasut <marex@denx.de>
-Cc: Dinh Nguyen <dinguyen@kernel.org>
-Cc: Jan Kiszka <jan.kiszka@siemens.com>
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
-
-Changes in v2:
- - enhance upstream commit log with reason to adopt the patch
-
- arch/arm/boot/dts/Makefile                                              | 2 +-
- ...ocfpga_cyclone5_de0_sockit.dts => socfpga_cyclone5_de0_nano_soc.dts} | 0
- 2 files changed, 1 insertion(+), 1 deletion(-)
- rename arch/arm/boot/dts/{socfpga_cyclone5_de0_sockit.dts => socfpga_cyclone5_de0_nano_soc.dts} (100%)
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index e0a0deaacd48..9871a7f0f92a 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -562,7 +562,7 @@ dtb-$(CONFIG_ARCH_SOCFPGA) += \
- 	socfpga_arria5_socdk.dtb \
- 	socfpga_arria10_socdk_sdmmc.dtb \
- 	socfpga_cyclone5_socdk.dtb \
--	socfpga_cyclone5_de0_sockit.dtb \
-+	socfpga_cyclone5_de0_nano_soc.dtb \
- 	socfpga_cyclone5_sockit.dtb \
- 	socfpga_cyclone5_socrates.dtb \
- 	socfpga_vt.dtb
-diff --git a/arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts b/arch/arm/boot/dts/socfpga_cyclone5_de0_nano_soc.dts
-similarity index 100%
-rename from arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts
-rename to arch/arm/boot/dts/socfpga_cyclone5_de0_nano_soc.dts
--- 
-2.16.4
+> SZ
+>
+> -----Original Message-----
+> From: Nobuhiro Iwamatsu [mailto:nobuhiro.iwamatsu at miraclelinux.com]
+> Sent: Thursday, December 06, 2018 1:42 PM
+> To: SZ Lin (???) <SZ.Lin@moxa.com>
+> Cc: cip-dev at lists.cip-project.org
+> Subject: Re: [cip-dev] CIP IRC weekly meeting today
+>
+> Hi,  SZ.
+>
+> I have other schedule today so I can not participate in the meeting.
+> Sorry.
+>
+> Best regards,
+>   Nobuhiro
+> 2018?12?6?(?) 12:23 SZ Lin (???) <SZ.Lin@moxa.com>:
+> >
+> > Hi All,
+> >
+> >
+> >
+> > Kindly be reminded to attend weekly meeting through IRC to discuss technical topics with CIP kernel today.
+> >
+> >
+> >
+> > *Please note that  IRC meeting was rescheduled to 18:00 (JST) starting from first week of Nov. according F2F meeting discussion in ELCE.*
+> >
+> >
+> >
+> > US-West US-East  UK    DE     TW     JP
+> >
+> > 02:00    05:00   09:00   10:00   17:00   18:00
+> >
+> >
+> >
+> > Channel:
+> >
+> > * irc:chat.freenode.net:6667/cip
+> >
+> >
+> >
+> > Agenda:
+> >
+> >
+> >
+> > * AI review
+> >
+> > #action Iwamatsu will send the merging schedule of CIP kernel to ML (cip-dev) this week
+> >
+> > #action CIP members fill out the SW Updates requirements survey before 12/10.
+> >
+> > * Kernel maintenance updates
+> >
+> > * Kernel testing
+> >
+> > * Software update
+> >
+> > * CIP Core
+> >
+> > * AOB
+> >
+> >
+> >
+> > The meeting will take 30 min although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting..
+> >
+> >
+> >
+> > Best regards,
+> >
+> >
+> >
+> > SZ Lin, Moxa.
+> >
+> > _______________________________________________
+> > cip-dev mailing list
+> > cip-dev at lists.cip-project.org
+> > https://lists.cip-project.org/mailman/listinfo/cip-dev
