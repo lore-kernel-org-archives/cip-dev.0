@@ -1,38 +1,91 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Mon, 10 Dec 2018 13:09:56 +0000
-Subject: [cip-dev] CIP kernel merging schedule
-In-Reply-To: <CAGDrK-ZjLAk6QoYC-NUYKHMFCVj7u_Y3BzGco_rAs2+NMiXYAA@mail.gmail.com>
-References: <CAGDrK-ZjLAk6QoYC-NUYKHMFCVj7u_Y3BzGco_rAs2+NMiXYAA@mail.gmail.com>
-Message-ID: <OSBPR01MB2280782B4F8423F2ECE29951B7A50@OSBPR01MB2280.jpnprd01.prod.outlook.com>
+From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
+Date: Tue, 11 Dec 2018 09:30:00 +0900
+Subject: [cip-dev] [PATCH 4.4-cip v2] ARM: dts: socfpga: Rename
+	socfpga_cyclone5_de0_{sockit, nano_soc}
+In-Reply-To: <b9e891af-405c-57b4-ae67-d61b2d989f7a@siemens.com>
+References: <b9e891af-405c-57b4-ae67-d61b2d989f7a@siemens.com>
+Message-ID: <003701d490e8$a71990f0$f54cb2d0$@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Iwamatsu-san,
+Koguchi-san, Jan-san:
 
-> From: Nobuhiro Iwamatsu <nobuhiro.iwamatsu@miraclelinux.com>
-> Sent: 10 December 2018 09:51
-> 
-> Hi, all.
-> 
-> About the release of the CIP kernel, I am planning to do the following.
-> 
-> for 4.4:
-> Currently, the kernel based on 4.4.154 is committed to the repository.
-> I plan to release it as kernel 4.4.166-cip29 which merged 4.4.166 into
-> current version this weekend.
-> 
-> for 4.19:
-> I am planning to release a CIP kernel based on 4.19 in January next
-> year.
-Do you have a specific date in mind that we can work to?
+The Deby reference implementation of CIP core contains the meta-cip-cyclonev layer. This layer is still using a separate repository (linux-cip-cyclonev.git, branch: socfpga-4.4-cip) created by Koguchi-san.
 
-Thanks, Chris
+* What is the current status of the CIP kernel compared to that separate repository?
+* Is any of you planning to backport patches to the CIP kernel 4.4?
 
->If you already have a patch, please create a patch for the current
-> latest 4.19.8. I will update linux-4.19.y-cip branch to 4.19.8 soon.
-> And I also update cip-kernel-config for 4.19.x.
+Thanks,
+Daniel
+
+> -----Original Message-----
+> From: cip-dev-bounces at lists.cip-project.org
+> <cip-dev-bounces@lists.cip-project.org> On Behalf Of Jan Kiszka
+> Sent: Monday, December 10, 2018 7:25 PM
+> To: cip-dev <cip-dev@lists.cip-project.org>
+> Subject: [cip-dev] [PATCH 4.4-cip v2] ARM: dts: socfpga: Rename
+> socfpga_cyclone5_de0_{sockit, nano_soc}
 > 
-> What do you think about this?
 > 
-> Best regards,
->   Nobuhiro
+> 
+> > -----Original Message-----
+> > From: cip-dev-bounces at lists.cip-project.org
+> > <cip-dev-bounces@lists.cip-project.org> On Behalf Of Jan Kiszka
+> > Sent: Monday, December 10, 2018 7:25 PM
+> > To: cip-dev <cip-dev@lists.cip-project.org>
+> > Subject: [cip-dev] [PATCH 4.4-cip v2] ARM: dts: socfpga: Rename
+> > socfpga_cyclone5_de0_{sockit, nano_soc}
+> >
+> > From: Marek Vasut <marex@denx.de>
+> >
+> > Rename DT source for DE0 Nano SoC . The board name is really DE0-Nano-SoC
+> > or Atlas SoC, and it is not to be confused with SoCkit board, which is a
+> > different one. Rename the DT source file to match the board name and to
+> > avoid this possible mixup with another different board.
+> >
+> > Upstream commit 202eb5481421040e115526b75317b5ca72584806
+> >
+> > This commit is needed because it aligns the device tree name of U-Boot
+> > and kernel which helps distro boot procedures (fdtfile as set by U-Boot
+> > will match the kernel-provided dtb).
+> >
+> > Signed-off-by: Marek Vasut <marex@denx.de>
+> > Cc: Dinh Nguyen <dinguyen@kernel.org>
+> > Cc: Jan Kiszka <jan.kiszka@siemens.com>
+> > Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> > ---
+> >
+> > Changes in v2:
+> >  - enhance upstream commit log with reason to adopt the patch
+> >
+> >  arch/arm/boot/dts/Makefile                                              | 2 +-
+> >  ...ocfpga_cyclone5_de0_sockit.dts => socfpga_cyclone5_de0_nano_soc.dts}
+> | 0
+> >  2 files changed, 1 insertion(+), 1 deletion(-)
+> >  rename arch/arm/boot/dts/{socfpga_cyclone5_de0_sockit.dts =>
+> > socfpga_cyclone5_de0_nano_soc.dts} (100%)
+> >
+> > diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> > index e0a0deaacd48..9871a7f0f92a 100644
+> > --- a/arch/arm/boot/dts/Makefile
+> > +++ b/arch/arm/boot/dts/Makefile
+> > @@ -562,7 +562,7 @@ dtb-$(CONFIG_ARCH_SOCFPGA) += \
+> >  	socfpga_arria5_socdk.dtb \
+> >  	socfpga_arria10_socdk_sdmmc.dtb \
+> >  	socfpga_cyclone5_socdk.dtb \
+> > -	socfpga_cyclone5_de0_sockit.dtb \
+> > +	socfpga_cyclone5_de0_nano_soc.dtb \
+> >  	socfpga_cyclone5_sockit.dtb \
+> >  	socfpga_cyclone5_socrates.dtb \
+> >  	socfpga_vt.dtb
+> > diff --git a/arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts
+> > b/arch/arm/boot/dts/socfpga_cyclone5_de0_nano_soc.dts
+> > similarity index 100%
+> > rename from arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts
+> > rename to arch/arm/boot/dts/socfpga_cyclone5_de0_nano_soc.dts
+> > --
+> > 2.16.4
+> > _______________________________________________
+> > cip-dev mailing list
+> > cip-dev at lists.cip-project.org
+> > https://lists.cip-project.org/mailman/listinfo/cip-dev
