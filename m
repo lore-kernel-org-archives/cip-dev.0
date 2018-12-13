@@ -1,63 +1,51 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 13 Dec 2018 02:55:13 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-Message-ID: <HK0PR01MB297961F2B8EFD68B0D4D04FEE2A00@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+From: nobuhiro.iwamatsu@miraclelinux.com (Nobuhiro Iwamatsu)
+Date: Thu, 13 Dec 2018 17:24:45 +0900
+Subject: [cip-dev] CIP kernel merging schedule
+In-Reply-To: <OSBPR01MB2280782B4F8423F2ECE29951B7A50@OSBPR01MB2280.jpnprd01.prod.outlook.com>
+References: <CAGDrK-ZjLAk6QoYC-NUYKHMFCVj7u_Y3BzGco_rAs2+NMiXYAA@mail.gmail.com>
+	<OSBPR01MB2280782B4F8423F2ECE29951B7A50@OSBPR01MB2280.jpnprd01.prod.outlook.com>
+Message-ID: <CAGDrK-Z3VE3+GevPyGU158OZJrajOKoqCXpy_4GpGw9waaL6ng@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi All,
+Hi, Chris.
 
+2018?12?10?(?) 22:10 Chris Paterson <Chris.Paterson2@renesas.com>:
+>
+> Hello Iwamatsu-san,
+>
+> > From: Nobuhiro Iwamatsu <nobuhiro.iwamatsu@miraclelinux.com>
+> > Sent: 10 December 2018 09:51
+> >
+> > Hi, all.
+> >
+> > About the release of the CIP kernel, I am planning to do the following.
+> >
+> > for 4.4:
+> > Currently, the kernel based on 4.4.154 is committed to the repository.
+> > I plan to release it as kernel 4.4.166-cip29 which merged 4.4.166 into
+> > current version this weekend.
+> >
+> > for 4.19:
+> > I am planning to release a CIP kernel based on 4.19 in January next
+> > year.
+> Do you have a specific date in mind that we can work to?
 
+I am thinking about this on January 10th or 11th.
+The first week is difficult because Japanese companies are on vacation.
 
-Kindly be reminded to attend weekly meeting through IRC to discuss technical topics with CIP kernel today.
-
-
-
-*Please note that  IRC meeting was rescheduled to 18:00 (JST) starting from first week of Nov. according F2F meeting discussion in ELCE.*
-
-
-
-US-West US-East  UK    DE     TW     JP
-
-02:00    05:00   09:00   10:00   17:00   18:00
-
-
-
-Channel:
-
-* irc:chat.freenode.net:6667/cip
-
-
-
-Agenda:
-
-
-
-* AI review
-
-#action Confirm the specified release date for 4.19-CIP release. (During or after the Embedded World? 28th Feb.)
-
-* Kernel maintenance updates
-
-* Kernel testing
-
-* Software update
-
-* CIP Core
-
-* AOB
-
-
-
-The meeting will take 30 min although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting..
-
-
+>
+> Thanks, Chris
 
 Best regards,
+  Nobuhiro
 
-
-
-SZ Lin, Moxa.
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20181213/acf1f6f9/attachment.html>
+>
+> >If you already have a patch, please create a patch for the current
+> > latest 4.19.8. I will update linux-4.19.y-cip branch to 4.19.8 soon.
+> > And I also update cip-kernel-config for 4.19.x.
+> >
+> > What do you think about this?
+> >
+> > Best regards,
+> >   Nobuhiro
