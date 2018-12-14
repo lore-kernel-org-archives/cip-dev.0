@@ -1,51 +1,25 @@
 From: nobuhiro.iwamatsu@miraclelinux.com (Nobuhiro Iwamatsu)
-Date: Thu, 13 Dec 2018 17:24:45 +0900
-Subject: [cip-dev] CIP kernel merging schedule
-In-Reply-To: <OSBPR01MB2280782B4F8423F2ECE29951B7A50@OSBPR01MB2280.jpnprd01.prod.outlook.com>
-References: <CAGDrK-ZjLAk6QoYC-NUYKHMFCVj7u_Y3BzGco_rAs2+NMiXYAA@mail.gmail.com>
-	<OSBPR01MB2280782B4F8423F2ECE29951B7A50@OSBPR01MB2280.jpnprd01.prod.outlook.com>
-Message-ID: <CAGDrK-Z3VE3+GevPyGU158OZJrajOKoqCXpy_4GpGw9waaL6ng@mail.gmail.com>
+Date: Sat, 15 Dec 2018 04:10:24 +0900
+Subject: [cip-dev] Linux 4.4.166-cip29
+Message-ID: <CAGDrK-YxePqVJLS+m3DnGZ1pQaa6aS33vhoA5JkKa+Py9NEKNA@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi, Chris.
+Hi, all.
 
-2018?12?10?(?) 22:10 Chris Paterson <Chris.Paterson2@renesas.com>:
->
-> Hello Iwamatsu-san,
->
-> > From: Nobuhiro Iwamatsu <nobuhiro.iwamatsu@miraclelinux.com>
-> > Sent: 10 December 2018 09:51
-> >
-> > Hi, all.
-> >
-> > About the release of the CIP kernel, I am planning to do the following.
-> >
-> > for 4.4:
-> > Currently, the kernel based on 4.4.154 is committed to the repository.
-> > I plan to release it as kernel 4.4.166-cip29 which merged 4.4.166 into
-> > current version this weekend.
-> >
-> > for 4.19:
-> > I am planning to release a CIP kernel based on 4.19 in January next
-> > year.
-> Do you have a specific date in mind that we can work to?
+I've released Linux version Linux 4.4.166-cip29.
 
-I am thinking about this on January 10th or 11th.
-The first week is difficult because Japanese companies are on vacation.
+https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/tag/?h=v4.4.166-cip29
 
->
-> Thanks, Chris
+The fix from Linux 4.4.154-cip 28 is as follows.
+
+- Update dts of r8a77xx
+  ARM: dts: r8a7743: Add PMU device node
+  ARM: dts: r8a7745: Add PMU device node
+  ARM: dts: r8a77(43|9[013]): Add missing OPP properties for CPUs
+- Update to 4.4.166
+- Change dts file name of socfpga DE0 sockit board
+  ARM: dts: socfpga: Rename socfpga_cyclone5_de0_{sockit, nano_soc}
 
 Best regards,
   Nobuhiro
-
->
-> >If you already have a patch, please create a patch for the current
-> > latest 4.19.8. I will update linux-4.19.y-cip branch to 4.19.8 soon.
-> > And I also update cip-kernel-config for 4.19.x.
-> >
-> > What do you think about this?
-> >
-> > Best regards,
-> >   Nobuhiro
