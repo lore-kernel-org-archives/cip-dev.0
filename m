@@ -1,8 +1,8 @@
 From: gitlab@mg.gitlab.com (Ben Hutchings)
-Date: Tue, 18 Dec 2018 17:47:22 +0000
-Subject: [cip-dev] [Git][cip-project/cip-kernel/cip-kernel-sec][master] 6
- commits: Import more data
-Message-ID: <5c1932aa2df6f_32233f8218c6242c12764c@sidekiq-asap-04-sv-gprd.mail>
+Date: Tue, 18 Dec 2018 17:57:07 +0000
+Subject: [cip-dev] [Git][cip-project/cip-kernel/cip-kernel-sec][master]
+ README.md: Use Gitlab terminology: "merge request" not "pull request"
+Message-ID: <5c1934f327227_287a3fe8c24f4fbc857f7@sidekiq-asap-01-sv-gprd.mail>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
@@ -10,77 +10,38 @@ Ben Hutchings pushed to branch master at cip-project / cip-kernel / cip-kernel-s
 
 
 Commits:
-e9d5695f by Ben Hutchings at 2018-12-10T16:28:50Z
-Import more data
-
-- - - - -
-85d39707 by Ben Hutchings at 2018-12-17T21:30:06Z
-Fill in and correct commit lists for various issues
-
-- - - - -
-37f61c0f by Ben Hutchings at 2018-12-17T21:44:07Z
-Import data from stable
-
-- - - - -
-20475cc5 by Ben Hutchings at 2018-12-17T22:09:29Z
-webview: Show why an issue is ignored for a branch
-
-On issue pages, where the status is &quot;ignored&quot;, show the explanatory
-text as well.
-
-- - - - -
-b4972995 by Ben Hutchings at 2018-12-17T22:21:07Z
-Fill in fix commit lists for Spectre v1 and v2 in 4.4
-
-- - - - -
-1a00d46f by Ben Hutchings at 2018-12-18T17:46:49Z
-Note alternate fix for CVE-2017-5967
+aae8d7f8 by Ben Hutchings at 2018-12-18T17:56:28Z
+README.md: Use Gitlab terminology: &quot;merge request&quot; not &quot;pull request&quot;
 
 - - - - -
 
 
-30 changed files:
+1 changed file:
 
-- issues/CVE-2017-0861.yml
-- issues/CVE-2017-13305.yml
-- issues/CVE-2017-14991.yml
-- issues/CVE-2017-15116.yml
-- issues/CVE-2017-5715.yml
-- issues/CVE-2017-5753.yml
-- issues/CVE-2017-5967.yml
-- issues/CVE-2018-1120.yml
-- issues/CVE-2018-11506.yml
-- issues/CVE-2018-12896.yml
-- issues/CVE-2018-13053.yml
-- issues/CVE-2018-13098.yml
-- issues/CVE-2018-14615.yml
-- issues/CVE-2018-14616.yml
-- issues/CVE-2018-14625.yml
-- + issues/CVE-2018-16862.yml
-- issues/CVE-2018-17972.yml
-- issues/CVE-2018-18021.yml
-- issues/CVE-2018-18281.yml
-- + issues/CVE-2018-18397.yml
-- issues/CVE-2018-18559.yml
-- issues/CVE-2018-18690.yml
-- issues/CVE-2018-18710.yml
-- issues/CVE-2018-18955.yml
-- + issues/CVE-2018-19407.yml
-- + issues/CVE-2018-19824.yml
-- issues/CVE-2018-3620.yml
-- issues/CVE-2018-5848.yml
-- issues/CVE-2018-5953.yml
-- issues/CVE-2018-7740.yml
+- README.md
 
 
-The diff was not included because it is too large.
+Changes:
+
+=====================================
+README.md
+=====================================
+@@ -48,6 +48,6 @@ in Debian as python3-cherrypy3 and python3-jinja2).
+ 
+ If you have better information about any issue, or additional
+ unfixed issues, or improvements to the scripts, please send a
+-pull request.
++merge request.
+ 
+ Note the license information in the [COPYING](COPYING) file.
 
 
-View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/compare/d809002c1c357902a2ed7bf38c1fa2efde5e1f74...1a00d46f35425e27471ef6b8891a24eb1fa12d6e
+
+View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/commit/aae8d7f869bf57dc71dfc817b2b70d39758bee12
 
 -- 
-View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/compare/d809002c1c357902a2ed7bf38c1fa2efde5e1f74...1a00d46f35425e27471ef6b8891a24eb1fa12d6e
+View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/commit/aae8d7f869bf57dc71dfc817b2b70d39758bee12
 You're receiving this email because of your account on gitlab.com.
 -------------- next part --------------
 An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20181218/fd88ec14/attachment.html>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20181218/fd10df44/attachment.html>
