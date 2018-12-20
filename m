@@ -1,40 +1,32 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Wed, 19 Dec 2018 16:08:50 +0000
-Subject: [cip-dev] [ANNOUNCE] Linux kernel CVE tracker
-Message-ID: <1545235730.19315.143.camel@codethink.co.uk>
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Thu, 20 Dec 2018 02:05:02 +0000
+Subject: [cip-dev] CIP IRC weekly meeting today
+Message-ID: <HK0PR01MB2979209236D8FF2FFDA9F9EDE2BF0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-As part of my work for the Civil Infrastructure Platform, I've been
-tracking security issues in the kernel and trying to ensure that the
-fixes are applied to stable branches as necessary.
+Hi All,
 
-The "kernel-sec" repository at
-<https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec> contains
-information about known issues and scripts to aid in maintaining and
-viewing that information.  Issues are identified by CVE ID and their
-status is recorded for mainline and all live stable branches.
+Kindly be reminded to attend weekly meeting through IRC to discuss technical topics with CIP kernel today.
 
-I import most of the information from distribution security trackers,
-and from upstream commit references in stable branch commit messages. 
-Manual editing is needed mostly to correct errors in these sources, or
-where the commits fixing an issue in a stable branch don't correspond
-exactly to the commits fixing it in mainline.
+*Please note that? IRC meeting was rescheduled to 18:00 (JST) starting from first week of Nov. according F2F meeting discussion in ELCE.*
 
-I recently added a local web application that allows browsing the
-status of all branches and issues, complete with links to references
-and related commits.  There is also a simple reporting script that
-lists open issues for each branch.
+US-West US-East? UK??? DE???? TW???? JP
+02:00??? 05:00?? 09:00?? 10:00?? 17:00?? 18:00
 
-If you're interested in security support for stable branches, please
-take a look at this.
+Channel:
+* irc:chat.freenode.net:6667/cip
 
-I would welcome merge requests to add to the issue data or to improve
-the scripts.
+Agenda:
 
-Ben.
+* Kernel maintenance updates
+* Kernel testing
+* CIP Core
+* Software update 
+* AOB
 
--- 
-Ben Hutchings, Software Developer                ?        Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+The meeting will take 30 min although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting..
+
+Best regards,
+
+SZ Lin, Moxa.
