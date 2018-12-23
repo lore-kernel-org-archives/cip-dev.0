@@ -1,32 +1,45 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 20 Dec 2018 02:05:02 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-Message-ID: <HK0PR01MB2979209236D8FF2FFDA9F9EDE2BF0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+From: zoran.stojsavljevic.de@gmail.com (Zoran S)
+Date: Sun, 23 Dec 2018 16:27:04 +0100
+Subject: [cip-dev] Beaglebone Black thud kas-bbb-thud.yml script
+Message-ID: <CAEss1E+QmWkgb5Qb_Cn+jBdVq_PkJVmDim7ho5+pVzR4LAbwjg@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi All,
+Hello to all,
 
-Kindly be reminded to attend weekly meeting through IRC to discuss technical topics with CIP kernel today.
+I produced thud KAS script to do some dirty and quick bbb YOCTO rootfs
+and kernel (4.19.7) production.
 
-*Please note that? IRC meeting was rescheduled to 18:00 (JST) starting from first week of Nov. according F2F meeting discussion in ELCE.*
+For this purpose I have enhanced Beaglebone Black sumo KAS script to
+thud, to serve to the purpose.
 
-US-West US-East? UK??? DE???? TW???? JP
-02:00??? 05:00?? 09:00?? 10:00?? 17:00?? 18:00
+If anybody needs it, please, find it attached (with meta-socketcan layer
+addendum, which is my proprietary layer invention due to some work done
+for automotive industry).
 
-Channel:
-* irc:chat.freenode.net:6667/cip
+If you do not need meta-socketcan layer included as extras, just remove
+these lines from the script:
 
-Agenda:
 
-* Kernel maintenance updates
-* Kernel testing
-* CIP Core
-* Software update 
-* AOB
+*  meta-socketcan:    url:
+"https://github.com/ZoranStojsavljevic/meta-socketcan.git
+<https://github.com/ZoranStojsavljevic/meta-socketcan.git>"    refspec:
+064d2fdf5b69e5c038aba225884c183b8e00f30b*
 
-The meeting will take 30 min although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting..
+Please, also do note that the script takes default variables, if they are
+not
+explicitly specified.
 
-Best regards,
-
-SZ Lin, Moxa.
+Thank you,
+Zoran
+_______
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20181223/89c7b9cb/attachment.html>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: kas-bbb-thud.yml
+Type: application/x-yaml
+Size: 1708 bytes
+Desc: not available
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20181223/89c7b9cb/attachment.bin>
