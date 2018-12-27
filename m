@@ -1,23 +1,59 @@
 From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Mon, 24 Dec 2018 10:25:11 +0000
-Subject: [cip-dev] CIP-dev IRC weekly meeting log: week 51
-Message-ID: <HK0PR01MB297915935869BFF3A3EACCA7E2BB0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+Date: Thu, 27 Dec 2018 02:10:41 +0000
+Subject: [cip-dev] CIP IRC weekly meeting today
+Message-ID: <HK0PR01MB297993C72BDCD2EC684A4DB3E2B60@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+Hi All,
 
 
 
-Please find the logs of CIP meeting last week in below link:
+Kindly be reminded to attend weekly meeting through IRC to discuss technical topics with CIP kernel today.
 
 
 
-https://irclogs.baserock.org/cip/%23cip.2018-12-20.log.html#t2018-12-20T09:00:06
+*Please note that IRC meeting was rescheduled to 18:00 (JST) starting from first week of Nov. according F2F meeting discussion in ELCE.*
 
 
 
-SZ Lin, Moxa
+US-West US-East  UK    DE     TW     JP
+
+02:00    05:00   09:00   10:00   17:00   18:00
+
+
+
+Channel:
+
+* irc:chat.freenode.net:6667/cip
+
+
+
+Agenda:
+
+
+
+* Kernel maintenance updates
+
+* Kernel testing
+
+* CIP Core
+
+* Software update
+
+* AOB
+
+
+
+The meeting will take 30 min although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting..
+
+
+
+Best regards,
+
+
+
+SZ Lin, Moxa.
 -------------- next part --------------
 An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20181224/bb00284f/attachment.html>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20181227/1689c9b4/attachment.html>
