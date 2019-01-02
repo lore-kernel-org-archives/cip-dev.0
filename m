@@ -1,52 +1,15 @@
 From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 27 Dec 2018 02:10:41 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-Message-ID: <HK0PR01MB297993C72BDCD2EC684A4DB3E2B60@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+Date: Wed, 2 Jan 2019 09:37:56 +0000
+Subject: [cip-dev] CIP IRC weekly meeting will be skipped this week
+Message-ID: <HK0PR01MB29790B69DBCADB058836B6DEE28C0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi All,
+Hi all,
 
+Happy new year 2019.
 
-
-Kindly be reminded to attend weekly meeting through IRC to discuss technical topics with CIP kernel today.
-
-
-
-*Please note that IRC meeting was rescheduled to 18:00 (JST) starting from first week of Nov. according F2F meeting discussion in ELCE.*
-
-
-
-US-West US-East  UK    DE     TW     JP
-
-02:00    05:00   09:00   10:00   17:00   18:00
-
-
-
-Channel:
-
-* irc:chat.freenode.net:6667/cip
-
-
-
-Agenda:
-
-
-
-* Kernel maintenance updates
-
-* Kernel testing
-
-* CIP Core
-
-* Software update
-
-* AOB
-
-
-
-The meeting will take 30 min although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting..
-
+If no one has any objections, I would like to skip CIP kernel weekly meeting this week due to holidays.
 
 
 Best regards,
@@ -56,4 +19,4 @@ Best regards,
 SZ Lin, Moxa.
 -------------- next part --------------
 An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20181227/1689c9b4/attachment.html>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190102/e730d0dd/attachment.html>
