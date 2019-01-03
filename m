@@ -1,22 +1,38 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Wed, 2 Jan 2019 09:37:56 +0000
-Subject: [cip-dev] CIP IRC weekly meeting will be skipped this week
-Message-ID: <HK0PR01MB29790B69DBCADB058836B6DEE28C0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+From: jan.kiszka@siemens.com (Jan Kiszka)
+Date: Thu, 3 Jan 2019 19:03:22 +0100
+Subject: [cip-dev] [RFC] isar-cip-core
+Message-ID: <f3408484-dd40-ef30-6642-dd18dfe2315a@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+Hi,
 
-Happy new year 2019.
+happy new year to everyone!
 
-If no one has any objections, I would like to skip CIP kernel weekly meeting this week due to holidays.
+New year, new project: I've started isar-cip-core in our incubating area, see 
+https://gitlab.com/cip-playground/isar-cip-core.
 
+It's currently only generating an SD card image for the BeagleBone Black, but 
+that can easily be extended. The idea is to model our generic profile CIP Core 
+this way, producing images that contain all supported packages and can then be 
+used for testing, evaluation etc.
 
-Best regards,
+README is still missing, will write one tomorrow:
 
+# wget https://raw.githubusercontent.com/siemens/kas/master/kas-docker
+# chmod a+x kas-docker
+# ./kas-docker --isar build kas.yml:board-bbb.yml
 
+or
 
-SZ Lin, Moxa.
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190102/e730d0dd/attachment.html>
+# ./kas-docker --isar build kas.yml:board-bbb.yml:opt-rt.yml
+
+for the RT variant.
+
+Looking forward to feedback!
+
+Jan
+
+-- 
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+Corporate Competence Center Embedded Linux
