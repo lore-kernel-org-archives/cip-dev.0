@@ -1,119 +1,81 @@
-From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
-Date: Mon, 7 Jan 2019 16:31:27 +0900
-Subject: [cip-dev] [RFC] isar-cip-core
-In-Reply-To: <0c149643-a460-bfe8-3a14-01dd6b7d80c6@siemens.com>
-References: <f3408484-dd40-ef30-6642-dd18dfe2315a@siemens.com>
-	<00ed01d4a620$26921860$73b64920$@toshiba.co.jp>
-	<1be77add-abce-e4d2-4d47-d371238390bf@siemens.com>
-	<010501d4a654$87230570$95691050$@toshiba.co.jp>
-	<0c149643-a460-bfe8-3a14-01dd6b7d80c6@siemens.com>
-Message-ID: <011301d4a65b$003539f0$009fadd0$@toshiba.co.jp>
+From: gitlab@mg.gitlab.com (Ben Hutchings)
+Date: Wed, 09 Jan 2019 17:13:25 +0000
+Subject: [cip-dev] [Git][cip-project/cip-kernel/cip-kernel-sec][master] 4
+ commits: The Ubuntu CVE tracker migrated from bzr to git. Use new url in
+ import_ubuntu.py script.
+Message-ID: <5c362bb5cee91_492e3f9edd0f73f8648724@sidekiq-asap-05-sv-gprd.mail>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-> -----Original Message-----
-> From: Jan Kiszka <jan.kiszka@siemens.com>
-> Sent: Monday, January 7, 2019 3:59 PM
-> To: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>; 'cip-dev' <cip-dev@lists.cip-project.org>
-> Subject: Re: [cip-dev] [RFC] isar-cip-core
-> 
-> 
-> 
-> > -----Original Message-----
-> > From: Jan Kiszka <jan.kiszka@siemens.com>
-> > Sent: Monday, January 7, 2019 3:59 PM
-> > To: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>; 'cip-dev' <cip-dev@lists.cip-project.org>
-> > Subject: Re: [cip-dev] [RFC] isar-cip-core
-> >
-> > On 07.01.19 07:45, Daniel Sangorrin wrote:
-> > >> -----Original Message-----
-> > >> From: Jan Kiszka <jan.kiszka@siemens.com>
-> > >> Sent: Monday, January 7, 2019 2:41 PM
-> > >> To: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>; 'cip-dev' <cip-dev@lists.cip-project.org>
-> > >> Subject: Re: [cip-dev] [RFC] isar-cip-core
-> > >>
-> > >> Hi Daniel,
-> > >>
-> > >> On 07.01.19 01:30, Daniel Sangorrin wrote:
-> > >>> Hi Jan,
-> > >>>
-> > >>> Thanks for uploading isar-cip-core.
-> > >>>
-> > >>> As you noticed[1], https://gitlab.com/cip-project/cip-core/ contains a folder "deby". I created that folder
-> > with
-> > >> the intention of adding "isar" and other tools' metadata at the same folder level.
-> > >>>
-> > >>> cip-core/  <-- git repo
-> > >>>       deby/ <-- deby metadata
-> > >>>       isar/ <-- isar metadata
-> > >>>       eid/ <-- eid metadata
-> > >>>
-> > >>> [Note] Now that we have profiles (tiny and generic) we could add an extra folder for them.
-> > >>>
-> > >>> I think that having all of the metadata on the same repository can be good for communication. For
-> example,
-> > >> after a git-pull I might notice that you updated certain kernel configuration values under the "isar" folder
-> that
-> > >> should be applied to Deby's metadata as well.
-> > >>
-> > >> I agree that shared data like reference configs should ideally be stored in one
-> > >> place. That could be solved by having a single repos for all build systems or by
-> > >> sticking those artifacts into a separate repo. We already have
-> > >> https://gitlab.com/cip-project/cip-kernel/cip-kernel-config - maybe add the
-> > >> configs of the reference boards there?
-> > >
-> > > I said "communication" (like in a monorepo) rather than shared data, because each build tool has different
-> > methods to store that shared data. In the case of a kernel config, it will probably work fine, but there is always
-> > a possibility that we need to add some tuning on the recipe's metadata.
-> >
-> > When it comes to pure communication, the mailing list is a better place. We
-> > could route all cip-core patches through it (rather than splitting up the work
-> > in isolated MRs on gitlab).
-> >
-> > >
-> > >>> Another possibility is to use gitlab groups/subgroups in this way:
-> > >>>
-> > >>> cip-core/ <-- group
-> > >>>       tiny/ <-- subgroup
-> > >>>           deby <-- git repo
-> > >>>       generic/ <-- subgroup
-> > >>>           isar <-- git repo
-> > >>>
-> > >>> I don't have enough permissions to create groups and subgroups under cip-project though (that's the
-> > reason
-> > >> I used the folder approach).
-> > >>>
-> > >>
-> > >> I do. If we agree on the group approach, we need to rename the existing cip-core
-> > >> repo first, and flatten its folder structure. Then I can create the cip-core
-> > >> group as well as the tiny/generic subgroups and move the repo.
-> > >>
-> > >> Later on, we can factor out the kernel configs. Do you see other shared data?
-> > >
-> > > Well, one could be the list of packages for each profile. However, as I mention above it will be hard to share
-> > exactly the same files.
-> >
-> > Yes, sharing the package list 1:1 will only work if the tiny profile follows the
-> > standard Debian binary packaging structure - does/will it?
+Ben Hutchings pushed to branch master at cip-project / cip-kernel / cip-kernel-sec
 
-Not necessarily.
-For example, Deby follows the Open Embedded structure as far as I know.
 
-Thanks,
-Daniel
+Commits:
+a3a90572 by Christophe Kassabji at 2018-08-02T15:28:47Z
+The Ubuntu CVE tracker migrated from bzr to git. Use new url in import_ubuntu.py script.
+- - - - -
+4ffab6a9 by Ben Hutchings at 2019-01-09T17:02:42Z
+Merge branch &#39;master&#39; of https://gitlab.com/ckassabji/cip-kernel-sec
 
-> >
-> > >
-> > >>> Which way would you prefer?
-> > >>
-> > >> I'm leaning towards separate repos.
-> > >
-> > > OK, then let's analyze the pros and cons and decide today at the TSC meeting.
-> >
-> > Fine with me.
-> >
-> > Jan
-> >
-> > --
-> > Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-> > Corporate Competence Center Embedded Linux
+- - - - -
+4062b400 by Ben Hutchings at 2019-01-09T17:06:37Z
+Clean up remnants of Bazaar-NG
+
+* scripts/import_ubuntu.py: Delete local Bazaar-NG repository if present
+* README.md: Drop it from requirements
+
+- - - - -
+cf3ca110 by Ben Hutchings at 2019-01-09T17:11:56Z
+Import data from Ubuntu
+
+But override the fixed-by field for CVE-2016-10723, as the commit
+they recorded is not a complete fix.
+
+- - - - -
+
+
+30 changed files:
+
+- README.md
+- issues/CVE-2013-7445.yml
+- issues/CVE-2016-10208.yml
+- issues/CVE-2016-10723.yml
+- issues/CVE-2016-7913.yml
+- issues/CVE-2016-8660.yml
+- issues/CVE-2016-9588.yml
+- issues/CVE-2017-11472.yml
+- issues/CVE-2017-11473.yml
+- issues/CVE-2017-12154.yml
+- issues/CVE-2017-12193.yml
+- issues/CVE-2017-13693.yml
+- issues/CVE-2017-13694.yml
+- issues/CVE-2017-13695.yml
+- issues/CVE-2017-14991.yml
+- issues/CVE-2017-15265.yml
+- issues/CVE-2017-15299.yml
+- issues/CVE-2017-15649.yml
+- issues/CVE-2017-16526.yml
+- issues/CVE-2017-16527.yml
+- issues/CVE-2017-16529.yml
+- issues/CVE-2017-16531.yml
+- issues/CVE-2017-16532.yml
+- issues/CVE-2017-16533.yml
+- issues/CVE-2017-16535.yml
+- issues/CVE-2017-16536.yml
+- issues/CVE-2017-16537.yml
+- issues/CVE-2017-16538.yml
+- issues/CVE-2017-16643.yml
+- issues/CVE-2017-16644.yml
+
+
+The diff was not included because it is too large.
+
+
+View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/compare/45b595b96c7783ede7e743212368da373a20b6c8...cf3ca11062c4d9dc1cef3848f106f2da0d08f347
+
+-- 
+View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/compare/45b595b96c7783ede7e743212368da373a20b6c8...cf3ca11062c4d9dc1cef3848f106f2da0d08f347
+You're receiving this email because of your account on gitlab.com.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190109/ff999590/attachment.html>
