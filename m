@@ -1,31 +1,18 @@
 From: nobuhiro.iwamatsu@miraclelinux.com (Nobuhiro Iwamatsu)
-Date: Fri, 11 Jan 2019 23:48:51 +0900
-Subject: [cip-dev] Create development branch for 4.19.y
-In-Reply-To: <07857ed7-e2e9-6105-6fa8-b9e992dc8497@monom.org>
-References: <CAGDrK-b8prxi5W-P1VSXGxziiD0hBHjfcpA_8j0YAYgw5xRB=A@mail.gmail.com>
-	<07857ed7-e2e9-6105-6fa8-b9e992dc8497@monom.org>
-Message-ID: <CAGDrK-aasELYOH9WN6FVSUPWTr9d+GyKQ09a6neA9GyTzu2V4A@mail.gmail.com>
+Date: Fri, 11 Jan 2019 23:49:40 +0900
+Subject: [cip-dev] Linux 4.19.13-cip1 release
+Message-ID: <CAGDrK-Yyktq+BP=GPY35xx=NT5b3xHNfXv-9sR2XGWgzY7x4kg@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,  Daniel.
+Hi, all.
 
-2019?1?11?(?) 23:38 Daniel Wagner <wagi@monom.org>:
->
-> Hi Nobuhiro,
->
-> On 11/12/18 2:58 PM, Nobuhiro Iwamatsu wrote:
-> > If you have a patch for CIP kernel 4.19.y, please post it on the base.
->
-> I've started to work on the -rt flavor CIP tree and imported the
-> corresponding preempt-rt patches. Before I can upload the cip-rt patches
-> I need a tag to base it on. Wouldn't you mind to add a -cip1 tag now?
+I've released Linux version Linux 4.19.13-cip1.
+You can get this release via the git tree at:
+  https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/tag/?h=v4.19.13-cip1
 
-I was just doing the work and pushed.
-
->
-> Thanks,
-> Daniel
+This is the first release of the CIP kernel for 4.19.y. CIP specific
+fixes are not yet included.
 
 Best regards,
   Nobuhiro
