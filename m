@@ -1,20 +1,20 @@
 From: wagi@monom.org (Daniel Wagner)
-Date: Fri, 11 Jan 2019 15:20:36 +0100
-Subject: [cip-dev] [ANNOUNCE] 4.4.166-cip29-rt21
-Message-ID: <20190111142037.A74D2500722@mail.monom.org>
+Date: Fri, 11 Jan 2019 15:38:34 +0100
+Subject: [cip-dev] Create development branch for 4.19.y
+In-Reply-To: <CAGDrK-b8prxi5W-P1VSXGxziiD0hBHjfcpA_8j0YAYgw5xRB=A@mail.gmail.com>
+References: <CAGDrK-b8prxi5W-P1VSXGxziiD0hBHjfcpA_8j0YAYgw5xRB=A@mail.gmail.com>
+Message-ID: <07857ed7-e2e9-6105-6fa8-b9e992dc8497@monom.org>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello CIP RT Folks!
+Hi Nobuhiro,
 
-I'm pleased to announce the 4.4.166-cip29-rt21 stable release.
+On 11/12/18 2:58 PM, Nobuhiro Iwamatsu wrote:
+> If you have a patch for CIP kernel 4.19.y, please post it on the base.
 
-You can get this release via the git tree at:
+I've started to work on the -rt flavor CIP tree and imported the 
+corresponding preempt-rt patches. Before I can upload the cip-rt patches 
+I need a tag to base it on. Wouldn't you mind to add a -cip1 tag now?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-
-  branch: linux-4.4.y-cip-rt
-  Head SHA1: 616268e69203813b01644ebb971cbf1957db7d60
-
-Enjoy!
-   Daniel
+Thanks,
+Daniel
