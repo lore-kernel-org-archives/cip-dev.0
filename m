@@ -1,16 +1,23 @@
-From: wagi@monom.org (Daniel Wagner)
-Date: Fri, 11 Jan 2019 17:33:21 +0100
-Subject: [cip-dev] Linux 4.19.13-cip1-rt release
-Message-ID: <e814387c-6c42-ab7c-401c-c13becee1545@monom.org>
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Mon, 14 Jan 2019 15:00:24 +0000
+Subject: [cip-dev] CIP-dev IRC weekly meeting log: week3
+Message-ID: <HK0PR01MB29799BE719041E573883F86BE2800@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi,
 
-I've imported the v4.19.13-rt10 preempt-rt patches on top of the 
-4.19.13-cip1 release by Nobuhiro. All my local sanity tests have 
-survived. Remember the v4.19.x-rt tree is still under development, so 
-there might be still some serious hickups hidden.
 
-Thanks,
-Daniel
+
+Please find the logs of CIP meeting last week in below link:
+
+
+
+https://irclogs.baserock.org/cip/%23cip.2019-01-10.log.html#t2019-01-10T09:00:08
+
+
+
+SZ Lin, Moxa
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190114/3e52116f/attachment.html>
