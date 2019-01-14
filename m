@@ -1,23 +1,28 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Mon, 14 Jan 2019 15:00:24 +0000
-Subject: [cip-dev] CIP-dev IRC weekly meeting log: week3
-Message-ID: <HK0PR01MB29799BE719041E573883F86BE2800@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Mon, 14 Jan 2019 15:48:49 +0000
+Subject: [cip-dev] Linux 4.19.13-cip1 release
+In-Reply-To: <CAGDrK-Yyktq+BP=GPY35xx=NT5b3xHNfXv-9sR2XGWgzY7x4kg@mail.gmail.com>
+References: <CAGDrK-Yyktq+BP=GPY35xx=NT5b3xHNfXv-9sR2XGWgzY7x4kg@mail.gmail.com>
+Message-ID: <1547480929.3229.77.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+On Fri, 2019-01-11 at 23:49 +0900, Nobuhiro Iwamatsu wrote:
+> Hi, all.
+> 
+> I've released Linux version Linux 4.19.13-cip1.
+> You can get this release via the git tree at:
+> ? https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/tag/?h=v4.19.13-cip1
+> 
+> This is the first release of the CIP kernel for 4.19.y. CIP specific
+> fixes are not yet included.
 
+Great.  But could you delete the irrelevant tags from this repository?
+I think anything that doesn't start with v shouldn't be there.
 
+Ben.
 
-Please find the logs of CIP meeting last week in below link:
-
-
-
-https://irclogs.baserock.org/cip/%23cip.2019-01-10.log.html#t2019-01-10T09:00:08
-
-
-
-SZ Lin, Moxa
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190114/3e52116f/attachment.html>
+-- 
+Ben Hutchings, Software Developer                ?        Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
