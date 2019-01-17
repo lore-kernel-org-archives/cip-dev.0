@@ -1,36 +1,41 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 17 Jan 2019 02:30:20 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-Message-ID: <HK0PR01MB29792BD471F3B69B11625ECAE2830@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+From: nobuhiro.iwamatsu@miraclelinux.com (Nobuhiro Iwamatsu)
+Date: Thu, 17 Jan 2019 17:07:37 +0900
+Subject: [cip-dev] Linux 4.19.13-cip1 release
+In-Reply-To: <1547480929.3229.77.camel@codethink.co.uk>
+References: <CAGDrK-Yyktq+BP=GPY35xx=NT5b3xHNfXv-9sR2XGWgzY7x4kg@mail.gmail.com>
+	<1547480929.3229.77.camel@codethink.co.uk>
+Message-ID: <CAGDrK-YybYNTnFdZoWsBggo0j55g1c9OLKhNr4C9m-62v6ykFQ@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi All,
+Hi, Ben.
 
-Kindly be reminded to attend weekly meeting through IRC to discuss technical topics with CIP kernel today.
+2019?1?15?(?) 0:48 Ben Hutchings <ben.hutchings@codethink.co.uk>:
+>
+> On Fri, 2019-01-11 at 23:49 +0900, Nobuhiro Iwamatsu wrote:
+> > Hi, all.
+> >
+> > I've released Linux version Linux 4.19.13-cip1.
+> > You can get this release via the git tree at:
+> >   https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/tag/?h=v4.19.13-cip1
+> >
+> > This is the first release of the CIP kernel for 4.19.y. CIP specific
+> > fixes are not yet included.
+>
+> Great.  But could you delete the irrelevant tags from this repository?
+> I think anything that doesn't start with v shouldn't be there.
 
-*Please note that? IRC meeting was rescheduled to 18:00 (JST) starting from first week of Nov. according F2F meeting discussion in ELCE.*
+I just deleted  irrelevant tags.
+Thanks to your pointing out.
 
-US-West US-East? UK??? DE???? TW???? JP
-02:00??? 05:00?? 09:00?? 10:00?? 17:00?? 18:00
-
-Channel:
-* irc:chat.freenode.net:6667/cip
-
-Agenda:
-
-* AI review
-#action Daniel will start to work on v4.4.166-cip29-rt21 this friday? 
-* Kernel maintenance updates
-* Kernel testing
-* Software update 
-* CIP Core
-* AOB
-
-The meeting will take 30 min although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting..
-
-I won't be able to attend this meeting, Gavin will chair today's meeting.
+>
+> Ben.
+>
 
 Best regards,
+  Nobuhiro
 
-SZ Lin, Moxa.
+> --
+> Ben Hutchings, Software Developer                         Codethink Ltd
+> https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+>                                      Manchester, M1 2HF, United Kingdom
