@@ -1,92 +1,113 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 24 Jan 2019 05:40:26 +0000
+From: daniel.sangorrin@toshiba.co.jp (daniel.sangorrin at toshiba.co.jp)
+Date: Thu, 24 Jan 2019 05:49:40 +0000
 Subject: [cip-dev] CIP IRC weekly meeting today
-In-Reply-To: <OSAPR01MB3763699C758235B2AF0F2F0FD09A0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+In-Reply-To: <HK0PR01MB2979822CE265FAC55C00DD21E29A0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 References: <HK0PR01MB29798C89991D34E8F14CC339E29A0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 	<OSAPR01MB3763699C758235B2AF0F2F0FD09A0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-Message-ID: <HK0PR01MB2979822CE265FAC55C00DD21E29A0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+	<HK0PR01MB2979822CE265FAC55C00DD21E29A0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+Message-ID: <OSAPR01MB37635B6DE00A58A5332E4C76D09A0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Daniel,
+Hi SZ,
+Cc: Jan, Wolfgang
 
-Thanks for the heads up.
+Sorry I have no updates. A bit busy these days.
+Just I wanted to say to Jan that the backlinks to cip-core seem to be all ours [1], so he can go ahead and modify the directory structure in gitlab.
+Also, I wanted to ask Siemens to fill the cip-core survey (the software updates survey is done).
 
-It would be great if you can update the status via email before the meeting.
+[1] https://wiki.linuxfoundation.org/civilinfrastructureplatform/cip-core-quickstart
 
-SZ
-
------Original Message-----
-From: daniel.sangorrin@toshiba.co.jp [mailto:daniel.sangorrin at toshiba.co.jp] 
-Sent: Thursday, January 24, 2019 11:00 AM
-To: SZ Lin (???) <SZ.Lin@moxa.com>; cip-dev at lists.cip-project.org
-Subject: RE: CIP IRC weekly meeting today
-
-Hi Sz,
-I'm afraid I won't be able to attend.
-Regards
+Thanks,
 Daniel
 
 > -----Original Message-----
-> From: cip-dev-bounces at lists.cip-project.org 
-> <cip-dev-bounces@lists.cip-project.org> On Behalf Of SZ Lin (?
-> ??)
-> Sent: Thursday, January 24, 2019 11:23 AM
-> To: cip-dev at lists.cip-project.org
-> Subject: [cip-dev] CIP IRC weekly meeting today
+> From: SZ Lin (???) <SZ.Lin@moxa.com>
+> Sent: Thursday, January 24, 2019 2:40 PM
+> To: sangorrin daniel(????? ???? ????????) <daniel.sangorrin@toshiba.co.jp>;
+> cip-dev at lists.cip-project.org
+> Subject: RE: CIP IRC weekly meeting today
 > 
-> Hi All,
+> Hi Daniel,
 > 
+> Thanks for the heads up.
 > 
+> It would be great if you can update the status via email before the meeting.
 > 
-> Kindly be reminded to attend weekly meeting through IRC to discuss technical topics with CIP kernel today.
+> SZ
 > 
+> -----Original Message-----
+> From: daniel.sangorrin at toshiba.co.jp [mailto:daniel.sangorrin at toshiba.co.jp]
+> Sent: Thursday, January 24, 2019 11:00 AM
+> To: SZ Lin (???) <SZ.Lin@moxa.com>; cip-dev at lists.cip-project.org
+> Subject: RE: CIP IRC weekly meeting today
 > 
+> Hi Sz,
+> I'm afraid I won't be able to attend.
+> Regards
+> Daniel
 > 
-> *Please note that  IRC meeting was rescheduled to 18:00 (JST) starting 
-> from first week of Nov. according F2F meeting discussion in ELCE.*
-> 
-> 
-> 
-> US-West US-East  UK    DE     TW     JP
-> 
-> 02:00    05:00   09:00   10:00   17:00   18:00
-> 
-> 
-> 
-> Channel:
-> 
-> * irc:chat.freenode.net:6667/cip
-> 
-> 
-> 
-> Agenda:
-> 
-> 
-> 
-> * Kernel maintenance updates
-> 
-> TBD: wiki page edit
-> 
-> * Kernel testing
-> 
-> * Software update
-> 
-> * CIP Core
-> 
-> * AOB
-> 
-> 
-> 
-> The meeting will take 30 min although it can be extended to an hour if 
-> it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting..
-> 
-> 
-> 
-> Best regards,
-> 
-> 
-> 
-> SZ Lin, Moxa.
-> 
-> 
+> > -----Original Message-----
+> > From: cip-dev-bounces at lists.cip-project.org
+> > <cip-dev-bounces@lists.cip-project.org> On Behalf Of SZ Lin (?
+> > ??)
+> > Sent: Thursday, January 24, 2019 11:23 AM
+> > To: cip-dev at lists.cip-project.org
+> > Subject: [cip-dev] CIP IRC weekly meeting today
+> >
+> > Hi All,
+> >
+> >
+> >
+> > Kindly be reminded to attend weekly meeting through IRC to discuss technical topics with CIP kernel today.
+> >
+> >
+> >
+> > *Please note that  IRC meeting was rescheduled to 18:00 (JST) starting
+> > from first week of Nov. according F2F meeting discussion in ELCE.*
+> >
+> >
+> >
+> > US-West US-East  UK    DE     TW     JP
+> >
+> > 02:00    05:00   09:00   10:00   17:00   18:00
+> >
+> >
+> >
+> > Channel:
+> >
+> > * irc:chat.freenode.net:6667/cip
+> >
+> >
+> >
+> > Agenda:
+> >
+> >
+> >
+> > * Kernel maintenance updates
+> >
+> > TBD: wiki page edit
+> >
+> > * Kernel testing
+> >
+> > * Software update
+> >
+> > * CIP Core
+> >
+> > * AOB
+> >
+> >
+> >
+> > The meeting will take 30 min although it can be extended to an hour if
+> > it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next
+> meeting..
+> >
+> >
+> >
+> > Best regards,
+> >
+> >
+> >
+> > SZ Lin, Moxa.
+> >
+> >
