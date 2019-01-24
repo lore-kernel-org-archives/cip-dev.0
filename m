@@ -1,11 +1,25 @@
-From: nobuhiro.iwamatsu@miraclelinux.com (Nobuhiro Iwamatsu)
-Date: Thu, 24 Jan 2019 16:29:38 +0900
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Thu, 24 Jan 2019 07:56:07 +0000
 Subject: [cip-dev] CIP IRC weekly meeting today
-In-Reply-To: <HK0PR01MB29798C89991D34E8F14CC339E29A0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+In-Reply-To: <CAGDrK-YuZ9RRr2kg0B-NY6Yub3KqTm91GjJNBjzXgvQdeXF3iA@mail.gmail.com>
 References: <HK0PR01MB29798C89991D34E8F14CC339E29A0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-Message-ID: <CAGDrK-YuZ9RRr2kg0B-NY6Yub3KqTm91GjJNBjzXgvQdeXF3iA@mail.gmail.com>
+	<CAGDrK-YuZ9RRr2kg0B-NY6Yub3KqTm91GjJNBjzXgvQdeXF3iA@mail.gmail.com>
+Message-ID: <HK0PR01MB2979132746E2563AE713EFAEE29A0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
+
+Hi Iwamatsu-san,
+
+Noted with thanks.
+
+SZ
+
+-----Original Message-----
+From: Nobuhiro Iwamatsu [mailto:nobuhiro.iwamatsu at miraclelinux.com] 
+Sent: Thursday, January 24, 2019 3:30 PM
+To: SZ Lin (???) <SZ.Lin@moxa.com>
+Cc: cip-dev at lists.cip-project.org
+Subject: Re: [cip-dev] CIP IRC weekly meeting today
 
 Hi, SZ.
 
