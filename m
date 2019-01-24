@@ -1,19 +1,35 @@
-From: daniel.sangorrin@toshiba.co.jp (daniel.sangorrin at toshiba.co.jp)
-Date: Thu, 24 Jan 2019 03:00:09 +0000
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Thu, 24 Jan 2019 05:40:26 +0000
 Subject: [cip-dev] CIP IRC weekly meeting today
-In-Reply-To: <HK0PR01MB29798C89991D34E8F14CC339E29A0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+In-Reply-To: <OSAPR01MB3763699C758235B2AF0F2F0FD09A0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
 References: <HK0PR01MB29798C89991D34E8F14CC339E29A0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-Message-ID: <OSAPR01MB3763699C758235B2AF0F2F0FD09A0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+	<OSAPR01MB3763699C758235B2AF0F2F0FD09A0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+Message-ID: <HK0PR01MB2979822CE265FAC55C00DD21E29A0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Sz, 
+Hi Daniel,
+
+Thanks for the heads up.
+
+It would be great if you can update the status via email before the meeting.
+
+SZ
+
+-----Original Message-----
+From: daniel.sangorrin@toshiba.co.jp [mailto:daniel.sangorrin at toshiba.co.jp] 
+Sent: Thursday, January 24, 2019 11:00 AM
+To: SZ Lin (???) <SZ.Lin@moxa.com>; cip-dev at lists.cip-project.org
+Subject: RE: CIP IRC weekly meeting today
+
+Hi Sz,
 I'm afraid I won't be able to attend.
 Regards
 Daniel
 
 > -----Original Message-----
-> From: cip-dev-bounces at lists.cip-project.org <cip-dev-bounces@lists.cip-project.org> On Behalf Of SZ Lin (?
+> From: cip-dev-bounces at lists.cip-project.org 
+> <cip-dev-bounces@lists.cip-project.org> On Behalf Of SZ Lin (?
 > ??)
 > Sent: Thursday, January 24, 2019 11:23 AM
 > To: cip-dev at lists.cip-project.org
@@ -27,8 +43,8 @@ Daniel
 > 
 > 
 > 
-> *Please note that  IRC meeting was rescheduled to 18:00 (JST) starting from first week of Nov. according F2F
-> meeting discussion in ELCE.*
+> *Please note that  IRC meeting was rescheduled to 18:00 (JST) starting 
+> from first week of Nov. according F2F meeting discussion in ELCE.*
 > 
 > 
 > 
@@ -62,8 +78,8 @@ Daniel
 > 
 > 
 > 
-> The meeting will take 30 min although it can be extended to an hour if it makes sense and those involved in the
-> topics can stay. Otherwise, the topic will be taken offline or in the next meeting..
+> The meeting will take 30 min although it can be extended to an hour if 
+> it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting..
 > 
 > 
 > 
