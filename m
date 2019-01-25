@@ -1,91 +1,22 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 24 Jan 2019 07:56:07 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-In-Reply-To: <CAGDrK-YuZ9RRr2kg0B-NY6Yub3KqTm91GjJNBjzXgvQdeXF3iA@mail.gmail.com>
-References: <HK0PR01MB29798C89991D34E8F14CC339E29A0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-	<CAGDrK-YuZ9RRr2kg0B-NY6Yub3KqTm91GjJNBjzXgvQdeXF3iA@mail.gmail.com>
-Message-ID: <HK0PR01MB2979132746E2563AE713EFAEE29A0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+From: agustin.benito@codethink.co.uk (=?ISO-8859-1?Q?Agust=EDn?= Benito Bethencourt)
+Date: Fri, 25 Jan 2019 10:55:51 +0100
+Subject: [cip-dev] Meet Bot in #cip
+Message-ID: <3120927.qp1PL9D0sK@linux-if6s>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Iwamatsu-san,
+Hi,
 
-Noted with thanks.
+as you probably know, the Baserock project has been providing us the logs service for the #cip IRC channel in freenode. When the weekly dev meeting started, we all agree it would be good to add Meet Bot to those services, so keeping logs become easier as well as keeping track of the actions from previous meetings, among other improvements.
 
-SZ
+The Meet Bot was implemented yesterday. Thanks Pedro for adding this service.
 
------Original Message-----
-From: Nobuhiro Iwamatsu [mailto:nobuhiro.iwamatsu at miraclelinux.com] 
-Sent: Thursday, January 24, 2019 3:30 PM
-To: SZ Lin (???) <SZ.Lin@moxa.com>
-Cc: cip-dev at lists.cip-project.org
-Subject: Re: [cip-dev] CIP IRC weekly meeting today
+For those of you unfamiliar with Meet Bot please read: https://wiki.debian.org/MeetBot
 
-Hi, SZ.
+Best Regards
 
-Sorry I?m afraid I can't join this week's IRC meeting.
-For Kernel maintenance updates, I don't have no update.
-
-Best regards,
-  Nobuhiro
-
-2019?1?24?(?) 11:23 SZ Lin (???) <SZ.Lin@moxa.com>:
->
-> Hi All,
->
->
->
-> Kindly be reminded to attend weekly meeting through IRC to discuss technical topics with CIP kernel today.
->
->
->
-> *Please note that  IRC meeting was rescheduled to 18:00 (JST) starting from first week of Nov. according F2F meeting discussion in ELCE.*
->
->
->
-> US-West US-East  UK    DE     TW     JP
->
-> 02:00    05:00   09:00   10:00   17:00   18:00
->
->
->
-> Channel:
->
-> * irc:chat.freenode.net:6667/cip
->
->
->
-> Agenda:
->
->
->
-> * Kernel maintenance updates
->
-> TBD: wiki page edit
->
-> * Kernel testing
->
-> * Software update
->
-> * CIP Core
->
-> * AOB
->
->
->
-> The meeting will take 30 min although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting..
->
->
->
-> Best regards,
->
->
->
-> SZ Lin, Moxa.
->
->
->
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
+-- 
+Agust?n Benito Bethencourt
+Principal Consultant
+Codethink Ltd
+We respect your privacy.   See https://www.codethink.co.uk/privacy.html
