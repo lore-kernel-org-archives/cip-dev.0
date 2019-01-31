@@ -1,49 +1,39 @@
-From: zoran.stojsavljevic.de@gmail.com (Zoran S)
-Date: Wed, 30 Jan 2019 16:04:14 +0100
-Subject: [cip-dev] Next Debian kernel: when will it be announced?
-In-Reply-To: <2887169.qepfFsszbe@linux-if6s>
-References: <2887169.qepfFsszbe@linux-if6s>
-Message-ID: <CAEss1E+6KsepvfjoXg8fZsuUs6doiA3UGUWnhJLhpawRDk5f_Q@mail.gmail.com>
+From: SZ.Lin@moxa.com (=?big5?B?U1ogTGluICiqTKRXtLwp?=)
+Date: Thu, 31 Jan 2019 03:02:27 +0000
+Subject: [cip-dev] CIP IRC weekly meeting todayCIP IRC weekly meeting today
+Message-ID: <HK0PR01MB29796715E00B87DB1CDBADD1E2910@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-I finally got to the point that I can upgrade my custom VBox VM with
-Lava sans Vagrant from preseeded Debian 9 to Debian 10.
+Hi All,
 
-Here is what I got (empirically):
+Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
 
-root at stretch1-hostname:~# cat /etc/os-release
-PRETTY_NAME="Debian GNU/Linux buster/sid"
-NAME="Debian GNU/Linux"
-ID=debian
-HOME_URL="https://www.debian.org/"
-SUPPORT_URL="https://www.debian.org/support"
-BUG_REPORT_URL="https://bugs.debian.org/"
-root at stretch1-hostname:~# uname -a
-Linux stretch1-hostname 4.19.0-1-amd64 #1 SMP Debian 4.19.12-1
-(2018-12-22) x86_64 GNU/Linux
-root at stretch1-hostname:~#
+*Please note that  IRC meeting was rescheduled to 18:00 (JST) starting from the first week of Nov. according to F2F meeting discussion in ELCE.*
 
-Cheers,
-Zoran
-_______
+US-West US-East  UK    DE     TW     JP
+02:00    05:00   09:00   10:00   17:00   18:00
 
+Channel:
+* irc:chat.freenode.net:6667/cip
 
-On Thu, Sep 13, 2018 at 6:21 PM Agust?n Benito Bethencourt
-<agustin.benito@codethink.co.uk> wrote:
->
-> Hi Ben,
->
-> do you know when approximately will the Debian project announce the version of the new kernel?
->
-> Best Regards
->
-> --
-> Agust?n Benito Bethencourt
-> Principal Consultant
-> Codethink Ltd
-> We respect your privacy.   See https://www.codethink.co.uk/privacy.html
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
+Agenda:
+
+* AI review
+* Kernel maintenance updates
+* Kernel testing
+* CIP Core
+
+* Software update
+* AOB
+
+The meeting will take 30 min although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
+
+I won't be able to attend this meeting, Gavin will chair today's meeting.
+
+Best regards,
+
+SZ Lin, Moxa.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190131/aa4bcb84/attachment.html>
