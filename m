@@ -1,41 +1,89 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 7 Feb 2019 02:29:42 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-Message-ID: <HK0PR01MB2979919626682539BB979068E2680@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+From: gitlab@mg.gitlab.com (Ben Hutchings)
+Date: Thu, 07 Feb 2019 20:27:19 +0000
+Subject: [cip-dev] [Git][cip-project/cip-kernel/cip-kernel-sec][master] 6
+ commits: Import more data
+Message-ID: <5c5c94a7162d6_46ed3f91332592446691b5@sidekiq-asap-03-sv-gprd.mail>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+Ben Hutchings pushed to branch master at cip-project / cip-kernel / cip-kernel-sec
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
 
-*Please note that? IRC meeting was rescheduled to 18:00 (JST) starting from the first week of Nov. according to F2F meeting discussion in ELCE.*
+Commits:
+3fffafb3 by Ben Hutchings at 2019-02-07T16:42:05Z
+Import more data
 
-US-West US-East? UK??? DE???? TW???? JP
-02:00??? 05:00?? 09:00?? 10:00?? 17:00?? 18:00
+- - - - -
+5f1bf29e by Ben Hutchings at 2019-02-07T17:46:29Z
+scripts/import_stable.py: Simplify regexp construction using named substitution
 
-Channel:
-* irc:chat.freenode.net:6667/cip
+Also switch to using format().
 
-Agenda:
+- - - - -
+e1956732 by Ben Hutchings at 2019-02-07T17:46:31Z
+scripts/import_stable.py: Simplify extraction of commit hash from regexp match
 
-* AI review
-#action Iwamatsu will release v4.4.172 cip kernel today
-->Iwamatsu released v4.4.171 kernel [1]
-[1] https://lists.cip-project.org/pipermail/cip-dev/2019-January/001769.html
+Exactly one group must match, so if we substitute &#39;&#39; (instead of None)
+for non-matching groups we can get the right result by concatenate all
+the group matches.
 
-#action Sangorrin will list of packages for cip core v2 tiny profile
--> Sangorrin has sent the list [2]
-[2]https://lists.cip-project.org/pipermail/cip-dev/2019-February/001776.html
+- - - - -
+6ea4c540 by Ben Hutchings at 2019-02-07T17:46:31Z
+scripts/import_stable.py: Add yet another form of upstream commit reference
 
-* Kernel maintenance updates
-* Kernel testing
-* CIP Core
-* Software update?
-* AOB
+- - - - -
+47d0ae41 by Ben Hutchings at 2019-02-07T17:48:19Z
+scripts/import_stable.py: Add debug output to get_backports()
 
-The meeting will take 30 min although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
+- - - - -
+2673ace4 by Ben Hutchings at 2019-02-07T20:26:17Z
+Mark several issues as fixed or ignored
 
-Best regards,
+- - - - -
 
-SZ Lin, Moxa.
+
+30 changed files:
+
+- + issues/CVE-2016-10741.yml
+- issues/CVE-2017-18249.yml
+- issues/CVE-2018-1066.yml
+- issues/CVE-2018-10876.yml
+- issues/CVE-2018-10877.yml
+- issues/CVE-2018-10878.yml
+- issues/CVE-2018-10879.yml
+- issues/CVE-2018-10880.yml
+- issues/CVE-2018-10882.yml
+- issues/CVE-2018-10883.yml
+- issues/CVE-2018-13096.yml
+- issues/CVE-2018-13097.yml
+- issues/CVE-2018-13099.yml
+- issues/CVE-2018-13100.yml
+- issues/CVE-2018-14614.yml
+- issues/CVE-2018-14616.yml
+- issues/CVE-2018-14625.yml
+- issues/CVE-2018-16862.yml
+- + issues/CVE-2018-16880.yml
+- issues/CVE-2018-16882.yml
+- issues/CVE-2018-17972.yml
+- issues/CVE-2018-18281.yml
+- issues/CVE-2018-18690.yml
+- issues/CVE-2018-19407.yml
+- issues/CVE-2018-19824.yml
+- issues/CVE-2018-19854.yml
+- issues/CVE-2018-20169.yml
+- + issues/CVE-2018-20669.yml
+- issues/CVE-2019-3459.yml
+- issues/CVE-2019-3460.yml
+
+
+The diff was not included because it is too large.
+
+
+View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/compare/f97cfc8c21d00e91e0a96b230f6a39a04c45c1b0...2673ace439e64574f09d38e7fcd8e87b2b673ce5
+
+-- 
+View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/compare/f97cfc8c21d00e91e0a96b230f6a39a04c45c1b0...2673ace439e64574f09d38e7fcd8e87b2b673ce5
+You're receiving this email because of your account on gitlab.com.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190207/28259332/attachment.html>
