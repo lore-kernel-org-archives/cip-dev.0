@@ -1,89 +1,144 @@
-From: gitlab@mg.gitlab.com (Ben Hutchings)
-Date: Thu, 07 Feb 2019 20:27:19 +0000
-Subject: [cip-dev] [Git][cip-project/cip-kernel/cip-kernel-sec][master] 6
- commits: Import more data
-Message-ID: <5c5c94a7162d6_46ed3f91332592446691b5@sidekiq-asap-03-sv-gprd.mail>
+From: kazuhiro.fujita.jg@renesas.com (Kazuhiro Fujita)
+Date: Fri, 8 Feb 2019 04:39:57 +0000
+Subject: [cip-dev] CIP core tiny profile package list
+In-Reply-To: <OSAPR01MB37631F440E9797217D08C46BD06D0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+References: <OSAPR01MB37631F440E9797217D08C46BD06D0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+Message-ID: <OSBPR01MB526959EAEE4BDD2478B20B45D9690@OSBPR01MB5269.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Ben Hutchings pushed to branch master at cip-project / cip-kernel / cip-kernel-sec
+Hello Daniel, all,
+
+I compared your rootfs-summary.csv and Yocto(poky)'s core-image-minimal 
+and found some major components are not included in the rootfs.
+For example: dbus, pam, systemd, udev
+
+I think this result reflected policies for the tiny profile.
+I anticipate tiny profile let us:
+ - boot boards
+ - login via network and serial console
+ - copy files from network
+All other functions are supported in the generic profile.
+
+If this is correct, in my opinion, dropbear and busybox are enough 
+for these components.
+	openssh-server \ <-- this one or dropbear?
+	bash \ <-- or only busybox sh?
+	procps \ <-- or busybox ps?
+	findutils \ <-- or busybox find?
+And these are not mandatory for the tiny profile.
+	iproute2 \ <-- required?
+	iptables \ <-- required?
+	gawk \ <-- required?
+
+Best regards,
+Fujita
 
 
-Commits:
-3fffafb3 by Ben Hutchings at 2019-02-07T16:42:05Z
-Import more data
-
-- - - - -
-5f1bf29e by Ben Hutchings at 2019-02-07T17:46:29Z
-scripts/import_stable.py: Simplify regexp construction using named substitution
-
-Also switch to using format().
-
-- - - - -
-e1956732 by Ben Hutchings at 2019-02-07T17:46:31Z
-scripts/import_stable.py: Simplify extraction of commit hash from regexp match
-
-Exactly one group must match, so if we substitute &#39;&#39; (instead of None)
-for non-matching groups we can get the right result by concatenate all
-the group matches.
-
-- - - - -
-6ea4c540 by Ben Hutchings at 2019-02-07T17:46:31Z
-scripts/import_stable.py: Add yet another form of upstream commit reference
-
-- - - - -
-47d0ae41 by Ben Hutchings at 2019-02-07T17:48:19Z
-scripts/import_stable.py: Add debug output to get_backports()
-
-- - - - -
-2673ace4 by Ben Hutchings at 2019-02-07T20:26:17Z
-Mark several issues as fixed or ignored
-
-- - - - -
-
-
-30 changed files:
-
-- + issues/CVE-2016-10741.yml
-- issues/CVE-2017-18249.yml
-- issues/CVE-2018-1066.yml
-- issues/CVE-2018-10876.yml
-- issues/CVE-2018-10877.yml
-- issues/CVE-2018-10878.yml
-- issues/CVE-2018-10879.yml
-- issues/CVE-2018-10880.yml
-- issues/CVE-2018-10882.yml
-- issues/CVE-2018-10883.yml
-- issues/CVE-2018-13096.yml
-- issues/CVE-2018-13097.yml
-- issues/CVE-2018-13099.yml
-- issues/CVE-2018-13100.yml
-- issues/CVE-2018-14614.yml
-- issues/CVE-2018-14616.yml
-- issues/CVE-2018-14625.yml
-- issues/CVE-2018-16862.yml
-- + issues/CVE-2018-16880.yml
-- issues/CVE-2018-16882.yml
-- issues/CVE-2018-17972.yml
-- issues/CVE-2018-18281.yml
-- issues/CVE-2018-18690.yml
-- issues/CVE-2018-19407.yml
-- issues/CVE-2018-19824.yml
-- issues/CVE-2018-19854.yml
-- issues/CVE-2018-20169.yml
-- + issues/CVE-2018-20669.yml
-- issues/CVE-2019-3459.yml
-- issues/CVE-2019-3460.yml
-
-
-The diff was not included because it is too large.
-
-
-View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/compare/f97cfc8c21d00e91e0a96b230f6a39a04c45c1b0...2673ace439e64574f09d38e7fcd8e87b2b673ce5
-
--- 
-View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/compare/f97cfc8c21d00e91e0a96b230f6a39a04c45c1b0...2673ace439e64574f09d38e7fcd8e87b2b673ce5
-You're receiving this email because of your account on gitlab.com.
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190207/28259332/attachment.html>
+> -----Original Message-----
+> From: cip-dev-bounces at lists.cip-project.org <cip-dev-bounces@lists.cip-
+> project.org> On Behalf Of daniel.sangorrin at toshiba.co.jp
+> Sent: Monday, February 4, 2019 6:48 PM
+> To: cip-dev at lists.cip-project.org
+> Subject: [cip-dev] CIP core tiny profile package list
+> 
+> Hello CIPers ;)
+> 
+> A long time ago [1] we discussed about the packages that should be
+> included in CIP Core. Back then, we didn't have two profiles yet (tiny and
+> generic). For that reason, we ended up with a list that was good for the
+> generic profile but not specific enough for the tiny profile. I wanted to
+> re-start that activity but focusing on the tiny profile.
+> 
+> First, I will start with the goal which is to create lists of packages to
+> standarize the CIP core tiny profile. In particular, I want to have these
+> lists:
+> 
+> - Minimal binaries list: list of binary packages (eg.: oe names) that are
+> always included in the base layer.
+> 	- this list is useful information for application compatibility
+> 	- it must be supported by all build systems claiming to be tiny-
+> profile-compatible.
+> 	- it is useful to explain what the base layer is
+> 	- for example, in [2] this refers to the following packages
+> # system requirements
+> PKG_SYSTEM = "\
+> 	busybox \
+> 	init-files \
+> 	glib-2.0 \
+> 	libgcc \
+> 	libstdc++ \
+> "
+> # minimum package list
+> # TODO: agree on cip-core tiny profile minimal list
+> PKG_MIN = "\
+> 	openssh-server \ <-- this one or dropbear?
+> 	openssh-client \
+> 	gzip \
+> 	e2fsprogs \
+> 	libaio \
+> 	wget \ <-- wget or curl, or both?
+> 	curl \
+> 	bash \ <-- or only busybox sh?
+> 	procps \ <-- or busybox ps?
+> 	coreutils \
+> 	findutils \ <-- or busybox find?
+> 	iproute2 \ <-- required?
+> 	iptables \ <-- required?
+> 	gawk \ <-- required?
+> "
+> 
+> - Extra binaries list: list of binary packages (e.g oe names) that are
+> also available as recipes
+> 	- this is a list of packages that is also backed by long-term
+> supported Debian source packages
+> 	- it is a list that will depend on the image build system
+> 	- for example, in meta-debian the list would come from the folder
+> [3]
+> 	- they are optional (good to have), not required for being cip tiny-
+> profile compatible
+> 
+> - Sources list: list of Debian source packages required to build the base
+> layer
+> 	- useful for maintenance (e.g.: create a list for Debian LTS)
+> 	- ideally auto-generated by the build tool
+> 	- the list must include the source of binary package dependencies
+> (optionally separated)
+> 	- it must include the sources of the tools required to build the
+> rootfs as well (e.g. cross sdk)
+> 
+> Ultimately, I want to be able to define what packages a CIP tiny profile
+> base layer must offer, no matter what build tool is used.
+> The build tool will add dependencies, but that is something automatic, I
+> want to focus on the package names that one would write in [2].
+> As an example, Deby currently generates the attached files for the iwg22m
+> board:
+> - rootfs-summary.csv (binaries list): this is a list of binary packages
+> (yocto names) included in the final image. It includes the packages
+> defined in [2] and its runtime dependencies. (NOTE: I forgot to remove the
+> DEBUG packages)
+> - git.list.github.com (sources list): this is a list of Debian source
+> packages including to source code corresponding to the binary packages in
+> the rootfs, AND the source code of the host tools (e.g. gcc)
+> 
+> NEXT STEPS: feedback on the "minimal binaries list"
+> 
+> [1] Previous discussions
+> - Criteria to prioritize security fixes
+>   Ref: https://lists.cip-project.org/mailman/private/cip-members/2018-
+> June/001365.html
+>   Ref: https://lists.cip-project.org/pipermail/cip-dev/2018-
+> July/001398.html
+>   Ref: https://lists.cip-project.org/pipermail/cip-dev/2018-
+> July/001411.html
+> - Packages sorted out by criteria.
+>   Ref: https://lists.cip-project.org/mailman/private/cip-members/2018-
+> June/001367.html (hitachi)
+>   Ref: https://lists.cip-project.org/mailman/private/cip-members/2018-
+> July/001374.html (renesas)
+> [2] https://gitlab.com/cip-project/cip-core/deby/blob/master/poky/meta-
+> cip-common/recipes-core/packagegroups/packagegroup-core-boot.bbappend
+> [3] https://github.com/meta-debian/meta-debian/tree/morty/recipes-debian
+> 
+> Thanks,
+> Daniel
