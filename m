@@ -1,28 +1,11 @@
-From: zoran.stojsavljevic.de@gmail.com (Zoran S)
-Date: Thu, 14 Feb 2019 20:45:28 +0100
-Subject: [cip-dev] Debian 10 Buster tests with preseed VBox VM
-Message-ID: <CAEss1ELMwTDivmNSBBWd_vTw6g+OdHoeSquXHqOBetp_S7cqVg@mail.gmail.com>
+From: scottk@optimcloud.com (scottk at optimcloud.com)
+Date: Fri, 15 Feb 2019 01:15:30 +0000
+Subject: [cip-dev] CIP / Yocto / RaspberryPI 3
+Message-ID: <7aec9b27d426db4bafab2ac766845a26@optimcloud.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-The latest Buster Debian Live: Linux unassigned-hostname
-4.19.0-2-amd64 #1 SMP Debian 4.19.16-1 (2019-01-17) x86_64 GNU/Linux
-behaves way better then previous kernel version: 4.19.0-1-amd64.
-
-The modules bug is resolved, seems.
-
-Considering d-i/ preseed Debian installer used as VBox VM.
-
-I did not test it with UEFI, just with legacy. UEFI has the problem
-(for complete headless VBox VM boot-up), which I did not overcome yet.
-I will try (since all this is included in my scripts by default).
-_______
-
-Considering Debian Buster official release. Seems that the first
-official release will be in 05/2019. As the time frame schedule...
-
-At least considering d-i/ preseed Debian installer, kernel 5.0.x will
-be the initial Buster release, seems... ?!
-
-Zoran
-_______
+is there a recent CIP layer for Yocto ? We would like to test a build for raspberrypi3
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190215/326d1330/attachment.html>
