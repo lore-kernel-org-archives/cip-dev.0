@@ -1,23 +1,9 @@
-From: wagi@monom.org (Daniel Wagner)
-Date: Fri, 15 Feb 2019 11:24:03 +0100
-Subject: [cip-dev] [ANNOUNCE] 4.4.171-cip30-rt22
-Message-ID: <20190215102404.5FA85500633@mail.monom.org>
+From: info@transcriptsstars.info (Clara Hill)
+Date: Sun, 17 Feb 2019 15:00:02 +0000
+Subject: [cip-dev] Audio Transcription Service Provider
+Message-ID: <1b304e9ab2642af1eb0c103e8db5aea9@transcriptsstars.info>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello CIP RT Folks!
-
-I'm pleased to announce the 4.4.171-cip30-rt22 stable release.
-
-This release is just an update to the new stable 4.4.171-cip30 version
-and no RT specific changes have been made.
-
-You can get this release via the git tree at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-
-  branch: linux-4.4.y-cip-rt
-  Head SHA1: caa8c2a5ba541c625779a5b3a11f7333ad1ee5f1
-
-Enjoy!
-   Daniel
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190217/056bbd80/attachment.html>
