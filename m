@@ -1,59 +1,23 @@
-From: daniel.sangorrin@toshiba.co.jp (daniel.sangorrin at toshiba.co.jp)
-Date: Mon, 18 Feb 2019 05:47:40 +0000
-Subject: [cip-dev] CIP / Yocto / RaspberryPI 3
-In-Reply-To: <33703379.pJGxf1flb9@linux-3zh6>
-References: <7aec9b27d426db4bafab2ac766845a26@optimcloud.com>
-	<OSAPR01MB3763DF2A613F037BD48E7B4CD0600@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-	<33703379.pJGxf1flb9@linux-3zh6>
-Message-ID: <OSAPR01MB3763C21EA1AFA5316A45C865D0630@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+From: SZ.Lin@moxa.com (=?big5?B?U1ogTGluICiqTKRXtLwp?=)
+Date: Mon, 18 Feb 2019 06:46:36 +0000
+Subject: [cip-dev] CIP-dev IRC weekly meeting log: week 7
+Message-ID: <HK0PR01MB2979999DE939CFC36E077A19E2630@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hola Agustin,
+Hi,
 
-I have updated the wiki to be more explicit.
-https://wiki.linuxfoundation.org/civilinfrastructureplatform/cip-core
+Please find the logs of CIP meeting last week in below link:
+https://irclogs.baserock.org/meetings/cip/2019/02/cip.2019-02-14-09.00.log.html
 
-Please, let me know if you have any comment.
+Action items:
+https://irclogs.baserock.org/meetings/cip/2019/02/cip.2019-02-14-09.00.html
 
-Thanks,
-Daniel
+1. Ask Daniel about the timetable of v4.4.171-rt kernel release
+-> Done (https://lists.cip-project.org/pipermail/cip-dev/2019-February/001792.html)
 
-> -----Original Message-----
-> From: Agustin Benito Bethencourt <agustin.benito@codethink.co.uk>
-> Sent: Friday, February 15, 2019 6:01 PM
-> To: sangorrin daniel(????? ???? ????????) <daniel.sangorrin@toshiba.co.jp>
-> Cc: cip-dev at lists.cip-project.org; scottk at optimcloud.com
-> Subject: Re: [cip-dev] CIP / Yocto / RaspberryPI 3
-> 
-> Hi Daniel,
-> 
-> El viernes, 15 de febrero de 2019 3:14:06 (CET) daniel.sangorrin at toshiba.co.jp
-> escribi?:
-> > Hello Scott,
-> >
-> > > From: cip-dev-bounces at lists.cip-project.org
-> > > <cip-dev-bounces@lists.cip-project.org> On Behalf Of
-> > > scottk at optimcloud.com
-> > > is there a recent CIP layer for Yocto ? We would like to test a build for
-> > > raspberrypi3
-> > CIP core is focused on making sure that Debian source code packages that are
-> > relevant for civil infrastructure systems are maintained for a long time.
-> > The tool that you use to build that source code doesn't matter.
-> >
-> > Having said that, we do provide a few examples of how to use Debian source
-> > code in a yocto/OE-like project. You can find the examples here:
-> > https://gitlab.com/cip-project/cip-core/deby/tree/master/poky
-> >
-> <snip>
-> 
-> is this the kind of information we can consolidate on the wiki at this point?
-> 
-> Best Regards
-> 
-> --
-> Agust?n Benito Bethencourt
-> Principal Consultant
-> Codethink Ltd
-> We respect your privacy.   See https://www.codethink.co.uk/privacy.html
-> 
+2. Fujita will provide the feedback with CIP core tiny profile package list
+
+3. SZ will provide the feedback with CIP core tiny profile package list
+
+SZ Lin, Moxa
