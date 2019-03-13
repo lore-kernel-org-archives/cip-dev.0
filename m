@@ -1,35 +1,19 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 7 Mar 2019 02:19:24 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-Message-ID: <HK0PR01MB297919E0F090EF52038D4ECCE24C0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+From: nobuhiro.iwamatsu@miraclelinux.com (Nobuhiro Iwamatsu)
+Date: Wed, 13 Mar 2019 16:37:47 +0900
+Subject: [cip-dev] about branch of meta-debian in cip-core/deby
+Message-ID: <CAGDrK-a79Z7rc=JibAU_8TL=7GtVFocGfvne9iQ4MsCa1oGU1w@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+Hi, Daniel.
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
+I have a question about about branch of meta-debian in cip-core/deby.
 
-*Please note that? IRC meeting was rescheduled to 18:00 (JST) starting from the first week of Nov. according to F2F meeting discussion in ELCE.*
-
-US-West US-East? UK??? DE???? TW???? JP
-02:00??? 05:00?? 09:00?? 10:00?? 17:00?? 18:00
-
-Channel:
-* irc:chat.freenode.net:6667/cip
-
-Agenda:
-
-* AI review
-#action Iwamatsu-san will introduce kernel patch review mechanism in 3/7 IRC meeting
-
-* Kernel maintenance updates
-* Kernel testing
-* CIP Core
-* Software update?
-* AOB
-
-The meeting will take 30 min although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
+The meta-debian branch used by cip-core/deby  is morty.
+It provides debian 8 packages in OE/recipe. Is there any reason to
+choose morty/debian 8?
+Is the reason why the mata-debian master branch is still in development?
+Will you/we switch to the master branch when Debian 10 is released?
 
 Best regards,
-
-SZ Lin, Moxa.
+  Nobuhiro
