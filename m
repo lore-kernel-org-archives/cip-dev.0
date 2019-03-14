@@ -1,37 +1,59 @@
 From: nobuhiro.iwamatsu@miraclelinux.com (Nobuhiro Iwamatsu)
-Date: Thu, 14 Mar 2019 13:35:54 +0900
-Subject: [cip-dev] about patch review process
-Message-ID: <CAGDrK-ZwHwo3f0Zakf34N+QJ+vk=z6bLebwgrjVzZHsv40UKgg@mail.gmail.com>
+Date: Thu, 14 Mar 2019 13:38:10 +0900
+Subject: [cip-dev] CIP IRC weekly meeting today
+In-Reply-To: <HK0PR01MB297958B4B49D80F30DD800D9E24B0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+References: <HK0PR01MB297958B4B49D80F30DD800D9E24B0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+Message-ID: <CAGDrK-a42HKXLJ2zewnEsFE0miU_9gJhSEdJZ3S=YfLM+avFTg@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi, all.
+Hi, SZ
+I can not join IRC meeting today by personal reason.
 
-The kernel team is reviewing the stable tree patch that is the basis
-of the CIP kernel.
-The review results are managed on the wiki[0], but they have not been
-updated often.
-The kernel team discussed the issue in IRC and considered a simple process.
+2019?3?14?(?) 10:55 SZ Lin (???) <SZ.Lin@moxa.com>:
+>
+> Hi all,
+>
+> Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
+>
+> *Please note that IRC meeting was rescheduled to 18:00 (JST) starting from the first week of Nov. according to F2F meeting discussion in ELCE.*
+>
+> US-West US-East  UK    DE     TW     JP
+> 02:00    05:00   09:00   10:00   17:00   18:00
+>
+> Channel:
+> * irc:chat.freenode.net:6667/cip
+>
+> Agenda:
+>
+> * AI review
+> #action Iwamatsu-san will create a template page and send the link via mailing list afterward
 
-I created a template with a tool[1] to create these wiki pages and
-v4.4.176[2] patch list.
-The review process considers the following:
+I sent a mail about this.
 
-1. A new LTS will be released.
-2. Create a list on wiki.
-3. Mark the review and the name of the worker and mark (UR: under
-review) under the commit.
-4. When the review is over, update the mark.
-5. Work report on IRC.
+> #action Please send configuration file of kernel 4.19 to cip-dev before end of March.
+>
+> * Kernel maintenance updates
 
-I would like to make the review active based on these. This list is
-also maintained in the git repository[1].
-These are classical andalso suggestions. If you have an opinion,
-please let me know.
+I have no update.
+I am working on releasing a new CIP kernel, but this is delayed.
+
+
+> * Kernel testing
+> * CIP Core
+> * Software update
+> * AOB
+>
+> The meeting will take 30 min although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
+>
+> Best regards,
+>
+> SZ Lin, Moxa.
 
 Best regards,
   Nobuhiro
 
-[0]: https://wiki.linuxfoundation.org/civilinfrastructureplatform/linux-4.4.y
-[1]: https://gitlab.com/cip-project/cip-kernel/lts-commit-list
-[2]: https://wiki.linuxfoundation.org/civilinfrastructureplatform/review-linux-4.4.176
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
