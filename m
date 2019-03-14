@@ -1,62 +1,19 @@
-From: kazuhiro3.hayashi@toshiba.co.jp (kazuhiro3.hayashi at toshiba.co.jp)
-Date: Thu, 14 Mar 2019 10:09:12 +0000
-Subject: [cip-dev] about branch of meta-debian in cip-core/deby
-In-Reply-To: <OSAPR01MB3763870A4581B882D1AC1ADAD04B0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-References: <CAGDrK-a79Z7rc=JibAU_8TL=7GtVFocGfvne9iQ4MsCa1oGU1w@mail.gmail.com>
-	<OSAPR01MB3763870A4581B882D1AC1ADAD04B0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-Message-ID: <OSAPR01MB30444CACDE60382555A681DCE14B0@OSAPR01MB3044.jpnprd01.prod.outlook.com>
+From: patryk.mungai-ndungu.kx@renesas.com (Patryk Mungai Ndungu)
+Date: Thu, 14 Mar 2019 16:40:59 +0000
+Subject: [cip-dev] Testing update + cip-core
+Message-ID: <OSBPR01MB2055F3150CC418B4FFA7A740E94B0@OSBPR01MB2055.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Iwamatsu-san, Daniel,
+Hello Daniel,
 
-> > It provides debian 8 packages in OE/recipe. Is there any reason to
-> > choose morty/debian 8?
-In my understanding, this is the initial repository which was created
-when the master branch (Debian 10 based) didn't exist yet.
-We are planning to update it to the current master branch.
+Thanks again for adding lsusb to cip-core.
 
-I have another question about how to do that.
-Should we keep the morty branch and add contents of master to another cip-core branch,
-or just replace the morty by the master?
+I managed to add internet support to the boards in our LAVA lab the other day. Now that this is the case, it would be really useful to have apt-get installed in cip-core, in case any dependencies are missing in the rfs. 
 
-Regards,
-Kazu
+To run any tests that require a download from the internet, you need to run the following script first (it'll be added to the main repo soon): https://gitlab.com/mungaip/cip-kernel-tests/blob/dut-internet-support/setup_internet.yaml. Let me know if any of this could/should be done in cip-core too.
 
-> -----Original Message-----
-> From: cip-dev-bounces at lists.cip-project.org
-> [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of
-> daniel.sangorrin at toshiba.co.jp
-> Sent: Thursday, March 14, 2019 2:52 PM
-> To: nobuhiro.iwamatsu at miraclelinux.com
-> Cc: cip-dev at lists.cip-project.org
-> Subject: Re: [cip-dev] about branch of meta-debian in cip-core/deby
-> 
-> Iwamatsu-san,
-> 
-> > -----Original Message-----
-> > From: Nobuhiro Iwamatsu <nobuhiro.iwamatsu@miraclelinux.com>
-> > Sent: Wednesday, March 13, 2019 4:38 PM
-> > To: sangorrin daniel(????? ???? ????????)
-> <daniel.sangorrin@toshiba.co.jp>
-> > Cc: cip-dev at lists.cip-project.org
-> > Subject: about branch of meta-debian in cip-core/deby
-> >
-> > Hi, Daniel.
-> >
-> > I have a question about about branch of meta-debian in cip-core/deby.
-> >
-> > The meta-debian branch used by cip-core/deby  is morty.
-> > It provides debian 8 packages in OE/recipe. Is there any reason to
-> > choose morty/debian 8?
-> > Is the reason why the mata-debian master branch is still in development?
-> > Will you/we switch to the master branch when Debian 10 is released?
-> 
-> Yes, that's correct.
-> 
-> Thanks,
-> Daniel
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
+Example test definition: https://lava.ciplatform.org/scheduler/job/718/definition  
+
+Kind Regards,
+Patryk
