@@ -1,18 +1,22 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Thu, 14 Mar 2019 09:19:37 +0000
+From: patryk.mungai-ndungu.kx@renesas.com (Patryk Mungai Ndungu)
+Date: Thu, 14 Mar 2019 09:23:42 +0000
 Subject: [cip-dev] CIP IRC weekly meeting today
 In-Reply-To: <OSAPR01MB37633BA45B40D16877229C51D04B0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
 References: <HK0PR01MB297958B4B49D80F30DD800D9E24B0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 	<OSAPR01MB37633BA45B40D16877229C51D04B0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-Message-ID: <TYAPR01MB22855404B813081F9FEE040FB74B0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+Message-ID: <OSBPR01MB205534FE49C92CAC4209DDF7E94B0@OSBPR01MB2055.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hello Daniel,
 
-> From: cip-dev-bounces at lists.cip-project.org <cip-dev-bounces@lists.cip-
-> project.org> On Behalf Of daniel.sangorrin at toshiba.co.jp
+> -----Original Message-----
+> From: daniel.sangorrin at toshiba.co.jp <daniel.sangorrin@toshiba.co.jp>
 > Sent: 14 March 2019 07:27
+> To: SZ.Lin at moxa.com; cip-dev at lists.cip-project.org
+> Cc: Patryk Mungai Ndungu <patryk.mungai-ndungu.kx@renesas.com>;
+> akihiro27.suzuki at toshiba.co.jp; maemalynn at linuxfoundation.org
+> Subject: RE: CIP IRC weekly meeting today
 > 
 > Hello SZ,
 > 
@@ -23,11 +27,19 @@ Hello Daniel,
 >    - here is the YAML I used to test pwd, uname and lsusb. Anyone with an
 > account can use it by clicking on "Resubmit" and optionally change the test:
 > https://lava.ciplatform.org/scheduler/job/725/definition
-Thank you for adding lsusb, and thank you for doing a trial run on the LAVA master. It's very helpful for everyone to see examples.
-
-Kind regards, Chris
-
 > 
+
+Thank you for adding lsusb. Sorry for not getting back to you earlier. I'll try running the integration tests I pushed the other week using the updated cip-core.
+
+In terms of internal testing, these are the packages we add to our RFS Yocto build in order to run tests:
+
+bonnie++ e2fsprogs-mke2fs alsa-utils pciutils ethtool i2c-tools util-linux procps libpng imagemagick
+
+
+Kind Regards,
+Patryk
+
+
 > - Suzuki-san has found a couple of issues in ISAR CIP Core.
 >   - when building ISAR for the beaglebone black it complains that
 > "/debootstrap/debootstrap is not found" (or something like that). He will
@@ -110,7 +122,3 @@ Kind regards, Chris
 > > cip-dev mailing list
 > > cip-dev at lists.cip-project.org
 > > https://lists.cip-project.org/mailman/listinfo/cip-dev
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
