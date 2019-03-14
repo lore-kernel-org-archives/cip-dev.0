@@ -1,61 +1,62 @@
-From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
-Date: Thu, 14 Mar 2019 11:02:14 +0100
-Subject: [cip-dev] about patch review process
-In-Reply-To: <CAGDrK-ZwHwo3f0Zakf34N+QJ+vk=z6bLebwgrjVzZHsv40UKgg@mail.gmail.com>
-References: <CAGDrK-ZwHwo3f0Zakf34N+QJ+vk=z6bLebwgrjVzZHsv40UKgg@mail.gmail.com>
-Message-ID: <4324304.6oKhBapyEa@linux-3zh6>
+From: kazuhiro3.hayashi@toshiba.co.jp (kazuhiro3.hayashi at toshiba.co.jp)
+Date: Thu, 14 Mar 2019 10:09:12 +0000
+Subject: [cip-dev] about branch of meta-debian in cip-core/deby
+In-Reply-To: <OSAPR01MB3763870A4581B882D1AC1ADAD04B0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+References: <CAGDrK-a79Z7rc=JibAU_8TL=7GtVFocGfvne9iQ4MsCa1oGU1w@mail.gmail.com>
+	<OSAPR01MB3763870A4581B882D1AC1ADAD04B0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+Message-ID: <OSAPR01MB30444CACDE60382555A681DCE14B0@OSAPR01MB3044.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+Iwamatsu-san, Daniel,
 
-On jueves, 14 de marzo de 2019 5:35:54 (CET) Nobuhiro Iwamatsu wrote:
-> Hi, all.
-> 
-> The kernel team is reviewing the stable tree patch that is the basis
-> of the CIP kernel.
-> The review results are managed on the wiki[0], but they have not been
-> updated often.
-> The kernel team discussed the issue in IRC and considered a simple process.
-> 
-> I created a template with a tool[1] to create these wiki pages and
-> v4.4.176[2] patch list.
-> The review process considers the following:
-> 
-> 1. A new LTS will be released.
-> 2. Create a list on wiki.
-> 3. Mark the review and the name of the worker and mark (UR: under
-> review) under the commit.
-> 4. When the review is over, update the mark.
-> 5. Work report on IRC.
-> 
-> I would like to make the review active based on these. This list is
-> also maintained in the git repository[1].
-> These are classical andalso suggestions. If you have an opinion,
-> please let me know.
+> > It provides debian 8 packages in OE/recipe. Is there any reason to
+> > choose morty/debian 8?
+In my understanding, this is the initial repository which was created
+when the master branch (Debian 10 based) didn't exist yet.
+We are planning to update it to the current master branch.
 
-I think it would be easier to use the Gitlab wiki if you want to automate the 
-process since it has git in the backend and you can orchestrate the process 
-through pipelines. Then I would point to the specific gitlab wiki page in the 
-LF wiki.
+I have another question about how to do that.
+Should we keep the morty branch and add contents of master to another cip-core branch,
+or just replace the morty by the master?
 
+Regards,
+Kazu
+
+> -----Original Message-----
+> From: cip-dev-bounces at lists.cip-project.org
+> [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of
+> daniel.sangorrin at toshiba.co.jp
+> Sent: Thursday, March 14, 2019 2:52 PM
+> To: nobuhiro.iwamatsu at miraclelinux.com
+> Cc: cip-dev at lists.cip-project.org
+> Subject: Re: [cip-dev] about branch of meta-debian in cip-core/deby
 > 
-> Best regards,
->   Nobuhiro
+> Iwamatsu-san,
 > 
-> [0]:
-> https://wiki.linuxfoundation.org/civilinfrastructureplatform/linux-4.4.y
-> [1]: https://gitlab.com/cip-project/cip-kernel/lts-commit-list
-> [2]:
-> https://wiki.linuxfoundation.org/civilinfrastructureplatform/review-linux-4
-> .4.176 _______________________________________________
+> > -----Original Message-----
+> > From: Nobuhiro Iwamatsu <nobuhiro.iwamatsu@miraclelinux.com>
+> > Sent: Wednesday, March 13, 2019 4:38 PM
+> > To: sangorrin daniel(????? ???? ????????)
+> <daniel.sangorrin@toshiba.co.jp>
+> > Cc: cip-dev at lists.cip-project.org
+> > Subject: about branch of meta-debian in cip-core/deby
+> >
+> > Hi, Daniel.
+> >
+> > I have a question about about branch of meta-debian in cip-core/deby.
+> >
+> > The meta-debian branch used by cip-core/deby  is morty.
+> > It provides debian 8 packages in OE/recipe. Is there any reason to
+> > choose morty/debian 8?
+> > Is the reason why the mata-debian master branch is still in development?
+> > Will you/we switch to the master branch when Debian 10 is released?
+> 
+> Yes, that's correct.
+> 
+> Thanks,
+> Daniel
+> _______________________________________________
 > cip-dev mailing list
 > cip-dev at lists.cip-project.org
 > https://lists.cip-project.org/mailman/listinfo/cip-dev
-
-
--- 
-Agust?n Benito Bethencourt
-Principal Consultant
-Codethink Ltd
-We respect your privacy.   See https://www.codethink.co.uk/privacy.html
