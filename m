@@ -1,36 +1,49 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Fri, 15 Mar 2019 11:50:06 +0100
-Subject: [cip-dev] CIP IRC weekly meeting today
-In-Reply-To: <TY2PR01MB5146389CBF352FDC6F104262D9440@TY2PR01MB5146.jpnprd01.prod.outlook.com>
-References: <HK0PR01MB297958B4B49D80F30DD800D9E24B0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-	<OSAPR01MB37633BA45B40D16877229C51D04B0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-	<375b3b16-8688-6fb2-4d4b-fc130c501c7e@siemens.com>
-	<TY2PR01MB5146389CBF352FDC6F104262D9440@TY2PR01MB5146.jpnprd01.prod.outlook.com>
-Message-ID: <cc3ea2e6-79d9-ed10-f1a3-cf615c3e6ec8@siemens.com>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Fri, 15 Mar 2019 16:07:09 +0000
+Subject: [cip-dev] [PATCH] common: add alsa-utils util-linux libpng for
+ testing
+In-Reply-To: <1552626432-7359-2-git-send-email-daniel.sangorrin@toshiba.co.jp>
+References: <1552626432-7359-1-git-send-email-daniel.sangorrin@toshiba.co.jp>
+	<1552626432-7359-2-git-send-email-daniel.sangorrin@toshiba.co.jp>
+Message-ID: <1552666029.2925.332.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 15.03.19 10:48, akihiro27.suzuki at toshiba.co.jp wrote:
-> Hi Jan,
+On Fri, 2019-03-15 at 14:07 +0900, Daniel Sangorrin wrote:
+> Patryk mentioned that they were using these packages for internal
+> testing.
 > 
->> On 14.03.19 08:26, daniel.sangorrin at toshiba.co.jp wrote:
->>> - Suzuki-san has found a couple of issues in ISAR CIP Core.
->>>     - when building ISAR for the beaglebone black it complains that
->> "/debootstrap/debootstrap is not found" (or something like that). He will
->> post a new issue on the Gitlab web page with the complete log.
->>
->> Has this been resolved locally?
-> When I tried to build isar-cip-core on another 2 machines, the error didn't occur.
-> So, my machine which occurred the error may have some problem.
+> Note: bonnie++ and imagemagick were also on the list but they are not
+> supported by Deby at the moment.
 
-Were you building natively on Debian or inside the kas container?
+ImageMagick has an appalling security record, so I don't think it would
+make sense for CIP to try to support it.
 
-> I will check it when I have the time.
+Ben.
 
-OK, thanks.
-
-Jan
-
+> Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
+> ---
+> ?.../recipes-core/packagegroups/packagegroup-core-
+> boot.bbappend?????????| 3 +++
+> ?1 file changed, 3 insertions(+)
+> 
+> diff --git a/poky/meta-cip-common/recipes-
+> core/packagegroups/packagegroup-core-boot.bbappend b/poky/meta-cip-
+> common/recipes-core/packagegroups/packagegroup-core-boot.bbappend
+> index 4669429..d3637c3 100644
+> --- a/poky/meta-cip-common/recipes-core/packagegroups/packagegroup-
+> core-boot.bbappend
+> +++ b/poky/meta-cip-common/recipes-core/packagegroups/packagegroup-
+> core-boot.bbappend
+> @@ -56,4 +56,7 @@ PKG_DEBUG = "\
+> ?	traceroute \
+> ?	iputils-ping \
+> ?	usbutils \
+> +	alsa-utils \
+> +	util-linux \
+> +	libpng \
+> ?"
 -- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+Ben Hutchings, Software Developer                ?        Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
