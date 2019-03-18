@@ -1,77 +1,100 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Mon, 18 Mar 2019 11:18:54 +0100
-Subject: [cip-dev] debootrap error
-In-Reply-To: <24beb970-86d2-c672-08e7-12732f9dd467@siemens.com>
-References: <HK0PR01MB297958B4B49D80F30DD800D9E24B0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-	<OSAPR01MB37633BA45B40D16877229C51D04B0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-	<375b3b16-8688-6fb2-4d4b-fc130c501c7e@siemens.com>
-	<TY2PR01MB5146389CBF352FDC6F104262D9440@TY2PR01MB5146.jpnprd01.prod.outlook.com>
-	<cc3ea2e6-79d9-ed10-f1a3-cf615c3e6ec8@siemens.com>
-	<TY2PR01MB514615FB285AF43385A49493D9470@TY2PR01MB5146.jpnprd01.prod.outlook.com>
-	<02844bd9-fe8d-199f-27e3-42f59bb64163@siemens.com>
-	<41b9fdc25373948d08ad360dc1db13340648cc93.camel@siemens.com>
-	<1d4da986-92e6-87e3-11a4-30e15b48359d@siemens.com>
-	<TY2PR01MB51463965A654EA6074848D00D9470@TY2PR01MB5146.jpnprd01.prod.outlook.com>
-	<24beb970-86d2-c672-08e7-12732f9dd467@siemens.com>
-Message-ID: <204e9223-ed2b-9697-38a9-847fe2ee8704@siemens.com>
+From: christian.storm@siemens.com (Christian Storm)
+Date: Mon, 18 Mar 2019 11:27:56 +0100
+Subject: [cip-dev] CIP IRC weekly meeting today
+In-Reply-To: <TY2PR01MB514642E9DF502D9F239C224AD9470@TY2PR01MB5146.jpnprd01.prod.outlook.com>
+Message-ID: <20190318102756.kvqvsy4yxzl3qta3@MD1ZFJVC.ad001.siemens.net>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 18.03.19 11:17, Claudius Heine wrote:
-> Hi,,
-> 
-> On 18/03/2019 11.14, akihiro27.suzuki at toshiba.co.jp wrote:
->> Hi,
->>
->>> That's a good hint: Suzuki-san, could you check if binfmt_misc is
->>> available as
->>> kernel feature/module on that machine? There may also be some warning
->>> during the
->>> container startup.
->> I checked it and maybe it is available.
->>
->> ???? $ mount | grep binfmt
->> ???? systemd-1 on /proc/sys/fs/binfmt_misc type autofs 
->> (rw,relatime,fd=31,pgrp=1,timeout=0,minproto=5,maxproto=5,direct,pipe_ino=18804)
->> ???? binfmt_misc on /proc/sys/fs/binfmt_misc type binfmt_misc (rw,relatime)
->> ???? $ lsmod | grep binfmt
->> ???? binfmt_misc??????????? 20480? 1
->> ???? $ cat /boot/config-4.15.0-46-generic? | grep BINFMT
->> ???? CONFIG_BINFMT_ELF=y
->> ???? CONFIG_COMPAT_BINFMT_ELF=y
->> ???? CONFIG_BINFMT_SCRIPT=y
->> ???? CONFIG_BINFMT_MISC=m
->> ???? $ ls /proc/sys/fs/binfmt_misc/
->> ???? python2.7???? qemu-armeb?????? qemu-mips64????? qemu-ppc64le  
->> qemu-sparc??????? status
->> ???? python3.5???? qemu-cris??????? qemu-mips64el??? qemu-riscv32  
->> qemu-sparc32plus
->> ???? python3.6???? qemu-hppa??????? qemu-mipsel????? qemu-riscv64? qemu-sparc64
->> ???? qemu-aarch64? qemu-m68k??????? qemu-ppc???????? qemu-s390x??? qemu-xtensa
->> ???? qemu-alpha??? qemu-microblaze? qemu-ppc64?????? qemu-sh4????? qemu-xtensaeb
->> ???? qemu-arm????? qemu-mips??????? qemu-ppc64abi32? qemu-sh4eb??? register
->> ???? $ cat /proc/sys/fs/binfmt_misc/status
->> ???? enabled
-> 
-> That is how my qemu-arm setting looks like. Do you have a different qemu path?
+Hi Suzuki,
 
-Even if, it shouldn't be after starting the container: We allow it to adjust the 
-system-wide binfmt configuration (one reason for --privileged).
+> > > > [Note] we are planning to develop the SWUpdate demo using ISAR, any
+> > > > advice or news about how to build SWUpdate on ISAR with the right
+> > > > U-Boot environment?
+> > > >
+> > > > - Regarding SWUpdate we hit an issue that we had not expected
+> > > > before. Suzuki-san was trying to update the standard BBB debian
+> > > > image (or a yocto-made one), but there were many warnings about
+> > > > orphan nodes etc. After some investigation the reason seems to be
+> > > > that the rootfs is modified during the first boot (or something like
+> > > > that). This is probably one of the biggest problems with updating
+> > > > images instead of files.
+> > >
+> > > Christian, any remarks?
+> > 
+> > Hm, did you check that you didn't flash the filesystem you have
+> > currently booted, i.e., are you overwriting the currently running
+> > root filesystem? I have seen such errors when I did this by accident.
+>
+> I mounted rootfs with read-only.
 
-Jan
+OK, from the diffs it seems that temporary storage directories such as
+/run and /var/tmp are not separate mount points from your roots?
+
+> I checked the difference of the rootfs image between before boot and after boot,
+> and at least the number of mounts had changed.
+> 
+> I attached following log files. I think that 0x434 is a mount count.
+
+You can use tune2fs -l /dev/<rootdevicenode> and look for
+"Mount count: <some number>" to verify this.
 
 > 
-> $ cat /proc/sys/fs/binfmt_misc/qemu-arm
-> enabled
-> interpreter /usr/bin/qemu-arm-static
-> flags: OCF
-> offset 0
-> magic 7f454c4601010100000000000000000002002800
-> mask ffffffffffffff00fffffffffffffffffeffffff
+>     mmcblk1p2-1-2.diff: The difference of rootfs image between 1st boot and 2nd boot
+>     mmcblk1p2-2-3.diff: The difference of rootfs image between 2nd boot and 3rd boot
 > 
-> regards,
-> Claudius
+> Do you have some example of A/B update with binary delta update?
+
+Well, currently nothing written in code. But I can try to elaborate on it here:
+Assume that, initially, A/version=1 and B/version=1 is on-disk.
+Then, the delta artifact ART_1->2 := rdiff(version=1 -> version=2) is applied to B,
+resulting in A/version=1 and B/version=2 on-disk. Boot into B/version=2, which is
+assumably successful.
+Then, when wanting to update A to a version=3 by an artifact
+ART_2->3 := rdiff(version=2 -> version=3), first ART_1->2 has to be applied to A and
+thereafter ART_2->3 has to be applied to A.
+
+Thing is here, you may have to apply a sequence of delta updates to the
+"other" partition so that applying the latest delta to it results in a
+consistent state, i.e., you have to do a "catchup" so that it matches
+the version the latest diff is done against.
+
+That said, in order to not be forced to store ART_1->2 on the device,
+you can apply ART_1->2 to A once successfully booted into B/version=2.
+Or you can generate and apply ART_1->3 := rdiff(version=1 -> version=3) to A.
+Or you can split the update into first downloading and applying ART_1->2
+and the ART_2->3. There are many options, actually, depending on your
+preferences....
+
+
+> BTW, the warning message after binary delta update was as follows:
+> 
+>     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12: comm init: deleted inode referenced: 5040
+>     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12: comm init: deleted inode referenced: 5040
+>     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12: comm mount: deleted inode referenced: 5833
+>     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12: comm mount: deleted inode referenced: 5833
+>     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12: comm mount: deleted inode referenced: 5833
+>     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12: comm mount: deleted inode referenced: 5833
+>     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12: comm mount: deleted inode referenced: 5833
+>     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12: comm mount: deleted inode referenced: 5833
+>     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12: comm mount: deleted inode referenced: 5833
+>     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12: comm mount: deleted inode referenced: 5833
+
+Well, my suspicion is that, after a delta-update of the partition, the
+filesystem's metadata is corrupt, i.e., the metdata was partially
+updated by a delta update, resulting in an inconsistent overall state.
+Could you elaborate on the exact steps you performed? Is the diff done
+from/to the right sources? Could as well be that the journal hasn't
+committed the changes... Just a wild guess though...
+
+What kernel version are you using? There are some issues with v4.19.3
+and v4.19.4 and ext4 filesystems having the same symptoms...
+
+
+Kind regards,
+   Christian
 
 -- 
+Dr. Christian Storm
 Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+Otto-Hahn-Ring 6, 81739 M?nchen, Germany
