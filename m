@@ -1,33 +1,35 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Mon, 18 Mar 2019 07:22:37 +0100
-Subject: [cip-dev] [PATCH] Add a console option to the kernel command
-	line
-In-Reply-To: <TY2PR01MB51468E02C4A674214EB1768BD9470@TY2PR01MB5146.jpnprd01.prod.outlook.com>
-References: <20190315063834.3788-1-akihiro27.suzuki@toshiba.co.jp>
-	<20190315063834.3788-2-akihiro27.suzuki@toshiba.co.jp>
-	<a724b46c-3c8f-fe67-546a-d036dac80c7d@siemens.com>
-	<TY2PR01MB51468E02C4A674214EB1768BD9470@TY2PR01MB5146.jpnprd01.prod.outlook.com>
-Message-ID: <12bc282f-e95c-85a6-9919-674beb32fa13@siemens.com>
+From: christian.storm@siemens.com (Christian Storm)
+Date: Mon, 18 Mar 2019 09:42:18 +0100
+Subject: [cip-dev] CIP IRC weekly meeting today
+In-Reply-To: <375b3b16-8688-6fb2-4d4b-fc130c501c7e@siemens.com>
+Message-ID: <20190318084218.jvf56lfecrbjtge3@MD1ZFJVC.ad001.siemens.net>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 18.03.19 06:55, akihiro27.suzuki at toshiba.co.jp wrote:
-> Hi Jan,
-> 
-> I agree with your opinion.
-> We have to be able to use a uart console even if DISPLAY has a value.
-> 
-> But I couldn't understand the statement of "That's how it is on ARM[64] already".
-> Could you explain it in more detail?
-> Do you mean that, on ARM[64], we don't have to add console option to KERNEL_CMDLINE
-> on current start-qemu.sh?
+Hi,
 
-On ARM, QEMU ensures that the guest uses the UART by injecting this as console 
-into its device tree. This mechanism is not available on the x86 boot, therefore 
-we need to set this on the command line.
+> > [Note] we are planning to develop the SWUpdate demo using ISAR, any
+> > advice or news about how to build SWUpdate on ISAR with the right
+> > U-Boot environment?
+> > 
+> > - Regarding SWUpdate we hit an issue that we had not expected
+> > before. Suzuki-san was trying to update the standard BBB debian
+> > image (or a yocto-made one), but there were many warnings about
+> > orphan nodes etc. After some investigation the reason seems to be
+> > that the rootfs is modified during the first boot (or something like
+> > that). This is probably one of the biggest problems with updating
+> > images instead of files.
+> 
+> Christian, any remarks?
 
-Jan
+Hm, did you check that you didn't flash the filesystem you have
+currently booted, i.e., are you overwriting the currently running
+root filesystem? I have seen such errors when I did this by accident.
+
+Kind regards,
+   Christian
 
 -- 
+Dr. Christian Storm
 Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+Otto-Hahn-Ring 6, 81739 M?nchen, Germany
