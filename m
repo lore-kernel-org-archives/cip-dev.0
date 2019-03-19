@@ -1,137 +1,64 @@
 From: patryk.mungai-ndungu.kx@renesas.com (Patryk Mungai Ndungu)
-Date: Tue, 19 Mar 2019 15:16:18 +0000
-Subject: [cip-dev] Testing Dependencies
-In-Reply-To: <OSAPR01MB37637BF6E9C90C5766CC048ED0400@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-References: <OSBPR01MB205553CE1E094E76BF4E681FE9470@OSBPR01MB2055.jpnprd01.prod.outlook.com>
-	<OSAPR01MB37637BF6E9C90C5766CC048ED0400@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-Message-ID: <OSBPR01MB205501D032B04773D51C3541E9400@OSBPR01MB2055.jpnprd01.prod.outlook.com>
+Date: Tue, 19 Mar 2019 16:25:27 +0000
+Subject: [cip-dev] Testing update + cip-core
+In-Reply-To: <d351d297-c7fc-1e43-2470-d96f5c69a9f8@siemens.com>
+References: <OSBPR01MB2055F3150CC418B4FFA7A740E94B0@OSBPR01MB2055.jpnprd01.prod.outlook.com>
+	<OSAPR01MB376303BDABB64E54B07645C2D0400@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+	<d351d297-c7fc-1e43-2470-d96f5c69a9f8@siemens.com>
+Message-ID: <OSBPR01MB2055DD55592F4E4AC3F794AAE9400@OSBPR01MB2055.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Daniel,
-
-Thank you for your feedback.
+Hello Jan,
 
 > -----Original Message-----
-> From: daniel.sangorrin at toshiba.co.jp <daniel.sangorrin@toshiba.co.jp>
-> Sent: 19 March 2019 00:50
-> To: Patryk Mungai Ndungu <patryk.mungai-ndungu.kx@renesas.com>; cip-
-> dev at lists.cip-project.org
-> Subject: RE: Testing Dependencies
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+> Sent: 19 March 2019 10:39
+> To: daniel.sangorrin at toshiba.co.jp; Patryk Mungai Ndungu <patryk.mungai-
+> ndungu.kx at renesas.com>
+> Cc: cip-dev at lists.cip-project.org
+> Subject: Re: [cip-dev] Testing update + cip-core
 > 
-> Hello Patryk,
-> 
-> > -----Original Message-----
-> > From: cip-dev-bounces at lists.cip-project.org <cip-dev-bounces@lists.cip-
-> project.org> On Behalf Of Patryk
-> > Mungai Ndungu
-> > Sent: Tuesday, March 19, 2019 2:42 AM
-> > To: cip-dev at lists.cip-project.org
-> > Subject: [cip-dev] Testing Dependencies
+> On 19.03.19 04:00, daniel.sangorrin at toshiba.co.jp wrote:
+> > Hello Patryk,
 > >
-> > Hello,
+> > Sorry for the late reply.
 > >
-> > Some dependencies will be required by some tests. As discussed in the TSC
-> meeting today, there are a few
-> > options on how to do this:
+> >> -----Original Message-----
+> >> From: Patryk Mungai Ndungu <patryk.mungai-ndungu.kx@renesas.com>
+> >> Sent: Friday, March 15, 2019 1:41 AM
+> >> To: sangorrin daniel(????? ???? ????????)
+> <daniel.sangorrin@toshiba.co.jp>
+> >> Cc: cip-dev at lists.cip-project.org
+> >> Subject: Testing update + cip-core
+> >>
+> >> Hello Daniel,
+> >>
+> >> Thanks again for adding lsusb to cip-core.
+> >>
+> >> I managed to add internet support to the boards in our LAVA lab the other
+> day. Now that this is the case, it would
+> >> be really useful to have apt-get installed in cip-core, in case any
+> dependencies are missing in the rfs.
 > >
-> > 1) All the package dependencies for all tests included in one CIP-Core
-> filesystem
+> > I will send the AWS instructions to Jan and create an account for him so that
+> he can upload ISAR images.
+> > We will need to port ISAR to the Renesas board though.
 > 
-> This can't always be achieved. For example, Deby v1 does not have many
-> recipes.
-> Having said that, if Deby v2 becomes perfectly compatible with Yocto/OE,
-> adding tests to the image will get easier.
-> 
-> > 2) Install the dependency packages during the test (this will require a
-> package manager in the RFS, and an
-> > internet connection to the device under test)
-> 
-> This works well for the generic profile, but not for the tiny profile.
-> 
-> 3)
-> > 	- Static packages binaries could be stored on S3 bucket
-> 
-> This option should work for both profiles.
+> About which boards are we talking? How does the boot process and imaging
+> look
+> like for them? That will help assessing the effort (which can vary a lot,
+> specifically with modern, complex ones).
 > 
 
-This makes sense to me too.
-
-> - Other options:
-> 4) Prepare a multi-node job where one node (actually a LXC container)
-> contains Fuego. This is being developed by Linaro at the moment.
-
-Perhaps we can migrate to this once we have more of the infrastructure and tests set up?
-As you mention later, this looks to be the better option when it comes to testing for bugs.
-
-> 5) We can just use or create our own shell scripts for testing the basic
-> behavior of most commands. There are a few test definitions in Fuego that
-> can be easily adapted.
-
-I assume this is primarily for CIP-Core testing? In which case great! I think it would be nice to show CIP-Core tests in LAVA too.
-
-> 
-> > There are 2 different types of dependencies. First, the test might require
-> specific packages to be installed in the
-> > filesystem. Secondly, a test might require a test file/binary to run (eg.
-> kselftests, ltp tests).
-> > Linaro store static test binaries (such as cross-compiled kselftests) on a
-> server, and download these during a test
-> > (in the test script). They also download and install packages (using apt-get)
-> during the test.
-> >
-> > Are there any preferences in which of the above options to use?
-> > 	- We have to bear in mind, not all labs may provide an internet
-> connection to the boards
-> 
-> I prefer to separate the test build step from the test run step.
-> The test build step can be a combination of:
-> - tests and dependencies installed in the image
-> - tests built using the SDK (cross-compiled)
-> 
-
-Makes sense.
-
-> > Are there any package managers that should be included in CIP-Core? (apt-
-> get, pip, yum, dpkg etc.)
-> 
-> In ISAR, apt-get should be installed by default.
-> Deby v1 does not support apt-get. It supports dpkg, but almost a tar xzvf
-
-Okay. If/when the Renesas iwg20m board is supported in the ISAR build (CIP-Core generic profile?), I'll switch to using that image.
-
-> 
-> > Any other comments?
-> 
-> Yes, I think we should clarify two things:
-> 
-> - What type of problems we want to find
->   - Option 1: regressions. In this case, we can use always the same tests and
-> test versions
->   - Option 2: bugs. In this case, it is important to update the test version (e.g.
-> run the latest LTP) continuously.
-> - What we want to test
->   - Kernel regressions: LTP (including OpenPOSIX), kselftests, iperf3, IOZone,
-> rt-tests, xfstests..
->   - Kernel 0-day bugs: we need a fuzzy tool such as syzkaller
->   - Black-box regression testing (busybox, findutils, etc..): custom shell scripts
-> should be enough
-> 
-> In my opinion, we should focus on regression tests only.
-> #Although updating the LTP version from time to time might be important.
-
-I agree. At least for now, before we have the CI build system setup.
-
-So to summarise:
-- Images should have all tools dependencies installed during build
-- If not, it would be helpful if CIP-Core images have apt-get installed (use generic profile built with ISAR)
-- Any binaries for tests should be stored in the S3 bucket
-- As our focus is regression testing, these binaries should remain static
-- We can look into running Kernel 0-day bug tests and multi-node jobs later
+I believe Daniel means the Renesas iwg20m. I'm not sure what you mean by boot process and imaging, but I believe it's straightforward.
+To boot the board, you provide it the kernel image and dtb via tftp, and access to a RFS and it boots. There is no secure layer.
 
 Thanks,
 Patryk
 
+> Jan
 > 
-> Thanks,
-> Daniel
+> --
+> Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+> Corporate Competence Center Embedded Linux
