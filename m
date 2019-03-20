@@ -1,26 +1,37 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Wed, 20 Mar 2019 13:29:51 +0000
-Subject: [cip-dev] Arm64 configs
-Message-ID: <TYAPR01MB2285078E1883115EAF97B917B7410@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+From: agustin.benito@codethink.co.uk (Agustin Benito Bethencourt)
+Date: Wed, 20 Mar 2019 16:01:20 +0100
+Subject: [cip-dev] CVE tracker: questions
+Message-ID: <2544745.Y8d6tg5VCe@linux-3zh6>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello maintainers, all,
+Hi Ben,
 
-As discussed previously we need to decide what Kernel configs to use/support for the arm64 architecture.
+during the past face to face TSC meeting that took place in N?rnberg, there 
+were two questions about the CVE tracker you have done that would need some 
+more details from you that what I provided back then.
 
-Arm64 only has one supported config upstream - "defconfig" [1]. This is huge and presumably something CIP doesn't want to support in its entirety in the linux-4.19.y-cip for the next 10 years.
+Is the CVE tracker in a state that can be used by CIP Members?
 
-The alternative is for CIP create our own cut down defconfig(s) that meet the requirements of our users/members.
+If it is, under which conditions? Does it work for any kernel or needs to be 
+tuned?
 
->From a Renesas point of view there is an out-of-tree renesas-defconfig [2] which our upstream team uses to aid their development on Renesas arm64 platforms. Perhaps we could either add this to the CIP tree, or to the CIP Kernel configs repository [3] as a starting point?
+Can we advertise the CVE tracker in the coming events in Japan in July?
 
+I would like to add the following questions
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/tree/arch/arm64/configs/defconfig?h=linux-4.19.y-cip
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git/tree/arch/arm64/configs/renesas_defconfig?h=devel
-[3] https://gitlab.com/cip-project/cip-kernel/cip-kernel-config
+Is this a work you plan to maintain in the coming future?
 
-Kind regards, Chris
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190320/62e886db/attachment-0001.html>
+Would it be valuable to somehow keep the outcome of the tracker in Gitlab so 
+we can keep track of the patches that require attention, so the Kernel 
+Maintenance team can also get involved?
+
+Would it work for -rt ?
+
+Best Regards
+
+-- 
+Agust?n Benito Bethencourt
+Principal Consultant
+Codethink Ltd
+We respect your privacy.   See https://www.codethink.co.uk/privacy.html
