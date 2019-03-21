@@ -1,53 +1,49 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 21 Mar 2019 14:24:16 +0000
-Subject: [cip-dev] [PATCH 18/18] soc: renesas: rcar-rst: Add support for
-	RZ/G2E
-In-Reply-To: <1553178256-6293-1-git-send-email-biju.das@bp.renesas.com>
-References: <1553178256-6293-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1553178256-6293-19-git-send-email-biju.das@bp.renesas.com>
+Date: Thu, 21 Mar 2019 15:11:59 +0000
+Subject: [cip-dev] [PATCH 0/9] Add RZ/G2[ME] Clock support
+Message-ID: <1553181128-8171-1-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+This patch series aims to add Clock support for RZ/G2[ME] SoCs.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 91e95ecd4b4ff35624ac48bdf6dcf2d855f0b63e)
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
- drivers/soc/renesas/Kconfig    | 6 +++---
- drivers/soc/renesas/rcar-rst.c | 1 +
- 2 files changed, 4 insertions(+), 3 deletions(-)
+This patch series is based on linux-4.19.y-cip and all the patches
+in this series are cherry-picked from linux rc tree.
 
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index 163e666..614d767 100644
---- a/drivers/soc/renesas/Kconfig
-+++ b/drivers/soc/renesas/Kconfig
-@@ -3,9 +3,9 @@ config SOC_RENESAS
- 	default y if ARCH_RENESAS
- 	select SOC_BUS
- 	select RST_RCAR if ARCH_RCAR_GEN1 || ARCH_RCAR_GEN2 || \
--			   ARCH_R8A774A1 || ARCH_R8A7795 || ARCH_R8A7796 || \
--			   ARCH_R8A77965 || ARCH_R8A77970 || ARCH_R8A77980 || \
--			   ARCH_R8A77990 || ARCH_R8A77995
-+			   ARCH_R8A774A1 || ARCH_R8A774C0 || ARCH_R8A7795 || \
-+			   ARCH_R8A7796 || ARCH_R8A77965 || ARCH_R8A77970 || \
-+			   ARCH_R8A77980 || ARCH_R8A77990 || ARCH_R8A77995
- 	select SYSC_R8A7743 if ARCH_R8A7743
- 	select SYSC_R8A7745 if ARCH_R8A7745
- 	select SYSC_R8A77470 if ARCH_R8A77470
-diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
-index a447873..d5e31f4 100644
---- a/drivers/soc/renesas/rcar-rst.c
-+++ b/drivers/soc/renesas/rcar-rst.c
-@@ -47,6 +47,7 @@ static const struct of_device_id rcar_rst_matches[] __initconst = {
- 	{ .compatible = "renesas,r8a77470-rst", .data = &rcar_rst_gen2 },
- 	/* RZ/G2 is handled like R-Car Gen3 */
- 	{ .compatible = "renesas,r8a774a1-rst", .data = &rcar_rst_gen3 },
-+	{ .compatible = "renesas,r8a774c0-rst", .data = &rcar_rst_gen3 },
- 	/* R-Car Gen1 */
- 	{ .compatible = "renesas,r8a7778-reset-wdt", .data = &rcar_rst_gen1 },
- 	{ .compatible = "renesas,r8a7779-reset-wdt", .data = &rcar_rst_gen1 },
+This patch series is depend on the below patch series
+https://patchwork.kernel.org/project/cip-dev/list/?series=94893
+
+Biju Das (2):
+  clk: renesas: Add r8a774a1 CPG Core Clock Definitions
+  clk: renesas: cpg-mssr: Add r8a774a1 support
+
+Fabrizio Castro (3):
+  clk: renesas: Add r8a774c0 CPG Core Clock Definitions
+  dt-bindings: clock: renesas: cpg-mssr: Document r8a774c0
+  clk: renesas: cpg-mssr: Add r8a774c0 support
+
+Geert Uytterhoeven (4):
+  clk: renesas: rcar-gen3: Add support for OSC EXTAL predivider
+  clk: renesas: cpg-mssr: Add support for fixed rate clocks
+  clk: renesas: rcar-gen3: Add support for RCKSEL clock selection
+  clk: renesas: rcar-gen3: Add support for mode pin clock selection
+
+ .../devicetree/bindings/clock/renesas,cpg-mssr.txt |  10 +-
+ drivers/clk/renesas/Kconfig                        |  10 +
+ drivers/clk/renesas/Makefile                       |   2 +
+ drivers/clk/renesas/r8a774a1-cpg-mssr.c            | 323 +++++++++++++++++++++
+ drivers/clk/renesas/r8a774c0-cpg-mssr.c            | 286 ++++++++++++++++++
+ drivers/clk/renesas/rcar-gen3-cpg.c                |  40 ++-
+ drivers/clk/renesas/rcar-gen3-cpg.h                |  24 +-
+ drivers/clk/renesas/renesas-cpg-mssr.c             |  17 ++
+ drivers/clk/renesas/renesas-cpg-mssr.h             |   5 +
+ include/dt-bindings/clock/r8a774a1-cpg-mssr.h      |  58 ++++
+ include/dt-bindings/clock/r8a774c0-cpg-mssr.h      |  60 ++++
+ 11 files changed, 817 insertions(+), 18 deletions(-)
+ create mode 100644 drivers/clk/renesas/r8a774a1-cpg-mssr.c
+ create mode 100644 drivers/clk/renesas/r8a774c0-cpg-mssr.c
+ create mode 100644 include/dt-bindings/clock/r8a774a1-cpg-mssr.h
+ create mode 100644 include/dt-bindings/clock/r8a774c0-cpg-mssr.h
+
 -- 
 2.7.4
