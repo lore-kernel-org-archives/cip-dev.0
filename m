@@ -1,90 +1,79 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 21 Mar 2019 15:12:01 +0000
-Subject: [cip-dev] [PATCH 2/9] clk: renesas: Add r8a774a1 CPG Core Clock
-	Definitions
+Date: Thu, 21 Mar 2019 15:12:02 +0000
+Subject: [cip-dev] [PATCH 3/9] clk: renesas: rcar-gen3: Add support for OSC
+	EXTAL predivider
 In-Reply-To: <1553181128-8171-1-git-send-email-biju.das@bp.renesas.com>
 References: <1553181128-8171-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1553181128-8171-3-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1553181128-8171-4-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Add all RZ/G2M Clock Pulse Generator Core Clock Outputs, as listed in
-Table 8.2b ("List of Clocks [RZ/G2M]") of the RZ/G2M Hardware User's
-Manual.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Add a clock type and macro for defining clocks using the OSC EXTAL
+predivider combined with a fixed divider.
+
+On most R-Car Gen3 SoCs, the predivider value depends on mode pins, and
+thus must be specified in the configuration structure.
+
+Inspired by a patch in the BSP by Takeshi Kihara
+<takeshi.kihara.df@renesas.com>.
+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-(cherry picked from commit 62f32dde334302d7ebb2b3c150f404a61cfcf55e)
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+(cherry picked from commit 38c79e2899a66096583f3377c64b35f30584f1b4)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- include/dt-bindings/clock/r8a774a1-cpg-mssr.h | 58 +++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
- create mode 100644 include/dt-bindings/clock/r8a774a1-cpg-mssr.h
+ drivers/clk/renesas/rcar-gen3-cpg.c | 7 +++++++
+ drivers/clk/renesas/rcar-gen3-cpg.h | 4 ++++
+ 2 files changed, 11 insertions(+)
 
-diff --git a/include/dt-bindings/clock/r8a774a1-cpg-mssr.h b/include/dt-bindings/clock/r8a774a1-cpg-mssr.h
-new file mode 100644
-index 0000000..9bc5d45
---- /dev/null
-+++ b/include/dt-bindings/clock/r8a774a1-cpg-mssr.h
-@@ -0,0 +1,58 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ */
-+#ifndef __DT_BINDINGS_CLOCK_R8A774A1_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A774A1_CPG_MSSR_H__
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index 628b63b..7533a51 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -563,6 +563,13 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 		return cpg_z_clk_register(core->name, __clk_get_name(parent),
+ 					  base, CPG_FRQCRC_Z2FC_MASK);
+ 
++	case CLK_TYPE_GEN3_OSC:
++		/*
++		 * Clock combining OSC EXTAL predivider and a fixed divider
++		 */
++		div = cpg_pll_config->osc_prediv * core->div;
++		break;
 +
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+/* r8a774a1 CPG Core Clocks */
-+#define R8A774A1_CLK_Z			0
-+#define R8A774A1_CLK_Z2			1
-+#define R8A774A1_CLK_ZG			2
-+#define R8A774A1_CLK_ZTR		3
-+#define R8A774A1_CLK_ZTRD2		4
-+#define R8A774A1_CLK_ZT			5
-+#define R8A774A1_CLK_ZX			6
-+#define R8A774A1_CLK_S0D1		7
-+#define R8A774A1_CLK_S0D2		8
-+#define R8A774A1_CLK_S0D3		9
-+#define R8A774A1_CLK_S0D4		10
-+#define R8A774A1_CLK_S0D6		11
-+#define R8A774A1_CLK_S0D8		12
-+#define R8A774A1_CLK_S0D12		13
-+#define R8A774A1_CLK_S1D2		14
-+#define R8A774A1_CLK_S1D4		15
-+#define R8A774A1_CLK_S2D1		16
-+#define R8A774A1_CLK_S2D2		17
-+#define R8A774A1_CLK_S2D4		18
-+#define R8A774A1_CLK_S3D1		19
-+#define R8A774A1_CLK_S3D2		20
-+#define R8A774A1_CLK_S3D4		21
-+#define R8A774A1_CLK_LB			22
-+#define R8A774A1_CLK_CL			23
-+#define R8A774A1_CLK_ZB3		24
-+#define R8A774A1_CLK_ZB3D2		25
-+#define R8A774A1_CLK_ZB3D4		26
-+#define R8A774A1_CLK_CR			27
-+#define R8A774A1_CLK_CRD2		28
-+#define R8A774A1_CLK_SD0H		29
-+#define R8A774A1_CLK_SD0		30
-+#define R8A774A1_CLK_SD1H		31
-+#define R8A774A1_CLK_SD1		32
-+#define R8A774A1_CLK_SD2H		33
-+#define R8A774A1_CLK_SD2		34
-+#define R8A774A1_CLK_SD3H		35
-+#define R8A774A1_CLK_SD3		36
-+#define R8A774A1_CLK_RPC		37
-+#define R8A774A1_CLK_RPCD2		38
-+#define R8A774A1_CLK_MSO		39
-+#define R8A774A1_CLK_HDMI		40
-+#define R8A774A1_CLK_CSI0		41
-+#define R8A774A1_CLK_CP			42
-+#define R8A774A1_CLK_CPEX		43
-+#define R8A774A1_CLK_R			44
-+#define R8A774A1_CLK_OSC		45
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A774A1_CPG_MSSR_H__ */
+ 	default:
+ 		return ERR_PTR(-EINVAL);
+ 	}
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
+index ea4f8fc..d7d84d9 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.h
++++ b/drivers/clk/renesas/rcar-gen3-cpg.h
+@@ -23,6 +23,7 @@ enum rcar_gen3_clk_types {
+ 	CLK_TYPE_GEN3_PE,
+ 	CLK_TYPE_GEN3_Z,
+ 	CLK_TYPE_GEN3_Z2,
++	CLK_TYPE_GEN3_OSC,	/* OSC EXTAL predivider and fixed divider */
+ };
+ 
+ #define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
+@@ -33,6 +34,8 @@ enum rcar_gen3_clk_types {
+ 	DEF_BASE(_name, _id, CLK_TYPE_GEN3_PE,			\
+ 		 (_parent_sscg) << 16 | (_parent_clean),	\
+ 		 .div = (_div_sscg) << 16 | (_div_clean))
++#define DEF_GEN3_OSC(_name, _id, _parent, _div)		\
++	DEF_BASE(_name, _id, CLK_TYPE_GEN3_OSC, _parent, .div = _div)
+ 
+ struct rcar_gen3_cpg_pll_config {
+ 	u8 extal_div;
+@@ -40,6 +43,7 @@ struct rcar_gen3_cpg_pll_config {
+ 	u8 pll1_div;
+ 	u8 pll3_mult;
+ 	u8 pll3_div;
++	u8 osc_prediv;
+ };
+ 
+ #define CPG_RCKCR	0x240
 -- 
 2.7.4
