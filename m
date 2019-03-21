@@ -1,41 +1,37 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 21 Mar 2019 15:30:36 +0000
-Subject: [cip-dev] [PATCH 0/7] Add RZ/G2[ME] Clock support
-Message-ID: <1553182243-50724-1-git-send-email-biju.das@bp.renesas.com>
+Date: Thu, 21 Mar 2019 15:30:37 +0000
+Subject: [cip-dev] [PATCH 1/7] dt-bindings: pinctrl: sh-pfc: Document
+	r8a774a1 PFC support
+In-Reply-To: <1553182243-50724-1-git-send-email-biju.das@bp.renesas.com>
+References: <1553182243-50724-1-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1553182243-50724-2-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This patch series aims to add pin control support for RZ/G2[ME] SoCs.
+Document PFC support for the R8A774A1 SoC.
 
-This patch series is based on linux-4.19.y-cip and all the patches
-in this series are cherry-picked from linux rc tree.
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+(cherry picked from commit 8f9a1acd8c8b8e6d980bca02fd55ee9867792609)
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-This patch series is depend on the below patch series
-https://patchwork.kernel.org/project/cip-dev/list/?series=94923
-
-Biju Das (2):
-  dt-bindings: pinctrl: sh-pfc: Document r8a774a1 PFC support
-  pinctrl: sh-pfc: r8a7796: Add R8A774A1 PFC support
-
-Fabrizio Castro (2):
-  dt-bindings: pinctrl: sh-pfc: Document r8a774c0 PFC support
-  pinctrl: sh-pfc: r8a77990: Add R8A774C0 PFC support
-
-Laurent Pinchart (1):
-  pinctrl: sh-pfc: r8a77990: Add DU pins, groups and function
-
-Takeshi Kihara (2):
-  pinctrl: sh-pfc: r8a77990: Add PWM pins, groups and functions
-  pinctrl: sh-pfc: r8a77990: Add MSIOF pins, groups and functions
-
- .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |   2 +
- drivers/pinctrl/sh-pfc/Kconfig                     |  10 +
- drivers/pinctrl/sh-pfc/Makefile                    |   2 +
- drivers/pinctrl/sh-pfc/core.c                      |  12 +
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c               | 837 ++++++++++---------
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c              | 921 +++++++++++++++++++--
- drivers/pinctrl/sh-pfc/sh_pfc.h                    |   2 +
- 7 files changed, 1310 insertions(+), 476 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
+index abd8fbc..01c6f5f 100644
+--- a/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
+@@ -16,6 +16,7 @@ Required Properties:
+     - "renesas,pfc-r8a7743": for R8A7743 (RZ/G1M) compatible pin-controller.
+     - "renesas,pfc-r8a7745": for R8A7745 (RZ/G1E) compatible pin-controller.
+     - "renesas,pfc-r8a77470": for R8A77470 (RZ/G1C) compatible pin-controller.
++    - "renesas,pfc-r8a774a1": for R8A774A1 (RZ/G2M) compatible pin-controller.
+     - "renesas,pfc-r8a7778": for R8A7778 (R-Car M1) compatible pin-controller.
+     - "renesas,pfc-r8a7779": for R8A7779 (R-Car H1) compatible pin-controller.
+     - "renesas,pfc-r8a7790": for R8A7790 (R-Car H2) compatible pin-controller.
 -- 
 2.7.4
