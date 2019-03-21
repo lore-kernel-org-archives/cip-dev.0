@@ -1,63 +1,120 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 21 Mar 2019 15:12:03 +0000
-Subject: [cip-dev] [PATCH 4/9] clk: renesas: cpg-mssr: Add support for fixed
-	rate clocks
+Date: Thu, 21 Mar 2019 15:12:04 +0000
+Subject: [cip-dev] [PATCH 5/9] clk: renesas: rcar-gen3: Add support for
+	RCKSEL clock selection
 In-Reply-To: <1553181128-8171-1-git-send-email-biju.das@bp.renesas.com>
 References: <1553181128-8171-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1553181128-8171-5-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1553181128-8171-6-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add support for defining fixed rate clocks, to be used for on-chip
-oscillators.
+Add a clock type and macro for defining clocks where the parent and
+divider are selected based on the value of the RCKCR.CKSEL bit.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 0d2602d750152f9fcf3d9af9466f3d67b60aa646)
+(cherry picked from commit b9d0b84b3db8552f033d5051393b90852b977a76)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/clk/renesas/renesas-cpg-mssr.c | 5 +++++
- drivers/clk/renesas/renesas-cpg-mssr.h | 3 +++
- 2 files changed, 8 insertions(+)
+ drivers/clk/renesas/rcar-gen3-cpg.c | 23 ++++++++++++++++++++---
+ drivers/clk/renesas/rcar-gen3-cpg.h |  7 ++++++-
+ 2 files changed, 26 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index f4b013e..e043389 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -313,6 +313,11 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
- 		}
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index 7533a51..19a7782 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -1,7 +1,7 @@
+ /*
+  * R-Car Gen3 Clock Pulse Generator
+  *
+- * Copyright (C) 2015-2016 Glider bvba
++ * Copyright (C) 2015-2018 Glider bvba
+  *
+  * Based on clk-rcar-gen3.c
+  *
+@@ -31,6 +31,8 @@
+ #define CPG_PLL2CR		0x002c
+ #define CPG_PLL4CR		0x01f4
+ 
++#define CPG_RCKCR_CKSEL	BIT(15)	/* RCLK Clock Source Select */
++
+ struct cpg_simple_notifier {
+ 	struct notifier_block nb;
+ 	void __iomem *reg;
+@@ -444,7 +446,7 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 	unsigned int div = 1;
+ 	u32 value;
+ 
+-	parent = clks[core->parent & 0xffff];	/* CLK_TYPE_PE uses high bits */
++	parent = clks[core->parent & 0xffff];	/* some types use high bits */
+ 	if (IS_ERR(parent))
+ 		return ERR_CAST(parent);
+ 
+@@ -524,7 +526,7 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 
+ 			if (clk_get_rate(clks[cpg_clk_extalr])) {
+ 				parent = clks[cpg_clk_extalr];
+-				value |= BIT(15);
++				value |= CPG_RCKCR_CKSEL;
+ 			}
+ 
+ 			writel(value, csn->reg);
+@@ -570,6 +572,21 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 		div = cpg_pll_config->osc_prediv * core->div;
  		break;
  
-+	case CLK_TYPE_FR:
-+		clk = clk_register_fixed_rate(NULL, core->name, NULL, 0,
-+					      core->mult);
++	case CLK_TYPE_GEN3_RCKSEL:
++		/*
++		 * Clock selectable between two parents and two fixed dividers
++		 * using RCKCR.CKSEL
++		 */
++		if (readl(base + CPG_RCKCR) & CPG_RCKCR_CKSEL) {
++			div = core->div & 0xffff;
++		} else {
++			parent = clks[core->parent >> 16];
++			if (IS_ERR(parent))
++				return ERR_CAST(parent);
++			div = core->div >> 16;
++		}
 +		break;
 +
  	default:
- 		if (info->cpg_clk_register)
- 			clk = info->cpg_clk_register(dev, core, info,
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
-index 642f720..87bb8f3 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.h
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.h
-@@ -38,6 +38,7 @@ enum clk_types {
- 	CLK_TYPE_FF,		/* Fixed Factor Clock */
- 	CLK_TYPE_DIV6P1,	/* DIV6 Clock with 1 parent clock */
- 	CLK_TYPE_DIV6_RO,	/* DIV6 Clock read only with extra divisor */
-+	CLK_TYPE_FR,		/* Fixed Rate Clock */
+ 		return ERR_PTR(-EINVAL);
+ 	}
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
+index d7d84d9..7c49aeb 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.h
++++ b/drivers/clk/renesas/rcar-gen3-cpg.h
+@@ -1,7 +1,7 @@
+ /*
+  * R-Car Gen3 Clock Pulse Generator
+  *
+- * Copyright (C) 2015-2016 Glider bvba
++ * Copyright (C) 2015-2018 Glider bvba
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+@@ -24,6 +24,7 @@ enum rcar_gen3_clk_types {
+ 	CLK_TYPE_GEN3_Z,
+ 	CLK_TYPE_GEN3_Z2,
+ 	CLK_TYPE_GEN3_OSC,	/* OSC EXTAL predivider and fixed divider */
++	CLK_TYPE_GEN3_RCKSEL,	/* Select parent/divider using RCKCR.CKSEL */
+ };
  
- 	/* Custom definitions start here */
- 	CLK_TYPE_CUSTOM,
-@@ -56,6 +57,8 @@ enum clk_types {
- 	DEF_BASE(_name, _id, CLK_TYPE_DIV6P1, _parent, .offset = _offset)
- #define DEF_DIV6_RO(_name, _id, _parent, _offset, _div)	\
- 	DEF_BASE(_name, _id, CLK_TYPE_DIV6_RO, _parent, .offset = _offset, .div = _div, .mult = 1)
-+#define DEF_RATE(_name, _id, _rate)	\
-+	DEF_TYPE(_name, _id, CLK_TYPE_FR, .mult = _rate)
+ #define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
+@@ -37,6 +38,10 @@ enum rcar_gen3_clk_types {
+ #define DEF_GEN3_OSC(_name, _id, _parent, _div)		\
+ 	DEF_BASE(_name, _id, CLK_TYPE_GEN3_OSC, _parent, .div = _div)
  
-     /*
-      * Definitions of Module Clocks
++#define DEF_GEN3_RCKSEL(_name, _id, _parent0, _div0, _parent1, _div1) \
++	DEF_BASE(_name, _id, CLK_TYPE_GEN3_RCKSEL,	\
++		 (_parent0) << 16 | (_parent1),	.div = (_div0) << 16 | (_div1))
++
+ struct rcar_gen3_cpg_pll_config {
+ 	u8 extal_div;
+ 	u8 pll1_mult;
 -- 
 2.7.4
