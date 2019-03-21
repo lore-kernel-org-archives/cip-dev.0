@@ -1,74 +1,71 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 21 Mar 2019 14:24:13 +0000
-Subject: [cip-dev] [PATCH 15/18] soc: renesas: r8a774c0-sysc: Fix
-	initialization order of 3DG-{A, B}
+Date: Thu, 21 Mar 2019 14:24:14 +0000
+Subject: [cip-dev] [PATCH 16/18] soc: renesas: rcar-rst: Add support for
+	RZ/G2M
 In-Reply-To: <1553178256-6293-1-git-send-email-biju.das@bp.renesas.com>
 References: <1553178256-6293-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1553178256-6293-16-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1553178256-6293-17-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-The workaround for the wrong hierarchy of the 3DG-{A,B} power domains on
-RZ/G2E ES1.0 corrected the parent domains. However, the 3DG-{A,B} power
-domains were still initialized and powered in the wrong order, causing
-3DG operation to fail.
-
-Fix this by changing the order in the table at runtime, when running on
-an affected SoC.
-
-This work is based on the work done by Geert for R-Car E3.
-
-Fixes: f37d211c687588328 ("soc: renesas: rcar-sysc: Add r8a774c0 support")
-
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit a64597227d0de5610407fcc95dc835745a53f5d0)
+(cherry picked from commit 3116d859e7b15d3740afd44c975cdb34a4c1246e)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/soc/renesas/r8a774c0-sysc.c | 23 ++++-------------------
- 1 file changed, 4 insertions(+), 19 deletions(-)
+ Documentation/devicetree/bindings/reset/renesas,rst.txt | 1 +
+ drivers/soc/renesas/Kconfig                             | 6 +++---
+ drivers/soc/renesas/rcar-rst.c                          | 4 +++-
+ 3 files changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/soc/renesas/r8a774c0-sysc.c b/drivers/soc/renesas/r8a774c0-sysc.c
-index e1ac4c0..11050e1 100644
---- a/drivers/soc/renesas/r8a774c0-sysc.c
-+++ b/drivers/soc/renesas/r8a774c0-sysc.c
-@@ -28,19 +28,6 @@ static struct rcar_sysc_area r8a774c0_areas[] __initdata = {
- 	{ "3dg-b",	0x100, 1, R8A774C0_PD_3DG_B,	R8A774C0_PD_3DG_A },
+diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.txt b/Documentation/devicetree/bindings/reset/renesas,rst.txt
+index 67e83b0..e4fe0ab 100644
+--- a/Documentation/devicetree/bindings/reset/renesas,rst.txt
++++ b/Documentation/devicetree/bindings/reset/renesas,rst.txt
+@@ -18,6 +18,7 @@ Required properties:
+ 		  - "renesas,r8a7743-rst" (RZ/G1M)
+ 		  - "renesas,r8a7745-rst" (RZ/G1E)
+ 		  - "renesas,r8a77470-rst" (RZ/G1C)
++		  - "renesas,r8a774a1-rst" (RZ/G2M)
+ 		  - "renesas,r8a7778-reset-wdt" (R-Car M1A)
+ 		  - "renesas,r8a7779-reset-wdt" (R-Car H1)
+ 		  - "renesas,r8a7790-rst" (R-Car H2)
+diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+index e50e77c..163e666 100644
+--- a/drivers/soc/renesas/Kconfig
++++ b/drivers/soc/renesas/Kconfig
+@@ -3,9 +3,9 @@ config SOC_RENESAS
+ 	default y if ARCH_RENESAS
+ 	select SOC_BUS
+ 	select RST_RCAR if ARCH_RCAR_GEN1 || ARCH_RCAR_GEN2 || \
+-			   ARCH_R8A7795 || ARCH_R8A7796 || ARCH_R8A77965 || \
+-			   ARCH_R8A77970 || ARCH_R8A77980 || ARCH_R8A77990 || \
+-			   ARCH_R8A77995
++			   ARCH_R8A774A1 || ARCH_R8A7795 || ARCH_R8A7796 || \
++			   ARCH_R8A77965 || ARCH_R8A77970 || ARCH_R8A77980 || \
++			   ARCH_R8A77990 || ARCH_R8A77995
+ 	select SYSC_R8A7743 if ARCH_R8A7743
+ 	select SYSC_R8A7745 if ARCH_R8A7745
+ 	select SYSC_R8A77470 if ARCH_R8A77470
+diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
+index d9c1034..a447873 100644
+--- a/drivers/soc/renesas/rcar-rst.c
++++ b/drivers/soc/renesas/rcar-rst.c
+@@ -41,10 +41,12 @@ static const struct rst_config rcar_rst_gen3 __initconst = {
  };
  
--static void __init rcar_sysc_fix_parent(struct rcar_sysc_area *areas,
--					unsigned int num_areas, u8 id,
--					int new_parent)
--{
--	unsigned int i;
--
--	for (i = 0; i < num_areas; i++)
--		if (areas[i].isr_bit == id) {
--			areas[i].parent = new_parent;
--			return;
--		}
--}
--
- /* Fixups for RZ/G2E ES1.0 revision */
- static const struct soc_device_attribute r8a774c0[] __initconst = {
- 	{ .soc_id = "r8a774c0", .revision = "ES1.0" },
-@@ -50,12 +37,10 @@ static const struct soc_device_attribute r8a774c0[] __initconst = {
- static int __init r8a774c0_sysc_init(void)
- {
- 	if (soc_device_match(r8a774c0)) {
--		rcar_sysc_fix_parent(r8a774c0_areas,
--				     ARRAY_SIZE(r8a774c0_areas),
--				     R8A774C0_PD_3DG_A, R8A774C0_PD_3DG_B);
--		rcar_sysc_fix_parent(r8a774c0_areas,
--				     ARRAY_SIZE(r8a774c0_areas),
--				     R8A774C0_PD_3DG_B, R8A774C0_PD_ALWAYS_ON);
-+		/* Fix incorrect 3DG hierarchy */
-+		swap(r8a774c0_areas[6], r8a774c0_areas[7]);
-+		r8a774c0_areas[6].parent = R8A774C0_PD_ALWAYS_ON;
-+		r8a774c0_areas[7].parent = R8A774C0_PD_3DG_B;
- 	}
- 
- 	return 0;
+ static const struct of_device_id rcar_rst_matches[] __initconst = {
+-	/* RZ/G is handled like R-Car Gen2 */
++	/* RZ/G1 is handled like R-Car Gen2 */
+ 	{ .compatible = "renesas,r8a7743-rst", .data = &rcar_rst_gen2 },
+ 	{ .compatible = "renesas,r8a7745-rst", .data = &rcar_rst_gen2 },
+ 	{ .compatible = "renesas,r8a77470-rst", .data = &rcar_rst_gen2 },
++	/* RZ/G2 is handled like R-Car Gen3 */
++	{ .compatible = "renesas,r8a774a1-rst", .data = &rcar_rst_gen3 },
+ 	/* R-Car Gen1 */
+ 	{ .compatible = "renesas,r8a7778-reset-wdt", .data = &rcar_rst_gen1 },
+ 	{ .compatible = "renesas,r8a7779-reset-wdt", .data = &rcar_rst_gen1 },
 -- 
 2.7.4
