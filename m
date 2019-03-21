@@ -1,120 +1,85 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 21 Mar 2019 15:12:04 +0000
-Subject: [cip-dev] [PATCH 5/9] clk: renesas: rcar-gen3: Add support for
-	RCKSEL clock selection
+Date: Thu, 21 Mar 2019 15:12:05 +0000
+Subject: [cip-dev] [PATCH 6/9] clk: renesas: rcar-gen3: Add support for mode
+	pin clock selection
 In-Reply-To: <1553181128-8171-1-git-send-email-biju.das@bp.renesas.com>
 References: <1553181128-8171-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1553181128-8171-6-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1553181128-8171-7-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add a clock type and macro for defining clocks where the parent and
-divider are selected based on the value of the RCKCR.CKSEL bit.
+Make the existing support for selecting between clean and SSCG clocks
+using MD12 more generic, to allow using other mode pins for arbitrary
+clock selection.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit b9d0b84b3db8552f033d5051393b90852b977a76)
+(cherry picked from commit cd51e427e050f6a3d3bc3e0e38ad30974a52cb44)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/clk/renesas/rcar-gen3-cpg.c | 23 ++++++++++++++++++++---
- drivers/clk/renesas/rcar-gen3-cpg.h |  7 ++++++-
- 2 files changed, 26 insertions(+), 4 deletions(-)
+ drivers/clk/renesas/rcar-gen3-cpg.c | 10 ++++------
+ drivers/clk/renesas/rcar-gen3-cpg.h | 13 +++++++++----
+ 2 files changed, 13 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 7533a51..19a7782 100644
+index 19a7782..4346fde 100644
 --- a/drivers/clk/renesas/rcar-gen3-cpg.c
 +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -1,7 +1,7 @@
- /*
-  * R-Car Gen3 Clock Pulse Generator
-  *
-- * Copyright (C) 2015-2016 Glider bvba
-+ * Copyright (C) 2015-2018 Glider bvba
-  *
-  * Based on clk-rcar-gen3.c
-  *
-@@ -31,6 +31,8 @@
- #define CPG_PLL2CR		0x002c
- #define CPG_PLL4CR		0x01f4
- 
-+#define CPG_RCKCR_CKSEL	BIT(15)	/* RCLK Clock Source Select */
-+
- struct cpg_simple_notifier {
- 	struct notifier_block nb;
- 	void __iomem *reg;
-@@ -444,7 +446,7 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 	unsigned int div = 1;
- 	u32 value;
- 
--	parent = clks[core->parent & 0xffff];	/* CLK_TYPE_PE uses high bits */
-+	parent = clks[core->parent & 0xffff];	/* some types use high bits */
- 	if (IS_ERR(parent))
- 		return ERR_CAST(parent);
- 
-@@ -524,7 +526,7 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 
- 			if (clk_get_rate(clks[cpg_clk_extalr])) {
- 				parent = clks[cpg_clk_extalr];
--				value |= BIT(15);
-+				value |= CPG_RCKCR_CKSEL;
- 			}
- 
- 			writel(value, csn->reg);
-@@ -570,6 +572,21 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 		div = cpg_pll_config->osc_prediv * core->div;
+@@ -539,16 +539,14 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 			parent = clks[cpg_clk_extalr];
  		break;
  
-+	case CLK_TYPE_GEN3_RCKSEL:
-+		/*
+-	case CLK_TYPE_GEN3_PE:
++	case CLK_TYPE_GEN3_MDSEL:
+ 		/*
+-		 * Peripheral clock with a fixed divider, selectable between
+-		 * clean and spread spectrum parents using MD12
 +		 * Clock selectable between two parents and two fixed dividers
-+		 * using RCKCR.CKSEL
-+		 */
-+		if (readl(base + CPG_RCKCR) & CPG_RCKCR_CKSEL) {
-+			div = core->div & 0xffff;
-+		} else {
-+			parent = clks[core->parent >> 16];
-+			if (IS_ERR(parent))
-+				return ERR_CAST(parent);
-+			div = core->div >> 16;
-+		}
-+		break;
-+
- 	default:
- 		return ERR_PTR(-EINVAL);
- 	}
++		 * using a mode pin
+ 		 */
+-		if (cpg_mode & BIT(12)) {
+-			/* Clean */
++		if (cpg_mode & BIT(core->offset)) {
+ 			div = core->div & 0xffff;
+ 		} else {
+-			/* SCCG */
+ 			parent = clks[core->parent >> 16];
+ 			if (IS_ERR(parent))
+ 				return ERR_CAST(parent);
 diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
-index d7d84d9..7c49aeb 100644
+index 7c49aeb..04dc45d 100644
 --- a/drivers/clk/renesas/rcar-gen3-cpg.h
 +++ b/drivers/clk/renesas/rcar-gen3-cpg.h
-@@ -1,7 +1,7 @@
- /*
-  * R-Car Gen3 Clock Pulse Generator
-  *
-- * Copyright (C) 2015-2016 Glider bvba
-+ * Copyright (C) 2015-2018 Glider bvba
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License as published by
-@@ -24,6 +24,7 @@ enum rcar_gen3_clk_types {
+@@ -20,7 +20,7 @@ enum rcar_gen3_clk_types {
+ 	CLK_TYPE_GEN3_PLL4,
+ 	CLK_TYPE_GEN3_SD,
+ 	CLK_TYPE_GEN3_R,
+-	CLK_TYPE_GEN3_PE,
++	CLK_TYPE_GEN3_MDSEL,	/* Select parent/divider using mode pin */
  	CLK_TYPE_GEN3_Z,
  	CLK_TYPE_GEN3_Z2,
  	CLK_TYPE_GEN3_OSC,	/* OSC EXTAL predivider and fixed divider */
-+	CLK_TYPE_GEN3_RCKSEL,	/* Select parent/divider using RCKCR.CKSEL */
- };
- 
+@@ -30,11 +30,16 @@ enum rcar_gen3_clk_types {
  #define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
-@@ -37,6 +38,10 @@ enum rcar_gen3_clk_types {
+ 	DEF_BASE(_name, _id, CLK_TYPE_GEN3_SD, _parent, .offset = _offset)
+ 
++#define DEF_GEN3_MDSEL(_name, _id, _md, _parent0, _div0, _parent1, _div1) \
++	DEF_BASE(_name, _id, CLK_TYPE_GEN3_MDSEL,	\
++		 (_parent0) << 16 | (_parent1),		\
++		 .div = (_div0) << 16 | (_div1), .offset = _md)
++
+ #define DEF_GEN3_PE(_name, _id, _parent_sscg, _div_sscg, _parent_clean, \
+ 		    _div_clean) \
+-	DEF_BASE(_name, _id, CLK_TYPE_GEN3_PE,			\
+-		 (_parent_sscg) << 16 | (_parent_clean),	\
+-		 .div = (_div_sscg) << 16 | (_div_clean))
++	DEF_GEN3_MDSEL(_name, _id, 12, _parent_sscg, _div_sscg,	\
++		       _parent_clean, _div_clean)
++
  #define DEF_GEN3_OSC(_name, _id, _parent, _div)		\
  	DEF_BASE(_name, _id, CLK_TYPE_GEN3_OSC, _parent, .div = _div)
  
-+#define DEF_GEN3_RCKSEL(_name, _id, _parent0, _div0, _parent1, _div1) \
-+	DEF_BASE(_name, _id, CLK_TYPE_GEN3_RCKSEL,	\
-+		 (_parent0) << 16 | (_parent1),	.div = (_div0) << 16 | (_div1))
-+
- struct rcar_gen3_cpg_pll_config {
- 	u8 extal_div;
- 	u8 pll1_mult;
 -- 
 2.7.4
