@@ -1,41 +1,51 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 21 Mar 2019 00:48:18 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-Message-ID: <HK0PR01MB297914A6B4A03EA62AFAA7D9E2420@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Thu, 21 Mar 2019 09:15:41 +0000
+Subject: [cip-dev] CVE tracker: questions
+In-Reply-To: <2544745.Y8d6tg5VCe@linux-3zh6>
+References: <2544745.Y8d6tg5VCe@linux-3zh6>
+Message-ID: <1553159741.3557.1.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+On Wed, 2019-03-20 at 16:01 +0100, Agustin Benito Bethencourt wrote:
+> Hi Ben,
+> 
+> during the past face to face TSC meeting that took place in N?rnberg, there?
+> were two questions about the CVE tracker you have done that would need some?
+> more details from you that what I provided back then.
+> 
+> Is the CVE tracker in a state that can be used by CIP Members?
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
+I think so, yes.
 
-*Please note that IRC meeting was rescheduled to 18:00 (JST) starting from the first week of Nov. according to F2F meeting discussion in ELCE.*
+> If it is, under which conditions? Does it work for any kernel or needs to be?
+> tuned?
 
-US-West US-East? UK??? DE???? TW???? JP
-02:00??? 05:00?? 09:00?? 10:00?? 17:00?? 18:00
+It currently only works for mainline and stable branches.  I have an
+open issue to add support for CIP branches.
 
-Channel:
-* irc:chat.freenode.net:6667/cip
+> Can we advertise the CVE tracker in the coming events in Japan in July?
 
-Agenda:
+That would be fine with me.
 
-* Welcome our new kernel maintainer ? Pavel!
+> I would like to add the following questions
+> 
+> Is this a work you plan to maintain in the coming future?
 
-* AI review
-#action Please send configuration file of kernel 4.19 to cip-dev before end of March.
-#action Daniel has to upload to the wiki the SW updates tool comparison document?(https://irclogs.baserock.org/meetings/cip/2019/03/cip.2019-03-14-09.00.log.html#l-89, 09:23:00)
-#action Mae please add a link to the SW updates wiki page from the embedded world CIP release page?(https://irclogs.baserock.org/meetings/cip/2019/03/cip.2019-03-14-09.00.log.html#l-90, 09:23:02)
+So long as I'm working for CIP, yes.
 
-* Kernel maintenance updates
-* Kernel testing
-* CIP Core
-* Software update
-* AOB
+> Would it be valuable to somehow keep the outcome of the tracker in Gitlab so?
+> we can keep track of the patches that require attention, so the Kernel?
+> Maintenance team can also get involved?
+> 
+> Would it work for -rt ?
 
-The meeting will take 30 min although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
+Not currently, no.  If and when I add support for CIP branches, I
+expect -rt branches to be supportable in the same way.
 
-I might not be able to attend this meeting since I'm OOO today, Gavin will chair today's meeting.
+Ben.
 
-Best regards,
-
-SZ Lin, Moxa.
+-- 
+Ben Hutchings, Software Developer                ?        Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
