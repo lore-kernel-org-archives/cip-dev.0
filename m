@@ -1,51 +1,39 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 21 Mar 2019 16:22:09 +0000
-Subject: [cip-dev] [PATCH 00/10] Add basic RZ/G2E SoC/EK874 support
-Message-ID: <1553185339-26890-1-git-send-email-biju.das@bp.renesas.com>
+Date: Thu, 21 Mar 2019 16:22:10 +0000
+Subject: [cip-dev] [PATCH 01/10] dt-bindings: arm: Add si-linux cat87[45]
+	boards
+In-Reply-To: <1553185339-26890-1-git-send-email-biju.das@bp.renesas.com>
+References: <1553185339-26890-1-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1553185339-26890-2-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This patch series aims to add support for RZ/G2E SoC and EK874
-platform.
+This patch adds board cat874 (powered by the RZ/G2E) and board
+cat875 (that sits on top of cat874). Both boards are made by
+Silicon Linux.
 
-The EK874 is an evaluation kit for the RZ/G2E SoC (a.k.a. r8a774c0)
-from Silicon Linux Corporation. It is made of two boards: cat874
-(the main board) and cat875 (the sub board).
+backported from commit 1a69a73c9b006ae72 ("dt-bindings: arm: renesas:
+Add si-linux cat87[45] boards")
 
-This series adds the device trees to describe the SoC/HW configuration
-of the R8A774C0 SoC/EK874 platform, with some basic support.
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/arm/shmobile.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-This patch series is depend on the below patch series
-https://patchwork.kernel.org/project/cip-dev/list/?series=94939
-
-
-Biju Das (3):
-  dt-bindings: arm: Add si-linux cat87[45] boards
-  arm64: dts: renesas: Add Si-Linux CAT874 board support
-  arm64: dts: renesas: Add Si-Linux EK874 board support
-
-Fabrizio Castro (7):
-  arm64: dts: renesas: Initial device tree for r8a774c0
-  dmaengine: rcar-dmac: Document R8A774A1 bindings
-  dmaengine: rcar-dmac: Document R8A774C0 bindings
-  arm64: dts: renesas: r8a774c0: Add SYS-DMAC controller nodes
-  dt-bindings: serial: sh-sci: Document r8a774a1 bindings
-  dt-bindings: serial: sh-sci: Document r8a774c0 bindings
-  arm64: dts: renesas: r8a774c0: Add SCIF and HSCIF nodes
-
- Documentation/devicetree/bindings/arm/shmobile.txt |   4 +
- .../devicetree/bindings/dma/renesas,rcar-dmac.txt  |   4 +-
- .../bindings/serial/renesas,sci-serial.txt         |  16 +-
- arch/arm64/boot/dts/renesas/Makefile               |   1 +
- arch/arm64/boot/dts/renesas/cat875.dtsi            |  10 +
- arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts    |  37 ++
- arch/arm64/boot/dts/renesas/r8a774c0-ek874.dts     |  14 +
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi          | 459 +++++++++++++++++++++
- 8 files changed, 538 insertions(+), 7 deletions(-)
- create mode 100644 arch/arm64/boot/dts/renesas/cat875.dtsi
- create mode 100644 arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
- create mode 100644 arch/arm64/boot/dts/renesas/r8a774c0-ek874.dts
- create mode 100644 arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 7b1e257..1556460 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -131,6 +131,10 @@ Boards:
+     compatible = "renesas,salvator-xs", "renesas,r8a7796"
+   - Salvator-XS (Salvator-X 2nd version, RTP0RC77965SIPB012S)
+     compatible = "renesas,salvator-xs", "renesas,r8a77965"
++  - Silicon Linux RZ/G2E 96board platform (CAT874)
++    compatible = "si-linux,cat874", "renesas,r8a774c0"
++  - Silicon Linux sub board for CAT874 (CAT875)
++    compatible = "si-linux,cat875", "si-linux,cat874", "renesas,r8a774c0"
+   - SILK (RTP0RC7794LCB00011S)
+     compatible = "renesas,silk", "renesas,r8a7794"
+   - SK-RZG1E (YR8A77450S000BE)
 -- 
 2.7.4
