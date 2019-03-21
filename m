@@ -1,51 +1,40 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 21 Mar 2019 14:24:03 +0000
-Subject: [cip-dev] [PATCH 05/18] soc: renesas: Identify RZ/G2E
+Date: Thu, 21 Mar 2019 14:24:04 +0000
+Subject: [cip-dev] [PATCH 06/18] arm64: Add Renesas R8A774A1 support
 In-Reply-To: <1553178256-6293-1-git-send-email-biju.das@bp.renesas.com>
 References: <1553178256-6293-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1553178256-6293-6-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1553178256-6293-7-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Add configuration option for the RZ/G2M (R8A774A1) SoC.
 
-Add support for identifying the RZ/G2E (r8a774c0) SoC.
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 2bab3d8012ebc463b899ee2c9292bd9282d75257)
+(cherry picked from commit 5afa67792d0a25d5642cd6929ed0f92b5e7f5076)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/soc/renesas/renesas-soc.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm64/Kconfig.platforms | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
-index 5691618..d9b8485 100644
---- a/drivers/soc/renesas/renesas-soc.c
-+++ b/drivers/soc/renesas/renesas-soc.c
-@@ -115,6 +115,11 @@ static const struct renesas_soc soc_rz_g2m __initconst __maybe_unused = {
- 	.id	= 0x52,
- };
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 393d2b5..531ea50 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -186,6 +186,12 @@ config ARCH_RENESAS
+ 	help
+ 	  This enables support for the ARMv8 based Renesas SoCs.
  
-+static const struct renesas_soc soc_rz_g2e __initconst __maybe_unused = {
-+	.family	= &fam_rzg2,
-+	.id	= 0x57,
-+};
++config ARCH_R8A774A1
++	bool "Renesas RZ/G2M SoC Platform"
++	depends on ARCH_RENESAS
++	help
++	  This enables support for the Renesas RZ/G2M SoC.
 +
- static const struct renesas_soc soc_rcar_m1a __initconst __maybe_unused = {
- 	.family	= &fam_rcar_gen1,
- };
-@@ -218,6 +223,9 @@ static const struct of_device_id renesas_socs[] __initconst = {
- #ifdef CONFIG_ARCH_R8A774A1
- 	{ .compatible = "renesas,r8a774a1",	.data = &soc_rz_g2m },
- #endif
-+#ifdef CONFIG_ARCH_R8A774C0
-+	{ .compatible = "renesas,r8a774c0",	.data = &soc_rz_g2e },
-+#endif
- #ifdef CONFIG_ARCH_R8A7778
- 	{ .compatible = "renesas,r8a7778",	.data = &soc_rcar_m1a },
- #endif
+ config ARCH_R8A7795
+ 	bool "Renesas R-Car H3 SoC Platform"
+ 	depends on ARCH_RENESAS
 -- 
 2.7.4
