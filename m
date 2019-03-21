@@ -1,42 +1,33 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 21 Mar 2019 14:24:05 +0000
-Subject: [cip-dev] [PATCH 07/18] arm64: Add Renesas R8A774C0 support
+Date: Thu, 21 Mar 2019 14:24:06 +0000
+Subject: [cip-dev] [PATCH 08/18] arm64: defconfig: enable R8A774A1 SoC
 In-Reply-To: <1553178256-6293-1-git-send-email-biju.das@bp.renesas.com>
 References: <1553178256-6293-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1553178256-6293-8-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1553178256-6293-9-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Enable the Renesas RZ/G2M (R8A774A1) SoC in the ARM64 defconfig.
 
-Add configuration option for the RZ/G2E (R8A774C0) SoC.
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 692dce77dfb71b5eaf896d3cdc7ef72f70631b14)
+(cherry picked from commit 48acc8440a78596384881ba773e47d55c4de2ebc)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- arch/arm64/Kconfig.platforms | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 531ea50..71ae51d 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -192,6 +192,12 @@ config ARCH_R8A774A1
- 	help
- 	  This enables support for the Renesas RZ/G2M SoC.
- 
-+config ARCH_R8A774C0
-+	bool "Renesas RZ/G2E SoC Platform"
-+	depends on ARCH_RENESAS
-+	help
-+	  This enables support for the Renesas RZ/G2E SoC.
-+
- config ARCH_R8A7795
- 	bool "Renesas R-Car H3 SoC Platform"
- 	depends on ARCH_RENESAS
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index db8d364..3f1868c 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -50,6 +50,7 @@ CONFIG_ARCH_ROCKCHIP=y
+ CONFIG_ARCH_SEATTLE=y
+ CONFIG_ARCH_SYNQUACER=y
+ CONFIG_ARCH_RENESAS=y
++CONFIG_ARCH_R8A774A1=y
+ CONFIG_ARCH_R8A7795=y
+ CONFIG_ARCH_R8A7796=y
+ CONFIG_ARCH_R8A77965=y
 -- 
 2.7.4
