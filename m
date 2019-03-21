@@ -1,36 +1,62 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 21 Mar 2019 14:24:07 +0000
-Subject: [cip-dev] [PATCH 09/18] arm64: defconfig: enable R8A774C0 SoC
+Date: Thu, 21 Mar 2019 14:24:08 +0000
+Subject: [cip-dev] [PATCH 10/18] dt-bindings: power: Add r8a774a1 SYSC power
+	domain definitions
 In-Reply-To: <1553178256-6293-1-git-send-email-biju.das@bp.renesas.com>
 References: <1553178256-6293-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1553178256-6293-10-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1553178256-6293-11-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+This patch adds power domain indices for RZ/G2M.
 
-Enable the Renesas RZ/G2E (R8A774C0) SoC in the ARM64 defconfig.
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 76506880eac66cb1f189a993c39ad0fcba723b99)
+(cherry picked from commit 066f7e63b9ed0badffc32bcf135e59658b423999)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ include/dt-bindings/power/r8a774a1-sysc.h | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+ create mode 100644 include/dt-bindings/power/r8a774a1-sysc.h
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 3f1868c..e6ec985 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -51,6 +51,7 @@ CONFIG_ARCH_SEATTLE=y
- CONFIG_ARCH_SYNQUACER=y
- CONFIG_ARCH_RENESAS=y
- CONFIG_ARCH_R8A774A1=y
-+CONFIG_ARCH_R8A774C0=y
- CONFIG_ARCH_R8A7795=y
- CONFIG_ARCH_R8A7796=y
- CONFIG_ARCH_R8A77965=y
+diff --git a/include/dt-bindings/power/r8a774a1-sysc.h b/include/dt-bindings/power/r8a774a1-sysc.h
+new file mode 100644
+index 0000000..580f431
+--- /dev/null
++++ b/include/dt-bindings/power/r8a774a1-sysc.h
+@@ -0,0 +1,31 @@
++/* SPDX-License-Identifier: GPL-2.0
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ */
++#ifndef __DT_BINDINGS_POWER_R8A774A1_SYSC_H__
++#define __DT_BINDINGS_POWER_R8A774A1_SYSC_H__
++
++/*
++ * These power domain indices match the numbers of the interrupt bits
++ * representing the power areas in the various Interrupt Registers
++ * (e.g. SYSCISR, Interrupt Status Register)
++ */
++
++#define R8A774A1_PD_CA57_CPU0		 0
++#define R8A774A1_PD_CA57_CPU1		 1
++#define R8A774A1_PD_CA53_CPU0		 5
++#define R8A774A1_PD_CA53_CPU1		 6
++#define R8A774A1_PD_CA53_CPU2		 7
++#define R8A774A1_PD_CA53_CPU3		 8
++#define R8A774A1_PD_CA57_SCU		12
++#define R8A774A1_PD_A3VC		14
++#define R8A774A1_PD_3DG_A		17
++#define R8A774A1_PD_3DG_B		18
++#define R8A774A1_PD_CA53_SCU		21
++#define R8A774A1_PD_A2VC0		25
++#define R8A774A1_PD_A2VC1		26
++
++/* Always-on power area */
++#define R8A774A1_PD_ALWAYS_ON		32
++
++#endif /* __DT_BINDINGS_POWER_R8A774A1_SYSC_H__ */
 -- 
 2.7.4
