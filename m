@@ -1,60 +1,38 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 21 Mar 2019 14:23:58 +0000
-Subject: [cip-dev] [PATCH 00/18] Add RZ/G2[ME] SoC Identification/SYSC/RST
-	support
-Message-ID: <1553178256-6293-1-git-send-email-biju.das@bp.renesas.com>
+Date: Thu, 21 Mar 2019 14:23:59 +0000
+Subject: [cip-dev] [PATCH 01/18] dt-bindings: arm: Document RZ/G2M SoC DT
+	bindings
+In-Reply-To: <1553178256-6293-1-git-send-email-biju.das@bp.renesas.com>
+References: <1553178256-6293-1-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1553178256-6293-2-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This patch series aims to add SoC identification/SYSC/RST support for
-RZ/G2[ME] SoCs.
+Add device tree bindings documentation for Renesas RZ/G2M (r8a774a1) SoC.
 
-This patch series is based on linux-4.19.y-cip and all the patches
-in this series are cherry-picked from linux rc tree.
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+(cherry picked from commit 01588646dbce3bf9a79a190f3949677067cc1e20)
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-
-Biju Das (8):
-  dt-bindings: arm: Document RZ/G2M SoC DT bindings
-  soc: renesas: Identify RZ/G2M
-  arm64: Add Renesas R8A774A1 support
-  arm64: defconfig: enable R8A774A1 SoC
-  dt-bindings: power: Add r8a774a1 SYSC power domain definitions
-  soc: renesas: rcar-sysc: Add r8a774a1 support
-  soc: renesas: r8a774c0-sysc: Fix initialization order of 3DG-{A,B}
-  soc: renesas: rcar-rst: Add support for RZ/G2M
-
-Fabrizio Castro (10):
-  dt-bindings: arm: Document RZ/G2E SoC DT bindings
-  dt-bindings: arm: Fix RZ/G2E part number
-  soc: renesas: Identify RZ/G2E
-  arm64: Add Renesas R8A774C0 support
-  arm64: defconfig: enable R8A774C0 SoC
-  dt-bindings: power: Add r8a774c0 SYSC power domain definitions
-  dt-bindings: power: rcar-sysc: Document r8a774c0 sysc
-  soc: renesas: rcar-sysc: Add r8a774c0 support
-  dt-bindings: reset: rcar-rst: Document r8a774c0 rst
-  soc: renesas: rcar-rst: Add support for RZ/G2E
-
- Documentation/devicetree/bindings/arm/shmobile.txt |  4 ++
- .../bindings/power/renesas,rcar-sysc.txt           |  2 +
- .../devicetree/bindings/reset/renesas,rst.txt      |  2 +
- arch/arm64/Kconfig.platforms                       | 12 +++++
- arch/arm64/configs/defconfig                       |  2 +
- drivers/soc/renesas/Kconfig                        | 16 +++++--
- drivers/soc/renesas/Makefile                       |  2 +
- drivers/soc/renesas/r8a774a1-sysc.c                | 45 ++++++++++++++++++
- drivers/soc/renesas/r8a774c0-sysc.c                | 53 ++++++++++++++++++++++
- drivers/soc/renesas/rcar-rst.c                     |  5 +-
- drivers/soc/renesas/rcar-sysc.c                    |  6 +++
- drivers/soc/renesas/rcar-sysc.h                    |  2 +
- drivers/soc/renesas/renesas-soc.c                  | 35 +++++++++++---
- include/dt-bindings/power/r8a774a1-sysc.h          | 31 +++++++++++++
- include/dt-bindings/power/r8a774c0-sysc.h          | 25 ++++++++++
- 15 files changed, 231 insertions(+), 11 deletions(-)
- create mode 100644 drivers/soc/renesas/r8a774a1-sysc.c
- create mode 100644 drivers/soc/renesas/r8a774c0-sysc.c
- create mode 100644 include/dt-bindings/power/r8a774a1-sysc.h
- create mode 100644 include/dt-bindings/power/r8a774c0-sysc.h
-
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 89b4a38..8acd3cd 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -23,6 +23,8 @@ SoCs:
+     compatible = "renesas,r8a7745"
+   - RZ/G1C (R8A77470)
+     compatible = "renesas,r8a77470"
++  - RZ/G2M (R8A774A1)
++    compatible = "renesas,r8a774a1"
+   - R-Car M1A (R8A77781)
+     compatible = "renesas,r8a7778"
+   - R-Car H1 (R8A77790)
 -- 
 2.7.4
