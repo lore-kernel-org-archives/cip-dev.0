@@ -1,38 +1,99 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 21 Mar 2019 14:24:01 +0000
-Subject: [cip-dev] [PATCH 03/18] dt-bindings: arm: Fix RZ/G2E part number
+Date: Thu, 21 Mar 2019 14:24:02 +0000
+Subject: [cip-dev] [PATCH 04/18] soc: renesas: Identify RZ/G2M
 In-Reply-To: <1553178256-6293-1-git-send-email-biju.das@bp.renesas.com>
 References: <1553178256-6293-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1553178256-6293-4-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1553178256-6293-5-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+This patch adds support for identifying the RZ/G2M (r8a774a1) SoC.
+It corrects the original RZ/G SoC family name to RZ/G1 and also
+adds support for the new RZ/G2 SoC family.
 
-Fix RZ/G2E part number from its description.
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 058ad7b6aa5204d3af878415c7b946748ab34f7a)
+(cherry picked from commit 2a4056a759e26745f3a19431f5428c581fd8f347)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/soc/renesas/renesas-soc.c | 27 ++++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 9d74d81..7b1e257 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -25,7 +25,7 @@ SoCs:
-     compatible = "renesas,r8a77470"
-   - RZ/G2M (R8A774A1)
-     compatible = "renesas,r8a774a1"
--  - RZ/G2E (RA8774C0)
-+  - RZ/G2E (R8A774C0)
-     compatible = "renesas,r8a774c0"
-   - R-Car M1A (R8A77781)
-     compatible = "renesas,r8a7778"
+diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
+index d44d0e6..5691618 100644
+--- a/drivers/soc/renesas/renesas-soc.c
++++ b/drivers/soc/renesas/renesas-soc.c
+@@ -50,11 +50,16 @@ static const struct renesas_family fam_rza __initconst __maybe_unused = {
+ 	.name	= "RZ/A",
+ };
+ 
+-static const struct renesas_family fam_rzg __initconst __maybe_unused = {
+-	.name	= "RZ/G",
++static const struct renesas_family fam_rzg1 __initconst __maybe_unused = {
++	.name	= "RZ/G1",
+ 	.reg	= 0xff000044,		/* PRR (Product Register) */
+ };
+ 
++static const struct renesas_family fam_rzg2 __initconst __maybe_unused = {
++	.name	= "RZ/G2",
++	.reg	= 0xfff00044,		/* PRR (Product Register) */
++};
++
+ static const struct renesas_family fam_shmobile __initconst __maybe_unused = {
+ 	.name	= "SH-Mobile",
+ 	.reg	= 0xe600101c,		/* CCCR (Common Chip Code Register) */
+@@ -81,30 +86,35 @@ static const struct renesas_soc soc_rmobile_a1 __initconst __maybe_unused = {
+ };
+ 
+ static const struct renesas_soc soc_rz_g1h __initconst __maybe_unused = {
+-	.family	= &fam_rzg,
++	.family	= &fam_rzg1,
+ 	.id	= 0x45,
+ };
+ 
+ static const struct renesas_soc soc_rz_g1m __initconst __maybe_unused = {
+-	.family	= &fam_rzg,
++	.family	= &fam_rzg1,
+ 	.id	= 0x47,
+ };
+ 
+ static const struct renesas_soc soc_rz_g1n __initconst __maybe_unused = {
+-	.family	= &fam_rzg,
++	.family	= &fam_rzg1,
+ 	.id	= 0x4b,
+ };
+ 
+ static const struct renesas_soc soc_rz_g1e __initconst __maybe_unused = {
+-	.family	= &fam_rzg,
++	.family	= &fam_rzg1,
+ 	.id	= 0x4c,
+ };
+ 
+ static const struct renesas_soc soc_rz_g1c __initconst __maybe_unused = {
+-	.family	= &fam_rzg,
++	.family	= &fam_rzg1,
+ 	.id	= 0x53,
+ };
+ 
++static const struct renesas_soc soc_rz_g2m __initconst __maybe_unused = {
++	.family	= &fam_rzg2,
++	.id	= 0x52,
++};
++
+ static const struct renesas_soc soc_rcar_m1a __initconst __maybe_unused = {
+ 	.family	= &fam_rcar_gen1,
+ };
+@@ -205,6 +215,9 @@ static const struct of_device_id renesas_socs[] __initconst = {
+ #ifdef CONFIG_ARCH_R8A77470
+ 	{ .compatible = "renesas,r8a77470",	.data = &soc_rz_g1c },
+ #endif
++#ifdef CONFIG_ARCH_R8A774A1
++	{ .compatible = "renesas,r8a774a1",	.data = &soc_rz_g2m },
++#endif
+ #ifdef CONFIG_ARCH_R8A7778
+ 	{ .compatible = "renesas,r8a7778",	.data = &soc_rcar_m1a },
+ #endif
 -- 
 2.7.4
