@@ -1,63 +1,42 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Fri, 22 Mar 2019 09:56:19 +0000
-Subject: [cip-dev] [PATCH 3/5] arm64: dts: renesas: cat875: Add ethernet
-	support
+Date: Fri, 22 Mar 2019 09:56:20 +0000
+Subject: [cip-dev] [PATCH 4/5] dt-bindings: watchdog: renesas-wdt: Document
+	r8a774c0 support
 In-Reply-To: <1553248581-64466-1-git-send-email-biju.das@bp.renesas.com>
 References: <1553248581-64466-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1553248581-64466-4-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1553248581-64466-5-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This patch adds ethernet support to the sub board.
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+RZ/G2E (R8A774C0) watchdog implementation is compatible with R-Car
+Gen3, therefore add relevant documentation.
+
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit 6b170cd3ed02949f33fb8b6898b3b31ae5e87716)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+(cherry picked from commit 6797f292e4f59211c1763de87a69c9a55fd9caef)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/cat875.dtsi | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ Documentation/devicetree/bindings/watchdog/renesas-wdt.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/cat875.dtsi b/arch/arm64/boot/dts/renesas/cat875.dtsi
-index a41d0d8..805ffa7 100644
---- a/arch/arm64/boot/dts/renesas/cat875.dtsi
-+++ b/arch/arm64/boot/dts/renesas/cat875.dtsi
-@@ -7,4 +7,34 @@
- 
- / {
- 	model = "Silicon Linux sub board for CAT874 (CAT875)";
-+
-+	aliases {
-+		ethernet0 = &avb;
-+	};
-+};
-+
-+&avb {
-+	pinctrl-0 = <&avb_pins>;
-+	pinctrl-names = "default";
-+	renesas,no-ether-link;
-+	phy-handle = <&phy0>;
-+	phy-mode = "rgmii";
-+	status = "okay";
-+
-+	phy0: ethernet-phy at 0 {
-+		rxc-skew-ps = <1500>;
-+		reg = <0>;
-+		interrupt-parent = <&gpio2>;
-+		interrupts = <21 IRQ_TYPE_LEVEL_LOW>;
-+		reset-gpios = <&gpio1 20 GPIO_ACTIVE_LOW>;
-+	};
-+};
-+
-+&pfc {
-+	avb_pins: avb {
-+		mux {
-+			groups = "avb_mii";
-+			function = "avb";
-+		};
-+	};
- };
+diff --git a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+index 9407212..2c0b03a 100644
+--- a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
++++ b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+@@ -8,6 +8,7 @@ Required properties:
+ 		 - "renesas,r8a7743-wdt" (RZ/G1M)
+ 		 - "renesas,r8a7745-wdt" (RZ/G1E)
+ 		 - "renesas,r8a774a1-wdt" (RZ/G2M)
++		 - "renesas,r8a774c0-wdt" (RZ/G2E)
+ 	         - "renesas,r8a7790-wdt" (R-Car H2)
+ 	         - "renesas,r8a7791-wdt" (R-Car M2-W)
+ 	         - "renesas,r8a7792-wdt" (R-Car V2H)
 -- 
 2.7.4
