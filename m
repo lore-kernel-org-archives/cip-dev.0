@@ -1,39 +1,72 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Fri, 22 Mar 2019 09:40:08 +0000
-Subject: [cip-dev] [PATCH 09/11] mmc: renesas_sdhi_internal_dmac: Whitelist
-	r8a774c0
+Date: Fri, 22 Mar 2019 09:40:09 +0000
+Subject: [cip-dev] [PATCH 10/11] arm64: dts: renesas: r8a774c0: Add SDHI
+	nodes
 In-Reply-To: <1553247610-33056-1-git-send-email-biju.das@bp.renesas.com>
 References: <1553247610-33056-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1553247610-33056-10-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1553247610-33056-11-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-We need r8a774c0 to be whitelisted for SDHI to work on the RZ/G2E,
-but we don't care about the revision of the SoC, so just whitelist
-the generic part number.
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Add SDHI nodes to the DT of the r8a774c0 SoC.
+
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-(cherry picked from commit ca804a5615a7c282dfb402805e657e735e1d864a)
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+(cherry picked from commit 77223211f44db5b35541f4cc1fe48cdee21a85b2)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 36 +++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index f4aefa8..0129837 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -299,6 +299,7 @@ static const struct soc_device_attribute gen3_soc_whitelist[] = {
- 	  .data = (void *)BIT(SDHI_INTERNAL_DMAC_ONE_RX_ONLY) },
- 	/* generic ones */
- 	{ .soc_id = "r8a774a1" },
-+	{ .soc_id = "r8a774c0" },
- 	{ .soc_id = "r8a7795" },
- 	{ .soc_id = "r8a7796" },
- 	{ .soc_id = "r8a77965" },
+diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
+index 97ff545..e354b8011 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
+@@ -548,6 +548,42 @@
+ 			status = "disabled";
+ 		};
+ 
++		sdhi0: sd at ee100000 {
++			compatible = "renesas,sdhi-r8a774c0",
++				     "renesas,rcar-gen3-sdhi";
++			reg = <0 0xee100000 0 0x2000>;
++			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 314>;
++			max-frequency = <200000000>;
++			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
++			resets = <&cpg 314>;
++			status = "disabled";
++		};
++
++		sdhi1: sd at ee120000 {
++			compatible = "renesas,sdhi-r8a774c0",
++				     "renesas,rcar-gen3-sdhi";
++			reg = <0 0xee120000 0 0x2000>;
++			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 313>;
++			max-frequency = <200000000>;
++			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
++			resets = <&cpg 313>;
++			status = "disabled";
++		};
++
++		sdhi3: sd at ee160000 {
++			compatible = "renesas,sdhi-r8a774c0",
++				     "renesas,rcar-gen3-sdhi";
++			reg = <0 0xee160000 0 0x2000>;
++			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 311>;
++			max-frequency = <200000000>;
++			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
++			resets = <&cpg 311>;
++			status = "disabled";
++		};
++
+ 		gic: interrupt-controller at f1010000 {
+ 			compatible = "arm,gic-400";
+ 			#interrupt-cells = <3>;
 -- 
 2.7.4
