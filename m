@@ -1,49 +1,41 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Fri, 22 Mar 2019 09:40:04 +0000
-Subject: [cip-dev] [PATCH 05/11] mmc: renesas_sdhi: Add r8a774a1 support
+Date: Fri, 22 Mar 2019 09:40:05 +0000
+Subject: [cip-dev] [PATCH 06/11] mmc: renesas_sdhi_internal_dmac: Whitelist
+	r8a774a1
 In-Reply-To: <1553247610-33056-1-git-send-email-biju.das@bp.renesas.com>
 References: <1553247610-33056-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1553247610-33056-6-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1553247610-33056-7-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Document RZ/G2M (R8A774A1) SoC bindings.
+We need r8a774a1 to be whitelisted for SDHI to work on the RZ/G2M,
+but we don't care about the revision of the SoC, so just whitelist
+the generic part number.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-(cherry picked from commit 722c68a52b486b470b8da89956cde99be5d413ac)
+(cherry picked from commit 2e1501a8bdd49eaa0e967c0ad00e9dcd68d0b30f)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-index c434200..8315fb5 100644
---- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-+++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-@@ -17,6 +17,7 @@ Required properties:
- 		"renesas,sdhi-r8a7740" - SDHI IP on R8A7740 SoC
- 		"renesas,sdhi-r8a7743" - SDHI IP on R8A7743 SoC
- 		"renesas,sdhi-r8a7745" - SDHI IP on R8A7745 SoC
-+		"renesas,sdhi-r8a774a1" - SDHI IP on R8A774A1 SoC
- 		"renesas,sdhi-r8a7778" - SDHI IP on R8A7778 SoC
- 		"renesas,sdhi-r8a7779" - SDHI IP on R8A7779 SoC
- 		"renesas,sdhi-r8a7790" - SDHI IP on R8A7790 SoC
-@@ -34,7 +35,8 @@ Required properties:
- 		"renesas,rcar-gen1-sdhi" - a generic R-Car Gen1 SDHI controller
- 		"renesas,rcar-gen2-sdhi" - a generic R-Car Gen2 or RZ/G1
- 					   SDHI controller
--		"renesas,rcar-gen3-sdhi" - a generic R-Car Gen3 SDHI controller
-+		"renesas,rcar-gen3-sdhi" - a generic R-Car Gen3 or RZ/G2
-+					   SDHI controller
- 
- 
- 		When compatible with the generic version, nodes must list
+diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+index ca0b439..f4aefa8 100644
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -298,6 +298,7 @@ static const struct soc_device_attribute gen3_soc_whitelist[] = {
+ 	{ .soc_id = "r8a7796", .revision = "ES1.0",
+ 	  .data = (void *)BIT(SDHI_INTERNAL_DMAC_ONE_RX_ONLY) },
+ 	/* generic ones */
++	{ .soc_id = "r8a774a1" },
+ 	{ .soc_id = "r8a7795" },
+ 	{ .soc_id = "r8a7796" },
+ 	{ .soc_id = "r8a77965" },
 -- 
 2.7.4
