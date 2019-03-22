@@ -1,441 +1,193 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Fri, 22 Mar 2019 10:28:48 +0000
-Subject: [cip-dev] [PATCH 4/4] pinctrl: sh-pfc: r8a77990: Add HSCIF pins,
-	groups, and functions
-In-Reply-To: <1553250528-42395-1-git-send-email-biju.das@bp.renesas.com>
-References: <1553250528-42395-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1553250528-42395-5-git-send-email-biju.das@bp.renesas.com>
+From: christian.storm@siemens.com (Christian Storm)
+Date: Fri, 22 Mar 2019 13:37:11 +0100
+Subject: [cip-dev] CIP IRC weekly meeting today
+In-Reply-To: <TY2PR01MB5146E2F09AB9D220F4E26C3CD9430@TY2PR01MB5146.jpnprd01.prod.outlook.com>
+Message-ID: <20190322123711.lc44vtkgk6bbgi6y@MD1ZFJVC.ad001.siemens.net>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Hi Suzuki,
 
-This patch adds HSCIF{0,1,2,3,4} pins, groups and functions to
-the R8A77990 SoC.
+> > > I mounted rootfs with read-only.
+> >
+> > OK, from the diffs it seems that temporary storage directories such as
+> > /run and /var/tmp are not separate mount points from your roots?
+> I built the rootfs image by poky with "read-only-rootfs" option like following URL.
+> <https://www.yoctoproject.org/docs/current/mega-manual/mega-manual.html#creating-the-root-filesystem>
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-(cherry picked from commit 5160063d567283cff1b85fdc1bcf843295b39eca)
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 370 +++++++++++++++++++++++++++++++++-
- 1 file changed, 368 insertions(+), 2 deletions(-)
+Ah, OK, didn't try that myself yet.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-index 5d6a13f..6868753 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-@@ -1626,6 +1626,290 @@ static const unsigned int du_disp_mux[] = {
- 	DU_DISP_MARK,
- };
- 
-+/* - HSCIF0 --------------------------------------------------*/
-+static const unsigned int hscif0_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 8), RCAR_GP_PIN(5, 9),
-+};
-+
-+static const unsigned int hscif0_data_a_mux[] = {
-+	HRX0_A_MARK, HTX0_A_MARK,
-+};
-+
-+static const unsigned int hscif0_clk_a_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(5, 7),
-+};
-+
-+static const unsigned int hscif0_clk_a_mux[] = {
-+	HSCK0_A_MARK,
-+};
-+
-+static const unsigned int hscif0_ctrl_a_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(5, 15), RCAR_GP_PIN(5, 14),
-+};
-+
-+static const unsigned int hscif0_ctrl_a_mux[] = {
-+	HRTS0_N_A_MARK, HCTS0_N_A_MARK,
-+};
-+
-+static const unsigned int hscif0_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(6, 11), RCAR_GP_PIN(6, 12),
-+};
-+
-+static const unsigned int hscif0_data_b_mux[] = {
-+	HRX0_B_MARK, HTX0_B_MARK,
-+};
-+
-+static const unsigned int hscif0_clk_b_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(6, 13),
-+};
-+
-+static const unsigned int hscif0_clk_b_mux[] = {
-+	HSCK0_B_MARK,
-+};
-+
-+/* - HSCIF1 ------------------------------------------------- */
-+static const unsigned int hscif1_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 1), RCAR_GP_PIN(5, 2),
-+};
-+
-+static const unsigned int hscif1_data_a_mux[] = {
-+	HRX1_A_MARK, HTX1_A_MARK,
-+};
-+
-+static const unsigned int hscif1_clk_a_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(5, 0),
-+};
-+
-+static const unsigned int hscif1_clk_a_mux[] = {
-+	HSCK1_A_MARK,
-+};
-+
-+static const unsigned int hscif1_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(3, 1), RCAR_GP_PIN(3, 2),
-+};
-+
-+static const unsigned int hscif1_data_b_mux[] = {
-+	HRX1_B_MARK, HTX1_B_MARK,
-+};
-+
-+static const unsigned int hscif1_clk_b_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(3, 0),
-+};
-+
-+static const unsigned int hscif1_clk_b_mux[] = {
-+	HSCK1_B_MARK,
-+};
-+
-+static const unsigned int hscif1_ctrl_b_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(3, 4), RCAR_GP_PIN(3, 3),
-+};
-+
-+static const unsigned int hscif1_ctrl_b_mux[] = {
-+	HRTS1_N_B_MARK, HCTS1_N_B_MARK,
-+};
-+
-+/* - HSCIF2 ------------------------------------------------- */
-+static const unsigned int hscif2_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 14), RCAR_GP_PIN(5, 15),
-+};
-+
-+static const unsigned int hscif2_data_a_mux[] = {
-+	HRX2_A_MARK, HTX2_A_MARK,
-+};
-+
-+static const unsigned int hscif2_clk_a_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(6, 14),
-+};
-+
-+static const unsigned int hscif2_clk_a_mux[] = {
-+	HSCK2_A_MARK,
-+};
-+
-+static const unsigned int hscif2_ctrl_a_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(6, 16), RCAR_GP_PIN(6, 15),
-+};
-+
-+static const unsigned int hscif2_ctrl_a_mux[] = {
-+	HRTS2_N_A_MARK, HCTS2_N_A_MARK,
-+};
-+
-+static const unsigned int hscif2_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 5), RCAR_GP_PIN(5, 6),
-+};
-+
-+static const unsigned int hscif2_data_b_mux[] = {
-+	HRX2_B_MARK, HTX2_B_MARK,
-+};
-+
-+/* - HSCIF3 ------------------------------------------------*/
-+static const unsigned int hscif3_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 15),
-+};
-+
-+static const unsigned int hscif3_data_a_mux[] = {
-+	HRX3_A_MARK, HTX3_A_MARK,
-+};
-+
-+static const unsigned int hscif3_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(0, 5), RCAR_GP_PIN(0, 6),
-+};
-+
-+static const unsigned int hscif3_data_b_mux[] = {
-+	HRX3_B_MARK, HTX3_B_MARK,
-+};
-+
-+static const unsigned int hscif3_clk_b_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(0, 4),
-+};
-+
-+static const unsigned int hscif3_clk_b_mux[] = {
-+	HSCK3_B_MARK,
-+};
-+
-+static const unsigned int hscif3_data_c_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(2, 10), RCAR_GP_PIN(2, 9),
-+};
-+
-+static const unsigned int hscif3_data_c_mux[] = {
-+	HRX3_C_MARK, HTX3_C_MARK,
-+};
-+
-+static const unsigned int hscif3_clk_c_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(2, 11),
-+};
-+
-+static const unsigned int hscif3_clk_c_mux[] = {
-+	HSCK3_C_MARK,
-+};
-+
-+static const unsigned int hscif3_ctrl_c_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(2, 13), RCAR_GP_PIN(2, 12),
-+};
-+
-+static const unsigned int hscif3_ctrl_c_mux[] = {
-+	HRTS3_N_C_MARK, HCTS3_N_C_MARK,
-+};
-+
-+static const unsigned int hscif3_data_d_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(1, 0), RCAR_GP_PIN(1, 3),
-+};
-+
-+static const unsigned int hscif3_data_d_mux[] = {
-+	HRX3_D_MARK, HTX3_D_MARK,
-+};
-+
-+static const unsigned int hscif3_data_e_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(0, 9), RCAR_GP_PIN(0, 10),
-+};
-+
-+static const unsigned int hscif3_data_e_mux[] = {
-+	HRX3_E_MARK, HTX3_E_MARK,
-+};
-+
-+static const unsigned int hscif3_ctrl_e_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(0, 11), RCAR_GP_PIN(0, 8),
-+};
-+
-+static const unsigned int hscif3_ctrl_e_mux[] = {
-+	HRTS3_N_E_MARK, HCTS3_N_E_MARK,
-+};
-+
-+/* - HSCIF4 -------------------------------------------------- */
-+static const unsigned int hscif4_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(2, 4), RCAR_GP_PIN(2, 3),
-+};
-+
-+static const unsigned int hscif4_data_a_mux[] = {
-+	HRX4_A_MARK, HTX4_A_MARK,
-+};
-+
-+static const unsigned int hscif4_clk_a_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(2, 0),
-+};
-+
-+static const unsigned int hscif4_clk_a_mux[] = {
-+	HSCK4_A_MARK,
-+};
-+
-+static const unsigned int hscif4_ctrl_a_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(2, 2), RCAR_GP_PIN(2, 1),
-+};
-+
-+static const unsigned int hscif4_ctrl_a_mux[] = {
-+	HRTS4_N_A_MARK, HCTS4_N_A_MARK,
-+};
-+
-+static const unsigned int hscif4_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(2, 8), RCAR_GP_PIN(2, 7),
-+};
-+
-+static const unsigned int hscif4_data_b_mux[] = {
-+	HRX4_B_MARK, HTX4_B_MARK,
-+};
-+
-+static const unsigned int hscif4_clk_b_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(2, 6),
-+};
-+
-+static const unsigned int hscif4_clk_b_mux[] = {
-+	HSCK4_B_MARK,
-+};
-+
-+static const unsigned int hscif4_data_c_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(1, 8), RCAR_GP_PIN(1, 11),
-+};
-+
-+static const unsigned int hscif4_data_c_mux[] = {
-+	HRX4_C_MARK, HTX4_C_MARK,
-+};
-+
-+static const unsigned int hscif4_data_d_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(1, 13), RCAR_GP_PIN(1, 14),
-+};
-+
-+static const unsigned int hscif4_data_d_mux[] = {
-+	HRX4_D_MARK, HTX4_D_MARK,
-+};
-+
-+static const unsigned int hscif4_data_e_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(1, 18), RCAR_GP_PIN(1, 19),
-+};
-+
-+static const unsigned int hscif4_data_e_mux[] = {
-+	HRX4_E_MARK, HTX4_E_MARK,
-+};
-+
- /* - I2C -------------------------------------------------------------------- */
- static const unsigned int i2c1_a_pins[] = {
- 	/* SCL, SDA */
-@@ -3191,7 +3475,7 @@ static const unsigned int vin5_clk_b_mux[] = {
- };
- 
- static const struct {
--	struct sh_pfc_pin_group common[207];
-+	struct sh_pfc_pin_group common[238];
- 	struct sh_pfc_pin_group automotive[0];
- } pinmux_groups = {
- 	.common = {
-@@ -3229,6 +3513,37 @@ static const struct {
- 		SH_PFC_PIN_GROUP(du_disp_cde),
- 		SH_PFC_PIN_GROUP(du_cde),
- 		SH_PFC_PIN_GROUP(du_disp),
-+		SH_PFC_PIN_GROUP(hscif0_data_a),
-+		SH_PFC_PIN_GROUP(hscif0_clk_a),
-+		SH_PFC_PIN_GROUP(hscif0_ctrl_a),
-+		SH_PFC_PIN_GROUP(hscif0_data_b),
-+		SH_PFC_PIN_GROUP(hscif0_clk_b),
-+		SH_PFC_PIN_GROUP(hscif1_data_a),
-+		SH_PFC_PIN_GROUP(hscif1_clk_a),
-+		SH_PFC_PIN_GROUP(hscif1_data_b),
-+		SH_PFC_PIN_GROUP(hscif1_clk_b),
-+		SH_PFC_PIN_GROUP(hscif1_ctrl_b),
-+		SH_PFC_PIN_GROUP(hscif2_data_a),
-+		SH_PFC_PIN_GROUP(hscif2_clk_a),
-+		SH_PFC_PIN_GROUP(hscif2_ctrl_a),
-+		SH_PFC_PIN_GROUP(hscif2_data_b),
-+		SH_PFC_PIN_GROUP(hscif3_data_a),
-+		SH_PFC_PIN_GROUP(hscif3_data_b),
-+		SH_PFC_PIN_GROUP(hscif3_clk_b),
-+		SH_PFC_PIN_GROUP(hscif3_data_c),
-+		SH_PFC_PIN_GROUP(hscif3_clk_c),
-+		SH_PFC_PIN_GROUP(hscif3_ctrl_c),
-+		SH_PFC_PIN_GROUP(hscif3_data_d),
-+		SH_PFC_PIN_GROUP(hscif3_data_e),
-+		SH_PFC_PIN_GROUP(hscif3_ctrl_e),
-+		SH_PFC_PIN_GROUP(hscif4_data_a),
-+		SH_PFC_PIN_GROUP(hscif4_clk_a),
-+		SH_PFC_PIN_GROUP(hscif4_ctrl_a),
-+		SH_PFC_PIN_GROUP(hscif4_data_b),
-+		SH_PFC_PIN_GROUP(hscif4_clk_b),
-+		SH_PFC_PIN_GROUP(hscif4_data_c),
-+		SH_PFC_PIN_GROUP(hscif4_data_d),
-+		SH_PFC_PIN_GROUP(hscif4_data_e),
- 		SH_PFC_PIN_GROUP(i2c1_a),
- 		SH_PFC_PIN_GROUP(i2c1_b),
- 		SH_PFC_PIN_GROUP(i2c1_c),
-@@ -3448,6 +3763,52 @@ static const char * const du_groups[] = {
- 	"du_disp",
- };
- 
-+static const char * const hscif0_groups[] = {
-+	"hscif0_data_a",
-+	"hscif0_clk_a",
-+	"hscif0_ctrl_a",
-+	"hscif0_data_b",
-+	"hscif0_clk_b",
-+};
-+
-+static const char * const hscif1_groups[] = {
-+	"hscif1_data_a",
-+	"hscif1_clk_a",
-+	"hscif1_data_b",
-+	"hscif1_clk_b",
-+	"hscif1_ctrl_b",
-+};
-+
-+static const char * const hscif2_groups[] = {
-+	"hscif2_data_a",
-+	"hscif2_clk_a",
-+	"hscif2_ctrl_a",
-+	"hscif2_data_b",
-+};
-+
-+static const char * const hscif3_groups[] = {
-+	"hscif3_data_a",
-+	"hscif3_data_b",
-+	"hscif3_clk_b",
-+	"hscif3_data_c",
-+	"hscif3_clk_c",
-+	"hscif3_ctrl_c",
-+	"hscif3_data_d",
-+	"hscif3_data_e",
-+	"hscif3_ctrl_e",
-+};
-+
-+static const char * const hscif4_groups[] = {
-+	"hscif4_data_a",
-+	"hscif4_clk_a",
-+	"hscif4_ctrl_a",
-+	"hscif4_data_b",
-+	"hscif4_clk_b",
-+	"hscif4_data_c",
-+	"hscif4_data_d",
-+	"hscif4_data_e",
-+};
-+
- static const char * const i2c1_groups[] = {
- 	"i2c1_a",
- 	"i2c1_b",
-@@ -3721,13 +4082,18 @@ static const char * const vin5_groups[] = {
- };
- 
- static const struct {
--	struct sh_pfc_function common[36];
-+	struct sh_pfc_function common[41];
- 	struct sh_pfc_function automotive[0];
- } pinmux_functions = {
- 	.common = {
- 		SH_PFC_FUNCTION(audio_clk),
- 		SH_PFC_FUNCTION(avb),
- 		SH_PFC_FUNCTION(du),
-+		SH_PFC_FUNCTION(hscif0),
-+		SH_PFC_FUNCTION(hscif1),
-+		SH_PFC_FUNCTION(hscif2),
-+		SH_PFC_FUNCTION(hscif3),
-+		SH_PFC_FUNCTION(hscif4),
- 		SH_PFC_FUNCTION(i2c1),
- 		SH_PFC_FUNCTION(i2c2),
- 		SH_PFC_FUNCTION(i2c4),
+
+> I think that the temporary storage directories were mounted as tmpfs as follows:
+>
+>     root at beaglebone:~# df -T
+>     Filesystem     Type     1K-blocks  Used Available Use% Mounted on
+>     /dev/root      ext4        135221 75902     49409  61% /
+>     devtmpfs       devtmpfs    243420     0    243420   0% /dev
+>     tmpfs          tmpfs       252124   124    252000   1% /run
+>     tmpfs          tmpfs       252124   252    251872   1% /var/volatile
+>
+>     root at beaglebone:~# mount
+>     /dev/mmcblk1p2 on / type ext4 (ro,relatime,data=ordered)
+>     devtmpfs on /dev type devtmpfs (rw,relatime,size=243420k,nr_inodes=60855,mode=755)
+>     proc on /proc type proc (rw,relatime)
+>     sysfs on /sys type sysfs (rw,relatime)
+>     debugfs on /sys/kernel/debug type debugfs (rw,relatime)
+>     tmpfs on /run type tmpfs (rw,nosuid,nodev,mode=755)
+>     tmpfs on /var/volatile type tmpfs (rw,relatime)
+>     devpts on /dev/pts type devpts (rw,relatime,gid=5,mode=620,ptmxmode=000)
+>     tmpfs on /var/lib type tmpfs (rw,relatime)
+
+Looks good as / is mounted ro. Question is whether this is done via a
+remount,ro or whether it's ro right from the start?
+
+To find out what's touching the files you can, e.g., turn on block_dump
+$ echo 1 > /proc/sys/vm/block_dump
+quite early in the boot process and filter it by grepping dmesg like
+$ dmesg | grep dirtied | grep "on sda" | sort
+
+
+> > > I checked the difference of the rootfs image between before boot and
+> > after boot,
+> > > and at least the number of mounts had changed.
+> > >
+> > > I attached following log files. I think that 0x434 is a mount count.
+> >
+> > You can use tune2fs -l /dev/<rootdevicenode> and look for
+> > "Mount count: <some number>" to verify this.
+> I checked this by tune2fs, and it was correct.
+>
+>     After the 1st boot:
+>
+>         root at beaglebone:~# tune2fs -l /dev/mmcblk1p2 | grep "Mount count"
+>         Mount count:              1
+>
+>         root at beaglebone:~# hexdump -C -n 2048 /dev/mmcblk1p2 | grep 430
+>         00000430  81 43 6d 38 01 00 ff ff  53 ef 01 00 01 00 00 00  |.Cm8....S.......|
+>
+>     After the 2nd boot:
+>
+>         root at beaglebone:~# tune2fs -l /dev/mmcblk1p2 | grep "Mount count"
+>         Mount count:              2
+>
+>         root at beaglebone:~# hexdump -C -n 2048 /dev/mmcblk1p2 | grep 430
+>         00000430  f4 a4 90 5c 02 00 ff ff  53 ef 01 00 01 00 00 00  |...\....S.......|
+>
+>     After the 3rd boot:
+>
+>         root at beaglebone:~# tune2fs -l /dev/mmcblk1p2 | grep "Mount count"
+>         Mount count:              3
+>
+>         root at beaglebone:~# hexdump -C -n 2048 /dev/mmcblk1p2 | grep 430
+>         00000430  63 a6 90 5c 03 00 ff ff  53 ef 01 00 01 00 00 00  |c..\....S.......|
+>
+> BTW, the values of "Last mount time", "Last write time" and "Lifetime writes" were also changed.
+>
+> I'm concerned that if the partition which is set to rdiffbase is changed as above,
+> the binary delta update will be done correctly or not.
+
+Well, technically it's just a patch, so if there is a difference in the
+two partition images you diff, and be it the filesystem's mount count,
+then this will end up in the patch and be applied on the device. If
+that's deemed incorrect, then such filesystem metadata has to be
+excluded from the diff by means of preprocessing both partition images
+so that there's no difference in the metadata that could end up in the
+binary patch.
+
+The resulting partition's data is copied from the partition designated
+by rdiffbase except for the patch contents that overrule these. So, to
+stay in the above example, if the filesystem's mount count is not in the
+binary patch, it's taken from rdiffbase.
+
+
+> > > BTW, the warning message after binary delta update was as follows:
+> > >
+> > >     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12:
+> > comm init: deleted inode referenced: 5040
+> > >     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12:
+> > comm init: deleted inode referenced: 5040
+> > >     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12:
+> > comm mount: deleted inode referenced: 5833
+> > >     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12:
+> > comm mount: deleted inode referenced: 5833
+> > >     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12:
+> > comm mount: deleted inode referenced: 5833
+> > >     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12:
+> > comm mount: deleted inode referenced: 5833
+> > >     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12:
+> > comm mount: deleted inode referenced: 5833
+> > >     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12:
+> > comm mount: deleted inode referenced: 5833
+> > >     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12:
+> > comm mount: deleted inode referenced: 5833
+> > >     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12:
+> > comm mount: deleted inode referenced: 5833
+> >
+> > Well, my suspicion is that, after a delta-update of the partition, the
+> > filesystem's metadata is corrupt, i.e., the metdata was partially
+> > updated by a delta update, resulting in an inconsistent overall state.
+> > Could you elaborate on the exact steps you performed? Is the diff done
+> > from/to the right sources? Could as well be that the journal hasn't
+> > committed the changes... Just a wild guess though...
+> The exact steps I performed are as follows:
+>
+>      1. Build rootfs image as v1 by poky by reference to the following article:
+>         <https://mkrak.org/2018/01/26/updating-embedded-linux-devices-part2/>
+>      2. Boot BeagleBone Black (BBB) from microSD
+>      3. Write "core-image-full-cmdline-beaglebone.wic" to /dev/mmcblk1 (eMMC) on BBB
+>      4. Write "core-image-full-cmdline-beaglebone.ext4" to /dev/mmcblk1p2
+>      5. Make /dev/mmcblk1p3 partition by fdisk and copy /dev/mmcblk1p2 to /dev/mmcblk1p3
+>      6. Shutdown BBB and boot from /dev/mmcblk1p3
+>      7. Add a change to the recipe of poky and rebuild rootfs image as v2
+>      8. Make a delta image from v1 and v2 by rdiff command
+>      9. Make swu image from attached sw-description, emmcsetup.lua, and the delta image
+
+Well, in the attached sw-description, you're using
+						device = "/dev/mmcblk1p2";
+						properties: {
+							rdiffbase = ["/dev/mmcblk1p2"];
+						};
+for "copy1" and
+						device = "/dev/mmcblk1p3";
+						properties: {
+							rdiffbase = ["/dev/mmcblk1p3"];
+						};
+for "copy2" which basically says use /dev/mmcblk1p{2,3} as rdiffbase
+(i.e. copy source) *and* target, hence you're overwriting
+/dev/mmcblk1p{2,3} with /dev/mmcblk1p{2,3} + binary patch applied.
+If /dev/mmcblk1p{2,3} happens to be mounted, then you'll get the ext4
+errors as you're overwriting a mounted filesystem on the block layer.
+
+>     10. Access http://[IP address of BBB]:8080/ by Web browser and upload the above swu image
+>         (After the update is finished, It reboots automatically)
+
+Well, how did you instruct SWUpdate to choose "copy1" or "copy2"?
+Can you provide the logs of the SWUpdate runs and the information from
+which partition you booted while running SWUpdate?
+
+>     11. Check the update is done correctly
+>         (It boots from /dev/mmcblk1p2 and the rootfs image version is v2)
+
+Well, I cannot tell about your setup but does
+  value = "... setenv bootpart 1:3 ..." 
+in "copy2" instruct to boot from /dev/mmcblk1p2? Same question applies to "copy1".
+
+>     12. Do the step of No.10 to update the rootfs image on /dev/mmcblk1p3 to v2
+>     13. After updating and rebooting, BBB is booted from /dev/mmcblk1p3 and
+>         the rootfs image version is v2, but the ext4 warning message is shown
+>
+> If you need more detailed steps, please let me know.
+>
+> To tell the truth, at first, I set the different partition to "device" and "rdiffbase" field at sw-description.
+> If "/dev/mmcblk1p2" was set to "device", I set "/dev/mmcblk1p3" to "rdiffbase" -- and vice versa.
+> When I used this sw-description, the ext4 warning message was shown at the step of No.11.
+
+
+
+Kind regards,
+   Christian
+
 -- 
-2.7.4
+Dr. Christian Storm
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+Otto-Hahn-Ring 6, 81739 M?nchen, Germany
