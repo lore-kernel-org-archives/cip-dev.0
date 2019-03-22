@@ -1,185 +1,135 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Fri, 22 Mar 2019 09:19:23 +0000
-Subject: [cip-dev] [PATCH 2/9] pinctrl: sh-pfc: rcar: Rename automotive-only
-	arrays to automotive
+Date: Fri, 22 Mar 2019 09:19:24 +0000
+Subject: [cip-dev] [PATCH 3/9] pinctrl: sh-pfc: r8a77990: Add INTC-EX pins,
+	groups and function
 In-Reply-To: <1553246370-60751-1-git-send-email-biju.das@bp.renesas.com>
 References: <1553246370-60751-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1553246370-60751-3-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1553246370-60751-4-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Renesas RZ/G SoCs are pin compatible with R-Car SoCs, but lack several
-automotive-specific peripherals.
-
-Currently pin groups and functions for automotive-specific peripherals
-are grouped in arrays named after the automative SoC part numbers.
-Rename them to "automotive" for clarity and consistency.
+Add pins, groups, and function for the Interrupt Controller for
+External Devices (INTC-EX) on the R-Car E3 SoC.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit a97f340c0a071bcb32ff68f3d19cf56a76887288)
+(cherry picked from commit ef26d96023a4c34b1bcc4294f570df2b63a1b952)
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c  | 16 ++++++++--------
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c  | 12 ++++++------
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c |  8 ++++----
- 3 files changed, 18 insertions(+), 18 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 64 +++++++++++++++++++++++++++++++++--
+ 1 file changed, 62 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index 5811784..c5144de 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -4458,7 +4458,7 @@ static const unsigned int vin2_clk_mux[] = {
- 
- static const struct {
- 	struct sh_pfc_pin_group common[346];
--	struct sh_pfc_pin_group r8a779x[9];
-+	struct sh_pfc_pin_group automotive[9];
- } pinmux_groups = {
- 	.common = {
- 		SH_PFC_PIN_GROUP(audio_clk_a),
-@@ -4808,7 +4808,7 @@ static const struct {
- 		SH_PFC_PIN_GROUP(vin2_clkenb),
- 		SH_PFC_PIN_GROUP(vin2_clk),
- 	},
--	.r8a779x = {
-+	.automotive = {
- 		SH_PFC_PIN_GROUP(adi_common),
- 		SH_PFC_PIN_GROUP(adi_chsel0),
- 		SH_PFC_PIN_GROUP(adi_chsel1),
-@@ -5365,7 +5365,7 @@ static const char * const vin2_groups[] = {
- 
- static const struct {
- 	struct sh_pfc_function common[58];
--	struct sh_pfc_function r8a779x[2];
-+	struct sh_pfc_function automotive[2];
- } pinmux_functions = {
- 	.common = {
- 		SH_PFC_FUNCTION(audio_clk),
-@@ -5427,7 +5427,7 @@ static const struct {
- 		SH_PFC_FUNCTION(vin1),
- 		SH_PFC_FUNCTION(vin2),
- 	},
--	.r8a779x = {
-+	.automotive = {
- 		SH_PFC_FUNCTION(adi),
- 		SH_PFC_FUNCTION(mlb),
- 	}
-@@ -6646,10 +6646,10 @@ const struct sh_pfc_soc_info r8a7791_pinmux_info = {
- 	.nr_pins = ARRAY_SIZE(pinmux_pins),
- 	.groups = pinmux_groups.common,
- 	.nr_groups = ARRAY_SIZE(pinmux_groups.common) +
--		     ARRAY_SIZE(pinmux_groups.r8a779x),
-+		     ARRAY_SIZE(pinmux_groups.automotive),
- 	.functions = pinmux_functions.common,
- 	.nr_functions = ARRAY_SIZE(pinmux_functions.common) +
--			ARRAY_SIZE(pinmux_functions.r8a779x),
-+			ARRAY_SIZE(pinmux_functions.automotive),
- 
- 	.cfg_regs = pinmux_config_regs,
- 
-@@ -6670,10 +6670,10 @@ const struct sh_pfc_soc_info r8a7793_pinmux_info = {
- 	.nr_pins = ARRAY_SIZE(pinmux_pins),
- 	.groups = pinmux_groups.common,
- 	.nr_groups = ARRAY_SIZE(pinmux_groups.common) +
--		     ARRAY_SIZE(pinmux_groups.r8a779x),
-+		     ARRAY_SIZE(pinmux_groups.automotive),
- 	.functions = pinmux_functions.common,
- 	.nr_functions = ARRAY_SIZE(pinmux_functions.common) +
--			ARRAY_SIZE(pinmux_functions.r8a779x),
-+			ARRAY_SIZE(pinmux_functions.automotive),
- 
- 	.cfg_regs = pinmux_config_regs,
- 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index 067a79e..aa378e4 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -4128,7 +4128,7 @@ static const unsigned int vin5_clk_mux[] = {
- 
- static const struct {
- 	struct sh_pfc_pin_group common[307];
--	struct sh_pfc_pin_group r8a779x[33];
-+	struct sh_pfc_pin_group automotive[33];
- } pinmux_groups = {
- 	.common = {
- 		SH_PFC_PIN_GROUP(audio_clk_a_a),
-@@ -4439,7 +4439,7 @@ static const struct {
- 		SH_PFC_PIN_GROUP(vin5_clkenb),
- 		SH_PFC_PIN_GROUP(vin5_clk),
- 	},
--	.r8a779x = {
-+	.automotive = {
- 		SH_PFC_PIN_GROUP(canfd0_data_a),
- 		SH_PFC_PIN_GROUP(canfd0_data_b),
- 		SH_PFC_PIN_GROUP(canfd1_data),
-@@ -4971,7 +4971,7 @@ static const char * const vin5_groups[] = {
- 
- static const struct {
- 	struct sh_pfc_function common[45];
--	struct sh_pfc_function r8a779x[6];
-+	struct sh_pfc_function automotive[6];
- } pinmux_functions = {
- 	.common = {
- 		SH_PFC_FUNCTION(audio_clk),
-@@ -5020,7 +5020,7 @@ static const struct {
- 		SH_PFC_FUNCTION(vin4),
- 		SH_PFC_FUNCTION(vin5),
- 	},
--	.r8a779x = {
-+	.automotive = {
- 		SH_PFC_FUNCTION(canfd0),
- 		SH_PFC_FUNCTION(canfd1),
- 		SH_PFC_FUNCTION(drif0),
-@@ -6188,10 +6188,10 @@ const struct sh_pfc_soc_info r8a7796_pinmux_info = {
- 	.nr_pins = ARRAY_SIZE(pinmux_pins),
- 	.groups = pinmux_groups.common,
- 	.nr_groups = ARRAY_SIZE(pinmux_groups.common) +
--		ARRAY_SIZE(pinmux_groups.r8a779x),
-+		ARRAY_SIZE(pinmux_groups.automotive),
- 	.functions = pinmux_functions.common,
- 	.nr_functions = ARRAY_SIZE(pinmux_functions.common) +
--		ARRAY_SIZE(pinmux_functions.r8a779x),
-+		ARRAY_SIZE(pinmux_functions.automotive),
- 
- 	.cfg_regs = pinmux_config_regs,
- 	.drive_regs = pinmux_drive_regs,
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-index 76ac77a..663b8ce 100644
+index 663b8ce..1fdafa4 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-@@ -2391,7 +2391,7 @@ static const unsigned int usb30_id_mux[] = {
+@@ -1595,6 +1595,50 @@ static const unsigned int i2c7_b_mux[] = {
+ 	SCL7_B_MARK, SDA7_B_MARK,
+ };
+ 
++/* - INTC-EX ---------------------------------------------------------------- */
++static const unsigned int intc_ex_irq0_pins[] = {
++	/* IRQ0 */
++	RCAR_GP_PIN(1, 0),
++};
++static const unsigned int intc_ex_irq0_mux[] = {
++	IRQ0_MARK,
++};
++static const unsigned int intc_ex_irq1_pins[] = {
++	/* IRQ1 */
++	RCAR_GP_PIN(1, 1),
++};
++static const unsigned int intc_ex_irq1_mux[] = {
++	IRQ1_MARK,
++};
++static const unsigned int intc_ex_irq2_pins[] = {
++	/* IRQ2 */
++	RCAR_GP_PIN(1, 2),
++};
++static const unsigned int intc_ex_irq2_mux[] = {
++	IRQ2_MARK,
++};
++static const unsigned int intc_ex_irq3_pins[] = {
++	/* IRQ3 */
++	RCAR_GP_PIN(1, 9),
++};
++static const unsigned int intc_ex_irq3_mux[] = {
++	IRQ3_MARK,
++};
++static const unsigned int intc_ex_irq4_pins[] = {
++	/* IRQ4 */
++	RCAR_GP_PIN(1, 10),
++};
++static const unsigned int intc_ex_irq4_mux[] = {
++	IRQ4_MARK,
++};
++static const unsigned int intc_ex_irq5_pins[] = {
++	/* IRQ5 */
++	RCAR_GP_PIN(0, 7),
++};
++static const unsigned int intc_ex_irq5_mux[] = {
++	IRQ5_MARK,
++};
++
+ /* - MSIOF0 ----------------------------------------------------------------- */
+ static const unsigned int msiof0_clk_pins[] = {
+ 	/* SCK */
+@@ -2390,7 +2434,7 @@ static const unsigned int usb30_id_mux[] = {
+ };
  
  static const struct {
- 	struct sh_pfc_pin_group common[117];
--	struct sh_pfc_pin_group r8a77990[0];
-+	struct sh_pfc_pin_group automotive[0];
+-	struct sh_pfc_pin_group common[117];
++	struct sh_pfc_pin_group common[123];
+ 	struct sh_pfc_pin_group automotive[0];
  } pinmux_groups = {
  	.common = {
- 		SH_PFC_PIN_GROUP(avb_link),
-@@ -2717,7 +2717,7 @@ static const char * const usb30_groups[] = {
+@@ -2425,6 +2469,12 @@ static const struct {
+ 		SH_PFC_PIN_GROUP(i2c6_b),
+ 		SH_PFC_PIN_GROUP(i2c7_a),
+ 		SH_PFC_PIN_GROUP(i2c7_b),
++		SH_PFC_PIN_GROUP(intc_ex_irq0),
++		SH_PFC_PIN_GROUP(intc_ex_irq1),
++		SH_PFC_PIN_GROUP(intc_ex_irq2),
++		SH_PFC_PIN_GROUP(intc_ex_irq3),
++		SH_PFC_PIN_GROUP(intc_ex_irq4),
++		SH_PFC_PIN_GROUP(intc_ex_irq5),
+ 		SH_PFC_PIN_GROUP(msiof0_clk),
+ 		SH_PFC_PIN_GROUP(msiof0_sync),
+ 		SH_PFC_PIN_GROUP(msiof0_ss1),
+@@ -2569,6 +2619,15 @@ static const char * const i2c7_groups[] = {
+ 	"i2c7_b",
+ };
+ 
++static const char * const intc_ex_groups[] = {
++	"intc_ex_irq0",
++	"intc_ex_irq1",
++	"intc_ex_irq2",
++	"intc_ex_irq3",
++	"intc_ex_irq4",
++	"intc_ex_irq5",
++};
++
+ static const char * const msiof0_groups[] = {
+ 	"msiof0_clk",
+ 	"msiof0_sync",
+@@ -2716,7 +2775,7 @@ static const char * const usb30_groups[] = {
+ };
  
  static const struct {
- 	struct sh_pfc_function common[28];
--	struct sh_pfc_function r8a77990[0];
-+	struct sh_pfc_function automotive[0];
+-	struct sh_pfc_function common[28];
++	struct sh_pfc_function common[29];
+ 	struct sh_pfc_function automotive[0];
  } pinmux_functions = {
  	.common = {
- 		SH_PFC_FUNCTION(avb),
-@@ -3509,10 +3509,10 @@ const struct sh_pfc_soc_info r8a77990_pinmux_info = {
- 	.nr_pins = ARRAY_SIZE(pinmux_pins),
- 	.groups = pinmux_groups.common,
- 	.nr_groups = ARRAY_SIZE(pinmux_groups.common) +
--		ARRAY_SIZE(pinmux_groups.r8a77990),
-+		ARRAY_SIZE(pinmux_groups.automotive),
- 	.functions = pinmux_functions.common,
- 	.nr_functions = ARRAY_SIZE(pinmux_functions.common) +
--		ARRAY_SIZE(pinmux_functions.r8a77990),
-+		ARRAY_SIZE(pinmux_functions.automotive),
- 
- 	.cfg_regs = pinmux_config_regs,
- 	.bias_regs = pinmux_bias_regs,
+@@ -2728,6 +2787,7 @@ static const struct {
+ 		SH_PFC_FUNCTION(i2c5),
+ 		SH_PFC_FUNCTION(i2c6),
+ 		SH_PFC_FUNCTION(i2c7),
++		SH_PFC_FUNCTION(intc_ex),
+ 		SH_PFC_FUNCTION(msiof0),
+ 		SH_PFC_FUNCTION(msiof1),
+ 		SH_PFC_FUNCTION(msiof2),
 -- 
 2.7.4
