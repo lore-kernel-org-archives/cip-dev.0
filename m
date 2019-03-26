@@ -1,193 +1,63 @@
-From: christian.storm@siemens.com (Christian Storm)
-Date: Fri, 22 Mar 2019 13:37:11 +0100
-Subject: [cip-dev] CIP IRC weekly meeting today
-In-Reply-To: <TY2PR01MB5146E2F09AB9D220F4E26C3CD9430@TY2PR01MB5146.jpnprd01.prod.outlook.com>
-Message-ID: <20190322123711.lc44vtkgk6bbgi6y@MD1ZFJVC.ad001.siemens.net>
+From: nobuhiro.iwamatsu@miraclelinux.com (Nobuhiro Iwamatsu)
+Date: Wed, 27 Mar 2019 07:06:48 +0900
+Subject: [cip-dev] Arm64 configs
+In-Reply-To: <TYAPR01MB2285078E1883115EAF97B917B7410@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+References: <TYAPR01MB2285078E1883115EAF97B917B7410@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+Message-ID: <CAGDrK-YWk_6pkW6d+BLfAC3DAK3W4P5VLs5v=ArsQtf7kuGvFg@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Suzuki,
+Hi, Chris.
 
-> > > I mounted rootfs with read-only.
-> >
-> > OK, from the diffs it seems that temporary storage directories such as
-> > /run and /var/tmp are not separate mount points from your roots?
-> I built the rootfs image by poky with "read-only-rootfs" option like following URL.
-> <https://www.yoctoproject.org/docs/current/mega-manual/mega-manual.html#creating-the-root-filesystem>
+Sorry for my late reply.
 
-Ah, OK, didn't try that myself yet.
-
-
-> I think that the temporary storage directories were mounted as tmpfs as follows:
+2019?3?20?(?) 22:37 Chris Paterson <Chris.Paterson2@renesas.com>:
 >
->     root at beaglebone:~# df -T
->     Filesystem     Type     1K-blocks  Used Available Use% Mounted on
->     /dev/root      ext4        135221 75902     49409  61% /
->     devtmpfs       devtmpfs    243420     0    243420   0% /dev
->     tmpfs          tmpfs       252124   124    252000   1% /run
->     tmpfs          tmpfs       252124   252    251872   1% /var/volatile
+> Hello maintainers, all,
 >
->     root at beaglebone:~# mount
->     /dev/mmcblk1p2 on / type ext4 (ro,relatime,data=ordered)
->     devtmpfs on /dev type devtmpfs (rw,relatime,size=243420k,nr_inodes=60855,mode=755)
->     proc on /proc type proc (rw,relatime)
->     sysfs on /sys type sysfs (rw,relatime)
->     debugfs on /sys/kernel/debug type debugfs (rw,relatime)
->     tmpfs on /run type tmpfs (rw,nosuid,nodev,mode=755)
->     tmpfs on /var/volatile type tmpfs (rw,relatime)
->     devpts on /dev/pts type devpts (rw,relatime,gid=5,mode=620,ptmxmode=000)
->     tmpfs on /var/lib type tmpfs (rw,relatime)
-
-Looks good as / is mounted ro. Question is whether this is done via a
-remount,ro or whether it's ro right from the start?
-
-To find out what's touching the files you can, e.g., turn on block_dump
-$ echo 1 > /proc/sys/vm/block_dump
-quite early in the boot process and filter it by grepping dmesg like
-$ dmesg | grep dirtied | grep "on sda" | sort
-
-
-> > > I checked the difference of the rootfs image between before boot and
-> > after boot,
-> > > and at least the number of mounts had changed.
-> > >
-> > > I attached following log files. I think that 0x434 is a mount count.
-> >
-> > You can use tune2fs -l /dev/<rootdevicenode> and look for
-> > "Mount count: <some number>" to verify this.
-> I checked this by tune2fs, and it was correct.
 >
->     After the 1st boot:
 >
->         root at beaglebone:~# tune2fs -l /dev/mmcblk1p2 | grep "Mount count"
->         Mount count:              1
+> As discussed previously we need to decide what Kernel configs to use/support for the arm64 architecture.
 >
->         root at beaglebone:~# hexdump -C -n 2048 /dev/mmcblk1p2 | grep 430
->         00000430  81 43 6d 38 01 00 ff ff  53 ef 01 00 01 00 00 00  |.Cm8....S.......|
 >
->     After the 2nd boot:
 >
->         root at beaglebone:~# tune2fs -l /dev/mmcblk1p2 | grep "Mount count"
->         Mount count:              2
+> Arm64 only has one supported config upstream ? ?defconfig? [1]. This is huge and presumably something CIP doesn?t want to support in its entirety in the linux-4.19.y-cip for the next 10 years.
 >
->         root at beaglebone:~# hexdump -C -n 2048 /dev/mmcblk1p2 | grep 430
->         00000430  f4 a4 90 5c 02 00 ff ff  53 ef 01 00 01 00 00 00  |...\....S.......|
 >
->     After the 3rd boot:
+
+Indeed.
+
 >
->         root at beaglebone:~# tune2fs -l /dev/mmcblk1p2 | grep "Mount count"
->         Mount count:              3
+> The alternative is for CIP create our own cut down defconfig(s) that meet the requirements of our users/members.
 >
->         root at beaglebone:~# hexdump -C -n 2048 /dev/mmcblk1p2 | grep 430
->         00000430  63 a6 90 5c 03 00 ff ff  53 ef 01 00 01 00 00 00  |c..\....S.......|
 >
-> BTW, the values of "Last mount time", "Last write time" and "Lifetime writes" were also changed.
 >
-> I'm concerned that if the partition which is set to rdiffbase is changed as above,
-> the binary delta update will be done correctly or not.
-
-Well, technically it's just a patch, so if there is a difference in the
-two partition images you diff, and be it the filesystem's mount count,
-then this will end up in the patch and be applied on the device. If
-that's deemed incorrect, then such filesystem metadata has to be
-excluded from the diff by means of preprocessing both partition images
-so that there's no difference in the metadata that could end up in the
-binary patch.
-
-The resulting partition's data is copied from the partition designated
-by rdiffbase except for the patch contents that overrule these. So, to
-stay in the above example, if the filesystem's mount count is not in the
-binary patch, it's taken from rdiffbase.
-
-
-> > > BTW, the warning message after binary delta update was as follows:
-> > >
-> > >     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12:
-> > comm init: deleted inode referenced: 5040
-> > >     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12:
-> > comm init: deleted inode referenced: 5040
-> > >     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12:
-> > comm mount: deleted inode referenced: 5833
-> > >     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12:
-> > comm mount: deleted inode referenced: 5833
-> > >     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12:
-> > comm mount: deleted inode referenced: 5833
-> > >     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12:
-> > comm mount: deleted inode referenced: 5833
-> > >     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12:
-> > comm mount: deleted inode referenced: 5833
-> > >     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12:
-> > comm mount: deleted inode referenced: 5833
-> > >     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12:
-> > comm mount: deleted inode referenced: 5833
-> > >     EXT4-fs error (device mmcblk1p3): ext4_lookup:1584: inode #12:
-> > comm mount: deleted inode referenced: 5833
-> >
-> > Well, my suspicion is that, after a delta-update of the partition, the
-> > filesystem's metadata is corrupt, i.e., the metdata was partially
-> > updated by a delta update, resulting in an inconsistent overall state.
-> > Could you elaborate on the exact steps you performed? Is the diff done
-> > from/to the right sources? Could as well be that the journal hasn't
-> > committed the changes... Just a wild guess though...
-> The exact steps I performed are as follows:
+> From a Renesas point of view there is an out-of-tree renesas-defconfig [2] which our upstream team uses to aid their development on Renesas arm64 platforms. Perhaps we could either add this to the CIP tree, or to the CIP Kernel configs repository [3] as a starting point?
 >
->      1. Build rootfs image as v1 by poky by reference to the following article:
->         <https://mkrak.org/2018/01/26/updating-embedded-linux-devices-part2/>
->      2. Boot BeagleBone Black (BBB) from microSD
->      3. Write "core-image-full-cmdline-beaglebone.wic" to /dev/mmcblk1 (eMMC) on BBB
->      4. Write "core-image-full-cmdline-beaglebone.ext4" to /dev/mmcblk1p2
->      5. Make /dev/mmcblk1p3 partition by fdisk and copy /dev/mmcblk1p2 to /dev/mmcblk1p3
->      6. Shutdown BBB and boot from /dev/mmcblk1p3
->      7. Add a change to the recipe of poky and rebuild rootfs image as v2
->      8. Make a delta image from v1 and v2 by rdiff command
->      9. Make swu image from attached sw-description, emmcsetup.lua, and the delta image
-
-Well, in the attached sw-description, you're using
-						device = "/dev/mmcblk1p2";
-						properties: {
-							rdiffbase = ["/dev/mmcblk1p2"];
-						};
-for "copy1" and
-						device = "/dev/mmcblk1p3";
-						properties: {
-							rdiffbase = ["/dev/mmcblk1p3"];
-						};
-for "copy2" which basically says use /dev/mmcblk1p{2,3} as rdiffbase
-(i.e. copy source) *and* target, hence you're overwriting
-/dev/mmcblk1p{2,3} with /dev/mmcblk1p{2,3} + binary patch applied.
-If /dev/mmcblk1p{2,3} happens to be mounted, then you'll get the ext4
-errors as you're overwriting a mounted filesystem on the block layer.
-
->     10. Access http://[IP address of BBB]:8080/ by Web browser and upload the above swu image
->         (After the update is finished, It reboots automatically)
-
-Well, how did you instruct SWUpdate to choose "copy1" or "copy2"?
-Can you provide the logs of the SWUpdate runs and the information from
-which partition you booted while running SWUpdate?
-
->     11. Check the update is done correctly
->         (It boots from /dev/mmcblk1p2 and the rootfs image version is v2)
-
-Well, I cannot tell about your setup but does
-  value = "... setenv bootpart 1:3 ..." 
-in "copy2" instruct to boot from /dev/mmcblk1p2? Same question applies to "copy1".
-
->     12. Do the step of No.10 to update the rootfs image on /dev/mmcblk1p3 to v2
->     13. After updating and rebooting, BBB is booted from /dev/mmcblk1p3 and
->         the rootfs image version is v2, but the ext4 warning message is shown
 >
-> If you need more detailed steps, please let me know.
+
+I agree. However, if renesas-defconfig includes configs not for RZ
+(eg. R-Car), we may be better to delete them.
+Could you send a patch of renesas-defconfig?
+
 >
-> To tell the truth, at first, I set the different partition to "device" and "rdiffbase" field at sw-description.
-> If "/dev/mmcblk1p2" was set to "device", I set "/dev/mmcblk1p3" to "rdiffbase" -- and vice versa.
-> When I used this sw-description, the ext4 warning message was shown at the step of No.11.
+>
+>
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/tree/arch/arm64/configs/defconfig?h=linux-4.19.y-cip
+>
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git/tree/arch/arm64/configs/renesas_defconfig?h=devel
+>
+> [3] https://gitlab.com/cip-project/cip-kernel/cip-kernel-config
+>
+>
+>
+> Kind regards, Chris
+>
 
+Best regards,
+  Nobuhiro
 
-
-Kind regards,
-   Christian
-
--- 
-Dr. Christian Storm
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Otto-Hahn-Ring 6, 81739 M?nchen, Germany
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
