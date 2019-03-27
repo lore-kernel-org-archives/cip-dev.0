@@ -1,37 +1,55 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Wed, 27 Mar 2019 12:13:00 +0000
-Subject: [cip-dev] [PATCH 4.19.y 0/9] Add i2c/msiof support
-Message-ID: <1553688789-43441-1-git-send-email-biju.das@bp.renesas.com>
+Date: Wed, 27 Mar 2019 12:13:01 +0000
+Subject: [cip-dev] [PATCH 4.19.y 1/9] i2c: sh_mobile: document support for
+	r8a77990 (R-Car E3)
+In-Reply-To: <1553688789-43441-1-git-send-email-biju.das@bp.renesas.com>
+References: <1553688789-43441-1-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1553688789-43441-2-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This patch series add i2c/msiof support for RZ/G2E SoC.
+From: Simon Horman <horms+renesas@verge.net.au>
 
-This patch series is based on linux-4.19.y-cip and all the patches
-in this series are cherry-picked from linux rc tree.
+Document support for the IIC code for the r8a77990 (R-Car E3).
 
-This patch series is depend on the below patch series
-https://patchwork.kernel.org/patch/10865489/
+It is not considered compatible with existing fallback bindings
+due to the documented absence of automatic transmission registers.
 
-Fabrizio Castro (7):
-  dt-bindings: i2c: sh_mobile: Add r8a774c0 support
-  i2c: sh_mobile: Add support for r8a774c0 (RZ/G2E)
-  dt-bindings: i2c: rcar: Add r8a774c0 support
-  arm64: dts: renesas: r8a774c0: Add I2C and IIC-DVFS support
-  spi: sh-msiof: Add r8a774a1 support
-  spi: sh-msiof: Add r8a774c0 support
-  arm64: dts: renesas: r8a774c0: Add MSIOF nodes
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+(cherry picked from commit fca34b910ddc556c51294d58287f7c33863dddef)
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-Simon Horman (2):
-  i2c: sh_mobile: document support for r8a77990 (R-Car E3)
-  i2c: sh_mobile: add support for r8a77990 (R-Car E3)
-
- Documentation/devicetree/bindings/i2c/i2c-rcar.txt |   1 +
- .../devicetree/bindings/i2c/i2c-sh_mobile.txt      |  10 +-
- Documentation/devicetree/bindings/spi/sh-msiof.txt |   4 +-
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi          | 205 +++++++++++++++++++++
- drivers/i2c/busses/i2c-sh_mobile.c                 |   2 +
- 5 files changed, 220 insertions(+), 2 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt b/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt
+index 872673a..cc62577 100644
+--- a/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt
++++ b/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt
+@@ -15,6 +15,7 @@ Required properties:
+ 			- "renesas,iic-r8a7795" (R-Car H3)
+ 			- "renesas,iic-r8a7796" (R-Car M3-W)
+ 			- "renesas,iic-r8a77965" (R-Car M3-N)
++			- "renesas,iic-r8a77990" (R-Car E3)
+ 			- "renesas,iic-sh73a0" (SH-Mobile AG5)
+ 			- "renesas,rcar-gen2-iic" (generic R-Car Gen2 or RZ/G1
+ 							compatible device)
+@@ -27,7 +28,13 @@ Required properties:
+ 			the platform first followed by the generic R-Car
+ 			version.
+ 
+-			renesas,rmobile-iic must always follow.
++			When compatible with "renesas,rmobile-iic" it should
++			be the last compatibility string listed.
++
++			The r8a77990 (R-Car E3) controller is not
++			considered compatible with "renesas,rcar-gen3-iic"
++			or "renesas,rmobile-iic" due to the absence of
++			automatic transmission registers.
+ 
+ - reg             : address start and address range size of device
+ - interrupts      : interrupt of device
 -- 
 2.7.4
