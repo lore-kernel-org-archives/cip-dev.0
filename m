@@ -1,69 +1,29 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 28 Mar 2019 04:08:27 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-Message-ID: <HK0PR01MB297949617ADF58F10B9EB9EEE2590@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+From: daniel.sangorrin@toshiba.co.jp (daniel.sangorrin at toshiba.co.jp)
+Date: Thu, 28 Mar 2019 07:52:24 +0000
+Subject: [cip-dev] Testing update + cip-core
+In-Reply-To: <OSBPR01MB2055BB21A8D9E5124E32DDCAE9410@OSBPR01MB2055.jpnprd01.prod.outlook.com>
+References: <OSBPR01MB2055F3150CC418B4FFA7A740E94B0@OSBPR01MB2055.jpnprd01.prod.outlook.com>
+	<OSAPR01MB376303BDABB64E54B07645C2D0400@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+	<d351d297-c7fc-1e43-2470-d96f5c69a9f8@siemens.com>
+	<OSBPR01MB2055DD55592F4E4AC3F794AAE9400@OSBPR01MB2055.jpnprd01.prod.outlook.com>
+	<dfb75e5e-f77f-f9db-c088-663bcc667561@siemens.com>
+	<OSAPR01MB376397FD0A2ED68453B4D0B7D0410@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+	<OSBPR01MB2055BB21A8D9E5124E32DDCAE9410@OSBPR01MB2055.jpnprd01.prod.outlook.com>
+Message-ID: <OSAPR01MB376322E281250C7B6ACE38FAD0590@OSAPR01MB3763.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+Hello Patryk,
 
+Sorry for the late reply.
 
+> -----Original Message-----
+> From: Patryk Mungai Ndungu <patryk.mungai-ndungu.kx@renesas.com>
+[...]
+> I've not had a chance to play around with NBD yet, but this looks to be the case.
+> Let me know if you?d like me to look into adding NBD support for the lab in Renesas.
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
+Yes, that would be great. Some LTP tests will not work on NFS and require NBD instead (according to Jan-Simon from AGL).
 
-
-
-*Please note that IRC meeting was rescheduled to 18:00 (JST) starting from the first week of Nov. according to F2F meeting discussion in ELCE.*
-
-
-
-US-West US-East  UK    DE     TW     JP
-
-02:00    05:00   09:00   10:00   17:00   18:00
-
-
-
-Channel:
-
-* irc:chat.freenode.net:6667/cip
-
-
-
-Agenda:
-
-
-
-* AI review
-
-#action Please send configuration file of kernel 4.19 to cip-dev before the end of March.
-
-#action Daniel has to upload to the wiki the SW updates tool comparison document
-
-#action Add a link to the SW updates wiki page from the embedded world CIP release page
-
-
-
-* Kernel maintenance updates
-
-* Kernel testing
-
-* CIP Core
-
-* Software update
-
-* AOB
-
-
-
-The meeting will take 30 min although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
-
-
-
-Best regards,
-
-
-
-SZ Lin, Moxa.
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190328/9afaa154/attachment.html>
+Thanks,
+Daniel
