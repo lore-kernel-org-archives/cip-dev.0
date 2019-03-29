@@ -1,14 +1,12 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Fri, 29 Mar 2019 08:49:09 +0000
-Subject: [cip-dev] git send-email --dry-run --suppress-cc=all --to
-	"cip-dev@lists.cip-project.org" --cc "Chris Paterson
-	<chris.paterson2@renesas.com>" --cc "Biju Das
-	<biju.das@bp.renesas.com>" --cc "Fabrizio Castro
-	<fabrizio.castro@bp.renesas.com>" --annotate *.patchFrom
-	66ce56ee3056322212b678f5425ae1e24920d0a6 Mon Sep 17 00:00:00 2001
-Message-ID: <1553849349-22186-1-git-send-email-biju.das@bp.renesas.com>
+Date: Fri, 29 Mar 2019 08:51:37 +0000
+Subject: [cip-dev] [PATCH 4.19.y] dt-bindings: irqchip: renesas-irqc:
+	Document r8a774c0 support
+Message-ID: <1553849497-24475-1-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
+
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
 Document RZ/G2E (R8A774C0) SoC bindings.
 
