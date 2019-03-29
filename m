@@ -1,67 +1,23 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Fri, 29 Mar 2019 09:01:43 +0000
-Subject: [cip-dev] git send-email --dry-run --suppress-cc=all --to
- "cip-dev@lists.cip-project.org" --cc "Chris Paterson
- <chris.paterson2@renesas.com>" --cc "Biju Das <biju.das@bp.renesas.com>"
- --cc "Fabrizio Castro <fabrizio.castro@bp.renesas.com>" --annotate
- *.patchFr
-Message-ID: <OSBPR01MB2103DA691131A8D3F12F9D1DB85A0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+From: wagi@monom.org (Daniel Wagner)
+Date: Fri, 29 Mar 2019 12:06:10 +0100
+Subject: [cip-dev] [ANNOUNCE] 4.4.176-cip31-rt23
+Message-ID: <20190329110611.1B897500722@mail.monom.org>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+Hello CIP RT Folks!
 
-Sorry for the spam. The subject got corrupted while sending the patch. Please ignore this patch.
+I'm pleased to announce the 4.4.176-cip31-rt23 stable release.
 
-I have sent another patch to fix this.
+This release is just an update to the new stable 4.4.176-cip31 version
+and no RT specific changes have been made.
 
-https://patchwork.kernel.org/patch/10876677/
+You can get this release via the git tree at:
 
-regards,
-Biju
+  git://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
 
+  branch: linux-4.4.y-cip-rt
+  Head SHA1: b51a171ad762ba4a78b0ed0c7ec83fb9f6fb135f
 
-> -----Original Message-----
-> From: Biju Das <biju.das@bp.renesas.com>
-> Sent: 29 March 2019 08:49
-> To: cip-dev at lists.cip-project.org
-> Cc: Chris Paterson <Chris.Paterson2@renesas.com>; Biju Das
-> <biju.das@bp.renesas.com>; Fabrizio Castro
-> <fabrizio.castro@bp.renesas.com>
-> Subject: git send-email --dry-run --suppress-cc=all --to "cip-dev at lists.cip-
-> project.org" --cc "Chris Paterson <chris.paterson2@renesas.com>" --cc "Biju
-> Das <biju.das@bp.renesas.com>" --cc "Fabrizio Castro
-> <fabrizio.castro@bp.renesas.com>" --annotate *.patchFro...
-> 
-> Document RZ/G2E (R8A774C0) SoC bindings.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com> (cherry picked from
-> commit 24105bf4d10485143f8e26337cda8bcb7f6e6da5)
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> ---
->  Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt |
-> 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/interrupt-
-> controller/renesas,irqc.txt b/Documentation/devicetree/bindings/interrupt-
-> controller/renesas,irqc.txt
-> index a046ed3..c974b83 100644
-> --- a/Documentation/devicetree/bindings/interrupt-
-> controller/renesas,irqc.txt
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,irq
-> +++ c.txt
-> @@ -14,6 +14,7 @@ Required properties:
->      - "renesas,irqc-r8a7793" (R-Car M2-N)
->      - "renesas,irqc-r8a7794" (R-Car E2)
->      - "renesas,intc-ex-r8a774a1" (RZ/G2M)
-> +    - "renesas,intc-ex-r8a774c0" (RZ/G2E)
->      - "renesas,intc-ex-r8a7795" (R-Car H3)
->      - "renesas,intc-ex-r8a7796" (R-Car M3-W)
->      - "renesas,intc-ex-r8a77965" (R-Car M3-N)
-> --
-> 2.7.4
+Enjoy!
+   Daniel
