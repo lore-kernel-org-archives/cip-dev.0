@@ -1,47 +1,39 @@
-From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Fri, 29 Mar 2019 08:32:36 +0000
-Subject: [cip-dev] [PATCH 4.19.y 3/4] arm64: dts: renesas: r8a774c0-cat874:
-	Add pciec0 support
-In-Reply-To: <1553848357-30592-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1553848357-30592-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1553848357-30592-4-git-send-email-fabrizio.castro@bp.renesas.com>
+From: biju.das@bp.renesas.com (Biju Das)
+Date: Fri, 29 Mar 2019 08:49:09 +0000
+Subject: [cip-dev] git send-email --dry-run --suppress-cc=all --to
+	"cip-dev@lists.cip-project.org" --cc "Chris Paterson
+	<chris.paterson2@renesas.com>" --cc "Biju Das
+	<biju.das@bp.renesas.com>" --cc "Fabrizio Castro
+	<fabrizio.castro@bp.renesas.com>" --annotate *.patchFrom
+	66ce56ee3056322212b678f5425ae1e24920d0a6 Mon Sep 17 00:00:00 2001
+Message-ID: <1553849349-22186-1-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Biju Das <biju.das@bp.renesas.com>
+Document RZ/G2E (R8A774C0) SoC bindings.
 
-Silicon Linux CAT 874 board has 2GB DDR memory. Update the dma-ranges
-mapping for pciec0 node. Also declare pcie bus clock, since it is
-generated on the CAT874 main board.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(cherry picked from commit aaf6c75c0458122600a20db9d41a0350f0a8dff8)
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+(cherry picked from commit 24105bf4d10485143f8e26337cda8bcb7f6e6da5)
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-index 477a56b..96ee0d2c 100644
---- a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-@@ -56,6 +56,15 @@
- 	clock-frequency = <48000000>;
- };
- 
-+&pcie_bus_clk {
-+	clock-frequency = <100000000>;
-+};
-+
-+&pciec0 {
-+	/* Map all possible DDR as inbound ranges */
-+	dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x80000000>;
-+};
-+
- &pfc {
- 	scif2_pins: scif2 {
- 		groups = "scif2_data_a";
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
+index a046ed3..c974b83 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
++++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
+@@ -14,6 +14,7 @@ Required properties:
+     - "renesas,irqc-r8a7793" (R-Car M2-N)
+     - "renesas,irqc-r8a7794" (R-Car E2)
+     - "renesas,intc-ex-r8a774a1" (RZ/G2M)
++    - "renesas,intc-ex-r8a774c0" (RZ/G2E)
+     - "renesas,intc-ex-r8a7795" (R-Car H3)
+     - "renesas,intc-ex-r8a7796" (R-Car M3-W)
+     - "renesas,intc-ex-r8a77965" (R-Car M3-N)
 -- 
 2.7.4
