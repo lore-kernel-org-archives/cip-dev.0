@@ -1,64 +1,51 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon,  1 Apr 2019 10:58:02 +0100
-Subject: [cip-dev] [PATCH 4.19.y 03/17] clocksource/drivers/sh_cmt: Fix
-	clocksource width for 32-bit machines
+Date: Mon,  1 Apr 2019 10:58:03 +0100
+Subject: [cip-dev] [PATCH 4.19.y 04/17] clocksource/drivers/sh_cmt: Properly
+	line-wrap sh_cmt_of_table[] initializer
 In-Reply-To: <1554112696-20706-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1554112696-20706-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1554112696-20706-4-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1554112696-20706-5-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-commit 37e7742c55ba856eaec7e35673ee370f36eb17f3 upstream.
+commit eceb4c49aed0fafbc4967e788231b1eba42b7606 upstream.
 
-The driver seems to abuse *unsigned long* not only for the (32-bit)
-register values but also for the 'sh_cmt_channel::total_cycles' which
-needs to always be 64-bit -- as a result, the clocksource's mask is
-needlessly clamped down to 32-bits on the 32-bit machines...
+There's no good reason for the sh_cmt_of_table[] initializer to
+violate the 80-column limit, especially after the commit 8d50e9476bb4
+("clocksource/drivers/sh_cmt: Mark "renesas,cmt-48-gen2" deprecated")
+partially fixed it -- fix the R-Car gen2 related entries as well.
 
-Fixes: 19bdc9d061bc ("clocksource: sh_cmt clocksource support")
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/clocksource/sh_cmt.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/clocksource/sh_cmt.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/clocksource/sh_cmt.c b/drivers/clocksource/sh_cmt.c
-index efaf00d..0c74489 100644
+index 0c74489..71624dc 100644
 --- a/drivers/clocksource/sh_cmt.c
 +++ b/drivers/clocksource/sh_cmt.c
-@@ -100,7 +100,7 @@ struct sh_cmt_channel {
- 	raw_spinlock_t lock;
- 	struct clock_event_device ced;
- 	struct clocksource cs;
--	unsigned long total_cycles;
-+	u64 total_cycles;
- 	bool cs_enabled;
+@@ -927,8 +927,14 @@ static const struct of_device_id sh_cmt_of_table[] __maybe_unused = {
+ 		.compatible = "renesas,cmt-48-gen2",
+ 		.data = &sh_cmt_info[SH_CMT0_RCAR_GEN2]
+ 	},
+-	{ .compatible = "renesas,rcar-gen2-cmt0", .data = &sh_cmt_info[SH_CMT0_RCAR_GEN2] },
+-	{ .compatible = "renesas,rcar-gen2-cmt1", .data = &sh_cmt_info[SH_CMT1_RCAR_GEN2] },
++	{
++		.compatible = "renesas,rcar-gen2-cmt0",
++		.data = &sh_cmt_info[SH_CMT0_RCAR_GEN2]
++	},
++	{
++		.compatible = "renesas,rcar-gen2-cmt1",
++		.data = &sh_cmt_info[SH_CMT1_RCAR_GEN2]
++	},
+ 	{ }
  };
- 
-@@ -605,8 +605,8 @@ static u64 sh_cmt_clocksource_read(struct clocksource *cs)
- {
- 	struct sh_cmt_channel *ch = cs_to_sh_cmt(cs);
- 	unsigned long flags;
--	unsigned long value;
- 	u32 has_wrapped;
-+	u64 value;
- 	u32 raw;
- 
- 	raw_spin_lock_irqsave(&ch->lock, flags);
-@@ -680,7 +680,7 @@ static int sh_cmt_register_clocksource(struct sh_cmt_channel *ch,
- 	cs->disable = sh_cmt_clocksource_disable;
- 	cs->suspend = sh_cmt_clocksource_suspend;
- 	cs->resume = sh_cmt_clocksource_resume;
--	cs->mask = CLOCKSOURCE_MASK(sizeof(unsigned long) * 8);
-+	cs->mask = CLOCKSOURCE_MASK(sizeof(u64) * 8);
- 	cs->flags = CLOCK_SOURCE_IS_CONTINUOUS;
- 
- 	dev_info(&ch->cmt->pdev->dev, "ch%u: used as clock source\n",
+ MODULE_DEVICE_TABLE(of, sh_cmt_of_table);
 -- 
 2.7.4
