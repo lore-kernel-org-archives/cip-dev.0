@@ -1,40 +1,39 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon,  1 Apr 2019 10:58:12 +0100
-Subject: [cip-dev] [PATCH 4.19.y 13/17] clk: renesas: r8a774c0: Fix
-	LAST_DT_CORE_CLK
+Date: Mon,  1 Apr 2019 10:58:13 +0100
+Subject: [cip-dev] [PATCH 4.19.y 14/17] dt-bindings: timer: renesas: tmu:
+	Document r8a774c0 bindings
 In-Reply-To: <1554112696-20706-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1554112696-20706-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1554112696-20706-14-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1554112696-20706-15-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit e61b30bb34b6206f76e623269a41b65cd3989fff upstream.
+From: Biju Das <biju.das@bp.renesas.com>
 
-Enum LAST_DT_CORE_CLK needs updating as R8A774C0_CLK_CANFD
-was recently added and it's the core clock with the highest
-index.
+commit 29f970cf670f12d72580662b2f291cf2dc86aaf5 upstream.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
-Fixes: 2a6efbc6da5d248c ("clk: renesas: r8a774c0: Add missing CANFD clock")
+Document RZ/G2E (R8A774C0) SoC in the Renesas TMU bindings.
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/clk/renesas/r8a774c0-cpg-mssr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/timer/renesas,tmu.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/renesas/r8a774c0-cpg-mssr.c b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-index aeadb4d..34e274f 100644
---- a/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-@@ -22,7 +22,7 @@
+diff --git a/Documentation/devicetree/bindings/timer/renesas,tmu.txt b/Documentation/devicetree/bindings/timer/renesas,tmu.txt
+index cd5f20b..dc8c0fd 100644
+--- a/Documentation/devicetree/bindings/timer/renesas,tmu.txt
++++ b/Documentation/devicetree/bindings/timer/renesas,tmu.txt
+@@ -10,6 +10,7 @@ Required Properties:
  
- enum clk_ids {
- 	/* Core Clock Outputs exported to DT */
--	LAST_DT_CORE_CLK = R8A774C0_CLK_CPEX,
-+	LAST_DT_CORE_CLK = R8A774C0_CLK_CANFD,
- 
- 	/* External Input Clocks */
- 	CLK_EXTAL,
+   - compatible: must contain one or more of the following:
+     - "renesas,tmu-r8a7740" for the r8a7740 TMU
++    - "renesas,tmu-r8a774c0" for the r8a774C0 TMU
+     - "renesas,tmu-r8a7778" for the r8a7778 TMU
+     - "renesas,tmu-r8a7779" for the r8a7779 TMU
+     - "renesas,tmu" for any TMU.
 -- 
 2.7.4
