@@ -1,58 +1,49 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon,  1 Apr 2019 10:57:59 +0100
-Subject: [cip-dev] [PATCH 4.19.y 00/17] Add CMT and TMU support to RZ/G2E
-Message-ID: <1554112696-20706-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Date: Mon,  1 Apr 2019 10:58:00 +0100
+Subject: [cip-dev] [PATCH 4.19.y 01/17] clocksource/drivers/sh_cmt: Convert
+	to SPDX identifiers
+In-Reply-To: <1554112696-20706-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1554112696-20706-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1554112696-20706-2-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Dear All,
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-this series backports what's necessary to support CMT and TMU
-on the RZ/G2E.
+commit efad01173717b0d0ad8a7dc91cc447f19d8447f3 upstream.
 
-This series depends on:
-https://patchwork.kernel.org/project/cip-dev/list/?series=98481
+This patch updates license to use SPDX-License-Identifier instead of verbose
+license text.
 
-Thanks,
-Fab
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
+ drivers/clocksource/sh_cmt.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-Biju Das (5):
-  dt-bindings: timer: renesas, cmt: Document r8a774a1 CMT support
-  dt-bindings: timer: renesas, cmt: Document r8a774c0 CMT support
-  arm64: dts: renesas: r8a774c0: Add CMT device nodes
-  clk: renesas: r8a774c0: Add TMU clock
-  dt-bindings: timer: renesas: tmu: Document r8a774c0 bindings
-
-Fabrizio Castro (3):
-  clk: renesas: r8a774c0: Add missing CANFD clock
-  clk: renesas: r8a774c0: Fix LAST_DT_CORE_CLK
-  arm64: dts: renesas: r8a774c0: Add TMU device nodes
-
-Geert Uytterhoeven (1):
-  clk: renesas: r8a774c0: Correct parent clock of DU
-
-Kuninori Morimoto (2):
-  clocksource/drivers/sh_cmt: Convert to SPDX identifiers
-  clocksource/drivers/sh_tmu: Convert to SPDX identifiers
-
-Sergei Shtylyov (6):
-  clocksource/drivers/sh_cmt: Fixup for 64-bit machines
-  clocksource/drivers/sh_cmt: Fix clocksource width for 32-bit machines
-  clocksource/drivers/sh_cmt: Properly line-wrap sh_cmt_of_table[]
-    initializer
-  dt-bindings: timer: renesas: cmt: document R-Car gen3 support
-  clocksource/drivers/sh_cmt: Add R-Car gen3 support
-  arm64: enable CMT/TMU support for Renesas SoC
-
- .../devicetree/bindings/timer/renesas,cmt.txt      |  14 +++
- .../devicetree/bindings/timer/renesas,tmu.txt      |   1 +
- arch/arm64/Kconfig.platforms                       |   2 +
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi          | 135 +++++++++++++++++++++
- drivers/clk/renesas/r8a774c0-cpg-mssr.c            |  15 ++-
- drivers/clocksource/sh_cmt.c                       | 106 ++++++++--------
- drivers/clocksource/sh_tmu.c                       |  10 +-
- include/dt-bindings/clock/r8a774c0-cpg-mssr.h      |   1 +
- 8 files changed, 219 insertions(+), 65 deletions(-)
-
+diff --git a/drivers/clocksource/sh_cmt.c b/drivers/clocksource/sh_cmt.c
+index bbbf37c..6f65cf8 100644
+--- a/drivers/clocksource/sh_cmt.c
++++ b/drivers/clocksource/sh_cmt.c
+@@ -1,16 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * SuperH Timer Support - CMT
+  *
+  *  Copyright (C) 2008 Magnus Damm
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #include <linux/clk.h>
 -- 
 2.7.4
