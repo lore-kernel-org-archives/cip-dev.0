@@ -1,39 +1,58 @@
-From: christian.storm@siemens.com (Christian Storm)
-Date: Mon, 1 Apr 2019 08:48:58 +0200
-Subject: [cip-dev] CIP IRC weekly meeting today
-In-Reply-To: <TYAPR01MB24950C688973FA3F22D72E67D9550@TYAPR01MB2495.jpnprd01.prod.outlook.com>
-Message-ID: <20190401064858.ioieooa6yksfc75p@MD1ZFJVC.ad001.siemens.net>
+From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
+Date: Mon,  1 Apr 2019 10:57:59 +0100
+Subject: [cip-dev] [PATCH 4.19.y 00/17] Add CMT and TMU support to RZ/G2E
+Message-ID: <1554112696-20706-1-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Suzuki,
+Dear All,
 
-> > Ah, OK. This is the "official" in the sense of exemplary implemented way
-> > how to do round-robin A/B firmware update. That said, this is in my very
-> > personal opinion a bit too involved and spread out over too many places.
-> > That was also one reason I brought forward the Lua handler feature that
-> > allows you to implement a handler in Lua. Lua handlers are feature-wise
-> > on par with C handlers by now, i.e., they are equally powerful. So, you
-> > can write a Lua handler that does the target partition round-robin
-> > calculation, flashing, and updating of the bootloader environment in one
-> > place. The sw-description becomes simpler as well since you don't need
-> > to specify the A/B layout there but instead the Lua handler will take
-> > care of this.
-> That makes sense.
-> I thought that the A/B update way adopted by meta-swupdate-boards was
-> a little difficult to understand and not very flexible.
-> I would like to use Lua handler to implement the flexible A/B update
-> which can be used in various situations.
+this series backports what's necessary to support CMT and TMU
+on the RZ/G2E.
 
-OK, then I'd propose having a meeting about this so that I can explain how this
-variant works and how we make use of it. When do you think you'll come to this
-point so that a meeting makes sense?
+This series depends on:
+https://patchwork.kernel.org/project/cip-dev/list/?series=98481
 
+Thanks,
+Fab
 
-Kind regards,
-   Christian
+Biju Das (5):
+  dt-bindings: timer: renesas, cmt: Document r8a774a1 CMT support
+  dt-bindings: timer: renesas, cmt: Document r8a774c0 CMT support
+  arm64: dts: renesas: r8a774c0: Add CMT device nodes
+  clk: renesas: r8a774c0: Add TMU clock
+  dt-bindings: timer: renesas: tmu: Document r8a774c0 bindings
+
+Fabrizio Castro (3):
+  clk: renesas: r8a774c0: Add missing CANFD clock
+  clk: renesas: r8a774c0: Fix LAST_DT_CORE_CLK
+  arm64: dts: renesas: r8a774c0: Add TMU device nodes
+
+Geert Uytterhoeven (1):
+  clk: renesas: r8a774c0: Correct parent clock of DU
+
+Kuninori Morimoto (2):
+  clocksource/drivers/sh_cmt: Convert to SPDX identifiers
+  clocksource/drivers/sh_tmu: Convert to SPDX identifiers
+
+Sergei Shtylyov (6):
+  clocksource/drivers/sh_cmt: Fixup for 64-bit machines
+  clocksource/drivers/sh_cmt: Fix clocksource width for 32-bit machines
+  clocksource/drivers/sh_cmt: Properly line-wrap sh_cmt_of_table[]
+    initializer
+  dt-bindings: timer: renesas: cmt: document R-Car gen3 support
+  clocksource/drivers/sh_cmt: Add R-Car gen3 support
+  arm64: enable CMT/TMU support for Renesas SoC
+
+ .../devicetree/bindings/timer/renesas,cmt.txt      |  14 +++
+ .../devicetree/bindings/timer/renesas,tmu.txt      |   1 +
+ arch/arm64/Kconfig.platforms                       |   2 +
+ arch/arm64/boot/dts/renesas/r8a774c0.dtsi          | 135 +++++++++++++++++++++
+ drivers/clk/renesas/r8a774c0-cpg-mssr.c            |  15 ++-
+ drivers/clocksource/sh_cmt.c                       | 106 ++++++++--------
+ drivers/clocksource/sh_tmu.c                       |  10 +-
+ include/dt-bindings/clock/r8a774c0-cpg-mssr.h      |   1 +
+ 8 files changed, 219 insertions(+), 65 deletions(-)
 
 -- 
-Dr. Christian Storm
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Otto-Hahn-Ring 6, 81739 M?nchen, Germany
+2.7.4
