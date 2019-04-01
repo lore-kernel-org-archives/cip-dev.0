@@ -1,34 +1,39 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Mon, 1 Apr 2019 10:40:19 +0000
-Subject: [cip-dev] Patch submissions to cip-dev
-Message-ID: <TYAPR01MB22857DA4772C8A496A7AD1CBB7550@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
+Date: Mon,  1 Apr 2019 14:55:37 +0100
+Subject: [cip-dev] [PATCH 4.19y 00/10] Pinctrl driver updates for RZ/G2E
+Message-ID: <1554126947-32747-1-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello all,
+Dear All,
 
-I'm raising an issue that we discussed in the IRC meeting last week.
+this series backports the latest commits for the pinctrl driver
+for the RZ/G2E (a.k.a. r8a774c0).
 
-The cip-dev mailing list is currently used for a number of different CIP projects e.g. linux-4.4.y-cip, linux-4.19.y-cip, CIP Core, the RT branches etc.
+This series depends on:
+https://patchwork.kernel.org/project/cip-dev/list/?series=95351
 
-To make it clear to the maintainers I think patch submitters should indicate which repository/branch they are targeting.
+Thanks,
+Fab
 
-One way to do this is by adding a tag in the [PATCH] identifier.
+Geert Uytterhoeven (3):
+  pinctrl: sh-pfc: r8a77990: Fix IOCTRL reg state after s2ram on R-Car
+    E3
+  pinctrl: sh-pfc: r8a77990: Fix MOD_SEL0 SEL_I2C1 field width
+  pinctrl: sh-pfc: r8a77990: GP6_9 does not have pull-down capability
 
-For an example of this, please see the recent submissions from Biju[1] and Fabrizio[2] who are using [PATCH 4.19.y].
-(FYI, patchwork hides "PATCH").
+Takeshi Kihara (7):
+  pinctrl: sh-pfc: r8a77990: Add CAN pins, groups and functions
+  pinctrl: sh-pfc: r8a77990: Add CAN FD pins, groups and functions
+  pinctrl: sh-pfc: r8a77990: Fix MOD_SEL0 bit3 when using TX0
+  pinctrl: sh-pfc: r8a77990: Fix MOD_SEL0 bit2 when using RX2, TX2 and
+    SCK2
+  pinctrl: sh-pfc: r8a77990: Fix MOD_SEL bit numbering
+  pinctrl: sh-pfc: r8a77990: Add TMU pins, groups and functions
+  pinctrl: sh-pfc: r8a77990: Add DRIF pins, groups and functions
 
-Does this approach seem like a good idea? Does anyone have an alternative?
+ drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 448 ++++++++++++++++++++++++++++++++--
+ 1 file changed, 422 insertions(+), 26 deletions(-)
 
-We should probably add a note to the Kernel maintenance page [3], which btw needs to be updated with the current maintainers.
-
-
-[1] https://patchwork.kernel.org/project/cip-dev/list/?submitter=174479
-[2] https://patchwork.kernel.org/project/cip-dev/list/?submitter=175811
-[3] https://wiki.linuxfoundation.org/civilinfrastructureplatform/cipkernelmaintenance
-
-Kind regards, Chris
-
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190401/060851c9/attachment.html>
+-- 
+2.7.4
