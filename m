@@ -1,107 +1,73 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon,  1 Apr 2019 10:58:08 +0100
-Subject: [cip-dev] [PATCH 4.19.y 09/17] arm64: dts: renesas: r8a774c0: Add
-	CMT device nodes
+Date: Mon,  1 Apr 2019 10:58:09 +0100
+Subject: [cip-dev] [PATCH 4.19.y 10/17] clk: renesas: r8a774c0: Add missing
+	CANFD clock
 In-Reply-To: <1554112696-20706-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1554112696-20706-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1554112696-20706-10-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1554112696-20706-11-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Biju Das <biju.das@bp.renesas.com>
+commit 2a6efbc6da5d248c4fbe7fdb7de7f3eff1de95a4 upstream.
 
-commit fa930bb65cf930c48efc01cc90f928a8db99fa94 upstream.
+This patch adds the missing CANFD clock to the r8a774c0 specific
+clock driver.
 
-This patch adds CMT{0|1|2|3} device nodes for r8a774c0 SoC.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 70 +++++++++++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
+ drivers/clk/renesas/r8a774c0-cpg-mssr.c       | 4 ++++
+ include/dt-bindings/clock/r8a774c0-cpg-mssr.h | 1 +
+ 2 files changed, 5 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-index 1b67ea3..2f43ff0 100644
---- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-@@ -234,6 +234,76 @@
- 			reg = <0 0xe6060000 0 0x508>;
- 		};
+diff --git a/drivers/clk/renesas/r8a774c0-cpg-mssr.c b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+index 10b9689..28bcc81 100644
+--- a/drivers/clk/renesas/r8a774c0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+@@ -33,6 +33,7 @@ enum clk_ids {
+ 	CLK_PLL1,
+ 	CLK_PLL3,
+ 	CLK_PLL0D4,
++	CLK_PLL0D6,
+ 	CLK_PLL0D8,
+ 	CLK_PLL0D20,
+ 	CLK_PLL0D24,
+@@ -61,6 +62,7 @@ static const struct cpg_core_clk r8a774c0_core_clks[] __initconst = {
  
-+		cmt0: timer at e60f0000 {
-+			compatible = "renesas,r8a774c0-cmt0",
-+				     "renesas,rcar-gen3-cmt0";
-+			reg = <0 0xe60f0000 0 0x1004>;
-+			interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 303>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			resets = <&cpg 303>;
-+			status = "disabled";
-+		};
-+
-+		cmt1: timer at e6130000 {
-+			compatible = "renesas,r8a774c0-cmt1",
-+				     "renesas,rcar-gen3-cmt1";
-+			reg = <0 0xe6130000 0 0x1004>;
-+			interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 302>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			resets = <&cpg 302>;
-+			status = "disabled";
-+		};
-+
-+		cmt2: timer at e6140000 {
-+			compatible = "renesas,r8a774c0-cmt1",
-+				     "renesas,rcar-gen3-cmt1";
-+			reg = <0 0xe6140000 0 0x1004>;
-+			interrupts = <GIC_SPI 398 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 399 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 400 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 401 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 402 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 403 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 404 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 405 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 301>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			resets = <&cpg 301>;
-+			status = "disabled";
-+		};
-+
-+		cmt3: timer at e6148000 {
-+			compatible = "renesas,r8a774c0-cmt1",
-+				     "renesas,rcar-gen3-cmt1";
-+			reg = <0 0xe6148000 0 0x1004>;
-+			interrupts = <GIC_SPI 470 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 471 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 472 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 473 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 474 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 475 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 476 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 477 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 300>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			resets = <&cpg 300>;
-+			status = "disabled";
-+		};
-+
- 		cpg: clock-controller at e6150000 {
- 			compatible = "renesas,r8a774c0-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x1000>;
+ 	DEF_FIXED(".pll0",     CLK_PLL0,           CLK_MAIN,	   1, 100),
+ 	DEF_FIXED(".pll0d4",   CLK_PLL0D4,         CLK_PLL0,       4, 1),
++	DEF_FIXED(".pll0d6",   CLK_PLL0D6,         CLK_PLL0,       6, 1),
+ 	DEF_FIXED(".pll0d8",   CLK_PLL0D8,         CLK_PLL0,       8, 1),
+ 	DEF_FIXED(".pll0d20",  CLK_PLL0D20,        CLK_PLL0,      20, 1),
+ 	DEF_FIXED(".pll0d24",  CLK_PLL0D24,        CLK_PLL0,      24, 1),
+@@ -112,6 +114,7 @@ static const struct cpg_core_clk r8a774c0_core_clks[] __initconst = {
+ 	DEF_GEN3_PE("s3d2c",   R8A774C0_CLK_S3D2C, CLK_S3, 2, CLK_PE, 2),
+ 	DEF_GEN3_PE("s3d4c",   R8A774C0_CLK_S3D4C, CLK_S3, 4, CLK_PE, 4),
+ 
++	DEF_DIV6P1("canfd",    R8A774C0_CLK_CANFD, CLK_PLL0D6, 0x244),
+ 	DEF_DIV6P1("csi0",     R8A774C0_CLK_CSI0,  CLK_PLL1D2, 0x00c),
+ 	DEF_DIV6P1("mso",      R8A774C0_CLK_MSO,   CLK_PLL1D2, 0x014),
+ 
+@@ -187,6 +190,7 @@ static const struct mssr_mod_clk r8a774c0_mod_clks[] __initconst = {
+ 	DEF_MOD("gpio2",		 910,	R8A774C0_CLK_S3D4),
+ 	DEF_MOD("gpio1",		 911,	R8A774C0_CLK_S3D4),
+ 	DEF_MOD("gpio0",		 912,	R8A774C0_CLK_S3D4),
++	DEF_MOD("can-fd",		 914,	R8A774C0_CLK_S3D2),
+ 	DEF_MOD("can-if1",		 915,	R8A774C0_CLK_S3D4),
+ 	DEF_MOD("can-if0",		 916,	R8A774C0_CLK_S3D4),
+ 	DEF_MOD("i2c6",			 918,	R8A774C0_CLK_S3D2),
+diff --git a/include/dt-bindings/clock/r8a774c0-cpg-mssr.h b/include/dt-bindings/clock/r8a774c0-cpg-mssr.h
+index 8fe51b6..8ad9cd6 100644
+--- a/include/dt-bindings/clock/r8a774c0-cpg-mssr.h
++++ b/include/dt-bindings/clock/r8a774c0-cpg-mssr.h
+@@ -56,5 +56,6 @@
+ #define R8A774C0_CLK_CSI0		45
+ #define R8A774C0_CLK_CP			46
+ #define R8A774C0_CLK_CPEX		47
++#define R8A774C0_CLK_CANFD		48
+ 
+ #endif /* __DT_BINDINGS_CLOCK_R8A774C0_CPG_MSSR_H__ */
 -- 
 2.7.4
