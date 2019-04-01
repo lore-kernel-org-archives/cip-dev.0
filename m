@@ -1,73 +1,127 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon,  1 Apr 2019 14:55:43 +0100
-Subject: [cip-dev] [PATCH 4.19y 06/10] pinctrl: sh-pfc: r8a77990: Fix
-	MOD_SEL0 bit2 when using RX2, TX2 and SCK2
+Date: Mon,  1 Apr 2019 14:55:44 +0100
+Subject: [cip-dev] [PATCH 4.19y 07/10] pinctrl: sh-pfc: r8a77990: Fix
+	MOD_SEL bit numbering
 In-Reply-To: <1554126947-32747-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1554126947-32747-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1554126947-32747-7-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1554126947-32747-8-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-commit 7219a4b645208734d45b1d30a4c35b6f09a0e9e6 upstream.
+commit 3e3eebeacad79bda8a9664c86c04f5201e86fece upstream.
 
-According to the R-Car Gen3 Hardware Manual Errata for Rev 1.00 of
-Aug 24, 2018, the MOD_SEL0 bit2 is set when RX2_{A,B}, TX2_{A,B} and
-SCK2_A pin functions are selected.
+MOD_SEL register bit numbering was different from R-Car E3 SoC and
+R-Car H3/M3-[WN] SoCs.
 
-Fixes: 6d4036a1e3b3ac0f ("pinctrl: sh-pfc: Initial R8A77990 PFC support")
+MOD_SEL 1-bit      H3/M3-[WN]  E3
+===============    ==========  =====
+Set Value = H'0    b'0         b'0
+Set Value = H'1    b'1         b'1
+
+MOD_SEL 2-bits     H3/M3-[WN]  E3
+===============    ==========  =====
+Set Value = H'0    b'00        b'00
+Set Value = H'1    b'01        b'10
+Set Value = H'2    b'10        b'01
+Set Value = H'3    b'11        b'11
+
+MOD_SEL 3-bits     H3/M3-[WN]  E3
+===============    ==========  =====
+Set Value = H'0    b'000       b'000
+Set Value = H'1    b'001       b'100
+Set Value = H'2    b'010       b'010
+Set Value = H'3    b'011       b'110
+Set Value = H'4    b'100       b'001
+Set Value = H'5    b'101       b'101
+Set Value = H'6    b'110       b'011
+Set Value = H'7    b'111       b'111
+
+This patch replaces the #define name and value of MOD_SEL.
+
 Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Fixes: 6d4036a1e3b3 ("pinctrl: sh-pfc: Initial R8A77990 PFC support")
+[shimoda: Split a patch per SoC and revise the commit log]
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+[geert: Use macros to do the actual reordering]
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 32 ++++++++++++++++++--------------
+ 1 file changed, 18 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-index 1bc9b71..2492479 100644
+index 2492479..b1d96a46c 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-@@ -1099,7 +1099,7 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_MSEL(IP12_3_0,		SSI_WS9_B,	SEL_SSI9_1),
- 	PINMUX_IPSR_GPSR(IP12_3_0,		AUDIO_CLKOUT3_B),
+@@ -391,29 +391,33 @@ FM(IP12_23_20)	IP12_23_20	FM(IP13_23_20)	IP13_23_20	FM(IP14_23_20)	IP14_23_20	FM
+ FM(IP12_27_24)	IP12_27_24	FM(IP13_27_24)	IP13_27_24	FM(IP14_27_24)	IP14_27_24	FM(IP15_27_24)	IP15_27_24 \
+ FM(IP12_31_28)	IP12_31_28	FM(IP13_31_28)	IP13_31_28	FM(IP14_31_28)	IP14_31_28	FM(IP15_31_28)	IP15_31_28
  
--	PINMUX_IPSR_GPSR(IP12_7_4,		SCK2_A),
-+	PINMUX_IPSR_MSEL(IP12_7_4,		SCK2_A,		SEL_SCIF2_0),
- 	PINMUX_IPSR_MSEL(IP12_7_4,		HSCK0_A,	SEL_HSCIF0_0),
- 	PINMUX_IPSR_MSEL(IP12_7_4,		AUDIO_CLKB_A,	SEL_ADGB_0),
- 	PINMUX_IPSR_GPSR(IP12_7_4,		CTS1_N),
-@@ -1107,14 +1107,14 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_MSEL(IP12_7_4,		REMOCON_A,	SEL_REMOCON_0),
- 	PINMUX_IPSR_MSEL(IP12_7_4,		SCIF_CLK_B,	SEL_SCIF_1),
++/* The bit numbering in MOD_SEL fields is reversed */
++#define REV4(f0, f1, f2, f3)			f0 f2 f1 f3
++#define REV8(f0, f1, f2, f3, f4, f5, f6, f7)	f0 f4 f2 f6 f1 f5 f3 f7
++
+ /* MOD_SEL0 */			/* 0 */				/* 1 */				/* 2 */				/* 3 */			/* 4 */			/* 5 */		/* 6 */		/* 7 */
+-#define MOD_SEL0_30_29		FM(SEL_ADGB_0)			FM(SEL_ADGB_1)			FM(SEL_ADGB_2)			F_(0, 0)
++#define MOD_SEL0_30_29	   REV4(FM(SEL_ADGB_0),			FM(SEL_ADGB_1),			FM(SEL_ADGB_2),			F_(0, 0))
+ #define MOD_SEL0_28		FM(SEL_DRIF0_0)			FM(SEL_DRIF0_1)
+-#define MOD_SEL0_27_26		FM(SEL_FM_0)			FM(SEL_FM_1)			FM(SEL_FM_2)			F_(0, 0)
++#define MOD_SEL0_27_26	   REV4(FM(SEL_FM_0),			FM(SEL_FM_1),			FM(SEL_FM_2),			F_(0, 0))
+ #define MOD_SEL0_25		FM(SEL_FSO_0)			FM(SEL_FSO_1)
+ #define MOD_SEL0_24		FM(SEL_HSCIF0_0)		FM(SEL_HSCIF0_1)
+ #define MOD_SEL0_23		FM(SEL_HSCIF1_0)		FM(SEL_HSCIF1_1)
+ #define MOD_SEL0_22		FM(SEL_HSCIF2_0)		FM(SEL_HSCIF2_1)
+-#define MOD_SEL0_21_20		FM(SEL_I2C1_0)			FM(SEL_I2C1_1)			FM(SEL_I2C1_2)			FM(SEL_I2C1_3)
+-#define MOD_SEL0_19_18_17	FM(SEL_I2C2_0)			FM(SEL_I2C2_1)			FM(SEL_I2C2_2)			FM(SEL_I2C2_3)		FM(SEL_I2C2_4)		F_(0, 0)	F_(0, 0)	F_(0, 0)
++#define MOD_SEL0_21_20	   REV4(FM(SEL_I2C1_0),			FM(SEL_I2C1_1),			FM(SEL_I2C1_2),			FM(SEL_I2C1_3))
++#define MOD_SEL0_19_18_17  REV8(FM(SEL_I2C2_0),			FM(SEL_I2C2_1),			FM(SEL_I2C2_2),			FM(SEL_I2C2_3),		FM(SEL_I2C2_4),		F_(0, 0),	F_(0, 0),	F_(0, 0))
+ #define MOD_SEL0_16		FM(SEL_NDFC_0)			FM(SEL_NDFC_1)
+ #define MOD_SEL0_15		FM(SEL_PWM0_0)			FM(SEL_PWM0_1)
+ #define MOD_SEL0_14		FM(SEL_PWM1_0)			FM(SEL_PWM1_1)
+-#define MOD_SEL0_13_12		FM(SEL_PWM2_0)			FM(SEL_PWM2_1)			FM(SEL_PWM2_2)			F_(0, 0)
+-#define MOD_SEL0_11_10		FM(SEL_PWM3_0)			FM(SEL_PWM3_1)			FM(SEL_PWM3_2)			F_(0, 0)
++#define MOD_SEL0_13_12	   REV4(FM(SEL_PWM2_0),			FM(SEL_PWM2_1),			FM(SEL_PWM2_2),			F_(0, 0))
++#define MOD_SEL0_11_10	   REV4(FM(SEL_PWM3_0),			FM(SEL_PWM3_1),			FM(SEL_PWM3_2),			F_(0, 0))
+ #define MOD_SEL0_9		FM(SEL_PWM4_0)			FM(SEL_PWM4_1)
+ #define MOD_SEL0_8		FM(SEL_PWM5_0)			FM(SEL_PWM5_1)
+ #define MOD_SEL0_7		FM(SEL_PWM6_0)			FM(SEL_PWM6_1)
+-#define MOD_SEL0_6_5		FM(SEL_REMOCON_0)		FM(SEL_REMOCON_1)		FM(SEL_REMOCON_2)		F_(0, 0)
++#define MOD_SEL0_6_5	   REV4(FM(SEL_REMOCON_0),		FM(SEL_REMOCON_1),		FM(SEL_REMOCON_2),		F_(0, 0))
+ #define MOD_SEL0_4		FM(SEL_SCIF_0)			FM(SEL_SCIF_1)
+ #define MOD_SEL0_3		FM(SEL_SCIF0_0)			FM(SEL_SCIF0_1)
+ #define MOD_SEL0_2		FM(SEL_SCIF2_0)			FM(SEL_SCIF2_1)
+-#define MOD_SEL0_1_0		FM(SEL_SPEED_PULSE_IF_0)	FM(SEL_SPEED_PULSE_IF_1)	FM(SEL_SPEED_PULSE_IF_2)	F_(0, 0)
++#define MOD_SEL0_1_0	   REV4(FM(SEL_SPEED_PULSE_IF_0),	FM(SEL_SPEED_PULSE_IF_1),	FM(SEL_SPEED_PULSE_IF_2),	F_(0, 0))
  
--	PINMUX_IPSR_GPSR(IP12_11_8,		TX2_A),
-+	PINMUX_IPSR_MSEL(IP12_11_8,		TX2_A,		SEL_SCIF2_0),
- 	PINMUX_IPSR_MSEL(IP12_11_8,		HRX0_A,		SEL_HSCIF0_0),
- 	PINMUX_IPSR_GPSR(IP12_11_8,		AUDIO_CLKOUT2_A),
- 	PINMUX_IPSR_MSEL(IP12_11_8,		SCL1_A,		SEL_I2C1_0),
- 	PINMUX_IPSR_MSEL(IP12_11_8,		FSO_CFE_0_N_A,	SEL_FSO_0),
- 	PINMUX_IPSR_GPSR(IP12_11_8,		TS_SDEN1),
+ /* MOD_SEL1 */			/* 0 */				/* 1 */				/* 2 */				/* 3 */			/* 4 */			/* 5 */		/* 6 */		/* 7 */
+ #define MOD_SEL1_31		FM(SEL_SIMCARD_0)		FM(SEL_SIMCARD_1)
+@@ -422,18 +426,18 @@ FM(IP12_31_28)	IP12_31_28	FM(IP13_31_28)	IP13_31_28	FM(IP14_31_28)	IP14_31_28	FM
+ #define MOD_SEL1_28		FM(SEL_USB_20_CH0_0)		FM(SEL_USB_20_CH0_1)
+ #define MOD_SEL1_26		FM(SEL_DRIF2_0)			FM(SEL_DRIF2_1)
+ #define MOD_SEL1_25		FM(SEL_DRIF3_0)			FM(SEL_DRIF3_1)
+-#define MOD_SEL1_24_23_22	FM(SEL_HSCIF3_0)		FM(SEL_HSCIF3_1)		FM(SEL_HSCIF3_2)		FM(SEL_HSCIF3_3)	FM(SEL_HSCIF3_4)	F_(0, 0)	F_(0, 0)	F_(0, 0)
+-#define MOD_SEL1_21_20_19	FM(SEL_HSCIF4_0)		FM(SEL_HSCIF4_1)		FM(SEL_HSCIF4_2)		FM(SEL_HSCIF4_3)	FM(SEL_HSCIF4_4)	F_(0, 0)	F_(0, 0)	F_(0, 0)
++#define MOD_SEL1_24_23_22  REV8(FM(SEL_HSCIF3_0),		FM(SEL_HSCIF3_1),		FM(SEL_HSCIF3_2),		FM(SEL_HSCIF3_3),	FM(SEL_HSCIF3_4),	F_(0, 0),	F_(0, 0),	F_(0, 0))
++#define MOD_SEL1_21_20_19  REV8(FM(SEL_HSCIF4_0),		FM(SEL_HSCIF4_1),		FM(SEL_HSCIF4_2),		FM(SEL_HSCIF4_3),	FM(SEL_HSCIF4_4),	F_(0, 0),	F_(0, 0),	F_(0, 0))
+ #define MOD_SEL1_18		FM(SEL_I2C6_0)			FM(SEL_I2C6_1)
+ #define MOD_SEL1_17		FM(SEL_I2C7_0)			FM(SEL_I2C7_1)
+ #define MOD_SEL1_16		FM(SEL_MSIOF2_0)		FM(SEL_MSIOF2_1)
+ #define MOD_SEL1_15		FM(SEL_MSIOF3_0)		FM(SEL_MSIOF3_1)
+-#define MOD_SEL1_14_13		FM(SEL_SCIF3_0)			FM(SEL_SCIF3_1)			FM(SEL_SCIF3_2)			F_(0, 0)
+-#define MOD_SEL1_12_11		FM(SEL_SCIF4_0)			FM(SEL_SCIF4_1)			FM(SEL_SCIF4_2)			F_(0, 0)
+-#define MOD_SEL1_10_9		FM(SEL_SCIF5_0)			FM(SEL_SCIF5_1)			FM(SEL_SCIF5_2)			F_(0, 0)
++#define MOD_SEL1_14_13	   REV4(FM(SEL_SCIF3_0),		FM(SEL_SCIF3_1),		FM(SEL_SCIF3_2),		F_(0, 0))
++#define MOD_SEL1_12_11	   REV4(FM(SEL_SCIF4_0),		FM(SEL_SCIF4_1),		FM(SEL_SCIF4_2),		F_(0, 0))
++#define MOD_SEL1_10_9	   REV4(FM(SEL_SCIF5_0),		FM(SEL_SCIF5_1),		FM(SEL_SCIF5_2),		F_(0, 0))
+ #define MOD_SEL1_8		FM(SEL_VIN4_0)			FM(SEL_VIN4_1)
+ #define MOD_SEL1_7		FM(SEL_VIN5_0)			FM(SEL_VIN5_1)
+-#define MOD_SEL1_6_5		FM(SEL_ADGC_0)			FM(SEL_ADGC_1)			FM(SEL_ADGC_2)			F_(0, 0)
++#define MOD_SEL1_6_5	   REV4(FM(SEL_ADGC_0),			FM(SEL_ADGC_1),			FM(SEL_ADGC_2),			F_(0, 0))
+ #define MOD_SEL1_4		FM(SEL_SSI9_0)			FM(SEL_SSI9_1)
  
--	PINMUX_IPSR_GPSR(IP12_15_12,		RX2_A),
-+	PINMUX_IPSR_MSEL(IP12_15_12,		RX2_A,		SEL_SCIF2_0),
- 	PINMUX_IPSR_GPSR(IP12_15_12,		HTX0_A),
- 	PINMUX_IPSR_GPSR(IP12_15_12,		AUDIO_CLKOUT3_A),
- 	PINMUX_IPSR_MSEL(IP12_15_12,		SDA1_A,		SEL_I2C1_0),
-@@ -1126,11 +1126,11 @@ static const u16 pinmux_data[] = {
- 
- 	PINMUX_IPSR_GPSR(IP12_23_20,		MSIOF0_RXD),
- 	PINMUX_IPSR_GPSR(IP12_23_20,		SSI_WS78),
--	PINMUX_IPSR_GPSR(IP12_23_20,		TX2_B),
-+	PINMUX_IPSR_MSEL(IP12_23_20,		TX2_B,		SEL_SCIF2_1),
- 
- 	PINMUX_IPSR_GPSR(IP12_27_24,		MSIOF0_TXD),
- 	PINMUX_IPSR_GPSR(IP12_27_24,		SSI_SDATA7),
--	PINMUX_IPSR_GPSR(IP12_27_24,		RX2_B),
-+	PINMUX_IPSR_MSEL(IP12_27_24,		RX2_B,		SEL_SCIF2_1),
- 
- 	PINMUX_IPSR_GPSR(IP12_31_28,		MSIOF0_SYNC),
- 	PINMUX_IPSR_GPSR(IP12_31_28,		AUDIO_CLKOUT_B),
+ #define PINMUX_MOD_SELS	\
 -- 
 2.7.4
