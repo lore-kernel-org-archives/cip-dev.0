@@ -1,328 +1,80 @@
-From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon,  1 Apr 2019 14:55:47 +0100
-Subject: [cip-dev] [PATCH 4.19y 10/10] pinctrl: sh-pfc: r8a77990: Add DRIF
-	pins, groups and functions
-In-Reply-To: <1554126947-32747-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1554126947-32747-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1554126947-32747-11-git-send-email-fabrizio.castro@bp.renesas.com>
+From: daniel.sangorrin@toshiba.co.jp (daniel.sangorrin at toshiba.co.jp)
+Date: Tue, 2 Apr 2019 03:17:05 +0000
+Subject: [cip-dev] isar error log
+Message-ID: <OSAPR01MB3763A7998474AB7ABEB3DDF3D0560@OSAPR01MB3763.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Hi Jan,
 
-commit fdbbd6b74c9278f65302af113e73cf61d36d3037 upstream.
+I am trying to show CIP Core ISAR to some guys in Linaro Connect but I also met a binfmt related error.
+I am using Ubuntu 16.04. Do you have a hint on how to solve this problem?
+I already installed qemu-user-static. The system service for binfmt seems to fail.
 
-This patch adds DRIF{0,1,2,3} pins, groups and functions to the R8A77990
-SoC.
+Thanks,
+Daniel
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 255 +++++++++++++++++++++++++++++++++-
- 1 file changed, 253 insertions(+), 2 deletions(-)
+update-binfmts: warning: unable to close /proc/sys/fs/binfmt_misc/register: Invalid argument
+update-binfmts: warning: unable to enable binary format qemu-aarch64
+update-binfmts: exiting due to previous errors
+2019-04-01 15:37:22 - INFO     - kas 1.0 started
+2019-04-01 15:37:22 - INFO     - /repo$ git rev-parse --show-toplevel
+2019-04-01 15:37:22 - INFO     - /repo$ git rev-parse --show-toplevel
+2019-04-01 15:37:22 - INFO     - /repo$ git rev-parse --show-toplevel
+2019-04-01 15:37:22 - INFO     - Using /repo as root for repository cip-core
+2019-04-01 15:37:22 - INFO     - /work/isar$ git cat-file -t ee5518cc6ecdade53dcafabfbb40ba4b0c505777
+2019-04-01 15:37:22 - INFO     - Repository isar already contains ee5518cc6ecdade53dcafabfbb40ba4b0c505777 as commit
+2019-04-01 15:37:22 - INFO     - /repo$ git rev-parse --show-toplevel
+2019-04-01 15:37:22 - INFO     - Using /repo as root for repository cip-core
+2019-04-01 15:37:22 - INFO     - /work/isar$ git status -s
+2019-04-01 15:37:22 - INFO     - /work/isar$ git rev-parse --verify HEAD
+2019-04-01 15:37:22 - INFO     - ee5518cc6ecdade53dcafabfbb40ba4b0c505777
+2019-04-01 15:37:22 - INFO     - Repo isar has already been checked out with correct refspec. Nothing to do.
+2019-04-01 15:37:22 - INFO     - /repo$ git rev-parse --show-toplevel
+2019-04-01 15:37:22 - INFO     - Using /repo as root for repository cip-core
+2019-04-01 15:37:22 - INFO     - /work/isar$ /tmp/tmp9u5m9ths /work/build
+2019-04-01 15:37:22 - INFO     - /repo$ git rev-parse --show-toplevel
+2019-04-01 15:37:22 - INFO     - Using /repo as root for repository cip-core
+2019-04-01 15:37:22 - INFO     - /repo$ git rev-parse --show-toplevel
+2019-04-01 15:37:22 - INFO     - Using /repo as root for repository cip-core
+2019-04-01 15:37:22 - INFO     - /work/build$ /work/isar/bitbake/bin/bitbake -k -c build cip-core-image
+Loading cache: 100% |######################################################################################################################################| Time: 0:00:00
+Loaded 19 entries from dependency cache.
+NOTE: Resolving any missing task queue dependencies
+Initialising tasks: 100% |#################################################################################################################################| Time: 0:00:00
+NOTE: Executing RunQueue Tasks
+ERROR: isar-bootstrap-target-1.0-r0 do_bootstrap: Function failed: do_bootstrap (log file is located at /work/build/tmp/work/cip-core-amd64/isar-bootstrap-target/temp/log.do_bootstrap.77)
+ERROR: Logfile of failure stored in: /work/build/tmp/work/cip-core-amd64/isar-bootstrap-target/temp/log.do_bootstrap.77
+Log data follows:
+| DEBUG: Executing shell function do_bootstrap
+| W: Target architecture is the same as host architecture; disabling QEMU support
+| I: Running command: debootstrap --arch amd64 --verbose --variant=minbase --include=locales --components=main,contrib,non-free stretch /work/build/tmp/work/cip-core-amd64/isar-bootstrap-target/rootfs http://ftp.de.debian.org/debian
+| /usr/sbin/debootstrap: 1454: /usr/sbin/debootstrap: cannot create /work/build/tmp/work/cip-core-amd64/isar-bootstrap-target/rootfs/test-dev-null: Permission denied
+| E: Cannot install into target '/work/build/tmp/work/cip-core-amd64/isar-bootstrap-target/rootfs' mounted with noexec or nodev
+| WARNING: exit code 1 from a shell command.
+| ERROR: Function failed: do_bootstrap (log file is located at /work/build/tmp/work/cip-core-amd64/isar-bootstrap-target/temp/log.do_bootstrap.77)
+ERROR: Task (/work/isar/meta/recipes-core/isar-bootstrap/isar-bootstrap-target.bb:do_bootstrap) failed with exit code '1'
+ERROR: isar-bootstrap-host-1.0-r0 do_bootstrap: Function failed: do_bootstrap (log file is located at /work/build/tmp/work/cip-core-amd64/isar-bootstrap-host-debian-stretch-amd64/temp/log.do_bootstrap.79)
+ERROR: Logfile of failure stored in: /work/build/tmp/work/cip-core-amd64/isar-bootstrap-host-debian-stretch-amd64/temp/log.do_bootstrap.79
+Log data follows:
+| DEBUG: Executing shell function do_bootstrap
+| W: Target architecture is the same as host architecture; disabling QEMU support
+| I: Running command: debootstrap --arch amd64 --verbose --variant=minbase --include=locales --components=main,contrib,non-free stretch /work/build/tmp/work/cip-core-amd64/isar-bootstrap-host-debian-stretch-amd64/rootfs http://ftp.de.debian.org/debian
+| /usr/sbin/debootstrap: 1454: /usr/sbin/debootstrap: cannot create /work/build/tmp/work/cip-core-amd64/isar-bootstrap-host-debian-stretch-amd64/rootfs/test-dev-null: Permission denied
+| E: Cannot install into target '/work/build/tmp/work/cip-core-amd64/isar-bootstrap-host-debian-stretch-amd64/rootfs' mounted with noexec or nodev
+| WARNING: exit code 1 from a shell command.
+| ERROR: Function failed: do_bootstrap (log file is located at /work/build/tmp/work/cip-core-amd64/isar-bootstrap-host-debian-stretch-amd64/temp/log.do_bootstrap.79)
+ERROR: Task (/work/isar/meta/recipes-core/isar-bootstrap/isar-bootstrap-host.bb:do_bootstrap) failed with exit code '1'
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-index 0a9aa62..151640c 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-@@ -1599,6 +1599,199 @@ static const unsigned int canfd1_data_mux[] = {
- 	CANFD1_TX_MARK, CANFD1_RX_MARK,
- };
- 
-+/* - DRIF0 --------------------------------------------------------------- */
-+static const unsigned int drif0_ctrl_a_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(5, 7), RCAR_GP_PIN(5, 19),
-+};
-+
-+static const unsigned int drif0_ctrl_a_mux[] = {
-+	RIF0_CLK_A_MARK, RIF0_SYNC_A_MARK,
-+};
-+
-+static const unsigned int drif0_data0_a_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(5, 17),
-+};
-+
-+static const unsigned int drif0_data0_a_mux[] = {
-+	RIF0_D0_A_MARK,
-+};
-+
-+static const unsigned int drif0_data1_a_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(5, 18),
-+};
-+
-+static const unsigned int drif0_data1_a_mux[] = {
-+	RIF0_D1_A_MARK,
-+};
-+
-+static const unsigned int drif0_ctrl_b_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(3, 12), RCAR_GP_PIN(3, 15),
-+};
-+
-+static const unsigned int drif0_ctrl_b_mux[] = {
-+	RIF0_CLK_B_MARK, RIF0_SYNC_B_MARK,
-+};
-+
-+static const unsigned int drif0_data0_b_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(3, 13),
-+};
-+
-+static const unsigned int drif0_data0_b_mux[] = {
-+	RIF0_D0_B_MARK,
-+};
-+
-+static const unsigned int drif0_data1_b_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(3, 14),
-+};
-+
-+static const unsigned int drif0_data1_b_mux[] = {
-+	RIF0_D1_B_MARK,
-+};
-+
-+/* - DRIF1 --------------------------------------------------------------- */
-+static const unsigned int drif1_ctrl_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(5, 4), RCAR_GP_PIN(5, 1),
-+};
-+
-+static const unsigned int drif1_ctrl_mux[] = {
-+	RIF1_CLK_MARK, RIF1_SYNC_MARK,
-+};
-+
-+static const unsigned int drif1_data0_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(5, 2),
-+};
-+
-+static const unsigned int drif1_data0_mux[] = {
-+	RIF1_D0_MARK,
-+};
-+
-+static const unsigned int drif1_data1_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(5, 3),
-+};
-+
-+static const unsigned int drif1_data1_mux[] = {
-+	RIF1_D1_MARK,
-+};
-+
-+/* - DRIF2 --------------------------------------------------------------- */
-+static const unsigned int drif2_ctrl_a_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(2, 6), RCAR_GP_PIN(2, 7),
-+};
-+
-+static const unsigned int drif2_ctrl_a_mux[] = {
-+	RIF2_CLK_A_MARK, RIF2_SYNC_A_MARK,
-+};
-+
-+static const unsigned int drif2_data0_a_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(2, 8),
-+};
-+
-+static const unsigned int drif2_data0_a_mux[] = {
-+	RIF2_D0_A_MARK,
-+};
-+
-+static const unsigned int drif2_data1_a_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(2, 9),
-+};
-+
-+static const unsigned int drif2_data1_a_mux[] = {
-+	RIF2_D1_A_MARK,
-+};
-+
-+static const unsigned int drif2_ctrl_b_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(1, 4), RCAR_GP_PIN(1, 5),
-+};
-+
-+static const unsigned int drif2_ctrl_b_mux[] = {
-+	RIF2_CLK_B_MARK, RIF2_SYNC_B_MARK,
-+};
-+
-+static const unsigned int drif2_data0_b_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(1, 6),
-+};
-+
-+static const unsigned int drif2_data0_b_mux[] = {
-+	RIF2_D0_B_MARK,
-+};
-+
-+static const unsigned int drif2_data1_b_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(1, 7),
-+};
-+
-+static const unsigned int drif2_data1_b_mux[] = {
-+	RIF2_D1_B_MARK,
-+};
-+
-+/* - DRIF3 --------------------------------------------------------------- */
-+static const unsigned int drif3_ctrl_a_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(2, 10), RCAR_GP_PIN(2, 11),
-+};
-+
-+static const unsigned int drif3_ctrl_a_mux[] = {
-+	RIF3_CLK_A_MARK, RIF3_SYNC_A_MARK,
-+};
-+
-+static const unsigned int drif3_data0_a_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(2, 12),
-+};
-+
-+static const unsigned int drif3_data0_a_mux[] = {
-+	RIF3_D0_A_MARK,
-+};
-+
-+static const unsigned int drif3_data1_a_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(2, 13),
-+};
-+
-+static const unsigned int drif3_data1_a_mux[] = {
-+	RIF3_D1_A_MARK,
-+};
-+
-+static const unsigned int drif3_ctrl_b_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(0, 8), RCAR_GP_PIN(0, 9),
-+};
-+
-+static const unsigned int drif3_ctrl_b_mux[] = {
-+	RIF3_CLK_B_MARK, RIF3_SYNC_B_MARK,
-+};
-+
-+static const unsigned int drif3_data0_b_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(0, 10),
-+};
-+
-+static const unsigned int drif3_data0_b_mux[] = {
-+	RIF3_D0_B_MARK,
-+};
-+
-+static const unsigned int drif3_data1_b_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(0, 11),
-+};
-+
-+static const unsigned int drif3_data1_b_mux[] = {
-+	RIF3_D1_B_MARK,
-+};
-+
- /* - DU --------------------------------------------------------------------- */
- static const unsigned int du_rgb666_pins[] = {
- 	/* R[7:2], G[7:2], B[7:2] */
-@@ -3574,7 +3767,7 @@ static const unsigned int vin5_clk_b_mux[] = {
- 
- static const struct {
- 	struct sh_pfc_pin_group common[245];
--	struct sh_pfc_pin_group automotive[2];
-+	struct sh_pfc_pin_group automotive[23];
- } pinmux_groups = {
- 	.common = {
- 		SH_PFC_PIN_GROUP(audio_clk_a),
-@@ -3826,6 +4019,27 @@ static const struct {
- 	.automotive = {
- 		SH_PFC_PIN_GROUP(canfd0_data),
- 		SH_PFC_PIN_GROUP(canfd1_data),
-+		SH_PFC_PIN_GROUP(drif0_ctrl_a),
-+		SH_PFC_PIN_GROUP(drif0_data0_a),
-+		SH_PFC_PIN_GROUP(drif0_data1_a),
-+		SH_PFC_PIN_GROUP(drif0_ctrl_b),
-+		SH_PFC_PIN_GROUP(drif0_data0_b),
-+		SH_PFC_PIN_GROUP(drif0_data1_b),
-+		SH_PFC_PIN_GROUP(drif1_ctrl),
-+		SH_PFC_PIN_GROUP(drif1_data0),
-+		SH_PFC_PIN_GROUP(drif1_data1),
-+		SH_PFC_PIN_GROUP(drif2_ctrl_a),
-+		SH_PFC_PIN_GROUP(drif2_data0_a),
-+		SH_PFC_PIN_GROUP(drif2_data1_a),
-+		SH_PFC_PIN_GROUP(drif2_ctrl_b),
-+		SH_PFC_PIN_GROUP(drif2_data0_b),
-+		SH_PFC_PIN_GROUP(drif2_data1_b),
-+		SH_PFC_PIN_GROUP(drif3_ctrl_a),
-+		SH_PFC_PIN_GROUP(drif3_data0_a),
-+		SH_PFC_PIN_GROUP(drif3_data1_a),
-+		SH_PFC_PIN_GROUP(drif3_ctrl_b),
-+		SH_PFC_PIN_GROUP(drif3_data0_b),
-+		SH_PFC_PIN_GROUP(drif3_data1_b),
- 	}
- };
- 
-@@ -3880,6 +4094,39 @@ static const char * const canfd1_groups[] = {
- 	"canfd1_data",
- };
- 
-+static const char * const drif0_groups[] = {
-+	"drif0_ctrl_a",
-+	"drif0_data0_a",
-+	"drif0_data1_a",
-+	"drif0_ctrl_b",
-+	"drif0_data0_b",
-+	"drif0_data1_b",
-+};
-+
-+static const char * const drif1_groups[] = {
-+	"drif1_ctrl",
-+	"drif1_data0",
-+	"drif1_data1",
-+};
-+
-+static const char * const drif2_groups[] = {
-+	"drif2_ctrl_a",
-+	"drif2_data0_a",
-+	"drif2_data1_a",
-+	"drif2_ctrl_b",
-+	"drif2_data0_b",
-+	"drif2_data1_b",
-+};
-+
-+static const char * const drif3_groups[] = {
-+	"drif3_ctrl_a",
-+	"drif3_data0_a",
-+	"drif3_data1_a",
-+	"drif3_ctrl_b",
-+	"drif3_data0_b",
-+	"drif3_data1_b",
-+};
-+
- static const char * const du_groups[] = {
- 	"du_rgb666",
- 	"du_rgb888",
-@@ -4219,7 +4466,7 @@ static const char * const vin5_groups[] = {
- 
- static const struct {
- 	struct sh_pfc_function common[45];
--	struct sh_pfc_function automotive[2];
-+	struct sh_pfc_function automotive[6];
- } pinmux_functions = {
- 	.common = {
- 		SH_PFC_FUNCTION(audio_clk),
-@@ -4271,6 +4518,10 @@ static const struct {
- 	.automotive = {
- 		SH_PFC_FUNCTION(canfd0),
- 		SH_PFC_FUNCTION(canfd1),
-+		SH_PFC_FUNCTION(drif0),
-+		SH_PFC_FUNCTION(drif1),
-+		SH_PFC_FUNCTION(drif2),
-+		SH_PFC_FUNCTION(drif3),
- 	}
- };
- 
--- 
-2.7.4
+$ systemctl status systemd-binfmt.service
+? systemd-binfmt.service - Set Up Additional Binary Formats
+   Loaded: loaded (/lib/systemd/system/systemd-binfmt.service; static; vendor preset: enabled)
+   Active: inactive (dead)
+Condition: start condition failed at Tue 2019-04-02 08:04:31 +07; 2h 1min ago
+           none of the trigger conditions were met
+     Docs: man:systemd-binfmt.service(8)
+           man:binfmt.d(5)
+           https://www.kernel.org/doc/Documentation/binfmt_misc.txt
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190402/ef3601f3/attachment.html>
