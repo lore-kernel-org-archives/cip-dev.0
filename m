@@ -1,80 +1,96 @@
-From: daniel.sangorrin@toshiba.co.jp (daniel.sangorrin at toshiba.co.jp)
-Date: Tue, 2 Apr 2019 03:17:05 +0000
-Subject: [cip-dev] isar error log
-Message-ID: <OSAPR01MB3763A7998474AB7ABEB3DDF3D0560@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+From: akihiro27.suzuki@toshiba.co.jp (akihiro27.suzuki at toshiba.co.jp)
+Date: Tue, 2 Apr 2019 03:50:17 +0000
+Subject: [cip-dev] CIP IRC weekly meeting today
+In-Reply-To: <20190401064858.ioieooa6yksfc75p@MD1ZFJVC.ad001.siemens.net>
+References: <TYAPR01MB24950C688973FA3F22D72E67D9550@TYAPR01MB2495.jpnprd01.prod.outlook.com>
+	<20190401064858.ioieooa6yksfc75p@MD1ZFJVC.ad001.siemens.net>
+Message-ID: <TYAPR01MB2495C0F184E13F7CEB083670D9560@TYAPR01MB2495.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Jan,
+Hi Christian,
 
-I am trying to show CIP Core ISAR to some guys in Linaro Connect but I also met a binfmt related error.
-I am using Ubuntu 16.04. Do you have a hint on how to solve this problem?
-I already installed qemu-user-static. The system service for binfmt seems to fail.
+> > > Ah, OK. This is the "official" in the sense of exemplary implemented way
+> > > how to do round-robin A/B firmware update. That said, this is in my very
+> > > personal opinion a bit too involved and spread out over too many places.
+> > > That was also one reason I brought forward the Lua handler feature that
+> > > allows you to implement a handler in Lua. Lua handlers are feature-wise
+> > > on par with C handlers by now, i.e., they are equally powerful. So, you
+> > > can write a Lua handler that does the target partition round-robin
+> > > calculation, flashing, and updating of the bootloader environment in one
+> > > place. The sw-description becomes simpler as well since you don't need
+> > > to specify the A/B layout there but instead the Lua handler will take
+> > > care of this.
+> > That makes sense.
+> > I thought that the A/B update way adopted by meta-swupdate-boards was
+> > a little difficult to understand and not very flexible.
+> > I would like to use Lua handler to implement the flexible A/B update
+> > which can be used in various situations.
+> 
+> OK, then I'd propose having a meeting about this so that I can explain how this
+> variant works and how we make use of it. When do you think you'll come to this
+> point so that a meeting makes sense?
 
-Thanks,
-Daniel
+Thank you for your proposal.
+Just in case, please let me make sure the meaning of your proposal.
 
-update-binfmts: warning: unable to close /proc/sys/fs/binfmt_misc/register: Invalid argument
-update-binfmts: warning: unable to enable binary format qemu-aarch64
-update-binfmts: exiting due to previous errors
-2019-04-01 15:37:22 - INFO     - kas 1.0 started
-2019-04-01 15:37:22 - INFO     - /repo$ git rev-parse --show-toplevel
-2019-04-01 15:37:22 - INFO     - /repo$ git rev-parse --show-toplevel
-2019-04-01 15:37:22 - INFO     - /repo$ git rev-parse --show-toplevel
-2019-04-01 15:37:22 - INFO     - Using /repo as root for repository cip-core
-2019-04-01 15:37:22 - INFO     - /work/isar$ git cat-file -t ee5518cc6ecdade53dcafabfbb40ba4b0c505777
-2019-04-01 15:37:22 - INFO     - Repository isar already contains ee5518cc6ecdade53dcafabfbb40ba4b0c505777 as commit
-2019-04-01 15:37:22 - INFO     - /repo$ git rev-parse --show-toplevel
-2019-04-01 15:37:22 - INFO     - Using /repo as root for repository cip-core
-2019-04-01 15:37:22 - INFO     - /work/isar$ git status -s
-2019-04-01 15:37:22 - INFO     - /work/isar$ git rev-parse --verify HEAD
-2019-04-01 15:37:22 - INFO     - ee5518cc6ecdade53dcafabfbb40ba4b0c505777
-2019-04-01 15:37:22 - INFO     - Repo isar has already been checked out with correct refspec. Nothing to do.
-2019-04-01 15:37:22 - INFO     - /repo$ git rev-parse --show-toplevel
-2019-04-01 15:37:22 - INFO     - Using /repo as root for repository cip-core
-2019-04-01 15:37:22 - INFO     - /work/isar$ /tmp/tmp9u5m9ths /work/build
-2019-04-01 15:37:22 - INFO     - /repo$ git rev-parse --show-toplevel
-2019-04-01 15:37:22 - INFO     - Using /repo as root for repository cip-core
-2019-04-01 15:37:22 - INFO     - /repo$ git rev-parse --show-toplevel
-2019-04-01 15:37:22 - INFO     - Using /repo as root for repository cip-core
-2019-04-01 15:37:22 - INFO     - /work/build$ /work/isar/bitbake/bin/bitbake -k -c build cip-core-image
-Loading cache: 100% |######################################################################################################################################| Time: 0:00:00
-Loaded 19 entries from dependency cache.
-NOTE: Resolving any missing task queue dependencies
-Initialising tasks: 100% |#################################################################################################################################| Time: 0:00:00
-NOTE: Executing RunQueue Tasks
-ERROR: isar-bootstrap-target-1.0-r0 do_bootstrap: Function failed: do_bootstrap (log file is located at /work/build/tmp/work/cip-core-amd64/isar-bootstrap-target/temp/log.do_bootstrap.77)
-ERROR: Logfile of failure stored in: /work/build/tmp/work/cip-core-amd64/isar-bootstrap-target/temp/log.do_bootstrap.77
-Log data follows:
-| DEBUG: Executing shell function do_bootstrap
-| W: Target architecture is the same as host architecture; disabling QEMU support
-| I: Running command: debootstrap --arch amd64 --verbose --variant=minbase --include=locales --components=main,contrib,non-free stretch /work/build/tmp/work/cip-core-amd64/isar-bootstrap-target/rootfs http://ftp.de.debian.org/debian
-| /usr/sbin/debootstrap: 1454: /usr/sbin/debootstrap: cannot create /work/build/tmp/work/cip-core-amd64/isar-bootstrap-target/rootfs/test-dev-null: Permission denied
-| E: Cannot install into target '/work/build/tmp/work/cip-core-amd64/isar-bootstrap-target/rootfs' mounted with noexec or nodev
-| WARNING: exit code 1 from a shell command.
-| ERROR: Function failed: do_bootstrap (log file is located at /work/build/tmp/work/cip-core-amd64/isar-bootstrap-target/temp/log.do_bootstrap.77)
-ERROR: Task (/work/isar/meta/recipes-core/isar-bootstrap/isar-bootstrap-target.bb:do_bootstrap) failed with exit code '1'
-ERROR: isar-bootstrap-host-1.0-r0 do_bootstrap: Function failed: do_bootstrap (log file is located at /work/build/tmp/work/cip-core-amd64/isar-bootstrap-host-debian-stretch-amd64/temp/log.do_bootstrap.79)
-ERROR: Logfile of failure stored in: /work/build/tmp/work/cip-core-amd64/isar-bootstrap-host-debian-stretch-amd64/temp/log.do_bootstrap.79
-Log data follows:
-| DEBUG: Executing shell function do_bootstrap
-| W: Target architecture is the same as host architecture; disabling QEMU support
-| I: Running command: debootstrap --arch amd64 --verbose --variant=minbase --include=locales --components=main,contrib,non-free stretch /work/build/tmp/work/cip-core-amd64/isar-bootstrap-host-debian-stretch-amd64/rootfs http://ftp.de.debian.org/debian
-| /usr/sbin/debootstrap: 1454: /usr/sbin/debootstrap: cannot create /work/build/tmp/work/cip-core-amd64/isar-bootstrap-host-debian-stretch-amd64/rootfs/test-dev-null: Permission denied
-| E: Cannot install into target '/work/build/tmp/work/cip-core-amd64/isar-bootstrap-host-debian-stretch-amd64/rootfs' mounted with noexec or nodev
-| WARNING: exit code 1 from a shell command.
-| ERROR: Function failed: do_bootstrap (log file is located at /work/build/tmp/work/cip-core-amd64/isar-bootstrap-host-debian-stretch-amd64/temp/log.do_bootstrap.79)
-ERROR: Task (/work/isar/meta/recipes-core/isar-bootstrap/isar-bootstrap-host.bb:do_bootstrap) failed with exit code '1'
+Which one did you mean?
 
-$ systemctl status systemd-binfmt.service
-? systemd-binfmt.service - Set Up Additional Binary Formats
-   Loaded: loaded (/lib/systemd/system/systemd-binfmt.service; static; vendor preset: enabled)
-   Active: inactive (dead)
-Condition: start condition failed at Tue 2019-04-02 08:04:31 +07; 2h 1min ago
-           none of the trigger conditions were met
-     Docs: man:systemd-binfmt.service(8)
-           man:binfmt.d(5)
-           https://www.kernel.org/doc/Documentation/binfmt_misc.txt
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190402/ef3601f3/attachment.html>
+  (A) In a meeting, you will tell me about how to use Lua handler for the A/B update.
+  (B) I should have a meeting after I implemented the A/B update by using Lua handler.
+
+If you meant (A), I'd like some time, 1 or 2 weeks, to try Lua before the meeting
+because I haven't used it.
+
+If you meant (B), I will have a meeting after implementing it,
+but maybe the implementation (and tests) will take at least 1 month.
+
+Best regards,
+Suzuki
+
+
+> -----Original Message-----
+> From: cip-dev-bounces at lists.cip-project.org
+> [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Christian
+> Storm
+> Sent: Monday, April 01, 2019 3:49 PM
+> To: cip-dev at lists.cip-project.org
+> Subject: Re: [cip-dev] CIP IRC weekly meeting today
+> 
+> Hi Suzuki,
+> 
+> > > Ah, OK. This is the "official" in the sense of exemplary implemented way
+> > > how to do round-robin A/B firmware update. That said, this is in my very
+> > > personal opinion a bit too involved and spread out over too many places.
+> > > That was also one reason I brought forward the Lua handler feature that
+> > > allows you to implement a handler in Lua. Lua handlers are feature-wise
+> > > on par with C handlers by now, i.e., they are equally powerful. So, you
+> > > can write a Lua handler that does the target partition round-robin
+> > > calculation, flashing, and updating of the bootloader environment in one
+> > > place. The sw-description becomes simpler as well since you don't need
+> > > to specify the A/B layout there but instead the Lua handler will take
+> > > care of this.
+> > That makes sense.
+> > I thought that the A/B update way adopted by meta-swupdate-boards was
+> > a little difficult to understand and not very flexible.
+> > I would like to use Lua handler to implement the flexible A/B update
+> > which can be used in various situations.
+> 
+> OK, then I'd propose having a meeting about this so that I can explain
+> how this
+> variant works and how we make use of it. When do you think you'll come
+> to this
+> point so that a meeting makes sense?
+> 
+> 
+> Kind regards,
+>    Christian
+> 
+> --
+> Dr. Christian Storm
+> Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+> Otto-Hahn-Ring 6, 81739 M?nchen, Germany
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
