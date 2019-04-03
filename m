@@ -1,55 +1,156 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Tue, 2 Apr 2019 15:24:51 +0200
-Subject: [cip-dev] [PATCH v2 4.19.y] ARM: dts: socfpga: Rename
- socfpga_cyclone5_de0_{sockit, nano_soc}
-In-Reply-To: <a3b5f19e-00ba-fd0f-8ebe-bfa0c5782fe6@siemens.com>
-References: <a3b5f19e-00ba-fd0f-8ebe-bfa0c5782fe6@siemens.com>
-Message-ID: <756db9bb-1cef-0a6c-220d-35c387dd5a8a@siemens.com>
+From: daniel.sangorrin@toshiba.co.jp (daniel.sangorrin at toshiba.co.jp)
+Date: Wed, 3 Apr 2019 00:56:54 +0000
+Subject: [cip-dev] isar error log
+In-Reply-To: <0c1b977d-cd7e-34aa-8d7e-1569b313f75d@siemens.com>
+References: <OSAPR01MB3763A7998474AB7ABEB3DDF3D0560@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+	<0c1b977d-cd7e-34aa-8d7e-1569b313f75d@siemens.com>
+Message-ID: <OSAPR01MB37634FC9265275C1F909D27AD0570@OSAPR01MB3763.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Marek Vasut <marex@denx.de>
+Hi Jan,
 
-Rename DT source for DE0 Nano SoC . The board name is really DE0-Nano-SoC
-or Atlas SoC, and it is not to be confused with SoCkit board, which is a
-different one. Rename the DT source file to match the board name and to
-avoid this possible mixup with another different board.
+Yes I am following the Readme.
 
-Upstream commit 202eb5481421040e115526b75317b5ca72584806
+The docker image id for kasproject/kas-isar is 9e9fe44e68d3 (I am using kas-docker script). And I am using
+kas-docker --isar build kas.yml:board-qemu-amd64.yml
 
-This commit is needed because it aligns the device tree name of U-Boot
-and kernel which helps distro boot procedures (fdtfile as set by U-Boot
-will match the kernel-provided dtb).
+Yes, it seems there are multiple errors:
+/proc/sys/fs/binfmt_misc/register: Invalid argument
+/test-dev-null: Permission denied
 
-Signed-off-by: Marek Vasut <marex@denx.de>
-Cc: Dinh Nguyen <dinguyen@kernel.org>
-Cc: Jan Kiszka <jan.kiszka@siemens.com>
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
+Probably this is a bug or misconfiguration in Ubuntu. I will try to figure it out.
 
-Sorry, missed to add the actual renaming hunk in v1.
+Thanks,
+Daniel
 
- arch/arm/boot/dts/Makefile                                              | 2 +-
- ...ocfpga_cyclone5_de0_sockit.dts => socfpga_cyclone5_de0_nano_soc.dts} | 0
- 2 files changed, 1 insertion(+), 1 deletion(-)
- rename arch/arm/boot/dts/{socfpga_cyclone5_de0_sockit.dts => socfpga_cyclone5_de0_nano_soc.dts} (100%)
+-----Original Message-----
+From: Jan Kiszka <jan.kiszka@siemens.com> 
+Sent: Tuesday, April 2, 2019 3:14 PM
+To: sangorrin daniel(????? ???? ????????) <daniel.sangorrin@toshiba.co.jp>
+Cc: cip-dev at lists.cip-project.org; isar-users at googlegroups.com
+Subject: Re: isar error log
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index b5bd3de87c33..1036d396da83 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -892,7 +892,7 @@ dtb-$(CONFIG_ARCH_SOCFPGA) += \
- 	socfpga_arria10_socdk_sdmmc.dtb \
- 	socfpga_cyclone5_mcvevk.dtb \
- 	socfpga_cyclone5_socdk.dtb \
--	socfpga_cyclone5_de0_sockit.dtb \
-+	socfpga_cyclone5_de0_nano_soc.dtb \
- 	socfpga_cyclone5_sockit.dtb \
- 	socfpga_cyclone5_socrates.dtb \
- 	socfpga_cyclone5_sodia.dtb \
-diff --git a/arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts b/arch/arm/boot/dts/socfpga_cyclone5_de0_nano_soc.dts
-similarity index 100%
-rename from arch/arm/boot/dts/socfpga_cyclone5_de0_sockit.dts
-rename to arch/arm/boot/dts/socfpga_cyclone5_de0_nano_soc.dts
--- 
-2.16.4
+On 02.04.19 05:17, daniel.sangorrin at toshiba.co.jp wrote:
+> Hi Jan,
+> 
+> I am trying to show CIP Core ISAR to some guys in Linaro Connect but I also met a binfmt related error.
+
+It's supposed to be fixed in the :latest kas-isar image. Are you using that?
+
+> I am using Ubuntu 16.04. Do you have a hint on how to solve this problem?
+> I already installed qemu-user-static. The system service for binfmt seems to fail.
+> 
+> Thanks,
+> Daniel
+> 
+> update-binfmts: warning: unable to close 
+> /proc/sys/fs/binfmt_misc/register: Invalid argument
+> update-binfmts: warning: unable to enable binary format qemu-aarch64
+> update-binfmts: exiting due to previous errors
+
+That indeed indicate broken binfmt settings.
+
+> 2019-04-01 15:37:22 - INFO     - kas 1.0 started
+> 2019-04-01 15:37:22 - INFO     - /repo$ git rev-parse --show-toplevel
+> 2019-04-01 15:37:22 - INFO     - /repo$ git rev-parse --show-toplevel
+> 2019-04-01 15:37:22 - INFO     - /repo$ git rev-parse --show-toplevel
+> 2019-04-01 15:37:22 - INFO     - Using /repo as root for repository cip-core
+> 2019-04-01 15:37:22 - INFO     - /work/isar$ git cat-file -t ee5518cc6ecdade53dcafabfbb40ba4b0c505777
+> 2019-04-01 15:37:22 - INFO     - Repository isar already contains ee5518cc6ecdade53dcafabfbb40ba4b0c505777 as commit
+> 2019-04-01 15:37:22 - INFO     - /repo$ git rev-parse --show-toplevel
+> 2019-04-01 15:37:22 - INFO     - Using /repo as root for repository cip-core
+> 2019-04-01 15:37:22 - INFO     - /work/isar$ git status -s
+> 2019-04-01 15:37:22 - INFO     - /work/isar$ git rev-parse --verify HEAD
+> 2019-04-01 15:37:22 - INFO     - ee5518cc6ecdade53dcafabfbb40ba4b0c505777
+> 2019-04-01 15:37:22 - INFO     - Repo isar has already been checked out with correct refspec. Nothing to do.
+> 2019-04-01 15:37:22 - INFO     - /repo$ git rev-parse --show-toplevel
+> 2019-04-01 15:37:22 - INFO     - Using /repo as root for repository cip-core
+> 2019-04-01 15:37:22 - INFO     - /work/isar$ /tmp/tmp9u5m9ths /work/build
+> 2019-04-01 15:37:22 - INFO     - /repo$ git rev-parse --show-toplevel
+> 2019-04-01 15:37:22 - INFO     - Using /repo as root for repository cip-core
+> 2019-04-01 15:37:22 - INFO     - /repo$ git rev-parse --show-toplevel
+> 2019-04-01 15:37:22 - INFO     - Using /repo as root for repository cip-core
+> 2019-04-01 15:37:22 - INFO     - /work/build$ /work/isar/bitbake/bin/bitbake -k -c build cip-core-image
+> Loading cache: 100% 
+> |######################################################################################################################################| Time: 0:00:00 Loaded 19 entries from dependency cache.
+> NOTE: Resolving any missing task queue dependencies Initialising 
+> tasks: 100% 
+> |#####################################################################
+> ############################################################| Time: 
+> 0:00:00
+> NOTE: Executing RunQueue Tasks
+> ERROR: isar-bootstrap-target-1.0-r0 do_bootstrap: Function failed: 
+> do_bootstrap (log file is located at 
+> /work/build/tmp/work/cip-core-amd64/isar-bootstrap-target/temp/log.do_
+> bootstrap.77)
+> ERROR: Logfile of failure stored in: 
+> /work/build/tmp/work/cip-core-amd64/isar-bootstrap-target/temp/log.do_
+> bootstrap.77
+> Log data follows:
+> | DEBUG: Executing shell function do_bootstrap
+> | W: Target architecture is the same as host architecture; disabling 
+> | QEMU support
+> | I: Running command: debootstrap --arch amd64 --verbose 
+> | --variant=minbase --include=locales 
+> | --components=main,contrib,non-free stretch 
+> | /work/build/tmp/work/cip-core-amd64/isar-bootstrap-target/rootfs 
+> | http://ftp.de.debian.org/debian
+> | /usr/sbin/debootstrap: 1454: /usr/sbin/debootstrap: cannot create 
+> | /work/build/tmp/work/cip-core-amd64/isar-bootstrap-target/rootfs/tes
+> | t-dev-null: Permission denied
+> | E: Cannot install into target 
+> | '/work/build/tmp/work/cip-core-amd64/isar-bootstrap-target/rootfs' 
+> | mounted with noexec or nodev
+
+Hmm, there are more strange errors. Could it be that you forgot the "--isar"  
+after "kas-docker"? That would mean you are trying to run unprivileged which is doomed to fail.
+
+> | WARNING: exit code 1 from a shell command.
+> | ERROR: Function failed: do_bootstrap (log file is located at 
+> | /work/build/tmp/work/cip-core-amd64/isar-bootstrap-target/temp/log.d
+> | o_bootstrap.77)
+> ERROR: Task (/work/isar/meta/recipes-core/isar-bootstrap/isar-bootstrap-target.bb:do_bootstrap) failed with exit code '1'
+> ERROR: isar-bootstrap-host-1.0-r0 do_bootstrap: Function failed: 
+> do_bootstrap (log file is located at 
+> /work/build/tmp/work/cip-core-amd64/isar-bootstrap-host-debian-stretch
+> -amd64/temp/log.do_bootstrap.79)
+> ERROR: Logfile of failure stored in: 
+> /work/build/tmp/work/cip-core-amd64/isar-bootstrap-host-debian-stretch
+> -amd64/temp/log.do_bootstrap.79
+> Log data follows:
+> | DEBUG: Executing shell function do_bootstrap
+> | W: Target architecture is the same as host architecture; disabling 
+> | QEMU support
+> | I: Running command: debootstrap --arch amd64 --verbose 
+> | --variant=minbase --include=locales 
+> | --components=main,contrib,non-free stretch 
+> | /work/build/tmp/work/cip-core-amd64/isar-bootstrap-host-debian-stret
+> | ch-amd64/rootfs http://ftp.de.debian.org/debian
+> | /usr/sbin/debootstrap: 1454: /usr/sbin/debootstrap: cannot create 
+> | /work/build/tmp/work/cip-core-amd64/isar-bootstrap-host-debian-stret
+> | ch-amd64/rootfs/test-dev-null: Permission denied
+> | E: Cannot install into target 
+> | '/work/build/tmp/work/cip-core-amd64/isar-bootstrap-host-debian-stre
+> | tch-amd64/rootfs' mounted with noexec or nodev
+> | WARNING: exit code 1 from a shell command.
+> | ERROR: Function failed: do_bootstrap (log file is located at 
+> | /work/build/tmp/work/cip-core-amd64/isar-bootstrap-host-debian-stret
+> | ch-amd64/temp/log.do_bootstrap.79)
+> ERROR: Task (/work/isar/meta/recipes-core/isar-bootstrap/isar-bootstrap-host.bb:do_bootstrap) failed with exit code '1'
+> 
+> $ systemctl status systemd-binfmt.service ? systemd-binfmt.service - 
+> Set Up Additional Binary Formats
+>     Loaded: loaded (/lib/systemd/system/systemd-binfmt.service; static; vendor preset: enabled)
+>     Active: inactive (dead)
+> Condition: start condition failed at Tue 2019-04-02 08:04:31 +07; 2h 1min ago
+>             none of the trigger conditions were met
+>       Docs: man:systemd-binfmt.service(8)
+>             man:binfmt.d(5)
+>             https://www.kernel.org/doc/Documentation/binfmt_misc.txt
+> 
+
+Jan
+
+--
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE Corporate Competence Center Embedded Linux
