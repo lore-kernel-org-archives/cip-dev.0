@@ -1,44 +1,42 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Fri,  5 Apr 2019 08:54:56 +0100
-Subject: [cip-dev] [PATCH 4.19.y] arm64: renesas: Enable GPIOLIB to allow
-	GPIO driver selection
-Message-ID: <1554450896-62824-1-git-send-email-biju.das@bp.renesas.com>
+From: patryk.mungai-ndungu.kx@renesas.com (Patryk Mungai)
+Date: Fri,  5 Apr 2019 11:47:31 +0100
+Subject: [cip-dev] [PATCH 4.4 0/5] DHCP client support when receiving
+	"delayed" replies
+Message-ID: <1554461256-12966-1-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Dear All,
 
-The R-Car GPIO driver cannot be enabled when Renesas SoC's ARCH configs
-(ARCH_RENESAS, ARCH_R8A7795, ARCH_R8A7796 and ARCH_R8A77965) are enabled
-only.
+When running dhcp tests using the 4.4.y (and 4.4.y-cip kernel as well), I
+encountered an issue where the dhcp client in the kernel could not get an
+IP address when multiple network devices were enabled. It seems that the
+current implementation of the dhcp client in the 4.4 kernel is send dhcp
+request via device 1 -> wait <1s for response from server on device 1 ->
+if no response, switch to device 2 -> repeat process on device 2 ...etc.
+When the dhcp server is slow to respond, this means it is impossible to get
+a dhcp address.
 
-As GPIOs are a critical resource for proper operation on Renesas
-platforms, this patch selects GPIOLIB, just like is done for other SoC
-vendors, and on Renesas arm32 SoCs.
+This series backported from upstream fixes the issue, is it possible
+to apply this to 4.4.y and/or 4.4.y-cip?
 
-Reported-by: Alexandru Gheorghe <Alexandru_Gheorghe@mentor.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[geert: Improve patch description]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Thanks,
+Patryk
 
-(cherry picked from commit 9374eee32b666c92cf821a98eb3aeaa0bf4d5dd5)
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm64/Kconfig.platforms | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index e13c9ff..a6f9b64 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -178,6 +178,7 @@ config ARCH_SYNQUACER
- config ARCH_RENESAS
- 	bool "Renesas SoC Platforms"
- 	select ARCH_SHMOBILE
-+	select GPIOLIB
- 	select PINCTRL
- 	select PM
- 	select PM_GENERIC_DOMAINS
+Geert Uytterhoeven (1):
+  net: ipconfig: Fix NULL pointer dereference on RARP/BOOTP/DHCP timeout
+
+Thierry Reding (1):
+  net: ipconfig: Fix more use after free
+
+Uwe Kleine-K?nig (3):
+  net: ipconfig: Support using "delayed" DHCP replies
+  net: ipconfig: drop inter-device timeout
+  net: ipconfig: fix use after free
+
+ net/ipv4/ipconfig.c | 61 ++++++++++++++++++++++++-----------------------------
+ 1 file changed, 28 insertions(+), 33 deletions(-)
+
 -- 
 2.7.4
