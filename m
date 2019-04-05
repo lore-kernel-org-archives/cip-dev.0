@@ -1,52 +1,47 @@
 From: patryk.mungai-ndungu.kx@renesas.com (Patryk Mungai)
-Date: Fri,  5 Apr 2019 11:47:35 +0100
-Subject: [cip-dev] [PATCH 4.4 4/5] net: ipconfig: Fix more use after free
+Date: Fri,  5 Apr 2019 11:47:36 +0100
+Subject: [cip-dev] [PATCH 4.4 5/5] net: ipconfig: Fix NULL pointer
+	dereference on RARP/BOOTP/DHCP timeout
 In-Reply-To: <1554461256-12966-1-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
 References: <1554461256-12966-1-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
-Message-ID: <1554461256-12966-5-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
+Message-ID: <1554461256-12966-6-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit d2d371ae5dd6af9a6a3d7f50b753627c42868409 upstream.
+commit 1ae292a2457cd692828da2be87cb967260993ad0 upstream.
 
-While commit 9c706a49d660 ("net: ipconfig: fix use after free") avoids
-the use after free, the resulting code still ends up calling both the
-ic_setup_if() and ic_setup_routes() after calling ic_close_devs(), and
-access to the device is still required.
+If no RARP, BOOTP, or DHCP response is received, ic_dev is never set,
+causing a NULL pointer dereference in ic_close_devs():
 
-Move the call to ic_close_devs() to the very end of the function.
+    Sending DHCP requests ...... timed out!
+    Unable to handle kernel NULL pointer dereference at virtual address 00000004
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+To fix this, add a check to avoid dereferencing ic_dev if it is still
+NULL.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: 2647cffb2bc6fbed ("net: ipconfig: Support using "delayed" DHCP replies")
 Signed-off-by: David S. Miller <davem@davemloft.net>
 [Patryk: cherry-picked to 4.4]
 Signed-off-by: Patryk Mungai <patryk.mungai-ndungu.kx@renesas.com>
 ---
- net/ipv4/ipconfig.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ net/ipv4/ipconfig.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/net/ipv4/ipconfig.c b/net/ipv4/ipconfig.c
-index 23c9b8a..6b78590 100644
+index 6b78590..ca658af 100644
 --- a/net/ipv4/ipconfig.c
 +++ b/net/ipv4/ipconfig.c
-@@ -1556,12 +1556,14 @@ static int __init ip_auto_config(void)
- 	 * Close all network devices except the device we've
- 	 * autoconfigured and set up routes.
- 	 */
--	ic_close_devs();
- 	if (ic_setup_if() < 0 || ic_setup_routes() < 0)
--		return -1;
-+		err = -1;
-+	else
-+		err = 0;
- 
-+	ic_close_devs();
- 
--	return 0;
-+	return err;
- }
- 
- late_initcall(ip_auto_config);
+@@ -313,7 +313,7 @@ static void __init ic_close_devs(void)
+ 	while ((d = next)) {
+ 		next = d->next;
+ 		dev = d->dev;
+-		if (dev != ic_dev->dev && !netdev_uses_dsa(dev)) {
++		if ((!ic_dev || dev != ic_dev->dev) && !netdev_uses_dsa(dev)) {
+ 			pr_debug("IP-Config: Downing %s\n", dev->name);
+ 			dev_change_flags(dev, d->flags);
+ 		}
 -- 
 2.7.4
