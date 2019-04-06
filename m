@@ -1,47 +1,44 @@
-From: patryk.mungai-ndungu.kx@renesas.com (Patryk Mungai)
-Date: Fri,  5 Apr 2019 11:47:36 +0100
-Subject: [cip-dev] [PATCH 4.4 5/5] net: ipconfig: Fix NULL pointer
-	dereference on RARP/BOOTP/DHCP timeout
+From: pavel@denx.de (Pavel Machek)
+Date: Sat, 6 Apr 2019 12:38:35 +0200
+Subject: [cip-dev] [PATCH 4.4 0/5] DHCP client support when receiving
+ "delayed" replies
 In-Reply-To: <1554461256-12966-1-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
 References: <1554461256-12966-1-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
-Message-ID: <1554461256-12966-6-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
+Message-ID: <20190406103835.GA15362@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi!
 
-commit 1ae292a2457cd692828da2be87cb967260993ad0 upstream.
+> When running dhcp tests using the 4.4.y (and 4.4.y-cip kernel as well), I
+> encountered an issue where the dhcp client in the kernel could not get an
+> IP address when multiple network devices were enabled. It seems that the
+> current implementation of the dhcp client in the 4.4 kernel is send dhcp
+> request via device 1 -> wait <1s for response from server on device 1 ->
+> if no response, switch to device 2 -> repeat process on device 2 ...etc.
+> When the dhcp server is slow to respond, this means it is impossible to get
+> a dhcp address.
+> 
+> This series backported from upstream fixes the issue, is it possible
+> to apply this to 4.4.y and/or 4.4.y-cip?
 
-If no RARP, BOOTP, or DHCP response is received, ic_dev is never set,
-causing a NULL pointer dereference in ic_close_devs():
+Ok, so first patch adds support for using "delayed" DHCP replies, then
+there are three more patches to fix up issues it creates.
 
-    Sending DHCP requests ...... timed out!
-    Unable to handle kernel NULL pointer dereference at virtual address 00000004
+Which tells me that maybe this is not quite suitable for -stable.
 
-To fix this, add a check to avoid dereferencing ic_dev if it is still
-NULL.
+How long do your dhcp servers take to reply? Can you solve the problem
+some other way, like for example increasing timeouts?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Fixes: 2647cffb2bc6fbed ("net: ipconfig: Support using "delayed" DHCP replies")
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[Patryk: cherry-picked to 4.4]
-Signed-off-by: Patryk Mungai <patryk.mungai-ndungu.kx@renesas.com>
----
- net/ipv4/ipconfig.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/ipv4/ipconfig.c b/net/ipv4/ipconfig.c
-index 6b78590..ca658af 100644
---- a/net/ipv4/ipconfig.c
-+++ b/net/ipv4/ipconfig.c
-@@ -313,7 +313,7 @@ static void __init ic_close_devs(void)
- 	while ((d = next)) {
- 		next = d->next;
- 		dev = d->dev;
--		if (dev != ic_dev->dev && !netdev_uses_dsa(dev)) {
-+		if ((!ic_dev || dev != ic_dev->dev) && !netdev_uses_dsa(dev)) {
- 			pr_debug("IP-Config: Downing %s\n", dev->name);
- 			dev_change_flags(dev, d->flags);
- 		}
+Thanks,
+									Pavel
 -- 
-2.7.4
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 181 bytes
+Desc: Digital signature
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190406/635ad643/attachment.sig>
