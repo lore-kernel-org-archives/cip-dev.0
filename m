@@ -1,32 +1,59 @@
 From: pavel@denx.de (Pavel Machek)
-Date: Tue, 9 Apr 2019 22:56:39 +0200
-Subject: [cip-dev] [PATCH 01/11] pinctrl: sh-pfc: r8a77990: Add Audio
- clock pins, groups and functions
-In-Reply-To: <1553247610-33056-2-git-send-email-biju.das@bp.renesas.com>
-References: <1553247610-33056-1-git-send-email-biju.das@bp.renesas.com>
-	<1553247610-33056-2-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <20190409205639.GE3845141@pollux.denx.de>
+Date: Tue, 9 Apr 2019 23:03:54 +0200
+Subject: [cip-dev] [PATCH 4.19y 01/10] pinctrl: sh-pfc: r8a77990: Add
+ CAN pins, groups and functions
+In-Reply-To: <1554126947-32747-2-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1554126947-32747-1-git-send-email-fabrizio.castro@bp.renesas.com>
+	<1554126947-32747-2-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <20190409210354.GF3845141@pollux.denx.de>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Fri 2019-03-22 09:40:00, Biju Das wrote:
+On Mon 2019-04-01 14:55:38, Fabrizio Castro wrote:
 > From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 > 
-> This patch adds AUDIO_CLK{A,B,C}, AUDIO_CLKOUT, AUDIO_CLKOUT{1,2,3}
-> pins, groups and functions to the R8A77990 SoC.
+> commit c1e5bd286fe501992165608551f889ec69f5901a upstream.
+> 
+> This patch adds CAN{0,1} pins, groups and functions to the R8A77990 SoC.
 > 
 > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> [simon: rebase]
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> (cherry picked from commit 4c833b2fa5b6b121cc657e5f24b8c3585a8c37ea)
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-I could not apply this on c312fd1d432e36f9012127fe3c1d2b7023afae48-based tree.
+This does not apply. My kernel still has:
 
-I have         struct sh_pfc_pin_group common[117];
-while the patch expects struct sh_pfc_pin_group common[123];
+> -     struct sh_pfc_pin_group common[117];
+
+while this expects... way higher number. I tried to look at pending patches
+in patchwork, that maybe if I tried to apply everything it would work, but
+could not get that to work, either.
+
+Current status of the tree is at:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.19.y-cip
+
+Could the patches that depend on each other go into one series? If it is
+hard identifying what depends on what, maybe the best way forward is to 
+create a big series on top of 64729dc0be4847961550cdcca4ddc66adf556aaa
+with all patches you have pending. Your patches seem to be in good shape,
+so applying it should not be a big deal.
+
+Thanks and sorry for confusion,
+								Pavel
+
+> @@ -3475,7 +3504,7 @@ static const unsigned int vin5_clk_b_mux[] = {
+>  };
+>  
+>  static const struct {
+> -	struct sh_pfc_pin_group common[238];
+> +	struct sh_pfc_pin_group common[241];
+>  	struct sh_pfc_pin_group automotive[0];
+>  } pinmux_groups = {
+>  	.common = {
+> @@ -3504,6 +3533,9 @@ static const struct {
+
+
 
 -- 
 DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
