@@ -1,27 +1,32 @@
 From: pavel@denx.de (Pavel Machek)
-Date: Tue, 9 Apr 2019 22:55:54 +0200
-Subject: [cip-dev] [PATCH 4.19.y 09/17] arm64: dts: renesas: r8a774c0:
- Add CMT device nodes
-In-Reply-To: <1554112696-20706-10-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1554112696-20706-1-git-send-email-fabrizio.castro@bp.renesas.com>
-	<1554112696-20706-10-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <20190409205554.GD3845141@pollux.denx.de>
+Date: Tue, 9 Apr 2019 22:56:39 +0200
+Subject: [cip-dev] [PATCH 01/11] pinctrl: sh-pfc: r8a77990: Add Audio
+ clock pins, groups and functions
+In-Reply-To: <1553247610-33056-2-git-send-email-biju.das@bp.renesas.com>
+References: <1553247610-33056-1-git-send-email-biju.das@bp.renesas.com>
+	<1553247610-33056-2-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <20190409205639.GE3845141@pollux.denx.de>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi!
-
-> From: Biju Das <biju.das@bp.renesas.com>
+On Fri 2019-03-22 09:40:00, Biju Das wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 > 
-> commit fa930bb65cf930c48efc01cc90f928a8db99fa94 upstream.
+> This patch adds AUDIO_CLK{A,B,C}, AUDIO_CLKOUT, AUDIO_CLKOUT{1,2,3}
+> pins, groups and functions to the R8A77990 SoC.
 > 
-> This patch adds CMT{0|1|2|3} device nodes for r8a774c0 SoC.
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> [simon: rebase]
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> (cherry picked from commit 4c833b2fa5b6b121cc657e5f24b8c3585a8c37ea)
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
-I could not apply this, as arch/arm64/boot/dts/renesas/r8a774c0.dtsi does
-not exist in my tree.
+I could not apply this on c312fd1d432e36f9012127fe3c1d2b7023afae48-based tree.
 
-Plus, you are pushing spdx comment changes. I guess it is ok if it makes your
-life easier, but...
+I have         struct sh_pfc_pin_group common[117];
+while the patch expects struct sh_pfc_pin_group common[123];
 
 -- 
 DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
