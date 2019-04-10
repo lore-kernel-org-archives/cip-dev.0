@@ -1,58 +1,36 @@
-From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
-Date: Wed, 10 Apr 2019 00:55:42 +0000
-Subject: [cip-dev] [PATCH 4.19.y 09/17] arm64: dts: renesas: r8a774c0:
- Add CMT device nodes
-In-Reply-To: <20190409205554.GD3845141@pollux.denx.de>
-References: <1554112696-20706-1-git-send-email-fabrizio.castro@bp.renesas.com>
-	<1554112696-20706-10-git-send-email-fabrizio.castro@bp.renesas.com>,
-	<20190409205554.GD3845141@pollux.denx.de>
-Message-ID: <TYAPR01MB4189070F5913AF8DCE1D95FE922E0@TYAPR01MB4189.jpnprd01.prod.outlook.com>
+From: biju.das@bp.renesas.com (Biju Das)
+Date: Wed, 10 Apr 2019 06:41:30 +0000
+Subject: [cip-dev] [PATCH 4.19.y 6/9] arm64: dts: renesas: r8a774c0: Add
+ I2C and IIC-DVFS support
+In-Reply-To: <20190409205446.GB3845141@pollux.denx.de>
+References: <1553688789-43441-1-git-send-email-biju.das@bp.renesas.com>
+	<1553688789-43441-7-git-send-email-biju.das@bp.renesas.com>
+	<20190409205446.GB3845141@pollux.denx.de>
+Message-ID: <OSBPR01MB2103CD65B57B09337CA1AB62B82E0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi, all.
+Hi Pavel,
 
-> > From: Biju Das <biju.das@bp.renesas.com>
+Thanks for the feedback.
+
+> Subject: Re: [cip-dev] [PATCH 4.19.y 6/9] arm64: dts: renesas: r8a774c0: Add
+> I2C and IIC-DVFS support
+> 
+> On Wed 2019-03-27 12:13:06, Biju Das wrote:
+> > From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 > >
-> > commit fa930bb65cf930c48efc01cc90f928a8db99fa94 upstream.
-> >
-> > This patch adds CMT{0|1|2|3} device nodes for r8a774c0 SoC.
->
-> I could not apply this, as arch/arm64/boot/dts/renesas/r8a774c0.dtsi does
-> not exist in my tree.
+> > Add the I2C[0-7] and IIC Bus Interface for DVFS (IIC for DVFS) devices
+> > nodes to the r8a774c0 device tree.
+> 
+> This fails for me, because arch/arm64/boot/dts/renesas/r8a774c0.dtsi does
+> not yet exist.
 
-This was depended patch in charge.
-I already applied and push to linux-4.19.y-cip branch.
+This patch "arm64: dts: renesas: Initial device tree for r8a774c0" have "arch/arm64/boot/dts/renesas/r8a774c0.dtsi"
 
-Best regards,
-  Nobuhiro
+https://lists.cip-project.org/pipermail/cip-dev/2019-March/001917.html
 
-________________________________________
-???: cip-dev-bounces at lists.cip-project.org <cip-dev-bounces@lists.cip-project.org> ? Pavel Machek <pavel@denx.de> ??????
-????: 2019?4?10? 5:55
-??: Fabrizio Castro
-CC: cip-dev at lists.cip-project.org; Biju Das
-??: Re: [cip-dev] [PATCH 4.19.y 09/17] arm64: dts: renesas: r8a774c0: Add CMT device nodes
+Do you want me to send it again?
 
-Hi!
-
-> From: Biju Das <biju.das@bp.renesas.com>
->
-> commit fa930bb65cf930c48efc01cc90f928a8db99fa94 upstream.
->
-> This patch adds CMT{0|1|2|3} device nodes for r8a774c0 SoC.
-
-I could not apply this, as arch/arm64/boot/dts/renesas/r8a774c0.dtsi does
-not exist in my tree.
-
-Plus, you are pushing spdx comment changes. I guess it is ok if it makes your
-life easier, but...
-
---
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
-_______________________________________________
-cip-dev mailing list
-cip-dev at lists.cip-project.org
-https://lists.cip-project.org/mailman/listinfo/cip-dev
+Regards,
+Biju
