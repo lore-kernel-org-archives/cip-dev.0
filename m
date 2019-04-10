@@ -1,60 +1,61 @@
-From: pavel@denx.de (Pavel Machek)
-Date: Tue, 9 Apr 2019 23:03:54 +0200
-Subject: [cip-dev] [PATCH 4.19y 01/10] pinctrl: sh-pfc: r8a77990: Add
- CAN pins, groups and functions
-In-Reply-To: <1554126947-32747-2-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1554126947-32747-1-git-send-email-fabrizio.castro@bp.renesas.com>
-	<1554126947-32747-2-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <20190409210354.GF3845141@pollux.denx.de>
+From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
+Date: Wed, 10 Apr 2019 00:33:15 +0000
+Subject: [cip-dev] [PATCH 01/10] dt-bindings: arm: Add si-linux
+	cat87[45]	boards
+In-Reply-To: <1553185339-26890-2-git-send-email-biju.das@bp.renesas.com>
+References: <1553185339-26890-2-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <TYAPR01MB418959737BE35AE5E733FBFE922E0@TYAPR01MB4189.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Mon 2019-04-01 14:55:38, Fabrizio Castro wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Hi, all.
+
+> This patch adds board cat874 (powered by the RZ/G2E) and board
+> cat875 (that sits on top of cat874). Both boards are made by Silicon Linux.
 > 
-> commit c1e5bd286fe501992165608551f889ec69f5901a upstream.
+> backported from commit 1a69a73c9b006ae72 ("dt-bindings: arm: renesas:
+> Add si-linux cat87[45] boards")
+
+
+I applied this series, thanks.
+
+Best regards,
+  Nobuhiro
+
+> -----Original Message-----
+> From: cip-dev-bounces at lists.cip-project.org
+> [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Biju Das
+> Sent: Friday, March 22, 2019 1:22 AM
+> To: cip-dev at lists.cip-project.org
+> Cc: Biju Das <biju.das@bp.renesas.com>
+> Subject: [cip-dev] [PATCH 01/10] dt-bindings: arm: Add si-linux cat87[45]
+> boards
 > 
-> This patch adds CAN{0,1} pins, groups and functions to the R8A77990 SoC.
+> This patch adds board cat874 (powered by the RZ/G2E) and board
+> cat875 (that sits on top of cat874). Both boards are made by Silicon Linux.
 > 
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-
-This does not apply. My kernel still has:
-
-> -     struct sh_pfc_pin_group common[117];
-
-while this expects... way higher number. I tried to look at pending patches
-in patchwork, that maybe if I tried to apply everything it would work, but
-could not get that to work, either.
-
-Current status of the tree is at:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.19.y-cip
-
-Could the patches that depend on each other go into one series? If it is
-hard identifying what depends on what, maybe the best way forward is to 
-create a big series on top of 64729dc0be4847961550cdcca4ddc66adf556aaa
-with all patches you have pending. Your patches seem to be in good shape,
-so applying it should not be a big deal.
-
-Thanks and sorry for confusion,
-								Pavel
-
-> @@ -3475,7 +3504,7 @@ static const unsigned int vin5_clk_b_mux[] = {
->  };
->  
->  static const struct {
-> -	struct sh_pfc_pin_group common[238];
-> +	struct sh_pfc_pin_group common[241];
->  	struct sh_pfc_pin_group automotive[0];
->  } pinmux_groups = {
->  	.common = {
-> @@ -3504,6 +3533,9 @@ static const struct {
-
-
-
--- 
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+> backported from commit 1a69a73c9b006ae72 ("dt-bindings: arm: renesas:
+> Add si-linux cat87[45] boards")
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> ---
+>  Documentation/devicetree/bindings/arm/shmobile.txt | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt
+> b/Documentation/devicetree/bindings/arm/shmobile.txt
+> index 7b1e257..1556460 100644
+> --- a/Documentation/devicetree/bindings/arm/shmobile.txt
+> +++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+> @@ -131,6 +131,10 @@ Boards:
+>      compatible = "renesas,salvator-xs", "renesas,r8a7796"
+>    - Salvator-XS (Salvator-X 2nd version, RTP0RC77965SIPB012S)
+>      compatible = "renesas,salvator-xs", "renesas,r8a77965"
+> +  - Silicon Linux RZ/G2E 96board platform (CAT874)
+> +    compatible = "si-linux,cat874", "renesas,r8a774c0"
+> +  - Silicon Linux sub board for CAT874 (CAT875)
+> +    compatible = "si-linux,cat875", "si-linux,cat874",
+> "renesas,r8a774c0"
+>    - SILK (RTP0RC7794LCB00011S)
+>      compatible = "renesas,silk", "renesas,r8a7794"
+>    - SK-RZG1E (YR8A77450S000BE)
