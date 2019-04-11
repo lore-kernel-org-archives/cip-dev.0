@@ -1,77 +1,244 @@
-From: iwamatsu@nigauri.org (Nobuhiro Iwamatsu)
-Date: Thu, 11 Apr 2019 18:34:49 +0900
-Subject: [cip-dev] [PATCH 1/9] arm64: dts: renesas: r8a774c0: Add
- secondary CA53 CPU core
-In-Reply-To: <OSBPR01MB210351DFE8721A24FA116F50B82F0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-References: <1553246370-60751-2-git-send-email-biju.das@bp.renesas.com>
-	<TYAPR01MB418999A8DD8304553CBF0204922E0@TYAPR01MB4189.jpnprd01.prod.outlook.com>
-	<OSBPR01MB210351DFE8721A24FA116F50B82F0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-Message-ID: <CABMQnVJ5d_cBFwdihc8KfKUEh2cSA_OHptDB_A9v99pt7d-HYA@mail.gmail.com>
+From: daniel.sangorrin@toshiba.co.jp (daniel.sangorrin at toshiba.co.jp)
+Date: Thu, 11 Apr 2019 10:05:45 +0000
+Subject: [cip-dev] isar error log
+In-Reply-To: <2c3a7bd1-facf-87f2-ec20-2936c893584a@siemens.com>
+References: <OSAPR01MB3763A7998474AB7ABEB3DDF3D0560@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+	<0c1b977d-cd7e-34aa-8d7e-1569b313f75d@siemens.com>
+	<OSAPR01MB37634FC9265275C1F909D27AD0570@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+	<043f0dda-7df0-36d1-c9ae-d9d08d3298d5@siemens.com>
+	<OSAPR01MB37639D8B6560398B6DE5834ED02F0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+	<2c3a7bd1-facf-87f2-ec20-2936c893584a@siemens.com>
+Message-ID: <OSAPR01MB3763518BD0621EA0A7BA5A0DD02F0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi, Biju.
-
-2019?4?11?(?) 15:55 Biju Das <biju.das@bp.renesas.com>:
->
->
-> Hi Nobuhiro-San,
->
-> Thanks for the feedback.
->
-> Regards,
-> Biju
->
-> > -----Original Message-----
-> > From: nobuhiro1.iwamatsu at toshiba.co.jp
-> > <nobuhiro1.iwamatsu@toshiba.co.jp>
-> > Sent: 11 April 2019 00:14
-> > To: Biju Das <biju.das@bp.renesas.com>; cip-dev at lists.cip-project.org
-> > Subject: RE: [cip-dev] [PATCH 1/9] arm64: dts: renesas: r8a774c0: Add
-> > secondary CA53 CPU core
+> -----Original Message-----
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+> Sent: Thursday, April 11, 2019 6:16 PM
+> To: sangorrin daniel(????? ???? ????????) <daniel.sangorrin@toshiba.co.jp>
+> Cc: cip-dev at lists.cip-project.org; isar-users at googlegroups.com; kas-devel at googlegroups.com
+> Subject: Re: isar error log
+> 
+> On 11.04.19 11:08, daniel.sangorrin at toshiba.co.jp wrote:
+> >> From: Jan Kiszka <jan.kiszka@siemens.com>
+> >> On 03.04.19 02:56, daniel.sangorrin at toshiba.co.jp wrote:
+> >>> Hi Jan,
+> >>>
+> >>> Yes I am following the Readme.
+> >>>
+> >>> The docker image id for kasproject/kas-isar is 9e9fe44e68d3 (I am using kas-docker script). And I am using
+> >>
+> >> That's the same version I have, and it works for me.
+> >>
+> >>> kas-docker --isar build kas.yml:board-qemu-amd64.yml
+> >>>
+> >>> Yes, it seems there are multiple errors:
+> >>> /proc/sys/fs/binfmt_misc/register: Invalid argument
+> >>> /test-dev-null: Permission denied
+> >>>
+> >>> Probably this is a bug or misconfiguration in Ubuntu. I will try to figure it out.
+> >>>
+> >>
+> >> Adding kas-devel: Would be interesting to understand this so that we can fix it
+> >> or at least document a workaround. Maybe you need to be in some privileged group
+> >> in order to use privileged docker containers? That's how things work on SUSE.
+> >>
+> >> No one around is using Ubuntu, so that distro is likely a blind spot for our
+> >> testing.
 > >
-> > Hi, Diju.
-> >
-> > > -----Original Message-----
-> > > From: cip-dev-bounces at lists.cip-project.org
-> > > [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Biju Das
-> > > Sent: Friday, March 22, 2019 6:19 PM
-> > > To: cip-dev at lists.cip-project.org
-> > > Cc: Biju Das <biju.das@bp.renesas.com>
-> > > Subject: [cip-dev] [PATCH 1/9] arm64: dts: renesas: r8a774c0: Add
-> > > secondary CA53 CPU core
-> > >
-> > > From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > >
-> > > Add a device node for the second Cortex-A53 CPU core on the Renesas
-> > > RZ/G2E (a.k.a r8a774c0) SoC, and adjust the interrupt delivery masks
-> > > for the ARM Generic Interrupt Controller and Architectured Timer.
-> >
-> > I think that 'Architected Timer' is correct, not 'Architectured Timer'.
-> > If my point is correct, I will fix and apply the commit message.
-> >
-> > Other patches are looks good to me.
->
-> I believe it is correct. see the link below.
->
-> https://www.kernel.org/doc/Documentation/devicetree/bindings/arm/arch_timer.txt
->
-> Already the cherry-picked patch from upstream is reviewed by wider people.
-> So I believe it is not good to change the commit messages or ordering of patches.
->
-> We have upstreamed RZ/G2[ME] patches in specific order. So we expect the same order in cip kernel as well.
-> Like SoC definitions,SYSC,RST,CLK,Pinctrl , SoC DTSI,Board DTSI and the rest of the drivers.
->
-> We may be wrong. So please correct us if we are wrong.
+> > OK, so I figured out that Ubuntu 16.04 was using the service "binfmt-support", not "systemd-binfmt".
+> > For that reason, the "systemd-binfmt" service was inactive. However, "binfmt-support" is working fine.
+> > I also checked that the post-install script of the qemu-user-static package had run correctly
+> > and there were binfmt configuration files at /var/lib/binfmts/
+> 
+> But what prevented the container to tune the host kernel according to its needs?
+> That is the intended resolution for the host not having the same settings as the
+> container (or any at all).
 
-I do not intend to change the patch application order.
-However, since our CIP kernel needs to be maintained on a long-term,
-I think it is better to fix the problems that we noticed and include the
-corrected content in the commit message.
+To be honest I don't really know what binfmt is all about yet, so I can't even understand what you mean about "tuning the kernel".
 
->
-> Regards,
-> Biju
+By the way, I managed to update to the latest Ubuntu 4.4 kernel (145) and the problem persists. I tried to reinstall qemu-user-static etc but still fails humm
+.
+Also i just tested on Ubuntu 18.04 and there I can build with ISAR without problems. So I might just leave it unsolved and update to 18.04...
 
-Best regards,
-  Nobuhiro
+Thanks,
+Daniel
+
+
+
+
+
+> 
+> Jan
+> 
+> >
+> > I am going to try with Ubuntu 18.04 (which worked fine for Suzuki-san) and then try to compare both.
+> >
+> > Thanks,
+> > Daniel
+> >
+> >
+> >
+> >
+> >
+> >
+> >>
+> >> Thanks
+> >> Jan
+> >>
+> >>> -----Original Message-----
+> >>> From: Jan Kiszka <jan.kiszka@siemens.com>
+> >>> Sent: Tuesday, April 2, 2019 3:14 PM
+> >>> To: sangorrin daniel(????? ???? ????????) <daniel.sangorrin@toshiba.co.jp>
+> >>> Cc: cip-dev at lists.cip-project.org; isar-users at googlegroups.com
+> >>> Subject: Re: isar error log
+> >>>
+> >>> On 02.04.19 05:17, daniel.sangorrin at toshiba.co.jp wrote:
+> >>>> Hi Jan,
+> >>>>
+> >>>> I am trying to show CIP Core ISAR to some guys in Linaro Connect but I also met a binfmt related error.
+> >>>
+> >>> It's supposed to be fixed in the :latest kas-isar image. Are you using that?
+> >>>
+> >>>> I am using Ubuntu 16.04. Do you have a hint on how to solve this problem?
+> >>>> I already installed qemu-user-static. The system service for binfmt seems to fail.
+> >>>>
+> >>>> Thanks,
+> >>>> Daniel
+> >>>>
+> >>>> update-binfmts: warning: unable to close
+> >>>> /proc/sys/fs/binfmt_misc/register: Invalid argument
+> >>>> update-binfmts: warning: unable to enable binary format qemu-aarch64
+> >>>> update-binfmts: exiting due to previous errors
+> >>>
+> >>> That indeed indicate broken binfmt settings.
+> >>>
+> >>>> 2019-04-01 15:37:22 - INFO     - kas 1.0 started
+> >>>> 2019-04-01 15:37:22 - INFO     - /repo$ git rev-parse --show-toplevel
+> >>>> 2019-04-01 15:37:22 - INFO     - /repo$ git rev-parse --show-toplevel
+> >>>> 2019-04-01 15:37:22 - INFO     - /repo$ git rev-parse --show-toplevel
+> >>>> 2019-04-01 15:37:22 - INFO     - Using /repo as root for repository cip-core
+> >>>> 2019-04-01 15:37:22 - INFO     - /work/isar$ git cat-file -t
+> >> ee5518cc6ecdade53dcafabfbb40ba4b0c505777
+> >>>> 2019-04-01 15:37:22 - INFO     - Repository isar already contains
+> >> ee5518cc6ecdade53dcafabfbb40ba4b0c505777 as commit
+> >>>> 2019-04-01 15:37:22 - INFO     - /repo$ git rev-parse --show-toplevel
+> >>>> 2019-04-01 15:37:22 - INFO     - Using /repo as root for repository cip-core
+> >>>> 2019-04-01 15:37:22 - INFO     - /work/isar$ git status -s
+> >>>> 2019-04-01 15:37:22 - INFO     - /work/isar$ git rev-parse --verify HEAD
+> >>>> 2019-04-01 15:37:22 - INFO     - ee5518cc6ecdade53dcafabfbb40ba4b0c505777
+> >>>> 2019-04-01 15:37:22 - INFO     - Repo isar has already been checked out with correct refspec.
+> Nothing
+> >> to do.
+> >>>> 2019-04-01 15:37:22 - INFO     - /repo$ git rev-parse --show-toplevel
+> >>>> 2019-04-01 15:37:22 - INFO     - Using /repo as root for repository cip-core
+> >>>> 2019-04-01 15:37:22 - INFO     - /work/isar$ /tmp/tmp9u5m9ths /work/build
+> >>>> 2019-04-01 15:37:22 - INFO     - /repo$ git rev-parse --show-toplevel
+> >>>> 2019-04-01 15:37:22 - INFO     - Using /repo as root for repository cip-core
+> >>>> 2019-04-01 15:37:22 - INFO     - /repo$ git rev-parse --show-toplevel
+> >>>> 2019-04-01 15:37:22 - INFO     - Using /repo as root for repository cip-core
+> >>>> 2019-04-01 15:37:22 - INFO     - /work/build$ /work/isar/bitbake/bin/bitbake -k -c build
+> cip-core-image
+> >>>> Loading cache: 100%
+> >>>>
+> >>
+> |#################################################################
+> >>
+> #################################################################
+> >> ####| Time: 0:00:00 Loaded 19 entries from dependency cache.
+> >>>> NOTE: Resolving any missing task queue dependencies Initialising
+> >>>> tasks: 100%
+> >>>>
+> >>
+> |#################################################################
+> >> ####
+> >>>> ############################################################|
+> >> Time:
+> >>>> 0:00:00
+> >>>> NOTE: Executing RunQueue Tasks
+> >>>> ERROR: isar-bootstrap-target-1.0-r0 do_bootstrap: Function failed:
+> >>>> do_bootstrap (log file is located at
+> >>>> /work/build/tmp/work/cip-core-amd64/isar-bootstrap-target/temp/log.do_
+> >>>> bootstrap.77)
+> >>>> ERROR: Logfile of failure stored in:
+> >>>> /work/build/tmp/work/cip-core-amd64/isar-bootstrap-target/temp/log.do_
+> >>>> bootstrap.77
+> >>>> Log data follows:
+> >>>> | DEBUG: Executing shell function do_bootstrap
+> >>>> | W: Target architecture is the same as host architecture; disabling
+> >>>> | QEMU support
+> >>>> | I: Running command: debootstrap --arch amd64 --verbose
+> >>>> | --variant=minbase --include=locales
+> >>>> | --components=main,contrib,non-free stretch
+> >>>> | /work/build/tmp/work/cip-core-amd64/isar-bootstrap-target/rootfs
+> >>>> | http://ftp.de.debian.org/debian
+> >>>> | /usr/sbin/debootstrap: 1454: /usr/sbin/debootstrap: cannot create
+> >>>> | /work/build/tmp/work/cip-core-amd64/isar-bootstrap-target/rootfs/tes
+> >>>> | t-dev-null: Permission denied
+> >>>> | E: Cannot install into target
+> >>>> | '/work/build/tmp/work/cip-core-amd64/isar-bootstrap-target/rootfs'
+> >>>> | mounted with noexec or nodev
+> >>>
+> >>> Hmm, there are more strange errors. Could it be that you forgot the "--isar"
+> >>> after "kas-docker"? That would mean you are trying to run unprivileged which is doomed to fail.
+> >>>
+> >>>> | WARNING: exit code 1 from a shell command.
+> >>>> | ERROR: Function failed: do_bootstrap (log file is located at
+> >>>> | /work/build/tmp/work/cip-core-amd64/isar-bootstrap-target/temp/log.d
+> >>>> | o_bootstrap.77)
+> >>>> ERROR: Task (/work/isar/meta/recipes-core/isar-bootstrap/isar-bootstrap-target.bb:do_bootstrap)
+> failed
+> >> with exit code '1'
+> >>>> ERROR: isar-bootstrap-host-1.0-r0 do_bootstrap: Function failed:
+> >>>> do_bootstrap (log file is located at
+> >>>> /work/build/tmp/work/cip-core-amd64/isar-bootstrap-host-debian-stretch
+> >>>> -amd64/temp/log.do_bootstrap.79)
+> >>>> ERROR: Logfile of failure stored in:
+> >>>> /work/build/tmp/work/cip-core-amd64/isar-bootstrap-host-debian-stretch
+> >>>> -amd64/temp/log.do_bootstrap.79
+> >>>> Log data follows:
+> >>>> | DEBUG: Executing shell function do_bootstrap
+> >>>> | W: Target architecture is the same as host architecture; disabling
+> >>>> | QEMU support
+> >>>> | I: Running command: debootstrap --arch amd64 --verbose
+> >>>> | --variant=minbase --include=locales
+> >>>> | --components=main,contrib,non-free stretch
+> >>>> | /work/build/tmp/work/cip-core-amd64/isar-bootstrap-host-debian-stret
+> >>>> | ch-amd64/rootfs http://ftp.de.debian.org/debian
+> >>>> | /usr/sbin/debootstrap: 1454: /usr/sbin/debootstrap: cannot create
+> >>>> | /work/build/tmp/work/cip-core-amd64/isar-bootstrap-host-debian-stret
+> >>>> | ch-amd64/rootfs/test-dev-null: Permission denied
+> >>>> | E: Cannot install into target
+> >>>> | '/work/build/tmp/work/cip-core-amd64/isar-bootstrap-host-debian-stre
+> >>>> | tch-amd64/rootfs' mounted with noexec or nodev
+> >>>> | WARNING: exit code 1 from a shell command.
+> >>>> | ERROR: Function failed: do_bootstrap (log file is located at
+> >>>> | /work/build/tmp/work/cip-core-amd64/isar-bootstrap-host-debian-stret
+> >>>> | ch-amd64/temp/log.do_bootstrap.79)
+> >>>> ERROR: Task (/work/isar/meta/recipes-core/isar-bootstrap/isar-bootstrap-host.bb:do_bootstrap) failed
+> >> with exit code '1'
+> >>>>
+> >>>> $ systemctl status systemd-binfmt.service ? systemd-binfmt.service -
+> >>>> Set Up Additional Binary Formats
+> >>>>       Loaded: loaded (/lib/systemd/system/systemd-binfmt.service; static; vendor preset: enabled)
+> >>>>       Active: inactive (dead)
+> >>>> Condition: start condition failed at Tue 2019-04-02 08:04:31 +07; 2h 1min ago
+> >>>>               none of the trigger conditions were met
+> >>>>         Docs: man:systemd-binfmt.service(8)
+> >>>>               man:binfmt.d(5)
+> >>>>               https://www.kernel.org/doc/Documentation/binfmt_misc.txt
+> >>>>
+> >>>
+> >>> Jan
+> >>>
+> >>> --
+> >>> Siemens AG, Corporate Technology, CT RDA IOT SES-DE Corporate Competence Center Embedded Linux
+> >>>
+> >>
+> >> --
+> >> Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+> >> Corporate Competence Center Embedded Linux
+> 
+> --
+> Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+> Corporate Competence Center Embedded Linux
