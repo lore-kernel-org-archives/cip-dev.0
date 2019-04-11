@@ -1,122 +1,41 @@
-From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
-Date: Wed, 10 Apr 2019 23:31:40 +0000
-Subject: [cip-dev] [PATCH 4.19y 01/10] pinctrl: sh-pfc: r8a77990: Add
- CAN pins, groups and functions
-In-Reply-To: <TY1PR01MB1770D40D7734C44FE892D77CC02E0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1554126947-32747-1-git-send-email-fabrizio.castro@bp.renesas.com>
-	<1554126947-32747-2-git-send-email-fabrizio.castro@bp.renesas.com>
-	<20190409210354.GF3845141@pollux.denx.de>
-	<TY1PR01MB1770D40D7734C44FE892D77CC02E0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-Message-ID: <TYAPR01MB41891C23F9CC19BE7E91080E922E0@TYAPR01MB4189.jpnprd01.prod.outlook.com>
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Thu, 11 Apr 2019 02:28:05 +0000
+Subject: [cip-dev] CIP IRC weekly meeting today
+Message-ID: <HK0PR01MB29794630D044745FA0ACE533E22F0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi, Fabrizio
+Hi all,
 
-> -----Original Message-----
-> From: cip-dev-bounces at lists.cip-project.org
-> [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Fabrizio
-> Castro
-> Sent: Wednesday, April 10, 2019 6:17 PM
-> To: Pavel Machek <pavel@denx.de>
-> Cc: cip-dev at lists.cip-project.org; Biju Das <biju.das@bp.renesas.com>
-> Subject: Re: [cip-dev] [PATCH 4.19y 01/10] pinctrl: sh-pfc: r8a77990:
-> Add CAN pins, groups and functions
-> 
-> Hello Pavel,
-> 
-> Thank you for your feedback.
-> 
-> > -----Original Message-----
-> > From: Pavel Machek <pavel@denx.de>
-> > Sent: 09 April 2019 22:04
-> > To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > Cc: cip-dev at lists.cip-project.org; Biju Das <biju.das@bp.renesas.com>
-> > Subject: Re: [cip-dev] [PATCH 4.19y 01/10] pinctrl: sh-pfc: r8a77990:
-> > Add CAN pins, groups and functions
-> >
-> > On Mon 2019-04-01 14:55:38, Fabrizio Castro wrote:
-> > > From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> > >
-> > > commit c1e5bd286fe501992165608551f889ec69f5901a upstream.
-> > >
-> > > This patch adds CAN{0,1} pins, groups and functions to the R8A77990
-> SoC.
-> > >
-> > > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> > > Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> >
-> > This does not apply. My kernel still has:
-> >
-> > > -     struct sh_pfc_pin_group common[117];
-> >
-> > while this expects... way higher number. I tried to look at pending
-> > patches in patchwork, that maybe if I tried to apply everything it
-> > would work, but could not get that to work, either.
-> >
-> > Current status of the tree is at:
-> >
-> >
-> https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/lo
-> g/
-> > ?h=linux-4.19.y-cip
-> >
-> > Could the patches that depend on each other go into one series? If it
-> > is hard identifying what depends on what, maybe the best way forward
-> > is to create a big series on top of
-> > 64729dc0be4847961550cdcca4ddc66adf556aaa
-> > with all patches you have pending. Your patches seem to be in good
-> > shape, so applying it should not be a big deal.
-> 
-> I went through the emails on the cip-dev mailing list and I could find
-> all the necessary patches this patch depends on, this patch applies
-> cleanly once its dependencies have been applied, so perhaps we should
-> do what you are suggesting, which is sending you another big series to
-> apply on top of the current branch.
+Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
 
-Pavel and I are reviewing the patch now.
-Although we share patches, we have such a problem because we do not consider the dependencies of each series.
-The patch review by two people has just begun, so I think there are many problems. The kernel team will talk about this.
+*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=4&day=11&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
 
-Pavel, do you have comment about this?
+US-West US-East   UK     DE     TW     JP
+02:00    05:00   10:00   11:00   17:00   18:00
 
-If possible, it would be helpful if you could write a patch series dependency on the cover letter of series.
+Channel:
+* irc:chat.freenode.net:6667/cip
+
+Agenda:
+
+* AI review
+#action Send email to Daniel for SW update update ? szlin
+-> Done
+#action Daniel has to upload to the wiki the SW updates tool comparison document
+-> Done
+#action Send discussion of deby naming to cip-dev - Kazu
+#action The review results from Pavel will be confirmed - Iwamatsu-san
+
+* Kernel maintenance updates
+* Kernel testing
+* CIP Core
+* Software update
+* AOB
+
+The meeting will take 30 min although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
 
 Best regards,
-  Nobuhiro
 
-> 
-> Thanks,
-> Fab
-> 
-> >
-> > Thanks and sorry for confusion,
-> > 								Pavel
-> >
-
-Best regards,
-  Nobuhiro
-
-> > > @@ -3475,7 +3504,7 @@ static const unsigned int vin5_clk_b_mux[] =
-> {
-> > > };
-> > >
-> > >  static const struct {
-> > > -	struct sh_pfc_pin_group common[238];
-> > > +	struct sh_pfc_pin_group common[241];
-> > >  	struct sh_pfc_pin_group automotive[0];  } pinmux_groups = {
-> > >  	.common = {
-> > > @@ -3504,6 +3533,9 @@ static const struct {
-> >
-> >
-> >
-> > --
-> > DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-> > HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-> 
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
+SZ Lin, Moxa.
