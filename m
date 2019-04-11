@@ -1,132 +1,92 @@
 From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Thu, 11 Apr 2019 14:15:13 +0200
-Subject: [cip-dev] Supported kernel and Debian versions in Isar
-In-Reply-To: <OSBPR01MB2774CEC142FC42D93728BD65E12F0@OSBPR01MB2774.jpnprd01.prod.outlook.com>
-References: <OSBPR01MB27743E33CB9ED2B9B5885577E12F0@OSBPR01MB2774.jpnprd01.prod.outlook.com>
-	<a3ddd6c7-799b-001f-e134-752766536744@siemens.com>
-	<OSBPR01MB2774CEC142FC42D93728BD65E12F0@OSBPR01MB2774.jpnprd01.prod.outlook.com>
-Message-ID: <4ca0a48f-b728-b7af-eb78-c57f3bf71840@siemens.com>
+Date: Thu, 11 Apr 2019 14:42:03 +0200
+Subject: [cip-dev] isar error log
+In-Reply-To: <OSAPR01MB3763355E6AAF5A37347B24ACD02F0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+References: <OSAPR01MB3763A7998474AB7ABEB3DDF3D0560@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+	<0c1b977d-cd7e-34aa-8d7e-1569b313f75d@siemens.com>
+	<OSAPR01MB37634FC9265275C1F909D27AD0570@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+	<043f0dda-7df0-36d1-c9ae-d9d08d3298d5@siemens.com>
+	<OSAPR01MB37639D8B6560398B6DE5834ED02F0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+	<2c3a7bd1-facf-87f2-ec20-2936c893584a@siemens.com>
+	<OSAPR01MB3763518BD0621EA0A7BA5A0DD02F0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+	<OSAPR01MB3763355E6AAF5A37347B24ACD02F0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+Message-ID: <74cc4dec-f603-4746-077d-4aae2e20a095@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 11.04.19 13:39, kazuhiro3.hayashi at toshiba.co.jp wrote:
-> Hi,
-> 
+On 11.04.19 12:13, daniel.sangorrin at toshiba.co.jp wrote:
 >> -----Original Message-----
->> From: Jan Kiszka [mailto:jan.kiszka at siemens.com]
->> Sent: Thursday, April 11, 2019 6:02 PM
->> To: hayashi kazuhiro(? ?? ????????)
->> <kazuhiro3.hayashi@toshiba.co.jp>
->> Cc: cip-dev at lists.cip-project.org
->> Subject: Re: Supported kernel and Debian versions in Isar
+>> From: cip-dev-bounces at lists.cip-project.org <cip-dev-bounces@lists.cip-project.org> On Behalf Of
+>> daniel.sangorrin at toshiba.co.jp
+>> Sent: Thursday, April 11, 2019 7:06 PM
+>> To: jan.kiszka at siemens.com
+>> Cc: kas-devel at googlegroups.com; isar-users at googlegroups.com; cip-dev at lists.cip-project.org
+>> Subject: Re: [cip-dev] isar error log
 >>
->> On 11.04.19 10:33, kazuhiro3.hayashi at toshiba.co.jp wrote:
->>> Hello Jan,
+>>> -----Original Message-----
+>>> From: Jan Kiszka <jan.kiszka@siemens.com>
+>>> Sent: Thursday, April 11, 2019 6:16 PM
+>>> To: sangorrin daniel(????? ???? ????????) <daniel.sangorrin@toshiba.co.jp>
+>>> Cc: cip-dev at lists.cip-project.org; isar-users at googlegroups.com; kas-devel at googlegroups.com
+>>> Subject: Re: isar error log
 >>>
->>> Do you have any policies about the version combinations of CIP kernel
->> and Debian supported in Isar?
+>>> On 11.04.19 11:08, daniel.sangorrin at toshiba.co.jp wrote:
+>>>>> From: Jan Kiszka <jan.kiszka@siemens.com>
+>>>>> On 03.04.19 02:56, daniel.sangorrin at toshiba.co.jp wrote:
+>>>>>> Hi Jan,
+>>>>>>
+>>>>>> Yes I am following the Readme.
+>>>>>>
+>>>>>> The docker image id for kasproject/kas-isar is 9e9fe44e68d3 (I am using kas-docker script). And I am
+>> using
+>>>>>
+>>>>> That's the same version I have, and it works for me.
+>>>>>
+>>>>>> kas-docker --isar build kas.yml:board-qemu-amd64.yml
+>>>>>>
+>>>>>> Yes, it seems there are multiple errors:
+>>>>>> /proc/sys/fs/binfmt_misc/register: Invalid argument
+>>>>>> /test-dev-null: Permission denied
+>>>>>>
+>>>>>> Probably this is a bug or misconfiguration in Ubuntu. I will try to figure it out.
+>>>>>>
+>>>>>
+>>>>> Adding kas-devel: Would be interesting to understand this so that we can fix it
+>>>>> or at least document a workaround. Maybe you need to be in some privileged group
+>>>>> in order to use privileged docker containers? That's how things work on SUSE.
+>>>>>
+>>>>> No one around is using Ubuntu, so that distro is likely a blind spot for our
+>>>>> testing.
+>>>>
+>>>> OK, so I figured out that Ubuntu 16.04 was using the service "binfmt-support", not "systemd-binfmt".
+>>>> For that reason, the "systemd-binfmt" service was inactive. However, "binfmt-support" is working fine.
+>>>> I also checked that the post-install script of the qemu-user-static package had run correctly
+>>>> and there were binfmt configuration files at /var/lib/binfmts/
 >>>
->>> Currently, Isar seems to support 4.4 CIP + stretch/buster:
->>>
->> https://github.com/ilbers/isar/blob/master/meta-isar/recipes-kernel/li
->> nux/linux-cip_4.4.166-cip29.bb
+>>> But what prevented the container to tune the host kernel according to its needs?
+>>> That is the intended resolution for the host not having the same settings as the
+>>> container (or any at all).
 >>
->> That's just an example for a custom kernel recipe.
->>
->>>
->> https://github.com/ilbers/isar/blob/master/doc/user_manual.md#getting-
->> started
->>>
->>> isar-cip-core additionally supports 4.19:
->>>
->> https://gitlab.com/cip-project/cip-core/isar-cip-core/tree/master/reci
->> pes-kernel/linux
->>> but "linux-cip" is default to 4.4.
->>>
->> https://gitlab.com/cip-project/cip-core/isar-cip-core/commit/02fdfbd03
->> ec994d8282de4851293687116a7f311
->>
->> Yes, that was a conservative choice we should change.
-> 
-> OK.
-> I would like to confirm the meaning of "change" (override or add) in the following questions.
-> 
+>> To be honest I don't really know what binfmt is all about yet, so I can't even understand what you mean about
+>> "tuning the kernel".
 
-I mean: Set the default to 4.19, leave an option (e.g. a kas config fragment) to switch back to 4.4.
-
->>
->>>
->>> Do you any plans to provide the kernel recipes for all CIP versions (4.4,
->> 4.19, ...) in master branch
->>> and validate them with all Debian versions?
->>
->> All (released) versions exist already, validation is the key now. We do
->> not have isar-cip-core hooked up with our test labs yet. I only started
->> artifact generation, but only for the combinations 4.4-rt with BBB and
->> IPC227E. We should add 4.19 as well, and then we need tests. I'm low on
->> bandwidth to look into the test hook-up myself ATM, unfortunately, but I
->> will at least try to finish the uploading (more variants, upload of rootfs
->> as well, not only bootable image - or can the latter be used for LAVA as
->> well?)
-> 
-> Thank you for the information.
-> The current Debian version used in the above testing is stretch?
-> After the buster released, are you planning to validate all of the followings with isar-cip-core?
-> 
-> 4.4-rt + stretch + BBB/ IPC227E
-> 4.19-rt + stretch + BBB/ IPC227E
-> 4.4-rt + buster + BBB/ IPC227E
-> 4.19-rt + buster + BBB/ IPC227E
-
-That would be the plan. Of course, the more variables we add, the more we need to think about designing our test matrix, rather than just fully populating it.
-
-> 
->>
->>> I guess that the supported combinations would be limited to practical
->> ones.
->>> For examples:
->>> 	4.4 + stretch => SUPPORTED
->>> 	4.4 + buster => NOT SUPPORTED
->>> 	4.4 + bullseye => NOT SUPPORTED
->>> 	4.19 + stretch => SUPPORTED
->>> 	4.19 + buster => NOT SUPPORTED
->>> 	4.19 + bullseye => SUPPORTED(?)
->>
->> You meant
->> 	4.19 + buster => SUPPORTED
->> 	4.19 + bullseye => SUPPORTED(?)
->>
->> Yes for buster, specifically when it is released. I don't think we need
->> to rush with the next release then.
-> 
-> OK.
-> What do you think about the targets of validation in future?
-> 
-> In Isar, we can choose any Debian versions available in
-> https://github.com/ilbers/isar/tree/master/meta/conf/distro (now stretch & buster)
-> In isar-cip-core, we can choose any kernel versions available in
-> https://gitlab.com/cip-project/cip-core/isar-cip-core/tree/master/recipes-kernel/linux
-> but now isar-cip-core only provides one version combination specified by
-> https://gitlab.com/cip-project/cip-core/isar-cip-core/blob/master/conf/distro/cip-core.conf
-> When the new CIP kernel version or Debian version released,
-> will isar-cip-core overriede "distro/cip-core.conf" for the specific version combination and validate?
-> e.g. 4.4 + stretch => 4.19 + buster => 5.xx + bullseye => ...
-> or, will add new files like "cip-core_2.conf", "cip-core_3.conf", ... to provide multiple version combinations?
-> e.g.
-> 	cip-core.conf: 4.4 + stretch
-> 	cip-core_2.conf: 4.19 + buster
-> 	cip-core_3.conf: 5.xx + bullseye
-> 	...
-> 
-
-As I said above, we will soon hit a point we will have to reduce our test matrix again and rely on some version being indirectly tested via a similar combination. E.g. if you test all generic features of a kernel version against a specific Debian version on a specific board, the chances are fairly high that those will also work on other boards. So the need to test all Debian versions on all boards is rather low.
+https://www.kernel.org/doc/html/latest/admin-guide/binfmt-misc.html
 
 >>
->> Enabling buster should be straightforward, Isar works with it already.
+>> By the way, I managed to update to the latest Ubuntu 4.4 kernel (145) and the problem persists. I tried to reinstall
+>> qemu-user-static etc but still fails humm
+>> .
+>> Also i just tested on Ubuntu 18.04 and there I can build with ISAR without problems. So I might just leave it
+>> unsolved and update to 18.04...
 > 
-> Great, how can I know that the buster is officially enabled in isar-cip-core?
+> This might be a hint.
+> On Ubuntu 18.04 I can see "qemu-alpha" on /proc/sys/fs/binfmt_misc, but on Ubuntu 16.04 it isn't there.
+> When running kas-docker, the first error is about not being able to close /proc/sys/fs/binfmt_misc/register (invalid argument)
+> and the second is about qemu-alpha.
+> 
 
-When someone writes the patch(es) :). It's kas magic, I don't think we need more.
+Maybe /proc/sys/fs/binfmt_misc is not mounted into the container under Ubuntu 
+16.04, even if that is privileged.
 
 Jan
 
