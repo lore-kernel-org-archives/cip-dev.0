@@ -1,84 +1,244 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 11 Apr 2019 06:59:35 +0000
-Subject: [cip-dev] [PATCH 1/9] arm64: dts: renesas: r8a774c0: Add
- secondary	CA53 CPU core
-In-Reply-To: <OSBPR01MB210351DFE8721A24FA116F50B82F0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-References: <1553246370-60751-2-git-send-email-biju.das@bp.renesas.com>
-	<TYAPR01MB418999A8DD8304553CBF0204922E0@TYAPR01MB4189.jpnprd01.prod.outlook.com>
-	<OSBPR01MB210351DFE8721A24FA116F50B82F0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-Message-ID: <OSBPR01MB21030CF1AF34EB4E2733E77BB82F0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+From: kazuhiro3.hayashi@toshiba.co.jp (kazuhiro3.hayashi at toshiba.co.jp)
+Date: Thu, 11 Apr 2019 08:22:58 +0000
+Subject: [cip-dev] about branch of meta-debian in cip-core/deby
+In-Reply-To: <OSBPR01MB4999AAFDBFB634B1F7D3350DD9400@OSBPR01MB4999.jpnprd01.prod.outlook.com>
+References: <CAGDrK-a79Z7rc=JibAU_8TL=7GtVFocGfvne9iQ4MsCa1oGU1w@mail.gmail.com>
+	<OSAPR01MB3763870A4581B882D1AC1ADAD04B0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+	<OSAPR01MB30444CACDE60382555A681DCE14B0@OSAPR01MB3044.jpnprd01.prod.outlook.com>
+	<OSBPR01MB499953893394AAC252B66DC6D9440@OSBPR01MB4999.jpnprd01.prod.outlook.com>
+	<TY2PR01MB305133BDEEBBDE5D8386AB97E1470@TY2PR01MB3051.jpnprd01.prod.outlook.com>
+	<OSBPR01MB4999AAFDBFB634B1F7D3350DD9400@OSBPR01MB4999.jpnprd01.prod.outlook.com>
+Message-ID: <OSBPR01MB2774062C0B63CAA2D0EA943FE12F0@OSBPR01MB2774.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Nobuhiro-San,
+Dear Fujita-san, and CIP-core members
+
+Sorry for my late reply, but I would like to re-open this discussion
+to prepare uploading the latest Deby to cip-core repository.
+
+> However, it may not clear CIP has decided or not that each kernel
+> version sticks to specific version of the other OSSs.
+> Some people around me say that OSSs included in cip-core will keep
+> these versions and maintained by CIP.
+> For example, they believe openssl 1.0.1t will be used when kernel
+> 4.4-cip is running.
+> This may not right assumption.
+> 
+> Is there any material explaining the update policy of cip-core?
+
+I have not seen such policy.
+Probably, it has not been clarified yet.
+
+In my understanding, the targets of CIP(-core)'s support are the followings at least:
+
+Kernel:
+	linux-4.4.y-cip & -rt
+	linux-4.19.y-cip & -rt
+Debian:
+	Debian 8 (jessie)
+	Debian 9 (stretch)
+	Debian 10 (buster)
+	... and every version in future
+
+However, I think that there is no decision in CIP about the combination of
+the above kernel versions and Debian versions, which should be supported by CIP.
+This implicitly shows that all combinations could be supported, but
+it's quite hard to test and maintain all of them.
+I guess that the practical version combinations are very limited actually.
+
+I would like to confirm opinions about this in Isar later.
+
+> >
+> > If the both tiny(deby) and generic profile(isar) are based on the same
+> > CIP kernel and Debian versions, we can use such common branch name above.
+> > If not, or no benefit for users to use the common branch name,
+> > I would like to simply use "morty" and "master" in deby repository.
+> 
+> Using different version for tiny and generic may be confusing.
+> In my opinion, tiny should be the subset of generic profile.
+
+Thank you for your opinion.
+Regarding the supported package list, I agree that tiny should be subset of generic.
+In order to use the common version (branch name) in tiny and generic,
+and to concentrate our efforts on well-used cases,,
+we need to make a decision about the supported version combinations between CIP kernel and Debian.
+
+Regards,
+Kazu
 
 > -----Original Message-----
-> From: Biju Das
-> Sent: 11 April 2019 07:55
-> To: nobuhiro1.iwamatsu at toshiba.co.jp; cip-dev at lists.cip-project.org
-> Cc: Chris Paterson <Chris.Paterson2@renesas.com>; Fabrizio Castro
-> <fabrizio.castro@bp.renesas.com>
-> Subject: RE: [cip-dev] [PATCH 1/9] arm64: dts: renesas: r8a774c0: Add
-> secondary CA53 CPU core
+> From: Kazuhiro Fujita [mailto:kazuhiro.fujita.jg at renesas.com]
+> Sent: Tuesday, March 19, 2019 2:52 PM
+> To: hayashi kazuhiro(? ?? ????????)
+> <kazuhiro3.hayashi@toshiba.co.jp>; sangorrin daniel(????? ????
+> ????????) <daniel.sangorrin@toshiba.co.jp>;
+> nobuhiro.iwamatsu at miraclelinux.com
+> Cc: jan.kiszka at siemens.com; cip-dev at lists.cip-project.org
+> Subject: RE: about branch of meta-debian in cip-core/deby
 > 
-> 
-> Hi Nobuhiro-San,
-> 
-> Thanks for the feedback.
-> 
-> Regards,
-> Biju
+> Hello Hayashi-san,
 > 
 > > -----Original Message-----
-> > From: nobuhiro1.iwamatsu at toshiba.co.jp
-> > <nobuhiro1.iwamatsu@toshiba.co.jp>
-> > Sent: 11 April 2019 00:14
-> > To: Biju Das <biju.das@bp.renesas.com>; cip-dev at lists.cip-project.org
-> > Subject: RE: [cip-dev] [PATCH 1/9] arm64: dts: renesas: r8a774c0: Add
-> > secondary CA53 CPU core
+> > From: kazuhiro3.hayashi at toshiba.co.jp
+> <kazuhiro3.hayashi@toshiba.co.jp>
+> > Sent: Monday, March 18, 2019 10:52 AM
+> > To: Kazuhiro Fujita <kazuhiro.fujita.jg@renesas.com>;
+> > daniel.sangorrin at toshiba.co.jp; nobuhiro.iwamatsu at miraclelinux.com
+> > Cc: jan.kiszka at siemens.com; cip-dev at lists.cip-project.org
+> > Subject: RE: about branch of meta-debian in cip-core/deby
 > >
-> > Hi, Diju.
+> > Hello Fujita-san,
+> > CC: Jan
+> >
+> > > In case the morty branch will be replaced by the master, current users
+> > > will automatically switch to the master without knowing the change?
+> > No, user can not automatically migrate from morty to master without
+> > knowing the changes
+> > because several specifications about recipe development has been deferent
+> > between them.
+> >
+> > Therefore, regarding deby repository, it would be better to provide
+> > branches
+> 
+> Agreed.
+> 
+> > "morty" and "master" as follows:
+> > 	Current                  New
+> > 	master(poky:morty-based) => morty
+> > 	-                        => master(poky:master-based)
+> > 	jethro                   => remove? (no longer maintained in
+> meta-
+> > debian)
+> >
+> > I would like to know if we need to the common branch name in cip-core.
+> > For example: cip-core-v1(4.4+Debian8/9?),
+> cip-core-v2(4.19+Debian10), ...
+> 
+> Common branch name like cip-core-xx will help many users to understand
+> which branch they should use.
+> 
+> However, it may not clear CIP has decided or not that each kernel
+> version sticks to specific version of the other OSSs.
+> Some people around me say that OSSs included in cip-core will keep
+> these versions and maintained by CIP.
+> For example, they believe openssl 1.0.1t will be used when kernel
+> 4.4-cip is running.
+> This may not right assumption.
+> 
+> Is there any material explaining the update policy of cip-core?
+> 
+> >
+> > If the both tiny(deby) and generic profile(isar) are based on the same
+> > CIP kernel and Debian versions, we can use such common branch name above.
+> > If not, or no benefit for users to use the common branch name,
+> > I would like to simply use "morty" and "master" in deby repository.
+> 
+> Using different version for tiny and generic may be confusing.
+> In my opinion, tiny should be the subset of generic profile.
+> 
+> Kind regards,
+> Fujita
+> 
+> 
+> >
+> > Kind regards,
+> > Kazu
 > >
 > > > -----Original Message-----
-> > > From: cip-dev-bounces at lists.cip-project.org
-> > > [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Biju Das
-> > > Sent: Friday, March 22, 2019 6:19 PM
-> > > To: cip-dev at lists.cip-project.org
-> > > Cc: Biju Das <biju.das@bp.renesas.com>
-> > > Subject: [cip-dev] [PATCH 1/9] arm64: dts: renesas: r8a774c0: Add
-> > > secondary CA53 CPU core
+> > > From: Kazuhiro Fujita [mailto:kazuhiro.fujita.jg at renesas.com]
+> > > Sent: Friday, March 15, 2019 11:39 AM
+> > > To: hayashi kazuhiro(? ?? ????????)
+> > > <kazuhiro3.hayashi@toshiba.co.jp>; sangorrin daniel(????? ??
+> ??
+> > > ????????) <daniel.sangorrin@toshiba.co.jp>;
+> > > nobuhiro.iwamatsu at miraclelinux.com
+> > > Cc: cip-dev at lists.cip-project.org
+> > > Subject: RE: about branch of meta-debian in cip-core/deby
 > > >
-> > > From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > > Hello Hayashi-san,
 > > >
-> > > Add a device node for the second Cortex-A53 CPU core on the Renesas
-> > > RZ/G2E (a.k.a r8a774c0) SoC, and adjust the interrupt delivery masks
-> > > for the ARM Generic Interrupt Controller and Architectured Timer.
-> >
-> > I think that 'Architected Timer' is correct, not 'Architectured Timer'.
-
-Yes, you are correct, as per the below link. 
-
-https://www.kernel.org/doc/Documentation/devicetree/bindings/arm/arch _timer.txt
-
-> > If my point is correct, I will fix and apply the commit message.
-> > Other patches are looks good to me.
-
-> I believe it is correct. see the link below.
-> 
-> https://www.kernel.org/doc/Documentation/devicetree/bindings/arm/arch
-> _timer.txt
-> 
-> Already the cherry-picked patch from upstream is reviewed by wider people.
-> So I believe it is not good to change the commit messages or ordering of
-> patches.
-> 
-> We have upstreamed RZ/G2[ME] patches in specific order. So we expect the
-> same order in cip kernel as well.
-> Like SoC definitions,SYSC,RST,CLK,Pinctrl , SoC DTSI,Board DTSI and the rest
-> of the drivers.
-> 
-> We may be wrong. So please correct us if we are wrong.
-> 
-> Regards,
-> Biju
-> 
+> > > > Should we keep the morty branch and add contents of master to another
+> > > cip-
+> > > > core branch, or just replace the morty by the master?
+> > >
+> > > In case the morty branch will be replaced by the master, current users
+> > > will automatically switch to the master without knowing the change?
+> > >
+> > > Regards,
+> > > Fujita
+> > >
+> > >
+> > > > -----Original Message-----
+> > > > From: cip-dev-bounces at lists.cip-project.org
+> > > <cip-dev-bounces@lists.cip-
+> > > > project.org> On Behalf Of kazuhiro3.hayashi at toshiba.co.jp
+> > > > Sent: Thursday, March 14, 2019 7:09 PM
+> > > > To: daniel.sangorrin at toshiba.co.jp;
+> nobuhiro.iwamatsu at miraclelinux.com
+> > > > Cc: cip-dev at lists.cip-project.org
+> > > > Subject: Re: [cip-dev] about branch of meta-debian in cip-core/deby
+> > > >
+> > > > Iwamatsu-san, Daniel,
+> > > >
+> > > > > > It provides debian 8 packages in OE/recipe. Is there any reason
+> to
+> > > > > > choose morty/debian 8?
+> > > > In my understanding, this is the initial repository which was created
+> > > > when the master branch (Debian 10 based) didn't exist yet.
+> > > > We are planning to update it to the current master branch.
+> > > >
+> > > > I have another question about how to do that.
+> > > > Should we keep the morty branch and add contents of master to another
+> > > cip-
+> > > > core branch,
+> > > > or just replace the morty by the master?
+> > > >
+> > > > Regards,
+> > > > Kazu
+> > > >
+> > > > > -----Original Message-----
+> > > > > From: cip-dev-bounces at lists.cip-project.org
+> > > > > [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of
+> > > > > daniel.sangorrin at toshiba.co.jp
+> > > > > Sent: Thursday, March 14, 2019 2:52 PM
+> > > > > To: nobuhiro.iwamatsu at miraclelinux.com
+> > > > > Cc: cip-dev at lists.cip-project.org
+> > > > > Subject: Re: [cip-dev] about branch of meta-debian in cip-core/deby
+> > > > >
+> > > > > Iwamatsu-san,
+> > > > >
+> > > > > > -----Original Message-----
+> > > > > > From: Nobuhiro Iwamatsu <nobuhiro.iwamatsu@miraclelinux.com>
+> > > > > > Sent: Wednesday, March 13, 2019 4:38 PM
+> > > > > > To: sangorrin daniel(????? ???? ????????)
+> > > > > <daniel.sangorrin@toshiba.co.jp>
+> > > > > > Cc: cip-dev at lists.cip-project.org
+> > > > > > Subject: about branch of meta-debian in cip-core/deby
+> > > > > >
+> > > > > > Hi, Daniel.
+> > > > > >
+> > > > > > I have a question about about branch of meta-debian in cip-
+> > core/deby.
+> > > > > >
+> > > > > > The meta-debian branch used by cip-core/deby  is morty.
+> > > > > > It provides debian 8 packages in OE/recipe. Is there any reason
+> to
+> > > > > > choose morty/debian 8?
+> > > > > > Is the reason why the mata-debian master branch is still in
+> > > > development?
+> > > > > > Will you/we switch to the master branch when Debian 10 is
+> > released?
+> > > > >
+> > > > > Yes, that's correct.
+> > > > >
+> > > > > Thanks,
+> > > > > Daniel
+> > > > > _______________________________________________
+> > > > > cip-dev mailing list
+> > > > > cip-dev at lists.cip-project.org
+> > > > > https://lists.cip-project.org/mailman/listinfo/cip-dev
+> > > > _______________________________________________
+> > > > cip-dev mailing list
+> > > > cip-dev at lists.cip-project.org
+> > > > https://lists.cip-project.org/mailman/listinfo/cip-dev
