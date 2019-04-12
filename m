@@ -1,38 +1,62 @@
-From: pavel@denx.de (Pavel Machek)
-Date: Fri, 12 Apr 2019 10:11:26 +0200
-Subject: [cip-dev] [PATCH 4.19.y 01/17] clocksource/drivers/sh_cmt:
- Convert to SPDX identifiers
-In-Reply-To: <1554112696-20706-2-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1554112696-20706-1-git-send-email-fabrizio.castro@bp.renesas.com>
-	<1554112696-20706-2-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <20190412081126.GB14607@amd>
+From: jan.kiszka@siemens.com (Jan Kiszka)
+Date: Fri, 12 Apr 2019 13:28:21 +0200
+Subject: [cip-dev] Supported kernel and Debian versions in Isar
+In-Reply-To: <OSBPR01MB27743C65D403FD9027F2CCF9E1280@OSBPR01MB2774.jpnprd01.prod.outlook.com>
+References: <OSBPR01MB27743E33CB9ED2B9B5885577E12F0@OSBPR01MB2774.jpnprd01.prod.outlook.com>
+	<a3ddd6c7-799b-001f-e134-752766536744@siemens.com>
+	<OSBPR01MB2774CEC142FC42D93728BD65E12F0@OSBPR01MB2774.jpnprd01.prod.outlook.com>
+	<4ca0a48f-b728-b7af-eb78-c57f3bf71840@siemens.com>
+	<OSBPR01MB27743C65D403FD9027F2CCF9E1280@OSBPR01MB2774.jpnprd01.prod.outlook.com>
+Message-ID: <55d67dcb-e16f-8e9f-d053-32bf30537ef6@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Mon 2019-04-01 10:58:00, Fabrizio Castro wrote:
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+On 12.04.19 08:05, kazuhiro3.hayashi at toshiba.co.jp wrote:
+>>>> Enabling buster should be straightforward, Isar works with it already.
+>>>
+>>> Great, how can I know that the buster is officially enabled in
+>> isar-cip-core?
+>>
+>> When someone writes the patch(es) :). It's kas magic, I don't think we need
+>> more.
 > 
-> commit efad01173717b0d0ad8a7dc91cc447f19d8447f3 upstream.
+> I'm interested in what kind of variables is appropriate to provide the "options" with kas.
+> The most simple way I can guess is that:
 > 
-> This patch updates license to use SPDX-License-Identifier instead of verbose
-> license text.
+> * Provide another distro conf (e.g. cip-core_4.19_buster.conf) with the followings
+> 	require conf/distro/debian-buster.conf
+> 	...
+> 	PREFERRED_VERSION_linux-cip ?= "4.19.%"
+> 	PREFERRED_VERSION_linux-cip-rt ?= "4.19.%"
+> 	...
+> * Change the default "distro" in kas.yml
+> 	-distro: cip-core
+> 	+distro: cip-core_4.19_buster
+> * The current combination (4.4 + stretch) still available by setting
+> 	KAS_DISTRO="cip-core" (or should be renamed to "cip-core_4.4_stretch" ?)
+> 
+> If no objections or other ideas, I would like to create a simple patch to do that.
 
-Thanks, I applied the series.
+I would do the following:
 
-Strictly speaking patches 1, 4, 16 only alter whitespace, so they
-would not be welcome under -stable rules. OTOH they clearly do not
-break anything, and ammount of surrounding changes means taking them
-is easier than not taking them... so I took them.
+- define distro/cip-core_stretch.conf and distro/cip-core_buster.conf
+- maybe redefine distro/cip-core.conf as link to stretch today that is going to move to
+  buster once that was released and validated (similar to the default kernel story)
+- define PREFERRED_VERSION_linux-cip to 4.19, maybe in a cip-core-common.conf
+- allow override via kas fragments:
+   - distro: cip-core_buster
+   - PREFERRED_VERSION_linux-cip[-rt] = "4.4.%"
 
-Best regards,
-									Pavel
+> 
+> In addition, I'm also interested in the appropriate name for "distro"
+> because I'm just considering the branch name for the tiny profile (deby).
+> My first idea is the above. After it's decided,,
+> we can share the common names for specifying the version combinations between the both profiles.
+
+I think appending the distro version name to the "cip-core" like above is a reasonable approach.
+
+Jan
+
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 181 bytes
-Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190412/247b3868/attachment.sig>
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+Corporate Competence Center Embedded Linux
