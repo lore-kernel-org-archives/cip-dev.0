@@ -1,45 +1,57 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Fri, 12 Apr 2019 12:59:57 +0100
-Subject: [cip-dev] isar error log
-In-Reply-To: <20190412133736.5f3b257f@md1za8fc.ad001.siemens.net>
-References: <OSAPR01MB3763A7998474AB7ABEB3DDF3D0560@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-	<0c1b977d-cd7e-34aa-8d7e-1569b313f75d@siemens.com>
-	<OSAPR01MB37634FC9265275C1F909D27AD0570@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-	<043f0dda-7df0-36d1-c9ae-d9d08d3298d5@siemens.com>
-	<OSAPR01MB37639D8B6560398B6DE5834ED02F0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-	<2c3a7bd1-facf-87f2-ec20-2936c893584a@siemens.com>
-	<OSAPR01MB3763518BD0621EA0A7BA5A0DD02F0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-	<OSAPR01MB3763355E6AAF5A37347B24ACD02F0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-	<74cc4dec-f603-4746-077d-4aae2e20a095@siemens.com>
-	<20190412133736.5f3b257f@md1za8fc.ad001.siemens.net>
-Message-ID: <1555070397.3557.19.camel@codethink.co.uk>
+From: pavel@denx.de (Pavel Machek)
+Date: Fri, 12 Apr 2019 22:28:42 +0200
+Subject: [cip-dev] Renesas patches was Re: [PATCH 4.19y 01/10] pinctrl:
+ sh-pfc: r8a77990: Add CAN pins, groups and functions
+In-Reply-To: <TY1PR01MB17708075ACA57D5581AFEE1AC02E0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <1554126947-32747-1-git-send-email-fabrizio.castro@bp.renesas.com>
+	<1554126947-32747-2-git-send-email-fabrizio.castro@bp.renesas.com>
+	<20190409210354.GF3845141@pollux.denx.de>
+	<TY1PR01MB1770D40D7734C44FE892D77CC02E0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+	<TY1PR01MB17708075ACA57D5581AFEE1AC02E0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+Message-ID: <20190412202842.GA3904@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Fri, 2019-04-12 at 13:37 +0200, Henning Schild wrote:
-[...]
-> Just had a look at a ubuntu 16.04. It does support the fs but it is
-> not mounted. So a pseudo-code patch for the docker entry could be:
+Hi!
+
+> > > Current status of the tree is at:
+> > >
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.19.y-cip
+> > >
+> > > Could the patches that depend on each other go into one series? If it is
+> > > hard identifying what depends on what, maybe the best way forward is to
+> > > create a big series on top of 64729dc0be4847961550cdcca4ddc66adf556aaa
+> > > with all patches you have pending. Your patches seem to be in good shape,
+> > > so applying it should not be a big deal.
+> > 
+> > I went through the emails on the cip-dev mailing list and I could find all the
+> > necessary patches this patch depends on, this patch applies cleanly once
+> > its dependencies have been applied, so perhaps we should do what you are
+> > suggesting, which is sending you another big series to apply on top of the
+> > current branch.
 > 
-> if not mounted
-> ?if grep binfmt_misc /proc/filesystems
-> ? mount
-> ?else
-> ? echo "Get a real and recent distro"
-> ?fi
-> fi
+> Actually, that would create an even bigger confusion at this point, so I am going to wait
+> for you guys to work this out for now.
 
-Actual code should be something like:
+Good news -- I believe we managed to sort it out.
 
-if ! mountpoint -q /proc/sys/fs/binfmt_misc \
-   && ! mount -t binfmt_misc binfmt_misc /proc/sys/fs/binfmt_misc; then
-    echo >&2 "E: Unable to mount binfmt_misc"
-    exit 1
-fi
+Tree at 
 
-Ben.
+https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.19.y-cip
+
+should now be up-to-date with your patches. If you could run any
+tests and verify things look sane, it would be great.
+
+Best regards,
+									Pavel
 
 -- 
-Ben Hutchings, Software Developer                ?        Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 181 bytes
+Desc: Digital signature
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190412/5e806e8c/attachment.sig>
