@@ -1,95 +1,36 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Thu, 11 Apr 2019 14:42:03 +0200
-Subject: [cip-dev] isar error log
-In-Reply-To: <OSAPR01MB3763355E6AAF5A37347B24ACD02F0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-References: <OSAPR01MB3763A7998474AB7ABEB3DDF3D0560@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-	<0c1b977d-cd7e-34aa-8d7e-1569b313f75d@siemens.com>
-	<OSAPR01MB37634FC9265275C1F909D27AD0570@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-	<043f0dda-7df0-36d1-c9ae-d9d08d3298d5@siemens.com>
-	<OSAPR01MB37639D8B6560398B6DE5834ED02F0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-	<2c3a7bd1-facf-87f2-ec20-2936c893584a@siemens.com>
-	<OSAPR01MB3763518BD0621EA0A7BA5A0DD02F0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-	<OSAPR01MB3763355E6AAF5A37347B24ACD02F0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-Message-ID: <74cc4dec-f603-4746-077d-4aae2e20a095@siemens.com>
+From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
+Date: Fri, 12 Apr 2019 00:31:49 +0000
+Subject: [cip-dev] [PATCH 1/4] pinctrl: sh-pfc: Reduce kernel size
+	for	narrow VIN channels
+In-Reply-To: <1553250528-42395-2-git-send-email-biju.das@bp.renesas.com>
+References: <1553250528-42395-2-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <TYAPR01MB4189D8B8056D6E211787EC8192280@TYAPR01MB4189.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 11.04.19 12:13, daniel.sangorrin at toshiba.co.jp wrote:
->> -----Original Message-----
->> From: cip-dev-bounces at lists.cip-project.org <cip-dev-bounces@lists.cip-project.org> On Behalf Of
->> daniel.sangorrin at toshiba.co.jp
->> Sent: Thursday, April 11, 2019 7:06 PM
->> To: jan.kiszka at siemens.com
->> Cc: kas-devel at googlegroups.com; isar-users at googlegroups.com; cip-dev at lists.cip-project.org
->> Subject: Re: [cip-dev] isar error log
->>
->>> -----Original Message-----
->>> From: Jan Kiszka <jan.kiszka@siemens.com>
->>> Sent: Thursday, April 11, 2019 6:16 PM
->>> To: sangorrin daniel(????? ???? ????????) <daniel.sangorrin@toshiba.co.jp>
->>> Cc: cip-dev at lists.cip-project.org; isar-users at googlegroups.com; kas-devel at googlegroups.com
->>> Subject: Re: isar error log
->>>
->>> On 11.04.19 11:08, daniel.sangorrin at toshiba.co.jp wrote:
->>>>> From: Jan Kiszka <jan.kiszka@siemens.com>
->>>>> On 03.04.19 02:56, daniel.sangorrin at toshiba.co.jp wrote:
->>>>>> Hi Jan,
->>>>>>
->>>>>> Yes I am following the Readme.
->>>>>>
->>>>>> The docker image id for kasproject/kas-isar is 9e9fe44e68d3 (I am using kas-docker script). And I am
->> using
->>>>>
->>>>> That's the same version I have, and it works for me.
->>>>>
->>>>>> kas-docker --isar build kas.yml:board-qemu-amd64.yml
->>>>>>
->>>>>> Yes, it seems there are multiple errors:
->>>>>> /proc/sys/fs/binfmt_misc/register: Invalid argument
->>>>>> /test-dev-null: Permission denied
->>>>>>
->>>>>> Probably this is a bug or misconfiguration in Ubuntu. I will try to figure it out.
->>>>>>
->>>>>
->>>>> Adding kas-devel: Would be interesting to understand this so that we can fix it
->>>>> or at least document a workaround. Maybe you need to be in some privileged group
->>>>> in order to use privileged docker containers? That's how things work on SUSE.
->>>>>
->>>>> No one around is using Ubuntu, so that distro is likely a blind spot for our
->>>>> testing.
->>>>
->>>> OK, so I figured out that Ubuntu 16.04 was using the service "binfmt-support", not "systemd-binfmt".
->>>> For that reason, the "systemd-binfmt" service was inactive. However, "binfmt-support" is working fine.
->>>> I also checked that the post-install script of the qemu-user-static package had run correctly
->>>> and there were binfmt configuration files at /var/lib/binfmts/
->>>
->>> But what prevented the container to tune the host kernel according to its needs?
->>> That is the intended resolution for the host not having the same settings as the
->>> container (or any at all).
->>
->> To be honest I don't really know what binfmt is all about yet, so I can't even understand what you mean about
->> "tuning the kernel".
+Hi, Biju.
 
-https://www.kernel.org/doc/html/latest/admin-guide/binfmt-misc.html
-
->>
->> By the way, I managed to update to the latest Ubuntu 4.4 kernel (145) and the problem persists. I tried to reinstall
->> qemu-user-static etc but still fails humm
->> .
->> Also i just tested on Ubuntu 18.04 and there I can build with ISAR without problems. So I might just leave it
->> unsolved and update to 18.04...
+> -----Original Message-----
+> From: cip-dev-bounces at lists.cip-project.org
+> [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Biju Das
+> Sent: Friday, March 22, 2019 7:29 PM
+> To: cip-dev at lists.cip-project.org
+> Cc: Biju Das <biju.das@bp.renesas.com>
+> Subject: [cip-dev] [PATCH 1/4] pinctrl: sh-pfc: Reduce kernel size for
+> narrow VIN channels
 > 
-> This might be a hint.
-> On Ubuntu 18.04 I can see "qemu-alpha" on /proc/sys/fs/binfmt_misc, but on Ubuntu 16.04 it isn't there.
-> When running kas-docker, the first error is about not being able to close /proc/sys/fs/binfmt_misc/register (invalid argument)
-> and the second is about qemu-alpha.
+> From: Geert Uytterhoeven <geert+renesas@glider.be>
 > 
+> Some VIN channels support less than 24 lanes.  As union vin_data always
+> consumes space for 24 lanes, this wastes memory.
+> 
+> Hence introduce new smaller unions vin_data12 and vin_data16, to
+> accommodate VIN channels with only 12 or 16 lanes.
+> 
+> This reduces the static pin controller driver size by 320 bytes for R-Car
+> V2H, and by 96 bytes for R-Car E2.
 
-Maybe /proc/sys/fs/binfmt_misc is not mounted into the container under Ubuntu 
-16.04, even if that is privileged.
+I applied this series, thanks.
 
-Jan
-
--- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+Best regards,
+  Nobuhiro
