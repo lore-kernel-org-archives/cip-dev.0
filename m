@@ -1,119 +1,118 @@
-From: daniel.sangorrin@toshiba.co.jp (daniel.sangorrin at toshiba.co.jp)
-Date: Tue, 16 Apr 2019 03:04:44 +0000
-Subject: [cip-dev] isar error log
-In-Reply-To: <OSAPR01MB37635280DF780D10C67B37EBD0240@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-References: <OSAPR01MB3763A7998474AB7ABEB3DDF3D0560@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-	<0c1b977d-cd7e-34aa-8d7e-1569b313f75d@siemens.com>
-	<OSAPR01MB37634FC9265275C1F909D27AD0570@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-	<043f0dda-7df0-36d1-c9ae-d9d08d3298d5@siemens.com>
-	<OSAPR01MB37639D8B6560398B6DE5834ED02F0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-	<2c3a7bd1-facf-87f2-ec20-2936c893584a@siemens.com>
-	<OSAPR01MB3763518BD0621EA0A7BA5A0DD02F0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-	<OSAPR01MB3763355E6AAF5A37347B24ACD02F0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-	<74cc4dec-f603-4746-077d-4aae2e20a095@siemens.com>
-	<20190412133736.5f3b257f@md1za8fc.ad001.siemens.net>
-	<1555070397.3557.19.camel@codethink.co.uk>
-	<OSAPR01MB37635280DF780D10C67B37EBD0240@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-Message-ID: <OSAPR01MB3763F005F7BFDE10700A2025D0240@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
+Date: Tue, 16 Apr 2019 04:00:58 +0000
+Subject: [cip-dev] Was: Software updates comparison
+In-Reply-To: <8f304163-8d36-a0e1-cd87-7b59145cf312@denx.de>
+References: <987bae4c-1936-bda6-5e12-f4d1016110a3@denx.de>
+	<OSAPR01MB3763BCD2795C773983692A01D02B0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+	<8f304163-8d36-a0e1-cd87-7b59145cf312@denx.de>
+Message-ID: <TYAPR01MB4189C4AA55AFDB4C6484EDB492240@TYAPR01MB4189.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
+Hi Stefano,
 
+> >> 	https://github.com/sbabic/libubootenv
+> >>
+> >> The library must be explicitely activated in SWUpdate's
+> >> configuration, it will become the default in future.
+> >
+> > Sounds great.
+> > I think that SZ Lin (Moxa) was already preparing a Debian package.
+> 
+> I am in touch with him and I have already merged some changes he asked
+> me to allow an eaier integration of the package in Debian.
+
+Oh, I already packaged this with some patches.
+You can see data from salsa.debian.org:
+   https://salsa.debian.org/debian/libubootenv
+
+If there is a necessary patch in this, please apply.
+
+Best regards,
+  Nobuhiro
 
 > -----Original Message-----
-> From: cip-dev-bounces at lists.cip-project.org <cip-dev-bounces@lists.cip-
-> project.org> On Behalf Of daniel.sangorrin at toshiba.co.jp
-> Sent: Tuesday, April 16, 2019 11:47 AM
-> To: ben.hutchings at codethink.co.uk; henning.schild at siemens.com;
-> jan.kiszka at siemens.com
-> Cc: kas-devel at googlegroups.com; isar-users at googlegroups.com; cip-
-> dev at lists.cip-project.org
-> Subject: Re: [cip-dev] isar error log
+> From: cip-dev-bounces at lists.cip-project.org
+> [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Stefano
+> Babic
+> Sent: Monday, April 15, 2019 7:03 PM
+> To: sangorrin daniel(????? ???? ????????)
+> <daniel.sangorrin@toshiba.co.jp>
+> Cc: cip-dev at lists.cip-project.org
+> Subject: Re: [cip-dev] Was: Software updates comparison
 > 
-> Henning, Ben, Jan: thanks for your answers.
+> Hi Daniel,
 > 
-> Actually, in my PC (Ubuntu 16.04.6) binfmt_misc is mounted, both outside
-> and inside the container.
-> # Henning: not sure why yours wasn't but it could be because I have also
-> qemu-user-static installed on the host OS or because of something I installed
-> in the past.
-> 
-> I tried to dig a bit deeper.
-> 
-> - The error:
-> update-binfmts: warning: unable to close /proc/sys/fs/binfmt_misc/register:
-> Invalid argument
-> - This error appears when /kas/docker-entrypoint calls "dpkg-configure
-> qemu-user-static"
-> - I added a set -x to qemu-user-static's postinstall script
-> (/var/lib/dpkg/info/qemu-user-static.postinst) and the error comes from this
-> line:
-> update-binfmts --package qemu-user-static --install qemu-aarch64 ... --
-> credential yes --fix-binary yes
-> - I tried to run update-binfmts (with the same arguments) and I could
-> reproduce the problem
-> - If I remove the "--fix-binary yes" part and execute it twice, then the first
-> time fails with the same error but the second time it succeeds
-> - I straced update-binfmts with --fix-binary yes
->   - it opens /proc/sys/fs/binfmt_misc/register
->   - writes :qemu-aarch64:M:0:x7fx45x4cx46x0"
->   - returns EINVAL
-> 
-> And then I found the real reason of the problem:
-> - The qemu-user-static on the host side was conflicting with the one inside
-> docker.
-> - If I remove qemu-user-static from the host then, it works.
-
-Oh no, I thought it was working but I was looking at the wrong screen. This doesn't seem to be the reason. I will dig a bit more.
-
-Thanks,
-Daniel
-
-> 
-> Thanks,
-> Daniel
-> 
-> > -----Original Message-----
-> > From: cip-dev-bounces at lists.cip-project.org
-> > <cip-dev-bounces@lists.cip- project.org> On Behalf Of Ben Hutchings
-> > Sent: Friday, April 12, 2019 9:00 PM
-> > To: Henning Schild <henning.schild@siemens.com>; [ext] Jan Kiszka
-> > <jan.kiszka@siemens.com>
-> > Cc: kas-devel at googlegroups.com; isar-users at googlegroups.com; cip-
-> > dev at lists.cip-project.org
-> > Subject: Re: [cip-dev] isar error log
+> On 15/04/19 11:51, daniel.sangorrin at toshiba.co.jp wrote:
+> > Hi Stefano,
 > >
-> > On Fri, 2019-04-12 at 13:37 +0200, Henning Schild wrote:
+> > Thanks a lot for the clarifications.
+> > # Christian (Siemens) had already informed us about part of the progress.
+> >
+> 
+> ok
+> 
+> >> From: Stefano Babic <sbabic@denx.de>
 > > [...]
-> > > Just had a look at a ubuntu 16.04. It does support the fs but it is
-> > > not mounted. So a pseudo-code patch for the docker entry could be:
-> > >
-> > > if not mounted
-> > > ?if grep binfmt_misc /proc/filesystems
-> > > ? mount
-> > > ?else
-> > > ? echo "Get a real and recent distro"
-> > > ?fi
-> > > fi
+> >> - depends on libubootenv which needs to be rebuilt for each target.
+> >>
+> >> This was a well known issue and source of several conflicts in the
+> past.
+> >> Thanks to a customer of mines, I have implemented a new libubootenv
+> >> library that is hardware independent and fixes this issue. Not only,
+> >> this could allow in future to extend it and introduce security
+> >> features, like signed
+> >> environment:
+> >>
+> >> 	https://github.com/sbabic/libubootenv
+> >>
+> >> The library must be explicitely activated in SWUpdate's
+> >> configuration, it will become the default in future.
 > >
-> > Actual code should be something like:
+> > Sounds great.
+> > I think that SZ Lin (Moxa) was already preparing a Debian package.
+> 
+> I am in touch with him and I have already merged some changes he asked
+> me to allow an eaier integration of the package in Debian.
+> 
+> > If the new library is mature enough then we should enable it by default.
+> 
+> Most projects of mine are still using the old approach, a couple of newer
+> have switched to libubootenv. For the future, I will set to libubootenv
+> as the old approach is often tricky and depends on U-Boot's changes.
+> 
 > >
-> > if ! mountpoint -q /proc/sys/fs/binfmt_misc \
-> >    && ! mount -t binfmt_misc binfmt_misc /proc/sys/fs/binfmt_misc; then
-> >     echo >&2 "E: Unable to mount binfmt_misc"
-> >     exit 1
-> > fi
+> >> - hard to manage updates from v1 to v5 directly
+> >>
+> >> This is also a topic I had on my desk - as it is possible to read in
+> >> your comparison / research, this can be solved if SWUpdate and CASync
+> >> can be combined. But to make things correct, SWUpdate should well
+> >> integrate CASync and uses it as library - this requires some changes
+> >> in CASync, too. I had a draft design about this, but due to the
+> >> complexity / effort, the project asking for delta-update decided in
+> >> another direction. There is currently no further work in SWUpdate in
+> this direction.
 > >
-> > Ben.
-> >
-> > --
-> > Ben Hutchings, Software Developer                ?        Codethink Ltd
-> > https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-> >                                      Manchester, M1 2HF, United
-> > Kingdom _______________________________________________
-> > cip-dev mailing list
-> > cip-dev at lists.cip-project.org
-> > https://lists.cip-project.org/mailman/listinfo/cip-dev
+> > Thanks for the update!
+> > Was transforming CASync into a library the complex part that you mention?
+> 
+> No, it is a part. It must be well integrated in SWUpdate and should not
+> break the current security concept. SWUpdate implements privilege
+> separation and processes that communicate with network run with different
+> permission as the installer, that is generally root. CASync processes
+> shoult be split and some of them replaced with something inside SWUpdate.
+> 
+> Best regards,
+> Stefano
+> 
+> --
+> ====================================================================
+> =
+> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+> Phone: +49-8142-66989-53 Fax: +49-8142-66989-80 Email: sbabic at denx.de
+> ====================================================================
+> =
 > _______________________________________________
 > cip-dev mailing list
 > cip-dev at lists.cip-project.org
