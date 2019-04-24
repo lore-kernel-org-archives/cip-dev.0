@@ -1,69 +1,36 @@
-From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
-Date: Wed, 24 Apr 2019 00:58:39 +0000
-Subject: [cip-dev] [cip-core] RFC: Process to decide supported package
-	list
-In-Reply-To: <OSBPR01MB277402D6349598D10F48A165E1240@OSBPR01MB2774.jpnprd01.prod.outlook.com>
-References: <OSBPR01MB277402D6349598D10F48A165E1240@OSBPR01MB2774.jpnprd01.prod.outlook.com>
-Message-ID: <TYAPR01MB41896A8C7559CF24EC798ABF923C0@TYAPR01MB4189.jpnprd01.prod.outlook.com>
+From: daniel.sangorrin@toshiba.co.jp (daniel.sangorrin at toshiba.co.jp)
+Date: Wed, 24 Apr 2019 01:23:43 +0000
+Subject: [cip-dev] EFIBootGuard for CIP and SecureBoot
+In-Reply-To: <20190422175446.GO4664@bill-the-cat>
+References: <CAHFG_=Ujd5m3uSq87MuiK-7HWM379GoJjTQ3HMvk_m8V0gzqMg@mail.gmail.com>
+	<20190422175446.GO4664@bill-the-cat>
+Message-ID: <OSAPR01MB3763A83FABF505EC4E0A5534D03C0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+Hello Francois, Jan, Christian, and all
 
-+1
-I think it is better to proceed this way.
+Sorry for the late reply, I was waiting for the administrator of the Boot Architecture mailing list to accept my subscription request, but it seems it will take a bit more time. I will send this reply and hope it will not be blocked. I have also added the u-boot mailing list to Cc, as Tom suggested (although I'm not a member), the CIP mailing list, Jan Kiszka (one of the main developers of Efibootguard) and Christian (an expert in software updates).
 
-Best regards,
-  Nobuhiro
+Background: during the last Linaro connect in Bangkok I was told that Linaro Edge (LEDGE) were working on a secure software update mechanism based on UEFI capsules that would flash firmware updates from a UEFI application, instead of using a Linux agent such as SWUpdate. Then, I had an online meeting with Francois, director of LEDGE. I explained to Francois that in CIP we are using the Linux agent approach right now, and we are also considering the use of a UEFI application (Efibootguard) to arm a watchdog and deal with the state-machine variables (installed, testing, ok, failed..) needed for A/B software updates. Efibootguard sounds like an excellent place to collaborate with Linaro (particularly on the watchdog drivers front) because it does not strictly depend on where the firmware is flashed (UEFI capsule or Linux agent). 
 
-> -----Original Message-----
-> From: cip-dev-bounces at lists.cip-project.org
-> [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of
-> kazuhiro3.hayashi at toshiba.co.jp
-> Sent: Tuesday, April 16, 2019 10:22 PM
-> To: cip-dev at lists.cip-project.org
-> Subject: [cip-dev] [cip-core] RFC: Process to decide supported package
-> list
-> 
-> Hello CIP developers,
-> 
-> I would like to suggest an idea about the process to determine the package
-> list that should be supported by CIP.
-> It's difficult to discuss adding any packages including their
-> dependencies from whole Debian, mixing the two profiles.
-> 
-> As the first step, it would be better to start from the source package
-> list which binary packages are installed by debootstrap minbase.
-> I attached the source package list, where only 58 packages exist.
-> I guess that it's easier to discuss which packages should be supported
-> from such core components.
-> 
-> NOTE: busybox is not included in the attached list, but it have to be
-> supported not only for the tiny profile but also initramfs (and Debian
-> installer?) in the generic profile.
-> 
-> Regarding the tiny profile, we need to keep discussion about which busybox
-> applet should be supported.
-> I think this process should be done independently from the above
-> discussion because the all packages selected from debootstrap in the first
-> step should be supported in the tiny profile as well.
-> 
-> Regarding voting, I have the same opinion that Daniel proposed previously.
-> 	1. Send an initial list and vote (>50% means accepted)
-> 	2. After that, each package will be voted (>50% means accepted)
-> 
-> As the second step, we consider adding other packages not included in
-> the list one by one.
-> We need to decide the detailed process of the second step later.
-> 
-> If you have any other opinions, please let me know.
-> 
-> Kind regards,
-> Kazu
-> 
->  Kazuhiro Hayashi
->  Corporate Software Engineering & Technology Center  Toshiba
-> Corporation
->  Tel: +81-44-549-2476
->  E-mail: kazuhiro3.hayashi at toshiba.co.jp
-> 
+> On Fri, Apr 19, 2019 at 12:48:51PM +0200, Francois Ozog wrote:
+> > Hi Daniel,
+> >
+> > We will be conducting a UEFI gap analysis to support EFIBootGuard in U-Boot.
+> >
+> > As we are working on UEFI SecureBoot implementation in U-Boot, how do
+> > you expect the boot process to be secured? Would U-Boot UEFI
+> > SecureBoot verify EFIBootGuard signature and in turn EFIBootGuard will
+> > check either grub or Linux signature?
+> >
+> > Please elaborate on your vision of a secured boot process.
+
+Efibootguard is composed of two parts.
+  - A UEFI application that can arm a watchdog and decide what environment (kernel, boot args, etc.) to use next depending on a set of variables (update status, highest revision, etc.) stored in FAT16 partitions.
+  - A Linux application that can read and set those variables from Linux (similar to u-boot's fw_setenv). This functionality is also available in the form of a library.
+
+As far as I know, there is no concept of "Secure Booting" in Efibootguard at the moment. Adding signature checks before booting into the selected kernel would be a possible solution. 
+
+Thanks,
+Daniel
