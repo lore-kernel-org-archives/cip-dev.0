@@ -1,56 +1,80 @@
-From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed, 24 Apr 2019 18:20:40 +0100
-Subject: [cip-dev] [PATCH 4.19.y 17/17] arm64: dts: renesas: r8a774c0: Add
-	USB3.0 device nodes
-In-Reply-To: <1556126440-27978-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1556126440-27978-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1556126440-27978-18-git-send-email-fabrizio.castro@bp.renesas.com>
+From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
+Date: Wed, 24 Apr 2019 23:52:46 +0000
+Subject: [cip-dev] [cip-core] RFC: Process to decide supported package
+	list
+In-Reply-To: <OSBPR01MB277402D6349598D10F48A165E1240@OSBPR01MB2774.jpnprd01.prod.outlook.com>
+References: <OSBPR01MB277402D6349598D10F48A165E1240@OSBPR01MB2774.jpnprd01.prod.outlook.com>
+Message-ID: <TYAPR01MB41891DA442DE5C5EDF4BFFEF923C0@TYAPR01MB4189.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit 3a6addcaedecf2a8261c3491693be38b28a75444 upstream.
+Hi,
 
-Add usb3.0 host and function device nodes to the RZ/G2E SoC dtsi.
+> cdebconf
+> debconf
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+This is necessary when setting up the package interactively.
+I think that it is not necessary in the system that we think.
+But base-files use cdebconf's library. After this, we may need
+to think about how to set up the application.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-index a4eb5b8..1d37a35 100644
---- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-@@ -988,6 +988,28 @@
- 			status = "disabled";
- 		};
- 
-+		xhci0: usb at ee000000 {
-+			compatible = "renesas,xhci-r8a774c0",
-+				     "renesas,rcar-gen3-xhci";
-+			reg = <0 0xee000000 0 0xc00>;
-+			interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 328>;
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			resets = <&cpg 328>;
-+			status = "disabled";
-+		};
-+
-+		usb3_peri0: usb at ee020000 {
-+			compatible = "renesas,r8a774c0-usb3-peri",
-+				     "renesas,rcar-gen3-usb3-peri";
-+			reg = <0 0xee020000 0 0x400>;
-+			interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 328>;
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			resets = <&cpg 328>;
-+			status = "disabled";
-+		};
-+
- 		ohci0: usb at ee080000 {
- 			compatible = "generic-ohci";
- 			reg = <0 0xee080000 0 0x100>;
--- 
-2.7.4
+> debian-archive-keyring
+
+This is the package maintainer's keyring.
+I think that it is not necessary.
+
+Best regards,
+  Nobuhiro
+
+
+> -----Original Message-----
+> From: cip-dev-bounces at lists.cip-project.org
+> [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of
+> kazuhiro3.hayashi at toshiba.co.jp
+> Sent: Tuesday, April 16, 2019 10:22 PM
+> To: cip-dev at lists.cip-project.org
+> Subject: [cip-dev] [cip-core] RFC: Process to decide supported package
+> list
+> 
+> Hello CIP developers,
+> 
+> I would like to suggest an idea about the process to determine the package
+> list that should be supported by CIP.
+> It's difficult to discuss adding any packages including their
+> dependencies from whole Debian, mixing the two profiles.
+> 
+> As the first step, it would be better to start from the source package
+> list which binary packages are installed by debootstrap minbase.
+> I attached the source package list, where only 58 packages exist.
+> I guess that it's easier to discuss which packages should be supported
+> from such core components.
+> 
+> NOTE: busybox is not included in the attached list, but it have to be
+> supported not only for the tiny profile but also initramfs (and Debian
+> installer?) in the generic profile.
+> 
+> Regarding the tiny profile, we need to keep discussion about which busybox
+> applet should be supported.
+> I think this process should be done independently from the above
+> discussion because the all packages selected from debootstrap in the first
+> step should be supported in the tiny profile as well.
+> 
+> Regarding voting, I have the same opinion that Daniel proposed previously.
+> 	1. Send an initial list and vote (>50% means accepted)
+> 	2. After that, each package will be voted (>50% means accepted)
+> 
+> As the second step, we consider adding other packages not included in
+> the list one by one.
+> We need to decide the detailed process of the second step later.
+> 
+> If you have any other opinions, please let me know.
+> 
+> Kind regards,
+> Kazu
+> 
+>  Kazuhiro Hayashi
+>  Corporate Software Engineering & Technology Center  Toshiba
+> Corporation
+>  Tel: +81-44-549-2476
+>  E-mail: kazuhiro3.hayashi at toshiba.co.jp
+> 
