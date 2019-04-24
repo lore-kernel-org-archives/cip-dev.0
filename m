@@ -1,64 +1,79 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Wed, 24 Apr 2019 08:11:24 +0200
-Subject: [cip-dev] EFIBootGuard for CIP and SecureBoot
-In-Reply-To: <OSAPR01MB3763A83FABF505EC4E0A5534D03C0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-References: <CAHFG_=Ujd5m3uSq87MuiK-7HWM379GoJjTQ3HMvk_m8V0gzqMg@mail.gmail.com>
-	<20190422175446.GO4664@bill-the-cat>
-	<OSAPR01MB3763A83FABF505EC4E0A5534D03C0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-Message-ID: <26998f72-94f6-894f-f095-16e752572b6b@siemens.com>
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Wed, 24 Apr 2019 06:47:27 +0000
+Subject: [cip-dev] [cip-core] RFC: Process to decide supported package
+ list
+In-Reply-To: <TYAPR01MB50051E633D3AFF11DCC34A3ADF220@TYAPR01MB5005.jpnprd01.prod.outlook.com>
+References: <OSBPR01MB277402D6349598D10F48A165E1240@OSBPR01MB2774.jpnprd01.prod.outlook.com>
+	<CAFk6z8OJW9k+YEs3cp-MzYN_428w5KHDFpRkiCjB0zzhQTdpWg@mail.gmail.com>
+	<TYAPR01MB50051E633D3AFF11DCC34A3ADF220@TYAPR01MB5005.jpnprd01.prod.outlook.com>
+Message-ID: <HK0PR01MB297913CB4BB27D2D2664DCBFE23C0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-[prolonging the CCs with the efibootguard mailing list]
-
-On 24.04.19 03:23, daniel.sangorrin at toshiba.co.jp wrote:
-> Hello Francois, Jan, Christian, and all
->  EFI Boot Guard is now shipped in quite a few devices, to my knowledge not only at 
-> Sorry for the late reply, I was waiting for the administrator of the Boot Architecture mailing list to accept my subscription request, but it seems it will take a bit more time. I will send this reply and hope it will not be blocked. I have also added the u-boot mailing list to Cc, as Tom suggested (although I'm not a member), the CIP mailing list, Jan Kiszka (one of the main developers of Efibootguard) and Christian (an expert in software updates).
+Hi,
+> -----Original Message-----
+> From: Kento Yoshida <kento.yoshida.wz@renesas.com>
+> Sent: Monday, April 22, 2019 11:05 AM
+> To: SZ Lin (???) <SZ.Lin@moxa.com>; Kazuhiro HAYASHI
+> <kazuhiro3.hayashi@toshiba.co.jp>; Takehisa Katayama
+> <takehisa.katayama.bx@renesas.com>
+> Cc: cip dev <cip-dev@lists.cip-project.org>
+> Subject: RE: [cip-dev] [cip-core] RFC: Process to decide supported package list
 > 
-> Background: during the last Linaro connect in Bangkok I was told that Linaro Edge (LEDGE) were working on a secure software update mechanism based on UEFI capsules that would flash firmware updates from a UEFI application, instead of using a Linux agent such as SWUpdate.
-
-How would capsules help with writing to arbitrary storage, updating only files 
-on filesystem, reducing the update size (binary diffs), or talking to the cloud?
-
-> Then, I had an online meeting with Francois, director of LEDGE. I explained to Francois that in CIP we are using the Linux agent approach right now, and we are also considering the use of a UEFI application (Efibootguard) to arm a watchdog and deal with the state-machine variables (installed, testing, ok, failed..) needed for A/B software updates. Efibootguard sounds like an excellent place to collaborate with Linaro (particularly on the watchdog drivers front) because it does not strictly depend on where the firmware is flashed (UEFI capsule or Linux agent).
+> Hello Lin-san,
 > 
->> On Fri, Apr 19, 2019 at 12:48:51PM +0200, Francois Ozog wrote:
->>> Hi Daniel,
->>>
->>> We will be conducting a UEFI gap analysis to support EFIBootGuard in U-Boot.
->>>
->>> As we are working on UEFI SecureBoot implementation in U-Boot, how do
->>> you expect the boot process to be secured? Would U-Boot UEFI
->>> SecureBoot verify EFIBootGuard signature and in turn EFIBootGuard will
->>> check either grub or Linux signature?
->>>
->>> Please elaborate on your vision of a secured boot process.
+> > Would you like to add some essential security packages into a list based on
+> security workgroup discussion?
+> Yes we would.
+> We may add more packages in near future discussions, but at least the
+> following packages should be added into the list.
 > 
-> Efibootguard is composed of two parts.
->    - A UEFI application that can arm a watchdog and decide what environment (kernel, boot args, etc.) to use next depending on a set of variables (update status, highest revision, etc.) stored in FAT16 partitions.
->    - A Linux application that can read and set those variables from Linux (similar to u-boot's fw_setenv). This functionality is also available in the form of a library.
+> openssl
+> sudo
 > 
-> As far as I know, there is no concept of "Secure Booting" in Efibootguard at the moment. Adding signature checks before booting into the selected kernel would be a possible solution.
+> *acl, pam and shadow have already listed.
+> **auditd is included into "audit" that has already listed.
+> ***openssh is considered to add into the list by WG.
+> ****tpm2-tools is not mandatory, but you may add into the list as an optional
+> choice for customers.
+> 
+> Is there anything else?
 
-Secure boot is a pending feature on our to-do list. It's a bit more complicated 
-than that, like secure boot is "a bit" more complicated than you think once you 
-actually try to implement it. Once we do that, it's really about adding 
-signature checks or relying on UEFI validating the payloads we boot for us PLUS 
-ensuring the our config sections can either be validated (despite being 
-volatile) or split the security-wise critical parts (specifically EFI payload 
-parameters) from the less critical ones (update states) and remove the latter 
-from the validation.
+LGTM, thank you!
 
-BTW, what we do in EFI Board Guard could also be done in any other UEFI 
-bootloader, may it be grub (if you like to use that complex and fragile beast in 
-production), systemd-boot or even TianoCore. But for now, it was easier - and 
-more robust - to add our requirements in form of this tiny bootloader to the 
-ecosystem. EFI Boot Guard is now shipped in quite a few devices, to my best 
-knowledge not only at Siemens.
+SZ
 
-Jan
-
--- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+> 
+> Best regards,
+> Kent Yoshida
+> 
+> -----Original Message-----
+> From: SZ Lin (???) <sz.lin@moxa.com>
+> Sent: Monday, April 22, 2019 11:30 AM
+> To: Kazuhiro HAYASHI <kazuhiro3.hayashi@toshiba.co.jp>; Takehisa Katayama
+> <takehisa.katayama.bx@renesas.com>; Kento Yoshida
+> <kento.yoshida.wz@renesas.com>
+> Cc: cip dev <cip-dev@lists.cip-project.org>
+> Subject: Re: [cip-dev] [cip-core] RFC: Process to decide supported package list
+> 
+> Hi,
+> 
+> <kazuhiro3.hayashi@toshiba.co.jp> ? 2019?4?16? ?? ??9:22
+> ???
+> >
+> > Hello CIP developers,
+> >
+> > I would like to suggest an idea about the process to determine the package
+> list that should be supported by CIP.
+> > It's difficult to discuss adding any packages including their dependencies
+> from whole Debian, mixing the two profiles.
+> >
+> 
+> Thanks for your work, Hayashi-san.
+> 
+> Hi Katayama-san and Yoshida-san,
+> 
+> Would you like to add some essential security packages into a list based on
+> security workgroup discussion?
+> 
+> SZ
