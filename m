@@ -1,36 +1,53 @@
-From: gregkh@linuxfoundation.org (Greg KH)
-Date: Wed, 24 Apr 2019 18:44:39 +0200
-Subject: [cip-dev] [PATCH 4.4 0/5] DHCP client support when receiving
- "delayed" replies
-In-Reply-To: <20190406135350.GA2935@sasha-vm>
-References: <1554461256-12966-1-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
-	<20190406135350.GA2935@sasha-vm>
-Message-ID: <20190424164439.GB21916@kroah.com>
+From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
+Date: Wed, 24 Apr 2019 18:20:23 +0100
+Subject: [cip-dev]  [PATCH 4.19.y 00/17] Backport USB support for RZ/G2E
+Message-ID: <1556126440-27978-1-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Sat, Apr 06, 2019 at 09:53:50AM -0400, Sasha Levin wrote:
-> On Fri, Apr 05, 2019 at 11:47:31AM +0100, Patryk Mungai wrote:
-> > Dear All,
-> > 
-> > When running dhcp tests using the 4.4.y (and 4.4.y-cip kernel as well), I
-> > encountered an issue where the dhcp client in the kernel could not get an
-> > IP address when multiple network devices were enabled. It seems that the
-> > current implementation of the dhcp client in the 4.4 kernel is send dhcp
-> > request via device 1 -> wait <1s for response from server on device 1 ->
-> > if no response, switch to device 2 -> repeat process on device 2 ...etc.
-> > When the dhcp server is slow to respond, this means it is impossible to get
-> > a dhcp address.
-> > 
-> > This series backported from upstream fixes the issue, is it possible
-> > to apply this to 4.4.y and/or 4.4.y-cip?
-> 
-> This is something that seems more suited for the CIP kernel as it adds
-> new functionality.
+Dear All,
 
-I agree, this is a new feature.  If someone wants this, they should use
-a newer kernel please.  Like 4.19.y :)
+this series backports SoC specific USB Host 2.0/HSUSB/USB 3.0 DRD
+support for the RZ/G2E (a.k.a. R8A774C0).
+While at it, this series also cherry-picks some patches useful for
+the RZ/G2M (a.k.a. R8A774A1).
 
-thanks,
+Thanks,
+Fab
 
-greg k-h
+Fabrizio Castro (11):
+  dt-bindings: rcar-gen3-phy-usb2: Add r8a774a1 support
+  dt-bindings: rcar-gen3-phy-usb2: Add r8a774c0 support
+  arm64: dts: renesas: r8a774c0: Add USB2.0 phy and host device nodes
+  usb: renesas_usbhs: add support for RZ/G2E
+  dt-bindings: usb: renesas_usbhs: Add r8a774c0 support
+  dt-bindings: dmaengine: usb-dmac: Add binding for r8a774c0
+  arm64: dts: renesas: r8a774c0: Add USB-DMAC and HSUSB device nodes
+  usb: gadget: udc: renesas_usb3: add support for r8a774c0
+  usb: gadget: udc: renesas_usb3: Add r8a774a1 support
+  usb: gadget: udc: renesas_usb3: Add bindings for r8a774c0
+  arm64: dts: renesas: r8a774c0: Add USB3.0 device nodes
+
+Yoshihiro Shimoda (6):
+  usb: renesas_usbhs: Add reset_control
+  usb: renesas_usbhs: Add multiple clocks management
+  Revert "usb: renesas_usbhs: add extcon notifier to set mode for
+    non-otg channel"
+  dt-bindings: usb: renesas_usbhs: add clock-names property
+  usb: gadget: udc: renesas_usb3: add support for r8a77990
+  usb: gadget: udc: renesas_usb3: add a safety connection way for
+    forced_b_device
+
+ .../devicetree/bindings/dma/renesas,usb-dmac.txt   |   1 +
+ .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt |  11 +-
+ .../devicetree/bindings/usb/renesas_usb3.txt       |   6 +-
+ .../devicetree/bindings/usb/renesas_usbhs.txt      |   7 +-
+ arch/arm64/boot/dts/renesas/r8a774c0.dtsi          | 104 +++++++++++++++++++
+ drivers/usb/gadget/udc/renesas_usb3.c              |  30 +++++-
+ drivers/usb/renesas_usbhs/common.c                 | 113 +++++++++++++++++++--
+ drivers/usb/renesas_usbhs/common.h                 |   5 +-
+ drivers/usb/renesas_usbhs/rcar3.c                  |  11 --
+ 9 files changed, 256 insertions(+), 32 deletions(-)
+
+-- 
+2.7.4
