@@ -1,51 +1,56 @@
-From: pavel@ucw.cz (Pavel Machek)
-Date: Wed, 24 Apr 2019 11:30:37 +0200
-Subject: [cip-dev] [cip-core] RFC: Process to decide supported package
- list
-In-Reply-To: <OSBPR01MB277402D6349598D10F48A165E1240@OSBPR01MB2774.jpnprd01.prod.outlook.com>
-References: <OSBPR01MB277402D6349598D10F48A165E1240@OSBPR01MB2774.jpnprd01.prod.outlook.com>
-Message-ID: <20190424093037.GA30540@amd>
+From: Grant.Likely@arm.com (Grant Likely)
+Date: Wed, 24 Apr 2019 09:45:22 +0000
+Subject: [cip-dev] EFIBootGuard for CIP and SecureBoot
+In-Reply-To: <OSAPR01MB3763A83FABF505EC4E0A5534D03C0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+References: <CAHFG_=Ujd5m3uSq87MuiK-7HWM379GoJjTQ3HMvk_m8V0gzqMg@mail.gmail.com>
+	<20190422175446.GO4664@bill-the-cat>
+	<OSAPR01MB3763A83FABF505EC4E0A5534D03C0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+Message-ID: <2b920228-fe1d-5237-d8e3-d22b13223cd0@arm.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi!
-
-> Hello CIP developers,
+On 24/04/2019 02:23, daniel.sangorrin at toshiba.co.jp wrote:
+> Hello Francois, Jan, Christian, and all
 > 
-> I would like to suggest an idea about the process to determine the package list that should be supported by CIP.
-> It's difficult to discuss adding any packages including their dependencies from whole Debian, mixing the two profiles.
+> Sorry for the late reply, I was waiting for the administrator of the Boot Architecture mailing list to accept my subscription request, but it seems it will take a bit more time. I will send this reply and hope it will not be blocked. I have also added the u-boot mailing list to Cc, as Tom suggested (although I'm not a member), the CIP mailing list, Jan Kiszka (one of the main developers of Efibootguard) and Christian (an expert in software updates).
+
+Hmmm, that's weird. The boot-architecture list doesn't require approval 
+to subscribe. It just requires confirmation of email address. I think 
+there is a problem with lists.linaro.org. I'll send an IT support 
+request to Linaro.
+
+Regardless, I've approved this post and added you to the allowed senders 
+list. You can post freely. :-)
+
+g.
+
+> Background: during the last Linaro connect in Bangkok I was told that Linaro Edge (LEDGE) were working on a secure software update mechanism based on UEFI capsules that would flash firmware updates from a UEFI application, instead of using a Linux agent such as SWUpdate. Then, I had an online meeting with Francois, director of LEDGE. I explained to Francois that in CIP we are using the Linux agent approach right now, and we are also considering the use of a UEFI application (Efibootguard) to arm a watchdog and deal with the state-machine variables (installed, testing, ok, failed..) needed for A/B software updates. Efibootguard sounds like an excellent place to collaborate with Linaro (particularly on the watchdog drivers front) because it does not strictly depend on where the firmware is flashed (UEFI capsule or Linux agent).
 > 
-> As the first step, it would be better to start from the source package list
-> which binary packages are installed by debootstrap minbase.
-> I attached the source package list, where only 58 packages exist.
-> I guess that it's easier to discuss which packages should be supported from such core components.
+>> On Fri, Apr 19, 2019 at 12:48:51PM +0200, Francois Ozog wrote:
+>>> Hi Daniel,
+>>>
+>>> We will be conducting a UEFI gap analysis to support EFIBootGuard in U-Boot.
+>>>
+>>> As we are working on UEFI SecureBoot implementation in U-Boot, how do
+>>> you expect the boot process to be secured? Would U-Boot UEFI
+>>> SecureBoot verify EFIBootGuard signature and in turn EFIBootGuard will
+>>> check either grub or Linux signature?
+>>>
+>>> Please elaborate on your vision of a secured boot process.
 > 
-> NOTE: busybox is not included in the attached list, but it have to be supported
-> not only for the tiny profile but also initramfs (and Debian
-> installer?) in the generic profile.
-
-Looking at the list, one things stands out:
-
-There are tiny packages one would expect on embedded system:
-
-> dash
-
-And there's huge package one would not expect there:
-
-> gcc-8
-
-How did gcc get to the list? It may be more work to support gcc-8 than
-rest of the packages combined...
-
-Best regards,
-									Pavel
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 181 bytes
-Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190424/72d55e5c/attachment.sig>
+> Efibootguard is composed of two parts.
+>    - A UEFI application that can arm a watchdog and decide what environment (kernel, boot args, etc.) to use next depending on a set of variables (update status, highest revision, etc.) stored in FAT16 partitions.
+>    - A Linux application that can read and set those variables from Linux (similar to u-boot's fw_setenv). This functionality is also available in the form of a library.
+> 
+> As far as I know, there is no concept of "Secure Booting" in Efibootguard at the moment. Adding signature checks before booting into the selected kernel would be a possible solution.
+> 
+> Thanks,
+> Daniel
+> 
+> 
+> 
+> _______________________________________________
+> boot-architecture mailing list
+> boot-architecture at lists.linaro.org
+> https://lists.linaro.org/mailman/listinfo/boot-architecture
+> 
