@@ -1,55 +1,38 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed, 24 Apr 2019 18:20:24 +0100
-Subject: [cip-dev] [PATCH 4.19.y 01/17] dt-bindings: rcar-gen3-phy-usb2: Add
-	r8a774a1 support
+Date: Wed, 24 Apr 2019 18:20:25 +0100
+Subject: [cip-dev] [PATCH 4.19.y 02/17] dt-bindings: rcar-gen3-phy-usb2: Add
+	r8a774c0 support
 In-Reply-To: <1556126440-27978-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1556126440-27978-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1556126440-27978-2-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1556126440-27978-3-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit ad05573080997aab7b5d0ea6187d88ef996ae3e5 upstream.
+commit 4f0960ba7a6aedee18d5749e13ac74afe939bf2e upstream.
 
-Document RZ/G2M (R8A774A1) SoC bindings.
+Document RZ/G2E (R8A774C0) SoC bindings.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-index fb4a204..6a4b5b6 100644
+index 6a4b5b6..6f73293 100644
 --- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
 +++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-@@ -1,10 +1,12 @@
- * Renesas R-Car generation 3 USB 2.0 PHY
- 
- This file provides information on what the device node for the R-Car generation
--3 USB 2.0 PHY contains.
-+3 and RZ/G2 USB 2.0 PHY contain.
- 
+@@ -6,6 +6,8 @@ This file provides information on what the device node for the R-Car generation
  Required properties:
--- compatible: "renesas,usb2-phy-r8a7795" if the device is a part of an R8A7795
-+- compatible: "renesas,usb2-phy-r8a774a1" if the device is a part of an R8A774A1
+ - compatible: "renesas,usb2-phy-r8a774a1" if the device is a part of an R8A774A1
+ 	      SoC.
++	      "renesas,usb2-phy-r8a774c0" if the device is a part of an R8A774C0
 +	      SoC.
-+	      "renesas,usb2-phy-r8a7795" if the device is a part of an R8A7795
+ 	      "renesas,usb2-phy-r8a7795" if the device is a part of an R8A7795
  	      SoC.
  	      "renesas,usb2-phy-r8a7796" if the device is a part of an R8A7796
- 	      SoC.
-@@ -14,7 +16,8 @@ Required properties:
- 	      R8A77990 SoC.
- 	      "renesas,usb2-phy-r8a77995" if the device is a part of an
- 	      R8A77995 SoC.
--	      "renesas,rcar-gen3-usb2-phy" for a generic R-Car Gen3 compatible device.
-+	      "renesas,rcar-gen3-usb2-phy" for a generic R-Car Gen3 or RZ/G2
-+	      compatible device.
- 
- 	      When compatible with the generic version, nodes must list the
- 	      SoC-specific version corresponding to the platform first
 -- 
 2.7.4
