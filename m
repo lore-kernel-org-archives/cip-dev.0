@@ -1,56 +1,325 @@
-From: Grant.Likely@arm.com (Grant Likely)
-Date: Wed, 24 Apr 2019 09:45:22 +0000
-Subject: [cip-dev] EFIBootGuard for CIP and SecureBoot
-In-Reply-To: <OSAPR01MB3763A83FABF505EC4E0A5534D03C0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-References: <CAHFG_=Ujd5m3uSq87MuiK-7HWM379GoJjTQ3HMvk_m8V0gzqMg@mail.gmail.com>
-	<20190422175446.GO4664@bill-the-cat>
-	<OSAPR01MB3763A83FABF505EC4E0A5534D03C0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-Message-ID: <2b920228-fe1d-5237-d8e3-d22b13223cd0@arm.com>
+From: kazuhiro.fujita.jg@renesas.com (Kazuhiro Fujita)
+Date: Wed, 24 Apr 2019 11:01:10 +0000
+Subject: [cip-dev] about branch of meta-debian in cip-core/deby
+In-Reply-To: <OSBPR01MB27746936339146E99ADC8AB2E1240@OSBPR01MB2774.jpnprd01.prod.outlook.com>
+References: <CAGDrK-a79Z7rc=JibAU_8TL=7GtVFocGfvne9iQ4MsCa1oGU1w@mail.gmail.com>
+	<OSAPR01MB3763870A4581B882D1AC1ADAD04B0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+	<OSAPR01MB30444CACDE60382555A681DCE14B0@OSAPR01MB3044.jpnprd01.prod.outlook.com>
+	<OSBPR01MB499953893394AAC252B66DC6D9440@OSBPR01MB4999.jpnprd01.prod.outlook.com>
+	<TY2PR01MB305133BDEEBBDE5D8386AB97E1470@TY2PR01MB3051.jpnprd01.prod.outlook.com>
+	<OSBPR01MB4999AAFDBFB634B1F7D3350DD9400@OSBPR01MB4999.jpnprd01.prod.outlook.com>
+	<OSBPR01MB2774062C0B63CAA2D0EA943FE12F0@OSBPR01MB2774.jpnprd01.prod.outlook.com>
+	<OSBPR01MB27746936339146E99ADC8AB2E1240@OSBPR01MB2774.jpnprd01.prod.outlook.com>
+Message-ID: <OSBPR01MB499921C7785981E6923C86C6D93C0@OSBPR01MB4999.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 24/04/2019 02:23, daniel.sangorrin at toshiba.co.jp wrote:
-> Hello Francois, Jan, Christian, and all
-> 
-> Sorry for the late reply, I was waiting for the administrator of the Boot Architecture mailing list to accept my subscription request, but it seems it will take a bit more time. I will send this reply and hope it will not be blocked. I have also added the u-boot mailing list to Cc, as Tom suggested (although I'm not a member), the CIP mailing list, Jan Kiszka (one of the main developers of Efibootguard) and Christian (an expert in software updates).
+Hello Hayashi-san,
 
-Hmmm, that's weird. The boot-architecture list doesn't require approval 
-to subscribe. It just requires confirmation of email address. I think 
-there is a problem with lists.linaro.org. I'll send an IT support 
-request to Linaro.
+Sorry for my late reply...
 
-Regardless, I've approved this post and added you to the allowed senders 
-list. You can post freely. :-)
+> -----Original Message-----
+> From: kazuhiro3.hayashi at toshiba.co.jp <kazuhiro3.hayashi@toshiba.co.jp>
+> Sent: Tuesday, April 16, 2019 8:53 PM
+> To: Kazuhiro Fujita <kazuhiro.fujita.jg@renesas.com>
+> Cc: cip-dev at lists.cip-project.org
+> Subject: RE: about branch of meta-debian in cip-core/deby
+> 
+> Dear Fujita-san,
+> 
+> > In my understanding, the targets of CIP(-core)'s support are the
+> followings at least:
+> >
+> > Kernel:
+> > 	linux-4.4.y-cip & -rt
+> > 	linux-4.19.y-cip & -rt
+> > Debian:
+> > 	Debian 8 (jessie)
+> > 	Debian 9 (stretch)
+> > 	Debian 10 (buster)
+> > 	... and every version in future
+> >
+> > However, I think that there is no decision in CIP about the combination
+> of
+> > the above kernel versions and Debian versions, which should be supported
+> by CIP.
+> > This implicitly shows that all combinations could be supported, but
+> > it's quite hard to test and maintain all of them.
+> > I guess that the practical version combinations are very limited
+> actually.
+> >
+> > I would like to confirm opinions about this in Isar later.
+> 
+> Regarding the discussion with Jan,
+> I supposed that it's better to provide the following names for branches of
+> tiny profile.
+> https://lists.cip-project.org/pipermail/cip-dev/2019-April/002094.html
+> 
+> 	cip-core_jessie (Current "morty")
+> 	cip-core_buster (Current "master")
 
-g.
+This naming rule is clear and reasonable.
 
-> Background: during the last Linaro connect in Bangkok I was told that Linaro Edge (LEDGE) were working on a secure software update mechanism based on UEFI capsules that would flash firmware updates from a UEFI application, instead of using a Linux agent such as SWUpdate. Then, I had an online meeting with Francois, director of LEDGE. I explained to Francois that in CIP we are using the Linux agent approach right now, and we are also considering the use of a UEFI application (Efibootguard) to arm a watchdog and deal with the state-machine variables (installed, testing, ok, failed..) needed for A/B software updates. Efibootguard sounds like an excellent place to collaborate with Linaro (particularly on the watchdog drivers front) because it does not strictly depend on where the firmware is flashed (UEFI capsule or Linux agent).
+
 > 
->> On Fri, Apr 19, 2019 at 12:48:51PM +0200, Francois Ozog wrote:
->>> Hi Daniel,
->>>
->>> We will be conducting a UEFI gap analysis to support EFIBootGuard in U-Boot.
->>>
->>> As we are working on UEFI SecureBoot implementation in U-Boot, how do
->>> you expect the boot process to be secured? Would U-Boot UEFI
->>> SecureBoot verify EFIBootGuard signature and in turn EFIBootGuard will
->>> check either grub or Linux signature?
->>>
->>> Please elaborate on your vision of a secured boot process.
+> I would like to push the latest master branch of deby to cip-core GitLab
+> and
+> adjust it to work with kas later.
 > 
-> Efibootguard is composed of two parts.
->    - A UEFI application that can arm a watchdog and decide what environment (kernel, boot args, etc.) to use next depending on a set of variables (update status, highest revision, etc.) stored in FAT16 partitions.
->    - A Linux application that can read and set those variables from Linux (similar to u-boot's fw_setenv). This functionality is also available in the form of a library.
+> >
+> > > >
+> > > > If the both tiny(deby) and generic profile(isar) are based on the
+> same
+> > > > CIP kernel and Debian versions, we can use such common branch name
+> above.
+> > > > If not, or no benefit for users to use the common branch name,
+> > > > I would like to simply use "morty" and "master" in deby repository.
+> > >
+> > > Using different version for tiny and generic may be confusing.
+> > > In my opinion, tiny should be the subset of generic profile.
+> >
+> > Thank you for your opinion.
+> > Regarding the supported package list, I agree that tiny should be subset
+> of generic.
+> > In order to use the common version (branch name) in tiny and generic,
+> > and to concentrate our efforts on well-used cases,,
+> > we need to make a decision about the supported version combinations
+> between CIP kernel and Debian.
 > 
-> As far as I know, there is no concept of "Secure Booting" in Efibootguard at the moment. Adding signature checks before booting into the selected kernel would be a possible solution.
+> Here is the first draft of the version combinations (CIP & Debian)
+> supported by CIP.
+> https://lists.cip-project.org/pipermail/cip-dev/2019-April/002117.html
 > 
-> Thanks,
-> Daniel
+> 	4.4 + stretch => SUPPORTED (necessary)
+> 	4.4 + buster => NOT SUPPORTED
+> 	4.4 + bullseye => NOT SUPPORTED
+> 	4.19 + stretch => SUPPORTED (optional)
+> 	4.19 + buster => SUPPORTED (necessary)
+> 	4.19 + bullseye => SUPPORTED (optional: 4.19 should be compatible
+> with bullseye userland)
+> 	...
+
+If "SUPPORTED" means that CIP promise to maintain these pairs, 
+it may not good idea to put "optional" choice.
+
+In my understanding, CIP decided at the start of CIP core 
+activity that CIP must maintain packages used in CIP core 
+after Debian finishes its maintenance.
+For example, Debian will finish their support of Stretch at 
+June/2022 and CIP will maintain the packages after that day.
+
+If "optional" means CIP will stop using that pair in future, 
+putting "optional" choice may work.
+
+Regards,
+Fujita
+
+
 > 
+> Some of them would be updated in future (especially "bullseye" (Debian
+> 11)),
+> but I would like to follow this list in the future discussion.
 > 
+> Regards,
+> Kazu
 > 
-> _______________________________________________
-> boot-architecture mailing list
-> boot-architecture at lists.linaro.org
-> https://lists.linaro.org/mailman/listinfo/boot-architecture
-> 
+> >
+> > Regards,
+> > Kazu
+> >
+> > > -----Original Message-----
+> > > From: Kazuhiro Fujita [mailto:kazuhiro.fujita.jg at renesas.com]
+> > > Sent: Tuesday, March 19, 2019 2:52 PM
+> > > To: hayashi kazuhiro(? ?? ????????)
+> > > <kazuhiro3.hayashi@toshiba.co.jp>; sangorrin daniel(????? ???
+> ?
+> > > ????????) <daniel.sangorrin@toshiba.co.jp>;
+> > > nobuhiro.iwamatsu at miraclelinux.com
+> > > Cc: jan.kiszka at siemens.com; cip-dev at lists.cip-project.org
+> > > Subject: RE: about branch of meta-debian in cip-core/deby
+> > >
+> > > Hello Hayashi-san,
+> > >
+> > > > -----Original Message-----
+> > > > From: kazuhiro3.hayashi at toshiba.co.jp
+> > > <kazuhiro3.hayashi@toshiba.co.jp>
+> > > > Sent: Monday, March 18, 2019 10:52 AM
+> > > > To: Kazuhiro Fujita <kazuhiro.fujita.jg@renesas.com>;
+> > > > daniel.sangorrin at toshiba.co.jp; nobuhiro.iwamatsu at miraclelinux.com
+> > > > Cc: jan.kiszka at siemens.com; cip-dev at lists.cip-project.org
+> > > > Subject: RE: about branch of meta-debian in cip-core/deby
+> > > >
+> > > > Hello Fujita-san,
+> > > > CC: Jan
+> > > >
+> > > > > In case the morty branch will be replaced by the master, current
+> users
+> > > > > will automatically switch to the master without knowing the
+> change?
+> > > > No, user can not automatically migrate from morty to master without
+> > > > knowing the changes
+> > > > because several specifications about recipe development has been
+> deferent
+> > > > between them.
+> > > >
+> > > > Therefore, regarding deby repository, it would be better to provide
+> > > > branches
+> > >
+> > > Agreed.
+> > >
+> > > > "morty" and "master" as follows:
+> > > > 	Current                  New
+> > > > 	master(poky:morty-based) => morty
+> > > > 	-                        => master(poky:master-based)
+> > > > 	jethro                   => remove? (no longer maintained in
+> > > meta-
+> > > > debian)
+> > > >
+> > > > I would like to know if we need to the common branch name in cip-
+> core.
+> > > > For example: cip-core-v1(4.4+Debian8/9?),
+> > > cip-core-v2(4.19+Debian10), ...
+> > >
+> > > Common branch name like cip-core-xx will help many users to understand
+> > > which branch they should use.
+> > >
+> > > However, it may not clear CIP has decided or not that each kernel
+> > > version sticks to specific version of the other OSSs.
+> > > Some people around me say that OSSs included in cip-core will keep
+> > > these versions and maintained by CIP.
+> > > For example, they believe openssl 1.0.1t will be used when kernel
+> > > 4.4-cip is running.
+> > > This may not right assumption.
+> > >
+> > > Is there any material explaining the update policy of cip-core?
+> > >
+> > > >
+> > > > If the both tiny(deby) and generic profile(isar) are based on the
+> same
+> > > > CIP kernel and Debian versions, we can use such common branch name
+> above.
+> > > > If not, or no benefit for users to use the common branch name,
+> > > > I would like to simply use "morty" and "master" in deby repository.
+> > >
+> > > Using different version for tiny and generic may be confusing.
+> > > In my opinion, tiny should be the subset of generic profile.
+> > >
+> > > Kind regards,
+> > > Fujita
+> > >
+> > >
+> > > >
+> > > > Kind regards,
+> > > > Kazu
+> > > >
+> > > > > -----Original Message-----
+> > > > > From: Kazuhiro Fujita [mailto:kazuhiro.fujita.jg at renesas.com]
+> > > > > Sent: Friday, March 15, 2019 11:39 AM
+> > > > > To: hayashi kazuhiro(? ?? ????????)
+> > > > > <kazuhiro3.hayashi@toshiba.co.jp>; sangorrin daniel(????? ?
+> ?
+> > > ??
+> > > > > ????????) <daniel.sangorrin@toshiba.co.jp>;
+> > > > > nobuhiro.iwamatsu at miraclelinux.com
+> > > > > Cc: cip-dev at lists.cip-project.org
+> > > > > Subject: RE: about branch of meta-debian in cip-core/deby
+> > > > >
+> > > > > Hello Hayashi-san,
+> > > > >
+> > > > > > Should we keep the morty branch and add contents of master to
+> another
+> > > > > cip-
+> > > > > > core branch, or just replace the morty by the master?
+> > > > >
+> > > > > In case the morty branch will be replaced by the master, current
+> users
+> > > > > will automatically switch to the master without knowing the
+> change?
+> > > > >
+> > > > > Regards,
+> > > > > Fujita
+> > > > >
+> > > > >
+> > > > > > -----Original Message-----
+> > > > > > From: cip-dev-bounces at lists.cip-project.org
+> > > > > <cip-dev-bounces@lists.cip-
+> > > > > > project.org> On Behalf Of kazuhiro3.hayashi at toshiba.co.jp
+> > > > > > Sent: Thursday, March 14, 2019 7:09 PM
+> > > > > > To: daniel.sangorrin at toshiba.co.jp;
+> > > nobuhiro.iwamatsu at miraclelinux.com
+> > > > > > Cc: cip-dev at lists.cip-project.org
+> > > > > > Subject: Re: [cip-dev] about branch of meta-debian in cip-
+> core/deby
+> > > > > >
+> > > > > > Iwamatsu-san, Daniel,
+> > > > > >
+> > > > > > > > It provides debian 8 packages in OE/recipe. Is there any
+> reason
+> > > to
+> > > > > > > > choose morty/debian 8?
+> > > > > > In my understanding, this is the initial repository which was
+> created
+> > > > > > when the master branch (Debian 10 based) didn't exist yet.
+> > > > > > We are planning to update it to the current master branch.
+> > > > > >
+> > > > > > I have another question about how to do that.
+> > > > > > Should we keep the morty branch and add contents of master to
+> another
+> > > > > cip-
+> > > > > > core branch,
+> > > > > > or just replace the morty by the master?
+> > > > > >
+> > > > > > Regards,
+> > > > > > Kazu
+> > > > > >
+> > > > > > > -----Original Message-----
+> > > > > > > From: cip-dev-bounces at lists.cip-project.org
+> > > > > > > [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of
+> > > > > > > daniel.sangorrin at toshiba.co.jp
+> > > > > > > Sent: Thursday, March 14, 2019 2:52 PM
+> > > > > > > To: nobuhiro.iwamatsu at miraclelinux.com
+> > > > > > > Cc: cip-dev at lists.cip-project.org
+> > > > > > > Subject: Re: [cip-dev] about branch of meta-debian in cip-
+> core/deby
+> > > > > > >
+> > > > > > > Iwamatsu-san,
+> > > > > > >
+> > > > > > > > -----Original Message-----
+> > > > > > > > From: Nobuhiro Iwamatsu <nobuhiro.iwamatsu@miraclelinux.com>
+> > > > > > > > Sent: Wednesday, March 13, 2019 4:38 PM
+> > > > > > > > To: sangorrin daniel(????? ???? ????????)
+> > > > > > > <daniel.sangorrin@toshiba.co.jp>
+> > > > > > > > Cc: cip-dev at lists.cip-project.org
+> > > > > > > > Subject: about branch of meta-debian in cip-core/deby
+> > > > > > > >
+> > > > > > > > Hi, Daniel.
+> > > > > > > >
+> > > > > > > > I have a question about about branch of meta-debian in cip-
+> > > > core/deby.
+> > > > > > > >
+> > > > > > > > The meta-debian branch used by cip-core/deby  is morty.
+> > > > > > > > It provides debian 8 packages in OE/recipe. Is there any
+> reason
+> > > to
+> > > > > > > > choose morty/debian 8?
+> > > > > > > > Is the reason why the mata-debian master branch is still in
+> > > > > > development?
+> > > > > > > > Will you/we switch to the master branch when Debian 10 is
+> > > > released?
+> > > > > > >
+> > > > > > > Yes, that's correct.
+> > > > > > >
+> > > > > > > Thanks,
+> > > > > > > Daniel
+> > > > > > > _______________________________________________
+> > > > > > > cip-dev mailing list
+> > > > > > > cip-dev at lists.cip-project.org
+> > > > > > > https://lists.cip-project.org/mailman/listinfo/cip-dev
+> > > > > > _______________________________________________
+> > > > > > cip-dev mailing list
+> > > > > > cip-dev at lists.cip-project.org
+> > > > > > https://lists.cip-project.org/mailman/listinfo/cip-dev
+> > _______________________________________________
+> > cip-dev mailing list
+> > cip-dev at lists.cip-project.org
+> > https://lists.cip-project.org/mailman/listinfo/cip-dev
