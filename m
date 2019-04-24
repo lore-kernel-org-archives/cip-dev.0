@@ -1,56 +1,96 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed, 24 Apr 2019 18:20:35 +0100
-Subject: [cip-dev] [PATCH 4.19.y 12/17] usb: gadget: udc: renesas_usb3: add
-	support for r8a77990
+Date: Wed, 24 Apr 2019 18:20:36 +0100
+Subject: [cip-dev] [PATCH 4.19.y 13/17] usb: gadget: udc: renesas_usb3: add
+	a safety connection way for forced_b_device
 In-Reply-To: <1556126440-27978-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1556126440-27978-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1556126440-27978-13-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1556126440-27978-14-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-commit 30025efa8b5e75f545e38a592158c34b3169423b upstream.
+commit ceb94bc52c437463f0903e61060a94a2226fb672 upstream.
 
-Since r8a77990 (R-Car E3) doesn't have VBUS detect pin and
-number of ramif is 4, this patch adds a new renesas_usb3_priv
-variable for the SoC.
+This patch adds a safety connection way for "forced_b_device" with
+"workaround_for_vbus" like below:
 
+< Example for R-Car E3 Ebisu >
+ # modprobe <any usb gadget driver>
+ # echo 1 > /sys/kernel/debug/ee020000.usb/b_device
+ (connect a usb cable to host side.)
+ # echo 2 > /sys/kernel/debug/ee020000.usb/b_device
+
+Previous code should have connected a usb cable before the "b_device"
+is set to 1 on the Ebisu board. However, if xHCI driver on the board
+is probed, it causes some troubles:
+ - Conflicts USB VBUS/signals between the board and another host.
+ - "Cannot enable. Maybe the USB cable is bad?" might happen on
+   both the board and another host with a usb hub.
+ - Cannot enumerate a usb gadget correctly because an interruption
+   of VBUS change happens unexpectedly.
+
+Reported-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/usb/gadget/udc/renesas_usb3.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/usb/gadget/udc/renesas_usb3.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index 67d8a50..cdffbd1 100644
+index cdffbd1..6e34f95 100644
 --- a/drivers/usb/gadget/udc/renesas_usb3.c
 +++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -2603,6 +2603,13 @@ static const struct renesas_usb3_priv renesas_usb3_priv_gen3 = {
- 	.ramsize_per_pipe = SZ_4K,
+@@ -358,6 +358,7 @@ struct renesas_usb3 {
+ 	bool extcon_host;		/* check id and set EXTCON_USB_HOST */
+ 	bool extcon_usb;		/* check vbus and set EXTCON_USB */
+ 	bool forced_b_device;
++	bool start_to_connect;
  };
  
-+static const struct renesas_usb3_priv renesas_usb3_priv_r8a77990 = {
-+	.ramsize_per_ramif = SZ_16K,
-+	.num_ramif = 4,
-+	.ramsize_per_pipe = SZ_4K,
-+	.workaround_for_vbus = true,
-+};
-+
- static const struct of_device_id usb3_of_match[] = {
- 	{
- 		.compatible = "renesas,r8a7795-usb3-peri",
-@@ -2621,6 +2628,10 @@ static const struct soc_device_attribute renesas_usb3_quirks_match[] = {
- 		.soc_id = "r8a7795", .revision = "ES1.*",
- 		.data = &renesas_usb3_priv_r8a7795_es1,
- 	},
-+	{
-+		.soc_id = "r8a77990",
-+		.data = &renesas_usb3_priv_r8a77990,
-+	},
- 	{ /* sentinel */ },
- };
+ #define gadget_to_renesas_usb3(_gadget)	\
+@@ -476,7 +477,8 @@ static void usb3_init_axi_bridge(struct renesas_usb3 *usb3)
+ static void usb3_init_epc_registers(struct renesas_usb3 *usb3)
+ {
+ 	usb3_write(usb3, ~0, USB3_USB_INT_STA_1);
+-	usb3_enable_irq_1(usb3, USB_INT_1_VBUS_CNG);
++	if (!usb3->workaround_for_vbus)
++		usb3_enable_irq_1(usb3, USB_INT_1_VBUS_CNG);
+ }
  
+ static bool usb3_wakeup_usb2_phy(struct renesas_usb3 *usb3)
+@@ -700,8 +702,7 @@ static void usb3_mode_config(struct renesas_usb3 *usb3, bool host, bool a_dev)
+ 	usb3_set_mode_by_role_sw(usb3, host);
+ 	usb3_vbus_out(usb3, a_dev);
+ 	/* for A-Peripheral or forced B-device mode */
+-	if ((!host && a_dev) ||
+-	    (usb3->workaround_for_vbus && usb3->forced_b_device))
++	if ((!host && a_dev) || usb3->start_to_connect)
+ 		usb3_connect(usb3);
+ 	spin_unlock_irqrestore(&usb3->lock, flags);
+ }
+@@ -2432,7 +2433,11 @@ static ssize_t renesas_usb3_b_device_write(struct file *file,
+ 	if (copy_from_user(&buf, ubuf, min_t(size_t, sizeof(buf) - 1, count)))
+ 		return -EFAULT;
+ 
+-	if (!strncmp(buf, "1", 1))
++	usb3->start_to_connect = false;
++	if (usb3->workaround_for_vbus && usb3->forced_b_device &&
++	    !strncmp(buf, "2", 1))
++		usb3->start_to_connect = true;
++	else if (!strncmp(buf, "1", 1))
+ 		usb3->forced_b_device = true;
+ 	else
+ 		usb3->forced_b_device = false;
+@@ -2440,7 +2445,7 @@ static ssize_t renesas_usb3_b_device_write(struct file *file,
+ 	if (usb3->workaround_for_vbus)
+ 		usb3_disconnect(usb3);
+ 
+-	/* Let this driver call usb3_connect() anyway */
++	/* Let this driver call usb3_connect() if needed */
+ 	usb3_check_id(usb3);
+ 
+ 	return count;
 -- 
 2.7.4
