@@ -1,40 +1,26 @@
 From: patryk.mungai-ndungu.kx@renesas.com (Patryk Mungai)
-Date: Thu, 25 Apr 2019 14:23:11 +0100
-Subject: [cip-dev] [PATCH 4.4.y] Increase DHCP inter-device timeout
-In-Reply-To: <1556198591-5414-1-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
-References: <1556198591-5414-1-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
-Message-ID: <1556198591-5414-2-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
+Date: Thu, 25 Apr 2019 14:28:16 +0100
+Subject: [cip-dev] [PATCH 4.4.y V2] DHCP client support when receiving
+	"delayed" replies
+Message-ID: <1556198897-5710-1-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-If multiple networking devices are enabled, the current implementation
-of the DHCP client is to request a DHCP address on one device, listen
-for responses on that device for one second, and if no response is
-received in that time, repeat on the next device.
+Hello,
 
-This means if a DHCP server takes over a second to reply, the client
-will not be able to process the reply.
+This is the squashed series of patches to fix the DHCP client issue in 4.4.y.
+The issue arises when a DHCP server takes longer than 1s to reply to the DHCP
+client in the kernel, and the kernel has multiple networking interfaces enabled.
 
-This commit increases the inter-device timeout to 2 seconds, to give the
-DHCP server more time to reply.
+Thanks,
+Patryk
 
-Signed-off-by: Patryk Mungai <patryk.mungai-ndungu.kx@renesas.com>
----
- net/ipv4/ipconfig.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/ipv4/ipconfig.c b/net/ipv4/ipconfig.c
-index 60f564d..fbe966d 100644
---- a/net/ipv4/ipconfig.c
-+++ b/net/ipv4/ipconfig.c
-@@ -94,7 +94,7 @@
- /* Define the timeout for waiting for a DHCP/BOOTP/RARP reply */
- #define CONF_OPEN_RETRIES 	2	/* (Re)open devices twice */
- #define CONF_SEND_RETRIES 	6	/* Send six requests per open */
--#define CONF_INTER_TIMEOUT	(HZ)	/* Inter-device timeout: 1 second */
-+#define CONF_INTER_TIMEOUT	(HZ*2)	/* Inter-device timeout: 2 seconds */
- #define CONF_BASE_TIMEOUT	(HZ*2)	/* Initial timeout: 2 seconds */
- #define CONF_TIMEOUT_RANDOM	(HZ)	/* Maximum amount of randomization */
- #define CONF_TIMEOUT_MULT	*7/4	/* Rate of timeout growth */
+Uwe Kleine-K?nig (1):
+  net: ipconfig: Support using "delayed" DHCP replies
+
+ net/ipv4/ipconfig.c | 61 ++++++++++++++++++++++++-----------------------------
+ 1 file changed, 28 insertions(+), 33 deletions(-)
+
 -- 
 2.7.4
