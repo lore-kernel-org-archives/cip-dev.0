@@ -1,150 +1,197 @@
-From: akihiro27.suzuki@toshiba.co.jp (akihiro27.suzuki at toshiba.co.jp)
-Date: Fri, 26 Apr 2019 10:34:54 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-References: <TYAPR01MB2495C0F184E13F7CEB083670D9560@TYAPR01MB2495.jpnprd01.prod.outlook.com>
-	<20190402064536.4g5pmetmd6vzzvo7@MD1ZFJVC.ad001.siemens.net>
-Message-ID: <TYAPR01MB2495BCF41A8836204789CADED93E0@TYAPR01MB2495.jpnprd01.prod.outlook.com>
+From: francois.ozog@linaro.org (Francois Ozog)
+Date: Fri, 26 Apr 2019 14:35:08 +0200
+Subject: [cip-dev] EFIBootGuard for CIP and SecureBoot
+In-Reply-To: <ad933d6b-86ae-bbad-9138-730cb71849e4@siemens.com>
+References: <OSAPR01MB37639B3931B3AA6A9765099BD03E0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+	<20190426083106.643evxbnzkxyhqsy@MD1ZFJVC.ad001.siemens.net>
+	<CAHFG_=VQigOtWZRiRy=zMVSb1BpfFNyVa3dnGfn=fBQW-KjGMA@mail.gmail.com>
+	<ad933d6b-86ae-bbad-9138-730cb71849e4@siemens.com>
+Message-ID: <CAHFG_=XX2tRYDPyr7xuQy-YMH1c15Y0tCMvFQiJaENaJ3cM-8w@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Christian,
+On Fri, 26 Apr 2019 at 11:49, Jan Kiszka <jan.kiszka@siemens.com> wrote:
 
-Sorry for my late reply.
-I was a little busy with work unrelated to CIP.
+> On 26.04.19 11:07, Francois Ozog wrote:
+> > On Fri, 26 Apr 2019 at 10:30, Christian Storm
+> > <christian.storm@siemens.com> wrote:
+> >>
+> >> Hi,
+> >>
+> >>>>> Background: during the last Linaro connect in Bangkok I was told
+> >>>>> that Linaro Edge (LEDGE) were working on a secure software update
+> >>>>> mechanism based on UEFI capsules that would flash firmware updates
+> >>>>> from a UEFI application, instead of using a Linux agent such as
+> >>>>> SWUpdate.
+> >>>>
+> >>>> How would capsules help with writing to arbitrary storage, updating
+> >>>> only files on filesystem, reducing the update size (binary diffs),
+> >>>> or talking to the cloud?
+> >>>
+> >
+> > See below
+> >>
+> >>> - arbitrary storage: I guess they can only write to what is supported
+> >>>    by the machine's UEFI implementation.
+> >>>
+> >
+> > Yes, see below
+> >>
+> >>> - updating only files on filesystem: I assume this is out of scope in
+> >>>    their architecture (Francois: do you want to support file-based
+> >>>    updates or only block-based ones?)
+> >>
+> > Both, see below
+> >>
+> >>> - reducing the update size (binary diffs), or talking to the cloud:
+> >>>    they will do that from non-secure Linux. It would be dangerous to
+> use
+> >>>    a fragile network stack from an UEFI application or the secure
+> world.
+> >>>    In that sense, they also need a Linux agent.
+> >>
+> >> If I understand the idea correctly, there's then a Linux companion agent
+> >> that does, e.g., the cloud communication and sets up the update payload
+> >> to be consumed and applied by the UEFI firmware update application. The
+> >> actual update action will take place on reboot, e.g., flashing the
+> >> inactive partition in an A/B setup and thereafter booting into the newly
+> >> flashed, then active partition.
+> >>
+> >> If so, this would prolong the time the system is unavailable due to disk
+> >> flashing I/O in the UEFI firmware update application compared to
+> flashing
+> >> the inactive partition from within Linux and have the bootloader just
+> >> switch the to be booted partitions.
+> >>
+> >> Generally, but in particular regarding binary diffs, a binary diff
+> >> application mechanism would have to be implemented and maintained in the
+> >> UEFI realm as opposed to "just" using the respective shared libraries
+> >> (e.g. librsync, casync, ...) in the Linux realm. Granted, one could
+> >> come up with a unified format to which the output of, e.g, librsync's
+> rdiff
+> >> or a casync run is converted but nonetheless, this creates some porting/
+> >> implementation and maintenance effort.
+> >>
+> >>
+> > Here are the guiding principles of our efforts :
+> > 0) we want a cross architecture (x86/Arm/...), cross vendor and cross
+> > processor model update solution
+> > 1) untrusted world cannot update trusted world
+>
+> Conceptually, it can. It's a matter of validating the update by the
+> trusted
+> world before using it. A trusted instance can allow an untrusted one to
+> write
+> version 2, validate that before switching to it, and stick with version 1
+> if
+> that fails.
+>
+> Agreed. Then is a better principle:  untrusted world cannot directly
+update trusted world objects that are part of the current chain of trust
+   This would allow changing B partition while A is in force.
+There may be another aspect to take into account, not every use case need
+the same security "level".
+May be a principle to define security levels and guidelines to achieve each
+level is more relevant than the "untrusted world cannot directly update
+trusted world objects that are part of the current chain of trust" which
+implies a certain security level goal.
 
-I tried Lua handler and I was able to understand it a little.
-I referred to the following example.
-<https://github.com/andi8086/meta-iot2000/blob/iot2000-ebg-swu/meta-iot2000-example/recipes-support/swupdate/swupdate/swupdate_handlers.lua>
+> 2) what the UEFI implementation does with the capsule is platform specific
+> > 3) the update capsule payload is opaque
+> >
+> > 1) is a "philosophy" decision. When you have a root of trust down to
+> > the operating system. So in theory everything should be fine. But the
+> > attack surface is such that we can't rule out hacking (and history
+> > prove this is unfortunately a safe assumption). In addition, there may
+> > be liability aspects related to the who does the update: the hardware
+> > platform administrator may not be the legal entity than the operating
+> > system administrator. For instance:
+> > -  on Packet.net could, a customer can flash up to the BL33 untrusted
+> > firmware but that is all.
+> > - A surveillance camera can be operated by city personnel but only law
+> > enforcement agency can see raw video (un-blurred faces and licence
+> > plates). This can be implemented by a derivative of OPTEE SecureMedia
+> > Path but if you allow untrusted world to update the trusted one, city
+> > personnel can overcome the legal restriction.
+> > With 1) this means that even U-Boot code shall not be able/allowed to
+> > update S-EL3 firmware (be it Trusted Firmware A or something else),
+> > Secure EL1/0 software (OPTEE and its applications or something else).
+> > If possible, allowing the operating system administrator to
+> > selectively (BL33 is OK but not S-EL3) update firmware is at least
+> > platform dependent. Hence defeats 0)
+> >
+> > With 2) we do not impose reboot to update. Some platform may impose
+> > reboot or some designers will prefer reboot. We say that there is a
+> > chain of responsibility for updates.
+> > So it is perfectly OK to have a Linux software agent receive an update
+> > by any mean (network, USB, serial...). The agent will pack this (or
+> > those) into a capsule and push it to UEFI implementation.
+> > The UEFI implementation (U-Boot or Tianocore) will then do whatever it
+> > pleases for the update providing it complies with 1) So the UEFI
+> > implementation can live update up to BL33 firmware.
+> > Should the update be targeted to secure world, then the UEFI
+> > implementation can pass it to S-EL3 for update (platform specific)
+> > which means the update can also be live. It is a designer decision.
+> >
+> > With 3) we have flexibility but sometimes too much flexibility is a
+> > problem. Alexander Graf suggested we can use a FIT object to pass
+> > diverse objects. It is "half" opaque but I really like the idea.
+> > The contents of individual FIT components can be blocks to be placed
+> > at a fix location in a NOR flash or a file, no importance.
+> >
+> > What do everyone think about those design principles ?
+> >
+>
+> UEFI and capsules can be fine for those platform that support it (and it's
+> still
+> a rare feature) and for stuff like boot and peripheral firmware. I don't
+> think
+> it's a wise, future-proof idea to use it for more.
+>
+> Agreed. if we say that {shim, grub , kernel, initrd, commandline} is to be
+named the "BL33 payload" then they are out of scope of the UEFI update
+capsules, as well as any untrusted apps.= (on top of OS).
+Update capsules can be used to update firmwares of any sort, keys,
+certificates, secrets, blobs that are for pre-BL33 execution environment.
 
-I made "sw-description" and "swupdate_handlers.lua" for BBB.
-They are working fine for now.
-BTW, I needed to patch "0001-Fix-Lua-handler-issue.patch" to SWUpdate.
+UEFI is not a very healthy ecosystem yet, and I'm personally skeptical it
+> will
+> evolve towards that (looking at that as both a user as well as an OEM).
+> It's not
+> even present in quite a few of our use cases. In some it will never be -
+> think
+> of safety-critical system: not affordable with such a complex approach
+> like
+> UEFI. It should not expand further into OS domains. Updating complete
+> filesystems and their content is beyond its duties. We have all the
+> required,
+> tested, matured means for the OS in the OS. For firmware, it can be an
+> option -
+> if that firmware is UEFI compliant, with all needed options.
+>
+> So let's use UEFI and capsules as a one possible building block in the
+> design,
+> but not as the cornerstone. Just like we do mandate that all updates must
+> be
+> served and managed by our IoT cloud ;).
+>
+> Agreed. Out of all the edge and fog deployments some will have very
+specific requirements. This effort is not to rule them out as rule out
+proprietary mechanisms. It is to say that 90% of the cases can be handled
+by a generic method and we should define this one.
 
-I think I'm ready, so I'd like to have a meeting with you.
-However, Japan has consecutive national holidays from tomorrow to May 6th.
-Could you please wait until the holidays end?
-After the holidays, I'll let you know my several convenient time for the meeting.
+> Jan
+>
+> --
+> Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+> Corporate Competence Center Embedded Linux
+>
 
-Best regards,
-Suzuki
 
-> -----Original Message-----
-> From: suzuki akihiro(???? ???? ????????????????)
-> Sent: Tuesday, April 02, 2019 5:14 PM
-> To: Christian Storm <christian.storm@siemens.com>; cip-dev at lists.cip-project.org
-> Subject: RE: [cip-dev] CIP IRC weekly meeting today
-> 
-> Hi Christian,
-> 
-> > > > OK, then I'd propose having a meeting about this so that I can explain how this
-> > > > variant works and how we make use of it. When do you think you'll come to this
-> > > > point so that a meeting makes sense?
-> > >
-> > > Thank you for your proposal.
-> > > Just in case, please let me make sure the meaning of your proposal.
-> > >
-> > > Which one did you mean?
-> > >
-> > >   (A) In a meeting, you will tell me about how to use Lua handler for the A/B update.
-> > >   (B) I should have a meeting after I implemented the A/B update by using Lua handler.
-> > >
-> > > If you meant (A), I'd like some time, 1 or 2 weeks, to try Lua before the meeting
-> > > because I haven't used it.
-> > >
-> > > If you meant (B), I will have a meeting after implementing it,
-> > > but maybe the implementation (and tests) will take at least 1 month.
-> >
-> > I meant (A) to spare you (re)exploring the path I went :)
-> > I'd like to show off some features you may find useful along the way as
-> > well. Just let me know when you're ready and I'll setup the metting
-> > then.
-> 
-> OK, I see. Thanks a lot!
-> I'll let you know when I'm ready.
-> 
-> Best regards,
-> Suzuki
-> 
-> 
-> > -----Original Message-----
-> > From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Christian
-> > Storm
-> > Sent: Tuesday, April 02, 2019 3:46 PM
-> > To: cip-dev at lists.cip-project.org
-> > Subject: Re: [cip-dev] CIP IRC weekly meeting today
-> >
-> > Hi Suzuki,
-> >
-> > > > > > Ah, OK. This is the "official" in the sense of exemplary implemented way
-> > > > > > how to do round-robin A/B firmware update. That said, this is in my very
-> > > > > > personal opinion a bit too involved and spread out over too many places.
-> > > > > > That was also one reason I brought forward the Lua handler feature that
-> > > > > > allows you to implement a handler in Lua. Lua handlers are feature-wise
-> > > > > > on par with C handlers by now, i.e., they are equally powerful. So, you
-> > > > > > can write a Lua handler that does the target partition round-robin
-> > > > > > calculation, flashing, and updating of the bootloader environment in one
-> > > > > > place. The sw-description becomes simpler as well since you don't need
-> > > > > > to specify the A/B layout there but instead the Lua handler will take
-> > > > > > care of this.
-> > > > > That makes sense.
-> > > > > I thought that the A/B update way adopted by meta-swupdate-boards was
-> > > > > a little difficult to understand and not very flexible.
-> > > > > I would like to use Lua handler to implement the flexible A/B update
-> > > > > which can be used in various situations.
-> > > >
-> > > > OK, then I'd propose having a meeting about this so that I can explain how this
-> > > > variant works and how we make use of it. When do you think you'll come to this
-> > > > point so that a meeting makes sense?
-> > >
-> > > Thank you for your proposal.
-> > > Just in case, please let me make sure the meaning of your proposal.
-> > >
-> > > Which one did you mean?
-> > >
-> > >   (A) In a meeting, you will tell me about how to use Lua handler for the A/B update.
-> > >   (B) I should have a meeting after I implemented the A/B update by using Lua handler.
-> > >
-> > > If you meant (A), I'd like some time, 1 or 2 weeks, to try Lua before the meeting
-> > > because I haven't used it.
-> > >
-> > > If you meant (B), I will have a meeting after implementing it,
-> > > but maybe the implementation (and tests) will take at least 1 month.
-> >
-> > I meant (A) to spare you (re)exploring the path I went :)
-> > I'd like to show off some features you may find useful along the way as
-> > well. Just let me know when you're ready and I'll setup the metting
-> > then.
-> >
-> >
-> > Kind regards,
-> >    Christian
-> >
-> > --
-> > Dr. Christian Storm
-> > Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-> > Otto-Hahn-Ring 6, 81739 M??nchen, Germany
-> > _______________________________________________
-> > cip-dev mailing list
-> > cip-dev at lists.cip-project.org
-> > https://lists.cip-project.org/mailman/listinfo/cip-dev
+-- 
+Fran?ois-Fr?d?ric Ozog | *Director Linaro Edge & Fog Computing Group*
+T: +33.67221.6485
+francois.ozog at linaro.org | Skype: ffozog
 -------------- next part --------------
-A non-text attachment was scrubbed...
-Name: sw-description
-Type: application/octet-stream
-Size: 201 bytes
-Desc: sw-description
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190426/2734cf4a/attachment.obj>
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: swupdate_handlers.lua
-Type: application/octet-stream
-Size: 2294 bytes
-Desc: swupdate_handlers.lua
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190426/2734cf4a/attachment-0001.obj>
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: 0001-Fix-Lua-handler-issue.patch
-Type: application/octet-stream
-Size: 1478 bytes
-Desc: 0001-Fix-Lua-handler-issue.patch
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190426/2734cf4a/attachment-0002.obj>
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190426/f2c9a3d4/attachment-0001.html>
