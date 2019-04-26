@@ -1,176 +1,150 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Fri, 26 Apr 2019 13:21:54 +0200
-Subject: [cip-dev] EFIBootGuard for CIP and SecureBoot
-In-Reply-To: <dc1dd410-08d4-334b-4a9d-acad8283ab19@arm.com>
-References: <OSAPR01MB37639B3931B3AA6A9765099BD03E0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-	<20190426083106.643evxbnzkxyhqsy@MD1ZFJVC.ad001.siemens.net>
-	<CAHFG_=VQigOtWZRiRy=zMVSb1BpfFNyVa3dnGfn=fBQW-KjGMA@mail.gmail.com>
-	<ad933d6b-86ae-bbad-9138-730cb71849e4@siemens.com>
-	<dc1dd410-08d4-334b-4a9d-acad8283ab19@arm.com>
-Message-ID: <b62f89d8-284d-66d4-4156-3079f058d8aa@siemens.com>
+From: akihiro27.suzuki@toshiba.co.jp (akihiro27.suzuki at toshiba.co.jp)
+Date: Fri, 26 Apr 2019 10:34:54 +0000
+Subject: [cip-dev] CIP IRC weekly meeting today
+References: <TYAPR01MB2495C0F184E13F7CEB083670D9560@TYAPR01MB2495.jpnprd01.prod.outlook.com>
+	<20190402064536.4g5pmetmd6vzzvo7@MD1ZFJVC.ad001.siemens.net>
+Message-ID: <TYAPR01MB2495BCF41A8836204789CADED93E0@TYAPR01MB2495.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 26.04.19 12:21, Grant Likely wrote:
-> On 26/04/2019 10:49, Jan Kiszka wrote:
->> On 26.04.19 11:07, Francois Ozog wrote:
-> [...]
->>> Here are the guiding principles of our efforts :
->>> 0) we want a cross architecture (x86/Arm/...), cross vendor and cross
->>> processor model update solution
->>> 1) untrusted world cannot update trusted world
->>
->> Conceptually, it can. It's a matter of validating the update by the
->> trusted world before using it. A trusted instance can allow an untrusted
->> one to write version 2, validate that before switching to it, and stick
->> with version 1 if that fails.
->>
->>> 2) what the UEFI implementation does with the capsule is platform
->>> specific
->>> 3) the update capsule payload is opaque
->>>
->>> 1) is a "philosophy" decision. When you have a root of trust down to
->>> the operating system. So in theory everything should be fine. But the
->>> attack surface is such that we can't rule out hacking (and history
->>> prove this is unfortunately a safe assumption). In addition, there may
->>> be liability aspects related to the who does the update: the hardware
->>> platform administrator may not be the legal entity than the operating
->>> system administrator. For instance:
->>> -? on Packet.net could, a customer can flash up to the BL33 untrusted
->>> firmware but that is all.
->>> - A surveillance camera can be operated by city personnel but only law
->>> enforcement agency can see raw video (un-blurred faces and licence
->>> plates). This can be implemented by a derivative of OPTEE SecureMedia
->>> Path but if you allow untrusted world to update the trusted one, city
->>> personnel can overcome the legal restriction.
->>> With 1) this means that even U-Boot code shall not be able/allowed to
->>> update S-EL3 firmware (be it Trusted Firmware A or something else),
->>> Secure EL1/0 software (OPTEE and its applications or something else).
->>> If possible, allowing the operating system administrator to
->>> selectively (BL33 is OK but not S-EL3) update firmware is at least
->>> platform dependent. Hence defeats 0)
->>>
->>> With 2) we do not impose reboot to update. Some platform may impose
->>> reboot or some designers will prefer reboot. We say that there is a
->>> chain of responsibility for updates.
->>> So it is perfectly OK to have a Linux software agent receive an update
->>> by any mean (network, USB, serial...). The agent will pack this (or
->>> those) into a capsule and push it to UEFI implementation.
->>> The UEFI implementation (U-Boot or Tianocore) will then do whatever it
->>> pleases for the update providing it complies with 1) So the UEFI
->>> implementation can live update up to BL33 firmware.
->>> Should the update be targeted to secure world, then the UEFI
->>> implementation can pass it to S-EL3 for update (platform specific)
->>> which means the update can also be live. It is a designer decision.
->>>
->>> With 3) we have flexibility but sometimes too much flexibility is a
->>> problem. Alexander Graf suggested we can use a FIT object to pass
->>> diverse objects. It is "half" opaque but I really like the idea.
->>> The contents of individual FIT components can be blocks to be placed
->>> at a fix location in a NOR flash or a file, no importance.
->>>
->>> What do everyone think about those design principles ?
->>>
->>
->> UEFI and capsules can be fine for those platform that support it (and
->> it's still a rare feature) and for stuff like boot and peripheral
->> firmware. I don't think it's a wise, future-proof idea to use it for more.
->>
->> UEFI is not a very healthy ecosystem yet, and I'm personally skeptical
->> it will evolve towards that (looking at that as both a user as well as
->> an OEM). It's not even present in quite a few of our use cases. In some
->> it will never be - think of safety-critical system: not affordable with
->> such a complex approach like UEFI.
+Hi Christian,
+
+Sorry for my late reply.
+I was a little busy with work unrelated to CIP.
+
+I tried Lua handler and I was able to understand it a little.
+I referred to the following example.
+<https://github.com/andi8086/meta-iot2000/blob/iot2000-ebg-swu/meta-iot2000-example/recipes-support/swupdate/swupdate/swupdate_handlers.lua>
+
+I made "sw-description" and "swupdate_handlers.lua" for BBB.
+They are working fine for now.
+BTW, I needed to patch "0001-Fix-Lua-handler-issue.patch" to SWUpdate.
+
+I think I'm ready, so I'd like to have a meeting with you.
+However, Japan has consecutive national holidays from tomorrow to May 6th.
+Could you please wait until the holidays end?
+After the holidays, I'll let you know my several convenient time for the meeting.
+
+Best regards,
+Suzuki
+
+> -----Original Message-----
+> From: suzuki akihiro(???? ???? ????????????????)
+> Sent: Tuesday, April 02, 2019 5:14 PM
+> To: Christian Storm <christian.storm@siemens.com>; cip-dev at lists.cip-project.org
+> Subject: RE: [cip-dev] CIP IRC weekly meeting today
 > 
-> Can I challenge that view a bit? On the Tianocore side I agree that the
-> ecosystem isn't very healthy. That project in particular struggles with
-> what to do with board support, having decided early on that board
-> support generally doesn't need to be in the main repository.
+> Hi Christian,
 > 
-> However, U-Boot support for the UEFI ABI is improving in leaps and
-> bounds. SUSE and Fedora both depend on U-Boot UEFI for booting on all
-> the Arm SBCs that they support, and enabling UEFI in U-Boot is just a
-> config option or two. There is a fair bit of encouragement from within
-> the project to enable UEFI by default.
-
-I don't disagree that this aspect is a step forward (though pulling in things 
-redundant code via grub & Co is not really progress). But a Unix community would 
-have probably designed a technically more elegant solution on a green field than 
-the clumsy, legacy-based UEFI interfaces.
-
+> > > > OK, then I'd propose having a meeting about this so that I can explain how this
+> > > > variant works and how we make use of it. When do you think you'll come to this
+> > > > point so that a meeting makes sense?
+> > >
+> > > Thank you for your proposal.
+> > > Just in case, please let me make sure the meaning of your proposal.
+> > >
+> > > Which one did you mean?
+> > >
+> > >   (A) In a meeting, you will tell me about how to use Lua handler for the A/B update.
+> > >   (B) I should have a meeting after I implemented the A/B update by using Lua handler.
+> > >
+> > > If you meant (A), I'd like some time, 1 or 2 weeks, to try Lua before the meeting
+> > > because I haven't used it.
+> > >
+> > > If you meant (B), I will have a meeting after implementing it,
+> > > but maybe the implementation (and tests) will take at least 1 month.
+> >
+> > I meant (A) to spare you (re)exploring the path I went :)
+> > I'd like to show off some features you may find useful along the way as
+> > well. Just let me know when you're ready and I'll setup the metting
+> > then.
 > 
-> UEFI gets a bad rap at being complicated, but I think the U-Boot work
-> has shown that implementing the core UEFI ABI doesn't require much code
-> and isn't the complicated mess they everyone fears it to be.
-
-Depends on how much you start to rely on UEFI features.
-
+> OK, I see. Thanks a lot!
+> I'll let you know when I'm ready.
 > 
-> I don't see the conflict with safety critical for boot services. I can
-
-Everything is certifiable - with infinite time and money. So you will likely 
-reduce the boot process to the very essential of your concrete system, removing 
-then unneeded abstractions and stages. Or you will find ways to eliminate that 
-from your argumentation, which would definitely include removing runtime services.
-
-> however see the arguement against UEFI runtime services as a poor
-> implementation could result in unbounded execution times. There's been
-> recent movement on the UEFI spec to make runtime services optional, and
-> in U-Boot they are mostly empty stubs.
-
-Of course, it also depends on how much you need from UEFI to boot or to use 
-certain services like capsule updates (and which would be gone when you remove 
-runtime services).
-
+> Best regards,
+> Suzuki
 > 
->> It should not expand further into OS
->> domains. Updating complete filesystems and their content is beyond its
->> duties. We have all the required, tested, matured means for the OS in
->> the OS. For firmware, it can be an option - if that firmware is UEFI
->> compliant, with all needed options.
 > 
-> Here I agree 100%. Capsule update is a useful ABI for the OS to pass
-> firmware update blobs without needing to know specifics about the
-> platform, but everything from the kernel on up is out of scope.
-
-OK, that's good.
-
-> 
->> So let's use UEFI and capsules as a one possible building block in the
->> design, but not as the cornerstone. Just like we do mandate that all
->> updates must be served and managed by our IoT cloud ;).
-> 
-> What do the firmware stacks in your projects look like? What percentage
-> are based on U-Boot? Littlekernel? Others?
-
-I don't have absolute numbers. We have a lot of "standard" x86 UEFI systems, 
-many U-boot devices (of which, to my knowledge, none is on UEFI yet - no 
-surprise, that feature is still too "new"), and quite a few Coreboot designs (so 
-far only x86) that just need to load Linux and bypass a lot therefore. There 
-will likely be more exotic things but they will likely also do not deserve 
-attention.
-
-> 
-> UEFI has the advantage that it has a defined ABI, and only a small
-> amount of it needs to be implemented to execute UEFI OS loaders (ie. the
-> Linux UEFI stub). For the reference platform, I think it makes sense to
-> make the design decision that firmware provides UEFI, and the update
-> infrastructure is based on that. However, if UEFI doesn't work for a
-> particular stack/project then it can be swapped out. There will need to
-> be work done on the boot sequence, but all the rest of the OS stack is
-> still relevant.
-
-Yes, I would design it in a way that a perfect UEFI implementation can take a 
-lot of boot-related tasks like safe boot configuration switching, watchdog 
-management, firmware and peripheral updating (possibly in lock-step with the OS) 
-etc. But I would always ensure that incomplete or immature UEFI implementations 
-will not complicate partial or complete replacements. Because the latter will 
-remain the default for quite a while, if not longer, I'm sure. UEFI should not 
-become the systemd of unattended device updates (or worse, due to closed 
-implementations).
-
-Jan
-
--- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+> > -----Original Message-----
+> > From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Christian
+> > Storm
+> > Sent: Tuesday, April 02, 2019 3:46 PM
+> > To: cip-dev at lists.cip-project.org
+> > Subject: Re: [cip-dev] CIP IRC weekly meeting today
+> >
+> > Hi Suzuki,
+> >
+> > > > > > Ah, OK. This is the "official" in the sense of exemplary implemented way
+> > > > > > how to do round-robin A/B firmware update. That said, this is in my very
+> > > > > > personal opinion a bit too involved and spread out over too many places.
+> > > > > > That was also one reason I brought forward the Lua handler feature that
+> > > > > > allows you to implement a handler in Lua. Lua handlers are feature-wise
+> > > > > > on par with C handlers by now, i.e., they are equally powerful. So, you
+> > > > > > can write a Lua handler that does the target partition round-robin
+> > > > > > calculation, flashing, and updating of the bootloader environment in one
+> > > > > > place. The sw-description becomes simpler as well since you don't need
+> > > > > > to specify the A/B layout there but instead the Lua handler will take
+> > > > > > care of this.
+> > > > > That makes sense.
+> > > > > I thought that the A/B update way adopted by meta-swupdate-boards was
+> > > > > a little difficult to understand and not very flexible.
+> > > > > I would like to use Lua handler to implement the flexible A/B update
+> > > > > which can be used in various situations.
+> > > >
+> > > > OK, then I'd propose having a meeting about this so that I can explain how this
+> > > > variant works and how we make use of it. When do you think you'll come to this
+> > > > point so that a meeting makes sense?
+> > >
+> > > Thank you for your proposal.
+> > > Just in case, please let me make sure the meaning of your proposal.
+> > >
+> > > Which one did you mean?
+> > >
+> > >   (A) In a meeting, you will tell me about how to use Lua handler for the A/B update.
+> > >   (B) I should have a meeting after I implemented the A/B update by using Lua handler.
+> > >
+> > > If you meant (A), I'd like some time, 1 or 2 weeks, to try Lua before the meeting
+> > > because I haven't used it.
+> > >
+> > > If you meant (B), I will have a meeting after implementing it,
+> > > but maybe the implementation (and tests) will take at least 1 month.
+> >
+> > I meant (A) to spare you (re)exploring the path I went :)
+> > I'd like to show off some features you may find useful along the way as
+> > well. Just let me know when you're ready and I'll setup the metting
+> > then.
+> >
+> >
+> > Kind regards,
+> >    Christian
+> >
+> > --
+> > Dr. Christian Storm
+> > Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+> > Otto-Hahn-Ring 6, 81739 M??nchen, Germany
+> > _______________________________________________
+> > cip-dev mailing list
+> > cip-dev at lists.cip-project.org
+> > https://lists.cip-project.org/mailman/listinfo/cip-dev
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: sw-description
+Type: application/octet-stream
+Size: 201 bytes
+Desc: sw-description
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190426/2734cf4a/attachment.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: swupdate_handlers.lua
+Type: application/octet-stream
+Size: 2294 bytes
+Desc: swupdate_handlers.lua
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190426/2734cf4a/attachment-0001.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: 0001-Fix-Lua-handler-issue.patch
+Type: application/octet-stream
+Size: 1478 bytes
+Desc: 0001-Fix-Lua-handler-issue.patch
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190426/2734cf4a/attachment-0002.obj>
