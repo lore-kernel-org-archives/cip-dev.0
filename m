@@ -1,220 +1,64 @@
-From: patryk.mungai-ndungu.kx@renesas.com (Patryk Mungai)
-Date: Thu, 25 Apr 2019 14:28:17 +0100
-Subject: [cip-dev] [PATCH 4.4.y V2] net: ipconfig: Support using "delayed"
-	DHCP replies
-In-Reply-To: <1556198897-5710-1-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
-References: <1556198897-5710-1-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
-Message-ID: <1556198897-5710-2-git-send-email-patryk.mungai-ndungu.kx@renesas.com>
+From: daniel.sangorrin@toshiba.co.jp (daniel.sangorrin at toshiba.co.jp)
+Date: Fri, 26 Apr 2019 04:49:41 +0000
+Subject: [cip-dev] EFIBootGuard for CIP and SecureBoot
+In-Reply-To: <26998f72-94f6-894f-f095-16e752572b6b@siemens.com>
+References: <CAHFG_=Ujd5m3uSq87MuiK-7HWM379GoJjTQ3HMvk_m8V0gzqMg@mail.gmail.com>
+	<20190422175446.GO4664@bill-the-cat>
+	<OSAPR01MB3763A83FABF505EC4E0A5534D03C0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
+	<26998f72-94f6-894f-f095-16e752572b6b@siemens.com>
+Message-ID: <OSAPR01MB37639B3931B3AA6A9765099BD03E0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Uwe Kleine-K?nig <u.kleine-koenig@pengutronix.de>
+Hi Jan, Francois:
 
-commit 2647cffb2bc6fbed163d377390eb7ca552c7c1cb upstream.
+Grant: thanks!
 
-The dhcp code only waits 1s between sending DHCP requests on different
-devices and only accepts an answer for the device that sent out the last
-request. Only the timeout at the end of a loop is increased iteratively
-which favours only the last device. This makes it impossible to work
-with a dhcp server that takes little more than 1s connected to a device
-that is not the last one.
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+> On 24.04.19 03:23, daniel.sangorrin at toshiba.co.jp wrote:
+> > Hello Francois, Jan, Christian, and all
+> >  EFI Boot Guard is now shipped in quite a few devices, to my knowledge not only at
+> > Sorry for the late reply, I was waiting for the administrator of the Boot Architecture mailing list to accept my
+> subscription request, but it seems it will take a bit more time. I will send this reply and hope it will not be blocked.
+> I have also added the u-boot mailing list to Cc, as Tom suggested (although I'm not a member), the CIP mailing
+> list, Jan Kiszka (one of the main developers of Efibootguard) and Christian (an expert in software updates).
+> >
+> > Background: during the last Linaro connect in Bangkok I was told that Linaro Edge (LEDGE) were working on
+> a secure software update mechanism based on UEFI capsules that would flash firmware updates from a UEFI
+> application, instead of using a Linux agent such as SWUpdate.
+> 
+> How would capsules help with writing to arbitrary storage, updating only files
+> on filesystem, reducing the update size (binary diffs), or talking to the cloud?
 
-Instead of also increasing the inter-device timeout, teach the code to
-handle delayed replies.
+- arbitrary storage: I guess they can only write to what is supported by the machine's UEFI implementation.
+- updating only files on filesystem: I assume this is out of scope in their architecture (Francois: do you want to support file-based updates or only block-based ones?)
+- reducing the update size (binary diffs), or talking to the cloud: they will do that from non-secure Linux. It would be dangerous to use a fragile network stack from an UEFI application or the secure world. In that sense, they also need a Linux agent.
 
-To accomplish that, make *ic_dev track the current ic_device instead of
-the current net_device and adapt all users accordingly. The relevant
-change then is to reset d to ic_dev on a reply to assert that the
-followup request goes through the right device.
+I believe that LEDGE is looking for a software update method that works the same on any machine (that supports UEFI). To do that they want to use the UEFI interfaces/services. They also want the ability to update the TrustZone secure world (you can't do that unless you have enough privileges).
 
-Signed-off-by: Uwe Kleine-K?nig <u.kleine-koenig@pengutronix.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[Patryk: Backported to 4.4: replaced DBG function with pr_debug
-squashed upstream commits:
-e068853409aa17208e94f4ca628005cc6f51e043
-9c706a49d660653625d206f6972541c1f60ea2b0
-d2d371ae5dd6af9a6a3d7f50b753627c42868409
-1ae292a2457cd692828da2be87cb967260993ad0]
-Signed-off-by: Patryk Mungai <patryk.mungai-ndungu.kx@renesas.com>
----
- net/ipv4/ipconfig.c | 61 ++++++++++++++++++++++++-----------------------------
- 1 file changed, 28 insertions(+), 33 deletions(-)
+> > As far as I know, there is no concept of "Secure Booting" in Efibootguard at the moment. Adding signature
+> checks before booting into the selected kernel would be a possible solution.
+> 
+> Secure boot is a pending feature on our to-do list. It's a bit more complicated
+> than that, like secure boot is "a bit" more complicated than you think once you
+> actually try to implement it. Once we do that, it's really about adding
+> signature checks or relying on UEFI validating the payloads we boot for us PLUS
+> ensuring the our config sections can either be validated (despite being
+> volatile) or split the security-wise critical parts (specifically EFI payload
+> parameters) from the less critical ones (update states) and remove the latter
+> from the validation.
 
-diff --git a/net/ipv4/ipconfig.c b/net/ipv4/ipconfig.c
-index 60f564d..ca658af 100644
---- a/net/ipv4/ipconfig.c
-+++ b/net/ipv4/ipconfig.c
-@@ -94,7 +94,6 @@
- /* Define the timeout for waiting for a DHCP/BOOTP/RARP reply */
- #define CONF_OPEN_RETRIES 	2	/* (Re)open devices twice */
- #define CONF_SEND_RETRIES 	6	/* Send six requests per open */
--#define CONF_INTER_TIMEOUT	(HZ)	/* Inter-device timeout: 1 second */
- #define CONF_BASE_TIMEOUT	(HZ*2)	/* Initial timeout: 2 seconds */
- #define CONF_TIMEOUT_RANDOM	(HZ)	/* Maximum amount of randomization */
- #define CONF_TIMEOUT_MULT	*7/4	/* Rate of timeout growth */
-@@ -195,7 +194,7 @@ struct ic_device {
- };
- 
- static struct ic_device *ic_first_dev __initdata;	/* List of open device */
--static struct net_device *ic_dev __initdata;		/* Selected device */
-+static struct ic_device *ic_dev __initdata;		/* Selected device */
- 
- static bool __init ic_is_init_dev(struct net_device *dev)
- {
-@@ -314,8 +313,8 @@ static void __init ic_close_devs(void)
- 	while ((d = next)) {
- 		next = d->next;
- 		dev = d->dev;
--		if (dev != ic_dev && !netdev_uses_dsa(dev)) {
--			DBG(("IP-Config: Downing %s\n", dev->name));
-+		if ((!ic_dev || dev != ic_dev->dev) && !netdev_uses_dsa(dev)) {
-+			pr_debug("IP-Config: Downing %s\n", dev->name);
- 			dev_change_flags(dev, d->flags);
- 		}
- 		kfree(d);
-@@ -379,7 +378,7 @@ static int __init ic_setup_if(void)
- 	int err;
- 
- 	memset(&ir, 0, sizeof(ir));
--	strcpy(ir.ifr_ifrn.ifrn_name, ic_dev->name);
-+	strcpy(ir.ifr_ifrn.ifrn_name, ic_dev->dev->name);
- 	set_sockaddr(sin, ic_myaddr, 0);
- 	if ((err = ic_devinet_ioctl(SIOCSIFADDR, &ir)) < 0) {
- 		pr_err("IP-Config: Unable to set interface address (%d)\n",
-@@ -403,7 +402,7 @@ static int __init ic_setup_if(void)
- 	 * out, we'll try to muddle along.
- 	 */
- 	if (ic_dev_mtu != 0) {
--		strcpy(ir.ifr_name, ic_dev->name);
-+		strcpy(ir.ifr_name, ic_dev->dev->name);
- 		ir.ifr_mtu = ic_dev_mtu;
- 		if ((err = ic_dev_ioctl(SIOCSIFMTU, &ir)) < 0)
- 			pr_err("IP-Config: Unable to set interface mtu to %d (%d)\n",
-@@ -574,7 +573,7 @@ ic_rarp_recv(struct sk_buff *skb, struct net_device *dev, struct packet_type *pt
- 		goto drop_unlock;
- 
- 	/* We have a winner! */
--	ic_dev = dev;
-+	ic_dev = d;
- 	if (ic_myaddr == NONE)
- 		ic_myaddr = tip;
- 	ic_servaddr = sip;
-@@ -661,8 +660,6 @@ static struct packet_type bootp_packet_type __initdata = {
- 	.func =	ic_bootp_recv,
- };
- 
--static __be32 ic_dev_xid;		/* Device under configuration */
--
- /*
-  *  Initialize DHCP/BOOTP extension fields in the request.
-  */
-@@ -1052,12 +1049,6 @@ static int __init ic_bootp_recv(struct sk_buff *skb, struct net_device *dev, str
- 		goto drop_unlock;
- 	}
- 
--	/* Is it a reply for the device we are configuring? */
--	if (b->xid != ic_dev_xid) {
--		net_err_ratelimited("DHCP/BOOTP: Ignoring delayed packet\n");
--		goto drop_unlock;
--	}
--
- 	/* Parse extensions */
- 	if (ext_len >= 4 &&
- 	    !memcmp(b->exten, ic_bootp_cookie, 4)) { /* Check magic cookie */
-@@ -1148,7 +1139,7 @@ static int __init ic_bootp_recv(struct sk_buff *skb, struct net_device *dev, str
- 	}
- 
- 	/* We have a winner! */
--	ic_dev = dev;
-+	ic_dev = d;
- 	ic_myaddr = b->your_ip;
- 	ic_servaddr = b->server_ip;
- 	ic_addrservaddr = b->iph.saddr;
-@@ -1243,9 +1234,6 @@ static int __init ic_dynamic(void)
- 	timeout = CONF_BASE_TIMEOUT + (timeout % (unsigned int) CONF_TIMEOUT_RANDOM);
- 	for (;;) {
- #ifdef IPCONFIG_BOOTP
--		/* Track the device we are configuring */
--		ic_dev_xid = d->xid;
--
- 		if (do_bootp && (d->able & IC_BOOTP))
- 			ic_bootp_send_if(d, jiffies - start_jiffies);
- #endif
-@@ -1254,15 +1242,19 @@ static int __init ic_dynamic(void)
- 			ic_rarp_send_if(d);
- #endif
- 
--		jiff = jiffies + (d->next ? CONF_INTER_TIMEOUT : timeout);
--		while (time_before(jiffies, jiff) && !ic_got_reply)
--			schedule_timeout_uninterruptible(1);
-+		if (!d->next) {
-+			jiff = jiffies + timeout;
-+			while (time_before(jiffies, jiff) && !ic_got_reply)
-+				schedule_timeout_uninterruptible(1);
-+		}
- #ifdef IPCONFIG_DHCP
- 		/* DHCP isn't done until we get a DHCPACK. */
- 		if ((ic_got_reply & IC_BOOTP) &&
- 		    (ic_proto_enabled & IC_USE_DHCP) &&
- 		    ic_dhcp_msgtype != DHCPACK) {
- 			ic_got_reply = 0;
-+			/* continue on device that got the reply */
-+			d = ic_dev;
- 			pr_cont(",");
- 			continue;
- 		}
-@@ -1513,7 +1505,7 @@ static int __init ip_auto_config(void)
- #endif /* IPCONFIG_DYNAMIC */
- 	} else {
- 		/* Device selected manually or only one device -> use it */
--		ic_dev = ic_first_dev->dev;
-+		ic_dev = ic_first_dev;
- 	}
- 
- 	addr = root_nfs_parse_addr(root_server_path);
-@@ -1527,14 +1519,6 @@ static int __init ip_auto_config(void)
- 		return -1;
- 
- 	/*
--	 * Close all network devices except the device we've
--	 * autoconfigured and set up routes.
--	 */
--	ic_close_devs();
--	if (ic_setup_if() < 0 || ic_setup_routes() < 0)
--		return -1;
--
--	/*
- 	 * Record which protocol was actually used.
- 	 */
- #ifdef IPCONFIG_DYNAMIC
-@@ -1548,7 +1532,7 @@ static int __init ip_auto_config(void)
- 	pr_info("IP-Config: Complete:\n");
- 
- 	pr_info("     device=%s, hwaddr=%*phC, ipaddr=%pI4, mask=%pI4, gw=%pI4\n",
--		ic_dev->name, ic_dev->addr_len, ic_dev->dev_addr,
-+		ic_dev->dev->name, ic_dev->dev->addr_len, ic_dev->dev->dev_addr,
- 		&ic_myaddr, &ic_netmask, &ic_gateway);
- 	pr_info("     host=%s, domain=%s, nis-domain=%s\n",
- 		utsname()->nodename, ic_domain, utsname()->domainname);
-@@ -1568,7 +1552,18 @@ static int __init ip_auto_config(void)
- 	pr_cont("\n");
- #endif /* !SILENT */
- 
--	return 0;
-+	/*
-+	 * Close all network devices except the device we've
-+	 * autoconfigured and set up routes.
-+	 */
-+	if (ic_setup_if() < 0 || ic_setup_routes() < 0)
-+		err = -1;
-+	else
-+		err = 0;
-+
-+	ic_close_devs();
-+
-+	return err;
- }
- 
- late_initcall(ip_auto_config);
--- 
-2.7.4
+I suppose that those "bits" are hard to predict until you start the implementation. From an architectural point of view, I guess that the "revision" variables will need to be secured to avoid downgrades (e.g. an attacker causing a rollback to a previous revision of the OS image). 
+
+> BTW, what we do in EFI Board Guard could also be done in any other UEFI
+> bootloader, may it be grub (if you like to use that complex and fragile beast in
+> production), systemd-boot or even TianoCore. But for now, it was easier - and
+> more robust - to add our requirements in form of this tiny bootloader to the
+> ecosystem. EFI Boot Guard is now shipped in quite a few devices, to my best
+> knowledge not only at Siemens.
+
+Jan: do you have a schedule or a list of tasks that need to be done?
+Francois: what direction should we take from here?
+
+Thanks,
+Daniel
