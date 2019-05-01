@@ -1,46 +1,101 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed,  1 May 2019 11:22:03 +0100
-Subject: [cip-dev] [PATCH 4.19.y 09/29] media: rcar-csi2: Add R8A77990
-	support
+Date: Wed,  1 May 2019 11:22:04 +0100
+Subject: [cip-dev] [PATCH 4.19.y 10/29] media: rcar: rcar-csi2: Update
+	V3M/E3 PHTW tables
 In-Reply-To: <1556706143-11898-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1556706143-11898-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1556706143-11898-10-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1556706143-11898-11-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-commit 6511459d2a233f3cfe405af219b3de5b62ca31f6 upstream.
+commit 10c08812fe60ddfd480730a58bb78616262d659a upstream.
 
-Add support for R-Car E3 R8A77965 to R-Car CSI-2 driver.
-Based on the experimental patch from Magnus Damm.
+Update PHTW tables for V3M and E3 SoCs to the latest datasheet release
+(R-Car Series, 3rd Generation manual rev1.00 20181017).
 
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Niklas S?derlund <niklas.soderlund+renesas@ragnatech.se>
 Signed-off-by: Hans Verkuil <hansverk@cisco.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-[fab: removed "renesas,r8a77990-csi2"]
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/media/platform/rcar-vin/rcar-csi2.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/media/platform/rcar-vin/rcar-csi2.c | 62 ++++++++++++++---------------
+ 1 file changed, 31 insertions(+), 31 deletions(-)
 
 diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-index dc5ae80..499730f 100644
+index 499730f..631f91f 100644
 --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
 +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-@@ -959,6 +959,11 @@ static const struct rcar_csi2_info rcar_csi2_info_r8a77970 = {
- 	.confirm_start = rcsi2_confirm_start_v3m_e3,
+@@ -152,37 +152,37 @@ static const struct rcsi2_mbps_reg phtw_mbps_h3_v3h_m3n[] = {
  };
  
-+static const struct rcar_csi2_info rcar_csi2_info_r8a77990 = {
-+	.init_phtw = rcsi2_init_phtw_v3m_e3,
-+	.confirm_start = rcsi2_confirm_start_v3m_e3,
-+};
-+
- static const struct of_device_id rcar_csi2_of_table[] = {
- 	{
- 		.compatible = "renesas,r8a7795-csi2",
+ static const struct rcsi2_mbps_reg phtw_mbps_v3m_e3[] = {
+-	{ .mbps =   80, .reg = 0x00 },
+-	{ .mbps =   90, .reg = 0x20 },
+-	{ .mbps =  100, .reg = 0x40 },
+-	{ .mbps =  110, .reg = 0x02 },
+-	{ .mbps =  130, .reg = 0x22 },
+-	{ .mbps =  140, .reg = 0x42 },
+-	{ .mbps =  150, .reg = 0x04 },
+-	{ .mbps =  170, .reg = 0x24 },
+-	{ .mbps =  180, .reg = 0x44 },
+-	{ .mbps =  200, .reg = 0x06 },
+-	{ .mbps =  220, .reg = 0x26 },
+-	{ .mbps =  240, .reg = 0x46 },
+-	{ .mbps =  250, .reg = 0x08 },
+-	{ .mbps =  270, .reg = 0x28 },
+-	{ .mbps =  300, .reg = 0x0a },
+-	{ .mbps =  330, .reg = 0x2a },
+-	{ .mbps =  360, .reg = 0x4a },
+-	{ .mbps =  400, .reg = 0x0c },
+-	{ .mbps =  450, .reg = 0x2c },
+-	{ .mbps =  500, .reg = 0x0e },
+-	{ .mbps =  550, .reg = 0x2e },
+-	{ .mbps =  600, .reg = 0x10 },
+-	{ .mbps =  650, .reg = 0x30 },
+-	{ .mbps =  700, .reg = 0x12 },
+-	{ .mbps =  750, .reg = 0x32 },
+-	{ .mbps =  800, .reg = 0x52 },
+-	{ .mbps =  850, .reg = 0x72 },
+-	{ .mbps =  900, .reg = 0x14 },
+-	{ .mbps =  950, .reg = 0x34 },
+-	{ .mbps = 1000, .reg = 0x54 },
+-	{ .mbps = 1050, .reg = 0x74 },
++	{ .mbps =   89, .reg = 0x00 },
++	{ .mbps =   99, .reg = 0x20 },
++	{ .mbps =  109, .reg = 0x40 },
++	{ .mbps =  129, .reg = 0x02 },
++	{ .mbps =  139, .reg = 0x22 },
++	{ .mbps =  149, .reg = 0x42 },
++	{ .mbps =  169, .reg = 0x04 },
++	{ .mbps =  179, .reg = 0x24 },
++	{ .mbps =  199, .reg = 0x44 },
++	{ .mbps =  219, .reg = 0x06 },
++	{ .mbps =  239, .reg = 0x26 },
++	{ .mbps =  249, .reg = 0x46 },
++	{ .mbps =  269, .reg = 0x08 },
++	{ .mbps =  299, .reg = 0x28 },
++	{ .mbps =  329, .reg = 0x0a },
++	{ .mbps =  359, .reg = 0x2a },
++	{ .mbps =  399, .reg = 0x4a },
++	{ .mbps =  449, .reg = 0x0c },
++	{ .mbps =  499, .reg = 0x2c },
++	{ .mbps =  549, .reg = 0x0e },
++	{ .mbps =  599, .reg = 0x2e },
++	{ .mbps =  649, .reg = 0x10 },
++	{ .mbps =  699, .reg = 0x30 },
++	{ .mbps =  749, .reg = 0x12 },
++	{ .mbps =  799, .reg = 0x32 },
++	{ .mbps =  849, .reg = 0x52 },
++	{ .mbps =  899, .reg = 0x72 },
++	{ .mbps =  949, .reg = 0x14 },
++	{ .mbps =  999, .reg = 0x34 },
++	{ .mbps = 1049, .reg = 0x54 },
++	{ .mbps = 1099, .reg = 0x74 },
+ 	{ .mbps = 1125, .reg = 0x16 },
+ 	{ /* sentinel */ },
+ };
 -- 
 2.7.4
