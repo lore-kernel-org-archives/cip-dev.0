@@ -1,129 +1,41 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed,  1 May 2019 11:22:10 +0100
-Subject: [cip-dev] [PATCH 4.19.y 16/29] arm64: dts: renesas: r8a774c0: Add
-	VIN and CSI-2 device nodes
+Date: Wed,  1 May 2019 11:22:11 +0100
+Subject: [cip-dev] [PATCH 4.19.y 17/29] ASoC: rsnd: Add r8a774a1 support
 In-Reply-To: <1556706143-11898-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1556706143-11898-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1556706143-11898-17-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1556706143-11898-18-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit e961ab42e034d4690ab4fd6a112b50209dec46ea upstream.
+commit 6fbf9d8e2793b81dd5f8738999163582ce61dba7 upstream.
 
-Add device nodes for VIN4, VIN5 and CSI40 to RZ/G2E (a.k.a. R8A774C0)
-SoC specific device tree.
+Document RZ/G2M (R8A774A1) SoC bindings.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 88 +++++++++++++++++++++++++++++++
- 1 file changed, 88 insertions(+)
+ Documentation/devicetree/bindings/sound/renesas,rsnd.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-index ea730c6..0450fb2 100644
---- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-@@ -1061,6 +1061,62 @@
- 			status = "disabled";
- 		};
- 
-+		vin4: video at e6ef4000 {
-+			compatible = "renesas,vin-r8a774c0";
-+			reg = <0 0xe6ef4000 0 0x1000>;
-+			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 807>;
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			resets = <&cpg 807>;
-+			renesas,id = <4>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port at 1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+
-+					vin4csi40: endpoint at 2 {
-+						reg = <2>;
-+						remote-endpoint= <&csi40vin4>;
-+					};
-+				};
-+			};
-+		};
-+
-+		vin5: video at e6ef5000 {
-+			compatible = "renesas,vin-r8a774c0";
-+			reg = <0 0xe6ef5000 0 0x1000>;
-+			interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 806>;
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			resets = <&cpg 806>;
-+			renesas,id = <5>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port at 1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+
-+					vin5csi40: endpoint at 2 {
-+						reg = <2>;
-+						remote-endpoint= <&csi40vin5>;
-+					};
-+				};
-+			};
-+		};
-+
- 		xhci0: usb at ee000000 {
- 			compatible = "renesas,xhci-r8a774c0",
- 				     "renesas,rcar-gen3-xhci";
-@@ -1200,6 +1256,38 @@
- 			status = "disabled";
- 		};
- 
-+		csi40: csi2 at feaa0000 {
-+			compatible = "renesas,r8a774c0-csi2",
-+				     "renesas,rcar-gen3-csi2";
-+			reg = <0 0xfeaa0000 0 0x10000>;
-+			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 716>;
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			resets = <&cpg 716>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port at 1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+
-+					csi40vin4: endpoint at 0 {
-+						reg = <0>;
-+						remote-endpoint = <&vin4csi40>;
-+					};
-+					csi40vin5: endpoint at 1 {
-+						reg = <1>;
-+						remote-endpoint = <&vin5csi40>;
-+					};
-+				};
-+			};
-+		};
-+
- 		prr: chipid at fff00044 {
- 			compatible = "renesas,prr";
- 			reg = <0 0xfff00044 0 4>;
+diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
+index 9e764270..8083f0d 100644
+--- a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
++++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
+@@ -340,10 +340,11 @@ Required properties:
+ - compatible			: "renesas,rcar_sound-<soctype>", fallbacks
+ 				  "renesas,rcar_sound-gen1" if generation1, and
+ 				  "renesas,rcar_sound-gen2" if generation2 (or RZ/G1)
+-				  "renesas,rcar_sound-gen3" if generation3
++				  "renesas,rcar_sound-gen3" if generation3 (or RZ/G2)
+ 				  Examples with soctypes are:
+ 				    - "renesas,rcar_sound-r8a7743" (RZ/G1M)
+ 				    - "renesas,rcar_sound-r8a7745" (RZ/G1E)
++				    - "renesas,rcar_sound-r8a774a1" (RZ/G2M)
+ 				    - "renesas,rcar_sound-r8a7778" (R-Car M1A)
+ 				    - "renesas,rcar_sound-r8a7779" (R-Car H1)
+ 				    - "renesas,rcar_sound-r8a7790" (R-Car H2)
 -- 
 2.7.4
