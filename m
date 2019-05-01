@@ -1,103 +1,42 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed,  1 May 2019 11:22:06 +0100
-Subject: [cip-dev] [PATCH 4.19.y 12/29] media: rcar-csi2: Fix PHTW table
-	values for E3/V3M
+Date: Wed,  1 May 2019 11:22:07 +0100
+Subject: [cip-dev] [PATCH 4.19.y 13/29] media: rcar-csi2: Add support for
+	RZ/G2E
 In-Reply-To: <1556706143-11898-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1556706143-11898-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1556706143-11898-13-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1556706143-11898-14-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+commit 8809b8ceb0bd283c0528a0c7233656b12bcda2dc upstream.
 
-commit aa8a1012ba624e92fd1ab58463f22501bce78af8 upstream.
+According to the RZ/G2 User's manual, RZ/G2E and R-Car E3 CSI-2
+blocks are identical, therefore use R-Car E3 definitions to add
+RZ/G2E support.
 
-The PHTW selection algorithm implemented in rcsi2_phtw_write_mbps() checks for
-lower bound of the interval used to match the desired bandwidth. Use that
-in place of the currently used upper bound.
-
-Fixes: 10c08812fe60 ("media: rcar: rcar-csi2: Update V3M/E3 PHTW tables")
-
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Acked-by: Niklas S?derlund <niklas.soderlund+renesas@ragnatech.se>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Niklas S?derlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- drivers/media/platform/rcar-vin/rcar-csi2.c | 62 ++++++++++++++---------------
- 1 file changed, 31 insertions(+), 31 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-csi2.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-index 9d8357b..d409ba3 100644
+index d409ba3..007e238 100644
 --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
 +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-@@ -152,37 +152,37 @@ static const struct rcsi2_mbps_reg phtw_mbps_h3_v3h_m3n[] = {
- };
+@@ -975,6 +975,10 @@ static const struct rcar_csi2_info rcar_csi2_info_r8a77990 = {
  
- static const struct rcsi2_mbps_reg phtw_mbps_v3m_e3[] = {
--	{ .mbps =   89, .reg = 0x00 },
--	{ .mbps =   99, .reg = 0x20 },
--	{ .mbps =  109, .reg = 0x40 },
--	{ .mbps =  129, .reg = 0x02 },
--	{ .mbps =  139, .reg = 0x22 },
--	{ .mbps =  149, .reg = 0x42 },
--	{ .mbps =  169, .reg = 0x04 },
--	{ .mbps =  179, .reg = 0x24 },
--	{ .mbps =  199, .reg = 0x44 },
--	{ .mbps =  219, .reg = 0x06 },
--	{ .mbps =  239, .reg = 0x26 },
--	{ .mbps =  249, .reg = 0x46 },
--	{ .mbps =  269, .reg = 0x08 },
--	{ .mbps =  299, .reg = 0x28 },
--	{ .mbps =  329, .reg = 0x0a },
--	{ .mbps =  359, .reg = 0x2a },
--	{ .mbps =  399, .reg = 0x4a },
--	{ .mbps =  449, .reg = 0x0c },
--	{ .mbps =  499, .reg = 0x2c },
--	{ .mbps =  549, .reg = 0x0e },
--	{ .mbps =  599, .reg = 0x2e },
--	{ .mbps =  649, .reg = 0x10 },
--	{ .mbps =  699, .reg = 0x30 },
--	{ .mbps =  749, .reg = 0x12 },
--	{ .mbps =  799, .reg = 0x32 },
--	{ .mbps =  849, .reg = 0x52 },
--	{ .mbps =  899, .reg = 0x72 },
--	{ .mbps =  949, .reg = 0x14 },
--	{ .mbps =  999, .reg = 0x34 },
--	{ .mbps = 1049, .reg = 0x54 },
--	{ .mbps = 1099, .reg = 0x74 },
-+	{ .mbps =   80, .reg = 0x00 },
-+	{ .mbps =   90, .reg = 0x20 },
-+	{ .mbps =  100, .reg = 0x40 },
-+	{ .mbps =  110, .reg = 0x02 },
-+	{ .mbps =  130, .reg = 0x22 },
-+	{ .mbps =  140, .reg = 0x42 },
-+	{ .mbps =  150, .reg = 0x04 },
-+	{ .mbps =  170, .reg = 0x24 },
-+	{ .mbps =  180, .reg = 0x44 },
-+	{ .mbps =  200, .reg = 0x06 },
-+	{ .mbps =  220, .reg = 0x26 },
-+	{ .mbps =  240, .reg = 0x46 },
-+	{ .mbps =  250, .reg = 0x08 },
-+	{ .mbps =  270, .reg = 0x28 },
-+	{ .mbps =  300, .reg = 0x0a },
-+	{ .mbps =  330, .reg = 0x2a },
-+	{ .mbps =  360, .reg = 0x4a },
-+	{ .mbps =  400, .reg = 0x0c },
-+	{ .mbps =  450, .reg = 0x2c },
-+	{ .mbps =  500, .reg = 0x0e },
-+	{ .mbps =  550, .reg = 0x2e },
-+	{ .mbps =  600, .reg = 0x10 },
-+	{ .mbps =  650, .reg = 0x30 },
-+	{ .mbps =  700, .reg = 0x12 },
-+	{ .mbps =  750, .reg = 0x32 },
-+	{ .mbps =  800, .reg = 0x52 },
-+	{ .mbps =  850, .reg = 0x72 },
-+	{ .mbps =  900, .reg = 0x14 },
-+	{ .mbps =  950, .reg = 0x34 },
-+	{ .mbps = 1000, .reg = 0x54 },
-+	{ .mbps = 1050, .reg = 0x74 },
- 	{ .mbps = 1125, .reg = 0x16 },
- 	{ /* sentinel */ },
- };
+ static const struct of_device_id rcar_csi2_of_table[] = {
+ 	{
++		.compatible = "renesas,r8a774c0-csi2",
++		.data = &rcar_csi2_info_r8a77990,
++	},
++	{
+ 		.compatible = "renesas,r8a7795-csi2",
+ 		.data = &rcar_csi2_info_r8a7795,
+ 	},
 -- 
 2.7.4
