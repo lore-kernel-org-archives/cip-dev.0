@@ -1,54 +1,37 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed,  1 May 2019 11:21:57 +0100
-Subject: [cip-dev] [PATCH 4.19.y 03/29] iommu/ipmmu-vmsa: Hook up r8a774c0
-	DT matching code
+Date: Wed,  1 May 2019 11:21:58 +0100
+Subject: [cip-dev] [PATCH 4.19.y 04/29] dt-bindings: iommu: ipmmu-vmsa: Add
+	r8a774a1 support
 In-Reply-To: <1556706143-11898-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1556706143-11898-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1556706143-11898-4-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1556706143-11898-5-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit b6d39cd82241bfc14a910eab032c53aabe678df7 upstream.
+commit 31fc9763f9d752b75711156ef6a066f6ea264be5 upstream.
 
-Support RZ/G2E (a.k.a. R8A774C0) IPMMU.
+Document RZ/G2M (R8A774A1) SoC bindings.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- drivers/iommu/ipmmu-vmsa.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index acb46cc..6797ddc 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -759,6 +759,7 @@ static int ipmmu_init_platform_device(struct device *dev,
- 
- static const struct soc_device_attribute soc_rcar_gen3[] = {
- 	{ .soc_id = "r8a774a1", },
-+	{ .soc_id = "r8a774c0", },
- 	{ .soc_id = "r8a7795", },
- 	{ .soc_id = "r8a7796", },
- 	{ .soc_id = "r8a77965", },
-@@ -768,6 +769,7 @@ static const struct soc_device_attribute soc_rcar_gen3[] = {
- };
- 
- static const struct soc_device_attribute soc_rcar_gen3_whitelist[] = {
-+	{ .soc_id = "r8a774c0", },
- 	{ .soc_id = "r8a7795", .revision = "ES3.*" },
- 	{ .soc_id = "r8a77965", },
- 	{ .soc_id = "r8a77990", },
-@@ -966,6 +968,9 @@ static const struct of_device_id ipmmu_of_ids[] = {
- 		.compatible = "renesas,ipmmu-r8a774a1",
- 		.data = &ipmmu_features_rcar_gen3,
- 	}, {
-+		.compatible = "renesas,ipmmu-r8a774c0",
-+		.data = &ipmmu_features_rcar_gen3,
-+	}, {
- 		.compatible = "renesas,ipmmu-r8a7795",
- 		.data = &ipmmu_features_rcar_gen3,
- 	}, {
+diff --git a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
+index c6e2d85..adc8854 100644
+--- a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
++++ b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
+@@ -13,6 +13,7 @@ Required Properties:
+     - "renesas,ipmmu-r8a73a4" for the R8A73A4 (R-Mobile APE6) IPMMU.
+     - "renesas,ipmmu-r8a7743" for the R8A7743 (RZ/G1M) IPMMU.
+     - "renesas,ipmmu-r8a7745" for the R8A7745 (RZ/G1E) IPMMU.
++    - "renesas,ipmmu-r8a774a1" for the R8A774A1 (RZ/G2M) IPMMU.
+     - "renesas,ipmmu-r8a7790" for the R8A7790 (R-Car H2) IPMMU.
+     - "renesas,ipmmu-r8a7791" for the R8A7791 (R-Car M2-W) IPMMU.
+     - "renesas,ipmmu-r8a7793" for the R8A7793 (R-Car M2-N) IPMMU.
 -- 
 2.7.4
