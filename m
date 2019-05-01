@@ -1,107 +1,57 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed,  1 May 2019 11:22:00 +0100
-Subject: [cip-dev] [PATCH 4.19.y 06/29] arm64: dts: renesas: r8a774c0: Add
-	IPMMU device nodes
+Date: Wed,  1 May 2019 11:22:01 +0100
+Subject: [cip-dev] [PATCH 4.19.y 07/29] media: rcar-vin: Add support for
+	R-Car R8A77990
 In-Reply-To: <1556706143-11898-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1556706143-11898-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1556706143-11898-7-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1556706143-11898-8-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit 6c7e02178e8fb75dc6114cb12be1ce65741502fb upstream.
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Add r8a774c0 IPMMU nodes.
+commit fad6d6dd4e091992eda85364125299c9ff261111 upstream.
 
+Add R-Car E3 R8A77990 SoC to the rcar-vin supported ones.
+Based on the experimental patch from Magnus Damm.
+
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Niklas S?derlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Hans Verkuil <hansverk@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+[fab: taken out "renesas,vin-r8a77990"]
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 73 +++++++++++++++++++++++++++++++
- 1 file changed, 73 insertions(+)
+ drivers/media/platform/rcar-vin/rcar-core.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-index 1d37a35..ea730c6 100644
---- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-@@ -784,6 +784,79 @@
- 			dma-channels = <16>;
- 		};
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index ce09799..fe03007 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -1085,6 +1085,22 @@ static const struct rvin_info rcar_info_r8a77970 = {
+ 	.routes = rcar_info_r8a77970_routes,
+ };
  
-+		ipmmu_ds0: mmu at e6740000 {
-+			compatible = "renesas,ipmmu-r8a774c0";
-+			reg = <0 0xe6740000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 0>;
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
++static const struct rvin_group_route rcar_info_r8a77990_routes[] = {
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 4, .mask = BIT(0) | BIT(3) },
++	{ .csi = RVIN_CSI40, .channel = 0, .vin = 5, .mask = BIT(2) },
++	{ .csi = RVIN_CSI40, .channel = 1, .vin = 4, .mask = BIT(2) },
++	{ .csi = RVIN_CSI40, .channel = 1, .vin = 5, .mask = BIT(1) | BIT(3) },
++	{ /* Sentinel */ }
++};
 +
-+		ipmmu_ds1: mmu at e7740000 {
-+			compatible = "renesas,ipmmu-r8a774c0";
-+			reg = <0 0xe7740000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 1>;
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
++static const struct rvin_info rcar_info_r8a77990 = {
++	.model = RCAR_GEN3,
++	.use_mc = true,
++	.max_width = 4096,
++	.max_height = 4096,
++	.routes = rcar_info_r8a77990_routes,
++};
 +
-+		ipmmu_hc: mmu at e6570000 {
-+			compatible = "renesas,ipmmu-r8a774c0";
-+			reg = <0 0xe6570000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 2>;
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_mm: mmu at e67b0000 {
-+			compatible = "renesas,ipmmu-r8a774c0";
-+			reg = <0 0xe67b0000 0 0x1000>;
-+			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_mp: mmu at ec670000 {
-+			compatible = "renesas,ipmmu-r8a774c0";
-+			reg = <0 0xec670000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 4>;
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_pv0: mmu at fd800000 {
-+			compatible = "renesas,ipmmu-r8a774c0";
-+			reg = <0 0xfd800000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 6>;
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_vc0: mmu at fe6b0000 {
-+			compatible = "renesas,ipmmu-r8a774c0";
-+			reg = <0 0xfe6b0000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 12>;
-+			power-domains = <&sysc R8A774C0_PD_A3VC>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_vi0: mmu at febd0000 {
-+			compatible = "renesas,ipmmu-r8a774c0";
-+			reg = <0 0xfebd0000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 14>;
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_vp0: mmu at fe990000 {
-+			compatible = "renesas,ipmmu-r8a774c0";
-+			reg = <0 0xfe990000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 16>;
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
- 		avb: ethernet at e6800000 {
- 			compatible = "renesas,etheravb-r8a774c0",
- 				     "renesas,etheravb-rcar-gen3";
+ static const struct rvin_group_route rcar_info_r8a77995_routes[] = {
+ 	{ /* Sentinel */ }
+ };
 -- 
 2.7.4
