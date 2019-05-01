@@ -1,42 +1,46 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed,  1 May 2019 11:22:02 +0100
-Subject: [cip-dev] [PATCH 4.19.y 08/29] media: rcar-vin: Add support for
-	RZ/G2E
+Date: Wed,  1 May 2019 11:22:03 +0100
+Subject: [cip-dev] [PATCH 4.19.y 09/29] media: rcar-csi2: Add R8A77990
+	support
 In-Reply-To: <1556706143-11898-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1556706143-11898-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1556706143-11898-9-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1556706143-11898-10-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit f74e5a32fa0c03d9f4bb84ea20d0c7be34fe3725 upstream.
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-According to the RZ/G2 User's manual, RZ/G2E and R-Car E3 VIN
-blocks are identical, therefore use R-Car E3 definitions to add
-RZ/G2E support.
+commit 6511459d2a233f3cfe405af219b3de5b62ca31f6 upstream.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Niklas S?derlund <niklas.soderlund+renesas@ragnatech.se>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Add support for R-Car E3 R8A77965 to R-Car CSI-2 driver.
+Based on the experimental patch from Magnus Damm.
+
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Niklas S?derlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Hans Verkuil <hansverk@cisco.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+[fab: removed "renesas,r8a77990-csi2"]
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/media/platform/rcar-vin/rcar-csi2.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index fe03007..a6d1a46 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -1115,6 +1115,10 @@ static const struct rvin_info rcar_info_r8a77995 = {
+diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
+index dc5ae80..499730f 100644
+--- a/drivers/media/platform/rcar-vin/rcar-csi2.c
++++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+@@ -959,6 +959,11 @@ static const struct rcar_csi2_info rcar_csi2_info_r8a77970 = {
+ 	.confirm_start = rcsi2_confirm_start_v3m_e3,
+ };
  
- static const struct of_device_id rvin_of_id_table[] = {
++static const struct rcar_csi2_info rcar_csi2_info_r8a77990 = {
++	.init_phtw = rcsi2_init_phtw_v3m_e3,
++	.confirm_start = rcsi2_confirm_start_v3m_e3,
++};
++
+ static const struct of_device_id rcar_csi2_of_table[] = {
  	{
-+		.compatible = "renesas,vin-r8a774c0",
-+		.data = &rcar_info_r8a77990,
-+	},
-+	{
- 		.compatible = "renesas,vin-r8a7778",
- 		.data = &rcar_info_m1,
- 	},
+ 		.compatible = "renesas,r8a7795-csi2",
 -- 
 2.7.4
