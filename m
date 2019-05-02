@@ -1,29 +1,82 @@
-From: pavel@denx.de (Pavel Machek)
-Date: Wed, 1 May 2019 22:48:02 +0200
-Subject: [cip-dev] [PATCH 4.19.y 00/29] Add further support for the
-	RZ/G2M
-In-Reply-To: <1556706143-11898-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1556706143-11898-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <20190501204802.GA1283@amd>
+From: laurence.urhegyi@codethink.co.uk (Laurence Urhegyi)
+Date: Thu, 02 May 2019 19:18:22 +0100
+Subject: [cip-dev] [cip-core] RFC: Process to decide supported package
+ list
+In-Reply-To: <16205208.VlgFrJl6Ko@linux-3zh6>
+References: <16205208.VlgFrJl6Ko@linux-3zh6>
+Message-ID: <ce12a60d5f0ccf3a81ec28c856fbfb0a@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi!
+Hi all,
 
-> this series adds further support for the RZ/G2M SoC
-> (a.k.a. R8A774C0), including IPMMU, VIN, CSI2, Sound, PWM,
-> and Thermal.
+The list attached to the below mail has been reviewed internally at 
+Codethink: no strong opinions from us.
 
-Ok, let me take a look...
-							Pavel
-							
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 181 bytes
-Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190501/5af040e1/attachment.sig>
+Kind regards,
+Laurence
+
+
+> ----------  Forwarded Message  ----------
+> 
+> Subject: [cip-dev] [cip-core] RFC: Process to decide supported package 
+> list
+> Date: Tuesday, 16 April 2019, 15:22:00 CEST
+> From: kazuhiro3.hayashi at toshiba.co.jp
+> To: cip-dev at lists.cip-project.org
+> 
+> Hello CIP developers,
+> 
+> I would like to suggest an idea about the process to determine the 
+> package
+> list that should be supported by CIP.
+> It's difficult to discuss adding any packages including their 
+> dependencies
+> from whole Debian, mixing the two profiles.
+> 
+> As the first step, it would be better to start from the source package 
+> list
+> which binary packages are installed by debootstrap minbase.
+> I attached the source package list, where only 58 packages exist.
+> I guess that it's easier to discuss which packages should be supported 
+> from
+> such core components.
+> 
+> NOTE: busybox is not included in the attached list, but it have to be
+> supported
+> not only for the tiny profile but also initramfs (and Debian 
+> installer?) in
+> the generic profile.
+> 
+> Regarding the tiny profile, we need to keep discussion about which 
+> busybox
+> applet should be supported.
+> I think this process should be done independently from the above 
+> discussion
+> because
+> the all packages selected from debootstrap in the first step should be
+> supported in the tiny profile as well.
+> 
+> Regarding voting, I have the same opinion that Daniel proposed 
+> previously.
+> 	1. Send an initial list and vote (>50% means accepted)
+> 	2. After that, each package will be voted (>50% means accepted)
+> 
+> As the second step, we consider adding other packages not included in 
+> the list
+> one by one.
+> We need to decide the detailed process of the second step later.
+> 
+> If you have any other opinions, please let me know.
+> 
+> Kind regards,
+> Kazu
+> 
+>  Kazuhiro Hayashi
+>  Corporate Software Engineering & Technology Center
+>  Toshiba Corporation
+>  Tel: +81-44-549-2476
+>  E-mail: kazuhiro3.hayashi at toshiba.co.jp
+> 
+> 
+> -----------------------------------------
