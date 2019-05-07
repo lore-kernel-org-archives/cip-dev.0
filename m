@@ -1,68 +1,65 @@
-From: nobuhiro1.iwamatsu@toshiba.co.jp (Nobuhiro Iwamatsu)
-Date: Tue, 7 May 2019 11:11:47 +0900
-Subject: [cip-dev] [PATCH 4.19.y 02/29] iommu/ipmmu-vmsa: Modify
- ipmmu_slave_whitelist() to check SoC revisions
-In-Reply-To: <TY1PR01MB1770796FB6BEBE0DE40A420DC0350@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+From: Chris.Paterson2@renesas.com (Chris Paterson)
+Date: Tue, 7 May 2019 09:14:14 +0000
+Subject: [cip-dev] [PATCH 4.19.y 00/29] Add further support for the
+	RZ/G2M
+In-Reply-To: <1556706143-11898-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1556706143-11898-1-git-send-email-fabrizio.castro@bp.renesas.com>
-	<1556706143-11898-3-git-send-email-fabrizio.castro@bp.renesas.com>
-	<20190502212731.GB19728@amd>
-	<TY1PR01MB1770796FB6BEBE0DE40A420DC0350@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-Message-ID: <20190507111147.6d952d70@fdyp522>
+Message-ID: <TYAPR01MB228505B80F4B559674B6474BB7310@TYAPR01MB2285.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
 
-On Fri, 3 May 2019 09:34:56 +0000
-Fabrizio Castro <fabrizio.castro@bp.renesas.com> wrote:
-
-> Hello Pavel,
+> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Sent: 01 May 2019 11:22
 > 
-> Thank you for your feedback!
+> Dear All,
 > 
-> > From: Pavel Machek <pavel@denx.de>
-> > Sent: 02 May 2019 22:28
-> > Subject: Re: [cip-dev] [PATCH 4.19.y 02/29] iommu/ipmmu-vmsa:
-> > Modify ipmmu_slave_whitelist() to check SoC revisions
-> > 
-> > Hi!
-> >   
-> > > commit b7ee92c6ff0e023a473b2500d771f6bf504fcc1a upstream.
-> > >
-> > > Some R-Car Gen3 SoCs has hardware restrictions on the IPMMU. So,
-> > > to check whether this R-Car Gen3 SoC can use the IPMMU correctly,
-> > > this patch modifies the ipmmu_slave_whitelist().
-> > >
-> > > Signed-off-by: Yoshihiro Shimoda
-> > > <yoshihiro.shimoda.uh@renesas.com> Reviewed-by: Geert
-> > > Uytterhoeven <geert+renesas@glider.be> Reviewed-by: Simon Horman
-> > > <horms+renesas@verge.net.au> Signed-off-by: Joerg Roedel
-> > > <jroedel@suse.de> Signed-off-by: Fabrizio Castro
-> > > <fabrizio.castro@bp.renesas.com> ---
-> > >  drivers/iommu/ipmmu-vmsa.c | 34
-> > > ++++++++++++++++++++++++++-------- 1 file changed, 26
-> > > insertions(+), 8 deletions(-) 
-> >   
-> > >  static int ipmmu_of_xlate(struct device *dev,
-> > >  			  struct of_phandle_args *spec)
-> > >  {
-> > > -	/* For R-Car Gen3 use a white list to opt-in slave
-> > > devices */
-> > > -	if (soc_device_match(soc_rcar_gen3)
-> > > && !ipmmu_slave_whitelist(dev))
-> > > +	if (!ipmmu_slave_whitelist(dev))
-> > >  		return -ENODEV;
-> > >  
-> > 
-> > I just want to make sure "soc_device_match(soc_rcar_gen3) &&"
-> > deletion is intentional here...  
+> this series adds further support for the RZ/G2M SoC
+> (a.k.a. R8A774C0), including IPMMU, VIN, CSI2, Sound, PWM,
+
+s|R8A774C0|R8A774A1
+
+Regards, Chris
+
+> and Thermal.
 > 
-> It is. I wasn't sure about backporting patch
-> 807596491d33d016e420d217cf1350aef2d2b3f7, but It didn't seem to add
-> any value, what's your take on that?
-
-As you wrote, there are no changes that have an impact.
-But these these commits are like a set If I look at the content eatch commit.
-
-Best regards,
-  Nobuhiro
+> Thanks,
+> Fab
+> 
+> Fabrizio Castro (22):
+>   iommu/ipmmu-vmsa: Hook up R8A774A1 DT maching code
+>   iommu/ipmmu-vmsa: Hook up r8a774c0 DT matching code
+>   dt-bindings: iommu: ipmmu-vmsa: Add r8a774a1 support
+>   dt-bindings: iommu: ipmmu-vmsa: Add r8a774c0 support
+>   arm64: dts: renesas: r8a774c0: Add IPMMU device nodes
+>   media: rcar-vin: Add support for RZ/G2E
+>   media: rcar-csi2: Add support for RZ/G2E
+>   media: dt-bindings: rcar-vin: Add R8A774C0 support
+>   media: dt-bindings: rcar-csi2: Add r8a774c0
+>   arm64: dts: renesas: r8a774c0: Add VIN and CSI-2 device nodes
+>   ASoC: rsnd: Add r8a774a1 support
+>   ASoC: rsnd: Add r8a774c0 support
+>   arm64: dts: renesas: r8a774c0: Add audio support
+>   dt-bindings: pwm: rcar: Add r8a774a1 support
+>   dt-bindings: pwm: rcar: Add r8a774c0 support
+>   arm64: dts: renesas: r8a774c0: Add PWM support
+>   arm64: dts: renesas: r8a774c0: Connect RZ/G2E SYS-DMAC to IPMMU
+>   arm64: dts: renesas: r8a774c0: Connect RZ/G2E AVB to IPMMU
+>   arm64: dts: renesas: r8a774c0: Connect RZ/G2E Audio-DMAC to IPMMU
+>   thermal: rcar_thermal: add R8A774C0 support
+>   dt-bindings: thermal: rcar-thermal: add R8A774C0 support
+>   arm64: dts: renesas: r8a774c0: Add thermal support
+> 
+> Jacopo Mondi (5):
+>   media: rcar-vin: Add support for R-Car R8A77990
+>   media: rcar-csi2: Add R8A77990 support
+>   media: rcar: rcar-csi2: Update V3M/E3 PHTW tables
+>   media: rcar-csi2: Handle per-SoC number of channels
+>   media: rcar-csi2: Fix PHTW table values for E3/V3M
+> 
+> Simon Horman (1):
+>   arm64: defconfig: Enable R-Car thermal driver
+> 
+> Yoshihiro Shimoda (1):
+>   iommu/ipmmu-vmsa: Modify ipmmu_slave_whitelist() to check SoC
+>     revisions
