@@ -1,49 +1,68 @@
-From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
-Date: Tue, 7 May 2019 01:44:48 +0000
-Subject: [cip-dev] [PATCH 4.19.y 00/29] Add further support for
-	the	RZ/G2M
-In-Reply-To: <20190502213222.GD19728@amd>
+From: nobuhiro1.iwamatsu@toshiba.co.jp (Nobuhiro Iwamatsu)
+Date: Tue, 7 May 2019 11:11:47 +0900
+Subject: [cip-dev] [PATCH 4.19.y 02/29] iommu/ipmmu-vmsa: Modify
+ ipmmu_slave_whitelist() to check SoC revisions
+In-Reply-To: <TY1PR01MB1770796FB6BEBE0DE40A420DC0350@TY1PR01MB1770.jpnprd01.prod.outlook.com>
 References: <1556706143-11898-1-git-send-email-fabrizio.castro@bp.renesas.com>
-	<20190502213222.GD19728@amd>
-Message-ID: <TYAPR01MB4189E203875340E940D7C46E92310@TYAPR01MB4189.jpnprd01.prod.outlook.com>
+	<1556706143-11898-3-git-send-email-fabrizio.castro@bp.renesas.com>
+	<20190502212731.GB19728@amd>
+	<TY1PR01MB1770796FB6BEBE0DE40A420DC0350@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+Message-ID: <20190507111147.6d952d70@fdyp522>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Pavel
+Hi,
 
-I came back from a long vacation in Japan.
+On Fri, 3 May 2019 09:34:56 +0000
+Fabrizio Castro <fabrizio.castro@bp.renesas.com> wrote:
 
-> > this series adds further support for the RZ/G2M SoC (a.k.a. R8A774C0),
-> > including IPMMU, VIN, CSI2, Sound, PWM, and Thermal.
+> Hello Pavel,
 > 
-> Thanks for the series. Applied and pushed out.
+> Thank you for your feedback!
+> 
+> > From: Pavel Machek <pavel@denx.de>
+> > Sent: 02 May 2019 22:28
+> > Subject: Re: [cip-dev] [PATCH 4.19.y 02/29] iommu/ipmmu-vmsa:
+> > Modify ipmmu_slave_whitelist() to check SoC revisions
+> > 
+> > Hi!
+> >   
+> > > commit b7ee92c6ff0e023a473b2500d771f6bf504fcc1a upstream.
+> > >
+> > > Some R-Car Gen3 SoCs has hardware restrictions on the IPMMU. So,
+> > > to check whether this R-Car Gen3 SoC can use the IPMMU correctly,
+> > > this patch modifies the ipmmu_slave_whitelist().
+> > >
+> > > Signed-off-by: Yoshihiro Shimoda
+> > > <yoshihiro.shimoda.uh@renesas.com> Reviewed-by: Geert
+> > > Uytterhoeven <geert+renesas@glider.be> Reviewed-by: Simon Horman
+> > > <horms+renesas@verge.net.au> Signed-off-by: Joerg Roedel
+> > > <jroedel@suse.de> Signed-off-by: Fabrizio Castro
+> > > <fabrizio.castro@bp.renesas.com> ---
+> > >  drivers/iommu/ipmmu-vmsa.c | 34
+> > > ++++++++++++++++++++++++++-------- 1 file changed, 26
+> > > insertions(+), 8 deletions(-) 
+> >   
+> > >  static int ipmmu_of_xlate(struct device *dev,
+> > >  			  struct of_phandle_args *spec)
+> > >  {
+> > > -	/* For R-Car Gen3 use a white list to opt-in slave
+> > > devices */
+> > > -	if (soc_device_match(soc_rcar_gen3)
+> > > && !ipmmu_slave_whitelist(dev))
+> > > +	if (!ipmmu_slave_whitelist(dev))
+> > >  		return -ENODEV;
+> > >  
+> > 
+> > I just want to make sure "soc_device_match(soc_rcar_gen3) &&"
+> > deletion is intentional here...  
+> 
+> It is. I wasn't sure about backporting patch
+> 807596491d33d016e420d217cf1350aef2d2b3f7, but It didn't seem to add
+> any value, what's your take on that?
 
-
-Thanks for your work.
+As you wrote, there are no changes that have an impact.
+But these these commits are like a set If I look at the content eatch commit.
 
 Best regards,
   Nobuhiro
-
-
-> -----Original Message-----
-> From: cip-dev-bounces at lists.cip-project.org
-> [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Pavel
-> Machek
-> Sent: Friday, May 3, 2019 6:32 AM
-> To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Cc: cip-dev at lists.cip-project.org; Biju Das <biju.das@bp.renesas.com>
-> Subject: Re: [cip-dev] [PATCH 4.19.y 00/29] Add further support for the
-> RZ/G2M
-> 
-> Hi!
-> 
-> > this series adds further support for the RZ/G2M SoC (a.k.a. R8A774C0),
-> > including IPMMU, VIN, CSI2, Sound, PWM, and Thermal.
-> 
-> Thanks for the series. Applied and pushed out.
-> 								Pavel
-> 
-> --
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures)
-> http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
