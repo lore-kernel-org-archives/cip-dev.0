@@ -1,51 +1,49 @@
-From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Fri, 3 May 2019 10:25:54 +0000
-Subject: [cip-dev] [PATCH 4.19.y 29/29] arm64: defconfig: Enable R-Car
- thermal driver
-In-Reply-To: <20190502213416.GE19728@amd>
+From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
+Date: Tue, 7 May 2019 01:44:48 +0000
+Subject: [cip-dev] [PATCH 4.19.y 00/29] Add further support for
+	the	RZ/G2M
+In-Reply-To: <20190502213222.GD19728@amd>
 References: <1556706143-11898-1-git-send-email-fabrizio.castro@bp.renesas.com>
-	<1556706143-11898-30-git-send-email-fabrizio.castro@bp.renesas.com>
-	<20190502213416.GE19728@amd>
-Message-ID: <TY1PR01MB1770188328B2F66831C3B151C0350@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+	<20190502213222.GD19728@amd>
+Message-ID: <TYAPR01MB4189E203875340E940D7C46E92310@TYAPR01MB4189.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Pavel,
+Hi Pavel
 
-Thank you for your feedback!
+I came back from a long vacation in Japan.
 
-> From: Pavel Machek <pavel@denx.de>
-> Sent: 02 May 2019 22:34
-> Subject: Re: [cip-dev] [PATCH 4.19.y 29/29] arm64: defconfig: Enable R-Car thermal driver
+> > this series adds further support for the RZ/G2M SoC (a.k.a. R8A774C0),
+> > including IPMMU, VIN, CSI2, Sound, PWM, and Thermal.
+> 
+> Thanks for the series. Applied and pushed out.
+
+
+Thanks for your work.
+
+Best regards,
+  Nobuhiro
+
+
+> -----Original Message-----
+> From: cip-dev-bounces at lists.cip-project.org
+> [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Pavel
+> Machek
+> Sent: Friday, May 3, 2019 6:32 AM
+> To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Cc: cip-dev at lists.cip-project.org; Biju Das <biju.das@bp.renesas.com>
+> Subject: Re: [cip-dev] [PATCH 4.19.y 00/29] Add further support for the
+> RZ/G2M
 > 
 > Hi!
 > 
-> > commit 4aac2bf0760d359af44e423dc01e10880d9d18b0 upstream.
-> >
-> > Enable the R-Car thermal driver as a built-in.
-> > This seems safer than enabling as a module from the point of view of
-> > protecting equipment from overheating.
+> > this series adds further support for the RZ/G2M SoC (a.k.a. R8A774C0),
+> > including IPMMU, VIN, CSI2, Sound, PWM, and Thermal.
 > 
-> No objections here, but...
-> 
-> ...make sure your hardware can protect itself when kernel fails for
-> whatever reason. Yes, crashes from time to time, and then thermal
-> support will fail, too.
-> 
-
-My understanding is that the unit is programmed to always output from
-pins VTHSENSE and VTHREF (as in like the THIDLE bits are always 00),
-therefore it's down to the PCB design to pick this up properly. A kernel
-crash will prevent a graceful shutdown.
-
-Biju, you had a deeper look into this a while back, is my understanding correct?
-
-Thanks,
-Fab
-
-> Thanks,
-> 									Pavel
+> Thanks for the series. Applied and pushed out.
+> 								Pavel
 > 
 > --
 > (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+> (cesky, pictures)
+> http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
