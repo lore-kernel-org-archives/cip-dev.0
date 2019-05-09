@@ -1,42 +1,23 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Thu, 9 May 2019 10:11:46 +0000
-Subject: [cip-dev] Kernel configurations for 4.19?
-In-Reply-To: <1555501985.3557.26.camel@codethink.co.uk>
-References: <1555501985.3557.26.camel@codethink.co.uk>
-Message-ID: <TYAPR01MB2285AAC3FBF34524ED8B7961B7330@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+From: diego.ml@zoho.com (diego.ml)
+Date: Thu, 09 May 2019 23:13:04 +0200
+Subject: [cip-dev] CIP software updates report
+Message-ID: <16a9e7146a0.afd6a3cc10954.9216279613248465781@zoho.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Ben,
+Hi all,
 
-> From: cip-dev-bounces at lists.cip-project.org <cip-dev-bounces@lists.cip-
-> project.org> On Behalf Of Ben Hutchings
-> Sent: 17 April 2019 12:53
-> 
-> Please could members send their kernel configuration files for Linux
-> 4.19-cip?  Either send them to the list as attachments, or create merge
-> requests for
-> <https://gitlab.com/cip-project/cip-kernel/cip-kernel-config>.
+I've seen your CIP software updates report published here:
+https://wiki.linuxfoundation.org/civilinfrastructureplatform/cip_comparison_report
 
-Sorry for the delay.
+One thing I'd like to point out regarding SWUpdate's "bad point: depends on libubootenv which needs to be rebuilt for each target" is that this issue is well on its way to being solved.
+Stefano Babic, SWUpdate creator and maintainer, started a new project called "libubootenv", a standalone replacement for U-Boot built-in libubootenv:
+https://github.com/sbabic/libubootenv
+This project aims to solve the need to rebuild SWUpdate any time the default env changes.
 
-I've created a MR to update renesas_shmobile_defconfig to the latest available in the CIP Kernel.
-https://gitlab.com/cip-project/cip-kernel/cip-kernel-config/merge_requests/2
+Building SWUpdate 2019.04 with CONFIG_UBOOT_NEWAPI like this:
+https://github.com/Kynetics/meta-updatefactory/commit/c4c25b21d3ed4ae15f9716769c2644953e8eedb3#diff-6a1eb0b91b36c4c636f9fa5b23f5514bR53
+will make use of the standalone libubootenv library, and will read default initial environment from "/etc/u-boot-initial-env".
 
-Kind regards, Chris
-
-> 
-> There are already configuration files for 4.19 in cip-kernel-config
-> that were produced by automatically updating the 4.4 configurations.
-> Please also let us know which of these can be deleted.
-> 
-> Ben.
-> 
-> --
-> Ben Hutchings, Software Developer                ?        Codethink Ltd
-> https://www.codethink.co.uk/                 Dale House, 35 Dale Street
->                                      Manchester, M1 2HF, United Kingdom
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
+Regards,
+Diego Rondini
