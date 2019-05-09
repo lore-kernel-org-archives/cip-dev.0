@@ -1,62 +1,42 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 9 May 2019 01:45:42 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-Message-ID: <HK0PR01MB2979C5A17EB0DC5FA3D0236BE2330@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+From: Chris.Paterson2@renesas.com (Chris Paterson)
+Date: Thu, 9 May 2019 10:11:46 +0000
+Subject: [cip-dev] Kernel configurations for 4.19?
+In-Reply-To: <1555501985.3557.26.camel@codethink.co.uk>
+References: <1555501985.3557.26.camel@codethink.co.uk>
+Message-ID: <TYAPR01MB2285AAC3FBF34524ED8B7961B7330@TYAPR01MB2285.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+Hello Ben,
 
+> From: cip-dev-bounces at lists.cip-project.org <cip-dev-bounces@lists.cip-
+> project.org> On Behalf Of Ben Hutchings
+> Sent: 17 April 2019 12:53
+> 
+> Please could members send their kernel configuration files for Linux
+> 4.19-cip?  Either send them to the list as attachments, or create merge
+> requests for
+> <https://gitlab.com/cip-project/cip-kernel/cip-kernel-config>.
 
+Sorry for the delay.
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
+I've created a MR to update renesas_shmobile_defconfig to the latest available in the CIP Kernel.
+https://gitlab.com/cip-project/cip-kernel/cip-kernel-config/merge_requests/2
 
+Kind regards, Chris
 
-
-*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
-
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=5&day=9&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
-
-
-
-US-West US-East   UK     DE     TW     JP
-
-02:00    05:00   10:00   11:00   17:00   18:00
-
-
-
-Channel:
-
-* irc:chat.freenode.net:6667/cip
-
-
-
-Agenda:
-
-
-
-* Kernel maintenance updates
-
-* Kernel testing
-
-* CIP Core
-
-* Software update
-
-* AOB
-
-
-
-The meeting will take 30 min although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
-
-
-
-Best regards,
-
-
-
-SZ Lin, Moxa.
-
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190509/3f12121a/attachment.html>
+> 
+> There are already configuration files for 4.19 in cip-kernel-config
+> that were produced by automatically updating the 4.4 configurations.
+> Please also let us know which of these can be deleted.
+> 
+> Ben.
+> 
+> --
+> Ben Hutchings, Software Developer                ?        Codethink Ltd
+> https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+>                                      Manchester, M1 2HF, United Kingdom
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
