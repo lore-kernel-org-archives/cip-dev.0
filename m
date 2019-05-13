@@ -1,50 +1,45 @@
 From: pavel@denx.de (Pavel Machek)
-Date: Mon, 13 May 2019 21:03:35 +0200
-Subject: [cip-dev] [PATCH 4.4.y 02/52] clk: shmobile: rcar-gen2: Add
- quirks for the RZ/G1C
-In-Reply-To: <1557761837-24993-3-git-send-email-fabrizio.castro@bp.renesas.com>
+Date: Mon, 13 May 2019 21:44:18 +0200
+Subject: [cip-dev] [PATCH 4.4.y 05/52] pinctrl: sh-pfc: Add r8a77470 PFC
+ support
+In-Reply-To: <1557761837-24993-6-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1557761837-24993-1-git-send-email-fabrizio.castro@bp.renesas.com>
-	<1557761837-24993-3-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <20190513190335.GC27497@amd>
+	<1557761837-24993-6-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <20190513194418.GD27497@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Mon 2019-05-13 16:36:27, Fabrizio Castro wrote:
-> This patch adds a quirk for clocks "sd0" and "sd1" for the
-> RZ/G1C (a.k.a. r8a77470) SoC, similarly to what has been done
-> upstream with commit:
-> 5bf2fbbef50c ("clk: renesas: cpg-mssr: Add r8a77470 support")
+Hi!
+
+> From: Biju Das <biju.das@bp.renesas.com>
 > 
-> and also customizes the settings for the PLLs.
+> commit 73dacc3403436fc246258c0933e35b6e809640ac upstream.
 > 
+> Add PFC support for the R8A77470 SoC including pin groups for
+> some on-chip devices such as SCIF and MMC.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> (fab: moved r8a77470_pinmux_info declaration from sh_pfc.h to core.h,
+> in pfc-r8a77470.c: added #include "core.h", removed #include "sh_pfc.h",
+> and added a few missing macro definitions)
 > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> ---
->  drivers/clk/shmobile/clk-rcar-gen2.c | 39 +++++++++++++++++++++++++++++++++++-
->  1 file changed, 38 insertions(+), 1 deletion(-)
-> 
-> +#define CPG_PLL_CONFIG_INDEX_RZG1C(md)	((((md) & BIT(14)) >> 13) | \
-> +					 (((md) & BIT(13)) >> 13))
-> +
->  struct cpg_pll_config {
->  	unsigned int extal_div;
->  	unsigned int pll1_mult;
-> @@ -282,6 +300,14 @@ static const struct cpg_pll_config cpg_pll_configs[8] __initconst = {
->  	{ 2, 208, 106, 200 }, { 2, 208,  88, 200 },
->  };
->  
-> +static const struct cpg_pll_config cpg_pll_configs_rzg1c[4] __initconst = {
-> +	/* EXTAL div	PLL1 mult x2	PLL3 mult */
-> +	{ 1,		156,		50,	},
-> +	{ 1,		120,		56,	},
-> +	{ /* Invalid*/				},
-> +	{ 1,		104,		50,	},
 
-Coding style says "/* Invalid */". And just initializing with zeros
-using {} is valid C, but was somehow surprising to me.
+> new file mode 100644
+> index 0000000..8973f61
+> --- /dev/null
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77470.c
+> @@ -0,0 +1,2368 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * R8A77470 processor support - PFC hardware block.
+> + *
 
-[No need to do anything. I'll probably just apply the patch for cip-4.4].
-
-									Pavel
+SPDX here, good. But this one is GPL-2.0, and the other one was
+GPL-2.0+. Is that difference intentional?
+								Pavel
 -- 
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
@@ -54,4 +49,4 @@ Name: signature.asc
 Type: application/pgp-signature
 Size: 181 bytes
 Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190513/ee828ae1/attachment.sig>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190513/c715569b/attachment.sig>
