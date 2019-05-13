@@ -1,106 +1,119 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon, 13 May 2019 16:36:27 +0100
-Subject: [cip-dev] [PATCH 4.4.y 02/52] clk: shmobile: rcar-gen2: Add quirks
-	for the RZ/G1C
-In-Reply-To: <1557761837-24993-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1557761837-24993-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1557761837-24993-3-git-send-email-fabrizio.castro@bp.renesas.com>
+Date: Mon, 13 May 2019 16:36:25 +0100
+Subject: [cip-dev] [PATCH 4.4.y 00/52] Add basic support for the iwg23s
+Message-ID: <1557761837-24993-1-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This patch adds a quirk for clocks "sd0" and "sd1" for the
-RZ/G1C (a.k.a. r8a77470) SoC, similarly to what has been done
-upstream with commit:
-5bf2fbbef50c ("clk: renesas: cpg-mssr: Add r8a77470 support")
+Dear All,
 
-and also customizes the settings for the PLLs.
+This series adds basic support for the iwg23s from iWave, based
+on the RZ/G1C (a.k.a. r8a77470).
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- drivers/clk/shmobile/clk-rcar-gen2.c | 39 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 38 insertions(+), 1 deletion(-)
+Thanks,
+Fab
 
-diff --git a/drivers/clk/shmobile/clk-rcar-gen2.c b/drivers/clk/shmobile/clk-rcar-gen2.c
-index 6ab0199..3f7d331 100644
---- a/drivers/clk/shmobile/clk-rcar-gen2.c
-+++ b/drivers/clk/shmobile/clk-rcar-gen2.c
-@@ -268,6 +268,24 @@ static struct clk * __init cpg_adsp_clk_register(struct rcar_gen2_cpg *cpg)
- #define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 12) | \
- 					 (((md) & BIT(13)) >> 12) | \
- 					 (((md) & BIT(19)) >> 19))
-+
-+/*
-+ * This table is only valid for the RZ/G1C
-+ *
-+ *    MD	EXTAL		PLL0	PLL1	PLL3
-+ * 14 13	(MHz)		*1	*2
-+ *---------------------------------------------------
-+ * 0  0		20 / 1		x80	x78	x50
-+ * 0  1		26 / 1		x60	x60	x56
-+ * 1  0		Prohibited setting
-+ * 1  1		30 / 1		x52	x52	x50
-+ *
-+ * *1 :	Table 7.4 indicates VCO output (PLL0 = VCO)
-+ * *2 :	Table 7.4 indicates VCO output (PLL1 = VCO)
-+ */
-+#define CPG_PLL_CONFIG_INDEX_RZG1C(md)	((((md) & BIT(14)) >> 13) | \
-+					 (((md) & BIT(13)) >> 13))
-+
- struct cpg_pll_config {
- 	unsigned int extal_div;
- 	unsigned int pll1_mult;
-@@ -282,6 +300,14 @@ static const struct cpg_pll_config cpg_pll_configs[8] __initconst = {
- 	{ 2, 208, 106, 200 }, { 2, 208,  88, 200 },
- };
- 
-+static const struct cpg_pll_config cpg_pll_configs_rzg1c[4] __initconst = {
-+	/* EXTAL div	PLL1 mult x2	PLL3 mult */
-+	{ 1,		156,		50,	},
-+	{ 1,		120,		56,	},
-+	{ /* Invalid*/				},
-+	{ 1,		104,		50,	},
-+};
-+
- /* SDHI divisors */
- static const struct clk_div_table cpg_sdh_div_table[] = {
- 	{  0,  2 }, {  1,  3 }, {  2,  4 }, {  3,  6 },
-@@ -308,6 +334,8 @@ static const char * const pll0_mult_match[] = {
- 	NULL
- };
- 
-+static const char *r8a77470_compat = "renesas,r8a77470-cpg-clocks";
-+
- static struct clk * __init
- rcar_gen2_cpg_register_clock(struct device_node *np, struct rcar_gen2_cpg *cpg,
- 			     const struct cpg_pll_config *config,
-@@ -357,10 +385,16 @@ rcar_gen2_cpg_register_clock(struct device_node *np, struct rcar_gen2_cpg *cpg,
- 	} else if (!strcmp(name, "sd0")) {
- 		parent_name = "pll1";
- 		table = cpg_sd01_div_table;
-+		if (of_device_is_compatible(np, r8a77470_compat))
-+			table++;
-+
- 		shift = 4;
- 	} else if (!strcmp(name, "sd1")) {
- 		parent_name = "pll1";
- 		table = cpg_sd01_div_table;
-+		if (of_device_is_compatible(np, r8a77470_compat))
-+			table++;
-+
- 		shift = 0;
- 	} else if (!strcmp(name, "z")) {
- 		return cpg_z_clk_register(cpg);
-@@ -414,7 +448,10 @@ static void __init rcar_gen2_cpg_clocks_init(struct device_node *np)
- 	if (WARN_ON(cpg->reg == NULL))
- 		return;
- 
--	config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
-+	if (of_device_is_compatible(np, r8a77470_compat))
-+		config = &cpg_pll_configs_rzg1c[CPG_PLL_CONFIG_INDEX_RZG1C(cpg_mode)];
-+	else
-+		config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
- 
- 	for (i = 0; i < num_clks; ++i) {
- 		const char *name;
+Biju Das (30):
+  ARM: shmobile: r8a77470: basic SoC support
+  pinctrl: sh-pfc: Add r8a77470 PFC support
+  pinctrl: sh-pfc: r8a77470: Add EtherAVB pin groups
+  soc: renesas: rcar-rst: Add support for RZ/G1C
+  ARM: debug-ll: Add support for r8a77470
+  gpiolib: Avoid calling chip->request() for unused gpios
+  gpio: rcar: Add GPIO hole support
+  dt-bindings: gpio: rcar: Add gpio-reserved-ranges support
+  ARM: shmobile: defconfig: Enable r8a77470 SoC
+  ARM: multi_v7_defconfig: Enable r8a77470 SoC
+  serial: sh-sci: Document r8a77470 bindings
+  ARM: dts: r8a77470: Initial SoC device tree
+  dt-bindings: arm: Document iW-RainboW-G23S single board computer
+  ARM: dts: iwg23s-sbc: Add support for iWave G23S-SBC based on RZ/G1C
+  dt-bindings: pinctrl: sh-pfc: Document r8a77470 PFC support
+  ARM: dts: r8a77470: Add PFC support
+  dt-bindings: gpio: rcar: Add r8a77470 (RZ/G1C) support
+  ARM: dts: r8a77470: Add GPIO support
+  ARM: dts: r8a77470: Add SCIF support
+  dt-bindings: irqchip: renesas-irqc: Document r8a77470 support
+  ARM: dts: r8a77470: Add IRQC support
+  ARM: dts: iwg23s-sbc: Add pinctl support for scif1
+  dt-bindings: rcar-dmac: Document r8a77470 support
+  ARM: dts: r8a77470: Add SYS-DMAC support
+  ARM: dts: r8a77470: Add SCIF DMA support
+  dt-bindings: net: renesas-ravb: Add support for r8a77470 SoC
+  ARM: dts: r8a77470: Add EtherAVB support
+  ARM: dts: iwg23s-sbc: Add EtherAVB support
+  ARM: dts: iwg23s-sbc: specify EtherAVB PHY IRQ
+  ARM: dts: iwg23s-sbc: Add pinctl support for EtherAVB
+
+Fabrizio Castro (16):
+  clk: shmobile: rcar-gen2: Add quirks for the RZ/G1C
+  clk: shmobile: Compile clk-rcar-gen2.c when using the r8a77470
+  ARM: shmobile: r8a77470: Add clock index macros for DT sources
+  pinctrl: sh-pfc: r8a77470: Add I2C4 pin groups
+  pinctrl: sh-pfc: r8a77470: Add DU0 pin groups
+  pinctrl: sh-pfc: r8a77470: Add QSPI0 pin groups
+  pinctrl: sh-pfc: r8a77470: Add SDHI2 pin groups
+  pinctrl: sh-pfc: r8a77470: Add USB pin groups
+  pinctrl: sh-pfc: r8a77470: Add remaining I2C pin groups
+  pinctrl: sh-pfc: r8a77470: Add DU1 pin groups
+  pinctrl: sh-pfc: r8a77470: Add VIN pin groups
+  pinctrl: sh-pfc: r8a77470: Add QSPI1 pin groups
+  clk: shmobile: Document r8a77470 CPG clock support
+  clk: shmobile: Document r8a77470 CPG DIV6 clock support
+  clk: shmobile: Document r8a77470 MSTP clock support
+  ARM: dts: r8a77470: Add clocks
+
+Geert Uytterhoeven (3):
+  gpio: rcar: Implement gpiochip.set_multiple()
+  dt-bindings: sram: Document renesas,smp-sram
+  dt-bindings: rcar-dmac: Document missing error interrupt
+
+Stephen Boyd (3):
+  gpiolib: Extract mask allocation into subroutine
+  gpiolib: Support 'gpio-reserved-ranges' property
+  dt-bindings: gpio: Add a gpio-reserved-ranges property
+
+ Documentation/devicetree/bindings/arm/shmobile.txt |    4 +
+ .../bindings/clock/renesas,cpg-div6-clocks.txt     |    1 +
+ .../bindings/clock/renesas,cpg-mstp-clocks.txt     |    1 +
+ .../clock/renesas,rcar-gen2-cpg-clocks.txt         |    1 +
+ .../devicetree/bindings/dma/renesas,rcar-dmac.txt  |    6 +-
+ Documentation/devicetree/bindings/gpio/gpio.txt    |    7 +-
+ .../devicetree/bindings/gpio/renesas,gpio-rcar.txt |   44 +-
+ .../bindings/interrupt-controller/renesas,irqc.txt |    1 +
+ .../devicetree/bindings/net/renesas,ravb.txt       |    1 +
+ .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |    1 +
+ .../devicetree/bindings/reset/renesas,rst.txt      |    1 +
+ .../bindings/serial/renesas,sci-serial.txt         |    2 +
+ .../devicetree/bindings/sram/renesas,smp-sram.txt  |   27 +
+ arch/arm/Kconfig.debug                             |   13 +-
+ arch/arm/boot/dts/Makefile                         |    1 +
+ arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts          |   68 +
+ arch/arm/boot/dts/r8a77470.dtsi                    |  764 +++++
+ arch/arm/configs/multi_v7_defconfig                |    1 +
+ arch/arm/configs/shmobile_defconfig                |    1 +
+ arch/arm/mach-shmobile/Kconfig                     |    4 +
+ arch/arm/mach-shmobile/pm-rcar-gen2.c              |    2 +
+ arch/arm/mach-shmobile/setup-rcar-gen2.c           |    2 +
+ drivers/clk/shmobile/Makefile                      |    1 +
+ drivers/clk/shmobile/clk-rcar-gen2.c               |   39 +-
+ drivers/gpio/gpio-rcar.c                           |   23 +
+ drivers/gpio/gpiolib-of.c                          |   24 +
+ drivers/gpio/gpiolib.c                             |   64 +-
+ drivers/pinctrl/sh-pfc/Kconfig                     |    5 +
+ drivers/pinctrl/sh-pfc/Makefile                    |    1 +
+ drivers/pinctrl/sh-pfc/core.c                      |    6 +
+ drivers/pinctrl/sh-pfc/core.h                      |    1 +
+ drivers/pinctrl/sh-pfc/pfc-r8a77470.c              | 3292 ++++++++++++++++++++
+ drivers/soc/renesas/rcar-rst.c                     |    1 +
+ include/dt-bindings/clock/r8a77470-clock.h         |  140 +
+ include/linux/gpio/driver.h                        |   18 +
+ 35 files changed, 4541 insertions(+), 27 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/sram/renesas,smp-sram.txt
+ create mode 100644 arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+ create mode 100644 arch/arm/boot/dts/r8a77470.dtsi
+ create mode 100644 drivers/pinctrl/sh-pfc/pfc-r8a77470.c
+ create mode 100644 include/dt-bindings/clock/r8a77470-clock.h
+
 -- 
 2.7.4
