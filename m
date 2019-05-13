@@ -1,40 +1,49 @@
 From: pavel@denx.de (Pavel Machek)
-Date: Mon, 13 May 2019 21:03:22 +0200
-Subject: [cip-dev] [PATCH 4.4.y 04/52] ARM: shmobile: r8a77470: Add
- clock index macros for DT sources
-In-Reply-To: <1557761837-24993-5-git-send-email-fabrizio.castro@bp.renesas.com>
+Date: Mon, 13 May 2019 21:03:35 +0200
+Subject: [cip-dev] [PATCH 4.4.y 02/52] clk: shmobile: rcar-gen2: Add
+ quirks for the RZ/G1C
+In-Reply-To: <1557761837-24993-3-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1557761837-24993-1-git-send-email-fabrizio.castro@bp.renesas.com>
-	<1557761837-24993-5-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <20190513190322.GB27497@amd>
+	<1557761837-24993-3-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <20190513190335.GC27497@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Mon 2019-05-13 16:36:29, Fabrizio Castro wrote:
-> Add macros usable by device tree sources to reference the r8a77470
-> clocks by index.
+On Mon 2019-05-13 16:36:27, Fabrizio Castro wrote:
+> This patch adds a quirk for clocks "sd0" and "sd1" for the
+> RZ/G1C (a.k.a. r8a77470) SoC, similarly to what has been done
+> upstream with commit:
+> 5bf2fbbef50c ("clk: renesas: cpg-mssr: Add r8a77470 support")
+> 
+> and also customizes the settings for the PLLs.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> ---
+>  drivers/clk/shmobile/clk-rcar-gen2.c | 39 +++++++++++++++++++++++++++++++++++-
+>  1 file changed, 38 insertions(+), 1 deletion(-)
+> 
+> +#define CPG_PLL_CONFIG_INDEX_RZG1C(md)	((((md) & BIT(14)) >> 13) | \
+> +					 (((md) & BIT(13)) >> 13))
+> +
+>  struct cpg_pll_config {
+>  	unsigned int extal_div;
+>  	unsigned int pll1_mult;
+> @@ -282,6 +300,14 @@ static const struct cpg_pll_config cpg_pll_configs[8] __initconst = {
+>  	{ 2, 208, 106, 200 }, { 2, 208,  88, 200 },
+>  };
+>  
+> +static const struct cpg_pll_config cpg_pll_configs_rzg1c[4] __initconst = {
+> +	/* EXTAL div	PLL1 mult x2	PLL3 mult */
+> +	{ 1,		156,		50,	},
+> +	{ 1,		120,		56,	},
+> +	{ /* Invalid*/				},
+> +	{ 1,		104,		50,	},
 
-Is this commit in the mainline? I could not find it in recent mainline
-nor in -next kernel.
+Coding style says "/* Invalid */". And just initializing with zeros
+using {} is valid C, but was somehow surprising to me.
 
-> diff --git a/include/dt-bindings/clock/r8a77470-clock.h b/include/dt-bindings/clock/r8a77470-clock.h
-> new file mode 100644
-> index 0000000..2f20bcc
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/r8a77470-clock.h
-> @@ -0,0 +1,140 @@
-> +/*
-> + * Copyright (C) 2019 Renesas Electronics Corporation
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + */
+[No need to do anything. I'll probably just apply the patch for cip-4.4].
 
-World is moving to SPDX. (But you want to fix it in the mainline, not
-here, so...)
-
-Best regards,
 									Pavel
 -- 
 (english) http://www.livejournal.com/~pavelmachek
@@ -45,4 +54,4 @@ Name: signature.asc
 Type: application/pgp-signature
 Size: 181 bytes
 Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190513/95c763c1/attachment.sig>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190513/ee828ae1/attachment.sig>
