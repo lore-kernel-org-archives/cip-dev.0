@@ -1,161 +1,91 @@
-From: kazuhiro3.hayashi@toshiba.co.jp (kazuhiro3.hayashi at toshiba.co.jp)
-Date: Fri, 10 May 2019 06:36:15 +0000
-Subject: [cip-dev] [cip-core] RFC: Process to decide supported package
-	list
-In-Reply-To: <OSBPR01MB277402D6349598D10F48A165E1240@OSBPR01MB2774.jpnprd01.prod.outlook.com>
-References: <OSBPR01MB277402D6349598D10F48A165E1240@OSBPR01MB2774.jpnprd01.prod.outlook.com>
-Message-ID: <TY1PR01MB180193DE11C941E7A08BD1B8E10C0@TY1PR01MB1801.jpnprd01.prod.outlook.com>
+From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
+Date: Mon, 13 May 2019 16:36:26 +0100
+Subject: [cip-dev] [PATCH 4.4.y 01/52] ARM: shmobile: r8a77470: basic SoC
+	support
+In-Reply-To: <1557761837-24993-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1557761837-24993-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1557761837-24993-2-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello CIP developers,
+From: Biju Das <biju.das@bp.renesas.com>
 
-Thank you for your feedbacks.
+commit 0c1d543b75f242f08b08e7fb63a1df2ada025903 upstream.
 
-Here is the simple summary of the comments from cip-dev:
+Add minimal support for the RZ/G1C (R8A77470) SoC.
 
-================================================
-openssl (Not in the debootstrap list)
-sudo (Not in the debootstrap list)
-	Requested by Security WG
-	(See also *1 below)
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+ arch/arm/mach-shmobile/Kconfig                     | 4 ++++
+ arch/arm/mach-shmobile/pm-rcar-gen2.c              | 2 ++
+ arch/arm/mach-shmobile/setup-rcar-gen2.c           | 2 ++
+ 4 files changed, 10 insertions(+)
 
-dash
-	Suggested by Pavel
-	One of the tiny packages expected on embedded system
-
-cdebconf
-debconf
-	Not necessary (Commented by Nobuhiro)
-	NOTE: base-files use cdebconf's library
-
-debian-archive-keyring
-	Not necessary (Commented by Nobuhiro)
-	Package maintainer's keyring
-================================================
-
-*1: I heared that CIP security WG will come out the essential packages list and all dependencies
-    I would like to consider the remaining packages suggested by security WG previously:
-    acl, pam, shadow / auditd / openssh / tpm2-tools
-
-Regarding the source package list I previously attached (srcpkg_buster_amd64_debootstrap_minbase.txt),
-as Pavel pointed out (gcc-8), it's not easy to understand why each source package is added to the list.
-I've created another list of 'binary' packages including corresponding source package name
-(binpkg_buster_amd64_debootstrap_minbase.txt).
-
-Also, the criteria for prioritizing security fixes Daniel.S proposed previously [1][2]
-should be inherited to this decision process.
-[1] https://wiki.linuxfoundation.org/civilinfrastructureplatform/tsc-meetings/tsc_mm_jul092018#cip_core_packages
-[2] https://lists.cip-project.org/pipermail/cip-dev/2018-July/001398.html
-This discussion was concentrating on creating the 'source' package list and their priorities requested to Debian LTS.
-(Especially for security fixes)
-
-Considering the above feedback, I would like to go ahead with the following policy:
-
-* As the first step, focus on the source package list which binaries are installed by debootstrap minbase
-  (to simplify the discussion and clarify the decision process)
-* Use the criteria [1][2] to decide the priority of security fix supports
-* If needed, clarify functions that should be the scope (or out of scope) of the maintenance
-  (e.g. gcc-8 is listed in the debootstrap list, but libgcc, libstdc++, gcc-base are required actually)
-* Correct opinions from cip-dev about not only "packages which should be supported"
-  but also "packages which no need to support" (e.g. debian-archive-keyring in the debootstrap list)
-
-If you have any comments, please let me know.
-
-> 	1. Send an initial list and vote (>50% means accepted)
-> 	2. After that, each package will be voted (>50% means accepted)
-I guess it's still early for voting because the meaning of "supported"
-is still unclear among developers in cip-dev.
-(Someone requests packages that security fixes should be continuously applied to,
- others request packages that can be just installed by cip-core generic/tiny profiles, etc.)
-It might be better to break down "support" we assuming into the several levels.
-
-Samples of the support levels:
-
-A.Apply security fixes immediately
-    * The package list should be sent to Debian LTS
-    * Define the package priority based on the above criteria?
-B.Fix other bugs (back-port from the upstream, fix by ourselves)
-    * Such bug fixes might not be focus of Debian LTS though required in our product development
-C.Fix development issues only when required (Normally do nothing)
-    * Build failed on CIP developers' environment
-    * The dependencies (or other functional relations) between other packages are broken
-    * etc.
-D.Available (installable) in cip-core (generic/tiny profile)
-    * Required for debugging, tracing, performance evaluation, testing, etc.
-
-(A-C: Source codes should be shared in CIP)
-
-Example:
-
-SRCPKG    | LEVEL: A B C D
-----------+---------------
-openssl   |        x x x x  Need to apply security fixes continuously
-diffutils |          x x x  Few security fixes, but want to fix functional bugs if found
-debconf   |            x x  Not necessary in products, but included in debootstrapped packages
-gdb       |              x
-
-In my understanding, only the level "A" is the target of this discussion
-to decide the (source) package list which would be sent to Debian LTS.
-Other support levels could be discussed later when we decide other stuffs
-(e.g. which source packages should be available in the common source repository,
- which packages should be installable in cip-core profiles, etc.)
-
-Please give me your feedback.
-I would like to improve the above policy and my opinion about the support levels,
-then go to the next steps including the voting.
-
-Kind regards,
-Kazu
-
-> -----Original Message-----
-> From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of
-> kazuhiro3.hayashi at toshiba.co.jp
-> Sent: Tuesday, April 16, 2019 10:22 PM
-> To: cip-dev at lists.cip-project.org
-> Subject: [cip-dev] [cip-core] RFC: Process to decide supported package list
-> 
-> Hello CIP developers,
-> 
-> I would like to suggest an idea about the process to determine the package list that should be supported by CIP.
-> It's difficult to discuss adding any packages including their dependencies from whole Debian, mixing the two profiles.
-> 
-> As the first step, it would be better to start from the source package list
-> which binary packages are installed by debootstrap minbase.
-> I attached the source package list, where only 58 packages exist.
-> I guess that it's easier to discuss which packages should be supported from such core components.
-> 
-> NOTE: busybox is not included in the attached list, but it have to be supported
-> not only for the tiny profile but also initramfs (and Debian installer?) in the generic profile.
-> 
-> Regarding the tiny profile, we need to keep discussion about which busybox applet should be supported.
-> I think this process should be done independently from the above discussion because
-> the all packages selected from debootstrap in the first step should be supported in the tiny profile as well.
-> 
-> Regarding voting, I have the same opinion that Daniel proposed previously.
-> 	1. Send an initial list and vote (>50% means accepted)
-> 	2. After that, each package will be voted (>50% means accepted)
-> 
-> As the second step, we consider adding other packages not included in the list one by one.
-> We need to decide the detailed process of the second step later.
-> 
-> If you have any other opinions, please let me know.
-> 
-> Kind regards,
-> Kazu
-> 
->  Kazuhiro Hayashi
->  Corporate Software Engineering & Technology Center
->  Toshiba Corporation
->  Tel: +81-44-549-2476
->  E-mail: kazuhiro3.hayashi at toshiba.co.jp
-> 
-
--------------- next part --------------
-An embedded and charset-unspecified text was scrubbed...
-Name: srcpkg_buster_amd64_debootstrap_minbase.txt
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190510/12976417/attachment.txt>
--------------- next part --------------
-An embedded and charset-unspecified text was scrubbed...
-Name: binpkg_buster_amd64_debootstrap_minbase.txt
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190510/12976417/attachment-0001.txt>
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index e27b38e..3b51d7e 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -17,6 +17,8 @@ SoCs:
+     compatible = "renesas,r8a7743"
+   - RZ/G1E (R8A77450)
+     compatible = "renesas,r8a7745"
++  - RZ/G1C (R8A77470)
++    compatible = "renesas,r8a77470"
+   - R-Car M1A (R8A77781)
+     compatible = "renesas,r8a7778"
+   - R-Car H1 (R8A77790)
+diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
+index 602fc2d..31549b7 100644
+--- a/arch/arm/mach-shmobile/Kconfig
++++ b/arch/arm/mach-shmobile/Kconfig
+@@ -72,6 +72,10 @@ config ARCH_R8A7745
+ 	bool "RZ/G1E (R8A77450)"
+ 	select ARCH_RCAR_GEN2
+ 
++config ARCH_R8A77470
++	bool "RZ/G1C (R8A77470)"
++	select ARCH_RCAR_GEN2
++
+ config ARCH_R8A7778
+ 	bool "R-Car M1A (R8A77781)"
+ 	select ARCH_RCAR_GEN1
+diff --git a/arch/arm/mach-shmobile/pm-rcar-gen2.c b/arch/arm/mach-shmobile/pm-rcar-gen2.c
+index 0054561..419575e 100644
+--- a/arch/arm/mach-shmobile/pm-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/pm-rcar-gen2.c
+@@ -101,6 +101,8 @@ void __init rcar_gen2_pm_init(void)
+ 		syscier = 0x00101003;
+ 	else if (of_machine_is_compatible("renesas,r8a7745"))
+ 		syscier = 0x00300060;
++	else if (of_machine_is_compatible("renesas,r8a77470"))
++		syscier = 0x00300060;
+ 
+ 	np = of_find_compatible_node(NULL, NULL, "renesas,smp-sram");
+ 	if (!np) {
+diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+index 50d7438..6e0c0ce 100644
+--- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+@@ -61,6 +61,7 @@ void __init rcar_gen2_timer_init(void)
+ 	shmobile_init_cntvoff();
+ 
+ 	if (of_machine_is_compatible("renesas,r8a7745") ||
++	    of_machine_is_compatible("renesas,r8a77470") ||
+ 	    of_machine_is_compatible("renesas,r8a7794")) {
+ 		freq = 260000000 / 8;	/* ZS / 8 */
+ 	} else {
+@@ -208,6 +209,7 @@ MACHINE_END
+ static const char * const rz_g1_boards_compat_dt[] __initconst = {
+ 	"renesas,r8a7743",
+ 	"renesas,r8a7745",
++	"renesas,r8a77470",
+ 	NULL,
+ };
+ 
+-- 
+2.7.4
