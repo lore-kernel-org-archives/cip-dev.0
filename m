@@ -1,48 +1,46 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon, 13 May 2019 16:37:08 +0100
-Subject: [cip-dev] [PATCH 4.4.y 43/52] ARM: dts: iwg23s-sbc: Add pinctl
-	support for scif1
+Date: Mon, 13 May 2019 16:37:09 +0100
+Subject: [cip-dev] [PATCH 4.4.y 44/52] dt-bindings: rcar-dmac: Document
+	missing error interrupt
 In-Reply-To: <1557761837-24993-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1557761837-24993-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1557761837-24993-44-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1557761837-24993-45-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit 01a12d4975fb09c10f64cb551d4903dacd032b79 upstream.
+commit 5466c34f8425ccd24124ebdae6e3b6552195956d upstream.
 
-Adding pinctrl support for scif1 interface.
+The documentation for the "interrupt-names" property only mentions the
+per-channel interrupts, while the error interrupt has always been
+mandatory, too.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Fixes: 10f5c8438475909a ("dmaengine: rcar-dmac: Add device tree bindings
+documentation")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Niklas S?derlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-index d21baad..48821dd 100644
---- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-+++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-@@ -30,6 +30,16 @@
- 	clock-frequency = <20000000>;
- };
+diff --git a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
+index 5f2ce66..471fcc2 100644
+--- a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
++++ b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
+@@ -29,8 +29,9 @@ Required Properties:
  
-+&pfc {
-+	scif1_pins: scif1 {
-+		groups = "scif1_data_b";
-+		function = "scif1";
-+	};
-+};
-+
- &scif1 {
-+	pinctrl-0 = <&scif1_pins>;
-+	pinctrl-names = "default";
-+
- 	status = "okay";
- };
+ - interrupts: interrupt specifiers for the DMAC, one for each entry in
+   interrupt-names.
+-- interrupt-names: one entry per channel, named "ch%u", where %u is the
+-  channel number ranging from zero to the number of channels minus one.
++- interrupt-names: one entry for the error interrupt, named "error", plus one
++  entry per channel, named "ch%u", where %u is the channel number ranging from
++  zero to the number of channels minus one.
+ 
+ - clock-names: "fck" for the functional clock
+ - clocks: a list of phandle + clock-specifier pairs, one for each entry
 -- 
 2.7.4
