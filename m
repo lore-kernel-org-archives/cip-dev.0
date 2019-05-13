@@ -1,54 +1,63 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon, 13 May 2019 16:36:45 +0100
-Subject: [cip-dev] [PATCH 4.4.y 20/52] gpiolib: Avoid calling
-	chip->request() for unused gpios
+Date: Mon, 13 May 2019 16:36:46 +0100
+Subject: [cip-dev] [PATCH 4.4.y 21/52] gpio: rcar: Implement
+	gpiochip.set_multiple()
 In-Reply-To: <1557761837-24993-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1557761837-24993-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1557761837-24993-21-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1557761837-24993-22-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit 3789f5acb9bbe088f70779002f32e7c6a64000bc upstream.
+commit dbb763b8ea5d8eb0ce3e45e289969f6f1f418921 upstream.
 
-Add a check for unused gpios to avoid chip->request() call to client
-driver for unused gpios.
+This allows to set multiple outputs using a single register write.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-[fab: moved changes from gpiod_request_commit to __gpiod_request]
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/gpio/gpiolib.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/gpio/gpio-rcar.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index d2b0386..7dd3468 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1025,6 +1025,7 @@ static int __gpiod_request(struct gpio_desc *desc, const char *label)
- 	struct gpio_chip	*chip = desc->chip;
- 	int			status;
- 	unsigned long		flags;
-+	unsigned		offset;
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index c0fd5a5..411e93b 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -349,6 +349,25 @@ static void gpio_rcar_set(struct gpio_chip *chip, unsigned offset, int value)
+ 	spin_unlock_irqrestore(&p->lock, flags);
+ }
  
- 	spin_lock_irqsave(&gpio_lock, flags);
- 
-@@ -1043,7 +1044,11 @@ static int __gpiod_request(struct gpio_desc *desc, const char *label)
- 	if (chip->request) {
- 		/* chip->request may sleep */
- 		spin_unlock_irqrestore(&gpio_lock, flags);
--		status = chip->request(chip, gpio_chip_hwgpio(desc));
-+		offset = gpio_chip_hwgpio(desc);
-+		if (gpiochip_line_is_valid(chip, offset))
-+			status = chip->request(chip, offset);
-+		else
-+			status = -EINVAL;
- 		spin_lock_irqsave(&gpio_lock, flags);
- 
- 		if (status < 0) {
++static void gpio_rcar_set_multiple(struct gpio_chip *chip, unsigned long *mask,
++				   unsigned long *bits)
++{
++	struct gpio_rcar_priv *p = gpiochip_get_data(chip);
++	unsigned long flags;
++	u32 val, bankmask;
++
++	bankmask = mask[0] & GENMASK(chip->ngpio - 1, 0);
++	if (!bankmask)
++		return;
++
++	spin_lock_irqsave(&p->lock, flags);
++	val = gpio_rcar_read(p, OUTDT);
++	val &= ~bankmask;
++	val |= (bankmask & bits[0]);
++	gpio_rcar_write(p, OUTDT, val);
++	spin_unlock_irqrestore(&p->lock, flags);
++}
++
+ static int gpio_rcar_direction_output(struct gpio_chip *chip, unsigned offset,
+ 				      int value)
+ {
+@@ -500,6 +519,7 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+ 	gpio_chip->get = gpio_rcar_get;
+ 	gpio_chip->direction_output = gpio_rcar_direction_output;
+ 	gpio_chip->set = gpio_rcar_set;
++	gpio_chip->set_multiple = gpio_rcar_set_multiple;
+ 	gpio_chip->label = name;
+ 	gpio_chip->dev = dev;
+ 	gpio_chip->owner = THIS_MODULE;
 -- 
 2.7.4
