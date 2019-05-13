@@ -1,53 +1,27 @@
-From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon, 13 May 2019 16:37:17 +0100
-Subject: [cip-dev] [PATCH 4.4.y 52/52] ARM: dts: iwg23s-sbc: Add pinctl
-	support for EtherAVB
+From: pavel@denx.de (Pavel Machek)
+Date: Mon, 13 May 2019 20:52:10 +0200
+Subject: [cip-dev] [PATCH 4.4.y 00/52] Add basic support for the iwg23s
 In-Reply-To: <1557761837-24993-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1557761837-24993-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1557761837-24993-53-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <20190513185210.GA27497@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Biju Das <biju.das@bp.renesas.com>
+Hi!
 
-commit 976a5ccb808da21f77a3bb1123a9e5df6f2d9564 upstream.
+> This series adds basic support for the iwg23s from iWave, based
+> on the RZ/G1C (a.k.a. r8a77470).
 
-Adding pinctrl support for EtherAVB interface.
+Ok, let me take a look...
+								Pavel
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-index 22da819..4ceff9c 100644
---- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-+++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-@@ -28,6 +28,9 @@
- };
- 
- &avb {
-+	pinctrl-0 = <&avb_pins>;
-+	pinctrl-names = "default";
-+
- 	phy-handle = <&phy3>;
- 	phy-mode = "gmii";
- 	renesas,no-ether-link;
-@@ -46,6 +49,11 @@
- };
- 
- &pfc {
-+	avb_pins: avb {
-+		groups = "avb_mdio", "avb_gmii_tx_rx";
-+		function = "avb";
-+	};
-+
- 	scif1_pins: scif1 {
- 		groups = "scif1_data_b";
- 		function = "scif1";
 -- 
-2.7.4
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 181 bytes
+Desc: Digital signature
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190513/eec13a88/attachment.sig>
