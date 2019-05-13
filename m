@@ -1,124 +1,106 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon, 13 May 2019 16:37:04 +0100
-Subject: [cip-dev] [PATCH 4.4.y 39/52] ARM: dts: r8a77470: Add GPIO support
+Date: Mon, 13 May 2019 16:37:05 +0100
+Subject: [cip-dev] [PATCH 4.4.y 40/52] ARM: dts: r8a77470: Add SCIF support
 In-Reply-To: <1557761837-24993-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1557761837-24993-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1557761837-24993-40-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1557761837-24993-41-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Biju Das <biju.das@bp.renesas.com>
 
-commit 5fcd4bfe03913301bab34e2934c838eb4173a475 upstream.
+commit 8cdb8f1ab7efbd88868d3067ec1f211ff289bc01 upstream.
 
-Describe GPIO blocks in the R8A77470 device tree.
+Describe SCIF ports in the R8A77470 device tree.
+Also it fixes the CPG clock index ZS from 6 to 5.
 
+Fixes: 6929dfc5918049 ("ARM: dts: r8a77470: Initial SoC device tree")
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[fab: reworked clocks and power-domains properties, removed
-resets proporties]
+[fab: reworked to make it fit 4.4.y-cip definitions, like include
+files, and properties like clocks, clock-names, and power-domains.
+Also, removed resets properties as not applicable here. Finally,
+the fix for the ZS clock index is not applicable to this version]
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a77470.dtsi | 85 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 85 insertions(+)
+ arch/arm/boot/dts/r8a77470.dtsi | 56 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
 
 diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-index e971b5e..d9a89fa 100644
+index d9a89fa..2d542b3 100644
 --- a/arch/arm/boot/dts/r8a77470.dtsi
 +++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -59,6 +59,91 @@
- 		#size-cells = <2>;
- 		ranges;
+@@ -177,6 +177,17 @@
+ 			reg = <0 0xe6300000 0 0x20000>;
+ 		};
  
-+		gpio0: gpio at e6050000 {
-+			compatible = "renesas,gpio-r8a77470",
-+				     "renesas,rcar-gen2-gpio";
-+			reg = <0 0xe6050000 0 0x50>;
-+			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 0 23>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&mstp9_clks R8A77470_CLK_GPIO0>;
++		scif0: serial at e6e60000 {
++			compatible = "renesas,scif-r8a77470", "renesas,scif";
++			reg = <0 0xe6e60000 0 0x40>;
++			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp7_clks R8A77470_CLK_SCIF0>,
++				 <&zs_clk>, <&scif_clk>;
++			clock-names = "sci_ick", "brg_int", "scif_clk";
 +			power-domains = <&cpg_clocks>;
++			status = "disabled";
 +		};
 +
-+		gpio1: gpio at e6051000 {
-+			compatible = "renesas,gpio-r8a77470",
-+				     "renesas,rcar-gen2-gpio";
-+			reg = <0 0xe6051000 0 0x50>;
-+			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 32 23>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&mstp9_clks R8A77470_CLK_GPIO1>;
+ 		scif1: serial at e6e68000 {
+ 			compatible = "renesas,scif-r8a77470", "renesas,scif";
+ 			reg = <0 0xe6e68000 0 0x40>;
+@@ -188,6 +199,51 @@
+ 			status = "disabled";
+ 		};
+ 
++		scif2: serial at e6e58000 {
++			compatible = "renesas,scif-r8a77470", "renesas,scif";
++			reg = <0 0xe6e58000 0 0x40>;
++			interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp7_clks R8A77470_CLK_SCIF2>,
++				 <&zs_clk>, <&scif_clk>;
++			clock-names = "sci_ick", "brg_int", "scif_clk";
 +			power-domains = <&cpg_clocks>;
++			status = "disabled";
 +		};
 +
-+		gpio2: gpio at e6052000 {
-+			compatible = "renesas,gpio-r8a77470",
-+				     "renesas,rcar-gen2-gpio";
-+			reg = <0 0xe6052000 0 0x50>;
-+			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 64 32>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&mstp9_clks R8A77470_CLK_GPIO2>;
++		scif3: serial at e6ea8000 {
++			compatible = "renesas,scif-r8a77470", "renesas,scif";
++			reg = <0 0xe6ea8000 0 0x40>;
++			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp7_clks R8A77470_CLK_SCIF3>,
++				 <&zs_clk>, <&scif_clk>;
++			clock-names = "sci_ick", "brg_int", "scif_clk";
 +			power-domains = <&cpg_clocks>;
++			status = "disabled";
 +		};
 +
-+		gpio3: gpio at e6053000 {
-+			compatible = "renesas,gpio-r8a77470",
-+				     "renesas,rcar-gen2-gpio";
-+			reg = <0 0xe6053000 0 0x50>;
-+			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 96 30>;
-+			gpio-reserved-ranges = <17 10>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&mstp9_clks R8A77470_CLK_GPIO3>;
++		scif4: serial at e6ee0000 {
++			compatible = "renesas,scif-r8a77470", "renesas,scif";
++			reg = <0 0xe6ee0000 0 0x40>;
++			interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp7_clks R8A77470_CLK_SCIF4>,
++				 <&zs_clk>, <&scif_clk>;
++			clock-names = "sci_ick", "brg_int", "scif_clk";
 +			power-domains = <&cpg_clocks>;
++			status = "disabled";
 +		};
 +
-+		gpio4: gpio at e6054000 {
-+			compatible = "renesas,gpio-r8a77470",
-+				     "renesas,rcar-gen2-gpio";
-+			reg = <0 0xe6054000 0 0x50>;
-+			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 128 26>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&mstp9_clks R8A77470_CLK_GPIO4>;
++		scif5: serial at e6ee8000 {
++			compatible = "renesas,scif-r8a77470",
++				     "renesas,rcar-gen2-scif", "renesas,scif";
++			reg = <0 0xe6ee8000 0 0x40>;
++			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp7_clks R8A77470_CLK_SCIF5>,
++				 <&zs_clk>, <&scif_clk>;
++			clock-names = "sci_ick", "brg_int", "scif_clk";
 +			power-domains = <&cpg_clocks>;
++			status = "disabled";
 +		};
 +
-+		gpio5: gpio at e6055000 {
-+			compatible = "renesas,gpio-r8a77470",
-+				     "renesas,rcar-gen2-gpio";
-+			reg = <0 0xe6055000 0 0x50>;
-+			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 160 32>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&mstp9_clks R8A77470_CLK_GPIO5>;
-+			power-domains = <&cpg_clocks>;
-+		};
-+
- 		pfc: pin-controller at e6060000 {
- 			compatible = "renesas,pfc-r8a77470";
- 			reg = <0 0xe6060000 0 0x118>;
+ 		gic: interrupt-controller at f1001000 {
+ 			compatible = "arm,gic-400";
+ 			#interrupt-cells = <3>;
 -- 
 2.7.4
