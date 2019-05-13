@@ -1,73 +1,55 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon, 13 May 2019 16:36:42 +0100
-Subject: [cip-dev] [PATCH 4.4.y 17/52] ARM: debug-ll: Add support for
-	r8a77470
+Date: Mon, 13 May 2019 16:36:43 +0100
+Subject: [cip-dev] [PATCH 4.4.y 18/52] gpiolib: Extract mask allocation into
+	subroutine
 In-Reply-To: <1557761837-24993-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1557761837-24993-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1557761837-24993-18-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1557761837-24993-19-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Stephen Boyd <swboyd@chromium.org>
 
-commit 2f095c261a0fe15aacf1c3b2958b4d23a4735b4e upstream.
+commit e4371f6e079294369ecb4cfa03aaeb60831e8b91 upstream.
 
-Enable low-level debugging support for RZ/G1C (r8a77470). RZ/G1C uses
-SCIF1 for the debug console.
+We're going to use similar code to allocate and set all the bits in a
+mask for valid gpios to use. Extract the code from the irqchip version
+so it can be reused.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Tested-by: Timur Tabi <timur@codeaurora.org>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+[fab: removed change from function gpiochip_irqchip_init_valid_mask]
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- arch/arm/Kconfig.debug | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/gpio/gpiolib.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index c84f87b..e5c9e93 100644
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@ -824,6 +824,13 @@ choice
- 		  via SCIF0 on Renesas RZ/G1M (R8A7743), R-Car H2 (R8A7790),
- 		  M2-W (R8A7791), or M2-N (R8A7793).
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 827510d..0e4e753 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -279,6 +279,20 @@ static int gpiochip_set_desc_names(struct gpio_chip *gc)
+ 	return 0;
+ }
  
-+	config DEBUG_RCAR_GEN2_SCIF1
-+		bool "Kernel low-level debugging messages via SCIF1 on R8A77470"
-+		depends on ARCH_R8A77470
-+		help
-+		  Say Y here if you want kernel low-level debugging support
-+		  via SCIF1 on Renesas RZ/G1C (R8A77470).
++static unsigned long *gpiochip_allocate_mask(struct gpio_chip *chip)
++{
++	unsigned long *p;
 +
- 	config DEBUG_RCAR_GEN2_SCIF2
- 		bool "Kernel low-level debugging messages via SCIF2 on R8A7794"
- 		depends on ARCH_R8A7794
-@@ -1340,6 +1347,7 @@ config DEBUG_LL_INCLUDE
- 	default "debug/renesas-scif.S" if DEBUG_RCAR_GEN1_SCIF0
- 	default "debug/renesas-scif.S" if DEBUG_RCAR_GEN1_SCIF2
- 	default "debug/renesas-scif.S" if DEBUG_RCAR_GEN2_SCIF0
-+	default "debug/renesas-scif.S" if DEBUG_RCAR_GEN2_SCIF1
- 	default "debug/renesas-scif.S" if DEBUG_RCAR_GEN2_SCIF2
- 	default "debug/renesas-scif.S" if DEBUG_RCAR_GEN2_SCIF4
- 	default "debug/renesas-scif.S" if DEBUG_RMOBILE_SCIFA0
-@@ -1442,6 +1450,7 @@ config DEBUG_UART_PHYS
- 	default 0xe6c80000 if DEBUG_RMOBILE_SCIFA4
- 	default 0xe6e58000 if DEBUG_RCAR_GEN2_SCIF2
- 	default 0xe6e60000 if DEBUG_RCAR_GEN2_SCIF0
-+	default 0xe6e68000 if DEBUG_RCAR_GEN2_SCIF1
- 	default 0xe6ee0000 if DEBUG_RCAR_GEN2_SCIF4
- 	default 0xe8008000 if DEBUG_R7S72100_SCIF2
- 	default 0xf0000be0 if ARCH_EBSA110
-@@ -1475,8 +1484,8 @@ config DEBUG_UART_PHYS
- 		DEBUG_NETX_UART || \
- 		DEBUG_QCOM_UARTDM || DEBUG_R7S72100_SCIF2 || \
- 		DEBUG_RCAR_GEN1_SCIF0 || DEBUG_RCAR_GEN1_SCIF2 || \
--		DEBUG_RCAR_GEN2_SCIF0 || DEBUG_RCAR_GEN2_SCIF2 || \
--		DEBUG_RCAR_GEN2_SCIF4 || \
-+		DEBUG_RCAR_GEN2_SCIF0 || DEBUG_RCAR_GEN2_SCIF1 || \
-+		DEBUG_RCAR_GEN2_SCIF2 || DEBUG_RCAR_GEN2_SCIF4 || \
- 		DEBUG_RMOBILE_SCIFA0 || DEBUG_RMOBILE_SCIFA1 || \
- 		DEBUG_RMOBILE_SCIFA4 || DEBUG_S3C24XX_UART || \
- 		DEBUG_BCM63XX_UART || DEBUG_ASM9260_UART || \
++	p = kcalloc(BITS_TO_LONGS(chip->ngpio), sizeof(long), GFP_KERNEL);
++	if (!p)
++		return NULL;
++
++	/* Assume by default all GPIOs are valid */
++	bitmap_fill(p, chip->ngpio);
++
++	return p;
++}
++
+ /**
+  * gpiochip_add_data() - register a gpio_chip
+  * @chip: the chip to register, with chip->base initialized
 -- 
 2.7.4
