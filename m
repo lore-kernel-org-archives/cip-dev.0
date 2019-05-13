@@ -1,46 +1,41 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon, 13 May 2019 16:37:09 +0100
-Subject: [cip-dev] [PATCH 4.4.y 44/52] dt-bindings: rcar-dmac: Document
-	missing error interrupt
+Date: Mon, 13 May 2019 16:37:10 +0100
+Subject: [cip-dev] [PATCH 4.4.y 45/52] dt-bindings: rcar-dmac: Document
+	r8a77470 support
 In-Reply-To: <1557761837-24993-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1557761837-24993-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1557761837-24993-45-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1557761837-24993-46-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Biju Das <biju.das@bp.renesas.com>
 
-commit 5466c34f8425ccd24124ebdae6e3b6552195956d upstream.
+commit a0b007e1ef1cb5b7f8d4be296beeb0a097af57ac upstream.
 
-The documentation for the "interrupt-names" property only mentions the
-per-channel interrupts, while the error interrupt has always been
-mandatory, too.
+Renesas  RZ/G SoC also have the R-Car gen2/3 compatible DMA controllers.
+Document RZ/G1C (also known as R8A77470) SoC bindings.
 
-Fixes: 10f5c8438475909a ("dmaengine: rcar-dmac: Add device tree bindings
-documentation")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Niklas S?derlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Vinod Koul <vinod.koul@intel.com>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-index 5f2ce66..471fcc2 100644
+index 471fcc2..5954b05 100644
 --- a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
 +++ b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-@@ -29,8 +29,9 @@ Required Properties:
- 
- - interrupts: interrupt specifiers for the DMAC, one for each entry in
-   interrupt-names.
--- interrupt-names: one entry per channel, named "ch%u", where %u is the
--  channel number ranging from zero to the number of channels minus one.
-+- interrupt-names: one entry for the error interrupt, named "error", plus one
-+  entry per channel, named "ch%u", where %u is the channel number ranging from
-+  zero to the number of channels minus one.
- 
- - clock-names: "fck" for the functional clock
- - clocks: a list of phandle + clock-specifier pairs, one for each entry
+@@ -18,6 +18,7 @@ Required Properties:
+ 	      Examples with soctypes are:
+ 		- "renesas,dmac-r8a7743" (RZ/G1M)
+ 		- "renesas,dmac-r8a7745" (RZ/G1E)
++		- "renesas,dmac-r8a77470" (RZ/G1C)
+ 		- "renesas,dmac-r8a7790" (R-Car H2)
+ 		- "renesas,dmac-r8a7791" (R-Car M2-W)
+ 		- "renesas,dmac-r8a7792" (R-Car V2H)
 -- 
 2.7.4
