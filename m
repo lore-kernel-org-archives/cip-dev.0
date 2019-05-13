@@ -1,41 +1,58 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon, 13 May 2019 16:37:06 +0100
-Subject: [cip-dev] [PATCH 4.4.y 41/52] dt-bindings: irqchip: renesas-irqc:
-	Document r8a77470 support
+Date: Mon, 13 May 2019 16:37:07 +0100
+Subject: [cip-dev] [PATCH 4.4.y 42/52] ARM: dts: r8a77470: Add IRQC support
 In-Reply-To: <1557761837-24993-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1557761837-24993-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1557761837-24993-42-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1557761837-24993-43-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Biju Das <biju.das@bp.renesas.com>
 
-commit dcbabbbd2618991d349b3b4f75e6b2eb4fad37df upstream.
+commit 141fb10294e3ba5ee2d34d464ddc8a9952bd3372 upstream.
 
-Renesas RZ/G SoC have the R-Car gen2 compatible IRQC interrupt
-controllers. Document RZ/G1C (also known as R8A77470) SoC bindings.
+Describe the IRQC interrupt controller in the R8A77470 device tree.
 
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[fab: reworked clocks and power-domains properties. Removed resets
+property]
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/r8a77470.dtsi | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-index e3f052d..1ed382e 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-+++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-@@ -7,6 +7,7 @@ Required properties:
-     - "renesas,irqc-r8a73a4" (R-Mobile APE6)
-     - "renesas,irqc-r8a7743" (RZ/G1M)
-     - "renesas,irqc-r8a7745" (RZ/G1E)
-+    - "renesas,irqc-r8a77470" (RZ/G1C)
-     - "renesas,irqc-r8a7790" (R-Car H2)
-     - "renesas,irqc-r8a7791" (R-Car M2-W)
-     - "renesas,irqc-r8a7792" (R-Car V2H)
+diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
+index 2d542b3..1325dae 100644
+--- a/arch/arm/boot/dts/r8a77470.dtsi
++++ b/arch/arm/boot/dts/r8a77470.dtsi
+@@ -154,6 +154,25 @@
+ 			reg = <0 0xe6160000 0 0x100>;
+ 		};
+ 
++		irqc: interrupt-controller at e61c0000 {
++			compatible = "renesas,irqc-r8a77470", "renesas,irqc";
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			reg = <0 0xe61c0000 0 0x200>;
++			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp4_clks R8A77470_CLK_IRQC>;
++			power-domains = <&cpg_clocks>;
++		};
++
+ 		icram0:	sram at e63a0000 {
+ 			compatible = "mmio-sram";
+ 			reg = <0 0xe63a0000 0 0x12000>;
 -- 
 2.7.4
