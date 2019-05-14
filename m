@@ -1,26 +1,73 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Tue, 14 May 2019 13:00:05 +0000
-Subject: [cip-dev] RZ/G2E board now available in lab-cip-renesas
-Message-ID: <TYAPR01MB2285114F9B6C4D8EECE29E65B7080@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+From: iwamatsu@nigauri.org (Nobuhiro Iwamatsu)
+Date: Tue, 14 May 2019 22:28:02 +0900
+Subject: [cip-dev] [PATCH 4.4.y 00/52] Add basic support for the iwg23s
+In-Reply-To: <TY1PR01MB1770786FF0F16BDBBE3DA1D2C0080@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <1557761837-24993-1-git-send-email-fabrizio.castro@bp.renesas.com>
+	<20190513201718.GF27497@amd>
+	<20190514002814.zbgrh2iwn2vxf3zi@toshiba.co.jp>
+	<TY1PR01MB1770786FF0F16BDBBE3DA1D2C0080@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+Message-ID: <CABMQnV+RxsoR36WzX41sYvrysxxCngcZmQnhFFivx6rmzE-i7A@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello all,
+Hi,
 
-We have now added an Arm64 based RZ/G2E Si-Linux development platform (r8a774c0-ek874) to CIP's LAVA lab [1].
+2019?5?14?(?) 19:12 Fabrizio Castro <fabrizio.castro@bp.renesas.com>:
+>
+> Thank you guys for your help!
+>
+> I think for the future we would need to agree on a format we are all comfortable with
+> when backporting a patch from mainline is not an option.
+>
+> Do you have any suggestions?
 
-This means that authorised users can now run tests using the CIP v4.19 Kernel on actual hardware.
+I think it is enough to write down a note why each commit is not
+backported from the linux kernel.
+CIP has an "upstream first" policy, so if we can not choice this
+policy, it is better to include a
+reason to commit message, I think.
+For example, 'We can not backport a patch because the clock framework
+is different in 4.4, so we
+need to create a new patch.'
 
-Please see job #1269 [2] for an example, which uses linux-4.19.y-cip [3] built with renesas_defconfig [4].
+How is this?
 
-Let me know if anyone needs a hand with their testing.
+Best regards,
+  Nobuhiro
 
-[1] https://lava.ciplatform.org/scheduler/worker/lab-cip-renesas
-[2] https://lava.ciplatform.org/scheduler/job/1269
-[3] https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/commit/?h=linux-4.19.y-cip&id=e2a020d7b8887f395d139e94324ff7b7286ac681
-[4] https://gitlab.com/cip-project/cip-kernel/cip-kernel-config/blob/master/4.19/arm64/renesas_defconfig
 
-Kind regards, Chris
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190514/dd7b60c7/attachment.html>
+>
+> Thanks,
+> Fab
+>
+> > From: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+> > Sent: 14 May 2019 01:28
+> > Subject: Re: [cip-dev] [PATCH 4.4.y 00/52] Add basic support for the iwg23s
+> >
+> > Hi,
+> >
+> > On Mon, May 13, 2019 at 10:17:18PM +0200, Pavel Machek wrote:
+> > > Hi!
+> > >
+> > > > This series adds basic support for the iwg23s from iWave, based
+> > > > on the RZ/G1C (a.k.a. r8a77470).
+> > >
+> > > Thanks, applied. Minor comments were sent in replies to response to
+> > > patches.
+> >
+> > There are patches in this patch series that is not match to the CIP kernel maintenance rules.
+> > If we include these, I think that the commit message is not enough.
+> >
+> > Best regards,
+> >   Nobuhiro
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
+
+
+
+--
+Nobuhiro Iwamatsu
+   iwamatsu at {nigauri.org / debian.org}
+   GPG ID: 40AD1FA6
