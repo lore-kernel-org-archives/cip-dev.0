@@ -1,89 +1,111 @@
-From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed, 15 May 2019 14:05:52 +0000
-Subject: [cip-dev] [PATCH 4.4.y 05/52] pinctrl: sh-pfc: Add r8a77470 PFC
- support
-In-Reply-To: <20190515102802.GB3783@amd>
+From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
+Date: Thu, 16 May 2019 00:20:27 +0000
+Subject: [cip-dev] [PATCH 4.4.y 00/52] Add basic support for the iwg23s
+In-Reply-To: <TY1PR01MB17709F3361B2F8A0F70BF751C0090@TY1PR01MB1770.jpnprd01.prod.outlook.com>
 References: <1557761837-24993-1-git-send-email-fabrizio.castro@bp.renesas.com>
-	<1557761837-24993-6-git-send-email-fabrizio.castro@bp.renesas.com>
-	<20190513194418.GD27497@amd>
-	<TY1PR01MB1770ABE4F290749ACFB03F1AC0080@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-	<20190515102802.GB3783@amd>
-Message-ID: <TY1PR01MB17700DB614BE232BD6179523C0090@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+	<20190513201718.GF27497@amd>
+	<20190514002814.zbgrh2iwn2vxf3zi@toshiba.co.jp>
+	<TY1PR01MB1770786FF0F16BDBBE3DA1D2C0080@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+	<CABMQnV+RxsoR36WzX41sYvrysxxCngcZmQnhFFivx6rmzE-i7A@mail.gmail.com>
+	<TY1PR01MB17709F3361B2F8A0F70BF751C0090@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+Message-ID: <TYAPR01MB41893BED96A1B33A1A4BAA84920A0@TYAPR01MB4189.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Pavel,
+Hi,
 
-> From: Pavel Machek <pavel@denx.de>
-> Sent: 15 May 2019 11:28
-> Subject: Re: [cip-dev] [PATCH 4.4.y 05/52] pinctrl: sh-pfc: Add r8a77470 PFC support
+> -----Original Message-----
+> From: Fabrizio Castro [mailto:fabrizio.castro at bp.renesas.com]
+> Sent: Wednesday, May 15, 2019 9:57 PM
+> To: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
+> Cc: iwamatsu nobuhiro(?? ?? ????????)
+> <nobuhiro1.iwamatsu@toshiba.co.jp>; Pavel Machek <pavel@denx.de>;
+> cip-dev at lists.cip-project.org; Biju Das <biju.das@bp.renesas.com>
+> Subject: RE: [cip-dev] [PATCH 4.4.y 00/52] Add basic support for the
+> iwg23s
 > 
-> Hi!
+> Hello Nobuhiro-san,
 > 
-> > Thank you for your feedback!
+> Thank you for your feedback!
 > 
-> You are welcome.
-> 
-> > > Subject: Re: [cip-dev] [PATCH 4.4.y 05/52] pinctrl: sh-pfc: Add r8a77470 PFC support
-> 
-> ...
-> > > > +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77470.c
-> > > > @@ -0,0 +1,2368 @@
-> > > > +// SPDX-License-Identifier: GPL-2.0
-> > > > +/*
-> > > > + * R8A77470 processor support - PFC hardware block.
-> > > > + *
-> > >
-> > > SPDX here, good. But this one is GPL-2.0, and the other one was
-> > > GPL-2.0+. Is that difference intentional?
+> > From: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
+> > Sent: 14 May 2019 14:28
+> > Subject: Re: [cip-dev] [PATCH 4.4.y 00/52] Add basic support for the
+> > iwg23s
 > >
-> > What other SPDX header are you referring to?
+> > Hi,
+> >
+> > 2019?5?14?(?) 19:12 Fabrizio Castro
+> <fabrizio.castro@bp.renesas.com>:
+> > >
+> > > Thank you guys for your help!
+> > >
+> > > I think for the future we would need to agree on a format we are all
+> > > comfortable with when backporting a patch from mainline is not an
+> option.
+> > >
+> > > Do you have any suggestions?
+> >
+> > I think it is enough to write down a note why each commit is not
+> > backported from the linux kernel.
+> > CIP has an "upstream first" policy, so if we can not choice this
+> > policy, it is better to include a reason to commit message, I think.
+> > For example, 'We can not backport a patch because the clock framework
+> > is different in 4.4, so we need to create a new patch.'
+> >
+> > How is this?
 > 
-> I'm refering to
+> It sounds good to me.
+
+Thanks.
+Could you add a comment to the targeted patch and resend it?
 > 
-> [PATCH 4.4.y 04/52] ARM: shmobile: r8a77470: Add clock index macros
->         for DT sources
-> 
-> That one has GPL-2.0+:
+> Thanks,
+> Fab
 
-Thank you for looking into this.
-
-I am not a license expert, but this one (and other similar files) probably need fixing.
-
-I have used the same license as:
-https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/tree/include/dt-bindings/clock/r8a7743-clock.h?h=linux-4.4.y-cip
-https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/tree/include/dt-bindings/clock/r8a7745-clock.h?h=linux-4.4.y-cip
-
-but now that you are pointing this out I am noticing that the driver comes with GPL-2.0 as well:
-https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/tree/drivers/clk/shmobile/clk-rcar-gen2.c?h=linux-4.4.y-cip
-
-and so are the device trees that include the definitions for the clocks:
-https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/tree/arch/arm/boot/dts/r8a7743.dtsi?h=linux-4.4.y-cip
-https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/tree/arch/arm/boot/dts/r8a7745.dtsi?h=linux-4.4.y-cip
-https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/tree/arch/arm/boot/dts/r8a77470.dtsi?h=linux-4.4.y-cip
-
-I think using GPL-2.0+ with:
-https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/tree/include/dt-bindings/clock/r8a7743-clock.h?h=linux-4.4.y-cip
-https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/tree/include/dt-bindings/clock/r8a7745-clock.h?h=linux-4.4.y-cip
-https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/tree/include/dt-bindings/clock/r8a77470-clock.h?h=linux-4.4.y-cip
-was the wrong call, what do you think?
-
-Thanks,
-Fab
+Best regards,
+  Nobuhiro
 
 > 
-> +++ b/include/dt-bindings/clock/r8a77470-clock.h
-> +/*
-> + * Copyright (C) 2019 Renesas Electronics Corporation
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + */
-> 
-> Best regrads,
-> 								Pavel
-> --
-> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+> >
+> > Best regards,
+> >   Nobuhiro
+> >
+> >
+> > >
+> > > Thanks,
+> > > Fab
+> > >
+> > > > From: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+> > > > Sent: 14 May 2019 01:28
+> > > > Subject: Re: [cip-dev] [PATCH 4.4.y 00/52] Add basic support for
+> > > > the iwg23s
+> > > >
+> > > > Hi,
+> > > >
+> > > > On Mon, May 13, 2019 at 10:17:18PM +0200, Pavel Machek wrote:
+> > > > > Hi!
+> > > > >
+> > > > > > This series adds basic support for the iwg23s from iWave,
+> > > > > > based on the RZ/G1C (a.k.a. r8a77470).
+> > > > >
+> > > > > Thanks, applied. Minor comments were sent in replies to response
+> > > > > to patches.
+> > > >
+> > > > There are patches in this patch series that is not match to the
+> CIP kernel maintenance rules.
+> > > > If we include these, I think that the commit message is not enough.
+> > > >
+> > > > Best regards,
+> > > >   Nobuhiro
+> > > _______________________________________________
+> > > cip-dev mailing list
+> > > cip-dev at lists.cip-project.org
+> > > https://lists.cip-project.org/mailman/listinfo/cip-dev
+> >
+> >
+> >
+> > --
+> > Nobuhiro Iwamatsu
+> >    iwamatsu at {nigauri.org / debian.org}
+> >    GPG ID: 40AD1FA6
