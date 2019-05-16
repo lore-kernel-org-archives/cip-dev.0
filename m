@@ -1,22 +1,23 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Thu, 16 May 2019 10:40:02 +0100
-Subject: [cip-dev] [PATCH v2 50/52] ARM: dts: iwg23s-sbc: Add EtherAVB
-	support
+Date: Thu, 16 May 2019 10:40:03 +0100
+Subject: [cip-dev] [PATCH v2 51/52] ARM: dts: iwg23s-sbc: specify EtherAVB
+	PHY IRQ
 In-Reply-To: <1557999604-1117-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1557999604-1117-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1557999604-1117-51-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1557999604-1117-52-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Biju Das <biju.das@bp.renesas.com>
 
-commit b6ef074bcadf9f89295bc7ee19424714b6ffc4c8 upstream.
+commit 938fbd1ae2aca6e0547411687f0cc32d18427eae upstream.
 
-Define the iW-RainboW-G23S board dependent part of the
-EtherAVB device node.
+Specify  EtherAVB PHY IRQ  in the board specific device tree, now that we
+have GPIO support.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
@@ -24,45 +25,21 @@ Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 v1->v2:
 * No change
 ---
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-index 48821dd..56182ee 100644
+index 56182ee..22da819 100644
 --- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
 +++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-@@ -12,11 +12,12 @@
- 	compatible = "iwave,g23s", "renesas,r8a77470";
+@@ -35,6 +35,8 @@
  
- 	aliases {
-+		ethernet0 = &avb;
- 		serial1 = &scif1;
+ 	phy3: ethernet-phy at 3 {
+ 		reg = <3>;
++		interrupt-parent = <&gpio5>;
++		interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
+ 		micrel,led-mode = <1>;
  	};
- 
- 	chosen {
--		bootargs = "ignore_loglevel";
-+		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
- 		stdout-path = "serial1:115200n8";
- 	};
- 
-@@ -26,6 +27,18 @@
- 	};
- };
- 
-+&avb {
-+	phy-handle = <&phy3>;
-+	phy-mode = "gmii";
-+	renesas,no-ether-link;
-+	status = "okay";
-+
-+	phy3: ethernet-phy at 3 {
-+		reg = <3>;
-+		micrel,led-mode = <1>;
-+	};
-+};
-+
- &extal_clk {
- 	clock-frequency = <20000000>;
  };
 -- 
 2.7.4
