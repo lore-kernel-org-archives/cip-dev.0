@@ -1,40 +1,35 @@
-From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
-Date: Thu, 16 May 2019 00:44:11 +0000
-Subject: [cip-dev] MDS and other speculation issues
-In-Reply-To: <1557920010.3952.2.camel@codethink.co.uk>
-References: <1557920010.3952.2.camel@codethink.co.uk>
-Message-ID: <TYAPR01MB41891550E349BF4F04888203920A0@TYAPR01MB4189.jpnprd01.prod.outlook.com>
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Thu, 16 May 2019 03:55:01 +0000
+Subject: [cip-dev] CIP IRC weekly meeting today
+Message-ID: <HK0PR01MB29797B554627B8FA7A804F1FE20A0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Ben,
+Hi all,
 
-> -----Original Message-----
-> From: cip-dev-bounces at lists.cip-project.org
-> [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Ben
-> Hutchings
-> Sent: Wednesday, May 15, 2019 8:34 PM
-> To: cip-dev at lists.cip-project.org
-> Subject: [cip-dev] MDS and other speculation issues
-> 
-> As with the earlier speculation vulnerabilities, I don't believe that
-> MDS should be a particularly severe issue for CIP-based systems.
-> 
-> Nevertheless, I have prepared a backport of the mitigations for MDS (and
-> some changes to the mitigations for other speculation issues) for 4.4.
-> This was included in 4.4.180-rc1, which is out for review now.  I did
-> not have the chance to test this thoroughly, so review and testing are
-> needed.
+Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
 
-Thank you for your work and information.
-I'm just looking into a test tool for this issue, but please let me know what
-you already know.
+*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=5&day=16&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
 
-There is a spectre-meltdown-checker, but we can not do a detailed test with this.
-https://github.com/speed47/spectre-meltdown-checker/
+US-West US-East?? UK???? DE???? TW???? JP
+02:00??? 05:00?? 10:00?? 11:00?? 17:00?? 18:00
 
-> 
-> Ben.
-> 
+Channel:
+* irc:chat.freenode.net:6667/cip
+
+Agenda:
+
+* Action item
+1. Send list of binary packages to cip-dev - kazu
+* Kernel maintenance updates
+* Kernel testing
+* CIP Core
+* Software update
+* AOB
+
+The meeting will take 30 min although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
+
 Best regards,
-  Nobuhirio
+
+SZ Lin, Moxa.
