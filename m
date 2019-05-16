@@ -1,65 +1,163 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Thu, 16 May 2019 10:39:40 +0100
-Subject: [cip-dev] [PATCH v2 28/52] dt-bindings: sram: Document renesas,
-	smp-sram
+Date: Thu, 16 May 2019 10:39:41 +0100
+Subject: [cip-dev] [PATCH v2 29/52] ARM: dts: r8a77470: Initial SoC device
+	tree
 In-Reply-To: <1557999604-1117-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1557999604-1117-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1557999604-1117-29-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1557999604-1117-30-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Biju Das <biju.das@bp.renesas.com>
 
-commit d5f2ac6ae9931227d8ccd71c12182e547ec28c21 upstream.
+commit 6929dfc5918049272e07653b1760b0b305f098e6 upstream.
 
-Document reserved SRAM for the SMP jump stub on Renesas R-Car Gen2 and
-RZ/G1 SoCs.
+The initial R8A77470 SoC device tree including CPU0, GIC, timer, SYSC, RST,
+CPG, and the required clock descriptions.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[fab: replaced renesas-cpg-mssr.h with r8a77470-clock.h,
+taken out clocks, clock-names, power-domains, and resets properties,
+and also taken out cpg, prr, and sysc nodes]
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
 ---
 v1->v2:
 * No change
 ---
- .../devicetree/bindings/sram/renesas,smp-sram.txt  | 27 ++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sram/renesas,smp-sram.txt
+ arch/arm/boot/dts/r8a77470.dtsi | 121 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 121 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r8a77470.dtsi
 
-diff --git a/Documentation/devicetree/bindings/sram/renesas,smp-sram.txt b/Documentation/devicetree/bindings/sram/renesas,smp-sram.txt
+diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
 new file mode 100644
-index 0000000..712d05e
+index 0000000..a126bf5
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/sram/renesas,smp-sram.txt
-@@ -0,0 +1,27 @@
-+* Renesas SMP SRAM
++++ b/arch/arm/boot/dts/r8a77470.dtsi
+@@ -0,0 +1,121 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the r8a77470 SoC
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ */
 +
-+Renesas R-Car Gen2 and RZ/G1 SoCs need a small piece of SRAM for the jump stub
-+for secondary CPU bringup and CPU hotplug.
-+This memory is reserved by adding a child node to a "mmio-sram" node, cfr.
-+Documentation/devicetree/bindings/sram/sram.txt.
++#include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/r8a77470-clock.h>
 +
-+Required child node properties:
-+  - compatible: Must be "renesas,smp-sram",
-+  - reg: Address and length of the reserved SRAM.
-+    The full physical (bus) address must be aligned to a 256 KiB boundary.
++/ {
++	compatible = "renesas,r8a77470";
++	#address-cells = <2>;
++	#size-cells = <2>;
 +
-+
-+Example:
-+
-+	icram1:	sram at e63c0000 {
-+		compatible = "mmio-sram";
-+		reg = <0 0xe63c0000 0 0x1000>;
++	cpus {
 +		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0 0xe63c0000 0x1000>;
++		#size-cells = <0>;
 +
-+		smp-sram at 0 {
-+			compatible = "renesas,smp-sram";
-+			reg = <0 0x10>;
++		cpu0: cpu at 0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <0>;
++			clock-frequency = <1000000000>;
++			next-level-cache = <&L2_CA7>;
++		};
++
++
++		L2_CA7: cache-controller-0 {
++			compatible = "cache";
++			cache-unified;
++			cache-level = <2>;
 +		};
 +	};
++
++	/* External root clock */
++	extal_clk: extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	/* External SCIF clock */
++	scif_clk: scif {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	soc {
++		compatible = "simple-bus";
++		interrupt-parent = <&gic>;
++
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		rst: reset-controller at e6160000 {
++			compatible = "renesas,r8a77470-rst";
++			reg = <0 0xe6160000 0 0x100>;
++		};
++
++		icram0:	sram at e63a0000 {
++			compatible = "mmio-sram";
++			reg = <0 0xe63a0000 0 0x12000>;
++		};
++
++		icram1:	sram at e63c0000 {
++			compatible = "mmio-sram";
++			reg = <0 0xe63c0000 0 0x1000>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges = <0 0 0xe63c0000 0x1000>;
++
++			smp-sram at 0 {
++				compatible = "renesas,smp-sram";
++				reg = <0 0x100>;
++			};
++		};
++
++		icram2:	sram at e6300000 {
++			compatible = "mmio-sram";
++			reg = <0 0xe6300000 0 0x20000>;
++		};
++
++		scif1: serial at e6e68000 {
++			compatible = "renesas,scif-r8a77470", "renesas,scif";
++			reg = <0 0xe6e68000 0 0x40>;
++			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++		};
++
++		gic: interrupt-controller at f1001000 {
++			compatible = "arm,gic-400";
++			#interrupt-cells = <3>;
++			#address-cells = <0>;
++			interrupt-controller;
++			reg = <0 0xf1001000 0 0x1000>, <0 0xf1002000 0 0x2000>,
++			      <0 0xf1004000 0 0x2000>, <0 0xf1006000 0 0x2000>;
++			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
++		};
++	};
++
++	timer {
++		compatible = "arm,armv7-timer";
++		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
++	};
++
++	/* External USB clock - can be overridden by the board */
++	usb_extal_clk: usb_extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <48000000>;
++	};
++};
 -- 
 2.7.4
