@@ -1,44 +1,54 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Thu, 16 May 2019 10:40:00 +0100
-Subject: [cip-dev] [PATCH v2 48/52] dt-bindings: net: renesas-ravb: Add
-	support for r8a77470 SoC
+Date: Thu, 16 May 2019 10:40:01 +0100
+Subject: [cip-dev] [PATCH v2 49/52] ARM: dts: r8a77470: Add EtherAVB support
 In-Reply-To: <1557999604-1117-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1557999604-1117-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1557999604-1117-49-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1557999604-1117-50-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Biju Das <biju.das@bp.renesas.com>
 
-commit 9b85756341c53fd13b4b5e25104c22849274cd0d upstream.
+commit f70b0958c044a73188056a231d40a8af55c04dd2 upstream.
 
-Add a new compatible string for the RZ/G1C (R8A77470) SoC.
+Define the generic R8A77470 part of the EtherAVB device node.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[fab: reworked clocks and power-domains properties, removed
+resets property]
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
 ---
 v1->v2:
 * No change
 ---
- Documentation/devicetree/bindings/net/renesas,ravb.txt | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/r8a77470.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
-index 9a22b1e..b289f61 100644
---- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
-+++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
-@@ -7,6 +7,7 @@ Required properties:
- - compatible: Must contain one or more of the following:
-       - "renesas,etheravb-r8a7743" for the R8A7743 SoC.
-       - "renesas,etheravb-r8a7745" for the R8A7745 SoC.
-+      - "renesas,etheravb-r8a77470" for the R8A77470 SoC.
-       - "renesas,etheravb-r8a7790" for the R8A7790 SoC.
-       - "renesas,etheravb-r8a7794" for the R8A7794 SoC.
-       - "renesas,etheravb-rcar-gen2" as a fallback for the above
+diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
+index 6f5fd91..3542678 100644
+--- a/arch/arm/boot/dts/r8a77470.dtsi
++++ b/arch/arm/boot/dts/r8a77470.dtsi
+@@ -260,6 +260,18 @@
+ 			dma-channels = <15>;
+ 		};
+ 
++		avb: ethernet at e6800000 {
++			compatible = "renesas,etheravb-r8a77470",
++				     "renesas,etheravb-rcar-gen2";
++			reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
++			interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp8_clks R8A77470_CLK_ETHERAVB>;
++			power-domains = <&cpg_clocks>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		scif0: serial at e6e60000 {
+ 			compatible = "renesas,scif-r8a77470", "renesas,scif";
+ 			reg = <0 0xe6e60000 0 0x40>;
 -- 
 2.7.4
