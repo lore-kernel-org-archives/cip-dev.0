@@ -1,57 +1,51 @@
-From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Thu, 16 May 2019 10:40:04 +0100
-Subject: [cip-dev] [PATCH v2 52/52] ARM: dts: iwg23s-sbc: Add pinctl support
-	for EtherAVB
-In-Reply-To: <1557999604-1117-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1557999604-1117-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1557999604-1117-53-git-send-email-fabrizio.castro@bp.renesas.com>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Thu, 16 May 2019 17:29:26 +0100
+Subject: [cip-dev] MDS and other speculation issues
+In-Reply-To: <TYAPR01MB41891550E349BF4F04888203920A0@TYAPR01MB4189.jpnprd01.prod.outlook.com>
+References: <1557920010.3952.2.camel@codethink.co.uk>
+	<TYAPR01MB41891550E349BF4F04888203920A0@TYAPR01MB4189.jpnprd01.prod.outlook.com>
+Message-ID: <1558024166.3952.4.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Biju Das <biju.das@bp.renesas.com>
+On Thu, 2019-05-16 at 00:44 +0000, nobuhiro1.iwamatsu at toshiba.co.jp wrote:
+> Hi Ben,
+> 
+> > -----Original Message-----
+> > From: cip-dev-bounces at lists.cip-project.org
+> > > > [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Ben
+> > Hutchings
+> > Sent: Wednesday, May 15, 2019 8:34 PM
+> > To: cip-dev at lists.cip-project.org
+> > Subject: [cip-dev] MDS and other speculation issues
+> > 
+> > As with the earlier speculation vulnerabilities, I don't believe that
+> > MDS should be a particularly severe issue for CIP-based systems.
+> > 
+> > Nevertheless, I have prepared a backport of the mitigations for MDS (and
+> > some changes to the mitigations for other speculation issues) for 4.4.
+> > This was included in 4.4.180-rc1, which is out for review now.??I did
+> > not have the chance to test this thoroughly, so review and testing are
+> > needed.
+> 
+> Thank you for your work and information.
+> I'm just looking into a test tool for this issue, but please let me know what
+> you already know.
 
-commit 976a5ccb808da21f77a3bb1123a9e5df6f2d9564 upstream.
+There is proof-of-concept exploit code, but it's not yet public, so far
+as I know.  Nor do I have a copy.
 
-Adding pinctrl support for EtherAVB interface.
+> There is a spectre-meltdown-checker, but we can not do a detailed test with this.
+> https://github.com/speed47/spectre-meltdown-checker/
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+That uses kernel interfaces to identify the affected CPUs and any
+mitigations that are enabled.  However, it does not test whether the
+mitigation is actually effective, so it won't detect incomplete or
+incorrect backports.
 
----
-v1->v2:
-* No change
----
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Ben.
 
-diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-index 22da819..4ceff9c 100644
---- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-+++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-@@ -28,6 +28,9 @@
- };
- 
- &avb {
-+	pinctrl-0 = <&avb_pins>;
-+	pinctrl-names = "default";
-+
- 	phy-handle = <&phy3>;
- 	phy-mode = "gmii";
- 	renesas,no-ether-link;
-@@ -46,6 +49,11 @@
- };
- 
- &pfc {
-+	avb_pins: avb {
-+		groups = "avb_mdio", "avb_gmii_tx_rx";
-+		function = "avb";
-+	};
-+
- 	scif1_pins: scif1 {
- 		groups = "scif1_data_b";
- 		function = "scif1";
 -- 
-2.7.4
+Ben Hutchings, Software Developer                ?        Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
