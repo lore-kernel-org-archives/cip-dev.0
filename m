@@ -1,94 +1,44 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Thu, 16 May 2019 10:39:59 +0100
-Subject: [cip-dev] [PATCH v2 47/52] ARM: dts: r8a77470: Add SCIF DMA support
+Date: Thu, 16 May 2019 10:40:00 +0100
+Subject: [cip-dev] [PATCH v2 48/52] dt-bindings: net: renesas-ravb: Add
+	support for r8a77470 SoC
 In-Reply-To: <1557999604-1117-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1557999604-1117-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1557999604-1117-48-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1557999604-1117-49-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Biju Das <biju.das@bp.renesas.com>
 
-commit e4696122205634f40e26f9c33359a71823d1e68c upstream.
+commit 9b85756341c53fd13b4b5e25104c22849274cd0d upstream.
 
-Add SCIF DMA support for R8A77470 SoC.
+Add a new compatible string for the RZ/G1C (R8A77470) SoC.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
 ---
 v1->v2:
 * No change
 ---
- arch/arm/boot/dts/r8a77470.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ Documentation/devicetree/bindings/net/renesas,ravb.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-index 0daa451..6f5fd91 100644
---- a/arch/arm/boot/dts/r8a77470.dtsi
-+++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -267,6 +267,9 @@
- 			clocks = <&mstp7_clks R8A77470_CLK_SCIF0>,
- 				 <&zs_clk>, <&scif_clk>;
- 			clock-names = "sci_ick", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x29>, <&dmac0 0x2a>,
-+			       <&dmac1 0x29>, <&dmac1 0x2a>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&cpg_clocks>;
- 			status = "disabled";
- 		};
-@@ -278,6 +281,9 @@
- 			clocks = <&mstp7_clks R8A77470_CLK_SCIF1>,
- 				 <&zs_clk>, <&scif_clk>;
- 			clock-names = "sci_ick", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x2d>, <&dmac0 0x2e>,
-+			       <&dmac1 0x2d>, <&dmac1 0x2e>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&cpg_clocks>;
- 			status = "disabled";
- 		};
-@@ -289,6 +295,9 @@
- 			clocks = <&mstp7_clks R8A77470_CLK_SCIF2>,
- 				 <&zs_clk>, <&scif_clk>;
- 			clock-names = "sci_ick", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x2b>, <&dmac0 0x2c>,
-+			       <&dmac1 0x2b>, <&dmac1 0x2c>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&cpg_clocks>;
- 			status = "disabled";
- 		};
-@@ -300,6 +309,9 @@
- 			clocks = <&mstp7_clks R8A77470_CLK_SCIF3>,
- 				 <&zs_clk>, <&scif_clk>;
- 			clock-names = "sci_ick", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x2f>, <&dmac0 0x30>,
-+			       <&dmac1 0x2f>, <&dmac1 0x30>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&cpg_clocks>;
- 			status = "disabled";
- 		};
-@@ -311,6 +323,9 @@
- 			clocks = <&mstp7_clks R8A77470_CLK_SCIF4>,
- 				 <&zs_clk>, <&scif_clk>;
- 			clock-names = "sci_ick", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0xfb>, <&dmac0 0xfc>,
-+			       <&dmac1 0xfb>, <&dmac1 0xfc>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&cpg_clocks>;
- 			status = "disabled";
- 		};
-@@ -323,6 +338,9 @@
- 			clocks = <&mstp7_clks R8A77470_CLK_SCIF5>,
- 				 <&zs_clk>, <&scif_clk>;
- 			clock-names = "sci_ick", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0xfd>, <&dmac0 0xfe>,
-+			       <&dmac1 0xfd>, <&dmac1 0xfe>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&cpg_clocks>;
- 			status = "disabled";
- 		};
+diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+index 9a22b1e..b289f61 100644
+--- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
++++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+@@ -7,6 +7,7 @@ Required properties:
+ - compatible: Must contain one or more of the following:
+       - "renesas,etheravb-r8a7743" for the R8A7743 SoC.
+       - "renesas,etheravb-r8a7745" for the R8A7745 SoC.
++      - "renesas,etheravb-r8a77470" for the R8A77470 SoC.
+       - "renesas,etheravb-r8a7790" for the R8A7790 SoC.
+       - "renesas,etheravb-r8a7794" for the R8A7794 SoC.
+       - "renesas,etheravb-rcar-gen2" as a fallback for the above
 -- 
 2.7.4
