@@ -1,87 +1,44 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Thu, 16 May 2019 10:39:47 +0100
-Subject: [cip-dev] [PATCH v2 35/52] ARM: dts: iwg23s-sbc: Add support for
-	iWave G23S-SBC based on RZ/G1C
+Date: Thu, 16 May 2019 10:39:48 +0100
+Subject: [cip-dev] [PATCH v2 36/52] dt-bindings: pinctrl: sh-pfc: Document
+	r8a77470 PFC support
 In-Reply-To: <1557999604-1117-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1557999604-1117-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1557999604-1117-36-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1557999604-1117-37-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Biju Das <biju.das@bp.renesas.com>
 
-commit f922fb5af1584c35bcd8bf661738b16dd4f65441 upstream.
+commit 98c1c1f08adfda0d24f3bef9614a7117ef0c5495 upstream.
 
-Add support for iWave iW-RainboW-G23S single board computer based on
- RZ/G1C.
+Document PFC support for the R8A77470 SoC.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
 ---
 v1->v2:
 * No change
 ---
- arch/arm/boot/dts/Makefile                |  1 +
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 35 +++++++++++++++++++++++++++++++
- 2 files changed, 36 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+ Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 9871a7f..28fbcdb 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -548,6 +548,7 @@ dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) += \
- 	r8a7743-iwg20d-q7-dbcm-ca.dtb \
- 	r8a7745-iwg22d-sodimm.dtb \
- 	r8a7745-iwg22d-sodimm-dbhd-ca.dtb \
-+	r8a77470-iwg23s-sbc.dtb \
- 	r8a7778-bockw.dtb \
- 	r8a7779-marzen.dtb \
- 	r8a7790-lager.dtb \
-diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-new file mode 100644
-index 0000000..d21baad
---- /dev/null
-+++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-@@ -0,0 +1,35 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the iWave-RZ/G1C single board computer
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ */
-+
-+/dts-v1/;
-+#include "r8a77470.dtsi"
-+/ {
-+	model = "iWave iW-RainboW-G23S single board computer based on RZ/G1C";
-+	compatible = "iwave,g23s", "renesas,r8a77470";
-+
-+	aliases {
-+		serial1 = &scif1;
-+	};
-+
-+	chosen {
-+		bootargs = "ignore_loglevel";
-+		stdout-path = "serial1:115200n8";
-+	};
-+
-+	memory at 40000000 {
-+		device_type = "memory";
-+		reg = <0 0x40000000 0 0x20000000>;
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <20000000>;
-+};
-+
-+&scif1 {
-+	status = "okay";
-+};
+diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
+index cf28bd4..b2264d9 100644
+--- a/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
+@@ -15,6 +15,7 @@ Required Properties:
+     - "renesas,pfc-r8a7740": for R8A7740 (R-Mobile A1) compatible pin-controller.
+     - "renesas,pfc-r8a7743": for R8A7743 (RZ/G1M) compatible pin-controller.
+     - "renesas,pfc-r8a7745": for R8A7745 (RZ/G1E) compatible pin-controller.
++    - "renesas,pfc-r8a77470": for R8A77470 (RZ/G1C) compatible pin-controller.
+     - "renesas,pfc-r8a7778": for R8A7778 (R-Mobile M1) compatible pin-controller.
+     - "renesas,pfc-r8a7779": for R8A7779 (R-Car H1) compatible pin-controller.
+     - "renesas,pfc-r8a7790": for R8A7790 (R-Car H2) compatible pin-controller.
 -- 
 2.7.4
