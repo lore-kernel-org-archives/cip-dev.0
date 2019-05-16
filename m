@@ -1,43 +1,177 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Thu, 16 May 2019 10:39:15 +0100
-Subject: [cip-dev] [PATCH v2 03/52] clk: shmobile: Compile clk-rcar-gen2.c
-	when using the r8a77470
+Date: Thu, 16 May 2019 10:39:16 +0100
+Subject: [cip-dev] [PATCH v2 04/52] ARM: shmobile: r8a77470: Add clock index
+	macros for DT sources
 In-Reply-To: <1557999604-1117-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1557999604-1117-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1557999604-1117-4-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1557999604-1117-5-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This patch makes sure clk-rcar-gen2,c gets compiled when
-CONFIG_ARCH_R8A77470 is selected, similarly to what done by
-commit:
-7bac4ad3e40f ("CIP: Build essential clock driver for Renesas RZ/G1 platforms")
+Add macros usable by device tree sources to reference the r8a77470
+clocks by index.
 
-Unfortunately there is no commit upstream that we can backport
-to achieve this as the architecture of the clock driver has
-changed quite dramatically over time, and as such we need this
-new patch.
+Unfortunately there is nothing that we can backport from mainline
+for this, as the architecture of the clock driver has changed
+quite dramatically over time.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
 ---
 v1->v2:
+* Changed license for file include/dt-bindings/clock/r8a77470-clock.h
+  from GPL-2.0+ to GPL-2.0 to make it match the license of the clock
+  driver and the license of the DT file
 * Changed commit message to explain why we can't backport this
 ---
- drivers/clk/shmobile/Makefile | 1 +
- 1 file changed, 1 insertion(+)
+ include/dt-bindings/clock/r8a77470-clock.h | 139 +++++++++++++++++++++++++++++
+ 1 file changed, 139 insertions(+)
+ create mode 100644 include/dt-bindings/clock/r8a77470-clock.h
 
-diff --git a/drivers/clk/shmobile/Makefile b/drivers/clk/shmobile/Makefile
-index b339c0b..2412eb9 100644
---- a/drivers/clk/shmobile/Makefile
-+++ b/drivers/clk/shmobile/Makefile
-@@ -4,6 +4,7 @@ obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o
- obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o
- obj-$(CONFIG_ARCH_R8A7743)		+= clk-rcar-gen2.o
- obj-$(CONFIG_ARCH_R8A7745)		+= clk-rcar-gen2.o
-+obj-$(CONFIG_ARCH_R8A77470)		+= clk-rcar-gen2.o
- obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
- obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
- obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o
+diff --git a/include/dt-bindings/clock/r8a77470-clock.h b/include/dt-bindings/clock/r8a77470-clock.h
+new file mode 100644
+index 0000000..a22af15
+--- /dev/null
++++ b/include/dt-bindings/clock/r8a77470-clock.h
+@@ -0,0 +1,139 @@
++/*
++ * Copyright (C) 2019 Renesas Electronics Corporation
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2
++ * as published by the Free Software Foundation.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_R8A77470_H__
++#define __DT_BINDINGS_CLOCK_R8A77470_H__
++
++/* CPG */
++#define R8A77470_CLK_MAIN		0
++#define R8A77470_CLK_PLL0		1
++#define R8A77470_CLK_PLL1		2
++#define R8A77470_CLK_PLL3		3
++#define R8A77470_CLK_LB			4
++#define R8A77470_CLK_QSPI		5
++#define R8A77470_CLK_SDH		6
++#define R8A77470_CLK_SD0		7
++#define R8A77470_CLK_SD1		8
++#define R8A77470_CLK_RCAN		9
++
++/* MSTP0 */
++#define R8A77470_CLK_MSIOF0		0
++
++/* MSTP1 */
++#define R8A77470_CLK_VCP0		1
++#define R8A77470_CLK_VPC0		3
++#define R8A77470_CLK_STB		4
++#define R8A77470_CLK_TMU1		11
++#define R8A77470_CLK_3DG		12
++#define R8A77470_CLK_2DDMAC		15
++#define R8A77470_CLK_FDP1_0		19
++#define R8A77470_CLK_TMU3		21
++#define R8A77470_CLK_TMU2		22
++#define R8A77470_CLK_CMT0		24
++#define R8A77470_CLK_VSP1DU0		28
++#define R8A77470_CLK_VSP1_SY		31
++
++/* MSTP2 */
++#define R8A77470_CLK_MSIOF2		5
++#define R8A77470_CLK_MSIOF1		8
++#define R8A77470_CLK_SYS_DMAC1		18
++#define R8A77470_CLK_SYS_DMAC0		19
++
++/* MSTP3 */
++#define R8A77470_CLK_SDHI2		12
++#define R8A77470_CLK_SDHI1		13
++#define R8A77470_CLK_SDHI0		14
++#define R8A77470_CLK_USBHS_DMAC0_CH1	26
++#define R8A77470_CLK_USBHS_DMAC1_CH1	27
++#define R8A77470_CLK_CMT1		29
++#define R8A77470_CLK_USBHS_DMAC0_CH0	30
++#define R8A77470_CLK_USBHS_DMAC1_CH0	31
++
++/* MSTP4 */
++#define R8A77470_CLK_RWDT		2
++#define R8A77470_CLK_USB_DDM0		6
++#define R8A77470_CLK_IRQC		7
++#define R8A77470_CLK_INTC_SYS		8
++#define R8A77470_CLK_USB_DDM1		9
++
++/* MSTP5 */
++#define R8A77470_CLK_AUDIO_DMAC0	2
++#define R8A77470_CLK_PWM		23
++#define R8A77470_CLK_BOOT_ROM		30
++
++/* MSTP7 */
++#define R8A77470_CLK_USB_EHCI_0		3
++#define R8A77470_CLK_USBHS0		4
++#define R8A77470_CLK_USB_EHCI_1		5
++#define R8A77470_CLK_USBHS1		6
++#define R8A77470_CLK_HSCIF2		13
++#define R8A77470_CLK_SCIF5		14
++#define R8A77470_CLK_SCIF4		15
++#define R8A77470_CLK_HSCIF1		16
++#define R8A77470_CLK_HSCIF0		17
++#define R8A77470_CLK_SCIF3		18
++#define R8A77470_CLK_SCIF2		19
++#define R8A77470_CLK_SCIF1		20
++#define R8A77470_CLK_SCIF0		21
++#define R8A77470_CLK_DU1		23
++#define R8A77470_CLK_DU0		24
++#define R8A77470_CLK_LVDS		26
++#define R8A77470_CLK_DVE		27
++
++/* MSTP8 */
++#define R8A77470_CLK_IPMMU_SGX		0
++#define R8A77470_CLK_DVD		1
++#define R8A77470_CLK_VIN1		10
++#define R8A77470_CLK_VIN0		11
++#define R8A77470_CLK_ETHERAVB		12
++#define R8A77470_CLK_ETHER		13
++
++/* MSTP9 */
++#define R8A77470_CLK_IR_RECEIVER	3
++#define R8A77470_CLK_GPIO5		7
++#define R8A77470_CLK_GPIO4		8
++#define R8A77470_CLK_GPIO3		9
++#define R8A77470_CLK_GPIO2		10
++#define R8A77470_CLK_GPIO1		11
++#define R8A77470_CLK_GPIO0		12
++#define R8A77470_CLK_CAN1		15
++#define R8A77470_CLK_CAN0		16
++#define R8A77470_CLK_QUAD_SPI1		17
++#define R8A77470_CLK_QUAD_SPI0		18
++#define R8A77470_CLK_ADG		22
++#define R8A77470_CLK_I2C4		27
++#define R8A77470_CLK_I2C3		28
++#define R8A77470_CLK_I2C2		29
++#define R8A77470_CLK_I2C1		30
++#define R8A77470_CLK_I2C0		31
++
++/* MSTP10 */
++#define R8A77470_CLK_SSI_ALL		5
++#define R8A77470_CLK_SSI9		6
++#define R8A77470_CLK_SSI8		7
++#define R8A77470_CLK_SSI7		8
++#define R8A77470_CLK_SSI6		9
++#define R8A77470_CLK_SSI5		10
++#define R8A77470_CLK_SSI4		11
++#define R8A77470_CLK_SSI3		12
++#define R8A77470_CLK_SSI2		13
++#define R8A77470_CLK_SSI1		14
++#define R8A77470_CLK_SSI0		15
++#define R8A77470_CLK_SCU_ALL		17
++#define R8A77470_CLK_SCU_DVC1		18
++#define R8A77470_CLK_SCU_DVC0		19
++#define R8A77470_CLK_SCU_CTU1_MIX1	20
++#define R8A77470_CLK_SCU_CTU0_MIX0	21
++#define R8A77470_CLK_SCU_SRC6		25
++#define R8A77470_CLK_SCU_SRC5		26
++#define R8A77470_CLK_SCU_SRC4		27
++#define R8A77470_CLK_SCU_SRC3		28
++#define R8A77470_CLK_SCU_SRC2		29
++#define R8A77470_CLK_SCU_SRC1		30
++
++#endif /* __DT_BINDINGS_CLOCK_R8A77470_H__ */
 -- 
 2.7.4
