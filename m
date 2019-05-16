@@ -1,124 +1,126 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Thu, 16 May 2019 09:39:02 +0000
-Subject: [cip-dev] [PATCH 4.4.y 00/52] Add basic support for the iwg23s
-In-Reply-To: <TYAPR01MB41893BED96A1B33A1A4BAA84920A0@TYAPR01MB4189.jpnprd01.prod.outlook.com>
-References: <1557761837-24993-1-git-send-email-fabrizio.castro@bp.renesas.com>
-	<20190513201718.GF27497@amd>
-	<20190514002814.zbgrh2iwn2vxf3zi@toshiba.co.jp>
-	<TY1PR01MB1770786FF0F16BDBBE3DA1D2C0080@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-	<CABMQnV+RxsoR36WzX41sYvrysxxCngcZmQnhFFivx6rmzE-i7A@mail.gmail.com>
-	<TY1PR01MB17709F3361B2F8A0F70BF751C0090@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-	<TYAPR01MB41893BED96A1B33A1A4BAA84920A0@TYAPR01MB4189.jpnprd01.prod.outlook.com>
-Message-ID: <TY1PR01MB1770EB48E2AC4AA207CC8B98C00A0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+Date: Thu, 16 May 2019 10:39:12 +0100
+Subject: [cip-dev] [PATCH v2 00/52] Add basic support for the iwg23s
+Message-ID: <1557999604-1117-1-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Iwamatsu-san,
+Dear All,
 
-> From: nobuhiro1.iwamatsu at toshiba.co.jp <nobuhiro1.iwamatsu@toshiba.co.jp>
-> Sent: 16 May 2019 01:20
-> Subject: RE: [cip-dev] [PATCH 4.4.y 00/52] Add basic support for the iwg23s
-> 
-> Hi,
-> 
-> > -----Original Message-----
-> > From: Fabrizio Castro [mailto:fabrizio.castro at bp.renesas.com]
-> > Sent: Wednesday, May 15, 2019 9:57 PM
-> > To: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
-> > Cc: iwamatsu nobuhiro(?? ?? ????????)
-> > <nobuhiro1.iwamatsu@toshiba.co.jp>; Pavel Machek <pavel@denx.de>;
-> > cip-dev at lists.cip-project.org; Biju Das <biju.das@bp.renesas.com>
-> > Subject: RE: [cip-dev] [PATCH 4.4.y 00/52] Add basic support for the
-> > iwg23s
-> >
-> > Hello Nobuhiro-san,
-> >
-> > Thank you for your feedback!
-> >
-> > > From: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
-> > > Sent: 14 May 2019 14:28
-> > > Subject: Re: [cip-dev] [PATCH 4.4.y 00/52] Add basic support for the
-> > > iwg23s
-> > >
-> > > Hi,
-> > >
-> > > 2019?5?14?(?) 19:12 Fabrizio Castro
-> > <fabrizio.castro@bp.renesas.com>:
-> > > >
-> > > > Thank you guys for your help!
-> > > >
-> > > > I think for the future we would need to agree on a format we are all
-> > > > comfortable with when backporting a patch from mainline is not an
-> > option.
-> > > >
-> > > > Do you have any suggestions?
-> > >
-> > > I think it is enough to write down a note why each commit is not
-> > > backported from the linux kernel.
-> > > CIP has an "upstream first" policy, so if we can not choice this
-> > > policy, it is better to include a reason to commit message, I think.
-> > > For example, 'We can not backport a patch because the clock framework
-> > > is different in 4.4, so we need to create a new patch.'
-> > >
-> > > How is this?
-> >
-> > It sounds good to me.
-> 
-> Thanks.
-> Could you add a comment to the targeted patch and resend it?
+This series adds basic support for the iwg23s from iWave, based
+on the RZ/G1C (a.k.a. r8a77470).
 
-Will resend the whole thing for simplicity.
+v1->v2:
+* Changed commit messages to explain why we can't backport some of
+  the patches according to Iwamatsu-san comments
+* Changed the license of one of the files after a comment from Pavel
+* Reworked the return of one of the functions according to Pavel's
+  comment
 
 Thanks,
 Fab
 
-> >
-> > Thanks,
-> > Fab
-> 
-> Best regards,
->   Nobuhiro
-> 
-> >
-> > >
-> > > Best regards,
-> > >   Nobuhiro
-> > >
-> > >
-> > > >
-> > > > Thanks,
-> > > > Fab
-> > > >
-> > > > > From: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-> > > > > Sent: 14 May 2019 01:28
-> > > > > Subject: Re: [cip-dev] [PATCH 4.4.y 00/52] Add basic support for
-> > > > > the iwg23s
-> > > > >
-> > > > > Hi,
-> > > > >
-> > > > > On Mon, May 13, 2019 at 10:17:18PM +0200, Pavel Machek wrote:
-> > > > > > Hi!
-> > > > > >
-> > > > > > > This series adds basic support for the iwg23s from iWave,
-> > > > > > > based on the RZ/G1C (a.k.a. r8a77470).
-> > > > > >
-> > > > > > Thanks, applied. Minor comments were sent in replies to response
-> > > > > > to patches.
-> > > > >
-> > > > > There are patches in this patch series that is not match to the
-> > CIP kernel maintenance rules.
-> > > > > If we include these, I think that the commit message is not enough.
-> > > > >
-> > > > > Best regards,
-> > > > >   Nobuhiro
-> > > > _______________________________________________
-> > > > cip-dev mailing list
-> > > > cip-dev at lists.cip-project.org
-> > > > https://lists.cip-project.org/mailman/listinfo/cip-dev
-> > >
-> > >
-> > >
-> > > --
-> > > Nobuhiro Iwamatsu
-> > >    iwamatsu at {nigauri.org / debian.org}
-> > >    GPG ID: 40AD1FA6
+Biju Das (30):
+  ARM: shmobile: r8a77470: basic SoC support
+  pinctrl: sh-pfc: Add r8a77470 PFC support
+  pinctrl: sh-pfc: r8a77470: Add EtherAVB pin groups
+  soc: renesas: rcar-rst: Add support for RZ/G1C
+  ARM: debug-ll: Add support for r8a77470
+  gpiolib: Avoid calling chip->request() for unused gpios
+  gpio: rcar: Add GPIO hole support
+  dt-bindings: gpio: rcar: Add gpio-reserved-ranges support
+  ARM: shmobile: defconfig: Enable r8a77470 SoC
+  ARM: multi_v7_defconfig: Enable r8a77470 SoC
+  serial: sh-sci: Document r8a77470 bindings
+  ARM: dts: r8a77470: Initial SoC device tree
+  dt-bindings: arm: Document iW-RainboW-G23S single board computer
+  ARM: dts: iwg23s-sbc: Add support for iWave G23S-SBC based on RZ/G1C
+  dt-bindings: pinctrl: sh-pfc: Document r8a77470 PFC support
+  ARM: dts: r8a77470: Add PFC support
+  dt-bindings: gpio: rcar: Add r8a77470 (RZ/G1C) support
+  ARM: dts: r8a77470: Add GPIO support
+  ARM: dts: r8a77470: Add SCIF support
+  dt-bindings: irqchip: renesas-irqc: Document r8a77470 support
+  ARM: dts: r8a77470: Add IRQC support
+  ARM: dts: iwg23s-sbc: Add pinctl support for scif1
+  dt-bindings: rcar-dmac: Document r8a77470 support
+  ARM: dts: r8a77470: Add SYS-DMAC support
+  ARM: dts: r8a77470: Add SCIF DMA support
+  dt-bindings: net: renesas-ravb: Add support for r8a77470 SoC
+  ARM: dts: r8a77470: Add EtherAVB support
+  ARM: dts: iwg23s-sbc: Add EtherAVB support
+  ARM: dts: iwg23s-sbc: specify EtherAVB PHY IRQ
+  ARM: dts: iwg23s-sbc: Add pinctl support for EtherAVB
+
+Fabrizio Castro (16):
+  clk: shmobile: rcar-gen2: Add quirks for the RZ/G1C
+  clk: shmobile: Compile clk-rcar-gen2.c when using the r8a77470
+  ARM: shmobile: r8a77470: Add clock index macros for DT sources
+  pinctrl: sh-pfc: r8a77470: Add I2C4 pin groups
+  pinctrl: sh-pfc: r8a77470: Add DU0 pin groups
+  pinctrl: sh-pfc: r8a77470: Add QSPI0 pin groups
+  pinctrl: sh-pfc: r8a77470: Add SDHI2 pin groups
+  pinctrl: sh-pfc: r8a77470: Add USB pin groups
+  pinctrl: sh-pfc: r8a77470: Add remaining I2C pin groups
+  pinctrl: sh-pfc: r8a77470: Add DU1 pin groups
+  pinctrl: sh-pfc: r8a77470: Add VIN pin groups
+  pinctrl: sh-pfc: r8a77470: Add QSPI1 pin groups
+  clk: shmobile: Document r8a77470 CPG clock support
+  clk: shmobile: Document r8a77470 CPG DIV6 clock support
+  clk: shmobile: Document r8a77470 MSTP clock support
+  ARM: dts: r8a77470: Add clocks
+
+Geert Uytterhoeven (3):
+  gpio: rcar: Implement gpiochip.set_multiple()
+  dt-bindings: sram: Document renesas,smp-sram
+  dt-bindings: rcar-dmac: Document missing error interrupt
+
+Stephen Boyd (3):
+  gpiolib: Extract mask allocation into subroutine
+  gpiolib: Support 'gpio-reserved-ranges' property
+  dt-bindings: gpio: Add a gpio-reserved-ranges property
+
+ Documentation/devicetree/bindings/arm/shmobile.txt |    4 +
+ .../bindings/clock/renesas,cpg-div6-clocks.txt     |    1 +
+ .../bindings/clock/renesas,cpg-mstp-clocks.txt     |    1 +
+ .../clock/renesas,rcar-gen2-cpg-clocks.txt         |    1 +
+ .../devicetree/bindings/dma/renesas,rcar-dmac.txt  |    6 +-
+ Documentation/devicetree/bindings/gpio/gpio.txt    |    7 +-
+ .../devicetree/bindings/gpio/renesas,gpio-rcar.txt |   44 +-
+ .../bindings/interrupt-controller/renesas,irqc.txt |    1 +
+ .../devicetree/bindings/net/renesas,ravb.txt       |    1 +
+ .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |    1 +
+ .../devicetree/bindings/reset/renesas,rst.txt      |    1 +
+ .../bindings/serial/renesas,sci-serial.txt         |    2 +
+ .../devicetree/bindings/sram/renesas,smp-sram.txt  |   27 +
+ arch/arm/Kconfig.debug                             |   13 +-
+ arch/arm/boot/dts/Makefile                         |    1 +
+ arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts          |   68 +
+ arch/arm/boot/dts/r8a77470.dtsi                    |  764 +++++
+ arch/arm/configs/multi_v7_defconfig                |    1 +
+ arch/arm/configs/shmobile_defconfig                |    1 +
+ arch/arm/mach-shmobile/Kconfig                     |    4 +
+ arch/arm/mach-shmobile/pm-rcar-gen2.c              |    2 +
+ arch/arm/mach-shmobile/setup-rcar-gen2.c           |    2 +
+ drivers/clk/shmobile/Makefile                      |    1 +
+ drivers/clk/shmobile/clk-rcar-gen2.c               |   39 +-
+ drivers/gpio/gpio-rcar.c                           |   23 +
+ drivers/gpio/gpiolib-of.c                          |   24 +
+ drivers/gpio/gpiolib.c                             |   63 +-
+ drivers/pinctrl/sh-pfc/Kconfig                     |    5 +
+ drivers/pinctrl/sh-pfc/Makefile                    |    1 +
+ drivers/pinctrl/sh-pfc/core.c                      |    6 +
+ drivers/pinctrl/sh-pfc/core.h                      |    1 +
+ drivers/pinctrl/sh-pfc/pfc-r8a77470.c              | 3292 ++++++++++++++++++++
+ drivers/soc/renesas/rcar-rst.c                     |    1 +
+ include/dt-bindings/clock/r8a77470-clock.h         |  139 +
+ include/linux/gpio/driver.h                        |   18 +
+ 35 files changed, 4539 insertions(+), 27 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/sram/renesas,smp-sram.txt
+ create mode 100644 arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+ create mode 100644 arch/arm/boot/dts/r8a77470.dtsi
+ create mode 100644 drivers/pinctrl/sh-pfc/pfc-r8a77470.c
+ create mode 100644 include/dt-bindings/clock/r8a77470-clock.h
+
+-- 
+2.7.4
