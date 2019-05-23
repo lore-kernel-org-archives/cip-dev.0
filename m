@@ -1,67 +1,39 @@
-From: daniel.sangorrin@toshiba.co.jp (daniel.sangorrin at toshiba.co.jp)
-Date: Wed, 22 May 2019 08:57:18 +0000
-Subject: [cip-dev] Kernel configurations for 4.19?
-In-Reply-To: <OSAPR01MB376329C22EB1F3834CE46204D0270@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-References: <1555501985.3557.26.camel@codethink.co.uk>
-	<OSAPR01MB376329C22EB1F3834CE46204D0270@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-Message-ID: <TY2PR01MB332365C777838DEF83D82767D0000@TY2PR01MB3323.jpnprd01.prod.outlook.com>
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Thu, 23 May 2019 01:58:38 +0000
+Subject: [cip-dev] CIP IRC weekly meeting today
+Message-ID: <HK0PR01MB297989A417BB43A2695EF017E2010@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Ben,
+Hi all,
 
-Sorry for the delay, here is the configuration file for 4.19.
-If you prefer I can send it to you as a pull request or inline.
+Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
 
-Thanks,
-Daniel
+*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=5&day=23&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
 
-> -----Original Message-----
-> From: cip-dev-bounces at lists.cip-project.org <cip-dev-bounces@lists.cip-project.org> On Behalf Of
-> daniel.sangorrin at toshiba.co.jp
-> Sent: Friday, April 19, 2019 3:04 PM
-> To: ben.hutchings at codethink.co.uk; cip-dev at lists.cip-project.org
-> Subject: Re: [cip-dev] Kernel configurations for 4.19?
-> 
-> Hi Ben,
-> 
-> I need to minimize (deselect options that are not strictly necessary) a configuration file but probably I will be able
-> to send it to you in a few weeks.
-> 
-> Best regards,
-> Daniel
-> 
-> > -----Original Message-----
-> > From: cip-dev-bounces at lists.cip-project.org <cip-dev-bounces@lists.cip-project.org> On Behalf Of Ben
-> > Hutchings
-> > Sent: Wednesday, April 17, 2019 8:53 PM
-> > To: cip-dev at lists.cip-project.org
-> > Subject: [cip-dev] Kernel configurations for 4.19?
-> >
-> > Please could members send their kernel configuration files for Linux
-> > 4.19-cip?  Either send them to the list as attachments, or create merge
-> > requests for
-> > <https://gitlab.com/cip-project/cip-kernel/cip-kernel-config>.
-> >
-> > There are already configuration files for 4.19 in cip-kernel-config
-> > that were produced by automatically updating the 4.4 configurations.
-> > Please also let us know which of these can be deleted.
-> >
-> > Ben.
-> >
-> > --
-> > Ben Hutchings, Software Developer                ?        Codethink Ltd
-> > https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-> >                                      Manchester, M1 2HF, United Kingdom
-> > _______________________________________________
-> > cip-dev mailing list
-> > cip-dev at lists.cip-project.org
-> > https://lists.cip-project.org/mailman/listinfo/cip-dev
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
--------------- next part --------------
-An embedded and charset-unspecified text was scrubbed...
-Name: config_toshiba_atom_baytrail_cip_4.19.txt
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190522/204301f5/attachment-0001.txt>
+US-West US-East?? UK???? DE???? TW???? JP
+02:00??? 05:00?? 10:00?? 11:00?? 17:00?? 18:00
+
+Channel:
+* irc:chat.freenode.net:6667/cip
+
+Agenda:
+
+* Action item
+1. Upload check script to lts-commit-list repository - Pavel?
+2. Release 4.4 and 4.19 kernel - Iwamatsu
+3. Prepare the CIP kernel release document - Iwamatsu
+4. Arrange a meeting between CIP core and CIP security WG - szlin
+
+* Kernel maintenance updates
+* Kernel testing
+* CIP Core
+* Software update
+* AOB
+
+The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
+
+Best regards,
+
+SZ Lin, Moxa.
