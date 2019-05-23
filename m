@@ -1,39 +1,59 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 23 May 2019 01:58:38 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-Message-ID: <HK0PR01MB297989A417BB43A2695EF017E2010@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+From: daniel.sangorrin@toshiba.co.jp (daniel.sangorrin at toshiba.co.jp)
+Date: Thu, 23 May 2019 03:00:48 +0000
+Subject: [cip-dev] [ANNOUNCE] Introducing gitlab-cloud-ci. Perform
+ ISAR-based CI builds in the cloud.
+In-Reply-To: <20190521130917.hqjjbaoflstm7ycg@demogorgon>
+References: <20190521130917.hqjjbaoflstm7ycg@demogorgon>
+Message-ID: <TY2PR01MB3323A4409E75E7A36F45BA0AD0010@TY2PR01MB3323.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+Hi Michael,
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
+> From: Adler, Michael
+> I have created a little Python tool called gitlab-cloud-ci [1] which allows you to set up an AWS-based
+> infrastructure to perform ISAR CI-builds.
+> It does:
+> 
+> * Create a Kubernetes-cluster on AWS from scratch
+> * Scale horizontally: run an (almost) arbitrary number of CI jobs in parallel
+> * Scale dynamically: scale up and down based on the current workload situation
+> * Support running privileged containers for CI pipelines (unlike the default Gitlab runners) which is required for
+> Isar builds
 
-*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=5&day=23&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
+Great work!!
+# Looking at "share/k8s/setup-host-binfmt/daemonset.yaml" I see that you must have run into some difficult problems.
 
-US-West US-East?? UK???? DE???? TW???? JP
-02:00??? 05:00?? 10:00?? 11:00?? 17:00?? 18:00
+> The project gitlab-cloud-ci is still in a very early stage (the public release was just yesterday).
+> 
+> We (Siemens) would like to propose this tool for creating an AWS-based build infrastructure in CIP. As a first step,
+> we
+> could create a test cluster on AWS and demonstrate building cip-core (deby and isar-based), then discuss further
+> steps.
 
-Channel:
-* irc:chat.freenode.net:6667/cip
+That sounds good to me.
+You can ask Jan for a user account on CIP AWS account.
+If you are not able to allocate resources (e.g.: EC2, S3, Route53) for the test cluster please let us know.
+Once you finish the initial test, we should be able to estimate the cost of using the cluster and probably ask the CIP board members to approve.
 
-Agenda:
+Thanks,
+Daniel
 
-* Action item
-1. Upload check script to lts-commit-list repository - Pavel?
-2. Release 4.4 and 4.19 kernel - Iwamatsu
-3. Prepare the CIP kernel release document - Iwamatsu
-4. Arrange a meeting between CIP core and CIP security WG - szlin
-
-* Kernel maintenance updates
-* Kernel testing
-* CIP Core
-* Software update
-* AOB
-
-The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
-
-Best regards,
-
-SZ Lin, Moxa.
+> 
+> Kind regards,
+> Michael
+> 
+> [1] https://gitlab.com/cip-playground/gitlab-cloud-ci
+> 
+> --
+> Michael Adler
+> Siemens AG, Corporate Technology, CT RDA IOT SES-DE, Otto-Hahn-Ring 6, 81739 Munich, Germany
+> 
+> Siemens Aktiengesellschaft: Chairman of the Supervisory Board: Gerhard Cromme; Managing Board: Joe Kaeser,
+> Chairman, President and Chief Executive Officer; Roland Busch, Lisa Davis, Klaus Helmrich, Janina Kugel,
+> Siegfried Russwurm, Ralf P. Thomas; Registered offices: Berlin and Munich, Germany; Commercial registries:
+> Berlin Charlottenburg, HRB 12300, Munich, HRB 6684; WEEE-Reg.-No. DE 23691322
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
