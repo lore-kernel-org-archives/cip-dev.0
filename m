@@ -1,38 +1,30 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 23 May 2019 10:48:47 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip] dt-bindings: Add vendor prefix for
-	Silicon Linux.
-Message-ID: <1558604927-22333-1-git-send-email-biju.das@bp.renesas.com>
+From: michael.adler@siemens.com (Adler, Michael)
+Date: Fri, 24 May 2019 08:37:13 +0000
+Subject: [cip-dev] [ANNOUNCE] Introducing gitlab-cloud-ci. Perform
+ ISAR-based CI builds in the cloud.
+In-Reply-To: <TY2PR01MB3323A4409E75E7A36F45BA0AD0010@TY2PR01MB3323.jpnprd01.prod.outlook.com>
+Message-ID: <20190524083711.wt6fg6atlixfbuux@demogorgon>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit 295768f6207e412e145487c87993481774c55411 upstream.
+> Great work!!
 
-Add Silicon Linux to the list of devicetree vendor prefixes.
+Thanks :)
 
-Website: http://www.si-linux.co.jp
+> # Looking at "share/k8s/setup-host-binfmt/daemonset.yaml" I see that you must have run into some difficult problems.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-Reviewed-by: Andreas F?rber <afaerber@suse.de>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
- 1 file changed, 1 insertion(+)
+Good catch! That was indeed one of the trickier parts.
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index 2c3fc51..b77f359 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -338,6 +338,7 @@ sgx	SGX Sensortech
- sharp	Sharp Corporation
- shimafuji	Shimafuji Electric, Inc.
- si-en	Si-En Technology Ltd.
-+si-linux	Silicon Linux Corporation
- sifive	SiFive, Inc.
- sigma	Sigma Designs, Inc.
- sii	Seiko Instruments, Inc.
+> You can ask Jan for a user account on CIP AWS account.
+> Once you finish the initial test, we should be able to estimate the cost of using the cluster and probably ask the CIP board members to approve.
+
+Alright, we'll probably give it a try on Monday and see how it goes.
+
+Have a nice weekend,
+Michael
+
 -- 
-2.7.4
+Michael Adler
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE, Otto-Hahn-Ring 6, 81739 Munich, Germany
+
+Siemens Aktiengesellschaft: Chairman of the Supervisory Board: Gerhard Cromme; Managing Board: Joe Kaeser, Chairman, President and Chief Executive Officer; Roland Busch, Lisa Davis, Klaus Helmrich, Janina Kugel, Siegfried Russwurm, Ralf P. Thomas; Registered offices: Berlin and Munich, Germany; Commercial registries: Berlin Charlottenburg, HRB 12300, Munich, HRB 6684; WEEE-Reg.-No. DE 23691322
