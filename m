@@ -1,30 +1,25 @@
-From: michael.adler@siemens.com (Adler, Michael)
-Date: Fri, 24 May 2019 08:37:13 +0000
-Subject: [cip-dev] [ANNOUNCE] Introducing gitlab-cloud-ci. Perform
- ISAR-based CI builds in the cloud.
-In-Reply-To: <TY2PR01MB3323A4409E75E7A36F45BA0AD0010@TY2PR01MB3323.jpnprd01.prod.outlook.com>
-Message-ID: <20190524083711.wt6fg6atlixfbuux@demogorgon>
+From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
+Date: Fri, 24 May 2019 11:43:32 +0100
+Subject: [cip-dev] [PATCH 4.4.y 0/2] Add SMP support to the RZ/G1C
+Message-ID: <1558694614-14062-1-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-> Great work!!
+Dear All,
 
-Thanks :)
+this series adds SMP support to the RZ/G1C SoC (a.k.a r8a77470)
+specific dtsi.
 
-> # Looking at "share/k8s/setup-host-binfmt/daemonset.yaml" I see that you must have run into some difficult problems.
+Thanks,
+Fab
 
-Good catch! That was indeed one of the trickier parts.
+Fabrizio Castro (2):
+  dt-bindings: apmu: Document r8a77470 support
+  ARM: dts: r8a77470: Add SMP support
 
-> You can ask Jan for a user account on CIP AWS account.
-> Once you finish the initial test, we should be able to estimate the cost of using the cluster and probably ask the CIP board members to approve.
-
-Alright, we'll probably give it a try on Monday and see how it goes.
-
-Have a nice weekend,
-Michael
+ Documentation/devicetree/bindings/power/renesas,apmu.txt |  1 +
+ arch/arm/boot/dts/r8a77470.dtsi                          | 15 +++++++++++++++
+ 2 files changed, 16 insertions(+)
 
 -- 
-Michael Adler
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE, Otto-Hahn-Ring 6, 81739 Munich, Germany
-
-Siemens Aktiengesellschaft: Chairman of the Supervisory Board: Gerhard Cromme; Managing Board: Joe Kaeser, Chairman, President and Chief Executive Officer; Roland Busch, Lisa Davis, Klaus Helmrich, Janina Kugel, Siegfried Russwurm, Ralf P. Thomas; Registered offices: Berlin and Munich, Germany; Commercial registries: Berlin Charlottenburg, HRB 12300, Munich, HRB 6684; WEEE-Reg.-No. DE 23691322
+2.7.4
