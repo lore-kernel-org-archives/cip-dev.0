@@ -1,34 +1,33 @@
 From: nobuhiro1.iwamatsu@toshiba.co.jp (Nobuhiro Iwamatsu)
-Date: Mon, 27 May 2019 09:19:24 +0900
-Subject: [cip-dev] [PATCH 4.19.y-cip] dt-bindings: Add vendor prefix for
- Silicon Linux.
-In-Reply-To: <1558604927-22333-1-git-send-email-biju.das@bp.renesas.com>
-References: <1558604927-22333-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <20190527001924.ps3bw4s2khkkixow@toshiba.co.jp>
+Date: Mon, 27 May 2019 09:27:28 +0900
+Subject: [cip-dev] [PATCH 4.4.y 0/2] Add SMP support to the RZ/G1C
+In-Reply-To: <1558694614-14062-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1558694614-14062-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <20190527002728.ydsehe4pt6be6hte@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Biju,
+Hi Fabrizio,
 
-On Thu, May 23, 2019 at 10:48:47AM +0100, Biju Das wrote:
-> commit 295768f6207e412e145487c87993481774c55411 upstream.
+On Fri, May 24, 2019 at 11:43:32AM +0100, Fabrizio Castro wrote:
+> Dear All,
 > 
-> Add Silicon Linux to the list of devicetree vendor prefixes.
+> this series adds SMP support to the RZ/G1C SoC (a.k.a r8a77470)
+> specific dtsi.
 > 
-> Website: http://www.si-linux.co.jp
+> Thanks,
+> Fab
 > 
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-> Reviewed-by: Andreas F?rber <afaerber@suse.de>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> ---
->  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
->  1 file changed, 1 insertion(+)
+> Fabrizio Castro (2):
+>   dt-bindings: apmu: Document r8a77470 support
+>   ARM: dts: r8a77470: Add SMP support
+> 
+>  Documentation/devicetree/bindings/power/renesas,apmu.txt |  1 +
+>  arch/arm/boot/dts/r8a77470.dtsi                          | 15 +++++++++++++++
+>  2 files changed, 16 insertions(+)
 > 
 
-I reivewed this patch, there is no problem.
+Both patches looks good to me.
 
 Reviewed-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 
