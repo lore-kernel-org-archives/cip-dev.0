@@ -1,428 +1,194 @@
-From: kazuhiro.fujita.jg@renesas.com (Kazuhiro Fujita)
-Date: Tue, 28 May 2019 07:29:46 +0000
-Subject: [cip-dev] about branch of meta-debian in cip-core/deby
-In-Reply-To: <OSBPR01MB3862C36E2D6441A61D622DA7E11D0@OSBPR01MB3862.jpnprd01.prod.outlook.com>
-References: <CAGDrK-a79Z7rc=JibAU_8TL=7GtVFocGfvne9iQ4MsCa1oGU1w@mail.gmail.com>
-	<OSAPR01MB3763870A4581B882D1AC1ADAD04B0@OSAPR01MB3763.jpnprd01.prod.outlook.com>
-	<OSAPR01MB30444CACDE60382555A681DCE14B0@OSAPR01MB3044.jpnprd01.prod.outlook.com>
-	<OSBPR01MB499953893394AAC252B66DC6D9440@OSBPR01MB4999.jpnprd01.prod.outlook.com>
-	<TY2PR01MB305133BDEEBBDE5D8386AB97E1470@TY2PR01MB3051.jpnprd01.prod.outlook.com>
-	<OSBPR01MB4999AAFDBFB634B1F7D3350DD9400@OSBPR01MB4999.jpnprd01.prod.outlook.com>
-	<OSBPR01MB2774062C0B63CAA2D0EA943FE12F0@OSBPR01MB2774.jpnprd01.prod.outlook.com>
-	<OSBPR01MB27746936339146E99ADC8AB2E1240@OSBPR01MB2774.jpnprd01.prod.outlook.com>
-	<OSBPR01MB499921C7785981E6923C86C6D93C0@OSBPR01MB4999.jpnprd01.prod.outlook.com>
-	<OSBPR01MB3862C36E2D6441A61D622DA7E11D0@OSBPR01MB3862.jpnprd01.prod.outlook.com>
-Message-ID: <OSBPR01MB499986A053AC32691E3B3655D91E0@OSBPR01MB4999.jpnprd01.prod.outlook.com>
+From: kazuhiro3.hayashi@toshiba.co.jp (kazuhiro3.hayashi at toshiba.co.jp)
+Date: Tue, 28 May 2019 12:27:17 +0000
+Subject: [cip-dev] [cip-core] RFC: Process to decide supported package
+ list
+Message-ID: <OSBPR01MB38629079C169C6162D351E82E11E0@OSBPR01MB3862.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Hayashi-san,
+Hello CIP developers,
 
-Thank you for your confirmation.
+I created a sample format[1] to decide "supported" packages.
+[1] https://docs.google.com/spreadsheets/d/10b2yU5bLW8UwAw9nceidolZg7-eQQsdQhke8HEikXrI/edit#gid=0
+
+I would like to suggest the process to decide the supported packages:
+1. Everyone can suggest packages
+   Select the supported level (S/A) in the column "C" and write your name to the column "D".
+2. Each CIP member check if the suggested packages are required
+   Put "x" if required into the column for each member (E-G in the sample sheet).
+3. The packages voted by over 50% members are accepted as the supported packages
+
+As the first step, it's better to start from the source package list installed by debootstrap. (Row 11-68)
+After that, do the same process for additional packages one by one. (Row 73-)
+
+Future plan:
+May 28-31: Correct feedback and update the decision process if needed
+May 31th: Feedback due date (might be delayed if the discussion has not finished)
+June 3-4: Need to be approved by TSC? (e-mail?)
+June 4-11: Do the STEP1 above (Target: debootstrap packages only)
+June 11th: Share the result of STEP1 in the TSC meeting
+           (Need to be approved by TSC to go to the next step?)
+June 11-25: STEP2(Voting)
+June 25th: Share the result of STEP2 in the TSC meeting
+           (Need to be approved by TSC to make the final decision)
+
+NOTE:
+* Once a package is approved, its run-time & build dependencies
+  must be "satisfied" in each profile (but still not supported in the levels of S/A).
+* If some dependent packages are functionally required,
+  they should be suggested and voted as well.
+
+If you have any comments, please let me know.
+
+Best regards,
+Kazu
 
 > -----Original Message-----
-> From: kazuhiro3.hayashi at toshiba.co.jp <kazuhiro3.hayashi@toshiba.co.jp>
-> Sent: Monday, May 27, 2019 9:00 PM
-> To: Kazuhiro Fujita <kazuhiro.fujita.jg@renesas.com>
-> Cc: cip-dev at lists.cip-project.org
-> Subject: RE: about branch of meta-debian in cip-core/deby
+> From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of
+> kazuhiro3.hayashi at toshiba.co.jp
+> Sent: Friday, May 10, 2019 3:36 PM
+> To: cip-dev at lists.cip-project.org
+> Subject: Re: [cip-dev] [cip-core] RFC: Process to decide supported package list
 > 
-> Dear Fujita-san,
+> Hello CIP developers,
 > 
-> Sorry for the late reply.
+> Thank you for your feedbacks.
 > 
-> > -----Original Message-----
-> > From: Kazuhiro Fujita [mailto:kazuhiro.fujita.jg at renesas.com]
-> > Sent: Wednesday, April 24, 2019 8:01 PM
-> > To: hayashi kazuhiro(? ?? ????????)
-> <kazuhiro3.hayashi@toshiba.co.jp>
-> > Cc: cip-dev at lists.cip-project.org
-> > Subject: RE: about branch of meta-debian in cip-core/deby
-> >
-> > Hello Hayashi-san,
-> >
-> > Sorry for my late reply...
-> >
-> > > -----Original Message-----
-> > > From: kazuhiro3.hayashi at toshiba.co.jp
-> <kazuhiro3.hayashi@toshiba.co.jp>
-> > > Sent: Tuesday, April 16, 2019 8:53 PM
-> > > To: Kazuhiro Fujita <kazuhiro.fujita.jg@renesas.com>
-> > > Cc: cip-dev at lists.cip-project.org
-> > > Subject: RE: about branch of meta-debian in cip-core/deby
-> > >
-> > > Dear Fujita-san,
-> > >
-> > > > In my understanding, the targets of CIP(-core)'s support are the
-> > > followings at least:
-> > > >
-> > > > Kernel:
-> > > > 	linux-4.4.y-cip & -rt
-> > > > 	linux-4.19.y-cip & -rt
-> > > > Debian:
-> > > > 	Debian 8 (jessie)
-> > > > 	Debian 9 (stretch)
-> > > > 	Debian 10 (buster)
-> > > > 	... and every version in future
-> > > >
-> > > > However, I think that there is no decision in CIP about the
-> combination
-> > > of
-> > > > the above kernel versions and Debian versions, which should be
-> supported
-> > > by CIP.
-> > > > This implicitly shows that all combinations could be supported, but
-> > > > it's quite hard to test and maintain all of them.
-> > > > I guess that the practical version combinations are very limited
-> > > actually.
-> > > >
-> > > > I would like to confirm opinions about this in Isar later.
-> > >
-> > > Regarding the discussion with Jan,
-> > > I supposed that it's better to provide the following names for
-> branches of
-> > > tiny profile.
-> > > https://lists.cip-project.org/pipermail/cip-dev/2019-April/002094.html
-> > >
-> > > 	cip-core_jessie (Current "morty")
-> > > 	cip-core_buster (Current "master")
-> >
-> > This naming rule is clear and reasonable.
+> Here is the simple summary of the comments from cip-dev:
 > 
-> Thanks, I'm preparing the new branches according to this rule.
+> ================================================
+> openssl (Not in the debootstrap list)
+> sudo (Not in the debootstrap list)
+> 	Requested by Security WG
+> 	(See also *1 below)
 > 
-> >
-> >
-> > >
-> > > I would like to push the latest master branch of deby to cip-core
-> GitLab
-> > > and
-> > > adjust it to work with kas later.
-> > >
-> > > >
-> > > > > >
-> > > > > > If the both tiny(deby) and generic profile(isar) are based on
-> the
-> > > same
-> > > > > > CIP kernel and Debian versions, we can use such common branch
-> name
-> > > above.
-> > > > > > If not, or no benefit for users to use the common branch name,
-> > > > > > I would like to simply use "morty" and "master" in deby
-> repository.
-> > > > >
-> > > > > Using different version for tiny and generic may be confusing.
-> > > > > In my opinion, tiny should be the subset of generic profile.
-> > > >
-> > > > Thank you for your opinion.
-> > > > Regarding the supported package list, I agree that tiny should be
-> subset
-> > > of generic.
-> > > > In order to use the common version (branch name) in tiny and generic,
-> > > > and to concentrate our efforts on well-used cases,,
-> > > > we need to make a decision about the supported version combinations
-> > > between CIP kernel and Debian.
-> > >
-> > > Here is the first draft of the version combinations (CIP & Debian)
-> > > supported by CIP.
-> > > https://lists.cip-project.org/pipermail/cip-dev/2019-April/002117.html
-> > >
-> > > 	4.4 + stretch => SUPPORTED (necessary)
-> > > 	4.4 + buster => NOT SUPPORTED
-> > > 	4.4 + bullseye => NOT SUPPORTED
-> > > 	4.19 + stretch => SUPPORTED (optional)
-> > > 	4.19 + buster => SUPPORTED (necessary)
-> > > 	4.19 + bullseye => SUPPORTED (optional: 4.19 should be compatible
-> > > with bullseye userland)
-> > > 	...
-> >
-> > If "SUPPORTED" means that CIP promise to maintain these pairs,
-> > it may not good idea to put "optional" choice.
-> >
-> > In my understanding, CIP decided at the start of CIP core
-> > activity that CIP must maintain packages used in CIP core
-> > after Debian finishes its maintenance.
-> > For example, Debian will finish their support of Stretch at
-> > June/2022 and CIP will maintain the packages after that day.
-> >
-> > If "optional" means CIP will stop using that pair in future,
-> > putting "optional" choice may work.
+> dash
+> 	Suggested by Pavel
+> 	One of the tiny packages expected on embedded system
 > 
-> Thank you for pointing it out.
-> I would like to clarify the meaning of "optional".
+> cdebconf
+> debconf
+> 	Not necessary (Commented by Nobuhiro)
+> 	NOTE: base-files use cdebconf's library
 > 
-> At this time, cip-core has two profiles (generic, tiny).
-> After Debian buster released, each profile will provide the following
-> kernel + Debian pares:
+> debian-archive-keyring
+> 	Not necessary (Commented by Nobuhiro)
+> 	Package maintainer's keyring
+> ================================================
 > 
->                 generic     tiny
-> =================================
-> 4.4 + jessie                X
-
-Debian announced that their security support for jessie finishes in next month.
-https://lists.debian.org/debian-security-announce/2018/msg00132.html
-
-
-> 4.4 + stretch   X
-> 4.19 + stretch  X(optional)
-> 4.19 + buster   X(default)  X
+> *1: I heared that CIP security WG will come out the essential packages list and all dependencies
+>     I would like to consider the remaining packages suggested by security WG previously:
+>     acl, pam, shadow / auditd / openssh / tpm2-tools
 > 
-> Regarding the generic profile, 4.19 + buster is provided by isar-cip-core
-> by default,
-> and 4.19 + stretch is also "available" by changing the settings.
-> Example: https://lists.cip-project.org/pipermail/cip-dev/2019-
-> April/002116.html
-> "4.19 + stretch" here is the "optional" I initially meant.
+> Regarding the source package list I previously attached (srcpkg_buster_amd64_debootstrap_minbase.txt),
+> as Pavel pointed out (gcc-8), it's not easy to understand why each source package is added to the list.
+> I've created another list of 'binary' packages including corresponding source package name
+> (binpkg_buster_amd64_debootstrap_minbase.txt).
 > 
-> From the maintenance PoV, (in my opinion)
-> once a pair becomes available in a profile, CIP need to keep maintaining
-> (testing) it.
-> How the test matrix should be defined is under discussion.
-> (e.g. Duplicated tests should be avoided among the supported pairs and
-> target boards)
-
-If CIP itself starts to support jessie as soon after finishing debian's support,
-we must hurry to discuss about this topic.
-
-Kind regards,
-Fujita
-
-
+> Also, the criteria for prioritizing security fixes Daniel.S proposed previously [1][2]
+> should be inherited to this decision process.
+> [1] https://wiki.linuxfoundation.org/civilinfrastructureplatform/tsc-meetings/tsc_mm_jul092018#cip_core_packages
+> [2] https://lists.cip-project.org/pipermail/cip-dev/2018-July/001398.html
+> This discussion was concentrating on creating the 'source' package list and their priorities requested to Debian LTS.
+> (Especially for security fixes)
+> 
+> Considering the above feedback, I would like to go ahead with the following policy:
+> 
+> * As the first step, focus on the source package list which binaries are installed by debootstrap minbase
+>   (to simplify the discussion and clarify the decision process)
+> * Use the criteria [1][2] to decide the priority of security fix supports
+> * If needed, clarify functions that should be the scope (or out of scope) of the maintenance
+>   (e.g. gcc-8 is listed in the debootstrap list, but libgcc, libstdc++, gcc-base are required actually)
+> * Correct opinions from cip-dev about not only "packages which should be supported"
+>   but also "packages which no need to support" (e.g. debian-archive-keyring in the debootstrap list)
+> 
+> If you have any comments, please let me know.
+> 
+> > 	1. Send an initial list and vote (>50% means accepted)
+> > 	2. After that, each package will be voted (>50% means accepted)
+> I guess it's still early for voting because the meaning of "supported"
+> is still unclear among developers in cip-dev.
+> (Someone requests packages that security fixes should be continuously applied to,
+>  others request packages that can be just installed by cip-core generic/tiny profiles, etc.)
+> It might be better to break down "support" we assuming into the several levels.
+> 
+> Samples of the support levels:
+> 
+> A.Apply security fixes immediately
+>     * The package list should be sent to Debian LTS
+>     * Define the package priority based on the above criteria?
+> B.Fix other bugs (back-port from the upstream, fix by ourselves)
+>     * Such bug fixes might not be focus of Debian LTS though required in our product development
+> C.Fix development issues only when required (Normally do nothing)
+>     * Build failed on CIP developers' environment
+>     * The dependencies (or other functional relations) between other packages are broken
+>     * etc.
+> D.Available (installable) in cip-core (generic/tiny profile)
+>     * Required for debugging, tracing, performance evaluation, testing, etc.
+> 
+> (A-C: Source codes should be shared in CIP)
+> 
+> Example:
+> 
+> SRCPKG    | LEVEL: A B C D
+> ----------+---------------
+> openssl   |        x x x x  Need to apply security fixes continuously
+> diffutils |          x x x  Few security fixes, but want to fix functional bugs if found
+> debconf   |            x x  Not necessary in products, but included in debootstrapped packages
+> gdb       |              x
+> 
+> In my understanding, only the level "A" is the target of this discussion
+> to decide the (source) package list which would be sent to Debian LTS.
+> Other support levels could be discussed later when we decide other stuffs
+> (e.g. which source packages should be available in the common source repository,
+>  which packages should be installable in cip-core profiles, etc.)
+> 
+> Please give me your feedback.
+> I would like to improve the above policy and my opinion about the support levels,
+> then go to the next steps including the voting.
 > 
 > Kind regards,
 > Kazu
 > 
+> > -----Original Message-----
+> > From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of
+> > kazuhiro3.hayashi at toshiba.co.jp
+> > Sent: Tuesday, April 16, 2019 10:22 PM
+> > To: cip-dev at lists.cip-project.org
+> > Subject: [cip-dev] [cip-core] RFC: Process to decide supported package list
 > >
-> > Regards,
-> > Fujita
+> > Hello CIP developers,
 > >
+> > I would like to suggest an idea about the process to determine the package list that should be supported by CIP.
+> > It's difficult to discuss adding any packages including their dependencies from whole Debian, mixing the two profiles.
 > >
-> > >
-> > > Some of them would be updated in future (especially "bullseye" (Debian
-> > > 11)),
-> > > but I would like to follow this list in the future discussion.
-> > >
-> > > Regards,
-> > > Kazu
-> > >
-> > > >
-> > > > Regards,
-> > > > Kazu
-> > > >
-> > > > > -----Original Message-----
-> > > > > From: Kazuhiro Fujita [mailto:kazuhiro.fujita.jg at renesas.com]
-> > > > > Sent: Tuesday, March 19, 2019 2:52 PM
-> > > > > To: hayashi kazuhiro(? ?? ????????)
-> > > > > <kazuhiro3.hayashi@toshiba.co.jp>; sangorrin daniel(????? ?
-> ??
-> > > ?
-> > > > > ????????) <daniel.sangorrin@toshiba.co.jp>;
-> > > > > nobuhiro.iwamatsu at miraclelinux.com
-> > > > > Cc: jan.kiszka at siemens.com; cip-dev at lists.cip-project.org
-> > > > > Subject: RE: about branch of meta-debian in cip-core/deby
-> > > > >
-> > > > > Hello Hayashi-san,
-> > > > >
-> > > > > > -----Original Message-----
-> > > > > > From: kazuhiro3.hayashi at toshiba.co.jp
-> > > > > <kazuhiro3.hayashi@toshiba.co.jp>
-> > > > > > Sent: Monday, March 18, 2019 10:52 AM
-> > > > > > To: Kazuhiro Fujita <kazuhiro.fujita.jg@renesas.com>;
-> > > > > > daniel.sangorrin at toshiba.co.jp;
-> nobuhiro.iwamatsu at miraclelinux.com
-> > > > > > Cc: jan.kiszka at siemens.com; cip-dev at lists.cip-project.org
-> > > > > > Subject: RE: about branch of meta-debian in cip-core/deby
-> > > > > >
-> > > > > > Hello Fujita-san,
-> > > > > > CC: Jan
-> > > > > >
-> > > > > > > In case the morty branch will be replaced by the master,
-> current
-> > > users
-> > > > > > > will automatically switch to the master without knowing the
-> > > change?
-> > > > > > No, user can not automatically migrate from morty to master
-> without
-> > > > > > knowing the changes
-> > > > > > because several specifications about recipe development has been
-> > > deferent
-> > > > > > between them.
-> > > > > >
-> > > > > > Therefore, regarding deby repository, it would be better to
-> provide
-> > > > > > branches
-> > > > >
-> > > > > Agreed.
-> > > > >
-> > > > > > "morty" and "master" as follows:
-> > > > > > 	Current                  New
-> > > > > > 	master(poky:morty-based) => morty
-> > > > > > 	-                        => master(poky:master-based)
-> > > > > > 	jethro                   => remove? (no longer maintained in
-> > > > > meta-
-> > > > > > debian)
-> > > > > >
-> > > > > > I would like to know if we need to the common branch name in
-> cip-
-> > > core.
-> > > > > > For example: cip-core-v1(4.4+Debian8/9?),
-> > > > > cip-core-v2(4.19+Debian10), ...
-> > > > >
-> > > > > Common branch name like cip-core-xx will help many users to
-> understand
-> > > > > which branch they should use.
-> > > > >
-> > > > > However, it may not clear CIP has decided or not that each kernel
-> > > > > version sticks to specific version of the other OSSs.
-> > > > > Some people around me say that OSSs included in cip-core will keep
-> > > > > these versions and maintained by CIP.
-> > > > > For example, they believe openssl 1.0.1t will be used when kernel
-> > > > > 4.4-cip is running.
-> > > > > This may not right assumption.
-> > > > >
-> > > > > Is there any material explaining the update policy of cip-core?
-> > > > >
-> > > > > >
-> > > > > > If the both tiny(deby) and generic profile(isar) are based on
-> the
-> > > same
-> > > > > > CIP kernel and Debian versions, we can use such common branch
-> name
-> > > above.
-> > > > > > If not, or no benefit for users to use the common branch name,
-> > > > > > I would like to simply use "morty" and "master" in deby
-> repository.
-> > > > >
-> > > > > Using different version for tiny and generic may be confusing.
-> > > > > In my opinion, tiny should be the subset of generic profile.
-> > > > >
-> > > > > Kind regards,
-> > > > > Fujita
-> > > > >
-> > > > >
-> > > > > >
-> > > > > > Kind regards,
-> > > > > > Kazu
-> > > > > >
-> > > > > > > -----Original Message-----
-> > > > > > > From: Kazuhiro Fujita [mailto:kazuhiro.fujita.jg at renesas.com]
-> > > > > > > Sent: Friday, March 15, 2019 11:39 AM
-> > > > > > > To: hayashi kazuhiro(? ?? ????????)
-> > > > > > > <kazuhiro3.hayashi@toshiba.co.jp>; sangorrin daniel(?????
-> ?
-> > > ?
-> > > > > ??
-> > > > > > > ????????) <daniel.sangorrin@toshiba.co.jp>;
-> > > > > > > nobuhiro.iwamatsu at miraclelinux.com
-> > > > > > > Cc: cip-dev at lists.cip-project.org
-> > > > > > > Subject: RE: about branch of meta-debian in cip-core/deby
-> > > > > > >
-> > > > > > > Hello Hayashi-san,
-> > > > > > >
-> > > > > > > > Should we keep the morty branch and add contents of master
-> to
-> > > another
-> > > > > > > cip-
-> > > > > > > > core branch, or just replace the morty by the master?
-> > > > > > >
-> > > > > > > In case the morty branch will be replaced by the master,
-> current
-> > > users
-> > > > > > > will automatically switch to the master without knowing the
-> > > change?
-> > > > > > >
-> > > > > > > Regards,
-> > > > > > > Fujita
-> > > > > > >
-> > > > > > >
-> > > > > > > > -----Original Message-----
-> > > > > > > > From: cip-dev-bounces at lists.cip-project.org
-> > > > > > > <cip-dev-bounces@lists.cip-
-> > > > > > > > project.org> On Behalf Of kazuhiro3.hayashi at toshiba.co.jp
-> > > > > > > > Sent: Thursday, March 14, 2019 7:09 PM
-> > > > > > > > To: daniel.sangorrin at toshiba.co.jp;
-> > > > > nobuhiro.iwamatsu at miraclelinux.com
-> > > > > > > > Cc: cip-dev at lists.cip-project.org
-> > > > > > > > Subject: Re: [cip-dev] about branch of meta-debian in cip-
-> > > core/deby
-> > > > > > > >
-> > > > > > > > Iwamatsu-san, Daniel,
-> > > > > > > >
-> > > > > > > > > > It provides debian 8 packages in OE/recipe. Is there any
-> > > reason
-> > > > > to
-> > > > > > > > > > choose morty/debian 8?
-> > > > > > > > In my understanding, this is the initial repository which
-> was
-> > > created
-> > > > > > > > when the master branch (Debian 10 based) didn't exist yet.
-> > > > > > > > We are planning to update it to the current master branch.
-> > > > > > > >
-> > > > > > > > I have another question about how to do that.
-> > > > > > > > Should we keep the morty branch and add contents of master
-> to
-> > > another
-> > > > > > > cip-
-> > > > > > > > core branch,
-> > > > > > > > or just replace the morty by the master?
-> > > > > > > >
-> > > > > > > > Regards,
-> > > > > > > > Kazu
-> > > > > > > >
-> > > > > > > > > -----Original Message-----
-> > > > > > > > > From: cip-dev-bounces at lists.cip-project.org
-> > > > > > > > > [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf
-> Of
-> > > > > > > > > daniel.sangorrin at toshiba.co.jp
-> > > > > > > > > Sent: Thursday, March 14, 2019 2:52 PM
-> > > > > > > > > To: nobuhiro.iwamatsu at miraclelinux.com
-> > > > > > > > > Cc: cip-dev at lists.cip-project.org
-> > > > > > > > > Subject: Re: [cip-dev] about branch of meta-debian in cip-
-> > > core/deby
-> > > > > > > > >
-> > > > > > > > > Iwamatsu-san,
-> > > > > > > > >
-> > > > > > > > > > -----Original Message-----
-> > > > > > > > > > From: Nobuhiro Iwamatsu
-> <nobuhiro.iwamatsu@miraclelinux.com>
-> > > > > > > > > > Sent: Wednesday, March 13, 2019 4:38 PM
-> > > > > > > > > > To: sangorrin daniel(????? ???? ???????
-> ?)
-> > > > > > > > > <daniel.sangorrin@toshiba.co.jp>
-> > > > > > > > > > Cc: cip-dev at lists.cip-project.org
-> > > > > > > > > > Subject: about branch of meta-debian in cip-core/deby
-> > > > > > > > > >
-> > > > > > > > > > Hi, Daniel.
-> > > > > > > > > >
-> > > > > > > > > > I have a question about about branch of meta-debian in
-> cip-
-> > > > > > core/deby.
-> > > > > > > > > >
-> > > > > > > > > > The meta-debian branch used by cip-core/deby  is morty.
-> > > > > > > > > > It provides debian 8 packages in OE/recipe. Is there any
-> > > reason
-> > > > > to
-> > > > > > > > > > choose morty/debian 8?
-> > > > > > > > > > Is the reason why the mata-debian master branch is still
-> in
-> > > > > > > > development?
-> > > > > > > > > > Will you/we switch to the master branch when Debian 10
-> is
-> > > > > > released?
-> > > > > > > > >
-> > > > > > > > > Yes, that's correct.
-> > > > > > > > >
-> > > > > > > > > Thanks,
-> > > > > > > > > Daniel
-> > > > > > > > > _______________________________________________
-> > > > > > > > > cip-dev mailing list
-> > > > > > > > > cip-dev at lists.cip-project.org
-> > > > > > > > > https://lists.cip-project.org/mailman/listinfo/cip-dev
-> > > > > > > > _______________________________________________
-> > > > > > > > cip-dev mailing list
-> > > > > > > > cip-dev at lists.cip-project.org
-> > > > > > > > https://lists.cip-project.org/mailman/listinfo/cip-dev
-> > > > _______________________________________________
-> > > > cip-dev mailing list
-> > > > cip-dev at lists.cip-project.org
-> > > > https://lists.cip-project.org/mailman/listinfo/cip-dev
+> > As the first step, it would be better to start from the source package list
+> > which binary packages are installed by debootstrap minbase.
+> > I attached the source package list, where only 58 packages exist.
+> > I guess that it's easier to discuss which packages should be supported from such core components.
+> >
+> > NOTE: busybox is not included in the attached list, but it have to be supported
+> > not only for the tiny profile but also initramfs (and Debian installer?) in the generic profile.
+> >
+> > Regarding the tiny profile, we need to keep discussion about which busybox applet should be supported.
+> > I think this process should be done independently from the above discussion because
+> > the all packages selected from debootstrap in the first step should be supported in the tiny profile as well.
+> >
+> > Regarding voting, I have the same opinion that Daniel proposed previously.
+> > 	1. Send an initial list and vote (>50% means accepted)
+> > 	2. After that, each package will be voted (>50% means accepted)
+> >
+> > As the second step, we consider adding other packages not included in the list one by one.
+> > We need to decide the detailed process of the second step later.
+> >
+> > If you have any other opinions, please let me know.
+> >
+> > Kind regards,
+> > Kazu
+> >
+> >  Kazuhiro Hayashi
+> >  Corporate Software Engineering & Technology Center
+> >  Toshiba Corporation
+> >  Tel: +81-44-549-2476
+> >  E-mail: kazuhiro3.hayashi at toshiba.co.jp
+> >
