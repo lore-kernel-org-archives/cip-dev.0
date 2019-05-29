@@ -1,38 +1,93 @@
-From: michael.adler@siemens.com (Adler, Michael)
-Date: Tue, 28 May 2019 14:20:05 +0000
-Subject: [cip-dev] [ANNOUNCE] Introducing gitlab-cloud-ci. Perform
- ISAR-based CI builds in the cloud.
-In-Reply-To: <20190524083711.wt6fg6atlixfbuux@demogorgon>
-Message-ID: <20190528142004.hrvotkqqlus5gho7@demogorgon>
+From: gitlab@mg.gitlab.com (Ben Hutchings)
+Date: Wed, 29 May 2019 23:10:56 +0000
+Subject: [cip-dev] [Git][cip-project/cip-kernel/cip-kernel-sec][master] 6
+ commits: Import more data
+Message-ID: <5cef1180adb32_540c3fa625d3e9c86476a@sidekiq-asap-01-sv-gprd.mail>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-> Alright, we'll probably give it a try on Monday and see how it goes.
 
-Today we performed the initial tests successfully [1]. It took 24 minutes to build the master branch, spending 3 minutes
-waiting for the node (4 cores/16GB RAM/150GB NVMe SSD) to come up.
 
-> Once you finish the initial test, we should be able to estimate the cost of using the cluster and probably ask the CIP board members to approve.
+Ben Hutchings pushed to branch master at cip-project / cip-kernel / cip-kernel-sec
 
-The base cost (no CI pipelines included) is $39.24 per month for the Kubernetes master node (t2.medium), which runs 24/7
-and spins the slaves up and down, depending on the current workload situation.
-The actual cost depends on the utilization (the number of CI pipelines triggered) and the configured node size. If we
-take the node size from our example (m5d.xlarge), the AWS cost calculator [2] says:
 
-* An average utilization of 2 hours/day (~4 builds) per month costs $16.60 per month
+Commits:
+8769119d by Ben Hutchings at 2019-05-27T20:33:11Z
+Import more data
 
-This scales linearly up and down, i.e. 4 hours/day per month would result in $33.20.  So in total you have the base cost
-of $39.24 plus the node cost.  All numbers are for the region Frankfurt (just because it's my default, but you are free
-to choose any region you like; e.g. North Virginia is only $13.79 instead of $16.60).
+- - - - -
+2442ae80 by Ben Hutchings at 2019-05-29T23:06:37Z
+Mark CVE-2019-9500 as not fixed in linux-3.16.y
 
-Best regards,
-  Michael
+CVE-2019-9500 didn&#39;t affect Linux 3.16, but the stable branch has an
+incorrect backport of the fix for it that has now been reverted.
+Since import_stable.py doesn&#39;t (yet) recognise and take account of
+reverts, explicitly mark this as never fixed in linux-3.16.y so that
+the next run won&#39;t re-add the incorrect backport here.
 
-[1] https://gitlab.com/cip-project/cip-core/isar-cip-core/pipelines/63516863
-[2] https://calculator.s3.amazonaws.com/index.html
+- - - - -
+fc2cff50 by Ben Hutchings at 2019-05-29T23:09:25Z
+Delete CVE-2019-3892 which was rejected as a duplicate
+
+- - - - -
+b5494a69 by Ben Hutchings at 2019-05-29T23:09:25Z
+Add or correct fixed-by and introduced-by commits for several issues
+
+- - - - -
+a05ead70 by Ben Hutchings at 2019-05-29T23:09:25Z
+Mark CVE-2018-20509 to be ignored
+
+- - - - -
+31bbcd8b by Ben Hutchings at 2019-05-29T23:09:26Z
+Note other fixes related to CVE-2018-20510
+
+- - - - -
+
+
+30 changed files:
+
+- issues/CVE-2017-5967.yml
+- + issues/CVE-2018-12126.yml
+- + issues/CVE-2018-12127.yml
+- + issues/CVE-2018-12130.yml
+- issues/CVE-2018-16884.yml
+- + issues/CVE-2018-20509.yml
+- + issues/CVE-2018-20510.yml
+- + issues/CVE-2018-20836.yml
+- issues/CVE-2018-5995.yml
+- + issues/CVE-2018-7191.yml
+- + issues/CVE-2018-ebpf-filter-dos.yml
+- issues/CVE-2019-10125.yml
+- + issues/CVE-2019-10142.yml
+- + issues/CVE-2019-11085.yml
+- + issues/CVE-2019-11091.yml
+- issues/CVE-2019-11190.yml
+- issues/CVE-2019-11191.yml
+- issues/CVE-2019-11486.yml
+- issues/CVE-2019-11487.yml
+- issues/CVE-2019-3892.yml ? issues/CVE-2019-11599.yml
+- + issues/CVE-2019-11683.yml
+- + issues/CVE-2019-11810.yml
+- + issues/CVE-2019-11811.yml
+- + issues/CVE-2019-11815.yml
+- + issues/CVE-2019-11833.yml
+- + issues/CVE-2019-11884.yml
+- + issues/CVE-2019-1999.yml
+- issues/CVE-2019-2024.yml
+- issues/CVE-2019-3459.yml
+- issues/CVE-2019-3460.yml
+
+
+The diff was not included because it is too large.
+
+
+View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/compare/2d32b073ebe4de60a4208ab0d449ff0c60c51537...31bbcd8b5ea445976a596fc539b126eb499dc957
 
 -- 
-Michael Adler
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE, Otto-Hahn-Ring 6, 81739 Munich, Germany
+View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/compare/2d32b073ebe4de60a4208ab0d449ff0c60c51537...31bbcd8b5ea445976a596fc539b126eb499dc957
+You're receiving this email because of your account on gitlab.com.
 
-Siemens Aktiengesellschaft: Chairman of the Supervisory Board: Gerhard Cromme; Managing Board: Joe Kaeser, Chairman, President and Chief Executive Officer; Roland Busch, Lisa Davis, Klaus Helmrich, Janina Kugel, Siegfried Russwurm, Ralf P. Thomas; Registered offices: Berlin and Munich, Germany; Commercial registries: Berlin Charlottenburg, HRB 12300, Munich, HRB 6684; WEEE-Reg.-No. DE 23691322
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190529/6d131e6d/attachment.html>
