@@ -1,38 +1,23 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 30 May 2019 01:18:14 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-Message-ID: <HK0PR01MB297993A2A958DF25068EC7CCE2180@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+From: Hemanth_Koturappa@mentor.com (Koturappa, Hemanth)
+Date: Thu, 30 May 2019 05:02:12 +0000
+Subject: [cip-dev] access for https://lava.ciplatform.org
+Message-ID: <3d03db77e9b04fa789edfb3da724b7ec@svr-ies-mbx-01.mgc.mentorg.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+Hello,
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
 
-*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=5&day=30&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
 
-US-West US-East?? UK???? DE???? TW???? JP
-02:00??? 05:00?? 10:00?? 11:00?? 17:00?? 18:00
+Request account for accessing https://lava.ciplatform.org .
 
-Channel:
-* irc:chat.freenode.net:6667/cip
+Username: epsqa
 
-Agenda:
 
-* Action item
-1. Prepare the CIP kernel release tutorial- Iwamatsu
-2. Add license file in classify-failed-patches - Iwamatsu
-3. send investigating email for kernel-testing lab to cip-dev - patersonc
 
-* Kernel maintenance updates
-* Kernel testing
-* CIP Core
-* Software update
-* AOB
+Thanks,
 
-The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
-
-Best regards,
-
-SZ Lin, Moxa.
+Hemanth.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190530/ebd91f85/attachment.html>
