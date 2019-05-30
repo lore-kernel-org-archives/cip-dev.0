@@ -1,39 +1,35 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Thu, 30 May 2019 09:20:49 +0000
-Subject: [cip-dev] access for https://lava.ciplatform.org
-In-Reply-To: <3d03db77e9b04fa789edfb3da724b7ec@svr-ies-mbx-01.mgc.mentorg.com>
-References: <3d03db77e9b04fa789edfb3da724b7ec@svr-ies-mbx-01.mgc.mentorg.com>
-Message-ID: <TYAPR01MB228583BB89BDBBE2BFE30C87B7180@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+From: Archana.c727@toshiba-tsip.com (Archana Polampalli)
+Date: Thu, 30 May 2019 12:16:11 +0000
+Subject: [cip-dev] CIP Super long term support
+Message-ID: <1559218447.9936.32.camel@toshiba-tsip.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello all,
+Hi All,
 
-I?ll pick this up.
+I would like to know ?how CIP is achieving long term availability or
+long term support for CIP based projects like Electric power
+generation, oil and gas,water and waste water.can any one explaine  me?
 
-Hemanth, I?ll email you separately.
+Thanks in advance.
 
-Kind regards, Chris
+Regards
+Archana.
+The information contained in this e-mail message and in any
+attachments/annexure/appendices is confidential to the 
+recipient and may contain privileged information. 
+If you are not the intended recipient, please notify the
+sender and delete the message along with any 
+attachments/annexure/appendices. You should not disclose,
+copy or otherwise use the information contained in the
+message or any annexure. Any views expressed in this e-mail 
+are those of the individual sender except where the sender 
+specifically states them to be the views of 
+Toshiba Software India Pvt. Ltd. (TSIP),Bangalore.
 
-From: cip-dev-bounces@lists.cip-project.org <cip-dev-bounces@lists.cip-project.org> On Behalf Of Koturappa, Hemanth
-Sent: 30 May 2019 06:02
-To: cip-dev at lists.cip-project.org
-Subject: [cip-dev] access for https://lava.ciplatform.org
-
-
-Hello,
-
-
-
-Request account for accessing https://lava.ciplatform.org .
-
-Username: epsqa
-
-
-
-Thanks,
-
-Hemanth.
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190530/684a1ca7/attachment-0001.html>
+Although this transmission and any attachments are believed to be
+free of any virus or other defect that might affect any computer 
+system into which it is received and opened, it is the responsibility
+of the recipient to ensure that it is virus free and no responsibility 
+is accepted by Toshiba Embedded Software India Pvt. Ltd, for any loss or
+damage arising in any way from its use.
