@@ -1,93 +1,38 @@
-From: gitlab@mg.gitlab.com (Ben Hutchings)
-Date: Wed, 29 May 2019 23:10:56 +0000
-Subject: [cip-dev] [Git][cip-project/cip-kernel/cip-kernel-sec][master] 6
- commits: Import more data
-Message-ID: <5cef1180adb32_540c3fa625d3e9c86476a@sidekiq-asap-01-sv-gprd.mail>
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Thu, 30 May 2019 01:18:14 +0000
+Subject: [cip-dev] CIP IRC weekly meeting today
+Message-ID: <HK0PR01MB297993A2A958DF25068EC7CCE2180@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
+Hi all,
 
+Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
 
-Ben Hutchings pushed to branch master at cip-project / cip-kernel / cip-kernel-sec
+*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=5&day=30&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
 
+US-West US-East?? UK???? DE???? TW???? JP
+02:00??? 05:00?? 10:00?? 11:00?? 17:00?? 18:00
 
-Commits:
-8769119d by Ben Hutchings at 2019-05-27T20:33:11Z
-Import more data
+Channel:
+* irc:chat.freenode.net:6667/cip
 
-- - - - -
-2442ae80 by Ben Hutchings at 2019-05-29T23:06:37Z
-Mark CVE-2019-9500 as not fixed in linux-3.16.y
+Agenda:
 
-CVE-2019-9500 didn&#39;t affect Linux 3.16, but the stable branch has an
-incorrect backport of the fix for it that has now been reverted.
-Since import_stable.py doesn&#39;t (yet) recognise and take account of
-reverts, explicitly mark this as never fixed in linux-3.16.y so that
-the next run won&#39;t re-add the incorrect backport here.
+* Action item
+1. Prepare the CIP kernel release tutorial- Iwamatsu
+2. Add license file in classify-failed-patches - Iwamatsu
+3. send investigating email for kernel-testing lab to cip-dev - patersonc
 
-- - - - -
-fc2cff50 by Ben Hutchings at 2019-05-29T23:09:25Z
-Delete CVE-2019-3892 which was rejected as a duplicate
+* Kernel maintenance updates
+* Kernel testing
+* CIP Core
+* Software update
+* AOB
 
-- - - - -
-b5494a69 by Ben Hutchings at 2019-05-29T23:09:25Z
-Add or correct fixed-by and introduced-by commits for several issues
+The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
 
-- - - - -
-a05ead70 by Ben Hutchings at 2019-05-29T23:09:25Z
-Mark CVE-2018-20509 to be ignored
+Best regards,
 
-- - - - -
-31bbcd8b by Ben Hutchings at 2019-05-29T23:09:26Z
-Note other fixes related to CVE-2018-20510
-
-- - - - -
-
-
-30 changed files:
-
-- issues/CVE-2017-5967.yml
-- + issues/CVE-2018-12126.yml
-- + issues/CVE-2018-12127.yml
-- + issues/CVE-2018-12130.yml
-- issues/CVE-2018-16884.yml
-- + issues/CVE-2018-20509.yml
-- + issues/CVE-2018-20510.yml
-- + issues/CVE-2018-20836.yml
-- issues/CVE-2018-5995.yml
-- + issues/CVE-2018-7191.yml
-- + issues/CVE-2018-ebpf-filter-dos.yml
-- issues/CVE-2019-10125.yml
-- + issues/CVE-2019-10142.yml
-- + issues/CVE-2019-11085.yml
-- + issues/CVE-2019-11091.yml
-- issues/CVE-2019-11190.yml
-- issues/CVE-2019-11191.yml
-- issues/CVE-2019-11486.yml
-- issues/CVE-2019-11487.yml
-- issues/CVE-2019-3892.yml ? issues/CVE-2019-11599.yml
-- + issues/CVE-2019-11683.yml
-- + issues/CVE-2019-11810.yml
-- + issues/CVE-2019-11811.yml
-- + issues/CVE-2019-11815.yml
-- + issues/CVE-2019-11833.yml
-- + issues/CVE-2019-11884.yml
-- + issues/CVE-2019-1999.yml
-- issues/CVE-2019-2024.yml
-- issues/CVE-2019-3459.yml
-- issues/CVE-2019-3460.yml
-
-
-The diff was not included because it is too large.
-
-
-View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/compare/2d32b073ebe4de60a4208ab0d449ff0c60c51537...31bbcd8b5ea445976a596fc539b126eb499dc957
-
--- 
-View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/compare/2d32b073ebe4de60a4208ab0d449ff0c60c51537...31bbcd8b5ea445976a596fc539b126eb499dc957
-You're receiving this email because of your account on gitlab.com.
-
-
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190529/6d131e6d/attachment.html>
+SZ Lin, Moxa.
