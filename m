@@ -1,65 +1,58 @@
-From: expo2@expolistz.com (Kaylee Williams)
-Date: Fri, 31 May 2019 08:27:12 -0500
-Subject: [cip-dev] Lists - Del Mar Electronics and Manufacturing Show 2019 -
-	Register Portal List
-Message-ID: <06da01d517b4$ab333670$0199a350$@expolistz.com>
+From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
+Date: Mon,  3 Jun 2019 16:25:31 +0900
+Subject: [cip-dev] [isar-cip-core] kernel: add yml file for 4.19 kernels
+Message-ID: <20190603072531.28135-1-daniel.sangorrin@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
+Currently 4.4 is used by default, as specified in
+conf/distro/cip-core.conf. I guess you can override
+the PREFERRED_VERSION_linux variables on the board's yaml
+but having this as build option is convenient.
+
+Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
+---
+ README.md    |  2 +-
+ opt-4.19.yml | 18 ++++++++++++++++++
+ 2 files changed, 19 insertions(+), 1 deletion(-)
+ create mode 100644 opt-4.19.yml
+
+diff --git a/README.md b/README.md
+index dfd9ef1..f90c649 100644
+--- a/README.md
++++ b/README.md
+@@ -27,7 +27,7 @@ This image can be run using `start-qemu.sh x86`.
  
-
+ The BeagleBone Black target is selected by `... kas.yml:board-bbb.yml`. In
+ order to build the image with the PREEMPT-RT kernel, append `:opt-rt.yml` to
+-the above.
++the above. Append ':opt-4.19.yml' to use the kernel version 4.19.
  
-
-Dear Exhibitors,
-
- 
-
-Thanks for your participation in Del Mar Electronics and Manufacturing Show
-2019.
-
- 
-
-Del Mar Electronics and Manufacturing Show 01 - 02 May 2019 Updated
-attendees List is Now Available!
-
- 
-
-Use of the mailing list is meant to facilitate your company's pre-show and
-post-show marketing efforts with the License Agreement which allows you for
-a unlimited usage of the list, which means no restriction on usage.
-
-Information field includes Contact name, Company name, Job Title, Company
-Mailing address with Zip Code, Phone Number, Fax Number, SIC Code, Industry
-Classification, Website URL and contact person verified business email
-address and LinkedIn Profile.
-
-Information provided is for perpetual and unlimited usage including
-telemarketing, direct marketing, and email marketing initiatives and will be
-delivered in Excel format but as you being our Client can request for
-delivery of the same in any other format as per your convenient or
-requirement.
-
- 
-
-Please let me know your thoughts, as it will be my pleasure to share you the
-counts and pricing of the lists.
-
- 
-
-Looking back to hearing from you.
-
- 
-
-Regards,
-
-Kalyee
-
-DMEMS -Event Specialist.
-
-01 - 02 May 2019|SAN DIEGO, CA 
-
- 
-
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190531/d92b6ea1/attachment.html>
+ Physical targets will generate ready-to-boot images under
+ `build/tmp/deploy/images/`. To flash, e.g., the BeagleBone Black image to an SD
+diff --git a/opt-4.19.yml b/opt-4.19.yml
+new file mode 100644
+index 0000000..94306b4
+--- /dev/null
++++ b/opt-4.19.yml
+@@ -0,0 +1,18 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Toshiba corp., 2019
++#
++# Authors:
++#  Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
++#
++# SPDX-License-Identifier: MIT
++#
++
++header:
++  version: 8
++
++local_conf_header:
++  kernel-version: |
++    PREFERRED_VERSION_linux-cip = "4.19.%"
++    PREFERRED_VERSION_linux-cip-rt = "4.19.%"
+-- 
+2.17.1
