@@ -1,87 +1,104 @@
-From: daniel.sangorrin@toshiba.co.jp (daniel.sangorrin at toshiba.co.jp)
-Date: Tue, 4 Jun 2019 06:37:03 +0000
-Subject: [cip-dev] [isar-cip-core] porting isar-cip-core to iwg20m
-In-Reply-To: <7f7466fb-a307-076d-8ea4-8913fc02fbe9@siemens.com>
-References: <TY2PR01MB332320DC786A54F33FF95C9FD0150@TY2PR01MB3323.jpnprd01.prod.outlook.com>
-	<7f7466fb-a307-076d-8ea4-8913fc02fbe9@siemens.com>
-Message-ID: <TY2PR01MB33236A6D098DB4C08EE047A4D0150@TY2PR01MB3323.jpnprd01.prod.outlook.com>
+From: Chris.Paterson2@renesas.com (Chris Paterson)
+Date: Tue, 4 Jun 2019 07:05:01 +0000
+Subject: [cip-dev] [isar-cip-core] iwg20m: temporary patch for review
+In-Reply-To: <20190604061412.8886-1-daniel.sangorrin@toshiba.co.jp>
+References: <20190604061412.8886-1-daniel.sangorrin@toshiba.co.jp>
+Message-ID: <TYAPR01MB2285186B782CB310BB133B42B7150@TYAPR01MB2285.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Thanks Jan!
-I will check your points and try to complete the porting.
+Hello Daniel,
 
-> -----Original Message-----
-> From: Jan Kiszka <jan.kiszka@siemens.com>
-> Sent: Tuesday, June 4, 2019 3:28 PM
-> To: sangorrin daniel(????? ???? ????????) <daniel.sangorrin@toshiba.co.jp>;
-> cip-dev at lists.cip-project.org
-> Cc: isar-users at googlegroups.com
-> Subject: Re: [isar-cip-core] porting isar-cip-core to iwg20m
+Thank you for your patch.
+
+> From: cip-dev-bounces at lists.cip-project.org <cip-dev-bounces@lists.cip-
+> project.org> On Behalf Of Daniel Sangorrin
+> Sent: 04 June 2019 07:14
 > 
-> On 04.06.19 08:15, daniel.sangorrin at toshiba.co.jp wrote:
-> > Hi Jan,
-> >
-> > I am trying to port isar-cip-core to the iwg20m board.
-> >
-> > So far I managed to create a WIC SDCard image with 2 partitions:
-> > - boot: an VFAT partition to store the uImage and devicetree
-> > - root: the root filesystem
-> > [Note] u-boot.bin is installed on an SPI memory with a JTAG debugger, so it's not in the image.
-> >
-> > I would appreciate your help with a couple of problems:
-> >
-> > - The kernel is built correctly, but I need to transform it into an uImage. I guess I can install u-boot-tools and
-> do a mkimage in some postinstall script, but isn't this supposed to be automatized?
+> Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
+> ---
+>  board-iwg20m.yml                            |  16 ++
+>  conf/machine/iwg20m.conf                    |  19 ++
+>  recipes-kernel/linux/files/iwg20m_defconfig | 230
+> ++++++++++++++++++++
+>  wic/iwg20m.wks                              |  20 ++
+>  4 files changed, 285 insertions(+)
+>  create mode 100644 board-iwg20m.yml
+>  create mode 100644 conf/machine/iwg20m.conf
+>  create mode 100644 recipes-kernel/linux/files/iwg20m_defconfig
+>  create mode 100644 wic/iwg20m.wks
 > 
-> Why is that transformation needed or desired?
-> 
-> > For example, in meta-debian, I just need to define KERNEL_IMAGETYPE=uImage and the
-> UBOOT_ENTRYPOINT. The rest is done for me.
-> >
-> > - In case, I want to build u-boot (not strictly necessary but it would be good to have it), do I have to create a
-> whole recipe including debian rules like in the jailhouse-images repository [1]!?
-> 
-> Nope, just use u-boot-custom.inc, see
-> meta-isar/recipes-bsp/u-boot/u-boot_2018.09.bb for an example.
-> 
-> > In meta-debian, I just need to define a few variables (git repo, config, entrypoint) and the u-boot packages will
-> be created automatically. Those scripts may be needed for very detailed customization (e.g. Trusted firmware),
-> but the common case should be automatized.
-> > [1] https://github.com/siemens/jailhouse-images/tree/master/recipes-bsp/u-boot
-> >
-> > - What is the correct way to specify the device tree for the kernel?
-> > I added DTB_FILE="mydt.dtb" to my machine config, and then added that to IMAGE_BOOT_FILES. That
-> worked, but is that the correct way to do it? There is no documentation about this.
-> >
-> > - For the kernel configuration, I want to use shmobile_defconfig (already in the kernel source) plus a few extra
-> configurations that I have on another file. Is that possible? So far I had to concatenate my configurations to
-> shmobile_defconfig which is redundant.
-> 
-> We probably need to tune the recipes a bit, including in isar, to pick up an
-> existing defconfig != "defconfig" - though that is now the default, only ARMv7
-> still has board-specific defconfigs.
-> 
-> >
-> > - How can I install the kernel into the boot partition?
-> > Currently, the kernel binary and symbols are deployed into the the /boot folder of the "root" partition instead
-> of the "boot" partition. I would like the /boot folder to be deployed into the FAT partition. And maybe also get fstab
-> filled automatically.
-> 
-> You want U-Boot distro boot. The kernel will then be picked up from the rootfs,
-> and you do not need to move it manually. See other boards, e.g. the bananapi in
-> upstream isar.
-> 
-> Jan
-> 
-> >
-> > I send the actual code/metadata separately on another e-mail.
-> > https://lists.cip-project.org/pipermail/cip-dev/2019-June/002409.html
-> >
-> > Thanks,
-> > Daniel
-> >
-> 
+
+<snip>
+
+> diff --git a/conf/machine/iwg20m.conf b/conf/machine/iwg20m.conf
+> new file mode 100644
+> index 0000000..3bc0c9a
+> --- /dev/null
+> +++ b/conf/machine/iwg20m.conf
+> @@ -0,0 +1,19 @@
+> +#
+> +# CIP Core, generic profile
+> +#
+> +# Copyright (c) Toshiba corp. 2019
+> +#
+> +# SPDX-License-Identifier: MIT
+> +#
+> +DISTRO_ARCH = "armhf"
+> +
+> +# see wic/iwg20m.wks
+> +IMAGE_TYPE = "wic-img"
+> +
+> +# sets serial login getty
+> +MACHINE_SERIAL = "ttySC0"
+> +BAUDRATE_TTY = "115200"
+> +
+> +# Boot partition files
+> +DTB_FILE = "r8a7743-iwg20d-q7.dtb"
+
+I wonder if it is better to use r8a7743-iwg20d-q7-dbcm-ca.dtb instead. This does the same as r8a7743-iwg20d-q7.dtb but also enables the add-on board that comes with most iwg20d kits.
+The add-on board adds HDMI output, CAN bus and various SCIF interfaces.
+
+<snip>
+
+> diff --git a/wic/iwg20m.wks b/wic/iwg20m.wks
+> new file mode 100644
+> index 0000000..8e43229
+> --- /dev/null
+> +++ b/wic/iwg20m.wks
+> @@ -0,0 +1,20 @@
+> +#
+> +# CIP Core, generic profile
+> +#
+> +# Copyright (c) Toshiba corp., 2019
+> +#
+> +# Authors:
+> +#  Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
+> +#
+> +# SPDX-License-Identifier: MIT
+> +#
+> +
+> +# [Note] u-boot is in an SPI flash memory and needs a JTAG debugger to re-
+> flash
+
+It is also possible to write to the SPI from Linux, but having JTAG as backup is recommended as there is no backup SPI if the write goes wrong.
+
+Kind regards, Chris
+
+> +
+> +# SDCard Boot partition (copies files in IMAGE_BOOT_FILES)
+> +part /boot --source bootimg-partition --ondisk mmcblk0 --fstype vfat --label
+> boot --align 1 --size 32M --extra-space 0
+> +
+> +# Rootfs partition
+> +part / --source rootfs --ondisk mmcblk0 --fstype ext4 --label root --align
+> 1024 --size 2G --active
+> +
+> +bootloader --append "rootwait console=ttySC0,115200"
 > --
-> Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-> Corporate Competence Center Embedded Linux
+> 2.17.1
+> 
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
