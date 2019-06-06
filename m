@@ -1,40 +1,23 @@
 From: daniel.sangorrin@toshiba.co.jp (daniel.sangorrin at toshiba.co.jp)
-Date: Thu, 6 Jun 2019 02:04:20 +0000
-Subject: [cip-dev] add support for this board compose message
-Message-ID: <TY2PR01MB3323AC763076B5C5A4C06FC9D0170@TY2PR01MB3323.jpnprd01.prod.outlook.com>
+Date: Thu, 6 Jun 2019 05:41:26 +0000
+Subject: [cip-dev] gitlab-ci for CIP tiny profile (Deby)
+Message-ID: <TY2PR01MB332348D30D9AD1A6D62523E0D0170@TY2PR01MB3323.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Sorry, i forgot to fill the subject line for the --compose option.
+Hello Michael,
 
-> -----Original Message-----
-> From: isar-users at googlegroups.com <isar-users@googlegroups.com> On Behalf Of Daniel Sangorrin
-> Sent: Thursday, June 6, 2019 11:02 AM
-> To: cip-dev at lists.cip-project.org
-> Cc: isar-users at googlegroups.com
-> Subject:
-> 
-> Hi Jan,
-> 
-> This patch adds support for the iwg20m board on ISAR CIP Core.
-> 
-> [PATCH] iwg20m: add support for this board
-> 
-> For now, it uses the u-boot shipped with the board.
-> We could improve that in the future, but for the first release
-> I think it is not critical.
-> 
-> Thanks,
-> Daniel
-> 
-> 
-> 
-> --
-> You received this message because you are subscribed to the Google Groups "isar-users" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to
-> isar-users+unsubscribe at googlegroups.com.
-> To post to this group, send email to isar-users at googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/isar-users/20190606020204.25320-1-daniel.sangorrin%40toshiba.co.jp
-> .
-> For more options, visit https://groups.google.com/d/optout.
+I have added an initial, very simple, gitlab-ci yaml script for building CIP tiny profile (Deby for BBB).
+https://gitlab.com/cip-project/cip-core/deby/blob/master/.gitlab-ci.yml
+
+I have tested it with Gitlab's shared runners. I set the timeout to be 4h, but the shared runner seems to have a timeout of 3h.
+Hopefully it will finish in time:
+https://gitlab.com/cip-project/cip-core/deby/-/jobs/226174734
+
+I read that for public open source projects, the maximum amount of CI time is 2000 minutes per month.
+This is clearly not enough for Deby.
+
+For that reason, I would like to register our Runner. Please let me know what should I do.
+
+Thanks,
+Daniel
