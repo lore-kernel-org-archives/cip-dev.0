@@ -1,56 +1,47 @@
-From: daniel.sangorrin@toshiba.co.jp (daniel.sangorrin at toshiba.co.jp)
-Date: Thu, 6 Jun 2019 08:20:51 +0000
-Subject: [cip-dev] gitlab-ci for CIP tiny profile (Deby)
-In-Reply-To: <20190606065138.ggobgsedasddp2v2@demogorgon>
-References: <TY2PR01MB332348D30D9AD1A6D62523E0D0170@TY2PR01MB3323.jpnprd01.prod.outlook.com>
-	<20190606065138.ggobgsedasddp2v2@demogorgon>
-Message-ID: <TY2PR01MB332360F60D512990800E9561D0170@TY2PR01MB3323.jpnprd01.prod.outlook.com>
+From: ch@denx.de (Claudius Heine)
+Date: Thu, 6 Jun 2019 10:26:46 +0200
+Subject: [cip-dev] [PATCH] iwg20m: add support for this board
+In-Reply-To: <TY2PR01MB332378867EA4864E50DF494AD0170@TY2PR01MB3323.jpnprd01.prod.outlook.com>
+References: <Add support for iwg20m to ISAR CIP Core>
+	<20190606020204.25320-1-daniel.sangorrin@toshiba.co.jp>
+	<20190606020204.25320-2-daniel.sangorrin@toshiba.co.jp>
+	<0b70c8f4-9ca2-1ef6-d1a3-826dc71d5a96@siemens.com>
+	<TY2PR01MB332378867EA4864E50DF494AD0170@TY2PR01MB3323.jpnprd01.prod.outlook.com>
+Message-ID: <1319553a-38d0-a4f1-0590-7c6f71d9fbd2@denx.de>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Continuing with this conversation on the public list, it seems that the job on gitlab-cloud-ci failed:
-https://gitlab.com/cip-project/cip-core/deby/-/jobs/226291592
+Hi,
 
---- Error summary ---
-ERROR:  OE-core's config sanity checker detected a potential misconfiguration.
-    Either fix the cause of this error or at your own risk disable the checker (see sanity.conf).
-    Following is the list of potential problems / advisories:
+On 06/06/2019 10.17, daniel.sangorrin at toshiba.co.jp wrote:
+>> If yes, why not using u-boot-script
+>> and loading /boot/boot.scr instead? 
+> 
+> After loading boot.scr, don't we need the "source" command to work? "source" does not seem to be configured in the pre-installed u-boot.
+> 
+> Also, to create boot.scr we need mkimage. I wonder if modern Debian u-boot-tools' mkimage will create a boot.scr that is compatible with the pre-installed u-boot (remember that I couldn't build the old u-boot with the new compilers).
 
-    Do not use Bitbake as root
+You could just use the mkimage that comes from your u-boot source to be
+certain. I do something similar [1] since the upstream debian
+u-boot-tools do not support creating signed fit images.
 
-Perhaps it has something to do with privileged containers?
+[1] https://github.com/ilbers/isar/blob/master/meta/classes/fit-img.bbclass
 
-Thanks,
-Daniel
+regards,
+Claudius
 
+-- 
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-54 Fax: (+49)-8142-66989-80 Email: ch at denx.de
 
-> -----Original Message-----
-> From: Adler, Michael <michael.adler@siemens.com>
-> Sent: Thursday, June 6, 2019 3:52 PM
-> To: sangorrin daniel(????? ???? ????????) <daniel.sangorrin@toshiba.co.jp>
-> Cc: cip-dev at lists.cip-project.org
-> Subject: Re: gitlab-ci for CIP tiny profile (Deby)
-> 
-> Hi Daniel,
-> 
-> > For that reason, I would like to register our Runner. Please let me know what should I do.
-> 
-> sure, no problem! I suggest moving my instance of the gitlab-ci runner to the project-level.
-> Then it should be visible to all sub-projects (which includes your project).
-> For this however, I would require the *runner registration token* of the parent project:
-> 
-> * Go to https://gitlab.com/cip-project, "Settings -> CI/CD"
-> * Expand "Runners" section, copy&paste the token under "Set up a specific Runner manually"
-> * Send me the token in in a pgp-encrypted mail (keyserver pgp.mit.edu, keyid: 0xf39a07eca4aabc19)
-> 
-> Best regards,
->   Michael
-> 
-> --
-> Michael Adler
-> Siemens AG, Corporate Technology, CT RDA IOT SES-DE, Otto-Hahn-Ring 6, 81739 Munich, Germany
-> 
-> Siemens Aktiengesellschaft: Chairman of the Supervisory Board: Gerhard Cromme; Managing Board: Joe Kaeser,
-> Chairman, President and Chief Executive Officer; Roland Busch, Lisa Davis, Klaus Helmrich, Janina Kugel,
-> Siegfried Russwurm, Ralf P. Thomas; Registered offices: Berlin and Munich, Germany; Commercial registries:
-> Berlin Charlottenburg, HRB 12300, Munich, HRB 6684; WEEE-Reg.-No. DE 23691322
+           PGP key: 6FF2 E59F 00C6 BC28 31D8 64C1 1173 CB19 9808 B153
+                             Keyserver: hkp://pool.sks-keyservers.net
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 833 bytes
+Desc: OpenPGP digital signature
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190606/e6eee702/attachment.sig>
