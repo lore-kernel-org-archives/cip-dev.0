@@ -1,48 +1,36 @@
-From: daniel.sangorrin@toshiba.co.jp (daniel.sangorrin at toshiba.co.jp)
-Date: Wed, 5 Jun 2019 08:27:59 +0000
-Subject: [cip-dev] porting iwg20m to isar-cip-core
-In-Reply-To: <d0acd9f6-2f30-2407-c202-5600b3750352@siemens.com>
-References: <20190605021645.4464-1-daniel.sangorrin@toshiba.co.jp>
-	<d0acd9f6-2f30-2407-c202-5600b3750352@siemens.com>
-Message-ID: <TY2PR01MB33231DCBB1664127B91D0673D0160@TY2PR01MB3323.jpnprd01.prod.outlook.com>
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Thu, 6 Jun 2019 01:28:24 +0000
+Subject: [cip-dev] CIP IRC weekly meeting today
+Message-ID: <HK0PR01MB2979AE859E20AD93707A5641E2170@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Jan,
+Hi all,
 
-> From: isar-users at googlegroups.com <isar-users@googlegroups.com> On Behalf Of Jan Kiszka
-> On 05.06.19 04:16, Daniel Sangorrin wrote:
-> > I wanted to use uImage because that's what is used in the
-> > iwg20m manual, and it's known to work on Deby as well.
-> > Ref:
-> https://gitlab.com/cip-project/cip-core/deby/blob/master/poky/meta-cip-iwg20m/README.IWG20M.txt
-> > Do you suggest that we should use bootz instead of bootm?
-> > Is uImage not recommended or something? I have used uImage in many boards.
-> 
-> BTW, we chose bootz (and distro boot) in order to be able to boot also stock
-> Debian kernels - which work on a (slowly) increasing number of boards. I.e. Isar
-> is modeled around the ideal case, not legacy ones.
+Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
 
-I was surprised to see so many u-boot debian packages:
-https://packages.debian.org/search?keywords=u-boot
+*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=6&day=6&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
 
-For now, please let me go the legacy way (ask users to 'setenv' things). Do you have an example of how to emulate boot.scr on older u-boot versions. I
+US-West US-East?? UK???? DE???? TW???? JP
+02:00??? 05:00?? 10:00?? 11:00?? 17:00?? 18:00
 
-Iwamatsu-san is going to upgrade/mainstream the u-boot support for Renesas iwg20m. Once that is done I will modify the recipe.
-# One thing though: if the flash process fails, you really need to get a JTAG device to unbrick the board (not sure if OpenOCD JTAG devices would be supported).
+Channel:
+* irc:chat.freenode.net:6667/cip
 
-Thanks,
-Daniel
+Agenda:
 
-> --
-> Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-> Corporate Competence Center Embedded Linux
-> 
-> --
-> You received this message because you are subscribed to the Google Groups "isar-users" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to
-> isar-users+unsubscribe at googlegroups.com.
-> To post to this group, send email to isar-users at googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/isar-users/d0acd9f6-2f30-2407-c202-5600b3750352%40siemens.com.
-> For more options, visit https://groups.google.com/d/optout.
+* Action item
+1. send investigating email for kernel-testing lab to cip-dev - patersonc
+
+* Kernel maintenance updates
+* Kernel testing
+* CIP Core
+* Software update
+* AOB
+
+The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
+
+Best regards,
+
+SZ Lin, Moxa.
