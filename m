@@ -1,79 +1,38 @@
-From: gitlab@mg.gitlab.com (Ben Hutchings)
-Date: Wed, 12 Jun 2019 14:16:45 +0000
-Subject: [cip-dev] [Git][cip-project/cip-kernel/cip-kernel-sec][master] 4
- commits: Import more data
-Message-ID: <5d01094d3411e_19013fac4446d9a0385339@sidekiq-asap-03-sv-gprd.mail>
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Wed, 12 Jun 2019 23:26:50 +0000
+Subject: [cip-dev] CIP IRC weekly meeting today
+Message-ID: <SG2PR01MB2982493D9009609A24161FD0E2EC0@SG2PR01MB2982.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
+Hi all,
 
+Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
 
-Ben Hutchings pushed to branch master at cip-project / cip-kernel / cip-kernel-sec
+*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=6&day=13&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
 
+US-West US-East?? UK???? DE???? TW???? JP
+02:00??? 05:00?? 10:00?? 11:00?? 17:00?? 18:00
 
-Commits:
-4bc90875 by Ben Hutchings at 2019-06-11T19:11:20Z
-Import more data
+Channel:
+* irc:chat.freenode.net:6667/cip
 
-- - - - -
-ebea96ce by Ben Hutchings at 2019-06-12T14:15:49Z
-Add introduced-by commits for several issues
+Agenda:
 
-- - - - -
-ff0d345c by Ben Hutchings at 2019-06-12T14:16:10Z
-Fix description of CVE-2019-10126
+* Action item
+1. send investigating email for kernel-testing lab to cip-dev - patersonc
+2. provide the script for CIP kernel config collection - bwh
+3. provide the plan about next cip-rt kernel release - szlin
 
-- - - - -
-17e0403e by Ben Hutchings at 2019-06-12T14:16:34Z
-Mark several issues to be ignored as minor or invalid
+* Kernel maintenance updates
+* Kernel testing
+* CIP Core
+* Software update
+* AOB
 
-- - - - -
+The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
 
+Best regards,
 
-30 changed files:
-
-- issues/CVE-2015-8553.yml
-- issues/CVE-2017-10662.yml
-- issues/CVE-2017-10663.yml
-- issues/CVE-2017-18249.yml
-- issues/CVE-2018-1000026.yml
-- issues/CVE-2018-12126.yml
-- issues/CVE-2018-12127.yml
-- issues/CVE-2018-12130.yml
-- issues/CVE-2018-13096.yml
-- issues/CVE-2018-13097.yml
-- issues/CVE-2018-13099.yml
-- issues/CVE-2018-13100.yml
-- issues/CVE-2018-14614.yml
-- + issues/CVE-2018-16871.yml
-- issues/CVE-2018-20509.yml
-- issues/CVE-2018-20510.yml
-- issues/CVE-2018-20836.yml
-- + issues/CVE-2019-10126.yml
-- issues/CVE-2019-10142.yml
-- issues/CVE-2019-11091.yml
-- issues/CVE-2019-11190.yml
-- issues/CVE-2019-11191.yml
-- issues/CVE-2019-11487.yml
-- issues/CVE-2019-11599.yml
-- issues/CVE-2019-11810.yml
-- issues/CVE-2019-11815.yml
-- issues/CVE-2019-11833.yml
-- + issues/CVE-2019-12378.yml
-- + issues/CVE-2019-12379.yml
-- + issues/CVE-2019-12380.yml
-
-
-The diff was not included because it is too large.
-
-
-View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/compare/5e2a0e07317efd9623d7d87c752d1d8082c13ccb...17e0403ef06488fac8ef8d014b8cc5222023e9e3
-
--- 
-View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/compare/5e2a0e07317efd9623d7d87c752d1d8082c13ccb...17e0403ef06488fac8ef8d014b8cc5222023e9e3
-You're receiving this email because of your account on gitlab.com.
-
-
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190612/8be757b1/attachment.html>
+SZ Lin, Moxa.
