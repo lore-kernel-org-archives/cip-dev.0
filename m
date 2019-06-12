@@ -1,50 +1,79 @@
-From: daniel.sangorrin@toshiba.co.jp (daniel.sangorrin at toshiba.co.jp)
-Date: Wed, 12 Jun 2019 00:44:21 +0000
-Subject: [cip-dev] gitlab-ci for CIP tiny profile (Deby)
-In-Reply-To: <20190611091542.3trij2we75iu7me6@demogorgon>
-References: <TY2PR01MB3323861584A80E70010AC415D0130@TY2PR01MB3323.jpnprd01.prod.outlook.com>
-	<20190611091542.3trij2we75iu7me6@demogorgon>
-Message-ID: <TY2PR01MB3323CA54E09D8839FA6EBFDFD0EC0@TY2PR01MB3323.jpnprd01.prod.outlook.com>
+From: gitlab@mg.gitlab.com (Ben Hutchings)
+Date: Wed, 12 Jun 2019 14:16:45 +0000
+Subject: [cip-dev] [Git][cip-project/cip-kernel/cip-kernel-sec][master] 4
+ commits: Import more data
+Message-ID: <5d01094d3411e_19013fac4446d9a0385339@sidekiq-asap-03-sv-gprd.mail>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Thanks Michael,
 
-It seems that worked out!
-https://gitlab.com/cip-project/cip-core/deby/-/jobs/229463821
 
-Best regards,
-Daniel
+Ben Hutchings pushed to branch master at cip-project / cip-kernel / cip-kernel-sec
 
-> -----Original Message-----
-> From: Adler, Michael <michael.adler@siemens.com>
-> Sent: Tuesday, June 11, 2019 6:16 PM
-> To: sangorrin daniel(????? ???? ????????) <daniel.sangorrin@toshiba.co.jp>
-> Cc: cip-dev at lists.cip-project.org
-> Subject: Re: [cip-dev] gitlab-ci for CIP tiny profile (Deby)
-> 
-> Hi Daniel,
-> 
-> I've done some experiments as well [1]. Could you try prefixing the "kas build" command with "gosu builder"?
-> Something like this:
-> 
-> gosu builder kas build --target core-image-minimal meta-cip-bbb/kas-bbb.yml
-> 
-> See also my gitlab-ci.yml [2].
-> 
-> Best regards,
->   Michael
-> 
-> [1] https://gitlab.com/therisen06/entrypoint-debug/-/jobs/228882512
-> [2]
-> https://gitlab.com/therisen06/entrypoint-debug/blob/3c1ffef93ca7880e11a984d4338bf04965962f1f/.gitlab-
-> ci.yml
-> 
-> --
-> Michael Adler
-> Siemens AG, Corporate Technology, CT RDA IOT SES-DE, Otto-Hahn-Ring 6, 81739 Munich, Germany
-> 
-> Siemens Aktiengesellschaft: Chairman of the Supervisory Board: Gerhard Cromme; Managing Board: Joe Kaeser,
-> Chairman, President and Chief Executive Officer; Roland Busch, Lisa Davis, Klaus Helmrich, Janina Kugel,
-> Siegfried Russwurm, Ralf P. Thomas; Registered offices: Berlin and Munich, Germany; Commercial registries:
-> Berlin Charlottenburg, HRB 12300, Munich, HRB 6684; WEEE-Reg.-No. DE 23691322
+
+Commits:
+4bc90875 by Ben Hutchings at 2019-06-11T19:11:20Z
+Import more data
+
+- - - - -
+ebea96ce by Ben Hutchings at 2019-06-12T14:15:49Z
+Add introduced-by commits for several issues
+
+- - - - -
+ff0d345c by Ben Hutchings at 2019-06-12T14:16:10Z
+Fix description of CVE-2019-10126
+
+- - - - -
+17e0403e by Ben Hutchings at 2019-06-12T14:16:34Z
+Mark several issues to be ignored as minor or invalid
+
+- - - - -
+
+
+30 changed files:
+
+- issues/CVE-2015-8553.yml
+- issues/CVE-2017-10662.yml
+- issues/CVE-2017-10663.yml
+- issues/CVE-2017-18249.yml
+- issues/CVE-2018-1000026.yml
+- issues/CVE-2018-12126.yml
+- issues/CVE-2018-12127.yml
+- issues/CVE-2018-12130.yml
+- issues/CVE-2018-13096.yml
+- issues/CVE-2018-13097.yml
+- issues/CVE-2018-13099.yml
+- issues/CVE-2018-13100.yml
+- issues/CVE-2018-14614.yml
+- + issues/CVE-2018-16871.yml
+- issues/CVE-2018-20509.yml
+- issues/CVE-2018-20510.yml
+- issues/CVE-2018-20836.yml
+- + issues/CVE-2019-10126.yml
+- issues/CVE-2019-10142.yml
+- issues/CVE-2019-11091.yml
+- issues/CVE-2019-11190.yml
+- issues/CVE-2019-11191.yml
+- issues/CVE-2019-11487.yml
+- issues/CVE-2019-11599.yml
+- issues/CVE-2019-11810.yml
+- issues/CVE-2019-11815.yml
+- issues/CVE-2019-11833.yml
+- + issues/CVE-2019-12378.yml
+- + issues/CVE-2019-12379.yml
+- + issues/CVE-2019-12380.yml
+
+
+The diff was not included because it is too large.
+
+
+View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/compare/5e2a0e07317efd9623d7d87c752d1d8082c13ccb...17e0403ef06488fac8ef8d014b8cc5222023e9e3
+
+-- 
+View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/compare/5e2a0e07317efd9623d7d87c752d1d8082c13ccb...17e0403ef06488fac8ef8d014b8cc5222023e9e3
+You're receiving this email because of your account on gitlab.com.
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190612/8be757b1/attachment.html>
