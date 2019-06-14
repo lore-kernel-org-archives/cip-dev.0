@@ -1,42 +1,41 @@
-From: daniel.sangorrin@toshiba.co.jp (daniel.sangorrin at toshiba.co.jp)
-Date: Fri, 14 Jun 2019 05:01:29 +0000
-Subject: [cip-dev] [cip-kernel-sec] failure when importing stable
-Message-ID: <TY2PR01MB3323D92EC6AC8D81D65A51B8D0EE0@TY2PR01MB3323.jpnprd01.prod.outlook.com>
+From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
+Date: Fri, 14 Jun 2019 09:11:55 +0000
+Subject: [cip-dev] [ANNOUNCE] 4.19.50-cip3 and 4.4.181-cip33
+Message-ID: <OSBPR01MB418452DE0AB57E8B6792731192EE0@OSBPR01MB4184.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Ben,
+Hi all,
 
-I am trying to write a Quickstart about "cip-kernel-sec" for the CIP wiki (see initial draft attached).
-The Readme file mentions that you need two remote branches (torvalds and stable) defined on the ../kernel directory by default. However, that didn't seem enough because conf/remotes.yml also includes a remote branch "cip". I added a "cip" remote branch, but then I got an error when importing (see draft). Could you help me understand why do I need the CIP remote branch if ../kernel already has the CIP information? It seems I am doing something wrong.
+CIP kernel team has released Linux kernel 4.19.50-cip3 and 4.4.181-cip33.
+You can get this release via the git tree at:
 
-I am still trying to figure out the correct workflow. I have thought of at least two use cases:
+  4.19.50-cip3:
 
-1) CIP kernel maintainer: (s)he wants to know whether there are debian/ubuntu CVEs pending on his branch.
-$ ./scripts/report_affected.py linux-4.4.y
+    repository: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+    branch: linux-4.19.y-cip
+    commit: 0f13d9b4d0efa9e87381717c113df57718bc92d6
+  
+  4.4.181-cip33:
 
-2) Product engineer: he wants to know which CVEs are pending on the kernel since he shipped the device. If the CVEs are critical he may decide to create a new release and update the device. 
-$ ./scripts/report_affected.py linux-4.4.y:v4.4.176-cip31<-- is something like this possible?
+    repository: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+    branch: linux-4.4.y-cip
+    commit: b791a4823f245e7871dbdd05d8f13bcc5dc377c9
 
-Also, I wanted to know how new issues are added. I am guessing something like this:
+And I introduce the updates for each kernel below.
 
-$ ./scripts/import_debian.py
-  -> automatically adds yml files in issues/
-$ ./scripts/validate.py
-  -> checks all yml syntax
-$ vi issues/CVE-xxx <-- edit by hand those with syntax errors, or other errors?
-$ ./scripts/validate.py <-- repeat validate until no errors appear
-$ ./scripts/cleanup.py <-- correct indentation or spaces?
+About 4.19.50-cip3:
+  * This version has been updated from stable version 4.19.13 to 4.19.50, and
+    many CVE fixes including MDS (Microarchitectural Data Sampling: CVE-2018-12130,
+    CVE-2018-12126, CVE-2018-12127,, CVE-2019-11091).
+  * CIP updates include device-tree fixes by Renesas.
 
-Thanks,
-Daniel
+About 4.4.176-cip32:
+  * This version has been updated from stable version 4.4.176 to 4.4.181, and
+    this also includes MDS fixes as in 4.19.y.
+  * CIP updates include update of RZ/G1C by Renesas.
 
+We plan to update the next CIP kernel on the fourth Friday.
 
-
-
-
-
--------------- next part --------------
-An embedded and charset-unspecified text was scrubbed...
-Name: cip-kernel-sec.txt
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190614/cd1c5e6d/attachment.txt>
+Best regards,
+  Nobuhiro
