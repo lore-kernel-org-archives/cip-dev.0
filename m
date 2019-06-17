@@ -1,67 +1,33 @@
-From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
-Date: Sun, 16 Jun 2019 22:14:05 +0000
-Subject: [cip-dev] [ANNOUNCE] 4.19.50-cip3 and 4.4.181-cip33
-In-Reply-To: <OSBPR01MB418452DE0AB57E8B6792731192EE0@OSBPR01MB4184.jpnprd01.prod.outlook.com>
-References: <OSBPR01MB418452DE0AB57E8B6792731192EE0@OSBPR01MB4184.jpnprd01.prod.outlook.com>
-Message-ID: <OSBPR01MB41847EC988B652D8224B357792E80@OSBPR01MB4184.jpnprd01.prod.outlook.com>
+From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
+Date: Mon, 17 Jun 2019 11:20:39 +0900
+Subject: [cip-dev] [cip-kernel-sec 2/2] remotes: call _get_configured_remotes
+In-Reply-To: <20190617022039.7197-1-daniel.sangorrin@toshiba.co.jp>
+References: <20190617022039.7197-1-daniel.sangorrin@toshiba.co.jp>
+Message-ID: <20190617022039.7197-2-daniel.sangorrin@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+This is probably a copy&paste mistake that had no effect
+because the contents of _get_configured_remotes and
+_get_configured_branches is the same.
 
-> -----Original Message-----
-> From: iwamatsu nobuhiro(?? ?? ????????)
-> Sent: Friday, June 14, 2019 6:12 PM
-> To: cip-dev at lists.cip-project.org
-> Cc: SZ.Lin at moxa.com; Pavel Machek <pavel@denx.de>; Ben Hutchings
-> <ben.hutchings@codethink.co.uk>
-> Subject: [ANNOUNCE] 4.19.50-cip3 and 4.4.181-cip33
-> 
-> Hi all,
-> 
-> CIP kernel team has released Linux kernel 4.19.50-cip3 and 4.4.181-cip33.
-> You can get this release via the git tree at:
-> 
->   4.19.50-cip3:
-> 
->     repository:
-> https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
->     branch: linux-4.19.y-cip
->     commit: 0f13d9b4d0efa9e87381717c113df57718bc92d6
-> 
->   4.4.181-cip33:
-> 
->     repository:
-> https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
->     branch: linux-4.4.y-cip
->     commit: b791a4823f245e7871dbdd05d8f13bcc5dc377c9
-> 
-> And I introduce the updates for each kernel below.
-> 
-> About 4.19.50-cip3:
->   * This version has been updated from stable version 4.19.13 to 4.19.50,
-> and
->     many CVE fixes including MDS (Microarchitectural Data Sampling:
-> CVE-2018-12130,
->     CVE-2018-12126, CVE-2018-12127,, CVE-2019-11091).
->   * CIP updates include device-tree fixes by Renesas.
-> 
-> About 4.4.176-cip32:
->   * This version has been updated from stable version 4.4.176 to 4.4.181,
-> and
->     this also includes MDS fixes as in 4.19.y.
->   * CIP updates include update of RZ/G1C by Renesas.
-> 
+Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
+---
+ scripts/kernel_sec/branch.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I forgot to explain about MDS.
-
-Although patches for MDS are included in this release, no test code has been
-published for these, so we have not tested for MDS. Also, patches did not
-really follow the stable rules, so they could not be checked the same way
-as checking for other patches. But the bug is ugly enough so we included
-the patches anyway.
-For the above reasons, modern x86 CPUs can not really be trusted with secrets; 
-similar attacks are likely to happen in future.
-
-Best regards,
-  Nobuhiro
+diff --git a/scripts/kernel_sec/branch.py b/scripts/kernel_sec/branch.py
+index ae1ca2c..3ede64a 100644
+--- a/scripts/kernel_sec/branch.py
++++ b/scripts/kernel_sec/branch.py
+@@ -209,7 +209,7 @@ def get_remotes(mappings, mainline=None, stable=None):
+     remotes = RemoteMap()
+     remotes.update(_get_configured_remotes('conf/remotes.yml'))
+     remotes.update(
+-        _get_configured_branches(
++        _get_configured_remotes(
+             os.path.expanduser('~/.config/kernel-sec/remotes.yml')))
+     for mapping in mappings:
+         left, right = arg.split(':', 1)
+-- 
+2.17.1
