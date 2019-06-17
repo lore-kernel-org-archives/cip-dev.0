@@ -1,33 +1,37 @@
 From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
-Date: Mon, 17 Jun 2019 11:20:39 +0900
-Subject: [cip-dev] [cip-kernel-sec 2/2] remotes: call _get_configured_remotes
-In-Reply-To: <20190617022039.7197-1-daniel.sangorrin@toshiba.co.jp>
-References: <20190617022039.7197-1-daniel.sangorrin@toshiba.co.jp>
-Message-ID: <20190617022039.7197-2-daniel.sangorrin@toshiba.co.jp>
+Date: Mon, 17 Jun 2019 11:20:38 +0900
+Subject: [cip-dev] [cip-kernel-sec 1/2] remotes: refer to configuration files
+Message-ID: <20190617022039.7197-1-daniel.sangorrin@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This is probably a copy&paste mistake that had no effect
-because the contents of _get_configured_remotes and
-_get_configured_branches is the same.
+The Readme indicated some remote names (torvalds, stable) but
+not all of them. Ask the user to check conf/remotes.yml instead.
+I also added information on how to override or extend the
+configuration file (through '~/.config/kernel-sec/remotes.yml')
 
 Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
 ---
- scripts/kernel_sec/branch.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ README.md | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/scripts/kernel_sec/branch.py b/scripts/kernel_sec/branch.py
-index ae1ca2c..3ede64a 100644
---- a/scripts/kernel_sec/branch.py
-+++ b/scripts/kernel_sec/branch.py
-@@ -209,7 +209,7 @@ def get_remotes(mappings, mainline=None, stable=None):
-     remotes = RemoteMap()
-     remotes.update(_get_configured_remotes('conf/remotes.yml'))
-     remotes.update(
--        _get_configured_branches(
-+        _get_configured_remotes(
-             os.path.expanduser('~/.config/kernel-sec/remotes.yml')))
-     for mapping in mappings:
-         left, right = arg.split(':', 1)
+diff --git a/README.md b/README.md
+index a4f3d45..4c5808f 100644
+--- a/README.md
++++ b/README.md
+@@ -18,9 +18,10 @@ beneath that.  They require PyYAML and html5lib (packaged in Debian as
+ python3-yaml and python3-html5lib).
+ 
+ Many scripts require access to a kernel git repository.  By default
+-this is assumed to be in `../kernel`, with remotes named `torvalds`
+-and `stable` for the mainline and stable repositories.  These can
+-be overridden by command-line options or by configuration.
++this is assumed to be in `../kernel`, with remotes configured in
++`conf/remotes.yml`, e.g. `torvalds`, `stable` and `cip` for the mainline,
++stable and cip repositories. These can be overridden by command-line options
++or configuration (`~/.config/kernel-sec/remotes.yml`).
+ 
+ * `scripts/import_debian.py` - import information from Debian's
+ `kernel_sec` project.  It includes all issues that Debian considers
 -- 
 2.17.1
