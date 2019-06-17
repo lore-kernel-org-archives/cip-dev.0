@@ -1,27 +1,27 @@
-From: wolfgang.mauerer@siemens.com (Mauerer, Wolfgang)
-Date: Mon, 17 Jun 2019 09:28:35 +0000
-Subject: [cip-dev] Kernel configurations for 4.19?
-Message-ID: <174B7D17C50DAF46A1D85956F97DE7C51681CA26@DEFTHW99EK0MSX.ww902.siemens.net>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Mon, 17 Jun 2019 21:15:42 +0100
+Subject: [cip-dev] [cip-kernel-sec 1/2] remotes: refer to configuration
+	files
+In-Reply-To: <20190617022039.7197-1-daniel.sangorrin@toshiba.co.jp>
+References: <20190617022039.7197-1-daniel.sangorrin@toshiba.co.jp>
+Message-ID: <1560802542.21054.29.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Laurence,
+On Mon, 2019-06-17 at 11:20 +0900, Daniel Sangorrin wrote:
+> The Readme indicated some remote names (torvalds, stable) but
+> not all of them. Ask the user to check conf/remotes.yml instead.
+> I also added information on how to override or extend the
+> configuration file (through '~/.config/kernel-sec/remotes.yml')
+> 
+> Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
+[...]
 
-apologies for the delay, but please do finally find two configs
-from Siemens attached.
+Applied, thanks.
 
-Best regards, Wolfgang
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: imx6_mo_defconfig
-Type: application/octet-stream
-Size: 105320 bytes
-Desc: imx6_mo_defconfig
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190617/5f94f700/attachment-0002.obj>
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: dcu2_config
-Type: application/octet-stream
-Size: 82330 bytes
-Desc: dcu2_config
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190617/5f94f700/attachment-0003.obj>
+Ben.
+
+-- 
+Ben Hutchings, Software Developer                ?        Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
