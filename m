@@ -1,38 +1,38 @@
 From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Tue, 18 Jun 2019 14:00:47 +0100
-Subject: [cip-dev] [cip-kernel-sec 1/2] remotes: automatically add
- remotes from configuration file
-In-Reply-To: <TY2PR01MB33233462A88FCD3B578192EDD0EA0@TY2PR01MB3323.jpnprd01.prod.outlook.com>
-References: <20190617052127.9571-1-daniel.sangorrin@toshiba.co.jp>
-	<1560804887.21054.33.camel@codethink.co.uk>
-	<TY2PR01MB33233462A88FCD3B578192EDD0EA0@TY2PR01MB3323.jpnprd01.prod.outlook.com>
-Message-ID: <1560862847.21054.34.camel@codethink.co.uk>
+Date: Tue, 18 Jun 2019 15:42:53 +0100
+Subject: [cip-dev] [cip-kernel-sec 2/2] remotes: call
+	_get_configured_remotes
+In-Reply-To: <TY2PR01MB332350C9AD09DFF909EFF10BD0EB0@TY2PR01MB3323.jpnprd01.prod.outlook.com>
+References: <20190617022039.7197-1-daniel.sangorrin@toshiba.co.jp>
+	<20190617022039.7197-2-daniel.sangorrin@toshiba.co.jp>
+	<1560802573.21054.30.camel@codethink.co.uk>
+	<TY2PR01MB332350C9AD09DFF909EFF10BD0EB0@TY2PR01MB3323.jpnprd01.prod.outlook.com>
+Message-ID: <1560868973.21054.36.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Tue, 2019-06-18 at 03:54 +0000, daniel.sangorrin at toshiba.co.jp wrote:
-> > > > From: Ben Hutchings <ben.hutchings@codethink.co.uk>
-> > On Mon, 2019-06-17 at 14:21 +0900, Daniel Sangorrin wrote:
-> > > Currently the user is required to create its own remotes by
-> > > hand. This should not be necessary, because the information
-> > > is already collected in conf/remotes.yml. For that reason,
-> > > if we detect that any remote has not been added to the
-> > > local repo then we will add those.
+On Mon, 2019-06-17 at 23:48 +0000, daniel.sangorrin at toshiba.co.jp
+wrote:
+> > From: Ben Hutchings <ben.hutchings@codethink.co.uk>
 > > 
-> > I'm not yet convinced this is a good idea.
+> > On Mon, 2019-06-17 at 11:20 +0900, Daniel Sangorrin wrote:
+> > > This is probably a copy&paste mistake that had no effect
+> > > because the contents of _get_configured_remotes and
+> > > _get_configured_branches is the same.
+> > > 
+> > > Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
+> > 
+> > Maybe it would make more sense to merge the two functions instead?
 > 
-> I sent a new patch that takes a different approach. The new patch will
-> only check that the necessary remotes are there. I also prepared a
-> new separate script, for new users to prepare the local repository.
-> 
-> > After this change, we would still be assuming that there is a kernel
-> > repository or working tree next to kernel-config.??If we wanted to be
-> > really helpful we could create a new repository if it's not there.
-> 
-> I didn't understand the kernel-config thing. Maybe I am missing something important.
-[...]
+> I thought about that but in the future you may want to add some code
+> that is specific to one of them. If you want me to consolidate them,
+> what name would you use?
 
-Sorry, I meant "next to kernel-sec".
+Actually these two functions aren't exactly the same, since the default
+return value differs.  In practice that doesn't make a difference at
+the moment, but logically it would be wrong to return one or the other.
+
+So I'll apply your original patch.
 
 Ben.
 
