@@ -1,24 +1,42 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Tue, 18 Jun 2019 11:04:10 +0000
-Subject: [cip-dev] lab-cip-renesas planned downtime
-Message-ID: <TYAPR01MB2285C16F81C3FAEE6B4A9932B7EA0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Tue, 18 Jun 2019 14:00:47 +0100
+Subject: [cip-dev] [cip-kernel-sec 1/2] remotes: automatically add
+ remotes from configuration file
+In-Reply-To: <TY2PR01MB33233462A88FCD3B578192EDD0EA0@TY2PR01MB3323.jpnprd01.prod.outlook.com>
+References: <20190617052127.9571-1-daniel.sangorrin@toshiba.co.jp>
+	<1560804887.21054.33.camel@codethink.co.uk>
+	<TY2PR01MB33233462A88FCD3B578192EDD0EA0@TY2PR01MB3323.jpnprd01.prod.outlook.com>
+Message-ID: <1560862847.21054.34.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello all,
+On Tue, 2019-06-18 at 03:54 +0000, daniel.sangorrin at toshiba.co.jp wrote:
+> > > > From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+> > On Mon, 2019-06-17 at 14:21 +0900, Daniel Sangorrin wrote:
+> > > Currently the user is required to create its own remotes by
+> > > hand. This should not be necessary, because the information
+> > > is already collected in conf/remotes.yml. For that reason,
+> > > if we detect that any remote has not been added to the
+> > > local repo then we will add those.
+> > 
+> > I'm not yet convinced this is a good idea.
+> 
+> I sent a new patch that takes a different approach. The new patch will
+> only check that the necessary remotes are there. I also prepared a
+> new separate script, for new users to prepare the local repository.
+> 
+> > After this change, we would still be assuming that there is a kernel
+> > repository or working tree next to kernel-config.??If we wanted to be
+> > really helpful we could create a new repository if it's not there.
+> 
+> I didn't understand the kernel-config thing. Maybe I am missing something important.
+[...]
 
-I'm planning to take the Renesas LAVA worker [1] offline tomorrow morning (Wednesday UK time) for a few hours.
+Sorry, I meant "next to kernel-sec".
 
-We're having a re-arrangement in the rack.
+Ben.
 
-If this is going to cause any big issues please let me know.
-
-I'll let you all know when everything is back up and running again.
-
-[1] https://lava.ciplatform.org/scheduler/worker/lab-cip-renesas
-
-Kind regards, Chris
-
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190618/401661b2/attachment-0001.html>
+-- 
+Ben Hutchings, Software Developer                ?        Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
