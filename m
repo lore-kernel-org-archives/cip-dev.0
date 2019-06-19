@@ -1,37 +1,109 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Wed, 19 Jun 2019 15:39:23 +0000
-Subject: [cip-dev] lab-cip-renesas planned downtime
-In-Reply-To: <TYAPR01MB2285C16F81C3FAEE6B4A9932B7EA0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-References: <TYAPR01MB2285C16F81C3FAEE6B4A9932B7EA0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-Message-ID: <TYAPR01MB22858991BE7A0737B7CF69ECB7E50@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+From: jan.kiszka@siemens.com (Jan Kiszka)
+Date: Wed, 19 Jun 2019 18:24:57 +0200
+Subject: [cip-dev] [isar-cip-core][next] bmap: apply bmap patch to isar
+ until we upgrade
+In-Reply-To: <20190613055138.6769-1-daniel.sangorrin@toshiba.co.jp>
+References: <20190613055138.6769-1-daniel.sangorrin@toshiba.co.jp>
+Message-ID: <2b40d610-2c56-7e94-92eb-aa094edb91fa@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello CIP lovers,
+On 13.06.19 07:51, Daniel Sangorrin wrote:
+> A similar bmap patch has been sent to ISAR upstream,
+> but while it gets accepted and until we update the ISAR
+> version, we can use this backport.
+> 
+> Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
+> ---
+>   0001-bmap-generate-bmap-for-wic-images.patch | 57 ++++++++++++++++++++
+>   kas.yml                                      |  4 ++
+>   2 files changed, 61 insertions(+)
+>   create mode 100644 0001-bmap-generate-bmap-for-wic-images.patch
+> 
+> diff --git a/0001-bmap-generate-bmap-for-wic-images.patch b/0001-bmap-generate-bmap-for-wic-images.patch
+> new file mode 100644
+> index 0000000..63ebe54
+> --- /dev/null
+> +++ b/0001-bmap-generate-bmap-for-wic-images.patch
+> @@ -0,0 +1,57 @@
+> +From 4bf7d60b4fb64ed0a7a131431cc6a2573e7178a4 Mon Sep 17 00:00:00 2001
+> +From: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
+> +Date: Thu, 13 Jun 2019 13:51:28 +0900
+> +Subject: [PATCH] bmap: generate bmap for wic images
+> +
+> +bmap shortens the time required to flash an image.
+> +This can be useful when you need a fixed-size image, for
+> +example to update partitions with swupdate.
+> +
+> +Example usage:
+> +sudo bmaptool copy --bmap \
+> +build/tmp/deploy/images/iwg20m/cip-core-image-cip-core-iwg20m.wic.img.bmap \
+> +build/tmp/deploy/images/iwg20m/cip-core-image-cip-core-iwg20m.wic.img \
+> +/dev/sdf
+> +
+> +Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
+> +---
+> + meta/classes/wic-img.bbclass        | 5 ++++-
+> + meta/conf/distro/debian-common.conf | 4 ++--
+> + 2 files changed, 6 insertions(+), 3 deletions(-)
+> +
+> +diff --git a/meta/classes/wic-img.bbclass b/meta/classes/wic-img.bbclass
+> +index 09d9f2e..f227655 100644
+> +--- a/meta/classes/wic-img.bbclass
+> ++++ b/meta/classes/wic-img.bbclass
+> +@@ -151,9 +151,12 @@ EOSUDO
+> +         ${ISARROOT}/scripts/wic create ${WKS_FULL_PATH} \
+> +             --vars "${STAGING_DIR}/${MACHINE}/imgdata/" \
+> +             -o /tmp/${IMAGE_FULLNAME}.wic/ \
+> ++            --bmap \
+> +             -e ${IMAGE_BASENAME} ${WIC_CREATE_EXTRA_ARGS}
+> +     sudo chown -R $(stat -c "%U" ${ISARROOT}) ${ISARROOT}/meta ${ISARROOT}/meta-isar ${ISARROOT}/scripts || true
+> +-    cp -f $(ls -t -1 ${BUILDCHROOT_DIR}/tmp/${IMAGE_FULLNAME}.wic/*.direct | head -1) ${WIC_IMAGE_FILE}
+> ++    WIC_DIRECT=$(ls -t -1 ${BUILDCHROOT_DIR}/tmp/${IMAGE_FULLNAME}.wic/*.direct | head -1)
+> ++    cp -f ${WIC_DIRECT} ${WIC_IMAGE_FILE}
+> ++    cp -f ${WIC_DIRECT}.bmap ${WIC_IMAGE_FILE}.bmap
+> + }
+> +
+> + do_wic_image[file-checksums] += "${WKS_FILE_CHECKSUM}"
+> +diff --git a/meta/conf/distro/debian-common.conf b/meta/conf/distro/debian-common.conf
+> +index 5a47483..c1e5d6b 100644
+> +--- a/meta/conf/distro/debian-common.conf
+> ++++ b/meta/conf/distro/debian-common.conf
+> +@@ -10,8 +10,8 @@ WIC_IMAGER_INSTALL = "parted \
+> +                       util-linux \
+> +                       dosfstools \
+> +                       mtools \
+> +-                      e2fsprogs \
+> +-                      python3"
+> ++                      python3 \
+> ++                      bmap-tools"
+> +
+> + GRUB_BOOTLOADER_INSTALL_amd64 = "grub-efi-amd64-bin"
+> + GRUB_BOOTLOADER_INSTALL_i386 = "grub-efi-ia32-bin"
+> +--
+> +2.17.1
+> +
+> diff --git a/kas.yml b/kas.yml
+> index 21a776e..c726079 100644
+> --- a/kas.yml
+> +++ b/kas.yml
+> @@ -20,6 +20,10 @@ repos:
+>     isar:
+>       url: https://github.com/ilbers/isar
+>       refspec: 596732aa99c361b756655434bc90e0108e1caa33
+> +    patches:
+> +      bmap:
+> +        repo: cip-core
+> +        path: 0001-bmap-generate-bmap-for-wic-images.patch
+>       layers:
+>         meta:
+>   
+> 
 
-lab-cip-renesas and the LAVA master is back up and running.
+Currently trying to update Isar instead, now that your patch is in next.
 
-Kind regards, Chris
+Jan
 
-From: cip-dev-bounces@lists.cip-project.org <cip-dev-bounces@lists.cip-project.org> On Behalf Of Chris Paterson
-Sent: 18 June 2019 12:04
-To: cip-dev at lists.cip-project.org
-Subject: [cip-dev] lab-cip-renesas planned downtime
-
-Hello all,
-
-I?m planning to take the Renesas LAVA worker [1] offline tomorrow morning (Wednesday UK time) for a few hours.
-
-We?re having a re-arrangement in the rack.
-
-If this is going to cause any big issues please let me know.
-
-I?ll let you all know when everything is back up and running again.
-
-[1] https://lava.ciplatform.org/scheduler/worker/lab-cip-renesas
-
-Kind regards, Chris
-
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190619/98b3bd96/attachment.html>
+-- 
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+Corporate Competence Center Embedded Linux
