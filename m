@@ -1,27 +1,37 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Tue, 18 Jun 2019 16:08:40 +0100
-Subject: [cip-dev] [cip-kernel-sec 3/3] help:remote_name: use colon
- instead of equal
-In-Reply-To: <20190618024025.8274-4-daniel.sangorrin@toshiba.co.jp>
-References: <20190618024025.8274-1-daniel.sangorrin@toshiba.co.jp>
-	<20190618024025.8274-4-daniel.sangorrin@toshiba.co.jp>
-Message-ID: <1560870520.21054.40.camel@codethink.co.uk>
+From: Chris.Paterson2@renesas.com (Chris Paterson)
+Date: Wed, 19 Jun 2019 15:39:23 +0000
+Subject: [cip-dev] lab-cip-renesas planned downtime
+In-Reply-To: <TYAPR01MB2285C16F81C3FAEE6B4A9932B7EA0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+References: <TYAPR01MB2285C16F81C3FAEE6B4A9932B7EA0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+Message-ID: <TYAPR01MB22858991BE7A0737B7CF69ECB7E50@TYAPR01MB2285.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Tue, 2019-06-18 at 11:40 +0900, Daniel Sangorrin wrote:
-> The example and implementation use a colon (:) to specify
-> remote mappings, but the command's help use the equal
-> sign (=).
-> 
-> Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-[...]
+Hello CIP lovers,
 
-Right.
+lab-cip-renesas and the LAVA master is back up and running.
 
-Ben.
+Kind regards, Chris
 
--- 
-Ben Hutchings, Software Developer                ?        Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+From: cip-dev-bounces@lists.cip-project.org <cip-dev-bounces@lists.cip-project.org> On Behalf Of Chris Paterson
+Sent: 18 June 2019 12:04
+To: cip-dev at lists.cip-project.org
+Subject: [cip-dev] lab-cip-renesas planned downtime
+
+Hello all,
+
+I?m planning to take the Renesas LAVA worker [1] offline tomorrow morning (Wednesday UK time) for a few hours.
+
+We?re having a re-arrangement in the rack.
+
+If this is going to cause any big issues please let me know.
+
+I?ll let you all know when everything is back up and running again.
+
+[1] https://lava.ciplatform.org/scheduler/worker/lab-cip-renesas
+
+Kind regards, Chris
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190619/98b3bd96/attachment.html>
