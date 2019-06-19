@@ -1,107 +1,76 @@
 From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Wed, 19 Jun 2019 18:24:57 +0200
-Subject: [cip-dev] [isar-cip-core][next] bmap: apply bmap patch to isar
- until we upgrade
-In-Reply-To: <20190613055138.6769-1-daniel.sangorrin@toshiba.co.jp>
-References: <20190613055138.6769-1-daniel.sangorrin@toshiba.co.jp>
-Message-ID: <2b40d610-2c56-7e94-92eb-aa094edb91fa@siemens.com>
+Date: Wed, 19 Jun 2019 18:58:55 +0200
+Subject: [cip-dev] [ANNOUNCE] 4.19.50-cip3 and 4.4.181-cip33
+In-Reply-To: <OSBPR01MB41847EC988B652D8224B357792E80@OSBPR01MB4184.jpnprd01.prod.outlook.com>
+References: <OSBPR01MB418452DE0AB57E8B6792731192EE0@OSBPR01MB4184.jpnprd01.prod.outlook.com>
+	<OSBPR01MB41847EC988B652D8224B357792E80@OSBPR01MB4184.jpnprd01.prod.outlook.com>
+Message-ID: <b7549d5e-bf7e-ba5b-dd44-fca0346b8a12@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 13.06.19 07:51, Daniel Sangorrin wrote:
-> A similar bmap patch has been sent to ISAR upstream,
-> but while it gets accepted and until we update the ISAR
-> version, we can use this backport.
+On 17.06.19 00:14, nobuhiro1.iwamatsu at toshiba.co.jp wrote:
+> Hi,
 > 
-> Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-> ---
->   0001-bmap-generate-bmap-for-wic-images.patch | 57 ++++++++++++++++++++
->   kas.yml                                      |  4 ++
->   2 files changed, 61 insertions(+)
->   create mode 100644 0001-bmap-generate-bmap-for-wic-images.patch
+>> -----Original Message-----
+>> From: iwamatsu nobuhiro(?? ?? ????????)
+>> Sent: Friday, June 14, 2019 6:12 PM
+>> To: cip-dev at lists.cip-project.org
+>> Cc: SZ.Lin at moxa.com; Pavel Machek <pavel@denx.de>; Ben Hutchings
+>> <ben.hutchings@codethink.co.uk>
+>> Subject: [ANNOUNCE] 4.19.50-cip3 and 4.4.181-cip33
+>>
+>> Hi all,
+>>
+>> CIP kernel team has released Linux kernel 4.19.50-cip3 and 4.4.181-cip33.
+>> You can get this release via the git tree at:
+>>
+>>    4.19.50-cip3:
+>>
+>>      repository:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+>>      branch: linux-4.19.y-cip
+>>      commit: 0f13d9b4d0efa9e87381717c113df57718bc92d6
+>>
+>>    4.4.181-cip33:
+>>
+>>      repository:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+>>      branch: linux-4.4.y-cip
+>>      commit: b791a4823f245e7871dbdd05d8f13bcc5dc377c9
+>>
+>> And I introduce the updates for each kernel below.
+>>
+>> About 4.19.50-cip3:
+>>    * This version has been updated from stable version 4.19.13 to 4.19.50,
+>> and
+>>      many CVE fixes including MDS (Microarchitectural Data Sampling:
+>> CVE-2018-12130,
+>>      CVE-2018-12126, CVE-2018-12127,, CVE-2019-11091).
+>>    * CIP updates include device-tree fixes by Renesas.
+>>
+>> About 4.4.176-cip32:
+>>    * This version has been updated from stable version 4.4.176 to 4.4.181,
+>> and
+>>      this also includes MDS fixes as in 4.19.y.
+>>    * CIP updates include update of RZ/G1C by Renesas.
+>>
 > 
-> diff --git a/0001-bmap-generate-bmap-for-wic-images.patch b/0001-bmap-generate-bmap-for-wic-images.patch
-> new file mode 100644
-> index 0000000..63ebe54
-> --- /dev/null
-> +++ b/0001-bmap-generate-bmap-for-wic-images.patch
-> @@ -0,0 +1,57 @@
-> +From 4bf7d60b4fb64ed0a7a131431cc6a2573e7178a4 Mon Sep 17 00:00:00 2001
-> +From: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-> +Date: Thu, 13 Jun 2019 13:51:28 +0900
-> +Subject: [PATCH] bmap: generate bmap for wic images
-> +
-> +bmap shortens the time required to flash an image.
-> +This can be useful when you need a fixed-size image, for
-> +example to update partitions with swupdate.
-> +
-> +Example usage:
-> +sudo bmaptool copy --bmap \
-> +build/tmp/deploy/images/iwg20m/cip-core-image-cip-core-iwg20m.wic.img.bmap \
-> +build/tmp/deploy/images/iwg20m/cip-core-image-cip-core-iwg20m.wic.img \
-> +/dev/sdf
-> +
-> +Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-> +---
-> + meta/classes/wic-img.bbclass        | 5 ++++-
-> + meta/conf/distro/debian-common.conf | 4 ++--
-> + 2 files changed, 6 insertions(+), 3 deletions(-)
-> +
-> +diff --git a/meta/classes/wic-img.bbclass b/meta/classes/wic-img.bbclass
-> +index 09d9f2e..f227655 100644
-> +--- a/meta/classes/wic-img.bbclass
-> ++++ b/meta/classes/wic-img.bbclass
-> +@@ -151,9 +151,12 @@ EOSUDO
-> +         ${ISARROOT}/scripts/wic create ${WKS_FULL_PATH} \
-> +             --vars "${STAGING_DIR}/${MACHINE}/imgdata/" \
-> +             -o /tmp/${IMAGE_FULLNAME}.wic/ \
-> ++            --bmap \
-> +             -e ${IMAGE_BASENAME} ${WIC_CREATE_EXTRA_ARGS}
-> +     sudo chown -R $(stat -c "%U" ${ISARROOT}) ${ISARROOT}/meta ${ISARROOT}/meta-isar ${ISARROOT}/scripts || true
-> +-    cp -f $(ls -t -1 ${BUILDCHROOT_DIR}/tmp/${IMAGE_FULLNAME}.wic/*.direct | head -1) ${WIC_IMAGE_FILE}
-> ++    WIC_DIRECT=$(ls -t -1 ${BUILDCHROOT_DIR}/tmp/${IMAGE_FULLNAME}.wic/*.direct | head -1)
-> ++    cp -f ${WIC_DIRECT} ${WIC_IMAGE_FILE}
-> ++    cp -f ${WIC_DIRECT}.bmap ${WIC_IMAGE_FILE}.bmap
-> + }
-> +
-> + do_wic_image[file-checksums] += "${WKS_FILE_CHECKSUM}"
-> +diff --git a/meta/conf/distro/debian-common.conf b/meta/conf/distro/debian-common.conf
-> +index 5a47483..c1e5d6b 100644
-> +--- a/meta/conf/distro/debian-common.conf
-> ++++ b/meta/conf/distro/debian-common.conf
-> +@@ -10,8 +10,8 @@ WIC_IMAGER_INSTALL = "parted \
-> +                       util-linux \
-> +                       dosfstools \
-> +                       mtools \
-> +-                      e2fsprogs \
-> +-                      python3"
-> ++                      python3 \
-> ++                      bmap-tools"
-> +
-> + GRUB_BOOTLOADER_INSTALL_amd64 = "grub-efi-amd64-bin"
-> + GRUB_BOOTLOADER_INSTALL_i386 = "grub-efi-ia32-bin"
-> +--
-> +2.17.1
-> +
-> diff --git a/kas.yml b/kas.yml
-> index 21a776e..c726079 100644
-> --- a/kas.yml
-> +++ b/kas.yml
-> @@ -20,6 +20,10 @@ repos:
->     isar:
->       url: https://github.com/ilbers/isar
->       refspec: 596732aa99c361b756655434bc90e0108e1caa33
-> +    patches:
-> +      bmap:
-> +        repo: cip-core
-> +        path: 0001-bmap-generate-bmap-for-wic-images.patch
->       layers:
->         meta:
->   
+> I forgot to explain about MDS.
+> 
+> Although patches for MDS are included in this release, no test code has been
+> published for these, so we have not tested for MDS. Also, patches did not
+> really follow the stable rules, so they could not be checked the same way
+> as checking for other patches. But the bug is ugly enough so we included
+> the patches anyway.
+> For the above reasons, modern x86 CPUs can not really be trusted with secrets;
+> similar attacks are likely to happen in future.
 > 
 
-Currently trying to update Isar instead, now that your patch is in next.
+I wouldn't see it that extreme, it still heavily depends on what you are running and where. Also, the attacks are getting more complex.
 
+Anyway, different while similar topic: Is there a plan to quickly follow up with releases containing the SACK issue patches? That is cooking everywhere now.
+
+Thanks,
 Jan
 
 -- 
