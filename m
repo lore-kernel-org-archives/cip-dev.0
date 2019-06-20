@@ -1,28 +1,52 @@
-From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
-Date: Thu, 20 Jun 2019 11:07:17 +0000
-Subject: [cip-dev] [ANNOUNCE] Release 4.19.52-cip4 and 4.4.182-cip34
-Message-ID: <OSBPR01MB41844D05BCA4E626A797FA6892E40@OSBPR01MB4184.jpnprd01.prod.outlook.com>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Thu, 20 Jun 2019 13:37:46 +0100
+Subject: [cip-dev] [PATCH 4.4-cip] spi: pxa2xx: Fix build error because of
+ missing header
+Message-ID: <20190620123746.4boosxdwr2vapgu4@xylophone.i.decadent.org.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-CIP kernel team has released Linux kernel 4.19.52-cip4 and 4.4.182-cip34 for SACK Panic[0].
-You can get this release via the git tree at:
+commit 089bd46d8bc1fe5a28351e82e4adcaa5a40121b5 upstream.
 
-  4.19.52-cip4:
+Kbuild test robot reports:
 
-    repository: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch: linux-4.19.y-cip
-    commit: 097491b463d99691d7857aa8ff26f04cdb30c55b
-  
-  4.4.182-cip34:
+  drivers/spi/spi-pxa2xx.c: In function ?setup_cs?:
+  drivers/spi/spi-pxa2xx.c:1190:20: error: implicit declaration of function ?desc_to_gpio?
+  ...
 
-    repository: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch: linux-4.4.y-cip
-    commit: f70ae212791f2a559cc32ea0fc6f92f60b1c8fbb
+Reason for this is the fact that those functions are declared in
+linux/gpio/consumer.h which is not included in the driver. Fix this by
+including it.
 
-Best regards,
-  Nobuhiro
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+---
+This fixes a build regression for some configurations since I applied
+the backport of commit 3d3bc50700ba "spi: pxa2xx: Add support for GPIO
+descriptor chip selects".
 
-[0]: https://github.com/Netflix/security-bulletins/blob/master/advisories/third-party/2019-001.md
+Ben.
+
+ drivers/spi/spi-pxa2xx.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/spi/spi-pxa2xx.c b/drivers/spi/spi-pxa2xx.c
+index 9233a1cb4dee..02685ccaa97b 100644
+--- a/drivers/spi/spi-pxa2xx.c
++++ b/drivers/spi/spi-pxa2xx.c
+@@ -28,6 +28,7 @@
+ #include <linux/spi/spi.h>
+ #include <linux/delay.h>
+ #include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/slab.h>
+ #include <linux/clk.h>
+ #include <linux/pm_runtime.h>
+-- 
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
