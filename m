@@ -1,78 +1,37 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Wed, 19 Jun 2019 18:58:55 +0200
-Subject: [cip-dev] [ANNOUNCE] 4.19.50-cip3 and 4.4.181-cip33
-In-Reply-To: <OSBPR01MB41847EC988B652D8224B357792E80@OSBPR01MB4184.jpnprd01.prod.outlook.com>
-References: <OSBPR01MB418452DE0AB57E8B6792731192EE0@OSBPR01MB4184.jpnprd01.prod.outlook.com>
-	<OSBPR01MB41847EC988B652D8224B357792E80@OSBPR01MB4184.jpnprd01.prod.outlook.com>
-Message-ID: <b7549d5e-bf7e-ba5b-dd44-fca0346b8a12@siemens.com>
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Thu, 20 Jun 2019 01:11:37 +0000
+Subject: [cip-dev] CIP IRC weekly meeting today
+Message-ID: <HK0PR01MB2979A8F7BD80561439CD63D1E2E40@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 17.06.19 00:14, nobuhiro1.iwamatsu at toshiba.co.jp wrote:
-> Hi,
-> 
->> -----Original Message-----
->> From: iwamatsu nobuhiro(?? ?? ????????)
->> Sent: Friday, June 14, 2019 6:12 PM
->> To: cip-dev at lists.cip-project.org
->> Cc: SZ.Lin at moxa.com; Pavel Machek <pavel@denx.de>; Ben Hutchings
->> <ben.hutchings@codethink.co.uk>
->> Subject: [ANNOUNCE] 4.19.50-cip3 and 4.4.181-cip33
->>
->> Hi all,
->>
->> CIP kernel team has released Linux kernel 4.19.50-cip3 and 4.4.181-cip33.
->> You can get this release via the git tree at:
->>
->>    4.19.50-cip3:
->>
->>      repository:
->> https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
->>      branch: linux-4.19.y-cip
->>      commit: 0f13d9b4d0efa9e87381717c113df57718bc92d6
->>
->>    4.4.181-cip33:
->>
->>      repository:
->> https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
->>      branch: linux-4.4.y-cip
->>      commit: b791a4823f245e7871dbdd05d8f13bcc5dc377c9
->>
->> And I introduce the updates for each kernel below.
->>
->> About 4.19.50-cip3:
->>    * This version has been updated from stable version 4.19.13 to 4.19.50,
->> and
->>      many CVE fixes including MDS (Microarchitectural Data Sampling:
->> CVE-2018-12130,
->>      CVE-2018-12126, CVE-2018-12127,, CVE-2019-11091).
->>    * CIP updates include device-tree fixes by Renesas.
->>
->> About 4.4.176-cip32:
->>    * This version has been updated from stable version 4.4.176 to 4.4.181,
->> and
->>      this also includes MDS fixes as in 4.19.y.
->>    * CIP updates include update of RZ/G1C by Renesas.
->>
-> 
-> I forgot to explain about MDS.
-> 
-> Although patches for MDS are included in this release, no test code has been
-> published for these, so we have not tested for MDS. Also, patches did not
-> really follow the stable rules, so they could not be checked the same way
-> as checking for other patches. But the bug is ugly enough so we included
-> the patches anyway.
-> For the above reasons, modern x86 CPUs can not really be trusted with secrets;
-> similar attacks are likely to happen in future.
-> 
+Hi all,
 
-I wouldn't see it that extreme, it still heavily depends on what you are running and where. Also, the attacks are getting more complex.
+Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
 
-Anyway, different while similar topic: Is there a plan to quickly follow up with releases containing the SACK issue patches? That is cooking everywhere now.
+*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=6&day=20&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
 
-Thanks,
-Jan
+US-West US-East?? UK???? DE???? TW???? JP
+02:00??? 05:00?? 10:00?? 11:00?? 17:00?? 18:00
 
--- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+Channel:
+* irc:chat.freenode.net:6667/cip
+
+Agenda:
+
+* Action item
+1. Send investigating email for kernel-testing lab to cip-dev - patersonc
+2. Provide the script for CIP kernel config collection - bwh
+3. List some questions to ask Daniel Wagner - szlin
+* Kernel maintenance updates
+* Kernel testing
+* CIP Core
+* Software update
+* AOB
+
+The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
+
+Best regards,
+
+SZ Lin, Moxa.
