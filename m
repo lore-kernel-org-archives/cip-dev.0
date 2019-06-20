@@ -1,37 +1,62 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 20 Jun 2019 01:11:37 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-Message-ID: <HK0PR01MB2979A8F7BD80561439CD63D1E2E40@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
+Date: Thu, 20 Jun 2019 14:51:42 +0900
+Subject: [cip-dev] [cip-kernel-sec][PATCH v2 2/3] help:remote_name: use
+	colon instead of equal
+In-Reply-To: <20190620055143.341-1-daniel.sangorrin@toshiba.co.jp>
+References: <20190620055143.341-1-daniel.sangorrin@toshiba.co.jp>
+Message-ID: <20190620055143.341-2-daniel.sangorrin@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+The example and implementation use a colon (:) to specify
+remote mappings, but the command's help use the equal
+sign (=).
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
+Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
+---
+ scripts/import_stable.py   | 2 +-
+ scripts/report_affected.py | 2 +-
+ scripts/webview.py         | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=6&day=20&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
-
-US-West US-East?? UK???? DE???? TW???? JP
-02:00??? 05:00?? 10:00?? 11:00?? 17:00?? 18:00
-
-Channel:
-* irc:chat.freenode.net:6667/cip
-
-Agenda:
-
-* Action item
-1. Send investigating email for kernel-testing lab to cip-dev - patersonc
-2. Provide the script for CIP kernel config collection - bwh
-3. List some questions to ask Daniel Wagner - szlin
-* Kernel maintenance updates
-* Kernel testing
-* CIP Core
-* Software update
-* AOB
-
-The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
-
-Best regards,
-
-SZ Lin, Moxa.
+diff --git a/scripts/import_stable.py b/scripts/import_stable.py
+index b3261cf..2c88b07 100755
+--- a/scripts/import_stable.py
++++ b/scripts/import_stable.py
+@@ -174,7 +174,7 @@ if __name__ == '__main__':
+     parser.add_argument('--remote-name',
+                         dest='remote_name', action='append', default=[],
+                         help='git remote name mappings, e.g. stable:korg-stable',
+-                        metavar='NAME=OTHER-NAME')
++                        metavar='NAME:OTHER-NAME')
+     parser.add_argument('--mainline-remote',
+                         dest='mainline_remote_name',
+                         help="git remote name to use instead of 'torvalds'",
+diff --git a/scripts/report_affected.py b/scripts/report_affected.py
+index fac0885..879c021 100755
+--- a/scripts/report_affected.py
++++ b/scripts/report_affected.py
+@@ -76,7 +76,7 @@ if __name__ == '__main__':
+     parser.add_argument('--remote-name',
+                         dest='remote_name', action='append', default=[],
+                         help='git remote name mappings, e.g. stable:korg-stable',
+-                        metavar='NAME=OTHER-NAME')
++                        metavar='NAME:OTHER-NAME')
+     parser.add_argument('--mainline-remote',
+                         dest='mainline_remote_name',
+                         help="git remote name to use instead of 'torvalds'",
+diff --git a/scripts/webview.py b/scripts/webview.py
+index 9e16a0c..a3a643b 100755
+--- a/scripts/webview.py
++++ b/scripts/webview.py
+@@ -206,7 +206,7 @@ if __name__ == '__main__':
+     parser.add_argument('--remote-name',
+                         dest='remote_name', action='append', default=[],
+                         help='git remote name mappings, e.g. stable:korg-stable',
+-                        metavar='NAME=OTHER-NAME')
++                        metavar='NAME:OTHER-NAME')
+     parser.add_argument('--mainline-remote',
+                         dest='mainline_remote_name',
+                         help="git remote name to use instead of 'torvalds'",
+-- 
+2.17.1
