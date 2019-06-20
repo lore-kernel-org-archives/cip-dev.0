@@ -1,57 +1,68 @@
 From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Thu, 20 Jun 2019 17:27:57 +0100
-Subject: [cip-dev] [RFC] Script to find used sources in the kernel
-Message-ID: <1561048077.21054.46.camel@codethink.co.uk>
+Date: Thu, 20 Jun 2019 19:07:36 +0100
+Subject: [cip-dev] [cip-kernel-sec][PATCH v2 3/3] remotes: check that
+	remotes exist
+In-Reply-To: <20190620055143.341-3-daniel.sangorrin@toshiba.co.jp>
+References: <20190620055143.341-1-daniel.sangorrin@toshiba.co.jp>
+	<20190620055143.341-3-daniel.sangorrin@toshiba.co.jp>
+Message-ID: <1561054056.21054.48.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-I've been promising for some time to provide a way to identify which
-changes on Linux stable branches are relevant to CIP members, and
-conversely which are irrelevant and don't need to be reviewed.
+On Thu, 2019-06-20 at 14:51 +0900, Daniel Sangorrin wrote:
+[...]
+> --- a/scripts/kernel_sec/branch.py
+> +++ b/scripts/kernel_sec/branch.py
+[...]
+> +def check_git_repo(git_repo, remotes, create=False):
+> +????if create:
+> +????????if os.path.isdir(git_repo):
+> +????????????msg = "directory %r already exists" % git_repo
+> +????????????raise argparse.ArgumentTypeError(msg)
+> +????????else:
+> +????????????os.mkdir(git_repo)
+> +????????????subprocess.check_call(['git', 'init', '.'], cwd=git_repo)
+> +
+> +????????for key in remotes.keys():
+> +????????????remote = remotes[key]??# __getitem__ will add git_name
+> +????????????remote_add(git_repo, remote['git_name'], remote['git_repo_url'])
+> +????else:
+> +????????if not os.path.isdir(git_repo):
+> +????????????msg = "directory %r not present" % git_repo
+> +????????????raise argparse.ArgumentTypeError(msg)
+> +????????if not os.path.isdir(os.path.join(git_repo, '.git')):
+> +????????????msg = "directory %r is not a git repository" % git_repo
+> +????????????raise argparse.ArgumentTypeError(msg)
 
-This is a proof-of-concept of the major part of that, which is to
-identify which source files are used based on the submitted
-configurations.  Once this is working to everyone's satisfaction, it
-should be fairly easy to automate the remaining parts, which are (1)
-merge the source lists for each branch (4.4, 4.19) and (2) check a set
-of patches or commits against a list.
+This isn't compatible with the use of git worktrees (which I use).  In
+a worktree, .git is a regular file that refers back to the repository.
 
-I implemented:
+So I think this check should use exists() instead of isdir().
 
-* A script to select the appropriate value of CROSS_COMPILE for a given
-  configuration (cross-compile-prefix).
-* A script to call the assembler or compiler and collect dependency
-  information from the preprocessor into a single file
-  (get_used_sources_wrapper).
-* A script that builds a kernel from a given configuration file with
-  get_used_sources_wrapper?wrapped around the asssembler and compilers.
-  This also filters out references to missing files (like firmware)
-  from the configuration file.
+Also, why does this function raise argparse.ArgumentTypeError?  The
+doc-string for that type says it's "An error from trying to convert a
+command line string to a type."  It doesn't seem to be suitable for
+reporting problems with the thing that an argument refers to.
 
-I tied these together with a Makefile rule that generates a source list
-for each of the submitted configurations.  I was then able to generate
-source lists for each of them (although it took quite a few hours).
+[...]
+> --- /dev/null
+> +++ b/scripts/prepare_remotes.py
+> @@ -0,0 +1,46 @@
+> +#!/usr/bin/python3
+> +
+> +# Copyright 2019 Toshiba corp.
+> +# Based on import_stable.py by Codethink Ltd.
+> +#
+> +# This script is distributed under the terms and conditions of the GNU General
+> +# Public License, Version 3 or later. See?http://www.gnu.org/copyleft/gpl.html
+> +# for details.
+> +
+> +# Helper script that prepares the local git repository with the configured
+> +# remote branches
+[...]
 
-You can find the scripts and lists on the "benhutchings/get-used-
-sources" branch of
-https://gitlab.com/cip-project/cip-kernel/cip-kernel-config.git
-
-There are a couple of open questions, on which I would like to hear
-other's opinions:
-
-* Should the source lists be added to the repository or not?  If they
-  are added, then they should not be changed by the standard "all" and
-  "clean" targets.
-  I tend to think that they should be added, because they take a long
-  time to generate and require cross-compilers etc. to be installed.
-
-* If the answer to the above is "yes", should the source lists be
-  generated (a) by members, and sent along with the config files, or
-  (b) by the kernel maintainers?  Option (a) makes a bit more work for
-  members, but option (b) might result in missing build tools due to
-  the config filtering mentioned above.
-
-Please feel free to comment on anything else.
+Perhaps prepare_remotes.py should also run "git remote update"? 
+Without that, the repository is still not actually useful.
 
 Ben.
 
