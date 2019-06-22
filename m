@@ -1,125 +1,41 @@
-From: daniel.sangorrin@toshiba.co.jp (daniel.sangorrin at toshiba.co.jp)
-Date: Fri, 21 Jun 2019 02:39:13 +0000
-Subject: [cip-dev] [isar-cip-core][next] bmap: apply bmap patch to isar
- until we upgrade
-In-Reply-To: <2b40d610-2c56-7e94-92eb-aa094edb91fa@siemens.com>
-References: <20190613055138.6769-1-daniel.sangorrin@toshiba.co.jp>
-	<2b40d610-2c56-7e94-92eb-aa094edb91fa@siemens.com>
-Message-ID: <TY2PR01MB33237475AD7819CF0435417ED0E70@TY2PR01MB3323.jpnprd01.prod.outlook.com>
+From: pavel@ucw.cz (Pavel Machek)
+Date: Sat, 22 Jun 2019 22:07:14 +0200
+Subject: [cip-dev] [RFC] Script to find used sources in the kernel
+In-Reply-To: <1561048077.21054.46.camel@codethink.co.uk>
+References: <1561048077.21054.46.camel@codethink.co.uk>
+Message-ID: <20190622200714.GA19211@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Jan
+Hi!
 
-> From: Jan Kiszka <jan.kiszka@siemens.com>
+> There are a couple of open questions, on which I would like to hear
+> other's opinions:
 > 
-> On 13.06.19 07:51, Daniel Sangorrin wrote:
-> > A similar bmap patch has been sent to ISAR upstream,
-> > but while it gets accepted and until we update the ISAR
-> > version, we can use this backport.
-> >
-> > Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-> > ---
-> >   0001-bmap-generate-bmap-for-wic-images.patch | 57 ++++++++++++++++++++
-> >   kas.yml                                      |  4 ++
-> >   2 files changed, 61 insertions(+)
-> >   create mode 100644 0001-bmap-generate-bmap-for-wic-images.patch
-> >
-> > diff --git a/0001-bmap-generate-bmap-for-wic-images.patch
-> b/0001-bmap-generate-bmap-for-wic-images.patch
-> > new file mode 100644
-> > index 0000000..63ebe54
-> > --- /dev/null
-> > +++ b/0001-bmap-generate-bmap-for-wic-images.patch
-> > @@ -0,0 +1,57 @@
-> > +From 4bf7d60b4fb64ed0a7a131431cc6a2573e7178a4 Mon Sep 17 00:00:00 2001
-> > +From: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-> > +Date: Thu, 13 Jun 2019 13:51:28 +0900
-> > +Subject: [PATCH] bmap: generate bmap for wic images
-> > +
-> > +bmap shortens the time required to flash an image.
-> > +This can be useful when you need a fixed-size image, for
-> > +example to update partitions with swupdate.
-> > +
-> > +Example usage:
-> > +sudo bmaptool copy --bmap \
-> > +build/tmp/deploy/images/iwg20m/cip-core-image-cip-core-iwg20m.wic.img.bmap \
-> > +build/tmp/deploy/images/iwg20m/cip-core-image-cip-core-iwg20m.wic.img \
-> > +/dev/sdf
-> > +
-> > +Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-> > +---
-> > + meta/classes/wic-img.bbclass        | 5 ++++-
-> > + meta/conf/distro/debian-common.conf | 4 ++--
-> > + 2 files changed, 6 insertions(+), 3 deletions(-)
-> > +
-> > +diff --git a/meta/classes/wic-img.bbclass b/meta/classes/wic-img.bbclass
-> > +index 09d9f2e..f227655 100644
-> > +--- a/meta/classes/wic-img.bbclass
-> > ++++ b/meta/classes/wic-img.bbclass
-> > +@@ -151,9 +151,12 @@ EOSUDO
-> > +         ${ISARROOT}/scripts/wic create ${WKS_FULL_PATH} \
-> > +             --vars "${STAGING_DIR}/${MACHINE}/imgdata/" \
-> > +             -o /tmp/${IMAGE_FULLNAME}.wic/ \
-> > ++            --bmap \
-> > +             -e ${IMAGE_BASENAME} ${WIC_CREATE_EXTRA_ARGS}
-> > +     sudo chown -R $(stat -c "%U" ${ISARROOT}) ${ISARROOT}/meta ${ISARROOT}/meta-isar
-> ${ISARROOT}/scripts || true
-> > +-    cp -f $(ls -t -1 ${BUILDCHROOT_DIR}/tmp/${IMAGE_FULLNAME}.wic/*.direct | head -1)
-> ${WIC_IMAGE_FILE}
-> > ++    WIC_DIRECT=$(ls -t -1 ${BUILDCHROOT_DIR}/tmp/${IMAGE_FULLNAME}.wic/*.direct | head -1)
-> > ++    cp -f ${WIC_DIRECT} ${WIC_IMAGE_FILE}
-> > ++    cp -f ${WIC_DIRECT}.bmap ${WIC_IMAGE_FILE}.bmap
-> > + }
-> > +
-> > + do_wic_image[file-checksums] += "${WKS_FILE_CHECKSUM}"
-> > +diff --git a/meta/conf/distro/debian-common.conf b/meta/conf/distro/debian-common.conf
-> > +index 5a47483..c1e5d6b 100644
-> > +--- a/meta/conf/distro/debian-common.conf
-> > ++++ b/meta/conf/distro/debian-common.conf
-> > +@@ -10,8 +10,8 @@ WIC_IMAGER_INSTALL = "parted \
-> > +                       util-linux \
-> > +                       dosfstools \
-> > +                       mtools \
-> > +-                      e2fsprogs \
-> > +-                      python3"
-> > ++                      python3 \
-> > ++                      bmap-tools"
-> > +
-> > + GRUB_BOOTLOADER_INSTALL_amd64 = "grub-efi-amd64-bin"
-> > + GRUB_BOOTLOADER_INSTALL_i386 = "grub-efi-ia32-bin"
-> > +--
-> > +2.17.1
-> > +
-> > diff --git a/kas.yml b/kas.yml
-> > index 21a776e..c726079 100644
-> > --- a/kas.yml
-> > +++ b/kas.yml
-> > @@ -20,6 +20,10 @@ repos:
-> >     isar:
-> >       url: https://github.com/ilbers/isar
-> >       refspec: 596732aa99c361b756655434bc90e0108e1caa33
-> > +    patches:
-> > +      bmap:
-> > +        repo: cip-core
-> > +        path: 0001-bmap-generate-bmap-for-wic-images.patch
-> >       layers:
-> >         meta:
-> >
-> >
-> 
-> Currently trying to update Isar instead, now that your patch is in next.
+> * Should the source lists be added to the repository or not?  If they
+>   are added, then they should not be changed by the standard "all" and
+>   "clean" targets.
+>   I tend to think that they should be added, because they take a long
+>   time to generate and require cross-compilers etc. to be installed.
 
-OK, great. Let me know when you update it, I want to update the SWUpdate branch as well.
+I believe they should go to the repository, because we may want to
+manually adjust the lists.
 
-Thanks,
-Daniel
+I don't believe "example" configurations we have necessarily have
+enabled all the options "final products" may need. If some common
+option (vfat?) is not enabled in our configurations, because it is not
+hardware specific and not needed for testing, we may still want to
+review it, because it is common enough that someone will need it...
 
-
-
-> 
-> Jan
-> 
-> --
-> Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-> Corporate Competence Center Embedded Linux
+Best regards,
+									Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 181 bytes
+Desc: Digital signature
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190622/b2c00791/attachment.sig>
