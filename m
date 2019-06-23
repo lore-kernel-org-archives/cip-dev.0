@@ -1,41 +1,39 @@
-From: pavel@ucw.cz (Pavel Machek)
-Date: Sat, 22 Jun 2019 22:07:14 +0200
-Subject: [cip-dev] [RFC] Script to find used sources in the kernel
-In-Reply-To: <1561048077.21054.46.camel@codethink.co.uk>
-References: <1561048077.21054.46.camel@codethink.co.uk>
-Message-ID: <20190622200714.GA19211@amd>
+From: pavel@denx.de (Pavel Machek)
+Date: Sun, 23 Jun 2019 22:37:04 +0200
+Subject: [cip-dev] [RFC/RFT] -cip-rt kernels for review/testing
+Message-ID: <20190623203704.GA12734@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi!
 
-> There are a couple of open questions, on which I would like to hear
-> other's opinions:
-> 
-> * Should the source lists be added to the repository or not?  If they
->   are added, then they should not be changed by the standard "all" and
->   "clean" targets.
->   I tend to think that they should be added, because they take a long
->   time to generate and require cross-compilers etc. to be installed.
+I played a bit with -rt kernels, and here are the results.
 
-I believe they should go to the repository, because we may want to
-manually adjust the lists.
+v4.19.50-rt22-cip3-rebase was reasonably easy to do, as -cip1 was
+empty. v4.4.179-rt181-cip34-rebase was more interesting.
 
-I don't believe "example" configurations we have necessarily have
-enabled all the options "final products" may need. If some common
-option (vfat?) is not enabled in our configurations, because it is not
-hardware specific and not needed for testing, we may still want to
-review it, because it is common enough that someone will need it...
+Trees are at kernel.org:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/pavel/linux-cip.git/log/?h=v4.4.179-rt181-cip34-rebase
+https://git.kernel.org/pub/scm/linux/kernel/git/pavel/linux-cip.git/log/?h=v4.19.50-rt22-cip3-rebase
+
+Basically untested. Could I ask for reviews and testing?
+
+I know that full preemption does not work on x86-32. I sent
+"PREEMPT_RT_FULL on x86-32 machine" mail to the lists
+
+I don't know how to release useful non-rebasing trees. Is someone
+using those?
 
 Best regards,
-									Pavel
+								Pavel
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 -------------- next part --------------
 A non-text attachment was scrubbed...
 Name: signature.asc
 Type: application/pgp-signature
 Size: 181 bytes
 Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190622/b2c00791/attachment.sig>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190623/bb4ed075/attachment.sig>
