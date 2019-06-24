@@ -1,32 +1,45 @@
-From: patryk.mungai-ndungu.kx@renesas.com (Patryk Mungai Ndungu)
-Date: Mon, 24 Jun 2019 09:38:05 +0000
-Subject: [cip-dev] LAVA lab-cip-renesas maintenance
-In-Reply-To: <OSBPR01MB2055C4AC59A4C93F3E7F1E1FE9E00@OSBPR01MB2055.jpnprd01.prod.outlook.com>
-References: <OSBPR01MB2055C4AC59A4C93F3E7F1E1FE9E00@OSBPR01MB2055.jpnprd01.prod.outlook.com>
-Message-ID: <OSBPR01MB2055240CC157684D845C07F6E9E00@OSBPR01MB2055.jpnprd01.prod.outlook.com>
+From: pavel@denx.de (Pavel Machek)
+Date: Mon, 24 Jun 2019 13:11:41 +0200
+Subject: [cip-dev] [ANNOUNCE] 4.19.50-cip3 and 4.4.181-cip33
+In-Reply-To: <b7549d5e-bf7e-ba5b-dd44-fca0346b8a12@siemens.com>
+References: <OSBPR01MB418452DE0AB57E8B6792731192EE0@OSBPR01MB4184.jpnprd01.prod.outlook.com>
+	<OSBPR01MB41847EC988B652D8224B357792E80@OSBPR01MB4184.jpnprd01.prod.outlook.com>
+	<b7549d5e-bf7e-ba5b-dd44-fca0346b8a12@siemens.com>
+Message-ID: <20190624111141.GA22088@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello,
+Hi!
 
-The lab is now back online.
+> > Although patches for MDS are included in this release, no test code has been
+> > published for these, so we have not tested for MDS. Also, patches did not
+> > really follow the stable rules, so they could not be checked the same way
+> > as checking for other patches. But the bug is ugly enough so we included
+> > the patches anyway.
+> > For the above reasons, modern x86 CPUs can not really be trusted with secrets;
+> > similar attacks are likely to happen in future.
+> > 
+> 
+> I wouldn't see it that extreme, it still heavily depends on what you are running and where. Also, the attacks are getting more complex.
+> 
 
-Kind Regards,
-Patryk
+Well, most systems do not really need to protect local user's secrets
+from each other. We simply don't allow code execution for untrusted
+parties.
 
-From: cip-dev-bounces@lists.cip-project.org <cip-dev-bounces@lists.cip-project.org> On Behalf Of Patryk Mungai Ndungu
-Sent: 24 June 2019 09:43
-To: cip-dev at lists.cip-project.org
-Subject: [cip-dev] LAVA lab-cip-renesas maintenance
+If someone decides to combine "top secret document storage" and
+"honeypot giving shell to attackers" on single machine, well, they are
+asking for trouble.
 
-Hello all,
-
-I am bringing lab-cip-renesas offline to do some necessary LAVA maintenance. You will still be able to submit test jobs, but they won?t run until the lab is back online. The lab should be back online in the next hour.
-
-Sorry for any inconvenience.
-
-Kind Regards,
-Patryk
+Best regards,
+									Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
 -------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190624/d5e93d96/attachment.html>
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 181 bytes
+Desc: Digital signature
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190624/698caec2/attachment.sig>
