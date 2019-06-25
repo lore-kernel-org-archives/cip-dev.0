@@ -1,47 +1,71 @@
-From: SZ.Lin@moxa.com (=?iso-2022-jp?B?U1ogTGluICgbJEJOUz5lQ1IbKEIp?=)
-Date: Tue, 25 Jun 2019 03:55:26 +0000
-Subject: [cip-dev] [RFC/RFT] -cip-rt kernels for review/testing
-In-Reply-To: <20190623203704.GA12734@amd>
-References: <20190623203704.GA12734@amd>
-Message-ID: <HK0PR01MB29798DE214020C6889F9BE4CE2E30@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
+Date: Tue, 25 Jun 2019 15:00:11 +0900
+Subject: [cip-dev] [cip-kernel-sec] report_affected: add show-description
+	option
+Message-ID: <20190625060011.14152-1-daniel.sangorrin@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Pavel,
+Rather than looking up each issue file, I would like
+to have an overview of what each CVE ID means.
 
-> From: Pavel Machek <pavel@denx.de> 
-> Hi!
-> 
-> I played a bit with -rt kernels, and here are the results.
+Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
+---
+ scripts/report_affected.py | 24 +++++++++++++++++-------
+ 1 file changed, 17 insertions(+), 7 deletions(-)
 
-I appreciate your effort.
-
-> 
-> v4.19.50-rt22-cip3-rebase was reasonably easy to do, as -cip1 was empty.
-> v4.4.179-rt181-cip34-rebase was more interesting.
-> 
-> Trees are at kernel.org:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/pavel/linux-cip.git/log/?h=v4.
-> 4.179-rt181-cip34-rebase
-> https://git.kernel.org/pub/scm/linux/kernel/git/pavel/linux-cip.git/log/?h=v4.
-> 19.50-rt22-cip3-rebase
-> 
-> Basically untested. Could I ask for reviews and testing?
-> 
-> I know that full preemption does not work on x86-32. I sent
-> "PREEMPT_RT_FULL on x86-32 machine" mail to the lists
-> 
-> I don't know how to release useful non-rebasing trees. Is someone using
-> those?
-
-How about adding these questions into our question list and ask Wagner afterward :-)
-
-SZ
-
-> 
-> Best regards,
-> 								Pavel
-> --
-> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+diff --git a/scripts/report_affected.py b/scripts/report_affected.py
+index 0296649..d2459f4 100755
+--- a/scripts/report_affected.py
++++ b/scripts/report_affected.py
+@@ -18,8 +18,8 @@ import kernel_sec.issue
+ import kernel_sec.version
+ 
+ 
+-def main(git_repo, remotes,
+-         only_fixed_upstream, include_ignored, *branch_names):
++def main(git_repo, remotes, only_fixed_upstream,
++         include_ignored, show_description, *branch_names):
+     live_branches = kernel_sec.branch.get_live_branches()
+     if branch_names:
+         branches = []
+@@ -106,9 +106,16 @@ def main(git_repo, remotes,
+                         break
+ 
+     for branch in branches:
+-        print('%s:' % branch['full_name'],
+-              *sorted(branch_issues.get(branch['full_name'], []),
+-                      key=kernel_sec.issue.get_id_sort_key))
++        sorted_cve_ids = sorted(
++            branch_issues.get(branch['full_name'], []),
++            key=kernel_sec.issue.get_id_sort_key)
++        if show_description:
++            print('%s:' % branch['full_name'])
++            for cve_id in sorted_cve_ids:
++                print(cve_id, '=>',
++                      kernel_sec.issue.load(cve_id).get('description', 'None'))
++        else:
++            print('%s:' % branch['full_name'], *sorted_cve_ids)
+ 
+ 
+ if __name__ == '__main__':
+@@ -137,6 +144,9 @@ if __name__ == '__main__':
+     parser.add_argument('--include-ignored',
+                         action='store_true',
+                         help='include issues that have been marked as ignored')
++    parser.add_argument('--show-description',
++                        action='store_true',
++                        help='show the issue description')
+     parser.add_argument('branches',
+                         nargs='*',
+                         help=('specific branch[/tag] or stable tag to '
+@@ -149,5 +159,5 @@ if __name__ == '__main__':
+                                             mainline=args.mainline_remote_name,
+                                             stable=args.stable_remote_name)
+     kernel_sec.branch.check_git_repo(args.git_repo, remotes)
+-    main(args.git_repo, remotes,
+-         args.only_fixed_upstream, args.include_ignored, *args.branches)
++    main(args.git_repo, remotes, args.only_fixed_upstream,
++         args.include_ignored, args.show_description, *args.branches)
+-- 
+2.17.1
