@@ -1,65 +1,50 @@
-From: gitlab@mg.gitlab.com (Ben Hutchings)
-Date: Mon, 24 Jun 2019 15:41:21 +0000
-Subject: [cip-dev] [Git][cip-project/cip-kernel/cip-kernel-sec][master] 2
- commits: Ignore CVE-2019-0157 as it relates to an out-of-tree driver
-Message-ID: <5d10ef21e40f4_2bed3fa922b00cec66054e@sidekiq-asap-01-sv-gprd.mail>
+From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
+Date: Tue, 25 Jun 2019 12:26:30 +0900
+Subject: [cip-dev] fixes and support for tags
+Message-ID: <20190625032636.10694-1-daniel.sangorrin@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
+Hello Ben,
 
+This series contains a few fixes and support for reporting on tags.
 
-Ben Hutchings pushed to branch master at cip-project / cip-kernel / cip-kernel-sec
+- Re-sent patches
 
+[cip-kernel-sec 1/6] check_git_repo: add checks to the local
 
-Commits:
-fd56a750 by Ben Hutchings at 2019-06-24T15:40:59Z
-Ignore CVE-2019-0157 as it relates to an out-of-tree driver
+I decided to remove the repository creation code from the shared
+function, because it is only used by prepared_remotes.
+I have adjusted the exception raised, and I use .exists() instead
+of .isdir() to account for git worktrees (which I didn't know 
+about)
 
-- - - - -
-c96dfc60 by Ben Hutchings at 2019-06-24T15:41:17Z
-Add description for CVE-2019-12881
+[cip-kernel-sec 2/6] prepare_remotes: helper script to prepare local
 
-- - - - -
+I have put the creation code here, and added remote update code
+for the script to be useful.
 
+[cip-kernel-sec 3/6] report_affected: fix code when branches are
 
-2 changed files:
+This allows reporting on CIP branches. I have removed the
+get_stable_branch function as you mentioned.
 
-- issues/CVE-2019-0157.yml
-- issues/CVE-2019-12881.yml
+[cip-kernel-sec 4/6] report_affected: check user supplied branch
 
+Small check to make sure the user supplied branch names actually
+match the configured branches' names.
 
-Changes:
+[cip-kernel-sec 5/6] report_affected: add support for reporting on
 
-=====================================
-issues/CVE-2019-0157.yml
-=====================================
-@@ -5,3 +5,5 @@ description: |-
- references:
- - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-0157
- - https://www.intel.com/content/www/us/en/security-center/advisory/intel-sa-00235.html?wapkw=cve-2019-0157
-+ignore:
-+  all: Issue is in out-of-tree driver
+This is the new big patch, where I add support for reporting on
+tags. Tags can be specified in different formats. For example:
+- linux-4.4.y/v4.4.107
+- v4.4.181-cip33 <-- linux-4.4.y is inferred from the tag's name
+- linux-4.4.y/myproduct-v20190612 <-- product tags
 
+[cip-kernel-sec 6/6] pep8: fix pep8-related errors such as too long
 
-=====================================
-issues/CVE-2019-12881.yml
-=====================================
-@@ -1,4 +1,4 @@
--description: ''
-+description: 'i915_gem_userptr_get_pages allows local users to cause a denial of service (NULL pointer dereference and BUG)'
- references:
- - https://gist.github.com/oxagast/472866fb2c3d439e10499d7141d0a520
- - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-12881
+I fixed these ones because they were annoying.
 
-
-
-View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/compare/dc96f854ab41d10385d0c90aae5efc0402d5f9ed...c96dfc60475bb62048934a491a2eda588dbdfe1f
-
--- 
-View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/compare/dc96f854ab41d10385d0c90aae5efc0402d5f9ed...c96dfc60475bb62048934a491a2eda588dbdfe1f
-You're receiving this email because of your account on gitlab.com.
-
-
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190624/2f373813/attachment.html>
+Thanks,
+Daniel
