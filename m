@@ -1,39 +1,30 @@
-From: pavel@ucw.cz (Pavel Machek)
-Date: Tue, 25 Jun 2019 10:52:26 +0200
-Subject: [cip-dev] [PATCH 4.4-cip] spi: pxa2xx: Fix build error because
- of missing header
-In-Reply-To: <20190620123746.4boosxdwr2vapgu4@xylophone.i.decadent.org.uk>
-References: <20190620123746.4boosxdwr2vapgu4@xylophone.i.decadent.org.uk>
-Message-ID: <20190625085226.GA2928@amd>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Tue, 25 Jun 2019 13:29:15 +0100
+Subject: [cip-dev] [Git][cip-project/cip-kernel/cip-kernel-sec][master]
+ Import more data
+In-Reply-To: <TY2PR01MB33234EA30D2934C21A792F2AD0E30@TY2PR01MB3323.jpnprd01.prod.outlook.com>
+References: <5d0bebf82257_470e3fd2b3244620356163@sidekiq-asap-03-sv-gprd.mail>
+	<TY2PR01MB33234EA30D2934C21A792F2AD0E30@TY2PR01MB3323.jpnprd01.prod.outlook.com>
+Message-ID: <1561465755.21054.60.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Thu 2019-06-20 13:37:46, Ben Hutchings wrote:
-> From: Mika Westerberg <mika.westerberg@linux.intel.com>
+On Tue, 2019-06-25 at 06:10 +0000, daniel.sangorrin at toshiba.co.jp wrote:
+> Hello Ben,
 > 
-> commit 089bd46d8bc1fe5a28351e82e4adcaa5a40121b5 upstream.
-> 
-> Kbuild test robot reports:
-> 
->   drivers/spi/spi-pxa2xx.c: In function ?setup_cs?:
->   drivers/spi/spi-pxa2xx.c:1190:20: error: implicit declaration of function ?desc_to_gpio?
->   ...
-> 
-> Reason for this is the fact that those functions are declared in
-> linux/gpio/consumer.h which is not included in the driver. Fix this by
-> including it.
+> I'm not sure where the script that imports new issues and sends these e-mails is located, but it looks like it is not calling "scripts/cleanup.py".
+> I run cleanup.py, and I noticed that it modified most yaml issue files.
 
-Thanks, applied.
+I run the same scripts that are in the repo.  Whenever I push, Gitlab
+sends the mail.
 
-								Pavel
-								
+If cleanup.py is reformatting then that suggests there may have been a
+change in the default format used by yamllib.  We might need to
+override that.
+
+Ben.
+
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 181 bytes
-Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190625/f1c95d57/attachment.sig>
+Ben Hutchings, Software Developer                ?        Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
