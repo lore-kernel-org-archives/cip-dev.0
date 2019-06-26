@@ -1,30 +1,18 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Tue, 25 Jun 2019 13:29:15 +0100
-Subject: [cip-dev] [Git][cip-project/cip-kernel/cip-kernel-sec][master]
- Import more data
-In-Reply-To: <TY2PR01MB33234EA30D2934C21A792F2AD0E30@TY2PR01MB3323.jpnprd01.prod.outlook.com>
-References: <5d0bebf82257_470e3fd2b3244620356163@sidekiq-asap-03-sv-gprd.mail>
-	<TY2PR01MB33234EA30D2934C21A792F2AD0E30@TY2PR01MB3323.jpnprd01.prod.outlook.com>
-Message-ID: <1561465755.21054.60.camel@codethink.co.uk>
+From: Chris.Paterson2@renesas.com (Chris Paterson)
+Date: Wed, 26 Jun 2019 09:06:20 +0000
+Subject: [cip-dev] Planned LAVA master maintenance
+Message-ID: <TYAPR01MB22856E19380276E87579423BB7E20@TYAPR01MB2285.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Tue, 2019-06-25 at 06:10 +0000, daniel.sangorrin at toshiba.co.jp wrote:
-> Hello Ben,
-> 
-> I'm not sure where the script that imports new issues and sends these e-mails is located, but it looks like it is not calling "scripts/cleanup.py".
-> I run cleanup.py, and I noticed that it modified most yaml issue files.
+Hello all,
 
-I run the same scripts that are in the repo.  Whenever I push, Gitlab
-sends the mail.
+The CIP LAVA master will be down for some maintenance later today for about an hour starting from GMT 1400.
 
-If cleanup.py is reformatting then that suggests there may have been a
-change in the default format used by yamllib.  We might need to
-override that.
+Sorry for any inconvenience caused.
 
-Ben.
+Kind regards, Chris
 
--- 
-Ben Hutchings, Software Developer                ?        Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190626/4cebb671/attachment.html>
