@@ -1,9 +1,25 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Wed, 26 Jun 2019 09:06:20 +0000
+From: patryk.mungai-ndungu.kx@renesas.com (Patryk Mungai Ndungu)
+Date: Wed, 26 Jun 2019 15:55:34 +0000
 Subject: [cip-dev] Planned LAVA master maintenance
-Message-ID: <TYAPR01MB22856E19380276E87579423BB7E20@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+In-Reply-To: <TYAPR01MB22856E19380276E87579423BB7E20@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+References: <TYAPR01MB22856E19380276E87579423BB7E20@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+Message-ID: <OSBPR01MB2055EBCB7D4E20F24E726A21E9E20@OSBPR01MB2055.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
+
+Hello,
+
+lava.ciplatform.org is back up and running.
+
+Apologies for any inconvenience caused.
+
+Kind Regards,
+Patryk
+
+From: cip-dev-bounces@lists.cip-project.org <cip-dev-bounces@lists.cip-project.org> On Behalf Of Chris Paterson
+Sent: 26 June 2019 10:06
+To: cip-dev at lists.cip-project.org
+Subject: [cip-dev] Planned LAVA master maintenance
 
 Hello all,
 
@@ -15,4 +31,4 @@ Kind regards, Chris
 
 -------------- next part --------------
 An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190626/4cebb671/attachment.html>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190626/d1b78180/attachment.html>
