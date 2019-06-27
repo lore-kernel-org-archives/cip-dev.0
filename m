@@ -1,79 +1,42 @@
-From: chris.paterson2@renesas.com (Chris Paterson)
-Date: Thu, 27 Jun 2019 14:12:50 +0100
-Subject: [cip-dev] [PATCH 4.4.y-cip] Add gitlab-ci.yaml
-In-Reply-To: <20190627131250.7932-1-chris.paterson2@renesas.com>
-References: <20190627131250.7932-1-chris.paterson2@renesas.com>
-Message-ID: <20190627131250.7932-2-chris.paterson2@renesas.com>
+From: pavel@denx.de (Pavel Machek)
+Date: Thu, 27 Jun 2019 23:40:28 +0200
+Subject: [cip-dev] lava very slow; it was ok earlier today
+Message-ID: <20190627214028.GA21852@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This is configured to build and test for the following configuration:
+Hi!
 
-1. ARCH: arm
-   CONFIGS: shmobile_defconfig
-   BOARDS: r8a7743-iwg20d
+I'm trying to get something to work on iwg20m, but ... something is
+very slow.
 
-Build/test Docker containers and scripts are created by the
-https://gitlab.com/cip-playground/linux-cip-ci repository.
+https://lava.ciplatform.org/scheduler/job/1552
 
-Over time support will be added for all CIP supported architectures and
-configurations. At the moment only simple boot tests are run. Real tests
-will be added in the future. These changes should all all be handled in
-the linux-cip-ci repository.
+downloading
+https://s3-us-west-2.amazonaws.com/download.cip-project.org/cip-core/iwg20m/core-image-minimal-iwg20m.tar.gz
+saving as
+/var/lib/lava/dispatcher/tmp/1552/tftp-deploy-38u2x17d/nfsrootfs/core-image-minimal-iwg20m.tar
+total size: 29096711 (27MB)
+Using gunzip to decompress gz
+progress   0% (0MB)
+...
+progress  70% (19MB)
+http-download timed out after 598 seconds
+end: 1.3.1 http-download (duration 00:09:58) [common]
 
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
----
+I can increase the timeouts, and then it works better, but... it
+should not take 10 minutes to download 19MB. Any idea what is wrong
+there?
 
-In theory this file is only required in our GitLab repository. However if
-we add it there the automatic mirroring from the kernel.org repository
-will be broken.
-
-I also tried the GitLab option to create a new repository for CI/CD
-'only'. However this also has the exact same problem.
-
-This means that the best/easiest approach will be to just add the
-.gitlab-ci.yml file directly to the kernel.org repository. Most people can
-ignore it.
-
-There may well be some chrun in this file as linux-cip-ci improves, but
-this is a good starting point.
-
- .gitlab-ci.yml | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
- create mode 100644 .gitlab-ci.yml
-
-diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-new file mode 100644
-index 000000000000..4e949ac75b7b
---- /dev/null
-+++ b/.gitlab-ci.yml
-@@ -0,0 +1,27 @@
-+variables:
-+  GIT_STRATEGY: none
-+  DOCKER_DRIVER: overlay2
-+
-+before_script:
-+  - cd /opt/linux
-+  - git fetch origin
-+  - git checkout $CI_COMMIT_SHA
-+
-+build_arm_shmobile_defconfig:
-+  stage: build
-+  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-latest
-+  script:
-+    - /opt/build_kernel.sh arm shmobile_defconfig
-+  artifacts:
-+    name: "$CI_JOB_NAME"
-+    when: on_success
-+    paths:
-+      - output
-+
-+run_tests:
-+  stage: test
-+  image: registry.gitlab.com/cip-playground/linux-cip-ci:test-latest
-+  when: always
-+  before_script: []
-+  script:
-+    - /opt/submit_tests.sh
+Best regards,
+									Pavel
 -- 
-2.17.1
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 181 bytes
+Desc: Digital signature
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190627/2cb65cef/attachment.sig>
