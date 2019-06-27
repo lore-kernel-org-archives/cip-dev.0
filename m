@@ -1,19 +1,17 @@
 From: chris.paterson2@renesas.com (Chris Paterson)
-Date: Thu, 27 Jun 2019 14:12:49 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip] Add gitlab-ci.yaml
-Message-ID: <20190627131250.7932-1-chris.paterson2@renesas.com>
+Date: Thu, 27 Jun 2019 14:12:50 +0100
+Subject: [cip-dev] [PATCH 4.4.y-cip] Add gitlab-ci.yaml
+In-Reply-To: <20190627131250.7932-1-chris.paterson2@renesas.com>
+References: <20190627131250.7932-1-chris.paterson2@renesas.com>
+Message-ID: <20190627131250.7932-2-chris.paterson2@renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This is configured to build and test for the following configurations:
+This is configured to build and test for the following configuration:
 
 1. ARCH: arm
    CONFIGS: shmobile_defconfig
    BOARDS: r8a7743-iwg20d
-
-2. ARCH: arm64
-   CONFIGS: defconfig
-   BOARDS: r8a774c0-ek874
 
 Build/test Docker containers and scripts are created by the
 https://gitlab.com/cip-playground/linux-cip-ci repository.
@@ -40,16 +38,16 @@ ignore it.
 There may well be some chrun in this file as linux-cip-ci improves, but
 this is a good starting point.
 
- .gitlab-ci.yml | 39 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+ .gitlab-ci.yml | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
  create mode 100644 .gitlab-ci.yml
 
 diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
 new file mode 100644
-index 000000000000..d619ef0c1969
+index 000000000000..4e949ac75b7b
 --- /dev/null
 +++ b/.gitlab-ci.yml
-@@ -0,0 +1,39 @@
+@@ -0,0 +1,27 @@
 +variables:
 +  GIT_STRATEGY: none
 +  DOCKER_DRIVER: overlay2
@@ -70,17 +68,6 @@ index 000000000000..d619ef0c1969
 +    paths:
 +      - output
 +
-+build_arm64_defconfig:
-+  stage: build
-+  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-latest
-+  script:
-+    - /opt/build_kernel.sh arm64 defconfig
-+  artifacts:
-+    name: "$CI_JOB_NAME"
-+    when: on_success
-+    paths:
-+      - output
-+
 +run_tests:
 +  stage: test
 +  image: registry.gitlab.com/cip-playground/linux-cip-ci:test-latest
@@ -88,6 +75,5 @@ index 000000000000..d619ef0c1969
 +  before_script: []
 +  script:
 +    - /opt/submit_tests.sh
-+
 -- 
 2.17.1
