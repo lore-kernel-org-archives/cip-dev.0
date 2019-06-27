@@ -1,34 +1,39 @@
-From: patryk.mungai-ndungu.kx@renesas.com (Patryk Mungai Ndungu)
-Date: Wed, 26 Jun 2019 15:55:34 +0000
-Subject: [cip-dev] Planned LAVA master maintenance
-In-Reply-To: <TYAPR01MB22856E19380276E87579423BB7E20@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-References: <TYAPR01MB22856E19380276E87579423BB7E20@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-Message-ID: <OSBPR01MB2055EBCB7D4E20F24E726A21E9E20@OSBPR01MB2055.jpnprd01.prod.outlook.com>
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Thu, 27 Jun 2019 00:29:07 +0000
+Subject: [cip-dev] CIP IRC weekly meeting today
+Message-ID: <HK0PR01MB29794B5D299C6844783FFE61E2FD0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello,
+Hi all,
 
-lava.ciplatform.org is back up and running.
+Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
 
-Apologies for any inconvenience caused.
+*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=6&day=27&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
 
-Kind Regards,
-Patryk
+US-West US-East?? UK???? DE???? TW???? JP
+02:00??? 05:00?? 10:00?? 11:00?? 17:00?? 18:00
 
-From: cip-dev-bounces@lists.cip-project.org <cip-dev-bounces@lists.cip-project.org> On Behalf Of Chris Paterson
-Sent: 26 June 2019 10:06
-To: cip-dev at lists.cip-project.org
-Subject: [cip-dev] Planned LAVA master maintenance
+Channel:
+* irc:chat.freenode.net:6667/cip
 
-Hello all,
+Agenda:
 
-The CIP LAVA master will be down for some maintenance later today for about an hour starting from GMT 1400.
+* Action item
+1. Provide the script for CIP kernel config collection - bwh
+2. List real time kernel questions to ask Daniel Wagner - szlin
+3. Try updating CIP RT kernel to 4.19.50 - Pavel
+* Kernel maintenance updates
+* Kernel testing
+* CIP Core
+* Software update
+* AOB
 
-Sorry for any inconvenience caused.
+The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
 
-Kind regards, Chris
+I won't be able to attend this meeting, Gavin will chair today's meeting.
 
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190626/d1b78180/attachment.html>
+Best regards,
+
+SZ Lin, Moxa.
