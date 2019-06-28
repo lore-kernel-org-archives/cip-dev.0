@@ -1,37 +1,20 @@
-From: pavel@denx.de (Pavel Machek)
-Date: Fri, 28 Jun 2019 14:59:05 +0200
-Subject: [cip-dev] [ANNOUNCE] v4.19.50-cip3-rt1
-In-Reply-To: <20190623203704.GA12734@amd>
-References: <20190623203704.GA12734@amd>
-Message-ID: <20190628125904.GA24508@amd>
+From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
+Date: Fri, 28 Jun 2019 15:19:01 +0000
+Subject: [cip-dev] [ANNOUNCE] Release linux kernel 4.19.56-cip5
+Message-ID: <OSBPR01MB418455DC725C4DEE1DE0D00B92FC0@OSBPR01MB4184.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi!
+Hi all,
 
-4.19.50-cip3-rt1 should be available at kernel.org. I did limited
-testing, but it seems to have some bugs fixed relative to
-4.19.13-cip1-rt1. (Boots on x86-32 and cyclictest on iwg20m does not
-hit WARN_ON). 
+CIP kernel team has released Linux kernel 4.19.56-cip5.
+You can get this release via the git tree at:
 
-Trees are available at
+    repository: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+    branch: linux-4.19.y-cip
+    commit: 5b7dee96a2b4fffe481be81edc72fd104ed047ab
 
-https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.19.y-cip-rt-rebase
-
-https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.19.y-cip-rt
-
-And their content should be identical.
+This release has updated the base version from 4.19.52 to 4.19.56.
 
 Best regards,
-								Pavel
-
--- 
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 181 bytes
-Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190628/a63beb23/attachment.sig>
+  Nobuhiro
