@@ -1,33 +1,48 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Fri, 28 Jun 2019 17:45:15 +0200
-Subject: [cip-dev] [ANNOUNCE] v4.19.50-cip3-rt1
-In-Reply-To: <20190628125904.GA24508@amd>
-References: <20190623203704.GA12734@amd> <20190628125904.GA24508@amd>
-Message-ID: <d3b02a62-7931-17aa-ea81-e7a3554346ee@siemens.com>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Fri, 28 Jun 2019 21:09:03 +0100
+Subject: [cip-dev] [cip-kernel-sec 3/6] report_affected: fix code when
+ branches are specified
+In-Reply-To: <20190625032636.10694-4-daniel.sangorrin@toshiba.co.jp>
+References: <20190625032636.10694-1-daniel.sangorrin@toshiba.co.jp>
+	<20190625032636.10694-4-daniel.sangorrin@toshiba.co.jp>
+Message-ID: <1561752543.21054.80.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 28.06.19 14:59, Pavel Machek wrote:
-> Hi!
-> 
-> 4.19.50-cip3-rt1 should be available at kernel.org. I did limited
-> testing, but it seems to have some bugs fixed relative to
-> 4.19.13-cip1-rt1. (Boots on x86-32 and cyclictest on iwg20m does not
-> hit WARN_ON).
-> 
-> Trees are available at
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.19.y-cip-rt-rebase
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.19.y-cip-rt
-> 
-> And their content should be identical.
-> 
+On Tue, 2019-06-25 at 12:26 +0900, Daniel Sangorrin wrote:
+> The previous code could not handle branches with names
+> other than stable branch names. For example, passing
+> "linux-4.4.y-cip" as a branch would return an error.
+[...]
+> --- a/scripts/report_affected.py
+> +++ b/scripts/report_affected.py
+> @@ -18,14 +18,17 @@ import kernel_sec.version
+> ?
+> ?def main(git_repo, remotes,
+> ??????????only_fixed_upstream, include_ignored, *branch_names):
+> +????live_branches = kernel_sec.branch.get_live_branches()
+> ?????if branch_names:
+> -????????# Support stable release strings as shorthand for stable branches
+> -????????branches = [kernel_sec.branch.get_base_ver_stable_branch(name)
+> -????????????????????if name[0].isdigit()
+> -????????????????????else kernel_sec.branch.get_stable_branch(name)
+> -????????????????????for name in branch_names]
+> +????????branches = []
+> +????????for branch in live_branches:
+> +????????????for name in branch_names:
+> +????????????????if name[0].isdigit():
+> +????????????????????name = 'linux-%s.y' % name
+> +????????????????if branch['short_name'] == name:
+> +????????????????????branches.append(branch)
+[...]
 
-Shouldn't this be 4.19.50-cip3-rt2? It's the second -rt release for 4.19-cip.
+This results in quietly skipping arguments that don't match any known
+branch.  The current behaviour (failing with a TypeError) is not good
+but I think failing quietly is worse.
 
-Jan
+Ben.
 
 -- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+Ben Hutchings, Software Developer                ?        Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
