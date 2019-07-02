@@ -1,119 +1,83 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Fri, 28 Jun 2019 21:46:13 +0100
-Subject: [cip-dev] [cip-kernel-sec 5/6] report_affected: add support for
- reporting on tags
-In-Reply-To: <20190625032636.10694-6-daniel.sangorrin@toshiba.co.jp>
-References: <20190625032636.10694-1-daniel.sangorrin@toshiba.co.jp>
-	<20190625032636.10694-6-daniel.sangorrin@toshiba.co.jp>
-Message-ID: <1561754773.21054.86.camel@codethink.co.uk>
+From: chris.paterson2@renesas.com (Chris Paterson)
+Date: Tue,  2 Jul 2019 11:51:22 +0100
+Subject: [cip-dev] [PATCH v2 4.19.y-cip] Add gitlab-ci.yaml
+In-Reply-To: <20190627131250.7932-1-chris.paterson2@renesas.com>
+References: <20190627131250.7932-1-chris.paterson2@renesas.com>
+Message-ID: <20190702105122.23718-1-chris.paterson2@renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Tue, 2019-06-25 at 12:26 +0900, Daniel Sangorrin wrote:
-> Reporting on tags is useful for product engineers that
-> have shipped a kernel with a specific tag and need to know
-> which issues affect their product after some time.
+This is configured to build and test for the following configurations:
 
-I think this is a really important feature, but I'm not convinced about
-this implementation.
+1.
+ARCH: arm
+CONFIGS: shmobile_defconfig
+BOARDS: r8a7743-iwg20d, r8a7745-iwg22d
+2.
+ARCH: arm64
+CONFIGS: defconfig
+BOARDS: r8a774c0-ek874
 
-> Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-> ---
-> ?scripts/report_affected.py | 60 ++++++++++++++++++++++++++++++++------
-> ?1 file changed, 51 insertions(+), 9 deletions(-)
-> 
-> diff --git a/scripts/report_affected.py b/scripts/report_affected.py
-> index 7557dc8..32e9345 100755
-> --- a/scripts/report_affected.py
-> +++ b/scripts/report_affected.py
-> @@ -9,7 +9,9 @@
-> ?# Report issues affecting each stable branch.
-> ?
-> ?import argparse
-> +import copy
-> ?import subprocess
-> +import re
-> ?
-> ?import kernel_sec.branch
-> ?import kernel_sec.issue
-> @@ -23,10 +25,26 @@ def main(git_repo, remotes,
-> ?????????branches = []
-> ?????????for branch in live_branches:
-> ?????????????for name in branch_names:
-> +????????????????# there could be multiple tags for the same branch
-> +????????????????branch_copy = copy.deepcopy(branch)
+Over time support will be added for all CIP supported architectures and
+configurations.
 
-This makes a lot of unnecessary copies!
+At the moment only simple boot tests are run. Real tests will be added in
+the future.
 
-> +????????????????if name[0] == 'v':
-> +????????????????????# a stable tag, e.g. v4.4.92-cip11
-> +????????????????????branch_copy['tag'] = name
-> +????????????????????match = re.match(r'^v(\d+\.\d+).*', name)
-> +????????????????????if not match:
-> +????????????????????????raise ValueError('failed to parse tag %r' % name)
-> +????????????????????if 'cip' in name:
-> +????????????????????????name = 'linux-%s.y-cip' % match.group(1)
-> +????????????????????else:
-> +????????????????????????name = 'linux-%s.y' % match.group(1)
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+---
 
-How about adding regexps for tags to the branch configuration?  Then
-here we could match tags to branches with
-re.matchall(branch['tag_regexp'], name).
+v1->v2: Updated to use latest linux-cip-ci version: 9d56f41a
 
-> +????????????????if '/' in name:
+I still prefer to have these .gitlab-ci.yml files in the main cip repo,
+rather then split them off into their own repo and trigger them with
+hooks. Any opinions Kernel maintainers?
 
-'/' is valid in a branch or tag name, so how about using ':' which is
-not?
 
-> +????????????????????# a possibly custom tag, e.g. product-v1
-> +????????????????????branch_copy['tag'] = name.split('/')[1]
-> +????????????????????name = name.split('/')[0]
+ .gitlab-ci.yml | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
+ create mode 100644 .gitlab-ci.yml
 
-It would be more Pythonic to write this as a tuple assginment.
-
-> ?????????????????if name[0].isdigit():
-> ?????????????????????name = 'linux-%s.y' % name
-> -????????????????if branch['short_name'] == name:
-> -????????????????????branches.append(branch)
-> +????????????????if branch_copy['short_name'] == name:
-> +????????????????????branches.append(branch_copy)
-> ?????????if not branches:
-> ?????????????msg = "supplied branches didn't match any known branch"
-> ?????????????raise argparse.ArgumentError(None, msg)
-> @@ -40,6 +58,18 @@ def main(git_repo, remotes,
-> ?
-> ?????c_b_map = kernel_sec.branch.CommitBranchMap(git_repo, remotes, branches)
-> ?
-> +????# cache tag commits and set full_name to show the tag
-> +????tag_commits = {}
-> +????for branch in branches:
-> +????????if 'tag' in branch:
-> +????????????start = 'v' + branch['base_ver']
-> +????????????end = branch['tag']
-> +????????????for commit in kernel_sec.branch._get_commits(git_repo, end, start):
-
-The leading '_' means private, so it shouldn't be called from here.  I
-think it could be made public but it needs a better name, maybe
-'iter_rev_list' matching the underlying command.
-
-> +????????????????tag_commits.setdefault(end, []).append(commit)
-[...]
-
-Suppose I tried to query 'v4.4'; then I think we get start == end ==
-'v4.4' and this loop doesn't execute at all.  tag_commits['v4.4'] won't
-be defined at all, and the reporting loop will crash.
-
-So this could be simply:
-
-               tag_commits[end] = list(
-                   kernel_sec.branch.iter_rev_list(git_repo, end, start))
-
-But I think the collection type should also be changed from list to
-set, so that tests for membership will be fast.
-
-Ben.
-
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+new file mode 100644
+index 000000000000..71d92c975723
+--- /dev/null
++++ b/.gitlab-ci.yml
+@@ -0,0 +1,35 @@
++variables:
++  GIT_STRATEGY: clone
++  GIT_DEPTH: "10"
++  DOCKER_DRIVER: overlay2
++
++build_arm_shmobile_defconfig:
++  stage: build
++  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-latest
++  script:
++    - /opt/build_kernel.sh arm shmobile_defconfig
++  artifacts:
++    name: "$CI_JOB_NAME"
++    when: on_success
++    paths:
++      - output
++
++build_arm64_defconfig:
++  stage: build
++  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-latest
++  script:
++    - /opt/build_kernel.sh arm64 defconfig
++  artifacts:
++    name: "$CI_JOB_NAME"
++    when: on_success
++    paths:
++      - output
++
++run_tests:
++  stage: test
++  image: registry.gitlab.com/cip-playground/linux-cip-ci:test-latest
++  when: always
++  before_script: []
++  script:
++    - /opt/submit_tests.sh
++
 -- 
-Ben Hutchings, Software Developer                ?        Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+2.17.1
