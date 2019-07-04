@@ -1,66 +1,40 @@
-From: chris.paterson2@renesas.com (Chris Paterson)
-Date: Tue,  2 Jul 2019 11:51:33 +0100
-Subject: [cip-dev] [PATCH v2 4.4.y-cip] Add gitlab-ci.yaml
-In-Reply-To: <20190627131250.7932-2-chris.paterson2@renesas.com>
-References: <20190627131250.7932-2-chris.paterson2@renesas.com>
-Message-ID: <20190702105133.23765-1-chris.paterson2@renesas.com>
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Thu, 4 Jul 2019 00:59:39 +0000
+Subject: [cip-dev] CIP IRC weekly meeting today
+Message-ID: <HK0PR01MB2979096ED8E9CDE62672611AE2FA0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This is configured to build and test for the following configurations:
+Hi all,
 
-1.
-ARCH: arm
-CONFIGS: shmobile_defconfig
-BOARDS: r8a7743-iwg20d, r8a7745-iwg22d
+Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
 
-Over time support will be added for all CIP supported architectures and
-configurations.
+*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=7&day=4&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
 
-At the moment only simple boot tests are run. Real tests will be added in
-the future.
+US-West US-East?? UK???? DE???? TW???? JP
+02:00??? 05:00?? 10:00?? 11:00?? 17:00?? 18:00
 
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
----
+Channel:
+* irc:chat.freenode.net:6667/cip
 
-v1->v2: Updated to use latest linux-cip-ci version: 9d56f41a
+Agenda:
 
-I still prefer to have these .gitlab-ci.yml files in the main cip repo,
-rather then split them off into their own repo and trigger them with
-hooks. Any opinions Kernel maintainers?
+* Action item
+1. Provide the script for CIP kernel config collection - bwh
+#link https://lists.cip-project.org/pipermail/cip-dev/2019-June/002506.html
+2. List real time kernel questions to ask Daniel Wagner - szlin
+3. Try updating CIP RT kernel to 4.19.50 - Pavel
+#link https://lists.cip-project.org/pipermail/cip-dev/2019-June/002548.html
+4. Work out a solution for LAVA master backups - patersonc
+* Kernel maintenance updates
+* Kernel testing
+* CIP Core
+* Software update
+* AOB
 
- .gitlab-ci.yml | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
- create mode 100644 .gitlab-ci.yml
+The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
 
-diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-new file mode 100644
-index 000000000000..aec787a353bc
---- /dev/null
-+++ b/.gitlab-ci.yml
-@@ -0,0 +1,23 @@
-+variables:
-+  GIT_STRATEGY: clone
-+  GIT_DEPTH: "10"
-+  DOCKER_DRIVER: overlay2
-+
-+build_arm_shmobile_defconfig:
-+  stage: build
-+  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-latest
-+  script:
-+    - /opt/build_kernel.sh arm shmobile_defconfig
-+  artifacts:
-+    name: "$CI_JOB_NAME"
-+    when: on_success
-+    paths:
-+      - output
-+
-+run_tests:
-+  stage: test
-+  image: registry.gitlab.com/cip-playground/linux-cip-ci:test-latest
-+  when: always
-+  before_script: []
-+  script:
-+    - /opt/submit_tests.sh
--- 
-2.17.1
+Best regards,
+
+SZ Lin, Moxa.
