@@ -1,10 +1,10 @@
 From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Thu, 4 Jul 2019 09:23:16 +0000
-Subject: [cip-dev] [PATCH v2 4.19.y-cip] Add gitlab-ci.yaml
-In-Reply-To: <20190702105122.23718-1-chris.paterson2@renesas.com>
-References: <20190627131250.7932-1-chris.paterson2@renesas.com>
-	<20190702105122.23718-1-chris.paterson2@renesas.com>
-Message-ID: <TYAPR01MB2285DF67F19A34BDE3C95697B7FA0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+Date: Thu, 4 Jul 2019 09:23:39 +0000
+Subject: [cip-dev] [PATCH v2 4.4.y-cip] Add gitlab-ci.yaml
+In-Reply-To: <20190702105133.23765-1-chris.paterson2@renesas.com>
+References: <20190627131250.7932-2-chris.paterson2@renesas.com>
+	<20190702105133.23765-1-chris.paterson2@renesas.com>
+Message-ID: <TYAPR01MB2285D8D656A8FE8EEC13A35BB7FA0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
@@ -21,7 +21,7 @@ I'll mark it accordingly in patchwork.
 Kind regards, Chris
 
 > From: Chris Paterson <chris.paterson2@renesas.com>
-> Sent: 02 July 2019 11:51
+> Sent: 02 July 2019 11:52
 > 
 > This is configured to build and test for the following configurations:
 > 
@@ -29,10 +29,6 @@ Kind regards, Chris
 > ARCH: arm
 > CONFIGS: shmobile_defconfig
 > BOARDS: r8a7743-iwg20d, r8a7745-iwg22d
-> 2.
-> ARCH: arm64
-> CONFIGS: defconfig
-> BOARDS: r8a774c0-ek874
 > 
 > Over time support will be added for all CIP supported architectures and
 > configurations.
@@ -49,17 +45,16 @@ Kind regards, Chris
 > rather then split them off into their own repo and trigger them with
 > hooks. Any opinions Kernel maintainers?
 > 
-> 
->  .gitlab-ci.yml | 35 +++++++++++++++++++++++++++++++++++
->  1 file changed, 35 insertions(+)
+>  .gitlab-ci.yml | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
 >  create mode 100644 .gitlab-ci.yml
 > 
 > diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
 > new file mode 100644
-> index 000000000000..71d92c975723
+> index 000000000000..aec787a353bc
 > --- /dev/null
 > +++ b/.gitlab-ci.yml
-> @@ -0,0 +1,35 @@
+> @@ -0,0 +1,23 @@
 > +variables:
 > +  GIT_STRATEGY: clone
 > +  GIT_DEPTH: "10"
@@ -76,17 +71,6 @@ Kind regards, Chris
 > +    paths:
 > +      - output
 > +
-> +build_arm64_defconfig:
-> +  stage: build
-> +  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-latest
-> +  script:
-> +    - /opt/build_kernel.sh arm64 defconfig
-> +  artifacts:
-> +    name: "$CI_JOB_NAME"
-> +    when: on_success
-> +    paths:
-> +      - output
-> +
 > +run_tests:
 > +  stage: test
 > +  image: registry.gitlab.com/cip-playground/linux-cip-ci:test-latest
@@ -94,6 +78,5 @@ Kind regards, Chris
 > +  before_script: []
 > +  script:
 > +    - /opt/submit_tests.sh
-> +
 > --
 > 2.17.1
