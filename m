@@ -1,78 +1,99 @@
-From: akihiro27.suzuki@toshiba.co.jp (akihiro27.suzuki at toshiba.co.jp)
-Date: Thu, 4 Jul 2019 06:38:34 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-In-Reply-To: <HK0PR01MB2979096ED8E9CDE62672611AE2FA0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-References: <HK0PR01MB2979096ED8E9CDE62672611AE2FA0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-Message-ID: <TYAPR01MB470306E689DA232F49A00E46D9FA0@TYAPR01MB4703.jpnprd01.prod.outlook.com>
+From: Chris.Paterson2@renesas.com (Chris Paterson)
+Date: Thu, 4 Jul 2019 09:23:16 +0000
+Subject: [cip-dev] [PATCH v2 4.19.y-cip] Add gitlab-ci.yaml
+In-Reply-To: <20190702105122.23718-1-chris.paterson2@renesas.com>
+References: <20190627131250.7932-1-chris.paterson2@renesas.com>
+	<20190702105122.23718-1-chris.paterson2@renesas.com>
+Message-ID: <TYAPR01MB2285DF67F19A34BDE3C95697B7FA0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi SZ,
+Hello all,
 
-Today, Daniel-san takes a day off because of sickness.
-And I won't join the meeting because I have an another plan.
-Sorry about that.
+It was decided in the weekly meeting today by the maintainers that we will add the .gitlab-ci.yml files (i.e. this patch) to the main kernel.org repository.
 
-So I'll describe the update of SW Updates WG here before the meeting.
+However, I've been busy this week and already have more changes to make.
 
-> * Software update
-* We are preparing a software update demo for OSSJ.
-* We had a meeting with Christian of Siemens and he shared a sample script
-  that could manage the state of software update.
-* Suzuki implemented the state management into the u-boot script of the demo
-  and now BeagleBone Black can switch back to old root filesystem if the update fails.
-  We call it "rollback".
-* Now we can give the demo of raw image update only.
-  If we can make it in time, we will give the demo of binary delta update using librsync.
+So please drop this patch and I'll submit a V3 in the next few days.
 
-Best regards,
-Suzuki
+I'll mark it accordingly in patchwork.
 
+Kind regards, Chris
 
-> -----Original Message-----
-> From: cip-dev-bounces at lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of SZ Lin (??
-> ?)
-> Sent: Thursday, July 04, 2019 10:00 AM
-> To: cip-dev at lists.cip-project.org
-> Subject: [cip-dev] CIP IRC weekly meeting today
+> From: Chris Paterson <chris.paterson2@renesas.com>
+> Sent: 02 July 2019 11:51
 > 
-> Hi all,
+> This is configured to build and test for the following configurations:
 > 
-> Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
+> 1.
+> ARCH: arm
+> CONFIGS: shmobile_defconfig
+> BOARDS: r8a7743-iwg20d, r8a7745-iwg22d
+> 2.
+> ARCH: arm64
+> CONFIGS: defconfig
+> BOARDS: r8a774c0-ek874
 > 
-> *Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC
-> meeting*
-> https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=7&day=4&hour=9&min=0&sec=0&p1=241&p2=137&
-> p3=179&p4=136&p5=37&p6=248
+> Over time support will be added for all CIP supported architectures and
+> configurations.
 > 
-> US-West US-East?? UK???? DE???? TW???? JP
-> 02:00??? 05:00?? 10:00?? 11:00?? 17:00?? 18:00
+> At the moment only simple boot tests are run. Real tests will be added in
+> the future.
 > 
-> Channel:
-> * irc:chat.freenode.net:6667/cip
+> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+> ---
 > 
-> Agenda:
+> v1->v2: Updated to use latest linux-cip-ci version: 9d56f41a
 > 
-> * Action item
-> 1. Provide the script for CIP kernel config collection - bwh
-> #link https://lists.cip-project.org/pipermail/cip-dev/2019-June/002506.html
-> 2. List real time kernel questions to ask Daniel Wagner - szlin
-> 3. Try updating CIP RT kernel to 4.19.50 - Pavel
-> #link https://lists.cip-project.org/pipermail/cip-dev/2019-June/002548.html
-> 4. Work out a solution for LAVA master backups - patersonc
-> * Kernel maintenance updates
-> * Kernel testing
-> * CIP Core
-> * Software update
-> * AOB
+> I still prefer to have these .gitlab-ci.yml files in the main cip repo,
+> rather then split them off into their own repo and trigger them with
+> hooks. Any opinions Kernel maintainers?
 > 
-> The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics
-> can stay. Otherwise, the topic will be taken offline or in the next meeting.
 > 
-> Best regards,
+>  .gitlab-ci.yml | 35 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+>  create mode 100644 .gitlab-ci.yml
 > 
-> SZ Lin, Moxa.
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
+> diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+> new file mode 100644
+> index 000000000000..71d92c975723
+> --- /dev/null
+> +++ b/.gitlab-ci.yml
+> @@ -0,0 +1,35 @@
+> +variables:
+> +  GIT_STRATEGY: clone
+> +  GIT_DEPTH: "10"
+> +  DOCKER_DRIVER: overlay2
+> +
+> +build_arm_shmobile_defconfig:
+> +  stage: build
+> +  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-latest
+> +  script:
+> +    - /opt/build_kernel.sh arm shmobile_defconfig
+> +  artifacts:
+> +    name: "$CI_JOB_NAME"
+> +    when: on_success
+> +    paths:
+> +      - output
+> +
+> +build_arm64_defconfig:
+> +  stage: build
+> +  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-latest
+> +  script:
+> +    - /opt/build_kernel.sh arm64 defconfig
+> +  artifacts:
+> +    name: "$CI_JOB_NAME"
+> +    when: on_success
+> +    paths:
+> +      - output
+> +
+> +run_tests:
+> +  stage: test
+> +  image: registry.gitlab.com/cip-playground/linux-cip-ci:test-latest
+> +  when: always
+> +  before_script: []
+> +  script:
+> +    - /opt/submit_tests.sh
+> +
+> --
+> 2.17.1
