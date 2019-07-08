@@ -1,44 +1,122 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Fri, 5 Jul 2019 10:44:29 +0200
-Subject: [cip-dev] [ANNOUNCE] v4.19.50-cip3-rt1
-In-Reply-To: <20190704182042.GA4117@amd>
-References: <20190623203704.GA12734@amd> <20190628125904.GA24508@amd>
-	<d3b02a62-7931-17aa-ea81-e7a3554346ee@siemens.com>
-	<20190704182042.GA4117@amd>
-Message-ID: <152a8f06-2876-0d38-9c99-ba5ddec592da@siemens.com>
+From: chris.paterson2@renesas.com (Chris Paterson)
+Date: Mon,  8 Jul 2019 14:15:36 +0100
+Subject: [cip-dev] [PATCH v3 4.19.y-cip] Add gitlab-ci.yaml
+In-Reply-To: <20190702105122.23718-1-chris.paterson2@renesas.com>
+References: <20190702105122.23718-1-chris.paterson2@renesas.com>
+Message-ID: <20190708131536.17087-1-chris.paterson2@renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 04.07.19 20:20, Pavel Machek wrote:
-> Hi!
-> 
->>> 4.19.50-cip3-rt1 should be available at kernel.org. I did limited
->>> testing, but it seems to have some bugs fixed relative to
->>> 4.19.13-cip1-rt1. (Boots on x86-32 and cyclictest on iwg20m does not
->>> hit WARN_ON).
->>>
->>> Trees are available at
->>>
->>> https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.19.y-cip-rt-rebase
->>>
->>> https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.19.y-cip-rt
->>>
->>> And their content should be identical.
->>>
->>
->> Shouldn't this be 4.19.50-cip3-rt2? It's the second -rt release for 4.19-cip.
-> 
-> Its first realtime release based on 4.19.50-cip3 :-). It is also based
-> on 4.19.50-rt22. So yes, the naming is a bit confusing.
-> 
-> If such version would previously be named -rt2, I'll obviously need to
-> fix it.
+This is configured to build and test the following configurations:
 
-Please keep the old naming scheme and increment the -rt number when releasing a 
-new rt kernel.
+* BUILD_ARCH: arm
+* CONFIG: renesas_shmobile_defconfig
+* CONFIG_LOC: cip-kernel-config
+* DEVICES: r8a7743-iwg20d-q7 r8a7745-iwg22d-sodimm
+* DTBS: r8a7743-iwg20d-q7-dbcm-ca.dtb r8a7745-iwg22d-sodimm-dbhd-ca.dtb
 
-Jan
+* BUILD_ARCH: arm64
+* CONFIG: renesas_defconfig
+* CONFIG_LOC: cip-kernel-config
+* DEVICES: r8a774c0-ek874
+* DTBS: r8a774c0-ek874.dtb
 
+* BUILD_ARCH: arm
+* CONFIG: shmobile_defconfig
+* CONFIG_LOC: intree
+* DEVICES: r8a7743-iwg20d-q7 r8a7745-iwg22d-sodimm
+* DTBS: r8a7743-iwg20d-q7-dbcm-ca.dtb r8a7745-iwg22d-sodimm-dbhd-ca.dtb
+
+Over time support will be added for all CIP supported architectures and
+configurations.
+
+At the moment only simple boot tests are run. Real tests will be added in
+the future
+
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+---
+
+v2->v3: Updated to use linux-cip-ci version: ad4a6589 (docker tag "v1")
+
+v1->v2: Updated to use latest linux-cip-ci version: 9d56f41a
+
+ .gitlab-ci.yml | 68 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 68 insertions(+)
+ create mode 100644 .gitlab-ci.yml
+
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+new file mode 100644
+index 000000000000..96eed0e0c81a
+--- /dev/null
++++ b/.gitlab-ci.yml
+@@ -0,0 +1,68 @@
++variables:
++  GIT_STRATEGY: clone
++  GIT_DEPTH: 10
++  DOCKER_DRIVER: overlay2
++
++build_arm_renesas_shmobile_defconfig:
++  stage: build
++  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-v1
++  variables:
++    BUILD_ARCH: arm
++    CONFIG: renesas_shmobile_defconfig
++    CONFIG_LOC: cip-kernel-config
++    DEVICES: r8a7743-iwg20d-q7 r8a7745-iwg22d-sodimm
++    DTBS: arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dtb arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dtb
++  script:
++    - /opt/build_kernel.sh
++  artifacts:
++    name: "$CI_JOB_NAME"
++    when: on_success
++    paths:
++      - output
++
++build_arm64_renesas_defconfig:
++  stage: build
++  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-v1
++  variables:
++    BUILD_ARCH: arm64
++    CONFIG: renesas_defconfig
++    CONFIG_LOC: cip-kernel-config
++    DEVICES: r8a774c0-ek874
++    DTBS: arch/arm64/boot/dts/renesas/r8a774c0-ek874.dtb
++  script:
++    - /opt/build_kernel.sh
++  artifacts:
++    name: "$CI_JOB_NAME"
++    when: on_success
++    paths:
++      - output
++
++build_arm_shmobile_defconfig:
++  stage: build
++  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-v1
++  variables:
++    BUILD_ARCH: arm
++    CONFIG: shmobile_defconfig
++    CONFIG_LOC: intree
++    DEVICES: r8a7743-iwg20d-q7 r8a7745-iwg22d-sodimm
++    DTBS: arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dtb arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dtb
++  script:
++    - /opt/build_kernel.sh
++  artifacts:
++    name: "$CI_JOB_NAME"
++    when: on_success
++    paths:
++      - output
++
++run_tests:
++  stage: test
++  image: registry.gitlab.com/cip-playground/linux-cip-ci:test-v1
++  when: always
++  variables:
++    GIT_STRATEGY: none
++  script:
++    - /opt/submit_tests.sh
++  artifacts:
++    name: "$CI_JOB_NAME"
++    paths:
++      - output
 -- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+2.17.1
