@@ -1,9 +1,9 @@
 From: chris.paterson2@renesas.com (Chris Paterson)
-Date: Mon,  8 Jul 2019 14:15:36 +0100
-Subject: [cip-dev] [PATCH v3 4.19.y-cip] Add gitlab-ci.yaml
-In-Reply-To: <20190702105122.23718-1-chris.paterson2@renesas.com>
-References: <20190702105122.23718-1-chris.paterson2@renesas.com>
-Message-ID: <20190708131536.17087-1-chris.paterson2@renesas.com>
+Date: Mon,  8 Jul 2019 14:16:03 +0100
+Subject: [cip-dev] [PATCH v3 4.4.y-cip] Add gitlab-ci.yaml
+In-Reply-To: <20190702105133.23765-1-chris.paterson2@renesas.com>
+References: <20190702105133.23765-1-chris.paterson2@renesas.com>
+Message-ID: <20190708131603.17134-1-chris.paterson2@renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
@@ -14,12 +14,6 @@ This is configured to build and test the following configurations:
 * CONFIG_LOC: cip-kernel-config
 * DEVICES: r8a7743-iwg20d-q7 r8a7745-iwg22d-sodimm
 * DTBS: r8a7743-iwg20d-q7-dbcm-ca.dtb r8a7745-iwg22d-sodimm-dbhd-ca.dtb
-
-* BUILD_ARCH: arm64
-* CONFIG: renesas_defconfig
-* CONFIG_LOC: cip-kernel-config
-* DEVICES: r8a774c0-ek874
-* DTBS: r8a774c0-ek874.dtb
 
 * BUILD_ARCH: arm
 * CONFIG: shmobile_defconfig
@@ -40,16 +34,16 @@ v2->v3: Updated to use linux-cip-ci version: ad4a6589 (docker tag "v1")
 
 v1->v2: Updated to use latest linux-cip-ci version: 9d56f41a
 
- .gitlab-ci.yml | 68 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 68 insertions(+)
+ .gitlab-ci.yml | 51 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
  create mode 100644 .gitlab-ci.yml
 
 diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
 new file mode 100644
-index 000000000000..96eed0e0c81a
+index 000000000000..421d971908a6
 --- /dev/null
 +++ b/.gitlab-ci.yml
-@@ -0,0 +1,68 @@
+@@ -0,0 +1,51 @@
 +variables:
 +  GIT_STRATEGY: clone
 +  GIT_DEPTH: 10
@@ -64,23 +58,6 @@ index 000000000000..96eed0e0c81a
 +    CONFIG_LOC: cip-kernel-config
 +    DEVICES: r8a7743-iwg20d-q7 r8a7745-iwg22d-sodimm
 +    DTBS: arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dtb arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dtb
-+  script:
-+    - /opt/build_kernel.sh
-+  artifacts:
-+    name: "$CI_JOB_NAME"
-+    when: on_success
-+    paths:
-+      - output
-+
-+build_arm64_renesas_defconfig:
-+  stage: build
-+  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-v1
-+  variables:
-+    BUILD_ARCH: arm64
-+    CONFIG: renesas_defconfig
-+    CONFIG_LOC: cip-kernel-config
-+    DEVICES: r8a774c0-ek874
-+    DTBS: arch/arm64/boot/dts/renesas/r8a774c0-ek874.dtb
 +  script:
 +    - /opt/build_kernel.sh
 +  artifacts:
