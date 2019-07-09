@@ -1,100 +1,27 @@
-From: zoran.stojsavljevic.de@gmail.com (Zoran S)
-Date: Mon, 8 Jul 2019 15:35:29 +0200
-Subject: [cip-dev] [isar-cip-core] kernel: change default kernel version
- to 4.19
-In-Reply-To: <a32b7bc1-d028-bf9c-d59b-b82754f0909f@siemens.com>
-References: <20190603074118.28430-1-daniel.sangorrin@toshiba.co.jp>
-	<a32b7bc1-d028-bf9c-d59b-b82754f0909f@siemens.com>
-Message-ID: <CAEss1E+BT64EyL8_5PBScGbmrN80BUZX_cUXC1Lm0RkrdBSDrQ@mail.gmail.com>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Tue, 09 Jul 2019 14:49:09 +0100
+Subject: [cip-dev] Kernel configurations for 4.19?
+In-Reply-To: <0ba55724-0845-0071-4c1d-1ff84ed0c9ca@plathome.co.jp>
+References: <1555501985.3557.26.camel@codethink.co.uk>
+	<0ba55724-0845-0071-4c1d-1ff84ed0c9ca@plathome.co.jp>
+Message-ID: <2131a21a408f619ec50182c3bfbf6d8c0d1d7891.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-I think the kernel 5+ should be main pivot point for CIP project for
-next two years... But anyway, kernel version for Debian Buster is (by
-Ben Hutchinson) already fixed to 4.19... I see/read on many places
-that this rule is not ONLY applied on/for CIP (many people/maintainers
-follow)... Well!
+On Wed, 2019-06-12 at 09:12 +0900, Masato Minda wrote:
+> Hi,
+> 
+> Sorry for loooooooooooooooong time.
+> 
+> I got kernel config for 4.19 from our development team.
+> 
+> Attachment is for OpenBlocks IoT VX2.
 
-Zoran
-_______
+I've added this to the kernel-config repository, thanks.
 
-On Mon, Jun 3, 2019 at 1:03 PM Jan Kiszka <jan.kiszka@siemens.com> wrote:
->
-> On 03.06.19 09:41, Daniel Sangorrin wrote:
-> > To revert to version 4.4 users need to add :opt-4.4.yaml to
-> > the kas command line.
-> >
-> > Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-> > ---
-> >   README.md                 |  2 +-
-> >   conf/distro/cip-core.conf |  4 ++--
-> >   opt-4.4.yml               | 18 ++++++++++++++++++
-> >   3 files changed, 21 insertions(+), 3 deletions(-)
-> >   create mode 100644 opt-4.4.yml
-> >
-> > diff --git a/README.md b/README.md
-> > index dfd9ef1..184744a 100644
-> > --- a/README.md
-> > +++ b/README.md
-> > @@ -27,7 +27,7 @@ This image can be run using `start-qemu.sh x86`.
-> >
-> >   The BeagleBone Black target is selected by `... kas.yml:board-bbb.yml`. In
-> >   order to build the image with the PREEMPT-RT kernel, append `:opt-rt.yml` to
-> > -the above.
-> > +the above. Append ':opt-4.4.yml' to use the kernel version 4.4 instead of 4.19.
-> >
-> >   Physical targets will generate ready-to-boot images under
-> >   `build/tmp/deploy/images/`. To flash, e.g., the BeagleBone Black image to an SD
-> > diff --git a/conf/distro/cip-core.conf b/conf/distro/cip-core.conf
-> > index d06ba3b..4e873de 100644
-> > --- a/conf/distro/cip-core.conf
-> > +++ b/conf/distro/cip-core.conf
-> > @@ -12,7 +12,7 @@
-> >   require conf/distro/debian-stretch.conf
-> >
-> >   KERNEL_NAME ?= "cip"
-> > -PREFERRED_VERSION_linux-cip ?= "4.4.%"
-> > -PREFERRED_VERSION_linux-cip-rt ?= "4.4.%"
-> > +PREFERRED_VERSION_linux-cip ?= "4.19.%"
-> > +PREFERRED_VERSION_linux-cip-rt ?= "4.19.%"
-> >
-> >   WKS_FILE ?= "${MACHINE}.wks"
-> > diff --git a/opt-4.4.yml b/opt-4.4.yml
-> > new file mode 100644
-> > index 0000000..87be777
-> > --- /dev/null
-> > +++ b/opt-4.4.yml
-> > @@ -0,0 +1,18 @@
-> > +#
-> > +# CIP Core, generic profile
-> > +#
-> > +# Copyright (c) Toshiba corp., 2019
-> > +#
-> > +# Authors:
-> > +#  Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-> > +#
-> > +# SPDX-License-Identifier: MIT
-> > +#
-> > +
-> > +header:
-> > +  version: 8
-> > +
-> > +local_conf_header:
-> > +  kernel-version: |
-> > +    PREFERRED_VERSION_linux-cip = "4.4.%"
-> > +    PREFERRED_VERSION_linux-cip-rt = "4.4.%"
-> >
->
-> Thanks, applied.
->
-> Update the (non-rt) kernel versions at this chance as well.
->
-> Jan
->
-> --
-> Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-> Corporate Competence Center Embedded Linux
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
+Ben.
+
+-- 
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
