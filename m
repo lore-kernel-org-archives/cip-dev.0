@@ -1,23 +1,19 @@
 From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Tue, 09 Jul 2019 14:49:09 +0100
+Date: Tue, 09 Jul 2019 15:01:23 +0100
 Subject: [cip-dev] Kernel configurations for 4.19?
-In-Reply-To: <0ba55724-0845-0071-4c1d-1ff84ed0c9ca@plathome.co.jp>
-References: <1555501985.3557.26.camel@codethink.co.uk>
-	<0ba55724-0845-0071-4c1d-1ff84ed0c9ca@plathome.co.jp>
-Message-ID: <2131a21a408f619ec50182c3bfbf6d8c0d1d7891.camel@codethink.co.uk>
+In-Reply-To: <174B7D17C50DAF46A1D85956F97DE7C51681CA26@DEFTHW99EK0MSX.ww902.siemens.net>
+References: <174B7D17C50DAF46A1D85956F97DE7C51681CA26@DEFTHW99EK0MSX.ww902.siemens.net>
+Message-ID: <22a308bc7015cecfa8f1fb286a134411c8ad6486.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Wed, 2019-06-12 at 09:12 +0900, Masato Minda wrote:
-> Hi,
+On Mon, 2019-06-17 at 09:28 +0000, Mauerer, Wolfgang wrote:
+> Hi Laurence,
 > 
-> Sorry for loooooooooooooooong time.
-> 
-> I got kernel config for 4.19 from our development team.
-> 
-> Attachment is for OpenBlocks IoT VX2.
+> apologies for the delay, but please do finally find two configs
+> from Siemens attached.
 
-I've added this to the kernel-config repository, thanks.
+I've added these to the kernel-config repository, thanks.
 
 Ben.
 
