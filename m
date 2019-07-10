@@ -1,110 +1,96 @@
 From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
-Date: Wed, 10 Jul 2019 10:24:49 +0900
-Subject: [cip-dev] [cip-kernel-sec][RESEND 5/6] pep8: fix pep8-related
-	errors such as too long lines
+Date: Wed, 10 Jul 2019 10:24:45 +0900
+Subject: [cip-dev] [cip-kernel-sec][RESEND 1/6] check_git_repo: add checks
+	to the local repository
 In-Reply-To: <20190710012450.16524-1-daniel.sangorrin@toshiba.co.jp>
 References: <20190710012450.16524-1-daniel.sangorrin@toshiba.co.jp>
-Message-ID: <20190710012450.16524-6-daniel.sangorrin@toshiba.co.jp>
+Message-ID: <20190710012450.16524-2-daniel.sangorrin@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-These were distracting when checking new code.
+Add checks to make sure that the local repository exists
+and has the configured remotes in place.
 
 Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
 ---
- scripts/import_stable.py     | 8 +++++---
- scripts/kernel_sec/branch.py | 4 ++--
- scripts/prepare_remotes.py   | 2 +-
- scripts/report_affected.py   | 2 +-
- scripts/webview.py           | 2 +-
- 5 files changed, 10 insertions(+), 8 deletions(-)
+ scripts/import_stable.py     |  1 +
+ scripts/kernel_sec/branch.py | 21 +++++++++++++++++++++
+ scripts/report_affected.py   |  1 +
+ scripts/webview.py           |  1 +
+ 4 files changed, 24 insertions(+)
 
 diff --git a/scripts/import_stable.py b/scripts/import_stable.py
-index 194219d..b4d8e0a 100755
+index 2c88b07..26fcc2f 100755
 --- a/scripts/import_stable.py
 +++ b/scripts/import_stable.py
-@@ -64,7 +64,8 @@ def get_backports(git_repo, remotes, branches, debug=False):
-                     backports.setdefault(mainline_commit, {})[branch_name] \
-                         = stable_commit
-                 if line.strip() != '':
--                    commit_re = BACKPORT_COMMIT_BOTTOM_RE  # next line is not top
-+                    # next line is not top
-+                    commit_re = BACKPORT_COMMIT_BOTTOM_RE
- 
-     return backports
- 
-@@ -120,7 +121,8 @@ def add_backports(branches, c_b_map, issue_commits, all_backports,
-                 if debug_context:
-                     print('%s/%s: recording commits' %
-                           (debug_context, branch_name))
--                issue_commits.setdefault(branch_name, []).extend(branch_commits)
-+                issue_commits.setdefault(
-+                    branch_name, []).extend(branch_commits)
-                 changed = True
-             else:
-                 if debug_context:
-@@ -169,7 +171,7 @@ if __name__ == '__main__':
-                         metavar='DIRECTORY')
-     parser.add_argument('--remote-name',
-                         dest='remote_name', action='append', default=[],
--                        help='git remote name mappings, e.g. stable:korg-stable',
-+                        help='git remote name mappings, e.g. stable:mystable',
-                         metavar='NAME:OTHER-NAME')
-     parser.add_argument('--mainline-remote',
-                         dest='mainline_remote_name',
+@@ -190,4 +190,5 @@ if __name__ == '__main__':
+     remotes = kernel_sec.branch.get_remotes(args.remote_name,
+                                             mainline=args.mainline_remote_name,
+                                             stable=args.stable_remote_name)
++    kernel_sec.branch.check_git_repo(args.git_repo, remotes)
+     main(args.git_repo, remotes, args.debug)
 diff --git a/scripts/kernel_sec/branch.py b/scripts/kernel_sec/branch.py
-index 96f1cab..52f3b42 100644
+index 10f3339..a138b96 100644
 --- a/scripts/kernel_sec/branch.py
 +++ b/scripts/kernel_sec/branch.py
-@@ -62,8 +62,8 @@ def _extract_live_stable_branches(doc):
-             if match:
-                 version = match.group(1)
-                 eol = match.group(2) is not None
--        if branch_type not in ['mainline', 'stable', 'longterm', 'linux-next'] \
--           or version is None:
-+        if branch_type not in ['mainline', 'stable', 'longterm',
-+                               'linux-next'] or version is None:
-             raise ValueError('failed to parse releases row text %r' % row_text)
+@@ -4,10 +4,12 @@
+ # Public License, Version 3 or later. See http://www.gnu.org/copyleft/gpl.html
+ # for details.
  
-         # Filter out irrelevant branches
-diff --git a/scripts/prepare_remotes.py b/scripts/prepare_remotes.py
-index 59310fc..ab0db24 100755
---- a/scripts/prepare_remotes.py
-+++ b/scripts/prepare_remotes.py
-@@ -45,7 +45,7 @@ if __name__ == '__main__':
-                         metavar='DIRECTORY')
-     parser.add_argument('--remote-name',
-                         dest='remote_name', action='append', default=[],
--                        help='git remote name mappings, e.g. stable:korg-stable',
-+                        help='git remote name mappings, e.g. stable:mystable',
-                         metavar='NAME:OTHER-NAME')
-     parser.add_argument('--mainline-remote',
-                         dest='mainline_remote_name',
++import argparse
+ import io
+ import os
+ import re
+ import subprocess
++import sys
+ import time
+ import urllib.error
+ import urllib.request
+@@ -219,3 +221,22 @@ def get_remotes(mappings, mainline=None, stable=None):
+     if stable:
+         remotes['stable']['git_name'] = stable
+     return remotes
++
++
++def check_git_repo(git_repo, remotes):
++    if not os.path.isdir(git_repo):
++        msg = "directory %r not present" % git_repo
++        raise argparse.ArgumentError(None, msg)
++    # .git could be a regular file (worktrees) or a directory
++    if not os.path.exists(os.path.join(git_repo, '.git')):
++        msg = "directory %r is not a git repository" % git_repo
++        raise argparse.ArgumentError(None, msg)
++
++    current_remotes = subprocess.check_output(
++        ['git', 'remote', 'show'], cwd=git_repo).decode(
++            sys.stdout.encoding).strip().split('\n')
++    for key in remotes.keys():
++        remote = remotes[key]  # __getitem__ will add git_name
++        if remote['git_name'] not in current_remotes:
++            msg = "remote %r not in git repository" % remote['git_name']
++            raise argparse.ArgumentError(None, msg)
 diff --git a/scripts/report_affected.py b/scripts/report_affected.py
-index 7ec4af7..a97986c 100755
+index 879c021..d2f1f22 100755
 --- a/scripts/report_affected.py
 +++ b/scripts/report_affected.py
-@@ -143,7 +143,7 @@ if __name__ == '__main__':
-                         metavar='DIRECTORY')
-     parser.add_argument('--remote-name',
-                         dest='remote_name', action='append', default=[],
--                        help='git remote name mappings, e.g. stable:korg-stable',
-+                        help='git remote name mappings, e.g. stable:mystable',
-                         metavar='NAME:OTHER-NAME')
-     parser.add_argument('--mainline-remote',
-                         dest='mainline_remote_name',
+@@ -100,5 +100,6 @@ if __name__ == '__main__':
+     remotes = kernel_sec.branch.get_remotes(args.remote_name,
+                                             mainline=args.mainline_remote_name,
+                                             stable=args.stable_remote_name)
++    kernel_sec.branch.check_git_repo(args.git_repo, remotes)
+     main(args.git_repo, remotes,
+          args.only_fixed_upstream, args.include_ignored, *args.branches)
 diff --git a/scripts/webview.py b/scripts/webview.py
-index 52a7b15..cf54948 100755
+index a3a643b..52a7b15 100755
 --- a/scripts/webview.py
 +++ b/scripts/webview.py
-@@ -205,7 +205,7 @@ if __name__ == '__main__':
-                         metavar='DIRECTORY')
-     parser.add_argument('--remote-name',
-                         dest='remote_name', action='append', default=[],
--                        help='git remote name mappings, e.g. stable:korg-stable',
-+                        help='git remote name mappings, e.g. stable:mystable',
-                         metavar='NAME:OTHER-NAME')
-     parser.add_argument('--mainline-remote',
-                         dest='mainline_remote_name',
+@@ -219,6 +219,7 @@ if __name__ == '__main__':
+     remotes = kernel_sec.branch.get_remotes(args.remote_name,
+                                             mainline=args.mainline_remote_name,
+                                             stable=args.stable_remote_name)
++    kernel_sec.branch.check_git_repo(args.git_repo, remotes)
+ 
+     conf = {
+         '/static/style.css': {
 -- 
 2.17.1
