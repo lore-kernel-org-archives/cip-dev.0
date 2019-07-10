@@ -1,195 +1,59 @@
-From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
-Date: Wed, 10 Jul 2019 10:24:48 +0900
-Subject: [cip-dev] [cip-kernel-sec][RESEND 4/6] report_affected: add support
-	for reporting on tags
-In-Reply-To: <20190710012450.16524-1-daniel.sangorrin@toshiba.co.jp>
-References: <20190710012450.16524-1-daniel.sangorrin@toshiba.co.jp>
-Message-ID: <20190710012450.16524-5-daniel.sangorrin@toshiba.co.jp>
+From: daniel.sangorrin@toshiba.co.jp (daniel.sangorrin at toshiba.co.jp)
+Date: Wed, 10 Jul 2019 01:28:39 +0000
+Subject: [cip-dev] [cip-kernel-sec 3/6] report_affected: fix code when
+ branches are specified
+In-Reply-To: <1561752543.21054.80.camel@codethink.co.uk>
+References: <20190625032636.10694-1-daniel.sangorrin@toshiba.co.jp>
+	<20190625032636.10694-4-daniel.sangorrin@toshiba.co.jp>
+	<1561752543.21054.80.camel@codethink.co.uk>
+Message-ID: <OSBPR01MB3077BA36398A4378C784B85ED0F00@OSBPR01MB3077.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Reporting on tags is useful for product engineers that
-have shipped a kernel with a specific tag and need to know
-which issues affect their product after some time.
+> From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+> On Tue, 2019-06-25 at 12:26 +0900, Daniel Sangorrin wrote:
+> > The previous code could not handle branches with names
+> > other than stable branch names. For example, passing
+> > "linux-4.4.y-cip" as a branch would return an error.
+> [...]
+> > --- a/scripts/report_affected.py
+> > +++ b/scripts/report_affected.py
+> > @@ -18,14 +18,17 @@ import kernel_sec.version
+> >
+> > ?def main(git_repo, remotes,
+> > ??????????only_fixed_upstream, include_ignored, *branch_names):
+> > +????live_branches = kernel_sec.branch.get_live_branches()
+> > ?????if branch_names:
+> > -????????# Support stable release strings as shorthand for stable branches
+> > -????????branches = [kernel_sec.branch.get_base_ver_stable_branch(name)
+> > -????????????????????if name[0].isdigit()
+> > -????????????????????else kernel_sec.branch.get_stable_branch(name)
+> > -????????????????????for name in branch_names]
+> > +????????branches = []
+> > +????????for branch in live_branches:
+> > +????????????for name in branch_names:
+> > +????????????????if name[0].isdigit():
+> > +????????????????????name = 'linux-%s.y' % name
+> > +????????????????if branch['short_name'] == name:
+> > +????????????????????branches.append(branch)
+> [...]
+> 
+> This results in quietly skipping arguments that don't match any known
+> branch.  The current behaviour (failing with a TypeError) is not good
+> but I think failing quietly is worse.
 
-Examples:
-$ ./scripts/report_affected.py linux-4.14.y linux-4.4.y:v4.4.107 v4.4.181-cip33
-$ cd ../kernel
-$ git tag myproduct-v1 0f13d9b4d0efa9e87381717c113df57718bc92d6
-$ cd ../cip-kernel-sec
-$ ./scripts/report_affected.py linux-4.19.y-cip:myproduct-v1 v4.19.50-cip3
+I was taking the approach of "doing as much as possible". Something like what a recovery tool does on a disk with broken sectors: if a broken sector is found skip it.
 
-Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
----
- conf/branches.yml            |  2 +
- scripts/kernel_sec/branch.py |  4 +-
- scripts/report_affected.py   | 77 +++++++++++++++++++++++++++++++-----
- 3 files changed, 72 insertions(+), 11 deletions(-)
+In the new version, the script will raise an argument error if it cannot find the corresponding stable branch.
 
-diff --git a/conf/branches.yml b/conf/branches.yml
-index 2ed9db6..8197596 100644
---- a/conf/branches.yml
-+++ b/conf/branches.yml
-@@ -2,7 +2,9 @@
-   base_ver: "4.4"
-   git_remote: cip
-   git_name: linux-4.4.y-cip
-+  tag_regexp: '^v4\.4\.\d+-cip\d+$'
- - short_name: linux-4.19.y-cip
-   base_ver: "4.19"
-   git_remote: cip
-   git_name: linux-4.19.y-cip
-+  tag_regexp: '^v4\.19\.\d+-cip\d+$'
-diff --git a/scripts/kernel_sec/branch.py b/scripts/kernel_sec/branch.py
-index ef88b54..96f1cab 100644
---- a/scripts/kernel_sec/branch.py
-+++ b/scripts/kernel_sec/branch.py
-@@ -141,7 +141,7 @@ def get_sort_key(branch):
-     return version.get_sort_key(base_ver)
- 
- 
--def _get_commits(git_repo, end, start=None):
-+def iter_rev_list(git_repo, end, start=None):
-     if start:
-         list_expr = '%s..%s' % (start, end)
-     else:
-@@ -170,7 +170,7 @@ class CommitBranchMap:
-                                  branch['git_name'])
-             else:
-                 end = 'v' + branch['base_ver']
--            for commit in _get_commits(git_repo, end, start):
-+            for commit in iter_rev_list(git_repo, end, start):
-                 self._commit_sort_key[commit] \
-                     = self._branch_sort_key[branch_name]
-             start = end
-diff --git a/scripts/report_affected.py b/scripts/report_affected.py
-index 0ac27f6..7ec4af7 100755
---- a/scripts/report_affected.py
-+++ b/scripts/report_affected.py
-@@ -9,7 +9,9 @@
- # Report issues affecting each stable branch.
- 
- import argparse
-+import copy
- import subprocess
-+import re
- 
- import kernel_sec.branch
- import kernel_sec.issue
-@@ -22,15 +24,47 @@ def main(git_repo, remotes,
-     if branch_names:
-         branches = []
-         for branch_name in branch_names:
-+            tag = None
-             if branch_name[0].isdigit():
-                 # 4.4 is mapped to linux-4.4.y
-                 name = 'linux-%s.y' % branch_name
-+            elif branch_name[0] == 'v':
-+                # an official tag, e.g. v4.4.92-cip11
-+                # infer branch from tag (regexp's must be specific)
-+                for branch in live_branches:
-+                    if 'tag_regexp' in branch:
-+                        # predefined in conf/branches.yml
-+                        tag_regexp = branch['tag_regexp']
-+                    elif branch['git_remote'] == 'stable':
-+                        # stable format, e.g. v4.19.12
-+                        esc_base_ver = branch['base_ver'].replace('.', '\.')
-+                        tag_regexp = r'(^v%s$|^v%s\.\d+$)' % (
-+                            esc_base_ver, esc_base_ver)
-+                    else:
-+                        # no tag_regexp defined, or mainline
-+                        continue
-+
-+                    if re.match(tag_regexp, branch_name):
-+                        tag = branch_name
-+                        name = branch['short_name']
-+                        break
-+                else:
-+                    raise ValueError('Failed to match tag %r' % branch_name)
-+            elif ':' in branch_name:
-+                # a possibly custom tag, e.g. linux-4.19.y-cip:myproduct-v1
-+                name_tuple = tuple(branch_name.split(':'))
-+                name = name_tuple[0]
-+                tag = name_tuple[1]
-             else:
-                 name = branch_name
- 
-             for branch in live_branches:
-                 if branch['short_name'] == name:
--                    branches.append(branch)
-+                    # there could be multiple tags for the same branch
-+                    branch_copy = copy.deepcopy(branch)
-+                    if tag:
-+                        branch_copy['tag'] = tag
-+                    branches.append(branch_copy)
-                     break
-             else:
-                 msg = "Branch %s could not be found" % branch_name
-@@ -45,6 +79,18 @@ def main(git_repo, remotes,
- 
-     c_b_map = kernel_sec.branch.CommitBranchMap(git_repo, remotes, branches)
- 
-+    # cache tag commits and set full_name to show the tag
-+    tag_commits = {}
-+    for branch in branches:
-+        if 'tag' in branch:
-+            start = 'v' + branch['base_ver']
-+            end = branch['tag']
-+            tag_commits[end] = set(
-+                kernel_sec.branch.iter_rev_list(git_repo, end, start))
-+            branch['full_name'] = ':'.join([branch['short_name'], end])
-+        else:
-+            branch['full_name'] = branch['short_name']
-+
-     branch_issues = {}
-     issues = set(kernel_sec.issue.get_list())
- 
-@@ -65,15 +111,26 @@ def main(git_repo, remotes,
-             if not include_ignored and ignore.get(branch_name):
-                 continue
- 
-+            # Check if the branch is affected. If not and the issue was fixed
-+            # on that branch, then make sure the tag contains that fix
-             if kernel_sec.issue.affects_branch(
-                     issue, branch, c_b_map.is_commit_in_branch):
--                branch_issues.setdefault(branch_name, []).append(cve_id)
-+                branch_issues.setdefault(
-+                    branch['full_name'], []).append(cve_id)
-+            elif 'tag' in branch and fixed:
-+                if fixed.get(branch_name, 'never') == 'never':
-+                    continue
-+                for commit in fixed[branch_name]:
-+                    if commit not in tag_commits[branch['tag']]:
-+                        branch_issues.setdefault(
-+                            branch['full_name'], []).append(cve_id)
-+                        break
- 
-     for branch in branches:
--        branch_name = branch['short_name']
--        print('%s:' % branch_name,
--              *sorted(branch_issues.get(branch_name, []),
--                      key=kernel_sec.issue.get_id_sort_key))
-+        sorted_cve_ids = sorted(
-+            branch_issues.get(branch['full_name'], []),
-+            key=kernel_sec.issue.get_id_sort_key)
-+        print('%s:' % branch['full_name'], *sorted_cve_ids)
- 
- 
- if __name__ == '__main__':
-@@ -104,9 +161,11 @@ if __name__ == '__main__':
-                         help='include issues that have been marked as ignored')
-     parser.add_argument('branches',
-                         nargs='*',
--                        help=('specific branch to report on '
--                              '(default: all active branches)'),
--                        metavar='BRANCH')
-+                        help=('specific branch[:tag] or stable tag to '
-+                              'report on (default: all active branches). '
-+                              'e.g. linux-4.14.y linux-4.4.y:v4.4.107 '
-+                              'v4.4.181-cip33 linux-4.19.y-cip:myproduct-v33'),
-+                        metavar='[BRANCH[:TAG]|TAG]')
-     args = parser.parse_args()
-     remotes = kernel_sec.branch.get_remotes(args.remote_name,
-                                             mainline=args.mainline_remote_name,
--- 
-2.17.1
+Thanks,
+Daniel
+
+
+> 
+> Ben.
+> 
+> --
+> Ben Hutchings, Software Developer                ?        Codethink Ltd
+> https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+>                                      Manchester, M1 2HF, United Kingdom
