@@ -1,78 +1,75 @@
-From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
-Date: Wed, 10 Jul 2019 23:47:33 +0000
-Subject: [cip-dev] About CIP kernel maintenance policy for new hardware
- support backporting
-In-Reply-To: <CACbBqgU4zFV5U48cxjfv+xho2ed1j74qP5S3zhmQHt=m60tk3A@mail.gmail.com>
-References: <CADPJy8X1=bmekKrM+kAWYSsNQ=dbNgszD2K-aZ2JdH4NYGW4jQ@mail.gmail.com>
-	<CACbBqgU4zFV5U48cxjfv+xho2ed1j74qP5S3zhmQHt=m60tk3A@mail.gmail.com>
-Message-ID: <OSBPR01MB41845C469EB7F604B0B1908192F00@OSBPR01MB4184.jpnprd01.prod.outlook.com>
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Thu, 11 Jul 2019 02:25:38 +0000
+Subject: [cip-dev] CIP IRC weekly meeting today
+Message-ID: <HK0PR01MB297909836DF1969EAA9E469DE2F30@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+Hi all,
 
 
-> Thanks for pointed out.
-> You can find the following sentence on the page. 
-> > an SLTS branch may include larger changes to support new hardware, to bridge the gap between SLTS branches.
-> 
-> I think we need to write much clear to mention what kind of patches we can accept to CIP SLTS tree and how to approve(?) it by CIP.
 
-Agree.
+Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
 
-We think that we need to add the following sentences.
----
-We do not apply patches that have not been applied to upstream
- (Linus tree:https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git).
-If you want to add new features or hardware, they need to be applied into upstream.
-Also, you may not be able to easily apply the patches on Upstream. In such a case, 
-you need to describe in the commit message of patch what modifications have been made
-from the original patch.
----
 
-In addition to these, we may need to describe the supported hardware (CPU, boards) and
-test environment as well.
+
+*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
+
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=7&day11&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
+
+
+
+US-West US-East   UK     DE     TW     JP
+
+02:00    05:00   10:00   11:00   17:00   18:00
+
+
+
+Channel:
+
+* irc:chat.freenode.net:6667/cip
+
+
+
+Agenda:
+
+
+
+* Action item
+
+1. Provide the script for CIP kernel config collection - bwh
+
+#link https://lists.cip-project.org/pipermail/cip-dev/2019-June/002506.html
+
+2. List real time kernel questions to ask Daniel Wagner - szlin
+
+3. Try updating CIP RT kernel to 4.19.50 - Pavel
+
+#link https://lists.cip-project.org/pipermail/cip-dev/2019-June/002548.html
+
+4. Work out a solution for LAVA master backups - patersonc
+
+* Kernel maintenance updates
+
+* Kernel testing
+
+* CIP Core
+
+* Software update
+
+* AOB
+
+
+
+The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
+
+
 
 Best regards,
-  Nobuhiro
-
-From: Yoshitake Kobayashi [mailto:yoshitake.kobayashi at gmail.com] 
-Sent: Wednesday, July 10, 2019 9:56 PM
-To: hiraku.toyooka at cybertrust.co.jp
-Cc: cip-dev at lists.cip-project.org; pavel at denx.de; iwamatsu nobuhiro(?? ?? ????????) <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: Re: [cip-dev] About CIP kernel maintenance policy for new hardware support backporting
-
-Hi,
-
-Thanks for pointed out.
-You can find the following sentence on the page.?
-> an SLTS branch may include larger changes to support new hardware, to bridge the gap between SLTS branches.
-
-I think we need to write much clear to mention what kind of patches we can accept to CIP SLTS tree and how to approve(?) it by CIP.
-
-Best regards,
-Yoshi
 
 
 
-2019?7?10?(?) 15:42 <hiraku.toyooka@cybertrust.co.jp>:
-Hello,
-
-I have a question about CIP kernel maintenance policy.
-Can CIP kernel accept backport patches for new hardware support (not
-only fixes)?
-
-I read the following document and it seems to describe only acceptable fixes.
-https://wiki.linuxfoundation.org/civilinfrastructureplatform/cipkernelmaintenance
-
-On the other hand, Current linux-4.19.y-cip branch accepts some hardware
-support patches such as RZ/G2E(r8a774c0) from upstream.
-So I wonder if some policy about new hardware support exists.
-
--- 
-Hiraku Toyooka
-Cybertrust Japan Co., Ltd.
-_______________________________________________
-cip-dev mailing list
-cip-dev at lists.cip-project.org
-https://lists.cip-project.org/mailman/listinfo/cip-dev
+SZ Lin, Moxa.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190711/b9494b78/attachment-0001.html>
