@@ -1,38 +1,48 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Thu, 11 Jul 2019 10:47:11 +0200
-Subject: [cip-dev] [ANNOUNCE] 4.4.176-cip31-rt23
-In-Reply-To: <20190329110611.1B897500722@mail.monom.org>
-References: <20190329110611.1B897500722@mail.monom.org>
-Message-ID: <a86d4f19-790d-58ab-94b4-523a759d87b4@siemens.com>
+From: pavel@denx.de (Pavel Machek)
+Date: Thu, 11 Jul 2019 12:56:05 +0200
+Subject: [cip-dev] [PATCH v3 4.19.y-cip] Add gitlab-ci.yaml
+In-Reply-To: <20190708131536.17087-1-chris.paterson2@renesas.com>
+References: <20190702105122.23718-1-chris.paterson2@renesas.com>
+	<20190708131536.17087-1-chris.paterson2@renesas.com>
+Message-ID: <20190711105605.GA7605@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Pavel,
+Hi!
 
-On 29.03.19 12:06, Daniel Wagner wrote:
-> Hello CIP RT Folks!
+> This is configured to build and test the following configurations:
 > 
-> I'm pleased to announce the 4.4.176-cip31-rt23 stable release.
+> * BUILD_ARCH: arm
+> * CONFIG: renesas_shmobile_defconfig
+> * CONFIG_LOC: cip-kernel-config
+> * DEVICES: r8a7743-iwg20d-q7 r8a7745-iwg22d-sodimm
+> * DTBS: r8a7743-iwg20d-q7-dbcm-ca.dtb r8a7745-iwg22d-sodimm-dbhd-ca.dtb
 > 
-> This release is just an update to the new stable 4.4.176-cip31 version
-> and no RT specific changes have been made.
+> * BUILD_ARCH: arm64
+> * CONFIG: renesas_defconfig
+> * CONFIG_LOC: cip-kernel-config
+> * DEVICES: r8a774c0-ek874
+> * DTBS: r8a774c0-ek874.dtb
 > 
-> You can get this release via the git tree at:
+> * BUILD_ARCH: arm
+> * CONFIG: shmobile_defconfig
+> * CONFIG_LOC: intree
+> * DEVICES: r8a7743-iwg20d-q7 r8a7745-iwg22d-sodimm
+> * DTBS: r8a7743-iwg20d-q7-dbcm-ca.dtb r8a7745-iwg22d-sodimm-dbhd-ca.dtb
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-> 
->   branch: linux-4.4.y-cip-rt
->   Head SHA1: b51a171ad762ba4a78b0ed0c7ec83fb9f6fb135f
-> 
+> Over time support will be added for all CIP supported architectures and
+> configurations.
 
-Is there a chance to update 4.4-rt based on Daniel' 4.4.179-rt181 release, but
-then to 4.4.182 in order to have SACK fixes in?
+Thanks, applied and pushed out. Sorry for the delay.
 
-Thanks,
-Jan
-
-PS: Please make it -rt24 then. ;)
-
+								Pavel
 -- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 181 bytes
+Desc: Digital signature
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190711/1994ee54/attachment.sig>
