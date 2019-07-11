@@ -1,75 +1,71 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 11 Jul 2019 02:25:38 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-Message-ID: <HK0PR01MB297909836DF1969EAA9E469DE2F30@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+From: daniel.sangorrin@toshiba.co.jp (Daniel Sangorrin)
+Date: Thu, 11 Jul 2019 13:44:25 +0900
+Subject: [cip-dev] [cip-kernel-sec][RESEND v2 2/2] report_affected: add
+	show-description option
+In-Reply-To: <20190711044425.30128-1-daniel.sangorrin@toshiba.co.jp>
+References: <20190711044425.30128-1-daniel.sangorrin@toshiba.co.jp>
+Message-ID: <20190711044425.30128-3-daniel.sangorrin@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+Rather than looking up each issue file, I would like
+to have an overview of what each CVE ID means.
 
+Example:
+$ ./scripts/report_affected.py --show-description linux-4.4.y-cip
 
+Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
+---
+ scripts/report_affected.py | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
-
-
-
-*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
-
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=7&day11&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
-
-
-
-US-West US-East   UK     DE     TW     JP
-
-02:00    05:00   10:00   11:00   17:00   18:00
-
-
-
-Channel:
-
-* irc:chat.freenode.net:6667/cip
-
-
-
-Agenda:
-
-
-
-* Action item
-
-1. Provide the script for CIP kernel config collection - bwh
-
-#link https://lists.cip-project.org/pipermail/cip-dev/2019-June/002506.html
-
-2. List real time kernel questions to ask Daniel Wagner - szlin
-
-3. Try updating CIP RT kernel to 4.19.50 - Pavel
-
-#link https://lists.cip-project.org/pipermail/cip-dev/2019-June/002548.html
-
-4. Work out a solution for LAVA master backups - patersonc
-
-* Kernel maintenance updates
-
-* Kernel testing
-
-* CIP Core
-
-* Software update
-
-* AOB
-
-
-
-The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
-
-
-
-Best regards,
-
-
-
-SZ Lin, Moxa.
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190711/b9494b78/attachment-0001.html>
+diff --git a/scripts/report_affected.py b/scripts/report_affected.py
+index 27c39ef..22a923b 100755
+--- a/scripts/report_affected.py
++++ b/scripts/report_affected.py
+@@ -18,8 +18,8 @@ import kernel_sec.issue
+ import kernel_sec.version
+ 
+ 
+-def main(git_repo, remotes,
+-         only_fixed_upstream, include_ignored, *branch_names):
++def main(git_repo, remotes, only_fixed_upstream,
++         include_ignored, show_description, *branch_names):
+     live_branches = kernel_sec.branch.get_live_branches()
+     if branch_names:
+         branches = []
+@@ -121,7 +121,13 @@ def main(git_repo, remotes,
+         sorted_cve_ids = sorted(
+             branch_issues.get(branch['full_name'], []),
+             key=kernel_sec.issue.get_id_sort_key)
+-        print('%s:' % branch['full_name'], *sorted_cve_ids)
++        if show_description:
++            print('%s:' % branch['full_name'])
++            for cve_id in sorted_cve_ids:
++                print(cve_id, '=>',
++                      kernel_sec.issue.load(cve_id).get('description', 'None'))
++        else:
++            print('%s:' % branch['full_name'], *sorted_cve_ids)
+ 
+ 
+ if __name__ == '__main__':
+@@ -150,6 +156,9 @@ if __name__ == '__main__':
+     parser.add_argument('--include-ignored',
+                         action='store_true',
+                         help='include issues that have been marked as ignored')
++    parser.add_argument('--show-description',
++                        action='store_true',
++                        help='show the issue description')
+     parser.add_argument('branches',
+                         nargs='*',
+                         help=('specific branch[:tag] or stable tag to '
+@@ -162,5 +171,5 @@ if __name__ == '__main__':
+                                             mainline=args.mainline_remote_name,
+                                             stable=args.stable_remote_name)
+     kernel_sec.branch.check_git_repo(args.git_repo, remotes)
+-    main(args.git_repo, remotes,
+-         args.only_fixed_upstream, args.include_ignored, *args.branches)
++    main(args.git_repo, remotes, args.only_fixed_upstream,
++         args.include_ignored, args.show_description, *args.branches)
+-- 
+2.17.1
