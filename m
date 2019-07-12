@@ -1,34 +1,63 @@
-From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
-Date: Fri, 12 Jul 2019 16:00:02 +0000
-Subject: [cip-dev] [ANNOUNCE] Release 4.19.58-cip6 and 4.4.185-cip35
-Message-ID: <OSBPR01MB4184CD943F3985A043132B3792F20@OSBPR01MB4184.jpnprd01.prod.outlook.com>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Fri, 12 Jul 2019 17:34:47 +0100
+Subject: [cip-dev] Request for guidance: removal of old config files
+ [was: Kernel configurations for 4.19?]
+In-Reply-To: <909b4353-87c9-08e2-46f1-4ef8ce3fb6d2@siemens.com>
+References: <1555501985.3557.26.camel@codethink.co.uk>
+	<9210b0ba912e7a8c64f6562b43f25e4763ac4379.camel@codethink.co.uk>
+	<7c8d175eaa43357d6484c6fee89c4d0f@codethink.co.uk>
+	<909b4353-87c9-08e2-46f1-4ef8ce3fb6d2@siemens.com>
+Message-ID: <fae9b423882c15f5e31eaef237086f38055dcfce.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+On Thu, 2019-07-11 at 18:51 +0200, Jan Kiszka wrote:
+[...]
+> > 4.19/arm/hitachi_omap_defconfig
+> > 4.19/arm/moxa_mxc_defconfig
+> > 4.19/arm/siemens_am335x-axm2_defconfig
+> > 4.19/arm/siemens_am335x-draco_defconfig
+> > 4.19/arm/siemens_am335x-dxr2_defconfig
+> > 4.19/arm/siemens_am335x-etamin_defconfig
+> > 4.19/arm/siemens_am57xx-pxm3_defconfig
+> 
+> Those can go, I'm not aware of their usage on 4.19. But do we have one for the
+> am335-x-based BBB, our reference board?
 
-CIP kernel team has released Linux kernel 4.19.58-cip6 and 4.4.185-cip35.
+Good point.  I have not yet tried running 4.19 on the BBB, but I can
+look at adding one - or perhaps Nobuhiro or Pavel already has a
+suitable config?
 
-Linux-4.19.y-cip has been updated from base version from 4.19.56 to 4.19.58,
-and linux-4.4.y-cip has been updated from 4.4.182 to 4.4.185 with pxa2xx's
-spi fix.
-And CIP's gitlab CI configuration file (.gitlab-ci.yml) has been added.
+> > 4.19/arm/toshiba_tegra_defconfig
+> > 4.19/arm/toshiba_zynq_defconfig
+> > 4.19/powerpc/toshiba_defconfig
+> > 4.19/x86/plathome_obsvx1.config
+> > 4.19/x86/siemens_i386-rt.config
+> 
+> I do not recall the history of that one anymore. We should have at least one -rt
+> config for x86 somewhere.
 
-You can get this release via the git tree at:
+Yes, and also the build rules should check out -rt branches instead of
+the main CIP branches when processing an -rt configuration.
 
-  4.19.58-cip6:
+> > 4.19/x86/siemens_iot2000.config
+> > 4.19/x86/siemens_server_defconfig
+> 
+> Those two should stay.
 
-    repository: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch: linux-4.19.y-cip
-    commit: 2be2d3f02499e9d3a68f9e2ad1b1c4a0c42189b2
-  
-  4.4.185-cip35:
+But they need to be reviewed, as automatic config updates usually don't
+cope with renaming of config symbols.
 
-    This release has updated the base version from 4.4.182 to 4.4.185.
+Ben.
 
-    repository: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch: linux-4.4.y-cip
-    commit: 7b3d18ad0155a525f36903fc950dd27fe7ef1443
-
-Best regards,
-  Nobuhiro
+> > 4.19/x86/toshiba_defconfig
+> > 
+> > Ben.
+> 
+> Thanks,
+> Jan
+> 
+-- 
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
