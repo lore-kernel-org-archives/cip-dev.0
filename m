@@ -1,37 +1,34 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Fri, 12 Jul 2019 11:28:35 +0000
-Subject: [cip-dev] Regarding backporting RTC PCF85263 driver to cip 4.4
-	kernel
-Message-ID: <OSBPR01MB210389D3E16B7A69C24ADF0EB8F20@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
+Date: Fri, 12 Jul 2019 16:00:02 +0000
+Subject: [cip-dev] [ANNOUNCE] Release 4.19.58-cip6 and 4.4.185-cip35
+Message-ID: <OSBPR01MB4184CD943F3985A043132B3792F20@OSBPR01MB4184.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi All,
+Hi all,
 
-RTC PCF85263 is used by iWave RZ/G1C SBC( iwg23s) platform.  We have upstreamed  this driver support  on 4.19 kernel [1]
-[1]. https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/rtc/rtc-pcf85363.c?h=v5.2&id=fc979933bcf162595b6004d0de4effb64c323152
+CIP kernel team has released Linux kernel 4.19.58-cip6 and 4.4.185-cip35.
 
-This driver is based  on RTC PCF 85363 driver which has rtc nvmem/alarm support [2] .  Rtc nvmem framework is introduced in 4.13
-[2]. https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/rtc/rtc-pcf85363.c?h=v5.2&id=a9687aa2764dd2669602bd19dc636cbeef5293d5
+Linux-4.19.y-cip has been updated from base version from 4.19.56 to 4.19.58,
+and linux-4.4.y-cip has been updated from 4.4.182 to 4.4.185 with pxa2xx's
+spi fix.
+And CIP's gitlab CI configuration file (.gitlab-ci.yml) has been added.
 
-We are seeing the following options for backporting this driver to 4.4 kernel
+You can get this release via the git tree at:
 
-Option 1:
-Backport this driver[1] to 4.4 kernel along with nvmem/alarm support. we have already done this work and patches are available at [3]
-[3]. https://gitlab.com/bijud/pcf85263/tree/master
+  4.19.58-cip6:
 
-Option 2:
-Backport RTC PCF85263 driver, removing  Alarm/nvmem functionality from  [2] .
+    repository: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+    branch: linux-4.19.y-cip
+    commit: 2be2d3f02499e9d3a68f9e2ad1b1c4a0c42189b2
+  
+  4.4.185-cip35:
 
-Option 3:
-Don't backport RTC support at all.
+    This release has updated the base version from 4.4.182 to 4.4.185.
 
-Please share your views, so that I can work on this accordingly.
+    repository: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+    branch: linux-4.4.y-cip
+    commit: 7b3d18ad0155a525f36903fc950dd27fe7ef1443
 
-Regards,
-Biju
-
-
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190712/f0a5459e/attachment.html>
+Best regards,
+  Nobuhiro
