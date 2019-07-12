@@ -1,54 +1,54 @@
-From: pavel@denx.de (Pavel Machek)
-Date: Thu, 11 Jul 2019 13:03:27 +0200
-Subject: [cip-dev] [PATCH v3 4.19.y-cip] Add gitlab-ci.yaml
-In-Reply-To: <20190708131536.17087-1-chris.paterson2@renesas.com>
-References: <20190702105122.23718-1-chris.paterson2@renesas.com>
-	<20190708131536.17087-1-chris.paterson2@renesas.com>
-Message-ID: <20190711110327.GC7605@amd>
+From: daniel.sangorrin@toshiba.co.jp (daniel.sangorrin at toshiba.co.jp)
+Date: Fri, 12 Jul 2019 00:57:06 +0000
+Subject: [cip-dev] Kernel configurations for 4.19?
+In-Reply-To: <9210b0ba912e7a8c64f6562b43f25e4763ac4379.camel@codethink.co.uk>
+References: <1555501985.3557.26.camel@codethink.co.uk>
+	<9210b0ba912e7a8c64f6562b43f25e4763ac4379.camel@codethink.co.uk>
+Message-ID: <OSBPR01MB30774E79BB6AE34E75621D82D0F20@OSBPR01MB3077.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi!
+Hello Ben,
 
-> This is configured to build and test the following configurations:
-> 
-> * BUILD_ARCH: arm
-> * CONFIG: renesas_shmobile_defconfig
-> * CONFIG_LOC: cip-kernel-config
-> * DEVICES: r8a7743-iwg20d-q7 r8a7745-iwg22d-sodimm
-> * DTBS: r8a7743-iwg20d-q7-dbcm-ca.dtb r8a7745-iwg22d-sodimm-dbhd-ca.dtb
-> 
-> * BUILD_ARCH: arm64
-> * CONFIG: renesas_defconfig
-> * CONFIG_LOC: cip-kernel-config
-> * DEVICES: r8a774c0-ek874
-> * DTBS: r8a774c0-ek874.dtb
-> 
-> * BUILD_ARCH: arm
-> * CONFIG: shmobile_defconfig
-> * CONFIG_LOC: intree
-> * DEVICES: r8a7743-iwg20d-q7 r8a7745-iwg22d-sodimm
-> * DTBS: r8a7743-iwg20d-q7-dbcm-ca.dtb r8a7745-iwg22d-sodimm-dbhd-ca.dtb
-> 
-> Over time support will be added for all CIP supported architectures and
-> configurations.
-> 
-> At the moment only simple boot tests are run. Real tests will be added in
-> the future
+[Note] repeating the reply because I got some rejected mails.
 
-I went ahead, and applied this to linux-4.19.y-cip-rt-rebase branch,
-too. If it is easy to add that one to testing, it would be nice.
+> From: Ben Hutchings
+> I have received new config files from most members, but no-one told me
+> if the old configs can be deleted.  For reference, these are the files
+> we have for 4.19 that are based on those submitted for 4.4:
 
-Best regards,
-								Pavel
-								
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 181 bytes
-Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190711/7a10c05c/attachment.sig>
+You can discard the 4.4 old configurations from Toshiba. At the moment, we only need support for this one:
+https://gitlab.com/cip-project/cip-kernel/cip-kernel-config/blob/master/4.19/x86/toshiba_atom_baytrail_cip.config
+
+[Note] we may send more configuration files in the near future.
+
+Thanks,
+Daniel
+
+> 4.19/arm/hitachi_omap_defconfig
+> 4.19/arm/moxa_mxc_defconfig
+> 4.19/arm/siemens_am335x-axm2_defconfig
+> 4.19/arm/siemens_am335x-draco_defconfig
+> 4.19/arm/siemens_am335x-dxr2_defconfig
+> 4.19/arm/siemens_am335x-etamin_defconfig
+> 4.19/arm/siemens_am57xx-pxm3_defconfig
+> 4.19/arm/toshiba_tegra_defconfig
+> 4.19/arm/toshiba_zynq_defconfig
+> 4.19/powerpc/toshiba_defconfig
+> 4.19/x86/plathome_obsvx1.config
+> 4.19/x86/siemens_i386-rt.config
+> 4.19/x86/siemens_iot2000.config
+> 4.19/x86/siemens_server_defconfig
+> 4.19/x86/toshiba_defconfig
+> 
+> Ben.
+> 
+> --
+> Ben Hutchings, Software Developer                         Codethink Ltd
+> https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+>                                      Manchester, M1 2HF, United Kingdom
+> 
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
