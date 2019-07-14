@@ -1,56 +1,70 @@
-From: pavel@denx.de (Pavel Machek)
-Date: Sun, 14 Jul 2019 23:46:06 +0200
-Subject: [cip-dev] Regarding backporting RTC PCF85263 driver to cip 4.4
- kernel
-In-Reply-To: <OSBPR01MB210389D3E16B7A69C24ADF0EB8F20@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-References: <OSBPR01MB210389D3E16B7A69C24ADF0EB8F20@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-Message-ID: <20190714214606.GA19428@amd>
+From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
+Date: Sun, 14 Jul 2019 22:42:50 +0000
+Subject: [cip-dev] Request for guidance: removal of old config files
+ [was: Kernel configurations for 4.19?]
+In-Reply-To: <fae9b423882c15f5e31eaef237086f38055dcfce.camel@codethink.co.uk>
+References: <1555501985.3557.26.camel@codethink.co.uk>
+	<9210b0ba912e7a8c64f6562b43f25e4763ac4379.camel@codethink.co.uk>
+	<7c8d175eaa43357d6484c6fee89c4d0f@codethink.co.uk>
+	<909b4353-87c9-08e2-46f1-4ef8ce3fb6d2@siemens.com>
+	<fae9b423882c15f5e31eaef237086f38055dcfce.camel@codethink.co.uk>
+Message-ID: <OSBPR01MB4184B2667DAF950E5E53623392CC0@OSBPR01MB4184.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi!
+Hi Ben,
+
+> -----Original Message-----
+> From: cip-dev-bounces at lists.cip-project.org
+> [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Ben
+> Hutchings
+> Sent: Saturday, July 13, 2019 1:35 AM
+> To: Jan Kiszka <jan.kiszka@siemens.com>
+> Cc: takehisa.katayama.bx at renesas.com; sz.lin at moxa.com;
+> cip-dev at lists.cip-project.org
+> Subject: Re: [cip-dev] Request for guidance: removal of old config files
+> [was: Kernel configurations for 4.19?]
 > 
-> RTC PCF85263 is used by iWave RZ/G1C SBC( iwg23s) platform.  We have upstreamed  this driver support  on 4.19 kernel [1]
-> [1]. https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/rtc/rtc-pcf85363.c?h=v5.2&id=fc979933bcf162595b6004d0de4effb64c323152
+> On Thu, 2019-07-11 at 18:51 +0200, Jan Kiszka wrote:
+> [...]
+> > > 4.19/arm/hitachi_omap_defconfig
+> > > 4.19/arm/moxa_mxc_defconfig
+> > > 4.19/arm/siemens_am335x-axm2_defconfig
+> > > 4.19/arm/siemens_am335x-draco_defconfig
+> > > 4.19/arm/siemens_am335x-dxr2_defconfig
+> > > 4.19/arm/siemens_am335x-etamin_defconfig
+> > > 4.19/arm/siemens_am57xx-pxm3_defconfig
+> >
+> > Those can go, I'm not aware of their usage on 4.19. But do we have one
+> > for the am335-x-based BBB, our reference board?
 > 
-> This driver is based  on RTC PCF 85363 driver which has rtc nvmem/alarm support [2] .  Rtc nvmem framework is introduced in 4.13
-> [2]. https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/rtc/rtc-pcf85363.c?h=v5.2&id=a9687aa2764dd2669602bd19dc636cbeef5293d5
+> Good point.  I have not yet tried running 4.19 on the BBB, but I can look
+> at adding one - or perhaps Nobuhiro or Pavel already has a suitable config?
+
+I have a BBB, but I do not try running 4.19 on BBB.
+I will try this.
+
 > 
-> We are seeing the following options for backporting this driver to
-> 4.4 kernel
-
-First, you did a lot of work there...
-
-> Option 1:
-> Backport this driver[1] to 4.4 kernel along with nvmem/alarm support. we have already done this work and patches are available at [3]
-> [3]. https://gitlab.com/bijud/pcf85263/tree/master
-
-Ok, this is rather long/big series, and some parts are quite scary:
-https://gitlab.com/bijud/pcf85263/blob/master/0013-rtc-nvmem-allow-registering-the-nvmem-device-before-.patch
-
-> Option 2:
-> Backport RTC PCF85263 driver, removing  Alarm/nvmem functionality
-> from  [2] .
-
-So we basically get this one, and few patches on top, local to the new files.
-https://gitlab.com/bijud/pcf85263/blob/master/0015-rtc-add-support-for-NXP-PCF85363-real-time-clock.patch
-
-I think I prefer option 2. 
-
-> Option 3:
-> Don't backport RTC support at all.
-
-Applying patch #15 is easy. We can do option 2 I believe.
+> > > 4.19/arm/toshiba_tegra_defconfig
+> > > 4.19/arm/toshiba_zynq_defconfig
+> > > 4.19/powerpc/toshiba_defconfig
+> > > 4.19/x86/plathome_obsvx1.config
+> > > 4.19/x86/siemens_i386-rt.config
+> >
+> > I do not recall the history of that one anymore. We should have at
+> > least one -rt config for x86 somewhere.
+> 
+> Yes, and also the build rules should check out -rt branches instead of
+> the main CIP branches when processing an -rt configuration.
+> 
+> > > 4.19/x86/siemens_iot2000.config
+> > > 4.19/x86/siemens_server_defconfig
+> >
+> > Those two should stay.
+> 
+> But they need to be reviewed, as automatic config updates usually don't
+> cope with renaming of config symbols.
+> 
 
 Best regards,
-									Pavel
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 181 bytes
-Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190714/47a6b486/attachment.sig>
+  Nobuhiro
