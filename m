@@ -1,77 +1,58 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Mon, 15 Jul 2019 14:30:08 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 23/23] arm64: dts: renesas: r8a774c0:
-	Add OPPs table for cpu devices
-In-Reply-To: <1563197408-59548-1-git-send-email-biju.das@bp.renesas.com>
-References: <1563197408-59548-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1563197408-59548-24-git-send-email-biju.das@bp.renesas.com>
+From: pavel@denx.de (Pavel Machek)
+Date: Mon, 15 Jul 2019 15:43:36 +0200
+Subject: [cip-dev] [ANNOUNCE] 4.4.176-cip31-rt23
+In-Reply-To: <a86d4f19-790d-58ab-94b4-523a759d87b4@siemens.com>
+References: <20190329110611.1B897500722@mail.monom.org>
+	<a86d4f19-790d-58ab-94b4-523a759d87b4@siemens.com>
+Message-ID: <20190715134336.GB16268@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Hi!
 
-commit 231d8908a66fa98f09553d31ad8cd5f382b29959 upstream.
+> > I'm pleased to announce the 4.4.176-cip31-rt23 stable release.
+> > 
+> > This release is just an update to the new stable 4.4.176-cip31 version
+> > and no RT specific changes have been made.
+> > 
+> > You can get this release via the git tree at:
+> > 
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+> > 
+> >   branch: linux-4.4.y-cip-rt
+> >   Head SHA1: b51a171ad762ba4a78b0ed0c7ec83fb9f6fb135f
+> > 
+> 
+> Is there a chance to update 4.4-rt based on Daniel' 4.4.179-rt181 release, but
+> then to 4.4.182 in order to have SACK fixes in?
 
-This patch defines OOP tables for all CPUs, similarly to
-what done by Takeshi Kihara and Yoshihiro Kaneko for the
-R8A77990.
+Do you want 4.4.184, too, which fixes the SACK fixes? :-).
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+I'm up-to 4.4.179-rt181-cip32.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-index c47ca0b..8a2e4d8 100644
---- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-@@ -44,6 +44,27 @@
- 		clock-frequency = <0>;
- 	};
- 
-+	cluster1_opp: opp_table10 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+		opp-800000000 {
-+			opp-hz = /bits/ 64 <800000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-1000000000 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-1200000000 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+			opp-suspend;
-+		};
-+	};
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -55,6 +76,8 @@
- 			power-domains = <&sysc R8A774C0_PD_CA53_CPU0>;
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
-+			clocks =<&cpg CPG_CORE R8A774C0_CLK_Z2>;
-+			operating-points-v2 = <&cluster1_opp>;
- 		};
- 
- 		a53_1: cpu at 1 {
-@@ -64,6 +87,8 @@
- 			power-domains = <&sysc R8A774C0_PD_CA53_CPU1>;
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
-+			clocks =<&cpg CPG_CORE R8A774C0_CLK_Z2>;
-+			operating-points-v2 = <&cluster1_opp>;
- 		};
- 
- 		L2_CA53: cache-controller-0 {
+If I attempt to move forward to 4.4.181-cip3, I get some conflicts in
+rather core files.
+
+Auto-merging kernel/cpu.c
+CONFLICT (content): Merge conflict in kernel/cpu.c
+Auto-merging include/linux/sched.h
+CONFLICT (content): Merge conflict in include/linux/sched.h
+Auto-merging arch/x86/include/asm/thread_info.h
+CONFLICT (content): Merge conflict in
+
+I can attempt something, but I'd feel safer waiting for -stable-rt to
+solve it for me.
+
+Best regards,
+
+								Pavel
 -- 
-2.7.4
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 181 bytes
+Desc: Digital signature
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190715/fd9d0465/attachment.sig>
