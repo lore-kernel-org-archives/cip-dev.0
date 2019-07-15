@@ -1,58 +1,39 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Mon, 15 Jul 2019 14:30:00 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 15/23] clk: renesas: rcar-gen3: Support
-	Z and Z2 clocks with high frequency parents
+Date: Mon, 15 Jul 2019 14:30:01 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 16/23] clk: renesas: r8a774c0: Add Z2
+	clock
 In-Reply-To: <1563197408-59548-1-git-send-email-biju.das@bp.renesas.com>
 References: <1563197408-59548-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1563197408-59548-16-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1563197408-59548-17-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Simon Horman <horms+renesas@verge.net.au>
 
-commit 71119b54a2e6d9345f22d9501c4d3c28b06f955a upstream.
+commit 4aeed945b7024e454bafb4beb68b8c0298832efb upstream.
 
-Support Z and Z2 clocks with parent frequencies greater than UINT32_MAX Hz
-(~4.29GHz).
-
-The DIV_ROUND_CLOSEST_ULL() macro accepts a 64bit dividend and 32bit
-divisor. This leads to truncation of the divisor, which is the Z or Z2
-parent clock frequency in HZ, on platforms where frequency of that clock is
-greater than UINT32_MAX Hz.
-
-To resolve this problem the DIV64_U64_ROUND_CLOSEST() macro, which takes
-on an unsigned 64bit dividend and divisor, is used.
-
-An earlier version of this patch made use of the existing
-DIV_ROUND_CLOSEST() macro, which accepts the prevailing type of the
-dividend and divisor. However, this does not compile on 32bit systems, such
-as i386 and mips, when called with the types used at this call site, an
-unsigned long long dividend and unsigned long divisor.
-
-This work is in preparation for supporting the Z2 clock on the
-R-Car Gen3 E3 (r8a77990) SoC which has a 4.8GHz parent clock.
+Adds support for RZ/G2E (r8a774c0) Z2 clock.
 
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Tested-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/clk/renesas/rcar-gen3-cpg.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/renesas/r8a774c0-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 01c1d8f..8b8cc22 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -137,8 +137,8 @@ static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 	unsigned int mult;
- 	unsigned int i;
- 
--	mult = DIV_ROUND_CLOSEST_ULL(rate * 32ULL * zclk->fixed_div,
--				     parent_rate);
-+	mult = DIV64_U64_ROUND_CLOSEST(rate * 32ULL * zclk->fixed_div,
-+				       parent_rate);
- 	mult = clamp(mult, 1U, 32U);
- 
- 	if (readl(zclk->kick_reg) & CPG_FRQCRB_KICK)
+diff --git a/drivers/clk/renesas/r8a774c0-cpg-mssr.c b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+index 34e274f..57098b7 100644
+--- a/drivers/clk/renesas/r8a774c0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+@@ -81,6 +81,7 @@ static const struct cpg_core_clk r8a774c0_core_clks[] __initconst = {
+ 	/* Core Clock Outputs */
+ 	DEF_FIXED("za2",       R8A774C0_CLK_ZA2,   CLK_PLL0D24,    1, 1),
+ 	DEF_FIXED("za8",       R8A774C0_CLK_ZA8,   CLK_PLL0D8,     1, 1),
++	DEF_GEN3_Z("z2",       R8A774C0_CLK_Z2,    CLK_TYPE_GEN3_Z, CLK_PLL0, 4, 8),
+ 	DEF_FIXED("ztr",       R8A774C0_CLK_ZTR,   CLK_PLL1,       6, 1),
+ 	DEF_FIXED("zt",        R8A774C0_CLK_ZT,    CLK_PLL1,       4, 1),
+ 	DEF_FIXED("zx",        R8A774C0_CLK_ZX,    CLK_PLL1,       3, 1),
 -- 
 2.7.4
