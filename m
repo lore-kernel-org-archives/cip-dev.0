@@ -1,64 +1,39 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Mon, 15 Jul 2019 14:48:03 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 4/4] arm64: dts: renesas: cat875: Add
-	CAN support
-In-Reply-To: <1563198483-8589-1-git-send-email-biju.das@bp.renesas.com>
-References: <1563198483-8589-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1563198483-8589-5-git-send-email-biju.das@bp.renesas.com>
+Date: Mon, 15 Jul 2019 15:01:40 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 00/12] Add USB Host support
+Message-ID: <1563199312-18842-1-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+This patch series add USB host support for EK874 platform.
 
-commit e64f2c4b3aba6832758afe030ea4a703148546d7 upstream.
+This patch series is based on linux-4.19.y-cip and all the patches
+in this series are cherry-picked from linux rc tree.
 
-Add CAN support to the CAT875 sub board.
+This patch series is depend on the below patch series
+https://patchwork.kernel.org/project/cip-dev/list/?series=145929
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/cat875.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+Biju Das (2):
+  phy: rcar-gen3-usb2: Add support for r8a77470
+  arm64: dts: renesas: cat874: Add USB-HOST support
 
-diff --git a/arch/arm64/boot/dts/renesas/cat875.dtsi b/arch/arm64/boot/dts/renesas/cat875.dtsi
-index 14db667..aaefc3a 100644
---- a/arch/arm64/boot/dts/renesas/cat875.dtsi
-+++ b/arch/arm64/boot/dts/renesas/cat875.dtsi
-@@ -30,6 +30,18 @@
- 	};
- };
- 
-+&can0 {
-+	pinctrl-0 = <&can0_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&can1 {
-+	pinctrl-0 = <&can1_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
- &pciec0 {
- 	status = "okay";
- };
-@@ -41,4 +53,14 @@
- 			function = "avb";
- 		};
- 	};
-+
-+	can0_pins: can0 {
-+		groups = "can0_data";
-+		function = "can0";
-+	};
-+
-+	can1_pins: can1 {
-+		groups = "can1_data";
-+		function = "can1";
-+	};
- };
+Yoshihiro Shimoda (10):
+  phy: renesas: rcar-gen3-usb2: fix vbus_ctrl for role sysfs
+  phy: renesas: rcar-gen3-usb2: Rename has_otg_pins to uses_otg_pins
+  phy: renesas: rcar-gen3-usb2: Check a property to use otg pins
+  phy: renesas: rcar-gen3-usb2: unify OBINTEN handling
+  phy: renesas: rcar-gen3-usb2: add conditions for uses_otg_pins ==
+    false
+  phy: renesas: rcar-gen3-usb2: change a condition "dr_mode"
+  phy: renesas: rcar-gen3-usb2: add is_otg_channel to use "role" sysfs
+  phy: renesas: rcar-gen3-usb2: follow the hardware manual procedure
+  phy: renesas: rcar-gen3-usb2: Use pdev's device pointer on dev_vdbg()
+  phy: renesas: rcar-gen3-usb2: enable/disable independent irqs
+
+ arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts |  15 ++
+ drivers/phy/renesas/Kconfig                     |   2 +-
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c        | 286 +++++++++++++++++++-----
+ 3 files changed, 250 insertions(+), 53 deletions(-)
+
 -- 
 2.7.4
