@@ -1,37 +1,62 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Mon, 15 Jul 2019 15:28:44 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 0/6] Add LED/WDT support
-Message-ID: <1563200930-39297-1-git-send-email-biju.das@bp.renesas.com>
+Date: Mon, 15 Jul 2019 15:28:45 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 1/6] arm64: dts: renesas:
+	r8a774c0-cat874: Add LEDs support
+In-Reply-To: <1563200930-39297-1-git-send-email-biju.das@bp.renesas.com>
+References: <1563200930-39297-1-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1563200930-39297-2-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This patch series add LED/Watchdog support for EK874 platform.
-It also enabled DMA for SCIF2 and fixes SCIF5 DMA channels.
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-This patch series is based on linux-4.19.y-cip and all the patches
-in this series are cherry-picked from linux rc tree.
+commit dc0b439471323521a20314934080f51e8589fd19 upstream.
 
-This patch series is depend on the below patch series
-https://patchwork.kernel.org/project/cip-dev/list/?series=145943
+This patch adds LEDs support to the CAT874 board specific
+device tree.
 
-Biju Das (1):
-  arm64: dts: renesas: r8a774c0: sort subnodes of the soc node
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+---
+ arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-Fabrizio Castro (2):
-  arm64: dts: renesas: r8a774c0-cat874: Add LEDs support
-  arm64: dts: renesas: r8a774c0-cat874: Add RWDT support
-
-Geert Uytterhoeven (2):
-  arm64: dts: renesas: r8a774c0: Enable DMA for SCIF2
-  arm64: dts: renesas: r8a774c0: Fix SCIF5 DMA channels
-
-Niklas S?derlund (1):
-  arm64: dts: renesas: r8a774c0: Remove invalid compatible value for
-    CSI40
-
- arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts |  29 +++
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi       | 261 ++++++++++++------------
- 2 files changed, 160 insertions(+), 130 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
+index f08778e..af396bb 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
+@@ -22,6 +22,30 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	leds {
++		compatible = "gpio-leds";
++
++		led0 {
++			gpios = <&gpio5 19 GPIO_ACTIVE_HIGH>;
++			label = "LED0";
++		};
++
++		led1 {
++			gpios = <&gpio3 14 GPIO_ACTIVE_HIGH>;
++			label = "LED1";
++		};
++
++		led2 {
++			gpios = <&gpio4 10 GPIO_ACTIVE_HIGH>;
++			label = "LED2";
++		};
++
++		led3 {
++			gpios = <&gpio6 4 GPIO_ACTIVE_HIGH>;
++			label = "LED3";
++		};
++	};
++
+ 	memory at 48000000 {
+ 		device_type = "memory";
+ 		/* first 128MB is reserved for secure area. */
 -- 
 2.7.4
