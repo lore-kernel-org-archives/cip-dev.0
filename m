@@ -1,60 +1,125 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Mon, 15 Jul 2019 14:29:51 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 06/23] clk: renesas: r8a774a1: Add
-	missing CANFD clock
+Date: Mon, 15 Jul 2019 14:29:52 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 07/23] clk: renesas: rcar-gen3: Factor
+	out cpg_reg_modify()
 In-Reply-To: <1563197408-59548-1-git-send-email-biju.das@bp.renesas.com>
 References: <1563197408-59548-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1563197408-59548-7-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1563197408-59548-8-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-commit 9d034e151b407cbd2c66bc4c48b423f814533374 upstream.
+commit 8cb8f16c62e5ea9c77ca7d25af761f4eaea670ba upstream.
 
-This patch adds the missing CANFD clock to the r8a774a1 specific
-clock driver.
+There's quite often repeated sequence of a CPG register read-modify-write,
+so it seems worth factoring it out into a function -- this saves 68 bytes
+of the object code (AArch64 gcc 4.8.5) and simplifies protecting all such
+sequences with a spinlock in the next patch...
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/clk/renesas/r8a774a1-cpg-mssr.c       | 2 ++
- include/dt-bindings/clock/r8a774a1-cpg-mssr.h | 1 +
- 2 files changed, 3 insertions(+)
+ drivers/clk/renesas/rcar-gen3-cpg.c | 38 +++++++++++++++++++------------------
+ 1 file changed, 20 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/clk/renesas/r8a774a1-cpg-mssr.c b/drivers/clk/renesas/r8a774a1-cpg-mssr.c
-index 10e8525..e103741 100644
---- a/drivers/clk/renesas/r8a774a1-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a774a1-cpg-mssr.c
-@@ -102,6 +102,7 @@ static const struct cpg_core_clk r8a774a1_core_clks[] __initconst = {
- 	DEF_FIXED("cp",         R8A774A1_CLK_CP,    CLK_EXTAL,      2, 1),
- 	DEF_FIXED("cpex",       R8A774A1_CLK_CPEX,  CLK_EXTAL,      2, 1),
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index fa823a3..37be0e8 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -33,6 +33,16 @@
  
-+	DEF_DIV6P1("canfd",     R8A774A1_CLK_CANFD, CLK_PLL1_DIV4, 0x244),
- 	DEF_DIV6P1("csi0",      R8A774A1_CLK_CSI0,  CLK_PLL1_DIV4, 0x00c),
- 	DEF_DIV6P1("mso",       R8A774A1_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
- 	DEF_DIV6P1("hdmi",      R8A774A1_CLK_HDMI,  CLK_PLL1_DIV4, 0x250),
-@@ -191,6 +192,7 @@ static const struct mssr_mod_clk r8a774a1_mod_clks[] __initconst = {
- 	DEF_MOD("gpio2",		 910,	R8A774A1_CLK_S3D4),
- 	DEF_MOD("gpio1",		 911,	R8A774A1_CLK_S3D4),
- 	DEF_MOD("gpio0",		 912,	R8A774A1_CLK_S3D4),
-+	DEF_MOD("can-fd",		 914,	R8A774A1_CLK_S3D2),
- 	DEF_MOD("can-if1",		 915,	R8A774A1_CLK_S3D4),
- 	DEF_MOD("can-if0",		 916,	R8A774A1_CLK_S3D4),
- 	DEF_MOD("i2c6",			 918,	R8A774A1_CLK_S0D6),
-diff --git a/include/dt-bindings/clock/r8a774a1-cpg-mssr.h b/include/dt-bindings/clock/r8a774a1-cpg-mssr.h
-index 9bc5d45..e355363 100644
---- a/include/dt-bindings/clock/r8a774a1-cpg-mssr.h
-+++ b/include/dt-bindings/clock/r8a774a1-cpg-mssr.h
-@@ -54,5 +54,6 @@
- #define R8A774A1_CLK_CPEX		43
- #define R8A774A1_CLK_R			44
- #define R8A774A1_CLK_OSC		45
-+#define R8A774A1_CLK_CANFD		46
+ #define CPG_RCKCR_CKSEL	BIT(15)	/* RCLK Clock Source Select */
  
- #endif /* __DT_BINDINGS_CLOCK_R8A774A1_CPG_MSSR_H__ */
++static void cpg_reg_modify(void __iomem *reg, u32 clear, u32 set)
++{
++	u32 val;
++
++	val = readl(reg);
++	val &= ~clear;
++	val |= set;
++	writel(val, reg);
++};
++
+ struct cpg_simple_notifier {
+ 	struct notifier_block nb;
+ 	void __iomem *reg;
+@@ -121,7 +131,6 @@ static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct cpg_z_clk *zclk = to_z_clk(hw);
+ 	unsigned int mult;
+ 	unsigned int i;
+-	u32 val, kick;
+ 
+ 	/* Factor of 2 is for fixed divider */
+ 	mult = DIV_ROUND_CLOSEST_ULL(rate * 32ULL * 2, parent_rate);
+@@ -130,17 +139,14 @@ static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (readl(zclk->kick_reg) & CPG_FRQCRB_KICK)
+ 		return -EBUSY;
+ 
+-	val = readl(zclk->reg) & ~zclk->mask;
+-	val |= ((32 - mult) << __ffs(zclk->mask)) & zclk->mask;
+-	writel(val, zclk->reg);
++	cpg_reg_modify(zclk->reg, zclk->mask,
++		       ((32 - mult) << __ffs(zclk->mask)) & zclk->mask);
+ 
+ 	/*
+ 	 * Set KICK bit in FRQCRB to update hardware setting and wait for
+ 	 * clock change completion.
+ 	 */
+-	kick = readl(zclk->kick_reg);
+-	kick |= CPG_FRQCRB_KICK;
+-	writel(kick, zclk->kick_reg);
++	cpg_reg_modify(zclk->kick_reg, 0, CPG_FRQCRB_KICK);
+ 
+ 	/*
+ 	 * Note: There is no HW information about the worst case latency.
+@@ -269,12 +275,10 @@ static const struct sd_div_table cpg_sd_div_table[] = {
+ static int cpg_sd_clock_enable(struct clk_hw *hw)
+ {
+ 	struct sd_clock *clock = to_sd_clock(hw);
+-	u32 val = readl(clock->csn.reg);
+ 
+-	val &= ~(CPG_SD_STP_MASK);
+-	val |= clock->div_table[clock->cur_div_idx].val & CPG_SD_STP_MASK;
+-
+-	writel(val, clock->csn.reg);
++	cpg_reg_modify(clock->csn.reg, CPG_SD_STP_MASK,
++		       clock->div_table[clock->cur_div_idx].val &
++		       CPG_SD_STP_MASK);
+ 
+ 	return 0;
+ }
+@@ -283,7 +287,7 @@ static void cpg_sd_clock_disable(struct clk_hw *hw)
+ {
+ 	struct sd_clock *clock = to_sd_clock(hw);
+ 
+-	writel(readl(clock->csn.reg) | CPG_SD_STP_MASK, clock->csn.reg);
++	cpg_reg_modify(clock->csn.reg, 0, CPG_SD_STP_MASK);
+ }
+ 
+ static int cpg_sd_clock_is_enabled(struct clk_hw *hw)
+@@ -330,7 +334,6 @@ static int cpg_sd_clock_set_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct sd_clock *clock = to_sd_clock(hw);
+ 	unsigned int div = cpg_sd_clock_calc_div(clock, rate, parent_rate);
+-	u32 val;
+ 	unsigned int i;
+ 
+ 	for (i = 0; i < clock->div_num; i++)
+@@ -342,10 +345,9 @@ static int cpg_sd_clock_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	clock->cur_div_idx = i;
+ 
+-	val = readl(clock->csn.reg);
+-	val &= ~(CPG_SD_STP_MASK | CPG_SD_FC_MASK);
+-	val |= clock->div_table[i].val & (CPG_SD_STP_MASK | CPG_SD_FC_MASK);
+-	writel(val, clock->csn.reg);
++	cpg_reg_modify(clock->csn.reg, CPG_SD_STP_MASK | CPG_SD_FC_MASK,
++		       clock->div_table[i].val &
++		       (CPG_SD_STP_MASK | CPG_SD_FC_MASK));
+ 
+ 	return 0;
+ }
 -- 
 2.7.4
