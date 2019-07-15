@@ -1,74 +1,38 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Mon, 15 Jul 2019 14:29:45 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 00/23] Clock enhancements
-Message-ID: <1563197408-59548-1-git-send-email-biju.das@bp.renesas.com>
+Date: Mon, 15 Jul 2019 14:29:46 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 01/23] clk: renesas: r8a774a1: Add CPEX
+	clock
+In-Reply-To: <1563197408-59548-1-git-send-email-biju.das@bp.renesas.com>
+References: <1563197408-59548-1-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1563197408-59548-2-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This patch series add OPP tables,HS400 quirk for SD clock,
-add support  Z2 clock and fix some of parent clocks.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch series is based on linux-4.19.y-cip and all the patches
-in this series are cherry-picked from linux rc tree.
+commit f845b01d478a4d139fe3493f1e6ec8d9110ce56c upstream.
 
-Biju Das (2):
-  clk: renesas: rcar-gen3: Parameterise Z and Z2 clock fixed divisor
-  clk: renesas: rcar-gen3: Parameterise Z and Z2 clock offset
+Implement support for the CPEX clock on RZ/G2M.  This clock can be
+selected as a clock source for CMT1 (Compare Match Timer Type 1).
 
-Fabrizio Castro (3):
-  clk: renesas: r8a774a1: Add missing CANFD clock
-  clk: renesas: r8a774a1: Fix LAST_DT_CORE_CLK
-  arm64: dts: renesas: r8a774c0: Add OPPs table for cpu devices
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+---
+ drivers/clk/renesas/r8a774a1-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Geert Uytterhoeven (2):
-  clk: renesas: r8a774a1: Add CPEX clock
-  clk: renesas: rcar-gen3: Pass name/offset to cpg_sd_clk_register()
-
-Kazuya Mizuguchi (2):
-  clk: renesas: rcar-gen3: Correct parent clock of EHCI/OHCI
-  clk: renesas: rcar-gen3: Correct parent clock of HS-USB
-
-Niklas S?derlund (3):
-  clk: renesas: rcar-gen3: Set state when registering SD clocks
-  clk: renesas: rcar-gen3: Add documentation for SD clocks
-  clk: renesas: rcar-gen3: Add HS400 quirk for SD clock
-
-Sergei Shtylyov (2):
-  clk: renesas: rcar-gen3: Factor out cpg_reg_modify()
-  clk: renesas: rcar-gen3: Add spinlock
-
-Simon Horman (4):
-  clk: renesas: rcar-gen3: Remove CLK_TYPE_GEN3_Z2
-  math64: New DIV64_U64_ROUND_CLOSEST helper
-  clk: renesas: rcar-gen3: Support Z and Z2 clocks with high frequency
-    parents
-  clk: renesas: r8a774c0: Add Z2 clock
-
-Stephen Boyd (2):
-  clk: renesas: Remove usage of CLK_IS_BASIC
-  clk: renesas: rcar-gen3: Remove unused variable
-
-Takeshi Kihara (3):
-  clk: renesas: rcar-gen3: Correct parent clock of SYS-DMAC
-  clk: renesas: rcar-gen3: Correct parent clock of Audio-DMAC
-  clk: renesas: rcar-gen3: Fix cpg_sd_clock_round_rate() return value
-
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi     |  25 ++++
- drivers/clk/renesas/clk-div6.c                |   2 +-
- drivers/clk/renesas/clk-mstp.c                |   2 +-
- drivers/clk/renesas/r8a774a1-cpg-mssr.c       |  23 ++--
- drivers/clk/renesas/r8a774c0-cpg-mssr.c       |   7 +-
- drivers/clk/renesas/r8a7795-cpg-mssr.c        |  25 ++--
- drivers/clk/renesas/r8a7796-cpg-mssr.c        |  19 +--
- drivers/clk/renesas/r8a77965-cpg-mssr.c       |  16 +--
- drivers/clk/renesas/r8a77990-cpg-mssr.c       |   6 +-
- drivers/clk/renesas/r8a77995-cpg-mssr.c       |   2 +-
- drivers/clk/renesas/rcar-gen3-cpg.c           | 174 ++++++++++++++------------
- drivers/clk/renesas/rcar-gen3-cpg.h           |   5 +-
- drivers/clk/renesas/renesas-cpg-mssr.c        |   2 +-
- include/dt-bindings/clock/r8a774a1-cpg-mssr.h |   1 +
- include/linux/math64.h                        |  13 ++
- 15 files changed, 193 insertions(+), 129 deletions(-)
-
+diff --git a/drivers/clk/renesas/r8a774a1-cpg-mssr.c b/drivers/clk/renesas/r8a774a1-cpg-mssr.c
+index b0da342..10e8525 100644
+--- a/drivers/clk/renesas/r8a774a1-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a774a1-cpg-mssr.c
+@@ -100,6 +100,7 @@ static const struct cpg_core_clk r8a774a1_core_clks[] __initconst = {
+ 
+ 	DEF_FIXED("cl",         R8A774A1_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
+ 	DEF_FIXED("cp",         R8A774A1_CLK_CP,    CLK_EXTAL,      2, 1),
++	DEF_FIXED("cpex",       R8A774A1_CLK_CPEX,  CLK_EXTAL,      2, 1),
+ 
+ 	DEF_DIV6P1("csi0",      R8A774A1_CLK_CSI0,  CLK_PLL1_DIV4, 0x00c),
+ 	DEF_DIV6P1("mso",       R8A774A1_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
 -- 
 2.7.4
