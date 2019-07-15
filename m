@@ -1,109 +1,85 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Mon, 15 Jul 2019 15:01:49 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 09/12] phy: rcar-gen3-usb2: Add support
-	for r8a77470
+Date: Mon, 15 Jul 2019 15:01:50 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 10/12] phy: renesas: rcar-gen3-usb2:
+	Use pdev's device pointer on dev_vdbg()
 In-Reply-To: <1563199312-18842-1-git-send-email-biju.das@bp.renesas.com>
 References: <1563199312-18842-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1563199312-18842-10-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1563199312-18842-11-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit 5d8042e95fd471d0e342cf14f127194f1a867a01 upstream.
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-This patch adds support for r8a77470 (RZ/G1C). We can reuse this driver for
-initializing timing/interrupt generation registers.
+commit 92fec1c27caa7b6f2a70566625425190e14c2204 upstream.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To implement multiple phy instances in the future, this patch uses
+pdev's device pointer on dev_vdbg() instead of the phy's device
+pointer.
+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/phy/renesas/Kconfig              |  2 +-
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 39 +++++++++++++++++++++++++++-----
- 2 files changed, 34 insertions(+), 7 deletions(-)
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/phy/renesas/Kconfig b/drivers/phy/renesas/Kconfig
-index 4bd390c..7bc62d2 100644
---- a/drivers/phy/renesas/Kconfig
-+++ b/drivers/phy/renesas/Kconfig
-@@ -18,7 +18,7 @@ config PHY_RCAR_GEN3_PCIE
- config PHY_RCAR_GEN3_USB2
- 	tristate "Renesas R-Car generation 3 USB 2.0 PHY driver"
- 	depends on ARCH_RENESAS
--	depends on EXTCON
-+	depends on EXTCON || !EXTCON # if EXTCON=m, this cannot be built-in
- 	depends on USB_SUPPORT
- 	select GENERIC_PHY
- 	select USB_COMMON
 diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 685d56c..37cb619 100644
+index 37cb619..40378da 100644
 --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
 +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -396,6 +396,12 @@ static const struct phy_ops rcar_gen3_phy_usb2_ops = {
- 	.owner		= THIS_MODULE,
- };
+@@ -83,6 +83,7 @@
  
-+static const struct phy_ops rz_g1c_phy_usb2_ops = {
-+	.init		= rcar_gen3_phy_usb2_init,
-+	.exit		= rcar_gen3_phy_usb2_exit,
-+	.owner		= THIS_MODULE,
-+};
-+
- static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
- {
- 	struct rcar_gen3_chan *ch = _ch;
-@@ -414,11 +420,27 @@ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
- }
+ struct rcar_gen3_chan {
+ 	void __iomem *base;
++	struct device *dev;	/* platform_device's device */
+ 	struct extcon_dev *extcon;
+ 	struct phy *phy;
+ 	struct regulator *vbus;
+@@ -123,7 +124,7 @@ static void rcar_gen3_set_host_mode(struct rcar_gen3_chan *ch, int host)
+ 	void __iomem *usb2_base = ch->base;
+ 	u32 val = readl(usb2_base + USB2_COMMCTRL);
  
- static const struct of_device_id rcar_gen3_phy_usb2_match_table[] = {
--	{ .compatible = "renesas,usb2-phy-r8a7795" },
--	{ .compatible = "renesas,usb2-phy-r8a7796" },
--	{ .compatible = "renesas,usb2-phy-r8a77965" },
--	{ .compatible = "renesas,rcar-gen3-usb2-phy" },
--	{ }
-+	{
-+		.compatible = "renesas,usb2-phy-r8a77470",
-+		.data = &rz_g1c_phy_usb2_ops,
-+	},
-+	{
-+		.compatible = "renesas,usb2-phy-r8a7795",
-+		.data = &rcar_gen3_phy_usb2_ops,
-+	},
-+	{
-+		.compatible = "renesas,usb2-phy-r8a7796",
-+		.data = &rcar_gen3_phy_usb2_ops,
-+	},
-+	{
-+		.compatible = "renesas,usb2-phy-r8a77965",
-+		.data = &rcar_gen3_phy_usb2_ops,
-+	},
-+	{
-+		.compatible = "renesas,rcar-gen3-usb2-phy",
-+		.data = &rcar_gen3_phy_usb2_ops,
-+	},
-+	{ /* sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, rcar_gen3_phy_usb2_match_table);
+-	dev_vdbg(&ch->phy->dev, "%s: %08x, %d\n", __func__, val, host);
++	dev_vdbg(ch->dev, "%s: %08x, %d\n", __func__, val, host);
+ 	if (host)
+ 		val &= ~USB2_COMMCTRL_OTG_PERI;
+ 	else
+@@ -136,7 +137,7 @@ static void rcar_gen3_set_linectrl(struct rcar_gen3_chan *ch, int dp, int dm)
+ 	void __iomem *usb2_base = ch->base;
+ 	u32 val = readl(usb2_base + USB2_LINECTRL1);
  
-@@ -434,6 +456,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	struct rcar_gen3_chan *channel;
- 	struct phy_provider *provider;
- 	struct resource *res;
-+	const struct phy_ops *phy_usb2_ops;
- 	int irq, ret = 0;
+-	dev_vdbg(&ch->phy->dev, "%s: %08x, %d, %d\n", __func__, val, dp, dm);
++	dev_vdbg(ch->dev, "%s: %08x, %d, %d\n", __func__, val, dp, dm);
+ 	val &= ~(USB2_LINECTRL1_DP_RPD | USB2_LINECTRL1_DM_RPD);
+ 	if (dp)
+ 		val |= USB2_LINECTRL1_DP_RPD;
+@@ -150,7 +151,7 @@ static void rcar_gen3_enable_vbus_ctrl(struct rcar_gen3_chan *ch, int vbus)
+ 	void __iomem *usb2_base = ch->base;
+ 	u32 val = readl(usb2_base + USB2_ADPCTRL);
  
- 	if (!dev->of_node) {
-@@ -484,7 +507,11 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	 * And then, phy-core will manage runtime pm for this device.
- 	 */
- 	pm_runtime_enable(dev);
--	channel->phy = devm_phy_create(dev, NULL, &rcar_gen3_phy_usb2_ops);
-+	phy_usb2_ops = of_device_get_match_data(dev);
-+	if (!phy_usb2_ops)
-+		return -EINVAL;
-+
-+	channel->phy = devm_phy_create(dev, NULL, phy_usb2_ops);
- 	if (IS_ERR(channel->phy)) {
- 		dev_err(dev, "Failed to create USB2 PHY\n");
- 		ret = PTR_ERR(channel->phy);
+-	dev_vdbg(&ch->phy->dev, "%s: %08x, %d\n", __func__, val, vbus);
++	dev_vdbg(ch->dev, "%s: %08x, %d\n", __func__, val, vbus);
+ 	if (vbus)
+ 		val |= USB2_ADPCTRL_DRVVBUS;
+ 	else
+@@ -410,7 +411,7 @@ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
+ 	irqreturn_t ret = IRQ_NONE;
+ 
+ 	if (status & USB2_OBINT_BITS) {
+-		dev_vdbg(&ch->phy->dev, "%s: %08x\n", __func__, status);
++		dev_vdbg(ch->dev, "%s: %08x\n", __func__, status);
+ 		writel(USB2_OBINT_BITS, usb2_base + USB2_OBINTSTA);
+ 		rcar_gen3_device_recognition(ch);
+ 		ret = IRQ_HANDLED;
+@@ -529,6 +530,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, channel);
+ 	phy_set_drvdata(channel->phy, channel);
++	channel->dev = dev;
+ 
+ 	provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+ 	if (IS_ERR(provider)) {
 -- 
 2.7.4
