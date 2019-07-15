@@ -1,60 +1,37 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Mon, 15 Jul 2019 15:17:25 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 6/6] arm64: dts: renesas:
-	r8a774c0-cat874: add RTC support
-In-Reply-To: <1563200245-30331-1-git-send-email-biju.das@bp.renesas.com>
-References: <1563200245-30331-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1563200245-30331-7-git-send-email-biju.das@bp.renesas.com>
+Date: Mon, 15 Jul 2019 15:28:44 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 0/6] Add LED/WDT support
+Message-ID: <1563200930-39297-1-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit 07e72397f722d3a522991dcba82ce2ddb8c3c6e1 upstream.
+This patch series add LED/Watchdog support for EK874 platform.
+It also enabled DMA for SCIF2 and fixes SCIF5 DMA channels.
 
-This patch adds Epson RX-8571 real time clock support.
+This patch series is based on linux-4.19.y-cip and all the patches
+in this series are cherry-picked from linux rc tree.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+This patch series is depend on the below patch series
+https://patchwork.kernel.org/project/cip-dev/list/?series=145943
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-index 4333af8..f08778e 100644
---- a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-@@ -61,6 +61,19 @@
- 	clock-frequency = <48000000>;
- };
- 
-+&i2c1 {
-+	pinctrl-0 = <&i2c1_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	rtc at 32 {
-+		compatible = "epson,rx8571";
-+		reg = <0x32>;
-+	};
-+};
-+
- &ohci0 {
- 	dr_mode = "host";
- 	status = "okay";
-@@ -76,6 +89,12 @@
- };
- 
- &pfc {
-+
-+	i2c1_pins: i2c1 {
-+		groups = "i2c1_b";
-+		function = "i2c1";
-+	};
-+
- 	scif2_pins: scif2 {
- 		groups = "scif2_data_a";
- 		function = "scif2";
+Biju Das (1):
+  arm64: dts: renesas: r8a774c0: sort subnodes of the soc node
+
+Fabrizio Castro (2):
+  arm64: dts: renesas: r8a774c0-cat874: Add LEDs support
+  arm64: dts: renesas: r8a774c0-cat874: Add RWDT support
+
+Geert Uytterhoeven (2):
+  arm64: dts: renesas: r8a774c0: Enable DMA for SCIF2
+  arm64: dts: renesas: r8a774c0: Fix SCIF5 DMA channels
+
+Niklas S?derlund (1):
+  arm64: dts: renesas: r8a774c0: Remove invalid compatible value for
+    CSI40
+
+ arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts |  29 +++
+ arch/arm64/boot/dts/renesas/r8a774c0.dtsi       | 261 ++++++++++++------------
+ 2 files changed, 160 insertions(+), 130 deletions(-)
+
 -- 
 2.7.4
