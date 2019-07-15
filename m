@@ -1,341 +1,57 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Mon, 15 Jul 2019 15:01:51 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 11/12] phy: renesas: rcar-gen3-usb2:
-	enable/disable independent irqs
+Date: Mon, 15 Jul 2019 15:01:52 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 12/12] arm64: dts: renesas: cat874: Add
+	USB-HOST support
 In-Reply-To: <1563199312-18842-1-git-send-email-biju.das@bp.renesas.com>
 References: <1563199312-18842-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1563199312-18842-12-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1563199312-18842-13-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+commit ad68fa5fe8c12262cf4156b8e0726117aa3be8c8 upstream.
 
-commit 549b6b55b00558183cef4af2c2bb61d4f2ffe508 upstream.
+This patch adds USB 2.0 HOST support to the CAT874 board.
 
-Since the previous code enabled/disabled the irqs both OHCI and EHCI,
-it is possible to cause unexpected interruptions. To avoid this,
-this patch creates multiple phy instances from phandle and
-enables/disables independent irqs by the instances.
-
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Tested-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 185 ++++++++++++++++++++++++++-----
- 1 file changed, 160 insertions(+), 25 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 40378da..132ca20 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -40,11 +40,8 @@
- 
- /* INT_ENABLE */
- #define USB2_INT_ENABLE_UCOM_INTEN	BIT(3)
--#define USB2_INT_ENABLE_USBH_INTB_EN	BIT(2)
--#define USB2_INT_ENABLE_USBH_INTA_EN	BIT(1)
--#define USB2_INT_ENABLE_INIT		(USB2_INT_ENABLE_UCOM_INTEN | \
--					 USB2_INT_ENABLE_USBH_INTB_EN | \
--					 USB2_INT_ENABLE_USBH_INTA_EN)
-+#define USB2_INT_ENABLE_USBH_INTB_EN	BIT(2)	/* For EHCI */
-+#define USB2_INT_ENABLE_USBH_INTA_EN	BIT(1)	/* For OHCI */
- 
- /* USBCTR */
- #define USB2_USBCTR_DIRPD	BIT(2)
-@@ -81,11 +78,35 @@
- #define USB2_ADPCTRL_IDPULLUP		BIT(5)	/* 1 = ID sampling is enabled */
- #define USB2_ADPCTRL_DRVVBUS		BIT(4)
- 
-+#define NUM_OF_PHYS			4
-+enum rcar_gen3_phy_index {
-+	PHY_INDEX_BOTH_HC,
-+	PHY_INDEX_OHCI,
-+	PHY_INDEX_EHCI,
-+	PHY_INDEX_HSUSB
-+};
-+
-+static const u32 rcar_gen3_int_enable[NUM_OF_PHYS] = {
-+	USB2_INT_ENABLE_USBH_INTB_EN | USB2_INT_ENABLE_USBH_INTA_EN,
-+	USB2_INT_ENABLE_USBH_INTA_EN,
-+	USB2_INT_ENABLE_USBH_INTB_EN,
-+	0
-+};
-+
-+struct rcar_gen3_phy {
-+	struct phy *phy;
-+	struct rcar_gen3_chan *ch;
-+	u32 int_enable_bits;
-+	bool initialized;
-+	bool otg_initialized;
-+	bool powered;
-+};
-+
- struct rcar_gen3_chan {
- 	void __iomem *base;
- 	struct device *dev;	/* platform_device's device */
- 	struct extcon_dev *extcon;
--	struct phy *phy;
-+	struct rcar_gen3_phy rphys[NUM_OF_PHYS];
- 	struct regulator *vbus;
- 	struct work_struct work;
- 	enum usb_dr_mode dr_mode;
-@@ -253,6 +274,42 @@ static enum phy_mode rcar_gen3_get_phy_mode(struct rcar_gen3_chan *ch)
- 	return PHY_MODE_USB_DEVICE;
- }
- 
-+static bool rcar_gen3_is_any_rphy_initialized(struct rcar_gen3_chan *ch)
-+{
-+	int i;
-+
-+	for (i = 0; i < NUM_OF_PHYS; i++) {
-+		if (ch->rphys[i].initialized)
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
-+static bool rcar_gen3_needs_init_otg(struct rcar_gen3_chan *ch)
-+{
-+	int i;
-+
-+	for (i = 0; i < NUM_OF_PHYS; i++) {
-+		if (ch->rphys[i].otg_initialized)
-+			return false;
-+	}
-+
-+	return true;
-+}
-+
-+static bool rcar_gen3_are_all_rphys_power_off(struct rcar_gen3_chan *ch)
-+{
-+	int i;
-+
-+	for (i = 0; i < NUM_OF_PHYS; i++) {
-+		if (ch->rphys[i].powered)
-+			return false;
-+	}
-+
-+	return true;
-+}
-+
- static ssize_t role_store(struct device *dev, struct device_attribute *attr,
- 			  const char *buf, size_t count)
- {
-@@ -260,7 +317,7 @@ static ssize_t role_store(struct device *dev, struct device_attribute *attr,
- 	bool is_b_device;
- 	enum phy_mode cur_mode, new_mode;
- 
--	if (!ch->is_otg_channel || !ch->phy->init_count)
-+	if (!ch->is_otg_channel || !rcar_gen3_is_any_rphy_initialized(ch))
- 		return -EIO;
- 
- 	if (!strncmp(buf, "host", strlen("host")))
-@@ -298,7 +355,7 @@ static ssize_t role_show(struct device *dev, struct device_attribute *attr,
- {
- 	struct rcar_gen3_chan *ch = dev_get_drvdata(dev);
- 
--	if (!ch->is_otg_channel || !ch->phy->init_count)
-+	if (!ch->is_otg_channel || !rcar_gen3_is_any_rphy_initialized(ch))
- 		return -EIO;
- 
- 	return sprintf(buf, "%s\n", rcar_gen3_is_host(ch) ? "host" :
-@@ -332,37 +389,62 @@ static void rcar_gen3_init_otg(struct rcar_gen3_chan *ch)
- 
- static int rcar_gen3_phy_usb2_init(struct phy *p)
- {
--	struct rcar_gen3_chan *channel = phy_get_drvdata(p);
-+	struct rcar_gen3_phy *rphy = phy_get_drvdata(p);
-+	struct rcar_gen3_chan *channel = rphy->ch;
- 	void __iomem *usb2_base = channel->base;
-+	u32 val;
- 
- 	/* Initialize USB2 part */
--	writel(USB2_INT_ENABLE_INIT, usb2_base + USB2_INT_ENABLE);
-+	val = readl(usb2_base + USB2_INT_ENABLE);
-+	val |= USB2_INT_ENABLE_UCOM_INTEN | rphy->int_enable_bits;
-+	writel(val, usb2_base + USB2_INT_ENABLE);
- 	writel(USB2_SPD_RSM_TIMSET_INIT, usb2_base + USB2_SPD_RSM_TIMSET);
- 	writel(USB2_OC_TIMSET_INIT, usb2_base + USB2_OC_TIMSET);
- 
- 	/* Initialize otg part */
--	if (channel->is_otg_channel)
--		rcar_gen3_init_otg(channel);
-+	if (channel->is_otg_channel) {
-+		if (rcar_gen3_needs_init_otg(channel))
-+			rcar_gen3_init_otg(channel);
-+		rphy->otg_initialized = true;
-+	}
-+
-+	rphy->initialized = true;
- 
- 	return 0;
- }
- 
- static int rcar_gen3_phy_usb2_exit(struct phy *p)
- {
--	struct rcar_gen3_chan *channel = phy_get_drvdata(p);
-+	struct rcar_gen3_phy *rphy = phy_get_drvdata(p);
-+	struct rcar_gen3_chan *channel = rphy->ch;
-+	void __iomem *usb2_base = channel->base;
-+	u32 val;
-+
-+	rphy->initialized = false;
- 
--	writel(0, channel->base + USB2_INT_ENABLE);
-+	if (channel->is_otg_channel)
-+		rphy->otg_initialized = false;
-+
-+	val = readl(usb2_base + USB2_INT_ENABLE);
-+	val &= ~rphy->int_enable_bits;
-+	if (!rcar_gen3_is_any_rphy_initialized(channel))
-+		val &= ~USB2_INT_ENABLE_UCOM_INTEN;
-+	writel(val, usb2_base + USB2_INT_ENABLE);
- 
- 	return 0;
- }
- 
- static int rcar_gen3_phy_usb2_power_on(struct phy *p)
- {
--	struct rcar_gen3_chan *channel = phy_get_drvdata(p);
-+	struct rcar_gen3_phy *rphy = phy_get_drvdata(p);
-+	struct rcar_gen3_chan *channel = rphy->ch;
- 	void __iomem *usb2_base = channel->base;
- 	u32 val;
- 	int ret;
- 
-+	if (!rcar_gen3_are_all_rphys_power_off(channel))
-+		return 0;
-+
- 	if (channel->vbus) {
- 		ret = regulator_enable(channel->vbus);
- 		if (ret)
-@@ -375,14 +457,22 @@ static int rcar_gen3_phy_usb2_power_on(struct phy *p)
- 	val &= ~USB2_USBCTR_PLL_RST;
- 	writel(val, usb2_base + USB2_USBCTR);
- 
-+	rphy->powered = true;
-+
- 	return 0;
- }
- 
- static int rcar_gen3_phy_usb2_power_off(struct phy *p)
- {
--	struct rcar_gen3_chan *channel = phy_get_drvdata(p);
-+	struct rcar_gen3_phy *rphy = phy_get_drvdata(p);
-+	struct rcar_gen3_chan *channel = rphy->ch;
- 	int ret = 0;
- 
-+	rphy->powered = false;
-+
-+	if (!rcar_gen3_are_all_rphys_power_off(channel))
-+		return 0;
-+
- 	if (channel->vbus)
- 		ret = regulator_disable(channel->vbus);
- 
-@@ -451,6 +541,46 @@ static const unsigned int rcar_gen3_phy_cable[] = {
- 	EXTCON_NONE,
+diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
+index 96ee0d2c..4333af8 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
+@@ -52,10 +52,20 @@
+ 	};
  };
  
-+static struct phy *rcar_gen3_phy_usb2_xlate(struct device *dev,
-+					    struct of_phandle_args *args)
-+{
-+	struct rcar_gen3_chan *ch = dev_get_drvdata(dev);
++&ehci0 {
++	dr_mode = "host";
++	status = "okay";
++};
 +
-+	if (args->args_count == 0)	/* For old version dts */
-+		return ch->rphys[PHY_INDEX_BOTH_HC].phy;
-+	else if (args->args_count > 1)	/* Prevent invalid args count */
-+		return ERR_PTR(-ENODEV);
-+
-+	if (args->args[0] >= NUM_OF_PHYS)
-+		return ERR_PTR(-ENODEV);
-+
-+	return ch->rphys[args->args[0]].phy;
-+}
-+
-+static enum usb_dr_mode rcar_gen3_get_dr_mode(struct device_node *np)
-+{
-+	enum usb_dr_mode candidate = USB_DR_MODE_UNKNOWN;
-+	int i;
-+
-+	/*
-+	 * If one of device nodes has other dr_mode except UNKNOWN,
-+	 * this function returns UNKNOWN. To achieve backward compatibility,
-+	 * this loop starts the index as 0.
-+	 */
-+	for (i = 0; i < NUM_OF_PHYS; i++) {
-+		enum usb_dr_mode mode = of_usb_get_dr_mode_by_phy(np, i);
-+
-+		if (mode != USB_DR_MODE_UNKNOWN) {
-+			if (candidate == USB_DR_MODE_UNKNOWN)
-+				candidate = mode;
-+			else if (candidate != mode)
-+				return USB_DR_MODE_UNKNOWN;
-+		}
-+	}
-+
-+	return candidate;
-+}
-+
- static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -458,7 +588,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	struct phy_provider *provider;
- 	struct resource *res;
- 	const struct phy_ops *phy_usb2_ops;
--	int irq, ret = 0;
-+	int irq, ret = 0, i;
+ &extal_clk {
+ 	clock-frequency = <48000000>;
+ };
  
- 	if (!dev->of_node) {
- 		dev_err(dev, "This driver needs device tree\n");
-@@ -484,7 +614,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 			dev_err(dev, "No irq handler (%d)\n", irq);
- 	}
- 
--	channel->dr_mode = of_usb_get_dr_mode_by_phy(dev->of_node, 0);
-+	channel->dr_mode = rcar_gen3_get_dr_mode(dev->of_node);
- 	if (channel->dr_mode != USB_DR_MODE_UNKNOWN) {
- 		int ret;
- 
-@@ -512,11 +642,17 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	if (!phy_usb2_ops)
- 		return -EINVAL;
- 
--	channel->phy = devm_phy_create(dev, NULL, phy_usb2_ops);
--	if (IS_ERR(channel->phy)) {
--		dev_err(dev, "Failed to create USB2 PHY\n");
--		ret = PTR_ERR(channel->phy);
--		goto error;
-+	for (i = 0; i < NUM_OF_PHYS; i++) {
-+		channel->rphys[i].phy = devm_phy_create(dev, NULL,
-+							phy_usb2_ops);
-+		if (IS_ERR(channel->rphys[i].phy)) {
-+			dev_err(dev, "Failed to create USB2 PHY\n");
-+			ret = PTR_ERR(channel->rphys[i].phy);
-+			goto error;
-+		}
-+		channel->rphys[i].ch = channel;
-+		channel->rphys[i].int_enable_bits = rcar_gen3_int_enable[i];
-+		phy_set_drvdata(channel->rphys[i].phy, &channel->rphys[i]);
- 	}
- 
- 	channel->vbus = devm_regulator_get_optional(dev, "vbus");
-@@ -529,10 +665,9 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	}
- 
- 	platform_set_drvdata(pdev, channel);
--	phy_set_drvdata(channel->phy, channel);
- 	channel->dev = dev;
- 
--	provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-+	provider = devm_of_phy_provider_register(dev, rcar_gen3_phy_usb2_xlate);
- 	if (IS_ERR(provider)) {
- 		dev_err(dev, "Failed to register PHY provider\n");
- 		ret = PTR_ERR(provider);
++&ohci0 {
++	dr_mode = "host";
++	status = "okay";
++};
++
+ &pcie_bus_clk {
+ 	clock-frequency = <100000000>;
+ };
+@@ -104,3 +114,8 @@
+ 	sd-uhs-sdr104;
+ 	status = "okay";
+ };
++
++&usb2_phy0 {
++	renesas,no-otg-pins;
++	status = "okay";
++};
 -- 
 2.7.4
