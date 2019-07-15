@@ -1,111 +1,85 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Mon, 15 Jul 2019 14:29:49 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 04/23] clk: renesas: rcar-gen3: Add
-	HS400 quirk for SD clock
+Date: Mon, 15 Jul 2019 14:29:50 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 05/23] clk: renesas: Remove usage of
+	CLK_IS_BASIC
 In-Reply-To: <1563197408-59548-1-git-send-email-biju.das@bp.renesas.com>
 References: <1563197408-59548-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1563197408-59548-5-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1563197408-59548-6-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Niklas S?derlund <niklas.soderlund+renesas@ragnatech.se>
+From: Stephen Boyd <sboyd@kernel.org>
 
-commit 36c4da4f552a126bb29a95dc5c9608795491e32a upstream.
+commit ddbae6658d4dc495ac62f7977062b33bb15d1af6 upstream.
 
-On H3 (ES1.x, ES2.0) and M3-W (ES1.0, ES1.1) the clock setting for HS400
-needs a quirk to function properly. The reason for the quirk is that
-there are two settings which produces same divider value for the SDn
-clock. On the effected boards the one currently selected results in
-HS400 not working.
+This flag doesn't look to be used by any code, just set in various clk
+init structures and then never tested again. Remove it from these
+drivers as it doesn't provide any benefit.
 
-This change uses the same method as the Gen2 CPG driver and simply
-ignores the first clock setting as this is the offending one when
-selecting the settings. Which of the two possible settings is used have
-no effect for SDR104.
-
-Signed-off-by: Niklas S?derlund <niklas.soderlund+renesas@ragnatech.se>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: <linux-renesas-soc@vger.kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+[Removed changes to r9a06g032 device]
 ---
- drivers/clk/renesas/rcar-gen3-cpg.c | 33 ++++++++++++++++++++++++++-------
- 1 file changed, 26 insertions(+), 7 deletions(-)
+ drivers/clk/renesas/clk-div6.c         | 2 +-
+ drivers/clk/renesas/clk-mstp.c         | 2 +-
+ drivers/clk/renesas/rcar-gen3-cpg.c    | 2 +-
+ drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/clk/renesas/clk-div6.c b/drivers/clk/renesas/clk-div6.c
+index 9febbf4..ba19be6 100644
+--- a/drivers/clk/renesas/clk-div6.c
++++ b/drivers/clk/renesas/clk-div6.c
+@@ -277,7 +277,7 @@ struct clk * __init cpg_div6_register(const char *name,
+ 	/* Register the clock. */
+ 	init.name = name;
+ 	init.ops = &cpg_div6_clock_ops;
+-	init.flags = CLK_IS_BASIC;
++	init.flags = 0;
+ 	init.parent_names = parent_names;
+ 	init.num_parents = valid_parents;
+ 
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index e82adcb..252ff32 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -161,7 +161,7 @@ static struct clk * __init cpg_mstp_clock_register(const char *name,
+ 
+ 	init.name = name;
+ 	init.ops = &cpg_mstp_clock_ops;
+-	init.flags = CLK_IS_BASIC | CLK_SET_RATE_PARENT;
++	init.flags = CLK_SET_RATE_PARENT;
+ 	/* INTC-SYS is the module clock of the GIC, and must not be disabled */
+ 	if (!strcmp(name, "intc-sys")) {
+ 		pr_debug("MSTP %s setting CLK_IS_CRITICAL\n", name);
 diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 00e41de..3ba5076 100644
+index 3ba5076..fa823a3 100644
 --- a/drivers/clk/renesas/rcar-gen3-cpg.c
 +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -245,6 +245,10 @@ struct sd_clock {
-  *  1         0         2 (4)      0 (2)      8
-  *  1         0         3 (8)      0 (2)     16
-  *  1         0         4 (16)     0 (2)     32
-+ *
-+ *  NOTE: There is a quirk option to ignore the first row of the dividers
-+ *  table when searching for suitable settings. This is because HS400 on
-+ *  early ES versions of H3 and M3-W requires a specific setting to work.
-  */
- static const struct sd_div_table cpg_sd_div_table[] = {
- /*	CPG_SD_DIV_TABLE_DATA(stp_hck,  stp_ck,   sd_srcfc,   sd_fc,  sd_div) */
-@@ -355,6 +359,12 @@ static const struct clk_ops cpg_sd_clock_ops = {
- 	.set_rate = cpg_sd_clock_set_rate,
- };
+@@ -381,7 +381,7 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
  
-+static u32 cpg_quirks __initdata;
-+
-+#define PLL_ERRATA	BIT(0)		/* Missing PLL0/2/4 post-divider */
-+#define RCKCR_CKSEL	BIT(1)		/* Manual RCLK parent selection */
-+#define SD_SKIP_FIRST	BIT(2)		/* Skip first clock in SD table */
-+
- static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
- 	void __iomem *base, const char *parent_name,
- 	struct raw_notifier_head *notifiers)
-@@ -380,6 +390,11 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
- 	clock->div_table = cpg_sd_div_table;
- 	clock->div_num = ARRAY_SIZE(cpg_sd_div_table);
+ 	init.name = core->name;
+ 	init.ops = &cpg_sd_clock_ops;
+-	init.flags = CLK_IS_BASIC | CLK_SET_RATE_PARENT;
++	init.flags = CLK_SET_RATE_PARENT;
+ 	init.parent_names = &parent_name;
+ 	init.num_parents = 1;
  
-+	if (cpg_quirks & SD_SKIP_FIRST) {
-+		clock->div_table++;
-+		clock->div_num--;
-+	}
-+
- 	val = readl(clock->csn.reg) & ~CPG_SD_FC_MASK;
- 	val |= CPG_SD_STP_MASK | (clock->div_table[0].val & CPG_SD_FC_MASK);
- 	writel(val, clock->csn.reg);
-@@ -407,23 +422,27 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
- static const struct rcar_gen3_cpg_pll_config *cpg_pll_config __initdata;
- static unsigned int cpg_clk_extalr __initdata;
- static u32 cpg_mode __initdata;
--static u32 cpg_quirks __initdata;
--
--#define PLL_ERRATA	BIT(0)		/* Missing PLL0/2/4 post-divider */
--#define RCKCR_CKSEL	BIT(1)		/* Manual RCLK parent selection */
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index b00a33f..3a23456 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -377,7 +377,7 @@ static void __init cpg_mssr_register_mod_clk(const struct mssr_mod_clk *mod,
  
- static const struct soc_device_attribute cpg_quirks_match[] __initconst = {
- 	{
- 		.soc_id = "r8a7795", .revision = "ES1.0",
--		.data = (void *)(PLL_ERRATA | RCKCR_CKSEL),
-+		.data = (void *)(PLL_ERRATA | RCKCR_CKSEL | SD_SKIP_FIRST),
- 	},
- 	{
- 		.soc_id = "r8a7795", .revision = "ES1.*",
--		.data = (void *)RCKCR_CKSEL,
-+		.data = (void *)(RCKCR_CKSEL | SD_SKIP_FIRST),
-+	},
-+	{
-+		.soc_id = "r8a7795", .revision = "ES2.0",
-+		.data = (void *)SD_SKIP_FIRST,
- 	},
- 	{
- 		.soc_id = "r8a7796", .revision = "ES1.0",
--		.data = (void *)RCKCR_CKSEL,
-+		.data = (void *)(RCKCR_CKSEL | SD_SKIP_FIRST),
-+	},
-+	{
-+		.soc_id = "r8a7796", .revision = "ES1.1",
-+		.data = (void *)SD_SKIP_FIRST,
- 	},
- 	{ /* sentinel */ }
- };
+ 	init.name = mod->name;
+ 	init.ops = &cpg_mstp_clock_ops;
+-	init.flags = CLK_IS_BASIC | CLK_SET_RATE_PARENT;
++	init.flags = CLK_SET_RATE_PARENT;
+ 	for (i = 0; i < info->num_crit_mod_clks; i++)
+ 		if (id == info->crit_mod_clks[i]) {
+ 			dev_dbg(dev, "MSTP %s setting CLK_IS_CRITICAL\n",
 -- 
 2.7.4
