@@ -1,39 +1,45 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Mon, 15 Jul 2019 15:01:40 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 00/12] Add USB Host support
-Message-ID: <1563199312-18842-1-git-send-email-biju.das@bp.renesas.com>
+Date: Mon, 15 Jul 2019 15:01:41 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 01/12] phy: renesas: rcar-gen3-usb2:
+	fix vbus_ctrl for role sysfs
+In-Reply-To: <1563199312-18842-1-git-send-email-biju.das@bp.renesas.com>
+References: <1563199312-18842-1-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1563199312-18842-2-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This patch series add USB host support for EK874 platform.
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-This patch series is based on linux-4.19.y-cip and all the patches
-in this series are cherry-picked from linux rc tree.
+commit 09938ea9d136243e8d1fed6d4d7a257764f28f6d upstream.
 
-This patch series is depend on the below patch series
-https://patchwork.kernel.org/project/cip-dev/list/?series=145929
+This patch fixes and issue that the vbus_ctrl is disabled by
+rcar_gen3_init_from_a_peri_to_a_host(), so a usb host cannot
+supply the vbus.
 
-Biju Das (2):
-  phy: rcar-gen3-usb2: Add support for r8a77470
-  arm64: dts: renesas: cat874: Add USB-HOST support
+Note that this condition will exit when the otg irq happens
+even if we don't apply this patch.
 
-Yoshihiro Shimoda (10):
-  phy: renesas: rcar-gen3-usb2: fix vbus_ctrl for role sysfs
-  phy: renesas: rcar-gen3-usb2: Rename has_otg_pins to uses_otg_pins
-  phy: renesas: rcar-gen3-usb2: Check a property to use otg pins
-  phy: renesas: rcar-gen3-usb2: unify OBINTEN handling
-  phy: renesas: rcar-gen3-usb2: add conditions for uses_otg_pins ==
-    false
-  phy: renesas: rcar-gen3-usb2: change a condition "dr_mode"
-  phy: renesas: rcar-gen3-usb2: add is_otg_channel to use "role" sysfs
-  phy: renesas: rcar-gen3-usb2: follow the hardware manual procedure
-  phy: renesas: rcar-gen3-usb2: Use pdev's device pointer on dev_vdbg()
-  phy: renesas: rcar-gen3-usb2: enable/disable independent irqs
+Fixes: 9bb86777fb71 ("phy: rcar-gen3-usb2: add sysfs for usb role swap")
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+---
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts |  15 ++
- drivers/phy/renesas/Kconfig                     |   2 +-
- drivers/phy/renesas/phy-rcar-gen3-usb2.c        | 286 +++++++++++++++++++-----
- 3 files changed, 250 insertions(+), 53 deletions(-)
-
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+index fb8f05e..68bc979 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -198,7 +198,7 @@ static void rcar_gen3_init_from_a_peri_to_a_host(struct rcar_gen3_chan *ch)
+ 	val = readl(usb2_base + USB2_OBINTEN);
+ 	writel(val & ~USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
+ 
+-	rcar_gen3_enable_vbus_ctrl(ch, 0);
++	rcar_gen3_enable_vbus_ctrl(ch, 1);
+ 	rcar_gen3_init_for_host(ch);
+ 
+ 	writel(val | USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
 -- 
 2.7.4
