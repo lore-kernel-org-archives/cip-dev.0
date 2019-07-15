@@ -1,57 +1,36 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Mon, 15 Jul 2019 15:01:52 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 12/12] arm64: dts: renesas: cat874: Add
-	USB-HOST support
-In-Reply-To: <1563199312-18842-1-git-send-email-biju.das@bp.renesas.com>
-References: <1563199312-18842-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1563199312-18842-13-git-send-email-biju.das@bp.renesas.com>
+Date: Mon, 15 Jul 2019 15:17:19 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 0/6] Add RTC support
+Message-ID: <1563200245-30331-1-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit ad68fa5fe8c12262cf4156b8e0726117aa3be8c8 upstream.
+This patch series add RTC support for EK874 platform.
 
-This patch adds USB 2.0 HOST support to the CAT874 board.
+This patch series is based on linux-4.19.y-cip and all the patches
+in this series are cherry-picked from linux rc tree.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+This patch series is depend on the below patch series
+https://patchwork.kernel.org/project/cip-dev/list/?series=145931
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-index 96ee0d2c..4333af8 100644
---- a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-@@ -52,10 +52,20 @@
- 	};
- };
- 
-+&ehci0 {
-+	dr_mode = "host";
-+	status = "okay";
-+};
-+
- &extal_clk {
- 	clock-frequency = <48000000>;
- };
- 
-+&ohci0 {
-+	dr_mode = "host";
-+	status = "okay";
-+};
-+
- &pcie_bus_clk {
- 	clock-frequency = <100000000>;
- };
-@@ -104,3 +114,8 @@
- 	sd-uhs-sdr104;
- 	status = "okay";
- };
-+
-+&usb2_phy0 {
-+	renesas,no-otg-pins;
-+	status = "okay";
-+};
+Alexandre Belloni (2):
+  rtc: nvmem: use devm_nvmem_register()
+  rtc: nvmem: remove nvmem from struct rtc_device
+
+Biju Das (4):
+  dt-bindings: rtc: add rx8571 compatible
+  rtc: rx8581: Add support for Epson rx8571 RTC
+  arm64: defconfig: enable RX-8581 config option
+  arm64: dts: renesas: r8a774c0-cat874: add RTC support
+
+ .../devicetree/bindings/trivial-devices.txt        |   1 +
+ arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts    |  19 ++++
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/rtc/Kconfig                                |   5 +-
+ drivers/rtc/nvmem.c                                |  29 ++----
+ drivers/rtc/rtc-rx8581.c                           | 114 +++++++++++++++++++--
+ include/linux/rtc.h                                |   1 -
+ 7 files changed, 139 insertions(+), 31 deletions(-)
+
 -- 
 2.7.4
