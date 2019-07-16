@@ -1,48 +1,66 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Tue, 16 Jul 2019 12:01:15 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 15/23] clk: renesas: rcar-gen3:
- Support Z and Z2 clocks with high frequency parents
-In-Reply-To: <20190716112230.GB24157@amd>
-References: <1563197408-59548-1-git-send-email-biju.das@bp.renesas.com>
-	<1563197408-59548-16-git-send-email-biju.das@bp.renesas.com>
-	<20190716112230.GB24157@amd>
-Message-ID: <OSBPR01MB21034DCBFCBEB273D8D3462FB8CE0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+From: pavel@denx.de (Pavel Machek)
+Date: Tue, 16 Jul 2019 14:03:13 +0200
+Subject: [cip-dev] [PATCH 4.19.y-cip 04/12] phy: renesas:
+ rcar-gen3-usb2: unify OBINTEN handling
+In-Reply-To: <1563199312-18842-5-git-send-email-biju.das@bp.renesas.com>
+References: <1563199312-18842-1-git-send-email-biju.das@bp.renesas.com>
+	<1563199312-18842-5-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <20190716120313.GF24157@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Pavel,
+Hi!
 
-Thanks for the feedback.
+> commit 7ab0305d4d7725699169e21cdc4f6c8759c32feb upstream.
+> 
+> This patch unifies the OBINTEN handling to clean-up the code.
 
-> Subject: Re: [cip-dev] [PATCH 4.19.y-cip 15/23] clk: renesas: rcar-gen3:
-> Support Z and Z2 clocks with high frequency parents
-> 
-> Hi!
-> 
-> > Support Z and Z2 clocks with parent frequencies greater than
-> > UINT32_MAX Hz (~4.29GHz).
-> >
-> > The DIV_ROUND_CLOSEST_ULL() macro accepts a 64bit dividend and 32bit
-> > divisor. This leads to truncation of the divisor, which is the Z or Z2
-> > parent clock frequency in HZ, on platforms where frequency of that
-> > clock is greater than UINT32_MAX Hz.
-> >
-> > To resolve this problem the DIV64_U64_ROUND_CLOSEST() macro, which
-> > takes on an unsigned 64bit dividend and divisor, is used.
-> >
-> > An earlier version of this patch made use of the existing
-> > DIV_ROUND_CLOSEST() macro, which accepts the prevailing type of the
-> > dividend and divisor. However, this does not compile on 32bit systems,
-> > such as i386 and mips, when called with the types used at this call
-> > site, an unsigned long long dividend and unsigned long divisor.
-> 
-> > This work is in preparation for supporting the Z2 clock on the R-Car
-> > Gen3 E3 (r8a77990) SoC which has a 4.8GHz parent clock.
-> 
-> You still store "parent_rate" in "unsigned long". That is going to overflow on
-> 32-bit systems, right?
 
-Gen3 SoC's are aarch64. So I think it is ok.
+> @@ -145,6 +145,18 @@ static void rcar_gen3_enable_vbus_ctrl(struct rcar_gen3_chan *ch, int vbus)
+>  	writel(val, usb2_base + USB2_ADPCTRL);
+>  }
+>  
+> +static void rcar_gen3_control_otg_irq(struct rcar_gen3_chan *ch, int enable)
+> +{
+> +	void __iomem *usb2_base = ch->base;
+> +	u32 val = readl(usb2_base + USB2_OBINTEN);
+> +
+> +	if (enable)
+> +		val |= USB2_OBINT_BITS;
+> +	else
+> +		val &= ~USB2_OBINT_BITS;
+> +	writel(val, usb2_base + USB2_OBINTEN);
+> +}
+> +
+>  
+>  static void rcar_gen3_init_from_a_peri_to_a_host(struct rcar_gen3_chan *ch)
+>  {
+> -	void __iomem *usb2_base = ch->base;
+> -	u32 val;
+> -
+> -	val = readl(usb2_base + USB2_OBINTEN);
+> -	writel(val & ~USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
+> +	rcar_gen3_control_otg_irq(ch, 0);
+>  
+>  	rcar_gen3_enable_vbus_ctrl(ch, 1);
+>  	rcar_gen3_init_for_host(ch);
+>  
+> -	writel(val | USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
+> +	rcar_gen3_control_otg_irq(ch, 1);
+>  }
 
-Regards,
-Biju
+This actually removes optimalization: old code would avoid
+reading USB2_OBINTEN twice. I guess it is not a problem.
+
+Best regards,
+									Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 181 bytes
+Desc: Digital signature
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190716/f4dbd9c4/attachment.sig>
