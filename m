@@ -1,80 +1,43 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Tue, 16 Jul 2019 09:15:14 +0100
-Subject: [cip-dev] [PATCH 4.4.y-cip 03/10] rtc: pcf85363: set time accurately
+Date: Tue, 16 Jul 2019 09:15:15 +0100
+Subject: [cip-dev] [PATCH 4.4.y-cip 04/10] dt-bindings: rtc: pcf85363:
+	Document pcf85263 real-time clock
 In-Reply-To: <1563264921-42973-1-git-send-email-biju.das@bp.renesas.com>
 References: <1563264921-42973-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1563264921-42973-4-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1563264921-42973-5-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit 188306ac9536ec47674ffa9dd330f69927679aeb upstream.
+commit bae5e94bea188e652d798eeb4b92b88a355591f6 upstream.
 
-As per 8.2.6 Setting and reading the time in RTC mode, first stop the clok,
-then reset it before setting the date and time registers. Finally, start
-the clock.
+The pcf85263 RTC is compatible with the pcf85363 RTC.
 
-This uses register address wrap around from 0x2f to 0x00 for efficiency.
+The difference between the pcf85263 and pcf85363 RTC is that the latter has
+64 bytes more RAM. This renders them incompatible from a DT point of view.
 
-This allows to set the clock with a millisecond accuracy (drift is not
-corrected in this example):
-
-RTC        System
-1325388767 1325388767.000029180
-1325388768 1325388768.000018362
-1325388769 1325388769.000006544
-1325388770 1325388769.999992725
-1325388771 1325388770.999974544
-
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- drivers/rtc/rtc-pcf85363.c | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+ Documentation/devicetree/bindings/rtc/pcf85363.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/rtc/rtc-pcf85363.c b/drivers/rtc/rtc-pcf85363.c
-index 5fbc6df..dc57a6f 100644
---- a/drivers/rtc/rtc-pcf85363.c
-+++ b/drivers/rtc/rtc-pcf85363.c
-@@ -73,6 +73,10 @@
- #define CTRL_RESETS	0x2f
- #define CTRL_RAM	0x40
+diff --git a/Documentation/devicetree/bindings/rtc/pcf85363.txt b/Documentation/devicetree/bindings/rtc/pcf85363.txt
+index 76fdabc..94adc1c 100644
+--- a/Documentation/devicetree/bindings/rtc/pcf85363.txt
++++ b/Documentation/devicetree/bindings/rtc/pcf85363.txt
+@@ -1,8 +1,8 @@
+-NXP PCF85363 Real Time Clock
++NXP PCF85263/PCF85363 Real Time Clock
+ ============================
  
-+#define STOP_EN_STOP	BIT(0)
-+
-+#define RESET_CPR	0xa4
-+
- #define NVRAM_SIZE	0x40
+ Required properties:
+-- compatible: Should contain "nxp,pcf85363".
++- compatible: Should contain "nxp,pcf85263" or "nxp,pcf85363".
+ - reg: I2C address for chip.
  
- static struct i2c_driver pcf85363_driver;
-@@ -115,8 +119,12 @@ static int pcf85363_rtc_read_time(struct device *dev, struct rtc_time *tm)
- static int pcf85363_rtc_set_time(struct device *dev, struct rtc_time *tm)
- {
- 	struct pcf85363 *pcf85363 = dev_get_drvdata(dev);
--	unsigned char buf[DT_YEARS + 1];
--	int len = sizeof(buf);
-+	unsigned char tmp[11];
-+	unsigned char *buf = &tmp[2];
-+	int ret;
-+
-+	tmp[0] = STOP_EN_STOP;
-+	tmp[1] = RESET_CPR;
- 
- 	buf[DT_100THS] = 0;
- 	buf[DT_SECS] = bin2bcd(tm->tm_sec);
-@@ -127,8 +135,12 @@ static int pcf85363_rtc_set_time(struct device *dev, struct rtc_time *tm)
- 	buf[DT_MONTHS] = bin2bcd(tm->tm_mon + 1);
- 	buf[DT_YEARS] = bin2bcd(tm->tm_year % 100);
- 
--	return regmap_bulk_write(pcf85363->regmap, DT_100THS,
--				 buf, len);
-+	ret = regmap_bulk_write(pcf85363->regmap, CTRL_STOP_EN,
-+				tmp, sizeof(tmp));
-+	if (ret)
-+		return ret;
-+
-+	return regmap_write(pcf85363->regmap, CTRL_STOP_EN, 0);
- }
- 
- static const struct rtc_class_ops rtc_ops = {
+ Optional properties:
 -- 
 2.7.4
