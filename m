@@ -1,36 +1,57 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Tue, 16 Jul 2019 09:15:20 +0100
-Subject: [cip-dev] [PATCH 4.4.y-cip 09/10] ARM: multi_v7_defconfig: Enable
-	NXP pcf85363 rtc
+Date: Tue, 16 Jul 2019 09:15:21 +0100
+Subject: [cip-dev] [PATCH 4.4.y-cip 10/10] ARM: dts: iwg23s-sbc: Enable RTC
 In-Reply-To: <1563264921-42973-1-git-send-email-biju.das@bp.renesas.com>
 References: <1563264921-42973-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1563264921-42973-10-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1563264921-42973-11-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit e5168ec09d993d2b64cd9ee8d4cff269e53538be upstream.
+commit 55327bff832c9903a9133cdad56783b54bd8596a upstream.
 
-The iWave RZ/G1C SBC supports RTC (NXP pcf85263). To increase
-hardware support enable the driver in the multi_v7_defconfig
-multiplatform configuration.
+Enable NXP pcf85263 real time clock for the iWave SBC based on RZ/G1C.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index cfaf564..a3ba031 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -608,6 +608,7 @@ CONFIG_RTC_DRV_MAX77686=y
- CONFIG_RTC_DRV_RK808=m
- CONFIG_RTC_DRV_MAX77802=m
- CONFIG_RTC_DRV_RS5C372=m
-+CONFIG_RTC_DRV_PCF85363=m
- CONFIG_RTC_DRV_BQ32K=m
- CONFIG_RTC_DRV_PALMAS=y
- CONFIG_RTC_DRV_ST_LPC=y
+diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+index 48b168d..fea316d 100644
+--- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
++++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+@@ -48,12 +48,30 @@
+ 	clock-frequency = <20000000>;
+ };
+ 
++&i2c3 {
++	pinctrl-0 = <&i2c3_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++	clock-frequency = <400000>;
++
++	rtc at 51 {
++		compatible = "nxp,pcf85263";
++		reg = <0x51>;
++	};
++};
++
+ &pfc {
+ 	avb_pins: avb {
+ 		groups = "avb_mdio", "avb_gmii_tx_rx";
+ 		function = "avb";
+ 	};
+ 
++	i2c3_pins: i2c3 {
++		groups = "i2c3_c";
++		function = "i2c3";
++	};
++
+ 	qspi0_pins: qspi0 {
+ 		groups = "qspi0_ctrl", "qspi0_data2";
+ 		function = "qspi0";
 -- 
 2.7.4
