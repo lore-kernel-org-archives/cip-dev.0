@@ -1,38 +1,63 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Tue, 16 Jul 2019 07:42:19 +0100
-Subject: [cip-dev] [PATCH 4.4.y-cip 3/5] mtd: spi-nor: Add support for
-	is25lp016d
+Date: Tue, 16 Jul 2019 07:42:20 +0100
+Subject: [cip-dev] [PATCH 4.4.y-cip 4/5] ARM: dts: r8a77470: Add QSPI support
 In-Reply-To: <1563259341-37180-1-git-send-email-biju.das@bp.renesas.com>
 References: <1563259341-37180-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1563259341-37180-4-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1563259341-37180-5-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit b422847877e35d6818f65cb359a60f529fe22c4b upstream.
+commit b6239d4219643bd1ac1d0b5a0faedf69cd2a2bfa upstream.
 
-The is25lp016d is found on the iwg23s from iWave, therefore
-add driver support for it so that we can upstream board support.
+Add QSPI[01] support to the RZ/G1C SoC specific device tree.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/mtd/spi-nor/spi-nor.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/r8a77470.dtsi | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index 276998e..f26e735 100644
---- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -708,6 +708,8 @@ static const struct flash_info spi_nor_ids[] = {
+diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
+index 8cc15e6..a10afa2 100644
+--- a/arch/arm/boot/dts/r8a77470.dtsi
++++ b/arch/arm/boot/dts/r8a77470.dtsi
+@@ -287,6 +287,36 @@
+ 			status = "disabled";
+ 		};
  
- 	/* ISSI */
- 	{ "is25cd512", INFO(0x7f9d20, 0, 32 * 1024,   2, SECT_4K) },
-+	{ "is25lp016d", INFO(0x9d6015, 0, 64 * 1024,  32,
-+			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
- 	{ "is25wp032", INFO(0x9d7016, 0, 64 * 1024,  64,
- 			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
- 	{ "is25wp064", INFO(0x9d7017, 0, 64 * 1024, 128,
++		qspi0: spi at e6b10000 {
++			compatible = "renesas,qspi-r8a77470", "renesas,qspi";
++			reg = <0 0xe6b10000 0 0x2c>;
++			interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp9_clks R8A77470_CLK_QUAD_SPI0>;
++			dmas = <&dmac0 0x17>, <&dmac0 0x18>,
++			       <&dmac1 0x17>, <&dmac1 0x18>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&cpg_clocks>;
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		qspi1: spi at ee200000 {
++			compatible = "renesas,qspi-r8a77470", "renesas,qspi";
++			reg = <0 0xee200000 0 0x2c>;
++			interrupts = <GIC_SPI 239 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp9_clks R8A77470_CLK_QUAD_SPI1>;
++			dmas = <&dmac0 0xd1>, <&dmac0 0xd2>,
++			       <&dmac1 0xd1>, <&dmac1 0xd2>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&cpg_clocks>;
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		scif0: serial at e6e60000 {
+ 			compatible = "renesas,scif-r8a77470", "renesas,scif";
+ 			reg = <0 0xe6e60000 0 0x40>;
 -- 
 2.7.4
