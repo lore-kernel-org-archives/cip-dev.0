@@ -1,25 +1,21 @@
 From: pavel@denx.de (Pavel Machek)
-Date: Tue, 16 Jul 2019 13:24:53 +0200
-Subject: [cip-dev] [PATCH 4.19.y-cip 21/23] clk: renesas: rcar-gen3: Fix
- cpg_sd_clock_round_rate() return value
-In-Reply-To: <1563197408-59548-22-git-send-email-biju.das@bp.renesas.com>
+Date: Tue, 16 Jul 2019 13:28:30 +0200
+Subject: [cip-dev] [PATCH 4.19.y-cip 00/23] Clock enhancements
+In-Reply-To: <1563197408-59548-1-git-send-email-biju.das@bp.renesas.com>
 References: <1563197408-59548-1-git-send-email-biju.das@bp.renesas.com>
-	<1563197408-59548-22-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <20190716112453.GC24157@amd>
+Message-ID: <20190716112830.GD24157@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi!
 
-> This is not conform the clk API design.
+> This patch series add OPP tables,HS400 quirk for SD clock,
+> add support  Z2 clock and fix some of parent clocks.
 > 
-> This patch fixes that by making sure cpg_sd_clock_calc_div() considers
-> only the division values defined in cpg_sd_div_table[].
-> With this fix, the cpg_sd_clock_round_rate() always return a support
-> clock rate.
+> This patch series is based on linux-4.19.y-cip and all the patches
+> in this series are cherry-picked from linux rc tree.
 
-This is not quite correct english, but I guess it is too late to fix
-that.
+Thanks. Applied and pushed out.
 
 Best regards,
 									Pavel
@@ -32,4 +28,4 @@ Name: signature.asc
 Type: application/pgp-signature
 Size: 181 bytes
 Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190716/bf232362/attachment.sig>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190716/b2864c74/attachment-0001.sig>
