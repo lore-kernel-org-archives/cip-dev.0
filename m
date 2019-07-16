@@ -1,58 +1,41 @@
 From: pavel@denx.de (Pavel Machek)
-Date: Tue, 16 Jul 2019 13:17:53 +0200
-Subject: [cip-dev] [PATCH 4.19.y-cip 08/23] clk: renesas: rcar-gen3: Add
- spinlock
-In-Reply-To: <1563197408-59548-9-git-send-email-biju.das@bp.renesas.com>
+Date: Tue, 16 Jul 2019 13:22:30 +0200
+Subject: [cip-dev] [PATCH 4.19.y-cip 15/23] clk: renesas: rcar-gen3:
+ Support Z and Z2 clocks with high frequency parents
+In-Reply-To: <1563197408-59548-16-git-send-email-biju.das@bp.renesas.com>
 References: <1563197408-59548-1-git-send-email-biju.das@bp.renesas.com>
-	<1563197408-59548-9-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <20190716111753.GA24157@amd>
+	<1563197408-59548-16-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <20190716112230.GB24157@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi!
 
-> commit 875e8f6b0156c0ad56fd0c29c78e3f2f67ec0b16 upstream.
+> Support Z and Z2 clocks with parent frequencies greater than UINT32_MAX Hz
+> (~4.29GHz).
 > 
-> Protect the CPG register read-modify-write sequence with a spinlock.
+> The DIV_ROUND_CLOSEST_ULL() macro accepts a 64bit dividend and 32bit
+> divisor. This leads to truncation of the divisor, which is the Z or Z2
+> parent clock frequency in HZ, on platforms where frequency of that clock is
+> greater than UINT32_MAX Hz.
 > 
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> To resolve this problem the DIV64_U64_ROUND_CLOSEST() macro, which takes
+> on an unsigned 64bit dividend and divisor, is used.
+> 
+> An earlier version of this patch made use of the existing
+> DIV_ROUND_CLOSEST() macro, which accepts the prevailing type of the
+> dividend and divisor. However, this does not compile on 32bit systems, such
+> as i386 and mips, when called with the types used at this call site, an
+> unsigned long long dividend and unsigned long divisor.
 
+> This work is in preparation for supporting the Z2 clock on the
+> R-Car Gen3 E3 (r8a77990) SoC which has a 4.8GHz parent clock.
 
-> diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-> index 37be0e8..3bef9f2 100644
-> --- a/drivers/clk/renesas/rcar-gen3-cpg.c
-> +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-> @@ -33,14 +33,19 @@
->  
->  #define CPG_RCKCR_CKSEL	BIT(15)	/* RCLK Clock Source Select */
->  
-> +static spinlock_t cpg_lock;
-> +
-
-This is a bit unusual. I'd expect the the lock to be in data structure
-describing the hardware... but maybe the hardware abstraction here is
-so simple that we can get away with this.
-
->  static void cpg_reg_modify(void __iomem *reg, u32 clear, u32 set)
->  {
-> +	unsigned long flags;
->  	u32 val;
->  
-> +	spin_lock_irqsave(&cpg_lock, flags);
->  	val = readl(reg);
->  	val &= ~clear;
->  	val |= set;
->  	writel(val, reg);
-> +	spin_unlock_irqrestore(&cpg_lock, flags);
->  };
->  
->  struct cpg_simple_notifier {
+You still store "parent_rate" in "unsigned long". That is going to
+overflow on 32-bit systems, right?
 
 Best regards,
 									Pavel
-
 -- 
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
@@ -62,4 +45,4 @@ Name: signature.asc
 Type: application/pgp-signature
 Size: 181 bytes
 Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190716/d303a019/attachment.sig>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190716/6e2e8f98/attachment.sig>
