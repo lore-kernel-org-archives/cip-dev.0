@@ -1,67 +1,47 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Tue, 16 Jul 2019 07:42:21 +0100
-Subject: [cip-dev] [PATCH 4.4.y-cip 5/5] ARM: dts: iwg23s-sbc: Add QSPI
-	flash support
-In-Reply-To: <1563259341-37180-1-git-send-email-biju.das@bp.renesas.com>
-References: <1563259341-37180-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1563259341-37180-6-git-send-email-biju.das@bp.renesas.com>
+Date: Tue, 16 Jul 2019 09:15:11 +0100
+Subject: [cip-dev] [PATCH 4.4.y-cip 00/10] Add RTC support
+Message-ID: <1563264921-42973-1-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit 91f5c32dd0c8fc662694de4d8c5eeb61e4b4210b upstream.
+This patch series add RTC support for iWave iwg23s sbc based on RZ/G1C.
 
-This commit adds QSPI flash support to the iwg23s board specific
-device tree.
+This patch series is based on linux-4.4.y-cip and all the patches
+in this series are cherry-picked from linux rc tree.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+This patch series depend on
+https://patchwork.kernel.org/project/cip-dev/list/?series=146261
 
-diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-index 4ceff9c..48b168d 100644
---- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-+++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-@@ -54,12 +54,38 @@
- 		function = "avb";
- 	};
- 
-+	qspi0_pins: qspi0 {
-+		groups = "qspi0_ctrl", "qspi0_data2";
-+		function = "qspi0";
-+	};
-+
- 	scif1_pins: scif1 {
- 		groups = "scif1_data_b";
- 		function = "scif1";
- 	};
- };
- 
-+&qspi0 {
-+	pinctrl-0 = <&qspi0_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+
-+	/* WARNING - This device contains the bootloader. Handle with care. */
-+	flash: flash at 0 {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "issi,is25lp016d", "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <133000000>;
-+		spi-tx-bus-width = <1>;
-+		spi-rx-bus-width = <1>;
-+		m25p,fast-read;
-+		spi-cpol;
-+		spi-cpha;
-+	};
-+};
-+
- &scif1 {
- 	pinctrl-0 = <&scif1_pins>;
- 	pinctrl-names = "default";
+Alexandre Belloni (1):
+  rtc: pcf85363: add .max_register in regmap_config
+
+Biju Das (6):
+  rtc: pcf85363: set time accurately
+  dt-bindings: rtc: pcf85363: Document pcf85263 real-time clock
+  rtc: pcf85363: Add support for NXP pcf85263 rtc
+  ARM: shmobile: Enable NXP pcf85363 rtc in shmobile_defconfig
+  ARM: multi_v7_defconfig: Enable NXP pcf85363 rtc
+  ARM: dts: iwg23s-sbc: Enable RTC
+
+Eric Nelson (1):
+  rtc: add support for NXP PCF85363 real-time clock
+
+Fabrizio Castro (2):
+  ARM: dts: r8a77470: Add I2C4 support
+  ARM: dts: r8a77470: Add I2C[0123] support
+
+ Documentation/devicetree/bindings/rtc/pcf85363.txt |  17 ++
+ arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts          |  18 ++
+ arch/arm/boot/dts/r8a77470.dtsi                    |  68 ++++++
+ arch/arm/configs/multi_v7_defconfig                |   1 +
+ arch/arm/configs/shmobile_defconfig                |   1 +
+ drivers/rtc/Kconfig                                |   9 +
+ drivers/rtc/Makefile                               |   1 +
+ drivers/rtc/rtc-pcf85363.c                         | 234 +++++++++++++++++++++
+ 8 files changed, 349 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/rtc/pcf85363.txt
+ create mode 100644 drivers/rtc/rtc-pcf85363.c
+
 -- 
 2.7.4
