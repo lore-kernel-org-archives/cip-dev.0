@@ -1,57 +1,30 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Tue, 16 Jul 2019 09:15:21 +0100
-Subject: [cip-dev] [PATCH 4.4.y-cip 10/10] ARM: dts: iwg23s-sbc: Enable RTC
-In-Reply-To: <1563264921-42973-1-git-send-email-biju.das@bp.renesas.com>
-References: <1563264921-42973-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1563264921-42973-11-git-send-email-biju.das@bp.renesas.com>
+From: pavel@denx.de (Pavel Machek)
+Date: Tue, 16 Jul 2019 11:00:06 +0200
+Subject: [cip-dev] [PATCH 4.4.y-cip 0/5] Add QSPI support
+In-Reply-To: <1563259341-37180-1-git-send-email-biju.das@bp.renesas.com>
+References: <1563259341-37180-1-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <20190716090006.GA14756@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit 55327bff832c9903a9133cdad56783b54bd8596a upstream.
+Hi!
 
-Enable NXP pcf85263 real time clock for the iWave SBC based on RZ/G1C.
+> This patch series add QSPI support for iWave iwg23s sbc based on RZ/G1C.
+> 
+> This patch series is based on linux-4.4.y-cip and all the patches
+> in this series are cherry-picked from linux rc tree.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Thanks for the series. It looks fine to me.
 
-diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-index 48b168d..fea316d 100644
---- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-+++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-@@ -48,12 +48,30 @@
- 	clock-frequency = <20000000>;
- };
- 
-+&i2c3 {
-+	pinctrl-0 = <&i2c3_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	rtc at 51 {
-+		compatible = "nxp,pcf85263";
-+		reg = <0x51>;
-+	};
-+};
-+
- &pfc {
- 	avb_pins: avb {
- 		groups = "avb_mdio", "avb_gmii_tx_rx";
- 		function = "avb";
- 	};
- 
-+	i2c3_pins: i2c3 {
-+		groups = "i2c3_c";
-+		function = "i2c3";
-+	};
-+
- 	qspi0_pins: qspi0 {
- 		groups = "qspi0_ctrl", "qspi0_data2";
- 		function = "qspi0";
+Best regards,
+									Pavel
 -- 
-2.7.4
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 181 bytes
+Desc: Digital signature
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190716/59b668ec/attachment.sig>
