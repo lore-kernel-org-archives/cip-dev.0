@@ -1,113 +1,53 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Tue, 16 Jul 2019 09:15:16 +0100
-Subject: [cip-dev] [PATCH 4.4.y-cip 05/10] rtc: pcf85363: Add support for
-	NXP pcf85263 rtc
+Date: Tue, 16 Jul 2019 09:15:17 +0100
+Subject: [cip-dev] [PATCH 4.4.y-cip 06/10] ARM: dts: r8a77470: Add I2C4
+	support
 In-Reply-To: <1563264921-42973-1-git-send-email-biju.das@bp.renesas.com>
 References: <1563264921-42973-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1563264921-42973-6-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1563264921-42973-7-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit fc979933bcf162595b6004d0de4effb64c323152 upstream.
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Add support for NXP pcf85263 real-time clock. pcf85263 rtc is compatible
-with pcf85363,except that pcf85363 has additional 64 bytes of RAM.
+commit 3578859661975f8ccb9d8d49c97784d5ff5467df upstream.
 
-1 byte of nvmem is supported and exposed in sysfs (# is the instance
-number,starting with 0): /sys/bus/nvmem/devices/pcf85x63-#/nvmem
+Add I2C4 support to RZ/G1C (a.k.a. r8a77470) SoC specific
+device tree.
 
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-[ Removed rtc nvmem support. Added I2C ID table for rtc-pcf85263 ]
+[Reworked clocks and power-domains properties. Removed resets properties]
 ---
- drivers/rtc/rtc-pcf85363.c | 40 ++++++++++++++++++++++++++++++++--------
- 1 file changed, 32 insertions(+), 8 deletions(-)
+ arch/arm/boot/dts/r8a77470.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/rtc/rtc-pcf85363.c b/drivers/rtc/rtc-pcf85363.c
-index dc57a6f..64217f1 100644
---- a/drivers/rtc/rtc-pcf85363.c
-+++ b/drivers/rtc/rtc-pcf85363.c
-@@ -87,6 +87,11 @@ struct pcf85363 {
- 	struct regmap		*regmap;
- };
+diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
+index a10afa2..7b3c4a2 100644
+--- a/arch/arm/boot/dts/r8a77470.dtsi
++++ b/arch/arm/boot/dts/r8a77470.dtsi
+@@ -211,6 +211,18 @@
+ 			reg = <0 0xe6300000 0 0x20000>;
+ 		};
  
-+struct pcf85x63_config {
-+	struct regmap_config regmap;
-+	unsigned int num_nvram;
-+};
++		i2c4: i2c at e6520000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,i2c-r8a77470",
++				     "renesas,rcar-gen2-i2c";
++			reg = <0 0xe6520000 0 0x40>;
++			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp9_clks R8A77470_CLK_I2C4>;
++			power-domains = <&cpg_clocks>;
++			status = "disabled";
++		};
 +
- static int pcf85363_rtc_read_time(struct device *dev, struct rtc_time *tm)
- {
- 	struct pcf85363 *pcf85363 = dev_get_drvdata(dev);
-@@ -148,16 +153,33 @@ static const struct rtc_class_ops rtc_ops = {
- 	.set_time	= pcf85363_rtc_set_time,
- };
- 
--static const struct regmap_config regmap_config = {
--	.reg_bits = 8,
--	.val_bits = 8,
--	.max_register = 0x7f,
-+static const struct pcf85x63_config pcf_85263_config = {
-+	.regmap = {
-+		.reg_bits = 8,
-+		.val_bits = 8,
-+		.max_register = 0x2f,
-+	},
-+	.num_nvram = 1
-+};
-+
-+static const struct pcf85x63_config pcf_85363_config = {
-+	.regmap = {
-+		.reg_bits = 8,
-+		.val_bits = 8,
-+		.max_register = 0x7f,
-+	},
-+	.num_nvram = 2
- };
- 
- static int pcf85363_probe(struct i2c_client *client,
- 			  const struct i2c_device_id *id)
- {
- 	struct pcf85363 *pcf85363;
-+	const struct pcf85x63_config *config = &pcf_85363_config;
-+	const void *data = of_device_get_match_data(&client->dev);
-+
-+	if (data)
-+		config = data;
- 
- 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C))
- 		return -ENODEV;
-@@ -167,7 +189,7 @@ static int pcf85363_probe(struct i2c_client *client,
- 	if (!pcf85363)
- 		return -ENOMEM;
- 
--	pcf85363->regmap = devm_regmap_init_i2c(client, &regmap_config);
-+	pcf85363->regmap = devm_regmap_init_i2c(client, &config->regmap);
- 	if (IS_ERR(pcf85363->regmap)) {
- 		dev_err(&client->dev, "regmap allocation failed\n");
- 		return PTR_ERR(pcf85363->regmap);
-@@ -185,12 +207,14 @@ static int pcf85363_probe(struct i2c_client *client,
- 
- static const struct i2c_device_id pcf85363_id[] = {
- 	{ "pcf85363", 0 },
-+	{ "pcf85263", 0 },
- 	{ }
- };
- 
- static const struct of_device_id dev_ids[] = {
--	{ .compatible = "nxp,pcf85363" },
--	{}
-+	{ .compatible = "nxp,pcf85263", .data = &pcf_85263_config },
-+	{ .compatible = "nxp,pcf85363", .data = &pcf_85363_config },
-+	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, dev_ids);
- 
-@@ -206,5 +230,5 @@ static struct i2c_driver pcf85363_driver = {
- module_i2c_driver(pcf85363_driver);
- 
- MODULE_AUTHOR("Eric Nelson");
--MODULE_DESCRIPTION("pcf85363 I2C RTC driver");
-+MODULE_DESCRIPTION("pcf85263/pcf85363 I2C RTC driver");
- MODULE_LICENSE("GPL");
+ 		dmac0: dma-controller at e6700000 {
+ 			compatible = "renesas,dmac-r8a77470",
+ 				     "renesas,rcar-dmac";
 -- 
 2.7.4
