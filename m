@@ -1,70 +1,41 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Tue, 16 Jul 2019 12:57:37 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 04/12] phy: renesas:
- rcar-gen3-usb2: unify OBINTEN handling
-In-Reply-To: <20190716120313.GF24157@amd>
-References: <1563199312-18842-1-git-send-email-biju.das@bp.renesas.com>
-	<1563199312-18842-5-git-send-email-biju.das@bp.renesas.com>
-	<20190716120313.GF24157@amd>
-Message-ID: <OSBPR01MB2103FE3E76AC5DD095D2CE95B8CE0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+From: wagi@monom.org (Daniel Wagner)
+Date: Tue, 16 Jul 2019 16:09:28 +0200
+Subject: [cip-dev] [ANNOUNCE] 4.4.176-cip31-rt23
+In-Reply-To: <20190715134336.GB16268@amd>
+References: <20190329110611.1B897500722@mail.monom.org>
+	<a86d4f19-790d-58ab-94b4-523a759d87b4@siemens.com>
+	<20190715134336.GB16268@amd>
+Message-ID: <58c8af26-00ce-827d-999f-ccd545a0d974@monom.org>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Pavel,
+>> Is there a chance to update 4.4-rt based on Daniel' 4.4.179-rt181 release, but
+>> then to 4.4.182 in order to have SACK fixes in?
+> 
+> Do you want 4.4.184, too, which fixes the SACK fixes? :-).
+> 
+> I'm up-to 4.4.179-rt181-cip32.
+> 
+> If I attempt to move forward to 4.4.181-cip3, I get some conflicts in
+> rather core files.
+> 
+> Auto-merging kernel/cpu.c
+> CONFLICT (content): Merge conflict in kernel/cpu.c
+> Auto-merging include/linux/sched.h
+> CONFLICT (content): Merge conflict in include/linux/sched.h
+> Auto-merging arch/x86/include/asm/thread_info.h
+> CONFLICT (content): Merge conflict in
+> 
+> I can attempt something, but I'd feel safer waiting for -stable-rt to
+> solve it for me.
 
-Thanks for the feedback.
+FWIW, I am updating the stable-rt tree right now. As noted there are a 
+couple of merge conflicts ahead. Right now I am testing the result of 
+the v4.4.180 merge. So far all looks good and now I am waiting for the 
+test results from the CI system. After that I keep merging.
 
-> -----Original Message-----
-> From: Pavel Machek <pavel@denx.de>
-> Sent: Tuesday, July 16, 2019 1:03 PM
-> To: Biju Das <biju.das@bp.renesas.com>
-> Cc: cip-dev at lists.cip-project.org
-> Subject: Re: [cip-dev] [PATCH 4.19.y-cip 04/12] phy: renesas: rcar-gen3-usb2:
-> unify OBINTEN handling
-> 
-> Hi!
-> 
-> > commit 7ab0305d4d7725699169e21cdc4f6c8759c32feb upstream.
-> >
-> > This patch unifies the OBINTEN handling to clean-up the code.
-> 
-> 
-> > @@ -145,6 +145,18 @@ static void rcar_gen3_enable_vbus_ctrl(struct
-> rcar_gen3_chan *ch, int vbus)
-> >  	writel(val, usb2_base + USB2_ADPCTRL);  }
-> >
-> > +static void rcar_gen3_control_otg_irq(struct rcar_gen3_chan *ch, int
-> > +enable) {
-> > +	void __iomem *usb2_base = ch->base;
-> > +	u32 val = readl(usb2_base + USB2_OBINTEN);
-> > +
-> > +	if (enable)
-> > +		val |= USB2_OBINT_BITS;
-> > +	else
-> > +		val &= ~USB2_OBINT_BITS;
-> > +	writel(val, usb2_base + USB2_OBINTEN); }
-> > +
-> >
-> >  static void rcar_gen3_init_from_a_peri_to_a_host(struct
-> > rcar_gen3_chan *ch)  {
-> > -	void __iomem *usb2_base = ch->base;
-> > -	u32 val;
-> > -
-> > -	val = readl(usb2_base + USB2_OBINTEN);
-> > -	writel(val & ~USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
-> > +	rcar_gen3_control_otg_irq(ch, 0);
-> >
-> >  	rcar_gen3_enable_vbus_ctrl(ch, 1);
-> >  	rcar_gen3_init_for_host(ch);
-> >
-> > -	writel(val | USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
-> > +	rcar_gen3_control_otg_irq(ch, 1);
-> >  }
-> 
-> This actually removes optimalization: old code would avoid reading
-> USB2_OBINTEN twice. I guess it is not a problem
-
-I agree, it removes optimization compared to the old code, But on the hand, this code is not frequently used and  the code is much cleaner.
-
-Regards,
-Biju 
+In case you are wondering how the workflow works. We stable-rt 
+maintainer merge the latest stable release and make a release if there 
+is no merge conflict. If there is a merge conflict, that particular 
+stable merge will be released as separate version.  That allows to 
+review the merge conflicts more easily.
