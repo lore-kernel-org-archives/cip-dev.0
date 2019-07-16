@@ -1,44 +1,50 @@
 From: pavel@denx.de (Pavel Machek)
-Date: Tue, 16 Jul 2019 22:22:12 +0200
-Subject: [cip-dev] [PATCH 4.19.y-cip 4/6] rtc: rx8581: Add support for
- Epson rx8571 RTC
-In-Reply-To: <1563200245-30331-5-git-send-email-biju.das@bp.renesas.com>
-References: <1563200245-30331-1-git-send-email-biju.das@bp.renesas.com>
-	<1563200245-30331-5-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <20190716202212.GB9557@amd>
+Date: Tue, 16 Jul 2019 22:26:02 +0200
+Subject: [cip-dev] [PATCH 4.19.y-cip 1/6] arm64: dts: renesas:
+ r8a774c0-cat874: Add LEDs support
+In-Reply-To: <1563200930-39297-2-git-send-email-biju.das@bp.renesas.com>
+References: <1563200930-39297-1-git-send-email-biju.das@bp.renesas.com>
+	<1563200930-39297-2-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <20190716202602.GC9557@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi!
 
-> +static int rx85x1_nvram_read(void *priv, unsigned int offset, void *val,
-> +			     size_t bytes)
-> +{
-> +	struct rx8581 *rx8581 = priv;
-> +	unsigned int tmp_val;
-> +	int ret;
+> index f08778e..af396bb 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
+> @@ -22,6 +22,30 @@
+>  		stdout-path = "serial0:115200n8";
+>  	};
+>  
+> +	leds {
+> +		compatible = "gpio-leds";
 > +
-> +	ret = regmap_read(rx8581->regmap, RX8581_REG_RAM, &tmp_val);
-> +	(*(unsigned char *)val) = (unsigned char) tmp_val;
+> +		led0 {
+> +			gpios = <&gpio5 19 GPIO_ACTIVE_HIGH>;
+> +			label = "LED0";
+> +		};
 > +
-> +	return ret;
-> +}
+> +		led1 {
+> +			gpios = <&gpio3 14 GPIO_ACTIVE_HIGH>;
+> +			label = "LED1";
+> +		};
 > +
-> +static int rx85x1_nvram_write(void *priv, unsigned int offset, void *val,
-> +			      size_t bytes)
-> +{
-> +	struct rx8581 *rx8581 = priv;
-> +	unsigned char tmp_val;
+> +		led2 {
+> +			gpios = <&gpio4 10 GPIO_ACTIVE_HIGH>;
+> +			label = "LED2";
+> +		};
 > +
-> +	tmp_val = *((unsigned char *)val);
-> +	return regmap_write(rx8581->regmap, RX8581_REG_RAM,
-> +				(unsigned int)tmp_val);
-> +}
+> +		led3 {
+> +			gpios = <&gpio6 4 GPIO_ACTIVE_HIGH>;
+> +			label = "LED3";
+> +		};
+> +	};
 
-I see that 85x1 has single byte of RAM. I'd still expect return of
-error in case of offset != 0 or bytes != 1.
-
-Probably best done in mainline first...
+With my LED maintainer hat on... these are not exactly useful LED
+names. Do they have any fixed meaning? Are they labeled on the board?
+What color are they?
 
 Best regards,
 								Pavel
@@ -51,4 +57,4 @@ Name: signature.asc
 Type: application/pgp-signature
 Size: 181 bytes
 Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190716/22b19a6e/attachment.sig>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190716/6f76ff3f/attachment.sig>
