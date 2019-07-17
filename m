@@ -1,61 +1,78 @@
-From: wagi@monom.org (Daniel Wagner)
-Date: Wed, 17 Jul 2019 08:46:22 +0200
-Subject: [cip-dev] [ANNOUNCE] 4.4.176-cip31-rt23
-In-Reply-To: <20190716201431.GA9557@amd>
-References: <20190329110611.1B897500722@mail.monom.org>
-	<a86d4f19-790d-58ab-94b4-523a759d87b4@siemens.com>
-	<20190715134336.GB16268@amd>
-	<58c8af26-00ce-827d-999f-ccd545a0d974@monom.org>
-	<20190716201431.GA9557@amd>
-Message-ID: <5ffa53b1-b3e4-f99d-6289-1bae9364af3f@monom.org>
+From: biju.das@bp.renesas.com (Biju Das)
+Date: Wed, 17 Jul 2019 06:59:45 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 1/6] arm64: dts: renesas:
+ r8a774c0-cat874: Add LEDs support
+In-Reply-To: <20190716202602.GC9557@amd>
+References: <1563200930-39297-1-git-send-email-biju.das@bp.renesas.com>
+	<1563200930-39297-2-git-send-email-biju.das@bp.renesas.com>
+	<20190716202602.GC9557@amd>
+Message-ID: <OSBPR01MB2103E19170D82D9CC3B651D7B8C90@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Good Morning,
+Hi Pavel,
 
-On 7/16/19 10:14 PM, Pavel Machek wrote:
+Thanks for the feedback.
+
+> Subject: Re: [cip-dev] [PATCH 4.19.y-cip 1/6] arm64: dts: renesas: r8a774c0-
+> cat874: Add LEDs support
+> 
 > Hi!
 > 
->>>> Is there a chance to update 4.4-rt based on Daniel' 4.4.179-rt181 release, but
->>>> then to 4.4.182 in order to have SACK fixes in?
->>>
->>> Do you want 4.4.184, too, which fixes the SACK fixes? :-).
->>>
->>> I'm up-to 4.4.179-rt181-cip32.
->>>
->>> If I attempt to move forward to 4.4.181-cip3, I get some conflicts in
->>> rather core files.
->>>
->>> Auto-merging kernel/cpu.c
->>> CONFLICT (content): Merge conflict in kernel/cpu.c
->>> Auto-merging include/linux/sched.h
->>> CONFLICT (content): Merge conflict in include/linux/sched.h
->>> Auto-merging arch/x86/include/asm/thread_info.h
->>> CONFLICT (content): Merge conflict in
->>>
->>> I can attempt something, but I'd feel safer waiting for -stable-rt to
->>> solve it for me.
->>
->> FWIW, I am updating the stable-rt tree right now. As noted there are a
->> couple of merge conflicts ahead. Right now I am testing the result of the
->> v4.4.180 merge. So far all looks good and now I am waiting for the test
->> results from the CI system. After that I keep merging.
+> > index f08778e..af396bb 100644
+> > --- a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
+> > +++ b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
+> > @@ -22,6 +22,30 @@
+> >  		stdout-path = "serial0:115200n8";
+> >  	};
+> >
+> > +	leds {
+> > +		compatible = "gpio-leds";
+> > +
+> > +		led0 {
+> > +			gpios = <&gpio5 19 GPIO_ACTIVE_HIGH>;
+> > +			label = "LED0";
+> > +		};
+> > +
+> > +		led1 {
+> > +			gpios = <&gpio3 14 GPIO_ACTIVE_HIGH>;
+> > +			label = "LED1";
+> > +		};
+> > +
+> > +		led2 {
+> > +			gpios = <&gpio4 10 GPIO_ACTIVE_HIGH>;
+> > +			label = "LED2";
+> > +		};
+> > +
+> > +		led3 {
+> > +			gpios = <&gpio6 4 GPIO_ACTIVE_HIGH>;
+> > +			label = "LED3";
+> > +		};
+> > +	};
 > 
-> Thanks for good news. You have privat CI system, right?
+> With my LED maintainer hat on... these are not exactly useful LED names. Do
+> they have any fixed meaning? Are they labeled on the board?
+> What color are they?
 
-I got a private one at home for development and I am also using the one 
-sponsored by LinuxFoundation:
+It is labelled as LED0 label on the board and green colour. 
 
-	https://ci-rt.linutronix.de/RT-Test/
+Basically this board is as per 96boards CE specification
+System and User LEDs
+The following LEDs shall be present on the board.
+The LEDs shall be of the specified size, color and location.
+The User LEDs shall be directly programmable from the SoC.
+1. WiFi activity LED Yellow Type: 0603 SMD
+2. Bluetooth activity LED Blue Type: 0603 SMD
+3. User LEDs x4 Green Type: 0603 SMD
+Other LEDs and UI interfaces are optional.
 
-I used to push the CIP version for testing to this CI system as well 
-(see cip-4.4.y-rt branch). If you are interested to get access to the CI 
-system you have to talk to Anna-Maria.
+As a LED maintainer, What is your recommendation for mainline?
 
-> If sources are available somewhere, I can try to help with testing.
+1) label = "LED0"; --> based on the label on the board
 
-I've just uploaded the v4.4.180-rt182 version. Announcement is coming 
-later. I continue with the merging. I keep you updated.
+2) label = " gren:LED0 "; --> based on the colour and label on the board.
 
-Thanks,
-Daniel
+3) label = " green:user1";--> based on the colour and label as per 96 boards CE specification.
+
+Regards,
+Biju
