@@ -1,206 +1,289 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Wed, 17 Jul 2019 18:58:37 +0100
-Subject: [cip-dev] [cip-kernel-sec][Quickstart v2] docs: add a
- quickstart with practical information
-In-Reply-To: <20190711060415.17484-2-daniel.sangorrin@toshiba.co.jp>
-References: <Quickstart fixes>
-	<20190711060415.17484-1-daniel.sangorrin@toshiba.co.jp>
-	<20190711060415.17484-2-daniel.sangorrin@toshiba.co.jp>
-Message-ID: <3d59654fa1c9a78d8c0a869b41606f93ae06b79b.camel@codethink.co.uk>
+From: gitlab@mg.gitlab.com (Ben Hutchings)
+Date: Wed, 17 Jul 2019 18:01:31 +0000
+Subject: [cip-dev] [Git][cip-project/cip-kernel/cip-kernel-sec][master] 2
+ commits: report_affected: add support for reporting on tags
+Message-ID: <5d2f627ba019e_31173fe27c320840268599@sidekiq-asap-02-sv-gprd.mail>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Thu, 2019-07-11 at 15:04 +0900, Daniel Sangorrin wrote:
-> Although the README already contains all the information
-> that users may need, there are some bits of know-how that
-> are better expressed through a step-by-step quickstart or
-> tutorial. This files tries to fill that gap.
->
-> Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-> ---
->  QUICKSTART.md | 132 ++++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 132 insertions(+)
->  create mode 100644 QUICKSTART.md
-> 
-> diff --git a/QUICKSTART.md b/QUICKSTART.md
-> new file mode 100644
-> index 0000000..c79af41
-> --- /dev/null
-> +++ b/QUICKSTART.md
-> @@ -0,0 +1,132 @@
-> +# Quickstart
-> +
-> +## Overview
-> +
-> +This project tracks the status of CVEs in mainline and stable kernels. Each CVE is described in YAML format that includes data such as:
-> +
-> +```
-> +$ cat issues/CVE-2019-1999.yml
 
-This seems to be in the wrong place, as the command to clone the repo
-is further down.  (Though, I wonder whether it's really necessary to
-say how to clone a git repo in the documentation in every repo...)
 
-> +description: 'binder: fix race between munmap() and direct reclaim'
-> +references:
-> +- https://source.android.com/security/bulletin/2019-02-01
-> +comments:
-> +  Debian-bwh: |-
-> +    Introduced in 4.14 by f2517eb76f1f "android: binder: Add global lru
-> +    shrinker to binder".  Backports of the fix to stable have incorrect
-> +    metadata.
-> +  bwh: Backports to stable have incorrect metadata
-> +introduced-by:
-> +  mainline: [f2517eb76f1f2f7f89761f9db2b202e89931738c]
-> +fixed-by:
-> +  linux-4.14.y: [33c6b9ca70a8b066a613e2a3d0331ae8f82aa31a]
-> +  linux-4.19.y: [6bf7d3c5c0c5dad650bfc4345ed553c18b69d59e]
-> +  linux-5.0.y: [bbb19ca082ce27ce60ca65be016a951806ea947c]
-> +  mainline: [5cec2d2e5839f9c0fec319c523a911e0a7fd299f]
-> +```
-> +
-> +## Quickstart
+Ben Hutchings pushed to branch master at cip-project / cip-kernel / cip-kernel-sec
 
-This is the same as the document title, which seems wrong.  Are the
-sub-headings needed at all?
 
-> +Clone `cip-kernel-sec` and install its dependencies:
-> +
-> +```
-> +$ git clone https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec
-> +$ cd cip-kernel-sec/
-> +$ sudo apt install python3-yaml python3-html5lib python3-cherrypy3 python3-jinja2
-> +```
-> +
-> +Prepare kernel remote repositories according to `conf/remotes.yml`:
+Commits:
+40329eb5 by Daniel Sangorrin at 2019-07-17T17:30:41Z
+report_affected: add support for reporting on tags
 
-That should be "repository with remotes", shouldn't it?
+Reporting on tags is useful for product engineers that
+have shipped a kernel with a specific tag and need to know
+which issues affect their product after some time.
 
-> +```
-> +$ ./scripts/prepare_remotes.py
-> +```
+Examples:
+$ ./scripts/report_affected.py v4.4 v4.4.107 v4.4.181-cip33
+$ cd ../kernel
+$ git tag myproduct-v1 0f13d9b4d0efa9e87381717c113df57718bc92d6
+$ cd ../cip-kernel-sec
+$ ./scripts/report_affected.py linux-4.19.y-cip:myproduct-v1 v4.19.50-cip3
 
-A ./ prefix is needed to run programs in the current directory because
-the shell looks in $PATH if there's no "/" in the command name.  Since
-we are running programs under scripts/ that doesn't apply and we don't
-need the extra ./.  So please drop that from all the command lines.
+Signed-off-by: Daniel Sangorrin &lt;daniel.sangorrin at toshiba.co.jp&gt;
+Signed-off-by: Ben Hutchings &lt;ben.hutchings at codethink.co.uk&gt;
 
-> +Alternatively, you can do that manually:
-> +
-> +```
-> +$ mkdir ../kernel
-> +$ cd ../kernel
-> +$ git remote add torvalds https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-> +$ git remote add stable https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
-> +$ git remote add cip https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-> +$ cd ../cip-kernel-sec
-> +```
+- - - - -
+d202dc5b by Daniel Sangorrin at 2019-07-17T17:30:41Z
+report_affected: add show-description option
 
-"Alternatively, do it the long way" seems out of scope for a
-"quickstart" document.
+Rather than looking up each issue file, I would like
+to have an overview of what each CVE ID means.
 
-> +Download CVE information from [Debian] (https://salsa.debian.org/kernel-team/kernel-sec.git), [Ubuntu]  (https://git.launchpad.net/ubuntu-cve-tracker) and Stable:
+Example:
+$ ./scripts/report_affected.py --show-description linux-4.4.y-cip
 
-This should probably say something like "Download new CVE information
-...".  Otherwise someone might infer that none of that information is
-already present in kernel-sec.
+Signed-off-by: Daniel Sangorrin &lt;daniel.sangorrin at toshiba.co.jp&gt;
+Signed-off-by: Ben Hutchings &lt;ben.hutchings at codethink.co.uk&gt;
 
-> +```
-> +
-> +$ ./scripts/import_debian.py
-> +	-> import/debian
-> +$ ./scripts/import_ubuntu.py
-> +	-> import/ubuntu
-> +$ ./scripts/import_stable.py
-> +	-> import/stable_branches.yml
-> +```
+- - - - -
 
-That's rather misleading - the main purpose of the scripts is of course
-to update issues/*.yml, and the import/ directory is just a cache.
 
-> +Check issues that affect a linux-cip branch:
-> +
-> +```
-> +$ ./scripts/report_affected.py linux-4.4.y
-> +```
-> +
-> +You can show a short description on your report:
-> +
-> +```
-> +$ ./scripts/report_affected.py --show-description linux-4.4.y
-> +```
-> +
-> +Check issues that affect a tag:
-> +
-> +```
-> +$ ./scripts/report_affected.py v4.4.181-cip33
-> +```
-> +
-> +Browse kernel branches and issues interactively:
-> +
-> +```
-> +$ ./scripts/webview.py
-> +$ firefox http://localhost:8080
-> +```
+4 changed files:
 
-This example doesn't work.  Either webview.py has to be run in the
-background with "&" (in which case, ^C won't work) or the second
-command has to be run in another shell.  Realistically the reader
-already has the browser open and is using it to read this document, so
-you can put a link to this URL outside of the literal commands.
+- README.md
+- conf/branches.yml
+- scripts/kernel_sec/branch.py
+- scripts/report_affected.py
 
-> +[Note] Use Ctr-c to stop the `webview.py` script.
 
-Please use a more standard notation for the keystroke, either "Ctrl-C"
-or "^C".
+Changes:
 
-> +## Kernel maintainer workflow
+=====================================
+README.md
+=====================================
+@@ -41,7 +41,8 @@ current or previous year or that are already tracked here.
+ stable and other configured branches, by reading the git commit logs.
+ 
+ * `scripts/report_affected.py` - report which issues affect the
+-specified branches, or all active branches.
++specified branches, or all active branches. You can use --show-description
++to obtain a short description for each CVE ID.
+ 
+ * `scripts/validate.py` - validate all issue files against the
+ schema.
+@@ -72,6 +73,7 @@ keys:
+ * `base_ver`: Stable version that the branch is based on, e.g.
+   "4.4". This needs to be quoted so that it's a string not a
+   number.
++* `tag_regexp`: A regular expression that matches tags on a branch.
+ 
+ ### Remotes
+ 
 
-I don't think this section is "quickstart" material.
 
-> +Import or update the latest CVE information:
-> +
-> +```
-> +$ ./scripts/import_debian.py
-> +$ ./scripts/import_ubuntu.py
-> +$ ./scripts/import_stable.py
-> +```
-> +
-> +Edit by hand the newly created issues if you see that some imported information is incorrect or there is missing information:
-> +
-> +```
-> +$ vi issues/CVE-xx.yml
-> +```
-> +
-> +Validate the issue files against the YAML schema.
-> +
-> +```
-> +$ ./scripts/validate.py
-> +```
-> +
-> +YAML allows the same thing to be written in different ways, e.g. bracketed vs bulleted lists. Use `cleanup.py` to make the syntax and ordering of items consistent with the importers, to reduce "noise" in diffs:
-> +
-> +```
-> +$ ./scripts/cleanup.py
-> +```
-> +
-> +Check if the current issues:
+=====================================
+conf/branches.yml
+=====================================
+@@ -2,7 +2,9 @@
+   base_ver: "4.4"
+   git_remote: cip
+   git_name: linux-4.4.y-cip
++  tag_regexp: '^v4\.4\.\d+-cip\d+$'
+ - short_name: linux-4.19.y-cip
+   base_ver: "4.19"
+   git_remote: cip
+   git_name: linux-4.19.y-cip
++  tag_regexp: '^v4\.19\.\d+-cip\d+$'
 
-If the current issues do what?
 
-Ben.
+=====================================
+scripts/kernel_sec/branch.py
+=====================================
+@@ -23,11 +23,13 @@ from . import version
+ 
+ def get_base_ver_stable_branch(base_ver):
+     branch_name = 'linux-%s.y' % base_ver
++    esc_base_ver = re.escape(base_ver)
+     return {
+         'short_name': branch_name,
+         'git_remote': 'stable',
+         'git_name': branch_name,
+-        'base_ver': base_ver
++        'base_ver': base_ver,
++        'tag_regexp' : r'(^v%s$|^v%s\.\d+$)' % (esc_base_ver, esc_base_ver)
+         }
+ 
+ 
+@@ -141,7 +143,7 @@ def get_sort_key(branch):
+     return version.get_sort_key(base_ver)
+ 
+ 
+-def _get_commits(git_repo, end, start=None):
++def iter_rev_list(git_repo, end, start=None):
+     if start:
+         list_expr = '%s..%s' % (start, end)
+     else:
+@@ -170,7 +172,7 @@ class CommitBranchMap:
+                                  branch['git_name'])
+             else:
+                 end = 'v' + branch['base_ver']
+-            for commit in _get_commits(git_repo, end, start):
++            for commit in iter_rev_list(git_repo, end, start):
+                 self._commit_sort_key[commit] \
+                     = self._branch_sort_key[branch_name]
+             start = end
 
-> +```
-> +$ ./scripts/report_affected.py
-> +```
-> +
-> +## Changelog
-> +
-> +- 20190614: First version <daniel.sangorrin@toshiba.co.jp>
-> +- 20190618: Add workflow information provided by Ben
-> +- 20190711: Add tag reporting <daniel.sangorrin@toshiba.co.jp>
-> +
+
+=====================================
+scripts/report_affected.py
+=====================================
+@@ -9,28 +9,53 @@
+ # Report issues affecting each stable branch.
+ 
+ import argparse
++import copy
+ import subprocess
++import re
+ 
+ import kernel_sec.branch
+ import kernel_sec.issue
+ import kernel_sec.version
+ 
+ 
+-def main(git_repo, remotes,
+-         only_fixed_upstream, include_ignored, *branch_names):
++def main(git_repo, remotes, only_fixed_upstream,
++         include_ignored, show_description, *branch_names):
+     live_branches = kernel_sec.branch.get_live_branches()
+     if branch_names:
+         branches = []
+         for branch_name in branch_names:
++            tag = None
+             if branch_name[0].isdigit():
+                 # 4.4 is mapped to linux-4.4.y
+                 name = 'linux-%s.y' % branch_name
++            elif branch_name[0] == 'v':
++                # an official tag, e.g. v4.4.92-cip11
++                # infer branch from tag (regexp's must be specific)
++                for branch in live_branches:
++                    if 'tag_regexp' not in branch:
++                        # no tag_regexp defined, or mainline
++                        continue
++
++                    # predefined in branches.yml or a stable branch
++                    if re.match(branch['tag_regexp'], branch_name):
++                        tag = branch_name
++                        name = branch['short_name']
++                        break
++                else:
++                    raise ValueError('Failed to match tag %r' % branch_name)
++            elif ':' in branch_name:
++                # a possibly custom tag, e.g. linux-4.19.y-cip:myproduct-v1
++                name, tag = branch_name.split(':', 1)
+             else:
+                 name = branch_name
+ 
+             for branch in live_branches:
+                 if branch['short_name'] == name:
+-                    branches.append(branch)
++                    # there could be multiple tags for the same branch
++                    branch_copy = copy.deepcopy(branch)
++                    if tag:
++                        branch_copy['tag'] = tag
++                    branches.append(branch_copy)
+                     break
+             else:
+                 msg = "Branch %s could not be found" % branch_name
+@@ -45,6 +70,18 @@ def main(git_repo, remotes,
+ 
+     c_b_map = kernel_sec.branch.CommitBranchMap(git_repo, remotes, branches)
+ 
++    # cache tag commits and set full_name to show the tag
++    tag_commits = {}
++    for branch in branches:
++        if 'tag' in branch:
++            start = 'v' + branch['base_ver']
++            end = branch['tag']
++            tag_commits[end] = set(
++                kernel_sec.branch.iter_rev_list(git_repo, end, start))
++            branch['full_name'] = ':'.join([branch['short_name'], end])
++        else:
++            branch['full_name'] = branch['short_name']
++
+     branch_issues = {}
+     issues = set(kernel_sec.issue.get_list())
+ 
+@@ -65,15 +102,32 @@ def main(git_repo, remotes,
+             if not include_ignored and ignore.get(branch_name):
+                 continue
+ 
++            # Check if the branch is affected. If not and the issue was fixed
++            # on that branch, then make sure the tag contains that fix
+             if kernel_sec.issue.affects_branch(
+                     issue, branch, c_b_map.is_commit_in_branch):
+-                branch_issues.setdefault(branch_name, []).append(cve_id)
++                branch_issues.setdefault(
++                    branch['full_name'], []).append(cve_id)
++            elif 'tag' in branch and fixed:
++                if fixed.get(branch_name, 'never') == 'never':
++                    continue
++                for commit in fixed[branch_name]:
++                    if commit not in tag_commits[branch['tag']]:
++                        branch_issues.setdefault(
++                            branch['full_name'], []).append(cve_id)
++                        break
+ 
+     for branch in branches:
+-        branch_name = branch['short_name']
+-        print('%s:' % branch_name,
+-              *sorted(branch_issues.get(branch_name, []),
+-                      key=kernel_sec.issue.get_id_sort_key))
++        sorted_cve_ids = sorted(
++            branch_issues.get(branch['full_name'], []),
++            key=kernel_sec.issue.get_id_sort_key)
++        if show_description:
++            print('%s:' % branch['full_name'])
++            for cve_id in sorted_cve_ids:
++                print(cve_id, '=>',
++                      kernel_sec.issue.load(cve_id).get('description', 'None'))
++        else:
++            print('%s:' % branch['full_name'], *sorted_cve_ids)
+ 
+ 
+ if __name__ == '__main__':
+@@ -102,15 +156,20 @@ if __name__ == '__main__':
+     parser.add_argument('--include-ignored',
+                         action='store_true',
+                         help='include issues that have been marked as ignored')
++    parser.add_argument('--show-description',
++                        action='store_true',
++                        help='show the issue description')
+     parser.add_argument('branches',
+                         nargs='*',
+-                        help=('specific branch to report on '
+-                              '(default: all active branches)'),
+-                        metavar='BRANCH')
++                        help=('specific branch[:tag] or stable tag to '
++                              'report on (default: all active branches). '
++                              'e.g. linux-4.14.y linux-4.4.y:v4.4.107 '
++                              'v4.4.181-cip33 linux-4.19.y-cip:myproduct-v33'),
++                        metavar='[BRANCH[:TAG]|TAG]')
+     args = parser.parse_args()
+     remotes = kernel_sec.branch.get_remotes(args.remote_name,
+                                             mainline=args.mainline_remote_name,
+                                             stable=args.stable_remote_name)
+     kernel_sec.branch.check_git_repo(args.git_repo, remotes)
+-    main(args.git_repo, remotes,
+-         args.only_fixed_upstream, args.include_ignored, *args.branches)
++    main(args.git_repo, remotes, args.only_fixed_upstream,
++         args.include_ignored, args.show_description, *args.branches)
+
+
+
+View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/compare/ddf0f91c8b596022cbb40fc7b75f978420b96451...d202dc5b8e2a3b2e9a8c196891b8667d964a662f
+
 -- 
-Ben Hutchings, Software Developer                         Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/compare/ddf0f91c8b596022cbb40fc7b75f978420b96451...d202dc5b8e2a3b2e9a8c196891b8667d964a662f
+You're receiving this email because of your account on gitlab.com.
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190717/a195abe2/attachment-0001.html>
