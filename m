@@ -1,46 +1,32 @@
-From: pavel@denx.de (Pavel Machek)
-Date: Wed, 17 Jul 2019 14:16:40 +0200
-Subject: [cip-dev] [ANNOUNCE] 4.4.176-cip31-rt23
-In-Reply-To: <a86d4f19-790d-58ab-94b4-523a759d87b4@siemens.com>
-References: <20190329110611.1B897500722@mail.monom.org>
-	<a86d4f19-790d-58ab-94b4-523a759d87b4@siemens.com>
-Message-ID: <20190717121640.GB10101@amd>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Wed, 17 Jul 2019 18:19:51 +0100
+Subject: [cip-dev] [cip-kernel-sec][RESEND v3] report_affected: add
+ support for reporting on tags
+In-Reply-To: <20190711052624.8422-2-daniel.sangorrin@toshiba.co.jp>
+References: <20190711052624.8422-1-daniel.sangorrin@toshiba.co.jp>
+	<20190711052624.8422-2-daniel.sangorrin@toshiba.co.jp>
+Message-ID: <a2db5f348e834b88a4b1c86c3129717efc321f07.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi!
-
-> > I'm pleased to announce the 4.4.176-cip31-rt23 stable release.
-> > 
-> > This release is just an update to the new stable 4.4.176-cip31 version
-> > and no RT specific changes have been made.
-> > 
-> > You can get this release via the git tree at:
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-> > 
-> >   branch: linux-4.4.y-cip-rt
-> >   Head SHA1: b51a171ad762ba4a78b0ed0c7ec83fb9f6fb135f
-> > 
+On Thu, 2019-07-11 at 14:26 +0900, Daniel Sangorrin wrote:
+> Reporting on tags is useful for product engineers that
+> have shipped a kernel with a specific tag and need to know
+> which issues affect their product after some time.
 > 
-> Is there a chance to update 4.4-rt based on Daniel' 4.4.179-rt181 release, but
-> then to 4.4.182 in order to have SACK fixes in?
-...
-> PS: Please make it -rt24 then. ;)
+> Examples:
+> $ ./scripts/report_affected.py v4.4 v4.4.107 v4.4.181-cip33
+> $ cd ../kernel
+> $ git tag myproduct-v1 0f13d9b4d0efa9e87381717c113df57718bc92d6
+> $ cd ../cip-kernel-sec
+> $ ./scripts/report_affected.py linux-4.19.y-cip:myproduct-v1 v4.19.50-cip3
+[...]
 
-As -stable-rt was updated (thanks, Daniel!) I now have something. I
-pushed the results to the git, I'll run a bit of tests and then we are
-ready for release...
+Applied, thanks.
 
-Best regards,
-								Pavel
+Ben.
+
 -- 
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 181 bytes
-Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190717/90d8e8d3/attachment.sig>
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
