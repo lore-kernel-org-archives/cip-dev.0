@@ -1,40 +1,61 @@
-From: pavel@denx.de (Pavel Machek)
-Date: Tue, 16 Jul 2019 23:03:50 +0200
-Subject: [cip-dev] [PATCH 4.4.y-cip 03/10] rtc: pcf85363: set time
- accurately
-In-Reply-To: <1563264921-42973-4-git-send-email-biju.das@bp.renesas.com>
-References: <1563264921-42973-1-git-send-email-biju.das@bp.renesas.com>
-	<1563264921-42973-4-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <20190716210350.GB14181@amd>
+From: biju.das@bp.renesas.com (Biju Das)
+Date: Wed, 17 Jul 2019 06:46:15 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 4/6] rtc: rx8581: Add support for
+ Epson rx8571 RTC
+In-Reply-To: <20190716202212.GB9557@amd>
+References: <1563200245-30331-1-git-send-email-biju.das@bp.renesas.com>
+	<1563200245-30331-5-git-send-email-biju.das@bp.renesas.com>
+	<20190716202212.GB9557@amd>
+Message-ID: <OSBPR01MB2103875841FF3739EE002080B8C90@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Tue 2019-07-16 09:15:14, Biju Das wrote:
-> commit 188306ac9536ec47674ffa9dd330f69927679aeb upstream.
+Hi Pavel,
+
+Thanks for the feedback.
+
+> Subject: Re: [cip-dev] [PATCH 4.19.y-cip 4/6] rtc: rx8581: Add support for
+> Epson rx8571 RTC
 > 
-> As per 8.2.6 Setting and reading the time in RTC mode, first stop the clok,
-> then reset it before setting the date and time registers. Finally, start
-> the clock.
+> Hi!
 > 
-> This uses register address wrap around from 0x2f to 0x00 for
-> efficiency.
+> > +static int rx85x1_nvram_read(void *priv, unsigned int offset, void *val,
+> > +			     size_t bytes)
+> > +{
+> > +	struct rx8581 *rx8581 = priv;
+> > +	unsigned int tmp_val;
+> > +	int ret;
+> > +
+> > +	ret = regmap_read(rx8581->regmap, RX8581_REG_RAM, &tmp_val);
+> > +	(*(unsigned char *)val) = (unsigned char) tmp_val;
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static int rx85x1_nvram_write(void *priv, unsigned int offset, void *val,
+> > +			      size_t bytes)
+> > +{
+> > +	struct rx8581 *rx8581 = priv;
+> > +	unsigned char tmp_val;
+> > +
+> > +	tmp_val = *((unsigned char *)val);
+> > +	return regmap_write(rx8581->regmap, RX8581_REG_RAM,
+> > +				(unsigned int)tmp_val);
+> > +}
+> 
+> I see that 85x1 has single byte of RAM. I'd still expect return of error in case
+> of offset != 0 or bytes != 1.
 
-How does wrap around work? AFAICT it is supposed to have ram at 0x40.
+As per the discussion we had in ML. Any validation to be done at nvmem framework level.
 
-Does it really provide increased efficiency (given regmap layer in
-between) and will such trick cause problems in future? If regmap is
-not aware of register mirrors it might get confused and provide stale
-values, for example...
+> Probably best done in mainline first...
 
-Best regards,
-								Pavel
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 181 bytes
-Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190716/f24183ef/attachment.sig>
+We need to fix this issue at nvmem frame work level. Which involves API changes.
+Please see the mail discussion related to this.
+
+https://patchwork.kernel.org/patch/10723299/
+
+May be at some point, we will have a fix for this issues.
+
+regards,
+Biju
