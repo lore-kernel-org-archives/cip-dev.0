@@ -1,12 +1,12 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Wed, 17 Jul 2019 07:40:59 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 2/6] arm64: dts: renesas:
- r8a774c0-cat874: Add RWDT support
-In-Reply-To: <20190716202735.GD9557@amd>
-References: <1563200930-39297-1-git-send-email-biju.das@bp.renesas.com>
-	<1563200930-39297-3-git-send-email-biju.das@bp.renesas.com>
-	<20190716202735.GD9557@amd>
-Message-ID: <OSBPR01MB2103A1E0EA93551375549E70B8C90@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+Date: Wed, 17 Jul 2019 07:47:28 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 03/10] rtc: pcf85363: set time
+ accurately
+In-Reply-To: <20190716210350.GB14181@amd>
+References: <1563264921-42973-1-git-send-email-biju.das@bp.renesas.com>
+	<1563264921-42973-4-git-send-email-biju.das@bp.renesas.com>
+	<20190716210350.GB14181@amd>
+Message-ID: <OSBPR01MB2103D4ED93C66F6DB47539B8B8C90@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
@@ -14,52 +14,41 @@ Hi Pavel,
 
 Thanks for the feedback.
 
-> Subject: Re: [cip-dev] [PATCH 4.19.y-cip 2/6] arm64: dts: renesas: r8a774c0-
-> cat874: Add RWDT support
+> -----Original Message-----
+> From: Pavel Machek <pavel@denx.de>
+> Sent: Tuesday, July 16, 2019 10:04 PM
+> To: Biju Das <biju.das@bp.renesas.com>
+> Cc: cip-dev at lists.cip-project.org
+> Subject: Re: [cip-dev] [PATCH 4.4.y-cip 03/10] rtc: pcf85363: set time
+> accurately
 > 
-> On Mon 2019-07-15 15:28:46, Biju Das wrote:
-> > From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> On Tue 2019-07-16 09:15:14, Biju Das wrote:
+> > commit 188306ac9536ec47674ffa9dd330f69927679aeb upstream.
 > >
-> > commit 79223ca1f57776d2770da9561c26cc2f2dd42205 upstream.
+> > As per 8.2.6 Setting and reading the time in RTC mode, first stop the
+> > clok, then reset it before setting the date and time registers.
+> > Finally, start the clock.
 > >
-> > Enable RWDT and use 60 seconds as default timeout.
+> > This uses register address wrap around from 0x2f to 0x00 for
+> > efficiency.
+>
+> How does wrap around work? AFAICT it is supposed to have ram at 0x40.
 > 
-> So this will reboot machine if userspace does not ping it within 60 seconds by
-> default?
-
-Yes,  if you enable watchdog  in user space and there is no ping activity for 60 sec.
-We can verify this by using the below  command
-
-cat > /dev/watchdog0 & for i in $(seq 100); do echo $i; sleep 1; done
-
-> Will that break user configurations that worked up till now, but do not
-> contain watchdog support?
-> 
-> Do we care?
-> 
-
- As per  [1]
-- timeout-sec : Contains the watchdog timeout in seconds
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt?h=v5.2
-
-If time-out is not specified, then it uses the default timeout mentioned by the driver.
+Please see the document [1]  and [2] section 8, that have the details related to wrap around.
+[1] https://www.nxp.com/docs/en/data-sheet/PCF85363A.pdf
+[2] https://www.nxp.com/docs/en/data-sheet/PCF85263A.pdf
 
 Regards,
 Biju
+
+> Does it really provide increased efficiency (given regmap layer in
+> between) and will such trick cause problems in future? If regmap is not
+> aware of register mirrors it might get confused and provide stale values, for
+> example...
 > 
-> > @@ -137,6 +137,11 @@
-> >  	};
-> >  };
-> >
-> > +&rwdt {
-> > +	timeout-sec = <60>;
-> > +	status = "okay";
-> > +};
-> > +
-> >  &scif2 {
-> >  	pinctrl-0 = <&scif2_pins>;
-> >  	pinctrl-names = "default";
-> 
+> Best regards,
+> 								Pavel
 > --
-> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+> (english) http://www.livejournal.com/~pavelmachek
+> (cesky, pictures)
+> http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
