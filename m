@@ -1,74 +1,68 @@
-From: gitlab@mg.gitlab.com (Ben Hutchings)
-Date: Wed, 17 Jul 2019 22:24:57 +0000
-Subject: [cip-dev] [Git][cip-project/cip-kernel/cip-kernel-sec][master] Mark
- some issues to be ignored for 4.4
-Message-ID: <5d2fa0393cd9c_1d083ff8665ec9ac1203612@sidekiq-asap-01-sv-gprd.mail>
+From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
+Date: Wed, 17 Jul 2019 23:20:29 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 05/10] rtc: pcf85363: Add support
+	for	NXP pcf85263 rtc
+In-Reply-To: <OSBPR01MB2103ED72F24A325F68299855B8C90@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+References: <1563264921-42973-1-git-send-email-biju.das@bp.renesas.com>
+	<1563264921-42973-6-git-send-email-biju.das@bp.renesas.com>
+	<OSAPR01MB3234ABFCA10DAC2E6D74289692C90@OSAPR01MB3234.jpnprd01.prod.outlook.com>
+	<OSBPR01MB2103ED72F24A325F68299855B8C90@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+Message-ID: <OSAPR01MB3234A60856510B217AFE040992C90@OSAPR01MB3234.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
+Hi,
 
+> -----Original Message-----
+> From: Biju Das [mailto:biju.das at bp.renesas.com]
+> Sent: Wednesday, July 17, 2019 4:16 PM
+> To: iwamatsu nobuhiro(?? ?? ????????)
+> <nobuhiro1.iwamatsu@toshiba.co.jp>; cip-dev at lists.cip-project.org
+> Subject: RE: [cip-dev] [PATCH 4.4.y-cip 05/10] rtc: pcf85363: Add support
+> for NXP pcf85263 rtc
+> 
+> Hi Nobuhiro,
+> 
+> Thanks for the feedback.
+> 
+> > Subject: RE: [cip-dev] [PATCH 4.4.y-cip 05/10] rtc: pcf85363: Add
+> > support for NXP pcf85263 rtc
+> >
+> > Hi,
+> >
+> > > -----Original Message-----
+> > > From: cip-dev-bounces at lists.cip-project.org
+> > > [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Biju Das
+> > > Sent: Tuesday, July 16, 2019 5:15 PM
+> > > To: cip-dev at lists.cip-project.org
+> > > Cc: Biju Das <biju.das@bp.renesas.com>
+> > > Subject: [cip-dev] [PATCH 4.4.y-cip 05/10] rtc: pcf85363: Add
+> > > support for NXP pcf85263 rtc
+> > >
+> > > commit fc979933bcf162595b6004d0de4effb64c323152 upstream.
+> > >
+> > > Add support for NXP pcf85263 real-time clock. pcf85263 rtc is
+> > > compatible with pcf85363,except that pcf85363 has additional 64
+> > > bytes of
+> > RAM.
+> > >
+> > > 1 byte of nvmem is supported and exposed in sysfs (# is the instance
+> > > number,starting with 0): /sys/bus/nvmem/devices/pcf85x63-#/nvmem
+> > >
+> > > Signed-off-by: Biju Das <biju.das@bp.renesas.com> [ Removed rtc
+> > > nvmem support. Added I2C ID table for rtc-pcf85263 ]
+> >
+> > You've deleted Alexandre's Signed-off-by tag from original patch.
+> 
+> Thanks for pointing this out. It is a mistake.  Can you please fix this
+> while applying to the tree?
+> 
+> Or
+> 
+> Do you want me to send another patch fixing this? Please let me know.
+> 
 
-Ben Hutchings pushed to branch master at cip-project / cip-kernel / cip-kernel-sec
+Pavel applied this patch with signed-off-by tag. Thanks Pavel.
 
-
-Commits:
-7c70981f by Ben Hutchings at 2019-07-17T22:24:27Z
-Mark some issues to be ignored for 4.4
-
-- - - - -
-
-
-3 changed files:
-
-- issues/CVE-2018-3646.yml
-- issues/CVE-2018-ebpf-filter-dos.yml
-- issues/CVE-2019-2054.yml
-
-
-Changes:
-
-=====================================
-issues/CVE-2018-3646.yml
-=====================================
-@@ -177,3 +177,6 @@ fixed-by:
-     07d981ad4cf1e78361c6db1c28ee5ba105f96cc1]
- ignore:
-   linux-3.16.y: Too invasive and risky to apply
-+  linux-4.4.y: Too invasive and risky to apply
-+  linux-4.4.y-cip: Too invasive and risky to apply
-+  linux-4.4.y-cip-rt: Too invasive and risky to apply
-
-
-=====================================
-issues/CVE-2018-ebpf-filter-dos.yml
-=====================================
-@@ -20,3 +20,4 @@ fixed-by:
- ignore:
-   linux-4.4.y: Unprivileged BPF JIT should not be enabled
-   linux-4.4.y-cip: Unprivileged BPF JIT should not be enabled
-+  linux-4.4.y-cip-rt: Unprivileged BPF JIT should not be enabled
-
-
-=====================================
-issues/CVE-2019-2054.yml
-=====================================
-@@ -10,3 +10,6 @@ fixed-by:
-   mainline: [0f3912fd934cdfd03d93f2dc6f064099795bf638]
- ignore:
-   linux-3.16.y: Documented limitation
-+  linux-4.4.y: Documented limitation
-+  linux-4.4.y-cip: Documented limitation
-+  linux-4.4.y-cip-rt: Documented limitation
-
-
-
-View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/commit/7c70981f1d20c195ca397c0af9ea64d8a8d98362
-
--- 
-View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/commit/7c70981f1d20c195ca397c0af9ea64d8a8d98362
-You're receiving this email because of your account on gitlab.com.
-
-
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190717/2aac48ad/attachment-0001.html>
+Best regards,
+  Nobuhiro
