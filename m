@@ -1,34 +1,32 @@
-From: zoran.stojsavljevic.de@gmail.com (Zoran S)
-Date: Fri, 19 Jul 2019 20:10:20 +0200
-Subject: [cip-dev] Explanation for cip-kernel-config
-In-Reply-To: <20190719140517.GA21031@amd>
-References: <20190719140517.GA21031@amd>
-Message-ID: <CAEss1E+TW8udmVVL63OxbPLgndbKW7XiE5bKn1XvgK8J4rfWBQ@mail.gmail.com>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Fri, 19 Jul 2019 19:11:24 +0100
+Subject: [cip-dev] [OBSOLETE?] CONFIG_PREEMPT_RT_FULL config parameter
+	in 4.19?!
+In-Reply-To: <CAEss1E+93RuXzGWeNMaTreUaMOObmNioB5=VGD0qjgerYTFf6Q@mail.gmail.com>
+References: <CAEss1E+HzuGDxBCww0dkShV6Wqe-cnSpxCuM_kiq=0TtXOjo-A@mail.gmail.com>
+	<5d8ff922971892e85f4e682d687476645cf690e5.camel@codethink.co.uk>
+	<CAEss1E+93RuXzGWeNMaTreUaMOObmNioB5=VGD0qjgerYTFf6Q@mail.gmail.com>
+Message-ID: <5c024c43245bd5cdecd256fe9d74d6992ea95598.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Yup... I am very interested in this one, I should say. ;-)
+On Fri, 2019-07-19 at 19:58 +0200, Zoran S wrote:
+> > This never existed in the upstream kernel, only in -rt branches.
+> > It still exists in 4.19-rt.
+> 
+> Sure. The following is done by me:
+> 
+> git clone git://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+> 
+> Isn't this CIP RT-kernel real-time tree?
+[...]
 
-Let us see what will come out of this effort. :-)
+It's the CIP kernel repository.  Only the branches with "-rt" in the
+name include the real-time patch set.
 
-Thank you,
-Zoran Stojsavljevic
-_______
+Ben.
 
-On Fri, Jul 19, 2019 at 4:05 PM Pavel Machek <pavel@denx.de> wrote:
->
-> Hi!
->
-> I started README.md file in cip-kernel-config. It should provide some
-> explanation and I believe we should also provide table with mapping of
-> boards (their names and their codes in Lava) and config files.
->
-> Best regards,
->                                                                         Pavel
-> --
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
+-- 
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
