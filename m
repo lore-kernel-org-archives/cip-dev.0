@@ -1,85 +1,68 @@
 From: zoran.stojsavljevic.de@gmail.com (Zoran S)
-Date: Fri, 19 Jul 2019 19:58:04 +0200
+Date: Fri, 19 Jul 2019 20:05:07 +0200
 Subject: [cip-dev] [OBSOLETE?] CONFIG_PREEMPT_RT_FULL config parameter
 	in 4.19?!
-In-Reply-To: <5d8ff922971892e85f4e682d687476645cf690e5.camel@codethink.co.uk>
+In-Reply-To: <20190719135932.GA23951@amd>
 References: <CAEss1E+HzuGDxBCww0dkShV6Wqe-cnSpxCuM_kiq=0TtXOjo-A@mail.gmail.com>
-	<5d8ff922971892e85f4e682d687476645cf690e5.camel@codethink.co.uk>
-Message-ID: <CAEss1E+93RuXzGWeNMaTreUaMOObmNioB5=VGD0qjgerYTFf6Q@mail.gmail.com>
+	<20190719135932.GA23951@amd>
+Message-ID: <CAEss1EL0HDgCboj0AUOSmOqTtvz33AkxyrmsOJtCs5PxYwNMEg@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-> This never existed in the upstream kernel, only in -rt branches.
-> It still exists in 4.19-rt.
+> Are you sure you have your kernel patched with -rt patches?
+> CONFIG_PREEMPT_RT_FULL=y was still needed in 4.19, AFAICT.
 
-Sure. The following is done by me:
+Please, could you refer to reply above (practical exercises using
+lava_server_vm VM) to Ben and Daniel? You can also check and verify
+it...
 
-git clone git://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+Maybe, after all, I am doing something very wrong. But I do not
+see/not aware what?!
 
-*Isn't this CIP RT-kernel real-time tree?*
-
-cd linux-cip
-*git checkout -b cip_v4.19.58-cip6 v4.19.58-cip6*
-
-make -j4 -k -s ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- O=build-arm
-*omap2plus_defconfig*
-
-Please, check the folllowing:
-
-Linux stretch 4.19.0-5-amd64 #1 SMP Debian 4.19.37-5 (2019-06-19) x86_64
-
-vagrant at stretch:~/git-repos/linux-cip/build-arm$ pwd
-/home/vagrant/git-repos/linux-cip/build-arm
-vagrant at stretch:~/git-repos/linux-cip/build-arm$ ls -al .config
-*-rw-r--r-- 1 vagrant vagrant 148183 Jul 18 04:25 .config*
-vagrant at stretch:~/git-repos/linux-cip/build-arm$ cat .config | grep PREEMPT
-CONFIG_PREEMPT_NONE=y
-# CONFIG_PREEMPT_VOLUNTARY is not set
-# CONFIG_PREEMPT is not set
-CONFIG_PREEMPTIRQ_TRACEPOINTS=y
-# CONFIG_PREEMPTIRQ_EVENTS is not set
-# CONFIG_PREEMPTIRQ_DELAY_TEST is not set
-vagrant at stretch:~/git-repos/linux-cip/build-arm $
-
-And, finally:
-
-vagrant at stretch:~/git-repos/linux-cip$ pwd
-/home/vagrant/git-repos/linux-cip
-vagrant at stretch:~/git-repos/linux-cip$ ack CONFIG_PREEMPT_RT_FULL
-vagrant at stretch:~/git-repos/linux-cip$
-
-Hmmmmmm... Strange, isn't it??? Please, advise?
-
-Thank you,
-Zoran Stojsavljevic
+Zoran
 _______
 
 
-On Fri, Jul 19, 2019 at 3:58 PM Ben Hutchings <ben.hutchings@codethink.co.uk>
-wrote:
-
-> On Fri, 2019-07-19 at 15:31 +0200, Zoran S wrote:
-> > Hello  Ben, Daniel,
-> >
+On Fri, Jul 19, 2019 at 3:59 PM Pavel Machek <pavel@ucw.cz> wrote:
+>
+> Hi!
+>
 > > I started my own investigation about RT kernels, namely 4.19. I
 > > proceed very carefully over the kernel config parameters... BUt the
 > > last one I inspected today got me nowhere!?
 > >
 > > Seems, that the following config parameters are obsolete in 4.19:
 > > CONFIG_PREEMPT_RT_FULL
-> [...]
+> >
+> > This one (CONFIG_PREEMPT_RT_FULL) is still present in 4.4 .
+> >
+> > [vuser at fedora30-ssd kernel-config]$ cat CONFIG-4.4.120-rt-bbb | grep PREEMPT
+> > CONFIG_PREEMPT_RCU=y
+> > CONFIG_PREEMPT=y
+> > CONFIG_PREEMPT_RT_BASE=y
+> > CONFIG_HAVE_PREEMPT_LAZY=y
+> > CONFIG_PREEMPT_LAZY=y
+> > # CONFIG_PREEMPT_NONE is not set
+> > # CONFIG_PREEMPT_VOLUNTARY is not set
+> > # CONFIG_PREEMPT__LL is not set
+> > # CONFIG_PREEMPT_RTB is not set
+> > CONFIG_PREEMPT_RT_FULL=y <<======= Obsolete in 4.19 ?
+> > CONFIG_PREEMPT_COUNT=y
+> > CONFIG_DEBUG_PREEMPT=y
+> > [vuser at fedora30-ssd kernel-config]$
+> >
+> > What I should do to maintain RT-kernel-4.19? It is obvious, I must/need to set:
+> > CONFIG_PREEMPT=y
 >
-> This never existed in the upstream kernel, only in -rt branches.  It
-> still exists in 4.19-rt.
+> Are you sure you have your kernel patched with -rt patches?
+> CONFIG_PREEMPT_RT_FULL=y was still needed in 4.19, AFAICT.
 >
-> Ben.
+> Note that not every piece of hardware has suitable characteristics for
+> realtime / low latencies.
+>
+> Best regards,
+>                                                                         Pavel
 >
 > --
-> Ben Hutchings, Software Developer                         Codethink Ltd
-> https://www.codethink.co.uk/                 Dale House, 35 Dale Street
->                                      Manchester, M1 2HF, United Kingdom
->
->
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190719/a022d547/attachment.html>
+> (english) http://www.livejournal.com/~pavelmachek
+> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
