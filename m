@@ -1,107 +1,134 @@
-From: pavel@denx.de (Pavel Machek)
-Date: Sun, 21 Jul 2019 20:28:27 +0200
-Subject: [cip-dev] Request for guidance: removal of old config files
- [was: Kernel configurations for 4.19?]
-In-Reply-To: <CAEss1EJ7oLR+hVwtmvB1L5yjyaL5fiW0nuCCbwgANv39u=y1Jg@mail.gmail.com>
-References: <1555501985.3557.26.camel@codethink.co.uk>
-	<9210b0ba912e7a8c64f6562b43f25e4763ac4379.camel@codethink.co.uk>
-	<7c8d175eaa43357d6484c6fee89c4d0f@codethink.co.uk>
-	<909b4353-87c9-08e2-46f1-4ef8ce3fb6d2@siemens.com>
-	<fae9b423882c15f5e31eaef237086f38055dcfce.camel@codethink.co.uk>
-	<20190721162559.GB10770@amd>
-	<CAEss1EJ7oLR+hVwtmvB1L5yjyaL5fiW0nuCCbwgANv39u=y1Jg@mail.gmail.com>
-Message-ID: <20190721182827.GB20280@amd>
+From: gitlab@mg.gitlab.com (Ben Hutchings)
+Date: Mon, 22 Jul 2019 20:10:04 +0000
+Subject: [cip-dev] [Git][cip-project/cip-kernel/cip-kernel-sec][master]
+	Import more data
+Message-ID: <5d36181c9e5e3_2ac33fe7d5c921f417612f7@sidekiq-asap-10-sv-gprd.mail>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Sun 2019-07-21 19:58:40, Zoran S wrote:
-> >> Good point.  I have not yet tried running 4.19 on the BBB, but I can
-> >> look at adding one - or perhaps Nobuhiro or Pavel already has a
-> >> suitable config?
-> 
-> Excellent point, which spares me time to begin the new email thread
-> about 4.19 BBB rt-config file.
-> 
-> Actually, I have one 4.19 BBB rt-config file, which at the end of trimming
-> goes to cycles (not able to set three parameters).
-> 
-> git clone git://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-> cd linux-cip
-> *git checkout -b cip_v4.19.13-cip1-rt1-rebase v4.19.13-cip1-rt1-rebase*
-> export TREE_NAME=cip-example
-> export ARCH=arm
-> export CROSS_COMPILE=arm-linux-gnueabihf-
-> make -j4 -k -s ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- O=build-arm
-> omap2plus_defconfig
-> 
-> I did adjust all the RT parameters, and at the end of three cycles of
-> compiling, I've got the following CONFIG file (attached to this email).
-> 
-> My problem is, that I ended with cyclic loop, since every time I start
-> compiling with:
-> make -j4 -k -s ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- O=build-arm
-> 
-> I end up with changed .config, with always three parameters changed:
-
-I'm not sure I completely understand your problem. But "/" in
-menuconfig is helpful:
-
-> *** 585,591 ****
->   #
->   # CONFIG_SUSPEND is not set
->   # CONFIG_HIBERNATION is not set
-> *! CONFIG_PM=y <<== (should be # CONFIG_PM is not set)*
->   CONFIG_PM_DEBUG=y
->   # CONFIG_PM_ADVANCED_DEBUG is not set
->   # CONFIG_APM_EMULATION is not set
-
-  ? Symbol: PM [=y]
-    ? Type  : bool
-    ? Prompt: Device power management core functionality
-    ?   Location:
-    ? (1) -> Power management options
-    ?   Defined at kernel/power/Kconfig:144
-    ?   Selected by [y]:
-    ?   - ARCH_OMAP2PLUS_TYPICAL [=y] && (ARCH_MULTI_V6 [=y] ||
-  ARCH_MULTI_V7 ?
-
--> you need to disable OMAP2PLUS_TYPICAL.
-
-> --- 2320,2325 ----
-> ***************
-> *** 5469,5476 ****
->   CONFIG_DEBUG_SPINLOCK=y
->   CONFIG_DEBUG_MUTEXES=y
->   CONFIG_DEBUG_WW_MUTEX_SLOWPATH=y
-> 
-> *! CONFIG_DEBUG_LOCK_ALLOC=y <<== (should be #
-> CONFIG_DEBUG_LOCK_ALLOC is
-
-  ? Symbol: DEBUG_LOCK_ALLOC [=y]
-    ? Type  : bool
-    ? Prompt: Lock debugging: detect incorrect freeing of live locks
-    ?   Location:
-    ?     -> Kernel hacking
-    ? (1)   -> Lock Debugging (spinlocks, mutexes, etc...)
-    ?   Defined at lib/Kconfig.debug:1163
-    ?   Depends on: DEBUG_KERNEL [=y] && LOCK_DEBUGGING_SUPPORT [=y]
-    ?   Selects: DEBUG_SPINLOCK [=y] && DEBUG_MUTEXES [=y] &&
-  DEBUG_RT_MUTEXE ?
-    ?   Selected by [y]:
-    ?   - DEBUG_WW_MUTEX_SLOWPATH [=y] && DEBUG_KERNEL [=y] &&
-  LOCK_DEBUGGING ?
-
-You need to disable DEBUG_WW_MUTEX_SLOWPATH AFAICT.
 
 
-								Pavel
+Ben Hutchings pushed to branch master at cip-project / cip-kernel / cip-kernel-sec
+
+
+Commits:
+87656eff by Ben Hutchings at 2019-07-22T20:09:29Z
+Import more data
+
+- - - - -
+
+
+5 changed files:
+
+- issues/CVE-2019-10126.yml
+- + issues/CVE-2019-13272.yml
+- + issues/CVE-2019-13631.yml
+- + issues/CVE-2019-13648.yml
+- issues/CVE-2019-3846.yml
+
+
+Changes:
+
+=====================================
+issues/CVE-2019-10126.yml
+=====================================
+@@ -5,6 +5,9 @@ references:
+ - https://marc.info/?l=oss-security&m=155965912410053&w=2
+ fixed-by:
+   linux-3.16.y: [a62393d7eb63bd075c51154002825cc7ab4dd3eb]
++  linux-4.14.y: [b1459fb34061337efbf0d47a3ba6208f2f59829d]
+   linux-4.19.y: [c7e427e28a3a2d1b89b8f9fa7c3f559774d91a7b]
++  linux-4.4.y: [3a611df229a90247c9a5159d136c60f4008c29a2]
++  linux-4.9.y: [f70d411e2ecd1f8297e1fd7e91108ca220986784]
+   linux-5.1.y: [e9111176d9c195ba709245f1bf1d3d1dae5cd22a]
+   mainline: [69ae4f6aac1578575126319d3f55550e7e440449]
+
+
+=====================================
+issues/CVE-2019-13272.yml
+=====================================
+@@ -0,0 +1,32 @@
++description: 'ptrace: Fix ->ptracer_cred handling for PTRACE_TRACEME'
++references:
++- https://bugzilla.suse.com/show_bug.cgi?id=1140671
++- https://bugs.chromium.org/p/project-zero/issues/detail?id=1903
++- https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-13272
++- http://packetstormsecurity.com/files/153663/Linux-PTRACE_TRACEME-Broken-Permission-Object-Lifetime-Handling.html
++- https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=6994eefb0053799d2e07cd140df6c2ea106c41ee
++- https://bugzilla.redhat.com/show_bug.cgi?id=1730895
++comments:
++  Debian-carnil: |-
++    64b875f7ac8a ("ptrace: Capture the ptracer's creds not
++    PT_PTRACE_CAP") which is in 4.10 was backported to older stable
++    series as well, got included in v4.9.32
++reporters:
++- Jann Horn
++introduced-by:
++  linux-3.16.y: [d55a94ed03a24794d47f80d5300825f6c095a0a7]
++  linux-4.4.y: [1c1f15f8ebfbd5042883a1c9ae4b18a6299c9c5f]
++  linux-4.4.y-cip: [1c1f15f8ebfbd5042883a1c9ae4b18a6299c9c5f]
++  linux-4.4.y-cip-rt: [1c1f15f8ebfbd5042883a1c9ae4b18a6299c9c5f]
++  linux-4.9.y: [e747b4ae3b6bca205d82e86366e140cdcbfb7731]
++  mainline: [64b875f7ac8a5d60a4e191479299e931ee949b67]
++fixed-by:
++  linux-4.14.y: [bf71ef9655d25e8b275ec6ed649b6bd719231ddc]
++  linux-4.19.y: [54435b7fff7bfb9515cc457b71c3734c1c3fff76]
++  linux-4.19.y-cip: [54435b7fff7bfb9515cc457b71c3734c1c3fff76]
++  linux-4.4.y: [54562d2b0be5c120b01c8bb94baef1aca37fd329]
++  linux-4.4.y-cip: [54562d2b0be5c120b01c8bb94baef1aca37fd329]
++  linux-4.4.y-cip-rt: [54562d2b0be5c120b01c8bb94baef1aca37fd329]
++  linux-4.9.y: [d8b99303da935228a33fa7656a964adfb33e271b]
++  linux-5.1.y: [49887fc3f2a7e6185777af3a9c96095aeb2bce1b]
++  mainline: [6994eefb0053799d2e07cd140df6c2ea106c41ee]
+
+
+=====================================
+issues/CVE-2019-13631.yml
+=====================================
+@@ -0,0 +1,8 @@
++description: 'Input: gtco - bounds check collection indent level'
++references:
++- https://patchwork.kernel.org/patch/11040813/
++- https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-13631
++introduced-by:
++  mainline: [a19ceb56cbd1e1beff3e9cf6042e1f31f6487aa6]
++fixed-by:
++  mainline: [2a017fd82c5402b3c8df5e3d6e5165d9e6147dc1]
+
+
+=====================================
+issues/CVE-2019-13648.yml
+=====================================
+@@ -0,0 +1,4 @@
++description: 'powerpc/tm: Fix oops on sigreturn on systems without TM'
++references:
++- https://patchwork.ozlabs.org/patch/1133904/
++- https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-13648
+
+
+=====================================
+issues/CVE-2019-3846.yml
+=====================================
+@@ -9,6 +9,9 @@ introduced-by:
+   mainline: [5e6e3a92b9a4c9416b17f468fa5c7fa2233b8b4e]
+ fixed-by:
+   linux-3.16.y: [a24ac7326f38ffab2b63141496d075da144cec7d]
++  linux-4.14.y: [d50f6b58d7ad30ad8e96c0bbc3e5ecfe9b91ba77]
+   linux-4.19.y: [d4c0f752c1d2c6383cc7582c19b2ed7159d45937]
++  linux-4.4.y: [5d43b417e60ab25984fc7c41175f3ce8cee992bd]
++  linux-4.9.y: [58ec3690a908494f7a7c3e8a302eb491bef9d979]
+   linux-5.1.y: [cb48f5e50582bf44f63599b78941b325a17fa1ec]
+   mainline: [13ec7f10b87f5fc04c4ccbd491c94c7980236a74]
+
+
+
+View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/commit/87656eff4b84a515652b7abf25fd203b99dc43e7
+
 -- 
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/commit/87656eff4b84a515652b7abf25fd203b99dc43e7
+You're receiving this email because of your account on gitlab.com.
+
+
 -------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 181 bytes
-Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190721/a673a7c7/attachment.sig>
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190722/59b6b389/attachment-0001.html>
