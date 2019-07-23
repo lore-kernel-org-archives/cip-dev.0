@@ -1,34 +1,35 @@
-From: pavel@denx.de (Pavel Machek)
-Date: Tue, 23 Jul 2019 14:40:15 +0200
+From: jan.kiszka@siemens.com (Jan Kiszka)
+Date: Tue, 23 Jul 2019 15:53:54 +0200
 Subject: [cip-dev] [ANNOUNCE] v4.19.50-cip3-rt2
-Message-ID: <20190723124015.GA13044@amd>
+In-Reply-To: <20190723124015.GA13044@amd>
+References: <20190723124015.GA13044@amd>
+Message-ID: <34180972-ec78-ec39-d191-297e2029c3f0@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi!
+On 23.07.19 14:40, Pavel Machek wrote:
+> Hi!
+> 
+> 4.19.50-cip3-rt2 should be available at kernel.org. It performs well
+> on socfpga (Altera-Terasic-Deo-NanoAltera); but not so well on iwg20m
+> (r8a7743-iwg20d-q7) board.
+> 
 
-4.19.50-cip3-rt2 should be available at kernel.org. It performs well
-on socfpga (Altera-Terasic-Deo-NanoAltera); but not so well on iwg20m
-(r8a7743-iwg20d-q7) board.
+Thanks!
 
-Trees are available at
+> Trees are available at
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.19.y-cip-rt-rebase
+>  
+> https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.19.y-cip-rt
+>  
+> And their content should be identical. I attempted to tag it in a way
+> consistent with previous releases, and I attempted to sign a tag.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.19.y-cip-rt-rebase
- 
-https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.19.y-cip-rt
- 
-And their content should be identical. I attempted to tag it in a way
-consistent with previous releases, and I attempted to sign a tag.
- 
-Best regards,
-								Pavel
+...but you didn't push the tag yet? Or is this WiP?
+
+Jan
+
 -- 
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 181 bytes
-Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190723/e2d816ca/attachment.sig>
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+Corporate Competence Center Embedded Linux
