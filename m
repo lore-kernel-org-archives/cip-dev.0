@@ -1,35 +1,59 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Tue, 23 Jul 2019 15:53:54 +0200
-Subject: [cip-dev] [ANNOUNCE] v4.19.50-cip3-rt2
-In-Reply-To: <20190723124015.GA13044@amd>
-References: <20190723124015.GA13044@amd>
-Message-ID: <34180972-ec78-ec39-d191-297e2029c3f0@siemens.com>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Tue, 23 Jul 2019 19:12:04 +0100
+Subject: [cip-dev] [PATCH 4.4.y-cip 03/10] rtc: pcf85363: set time
+ accurately
+In-Reply-To: <OSBPR01MB2103D4ED93C66F6DB47539B8B8C90@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+References: <1563264921-42973-1-git-send-email-biju.das@bp.renesas.com>
+	<1563264921-42973-4-git-send-email-biju.das@bp.renesas.com>
+	<20190716210350.GB14181@amd>
+	<OSBPR01MB2103D4ED93C66F6DB47539B8B8C90@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+Message-ID: <debc83c7e66c87489c5674068fe68d41c3e0e39a.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 23.07.19 14:40, Pavel Machek wrote:
-> Hi!
+On Wed, 2019-07-17 at 07:47 +0000, Biju Das wrote:
+> Hi Pavel,
 > 
-> 4.19.50-cip3-rt2 should be available at kernel.org. It performs well
-> on socfpga (Altera-Terasic-Deo-NanoAltera); but not so well on iwg20m
-> (r8a7743-iwg20d-q7) board.
+> Thanks for the feedback.
 > 
+> > -----Original Message-----
+> > From: Pavel Machek <pavel@denx.de>
+> > Sent: Tuesday, July 16, 2019 10:04 PM
+> > To: Biju Das <biju.das@bp.renesas.com>
+> > Cc: cip-dev at lists.cip-project.org
+> > Subject: Re: [cip-dev] [PATCH 4.4.y-cip 03/10] rtc: pcf85363: set time
+> > accurately
+> > 
+> > On Tue 2019-07-16 09:15:14, Biju Das wrote:
+> > > commit 188306ac9536ec47674ffa9dd330f69927679aeb upstream.
+> > > 
+> > > As per 8.2.6 Setting and reading the time in RTC mode, first stop the
+> > > clok, then reset it before setting the date and time registers.
+> > > Finally, start the clock.
+> > > 
+> > > This uses register address wrap around from 0x2f to 0x00 for
+> > > efficiency.
+> > 
+> > How does wrap around work? AFAICT it is supposed to have ram at 0x40.
+> > 
+> Please see the document [1]  and [2] section 8, that have the details related to wrap around.
+> [1] https://www.nxp.com/docs/en/data-sheet/PCF85363A.pdf
+> [2] https://www.nxp.com/docs/en/data-sheet/PCF85263A.pdf
 
-Thanks!
+Regardless of what the hardware does...
 
-> Trees are available at
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.19.y-cip-rt-rebase
->  
-> https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.19.y-cip-rt
->  
-> And their content should be identical. I attempted to tag it in a way
-> consistent with previous releases, and I attempted to sign a tag.
+> > Does it really provide increased efficiency (given regmap layer in
+> > between) and will such trick cause problems in future? If regmap is not
+> > aware of register mirrors it might get confused and provide stale values, for
+> > example...
 
-...but you didn't push the tag yet? Or is this WiP?
+...I think Pavel is right on this point.  regmap doesn't seem to have
+any provision for register addresses wrapping around, and it looks like
+this causes a buffer overrun in the register cache.
 
-Jan
+Ben.
 
 -- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
