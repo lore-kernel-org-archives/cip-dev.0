@@ -1,59 +1,37 @@
-From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Tue, 23 Jul 2019 19:12:04 +0100
-Subject: [cip-dev] [PATCH 4.4.y-cip 03/10] rtc: pcf85363: set time
- accurately
-In-Reply-To: <OSBPR01MB2103D4ED93C66F6DB47539B8B8C90@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-References: <1563264921-42973-1-git-send-email-biju.das@bp.renesas.com>
-	<1563264921-42973-4-git-send-email-biju.das@bp.renesas.com>
-	<20190716210350.GB14181@amd>
-	<OSBPR01MB2103D4ED93C66F6DB47539B8B8C90@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-Message-ID: <debc83c7e66c87489c5674068fe68d41c3e0e39a.camel@codethink.co.uk>
+From: pavel@denx.de (Pavel Machek)
+Date: Tue, 23 Jul 2019 23:06:08 +0200
+Subject: [cip-dev] [ANNOUNCE] v4.19.50-cip3-rt2
+In-Reply-To: <34180972-ec78-ec39-d191-297e2029c3f0@siemens.com>
+References: <20190723124015.GA13044@amd>
+	<34180972-ec78-ec39-d191-297e2029c3f0@siemens.com>
+Message-ID: <20190723210608.GA23154@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Wed, 2019-07-17 at 07:47 +0000, Biju Das wrote:
-> Hi Pavel,
+Hi!
+
+> > Trees are available at
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.19.y-cip-rt-rebase
+> >  
+> > https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.19.y-cip-rt
+> >  
+> > And their content should be identical. I attempted to tag it in a way
+> > consistent with previous releases, and I attempted to sign a tag.
 > 
-> Thanks for the feedback.
-> 
-> > -----Original Message-----
-> > From: Pavel Machek <pavel@denx.de>
-> > Sent: Tuesday, July 16, 2019 10:04 PM
-> > To: Biju Das <biju.das@bp.renesas.com>
-> > Cc: cip-dev at lists.cip-project.org
-> > Subject: Re: [cip-dev] [PATCH 4.4.y-cip 03/10] rtc: pcf85363: set time
-> > accurately
-> > 
-> > On Tue 2019-07-16 09:15:14, Biju Das wrote:
-> > > commit 188306ac9536ec47674ffa9dd330f69927679aeb upstream.
-> > > 
-> > > As per 8.2.6 Setting and reading the time in RTC mode, first stop the
-> > > clok, then reset it before setting the date and time registers.
-> > > Finally, start the clock.
-> > > 
-> > > This uses register address wrap around from 0x2f to 0x00 for
-> > > efficiency.
-> > 
-> > How does wrap around work? AFAICT it is supposed to have ram at 0x40.
-> > 
-> Please see the document [1]  and [2] section 8, that have the details related to wrap around.
-> [1] https://www.nxp.com/docs/en/data-sheet/PCF85363A.pdf
-> [2] https://www.nxp.com/docs/en/data-sheet/PCF85263A.pdf
+> ...but you didn't push the tag yet? Or is this WiP?
 
-Regardless of what the hardware does...
+Sorry, I forgot I need to push the tag. It should be fixed now.
 
-> > Does it really provide increased efficiency (given regmap layer in
-> > between) and will such trick cause problems in future? If regmap is not
-> > aware of register mirrors it might get confused and provide stale values, for
-> > example...
-
-...I think Pavel is right on this point.  regmap doesn't seem to have
-any provision for register addresses wrapping around, and it looks like
-this causes a buffer overrun in the register cache.
-
-Ben.
-
+Best regards,
+								Pavel
 -- 
-Ben Hutchings, Software Developer                         Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 181 bytes
+Desc: Digital signature
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190723/9d168c33/attachment.sig>
