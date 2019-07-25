@@ -1,41 +1,120 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 25 Jul 2019 01:06:37 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-Message-ID: <HK0PR01MB297987D021B2565802CF3383E2C10@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+From: zoran.stojsavljevic.de@gmail.com (Zoran S)
+Date: Thu, 25 Jul 2019 08:44:05 +0200
+Subject: [cip-dev] [ANNOUNCE] v4.19.50-cip3-rt2
+In-Reply-To: <OSBPR01MB30771D622BD3892BC6993B1ED0C10@OSBPR01MB3077.jpnprd01.prod.outlook.com>
+References: <20190723124015.GA13044@amd>
+	<34180972-ec78-ec39-d191-297e2029c3f0@siemens.com>
+	<20190723210608.GA23154@amd>
+	<CAEss1EKQ_6SWV+Z5aOCkdrtDGGXOhN_ASfDs6Zf1UcjJm5mX0w@mail.gmail.com>
+	<20190724115306.GA26706@amd>
+	<CAEss1EKViv4UZ2gUh6h9EPHRvEG3xEeVOK65xoVEAhd5TDHYSg@mail.gmail.com>
+	<CAEss1ELuRZRNNtOtESN9GTxNvBpp9BzzaJT-HZawRChuLvrYXg@mail.gmail.com>
+	<OSBPR01MB30771D622BD3892BC6993B1ED0C10@OSBPR01MB3077.jpnprd01.prod.outlook.com>
+Message-ID: <CAEss1EJzeQb3kudGWQqp_Lu3E8haMjrL5BYbHcpd-z3oEhL8ZQ@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+> Why don't you use ISAR CIP Core?
+> https://gitlab.com/cip-project/cip-core/isar-cip-core
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
+With all due respect (and I do really respect prominent CIP founders),
+I need to make this problem solved solely by myself...
 
-*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=7&day25&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
+But, anyway, thank you for the advise! :-)
 
-US-West US-East?? UK???? DE???? TW???? JP
-02:00??? 05:00?? 10:00?? 11:00?? 17:00?? 18:00
+Zoran
+_______
 
-Channel:
-* irc:chat.freenode.net:6667/cip
-
-Agenda:
-
-* Action item
-1. Provide the script for CIP kernel config collection - bwh 
-#link https://lists.cip-project.org/pipermail/cip-dev/2019-June/002506.html
-2. Try updating CIP RT kernel to 4.19.50 - Pavel 
-#link https://lists.cip-project.org/pipermail/cip-dev/2019-June/002548.html
-3. Fix release number in CIP RT kernel - pavel
-4. Work out a solution for LAVA master backups - patersonc
-5. Review "gitlab-ci.yml" patches before OSS-J - pavel
-* Kernel maintenance updates
-* Kernel testing
-* CIP Core
-* Software update
-* AOB
-
-The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
-
-Best regards,
-
-SZ Lin, Moxa.
+On Thu, Jul 25, 2019 at 2:22 AM <daniel.sangorrin@toshiba.co.jp> wrote:
+>
+> Hello Zoran
+>
+> > From: cip-dev-bounces at lists.cip-project.org <cip-dev-
+> > (limitations): I could NOT connect with ETH to target (something is
+> > wrongly set with my local.conf for YOCTO rootfs)...
+>
+> Why don't you use ISAR CIP Core?
+> https://gitlab.com/cip-project/cip-core/isar-cip-core
+>
+> Thanks,
+> Daniel
+>
+> >
+> > Here is my approximate recipe for rootfs I am using for the test
+> > (initramfs) for your inspection (it is thud, local.conf moved to
+> > warrior):
+> > https://github.com/ZoranStojsavljevic/bbb-yocto/blob/master/bbb-releases/bbb-warrior/local.conf
+> >
+> > More or/and less, here are results after approximately 63 minutes of
+> > running rt-tests:
+> >
+> > root at beaglebone:~# uname -a
+> > Linux beaglebone 4.19.13-cip1-rt1 #1 PREEMPT RT Tue Jul 23 12:18:18
+> > GMT 2019 armv7l GNU/Linux
+> > _______
+> > policy: fifo: loadavg: 291.28 287.63 267.78 21/486 30014
+> > policy: fifo: loadavg: 186.97 215.90 243.41 5/458 22788
+> > policy: fifo: loadavg: 248.16 243.95 244.63 194/486 8800
+> > policy: fifo: loadavg: 283.55 240.50 243.74 9/318 2383
+> > T: 0 (13903) P:80 I:1000 C:3942593 Min:     19 Act:   52 Avg:   45 Max:      93
+> > T: 0 (13903) P:80 I:1000 C:3785664 Min:     19 Act:   44 Avg:   45 Max:      935
+> > T: 0 (13903) P:80 I:1000 C:3716107 Min:     19 Act:   60 Avg:   45 Max:      936
+> > policy: fifo: loadavg: 222.11 176.72 90.66 5/213 21249
+> > T: 0 (13903) P:80 I:1000 C:2213895 Min:     19 Act:   38 Avg:   46 Max:      905
+> > T: 0 (13903) P:80 I:1000 C: 181403 Min:     21 Act:   49 Avg:   45 Max:      90
+> > T: 0 (13903) P:80 I:1000 C: 181320 Min:     21 Act:   29 Avg:   45 Max:      90
+> >
+> > MIN 19 ns, MAX 936 ns (3x over 900 ns)... I would be really concerned
+> > about MAX over > 900 ns!
+> >
+> > On 4.4 RT kernel I had some much better # such as: Min:     19 Act:
+> > 44 Avg:   42 Max:      81
+> >
+> > I need to do more... No time anymore now!
+> >
+> > Best Regards,
+> > Zoran
+> > _______
+> >
+> >
+> > On Wed, Jul 24, 2019 at 3:00 PM Zoran S
+> > <zoran.stojsavljevic.de@gmail.com> wrote:
+> > >
+> > > > No problem. You should be able to use same .config
+> > > > with the new kernel...
+> > >
+> > > U R targeting 4.19.50-cip3-rt2... I do agree 100%, but I have some
+> > > problems to do rt-tests (connecting BBB target to my VM).
+> > >
+> > > Please, stay tuned. I'll resolve these problems ASAP (if ?, then Ill
+> > > publish the results) . Then I need to leave it for the time been.
+> > >
+> > > Zoran
+> > > _______
+> > >
+> > > On Wed, Jul 24, 2019 at 1:53 PM Pavel Machek <pavel@denx.de> wrote:
+> > > >
+> > > > Hi!
+> > > >
+> > > > > I finally was able to make the viable .config... For the previous
+> > > > > rt-kernel for BBB.
+> > > > >
+> > > > > root at beaglebone:~# uname -a
+> > > > > Linux beaglebone 4.19.13-cip1-rt1 #1 PREEMPT RT Tue Jul 23 12:18:18
+> > > > > GMT 2019 armv7l GNU/Linux
+> > > > >
+> > > > > It was very tough and rough... But I have it! Now I need to abandon
+> > > > > this effort, since I have another immediate things to do!
+> > > >
+> > > > No problem. You should be able to use same .config with the new
+> > > > kernel...
+> > > >
+> > > > Best regards,
+> > > >                                                                 Pavel
+> > > > --
+> > > > DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+> > > > HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+> > _______________________________________________
+> > cip-dev mailing list
+> > cip-dev at lists.cip-project.org
+> > https://lists.cip-project.org/mailman/listinfo/cip-dev
