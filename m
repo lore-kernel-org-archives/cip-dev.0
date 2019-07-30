@@ -1,53 +1,82 @@
-From: yoshihiro.shimoda.uh@renesas.com (Yoshihiro Shimoda)
-Date: Tue, 30 Jul 2019 10:08:33 +0000
-Subject: [cip-dev] phy-rcar-gen3-usb2: wrong parsing of role in
-	role_store?
-In-Reply-To: <20190730095140.GA29609@amd>
-References: <20190730095140.GA29609@amd>
-Message-ID: <TYAPR01MB4544F1EE39C3A9F36B13D49AD8DC0@TYAPR01MB4544.jpnprd01.prod.outlook.com>
+From: Chris.Paterson2@renesas.com (Chris Paterson)
+Date: Tue, 30 Jul 2019 12:54:06 +0000
+Subject: [cip-dev] powerpc build with Kernel v4.4
+In-Reply-To: <CAEss1E+JD=vvXDAsz-tpisBsCAGnwbxnRNaiWJb9f+eJ+3+68A@mail.gmail.com>
+References: <TYAPR01MB2285895BCD78ABB88C823A5DB7C30@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+	<CAEss1E+JD=vvXDAsz-tpisBsCAGnwbxnRNaiWJb9f+eJ+3+68A@mail.gmail.com>
+Message-ID: <TYAPR01MB2285A22754F2809267DD02FFB7DC0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Pavel,
+Hello Zoran,
 
-> From: Pavel Machek, Sent: Tuesday, July 30, 2019 6:52 PM
+> From: Zoran S <zoran.stojsavljevic.de@gmail.com>
+> Sent: 28 July 2019 05:22
 > 
-> Hi!
+> Quick ad-hoc observation:
 > 
-> Code does strcmps, but does not actually check count. So AFAICT
-> writing "host-I-don't-want-I-need-peripheral" into the file will
-> succeed and turn it into host mode.
+> [1] From https://gitlab.com/cip-project/cip-kernel/linux-cip/-
+> /jobs/260410825
+> > /opt/build_kernel.sh: line 123: [: /opt/cip-kernel-
+> config/4.4/powerpc/toshiba_defconfig: unary operator expected
 > 
-> Also data beyond count in buf are going to be accessed.
+> Interesting line...WTH is wrong with the line 123 (CONFIG_SPI_DEBUG=y)?
 
-Thank you for the report. I think the driver should use sysfs_streq() helper
-instead of strncmp() on the sysfs function. So, I'll submit such a patch later.
+Well spotted. This issue isn't with the actual config, rather than with my script. It's not handling very well the fact that there are two configs called "toshiba_defconfig" for v4.4 in the cip-kernel-config repository. (One for x86 and one for powerpc).
 
-Best regards,
-Yoshihiro Shimoda
+I'll update my script.
 
-> Best regards,
-> 								Pavel
 > 
-> static ssize_t role_store(struct device *dev, struct device_attribute *attr,
->                           const char *buf, size_t count)
-> {
->         struct rcar_gen3_chan *ch = dev_get_drvdata(dev);
->         bool is_b_device;
->         enum phy_mode cur_mode, new_mode;
+> [2] From https://lkml.org/lkml/2019/2/27/106
+> On Tue, Feb 26, 2019 at 09:29:40AM -0800, Guenter Roeck wrote:
+> > In function ?user_regset_copyin?,
+> >     inlined from ?vr_set? at arch/powerpc/kernel/ptrace.c:490:9:
+> > include/linux/regset.h:258:4: error:
+> > ?memcpy? offset [-527, -529] is out of the bounds [0, 16] of object ?vrsave?
+> > with type ?union <anonymous>?
+> >
+> > The problem is not new. It is seen now because I switched to use
+> > gcc 8.3.0. The problem is fixed in linux-next.
 > 
->         if (!ch->is_otg_channel || !rcar_gen3_is_any_rphy_initialized(ch))
->                 return -EIO;
+> You should contact Guenter Roeck and ask him about the following:
+> > The problem is not new. It is seen now because I switched to use
+> > gcc 8.3.0. The problem is fixed in linux-next.
 > 
->         /* FIXME, this is wrong */
->         if (!strncmp(buf, "host", strlen("host")))
->                 new_mode = PHY_MODE_USB_HOST;
->         else if (!strncmp(buf, "peripheral", strlen("peripheral")))
->                 new_mode = PHY_MODE_USB_DEVICE;
->         else
->                 return -EINVAL;
+> Stress on: "The problem is fixed in linux-next".
+
+Yep.
+
+Chris
+
 > 
+> My two cent worth thinking,
+> Zoran
+> _______
 > 
-> --
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+> On Sat, Jul 27, 2019 at 11:29 PM Chris Paterson
+> <Chris.Paterson2@renesas.com> wrote:
+> >
+> > Hello all,
+> >
+> > I'm trying to build the toshiba_defconfig [1] for the powerpc architecture
+> using the CIP v4.4 Kernel but I'm hitting some problems. The log from the
+> build can be seen on GitLab [2].
+> >
+> > Has anyone tried building this configuration recently?
+> >
+> > I'm using gcc compiler v8.1.0. I mention this because I've see a half-related
+> discussion [3] when Googling. From this mail thread I wonder if there are
+> some patches we need to backport?
+> >
+> >
+> > [1] https://gitlab.com/cip-project/cip-kernel/cip-kernel-
+> config/blob/master/4.4/powerpc/toshiba_defconfig
+> > [2] https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/260410825
+> > [3] https://lkml.org/lkml/2019/2/27/106
+> >
+> > Kind regards, Chris
+> >
+> > _______________________________________________
+> > cip-dev mailing list
+> > cip-dev at lists.cip-project.org
+> > https://lists.cip-project.org/mailman/listinfo/cip-dev
