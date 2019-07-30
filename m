@@ -1,82 +1,60 @@
 From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Tue, 30 Jul 2019 12:54:06 +0000
+Date: Tue, 30 Jul 2019 13:01:03 +0000
 Subject: [cip-dev] powerpc build with Kernel v4.4
-In-Reply-To: <CAEss1E+JD=vvXDAsz-tpisBsCAGnwbxnRNaiWJb9f+eJ+3+68A@mail.gmail.com>
+In-Reply-To: <20190728084920.GA21045@amd>
 References: <TYAPR01MB2285895BCD78ABB88C823A5DB7C30@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-	<CAEss1E+JD=vvXDAsz-tpisBsCAGnwbxnRNaiWJb9f+eJ+3+68A@mail.gmail.com>
-Message-ID: <TYAPR01MB2285A22754F2809267DD02FFB7DC0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+	<20190728074044.GA19089@amd> <20190728084920.GA21045@amd>
+Message-ID: <TYAPR01MB2285D2A833FCC5D7E0DF8A3CB7DC0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Zoran,
-
-> From: Zoran S <zoran.stojsavljevic.de@gmail.com>
-> Sent: 28 July 2019 05:22
-> 
-> Quick ad-hoc observation:
-> 
-> [1] From https://gitlab.com/cip-project/cip-kernel/linux-cip/-
-> /jobs/260410825
-> > /opt/build_kernel.sh: line 123: [: /opt/cip-kernel-
-> config/4.4/powerpc/toshiba_defconfig: unary operator expected
-> 
-> Interesting line...WTH is wrong with the line 123 (CONFIG_SPI_DEBUG=y)?
-
-Well spotted. This issue isn't with the actual config, rather than with my script. It's not handling very well the fact that there are two configs called "toshiba_defconfig" for v4.4 in the cip-kernel-config repository. (One for x86 and one for powerpc).
-
-I'll update my script.
-
-> 
-> [2] From https://lkml.org/lkml/2019/2/27/106
-> On Tue, Feb 26, 2019 at 09:29:40AM -0800, Guenter Roeck wrote:
-> > In function ?user_regset_copyin?,
-> >     inlined from ?vr_set? at arch/powerpc/kernel/ptrace.c:490:9:
-> > include/linux/regset.h:258:4: error:
-> > ?memcpy? offset [-527, -529] is out of the bounds [0, 16] of object ?vrsave?
-> > with type ?union <anonymous>?
-> >
-> > The problem is not new. It is seen now because I switched to use
-> > gcc 8.3.0. The problem is fixed in linux-next.
-> 
-> You should contact Guenter Roeck and ask him about the following:
-> > The problem is not new. It is seen now because I switched to use
-> > gcc 8.3.0. The problem is fixed in linux-next.
-> 
-> Stress on: "The problem is fixed in linux-next".
-
-Yep.
-
-Chris
-
-> 
-> My two cent worth thinking,
-> Zoran
-> _______
-> 
-> On Sat, Jul 27, 2019 at 11:29 PM Chris Paterson
-> <Chris.Paterson2@renesas.com> wrote:
-> >
-> > Hello all,
-> >
-> > I'm trying to build the toshiba_defconfig [1] for the powerpc architecture
+> From: Pavel Machek <pavel@denx.de>
+> Sent: 28 July 2019 09:49
+>
+> *** gpg4o | The signature of this email could not be verified because the
+> following public key is missing. Click here to search and import the key
+> 30E7F06A95DBFAF2 ***
+>
+> Hi!
+>
+> > > I'm trying to build the toshiba_defconfig [1] for the powerpc architecture
 > using the CIP v4.4 Kernel but I'm hitting some problems. The log from the
 > build can be seen on GitLab [2].
+> > >
+> > > Has anyone tried building this configuration recently?
+> > >
+> > > I'm using gcc compiler v8.1.0. I mention this because I've see a half-
+> related discussion [3] when Googling. From this mail thread I wonder if there
+> are some patches we need to backport?
+> > >
 > >
-> > Has anyone tried building this configuration recently?
-> >
-> > I'm using gcc compiler v8.1.0. I mention this because I've see a half-related
-> discussion [3] when Googling. From this mail thread I wonder if there are
-> some patches we need to backport?
-> >
-> >
-> > [1] https://gitlab.com/cip-project/cip-kernel/cip-kernel-
-> config/blob/master/4.4/powerpc/toshiba_defconfig
-> > [2] https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/260410825
-> > [3] https://lkml.org/lkml/2019/2/27/106
-> >
-> > Kind regards, Chris
-> >
-> > _______________________________________________
-> > cip-dev mailing list
-> > cip-dev at lists.cip-project.org
-> > https://lists.cip-project.org/mailman/listinfo/cip-dev
+> > Is there chance to use different gcc? Because this looks like gcc
+> > bug... but workaround seems simple enough. Let me investigate some
+> > more.
+>
+> Workaround seems simple, but won't easily apply on top of 4.4 kernel
+That?s a shame.
+
+>
+> Can you simply set
+>
+> CONFIG_PPC_DISABLE_WERROR=y
+>
+> to make the problem go away?
+
+I could, but even if it works it?s Toshiba?s config and perhaps they had a reason to enable this option.
+
+Daniel, Kobayashi-san, any comments?
+
+Kind regards, Chris
+
+>
+> Best regards,
+>
+>                                                               Pavel
+> --
+> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190730/c92e517e/attachment-0001.html>
