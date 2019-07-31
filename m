@@ -1,8 +1,10 @@
 From: chris.paterson2@renesas.com (Chris Paterson)
-Date: Wed, 31 Jul 2019 23:02:41 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip-rt] Update CI to use the latest
+Date: Wed, 31 Jul 2019 23:02:42 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip] Update CI to use the latest
 	linux-cip-ci containers
-Message-ID: <20190731220244.20321-1-chris.paterson2@renesas.com>
+In-Reply-To: <20190731220244.20321-1-chris.paterson2@renesas.com>
+References: <20190731220244.20321-1-chris.paterson2@renesas.com>
+Message-ID: <20190731220244.20321-2-chris.paterson2@renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
