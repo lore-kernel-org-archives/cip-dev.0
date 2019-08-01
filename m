@@ -1,115 +1,55 @@
 From: ben.hutchings@codethink.co.uk (Ben Hutchings)
-Date: Thu, 01 Aug 2019 19:32:01 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip-rt] Update CI to use the latest
- linux-cip-ci containers
-In-Reply-To: <20190731220244.20321-1-chris.paterson2@renesas.com>
-References: <20190731220244.20321-1-chris.paterson2@renesas.com>
-Message-ID: <e1da51399df977629aa4256a6e10c2566428a4e4.camel@codethink.co.uk>
+Date: Thu, 01 Aug 2019 19:51:02 +0100
+Subject: [cip-dev] phy-rcar-gen3-usb2: wrong parsing of role in
+ role_store?
+In-Reply-To: <20190730095140.GA29609@amd>
+References: <20190730095140.GA29609@amd>
+Message-ID: <ffe639374bd93fe76f4aed19883640fefebd08f4.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Wed, 2019-07-31 at 23:02 +0100, Chris Paterson wrote:
-> The main aim of this update is to add support for more build
-> architectures.
+On Tue, 2019-07-30 at 11:51 +0200, Pavel Machek wrote:
+> Hi!
 > 
-> In addition, we need to include a fix so that builds using Kernel
-> configs from cip-kernel-config will work again, after changes to the
-> directory structure caused us problems.
+> Code does strcmps, but does not actually check count. So AFAICT
+> writing "host-I-don't-want-I-need-peripheral" into the file will
+> succeed and turn it into host mode.
 
-Sorry about the lack of notice for that.
+I suspect the intent is to work without a trailing "\n", but you're
+right that this parsing is rather lax.
 
-I started out working alone on the kernel-config and kernel-sec
-repositories, so didn't have anyone to review the changes, so I got in
-the habit of simply pushing my changes.
+> Also data beyond count in buf are going to be accessed.
 
-Since that's no longer the case I will try to stick to merge requests
-that can be reviewed before I make breaking changes.  (That doesn't
-mean there won't be any breaking changes in future, but it's more
-likely that there will be advance warning.)
+All attribute writes should be going through kernfs_fop_write(), which
+writes a null terminator at buf[count] before calling the write/store
+function.  (I don't know where that'ss documented though.)  So I think
+this is safe.
 
 Ben.
 
-> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-> ---
->  .gitlab-ci.yml | 22 ++++++++++++----------
->  1 file changed, 12 insertions(+), 10 deletions(-)
+> static ssize_t role_store(struct device *dev, struct device_attribute *attr,
+>                           const char *buf, size_t count)
+> {
+>         struct rcar_gen3_chan *ch = dev_get_drvdata(dev);
+>         bool is_b_device;
+>         enum phy_mode cur_mode, new_mode;
 > 
-> diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-> index 96eed0e0c81a..fb775f4950b1 100644
-> --- a/.gitlab-ci.yml
-> +++ b/.gitlab-ci.yml
-> @@ -2,16 +2,17 @@ variables:
->    GIT_STRATEGY: clone
->    GIT_DEPTH: 10
->    DOCKER_DRIVER: overlay2
-> +  DOCKER_IMAGE_TAG: v2
->  
-> -build_arm_renesas_shmobile_defconfig:
-> +arm_renesas_shmobile_defconfig:
->    stage: build
-> -  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-v1
-> +  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-$DOCKER_IMAGE_TAG
->    variables:
->      BUILD_ARCH: arm
->      CONFIG: renesas_shmobile_defconfig
->      CONFIG_LOC: cip-kernel-config
->      DEVICES: r8a7743-iwg20d-q7 r8a7745-iwg22d-sodimm
-> -    DTBS: arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dtb arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dtb
-> +    DTBS: r8a7743-iwg20d-q7-dbcm-ca.dtb r8a7745-iwg22d-sodimm-dbhd-ca.dtb
->    script:
->      - /opt/build_kernel.sh
->    artifacts:
-> @@ -20,15 +21,15 @@ build_arm_renesas_shmobile_defconfig:
->      paths:
->        - output
->  
-> -build_arm64_renesas_defconfig:
-> +arm64_renesas_defconfig:
->    stage: build
-> -  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-v1
-> +  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-$DOCKER_IMAGE_TAG
->    variables:
->      BUILD_ARCH: arm64
->      CONFIG: renesas_defconfig
->      CONFIG_LOC: cip-kernel-config
->      DEVICES: r8a774c0-ek874
-> -    DTBS: arch/arm64/boot/dts/renesas/r8a774c0-ek874.dtb
-> +    DTBS: r8a774c0-ek874.dtb
->    script:
->      - /opt/build_kernel.sh
->    artifacts:
-> @@ -37,15 +38,15 @@ build_arm64_renesas_defconfig:
->      paths:
->        - output
->  
-> -build_arm_shmobile_defconfig:
-> +arm_shmobile_defconfig:
->    stage: build
-> -  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-v1
-> +  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-$DOCKER_IMAGE_TAG
->    variables:
->      BUILD_ARCH: arm
->      CONFIG: shmobile_defconfig
->      CONFIG_LOC: intree
->      DEVICES: r8a7743-iwg20d-q7 r8a7745-iwg22d-sodimm
-> -    DTBS: arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dtb arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dtb
-> +    DTBS: r8a7743-iwg20d-q7-dbcm-ca.dtb r8a7745-iwg22d-sodimm-dbhd-ca.dtb
->    script:
->      - /opt/build_kernel.sh
->    artifacts:
-> @@ -56,10 +57,11 @@ build_arm_shmobile_defconfig:
->  
->  run_tests:
->    stage: test
-> -  image: registry.gitlab.com/cip-playground/linux-cip-ci:test-v1
-> +  image: registry.gitlab.com/cip-playground/linux-cip-ci:test-$DOCKER_IMAGE_TAG
->    when: always
->    variables:
->      GIT_STRATEGY: none
-> +    TEST_TIMEOUT: 30
->    script:
->      - /opt/submit_tests.sh
->    artifacts:
+>         if (!ch->is_otg_channel || !rcar_gen3_is_any_rphy_initialized(ch))
+>                 return -EIO;
+> 
+>         /* FIXME, this is wrong */
+>         if (!strncmp(buf, "host", strlen("host")))
+>                 new_mode = PHY_MODE_USB_HOST;
+>         else if (!strncmp(buf, "peripheral", strlen("peripheral")))
+>                 new_mode = PHY_MODE_USB_DEVICE;
+>         else
+>                 return -EINVAL;
+> 
+> 
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
 -- 
 Ben Hutchings, Software Developer                         Codethink Ltd
 https://www.codethink.co.uk/                 Dale House, 35 Dale Street
