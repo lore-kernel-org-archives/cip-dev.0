@@ -1,81 +1,44 @@
-From: chris.paterson2@renesas.com (Chris Paterson)
-Date: Wed, 31 Jul 2019 23:02:44 +0100
-Subject: [cip-dev] [PATCH 4.4.y-cip] Update CI to use the latest
-	linux-cip-ci containers
-In-Reply-To: <20190731220244.20321-1-chris.paterson2@renesas.com>
-References: <20190731220244.20321-1-chris.paterson2@renesas.com>
-Message-ID: <20190731220244.20321-4-chris.paterson2@renesas.com>
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Thu, 1 Aug 2019 01:03:12 +0000
+Subject: [cip-dev] CIP IRC weekly meeting today
+Message-ID: <HK0PR01MB297996FC25F6B60133556704E2DE0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-The main aim of this update is to add support for more build
-architectures.
+Hi all,
 
-In addition, we need to include a fix so that builds using Kernel
-configs from cip-kernel-config will work again, after changes to the
-directory structure caused us problems.
+Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
 
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
----
- .gitlab-ci.yml | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=8&day1&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
 
-diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-index 421d971908a6..874601a94983 100644
---- a/.gitlab-ci.yml
-+++ b/.gitlab-ci.yml
-@@ -2,16 +2,17 @@ variables:
-   GIT_STRATEGY: clone
-   GIT_DEPTH: 10
-   DOCKER_DRIVER: overlay2
-+  DOCKER_IMAGE_TAG: v2
- 
--build_arm_renesas_shmobile_defconfig:
-+arm_renesas_shmobile_defconfig:
-   stage: build
--  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-v1
-+  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-$DOCKER_IMAGE_TAG
-   variables:
-     BUILD_ARCH: arm
-     CONFIG: renesas_shmobile_defconfig
-     CONFIG_LOC: cip-kernel-config
-     DEVICES: r8a7743-iwg20d-q7 r8a7745-iwg22d-sodimm
--    DTBS: arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dtb arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dtb
-+    DTBS: r8a7743-iwg20d-q7-dbcm-ca.dtb r8a7745-iwg22d-sodimm-dbhd-ca.dtb
-   script:
-     - /opt/build_kernel.sh
-   artifacts:
-@@ -20,15 +21,15 @@ build_arm_renesas_shmobile_defconfig:
-     paths:
-       - output
- 
--build_arm_shmobile_defconfig:
-+arm_shmobile_defconfig:
-   stage: build
--  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-v1
-+  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-$DOCKER_IMAGE_TAG
-   variables:
-     BUILD_ARCH: arm
-     CONFIG: shmobile_defconfig
-     CONFIG_LOC: intree
-     DEVICES: r8a7743-iwg20d-q7 r8a7745-iwg22d-sodimm
--    DTBS: arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dtb arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dtb
-+    DTBS: r8a7743-iwg20d-q7-dbcm-ca.dtb r8a7745-iwg22d-sodimm-dbhd-ca.dtb
-   script:
-     - /opt/build_kernel.sh
-   artifacts:
-@@ -39,10 +40,11 @@ build_arm_shmobile_defconfig:
- 
- run_tests:
-   stage: test
--  image: registry.gitlab.com/cip-playground/linux-cip-ci:test-v1
-+  image: registry.gitlab.com/cip-playground/linux-cip-ci:test-$DOCKER_IMAGE_TAG
-   when: always
-   variables:
-     GIT_STRATEGY: none
-+    TEST_TIMEOUT: 30
-   script:
-     - /opt/submit_tests.sh
-   artifacts:
--- 
-2.17.1
+US-West US-East?? UK???? DE???? TW???? JP
+02:00??? 05:00?? 10:00?? 11:00?? 17:00?? 18:00
+
+Channel:
+* irc:chat.freenode.net:6667/cip
+
+Agenda:
+
+* Action item
+1. Provide the script for CIP kernel config collection - bwh 
+#link https://lists.cip-project.org/pipermail/cip-dev/2019-June/002506.html
+2. Work out a solution for LAVA master backups - patersonc 
+3. Provide the cases to cip-testing to build up the test environment - Iwamatsu-san
+4. Ask cip-dev which configurations need testing - Chris
+5. Confirm we can enable high-res timers for every board - Pavel
+6. Add support for PowerPC (4.4 Toshiba config) - Chris
+7. Test LTS (pre)releases directly - Chris
+8. Discuss the primary repository in CIP kernel development (kernel.org or gitlab) - kernel team
+
+* Kernel maintenance updates
+* Kernel testing
+* CIP Core
+* Software update
+* AOB
+
+The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
+
+Best regards,
+
+SZ Lin, Moxa.
