@@ -1,73 +1,116 @@
-From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
-Date: Thu, 1 Aug 2019 08:05:47 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-In-Reply-To: <HK0PR01MB297996FC25F6B60133556704E2DE0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-References: <HK0PR01MB297996FC25F6B60133556704E2DE0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-Message-ID: <OSAPR01MB32344E856E076BEBE6309D4592DE0@OSAPR01MB3234.jpnprd01.prod.outlook.com>
+From: ben.hutchings@codethink.co.uk (Ben Hutchings)
+Date: Thu, 01 Aug 2019 19:32:01 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip-rt] Update CI to use the latest
+ linux-cip-ci containers
+In-Reply-To: <20190731220244.20321-1-chris.paterson2@renesas.com>
+References: <20190731220244.20321-1-chris.paterson2@renesas.com>
+Message-ID: <e1da51399df977629aa4256a6e10c2566428a4e4.camel@codethink.co.uk>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi SZ,
+On Wed, 2019-07-31 at 23:02 +0100, Chris Paterson wrote:
+> The main aim of this update is to add support for more build
+> architectures.
+> 
+> In addition, we need to include a fix so that builds using Kernel
+> configs from cip-kernel-config will work again, after changes to the
+> directory structure caused us problems.
 
-I can not participate IRC meeting for personal reasons.
+Sorry about the lack of notice for that.
 
-Best regards,
-  Nobuhiro
+I started out working alone on the kernel-config and kernel-sec
+repositories, so didn't have anyone to review the changes, so I got in
+the habit of simply pushing my changes.
 
+Since that's no longer the case I will try to stick to merge requests
+that can be reviewed before I make breaking changes.  (That doesn't
+mean there won't be any breaking changes in future, but it's more
+likely that there will be advance warning.)
 
-> -----Original Message-----
-> From: cip-dev-bounces at lists.cip-project.org
-> [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of SZ Lin (?
-> ??)
-> Sent: Thursday, August 1, 2019 10:03 AM
-> To: cip-dev at lists.cip-project.org
-> Subject: [cip-dev] CIP IRC weekly meeting today
+Ben.
+
+> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+> ---
+>  .gitlab-ci.yml | 22 ++++++++++++----------
+>  1 file changed, 12 insertions(+), 10 deletions(-)
 > 
-> Hi all,
-> 
-> Kindly be reminded to attend the weekly meeting through IRC to discuss
-> technical topics with CIP kernel today.
-> 
-> *Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting
-> from the first week of Apr. according to TSC meeting*
-> https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019
-> &month=8&day1&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p
-> 6=248
-> 
-> US-West US-East?? UK???? DE???? TW???? JP
-> 02:00??? 05:00?? 10:00?? 11:00?? 17:00?? 18:00
-> 
-> Channel:
-> * irc:chat.freenode.net:6667/cip
-> 
-> Agenda:
-> 
-> * Action item
-> 1. Provide the script for CIP kernel config collection - bwh #link
-> https://lists.cip-project.org/pipermail/cip-dev/2019-June/002506.htm
-> l
-> 2. Work out a solution for LAVA master backups - patersonc 3. Provide
-> the cases to cip-testing to build up the test environment - Iwamatsu-san
-> 4. Ask cip-dev which configurations need testing - Chris 5. Confirm we
-> can enable high-res timers for every board - Pavel 6. Add support for
-> PowerPC (4.4 Toshiba config) - Chris 7. Test LTS (pre)releases directly
-> - Chris 8. Discuss the primary repository in CIP kernel development
-> (kernel.org or gitlab) - kernel team
-> 
-> * Kernel maintenance updates
-> * Kernel testing
-> * CIP Core
-> * Software update
-> * AOB
-> 
-> The meeting will take 30 min, although it can be extended to an hour if
-> it makes sense and those involved in the topics can stay. Otherwise, the
-> topic will be taken offline or in the next meeting.
-> 
-> Best regards,
-> 
-> SZ Lin, Moxa.
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
+> diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+> index 96eed0e0c81a..fb775f4950b1 100644
+> --- a/.gitlab-ci.yml
+> +++ b/.gitlab-ci.yml
+> @@ -2,16 +2,17 @@ variables:
+>    GIT_STRATEGY: clone
+>    GIT_DEPTH: 10
+>    DOCKER_DRIVER: overlay2
+> +  DOCKER_IMAGE_TAG: v2
+>  
+> -build_arm_renesas_shmobile_defconfig:
+> +arm_renesas_shmobile_defconfig:
+>    stage: build
+> -  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-v1
+> +  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+>    variables:
+>      BUILD_ARCH: arm
+>      CONFIG: renesas_shmobile_defconfig
+>      CONFIG_LOC: cip-kernel-config
+>      DEVICES: r8a7743-iwg20d-q7 r8a7745-iwg22d-sodimm
+> -    DTBS: arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dtb arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dtb
+> +    DTBS: r8a7743-iwg20d-q7-dbcm-ca.dtb r8a7745-iwg22d-sodimm-dbhd-ca.dtb
+>    script:
+>      - /opt/build_kernel.sh
+>    artifacts:
+> @@ -20,15 +21,15 @@ build_arm_renesas_shmobile_defconfig:
+>      paths:
+>        - output
+>  
+> -build_arm64_renesas_defconfig:
+> +arm64_renesas_defconfig:
+>    stage: build
+> -  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-v1
+> +  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+>    variables:
+>      BUILD_ARCH: arm64
+>      CONFIG: renesas_defconfig
+>      CONFIG_LOC: cip-kernel-config
+>      DEVICES: r8a774c0-ek874
+> -    DTBS: arch/arm64/boot/dts/renesas/r8a774c0-ek874.dtb
+> +    DTBS: r8a774c0-ek874.dtb
+>    script:
+>      - /opt/build_kernel.sh
+>    artifacts:
+> @@ -37,15 +38,15 @@ build_arm64_renesas_defconfig:
+>      paths:
+>        - output
+>  
+> -build_arm_shmobile_defconfig:
+> +arm_shmobile_defconfig:
+>    stage: build
+> -  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-v1
+> +  image: registry.gitlab.com/cip-playground/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+>    variables:
+>      BUILD_ARCH: arm
+>      CONFIG: shmobile_defconfig
+>      CONFIG_LOC: intree
+>      DEVICES: r8a7743-iwg20d-q7 r8a7745-iwg22d-sodimm
+> -    DTBS: arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dtb arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dtb
+> +    DTBS: r8a7743-iwg20d-q7-dbcm-ca.dtb r8a7745-iwg22d-sodimm-dbhd-ca.dtb
+>    script:
+>      - /opt/build_kernel.sh
+>    artifacts:
+> @@ -56,10 +57,11 @@ build_arm_shmobile_defconfig:
+>  
+>  run_tests:
+>    stage: test
+> -  image: registry.gitlab.com/cip-playground/linux-cip-ci:test-v1
+> +  image: registry.gitlab.com/cip-playground/linux-cip-ci:test-$DOCKER_IMAGE_TAG
+>    when: always
+>    variables:
+>      GIT_STRATEGY: none
+> +    TEST_TIMEOUT: 30
+>    script:
+>      - /opt/submit_tests.sh
+>    artifacts:
+-- 
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
