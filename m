@@ -1,8 +1,10 @@
 From: chris.paterson2@renesas.com (Chris Paterson)
-Date: Mon,  5 Aug 2019 16:35:57 +0100
-Subject: [cip-dev] [PATCH linux-4.19.y-cip-rt] Update to run all CIP arm,
+Date: Mon,  5 Aug 2019 16:35:58 +0100
+Subject: [cip-dev] [PATCH linux-4.19.y-cip] Update to run all CIP arm,
 	arm64 and x86 configs
-Message-ID: <20190805153558.5926-1-chris.paterson2@renesas.com>
+In-Reply-To: <20190805153558.5926-1-chris.paterson2@renesas.com>
+References: <20190805153558.5926-1-chris.paterson2@renesas.com>
+Message-ID: <20190805153558.5926-2-chris.paterson2@renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
