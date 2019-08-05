@@ -1,42 +1,33 @@
-From: chris@reproducible-builds.org (Chris Lamb)
-Date: Mon, 05 Aug 2019 17:25:34 +0100
-Subject: [cip-dev] Reproducible Builds report for July 2019
-Message-ID: <8dc1c226-6435-4f95-a090-3d651aa70f1d@www.fastmail.com>
+From: pavel@denx.de (Pavel Machek)
+Date: Mon, 5 Aug 2019 21:45:45 +0200
+Subject: [cip-dev] [PATCH linux-4.19.y-cip] Update to run all CIP arm,
+ arm64 and x86 configs
+In-Reply-To: <20190805153558.5926-2-chris.paterson2@renesas.com>
+References: <20190805153558.5926-1-chris.paterson2@renesas.com>
+	<20190805153558.5926-2-chris.paterson2@renesas.com>
+Message-ID: <20190805194545.GA31940@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Dear cip-dev,
+Hi!
 
-As requested by Kazuhiro-san at DebConf19 in Curitiba, please find
-attached is the July 2019 report from the Reproducible Builds
-project. :)
+> Also update to use new linux-cip-ci repository location.
+> 
+> Support for real-time will be added later.
+> 
+> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 
-In these monthly reports, we attempt to outline the most important
-things which have been up to in the past month. In this attached
-months's report, we cover:
+Thanks, I applied all four patches.
 
- * Front page ? Media coverage, upstream news, etc.
- * Distribution work ? Shenanigans at DebConf19
- * Software development ? Software transparency, yet more diffoscope
-   work, etc.
- * On our mailing list ? GNU tools, education and .buildinfo files
-
-You can view the report as a PDF (attached) or you can view it online
-at <https://reproducible-builds.org/reports/2019-07/>,
-
-
-Best wishes,
-
+Best regards,
+								Pavel
 -- 
-      o
-    ?   ?      Chris Lamb
-   o     o     reproducible-builds.org
-    ?   ?
-      o
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
 -------------- next part --------------
 A non-text attachment was scrubbed...
-Name: reproducible_builds_in_july_2019.pdf
-Type: application/pdf
-Size: 335673 bytes
-Desc: not available
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190805/935a1102/attachment-0001.pdf>
+Name: signature.asc
+Type: application/pgp-signature
+Size: 181 bytes
+Desc: Digital signature
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190805/9a2e7f5b/attachment.sig>
