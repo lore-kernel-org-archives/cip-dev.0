@@ -1,33 +1,15 @@
-From: pavel@denx.de (Pavel Machek)
-Date: Mon, 5 Aug 2019 21:45:45 +0200
-Subject: [cip-dev] [PATCH linux-4.19.y-cip] Update to run all CIP arm,
- arm64 and x86 configs
-In-Reply-To: <20190805153558.5926-2-chris.paterson2@renesas.com>
-References: <20190805153558.5926-1-chris.paterson2@renesas.com>
-	<20190805153558.5926-2-chris.paterson2@renesas.com>
-Message-ID: <20190805194545.GA31940@amd>
+From: daniel.sangorrin@toshiba.co.jp (daniel.sangorrin at toshiba.co.jp)
+Date: Tue, 6 Aug 2019 06:38:10 +0000
+Subject: [cip-dev] powerpc support on CIP kernel v4.4 not required anymore
+Message-ID: <OSBPR01MB3077C8219AC5A0297B18E0C1D0D50@OSBPR01MB3077.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi!
+Hi all,
 
-> Also update to use new linux-cip-ci repository location.
-> 
-> Support for real-time will be added later.
-> 
-> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+After an internal survey, it seems that Toshiba doesn't need support for our 4.4 PowerPC defconfig anymore.
 
-Thanks, I applied all four patches.
+Hopefully, this will also release some time for kernel review and kernel testing.
 
-Best regards,
-								Pavel
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 181 bytes
-Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190805/9a2e7f5b/attachment.sig>
+Thanks,
+Daniel
