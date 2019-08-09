@@ -1,55 +1,31 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Fri, 9 Aug 2019 14:45:02 +0000
-Subject: [cip-dev] Testing CIP kernel with Debian gcc
-In-Reply-To: <5087d1355a38d5a1cb4c1e9e07bf64a0fddb625e.camel@codethink.co.uk>
-References: <TYAPR01MB4286F48F657C60E5BBF5341DE1D70@TYAPR01MB4286.jpnprd01.prod.outlook.com>
-	<TYAPR01MB228561299852241F36E8328BB7D70@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-	<5087d1355a38d5a1cb4c1e9e07bf64a0fddb625e.camel@codethink.co.uk>
-Message-ID: <TYAPR01MB22854618D026A3A9B6EB9DF0B7D60@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
+Date: Fri, 9 Aug 2019 20:47:58 +0000
+Subject: [cip-dev] [ANNOUNCE] Release v4.19.65-cip8 and v4.4.188-cip36
+Message-ID: <OSAPR01MB3234D044CC9F11D12894B70F92D60@OSAPR01MB3234.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-> From: Ben Hutchings <ben.hutchings@codethink.co.uk>
-> Sent: 09 August 2019 14:03
-> 
-> On Thu, 2019-08-08 at 12:05 +0000, Chris Paterson wrote:
-> [...]
-> > Do Debian make any changes/fixes in their gcc package?
-> 
-> Yes, they are usually snapshots of a release branch, with some cherry-
-> picked fixes e.g. for gcc-8 in buster the latest changelog entry is:
-> 
-> gcc-8 (8.3.0-6) unstable; urgency=medium
-> 
->   * Update to SVN 20190406 (r270182) from the gcc-8-branch.
->     - Fix PR middle-end/89934, PR lto/89896.
->   * Fix PR fortran/89981, taken from the trunk.
-> 
->  -- Matthias Klose <doko@debian.org>  Sat, 06 Apr 2019 16:44:55 +0200
-> 
-> Older gcc packages also have backports of retpoline support.
-> 
-> > The packages provided in the links above are presumably for compiling in
-> the native system.
-> > Does Debian provide suitable packages for cross-compiling?
-> [...]
-> 
-> Yes, starting with stretch there are cross-compilers for x86 and arm64
-> targetting most release architectures.  They are named gcc-<major>-
-> <triplet>, e.g. gcc-8-arm-linux-gnueabihf (except that x86_64 is
-> changed to x86-64 since underscores aren't allowed in package names).
+Hi all,
 
-Thank you Ben and Iwamatsu-san.
+CIP kernel team has released Linux kernel v4.19.65-cip8 and v4.4.188-cip36.
 
-I'll take do some experiments.
+The linux-4.19.y-cip tree has been updated from base version from 4.19.60 to 4.19.65.
+The linux-4.4.y-cip tree has been updated from base version from 4.4.185 to 4.4.188,
+and patches that adds support for I2C, QSPI and RTC for iwg23s-sbc has been applied.
 
-Chris
+You can get this release via the git tree at:
 
+  v4.19.65-cip8:
 
-> 
-> Ben.
-> 
-> --
-> Ben Hutchings, Software Developer                         Codethink Ltd
-> https://www.codethink.co.uk/                 Dale House, 35 Dale Street
->                                      Manchester, M1 2HF, United Kingdom
+    repository: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+    branch: linux-4.19.y-cip
+    commit: e68719ce48d5c4b1b761d1d67d5c33fef1153c88
+
+  v4.4.188-cip36:
+
+    repository: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+    branch: linux-4.4.y-cip
+    commit: 1425fbca32aa82d4a81303cd7c8e0f1aac0ed746
+
+Best regards,
+  Nobuhiro
