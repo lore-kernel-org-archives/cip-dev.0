@@ -1,20 +1,42 @@
-From: gitlab@mg.gitlab.com (Ben Hutchings)
-Date: Wed, 14 Aug 2019 23:28:51 +0000
-Subject: [cip-dev] [Git][cip-project/cip-kernel/cip-kernel-sec] Pushed new
- branch bwh/web-report-affected
-Message-ID: <5d54993380440_3a1a3f86caedea50372035aa@sidekiq-asap-03-sv-gprd.mail>
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Thu, 15 Aug 2019 01:04:56 +0000
+Subject: [cip-dev] CIP IRC weekly meeting today
+Message-ID: <HK0PR01MB29794FE823E23EBE3C26D49FE2AC0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
+Hi all,
 
+Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
 
-Ben Hutchings pushed new branch bwh/web-report-affected at cip-project / cip-kernel / cip-kernel-sec
+*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=8&day15&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
 
--- 
-View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/tree/bwh/web-report-affected
-You're receiving this email because of your account on gitlab.com.
+US-West US-East   UK     DE     TW     JP
+02:00    05:00   10:00   11:00   17:00   18:00
 
+Channel:
+* irc:chat.freenode.net:6667/cip
 
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190814/a62b7227/attachment.html>
+Agenda:
+
+* Action item
+1. Provide the cases to cip-testing to build up the test environment - Iwamatsu-san
+2. Ask cip-dev which configurations need testing - patersonc
+3. Test LTS (pre)releases directly - patersonc
+4. Discuss the primary repository in CIP kernel development (kernel.org or gitlab) - kernel team
+5. Discuss and make a decision on default compiler's options - kernel team
+
+* Kernel maintenance updates
+* Kernel testing
+* CIP Core
+* Software update
+* AOB
+
+The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
+
+I won't be able to attend this meeting, Gavin will chair today's meeting.
+
+Best regards,
+
+SZ Lin, Moxa.
