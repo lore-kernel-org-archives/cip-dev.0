@@ -1,154 +1,55 @@
 From: gitlab@mg.gitlab.com (Ben Hutchings)
-Date: Thu, 15 Aug 2019 15:41:02 +0000
+Date: Thu, 15 Aug 2019 19:49:51 +0000
 Subject: [cip-dev]
- [Git][cip-project/cip-kernel/cip-kernel-sec][bwh/web-report-affected]
- webview: Make open issues table headings "sticky"
-Message-ID: <5d557d0ebbfeb_3ce73fdcad24e1943759070@sidekiq-asap-02-sv-gprd.mail>
+ [Git][cip-project/cip-kernel/cip-kernel-sec][bwh/update-issues] Record
+ fixed-by commit for CVE-2019-14763
+Message-ID: <5d55b75fe1a2e_243f3fa0eb9924d054151fe@sidekiq-asap-04-sv-gprd.mail>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 
 
-Ben Hutchings pushed to branch bwh/web-report-affected at cip-project / cip-kernel / cip-kernel-sec
+Ben Hutchings pushed to branch bwh/update-issues at cip-project / cip-kernel / cip-kernel-sec
 
 
 Commits:
-b72bc3f4 by Ben Hutchings at 2019-08-15T15:40:50Z
-webview: Make open issues table headings &quot;sticky&quot;
-
-The open issues table can easily be larger than a browser window.
-Style the table headings for this table so that they don&#39;t scroll
-away (in either dimension).
-
-Tested with Firefox 60.8.0esr and 73.0.3683.75, and should be
-compatible with current Edge and Safari.
+e0079ecc by Ben Hutchings at 2019-08-15T19:49:05Z
+Record fixed-by commit for CVE-2019-14763
 
 Signed-off-by: Ben Hutchings &lt;ben.hutchings at codethink.co.uk&gt;
 
 - - - - -
 
 
-2 changed files:
+1 changed file:
 
-- scripts/templates/open_issues.html
-- scripts/templates/style.css
+- issues/CVE-2019-14763.yml
 
 
 Changes:
 
 =====================================
-scripts/templates/open_issues.html
+issues/CVE-2019-14763.yml
 =====================================
-@@ -1,37 +1,39 @@
- <link rel="stylesheet" href="/static/style.css">
- <title>Open issues</title>
- <h1>Open issues</h1>
--<table>
--  <thead>
-+<div class="table-container">
-+  <table class="fixed-header">
-+    <thead>
-+      <tr>
-+	<th/>
-+	{% for name, _, _ in branches %}
-+	<th>
-+	  <a href="/branch/{{ name }}/">{{ name }}</a>
-+	</th>
-+	{% endfor %}
-+      </tr>
-+    </thead>
-+    {% for cve_id, issue in cve_ids %}
-     <tr>
--      <td/>
--      {% for name, _, _ in branches %}
-       <th>
--	<a href="/branch/{{ name }}/">{{ name }}</a>
-+	<a href="/issue/{{ cve_id }}/">{{ cve_id }}</a>
-       </th>
-+      {% for name, branch, affected in branches %}
-+      {% if not affected[cve_id] %}
-+      {% if issue['fixed-by'] and issue['fixed-by'][name] %}
-+      <td class="good">fixed</td>
-+      {% else %}
-+      <td class="good">never affected</td>
-+      {% endif %}
-+      {% else %}
-+      {% if issue.ignore and (issue.ignore.all or issue.ignore[name]) %}
-+      <td class="ignored">ignored</td>
-+      {% else %}
-+      <td class="bad">vulnerable</td>
-+      {% endif %}
-+      {% endif %}
-       {% endfor %}
-     </tr>
--  </thead>
--  {% for cve_id, issue in cve_ids %}
--  <tr>
--    <th>
--      <a href="/issue/{{ cve_id }}/">{{ cve_id }}</a>
--    </th>
--    {% for name, branch, affected in branches %}
--    {% if not affected[cve_id] %}
--    {% if issue['fixed-by'] and issue['fixed-by'][name] %}
--    <td class="good">fixed</td>
--    {% else %}
--    <td class="good">never affected</td>
--    {% endif %}
--    {% else %}
--    {% if issue.ignore and (issue.ignore.all or issue.ignore[name]) %}
--    <td class="ignored">ignored</td>
--    {% else %}
--    <td class="bad">vulnerable</td>
--    {% endif %}
--    {% endif %}
-     {% endfor %}
--  </tr>
--  {% endfor %}
--</table>
-+  </table>
-+</div>
-
-
-=====================================
-scripts/templates/style.css
-=====================================
-@@ -45,3 +45,26 @@ th, td {
-     padding-left: 0.5em;
-     padding-right: 0.5em;
- }
-+
-+/*
-+ * Stop table headings scrolling away using position: sticky; see
-+ * <https://stackoverflow.com/questions/11891065/>.
-+ */
-+table-container {
-+    display: inline-block;
-+    overflow: auto;
-+}
-+table.fixed-header thead th {
-+    position: -webkit-sticky;
-+    position: sticky;
-+    top: 0;
-+    background-color: #ffffff;
-+    background-clip: padding-box;
-+}
-+table.fixed-header tbody th {
-+    position: -webkit-sticky;
-+    position: sticky;
-+    left: 0;
-+    background-color: #ffffff;
-+    background-clip: padding-box;
-+}
+@@ -20,6 +20,8 @@ comments:
+     c91815b59624.
+ reporters:
+ - Tuba Yavuz
++introduced-by:
++  mainline: [15b8d9332b927d76a0b26cf70c564756d1648133]
+ fixed-by:
+   linux-4.14.y: [59d3a952e4f3d505f9444e86db069081323351c7]
+   mainline: [c91815b596245fd7da349ecc43c8def670d2269e]
 
 
 
-View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/commit/b72bc3f4ddcb3b9635c88f2234eae09748e25e4c
+View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/commit/e0079eccbca56651ecf4f5e112451d22ecfe11d7
 
 -- 
-View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/commit/b72bc3f4ddcb3b9635c88f2234eae09748e25e4c
+View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/commit/e0079eccbca56651ecf4f5e112451d22ecfe11d7
 You're receiving this email because of your account on gitlab.com.
 
 
 -------------- next part --------------
 An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190815/2759202b/attachment-0001.html>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190815/f8e8740d/attachment.html>
