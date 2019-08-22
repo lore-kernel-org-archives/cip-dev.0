@@ -1,40 +1,17 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 22 Aug 2019 01:31:40 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-Message-ID: <HK0PR01MB29792D822E15692E95FA102FE2A50@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+From: daniel.sangorrin@toshiba.co.jp (daniel.sangorrin at toshiba.co.jp)
+Date: Thu, 22 Aug 2019 01:43:06 +0000
+Subject: [cip-dev] SW updates wiki updated
+Message-ID: <OSBPR01MB3077B87D242CA66AACCD3B71D0A50@OSBPR01MB3077.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+Hi, just a quick note to let you know that I have updated our wiki page (https://wiki.linuxfoundation.org/civilinfrastructureplatform/cip-sw-updates) with information about our deliverables for the Prototype and Contributions milestone. That includes the code used for the Demo [1], our Demo leaflet [2] and a list of contributions to upstream projects [3]
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
+We are still discussing the next 6 months roadmap. Hopefully, that will be announce soon.
 
-*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=8&day22&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
+[1] https://gitlab.com/cip-project/cip-core/isar-cip-core/tree/stormc/swupdate
+[2] https://wiki.linuxfoundation.org/_media/civilinfrastructureplatform/sw-updates/ossj2019-cip-swupdates-demo-panel.pdf
+[3] https://wiki.linuxfoundation.org/civilinfrastructureplatform/cip_software_updates_contributions_iternation_1
 
-US-West US-East   UK     DE     TW     JP
-02:00    05:00   10:00   11:00   17:00   18:00
-
-Channel:
-* irc:chat.freenode.net:6667/cip
-
-Agenda:
-
-* Action item
-1. Provide the cases to cip-testing to build up the test environment - Iwamatsu-san 
-2. Ask cip-dev which configurations need testing - patersonc 
-3. Test LTS (pre)releases directly - patersonc 
-4. Discuss the primary repository in CIP kernel development (kernel.org or gitlab) - kernel team 
-5. Discuss and make a decision on default compiler's options - kernel team
-
-* Kernel maintenance updates
-* Kernel testing
-* CIP Core
-* Software update
-* AOB
-
-The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
-
-Best regards,
-
-SZ Lin, Moxa.
+Thanks,
+Daniel
