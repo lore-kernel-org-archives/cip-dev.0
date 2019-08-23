@@ -1,37 +1,24 @@
-From: pavel@denx.de (Pavel Machek)
-Date: Thu, 22 Aug 2019 22:35:28 +0200
-Subject: [cip-dev] CIP IRC weekly meeting today
-In-Reply-To: <HK0PR01MB29792D822E15692E95FA102FE2A50@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-References: <HK0PR01MB29792D822E15692E95FA102FE2A50@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-Message-ID: <20190822203528.GA22309@amd>
+From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
+Date: Fri, 23 Aug 2019 12:31:36 +0000
+Subject: [cip-dev] [ANNOUNCE] Release v4.19.66-cip9
+Message-ID: <OSAPR01MB3234B5101BBF93EBF99F8FC592A40@OSAPR01MB3234.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi!
+Hi all,
 
-> Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
-> 
-> *Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
-> https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=8&day22&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
-> 
-> US-West US-East   UK     DE     TW     JP
-> 02:00    05:00   10:00   11:00   17:00   18:00
+CIP kernel team has released Linux kernel v4.19.66-cip9.
 
-I got carried away with other project, and forgot about time. Sorry
-about that.
+The linux-4.19.y-cip tree has been updated from base version from 4.19.65 to 4.19.66
+with patch to remove m57621-mmc with anxiety about license.
 
->From last meeting, I reviewed v4.19.67 and started reviewing v4.19.68.
+You can get this release via the git tree at:
+
+  v4.19.66-cip9:
+
+    repository: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+    branch: linux-4.19.y-cip
+    commit: d7f4410d07807d16c047d54b50358db829eaacdc
 
 Best regards,
-									Pavel
-										
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 181 bytes
-Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190822/10d8a8ae/attachment.sig>
+  Nobuhiro
