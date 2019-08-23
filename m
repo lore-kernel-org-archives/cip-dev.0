@@ -1,24 +1,20 @@
-From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
-Date: Fri, 23 Aug 2019 12:31:36 +0000
-Subject: [cip-dev] [ANNOUNCE] Release v4.19.66-cip9
-Message-ID: <OSAPR01MB3234B5101BBF93EBF99F8FC592A40@OSAPR01MB3234.jpnprd01.prod.outlook.com>
+From: gitlab@mg.gitlab.com (Ben Hutchings)
+Date: Fri, 23 Aug 2019 17:21:28 +0000
+Subject: [cip-dev] [Git][cip-project/cip-kernel/cip-kernel-sec] Pushed new
+ branch bwh/update-issues
+Message-ID: <5d6020983e23f_145d3f96d4ec6350346553dd@sidekiq-asap-05-sv-gprd.mail>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
 
-CIP kernel team has released Linux kernel v4.19.66-cip9.
 
-The linux-4.19.y-cip tree has been updated from base version from 4.19.65 to 4.19.66
-with patch to remove m57621-mmc with anxiety about license.
+Ben Hutchings pushed new branch bwh/update-issues at cip-project / cip-kernel / cip-kernel-sec
 
-You can get this release via the git tree at:
+-- 
+View it on GitLab: https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/tree/bwh/update-issues
+You're receiving this email because of your account on gitlab.com.
 
-  v4.19.66-cip9:
 
-    repository: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch: linux-4.19.y-cip
-    commit: d7f4410d07807d16c047d54b50358db829eaacdc
-
-Best regards,
-  Nobuhiro
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190823/64a10343/attachment.html>
