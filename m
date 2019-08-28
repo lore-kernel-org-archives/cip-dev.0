@@ -1,88 +1,97 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Wed, 28 Aug 2019 09:48:25 +0100
-Subject: [cip-dev] [PATCH 4.4.y-cip 07/17] ARM: dts: r8a77470: Add USB-DMAC
-	device nodes
+Date: Wed, 28 Aug 2019 09:48:26 +0100
+Subject: [cip-dev] [PATCH 4.4.y-cip 08/17] ARM: dts: r8a77470: Add USB PHY
+	DT support
 In-Reply-To: <1566982115-11148-1-git-send-email-biju.das@bp.renesas.com>
 References: <1566982115-11148-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1566982115-11148-8-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1566982115-11148-9-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit 92c3ccd9b847a6cf130e10aa305e9e349626e4f0 upstream.
+commit 1a675db44002ed9674d6e534b1400a9d756ef34b upstream.
 
-This patch adds USB DMAC nodes.
+Define the r8a77470 generic part of the USB PHY device node.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-[Reworked clocks and power-domains properties. Removed resets properties]
+[Reworked clocks and power-domains properties. Removed resets properties
+ Added usb2_host regname]
 ---
- arch/arm/boot/dts/r8a77470.dtsi | 52 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
+ arch/arm/boot/dts/r8a77470.dtsi | 54 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
 diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-index 524bba6..2c9cd0b 100644
+index 2c9cd0b..e407954 100644
 --- a/arch/arm/boot/dts/r8a77470.dtsi
 +++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -279,6 +279,58 @@
+@@ -279,6 +279,40 @@
  			status = "disabled";
  		};
  
-+		usb_dmac00: dma-controller at e65a0000 {
-+			compatible = "renesas,r8a77470-usb-dmac",
-+				     "renesas,usb-dmac";
-+			reg = <0 0xe65a0000 0 0x100>;
-+			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1";
-+			clocks = <&mstp3_clks R8A77470_CLK_USBHS_DMAC0_CH0>;
++		usbphy0: usb-phy at e6590100 {
++			compatible = "renesas,usb-phy-r8a77470",
++				     "renesas,rcar-gen2-usb-phy";
++			reg = <0 0xe6590100 0 0x100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			clocks = <&mstp7_clks R8A77470_CLK_USBHS0>;
++			clock-names = "usbhs";
 +			power-domains = <&cpg_clocks>;
-+			#dma-cells = <1>;
-+			dma-channels = <2>;
++			status = "disabled";
++
++			usb0: usb-channel at 0 {
++				reg = <0>;
++				#phy-cells = <1>;
++			};
 +		};
 +
-+		usb_dmac10: dma-controller at e65b0000 {
-+			compatible = "renesas,r8a77470-usb-dmac",
-+				     "renesas,usb-dmac";
-+			reg = <0 0xe65b0000 0 0x100>;
-+			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1";
-+			clocks = <&mstp3_clks R8A77470_CLK_USBHS_DMAC1_CH0>;
++		usbphy1: usb-phy at e6598100 {
++			compatible = "renesas,usb-phy-r8a77470",
++				     "renesas,rcar-gen2-usb-phy";
++			reg = <0 0xe6598100 0 0x100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			clocks = <&mstp7_clks R8A77470_CLK_USBHS1>;
++			clock-names = "usbhs";
 +			power-domains = <&cpg_clocks>;
-+			#dma-cells = <1>;
-+			dma-channels = <2>;
++			status = "disabled";
++
++			usb1: usb-channel at 0 {
++				reg = <0>;
++				#phy-cells = <1>;
++			};
 +		};
 +
-+		usb_dmac01: dma-controller at e65a8000 {
-+			compatible = "renesas,r8a77470-usb-dmac",
-+				     "renesas,usb-dmac";
-+			reg = <0 0xe65a8000 0 0x100>;
-+			interrupts = <GIC_SPI 293 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 293 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1";
-+			clocks = <&mstp3_clks R8A77470_CLK_USBHS_DMAC0_CH1>;
+ 		usb_dmac00: dma-controller at e65a0000 {
+ 			compatible = "renesas,r8a77470-usb-dmac",
+ 				     "renesas,usb-dmac";
+@@ -522,6 +556,26 @@
+ 			status = "disabled";
+ 		};
+ 
++		usb2_phy0: usb-phy at ee080200 {
++			compatible = "renesas,usb2-phy-r8a77470";
++			reg = <0 0xee080200 0 0x700>;
++			reg-names = "usb2_host";
++			clocks = <&mstp7_clks R8A77470_CLK_USB_EHCI_0>;
 +			power-domains = <&cpg_clocks>;
-+			#dma-cells = <1>;
-+			dma-channels = <2>;
++			#phy-cells = <0>;
++			status = "disabled";
 +		};
 +
-+		usb_dmac11: dma-controller at e65b8000 {
-+			compatible = "renesas,r8a77470-usb-dmac",
-+				     "renesas,usb-dmac";
-+			reg = <0 0xe65b8000 0 0x100>;
-+			interrupts = <GIC_SPI 292 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 292 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1";
-+			clocks = <&mstp3_clks R8A77470_CLK_USBHS_DMAC1_CH1>;
++		usb2_phy1: usb-phy at ee0c0200 {
++			compatible = "renesas,usb2-phy-r8a77470";
++			reg = <0 0xee0c0200 0 0x700>;
++			reg-names = "usb2_host";
++			clocks = <&mstp7_clks R8A77470_CLK_USB_EHCI_1>;
 +			power-domains = <&cpg_clocks>;
-+			#dma-cells = <1>;
-+			dma-channels = <2>;
++			#phy-cells = <0>;
++			status = "disabled";
 +		};
 +
- 		dmac0: dma-controller at e6700000 {
- 			compatible = "renesas,dmac-r8a77470",
- 				     "renesas,rcar-dmac";
+ 		gic: interrupt-controller at f1001000 {
+ 			compatible = "arm,gic-400";
+ 			#interrupt-cells = <3>;
 -- 
 2.7.4
