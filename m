@@ -1,58 +1,40 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed, 28 Aug 2019 12:21:30 +0100
-Subject: [cip-dev] [PATCH/RFC 4.19.y-cip 03/41] pinctrl: sh-pfc: Add
-	physical pin multiplexing helper macros
+Date: Wed, 28 Aug 2019 12:21:31 +0100
+Subject: [cip-dev] [PATCH/RFC 4.19.y-cip 04/41] pinctrl: sh-pfc: Validate
+	pins/marks in pin groups at build time
 In-Reply-To: <1566991328-25476-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1566991328-25476-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1566991328-25476-4-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1566991328-25476-5-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Ulrich Hecht <uli+renesas@fpond.eu>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit 50d1ba1764b3e00ae8c331202d50c5535d6b3361 upstream.
+commit 9925e879572680125c5d00ad8b807aec720b1cb6 upstream.
 
-Used by I2C controllers 0, 3 and 5 in R8A7795 and R8A7796 SoCs.
+Add a build-time check, to ensure the number of pins and pin marks in a
+pin group matches.  This helps catching bugs early.
 
-Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/pinctrl/sh-pfc/sh_pfc.h | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ drivers/pinctrl/sh-pfc/sh_pfc.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-index 7f31300..8a06ebc 100644
+index 8a06ebc..6d3430c 100644
 --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
 +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -389,6 +389,28 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
- 	PINMUX_DATA(fn##_MARK, FN_##msel, FN_##fn, FN_##ipsr)
+@@ -44,7 +44,8 @@ struct sh_pfc_pin {
+ 		.name = #alias,				\
+ 		.pins = n##_pins,			\
+ 		.mux = n##_mux,				\
+-		.nr_pins = ARRAY_SIZE(n##_pins),	\
++		.nr_pins = ARRAY_SIZE(n##_pins) +	\
++		BUILD_BUG_ON_ZERO(sizeof(n##_pins) != sizeof(n##_mux)), \
+ 	}
+ #define SH_PFC_PIN_GROUP(n)	SH_PFC_PIN_GROUP_ALIAS(n, n)
  
- /*
-+ * Describe a pinmux configuration similar to PINMUX_IPSR_MSEL, but with
-+ * an additional select register that controls physical multiplexing
-+ * with another pin.
-+ *   - ipsr: IPSR field
-+ *   - fn: Function name, also referring to the IPSR field
-+ *   - psel: Physical multiplexing selector
-+ *   - msel: Module selector
-+ */
-+#define PINMUX_IPSR_PHYS_MSEL(ipsr, fn, psel, msel) \
-+	PINMUX_DATA(fn##_MARK, FN_##psel, FN_##msel, FN_##fn, FN_##ipsr)
-+
-+/*
-+ * Describe a pinmux configuration in which a pin is physically multiplexed
-+ * with other pins.
-+ *   - ipsr: IPSR field
-+ *   - fn: Function name, also referring to the IPSR field
-+ *   - psel: Physical multiplexing selector
-+ */
-+#define PINMUX_IPSR_PHYS(ipsr, fn, psel) \
-+	PINMUX_DATA(fn##_MARK, FN_##psel)
-+
-+/*
-  * Describe a pinmux configuration for a single-function pin with GPIO
-  * capability.
-  *   - fn: Function name
 -- 
 2.7.4
