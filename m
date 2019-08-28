@@ -1,80 +1,65 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed, 28 Aug 2019 12:03:22 +0100
-Subject: [cip-dev] [PATCH 4.19.y 51/60] arm64: dts: renesas: r8a774a1: Add
-	USB3.0 device nodes
+Date: Wed, 28 Aug 2019 12:03:23 +0100
+Subject: [cip-dev] [PATCH 4.19.y 52/60] arm64: dts: renesas: Fix whitespace
+	around assignments
 In-Reply-To: <1566990211-24785-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1566990211-24785-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1566990211-24785-52-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1566990211-24785-53-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit 453240f6657a6f87dd59e39c1f0d2655d40f112c upstream.
+commit fced3a97f80955e5950b76d164a4124cb1303853 upstream.
 
-Add usb3.0 phy, host and function device nodes on RZ/G2M SoC dtsi.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[simon: updated for a few new cases]
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[fab: dropped changes not related to r8a774a1.dtsi]
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 35 +++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index b421174..d2c67f3 100644
+index d2c67f3..046fc93 100644
 --- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -641,6 +641,19 @@
- 			dma-channels = <2>;
+@@ -66,7 +66,7 @@
+ 			power-domains = <&sysc 0>;
+ 			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
+-			clocks =<&cpg CPG_CORE 0>;
++			clocks = <&cpg CPG_CORE 0>;
  		};
  
-+		usb3_phy0: usb-phy at e65ee000 {
-+			compatible = "renesas,r8a774a1-usb3-phy",
-+				     "renesas,rcar-gen3-usb3-phy";
-+			reg = <0 0xe65ee000 0 0x90>;
-+			clocks = <&cpg CPG_MOD 328>, <&usb3s0_clk>,
-+				 <&usb_extal_clk>;
-+			clock-names = "usb3-if", "usb3s_clk", "usb_extal";
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 328>;
-+			#phy-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		dmac0: dma-controller at e6700000 {
- 			compatible = "renesas,dmac-r8a774a1",
- 				     "renesas,rcar-dmac";
-@@ -1365,6 +1378,28 @@
- 			dma-channels = <16>;
+ 		a57_1: cpu at 1 {
+@@ -76,7 +76,7 @@
+ 			power-domains = <&sysc 1>;
+ 			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
+-			clocks =<&cpg CPG_CORE 0>;
++			clocks = <&cpg CPG_CORE 0>;
  		};
  
-+		xhci0: usb at ee000000 {
-+			compatible = "renesas,xhci-r8a774a1",
-+				     "renesas,rcar-gen3-xhci";
-+			reg = <0 0xee000000 0 0xc00>;
-+			interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 328>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 328>;
-+			status = "disabled";
-+		};
-+
-+		usb3_peri0: usb at ee020000 {
-+			compatible = "renesas,r8a774a1-usb3-peri",
-+				     "renesas,rcar-gen3-usb3-peri";
-+			reg = <0 0xee020000 0 0x400>;
-+			interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 328>;
-+			power-domains = <&sysc 32>;
-+			resets = <&cpg 328>;
-+			status = "disabled";
-+		};
-+
- 		ohci0: usb at ee080000 {
- 			compatible = "generic-ohci";
- 			reg = <0 0xee080000 0 0x100>;
+ 		a53_0: cpu at 100 {
+@@ -1431,7 +1431,7 @@
+ 			clocks = <&cpg CPG_MOD 703>;
+ 			phys = <&usb2_phy0>;
+ 			phy-names = "usb";
+-			companion= <&ohci0>;
++			companion = <&ohci0>;
+ 			power-domains = <&sysc 32>;
+ 			resets = <&cpg 703>;
+ 			status = "disabled";
+@@ -1444,7 +1444,7 @@
+ 			clocks = <&cpg CPG_MOD 702>;
+ 			phys = <&usb2_phy1>;
+ 			phy-names = "usb";
+-			companion= <&ohci1>;
++			companion = <&ohci1>;
+ 			power-domains = <&sysc 32>;
+ 			resets = <&cpg 702>;
+ 			status = "disabled";
 -- 
 2.7.4
