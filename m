@@ -1,283 +1,264 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed, 28 Aug 2019 12:21:40 +0100
-Subject: [cip-dev] [PATCH/RFC 4.19.y-cip 13/41] pinctrl: sh-pfc: Rename
-	2-parameter CPU_ALL_PORT() variant
+Date: Wed, 28 Aug 2019 12:21:41 +0100
+Subject: [cip-dev] [PATCH/RFC 4.19.y-cip 14/41] pinctrl: sh-pfc: Add
+	SH_PFC_PIN_CFG_PULL_UP_DOWN shorthand
 In-Reply-To: <1566991328-25476-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1566991328-25476-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1566991328-25476-14-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1566991328-25476-15-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit bd79c92039f117a3e448b9ef042595497a5218a6 upstream.
+commit f1074e7281a2e83b1cca7dee8f7005fbcc1f594e upstream.
 
-There are two variants of the CPU_ALL_PORT() macro in use:
-  1. A three-parameter variant, to be provided for SoCs with a linear
-     GPIO pin space ("PORT style"),
-  2. A two-parameter variant, to be provided for SoCs with 32-port GPIO
-     banks ("GP port style").
-
-Rename the 2-parameter variant to CPU_ALL_GP(), to avoid confusion, and
-to increase naming consistency.
+It is very common for a pin to support both pull-up and pull-down
+functionality.  Hence add a shorthand SH_PFC_PIN_CFG_PULL_UP_DOWN.
+This not only reduces typing, but also avoids the need for several line
+breaks, and makes many overly long lines shorter, improving
+readability.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a77470.c    | 2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7778.c     | 2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7779.c     | 2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7790.c     | 2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c     | 2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7792.c     | 2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c     | 2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c     | 2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c     | 2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c    | 2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a77970.c    | 2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a77980.c    | 2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c    | 2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a77995.c    | 2 +-
- drivers/pinctrl/sh-pfc/pfc-sh7734.c      | 2 +-
- drivers/pinctrl/sh-pfc/sh_pfc.h          | 6 +++---
- 17 files changed, 19 insertions(+), 19 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a73a4.c     |  2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7740.c     |  2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 12 +++++-------
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c     | 12 +++++-------
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c     | 12 +++++-------
+ drivers/pinctrl/sh-pfc/pfc-r8a77965.c    | 12 +++++-------
+ drivers/pinctrl/sh-pfc/pfc-r8a77990.c    |  3 +--
+ drivers/pinctrl/sh-pfc/pfc-sh73a0.c      |  2 +-
+ drivers/pinctrl/sh-pfc/pinctrl.c         |  3 +--
+ drivers/pinctrl/sh-pfc/sh_pfc.h          |  2 ++
+ 10 files changed, 27 insertions(+), 35 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77470.c b/drivers/pinctrl/sh-pfc/pfc-r8a77470.c
-index aeada74..cb4c907 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77470.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77470.c
-@@ -9,7 +9,7 @@
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c b/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c
+index 0b22fe5..bafc81a 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c
+@@ -1265,7 +1265,7 @@ static const u16 pinmux_data[] = {
  
- #include "sh_pfc.h"
+ #define __O	(SH_PFC_PIN_CFG_OUTPUT)
+ #define __IO	(SH_PFC_PIN_CFG_INPUT | SH_PFC_PIN_CFG_OUTPUT)
+-#define __PUD	(SH_PFC_PIN_CFG_PULL_DOWN | SH_PFC_PIN_CFG_PULL_UP)
++#define __PUD	(SH_PFC_PIN_CFG_PULL_UP_DOWN)
  
--#define CPU_ALL_PORT(fn, sfx)						\
-+#define CPU_ALL_GP(fn, sfx)						\
- 	PORT_GP_23(0, fn, sfx),						\
- 	PORT_GP_23(1, fn, sfx),						\
- 	PORT_GP_32(2, fn, sfx),						\
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7778.c b/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
-index 7f1c675..22700cd 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
-@@ -46,7 +46,7 @@
- 	PORT_GP_PUP_1(bank, 24, fn, sfx), PORT_GP_PUP_1(bank, 25, fn, sfx),	\
- 	PORT_GP_PUP_1(bank, 26, fn, sfx)
+ #define R8A73A4_PIN_IO_PU_PD(pin)       SH_PFC_PIN_CFG(pin, __IO | __PUD)
+ #define R8A73A4_PIN_O(pin)              SH_PFC_PIN_CFG(pin, __O)
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
+index 43541b1..c07fdad 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
+@@ -1528,7 +1528,7 @@ static const u16 pinmux_data[] = {
+ #define __IO		(SH_PFC_PIN_CFG_INPUT | SH_PFC_PIN_CFG_OUTPUT)
+ #define __PD		(SH_PFC_PIN_CFG_PULL_DOWN)
+ #define __PU		(SH_PFC_PIN_CFG_PULL_UP)
+-#define __PUD		(SH_PFC_PIN_CFG_PULL_DOWN | SH_PFC_PIN_CFG_PULL_UP)
++#define __PUD		(SH_PFC_PIN_CFG_PULL_UP_DOWN)
  
--#define CPU_ALL_PORT(fn, sfx)		\
-+#define CPU_ALL_GP(fn, sfx)		\
- 	PORT_GP_CFG_32(0, fn, sfx, SH_PFC_PIN_CFG_PULL_UP),		\
- 	PORT_GP_CFG_32(1, fn, sfx, SH_PFC_PIN_CFG_PULL_UP),		\
- 	PORT_GP_CFG_32(2, fn, sfx, SH_PFC_PIN_CFG_PULL_UP),		\
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7779.c b/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
-index 70aa490..00c1eec 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
-@@ -23,7 +23,7 @@
- 
- #include "sh_pfc.h"
- 
--#define CPU_ALL_PORT(fn, sfx)						\
-+#define CPU_ALL_GP(fn, sfx)						\
- 	PORT_GP_32(0, fn, sfx),						\
- 	PORT_GP_32(1, fn, sfx),						\
- 	PORT_GP_32(2, fn, sfx),						\
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-index 8046469..d2fd6e87 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-@@ -30,7 +30,7 @@
-  * All pins assigned to GPIO bank 3 can be used for SD interfaces in
-  * which case they support both 3.3V and 1.8V signalling.
-  */
--#define CPU_ALL_PORT(fn, sfx)						\
-+#define CPU_ALL_GP(fn, sfx)						\
- 	PORT_GP_32(0, fn, sfx),						\
- 	PORT_GP_30(1, fn, sfx),						\
- 	PORT_GP_30(2, fn, sfx),						\
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index c771a5c..332cb96 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -17,7 +17,7 @@
-  * Pins 0-23 assigned to GPIO bank 6 can be used for SD interfaces in
-  * which case they support both 3.3V and 1.8V signalling.
-  */
--#define CPU_ALL_PORT(fn, sfx)						\
-+#define CPU_ALL_GP(fn, sfx)						\
- 	PORT_GP_32(0, fn, sfx),						\
- 	PORT_GP_26(1, fn, sfx),						\
- 	PORT_GP_32(2, fn, sfx),						\
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7792.c b/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-index f49da5d..1131dd6 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-@@ -14,7 +14,7 @@
- #include "core.h"
- #include "sh_pfc.h"
- 
--#define CPU_ALL_PORT(fn, sfx)						\
-+#define CPU_ALL_GP(fn, sfx)						\
- 	PORT_GP_29(0, fn, sfx),						\
- 	PORT_GP_23(1, fn, sfx),						\
- 	PORT_GP_32(2, fn, sfx),						\
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-index 47a4772..7b8dfee 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-@@ -15,7 +15,7 @@
- #include "core.h"
- #include "sh_pfc.h"
- 
--#define CPU_ALL_PORT(fn, sfx)						\
-+#define CPU_ALL_GP(fn, sfx)						\
- 	PORT_GP_32(0, fn, sfx),						\
- 	PORT_GP_26(1, fn, sfx),						\
- 	PORT_GP_32(2, fn, sfx),						\
+ #define R8A7740_PIN_I_PD(pin)		SH_PFC_PIN_CFG(pin, __I | __PD)
+ #define R8A7740_PIN_I_PU(pin)		SH_PFC_PIN_CFG(pin, __I | __PU)
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-index 63e406d..087c2b3 100644
+index 087c2b3..c75d48f 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-@@ -17,7 +17,7 @@
- 		   SH_PFC_PIN_CFG_PULL_UP | \
- 		   SH_PFC_PIN_CFG_PULL_DOWN)
+@@ -13,9 +13,7 @@
+ #include "core.h"
+ #include "sh_pfc.h"
  
--#define CPU_ALL_PORT(fn, sfx)						\
-+#define CPU_ALL_GP(fn, sfx)						\
+-#define CFG_FLAGS (SH_PFC_PIN_CFG_DRIVE_STRENGTH | \
+-		   SH_PFC_PIN_CFG_PULL_UP | \
+-		   SH_PFC_PIN_CFG_PULL_DOWN)
++#define CFG_FLAGS (SH_PFC_PIN_CFG_DRIVE_STRENGTH | SH_PFC_PIN_CFG_PULL_UP_DOWN)
+ 
+ #define CPU_ALL_GP(fn, sfx)						\
  	PORT_GP_CFG_16(0, fn, sfx, CFG_FLAGS),	\
- 	PORT_GP_CFG_28(1, fn, sfx, CFG_FLAGS),	\
- 	PORT_GP_CFG_15(2, fn, sfx, CFG_FLAGS),	\
+@@ -1493,17 +1491,17 @@ static const struct sh_pfc_pin pinmux_pins[] = {
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('C'),  5, QSPI0_MOSI_IO0, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('C'),  7, QSPI1_MOSI_IO0, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('D'), 38, FSCLKST#, CFG_FLAGS),
+-	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('D'), 39, EXTALR, SH_PFC_PIN_CFG_PULL_UP | SH_PFC_PIN_CFG_PULL_DOWN),
++	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('D'), 39, EXTALR, SH_PFC_PIN_CFG_PULL_UP_DOWN),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('E'),  4, QSPI1_IO2, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('E'),  5, QSPI1_MISO_IO1, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('P'),  7, DU_DOTCLKIN0, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('P'),  8, DU_DOTCLKIN1, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'),  7, DU_DOTCLKIN2, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'),  8, DU_DOTCLKIN3, CFG_FLAGS),
+-	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 26, TRST#, SH_PFC_PIN_CFG_PULL_UP | SH_PFC_PIN_CFG_PULL_DOWN),
+-	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 29, TDI, SH_PFC_PIN_CFG_PULL_UP | SH_PFC_PIN_CFG_PULL_DOWN),
++	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 26, TRST#, SH_PFC_PIN_CFG_PULL_UP_DOWN),
++	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 29, TDI, SH_PFC_PIN_CFG_PULL_UP_DOWN),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 30, TMS, CFG_FLAGS),
+-	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 27, TCK, SH_PFC_PIN_CFG_PULL_UP | SH_PFC_PIN_CFG_PULL_DOWN),
++	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 27, TCK, SH_PFC_PIN_CFG_PULL_UP_DOWN),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 28, TDO, SH_PFC_PIN_CFG_DRIVE_STRENGTH),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 30, ASEBRK, CFG_FLAGS),
+ };
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 00081c3..32be7e3 100644
+index 32be7e3..d27a9c7 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -18,7 +18,7 @@
- 		   SH_PFC_PIN_CFG_PULL_UP | \
- 		   SH_PFC_PIN_CFG_PULL_DOWN)
+@@ -14,9 +14,7 @@
+ #include "core.h"
+ #include "sh_pfc.h"
  
--#define CPU_ALL_PORT(fn, sfx)						\
-+#define CPU_ALL_GP(fn, sfx)						\
+-#define CFG_FLAGS (SH_PFC_PIN_CFG_DRIVE_STRENGTH | \
+-		   SH_PFC_PIN_CFG_PULL_UP | \
+-		   SH_PFC_PIN_CFG_PULL_DOWN)
++#define CFG_FLAGS (SH_PFC_PIN_CFG_DRIVE_STRENGTH | SH_PFC_PIN_CFG_PULL_UP_DOWN)
+ 
+ #define CPU_ALL_GP(fn, sfx)						\
  	PORT_GP_CFG_16(0, fn, sfx, CFG_FLAGS),	\
- 	PORT_GP_CFG_29(1, fn, sfx, CFG_FLAGS),	\
- 	PORT_GP_CFG_15(2, fn, sfx, CFG_FLAGS),	\
+@@ -1553,17 +1551,17 @@ static const struct sh_pfc_pin pinmux_pins[] = {
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('C'),  5, QSPI0_MOSI_IO0, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('C'),  7, QSPI1_MOSI_IO0, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('D'), 38, FSCLKST#, CFG_FLAGS),
+-	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('D'), 39, EXTALR, SH_PFC_PIN_CFG_PULL_UP | SH_PFC_PIN_CFG_PULL_DOWN),
++	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('D'), 39, EXTALR, SH_PFC_PIN_CFG_PULL_UP_DOWN),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('E'),  4, QSPI1_IO2, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('E'),  5, QSPI1_MISO_IO1, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('P'),  7, DU_DOTCLKIN0, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('P'),  8, DU_DOTCLKIN1, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'),  7, DU_DOTCLKIN2, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'),  8, DU_DOTCLKIN3, CFG_FLAGS),
+-	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 26, TRST#, SH_PFC_PIN_CFG_PULL_UP | SH_PFC_PIN_CFG_PULL_DOWN),
+-	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 29, TDI, SH_PFC_PIN_CFG_PULL_UP | SH_PFC_PIN_CFG_PULL_DOWN),
++	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 26, TRST#, SH_PFC_PIN_CFG_PULL_UP_DOWN),
++	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 29, TDI, SH_PFC_PIN_CFG_PULL_UP_DOWN),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 30, TMS, CFG_FLAGS),
+-	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 27, TCK, SH_PFC_PIN_CFG_PULL_UP | SH_PFC_PIN_CFG_PULL_DOWN),
++	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 27, TCK, SH_PFC_PIN_CFG_PULL_UP_DOWN),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 28, TDO, SH_PFC_PIN_CFG_DRIVE_STRENGTH),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 30, ASEBRK, CFG_FLAGS),
+ };
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index fcde6ce..fd9ec59 100644
+index fd9ec59..70b05f2 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -23,7 +23,7 @@
- 		   SH_PFC_PIN_CFG_PULL_UP | \
- 		   SH_PFC_PIN_CFG_PULL_DOWN)
+@@ -19,9 +19,7 @@
+ #include "core.h"
+ #include "sh_pfc.h"
  
--#define CPU_ALL_PORT(fn, sfx)						\
-+#define CPU_ALL_GP(fn, sfx)						\
+-#define CFG_FLAGS (SH_PFC_PIN_CFG_DRIVE_STRENGTH | \
+-		   SH_PFC_PIN_CFG_PULL_UP | \
+-		   SH_PFC_PIN_CFG_PULL_DOWN)
++#define CFG_FLAGS (SH_PFC_PIN_CFG_DRIVE_STRENGTH | SH_PFC_PIN_CFG_PULL_UP_DOWN)
+ 
+ #define CPU_ALL_GP(fn, sfx)						\
  	PORT_GP_CFG_16(0, fn, sfx, CFG_FLAGS),	\
- 	PORT_GP_CFG_29(1, fn, sfx, CFG_FLAGS),	\
- 	PORT_GP_CFG_15(2, fn, sfx, CFG_FLAGS),	\
+@@ -1559,16 +1557,16 @@ static const struct sh_pfc_pin pinmux_pins[] = {
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('C'),  5, QSPI0_MOSI_IO0, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('C'),  7, QSPI1_MOSI_IO0, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('D'), 38, FSCLKST, CFG_FLAGS),
+-	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('D'), 39, EXTALR, SH_PFC_PIN_CFG_PULL_UP | SH_PFC_PIN_CFG_PULL_DOWN),
++	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('D'), 39, EXTALR, SH_PFC_PIN_CFG_PULL_UP_DOWN),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('E'),  4, QSPI1_IO2, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('E'),  5, QSPI1_MISO_IO1, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('P'),  7, DU_DOTCLKIN0, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('P'),  8, DU_DOTCLKIN1, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'),  8, DU_DOTCLKIN2, CFG_FLAGS),
+-	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 26, TRST#, SH_PFC_PIN_CFG_PULL_UP | SH_PFC_PIN_CFG_PULL_DOWN),
+-	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 29, TDI, SH_PFC_PIN_CFG_PULL_UP | SH_PFC_PIN_CFG_PULL_DOWN),
++	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 26, TRST#, SH_PFC_PIN_CFG_PULL_UP_DOWN),
++	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 29, TDI, SH_PFC_PIN_CFG_PULL_UP_DOWN),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 30, TMS, CFG_FLAGS),
+-	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 27, TCK, SH_PFC_PIN_CFG_PULL_UP | SH_PFC_PIN_CFG_PULL_DOWN),
++	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 27, TCK, SH_PFC_PIN_CFG_PULL_UP_DOWN),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 28, TDO, SH_PFC_PIN_CFG_DRIVE_STRENGTH),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 30, ASEBRK, CFG_FLAGS),
+ };
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-index 08c6635..1ef3960 100644
+index 1ef3960..77661cb 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-@@ -21,7 +21,7 @@
- 		   SH_PFC_PIN_CFG_PULL_UP | \
- 		   SH_PFC_PIN_CFG_PULL_DOWN)
+@@ -17,9 +17,7 @@
+ #include "core.h"
+ #include "sh_pfc.h"
  
--#define CPU_ALL_PORT(fn, sfx)						\
-+#define CPU_ALL_GP(fn, sfx)						\
+-#define CFG_FLAGS (SH_PFC_PIN_CFG_DRIVE_STRENGTH | \
+-		   SH_PFC_PIN_CFG_PULL_UP | \
+-		   SH_PFC_PIN_CFG_PULL_DOWN)
++#define CFG_FLAGS (SH_PFC_PIN_CFG_DRIVE_STRENGTH | SH_PFC_PIN_CFG_PULL_UP_DOWN)
+ 
+ #define CPU_ALL_GP(fn, sfx)						\
  	PORT_GP_CFG_16(0, fn, sfx, CFG_FLAGS),	\
- 	PORT_GP_CFG_29(1, fn, sfx, CFG_FLAGS),	\
- 	PORT_GP_CFG_15(2, fn, sfx, CFG_FLAGS),	\
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77970.c b/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
-index 42538ab..ed08cce 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
-@@ -21,7 +21,7 @@
- #include "core.h"
- #include "sh_pfc.h"
- 
--#define CPU_ALL_PORT(fn, sfx)						\
-+#define CPU_ALL_GP(fn, sfx)						\
- 	PORT_GP_CFG_22(0, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),		\
- 	PORT_GP_28(1, fn, sfx),						\
- 	PORT_GP_CFG_17(2, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),		\
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77980.c b/drivers/pinctrl/sh-pfc/pfc-r8a77980.c
-index 629fa0c..246ab41 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77980.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77980.c
-@@ -18,7 +18,7 @@
- #include "core.h"
- #include "sh_pfc.h"
- 
--#define CPU_ALL_PORT(fn, sfx)	\
-+#define CPU_ALL_GP(fn, sfx)	\
- 	PORT_GP_CFG_22(0, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
- 	PORT_GP_28(1, fn, sfx),	\
- 	PORT_GP_CFG_30(2, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
+@@ -1561,16 +1559,16 @@ static const struct sh_pfc_pin pinmux_pins[] = {
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('C'),  5, QSPI0_MOSI_IO0, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('C'),  7, QSPI1_MOSI_IO0, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('D'), 38, FSCLKST, CFG_FLAGS),
+-	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('D'), 39, EXTALR, SH_PFC_PIN_CFG_PULL_UP | SH_PFC_PIN_CFG_PULL_DOWN),
++	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('D'), 39, EXTALR, SH_PFC_PIN_CFG_PULL_UP_DOWN),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('E'),  4, QSPI1_IO2, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('E'),  5, QSPI1_MISO_IO1, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('P'),  7, DU_DOTCLKIN0, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('P'),  8, DU_DOTCLKIN1, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'),  8, DU_DOTCLKIN2, CFG_FLAGS),
+-	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 26, TRST#, SH_PFC_PIN_CFG_PULL_UP | SH_PFC_PIN_CFG_PULL_DOWN),
+-	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 29, TDI, SH_PFC_PIN_CFG_PULL_UP | SH_PFC_PIN_CFG_PULL_DOWN),
++	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 26, TRST#, SH_PFC_PIN_CFG_PULL_UP_DOWN),
++	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 29, TDI, SH_PFC_PIN_CFG_PULL_UP_DOWN),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 30, TMS, CFG_FLAGS),
+-	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 27, TCK, SH_PFC_PIN_CFG_PULL_UP | SH_PFC_PIN_CFG_PULL_DOWN),
++	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 27, TCK, SH_PFC_PIN_CFG_PULL_UP_DOWN),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 28, TDO, SH_PFC_PIN_CFG_DRIVE_STRENGTH),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 30, ASEBRK, CFG_FLAGS),
+ };
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-index 7b64da2..fadfe22 100644
+index fadfe22..b654e06 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-@@ -19,7 +19,7 @@
- #define CFG_FLAGS (SH_PFC_PIN_CFG_PULL_UP | \
- 		   SH_PFC_PIN_CFG_PULL_DOWN)
- 
--#define CPU_ALL_PORT(fn, sfx) \
-+#define CPU_ALL_GP(fn, sfx) \
- 	PORT_GP_CFG_18(0, fn, sfx, CFG_FLAGS), \
- 	PORT_GP_CFG_23(1, fn, sfx, CFG_FLAGS), \
- 	PORT_GP_CFG_26(2, fn, sfx, CFG_FLAGS), \
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-index 06babec..a4d7f20 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-@@ -19,7 +19,7 @@
+@@ -16,8 +16,7 @@
  #include "core.h"
  #include "sh_pfc.h"
  
--#define CPU_ALL_PORT(fn, sfx)			\
-+#define CPU_ALL_GP(fn, sfx)			\
- 		PORT_GP_9(0,  fn, sfx),		\
- 		PORT_GP_32(1, fn, sfx),		\
- 		PORT_GP_32(2, fn, sfx),		\
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7734.c b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
-index dd5c0f4..b7c07f5 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7734.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
-@@ -14,7 +14,7 @@
+-#define CFG_FLAGS (SH_PFC_PIN_CFG_PULL_UP | \
+-		   SH_PFC_PIN_CFG_PULL_DOWN)
++#define CFG_FLAGS (SH_PFC_PIN_CFG_PULL_UP_DOWN)
  
- #include "sh_pfc.h"
+ #define CPU_ALL_GP(fn, sfx) \
+ 	PORT_GP_CFG_18(0, fn, sfx, CFG_FLAGS), \
+diff --git a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
+index b3e1baf..39b86da 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
++++ b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
+@@ -1160,7 +1160,7 @@ static const u16 pinmux_data[] = {
+ #define __IO		(SH_PFC_PIN_CFG_INPUT | SH_PFC_PIN_CFG_OUTPUT)
+ #define __PD		(SH_PFC_PIN_CFG_PULL_DOWN)
+ #define __PU		(SH_PFC_PIN_CFG_PULL_UP)
+-#define __PUD		(SH_PFC_PIN_CFG_PULL_DOWN | SH_PFC_PIN_CFG_PULL_UP)
++#define __PUD		(SH_PFC_PIN_CFG_PULL_UP_DOWN)
  
--#define CPU_ALL_PORT(fn, sfx)						\
-+#define CPU_ALL_GP(fn, sfx)						\
- 	PORT_GP_32(0, fn, sfx),						\
- 	PORT_GP_32(1, fn, sfx),						\
- 	PORT_GP_32(2, fn, sfx),						\
+ #define SH73A0_PIN_I_PD(pin)		SH_PFC_PIN_CFG(pin, __I | __PD)
+ #define SH73A0_PIN_I_PU(pin)		SH_PFC_PIN_CFG(pin, __I | __PU)
+diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinctrl.c
+index 654dc20..d0f56ed 100644
+--- a/drivers/pinctrl/sh-pfc/pinctrl.c
++++ b/drivers/pinctrl/sh-pfc/pinctrl.c
+@@ -570,8 +570,7 @@ static bool sh_pfc_pinconf_validate(struct sh_pfc *pfc, unsigned int _pin,
+ 
+ 	switch (param) {
+ 	case PIN_CONFIG_BIAS_DISABLE:
+-		return pin->configs &
+-			(SH_PFC_PIN_CFG_PULL_UP | SH_PFC_PIN_CFG_PULL_DOWN);
++		return pin->configs & SH_PFC_PIN_CFG_PULL_UP_DOWN;
+ 
+ 	case PIN_CONFIG_BIAS_PULL_UP:
+ 		return pin->configs & SH_PFC_PIN_CFG_PULL_UP;
 diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-index f47a159..2ee4c79 100644
+index 2ee4c79..22df2e2 100644
 --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
 +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -586,7 +586,7 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
- 
- /* GP_ALL(suffix) - Expand to a list of GP_#_#_suffix */
- #define _GP_ALL(bank, pin, name, sfx, cfg)	name##_##sfx
--#define GP_ALL(str)			CPU_ALL_PORT(_GP_ALL, str)
-+#define GP_ALL(str)			CPU_ALL_GP(_GP_ALL, str)
- 
- /* PINMUX_GPIO_GP_ALL - Expand to a list of sh_pfc_pin entries */
- #define _GP_GPIO(bank, _pin, _name, sfx, cfg)				\
-@@ -596,11 +596,11 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
- 		.enum_id = _name##_DATA,				\
- 		.configs = cfg,						\
- 	}
--#define PINMUX_GPIO_GP_ALL()		CPU_ALL_PORT(_GP_GPIO, unused)
-+#define PINMUX_GPIO_GP_ALL()		CPU_ALL_GP(_GP_GPIO, unused)
- 
- /* PINMUX_DATA_GP_ALL -  Expand to a list of name_DATA, name_FN marks */
- #define _GP_DATA(bank, pin, name, sfx, cfg)	PINMUX_DATA(name##_DATA, name##_FN)
--#define PINMUX_DATA_GP_ALL()		CPU_ALL_PORT(_GP_DATA, unused)
-+#define PINMUX_DATA_GP_ALL()		CPU_ALL_GP(_GP_DATA, unused)
- 
- /*
-  * PORT style (linear pin space)
+@@ -28,6 +28,8 @@ enum {
+ #define SH_PFC_PIN_CFG_OUTPUT		(1 << 1)
+ #define SH_PFC_PIN_CFG_PULL_UP		(1 << 2)
+ #define SH_PFC_PIN_CFG_PULL_DOWN	(1 << 3)
++#define SH_PFC_PIN_CFG_PULL_UP_DOWN	(SH_PFC_PIN_CFG_PULL_UP | \
++					 SH_PFC_PIN_CFG_PULL_DOWN)
+ #define SH_PFC_PIN_CFG_IO_VOLTAGE	(1 << 4)
+ #define SH_PFC_PIN_CFG_DRIVE_STRENGTH	(1 << 5)
+ #define SH_PFC_PIN_CFG_NO_GPIO		(1 << 31)
 -- 
 2.7.4
