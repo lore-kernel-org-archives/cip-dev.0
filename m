@@ -1,61 +1,75 @@
 From: nobuhiro1.iwamatsu@toshiba.co.jp (Nobuhiro Iwamatsu)
-Date: Wed, 28 Aug 2019 11:26:17 +0900
-Subject: [cip-dev] [PATCH 1/3] Change templagte directory name
-Message-ID: <20190828022619.3690-1-nobuhiro1.iwamatsu@toshiba.co.jp>
+Date: Wed, 28 Aug 2019 11:26:18 +0900
+Subject: [cip-dev] [PATCH 2/3] Change to specify test name as argument to
+	create_job
+In-Reply-To: <20190828022619.3690-1-nobuhiro1.iwamatsu@toshiba.co.jp>
+References: <20190828022619.3690-1-nobuhiro1.iwamatsu@toshiba.co.jp>
+Message-ID: <20190828022619.3690-2-nobuhiro1.iwamatsu@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 ---
- .../r8a7743-iwg20d-q7.yaml                                    | 0
- .../r8a7745-iwg22d-sodimm.yaml                                | 0
- {healthcheck_templates => lava_templates}/r8a774c0-ek874.yaml | 0
- submit_tests.sh                                               | 2 +-
- test.Dockerfile                                               | 4 ++--
- 5 files changed, 3 insertions(+), 3 deletions(-)
- rename {healthcheck_templates => lava_templates}/r8a7743-iwg20d-q7.yaml (100%)
- rename {healthcheck_templates => lava_templates}/r8a7745-iwg22d-sodimm.yaml (100%)
- rename {healthcheck_templates => lava_templates}/r8a774c0-ek874.yaml (100%)
+ ...20d-q7.yaml => r8a7743-iwg20d-q7_healthcheck.yaml} |  0
+ ...mm.yaml => r8a7745-iwg22d-sodimm_healthcheck.yaml} |  0
+ ...4c0-ek874.yaml => r8a774c0-ek874_healthcheck.yaml} |  0
+ submit_tests.sh                                       | 11 ++++++-----
+ 4 files changed, 6 insertions(+), 5 deletions(-)
+ rename lava_templates/{r8a7743-iwg20d-q7.yaml => r8a7743-iwg20d-q7_healthcheck.yaml} (100%)
+ rename lava_templates/{r8a7745-iwg22d-sodimm.yaml => r8a7745-iwg22d-sodimm_healthcheck.yaml} (100%)
+ rename lava_templates/{r8a774c0-ek874.yaml => r8a774c0-ek874_healthcheck.yaml} (100%)
 
-diff --git a/healthcheck_templates/r8a7743-iwg20d-q7.yaml b/lava_templates/r8a7743-iwg20d-q7.yaml
+diff --git a/lava_templates/r8a7743-iwg20d-q7.yaml b/lava_templates/r8a7743-iwg20d-q7_healthcheck.yaml
 similarity index 100%
-rename from healthcheck_templates/r8a7743-iwg20d-q7.yaml
-rename to lava_templates/r8a7743-iwg20d-q7.yaml
-diff --git a/healthcheck_templates/r8a7745-iwg22d-sodimm.yaml b/lava_templates/r8a7745-iwg22d-sodimm.yaml
+rename from lava_templates/r8a7743-iwg20d-q7.yaml
+rename to lava_templates/r8a7743-iwg20d-q7_healthcheck.yaml
+diff --git a/lava_templates/r8a7745-iwg22d-sodimm.yaml b/lava_templates/r8a7745-iwg22d-sodimm_healthcheck.yaml
 similarity index 100%
-rename from healthcheck_templates/r8a7745-iwg22d-sodimm.yaml
-rename to lava_templates/r8a7745-iwg22d-sodimm.yaml
-diff --git a/healthcheck_templates/r8a774c0-ek874.yaml b/lava_templates/r8a774c0-ek874.yaml
+rename from lava_templates/r8a7745-iwg22d-sodimm.yaml
+rename to lava_templates/r8a7745-iwg22d-sodimm_healthcheck.yaml
+diff --git a/lava_templates/r8a774c0-ek874.yaml b/lava_templates/r8a774c0-ek874_healthcheck.yaml
 similarity index 100%
-rename from healthcheck_templates/r8a774c0-ek874.yaml
-rename to lava_templates/r8a774c0-ek874.yaml
+rename from lava_templates/r8a774c0-ek874.yaml
+rename to lava_templates/r8a774c0-ek874_healthcheck.yaml
 diff --git a/submit_tests.sh b/submit_tests.sh
-index 2911af1..7dff7a2 100755
+index 7dff7a2..5f83182 100755
 --- a/submit_tests.sh
 +++ b/submit_tests.sh
-@@ -29,7 +29,7 @@ set -e
- ################################################################################
- WORK_DIR=`pwd`
- OUTPUT_DIR="$WORK_DIR/output"
--TEMPLATE_DIR="/opt/healthcheck_templates"
-+TEMPLATE_DIR="/opt/lava_templates"
- ################################################################################
- AWS_URL_UP="s3://download.cip-project.org/ciptesting/ci"
- AWS_URL_DOWN="https://s3-us-west-2.amazonaws.com/download.cip-project.org/ciptesting/ci"
-diff --git a/test.Dockerfile b/test.Dockerfile
-index 04e2ad9..d15f7a3 100644
---- a/test.Dockerfile
-+++ b/test.Dockerfile
-@@ -11,8 +11,8 @@ RUN apt-get update \
- # Install AWS CLI
- RUN pip3 install awscli
+@@ -47,11 +47,12 @@ clean_up () {
+ }
  
--# Copy healthcheck templates
--COPY healthcheck_templates /opt/healthcheck_templates
-+# Copy lava templates
-+COPY lava_templates /opt/lava_templates
+ get_template () {
+-	TEMPLATE="$TEMPLATE_DIR/$DEVICE.yaml"
++	TEMPLATE="${TEMPLATE_DIR}/${DEVICE}_${1}.yaml"
+ }
  
- # Copy test script
- COPY submit_tests.sh /opt/
+ create_job () {
+-	get_template
++	local testname="$1"
++	get_template $testname
+ 
+ 	local dtb_url="$AWS_URL_DOWN/$DTB"
+ 	local kernel_url="$AWS_URL_DOWN/$KERNEL"
+@@ -59,9 +60,9 @@ create_job () {
+ 
+ 	INDEX="0"
+ 	if $USE_DTB; then
+-		local job_name="${VERSION}_${ARCH}_${CONFIG}_${DTB_NAME}"
++		local job_name="${VERSION}_${ARCH}_${CONFIG}_${DTB_NAME}_${testname}"
+ 	else
+-		local job_name="${VERSION}_${ARCH}_${CONFIG}"
++		local job_name="${VERSION}_${ARCH}_${CONFIG}_${testname}"
+ 	fi
+ 
+ 	local job_definition="$TMP_DIR/${INDEX}_${job_name}.yaml"
+@@ -148,7 +149,7 @@ find_jobs () {
+ 			fi
+ 
+ 			print_kernel_info
+-			create_job
++			create_job healthcheck
+ 		done < $jobfile
+ 	done
+ }
 -- 
 2.20.1
