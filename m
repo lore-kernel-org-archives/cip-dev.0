@@ -1,42 +1,45 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed, 28 Aug 2019 14:32:11 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip v2 24/57] dmaengine: rcar-dmac: Update
-	copyright information
+Date: Wed, 28 Aug 2019 14:32:12 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip v2 25/57] spi: sh-msiof: fix deferred
+	probing
 In-Reply-To: <1566999164-27898-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1566999164-27898-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1566999164-27898-25-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1566999164-27898-26-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-commit 8a6061c34a54a997db1ded6d89b7db6cbe3f359e upstream.
+commit f34c6e6257aa477cdfe7e9bbbecd3c5648ecda69 upstream.
 
-Update copyright and string for Gen3.
+Since commit 9ec36cafe43b ("of/irq: do irq resolution in platform_get_irq")
+platform_get_irq() can return -EPROBE_DEFER. However, the driver overrides
+an error returned by that function with -ENOENT which breaks the deferred
+probing. Propagate upstream an error code returned by platform_get_irq()
+and remove the bogus "platform" from the error message, while at it...
 
-Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-Signed-off-by: Niklas S?derlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Fixes: 9ec36cafe43b ("of/irq: do irq resolution in platform_get_irq")
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/dma/sh/rcar-dmac.c | 4 ++--
+ drivers/spi/spi-sh-msiof.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index 80ff95f..cf71a73 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -1,8 +1,8 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Renesas R-Car Gen2 DMA Controller Driver
-+ * Renesas R-Car Gen2/Gen3 DMA Controller Driver
-  *
-- * Copyright (C) 2014 Renesas Electronics Inc.
-+ * Copyright (C) 2014-2019 Renesas Electronics Inc.
-  *
-  * Author: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-  */
+diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+index 101cd6a..30ea0a2 100644
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -1343,8 +1343,8 @@ static int sh_msiof_spi_probe(struct platform_device *pdev)
+ 
+ 	i = platform_get_irq(pdev, 0);
+ 	if (i < 0) {
+-		dev_err(&pdev->dev, "cannot get platform IRQ\n");
+-		ret = -ENOENT;
++		dev_err(&pdev->dev, "cannot get IRQ\n");
++		ret = i;
+ 		goto err1;
+ 	}
+ 
 -- 
 2.7.4
