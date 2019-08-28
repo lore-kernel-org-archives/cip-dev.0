@@ -1,101 +1,185 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed, 28 Aug 2019 12:22:00 +0100
-Subject: [cip-dev] [PATCH/RFC 4.19.y-cip 33/41] pinctrl: sh-pfc: r8a77990:
-	Fix MOD_SEL1 bit30 when using SSI_SCK2 and SSI_WS2
+Date: Wed, 28 Aug 2019 12:22:01 +0100
+Subject: [cip-dev] [PATCH/RFC 4.19.y-cip 34/41] pinctrl: sh-pfc: rcar-gen3:
+	Rename RTS{0, 1, 3, 4}# pin function definitions
 In-Reply-To: <1566991328-25476-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1566991328-25476-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1566991328-25476-34-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1566991328-25476-35-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-commit e87882eb9be10b2b9e28156922c2a47d877f5db4 upstream.
+commit 624a7a12cc0cc776c9c82347ffe5ddce7218eeca upstream.
 
-According to the R-Car Gen3 Hardware Manual Errata for Rev 1.00 of Aug
-24, 2018, there is no need to configure MOD_SEL1 bit30 when the
-SSI_SCK2_{A,B} or SSI_WS2_{A,B} pin functions are selected.
+According to the R-Car Gen3 Hardware Manual Errata for Rev 1.50 of
+Feb 12, 2019, the RTS{0,1,3,4}_#/TANS pin names defined in the GPSR and
+IPSR registers are renamed to RTS{0,1,3,4}_#.
+This patch updates the pin control drivers to reflect this.
 
 Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[geert: Remove now unused definitions, mark MOD_SEL1 bit30 reserved]
+[geert: Update R-Car H3 ES1.x, V3M, V3H, and D3]
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+[fab: dropped changes not related to the r8a77990]
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 20 +++++++++-----------
- 1 file changed, 9 insertions(+), 11 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 36 +++++++++++++++++------------------
+ 1 file changed, 18 insertions(+), 18 deletions(-)
 
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-index 8a95cb5..4557070 100644
+index 4557070..df43e37 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-@@ -429,7 +429,6 @@ FM(IP12_31_28)	IP12_31_28	FM(IP13_31_28)	IP13_31_28	FM(IP14_31_28)	IP14_31_28	FM
- #define MOD_SEL0_1_0	   REV4(FM(SEL_SPEED_PULSE_IF_0),	FM(SEL_SPEED_PULSE_IF_1),	FM(SEL_SPEED_PULSE_IF_2),	F_(0, 0))
+@@ -2,7 +2,7 @@
+ /*
+  * R8A77990 processor support - PFC hardware block.
+  *
+- * Copyright (C) 2018 Renesas Electronics Corp.
++ * Copyright (C) 2018-2019 Renesas Electronics Corp.
+  *
+  * This file is based on the drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+  *
+@@ -165,7 +165,7 @@
+ #define GPSR5_7		F_(SCK2_A,		IP12_7_4)
+ #define GPSR5_6		F_(TX1,			IP12_3_0)
+ #define GPSR5_5		F_(RX1,			IP11_31_28)
+-#define GPSR5_4		F_(RTS0_N_TANS_A,	IP11_23_20)
++#define GPSR5_4		F_(RTS0_N_A,		IP11_23_20)
+ #define GPSR5_3		F_(CTS0_N_A,		IP11_19_16)
+ #define GPSR5_2		F_(TX0_A,		IP11_15_12)
+ #define GPSR5_1		F_(RX0_A,		IP11_11_8)
+@@ -219,7 +219,7 @@
+ #define IP3_3_0		FM(A1)			FM(IRQ1)		FM(PWM3_A)		FM(DU_DOTCLKIN1)	FM(VI5_DATA0_A)		FM(DU_DISP_CDE) FM(SDA6_B)	FM(IETX)	FM(QCPV_QDE)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP3_7_4		FM(A2)			FM(IRQ2)		FM(AVB_AVTP_PPS)	FM(VI4_CLKENB)		FM(VI5_DATA1_A)		FM(DU_DISP)	FM(SCL6_B)	F_(0, 0)	FM(QSTVB_QVE)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP3_11_8	FM(A3)			FM(CTS4_N_A)		FM(PWM4_A)		FM(VI4_DATA12)		F_(0, 0)		FM(DU_DOTCLKOUT0) FM(HTX3_D)	FM(IECLK)	FM(LCDOUT12)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP3_15_12	FM(A4)			FM(RTS4_N_TANS_A)	FM(MSIOF3_SYNC_B)	FM(VI4_DATA8)		FM(PWM2_B)		FM(DU_DG4)	FM(RIF2_CLK_B)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP3_15_12	FM(A4)			FM(RTS4_N_A)		FM(MSIOF3_SYNC_B)	FM(VI4_DATA8)		FM(PWM2_B)		FM(DU_DG4)	FM(RIF2_CLK_B)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP3_19_16	FM(A5)			FM(SCK4_A)		FM(MSIOF3_SCK_B)	FM(VI4_DATA9)		FM(PWM3_B)		F_(0, 0)	FM(RIF2_SYNC_B)	F_(0, 0)	FM(QPOLA)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP3_23_20	FM(A6)			FM(RX4_A)		FM(MSIOF3_RXD_B)	FM(VI4_DATA10)		F_(0, 0)		F_(0, 0)	FM(RIF2_D0_B)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP3_27_24	FM(A7)			FM(TX4_A)		FM(MSIOF3_TXD_B)	FM(VI4_DATA11)		F_(0, 0)		F_(0, 0)	FM(RIF2_D1_B)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+@@ -240,10 +240,10 @@
+ #define IP5_15_12	FM(CS0_N)		FM(SCL5)		F_(0, 0)		F_(0, 0)		F_(0, 0)		FM(DU_DR0)	FM(VI4_DATA2_B)	F_(0, 0)	FM(LCDOUT16)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP5_19_16	FM(WE0_N)		FM(SDA5)		F_(0, 0)		F_(0, 0)		F_(0, 0)		FM(DU_DR1)	FM(VI4_DATA3_B)	F_(0, 0)	FM(LCDOUT17)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP5_23_20	FM(D0)			FM(MSIOF3_SCK_A)	F_(0, 0)		F_(0, 0)		F_(0, 0)		FM(DU_DR2)	FM(CTS4_N_C)	F_(0, 0)	FM(LCDOUT18)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP5_27_24	FM(D1)			FM(MSIOF3_SYNC_A)	FM(SCK3_A)		FM(VI4_DATA23)		FM(VI5_CLKENB_A)	FM(DU_DB7)	FM(RTS4_N_TANS_C) F_(0, 0)	FM(LCDOUT7)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP5_27_24	FM(D1)			FM(MSIOF3_SYNC_A)	FM(SCK3_A)		FM(VI4_DATA23)		FM(VI5_CLKENB_A)	FM(DU_DB7)	FM(RTS4_N_C)	F_(0, 0)	FM(LCDOUT7)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP5_31_28	FM(D2)			FM(MSIOF3_RXD_A)	FM(RX5_C)		F_(0, 0)		FM(VI5_DATA14_A)	FM(DU_DR3)	FM(RX4_C)	F_(0, 0)	FM(LCDOUT19)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP6_3_0		FM(D3)			FM(MSIOF3_TXD_A)	FM(TX5_C)		F_(0, 0)		FM(VI5_DATA15_A)	FM(DU_DR4)	FM(TX4_C)	F_(0, 0)	FM(LCDOUT20)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP6_7_4		FM(D4)			FM(CANFD1_TX)		FM(HSCK3_B)		FM(CAN1_TX)		FM(RTS3_N_TANS_A)	FM(MSIOF3_SS2_A) F_(0, 0)	FM(VI5_DATA1_B)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP6_7_4		FM(D4)			FM(CANFD1_TX)		FM(HSCK3_B)		FM(CAN1_TX)		FM(RTS3_N_A)		FM(MSIOF3_SS2_A) F_(0, 0)	FM(VI5_DATA1_B)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP6_11_8	FM(D5)			FM(RX3_A)		FM(HRX3_B)		F_(0, 0)		F_(0, 0)		FM(DU_DR5)	FM(VI4_DATA4_B)	F_(0, 0)	FM(LCDOUT21)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP6_15_12	FM(D6)			FM(TX3_A)		FM(HTX3_B)		F_(0, 0)		F_(0, 0)		FM(DU_DR6)	FM(VI4_DATA5_B)	F_(0, 0)	FM(LCDOUT22)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP6_19_16	FM(D7)			FM(CANFD1_RX)		FM(IRQ5)		FM(CAN1_RX)		FM(CTS3_N_A)		F_(0, 0)	F_(0, 0)	FM(VI5_DATA2_B)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+@@ -289,8 +289,8 @@
+ #define IP11_11_8	FM(RX0_A)		FM(HRX1_A)		FM(SSI_SCK2_A)		FM(RIF1_SYNC)		F_(0, 0)		F_(0, 0)	F_(0, 0)	FM(TS_SCK1)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP11_15_12	FM(TX0_A)		FM(HTX1_A)		FM(SSI_WS2_A)		FM(RIF1_D0)		F_(0, 0)		F_(0, 0)	F_(0, 0)	FM(TS_SDAT1)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP11_19_16	FM(CTS0_N_A)		FM(NFDATA14_A)		FM(AUDIO_CLKOUT_A)	FM(RIF1_D1)		FM(SCIF_CLK_A)		FM(FMCLK_A)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP11_23_20	FM(RTS0_N_TANS_A)	FM(NFDATA15_A)		FM(AUDIO_CLKOUT1_A)	FM(RIF1_CLK)		FM(SCL2_A)		FM(FMIN_A)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP11_27_24	FM(SCK0_A)		FM(HSCK1_A)		FM(USB3HS0_ID)		FM(RTS1_N_TANS)		FM(SDA2_A)		FM(FMCLK_C)	F_(0, 0)	F_(0, 0)	FM(USB0_ID)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP11_23_20	FM(RTS0_N_A)		FM(NFDATA15_A)		FM(AUDIO_CLKOUT1_A)	FM(RIF1_CLK)		FM(SCL2_A)		FM(FMIN_A)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP11_27_24	FM(SCK0_A)		FM(HSCK1_A)		FM(USB3HS0_ID)		FM(RTS1_N)		FM(SDA2_A)		FM(FMCLK_C)	F_(0, 0)	F_(0, 0)	FM(USB0_ID)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP11_31_28	FM(RX1)			FM(HRX2_B)		FM(SSI_SCK9_B)		FM(AUDIO_CLKOUT1_B)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
  
- /* MOD_SEL1 */			/* 0 */				/* 1 */				/* 2 */				/* 3 */			/* 4 */			/* 5 */		/* 6 */		/* 7 */
--#define MOD_SEL1_30		FM(SEL_SSI2_0)			FM(SEL_SSI2_1)
- #define MOD_SEL1_29		FM(SEL_TIMER_TMU_0)		FM(SEL_TIMER_TMU_1)
- #define MOD_SEL1_28		FM(SEL_USB_20_CH0_0)		FM(SEL_USB_20_CH0_1)
- #define MOD_SEL1_26		FM(SEL_DRIF2_0)			FM(SEL_DRIF2_1)
-@@ -450,7 +449,7 @@ FM(IP12_31_28)	IP12_31_28	FM(IP13_31_28)	IP13_31_28	FM(IP14_31_28)	IP14_31_28	FM
+ /* IPSRx */		/* 0 */			/* 1 */			/* 2 */			/* 3 */			/* 4 */			/* 5 */		/* 6 */		/* 7 */		/* 8 */		/* 9 - F */
+@@ -668,7 +668,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_GPSR(IP3_11_8,		LCDOUT12),
  
- #define PINMUX_MOD_SELS	\
- \
--MOD_SEL0_30_29		MOD_SEL1_30 \
-+MOD_SEL0_30_29 \
- 			MOD_SEL1_29 \
- MOD_SEL0_28		MOD_SEL1_28 \
- MOD_SEL0_27_26 \
-@@ -1040,7 +1039,7 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_MSEL(IP10_27_24,		RIF0_CLK_B,	SEL_DRIF0_1),
- 	PINMUX_IPSR_MSEL(IP10_27_24,		SCL2_B,		SEL_I2C2_1),
- 	PINMUX_IPSR_MSEL(IP10_27_24,		TCLK1_A,	SEL_TIMER_TMU_0),
--	PINMUX_IPSR_MSEL(IP10_27_24,		SSI_SCK2_B,	SEL_SSI2_1),
-+	PINMUX_IPSR_GPSR(IP10_27_24,		SSI_SCK2_B),
- 	PINMUX_IPSR_GPSR(IP10_27_24,		TS_SCK0),
+ 	PINMUX_IPSR_GPSR(IP3_15_12,		A4),
+-	PINMUX_IPSR_MSEL(IP3_15_12,		RTS4_N_TANS_A,	SEL_SCIF4_0),
++	PINMUX_IPSR_MSEL(IP3_15_12,		RTS4_N_A,	SEL_SCIF4_0),
+ 	PINMUX_IPSR_MSEL(IP3_15_12,		MSIOF3_SYNC_B,	SEL_MSIOF3_1),
+ 	PINMUX_IPSR_GPSR(IP3_15_12,		VI4_DATA8),
+ 	PINMUX_IPSR_MSEL(IP3_15_12,		PWM2_B,		SEL_PWM2_1),
+@@ -818,7 +818,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_GPSR(IP5_27_24,		VI4_DATA23),
+ 	PINMUX_IPSR_MSEL(IP5_27_24,		VI5_CLKENB_A,	SEL_VIN5_0),
+ 	PINMUX_IPSR_GPSR(IP5_27_24,		DU_DB7),
+-	PINMUX_IPSR_MSEL(IP5_27_24,		RTS4_N_TANS_C,	SEL_SCIF4_2),
++	PINMUX_IPSR_MSEL(IP5_27_24,		RTS4_N_C,	SEL_SCIF4_2),
+ 	PINMUX_IPSR_GPSR(IP5_27_24,		LCDOUT7),
  
- 	PINMUX_IPSR_GPSR(IP10_31_28,		SD0_WP),
-@@ -1049,7 +1048,7 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_MSEL(IP10_31_28,		RIF0_D0_B,	SEL_DRIF0_1),
- 	PINMUX_IPSR_MSEL(IP10_31_28,		SDA2_B,		SEL_I2C2_1),
- 	PINMUX_IPSR_MSEL(IP10_31_28,		TCLK2_A,	SEL_TIMER_TMU_0),
--	PINMUX_IPSR_MSEL(IP10_31_28,		SSI_WS2_B,	SEL_SSI2_1),
-+	PINMUX_IPSR_GPSR(IP10_31_28,		SSI_WS2_B),
- 	PINMUX_IPSR_GPSR(IP10_31_28,		TS_SDAT0),
+ 	PINMUX_IPSR_GPSR(IP5_31_28,		D2),
+@@ -842,7 +842,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_GPSR(IP6_7_4,		CANFD1_TX),
+ 	PINMUX_IPSR_MSEL(IP6_7_4,		HSCK3_B,	SEL_HSCIF3_1),
+ 	PINMUX_IPSR_GPSR(IP6_7_4,		CAN1_TX),
+-	PINMUX_IPSR_MSEL(IP6_7_4,		RTS3_N_TANS_A,	SEL_SCIF3_0),
++	PINMUX_IPSR_MSEL(IP6_7_4,		RTS3_N_A,	SEL_SCIF3_0),
+ 	PINMUX_IPSR_GPSR(IP6_7_4,		MSIOF3_SS2_A),
+ 	PINMUX_IPSR_MSEL(IP6_7_4,		VI5_DATA1_B,	SEL_VIN5_1),
  
- 	/* IPSR11 */
-@@ -1067,13 +1066,13 @@ static const u16 pinmux_data[] = {
+@@ -1083,7 +1083,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_MSEL(IP11_19_16,		SCIF_CLK_A,	SEL_SCIF_0),
+ 	PINMUX_IPSR_MSEL(IP11_19_16,		FMCLK_A,	SEL_FM_0),
  
- 	PINMUX_IPSR_MSEL(IP11_11_8,		RX0_A,		SEL_SCIF0_0),
- 	PINMUX_IPSR_MSEL(IP11_11_8,		HRX1_A,		SEL_HSCIF1_0),
--	PINMUX_IPSR_MSEL(IP11_11_8,		SSI_SCK2_A,	SEL_SSI2_0),
-+	PINMUX_IPSR_GPSR(IP11_11_8,		SSI_SCK2_A),
- 	PINMUX_IPSR_GPSR(IP11_11_8,		RIF1_SYNC),
- 	PINMUX_IPSR_GPSR(IP11_11_8,		TS_SCK1),
+-	PINMUX_IPSR_MSEL(IP11_23_20,		RTS0_N_TANS_A,	SEL_SCIF0_0),
++	PINMUX_IPSR_MSEL(IP11_23_20,		RTS0_N_A,	SEL_SCIF0_0),
+ 	PINMUX_IPSR_MSEL(IP11_23_20,		NFDATA15_A,	SEL_NDFC_0),
+ 	PINMUX_IPSR_GPSR(IP11_23_20,		AUDIO_CLKOUT1_A),
+ 	PINMUX_IPSR_GPSR(IP11_23_20,		RIF1_CLK),
+@@ -1093,7 +1093,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_MSEL(IP11_27_24,		SCK0_A,		SEL_SCIF0_0),
+ 	PINMUX_IPSR_MSEL(IP11_27_24,		HSCK1_A,	SEL_HSCIF1_0),
+ 	PINMUX_IPSR_GPSR(IP11_27_24,		USB3HS0_ID),
+-	PINMUX_IPSR_GPSR(IP11_27_24,		RTS1_N_TANS),
++	PINMUX_IPSR_GPSR(IP11_27_24,		RTS1_N),
+ 	PINMUX_IPSR_MSEL(IP11_27_24,		SDA2_A,		SEL_I2C2_0),
+ 	PINMUX_IPSR_MSEL(IP11_27_24,		FMCLK_C,	SEL_FM_2),
+ 	PINMUX_IPSR_GPSR(IP11_27_24,		USB0_ID),
+@@ -2836,7 +2836,7 @@ static const unsigned int scif0_ctrl_a_pins[] = {
+ };
  
- 	PINMUX_IPSR_MSEL(IP11_15_12,		TX0_A,		SEL_SCIF0_0),
- 	PINMUX_IPSR_GPSR(IP11_15_12,		HTX1_A),
--	PINMUX_IPSR_MSEL(IP11_15_12,		SSI_WS2_A,	SEL_SSI2_0),
-+	PINMUX_IPSR_GPSR(IP11_15_12,		SSI_WS2_A),
- 	PINMUX_IPSR_GPSR(IP11_15_12,		RIF1_D0),
- 	PINMUX_IPSR_GPSR(IP11_15_12,		TS_SDAT1),
+ static const unsigned int scif0_ctrl_a_mux[] = {
+-	RTS0_N_TANS_A_MARK, CTS0_N_A_MARK,
++	RTS0_N_A_MARK, CTS0_N_A_MARK,
+ };
  
-@@ -4964,12 +4963,11 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		MOD_SEL0_1_0 ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("MOD_SEL1", 0xe6060504, 32,
--			     GROUP(1, 1, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1,
--				   1, 2, 2, 2, 1, 1, 2, 1, 4),
-+			     GROUP(2, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1, 1,
-+				   2, 2, 2, 1, 1, 2, 1, 4),
- 			     GROUP(
--		/* RESERVED 31 */
--		0, 0,
--		MOD_SEL1_30
-+		/* RESERVED 31, 30 */
-+		0, 0, 0, 0,
- 		MOD_SEL1_29
- 		MOD_SEL1_28
- 		/* RESERVED 27 */
+ static const unsigned int scif0_data_b_pins[] = {
+@@ -2882,7 +2882,7 @@ static const unsigned int scif1_ctrl_pins[] = {
+ };
+ 
+ static const unsigned int scif1_ctrl_mux[] = {
+-	RTS1_N_TANS_MARK, CTS1_N_MARK,
++	RTS1_N_MARK, CTS1_N_MARK,
+ };
+ 
+ /* - SCIF2 ------------------------------------------------------------------ */
+@@ -2938,7 +2938,7 @@ static const unsigned int scif3_ctrl_a_pins[] = {
+ };
+ 
+ static const unsigned int scif3_ctrl_a_mux[] = {
+-	RTS3_N_TANS_A_MARK, CTS3_N_A_MARK,
++	RTS3_N_A_MARK, CTS3_N_A_MARK,
+ };
+ 
+ static const unsigned int scif3_data_b_pins[] = {
+@@ -2993,7 +2993,7 @@ static const unsigned int scif4_ctrl_a_pins[] = {
+ };
+ 
+ static const unsigned int scif4_ctrl_a_mux[] = {
+-	RTS4_N_TANS_A_MARK, CTS4_N_A_MARK,
++	RTS4_N_A_MARK, CTS4_N_A_MARK,
+ };
+ 
+ static const unsigned int scif4_data_b_pins[] = {
+@@ -3029,7 +3029,7 @@ static const unsigned int scif4_ctrl_c_pins[] = {
+ };
+ 
+ static const unsigned int scif4_ctrl_c_mux[] = {
+-	RTS4_N_TANS_C_MARK, CTS4_N_C_MARK,
++	RTS4_N_C_MARK, CTS4_N_C_MARK,
+ };
+ 
+ /* - SCIF5 ------------------------------------------------------------------ */
+@@ -5125,7 +5125,7 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
+ 	} },
+ 	{ PINMUX_BIAS_REG("PUEN3", 0xe606040c, "PUD3", 0xe606044c) {
+ 		 [0] = RCAR_GP_PIN(5,  0),	/* SCK0_A */
+-		 [1] = RCAR_GP_PIN(5,  4),	/* RTS0#/TANS_A */
++		 [1] = RCAR_GP_PIN(5,  4),	/* RTS0#_A */
+ 		 [2] = RCAR_GP_PIN(5,  3),	/* CTS0#_A */
+ 		 [3] = RCAR_GP_PIN(5,  2),	/* TX0_A */
+ 		 [4] = RCAR_GP_PIN(5,  1),	/* RX0_A */
 -- 
 2.7.4
