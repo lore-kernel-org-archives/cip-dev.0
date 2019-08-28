@@ -1,73 +1,71 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed, 28 Aug 2019 12:21:44 +0100
-Subject: [cip-dev] [PATCH/RFC 4.19.y-cip 17/41] pinctrl: sh-pfc: Mark
-	run-time debug code __init
+Date: Wed, 28 Aug 2019 12:21:45 +0100
+Subject: [cip-dev] [PATCH/RFC 4.19.y-cip 18/41] pinctrl: sh-pfc: Add check
+	for empty pinmux groups/functions
 In-Reply-To: <1566991328-25476-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1566991328-25476-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1566991328-25476-18-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1566991328-25476-19-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit 80cde64f68ff09617f89e78dfadf5a6873be87a8 upstream.
+commit 3dd5fd79f07103f7cda30567f8bf85a854796dd6 upstream.
 
-All run-time debug code is called from sh_pfc_init(), which is __init.
+The pinmux groups and functions arrays may contain two parts, to ease
+supporting SoCs that expose pin subsets of other related SoCs.  Both
+parts need to be declared with explicit sizes, which thus need to be
+updated when adding support for more groups and functions.
 
-Fixes: 6161b39a14380815 ("pinctrl: sh-pfc: Validate pinmux tables at runtime when debugging")
+If a size is too small, the compiler will detect this at build time
+("excess elements in array initializer").
+If a size is too large, this may go undetected (for pin groups), lead to
+pin controller registration failures (for pin functions: "pinmux ops has
+no name for functionN"), or crash the optional run-time debug code (for
+pin groups).
+
+Extend the run-time debug code with checks to detect this, to help
+catching bugs early.
+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/pinctrl/sh-pfc/core.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/pinctrl/sh-pfc/core.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index 09b58eb..5c4f441 100644
+index 5c4f441..2a66de2 100644
 --- a/drivers/pinctrl/sh-pfc/core.c
 +++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -714,7 +714,7 @@ static int sh_pfc_suspend_init(struct sh_pfc *pfc) { return 0; }
- #endif /* CONFIG_PM_SLEEP && CONFIG_ARM_PSCI_FW */
+@@ -777,9 +777,15 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
  
- #ifdef DEBUG
--static bool is0s(const u16 *enum_ids, unsigned int n)
-+static bool __init is0s(const u16 *enum_ids, unsigned int n)
- {
- 	unsigned int i;
- 
-@@ -725,11 +725,11 @@ static bool is0s(const u16 *enum_ids, unsigned int n)
- 	return true;
- }
- 
--static unsigned int sh_pfc_errors;
--static unsigned int sh_pfc_warnings;
-+static unsigned int sh_pfc_errors __initdata = 0;
-+static unsigned int sh_pfc_warnings __initdata = 0;
- 
--static void sh_pfc_check_cfg_reg(const char *drvname,
--				 const struct pinmux_cfg_reg *cfg_reg)
-+static void __init sh_pfc_check_cfg_reg(const char *drvname,
-+					const struct pinmux_cfg_reg *cfg_reg)
- {
- 	unsigned int i, n, rw, fw;
- 
-@@ -761,7 +761,7 @@ static void sh_pfc_check_cfg_reg(const char *drvname,
+ 	for (i = 0; i < info->nr_functions; i++) {
+ 		func = &info->functions[i];
++		if (!func->name) {
++			pr_err("%s: empty function %u\n", drvname, i);
++			sh_pfc_errors++;
++			continue;
++		}
+ 		for (j = 0; j < func->nr_groups; j++) {
+ 			for (k = 0; k < info->nr_groups; k++) {
+-				if (!strcmp(func->groups[j],
++				if (info->groups[k].name &&
++				    !strcmp(func->groups[j],
+ 					    info->groups[k].name)) {
+ 					refcnts[k]++;
+ 					break;
+@@ -795,6 +801,11 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
  	}
- }
  
--static void sh_pfc_check_info(const struct sh_pfc_soc_info *info)
-+static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
- {
- 	const struct sh_pfc_function *func;
- 	const char *drvname = info->name;
-@@ -813,7 +813,7 @@ static void sh_pfc_check_info(const struct sh_pfc_soc_info *info)
- 		sh_pfc_check_cfg_reg(drvname, &info->cfg_regs[i]);
- }
- 
--static void sh_pfc_check_driver(const struct platform_driver *pdrv)
-+static void __init sh_pfc_check_driver(const struct platform_driver *pdrv)
- {
- 	unsigned int i;
- 
+ 	for (i = 0; i < info->nr_groups; i++) {
++		if (!info->groups[i].name) {
++			pr_err("%s: empty group %u\n", drvname, i);
++			sh_pfc_errors++;
++			continue;
++		}
+ 		if (!refcnts[i]) {
+ 			pr_err("%s: orphan group %s\n", drvname,
+ 			       info->groups[i].name);
 -- 
 2.7.4
