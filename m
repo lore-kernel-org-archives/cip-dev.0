@@ -1,63 +1,183 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed, 28 Aug 2019 12:21:53 +0100
-Subject: [cip-dev] [PATCH/RFC 4.19.y-cip 26/41] pinctrl: sh-pfc: rcar-gen3:
-	Retain TDSELCTRL register across suspend/resume
+Date: Wed, 28 Aug 2019 12:21:54 +0100
+Subject: [cip-dev] [PATCH/RFC 4.19.y-cip 27/41] pinctrl: sh-pfc: Add missing
+	#include <linux/errno.h>
 In-Reply-To: <1566991328-25476-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1566991328-25476-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1566991328-25476-27-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1566991328-25476-28-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit d92ee9cf8ec8d7fe1d7dbc4b3ee459419b1e5533 upstream.
+commit 2f9f5094f8b7a1da8852c4a50b205232e62d72dc upstream.
 
-The TDSELCTRL register is responsible for configuring the SDHI/MMC clock
-return path delay and may be adjusted by the bootloader. Retain the value
-across suspend/resume to prevent hardware instability after resume.
+Source files using -Exxx error codes should include <linux/errno.h>.
+On ARM, this header file is included indirectly; on SuperH, it is not,
+leading to "error: ?EINVAL? undeclared" failures when enabling
+compile-testing later.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[fab: dropped changes not related to either r8a7796 or r8a77990]
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c  | 2 ++
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 2 ++
- 2 files changed, 4 insertions(+)
+ drivers/pinctrl/sh-pfc/pfc-r8a77470.c    | 1 +
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c     | 1 +
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c     | 1 +
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c     | 1 +
+ drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 1 +
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c     | 1 +
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c     | 1 +
+ drivers/pinctrl/sh-pfc/pfc-r8a77965.c    | 1 +
+ drivers/pinctrl/sh-pfc/pfc-r8a77970.c    | 1 +
+ drivers/pinctrl/sh-pfc/pfc-r8a77980.c    | 1 +
+ drivers/pinctrl/sh-pfc/pfc-r8a77990.c    | 1 +
+ drivers/pinctrl/sh-pfc/pfc-r8a77995.c    | 1 +
+ 12 files changed, 12 insertions(+)
 
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77470.c b/drivers/pinctrl/sh-pfc/pfc-r8a77470.c
+index cb4c907..f548ccf 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77470.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77470.c
+@@ -5,6 +5,7 @@
+  * Copyright (C) 2018 Renesas Electronics Corp.
+  */
+ 
++#include <linux/errno.h>
+ #include <linux/kernel.h>
+ 
+ #include "sh_pfc.h"
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+index d2fd6e87..7b4c11b 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+@@ -21,6 +21,7 @@
+  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+  */
+ 
++#include <linux/errno.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+ 
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+index 332cb96..c4ffb40 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+@@ -9,6 +9,7 @@
+  * as published by the Free Software Foundation.
+  */
+ 
++#include <linux/errno.h>
+ #include <linux/kernel.h>
+ 
+ #include "sh_pfc.h"
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+index 7b8dfee..985d5ae 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+@@ -10,6 +10,7 @@
+  * as published by the Free Software Foundation.
+  */
+ 
++#include <linux/errno.h>
+ #include <linux/kernel.h>
+ 
+ #include "core.h"
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
+index c75d48f..ab5a94e 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
+@@ -8,6 +8,7 @@
+  * the Free Software Foundation; version 2 of the License.
+  */
+ 
++#include <linux/errno.h>
+ #include <linux/kernel.h>
+ 
+ #include "core.h"
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index d27a9c7..b1aa5c1 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -8,6 +8,7 @@
+  * the Free Software Foundation; version 2 of the License.
+  */
+ 
++#include <linux/errno.h>
+ #include <linux/kernel.h>
+ #include <linux/sys_soc.h>
+ 
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index 3a178d89..7fe0f9f 100644
+index 7fe0f9f..aedb431 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -5859,10 +5859,12 @@ static const struct pinmux_drive_reg pinmux_drive_regs[] = {
+@@ -14,6 +14,7 @@
+  * the Free Software Foundation; version 2 of the License.
+  */
  
- enum ioctrl_regs {
- 	POCCTRL,
-+	TDSELCTRL,
- };
++#include <linux/errno.h>
+ #include <linux/kernel.h>
  
- static const struct pinmux_ioctrl_reg pinmux_ioctrl_regs[] = {
- 	[POCCTRL] = { 0xe6060380, },
-+	[TDSELCTRL] = { 0xe60603c0, },
- 	{ /* sentinel */ },
- };
+ #include "core.h"
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
+index 77661cb..3ebfd85 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
+@@ -12,6 +12,7 @@
+  * Copyright (C) 2015  Renesas Electronics Corporation
+  */
+ 
++#include <linux/errno.h>
+ #include <linux/kernel.h>
+ 
+ #include "core.h"
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77970.c b/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
+index ed08cce..5582f41 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
+@@ -15,6 +15,7 @@
+  * the Free Software Foundation; version 2 of the License.
+  */
+ 
++#include <linux/errno.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+ 
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77980.c b/drivers/pinctrl/sh-pfc/pfc-r8a77980.c
+index 246ab41..04d51b1 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77980.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77980.c
+@@ -12,6 +12,7 @@
+  * Copyright (C) 2015 Renesas Electronics Corporation
+  */
+ 
++#include <linux/errno.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
  
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-index 9ade895..7e7d70f 100644
+index 7e7d70f..a3f22ff 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-@@ -4997,10 +4997,12 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+@@ -11,6 +11,7 @@
+  * Copyright (C) 2016-2017 Renesas Electronics Corp.
+  */
  
- enum ioctrl_regs {
- 	POCCTRL0,
-+	TDSELCTRL,
- };
++#include <linux/errno.h>
+ #include <linux/kernel.h>
  
- static const struct pinmux_ioctrl_reg pinmux_ioctrl_regs[] = {
- 	[POCCTRL0] = { 0xe6060380, },
-+	[TDSELCTRL] = { 0xe60603c0, },
- 	{ /* sentinel */ },
- };
+ #include "core.h"
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+index a4d7f20..b3e65dd 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+@@ -14,6 +14,7 @@
+  * the Free Software Foundation; version 2 of the License.
+  */
  
++#include <linux/errno.h>
+ #include <linux/kernel.h>
+ 
+ #include "core.h"
 -- 
 2.7.4
