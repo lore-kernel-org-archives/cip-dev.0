@@ -1,37 +1,40 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed, 28 Aug 2019 12:02:39 +0100
-Subject: [cip-dev] [PATCH 4.19.y 08/60] dt-bindings: thermal:
-	rcar-gen3-thermal: Add r8a774a1 support
+Date: Wed, 28 Aug 2019 12:02:40 +0100
+Subject: [cip-dev] [PATCH 4.19.y 09/60] dt-bindings: dmaengine: usb-dmac:
+	Add binding for r8a774a1
 In-Reply-To: <1566990211-24785-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1566990211-24785-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1566990211-24785-9-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1566990211-24785-10-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit be6af481f3b2d5084c4e70684eaa962602f94707 upstream.
+From: Biju Das <biju.das@bp.renesas.com>
 
-Document RZ/G2M (R8A774A1) SoC bindings.
+commit b9b4ed210380e51f5c5960dcbceedcc0bbe28408 upstream.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+This patch adds binding for r8a774a1 (RZ/G2M).
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt | 1 +
+ Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
-index cfa154b..098bf95 100644
---- a/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
-+++ b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
-@@ -7,6 +7,7 @@ inside the LSI.
- Required properties:
- - compatible		: "renesas,<soctype>-thermal",
- 			  Examples with soctypes are:
-+			    - "renesas,r8a774a1-thermal" (RZ/G2M)
- 			    - "renesas,r8a7795-thermal" (R-Car H3)
- 			    - "renesas,r8a7796-thermal" (R-Car M3-W)
- 			    - "renesas,r8a77965-thermal" (R-Car M3-N)
+diff --git a/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt b/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
+index 4354ed6..5e82a93 100644
+--- a/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
++++ b/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
+@@ -5,6 +5,7 @@ Required Properties:
+ 	Examples with soctypes are:
+ 	  - "renesas,r8a7743-usb-dmac" (RZ/G1M)
+ 	  - "renesas,r8a7745-usb-dmac" (RZ/G1E)
++	  - "renesas,r8a774a1-usb-dmac" (RZ/G2M)
+ 	  - "renesas,r8a774c0-usb-dmac" (RZ/G2E)
+ 	  - "renesas,r8a7790-usb-dmac" (R-Car H2)
+ 	  - "renesas,r8a7791-usb-dmac" (R-Car M2-W)
 -- 
 2.7.4
