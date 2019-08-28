@@ -1,74 +1,60 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed, 28 Aug 2019 12:03:01 +0100
-Subject: [cip-dev] [PATCH 4.19.y 30/60] ravb: Avoid unsupported internal
-	delay mode for R-Car E3/D3
+Date: Wed, 28 Aug 2019 12:03:02 +0100
+Subject: [cip-dev] [PATCH 4.19.y 31/60] mmc: renesas_sdhi_internal_dmac: set
+	scatter/gather max segment size
 In-Reply-To: <1566990211-24785-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1566990211-24785-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1566990211-24785-31-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1566990211-24785-32-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Simon Horman <horms+renesas@verge.net.au>
+From: Niklas S?derlund <niklas.soderlund+renesas@ragnatech.se>
 
-commit 0a5d329ffd1be394e3e4176eb11ca51dfde03c40 upstream.
+commit 54541815b43f4e49c82628bf28bbb31d86d2f58a upstream.
 
-According to the R-Car Gen3 Hardware Manual Rev 1.50 of Nov 30, 2018, the
-TX clock internal delay mode isn't supported on R-Car E3 (r8a77990) or D3
-(r8a77995). And by extension it is also not supported by RZ/G2E (r9a774c0).
+Fix warning when running with CONFIG_DMA_API_DEBUG_SG=y by allocating a
+device_dma_parameters structure and filling in the max segment size. The
+size used is the result of a discussion with Renesas hardware engineers
+and unfortunately not found in the datasheet.
 
-This matches all ES versions of the affected SoCs as it is
-not clear if this problem will be resolved in newer chips.
-This can be revisited, as necessary.
+  renesas_sdhi_internal_dmac ee140000.sd: DMA-API: mapping sg segment
+  longer than device claims to support [len=126976] [max=65536]
 
-This patch does not error-out if PHY_INTERFACE_MODE_RGMII_ID or
-PHY_INTERFACE_MODE_RGMII_TXID are used on SoCs where TX clock delay
-mode is not supported as there is a risk of introducing a regression
-when used in conjunction with older DT blobs present in the field.
-Rather, a warning is logged in such cases.
-
-Based on work by Kazuya Mizuguchi.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Niklas S?derlund <niklas.soderlund+renesas@ragnatech.se>
+[wsa: simplified some logic after validating intended dma_parms life cycle
+      and added comment]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/net/ethernet/renesas/ravb_main.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 037a0ad..7ed70b7 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1980,6 +1980,13 @@ static void ravb_set_config_mode(struct net_device *ndev)
- 	}
- }
- 
-+static const struct soc_device_attribute ravb_delay_mode_quirk_match[] = {
-+	{ .soc_id = "r8a774c0" },
-+	{ .soc_id = "r8a77990" },
-+	{ .soc_id = "r8a77995" },
-+	{ /* sentinel */ }
-+};
-+
- /* Set tx and rx clock internal delay modes */
- static void ravb_set_delay_mode(struct net_device *ndev)
+diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+index 0129837..fb7adcb 100644
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -311,12 +311,20 @@ static const struct soc_device_attribute gen3_soc_whitelist[] = {
+ static int renesas_sdhi_internal_dmac_probe(struct platform_device *pdev)
  {
-@@ -1991,8 +1998,12 @@ static void ravb_set_delay_mode(struct net_device *ndev)
- 		set |= APSR_DM_RDM;
+ 	const struct soc_device_attribute *soc = soc_device_match(gen3_soc_whitelist);
++	struct device *dev = &pdev->dev;
  
- 	if (priv->phy_interface == PHY_INTERFACE_MODE_RGMII_ID ||
--	    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_TXID)
--		set |= APSR_DM_TDM;
-+	    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_TXID) {
-+		if (!WARN(soc_device_match(ravb_delay_mode_quirk_match),
-+			  "phy-mode %s requires TX clock internal delay mode which is not supported by this hardware revision. Please update device tree",
-+			  phy_modes(priv->phy_interface)))
-+			set |= APSR_DM_TDM;
-+	}
+ 	if (!soc)
+ 		return -ENODEV;
  
- 	ravb_modify(ndev, APSR, APSR_DM, set);
+ 	global_flags |= (unsigned long)soc->data;
+ 
++	dev->dma_parms = devm_kzalloc(dev, sizeof(*dev->dma_parms), GFP_KERNEL);
++	if (!dev->dma_parms)
++		return -ENOMEM;
++
++	/* value is max of SD_SECCNT. Confirmed by HW engineers */
++	dma_set_max_seg_size(dev, 0xffffffff);
++
+ 	return renesas_sdhi_probe(pdev, &renesas_sdhi_internal_dmac_dma_ops);
  }
+ 
 -- 
 2.7.4
