@@ -1,54 +1,57 @@
-From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed, 28 Aug 2019 14:32:44 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip v2 57/57] arm64: dts: renesas:
-	r8a774a1: Add clkp2 clock to CAN nodes
-In-Reply-To: <1566999164-27898-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1566999164-27898-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1566999164-27898-58-git-send-email-fabrizio.castro@bp.renesas.com>
+From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
+Date: Wed, 28 Aug 2019 22:57:59 +0000
+Subject: [cip-dev] [PATCH 1/3] Change templagte directory name
+In-Reply-To: <TYAPR01MB2285770A2828D112504BF1FBB7A30@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+References: <20190828022619.3690-1-nobuhiro1.iwamatsu@toshiba.co.jp>
+	<TYAPR01MB2285770A2828D112504BF1FBB7A30@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+Message-ID: <OSAPR01MB3234CE92510D6A0DF333047992A30@OSAPR01MB3234.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit eccc40002972c4248652befa4513c76cdb350a5c upstream.
+Hi Chris,
 
-According to the latest information, clkp2 is available on RZ/G2.
-Modify CAN0 and CAN1 nodes accordingly.
+> -----Original Message-----
+> From: Chris Paterson [mailto:Chris.Paterson2 at renesas.com]
+> Sent: Wednesday, August 28, 2019 7:05 PM
+> To: iwamatsu nobuhiro(?? ?? ????????)
+> <nobuhiro1.iwamatsu@toshiba.co.jp>
+> Cc: cip-dev at lists.cip-project.org
+> Subject: RE: [PATCH 1/3] Change templagte directory name
+> 
+> Hello Iwamatsu-san,
+> 
+> > From: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+> > Sent: 28 August 2019 03:26
+> >
+> > Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+> > ---
+> >  .../r8a7743-iwg20d-q7.yaml                                    | 0
+> >  .../r8a7745-iwg22d-sodimm.yaml                                | 0
+> >  {healthcheck_templates => lava_templates}/r8a774c0-ek874.yaml | 0
+> >  submit_tests.sh                                               | 2
+> +-
+> >  test.Dockerfile                                               | 4
+> ++--
+> >  5 files changed, 3 insertions(+), 3 deletions(-)  rename
+> > {healthcheck_templates => lava_templates}/r8a7743-iwg20d- q7.yaml
+> > (100%)  rename {healthcheck_templates =>
+> > lava_templates}/r8a7745-iwg22d- sodimm.yaml (100%)  rename
+> > {healthcheck_templates => lava_templates}/r8a774c0-ek874.yaml
+> > (100%)
+> 
+> Thank you for this patch. Do you think you could create a merge request
+> in gitlab[0] so we can do the review there?
+> For this patch and the other two in the series.
+> 
+> [0]
+> https://gitlab.com/cip-project/cip-testing/linux-cip-ci/merge_reques
+> ts
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+Ok, I just sent MR via gitlab.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index a77de9e..12f28aa 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -879,8 +879,10 @@
- 				     "renesas,rcar-gen3-can";
- 			reg = <0 0xe6c30000 0 0x1000>;
- 			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 916>, <&can_clk>;
--			clock-names = "clkp1", "can_clk";
-+			clocks = <&cpg CPG_MOD 916>,
-+				 <&cpg CPG_CORE R8A774A1_CLK_CANFD>,
-+				 <&can_clk>;
-+			clock-names = "clkp1", "clkp2", "can_clk";
- 			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
- 			resets = <&cpg 916>;
- 			status = "disabled";
-@@ -891,8 +893,10 @@
- 				     "renesas,rcar-gen3-can";
- 			reg = <0 0xe6c38000 0 0x1000>;
- 			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 915>, <&can_clk>;
--			clock-names = "clkp1", "can_clk";
-+			clocks = <&cpg CPG_MOD 915>,
-+				 <&cpg CPG_CORE R8A774A1_CLK_CANFD>,
-+				 <&can_clk>;
-+			clock-names = "clkp1", "clkp2", "can_clk";
- 			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
- 			resets = <&cpg 915>;
- 			status = "disabled";
--- 
-2.7.4
+> 
+> Kind regards, Chris
+> 
+
+Best regards,
+  Nobuhiro
