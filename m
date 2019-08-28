@@ -1,84 +1,88 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Wed, 28 Aug 2019 09:48:24 +0100
-Subject: [cip-dev] [PATCH 4.4.y-cip 06/17] phy: rcar-gen3-usb2: Add support
-	for r8a77470
+Date: Wed, 28 Aug 2019 09:48:25 +0100
+Subject: [cip-dev] [PATCH 4.4.y-cip 07/17] ARM: dts: r8a77470: Add USB-DMAC
+	device nodes
 In-Reply-To: <1566982115-11148-1-git-send-email-biju.das@bp.renesas.com>
 References: <1566982115-11148-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1566982115-11148-7-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1566982115-11148-8-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit 5d8042e95fd471d0e342cf14f127194f1a867a01 upstream.
+commit 92c3ccd9b847a6cf130e10aa305e9e349626e4f0 upstream.
 
-This patch adds support for r8a77470 (RZ/G1C). We can reuse this driver for
-initializing timing/interrupt generation registers.
+This patch adds USB DMAC nodes.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-[Backported to 4.4-cip kernel]
+[Reworked clocks and power-domains properties. Removed resets properties]
 ---
- drivers/phy/phy-rcar-gen3-usb2.c | 25 ++++++++++++++++++++++---
- 1 file changed, 22 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/r8a77470.dtsi | 52 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
 
-diff --git a/drivers/phy/phy-rcar-gen3-usb2.c b/drivers/phy/phy-rcar-gen3-usb2.c
-index 2696152..355a671 100644
---- a/drivers/phy/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/phy-rcar-gen3-usb2.c
-@@ -18,6 +18,7 @@
- #include <linux/of_address.h>
- #include <linux/phy/phy.h>
- #include <linux/platform_device.h>
-+#include <linux/of_device.h>
+diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
+index 524bba6..2c9cd0b 100644
+--- a/arch/arm/boot/dts/r8a77470.dtsi
++++ b/arch/arm/boot/dts/r8a77470.dtsi
+@@ -279,6 +279,58 @@
+ 			status = "disabled";
+ 		};
  
- /******* USB2.0 Host registers (original offset is +0x200) *******/
- #define USB2_INT_ENABLE		0x000
-@@ -150,9 +151,22 @@ static struct phy_ops rcar_gen3_phy_usb2_ops = {
- 	.owner		= THIS_MODULE,
- };
- 
-+static const struct phy_ops rz_g1c_phy_usb2_ops = {
-+	.init		= rcar_gen3_phy_usb2_init,
-+	.exit		= rcar_gen3_phy_usb2_exit,
-+	.owner		= THIS_MODULE,
-+};
++		usb_dmac00: dma-controller at e65a0000 {
++			compatible = "renesas,r8a77470-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65a0000 0 0x100>;
++			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&mstp3_clks R8A77470_CLK_USBHS_DMAC0_CH0>;
++			power-domains = <&cpg_clocks>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
 +
- static const struct of_device_id rcar_gen3_phy_usb2_match_table[] = {
--	{ .compatible = "renesas,usb2-phy-r8a7795" },
--	{ }
-+	{
-+		.compatible = "renesas,usb2-phy-r8a77470",
-+		.data = &rz_g1c_phy_usb2_ops,
-+	},
-+	{
-+		.compatible = "renesas,usb2-phy-r8a7795",
-+		.data = &rcar_gen3_phy_usb2_ops,
-+	},
-+	{ /* sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, rcar_gen3_phy_usb2_match_table);
- 
-@@ -162,6 +176,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	struct rcar_gen3_chan *channel;
- 	struct phy_provider *provider;
- 	struct resource *res;
-+	const struct phy_ops *phy_usb2_ops;
- 
- 	if (!dev->of_node) {
- 		dev_err(dev, "This driver needs device tree\n");
-@@ -188,7 +203,11 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	}
- 
- 	/* devm_phy_create() will call pm_runtime_enable(dev); */
--	channel->phy = devm_phy_create(dev, NULL, &rcar_gen3_phy_usb2_ops);
-+	phy_usb2_ops = of_device_get_match_data(dev);
-+	if (!phy_usb2_ops)
-+		return -EINVAL;
++		usb_dmac10: dma-controller at e65b0000 {
++			compatible = "renesas,r8a77470-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65b0000 0 0x100>;
++			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&mstp3_clks R8A77470_CLK_USBHS_DMAC1_CH0>;
++			power-domains = <&cpg_clocks>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
 +
-+	channel->phy = devm_phy_create(dev, NULL, phy_usb2_ops);
- 	if (IS_ERR(channel->phy)) {
- 		dev_err(dev, "Failed to create USB2 PHY\n");
- 		return PTR_ERR(channel->phy);
++		usb_dmac01: dma-controller at e65a8000 {
++			compatible = "renesas,r8a77470-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65a8000 0 0x100>;
++			interrupts = <GIC_SPI 293 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 293 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&mstp3_clks R8A77470_CLK_USBHS_DMAC0_CH1>;
++			power-domains = <&cpg_clocks>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
++		usb_dmac11: dma-controller at e65b8000 {
++			compatible = "renesas,r8a77470-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65b8000 0 0x100>;
++			interrupts = <GIC_SPI 292 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 292 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&mstp3_clks R8A77470_CLK_USBHS_DMAC1_CH1>;
++			power-domains = <&cpg_clocks>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
+ 		dmac0: dma-controller at e6700000 {
+ 			compatible = "renesas,dmac-r8a77470",
+ 				     "renesas,rcar-dmac";
 -- 
 2.7.4
