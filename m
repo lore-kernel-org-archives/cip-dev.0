@@ -1,54 +1,80 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed, 28 Aug 2019 14:32:19 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip v2 32/57] arm64: dts: renesas:
-	r8a774a1: Add INTC-EX device node
+Date: Wed, 28 Aug 2019 14:32:20 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip v2 33/57] arm64: dts: renesas:
+	r8a774a1: Add Ethernet AVB node
 In-Reply-To: <1566999164-27898-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1566999164-27898-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1566999164-27898-33-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1566999164-27898-34-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Biju Das <biju.das@bp.renesas.com>
+commit 71bddde2a2dfcba2c2caad35d6933345960907e5 upstream.
 
-commit a21c572ce8bc7466816ea8601d7eb0b4ca12d40c upstream.
+This patch adds the SoC specific part of the Ethernet AVB
+device tree node.
 
-Add support for the Interrupt Controller for External Devices
-(INTC-EX) on RZ/G2M.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 45 +++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index 81fba7f..15d7785 100644
+index 15d7785..b771211 100644
 --- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -144,6 +144,22 @@
- 			#power-domain-cells = <1>;
+@@ -350,6 +350,51 @@
+ 			dma-channels = <16>;
  		};
  
-+		intc_ex: interrupt-controller at e61c0000 {
-+			compatible = "renesas,intc-ex-r8a774a1", "renesas,irqc";
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			reg = <0 0xe61c0000 0 0x200>;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 407>;
++		avb: ethernet at e6800000 {
++			compatible = "renesas,etheravb-r8a774a1",
++				     "renesas,etheravb-rcar-gen3";
++			reg = <0 0xe6800000 0 0x800>;
++			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1", "ch2", "ch3",
++					  "ch4", "ch5", "ch6", "ch7",
++					  "ch8", "ch9", "ch10", "ch11",
++					  "ch12", "ch13", "ch14", "ch15",
++					  "ch16", "ch17", "ch18", "ch19",
++					  "ch20", "ch21", "ch22", "ch23",
++					  "ch24";
++			clocks = <&cpg CPG_MOD 812>;
 +			power-domains = <&sysc 32>;
-+			resets = <&cpg 407>;
++			resets = <&cpg 812>;
++			phy-mode = "rgmii";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
 +		};
 +
- 		hscif0: serial at e6540000 {
- 			compatible = "renesas,hscif-r8a774a1",
- 				     "renesas,rcar-gen3-hscif",
+ 		scif0: serial at e6e60000 {
+ 			compatible = "renesas,scif-r8a774a1",
+ 				     "renesas,rcar-gen3-scif", "renesas,scif";
 -- 
 2.7.4
