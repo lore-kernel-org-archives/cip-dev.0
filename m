@@ -1,93 +1,94 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed, 28 Aug 2019 12:02:47 +0100
-Subject: [cip-dev] [PATCH 4.19.y 16/60] soc: renesas: rcar-sysc: Remove
-	rcar_sysc_power_{down, up}() helpers
+Date: Wed, 28 Aug 2019 12:02:49 +0100
+Subject: [cip-dev] [PATCH 4.19.y 18/60] soc: renesas: rcar-sysc: Fix power
+	domain control after system resume
 In-Reply-To: <1566990211-24785-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1566990211-24785-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1566990211-24785-17-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1566990211-24785-19-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit 319c84090696517f377a80225534677adf192e92 upstream.
+commit 7fc4650cc2417d7a2907a000f6f88240baa42018 upstream.
 
-Until commit 7e8a50df26f4e700 ("soc: renesas: rcar-sysc: Drop legacy
-handling"), the rcar_sysc_power_{down,up}() helpers were public, as they
-were called by the legacy (pre-DT) CPU power management code on R-Car H1
-and R-Car Gen2 before.
+To control power to a power domain, the System Controller (SYSC) needs
+the corresponding interrupt source to be enabled, but masked, to prevent
+the CPU from receiving it.
 
-As they are just one-line wrappers around rcar_sysc_power(), it makes
-sense to just remove them.
+Currently this is handled in the driver's probe() routine, and set up
+for every domain present, even if it will not be controlled directly by
+SYSC (CPU domains are powered through the APMU on R-Car Gen2 and later).
 
-This also avoids a bool/helper/bool conversion in rcar_sysc_power_cpu(),
-where a bool is checked to call one of two helper functions, which
-just call rcar_sysc_power() with hardcoded boolean values again.
+On R-Car Gen3, PSCI powers down the SoC during system suspend, thus
+losing any configured interrupt state.  Hence after system resume, power
+domains not controlled through the APMU (e.g. A3IR, A3VC, A3VP) fail to
+power up.
+
+Fix this by replacing the global interrupt setup in the probe() routine
+by a domain-specific interrupt setup in rcar_sysc_power(), where the
+domain's power is actually controlled.  This brings the code more in
+line with the flowchart in the Hardware User's Manual.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/soc/renesas/rcar-sysc.c | 19 ++++---------------
- 1 file changed, 4 insertions(+), 15 deletions(-)
+ drivers/soc/renesas/rcar-sysc.c | 28 +++++++++-------------------
+ 1 file changed, 9 insertions(+), 19 deletions(-)
 
 diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index e63d7a2..a71852f 100644
+index c3805fc..3fc5937 100644
 --- a/drivers/soc/renesas/rcar-sysc.c
 +++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -149,16 +149,6 @@ static int rcar_sysc_power(const struct rcar_sysc_ch *sysc_ch, bool on)
- 	return ret;
- }
+@@ -108,6 +108,15 @@ static int rcar_sysc_power(const struct rcar_sysc_ch *sysc_ch, bool on)
  
--static int rcar_sysc_power_down(const struct rcar_sysc_ch *sysc_ch)
--{
--	return rcar_sysc_power(sysc_ch, false);
--}
+ 	spin_lock_irqsave(&rcar_sysc_lock, flags);
+ 
++	/*
++	 * The interrupt source needs to be enabled, but masked, to prevent the
++	 * CPU from receiving it.
++	 */
++	iowrite32(ioread32(rcar_sysc_base + SYSCIMR) | isr_mask,
++		  rcar_sysc_base + SYSCIMR);
++	iowrite32(ioread32(rcar_sysc_base + SYSCIER) | isr_mask,
++		  rcar_sysc_base + SYSCIER);
++
+ 	iowrite32(isr_mask, rcar_sysc_base + SYSCISCR);
+ 
+ 	/* Submit power shutoff or resume request until it was accepted */
+@@ -325,7 +334,6 @@ static int __init rcar_sysc_pd_init(void)
+ 	const struct of_device_id *match;
+ 	struct rcar_pm_domains *domains;
+ 	struct device_node *np;
+-	u32 syscier, syscimr;
+ 	void __iomem *base;
+ 	unsigned int i;
+ 	int error;
+@@ -364,24 +372,6 @@ static int __init rcar_sysc_pd_init(void)
+ 	domains->onecell_data.num_domains = ARRAY_SIZE(domains->domains);
+ 	rcar_sysc_onecell_data = &domains->onecell_data;
+ 
+-	for (i = 0, syscier = 0; i < info->num_areas; i++)
+-		syscier |= BIT(info->areas[i].isr_bit);
 -
--static int rcar_sysc_power_up(const struct rcar_sysc_ch *sysc_ch)
--{
--	return rcar_sysc_power(sysc_ch, true);
--}
+-	/*
+-	 * Mask all interrupt sources to prevent the CPU from receiving them.
+-	 * Make sure not to clear reserved bits that were set before.
+-	 */
+-	syscimr = ioread32(base + SYSCIMR);
+-	syscimr |= syscier;
+-	pr_debug("%pOF: syscimr = 0x%08x\n", np, syscimr);
+-	iowrite32(syscimr, base + SYSCIMR);
 -
- static bool rcar_sysc_power_is_off(const struct rcar_sysc_ch *sysc_ch)
- {
- 	unsigned int st;
-@@ -187,7 +177,7 @@ static int rcar_sysc_pd_power_off(struct generic_pm_domain *genpd)
- 	struct rcar_sysc_pd *pd = to_rcar_pd(genpd);
- 
- 	pr_debug("%s: %s\n", __func__, genpd->name);
--	return rcar_sysc_power_down(&pd->ch);
-+	return rcar_sysc_power(&pd->ch, false);
- }
- 
- static int rcar_sysc_pd_power_on(struct generic_pm_domain *genpd)
-@@ -195,7 +185,7 @@ static int rcar_sysc_pd_power_on(struct generic_pm_domain *genpd)
- 	struct rcar_sysc_pd *pd = to_rcar_pd(genpd);
- 
- 	pr_debug("%s: %s\n", __func__, genpd->name);
--	return rcar_sysc_power_up(&pd->ch);
-+	return rcar_sysc_power(&pd->ch, true);
- }
- 
- static bool has_cpg_mstp;
-@@ -255,7 +245,7 @@ static int __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
- 		goto finalize;
- 	}
- 
--	rcar_sysc_power_up(&pd->ch);
-+	rcar_sysc_power(&pd->ch, true);
- 
- finalize:
- 	error = pm_genpd_init(genpd, gov, false);
-@@ -479,8 +469,7 @@ static int rcar_sysc_power_cpu(unsigned int idx, bool on)
- 		if (!(pd->flags & PD_CPU) || pd->ch.chan_bit != idx)
- 			continue;
- 
--		return on ? rcar_sysc_power_up(&pd->ch)
--			  : rcar_sysc_power_down(&pd->ch);
-+		return rcar_sysc_power(&pd->ch, on);
- 	}
- 
- 	return -ENOENT;
+-	/*
+-	 * SYSC needs all interrupt sources enabled to control power.
+-	 */
+-	pr_debug("%pOF: syscier = 0x%08x\n", np, syscier);
+-	iowrite32(syscier, base + SYSCIER);
+-
+ 	for (i = 0; i < info->num_areas; i++) {
+ 		const struct rcar_sysc_area *area = &info->areas[i];
+ 		struct rcar_sysc_pd *pd;
 -- 
 2.7.4
