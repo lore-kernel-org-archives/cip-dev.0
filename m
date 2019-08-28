@@ -1,60 +1,93 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed, 28 Aug 2019 12:02:45 +0100
-Subject: [cip-dev] [PATCH 4.19.y 14/60] clk: renesas: cpg-mssr: Use genpd
-	of_node instead of local copy
+Date: Wed, 28 Aug 2019 12:02:47 +0100
+Subject: [cip-dev] [PATCH 4.19.y 16/60] soc: renesas: rcar-sysc: Remove
+	rcar_sysc_power_{down, up}() helpers
 In-Reply-To: <1566990211-24785-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1566990211-24785-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1566990211-24785-15-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1566990211-24785-17-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit f243220e674c61ae6434209e25c25c12cada4e4e upstream.
+commit 319c84090696517f377a80225534677adf192e92 upstream.
 
-Since commit 6a0ae73d95956f7e ("PM / Domain: Add support to parse
-domain's OPP table"), of_genpd_add_provider_simple() fills in
-the dev.of_node field in the generic_pm_domain structure.
+Until commit 7e8a50df26f4e700 ("soc: renesas: rcar-sysc: Drop legacy
+handling"), the rcar_sysc_power_{down,up}() helpers were public, as they
+were called by the legacy (pre-DT) CPU power management code on R-Car H1
+and R-Car Gen2 before.
 
-Hence cpg_mssr_is_pm_clk() can use that instead of its own copy in the
-driver-private cpg_mssr_clk_domain structure.
+As they are just one-line wrappers around rcar_sysc_power(), it makes
+sense to just remove them.
+
+This also avoids a bool/helper/bool conversion in rcar_sysc_power_cpu(),
+where a bool is checked to call one of two helper functions, which
+just call rcar_sysc_power() with hardcoded boolean values again.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Niklas S?derlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/clk/renesas/renesas-cpg-mssr.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/soc/renesas/rcar-sysc.c | 19 ++++---------------
+ 1 file changed, 4 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 3a23456..3fe648a 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -411,7 +411,6 @@ static void __init cpg_mssr_register_mod_clk(const struct mssr_mod_clk *mod,
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index e63d7a2..a71852f 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -149,16 +149,6 @@ static int rcar_sysc_power(const struct rcar_sysc_ch *sysc_ch, bool on)
+ 	return ret;
+ }
  
- struct cpg_mssr_clk_domain {
- 	struct generic_pm_domain genpd;
--	struct device_node *np;
- 	unsigned int num_core_pm_clks;
- 	unsigned int core_pm_clks[0];
- };
-@@ -423,7 +422,7 @@ static bool cpg_mssr_is_pm_clk(const struct of_phandle_args *clkspec,
+-static int rcar_sysc_power_down(const struct rcar_sysc_ch *sysc_ch)
+-{
+-	return rcar_sysc_power(sysc_ch, false);
+-}
+-
+-static int rcar_sysc_power_up(const struct rcar_sysc_ch *sysc_ch)
+-{
+-	return rcar_sysc_power(sysc_ch, true);
+-}
+-
+ static bool rcar_sysc_power_is_off(const struct rcar_sysc_ch *sysc_ch)
  {
- 	unsigned int i;
+ 	unsigned int st;
+@@ -187,7 +177,7 @@ static int rcar_sysc_pd_power_off(struct generic_pm_domain *genpd)
+ 	struct rcar_sysc_pd *pd = to_rcar_pd(genpd);
  
--	if (clkspec->np != pd->np || clkspec->args_count != 2)
-+	if (clkspec->np != pd->genpd.dev.of_node || clkspec->args_count != 2)
- 		return false;
+ 	pr_debug("%s: %s\n", __func__, genpd->name);
+-	return rcar_sysc_power_down(&pd->ch);
++	return rcar_sysc_power(&pd->ch, false);
+ }
  
- 	switch (clkspec->args[0]) {
-@@ -513,7 +512,6 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
- 	if (!pd)
- 		return -ENOMEM;
+ static int rcar_sysc_pd_power_on(struct generic_pm_domain *genpd)
+@@ -195,7 +185,7 @@ static int rcar_sysc_pd_power_on(struct generic_pm_domain *genpd)
+ 	struct rcar_sysc_pd *pd = to_rcar_pd(genpd);
  
--	pd->np = np;
- 	pd->num_core_pm_clks = num_core_pm_clks;
- 	memcpy(pd->core_pm_clks, core_pm_clks, pm_size);
+ 	pr_debug("%s: %s\n", __func__, genpd->name);
+-	return rcar_sysc_power_up(&pd->ch);
++	return rcar_sysc_power(&pd->ch, true);
+ }
  
+ static bool has_cpg_mstp;
+@@ -255,7 +245,7 @@ static int __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
+ 		goto finalize;
+ 	}
+ 
+-	rcar_sysc_power_up(&pd->ch);
++	rcar_sysc_power(&pd->ch, true);
+ 
+ finalize:
+ 	error = pm_genpd_init(genpd, gov, false);
+@@ -479,8 +469,7 @@ static int rcar_sysc_power_cpu(unsigned int idx, bool on)
+ 		if (!(pd->flags & PD_CPU) || pd->ch.chan_bit != idx)
+ 			continue;
+ 
+-		return on ? rcar_sysc_power_up(&pd->ch)
+-			  : rcar_sysc_power_down(&pd->ch);
++		return rcar_sysc_power(&pd->ch, on);
+ 	}
+ 
+ 	return -ENOENT;
 -- 
 2.7.4
