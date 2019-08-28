@@ -1,53 +1,47 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed, 28 Aug 2019 12:02:55 +0100
-Subject: [cip-dev] [PATCH 4.19.y 24/60] serial: sh-sci: Fix fallback to PIO
-	in sci_dma_rx_complete()
+Date: Wed, 28 Aug 2019 12:02:56 +0100
+Subject: [cip-dev] [PATCH 4.19.y 25/60] dmaengine: rcar-dmac: set
+	scatter/gather max segment size
 In-Reply-To: <1566990211-24785-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1566990211-24785-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1566990211-24785-25-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1566990211-24785-26-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit 26f073993665683f1debf4d66d8bc274ac6df771 upstream.
+commit 97d49c59e219acac576e16293a6b8cb99302f62f upstream.
 
-When submitting a DMA request fails in sci_dma_rx_complete(), the driver
-tries to fall back to PIO, but that does not work: no more data will be
-received, or the kernel will even crash.
+Fix warning when running with CONFIG_DMA_API_DEBUG_SG=y by allocating a
+device_dma_parameters structure and filling in the max segment size.
 
-Fix this similar as in (but not identical to) sci_submit_rx():
-  - On SCIF, PIO cannot take over if any DMA transactions are pending,
-    hence they must be terminated first.
-  - All active cookies must be invalidated, else rx_timer_fn() may
-    trigger a NULL pointer dereference.
-  - Restarting the port is not needed, as it is already running, but
-    serial port interrupts must be directed back from the DMA engine to
-    the CPU.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/tty/serial/sh-sci.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/dma/sh/rcar-dmac.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index d5bd3f7..29dce54 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1327,8 +1327,9 @@ static void sci_dma_rx_complete(void *arg)
- 	dev_warn(port->dev, "Failed submitting Rx DMA descriptor\n");
- 	/* Switch to PIO */
- 	spin_lock_irqsave(&port->lock, flags);
--	s->chan_rx = NULL;
--	sci_start_rx(port);
-+	dmaengine_terminate_async(chan);
-+	sci_dma_rx_chan_invalidate(s);
-+	sci_dma_rx_reenable_irq(s);
- 	spin_unlock_irqrestore(&port->lock, flags);
- }
+diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+index 0b05a1e..99c2b59 100644
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -198,6 +198,7 @@ struct rcar_dmac {
+ 	struct dma_device engine;
+ 	struct device *dev;
+ 	void __iomem *iomem;
++	struct device_dma_parameters parms;
  
+ 	unsigned int n_channels;
+ 	struct rcar_dmac_chan *channels;
+@@ -1814,6 +1815,8 @@ static int rcar_dmac_probe(struct platform_device *pdev)
+ 
+ 	dmac->dev = &pdev->dev;
+ 	platform_set_drvdata(pdev, dmac);
++	dmac->dev->dma_parms = &dmac->parms;
++	dma_set_max_seg_size(dmac->dev, RCAR_DMATCR_MASK);
+ 	dma_set_mask_and_coherent(dmac->dev, DMA_BIT_MASK(40));
+ 
+ 	ret = rcar_dmac_parse_of(&pdev->dev, dmac);
 -- 
 2.7.4
