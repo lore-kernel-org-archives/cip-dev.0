@@ -1,75 +1,127 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed, 28 Aug 2019 14:31:48 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip v2 01/57] dt-bindings: can: rcar_can:
-	Add r8a774a1 support
-In-Reply-To: <1566999164-27898-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1566999164-27898-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1566999164-27898-2-git-send-email-fabrizio.castro@bp.renesas.com>
+Date: Wed, 28 Aug 2019 14:31:47 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip v2 00/57] Add basic RZ/G2M SoC support
+Message-ID: <1566999164-27898-1-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit 868b7c0f43e61f227bf3d7f7d6134bb3c67bb0e8 upstream.
+Dear All,
 
-Document RZ/G2M (r8a774a1) SoC specific bindings.
+this series aims at providing basic RZ/G2M SoC dtsi support.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Chris Paterson <Chris.Paterson2@renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
----
- Documentation/devicetree/bindings/net/can/rcar_can.txt | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+v1->v2:
+* dropped "serial: sh-sci: Fix TX DMA buffer flushing and workqueue races"
+* dropped "serial: sh-sci: Terminate TX DMA during buffer flushing"
+* dropped "dmaengine: rcar-dmac: Reject zero-length slave DMA requests"
 
-diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-index 94a7f33..f3b160c 100644
---- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
-+++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-@@ -4,6 +4,7 @@ Renesas R-Car CAN controller Device Tree Bindings
- Required properties:
- - compatible: "renesas,can-r8a7743" if CAN controller is a part of R8A7743 SoC.
- 	      "renesas,can-r8a7745" if CAN controller is a part of R8A7745 SoC.
-+	      "renesas,can-r8a774a1" if CAN controller is a part of R8A774A1 SoC.
- 	      "renesas,can-r8a7778" if CAN controller is a part of R8A7778 SoC.
- 	      "renesas,can-r8a7779" if CAN controller is a part of R8A7779 SoC.
- 	      "renesas,can-r8a7790" if CAN controller is a part of R8A7790 SoC.
-@@ -16,15 +17,21 @@ Required properties:
- 	      "renesas,rcar-gen1-can" for a generic R-Car Gen1 compatible device.
- 	      "renesas,rcar-gen2-can" for a generic R-Car Gen2 or RZ/G1
- 	      compatible device.
--	      "renesas,rcar-gen3-can" for a generic R-Car Gen3 compatible device.
-+	      "renesas,rcar-gen3-can" for a generic R-Car Gen3 or RZ/G2
-+	      compatible device.
- 	      When compatible with the generic version, nodes must list the
- 	      SoC-specific version corresponding to the platform first
- 	      followed by the generic version.
- 
- - reg: physical base address and size of the R-Car CAN register map.
- - interrupts: interrupt specifier for the sole interrupt.
--- clocks: phandles and clock specifiers for 3 CAN clock inputs.
--- clock-names: 3 clock input name strings: "clkp1", "clkp2", "can_clk".
-+- clocks: phandles and clock specifiers for 2 CAN clock inputs for RZ/G2
-+	  devices.
-+	  phandles and clock specifiers for 3 CAN clock inputs for every other
-+	  SoC.
-+- clock-names: 2 clock input name strings for RZ/G2: "clkp1", "can_clk".
-+	       3 clock input name strings for every other SoC: "clkp1", "clkp2",
-+	       "can_clk".
- - pinctrl-0: pin control group to be used for this controller.
- - pinctrl-names: must be "default".
- 
-@@ -41,8 +48,9 @@ using the below properties:
- Optional properties:
- - renesas,can-clock-select: R-Car CAN Clock Source Select. Valid values are:
- 			    <0x0> (default) : Peripheral clock (clkp1)
--			    <0x1> : Peripheral clock (clkp2)
--			    <0x3> : Externally input clock
-+			    <0x1> : Peripheral clock (clkp2) (not supported by
-+				    RZ/G2 devices)
-+			    <0x3> : External input clock
- 
- Example
- -------
+Thanks,
+Fab
+
+Biju Das (13):
+  dt-bindings: dmaengine: usb-dmac: Add binding for r8a774a1
+  arm64: dts: renesas: Initial r8a774a1 SoC device tree
+  arm64: dts: renesas: r8a774a1: Add SYS-DMAC controller nodes
+  arm64: dts: renesas: r8a774a1: Add INTC-EX device node
+  arm64: dts: renesas: r8a774a1: Add RWDT node
+  arm64: dts: renesas: r8a774a1: Add I2C and IIC-DVFS support
+  arm64: dts: renesas: r8a774a1: Add RZ/G2M thermal support
+  arm64: dts: renesas: r8a774a1: Add all MSIOF nodes
+  arm64: dts: renesas: r8a774a1: Add Cortex-A53 CPU cores
+  arm64: dts: renesas: r8a774a1: Add audio support
+  arm64: dts: renesas: r8a774a1: Add USB2.0 phy and host(EHCI/OHCI)
+    device nodes
+  arm64: dts: renesas: r8a774a1: Add USB-DMAC and HSUSB device nodes
+  arm64: dts: renesas: r8a774a1: Add USB3.0 device nodes
+
+Chris Paterson (1):
+  arm64: dts: renesas: r8a774a1: Add CAN nodes
+
+Enrico Weigelt, metux IT consult (1):
+  gpio: rcar: Pedantic formatting
+
+Fabrizio Castro (21):
+  dt-bindings: can: rcar_can: Add r8a774a1 support
+  dt-bindings: can: rcar_can: Fix RZ/G2 CAN clocks
+  dt-bindings: can: rcar_can: Add r8a774c0 support
+  dt-bindings: rcar-gen3-phy-usb3: Add r8a774a1 support
+  dt-bindings: usb-xhci: Add r8a774a1 support
+  dt-bindings: usb-xhci: Add r8a774c0 support
+  dt-bindings: usb: renesas_usbhs: Add r8a774a1 support
+  dt-bindings: thermal: rcar-gen3-thermal: Add r8a774a1 support
+  thermal: rcar_gen3_thermal: Add r8a774a1 support
+  arm64: dts: renesas: r8a774a1: Add SCIF and HSCIF nodes
+  arm64: dts: renesas: r8a774a1: Add Ethernet AVB node
+  arm64: dts: renesas: r8a774a1: Add pinctrl device node
+  arm64: dts: renesas: r8a774a1: Add GPIO device nodes
+  arm64: dts: renesas: r8a774a1: Add SDHI nodes
+  arm64: dts: renesas: r8a774a1: Add IPMMU device nodes
+  arm64: dts: renesas: r8a774a1: Add PWM device nodes
+  arm64: dts: renesas: r8a774a1: Add FCPF and FCPV instances
+  arm64: dts: renesas: r8a774a1: Replace power magic numbers
+  arm64: dts: renesas: r8a774a1: Replace clock magic numbers
+  arm64: dts: renesas: r8a774a1: Fix hsusb reg size
+  arm64: dts: renesas: r8a774a1: Add clkp2 clock to CAN nodes
+
+Geert Uytterhoeven (12):
+  clk: renesas: cpg-mssr: Use genpd of_node instead of local copy
+  clk: renesas: cpg-mssr: Remove error messages on out-of-memory
+    conditions
+  soc: renesas: rcar-sysc: Remove rcar_sysc_power_{down,up}() helpers
+  soc: renesas: rcar-sysc: Merge PM Domain registration and linking
+  soc: renesas: rcar-sysc: Fix power domain control after system resume
+  serial: sh-sci: Fix crash in rx_timer_fn() on PIO fallback
+  serial: sh-sci: Extract sci_dma_rx_chan_invalidate()
+  serial: sh-sci: Extract sci_dma_rx_reenable_irq()
+  serial: sh-sci: Fix fallback to PIO in sci_dma_rx_complete()
+  arm64: dts: renesas: Fix whitespace around assignments
+  arm64: dts: renesas: Remove unneeded status from thermal nodes
+  arm64: dts: renesas: r8a774a1: Enable DMA for SCIF2
+
+Hiroyuki Yokoyama (1):
+  dmaengine: rcar-dmac: Update copyright information
+
+Kazuya Mizuguchi (1):
+  ravb: remove tx buffer addr 4byte alilgnment restriction for R-Car
+    Gen3
+
+Niklas S?derlund (1):
+  mmc: renesas_sdhi_internal_dmac: set scatter/gather max segment size
+
+Rob Herring (1):
+  arm64: dts: Remove inconsistent use of 'arm,armv8' compatible string
+
+Sergei Shtylyov (1):
+  spi: sh-msiof: fix deferred probing
+
+Simon Horman (1):
+  ravb: Avoid unsupported internal delay mode for R-Car E3/D3
+
+Vladimir Zapolskiy (2):
+  gpio: rcar: reference device instead of platform device
+  gpio: rcar: select General Output Register to set output states
+
+Wolfram Sang (1):
+  dmaengine: rcar-dmac: set scatter/gather max segment size
+
+ .../devicetree/bindings/dma/renesas,usb-dmac.txt   |    1 +
+ .../devicetree/bindings/net/can/rcar_can.txt       |    9 +-
+ .../devicetree/bindings/phy/rcar-gen3-phy-usb3.txt |   10 +-
+ .../bindings/thermal/rcar-gen3-thermal.txt         |    1 +
+ .../devicetree/bindings/usb/renesas_usbhs.txt      |    3 +-
+ Documentation/devicetree/bindings/usb/usb-xhci.txt |    5 +-
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi          | 1695 ++++++++++++++++++++
+ drivers/clk/renesas/renesas-cpg-mssr.c             |   12 +-
+ drivers/dma/sh/rcar-dmac.c                         |    7 +-
+ drivers/gpio/gpio-rcar.c                           |   38 +-
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c      |    8 +
+ drivers/net/ethernet/renesas/ravb.h                |    6 +-
+ drivers/net/ethernet/renesas/ravb_main.c           |  158 +-
+ drivers/soc/renesas/rcar-sysc.c                    |   65 +-
+ drivers/spi/spi-sh-msiof.c                         |    4 +-
+ drivers/thermal/rcar_gen3_thermal.c                |    1 +
+ drivers/tty/serial/sh-sci.c                        |   47 +-
+ 17 files changed, 1911 insertions(+), 159 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+
 -- 
 2.7.4
