@@ -1,107 +1,338 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Wed, 28 Aug 2019 09:48:20 +0100
-Subject: [cip-dev] [PATCH 4.4.y-cip 02/17] dt-bindings: phy: rcar-gen2: Add
-	r8a77470 support
+Date: Wed, 28 Aug 2019 09:48:21 +0100
+Subject: [cip-dev] [PATCH 4.4.y-cip 03/17] phy: rcar-gen3-usb2: Add R-Car
+	Gen3 USB2 PHY driver
 In-Reply-To: <1566982115-11148-1-git-send-email-biju.das@bp.renesas.com>
 References: <1566982115-11148-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1566982115-11148-3-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1566982115-11148-4-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit f56511d0080ce33a17f7192a3f43d65e614da5cf upstream.
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Add USB PHY support for r8a77470 SoC. Renesas RZ/G1C (R8A77470)
-USB PHY is similar to the R-Car Gen2 family, but has the below
-feature compared to other RZ/G1 and R-Car Gen2/3 SoCs
+commit f3b5a8d9b50d71b8c9fb72aa9c8ea948ad1a4ef9 upstream.
 
-It has a shared pll reset for usbphy0/usbphy1 and this register
-reside in usbphy0 block.
+This patch adds support for R-Car generation 3 USB2 PHY driver.
+This SoC has 3 EHCI/OHCI channels, and the channel 0 is shared
+with the HSUSB (USB2.0 peripheral) device. And each channel has
+independent registers about the PHYs.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+So, the purpose of this driver is:
+ 1) initializes some registers of SoC specific to use the
+    {ehci,ohci}-platform driver.
+
+ 2) detects id pin to select host or peripheral on the channel 0.
+
+For now, this driver only supports 1) above.
+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-[Reworked clocks and power-domains properties]
 ---
- .../devicetree/bindings/phy/rcar-gen2-phy.txt      | 47 +++++++++++++++++++++-
- 1 file changed, 46 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt |  37 ++++
+ drivers/phy/Kconfig                                |   7 +
+ drivers/phy/Makefile                               |   1 +
+ drivers/phy/phy-rcar-gen3-usb2.c                   | 217 +++++++++++++++++++++
+ 4 files changed, 262 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+ create mode 100644 drivers/phy/phy-rcar-gen3-usb2.c
 
-diff --git a/Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt b/Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt
-index f38f42b..35c51d8 100644
---- a/Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt
-+++ b/Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt
-@@ -7,6 +7,7 @@ Required properties:
- - compatible: "renesas,usb-phy-r8a7743" if the device is a part of R8A7743 SoC.
- 	      "renesas,usb-phy-r8a7744" if the device is a part of R8A7744 SoC.
- 	      "renesas,usb-phy-r8a7745" if the device is a part of R8A7745 SoC.
-+	      "renesas,usb-phy-r8a77470" if the device is a part of R8A77470 SoC.
- 	      "renesas,usb-phy-r8a7790" if the device is a part of R8A7790 SoC.
- 	      "renesas,usb-phy-r8a7791" if the device is a part of R8A7791 SoC.
- 	      "renesas,usb-phy-r8a7794" if the device is a part of R8A7794 SoC.
-@@ -29,7 +30,7 @@ channels. These subnodes must contain the following properties:
- - #phy-cells: see phy-bindings.txt in the same directory, must be <1>.
- 
- The phandle's argument in the PHY specifier is the USB controller selector for
--the USB channel; see the selector meanings below:
-+the USB channel other than r8a77470 SoC; see the selector meanings below:
- 
- +-----------+---------------+---------------+
- |\ Selector |               |               |
-@@ -40,6 +41,16 @@ the USB channel; see the selector meanings below:
- | 2         | PCI EHCI/OHCI | xHCI          |
- +-----------+---------------+---------------+
- 
-+For r8a77470 SoC;see the selector meaning below:
+diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+new file mode 100644
+index 0000000..affa0f7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+@@ -0,0 +1,37 @@
++* Renesas R-Car generation 3 USB 2.0 PHY
 +
-++-----------+---------------+---------------+
-+|\ Selector |               |               |
-++ --------- +       0       |       1       |
-+| Channel  \|               |               |
-++-----------+---------------+---------------+
-+| 0         | EHCI/OHCI     | HS-USB        |
-++-----------+---------------+---------------+
++This file provides information on what the device node for the R-Car generation
++3 USB 2.0 PHY contains.
 +
- Example (Lager board):
- 
- 	usb-phy at e6590100 {
-@@ -59,3 +70,37 @@ Example (Lager board):
- 			#phy-cells = <1>;
- 		};
- 	};
++Required properties:
++- compatible: "renesas,usb2-phy-r8a7795" if the device is a part of an R8A7795
++	      SoC.
++- reg: offset and length of the partial USB 2.0 Host register block.
++- reg-names: must be "usb2_host".
++- clocks: clock phandle and specifier pair(s).
++- #phy-cells: see phy-bindings.txt in the same directory, must be <0>.
 +
-+Example (iWave RZ/G1C sbc):
++Optional properties:
++To use a USB channel where USB 2.0 Host and HSUSB (USB 2.0 Peripheral) are
++combined, the device tree node should set HSUSB properties to reg and reg-names
++properties. This is because HSUSB has registers to select USB 2.0 host or
++peripheral at that channel:
++- reg: offset and length of the partial HSUSB register block.
++- reg-names: must be "hsusb".
 +
-+	usbphy0: usb-phy0 at e6590100 {
-+		compatible = "renesas,usb-phy-r8a77470",
-+			     "renesas,rcar-gen2-usb-phy";
-+		reg = <0 0xe6590100 0 0x100>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&mstp7_clks R8A77470_CLK_USBHS0>;
-+		clock-names = "usbhs";
-+		power-domains = <&cpg_clocks>;
++Example (R-Car H3):
 +
-+		usb0: usb-channel at 0 {
-+			reg = <0>;
-+			#phy-cells = <1>;
-+		};
++	usb-phy at ee080200 {
++		compatible = "renesas,usb2-phy-r8a7795";
++		reg = <0 0xee080200 0 0x700>, <0 0xe6590100 0 0x100>;
++		reg-names = "usb2_host", "hsusb";
++		clocks = <&mstp7_clks R8A7795_CLK_EHCI0>,
++			 <&mstp7_clks R8A7795_CLK_HSUSB>;
 +	};
 +
-+	usbphy1: usb-phy at e6598100 {
-+		compatible = "renesas,usb-phy-r8a77470",
-+			     "renesas,rcar-gen2-usb-phy";
-+		reg = <0 0xe6598100 0 0x100>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&mstp7_clks R8A77470_CLK_USBHS1>;
-+		clock-names = "usbhs";
-+		power-domains = <&cpg_clocks>;
-+
-+		usb1: usb-channel at 0 {
-+			reg = <0>;
-+			#phy-cells = <1>;
-+		};
++	usb-phy at ee0a0200 {
++		compatible = "renesas,usb2-phy-r8a7795";
++		reg = <0 0xee0a0200 0 0x700>;
++		reg-names = "usb2_host";
++		clocks = <&mstp7_clks R8A7795_CLK_EHCI0>;
 +	};
+diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+index b5679fb..014a420 100644
+--- a/drivers/phy/Kconfig
++++ b/drivers/phy/Kconfig
+@@ -118,6 +118,13 @@ config PHY_RCAR_GEN2
+ 	help
+ 	  Support for USB PHY found on Renesas R-Car generation 2 SoCs.
+ 
++config PHY_RCAR_GEN3_USB2
++	tristate "Renesas R-Car generation 3 USB 2.0 PHY driver"
++	depends on OF && ARCH_SHMOBILE
++	select GENERIC_PHY
++	help
++	  Support for USB 2.0 PHY found on Renesas R-Car generation 3 SoCs.
++
+ config OMAP_CONTROL_PHY
+ 	tristate "OMAP CONTROL PHY Driver"
+ 	depends on ARCH_OMAP2PLUS || COMPILE_TEST
+diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
+index 075db1a..91d7a62 100644
+--- a/drivers/phy/Makefile
++++ b/drivers/phy/Makefile
+@@ -17,6 +17,7 @@ obj-$(CONFIG_PHY_MVEBU_SATA)		+= phy-mvebu-sata.o
+ obj-$(CONFIG_PHY_MIPHY28LP) 		+= phy-miphy28lp.o
+ obj-$(CONFIG_PHY_MIPHY365X)		+= phy-miphy365x.o
+ obj-$(CONFIG_PHY_RCAR_GEN2)		+= phy-rcar-gen2.o
++obj-$(CONFIG_PHY_RCAR_GEN3_USB2)	+= phy-rcar-gen3-usb2.o
+ obj-$(CONFIG_OMAP_CONTROL_PHY)		+= phy-omap-control.o
+ obj-$(CONFIG_OMAP_USB2)			+= phy-omap-usb2.o
+ obj-$(CONFIG_TI_PIPE3)			+= phy-ti-pipe3.o
+diff --git a/drivers/phy/phy-rcar-gen3-usb2.c b/drivers/phy/phy-rcar-gen3-usb2.c
+new file mode 100644
+index 0000000..2696152
+--- /dev/null
++++ b/drivers/phy/phy-rcar-gen3-usb2.c
+@@ -0,0 +1,217 @@
++/*
++ * Renesas R-Car Gen3 for USB2.0 PHY driver
++ *
++ * Copyright (C) 2015 Renesas Electronics Corporation
++ *
++ * This is based on the phy-rcar-gen2 driver:
++ * Copyright (C) 2014 Renesas Solutions Corp.
++ * Copyright (C) 2014 Cogent Embedded, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/phy/phy.h>
++#include <linux/platform_device.h>
++
++/******* USB2.0 Host registers (original offset is +0x200) *******/
++#define USB2_INT_ENABLE		0x000
++#define USB2_USBCTR		0x00c
++#define USB2_SPD_RSM_TIMSET	0x10c
++#define USB2_OC_TIMSET		0x110
++
++/* INT_ENABLE */
++#define USB2_INT_ENABLE_USBH_INTB_EN	BIT(2)
++#define USB2_INT_ENABLE_USBH_INTA_EN	BIT(1)
++#define USB2_INT_ENABLE_INIT		(USB2_INT_ENABLE_USBH_INTB_EN | \
++					 USB2_INT_ENABLE_USBH_INTA_EN)
++
++/* USBCTR */
++#define USB2_USBCTR_DIRPD	BIT(2)
++#define USB2_USBCTR_PLL_RST	BIT(1)
++
++/* SPD_RSM_TIMSET */
++#define USB2_SPD_RSM_TIMSET_INIT	0x014e029b
++
++/* OC_TIMSET */
++#define USB2_OC_TIMSET_INIT		0x000209ab
++
++/******* HSUSB registers (original offset is +0x100) *******/
++#define HSUSB_LPSTS			0x02
++#define HSUSB_UGCTRL2			0x84
++
++/* Low Power Status register (LPSTS) */
++#define HSUSB_LPSTS_SUSPM		0x4000
++
++/* USB General control register 2 (UGCTRL2) */
++#define HSUSB_UGCTRL2_MASK		0x00000031 /* bit[31:6] should be 0 */
++#define HSUSB_UGCTRL2_USB0SEL		0x00000030
++#define HSUSB_UGCTRL2_USB0SEL_HOST	0x00000010
++#define HSUSB_UGCTRL2_USB0SEL_HS_USB	0x00000020
++#define HSUSB_UGCTRL2_USB0SEL_OTG	0x00000030
++
++struct rcar_gen3_data {
++	void __iomem *base;
++	struct clk *clk;
++};
++
++struct rcar_gen3_chan {
++	struct rcar_gen3_data usb2;
++	struct rcar_gen3_data hsusb;
++	struct phy *phy;
++};
++
++static int rcar_gen3_phy_usb2_init(struct phy *p)
++{
++	struct rcar_gen3_chan *channel = phy_get_drvdata(p);
++	void __iomem *usb2_base = channel->usb2.base;
++	void __iomem *hsusb_base = channel->hsusb.base;
++	u32 val;
++
++	/* Initialize USB2 part */
++	writel(USB2_INT_ENABLE_INIT, usb2_base + USB2_INT_ENABLE);
++	writel(USB2_SPD_RSM_TIMSET_INIT, usb2_base + USB2_SPD_RSM_TIMSET);
++	writel(USB2_OC_TIMSET_INIT, usb2_base + USB2_OC_TIMSET);
++
++	/* Initialize HSUSB part */
++	if (hsusb_base) {
++		/* TODO: support "OTG" mode */
++		val = readl(hsusb_base + HSUSB_UGCTRL2);
++		val = (val & ~HSUSB_UGCTRL2_USB0SEL) |
++		      HSUSB_UGCTRL2_USB0SEL_HOST;
++		writel(val & HSUSB_UGCTRL2_MASK, hsusb_base + HSUSB_UGCTRL2);
++	}
++
++	return 0;
++}
++
++static int rcar_gen3_phy_usb2_exit(struct phy *p)
++{
++	struct rcar_gen3_chan *channel = phy_get_drvdata(p);
++
++	writel(0, channel->usb2.base + USB2_INT_ENABLE);
++
++	return 0;
++}
++
++static int rcar_gen3_phy_usb2_power_on(struct phy *p)
++{
++	struct rcar_gen3_chan *channel = phy_get_drvdata(p);
++	void __iomem *usb2_base = channel->usb2.base;
++	void __iomem *hsusb_base = channel->hsusb.base;
++	u32 val;
++
++	val = readl(usb2_base + USB2_USBCTR);
++	val |= USB2_USBCTR_PLL_RST;
++	writel(val, usb2_base + USB2_USBCTR);
++	val &= ~USB2_USBCTR_PLL_RST;
++	writel(val, usb2_base + USB2_USBCTR);
++
++	/*
++	 * TODO: To reduce power consuming, this driver should set the SUSPM
++	 *	after the PHY detects ID pin as peripheral.
++	 */
++	if (hsusb_base) {
++		/* Power on HSUSB PHY */
++		val = readw(hsusb_base + HSUSB_LPSTS);
++		val |= HSUSB_LPSTS_SUSPM;
++		writew(val, hsusb_base + HSUSB_LPSTS);
++	}
++
++	return 0;
++}
++
++static int rcar_gen3_phy_usb2_power_off(struct phy *p)
++{
++	struct rcar_gen3_chan *channel = phy_get_drvdata(p);
++	void __iomem *hsusb_base = channel->hsusb.base;
++	u32 val;
++
++	if (hsusb_base) {
++		/* Power off HSUSB PHY */
++		val = readw(hsusb_base + HSUSB_LPSTS);
++		val &= ~HSUSB_LPSTS_SUSPM;
++		writew(val, hsusb_base + HSUSB_LPSTS);
++	}
++
++	return 0;
++}
++
++static struct phy_ops rcar_gen3_phy_usb2_ops = {
++	.init		= rcar_gen3_phy_usb2_init,
++	.exit		= rcar_gen3_phy_usb2_exit,
++	.power_on	= rcar_gen3_phy_usb2_power_on,
++	.power_off	= rcar_gen3_phy_usb2_power_off,
++	.owner		= THIS_MODULE,
++};
++
++static const struct of_device_id rcar_gen3_phy_usb2_match_table[] = {
++	{ .compatible = "renesas,usb2-phy-r8a7795" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, rcar_gen3_phy_usb2_match_table);
++
++static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct rcar_gen3_chan *channel;
++	struct phy_provider *provider;
++	struct resource *res;
++
++	if (!dev->of_node) {
++		dev_err(dev, "This driver needs device tree\n");
++		return -EINVAL;
++	}
++
++	channel = devm_kzalloc(dev, sizeof(*channel), GFP_KERNEL);
++	if (!channel)
++		return -ENOMEM;
++
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "usb2_host");
++	channel->usb2.base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(channel->usb2.base))
++		return PTR_ERR(channel->usb2.base);
++
++	/* "hsusb" memory resource is optional */
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "hsusb");
++
++	/* To avoid error message by devm_ioremap_resource() */
++	if (res) {
++		channel->hsusb.base = devm_ioremap_resource(dev, res);
++		if (IS_ERR(channel->hsusb.base))
++			channel->hsusb.base = NULL;
++	}
++
++	/* devm_phy_create() will call pm_runtime_enable(dev); */
++	channel->phy = devm_phy_create(dev, NULL, &rcar_gen3_phy_usb2_ops);
++	if (IS_ERR(channel->phy)) {
++		dev_err(dev, "Failed to create USB2 PHY\n");
++		return PTR_ERR(channel->phy);
++	}
++
++	phy_set_drvdata(channel->phy, channel);
++
++	provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
++	if (IS_ERR(provider))
++		dev_err(dev, "Failed to register PHY provider\n");
++
++	return PTR_ERR_OR_ZERO(provider);
++}
++
++static struct platform_driver rcar_gen3_phy_usb2_driver = {
++	.driver = {
++		.name		= "phy_rcar_gen3_usb2",
++		.of_match_table	= rcar_gen3_phy_usb2_match_table,
++	},
++	.probe	= rcar_gen3_phy_usb2_probe,
++};
++module_platform_driver(rcar_gen3_phy_usb2_driver);
++
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("Renesas R-Car Gen3 USB 2.0 PHY");
++MODULE_AUTHOR("Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>");
 -- 
 2.7.4
