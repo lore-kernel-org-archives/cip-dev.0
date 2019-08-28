@@ -1,60 +1,223 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed, 28 Aug 2019 14:32:15 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip v2 28/57] mmc:
-	renesas_sdhi_internal_dmac: set scatter/gather max segment size
+Date: Wed, 28 Aug 2019 14:32:16 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip v2 29/57] arm64: dts: renesas: Initial
+	r8a774a1 SoC device tree
 In-Reply-To: <1566999164-27898-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1566999164-27898-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1566999164-27898-29-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1566999164-27898-30-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Niklas S?derlund <niklas.soderlund+renesas@ragnatech.se>
+From: Biju Das <biju.das@bp.renesas.com>
 
-commit 54541815b43f4e49c82628bf28bbb31d86d2f58a upstream.
+commit 90493b09df41a9c1dd0bf315e81d03b4212384f9 upstream.
 
-Fix warning when running with CONFIG_DMA_API_DEBUG_SG=y by allocating a
-device_dma_parameters structure and filling in the max segment size. The
-size used is the result of a discussion with Renesas hardware engineers
-and unfortunately not found in the datasheet.
+Basic support for the RZ/G2M SoC.
 
-  renesas_sdhi_internal_dmac ee140000.sd: DMA-API: mapping sg segment
-  longer than device claims to support [len=126976] [max=65536]
-
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Niklas S?derlund <niklas.soderlund+renesas@ragnatech.se>
-[wsa: simplified some logic after validating intended dma_parms life cycle
-      and added comment]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 190 ++++++++++++++++++++++++++++++
+ 1 file changed, 190 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a774a1.dtsi
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index 0129837..fb7adcb 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -311,12 +311,20 @@ static const struct soc_device_attribute gen3_soc_whitelist[] = {
- static int renesas_sdhi_internal_dmac_probe(struct platform_device *pdev)
- {
- 	const struct soc_device_attribute *soc = soc_device_match(gen3_soc_whitelist);
-+	struct device *dev = &pdev->dev;
- 
- 	if (!soc)
- 		return -ENODEV;
- 
- 	global_flags |= (unsigned long)soc->data;
- 
-+	dev->dma_parms = devm_kzalloc(dev, sizeof(*dev->dma_parms), GFP_KERNEL);
-+	if (!dev->dma_parms)
-+		return -ENOMEM;
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+new file mode 100644
+index 0000000..8e63e9a
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+@@ -0,0 +1,190 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the r8a774a1 SoC
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ */
 +
-+	/* value is max of SD_SECCNT. Confirmed by HW engineers */
-+	dma_set_max_seg_size(dev, 0xffffffff);
++#include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
 +
- 	return renesas_sdhi_probe(pdev, &renesas_sdhi_internal_dmac_dma_ops);
- }
- 
++/ {
++	compatible = "renesas,r8a774a1";
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	/*
++	 * The external audio clocks are configured as 0 Hz fixed frequency
++	 * clocks by default.
++	 * Boards that provide audio clocks should override them.
++	 */
++	audio_clk_a: audio_clk_a {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	audio_clk_b: audio_clk_b {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	audio_clk_c: audio_clk_c {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	/* External CAN clock - to be overridden by boards that provide it */
++	can_clk: can {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		a57_0: cpu at 0 {
++			compatible = "arm,cortex-a57", "arm,armv8";
++			reg = <0x0>;
++			device_type = "cpu";
++			power-domains = <&sysc 0>;
++			next-level-cache = <&L2_CA57>;
++			enable-method = "psci";
++			clocks =<&cpg CPG_CORE 0>;
++		};
++
++		a57_1: cpu at 1 {
++			compatible = "arm,cortex-a57", "arm,armv8";
++			reg = <0x1>;
++			device_type = "cpu";
++			power-domains = <&sysc 1>;
++			next-level-cache = <&L2_CA57>;
++			enable-method = "psci";
++			clocks =<&cpg CPG_CORE 0>;
++		};
++
++		L2_CA57: cache-controller-0 {
++			compatible = "cache";
++			power-domains = <&sysc 12>;
++			cache-unified;
++			cache-level = <2>;
++		};
++	};
++
++	extal_clk: extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board */
++		clock-frequency = <0>;
++	};
++
++	extalr_clk: extalr {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board */
++		clock-frequency = <0>;
++	};
++
++	/* External PCIe clock - can be overridden by the board */
++	pcie_bus_clk: pcie_bus {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	pmu_a57 {
++		compatible = "arm,cortex-a57-pmu";
++		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&a57_0>, <&a57_1>;
++	};
++
++	psci {
++		compatible = "arm,psci-1.0", "arm,psci-0.2";
++		method = "smc";
++	};
++
++	/* External SCIF clock - to be overridden by boards that provide it */
++	scif_clk: scif {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	soc {
++		compatible = "simple-bus";
++		interrupt-parent = <&gic>;
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		cpg: clock-controller at e6150000 {
++			compatible = "renesas,r8a774a1-cpg-mssr";
++			reg = <0 0xe6150000 0 0x0bb0>;
++			clocks = <&extal_clk>, <&extalr_clk>;
++			clock-names = "extal", "extalr";
++			#clock-cells = <2>;
++			#power-domain-cells = <0>;
++			#reset-cells = <1>;
++		};
++
++		rst: reset-controller at e6160000 {
++			compatible = "renesas,r8a774a1-rst";
++			reg = <0 0xe6160000 0 0x018c>;
++		};
++
++		sysc: system-controller at e6180000 {
++			compatible = "renesas,r8a774a1-sysc";
++			reg = <0 0xe6180000 0 0x0400>;
++			#power-domain-cells = <1>;
++		};
++
++		gic: interrupt-controller at f1010000 {
++			compatible = "arm,gic-400";
++			#interrupt-cells = <3>;
++			#address-cells = <0>;
++			interrupt-controller;
++			reg = <0x0 0xf1010000 0 0x1000>,
++			      <0x0 0xf1020000 0 0x20000>,
++			      <0x0 0xf1040000 0 0x20000>,
++			      <0x0 0xf1060000 0 0x20000>;
++			interrupts = <GIC_PPI 9
++					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
++			clocks = <&cpg CPG_MOD 408>;
++			clock-names = "clk";
++			power-domains = <&sysc 32>;
++			resets = <&cpg 408>;
++		};
++
++		prr: chipid at fff00044 {
++			compatible = "renesas,prr";
++			reg = <0 0xfff00044 0 4>;
++		};
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
++	};
++
++	/* External USB clocks - can be overridden by the board */
++	usb3s0_clk: usb3s0 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	usb_extal_clk: usb_extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++};
 -- 
 2.7.4
