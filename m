@@ -1,40 +1,36 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed, 28 Aug 2019 12:02:40 +0100
-Subject: [cip-dev] [PATCH 4.19.y 09/60] dt-bindings: dmaengine: usb-dmac:
-	Add binding for r8a774a1
+Date: Wed, 28 Aug 2019 12:02:41 +0100
+Subject: [cip-dev] [PATCH 4.19.y 10/60] thermal: rcar_gen3_thermal: Add
+	r8a774a1 support
 In-Reply-To: <1566990211-24785-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1566990211-24785-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1566990211-24785-10-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1566990211-24785-11-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Biju Das <biju.das@bp.renesas.com>
+commit 1d9e6cf3c8537c14ad979a9c02ce4e674e5f50e8 upstream.
 
-commit b9b4ed210380e51f5c5960dcbceedcc0bbe28408 upstream.
+Add r8a774a1 specific compatible string.
 
-This patch adds binding for r8a774a1 (RZ/G2M).
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
 ---
- Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt | 1 +
+ drivers/thermal/rcar_gen3_thermal.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt b/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
-index 4354ed6..5e82a93 100644
---- a/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
-+++ b/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
-@@ -5,6 +5,7 @@ Required Properties:
- 	Examples with soctypes are:
- 	  - "renesas,r8a7743-usb-dmac" (RZ/G1M)
- 	  - "renesas,r8a7745-usb-dmac" (RZ/G1E)
-+	  - "renesas,r8a774a1-usb-dmac" (RZ/G2M)
- 	  - "renesas,r8a774c0-usb-dmac" (RZ/G2E)
- 	  - "renesas,r8a7790-usb-dmac" (R-Car H2)
- 	  - "renesas,r8a7791-usb-dmac" (R-Car M2-W)
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index 704c8ad..393ed96 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -318,6 +318,7 @@ static void rcar_gen3_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
+ }
+ 
+ static const struct of_device_id rcar_gen3_thermal_dt_ids[] = {
++	{ .compatible = "renesas,r8a774a1-thermal", },
+ 	{ .compatible = "renesas,r8a7795-thermal", },
+ 	{ .compatible = "renesas,r8a7796-thermal", },
+ 	{ .compatible = "renesas,r8a77965-thermal", },
 -- 
 2.7.4
