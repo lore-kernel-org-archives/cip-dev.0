@@ -1,37 +1,87 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Wed, 28 Aug 2019 09:48:35 +0100
-Subject: [cip-dev] [PATCH 4.4.y-cip 17/17] ARM: dts: iwg23s-sbc: Enable
-	HS-USB
-In-Reply-To: <1566982115-11148-1-git-send-email-biju.das@bp.renesas.com>
-References: <1566982115-11148-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1566982115-11148-18-git-send-email-biju.das@bp.renesas.com>
+From: Chris.Paterson2@renesas.com (Chris Paterson)
+Date: Wed, 28 Aug 2019 10:05:04 +0000
+Subject: [cip-dev] [PATCH 1/3] Change templagte directory name
+In-Reply-To: <20190828022619.3690-1-nobuhiro1.iwamatsu@toshiba.co.jp>
+References: <20190828022619.3690-1-nobuhiro1.iwamatsu@toshiba.co.jp>
+Message-ID: <TYAPR01MB2285770A2828D112504BF1FBB7A30@TYAPR01MB2285.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit 0725a5478e3b7080666512e6889c94bc361e7b88 upstream.
+Hello Iwamatsu-san,
 
-Enable HS-USB device for the iWave SBC based on RZ/G1C.
+> From: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+> Sent: 28 August 2019 03:26
+> 
+> Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+> ---
+>  .../r8a7743-iwg20d-q7.yaml                                    | 0
+>  .../r8a7745-iwg22d-sodimm.yaml                                | 0
+>  {healthcheck_templates => lava_templates}/r8a774c0-ek874.yaml | 0
+>  submit_tests.sh                                               | 2 +-
+>  test.Dockerfile                                               | 4 ++--
+>  5 files changed, 3 insertions(+), 3 deletions(-)
+>  rename {healthcheck_templates => lava_templates}/r8a7743-iwg20d-
+> q7.yaml (100%)
+>  rename {healthcheck_templates => lava_templates}/r8a7745-iwg22d-
+> sodimm.yaml (100%)
+>  rename {healthcheck_templates => lava_templates}/r8a774c0-ek874.yaml
+> (100%)
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+Thank you for this patch. Do you think you could create a merge request in gitlab[0] so we can do the review there?
+For this patch and the other two in the series.
 
-diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-index 5c20c4c..273acc8 100644
---- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-+++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-@@ -52,6 +52,10 @@
- 	clock-frequency = <20000000>;
- };
- 
-+&hsusb0 {
-+	status = "okay";
-+};
-+
- &i2c3 {
- 	pinctrl-0 = <&i2c3_pins>;
- 	pinctrl-names = "default";
--- 
-2.7.4
+[0] https://gitlab.com/cip-project/cip-testing/linux-cip-ci/merge_requests
+
+Kind regards, Chris
+
+> 
+> diff --git a/healthcheck_templates/r8a7743-iwg20d-q7.yaml
+> b/lava_templates/r8a7743-iwg20d-q7.yaml
+> similarity index 100%
+> rename from healthcheck_templates/r8a7743-iwg20d-q7.yaml
+> rename to lava_templates/r8a7743-iwg20d-q7.yaml
+> diff --git a/healthcheck_templates/r8a7745-iwg22d-sodimm.yaml
+> b/lava_templates/r8a7745-iwg22d-sodimm.yaml
+> similarity index 100%
+> rename from healthcheck_templates/r8a7745-iwg22d-sodimm.yaml
+> rename to lava_templates/r8a7745-iwg22d-sodimm.yaml
+> diff --git a/healthcheck_templates/r8a774c0-ek874.yaml
+> b/lava_templates/r8a774c0-ek874.yaml
+> similarity index 100%
+> rename from healthcheck_templates/r8a774c0-ek874.yaml
+> rename to lava_templates/r8a774c0-ek874.yaml
+> diff --git a/submit_tests.sh b/submit_tests.sh
+> index 2911af1..7dff7a2 100755
+> --- a/submit_tests.sh
+> +++ b/submit_tests.sh
+> @@ -29,7 +29,7 @@ set -e
+> 
+> ##########################################################
+> ######################
+>  WORK_DIR=`pwd`
+>  OUTPUT_DIR="$WORK_DIR/output"
+> -TEMPLATE_DIR="/opt/healthcheck_templates"
+> +TEMPLATE_DIR="/opt/lava_templates"
+> 
+> ##########################################################
+> ######################
+>  AWS_URL_UP="s3://download.cip-project.org/ciptesting/ci"
+>  AWS_URL_DOWN="https://s3-us-west-2.amazonaws.com/download.cip-
+> project.org/ciptesting/ci"
+> diff --git a/test.Dockerfile b/test.Dockerfile
+> index 04e2ad9..d15f7a3 100644
+> --- a/test.Dockerfile
+> +++ b/test.Dockerfile
+> @@ -11,8 +11,8 @@ RUN apt-get update \
+>  # Install AWS CLI
+>  RUN pip3 install awscli
+> 
+> -# Copy healthcheck templates
+> -COPY healthcheck_templates /opt/healthcheck_templates
+> +# Copy lava templates
+> +COPY lava_templates /opt/lava_templates
+> 
+>  # Copy test script
+>  COPY submit_tests.sh /opt/
+> --
+> 2.20.1
