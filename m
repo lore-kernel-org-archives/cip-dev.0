@@ -1,89 +1,57 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed, 28 Aug 2019 12:21:50 +0100
-Subject: [cip-dev] [PATCH/RFC 4.19.y-cip 23/41] pinctrl: sh-pfc: r8a7796:
-	Move CANFD pin groups and functions
+Date: Wed, 28 Aug 2019 12:21:51 +0100
+Subject: [cip-dev] [PATCH/RFC 4.19.y-cip 24/41] pinctrl: sh-pfc: r8a77990:
+	Rename IOCTRLx registers
 In-Reply-To: <1566991328-25476-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1566991328-25476-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1566991328-25476-24-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1566991328-25476-25-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit dcd24e098d8df8b4f85686c6be7673d4506c1888 upstream.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-CANFD is found also on the R8A774A1, therefore move CANFD pin
-groups and functions to "common".
+commit 3df892fdbfe6919270a65a25c7982e2701c44f2b upstream.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+The R-Car Gen3 HardWare Manual Errata for Rev. 1.00 (Jul 2, 2018)
+renamed the various miscellaneous I/O control registers (IOCTRLx) on
+R-Car E3, to reflect better their actual purposes, and matching other
+SoCs.
+
+Update the code to match this.
+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index c734443..3a178d89 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -4125,8 +4125,8 @@ static const unsigned int vin5_clk_mux[] = {
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
+index b654e06..b8c49f0 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
+@@ -4996,11 +4996,11 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
  };
  
- static const struct {
--	struct sh_pfc_pin_group common[310];
--	struct sh_pfc_pin_group automotive[33];
-+	struct sh_pfc_pin_group common[313];
-+	struct sh_pfc_pin_group automotive[30];
- } pinmux_groups = {
- 	.common = {
- 		SH_PFC_PIN_GROUP(audio_clk_a_a),
-@@ -4161,6 +4161,9 @@ static const struct {
- 		SH_PFC_PIN_GROUP(can0_data_b),
- 		SH_PFC_PIN_GROUP(can1_data),
- 		SH_PFC_PIN_GROUP(can_clk),
-+		SH_PFC_PIN_GROUP(canfd0_data_a),
-+		SH_PFC_PIN_GROUP(canfd0_data_b),
-+		SH_PFC_PIN_GROUP(canfd1_data),
- 		SH_PFC_PIN_GROUP(du_rgb666),
- 		SH_PFC_PIN_GROUP(du_rgb888),
- 		SH_PFC_PIN_GROUP(du_clk_out_0),
-@@ -4441,9 +4444,6 @@ static const struct {
- 		SH_PFC_PIN_GROUP(vin5_clk),
- 	},
- 	.automotive = {
--		SH_PFC_PIN_GROUP(canfd0_data_a),
--		SH_PFC_PIN_GROUP(canfd0_data_b),
--		SH_PFC_PIN_GROUP(canfd1_data),
- 		SH_PFC_PIN_GROUP(drif0_ctrl_a),
- 		SH_PFC_PIN_GROUP(drif0_data0_a),
- 		SH_PFC_PIN_GROUP(drif0_data1_a),
-@@ -4983,8 +4983,8 @@ static const char * const vin5_groups[] = {
+ enum ioctrl_regs {
+-	IOCTRL30,
++	POCCTRL0,
  };
  
- static const struct {
--	struct sh_pfc_function common[48];
--	struct sh_pfc_function automotive[6];
-+	struct sh_pfc_function common[50];
-+	struct sh_pfc_function automotive[4];
- } pinmux_functions = {
- 	.common = {
- 		SH_PFC_FUNCTION(audio_clk),
-@@ -4992,6 +4992,8 @@ static const struct {
- 		SH_PFC_FUNCTION(can0),
- 		SH_PFC_FUNCTION(can1),
- 		SH_PFC_FUNCTION(can_clk),
-+		SH_PFC_FUNCTION(canfd0),
-+		SH_PFC_FUNCTION(canfd1),
- 		SH_PFC_FUNCTION(du),
- 		SH_PFC_FUNCTION(hdmi0),
- 		SH_PFC_FUNCTION(hscif0),
-@@ -5037,8 +5039,6 @@ static const struct {
- 		SH_PFC_FUNCTION(vin5),
- 	},
- 	.automotive = {
--		SH_PFC_FUNCTION(canfd0),
--		SH_PFC_FUNCTION(canfd1),
- 		SH_PFC_FUNCTION(drif0),
- 		SH_PFC_FUNCTION(drif1),
- 		SH_PFC_FUNCTION(drif2),
+ static const struct pinmux_ioctrl_reg pinmux_ioctrl_regs[] = {
+-	[IOCTRL30] = { 0xe6060380, },
++	[POCCTRL0] = { 0xe6060380, },
+ 	{ /* sentinel */ },
+ };
+ 
+@@ -5009,7 +5009,7 @@ static int r8a77990_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin,
+ {
+ 	int bit = -EINVAL;
+ 
+-	*pocctrl = pinmux_ioctrl_regs[IOCTRL30].reg;
++	*pocctrl = pinmux_ioctrl_regs[POCCTRL0].reg;
+ 
+ 	if (pin >= RCAR_GP_PIN(3, 0) && pin <= RCAR_GP_PIN(3, 11))
+ 		bit = pin & 0x1f;
 -- 
 2.7.4
