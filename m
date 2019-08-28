@@ -1,54 +1,48 @@
-From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed, 28 Aug 2019 12:03:31 +0100
-Subject: [cip-dev] [PATCH 4.19.y 60/60] arm64: dts: renesas: r8a774a1: Add
-	clkp2 clock to CAN nodes
-In-Reply-To: <1566990211-24785-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1566990211-24785-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1566990211-24785-61-git-send-email-fabrizio.castro@bp.renesas.com>
+From: pavel@denx.de (Pavel Machek)
+Date: Wed, 28 Aug 2019 13:12:09 +0200
+Subject: [cip-dev] [PATCH 4.4.y-cip 05/17] phy: phy-rcar-gen2: Add
+ support for r8a77470
+In-Reply-To: <1566982115-11148-6-git-send-email-biju.das@bp.renesas.com>
+References: <1566982115-11148-1-git-send-email-biju.das@bp.renesas.com>
+	<1566982115-11148-6-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <20190828111209.GB8052@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit eccc40002972c4248652befa4513c76cdb350a5c upstream.
+Hi!
 
-According to the latest information, clkp2 is available on RZ/G2.
-Modify CAN0 and CAN1 nodes accordingly.
+PHYS_PER_CHANNEL is 2.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+> +	const u32 (*select_value)[PHYS_PER_CHANNEL];
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index a77de9e..12f28aa 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -879,8 +879,10 @@
- 				     "renesas,rcar-gen3-can";
- 			reg = <0 0xe6c30000 0 0x1000>;
- 			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 916>, <&can_clk>;
--			clock-names = "clkp1", "can_clk";
-+			clocks = <&cpg CPG_MOD 916>,
-+				 <&cpg CPG_CORE R8A774A1_CLK_CANFD>,
-+				 <&can_clk>;
-+			clock-names = "clkp1", "clkp2", "can_clk";
- 			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
- 			resets = <&cpg 916>;
- 			status = "disabled";
-@@ -891,8 +893,10 @@
- 				     "renesas,rcar-gen3-can";
- 			reg = <0 0xe6c38000 0 0x1000>;
- 			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 915>, <&can_clk>;
--			clock-names = "clkp1", "can_clk";
-+			clocks = <&cpg CPG_MOD 915>,
-+				 <&cpg CPG_CORE R8A774A1_CLK_CANFD>,
-+				 <&can_clk>;
-+			clock-names = "clkp1", "clkp2", "can_clk";
- 			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
- 			resets = <&cpg 915>;
- 			status = "disabled";
+This is ... quite "interesting" declaration. Does it actually match
+the arrays below?
+
+If I read it correctly:
+
+   const u32 (...)[PHYS_PER_CHANNEL]
+
+this is array of two items.
+
+> +static const u32 pci_select_value[][PHYS_PER_CHANNEL] = {
+> +	[0]	= { USBHS_UGCTRL2_USB0SEL_PCI, USBHS_UGCTRL2_USB0SEL_HS_USB },
+> +	[2]	= { USBHS_UGCTRL2_USB2SEL_PCI, USBHS_UGCTRL2_USB2SEL_USB30 },
+> +};
+
+But here we have three items (0, 1 and 2), yet we are assigning that
+to same pointer.
+
+Correct me if I'm wrong.
+
+Best regards,
+									Pavel
 -- 
-2.7.4
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 181 bytes
+Desc: Digital signature
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190828/559202eb/attachment.sig>
