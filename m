@@ -1,72 +1,283 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Thu, 29 Aug 2019 18:02:16 +0100
-Subject: [cip-dev] [PATCH/RFC 4.19.y-cip v2 11/51] pinctrl: sh-pfc: Validate
-	enum IDs for regs with variable-width fields
+Date: Thu, 29 Aug 2019 18:02:18 +0100
+Subject: [cip-dev] [PATCH/RFC 4.19.y-cip v2 13/51] pinctrl: sh-pfc: Rename
+	2-parameter CPU_ALL_PORT() variant
 In-Reply-To: <1567098176-1242-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1567098176-1242-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1567098176-1242-12-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1567098176-1242-14-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit fa4d36712f20e2425171ab1f62341ebb6416d3ea upstream.
+commit bd79c92039f117a3e448b9ef042595497a5218a6 upstream.
 
-Add a run-time check to the PINMUX_CFG_REG_VAR() macro, to ensure the
-number of provided enum IDs is correct.  This cannot be done at build
-time, as the number of values depends on the variable-width fields in
-the config register.
+There are two variants of the CPU_ALL_PORT() macro in use:
+  1. A three-parameter variant, to be provided for SoCs with a linear
+     GPIO pin space ("PORT style"),
+  2. A two-parameter variant, to be provided for SoCs with 32-port GPIO
+     banks ("GP port style").
 
-This helps catching bugs early.
+Rename the 2-parameter variant to CPU_ALL_GP(), to avoid confusion, and
+to increase naming consistency.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/pinctrl/sh-pfc/core.c   | 6 ++++++
- drivers/pinctrl/sh-pfc/sh_pfc.h | 7 +++++++
- 2 files changed, 13 insertions(+)
+ drivers/pinctrl/sh-pfc/pfc-r8a77470.c    | 2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7778.c     | 2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7779.c     | 2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c     | 2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c     | 2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7792.c     | 2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c     | 2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c     | 2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c     | 2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a77965.c    | 2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a77970.c    | 2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a77980.c    | 2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a77990.c    | 2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a77995.c    | 2 +-
+ drivers/pinctrl/sh-pfc/pfc-sh7734.c      | 2 +-
+ drivers/pinctrl/sh-pfc/sh_pfc.h          | 6 +++---
+ 17 files changed, 19 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index 2c8c7b2..3ffd945 100644
---- a/drivers/pinctrl/sh-pfc/core.c
-+++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -753,6 +753,12 @@ static void sh_pfc_check_cfg_reg(const char *drvname,
- 		       drvname, cfg_reg->reg, rw, cfg_reg->reg_width);
- 		sh_pfc_errors++;
- 	}
-+
-+	if (n != cfg_reg->nr_enum_ids) {
-+		pr_err("%s: reg 0x%x: enum_ids[] has %u instead of %u values\n",
-+		       drvname, cfg_reg->reg, cfg_reg->nr_enum_ids, n);
-+		sh_pfc_errors++;
-+	}
- }
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77470.c b/drivers/pinctrl/sh-pfc/pfc-r8a77470.c
+index aeada74..cb4c907 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77470.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77470.c
+@@ -9,7 +9,7 @@
  
- static void sh_pfc_check_info(const struct sh_pfc_soc_info *info)
+ #include "sh_pfc.h"
+ 
+-#define CPU_ALL_PORT(fn, sfx)						\
++#define CPU_ALL_GP(fn, sfx)						\
+ 	PORT_GP_23(0, fn, sfx),						\
+ 	PORT_GP_23(1, fn, sfx),						\
+ 	PORT_GP_32(2, fn, sfx),						\
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7778.c b/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
+index 7f1c675..22700cd 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
+@@ -46,7 +46,7 @@
+ 	PORT_GP_PUP_1(bank, 24, fn, sfx), PORT_GP_PUP_1(bank, 25, fn, sfx),	\
+ 	PORT_GP_PUP_1(bank, 26, fn, sfx)
+ 
+-#define CPU_ALL_PORT(fn, sfx)		\
++#define CPU_ALL_GP(fn, sfx)		\
+ 	PORT_GP_CFG_32(0, fn, sfx, SH_PFC_PIN_CFG_PULL_UP),		\
+ 	PORT_GP_CFG_32(1, fn, sfx, SH_PFC_PIN_CFG_PULL_UP),		\
+ 	PORT_GP_CFG_32(2, fn, sfx, SH_PFC_PIN_CFG_PULL_UP),		\
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7779.c b/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
+index 70aa490..00c1eec 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
+@@ -23,7 +23,7 @@
+ 
+ #include "sh_pfc.h"
+ 
+-#define CPU_ALL_PORT(fn, sfx)						\
++#define CPU_ALL_GP(fn, sfx)						\
+ 	PORT_GP_32(0, fn, sfx),						\
+ 	PORT_GP_32(1, fn, sfx),						\
+ 	PORT_GP_32(2, fn, sfx),						\
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+index 8046469..d2fd6e87 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+@@ -30,7 +30,7 @@
+  * All pins assigned to GPIO bank 3 can be used for SD interfaces in
+  * which case they support both 3.3V and 1.8V signalling.
+  */
+-#define CPU_ALL_PORT(fn, sfx)						\
++#define CPU_ALL_GP(fn, sfx)						\
+ 	PORT_GP_32(0, fn, sfx),						\
+ 	PORT_GP_30(1, fn, sfx),						\
+ 	PORT_GP_30(2, fn, sfx),						\
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+index c771a5c..332cb96 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+@@ -17,7 +17,7 @@
+  * Pins 0-23 assigned to GPIO bank 6 can be used for SD interfaces in
+  * which case they support both 3.3V and 1.8V signalling.
+  */
+-#define CPU_ALL_PORT(fn, sfx)						\
++#define CPU_ALL_GP(fn, sfx)						\
+ 	PORT_GP_32(0, fn, sfx),						\
+ 	PORT_GP_26(1, fn, sfx),						\
+ 	PORT_GP_32(2, fn, sfx),						\
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7792.c b/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
+index f49da5d..1131dd6 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
+@@ -14,7 +14,7 @@
+ #include "core.h"
+ #include "sh_pfc.h"
+ 
+-#define CPU_ALL_PORT(fn, sfx)						\
++#define CPU_ALL_GP(fn, sfx)						\
+ 	PORT_GP_29(0, fn, sfx),						\
+ 	PORT_GP_23(1, fn, sfx),						\
+ 	PORT_GP_32(2, fn, sfx),						\
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+index 47a4772..7b8dfee 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+@@ -15,7 +15,7 @@
+ #include "core.h"
+ #include "sh_pfc.h"
+ 
+-#define CPU_ALL_PORT(fn, sfx)						\
++#define CPU_ALL_GP(fn, sfx)						\
+ 	PORT_GP_32(0, fn, sfx),						\
+ 	PORT_GP_26(1, fn, sfx),						\
+ 	PORT_GP_32(2, fn, sfx),						\
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
+index 63e406d..087c2b3 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
+@@ -17,7 +17,7 @@
+ 		   SH_PFC_PIN_CFG_PULL_UP | \
+ 		   SH_PFC_PIN_CFG_PULL_DOWN)
+ 
+-#define CPU_ALL_PORT(fn, sfx)						\
++#define CPU_ALL_GP(fn, sfx)						\
+ 	PORT_GP_CFG_16(0, fn, sfx, CFG_FLAGS),	\
+ 	PORT_GP_CFG_28(1, fn, sfx, CFG_FLAGS),	\
+ 	PORT_GP_CFG_15(2, fn, sfx, CFG_FLAGS),	\
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index 00081c3..32be7e3 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -18,7 +18,7 @@
+ 		   SH_PFC_PIN_CFG_PULL_UP | \
+ 		   SH_PFC_PIN_CFG_PULL_DOWN)
+ 
+-#define CPU_ALL_PORT(fn, sfx)						\
++#define CPU_ALL_GP(fn, sfx)						\
+ 	PORT_GP_CFG_16(0, fn, sfx, CFG_FLAGS),	\
+ 	PORT_GP_CFG_29(1, fn, sfx, CFG_FLAGS),	\
+ 	PORT_GP_CFG_15(2, fn, sfx, CFG_FLAGS),	\
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+index fcde6ce..fd9ec59 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+@@ -23,7 +23,7 @@
+ 		   SH_PFC_PIN_CFG_PULL_UP | \
+ 		   SH_PFC_PIN_CFG_PULL_DOWN)
+ 
+-#define CPU_ALL_PORT(fn, sfx)						\
++#define CPU_ALL_GP(fn, sfx)						\
+ 	PORT_GP_CFG_16(0, fn, sfx, CFG_FLAGS),	\
+ 	PORT_GP_CFG_29(1, fn, sfx, CFG_FLAGS),	\
+ 	PORT_GP_CFG_15(2, fn, sfx, CFG_FLAGS),	\
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
+index 08c6635..1ef3960 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
+@@ -21,7 +21,7 @@
+ 		   SH_PFC_PIN_CFG_PULL_UP | \
+ 		   SH_PFC_PIN_CFG_PULL_DOWN)
+ 
+-#define CPU_ALL_PORT(fn, sfx)						\
++#define CPU_ALL_GP(fn, sfx)						\
+ 	PORT_GP_CFG_16(0, fn, sfx, CFG_FLAGS),	\
+ 	PORT_GP_CFG_29(1, fn, sfx, CFG_FLAGS),	\
+ 	PORT_GP_CFG_15(2, fn, sfx, CFG_FLAGS),	\
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77970.c b/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
+index 42538ab..ed08cce 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
+@@ -21,7 +21,7 @@
+ #include "core.h"
+ #include "sh_pfc.h"
+ 
+-#define CPU_ALL_PORT(fn, sfx)						\
++#define CPU_ALL_GP(fn, sfx)						\
+ 	PORT_GP_CFG_22(0, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),		\
+ 	PORT_GP_28(1, fn, sfx),						\
+ 	PORT_GP_CFG_17(2, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),		\
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77980.c b/drivers/pinctrl/sh-pfc/pfc-r8a77980.c
+index 629fa0c..246ab41 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77980.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77980.c
+@@ -18,7 +18,7 @@
+ #include "core.h"
+ #include "sh_pfc.h"
+ 
+-#define CPU_ALL_PORT(fn, sfx)	\
++#define CPU_ALL_GP(fn, sfx)	\
+ 	PORT_GP_CFG_22(0, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
+ 	PORT_GP_28(1, fn, sfx),	\
+ 	PORT_GP_CFG_30(2, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),	\
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
+index 7b64da2..fadfe22 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
+@@ -19,7 +19,7 @@
+ #define CFG_FLAGS (SH_PFC_PIN_CFG_PULL_UP | \
+ 		   SH_PFC_PIN_CFG_PULL_DOWN)
+ 
+-#define CPU_ALL_PORT(fn, sfx) \
++#define CPU_ALL_GP(fn, sfx) \
+ 	PORT_GP_CFG_18(0, fn, sfx, CFG_FLAGS), \
+ 	PORT_GP_CFG_23(1, fn, sfx, CFG_FLAGS), \
+ 	PORT_GP_CFG_26(2, fn, sfx, CFG_FLAGS), \
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+index 06babec..a4d7f20 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+@@ -19,7 +19,7 @@
+ #include "core.h"
+ #include "sh_pfc.h"
+ 
+-#define CPU_ALL_PORT(fn, sfx)			\
++#define CPU_ALL_GP(fn, sfx)			\
+ 		PORT_GP_9(0,  fn, sfx),		\
+ 		PORT_GP_32(1, fn, sfx),		\
+ 		PORT_GP_32(2, fn, sfx),		\
+diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7734.c b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
+index dd5c0f4..b7c07f5 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-sh7734.c
++++ b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
+@@ -14,7 +14,7 @@
+ 
+ #include "sh_pfc.h"
+ 
+-#define CPU_ALL_PORT(fn, sfx)						\
++#define CPU_ALL_GP(fn, sfx)						\
+ 	PORT_GP_32(0, fn, sfx),						\
+ 	PORT_GP_32(1, fn, sfx),						\
+ 	PORT_GP_32(2, fn, sfx),						\
 diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-index c02b095..499356d 100644
+index f47a159..2ee4c79 100644
 --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
 +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -114,6 +114,12 @@ struct pinmux_func {
- struct pinmux_cfg_reg {
- 	u32 reg;
- 	u8 reg_width, field_width;
-+#ifdef DEBUG
-+	u16 nr_enum_ids;	/* for variable width regs only */
-+#define SET_NR_ENUM_IDS(n)	.nr_enum_ids = n,
-+#else
-+#define SET_NR_ENUM_IDS(n)
-+#endif
- 	const u16 *enum_ids;
- 	const u8 *var_field_width;
- };
-@@ -154,6 +160,7 @@ struct pinmux_cfg_reg {
- #define PINMUX_CFG_REG_VAR(name, r, r_width, f_widths, ids)		\
- 	.reg = r, .reg_width = r_width,					\
- 	.var_field_width = (const u8 []) { f_widths, 0 },		\
-+	SET_NR_ENUM_IDS(sizeof((const u16 []) { ids }) / sizeof(u16))	\
- 	.enum_ids = (const u16 []) { ids }
+@@ -586,7 +586,7 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
  
- struct pinmux_drive_reg_field {
+ /* GP_ALL(suffix) - Expand to a list of GP_#_#_suffix */
+ #define _GP_ALL(bank, pin, name, sfx, cfg)	name##_##sfx
+-#define GP_ALL(str)			CPU_ALL_PORT(_GP_ALL, str)
++#define GP_ALL(str)			CPU_ALL_GP(_GP_ALL, str)
+ 
+ /* PINMUX_GPIO_GP_ALL - Expand to a list of sh_pfc_pin entries */
+ #define _GP_GPIO(bank, _pin, _name, sfx, cfg)				\
+@@ -596,11 +596,11 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
+ 		.enum_id = _name##_DATA,				\
+ 		.configs = cfg,						\
+ 	}
+-#define PINMUX_GPIO_GP_ALL()		CPU_ALL_PORT(_GP_GPIO, unused)
++#define PINMUX_GPIO_GP_ALL()		CPU_ALL_GP(_GP_GPIO, unused)
+ 
+ /* PINMUX_DATA_GP_ALL -  Expand to a list of name_DATA, name_FN marks */
+ #define _GP_DATA(bank, pin, name, sfx, cfg)	PINMUX_DATA(name##_DATA, name##_FN)
+-#define PINMUX_DATA_GP_ALL()		CPU_ALL_PORT(_GP_DATA, unused)
++#define PINMUX_DATA_GP_ALL()		CPU_ALL_GP(_GP_DATA, unused)
+ 
+ /*
+  * PORT style (linear pin space)
 -- 
 2.7.4
