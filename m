@@ -1,11 +1,24 @@
-From: masashi.kudo@cybertrust.co.jp (masashi.kudo at cybertrust.co.jp)
-Date: Thu, 29 Aug 2019 02:51:26 +0000
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Thu, 29 Aug 2019 04:05:11 +0000
 Subject: [cip-dev] CIP IRC weekly meeting today
-In-Reply-To: <HK0PR01MB2979932CAB05B2C9D36681E3E2A20@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+In-Reply-To: <CAFa_k0js=QXXhrtif6ym+dSP6H9D63p=zA38kLbpBqfr6TDAyQ@mail.gmail.com>
 References: <HK0PR01MB2979932CAB05B2C9D36681E3E2A20@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-Message-ID: <CAFa_k0js=QXXhrtif6ym+dSP6H9D63p=zA38kLbpBqfr6TDAyQ@mail.gmail.com>
+	<CAFa_k0js=QXXhrtif6ym+dSP6H9D63p=zA38kLbpBqfr6TDAyQ@mail.gmail.com>
+Message-ID: <HK0PR01MB2979B0773899DBCBBCC00259E2A20@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
+
+Hi Kudo-san,
+
+Noted, thank you for your heads up.
+
+SZ
+
+From: masashi.kudo@cybertrust.co.jp <masashi.kudo@cybertrust.co.jp>
+Sent: Thursday, August 29, 2019 10:51 AM
+To: SZ Lin (???) <SZ.Lin@moxa.com>
+Cc: cip-dev at lists.cip-project.org
+Subject: Re: [cip-dev] CIP IRC weekly meeting today
 
 Hello, SZ-san, All,
 
@@ -61,4 +74,4 @@ cip-dev at lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>
 https://lists.cip-project.org/mailman/listinfo/cip-dev
 -------------- next part --------------
 An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190829/a288a0f2/attachment.html>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190829/7ffec5c6/attachment-0001.html>
