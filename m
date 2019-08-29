@@ -1,68 +1,89 @@
-From: pavel@denx.de (Pavel Machek)
-Date: Thu, 29 Aug 2019 09:00:11 +0200
-Subject: [cip-dev] [PATCH 4.4.y-cip 00/17] Add USB2.0 support
-In-Reply-To: <1566982115-11148-1-git-send-email-biju.das@bp.renesas.com>
-References: <1566982115-11148-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <20190829070011.GB10041@amd>
+From: masashi.kudo@cybertrust.co.jp (masashi.kudo at cybertrust.co.jp)
+Date: Thu, 29 Aug 2019 07:13:33 +0000
+Subject: [cip-dev] CIP IRC weekly meeting today
+In-Reply-To: <HK0PR01MB2979B0773899DBCBBCC00259E2A20@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+References: <HK0PR01MB2979932CAB05B2C9D36681E3E2A20@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+	<CAFa_k0js=QXXhrtif6ym+dSP6H9D63p=zA38kLbpBqfr6TDAyQ@mail.gmail.com>
+	<HK0PR01MB2979B0773899DBCBBCC00259E2A20@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+Message-ID: <CAFa_k0hLkO0-aencf6=QYvXmzR7VjGMPAdxTToxaVfYXp7kb-g@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Wed 2019-08-28 09:48:18, Biju Das wrote:
-> This patch series add USB2.0 support for iWave iwg23s sbc based on RZ/G1C.
-> 
-> This patch series is based on linux-4.4.y-cip and all the patches
-> in this series are cherry-picked from linux rc tree.
+SZ-san,
 
-Thanks for the series, applied and pushed out.
+I am sorry, but it turned out that I need to withdraw my request for now.
+Let me propose our idea some later time.
+I am sorry to confuse you.
 
 Best regards,
-							Pavel
+--
+M. Kudo
 
+2019?8?29?(?) 13:05 SZ Lin (???) <SZ.Lin at moxa.com<mailto:SZ.Lin@moxa.com>>:
+Hi Kudo-san,
 
-> Biju Das (16):
->   dt-bindings: phy: rcar-gen2: Add r8a7744 support
->   dt-bindings: phy: rcar-gen2: Add r8a77470 support
->   dt-bindings: rcar-gen3-phy-usb2: Add r8a77470 support
->   phy: phy-rcar-gen2: Add support for r8a77470
->   phy: rcar-gen3-usb2: Add support for r8a77470
->   ARM: dts: r8a77470: Add USB-DMAC device nodes
->   ARM: dts: r8a77470: Add USB PHY DT support
->   ARM: dts: r8a77470: Add USB2.0 Host (EHCI/OHCI) device
->   ARM: shmobile: Enable PHY_RCAR_GEN3_USB2 in shmobile_defconfig
->   ARM: shmobile: Enable USB [EO]HCI HCD PLATFORM support in
->     shmobile_defconfig
->   ARM: dts: iwg23s-sbc: Enable USB Phy[01]
->   ARM: dts: iwg23s-sbc: Enable USB USB2.0 Host
->   dt-bindings: usb: renesas_usbhs: Add support for r8a7744
->   dt-bindings: usb: renesas_usbhs: Add support for r8a77470
->   ARM: dts: r8a77470: Add HSUSB device nodes
->   ARM: dts: iwg23s-sbc: Enable HS-USB
-> 
-> Yoshihiro Shimoda (1):
->   phy: rcar-gen3-usb2: Add R-Car Gen3 USB2 PHY driver
-> 
->  .../devicetree/bindings/phy/rcar-gen2-phy.txt      |  48 ++++-
->  .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt |  39 ++++
->  .../devicetree/bindings/usb/renesas_usbhs.txt      |   2 +
->  arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts          |  44 ++++
->  arch/arm/boot/dts/r8a77470.dtsi                    | 185 ++++++++++++++++
->  arch/arm/configs/shmobile_defconfig                |   3 +
->  drivers/phy/Kconfig                                |   7 +
->  drivers/phy/Makefile                               |   1 +
->  drivers/phy/phy-rcar-gen2.c                        | 130 ++++++++++--
->  drivers/phy/phy-rcar-gen3-usb2.c                   | 236 +++++++++++++++++++++
->  10 files changed, 682 insertions(+), 13 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
->  create mode 100644 drivers/phy/phy-rcar-gen3-usb2.c
-> 
+Noted, thank you for your heads up.
 
--- 
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+SZ
+
+From: masashi.kudo@cybertrust.co.jp<mailto:masashi.kudo@cybertrust.co.jp> <masashi.kudo at cybertrust.co.jp<mailto:masashi.kudo@cybertrust.co.jp>>
+Sent: Thursday, August 29, 2019 10:51 AM
+To: SZ Lin (???) <SZ.Lin at moxa.com<mailto:SZ.Lin@moxa.com>>
+Cc: cip-dev at lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>
+Subject: Re: [cip-dev] CIP IRC weekly meeting today
+
+Hello, SZ-san, All,
+
+Cybertrust has some proposal to the CIP kernel team.
+I would appreciate it if you can add "Cybertrust Proposal" to the agenda.
+
+Best regards,
+--
+M. Kudo
+Cybertrust Japan Co., Ltd.
+
+2019?8?29?(?) 10:31 SZ Lin (???) <SZ.Lin at moxa.com<mailto:SZ.Lin@moxa.com>>:
+Hi all,
+
+Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
+
+*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=8&day29&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=24
+
+US-West US-East   UK     DE     TW     JP
+02:00    05:00   10:00   11:00   17:00   18:00
+
+Channel:
+* irc:chat.freenode.net:6667/cip<http://chat.freenode.net:6667/cip>
+
+Agenda:
+
+* Action item
+1. Provide the cases to cip-testing to build up the test environment - Iwamatsu-san
+
+2. Ask cip-dev which configurations need testing - patersonc
+
+3. Test LTS (pre)releases directly ? patersonc
+
+4. Discuss and make a decision on default compiler's options - kernel team
+
+5. Look for the new maintainer of CIP security tracker ? kernel team
+
+* Kernel maintenance updates
+* Kernel testing
+* CIP Core
+* Software update
+* AOB
+
+The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
+
+Best regards,
+
+SZ Lin, Moxa.
+_______________________________________________
+cip-dev mailing list
+cip-dev at lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>
+https://lists.cip-project.org/mailman/listinfo/cip-dev
 -------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 181 bytes
-Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190829/e3838ed3/attachment.sig>
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190829/ea87d6da/attachment-0001.html>
