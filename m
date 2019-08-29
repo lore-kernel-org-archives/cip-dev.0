@@ -1,43 +1,51 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Thu, 29 Aug 2019 18:02:50 +0100
-Subject: [cip-dev] [PATCH/RFC 4.19.y-cip v2 45/51] pinctrl: sh-pfc: r8a7791:
-	Remove bogus ctrl marks from qspi_data4_b group
+Date: Thu, 29 Aug 2019 18:02:51 +0100
+Subject: [cip-dev] [PATCH/RFC 4.19.y-cip v2 46/51] pinctrl: sh-pfc: r8a7791:
+	Remove bogus marks from vin1_b_data18 group
 In-Reply-To: <1567098176-1242-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1567098176-1242-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1567098176-1242-46-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1567098176-1242-47-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit 884fa25fb6e5e63ab970d612a628313bb68f37cc upstream.
+commit 0d6256cb880166a4111bebce35790019e56b6e1b upstream.
 
-The qspi_data4_b_mux[] array contains pin marks for the clock and chip
-select pins.  The qspi_data4_b_pins[] array rightfully does not contain
-the corresponding pin numbers, as the control pins are provided by a
-separate group (qspi_ctrl_b).
+The vin1_b_data18_mux[] arrays contains pin marks for the 2 LSB bits of
+the color components.  The vin1_b_data18_pins[] array rightfully does
+not include the corresponding pin numbers, as RGB18 is subset of RGB24,
+containing only the 6 MSB bits of each component.
 
-Fixes: 2d0c386f135e4186 ("pinctrl: sh-pfc: r8a7791: Add QSPI pin groups")
+Fixes: 8e32c9671f84acd8 ("pinctrl: sh-pfc: r8a7791: Add VIN pins")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index c4ffb40..dea3dda 100644
+index dea3dda..f9de61c 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -3221,8 +3221,7 @@ static const unsigned int qspi_data4_b_pins[] = {
- 	RCAR_GP_PIN(6, 4),
+@@ -4375,17 +4375,14 @@ static const unsigned int vin1_b_data18_pins[] = {
  };
- static const unsigned int qspi_data4_b_mux[] = {
--	SPCLK_B_MARK, MOSI_IO0_B_MARK, MISO_IO1_B_MARK,
--	IO2_B_MARK, IO3_B_MARK, SSL_B_MARK,
-+	MOSI_IO0_B_MARK, MISO_IO1_B_MARK, IO2_B_MARK, IO3_B_MARK,
- };
- /* - SCIF0 ------------------------------------------------------------------ */
- static const unsigned int scif0_data_pins[] = {
+ static const unsigned int vin1_b_data18_mux[] = {
+ 	/* B */
+-	VI1_DATA0_B_MARK, VI1_DATA1_B_MARK,
+ 	VI1_DATA2_B_MARK, VI1_DATA3_B_MARK,
+ 	VI1_DATA4_B_MARK, VI1_DATA5_B_MARK,
+ 	VI1_DATA6_B_MARK, VI1_DATA7_B_MARK,
+ 	/* G */
+-	VI1_G0_B_MARK, VI1_G1_B_MARK,
+ 	VI1_G2_B_MARK, VI1_G3_B_MARK,
+ 	VI1_G4_B_MARK, VI1_G5_B_MARK,
+ 	VI1_G6_B_MARK, VI1_G7_B_MARK,
+ 	/* R */
+-	VI1_R0_B_MARK, VI1_R1_B_MARK,
+ 	VI1_R2_B_MARK, VI1_R3_B_MARK,
+ 	VI1_R4_B_MARK, VI1_R5_B_MARK,
+ 	VI1_R6_B_MARK, VI1_R7_B_MARK,
 -- 
 2.7.4
