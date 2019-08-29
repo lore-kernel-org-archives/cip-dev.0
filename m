@@ -1,71 +1,68 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Thu, 29 Aug 2019 18:02:23 +0100
-Subject: [cip-dev] [PATCH/RFC 4.19.y-cip v2 18/51] pinctrl: sh-pfc: Add
-	check for empty pinmux groups/functions
+Date: Thu, 29 Aug 2019 18:02:24 +0100
+Subject: [cip-dev] [PATCH/RFC 4.19.y-cip v2 19/51] pinctrl: sh-pfc: Validate
+	pin tables at runtime
 In-Reply-To: <1567098176-1242-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1567098176-1242-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1567098176-1242-19-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1567098176-1242-20-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit 3dd5fd79f07103f7cda30567f8bf85a854796dd6 upstream.
+commit 542ffc9e026a3f736eeaa041823d406510f40a12 upstream.
 
-The pinmux groups and functions arrays may contain two parts, to ease
-supporting SoCs that expose pin subsets of other related SoCs.  Both
-parts need to be declared with explicit sizes, which thus need to be
-updated when adding support for more groups and functions.
+Extend the run-time debug code with checks to ensure there are no
+conflicting pin names, numbers, or enumeration values.
 
-If a size is too small, the compiler will detect this at build time
-("excess elements in array initializer").
-If a size is too large, this may go undetected (for pin groups), lead to
-pin controller registration failures (for pin functions: "pinmux ops has
-no name for functionN"), or crash the optional run-time debug code (for
-pin groups).
-
-Extend the run-time debug code with checks to detect this, to help
-catching bugs early.
+This helps catching bugs early.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/pinctrl/sh-pfc/core.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/pinctrl/sh-pfc/core.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
 diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index 5c4f441..2a66de2 100644
+index 2a66de2..c3d2313 100644
 --- a/drivers/pinctrl/sh-pfc/core.c
 +++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -777,9 +777,15 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
+@@ -770,6 +770,35 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
  
- 	for (i = 0; i < info->nr_functions; i++) {
- 		func = &info->functions[i];
-+		if (!func->name) {
-+			pr_err("%s: empty function %u\n", drvname, i);
-+			sh_pfc_errors++;
-+			continue;
-+		}
- 		for (j = 0; j < func->nr_groups; j++) {
- 			for (k = 0; k < info->nr_groups; k++) {
--				if (!strcmp(func->groups[j],
-+				if (info->groups[k].name &&
-+				    !strcmp(func->groups[j],
- 					    info->groups[k].name)) {
- 					refcnts[k]++;
- 					break;
-@@ -795,6 +801,11 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
- 	}
+ 	pr_info("Checking %s\n", drvname);
  
- 	for (i = 0; i < info->nr_groups; i++) {
-+		if (!info->groups[i].name) {
-+			pr_err("%s: empty group %u\n", drvname, i);
-+			sh_pfc_errors++;
-+			continue;
++	/* Check pins */
++	for (i = 0; i < info->nr_pins; i++) {
++		for (j = 0; j < i; j++) {
++			if (!strcmp(info->pins[i].name, info->pins[j].name)) {
++				pr_err("%s: pin %s/%s: name conflict\n",
++				       drvname, info->pins[i].name,
++				       info->pins[j].name);
++				sh_pfc_errors++;
++			}
++
++			if (info->pins[i].pin != (u16)-1 &&
++			    info->pins[i].pin == info->pins[j].pin) {
++				pr_err("%s: pin %s/%s: pin %u conflict\n",
++				       drvname, info->pins[i].name,
++				       info->pins[j].name, info->pins[i].pin);
++				sh_pfc_errors++;
++			}
++
++			if (info->pins[i].enum_id &&
++			    info->pins[i].enum_id == info->pins[j].enum_id) {
++				pr_err("%s: pin %s/%s: enum_id %u conflict\n",
++				       drvname, info->pins[i].name,
++				       info->pins[j].name,
++				       info->pins[i].enum_id);
++				sh_pfc_errors++;
++			}
 +		}
- 		if (!refcnts[i]) {
- 			pr_err("%s: orphan group %s\n", drvname,
- 			       info->groups[i].name);
++	}
++
+ 	/* Check groups and functions */
+ 	refcnts = kcalloc(info->nr_groups, sizeof(*refcnts), GFP_KERNEL);
+ 	if (!refcnts)
 -- 
 2.7.4
