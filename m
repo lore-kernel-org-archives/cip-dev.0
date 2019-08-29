@@ -1,41 +1,58 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Thu, 29 Aug 2019 18:02:11 +0100
-Subject: [cip-dev] [PATCH/RFC 4.19.y-cip v2 06/51] pinctrl: sh-pfc: Validate
-	fixed-size field widths at build time
+Date: Thu, 29 Aug 2019 18:02:08 +0100
+Subject: [cip-dev] [PATCH/RFC 4.19.y-cip v2 03/51] pinctrl: sh-pfc: Add
+	physical pin multiplexing helper macros
 In-Reply-To: <1567098176-1242-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1567098176-1242-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1567098176-1242-7-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1567098176-1242-4-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Ulrich Hecht <uli+renesas@fpond.eu>
 
-commit 5e8588c86d71e78de9e97103324d9127063f18d0 upstream.
+commit 50d1ba1764b3e00ae8c331202d50c5535d6b3361 upstream.
 
-Add a build-time check, to ensure the register and field widths in
-descriptors for config registers with fixed-width fields are sane.
-This helps catching bugs early.
+Used by I2C controllers 0, 3 and 5 in R8A7795 and R8A7796 SoCs.
 
+Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/pinctrl/sh-pfc/sh_pfc.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pinctrl/sh-pfc/sh_pfc.h | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
 diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-index 0e39fad..298fd06 100644
+index 7f31300..8a06ebc 100644
 --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
 +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -129,7 +129,8 @@ struct pinmux_cfg_reg {
-  * one for each possible combination of the register field bit values.
-  */
- #define PINMUX_CFG_REG(name, r, r_width, f_width) \
--	.reg = r, .reg_width = r_width, .field_width = f_width,		\
-+	.reg = r, .reg_width = r_width,					\
-+	.field_width = f_width + BUILD_BUG_ON_ZERO(r_width % f_width),	\
- 	.enum_ids = (const u16 [(r_width / f_width) * (1 << f_width)])
+@@ -389,6 +389,28 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
+ 	PINMUX_DATA(fn##_MARK, FN_##msel, FN_##fn, FN_##ipsr)
  
  /*
++ * Describe a pinmux configuration similar to PINMUX_IPSR_MSEL, but with
++ * an additional select register that controls physical multiplexing
++ * with another pin.
++ *   - ipsr: IPSR field
++ *   - fn: Function name, also referring to the IPSR field
++ *   - psel: Physical multiplexing selector
++ *   - msel: Module selector
++ */
++#define PINMUX_IPSR_PHYS_MSEL(ipsr, fn, psel, msel) \
++	PINMUX_DATA(fn##_MARK, FN_##psel, FN_##msel, FN_##fn, FN_##ipsr)
++
++/*
++ * Describe a pinmux configuration in which a pin is physically multiplexed
++ * with other pins.
++ *   - ipsr: IPSR field
++ *   - fn: Function name, also referring to the IPSR field
++ *   - psel: Physical multiplexing selector
++ */
++#define PINMUX_IPSR_PHYS(ipsr, fn, psel) \
++	PINMUX_DATA(fn##_MARK, FN_##psel)
++
++/*
+  * Describe a pinmux configuration for a single-function pin with GPIO
+  * capability.
+  *   - fn: Function name
 -- 
 2.7.4
