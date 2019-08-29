@@ -1,57 +1,44 @@
-From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
-Date: Wed, 28 Aug 2019 22:57:59 +0000
-Subject: [cip-dev] [PATCH 1/3] Change templagte directory name
-In-Reply-To: <TYAPR01MB2285770A2828D112504BF1FBB7A30@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-References: <20190828022619.3690-1-nobuhiro1.iwamatsu@toshiba.co.jp>
-	<TYAPR01MB2285770A2828D112504BF1FBB7A30@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-Message-ID: <OSAPR01MB3234CE92510D6A0DF333047992A30@OSAPR01MB3234.jpnprd01.prod.outlook.com>
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Thu, 29 Aug 2019 01:31:32 +0000
+Subject: [cip-dev] CIP IRC weekly meeting today
+Message-ID: <HK0PR01MB2979932CAB05B2C9D36681E3E2A20@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Chris,
+Hi all,
 
-> -----Original Message-----
-> From: Chris Paterson [mailto:Chris.Paterson2 at renesas.com]
-> Sent: Wednesday, August 28, 2019 7:05 PM
-> To: iwamatsu nobuhiro(?? ?? ????????)
-> <nobuhiro1.iwamatsu@toshiba.co.jp>
-> Cc: cip-dev at lists.cip-project.org
-> Subject: RE: [PATCH 1/3] Change templagte directory name
-> 
-> Hello Iwamatsu-san,
-> 
-> > From: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-> > Sent: 28 August 2019 03:26
-> >
-> > Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-> > ---
-> >  .../r8a7743-iwg20d-q7.yaml                                    | 0
-> >  .../r8a7745-iwg22d-sodimm.yaml                                | 0
-> >  {healthcheck_templates => lava_templates}/r8a774c0-ek874.yaml | 0
-> >  submit_tests.sh                                               | 2
-> +-
-> >  test.Dockerfile                                               | 4
-> ++--
-> >  5 files changed, 3 insertions(+), 3 deletions(-)  rename
-> > {healthcheck_templates => lava_templates}/r8a7743-iwg20d- q7.yaml
-> > (100%)  rename {healthcheck_templates =>
-> > lava_templates}/r8a7745-iwg22d- sodimm.yaml (100%)  rename
-> > {healthcheck_templates => lava_templates}/r8a774c0-ek874.yaml
-> > (100%)
-> 
-> Thank you for this patch. Do you think you could create a merge request
-> in gitlab[0] so we can do the review there?
-> For this patch and the other two in the series.
-> 
-> [0]
-> https://gitlab.com/cip-project/cip-testing/linux-cip-ci/merge_reques
-> ts
+Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
 
-Ok, I just sent MR via gitlab.
+*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=8&day29&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=24
+	
+US-West US-East   UK     DE     TW     JP
+02:00    05:00   10:00   11:00   17:00   18:00
 
-> 
-> Kind regards, Chris
-> 
+Channel:
+* irc:chat.freenode.net:6667/cip
+
+Agenda:
+
+* Action item
+1. Provide the cases to cip-testing to build up the test environment - Iwamatsu-san 
+
+2. Ask cip-dev which configurations need testing - patersonc 
+
+3. Test LTS (pre)releases directly ? patersonc
+
+4. Discuss and make a decision on default compiler's options - kernel team
+
+5. Look for the new maintainer of CIP security tracker ? kernel team
+
+* Kernel maintenance updates
+* Kernel testing
+* CIP Core
+* Software update
+* AOB
+
+The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
 
 Best regards,
-  Nobuhiro
+
+SZ Lin, Moxa.
