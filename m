@@ -1,90 +1,133 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Thu, 29 Aug 2019 18:02:56 +0100
-Subject: [cip-dev] [PATCH/RFC 4.19.y-cip v2 51/51] pinctrl: sh-pfc: sh73a0:
-	Use new macros for non-GPIO pins
-In-Reply-To: <1567098176-1242-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1567098176-1242-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1567098176-1242-52-git-send-email-fabrizio.castro@bp.renesas.com>
+Date: Thu, 29 Aug 2019 17:07:53 +0000
+Subject: [cip-dev] [PATCH/RFC 4.19.y-cip 00/41] Fast forward sh-pfc
+In-Reply-To: <af4fbd68b11573481451a6436030a46775211e4e.camel@codethink.co.uk>
+References: <1566991328-25476-1-git-send-email-fabrizio.castro@bp.renesas.com>
+	<20190829081221.GD10041@amd>
+	<TY1PR01MB1770129C698AAE461CFCE4FDC0A20@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+	<20190829094751.GB20258@amd>
+	<TY1PR01MB1770F6AE638C3F42AF85A480C0A20@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+	<TYAPR01MB228547C1D35538FE0A074410B7A20@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+	<TY1PR01MB1770BF5D1B46FF214219B97DC0A20@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+	<af4fbd68b11573481451a6436030a46775211e4e.camel@codethink.co.uk>
+Message-ID: <TY1PR01MB17709021A4730B4BAFA456BEC0A20@TY1PR01MB1770.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Ben,
 
-commit 25491559322e435c47731fd65f0dd9fb88a0b213 upstream.
+Thank you for the feedback!
 
-Update the SH-Mobile AG5 pin control driver to use the new macros for
-describing pins without GPIO functionality.  This replaces the use of
-physical pin numbers on the SH-Mobile AG5 SoC (in 34x34 BGA package) by
-symbolic enum values, referring to signal names.
+> From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+> Sent: 29 August 2019 14:51
+> Subject: Re: [cip-dev] [PATCH/RFC 4.19.y-cip 00/41] Fast forward sh-pfc
+> 
+> On Thu, 2019-08-29 at 11:04 +0000, Fabrizio Castro wrote:
+> > Hello Chris,
+> >
+> > Thank you for your feedback!
+> >
+> > > From: Chris Paterson <Chris.Paterson2@renesas.com>
+> > > Sent: 29 August 2019 11:23
+> > > Subject: RE: [cip-dev] [PATCH/RFC 4.19.y-cip 00/41] Fast forward sh-pfc
+> > >
+> > > Hello Pavel, Fab,
+> > >
+> > > > From: cip-dev-bounces at lists.cip-project.org <cip-dev-bounces@lists.cip-
+> > > > project.org> On Behalf Of Fabrizio Castro
+> > > > Sent: 29 August 2019 10:50
+> > > >
+> > > > Hi Pavel,
+> > > >
+> > > > > From: Pavel Machek <pavel@denx.de>
+> > > > > Sent: 29 August 2019 10:48
+> > > > > Subject: Re: [cip-dev] [PATCH/RFC 4.19.y-cip 00/41] Fast forward sh-pfc
+> > > > >
+> > > > > Hi!
+> > > > >
+> > > > > > > > they have made good progress upstream with the development of
+> > > > sh-pfc,
+> > > > > > > > and although the functionality of the drivers hasn't changed much,
+> > > > > > > > the code looks fairly different. This means that backporting patches
+> > > > > > > > to SoC specific driver files will be increasingly hard and error
+> > > > > > > > prone, unless we fast-forward the code base for 4.19.y-cip, hence
+> > > > > > > > this series.
+> > > > > > > > What do you gus think? Comments welcome!
+> > > > > > >
+> > > > > > > I reviewed the patches... and it is interesting how much magic can be
+> > > > > > > done with preprocessor.
+> > > > > >
+> > > > > > I thought the same thing!
+> > > > > > > I do not see anything preventing the merge, but they were marked
+> > > > [rfc]
+> > > > > > > so I'm not doing that yet. Let me know if I should.
+> > > > > >
+> > > > > > Since nothing nasty was spotted during code review and it works ok, I
+> > > > believe
+> > > > > > merging this series could really help us with future development, so yes
+> > > > > > please, go ahead and merge.
+> > > > >
+> > > > > Ok, merged, and pushed out.
+> > >
+> > > Our CI is hitting some build errors with the latest v4.19-cip (commit b11ac993) with the renesas shmobile_defconfig configurations:
+> > > https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/283063646
+> > > https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/283063654
+> > >
+> > > In file included from ./include/linux/kernel.h:15,
+> > >                  from ./include/asm-generic/bug.h:18,
+> > >                  from ./arch/arm/include/asm/bug.h:60,
+> > >                  from ./include/linux/bug.h:5,
+> > >                  from ./include/linux/io.h:23,
+> > >                  from drivers/pinctrl/sh-pfc/pfc-r8a7740.c:21:
+> > > ./include/linux/build_bug.h:29:45: error: negative width in bit-field '<anonymous>'
+> > >  #define BUILD_BUG_ON_ZERO(e) (sizeof(struct { int:(-!!(e)); }))
+> > >                                              ^
+> > > drivers/pinctrl/sh-pfc/sh_pfc.h:52:3: note: in expansion of macro 'BUILD_BUG_ON_ZERO'
+> > >    BUILD_BUG_ON_ZERO(sizeof(n##_pins) != sizeof(n##_mux)), \
+> > >    ^~~~~~~~~~~~~~~~~
+> > > drivers/pinctrl/sh-pfc/sh_pfc.h:54:29: note: in expansion of macro 'SH_PFC_PIN_GROUP_ALIAS'
+> > >  #define SH_PFC_PIN_GROUP(n) SH_PFC_PIN_GROUP_ALIAS(n, n)
+> > >                              ^~~~~~~~~~~~~~~~~~~~~~
+> > > drivers/pinctrl/sh-pfc/pfc-r8a7740.c:2806:2: note: in expansion of macro 'SH_PFC_PIN_GROUP'
+> > >   SH_PFC_PIN_GROUP(gether_gmii),
+> > >   ^~~~~~~~~~~~~~~~
+> [...]
+> > Thank you for reporting this, and I am so glad we have CI in place to spot this things early on now.
+> >
+> > I think the safest thing to do here is dropping this series after seeing the build log,
+> > there is clearly more effort needed to keep arm32 and arm64 in check, and backporting
+> > more patches to the sh-pfc driver would still be a pain.
+> >
+> > Pavel, do you think you can drop this series?
+> 
+> The failing assertions were added by "pinctrl: sh-pfc: Validate
+> pins/marks in pin groups at build time".  We could revert that one
+> patch, but it seems to be detecting actual bugs in r8a7740.c, so I
+> think we should take the fixes for those:
+> 
+> commit 1ebc589a7786f17f97b9e87b44e0fb4d0290d8f8
+> Author: Geert Uytterhoeven <geert+renesas@glider.be>
+> Date:   Wed Dec 12 10:57:27 2018 +0100
+> 
+>     pinctrl: sh-pfc: r8a7740: Add missing REF125CK pin to gether_gmii group
+> 
+> commit 96bb2a6ab4eca10e5b6490b3f0738e9f7ec22c2b
+> Author: Geert Uytterhoeven <geert+renesas@glider.be>
+> Date:   Wed Dec 12 11:00:27 2018 +0100
+> 
+>     pinctrl: sh-pfc: r8a7740: Add missing LCD0 marks to lcd0_data24_1 group
+> 
+> Ben.
 
-Note that the user-visible names of these pins are still based on pin
-numbers instead of signal names, to preserve DT backwards compatibility.
+Thank you for this, I have found problems with 3 SoC specific pinctrl drivers,
+I have sent out a v2 for reference, I am not convinced that applying the
+series is worth the risk, but I would appreciate your opinion.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Niklas S?derlund <niklas.soderlund+renesas@ragnatech.se>
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- drivers/pinctrl/sh-pfc/pfc-sh73a0.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+Thanks,
+Fab
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
-index 1adb234..a748af3 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
-@@ -56,6 +56,9 @@
- 	PORT_1(288, fn, pfx##288, sfx), PORT_1(289, fn, pfx##289, sfx),	\
- 	PORT_10(290, fn, pfx##29, sfx), PORT_10(300, fn, pfx##30, sfx)
- 
-+#define CPU_ALL_NOGP(fn)	\
-+	PIN_NOGP(A11, "F26", fn)
-+
- enum {
- 	PINMUX_RESERVED = 0,
- 
-@@ -1171,11 +1174,13 @@ static const u16 pinmux_data[] = {
- #define SH73A0_PIN_IO_PU_PD(pin)	SH_PFC_PIN_CFG(pin, __IO | __PUD)
- #define SH73A0_PIN_O(pin)		SH_PFC_PIN_CFG(pin, __O)
- 
--/* Pin numbers for pins without a corresponding GPIO port number are computed
-- * from the row and column numbers with a 1000 offset to avoid collisions with
-- * GPIO port numbers.
-+/*
-+ * Pins not associated with a GPIO port.
-  */
--#define PIN_NUMBER(row, col)		(1000+((row)-1)*34+(col)-1)
-+enum {
-+	PORT_ASSIGN_LAST(),
-+	NOGP_ALL(),
-+};
- 
- static const struct sh_pfc_pin pinmux_pins[] = {
- 	/* Table 25-1 (I/O and Pull U/D) */
-@@ -1450,7 +1455,7 @@ static const struct sh_pfc_pin pinmux_pins[] = {
- 	SH73A0_PIN_O(309),
- 
- 	/* Pins not associated with a GPIO port */
--	SH_PFC_PIN_NAMED(6, 26, F26),
-+	PINMUX_NOGP_ALL(),
- };
- 
- /* - BSC -------------------------------------------------------------------- */
-@@ -1876,7 +1881,7 @@ static const unsigned int keysc_out7_2_mux[] = {
- };
- static const unsigned int keysc_out8_0_pins[] = {
- 	/* KEYOUT8 */
--	PIN_NUMBER(6, 26),
-+	PIN_A11,
- };
- static const unsigned int keysc_out8_0_mux[] = {
- 	KEYOUT8_MARK,
-@@ -3086,7 +3091,7 @@ static const unsigned int tpu4_to2_mux[] = {
- };
- static const unsigned int tpu4_to3_pins[] = {
- 	/* TO */
--	PIN_NUMBER(6, 26),
-+	PIN_A11,
- };
- static const unsigned int tpu4_to3_mux[] = {
- 	TPU4TO3_MARK,
--- 
-2.7.4
+> 
+> --
+> Ben Hutchings, Software Developer                         Codethink Ltd
+> https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+>                                      Manchester, M1 2HF, United Kingdom
