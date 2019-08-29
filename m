@@ -1,77 +1,154 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 29 Aug 2019 04:05:11 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-In-Reply-To: <CAFa_k0js=QXXhrtif6ym+dSP6H9D63p=zA38kLbpBqfr6TDAyQ@mail.gmail.com>
-References: <HK0PR01MB2979932CAB05B2C9D36681E3E2A20@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-	<CAFa_k0js=QXXhrtif6ym+dSP6H9D63p=zA38kLbpBqfr6TDAyQ@mail.gmail.com>
-Message-ID: <HK0PR01MB2979B0773899DBCBBCC00259E2A20@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
+Date: Thu, 29 Aug 2019 05:57:11 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip v2 00/57] Add basic RZ/G2M SoC
+ support
+In-Reply-To: <1566999164-27898-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1566999164-27898-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <OSAPR01MB323434E340DE7CCF6313B0D992A20@OSAPR01MB3234.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Kudo-san,
+Hi Fabrizio,
 
-Noted, thank you for your heads up.
-
-SZ
-
-From: masashi.kudo@cybertrust.co.jp <masashi.kudo@cybertrust.co.jp>
-Sent: Thursday, August 29, 2019 10:51 AM
-To: SZ Lin (???) <SZ.Lin@moxa.com>
-Cc: cip-dev at lists.cip-project.org
-Subject: Re: [cip-dev] CIP IRC weekly meeting today
-
-Hello, SZ-san, All,
-
-Cybertrust has some proposal to the CIP kernel team.
-I would appreciate it if you can add "Cybertrust Proposal" to the agenda.
+Thanks for your patch.
+I will check these.
 
 Best regards,
---
-M. Kudo
-Cybertrust Japan Co., Ltd.
+  Nobuhiro
 
-2019?8?29?(?) 10:31 SZ Lin (???) <SZ.Lin at moxa.com<mailto:SZ.Lin@moxa.com>>:
-Hi all,
-
-Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
-
-*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=8&day29&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=24
-
-US-West US-East   UK     DE     TW     JP
-02:00    05:00   10:00   11:00   17:00   18:00
-
-Channel:
-* irc:chat.freenode.net:6667/cip<http://chat.freenode.net:6667/cip>
-
-Agenda:
-
-* Action item
-1. Provide the cases to cip-testing to build up the test environment - Iwamatsu-san
-
-2. Ask cip-dev which configurations need testing - patersonc
-
-3. Test LTS (pre)releases directly ? patersonc
-
-4. Discuss and make a decision on default compiler's options - kernel team
-
-5. Look for the new maintainer of CIP security tracker ? kernel team
-
-* Kernel maintenance updates
-* Kernel testing
-* CIP Core
-* Software update
-* AOB
-
-The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
-
-Best regards,
-
-SZ Lin, Moxa.
-_______________________________________________
-cip-dev mailing list
-cip-dev at lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>
-https://lists.cip-project.org/mailman/listinfo/cip-dev
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190829/7ffec5c6/attachment-0001.html>
+> -----Original Message-----
+> From: cip-dev-bounces at lists.cip-project.org
+> [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Fabrizio
+> Castro
+> Sent: Wednesday, August 28, 2019 10:32 PM
+> To: cip-dev at lists.cip-project.org
+> Cc: Biju Das <biju.das@bp.renesas.com>
+> Subject: [cip-dev] [PATCH 4.19.y-cip v2 00/57] Add basic RZ/G2M SoC
+> support
+> 
+> Dear All,
+> 
+> this series aims at providing basic RZ/G2M SoC dtsi support.
+> 
+> v1->v2:
+> * dropped "serial: sh-sci: Fix TX DMA buffer flushing and workqueue races"
+> * dropped "serial: sh-sci: Terminate TX DMA during buffer flushing"
+> * dropped "dmaengine: rcar-dmac: Reject zero-length slave DMA requests"
+> 
+> Thanks,
+> Fab
+> 
+> Biju Das (13):
+>   dt-bindings: dmaengine: usb-dmac: Add binding for r8a774a1
+>   arm64: dts: renesas: Initial r8a774a1 SoC device tree
+>   arm64: dts: renesas: r8a774a1: Add SYS-DMAC controller nodes
+>   arm64: dts: renesas: r8a774a1: Add INTC-EX device node
+>   arm64: dts: renesas: r8a774a1: Add RWDT node
+>   arm64: dts: renesas: r8a774a1: Add I2C and IIC-DVFS support
+>   arm64: dts: renesas: r8a774a1: Add RZ/G2M thermal support
+>   arm64: dts: renesas: r8a774a1: Add all MSIOF nodes
+>   arm64: dts: renesas: r8a774a1: Add Cortex-A53 CPU cores
+>   arm64: dts: renesas: r8a774a1: Add audio support
+>   arm64: dts: renesas: r8a774a1: Add USB2.0 phy and host(EHCI/OHCI)
+>     device nodes
+>   arm64: dts: renesas: r8a774a1: Add USB-DMAC and HSUSB device nodes
+>   arm64: dts: renesas: r8a774a1: Add USB3.0 device nodes
+> 
+> Chris Paterson (1):
+>   arm64: dts: renesas: r8a774a1: Add CAN nodes
+> 
+> Enrico Weigelt, metux IT consult (1):
+>   gpio: rcar: Pedantic formatting
+> 
+> Fabrizio Castro (21):
+>   dt-bindings: can: rcar_can: Add r8a774a1 support
+>   dt-bindings: can: rcar_can: Fix RZ/G2 CAN clocks
+>   dt-bindings: can: rcar_can: Add r8a774c0 support
+>   dt-bindings: rcar-gen3-phy-usb3: Add r8a774a1 support
+>   dt-bindings: usb-xhci: Add r8a774a1 support
+>   dt-bindings: usb-xhci: Add r8a774c0 support
+>   dt-bindings: usb: renesas_usbhs: Add r8a774a1 support
+>   dt-bindings: thermal: rcar-gen3-thermal: Add r8a774a1 support
+>   thermal: rcar_gen3_thermal: Add r8a774a1 support
+>   arm64: dts: renesas: r8a774a1: Add SCIF and HSCIF nodes
+>   arm64: dts: renesas: r8a774a1: Add Ethernet AVB node
+>   arm64: dts: renesas: r8a774a1: Add pinctrl device node
+>   arm64: dts: renesas: r8a774a1: Add GPIO device nodes
+>   arm64: dts: renesas: r8a774a1: Add SDHI nodes
+>   arm64: dts: renesas: r8a774a1: Add IPMMU device nodes
+>   arm64: dts: renesas: r8a774a1: Add PWM device nodes
+>   arm64: dts: renesas: r8a774a1: Add FCPF and FCPV instances
+>   arm64: dts: renesas: r8a774a1: Replace power magic numbers
+>   arm64: dts: renesas: r8a774a1: Replace clock magic numbers
+>   arm64: dts: renesas: r8a774a1: Fix hsusb reg size
+>   arm64: dts: renesas: r8a774a1: Add clkp2 clock to CAN nodes
+> 
+> Geert Uytterhoeven (12):
+>   clk: renesas: cpg-mssr: Use genpd of_node instead of local copy
+>   clk: renesas: cpg-mssr: Remove error messages on out-of-memory
+>     conditions
+>   soc: renesas: rcar-sysc: Remove rcar_sysc_power_{down,up}() helpers
+>   soc: renesas: rcar-sysc: Merge PM Domain registration and linking
+>   soc: renesas: rcar-sysc: Fix power domain control after system resume
+>   serial: sh-sci: Fix crash in rx_timer_fn() on PIO fallback
+>   serial: sh-sci: Extract sci_dma_rx_chan_invalidate()
+>   serial: sh-sci: Extract sci_dma_rx_reenable_irq()
+>   serial: sh-sci: Fix fallback to PIO in sci_dma_rx_complete()
+>   arm64: dts: renesas: Fix whitespace around assignments
+>   arm64: dts: renesas: Remove unneeded status from thermal nodes
+>   arm64: dts: renesas: r8a774a1: Enable DMA for SCIF2
+> 
+> Hiroyuki Yokoyama (1):
+>   dmaengine: rcar-dmac: Update copyright information
+> 
+> Kazuya Mizuguchi (1):
+>   ravb: remove tx buffer addr 4byte alilgnment restriction for R-Car
+>     Gen3
+> 
+> Niklas S?derlund (1):
+>   mmc: renesas_sdhi_internal_dmac: set scatter/gather max segment size
+> 
+> Rob Herring (1):
+>   arm64: dts: Remove inconsistent use of 'arm,armv8' compatible string
+> 
+> Sergei Shtylyov (1):
+>   spi: sh-msiof: fix deferred probing
+> 
+> Simon Horman (1):
+>   ravb: Avoid unsupported internal delay mode for R-Car E3/D3
+> 
+> Vladimir Zapolskiy (2):
+>   gpio: rcar: reference device instead of platform device
+>   gpio: rcar: select General Output Register to set output states
+> 
+> Wolfram Sang (1):
+>   dmaengine: rcar-dmac: set scatter/gather max segment size
+> 
+>  .../devicetree/bindings/dma/renesas,usb-dmac.txt   |    1 +
+>  .../devicetree/bindings/net/can/rcar_can.txt       |    9 +-
+>  .../devicetree/bindings/phy/rcar-gen3-phy-usb3.txt |   10 +-
+>  .../bindings/thermal/rcar-gen3-thermal.txt         |    1 +
+>  .../devicetree/bindings/usb/renesas_usbhs.txt      |    3 +-
+>  Documentation/devicetree/bindings/usb/usb-xhci.txt |    5 +-
+>  arch/arm64/boot/dts/renesas/r8a774a1.dtsi          | 1695
+> ++++++++++++++++++++
+>  drivers/clk/renesas/renesas-cpg-mssr.c             |   12 +-
+>  drivers/dma/sh/rcar-dmac.c                         |    7 +-
+>  drivers/gpio/gpio-rcar.c                           |   38 +-
+>  drivers/mmc/host/renesas_sdhi_internal_dmac.c      |    8 +
+>  drivers/net/ethernet/renesas/ravb.h                |    6 +-
+>  drivers/net/ethernet/renesas/ravb_main.c           |  158 +-
+>  drivers/soc/renesas/rcar-sysc.c                    |   65 +-
+>  drivers/spi/spi-sh-msiof.c                         |    4 +-
+>  drivers/thermal/rcar_gen3_thermal.c                |    1 +
+>  drivers/tty/serial/sh-sci.c                        |   47 +-
+>  17 files changed, 1911 insertions(+), 159 deletions(-)  create mode
+> 100644 arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+> 
+> --
+> 2.7.4
+> 
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
