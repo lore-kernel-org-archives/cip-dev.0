@@ -1,53 +1,45 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Thu, 29 Aug 2019 18:02:15 +0100
-Subject: [cip-dev] [PATCH/RFC 4.19.y-cip v2 10/51] pinctrl: sh-pfc: Validate
-	enum IDs for regs with fixed-width fields
+Date: Thu, 29 Aug 2019 18:02:10 +0100
+Subject: [cip-dev] [PATCH/RFC 4.19.y-cip v2 05/51] pinctrl: sh-pfc: Make
+	pinmux_cfg_reg.var_field_width[] variable-length
 In-Reply-To: <1567098176-1242-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1567098176-1242-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1567098176-1242-11-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1567098176-1242-6-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit c481c8178420b8cc8b188807fe6eee8b069ce2d8 upstream.
+commit f83f97684a737f66c9a10437544c92e3436ca4e0 upstream.
 
-Add build-time checks to the PINMUX_CFG_REG() and PINMUX_DATA_REG()
-macros, to ensure the number of provided enum IDs is correct.
+pinmux_cfg_reg.var_field_width[] is actually a variable-length array,
+terminated by a zero, and counting at most r_width entries.
+Usually the number of entries is much smaller than r_width, so the
+ability to catch bugs at compile time through an "excess elements in
+array initializer" warning is fairly limited.
 
-This helps catching bugs early.
+Hence make the array variable-length, decreasing kernel size slightly.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/pinctrl/sh-pfc/sh_pfc.h | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/pinctrl/sh-pfc/sh_pfc.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-index e97d0a4..c02b095 100644
+index 6d3430c..0e39fad 100644
 --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
 +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -133,7 +133,9 @@ struct pinmux_cfg_reg {
+@@ -145,8 +145,7 @@ struct pinmux_cfg_reg {
   */
- #define PINMUX_CFG_REG(name, r, r_width, f_width, ids)			\
- 	.reg = r, .reg_width = r_width,					\
--	.field_width = f_width + BUILD_BUG_ON_ZERO(r_width % f_width),	\
-+	.field_width = f_width + BUILD_BUG_ON_ZERO(r_width % f_width) +	\
-+	BUILD_BUG_ON_ZERO(sizeof((const u16 []) { ids }) / sizeof(u16) != \
-+			  (r_width / f_width) * (1 << f_width)),	\
- 	.enum_ids = (const u16 [(r_width / f_width) * (1 << f_width)])	\
- 		{ ids }
+ #define PINMUX_CFG_REG_VAR(name, r, r_width, var_fw0, var_fwn...) \
+ 	.reg = r, .reg_width = r_width,	\
+-	.var_field_width = (const u8 [r_width]) \
+-		{ var_fw0, var_fwn, 0 }, \
++	.var_field_width = (const u8 []) { var_fw0, var_fwn, 0 }, \
+ 	.enum_ids = (const u16 [])
  
-@@ -199,7 +201,9 @@ struct pinmux_data_reg {
-  *          enum ID must be specified, all wrapped using the GROUP() macro.
-  */
- #define PINMUX_DATA_REG(name, r, r_width, ids)				\
--	.reg = r, .reg_width = r_width,					\
-+	.reg = r, .reg_width = r_width +				\
-+	BUILD_BUG_ON_ZERO(sizeof((const u16 []) { ids }) / sizeof(u16) != \
-+			  r_width),					\
- 	.enum_ids = (const u16 [r_width]) { ids }
- 
- struct pinmux_irq {
+ struct pinmux_drive_reg_field {
 -- 
 2.7.4
