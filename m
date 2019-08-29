@@ -1,89 +1,35 @@
-From: masashi.kudo@cybertrust.co.jp (masashi.kudo at cybertrust.co.jp)
-Date: Thu, 29 Aug 2019 07:13:33 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-In-Reply-To: <HK0PR01MB2979B0773899DBCBBCC00259E2A20@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-References: <HK0PR01MB2979932CAB05B2C9D36681E3E2A20@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-	<CAFa_k0js=QXXhrtif6ym+dSP6H9D63p=zA38kLbpBqfr6TDAyQ@mail.gmail.com>
-	<HK0PR01MB2979B0773899DBCBBCC00259E2A20@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-Message-ID: <CAFa_k0hLkO0-aencf6=QYvXmzR7VjGMPAdxTToxaVfYXp7kb-g@mail.gmail.com>
+From: Chris.Paterson2@renesas.com (Chris Paterson)
+Date: Thu, 29 Aug 2019 07:28:13 +0000
+Subject: [cip-dev] [PATCH 1/3] Change templagte directory name
+In-Reply-To: <OSAPR01MB3234CE92510D6A0DF333047992A30@OSAPR01MB3234.jpnprd01.prod.outlook.com>
+References: <20190828022619.3690-1-nobuhiro1.iwamatsu@toshiba.co.jp>
+	<TYAPR01MB2285770A2828D112504BF1FBB7A30@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+	<OSAPR01MB3234CE92510D6A0DF333047992A30@OSAPR01MB3234.jpnprd01.prod.outlook.com>
+Message-ID: <TYAPR01MB22852D42736AF1965C9FA0EFB7A20@TYAPR01MB2285.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-SZ-san,
 
-I am sorry, but it turned out that I need to withdraw my request for now.
-Let me propose our idea some later time.
-I am sorry to confuse you.
 
-Best regards,
---
-M. Kudo
+> >
+> > Thank you for this patch. Do you think you could create a merge request
+> > in gitlab[0] so we can do the review there?
+> > For this patch and the other two in the series.
+> >
+> > [0]
+> > https://gitlab.com/cip-project/cip-testing/linux-cip-ci/merge_reques
+> > ts
+> 
+> Ok, I just sent MR via gitlab.
 
-2019?8?29?(?) 13:05 SZ Lin (???) <SZ.Lin at moxa.com<mailto:SZ.Lin@moxa.com>>:
-Hi Kudo-san,
+Thanks!
 
-Noted, thank you for your heads up.
+Chris
 
-SZ
-
-From: masashi.kudo@cybertrust.co.jp<mailto:masashi.kudo@cybertrust.co.jp> <masashi.kudo at cybertrust.co.jp<mailto:masashi.kudo@cybertrust.co.jp>>
-Sent: Thursday, August 29, 2019 10:51 AM
-To: SZ Lin (???) <SZ.Lin at moxa.com<mailto:SZ.Lin@moxa.com>>
-Cc: cip-dev at lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>
-Subject: Re: [cip-dev] CIP IRC weekly meeting today
-
-Hello, SZ-san, All,
-
-Cybertrust has some proposal to the CIP kernel team.
-I would appreciate it if you can add "Cybertrust Proposal" to the agenda.
-
-Best regards,
---
-M. Kudo
-Cybertrust Japan Co., Ltd.
-
-2019?8?29?(?) 10:31 SZ Lin (???) <SZ.Lin at moxa.com<mailto:SZ.Lin@moxa.com>>:
-Hi all,
-
-Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
-
-*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=8&day29&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=24
-
-US-West US-East   UK     DE     TW     JP
-02:00    05:00   10:00   11:00   17:00   18:00
-
-Channel:
-* irc:chat.freenode.net:6667/cip<http://chat.freenode.net:6667/cip>
-
-Agenda:
-
-* Action item
-1. Provide the cases to cip-testing to build up the test environment - Iwamatsu-san
-
-2. Ask cip-dev which configurations need testing - patersonc
-
-3. Test LTS (pre)releases directly ? patersonc
-
-4. Discuss and make a decision on default compiler's options - kernel team
-
-5. Look for the new maintainer of CIP security tracker ? kernel team
-
-* Kernel maintenance updates
-* Kernel testing
-* CIP Core
-* Software update
-* AOB
-
-The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
-
-Best regards,
-
-SZ Lin, Moxa.
-_______________________________________________
-cip-dev mailing list
-cip-dev at lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>
-https://lists.cip-project.org/mailman/listinfo/cip-dev
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190829/ea87d6da/attachment-0001.html>
+> 
+> >
+> > Kind regards, Chris
+> >
+> 
+> Best regards,
+>   Nobuhiro
