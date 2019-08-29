@@ -1,51 +1,30 @@
 From: pavel@denx.de (Pavel Machek)
-Date: Thu, 29 Aug 2019 10:09:14 +0200
-Subject: [cip-dev] [PATCH/RFC 4.19.y-cip 07/41] pinctrl: sh-pfc: Absorb
- enum IDs in PINMUX_CFG_REG() macro
-In-Reply-To: <1566991328-25476-8-git-send-email-fabrizio.castro@bp.renesas.com>
+Date: Thu, 29 Aug 2019 10:12:21 +0200
+Subject: [cip-dev] [PATCH/RFC 4.19.y-cip 00/41] Fast forward sh-pfc
+In-Reply-To: <1566991328-25476-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1566991328-25476-1-git-send-email-fabrizio.castro@bp.renesas.com>
-	<1566991328-25476-8-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <20190829080914.GC10041@amd>
+Message-ID: <20190829081221.GD10041@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi!
 
-> commit efca8da0c5fcc7f5617bab769faa595f7efdc593 upstream.
-> 
-> Currently the PINMUX_CFG_REG() macro must be followed by initialization
-> data, specifying all enum IDs.  Hence the macro itself does not know
-> anything about the enum IDs, preventing the macro from performing any
-> validation on it.
-> 
-> Make the macro accept the enum IDs as a parameter, and update all users.
-> Note that array data enclosed by curly braces cannot be passed to a
-> macro as a parameter, hence the enum IDs are wrapped using a new macro
-> GROUPS().
+> they have made good progress upstream with the development of sh-pfc,
+> and although the functionality of the drivers hasn't changed much,
+> the code looks fairly different. This means that backporting patches
+> to SoC specific driver files will be increasingly hard and error
+> prone, unless we fast-forward the code base for 4.19.y-cip, hence
+> this series.
+> What do you gus think? Comments welcome!
 
-The macro is called "GROUP" and we already have macros with same name
-(but different functionality) in the tree.
+I reviewed the patches... and it is interesting how much magic can be
+done with preprocessor.
 
-One of the other uses is ./arch/sh/kernel/cpu/sh4a/setup-sh7734.c. Not
-sure if it is huge problem, but it might be a bit confusing...
-
-./drivers/pinctrl/sirf/pinctrl-atlas7.c:#define GROUP(n, p)  \
-./drivers/pinctrl/meson/pinctrl-meson-axg-pmx.h:#define GROUP(grp, f)
-./drivers/pinctrl/meson/pinctrl-meson8-pmx.h:#define GROUP(grp, r, b)
-./drivers/input/rmi4/rmi_driver.h:#define GROUP(_attrs) { \
-./arch/sh/kernel/cpu/sh4a/setup-sh7734.c:#define GROUP 0
+I do not see anything preventing the merge, but they were marked [rfc]
+so I'm not doing that yet. Let me know if I should.
 
 Best regards,
 								Pavel
-
-> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-> @@ -118,20 +118,24 @@ struct pinmux_cfg_reg {
->  	const u8 *var_field_width;
->  };
->  
-> +#define GROUP(...)	__VA_ARGS__
-> +
-
 -- 
 DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
@@ -55,4 +34,4 @@ Name: signature.asc
 Type: application/pgp-signature
 Size: 181 bytes
 Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190829/28286036/attachment.sig>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190829/655ee367/attachment.sig>
