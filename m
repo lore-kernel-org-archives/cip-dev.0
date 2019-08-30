@@ -1,54 +1,137 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Fri, 30 Aug 2019 08:31:57 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 4/5] arm64: dts: renesas:
-	hihope-common: Add pincontrol support to scif2/scif clock
+Date: Fri, 30 Aug 2019 08:31:58 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 5/5] arm64: dts: renesas: Add HiHope
+	RZ/G2M sub board support
 In-Reply-To: <1567150318-36833-1-git-send-email-biju.das@bp.renesas.com>
 References: <1567150318-36833-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1567150318-36833-5-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1567150318-36833-6-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit 871c13a443de63c18c26f5ad725da58fc8e19f13 upstream.
+commit 7433f1fb8ec8fe40d069215ae431d5c33235bfb5 upstream.
 
-This patch adds pincontrol support to scif2/scif clock.
+The HiHope RZ/G2M sub board sits below the HiHope RZ/G2M main board.
+This patch also adds ethernet support along with a dtsi common to
+both HiHope RZ/G2M and RZ/G2N sub boards.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/hihope-common.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/arm64/boot/dts/renesas/Makefile               |  1 +
+ arch/arm64/boot/dts/renesas/hihope-common.dtsi     |  2 +
+ arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi    | 55 ++++++++++++++++++++++
+ .../boot/dts/renesas/r8a774a1-hihope-rzg2m-ex.dts  | 15 ++++++
+ 4 files changed, 73 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-ex.dts
 
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index cd986fa..c216d4e 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -1,5 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m.dtb
++dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m-ex.dtb
+ dtb-$(CONFIG_ARCH_R8A774C0) += r8a774c0-cat874.dtb r8a774c0-ek874.dtb
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-h3ulcb-kf.dtb
 diff --git a/arch/arm64/boot/dts/renesas/hihope-common.dtsi b/arch/arm64/boot/dts/renesas/hihope-common.dtsi
-index 5baf532..de206b7 100644
+index de206b7..4cc924d 100644
 --- a/arch/arm64/boot/dts/renesas/hihope-common.dtsi
 +++ b/arch/arm64/boot/dts/renesas/hihope-common.dtsi
-@@ -24,7 +24,25 @@
- 	clock-frequency = <32768>;
- };
+@@ -5,6 +5,8 @@
+  * Copyright (C) 2019 Renesas Electronics Corp.
+  */
  
++#include <dt-bindings/gpio/gpio.h>
++
+ / {
+ 	aliases {
+ 		serial0 = &scif2;
+diff --git a/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi b/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi
+new file mode 100644
+index 0000000..b1e45944
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi
+@@ -0,0 +1,55 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the RZ/G2[MN] HiHope sub board common parts
++ *
++ * Copyright (C) 2019 Renesas Electronics Corp.
++ */
++
++/ {
++	aliases {
++		ethernet0 = &avb;
++	};
++
++	chosen {
++		bootargs = "ignore_loglevel rw root=/dev/nfs ip=on";
++	};
++};
++
++&avb {
++	pinctrl-0 = <&avb_pins>;
++	pinctrl-names = "default";
++	phy-handle = <&phy0>;
++	phy-mode = "rgmii-txid";
++	status = "okay";
++
++	phy0: ethernet-phy at 0 {
++		rxc-skew-ps = <1500>;
++		reg = <0>;
++		interrupt-parent = <&gpio2>;
++		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
++		reset-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;
++	};
++};
++
 +&pfc {
 +	pinctrl-0 = <&scif_clk_pins>;
 +	pinctrl-names = "default";
 +
-+	scif2_pins: scif2 {
-+		groups = "scif2_data_a";
-+		function = "scif2";
-+	};
++	avb_pins: avb {
++		mux {
++			groups = "avb_link", "avb_mdio", "avb_mii";
++			function = "avb";
++		};
 +
-+	scif_clk_pins: scif_clk {
-+		groups = "scif_clk_a";
-+		function = "scif_clk";
++		pins_mdio {
++			groups = "avb_mdio";
++			drive-strength = <24>;
++		};
++
++		pins_mii_tx {
++			pins = "PIN_AVB_TX_CTL", "PIN_AVB_TXC", "PIN_AVB_TD0",
++			       "PIN_AVB_TD1", "PIN_AVB_TD2", "PIN_AVB_TD3";
++			drive-strength = <12>;
++		};
 +	};
 +};
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-ex.dts b/arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-ex.dts
+new file mode 100644
+index 0000000..6e33a3b
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-ex.dts
+@@ -0,0 +1,15 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the HiHope RZ/G2M sub board
++ *
++ * Copyright (C) 2019 Renesas Electronics Corp.
++ */
 +
- &scif2 {
-+	pinctrl-0 = <&scif2_pins>;
-+	pinctrl-names = "default";
++#include "r8a774a1-hihope-rzg2m.dts"
++#include "hihope-rzg2-ex.dtsi"
 +
- 	status = "okay";
- };
- 
++/ {
++	model = "HopeRun HiHope RZ/G2M with sub board";
++	compatible = "hoperun,hihope-rzg2-ex", "hoperun,hihope-rzg2m",
++		     "renesas,r8a774a1";
++};
 -- 
 2.7.4
