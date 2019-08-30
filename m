@@ -1,137 +1,140 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Fri, 30 Aug 2019 08:31:58 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 5/5] arm64: dts: renesas: Add HiHope
-	RZ/G2M sub board support
-In-Reply-To: <1567150318-36833-1-git-send-email-biju.das@bp.renesas.com>
-References: <1567150318-36833-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1567150318-36833-6-git-send-email-biju.das@bp.renesas.com>
+From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
+Date: Fri, 30 Aug 2019 08:59:35 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip v2 56/57] arm64: dts: Remove
+ inconsistent use of 'arm, armv8' compatible string
+In-Reply-To: <1566999164-27898-57-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1566999164-27898-1-git-send-email-fabrizio.castro@bp.renesas.com>
+	<1566999164-27898-57-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <TY1PR01MB177044D5252F7954B4C9DF05C0BD0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit 7433f1fb8ec8fe40d069215ae431d5c33235bfb5 upstream.
+Hi,
 
-The HiHope RZ/G2M sub board sits below the HiHope RZ/G2M main board.
-This patch also adds ethernet support along with a dtsi common to
-both HiHope RZ/G2M and RZ/G2N sub boards.
+>It's not that important, but why is there a space between 'arm,' and 'armv8'
+>in subject?
+>Original subject does not have space.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/Makefile               |  1 +
- arch/arm64/boot/dts/renesas/hihope-common.dtsi     |  2 +
- arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi    | 55 ++++++++++++++++++++++
- .../boot/dts/renesas/r8a774a1-hihope-rzg2m-ex.dts  | 15 ++++++
- 4 files changed, 73 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi
- create mode 100644 arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-ex.dts
+It is actually VERY, VERY, important, as the email I have sent out doesn't contain the space.
+I have even run hexdump on the patch file on my disk, it confirms there is no space.
+I am replying to my own email, and as you can see, there is no space.
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index cd986fa..c216d4e 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -1,5 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m.dtb
-+dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m-ex.dtb
- dtb-$(CONFIG_ARCH_R8A774C0) += r8a774c0-cat874.dtb r8a774c0-ek874.dtb
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-h3ulcb-kf.dtb
-diff --git a/arch/arm64/boot/dts/renesas/hihope-common.dtsi b/arch/arm64/boot/dts/renesas/hihope-common.dtsi
-index de206b7..4cc924d 100644
---- a/arch/arm64/boot/dts/renesas/hihope-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/hihope-common.dtsi
-@@ -5,6 +5,8 @@
-  * Copyright (C) 2019 Renesas Electronics Corp.
-  */
- 
-+#include <dt-bindings/gpio/gpio.h>
-+
- / {
- 	aliases {
- 		serial0 = &scif2;
-diff --git a/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi b/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi
-new file mode 100644
-index 0000000..b1e45944
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi
-@@ -0,0 +1,55 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the RZ/G2[MN] HiHope sub board common parts
-+ *
-+ * Copyright (C) 2019 Renesas Electronics Corp.
-+ */
-+
-+/ {
-+	aliases {
-+		ethernet0 = &avb;
-+	};
-+
-+	chosen {
-+		bootargs = "ignore_loglevel rw root=/dev/nfs ip=on";
-+	};
-+};
-+
-+&avb {
-+	pinctrl-0 = <&avb_pins>;
-+	pinctrl-names = "default";
-+	phy-handle = <&phy0>;
-+	phy-mode = "rgmii-txid";
-+	status = "okay";
-+
-+	phy0: ethernet-phy at 0 {
-+		rxc-skew-ps = <1500>;
-+		reg = <0>;
-+		interrupt-parent = <&gpio2>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		reset-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;
-+	};
-+};
-+
-+&pfc {
-+	pinctrl-0 = <&scif_clk_pins>;
-+	pinctrl-names = "default";
-+
-+	avb_pins: avb {
-+		mux {
-+			groups = "avb_link", "avb_mdio", "avb_mii";
-+			function = "avb";
-+		};
-+
-+		pins_mdio {
-+			groups = "avb_mdio";
-+			drive-strength = <24>;
-+		};
-+
-+		pins_mii_tx {
-+			pins = "PIN_AVB_TX_CTL", "PIN_AVB_TXC", "PIN_AVB_TD0",
-+			       "PIN_AVB_TD1", "PIN_AVB_TD2", "PIN_AVB_TD3";
-+			drive-strength = <12>;
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-ex.dts b/arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-ex.dts
-new file mode 100644
-index 0000000..6e33a3b
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-ex.dts
-@@ -0,0 +1,15 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the HiHope RZ/G2M sub board
-+ *
-+ * Copyright (C) 2019 Renesas Electronics Corp.
-+ */
-+
-+#include "r8a774a1-hihope-rzg2m.dts"
-+#include "hihope-rzg2-ex.dtsi"
-+
-+/ {
-+	model = "HopeRun HiHope RZ/G2M with sub board";
-+	compatible = "hoperun,hihope-rzg2-ex", "hoperun,hihope-rzg2m",
-+		     "renesas,r8a774a1";
-+};
--- 
-2.7.4
+>The following patch have similar problem.
+>soc: renesas: rcar-sysc: Remove rcar_sysc_power_{down, up}() helpers
+
+Same thing here, there is no space in the email I have sent out, which means it's
+probably down to patchwork? Somehow a space gets automatically added, I wonder if
+this is happening with the code too?
+
+How do we find out if the problem is with patchwork?
+
+Thanks,
+Fab
+
+> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Sent: 28 August 2019 14:33
+> Subject: [cip-dev][PATCH 4.19.y-cip v2 56/57] arm64: dts: Remove inconsistent use of 'arm,armv8' compatible string
+> 
+> From: Rob Herring <robh@kernel.org>
+> 
+> commit 31af04cd60d3162a58213363fd740a2b0cf0a08e upstream.
+> 
+> The 'arm,armv8' compatible string is only for software models. It adds
+> little value otherwise and is inconsistently used as a fallback on some
+> platforms. Remove it from those platforms.
+> 
+> This fixes warnings generated by the DT schema.
+> 
+> Reported-by: Michal Simek <michal.simek@xilinx.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Acked-by: Antoine Tenart <antoine.tenart@bootlin.com>
+> Acked-by: Nishanth Menon <nm@ti.com>
+> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Acked-by: Chanho Min <chanho.min@lge.com>
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> Acked-by: Heiko Stuebner <heiko@sntech.de>
+> Acked-by: Simon Horman <horms+renesas@verge.net.au>
+> Acked-by: Tero Kristo <t-kristo@ti.com>
+> Acked-by: Wei Xu <xuwei5@hisilicon.com>
+> Acked-by: Liviu Dudau <liviu.dudau@arm.com>
+> Acked-by: Matthias Brugger <matthias.bgg@gmail.com>
+> Acked-by: Michal Simek <michal.simek@xilinx.com>
+> Acked-by: Scott Branden <scott.branden@broadcom.com>
+> Acked-by: Kevin Hilman <khilman@baylibre.com>
+> Acked-by: Chunyan Zhang <zhang.lyra@gmail.com>
+> Acked-by: Robert Richter <rrichter@cavium.com>
+> Acked-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+> Acked-by: Dinh Nguyen <dinguyen@kernel.org>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> [fab: dropped changes not related to r8a774a1.dtsi]
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+> index 1969649..a77de9e 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+> @@ -61,7 +61,7 @@
+>  		#size-cells = <0>;
+> 
+>  		a57_0: cpu at 0 {
+> -			compatible = "arm,cortex-a57", "arm,armv8";
+> +			compatible = "arm,cortex-a57";
+>  			reg = <0x0>;
+>  			device_type = "cpu";
+>  			power-domains = <&sysc R8A774A1_PD_CA57_CPU0>;
+> @@ -71,7 +71,7 @@
+>  		};
+> 
+>  		a57_1: cpu at 1 {
+> -			compatible = "arm,cortex-a57", "arm,armv8";
+> +			compatible = "arm,cortex-a57";
+>  			reg = <0x1>;
+>  			device_type = "cpu";
+>  			power-domains = <&sysc R8A774A1_PD_CA57_CPU1>;
+> @@ -81,7 +81,7 @@
+>  		};
+> 
+>  		a53_0: cpu at 100 {
+> -			compatible = "arm,cortex-a53", "arm,armv8";
+> +			compatible = "arm,cortex-a53";
+>  			reg = <0x100>;
+>  			device_type = "cpu";
+>  			power-domains = <&sysc R8A774A1_PD_CA53_CPU0>;
+> @@ -91,7 +91,7 @@
+>  		};
+> 
+>  		a53_1: cpu at 101 {
+> -			compatible = "arm,cortex-a53", "arm,armv8";
+> +			compatible = "arm,cortex-a53";
+>  			reg = <0x101>;
+>  			device_type = "cpu";
+>  			power-domains = <&sysc R8A774A1_PD_CA53_CPU1>;
+> @@ -101,7 +101,7 @@
+>  		};
+> 
+>  		a53_2: cpu at 102 {
+> -			compatible = "arm,cortex-a53", "arm,armv8";
+> +			compatible = "arm,cortex-a53";
+>  			reg = <0x102>;
+>  			device_type = "cpu";
+>  			power-domains = <&sysc R8A774A1_PD_CA53_CPU2>;
+> @@ -111,7 +111,7 @@
+>  		};
+> 
+>  		a53_3: cpu at 103 {
+> -			compatible = "arm,cortex-a53", "arm,armv8";
+> +			compatible = "arm,cortex-a53";
+>  			reg = <0x103>;
+>  			device_type = "cpu";
+>  			power-domains = <&sysc R8A774A1_PD_CA53_CPU3>;
+> --
+> 2.7.4
