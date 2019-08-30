@@ -1,50 +1,40 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Fri, 30 Aug 2019 07:26:19 +0000
-Subject: [cip-dev] [PATCH/RFC 4.19.y-cip 00/41] Fast forward sh-pfc
-In-Reply-To: <20190829223526.GB31270@amd>
-References: <1566991328-25476-1-git-send-email-fabrizio.castro@bp.renesas.com>
-	<20190829081221.GD10041@amd>
-	<TY1PR01MB1770129C698AAE461CFCE4FDC0A20@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-	<20190829094751.GB20258@amd>
-	<TY1PR01MB1770F6AE638C3F42AF85A480C0A20@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-	<TYAPR01MB228547C1D35538FE0A074410B7A20@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-	<20190829223526.GB31270@amd>
-Message-ID: <TYAPR01MB228594322C02C3BCC71A2A71B7BD0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+From: biju.das@bp.renesas.com (Biju Das)
+Date: Fri, 30 Aug 2019 08:31:53 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 0/5] Add HopeRun RZ/G2[M] main/sub
+	boards
+Message-ID: <1567150318-36833-1-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Pavel,
+This patch series add support for HopeRun RZ/G2[M] main/sub boards.
 
-> From: Pavel Machek <pavel@denx.de>
-> Sent: 29 August 2019 23:35
->
-> Hi!
->
-> > > > > Since nothing nasty was spotted during code review and it works ok, I
-> > > believe
-> > > > > merging this series could really help us with future development, so
-> yes
-> > > > > please, go ahead and merge.
-> > > >
-> > > > Ok, merged, and pushed out.
-> >
-> > Our CI is hitting some build errors with the latest v4.19-cip (commit
-> b11ac993) with the renesas shmobile_defconfig configurations:
-> > https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/283063646
-> > https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/283063654
->
-> Thanks for report. Applying two patches Ben identified did not do the
-> trick; compelete series did.
->
-> Let me know if something is still broken.
+This patch series is based on linux-4.19.y-cip and all the patches
+in this series are cherry-picked from linux rc tree.
 
-Looks okay to me.
+This patch series depend upon
+https://patchwork.kernel.org/project/cip-dev/list/?series=166545
 
-Thanks, Chris
 
->
-> Best regards,
-> ????? ??????? ??????? ??????? ??????? ??????? ??????? ??????? Pavel
-> --
-> DENX Software Engineering GmbH,????? Managing Director: Wolfgang Denk
-> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Biju Das (5):
+  dt-bindings: arm: renesas: Add HopeRun RZ/G2[M] boards
+  dt-bindings: Add vendor prefix for HopeRun
+  arm64: dts: renesas: Add HiHope RZ/G2M main board support
+  arm64: dts: renesas: hihope-common: Add pincontrol support to
+    scif2/scif clock
+  arm64: dts: renesas: Add HiHope RZ/G2M sub board support
+
+ Documentation/devicetree/bindings/arm/shmobile.txt |  5 ++
+ .../devicetree/bindings/vendor-prefixes.txt        |  1 +
+ arch/arm64/boot/dts/renesas/Makefile               |  2 +
+ arch/arm64/boot/dts/renesas/hihope-common.dtsi     | 53 +++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi    | 55 ++++++++++++++++++++++
+ .../boot/dts/renesas/r8a774a1-hihope-rzg2m-ex.dts  | 15 ++++++
+ .../boot/dts/renesas/r8a774a1-hihope-rzg2m.dts     | 26 ++++++++++
+ 7 files changed, 157 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/hihope-common.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-ex.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m.dts
+
+-- 
+2.7.4
