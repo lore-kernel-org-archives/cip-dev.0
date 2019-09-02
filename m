@@ -1,71 +1,40 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Mon,  2 Sep 2019 16:57:37 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 03/22] watchdog: renesas_wdt: don't
-	keep timer value during suspend/resume
+Date: Mon,  2 Sep 2019 16:57:38 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 04/22] watchdog: renesas_wdt: drop
+	superfluous glob pattern
 In-Reply-To: <1567439876-1886-1-git-send-email-biju.das@bp.renesas.com>
 References: <1567439876-1886-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1567439876-1886-4-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1567439876-1886-5-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit 9077123c68074619177c9a8d3adce2527bd94179 upstream.
+commit e18431264954247f76a8e7aeac3b68421e35e65a upstream.
 
-After discussing this mail thread [1] again, we concluded that giving
-userspace enough time to prepare is our favourite option. So, do not
-keep the time value when suspended but reset it when resuming.
-
-[1] https://patchwork.kernel.org/patch/10252209/
+If we want to match all revisions, it is enough to leave the field
+empty.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/watchdog/renesas_wdt.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ drivers/watchdog/renesas_wdt.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-index 777c5a1..a579a23 100644
+index a579a23..c6ce244 100644
 --- a/drivers/watchdog/renesas_wdt.c
 +++ b/drivers/watchdog/renesas_wdt.c
-@@ -51,7 +51,6 @@ struct rwdt_priv {
- 	void __iomem *base;
- 	struct watchdog_device wdev;
- 	unsigned long clk_rate;
--	u16 time_left;
- 	u8 cks;
- };
- 
-@@ -271,10 +270,9 @@ static int __maybe_unused rwdt_suspend(struct device *dev)
- {
- 	struct rwdt_priv *priv = dev_get_drvdata(dev);
- 
--	if (watchdog_active(&priv->wdev)) {
--		priv->time_left = readw(priv->base + RWTCNT);
-+	if (watchdog_active(&priv->wdev))
- 		rwdt_stop(&priv->wdev);
--	}
-+
- 	return 0;
- }
- 
-@@ -282,10 +280,9 @@ static int __maybe_unused rwdt_resume(struct device *dev)
- {
- 	struct rwdt_priv *priv = dev_get_drvdata(dev);
- 
--	if (watchdog_active(&priv->wdev)) {
-+	if (watchdog_active(&priv->wdev))
- 		rwdt_start(&priv->wdev);
--		rwdt_write(priv, priv->time_left, RWTCNT);
--	}
-+
- 	return 0;
- }
- 
+@@ -154,7 +154,6 @@ static const struct soc_device_attribute rwdt_quirks_match[] = {
+ 		.data = (void *)1,	/* needs single CPU */
+ 	}, {
+ 		.soc_id = "r8a7792",
+-		.revision = "*",
+ 		.data = (void *)0,	/* needs SMP disabled */
+ 	},
+ 	{ /* sentinel */ }
 -- 
 2.7.4
