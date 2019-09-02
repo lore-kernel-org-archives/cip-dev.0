@@ -1,42 +1,103 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Mon,  2 Sep 2019 16:57:43 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 09/22] clk: renesas: r8a774a1: Add TMU
-	clock
+Date: Mon,  2 Sep 2019 16:57:44 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 10/22] arm64: dts: renesas: r8a774a1:
+	Add TMU device nodes
 In-Reply-To: <1567439876-1886-1-git-send-email-biju.das@bp.renesas.com>
 References: <1567439876-1886-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1567439876-1886-10-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1567439876-1886-11-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-commit c1324171a9d1771d3610cd13c952b981d52317df upstream.
+commit 67e291362a759be998c43cbd35b20ac3fa9add4b upstream.
 
-This patch adds the TMU clocks to the R8A774A1 SoC.
+This patch adds TMU[01234] device tree nodes to the r8a774a1
+SoC specific DT.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/clk/renesas/r8a774a1-cpg-mssr.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 65 +++++++++++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
 
-diff --git a/drivers/clk/renesas/r8a774a1-cpg-mssr.c b/drivers/clk/renesas/r8a774a1-cpg-mssr.c
-index 76ed7d1..e05bfa2 100644
---- a/drivers/clk/renesas/r8a774a1-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a774a1-cpg-mssr.c
-@@ -113,6 +113,11 @@ static const struct cpg_core_clk r8a774a1_core_clks[] __initconst = {
- };
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+index f9f40ed..b6c755b 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+@@ -447,6 +447,71 @@
+ 			resets = <&cpg 407>;
+ 		};
  
- static const struct mssr_mod_clk r8a774a1_mod_clks[] __initconst = {
-+	DEF_MOD("tmu4",			 121,	R8A774A1_CLK_S0D6),
-+	DEF_MOD("tmu3",			 122,	R8A774A1_CLK_S3D2),
-+	DEF_MOD("tmu2",			 123,	R8A774A1_CLK_S3D2),
-+	DEF_MOD("tmu1",			 124,	R8A774A1_CLK_S3D2),
-+	DEF_MOD("tmu0",			 125,	R8A774A1_CLK_CP),
- 	DEF_MOD("fdp1-0",		 119,	R8A774A1_CLK_S0D1),
- 	DEF_MOD("scif5",		 202,	R8A774A1_CLK_S3D4),
- 	DEF_MOD("scif4",		 203,	R8A774A1_CLK_S3D4),
++		tmu0: timer at e61e0000 {
++			compatible = "renesas,tmu-r8a774a1", "renesas,tmu";
++			reg = <0 0xe61e0000 0 0x30>;
++			interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 125>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
++			resets = <&cpg 125>;
++			status = "disabled";
++		};
++
++		tmu1: timer at e6fc0000 {
++			compatible = "renesas,tmu-r8a774a1", "renesas,tmu";
++			reg = <0 0xe6fc0000 0 0x30>;
++			interrupts = <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 124>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
++			resets = <&cpg 124>;
++			status = "disabled";
++		};
++
++		tmu2: timer at e6fd0000 {
++			compatible = "renesas,tmu-r8a774a1", "renesas,tmu";
++			reg = <0 0xe6fd0000 0 0x30>;
++			interrupts = <GIC_SPI 303 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 123>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
++			resets = <&cpg 123>;
++			status = "disabled";
++		};
++
++		tmu3: timer at e6fe0000 {
++			compatible = "renesas,tmu-r8a774a1", "renesas,tmu";
++			reg = <0 0xe6fe0000 0 0x30>;
++			interrupts = <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 122>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
++			resets = <&cpg 122>;
++			status = "disabled";
++		};
++
++		tmu4: timer at ffc00000 {
++			compatible = "renesas,tmu-r8a774a1", "renesas,tmu";
++			reg = <0 0xffc00000 0 0x30>;
++			interrupts = <GIC_SPI 406 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 407 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 408 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 121>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
++			resets = <&cpg 121>;
++			status = "disabled";
++		};
++
+ 		i2c0: i2c at e6500000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
 -- 
 2.7.4
