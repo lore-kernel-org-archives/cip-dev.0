@@ -1,149 +1,62 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Mon,  2 Sep 2019 16:57:52 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 18/22] arm64: dts: renesas: r8a774a1:
-	Add operating points
+Date: Mon,  2 Sep 2019 16:57:53 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 19/22] arm64: dts: renesas: r8a774a1:
+	Add CPU topology on r8a774a1 SoC
 In-Reply-To: <1567439876-1886-1-git-send-email-biju.das@bp.renesas.com>
 References: <1567439876-1886-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1567439876-1886-19-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1567439876-1886-20-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+commit 7b996955e514bd3639419c1e725bc3b69c96bd05 upstream.
 
-commit 800037e815b91d8c9ad67906d18129e79a2cfcba upstream.
+This patch adds the "cpu-map" into r8a774a1 composed of multi-cluster. This
+definition is used to parse the cpu topology.
 
-The RZ/G2M (a.k.a. r8a774a1) comes with two clusters of
-processors, similarly to the r8a7796.
-The first cluster is made of A57s, the second cluster is
-made of A53s.
+Based on work by Gaku Inami <gaku.inami.xw@bp.renesas.com> for r8a7796 SoC.
 
-The operating points for the cluster with the A57s are:
-
- Frequency | Voltage
------------|---------
- 500 MHz   | 0.82V
- 1.0 GHz   | 0.82V
- 1.5 GHz   | 0.82V
-
-The operating points for the cluster with the A53s are:
-
- Frequency | Voltage
------------|---------
- 800 MHz   | 0.82V
- 1.0 GHz   | 0.82V
- 1.2 GHz   | 0.82V
-
-This patch adds the definitions for the operating points
-to the SoC specific DT.
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 48 +++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index b6c755b..e44c180 100644
+index e44c180..50f3f17 100644
 --- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -56,6 +56,48 @@
- 		clock-frequency = <0>;
- 	};
- 
-+	cluster0_opp: opp_table0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp-500000000 {
-+			opp-hz = /bits/ 64 <500000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-1000000000 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-1500000000 {
-+			opp-hz = /bits/ 64 <1500000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+	};
-+
-+	cluster1_opp: opp_table1 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp-800000000 {
-+			opp-hz = /bits/ 64 <800000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-1000000000 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-1200000000 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+	};
-+
- 	cpus {
+@@ -102,6 +102,32 @@
  		#address-cells = <1>;
  		#size-cells = <0>;
-@@ -68,6 +110,7 @@
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R8A774A1_CLK_Z>;
-+			operating-points-v2 = <&cluster0_opp>;
- 		};
  
- 		a57_1: cpu at 1 {
-@@ -78,6 +121,7 @@
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R8A774A1_CLK_Z>;
-+			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
- 		a53_0: cpu at 100 {
-@@ -88,6 +132,7 @@
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R8A774A1_CLK_Z2>;
-+			operating-points-v2 = <&cluster1_opp>;
- 		};
- 
- 		a53_1: cpu at 101 {
-@@ -98,6 +143,7 @@
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R8A774A1_CLK_Z2>;
-+			operating-points-v2 = <&cluster1_opp>;
- 		};
- 
- 		a53_2: cpu at 102 {
-@@ -108,6 +154,7 @@
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R8A774A1_CLK_Z2>;
-+			operating-points-v2 = <&cluster1_opp>;
- 		};
- 
- 		a53_3: cpu at 103 {
-@@ -118,6 +165,7 @@
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R8A774A1_CLK_Z2>;
-+			operating-points-v2 = <&cluster1_opp>;
- 		};
- 
- 		L2_CA57: cache-controller-0 {
++		cpu-map {
++			cluster0 {
++				core0 {
++					cpu = <&a57_0>;
++				};
++				core1 {
++					cpu = <&a57_1>;
++				};
++			};
++
++			cluster1 {
++				core0 {
++					cpu = <&a53_0>;
++				};
++				core1 {
++					cpu = <&a53_1>;
++				};
++				core2 {
++					cpu = <&a53_2>;
++				};
++				core3 {
++					cpu = <&a53_3>;
++				};
++			};
++		};
++
+ 		a57_0: cpu at 0 {
+ 			compatible = "arm,cortex-a57";
+ 			reg = <0x0>;
 -- 
 2.7.4
