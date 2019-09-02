@@ -1,111 +1,149 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Mon,  2 Sep 2019 16:57:51 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 17/22] thermal: rcar_gen3_thermal:
-	Update temperature conversion method
+Date: Mon,  2 Sep 2019 16:57:52 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 18/22] arm64: dts: renesas: r8a774a1:
+	Add operating points
 In-Reply-To: <1567439876-1886-1-git-send-email-biju.das@bp.renesas.com>
 References: <1567439876-1886-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1567439876-1886-18-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1567439876-1886-19-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-commit 6a310f8f97bb8bc2e2bb9db6f49a1b8678c8d144 upstream.
+commit 800037e815b91d8c9ad67906d18129e79a2cfcba upstream.
 
-Update the formula to calculate temperature:
-Currently, current TEMP is calculated as
-average of val1 (is calculated by formula 1)
-and val2 (is calculated by formula 2). But,
-as description in HWM (chapter 10A.3.1.2 Normal Mode.)
+The RZ/G2M (a.k.a. r8a774a1) comes with two clusters of
+processors, similarly to the r8a7796.
+The first cluster is made of A57s, the second cluster is
+made of A53s.
 
-If (TEMP_CODE < THCODE2[11:0]) CTEMP value should be val1.
-If (TEMP_CODE > THCODE2[11:0]) CTEMP value should be val2.
+The operating points for the cluster with the A57s are:
 
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+ Frequency | Voltage
+-----------|---------
+ 500 MHz   | 0.82V
+ 1.0 GHz   | 0.82V
+ 1.5 GHz   | 0.82V
+
+The operating points for the cluster with the A53s are:
+
+ Frequency | Voltage
+-----------|---------
+ 800 MHz   | 0.82V
+ 1.0 GHz   | 0.82V
+ 1.2 GHz   | 0.82V
+
+This patch adds the definitions for the operating points
+to the SoC specific DT.
+
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/thermal/rcar_gen3_thermal.c | 28 ++++++++++++++++++----------
- 1 file changed, 18 insertions(+), 10 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 48 +++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index ad3908a..c67147e 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -62,6 +62,13 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+index b6c755b..e44c180 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+@@ -56,6 +56,48 @@
+ 		clock-frequency = <0>;
+ 	};
  
- #define TSC_MAX_NUM	3
- 
-+/* default THCODE values if FUSEs are missing */
-+static const int thcode[TSC_MAX_NUM][3] = {
-+	{ 3397, 2800, 2221 },
-+	{ 3393, 2795, 2216 },
-+	{ 3389, 2805, 2237 },
-+};
++	cluster0_opp: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
 +
- /* Structure for thermal temperature calculation */
- struct equation_coefs {
- 	int a1;
-@@ -77,6 +84,7 @@ struct rcar_gen3_thermal_tsc {
- 	int low;
- 	int high;
- 	int tj_t;
-+	int id; /* thermal channel id */
- };
++		opp-500000000 {
++			opp-hz = /bits/ 64 <500000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1500000000 {
++			opp-hz = /bits/ 64 <1500000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++	};
++
++	cluster1_opp: opp_table1 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp-800000000 {
++			opp-hz = /bits/ 64 <800000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1200000000 {
++			opp-hz = /bits/ 64 <1200000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++	};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -68,6 +110,7 @@
+ 			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R8A774A1_CLK_Z>;
++			operating-points-v2 = <&cluster0_opp>;
+ 		};
  
- struct rcar_gen3_thermal_priv {
-@@ -126,7 +134,7 @@ static inline void rcar_gen3_thermal_write(struct rcar_gen3_thermal_tsc *tsc,
- #define TJ_3 -41
+ 		a57_1: cpu at 1 {
+@@ -78,6 +121,7 @@
+ 			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R8A774A1_CLK_Z>;
++			operating-points-v2 = <&cluster0_opp>;
+ 		};
  
- static void rcar_gen3_thermal_calc_coefs(struct rcar_gen3_thermal_tsc *tsc,
--					 int *ptat, int *thcode,
-+					 int *ptat, const int *thcode,
- 					 int ths_tj_1)
- {
- 	/* TODO: Find documentation and document constant calculation formula */
-@@ -160,15 +168,19 @@ static int rcar_gen3_thermal_round(int temp)
- static int rcar_gen3_thermal_get_temp(void *devdata, int *temp)
- {
- 	struct rcar_gen3_thermal_tsc *tsc = devdata;
--	int mcelsius, val1, val2;
-+	int mcelsius, val;
- 	u32 reg;
+ 		a53_0: cpu at 100 {
+@@ -88,6 +132,7 @@
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R8A774A1_CLK_Z2>;
++			operating-points-v2 = <&cluster1_opp>;
+ 		};
  
- 	/* Read register and convert to mili Celsius */
- 	reg = rcar_gen3_thermal_read(tsc, REG_GEN3_TEMP) & CTEMP_MASK;
+ 		a53_1: cpu at 101 {
+@@ -98,6 +143,7 @@
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R8A774A1_CLK_Z2>;
++			operating-points-v2 = <&cluster1_opp>;
+ 		};
  
--	val1 = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b1, tsc->coef.a1);
--	val2 = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b2, tsc->coef.a2);
--	mcelsius = FIXPT_TO_MCELSIUS((val1 + val2) / 2);
-+	if (reg <= thcode[tsc->id][1])
-+		val = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b1,
-+				tsc->coef.a1);
-+	else
-+		val = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b2,
-+				tsc->coef.a2);
-+	mcelsius = FIXPT_TO_MCELSIUS(val);
+ 		a53_2: cpu at 102 {
+@@ -108,6 +154,7 @@
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R8A774A1_CLK_Z2>;
++			operating-points-v2 = <&cluster1_opp>;
+ 		};
  
- 	/* Make sure we are inside specifications */
- 	if ((mcelsius < MCELSIUS(-40)) || (mcelsius > MCELSIUS(125)))
-@@ -351,11 +363,6 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 	/* default values if FUSEs are missing */
- 	/* TODO: Read values from hardware on supported platforms */
- 	int ptat[3] = { 2631, 1509, 435 };
--	int thcode[TSC_MAX_NUM][3] = {
--		{ 3397, 2800, 2221 },
--		{ 3393, 2795, 2216 },
--		{ 3389, 2805, 2237 },
--	};
+ 		a53_3: cpu at 103 {
+@@ -118,6 +165,7 @@
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R8A774A1_CLK_Z2>;
++			operating-points-v2 = <&cluster1_opp>;
+ 		};
  
- 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
-@@ -410,6 +417,7 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 			ret = PTR_ERR(tsc->base);
- 			goto error_unregister;
- 		}
-+		tsc->id = i;
- 
- 		priv->tscs[i] = tsc;
- 
+ 		L2_CA57: cache-controller-0 {
 -- 
 2.7.4
