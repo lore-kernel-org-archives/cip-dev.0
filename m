@@ -1,8 +1,8 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Mon,  2 Sep 2019 09:30:24 +0100
-Subject: [cip-dev] [PATCH] arm64: dts: Remove inconsistent use of 'arm,
-	armv8' compatible string
-Message-ID: <1567413024-22482-1-git-send-email-biju.das@bp.renesas.com>
+From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
+Date: Mon,  2 Sep 2019 09:48:22 +0100
+Subject: [cip-dev] [PATCH resend] arm64: dts: Remove inconsistent use of
+	'arm, armv8' compatible string
+Message-ID: <1567414102-4869-1-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
@@ -46,6 +46,9 @@ Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 [fab: dropped changes not related to r8a774a1.dtsi]
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
+I have put the CIP maintainers in CC, to try and troubleshoot
+where the mysterious spaces are coming from, please bear with me...
+
  arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 12 ++++++------
  1 file changed, 6 insertions(+), 6 deletions(-)
 
