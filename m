@@ -1,31 +1,34 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Mon, 2 Sep 2019 08:58:08 +0000
-Subject: [cip-dev] LAVA lab-cip-renesas down
-In-Reply-To: <TYAPR01MB22856D6CAE45530C84DFCD04B7BE0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-References: <TYAPR01MB22856D6CAE45530C84DFCD04B7BE0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-Message-ID: <TYAPR01MB2285DA642BE9388FA3B052B9B7BE0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+From: pavel@denx.de (Pavel Machek)
+Date: Mon, 2 Sep 2019 11:00:45 +0200
+Subject: [cip-dev] [PATCH resend] arm64: dts: Remove inconsistent use of
+ 'arm, armv8' compatible string
+In-Reply-To: <TY1PR01MB1770611703AA39BE5DCF14B8C0BE0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <1567414102-4869-1-git-send-email-fabrizio.castro@bp.renesas.com>
+	<TY1PR01MB1770611703AA39BE5DCF14B8C0BE0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+Message-ID: <20190902090045.GD19557@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-> From: cip-dev-bounces at lists.cip-project.org <cip-dev-bounces@lists.cip-
-> project.org> On Behalf Of Chris Paterson
-> Sent: 02 September 2019 08:26
+On Mon 2019-09-02 08:51:12, Fabrizio Castro wrote:
+> Hi Pavel,
 > 
-> Hello all,
-> 
-> The Renesas LAVA worker is currently down due to power outage. Hopefully
-> our office will be back online soon!
+> I have put you in CC (and kept the ML as recipient this time around), did you receive the patch
+> with or without the space?
 
-Power and lab-cip-renesas are back up now.
+I got just one copy of email, and it does not have [cip-dev] marking,
+so I assume it is the direct one.
 
-Sorry for the inconvenience.
+No extra space.
 
-Kind regards, Chris
-
-> 
-> Kind regards, Chris
-> 
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
+Best regards,
+								Pavel
+-- 
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 181 bytes
+Desc: Digital signature
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190902/ea389035/attachment.sig>
