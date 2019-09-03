@@ -1,8 +1,8 @@
 From: nobuhiro1.iwamatsu@toshiba.co.jp (Nobuhiro Iwamatsu)
-Date: Tue,  3 Sep 2019 14:22:22 +0900
-Subject: [cip-dev] [PATCH Test] arm64: dts: Remove inconsistent use of 'arm,
-	armv8' compatible string
-Message-ID: <20190903052222.21195-1-nobuhiro1.iwamatsu@toshiba.co.jp>
+Date: Tue,  3 Sep 2019 14:23:46 +0900
+Subject: [cip-dev] [PATCH Test 2nd] arm64: dts: Remove inconsistent use of
+	'arm, armv8' compatible string
+Message-ID: <20190903052346.21504-1-nobuhiro1.iwamatsu@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
