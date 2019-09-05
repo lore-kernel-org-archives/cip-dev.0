@@ -1,37 +1,53 @@
-From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
-Date: Thu, 5 Sep 2019 09:40:39 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip repost 0/6] Add eMMC/uSD/LEDs
- support to HiHope RZ/G2M
-In-Reply-To: <1567672637-29449-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1567672637-29449-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <OSAPR01MB3234FD9A498CFBEC38DA86C692BB0@OSAPR01MB3234.jpnprd01.prod.outlook.com>
+From: chris.paterson2@renesas.com (Chris Paterson)
+Date: Thu,  5 Sep 2019 17:22:51 +0100
+Subject: [cip-dev] [PATCH linux-4.19.y-cip] gitlab-ci: Start testing the
+	r8a774a1-hihope-rzg2m-ex device
+Message-ID: <20190905162254.24424-1-chris.paterson2@renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Fabrizio,
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Cc: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+---
 
-> -----Original Message-----
-> From: Fabrizio Castro [mailto:fabrizio.castro at bp.renesas.com]
-> Sent: Thursday, September 5, 2019 5:37 PM
-> To: cip-dev at lists.cip-project.org
-> Cc: Chris Paterson <Chris.Paterson2@renesas.com>; Biju Das
-> <biju.das@bp.renesas.com>; Fabrizio Castro
-> <fabrizio.castro@bp.renesas.com>; iwamatsu nobuhiro(?? ?? ???
-> ?????) <nobuhiro1.iwamatsu@toshiba.co.jp>; pavel at denx.de
-> Subject: [cip-dev][PATCH 4.19.y-cip repost 0/6] Add eMMC/uSD/LEDs
-> support to HiHope RZ/G2M
-> 
-> Dear All,
-> 
-> This series is to add eMMC/uSD/LEDs support to the HiHope RZ/G2M board,
-> and depends on series:
-> https://patchwork.kernel.org/cover/11126905/
-> 
+Please apply this patch either with or before the "Add HopeRun RZ/G2[M]
+main/sub boards" series:
+https://patchwork.kernel.org/project/cip-dev/list/?series=167529
 
-Applied, thanks.
+This will mean that the RZ/G2M board is tested in the LAVA lab as the code
+for it is added.
 
-> Thanks,
-> Fab
+It is safe to add this patch before the above series if that's easier.
 
-Best regards,
-  Nobuhiro
+
+ .gitlab-ci.yml | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+index 62562c8b6fbb..aec930a72edc 100644
+--- a/.gitlab-ci.yml
++++ b/.gitlab-ci.yml
+@@ -109,8 +109,8 @@ arm64_renesas_defconfig:
+     BUILD_ARCH: arm64
+     CONFIG: renesas_defconfig
+     CONFIG_LOC: cip-kernel-config
+-    DEVICES: r8a774c0-ek874
+-    DTBS: r8a774c0-ek874.dtb
++    DEVICES: r8a774c0-ek874 r8a774a1-hihope-rzg2m-ex
++    DTBS: r8a774c0-ek874.dtb r8a774a1-hihope-rzg2m-ex.dtb
+   script:
+     - /opt/build_kernel.sh
+   artifacts:
+@@ -208,8 +208,8 @@ arm64_defconfig:
+     BUILD_ARCH: arm64
+     CONFIG: defconfig
+     CONFIG_LOC: intree
+-    DEVICES: r8a774c0-ek874
+-    DTBS: r8a774c0-ek874.dtb
++    DEVICES: r8a774c0-ek874 r8a774a1-hihope-rzg2m-ex
++    DTBS: r8a774c0-ek874.dtb r8a774a1-hihope-rzg2m-ex.dtb
+   script:
+     - /opt/build_kernel.sh
+   artifacts:
+-- 
+2.17.1
