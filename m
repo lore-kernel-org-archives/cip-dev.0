@@ -1,75 +1,39 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 5 Sep 2019 01:34:04 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-Message-ID: <HK0PR01MB29794C1B4D0C534183326A49E2BB0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
+Date: Thu, 5 Sep 2019 03:53:20 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 0/6] Add eMMC/uSD/LEDs support to
+ HiHope RZ/G2M
+In-Reply-To: <1567609455-21533-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1567609455-21533-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <OSAPR01MB32348AC4263CF1319311E6A892BB0@OSAPR01MB3234.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+Hi Fabrizio,
 
+> -----Original Message-----
+> From: Fabrizio Castro [mailto:fabrizio.castro at bp.renesas.com]
+> Sent: Thursday, September 5, 2019 12:04 AM
+> Cc: Chris Paterson <Chris.Paterson2@renesas.com>; Biju Das
+> <biju.das@bp.renesas.com>; Fabrizio Castro
+> <fabrizio.castro@bp.renesas.com>; pavel at denx.de; iwamatsu nobuhiro(?
+> ? ?? ????????) <nobuhiro1.iwamatsu@toshiba.co.jp>
+> Subject: [cip-dev][PATCH 4.19.y-cip 0/6] Add eMMC/uSD/LEDs support to
+> HiHope RZ/G2M
+> 
+> Dear All,
+> 
+> This series is to add eMMC/uSD/LEDs support to the HiHope RZ/G2M board,
+> and depends on series:
+> https://patchwork.kernel.org/cover/11126905/
 
+Have you posted these patches to cip-dev by subject issue?
+Please put Pavel and me in CC and send an email to cip-dev.
+We will pick patches that came in out personal email.
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
-
-
-
-*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
-
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=9&day=5&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
-
-
-
-US-West US-East   UK     DE     TW     JP
-
-02:00    05:00   10:00   11:00   17:00   18:00
-
-
-
-Channel:
-
-* irc:chat.freenode.net:6667/cip
-
-
-
-Agenda:
-
-
-
-* Action item
-
-1. Provide the cases to cip-testing to build up the test environment - Iwamatsu-san
-
-
-
-2. Ask cip-dev which configurations need testing - patersonc
-
-
-
-3. Test LTS (pre)releases directly ? patersonc
-
-
-
-* Kernel maintenance updates
-
-* Kernel testing
-
-* CIP Core
-
-* Software update
-
-* AOB
-
-
-
-The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
-
+> 
+> Thanks,
+> Fab
 
 
 Best regards,
-
-
-
-SZ Lin, Moxa.
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190905/56460d42/attachment.html>
+  Nobuhiro
