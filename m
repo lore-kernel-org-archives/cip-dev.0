@@ -1,48 +1,40 @@
-From: chris.paterson2@renesas.com (Chris Paterson)
-Date: Thu,  5 Sep 2019 17:22:54 +0100
-Subject: [cip-dev] [PATCH linux-4.4.y-cip-rt] gitlab-ci: Start testing RT
-	configs
+From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
+Date: Fri, 6 Sep 2019 03:34:30 +0000
+Subject: [cip-dev] [PATCH linux-4.19.y-cip] gitlab-ci: Start testing the
+ r8a774a1-hihope-rzg2m-ex device
 In-Reply-To: <20190905162254.24424-1-chris.paterson2@renesas.com>
 References: <20190905162254.24424-1-chris.paterson2@renesas.com>
-Message-ID: <20190905162254.24424-4-chris.paterson2@renesas.com>
+Message-ID: <OSAPR01MB3234ADA15FAB8C09BDF3468992BA0@OSAPR01MB3234.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-x86: siemens_i386-rt.config
+Hi Chris,
 
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-Cc: Pavel Machek <pavel@denx.de>
----
- .gitlab-ci.yml | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+> -----Original Message-----
+> From: Chris Paterson [mailto:chris.paterson2 at renesas.com]
+> Sent: Friday, September 6, 2019 1:23 AM
+> To: cip-dev at lists.cip-project.org
+> Cc: Chris Paterson <chris.paterson2@renesas.com>; iwamatsu nobuhiro(?
+> ? ?? ????????) <nobuhiro1.iwamatsu@toshiba.co.jp>
+> Subject: [PATCH linux-4.19.y-cip] gitlab-ci: Start testing the
+> r8a774a1-hihope-rzg2m-ex device
+> 
+> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+> Cc: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+> ---
+> 
+> Please apply this patch either with or before the "Add HopeRun RZ/G2[M]
+> main/sub boards" series:
+> https://patchwork.kernel.org/project/cip-dev/list/?series=167529
+> 
+> This will mean that the RZ/G2M board is tested in the LAVA lab as the
+> code for it is added.
+> 
+> It is safe to add this patch before the above series if that's easier.
+> 
 
-diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-index 6348d1c47f6e..d4cd0c9bd2f3 100644
---- a/.gitlab-ci.yml
-+++ b/.gitlab-ci.yml
-@@ -262,6 +262,23 @@ x86_toshiba_defconfig:
-     paths:
-       - output
- 
-+# RT build configurations
-+rt_x86_siemens_i386-rt.config:
-+  stage: build
-+  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
-+  variables:
-+    BUILD_ARCH: x86
-+    CONFIG: siemens_i386-rt.config
-+    CONFIG_LOC: cip-kernel-config
-+    BUILD_ONLY: "true"
-+  script:
-+    - /opt/build_kernel.sh
-+  artifacts:
-+    name: "$CI_JOB_NAME"
-+    when: on_success
-+    paths:
-+      - output
-+
- # Extra build configurations
- arm_shmobile_defconfig:
-   stage: build
--- 
-2.17.1
+Applied, thanks.
+I pushed ci/linux-4.19.y-cip. If test was OK, I will push to linux-4.19.y-cip.
+
+Best regards,
+  Nobuhiro
