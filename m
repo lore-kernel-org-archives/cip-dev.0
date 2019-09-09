@@ -1,170 +1,92 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Mon,  9 Sep 2019 09:52:03 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 1/4] phy: renesas: rcar-gen3-usb2: fix
-	imbalance powered flag
+Date: Mon,  9 Sep 2019 09:52:04 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 2/4] arm64: dts: renesas: r8a774a1: Fix
+	USB 2.0 clocks
 In-Reply-To: <1568019126-45985-1-git-send-email-biju.das@bp.renesas.com>
 References: <1568019126-45985-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1568019126-45985-2-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1568019126-45985-3-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+commit a573cb676d54ce314f58e129f8d69ff09c9a92cf upstream.
 
-commit 5c9dc6379f539c68a0fdd39e39a9d359545649e9 upstream.
+Similarly to what done for the r8a7796 with commit 737e05bf034e
+("arm64: dts: renesas: revise properties for R-Car Gen3 SoCs'
+usb 2.0"), this patch lists the clock for the USB High-Speed Module
+(HS-USB) with the USB2.0 Host (EHCI/OHCI) IP DT node, and it lists
+the clock for the USB2.0 Host IP with the HS-USB module DT node.
 
-The powered flag should be set for any other phys anyway. Also
-the flag should be locked by the channel. Otherwise, after we have
-revised the device tree for the usb phy, the following warning
-happened during a second system suspend. And if the driver doesn't
-lock the flag, an imbalance is possible when enabling the regulator
-during system resume. So, this patch fixes the issues.
-
-< The warning >
-[   56.026531] unbalanced disables for USB20_VBUS0
-[   56.031108] WARNING: CPU: 3 PID: 513 at drivers/regulator/core.c:2593 _regula
-tor_disable+0xe0/0x1c0
-[   56.040146] Modules linked in: rcar_du_drm rcar_lvds drm_kms_helper drm drm_p
-anel_orientation_quirks vsp1 videobuf2_vmalloc videobuf2_dma_contig videobuf2_me
-mops videobuf2_v4l2 videobuf2_common videodev snd_soc_rcar renesas_usbhs snd_soc
-_audio_graph_card media snd_soc_simple_card_utils crct10dif_ce renesas_usb3 snd_
-soc_ak4613 rcar_fcp pwm_rcar usb_dmac phy_rcar_gen3_usb3 pwm_bl ipv6
-[   56.074047] CPU: 3 PID: 513 Comm: kworker/u16:19 Not tainted 5.2.0-rc3-00001-
-g5f20a19 #6
-[   56.082129] Hardware name: Renesas Salvator-X board based on r8a7795 ES2.0+ (
-DT)
-[   56.089524] Workqueue: events_unbound async_run_entry_fn
-[   56.094832] pstate: 40000005 (nZcv daif -PAN -UAO)
-[   56.099617] pc : _regulator_disable+0xe0/0x1c0
-[   56.104054] lr : _regulator_disable+0xe0/0x1c0
-[   56.108489] sp : ffff0000121c3ae0
-[   56.111796] x29: ffff0000121c3ae0 x28: 0000000000000000
-[   56.117102] x27: 0000000000000000 x26: ffff000010fe0e60
-[   56.122407] x25: 0000000000000002 x24: 0000000000000001
-[   56.127712] x23: 0000000000000002 x22: ffff8006f99d4000
-[   56.133017] x21: ffff8006f99cc000 x20: ffff8006f9846800
-[   56.138322] x19: ffff8006f9846800 x18: ffffffffffffffff
-[   56.143626] x17: 0000000000000000 x16: 0000000000000000
-[   56.148931] x15: ffff0000112f96c8 x14: ffff0000921c37f7
-[   56.154235] x13: ffff0000121c3805 x12: ffff000011312000
-[   56.159540] x11: 0000000005f5e0ff x10: ffff0000112f9f20
-[   56.164844] x9 : ffff0000112d3018 x8 : 00000000000001ad
-[   56.170149] x7 : 00000000ffffffcc x6 : ffff8006ff768180
-[   56.175453] x5 : ffff8006ff768180 x4 : 0000000000000000
-[   56.180758] x3 : ffff8006ff76ef10 x2 : ffff8006ff768180
-[   56.186062] x1 : 3d2eccbaead8fb00 x0 : 0000000000000000
-[   56.191367] Call trace:
-[   56.193808]  _regulator_disable+0xe0/0x1c0
-[   56.197899]  regulator_disable+0x40/0x78
-[   56.201820]  rcar_gen3_phy_usb2_power_off+0x3c/0x50
-[   56.206692]  phy_power_off+0x48/0xd8
-[   56.210263]  usb_phy_roothub_power_off+0x30/0x50
-[   56.214873]  usb_phy_roothub_suspend+0x1c/0x50
-[   56.219311]  hcd_bus_suspend+0x13c/0x168
-[   56.223226]  generic_suspend+0x4c/0x58
-[   56.226969]  usb_suspend_both+0x1ac/0x238
-[   56.230972]  usb_suspend+0xcc/0x170
-[   56.234455]  usb_dev_suspend+0x10/0x18
-[   56.238199]  dpm_run_callback.isra.6+0x20/0x68
-[   56.242635]  __device_suspend+0x110/0x308
-[   56.246637]  async_suspend+0x24/0xa8
-[   56.250205]  async_run_entry_fn+0x40/0xf8
-[   56.254210]  process_one_work+0x1e0/0x320
-[   56.258211]  worker_thread+0x40/0x450
-[   56.261867]  kthread+0x124/0x128
-[   56.265094]  ret_from_fork+0x10/0x18
-[   56.268661] ---[ end trace 86d7ec5de5c517af ]---
-[   56.273290] phy phy-ee080200.usb-phy.10: phy poweroff failed --> -5
-
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Fixes: 549b6b55b005 ("phy: renesas: rcar-gen3-usb2: enable/disable independent irqs")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Fixes: 4c2c2fb99876 ("arm64: dts: renesas: r8a774a1: Add USB2.0 phy and host(EHCI/OHCI) device nodes")
+Fixes: ed898d4fc19d ("arm64: dts: renesas: r8a774a1: Add USB-DMAC and HSUSB device nodes")
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 132ca20..fdc81b5 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -16,6 +16,7 @@
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/module.h>
-+#include <linux/mutex.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
-@@ -109,6 +110,7 @@ struct rcar_gen3_chan {
- 	struct rcar_gen3_phy rphys[NUM_OF_PHYS];
- 	struct regulator *vbus;
- 	struct work_struct work;
-+	struct mutex lock;	/* protects rphys[...].powered */
- 	enum usb_dr_mode dr_mode;
- 	bool extcon_host;
- 	bool is_otg_channel;
-@@ -440,15 +442,16 @@ static int rcar_gen3_phy_usb2_power_on(struct phy *p)
- 	struct rcar_gen3_chan *channel = rphy->ch;
- 	void __iomem *usb2_base = channel->base;
- 	u32 val;
--	int ret;
-+	int ret = 0;
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+index bdf4292..892db7d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+@@ -821,7 +821,7 @@
+ 				     "renesas,rcar-gen3-usbhs";
+ 			reg = <0 0xe6590000 0 0x200>;
+ 			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&cpg CPG_MOD 704>;
++			clocks = <&cpg CPG_MOD 704>, <&cpg CPG_MOD 703>;
+ 			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
+ 			       <&usb_dmac1 0>, <&usb_dmac1 1>;
+ 			dma-names = "ch0", "ch1", "ch2", "ch3";
+@@ -829,7 +829,7 @@
+ 			phys = <&usb2_phy0>;
+ 			phy-names = "usb";
+ 			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
+-			resets = <&cpg 704>;
++			resets = <&cpg 704>, <&cpg 703>;
+ 			status = "disabled";
+ 		};
  
-+	mutex_lock(&channel->lock);
- 	if (!rcar_gen3_are_all_rphys_power_off(channel))
--		return 0;
-+		goto out;
+@@ -1655,11 +1655,11 @@
+ 			compatible = "generic-ohci";
+ 			reg = <0 0xee080000 0 0x100>;
+ 			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&cpg CPG_MOD 703>;
++			clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>;
+ 			phys = <&usb2_phy0>;
+ 			phy-names = "usb";
+ 			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
+-			resets = <&cpg 703>;
++			resets = <&cpg 703>, <&cpg 704>;
+ 			status = "disabled";
+ 		};
  
- 	if (channel->vbus) {
- 		ret = regulator_enable(channel->vbus);
- 		if (ret)
--			return ret;
-+			goto out;
- 	}
+@@ -1679,12 +1679,12 @@
+ 			compatible = "generic-ehci";
+ 			reg = <0 0xee080100 0 0x100>;
+ 			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&cpg CPG_MOD 703>;
++			clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>;
+ 			phys = <&usb2_phy0>;
+ 			phy-names = "usb";
+ 			companion = <&ohci0>;
+ 			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
+-			resets = <&cpg 703>;
++			resets = <&cpg 703>, <&cpg 704>;
+ 			status = "disabled";
+ 		};
  
- 	val = readl(usb2_base + USB2_USBCTR);
-@@ -457,7 +460,10 @@ static int rcar_gen3_phy_usb2_power_on(struct phy *p)
- 	val &= ~USB2_USBCTR_PLL_RST;
- 	writel(val, usb2_base + USB2_USBCTR);
- 
-+out:
-+	/* The powered flag should be set for any other phys anyway */
- 	rphy->powered = true;
-+	mutex_unlock(&channel->lock);
- 
- 	return 0;
- }
-@@ -468,14 +474,18 @@ static int rcar_gen3_phy_usb2_power_off(struct phy *p)
- 	struct rcar_gen3_chan *channel = rphy->ch;
- 	int ret = 0;
- 
-+	mutex_lock(&channel->lock);
- 	rphy->powered = false;
- 
- 	if (!rcar_gen3_are_all_rphys_power_off(channel))
--		return 0;
-+		goto out;
- 
- 	if (channel->vbus)
- 		ret = regulator_disable(channel->vbus);
- 
-+out:
-+	mutex_unlock(&channel->lock);
-+
- 	return ret;
- }
- 
-@@ -642,6 +652,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	if (!phy_usb2_ops)
- 		return -EINVAL;
- 
-+	mutex_init(&channel->lock);
- 	for (i = 0; i < NUM_OF_PHYS; i++) {
- 		channel->rphys[i].phy = devm_phy_create(dev, NULL,
- 							phy_usb2_ops);
+@@ -1706,9 +1706,9 @@
+ 				     "renesas,rcar-gen3-usb2-phy";
+ 			reg = <0 0xee080200 0 0x700>;
+ 			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&cpg CPG_MOD 703>;
++			clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>;
+ 			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
+-			resets = <&cpg 703>;
++			resets = <&cpg 703>, <&cpg 704>;
+ 			#phy-cells = <0>;
+ 			status = "disabled";
+ 		};
 -- 
 2.7.4
