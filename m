@@ -1,67 +1,44 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Mon,  9 Sep 2019 09:52:06 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 4/4] arm64: dts: renesas:
-	hihope-common: Enable USB3.0
-In-Reply-To: <1568019126-45985-1-git-send-email-biju.das@bp.renesas.com>
-References: <1568019126-45985-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1568019126-45985-5-git-send-email-biju.das@bp.renesas.com>
+From: pavel@ucw.cz (Pavel Machek)
+Date: Tue, 10 Sep 2019 14:51:15 +0200
+Subject: [cip-dev] Reproducible Builds in August 2019
+In-Reply-To: <5b563474-b5ff-4de2-b370-6a25752c6c26@www.fastmail.com>
+References: <5b563474-b5ff-4de2-b370-6a25752c6c26@www.fastmail.com>
+Message-ID: <20190910125115.GA16598@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit 3ba27637d8019d5bfea4ca25302b0d08bb6a1736 upstream.
+Hi!
 
-This patch enables USB3.0 host/peripheral device node for the HiHope
-RZ/G2M board.
+> Media coverage & events
+> =======================
+> 
+> A backdoor was found in Webmin [2] a popular web-based application used
+> by sysadmins to remotely manage Unix-based systems. Whilst more details
+> can be found on upstream's dedicated exploit page [3], it appears that
+> the build toolchain was compromised. Especially of note is that the
+> exploit "did not show up in any Git diffs" and thus would not have
+> been
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/hihope-common.dtsi | 29 ++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+Page says:
 
-diff --git a/arch/arm64/boot/dts/renesas/hihope-common.dtsi b/arch/arm64/boot/dts/renesas/hihope-common.dtsi
-index 8373cf8..de1c75f 100644
---- a/arch/arm64/boot/dts/renesas/hihope-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/hihope-common.dtsi
-@@ -166,6 +166,11 @@
- 			bias-pull-up;
- 		};
- 	};
-+
-+	usb30_pins: usb30 {
-+		groups = "usb30";
-+		function = "usb30";
-+	};
- };
- 
- &rwdt {
-@@ -230,3 +235,27 @@
- 
- 	status = "okay";
- };
-+
-+&usb3_peri0 {
-+	phys = <&usb3_phy0>;
-+	phy-names = "usb";
-+
-+	companion = <&xhci0>;
-+
-+	status = "okay";
-+};
-+
-+&usb3_phy0 {
-+	status = "okay";
-+};
-+
-+&usb3s0_clk {
-+	clock-frequency = <100000000>;
-+};
-+
-+&xhci0 {
-+	pinctrl-0 = <&usb30_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
+# At some time in April 2018, the Webmin development build server was
+# exploited and a vulnerability added to the password_change.cgi
+# script. Because the timestamp on the file was set back, it did not
+# show up in any Git diffs. This was included in the Webmin 1.890
+# release.
+
+That sounds to me like source code was modified locally on the build
+server, not any sort of advanced toolchain compromise.
+
+Best regards,
+									Pavel
 -- 
-2.7.4
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 181 bytes
+Desc: Digital signature
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190910/1f02de85/attachment.sig>
