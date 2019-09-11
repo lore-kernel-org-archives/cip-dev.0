@@ -1,51 +1,40 @@
 From: pavel@denx.de (Pavel Machek)
-Date: Wed, 11 Sep 2019 15:39:41 +0200
-Subject: [cip-dev] [PATCH 4.19.y-cip 0/4] Add USB support
-In-Reply-To: <20190911075427.GA9517@amd>
-References: <1568019126-45985-1-git-send-email-biju.das@bp.renesas.com>
-	<20190911075427.GA9517@amd>
-Message-ID: <20190911133941.GA21458@amd>
+Date: Thu, 12 Sep 2019 00:14:52 +0200
+Subject: [cip-dev] gitlab: mirroring broken, tests failing
+Message-ID: <20190911221452.GA30802@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Wed 2019-09-11 09:54:27, Pavel Machek wrote:
-> Hi!
-> 
-> > This patch series add USB2.0/USB3.0 support for Hihope RZ/G2M platform.
-> > 
-> > This patch series is based on linux-4.19.y-cip and all the patches
-> > in this series are cherry-picked from linux rc tree.
-> > 
-> > Biju Das (3):
-> >   arm64: dts: renesas: r8a774a1: Fix USB 2.0 clocks
-> >   arm64: dts: renesas: hihope-common: Add USB 2.0 support
-> >   arm64: dts: renesas: hihope-common: Enable USB3.0
-> > 
-> > Yoshihiro Shimoda (1):
-> >   phy: renesas: rcar-gen3-usb2: fix imbalance powered flag
-> 
-> Nothing obviously wrong here. Let me apply the series...
+Hi!
 
-Hmm, so according to gitlab Iwamatsu already tried to apply the
-series, and got failure in self-test. Let me submit aa6c3bd087e5f39
-for testing to see if it is problem with testing or problem with code.
+I pushed kernel to kernel.org, bug I don't see it on gilab. Does
+mirroring need to be restarted?
 
-https://gitlab.com/cip-project/cip-kernel/linux-cip/pipelines/81577156
+Plus, tests are failing, and it seems to me that problem is with
+tests, not with
+kernel... https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/292957614
 
-...so it seems problem is with tests.
+Job submitted successfully as #3620.
+------------------------------
+Current job status:
+Job #3605: Submitted
+...
+Job #3620: Submitted
+Timed out waiting for test jobs to complete
+Errors during testing
 
-I applied the series and pushed it to kernel.org. Thanks!
+I tried submiting known-good kernel, 3bc5ed22, and it failed, too...
 
 Best regards,
 								Pavel
 
 -- 
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
 -------------- next part --------------
 A non-text attachment was scrubbed...
 Name: signature.asc
 Type: application/pgp-signature
 Size: 181 bytes
 Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190911/81f6199b/attachment.sig>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190912/4592c695/attachment.sig>
