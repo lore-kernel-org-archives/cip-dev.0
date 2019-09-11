@@ -1,36 +1,38 @@
-From: chris@reproducible-builds.org (Chris Lamb)
-Date: Tue, 10 Sep 2019 14:04:53 +0100
-Subject: [cip-dev] Reproducible Builds in August 2019
-In-Reply-To: <20190910125115.GA16598@amd>
-References: <5b563474-b5ff-4de2-b370-6a25752c6c26@www.fastmail.com>
-	<20190910125115.GA16598@amd>
-Message-ID: <d91a8013-7187-467c-a458-624b447ba3b5@www.fastmail.com>
+From: pavel@denx.de (Pavel Machek)
+Date: Wed, 11 Sep 2019 09:54:27 +0200
+Subject: [cip-dev] [PATCH 4.19.y-cip 0/4] Add USB support
+In-Reply-To: <1568019126-45985-1-git-send-email-biju.das@bp.renesas.com>
+References: <1568019126-45985-1-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <20190911075427.GA9517@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Pavel,
+Hi!
 
-> # At some time in April 2018, the Webmin development build server was
-> # exploited and a vulnerability added to the password_change.cgi
-> # script. Because the timestamp on the file was set back, it did not
-> # show up in any Git diffs. This was included in the Webmin 1.890
-> # release.
+> This patch series add USB2.0/USB3.0 support for Hihope RZ/G2M platform.
 > 
-> That sounds to me like source code was modified locally on the build
-> server, not any sort of advanced toolchain compromise.
+> This patch series is based on linux-4.19.y-cip and all the patches
+> in this series are cherry-picked from linux rc tree.
+> 
+> Biju Das (3):
+>   arm64: dts: renesas: r8a774a1: Fix USB 2.0 clocks
+>   arm64: dts: renesas: hihope-common: Add USB 2.0 support
+>   arm64: dts: renesas: hihope-common: Enable USB3.0
+> 
+> Yoshihiro Shimoda (1):
+>   phy: renesas: rcar-gen3-usb2: fix imbalance powered flag
 
-Whilst I would concede it was not a technically advanced attack it is
-still an example of a lengthy and on-going compromise of the build
-process and, more importantly, something that Reproducible Builds
-would/should have been able to detect... hence its inclusion in our news
-updates. :)
+Nothing obviously wrong here. Let me apply the series...
 
-
-Best wishes,
-
+Best regards,
+								Pavel
 -- 
-      o
-    ?   ?      Chris Lamb
-   o     o     reproducible-builds.org
-    ?   ?
-      o
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 181 bytes
+Desc: Digital signature
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190911/be18f014/attachment.sig>
