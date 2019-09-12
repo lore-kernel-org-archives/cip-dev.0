@@ -1,62 +1,47 @@
 From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
-Date: Thu, 12 Sep 2019 22:46:42 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-In-Reply-To: <HK0PR01MB2979CDB80F5F6E20E8088B0DE2B00@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-References: <HK0PR01MB2979CDB80F5F6E20E8088B0DE2B00@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-Message-ID: <OSAPR01MB323469A7338AFAB0562B124492B00@OSAPR01MB3234.jpnprd01.prod.outlook.com>
+Date: Thu, 12 Sep 2019 22:49:50 +0000
+Subject: [cip-dev] gitlab: mirroring broken, tests failing
+In-Reply-To: <20190911221452.GA30802@amd>
+References: <20190911221452.GA30802@amd>
+Message-ID: <OSAPR01MB3234387C361803EA604F3D7F92B00@OSAPR01MB3234.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi SZ,
+Hi all,
 
-I could not attend yesterday's IRC meeting because 
-I was attended in another meeting.
+> -----Original Message-----
+> From: cip-dev-bounces at lists.cip-project.org
+> [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Pavel
+> Machek
+> Sent: Thursday, September 12, 2019 7:15 AM
+> To: Chris.Paterson2 at renesas.com; cip-dev at lists.cip-project.org
+> Subject: [cip-dev] gitlab: mirroring broken, tests failing
+> 
+> Hi!
+> 
+> I pushed kernel to kernel.org, bug I don't see it on gilab. Does mirroring
+> need to be restarted?
+> 
+> Plus, tests are failing, and it seems to me that problem is with tests,
+> not with kernel...
+> https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/292957614
+> 
+> Job submitted successfully as #3620.
+> ------------------------------
+> Current job status:
+> Job #3605: Submitted
+> ...
+> Job #3620: Submitted
+> Timed out waiting for test jobs to complete Errors during testing
+> 
+> I tried submiting known-good kernel, 3bc5ed22, and it failed, too...
 
-> * Action item
-> 1. Provide the cases to cip-testing to build up the test environment - Iwamatsu-san 
+I think this is caused by LAVA.
+LAVA has many test queue, and is not being processed.
 
-No update.
+   https://lava.ciplatform.org/scheduler/
 
-And I reviewed v4.4.166.
+Chris, could you check LAVA?
 
 Best regards,
   Nobuhiro
-
-From: cip-dev-bounces@lists.cip-project.org [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of SZ Lin (???)
-Sent: Thursday, September 12, 2019 10:38 AM
-To: cip-dev at lists.cip-project.org
-Subject: [cip-dev] CIP IRC weekly meeting today
-
-Hi all,
-
-Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
-
-*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=9&day=12&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
-????????? 
-US-West US-East?? UK???? DE???? TW???? JP
-02:00??? 05:00?? 10:00?? 11:00?? 17:00?? 18:00
-
-Channel:
-* irc:chat.freenode.net:6667/cip
-
-Agenda:
-
-* Action item
-1. Provide the cases to cip-testing to build up the test environment - Iwamatsu-san 
-
-2. Ask cip-dev which configurations need testing - patersonc 
-
-3. Test LTS (pre)releases directly ? patersonc
-
-* Kernel maintenance updates
-* Kernel testing
-* CIP Core
-* Software update
-* AOB
-
-The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
-
-Best regards,
-
-SZ Lin, Moxa.
