@@ -1,185 +1,136 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon, 16 Sep 2019 16:50:27 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 13/32] drm: rcar-du: Add interlaced
-	feature flag
+Date: Mon, 16 Sep 2019 16:50:28 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 14/32] drm: rcar-du: Cache DSYSR value
+	to ensure known initial value
 In-Reply-To: <1568649046-17420-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1568649046-17420-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1568649046-17420-14-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1568649046-17420-15-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-commit c6e3194a3b55a9365e40c3a25f8e31afa154c26c upstream.
+commit 9144adc5e5a99577bce0d4ee2ca3615f53b9d296 upstream.
 
-Upcoming implementations of the R-Car DU have removed support for
-interlaced display pipelines. Provide a means to determine this based on
-the feature flags of the hardware configuration structs.
+DSYSR is a DU channel register that also contains group fields. It is
+thus written to by both the group and CRTC code, using read-update-write
+sequences. As the register isn't initialized explicitly at startup time,
+this can lead to invalid or otherwise unexpected values being written to
+some of the fields if they have been modified by the firmware or just
+not reset properly.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To fix this we can write a fully known value to the DSYSR register when
+turning a channel's functional clock on. However, the mix of group and
+channel fields complicate this. A simpler solution is to cache the
+register and initialize the cached value to the desired hardware
+defaults.
+
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 14 ++++++++++++++
- drivers/gpu/drm/rcar-du/rcar_du_drv.c  | 32 +++++++++++++++++++++-----------
- drivers/gpu/drm/rcar-du/rcar_du_drv.h  |  1 +
- 3 files changed, 36 insertions(+), 11 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c  | 16 ++++++++--------
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.h  |  5 +++++
+ drivers/gpu/drm/rcar-du/rcar_du_group.c |  7 ++++---
+ 3 files changed, 17 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 15dc9ca..4b43d83 100644
+index 4b43d83..f2f6322 100644
 --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
 +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -684,11 +684,25 @@ static void rcar_du_crtc_atomic_flush(struct drm_crtc *crtc,
- 		rcar_du_vsp_atomic_flush(rcrtc);
+@@ -61,13 +61,12 @@ static void rcar_du_crtc_set(struct rcar_du_crtc *rcrtc, u32 reg, u32 set)
+ 		      rcar_du_read(rcdu, rcrtc->mmio_offset + reg) | set);
  }
  
-+enum drm_mode_status rcar_du_crtc_mode_valid(struct drm_crtc *crtc,
-+				   const struct drm_display_mode *mode)
-+{
-+	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
-+	struct rcar_du_device *rcdu = rcrtc->group->dev;
-+	bool interlaced = mode->flags & DRM_MODE_FLAG_INTERLACE;
+-static void rcar_du_crtc_clr_set(struct rcar_du_crtc *rcrtc, u32 reg,
+-				 u32 clr, u32 set)
++void rcar_du_crtc_dsysr_clr_set(struct rcar_du_crtc *rcrtc, u32 clr, u32 set)
+ {
+ 	struct rcar_du_device *rcdu = rcrtc->group->dev;
+-	u32 value = rcar_du_read(rcdu, rcrtc->mmio_offset + reg);
+ 
+-	rcar_du_write(rcdu, rcrtc->mmio_offset + reg, (value & ~clr) | set);
++	rcrtc->dsysr = (rcrtc->dsysr & ~clr) | set;
++	rcar_du_write(rcdu, rcrtc->mmio_offset + DSYSR, rcrtc->dsysr);
+ }
+ 
+ static int rcar_du_crtc_get(struct rcar_du_crtc *rcrtc)
+@@ -525,9 +524,9 @@ static void rcar_du_crtc_start(struct rcar_du_crtc *rcrtc)
+ 	 * actively driven).
+ 	 */
+ 	interlaced = rcrtc->crtc.mode.flags & DRM_MODE_FLAG_INTERLACE;
+-	rcar_du_crtc_clr_set(rcrtc, DSYSR, DSYSR_TVM_MASK | DSYSR_SCM_MASK,
+-			     (interlaced ? DSYSR_SCM_INT_VIDEO : 0) |
+-			     DSYSR_TVM_MASTER);
++	rcar_du_crtc_dsysr_clr_set(rcrtc, DSYSR_TVM_MASK | DSYSR_SCM_MASK,
++				   (interlaced ? DSYSR_SCM_INT_VIDEO : 0) |
++				   DSYSR_TVM_MASTER);
+ 
+ 	rcar_du_group_start_stop(rcrtc->group, true);
+ }
+@@ -594,7 +593,7 @@ static void rcar_du_crtc_stop(struct rcar_du_crtc *rcrtc)
+ 	 * Select switch sync mode. This stops display operation and configures
+ 	 * the HSYNC and VSYNC signals as inputs.
+ 	 */
+-	rcar_du_crtc_clr_set(rcrtc, DSYSR, DSYSR_TVM_MASK, DSYSR_TVM_SWITCH);
++	rcar_du_crtc_dsysr_clr_set(rcrtc, DSYSR_TVM_MASK, DSYSR_TVM_SWITCH);
+ 
+ 	rcar_du_group_start_stop(rcrtc->group, false);
+ }
+@@ -972,6 +971,7 @@ int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int swindex,
+ 	rcrtc->group = rgrp;
+ 	rcrtc->mmio_offset = mmio_offsets[hwindex];
+ 	rcrtc->index = hwindex;
++	rcrtc->dsysr = (rcrtc->index % 2 ? 0 : DSYSR_DRES) | DSYSR_TVM_TVSYNC;
+ 
+ 	if (rcar_du_has(rcdu, RCAR_DU_FEATURE_VSP1_SOURCE))
+ 		primary = &rcrtc->vsp->planes[rcrtc->vsp_pipe].plane;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+index 7680cb2..2c1eaa3 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+@@ -34,6 +34,7 @@ struct rcar_du_vsp;
+  * @mmio_offset: offset of the CRTC registers in the DU MMIO block
+  * @index: CRTC software and hardware index
+  * @initialized: whether the CRTC has been initialized and clocks enabled
++ * @dsysr: cached value of the DSYSR register
+  * @vblank_enable: whether vblank events are enabled on this CRTC
+  * @event: event to post when the pending page flip completes
+  * @flip_wait: wait queue used to signal page flip completion
+@@ -54,6 +55,8 @@ struct rcar_du_crtc {
+ 	unsigned int index;
+ 	bool initialized;
+ 
++	u32 dsysr;
 +
-+	if (interlaced && !rcar_du_has(rcdu, RCAR_DU_FEATURE_INTERLACED))
-+		return MODE_NO_INTERLACE;
+ 	bool vblank_enable;
+ 	struct drm_pending_vblank_event *event;
+ 	wait_queue_head_t flip_wait;
+@@ -104,4 +107,6 @@ void rcar_du_crtc_route_output(struct drm_crtc *crtc,
+ 			       enum rcar_du_output output);
+ void rcar_du_crtc_finish_page_flip(struct rcar_du_crtc *rcrtc);
+ 
++void rcar_du_crtc_dsysr_clr_set(struct rcar_du_crtc *rcrtc, u32 clr, u32 set);
 +
-+	return MODE_OK;
-+}
+ #endif /* __RCAR_DU_CRTC_H__ */
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/rcar-du/rcar_du_group.c
+index d539cb2..5966d94 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
+@@ -177,9 +177,10 @@ void rcar_du_group_put(struct rcar_du_group *rgrp)
+ 
+ static void __rcar_du_group_start_stop(struct rcar_du_group *rgrp, bool start)
+ {
+-	rcar_du_group_write(rgrp, DSYSR,
+-		(rcar_du_group_read(rgrp, DSYSR) & ~(DSYSR_DRES | DSYSR_DEN)) |
+-		(start ? DSYSR_DEN : DSYSR_DRES));
++	struct rcar_du_crtc *rcrtc = &rgrp->dev->crtcs[rgrp->index * 2];
 +
- static const struct drm_crtc_helper_funcs crtc_helper_funcs = {
- 	.atomic_begin = rcar_du_crtc_atomic_begin,
- 	.atomic_flush = rcar_du_crtc_atomic_flush,
- 	.atomic_enable = rcar_du_crtc_atomic_enable,
- 	.atomic_disable = rcar_du_crtc_atomic_disable,
-+	.mode_valid = rcar_du_crtc_mode_valid,
- };
++	rcar_du_crtc_dsysr_clr_set(rcrtc, DSYSR_DRES | DSYSR_DEN,
++				   start ? DSYSR_DEN : DSYSR_DRES);
+ }
  
- static struct drm_crtc_state *
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index dfa09cf..3f0cbc4 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -39,7 +39,8 @@
- static const struct rcar_du_device_info rzg1_du_r8a7743_info = {
- 	.gen = 2,
- 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
--		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
-+		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
-+		  | RCAR_DU_FEATURE_INTERLACED,
- 	.channels_mask = BIT(1) | BIT(0),
- 	.routes = {
- 		/*
-@@ -60,7 +61,8 @@ static const struct rcar_du_device_info rzg1_du_r8a7743_info = {
- static const struct rcar_du_device_info rzg1_du_r8a7745_info = {
- 	.gen = 2,
- 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
--		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
-+		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
-+		  | RCAR_DU_FEATURE_INTERLACED,
- 	.channels_mask = BIT(1) | BIT(0),
- 	.routes = {
- 		/*
-@@ -108,7 +110,7 @@ static const struct rcar_du_device_info rcar_du_r8a774a1_info = {
- 
- static const struct rcar_du_device_info rcar_du_r8a7779_info = {
- 	.gen = 2,
--	.features = 0,
-+	.features = RCAR_DU_FEATURE_INTERLACED,
- 	.channels_mask = BIT(1) | BIT(0),
- 	.routes = {
- 		/*
-@@ -129,7 +131,8 @@ static const struct rcar_du_device_info rcar_du_r8a7779_info = {
- static const struct rcar_du_device_info rcar_du_r8a7790_info = {
- 	.gen = 2,
- 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
--		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
-+		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
-+		  | RCAR_DU_FEATURE_INTERLACED,
- 	.quirks = RCAR_DU_QUIRK_ALIGN_128B,
- 	.channels_mask = BIT(2) | BIT(1) | BIT(0),
- 	.routes = {
-@@ -157,7 +160,8 @@ static const struct rcar_du_device_info rcar_du_r8a7790_info = {
- static const struct rcar_du_device_info rcar_du_r8a7791_info = {
- 	.gen = 2,
- 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
--		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
-+		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
-+		  | RCAR_DU_FEATURE_INTERLACED,
- 	.channels_mask = BIT(1) | BIT(0),
- 	.routes = {
- 		/*
-@@ -179,7 +183,8 @@ static const struct rcar_du_device_info rcar_du_r8a7791_info = {
- static const struct rcar_du_device_info rcar_du_r8a7792_info = {
- 	.gen = 2,
- 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
--		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
-+		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
-+		  | RCAR_DU_FEATURE_INTERLACED,
- 	.channels_mask = BIT(1) | BIT(0),
- 	.routes = {
- 		/* R8A7792 has two RGB outputs. */
-@@ -197,7 +202,8 @@ static const struct rcar_du_device_info rcar_du_r8a7792_info = {
- static const struct rcar_du_device_info rcar_du_r8a7794_info = {
- 	.gen = 2,
- 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
--		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
-+		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
-+		  | RCAR_DU_FEATURE_INTERLACED,
- 	.channels_mask = BIT(1) | BIT(0),
- 	.routes = {
- 		/*
-@@ -219,7 +225,8 @@ static const struct rcar_du_device_info rcar_du_r8a7795_info = {
- 	.gen = 3,
- 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
- 		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
--		  | RCAR_DU_FEATURE_VSP1_SOURCE,
-+		  | RCAR_DU_FEATURE_VSP1_SOURCE
-+		  | RCAR_DU_FEATURE_INTERLACED,
- 	.channels_mask = BIT(3) | BIT(2) | BIT(1) | BIT(0),
- 	.routes = {
- 		/*
-@@ -251,7 +258,8 @@ static const struct rcar_du_device_info rcar_du_r8a7796_info = {
- 	.gen = 3,
- 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
- 		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
--		  | RCAR_DU_FEATURE_VSP1_SOURCE,
-+		  | RCAR_DU_FEATURE_VSP1_SOURCE
-+		  | RCAR_DU_FEATURE_INTERLACED,
- 	.channels_mask = BIT(2) | BIT(1) | BIT(0),
- 	.routes = {
- 		/*
-@@ -279,7 +287,8 @@ static const struct rcar_du_device_info rcar_du_r8a77965_info = {
- 	.gen = 3,
- 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
- 		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
--		  | RCAR_DU_FEATURE_VSP1_SOURCE,
-+		  | RCAR_DU_FEATURE_VSP1_SOURCE
-+		  | RCAR_DU_FEATURE_INTERLACED,
- 	.channels_mask = BIT(3) | BIT(1) | BIT(0),
- 	.routes = {
- 		/*
-@@ -307,7 +316,8 @@ static const struct rcar_du_device_info rcar_du_r8a77970_info = {
- 	.gen = 3,
- 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
- 		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
--		  | RCAR_DU_FEATURE_VSP1_SOURCE,
-+		  | RCAR_DU_FEATURE_VSP1_SOURCE
-+		  | RCAR_DU_FEATURE_INTERLACED,
- 	.channels_mask = BIT(0),
- 	.routes = {
- 		/* R8A77970 has one RGB output and one LVDS output. */
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-index 78ea20a..c4a6613 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-@@ -30,6 +30,7 @@ struct rcar_du_device;
- #define RCAR_DU_FEATURE_CRTC_IRQ_CLOCK	BIT(0)	/* Per-CRTC IRQ and clock */
- #define RCAR_DU_FEATURE_EXT_CTRL_REGS	BIT(1)	/* Has extended control registers */
- #define RCAR_DU_FEATURE_VSP1_SOURCE	BIT(2)	/* Has inputs from VSP1 */
-+#define RCAR_DU_FEATURE_INTERLACED	BIT(3)	/* HW supports interlaced */
- 
- #define RCAR_DU_QUIRK_ALIGN_128B	BIT(0)	/* Align pitches to 128 bytes */
- 
+ void rcar_du_group_start_stop(struct rcar_du_group *rgrp, bool start)
 -- 
 2.7.4
