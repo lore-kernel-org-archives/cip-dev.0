@@ -1,57 +1,77 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon, 16 Sep 2019 16:50:22 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 08/32] PCI: rcar: Do not shadow the
-	'irq' variable
+Date: Mon, 16 Sep 2019 16:50:23 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 09/32] drm: rcar-du: Add R8A774A1
+	support
 In-Reply-To: <1568649046-17420-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1568649046-17420-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1568649046-17420-9-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1568649046-17420-10-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Biju Das <biju.das@bp.renesas.com>
 
-commit a27beb5820d1a52b1e2863a4ae5545a1dd4ab35a upstream.
+commit d31349a50415adee26486fbec90a08cc954d0082 upstream.
 
-The sparse tool rightfully detects:
-drivers/pci/controller/pcie-rcar.c:741:30: warning: symbol 'irq' shadows an earlier one
+Add support for the R8A774A1 DU (which is very similar to the R8A7796 DU
+except that it lacks TCON and CMM); it has one RGB output, one LVDS output
+and one HDMI output.
 
-Fix it now to avoid future surprises and for good coding style.
-
-No functional change intended.
-
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-[lorenzo.pieralisi at arm.com: commit log refactoring]
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/pci/controller/pcie-rcar.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
-index 6f4bad1..174be37 100644
---- a/drivers/pci/controller/pcie-rcar.c
-+++ b/drivers/pci/controller/pcie-rcar.c
-@@ -740,15 +740,15 @@ static irqreturn_t rcar_pcie_msi_irq(int irq, void *data)
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+index 02aee6c..dfa09cf 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+@@ -77,6 +77,35 @@ static const struct rcar_du_device_info rzg1_du_r8a7745_info = {
+ 	},
+ };
  
- 	while (reg) {
- 		unsigned int index = find_first_bit(&reg, 32);
--		unsigned int irq;
-+		unsigned int msi_irq;
- 
- 		/* clear the interrupt */
- 		rcar_pci_write_reg(pcie, 1 << index, PCIEMSIFR);
- 
--		irq = irq_find_mapping(msi->domain, index);
--		if (irq) {
-+		msi_irq = irq_find_mapping(msi->domain, index);
-+		if (msi_irq) {
- 			if (test_bit(index, msi->used))
--				generic_handle_irq(irq);
-+				generic_handle_irq(msi_irq);
- 			else
- 				dev_info(dev, "unhandled MSI\n");
- 		} else {
++static const struct rcar_du_device_info rcar_du_r8a774a1_info = {
++	.gen = 3,
++	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
++		  | RCAR_DU_FEATURE_VSP1_SOURCE
++		  | RCAR_DU_FEATURE_INTERLACED
++		  | RCAR_DU_FEATURE_TVM_SYNC,
++	.channels_mask = BIT(2) | BIT(1) | BIT(0),
++	.routes = {
++		/*
++		 * R8A774A1 has one RGB output, one LVDS output and one HDMI
++		 * output.
++		 */
++		[RCAR_DU_OUTPUT_DPAD0] = {
++			.possible_crtcs = BIT(2),
++			.port = 0,
++		},
++		[RCAR_DU_OUTPUT_HDMI0] = {
++			.possible_crtcs = BIT(1),
++			.port = 1,
++		},
++		[RCAR_DU_OUTPUT_LVDS0] = {
++			.possible_crtcs = BIT(0),
++			.port = 2,
++		},
++	},
++	.num_lvds = 1,
++	.dpll_mask =  BIT(1),
++};
++
+ static const struct rcar_du_device_info rcar_du_r8a7779_info = {
+ 	.gen = 2,
+ 	.features = 0,
+@@ -297,6 +326,7 @@ static const struct rcar_du_device_info rcar_du_r8a77970_info = {
+ static const struct of_device_id rcar_du_of_table[] = {
+ 	{ .compatible = "renesas,du-r8a7743", .data = &rzg1_du_r8a7743_info },
+ 	{ .compatible = "renesas,du-r8a7745", .data = &rzg1_du_r8a7745_info },
++	{ .compatible = "renesas,du-r8a774a1", .data = &rcar_du_r8a774a1_info },
+ 	{ .compatible = "renesas,du-r8a7779", .data = &rcar_du_r8a7779_info },
+ 	{ .compatible = "renesas,du-r8a7790", .data = &rcar_du_r8a7790_info },
+ 	{ .compatible = "renesas,du-r8a7791", .data = &rcar_du_r8a7791_info },
 -- 
 2.7.4
