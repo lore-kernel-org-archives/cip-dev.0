@@ -1,200 +1,95 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon, 16 Sep 2019 16:50:31 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 17/32] drm: rcar-du: Rework clock
-	configuration based on hardware limits
+Date: Mon, 16 Sep 2019 16:50:32 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 18/32] drm: rcar-du: Rename and
+	document dpll_ch field
 In-Reply-To: <1568649046-17420-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1568649046-17420-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1568649046-17420-18-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1568649046-17420-19-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-commit 7281e6c6a5bdbde9cae6eb3c6d2bf2706b94807d upstream.
+commit 9fe50e64fac7a7301f82e31dbd87a4145384005e upstream.
 
-The DU channels that have a display PLL (DPLL) can only use external
-clock sources, and don't have an internal clock divider (with the
-exception of H3 ES1.x where the post-divider is present and needs to be
-used as a workaround for a DPLL silicon issue).
+Document and re-name the 'dpll_ch' field to a more precise 'dpll_mask' for
+consistency with the 'channels_mask' field defined in 'struct
+rcar_du_device_info'.
 
-Rework the clock configuration to take this into account, avoiding
-selection of non-existing clock sources or usage of a missing
-post-divider.
-
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 134 ++++++++++++++++++---------------
- 1 file changed, 73 insertions(+), 61 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 2 +-
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c  | 6 +++---
+ drivers/gpu/drm/rcar-du/rcar_du_drv.h  | 3 ++-
+ 3 files changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 5441d5a..342519c 100644
+index 342519c..107cbf2 100644
 --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
 +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -207,78 +207,90 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 	const struct drm_display_mode *mode = &rcrtc->crtc.state->adjusted_mode;
- 	struct rcar_du_device *rcdu = rcrtc->group->dev;
- 	unsigned long mode_clock = mode->clock * 1000;
--	unsigned long clk;
--	u32 value;
-+	u32 dsmr;
+@@ -210,7 +210,7 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+ 	u32 dsmr;
  	u32 escr;
--	u32 div;
  
--	/*
--	 * Compute the clock divisor and select the internal or external dot
--	 * clock based on the requested frequency.
--	 */
--	clk = clk_get_rate(rcrtc->clock);
--	div = DIV_ROUND_CLOSEST(clk, mode_clock);
--	div = clamp(div, 1U, 64U) - 1;
--	escr = div | ESCR_DCLKSEL_CLKS;
--
--	if (rcrtc->extclock) {
-+	if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
-+		unsigned long target = mode_clock;
+-	if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
++	if (rcdu->info->dpll_mask & (1 << rcrtc->index)) {
+ 		unsigned long target = mode_clock;
  		struct dpll_info dpll = { 0 };
  		unsigned long extclk;
--		unsigned long extrate;
--		unsigned long rate;
--		u32 extdiv;
-+		u32 dpllcr;
-+		u32 div = 0;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+index ba360e4..5380f0e 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+@@ -259,7 +259,7 @@ static const struct rcar_du_device_info rcar_du_r8a7795_info = {
+ 		},
+ 	},
+ 	.num_lvds = 1,
+-	.dpll_ch =  BIT(2) | BIT(1),
++	.dpll_mask =  BIT(2) | BIT(1),
+ };
  
--		extclk = clk_get_rate(rcrtc->extclock);
--		if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
--			unsigned long target = mode_clock;
-+		/*
-+		 * DU channels that have a display PLL can't use the internal
-+		 * system clock, and have no internal clock divider.
-+		 */
+ static const struct rcar_du_device_info rcar_du_r8a7796_info = {
+@@ -289,7 +289,7 @@ static const struct rcar_du_device_info rcar_du_r8a7796_info = {
+ 		},
+ 	},
+ 	.num_lvds = 1,
+-	.dpll_ch =  BIT(1),
++	.dpll_mask =  BIT(1),
+ };
  
--			/*
--			 * The H3 ES1.x exhibits dot clock duty cycle stability
--			 * issues. We can work around them by configuring the
--			 * DPLL to twice the desired frequency, coupled with a
--			 * /2 post-divider. This isn't needed on other SoCs and
--			 * breaks HDMI output on M3-W for a currently unknown
--			 * reason, so restrict the workaround to H3 ES1.x.
--			 */
--			if (soc_device_match(rcar_du_r8a7795_es1))
--				target *= 2;
-+		if (WARN_ON(!rcrtc->extclock))
-+			return;
+ static const struct rcar_du_device_info rcar_du_r8a77965_info = {
+@@ -319,7 +319,7 @@ static const struct rcar_du_device_info rcar_du_r8a77965_info = {
+ 		},
+ 	},
+ 	.num_lvds = 1,
+-	.dpll_ch =  BIT(1),
++	.dpll_mask =  BIT(1),
+ };
  
--			rcar_du_dpll_divider(rcrtc, &dpll, extclk, target);
--			extclk = dpll.output;
-+		/*
-+		 * The H3 ES1.x exhibits dot clock duty cycle stability issues.
-+		 * We can work around them by configuring the DPLL to twice the
-+		 * desired frequency, coupled with a /2 post-divider. Restrict
-+		 * the workaround to H3 ES1.x as ES2.0 and all other SoCs have
-+		 * no post-divider when a display PLL is present (as shown by
-+		 * the workaround breaking HDMI output on M3-W during testing).
-+		 */
-+		if (soc_device_match(rcar_du_r8a7795_es1)) {
-+			target *= 2;
-+			div = 1;
- 		}
+ static const struct rcar_du_device_info rcar_du_r8a77970_info = {
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+index 970c077..a6e6316 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+@@ -57,6 +57,7 @@ struct rcar_du_output_routing {
+  * @channels_mask: bit mask of available DU channels
+  * @routes: array of CRTC to output routes, indexed by output (RCAR_DU_OUTPUT_*)
+  * @num_lvds: number of internal LVDS encoders
++ * @dpll_mask: bit mask of DU channels equipped with a DPLL
+  */
+ struct rcar_du_device_info {
+ 	unsigned int gen;
+@@ -65,7 +66,7 @@ struct rcar_du_device_info {
+ 	unsigned int channels_mask;
+ 	struct rcar_du_output_routing routes[RCAR_DU_OUTPUT_MAX];
+ 	unsigned int num_lvds;
+-	unsigned int dpll_ch;
++	unsigned int dpll_mask;
+ };
  
--		extdiv = DIV_ROUND_CLOSEST(extclk, mode_clock);
--		extdiv = clamp(extdiv, 1U, 64U) - 1;
-+		extclk = clk_get_rate(rcrtc->extclock);
-+		rcar_du_dpll_divider(rcrtc, &dpll, extclk, target);
- 
--		rate = clk / (div + 1);
--		extrate = extclk / (extdiv + 1);
-+		dpllcr = DPLLCR_CODE | DPLLCR_CLKE
-+		       | DPLLCR_FDPLL(dpll.fdpll)
-+		       | DPLLCR_N(dpll.n) | DPLLCR_M(dpll.m)
-+		       | DPLLCR_STBY;
- 
--		if (abs((long)extrate - (long)mode_clock) <
--		    abs((long)rate - (long)mode_clock)) {
-+		if (rcrtc->index == 1)
-+			dpllcr |= DPLLCR_PLCS1
-+			       |  DPLLCR_INCS_DOTCLKIN1;
-+		else
-+			dpllcr |= DPLLCR_PLCS0
-+			       |  DPLLCR_INCS_DOTCLKIN0;
- 
--			if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
--				u32 dpllcr = DPLLCR_CODE | DPLLCR_CLKE
--					   | DPLLCR_FDPLL(dpll.fdpll)
--					   | DPLLCR_N(dpll.n) | DPLLCR_M(dpll.m)
--					   | DPLLCR_STBY;
-+		rcar_du_group_write(rcrtc->group, DPLLCR, dpllcr);
- 
--				if (rcrtc->index == 1)
--					dpllcr |= DPLLCR_PLCS1
--					       |  DPLLCR_INCS_DOTCLKIN1;
--				else
--					dpllcr |= DPLLCR_PLCS0
--					       |  DPLLCR_INCS_DOTCLKIN0;
-+		escr = ESCR_DCLKSEL_DCLKIN | div;
-+	} else {
-+		unsigned long clk;
-+		u32 div;
- 
--				rcar_du_group_write(rcrtc->group, DPLLCR,
--						    dpllcr);
--			}
-+		/*
-+		 * Compute the clock divisor and select the internal or external
-+		 * dot clock based on the requested frequency.
-+		 */
-+		clk = clk_get_rate(rcrtc->clock);
-+		div = DIV_ROUND_CLOSEST(clk, mode_clock);
-+		div = clamp(div, 1U, 64U) - 1;
- 
--			escr = ESCR_DCLKSEL_DCLKIN | extdiv;
--		}
-+		escr = ESCR_DCLKSEL_CLKS | div;
- 
--		dev_dbg(rcrtc->group->dev->dev,
--			"mode clock %lu extrate %lu rate %lu ESCR 0x%08x\n",
--			mode_clock, extrate, rate, escr);
-+		if (rcrtc->extclock) {
-+			unsigned long extclk;
-+			unsigned long extrate;
-+			unsigned long rate;
-+			u32 extdiv;
-+
-+			extclk = clk_get_rate(rcrtc->extclock);
-+			extdiv = DIV_ROUND_CLOSEST(extclk, mode_clock);
-+			extdiv = clamp(extdiv, 1U, 64U) - 1;
-+
-+			extrate = extclk / (extdiv + 1);
-+			rate = clk / (div + 1);
-+
-+			if (abs((long)extrate - (long)mode_clock) <
-+			    abs((long)rate - (long)mode_clock))
-+				escr = ESCR_DCLKSEL_DCLKIN | extdiv;
-+
-+			dev_dbg(rcrtc->group->dev->dev,
-+				"mode clock %lu extrate %lu rate %lu ESCR 0x%08x\n",
-+				mode_clock, extrate, rate, escr);
-+		}
- 	}
- 
- 	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? ESCR2 : ESCR,
-@@ -286,11 +298,11 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? OTAR2 : OTAR, 0);
- 
- 	/* Signal polarities */
--	value = ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? DSMR_VSL : 0)
--	      | ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? DSMR_HSL : 0)
--	      | ((mode->flags & DRM_MODE_FLAG_INTERLACE) ? DSMR_ODEV : 0)
--	      | DSMR_DIPM_DISP | DSMR_CSPM;
--	rcar_du_crtc_write(rcrtc, DSMR, value);
-+	dsmr = ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? DSMR_VSL : 0)
-+	     | ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? DSMR_HSL : 0)
-+	     | ((mode->flags & DRM_MODE_FLAG_INTERLACE) ? DSMR_ODEV : 0)
-+	     | DSMR_DIPM_DISP | DSMR_CSPM;
-+	rcar_du_crtc_write(rcrtc, DSMR, dsmr);
- 
- 	/* Display timings */
- 	rcar_du_crtc_write(rcrtc, HDSR, mode->htotal - mode->hsync_start - 19);
+ #define RCAR_DU_MAX_CRTCS		4
 -- 
 2.7.4
