@@ -1,85 +1,91 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon, 16 Sep 2019 16:50:35 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 21/32] drm: rcar-du: Update framebuffer
-	pitch and alignment limits for Gen3
+Date: Mon, 16 Sep 2019 16:50:36 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 22/32] arm64: dts: renesas: r8a774a1:
+	Add PCIe device nodes
 In-Reply-To: <1568649046-17420-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1568649046-17420-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1568649046-17420-22-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1568649046-17420-23-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+From: Biju Das <biju.das@bp.renesas.com>
 
-commit f09e5b5d776debc2761e8d9330d60b8dcd8cb9dd upstream.
+commit a5a41d50ffe77d250655f767eb192dbbc387edd7 upstream.
 
-The framebuffer pitch and alignment constraints reflect the limitations
-of the Gen2 DU hardware. On Gen3, the DU has no memory interface and
-thus doesn't impose any constraint. The limitations come instead from
-the VSP that has a limit of 65535 bytes for the pitch and no alignment
-constraint. Update the checks accordingly.
+This patch adds PCIe{0,1} device nodes for R8A774A1 SoC.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_kms.c | 35 +++++++++++++++++++++++------------
- 1 file changed, 23 insertions(+), 12 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 54 +++++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-index d2094ae..27783f6 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-@@ -233,7 +233,6 @@ rcar_du_fb_create(struct drm_device *dev, struct drm_file *file_priv,
- 	const struct rcar_du_format_info *format;
- 	unsigned int max_pitch;
- 	unsigned int align;
--	unsigned int bpp;
- 	unsigned int i;
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+index bdf4292..048377c 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+@@ -1789,6 +1789,60 @@
+ 			resets = <&cpg 408>;
+ 		};
  
- 	format = rcar_du_format_info(mode_cmd->pixel_format);
-@@ -243,20 +242,32 @@ rcar_du_fb_create(struct drm_device *dev, struct drm_file *file_priv,
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--	/*
--	 * The pitch and alignment constraints are expressed in pixels on the
--	 * hardware side and in bytes in the DRM API.
--	 */
--	bpp = format->planes == 1 ? format->bpp / 8 : 1;
--	max_pitch =  4096 * bpp;
-+	if (rcdu->info->gen < 3) {
-+		/*
-+		 * On Gen2 the DU limits the pitch to 4095 pixels and requires
-+		 * buffers to be aligned to a 16 pixels boundary (or 128 bytes
-+		 * on some platforms).
-+		 */
-+		unsigned int bpp = format->planes == 1 ? format->bpp / 8 : 1;
- 
--	if (rcar_du_needs(rcdu, RCAR_DU_QUIRK_ALIGN_128B))
--		align = 128;
--	else
--		align = 16 * bpp;
-+		max_pitch = 4095 * bpp;
++		pciec0: pcie at fe000000 {
++			compatible = "renesas,pcie-r8a774a1",
++				     "renesas,pcie-rcar-gen3";
++			reg = <0 0xfe000000 0 0x80000>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++			bus-range = <0x00 0xff>;
++			device_type = "pci";
++			ranges = <0x01000000 0 0x00000000 0 0xfe100000 0 0x00100000
++				0x02000000 0 0xfe200000 0 0xfe200000 0 0x00200000
++				0x02000000 0 0x30000000 0 0x30000000 0 0x08000000
++				0x42000000 0 0x38000000 0 0x38000000 0 0x08000000>;
++			/* Map all possible DDR as inbound ranges */
++			dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x80000000>;
++			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 0>;
++			interrupt-map = <0 0 0 0 &gic GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 319>, <&pcie_bus_clk>;
++			clock-names = "pcie", "pcie_bus";
++			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
++			resets = <&cpg 319>;
++			status = "disabled";
++		};
 +
-+		if (rcar_du_needs(rcdu, RCAR_DU_QUIRK_ALIGN_128B))
-+			align = 128;
-+		else
-+			align = 16 * bpp;
-+	} else {
-+		/*
-+		 * On Gen3 the memory interface is handled by the VSP that
-+		 * limits the pitch to 65535 bytes and has no alignment
-+		 * constraint.
-+		 */
-+		max_pitch = 65535;
-+		align = 1;
-+	}
- 
- 	if (mode_cmd->pitches[0] & (align - 1) ||
--	    mode_cmd->pitches[0] >= max_pitch) {
-+	    mode_cmd->pitches[0] > max_pitch) {
- 		dev_dbg(dev->dev, "invalid pitch value %u\n",
- 			mode_cmd->pitches[0]);
- 		return ERR_PTR(-EINVAL);
++		pciec1: pcie at ee800000 {
++			compatible = "renesas,pcie-r8a774a1",
++				     "renesas,pcie-rcar-gen3";
++			reg = <0 0xee800000 0 0x80000>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++			bus-range = <0x00 0xff>;
++			device_type = "pci";
++			ranges = <0x01000000 0 0x00000000 0 0xee900000 0 0x00100000
++				0x02000000 0 0xeea00000 0 0xeea00000 0 0x00200000
++				0x02000000 0 0xc0000000 0 0xc0000000 0 0x08000000
++				0x42000000 0 0xc8000000 0 0xc8000000 0 0x08000000>;
++			/* Map all possible DDR as inbound ranges */
++			dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x80000000>;
++			interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 0>;
++			interrupt-map = <0 0 0 0 &gic GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 318>, <&pcie_bus_clk>;
++			clock-names = "pcie", "pcie_bus";
++			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
++			resets = <&cpg 318>;
++			status = "disabled";
++		};
++
+ 		fcpf0: fcp at fe950000 {
+ 			compatible = "renesas,fcpf";
+ 			reg = <0 0xfe950000 0 0x200>;
 -- 
 2.7.4
