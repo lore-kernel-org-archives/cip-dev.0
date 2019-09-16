@@ -1,56 +1,200 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon, 16 Sep 2019 16:50:30 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 16/32] drm: rcar-du: Support interlaced
-	video output through vsp1
+Date: Mon, 16 Sep 2019 16:50:31 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 17/32] drm: rcar-du: Rework clock
+	configuration based on hardware limits
 In-Reply-To: <1568649046-17420-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1568649046-17420-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1568649046-17420-17-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1568649046-17420-18-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-commit 4e86c208ddf2da6683a0ee6f8696a9f1b4444018 upstream.
+commit 7281e6c6a5bdbde9cae6eb3c6d2bf2706b94807d upstream.
 
-Use the newly exposed VSP1 interface to enable interlaced frame support
-through the VSP1 LIF pipelines.
+The DU channels that have a display PLL (DPLL) can only use external
+clock sources, and don't have an internal clock divider (with the
+exception of H3 ES1.x where the post-divider is present and needs to be
+used as a workaround for a DPLL silicon issue).
 
-The DSMR register is updated to set the ODEV flag on interlaced
-pipelines, thus defining an interlaced stream as having the ODD field
-located in the second half (BOTTOM) of the frame buffer.
+Rework the clock configuration to take this into account, avoiding
+selection of non-existing clock sources or usage of a missing
+post-divider.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 1 +
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c  | 1 +
- 2 files changed, 2 insertions(+)
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 134 ++++++++++++++++++---------------
+ 1 file changed, 73 insertions(+), 61 deletions(-)
 
 diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 9e5d00a..5441d5a 100644
+index 5441d5a..342519c 100644
 --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
 +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -288,6 +288,7 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 	/* Signal polarities */
- 	value = ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? DSMR_VSL : 0)
- 	      | ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? DSMR_HSL : 0)
-+	      | ((mode->flags & DRM_MODE_FLAG_INTERLACE) ? DSMR_ODEV : 0)
- 	      | DSMR_DIPM_DISP | DSMR_CSPM;
- 	rcar_du_crtc_write(rcrtc, DSMR, value);
+@@ -207,78 +207,90 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+ 	const struct drm_display_mode *mode = &rcrtc->crtc.state->adjusted_mode;
+ 	struct rcar_du_device *rcdu = rcrtc->group->dev;
+ 	unsigned long mode_clock = mode->clock * 1000;
+-	unsigned long clk;
+-	u32 value;
++	u32 dsmr;
+ 	u32 escr;
+-	u32 div;
  
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-index 72eebed..a042f11 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-@@ -52,6 +52,7 @@ void rcar_du_vsp_enable(struct rcar_du_crtc *crtc)
- 	struct vsp1_du_lif_config cfg = {
- 		.width = mode->hdisplay,
- 		.height = mode->vdisplay,
-+		.interlaced = mode->flags & DRM_MODE_FLAG_INTERLACE,
- 		.callback = rcar_du_vsp_complete,
- 		.callback_data = crtc,
- 	};
+-	/*
+-	 * Compute the clock divisor and select the internal or external dot
+-	 * clock based on the requested frequency.
+-	 */
+-	clk = clk_get_rate(rcrtc->clock);
+-	div = DIV_ROUND_CLOSEST(clk, mode_clock);
+-	div = clamp(div, 1U, 64U) - 1;
+-	escr = div | ESCR_DCLKSEL_CLKS;
+-
+-	if (rcrtc->extclock) {
++	if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
++		unsigned long target = mode_clock;
+ 		struct dpll_info dpll = { 0 };
+ 		unsigned long extclk;
+-		unsigned long extrate;
+-		unsigned long rate;
+-		u32 extdiv;
++		u32 dpllcr;
++		u32 div = 0;
+ 
+-		extclk = clk_get_rate(rcrtc->extclock);
+-		if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
+-			unsigned long target = mode_clock;
++		/*
++		 * DU channels that have a display PLL can't use the internal
++		 * system clock, and have no internal clock divider.
++		 */
+ 
+-			/*
+-			 * The H3 ES1.x exhibits dot clock duty cycle stability
+-			 * issues. We can work around them by configuring the
+-			 * DPLL to twice the desired frequency, coupled with a
+-			 * /2 post-divider. This isn't needed on other SoCs and
+-			 * breaks HDMI output on M3-W for a currently unknown
+-			 * reason, so restrict the workaround to H3 ES1.x.
+-			 */
+-			if (soc_device_match(rcar_du_r8a7795_es1))
+-				target *= 2;
++		if (WARN_ON(!rcrtc->extclock))
++			return;
+ 
+-			rcar_du_dpll_divider(rcrtc, &dpll, extclk, target);
+-			extclk = dpll.output;
++		/*
++		 * The H3 ES1.x exhibits dot clock duty cycle stability issues.
++		 * We can work around them by configuring the DPLL to twice the
++		 * desired frequency, coupled with a /2 post-divider. Restrict
++		 * the workaround to H3 ES1.x as ES2.0 and all other SoCs have
++		 * no post-divider when a display PLL is present (as shown by
++		 * the workaround breaking HDMI output on M3-W during testing).
++		 */
++		if (soc_device_match(rcar_du_r8a7795_es1)) {
++			target *= 2;
++			div = 1;
+ 		}
+ 
+-		extdiv = DIV_ROUND_CLOSEST(extclk, mode_clock);
+-		extdiv = clamp(extdiv, 1U, 64U) - 1;
++		extclk = clk_get_rate(rcrtc->extclock);
++		rcar_du_dpll_divider(rcrtc, &dpll, extclk, target);
+ 
+-		rate = clk / (div + 1);
+-		extrate = extclk / (extdiv + 1);
++		dpllcr = DPLLCR_CODE | DPLLCR_CLKE
++		       | DPLLCR_FDPLL(dpll.fdpll)
++		       | DPLLCR_N(dpll.n) | DPLLCR_M(dpll.m)
++		       | DPLLCR_STBY;
+ 
+-		if (abs((long)extrate - (long)mode_clock) <
+-		    abs((long)rate - (long)mode_clock)) {
++		if (rcrtc->index == 1)
++			dpllcr |= DPLLCR_PLCS1
++			       |  DPLLCR_INCS_DOTCLKIN1;
++		else
++			dpllcr |= DPLLCR_PLCS0
++			       |  DPLLCR_INCS_DOTCLKIN0;
+ 
+-			if (rcdu->info->dpll_ch & (1 << rcrtc->index)) {
+-				u32 dpllcr = DPLLCR_CODE | DPLLCR_CLKE
+-					   | DPLLCR_FDPLL(dpll.fdpll)
+-					   | DPLLCR_N(dpll.n) | DPLLCR_M(dpll.m)
+-					   | DPLLCR_STBY;
++		rcar_du_group_write(rcrtc->group, DPLLCR, dpllcr);
+ 
+-				if (rcrtc->index == 1)
+-					dpllcr |= DPLLCR_PLCS1
+-					       |  DPLLCR_INCS_DOTCLKIN1;
+-				else
+-					dpllcr |= DPLLCR_PLCS0
+-					       |  DPLLCR_INCS_DOTCLKIN0;
++		escr = ESCR_DCLKSEL_DCLKIN | div;
++	} else {
++		unsigned long clk;
++		u32 div;
+ 
+-				rcar_du_group_write(rcrtc->group, DPLLCR,
+-						    dpllcr);
+-			}
++		/*
++		 * Compute the clock divisor and select the internal or external
++		 * dot clock based on the requested frequency.
++		 */
++		clk = clk_get_rate(rcrtc->clock);
++		div = DIV_ROUND_CLOSEST(clk, mode_clock);
++		div = clamp(div, 1U, 64U) - 1;
+ 
+-			escr = ESCR_DCLKSEL_DCLKIN | extdiv;
+-		}
++		escr = ESCR_DCLKSEL_CLKS | div;
+ 
+-		dev_dbg(rcrtc->group->dev->dev,
+-			"mode clock %lu extrate %lu rate %lu ESCR 0x%08x\n",
+-			mode_clock, extrate, rate, escr);
++		if (rcrtc->extclock) {
++			unsigned long extclk;
++			unsigned long extrate;
++			unsigned long rate;
++			u32 extdiv;
++
++			extclk = clk_get_rate(rcrtc->extclock);
++			extdiv = DIV_ROUND_CLOSEST(extclk, mode_clock);
++			extdiv = clamp(extdiv, 1U, 64U) - 1;
++
++			extrate = extclk / (extdiv + 1);
++			rate = clk / (div + 1);
++
++			if (abs((long)extrate - (long)mode_clock) <
++			    abs((long)rate - (long)mode_clock))
++				escr = ESCR_DCLKSEL_DCLKIN | extdiv;
++
++			dev_dbg(rcrtc->group->dev->dev,
++				"mode clock %lu extrate %lu rate %lu ESCR 0x%08x\n",
++				mode_clock, extrate, rate, escr);
++		}
+ 	}
+ 
+ 	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? ESCR2 : ESCR,
+@@ -286,11 +298,11 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+ 	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? OTAR2 : OTAR, 0);
+ 
+ 	/* Signal polarities */
+-	value = ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? DSMR_VSL : 0)
+-	      | ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? DSMR_HSL : 0)
+-	      | ((mode->flags & DRM_MODE_FLAG_INTERLACE) ? DSMR_ODEV : 0)
+-	      | DSMR_DIPM_DISP | DSMR_CSPM;
+-	rcar_du_crtc_write(rcrtc, DSMR, value);
++	dsmr = ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? DSMR_VSL : 0)
++	     | ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? DSMR_HSL : 0)
++	     | ((mode->flags & DRM_MODE_FLAG_INTERLACE) ? DSMR_ODEV : 0)
++	     | DSMR_DIPM_DISP | DSMR_CSPM;
++	rcar_du_crtc_write(rcrtc, DSMR, dsmr);
+ 
+ 	/* Display timings */
+ 	rcar_du_crtc_write(rcrtc, HDSR, mode->htotal - mode->hsync_start - 19);
 -- 
 2.7.4
