@@ -1,63 +1,88 @@
-From: sz.lin@moxa.com (=?UTF-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Mon, 16 Sep 2019 17:50:39 +0800
-Subject: [cip-dev] gitlab: mirroring broken, tests failing
-In-Reply-To: <OSAPR01MB3234387C361803EA604F3D7F92B00@OSAPR01MB3234.jpnprd01.prod.outlook.com>
-References: <20190911221452.GA30802@amd>
-	<OSAPR01MB3234387C361803EA604F3D7F92B00@OSAPR01MB3234.jpnprd01.prod.outlook.com>
-Message-ID: <CAFk6z8OF4Bmviq3KWu2DsN1hDv-ozZs6Azw-ie=OJubrPOcReA@mail.gmail.com>
+From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
+Date: Mon, 16 Sep 2019 16:50:14 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 00/32] Add PCIe and HDMI support to
+	HiHope RZ/G2M
+Message-ID: <1568649046-17420-1-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+Dear All,
 
-<nobuhiro1.iwamatsu@toshiba.co.jp> ? 2019?9?13? ?? ??6:51???
->
-> Hi all,
->
-> > -----Original Message-----
-> > From: cip-dev-bounces at lists.cip-project.org
-> > [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Pavel
-> > Machek
-> > Sent: Thursday, September 12, 2019 7:15 AM
-> > To: Chris.Paterson2 at renesas.com; cip-dev at lists.cip-project.org
-> > Subject: [cip-dev] gitlab: mirroring broken, tests failing
-> >
-> > Hi!
-> >
-> > I pushed kernel to kernel.org, bug I don't see it on gilab. Does mirroring
-> > need to be restarted?
-> >
-> > Plus, tests are failing, and it seems to me that problem is with tests,
-> > not with kernel...
-> > https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/292957614
-> >
-> > Job submitted successfully as #3620.
-> > ------------------------------
-> > Current job status:
-> > Job #3605: Submitted
-> > ...
-> > Job #3620: Submitted
-> > Timed out waiting for test jobs to complete Errors during testing
-> >
-> > I tried submiting known-good kernel, 3bc5ed22, and it failed, too...
->
-> I think this is caused by LAVA.
-> LAVA has many test queue, and is not being processed.
+this series adds HDMI and PCIe support for the HiHope RZ/G2M board.
 
-Yes, it's.
+Thanks,
+Fab
 
-The gitlab mirror mechanism works fine.
+Biju Das (14):
+  dt-bindings: PCI: rcar: Add device tree support for r8a774a1
+  dt-bindings: display: renesas: du: Document the r8a774a1 bindings
+  dt-bindings: display: renesas: lvds: Document r8a774a1 bindings
+  drm: rcar-du: Add R8A774A1 support
+  drm: rcar-du: lvds: Add r8a774a1 support
+  arm64: dts: renesas: r8a774a1: Add PCIe device nodes
+  arm64: dts: renesas: hihope-common: Declare pcie bus clock
+  arm64: dts: renesas: hihope-rzg2-ex: Enable PCIe support
+  arm64: dts: renesas: r8a774a1: Add VSP instances
+  arm64: dts: renesas: r8a774a1: Add DU device to DT
+  arm64: dts: renesas: r8a774a1: Add FDP1 instance
+  arm64: dts: renesas: r8a774a1: Tie SYS-DMAC to IPMMU-DS0/1
+  arm64: dts: renesas: r8a774a1: Tie Audio-DMAC to IPMMU-MP
+  arm64: dts: renesas: r8a774a1: Connect Ethernet-AVB to IPMMU-DS0
 
-SZ
+Fabrizio Castro (3):
+  dt-bindings: display: renesas: Add r8a774a1 support
+  arm64: dts: renesas: r8a774a1: Add HDMI encoder instance
+  arm64: dts: renesas: hihope-common: Add HDMI support
 
->
->    https://lava.ciplatform.org/scheduler/
->
-> Chris, could you check LAVA?
->
-> Best regards,
->   Nobuhiro
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
+Jacopo Mondi (1):
+  drm: rcar-du: Rename and document dpll_ch field
+
+Kieran Bingham (3):
+  drm: rcar-du: Refactor Feature and Quirk definitions
+  drm: rcar-du: Add interlaced feature flag
+  drm: rcar-du: Support interlaced video output through vsp1
+
+Koji Matsuoka (1):
+  drm: rcar-du: Add support for missing pixel formats
+
+Laurent Pinchart (6):
+  drm: rcar-du: dw-hdmi: Reject modes with a too high clock frequency
+  drm: rcar-du: Cache DSYSR value to ensure known initial value
+  drm: rcar-du: Don't use TV sync mode when not supported by the
+    hardware
+  drm: rcar-du: Rework clock configuration based on hardware limits
+  drm: rcar-du: Store V4L2 fourcc in rcar_du_format_info structure
+  drm: rcar-du: Update framebuffer pitch and alignment limits for Gen3
+
+Marek Vasut (3):
+  PCI: rcar: Replace unsigned long with u32/unsigned int in register
+    accessors
+  PCI: rcar: Replace various variable types with unsigned ones for
+    register values
+  PCI: rcar: Clean up debug messages
+
+Wolfram Sang (1):
+  PCI: rcar: Do not shadow the 'irq' variable
+
+ .../bindings/display/bridge/renesas,dw-hdmi.txt    |   4 +-
+ .../bindings/display/bridge/renesas,lvds.txt       |   1 +
+ .../devicetree/bindings/display/renesas,du.txt     |   2 +
+ Documentation/devicetree/bindings/pci/rcar-pci.txt |   1 +
+ arch/arm64/boot/dts/renesas/hihope-common.dtsi     |  65 ++++++
+ arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi    |   8 +
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi          | 255 +++++++++++++++++++++
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c             | 168 ++++++++------
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.h             |   5 +
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c              |  79 +++++--
+ drivers/gpu/drm/rcar-du/rcar_du_drv.h              |  13 +-
+ drivers/gpu/drm/rcar-du/rcar_du_group.c            |   7 +-
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c              |  92 +++++++-
+ drivers/gpu/drm/rcar-du/rcar_du_kms.h              |   1 +
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.c              |  46 +---
+ drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c             |  15 ++
+ drivers/gpu/drm/rcar-du/rcar_lvds.c                |   1 +
+ drivers/pci/controller/pcie-rcar.c                 |  40 ++--
+ 18 files changed, 641 insertions(+), 162 deletions(-)
+
+-- 
+2.7.4
