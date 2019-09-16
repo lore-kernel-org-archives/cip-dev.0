@@ -1,40 +1,59 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon, 16 Sep 2019 16:50:24 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 10/32] drm: rcar-du: lvds: Add r8a774a1
-	support
+Date: Mon, 16 Sep 2019 16:50:25 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 11/32] drm: rcar-du: dw-hdmi: Reject
+	modes with a too high clock frequency
 In-Reply-To: <1568649046-17420-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1568649046-17420-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1568649046-17420-11-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1568649046-17420-12-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-commit 62e2da682a0a3874291bc7874d7e5a043f99cf6d upstream.
+commit f41cb153e6faf0d1f4bbe0b0f15aa20de1e43e90 upstream.
 
-The LVDS encoders on RZ/G2M SoC is similar to R-Car M3-W. Add support for
-RZ/G2M (R8A774A1) SoC to the LVDS encoder driver.
+Implement a .mode_valid() handler in the R-Car glue layer to reject
+modes with an unsupported clock frequency.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_lvds.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-index 4c39de3..61a1dc2 100644
---- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-@@ -516,6 +516,7 @@ static const struct rcar_lvds_device_info rcar_lvds_r8a77970_info = {
+diff --git a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
+index 76210ae..8e6abe8 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
++++ b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
+@@ -39,6 +39,20 @@ static const struct rcar_hdmi_phy_params rcar_hdmi_phy_params[] = {
+ 	{ ~0UL,      0x0000, 0x0000, 0x0000 },
+ };
  
- static const struct of_device_id rcar_lvds_of_table[] = {
- 	{ .compatible = "renesas,r8a7743-lvds", .data = &rcar_lvds_gen2_info },
-+	{ .compatible = "renesas,r8a774a1-lvds", .data = &rcar_lvds_gen3_info },
- 	{ .compatible = "renesas,r8a7790-lvds", .data = &rcar_lvds_r8a7790_info },
- 	{ .compatible = "renesas,r8a7791-lvds", .data = &rcar_lvds_gen2_info },
- 	{ .compatible = "renesas,r8a7793-lvds", .data = &rcar_lvds_gen2_info },
++static enum drm_mode_status
++rcar_hdmi_mode_valid(struct drm_connector *connector,
++		     const struct drm_display_mode *mode)
++{
++	/*
++	 * The maximum supported clock frequency is 297 MHz, as shown in the PHY
++	 * parameters table.
++	 */
++	if (mode->clock > 297000)
++		return MODE_CLOCK_HIGH;
++
++	return MODE_OK;
++}
++
+ static int rcar_hdmi_phy_configure(struct dw_hdmi *hdmi,
+ 				   const struct dw_hdmi_plat_data *pdata,
+ 				   unsigned long mpixelclock)
+@@ -63,6 +77,7 @@ static int rcar_hdmi_phy_configure(struct dw_hdmi *hdmi,
+ }
+ 
+ static const struct dw_hdmi_plat_data rcar_dw_hdmi_plat_data = {
++	.mode_valid = rcar_hdmi_mode_valid,
+ 	.configure_phy	= rcar_hdmi_phy_configure,
+ };
+ 
 -- 
 2.7.4
