@@ -1,10 +1,10 @@
 From: chris.paterson2@renesas.com (Chris Paterson)
-Date: Tue, 17 Sep 2019 15:02:09 +0100
-Subject: [cip-dev] [PATCH linux-4.19.y-cip-rt] gitlab-ci: Increase test
-	timeout to 60 minutes
+Date: Tue, 17 Sep 2019 15:02:10 +0100
+Subject: [cip-dev] [PATCH linux-4.4.y-cip] gitlab-ci: Increase test timeout
+	to 60 minutes
 In-Reply-To: <20190917140211.3993-1-chris.paterson2@renesas.com>
 References: <20190917140211.3993-1-chris.paterson2@renesas.com>
-Message-ID: <20190917140211.3993-2-chris.paterson2@renesas.com>
+Message-ID: <20190917140211.3993-3-chris.paterson2@renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
@@ -17,10 +17,10 @@ Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-index 62562c8b6fbb..0d72b94d8904 100644
+index 6348d1c47f6e..55202f5e2ced 100644
 --- a/.gitlab-ci.yml
 +++ b/.gitlab-ci.yml
-@@ -225,7 +225,7 @@ run_tests:
+@@ -287,7 +287,7 @@ run_tests:
    when: always
    variables:
      GIT_STRATEGY: none
