@@ -1,78 +1,47 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Tue, 17 Sep 2019 13:06:45 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 23/32] arm64: dts: renesas:
- hihope-common: Declare pcie bus clock
-In-Reply-To: <OSAPR01MB3234F47C461A87822432797F928F0@OSAPR01MB3234.jpnprd01.prod.outlook.com>
-References: <1568649046-17420-1-git-send-email-fabrizio.castro@bp.renesas.com>
-	<1568649046-17420-24-git-send-email-fabrizio.castro@bp.renesas.com>
-	<OSAPR01MB3234F47C461A87822432797F928F0@OSAPR01MB3234.jpnprd01.prod.outlook.com>
-Message-ID: <TY1PR01MB177098EF77342ED8E3A2BC0EC08F0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+Date: Tue, 17 Sep 2019 14:07:30 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip v2 02/32] dt-bindings: display:
+	renesas: du: Document the r8a774a1 bindings
+In-Reply-To: <1568725680-32730-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1568725680-32730-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1568725680-32730-3-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+From: Biju Das <biju.das@bp.renesas.com>
 
-> From: nobuhiro1.iwamatsu at toshiba.co.jp <nobuhiro1.iwamatsu@toshiba.co.jp>
-> Sent: 17 September 2019 13:37
-> Subject: RE: [cip-dev][PATCH 4.19.y-cip 23/32] arm64: dts: renesas: hihope-common: Declare pcie bus clock
-> 
-> Hi,
-> 
-> I can not merge this patch.
-> 
-> > -----Original Message-----
-> > From: Fabrizio Castro [mailto:fabrizio.castro at bp.renesas.com]
-> > Sent: Tuesday, September 17, 2019 12:51 AM
-> > To: cip-dev at lists.cip-project.org
-> > Cc: iwamatsu nobuhiro(?? ?? ????????)
-> > <nobuhiro1.iwamatsu@toshiba.co.jp>; pavel at denx.de; Chris Paterson
-> > <Chris.Paterson2@renesas.com>; Biju Das <biju.das@bp.renesas.com>;
-> > Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > Subject: [cip-dev][PATCH 4.19.y-cip 23/32] arm64: dts: renesas:
-> > hihope-common: Declare pcie bus clock
-> >
-> > From: Biju Das <biju.das@bp.renesas.com>
-> >
-> > commit 61e0505b162a3974663cc6d1dbec30268a7a03ea upstream.
-> >
-> > Declare pcie bus clock, since it is generated on the HiHope RZ/G2M main
-> > board.
-> >
-> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > ---
-> >  arch/arm64/boot/dts/renesas/hihope-common.dtsi | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/renesas/hihope-common.dtsi
-> > b/arch/arm64/boot/dts/renesas/hihope-common.dtsi
-> > index 77d183a..2a49bf1 100644
-> > --- a/arch/arm64/boot/dts/renesas/hihope-common.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/hihope-common.dtsi
-> > @@ -77,6 +77,10 @@
-> >  	clock-frequency = <32768>;
-> >  };
-> >
-> > +&pcie_bus_clk {
-> > +	clock-frequency = <100000000>;
-> > +};
-> > +
-> >  &pfc {
-> >  	pinctrl-0 = <&scif_clk_pins>;
-> >  	pinctrl-names = "default";
-> 
-> Please see:
->   https://gitlab.com/cip-project/cip-kernel/linux-cip/blob/linux-4.19.y-cip/arch/arm64/boot/dts/renesas/hihope-common.dtsi#L95
-> 
-> Please rebase from linux-4.19.y-cip/HEAD and resend this series.
+commit 2acd1d1f219946e292aa85a9e3dff35e4bb78237 upstream.
 
-Will do.
+Document the RZ/G2M (R8A774A1) SoC in the R-Car DU bindings.
 
-Thanks,
-Fab
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/display/renesas,du.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> 
-> Best regards,
->   Nobuhiro
+diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
+index ec9d34be..e01acc6 100644
+--- a/Documentation/devicetree/bindings/display/renesas,du.txt
++++ b/Documentation/devicetree/bindings/display/renesas,du.txt
+@@ -5,6 +5,7 @@ Required Properties:
+   - compatible: must be one of the following.
+     - "renesas,du-r8a7743" for R8A7743 (RZ/G1M) compatible DU
+     - "renesas,du-r8a7745" for R8A7745 (RZ/G1E) compatible DU
++    - "renesas,du-r8a774a1" for R8A774A1 (RZ/G2M) compatible DU
+     - "renesas,du-r8a7779" for R8A7779 (R-Car H1) compatible DU
+     - "renesas,du-r8a7790" for R8A7790 (R-Car H2) compatible DU
+     - "renesas,du-r8a7791" for R8A7791 (R-Car M2-W) compatible DU
+@@ -51,6 +52,7 @@ corresponding to each DU output.
+ -----------------------------------------------------------------------------
+  R8A7743 (RZ/G1M)       DPAD 0         LVDS 0         -              -
+  R8A7745 (RZ/G1E)       DPAD 0         DPAD 1         -              -
++ R8A774A1 (RZ/G2M)      DPAD 0         HDMI 0         LVDS 0         -
+  R8A7779 (R-Car H1)     DPAD 0         DPAD 1         -              -
+  R8A7790 (R-Car H2)     DPAD 0         LVDS 0         LVDS 1         -
+  R8A7791 (R-Car M2-W)   DPAD 0         LVDS 0         -              -
+-- 
+2.7.4
