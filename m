@@ -1,52 +1,78 @@
-From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
-Date: Tue, 17 Sep 2019 12:43:21 +0000
-Subject: [cip-dev] Postpone scheduled release
-In-Reply-To: <TYAPR01MB2285921DD6ADD2EFB30758D2B78F0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-References: <OSAPR01MB3234F8CCF031A1A2A5D68B6992B30@OSAPR01MB3234.jpnprd01.prod.outlook.com>
-	<TYAPR01MB2285921DD6ADD2EFB30758D2B78F0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-Message-ID: <OSAPR01MB323473BBED11DC18645122AC928F0@OSAPR01MB3234.jpnprd01.prod.outlook.com>
+From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
+Date: Tue, 17 Sep 2019 13:06:45 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 23/32] arm64: dts: renesas:
+ hihope-common: Declare pcie bus clock
+In-Reply-To: <OSAPR01MB3234F47C461A87822432797F928F0@OSAPR01MB3234.jpnprd01.prod.outlook.com>
+References: <1568649046-17420-1-git-send-email-fabrizio.castro@bp.renesas.com>
+	<1568649046-17420-24-git-send-email-fabrizio.castro@bp.renesas.com>
+	<OSAPR01MB3234F47C461A87822432797F928F0@OSAPR01MB3234.jpnprd01.prod.outlook.com>
+Message-ID: <TY1PR01MB177098EF77342ED8E3A2BC0EC08F0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Chris,
+Hi,
 
-> -----Original Message-----
-> From: Chris Paterson [mailto:Chris.Paterson2 at renesas.com]
-> Sent: Tuesday, September 17, 2019 4:27 PM
-> To: iwamatsu nobuhiro(?? ?? ????????)
-> <nobuhiro1.iwamatsu@toshiba.co.jp>; cip-dev at lists.cip-project.org
-> Subject: RE: Postpone scheduled release
+> From: nobuhiro1.iwamatsu at toshiba.co.jp <nobuhiro1.iwamatsu@toshiba.co.jp>
+> Sent: 17 September 2019 13:37
+> Subject: RE: [cip-dev][PATCH 4.19.y-cip 23/32] arm64: dts: renesas: hihope-common: Declare pcie bus clock
 > 
-> Hello,
+> Hi,
 > 
-> > From: cip-dev-bounces at lists.cip-project.org
-> > <cip-dev-bounces@lists.cip- project.org> On Behalf Of
-> > nobuhiro1.iwamatsu at toshiba.co.jp
-> > Sent: 13 September 2019 23:24
+> I can not merge this patch.
+> 
+> > -----Original Message-----
+> > From: Fabrizio Castro [mailto:fabrizio.castro at bp.renesas.com]
+> > Sent: Tuesday, September 17, 2019 12:51 AM
+> > To: cip-dev at lists.cip-project.org
+> > Cc: iwamatsu nobuhiro(?? ?? ????????)
+> > <nobuhiro1.iwamatsu@toshiba.co.jp>; pavel at denx.de; Chris Paterson
+> > <Chris.Paterson2@renesas.com>; Biju Das <biju.das@bp.renesas.com>;
+> > Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Subject: [cip-dev][PATCH 4.19.y-cip 23/32] arm64: dts: renesas:
+> > hihope-common: Declare pcie bus clock
 > >
-> > Hi,
+> > From: Biju Das <biju.das@bp.renesas.com>
 > >
-> > This friday was the regular release date for 4.4.y-cip and 4.19.y-cip.
-> > However, because LAVA have a problem, we are currently unable to test
-> > for Kernel.
+> > commit 61e0505b162a3974663cc6d1dbec30268a7a03ea upstream.
+> >
+> > Declare pcie bus clock, since it is generated on the HiHope RZ/G2M main
+> > board.
+> >
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > ---
+> >  arch/arm64/boot/dts/renesas/hihope-common.dtsi | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/renesas/hihope-common.dtsi
+> > b/arch/arm64/boot/dts/renesas/hihope-common.dtsi
+> > index 77d183a..2a49bf1 100644
+> > --- a/arch/arm64/boot/dts/renesas/hihope-common.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/hihope-common.dtsi
+> > @@ -77,6 +77,10 @@
+> >  	clock-frequency = <32768>;
+> >  };
+> >
+> > +&pcie_bus_clk {
+> > +	clock-frequency = <100000000>;
+> > +};
+> > +
+> >  &pfc {
+> >  	pinctrl-0 = <&scif_clk_pins>;
+> >  	pinctrl-names = "default";
 > 
-> LAVA is now fixed. Sorry for the delay.
+> Please see:
+>   https://gitlab.com/cip-project/cip-kernel/linux-cip/blob/linux-4.19.y-cip/arch/arm64/boot/dts/renesas/hihope-common.dtsi#L95
 > 
+> Please rebase from linux-4.19.y-cip/HEAD and resend this series.
 
-Thanks for your work.
+Will do.
 
-> > Therefore, we postpone the release. As soon as the LAVA's problem is
-> > fixed, we will begin the release.
+Thanks,
+Fab
+
 > 
-> Latest ci/linux-4.4.y-cip branch builds/tests okay:
-> https://gitlab.com/cip-project/cip-kernel/linux-cip/pipelines/814533
-> 29
-> 
-> Latest ci/linux-4.19.y-cip branch builds/tests are in progress:
-> https://gitlab.com/cip-project/cip-kernel/linux-cip/pipelines/825968
-> 90
-
-OK, I will check these.
-
-Best regards,
-  Nobuhiro
+> Best regards,
+>   Nobuhiro
