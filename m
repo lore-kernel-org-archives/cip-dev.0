@@ -1,56 +1,41 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Tue, 17 Sep 2019 14:07:33 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip v2 05/32] PCI: rcar: Replace unsigned
-	long with u32/unsigned int in register accessors
+Date: Tue, 17 Sep 2019 14:07:32 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip v2 04/32] dt-bindings: display:
+	renesas: Add r8a774a1 support
 In-Reply-To: <1568725680-32730-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1568725680-32730-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1568725680-32730-6-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1568725680-32730-5-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+commit 74a22e8f4350a9e096c84fc9e88cf72abf71887c upstream.
 
-commit 7dc13a7939e09caa20ed3a0a8417f23b4ec4e6e2 upstream.
+Document RZ/G2M (R8A774A1) SoC bindings.
 
-Replace unsigned long with u32 and unsigned int in register accessor
-functions, since they access 32bit registers.
-
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc at vger.kernel.org
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/pci/controller/pcie-rcar.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
-index 9b9c677..0665892 100644
---- a/drivers/pci/controller/pcie-rcar.c
-+++ b/drivers/pci/controller/pcie-rcar.c
-@@ -154,14 +154,13 @@ struct rcar_pcie {
- 	struct			rcar_msi msi;
- };
+diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt b/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
+index a41d280..db68041 100644
+--- a/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
++++ b/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
+@@ -12,10 +12,12 @@ following device-specific properties.
+ Required properties:
  
--static void rcar_pci_write_reg(struct rcar_pcie *pcie, unsigned long val,
--			       unsigned long reg)
-+static void rcar_pci_write_reg(struct rcar_pcie *pcie, u32 val,
-+			       unsigned int reg)
- {
- 	writel(val, pcie->base + reg);
- }
+ - compatible : Shall contain one or more of
++  - "renesas,r8a774a1-hdmi" for R8A774A1 (RZ/G2M) compatible HDMI TX
+   - "renesas,r8a7795-hdmi" for R8A7795 (R-Car H3) compatible HDMI TX
+   - "renesas,r8a7796-hdmi" for R8A7796 (R-Car M3-W) compatible HDMI TX
+   - "renesas,r8a77965-hdmi" for R8A77965 (R-Car M3-N) compatible HDMI TX
+-  - "renesas,rcar-gen3-hdmi" for the generic R-Car Gen3 compatible HDMI TX
++  - "renesas,rcar-gen3-hdmi" for the generic R-Car Gen3 and RZ/G2 compatible
++			     HDMI TX
  
--static unsigned long rcar_pci_read_reg(struct rcar_pcie *pcie,
--				       unsigned long reg)
-+static u32 rcar_pci_read_reg(struct rcar_pcie *pcie, unsigned int reg)
- {
- 	return readl(pcie->base + reg);
- }
+     When compatible with generic versions, nodes must list the SoC-specific
+     version corresponding to the platform first, followed by the
 -- 
 2.7.4
