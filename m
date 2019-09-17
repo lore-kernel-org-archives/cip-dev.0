@@ -1,88 +1,95 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Tue, 17 Sep 2019 14:07:53 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip v2 25/32] arm64: dts: renesas:
-	r8a774a1: Add VSP instances
+Date: Tue, 17 Sep 2019 14:07:54 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip v2 26/32] arm64: dts: renesas:
+	r8a774a1: Add DU device to DT
 In-Reply-To: <1568725680-32730-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1568725680-32730-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1568725680-32730-26-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1568725680-32730-27-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Biju Das <biju.das@bp.renesas.com>
 
-commit 391dca2105c435a2003c3c19f2d0b68742f43434 upstream.
+commit c4f223b419ba3fe44822d3180d3b9e5e6cb33c2e upstream.
 
-The r8a774a1 soc has 5 VSP instances similar to r8a7796.
+Add the DU device to r8a774a1.dtsi in a disabled state.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 55 +++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 63 +++++++++++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index 24ca569..bf3038b 100644
+index bf3038b..28d82e2 100644
 --- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -1895,6 +1895,61 @@
- 			iommus = <&ipmmu_vc0 19>;
+@@ -1950,6 +1950,69 @@
+ 			renesas,fcp = <&fcpvi0>;
  		};
  
-+		vspb: vsp at fe960000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfe960000 0 0x8000>;
-+			interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 626>;
-+			power-domains = <&sysc R8A774A1_PD_A3VC>;
-+			resets = <&cpg 626>;
++		du: display at feb00000 {
++			compatible = "renesas,du-r8a774a1";
++			reg = <0 0xfeb00000 0 0x70000>;
++			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 724>,
++				 <&cpg CPG_MOD 723>,
++				 <&cpg CPG_MOD 722>;
++			clock-names = "du.0", "du.1", "du.2";
++			status = "disabled";
 +
-+			renesas,fcp = <&fcpvb0>;
++			vsps = <&vspd0 &vspd1 &vspd2>;
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port at 0 {
++					reg = <0>;
++					du_out_rgb: endpoint {
++					};
++				};
++				port at 1 {
++					reg = <1>;
++					du_out_hdmi0: endpoint {
++					};
++				};
++				port at 2 {
++					reg = <2>;
++					du_out_lvds0: endpoint {
++						remote-endpoint = <&lvds0_in>;
++					};
++				};
++			};
 +		};
 +
-+		vspd0: vsp at fea20000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfea20000 0 0x5000>;
-+			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 623>;
++		lvds0: lvds at feb90000 {
++			compatible = "renesas,r8a774a1-lvds";
++			reg = <0 0xfeb90000 0 0x14>;
++			clocks = <&cpg CPG_MOD 727>;
 +			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
-+			resets = <&cpg 623>;
++			resets = <&cpg 727>;
++			status = "disabled";
 +
-+			renesas,fcp = <&fcpvd0>;
-+		};
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
 +
-+		vspd1: vsp at fea28000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfea28000 0 0x5000>;
-+			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 622>;
-+			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
-+			resets = <&cpg 622>;
-+
-+			renesas,fcp = <&fcpvd1>;
-+		};
-+
-+		vspd2: vsp at fea30000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfea30000 0 0x5000>;
-+			interrupts = <GIC_SPI 468 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 621>;
-+			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
-+			resets = <&cpg 621>;
-+
-+			renesas,fcp = <&fcpvd2>;
-+		};
-+
-+		vspi0: vsp at fe9a0000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfe9a0000 0 0x8000>;
-+			interrupts = <GIC_SPI 444 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 631>;
-+			power-domains = <&sysc R8A774A1_PD_A3VC>;
-+			resets = <&cpg 631>;
-+
-+			renesas,fcp = <&fcpvi0>;
++				port at 0 {
++					reg = <0>;
++					lvds0_in: endpoint {
++						remote-endpoint = <&du_out_lvds0>;
++					};
++				};
++				port at 1 {
++					reg = <1>;
++					lvds0_out: endpoint {
++					};
++				};
++			};
 +		};
 +
  		prr: chipid at fff00044 {
