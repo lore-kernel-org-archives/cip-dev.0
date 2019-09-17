@@ -1,41 +1,47 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Tue, 17 Sep 2019 07:27:25 +0000
-Subject: [cip-dev] Postpone scheduled release
-In-Reply-To: <OSAPR01MB3234F8CCF031A1A2A5D68B6992B30@OSAPR01MB3234.jpnprd01.prod.outlook.com>
-References: <OSAPR01MB3234F8CCF031A1A2A5D68B6992B30@OSAPR01MB3234.jpnprd01.prod.outlook.com>
-Message-ID: <TYAPR01MB2285921DD6ADD2EFB30758D2B78F0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+From: pavel@denx.de (Pavel Machek)
+Date: Tue, 17 Sep 2019 11:38:56 +0200
+Subject: [cip-dev] [PATCH 4.19.y-cip 00/32] Add PCIe and HDMI support to
+ HiHope RZ/G2M
+In-Reply-To: <OSAPR01MB3234E56BC8C3D0562EDD09FF928F0@OSAPR01MB3234.jpnprd01.prod.outlook.com>
+References: <1568649046-17420-1-git-send-email-fabrizio.castro@bp.renesas.com>
+	<OSAPR01MB3234E56BC8C3D0562EDD09FF928F0@OSAPR01MB3234.jpnprd01.prod.outlook.com>
+Message-ID: <20190917093856.GB10277@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello,
-
-> From: cip-dev-bounces at lists.cip-project.org <cip-dev-bounces@lists.cip-
-> project.org> On Behalf Of nobuhiro1.iwamatsu at toshiba.co.jp
-> Sent: 13 September 2019 23:24
+On Tue 2019-09-17 01:06:42, nobuhiro1.iwamatsu at toshiba.co.jp wrote:
+> Hi Fabrizio,
 > 
-> Hi,
+> > -----Original Message-----
+> > From: Fabrizio Castro [mailto:fabrizio.castro at bp.renesas.com]
+> > Sent: Tuesday, September 17, 2019 12:50 AM
+> > To: cip-dev at lists.cip-project.org
+> > Cc: iwamatsu nobuhiro(?? ?? ????????)
+> > <nobuhiro1.iwamatsu@toshiba.co.jp>; pavel at denx.de; Chris Paterson
+> > <Chris.Paterson2@renesas.com>; Biju Das <biju.das@bp.renesas.com>;
+> > Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Subject: [cip-dev][PATCH 4.19.y-cip 00/32] Add PCIe and HDMI support to
+> > HiHope RZ/G2M
+> > 
+> > Dear All,
+> > 
+> > this series adds HDMI and PCIe support for the HiHope RZ/G2M board.
+> > 
 > 
-> This friday was the regular release date for 4.4.y-cip and 4.19.y-cip.
-> However, because LAVA have a problem, we are currently unable to test for
-> Kernel.
+> OK, I start checking this series.
 
-LAVA is now fixed. Sorry for the delay.
+I quickly went through the series, and don't see anything obviously
+wrong.
 
-> Therefore, we postpone the release. As soon as the LAVA's problem is fixed,
-> we will begin the release.
-
-Latest ci/linux-4.4.y-cip branch builds/tests okay:
-https://gitlab.com/cip-project/cip-kernel/linux-cip/pipelines/81453329
-
-Latest ci/linux-4.19.y-cip branch builds/tests are in progress:
-https://gitlab.com/cip-project/cip-kernel/linux-cip/pipelines/82596890
-
-Kind regards, Chris
-
-> 
-> Best regards,
->   Nobuhiro
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
+Best regards,
+								Pavel
+-- 
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 181 bytes
+Desc: Digital signature
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20190917/56d3051a/attachment.sig>
