@@ -1,101 +1,57 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Tue, 17 Sep 2019 14:07:34 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip v2 06/32] PCI: rcar: Replace various
-	variable types with unsigned ones for register values
+Date: Tue, 17 Sep 2019 14:07:36 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip v2 08/32] PCI: rcar: Do not shadow the
+	'irq' variable
 In-Reply-To: <1568725680-32730-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1568725680-32730-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1568725680-32730-7-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1568725680-32730-9-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit d8fa26609b91394f9f2d17ae6956a2c3e3632fbb upstream.
+commit a27beb5820d1a52b1e2863a4ae5545a1dd4ab35a upstream.
 
-Replace various variable types with u32 or unsigned int type for
-variables holding register values, since the registers are 32bit.
-Note that rcar_pcie_msi_irq() still uses various variable types
-because both find_first_bit() and __fls() require various variable
-types as an argument.
+The sparse tool rightfully detects:
+drivers/pci/controller/pcie-rcar.c:741:30: warning: symbol 'irq' shadows an earlier one
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Fix it now to avoid future surprises and for good coding style.
+
+No functional change intended.
+
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+[lorenzo.pieralisi at arm.com: commit log refactoring]
 Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc at vger.kernel.org
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/pci/controller/pcie-rcar.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ drivers/pci/controller/pcie-rcar.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
-index 0665892..f602c0d 100644
+index 6f4bad1..174be37 100644
 --- a/drivers/pci/controller/pcie-rcar.c
 +++ b/drivers/pci/controller/pcie-rcar.c
-@@ -172,7 +172,7 @@ enum {
+@@ -740,15 +740,15 @@ static irqreturn_t rcar_pcie_msi_irq(int irq, void *data)
  
- static void rcar_rmw32(struct rcar_pcie *pcie, int where, u32 mask, u32 data)
- {
--	int shift = 8 * (where & 3);
-+	unsigned int shift = 8 * (where & 3);
- 	u32 val = rcar_pci_read_reg(pcie, where & ~3);
+ 	while (reg) {
+ 		unsigned int index = find_first_bit(&reg, 32);
+-		unsigned int irq;
++		unsigned int msi_irq;
  
- 	val &= ~(mask << shift);
-@@ -182,7 +182,7 @@ static void rcar_rmw32(struct rcar_pcie *pcie, int where, u32 mask, u32 data)
+ 		/* clear the interrupt */
+ 		rcar_pci_write_reg(pcie, 1 << index, PCIEMSIFR);
  
- static u32 rcar_read_conf(struct rcar_pcie *pcie, int where)
- {
--	int shift = 8 * (where & 3);
-+	unsigned int shift = 8 * (where & 3);
- 	u32 val = rcar_pci_read_reg(pcie, where & ~3);
- 
- 	return val >> shift;
-@@ -193,7 +193,7 @@ static int rcar_pcie_config_access(struct rcar_pcie *pcie,
- 		unsigned char access_type, struct pci_bus *bus,
- 		unsigned int devfn, int where, u32 *data)
- {
--	int dev, func, reg, index;
-+	unsigned int dev, func, reg, index;
- 
- 	dev = PCI_SLOT(devfn);
- 	func = PCI_FUNC(devfn);
-@@ -297,8 +297,9 @@ static int rcar_pcie_write_conf(struct pci_bus *bus, unsigned int devfn,
- 				int where, int size, u32 val)
- {
- 	struct rcar_pcie *pcie = bus->sysdata;
--	int shift, ret;
-+	unsigned int shift;
- 	u32 data;
-+	int ret;
- 
- 	ret = rcar_pcie_config_access(pcie, RCAR_PCI_ACCESS_READ,
- 				      bus, devfn, where, &data);
-@@ -508,10 +509,10 @@ static int phy_wait_for_ack(struct rcar_pcie *pcie)
- }
- 
- static void phy_write_reg(struct rcar_pcie *pcie,
--				 unsigned int rate, unsigned int addr,
--				 unsigned int lane, unsigned int data)
-+			  unsigned int rate, u32 addr,
-+			  unsigned int lane, u32 data)
- {
--	unsigned long phyaddr;
-+	u32 phyaddr;
- 
- 	phyaddr = WRITE_CMD |
- 		((rate & 1) << RATE_POS) |
-@@ -1123,7 +1124,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct rcar_pcie *pcie;
--	unsigned int data;
-+	u32 data;
- 	int err;
- 	int (*phy_init_fn)(struct rcar_pcie *);
- 	struct pci_host_bridge *bridge;
+-		irq = irq_find_mapping(msi->domain, index);
+-		if (irq) {
++		msi_irq = irq_find_mapping(msi->domain, index);
++		if (msi_irq) {
+ 			if (test_bit(index, msi->used))
+-				generic_handle_irq(irq);
++				generic_handle_irq(msi_irq);
+ 			else
+ 				dev_info(dev, "unhandled MSI\n");
+ 		} else {
 -- 
 2.7.4
