@@ -1,91 +1,42 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Tue, 17 Sep 2019 14:07:50 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip v2 22/32] arm64: dts: renesas:
-	r8a774a1: Add PCIe device nodes
+Date: Tue, 17 Sep 2019 14:07:51 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip v2 23/32] arm64: dts: renesas:
+	hihope-common: Declare pcie bus clock
 In-Reply-To: <1568725680-32730-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1568725680-32730-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1568725680-32730-23-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1568725680-32730-24-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Biju Das <biju.das@bp.renesas.com>
 
-commit a5a41d50ffe77d250655f767eb192dbbc387edd7 upstream.
+commit 61e0505b162a3974663cc6d1dbec30268a7a03ea upstream.
 
-This patch adds PCIe{0,1} device nodes for R8A774A1 SoC.
+Declare pcie bus clock, since it is generated on the HiHope RZ/G2M main
+board.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 54 +++++++++++++++++++++++++++++++
- 1 file changed, 54 insertions(+)
+ arch/arm64/boot/dts/renesas/hihope-common.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index 892db7d..24ca569 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -1789,6 +1789,60 @@
- 			resets = <&cpg 408>;
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/hihope-common.dtsi b/arch/arm64/boot/dts/renesas/hihope-common.dtsi
+index de1c75f..b6f9b13 100644
+--- a/arch/arm64/boot/dts/renesas/hihope-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/hihope-common.dtsi
+@@ -118,6 +118,10 @@
+ 	status = "okay";
+ };
  
-+		pciec0: pcie at fe000000 {
-+			compatible = "renesas,pcie-r8a774a1",
-+				     "renesas,pcie-rcar-gen3";
-+			reg = <0 0xfe000000 0 0x80000>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			bus-range = <0x00 0xff>;
-+			device_type = "pci";
-+			ranges = <0x01000000 0 0x00000000 0 0xfe100000 0 0x00100000
-+				0x02000000 0 0xfe200000 0 0xfe200000 0 0x00200000
-+				0x02000000 0 0x30000000 0 0x30000000 0 0x08000000
-+				0x42000000 0 0x38000000 0 0x38000000 0 0x08000000>;
-+			/* Map all possible DDR as inbound ranges */
-+			dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x80000000>;
-+			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0>;
-+			interrupt-map = <0 0 0 0 &gic GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 319>, <&pcie_bus_clk>;
-+			clock-names = "pcie", "pcie_bus";
-+			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
-+			resets = <&cpg 319>;
-+			status = "disabled";
-+		};
++&pcie_bus_clk {
++	clock-frequency = <100000000>;
++};
 +
-+		pciec1: pcie at ee800000 {
-+			compatible = "renesas,pcie-r8a774a1",
-+				     "renesas,pcie-rcar-gen3";
-+			reg = <0 0xee800000 0 0x80000>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			bus-range = <0x00 0xff>;
-+			device_type = "pci";
-+			ranges = <0x01000000 0 0x00000000 0 0xee900000 0 0x00100000
-+				0x02000000 0 0xeea00000 0 0xeea00000 0 0x00200000
-+				0x02000000 0 0xc0000000 0 0xc0000000 0 0x08000000
-+				0x42000000 0 0xc8000000 0 0xc8000000 0 0x08000000>;
-+			/* Map all possible DDR as inbound ranges */
-+			dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x80000000>;
-+			interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0>;
-+			interrupt-map = <0 0 0 0 &gic GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 318>, <&pcie_bus_clk>;
-+			clock-names = "pcie", "pcie_bus";
-+			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
-+			resets = <&cpg 318>;
-+			status = "disabled";
-+		};
-+
- 		fcpf0: fcp at fe950000 {
- 			compatible = "renesas,fcpf";
- 			reg = <0 0xfe950000 0 0x200>;
+ &pfc {
+ 	pinctrl-0 = <&scif_clk_pins>;
+ 	pinctrl-names = "default";
 -- 
 2.7.4
