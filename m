@@ -1,11 +1,11 @@
 From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
-Date: Wed, 18 Sep 2019 05:27:07 +0000
-Subject: [cip-dev] [PATCH linux-4.19.y-cip-rt] gitlab-ci: Increase
-	test	timeout to 60 minutes
-In-Reply-To: <20190917140211.3993-2-chris.paterson2@renesas.com>
+Date: Wed, 18 Sep 2019 05:27:24 +0000
+Subject: [cip-dev] [PATCH linux-4.4.y-cip] gitlab-ci: Increase test
+ timeout	to 60 minutes
+In-Reply-To: <20190917140211.3993-3-chris.paterson2@renesas.com>
 References: <20190917140211.3993-1-chris.paterson2@renesas.com>
-	<20190917140211.3993-2-chris.paterson2@renesas.com>
-Message-ID: <TY2PR01MB324392EB089C562E784A4012928E0@TY2PR01MB3243.jpnprd01.prod.outlook.com>
+	<20190917140211.3993-3-chris.paterson2@renesas.com>
+Message-ID: <TY2PR01MB3243A410F84C210C8D8958ED928E0@TY2PR01MB3243.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
@@ -17,7 +17,7 @@ Hi Chris,
 > Paterson
 > Sent: Tuesday, September 17, 2019 11:02 PM
 > To: cip-dev at lists.cip-project.org
-> Subject: [cip-dev] [PATCH linux-4.19.y-cip-rt] gitlab-ci: Increase test
+> Subject: [cip-dev] [PATCH linux-4.4.y-cip] gitlab-ci: Increase test
 > timeout to 60 minutes
 > 
 > Due to the number of jobs we're running we're beginning to see a backlog
