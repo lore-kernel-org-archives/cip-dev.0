@@ -1,125 +1,146 @@
-From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
-Date: Wed, 18 Sep 2019 08:47:47 +0000
-Subject: [cip-dev] [PATCH] net: davinci_cpdma: use dma_addr_t for DMA
- address
-In-Reply-To: <20190918080045.13130-1-nobuhiro1.iwamatsu@toshiba.co.jp>
-References: <20190918080045.13130-1-nobuhiro1.iwamatsu@toshiba.co.jp>
-Message-ID: <OSAPR01MB3234F90EF160D9329231E6DB928E0@OSAPR01MB3234.jpnprd01.prod.outlook.com>
+From: chris.paterson2@renesas.com (Chris Paterson)
+Date: Wed, 18 Sep 2019 16:42:50 +0100
+Subject: [cip-dev] [PATCH linux-4.19.y-cip] gitlab-ci: Always store job
+	artifacts
+Message-ID: <20190918154250.8205-1-chris.paterson2@renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+This means that we'll retain the Kernel configuration even if the build
+fails. Useful for debugging.
 
-This patch is needed to fix following build error on linux-4.4.y-cip-rt:
-  https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/297855132
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+---
+ .gitlab-ci.yml | 27 ++++++++++++++-------------
+ 1 file changed, 14 insertions(+), 13 deletions(-)
 
-This problem does not occur with 4.4.y-cip.
-The following fixes have been added in RT and this will affect:
-  https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/tree/Makefile?h=linux-4.4.y-cip-rt#n826
-
-Best regards,
-  Nobuhiro
-
-> -----Original Message-----
-> From: cip-dev-bounces at lists.cip-project.org
-> [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Nobuhiro
-> Iwamatsu
-> Sent: Wednesday, September 18, 2019 5:01 PM
-> To: cip-dev at lists.cip-project.org
-> Subject: [cip-dev] [PATCH] net: davinci_cpdma: use dma_addr_t for DMA
-> address
-> 
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> commit 84092996673211f16ef3b942a191d7952e9dfea9 upstream.
-> 
-> The davinci_cpdma mixes up physical addresses as seen from the CPU and
-> DMA addresses as seen from a DMA master, since it can operate on both
-> normal memory or an on-chip buffer. If dma_addr_t is different from
-> phys_addr_t, this means we get a compile-time warning about the type
-> mismatch:
-> 
-> ethernet/ti/davinci_cpdma.c: In function 'cpdma_desc_pool_create':
-> ethernet/ti/davinci_cpdma.c:182:48: error: passing argument 3 of
-> 'dma_alloc_coherent' from incompatible pointer type
-> [-Werror=incompatible-pointer-types]
->    pool->cpumap = dma_alloc_coherent(dev, size, &pool->phys, In file
-> included from ethernet/ti/davinci_cpdma.c:21:0:
-> dma-mapping.h:398:21: note: expected 'dma_addr_t * {aka long long
-> unsigned int *}' but argument is of type 'phys_addr_t * {aka unsigned
-> int *}'
->  static inline void *dma_alloc_coherent(struct device *dev, size_t size,
-> 
-> This slightly restructures the code so the address we use for mapping
-> RAM into a DMA address is always a dma_addr_t, avoiding the warning. The
-> code is correct even if both types are 32-bit because the DMA master in
-> this device only supports 32-bit addressing anyway, independent of the
-> types that are used.
-> 
-> We still assign this value to pool->phys, and that is wrong if the driver
-> is ever used with an IOMMU, but that value appears to be never used, so
-> there is no problem really. I've added a couple of comments about where
-> we do things that are slightly violating the API.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: David S. Miller <davem@davemloft.net>
-> Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-> ---
->  drivers/net/ethernet/ti/davinci_cpdma.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/ti/davinci_cpdma.c
-> b/drivers/net/ethernet/ti/davinci_cpdma.c
-> index 657b65bf5cac..18bf3a8fdc50 100644
-> --- a/drivers/net/ethernet/ti/davinci_cpdma.c
-> +++ b/drivers/net/ethernet/ti/davinci_cpdma.c
-> @@ -82,7 +82,7 @@ struct cpdma_desc {
-> 
->  struct cpdma_desc_pool {
->  	phys_addr_t		phys;
-> -	u32			hw_addr;
-> +	dma_addr_t		hw_addr;
->  	void __iomem		*iomap;		/* ioremap map */
->  	void			*cpumap;	/* dma_alloc map */
->  	int			desc_size, mem_size;
-> @@ -152,7 +152,7 @@ struct cpdma_chan {
->   * abstract out these details
->   */
->  static struct cpdma_desc_pool *
-> -cpdma_desc_pool_create(struct device *dev, u32 phys, u32 hw_addr,
-> +cpdma_desc_pool_create(struct device *dev, u32 phys, dma_addr_t
-> +hw_addr,
->  				int size, int align)
->  {
->  	int bitmap_size;
-> @@ -176,13 +176,13 @@ cpdma_desc_pool_create(struct device *dev, u32 phys,
-> u32 hw_addr,
-> 
->  	if (phys) {
->  		pool->phys  = phys;
-> -		pool->iomap = ioremap(phys, size);
-> +		pool->iomap = ioremap(phys, size); /* should be
-> memremap? */
->  		pool->hw_addr = hw_addr;
->  	} else {
-> -		pool->cpumap = dma_alloc_coherent(dev, size,
-> &pool->phys,
-> +		pool->cpumap = dma_alloc_coherent(dev, size,
-> &pool->hw_addr,
->  						  GFP_KERNEL);
-> -		pool->iomap = pool->cpumap;
-> -		pool->hw_addr = pool->phys;
-> +		pool->iomap = (void __iomem __force *)pool->cpumap;
-> +		pool->phys = pool->hw_addr; /* assumes no IOMMU, don't
-> use this value
-> +*/
->  	}
-> 
->  	if (pool->iomap)
-> --
-> 2.23.0
-> 
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+index 0e5d70d0c7f5..ba8b75abaee7 100644
+--- a/.gitlab-ci.yml
++++ b/.gitlab-ci.yml
+@@ -17,7 +17,7 @@ arm_hitachi_cyclonev_defconfig:
+     - /opt/build_kernel.sh
+   artifacts:
+     name: "$CI_JOB_NAME"
+-    when: on_success
++    when: always
+     paths:
+       - output
+ 
+@@ -33,7 +33,7 @@ arm_hitachi_omap_defconfig:
+     - /opt/build_kernel.sh
+   artifacts:
+     name: "$CI_JOB_NAME"
+-    when: on_success
++    when: always
+     paths:
+       - output
+ 
+@@ -49,7 +49,7 @@ arm_moxa_mxc_defconfig:
+     - /opt/build_kernel.sh
+   artifacts:
+     name: "$CI_JOB_NAME"
+-    when: on_success
++    when: always
+     paths:
+       - output
+ 
+@@ -66,7 +66,7 @@ arm_renesas_shmobile_defconfig:
+     - /opt/build_kernel.sh
+   artifacts:
+     name: "$CI_JOB_NAME"
+-    when: on_success
++    when: always
+     paths:
+       - output
+ 
+@@ -82,7 +82,7 @@ arm_siemens_imx6.config:
+     - /opt/build_kernel.sh
+   artifacts:
+     name: "$CI_JOB_NAME"
+-    when: on_success
++    when: always
+     paths:
+       - output
+ 
+@@ -98,7 +98,7 @@ arm64_moxa_eds_defconfig:
+     - /opt/build_kernel.sh
+   artifacts:
+     name: "$CI_JOB_NAME"
+-    when: on_success
++    when: always
+     paths:
+       - output
+ 
+@@ -115,7 +115,7 @@ arm64_renesas_defconfig:
+     - /opt/build_kernel.sh
+   artifacts:
+     name: "$CI_JOB_NAME"
+-    when: on_success
++    when: always
+     paths:
+       - output
+ 
+@@ -131,7 +131,7 @@ x86_plathome_obsvx2.config:
+     - /opt/build_kernel.sh
+   artifacts:
+     name: "$CI_JOB_NAME"
+-    when: on_success
++    when: always
+     paths:
+       - output
+ 
+@@ -147,7 +147,7 @@ x86_siemens_iot2000.config:
+     - /opt/build_kernel.sh
+   artifacts:
+     name: "$CI_JOB_NAME"
+-    when: on_success
++    when: always
+     paths:
+       - output
+ 
+@@ -163,7 +163,7 @@ x86_siemens_server_defconfig:
+     - /opt/build_kernel.sh
+   artifacts:
+     name: "$CI_JOB_NAME"
+-    when: on_success
++    when: always
+     paths:
+       - output
+ 
+@@ -179,7 +179,7 @@ x86_toshiba_atom_baytrail_cip.config:
+     - /opt/build_kernel.sh
+   artifacts:
+     name: "$CI_JOB_NAME"
+-    when: on_success
++    when: always
+     paths:
+       - output
+ 
+@@ -197,7 +197,7 @@ arm_shmobile_defconfig:
+     - /opt/build_kernel.sh
+   artifacts:
+     name: "$CI_JOB_NAME"
+-    when: on_success
++    when: always
+     paths:
+       - output
+ 
+@@ -214,7 +214,7 @@ arm64_defconfig:
+     - /opt/build_kernel.sh
+   artifacts:
+     name: "$CI_JOB_NAME"
+-    when: on_success
++    when: always
+     paths:
+       - output
+ 
+@@ -230,5 +230,6 @@ run_tests:
+     - /opt/submit_tests.sh
+   artifacts:
+     name: "$CI_JOB_NAME"
++    when: always
+     paths:
+       - output
+-- 
+2.17.1
