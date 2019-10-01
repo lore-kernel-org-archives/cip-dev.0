@@ -1,99 +1,165 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Tue,  1 Oct 2019 09:25:25 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 26/32] drm: rcar-du: Disable unused
-	DPAD outputs
+Date: Tue,  1 Oct 2019 09:25:26 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 27/32] drm: rcar-du: Replace
+	EXT_CTRL_REGS feature flag with generation check
 In-Reply-To: <1569918331-6990-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1569918331-6990-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1569918331-6990-27-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1569918331-6990-28-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-commit dedd876c949e56351f27aa52bf2eddd4a447f5bb upstream.
+commit cef0d9cfe4e5b6c756c268c1b7dda7fa257336fc upstream.
 
-DU channels are routed to DPAD outputs in an SoC-dependent way. The
-routing can be fixed (e.g. DU3 to DPAD0 on H3) or configurable (e.g. DU0
-or DU1 to DPAD0 on D3/E3). The hardware offers no option to disconnect
-DPAD outputs, which are thus always driven by a DU channel.
-
-On SoCs that have less DU channels than DU outputs, such as D3 and E3,
-the DPAD output is always driven when all channels are in use by other
-outputs (such as the internal LVDS and HDMI encoders). This creates an
-unwanted clone on the DPAD output.
-
-However, the parallel output of the DU channels routed to DPAD can be
-set to fixed levels in the DU channels themselves through the DOFLR
-group register. Use this to turn the DPAD on or off by driving fixed
-signals at the output of any DU channel not routed to a DPAD output.
-This doesn't affect the DU output signals going to other outputs.
+The RCAR_DU_FEATURE_EXT_CTRL_REGS feature flag is missing for H1 only,
+which is a first generation device, not a second generation device as
+reported in the device information table. Fix the H1 generation and use
+generation checks to replace the feature flag.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+[fab: backported to 4.19.y-cip]
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_group.c | 43 +++++++++++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c   | 12 +-----------
+ drivers/gpu/drm/rcar-du/rcar_du_drv.h   |  7 +++----
+ drivers/gpu/drm/rcar-du/rcar_du_group.c |  4 ++--
+ 3 files changed, 6 insertions(+), 17 deletions(-)
 
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+index a665679..d22b381 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+@@ -40,7 +40,6 @@
+ static const struct rcar_du_device_info rzg1_du_r8a7743_info = {
+ 	.gen = 2,
+ 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+-		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+ 		  | RCAR_DU_FEATURE_INTERLACED
+ 		  | RCAR_DU_FEATURE_TVM_SYNC,
+ 	.channels_mask = BIT(1) | BIT(0),
+@@ -63,7 +62,6 @@ static const struct rcar_du_device_info rzg1_du_r8a7743_info = {
+ static const struct rcar_du_device_info rzg1_du_r8a7745_info = {
+ 	.gen = 2,
+ 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+-		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+ 		  | RCAR_DU_FEATURE_INTERLACED
+ 		  | RCAR_DU_FEATURE_TVM_SYNC,
+ 	.channels_mask = BIT(1) | BIT(0),
+@@ -138,7 +136,7 @@ static const struct rcar_du_device_info rcar_du_r8a774c0_info = {
+ };
+ 
+ static const struct rcar_du_device_info rcar_du_r8a7779_info = {
+-	.gen = 2,
++	.gen = 1,
+ 	.features = RCAR_DU_FEATURE_INTERLACED
+ 		  | RCAR_DU_FEATURE_TVM_SYNC,
+ 	.channels_mask = BIT(1) | BIT(0),
+@@ -161,7 +159,6 @@ static const struct rcar_du_device_info rcar_du_r8a7779_info = {
+ static const struct rcar_du_device_info rcar_du_r8a7790_info = {
+ 	.gen = 2,
+ 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+-		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+ 		  | RCAR_DU_FEATURE_INTERLACED
+ 		  | RCAR_DU_FEATURE_TVM_SYNC,
+ 	.quirks = RCAR_DU_QUIRK_ALIGN_128B,
+@@ -191,7 +188,6 @@ static const struct rcar_du_device_info rcar_du_r8a7790_info = {
+ static const struct rcar_du_device_info rcar_du_r8a7791_info = {
+ 	.gen = 2,
+ 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+-		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+ 		  | RCAR_DU_FEATURE_INTERLACED
+ 		  | RCAR_DU_FEATURE_TVM_SYNC,
+ 	.channels_mask = BIT(1) | BIT(0),
+@@ -215,7 +211,6 @@ static const struct rcar_du_device_info rcar_du_r8a7791_info = {
+ static const struct rcar_du_device_info rcar_du_r8a7792_info = {
+ 	.gen = 2,
+ 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+-		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+ 		  | RCAR_DU_FEATURE_INTERLACED
+ 		  | RCAR_DU_FEATURE_TVM_SYNC,
+ 	.channels_mask = BIT(1) | BIT(0),
+@@ -235,7 +230,6 @@ static const struct rcar_du_device_info rcar_du_r8a7792_info = {
+ static const struct rcar_du_device_info rcar_du_r8a7794_info = {
+ 	.gen = 2,
+ 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+-		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+ 		  | RCAR_DU_FEATURE_INTERLACED
+ 		  | RCAR_DU_FEATURE_TVM_SYNC,
+ 	.channels_mask = BIT(1) | BIT(0),
+@@ -258,7 +252,6 @@ static const struct rcar_du_device_info rcar_du_r8a7794_info = {
+ static const struct rcar_du_device_info rcar_du_r8a7795_info = {
+ 	.gen = 3,
+ 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+-		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+ 		  | RCAR_DU_FEATURE_VSP1_SOURCE
+ 		  | RCAR_DU_FEATURE_INTERLACED
+ 		  | RCAR_DU_FEATURE_TVM_SYNC,
+@@ -292,7 +285,6 @@ static const struct rcar_du_device_info rcar_du_r8a7795_info = {
+ static const struct rcar_du_device_info rcar_du_r8a7796_info = {
+ 	.gen = 3,
+ 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+-		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+ 		  | RCAR_DU_FEATURE_VSP1_SOURCE
+ 		  | RCAR_DU_FEATURE_INTERLACED
+ 		  | RCAR_DU_FEATURE_TVM_SYNC,
+@@ -322,7 +314,6 @@ static const struct rcar_du_device_info rcar_du_r8a7796_info = {
+ static const struct rcar_du_device_info rcar_du_r8a77965_info = {
+ 	.gen = 3,
+ 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+-		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+ 		  | RCAR_DU_FEATURE_VSP1_SOURCE
+ 		  | RCAR_DU_FEATURE_INTERLACED
+ 		  | RCAR_DU_FEATURE_TVM_SYNC,
+@@ -352,7 +343,6 @@ static const struct rcar_du_device_info rcar_du_r8a77965_info = {
+ static const struct rcar_du_device_info rcar_du_r8a77970_info = {
+ 	.gen = 3,
+ 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+-		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+ 		  | RCAR_DU_FEATURE_VSP1_SOURCE
+ 		  | RCAR_DU_FEATURE_INTERLACED
+ 		  | RCAR_DU_FEATURE_TVM_SYNC,
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+index eb05bbd..f16cd26 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+@@ -28,10 +28,9 @@ struct rcar_du_device;
+ struct rcar_du_encoder;
+ 
+ #define RCAR_DU_FEATURE_CRTC_IRQ_CLOCK	BIT(0)	/* Per-CRTC IRQ and clock */
+-#define RCAR_DU_FEATURE_EXT_CTRL_REGS	BIT(1)	/* Has extended control registers */
+-#define RCAR_DU_FEATURE_VSP1_SOURCE	BIT(2)	/* Has inputs from VSP1 */
+-#define RCAR_DU_FEATURE_INTERLACED	BIT(3)	/* HW supports interlaced */
+-#define RCAR_DU_FEATURE_TVM_SYNC	BIT(4)	/* Has TV switch/sync modes */
++#define RCAR_DU_FEATURE_VSP1_SOURCE	BIT(1)	/* Has inputs from VSP1 */
++#define RCAR_DU_FEATURE_INTERLACED	BIT(2)	/* HW supports interlaced */
++#define RCAR_DU_FEATURE_TVM_SYNC	BIT(3)	/* Has TV switch/sync modes */
+ 
+ #define RCAR_DU_QUIRK_ALIGN_128B	BIT(0)	/* Align pitches to 128 bytes */
+ 
 diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-index cc3782e..7379899 100644
+index 7379899..3e87fbf 100644
 --- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
 +++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-@@ -276,6 +276,47 @@ int rcar_du_set_dpad0_vsp1_routing(struct rcar_du_device *rcdu)
- 	return 0;
- }
+@@ -151,7 +151,7 @@ static void rcar_du_group_setup(struct rcar_du_group *rgrp)
  
-+static void rcar_du_group_set_dpad_levels(struct rcar_du_group *rgrp)
-+{
-+	static const u32 doflr_values[2] = {
-+		DOFLR_HSYCFL0 | DOFLR_VSYCFL0 | DOFLR_ODDFL0 |
-+		DOFLR_DISPFL0 | DOFLR_CDEFL0  | DOFLR_RGBFL0,
-+		DOFLR_HSYCFL1 | DOFLR_VSYCFL1 | DOFLR_ODDFL1 |
-+		DOFLR_DISPFL1 | DOFLR_CDEFL1  | DOFLR_RGBFL1,
-+	};
-+	static const u32 dpad_mask = BIT(RCAR_DU_OUTPUT_DPAD1)
-+				   | BIT(RCAR_DU_OUTPUT_DPAD0);
-+	struct rcar_du_device *rcdu = rgrp->dev;
-+	u32 doflr = DOFLR_CODE;
-+	unsigned int i;
-+
+ 	rcar_du_group_setup_pins(rgrp);
+ 
+-	if (rcar_du_has(rgrp->dev, RCAR_DU_FEATURE_EXT_CTRL_REGS)) {
++	if (rcdu->info->gen >= 2) {
+ 		rcar_du_group_setup_defr8(rgrp);
+ 		rcar_du_group_setup_didsr(rgrp);
+ 	}
+@@ -251,7 +251,7 @@ int rcar_du_set_dpad0_vsp1_routing(struct rcar_du_device *rcdu)
+ 	unsigned int index;
+ 	int ret;
+ 
+-	if (!rcar_du_has(rcdu, RCAR_DU_FEATURE_EXT_CTRL_REGS))
 +	if (rcdu->info->gen < 2)
-+		return;
-+
-+	/*
-+	 * The DPAD outputs can't be controlled directly. However, the parallel
-+	 * output of the DU channels routed to DPAD can be set to fixed levels
-+	 * through the DOFLR group register. Use this to turn the DPAD on or off
-+	 * by driving fixed low-level signals@the output of any DU channel
-+	 * not routed to a DPAD output. This doesn't affect the DU output
-+	 * signals going to other outputs, such as the internal LVDS and HDMI
-+	 * encoders.
-+	 */
-+
-+	for (i = 0; i < rgrp->num_crtcs; ++i) {
-+		struct rcar_du_crtc_state *rstate;
-+		struct rcar_du_crtc *rcrtc;
-+
-+		rcrtc = &rcdu->crtcs[rgrp->index * 2 + i];
-+		rstate = to_rcar_crtc_state(rcrtc->crtc.state);
-+
-+		if (!(rstate->outputs & dpad_mask))
-+			doflr |= doflr_values[i];
-+	}
-+
-+	rcar_du_group_write(rgrp, DOFLR, doflr);
-+}
-+
- int rcar_du_group_set_routing(struct rcar_du_group *rgrp)
- {
- 	struct rcar_du_device *rcdu = rgrp->dev;
-@@ -295,5 +336,7 @@ int rcar_du_group_set_routing(struct rcar_du_group *rgrp)
+ 		return 0;
  
- 	rcar_du_group_write(rgrp, DORCR, dorcr);
- 
-+	rcar_du_group_set_dpad_levels(rgrp);
-+
- 	return rcar_du_set_dpad0_vsp1_routing(rgrp->dev);
- }
+ 	/*
 -- 
 2.7.4
