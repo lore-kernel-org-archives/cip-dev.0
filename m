@@ -1,93 +1,89 @@
-From: masashi.kudo@cybertrust.co.jp (masashi.kudo at cybertrust.co.jp)
-Date: Tue, 1 Oct 2019 02:47:06 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-In-Reply-To: <OSBPR01MB24239C49F9038EB86299B8D4A0860@OSBPR01MB2423.jpnprd01.prod.outlook.com>
-References: <HK0PR01MB2979E0408AE1A9C1323DCEFDE2860@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-	<CAFa_k0gBzv-2bOF_pGbpvZQyQ1ocEu-bsBNT_JsWi12cxrK-Pg@mail.gmail.com>
-	<OSBPR01MB24239C49F9038EB86299B8D4A0860@OSBPR01MB2423.jpnprd01.prod.outlook.com>
-Message-ID: <CAFa_k0gKU3eudKOK-txbprBA4=B+9RnJXs5VX18GXxvr2SqPYg@mail.gmail.com>
+From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
+Date: Tue,  1 Oct 2019 09:24:59 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 00/32] Add HDMI support to EK874
+Message-ID: <1569918331-6990-1-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi, Pavel-san,
+Dear All,
 
-At the CIP kernel meeting, there was the following conversation regarding the Cybertrust proposal.
-(BTW, 'masashi910' is me. )
+this series adds HDMI video and audio support to the EK874 board.
 
-[18:43] <pave1> masashi910: We don't need working version at the moment. But if you could mail the patches, or post pointer for them, or at least diffstat... That would help.
-[18:44] <masashi910> pavel: Thanks. Our work is currently being done locally. I will discuss our team how to share the patches with you.
+Thanks,
+Fab
 
-The current work which contains all CIP kernel files is compiled into a tar ball, and I uploaded the ball under the following repository.
-https://github.com/masashi910/tmp-cip-xilinx-mpsoc/
+Christophe JAILLET (1):
+  drm: rcar-du: Fix the return value in case of error in
+    'rcar_du_crtc_set_crc_source()'
 
-Please let me reiterate the following:
- - Cybertrust so far identified patches (in BSP) to be applied to CIP SLTS4.19 for some use cases
- - Those patches were from BSP, and our next step is to figure out which patches are actually in Mainline tree.
- - In another word, some of the current identified patches may not be in Mainline tree, yet.
+Fabrizio Castro (10):
+  media: vsp1: Add RZ/G support
+  media: dt-bindings: media: renesas-fcp: Add RZ/G2 support
+  dt-bindings: display: renesas: du: Document r8a774c0 bindings
+  dt-bindings: display: renesas: lvds: Document r8a774c0 bindings
+  drm: rcar-du: Add r8a774c0 device support
+  drm: rcar-du: lvds: add R8A774C0 support
+  arm64: dts: renesas: r8a774c0: Add display output support
+  arm64: defconfig: Enable TDA19988
+  arm64: dts: renesas: cat874: Add HDMI video support
+  arm64: dts: renesas: cat874: Add HDMI audio
 
-If you have any questions, please let me know.
+Jacopo Mondi (1):
+  drm: rcar-du: Improve non-DPLL clock selection
 
-Best regards,
---
-M. Kudo
+Laurent Pinchart (17):
+  dt-bindings: display: renesas: lvds: Add EXTAL and DU_DOTCLKIN clocks
+  drm: rcar-du: lvds: D3/E3 support
+  drm: rcar-du: Perform the initial CRTC setup from rcar_du_crtc_get()
+  drm: rcar-du: Use LVDS PLL clock as dot clock when possible
+  drm: rcar-du: Move CRTC outputs bitmask to private CRTC state
+  drm: rcar-du: Simplify encoder registration
+  drm: rcar-du: lvds: Don't fail probe if output is not connected on
+    D3/E3
+  drm: rcar-du: lvds: Add API to enable/disable clock output
+  drm: rcar-du: Turn LVDS clock output on/off for DPAD0 output on D3/E3
+  drm: rcar-du: lvds: Fix post-DLL divider calculation
+  drm: rcar-du: lvds: Adjust operating frequency for D3 and E3
+  drm: rcar-du: Enable configurable DPAD0 routing on Gen3
+  drm: rcar-du: Fix vblank initialization
+  drm: rcar-du: Fix external clock error checks
+  drm: rcar-du: Reject modes that fail CRTC timing requirements
+  drm: rcar-du: Disable unused DPAD outputs
+  drm: rcar-du: Replace EXT_CTRL_REGS feature flag with generation check
 
-2019?9?26?(?) 12:01 <masashi.kudo at cybertrust.co.jp<mailto:masashi.kudo@cybertrust.co.jp>>:
-Hi, SZ-san, All,
+Mauro Carvalho Chehab (1):
+  media: use strscpy() instead of strlcpy()
 
-Cybertrust would like to propose some contribution as described in the attached material.
-I would appreciate it if this topic can be discussed in AOB.
+Noralf Tr?nnes (1):
+  drm/rcar-du: Use drm_fbdev_generic_setup()
 
-Best regards,
---
-M. Kudo
-Cybertrust Japan Co., Ltd.
+Thomas Zimmermann (1):
+  drm/rcar-du: Replace drm_dev_unref with drm_dev_put
 
----------- Forwarded message ---------
-From: SZ Lin (???) <SZ.Lin at moxa.com<mailto:SZ.Lin@moxa.com>>
-Date: 2019?9?26?(?) 11:46
-Subject: [cip-dev] CIP IRC weekly meeting today
-To: cip-dev at lists.cip-project.org<mailto:cip-dev@lists.cip-project.org> <cip-dev at lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>>
+ .../bindings/display/bridge/renesas,lvds.txt       |  12 +-
+ .../devicetree/bindings/display/renesas,du.txt     |   2 +
+ .../devicetree/bindings/media/renesas,fcp.txt      |   5 +-
+ .../devicetree/bindings/media/renesas,vsp1.txt     |   6 +-
+ arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts    | 137 +++++++
+ arch/arm64/boot/dts/renesas/r8a774c0.dtsi          | 167 ++++++++
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/gpu/drm/Makefile                           |   2 +-
+ drivers/gpu/drm/rcar-du/Kconfig                    |   1 +
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c             | 294 +++++++++-----
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.h             |   7 +-
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c              |  55 +--
+ drivers/gpu/drm/rcar-du/rcar_du_drv.h              |  14 +-
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.c          |  14 +-
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.h          |   3 +-
+ drivers/gpu/drm/rcar-du/rcar_du_group.c            | 132 ++++--
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c              | 109 ++---
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.c              |   1 -
+ drivers/gpu/drm/rcar-du/rcar_lvds.c                | 441 ++++++++++++++++++---
+ drivers/gpu/drm/rcar-du/rcar_lvds.h                |  27 ++
+ drivers/gpu/drm/rcar-du/rcar_lvds_regs.h           |  43 +-
+ drivers/media/platform/vsp1/vsp1_drv.c             |   2 +-
+ 22 files changed, 1163 insertions(+), 312 deletions(-)
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_lvds.h
 
-
-Hi all,
-
-Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
-
-*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=9&day=26&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
-
-US-West US-East   UK     DE     TW     JP
-02:00    05:00   10:00   11:00   17:00   18:00
-
-Channel:
-* irc:chat.freenode.net:6667/cip<http://chat.freenode.net:6667/cip>
-
-Agenda:
-
-* Action item
-1. Provide the cases to cip-testing to build up the test environment - Iwamatsu-san
-
-2. Test LTS (pre)releases directly - patersonc
-
-* Kernel maintenance updates
-* Kernel testing
-* CIP Core
-* Software update
-* AOB
-
-The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
-
-Best regards,
-
-SZ Lin, Moxa.
-_______________________________________________
-cip-dev mailing list
-cip-dev at lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>
-https://lists.cip-project.org/mailman/listinfo/cip-dev
-_______________________________________________
-cip-dev mailing list
-cip-dev at lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>
-https://lists.cip-project.org/mailman/listinfo/cip-dev
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191001/c9da90b5/attachment-0001.html>
+-- 
+2.7.4
