@@ -1,53 +1,50 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Tue,  1 Oct 2019 09:25:15 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 16/32] drm: rcar-du: lvds: Fix post-DLL
-	divider calculation
+Date: Tue,  1 Oct 2019 09:25:16 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 17/32] drm: rcar-du: lvds: Adjust
+	operating frequency for D3 and E3
 In-Reply-To: <1569918331-6990-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1569918331-6990-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1569918331-6990-17-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1569918331-6990-18-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-commit 167e535438ecc73d299340bb1269616432020dfb upstream.
+commit 871370308675e477abd57a69ce66ca4730a4249c upstream.
 
-The PLL parameters are computed by looping over the range of acceptable
-M, N and E values, and selecting the combination that produces the
-output frequency closest to the target. The internal frequency
-constraints are taken into account by restricting the tested values for
-the PLL parameters, reducing the search space. The target frequency,
-however, is only taken into account when computing the post-PLL divider,
-which can result in a 0 value for the divider when the PLL output
-frequency being tested is lower than half of the target frequency.
-Subsequent loops will produce a better set of PLL parameters, but for
-some of the iterations this can result in a division by 0.
+The D3 and E3 SoCs have different pixel clock frequency limits for the
+LVDS encoder than the other SoCs in the Gen3 family. Adjust the mode
+fixup implementation accordingly.
 
-Fix it by clamping the divider value. We could instead restrict the E
-values being tested in the inner loop, but that would require additional
-calculation that would likely be less efficient as the E parameter can
-only take three different values.
-
-Fixes: c25c01361199 ("drm: rcar-du: lvds: D3/E3 support")
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_lvds.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/rcar-du/rcar_lvds.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-index 7f82bde..27a382f 100644
+index 27a382f..3b5884a 100644
 --- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
 +++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-@@ -282,7 +282,7 @@ static void rcar_lvds_d3_e3_pll_calc(struct rcar_lvds *lvds, struct clk *clk,
- 				 * divider.
- 				 */
- 				fout = fvco / (1 << e) / div7;
--				div = DIV_ROUND_CLOSEST(fout, target);
-+				div = max(1UL, DIV_ROUND_CLOSEST(fout, target));
- 				diff = abs(fout / div - target);
+@@ -530,11 +530,16 @@ static bool rcar_lvds_mode_fixup(struct drm_bridge *bridge,
+ 				 const struct drm_display_mode *mode,
+ 				 struct drm_display_mode *adjusted_mode)
+ {
++	struct rcar_lvds *lvds = bridge_to_rcar_lvds(bridge);
++	int min_freq;
++
+ 	/*
+ 	 * The internal LVDS encoder has a restricted clock frequency operating
+-	 * range (31MHz to 148.5MHz). Clamp the clock accordingly.
++	 * range, from 5MHz to 148.5MHz on D3 and E3, and from 31MHz to
++	 * 148.5MHz on all other platforms. Clamp the clock accordingly.
+ 	 */
+-	adjusted_mode->clock = clamp(adjusted_mode->clock, 31000, 148500);
++	min_freq = lvds->info->quirks & RCAR_LVDS_QUIRK_EXT_PLL ? 5000 : 31000;
++	adjusted_mode->clock = clamp(adjusted_mode->clock, min_freq, 148500);
  
- 				if (diff < pll->diff) {
+ 	return true;
+ }
 -- 
 2.7.4
