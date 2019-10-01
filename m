@@ -1,43 +1,41 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Tue,  1 Oct 2019 09:25:20 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 21/32] drm: rcar-du: Fix the return
-	value in case of error in 'rcar_du_crtc_set_crc_source()'
+Date: Tue,  1 Oct 2019 09:25:21 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 22/32] drm: rcar-du: Fix vblank
+	initialization
 In-Reply-To: <1569918331-6990-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1569918331-6990-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1569918331-6990-22-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1569918331-6990-23-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-commit 4d486f18d91b1876040bf87e9ad78981a08b15a6 upstream.
+commit 3d61fe5f59dd3e6f96fc0772156d257cb04dc656 upstream.
 
-We return 0 unconditionally in 'rcar_du_crtc_set_crc_source()'.
-However, 'ret' is set to some error codes if some function calls fail.
+The drm_vblank_init() takes the total number of CRTCs as an argument,
+but the rcar-du driver passes a bitmask of the CRTC indices. Fix it.
 
-Return 'ret' instead to propagate the error code.
-
-Fixes: 47a52d024e89 ("media: drm: rcar-du: Add support for CRC computation")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Fixes: 4bf8e1962f91 ("drm: Renesas R-Car Display Unit DRM driver")
+Reported-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 2 +-
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 1ea4bc2..0cfb015 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -936,7 +936,7 @@ static int rcar_du_crtc_set_crc_source(struct drm_crtc *crtc,
- 	drm_modeset_drop_locks(&ctx);
- 	drm_modeset_acquire_fini(&ctx);
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+index 3fd12ab..2c2d57c 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+@@ -591,7 +591,7 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
+ 	 * Initialize vertical blanking interrupts handling. Start with vblank
+ 	 * disabled for all CRTCs.
+ 	 */
+-	ret = drm_vblank_init(dev, (1 << rcdu->num_crtcs) - 1);
++	ret = drm_vblank_init(dev, rcdu->num_crtcs);
+ 	if (ret < 0)
+ 		return ret;
  
--	return 0;
-+	return ret;
- }
- 
- static const struct drm_crtc_funcs crtc_funcs_gen2 = {
 -- 
 2.7.4
