@@ -1,111 +1,42 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Tue,  1 Oct 2019 09:25:18 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 19/32] drm: rcar-du: Enable
-	configurable DPAD0 routing on Gen3
+Date: Tue,  1 Oct 2019 09:25:19 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 20/32] drm/rcar-du: Replace
+	drm_dev_unref with drm_dev_put
 In-Reply-To: <1569918331-6990-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1569918331-6990-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1569918331-6990-20-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1569918331-6990-21-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+From: Thomas Zimmermann <tzimmermann@suse.de>
 
-commit 1f98b2a4fd4632db3b585a624032b7ec785a5255 upstream.
+commit 06fa0d46b181e762f22d0742839200e7235d32ce upstream.
 
-All Gen3 SoCs supported so far have a fixed association between DPAD0
-and DU channels, which led to hardcoding that association when writing
-the corresponding hardware register. The D3 and E3 will break that
-mechanism as DPAD0 can be dynamically connected to either DU0 or DU1.
+This patch unifies the naming of DRM functions for reference counting
+of struct drm_device. The resulting code is more aligned with the rest
+of the Linux kernel interfaces.
 
-Make DPAD0 routing dynamic on Gen3. To ensure a valid hardware
-configuration when the DU starts without the RGB output enabled, DPAD0
-is associated at initialization time to the first DU channel that it can
-be connected to. This makes no change on Gen2 as all Gen2 SoCs can
-connected DPAD0 to DU0, which is the current implicit default value.
-
-As the DPAD0 source is always 0 when a single source is possible on
-Gen2, we can also simplify the Gen2 code in the same function to remove
-a conditional check.
-
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_group.c | 17 ++++++-----------
- drivers/gpu/drm/rcar-du/rcar_du_kms.c   | 12 ++++++++++++
- 2 files changed, 18 insertions(+), 11 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-index d35743f..cc3782e 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-@@ -60,8 +60,6 @@ static void rcar_du_group_setup_pins(struct rcar_du_group *rgrp)
- static void rcar_du_group_setup_defr8(struct rcar_du_group *rgrp)
- {
- 	struct rcar_du_device *rcdu = rgrp->dev;
--	unsigned int possible_crtcs =
--		rcdu->info->routes[RCAR_DU_OUTPUT_DPAD0].possible_crtcs;
- 	u32 defr8 = DEFR8_CODE;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+index 708ebd9..94d0213 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+@@ -485,7 +485,7 @@ static int rcar_du_remove(struct platform_device *pdev)
+ 	drm_kms_helper_poll_fini(ddev);
+ 	drm_mode_config_cleanup(ddev);
  
- 	if (rcdu->info->gen < 3) {
-@@ -73,21 +71,18 @@ static void rcar_du_group_setup_defr8(struct rcar_du_group *rgrp)
- 		 * DU instances that support it.
- 		 */
- 		if (rgrp->index == 0) {
--			if (possible_crtcs > 1)
--				defr8 |= DEFR8_DRGBS_DU(rcdu->dpad0_source);
-+			defr8 |= DEFR8_DRGBS_DU(rcdu->dpad0_source);
- 			if (rgrp->dev->vspd1_sink == 2)
- 				defr8 |= DEFR8_VSCS;
- 		}
- 	} else {
- 		/*
--		 * On Gen3 VSPD routing can't be configured, but DPAD routing
--		 * needs to be set despite having a single option available.
-+		 * On Gen3 VSPD routing can't be configured, and DPAD routing
-+		 * is set in the group corresponding to the DPAD output (no Gen3
-+		 * SoC has multiple DPAD sources belonging to separate groups).
- 		 */
--		unsigned int rgb_crtc = ffs(possible_crtcs) - 1;
--		struct rcar_du_crtc *crtc = &rcdu->crtcs[rgb_crtc];
--
--		if (crtc->index / 2 == rgrp->index)
--			defr8 |= DEFR8_DRGBS_DU(crtc->index);
-+		if (rgrp->index == rcdu->dpad0_source / 2)
-+			defr8 |= DEFR8_DRGBS_DU(rcdu->dpad0_source);
- 	}
+-	drm_dev_unref(ddev);
++	drm_dev_put(ddev);
  
- 	rcar_du_group_write(rgrp, DEFR8, defr8);
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-index 4dc5e20..3fd12ab 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-@@ -553,6 +553,7 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
- 	struct drm_device *dev = rcdu->ddev;
- 	struct drm_encoder *encoder;
- 	struct drm_fbdev_cma *fbdev;
-+	unsigned int dpad0_sources;
- 	unsigned int num_encoders;
- 	unsigned int num_groups;
- 	unsigned int swindex;
-@@ -675,6 +676,17 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
- 		encoder->possible_clones = (1 << num_encoders) - 1;
- 	}
- 
-+	/*
-+	 * Initialize the default DPAD0 source to the index of the first DU
-+	 * channel that can be connected to DPAD0. The exact value doesn't
-+	 * matter as it should be overwritten by mode setting for the RGB
-+	 * output, but it is nonetheless required to ensure a valid initial
-+	 * hardware configuration on Gen3 where DU0 can't always be connected to
-+	 * DPAD0.
-+	 */
-+	dpad0_sources = rcdu->info->routes[RCAR_DU_OUTPUT_DPAD0].possible_crtcs;
-+	rcdu->dpad0_source = ffs(dpad0_sources) - 1;
-+
- 	drm_mode_config_reset(dev);
- 
- 	drm_kms_helper_poll_init(dev);
+ 	return 0;
+ }
 -- 
 2.7.4
