@@ -1,127 +1,53 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Tue,  1 Oct 2019 09:25:14 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 15/32] drm: rcar-du: Turn LVDS clock
-	output on/off for DPAD0 output on D3/E3
+Date: Tue,  1 Oct 2019 09:25:15 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 16/32] drm: rcar-du: lvds: Fix post-DLL
+	divider calculation
 In-Reply-To: <1569918331-6990-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1569918331-6990-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1569918331-6990-16-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1569918331-6990-17-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-commit a6cc417d3eee4ac37aa9547cf82d4ff155d1780c upstream.
+commit 167e535438ecc73d299340bb1269616432020dfb upstream.
 
-On the D3 and E3 SoCs the LVDS PLL clock output provides the dot clock
-to the DU channels, even when the LVDS outputs are not in use. Enable
-and disable the LVDS clock output when enabling or disabling a CRTC
-connected to the DPAD0 output.
+The PLL parameters are computed by looping over the range of acceptable
+M, N and E values, and selecting the combination that produces the
+output frequency closest to the target. The internal frequency
+constraints are taken into account by restricting the tested values for
+the PLL parameters, reducing the search space. The target frequency,
+however, is only taken into account when computing the post-PLL divider,
+which can result in a 0 value for the divider when the PLL output
+frequency being tested is lower than half of the target frequency.
+Subsequent loops will produce a better set of PLL parameters, but for
+some of the iterations this can result in a division by 0.
 
+Fix it by clamping the divider value. We could instead restrict the E
+values being tested in the inner loop, but that would require additional
+calculation that would likely be less efficient as the E parameter can
+only take three different values.
+
+Fixes: c25c01361199 ("drm: rcar-du: lvds: D3/E3 support")
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c    | 34 +++++++++++++++++++++++++++++++
- drivers/gpu/drm/rcar-du/rcar_du_drv.h     |  3 +++
- drivers/gpu/drm/rcar-du/rcar_du_encoder.c |  1 +
- 3 files changed, 38 insertions(+)
+ drivers/gpu/drm/rcar-du/rcar_lvds.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index d679818..7079d94 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -31,6 +31,7 @@
- #include "rcar_du_plane.h"
- #include "rcar_du_regs.h"
- #include "rcar_du_vsp.h"
-+#include "rcar_lvds.h"
+diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+index 7f82bde..27a382f 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
++++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+@@ -282,7 +282,7 @@ static void rcar_lvds_d3_e3_pll_calc(struct rcar_lvds *lvds, struct clk *clk,
+ 				 * divider.
+ 				 */
+ 				fout = fvco / (1 << e) / div7;
+-				div = DIV_ROUND_CLOSEST(fout, target);
++				div = max(1UL, DIV_ROUND_CLOSEST(fout, target));
+ 				diff = abs(fout / div - target);
  
- static u32 rcar_du_crtc_read(struct rcar_du_crtc *rcrtc, u32 reg)
- {
-@@ -643,8 +644,27 @@ static void rcar_du_crtc_atomic_enable(struct drm_crtc *crtc,
- 				       struct drm_crtc_state *old_state)
- {
- 	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
-+	struct rcar_du_crtc_state *rstate = to_rcar_crtc_state(crtc->state);
-+	struct rcar_du_device *rcdu = rcrtc->group->dev;
- 
- 	rcar_du_crtc_get(rcrtc);
-+
-+	/*
-+	 * On D3/E3 the dot clock is provided by the LVDS encoder attached to
-+	 * the DU channel. We need to enable its clock output explicitly if
-+	 * the LVDS output is disabled.
-+	 */
-+	if (rcdu->info->lvds_clk_mask & BIT(rcrtc->index) &&
-+	    rstate->outputs == BIT(RCAR_DU_OUTPUT_DPAD0)) {
-+		struct rcar_du_encoder *encoder =
-+			rcdu->encoders[RCAR_DU_OUTPUT_LVDS0 + rcrtc->index];
-+		const struct drm_display_mode *mode =
-+			&crtc->state->adjusted_mode;
-+
-+		rcar_lvds_clk_enable(encoder->base.bridge,
-+				     mode->clock * 1000);
-+	}
-+
- 	rcar_du_crtc_start(rcrtc);
- }
- 
-@@ -652,10 +672,24 @@ static void rcar_du_crtc_atomic_disable(struct drm_crtc *crtc,
- 					struct drm_crtc_state *old_state)
- {
- 	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
-+	struct rcar_du_crtc_state *rstate = to_rcar_crtc_state(old_state);
-+	struct rcar_du_device *rcdu = rcrtc->group->dev;
- 
- 	rcar_du_crtc_stop(rcrtc);
- 	rcar_du_crtc_put(rcrtc);
- 
-+	if (rcdu->info->lvds_clk_mask & BIT(rcrtc->index) &&
-+	    rstate->outputs == BIT(RCAR_DU_OUTPUT_DPAD0)) {
-+		struct rcar_du_encoder *encoder =
-+			rcdu->encoders[RCAR_DU_OUTPUT_LVDS0 + rcrtc->index];
-+
-+		/*
-+		 * Disable the LVDS clock output, see
-+		 * rcar_du_crtc_atomic_enable().
-+		 */
-+		rcar_lvds_clk_disable(encoder->base.bridge);
-+	}
-+
- 	spin_lock_irq(&crtc->dev->event_lock);
- 	if (crtc->state->event) {
- 		drm_crtc_send_vblank_event(crtc, crtc->state->event);
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-index d9cf398..b8c4abd 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-@@ -26,6 +26,7 @@ struct device;
- struct drm_device;
- struct drm_fbdev_cma;
- struct rcar_du_device;
-+struct rcar_du_encoder;
- 
- #define RCAR_DU_FEATURE_CRTC_IRQ_CLOCK	BIT(0)	/* Per-CRTC IRQ and clock */
- #define RCAR_DU_FEATURE_EXT_CTRL_REGS	BIT(1)	/* Has extended control registers */
-@@ -88,6 +89,8 @@ struct rcar_du_device {
- 	struct rcar_du_crtc crtcs[RCAR_DU_MAX_CRTCS];
- 	unsigned int num_crtcs;
- 
-+	struct rcar_du_encoder *encoders[RCAR_DU_OUTPUT_MAX];
-+
- 	struct rcar_du_group groups[RCAR_DU_MAX_GROUPS];
- 	struct rcar_du_vsp vsps[RCAR_DU_MAX_VSPS];
- 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-index dc2750e..5cca7f7 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-@@ -46,6 +46,7 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
- 	if (renc == NULL)
- 		return -ENOMEM;
- 
-+	rcdu->encoders[output] = renc;
- 	renc->output = output;
- 	encoder = rcar_encoder_to_drm_encoder(renc);
- 
+ 				if (diff < pll->diff) {
 -- 
 2.7.4
