@@ -1,66 +1,55 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Tue,  1 Oct 2019 09:25:22 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 23/32] drm: rcar-du: Fix external clock
-	error checks
+Date: Tue,  1 Oct 2019 09:25:23 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 24/32] drm: rcar-du: Reject modes that
+	fail CRTC timing requirements
 In-Reply-To: <1569918331-6990-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1569918331-6990-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1569918331-6990-24-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1569918331-6990-25-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-commit 63a298f22a6183b5b7536a203596c6570dfcfe8e upstream.
+commit 256856efb8cc2b5468c69edf45eb0ab579833ce7 upstream.
 
-The rcar-du driver supports probe deferral for external clocks, but
-implements it badly by checking the wrong pointer due to a bad copy and
-paste. Fix it.
+The hardware requires the HDSR and VDSR registers to be set to 1 or
+higher. This translates to a minimum combined horizontal sync and back
+porch of 20 pixels and a minimum vertical back porch of 3 lines. Reject
+modes that fail those requirements.
 
-While at it, reject invalid clocks outright for DU channels that have a
-display PLL, as the external clock is mandatory in that case. This
-avoids a WARN_ON() at runtime.
-
-Fixes: 1b30dbde8596 ("drm: rcar-du: Add support for external pixel clock")
-Reported-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
 diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 0cfb015..3763f8c 100644
+index 3763f8c..cec4b5c 100644
 --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
 +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -232,9 +232,6 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 		 * system clock, and have no internal clock divider.
- 		 */
+@@ -771,10 +771,22 @@ enum drm_mode_status rcar_du_crtc_mode_valid(struct drm_crtc *crtc,
+ 	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
+ 	struct rcar_du_device *rcdu = rcrtc->group->dev;
+ 	bool interlaced = mode->flags & DRM_MODE_FLAG_INTERLACE;
++	unsigned int vbp;
  
--		if (WARN_ON(!rcrtc->extclock))
--			return;
--
- 		/*
- 		 * The H3 ES1.x exhibits dot clock duty cycle stability issues.
- 		 * We can work around them by configuring the DPLL to twice the
-@@ -1045,9 +1042,16 @@ int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int swindex,
- 	clk = devm_clk_get(rcdu->dev, clk_name);
- 	if (!IS_ERR(clk)) {
- 		rcrtc->extclock = clk;
--	} else if (PTR_ERR(rcrtc->clock) == -EPROBE_DEFER) {
--		dev_info(rcdu->dev, "can't get external clock %u\n", hwindex);
-+	} else if (PTR_ERR(clk) == -EPROBE_DEFER) {
- 		return -EPROBE_DEFER;
-+	} else if (rcdu->info->dpll_mask & BIT(hwindex)) {
-+		/*
-+		 * DU channels that have a display PLL can't use the internal
-+		 * system clock and thus require an external clock.
-+		 */
-+		ret = PTR_ERR(clk);
-+		dev_err(rcdu->dev, "can't get dclkin.%u: %d\n", hwindex, ret);
-+		return ret;
- 	}
+ 	if (interlaced && !rcar_du_has(rcdu, RCAR_DU_FEATURE_INTERLACED))
+ 		return MODE_NO_INTERLACE;
  
- 	init_waitqueue_head(&rcrtc->flip_wait);
++	/*
++	 * The hardware requires a minimum combined horizontal sync and back
++	 * porch of 20 pixels and a minimum vertical back porch of 3 lines.
++	 */
++	if (mode->htotal - mode->hsync_start < 20)
++		return MODE_HBLANK_NARROW;
++
++	vbp = (mode->vtotal - mode->vsync_end) / (interlaced ? 2 : 1);
++	if (vbp < 3)
++		return MODE_VBLANK_NARROW;
++
+ 	return MODE_OK;
+ }
+ 
 -- 
 2.7.4
