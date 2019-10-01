@@ -1,120 +1,60 @@
-From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Tue,  1 Oct 2019 09:25:31 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 32/32] arm64: dts: renesas: cat874: Add
-	HDMI audio
-In-Reply-To: <1569918331-6990-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1569918331-6990-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1569918331-6990-33-git-send-email-fabrizio.castro@bp.renesas.com>
+From: pavel@denx.de (Pavel Machek)
+Date: Tue, 1 Oct 2019 10:47:49 +0200
+Subject: [cip-dev] Xiling MPSOC -- was Re:  CIP IRC weekly meeting today
+In-Reply-To: <CAFa_k0gKU3eudKOK-txbprBA4=B+9RnJXs5VX18GXxvr2SqPYg@mail.gmail.com>
+References: <HK0PR01MB2979E0408AE1A9C1323DCEFDE2860@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+	<CAFa_k0gBzv-2bOF_pGbpvZQyQ1ocEu-bsBNT_JsWi12cxrK-Pg@mail.gmail.com>
+	<OSBPR01MB24239C49F9038EB86299B8D4A0860@OSBPR01MB2423.jpnprd01.prod.outlook.com>
+	<CAFa_k0gKU3eudKOK-txbprBA4=B+9RnJXs5VX18GXxvr2SqPYg@mail.gmail.com>
+Message-ID: <20191001084749.GA1630@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit a597dcb1d4ab7ddbba7e80b023eff892926f146c upstream.
+Hi!
 
-The CAT874 board pushes sound via I2S over SSI0 into the
-TDA19988BET chip.
-This commit wires things up so that we can get sound out of
-the HDMI interface.
+> At the CIP kernel meeting, there was the following conversation regarding the Cybertrust proposal.
+> (BTW, 'masashi910' is me. )
+> 
+> [18:43] <pave1> masashi910: We don't need working version at the moment. But if you could mail the patches, or post pointer for them, or at least diffstat... That would help.
+> [18:44] <masashi910> pavel: Thanks. Our work is currently being done locally. I will discuss our team how to share the patches with you.
+> 
+> The current work which contains all CIP kernel files is compiled into a tar ball, and I uploaded the ball under the following repository.
+> https://github.com/masashi910/tmp-cip-xilinx-mpsoc/
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts | 56 +++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
+Thanks, let me take a look.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-index 0623950..b7183f1 100644
---- a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-@@ -8,6 +8,7 @@
- /dts-v1/;
- #include "r8a774c0.dtsi"
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/display/tda998x.h>
- 
- / {
- 	model = "Silicon Linux RZ/G2E 96board platform (CAT874)";
-@@ -63,6 +64,23 @@
- 		reg = <0x0 0x48000000 0x0 0x78000000>;
- 	};
- 
-+	sound: sound {
-+		compatible = "simple-audio-card";
-+
-+		simple-audio-card,name = "CAT874 HDMI sound";
-+		simple-audio-card,format = "i2s";
-+		simple-audio-card,bitclock-master = <&sndcpu>;
-+		simple-audio-card,frame-master = <&sndcpu>;
-+
-+		sndcpu: simple-audio-card,cpu {
-+			sound-dai = <&rcar_sound>;
-+		};
-+
-+		sndcodec: simple-audio-card,codec {
-+			sound-dai = <&tda19988>;
-+		};
-+	};
-+
- 	vcc_sdhi0: regulator-vcc-sdhi0 {
- 		compatible = "regulator-fixed";
- 
-@@ -93,6 +111,10 @@
- 	};
- };
- 
-+&audio_clk_a {
-+	clock-frequency = <22579200>;
-+};
-+
- &du {
- 	pinctrl-0 = <&du_pins>;
- 	pinctrl-names = "default";
-@@ -133,6 +155,10 @@
- 
- 		video-ports = <0x234501>;
- 
-+		#sound-dai-cells = <0>;
-+		audio-ports = <TDA998x_I2S 0x03>;
-+		clocks = <&rcar_sound 1>;
-+
- 		ports {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -216,6 +242,36 @@
- 		function = "sdhi0";
- 		power-source = <1800>;
- 	};
-+
-+	sound_pins: sound {
-+		groups = "ssi01239_ctrl", "ssi0_data";
-+		function = "ssi";
-+	};
-+
-+	sound_clk_pins: sound_clk {
-+		groups = "audio_clkout1_a";
-+		function = "audio_clk";
-+	};
-+};
-+
-+&rcar_sound {
-+	pinctrl-0 = <&sound_pins &sound_clk_pins>;
-+	pinctrl-names = "default";
-+
-+	/* Single DAI */
-+	#sound-dai-cells = <0>;
-+
-+	/* audio_clkout0/1/2/3 */
-+	#clock-cells = <1>;
-+	clock-frequency = <11289600>;
-+
-+	status = "okay";
-+
-+	rcar_sound,dai {
-+		dai0 {
-+			playback = <&ssi0 &src0 &dvc0>;
-+		};
-+	};
- };
- 
- &rwdt {
+For the record, way to get the files is
+
+git clone https://github.com/masashi910/tmp-cip-xilinx-mpsoc.git
+cd tmp-cip*
+cat linux-4.19.56.tar.bz2.00* > linux.tar.bz2
+tar xjvf linux.tar.bz2
+
+Unfortunately, git commands can not be used in that repository, since
+it points to alternates somewhere.
+
+I diffed that against v4.19.56; which unfortunately produced unclean
+diff as it now also includes the -cip changes. I quickly reviewed and
+hand-edited the diff.
+
+I notice this includes staging drivers. 
+
++obj-$(CONFIG_XILINX_APF)       += apf/
++obj-$(CONFIG_XILINX_FCLK)      += fclk/
+
+I believe you should get those reviewed and moved outside of staging
+before attempting to backport them.
+
+Otherwise I don't see anything too scary.
+
+     		      	      	  	  	     	     	     Pavel
 -- 
-2.7.4
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 181 bytes
+Desc: Digital signature
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191001/c0e204ea/attachment.sig>
