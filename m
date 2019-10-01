@@ -1,172 +1,68 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Tue,  1 Oct 2019 09:25:07 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 08/32] drm: rcar-du: Use LVDS PLL clock
-	as dot clock when possible
+Date: Tue,  1 Oct 2019 09:25:08 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 09/32] drm: rcar-du: Add r8a774c0
+	device support
 In-Reply-To: <1569918331-6990-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1569918331-6990-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <1569918331-6990-9-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <1569918331-6990-10-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+commit 939ef2a586e5f7bce4e4465cfd5afe7758fb9f74 upstream.
 
-commit b4734f43f3cadfaa423ce6aceb1e9faea07b8eb8 upstream.
+Add support for the RZ/G2E (R8A774C0) SoC to the R-Car DU driver.
 
-On selected SoCs, the DU can use the clock output by the LVDS encoder
-PLL as its input dot clock. This feature is optional, but on the D3 and
-E3 SoC it is often the only way to obtain a precise dot clock frequency,
-as the other available clocks (CPG-generated clock and external clock)
-usually have fixed rates.
-
-Add a DU model information field to describe which DU channels can use
-the LVDS PLL output clock as their input clock, and configure clock
-routing accordingly.
-
-This feature is available on H2, M2-W, M2-N, D3 and E3 SoCs, with D3 and
-E3 being the primary targets. It is left disabled in this commit, and
-will be enabled per-SoC after careful testing.
-
-At the hardware level, clock routing is configured at runtime in two
-steps, first selecting an internal dot clock between the LVDS PLL clock
-and the external DOTCLKIN clock, and then selecting between the internal
-dot clock and the CPG-generated clock. The first part requires stopping
-the whole DU group in order for the change to take effect, thus causing
-flickering on the screen. For this reason we currently hardcode the
-clock source to the LVDS PLL clock if available, and allow flicker-free
-selection of the external DOTCLKIN clock or CPG-generated clock
-otherwise. A more dynamic clock selection process can be implemented
-later if the need arises.
-
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c  |  8 +++++
- drivers/gpu/drm/rcar-du/rcar_du_drv.h   |  2 ++
- drivers/gpu/drm/rcar-du/rcar_du_group.c | 64 +++++++++++++++++++++++++--------
- 3 files changed, 59 insertions(+), 15 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 57cdc5f..c330730 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -223,6 +223,14 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 		rcar_du_group_write(rcrtc->group, DPLLCR, dpllcr);
- 
- 		escr = ESCR_DCLKSEL_DCLKIN | div;
-+	} else if (rcdu->info->lvds_clk_mask & BIT(rcrtc->index)) {
-+		/*
-+		 * Use the LVDS PLL output as the dot clock when outputting to
-+		 * the LVDS encoder on an SoC that supports this clock routing
-+		 * option. We use the clock directly in that case, without any
-+		 * additional divider.
-+		 */
-+		escr = ESCR_DCLKSEL_DCLKIN;
- 	} else {
- 		unsigned long clk;
- 		u32 div;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-index a6e6316..7edf4a9 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-@@ -58,6 +58,7 @@ struct rcar_du_output_routing {
-  * @routes: array of CRTC to output routes, indexed by output (RCAR_DU_OUTPUT_*)
-  * @num_lvds: number of internal LVDS encoders
-  * @dpll_mask: bit mask of DU channels equipped with a DPLL
-+ * @lvds_clk_mask: bitmask of channels that can use the LVDS clock as dot clock
-  */
- struct rcar_du_device_info {
- 	unsigned int gen;
-@@ -67,6 +68,7 @@ struct rcar_du_device_info {
- 	struct rcar_du_output_routing routes[RCAR_DU_OUTPUT_MAX];
- 	unsigned int num_lvds;
- 	unsigned int dpll_mask;
-+	unsigned int lvds_clk_mask;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+index 5380f0e..708ebd9 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+@@ -110,6 +110,32 @@ static const struct rcar_du_device_info rcar_du_r8a774a1_info = {
+ 	.dpll_mask =  BIT(1),
  };
  
- #define RCAR_DU_MAX_CRTCS		4
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-index 5966d94..15dbef3 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-@@ -93,6 +93,54 @@ static void rcar_du_group_setup_defr8(struct rcar_du_group *rgrp)
- 	rcar_du_group_write(rgrp, DEFR8, defr8);
- }
- 
-+static void rcar_du_group_setup_didsr(struct rcar_du_group *rgrp)
-+{
-+	struct rcar_du_device *rcdu = rgrp->dev;
-+	struct rcar_du_crtc *rcrtc;
-+	unsigned int num_crtcs = 0;
-+	unsigned int i;
-+	u32 didsr;
-+
-+	/*
-+	 * Configure input dot clock routing with a hardcoded configuration. If
-+	 * the DU channel can use the LVDS encoder output clock as the dot
-+	 * clock, do so. Otherwise route DU_DOTCLKINn signal to DUn.
-+	 *
-+	 * Each channel can then select between the dot clock configured here
-+	 * and the clock provided by the CPG through the ESCR register.
-+	 */
-+	if (rcdu->info->gen < 3 && rgrp->index == 0) {
++static const struct rcar_du_device_info rcar_du_r8a774c0_info = {
++	.gen = 3,
++	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
++		  | RCAR_DU_FEATURE_VSP1_SOURCE,
++	.channels_mask = BIT(1) | BIT(0),
++	.routes = {
 +		/*
-+		 * On Gen2 a single register in the first group controls dot
-+		 * clock selection for all channels.
++		 * R8A774C0 has one RGB output and two LVDS outputs
 +		 */
-+		rcrtc = rcdu->crtcs;
-+		num_crtcs = rcdu->num_crtcs;
-+	} else if (rcdu->info->gen == 3 && rgrp->num_crtcs > 1) {
-+		/*
-+		 * On Gen3 dot clocks are setup through per-group registers,
-+		 * only available when the group has two channels.
-+		 */
-+		rcrtc = &rcdu->crtcs[rgrp->index * 2];
-+		num_crtcs = rgrp->num_crtcs;
-+	}
++		[RCAR_DU_OUTPUT_DPAD0] = {
++			.possible_crtcs = BIT(0) | BIT(1),
++			.port = 0,
++		},
++		[RCAR_DU_OUTPUT_LVDS0] = {
++			.possible_crtcs = BIT(0),
++			.port = 1,
++		},
++		[RCAR_DU_OUTPUT_LVDS1] = {
++			.possible_crtcs = BIT(1),
++			.port = 2,
++		},
++	},
++	.num_lvds = 2,
++	.lvds_clk_mask =  BIT(1) | BIT(0),
++};
 +
-+	if (!num_crtcs)
-+		return;
-+
-+	didsr = DIDSR_CODE;
-+	for (i = 0; i < num_crtcs; ++i, ++rcrtc) {
-+		if (rcdu->info->lvds_clk_mask & BIT(rcrtc->index))
-+			didsr |= DIDSR_LCDS_LVDS0(i)
-+			      |  DIDSR_PDCS_CLK(i, 0);
-+		else
-+			didsr |= DIDSR_LCDS_DCLKIN(i)
-+			      |  DIDSR_PDCS_CLK(i, 0);
-+	}
-+
-+	rcar_du_group_write(rgrp, DIDSR, didsr);
-+}
-+
- static void rcar_du_group_setup(struct rcar_du_group *rgrp)
- {
- 	struct rcar_du_device *rcdu = rgrp->dev;
-@@ -110,21 +158,7 @@ static void rcar_du_group_setup(struct rcar_du_group *rgrp)
- 
- 	if (rcar_du_has(rgrp->dev, RCAR_DU_FEATURE_EXT_CTRL_REGS)) {
- 		rcar_du_group_setup_defr8(rgrp);
--
--		/*
--		 * Configure input dot clock routing. We currently hardcode the
--		 * configuration to routing DOTCLKINn to DUn. Register fields
--		 * depend on the DU generation, but the resulting value is 0 in
--		 * all cases.
--		 *
--		 * On Gen2 a single register in the first group controls dot
--		 * clock selection for all channels, while on Gen3 dot clocks
--		 * are setup through per-group registers, only available when
--		 * the group has two channels.
--		 */
--		if ((rcdu->info->gen < 3 && rgrp->index == 0) ||
--		    (rcdu->info->gen == 3 &&  rgrp->num_crtcs > 1))
--			rcar_du_group_write(rgrp, DIDSR, DIDSR_CODE);
-+		rcar_du_group_setup_didsr(rgrp);
- 	}
- 
- 	if (rcdu->info->gen >= 3)
+ static const struct rcar_du_device_info rcar_du_r8a7779_info = {
+ 	.gen = 2,
+ 	.features = RCAR_DU_FEATURE_INTERLACED
+@@ -348,6 +374,7 @@ static const struct of_device_id rcar_du_of_table[] = {
+ 	{ .compatible = "renesas,du-r8a7743", .data = &rzg1_du_r8a7743_info },
+ 	{ .compatible = "renesas,du-r8a7745", .data = &rzg1_du_r8a7745_info },
+ 	{ .compatible = "renesas,du-r8a774a1", .data = &rcar_du_r8a774a1_info },
++	{ .compatible = "renesas,du-r8a774c0", .data = &rcar_du_r8a774c0_info },
+ 	{ .compatible = "renesas,du-r8a7779", .data = &rcar_du_r8a7779_info },
+ 	{ .compatible = "renesas,du-r8a7790", .data = &rcar_du_r8a7790_info },
+ 	{ .compatible = "renesas,du-r8a7791", .data = &rcar_du_r8a7791_info },
 -- 
 2.7.4
