@@ -1,43 +1,50 @@
 From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Wed, 2 Oct 2019 08:31:40 +0000
+Date: Wed, 2 Oct 2019 08:34:03 +0000
 Subject: [cip-dev] Testing results for 4.19-cip-rt
-In-Reply-To: <20191002082238.GA9041@amd>
+In-Reply-To: <43099417-d106-47cc-e784-4a5f25c4aa31@siemens.com>
 References: <20191002082238.GA9041@amd>
-Message-ID: <TYAPR01MB22856D44519AE15F3CD9D5C3B79C0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+	<43099417-d106-47cc-e784-4a5f25c4aa31@siemens.com>
+Message-ID: <TYAPR01MB22851D795B68DB436855A441B79C0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Pavel,
+Hello Jan,
 
-> From: Pavel Machek <pavel@denx.de>
-> Sent: 02 October 2019 09:23
->
-> Hi!
->
-> I pushed -cip-rt version to kernel.org, which got me automatic test on
-> gitlab:
->
-> https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/309275693
->
-> ...compile okay, but run_tests failed; unfortunately I don't quite
-> understand what went wrong with the test. Can someone help?
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+> Sent: 02 October 2019 09:30
+> 
+> On 02.10.19 10:22, Pavel Machek wrote:
+> > Hi!
+> >
+> > I pushed -cip-rt version to kernel.org, which got me automatic test on
+> > gitlab:
+> >
+> > https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/309275693
+> >
+> > ...compile okay, but run_tests failed; unfortunately I don't quite
+> > understand what went wrong with the test. Can someone help?
+> >
+> 
+> Job #4665: Finished
+>    Device Type: r8a774a1-hihope-rzg2m-ex
+>    Device: r8a774a1-hihope-rzg2m-ex-01
+>    Test: healthcheck
+> 
+> Chris can probably explain.
+> 
+> I see only the Renesas lab used here, right? Are we missing something for the
+> IPC227E and de0-nano-soc to be used as well?
 
-It looks like test join #4665[0] failed due to internet connectivity issues in the lab.
+Correct. I was waiting on Kernel configurations in order to start testing the boards in the Mentor lab.
+These have now been submitted[0] to the cip-kernel-config repository, so hopefully we'll get tests up and running soon.
 
-I've re-run the job and it passes[1], so you should be okay.
-I've also re-run the GitLab CI test job[2], so GitLab will show the pipeline as a success[3].
-
-
-[0] https://lava.ciplatform.org/scheduler/job/4665
-[1] https://lava.ciplatform.org/scheduler/job/4716
-[2] https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/309590344
-[3] https://gitlab.com/cip-project/cip-kernel/linux-cip/pipelines/85866813
+[0] https://gitlab.com/cip-project/cip-kernel/cip-kernel-config/merge_requests/11
 
 Kind regards, Chris
 
->
-> Thanks,
-> ????? ??????? ??????? ??????? ??????? ??????? ??????? ??????? ??????? Pavel
+> 
+> Jan
+> 
 > --
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+> Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+> Corporate Competence Center Embedded Linux
