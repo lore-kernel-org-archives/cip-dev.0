@@ -1,35 +1,42 @@
-From: pavel@denx.de (Pavel Machek)
-Date: Wed, 2 Oct 2019 22:39:50 +0200
-Subject: [cip-dev] [ANNOUNCE] 4.4.190-cip36-rt25
-Message-ID: <20191002203950.GA29152@amd>
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Thu, 3 Oct 2019 01:56:07 +0000
+Subject: [cip-dev] CIP IRC weekly meeting today
+Message-ID: <HK0PR01MB2979332EC6452A0B08D27543E29F0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi!
+Hi all,
 
-4.4.190-cip36-rt25 should be available at kernel.org.
+Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
 
-Trees are available at
+*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=10&day=3&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
+          
+US-West US-East   UK     DE     TW     JP
+02:00    05:00   10:00   11:00   17:00   18:00
 
-https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.4.y-cip-rt
+Channel:
+* irc:chat.freenode.net:6667/cip
 
-https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.4.y-cip-rt-rebase
- 
-And their content should be identical.
+Agenda:
+
+* Action item
+1. Provide the cases to cip-testing to build up the test environment - Iwamatsu-san 
+
+2. Test LTS (pre)releases directly ? patersonc
+
+3. Move cip-core repo to cip-project/cip-core - kazu
+
+4. Review the proposal from Kudo-san - Kernel team
+
+* Kernel maintenance updates
+* Kernel testing
+* CIP Core
+* Software update
+* AOB
+
+The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
 
 Best regards,
-								Pavel
-								
-PS: If you are using linux-4.4.y-cip-rt, let me know. I'd be
-interested in what hardware you are running.
 
--- 
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 181 bytes
-Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191002/f3a977bb/attachment.sig>
+SZ Lin, Moxa.
