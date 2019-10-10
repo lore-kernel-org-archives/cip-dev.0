@@ -1,75 +1,22 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 10 Oct 2019 02:32:21 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-Message-ID: <HK0PR01MB2979BE05CCEC0E4C2179CF1CE2940@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+From: biju.das@bp.renesas.com (Biju Das)
+Date: Thu, 10 Oct 2019 07:45:12 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 0/3] Add WLAN/BT support
+Message-ID: <1570689915-14149-1-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+This patch series add WLAN/BT support for HiHope RZ/G2M platform.
 
+This patch series is based on linux-4.19.y-cip and all the patches
+in this series are cherry-picked from linux rc tree.
 
+Biju Das (3):
+  arm64: dts: renesas: hihope-common: Add PCA9654 I/O expander
+  arm64: dts: renesas: hihope-common: Add BT support
+  arm64: dts: renesas: hihope-common: Add WLAN support
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
+ arch/arm64/boot/dts/renesas/hihope-common.dtsi | 78 ++++++++++++++++++++++++++
+ 1 file changed, 78 insertions(+)
 
-
-
-*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
-
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=10&day=10&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
-
-
-
-US-West US-East   UK     DE     TW     JP
-
-02:00    05:00   10:00   11:00   17:00   18:00
-
-
-
-Channel:
-
-* irc:chat.freenode.net:6667/cip
-
-
-
-Agenda:
-
-
-
-* Action item
-
-1. Provide the cases to cip-testing to build up the test environment - Iwamatsu-san
-
-
-
-2. Test LTS (pre)releases directly ? patersonc
-
-
-
-3. Review the proposal from Kudo-san - Kernel team
-
-
-
-* Kernel maintenance updates
-
-* Kernel testing
-
-* CIP Core
-
-* Software update
-
-* AOB
-
-
-
-The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
-
-
-
-Best regards,
-
-
-
-SZ Lin, Moxa.
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191010/737b0714/attachment-0001.html>
+-- 
+2.7.4
