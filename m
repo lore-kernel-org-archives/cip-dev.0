@@ -1,41 +1,32 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 10 Oct 2019 10:38:29 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 2/3] arm64: dts: renesas:
- hihope-common: Add BT support
-In-Reply-To: <20191010073809.GA23033@amd>
-References: <1570689915-14149-1-git-send-email-biju.das@bp.renesas.com>
-	<1570689915-14149-3-git-send-email-biju.das@bp.renesas.com>
-	<20191010073809.GA23033@amd>
-Message-ID: <OSBPR01MB2103041EDEE03E98D257A360B8940@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
+Date: Fri, 11 Oct 2019 22:51:43 +0000
+Subject: [cip-dev] [ANNOUNCE] Release v4.19.78-cip12 and v4.4.196-cip38
+Message-ID: <TY2PR01MB32433056813C13407E79281D92970@TY2PR01MB3243.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Pavel,
+Hi,
 
-Thanks for feedback.
+CIP kernel team has released Linux kernel v4.19.78-cip12 and v4.4.196-cip38.
 
-> Subject: Re: [PATCH 4.19.y-cip 2/3] arm64: dts: renesas: hihope-common:
-> Add BT support
-> 
-> Hi!
-> 
-> > commit d112c20925443b4a8876b101e5b7b13ef105057e upstream.
-> >
-> > This patch enables BT support for the HiHope RZ/G2[MN] boards.
-> 
-> > +++ b/arch/arm64/boot/dts/renesas/hihope-common.dtsi
-> > @@ -31,6 +32,13 @@
-> >  	leds {
-> >  		compatible = "gpio-leds";
-> >
-> > +		bt_active_led {
-> > +			label = "blue:bt";
-> 
-> It would be good to change this to "blue:bluetooth", for consistency with
-> include/dt-bindings/leds/common.h . It will change names in the sysfs.
+The linux-4.19.y-cip tree has been updated from base version from 4.19.75 to 4.19.78,
+and updated VSP1 and DU, added support r8a774c0's CANFD.
 
-Can you please me point to the right file? There is nothing related to "blue:bluetooth",
-Mentioned in include/dt-bindings/leds/common.h
+The linux-4.4.y-cip tree has been updated from base version from 4.4.192 to 4.4.196.
 
-Cheers,
-Biju
+You can get this release via the git tree at:
+
+  v4.19.78-cip12:
+
+    repository: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+    branch: linux-4.19.y-cip
+    commit: 4b63cf5d2a9dcd2f8b4a1dcb77a4637669dfb934
+
+  v4.4.196-cip38:
+
+    repository: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+    branch: linux-4.4.y-cip
+    commit: 83bce8ee46df26e7ad3129f6b824d47d9640a510
+
+Best regards,
+  Nobuhiro
