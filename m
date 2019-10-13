@@ -1,10 +1,10 @@
 From: chris.paterson2@renesas.com (Chris Paterson)
-Date: Sun, 13 Oct 2019 22:19:10 +0100
-Subject: [cip-dev] [PATCH linux-4.19.y-cip 2/3] gitlab-ci: Remove unofficial
-	build configurations
+Date: Sun, 13 Oct 2019 22:19:13 +0100
+Subject: [cip-dev] [PATCH linux-4.19.y-cip-rt 2/3] gitlab-ci: Remove
+	unofficial build configurations
 In-Reply-To: <20191013211920.9370-1-chris.paterson2@renesas.com>
 References: <20191013211920.9370-1-chris.paterson2@renesas.com>
-Message-ID: <20191013211920.9370-2-chris.paterson2@renesas.com>
+Message-ID: <20191013211920.9370-5-chris.paterson2@renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
@@ -23,10 +23,10 @@ Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
  1 file changed, 67 deletions(-)
 
 diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-index b72f0325435a..d297f3deaced 100644
+index b5a225c96f90..7ebd29b94c3a 100644
 --- a/.gitlab-ci.yml
 +++ b/.gitlab-ci.yml
-@@ -214,70 +214,3 @@ build:x86_toshiba_atom_baytrail_cip.config:
+@@ -249,70 +249,3 @@ build:rt_x86_siemens_i386-rt.config:
      when: always
      paths:
        - output
