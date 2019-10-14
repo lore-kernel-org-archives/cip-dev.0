@@ -1,11 +1,11 @@
 From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Mon, 14 Oct 2019 05:54:35 +0000
-Subject: [cip-dev] [PATCH linux-4.4.y-cip 1/3] gitlab-ci: Split tests
+Date: Mon, 14 Oct 2019 05:56:05 +0000
+Subject: [cip-dev] [PATCH linux-4.4.y-cip-rt 1/3] gitlab-ci: Split tests
  into separate jobs
-In-Reply-To: <20191013211920.9370-7-chris.paterson2@renesas.com>
+In-Reply-To: <20191013211920.9370-10-chris.paterson2@renesas.com>
 References: <20191013211920.9370-1-chris.paterson2@renesas.com>
-	<20191013211920.9370-7-chris.paterson2@renesas.com>
-Message-ID: <TYAPR01MB228559F4AFAAE7825F562188B7900@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+	<20191013211920.9370-10-chris.paterson2@renesas.com>
+Message-ID: <TYAPR01MB228567057B4708C09451F262B7900@TYAPR01MB2285.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
@@ -19,11 +19,11 @@ List-Id: cip-dev.lists.cip-project.org
 > 
 > Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 > ---
->  .gitlab-ci.yml | 60 ++++++++++++++++++++++++++++++++------------------
->  1 file changed, 39 insertions(+), 21 deletions(-)
+>  .gitlab-ci.yml | 66 ++++++++++++++++++++++++++++++++------------------
+>  1 file changed, 43 insertions(+), 23 deletions(-)
 > 
 > diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-> index e33099ea6594..73cea6bbce89 100644
+> index 59323dd06c6a..fcbfdd0b2197 100644
 > --- a/.gitlab-ci.yml
 > +++ b/.gitlab-ci.yml
 > @@ -4,8 +4,10 @@ variables:
@@ -214,6 +214,20 @@ needs: ["build:arm_renesas_shmobile_defconfig"]
 >      paths:
 >        - output
 > 
+> -# RT build configurations
+> -rt_x86_siemens_i386-rt.config:
+> +#########################
+> +# RT CIP configurations #
+> +#########################
+> +build:rt_x86_siemens_i386-rt.config:
+>    stage: build
+>    image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-
+> $DOCKER_IMAGE_TAG
+>    variables:
+> @@ -279,8 +298,10 @@ rt_x86_siemens_i386-rt.config:
+>      paths:
+>        - output
+> 
 > -# Extra build configurations
 > -arm_shmobile_defconfig:
 > +########################
@@ -224,7 +238,7 @@ needs: ["build:arm_renesas_shmobile_defconfig"]
 >    image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-
 > $DOCKER_IMAGE_TAG
 >    variables:
-> @@ -280,8 +299,7 @@ arm_shmobile_defconfig:
+> @@ -297,8 +318,7 @@ arm_shmobile_defconfig:
 >      paths:
 >        - output
 > 
@@ -238,7 +252,7 @@ needs: ["build:arm_shmobile_defconfig"]
 
 I'll send a v2 for the series.
 
-Chris
+Kind regards, Chris
 
 >    image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:test-
 > $DOCKER_IMAGE_TAG
