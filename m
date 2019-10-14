@@ -1,40 +1,38 @@
-From: chris.paterson2@renesas.com (Chris Paterson)
-Date: Mon, 14 Oct 2019 08:49:08 +0100
-Subject: [cip-dev] [PATCH linux-4.4.y-cip v2 3/3] gitlab-ci: Remove test
-	timeout
-In-Reply-To: <20191014074911.11161-1-chris.paterson2@renesas.com>
-References: <20191014074911.11161-1-chris.paterson2@renesas.com>
-Message-ID: <20191014074911.11161-3-chris.paterson2@renesas.com>
+From: Chris.Paterson2@renesas.com (Chris Paterson)
+Date: Mon, 14 Oct 2019 08:03:01 +0000
+Subject: [cip-dev] [PATCH linux-4.4.y-cip-rt 1/3] gitlab-ci: Split tests
+ into separate jobs
+In-Reply-To: <20191014073624.GB22886@amd>
+References: <20191013211920.9370-1-chris.paterson2@renesas.com>
+	<20191013211920.9370-10-chris.paterson2@renesas.com>
+	<TYAPR01MB228567057B4708C09451F262B7900@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+	<20191014073624.GB22886@amd>
+Message-ID: <TYAPR01MB22853D56FED5C52314BE7E26B7900@TYAPR01MB2285.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Setting a relevant test timeout is hard as we've no idea how many other
-test jobs are running.
+> From: Pavel Machek <pavel@denx.de>
+> Sent: 14 October 2019 08:36
+>
+>
+> Hi!
+>
+> > I'll send a v2 for the series.
+>
+> Ok. Feel free to send just _one_ series for -cip; I can apply it to
+> both branches, or maybe just apply it to -cip, and rely on regular
+> -cip -> -cip-rt merge to propagate it to -rt so that history is clean.
 
-We have another two timeouts already:
-  1) The CI job timeut setting in the GitLab runner
-  2) The LAVA test job timeout
+Ah, sorry. Too late!
 
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
----
+Feel free to disregard the -rt patches.
 
-v1 -> v2
-* No change
+Kind regards, Chris
 
- .gitlab-ci.yml | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-index 86ba8f31aafb..bbcb22168e7a 100644
---- a/.gitlab-ci.yml
-+++ b/.gitlab-ci.yml
-@@ -63,7 +63,6 @@ test:arm_renesas_shmobile_defconfig:
-   when: always
-   variables:
-     GIT_STRATEGY: none
--    TEST_TIMEOUT: 60
-   script:
-     - /opt/submit_tests.sh
-   artifacts:
--- 
-2.17.1
+>
+> Best regards,
+> ????? ??????? ??????? ??????? ??????? ??????? ??????? ??????? ??????? Pavel
+> --
+> (english) http://www.livejournal.com/~pavelmachek
+> (cesky, pictures)
+> http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
