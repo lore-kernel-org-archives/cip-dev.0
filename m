@@ -1,25 +1,22 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 17 Oct 2019 08:04:39 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 07/57] ASoc: rsnd: dma: Calculate dma
-	address with consider of BUSIF
+Date: Thu, 17 Oct 2019 08:04:40 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 08/57] ASoc: rsnd: dma: Calculate
+	PDMACHCRE with consider of BUSIF
 In-Reply-To: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1571295929-47286-8-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1571295929-47286-9-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Jiada Wang <jiada_wang@mentor.com>
 
-commit 5e45a6fab3b90ca300e13191fc68baaa8e37d1d4 upstream.
+commit 92c7d384ff7282738c70720f8670c9b65c90c7df upstream.
 
-DMA address calculated by rsnd_dma_addr() only considers BUSIF0 so far.
+PDMACHCR setting for SSI only considers BUSIF0 so far.
 But BUSIF1 ~ BUSIF7 also maybe used, in the future.
 
-This patch updates DMA address calculations, to also consider
+This patch updates table gen2_id_table_ssiu, to also consider
 BUSIF number used by SSI.
-
-One note is that we can't support SSI9-4/5/6/7 so far,
-because its address is out of calculation rule.
 
 Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
 Signed-off-by: Timo Wischer <twischer@de.adit-jv.com>
@@ -29,114 +26,74 @@ Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- sound/soc/sh/rcar/dma.c  | 43 +++++++++++++++++++++++++++----------------
- sound/soc/sh/rcar/rsnd.h |  1 +
- sound/soc/sh/rcar/ssi.c  |  5 +++++
- 3 files changed, 33 insertions(+), 16 deletions(-)
+ sound/soc/sh/rcar/dma.c | 37 ++++++++++++++++++++++++++-----------
+ 1 file changed, 26 insertions(+), 11 deletions(-)
 
 diff --git a/sound/soc/sh/rcar/dma.c b/sound/soc/sh/rcar/dma.c
-index d65ea7b..0c66788 100644
+index 0c66788..f8b2f8e 100644
 --- a/sound/soc/sh/rcar/dma.c
 +++ b/sound/soc/sh/rcar/dma.c
-@@ -491,11 +491,11 @@ static struct rsnd_mod_ops rsnd_dmapp_ops = {
- #define RDMA_SSI_I_N(addr, i)	(addr ##_reg - 0x00300000 + (0x40 * i) + 0x8)
- #define RDMA_SSI_O_N(addr, i)	(addr ##_reg - 0x00300000 + (0x40 * i) + 0xc)
+@@ -302,16 +302,26 @@ static struct rsnd_mod_ops rsnd_dmaen_ops = {
+  *		Audio DMAC peri peri
+  */
+ static const u8 gen2_id_table_ssiu[] = {
+-	0x00, /* SSI00 */
+-	0x04, /* SSI10 */
+-	0x08, /* SSI20 */
+-	0x0c, /* SSI3  */
+-	0x0d, /* SSI4  */
+-	0x0e, /* SSI5  */
+-	0x0f, /* SSI6  */
+-	0x10, /* SSI7  */
+-	0x11, /* SSI8  */
+-	0x12, /* SSI90 */
++	/* SSI00 ~ SSI07 */
++	0x00, 0x01, 0x02, 0x03, 0x39, 0x3a, 0x3b, 0x3c,
++	/* SSI10 ~ SSI17 */
++	0x04, 0x05, 0x06, 0x07, 0x3d, 0x3e, 0x3f, 0x40,
++	/* SSI20 ~ SSI27 */
++	0x08, 0x09, 0x0a, 0x0b, 0x41, 0x42, 0x43, 0x44,
++	/* SSI30 ~ SSI37 */
++	0x0c, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b,
++	/* SSI40 ~ SSI47 */
++	0x0d, 0x4c, 0x4d, 0x4e, 0x4f, 0x50, 0x51, 0x52,
++	/* SSI5 */
++	0x0e, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++	/* SSI6 */
++	0x0f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++	/* SSI7 */
++	0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++	/* SSI8 */
++	0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++	/* SSI90 ~ SSI97 */
++	0x12, 0x13, 0x14, 0x15, 0x53, 0x54, 0x55, 0x56,
+ };
+ static const u8 gen2_id_table_scu[] = {
+ 	0x2d, /* SCU_SRCI0 */
+@@ -337,18 +347,23 @@ static u32 rsnd_dmapp_get_id(struct rsnd_dai_stream *io,
+ 	struct rsnd_mod *src = rsnd_io_to_mod_src(io);
+ 	struct rsnd_mod *dvc = rsnd_io_to_mod_dvc(io);
+ 	const u8 *entry = NULL;
+-	int id = rsnd_mod_id(mod);
++	int id = 255;
+ 	int size = 0;
  
--#define RDMA_SSIU_I_N(addr, i)	(addr ##_reg - 0x00441000 + (0x1000 * i))
--#define RDMA_SSIU_O_N(addr, i)	(addr ##_reg - 0x00441000 + (0x1000 * i))
-+#define RDMA_SSIU_I_N(addr, i, j) (addr ##_reg - 0x00441000 + (0x1000 * (i)) + (((j) / 4) * 0xA000) + (((j) % 4) * 0x400))
-+#define RDMA_SSIU_O_N(addr, i, j) RDMA_SSIU_I_N(addr, i, j)
- 
--#define RDMA_SSIU_I_P(addr, i)	(addr ##_reg - 0x00141000 + (0x1000 * i))
--#define RDMA_SSIU_O_P(addr, i)	(addr ##_reg - 0x00141000 + (0x1000 * i))
-+#define RDMA_SSIU_I_P(addr, i, j) (addr ##_reg - 0x00141000 + (0x1000 * (i)) + (((j) / 4) * 0xA000) + (((j) % 4) * 0x400))
-+#define RDMA_SSIU_O_P(addr, i, j) RDMA_SSIU_I_P(addr, i, j)
- 
- #define RDMA_SRC_I_N(addr, i)	(addr ##_reg - 0x00500000 + (0x400 * i))
- #define RDMA_SRC_O_N(addr, i)	(addr ##_reg - 0x004fc000 + (0x400 * i))
-@@ -521,6 +521,7 @@ rsnd_gen2_dma_addr(struct rsnd_dai_stream *io,
- 		      !!rsnd_io_to_mod_mix(io) ||
- 		      !!rsnd_io_to_mod_ctu(io);
- 	int id = rsnd_mod_id(mod);
-+	int busif = rsnd_ssi_get_busif(io);
- 	struct dma_addr {
- 		dma_addr_t out_addr;
- 		dma_addr_t in_addr;
-@@ -537,25 +538,35 @@ rsnd_gen2_dma_addr(struct rsnd_dai_stream *io,
- 		},
- 		/* SSI */
- 		/* Capture */
--		{{{ RDMA_SSI_O_N(ssi, id),	0 },
--		  { RDMA_SSIU_O_P(ssi, id),	0 },
--		  { RDMA_SSIU_O_P(ssi, id),	0 } },
-+		{{{ RDMA_SSI_O_N(ssi, id),		0 },
-+		  { RDMA_SSIU_O_P(ssi, id, busif),	0 },
-+		  { RDMA_SSIU_O_P(ssi, id, busif),	0 } },
- 		 /* Playback */
--		 {{ 0,				RDMA_SSI_I_N(ssi, id) },
--		  { 0,				RDMA_SSIU_I_P(ssi, id) },
--		  { 0,				RDMA_SSIU_I_P(ssi, id) } }
-+		 {{ 0,			RDMA_SSI_I_N(ssi, id) },
-+		  { 0,			RDMA_SSIU_I_P(ssi, id, busif) },
-+		  { 0,			RDMA_SSIU_I_P(ssi, id, busif) } }
- 		},
- 		/* SSIU */
- 		/* Capture */
--		{{{ RDMA_SSIU_O_N(ssi, id),	0 },
--		  { RDMA_SSIU_O_P(ssi, id),	0 },
--		  { RDMA_SSIU_O_P(ssi, id),	0 } },
-+		{{{ RDMA_SSIU_O_N(ssi, id, busif),	0 },
-+		  { RDMA_SSIU_O_P(ssi, id, busif),	0 },
-+		  { RDMA_SSIU_O_P(ssi, id, busif),	0 } },
- 		 /* Playback */
--		 {{ 0,				RDMA_SSIU_I_N(ssi, id) },
--		  { 0,				RDMA_SSIU_I_P(ssi, id) },
--		  { 0,				RDMA_SSIU_I_P(ssi, id) } } },
-+		 {{ 0,			RDMA_SSIU_I_N(ssi, id, busif) },
-+		  { 0,			RDMA_SSIU_I_P(ssi, id, busif) },
-+		  { 0,			RDMA_SSIU_I_P(ssi, id, busif) } } },
- 	};
- 
-+	/*
-+	 * FIXME
-+	 *
-+	 * We can't support SSI9-4/5/6/7, because its address is
-+	 * out of calculation rule
-+	 */
-+	if ((id == 9) && (busif >= 4))
-+		dev_err(dev, "This driver doesn't support SSI%d-%d, so far",
-+			id, busif);
+ 	if (mod == ssi) {
++		int busif = rsnd_ssi_get_busif(io);
 +
- 	/* it shouldn't happen */
- 	if (use_cmd && !use_src)
- 		dev_err(dev, "DVC is selected without SRC\n");
-diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
-index fd3aba1..52ef194 100644
---- a/sound/soc/sh/rcar/rsnd.h
-+++ b/sound/soc/sh/rcar/rsnd.h
-@@ -699,6 +699,7 @@ void rsnd_ssi_remove(struct rsnd_priv *priv);
- struct rsnd_mod *rsnd_ssi_mod_get(struct rsnd_priv *priv, int id);
- int rsnd_ssi_is_dma_mode(struct rsnd_mod *mod);
- int rsnd_ssi_use_busif(struct rsnd_dai_stream *io);
-+int rsnd_ssi_get_busif(struct rsnd_dai_stream *io);
- u32 rsnd_ssi_multi_slaves_runtime(struct rsnd_dai_stream *io);
+ 		entry = gen2_id_table_ssiu;
+ 		size = ARRAY_SIZE(gen2_id_table_ssiu);
++		id = (rsnd_mod_id(mod) * 8) + busif;
+ 	} else if (mod == src) {
+ 		entry = gen2_id_table_scu;
+ 		size = ARRAY_SIZE(gen2_id_table_scu);
++		id = rsnd_mod_id(mod);
+ 	} else if (mod == dvc) {
+ 		entry = gen2_id_table_cmd;
+ 		size = ARRAY_SIZE(gen2_id_table_cmd);
++		id = rsnd_mod_id(mod);
+ 	}
  
- #define RSND_SSI_HDMI_PORT0	0xf0
-diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
-index 06d340a..0803704 100644
---- a/sound/soc/sh/rcar/ssi.c
-+++ b/sound/soc/sh/rcar/ssi.c
-@@ -150,6 +150,11 @@ int rsnd_ssi_use_busif(struct rsnd_dai_stream *io)
- 	return use_busif;
- }
- 
-+int rsnd_ssi_get_busif(struct rsnd_dai_stream *io)
-+{
-+	return 0; /* BUSIF0 only for now */
-+}
-+
- static void rsnd_ssi_status_clear(struct rsnd_mod *mod)
- {
- 	rsnd_mod_write(mod, SSISR, 0);
+ 	if ((!entry) || (size <= id)) {
 -- 
 2.7.4
