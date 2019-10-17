@@ -1,21 +1,24 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 17 Oct 2019 08:04:34 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 02/57] ASoC: rsnd: add support for
-	16/24 bit slot widths
+Date: Thu, 17 Oct 2019 08:04:36 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 04/57] ASoC: rsnd: remove is_play
+	parameter from hw_rule function
 In-Reply-To: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1571295929-47286-3-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1571295929-47286-5-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Dragos Tarcatu <dragos_tarcatu@mentor.com>
+From: Jiada Wang <jiada_wang@mentor.com>
 
-commit fb2815f44a9eb341ed8990263855a266960a5135 upstream.
+commit b735662fa473c0e3618a4d645ce797d31e0c9192 upstream.
 
-The slot width (system word length) was fixed at 32 bits.
-This patch allows also setting it to 16 or 24 bits.
+Currently rsnd_dai_stream *io is set to either &rdai->playback or
+&rdai->capture based on whether it is a playback or capture stream,
+in __rsnd_soc_hw_rule_* functions, but this is not necessary,
+rsnd_dai_stream *io handler can be get from rule->private.
 
-Signed-off-by: Dragos Tarcatu <dragos_tarcatu@mentor.com>
+This patch removes 'is_play' parameter from hw_rule function.
+
 Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
 Signed-off-by: Timo Wischer <twischer@de.adit-jv.com>
 [Kuninori: tidyup for upstream]
@@ -24,271 +27,104 @@ Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- sound/soc/sh/rcar/core.c | 32 +++++++++++++++++++++-------
- sound/soc/sh/rcar/rsnd.h |  8 ++++++-
- sound/soc/sh/rcar/ssi.c  | 54 +++++++++++++++++++++++++++++++++++-------------
- 3 files changed, 72 insertions(+), 22 deletions(-)
+ sound/soc/sh/rcar/core.c | 54 +++++++++++-------------------------------------
+ 1 file changed, 12 insertions(+), 42 deletions(-)
 
 diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
-index 36a369d..e272990 100644
+index 76f05716..636f6ed 100644
 --- a/sound/soc/sh/rcar/core.c
 +++ b/sound/soc/sh/rcar/core.c
-@@ -540,6 +540,14 @@ int rsnd_rdai_ssi_lane_ctrl(struct rsnd_dai *rdai,
- 	return rdai->ssi_lane;
+@@ -813,16 +813,14 @@ static int rsnd_soc_hw_rule(struct rsnd_dai *rdai,
+ 	return snd_interval_refine(iv, &p);
  }
  
-+int rsnd_rdai_width_ctrl(struct rsnd_dai *rdai, int width)
-+{
-+	if (width > 0)
-+		rdai->chan_width = width;
-+
-+	return rdai->chan_width;
-+}
-+
- struct rsnd_dai *rsnd_rdai_get(struct rsnd_priv *priv, int id)
+-static int __rsnd_soc_hw_rule_rate(struct snd_pcm_hw_params *params,
+-				   struct snd_pcm_hw_rule *rule,
+-				   int is_play)
++static int rsnd_soc_hw_rule_rate(struct snd_pcm_hw_params *params,
++				 struct snd_pcm_hw_rule *rule)
  {
- 	if ((id < 0) || (id >= rsnd_rdai_nr(priv)))
-@@ -720,6 +728,16 @@ static int rsnd_soc_set_dai_tdm_slot(struct snd_soc_dai *dai,
- 	struct rsnd_dai *rdai = rsnd_dai_to_rdai(dai);
- 	struct device *dev = rsnd_priv_to_dev(priv);
- 
-+	switch (slot_width) {
-+	case 16:
-+	case 24:
-+	case 32:
-+		break;
-+	default:
-+		dev_err(dev, "unsupported slot width value: %d\n", slot_width);
-+		return -EINVAL;
-+	}
-+
- 	switch (slots) {
- 	case 2:
- 	case 6:
-@@ -727,6 +745,7 @@ static int rsnd_soc_set_dai_tdm_slot(struct snd_soc_dai *dai,
- 		/* TDM Extend Mode */
- 		rsnd_rdai_channels_set(rdai, slots);
- 		rsnd_rdai_ssi_lane_set(rdai, 1);
-+		rsnd_rdai_width_set(rdai, slot_width);
- 		break;
- 	default:
- 		dev_err(dev, "unsupported TDM slots (%d)\n", slots);
-@@ -755,7 +774,7 @@ static unsigned int rsnd_soc_hw_rate_list[] = {
- 	192000,
- };
- 
--static int rsnd_soc_hw_rule(struct rsnd_priv *priv,
-+static int rsnd_soc_hw_rule(struct rsnd_dai *rdai,
- 			    unsigned int *list, int list_num,
- 			    struct snd_interval *baseline, struct snd_interval *iv)
- {
-@@ -772,14 +791,14 @@ static int rsnd_soc_hw_rule(struct rsnd_priv *priv,
- 		if (!snd_interval_test(iv, list[i]))
- 			continue;
- 
--		rate = rsnd_ssi_clk_query(priv,
-+		rate = rsnd_ssi_clk_query(rdai,
- 					  baseline->min, list[i], NULL);
- 		if (rate > 0) {
- 			p.min = min(p.min, list[i]);
- 			p.max = max(p.max, list[i]);
- 		}
- 
--		rate = rsnd_ssi_clk_query(priv,
-+		rate = rsnd_ssi_clk_query(rdai,
- 					  baseline->max, list[i], NULL);
- 		if (rate > 0) {
- 			p.min = min(p.min, list[i]);
-@@ -799,7 +818,6 @@ static int __rsnd_soc_hw_rule_rate(struct snd_pcm_hw_params *params,
+ 	struct snd_interval *ic_ = hw_param_interval(params, SNDRV_PCM_HW_PARAM_CHANNELS);
+ 	struct snd_interval *ir = hw_param_interval(params, SNDRV_PCM_HW_PARAM_RATE);
  	struct snd_interval ic;
- 	struct snd_soc_dai *dai = rule->private;
- 	struct rsnd_dai *rdai = rsnd_dai_to_rdai(dai);
--	struct rsnd_priv *priv = rsnd_rdai_to_priv(rdai);
- 	struct rsnd_dai_stream *io = is_play ? &rdai->playback : &rdai->capture;
+-	struct snd_soc_dai *dai = rule->private;
+-	struct rsnd_dai *rdai = rsnd_dai_to_rdai(dai);
+-	struct rsnd_dai_stream *io = is_play ? &rdai->playback : &rdai->capture;
++	struct rsnd_dai_stream *io = rule->private;
++	struct rsnd_dai *rdai = rsnd_io_to_rdai(io);
  
  	/*
-@@ -811,7 +829,7 @@ static int __rsnd_soc_hw_rule_rate(struct snd_pcm_hw_params *params,
- 	ic.min =
- 	ic.max = rsnd_runtime_channel_for_ssi_with_params(io, params);
- 
--	return rsnd_soc_hw_rule(priv, rsnd_soc_hw_rate_list,
-+	return rsnd_soc_hw_rule(rdai, rsnd_soc_hw_rate_list,
- 				ARRAY_SIZE(rsnd_soc_hw_rate_list),
+ 	 * possible sampling rate limitation is same as
+@@ -838,28 +836,14 @@ static int __rsnd_soc_hw_rule_rate(struct snd_pcm_hw_params *params,
  				&ic, ir);
  }
-@@ -837,7 +855,6 @@ static int __rsnd_soc_hw_rule_channels(struct snd_pcm_hw_params *params,
+ 
+-static int rsnd_soc_hw_rule_rate_playback(struct snd_pcm_hw_params *params,
+-				 struct snd_pcm_hw_rule *rule)
+-{
+-	return __rsnd_soc_hw_rule_rate(params, rule, 1);
+-}
+-
+-static int rsnd_soc_hw_rule_rate_capture(struct snd_pcm_hw_params *params,
+-					  struct snd_pcm_hw_rule *rule)
+-{
+-	return __rsnd_soc_hw_rule_rate(params, rule, 0);
+-}
+-
+-static int __rsnd_soc_hw_rule_channels(struct snd_pcm_hw_params *params,
+-				       struct snd_pcm_hw_rule *rule,
+-				       int is_play)
++static int rsnd_soc_hw_rule_channels(struct snd_pcm_hw_params *params,
++				     struct snd_pcm_hw_rule *rule)
+ {
+ 	struct snd_interval *ic_ = hw_param_interval(params, SNDRV_PCM_HW_PARAM_CHANNELS);
+ 	struct snd_interval *ir = hw_param_interval(params, SNDRV_PCM_HW_PARAM_RATE);
  	struct snd_interval ic;
- 	struct snd_soc_dai *dai = rule->private;
- 	struct rsnd_dai *rdai = rsnd_dai_to_rdai(dai);
--	struct rsnd_priv *priv = rsnd_rdai_to_priv(rdai);
- 	struct rsnd_dai_stream *io = is_play ? &rdai->playback : &rdai->capture;
+-	struct snd_soc_dai *dai = rule->private;
+-	struct rsnd_dai *rdai = rsnd_dai_to_rdai(dai);
+-	struct rsnd_dai_stream *io = is_play ? &rdai->playback : &rdai->capture;
++	struct rsnd_dai_stream *io = rule->private;
++	struct rsnd_dai *rdai = rsnd_io_to_rdai(io);
  
  	/*
-@@ -849,7 +866,7 @@ static int __rsnd_soc_hw_rule_channels(struct snd_pcm_hw_params *params,
- 	ic.min =
- 	ic.max = rsnd_runtime_channel_for_ssi_with_params(io, params);
- 
--	return rsnd_soc_hw_rule(priv, rsnd_soc_hw_channels_list,
-+	return rsnd_soc_hw_rule(rdai, rsnd_soc_hw_channels_list,
- 				ARRAY_SIZE(rsnd_soc_hw_channels_list),
+ 	 * possible sampling rate limitation is same as
+@@ -875,18 +859,6 @@ static int __rsnd_soc_hw_rule_channels(struct snd_pcm_hw_params *params,
  				ir, &ic);
  }
-@@ -1083,6 +1100,7 @@ static void __rsnd_dai_probe(struct rsnd_priv *priv,
- 	rdai->capture.rdai		= rdai;
- 	rsnd_rdai_channels_set(rdai, 2); /* default 2ch */
- 	rsnd_rdai_ssi_lane_set(rdai, 1); /* default 1lane */
-+	rsnd_rdai_width_set(rdai, 32);   /* default 32bit width */
  
- 	for (io_i = 0;; io_i++) {
- 		playback = of_parse_phandle(dai_np, "playback", io_i);
-diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
-index 8f7a0ab..d903f70 100644
---- a/sound/soc/sh/rcar/rsnd.h
-+++ b/sound/soc/sh/rcar/rsnd.h
-@@ -467,6 +467,7 @@ struct rsnd_dai {
+-static int rsnd_soc_hw_rule_channels_playback(struct snd_pcm_hw_params *params,
+-					      struct snd_pcm_hw_rule *rule)
+-{
+-	return __rsnd_soc_hw_rule_channels(params, rule, 1);
+-}
+-
+-static int rsnd_soc_hw_rule_channels_capture(struct snd_pcm_hw_params *params,
+-					     struct snd_pcm_hw_rule *rule)
+-{
+-	return __rsnd_soc_hw_rule_channels(params, rule, 0);
+-}
+-
+ static const struct snd_pcm_hardware rsnd_pcm_hardware = {
+ 	.info =		SNDRV_PCM_INFO_INTERLEAVED	|
+ 			SNDRV_PCM_INFO_MMAP		|
+@@ -943,14 +915,12 @@ static int rsnd_soc_dai_startup(struct snd_pcm_substream *substream,
+ 		int is_play = substream->stream == SNDRV_PCM_STREAM_PLAYBACK;
  
- 	int max_channels;	/* 2ch - 16ch */
- 	int ssi_lane;		/* 1lane - 4lane */
-+	int chan_width;		/* 16/24/32 bit width */
- 
- 	unsigned int clk_master:1;
- 	unsigned int bit_clk_inv:1;
-@@ -500,6 +501,11 @@ int rsnd_rdai_channels_ctrl(struct rsnd_dai *rdai,
- int rsnd_rdai_ssi_lane_ctrl(struct rsnd_dai *rdai,
- 			    int ssi_lane);
- 
-+#define rsnd_rdai_width_set(rdai, width) \
-+	rsnd_rdai_width_ctrl(rdai, width)
-+#define rsnd_rdai_width_get(rdai) \
-+	rsnd_rdai_width_ctrl(rdai, 0)
-+int rsnd_rdai_width_ctrl(struct rsnd_dai *rdai, int width);
- void rsnd_dai_period_elapsed(struct rsnd_dai_stream *io);
- int rsnd_dai_connect(struct rsnd_mod *mod,
- 		     struct rsnd_dai_stream *io,
-@@ -709,7 +715,7 @@ int __rsnd_ssi_is_pin_sharing(struct rsnd_mod *mod);
- void rsnd_parse_connect_ssi(struct rsnd_dai *rdai,
- 			    struct device_node *playback,
- 			    struct device_node *capture);
--unsigned int rsnd_ssi_clk_query(struct rsnd_priv *priv,
-+unsigned int rsnd_ssi_clk_query(struct rsnd_dai *rdai,
- 		       int param1, int param2, int *idx);
- 
- /*
-diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
-index 9410e0a..6fe2075 100644
---- a/sound/soc/sh/rcar/ssi.c
-+++ b/sound/soc/sh/rcar/ssi.c
-@@ -42,7 +42,13 @@
- #define	DWL_24		(5 << 19)	/* Data Word Length */
- #define	DWL_32		(6 << 19)	/* Data Word Length */
- 
-+/*
-+ * System word length
-+ */
-+#define	SWL_16		(1 << 16)	/* R/W System Word Length */
-+#define	SWL_24		(2 << 16)	/* R/W System Word Length */
- #define	SWL_32		(3 << 16)	/* R/W System Word Length */
-+
- #define	SCKD		(1 << 15)	/* Serial Bit Clock Direction */
- #define	SWSD		(1 << 14)	/* Serial WS Direction */
- #define	SCKP		(1 << 13)	/* Serial Bit Clock Polarity */
-@@ -220,14 +226,32 @@ u32 rsnd_ssi_multi_slaves_runtime(struct rsnd_dai_stream *io)
- 	return 0;
- }
- 
--unsigned int rsnd_ssi_clk_query(struct rsnd_priv *priv,
-+static u32 rsnd_rdai_width_to_swl(struct rsnd_dai *rdai)
-+{
-+	struct rsnd_priv *priv = rsnd_rdai_to_priv(rdai);
-+	struct device *dev = rsnd_priv_to_dev(priv);
-+	int width = rsnd_rdai_width_get(rdai);
-+
-+	switch (width) {
-+	case 32: return SWL_32;
-+	case 24: return SWL_24;
-+	case 16: return SWL_16;
-+	}
-+
-+	dev_err(dev, "unsupported slot width value: %d\n", width);
-+	return 0;
-+}
-+
-+unsigned int rsnd_ssi_clk_query(struct rsnd_dai *rdai,
- 		       int param1, int param2, int *idx)
- {
-+	struct rsnd_priv *priv = rsnd_rdai_to_priv(rdai);
- 	int ssi_clk_mul_table[] = {
- 		1, 2, 4, 8, 16, 6, 12,
- 	};
- 	int j, ret;
- 	unsigned int main_rate;
-+	int width = rsnd_rdai_width_get(rdai);
- 
- 	for (j = 0; j < ARRAY_SIZE(ssi_clk_mul_table); j++) {
- 
-@@ -240,12 +264,7 @@ unsigned int rsnd_ssi_clk_query(struct rsnd_priv *priv,
- 		if (j == 0)
- 			continue;
- 
--		/*
--		 * this driver is assuming that
--		 * system word is 32bit x chan
--		 * see rsnd_ssi_init()
--		 */
--		main_rate = 32 * param1 * param2 * ssi_clk_mul_table[j];
-+		main_rate = width * param1 * param2 * ssi_clk_mul_table[j];
- 
- 		ret = rsnd_adg_clk_query(priv, main_rate);
- 		if (ret < 0)
-@@ -292,7 +311,7 @@ static int rsnd_ssi_master_clk_start(struct rsnd_mod *mod,
- 		return 0;
+ 		snd_pcm_hw_rule_add(runtime, 0, SNDRV_PCM_HW_PARAM_RATE,
+-				    is_play ? rsnd_soc_hw_rule_rate_playback :
+-					      rsnd_soc_hw_rule_rate_capture,
+-				    dai,
++				    rsnd_soc_hw_rule_rate,
++				    is_play ? &rdai->playback : &rdai->capture,
+ 				    SNDRV_PCM_HW_PARAM_CHANNELS, -1);
+ 		snd_pcm_hw_rule_add(runtime, 0, SNDRV_PCM_HW_PARAM_CHANNELS,
+-				    is_play ? rsnd_soc_hw_rule_channels_playback :
+-					      rsnd_soc_hw_rule_channels_capture,
+-				    dai,
++				    rsnd_soc_hw_rule_channels,
++				    is_play ? &rdai->playback : &rdai->capture,
+ 				    SNDRV_PCM_HW_PARAM_RATE, -1);
  	}
  
--	main_rate = rsnd_ssi_clk_query(priv, rate, chan, &idx);
-+	main_rate = rsnd_ssi_clk_query(rdai, rate, chan, &idx);
- 	if (!main_rate) {
- 		dev_err(dev, "unsupported clock rate\n");
- 		return -EIO;
-@@ -312,7 +331,8 @@ static int rsnd_ssi_master_clk_start(struct rsnd_mod *mod,
- 	 * SSICR  : FORCE, SCKD, SWSD
- 	 * SSIWSR : CONT
- 	 */
--	ssi->cr_clk = FORCE | SWL_32 | SCKD | SWSD | CKDV(idx);
-+	ssi->cr_clk = FORCE | rsnd_rdai_width_to_swl(rdai) |
-+			SCKD | SWSD | CKDV(idx);
- 	ssi->wsr = CONT;
- 	ssi->rate = rate;
- 
-@@ -357,11 +377,7 @@ static void rsnd_ssi_config_init(struct rsnd_mod *mod,
- 
- 	is_tdm = rsnd_runtime_is_ssi_tdm(io);
- 
--	/*
--	 * always use 32bit system word.
--	 * see also rsnd_ssi_master_clk_enable()
--	 */
--	cr_own |= FORCE | SWL_32;
-+	cr_own |= FORCE | rsnd_rdai_width_to_swl(rdai);
- 
- 	if (rdai->bit_clk_inv)
- 		cr_own |= SCKP;
-@@ -489,7 +505,17 @@ static int rsnd_ssi_hw_params(struct rsnd_mod *mod,
- 			      struct snd_pcm_hw_params *params)
- {
- 	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
-+	struct rsnd_dai *rdai = rsnd_io_to_rdai(io);
- 	int chan = params_channels(params);
-+	unsigned int fmt_width = snd_pcm_format_width(params_format(params));
-+
-+	if (fmt_width > rdai->chan_width) {
-+		struct rsnd_priv *priv = rsnd_io_to_priv(io);
-+		struct device *dev = rsnd_priv_to_dev(priv);
-+
-+		dev_err(dev, "invalid combination of slot-width and format-data-width\n");
-+		return -EINVAL;
-+	}
- 
- 	/*
- 	 * snd_pcm_ops::hw_params will be called *before*
 -- 
 2.7.4
