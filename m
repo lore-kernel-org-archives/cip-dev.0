@@ -1,119 +1,294 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 17 Oct 2019 08:04:32 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 00/57] Audio improvements/SSIU BUSIF/
-Message-ID: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
+Date: Thu, 17 Oct 2019 08:04:34 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 02/57] ASoC: rsnd: add support for
+	16/24 bit slot widths
+In-Reply-To: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
+References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1571295929-47286-3-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This patch add support for SSIU BUSIF/ TDM split mode. Also it
-fixes some of audio issues.
+From: Dragos Tarcatu <dragos_tarcatu@mentor.com>
 
-This patch series is based on linux-4.19.y-cip and all the patches
-in this series are cherry-picked from linux rc tree.
+commit fb2815f44a9eb341ed8990263855a266960a5135 upstream.
 
-Dmytro Prokopchuk (1):
-  ASoC: rsnd: fixup SSI clock during suspend/resume modes
+The slot width (system word length) was fixed at 32 bits.
+This patch allows also setting it to 16 or 24 bits.
 
-Dragos Tarcatu (2):
-  ASoC: rsnd: add support for 16/24 bit slot widths
-  ASoC: rsnd: add support for 8 bit S8 format
+Signed-off-by: Dragos Tarcatu <dragos_tarcatu@mentor.com>
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+Signed-off-by: Timo Wischer <twischer@de.adit-jv.com>
+[Kuninori: tidyup for upstream]
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+---
+ sound/soc/sh/rcar/core.c | 32 +++++++++++++++++++++-------
+ sound/soc/sh/rcar/rsnd.h |  8 ++++++-
+ sound/soc/sh/rcar/ssi.c  | 54 +++++++++++++++++++++++++++++++++++-------------
+ 3 files changed, 72 insertions(+), 22 deletions(-)
 
-Fabrizio Castro (1):
-  arm64: dts: renesas: r8a774a1: Add SSIU support for sound
-
-Jiada Wang (12):
-  ASoC: rsnd: add warning message to rsnd_kctrl_accept_runtime()
-  ASoC: rsnd: remove is_play parameter from hw_rule function
-  ASoC: rsnd: ssi: Fix issue in dma data address assignment
-  ASoC: rsnd: ssi: Check runtime channel number rather than hw_params
-  ASoc: rsnd: dma: Calculate dma address with consider of BUSIF
-  ASoc: rsnd: dma: Calculate PDMACHCRE with consider of BUSIF
-  ASoC: rsnd: ssiu: Support BUSIF other than BUSIF0
-  ASoC: rsnd: ssiu: Support to init different BUSIF instance
-  ASoC: rsnd: ssiu: correct shift bit for ssiu9
-  ASoC: rsnd: gen: fix SSI9 4/5/6/7 busif related register address
-  ASoC: rsnd: src: Avoid a potential deadlock
-  ASoC: rsnd: src: fix compiler warnings
-
-Kuninori Morimoto (37):
-  ASoC: rsnd: merge .nolock_start and .prepare
-  ASoC: rsnd: gen: use tab instead of white-space
-  ASoC: rsnd: don't use %p for dev_dbg()
-  ASoC: add for_each_rtd_codec_dai() macro
-  ASoC: convert for_each_rtd_codec_dai() for missing part
-  ASoC: add for_each_dpcm_fe() macro
-  ASoC: add for_each_dpcm_be() macro
-  ASoC: rsnd: use 32bit TDM width as default
-  ASoC: rsnd: enable TDM settings for SSI parent
-  ASoC: rsnd: tidyup SSICR::SWSP for TDM
-  ASoC: rsnd: move .get_status under rsnd_mod_ops
-  ASoC: rsnd: add .get_id/.get_id_sub
-  ASoC: rsnd: rsnd_mod_name() handles both name and ID
-  ASoC: rsnd: remove endpoint bidirectional check
-  ASoC: rsnd: rename rsnd_runtime_is_ssi_xxx()
-  ASoC: rsnd: use defined io_playback/io_capture
-  ASoC: rsnd: move HDMI information from ssi.c to core.c
-  ASoC: rsnd: handle DPCM converted rate/chan under core
-  ASoC: rsnd: add SSIU BUSIF support
-  ASoC: rsnd: add TDM Split mode support
-  ASoC: rsnd: use ring buffer for rsnd_mod_name()
-  ASoC: rsnd: tidyup rsnd_parse_connect_ssiu_compatible()
-  ASoC: rsnd: makes rsnd_ssi_is_dma_mode() static
-  ASoC: rsnd: tidyup registering method for rsnd_kctrl_new()
-  ASoC: rsnd: indicates Channel and Mode for debug
-  ASoC: rsnd: fixup mod ID for CTU regmap read/write
-  ASoC: rsnd: add missing TDM Split mode support for simple-card
-  ASoC: rsnd: remove RSND_REG_ from rsnd_reg
-  ASoC: rsnd: update BSDSR/BSDISR handling
-  ASoC: rsnd: fixup MIX kctrl registration
-  ASoC: rsnd: synchronize connection check for simple-card/audio-graph
-  ASoC: rsnd: fixup TDM Split mode check for CTU
-  ASoC: rsnd: fixup 6ch settings to 8ch
-  ASoC: rsnd: move pcm_new from snd_soc_component_driver to
-    snd_soc_dai_driver
-  ASoC: rsnd: ssiu: tidyup SSI_MODE1/2 settings
-  ASoC: rsnd: add missing pin sharing with SSI9
-  ASoC: rsnd: do error check after rsnd_channel_normalization()
-
-Nilkanth Ahirrao (1):
-  ASoC: rsnd: fixup mod ID calculation in rsnd_ctu_probe_
-
-Takashi Iwai (2):
-  ASoC: sh: Avoid passing NULL to memory allocators
-  ASoC: sh: Drop superfluous PCM preallocation error checks
-
-Timo Wischer (1):
-  ASoC: rsnd: Support hw_free() callback at DAI level
-
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi          | 251 +++++++++-
- include/sound/soc-dpcm.h                           |  10 +
- include/sound/soc.h                                |   7 +
- sound/soc/fsl/fsl_asrc_dma.c                       |   2 +-
- sound/soc/intel/boards/kbl_rt5663_max98927.c       |   5 +-
- .../soc/intel/boards/kbl_rt5663_rt5514_max98927.c  |   5 +-
- sound/soc/mediatek/mt8173/mt8173-rt5650-rt5514.c   |   5 +-
- sound/soc/mediatek/mt8173/mt8173-rt5650-rt5676.c   |   5 +-
- sound/soc/mediatek/mt8173/mt8173-rt5650.c          |   5 +-
- sound/soc/meson/axg-card.c                         |   6 +-
- sound/soc/sh/fsi.c                                 |   3 +-
- sound/soc/sh/rcar/adg.c                            |  43 +-
- sound/soc/sh/rcar/cmd.c                            |  11 +-
- sound/soc/sh/rcar/core.c                           | 531 ++++++++++++++-------
- sound/soc/sh/rcar/ctu.c                            | 140 ++----
- sound/soc/sh/rcar/dma.c                            | 185 ++++---
- sound/soc/sh/rcar/dvc.c                            |  21 +-
- sound/soc/sh/rcar/gen.c                            | 106 +++-
- sound/soc/sh/rcar/mix.c                            |   3 +-
- sound/soc/sh/rcar/rsnd.h                           | 440 ++++++++++-------
- sound/soc/sh/rcar/src.c                            | 175 ++++---
- sound/soc/sh/rcar/ssi.c                            | 372 +++++++--------
- sound/soc/sh/rcar/ssiu.c                           | 376 +++++++++++----
- sound/soc/sh/siu_pcm.c                             |  15 +-
- sound/soc/soc-compress.c                           |   4 +-
- sound/soc/soc-core.c                               |  38 +-
- sound/soc/soc-dapm.c                               |  14 +-
- sound/soc/soc-pcm.c                                | 239 +++++-----
- 28 files changed, 1867 insertions(+), 1150 deletions(-)
-
+diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
+index 36a369d..e272990 100644
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -540,6 +540,14 @@ int rsnd_rdai_ssi_lane_ctrl(struct rsnd_dai *rdai,
+ 	return rdai->ssi_lane;
+ }
+ 
++int rsnd_rdai_width_ctrl(struct rsnd_dai *rdai, int width)
++{
++	if (width > 0)
++		rdai->chan_width = width;
++
++	return rdai->chan_width;
++}
++
+ struct rsnd_dai *rsnd_rdai_get(struct rsnd_priv *priv, int id)
+ {
+ 	if ((id < 0) || (id >= rsnd_rdai_nr(priv)))
+@@ -720,6 +728,16 @@ static int rsnd_soc_set_dai_tdm_slot(struct snd_soc_dai *dai,
+ 	struct rsnd_dai *rdai = rsnd_dai_to_rdai(dai);
+ 	struct device *dev = rsnd_priv_to_dev(priv);
+ 
++	switch (slot_width) {
++	case 16:
++	case 24:
++	case 32:
++		break;
++	default:
++		dev_err(dev, "unsupported slot width value: %d\n", slot_width);
++		return -EINVAL;
++	}
++
+ 	switch (slots) {
+ 	case 2:
+ 	case 6:
+@@ -727,6 +745,7 @@ static int rsnd_soc_set_dai_tdm_slot(struct snd_soc_dai *dai,
+ 		/* TDM Extend Mode */
+ 		rsnd_rdai_channels_set(rdai, slots);
+ 		rsnd_rdai_ssi_lane_set(rdai, 1);
++		rsnd_rdai_width_set(rdai, slot_width);
+ 		break;
+ 	default:
+ 		dev_err(dev, "unsupported TDM slots (%d)\n", slots);
+@@ -755,7 +774,7 @@ static unsigned int rsnd_soc_hw_rate_list[] = {
+ 	192000,
+ };
+ 
+-static int rsnd_soc_hw_rule(struct rsnd_priv *priv,
++static int rsnd_soc_hw_rule(struct rsnd_dai *rdai,
+ 			    unsigned int *list, int list_num,
+ 			    struct snd_interval *baseline, struct snd_interval *iv)
+ {
+@@ -772,14 +791,14 @@ static int rsnd_soc_hw_rule(struct rsnd_priv *priv,
+ 		if (!snd_interval_test(iv, list[i]))
+ 			continue;
+ 
+-		rate = rsnd_ssi_clk_query(priv,
++		rate = rsnd_ssi_clk_query(rdai,
+ 					  baseline->min, list[i], NULL);
+ 		if (rate > 0) {
+ 			p.min = min(p.min, list[i]);
+ 			p.max = max(p.max, list[i]);
+ 		}
+ 
+-		rate = rsnd_ssi_clk_query(priv,
++		rate = rsnd_ssi_clk_query(rdai,
+ 					  baseline->max, list[i], NULL);
+ 		if (rate > 0) {
+ 			p.min = min(p.min, list[i]);
+@@ -799,7 +818,6 @@ static int __rsnd_soc_hw_rule_rate(struct snd_pcm_hw_params *params,
+ 	struct snd_interval ic;
+ 	struct snd_soc_dai *dai = rule->private;
+ 	struct rsnd_dai *rdai = rsnd_dai_to_rdai(dai);
+-	struct rsnd_priv *priv = rsnd_rdai_to_priv(rdai);
+ 	struct rsnd_dai_stream *io = is_play ? &rdai->playback : &rdai->capture;
+ 
+ 	/*
+@@ -811,7 +829,7 @@ static int __rsnd_soc_hw_rule_rate(struct snd_pcm_hw_params *params,
+ 	ic.min =
+ 	ic.max = rsnd_runtime_channel_for_ssi_with_params(io, params);
+ 
+-	return rsnd_soc_hw_rule(priv, rsnd_soc_hw_rate_list,
++	return rsnd_soc_hw_rule(rdai, rsnd_soc_hw_rate_list,
+ 				ARRAY_SIZE(rsnd_soc_hw_rate_list),
+ 				&ic, ir);
+ }
+@@ -837,7 +855,6 @@ static int __rsnd_soc_hw_rule_channels(struct snd_pcm_hw_params *params,
+ 	struct snd_interval ic;
+ 	struct snd_soc_dai *dai = rule->private;
+ 	struct rsnd_dai *rdai = rsnd_dai_to_rdai(dai);
+-	struct rsnd_priv *priv = rsnd_rdai_to_priv(rdai);
+ 	struct rsnd_dai_stream *io = is_play ? &rdai->playback : &rdai->capture;
+ 
+ 	/*
+@@ -849,7 +866,7 @@ static int __rsnd_soc_hw_rule_channels(struct snd_pcm_hw_params *params,
+ 	ic.min =
+ 	ic.max = rsnd_runtime_channel_for_ssi_with_params(io, params);
+ 
+-	return rsnd_soc_hw_rule(priv, rsnd_soc_hw_channels_list,
++	return rsnd_soc_hw_rule(rdai, rsnd_soc_hw_channels_list,
+ 				ARRAY_SIZE(rsnd_soc_hw_channels_list),
+ 				ir, &ic);
+ }
+@@ -1083,6 +1100,7 @@ static void __rsnd_dai_probe(struct rsnd_priv *priv,
+ 	rdai->capture.rdai		= rdai;
+ 	rsnd_rdai_channels_set(rdai, 2); /* default 2ch */
+ 	rsnd_rdai_ssi_lane_set(rdai, 1); /* default 1lane */
++	rsnd_rdai_width_set(rdai, 32);   /* default 32bit width */
+ 
+ 	for (io_i = 0;; io_i++) {
+ 		playback = of_parse_phandle(dai_np, "playback", io_i);
+diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
+index 8f7a0ab..d903f70 100644
+--- a/sound/soc/sh/rcar/rsnd.h
++++ b/sound/soc/sh/rcar/rsnd.h
+@@ -467,6 +467,7 @@ struct rsnd_dai {
+ 
+ 	int max_channels;	/* 2ch - 16ch */
+ 	int ssi_lane;		/* 1lane - 4lane */
++	int chan_width;		/* 16/24/32 bit width */
+ 
+ 	unsigned int clk_master:1;
+ 	unsigned int bit_clk_inv:1;
+@@ -500,6 +501,11 @@ int rsnd_rdai_channels_ctrl(struct rsnd_dai *rdai,
+ int rsnd_rdai_ssi_lane_ctrl(struct rsnd_dai *rdai,
+ 			    int ssi_lane);
+ 
++#define rsnd_rdai_width_set(rdai, width) \
++	rsnd_rdai_width_ctrl(rdai, width)
++#define rsnd_rdai_width_get(rdai) \
++	rsnd_rdai_width_ctrl(rdai, 0)
++int rsnd_rdai_width_ctrl(struct rsnd_dai *rdai, int width);
+ void rsnd_dai_period_elapsed(struct rsnd_dai_stream *io);
+ int rsnd_dai_connect(struct rsnd_mod *mod,
+ 		     struct rsnd_dai_stream *io,
+@@ -709,7 +715,7 @@ int __rsnd_ssi_is_pin_sharing(struct rsnd_mod *mod);
+ void rsnd_parse_connect_ssi(struct rsnd_dai *rdai,
+ 			    struct device_node *playback,
+ 			    struct device_node *capture);
+-unsigned int rsnd_ssi_clk_query(struct rsnd_priv *priv,
++unsigned int rsnd_ssi_clk_query(struct rsnd_dai *rdai,
+ 		       int param1, int param2, int *idx);
+ 
+ /*
+diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
+index 9410e0a..6fe2075 100644
+--- a/sound/soc/sh/rcar/ssi.c
++++ b/sound/soc/sh/rcar/ssi.c
+@@ -42,7 +42,13 @@
+ #define	DWL_24		(5 << 19)	/* Data Word Length */
+ #define	DWL_32		(6 << 19)	/* Data Word Length */
+ 
++/*
++ * System word length
++ */
++#define	SWL_16		(1 << 16)	/* R/W System Word Length */
++#define	SWL_24		(2 << 16)	/* R/W System Word Length */
+ #define	SWL_32		(3 << 16)	/* R/W System Word Length */
++
+ #define	SCKD		(1 << 15)	/* Serial Bit Clock Direction */
+ #define	SWSD		(1 << 14)	/* Serial WS Direction */
+ #define	SCKP		(1 << 13)	/* Serial Bit Clock Polarity */
+@@ -220,14 +226,32 @@ u32 rsnd_ssi_multi_slaves_runtime(struct rsnd_dai_stream *io)
+ 	return 0;
+ }
+ 
+-unsigned int rsnd_ssi_clk_query(struct rsnd_priv *priv,
++static u32 rsnd_rdai_width_to_swl(struct rsnd_dai *rdai)
++{
++	struct rsnd_priv *priv = rsnd_rdai_to_priv(rdai);
++	struct device *dev = rsnd_priv_to_dev(priv);
++	int width = rsnd_rdai_width_get(rdai);
++
++	switch (width) {
++	case 32: return SWL_32;
++	case 24: return SWL_24;
++	case 16: return SWL_16;
++	}
++
++	dev_err(dev, "unsupported slot width value: %d\n", width);
++	return 0;
++}
++
++unsigned int rsnd_ssi_clk_query(struct rsnd_dai *rdai,
+ 		       int param1, int param2, int *idx)
+ {
++	struct rsnd_priv *priv = rsnd_rdai_to_priv(rdai);
+ 	int ssi_clk_mul_table[] = {
+ 		1, 2, 4, 8, 16, 6, 12,
+ 	};
+ 	int j, ret;
+ 	unsigned int main_rate;
++	int width = rsnd_rdai_width_get(rdai);
+ 
+ 	for (j = 0; j < ARRAY_SIZE(ssi_clk_mul_table); j++) {
+ 
+@@ -240,12 +264,7 @@ unsigned int rsnd_ssi_clk_query(struct rsnd_priv *priv,
+ 		if (j == 0)
+ 			continue;
+ 
+-		/*
+-		 * this driver is assuming that
+-		 * system word is 32bit x chan
+-		 * see rsnd_ssi_init()
+-		 */
+-		main_rate = 32 * param1 * param2 * ssi_clk_mul_table[j];
++		main_rate = width * param1 * param2 * ssi_clk_mul_table[j];
+ 
+ 		ret = rsnd_adg_clk_query(priv, main_rate);
+ 		if (ret < 0)
+@@ -292,7 +311,7 @@ static int rsnd_ssi_master_clk_start(struct rsnd_mod *mod,
+ 		return 0;
+ 	}
+ 
+-	main_rate = rsnd_ssi_clk_query(priv, rate, chan, &idx);
++	main_rate = rsnd_ssi_clk_query(rdai, rate, chan, &idx);
+ 	if (!main_rate) {
+ 		dev_err(dev, "unsupported clock rate\n");
+ 		return -EIO;
+@@ -312,7 +331,8 @@ static int rsnd_ssi_master_clk_start(struct rsnd_mod *mod,
+ 	 * SSICR  : FORCE, SCKD, SWSD
+ 	 * SSIWSR : CONT
+ 	 */
+-	ssi->cr_clk = FORCE | SWL_32 | SCKD | SWSD | CKDV(idx);
++	ssi->cr_clk = FORCE | rsnd_rdai_width_to_swl(rdai) |
++			SCKD | SWSD | CKDV(idx);
+ 	ssi->wsr = CONT;
+ 	ssi->rate = rate;
+ 
+@@ -357,11 +377,7 @@ static void rsnd_ssi_config_init(struct rsnd_mod *mod,
+ 
+ 	is_tdm = rsnd_runtime_is_ssi_tdm(io);
+ 
+-	/*
+-	 * always use 32bit system word.
+-	 * see also rsnd_ssi_master_clk_enable()
+-	 */
+-	cr_own |= FORCE | SWL_32;
++	cr_own |= FORCE | rsnd_rdai_width_to_swl(rdai);
+ 
+ 	if (rdai->bit_clk_inv)
+ 		cr_own |= SCKP;
+@@ -489,7 +505,17 @@ static int rsnd_ssi_hw_params(struct rsnd_mod *mod,
+ 			      struct snd_pcm_hw_params *params)
+ {
+ 	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
++	struct rsnd_dai *rdai = rsnd_io_to_rdai(io);
+ 	int chan = params_channels(params);
++	unsigned int fmt_width = snd_pcm_format_width(params_format(params));
++
++	if (fmt_width > rdai->chan_width) {
++		struct rsnd_priv *priv = rsnd_io_to_priv(io);
++		struct device *dev = rsnd_priv_to_dev(priv);
++
++		dev_err(dev, "invalid combination of slot-width and format-data-width\n");
++		return -EINVAL;
++	}
+ 
+ 	/*
+ 	 * snd_pcm_ops::hw_params will be called *before*
 -- 
 2.7.4
