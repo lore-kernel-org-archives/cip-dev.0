@@ -1,17 +1,43 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Wed, 16 Oct 2019 12:34:37 +0000
-Subject: [cip-dev] New RZ/G1M boards added to lab-cip-renesas
-Message-ID: <TYAPR01MB22853BA708ACB3D7DBBD3089B7920@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Thu, 17 Oct 2019 02:05:47 +0000
+Subject: [cip-dev] CIP IRC weekly meeting today
+Message-ID: <HK0PR01MB2979EA427ED830E26BE50C27E26D0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello all,
+Hi all,
 
-For your testing pleasure I've added two more RZ/G1M platforms (r8a7743-iwg20d-q7) to the Renesas LAVA worker, bringing the total to 4.
+Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
 
-Hopefully will speed up testing a bit.
+*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=10&day=17&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
+????????? 
+US-West US-East?? UK???? DE???? TW???? JP
+02:00??? 05:00?? 10:00?? 11:00?? 17:00?? 18:00
 
-A complete list of boards available in the CIP LAVA infrastructure and their status can be viewed here:
-https://lava.ciplatform.org/scheduler/
+Channel:
+* irc:chat.freenode.net:6667/cip
 
-Kind regards, Chris
+Last week's meeting minutes:
+https://irclogs.baserock.org/meetings/cip/2019/10/cip.2019-10-10-09.00.html
+
+Agenda:
+
+* Action item
+1. Provide the cases to cip-testing to build up the test environment - Iwamatsu-san 
+
+2. Test LTS (pre)releases directly ? patersonc
+
+3. Review the proposal from Kudo-san - Kernel team
+
+* Kernel maintenance updates
+* Kernel testing
+* CIP Core
+* Software update
+* AOB
+
+The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
+
+Best regards,
+
+SZ Lin, Moxa.
