@@ -1,101 +1,264 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 17 Oct 2019 08:05:10 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 38/57] ASoC: rsnd: add missing TDM
-	Split mode support for simple-card
+Date: Thu, 17 Oct 2019 08:05:01 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 29/57] ASoC: rsnd: handle DPCM
+	converted rate/chan under core
 In-Reply-To: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1571295929-47286-39-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1571295929-47286-30-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-commit 538a4ffea3f719ed8f853f78826e360aee5fe9d7 upstream.
+commit c2aaaa57d44a195b71fe1e9ff0c6a80ac017495d upstream.
 
-commit f69f452243e4e1 ("ASoC: rsnd: add TDM Split mode support")
-added TDM Split mode support for rsnd driver.
-But, it cares audio-graph-card style only. We can't use TDM Split
-mode on simple-card style now.
-This patch fixup this issue.
+converted rate/chan are handled each rated module, but
+it will be used other module too.
+For examle, converted channel is currently used for CTU,
+but, it will be used for TDM Split mode, too.
 
-Fixes: f69f452243e4e1 ("ASoC: rsnd: add TDM Split mode support")
+This patch move/merge SRC/CTU hw_param under core.c
+and handles converted rate/chan under rsnd_dai_stream.
+
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- sound/soc/sh/rcar/core.c | 53 ++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 51 insertions(+), 2 deletions(-)
+ sound/soc/sh/rcar/core.c | 34 +++++++++++++++++++++++++++++++++-
+ sound/soc/sh/rcar/ctu.c  | 45 ---------------------------------------------
+ sound/soc/sh/rcar/rsnd.h |  5 ++++-
+ sound/soc/sh/rcar/src.c  | 40 ++--------------------------------------
+ 4 files changed, 39 insertions(+), 85 deletions(-)
 
 diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
-index 4a88c97..c0b7d85 100644
+index 2dad91e..681abf6 100644
 --- a/sound/soc/sh/rcar/core.c
 +++ b/sound/soc/sh/rcar/core.c
-@@ -1025,6 +1025,49 @@ static const struct snd_soc_dai_ops rsnd_soc_dai_ops = {
- 	.prepare	= rsnd_soc_dai_prepare,
+@@ -269,7 +269,7 @@ int rsnd_runtime_channel_after_ctu_with_params(struct rsnd_dai_stream *io,
+ 	struct rsnd_mod *ctu_mod = rsnd_io_to_mod_ctu(io);
+ 
+ 	if (ctu_mod) {
+-		u32 converted_chan = rsnd_ctu_converted_channel(ctu_mod);
++		u32 converted_chan = rsnd_io_converted_chan(io);
+ 
+ 		if (converted_chan)
+ 			return converted_chan;
+@@ -1219,8 +1219,40 @@ static int rsnd_hw_params(struct snd_pcm_substream *substream,
+ 	struct snd_soc_dai *dai = rsnd_substream_to_dai(substream);
+ 	struct rsnd_dai *rdai = rsnd_dai_to_rdai(dai);
+ 	struct rsnd_dai_stream *io = rsnd_rdai_to_io(rdai, substream);
++	struct snd_soc_pcm_runtime *fe = substream->private_data;
+ 	int ret;
+ 
++	/*
++	 * rsnd assumes that it might be used under DPCM if user want to use
++	 * channel / rate convert. Then, rsnd should be FE.
++	 * And then, this function will be called *after* BE settings.
++	 * this means, each BE already has fixuped hw_params.
++	 * see
++	 *	dpcm_fe_dai_hw_params()
++	 *	dpcm_be_dai_hw_params()
++	 */
++	io->converted_rate = 0;
++	io->converted_chan = 0;
++	if (fe->dai_link->dynamic) {
++		struct rsnd_priv *priv = rsnd_io_to_priv(io);
++		struct device *dev = rsnd_priv_to_dev(priv);
++		struct snd_soc_dpcm *dpcm;
++		struct snd_pcm_hw_params *be_params;
++		int stream = substream->stream;
++
++		for_each_dpcm_be(fe, stream, dpcm) {
++			be_params = &dpcm->hw_params;
++			if (params_channels(hw_params) != params_channels(be_params))
++				io->converted_chan = params_channels(be_params);
++			if (params_rate(hw_params) != params_rate(be_params))
++				io->converted_rate = params_rate(be_params);
++		}
++		if (io->converted_chan)
++			dev_dbg(dev, "convert channels = %d\n", io->converted_chan);
++		if (io->converted_rate)
++			dev_dbg(dev, "convert rate     = %d\n", io->converted_rate);
++	}
++
+ 	ret = rsnd_dai_call(hw_params, io, substream, hw_params);
+ 	if (ret)
+ 		return ret;
+diff --git a/sound/soc/sh/rcar/ctu.c b/sound/soc/sh/rcar/ctu.c
+index 6a948b1..4dda7d9 100644
+--- a/sound/soc/sh/rcar/ctu.c
++++ b/sound/soc/sh/rcar/ctu.c
+@@ -107,13 +107,6 @@ static void rsnd_ctu_halt(struct rsnd_mod *mod)
+ 	rsnd_mod_write(mod, CTU_SWRSR, 0);
+ }
+ 
+-int rsnd_ctu_converted_channel(struct rsnd_mod *mod)
+-{
+-	struct rsnd_ctu *ctu = rsnd_mod_to_ctu(mod);
+-
+-	return ctu->channels;
+-}
+-
+ static int rsnd_ctu_probe_(struct rsnd_mod *mod,
+ 			   struct rsnd_dai_stream *io,
+ 			   struct rsnd_priv *priv)
+@@ -233,43 +226,6 @@ static int rsnd_ctu_quit(struct rsnd_mod *mod,
+ 	return 0;
+ }
+ 
+-static int rsnd_ctu_hw_params(struct rsnd_mod *mod,
+-			      struct rsnd_dai_stream *io,
+-			      struct snd_pcm_substream *substream,
+-			      struct snd_pcm_hw_params *fe_params)
+-{
+-	struct rsnd_ctu *ctu = rsnd_mod_to_ctu(mod);
+-	struct snd_soc_pcm_runtime *fe = substream->private_data;
+-
+-	/*
+-	 * CTU assumes that it is used under DPCM if user want to use
+-	 * channel transfer. Then, CTU should be FE.
+-	 * And then, this function will be called *after* BE settings.
+-	 * this means, each BE already has fixuped hw_params.
+-	 * see
+-	 *	dpcm_fe_dai_hw_params()
+-	 *	dpcm_be_dai_hw_params()
+-	 */
+-	ctu->channels = 0;
+-	if (fe->dai_link->dynamic) {
+-		struct rsnd_priv *priv = rsnd_mod_to_priv(mod);
+-		struct device *dev = rsnd_priv_to_dev(priv);
+-		struct snd_soc_dpcm *dpcm;
+-		struct snd_pcm_hw_params *be_params;
+-		int stream = substream->stream;
+-
+-		for_each_dpcm_be(fe, stream, dpcm) {
+-			be_params = &dpcm->hw_params;
+-			if (params_channels(fe_params) != params_channels(be_params))
+-				ctu->channels = params_channels(be_params);
+-		}
+-
+-		dev_dbg(dev, "CTU convert channels %d\n", ctu->channels);
+-	}
+-
+-	return 0;
+-}
+-
+ static int rsnd_ctu_pcm_new(struct rsnd_mod *mod,
+ 			    struct rsnd_dai_stream *io,
+ 			    struct snd_soc_pcm_runtime *rtd)
+@@ -357,7 +313,6 @@ static struct rsnd_mod_ops rsnd_ctu_ops = {
+ 	.probe		= rsnd_ctu_probe_,
+ 	.init		= rsnd_ctu_init,
+ 	.quit		= rsnd_ctu_quit,
+-	.hw_params	= rsnd_ctu_hw_params,
+ 	.pcm_new	= rsnd_ctu_pcm_new,
+ 	.get_status	= rsnd_mod_get_status,
+ 	.id		= rsnd_ctu_id,
+diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
+index 9aeb547..7e54edc 100644
+--- a/sound/soc/sh/rcar/rsnd.h
++++ b/sound/soc/sh/rcar/rsnd.h
+@@ -457,6 +457,8 @@ struct rsnd_dai_stream {
+ 	struct rsnd_mod *dma;
+ 	struct rsnd_dai *rdai;
+ 	struct device *dmac_dev; /* for IPMMU */
++	u32 converted_rate;      /* converted sampling rate */
++	int converted_chan;      /* converted channels */
+ 	u32 parent_ssi_status;
+ 	u32 flags;
+ };
+@@ -479,6 +481,8 @@ struct rsnd_dai_stream {
+ #define rsnd_io_is_play(io)	(&rsnd_io_to_rdai(io)->playback == io)
+ #define rsnd_io_to_runtime(io) ((io)->substream ? \
+ 				(io)->substream->runtime : NULL)
++#define rsnd_io_converted_rate(io)	((io)->converted_rate)
++#define rsnd_io_converted_chan(io)	((io)->converted_chan)
+ int rsnd_io_is_working(struct rsnd_dai_stream *io);
+ 
+ struct rsnd_dai {
+@@ -767,7 +771,6 @@ unsigned int rsnd_src_get_rate(struct rsnd_priv *priv,
+  */
+ int rsnd_ctu_probe(struct rsnd_priv *priv);
+ void rsnd_ctu_remove(struct rsnd_priv *priv);
+-int rsnd_ctu_converted_channel(struct rsnd_mod *mod);
+ struct rsnd_mod *rsnd_ctu_mod_get(struct rsnd_priv *priv, int id);
+ #define rsnd_ctu_of_node(priv) rsnd_parse_of_node(priv, RSND_NODE_CTU)
+ #define rsnd_parse_connect_ctu(rdai, playback, capture)			\
+diff --git a/sound/soc/sh/rcar/src.c b/sound/soc/sh/rcar/src.c
+index bdc0595..50348a2 100644
+--- a/sound/soc/sh/rcar/src.c
++++ b/sound/soc/sh/rcar/src.c
+@@ -25,7 +25,6 @@ struct rsnd_src {
+ 	struct rsnd_mod *dma;
+ 	struct rsnd_kctrl_cfg_s sen;  /* sync convert enable */
+ 	struct rsnd_kctrl_cfg_s sync; /* sync convert */
+-	u32 convert_rate; /* sampling rate convert */
+ 	int irq;
  };
  
-+static void rsnd_parse_connect_simple(struct rsnd_priv *priv,
-+				      struct device_node *dai_np,
-+				      int dai_i, int is_play)
-+{
-+	struct device *dev = rsnd_priv_to_dev(priv);
-+	struct rsnd_dai *rdai = rsnd_rdai_get(priv, dai_i);
-+	struct rsnd_dai_stream *io = is_play ?
-+		&rdai->playback :
-+		&rdai->capture;
-+	struct device_node *ssiu_np = rsnd_ssiu_of_node(priv);
-+	struct device_node *np;
-+	int i, j;
-+
-+	if (!ssiu_np)
-+		return;
-+
-+	if (!rsnd_io_to_mod_ssi(io))
-+		return;
-+
-+	/*
-+	 * This driver assumes that it is TDM Split mode
-+	 * if it includes ssiu node
-+	 */
-+	for (i = 0;; i++) {
-+		struct device_node *node = is_play ?
-+			of_parse_phandle(dai_np, "playback", i) :
-+			of_parse_phandle(dai_np, "capture",  i);
-+
-+		if (!node)
-+			break;
-+
-+		j = 0;
-+		for_each_child_of_node(ssiu_np, np) {
-+			if (np == node) {
-+				rsnd_flags_set(io, RSND_STREAM_TDM_SPLIT);
-+				dev_dbg(dev, "%s is part of TDM Split\n", io->name);
-+			}
-+			j++;
-+		}
-+
-+	}
-+}
-+
- static void rsnd_parse_connect_graph(struct rsnd_priv *priv,
- 				     struct rsnd_dai_stream *io,
- 				     struct device_node *endpoint)
-@@ -1240,8 +1283,14 @@ static int rsnd_dai_probe(struct rsnd_priv *priv)
- 			dai_i++;
- 		}
- 	} else {
--		for_each_child_of_node(dai_node, dai_np)
--			__rsnd_dai_probe(priv, dai_np, dai_i++);
-+		for_each_child_of_node(dai_node, dai_np) {
-+			__rsnd_dai_probe(priv, dai_np, dai_i);
-+			if (rsnd_is_gen3(priv)) {
-+				rsnd_parse_connect_simple(priv, dai_np, dai_i, 1);
-+				rsnd_parse_connect_simple(priv, dai_np, dai_i, 0);
-+			}
-+			dai_i++;
-+		}
- 	}
+@@ -89,12 +88,12 @@ static u32 rsnd_src_convert_rate(struct rsnd_dai_stream *io,
+ 		return 0;
  
- 	return 0;
+ 	if (!rsnd_src_sync_is_enabled(mod))
+-		return src->convert_rate;
++		return rsnd_io_converted_rate(io);
+ 
+ 	convert_rate = src->sync.val;
+ 
+ 	if (!convert_rate)
+-		convert_rate = src->convert_rate;
++		convert_rate = rsnd_io_converted_rate(io);
+ 
+ 	if (!convert_rate)
+ 		convert_rate = runtime->rate;
+@@ -135,40 +134,6 @@ unsigned int rsnd_src_get_rate(struct rsnd_priv *priv,
+ 	return rate;
+ }
+ 
+-static int rsnd_src_hw_params(struct rsnd_mod *mod,
+-			      struct rsnd_dai_stream *io,
+-			      struct snd_pcm_substream *substream,
+-			      struct snd_pcm_hw_params *fe_params)
+-{
+-	struct rsnd_src *src = rsnd_mod_to_src(mod);
+-	struct snd_soc_pcm_runtime *fe = substream->private_data;
+-
+-	/*
+-	 * SRC assumes that it is used under DPCM if user want to use
+-	 * sampling rate convert. Then, SRC should be FE.
+-	 * And then, this function will be called *after* BE settings.
+-	 * this means, each BE already has fixuped hw_params.
+-	 * see
+-	 *	dpcm_fe_dai_hw_params()
+-	 *	dpcm_be_dai_hw_params()
+-	 */
+-	src->convert_rate = 0;
+-	if (fe->dai_link->dynamic) {
+-		int stream = substream->stream;
+-		struct snd_soc_dpcm *dpcm;
+-		struct snd_pcm_hw_params *be_params;
+-
+-		for_each_dpcm_be(fe, stream, dpcm) {
+-			be_params = &dpcm->hw_params;
+-
+-			if (params_rate(fe_params) != params_rate(be_params))
+-				src->convert_rate = params_rate(be_params);
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+ static void rsnd_src_set_convert_rate(struct rsnd_dai_stream *io,
+ 				      struct rsnd_mod *mod)
+ {
+@@ -534,7 +499,6 @@ static struct rsnd_mod_ops rsnd_src_ops = {
+ 	.start		= rsnd_src_start,
+ 	.stop		= rsnd_src_stop,
+ 	.irq		= rsnd_src_irq,
+-	.hw_params	= rsnd_src_hw_params,
+ 	.pcm_new	= rsnd_src_pcm_new,
+ 	.get_status	= rsnd_mod_get_status,
+ };
 -- 
 2.7.4
