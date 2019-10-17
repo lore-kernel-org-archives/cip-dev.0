@@ -1,43 +1,30 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 17 Oct 2019 02:05:47 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-Message-ID: <HK0PR01MB2979EA427ED830E26BE50C27E26D0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+From: biju.das@bp.renesas.com (Biju Das)
+Date: Thu, 17 Oct 2019 07:57:53 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 0/6] Add HDMI AUDIO/CAN/CANFD support
+Message-ID: <1571295479-39328-1-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+This patch series add HDMI AUDIO/CAN/CANFD support for HiHope RZ/G2M platform.
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
+This patch series is based on linux-4.19.y-cip and all the patches
+in this series are cherry-picked from linux rc tree.
 
-*Please note that IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=10&day=17&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
-????????? 
-US-West US-East?? UK???? DE???? TW???? JP
-02:00??? 05:00?? 10:00?? 11:00?? 17:00?? 18:00
+Biju Das (1):
+  dt-bindings: can: rcar_canfd: document r8a774a1 support
 
-Channel:
-* irc:chat.freenode.net:6667/cip
+Fabrizio Castro (5):
+  arm64: dts: renesas: r8a774a1: Use extended audio dmac registers
+  arm64: dts: renesas: hihope-common: Add HDMI audio support
+  arm64: dts: renesas: r8a774a1: Add missing assigned-clocks for CAN[01]
+  arm64: dts: renesas: r8a774a1: Add CANFD support
+  arm64: dts: renesas: hihope-rzg2-ex: Enable CAN interfaces
 
-Last week's meeting minutes:
-https://irclogs.baserock.org/meetings/cip/2019/10/cip.2019-10-10-09.00.html
+ .../devicetree/bindings/net/can/rcar_canfd.txt     |  9 +++--
+ arch/arm64/boot/dts/renesas/hihope-common.dtsi     | 47 ++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi    | 22 ++++++++++
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi          | 31 +++++++++++++-
+ 4 files changed, 104 insertions(+), 5 deletions(-)
 
-Agenda:
-
-* Action item
-1. Provide the cases to cip-testing to build up the test environment - Iwamatsu-san 
-
-2. Test LTS (pre)releases directly ? patersonc
-
-3. Review the proposal from Kudo-san - Kernel team
-
-* Kernel maintenance updates
-* Kernel testing
-* CIP Core
-* Software update
-* AOB
-
-The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
-
-Best regards,
-
-SZ Lin, Moxa.
+-- 
+2.7.4
