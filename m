@@ -1,105 +1,235 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 17 Oct 2019 08:05:09 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 37/57] ASoC: rsnd: fixup mod ID for CTU
-	regmap read/write
+Date: Thu, 17 Oct 2019 08:05:00 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 28/57] ASoC: rsnd: move HDMI
+	information from ssi.c to core.c
 In-Reply-To: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1571295929-47286-38-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1571295929-47286-29-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-commit 665c1ade11e8aee0db691c7a928de1586b712344 upstream.
+commit beed78aeeb10214798b1fd5f1dd05e0b7199d65f upstream.
 
-commit c16015f36cc12824 ("ASoC: rsnd: add .get_id/.get_id_sub")
-add new .get_id/.get_id_sub to indicate module ID/subID.
-It is used for SSIU and CTU. In SSIU case, subID indicates BUSIF,
-but register settings is based on SSIU ID.
-OTOH, in CTU case, subID indicates CTU channel, and register settings
-is based on it. This means regmap read/write function needs to care it.
-This patch fixup this issue. It can't play MIXed sound without this
-patch.
+Current driver is supporting HDMI output, and its information
+are handled under ssi.c. But, it is stream information.
+Let's move it from ssi.c to core.c.
 
-Fixes: c16015f36cc12824 ("ASoC: rsnd: add .get_id/.get_id_sub")
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- sound/soc/sh/rcar/ctu.c  |  1 +
- sound/soc/sh/rcar/gen.c  | 14 +++++++++++---
- sound/soc/sh/rcar/rsnd.h |  1 +
- 3 files changed, 13 insertions(+), 3 deletions(-)
+ sound/soc/sh/rcar/core.c | 30 +++++++++++++++++++++++-
+ sound/soc/sh/rcar/rsnd.h | 13 +++++------
+ sound/soc/sh/rcar/ssi.c  | 60 +-----------------------------------------------
+ sound/soc/sh/rcar/ssiu.c | 13 ++++-------
+ 4 files changed, 41 insertions(+), 75 deletions(-)
 
-diff --git a/sound/soc/sh/rcar/ctu.c b/sound/soc/sh/rcar/ctu.c
-index 4dda7d9..ff41a5e 100644
---- a/sound/soc/sh/rcar/ctu.c
-+++ b/sound/soc/sh/rcar/ctu.c
-@@ -317,6 +317,7 @@ static struct rsnd_mod_ops rsnd_ctu_ops = {
- 	.get_status	= rsnd_mod_get_status,
- 	.id		= rsnd_ctu_id,
- 	.id_sub		= rsnd_ctu_id_sub,
-+	.id_cmd		= rsnd_mod_id_raw,
+diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
+index dacd7bb..2dad91e 100644
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -999,6 +999,29 @@ static const struct snd_soc_dai_ops rsnd_soc_dai_ops = {
+ 	.prepare	= rsnd_soc_dai_prepare,
  };
  
- struct rsnd_mod *rsnd_ctu_mod_get(struct rsnd_priv *priv, int id)
-diff --git a/sound/soc/sh/rcar/gen.c b/sound/soc/sh/rcar/gen.c
-index ca63940..3283d67 100644
---- a/sound/soc/sh/rcar/gen.c
-+++ b/sound/soc/sh/rcar/gen.c
-@@ -71,6 +71,14 @@ static int rsnd_is_accessible_reg(struct rsnd_priv *priv,
- 	return 1;
- }
- 
-+static int rsnd_mod_id_cmd(struct rsnd_mod *mod)
++static void rsnd_parse_connect_graph(struct rsnd_priv *priv,
++				     struct rsnd_dai_stream *io,
++				     struct device_node *endpoint)
 +{
-+	if (mod->ops->id_cmd)
-+		return mod->ops->id_cmd(mod);
++	struct device *dev = rsnd_priv_to_dev(priv);
++	struct device_node *remote_node = of_graph_get_remote_port_parent(endpoint);
 +
-+	return rsnd_mod_id(mod);
++	if (!rsnd_io_to_mod_ssi(io))
++		return;
++
++	/* HDMI0 */
++	if (strstr(remote_node->full_name, "hdmi at fead0000")) {
++		rsnd_flags_set(io, RSND_STREAM_HDMI0);
++		dev_dbg(dev, "%s connected to HDMI0\n", io->name);
++	}
++
++	/* HDMI1 */
++	if (strstr(remote_node->full_name, "hdmi at feae0000")) {
++		rsnd_flags_set(io, RSND_STREAM_HDMI1);
++		dev_dbg(dev, "%s connected to HDMI1\n", io->name);
++	}
 +}
 +
- u32 rsnd_read(struct rsnd_priv *priv,
- 	      struct rsnd_mod *mod, enum rsnd_reg reg)
- {
-@@ -81,7 +89,7 @@ u32 rsnd_read(struct rsnd_priv *priv,
- 	if (!rsnd_is_accessible_reg(priv, gen, reg))
- 		return 0;
- 
--	regmap_fields_read(gen->regs[reg], rsnd_mod_id(mod), &val);
-+	regmap_fields_read(gen->regs[reg], rsnd_mod_id_cmd(mod), &val);
- 
- 	dev_dbg(dev, "r %s - %-18s (%4d) : %08x\n",
- 		rsnd_mod_name(mod),
-@@ -100,7 +108,7 @@ void rsnd_write(struct rsnd_priv *priv,
- 	if (!rsnd_is_accessible_reg(priv, gen, reg))
- 		return;
- 
--	regmap_fields_force_write(gen->regs[reg], rsnd_mod_id(mod), data);
-+	regmap_fields_force_write(gen->regs[reg], rsnd_mod_id_cmd(mod), data);
- 
- 	dev_dbg(dev, "w %s - %-18s (%4d) : %08x\n",
- 		rsnd_mod_name(mod),
-@@ -117,7 +125,7 @@ void rsnd_bset(struct rsnd_priv *priv, struct rsnd_mod *mod,
- 		return;
- 
- 	regmap_fields_force_update_bits(gen->regs[reg],
--					rsnd_mod_id(mod), mask, data);
-+					rsnd_mod_id_cmd(mod), mask, data);
- 
- 	dev_dbg(dev, "b %s - %-18s (%4d) : %08x/%08x\n",
- 		rsnd_mod_name(mod),
+ void rsnd_parse_connect_common(struct rsnd_dai *rdai,
+ 		struct rsnd_mod* (*mod_get)(struct rsnd_priv *priv, int id),
+ 		struct device_node *node,
+@@ -1171,7 +1194,12 @@ static int rsnd_dai_probe(struct rsnd_priv *priv)
+ 	if (is_graph) {
+ 		for_each_endpoint_of_node(dai_node, dai_np) {
+ 			__rsnd_dai_probe(priv, dai_np, dai_i);
+-			rsnd_ssi_parse_hdmi_connection(priv, dai_np, dai_i);
++			if (rsnd_is_gen3(priv)) {
++				struct rsnd_dai *rdai = rsnd_rdai_get(priv, dai_i);
++
++				rsnd_parse_connect_graph(priv, &rdai->playback, dai_np);
++				rsnd_parse_connect_graph(priv, &rdai->capture,  dai_np);
++			}
+ 			dai_i++;
+ 		}
+ 	} else {
 diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
-index 3c57129..94d51fe 100644
+index 4b547c6..9aeb547 100644
 --- a/sound/soc/sh/rcar/rsnd.h
 +++ b/sound/soc/sh/rcar/rsnd.h
-@@ -306,6 +306,7 @@ struct rsnd_mod_ops {
- 			   enum rsnd_mod_type type);
- 	int (*id)(struct rsnd_mod *mod);
- 	int (*id_sub)(struct rsnd_mod *mod);
-+	int (*id_cmd)(struct rsnd_mod *mod);
+@@ -458,7 +458,13 @@ struct rsnd_dai_stream {
+ 	struct rsnd_dai *rdai;
+ 	struct device *dmac_dev; /* for IPMMU */
+ 	u32 parent_ssi_status;
++	u32 flags;
  };
++
++/* flags */
++#define RSND_STREAM_HDMI0	(1 << 0) /* for HDMI0 */
++#define RSND_STREAM_HDMI1	(1 << 1) /* for HDMI1 */
++
+ #define rsnd_io_to_mod(io, i)	((i) < RSND_MOD_MAX ? (io)->mod[(i)] : NULL)
+ #define rsnd_io_to_mod_ssi(io)	rsnd_io_to_mod((io), RSND_MOD_SSI)
+ #define rsnd_io_to_mod_ssiu(io)	rsnd_io_to_mod((io), RSND_MOD_SSIU)
+@@ -718,13 +724,6 @@ int rsnd_ssi_use_busif(struct rsnd_dai_stream *io);
+ int rsnd_ssi_get_busif(struct rsnd_dai_stream *io);
+ u32 rsnd_ssi_multi_slaves_runtime(struct rsnd_dai_stream *io);
  
- struct rsnd_dai_stream;
+-#define RSND_SSI_HDMI_PORT0	0xf0
+-#define RSND_SSI_HDMI_PORT1	0xf1
+-int rsnd_ssi_hdmi_port(struct rsnd_dai_stream *io);
+-void rsnd_ssi_parse_hdmi_connection(struct rsnd_priv *priv,
+-				    struct device_node *endpoint,
+-				    int dai_i);
+-
+ #define rsnd_ssi_is_pin_sharing(io)	\
+ 	__rsnd_ssi_is_pin_sharing(rsnd_io_to_mod_ssi(io))
+ int __rsnd_ssi_is_pin_sharing(struct rsnd_mod *mod);
+diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
+index 88bdbb9..b4991a6 100644
+--- a/sound/soc/sh/rcar/ssi.c
++++ b/sound/soc/sh/rcar/ssi.c
+@@ -99,9 +99,7 @@ struct rsnd_ssi {
+ /* flags */
+ #define RSND_SSI_CLK_PIN_SHARE		(1 << 0)
+ #define RSND_SSI_NO_BUSIF		(1 << 1) /* SSI+DMA without BUSIF */
+-#define RSND_SSI_HDMI0			(1 << 2) /* for HDMI0 */
+-#define RSND_SSI_HDMI1			(1 << 3) /* for HDMI1 */
+-#define RSND_SSI_PROBED			(1 << 4)
++#define RSND_SSI_PROBED			(1 << 2)
+ 
+ #define for_each_rsnd_ssi(pos, priv, i)					\
+ 	for (i = 0;							\
+@@ -119,20 +117,6 @@ struct rsnd_ssi {
+ 	(rsnd_ssi_run_mods(io) & (1 << rsnd_mod_id(mod)))
+ #define rsnd_ssi_can_output_clk(mod) (!__rsnd_ssi_is_pin_sharing(mod))
+ 
+-int rsnd_ssi_hdmi_port(struct rsnd_dai_stream *io)
+-{
+-	struct rsnd_mod *mod = rsnd_io_to_mod_ssi(io);
+-	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
+-
+-	if (rsnd_flags_has(ssi, RSND_SSI_HDMI0))
+-		return RSND_SSI_HDMI_PORT0;
+-
+-	if (rsnd_flags_has(ssi, RSND_SSI_HDMI1))
+-		return RSND_SSI_HDMI_PORT1;
+-
+-	return 0;
+-}
+-
+ int rsnd_ssi_use_busif(struct rsnd_dai_stream *io)
+ {
+ 	struct rsnd_mod *mod = rsnd_io_to_mod_ssi(io);
+@@ -1059,48 +1043,6 @@ void rsnd_parse_connect_ssi(struct rsnd_dai *rdai,
+ 	of_node_put(node);
+ }
+ 
+-static void __rsnd_ssi_parse_hdmi_connection(struct rsnd_priv *priv,
+-					     struct rsnd_dai_stream *io,
+-					     struct device_node *remote_ep)
+-{
+-	struct device *dev = rsnd_priv_to_dev(priv);
+-	struct rsnd_mod *mod = rsnd_io_to_mod_ssi(io);
+-	struct rsnd_ssi *ssi;
+-	struct device_node *remote_node = of_graph_get_port_parent(remote_ep);
+-
+-	/* support Gen3 only */
+-	if (!rsnd_is_gen3(priv))
+-		return;
+-
+-	if (!mod)
+-		return;
+-
+-	ssi  = rsnd_mod_to_ssi(mod);
+-
+-	/* HDMI0 */
+-	if (strstr(remote_node->full_name, "hdmi at fead0000")) {
+-		rsnd_flags_set(ssi, RSND_SSI_HDMI0);
+-		dev_dbg(dev, "%s connected to HDMI0\n", rsnd_mod_name(mod));
+-	}
+-
+-	/* HDMI1 */
+-	if (strstr(remote_node->full_name, "hdmi at feae0000")) {
+-		rsnd_flags_set(ssi, RSND_SSI_HDMI1);
+-		dev_dbg(dev, "%s connected to HDMI1\n", rsnd_mod_name(mod));
+-	}
+-}
+-
+-void rsnd_ssi_parse_hdmi_connection(struct rsnd_priv *priv,
+-				    struct device_node *endpoint,
+-				    int dai_i)
+-{
+-	struct rsnd_dai *rdai = rsnd_rdai_get(priv, dai_i);
+-	struct device_node *remote_ep = of_graph_get_remote_endpoint(endpoint);
+-
+-	__rsnd_ssi_parse_hdmi_connection(priv, &rdai->playback, remote_ep);
+-	__rsnd_ssi_parse_hdmi_connection(priv, &rdai->capture,  remote_ep);
+-}
+-
+ struct rsnd_mod *rsnd_ssi_mod_get(struct rsnd_priv *priv, int id)
+ {
+ 	if (WARN_ON(id < 0 || id >= rsnd_ssi_nr(priv)))
+diff --git a/sound/soc/sh/rcar/ssiu.c b/sound/soc/sh/rcar/ssiu.c
+index 645340e..4f59100 100644
+--- a/sound/soc/sh/rcar/ssiu.c
++++ b/sound/soc/sh/rcar/ssiu.c
+@@ -135,7 +135,8 @@ static int rsnd_ssiu_init_gen2(struct rsnd_mod *mod,
+ 			       struct rsnd_priv *priv)
+ {
+ 	struct rsnd_ssiu *ssiu = rsnd_mod_to_ssiu(mod);
+-	int hdmi = rsnd_ssi_hdmi_port(io);
++	u32 has_hdmi0 = rsnd_flags_has(io, RSND_STREAM_HDMI0);
++	u32 has_hdmi1 = rsnd_flags_has(io, RSND_STREAM_HDMI1);
+ 	int ret;
+ 	u32 mode = 0;
+ 
+@@ -212,7 +213,7 @@ static int rsnd_ssiu_init_gen2(struct rsnd_mod *mod,
+ 		}
+ 	}
+ 
+-	if (hdmi) {
++	if (has_hdmi0 || has_hdmi1) {
+ 		enum rsnd_mod_type rsnd_ssi_array[] = {
+ 			RSND_MOD_SSIM1,
+ 			RSND_MOD_SSIM2,
+@@ -238,14 +239,10 @@ static int rsnd_ssiu_init_gen2(struct rsnd_mod *mod,
+ 				rsnd_mod_id(pos) << shift;
+ 		}
+ 
+-		switch (hdmi) {
+-		case RSND_SSI_HDMI_PORT0:
++		if (has_hdmi0)
+ 			rsnd_mod_write(mod, HDMI0_SEL, val);
+-			break;
+-		case RSND_SSI_HDMI_PORT1:
++		if (has_hdmi1)
+ 			rsnd_mod_write(mod, HDMI1_SEL, val);
+-			break;
+-		}
+ 	}
+ 
+ 	return 0;
 -- 
 2.7.4
