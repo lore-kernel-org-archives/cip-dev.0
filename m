@@ -1,326 +1,112 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 17 Oct 2019 08:05:29 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 57/57] arm64: dts: renesas: r8a774a1:
-	Add SSIU support for sound
+Date: Thu, 17 Oct 2019 08:05:20 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 48/57] ASoC: rsnd: src: Avoid a
+	potential deadlock
 In-Reply-To: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1571295929-47286-58-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1571295929-47286-49-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+From: Jiada Wang <jiada_wang@mentor.com>
 
-commit a44efeaa0bbf699f7ad397f5130e2834d52f621e upstream.
+commit ba164a49f8f7390b036713bf8a70a150a938c670 upstream.
 
-Add SSIU support to the SoC DT as the sound driver supports
-it now, and also since the sound driver can now handle
-BUSIF0-7 via SSIU remove the no longer needed "rxu" and "txu"
-properties.
+lockdep warns us that priv->lock and k->k_lock can cause a
+deadlock when after acquire of k->k_lock, process is interrupted
+by src, while in another routine of src .init, k->k_lock is
+acquired with priv->lock held.
 
-Based on similar work from Kuninori Morimoto and Simon Horman in commits
-8d14bfa074db ("arm64: dts: renesas: r8a7796: add SSIU support for
-sound") and 10bd03fa896e ("arm64: dts: renesas: r8a7796: remove BUSIF0
-settings from rcar_sound,ssi").
+This patch avoids a potential deadlock by not calling soc_device_match()
+in SRC .init callback, instead it adds new soc fields in priv->flags to
+differentiate SoCs.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: linux-next commit 7674bec4fc09 ("ASoC: rsnd: update BSDSR/BSDISR handling")
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 251 +++++++++++++++++++++++++++---
- 1 file changed, 231 insertions(+), 20 deletions(-)
+ sound/soc/sh/rcar/core.c | 2 ++
+ sound/soc/sh/rcar/rsnd.h | 5 +++++
+ sound/soc/sh/rcar/src.c  | 9 +--------
+ 3 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index 86228e0..570093c 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -1550,56 +1550,267 @@
- 				};
- 			};
+diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
+index 96d2b39..f361118 100644
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -110,6 +110,8 @@ static const struct of_device_id rsnd_of_match[] = {
+ 	{ .compatible = "renesas,rcar_sound-gen1", .data = (void *)RSND_GEN1 },
+ 	{ .compatible = "renesas,rcar_sound-gen2", .data = (void *)RSND_GEN2 },
+ 	{ .compatible = "renesas,rcar_sound-gen3", .data = (void *)RSND_GEN3 },
++	/* Special Handling */
++	{ .compatible = "renesas,rcar_sound-r8a77990", .data = (void *)(RSND_GEN3 | RSND_SOC_E) },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, rsnd_of_match);
+diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
+index 90625c5..0e6ef4e1 100644
+--- a/sound/soc/sh/rcar/rsnd.h
++++ b/sound/soc/sh/rcar/rsnd.h
+@@ -607,6 +607,8 @@ struct rsnd_priv {
+ #define RSND_GEN1	(1 << 0)
+ #define RSND_GEN2	(2 << 0)
+ #define RSND_GEN3	(3 << 0)
++#define RSND_SOC_MASK	(0xFF << 4)
++#define RSND_SOC_E	(1 << 4) /* E1/E2/E3 */
  
-+			rcar_sound,ssiu {
-+				ssiu00: ssiu-0 {
-+					dmas = <&audma0 0x15>, <&audma1 0x16>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu01: ssiu-1 {
-+					dmas = <&audma0 0x35>, <&audma1 0x36>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu02: ssiu-2 {
-+					dmas = <&audma0 0x37>, <&audma1 0x38>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu03: ssiu-3 {
-+					dmas = <&audma0 0x47>, <&audma1 0x48>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu04: ssiu-4 {
-+					dmas = <&audma0 0x3F>, <&audma1 0x40>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu05: ssiu-5 {
-+					dmas = <&audma0 0x43>, <&audma1 0x44>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu06: ssiu-6 {
-+					dmas = <&audma0 0x4F>, <&audma1 0x50>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu07: ssiu-7 {
-+					dmas = <&audma0 0x53>, <&audma1 0x54>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu10: ssiu-8 {
-+					dmas = <&audma0 0x49>, <&audma1 0x4a>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu11: ssiu-9 {
-+					dmas = <&audma0 0x4B>, <&audma1 0x4C>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu12: ssiu-10 {
-+					dmas = <&audma0 0x57>, <&audma1 0x58>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu13: ssiu-11 {
-+					dmas = <&audma0 0x59>, <&audma1 0x5A>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu14: ssiu-12 {
-+					dmas = <&audma0 0x5F>, <&audma1 0x60>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu15: ssiu-13 {
-+					dmas = <&audma0 0xC3>, <&audma1 0xC4>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu16: ssiu-14 {
-+					dmas = <&audma0 0xC7>, <&audma1 0xC8>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu17: ssiu-15 {
-+					dmas = <&audma0 0xCB>, <&audma1 0xCC>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu20: ssiu-16 {
-+					dmas = <&audma0 0x63>, <&audma1 0x64>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu21: ssiu-17 {
-+					dmas = <&audma0 0x67>, <&audma1 0x68>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu22: ssiu-18 {
-+					dmas = <&audma0 0x6B>, <&audma1 0x6C>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu23: ssiu-19 {
-+					dmas = <&audma0 0x6D>, <&audma1 0x6E>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu24: ssiu-20 {
-+					dmas = <&audma0 0xCF>, <&audma1 0xCE>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu25: ssiu-21 {
-+					dmas = <&audma0 0xEB>, <&audma1 0xEC>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu26: ssiu-22 {
-+					dmas = <&audma0 0xED>, <&audma1 0xEE>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu27: ssiu-23 {
-+					dmas = <&audma0 0xEF>, <&audma1 0xF0>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu30: ssiu-24 {
-+					dmas = <&audma0 0x6f>, <&audma1 0x70>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu31: ssiu-25 {
-+					dmas = <&audma0 0x21>, <&audma1 0x22>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu32: ssiu-26 {
-+					dmas = <&audma0 0x23>, <&audma1 0x24>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu33: ssiu-27 {
-+					dmas = <&audma0 0x25>, <&audma1 0x26>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu34: ssiu-28 {
-+					dmas = <&audma0 0x27>, <&audma1 0x28>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu35: ssiu-29 {
-+					dmas = <&audma0 0x29>, <&audma1 0x2A>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu36: ssiu-30 {
-+					dmas = <&audma0 0x2B>, <&audma1 0x2C>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu37: ssiu-31 {
-+					dmas = <&audma0 0x2D>, <&audma1 0x2E>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu40: ssiu-32 {
-+					dmas =	<&audma0 0x71>, <&audma1 0x72>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu41: ssiu-33 {
-+					dmas = <&audma0 0x17>, <&audma1 0x18>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu42: ssiu-34 {
-+					dmas = <&audma0 0x19>, <&audma1 0x1A>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu43: ssiu-35 {
-+					dmas = <&audma0 0x1B>, <&audma1 0x1C>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu44: ssiu-36 {
-+					dmas = <&audma0 0x1D>, <&audma1 0x1E>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu45: ssiu-37 {
-+					dmas = <&audma0 0x1F>, <&audma1 0x20>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu46: ssiu-38 {
-+					dmas = <&audma0 0x31>, <&audma1 0x32>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu47: ssiu-39 {
-+					dmas = <&audma0 0x33>, <&audma1 0x34>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu50: ssiu-40 {
-+					dmas = <&audma0 0x73>, <&audma1 0x74>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu60: ssiu-41 {
-+					dmas = <&audma0 0x75>, <&audma1 0x76>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu70: ssiu-42 {
-+					dmas = <&audma0 0x79>, <&audma1 0x7a>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu80: ssiu-43 {
-+					dmas = <&audma0 0x7b>, <&audma1 0x7c>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu90: ssiu-44 {
-+					dmas = <&audma0 0x7d>, <&audma1 0x7e>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu91: ssiu-45 {
-+					dmas = <&audma0 0x7F>, <&audma1 0x80>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu92: ssiu-46 {
-+					dmas = <&audma0 0x81>, <&audma1 0x82>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu93: ssiu-47 {
-+					dmas = <&audma0 0x83>, <&audma1 0x84>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu94: ssiu-48 {
-+					dmas = <&audma0 0xA3>, <&audma1 0xA4>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu95: ssiu-49 {
-+					dmas = <&audma0 0xA5>, <&audma1 0xA6>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu96: ssiu-50 {
-+					dmas = <&audma0 0xA7>, <&audma1 0xA8>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu97: ssiu-51 {
-+					dmas = <&audma0 0xA9>, <&audma1 0xAA>;
-+					dma-names = "rx", "tx";
-+				};
-+			};
-+
- 			rcar_sound,ssi {
- 				ssi0: ssi-0 {
- 					interrupts = <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x01>, <&audma1 0x02>, <&audma0 0x15>, <&audma1 0x16>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x01>, <&audma1 0x02>;
-+					dma-names = "rx", "tx";
- 				};
- 				ssi1: ssi-1 {
- 					interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x03>, <&audma1 0x04>, <&audma0 0x49>, <&audma1 0x4a>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x03>, <&audma1 0x04>;
-+					dma-names = "rx", "tx";
- 				};
- 				ssi2: ssi-2 {
- 					interrupts = <GIC_SPI 372 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x05>, <&audma1 0x06>, <&audma0 0x63>, <&audma1 0x64>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x05>, <&audma1 0x06>;
-+					dma-names = "rx", "tx";
- 				};
- 				ssi3: ssi-3 {
- 					interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x07>, <&audma1 0x08>, <&audma0 0x6f>, <&audma1 0x70>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x07>, <&audma1 0x08>;
-+					dma-names = "rx", "tx";
- 				};
- 				ssi4: ssi-4 {
- 					interrupts = <GIC_SPI 374 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x09>, <&audma1 0x0a>, <&audma0 0x71>, <&audma1 0x72>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x09>, <&audma1 0x0a>;
-+					dma-names = "rx", "tx";
- 				};
- 				ssi5: ssi-5 {
- 					interrupts = <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x0b>, <&audma1 0x0c>, <&audma0 0x73>, <&audma1 0x74>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x0b>, <&audma1 0x0c>;
-+					dma-names = "rx", "tx";
- 				};
- 				ssi6: ssi-6 {
- 					interrupts = <GIC_SPI 376 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x0d>, <&audma1 0x0e>, <&audma0 0x75>, <&audma1 0x76>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x0d>, <&audma1 0x0e>;
-+					dma-names = "rx", "tx";
- 				};
- 				ssi7: ssi-7 {
- 					interrupts = <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x0f>, <&audma1 0x10>, <&audma0 0x79>, <&audma1 0x7a>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x0f>, <&audma1 0x10>;
-+					dma-names = "rx", "tx";
- 				};
- 				ssi8: ssi-8 {
- 					interrupts = <GIC_SPI 378 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x11>, <&audma1 0x12>, <&audma0 0x7b>, <&audma1 0x7c>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x11>, <&audma1 0x12>;
-+					dma-names = "rx", "tx";
- 				};
- 				ssi9: ssi-9 {
- 					interrupts = <GIC_SPI 379 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x13>, <&audma1 0x14>, <&audma0 0x7d>, <&audma1 0x7e>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x13>, <&audma1 0x14>;
-+					dma-names = "rx", "tx";
- 				};
- 			};
+ 	/*
+ 	 * below value will be filled on rsnd_gen_probe()
+@@ -679,6 +681,9 @@ struct rsnd_priv {
+ #define rsnd_is_gen1(priv)	(((priv)->flags & RSND_GEN_MASK) == RSND_GEN1)
+ #define rsnd_is_gen2(priv)	(((priv)->flags & RSND_GEN_MASK) == RSND_GEN2)
+ #define rsnd_is_gen3(priv)	(((priv)->flags & RSND_GEN_MASK) == RSND_GEN3)
++#define rsnd_is_e3(priv)	(((priv)->flags & \
++					(RSND_GEN_MASK | RSND_SOC_MASK)) == \
++					(RSND_GEN3 | RSND_SOC_E))
  
+ #define rsnd_flags_has(p, f) ((p)->flags & (f))
+ #define rsnd_flags_set(p, f) ((p)->flags |= (f))
+diff --git a/sound/soc/sh/rcar/src.c b/sound/soc/sh/rcar/src.c
+index db81e06..45096a6 100644
+--- a/sound/soc/sh/rcar/src.c
++++ b/sound/soc/sh/rcar/src.c
+@@ -14,7 +14,6 @@
+  */
+ 
+ #include "rsnd.h"
+-#include <linux/sys_soc.h>
+ 
+ #define SRC_NAME "src"
+ 
+@@ -189,18 +188,12 @@ const static u32 chan222222[] = {
+ 	0x00000006, /* 1 to 2 */
+ };
+ 
+-static const struct soc_device_attribute ov_soc[] = {
+-	{ .soc_id = "r8a77990" }, /* E3 */
+-	{ /* sentinel */ }
+-};
+-
+ static void rsnd_src_set_convert_rate(struct rsnd_dai_stream *io,
+ 				      struct rsnd_mod *mod)
+ {
+ 	struct rsnd_priv *priv = rsnd_mod_to_priv(mod);
+ 	struct device *dev = rsnd_priv_to_dev(priv);
+ 	struct snd_pcm_runtime *runtime = rsnd_io_to_runtime(io);
+-	const struct soc_device_attribute *soc = soc_device_match(ov_soc);
+ 	int is_play = rsnd_io_is_play(io);
+ 	int use_src = 0;
+ 	u32 fin, fout;
+@@ -307,7 +300,7 @@ static void rsnd_src_set_convert_rate(struct rsnd_dai_stream *io,
+ 	/*
+ 	 * E3 need to overwrite
+ 	 */
+-	if (soc)
++	if (rsnd_is_e3(priv))
+ 		switch (rsnd_mod_id(mod)) {
+ 		case 0:
+ 		case 4:
 -- 
 2.7.4
