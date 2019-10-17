@@ -1,233 +1,99 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 17 Oct 2019 08:05:00 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 28/57] ASoC: rsnd: move HDMI
-	information from ssi.c to core.c
+Date: Thu, 17 Oct 2019 08:05:10 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 38/57] ASoC: rsnd: add missing TDM
+	Split mode support for simple-card
 In-Reply-To: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1571295929-47286-29-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1571295929-47286-39-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-commit beed78aeeb10214798b1fd5f1dd05e0b7199d65f upstream.
+commit 538a4ffea3f719ed8f853f78826e360aee5fe9d7 upstream.
 
-Current driver is supporting HDMI output, and its information
-are handled under ssi.c. But, it is stream information.
-Let's move it from ssi.c to core.c.
+commit f69f452243e4e1 ("ASoC: rsnd: add TDM Split mode support")
+added TDM Split mode support for rsnd driver.
+But, it cares audio-graph-card style only. We can't use TDM Split
+mode on simple-card style now.
+This patch fixup this issue.
 
+Fixes: f69f452243e4e1 ("ASoC: rsnd: add TDM Split mode support")
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- sound/soc/sh/rcar/core.c | 30 +++++++++++++++++++++++-
- sound/soc/sh/rcar/rsnd.h | 13 +++++------
- sound/soc/sh/rcar/ssi.c  | 60 +-----------------------------------------------
- sound/soc/sh/rcar/ssiu.c | 13 ++++-------
- 4 files changed, 41 insertions(+), 75 deletions(-)
+ sound/soc/sh/rcar/core.c | 53 ++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 51 insertions(+), 2 deletions(-)
 
 diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
-index dacd7bb..2dad91e 100644
+index 4a88c97..c0b7d85 100644
 --- a/sound/soc/sh/rcar/core.c
 +++ b/sound/soc/sh/rcar/core.c
-@@ -999,6 +999,29 @@ static const struct snd_soc_dai_ops rsnd_soc_dai_ops = {
+@@ -1025,6 +1025,49 @@ static const struct snd_soc_dai_ops rsnd_soc_dai_ops = {
  	.prepare	= rsnd_soc_dai_prepare,
  };
  
-+static void rsnd_parse_connect_graph(struct rsnd_priv *priv,
-+				     struct rsnd_dai_stream *io,
-+				     struct device_node *endpoint)
++static void rsnd_parse_connect_simple(struct rsnd_priv *priv,
++				      struct device_node *dai_np,
++				      int dai_i, int is_play)
 +{
 +	struct device *dev = rsnd_priv_to_dev(priv);
-+	struct device_node *remote_node = of_graph_get_remote_port_parent(endpoint);
++	struct rsnd_dai *rdai = rsnd_rdai_get(priv, dai_i);
++	struct rsnd_dai_stream *io = is_play ?
++		&rdai->playback :
++		&rdai->capture;
++	struct device_node *ssiu_np = rsnd_ssiu_of_node(priv);
++	struct device_node *np;
++	int i, j;
++
++	if (!ssiu_np)
++		return;
 +
 +	if (!rsnd_io_to_mod_ssi(io))
 +		return;
 +
-+	/* HDMI0 */
-+	if (strstr(remote_node->full_name, "hdmi at fead0000")) {
-+		rsnd_flags_set(io, RSND_STREAM_HDMI0);
-+		dev_dbg(dev, "%s connected to HDMI0\n", io->name);
-+	}
++	/*
++	 * This driver assumes that it is TDM Split mode
++	 * if it includes ssiu node
++	 */
++	for (i = 0;; i++) {
++		struct device_node *node = is_play ?
++			of_parse_phandle(dai_np, "playback", i) :
++			of_parse_phandle(dai_np, "capture",  i);
 +
-+	/* HDMI1 */
-+	if (strstr(remote_node->full_name, "hdmi at feae0000")) {
-+		rsnd_flags_set(io, RSND_STREAM_HDMI1);
-+		dev_dbg(dev, "%s connected to HDMI1\n", io->name);
++		if (!node)
++			break;
++
++		j = 0;
++		for_each_child_of_node(ssiu_np, np) {
++			if (np == node) {
++				rsnd_flags_set(io, RSND_STREAM_TDM_SPLIT);
++				dev_dbg(dev, "%s is part of TDM Split\n", io->name);
++			}
++			j++;
++		}
++
 +	}
 +}
 +
- void rsnd_parse_connect_common(struct rsnd_dai *rdai,
- 		struct rsnd_mod* (*mod_get)(struct rsnd_priv *priv, int id),
- 		struct device_node *node,
-@@ -1171,7 +1194,12 @@ static int rsnd_dai_probe(struct rsnd_priv *priv)
- 	if (is_graph) {
- 		for_each_endpoint_of_node(dai_node, dai_np) {
- 			__rsnd_dai_probe(priv, dai_np, dai_i);
--			rsnd_ssi_parse_hdmi_connection(priv, dai_np, dai_i);
-+			if (rsnd_is_gen3(priv)) {
-+				struct rsnd_dai *rdai = rsnd_rdai_get(priv, dai_i);
-+
-+				rsnd_parse_connect_graph(priv, &rdai->playback, dai_np);
-+				rsnd_parse_connect_graph(priv, &rdai->capture,  dai_np);
-+			}
+ static void rsnd_parse_connect_graph(struct rsnd_priv *priv,
+ 				     struct rsnd_dai_stream *io,
+ 				     struct device_node *endpoint)
+@@ -1240,8 +1283,14 @@ static int rsnd_dai_probe(struct rsnd_priv *priv)
  			dai_i++;
  		}
  	} else {
-diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
-index 4b547c6..9aeb547 100644
---- a/sound/soc/sh/rcar/rsnd.h
-+++ b/sound/soc/sh/rcar/rsnd.h
-@@ -458,7 +458,13 @@ struct rsnd_dai_stream {
- 	struct rsnd_dai *rdai;
- 	struct device *dmac_dev; /* for IPMMU */
- 	u32 parent_ssi_status;
-+	u32 flags;
- };
-+
-+/* flags */
-+#define RSND_STREAM_HDMI0	(1 << 0) /* for HDMI0 */
-+#define RSND_STREAM_HDMI1	(1 << 1) /* for HDMI1 */
-+
- #define rsnd_io_to_mod(io, i)	((i) < RSND_MOD_MAX ? (io)->mod[(i)] : NULL)
- #define rsnd_io_to_mod_ssi(io)	rsnd_io_to_mod((io), RSND_MOD_SSI)
- #define rsnd_io_to_mod_ssiu(io)	rsnd_io_to_mod((io), RSND_MOD_SSIU)
-@@ -718,13 +724,6 @@ int rsnd_ssi_use_busif(struct rsnd_dai_stream *io);
- int rsnd_ssi_get_busif(struct rsnd_dai_stream *io);
- u32 rsnd_ssi_multi_slaves_runtime(struct rsnd_dai_stream *io);
- 
--#define RSND_SSI_HDMI_PORT0	0xf0
--#define RSND_SSI_HDMI_PORT1	0xf1
--int rsnd_ssi_hdmi_port(struct rsnd_dai_stream *io);
--void rsnd_ssi_parse_hdmi_connection(struct rsnd_priv *priv,
--				    struct device_node *endpoint,
--				    int dai_i);
--
- #define rsnd_ssi_is_pin_sharing(io)	\
- 	__rsnd_ssi_is_pin_sharing(rsnd_io_to_mod_ssi(io))
- int __rsnd_ssi_is_pin_sharing(struct rsnd_mod *mod);
-diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
-index 88bdbb9..b4991a6 100644
---- a/sound/soc/sh/rcar/ssi.c
-+++ b/sound/soc/sh/rcar/ssi.c
-@@ -99,9 +99,7 @@ struct rsnd_ssi {
- /* flags */
- #define RSND_SSI_CLK_PIN_SHARE		(1 << 0)
- #define RSND_SSI_NO_BUSIF		(1 << 1) /* SSI+DMA without BUSIF */
--#define RSND_SSI_HDMI0			(1 << 2) /* for HDMI0 */
--#define RSND_SSI_HDMI1			(1 << 3) /* for HDMI1 */
--#define RSND_SSI_PROBED			(1 << 4)
-+#define RSND_SSI_PROBED			(1 << 2)
- 
- #define for_each_rsnd_ssi(pos, priv, i)					\
- 	for (i = 0;							\
-@@ -119,20 +117,6 @@ struct rsnd_ssi {
- 	(rsnd_ssi_run_mods(io) & (1 << rsnd_mod_id(mod)))
- #define rsnd_ssi_can_output_clk(mod) (!__rsnd_ssi_is_pin_sharing(mod))
- 
--int rsnd_ssi_hdmi_port(struct rsnd_dai_stream *io)
--{
--	struct rsnd_mod *mod = rsnd_io_to_mod_ssi(io);
--	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
--
--	if (rsnd_flags_has(ssi, RSND_SSI_HDMI0))
--		return RSND_SSI_HDMI_PORT0;
--
--	if (rsnd_flags_has(ssi, RSND_SSI_HDMI1))
--		return RSND_SSI_HDMI_PORT1;
--
--	return 0;
--}
--
- int rsnd_ssi_use_busif(struct rsnd_dai_stream *io)
- {
- 	struct rsnd_mod *mod = rsnd_io_to_mod_ssi(io);
-@@ -1059,48 +1043,6 @@ void rsnd_parse_connect_ssi(struct rsnd_dai *rdai,
- 	of_node_put(node);
- }
- 
--static void __rsnd_ssi_parse_hdmi_connection(struct rsnd_priv *priv,
--					     struct rsnd_dai_stream *io,
--					     struct device_node *remote_ep)
--{
--	struct device *dev = rsnd_priv_to_dev(priv);
--	struct rsnd_mod *mod = rsnd_io_to_mod_ssi(io);
--	struct rsnd_ssi *ssi;
--	struct device_node *remote_node = of_graph_get_port_parent(remote_ep);
--
--	/* support Gen3 only */
--	if (!rsnd_is_gen3(priv))
--		return;
--
--	if (!mod)
--		return;
--
--	ssi  = rsnd_mod_to_ssi(mod);
--
--	/* HDMI0 */
--	if (strstr(remote_node->full_name, "hdmi at fead0000")) {
--		rsnd_flags_set(ssi, RSND_SSI_HDMI0);
--		dev_dbg(dev, "%s connected to HDMI0\n", rsnd_mod_name(mod));
--	}
--
--	/* HDMI1 */
--	if (strstr(remote_node->full_name, "hdmi at feae0000")) {
--		rsnd_flags_set(ssi, RSND_SSI_HDMI1);
--		dev_dbg(dev, "%s connected to HDMI1\n", rsnd_mod_name(mod));
--	}
--}
--
--void rsnd_ssi_parse_hdmi_connection(struct rsnd_priv *priv,
--				    struct device_node *endpoint,
--				    int dai_i)
--{
--	struct rsnd_dai *rdai = rsnd_rdai_get(priv, dai_i);
--	struct device_node *remote_ep = of_graph_get_remote_endpoint(endpoint);
--
--	__rsnd_ssi_parse_hdmi_connection(priv, &rdai->playback, remote_ep);
--	__rsnd_ssi_parse_hdmi_connection(priv, &rdai->capture,  remote_ep);
--}
--
- struct rsnd_mod *rsnd_ssi_mod_get(struct rsnd_priv *priv, int id)
- {
- 	if (WARN_ON(id < 0 || id >= rsnd_ssi_nr(priv)))
-diff --git a/sound/soc/sh/rcar/ssiu.c b/sound/soc/sh/rcar/ssiu.c
-index 645340e..4f59100 100644
---- a/sound/soc/sh/rcar/ssiu.c
-+++ b/sound/soc/sh/rcar/ssiu.c
-@@ -135,7 +135,8 @@ static int rsnd_ssiu_init_gen2(struct rsnd_mod *mod,
- 			       struct rsnd_priv *priv)
- {
- 	struct rsnd_ssiu *ssiu = rsnd_mod_to_ssiu(mod);
--	int hdmi = rsnd_ssi_hdmi_port(io);
-+	u32 has_hdmi0 = rsnd_flags_has(io, RSND_STREAM_HDMI0);
-+	u32 has_hdmi1 = rsnd_flags_has(io, RSND_STREAM_HDMI1);
- 	int ret;
- 	u32 mode = 0;
- 
-@@ -212,7 +213,7 @@ static int rsnd_ssiu_init_gen2(struct rsnd_mod *mod,
- 		}
- 	}
- 
--	if (hdmi) {
-+	if (has_hdmi0 || has_hdmi1) {
- 		enum rsnd_mod_type rsnd_ssi_array[] = {
- 			RSND_MOD_SSIM1,
- 			RSND_MOD_SSIM2,
-@@ -238,14 +239,10 @@ static int rsnd_ssiu_init_gen2(struct rsnd_mod *mod,
- 				rsnd_mod_id(pos) << shift;
- 		}
- 
--		switch (hdmi) {
--		case RSND_SSI_HDMI_PORT0:
-+		if (has_hdmi0)
- 			rsnd_mod_write(mod, HDMI0_SEL, val);
--			break;
--		case RSND_SSI_HDMI_PORT1:
-+		if (has_hdmi1)
- 			rsnd_mod_write(mod, HDMI1_SEL, val);
--			break;
--		}
+-		for_each_child_of_node(dai_node, dai_np)
+-			__rsnd_dai_probe(priv, dai_np, dai_i++);
++		for_each_child_of_node(dai_node, dai_np) {
++			__rsnd_dai_probe(priv, dai_np, dai_i);
++			if (rsnd_is_gen3(priv)) {
++				rsnd_parse_connect_simple(priv, dai_np, dai_i, 1);
++				rsnd_parse_connect_simple(priv, dai_np, dai_i, 0);
++			}
++			dai_i++;
++		}
  	}
  
  	return 0;
