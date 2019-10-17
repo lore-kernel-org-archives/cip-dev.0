@@ -1,221 +1,87 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 17 Oct 2019 08:04:43 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 11/57] ASoC: rsnd: merge .nolock_start
-	and .prepare
+Date: Thu, 17 Oct 2019 08:04:35 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 03/57] ASoC: rsnd: add support for 8
+	bit S8 format
 In-Reply-To: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1571295929-47286-12-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1571295929-47286-4-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+From: Dragos Tarcatu <dragos_tarcatu@mentor.com>
 
-commit 6ab6a2474e0dce02f71e92adb9778a168a8931f4 upstream.
+commit ba5d553b7bd71e63d639863e2cb09e0c9543b8b7 upstream.
 
-Main purpose of .nolock_start is we need to call
-some function without spinlock.
-OTOH we have .prepare which main purpose is
-called under atomic context.
-Then, it is called without spinlock.
+This patch adds support for SNDRV_PCM_FMTBIT_S8 format.
 
-In summary, our main callback init/quit, and start/stop
-are called under "atomic context and with spinlock".
-And some function need to be called under
-"non-atomic context or without spinlock".
-Let's merge .nolock_start and prepare to be more clear code.
-Then, let's rename nolock_stop to cleanup
-
+Signed-off-by: Dragos Tarcatu <dragos_tarcatu@mentor.com>
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+Signed-off-by: Timo Wischer <twischer@de.adit-jv.com>
+[Kuninori: tidyup for upstream]
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- sound/soc/sh/rcar/core.c | 13 ++-----------
- sound/soc/sh/rcar/dma.c  | 20 ++++++++++----------
- sound/soc/sh/rcar/rsnd.h | 26 ++++++++++----------------
- 3 files changed, 22 insertions(+), 37 deletions(-)
+ sound/soc/sh/rcar/core.c | 10 +++++++---
+ sound/soc/sh/rcar/ssi.c  |  3 +++
+ 2 files changed, 10 insertions(+), 3 deletions(-)
 
 diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
-index 636f6ed..fd41da7 100644
+index e272990..76f05716 100644
 --- a/sound/soc/sh/rcar/core.c
 +++ b/sound/soc/sh/rcar/core.c
-@@ -875,12 +875,10 @@ static int rsnd_soc_dai_startup(struct snd_pcm_substream *substream,
- 				struct snd_soc_dai *dai)
- {
- 	struct rsnd_dai *rdai = rsnd_dai_to_rdai(dai);
--	struct rsnd_priv *priv = rsnd_rdai_to_priv(rdai);
- 	struct rsnd_dai_stream *io = rsnd_rdai_to_io(rdai, substream);
- 	struct snd_pcm_hw_constraint_list *constraint = &rdai->constraint;
- 	struct snd_pcm_runtime *runtime = substream->runtime;
- 	unsigned int max_channels = rsnd_rdai_channels_get(rdai);
--	int ret;
- 	int i;
+@@ -102,7 +102,9 @@
+ #include "rsnd.h"
  
- 	rsnd_dai_stream_init(io, substream);
-@@ -924,14 +922,7 @@ static int rsnd_soc_dai_startup(struct snd_pcm_substream *substream,
- 				    SNDRV_PCM_HW_PARAM_RATE, -1);
+ #define RSND_RATES SNDRV_PCM_RATE_8000_192000
+-#define RSND_FMTS (SNDRV_PCM_FMTBIT_S24_LE | SNDRV_PCM_FMTBIT_S16_LE)
++#define RSND_FMTS (SNDRV_PCM_FMTBIT_S8 |\
++		   SNDRV_PCM_FMTBIT_S16_LE |\
++		   SNDRV_PCM_FMTBIT_S24_LE)
+ 
+ static const struct of_device_id rsnd_of_match[] = {
+ 	{ .compatible = "renesas,rcar_sound-gen1", .data = (void *)RSND_GEN1 },
+@@ -280,6 +282,8 @@ u32 rsnd_get_adinr_bit(struct rsnd_mod *mod, struct rsnd_dai_stream *io)
+ 	struct device *dev = rsnd_priv_to_dev(priv);
+ 
+ 	switch (snd_pcm_format_width(runtime->format)) {
++	case 8:
++		return 16 << 16;
+ 	case 16:
+ 		return 8 << 16;
+ 	case 24:
+@@ -331,7 +335,7 @@ u32 rsnd_get_dalign(struct rsnd_mod *mod, struct rsnd_dai_stream *io)
+ 		target = cmd ? cmd : ssiu;
  	}
  
--	/*
--	 * call rsnd_dai_call without spinlock
--	 */
--	ret = rsnd_dai_call(nolock_start, io, priv);
--	if (ret < 0)
--		rsnd_dai_call(nolock_stop, io, priv);
--
--	return ret;
-+	return 0;
- }
- 
- static void rsnd_soc_dai_shutdown(struct snd_pcm_substream *substream,
-@@ -944,7 +935,7 @@ static void rsnd_soc_dai_shutdown(struct snd_pcm_substream *substream,
- 	/*
- 	 * call rsnd_dai_call without spinlock
+-	/* Non target mod or 24bit data needs normal DALIGN */
++	/* Non target mod or non 16bit needs normal DALIGN */
+ 	if ((snd_pcm_format_width(runtime->format) != 16) ||
+ 	    (mod != target))
+ 		return 0x76543210;
+@@ -367,7 +371,7 @@ u32 rsnd_get_busif_shift(struct rsnd_dai_stream *io, struct rsnd_mod *mod)
+ 	 * HW    24bit data is located as 0x******00
+ 	 *
  	 */
--	rsnd_dai_call(nolock_stop, io, priv);
-+	rsnd_dai_call(cleanup, io, priv);
+-	if (snd_pcm_format_width(runtime->format) == 16)
++	if (snd_pcm_format_width(runtime->format) != 24)
+ 		return 0;
  
- 	rsnd_dai_stream_quit(io);
- }
-diff --git a/sound/soc/sh/rcar/dma.c b/sound/soc/sh/rcar/dma.c
-index f8b2f8e..b5f3bf8 100644
---- a/sound/soc/sh/rcar/dma.c
-+++ b/sound/soc/sh/rcar/dma.c
-@@ -106,9 +106,9 @@ static int rsnd_dmaen_stop(struct rsnd_mod *mod,
- 	return 0;
- }
+ 	for (i = 0; i < ARRAY_SIZE(playback_mods); i++) {
+diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
+index 6fe2075..98c5c71 100644
+--- a/sound/soc/sh/rcar/ssi.c
++++ b/sound/soc/sh/rcar/ssi.c
+@@ -400,6 +400,9 @@ static void rsnd_ssi_config_init(struct rsnd_mod *mod,
  
--static int rsnd_dmaen_nolock_stop(struct rsnd_mod *mod,
--				   struct rsnd_dai_stream *io,
--				   struct rsnd_priv *priv)
-+static int rsnd_dmaen_cleanup(struct rsnd_mod *mod,
-+			      struct rsnd_dai_stream *io,
-+			      struct rsnd_priv *priv)
- {
- 	struct rsnd_dma *dma = rsnd_mod_to_dma(mod);
- 	struct rsnd_dmaen *dmaen = rsnd_dma_to_dmaen(dma);
-@@ -116,7 +116,7 @@ static int rsnd_dmaen_nolock_stop(struct rsnd_mod *mod,
- 	/*
- 	 * DMAEngine release uses mutex lock.
- 	 * Thus, it shouldn't be called under spinlock.
--	 * Let's call it under nolock_start
-+	 * Let's call it under prepare
- 	 */
- 	if (dmaen->chan)
- 		dma_release_channel(dmaen->chan);
-@@ -126,9 +126,9 @@ static int rsnd_dmaen_nolock_stop(struct rsnd_mod *mod,
- 	return 0;
- }
- 
--static int rsnd_dmaen_nolock_start(struct rsnd_mod *mod,
--			    struct rsnd_dai_stream *io,
--			    struct rsnd_priv *priv)
-+static int rsnd_dmaen_prepare(struct rsnd_mod *mod,
-+			      struct rsnd_dai_stream *io,
-+			      struct rsnd_priv *priv)
- {
- 	struct rsnd_dma *dma = rsnd_mod_to_dma(mod);
- 	struct rsnd_dmaen *dmaen = rsnd_dma_to_dmaen(dma);
-@@ -142,7 +142,7 @@ static int rsnd_dmaen_nolock_start(struct rsnd_mod *mod,
- 	/*
- 	 * DMAEngine request uses mutex lock.
- 	 * Thus, it shouldn't be called under spinlock.
--	 * Let's call it under nolock_start
-+	 * Let's call it under prepare
- 	 */
- 	dmaen->chan = rsnd_dmaen_request_channel(io,
- 						 dma->mod_from,
-@@ -291,8 +291,8 @@ static int rsnd_dmaen_pointer(struct rsnd_mod *mod,
- 
- static struct rsnd_mod_ops rsnd_dmaen_ops = {
- 	.name	= "audmac",
--	.nolock_start = rsnd_dmaen_nolock_start,
--	.nolock_stop  = rsnd_dmaen_nolock_stop,
-+	.prepare = rsnd_dmaen_prepare,
-+	.cleanup = rsnd_dmaen_cleanup,
- 	.start	= rsnd_dmaen_start,
- 	.stop	= rsnd_dmaen_stop,
- 	.pointer= rsnd_dmaen_pointer,
-diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
-index 7a04b19..e857311 100644
---- a/sound/soc/sh/rcar/rsnd.h
-+++ b/sound/soc/sh/rcar/rsnd.h
-@@ -295,15 +295,12 @@ struct rsnd_mod_ops {
- 	int (*fallback)(struct rsnd_mod *mod,
- 			struct rsnd_dai_stream *io,
- 			struct rsnd_priv *priv);
--	int (*nolock_start)(struct rsnd_mod *mod,
--		    struct rsnd_dai_stream *io,
--		    struct rsnd_priv *priv);
--	int (*nolock_stop)(struct rsnd_mod *mod,
--		    struct rsnd_dai_stream *io,
--		    struct rsnd_priv *priv);
- 	int (*prepare)(struct rsnd_mod *mod,
- 		       struct rsnd_dai_stream *io,
- 		       struct rsnd_priv *priv);
-+	int (*cleanup)(struct rsnd_mod *mod,
-+		       struct rsnd_dai_stream *io,
-+		       struct rsnd_priv *priv);
- };
- 
- struct rsnd_dai_stream;
-@@ -323,7 +320,7 @@ struct rsnd_mod {
-  *
-  * 0xH0000CBA
-  *
-- * A	0: nolock_start	1: nolock_stop
-+ * A	0: prepare	1: cleanup
-  * B	0: init		1: quit
-  * C	0: start	1: stop
-  *
-@@ -335,8 +332,8 @@ struct rsnd_mod {
-  * H	0: pointer
-  * H	0: prepare
-  */
--#define __rsnd_mod_shift_nolock_start	0
--#define __rsnd_mod_shift_nolock_stop	0
-+#define __rsnd_mod_shift_prepare	0
-+#define __rsnd_mod_shift_cleanup	0
- #define __rsnd_mod_shift_init		4
- #define __rsnd_mod_shift_quit		4
- #define __rsnd_mod_shift_start		8
-@@ -348,12 +345,11 @@ struct rsnd_mod {
- #define __rsnd_mod_shift_fallback	28 /* always called */
- #define __rsnd_mod_shift_hw_params	28 /* always called */
- #define __rsnd_mod_shift_pointer	28 /* always called */
--#define __rsnd_mod_shift_prepare	28 /* always called */
- 
- #define __rsnd_mod_add_probe		0
- #define __rsnd_mod_add_remove		0
--#define __rsnd_mod_add_nolock_start	 1
--#define __rsnd_mod_add_nolock_stop	-1
-+#define __rsnd_mod_add_prepare		 1
-+#define __rsnd_mod_add_cleanup		-1
- #define __rsnd_mod_add_init		 1
- #define __rsnd_mod_add_quit		-1
- #define __rsnd_mod_add_start		 1
-@@ -363,10 +359,11 @@ struct rsnd_mod {
- #define __rsnd_mod_add_fallback		0
- #define __rsnd_mod_add_hw_params	0
- #define __rsnd_mod_add_pointer		0
--#define __rsnd_mod_add_prepare		0
- 
- #define __rsnd_mod_call_probe		0
- #define __rsnd_mod_call_remove		0
-+#define __rsnd_mod_call_prepare		0
-+#define __rsnd_mod_call_cleanup		1
- #define __rsnd_mod_call_init		0
- #define __rsnd_mod_call_quit		1
- #define __rsnd_mod_call_start		0
-@@ -376,9 +373,6 @@ struct rsnd_mod {
- #define __rsnd_mod_call_fallback	0
- #define __rsnd_mod_call_hw_params	0
- #define __rsnd_mod_call_pointer		0
--#define __rsnd_mod_call_nolock_start	0
--#define __rsnd_mod_call_nolock_stop	1
--#define __rsnd_mod_call_prepare		0
- 
- #define rsnd_mod_to_priv(mod)	((mod)->priv)
- #define rsnd_mod_name(mod)	((mod)->ops->name)
+ 	cr_own &= ~DWL_MASK;
+ 	switch (snd_pcm_format_width(runtime->format)) {
++	case 8:
++		cr_own |= DWL_8;
++		break;
+ 	case 16:
+ 		cr_own |= DWL_16;
+ 		break;
 -- 
 2.7.4
