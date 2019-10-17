@@ -1,24 +1,25 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 17 Oct 2019 08:04:38 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 06/57] ASoC: rsnd: ssi: Check runtime
-	channel number rather than hw_params
+Date: Thu, 17 Oct 2019 08:04:39 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 07/57] ASoc: rsnd: dma: Calculate dma
+	address with consider of BUSIF
 In-Reply-To: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1571295929-47286-7-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1571295929-47286-8-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Jiada Wang <jiada_wang@mentor.com>
 
-commit 599da084e041b877ef89211dcbb4c7bd8380049d upstream.
+commit 5e45a6fab3b90ca300e13191fc68baaa8e37d1d4 upstream.
 
-The number of channel handled by SSI maybe differs from the one set
-in hw_params, currently SSI checks hw_params's channel number,
-and constrains to use same channel number, when it is being
-used by multiple clients.
+DMA address calculated by rsnd_dma_addr() only considers BUSIF0 so far.
+But BUSIF1 ~ BUSIF7 also maybe used, in the future.
 
-This patch corrects to check runtime channel number rather
-than channel number set in hw_params.
+This patch updates DMA address calculations, to also consider
+BUSIF number used by SSI.
+
+One note is that we can't support SSI9-4/5/6/7 so far,
+because its address is out of calculation rule.
 
 Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
 Signed-off-by: Timo Wischer <twischer@de.adit-jv.com>
@@ -28,75 +29,114 @@ Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- sound/soc/sh/rcar/ssi.c | 27 +++++++--------------------
- 1 file changed, 7 insertions(+), 20 deletions(-)
+ sound/soc/sh/rcar/dma.c  | 43 +++++++++++++++++++++++++++----------------
+ sound/soc/sh/rcar/rsnd.h |  1 +
+ sound/soc/sh/rcar/ssi.c  |  5 +++++
+ 3 files changed, 33 insertions(+), 16 deletions(-)
 
+diff --git a/sound/soc/sh/rcar/dma.c b/sound/soc/sh/rcar/dma.c
+index d65ea7b..0c66788 100644
+--- a/sound/soc/sh/rcar/dma.c
++++ b/sound/soc/sh/rcar/dma.c
+@@ -491,11 +491,11 @@ static struct rsnd_mod_ops rsnd_dmapp_ops = {
+ #define RDMA_SSI_I_N(addr, i)	(addr ##_reg - 0x00300000 + (0x40 * i) + 0x8)
+ #define RDMA_SSI_O_N(addr, i)	(addr ##_reg - 0x00300000 + (0x40 * i) + 0xc)
+ 
+-#define RDMA_SSIU_I_N(addr, i)	(addr ##_reg - 0x00441000 + (0x1000 * i))
+-#define RDMA_SSIU_O_N(addr, i)	(addr ##_reg - 0x00441000 + (0x1000 * i))
++#define RDMA_SSIU_I_N(addr, i, j) (addr ##_reg - 0x00441000 + (0x1000 * (i)) + (((j) / 4) * 0xA000) + (((j) % 4) * 0x400))
++#define RDMA_SSIU_O_N(addr, i, j) RDMA_SSIU_I_N(addr, i, j)
+ 
+-#define RDMA_SSIU_I_P(addr, i)	(addr ##_reg - 0x00141000 + (0x1000 * i))
+-#define RDMA_SSIU_O_P(addr, i)	(addr ##_reg - 0x00141000 + (0x1000 * i))
++#define RDMA_SSIU_I_P(addr, i, j) (addr ##_reg - 0x00141000 + (0x1000 * (i)) + (((j) / 4) * 0xA000) + (((j) % 4) * 0x400))
++#define RDMA_SSIU_O_P(addr, i, j) RDMA_SSIU_I_P(addr, i, j)
+ 
+ #define RDMA_SRC_I_N(addr, i)	(addr ##_reg - 0x00500000 + (0x400 * i))
+ #define RDMA_SRC_O_N(addr, i)	(addr ##_reg - 0x004fc000 + (0x400 * i))
+@@ -521,6 +521,7 @@ rsnd_gen2_dma_addr(struct rsnd_dai_stream *io,
+ 		      !!rsnd_io_to_mod_mix(io) ||
+ 		      !!rsnd_io_to_mod_ctu(io);
+ 	int id = rsnd_mod_id(mod);
++	int busif = rsnd_ssi_get_busif(io);
+ 	struct dma_addr {
+ 		dma_addr_t out_addr;
+ 		dma_addr_t in_addr;
+@@ -537,25 +538,35 @@ rsnd_gen2_dma_addr(struct rsnd_dai_stream *io,
+ 		},
+ 		/* SSI */
+ 		/* Capture */
+-		{{{ RDMA_SSI_O_N(ssi, id),	0 },
+-		  { RDMA_SSIU_O_P(ssi, id),	0 },
+-		  { RDMA_SSIU_O_P(ssi, id),	0 } },
++		{{{ RDMA_SSI_O_N(ssi, id),		0 },
++		  { RDMA_SSIU_O_P(ssi, id, busif),	0 },
++		  { RDMA_SSIU_O_P(ssi, id, busif),	0 } },
+ 		 /* Playback */
+-		 {{ 0,				RDMA_SSI_I_N(ssi, id) },
+-		  { 0,				RDMA_SSIU_I_P(ssi, id) },
+-		  { 0,				RDMA_SSIU_I_P(ssi, id) } }
++		 {{ 0,			RDMA_SSI_I_N(ssi, id) },
++		  { 0,			RDMA_SSIU_I_P(ssi, id, busif) },
++		  { 0,			RDMA_SSIU_I_P(ssi, id, busif) } }
+ 		},
+ 		/* SSIU */
+ 		/* Capture */
+-		{{{ RDMA_SSIU_O_N(ssi, id),	0 },
+-		  { RDMA_SSIU_O_P(ssi, id),	0 },
+-		  { RDMA_SSIU_O_P(ssi, id),	0 } },
++		{{{ RDMA_SSIU_O_N(ssi, id, busif),	0 },
++		  { RDMA_SSIU_O_P(ssi, id, busif),	0 },
++		  { RDMA_SSIU_O_P(ssi, id, busif),	0 } },
+ 		 /* Playback */
+-		 {{ 0,				RDMA_SSIU_I_N(ssi, id) },
+-		  { 0,				RDMA_SSIU_I_P(ssi, id) },
+-		  { 0,				RDMA_SSIU_I_P(ssi, id) } } },
++		 {{ 0,			RDMA_SSIU_I_N(ssi, id, busif) },
++		  { 0,			RDMA_SSIU_I_P(ssi, id, busif) },
++		  { 0,			RDMA_SSIU_I_P(ssi, id, busif) } } },
+ 	};
+ 
++	/*
++	 * FIXME
++	 *
++	 * We can't support SSI9-4/5/6/7, because its address is
++	 * out of calculation rule
++	 */
++	if ((id == 9) && (busif >= 4))
++		dev_err(dev, "This driver doesn't support SSI%d-%d, so far",
++			id, busif);
++
+ 	/* it shouldn't happen */
+ 	if (use_cmd && !use_src)
+ 		dev_err(dev, "DVC is selected without SRC\n");
+diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
+index fd3aba1..52ef194 100644
+--- a/sound/soc/sh/rcar/rsnd.h
++++ b/sound/soc/sh/rcar/rsnd.h
+@@ -699,6 +699,7 @@ void rsnd_ssi_remove(struct rsnd_priv *priv);
+ struct rsnd_mod *rsnd_ssi_mod_get(struct rsnd_priv *priv, int id);
+ int rsnd_ssi_is_dma_mode(struct rsnd_mod *mod);
+ int rsnd_ssi_use_busif(struct rsnd_dai_stream *io);
++int rsnd_ssi_get_busif(struct rsnd_dai_stream *io);
+ u32 rsnd_ssi_multi_slaves_runtime(struct rsnd_dai_stream *io);
+ 
+ #define RSND_SSI_HDMI_PORT0	0xf0
 diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
-index acb77ae..06d340a 100644
+index 06d340a..0803704 100644
 --- a/sound/soc/sh/rcar/ssi.c
 +++ b/sound/soc/sh/rcar/ssi.c
-@@ -307,6 +307,11 @@ static int rsnd_ssi_master_clk_start(struct rsnd_mod *mod,
- 			return -EINVAL;
- 		}
+@@ -150,6 +150,11 @@ int rsnd_ssi_use_busif(struct rsnd_dai_stream *io)
+ 	return use_busif;
+ }
  
-+		if (ssi->chan != chan) {
-+			dev_err(dev, "SSI parent/child should use same chan\n");
-+			return -EINVAL;
-+		}
++int rsnd_ssi_get_busif(struct rsnd_dai_stream *io)
++{
++	return 0; /* BUSIF0 only for now */
++}
 +
- 		return 0;
- 	}
- 
-@@ -334,6 +339,7 @@ static int rsnd_ssi_master_clk_start(struct rsnd_mod *mod,
- 			SCKD | SWSD | CKDV(idx);
- 	ssi->wsr = CONT;
- 	ssi->rate = rate;
-+	ssi->chan = chan;
- 
- 	dev_dbg(dev, "%s[%d] outputs %u Hz\n",
- 		rsnd_mod_name(mod),
-@@ -359,6 +365,7 @@ static void rsnd_ssi_master_clk_stop(struct rsnd_mod *mod,
- 
- 	ssi->cr_clk	= 0;
- 	ssi->rate	= 0;
-+	ssi->chan	= 0;
- 
- 	rsnd_adg_ssi_clk_stop(mod);
- }
-@@ -506,9 +513,7 @@ static int rsnd_ssi_hw_params(struct rsnd_mod *mod,
- 			      struct snd_pcm_substream *substream,
- 			      struct snd_pcm_hw_params *params)
+ static void rsnd_ssi_status_clear(struct rsnd_mod *mod)
  {
--	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
- 	struct rsnd_dai *rdai = rsnd_io_to_rdai(io);
--	int chan = params_channels(params);
- 	unsigned int fmt_width = snd_pcm_format_width(params_format(params));
- 
- 	if (fmt_width > rdai->chan_width) {
-@@ -519,24 +524,6 @@ static int rsnd_ssi_hw_params(struct rsnd_mod *mod,
- 		return -EINVAL;
- 	}
- 
--	/*
--	 * snd_pcm_ops::hw_params will be called *before*
--	 * snd_soc_dai_ops::trigger. Thus, ssi->usrcnt is 0
--	 * in 1st call.
--	 */
--	if (ssi->usrcnt) {
--		/*
--		 * Already working.
--		 * It will happen if SSI has parent/child connection.
--		 * it is error if child <-> parent SSI uses
--		 * different channels.
--		 */
--		if (ssi->chan != chan)
--			return -EIO;
--	}
--
--	ssi->chan = chan;
--
- 	return 0;
- }
- 
+ 	rsnd_mod_write(mod, SSISR, 0);
 -- 
 2.7.4
