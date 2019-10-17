@@ -1,567 +1,816 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 17 Oct 2019 08:04:54 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 22/57] ASoC: rsnd: move .get_status
-	under rsnd_mod_ops
+Date: Thu, 17 Oct 2019 08:04:46 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 14/57] ASoC: add
+	for_each_rtd_codec_dai() macro
 In-Reply-To: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1571295929-47286-23-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1571295929-47286-15-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-commit 7e7fe06de376e9874f4399dac81d65ea9b0a9507 upstream.
+commit 0b7990e38971da403ce223d8bdc758a817eb72f8 upstream.
 
-Each mod needs to have .get_status, but current driver is handling it
-under rsnd_mod, instead of rsnd_mod_ops.
-It is not any make sence. This patch moves it to rsnd_mod_ops, and
-tidyup its parameter order to align to other callback functions.
+ALSA SoC snd_soc_pcm_runtime has snd_soc_dai array for codec_dai.
+To be more readable code, this patch adds
+new for_each_rtd_codec_dai() macro, and replace existing code to it.
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- sound/soc/sh/rcar/adg.c  |   2 +-
- sound/soc/sh/rcar/cmd.c  |  11 +++--
- sound/soc/sh/rcar/core.c |  10 ++--
- sound/soc/sh/rcar/ctu.c  |   3 +-
- sound/soc/sh/rcar/dma.c  |  26 +++++-----
- sound/soc/sh/rcar/dvc.c  |   3 +-
- sound/soc/sh/rcar/mix.c  |   3 +-
- sound/soc/sh/rcar/rsnd.h |  13 ++---
- sound/soc/sh/rcar/src.c  |  24 ++++-----
- sound/soc/sh/rcar/ssi.c  | 124 ++++++++++++++++++++++++-----------------------
- sound/soc/sh/rcar/ssiu.c |  37 +++++++-------
- 11 files changed, 129 insertions(+), 127 deletions(-)
+ include/sound/soc.h                                |   7 +
+ sound/soc/intel/boards/kbl_rt5663_max98927.c       |   5 +-
+ .../soc/intel/boards/kbl_rt5663_rt5514_max98927.c  |   5 +-
+ sound/soc/mediatek/mt8173/mt8173-rt5650-rt5514.c   |   5 +-
+ sound/soc/mediatek/mt8173/mt8173-rt5650-rt5676.c   |   5 +-
+ sound/soc/mediatek/mt8173/mt8173-rt5650.c          |   5 +-
+ sound/soc/meson/axg-card.c                         |   6 +-
+ sound/soc/soc-core.c                               |  38 ++---
+ sound/soc/soc-dapm.c                               |  14 +-
+ sound/soc/soc-pcm.c                                | 154 ++++++++++-----------
+ 10 files changed, 118 insertions(+), 126 deletions(-)
 
-diff --git a/sound/soc/sh/rcar/adg.c b/sound/soc/sh/rcar/adg.c
-index e9de281..24ea8b9 100644
---- a/sound/soc/sh/rcar/adg.c
-+++ b/sound/soc/sh/rcar/adg.c
-@@ -622,7 +622,7 @@ int rsnd_adg_probe(struct rsnd_priv *priv)
- 		return -ENOMEM;
+diff --git a/include/sound/soc.h b/include/sound/soc.h
+index 41cec42..45923f2 100644
+--- a/include/sound/soc.h
++++ b/include/sound/soc.h
+@@ -1152,6 +1152,13 @@ struct snd_soc_pcm_runtime {
+ 	unsigned int dev_registered:1;
+ 	unsigned int pop_wait:1;
+ };
++#define for_each_rtd_codec_dai(rtd, i, dai)\
++	for ((i) = 0;						       \
++	     ((i) < rtd->num_codecs) && ((dai) = rtd->codec_dais[i]); \
++	     (i)++)
++#define for_each_rtd_codec_dai_reverse(rtd, i, dai)				\
++	for (; ((i--) >= 0) && ((dai) = rtd->codec_dais[i]);)
++
  
- 	ret = rsnd_mod_init(priv, &adg->mod, &adg_ops,
--		      NULL, NULL, 0, 0);
-+		      NULL, 0, 0);
- 	if (ret)
+ /* mixer control */
+ struct soc_mixer_control {
+diff --git a/sound/soc/intel/boards/kbl_rt5663_max98927.c b/sound/soc/intel/boards/kbl_rt5663_max98927.c
+index 21a6490..99e1320 100644
+--- a/sound/soc/intel/boards/kbl_rt5663_max98927.c
++++ b/sound/soc/intel/boards/kbl_rt5663_max98927.c
+@@ -488,11 +488,10 @@ static int kabylake_ssp0_hw_params(struct snd_pcm_substream *substream,
+ 					struct snd_pcm_hw_params *params)
+ {
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct snd_soc_dai *codec_dai;
+ 	int ret = 0, j;
+ 
+-	for (j = 0; j < rtd->num_codecs; j++) {
+-		struct snd_soc_dai *codec_dai = rtd->codec_dais[j];
+-
++	for_each_rtd_codec_dai(rtd, j, codec_dai) {
+ 		if (!strcmp(codec_dai->component->name, MAXIM_DEV0_NAME)) {
+ 			/*
+ 			 * Use channel 4 and 5 for the first amp
+diff --git a/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c b/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
+index b8a03f5..5ca908a 100644
+--- a/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
++++ b/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
+@@ -353,11 +353,10 @@ static int kabylake_ssp0_hw_params(struct snd_pcm_substream *substream,
+ 	struct snd_pcm_hw_params *params)
+ {
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct snd_soc_dai *codec_dai;
+ 	int ret = 0, j;
+ 
+-	for (j = 0; j < rtd->num_codecs; j++) {
+-		struct snd_soc_dai *codec_dai = rtd->codec_dais[j];
+-
++	for_each_rtd_codec_dai(rtd, j, codec_dai) {
+ 		if (!strcmp(codec_dai->component->name, RT5514_DEV_NAME)) {
+ 			ret = snd_soc_dai_set_tdm_slot(codec_dai, 0xF, 0, 8, 16);
+ 			if (ret < 0) {
+diff --git a/sound/soc/mediatek/mt8173/mt8173-rt5650-rt5514.c b/sound/soc/mediatek/mt8173/mt8173-rt5650-rt5514.c
+index 582174d..5b4e901 100644
+--- a/sound/soc/mediatek/mt8173/mt8173-rt5650-rt5514.c
++++ b/sound/soc/mediatek/mt8173/mt8173-rt5650-rt5514.c
+@@ -44,11 +44,10 @@ static int mt8173_rt5650_rt5514_hw_params(struct snd_pcm_substream *substream,
+ 					  struct snd_pcm_hw_params *params)
+ {
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct snd_soc_dai *codec_dai;
+ 	int i, ret;
+ 
+-	for (i = 0; i < rtd->num_codecs; i++) {
+-		struct snd_soc_dai *codec_dai = rtd->codec_dais[i];
+-
++	for_each_rtd_codec_dai(rtd, i, codec_dai) {
+ 		/* pll from mclk 12.288M */
+ 		ret = snd_soc_dai_set_pll(codec_dai, 0, 0, MCLK_FOR_CODECS,
+ 					  params_rate(params) * 512);
+diff --git a/sound/soc/mediatek/mt8173/mt8173-rt5650-rt5676.c b/sound/soc/mediatek/mt8173/mt8173-rt5650-rt5676.c
+index b3670c8..82675ed 100644
+--- a/sound/soc/mediatek/mt8173/mt8173-rt5650-rt5676.c
++++ b/sound/soc/mediatek/mt8173/mt8173-rt5650-rt5676.c
+@@ -48,11 +48,10 @@ static int mt8173_rt5650_rt5676_hw_params(struct snd_pcm_substream *substream,
+ 					  struct snd_pcm_hw_params *params)
+ {
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct snd_soc_dai *codec_dai;
+ 	int i, ret;
+ 
+-	for (i = 0; i < rtd->num_codecs; i++) {
+-		struct snd_soc_dai *codec_dai = rtd->codec_dais[i];
+-
++	for_each_rtd_codec_dai(rtd, i, codec_dai) {
+ 		/* pll from mclk 12.288M */
+ 		ret = snd_soc_dai_set_pll(codec_dai, 0, 0, MCLK_FOR_CODECS,
+ 					  params_rate(params) * 512);
+diff --git a/sound/soc/mediatek/mt8173/mt8173-rt5650.c b/sound/soc/mediatek/mt8173/mt8173-rt5650.c
+index 7a89b4a..ef05fbc 100644
+--- a/sound/soc/mediatek/mt8173/mt8173-rt5650.c
++++ b/sound/soc/mediatek/mt8173/mt8173-rt5650.c
+@@ -59,6 +59,7 @@ static int mt8173_rt5650_hw_params(struct snd_pcm_substream *substream,
+ {
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+ 	unsigned int mclk_clock;
++	struct snd_soc_dai *codec_dai;
+ 	int i, ret;
+ 
+ 	switch (mt8173_rt5650_priv.pll_from) {
+@@ -76,9 +77,7 @@ static int mt8173_rt5650_hw_params(struct snd_pcm_substream *substream,
+ 		break;
+ 	}
+ 
+-	for (i = 0; i < rtd->num_codecs; i++) {
+-		struct snd_soc_dai *codec_dai = rtd->codec_dais[i];
+-
++	for_each_rtd_codec_dai(rtd, i, codec_dai) {
+ 		/* pll from mclk */
+ 		ret = snd_soc_dai_set_pll(codec_dai, 0, 0, mclk_clock,
+ 					  params_rate(params) * 512);
+diff --git a/sound/soc/meson/axg-card.c b/sound/soc/meson/axg-card.c
+index 2914ba0..5fcd0ca 100644
+--- a/sound/soc/meson/axg-card.c
++++ b/sound/soc/meson/axg-card.c
+@@ -167,8 +167,7 @@ static int axg_card_tdm_be_hw_params(struct snd_pcm_substream *substream,
+ 	if (be->mclk_fs) {
+ 		mclk = params_rate(params) * be->mclk_fs;
+ 
+-		for (i = 0; i < rtd->num_codecs; i++) {
+-			codec_dai = rtd->codec_dais[i];
++		for_each_rtd_codec_dai(rtd, i, codec_dai) {
+ 			ret = snd_soc_dai_set_sysclk(codec_dai, 0, mclk,
+ 						     SND_SOC_CLOCK_IN);
+ 			if (ret && ret != -ENOTSUPP)
+@@ -196,8 +195,7 @@ static int axg_card_tdm_dai_init(struct snd_soc_pcm_runtime *rtd)
+ 	struct snd_soc_dai *codec_dai;
+ 	int ret, i;
+ 
+-	for (i = 0; i < rtd->num_codecs; i++) {
+-		codec_dai = rtd->codec_dais[i];
++	for_each_rtd_codec_dai(rtd, i, codec_dai) {
+ 		ret = snd_soc_dai_set_tdm_slot(codec_dai,
+ 					       be->codec_masks[i].tx,
+ 					       be->codec_masks[i].rx,
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index 62aa320..45d0790 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -452,12 +452,12 @@ int snd_soc_suspend(struct device *dev)
+ 
+ 	/* mute any active DACs */
+ 	list_for_each_entry(rtd, &card->rtd_list, list) {
++		struct snd_soc_dai *dai;
+ 
+ 		if (rtd->dai_link->ignore_suspend)
+ 			continue;
+ 
+-		for (i = 0; i < rtd->num_codecs; i++) {
+-			struct snd_soc_dai *dai = rtd->codec_dais[i];
++		for_each_rtd_codec_dai(rtd, i, dai) {
+ 			struct snd_soc_dai_driver *drv = dai->driver;
+ 
+ 			if (drv->ops->digital_mute && dai->playback_active)
+@@ -625,12 +625,12 @@ static void soc_resume_deferred(struct work_struct *work)
+ 
+ 	/* unmute any active DACs */
+ 	list_for_each_entry(rtd, &card->rtd_list, list) {
++		struct snd_soc_dai *dai;
+ 
+ 		if (rtd->dai_link->ignore_suspend)
+ 			continue;
+ 
+-		for (i = 0; i < rtd->num_codecs; i++) {
+-			struct snd_soc_dai *dai = rtd->codec_dais[i];
++		for_each_rtd_codec_dai(rtd, i, dai) {
+ 			struct snd_soc_dai_driver *drv = dai->driver;
+ 
+ 			if (drv->ops->digital_mute && dai->playback_active)
+@@ -674,15 +674,14 @@ int snd_soc_resume(struct device *dev)
+ 
+ 	/* activate pins from sleep state */
+ 	list_for_each_entry(rtd, &card->rtd_list, list) {
+-		struct snd_soc_dai **codec_dais = rtd->codec_dais;
++		struct snd_soc_dai *codec_dai;
+ 		struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+ 		int j;
+ 
+ 		if (cpu_dai->active)
+ 			pinctrl_pm_select_default_state(cpu_dai->dev);
+ 
+-		for (j = 0; j < rtd->num_codecs; j++) {
+-			struct snd_soc_dai *codec_dai = codec_dais[j];
++		for_each_rtd_codec_dai(rtd, j, codec_dai) {
+ 			if (codec_dai->active)
+ 				pinctrl_pm_select_default_state(codec_dai->dev);
+ 		}
+@@ -877,6 +876,7 @@ static int soc_bind_dai_link(struct snd_soc_card *card,
+ 	rtd->num_codecs = dai_link->num_codecs;
+ 
+ 	/* Find CODEC from registered CODECs */
++	/* we can use for_each_rtd_codec_dai() after this */
+ 	codec_dais = rtd->codec_dais;
+ 	for (i = 0; i < rtd->num_codecs; i++) {
+ 		codec_dais[i] = snd_soc_find_dai(&codecs[i]);
+@@ -959,6 +959,7 @@ static void soc_remove_link_dais(struct snd_soc_card *card,
+ 		struct snd_soc_pcm_runtime *rtd, int order)
+ {
+ 	int i;
++	struct snd_soc_dai *codec_dai;
+ 
+ 	/* unregister the rtd device */
+ 	if (rtd->dev_registered) {
+@@ -967,8 +968,8 @@ static void soc_remove_link_dais(struct snd_soc_card *card,
+ 	}
+ 
+ 	/* remove the CODEC DAI */
+-	for (i = 0; i < rtd->num_codecs; i++)
+-		soc_remove_dai(rtd->codec_dais[i], order);
++	for_each_rtd_codec_dai(rtd, i, codec_dai)
++		soc_remove_dai(codec_dai, order);
+ 
+ 	soc_remove_dai(rtd->cpu_dai, order);
+ }
+@@ -1480,6 +1481,7 @@ static int soc_probe_link_dais(struct snd_soc_card *card,
+ 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+ 	struct snd_soc_rtdcom_list *rtdcom;
+ 	struct snd_soc_component *component;
++	struct snd_soc_dai *codec_dai;
+ 	int i, ret, num;
+ 
+ 	dev_dbg(card->dev, "ASoC: probe %s dai link %d late %d\n",
+@@ -1493,8 +1495,8 @@ static int soc_probe_link_dais(struct snd_soc_card *card,
  		return ret;
  
-diff --git a/sound/soc/sh/rcar/cmd.c b/sound/soc/sh/rcar/cmd.c
-index cc191cd..e6bb6a9 100644
---- a/sound/soc/sh/rcar/cmd.c
-+++ b/sound/soc/sh/rcar/cmd.c
-@@ -116,10 +116,11 @@ static int rsnd_cmd_stop(struct rsnd_mod *mod,
- }
- 
- static struct rsnd_mod_ops rsnd_cmd_ops = {
--	.name	= CMD_NAME,
--	.init	= rsnd_cmd_init,
--	.start	= rsnd_cmd_start,
--	.stop	= rsnd_cmd_stop,
-+	.name		= CMD_NAME,
-+	.init		= rsnd_cmd_init,
-+	.start		= rsnd_cmd_start,
-+	.stop		= rsnd_cmd_stop,
-+	.get_status	= rsnd_mod_get_status,
- };
- 
- static struct rsnd_mod *rsnd_cmd_mod_get(struct rsnd_priv *priv, int id)
-@@ -162,7 +163,7 @@ int rsnd_cmd_probe(struct rsnd_priv *priv)
- 	for_each_rsnd_cmd(cmd, priv, i) {
- 		ret = rsnd_mod_init(priv, rsnd_mod_get(cmd),
- 				    &rsnd_cmd_ops, NULL,
--				    rsnd_mod_get_status, RSND_MOD_CMD, i);
-+				    RSND_MOD_CMD, i);
+ 	/* probe the CODEC DAI */
+-	for (i = 0; i < rtd->num_codecs; i++) {
+-		ret = soc_probe_dai(rtd->codec_dais[i], order);
++	for_each_rtd_codec_dai(rtd, i, codec_dai) {
++		ret = soc_probe_dai(codec_dai, order);
  		if (ret)
  			return ret;
  	}
-diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
-index 4a2a48e..b8cbf6e 100644
---- a/sound/soc/sh/rcar/core.c
-+++ b/sound/soc/sh/rcar/core.c
-@@ -137,8 +137,8 @@ struct dma_chan *rsnd_mod_dma_req(struct rsnd_dai_stream *io,
- 	return mod->ops->dma_req(io, mod);
- }
- 
--u32 *rsnd_mod_get_status(struct rsnd_dai_stream *io,
--			 struct rsnd_mod *mod,
-+u32 *rsnd_mod_get_status(struct rsnd_mod *mod,
-+			 struct rsnd_dai_stream *io,
- 			 enum rsnd_mod_type type)
+@@ -1681,14 +1683,12 @@ static void soc_remove_aux_devices(struct snd_soc_card *card)
+ int snd_soc_runtime_set_dai_fmt(struct snd_soc_pcm_runtime *rtd,
+ 	unsigned int dai_fmt)
  {
- 	return &mod->status;
-@@ -148,9 +148,6 @@ int rsnd_mod_init(struct rsnd_priv *priv,
- 		  struct rsnd_mod *mod,
- 		  struct rsnd_mod_ops *ops,
- 		  struct clk *clk,
--		  u32* (*get_status)(struct rsnd_dai_stream *io,
--				     struct rsnd_mod *mod,
--				     enum rsnd_mod_type type),
- 		  enum rsnd_mod_type type,
- 		  int id)
- {
-@@ -164,7 +161,6 @@ int rsnd_mod_init(struct rsnd_priv *priv,
- 	mod->type	= type;
- 	mod->clk	= clk;
- 	mod->priv	= priv;
--	mod->get_status	= get_status;
+-	struct snd_soc_dai **codec_dais = rtd->codec_dais;
+ 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
++	struct snd_soc_dai *codec_dai;
+ 	unsigned int i;
+ 	int ret;
  
- 	return ret;
- }
-@@ -472,7 +468,7 @@ static int rsnd_status_update(u32 *status,
- 	enum rsnd_mod_type *types = rsnd_mod_sequence[is_play];		\
- 	for_each_rsnd_mod_arrays(i, mod, io, types, RSND_MOD_MAX) {	\
- 		int tmp = 0;						\
--		u32 *status = mod->get_status(io, mod, types[i]);	\
-+		u32 *status = mod->ops->get_status(mod, io, types[i]);	\
- 		int func_call = rsnd_status_update(status,		\
- 						__rsnd_mod_shift_##fn,	\
- 						__rsnd_mod_add_##fn,	\
-diff --git a/sound/soc/sh/rcar/ctu.c b/sound/soc/sh/rcar/ctu.c
-index ad70237..2805847 100644
---- a/sound/soc/sh/rcar/ctu.c
-+++ b/sound/soc/sh/rcar/ctu.c
-@@ -341,6 +341,7 @@ static struct rsnd_mod_ops rsnd_ctu_ops = {
- 	.quit		= rsnd_ctu_quit,
- 	.hw_params	= rsnd_ctu_hw_params,
- 	.pcm_new	= rsnd_ctu_pcm_new,
-+	.get_status	= rsnd_mod_get_status,
- };
- 
- struct rsnd_mod *rsnd_ctu_mod_get(struct rsnd_priv *priv, int id)
-@@ -404,7 +405,7 @@ int rsnd_ctu_probe(struct rsnd_priv *priv)
- 		}
- 
- 		ret = rsnd_mod_init(priv, rsnd_mod_get(ctu), &rsnd_ctu_ops,
--				    clk, rsnd_mod_get_status, RSND_MOD_CTU, i);
-+				    clk, RSND_MOD_CTU, i);
- 		if (ret) {
- 			of_node_put(np);
- 			goto rsnd_ctu_probe_done;
-diff --git a/sound/soc/sh/rcar/dma.c b/sound/soc/sh/rcar/dma.c
-index 6d19475..e5c30ee 100644
---- a/sound/soc/sh/rcar/dma.c
-+++ b/sound/soc/sh/rcar/dma.c
-@@ -289,12 +289,13 @@ static int rsnd_dmaen_pointer(struct rsnd_mod *mod,
- }
- 
- static struct rsnd_mod_ops rsnd_dmaen_ops = {
--	.name	= "audmac",
--	.prepare = rsnd_dmaen_prepare,
--	.cleanup = rsnd_dmaen_cleanup,
--	.start	= rsnd_dmaen_start,
--	.stop	= rsnd_dmaen_stop,
--	.pointer= rsnd_dmaen_pointer,
-+	.name		= "audmac",
-+	.prepare	= rsnd_dmaen_prepare,
-+	.cleanup	= rsnd_dmaen_cleanup,
-+	.start		= rsnd_dmaen_start,
-+	.stop		= rsnd_dmaen_stop,
-+	.pointer	= rsnd_dmaen_pointer,
-+	.get_status	= rsnd_mod_get_status,
- };
- 
- /*
-@@ -477,10 +478,11 @@ static int rsnd_dmapp_attach(struct rsnd_dai_stream *io,
- }
- 
- static struct rsnd_mod_ops rsnd_dmapp_ops = {
--	.name	= "audmac-pp",
--	.start	= rsnd_dmapp_start,
--	.stop	= rsnd_dmapp_stop,
--	.quit	= rsnd_dmapp_stop,
-+	.name		= "audmac-pp",
-+	.start		= rsnd_dmapp_start,
-+	.stop		= rsnd_dmapp_stop,
-+	.quit		= rsnd_dmapp_stop,
-+	.get_status	= rsnd_mod_get_status,
- };
- 
- /*
-@@ -756,7 +758,7 @@ static int rsnd_dma_alloc(struct rsnd_dai_stream *io, struct rsnd_mod *mod,
- 	*dma_mod = rsnd_mod_get(dma);
- 
- 	ret = rsnd_mod_init(priv, *dma_mod, ops, NULL,
--			    rsnd_mod_get_status, type, dma_id);
-+			    type, dma_id);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -823,5 +825,5 @@ int rsnd_dma_probe(struct rsnd_priv *priv)
- 	priv->dma = dmac;
- 
- 	/* dummy mem mod for debug */
--	return rsnd_mod_init(NULL, &mem, &mem_ops, NULL, NULL, 0, 0);
-+	return rsnd_mod_init(NULL, &mem, &mem_ops, NULL, 0, 0);
- }
-diff --git a/sound/soc/sh/rcar/dvc.c b/sound/soc/sh/rcar/dvc.c
-index 2b16e0c..d65f24b 100644
---- a/sound/soc/sh/rcar/dvc.c
-+++ b/sound/soc/sh/rcar/dvc.c
-@@ -306,6 +306,7 @@ static struct rsnd_mod_ops rsnd_dvc_ops = {
- 	.init		= rsnd_dvc_init,
- 	.quit		= rsnd_dvc_quit,
- 	.pcm_new	= rsnd_dvc_pcm_new,
-+	.get_status	= rsnd_mod_get_status,
- };
- 
- struct rsnd_mod *rsnd_dvc_mod_get(struct rsnd_priv *priv, int id)
-@@ -365,7 +366,7 @@ int rsnd_dvc_probe(struct rsnd_priv *priv)
- 		}
- 
- 		ret = rsnd_mod_init(priv, rsnd_mod_get(dvc), &rsnd_dvc_ops,
--				    clk, rsnd_mod_get_status, RSND_MOD_DVC, i);
-+				    clk, RSND_MOD_DVC, i);
- 		if (ret) {
- 			of_node_put(np);
- 			goto rsnd_dvc_probe_done;
-diff --git a/sound/soc/sh/rcar/mix.c b/sound/soc/sh/rcar/mix.c
-index 8e3b57e..a3e0370 100644
---- a/sound/soc/sh/rcar/mix.c
-+++ b/sound/soc/sh/rcar/mix.c
-@@ -256,6 +256,7 @@ static struct rsnd_mod_ops rsnd_mix_ops = {
- 	.init		= rsnd_mix_init,
- 	.quit		= rsnd_mix_quit,
- 	.pcm_new	= rsnd_mix_pcm_new,
-+	.get_status	= rsnd_mod_get_status,
- };
- 
- struct rsnd_mod *rsnd_mix_mod_get(struct rsnd_priv *priv, int id)
-@@ -315,7 +316,7 @@ int rsnd_mix_probe(struct rsnd_priv *priv)
- 		}
- 
- 		ret = rsnd_mod_init(priv, rsnd_mod_get(mix), &rsnd_mix_ops,
--				    clk, rsnd_mod_get_status, RSND_MOD_MIX, i);
-+				    clk, RSND_MOD_MIX, i);
- 		if (ret) {
- 			of_node_put(np);
- 			goto rsnd_mix_probe_done;
-diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
-index 4464d1d..d25fb5c 100644
---- a/sound/soc/sh/rcar/rsnd.h
-+++ b/sound/soc/sh/rcar/rsnd.h
-@@ -301,6 +301,9 @@ struct rsnd_mod_ops {
- 	int (*cleanup)(struct rsnd_mod *mod,
- 		       struct rsnd_dai_stream *io,
- 		       struct rsnd_priv *priv);
-+	u32 *(*get_status)(struct rsnd_mod *mod,
-+			   struct rsnd_dai_stream *io,
-+			   enum rsnd_mod_type type);
- };
- 
- struct rsnd_dai_stream;
-@@ -310,9 +313,6 @@ struct rsnd_mod {
- 	struct rsnd_mod_ops *ops;
- 	struct rsnd_priv *priv;
- 	struct clk *clk;
--	u32 *(*get_status)(struct rsnd_dai_stream *io,
--			   struct rsnd_mod *mod,
--			   enum rsnd_mod_type type);
- 	u32 status;
- };
- /*
-@@ -385,9 +385,6 @@ int rsnd_mod_init(struct rsnd_priv *priv,
- 		  struct rsnd_mod *mod,
- 		  struct rsnd_mod_ops *ops,
- 		  struct clk *clk,
--		  u32* (*get_status)(struct rsnd_dai_stream *io,
--				     struct rsnd_mod *mod,
--				     enum rsnd_mod_type type),
- 		  enum rsnd_mod_type type,
- 		  int id);
- void rsnd_mod_quit(struct rsnd_mod *mod);
-@@ -396,8 +393,8 @@ struct dma_chan *rsnd_mod_dma_req(struct rsnd_dai_stream *io,
- void rsnd_mod_interrupt(struct rsnd_mod *mod,
- 			void (*callback)(struct rsnd_mod *mod,
- 					 struct rsnd_dai_stream *io));
--u32 *rsnd_mod_get_status(struct rsnd_dai_stream *io,
--			 struct rsnd_mod *mod,
-+u32 *rsnd_mod_get_status(struct rsnd_mod *mod,
-+			 struct rsnd_dai_stream *io,
- 			 enum rsnd_mod_type type);
- struct rsnd_mod *rsnd_mod_next(int *iterator,
- 			       struct rsnd_dai_stream *io,
-diff --git a/sound/soc/sh/rcar/src.c b/sound/soc/sh/rcar/src.c
-index cd38a43..7de7afd 100644
---- a/sound/soc/sh/rcar/src.c
-+++ b/sound/soc/sh/rcar/src.c
-@@ -527,16 +527,17 @@ static int rsnd_src_pcm_new(struct rsnd_mod *mod,
- }
- 
- static struct rsnd_mod_ops rsnd_src_ops = {
--	.name	= SRC_NAME,
--	.dma_req = rsnd_src_dma_req,
--	.probe	= rsnd_src_probe_,
--	.init	= rsnd_src_init,
--	.quit	= rsnd_src_quit,
--	.start	= rsnd_src_start,
--	.stop	= rsnd_src_stop,
--	.irq	= rsnd_src_irq,
--	.hw_params = rsnd_src_hw_params,
--	.pcm_new = rsnd_src_pcm_new,
-+	.name		= SRC_NAME,
-+	.dma_req	= rsnd_src_dma_req,
-+	.probe		= rsnd_src_probe_,
-+	.init		= rsnd_src_init,
-+	.quit		= rsnd_src_quit,
-+	.start		= rsnd_src_start,
-+	.stop		= rsnd_src_stop,
-+	.irq		= rsnd_src_irq,
-+	.hw_params	= rsnd_src_hw_params,
-+	.pcm_new	= rsnd_src_pcm_new,
-+	.get_status	= rsnd_mod_get_status,
- };
- 
- struct rsnd_mod *rsnd_src_mod_get(struct rsnd_priv *priv, int id)
-@@ -605,8 +606,7 @@ int rsnd_src_probe(struct rsnd_priv *priv)
- 		}
- 
- 		ret = rsnd_mod_init(priv, rsnd_mod_get(src),
--				    &rsnd_src_ops, clk, rsnd_mod_get_status,
--				    RSND_MOD_SRC, i);
-+				    &rsnd_src_ops, clk, RSND_MOD_SRC, i);
- 		if (ret) {
- 			of_node_put(np);
- 			goto rsnd_src_probe_done;
-diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
-index 5ff0b44..bf14207 100644
---- a/sound/soc/sh/rcar/ssi.c
-+++ b/sound/soc/sh/rcar/ssi.c
-@@ -681,6 +681,41 @@ static irqreturn_t rsnd_ssi_interrupt(int irq, void *data)
- 	return IRQ_HANDLED;
- }
- 
-+static u32 *rsnd_ssi_get_status(struct rsnd_mod *mod,
-+				struct rsnd_dai_stream *io,
-+				enum rsnd_mod_type type)
-+{
-+	/*
-+	 * SSIP (= SSI parent) needs to be special, otherwise,
-+	 * 2nd SSI might doesn't start. see also rsnd_mod_call()
-+	 *
-+	 * We can't include parent SSI status on SSI, because we don't know
-+	 * how many SSI requests parent SSI. Thus, it is localed on "io" now.
-+	 * ex) trouble case
-+	 *	Playback: SSI0
-+	 *	Capture : SSI1 (needs SSI0)
-+	 *
-+	 * 1) start Capture  ->	SSI0/SSI1 are started.
-+	 * 2) start Playback ->	SSI0 doesn't work, because it is already
-+	 *			marked as "started" on 1)
-+	 *
-+	 * OTOH, using each mod's status is good for MUX case.
-+	 * It doesn't need to start in 2nd start
-+	 * ex)
-+	 *	IO-0: SRC0 -> CTU1 -+-> MUX -> DVC -> SSIU -> SSI0
-+	 *			    |
-+	 *	IO-1: SRC1 -> CTU2 -+
-+	 *
-+	 * 1) start IO-0 ->	start SSI0
-+	 * 2) start IO-1 ->	SSI0 doesn't need to start, because it is
-+	 *			already started on 1)
-+	 */
-+	if (type == RSND_MOD_SSIP)
-+		return &io->parent_ssi_status;
-+
-+	return rsnd_mod_get_status(mod, io, type);
-+}
-+
- /*
-  *		SSI PIO
-  */
-@@ -876,18 +911,19 @@ static int rsnd_ssi_prepare(struct rsnd_mod *mod,
- }
- 
- static struct rsnd_mod_ops rsnd_ssi_pio_ops = {
--	.name	= SSI_NAME,
--	.probe	= rsnd_ssi_common_probe,
--	.remove	= rsnd_ssi_common_remove,
--	.init	= rsnd_ssi_pio_init,
--	.quit	= rsnd_ssi_quit,
--	.start	= rsnd_ssi_start,
--	.stop	= rsnd_ssi_stop,
--	.irq	= rsnd_ssi_irq,
--	.pointer = rsnd_ssi_pio_pointer,
--	.pcm_new = rsnd_ssi_pcm_new,
--	.hw_params = rsnd_ssi_hw_params,
--	.prepare = rsnd_ssi_prepare,
-+	.name		= SSI_NAME,
-+	.probe		= rsnd_ssi_common_probe,
-+	.remove		= rsnd_ssi_common_remove,
-+	.init		= rsnd_ssi_pio_init,
-+	.quit		= rsnd_ssi_quit,
-+	.start		= rsnd_ssi_start,
-+	.stop		= rsnd_ssi_stop,
-+	.irq		= rsnd_ssi_irq,
-+	.pointer	= rsnd_ssi_pio_pointer,
-+	.pcm_new	= rsnd_ssi_pcm_new,
-+	.hw_params	= rsnd_ssi_hw_params,
-+	.prepare	= rsnd_ssi_prepare,
-+	.get_status	= rsnd_ssi_get_status,
- };
- 
- static int rsnd_ssi_dma_probe(struct rsnd_mod *mod,
-@@ -951,19 +987,20 @@ static struct dma_chan *rsnd_ssi_dma_req(struct rsnd_dai_stream *io,
- }
- 
- static struct rsnd_mod_ops rsnd_ssi_dma_ops = {
--	.name	= SSI_NAME,
--	.dma_req = rsnd_ssi_dma_req,
--	.probe	= rsnd_ssi_dma_probe,
--	.remove	= rsnd_ssi_common_remove,
--	.init	= rsnd_ssi_init,
--	.quit	= rsnd_ssi_quit,
--	.start	= rsnd_ssi_start,
--	.stop	= rsnd_ssi_stop,
--	.irq	= rsnd_ssi_irq,
--	.pcm_new = rsnd_ssi_pcm_new,
--	.fallback = rsnd_ssi_fallback,
--	.hw_params = rsnd_ssi_hw_params,
--	.prepare = rsnd_ssi_prepare,
-+	.name		= SSI_NAME,
-+	.dma_req	= rsnd_ssi_dma_req,
-+	.probe		= rsnd_ssi_dma_probe,
-+	.remove		= rsnd_ssi_common_remove,
-+	.init		= rsnd_ssi_init,
-+	.quit		= rsnd_ssi_quit,
-+	.start		= rsnd_ssi_start,
-+	.stop		= rsnd_ssi_stop,
-+	.irq		= rsnd_ssi_irq,
-+	.pcm_new	= rsnd_ssi_pcm_new,
-+	.fallback	= rsnd_ssi_fallback,
-+	.hw_params	= rsnd_ssi_hw_params,
-+	.prepare	= rsnd_ssi_prepare,
-+	.get_status	= rsnd_ssi_get_status,
- };
- 
- int rsnd_ssi_is_dma_mode(struct rsnd_mod *mod)
-@@ -1091,41 +1128,6 @@ int __rsnd_ssi_is_pin_sharing(struct rsnd_mod *mod)
- 	return !!(rsnd_flags_has(rsnd_mod_to_ssi(mod), RSND_SSI_CLK_PIN_SHARE));
- }
- 
--static u32 *rsnd_ssi_get_status(struct rsnd_dai_stream *io,
--				struct rsnd_mod *mod,
--				enum rsnd_mod_type type)
--{
--	/*
--	 * SSIP (= SSI parent) needs to be special, otherwise,
--	 * 2nd SSI might doesn't start. see also rsnd_mod_call()
--	 *
--	 * We can't include parent SSI status on SSI, because we don't know
--	 * how many SSI requests parent SSI. Thus, it is localed on "io" now.
--	 * ex) trouble case
--	 *	Playback: SSI0
--	 *	Capture : SSI1 (needs SSI0)
--	 *
--	 * 1) start Capture  ->	SSI0/SSI1 are started.
--	 * 2) start Playback ->	SSI0 doesn't work, because it is already
--	 *			marked as "started" on 1)
--	 *
--	 * OTOH, using each mod's status is good for MUX case.
--	 * It doesn't need to start in 2nd start
--	 * ex)
--	 *	IO-0: SRC0 -> CTU1 -+-> MUX -> DVC -> SSIU -> SSI0
--	 *			    |
--	 *	IO-1: SRC1 -> CTU2 -+
--	 *
--	 * 1) start IO-0 ->	start SSI0
--	 * 2) start IO-1 ->	SSI0 doesn't need to start, because it is
--	 *			already started on 1)
--	 */
--	if (type == RSND_MOD_SSIP)
--		return &io->parent_ssi_status;
+-	for (i = 0; i < rtd->num_codecs; i++) {
+-		struct snd_soc_dai *codec_dai = codec_dais[i];
 -
--	return rsnd_mod_get_status(io, mod, type);
--}
--
- int rsnd_ssi_probe(struct rsnd_priv *priv)
- {
- 	struct device_node *node;
-@@ -1192,7 +1194,7 @@ int rsnd_ssi_probe(struct rsnd_priv *priv)
- 			ops = &rsnd_ssi_dma_ops;
++	for_each_rtd_codec_dai(rtd, i, codec_dai) {
+ 		ret = snd_soc_dai_set_fmt(codec_dai, dai_fmt);
+ 		if (ret != 0 && ret != -ENOTSUPP) {
+ 			dev_warn(codec_dai->dev,
+@@ -2232,11 +2232,11 @@ int snd_soc_poweroff(struct device *dev)
+ 	/* deactivate pins to sleep state */
+ 	list_for_each_entry(rtd, &card->rtd_list, list) {
+ 		struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
++		struct snd_soc_dai *codec_dai;
+ 		int i;
  
- 		ret = rsnd_mod_init(priv, rsnd_mod_get(ssi), ops, clk,
--				    rsnd_ssi_get_status, RSND_MOD_SSI, i);
-+				    RSND_MOD_SSI, i);
- 		if (ret) {
- 			of_node_put(np);
- 			goto rsnd_ssi_probe_done;
-diff --git a/sound/soc/sh/rcar/ssiu.c b/sound/soc/sh/rcar/ssiu.c
-index 39b6764..ebcb826 100644
---- a/sound/soc/sh/rcar/ssiu.c
-+++ b/sound/soc/sh/rcar/ssiu.c
-@@ -22,6 +22,16 @@ struct rsnd_ssiu {
- 		     ((pos) = ((struct rsnd_ssiu *)(priv)->ssiu + i));	\
- 	     i++)
- 
-+static u32 *rsnd_ssiu_get_status(struct rsnd_mod *mod,
-+				 struct rsnd_dai_stream *io,
-+				 enum rsnd_mod_type type)
-+{
-+	struct rsnd_ssiu *ssiu = rsnd_mod_to_ssiu(mod);
-+	int busif = rsnd_ssi_get_busif(io);
-+
-+	return &ssiu->busif_status[busif];
-+}
-+
- static int rsnd_ssiu_init(struct rsnd_mod *mod,
- 			  struct rsnd_dai_stream *io,
- 			  struct rsnd_priv *priv)
-@@ -115,8 +125,9 @@ static int rsnd_ssiu_init(struct rsnd_mod *mod,
- }
- 
- static struct rsnd_mod_ops rsnd_ssiu_ops_gen1 = {
--	.name	= SSIU_NAME,
--	.init	= rsnd_ssiu_init,
-+	.name		= SSIU_NAME,
-+	.init		= rsnd_ssiu_init,
-+	.get_status	= rsnd_ssiu_get_status,
- };
- 
- static int rsnd_ssiu_init_gen2(struct rsnd_mod *mod,
-@@ -279,10 +290,11 @@ static int rsnd_ssiu_stop_gen2(struct rsnd_mod *mod,
- }
- 
- static struct rsnd_mod_ops rsnd_ssiu_ops_gen2 = {
--	.name	= SSIU_NAME,
--	.init	= rsnd_ssiu_init_gen2,
--	.start	= rsnd_ssiu_start_gen2,
--	.stop	= rsnd_ssiu_stop_gen2,
-+	.name		= SSIU_NAME,
-+	.init		= rsnd_ssiu_init_gen2,
-+	.start		= rsnd_ssiu_start_gen2,
-+	.stop		= rsnd_ssiu_stop_gen2,
-+	.get_status	= rsnd_ssiu_get_status,
- };
- 
- static struct rsnd_mod *rsnd_ssiu_mod_get(struct rsnd_priv *priv, int id)
-@@ -304,16 +316,6 @@ int rsnd_ssiu_attach(struct rsnd_dai_stream *io,
- 	return rsnd_dai_connect(mod, io, mod->type);
- }
- 
--static u32 *rsnd_ssiu_get_status(struct rsnd_dai_stream *io,
--				 struct rsnd_mod *mod,
--				 enum rsnd_mod_type type)
--{
--	struct rsnd_ssiu *ssiu = rsnd_mod_to_ssiu(mod);
--	int busif = rsnd_ssi_get_busif(io);
--
--	return &ssiu->busif_status[busif];
--}
--
- int rsnd_ssiu_probe(struct rsnd_priv *priv)
- {
- 	struct device *dev = rsnd_priv_to_dev(priv);
-@@ -337,8 +339,7 @@ int rsnd_ssiu_probe(struct rsnd_priv *priv)
- 
- 	for_each_rsnd_ssiu(ssiu, priv, i) {
- 		ret = rsnd_mod_init(priv, rsnd_mod_get(ssiu),
--				    ops, NULL, rsnd_ssiu_get_status,
--				    RSND_MOD_SSIU, i);
-+				    ops, NULL, RSND_MOD_SSIU, i);
- 		if (ret)
- 			return ret;
+ 		pinctrl_pm_select_sleep_state(cpu_dai->dev);
+-		for (i = 0; i < rtd->num_codecs; i++) {
+-			struct snd_soc_dai *codec_dai = rtd->codec_dais[i];
++		for_each_rtd_codec_dai(rtd, i, codec_dai) {
+ 			pinctrl_pm_select_sleep_state(codec_dai->dev);
+ 		}
  	}
+@@ -2742,10 +2742,10 @@ int snd_soc_register_card(struct snd_soc_card *card)
+ 	/* deactivate pins to sleep state */
+ 	list_for_each_entry(rtd, &card->rtd_list, list)  {
+ 		struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
++		struct snd_soc_dai *codec_dai;
+ 		int j;
+ 
+-		for (j = 0; j < rtd->num_codecs; j++) {
+-			struct snd_soc_dai *codec_dai = rtd->codec_dais[j];
++		for_each_rtd_codec_dai(rtd, j, codec_dai) {
+ 			if (!codec_dai->active)
+ 				pinctrl_pm_select_sleep_state(codec_dai->dev);
+ 		}
+diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
+index 4ce5751..384dff5 100644
+--- a/sound/soc/soc-dapm.c
++++ b/sound/soc/soc-dapm.c
+@@ -2397,12 +2397,13 @@ static ssize_t dapm_widget_show(struct device *dev,
+ 	struct device_attribute *attr, char *buf)
+ {
+ 	struct snd_soc_pcm_runtime *rtd = dev_get_drvdata(dev);
++	struct snd_soc_dai *codec_dai;
+ 	int i, count = 0;
+ 
+ 	mutex_lock(&rtd->card->dapm_mutex);
+ 
+-	for (i = 0; i < rtd->num_codecs; i++) {
+-		struct snd_soc_component *cmpnt = rtd->codec_dais[i]->component;
++	for_each_rtd_codec_dai(rtd, i, codec_dai) {
++		struct snd_soc_component *cmpnt = codec_dai->component;
+ 
+ 		count += dapm_widget_show_component(cmpnt, buf + count);
+ 	}
+@@ -4145,11 +4146,11 @@ static void dapm_connect_dai_link_widgets(struct snd_soc_card *card,
+ 					  struct snd_soc_pcm_runtime *rtd)
+ {
+ 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
++	struct snd_soc_dai *codec_dai;
+ 	struct snd_soc_dapm_widget *sink, *source;
+ 	int i;
+ 
+-	for (i = 0; i < rtd->num_codecs; i++) {
+-		struct snd_soc_dai *codec_dai = rtd->codec_dais[i];
++	for_each_rtd_codec_dai(rtd, i, codec_dai) {
+ 
+ 		/* connect BE DAI playback if widgets are valid */
+ 		if (codec_dai->playback_widget && cpu_dai->playback_widget) {
+@@ -4237,11 +4238,12 @@ void snd_soc_dapm_connect_dai_link_widgets(struct snd_soc_card *card)
+ static void soc_dapm_stream_event(struct snd_soc_pcm_runtime *rtd, int stream,
+ 	int event)
+ {
++	struct snd_soc_dai *codec_dai;
+ 	int i;
+ 
+ 	soc_dapm_dai_stream_event(rtd->cpu_dai, stream, event);
+-	for (i = 0; i < rtd->num_codecs; i++)
+-		soc_dapm_dai_stream_event(rtd->codec_dais[i], stream, event);
++	for_each_rtd_codec_dai(rtd, i, codec_dai)
++		soc_dapm_dai_stream_event(codec_dai, stream, event);
+ 
+ 	dapm_power_widgets(rtd->card, event);
+ }
+diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+index 6566c88..9a64f6d 100644
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -59,25 +59,26 @@ static bool snd_soc_dai_stream_valid(struct snd_soc_dai *dai, int stream)
+ void snd_soc_runtime_activate(struct snd_soc_pcm_runtime *rtd, int stream)
+ {
+ 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
++	struct snd_soc_dai *codec_dai;
+ 	int i;
+ 
+ 	lockdep_assert_held(&rtd->pcm_mutex);
+ 
+ 	if (stream == SNDRV_PCM_STREAM_PLAYBACK) {
+ 		cpu_dai->playback_active++;
+-		for (i = 0; i < rtd->num_codecs; i++)
+-			rtd->codec_dais[i]->playback_active++;
++		for_each_rtd_codec_dai(rtd, i, codec_dai)
++			codec_dai->playback_active++;
+ 	} else {
+ 		cpu_dai->capture_active++;
+-		for (i = 0; i < rtd->num_codecs; i++)
+-			rtd->codec_dais[i]->capture_active++;
++		for_each_rtd_codec_dai(rtd, i, codec_dai)
++			codec_dai->capture_active++;
+ 	}
+ 
+ 	cpu_dai->active++;
+ 	cpu_dai->component->active++;
+-	for (i = 0; i < rtd->num_codecs; i++) {
+-		rtd->codec_dais[i]->active++;
+-		rtd->codec_dais[i]->component->active++;
++	for_each_rtd_codec_dai(rtd, i, codec_dai) {
++		codec_dai->active++;
++		codec_dai->component->active++;
+ 	}
+ }
+ 
+@@ -94,25 +95,26 @@ void snd_soc_runtime_activate(struct snd_soc_pcm_runtime *rtd, int stream)
+ void snd_soc_runtime_deactivate(struct snd_soc_pcm_runtime *rtd, int stream)
+ {
+ 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
++	struct snd_soc_dai *codec_dai;
+ 	int i;
+ 
+ 	lockdep_assert_held(&rtd->pcm_mutex);
+ 
+ 	if (stream == SNDRV_PCM_STREAM_PLAYBACK) {
+ 		cpu_dai->playback_active--;
+-		for (i = 0; i < rtd->num_codecs; i++)
+-			rtd->codec_dais[i]->playback_active--;
++		for_each_rtd_codec_dai(rtd, i, codec_dai)
++			codec_dai->playback_active--;
+ 	} else {
+ 		cpu_dai->capture_active--;
+-		for (i = 0; i < rtd->num_codecs; i++)
+-			rtd->codec_dais[i]->capture_active--;
++		for_each_rtd_codec_dai(rtd, i, codec_dai)
++			codec_dai->capture_active--;
+ 	}
+ 
+ 	cpu_dai->active--;
+ 	cpu_dai->component->active--;
+-	for (i = 0; i < rtd->num_codecs; i++) {
+-		rtd->codec_dais[i]->component->active--;
+-		rtd->codec_dais[i]->active--;
++	for_each_rtd_codec_dai(rtd, i, codec_dai) {
++		codec_dai->component->active--;
++		codec_dai->active--;
+ 	}
+ }
+ 
+@@ -253,6 +255,7 @@ static int soc_pcm_params_symmetry(struct snd_pcm_substream *substream,
+ {
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+ 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
++	struct snd_soc_dai *codec_dai;
+ 	unsigned int rate, channels, sample_bits, symmetry, i;
+ 
+ 	rate = params_rate(params);
+@@ -263,8 +266,8 @@ static int soc_pcm_params_symmetry(struct snd_pcm_substream *substream,
+ 	symmetry = cpu_dai->driver->symmetric_rates ||
+ 		rtd->dai_link->symmetric_rates;
+ 
+-	for (i = 0; i < rtd->num_codecs; i++)
+-		symmetry |= rtd->codec_dais[i]->driver->symmetric_rates;
++	for_each_rtd_codec_dai(rtd, i, codec_dai)
++		symmetry |= codec_dai->driver->symmetric_rates;
+ 
+ 	if (symmetry && cpu_dai->rate && cpu_dai->rate != rate) {
+ 		dev_err(rtd->dev, "ASoC: unmatched rate symmetry: %d - %d\n",
+@@ -275,8 +278,8 @@ static int soc_pcm_params_symmetry(struct snd_pcm_substream *substream,
+ 	symmetry = cpu_dai->driver->symmetric_channels ||
+ 		rtd->dai_link->symmetric_channels;
+ 
+-	for (i = 0; i < rtd->num_codecs; i++)
+-		symmetry |= rtd->codec_dais[i]->driver->symmetric_channels;
++	for_each_rtd_codec_dai(rtd, i, codec_dai)
++		symmetry |= codec_dai->driver->symmetric_channels;
+ 
+ 	if (symmetry && cpu_dai->channels && cpu_dai->channels != channels) {
+ 		dev_err(rtd->dev, "ASoC: unmatched channel symmetry: %d - %d\n",
+@@ -287,8 +290,8 @@ static int soc_pcm_params_symmetry(struct snd_pcm_substream *substream,
+ 	symmetry = cpu_dai->driver->symmetric_samplebits ||
+ 		rtd->dai_link->symmetric_samplebits;
+ 
+-	for (i = 0; i < rtd->num_codecs; i++)
+-		symmetry |= rtd->codec_dais[i]->driver->symmetric_samplebits;
++	for_each_rtd_codec_dai(rtd, i, codec_dai)
++		symmetry |= codec_dai->driver->symmetric_samplebits;
+ 
+ 	if (symmetry && cpu_dai->sample_bits && cpu_dai->sample_bits != sample_bits) {
+ 		dev_err(rtd->dev, "ASoC: unmatched sample bits symmetry: %d - %d\n",
+@@ -304,17 +307,18 @@ static bool soc_pcm_has_symmetry(struct snd_pcm_substream *substream)
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+ 	struct snd_soc_dai_driver *cpu_driver = rtd->cpu_dai->driver;
+ 	struct snd_soc_dai_link *link = rtd->dai_link;
++	struct snd_soc_dai *codec_dai;
+ 	unsigned int symmetry, i;
+ 
+ 	symmetry = cpu_driver->symmetric_rates || link->symmetric_rates ||
+ 		cpu_driver->symmetric_channels || link->symmetric_channels ||
+ 		cpu_driver->symmetric_samplebits || link->symmetric_samplebits;
+ 
+-	for (i = 0; i < rtd->num_codecs; i++)
++	for_each_rtd_codec_dai(rtd, i, codec_dai)
+ 		symmetry = symmetry ||
+-			rtd->codec_dais[i]->driver->symmetric_rates ||
+-			rtd->codec_dais[i]->driver->symmetric_channels ||
+-			rtd->codec_dais[i]->driver->symmetric_samplebits;
++			codec_dai->driver->symmetric_rates ||
++			codec_dai->driver->symmetric_channels ||
++			codec_dai->driver->symmetric_samplebits;
+ 
+ 	return symmetry;
+ }
+@@ -342,8 +346,7 @@ static void soc_pcm_apply_msb(struct snd_pcm_substream *substream)
+ 	unsigned int bits = 0, cpu_bits;
+ 
+ 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+-		for (i = 0; i < rtd->num_codecs; i++) {
+-			codec_dai = rtd->codec_dais[i];
++		for_each_rtd_codec_dai(rtd, i, codec_dai) {
+ 			if (codec_dai->driver->playback.sig_bits == 0) {
+ 				bits = 0;
+ 				break;
+@@ -352,8 +355,7 @@ static void soc_pcm_apply_msb(struct snd_pcm_substream *substream)
+ 		}
+ 		cpu_bits = cpu_dai->driver->playback.sig_bits;
+ 	} else {
+-		for (i = 0; i < rtd->num_codecs; i++) {
+-			codec_dai = rtd->codec_dais[i];
++		for_each_rtd_codec_dai(rtd, i, codec_dai) {
+ 			if (codec_dai->driver->capture.sig_bits == 0) {
+ 				bits = 0;
+ 				break;
+@@ -372,6 +374,7 @@ static void soc_pcm_init_runtime_hw(struct snd_pcm_substream *substream)
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+ 	struct snd_pcm_hardware *hw = &runtime->hw;
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct snd_soc_dai *codec_dai;
+ 	struct snd_soc_dai_driver *cpu_dai_drv = rtd->cpu_dai->driver;
+ 	struct snd_soc_dai_driver *codec_dai_drv;
+ 	struct snd_soc_pcm_stream *codec_stream;
+@@ -388,7 +391,7 @@ static void soc_pcm_init_runtime_hw(struct snd_pcm_substream *substream)
+ 		cpu_stream = &cpu_dai_drv->capture;
+ 
+ 	/* first calculate min/max only for CODECs in the DAI link */
+-	for (i = 0; i < rtd->num_codecs; i++) {
++	for_each_rtd_codec_dai(rtd, i, codec_dai) {
+ 
+ 		/*
+ 		 * Skip CODECs which don't support the current stream type.
+@@ -399,11 +402,11 @@ static void soc_pcm_init_runtime_hw(struct snd_pcm_substream *substream)
+ 		 * bailed out on a higher level, since there would be no
+ 		 * CODEC to support the transfer direction in that case.
+ 		 */
+-		if (!snd_soc_dai_stream_valid(rtd->codec_dais[i],
++		if (!snd_soc_dai_stream_valid(codec_dai,
+ 					      substream->stream))
+ 			continue;
+ 
+-		codec_dai_drv = rtd->codec_dais[i]->driver;
++		codec_dai_drv = codec_dai->driver;
+ 		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
+ 			codec_stream = &codec_dai_drv->playback;
+ 		else
+@@ -482,8 +485,8 @@ static int soc_pcm_open(struct snd_pcm_substream *substream)
+ 	int i, ret = 0;
+ 
+ 	pinctrl_pm_select_default_state(cpu_dai->dev);
+-	for (i = 0; i < rtd->num_codecs; i++)
+-		pinctrl_pm_select_default_state(rtd->codec_dais[i]->dev);
++	for_each_rtd_codec_dai(rtd, i, codec_dai)
++		pinctrl_pm_select_default_state(codec_dai->dev);
+ 
+ 	for_each_rtdcom(rtd, rtdcom) {
+ 		component = rtdcom->component;
+@@ -520,8 +523,7 @@ static int soc_pcm_open(struct snd_pcm_substream *substream)
+ 	}
+ 	component = NULL;
+ 
+-	for (i = 0; i < rtd->num_codecs; i++) {
+-		codec_dai = rtd->codec_dais[i];
++	for_each_rtd_codec_dai(rtd, i, codec_dai) {
+ 		if (codec_dai->driver->ops->startup) {
+ 			ret = codec_dai->driver->ops->startup(substream,
+ 							      codec_dai);
+@@ -588,10 +590,9 @@ static int soc_pcm_open(struct snd_pcm_substream *substream)
+ 			goto config_err;
+ 	}
+ 
+-	for (i = 0; i < rtd->num_codecs; i++) {
+-		if (rtd->codec_dais[i]->active) {
+-			ret = soc_pcm_apply_symmetry(substream,
+-						     rtd->codec_dais[i]);
++	for_each_rtd_codec_dai(rtd, i, codec_dai) {
++		if (codec_dai->active) {
++			ret = soc_pcm_apply_symmetry(substream, codec_dai);
+ 			if (ret != 0)
+ 				goto config_err;
+ 		}
+@@ -620,8 +621,7 @@ static int soc_pcm_open(struct snd_pcm_substream *substream)
+ 	i = rtd->num_codecs;
+ 
+ codec_dai_err:
+-	while (--i >= 0) {
+-		codec_dai = rtd->codec_dais[i];
++	for_each_rtd_codec_dai_reverse(rtd, i, codec_dai) {
+ 		if (codec_dai->driver->ops->shutdown)
+ 			codec_dai->driver->ops->shutdown(substream, codec_dai);
+ 	}
+@@ -641,9 +641,9 @@ static int soc_pcm_open(struct snd_pcm_substream *substream)
+ 		pm_runtime_put_autosuspend(component->dev);
+ 	}
+ 
+-	for (i = 0; i < rtd->num_codecs; i++) {
+-		if (!rtd->codec_dais[i]->active)
+-			pinctrl_pm_select_sleep_state(rtd->codec_dais[i]->dev);
++	for_each_rtd_codec_dai(rtd, i, codec_dai) {
++		if (!codec_dai->active)
++			pinctrl_pm_select_sleep_state(codec_dai->dev);
+ 	}
+ 	if (!cpu_dai->active)
+ 		pinctrl_pm_select_sleep_state(cpu_dai->dev);
+@@ -701,8 +701,7 @@ static int soc_pcm_close(struct snd_pcm_substream *substream)
+ 	if (!cpu_dai->active)
+ 		cpu_dai->rate = 0;
+ 
+-	for (i = 0; i < rtd->num_codecs; i++) {
+-		codec_dai = rtd->codec_dais[i];
++	for_each_rtd_codec_dai(rtd, i, codec_dai) {
+ 		if (!codec_dai->active)
+ 			codec_dai->rate = 0;
+ 	}
+@@ -712,8 +711,7 @@ static int soc_pcm_close(struct snd_pcm_substream *substream)
+ 	if (cpu_dai->driver->ops->shutdown)
+ 		cpu_dai->driver->ops->shutdown(substream, cpu_dai);
+ 
+-	for (i = 0; i < rtd->num_codecs; i++) {
+-		codec_dai = rtd->codec_dais[i];
++	for_each_rtd_codec_dai(rtd, i, codec_dai) {
+ 		if (codec_dai->driver->ops->shutdown)
+ 			codec_dai->driver->ops->shutdown(substream, codec_dai);
+ 	}
+@@ -751,9 +749,9 @@ static int soc_pcm_close(struct snd_pcm_substream *substream)
+ 		pm_runtime_put_autosuspend(component->dev);
+ 	}
+ 
+-	for (i = 0; i < rtd->num_codecs; i++) {
+-		if (!rtd->codec_dais[i]->active)
+-			pinctrl_pm_select_sleep_state(rtd->codec_dais[i]->dev);
++	for_each_rtd_codec_dai(rtd, i, codec_dai) {
++		if (!codec_dai->active)
++			pinctrl_pm_select_sleep_state(codec_dai->dev);
+ 	}
+ 	if (!cpu_dai->active)
+ 		pinctrl_pm_select_sleep_state(cpu_dai->dev);
+@@ -801,8 +799,7 @@ static int soc_pcm_prepare(struct snd_pcm_substream *substream)
+ 		}
+ 	}
+ 
+-	for (i = 0; i < rtd->num_codecs; i++) {
+-		codec_dai = rtd->codec_dais[i];
++	for_each_rtd_codec_dai(rtd, i, codec_dai) {
+ 		if (codec_dai->driver->ops->prepare) {
+ 			ret = codec_dai->driver->ops->prepare(substream,
+ 							      codec_dai);
+@@ -834,8 +831,8 @@ static int soc_pcm_prepare(struct snd_pcm_substream *substream)
+ 	snd_soc_dapm_stream_event(rtd, substream->stream,
+ 			SND_SOC_DAPM_STREAM_START);
+ 
+-	for (i = 0; i < rtd->num_codecs; i++)
+-		snd_soc_dai_digital_mute(rtd->codec_dais[i], 0,
++	for_each_rtd_codec_dai(rtd, i, codec_dai)
++		snd_soc_dai_digital_mute(codec_dai, 0,
+ 					 substream->stream);
+ 	snd_soc_dai_digital_mute(cpu_dai, 0, substream->stream);
+ 
+@@ -920,6 +917,7 @@ static int soc_pcm_hw_params(struct snd_pcm_substream *substream,
+ 	struct snd_soc_component *component;
+ 	struct snd_soc_rtdcom_list *rtdcom;
+ 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
++	struct snd_soc_dai *codec_dai;
+ 	int i, ret = 0;
+ 
+ 	mutex_lock_nested(&rtd->pcm_mutex, rtd->pcm_subclass);
+@@ -932,8 +930,7 @@ static int soc_pcm_hw_params(struct snd_pcm_substream *substream,
+ 		}
+ 	}
+ 
+-	for (i = 0; i < rtd->num_codecs; i++) {
+-		struct snd_soc_dai *codec_dai = rtd->codec_dais[i];
++	for_each_rtd_codec_dai(rtd, i, codec_dai) {
+ 		struct snd_pcm_hw_params codec_params;
+ 
+ 		/*
+@@ -1021,8 +1018,7 @@ static int soc_pcm_hw_params(struct snd_pcm_substream *substream,
+ 	i = rtd->num_codecs;
+ 
+ codec_err:
+-	while (--i >= 0) {
+-		struct snd_soc_dai *codec_dai = rtd->codec_dais[i];
++	for_each_rtd_codec_dai_reverse(rtd, i, codec_dai) {
+ 		if (codec_dai->driver->ops->hw_free)
+ 			codec_dai->driver->ops->hw_free(substream, codec_dai);
+ 		codec_dai->rate = 0;
+@@ -1055,8 +1051,7 @@ static int soc_pcm_hw_free(struct snd_pcm_substream *substream)
+ 		cpu_dai->sample_bits = 0;
+ 	}
+ 
+-	for (i = 0; i < rtd->num_codecs; i++) {
+-		codec_dai = rtd->codec_dais[i];
++	for_each_rtd_codec_dai(rtd, i, codec_dai) {
+ 		if (codec_dai->active == 1) {
+ 			codec_dai->rate = 0;
+ 			codec_dai->channels = 0;
+@@ -1065,10 +1060,10 @@ static int soc_pcm_hw_free(struct snd_pcm_substream *substream)
+ 	}
+ 
+ 	/* apply codec digital mute */
+-	for (i = 0; i < rtd->num_codecs; i++) {
+-		if ((playback && rtd->codec_dais[i]->playback_active == 1) ||
+-		    (!playback && rtd->codec_dais[i]->capture_active == 1))
+-			snd_soc_dai_digital_mute(rtd->codec_dais[i], 1,
++	for_each_rtd_codec_dai(rtd, i, codec_dai) {
++		if ((playback && codec_dai->playback_active == 1) ||
++		    (!playback && codec_dai->capture_active == 1))
++			snd_soc_dai_digital_mute(codec_dai, 1,
+ 						 substream->stream);
+ 	}
+ 
+@@ -1080,8 +1075,7 @@ static int soc_pcm_hw_free(struct snd_pcm_substream *substream)
+ 	soc_pcm_components_hw_free(substream, NULL);
+ 
+ 	/* now free hw params for the DAIs  */
+-	for (i = 0; i < rtd->num_codecs; i++) {
+-		codec_dai = rtd->codec_dais[i];
++	for_each_rtd_codec_dai(rtd, i, codec_dai) {
+ 		if (codec_dai->driver->ops->hw_free)
+ 			codec_dai->driver->ops->hw_free(substream, codec_dai);
+ 	}
+@@ -1102,8 +1096,7 @@ static int soc_pcm_trigger(struct snd_pcm_substream *substream, int cmd)
+ 	struct snd_soc_dai *codec_dai;
+ 	int i, ret;
+ 
+-	for (i = 0; i < rtd->num_codecs; i++) {
+-		codec_dai = rtd->codec_dais[i];
++	for_each_rtd_codec_dai(rtd, i, codec_dai) {
+ 		if (codec_dai->driver->ops->trigger) {
+ 			ret = codec_dai->driver->ops->trigger(substream,
+ 							      cmd, codec_dai);
+@@ -1147,8 +1140,7 @@ static int soc_pcm_bespoke_trigger(struct snd_pcm_substream *substream,
+ 	struct snd_soc_dai *codec_dai;
+ 	int i, ret;
+ 
+-	for (i = 0; i < rtd->num_codecs; i++) {
+-		codec_dai = rtd->codec_dais[i];
++	for_each_rtd_codec_dai(rtd, i, codec_dai) {
+ 		if (codec_dai->driver->ops->bespoke_trigger) {
+ 			ret = codec_dai->driver->ops->bespoke_trigger(substream,
+ 								cmd, codec_dai);
+@@ -1202,8 +1194,7 @@ static snd_pcm_uframes_t soc_pcm_pointer(struct snd_pcm_substream *substream)
+ 	if (cpu_dai->driver->ops->delay)
+ 		delay += cpu_dai->driver->ops->delay(substream, cpu_dai);
+ 
+-	for (i = 0; i < rtd->num_codecs; i++) {
+-		codec_dai = rtd->codec_dais[i];
++	for_each_rtd_codec_dai(rtd, i, codec_dai) {
+ 		if (codec_dai->driver->ops->delay)
+ 			codec_delay = max(codec_delay,
+ 					codec_dai->driver->ops->delay(substream,
+@@ -1391,6 +1382,7 @@ static bool dpcm_end_walk_at_be(struct snd_soc_dapm_widget *widget,
+ {
+ 	struct snd_soc_card *card = widget->dapm->card;
+ 	struct snd_soc_pcm_runtime *rtd;
++	struct snd_soc_dai *dai;
+ 	int i;
+ 
+ 	if (dir == SND_SOC_DAPM_DIR_OUT) {
+@@ -1401,8 +1393,7 @@ static bool dpcm_end_walk_at_be(struct snd_soc_dapm_widget *widget,
+ 			if (rtd->cpu_dai->playback_widget == widget)
+ 				return true;
+ 
+-			for (i = 0; i < rtd->num_codecs; ++i) {
+-				struct snd_soc_dai *dai = rtd->codec_dais[i];
++			for_each_rtd_codec_dai(rtd, i, dai) {
+ 				if (dai->playback_widget == widget)
+ 					return true;
+ 			}
+@@ -1415,8 +1406,7 @@ static bool dpcm_end_walk_at_be(struct snd_soc_dapm_widget *widget,
+ 			if (rtd->cpu_dai->capture_widget == widget)
+ 				return true;
+ 
+-			for (i = 0; i < rtd->num_codecs; ++i) {
+-				struct snd_soc_dai *dai = rtd->codec_dais[i];
++			for_each_rtd_codec_dai(rtd, i, dai) {
+ 				if (dai->capture_widget == widget)
+ 					return true;
+ 			}
+@@ -1910,6 +1900,7 @@ static int dpcm_apply_symmetry(struct snd_pcm_substream *fe_substream,
+ 		struct snd_pcm_substream *be_substream =
+ 			snd_soc_dpcm_get_substream(be, stream);
+ 		struct snd_soc_pcm_runtime *rtd = be_substream->private_data;
++		struct snd_soc_dai *codec_dai;
+ 		int i;
+ 
+ 		if (rtd->dai_link->be_hw_params_fixup)
+@@ -1926,10 +1917,10 @@ static int dpcm_apply_symmetry(struct snd_pcm_substream *fe_substream,
+ 				return err;
+ 		}
+ 
+-		for (i = 0; i < rtd->num_codecs; i++) {
+-			if (rtd->codec_dais[i]->active) {
++		for_each_rtd_codec_dai(rtd, i, codec_dai) {
++			if (codec_dai->active) {
+ 				err = soc_pcm_apply_symmetry(fe_substream,
+-							     rtd->codec_dais[i]);
++							     codec_dai);
+ 				if (err < 0)
+ 					return err;
+ 			}
+@@ -3045,8 +3036,7 @@ int soc_new_pcm(struct snd_soc_pcm_runtime *rtd, int num)
+ 		playback = rtd->dai_link->dpcm_playback;
+ 		capture = rtd->dai_link->dpcm_capture;
+ 	} else {
+-		for (i = 0; i < rtd->num_codecs; i++) {
+-			codec_dai = rtd->codec_dais[i];
++		for_each_rtd_codec_dai(rtd, i, codec_dai) {
+ 			if (codec_dai->driver->playback.channels_min)
+ 				playback = 1;
+ 			if (codec_dai->driver->capture.channels_min)
 -- 
 2.7.4
