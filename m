@@ -1,68 +1,107 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 17 Oct 2019 08:05:13 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 41/57] ASoC: rsnd: fixup MIX kctrl
-	registration
+Date: Thu, 17 Oct 2019 08:05:21 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 49/57] ASoC: rsnd: src: fix compiler
+	warnings
 In-Reply-To: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1571295929-47286-42-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1571295929-47286-50-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+From: Jiada Wang <jiada_wang@mentor.com>
 
-commit 7aea8a9d71d54f449f49e20324df06341cc18395 upstream.
+commit 399706df420ea8bc8b31283a919e6475f737d0ea upstream.
 
-Renesas sound device has many IPs and many situations.
-If platform/board uses MIXer, situation will be more complex.
-To avoid duplicate DVC kctrl registration when MIXer was used,
-it had original flags.
-But it was issue when sound card was re-binded, because
-no one can't cleanup this flags then.
+compiler complains about following declarations
 
-To solve this issue, commit 9c698e8481a15237a ("ASoC: rsnd: tidyup
-registering method for rsnd_kctrl_new()") checks registered
-card->controls, because if card was re-binded, these were cleanuped
-automatically. This patch could solve re-binding issue.
-But, it start to avoid MIX kctrl.
+sound/soc/sh/rcar/src.c:174:1: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+ const static u32 bsdsr_table_pattern1[] = {
+ ^~~~~
+sound/soc/sh/rcar/src.c:183:1: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+ const static u32 bsdsr_table_pattern2[] = {
+ ^~~~~
+sound/soc/sh/rcar/src.c:192:1: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+ const static u32 bsisr_table[] = {
+ ^~~~~
+sound/soc/sh/rcar/src.c:201:1: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+ const static u32 chan288888[] = {
+ ^~~~~
+sound/soc/sh/rcar/src.c:210:1: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+ const static u32 chan244888[] = {
+ ^~~~~
+sound/soc/sh/rcar/src.c:219:1: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+ const static u32 chan222222[] = {
+ ^~~~~
 
-To solve these issues, we need below.
-To avoid card re-binding issue: check registered card->controls
-To avoid duplicate DVC registration: check registered rsnd_kctrl_cfg
-To allow multiple MIX registration: check registered rsnd_kctrl_cfg
-This patch do it.
+This patch moves the 'static' keyword to the front of the
+declaration to fix the compiler warnings
 
-Fixes: 9c698e8481a15237a ("ASoC: rsnd: tidyup registering method for rsnd_kctrl_new()")
-Reported-by: Jiada Wang <jiada_wang@mentor.com>
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Tested-By: Jiada Wang <jiada_wang@mentor.com>
+Fixes: linux-next commit 7674bec4fc09 ("ASoC: rsnd: update BSDSR/BSDISR handling")
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- sound/soc/sh/rcar/core.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ sound/soc/sh/rcar/src.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
-index c0b7d85..5e044ee 100644
---- a/sound/soc/sh/rcar/core.c
-+++ b/sound/soc/sh/rcar/core.c
-@@ -1520,14 +1520,14 @@ int rsnd_kctrl_new(struct rsnd_mod *mod,
- 	int ret;
+diff --git a/sound/soc/sh/rcar/src.c b/sound/soc/sh/rcar/src.c
+index 45096a6..585ffba 100644
+--- a/sound/soc/sh/rcar/src.c
++++ b/sound/soc/sh/rcar/src.c
+@@ -134,7 +134,7 @@ unsigned int rsnd_src_get_rate(struct rsnd_priv *priv,
+ 	return rate;
+ }
  
- 	/*
--	 * 1) Avoid duplicate register (ex. MIXer case)
--	 * 2) re-register if card was rebinded
-+	 * 1) Avoid duplicate register for DVC with MIX case
-+	 * 2) Allow duplicate register for MIX
-+	 * 3) re-register if card was rebinded
- 	 */
- 	list_for_each_entry(kctrl, &card->controls, list) {
- 		struct rsnd_kctrl_cfg *c = kctrl->private_data;
+-const static u32 bsdsr_table_pattern1[] = {
++static const u32 bsdsr_table_pattern1[] = {
+ 	0x01800000, /* 6 - 1/6 */
+ 	0x01000000, /* 6 - 1/4 */
+ 	0x00c00000, /* 6 - 1/3 */
+@@ -143,7 +143,7 @@ const static u32 bsdsr_table_pattern1[] = {
+ 	0x00400000, /* 6 - 1   */
+ };
  
--		if (strcmp(kctrl->id.name, name) == 0 &&
--		    c->mod == mod)
-+		if (c == cfg)
- 			return 0;
- 	}
+-const static u32 bsdsr_table_pattern2[] = {
++static const u32 bsdsr_table_pattern2[] = {
+ 	0x02400000, /* 6 - 1/6 */
+ 	0x01800000, /* 6 - 1/4 */
+ 	0x01200000, /* 6 - 1/3 */
+@@ -152,7 +152,7 @@ const static u32 bsdsr_table_pattern2[] = {
+ 	0x00600000, /* 6 - 1   */
+ };
  
+-const static u32 bsisr_table[] = {
++static const u32 bsisr_table[] = {
+ 	0x00100060, /* 6 - 1/6 */
+ 	0x00100040, /* 6 - 1/4 */
+ 	0x00100030, /* 6 - 1/3 */
+@@ -161,7 +161,7 @@ const static u32 bsisr_table[] = {
+ 	0x00100020, /* 6 - 1   */
+ };
+ 
+-const static u32 chan288888[] = {
++static const u32 chan288888[] = {
+ 	0x00000006, /* 1 to 2 */
+ 	0x000001fe, /* 1 to 8 */
+ 	0x000001fe, /* 1 to 8 */
+@@ -170,7 +170,7 @@ const static u32 chan288888[] = {
+ 	0x000001fe, /* 1 to 8 */
+ };
+ 
+-const static u32 chan244888[] = {
++static const u32 chan244888[] = {
+ 	0x00000006, /* 1 to 2 */
+ 	0x0000001e, /* 1 to 4 */
+ 	0x0000001e, /* 1 to 4 */
+@@ -179,7 +179,7 @@ const static u32 chan244888[] = {
+ 	0x000001fe, /* 1 to 8 */
+ };
+ 
+-const static u32 chan222222[] = {
++static const u32 chan222222[] = {
+ 	0x00000006, /* 1 to 2 */
+ 	0x00000006, /* 1 to 2 */
+ 	0x00000006, /* 1 to 2 */
 -- 
 2.7.4
