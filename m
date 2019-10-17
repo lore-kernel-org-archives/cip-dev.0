@@ -1,111 +1,61 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 17 Oct 2019 08:04:58 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 26/57] ASoC: rsnd: rename
-	rsnd_runtime_is_ssi_xxx()
+Date: Thu, 17 Oct 2019 08:05:08 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 36/57] ASoC: rsnd: indicates Channel
+	and Mode for debug
 In-Reply-To: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1571295929-47286-27-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1571295929-47286-37-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-commit a607280293b4b804fa080c75412b256ec37ce04c upstream.
+commit 5d9bb5554c1dadb141eda9afc06dea350e277b18 upstream.
 
-Current rsnd driver has rsnd_runtime_is_ssi_xxx() functions,
-but it is not only related to SSI, thus, it is misunderstandable.
-This patch renames it.
+For TDM debug purpose, indicating Channel and Mode is very
+useful. This patch indicate it if it has #define DEBUG
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- sound/soc/sh/rcar/core.c | 6 +++---
- sound/soc/sh/rcar/rsnd.h | 4 ++--
- sound/soc/sh/rcar/ssi.c  | 4 ++--
- sound/soc/sh/rcar/ssiu.c | 2 +-
- 4 files changed, 8 insertions(+), 8 deletions(-)
+ sound/soc/sh/rcar/ssi.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
-index 6023fb3..f93644e 100644
---- a/sound/soc/sh/rcar/core.c
-+++ b/sound/soc/sh/rcar/core.c
-@@ -287,7 +287,7 @@ int rsnd_runtime_channel_for_ssi_with_params(struct rsnd_dai_stream *io,
- 		rsnd_runtime_channel_original_with_params(io, params);
- 
- 	/* Use Multi SSI */
--	if (rsnd_runtime_is_ssi_multi(io))
-+	if (rsnd_runtime_is_multi_ssi(io))
- 		chan /= rsnd_rdai_ssi_lane_get(rdai);
- 
- 	/* TDM Extend Mode needs 8ch */
-@@ -297,7 +297,7 @@ int rsnd_runtime_channel_for_ssi_with_params(struct rsnd_dai_stream *io,
- 	return chan;
- }
- 
--int rsnd_runtime_is_ssi_multi(struct rsnd_dai_stream *io)
-+int rsnd_runtime_is_multi_ssi(struct rsnd_dai_stream *io)
- {
- 	struct rsnd_dai *rdai = rsnd_io_to_rdai(io);
- 	int lane = rsnd_rdai_ssi_lane_get(rdai);
-@@ -308,7 +308,7 @@ int rsnd_runtime_is_ssi_multi(struct rsnd_dai_stream *io)
- 	return (chan > 2) && (lane > 1);
- }
- 
--int rsnd_runtime_is_ssi_tdm(struct rsnd_dai_stream *io)
-+int rsnd_runtime_is_tdm(struct rsnd_dai_stream *io)
- {
- 	return rsnd_runtime_channel_for_ssi(io) >= 6;
- }
-diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
-index 28bd90a..4b547c6 100644
---- a/sound/soc/sh/rcar/rsnd.h
-+++ b/sound/soc/sh/rcar/rsnd.h
-@@ -431,8 +431,8 @@ int rsnd_runtime_channel_after_ctu_with_params(struct rsnd_dai_stream *io,
- 	rsnd_runtime_channel_for_ssi_with_params(io, NULL)
- int rsnd_runtime_channel_for_ssi_with_params(struct rsnd_dai_stream *io,
- 				 struct snd_pcm_hw_params *params);
--int rsnd_runtime_is_ssi_multi(struct rsnd_dai_stream *io);
--int rsnd_runtime_is_ssi_tdm(struct rsnd_dai_stream *io);
-+int rsnd_runtime_is_multi_ssi(struct rsnd_dai_stream *io);
-+int rsnd_runtime_is_tdm(struct rsnd_dai_stream *io);
- 
- /*
-  * DT
 diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
-index 65cd629..88bdbb9 100644
+index 8eebcf6..f5afab6 100644
 --- a/sound/soc/sh/rcar/ssi.c
 +++ b/sound/soc/sh/rcar/ssi.c
-@@ -223,7 +223,7 @@ static u32 rsnd_ssi_run_mods(struct rsnd_dai_stream *io)
+@@ -329,7 +329,8 @@ static int rsnd_ssi_master_clk_start(struct rsnd_mod *mod,
+ 	ssi->rate = rate;
+ 	ssi->chan = chan;
  
- u32 rsnd_ssi_multi_slaves_runtime(struct rsnd_dai_stream *io)
- {
--	if (rsnd_runtime_is_ssi_multi(io))
-+	if (rsnd_runtime_is_multi_ssi(io))
- 		return rsnd_ssi_multi_slaves(io);
+-	dev_dbg(dev, "%s outputs %u Hz\n", rsnd_mod_name(mod), rate);
++	dev_dbg(dev, "%s outputs %d chan %u Hz\n",
++		rsnd_mod_name(mod), chan, rate);
  
  	return 0;
-@@ -383,7 +383,7 @@ static void rsnd_ssi_config_init(struct rsnd_mod *mod,
- 	u32 wsr		= ssi->wsr;
- 	int is_tdm;
+ }
+@@ -360,6 +361,8 @@ static void rsnd_ssi_config_init(struct rsnd_mod *mod,
+ 				struct rsnd_dai_stream *io)
+ {
+ 	struct rsnd_dai *rdai = rsnd_io_to_rdai(io);
++	struct rsnd_priv *priv = rsnd_rdai_to_priv(rdai);
++	struct device *dev = rsnd_priv_to_dev(priv);
+ 	struct snd_pcm_runtime *runtime = rsnd_io_to_runtime(io);
+ 	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
+ 	u32 cr_own	= ssi->cr_own;
+@@ -371,6 +374,11 @@ static void rsnd_ssi_config_init(struct rsnd_mod *mod,
+ 	is_tdm		= rsnd_runtime_is_tdm(io);
+ 	is_tdm_split	= rsnd_runtime_is_tdm_split(io);
  
--	is_tdm = rsnd_runtime_is_ssi_tdm(io);
-+	is_tdm = rsnd_runtime_is_tdm(io);
- 
++	if (is_tdm)
++		dev_dbg(dev, "TDM mode\n");
++	if (is_tdm_split)
++		dev_dbg(dev, "TDM Split mode\n");
++
  	cr_own |= FORCE | rsnd_rdai_width_to_swl(rdai);
  
-diff --git a/sound/soc/sh/rcar/ssiu.c b/sound/soc/sh/rcar/ssiu.c
-index ebcb826..645340e 100644
---- a/sound/soc/sh/rcar/ssiu.c
-+++ b/sound/soc/sh/rcar/ssiu.c
-@@ -145,7 +145,7 @@ static int rsnd_ssiu_init_gen2(struct rsnd_mod *mod,
- 
- 	ssiu->usrcnt++;
- 
--	if (rsnd_runtime_is_ssi_tdm(io)) {
-+	if (rsnd_runtime_is_tdm(io)) {
- 		/*
- 		 * TDM Extend Mode
- 		 * see
+ 	if (rdai->bit_clk_inv)
 -- 
 2.7.4
