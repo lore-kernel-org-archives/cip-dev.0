@@ -1,53 +1,132 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 17 Oct 2019 08:05:26 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 54/57] ASoC: rsnd: add missing pin
-	sharing with SSI9
+Date: Thu, 17 Oct 2019 08:05:27 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 55/57] ASoC: rsnd: Support hw_free()
+	callback at DAI level
 In-Reply-To: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1571295929-47286-55-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1571295929-47286-56-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+From: Timo Wischer <twischer@de.adit-jv.com>
 
-commit 526a6d45b013d45fdddd420860c69fb29fed3d62 upstream.
+commit 859fd6cbf1fb32b5428c26f837215c085b8a822e upstream.
 
-When SSI9 is sharing pin with SSI0, we need to care about it,
-but is missing. This patch fixup it.
+This patch provides the needed infrastructure to support calling hw_free()
+at the DAI level. This is for example required to free resources allocated
+in hw_params() callback.
 
-Reported-by: Hien Dang <hien.dang.eb@renesas.com>
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Tested-by: Chaoliang Qin <chaoliang.qin.jg@renesas.com>
+The modification of __rsnd_mod_add_hw_params does not have any side
+effects because rsnd_mod_ops::hw_params callback is not used by anyone
+until now.
+
+Signed-off-by: Timo Wischer <twischer@de.adit-jv.com>
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+Link: https://lore.kernel.org/r/20190722072403.11008-2-jiada_wang at mentor.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- sound/soc/sh/rcar/adg.c | 1 +
- sound/soc/sh/rcar/ssi.c | 1 +
- 2 files changed, 2 insertions(+)
+ sound/soc/sh/rcar/core.c | 16 +++++++++++++++-
+ sound/soc/sh/rcar/rsnd.h | 12 +++++++++---
+ 2 files changed, 24 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/sh/rcar/adg.c b/sound/soc/sh/rcar/adg.c
-index 141d9a0..b9aacf3 100644
---- a/sound/soc/sh/rcar/adg.c
-+++ b/sound/soc/sh/rcar/adg.c
-@@ -88,6 +88,7 @@ static u32 rsnd_adg_ssi_ws_timing_gen2(struct rsnd_dai_stream *io)
- 		switch (id) {
- 		case 1:
- 		case 2:
-+		case 9:
- 			ws = 0;
- 			break;
- 		case 4:
-diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
-index 44bda21..f6a7466 100644
---- a/sound/soc/sh/rcar/ssi.c
-+++ b/sound/soc/sh/rcar/ssi.c
-@@ -740,6 +740,7 @@ static void rsnd_ssi_parent_attach(struct rsnd_mod *mod,
- 	switch (rsnd_mod_id(mod)) {
- 	case 1:
- 	case 2:
-+	case 9:
- 		rsnd_dai_connect(rsnd_ssi_mod_get(priv, 0), io, RSND_MOD_SSIP);
- 		break;
- 	case 4:
+diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
+index 0b90cd8..a4fcacb 100644
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -1415,6 +1415,20 @@ static int rsnd_hw_params(struct snd_pcm_substream *substream,
+ 					params_buffer_bytes(hw_params));
+ }
+ 
++static int rsnd_hw_free(struct snd_pcm_substream *substream)
++{
++	struct snd_soc_dai *dai = rsnd_substream_to_dai(substream);
++	struct rsnd_dai *rdai = rsnd_dai_to_rdai(dai);
++	struct rsnd_dai_stream *io = rsnd_rdai_to_io(rdai, substream);
++	int ret;
++
++	ret = rsnd_dai_call(hw_free, io, substream);
++	if (ret)
++		return ret;
++
++	return snd_pcm_lib_free_pages(substream);
++}
++
+ static snd_pcm_uframes_t rsnd_pointer(struct snd_pcm_substream *substream)
+ {
+ 	struct snd_soc_dai *dai = rsnd_substream_to_dai(substream);
+@@ -1430,7 +1444,7 @@ static snd_pcm_uframes_t rsnd_pointer(struct snd_pcm_substream *substream)
+ static const struct snd_pcm_ops rsnd_pcm_ops = {
+ 	.ioctl		= snd_pcm_lib_ioctl,
+ 	.hw_params	= rsnd_hw_params,
+-	.hw_free	= snd_pcm_lib_free_pages,
++	.hw_free	= rsnd_hw_free,
+ 	.pointer	= rsnd_pointer,
+ };
+ 
+diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
+index 7727add..ea6cbaa 100644
+--- a/sound/soc/sh/rcar/rsnd.h
++++ b/sound/soc/sh/rcar/rsnd.h
+@@ -327,6 +327,9 @@ struct rsnd_mod_ops {
+ 	int (*cleanup)(struct rsnd_mod *mod,
+ 		       struct rsnd_dai_stream *io,
+ 		       struct rsnd_priv *priv);
++	int (*hw_free)(struct rsnd_mod *mod,
++		       struct rsnd_dai_stream *io,
++		       struct snd_pcm_substream *substream);
+ 	u32 *(*get_status)(struct rsnd_mod *mod,
+ 			   struct rsnd_dai_stream *io,
+ 			   enum rsnd_mod_type type);
+@@ -351,12 +354,12 @@ struct rsnd_mod {
+  *
+  * B	0: init		1: quit
+  * C	0: start	1: stop
++ * D	0: hw_params	1: hw_free
+  *
+  * H is always called (see __rsnd_mod_call)
+  * H	0: probe	1: remove
+  * H	0: pcm_new
+  * H	0: fallback
+- * H	0: hw_params
+  * H	0: pointer
+  * H	0: prepare
+  * H	0: cleanup
+@@ -365,12 +368,13 @@ struct rsnd_mod {
+ #define __rsnd_mod_shift_quit		4
+ #define __rsnd_mod_shift_start		8
+ #define __rsnd_mod_shift_stop		8
++#define __rsnd_mod_shift_hw_params	12
++#define __rsnd_mod_shift_hw_free	12
+ #define __rsnd_mod_shift_probe		28 /* always called */
+ #define __rsnd_mod_shift_remove		28 /* always called */
+ #define __rsnd_mod_shift_irq		28 /* always called */
+ #define __rsnd_mod_shift_pcm_new	28 /* always called */
+ #define __rsnd_mod_shift_fallback	28 /* always called */
+-#define __rsnd_mod_shift_hw_params	28 /* always called */
+ #define __rsnd_mod_shift_pointer	28 /* always called */
+ #define __rsnd_mod_shift_prepare	28 /* always called */
+ #define __rsnd_mod_shift_cleanup	28 /* always called */
+@@ -383,10 +387,11 @@ struct rsnd_mod {
+ #define __rsnd_mod_add_quit		-1
+ #define __rsnd_mod_add_start		 1
+ #define __rsnd_mod_add_stop		-1
++#define __rsnd_mod_add_hw_params	1
++#define __rsnd_mod_add_hw_free		-1
+ #define __rsnd_mod_add_irq		0
+ #define __rsnd_mod_add_pcm_new		0
+ #define __rsnd_mod_add_fallback		0
+-#define __rsnd_mod_add_hw_params	0
+ #define __rsnd_mod_add_pointer		0
+ 
+ #define __rsnd_mod_call_probe		0
+@@ -402,6 +407,7 @@ struct rsnd_mod {
+ #define __rsnd_mod_call_fallback	0
+ #define __rsnd_mod_call_hw_params	0
+ #define __rsnd_mod_call_pointer		0
++#define __rsnd_mod_call_hw_free		1
+ 
+ #define rsnd_mod_to_priv(mod)	((mod)->priv)
+ #define rsnd_mod_power_on(mod)	clk_enable((mod)->clk)
 -- 
 2.7.4
