@@ -1,75 +1,102 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 17 Oct 2019 08:04:37 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 05/57] ASoC: rsnd: ssi: Fix issue in
-	dma data address assignment
+Date: Thu, 17 Oct 2019 08:04:38 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 06/57] ASoC: rsnd: ssi: Check runtime
+	channel number rather than hw_params
 In-Reply-To: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1571295929-47286-6-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1571295929-47286-7-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Jiada Wang <jiada_wang@mentor.com>
 
-commit 0e289012b47a2de1f029a6b61c75998e2f159dd9 upstream.
+commit 599da084e041b877ef89211dcbb4c7bd8380049d upstream.
 
-Same SSI device may be used in different dai links,
-by only having one dma struct in rsnd_ssi, after the first
-instance's dma config be initilized, the following instances
-can no longer configure dma, this causes issue, when their
-dma data address are different from the first instance.
+The number of channel handled by SSI maybe differs from the one set
+in hw_params, currently SSI checks hw_params's channel number,
+and constrains to use same channel number, when it is being
+used by multiple clients.
+
+This patch corrects to check runtime channel number rather
+than channel number set in hw_params.
 
 Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
 Signed-off-by: Timo Wischer <twischer@de.adit-jv.com>
-[Kuninori: tidyup for upstream]
+[kuninori: adjust to upstreaming]
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- sound/soc/sh/rcar/rsnd.h | 1 +
- sound/soc/sh/rcar/ssi.c  | 4 +---
- 2 files changed, 2 insertions(+), 3 deletions(-)
+ sound/soc/sh/rcar/ssi.c | 27 +++++++--------------------
+ 1 file changed, 7 insertions(+), 20 deletions(-)
 
-diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
-index d903f70..fd3aba1 100644
---- a/sound/soc/sh/rcar/rsnd.h
-+++ b/sound/soc/sh/rcar/rsnd.h
-@@ -438,6 +438,7 @@ struct rsnd_dai_stream {
- 	char name[RSND_DAI_NAME_SIZE];
- 	struct snd_pcm_substream *substream;
- 	struct rsnd_mod *mod[RSND_MOD_MAX];
-+	struct rsnd_mod *dma;
- 	struct rsnd_dai *rdai;
- 	struct device *dmac_dev; /* for IPMMU */
- 	u32 parent_ssi_status;
 diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
-index 98c5c71..acb77ae 100644
+index acb77ae..06d340a 100644
 --- a/sound/soc/sh/rcar/ssi.c
 +++ b/sound/soc/sh/rcar/ssi.c
-@@ -78,7 +78,6 @@
+@@ -307,6 +307,11 @@ static int rsnd_ssi_master_clk_start(struct rsnd_mod *mod,
+ 			return -EINVAL;
+ 		}
  
- struct rsnd_ssi {
- 	struct rsnd_mod mod;
--	struct rsnd_mod *dma;
++		if (ssi->chan != chan) {
++			dev_err(dev, "SSI parent/child should use same chan\n");
++			return -EINVAL;
++		}
++
+ 		return 0;
+ 	}
  
- 	u32 flags;
- 	u32 cr_own;
-@@ -902,7 +901,6 @@ static int rsnd_ssi_dma_probe(struct rsnd_mod *mod,
- 			      struct rsnd_dai_stream *io,
- 			      struct rsnd_priv *priv)
+@@ -334,6 +339,7 @@ static int rsnd_ssi_master_clk_start(struct rsnd_mod *mod,
+ 			SCKD | SWSD | CKDV(idx);
+ 	ssi->wsr = CONT;
+ 	ssi->rate = rate;
++	ssi->chan = chan;
+ 
+ 	dev_dbg(dev, "%s[%d] outputs %u Hz\n",
+ 		rsnd_mod_name(mod),
+@@ -359,6 +365,7 @@ static void rsnd_ssi_master_clk_stop(struct rsnd_mod *mod,
+ 
+ 	ssi->cr_clk	= 0;
+ 	ssi->rate	= 0;
++	ssi->chan	= 0;
+ 
+ 	rsnd_adg_ssi_clk_stop(mod);
+ }
+@@ -506,9 +513,7 @@ static int rsnd_ssi_hw_params(struct rsnd_mod *mod,
+ 			      struct snd_pcm_substream *substream,
+ 			      struct snd_pcm_hw_params *params)
  {
 -	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
- 	int ret;
+ 	struct rsnd_dai *rdai = rsnd_io_to_rdai(io);
+-	int chan = params_channels(params);
+ 	unsigned int fmt_width = snd_pcm_format_width(params_format(params));
  
- 	/*
-@@ -917,7 +915,7 @@ static int rsnd_ssi_dma_probe(struct rsnd_mod *mod,
- 		return ret;
+ 	if (fmt_width > rdai->chan_width) {
+@@ -519,24 +524,6 @@ static int rsnd_ssi_hw_params(struct rsnd_mod *mod,
+ 		return -EINVAL;
+ 	}
  
- 	/* SSI probe might be called many times in MUX multi path */
--	ret = rsnd_dma_attach(io, mod, &ssi->dma);
-+	ret = rsnd_dma_attach(io, mod, &io->dma);
- 
- 	return ret;
+-	/*
+-	 * snd_pcm_ops::hw_params will be called *before*
+-	 * snd_soc_dai_ops::trigger. Thus, ssi->usrcnt is 0
+-	 * in 1st call.
+-	 */
+-	if (ssi->usrcnt) {
+-		/*
+-		 * Already working.
+-		 * It will happen if SSI has parent/child connection.
+-		 * it is error if child <-> parent SSI uses
+-		 * different channels.
+-		 */
+-		if (ssi->chan != chan)
+-			return -EIO;
+-	}
+-
+-	ssi->chan = chan;
+-
+ 	return 0;
  }
+ 
 -- 
 2.7.4
