@@ -1,167 +1,326 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 17 Oct 2019 08:05:19 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 47/57] ASoC: rsnd: gen: fix SSI9
-	4/5/6/7 busif related register address
+Date: Thu, 17 Oct 2019 08:05:29 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 57/57] arm64: dts: renesas: r8a774a1:
+	Add SSIU support for sound
 In-Reply-To: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1571295929-47286-48-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1571295929-47286-58-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Jiada Wang <jiada_wang@mentor.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-commit 8af6c521cc236534093f9e744cfa004314bfe5ae upstream.
+commit a44efeaa0bbf699f7ad397f5130e2834d52f621e upstream.
 
-Currently each SSI unit 's busif mode/adinr/dalign address is
-registered by: (in busif4 case)
-RSND_GEN_M_REG(SSI_BUSIF4_MODE, 0x500, 0x80)
-RSND_GEN_M_REG(SSI_BUSIF4_ADINR,0x504, 0x80)
-RSND_GEN_M_REG(SSI_BUSIF4_DALIGN, 0x508, 0x80)
+Add SSIU support to the SoC DT as the sound driver supports
+it now, and also since the sound driver can now handle
+BUSIF0-7 via SSIU remove the no longer needed "rxu" and "txu"
+properties.
 
-But according to user manual 41.1.4 Register Configuration
-ssi9 4/5/6/7 busif mode/adinr/dalign register address
-( SSI9-[4/5/6/7]_BUSIF_[MODE/ADINR/DALIGN] )
-are out of this rule.
+Based on similar work from Kuninori Morimoto and Simon Horman in commits
+8d14bfa074db ("arm64: dts: renesas: r8a7796: add SSIU support for
+sound") and 10bd03fa896e ("arm64: dts: renesas: r8a7796: remove BUSIF0
+settings from rcar_sound,ssi").
 
-This patch registers ssi9 4/5/6/7 mode/adinr/dalign register
-as single register, and access these registers in case of
-SSI9 BUSIF 4/5/6/7.
-
-Fixes: commit 8c9d75033340 ("ASoC: rsnd: ssiu: Support BUSIF other than BUSIF0")
-Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
-Signed-off-by: Timo Wischer <twischer@de.adit-jv.com>
-Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- sound/soc/sh/rcar/gen.c  | 24 ++++++++++++++++++++++++
- sound/soc/sh/rcar/rsnd.h | 27 +++++++++++++++++++++++++++
- sound/soc/sh/rcar/ssiu.c | 24 +++++++++++-------------
- 3 files changed, 62 insertions(+), 13 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 251 +++++++++++++++++++++++++++---
+ 1 file changed, 231 insertions(+), 20 deletions(-)
 
-diff --git a/sound/soc/sh/rcar/gen.c b/sound/soc/sh/rcar/gen.c
-index 7cda601..af19010 100644
---- a/sound/soc/sh/rcar/gen.c
-+++ b/sound/soc/sh/rcar/gen.c
-@@ -255,6 +255,30 @@ static int rsnd_gen2_probe(struct rsnd_priv *priv)
- 		RSND_GEN_M_REG(SSI_MODE,		0xc,	0x80),
- 		RSND_GEN_M_REG(SSI_CTRL,		0x10,	0x80),
- 		RSND_GEN_M_REG(SSI_INT_ENABLE,		0x18,	0x80),
-+		RSND_GEN_S_REG(SSI9_BUSIF0_MODE,	0x48c),
-+		RSND_GEN_S_REG(SSI9_BUSIF0_ADINR,	0x484),
-+		RSND_GEN_S_REG(SSI9_BUSIF0_DALIGN,	0x488),
-+		RSND_GEN_S_REG(SSI9_BUSIF1_MODE,	0x4a0),
-+		RSND_GEN_S_REG(SSI9_BUSIF1_ADINR,	0x4a4),
-+		RSND_GEN_S_REG(SSI9_BUSIF1_DALIGN,	0x4a8),
-+		RSND_GEN_S_REG(SSI9_BUSIF2_MODE,	0x4c0),
-+		RSND_GEN_S_REG(SSI9_BUSIF2_ADINR,	0x4c4),
-+		RSND_GEN_S_REG(SSI9_BUSIF2_DALIGN,	0x4c8),
-+		RSND_GEN_S_REG(SSI9_BUSIF3_MODE,	0x4e0),
-+		RSND_GEN_S_REG(SSI9_BUSIF3_ADINR,	0x4e4),
-+		RSND_GEN_S_REG(SSI9_BUSIF3_DALIGN,	0x4e8),
-+		RSND_GEN_S_REG(SSI9_BUSIF4_MODE,	0xd80),
-+		RSND_GEN_S_REG(SSI9_BUSIF4_ADINR,	0xd84),
-+		RSND_GEN_S_REG(SSI9_BUSIF4_DALIGN,	0xd88),
-+		RSND_GEN_S_REG(SSI9_BUSIF5_MODE,	0xda0),
-+		RSND_GEN_S_REG(SSI9_BUSIF5_ADINR,	0xda4),
-+		RSND_GEN_S_REG(SSI9_BUSIF5_DALIGN,	0xda8),
-+		RSND_GEN_S_REG(SSI9_BUSIF6_MODE,	0xdc0),
-+		RSND_GEN_S_REG(SSI9_BUSIF6_ADINR,	0xdc4),
-+		RSND_GEN_S_REG(SSI9_BUSIF6_DALIGN,	0xdc8),
-+		RSND_GEN_S_REG(SSI9_BUSIF7_MODE,	0xde0),
-+		RSND_GEN_S_REG(SSI9_BUSIF7_ADINR,	0xde4),
-+		RSND_GEN_S_REG(SSI9_BUSIF7_DALIGN,	0xde8),
- 	};
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+index 86228e0..570093c 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+@@ -1550,56 +1550,267 @@
+ 				};
+ 			};
  
- 	static const struct rsnd_regmap_field_conf conf_scu[] = {
-diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
-index 605e4b9..90625c5 100644
---- a/sound/soc/sh/rcar/rsnd.h
-+++ b/sound/soc/sh/rcar/rsnd.h
-@@ -191,6 +191,30 @@ enum rsnd_reg {
- 	SSI_SYS_STATUS7,
- 	HDMI0_SEL,
- 	HDMI1_SEL,
-+	SSI9_BUSIF0_MODE,
-+	SSI9_BUSIF1_MODE,
-+	SSI9_BUSIF2_MODE,
-+	SSI9_BUSIF3_MODE,
-+	SSI9_BUSIF4_MODE,
-+	SSI9_BUSIF5_MODE,
-+	SSI9_BUSIF6_MODE,
-+	SSI9_BUSIF7_MODE,
-+	SSI9_BUSIF0_ADINR,
-+	SSI9_BUSIF1_ADINR,
-+	SSI9_BUSIF2_ADINR,
-+	SSI9_BUSIF3_ADINR,
-+	SSI9_BUSIF4_ADINR,
-+	SSI9_BUSIF5_ADINR,
-+	SSI9_BUSIF6_ADINR,
-+	SSI9_BUSIF7_ADINR,
-+	SSI9_BUSIF0_DALIGN,
-+	SSI9_BUSIF1_DALIGN,
-+	SSI9_BUSIF2_DALIGN,
-+	SSI9_BUSIF3_DALIGN,
-+	SSI9_BUSIF4_DALIGN,
-+	SSI9_BUSIF5_DALIGN,
-+	SSI9_BUSIF6_DALIGN,
-+	SSI9_BUSIF7_DALIGN,
- 
- 	/* SSI */
- 	SSICR,
-@@ -209,6 +233,9 @@ enum rsnd_reg {
- #define SSI_BUSIF_MODE(i)	(SSI_BUSIF0_MODE + (i))
- #define SSI_BUSIF_ADINR(i)	(SSI_BUSIF0_ADINR + (i))
- #define SSI_BUSIF_DALIGN(i)	(SSI_BUSIF0_DALIGN + (i))
-+#define SSI9_BUSIF_MODE(i)	(SSI9_BUSIF0_MODE + (i))
-+#define SSI9_BUSIF_ADINR(i)	(SSI9_BUSIF0_ADINR + (i))
-+#define SSI9_BUSIF_DALIGN(i)	(SSI9_BUSIF0_DALIGN + (i))
- #define SSI_SYS_STATUS(i)	(SSI_SYS_STATUS0 + (i))
- 
- 
-diff --git a/sound/soc/sh/rcar/ssiu.c b/sound/soc/sh/rcar/ssiu.c
-index c74991d..2347f34 100644
---- a/sound/soc/sh/rcar/ssiu.c
-+++ b/sound/soc/sh/rcar/ssiu.c
-@@ -181,28 +181,26 @@ static int rsnd_ssiu_init_gen2(struct rsnd_mod *mod,
- 	if (rsnd_ssi_use_busif(io)) {
- 		int id = rsnd_mod_id(mod);
- 		int busif = rsnd_mod_id_sub(mod);
-+		enum rsnd_reg adinr_reg, mode_reg, dalign_reg;
- 
--		/*
--		 * FIXME
--		 *
--		 * We can't support SSI9-4/5/6/7, because its address is
--		 * out of calculation rule
--		 */
- 		if ((id == 9) && (busif >= 4)) {
--			struct device *dev = rsnd_priv_to_dev(priv);
--
--			dev_err(dev, "This driver doesn't support SSI%d-%d, so far",
--				id, busif);
-+			adinr_reg = SSI9_BUSIF_ADINR(busif);
-+			mode_reg = SSI9_BUSIF_MODE(busif);
-+			dalign_reg = SSI9_BUSIF_DALIGN(busif);
-+		} else {
-+			adinr_reg = SSI_BUSIF_ADINR(busif);
-+			mode_reg = SSI_BUSIF_MODE(busif);
-+			dalign_reg = SSI_BUSIF_DALIGN(busif);
- 		}
- 
--		rsnd_mod_write(mod, SSI_BUSIF_ADINR(busif),
-+		rsnd_mod_write(mod, adinr_reg,
- 			       rsnd_get_adinr_bit(mod, io) |
- 			       (rsnd_io_is_play(io) ?
- 				rsnd_runtime_channel_after_ctu(io) :
- 				rsnd_runtime_channel_original(io)));
--		rsnd_mod_write(mod, SSI_BUSIF_MODE(busif),
-+		rsnd_mod_write(mod, mode_reg,
- 			       rsnd_get_busif_shift(io, mod) | 1);
--		rsnd_mod_write(mod, SSI_BUSIF_DALIGN(busif),
-+		rsnd_mod_write(mod, dalign_reg,
- 			       rsnd_get_dalign(mod, io));
- 	}
++			rcar_sound,ssiu {
++				ssiu00: ssiu-0 {
++					dmas = <&audma0 0x15>, <&audma1 0x16>;
++					dma-names = "rx", "tx";
++				};
++				ssiu01: ssiu-1 {
++					dmas = <&audma0 0x35>, <&audma1 0x36>;
++					dma-names = "rx", "tx";
++				};
++				ssiu02: ssiu-2 {
++					dmas = <&audma0 0x37>, <&audma1 0x38>;
++					dma-names = "rx", "tx";
++				};
++				ssiu03: ssiu-3 {
++					dmas = <&audma0 0x47>, <&audma1 0x48>;
++					dma-names = "rx", "tx";
++				};
++				ssiu04: ssiu-4 {
++					dmas = <&audma0 0x3F>, <&audma1 0x40>;
++					dma-names = "rx", "tx";
++				};
++				ssiu05: ssiu-5 {
++					dmas = <&audma0 0x43>, <&audma1 0x44>;
++					dma-names = "rx", "tx";
++				};
++				ssiu06: ssiu-6 {
++					dmas = <&audma0 0x4F>, <&audma1 0x50>;
++					dma-names = "rx", "tx";
++				};
++				ssiu07: ssiu-7 {
++					dmas = <&audma0 0x53>, <&audma1 0x54>;
++					dma-names = "rx", "tx";
++				};
++				ssiu10: ssiu-8 {
++					dmas = <&audma0 0x49>, <&audma1 0x4a>;
++					dma-names = "rx", "tx";
++				};
++				ssiu11: ssiu-9 {
++					dmas = <&audma0 0x4B>, <&audma1 0x4C>;
++					dma-names = "rx", "tx";
++				};
++				ssiu12: ssiu-10 {
++					dmas = <&audma0 0x57>, <&audma1 0x58>;
++					dma-names = "rx", "tx";
++				};
++				ssiu13: ssiu-11 {
++					dmas = <&audma0 0x59>, <&audma1 0x5A>;
++					dma-names = "rx", "tx";
++				};
++				ssiu14: ssiu-12 {
++					dmas = <&audma0 0x5F>, <&audma1 0x60>;
++					dma-names = "rx", "tx";
++				};
++				ssiu15: ssiu-13 {
++					dmas = <&audma0 0xC3>, <&audma1 0xC4>;
++					dma-names = "rx", "tx";
++				};
++				ssiu16: ssiu-14 {
++					dmas = <&audma0 0xC7>, <&audma1 0xC8>;
++					dma-names = "rx", "tx";
++				};
++				ssiu17: ssiu-15 {
++					dmas = <&audma0 0xCB>, <&audma1 0xCC>;
++					dma-names = "rx", "tx";
++				};
++				ssiu20: ssiu-16 {
++					dmas = <&audma0 0x63>, <&audma1 0x64>;
++					dma-names = "rx", "tx";
++				};
++				ssiu21: ssiu-17 {
++					dmas = <&audma0 0x67>, <&audma1 0x68>;
++					dma-names = "rx", "tx";
++				};
++				ssiu22: ssiu-18 {
++					dmas = <&audma0 0x6B>, <&audma1 0x6C>;
++					dma-names = "rx", "tx";
++				};
++				ssiu23: ssiu-19 {
++					dmas = <&audma0 0x6D>, <&audma1 0x6E>;
++					dma-names = "rx", "tx";
++				};
++				ssiu24: ssiu-20 {
++					dmas = <&audma0 0xCF>, <&audma1 0xCE>;
++					dma-names = "rx", "tx";
++				};
++				ssiu25: ssiu-21 {
++					dmas = <&audma0 0xEB>, <&audma1 0xEC>;
++					dma-names = "rx", "tx";
++				};
++				ssiu26: ssiu-22 {
++					dmas = <&audma0 0xED>, <&audma1 0xEE>;
++					dma-names = "rx", "tx";
++				};
++				ssiu27: ssiu-23 {
++					dmas = <&audma0 0xEF>, <&audma1 0xF0>;
++					dma-names = "rx", "tx";
++				};
++				ssiu30: ssiu-24 {
++					dmas = <&audma0 0x6f>, <&audma1 0x70>;
++					dma-names = "rx", "tx";
++				};
++				ssiu31: ssiu-25 {
++					dmas = <&audma0 0x21>, <&audma1 0x22>;
++					dma-names = "rx", "tx";
++				};
++				ssiu32: ssiu-26 {
++					dmas = <&audma0 0x23>, <&audma1 0x24>;
++					dma-names = "rx", "tx";
++				};
++				ssiu33: ssiu-27 {
++					dmas = <&audma0 0x25>, <&audma1 0x26>;
++					dma-names = "rx", "tx";
++				};
++				ssiu34: ssiu-28 {
++					dmas = <&audma0 0x27>, <&audma1 0x28>;
++					dma-names = "rx", "tx";
++				};
++				ssiu35: ssiu-29 {
++					dmas = <&audma0 0x29>, <&audma1 0x2A>;
++					dma-names = "rx", "tx";
++				};
++				ssiu36: ssiu-30 {
++					dmas = <&audma0 0x2B>, <&audma1 0x2C>;
++					dma-names = "rx", "tx";
++				};
++				ssiu37: ssiu-31 {
++					dmas = <&audma0 0x2D>, <&audma1 0x2E>;
++					dma-names = "rx", "tx";
++				};
++				ssiu40: ssiu-32 {
++					dmas =	<&audma0 0x71>, <&audma1 0x72>;
++					dma-names = "rx", "tx";
++				};
++				ssiu41: ssiu-33 {
++					dmas = <&audma0 0x17>, <&audma1 0x18>;
++					dma-names = "rx", "tx";
++				};
++				ssiu42: ssiu-34 {
++					dmas = <&audma0 0x19>, <&audma1 0x1A>;
++					dma-names = "rx", "tx";
++				};
++				ssiu43: ssiu-35 {
++					dmas = <&audma0 0x1B>, <&audma1 0x1C>;
++					dma-names = "rx", "tx";
++				};
++				ssiu44: ssiu-36 {
++					dmas = <&audma0 0x1D>, <&audma1 0x1E>;
++					dma-names = "rx", "tx";
++				};
++				ssiu45: ssiu-37 {
++					dmas = <&audma0 0x1F>, <&audma1 0x20>;
++					dma-names = "rx", "tx";
++				};
++				ssiu46: ssiu-38 {
++					dmas = <&audma0 0x31>, <&audma1 0x32>;
++					dma-names = "rx", "tx";
++				};
++				ssiu47: ssiu-39 {
++					dmas = <&audma0 0x33>, <&audma1 0x34>;
++					dma-names = "rx", "tx";
++				};
++				ssiu50: ssiu-40 {
++					dmas = <&audma0 0x73>, <&audma1 0x74>;
++					dma-names = "rx", "tx";
++				};
++				ssiu60: ssiu-41 {
++					dmas = <&audma0 0x75>, <&audma1 0x76>;
++					dma-names = "rx", "tx";
++				};
++				ssiu70: ssiu-42 {
++					dmas = <&audma0 0x79>, <&audma1 0x7a>;
++					dma-names = "rx", "tx";
++				};
++				ssiu80: ssiu-43 {
++					dmas = <&audma0 0x7b>, <&audma1 0x7c>;
++					dma-names = "rx", "tx";
++				};
++				ssiu90: ssiu-44 {
++					dmas = <&audma0 0x7d>, <&audma1 0x7e>;
++					dma-names = "rx", "tx";
++				};
++				ssiu91: ssiu-45 {
++					dmas = <&audma0 0x7F>, <&audma1 0x80>;
++					dma-names = "rx", "tx";
++				};
++				ssiu92: ssiu-46 {
++					dmas = <&audma0 0x81>, <&audma1 0x82>;
++					dma-names = "rx", "tx";
++				};
++				ssiu93: ssiu-47 {
++					dmas = <&audma0 0x83>, <&audma1 0x84>;
++					dma-names = "rx", "tx";
++				};
++				ssiu94: ssiu-48 {
++					dmas = <&audma0 0xA3>, <&audma1 0xA4>;
++					dma-names = "rx", "tx";
++				};
++				ssiu95: ssiu-49 {
++					dmas = <&audma0 0xA5>, <&audma1 0xA6>;
++					dma-names = "rx", "tx";
++				};
++				ssiu96: ssiu-50 {
++					dmas = <&audma0 0xA7>, <&audma1 0xA8>;
++					dma-names = "rx", "tx";
++				};
++				ssiu97: ssiu-51 {
++					dmas = <&audma0 0xA9>, <&audma1 0xAA>;
++					dma-names = "rx", "tx";
++				};
++			};
++
+ 			rcar_sound,ssi {
+ 				ssi0: ssi-0 {
+ 					interrupts = <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>;
+-					dmas = <&audma0 0x01>, <&audma1 0x02>, <&audma0 0x15>, <&audma1 0x16>;
+-					dma-names = "rx", "tx", "rxu", "txu";
++					dmas = <&audma0 0x01>, <&audma1 0x02>;
++					dma-names = "rx", "tx";
+ 				};
+ 				ssi1: ssi-1 {
+ 					interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
+-					dmas = <&audma0 0x03>, <&audma1 0x04>, <&audma0 0x49>, <&audma1 0x4a>;
+-					dma-names = "rx", "tx", "rxu", "txu";
++					dmas = <&audma0 0x03>, <&audma1 0x04>;
++					dma-names = "rx", "tx";
+ 				};
+ 				ssi2: ssi-2 {
+ 					interrupts = <GIC_SPI 372 IRQ_TYPE_LEVEL_HIGH>;
+-					dmas = <&audma0 0x05>, <&audma1 0x06>, <&audma0 0x63>, <&audma1 0x64>;
+-					dma-names = "rx", "tx", "rxu", "txu";
++					dmas = <&audma0 0x05>, <&audma1 0x06>;
++					dma-names = "rx", "tx";
+ 				};
+ 				ssi3: ssi-3 {
+ 					interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
+-					dmas = <&audma0 0x07>, <&audma1 0x08>, <&audma0 0x6f>, <&audma1 0x70>;
+-					dma-names = "rx", "tx", "rxu", "txu";
++					dmas = <&audma0 0x07>, <&audma1 0x08>;
++					dma-names = "rx", "tx";
+ 				};
+ 				ssi4: ssi-4 {
+ 					interrupts = <GIC_SPI 374 IRQ_TYPE_LEVEL_HIGH>;
+-					dmas = <&audma0 0x09>, <&audma1 0x0a>, <&audma0 0x71>, <&audma1 0x72>;
+-					dma-names = "rx", "tx", "rxu", "txu";
++					dmas = <&audma0 0x09>, <&audma1 0x0a>;
++					dma-names = "rx", "tx";
+ 				};
+ 				ssi5: ssi-5 {
+ 					interrupts = <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>;
+-					dmas = <&audma0 0x0b>, <&audma1 0x0c>, <&audma0 0x73>, <&audma1 0x74>;
+-					dma-names = "rx", "tx", "rxu", "txu";
++					dmas = <&audma0 0x0b>, <&audma1 0x0c>;
++					dma-names = "rx", "tx";
+ 				};
+ 				ssi6: ssi-6 {
+ 					interrupts = <GIC_SPI 376 IRQ_TYPE_LEVEL_HIGH>;
+-					dmas = <&audma0 0x0d>, <&audma1 0x0e>, <&audma0 0x75>, <&audma1 0x76>;
+-					dma-names = "rx", "tx", "rxu", "txu";
++					dmas = <&audma0 0x0d>, <&audma1 0x0e>;
++					dma-names = "rx", "tx";
+ 				};
+ 				ssi7: ssi-7 {
+ 					interrupts = <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>;
+-					dmas = <&audma0 0x0f>, <&audma1 0x10>, <&audma0 0x79>, <&audma1 0x7a>;
+-					dma-names = "rx", "tx", "rxu", "txu";
++					dmas = <&audma0 0x0f>, <&audma1 0x10>;
++					dma-names = "rx", "tx";
+ 				};
+ 				ssi8: ssi-8 {
+ 					interrupts = <GIC_SPI 378 IRQ_TYPE_LEVEL_HIGH>;
+-					dmas = <&audma0 0x11>, <&audma1 0x12>, <&audma0 0x7b>, <&audma1 0x7c>;
+-					dma-names = "rx", "tx", "rxu", "txu";
++					dmas = <&audma0 0x11>, <&audma1 0x12>;
++					dma-names = "rx", "tx";
+ 				};
+ 				ssi9: ssi-9 {
+ 					interrupts = <GIC_SPI 379 IRQ_TYPE_LEVEL_HIGH>;
+-					dmas = <&audma0 0x13>, <&audma1 0x14>, <&audma0 0x7d>, <&audma1 0x7e>;
+-					dma-names = "rx", "tx", "rxu", "txu";
++					dmas = <&audma0 0x13>, <&audma1 0x14>;
++					dma-names = "rx", "tx";
+ 				};
+ 			};
  
 -- 
 2.7.4
