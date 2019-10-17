@@ -1,107 +1,42 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 17 Oct 2019 08:04:50 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 18/57] ASoC: rsnd: fixup SSI clock
-	during suspend/resume modes
+Date: Thu, 17 Oct 2019 08:04:51 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 19/57] ASoC: rsnd: use 32bit TDM width
+	as default
 In-Reply-To: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1571295929-47286-19-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1571295929-47286-20-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Dmytro Prokopchuk <dmytro.prokopchuk@globallogic.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-commit 624d1a7cd8991e33dad96ab4629a52c412540e65 upstream.
+commit 82ab7e9a4d3fcec27f745be04063e17da1881dda upstream.
 
-Prepare <-> Cleanup functions pair has balanced calls.
-But in case of suspend mode no call to rsnd_soc_dai_shutdown()
-function, so cleanup isn't called. OTOH during resume mode
-function rsnd_soc_dai_prepare() is called, but calling
-rsnd_ssi_prepare() is skipped (rsnd_status_update() returns zero,
-bacause was not cleanup before).
-We need to call rsnd_ssi_prepare(), because it enables SSI clocks
-by calling rsnd_ssi_master_clk_start().
+commit fb2815f44a9e ("ASoC: rsnd: add support for 16/24 bit slot widths")
+added TDM width check, and return error if it was not 16/24/32 bit.
+But it is too strict. This patch uses 32bit same as default.
 
-This patch allows to call prepare/cleanup functions always.
-
-Signed-off-by: Dmytro Prokopchuk <dmytro.prokopchuk@globallogic.com>
-Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-[kuninori: adjusted to upstream]
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- sound/soc/sh/rcar/dma.c  |  7 +++----
- sound/soc/sh/rcar/rsnd.h | 14 +++++++-------
- 2 files changed, 10 insertions(+), 11 deletions(-)
+ sound/soc/sh/rcar/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/sh/rcar/dma.c b/sound/soc/sh/rcar/dma.c
-index 0bbc4b0..6d19475 100644
---- a/sound/soc/sh/rcar/dma.c
-+++ b/sound/soc/sh/rcar/dma.c
-@@ -134,10 +134,9 @@ static int rsnd_dmaen_prepare(struct rsnd_mod *mod,
- 	struct rsnd_dmaen *dmaen = rsnd_dma_to_dmaen(dma);
- 	struct device *dev = rsnd_priv_to_dev(priv);
+diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
+index fd41da7..4a2a48e 100644
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -738,8 +738,8 @@ static int rsnd_soc_set_dai_tdm_slot(struct snd_soc_dai *dai,
+ 	case 32:
+ 		break;
+ 	default:
+-		dev_err(dev, "unsupported slot width value: %d\n", slot_width);
+-		return -EINVAL;
++		/* use default */
++		slot_width = 32;
+ 	}
  
--	if (dmaen->chan) {
--		dev_err(dev, "it already has dma channel\n");
--		return -EIO;
--	}
-+	/* maybe suspended */
-+	if (dmaen->chan)
-+		return 0;
- 
- 	/*
- 	 * DMAEngine request uses mutex lock.
-diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
-index e857311..4464d1d 100644
---- a/sound/soc/sh/rcar/rsnd.h
-+++ b/sound/soc/sh/rcar/rsnd.h
-@@ -318,9 +318,8 @@ struct rsnd_mod {
- /*
-  * status
-  *
-- * 0xH0000CBA
-+ * 0xH0000CB0
-  *
-- * A	0: prepare	1: cleanup
-  * B	0: init		1: quit
-  * C	0: start	1: stop
-  *
-@@ -331,9 +330,8 @@ struct rsnd_mod {
-  * H	0: hw_params
-  * H	0: pointer
-  * H	0: prepare
-+ * H	0: cleanup
-  */
--#define __rsnd_mod_shift_prepare	0
--#define __rsnd_mod_shift_cleanup	0
- #define __rsnd_mod_shift_init		4
- #define __rsnd_mod_shift_quit		4
- #define __rsnd_mod_shift_start		8
-@@ -345,11 +343,13 @@ struct rsnd_mod {
- #define __rsnd_mod_shift_fallback	28 /* always called */
- #define __rsnd_mod_shift_hw_params	28 /* always called */
- #define __rsnd_mod_shift_pointer	28 /* always called */
-+#define __rsnd_mod_shift_prepare	28 /* always called */
-+#define __rsnd_mod_shift_cleanup	28 /* always called */
- 
- #define __rsnd_mod_add_probe		0
- #define __rsnd_mod_add_remove		0
--#define __rsnd_mod_add_prepare		 1
--#define __rsnd_mod_add_cleanup		-1
-+#define __rsnd_mod_add_prepare		0
-+#define __rsnd_mod_add_cleanup		0
- #define __rsnd_mod_add_init		 1
- #define __rsnd_mod_add_quit		-1
- #define __rsnd_mod_add_start		 1
-@@ -363,7 +363,7 @@ struct rsnd_mod {
- #define __rsnd_mod_call_probe		0
- #define __rsnd_mod_call_remove		0
- #define __rsnd_mod_call_prepare		0
--#define __rsnd_mod_call_cleanup		1
-+#define __rsnd_mod_call_cleanup		0
- #define __rsnd_mod_call_init		0
- #define __rsnd_mod_call_quit		1
- #define __rsnd_mod_call_start		0
+ 	switch (slots) {
 -- 
 2.7.4
