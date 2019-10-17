@@ -1,321 +1,151 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 17 Oct 2019 08:04:56 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 24/57] ASoC: rsnd: rsnd_mod_name()
-	handles both name and ID
+Date: Thu, 17 Oct 2019 08:04:47 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 15/57] ASoC: convert
+	for_each_rtd_codec_dai() for missing part
 In-Reply-To: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1571295929-47286-25-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1571295929-47286-16-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-commit c0ea089dbad47a41ae30ad290766d7a6571c9802 upstream.
+commit 7afecb3073e357ebfe4087e4ab8bb493c32bb652 upstream.
 
-Current rsnd driver is using "%s[%d]" for mod name and ID,
-but, this ID portion might confusable.
-For example currently, CTU ID is 0 to 7, but using 00 to 13
-(= 00, 01, 02, 03, 10, 11, 12, 13) is very best matching to datasheet.
-
-In the future, we will support BUSIFn, but it will be more complicated
-numbering. To avoid future confusable code, this patch modify
-rsnd_mod_name() to return understandable name.
-
-To avoid using pointless memory, it uses static char and snprintf,
-thus, rsnd_mod_name() user should use it immediately, and shouldn't keep
-its pointer.
+commit 0b7990e38971 ("ASoC: add for_each_rtd_codec_dai() macro")
+added for_each_rtd_codec_dai(), but it didn't convert few loop
+which is not using "rtd". This patch fixup it.
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- sound/soc/sh/rcar/core.c | 41 ++++++++++++++++++++++++++++++++---------
- sound/soc/sh/rcar/dma.c  | 21 ++++++++-------------
- sound/soc/sh/rcar/gen.c  | 12 ++++++------
- sound/soc/sh/rcar/rsnd.h |  2 +-
- sound/soc/sh/rcar/src.c  |  5 ++---
- sound/soc/sh/rcar/ssi.c  | 23 ++++++++---------------
- 6 files changed, 57 insertions(+), 47 deletions(-)
+ sound/soc/soc-pcm.c | 31 +++++++++++++++----------------
+ 1 file changed, 15 insertions(+), 16 deletions(-)
 
-diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
-index 93848f4..6023fb3 100644
---- a/sound/soc/sh/rcar/core.c
-+++ b/sound/soc/sh/rcar/core.c
-@@ -123,8 +123,8 @@ void rsnd_mod_make_sure(struct rsnd_mod *mod, enum rsnd_mod_type type)
- 		struct rsnd_priv *priv = rsnd_mod_to_priv(mod);
- 		struct device *dev = rsnd_priv_to_dev(priv);
+diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+index 9a64f6d..06eedb5 100644
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -1304,6 +1304,7 @@ static struct snd_soc_pcm_runtime *dpcm_get_be(struct snd_soc_card *card,
+ 		struct snd_soc_dapm_widget *widget, int stream)
+ {
+ 	struct snd_soc_pcm_runtime *be;
++	struct snd_soc_dai *dai;
+ 	int i;
  
--		dev_warn(dev, "%s[%d] is not your expected module\n",
--			 rsnd_mod_name(mod), rsnd_mod_id(mod));
-+		dev_warn(dev, "%s is not your expected module\n",
-+			 rsnd_mod_name(mod));
- 	}
- }
+ 	dev_dbg(card->dev, "ASoC: find BE for widget %s\n", widget->name);
+@@ -1321,8 +1322,7 @@ static struct snd_soc_pcm_runtime *dpcm_get_be(struct snd_soc_card *card,
+ 			if (be->cpu_dai->playback_widget == widget)
+ 				return be;
  
-@@ -137,6 +137,30 @@ struct dma_chan *rsnd_mod_dma_req(struct rsnd_dai_stream *io,
- 	return mod->ops->dma_req(io, mod);
- }
+-			for (i = 0; i < be->num_codecs; i++) {
+-				struct snd_soc_dai *dai = be->codec_dais[i];
++			for_each_rtd_codec_dai(be, i, dai) {
+ 				if (dai->playback_widget == widget)
+ 					return be;
+ 			}
+@@ -1341,8 +1341,7 @@ static struct snd_soc_pcm_runtime *dpcm_get_be(struct snd_soc_card *card,
+ 			if (be->cpu_dai->capture_widget == widget)
+ 				return be;
  
-+#define MOD_NAME_SIZE 16
-+char *rsnd_mod_name(struct rsnd_mod *mod)
-+{
-+	static char name[MOD_NAME_SIZE];
-+
-+	/*
-+	 * Let's use same char to avoid pointlessness memory
-+	 * Thus, rsnd_mod_name() should be used immediately
-+	 * Don't keep pointer
-+	 */
-+	if ((mod)->ops->id_sub) {
-+		snprintf(name, MOD_NAME_SIZE, "%s[%d%d]",
-+			 mod->ops->name,
-+			 rsnd_mod_id(mod),
-+			 rsnd_mod_id_sub(mod));
-+	} else {
-+		snprintf(name, MOD_NAME_SIZE, "%s[%d]",
-+			 mod->ops->name,
-+			 rsnd_mod_id(mod));
-+	}
-+
-+	return name;
-+}
-+
- u32 *rsnd_mod_get_status(struct rsnd_mod *mod,
- 			 struct rsnd_dai_stream *io,
- 			 enum rsnd_mod_type type)
-@@ -494,15 +518,14 @@ static int rsnd_status_update(u32 *status,
- 						__rsnd_mod_shift_##fn,	\
- 						__rsnd_mod_add_##fn,	\
- 						__rsnd_mod_call_##fn);	\
--		rsnd_dbg_dai_call(dev, "%s[%d]\t0x%08x %s\n",		\
--			rsnd_mod_name(mod), rsnd_mod_id(mod), *status,	\
-+		rsnd_dbg_dai_call(dev, "%s\t0x%08x %s\n",		\
-+			rsnd_mod_name(mod), *status,	\
- 			(func_call && (mod)->ops->fn) ? #fn : "");	\
- 		if (func_call && (mod)->ops->fn)			\
- 			tmp = (mod)->ops->fn(mod, io, param);		\
- 		if (tmp && (tmp != -EPROBE_DEFER))			\
--			dev_err(dev, "%s[%d] : %s error %d\n",		\
--				rsnd_mod_name(mod), rsnd_mod_id(mod),	\
--						     #fn, tmp);		\
-+			dev_err(dev, "%s : %s error %d\n",		\
-+				rsnd_mod_name(mod), #fn, tmp);		\
- 		ret |= tmp;						\
- 	}								\
- 	ret;								\
-@@ -529,8 +552,8 @@ int rsnd_dai_connect(struct rsnd_mod *mod,
+-			for (i = 0; i < be->num_codecs; i++) {
+-				struct snd_soc_dai *dai = be->codec_dais[i];
++			for_each_rtd_codec_dai(be, i, dai) {
+ 				if (dai->capture_widget == widget)
+ 					return be;
+ 			}
+@@ -1438,6 +1437,7 @@ static int dpcm_prune_paths(struct snd_soc_pcm_runtime *fe, int stream,
+ 	struct snd_soc_dpcm *dpcm;
+ 	struct snd_soc_dapm_widget_list *list = *list_;
+ 	struct snd_soc_dapm_widget *widget;
++	struct snd_soc_dai *dai;
+ 	int prune = 0;
  
- 	io->mod[type] = mod;
+ 	/* Destroy any old FE <--> BE connections */
+@@ -1452,8 +1452,7 @@ static int dpcm_prune_paths(struct snd_soc_pcm_runtime *fe, int stream,
+ 			continue;
  
--	dev_dbg(dev, "%s[%d] is connected to io (%s)\n",
--		rsnd_mod_name(mod), rsnd_mod_id(mod),
-+	dev_dbg(dev, "%s is connected to io (%s)\n",
-+		rsnd_mod_name(mod),
- 		rsnd_io_is_play(io) ? "Playback" : "Capture");
+ 		/* is there a valid CODEC DAI widget for this BE */
+-		for (i = 0; i < dpcm->be->num_codecs; i++) {
+-			struct snd_soc_dai *dai = dpcm->be->codec_dais[i];
++		for_each_rtd_codec_dai(dpcm->be, i, dai) {
+ 			widget = dai_get_widget(dai, stream);
  
- 	return 0;
-diff --git a/sound/soc/sh/rcar/dma.c b/sound/soc/sh/rcar/dma.c
-index e5c30ee..5daa6c9 100644
---- a/sound/soc/sh/rcar/dma.c
-+++ b/sound/soc/sh/rcar/dma.c
-@@ -174,8 +174,8 @@ static int rsnd_dmaen_start(struct rsnd_mod *mod,
- 	cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
- 	cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+ 			/* prune the BE if it's no longer in our active list */
+@@ -1688,6 +1687,7 @@ static void dpcm_runtime_merge_format(struct snd_pcm_substream *substream,
+ {
+ 	struct snd_soc_pcm_runtime *fe = substream->private_data;
+ 	struct snd_soc_dpcm *dpcm;
++	struct snd_soc_dai *dai;
+ 	int stream = substream->stream;
  
--	dev_dbg(dev, "%s[%d] %pad -> %pad\n",
--		rsnd_mod_name(mod), rsnd_mod_id(mod),
-+	dev_dbg(dev, "%s %pad -> %pad\n",
-+		rsnd_mod_name(mod),
- 		&cfg.src_addr, &cfg.dst_addr);
+ 	if (!fe->dai_link->dpcm_merged_format)
+@@ -1704,16 +1704,15 @@ static void dpcm_runtime_merge_format(struct snd_pcm_substream *substream,
+ 		struct snd_soc_pcm_stream *codec_stream;
+ 		int i;
  
- 	ret = dmaengine_slave_config(dmaen->chan, &cfg);
-@@ -369,8 +369,7 @@ static u32 rsnd_dmapp_get_id(struct rsnd_dai_stream *io,
- 	if ((!entry) || (size <= id)) {
- 		struct device *dev = rsnd_priv_to_dev(rsnd_io_to_priv(io));
+-		for (i = 0; i < be->num_codecs; i++) {
++		for_each_rtd_codec_dai(be, i, dai) {
+ 			/*
+ 			 * Skip CODECs which don't support the current stream
+ 			 * type. See soc_pcm_init_runtime_hw() for more details
+ 			 */
+-			if (!snd_soc_dai_stream_valid(be->codec_dais[i],
+-						      stream))
++			if (!snd_soc_dai_stream_valid(dai, stream))
+ 				continue;
  
--		dev_err(dev, "unknown connection (%s[%d])\n",
--			rsnd_mod_name(mod), rsnd_mod_id(mod));
-+		dev_err(dev, "unknown connection (%s)\n", rsnd_mod_name(mod));
+-			codec_dai_drv = be->codec_dais[i]->driver;
++			codec_dai_drv = dai->driver;
+ 			if (stream == SNDRV_PCM_STREAM_PLAYBACK)
+ 				codec_stream = &codec_dai_drv->playback;
+ 			else
+@@ -1798,6 +1797,7 @@ static void dpcm_runtime_merge_rate(struct snd_pcm_substream *substream,
+ 		struct snd_soc_dai_driver *codec_dai_drv;
+ 		struct snd_soc_pcm_stream *codec_stream;
+ 		struct snd_soc_pcm_stream *cpu_stream;
++		struct snd_soc_dai *dai;
+ 		int i;
  
- 		/* use non-prohibited SRS number as error */
- 		return 0x00; /* SSI00 */
-@@ -692,12 +691,10 @@ static void rsnd_dma_of_path(struct rsnd_mod *this,
- 		*mod_to		= mod[1];
- 	}
+ 		if (stream == SNDRV_PCM_STREAM_PLAYBACK)
+@@ -1809,16 +1809,15 @@ static void dpcm_runtime_merge_rate(struct snd_pcm_substream *substream,
+ 		*rate_max = min_not_zero(*rate_max, cpu_stream->rate_max);
+ 		*rates = snd_pcm_rate_mask_intersect(*rates, cpu_stream->rates);
  
--	dev_dbg(dev, "module connection (this is %s[%d])\n",
--		rsnd_mod_name(this), rsnd_mod_id(this));
-+	dev_dbg(dev, "module connection (this is %s)\n", rsnd_mod_name(this));
- 	for (i = 0; i <= idx; i++) {
--		dev_dbg(dev, "  %s[%d]%s\n",
-+		dev_dbg(dev, "  %s%s\n",
- 			rsnd_mod_name(mod[i] ? mod[i] : &mem),
--			rsnd_mod_id  (mod[i] ? mod[i] : &mem),
- 			(mod[i] == *mod_from) ? " from" :
- 			(mod[i] == *mod_to)   ? " to" : "");
- 	}
-@@ -762,12 +759,10 @@ static int rsnd_dma_alloc(struct rsnd_dai_stream *io, struct rsnd_mod *mod,
- 	if (ret < 0)
- 		return ret;
+-		for (i = 0; i < be->num_codecs; i++) {
++		for_each_rtd_codec_dai(be, i, dai) {
+ 			/*
+ 			 * Skip CODECs which don't support the current stream
+ 			 * type. See soc_pcm_init_runtime_hw() for more details
+ 			 */
+-			if (!snd_soc_dai_stream_valid(be->codec_dais[i],
+-						      stream))
++			if (!snd_soc_dai_stream_valid(dai, stream))
+ 				continue;
  
--	dev_dbg(dev, "%s[%d] %s[%d] -> %s[%d]\n",
--		rsnd_mod_name(*dma_mod), rsnd_mod_id(*dma_mod),
-+	dev_dbg(dev, "%s %s -> %s\n",
-+		rsnd_mod_name(*dma_mod),
- 		rsnd_mod_name(mod_from ? mod_from : &mem),
--		rsnd_mod_id  (mod_from ? mod_from : &mem),
--		rsnd_mod_name(mod_to   ? mod_to   : &mem),
--		rsnd_mod_id  (mod_to   ? mod_to   : &mem));
-+		rsnd_mod_name(mod_to   ? mod_to   : &mem));
+-			codec_dai_drv = be->codec_dais[i]->driver;
++			codec_dai_drv = dai->driver;
+ 			if (stream == SNDRV_PCM_STREAM_PLAYBACK)
+ 				codec_stream = &codec_dai_drv->playback;
+ 			else
+@@ -2788,6 +2787,7 @@ int soc_dpcm_be_digital_mute(struct snd_soc_pcm_runtime *fe, int mute)
+ 	struct snd_soc_dpcm *dpcm;
+ 	struct list_head *clients =
+ 		&fe->dpcm[SNDRV_PCM_STREAM_PLAYBACK].be_clients;
++	struct snd_soc_dai *dai;
  
- 	ret = attach(io, dma, mod_from, mod_to);
- 	if (ret < 0)
-diff --git a/sound/soc/sh/rcar/gen.c b/sound/soc/sh/rcar/gen.c
-index 1f7881cc..ca63940 100644
---- a/sound/soc/sh/rcar/gen.c
-+++ b/sound/soc/sh/rcar/gen.c
-@@ -83,8 +83,8 @@ u32 rsnd_read(struct rsnd_priv *priv,
+ 	list_for_each_entry(dpcm, clients, list_be) {
  
- 	regmap_fields_read(gen->regs[reg], rsnd_mod_id(mod), &val);
+@@ -2797,8 +2797,7 @@ int soc_dpcm_be_digital_mute(struct snd_soc_pcm_runtime *fe, int mute)
+ 		if (be->dai_link->ignore_suspend)
+ 			continue;
  
--	dev_dbg(dev, "r %s[%d] - %-18s (%4d) : %08x\n",
--		rsnd_mod_name(mod), rsnd_mod_id(mod),
-+	dev_dbg(dev, "r %s - %-18s (%4d) : %08x\n",
-+		rsnd_mod_name(mod),
- 		rsnd_reg_name(gen, reg), reg, val);
+-		for (i = 0; i < be->num_codecs; i++) {
+-			struct snd_soc_dai *dai = be->codec_dais[i];
++		for_each_rtd_codec_dai(be, i, dai) {
+ 			struct snd_soc_dai_driver *drv = dai->driver;
  
- 	return val;
-@@ -102,8 +102,8 @@ void rsnd_write(struct rsnd_priv *priv,
- 
- 	regmap_fields_force_write(gen->regs[reg], rsnd_mod_id(mod), data);
- 
--	dev_dbg(dev, "w %s[%d] - %-18s (%4d) : %08x\n",
--		rsnd_mod_name(mod), rsnd_mod_id(mod),
-+	dev_dbg(dev, "w %s - %-18s (%4d) : %08x\n",
-+		rsnd_mod_name(mod),
- 		rsnd_reg_name(gen, reg), reg, data);
- }
- 
-@@ -119,8 +119,8 @@ void rsnd_bset(struct rsnd_priv *priv, struct rsnd_mod *mod,
- 	regmap_fields_force_update_bits(gen->regs[reg],
- 					rsnd_mod_id(mod), mask, data);
- 
--	dev_dbg(dev, "b %s[%d] - %-18s (%4d) : %08x/%08x\n",
--		rsnd_mod_name(mod), rsnd_mod_id(mod),
-+	dev_dbg(dev, "b %s - %-18s (%4d) : %08x/%08x\n",
-+		rsnd_mod_name(mod),
- 		rsnd_reg_name(gen, reg), reg, data, mask);
- 
- }
-diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
-index fdf007a..28bd90a 100644
---- a/sound/soc/sh/rcar/rsnd.h
-+++ b/sound/soc/sh/rcar/rsnd.h
-@@ -377,7 +377,6 @@ struct rsnd_mod {
- #define __rsnd_mod_call_pointer		0
- 
- #define rsnd_mod_to_priv(mod)	((mod)->priv)
--#define rsnd_mod_name(mod)	((mod)->ops->name)
- #define rsnd_mod_power_on(mod)	clk_enable((mod)->clk)
- #define rsnd_mod_power_off(mod)	clk_disable((mod)->clk)
- #define rsnd_mod_get(ip)	(&(ip)->mod)
-@@ -400,6 +399,7 @@ u32 *rsnd_mod_get_status(struct rsnd_mod *mod,
- int rsnd_mod_id(struct rsnd_mod *mod);
- int rsnd_mod_id_raw(struct rsnd_mod *mod);
- int rsnd_mod_id_sub(struct rsnd_mod *mod);
-+char *rsnd_mod_name(struct rsnd_mod *mod);
- struct rsnd_mod *rsnd_mod_next(int *iterator,
- 			       struct rsnd_dai_stream *io,
- 			       enum rsnd_mod_type *array,
-diff --git a/sound/soc/sh/rcar/src.c b/sound/soc/sh/rcar/src.c
-index 7de7afd..bdc0595 100644
---- a/sound/soc/sh/rcar/src.c
-+++ b/sound/soc/sh/rcar/src.c
-@@ -349,9 +349,8 @@ static bool rsnd_src_error_occurred(struct rsnd_mod *mod)
- 	status0 = rsnd_mod_read(mod, SCU_SYS_STATUS0);
- 	status1 = rsnd_mod_read(mod, SCU_SYS_STATUS1);
- 	if ((status0 & val0) || (status1 & val1)) {
--		rsnd_dbg_irq_status(dev, "%s[%d] err status : 0x%08x, 0x%08x\n",
--			rsnd_mod_name(mod), rsnd_mod_id(mod),
--			status0, status1);
-+		rsnd_dbg_irq_status(dev, "%s err status : 0x%08x, 0x%08x\n",
-+			rsnd_mod_name(mod), status0, status1);
- 
- 		ret = true;
- 	}
-diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
-index bf14207..81d3864 100644
---- a/sound/soc/sh/rcar/ssi.c
-+++ b/sound/soc/sh/rcar/ssi.c
-@@ -181,8 +181,7 @@ static void rsnd_ssi_status_check(struct rsnd_mod *mod,
- 		udelay(5);
- 	}
- 
--	dev_warn(dev, "%s[%d] status check failed\n",
--		 rsnd_mod_name(mod), rsnd_mod_id(mod));
-+	dev_warn(dev, "%s status check failed\n", rsnd_mod_name(mod));
- }
- 
- static u32 rsnd_ssi_multi_slaves(struct rsnd_dai_stream *io)
-@@ -346,9 +345,7 @@ static int rsnd_ssi_master_clk_start(struct rsnd_mod *mod,
- 	ssi->rate = rate;
- 	ssi->chan = chan;
- 
--	dev_dbg(dev, "%s[%d] outputs %u Hz\n",
--		rsnd_mod_name(mod),
--		rsnd_mod_id(mod), rate);
-+	dev_dbg(dev, "%s outputs %u Hz\n", rsnd_mod_name(mod), rate);
- 
- 	return 0;
- }
-@@ -494,8 +491,7 @@ static int rsnd_ssi_quit(struct rsnd_mod *mod,
- 		return 0;
- 
- 	if (!ssi->usrcnt) {
--		dev_err(dev, "%s[%d] usrcnt error\n",
--			rsnd_mod_name(mod), rsnd_mod_id(mod));
-+		dev_err(dev, "%s usrcnt error\n", rsnd_mod_name(mod));
- 		return -EIO;
- 	}
- 
-@@ -654,8 +650,8 @@ static void __rsnd_ssi_interrupt(struct rsnd_mod *mod,
- 
- 	/* DMA only */
- 	if (is_dma && (status & (UIRQ | OIRQ))) {
--		rsnd_dbg_irq_status(dev, "%s[%d] err status : 0x%08x\n",
--			rsnd_mod_name(mod), rsnd_mod_id(mod), status);
-+		rsnd_dbg_irq_status(dev, "%s err status : 0x%08x\n",
-+			rsnd_mod_name(mod), status);
- 
- 		stop = true;
- 	}
-@@ -964,8 +960,7 @@ static int rsnd_ssi_fallback(struct rsnd_mod *mod,
- 	 */
- 	mod->ops = &rsnd_ssi_pio_ops;
- 
--	dev_info(dev, "%s[%d] fallback to PIO mode\n",
--		 rsnd_mod_name(mod), rsnd_mod_id(mod));
-+	dev_info(dev, "%s fallback to PIO mode\n", rsnd_mod_name(mod));
- 
- 	return 0;
- }
-@@ -1085,15 +1080,13 @@ static void __rsnd_ssi_parse_hdmi_connection(struct rsnd_priv *priv,
- 	/* HDMI0 */
- 	if (strstr(remote_node->full_name, "hdmi at fead0000")) {
- 		rsnd_flags_set(ssi, RSND_SSI_HDMI0);
--		dev_dbg(dev, "%s[%d] connected to HDMI0\n",
--			 rsnd_mod_name(mod), rsnd_mod_id(mod));
-+		dev_dbg(dev, "%s connected to HDMI0\n", rsnd_mod_name(mod));
- 	}
- 
- 	/* HDMI1 */
- 	if (strstr(remote_node->full_name, "hdmi at feae0000")) {
- 		rsnd_flags_set(ssi, RSND_SSI_HDMI1);
--		dev_dbg(dev, "%s[%d] connected to HDMI1\n",
--			rsnd_mod_name(mod), rsnd_mod_id(mod));
-+		dev_dbg(dev, "%s connected to HDMI1\n", rsnd_mod_name(mod));
- 	}
- }
- 
+ 			dev_dbg(be->dev, "ASoC: BE digital mute %s\n",
 -- 
 2.7.4
