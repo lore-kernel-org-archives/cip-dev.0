@@ -1,264 +1,751 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 17 Oct 2019 08:05:01 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 29/57] ASoC: rsnd: handle DPCM
-	converted rate/chan under core
+Date: Thu, 17 Oct 2019 08:05:11 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 39/57] ASoC: rsnd: remove RSND_REG_
+	from rsnd_reg
 In-Reply-To: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1571295929-47286-30-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1571295929-47286-40-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-commit c2aaaa57d44a195b71fe1e9ff0c6a80ac017495d upstream.
+commit b7169ddea2f2a90538f606688adf4948f2da82ce upstream.
 
-converted rate/chan are handled each rated module, but
-it will be used other module too.
-For examle, converted channel is currently used for CTU,
-but, it will be used for TDM Split mode, too.
-
-This patch move/merge SRC/CTU hw_param under core.c
-and handles converted rate/chan under rsnd_dai_stream.
+Current rsnd is using RSND_REG_xxx for register naming,
+and using RSND_REG_##f style macro for read/write.
+The biggest reason why it uses this style is that
+we can avoid non-existing register access.
+But, its demerit is sequential register access code will
+be very ugly.
+Current rsnd driver is well tested, so, let's remove RSND_REG_
+from rsnd_reg, and cleanup sequential register access code.
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- sound/soc/sh/rcar/core.c | 34 +++++++++++++++++++++++++++++++++-
- sound/soc/sh/rcar/ctu.c  | 45 ---------------------------------------------
- sound/soc/sh/rcar/rsnd.h |  5 ++++-
- sound/soc/sh/rcar/src.c  | 40 ++--------------------------------------
- 4 files changed, 39 insertions(+), 85 deletions(-)
+ sound/soc/sh/rcar/adg.c  |  36 +-----
+ sound/soc/sh/rcar/ctu.c  |  69 +++-------
+ sound/soc/sh/rcar/dvc.c  |  10 +-
+ sound/soc/sh/rcar/gen.c  |  23 ++--
+ sound/soc/sh/rcar/rsnd.h | 329 +++++++++++++++++++++++------------------------
+ sound/soc/sh/rcar/ssiu.c |  59 ++-------
+ 6 files changed, 212 insertions(+), 314 deletions(-)
 
-diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
-index 2dad91e..681abf6 100644
---- a/sound/soc/sh/rcar/core.c
-+++ b/sound/soc/sh/rcar/core.c
-@@ -269,7 +269,7 @@ int rsnd_runtime_channel_after_ctu_with_params(struct rsnd_dai_stream *io,
- 	struct rsnd_mod *ctu_mod = rsnd_io_to_mod_ctu(io);
+diff --git a/sound/soc/sh/rcar/adg.c b/sound/soc/sh/rcar/adg.c
+index 24ea8b9..141d9a0 100644
+--- a/sound/soc/sh/rcar/adg.c
++++ b/sound/soc/sh/rcar/adg.c
+@@ -250,28 +250,8 @@ int rsnd_adg_set_src_timesel_gen2(struct rsnd_mod *src_mod,
+ 	out  = out	<< shift;
+ 	mask = 0x0f1f	<< shift;
  
- 	if (ctu_mod) {
--		u32 converted_chan = rsnd_ctu_converted_channel(ctu_mod);
-+		u32 converted_chan = rsnd_io_converted_chan(io);
+-	switch (id / 2) {
+-	case 0:
+-		rsnd_mod_bset(adg_mod, SRCIN_TIMSEL0,  mask, in);
+-		rsnd_mod_bset(adg_mod, SRCOUT_TIMSEL0, mask, out);
+-		break;
+-	case 1:
+-		rsnd_mod_bset(adg_mod, SRCIN_TIMSEL1,  mask, in);
+-		rsnd_mod_bset(adg_mod, SRCOUT_TIMSEL1, mask, out);
+-		break;
+-	case 2:
+-		rsnd_mod_bset(adg_mod, SRCIN_TIMSEL2,  mask, in);
+-		rsnd_mod_bset(adg_mod, SRCOUT_TIMSEL2, mask, out);
+-		break;
+-	case 3:
+-		rsnd_mod_bset(adg_mod, SRCIN_TIMSEL3,  mask, in);
+-		rsnd_mod_bset(adg_mod, SRCOUT_TIMSEL3, mask, out);
+-		break;
+-	case 4:
+-		rsnd_mod_bset(adg_mod, SRCIN_TIMSEL4,  mask, in);
+-		rsnd_mod_bset(adg_mod, SRCOUT_TIMSEL4, mask, out);
+-		break;
+-	}
++	rsnd_mod_bset(adg_mod, SRCIN_TIMSEL(id / 2),  mask, in);
++	rsnd_mod_bset(adg_mod, SRCOUT_TIMSEL(id / 2), mask, out);
  
- 		if (converted_chan)
- 			return converted_chan;
-@@ -1219,8 +1219,40 @@ static int rsnd_hw_params(struct snd_pcm_substream *substream,
- 	struct snd_soc_dai *dai = rsnd_substream_to_dai(substream);
- 	struct rsnd_dai *rdai = rsnd_dai_to_rdai(dai);
- 	struct rsnd_dai_stream *io = rsnd_rdai_to_io(rdai, substream);
-+	struct snd_soc_pcm_runtime *fe = substream->private_data;
- 	int ret;
+ 	if (en)
+ 		rsnd_mod_bset(adg_mod, DIV_EN, en, en);
+@@ -300,17 +280,7 @@ static void rsnd_adg_set_ssi_clk(struct rsnd_mod *ssi_mod, u32 val)
+ 	if (id == 8)
+ 		return;
  
-+	/*
-+	 * rsnd assumes that it might be used under DPCM if user want to use
-+	 * channel / rate convert. Then, rsnd should be FE.
-+	 * And then, this function will be called *after* BE settings.
-+	 * this means, each BE already has fixuped hw_params.
-+	 * see
-+	 *	dpcm_fe_dai_hw_params()
-+	 *	dpcm_be_dai_hw_params()
-+	 */
-+	io->converted_rate = 0;
-+	io->converted_chan = 0;
-+	if (fe->dai_link->dynamic) {
-+		struct rsnd_priv *priv = rsnd_io_to_priv(io);
-+		struct device *dev = rsnd_priv_to_dev(priv);
-+		struct snd_soc_dpcm *dpcm;
-+		struct snd_pcm_hw_params *be_params;
-+		int stream = substream->stream;
-+
-+		for_each_dpcm_be(fe, stream, dpcm) {
-+			be_params = &dpcm->hw_params;
-+			if (params_channels(hw_params) != params_channels(be_params))
-+				io->converted_chan = params_channels(be_params);
-+			if (params_rate(hw_params) != params_rate(be_params))
-+				io->converted_rate = params_rate(be_params);
-+		}
-+		if (io->converted_chan)
-+			dev_dbg(dev, "convert channels = %d\n", io->converted_chan);
-+		if (io->converted_rate)
-+			dev_dbg(dev, "convert rate     = %d\n", io->converted_rate);
-+	}
-+
- 	ret = rsnd_dai_call(hw_params, io, substream, hw_params);
- 	if (ret)
- 		return ret;
+-	switch (id / 4) {
+-	case 0:
+-		rsnd_mod_bset(adg_mod, AUDIO_CLK_SEL0, mask, val);
+-		break;
+-	case 1:
+-		rsnd_mod_bset(adg_mod, AUDIO_CLK_SEL1, mask, val);
+-		break;
+-	case 2:
+-		rsnd_mod_bset(adg_mod, AUDIO_CLK_SEL2, mask, val);
+-		break;
+-	}
++	rsnd_mod_bset(adg_mod, AUDIO_CLK_SEL(id / 4), mask, val);
+ 
+ 	dev_dbg(dev, "AUDIO_CLK_SEL is 0x%x\n", val);
+ }
 diff --git a/sound/soc/sh/rcar/ctu.c b/sound/soc/sh/rcar/ctu.c
-index 6a948b1..4dda7d9 100644
+index ff41a5e..8cb06da 100644
 --- a/sound/soc/sh/rcar/ctu.c
 +++ b/sound/soc/sh/rcar/ctu.c
-@@ -107,13 +107,6 @@ static void rsnd_ctu_halt(struct rsnd_mod *mod)
- 	rsnd_mod_write(mod, CTU_SWRSR, 0);
- }
+@@ -72,10 +72,7 @@
+ struct rsnd_ctu {
+ 	struct rsnd_mod mod;
+ 	struct rsnd_kctrl_cfg_m pass;
+-	struct rsnd_kctrl_cfg_m sv0;
+-	struct rsnd_kctrl_cfg_m sv1;
+-	struct rsnd_kctrl_cfg_m sv2;
+-	struct rsnd_kctrl_cfg_m sv3;
++	struct rsnd_kctrl_cfg_m sv[4];
+ 	struct rsnd_kctrl_cfg_s reset;
+ 	int channels;
+ 	u32 flags;
+@@ -120,7 +117,7 @@ static void rsnd_ctu_value_init(struct rsnd_dai_stream *io,
+ 	struct rsnd_ctu *ctu = rsnd_mod_to_ctu(mod);
+ 	u32 cpmdr = 0;
+ 	u32 scmdr = 0;
+-	int i;
++	int i, j;
  
--int rsnd_ctu_converted_channel(struct rsnd_mod *mod)
--{
--	struct rsnd_ctu *ctu = rsnd_mod_to_ctu(mod);
--
--	return ctu->channels;
--}
--
- static int rsnd_ctu_probe_(struct rsnd_mod *mod,
- 			   struct rsnd_dai_stream *io,
- 			   struct rsnd_priv *priv)
-@@ -233,43 +226,6 @@ static int rsnd_ctu_quit(struct rsnd_mod *mod,
- 	return 0;
- }
+ 	for (i = 0; i < RSND_MAX_CHANNELS; i++) {
+ 		u32 val = rsnd_kctrl_valm(ctu->pass, i);
+@@ -139,45 +136,13 @@ static void rsnd_ctu_value_init(struct rsnd_dai_stream *io,
  
--static int rsnd_ctu_hw_params(struct rsnd_mod *mod,
--			      struct rsnd_dai_stream *io,
--			      struct snd_pcm_substream *substream,
--			      struct snd_pcm_hw_params *fe_params)
--{
--	struct rsnd_ctu *ctu = rsnd_mod_to_ctu(mod);
--	struct snd_soc_pcm_runtime *fe = substream->private_data;
--
--	/*
--	 * CTU assumes that it is used under DPCM if user want to use
--	 * channel transfer. Then, CTU should be FE.
--	 * And then, this function will be called *after* BE settings.
--	 * this means, each BE already has fixuped hw_params.
--	 * see
--	 *	dpcm_fe_dai_hw_params()
--	 *	dpcm_be_dai_hw_params()
--	 */
--	ctu->channels = 0;
--	if (fe->dai_link->dynamic) {
--		struct rsnd_priv *priv = rsnd_mod_to_priv(mod);
--		struct device *dev = rsnd_priv_to_dev(priv);
--		struct snd_soc_dpcm *dpcm;
--		struct snd_pcm_hw_params *be_params;
--		int stream = substream->stream;
--
--		for_each_dpcm_be(fe, stream, dpcm) {
--			be_params = &dpcm->hw_params;
--			if (params_channels(fe_params) != params_channels(be_params))
--				ctu->channels = params_channels(be_params);
--		}
--
--		dev_dbg(dev, "CTU convert channels %d\n", ctu->channels);
+ 	rsnd_mod_write(mod, CTU_SCMDR, scmdr);
+ 
+-	if (scmdr > 0) {
+-		rsnd_mod_write(mod, CTU_SV00R, rsnd_kctrl_valm(ctu->sv0, 0));
+-		rsnd_mod_write(mod, CTU_SV01R, rsnd_kctrl_valm(ctu->sv0, 1));
+-		rsnd_mod_write(mod, CTU_SV02R, rsnd_kctrl_valm(ctu->sv0, 2));
+-		rsnd_mod_write(mod, CTU_SV03R, rsnd_kctrl_valm(ctu->sv0, 3));
+-		rsnd_mod_write(mod, CTU_SV04R, rsnd_kctrl_valm(ctu->sv0, 4));
+-		rsnd_mod_write(mod, CTU_SV05R, rsnd_kctrl_valm(ctu->sv0, 5));
+-		rsnd_mod_write(mod, CTU_SV06R, rsnd_kctrl_valm(ctu->sv0, 6));
+-		rsnd_mod_write(mod, CTU_SV07R, rsnd_kctrl_valm(ctu->sv0, 7));
 -	}
--
--	return 0;
--}
--
- static int rsnd_ctu_pcm_new(struct rsnd_mod *mod,
- 			    struct rsnd_dai_stream *io,
- 			    struct snd_soc_pcm_runtime *rtd)
-@@ -357,7 +313,6 @@ static struct rsnd_mod_ops rsnd_ctu_ops = {
- 	.probe		= rsnd_ctu_probe_,
- 	.init		= rsnd_ctu_init,
- 	.quit		= rsnd_ctu_quit,
--	.hw_params	= rsnd_ctu_hw_params,
- 	.pcm_new	= rsnd_ctu_pcm_new,
- 	.get_status	= rsnd_mod_get_status,
- 	.id		= rsnd_ctu_id,
+-	if (scmdr > 1) {
+-		rsnd_mod_write(mod, CTU_SV10R, rsnd_kctrl_valm(ctu->sv1, 0));
+-		rsnd_mod_write(mod, CTU_SV11R, rsnd_kctrl_valm(ctu->sv1, 1));
+-		rsnd_mod_write(mod, CTU_SV12R, rsnd_kctrl_valm(ctu->sv1, 2));
+-		rsnd_mod_write(mod, CTU_SV13R, rsnd_kctrl_valm(ctu->sv1, 3));
+-		rsnd_mod_write(mod, CTU_SV14R, rsnd_kctrl_valm(ctu->sv1, 4));
+-		rsnd_mod_write(mod, CTU_SV15R, rsnd_kctrl_valm(ctu->sv1, 5));
+-		rsnd_mod_write(mod, CTU_SV16R, rsnd_kctrl_valm(ctu->sv1, 6));
+-		rsnd_mod_write(mod, CTU_SV17R, rsnd_kctrl_valm(ctu->sv1, 7));
+-	}
+-	if (scmdr > 2) {
+-		rsnd_mod_write(mod, CTU_SV20R, rsnd_kctrl_valm(ctu->sv2, 0));
+-		rsnd_mod_write(mod, CTU_SV21R, rsnd_kctrl_valm(ctu->sv2, 1));
+-		rsnd_mod_write(mod, CTU_SV22R, rsnd_kctrl_valm(ctu->sv2, 2));
+-		rsnd_mod_write(mod, CTU_SV23R, rsnd_kctrl_valm(ctu->sv2, 3));
+-		rsnd_mod_write(mod, CTU_SV24R, rsnd_kctrl_valm(ctu->sv2, 4));
+-		rsnd_mod_write(mod, CTU_SV25R, rsnd_kctrl_valm(ctu->sv2, 5));
+-		rsnd_mod_write(mod, CTU_SV26R, rsnd_kctrl_valm(ctu->sv2, 6));
+-		rsnd_mod_write(mod, CTU_SV27R, rsnd_kctrl_valm(ctu->sv2, 7));
+-	}
+-	if (scmdr > 3) {
+-		rsnd_mod_write(mod, CTU_SV30R, rsnd_kctrl_valm(ctu->sv3, 0));
+-		rsnd_mod_write(mod, CTU_SV31R, rsnd_kctrl_valm(ctu->sv3, 1));
+-		rsnd_mod_write(mod, CTU_SV32R, rsnd_kctrl_valm(ctu->sv3, 2));
+-		rsnd_mod_write(mod, CTU_SV33R, rsnd_kctrl_valm(ctu->sv3, 3));
+-		rsnd_mod_write(mod, CTU_SV34R, rsnd_kctrl_valm(ctu->sv3, 4));
+-		rsnd_mod_write(mod, CTU_SV35R, rsnd_kctrl_valm(ctu->sv3, 5));
+-		rsnd_mod_write(mod, CTU_SV36R, rsnd_kctrl_valm(ctu->sv3, 6));
+-		rsnd_mod_write(mod, CTU_SV37R, rsnd_kctrl_valm(ctu->sv3, 7));
++	for (i = 0; i < 4; i++) {
++
++		if (i >= scmdr)
++			break;
++
++		for (j = 0; j < RSND_MAX_CHANNELS; j++)
++			rsnd_mod_write(mod, CTU_SVxxR(i, j), rsnd_kctrl_valm(ctu->sv[i], j));
+ 	}
+ 
+ 	rsnd_mod_write(mod, CTU_CTUIR, 0);
+@@ -194,10 +159,10 @@ static void rsnd_ctu_value_reset(struct rsnd_dai_stream *io,
+ 
+ 	for (i = 0; i < RSND_MAX_CHANNELS; i++) {
+ 		rsnd_kctrl_valm(ctu->pass, i) = 0;
+-		rsnd_kctrl_valm(ctu->sv0,  i) = 0;
+-		rsnd_kctrl_valm(ctu->sv1,  i) = 0;
+-		rsnd_kctrl_valm(ctu->sv2,  i) = 0;
+-		rsnd_kctrl_valm(ctu->sv3,  i) = 0;
++		rsnd_kctrl_valm(ctu->sv[0],  i) = 0;
++		rsnd_kctrl_valm(ctu->sv[1],  i) = 0;
++		rsnd_kctrl_valm(ctu->sv[2],  i) = 0;
++		rsnd_kctrl_valm(ctu->sv[3],  i) = 0;
+ 	}
+ 	rsnd_kctrl_vals(ctu->reset) = 0;
+ }
+@@ -247,7 +212,7 @@ static int rsnd_ctu_pcm_new(struct rsnd_mod *mod,
+ 	ret = rsnd_kctrl_new_m(mod, io, rtd, "CTU SV0",
+ 			       rsnd_kctrl_accept_anytime,
+ 			       NULL,
+-			       &ctu->sv0, RSND_MAX_CHANNELS,
++			       &ctu->sv[0], RSND_MAX_CHANNELS,
+ 			       0x00FFFFFF);
+ 	if (ret < 0)
+ 		return ret;
+@@ -256,7 +221,7 @@ static int rsnd_ctu_pcm_new(struct rsnd_mod *mod,
+ 	ret = rsnd_kctrl_new_m(mod, io, rtd, "CTU SV1",
+ 			       rsnd_kctrl_accept_anytime,
+ 			       NULL,
+-			       &ctu->sv1, RSND_MAX_CHANNELS,
++			       &ctu->sv[1], RSND_MAX_CHANNELS,
+ 			       0x00FFFFFF);
+ 	if (ret < 0)
+ 		return ret;
+@@ -265,7 +230,7 @@ static int rsnd_ctu_pcm_new(struct rsnd_mod *mod,
+ 	ret = rsnd_kctrl_new_m(mod, io, rtd, "CTU SV2",
+ 			       rsnd_kctrl_accept_anytime,
+ 			       NULL,
+-			       &ctu->sv2, RSND_MAX_CHANNELS,
++			       &ctu->sv[2], RSND_MAX_CHANNELS,
+ 			       0x00FFFFFF);
+ 	if (ret < 0)
+ 		return ret;
+@@ -274,7 +239,7 @@ static int rsnd_ctu_pcm_new(struct rsnd_mod *mod,
+ 	ret = rsnd_kctrl_new_m(mod, io, rtd, "CTU SV3",
+ 			       rsnd_kctrl_accept_anytime,
+ 			       NULL,
+-			       &ctu->sv3, RSND_MAX_CHANNELS,
++			       &ctu->sv[3], RSND_MAX_CHANNELS,
+ 			       0x00FFFFFF);
+ 	if (ret < 0)
+ 		return ret;
+diff --git a/sound/soc/sh/rcar/dvc.c b/sound/soc/sh/rcar/dvc.c
+index 27c3761..8d91c0e 100644
+--- a/sound/soc/sh/rcar/dvc.c
++++ b/sound/soc/sh/rcar/dvc.c
+@@ -86,14 +86,8 @@ static void rsnd_dvc_volume_parameter(struct rsnd_dai_stream *io,
+ 			val[i] = rsnd_kctrl_valm(dvc->volume, i);
+ 
+ 	/* Enable Digital Volume */
+-	rsnd_mod_write(mod, DVC_VOL0R, val[0]);
+-	rsnd_mod_write(mod, DVC_VOL1R, val[1]);
+-	rsnd_mod_write(mod, DVC_VOL2R, val[2]);
+-	rsnd_mod_write(mod, DVC_VOL3R, val[3]);
+-	rsnd_mod_write(mod, DVC_VOL4R, val[4]);
+-	rsnd_mod_write(mod, DVC_VOL5R, val[5]);
+-	rsnd_mod_write(mod, DVC_VOL6R, val[6]);
+-	rsnd_mod_write(mod, DVC_VOL7R, val[7]);
++	for (i = 0; i < RSND_MAX_CHANNELS; i++)
++		rsnd_mod_write(mod, DVC_VOLxR(i), val[i]);
+ }
+ 
+ static void rsnd_dvc_volume_init(struct rsnd_dai_stream *io,
+diff --git a/sound/soc/sh/rcar/gen.c b/sound/soc/sh/rcar/gen.c
+index 3283d67..7cda601 100644
+--- a/sound/soc/sh/rcar/gen.c
++++ b/sound/soc/sh/rcar/gen.c
+@@ -26,8 +26,8 @@ struct rsnd_gen {
+ 	struct regmap *regmap[RSND_BASE_MAX];
+ 
+ 	/* RSND_REG_MAX base */
+-	struct regmap_field *regs[RSND_REG_MAX];
+-	const char *reg_name[RSND_REG_MAX];
++	struct regmap_field *regs[REG_MAX];
++	const char *reg_name[REG_MAX];
+ };
+ 
+ #define rsnd_priv_to_gen(p)	((struct rsnd_gen *)(p)->gen)
+@@ -49,11 +49,11 @@ struct rsnd_regmap_field_conf {
+ }
+ /* single address mapping */
+ #define RSND_GEN_S_REG(id, offset)	\
+-	RSND_REG_SET(RSND_REG_##id, offset, 0, #id)
++	RSND_REG_SET(id, offset, 0, #id)
+ 
+ /* multi address mapping */
+ #define RSND_GEN_M_REG(id, offset, _id_offset)	\
+-	RSND_REG_SET(RSND_REG_##id, offset, _id_offset, #id)
++	RSND_REG_SET(id, offset, _id_offset, #id)
+ 
+ /*
+  *		basic function
+@@ -79,9 +79,9 @@ static int rsnd_mod_id_cmd(struct rsnd_mod *mod)
+ 	return rsnd_mod_id(mod);
+ }
+ 
+-u32 rsnd_read(struct rsnd_priv *priv,
+-	      struct rsnd_mod *mod, enum rsnd_reg reg)
++u32 rsnd_mod_read(struct rsnd_mod *mod, enum rsnd_reg reg)
+ {
++	struct rsnd_priv *priv = rsnd_mod_to_priv(mod);
+ 	struct device *dev = rsnd_priv_to_dev(priv);
+ 	struct rsnd_gen *gen = rsnd_priv_to_gen(priv);
+ 	u32 val;
+@@ -98,10 +98,10 @@ u32 rsnd_read(struct rsnd_priv *priv,
+ 	return val;
+ }
+ 
+-void rsnd_write(struct rsnd_priv *priv,
+-		struct rsnd_mod *mod,
+-		enum rsnd_reg reg, u32 data)
++void rsnd_mod_write(struct rsnd_mod *mod,
++		    enum rsnd_reg reg, u32 data)
+ {
++	struct rsnd_priv *priv = rsnd_mod_to_priv(mod);
+ 	struct device *dev = rsnd_priv_to_dev(priv);
+ 	struct rsnd_gen *gen = rsnd_priv_to_gen(priv);
+ 
+@@ -115,9 +115,10 @@ void rsnd_write(struct rsnd_priv *priv,
+ 		rsnd_reg_name(gen, reg), reg, data);
+ }
+ 
+-void rsnd_bset(struct rsnd_priv *priv, struct rsnd_mod *mod,
+-	       enum rsnd_reg reg, u32 mask, u32 data)
++void rsnd_mod_bset(struct rsnd_mod *mod,
++		   enum rsnd_reg reg, u32 mask, u32 data)
+ {
++	struct rsnd_priv *priv = rsnd_mod_to_priv(mod);
+ 	struct device *dev = rsnd_priv_to_dev(priv);
+ 	struct rsnd_gen *gen = rsnd_priv_to_gen(priv);
+ 
 diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
-index 9aeb547..7e54edc 100644
+index 94d51fe..605e4b9 100644
 --- a/sound/soc/sh/rcar/rsnd.h
 +++ b/sound/soc/sh/rcar/rsnd.h
-@@ -457,6 +457,8 @@ struct rsnd_dai_stream {
- 	struct rsnd_mod *dma;
- 	struct rsnd_dai *rdai;
- 	struct device *dmac_dev; /* for IPMMU */
-+	u32 converted_rate;      /* converted sampling rate */
-+	int converted_chan;      /* converted channels */
- 	u32 parent_ssi_status;
- 	u32 flags;
- };
-@@ -479,6 +481,8 @@ struct rsnd_dai_stream {
- #define rsnd_io_is_play(io)	(&rsnd_io_to_rdai(io)->playback == io)
- #define rsnd_io_to_runtime(io) ((io)->substream ? \
- 				(io)->substream->runtime : NULL)
-+#define rsnd_io_converted_rate(io)	((io)->converted_rate)
-+#define rsnd_io_converted_chan(io)	((io)->converted_chan)
- int rsnd_io_is_working(struct rsnd_dai_stream *io);
- 
- struct rsnd_dai {
-@@ -767,7 +771,6 @@ unsigned int rsnd_src_get_rate(struct rsnd_priv *priv,
+@@ -42,165 +42,175 @@
   */
- int rsnd_ctu_probe(struct rsnd_priv *priv);
- void rsnd_ctu_remove(struct rsnd_priv *priv);
--int rsnd_ctu_converted_channel(struct rsnd_mod *mod);
- struct rsnd_mod *rsnd_ctu_mod_get(struct rsnd_priv *priv, int id);
- #define rsnd_ctu_of_node(priv) rsnd_parse_of_node(priv, RSND_NODE_CTU)
- #define rsnd_parse_connect_ctu(rdai, playback, capture)			\
-diff --git a/sound/soc/sh/rcar/src.c b/sound/soc/sh/rcar/src.c
-index bdc0595..50348a2 100644
---- a/sound/soc/sh/rcar/src.c
-+++ b/sound/soc/sh/rcar/src.c
-@@ -25,7 +25,6 @@ struct rsnd_src {
- 	struct rsnd_mod *dma;
- 	struct rsnd_kctrl_cfg_s sen;  /* sync convert enable */
- 	struct rsnd_kctrl_cfg_s sync; /* sync convert */
--	u32 convert_rate; /* sampling rate convert */
- 	int irq;
+ enum rsnd_reg {
+ 	/* SCU (MIX/CTU/DVC) */
+-	RSND_REG_SRC_I_BUSIF_MODE,
+-	RSND_REG_SRC_O_BUSIF_MODE,
+-	RSND_REG_SRC_ROUTE_MODE0,
+-	RSND_REG_SRC_SWRSR,
+-	RSND_REG_SRC_SRCIR,
+-	RSND_REG_SRC_ADINR,
+-	RSND_REG_SRC_IFSCR,
+-	RSND_REG_SRC_IFSVR,
+-	RSND_REG_SRC_SRCCR,
+-	RSND_REG_SRC_CTRL,
+-	RSND_REG_SRC_BSDSR,
+-	RSND_REG_SRC_BSISR,
+-	RSND_REG_SRC_INT_ENABLE0,
+-	RSND_REG_SRC_BUSIF_DALIGN,
+-	RSND_REG_SRCIN_TIMSEL0,
+-	RSND_REG_SRCIN_TIMSEL1,
+-	RSND_REG_SRCIN_TIMSEL2,
+-	RSND_REG_SRCIN_TIMSEL3,
+-	RSND_REG_SRCIN_TIMSEL4,
+-	RSND_REG_SRCOUT_TIMSEL0,
+-	RSND_REG_SRCOUT_TIMSEL1,
+-	RSND_REG_SRCOUT_TIMSEL2,
+-	RSND_REG_SRCOUT_TIMSEL3,
+-	RSND_REG_SRCOUT_TIMSEL4,
+-	RSND_REG_SCU_SYS_STATUS0,
+-	RSND_REG_SCU_SYS_STATUS1,
+-	RSND_REG_SCU_SYS_INT_EN0,
+-	RSND_REG_SCU_SYS_INT_EN1,
+-	RSND_REG_CMD_CTRL,
+-	RSND_REG_CMD_BUSIF_MODE,
+-	RSND_REG_CMD_BUSIF_DALIGN,
+-	RSND_REG_CMD_ROUTE_SLCT,
+-	RSND_REG_CMDOUT_TIMSEL,
+-	RSND_REG_CTU_SWRSR,
+-	RSND_REG_CTU_CTUIR,
+-	RSND_REG_CTU_ADINR,
+-	RSND_REG_CTU_CPMDR,
+-	RSND_REG_CTU_SCMDR,
+-	RSND_REG_CTU_SV00R,
+-	RSND_REG_CTU_SV01R,
+-	RSND_REG_CTU_SV02R,
+-	RSND_REG_CTU_SV03R,
+-	RSND_REG_CTU_SV04R,
+-	RSND_REG_CTU_SV05R,
+-	RSND_REG_CTU_SV06R,
+-	RSND_REG_CTU_SV07R,
+-	RSND_REG_CTU_SV10R,
+-	RSND_REG_CTU_SV11R,
+-	RSND_REG_CTU_SV12R,
+-	RSND_REG_CTU_SV13R,
+-	RSND_REG_CTU_SV14R,
+-	RSND_REG_CTU_SV15R,
+-	RSND_REG_CTU_SV16R,
+-	RSND_REG_CTU_SV17R,
+-	RSND_REG_CTU_SV20R,
+-	RSND_REG_CTU_SV21R,
+-	RSND_REG_CTU_SV22R,
+-	RSND_REG_CTU_SV23R,
+-	RSND_REG_CTU_SV24R,
+-	RSND_REG_CTU_SV25R,
+-	RSND_REG_CTU_SV26R,
+-	RSND_REG_CTU_SV27R,
+-	RSND_REG_CTU_SV30R,
+-	RSND_REG_CTU_SV31R,
+-	RSND_REG_CTU_SV32R,
+-	RSND_REG_CTU_SV33R,
+-	RSND_REG_CTU_SV34R,
+-	RSND_REG_CTU_SV35R,
+-	RSND_REG_CTU_SV36R,
+-	RSND_REG_CTU_SV37R,
+-	RSND_REG_MIX_SWRSR,
+-	RSND_REG_MIX_MIXIR,
+-	RSND_REG_MIX_ADINR,
+-	RSND_REG_MIX_MIXMR,
+-	RSND_REG_MIX_MVPDR,
+-	RSND_REG_MIX_MDBAR,
+-	RSND_REG_MIX_MDBBR,
+-	RSND_REG_MIX_MDBCR,
+-	RSND_REG_MIX_MDBDR,
+-	RSND_REG_MIX_MDBER,
+-	RSND_REG_DVC_SWRSR,
+-	RSND_REG_DVC_DVUIR,
+-	RSND_REG_DVC_ADINR,
+-	RSND_REG_DVC_DVUCR,
+-	RSND_REG_DVC_ZCMCR,
+-	RSND_REG_DVC_VOL0R,
+-	RSND_REG_DVC_VOL1R,
+-	RSND_REG_DVC_VOL2R,
+-	RSND_REG_DVC_VOL3R,
+-	RSND_REG_DVC_VOL4R,
+-	RSND_REG_DVC_VOL5R,
+-	RSND_REG_DVC_VOL6R,
+-	RSND_REG_DVC_VOL7R,
+-	RSND_REG_DVC_DVUER,
+-	RSND_REG_DVC_VRCTR,
+-	RSND_REG_DVC_VRPDR,
+-	RSND_REG_DVC_VRDBR,
++	SRC_I_BUSIF_MODE,
++	SRC_O_BUSIF_MODE,
++	SRC_ROUTE_MODE0,
++	SRC_SWRSR,
++	SRC_SRCIR,
++	SRC_ADINR,
++	SRC_IFSCR,
++	SRC_IFSVR,
++	SRC_SRCCR,
++	SRC_CTRL,
++	SRC_BSDSR,
++	SRC_BSISR,
++	SRC_INT_ENABLE0,
++	SRC_BUSIF_DALIGN,
++	SRCIN_TIMSEL0,
++	SRCIN_TIMSEL1,
++	SRCIN_TIMSEL2,
++	SRCIN_TIMSEL3,
++	SRCIN_TIMSEL4,
++	SRCOUT_TIMSEL0,
++	SRCOUT_TIMSEL1,
++	SRCOUT_TIMSEL2,
++	SRCOUT_TIMSEL3,
++	SRCOUT_TIMSEL4,
++	SCU_SYS_STATUS0,
++	SCU_SYS_STATUS1,
++	SCU_SYS_INT_EN0,
++	SCU_SYS_INT_EN1,
++	CMD_CTRL,
++	CMD_BUSIF_MODE,
++	CMD_BUSIF_DALIGN,
++	CMD_ROUTE_SLCT,
++	CMDOUT_TIMSEL,
++	CTU_SWRSR,
++	CTU_CTUIR,
++	CTU_ADINR,
++	CTU_CPMDR,
++	CTU_SCMDR,
++	CTU_SV00R,
++	CTU_SV01R,
++	CTU_SV02R,
++	CTU_SV03R,
++	CTU_SV04R,
++	CTU_SV05R,
++	CTU_SV06R,
++	CTU_SV07R,
++	CTU_SV10R,
++	CTU_SV11R,
++	CTU_SV12R,
++	CTU_SV13R,
++	CTU_SV14R,
++	CTU_SV15R,
++	CTU_SV16R,
++	CTU_SV17R,
++	CTU_SV20R,
++	CTU_SV21R,
++	CTU_SV22R,
++	CTU_SV23R,
++	CTU_SV24R,
++	CTU_SV25R,
++	CTU_SV26R,
++	CTU_SV27R,
++	CTU_SV30R,
++	CTU_SV31R,
++	CTU_SV32R,
++	CTU_SV33R,
++	CTU_SV34R,
++	CTU_SV35R,
++	CTU_SV36R,
++	CTU_SV37R,
++	MIX_SWRSR,
++	MIX_MIXIR,
++	MIX_ADINR,
++	MIX_MIXMR,
++	MIX_MVPDR,
++	MIX_MDBAR,
++	MIX_MDBBR,
++	MIX_MDBCR,
++	MIX_MDBDR,
++	MIX_MDBER,
++	DVC_SWRSR,
++	DVC_DVUIR,
++	DVC_ADINR,
++	DVC_DVUCR,
++	DVC_ZCMCR,
++	DVC_VOL0R,
++	DVC_VOL1R,
++	DVC_VOL2R,
++	DVC_VOL3R,
++	DVC_VOL4R,
++	DVC_VOL5R,
++	DVC_VOL6R,
++	DVC_VOL7R,
++	DVC_DVUER,
++	DVC_VRCTR,
++	DVC_VRPDR,
++	DVC_VRDBR,
+ 
+ 	/* ADG */
+-	RSND_REG_BRRA,
+-	RSND_REG_BRRB,
+-	RSND_REG_BRGCKR,
+-	RSND_REG_DIV_EN,
+-	RSND_REG_AUDIO_CLK_SEL0,
+-	RSND_REG_AUDIO_CLK_SEL1,
+-	RSND_REG_AUDIO_CLK_SEL2,
++	BRRA,
++	BRRB,
++	BRGCKR,
++	DIV_EN,
++	AUDIO_CLK_SEL0,
++	AUDIO_CLK_SEL1,
++	AUDIO_CLK_SEL2,
+ 
+ 	/* SSIU */
+-	RSND_REG_SSI_MODE,
+-	RSND_REG_SSI_MODE0,
+-	RSND_REG_SSI_MODE1,
+-	RSND_REG_SSI_MODE2,
+-	RSND_REG_SSI_CONTROL,
+-	RSND_REG_SSI_CTRL,
+-	RSND_REG_SSI_BUSIF0_MODE,
+-	RSND_REG_SSI_BUSIF0_ADINR,
+-	RSND_REG_SSI_BUSIF0_DALIGN,
+-	RSND_REG_SSI_BUSIF1_MODE,
+-	RSND_REG_SSI_BUSIF1_ADINR,
+-	RSND_REG_SSI_BUSIF1_DALIGN,
+-	RSND_REG_SSI_BUSIF2_MODE,
+-	RSND_REG_SSI_BUSIF2_ADINR,
+-	RSND_REG_SSI_BUSIF2_DALIGN,
+-	RSND_REG_SSI_BUSIF3_MODE,
+-	RSND_REG_SSI_BUSIF3_ADINR,
+-	RSND_REG_SSI_BUSIF3_DALIGN,
+-	RSND_REG_SSI_BUSIF4_MODE,
+-	RSND_REG_SSI_BUSIF4_ADINR,
+-	RSND_REG_SSI_BUSIF4_DALIGN,
+-	RSND_REG_SSI_BUSIF5_MODE,
+-	RSND_REG_SSI_BUSIF5_ADINR,
+-	RSND_REG_SSI_BUSIF5_DALIGN,
+-	RSND_REG_SSI_BUSIF6_MODE,
+-	RSND_REG_SSI_BUSIF6_ADINR,
+-	RSND_REG_SSI_BUSIF6_DALIGN,
+-	RSND_REG_SSI_BUSIF7_MODE,
+-	RSND_REG_SSI_BUSIF7_ADINR,
+-	RSND_REG_SSI_BUSIF7_DALIGN,
+-	RSND_REG_SSI_INT_ENABLE,
+-	RSND_REG_SSI_SYS_STATUS0,
+-	RSND_REG_SSI_SYS_STATUS1,
+-	RSND_REG_SSI_SYS_STATUS2,
+-	RSND_REG_SSI_SYS_STATUS3,
+-	RSND_REG_SSI_SYS_STATUS4,
+-	RSND_REG_SSI_SYS_STATUS5,
+-	RSND_REG_SSI_SYS_STATUS6,
+-	RSND_REG_SSI_SYS_STATUS7,
+-	RSND_REG_HDMI0_SEL,
+-	RSND_REG_HDMI1_SEL,
++	SSI_MODE,
++	SSI_MODE0,
++	SSI_MODE1,
++	SSI_MODE2,
++	SSI_CONTROL,
++	SSI_CTRL,
++	SSI_BUSIF0_MODE,
++	SSI_BUSIF1_MODE,
++	SSI_BUSIF2_MODE,
++	SSI_BUSIF3_MODE,
++	SSI_BUSIF4_MODE,
++	SSI_BUSIF5_MODE,
++	SSI_BUSIF6_MODE,
++	SSI_BUSIF7_MODE,
++	SSI_BUSIF0_ADINR,
++	SSI_BUSIF1_ADINR,
++	SSI_BUSIF2_ADINR,
++	SSI_BUSIF3_ADINR,
++	SSI_BUSIF4_ADINR,
++	SSI_BUSIF5_ADINR,
++	SSI_BUSIF6_ADINR,
++	SSI_BUSIF7_ADINR,
++	SSI_BUSIF0_DALIGN,
++	SSI_BUSIF1_DALIGN,
++	SSI_BUSIF2_DALIGN,
++	SSI_BUSIF3_DALIGN,
++	SSI_BUSIF4_DALIGN,
++	SSI_BUSIF5_DALIGN,
++	SSI_BUSIF6_DALIGN,
++	SSI_BUSIF7_DALIGN,
++	SSI_INT_ENABLE,
++	SSI_SYS_STATUS0,
++	SSI_SYS_STATUS1,
++	SSI_SYS_STATUS2,
++	SSI_SYS_STATUS3,
++	SSI_SYS_STATUS4,
++	SSI_SYS_STATUS5,
++	SSI_SYS_STATUS6,
++	SSI_SYS_STATUS7,
++	HDMI0_SEL,
++	HDMI1_SEL,
+ 
+ 	/* SSI */
+-	RSND_REG_SSICR,
+-	RSND_REG_SSISR,
+-	RSND_REG_SSITDR,
+-	RSND_REG_SSIRDR,
+-	RSND_REG_SSIWSR,
++	SSICR,
++	SSISR,
++	SSITDR,
++	SSIRDR,
++	SSIWSR,
+ 
+-	RSND_REG_MAX,
++	REG_MAX,
  };
++#define SRCIN_TIMSEL(i)		(SRCIN_TIMSEL0 + (i))
++#define SRCOUT_TIMSEL(i)	(SRCOUT_TIMSEL0 + (i))
++#define CTU_SVxxR(i, j)		(CTU_SV00R + (i * 8) + (j))
++#define DVC_VOLxR(i)		(DVC_VOL0R + (i))
++#define AUDIO_CLK_SEL(i)	(AUDIO_CLK_SEL0 + (i))
++#define SSI_BUSIF_MODE(i)	(SSI_BUSIF0_MODE + (i))
++#define SSI_BUSIF_ADINR(i)	(SSI_BUSIF0_ADINR + (i))
++#define SSI_BUSIF_DALIGN(i)	(SSI_BUSIF0_DALIGN + (i))
++#define SSI_SYS_STATUS(i)	(SSI_SYS_STATUS0 + (i))
++
  
-@@ -89,12 +88,12 @@ static u32 rsnd_src_convert_rate(struct rsnd_dai_stream *io,
- 		return 0;
- 
- 	if (!rsnd_src_sync_is_enabled(mod))
--		return src->convert_rate;
-+		return rsnd_io_converted_rate(io);
- 
- 	convert_rate = src->sync.val;
- 
- 	if (!convert_rate)
--		convert_rate = src->convert_rate;
-+		convert_rate = rsnd_io_converted_rate(io);
- 
- 	if (!convert_rate)
- 		convert_rate = runtime->rate;
-@@ -135,40 +134,6 @@ unsigned int rsnd_src_get_rate(struct rsnd_priv *priv,
- 	return rate;
- }
- 
--static int rsnd_src_hw_params(struct rsnd_mod *mod,
--			      struct rsnd_dai_stream *io,
--			      struct snd_pcm_substream *substream,
--			      struct snd_pcm_hw_params *fe_params)
--{
--	struct rsnd_src *src = rsnd_mod_to_src(mod);
--	struct snd_soc_pcm_runtime *fe = substream->private_data;
+ struct rsnd_priv;
+ struct rsnd_mod;
+@@ -210,20 +220,9 @@ struct rsnd_dai_stream;
+ /*
+  *	R-Car basic functions
+  */
+-#define rsnd_mod_read(m, r) \
+-	rsnd_read(rsnd_mod_to_priv(m), m, RSND_REG_##r)
+-#define rsnd_mod_write(m, r, d) \
+-	rsnd_write(rsnd_mod_to_priv(m), m, RSND_REG_##r, d)
+-#define rsnd_mod_bset(m, r, s, d) \
+-	rsnd_bset(rsnd_mod_to_priv(m), m, RSND_REG_##r, s, d)
 -
--	/*
--	 * SRC assumes that it is used under DPCM if user want to use
--	 * sampling rate convert. Then, SRC should be FE.
--	 * And then, this function will be called *after* BE settings.
--	 * this means, each BE already has fixuped hw_params.
--	 * see
--	 *	dpcm_fe_dai_hw_params()
--	 *	dpcm_be_dai_hw_params()
--	 */
--	src->convert_rate = 0;
--	if (fe->dai_link->dynamic) {
--		int stream = substream->stream;
--		struct snd_soc_dpcm *dpcm;
--		struct snd_pcm_hw_params *be_params;
+-u32 rsnd_read(struct rsnd_priv *priv, struct rsnd_mod *mod, enum rsnd_reg reg);
+-void rsnd_write(struct rsnd_priv *priv, struct rsnd_mod *mod,
+-		enum rsnd_reg reg, u32 data);
+-void rsnd_force_write(struct rsnd_priv *priv, struct rsnd_mod *mod,
+-		enum rsnd_reg reg, u32 data);
+-void rsnd_bset(struct rsnd_priv *priv, struct rsnd_mod *mod, enum rsnd_reg reg,
+-		    u32 mask, u32 data);
++u32 rsnd_mod_read(struct rsnd_mod *mod, enum rsnd_reg reg);
++void rsnd_mod_write(struct rsnd_mod *mod, enum rsnd_reg reg, u32 data);
++void rsnd_mod_bset(struct rsnd_mod *mod, enum rsnd_reg reg, u32 mask, u32 data);
+ u32 rsnd_get_adinr_bit(struct rsnd_mod *mod, struct rsnd_dai_stream *io);
+ u32 rsnd_get_dalign(struct rsnd_mod *mod, struct rsnd_dai_stream *io);
+ u32 rsnd_get_busif_shift(struct rsnd_dai_stream *io, struct rsnd_mod *mod);
+diff --git a/sound/soc/sh/rcar/ssiu.c b/sound/soc/sh/rcar/ssiu.c
+index 04b1a48..c5934ad 100644
+--- a/sound/soc/sh/rcar/ssiu.c
++++ b/sound/soc/sh/rcar/ssiu.c
+@@ -65,6 +65,7 @@ static int rsnd_ssiu_init(struct rsnd_mod *mod,
+ 	int id = rsnd_mod_id(mod);
+ 	u32 mask1, val1;
+ 	u32 mask2, val2;
++	int i;
+ 
+ 	/* clear status */
+ 	switch (id) {
+@@ -73,16 +74,12 @@ static int rsnd_ssiu_init(struct rsnd_mod *mod,
+ 	case 2:
+ 	case 3:
+ 	case 4:
+-		rsnd_mod_write(mod, SSI_SYS_STATUS0, 0xf << (id * 4));
+-		rsnd_mod_write(mod, SSI_SYS_STATUS2, 0xf << (id * 4));
+-		rsnd_mod_write(mod, SSI_SYS_STATUS4, 0xf << (id * 4));
+-		rsnd_mod_write(mod, SSI_SYS_STATUS6, 0xf << (id * 4));
++		for (i = 0; i < 4; i++)
++			rsnd_mod_write(mod, SSI_SYS_STATUS(i * 2), 0xf << (id * 4));
+ 		break;
+ 	case 9:
+-		rsnd_mod_write(mod, SSI_SYS_STATUS1, 0xf << 4);
+-		rsnd_mod_write(mod, SSI_SYS_STATUS3, 0xf << 4);
+-		rsnd_mod_write(mod, SSI_SYS_STATUS5, 0xf << 4);
+-		rsnd_mod_write(mod, SSI_SYS_STATUS7, 0xf << 4);
++		for (i = 0; i < 4; i++)
++			rsnd_mod_write(mod, SSI_SYS_STATUS((i * 2) + 1), 0xf << (id * 4));
+ 		break;
+ 	}
+ 
+@@ -198,43 +195,15 @@ static int rsnd_ssiu_init_gen2(struct rsnd_mod *mod,
+ 				id, busif);
+ 		}
+ 
+-#define RSND_WRITE_BUSIF(i)						\
+-		rsnd_mod_write(mod, SSI_BUSIF##i##_ADINR,		\
+-			       rsnd_get_adinr_bit(mod, io) |		\
+-			       (rsnd_io_is_play(io) ?			\
+-				rsnd_runtime_channel_after_ctu(io) :	\
+-				rsnd_runtime_channel_original(io)));	\
+-		rsnd_mod_write(mod, SSI_BUSIF##i##_MODE,		\
+-			       rsnd_get_busif_shift(io, mod) | 1);	\
+-		rsnd_mod_write(mod, SSI_BUSIF##i##_DALIGN,		\
+-			       rsnd_get_dalign(mod, io))
 -
--		for_each_dpcm_be(fe, stream, dpcm) {
--			be_params = &dpcm->hw_params;
--
--			if (params_rate(fe_params) != params_rate(be_params))
--				src->convert_rate = params_rate(be_params);
+-		switch (busif) {
+-		case 0:
+-			RSND_WRITE_BUSIF(0);
+-			break;
+-		case 1:
+-			RSND_WRITE_BUSIF(1);
+-			break;
+-		case 2:
+-			RSND_WRITE_BUSIF(2);
+-			break;
+-		case 3:
+-			RSND_WRITE_BUSIF(3);
+-			break;
+-		case 4:
+-			RSND_WRITE_BUSIF(4);
+-			break;
+-		case 5:
+-			RSND_WRITE_BUSIF(5);
+-			break;
+-		case 6:
+-			RSND_WRITE_BUSIF(6);
+-			break;
+-		case 7:
+-			RSND_WRITE_BUSIF(7);
+-			break;
 -		}
--	}
--
--	return 0;
--}
--
- static void rsnd_src_set_convert_rate(struct rsnd_dai_stream *io,
- 				      struct rsnd_mod *mod)
- {
-@@ -534,7 +499,6 @@ static struct rsnd_mod_ops rsnd_src_ops = {
- 	.start		= rsnd_src_start,
- 	.stop		= rsnd_src_stop,
- 	.irq		= rsnd_src_irq,
--	.hw_params	= rsnd_src_hw_params,
- 	.pcm_new	= rsnd_src_pcm_new,
- 	.get_status	= rsnd_mod_get_status,
- };
++		rsnd_mod_write(mod, SSI_BUSIF_ADINR(busif),
++			       rsnd_get_adinr_bit(mod, io) |
++			       (rsnd_io_is_play(io) ?
++				rsnd_runtime_channel_after_ctu(io) :
++				rsnd_runtime_channel_original(io)));
++		rsnd_mod_write(mod, SSI_BUSIF_MODE(busif),
++			       rsnd_get_busif_shift(io, mod) | 1);
++		rsnd_mod_write(mod, SSI_BUSIF_DALIGN(busif),
++			       rsnd_get_dalign(mod, io));
+ 	}
+ 
+ 	if (has_hdmi0 || has_hdmi1) {
 -- 
 2.7.4
