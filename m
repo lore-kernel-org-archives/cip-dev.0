@@ -1,65 +1,52 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 17 Oct 2019 07:57:59 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 6/6] arm64: dts: renesas:
-	hihope-rzg2-ex: Enable CAN interfaces
-In-Reply-To: <1571295479-39328-1-git-send-email-biju.das@bp.renesas.com>
-References: <1571295479-39328-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1571295479-39328-7-git-send-email-biju.das@bp.renesas.com>
+Date: Thu, 17 Oct 2019 08:04:33 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 01/57] ASoC: rsnd: add warning message
+	to rsnd_kctrl_accept_runtime()
+In-Reply-To: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
+References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1571295929-47286-2-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+From: Jiada Wang <jiada_wang@mentor.com>
 
-commit 816c5248df0fdcee33e56444232394d597a1894b upstream.
+commit b5c088689847372794500f83b65673aaa8ca4d8d upstream.
 
-This patch enables both CAN0 and CAN1, both exposed via
-connectors found on the expansion board.
+Add warning message to rsnd_kctrl_accept_runtime(), when kctrl
+update is rejected due to corresponding dai-link is idle.
+So that user can notice the reason of kctrl update failure.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+Signed-off-by: Timo Wischer <twischer@de.adit-jv.com>
+[kuninori: adjust to upstream]
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ sound/soc/sh/rcar/core.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi b/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi
-index 07a6eea..4280b19 100644
---- a/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi
-+++ b/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi
-@@ -31,6 +31,18 @@
- 	};
- };
+diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
+index d23c2bb..36a369d 100644
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -1274,8 +1274,15 @@ int rsnd_kctrl_accept_anytime(struct rsnd_dai_stream *io)
+ int rsnd_kctrl_accept_runtime(struct rsnd_dai_stream *io)
+ {
+ 	struct snd_pcm_runtime *runtime = rsnd_io_to_runtime(io);
++	struct rsnd_priv *priv = rsnd_io_to_priv(io);
++	struct device *dev = rsnd_priv_to_dev(priv);
++
++	if (!runtime) {
++		dev_warn(dev, "Can't update kctrl when idle\n");
++		return 0;
++	}
  
-+&can0 {
-+	pinctrl-0 = <&can0_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&can1 {
-+	pinctrl-0 = <&can1_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
- &pciec0 {
- 	status = "okay";
- };
-@@ -60,4 +72,14 @@
- 			drive-strength = <12>;
- 		};
- 	};
-+
-+	can0_pins: can0 {
-+		groups = "can0_data_a";
-+		function = "can0";
-+	};
-+
-+	can1_pins: can1 {
-+		groups = "can1_data";
-+		function = "can1";
-+	};
- };
+-	return !!runtime;
++	return 1;
+ }
+ 
+ struct rsnd_kctrl_cfg *rsnd_kctrl_init_m(struct rsnd_kctrl_cfg_m *cfg)
 -- 
 2.7.4
