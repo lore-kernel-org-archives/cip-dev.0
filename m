@@ -1,47 +1,55 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 17 Oct 2019 08:05:18 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 46/57] ASoC: rsnd: ssiu: correct shift
-	bit for ssiu9
+Date: Thu, 17 Oct 2019 08:05:28 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 56/57] ASoC: rsnd: do error check after
+	rsnd_channel_normalization()
 In-Reply-To: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1571295929-47286-47-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1571295929-47286-57-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Jiada Wang <jiada_wang@mentor.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-commit 76379dfbfd7c8fd7dd29eea3f828cf85c884829e upstream.
+commit 947ec14c7369a87625f03abaab5b3f4d33ac73ba upstream.
 
-Currently "0xf << 36" is used to
-clear SSIU-9 internal buffer state, which overflows 32-bit value
-according to user reference manual, it is always bit4 ~ bit7
-of SSI_SYS_STATUS[1,3,5,7] registers indicate
-SSIU-9's buffer state, so "0xf << 4" should be used.
+SSI need to use rsnd_channel_normalization() for TDM-split mode,
+thus, channel check need to do after that.
 
-This patch fix incorrect shifting issue in SSIU-9 case
-
-Fixes: commit b7169ddea2f2 ("ASoC: rsnd: remove RSND_REG_ from rsnd_reg")
-
-Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
-Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Link: https://lore.kernel.org/r/874l1aw39d.wl-kuninori.morimoto.gx at renesas.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- sound/soc/sh/rcar/ssiu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/sh/rcar/ssi.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/sound/soc/sh/rcar/ssiu.c b/sound/soc/sh/rcar/ssiu.c
-index c5934ad..c74991d 100644
---- a/sound/soc/sh/rcar/ssiu.c
-+++ b/sound/soc/sh/rcar/ssiu.c
-@@ -79,7 +79,7 @@ static int rsnd_ssiu_init(struct rsnd_mod *mod,
- 		break;
- 	case 9:
- 		for (i = 0; i < 4; i++)
--			rsnd_mod_write(mod, SSI_SYS_STATUS((i * 2) + 1), 0xf << (id * 4));
-+			rsnd_mod_write(mod, SSI_SYS_STATUS((i * 2) + 1), 0xf << 4);
- 		break;
+diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
+index f6a7466..fc5d089 100644
+--- a/sound/soc/sh/rcar/ssi.c
++++ b/sound/soc/sh/rcar/ssi.c
+@@ -286,6 +286,11 @@ static int rsnd_ssi_master_clk_start(struct rsnd_mod *mod,
+ 	if (rsnd_ssi_is_multi_slave(mod, io))
+ 		return 0;
+ 
++	if (rsnd_runtime_is_tdm_split(io))
++		chan = rsnd_io_converted_chan(io);
++
++	chan = rsnd_channel_normalization(chan);
++
+ 	if (ssi->usrcnt > 0) {
+ 		if (ssi->rate != rate) {
+ 			dev_err(dev, "SSI parent/child should use same rate\n");
+@@ -300,11 +305,6 @@ static int rsnd_ssi_master_clk_start(struct rsnd_mod *mod,
+ 		return 0;
  	}
  
+-	if (rsnd_runtime_is_tdm_split(io))
+-		chan = rsnd_io_converted_chan(io);
+-
+-	chan = rsnd_channel_normalization(chan);
+-
+ 	main_rate = rsnd_ssi_clk_query(rdai, rate, chan, &idx);
+ 	if (!main_rate) {
+ 		dev_err(dev, "unsupported clock rate\n");
 -- 
 2.7.4
