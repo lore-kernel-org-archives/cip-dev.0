@@ -1,72 +1,325 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 17 Oct 2019 08:04:48 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 16/57] ASoC: add for_each_dpcm_fe()
+Date: Thu, 17 Oct 2019 08:04:49 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 17/57] ASoC: add for_each_dpcm_be()
 	macro
 In-Reply-To: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1571295929-47286-17-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1571295929-47286-18-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-commit d2e24d64652bf9d272e5496ae8a562bc64facff3 upstream.
+commit 8d6258a4dd267838e2f10643c3d91b79fe75ef6e upstream.
 
 To be more readable code, this patch adds
-new for_each_dpcm_fe() macro, and replace existing code to it.
+new for_each_dpcm_be() macro, and replace existing code to it.
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- include/sound/soc-dpcm.h | 3 +++
- sound/soc/soc-pcm.c      | 6 +++---
- 2 files changed, 6 insertions(+), 3 deletions(-)
+ include/sound/soc-dpcm.h     |  7 +++++++
+ sound/soc/fsl/fsl_asrc_dma.c |  2 +-
+ sound/soc/sh/rcar/ctu.c      |  2 +-
+ sound/soc/sh/rcar/src.c      |  2 +-
+ sound/soc/soc-compress.c     |  4 ++--
+ sound/soc/soc-pcm.c          | 48 +++++++++++++++++++++-----------------------
+ 6 files changed, 35 insertions(+), 30 deletions(-)
 
 diff --git a/include/sound/soc-dpcm.h b/include/sound/soc-dpcm.h
-index 9bb92f1..f130de6 100644
+index f130de6..4be3a2b 100644
 --- a/include/sound/soc-dpcm.h
 +++ b/include/sound/soc-dpcm.h
-@@ -103,6 +103,9 @@ struct snd_soc_dpcm_runtime {
- 	int trigger_pending; /* trigger cmd + 1 if pending, 0 if not */
- };
+@@ -106,6 +106,13 @@ struct snd_soc_dpcm_runtime {
+ #define for_each_dpcm_fe(be, stream, dpcm)				\
+ 	list_for_each_entry(dpcm, &(be)->dpcm[stream].fe_clients, list_fe)
  
-+#define for_each_dpcm_fe(be, stream, dpcm)				\
-+	list_for_each_entry(dpcm, &(be)->dpcm[stream].fe_clients, list_fe)
++#define for_each_dpcm_be(fe, stream, dpcm)				\
++	list_for_each_entry(dpcm, &(fe)->dpcm[stream].be_clients, list_be)
++#define for_each_dpcm_be_safe(fe, stream, dpcm, _dpcm)			\
++	list_for_each_entry_safe(dpcm, _dpcm, &(fe)->dpcm[stream].be_clients, list_be)
++#define for_each_dpcm_be_rollback(fe, stream, dpcm)			\
++	list_for_each_entry_continue_reverse(dpcm, &(fe)->dpcm[stream].be_clients, list_be)
 +
  /* can this BE stop and free */
  int snd_soc_dpcm_can_be_free_stop(struct snd_soc_pcm_runtime *fe,
  		struct snd_soc_pcm_runtime *be, int stream);
+diff --git a/sound/soc/fsl/fsl_asrc_dma.c b/sound/soc/fsl/fsl_asrc_dma.c
+index 1033ac6..01052a0 100644
+--- a/sound/soc/fsl/fsl_asrc_dma.c
++++ b/sound/soc/fsl/fsl_asrc_dma.c
+@@ -151,7 +151,7 @@ static int fsl_asrc_dma_hw_params(struct snd_pcm_substream *substream,
+ 	int ret;
+ 
+ 	/* Fetch the Back-End dma_data from DPCM */
+-	list_for_each_entry(dpcm, &rtd->dpcm[stream].be_clients, list_be) {
++	for_each_dpcm_be(rtd, stream, dpcm) {
+ 		struct snd_soc_pcm_runtime *be = dpcm->be;
+ 		struct snd_pcm_substream *substream_be;
+ 		struct snd_soc_dai *dai = be->cpu_dai;
+diff --git a/sound/soc/sh/rcar/ctu.c b/sound/soc/sh/rcar/ctu.c
+index 6a55aa7..ad70237 100644
+--- a/sound/soc/sh/rcar/ctu.c
++++ b/sound/soc/sh/rcar/ctu.c
+@@ -258,7 +258,7 @@ static int rsnd_ctu_hw_params(struct rsnd_mod *mod,
+ 		struct snd_pcm_hw_params *be_params;
+ 		int stream = substream->stream;
+ 
+-		list_for_each_entry(dpcm, &fe->dpcm[stream].be_clients, list_be) {
++		for_each_dpcm_be(fe, stream, dpcm) {
+ 			be_params = &dpcm->hw_params;
+ 			if (params_channels(fe_params) != params_channels(be_params))
+ 				ctu->channels = params_channels(be_params);
+diff --git a/sound/soc/sh/rcar/src.c b/sound/soc/sh/rcar/src.c
+index beccfba..cd38a43 100644
+--- a/sound/soc/sh/rcar/src.c
++++ b/sound/soc/sh/rcar/src.c
+@@ -158,7 +158,7 @@ static int rsnd_src_hw_params(struct rsnd_mod *mod,
+ 		struct snd_soc_dpcm *dpcm;
+ 		struct snd_pcm_hw_params *be_params;
+ 
+-		list_for_each_entry(dpcm, &fe->dpcm[stream].be_clients, list_be) {
++		for_each_dpcm_be(fe, stream, dpcm) {
+ 			be_params = &dpcm->hw_params;
+ 
+ 			if (params_rate(fe_params) != params_rate(be_params))
+diff --git a/sound/soc/soc-compress.c b/sound/soc/soc-compress.c
+index 409d082..699397a 100644
+--- a/sound/soc/soc-compress.c
++++ b/sound/soc/soc-compress.c
+@@ -157,7 +157,7 @@ static int soc_compr_open_fe(struct snd_compr_stream *cstream)
+ 	ret = dpcm_be_dai_startup(fe, stream);
+ 	if (ret < 0) {
+ 		/* clean up all links */
+-		list_for_each_entry(dpcm, &fe->dpcm[stream].be_clients, list_be)
++		for_each_dpcm_be(fe, stream, dpcm)
+ 			dpcm->state = SND_SOC_DPCM_LINK_STATE_FREE;
+ 
+ 		dpcm_be_disconnect(fe, stream);
+@@ -321,7 +321,7 @@ static int soc_compr_free_fe(struct snd_compr_stream *cstream)
+ 	ret = dpcm_be_dai_shutdown(fe, stream);
+ 
+ 	/* mark FE's links ready to prune */
+-	list_for_each_entry(dpcm, &fe->dpcm[stream].be_clients, list_be)
++	for_each_dpcm_be(fe, stream, dpcm)
+ 		dpcm->state = SND_SOC_DPCM_LINK_STATE_FREE;
+ 
+ 	dpcm_dapm_stream_event(fe, stream, SND_SOC_DAPM_STREAM_STOP);
 diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
-index 06eedb5..14132f6 100644
+index 14132f6..47cc8f36 100644
 --- a/sound/soc/soc-pcm.c
 +++ b/sound/soc/soc-pcm.c
-@@ -1255,7 +1255,7 @@ static void dpcm_be_reparent(struct snd_soc_pcm_runtime *fe,
- 
- 	be_substream = snd_soc_dpcm_get_substream(be, stream);
- 
--	list_for_each_entry(dpcm, &be->dpcm[stream].fe_clients, list_fe) {
-+	for_each_dpcm_fe(be, stream, dpcm) {
- 		if (dpcm->fe == fe)
- 			continue;
- 
-@@ -3223,7 +3223,7 @@ int snd_soc_dpcm_can_be_free_stop(struct snd_soc_pcm_runtime *fe,
+@@ -174,7 +174,7 @@ int dpcm_dapm_stream_event(struct snd_soc_pcm_runtime *fe, int dir,
+ {
  	struct snd_soc_dpcm *dpcm;
- 	int state;
  
--	list_for_each_entry(dpcm, &be->dpcm[stream].fe_clients, list_fe) {
-+	for_each_dpcm_fe(be, stream, dpcm) {
+-	list_for_each_entry(dpcm, &fe->dpcm[dir].be_clients, list_be) {
++	for_each_dpcm_be(fe, dir, dpcm) {
  
- 		if (dpcm->fe == fe)
- 			continue;
-@@ -3250,7 +3250,7 @@ int snd_soc_dpcm_can_be_params(struct snd_soc_pcm_runtime *fe,
+ 		struct snd_soc_pcm_runtime *be = dpcm->be;
+ 
+@@ -1214,7 +1214,7 @@ static int dpcm_be_connect(struct snd_soc_pcm_runtime *fe,
  	struct snd_soc_dpcm *dpcm;
- 	int state;
  
--	list_for_each_entry(dpcm, &be->dpcm[stream].fe_clients, list_fe) {
-+	for_each_dpcm_fe(be, stream, dpcm) {
+ 	/* only add new dpcms */
+-	list_for_each_entry(dpcm, &fe->dpcm[stream].be_clients, list_be) {
++	for_each_dpcm_be(fe, stream, dpcm) {
+ 		if (dpcm->be == be && dpcm->fe == fe)
+ 			return 0;
+ 	}
+@@ -1275,7 +1275,7 @@ void dpcm_be_disconnect(struct snd_soc_pcm_runtime *fe, int stream)
+ {
+ 	struct snd_soc_dpcm *dpcm, *d;
  
- 		if (dpcm->fe == fe)
- 			continue;
+-	list_for_each_entry_safe(dpcm, d, &fe->dpcm[stream].be_clients, list_be) {
++	for_each_dpcm_be_safe(fe, stream, dpcm, d) {
+ 		dev_dbg(fe->dev, "ASoC: BE %s disconnect check for %s\n",
+ 				stream ? "capture" : "playback",
+ 				dpcm->be->dai_link->name);
+@@ -1441,7 +1441,7 @@ static int dpcm_prune_paths(struct snd_soc_pcm_runtime *fe, int stream,
+ 	int prune = 0;
+ 
+ 	/* Destroy any old FE <--> BE connections */
+-	list_for_each_entry(dpcm, &fe->dpcm[stream].be_clients, list_be) {
++	for_each_dpcm_be(fe, stream, dpcm) {
+ 		unsigned int i;
+ 
+ 		/* is there a valid CPU DAI widget for this BE */
+@@ -1547,7 +1547,7 @@ void dpcm_clear_pending_state(struct snd_soc_pcm_runtime *fe, int stream)
+ {
+ 	struct snd_soc_dpcm *dpcm;
+ 
+-	list_for_each_entry(dpcm, &fe->dpcm[stream].be_clients, list_be)
++	for_each_dpcm_be(fe, stream, dpcm)
+ 		dpcm->be->dpcm[stream].runtime_update =
+ 						SND_SOC_DPCM_UPDATE_NO;
+ }
+@@ -1558,7 +1558,7 @@ static void dpcm_be_dai_startup_unwind(struct snd_soc_pcm_runtime *fe,
+ 	struct snd_soc_dpcm *dpcm;
+ 
+ 	/* disable any enabled and non active backends */
+-	list_for_each_entry(dpcm, &fe->dpcm[stream].be_clients, list_be) {
++	for_each_dpcm_be(fe, stream, dpcm) {
+ 
+ 		struct snd_soc_pcm_runtime *be = dpcm->be;
+ 		struct snd_pcm_substream *be_substream =
+@@ -1587,7 +1587,7 @@ int dpcm_be_dai_startup(struct snd_soc_pcm_runtime *fe, int stream)
+ 	int err, count = 0;
+ 
+ 	/* only startup BE DAIs that are either sinks or sources to this FE DAI */
+-	list_for_each_entry(dpcm, &fe->dpcm[stream].be_clients, list_be) {
++	for_each_dpcm_be(fe, stream, dpcm) {
+ 
+ 		struct snd_soc_pcm_runtime *be = dpcm->be;
+ 		struct snd_pcm_substream *be_substream =
+@@ -1641,7 +1641,7 @@ int dpcm_be_dai_startup(struct snd_soc_pcm_runtime *fe, int stream)
+ 
+ unwind:
+ 	/* disable any enabled and non active backends */
+-	list_for_each_entry_continue_reverse(dpcm, &fe->dpcm[stream].be_clients, list_be) {
++	for_each_dpcm_be_rollback(fe, stream, dpcm) {
+ 		struct snd_soc_pcm_runtime *be = dpcm->be;
+ 		struct snd_pcm_substream *be_substream =
+ 			snd_soc_dpcm_get_substream(be, stream);
+@@ -1698,7 +1698,7 @@ static void dpcm_runtime_merge_format(struct snd_pcm_substream *substream,
+ 	 * if FE want to use it (= dpcm_merged_format)
+ 	 */
+ 
+-	list_for_each_entry(dpcm, &fe->dpcm[stream].be_clients, list_be) {
++	for_each_dpcm_be(fe, stream, dpcm) {
+ 		struct snd_soc_pcm_runtime *be = dpcm->be;
+ 		struct snd_soc_dai_driver *codec_dai_drv;
+ 		struct snd_soc_pcm_stream *codec_stream;
+@@ -1739,7 +1739,7 @@ static void dpcm_runtime_merge_chan(struct snd_pcm_substream *substream,
+ 	 * if FE want to use it (= dpcm_merged_chan)
+ 	 */
+ 
+-	list_for_each_entry(dpcm, &fe->dpcm[stream].be_clients, list_be) {
++	for_each_dpcm_be(fe, stream, dpcm) {
+ 		struct snd_soc_pcm_runtime *be = dpcm->be;
+ 		struct snd_soc_dai_driver *cpu_dai_drv =  be->cpu_dai->driver;
+ 		struct snd_soc_dai_driver *codec_dai_drv;
+@@ -1791,7 +1791,7 @@ static void dpcm_runtime_merge_rate(struct snd_pcm_substream *substream,
+ 	 * if FE want to use it (= dpcm_merged_chan)
+ 	 */
+ 
+-	list_for_each_entry(dpcm, &fe->dpcm[stream].be_clients, list_be) {
++	for_each_dpcm_be(fe, stream, dpcm) {
+ 		struct snd_soc_pcm_runtime *be = dpcm->be;
+ 		struct snd_soc_dai_driver *cpu_dai_drv =  be->cpu_dai->driver;
+ 		struct snd_soc_dai_driver *codec_dai_drv;
+@@ -1894,7 +1894,7 @@ static int dpcm_apply_symmetry(struct snd_pcm_substream *fe_substream,
+ 	}
+ 
+ 	/* apply symmetry for BE */
+-	list_for_each_entry(dpcm, &fe->dpcm[stream].be_clients, list_be) {
++	for_each_dpcm_be(fe, stream, dpcm) {
+ 		struct snd_soc_pcm_runtime *be = dpcm->be;
+ 		struct snd_pcm_substream *be_substream =
+ 			snd_soc_dpcm_get_substream(be, stream);
+@@ -1979,7 +1979,7 @@ int dpcm_be_dai_shutdown(struct snd_soc_pcm_runtime *fe, int stream)
+ 	struct snd_soc_dpcm *dpcm;
+ 
+ 	/* only shutdown BEs that are either sinks or sources to this FE DAI */
+-	list_for_each_entry(dpcm, &fe->dpcm[stream].be_clients, list_be) {
++	for_each_dpcm_be(fe, stream, dpcm) {
+ 
+ 		struct snd_soc_pcm_runtime *be = dpcm->be;
+ 		struct snd_pcm_substream *be_substream =
+@@ -2043,7 +2043,7 @@ int dpcm_be_dai_hw_free(struct snd_soc_pcm_runtime *fe, int stream)
+ 
+ 	/* only hw_params backends that are either sinks or sources
+ 	 * to this frontend DAI */
+-	list_for_each_entry(dpcm, &fe->dpcm[stream].be_clients, list_be) {
++	for_each_dpcm_be(fe, stream, dpcm) {
+ 
+ 		struct snd_soc_pcm_runtime *be = dpcm->be;
+ 		struct snd_pcm_substream *be_substream =
+@@ -2112,7 +2112,7 @@ int dpcm_be_dai_hw_params(struct snd_soc_pcm_runtime *fe, int stream)
+ 	struct snd_soc_dpcm *dpcm;
+ 	int ret;
+ 
+-	list_for_each_entry(dpcm, &fe->dpcm[stream].be_clients, list_be) {
++	for_each_dpcm_be(fe, stream, dpcm) {
+ 
+ 		struct snd_soc_pcm_runtime *be = dpcm->be;
+ 		struct snd_pcm_substream *be_substream =
+@@ -2163,7 +2163,7 @@ int dpcm_be_dai_hw_params(struct snd_soc_pcm_runtime *fe, int stream)
+ 
+ unwind:
+ 	/* disable any enabled and non active backends */
+-	list_for_each_entry_continue_reverse(dpcm, &fe->dpcm[stream].be_clients, list_be) {
++	for_each_dpcm_be_rollback(fe, stream, dpcm) {
+ 		struct snd_soc_pcm_runtime *be = dpcm->be;
+ 		struct snd_pcm_substream *be_substream =
+ 			snd_soc_dpcm_get_substream(be, stream);
+@@ -2243,7 +2243,7 @@ int dpcm_be_dai_trigger(struct snd_soc_pcm_runtime *fe, int stream,
+ 	struct snd_soc_dpcm *dpcm;
+ 	int ret = 0;
+ 
+-	list_for_each_entry(dpcm, &fe->dpcm[stream].be_clients, list_be) {
++	for_each_dpcm_be(fe, stream, dpcm) {
+ 
+ 		struct snd_soc_pcm_runtime *be = dpcm->be;
+ 		struct snd_pcm_substream *be_substream =
+@@ -2429,7 +2429,7 @@ int dpcm_be_dai_prepare(struct snd_soc_pcm_runtime *fe, int stream)
+ 	struct snd_soc_dpcm *dpcm;
+ 	int ret = 0;
+ 
+-	list_for_each_entry(dpcm, &fe->dpcm[stream].be_clients, list_be) {
++	for_each_dpcm_be(fe, stream, dpcm) {
+ 
+ 		struct snd_soc_pcm_runtime *be = dpcm->be;
+ 		struct snd_pcm_substream *be_substream =
+@@ -2640,7 +2640,7 @@ static int dpcm_run_update_startup(struct snd_soc_pcm_runtime *fe, int stream)
+ 	dpcm_be_dai_shutdown(fe, stream);
+ disconnect:
+ 	/* disconnect any non started BEs */
+-	list_for_each_entry(dpcm, &fe->dpcm[stream].be_clients, list_be) {
++	for_each_dpcm_be(fe, stream, dpcm) {
+ 		struct snd_soc_pcm_runtime *be = dpcm->be;
+ 		if (be->dpcm[stream].state != SND_SOC_DPCM_STATE_START)
+ 				dpcm->state = SND_SOC_DPCM_LINK_STATE_FREE;
+@@ -2785,11 +2785,9 @@ int soc_dpcm_runtime_update(struct snd_soc_card *card)
+ int soc_dpcm_be_digital_mute(struct snd_soc_pcm_runtime *fe, int mute)
+ {
+ 	struct snd_soc_dpcm *dpcm;
+-	struct list_head *clients =
+-		&fe->dpcm[SNDRV_PCM_STREAM_PLAYBACK].be_clients;
+ 	struct snd_soc_dai *dai;
+ 
+-	list_for_each_entry(dpcm, clients, list_be) {
++	for_each_dpcm_be(fe, SNDRV_PCM_STREAM_PLAYBACK, dpcm) {
+ 
+ 		struct snd_soc_pcm_runtime *be = dpcm->be;
+ 		int i;
+@@ -2838,7 +2836,7 @@ static int dpcm_fe_dai_open(struct snd_pcm_substream *fe_substream)
+ 	ret = dpcm_fe_dai_startup(fe_substream);
+ 	if (ret < 0) {
+ 		/* clean up all links */
+-		list_for_each_entry(dpcm, &fe->dpcm[stream].be_clients, list_be)
++		for_each_dpcm_be(fe, stream, dpcm)
+ 			dpcm->state = SND_SOC_DPCM_LINK_STATE_FREE;
+ 
+ 		dpcm_be_disconnect(fe, stream);
+@@ -2861,7 +2859,7 @@ static int dpcm_fe_dai_close(struct snd_pcm_substream *fe_substream)
+ 	ret = dpcm_fe_dai_shutdown(fe_substream);
+ 
+ 	/* mark FE's links ready to prune */
+-	list_for_each_entry(dpcm, &fe->dpcm[stream].be_clients, list_be)
++	for_each_dpcm_be(fe, stream, dpcm)
+ 		dpcm->state = SND_SOC_DPCM_LINK_STATE_FREE;
+ 
+ 	dpcm_be_disconnect(fe, stream);
+@@ -3330,7 +3328,7 @@ static ssize_t dpcm_show_state(struct snd_soc_pcm_runtime *fe,
+ 		goto out;
+ 	}
+ 
+-	list_for_each_entry(dpcm, &fe->dpcm[stream].be_clients, list_be) {
++	for_each_dpcm_be(fe, stream, dpcm) {
+ 		struct snd_soc_pcm_runtime *be = dpcm->be;
+ 		params = &dpcm->hw_params;
+ 
 -- 
 2.7.4
