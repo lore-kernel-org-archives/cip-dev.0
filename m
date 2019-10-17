@@ -1,41 +1,53 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 17 Oct 2019 08:05:16 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 44/57] ASoC: sh: Avoid passing NULL to
-	memory allocators
+Date: Thu, 17 Oct 2019 08:05:26 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 54/57] ASoC: rsnd: add missing pin
+	sharing with SSI9
 In-Reply-To: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1571295929-47286-45-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1571295929-47286-55-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-commit 8f74ae398aa0b96207de366e9a723517e440e590 upstream.
+commit 526a6d45b013d45fdddd420860c69fb29fed3d62 upstream.
 
-We should pass a proper	non-NULL device	object to memory allocators
-although it was accepted in the past.  The card->dev points to the
-most appropriate device object in such a case, so let's put it.
+When SSI9 is sharing pin with SSI0, we need to care about it,
+but is missing. This patch fixup it.
 
-Acked-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Reported-by: Hien Dang <hien.dang.eb@renesas.com>
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Tested-by: Chaoliang Qin <chaoliang.qin.jg@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- sound/soc/sh/siu_pcm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/sh/rcar/adg.c | 1 +
+ sound/soc/sh/rcar/ssi.c | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/sound/soc/sh/siu_pcm.c b/sound/soc/sh/siu_pcm.c
-index e263757..23384c4 100644
---- a/sound/soc/sh/siu_pcm.c
-+++ b/sound/soc/sh/siu_pcm.c
-@@ -542,7 +542,7 @@ static int siu_pcm_new(struct snd_soc_pcm_runtime *rtd)
- 			return ret;
- 
- 		ret = snd_pcm_lib_preallocate_pages_for_all(pcm,
--				SNDRV_DMA_TYPE_DEV, NULL,
-+				SNDRV_DMA_TYPE_DEV, card->dev,
- 				SIU_BUFFER_BYTES_MAX, SIU_BUFFER_BYTES_MAX);
- 		if (ret < 0) {
- 			dev_err(card->dev,
+diff --git a/sound/soc/sh/rcar/adg.c b/sound/soc/sh/rcar/adg.c
+index 141d9a0..b9aacf3 100644
+--- a/sound/soc/sh/rcar/adg.c
++++ b/sound/soc/sh/rcar/adg.c
+@@ -88,6 +88,7 @@ static u32 rsnd_adg_ssi_ws_timing_gen2(struct rsnd_dai_stream *io)
+ 		switch (id) {
+ 		case 1:
+ 		case 2:
++		case 9:
+ 			ws = 0;
+ 			break;
+ 		case 4:
+diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
+index 44bda21..f6a7466 100644
+--- a/sound/soc/sh/rcar/ssi.c
++++ b/sound/soc/sh/rcar/ssi.c
+@@ -740,6 +740,7 @@ static void rsnd_ssi_parent_attach(struct rsnd_mod *mod,
+ 	switch (rsnd_mod_id(mod)) {
+ 	case 1:
+ 	case 2:
++	case 9:
+ 		rsnd_dai_connect(rsnd_ssi_mod_get(priv, 0), io, RSND_MOD_SSIP);
+ 		break;
+ 	case 4:
 -- 
 2.7.4
