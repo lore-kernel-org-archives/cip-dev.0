@@ -1,34 +1,39 @@
 From: pavel@denx.de (Pavel Machek)
-Date: Sun, 20 Oct 2019 11:48:05 +0200
-Subject: [cip-dev] [PATCH 4.19.y-cip 16/57] ASoC: add for_each_dpcm_fe()
-	macro
-In-Reply-To: <1571295929-47286-17-git-send-email-biju.das@bp.renesas.com>
+Date: Sun, 20 Oct 2019 11:49:24 +0200
+Subject: [cip-dev] [PATCH 4.19.y-cip 19/57] ASoC: rsnd: use 32bit TDM
+ width as default
+In-Reply-To: <1571295929-47286-20-git-send-email-biju.das@bp.renesas.com>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-	<1571295929-47286-17-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <20191020094805.GF8003@amd>
+	<1571295929-47286-20-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <20191020094924.GG8003@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi!
+On Thu 2019-10-17 08:04:51, Biju Das wrote:
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> commit 82ab7e9a4d3fcec27f745be04063e17da1881dda upstream.
+> 
+> commit fb2815f44a9e ("ASoC: rsnd: add support for 16/24 bit slot widths")
+> added TDM width check, and return error if it was not 16/24/32 bit.
+> But it is too strict. This patch uses 32bit same as default.
 
-> --- a/include/sound/soc-dpcm.h
-> +++ b/include/sound/soc-dpcm.h
-> @@ -103,6 +103,9 @@ struct snd_soc_dpcm_runtime {
->  	int trigger_pending; /* trigger cmd + 1 if pending, 0 if not */
->  };
+> @@ -738,8 +738,8 @@ static int rsnd_soc_set_dai_tdm_slot(struct snd_soc_dai *dai,
+>  	case 32:
+>  		break;
+>  	default:
+> -		dev_err(dev, "unsupported slot width value: %d\n", slot_width);
+> -		return -EINVAL;
+> +		/* use default */
+> +		slot_width = 32;
+>  	}
 >  
-> +#define for_each_dpcm_fe(be, stream, dpcm)				\
-> +	list_for_each_entry(dpcm, &(be)->dpcm[stream].fe_clients, list_fe)
-> +
+>  	switch (slots) {
 
-This macro is really confusing. dpcm is used as both control variable
-of the loop and name of the field in *be. Plus it relies on list_fe
-variable to be present in the context including it... that's
-non-standard.
+I don't think I like this. People should not be passing strange values
+to this function. Can the caller be fixed, instead?
 
-Oh and "&(be)->" can be written as "(be)." AFAICT.
-
-Best regards,
+Thanks,
 								Pavel
 -- 
 DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
@@ -39,4 +44,4 @@ Name: signature.asc
 Type: application/pgp-signature
 Size: 181 bytes
 Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191020/e45c32b7/attachment.sig>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191020/7f233998/attachment-0001.sig>
