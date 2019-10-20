@@ -1,38 +1,69 @@
 From: pavel@denx.de (Pavel Machek)
-Date: Sun, 20 Oct 2019 12:50:36 +0200
-Subject: [cip-dev] [PATCH 4.19.y-cip 30/57] ASoC: rsnd: add SSIU BUSIF
-	support
-In-Reply-To: <1571295929-47286-31-git-send-email-biju.das@bp.renesas.com>
+Date: Sun, 20 Oct 2019 12:54:09 +0200
+Subject: [cip-dev] [PATCH 4.19.y-cip 32/57] ASoC: rsnd: use ring buffer
+ for rsnd_mod_name()
+In-Reply-To: <1571295929-47286-33-git-send-email-biju.das@bp.renesas.com>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-	<1571295929-47286-31-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <20191020105036.GD18709@amd>
+	<1571295929-47286-33-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <20191020105409.GE18709@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi!
+On Thu 2019-10-17 08:05:04, Biju Das wrote:
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> commit 0246c661b6f0051ef7bfbfff01d8ef7fd0359372 upstream.
+> 
+> commit c0ea089dbad4 ("ASoC: rsnd: rsnd_mod_name() handles both name and
+> ID") merged "name" and "ID" on rsnd_mod_name() to handle sub-ID
+> (= for CTU/BUSIF).
+> Then, it decided to share static char to avoid pointless memory.
+> But, it doesn't work correctry in below case, because last called
+> name will be used.
+> 
+> 	dev_xxx(dev, "%s is connected to %s\n",
+> 		rsnd_mod_name(mod_a),  /* ssiu[00] */
+> 		rsnd_mod_name(mod_b)); /* ssi[0]   */
+> 	->
+> 	rcar_sound ec500000.sound: ssi[0] is connected to ssi[0]
+> 	                           ~~~~~~                 ~~~~~~
+> We still don't want to have pointless memory, so let's use ring buffer.
+> 16byte x 5 is very enough for this purpose.
+> 
+> 	dev_xxx(dev, "%s is connected to %s\n",
+> 		rsnd_mod_name(mod_a),  /* ssiu[00] */
+> 		rsnd_mod_name(mod_b)); /* ssi[0]   */
+> 	->
+> 	rcar_sound ec500000.sound: ssiu[00] is connected to ssi[0]
+> 	                           ~~~~~~~~                 ~~~~~~
 
-> This patch removes its settings from Document, but driver is still
-> keeping compatibility. Thus, old DT style is still working.
-> But, to avoid confusing, it doesn't indicate old compatibility things on
-> Document. New SoC should have SSIU on DT from this patch.
-
-I'm not sure which Document this talks about:
-
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> ---
->  sound/soc/sh/rcar/core.c |   1 +
->  sound/soc/sh/rcar/dma.c  |  37 ++++++++--
->  sound/soc/sh/rcar/rsnd.h |   6 +-
->  sound/soc/sh/rcar/ssi.c  |  22 +++---
->  sound/soc/sh/rcar/ssiu.c | 178 +++++++++++++++++++++++++++++++++++++++++++----
->  5 files changed, 215 insertions(+), 29 deletions(-)
-
-Patch does not seem to be changing any documentation.
+I'd really preffer caller passing pointer to buffer to be used to the
+function.
 
 Best regards,
 								Pavel
+
+> +++ b/sound/soc/sh/rcar/core.c
+> @@ -137,10 +137,17 @@ struct dma_chan *rsnd_mod_dma_req(struct rsnd_dai_stream *io,
+>  	return mod->ops->dma_req(io, mod);
+>  }
+>  
+> +#define MOD_NAME_NUM   5
+>  #define MOD_NAME_SIZE 16
+>  char *rsnd_mod_name(struct rsnd_mod *mod)
+>  {
+> -	static char name[MOD_NAME_SIZE];
+> +	static char names[MOD_NAME_NUM][MOD_NAME_SIZE];
+> +	static int num;
+> +	char *name = names[num];
+> +
+> +	num++;
+> +	if (num >= MOD_NAME_NUM)
+> +		num = 0;
+>  
+>  	/*
+>  	 * Let's use same char to avoid pointlessness memory
+
 -- 
 DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
@@ -42,4 +73,4 @@ Name: signature.asc
 Type: application/pgp-signature
 Size: 181 bytes
 Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191020/61c40343/attachment.sig>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191020/cd2652f6/attachment.sig>
