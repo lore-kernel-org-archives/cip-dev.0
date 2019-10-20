@@ -1,58 +1,36 @@
 From: pavel@denx.de (Pavel Machek)
-Date: Sun, 20 Oct 2019 11:36:47 +0200
-Subject: [cip-dev] [PATCH 4.19.y-cip 14/57] ASoC: add
-	for_each_rtd_codec_dai() macro
-In-Reply-To: <1571295929-47286-15-git-send-email-biju.das@bp.renesas.com>
+Date: Sun, 20 Oct 2019 11:41:59 +0200
+Subject: [cip-dev] [PATCH 4.19.y-cip 15/57] ASoC: convert
+ for_each_rtd_codec_dai() for missing part
+In-Reply-To: <1571295929-47286-16-git-send-email-biju.das@bp.renesas.com>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-	<1571295929-47286-15-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <20191020093647.GD8003@amd>
+	<1571295929-47286-16-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <20191020094159.GE8003@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi!
 
-> commit 0b7990e38971da403ce223d8bdc758a817eb72f8 upstream.
-> 
-> ALSA SoC snd_soc_pcm_runtime has snd_soc_dai array for codec_dai.
-> To be more readable code, this patch adds
-> new for_each_rtd_codec_dai() macro, and replace existing code to it.
+> commit 0b7990e38971 ("ASoC: add for_each_rtd_codec_dai() macro")
+> added for_each_rtd_codec_dai(), but it didn't convert few loop
+> which is not using "rtd". This patch fixup it.
 
-I'm okay with for_each_rtd_codec_dai() macro. But there's _reverse
-macro, and they look very, very similar, except that the _reverse
-macro does not actually initialize i... Yes, code needs it that way,
-but that's kind of tiny detail easy to overlook.
 
-Mainline at least names the macro _rollback to make it tiny bit
-clearer. But I'd recommend just opencoding the _reverse macro; it does
-not really help readability.
-
-Best regards,
-								Pavel
-								
-> +++ b/include/sound/soc.h
-> @@ -1152,6 +1152,13 @@ struct snd_soc_pcm_runtime {
->  	unsigned int dev_registered:1;
->  	unsigned int pop_wait:1;
->  };
-> +#define for_each_rtd_codec_dai(rtd, i, dai)\
-> +	for ((i) = 0;						       \
-> +	     ((i) < rtd->num_codecs) && ((dai) = rtd->codec_dais[i]); \
-> +	     (i)++)
-> +#define for_each_rtd_codec_dai_reverse(rtd, i, dai)				\
-> +	for (; ((i--) >= 0) && ((dai) = rtd->codec_dais[i]);)
-> +
->
-
-> @@ -620,8 +621,7 @@ static int soc_pcm_open(struct snd_pcm_substream *substream)
->  	i = rtd->num_codecs;
+> @@ -1321,8 +1322,7 @@ static struct snd_soc_pcm_runtime *dpcm_get_be(struct snd_soc_card *card,
+>  			if (be->cpu_dai->playback_widget == widget)
+>  				return be;
 >  
->  codec_dai_err:
-> -	while (--i >= 0) {
-> -		codec_dai = rtd->codec_dais[i];
-> +	for_each_rtd_codec_dai_reverse(rtd, i, codec_dai) {
->  		if (codec_dai->driver->ops->shutdown)
->  			codec_dai->driver->ops->shutdown(substream, codec_dai);
->  	}
+> -			for (i = 0; i < be->num_codecs; i++) {
+> -				struct snd_soc_dai *dai = be->codec_dais[i];
+> +			for_each_rtd_codec_dai(be, i, dai) {
+>  				if (dai->playback_widget == widget)
+>  					return be;
+>  			}
+
+This conversion is not equivalent. Original code always goes through
+num_codecs, new code stops at first NULL pointer. I assume there are
+always non-NULL pointers in the list, but perhaps new code should not
+be ignoring the NULLs silently?
 
 Best regards,
 								Pavel
@@ -65,4 +43,4 @@ Name: signature.asc
 Type: application/pgp-signature
 Size: 181 bytes
 Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191020/27ced167/attachment.sig>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191020/722af6d1/attachment.sig>
