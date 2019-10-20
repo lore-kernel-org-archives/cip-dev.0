@@ -1,50 +1,57 @@
 From: pavel@denx.de (Pavel Machek)
-Date: Fri, 18 Oct 2019 23:49:44 +0200
-Subject: [cip-dev] [PATCH 4.19.y-cip 00/57] Audio improvements/SSIU
-	BUSIF/
-In-Reply-To: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
+Date: Sun, 20 Oct 2019 11:12:50 +0200
+Subject: [cip-dev] [PATCH 4.19.y-cip 06/57] ASoC: rsnd: ssi: Check
+ runtime channel number rather than hw_params
+In-Reply-To: <1571295929-47286-7-git-send-email-biju.das@bp.renesas.com>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <20191018214944.GA2766@amd>
+	<1571295929-47286-7-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <20191020091250.GA8003@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi!
 
-> This patch add support for SSIU BUSIF/ TDM split mode. Also it
-> fixes some of audio issues.
+> commit 599da084e041b877ef89211dcbb4c7bd8380049d upstream.
 > 
-> This patch series is based on linux-4.19.y-cip and all the patches
-> in this series are cherry-picked from linux rc tree.
+> The number of channel handled by SSI maybe differs from the one set
+> in hw_params, currently SSI checks hw_params's channel number,
+> and constrains to use same channel number, when it is being
+> used by multiple clients.
+> 
+> This patch corrects to check runtime channel number rather
+> than channel number set in hw_params.
 
->  arch/arm64/boot/dts/renesas/r8a774a1.dtsi          | 251 +++++++++-
->  include/sound/soc-dpcm.h                           |  10 +
->  include/sound/soc.h                                |   7 +
->  sound/soc/fsl/fsl_asrc_dma.c                       |   2 +-
->  sound/soc/intel/boards/kbl_rt5663_max98927.c       |   5 +-
->  .../soc/intel/boards/kbl_rt5663_rt5514_max98927.c  |   5 +-
->  sound/soc/mediatek/mt8173/mt8173-rt5650-rt5514.c   |   5 +-
->  sound/soc/mediatek/mt8173/mt8173-rt5650-rt5676.c   |   5 +-
->  sound/soc/mediatek/mt8173/mt8173-rt5650.c          |   5 +-
-...
->  sound/soc/meson/axg-card.c                         |   6 +-
->  sound/soc/soc-compress.c                           |   4 +-
->  sound/soc/soc-core.c                               |  38 +-
->  sound/soc/soc-dapm.c                               |  14 +-
->  sound/soc/soc-pcm.c                                | 239 +++++-----
->  28 files changed, 1867 insertions(+), 1150 deletions(-)
+This also changes the error return here from -EIO to -EINVAL. I assume
+that's okay, but I wanted to double check.
 
-Ok, this is quite a lot of changes, some of them questionable, and
-some of them to the shared code.
-
-What is "SSIU BUSIF/ TDM split mode" and why is it important? Is it
-possible to identify which patches fix existing issues, and what
-issues those are?
-
-I'll post comments on individual patches later, but it would be really
-useful to have a big picture.
-
-Thanks and best regards,
+Best regards,
 								Pavel
+
+
+> @@ -307,6 +307,11 @@ static int rsnd_ssi_master_clk_start(struct rsnd_mod *mod,
+>  			return -EINVAL;
+>  		}
+>  
+> +		if (ssi->chan != chan) {
+> +			dev_err(dev, "SSI parent/child should use same chan\n");
+> +			return -EINVAL;
+> +		}
+> +
+>  		return 0;
+>  	}
+>  
+> @@ -519,24 +524,6 @@ static int rsnd_ssi_hw_params(struct rsnd_mod *mod,
+> -	if (ssi->usrcnt) {
+> -		/*
+> -		 * Already working.
+> -		 * It will happen if SSI has parent/child connection.
+> -		 * it is error if child <-> parent SSI uses
+> -		 * different channels.
+> -		 */
+> -		if (ssi->chan != chan)
+> -			return -EIO;
+> -	}
+
 -- 
 DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
@@ -54,4 +61,4 @@ Name: signature.asc
 Type: application/pgp-signature
 Size: 181 bytes
 Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191018/c0db7cf5/attachment.sig>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191020/27015c9c/attachment.sig>
