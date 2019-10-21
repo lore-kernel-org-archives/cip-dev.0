@@ -1,50 +1,58 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Mon, 21 Oct 2019 13:46:26 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 30/57] ASoC: rsnd: add SSIU BUSIF
-	support
-In-Reply-To: <20191020105036.GD18709@amd>
+Date: Mon, 21 Oct 2019 13:48:49 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 28/57] ASoC: rsnd: move HDMI
+ information from ssi.c to core.c
+In-Reply-To: <20191020104009.GC18709@amd>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-	<1571295929-47286-31-git-send-email-biju.das@bp.renesas.com>
-	<20191020105036.GD18709@amd>
-Message-ID: <OSBPR01MB21031093A88670D4A49E64DEB8690@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+	<1571295929-47286-29-git-send-email-biju.das@bp.renesas.com>
+	<20191020104009.GC18709@amd>
+Message-ID: <OSBPR01MB210352CA992B2B242887FDAEB8690@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-HI Pavel,
++ Morimoto-San
+
+Hi Pavel,
 
 Thanks for the feedback.
 
-> Subject: Re: [PATCH 4.19.y-cip 30/57] ASoC: rsnd: add SSIU BUSIF support
+> Subject: Re: [PATCH 4.19.y-cip 28/57] ASoC: rsnd: move HDMI information
+> from ssi.c to core.c
 > 
 > Hi!
 > 
-> > This patch removes its settings from Document, but driver is still
-> > keeping compatibility. Thus, old DT style is still working.
-> > But, to avoid confusing, it doesn't indicate old compatibility things
-> > on Document. New SoC should have SSIU on DT from this patch.
+> > Current driver is supporting HDMI output, and its information are
+> > handled under ssi.c. But, it is stream information.
+> > Let's move it from ssi.c to core.c.
 > 
-> I'm not sure which Document this talks about:
-
-I think, it is talking about "Old" means BUS IF handled by SSI driver and "New" means BUSIF handled by SSIU.
-
-If you have new DT style and don't have this driver change, then you will get the below error and the driver fallback to PIO mode.
-
-[ 10.762848] rcar_sound ec500000.sound: ssi[2] : probe error -11
-[ 10.768858] rcar_sound ec500000.sound: ssi[2] fallback to PIO mode
-[ 10.775177] rcar_sound ec500000.sound: probed
-
-> > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> > Signed-off-by: Mark Brown <broonie@kernel.org>
-> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> > ---
-> >  sound/soc/sh/rcar/core.c |   1 +
-> >  sound/soc/sh/rcar/dma.c  |  37 ++++++++--
-> >  sound/soc/sh/rcar/rsnd.h |   6 +-
-> >  sound/soc/sh/rcar/ssi.c  |  22 +++---  sound/soc/sh/rcar/ssiu.c | 178
-> > +++++++++++++++++++++++++++++++++++++++++++----
-> >  5 files changed, 215 insertions(+), 29 deletions(-)
+> > +++ b/sound/soc/sh/rcar/core.c
+> >
+> > +static void rsnd_parse_connect_graph(struct rsnd_priv *priv,
+> > +				     struct rsnd_dai_stream *io,
+> > +				     struct device_node *endpoint) {
+> > +	struct device *dev = rsnd_priv_to_dev(priv);
+> > +	struct device_node *remote_node =
+> > +of_graph_get_remote_port_parent(endpoint);
+> > +
+> > +	if (!rsnd_io_to_mod_ssi(io))
+> > +		return;
+> > +
+> > +	/* HDMI0 */
+> > +	if (strstr(remote_node->full_name, "hdmi at fead0000")) {
+> > +		rsnd_flags_set(io, RSND_STREAM_HDMI0);
+> > +		dev_dbg(dev, "%s connected to HDMI0\n", io->name);
+> > +	}
+> > +
+> > +	/* HDMI1 */
+> > +	if (strstr(remote_node->full_name, "hdmi at feae0000")) {
+> > +		rsnd_flags_set(io, RSND_STREAM_HDMI1);
+> > +		dev_dbg(dev, "%s connected to HDMI1\n", io->name);
+> > +	}
+> > +}
 > 
-> Patch does not seem to be changing any documentation.
+> Does it miss of_node_put()?
 
-Cheers,
+Ye looks like we are missing of_node_put. Morimoto-San any comments?
+
+Regards,
 Biju
