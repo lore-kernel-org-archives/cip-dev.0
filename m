@@ -1,81 +1,75 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Mon, 21 Oct 2019 12:17:17 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 13/57] ASoC: rsnd: don't use %p for
-	dev_dbg()
-In-Reply-To: <20191020092733.GC8003@amd>
+Date: Mon, 21 Oct 2019 12:18:33 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 14/57] ASoC: add
+	for_each_rtd_codec_dai() macro
+In-Reply-To: <20191020093647.GD8003@amd>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-	<1571295929-47286-14-git-send-email-biju.das@bp.renesas.com>
-	<20191020092733.GC8003@amd>
-Message-ID: <OSBPR01MB2103985471E330DDE05AA1BCB8690@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+	<1571295929-47286-15-git-send-email-biju.das@bp.renesas.com>
+	<20191020093647.GD8003@amd>
+Message-ID: <OSBPR01MB2103E35FB245F3567AE5CCA1B8690@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Pave,
+HI Pavel,
 
-Thanks for the feedback.
+Thanks for the feedback
 
-> Subject: Re: [PATCH 4.19.y-cip 13/57] ASoC: rsnd: don't use %p for dev_dbg()
+> Subject: Re: [PATCH 4.19.y-cip 14/57] ASoC: add for_each_rtd_codec_dai()
+> macro
 > 
-> On Thu 2019-10-17 08:04:45, Biju Das wrote:
-> > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Hi!
+> 
+> > commit 0b7990e38971da403ce223d8bdc758a817eb72f8 upstream.
 > >
-> > commit dabdbe3ae0cb9a67872fa4ac80ffdef61391f645 upstream.
-> >
-> > rsnd driver sometimes want to know which address is used when
-> debugging.
-> > But it will indicate "(____ptrval____)" if it used "%p" on dev_dbg().
-> > Let's use "%pa" or "%px" for it.
+> > ALSA SoC snd_soc_pcm_runtime has snd_soc_dai array for codec_dai.
+> > To be more readable code, this patch adds new for_each_rtd_codec_dai()
+> > macro, and replace existing code to it.
 > 
-> Well, ____ptrval____ is there to hide address space randomization data
-> from the userland. This defeats it... which is probably okay while debugging,
-> but not sure if it is good idea for production.
+> I'm okay with for_each_rtd_codec_dai() macro. But there's _reverse macro,
+> and they look very, very similar, except that the _reverse macro does not
+> actually initialize i... Yes, code needs it that way, but that's kind of tiny detail
+> easy to overlook.
 > 
-> (It is okay if dev_dbgs are compiled out by default. Is it?)
+> Mainline at least names the macro _rollback to make it tiny bit clearer. But I'd
+> recommend just opencoding the _reverse macro; it does not really help
+> readability.
 
-Yes, for production scenario no one will enable this.
+I have backported this patch only because I got compilation error.
 
 Regards,
 Biju
 
 > 
-> > @@ -591,7 +591,7 @@ static void rsnd_adg_clk_dbg_info(struct rsnd_priv
-> *priv, struct rsnd_adg *adg)
-> >  	int i;
+> > +++ b/include/sound/soc.h
+> > @@ -1152,6 +1152,13 @@ struct snd_soc_pcm_runtime {
+> >  	unsigned int dev_registered:1;
+> >  	unsigned int pop_wait:1;
+> >  };
+> > +#define for_each_rtd_codec_dai(rtd, i, dai)\
+> > +	for ((i) = 0;						       \
+> > +	     ((i) < rtd->num_codecs) && ((dai) = rtd->codec_dais[i]); \
+> > +	     (i)++)
+> > +#define for_each_rtd_codec_dai_reverse(rtd, i, dai)
+> 		\
+> > +	for (; ((i--) >= 0) && ((dai) = rtd->codec_dais[i]);)
+> > +
 > >
-> >  	for_each_rsnd_clk(clk, adg, i)
-> > -		dev_dbg(dev, "%s    : %p : %ld\n",
-> > +		dev_dbg(dev, "%s    : %pa : %ld\n",
-> >  			clk_name[i], clk, clk_get_rate(clk));
-> >
-> >  	dev_dbg(dev, "BRGCKR = 0x%08x, BRRA/BRRB = 0x%x/0x%x\n", @@
-> -604,7
-> > +604,7 @@ static void rsnd_adg_clk_dbg_info(struct rsnd_priv *priv, struct
-> rsnd_adg *adg)
-> >  	 * by BRGCKR::BRGCKR_31
-> >  	 */
-> >  	for_each_rsnd_clkout(clk, adg, i)
-> > -		dev_dbg(dev, "clkout %d : %p : %ld\n", i,
-> > +		dev_dbg(dev, "clkout %d : %pa : %ld\n", i,
-> >  			clk, clk_get_rate(clk));
-> >  }
-> >  #else
-> > diff --git a/sound/soc/sh/rcar/dma.c b/sound/soc/sh/rcar/dma.c index
-> > b5f3bf8..0bbc4b0 100644
-> > --- a/sound/soc/sh/rcar/dma.c
-> > +++ b/sound/soc/sh/rcar/dma.c
-> > @@ -397,7 +397,7 @@ static void rsnd_dmapp_write(struct rsnd_dma
-> *dma, u32 data, u32 reg)
-> >  	struct rsnd_dma_ctrl *dmac = rsnd_priv_to_dmac(priv);
-> >  	struct device *dev = rsnd_priv_to_dev(priv);
-> >
-> > -	dev_dbg(dev, "w %p : %08x\n", rsnd_dmapp_addr(dmac, dma, reg),
-> data);
-> > +	dev_dbg(dev, "w 0x%px : %08x\n", rsnd_dmapp_addr(dmac, dma,
-> reg),
-> > +data);
-> >
-> >  	iowrite32(data, rsnd_dmapp_addr(dmac, dma, reg));  }
 > 
+> > @@ -620,8 +621,7 @@ static int soc_pcm_open(struct
+> snd_pcm_substream *substream)
+> >  	i = rtd->num_codecs;
+> >
+> >  codec_dai_err:
+> > -	while (--i >= 0) {
+> > -		codec_dai = rtd->codec_dais[i];
+> > +	for_each_rtd_codec_dai_reverse(rtd, i, codec_dai) {
+> >  		if (codec_dai->driver->ops->shutdown)
+> >  			codec_dai->driver->ops->shutdown(substream,
+> codec_dai);
+> >  	}
+> 
+> Best regards,
+> 								Pavel
 > --
 > DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
 > HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
