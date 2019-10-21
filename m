@@ -1,107 +1,80 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Mon, 21 Oct 2019 12:12:59 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 12/57] ASoC: rsnd: gen: use tab
- instead of white-space
-In-Reply-To: <20191020092205.GB8003@amd>
+Date: Mon, 21 Oct 2019 12:17:17 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 13/57] ASoC: rsnd: don't use %p for
+	dev_dbg()
+In-Reply-To: <20191020092733.GC8003@amd>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-	<1571295929-47286-13-git-send-email-biju.das@bp.renesas.com>
-	<20191020092205.GB8003@amd>
-Message-ID: <OSBPR01MB2103BC6A7270CF76E561A6CCB8690@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+	<1571295929-47286-14-git-send-email-biju.das@bp.renesas.com>
+	<20191020092733.GC8003@amd>
+Message-ID: <OSBPR01MB2103985471E330DDE05AA1BCB8690@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Pavel,
+Hi Pave,
 
 Thanks for the feedback.
 
-> Subject: Re: [PATCH 4.19.y-cip 12/57] ASoC: rsnd: gen: use tab instead of
-> white-space
+> Subject: Re: [PATCH 4.19.y-cip 13/57] ASoC: rsnd: don't use %p for dev_dbg()
 > 
-> On Thu 2019-10-17 08:04:44, Biju Das wrote:
+> On Thu 2019-10-17 08:04:45, Biju Das wrote:
 > > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 > >
-> > commit 501683d0cd54714de78501efe945bbe4356b922b upstream.
+> > commit dabdbe3ae0cb9a67872fa4ac80ffdef61391f645 upstream.
 > >
-> > commit 8c9d75033340 ("ASoC: rsnd: ssiu: Support BUSIF other than
-> > BUSIF0") added new SSIU registers.
-> > But it is using white-space for it.
-> > This patch fixup it to use tab.
+> > rsnd driver sometimes want to know which address is used when
+> debugging.
+> > But it will indicate "(____ptrval____)" if it used "%p" on dev_dbg().
+> > Let's use "%pa" or "%px" for it.
 > 
-> I believe spaces are okay for indentation, too and normally we do not fix this
-> kind of minor formatting problems unless there are real changes in the same
-> area.
+> Well, ____ptrval____ is there to hide address space randomization data
+> from the userland. This defeats it... which is probably okay while debugging,
+> but not sure if it is good idea for production.
 > 
-> (Plus English could be improved in changelog).
+> (It is okay if dev_dbgs are compiled out by default. Is it?)
 
-Later patches touches in this area. That is the reason.
+Yes, for production scenario no one will enable this.
 
-Cheers,
+Regards,
 Biju
 
 > 
-> > @@ -222,30 +222,30 @@ static int rsnd_gen2_probe(struct rsnd_priv *priv)
-> >  		RSND_GEN_M_REG(SSI_BUSIF0_MODE,		0x0,
-> 	0x80),
-> >  		RSND_GEN_M_REG(SSI_BUSIF0_ADINR,	0x4,	0x80),
-> >  		RSND_GEN_M_REG(SSI_BUSIF0_DALIGN,	0x8,	0x80),
-> > -		RSND_GEN_M_REG(SSI_BUSIF1_MODE,         0x20,   0x80),
-> > -		RSND_GEN_M_REG(SSI_BUSIF1_ADINR,        0x24,   0x80),
-> > -		RSND_GEN_M_REG(SSI_BUSIF1_DALIGN,       0x28,   0x80),
-> > -		RSND_GEN_M_REG(SSI_BUSIF2_MODE,         0x40,   0x80),
-> > -		RSND_GEN_M_REG(SSI_BUSIF2_ADINR,        0x44,   0x80),
-> > -		RSND_GEN_M_REG(SSI_BUSIF2_DALIGN,       0x48,   0x80),
-> > -		RSND_GEN_M_REG(SSI_BUSIF3_MODE,         0x60,   0x80),
-> > -		RSND_GEN_M_REG(SSI_BUSIF3_ADINR,        0x64,   0x80),
-> > -		RSND_GEN_M_REG(SSI_BUSIF3_DALIGN,       0x68,   0x80),
-> > -		RSND_GEN_M_REG(SSI_BUSIF4_MODE,         0x500,  0x80),
-> > -		RSND_GEN_M_REG(SSI_BUSIF4_ADINR,        0x504,  0x80),
-> > -		RSND_GEN_M_REG(SSI_BUSIF4_DALIGN,       0x508,  0x80),
-> > -		RSND_GEN_M_REG(SSI_BUSIF5_MODE,         0x520,  0x80),
-> > -		RSND_GEN_M_REG(SSI_BUSIF5_ADINR,        0x524,  0x80),
-> > -		RSND_GEN_M_REG(SSI_BUSIF5_DALIGN,       0x528,  0x80),
-> > -		RSND_GEN_M_REG(SSI_BUSIF6_MODE,         0x540,  0x80),
-> > -		RSND_GEN_M_REG(SSI_BUSIF6_ADINR,        0x544,  0x80),
-> > -		RSND_GEN_M_REG(SSI_BUSIF6_DALIGN,       0x548,  0x80),
-> > -		RSND_GEN_M_REG(SSI_BUSIF7_MODE,         0x560,  0x80),
-> > -		RSND_GEN_M_REG(SSI_BUSIF7_ADINR,        0x564,  0x80),
-> > -		RSND_GEN_M_REG(SSI_BUSIF7_DALIGN,       0x568,  0x80),
-> > -		RSND_GEN_M_REG(SSI_MODE,	0xc,	0x80),
-> > -		RSND_GEN_M_REG(SSI_CTRL,	0x10,	0x80),
-> > -		RSND_GEN_M_REG(SSI_INT_ENABLE,	0x18,	0x80),
-> > +		RSND_GEN_M_REG(SSI_BUSIF1_MODE,		0x20,
-> 	0x80),
-> > +		RSND_GEN_M_REG(SSI_BUSIF1_ADINR,	0x24,	0x80),
-> > +		RSND_GEN_M_REG(SSI_BUSIF1_DALIGN,	0x28,	0x80),
-> > +		RSND_GEN_M_REG(SSI_BUSIF2_MODE,		0x40,
-> 	0x80),
-> > +		RSND_GEN_M_REG(SSI_BUSIF2_ADINR,	0x44,	0x80),
-> > +		RSND_GEN_M_REG(SSI_BUSIF2_DALIGN,	0x48,	0x80),
-> > +		RSND_GEN_M_REG(SSI_BUSIF3_MODE,		0x60,
-> 	0x80),
-> > +		RSND_GEN_M_REG(SSI_BUSIF3_ADINR,	0x64,	0x80),
-> > +		RSND_GEN_M_REG(SSI_BUSIF3_DALIGN,	0x68,	0x80),
-> > +		RSND_GEN_M_REG(SSI_BUSIF4_MODE,
-> 	0x500,	0x80),
-> > +		RSND_GEN_M_REG(SSI_BUSIF4_ADINR,	0x504,	0x80),
-> > +		RSND_GEN_M_REG(SSI_BUSIF4_DALIGN,	0x508,	0x80),
-> > +		RSND_GEN_M_REG(SSI_BUSIF5_MODE,
-> 	0x520,	0x80),
-> > +		RSND_GEN_M_REG(SSI_BUSIF5_ADINR,	0x524,	0x80),
-> > +		RSND_GEN_M_REG(SSI_BUSIF5_DALIGN,	0x528,	0x80),
-> > +		RSND_GEN_M_REG(SSI_BUSIF6_MODE,
-> 	0x540,	0x80),
-> > +		RSND_GEN_M_REG(SSI_BUSIF6_ADINR,	0x544,	0x80),
-> > +		RSND_GEN_M_REG(SSI_BUSIF6_DALIGN,	0x548,	0x80),
-> > +		RSND_GEN_M_REG(SSI_BUSIF7_MODE,
-> 	0x560,	0x80),
-> > +		RSND_GEN_M_REG(SSI_BUSIF7_ADINR,	0x564,	0x80),
-> > +		RSND_GEN_M_REG(SSI_BUSIF7_DALIGN,	0x568,	0x80),
-> > +		RSND_GEN_M_REG(SSI_MODE,		0xc,	0x80),
-> > +		RSND_GEN_M_REG(SSI_CTRL,		0x10,	0x80),
-> > +		RSND_GEN_M_REG(SSI_INT_ENABLE,		0x18,	0x80),
-> >  	};
+> > @@ -591,7 +591,7 @@ static void rsnd_adg_clk_dbg_info(struct rsnd_priv
+> *priv, struct rsnd_adg *adg)
+> >  	int i;
 > >
-> >  	static const struct rsnd_regmap_field_conf conf_scu[] = {
+> >  	for_each_rsnd_clk(clk, adg, i)
+> > -		dev_dbg(dev, "%s    : %p : %ld\n",
+> > +		dev_dbg(dev, "%s    : %pa : %ld\n",
+> >  			clk_name[i], clk, clk_get_rate(clk));
+> >
+> >  	dev_dbg(dev, "BRGCKR = 0x%08x, BRRA/BRRB = 0x%x/0x%x\n", @@
+> -604,7
+> > +604,7 @@ static void rsnd_adg_clk_dbg_info(struct rsnd_priv *priv, struct
+> rsnd_adg *adg)
+> >  	 * by BRGCKR::BRGCKR_31
+> >  	 */
+> >  	for_each_rsnd_clkout(clk, adg, i)
+> > -		dev_dbg(dev, "clkout %d : %p : %ld\n", i,
+> > +		dev_dbg(dev, "clkout %d : %pa : %ld\n", i,
+> >  			clk, clk_get_rate(clk));
+> >  }
+> >  #else
+> > diff --git a/sound/soc/sh/rcar/dma.c b/sound/soc/sh/rcar/dma.c index
+> > b5f3bf8..0bbc4b0 100644
+> > --- a/sound/soc/sh/rcar/dma.c
+> > +++ b/sound/soc/sh/rcar/dma.c
+> > @@ -397,7 +397,7 @@ static void rsnd_dmapp_write(struct rsnd_dma
+> *dma, u32 data, u32 reg)
+> >  	struct rsnd_dma_ctrl *dmac = rsnd_priv_to_dmac(priv);
+> >  	struct device *dev = rsnd_priv_to_dev(priv);
+> >
+> > -	dev_dbg(dev, "w %p : %08x\n", rsnd_dmapp_addr(dmac, dma, reg),
+> data);
+> > +	dev_dbg(dev, "w 0x%px : %08x\n", rsnd_dmapp_addr(dmac, dma,
+> reg),
+> > +data);
+> >
+> >  	iowrite32(data, rsnd_dmapp_addr(dmac, dma, reg));  }
 > 
 > --
 > DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
