@@ -1,47 +1,43 @@
 From: kuninori.morimoto.gx@renesas.com (Kuninori Morimoto)
-Date: 23 Oct 2019 10:20:04 +0900
-Subject: [cip-dev] [PATCH 4.19.y-cip 15/57] ASoC: convert
-	for_each_rtd_codec_dai() for missing part
-In-Reply-To: <OSBPR01MB2103E078B3B9571E3BF50024B8690@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+Date: 23 Oct 2019 10:28:36 +0900
+Subject: [cip-dev] [PATCH 4.19.y-cip 16/57] ASoC: add for_each_dpcm_fe()
+	macro
+In-Reply-To: <OSBPR01MB2103CC08EA8249635E23798EB8690@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-	<1571295929-47286-16-git-send-email-biju.das@bp.renesas.com>
-	<20191020094159.GE8003@amd>
-	<OSBPR01MB2103E078B3B9571E3BF50024B8690@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-Message-ID: <87blu8z29n.wl-kuninori.morimoto.gx@renesas.com>
+	<1571295929-47286-17-git-send-email-biju.das@bp.renesas.com>
+	<20191020094805.GF8003@amd>
+	<OSBPR01MB2103CC08EA8249635E23798EB8690@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+Message-ID: <87a79sz1vf.wl-kuninori.morimoto.gx@renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 
 Hi
 
-> > > @@ -1321,8 +1322,7 @@ static struct snd_soc_pcm_runtime
-> > *dpcm_get_be(struct snd_soc_card *card,
-> > >  			if (be->cpu_dai->playback_widget == widget)
-> > >  				return be;
+> > > --- a/include/sound/soc-dpcm.h
+> > > +++ b/include/sound/soc-dpcm.h
+> > > @@ -103,6 +103,9 @@ struct snd_soc_dpcm_runtime {
+> > >  	int trigger_pending; /* trigger cmd + 1 if pending, 0 if not */  };
 > > >
-> > > -			for (i = 0; i < be->num_codecs; i++) {
-> > > -				struct snd_soc_dai *dai = be->codec_dais[i];
-> > > +			for_each_rtd_codec_dai(be, i, dai) {
-> > >  				if (dai->playback_widget == widget)
-> > >  					return be;
-> > >  			}
+> > > +#define for_each_dpcm_fe(be, stream, dpcm)
+> > 	\
+> > > +	list_for_each_entry(dpcm, &(be)->dpcm[stream].fe_clients, list_fe)
+> > > +
 > > 
-> > This conversion is not equivalent. Original code always goes through
-> > num_codecs, new code stops at first NULL pointer. I assume there are
-> > always non-NULL pointers in the list, but perhaps new code should not be
-> > ignoring the NULLs silently?
-> > 
-> 
-> Do you have any opinion on Pavel's findings?
+> > This macro is really confusing. dpcm is used as both control variable of the
+> > loop and name of the field in *be.
 
-Hmm.. strange.
-If original code goes through eventhough NULL pointer,
-it will be Oops at dai->playback_widget access ?
+Ohh, yes, indeed.
+Thank you for pointing it. I will post fixup patch
 
-? Does this comment came from code review,
-instead of actual machine operation issue ?
+> Plus it relies on list_fe variable to be
+> > present in the context including it... that's non-standard.
 
-if so, it is always non-NULL pointer list.
+sorry I couldn't understand about this
+
+> > Oh and "&(be)->" can be written as "(be)." AFAICT.
+
+This "&" is for fe_clients
 
 Thank you for your help !!
 Best regards
