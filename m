@@ -1,130 +1,40 @@
-From: masashi.kudo@cybertrust.co.jp (masashi.kudo at cybertrust.co.jp)
-Date: Thu, 24 Oct 2019 06:01:06 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-In-Reply-To: <HK0PR01MB29799643E6D621A2752E8CABE26A0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-References: <HK0PR01MB2979A4AAFF70AA45C5EF3E76E26A0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-	<CAFa_k0jkaRyrm9pCkrDGHC_iAYaDvHiWfvt9xFOUwD+GtnBwoA@mail.gmail.com>
-	<HK0PR01MB29799643E6D621A2752E8CABE26A0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-Message-ID: <OSBPR01MB242312E3F6B040EA30F5D8C2A06A0@OSBPR01MB2423.jpnprd01.prod.outlook.com>
+From: pavel@denx.de (Pavel Machek)
+Date: Thu, 24 Oct 2019 14:49:03 +0200
+Subject: [cip-dev] [PATCH 4.19.y-cip 0/6] Add HDMI AUDIO/CAN/CANFD
+	support
+In-Reply-To: <OSBPR01MB2103A670C18F3F754A319CDAB8690@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+References: <1571295479-39328-1-git-send-email-biju.das@bp.renesas.com>
+	<20191018165754.GB25992@amd>
+	<OSBPR01MB2103A670C18F3F754A319CDAB8690@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+Message-ID: <20191024124903.GA6546@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi, SZ-san,
+Hi!
 
-Yes, please close this AI. Thanks very much for your cooperation.
+> > > This patch series add HDMI AUDIO/CAN/CANFD support for HiHope
+> > RZ/G2M platform.
+> > >
+> > > This patch series is based on linux-4.19.y-cip and all the patches in
+> > > this series are cherry-picked from linux rc tree.
+> > 
+> > Series seems ok to me, if there are no objections I can apply it.
+> > 
+> Thanks for the review
 
-Best regards,
---
-M. Kudo
-
-From: SZ Lin (???) <SZ.Lin@moxa.com>
-Sent: Thursday, October 24, 2019 2:54 PM
-To: ??????CTJ? <masashi.kudo@cybertrust.co.jp>
-Cc: cip-dev at lists.cip-project.org
-Subject: RE: [cip-dev] CIP IRC weekly meeting today
-
-Hi Kudo-san,
-
-Thanks for you heads up.
-
-For now, we?re waiting for your patches. So I think we can close this AI if you have no objection.
-
-SZ
-
-From: masashi.kudo@cybertrust.co.jp<mailto:masashi.kudo@cybertrust.co.jp> <masashi.kudo at cybertrust.co.jp<mailto:masashi.kudo@cybertrust.co.jp>>
-Sent: Thursday, October 24, 2019 1:51 PM
-To: SZ Lin (???) <SZ.Lin at moxa.com<mailto:SZ.Lin@moxa.com>>
-Cc: cip-dev at lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>
-Subject: Re: [cip-dev] CIP IRC weekly meeting today
-
-SZ-san,
-
-> 3. Review the proposal from Kudo-san - Kernel team
-
-I'm sorry, but I cannot attend today's meeting due to another appointment.
-If I need to do anything, please let me know.
+I applied the patches. Tests are still running (
+https://gitlab.com/cip-project/cip-kernel/linux-cip/pipelines/91254170
+) but I don't expect problems there.
 
 Best regards,
---
-M. Kudo
-
-2019?10?24?(?) 10:55 SZ Lin (???) <SZ.Lin at moxa.com<mailto:SZ.Lin@moxa.com>>:
-
-Hi all,
-
-
-
-Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
-
-
-
-*Please note that the IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
-
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=10&day=24&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
-
-
-
-US-West US-East   UK     DE     TW     JP
-
-02:00    05:00   10:00   11:00   17:00   18:00
-
-
-
-Channel:
-
-* irc:chat.freenode.net:6667/cip<http://chat.freenode.net:6667/cip>
-
-
-
-Last week's meeting minutes:
-
-https://irclogs.baserock.org/meetings/cip/2019/10/cip.2019-10-17-09.00.html
-
-
-
-Agenda:
-
-
-
-* Action item
-
-1. Provide the cases to cip-testing to build up the test environment - Iwamatsu-san
-
-
-
-2. Test LTS (pre)releases directly ? patersonc
-
-
-
-3. Review the proposal from Kudo-san - Kernel team
-
-
-
-* Kernel maintenance updates
-
-* Kernel testing
-
-* CIP Core
-
-* Software update
-
-* AOB
-
-
-
-The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
-
-
-
-Best regards,
-
-
-
-SZ Lin, Moxa.
-_______________________________________________
-cip-dev mailing list
-cip-dev at lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>
-https://lists.cip-project.org/mailman/listinfo/cip-dev
+								Pavel
+-- 
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 -------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191024/694621cd/attachment-0001.html>
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 181 bytes
+Desc: Digital signature
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191024/bc2d9520/attachment.sig>
