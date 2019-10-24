@@ -1,12 +1,27 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 24 Oct 2019 05:53:33 +0000
+From: masashi.kudo@cybertrust.co.jp (masashi.kudo at cybertrust.co.jp)
+Date: Thu, 24 Oct 2019 06:01:06 +0000
 Subject: [cip-dev] CIP IRC weekly meeting today
-In-Reply-To: <CAFa_k0jkaRyrm9pCkrDGHC_iAYaDvHiWfvt9xFOUwD+GtnBwoA@mail.gmail.com>
+In-Reply-To: <HK0PR01MB29799643E6D621A2752E8CABE26A0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 References: <HK0PR01MB2979A4AAFF70AA45C5EF3E76E26A0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 	<CAFa_k0jkaRyrm9pCkrDGHC_iAYaDvHiWfvt9xFOUwD+GtnBwoA@mail.gmail.com>
-Message-ID: <HK0PR01MB29799643E6D621A2752E8CABE26A0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+	<HK0PR01MB29799643E6D621A2752E8CABE26A0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+Message-ID: <OSBPR01MB242312E3F6B040EA30F5D8C2A06A0@OSBPR01MB2423.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
+
+Hi, SZ-san,
+
+Yes, please close this AI. Thanks very much for your cooperation.
+
+Best regards,
+--
+M. Kudo
+
+From: SZ Lin (???) <SZ.Lin@moxa.com>
+Sent: Thursday, October 24, 2019 2:54 PM
+To: ??????CTJ? <masashi.kudo@cybertrust.co.jp>
+Cc: cip-dev at lists.cip-project.org
+Subject: RE: [cip-dev] CIP IRC weekly meeting today
 
 Hi Kudo-san,
 
@@ -16,10 +31,10 @@ For now, we?re waiting for your patches. So I think we can close this AI if you 
 
 SZ
 
-From: masashi.kudo@cybertrust.co.jp <masashi.kudo@cybertrust.co.jp>
+From: masashi.kudo@cybertrust.co.jp<mailto:masashi.kudo@cybertrust.co.jp> <masashi.kudo at cybertrust.co.jp<mailto:masashi.kudo@cybertrust.co.jp>>
 Sent: Thursday, October 24, 2019 1:51 PM
-To: SZ Lin (???) <SZ.Lin@moxa.com>
-Cc: cip-dev at lists.cip-project.org
+To: SZ Lin (???) <SZ.Lin at moxa.com<mailto:SZ.Lin@moxa.com>>
+Cc: cip-dev at lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>
 Subject: Re: [cip-dev] CIP IRC weekly meeting today
 
 SZ-san,
@@ -112,4 +127,4 @@ cip-dev at lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>
 https://lists.cip-project.org/mailman/listinfo/cip-dev
 -------------- next part --------------
 An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191024/fe1f0cc6/attachment.html>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191024/694621cd/attachment-0001.html>
