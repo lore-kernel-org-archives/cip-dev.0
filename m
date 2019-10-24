@@ -1,60 +1,81 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Wed, 23 Oct 2019 06:47:07 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 15/57] ASoC: convert
- for_each_rtd_codec_dai() for missing part
-In-Reply-To: <87blu8z29n.wl-kuninori.morimoto.gx@renesas.com>
-References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-	<1571295929-47286-16-git-send-email-biju.das@bp.renesas.com>
-	<20191020094159.GE8003@amd>
-	<OSBPR01MB2103E078B3B9571E3BF50024B8690@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-	<87blu8z29n.wl-kuninori.morimoto.gx@renesas.com>
-Message-ID: <TYAPR01MB2111D3ECF5AAB938AAB67FF9B86B0@TYAPR01MB2111.jpnprd01.prod.outlook.com>
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Thu, 24 Oct 2019 01:55:32 +0000
+Subject: [cip-dev] CIP IRC weekly meeting today
+Message-ID: <HK0PR01MB2979A4AAFF70AA45C5EF3E76E26A0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Morimota-San,
+Hi all,
 
-Thanks for the feedback. 
 
-> Subject: Re: [PATCH 4.19.y-cip 15/57] ASoC: convert
-> for_each_rtd_codec_dai() for missing part
-> 
-> 
-> Hi
-> 
-> > > > @@ -1321,8 +1322,7 @@ static struct snd_soc_pcm_runtime
-> > > *dpcm_get_be(struct snd_soc_card *card,
-> > > >  			if (be->cpu_dai->playback_widget == widget)
-> > > >  				return be;
-> > > >
-> > > > -			for (i = 0; i < be->num_codecs; i++) {
-> > > > -				struct snd_soc_dai *dai = be->codec_dais[i];
-> > > > +			for_each_rtd_codec_dai(be, i, dai) {
-> > > >  				if (dai->playback_widget == widget)
-> > > >  					return be;
-> > > >  			}
-> > >
-> > > This conversion is not equivalent. Original code always goes through
-> > > num_codecs, new code stops at first NULL pointer. I assume there are
-> > > always non-NULL pointers in the list, but perhaps new code should
-> > > not be ignoring the NULLs silently?
-> > >
-> >
-> > Do you have any opinion on Pavel's findings?
-> 
-> Hmm.. strange.
-> If original code goes through eventhough NULL pointer, it will be Oops at dai-
-> >playback_widget access ?
-> 
-> ? Does this comment came from code review, instead of actual machine
-> operation issue ?
 
-This comments are from code review.
- 
-https://lists.cip-project.org/pipermail/cip-dev/2019-October/thread.html#3456
+Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
 
-Cheers,
-Biju
 
-> 
-> if so, it is always non-NULL pointer list.
+
+*Please note that the IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
+
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=10&day=24&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
+
+
+
+US-West US-East   UK     DE     TW     JP
+
+02:00    05:00   10:00   11:00   17:00   18:00
+
+
+
+Channel:
+
+* irc:chat.freenode.net:6667/cip
+
+
+
+Last week's meeting minutes:
+
+https://irclogs.baserock.org/meetings/cip/2019/10/cip.2019-10-17-09.00.html
+
+
+
+Agenda:
+
+
+
+* Action item
+
+1. Provide the cases to cip-testing to build up the test environment - Iwamatsu-san
+
+
+
+2. Test LTS (pre)releases directly ? patersonc
+
+
+
+3. Review the proposal from Kudo-san - Kernel team
+
+
+
+* Kernel maintenance updates
+
+* Kernel testing
+
+* CIP Core
+
+* Software update
+
+* AOB
+
+
+
+The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
+
+
+
+Best regards,
+
+
+
+SZ Lin, Moxa.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191024/1f5cac32/attachment.html>
