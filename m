@@ -1,11 +1,26 @@
-From: masashi.kudo@cybertrust.co.jp (masashi.kudo at cybertrust.co.jp)
-Date: Thu, 24 Oct 2019 05:50:45 +0000
+From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Thu, 24 Oct 2019 05:53:33 +0000
 Subject: [cip-dev] CIP IRC weekly meeting today
-In-Reply-To: <HK0PR01MB2979A4AAFF70AA45C5EF3E76E26A0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+In-Reply-To: <CAFa_k0jkaRyrm9pCkrDGHC_iAYaDvHiWfvt9xFOUwD+GtnBwoA@mail.gmail.com>
 References: <HK0PR01MB2979A4AAFF70AA45C5EF3E76E26A0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
-Message-ID: <CAFa_k0jkaRyrm9pCkrDGHC_iAYaDvHiWfvt9xFOUwD+GtnBwoA@mail.gmail.com>
+	<CAFa_k0jkaRyrm9pCkrDGHC_iAYaDvHiWfvt9xFOUwD+GtnBwoA@mail.gmail.com>
+Message-ID: <HK0PR01MB29799643E6D621A2752E8CABE26A0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
+
+Hi Kudo-san,
+
+Thanks for you heads up.
+
+For now, we?re waiting for your patches. So I think we can close this AI if you have no objection.
+
+SZ
+
+From: masashi.kudo@cybertrust.co.jp <masashi.kudo@cybertrust.co.jp>
+Sent: Thursday, October 24, 2019 1:51 PM
+To: SZ Lin (???) <SZ.Lin@moxa.com>
+Cc: cip-dev at lists.cip-project.org
+Subject: Re: [cip-dev] CIP IRC weekly meeting today
 
 SZ-san,
 
@@ -91,11 +106,10 @@ Best regards,
 
 
 SZ Lin, Moxa.
-
 _______________________________________________
 cip-dev mailing list
 cip-dev at lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>
 https://lists.cip-project.org/mailman/listinfo/cip-dev
 -------------- next part --------------
 An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191024/e25d8ecc/attachment-0001.html>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191024/fe1f0cc6/attachment.html>
