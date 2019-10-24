@@ -1,9 +1,24 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 24 Oct 2019 01:55:32 +0000
+From: masashi.kudo@cybertrust.co.jp (masashi.kudo at cybertrust.co.jp)
+Date: Thu, 24 Oct 2019 05:50:45 +0000
 Subject: [cip-dev] CIP IRC weekly meeting today
-Message-ID: <HK0PR01MB2979A4AAFF70AA45C5EF3E76E26A0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+In-Reply-To: <HK0PR01MB2979A4AAFF70AA45C5EF3E76E26A0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+References: <HK0PR01MB2979A4AAFF70AA45C5EF3E76E26A0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+Message-ID: <CAFa_k0jkaRyrm9pCkrDGHC_iAYaDvHiWfvt9xFOUwD+GtnBwoA@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
+
+SZ-san,
+
+> 3. Review the proposal from Kudo-san - Kernel team
+
+I'm sorry, but I cannot attend today's meeting due to another appointment.
+If I need to do anything, please let me know.
+
+Best regards,
+--
+M. Kudo
+
+2019?10?24?(?) 10:55 SZ Lin (???) <SZ.Lin at moxa.com<mailto:SZ.Lin@moxa.com>>:
 
 Hi all,
 
@@ -27,7 +42,7 @@ US-West US-East   UK     DE     TW     JP
 
 Channel:
 
-* irc:chat.freenode.net:6667/cip
+* irc:chat.freenode.net:6667/cip<http://chat.freenode.net:6667/cip>
 
 
 
@@ -76,6 +91,11 @@ Best regards,
 
 
 SZ Lin, Moxa.
+
+_______________________________________________
+cip-dev mailing list
+cip-dev at lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>
+https://lists.cip-project.org/mailman/listinfo/cip-dev
 -------------- next part --------------
 An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191024/1f5cac32/attachment.html>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191024/e25d8ecc/attachment-0001.html>
