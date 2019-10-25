@@ -1,47 +1,54 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Thu, 24 Oct 2019 12:58:18 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 0/6] Add HDMI AUDIO/CAN/CANFD
-	support
-In-Reply-To: <20191024124903.GA6546@amd>
-References: <1571295479-39328-1-git-send-email-biju.das@bp.renesas.com>
-	<20191018165754.GB25992@amd>
-	<OSBPR01MB2103A670C18F3F754A319CDAB8690@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-	<20191024124903.GA6546@amd>
-Message-ID: <TYAPR01MB2285B780FAA648DD83AE9EAAB76A0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+From: pavel@denx.de (Pavel Machek)
+Date: Fri, 25 Oct 2019 14:03:38 +0200
+Subject: [cip-dev] [PATCH 4.19.y-cip 39/57] ASoC: rsnd: remove RSND_REG_
+ from rsnd_reg
+In-Reply-To: <1571295929-47286-40-git-send-email-biju.das@bp.renesas.com>
+References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
+	<1571295929-47286-40-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <20191025120338.GA32430@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Pavel,
+Hi!
 
-> From: Pavel Machek <pavel@denx.de>
-> Sent: 24 October 2019 13:49
->
-> Hi!
->
-> > > > This patch series add HDMI AUDIO/CAN/CANFD support for HiHope
-> > > RZ/G2M platform.
-> > > >
-> > > > This patch series is based on linux-4.19.y-cip and all the patches in
-> > > > this series are cherry-picked from linux rc tree.
-> > >
-> > > Series seems ok to me, if there are no objections I can apply it.
-> > >
-> > Thanks for the review
->
-> I applied the patches. Tests are still running (
-> https://gitlab.com/cip-project/cip-kernel/linux-cip/pipelines/91254170
-> ) but I don't expect problems there.
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> commit b7169ddea2f2a90538f606688adf4948f2da82ce upstream.
+> 
+> Current rsnd is using RSND_REG_xxx for register naming,
+> and using RSND_REG_##f style macro for read/write.
+> The biggest reason why it uses this style is that
+> we can avoid non-existing register access.
+> But, its demerit is sequential register access code will
+> be very ugly.
+> Current rsnd driver is well tested, so, let's remove RSND_REG_
+> from rsnd_reg, and cleanup sequential register access code.
 
-Just to let you know, the arm64 boards are currently offline in the Renesas LAVA lab.
-I'm working to get them online again, but the impact will be that your test jobs will eventually timeout and fail.
+> +#define SRCIN_TIMSEL(i)		(SRCIN_TIMSEL0 + (i))
+> +#define SRCOUT_TIMSEL(i)	(SRCOUT_TIMSEL0 + (i))
+> +#define CTU_SVxxR(i, j)		(CTU_SV00R + (i * 8) + (j))
+> +#define DVC_VOLxR(i)		(DVC_VOL0R + (i))
+> +#define AUDIO_CLK_SEL(i)	(AUDIO_CLK_SEL0 + (i))
+> +#define SSI_BUSIF_MODE(i)	(SSI_BUSIF0_MODE + (i))
+> +#define SSI_BUSIF_ADINR(i)	(SSI_BUSIF0_ADINR + (i))
+> +#define SSI_BUSIF_DALIGN(i)	(SSI_BUSIF0_DALIGN + (i))
+> +#define SSI_SYS_STATUS(i)	(SSI_SYS_STATUS0 + (i))
 
-Sorry for the inconvenience.
+Would it still make sense to test that i is in expected range?
 
-Kind regards, Chris
+#define CHECK_RANGE(i) ({ WARN_ON(i<0 || i>4); i; })
+#define SRCIN_TIMSEL(i)              (SRCIN_TIMSEL0 + (i))
+...
 
->
-> Best regards,
-> ????? ??????? ??????? ??????? ??????? ??????? ??????? ??????? Pavel
-> --
-> DENX Software Engineering GmbH,????? Managing Director: Wolfgang Denk
-> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Thanks and best regards,
+								Pavel
+-- 
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 181 bytes
+Desc: Digital signature
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191025/71f59fad/attachment.sig>
