@@ -1,47 +1,35 @@
 From: pavel@denx.de (Pavel Machek)
-Date: Sun, 27 Oct 2019 08:33:13 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 40/57] ASoC: rsnd: update
-	BSDSR/BSDISR handling
-In-Reply-To: <1571295929-47286-41-git-send-email-biju.das@bp.renesas.com>
+Date: Sun, 27 Oct 2019 08:45:38 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 48/57] ASoC: rsnd: src: Avoid a
+ potential deadlock
+In-Reply-To: <1571295929-47286-49-git-send-email-biju.das@bp.renesas.com>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-	<1571295929-47286-41-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <20191027073313.GA28383@amd>
+	<1571295929-47286-49-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <20191027074538.GB28383@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi!
 
-> Current BSDSR/BSDISR are using temporary/generic settings, but it can't
-> handle all SRCx/SoC. It needs to handle correctry.
-> Otherwise, sampling rate converted sound channel will be broken if it
-> was TDM. One note is that it needs to overwrite settings on E3 case.
+On Thu 2019-10-17 08:05:20, Biju Das wrote:
+> From: Jiada Wang <jiada_wang@mentor.com>
 > 
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> commit ba164a49f8f7390b036713bf8a70a150a938c670 upstream.
+> 
+> lockdep warns us that priv->lock and k->k_lock can cause a
+> deadlock when after acquire of k->k_lock, process is interrupted
+> by src, while in another routine of src .init, k->k_lock is
+> acquired with priv->lock held.
+> 
+> This patch avoids a potential deadlock by not calling soc_device_match()
+> in SRC .init callback, instead it adds new soc fields in priv->flags to
+> differentiate SoCs.
 
->  static void rsnd_src_set_convert_rate(struct rsnd_dai_stream *io,
->  				      struct rsnd_mod *mod)
->  {
-...
-> +	if (chan > 8 ||
-> +	    idx >= ARRAY_SIZE(chan222222))
-> +		goto convert_rate_err;
-...
-> @@ -244,6 +344,11 @@ static void rsnd_src_set_convert_rate(struct rsnd_dai_stream *io,
->  	rsnd_mod_write(mod, SRC_BUSIF_DALIGN, rsnd_get_dalign(mod, io));
->  
->  	rsnd_adg_set_src_timesel_gen2(mod, io, fin, fout);
-> +
-> +	return;
-> +
-> +convert_rate_err:
-> +	dev_err(dev, "unknown BSDSR/BSDIR settings\n");
->  }
-
-If error happens, would it make sense to propagate it back to the
-caller?
+Could this be moved near the patch it fixes? Or even merged to it?
+Introducing deadlocks is bad for bisection at the very least...
 
 Best regards,
 								Pavel
+								
 -- 
 DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
@@ -51,4 +39,4 @@ Name: signature.asc
 Type: application/pgp-signature
 Size: 181 bytes
 Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191027/8581ba07/attachment.sig>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191027/34db6ccb/attachment.sig>
