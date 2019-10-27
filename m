@@ -1,45 +1,46 @@
 From: pavel@denx.de (Pavel Machek)
-Date: Sun, 27 Oct 2019 08:51:10 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 50/57] ASoC: rsnd: fixup 6ch
-	settings to 8ch
-In-Reply-To: <1571295929-47286-51-git-send-email-biju.das@bp.renesas.com>
+Date: Sun, 27 Oct 2019 08:56:18 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 52/57] ASoC: rsnd: fixup mod ID
+ calculation in rsnd_ctu_probe_
+In-Reply-To: <1571295929-47286-53-git-send-email-biju.das@bp.renesas.com>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-	<1571295929-47286-51-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <20191027075110.GD28383@amd>
+	<1571295929-47286-53-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <20191027075618.GE28383@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Thu 2019-10-17 08:05:22, Biju Das wrote:
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+On Thu 2019-10-17 08:05:24, Biju Das wrote:
+> From: Nilkanth Ahirrao <anilkanth@jp.adit-jv.com>
 > 
-> commit 66287def435315d9d8de740da4c543e37630b897 upstream.
+> commit ac28ec07ae1c5c1e18ed6855eb105a328418da88 upstream.
 > 
-> rsnd need to use 8ch clock settings for 6ch for TDM.
-> Otherwise, it can't work correctly.
-> This patch fixup it.
+> commit c16015f36cc1 ("ASoC: rsnd: add .get_id/.get_id_sub")
+> introduces rsnd_ctu_id which calcualates and gives
+> the main Device id of the CTU by dividing the id by 4.
+> rsnd_mod_id uses this interface to get the CTU main
+> Device id. But this commit forgets to revert the main
+> Device id calcution previously done in rsnd_ctu_probe_
+> which also divides the id by 4. This path corrects the
+> same to get the correct main Device id.
+> 
+> The issue is observered when rsnd_ctu_probe_ is done for CTU1
+> 
+> Fixes: c16015f36cc1 ("ASoC: rsnd: add .get_id/.get_id_sub")
 
-Ok, but...
+> @@ -108,7 +108,7 @@ static int rsnd_ctu_probe_(struct rsnd_mod *mod,
+>  			   struct rsnd_dai_stream *io,
+>  			   struct rsnd_priv *priv)
+>  {
+> -	return rsnd_cmd_attach(io, rsnd_mod_id(mod) / 4);
+> +	return rsnd_cmd_attach(io, rsnd_mod_id(mod));
+>  }
+>  
+>  static void rsnd_ctu_value_init(struct rsnd_dai_stream *io,
 
-> +int rsnd_channel_normalization(int chan)
-> +{
-> +	if ((chan > 8) || (chan < 0))
-> +		return 0;
-> +
-> +	/* TDM Extend Mode needs 8ch */
-> +	if (chan == 6)
-> +		chan = 8;
-> +
-> +	return chan;
-> +}
-> +
+Ok, but again, could it be next to the patch it fixes?
 
-Should the if ((chan > 8) || (chan < 0)) ever be true in practice?
-Sounds like bogus inputs to me. Should we dev_err() and return error
-in those cases? Or@least WARN_ON()?
-
-Best regards,
+Thanks,
 								Pavel
-
 -- 
 DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
@@ -49,4 +50,4 @@ Name: signature.asc
 Type: application/pgp-signature
 Size: 181 bytes
 Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191027/26df021d/attachment.sig>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191027/66bfdef2/attachment.sig>
