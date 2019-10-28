@@ -1,35 +1,38 @@
 From: kuninori.morimoto.gx@renesas.com (Kuninori Morimoto)
-Date: 28 Oct 2019 09:36:09 +0900
-Subject: [cip-dev] [PATCH 4.19.y-cip 39/57] ASoC: rsnd: remove RSND_REG_
-	from rsnd_reg
-In-Reply-To: <20191025120338.GA32430@amd>
+Date: 28 Oct 2019 09:43:38 +0900
+Subject: [cip-dev] [PATCH 4.19.y-cip 50/57] ASoC: rsnd: fixup 6ch
+	settings to 8ch
+In-Reply-To: <20191027075110.GD28383@amd>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
-	<1571295929-47286-40-git-send-email-biju.das@bp.renesas.com>
-	<20191025120338.GA32430@amd>
-Message-ID: <87lft54sg6.wl-kuninori.morimoto.gx@renesas.com>
+	<1571295929-47286-51-git-send-email-biju.das@bp.renesas.com>
+	<20191027075110.GD28383@amd>
+Message-ID: <87k18p4s3p.wl-kuninori.morimoto.gx@renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 
 Hi Pavel
 
-> > +#define SRCIN_TIMSEL(i)		(SRCIN_TIMSEL0 + (i))
-> > +#define SRCOUT_TIMSEL(i)	(SRCOUT_TIMSEL0 + (i))
-> > +#define CTU_SVxxR(i, j)		(CTU_SV00R + (i * 8) + (j))
-> > +#define DVC_VOLxR(i)		(DVC_VOL0R + (i))
-> > +#define AUDIO_CLK_SEL(i)	(AUDIO_CLK_SEL0 + (i))
-> > +#define SSI_BUSIF_MODE(i)	(SSI_BUSIF0_MODE + (i))
-> > +#define SSI_BUSIF_ADINR(i)	(SSI_BUSIF0_ADINR + (i))
-> > +#define SSI_BUSIF_DALIGN(i)	(SSI_BUSIF0_DALIGN + (i))
-> > +#define SSI_SYS_STATUS(i)	(SSI_SYS_STATUS0 + (i))
+> > +int rsnd_channel_normalization(int chan)
+> > +{
+> > +	if ((chan > 8) || (chan < 0))
+> > +		return 0;
+> > +
+> > +	/* TDM Extend Mode needs 8ch */
+> > +	if (chan == 6)
+> > +		chan = 8;
+> > +
+> > +	return chan;
+> > +}
+> > +
 > 
-> Would it still make sense to test that i is in expected range?
-> 
-> #define CHECK_RANGE(i) ({ WARN_ON(i<0 || i>4); i; })
-> #define SRCIN_TIMSEL(i)              (SRCIN_TIMSEL0 + (i))
+> Should the if ((chan > 8) || (chan < 0)) ever be true in practice?
+> Sounds like bogus inputs to me. Should we dev_err() and return error
+> in those cases? Or at least WARN_ON()?
 
-Which range ?? for SRCIN ?
-I'm not sure it make sense. Can you send use case ??
+Hmm... indeed.
+Thank you for your report.
+I will re-check code, and post patch
 
 Thank you for your help !!
 Best regards
