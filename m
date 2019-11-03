@@ -1,44 +1,25 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Fri, 1 Nov 2019 14:29:04 +0000
-Subject: [cip-dev] Regarding RZ/G1CeMMC backporting patches
-In-Reply-To: <OSBPR01MB2103831ABFCEAE5F3CA232E7B8660@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-References: <OSBPR01MB2103831ABFCEAE5F3CA232E7B8660@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-Message-ID: <OSBPR01MB21034BD9CB1174161784FE47B8620@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
+Date: Sun, 3 Nov 2019 01:23:11 +0000
+Subject: [cip-dev] [ANNOUNCE] Release v4.19.80-cip13
+Message-ID: <OSAPR01MB3234CF1BD0532E1A560FC668927C0@OSAPR01MB3234.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Pavel & Nobuhiro-San ,
+Hi all,
 
-Do you want me to send the patches instead of [1]? Please let me know.
+The release was delayed, sorry.
+CIP kernel team has released Linux kernel v4.19.80-cip13 and v4.4.196-cip38.
 
-[1]. https://gitlab.com/bijud/emmc
+The linux-4.19.y-cip tree has been updated from base version from 4.19.78 to 4.19.80,
+and added support for WLAN and Bluetooth for hihope and cat 874 boards, and CANFD for
+r8a774a1.
 
-Regards,
-Biju
+You can get this release via the git tree at:
+  v4.19.80-cip13:
 
-> -----Original Message-----
-> From: Biju Das
-> Sent: Monday, October 28, 2019 5:47 PM
-> To: cip-dev at lists.cip-project.org; Pavel Machek <pavel@denx.de>; Nobuhiro
-> Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-> Cc: Chris Paterson <Chris.Paterson2@renesas.com>; Fabrizio Castro
-> <fabrizio.castro@bp.renesas.com>
-> Subject: Regarding RZ/G1CeMMC backporting patches
-> 
-> Hi All,
-> 
-> RZ/G1C eMMC IP is different from other RZ/G1 SoC's. It is having an internal
-> DMA for data transfer which is similar to R-Car Gen3.
-> 
-> Support for internal DMAC is added in 4.14 kernel and support for RZ/G1C
-> added on 4.20 kernel.
-> 
-> I have backported the relevant patches(86 patches)  to 4.4 kernel and shared
-> at [1].
-> [1]. https://gitlab.com/bijud/emmc
-> 
-> Please review this patches and share your opinion, so that I can send it to cip
-> patchwork
-> 
-> Regards,
-> Biju
+    repository: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+    branch: linux-4.19.y-cip
+    commit: 678c61cf1ee690282482f867aa9587d39d549e6c
+
+Best regards,
+  Nobuhiro
