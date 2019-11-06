@@ -1,33 +1,44 @@
 From: Quirin.Gylstorff@siemens.com (Q. Gylstorff)
-Date: Wed,  6 Nov 2019 13:44:36 +0100
-Subject: [cip-dev] [isar-cip-core PATCH 1/4] kas: Increase Isar version
-In-Reply-To: <20191106124439.10532-1-Quirin.Gylstorff@siemens.com>
-References: <20191106124439.10532-1-Quirin.Gylstorff@siemens.com>
-Message-ID: <20191106124439.10532-2-Quirin.Gylstorff@siemens.com>
+Date: Wed,  6 Nov 2019 13:44:35 +0100
+Subject: [cip-dev] [isar-cip-core PATCH 0/4] Add rzg2m support
+Message-ID: <20191106124439.10532-1-Quirin.Gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-Add fix for manifest generation to avoid errors during build.
+Add the rzg2m reference board.
+Add the option to build rootfs tarballs for LAVA tests.
+This option needs to be activated in the gitlab-ci.yml by
+adding it to the builds for testing.
 
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
----
- kas.yml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kas.yml b/kas.yml
-index 4904715..aa7ddda 100644
---- a/kas.yml
-+++ b/kas.yml
-@@ -19,7 +19,7 @@ repos:
- 
-   isar:
-     url: https://github.com/ilbers/isar
--    refspec: c1bae4c7ae9dee4d2cf5fd77d0c5560d9e52d5e1
-+    refspec: 20a5e368021d988d8f0dcd1951b395d194a37ebb
-     layers:
-       meta:
- 
+Quirin Gylstorff (4):
+  kas: Increase Isar version
+  classes: add wic-targz-img.bbclass
+  hihope-rzg2m: Add board support
+  ci: add hihope-rzg2m to ci chain
+
+ .gitlab-ci.yml                                |   4 +
+ board-rzg2m.yml                               |  16 +
+ classes/wic-targz-img.bbclass                 |  13 +
+ conf/machine/bbb.conf                         |   2 +-
+ conf/machine/hihope-rzg2m.conf                |  17 +
+ conf/machine/iwg20m.conf                      |   2 +-
+ conf/machine/qemu-amd64.conf                  |   2 +-
+ conf/machine/simatic-ipc227e.conf             |   2 +-
+ kas.yml                                       |   2 +-
+ opt-targz-img.yml                             |  20 ++
+ .../linux/files/hihope-rzg2m_defconfig        | 330 ++++++++++++++++++
+ scripts/deploy-cip-core.sh                    |   4 +
+ wic/hihope-rzg2m.wks                          |  15 +
+ 13 files changed, 424 insertions(+), 5 deletions(-)
+ create mode 100644 board-rzg2m.yml
+ create mode 100644 classes/wic-targz-img.bbclass
+ create mode 100644 conf/machine/hihope-rzg2m.conf
+ create mode 100644 opt-targz-img.yml
+ create mode 100644 recipes-kernel/linux/files/hihope-rzg2m_defconfig
+ create mode 100644 wic/hihope-rzg2m.wks
+
 -- 
 2.20.1
