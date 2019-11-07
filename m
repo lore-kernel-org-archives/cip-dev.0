@@ -1,74 +1,73 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu,  7 Nov 2019 08:31:31 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 02/83] mmc: tmio_dma: remove debug
-	messages with little information
+Date: Thu,  7 Nov 2019 08:31:32 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 03/83] mmc: tmio: add flag to reduce
+	delay after changing clock status
 In-Reply-To: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
 References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1573115572-13513-3-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1573115572-13513-4-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit 254d1456560fa42d4ca901c9b9308e87c951fee1 upstream.
+commit 04e24b80a3ddf4cdf85e49a99d33aec27c9432ad upstream.
 
-When compiling the driver with CONFIG_MMC_DEBUG set, I got build
-warnings. They have been 'fixed' meanwhile. However, because these debug
-messages look random anyhow (some duplicate information printed etc),
-let's just drop them and rather re-add something consistent if that
-should ever be needed.
+The docs for RCar Gen2 & 3 I have access to, mention delays of 5ms after
+stop and 1ms after start. Make it possible to apply these values.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/mmc/host/tmio_mmc_dma.c | 11 -----------
- 1 file changed, 11 deletions(-)
+ drivers/mmc/host/tmio_mmc_pio.c | 7 ++++---
+ include/linux/mfd/tmio.h        | 4 ++++
+ 2 files changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mmc/host/tmio_mmc_dma.c b/drivers/mmc/host/tmio_mmc_dma.c
-index 4a0d6b8..6754358 100644
---- a/drivers/mmc/host/tmio_mmc_dma.c
-+++ b/drivers/mmc/host/tmio_mmc_dma.c
-@@ -94,10 +94,7 @@ static void tmio_mmc_start_dma_rx(struct tmio_mmc_host *host)
- 			desc = NULL;
- 			ret = cookie;
- 		}
--		dev_dbg(&host->pdev->dev, "%s(): mapped %d -> %d, cookie %d, rq %p\n",
--			__func__, host->sg_len, ret, cookie, host->mrq);
- 	}
--
- pio:
- 	if (!desc) {
- 		/* DMA failed, fall back to PIO */
-@@ -115,9 +112,6 @@ pio:
- 		dev_warn(&host->pdev->dev,
- 			 "DMA failed: %d, falling back to PIO\n", ret);
- 	}
--
--	dev_dbg(&host->pdev->dev, "%s(): desc %p, sg[%d]\n", __func__,
--		desc, host->sg_len);
+diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+index 3c7c3a1..66c65fe 100644
+--- a/drivers/mmc/host/tmio_mmc_pio.c
++++ b/drivers/mmc/host/tmio_mmc_pio.c
+@@ -172,7 +172,8 @@ static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
+ 		host->set_clk_div(host->pdev, (clk>>22) & 1);
+ 
+ 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, clk & 0x1ff);
+-	msleep(10);
++	if (!(host->pdata->flags & TMIO_MMC_FAST_CLK_CHG))
++		msleep(10);
  }
  
- static void tmio_mmc_start_dma_tx(struct tmio_mmc_host *host)
-@@ -174,10 +168,7 @@ static void tmio_mmc_start_dma_tx(struct tmio_mmc_host *host)
- 			desc = NULL;
- 			ret = cookie;
- 		}
--		dev_dbg(&host->pdev->dev, "%s(): mapped %d -> %d, cookie %d, rq %p\n",
--			__func__, host->sg_len, ret, cookie, host->mrq);
- 	}
--
- pio:
- 	if (!desc) {
- 		/* DMA failed, fall back to PIO */
-@@ -195,8 +186,6 @@ pio:
- 		dev_warn(&host->pdev->dev,
- 			 "DMA failed: %d, falling back to PIO\n", ret);
- 	}
--
--	dev_dbg(&host->pdev->dev, "%s(): desc %p\n", __func__, desc);
+ static void tmio_mmc_clk_stop(struct tmio_mmc_host *host)
+@@ -185,14 +186,14 @@ static void tmio_mmc_clk_stop(struct tmio_mmc_host *host)
+ 
+ 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~0x0100 &
+ 		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+-	msleep(10);
++	msleep(host->pdata->flags & TMIO_MMC_FAST_CLK_CHG ? 5 : 10);
  }
  
- void tmio_mmc_start_dma(struct tmio_mmc_host *host,
+ static void tmio_mmc_clk_start(struct tmio_mmc_host *host)
+ {
+ 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, 0x0100 |
+ 		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+-	msleep(10);
++	msleep(host->pdata->flags & TMIO_MMC_FAST_CLK_CHG ? 1 : 10);
+ 
+ 	/* implicit BUG_ON(!res) */
+ 	if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG) {
+diff --git a/include/linux/mfd/tmio.h b/include/linux/mfd/tmio.h
+index 24b86d5..05d58ee 100644
+--- a/include/linux/mfd/tmio.h
++++ b/include/linux/mfd/tmio.h
+@@ -65,6 +65,10 @@
+  * Some controllers can support SDIO IRQ signalling.
+  */
+ #define TMIO_MMC_SDIO_IRQ		(1 << 2)
++
++/* Some controllers don't need to wait 10ms for clock changes */
++#define TMIO_MMC_FAST_CLK_CHG		(1 << 3)
++
+ /*
+  * Some controllers require waiting for the SD bus to become
+  * idle before writing to some registers.
 -- 
 2.7.4
