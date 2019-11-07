@@ -1,50 +1,114 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu,  7 Nov 2019 08:32:01 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 32/83] mmc: host: sh_mobile_sdhi: don't
-	populate unneeded functions
+Date: Thu,  7 Nov 2019 08:32:02 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 33/83] mmc: tmio: add eMMC support
 In-Reply-To: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
 References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1573115572-13513-33-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1573115572-13513-34-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit ff026099d775c74548839f1d627eb0b2bec0b857 upstream.
+commit 0bc0b6e86524526c92a9409faea79d53db8e7e6e upstream.
 
-Populating card_busy caused a side-effect on a chip variant we don't
-have documentation for (r8a73a4). So, enable it and voltage switching
-only on devices known to support those features.
+We need to add R1 without CRC support, refactor the bus width routine a
+little and extend a quirk check. To support "non-removable;" we need a
+workaround which will be hopefully removed when reworking PM soon.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Fixes: 452e5eef6d31 ("mmc: tmio: Add UHS-I mode support")
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/mmc/host/sh_mobile_sdhi.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/mmc/host/tmio_mmc.h     |  3 +++
+ drivers/mmc/host/tmio_mmc_pio.c | 38 ++++++++++++++++++++++++++------------
+ 2 files changed, 29 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
-index 343aa1a..3d186cc 100644
---- a/drivers/mmc/host/sh_mobile_sdhi.c
-+++ b/drivers/mmc/host/sh_mobile_sdhi.c
-@@ -383,8 +383,14 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
- 	host->clk_update	= sh_mobile_sdhi_clk_update;
- 	host->clk_disable	= sh_mobile_sdhi_clk_disable;
- 	host->multi_io_quirk	= sh_mobile_sdhi_multi_io_quirk;
--	host->card_busy	= sh_mobile_sdhi_card_busy;
--	host->start_signal_voltage_switch = sh_mobile_sdhi_start_signal_voltage_switch;
-+
-+	/* SDR speeds are only available on Gen2+ */
-+	if (mmc_data->flags & TMIO_MMC_MIN_RCAR2) {
-+		/* card_busy caused issues on r8a73a4 (pre-Gen2) CD-less SDHI */
-+		host->card_busy	= sh_mobile_sdhi_card_busy;
-+		host->start_signal_voltage_switch =
-+			sh_mobile_sdhi_start_signal_voltage_switch;
-+	}
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index addbc71..eafd92d 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -79,6 +79,9 @@
+ #define	CLK_CTL_DIV_MASK	0xff
+ #define	CLK_CTL_SCLKEN		BIT(8)
  
- 	/* Orginally registers were 16 bit apart, could be 32 or 64 nowadays */
- 	if (!host->bus_shift && resource_size(res) > 0x100) /* old way to determine the shift */
++#define CARD_OPT_WIDTH8		BIT(13)
++#define CARD_OPT_WIDTH		BIT(15)
++
+ #define TMIO_BBS		512		/* Boot block size */
+ 
+ /* Definitions for values the CTRL_SDIO_STATUS register can take. */
+diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+index d499ed2..c927916 100644
+--- a/drivers/mmc/host/tmio_mmc_pio.c
++++ b/drivers/mmc/host/tmio_mmc_pio.c
+@@ -336,7 +336,9 @@ static int tmio_mmc_start_command(struct tmio_mmc_host *host, struct mmc_command
+ 
+ 	switch (mmc_resp_type(cmd)) {
+ 	case MMC_RSP_NONE: c |= RESP_NONE; break;
+-	case MMC_RSP_R1:   c |= RESP_R1;   break;
++	case MMC_RSP_R1:
++	case MMC_RSP_R1_NO_CRC:
++			   c |= RESP_R1;   break;
+ 	case MMC_RSP_R1B:  c |= RESP_R1B;  break;
+ 	case MMC_RSP_R2:   c |= RESP_R2;   break;
+ 	case MMC_RSP_R3:   c |= RESP_R3;   break;
+@@ -733,12 +735,13 @@ static int tmio_mmc_start_data(struct tmio_mmc_host *host,
+ 	pr_debug("setup data transfer: blocksize %08x  nr_blocks %d\n",
+ 		 data->blksz, data->blocks);
+ 
+-	/* Some hardware cannot perform 2 byte requests in 4 bit mode */
+-	if (host->mmc->ios.bus_width == MMC_BUS_WIDTH_4) {
++	/* Some hardware cannot perform 2 byte requests in 4/8 bit mode */
++	if (host->mmc->ios.bus_width == MMC_BUS_WIDTH_4 ||
++	    host->mmc->ios.bus_width == MMC_BUS_WIDTH_8) {
+ 		int blksz_2bytes = pdata->flags & TMIO_MMC_BLKSZ_2BYTES;
+ 
+ 		if (data->blksz < 2 || (data->blksz < 4 && !blksz_2bytes)) {
+-			pr_err("%s: %d byte block unsupported in 4 bit mode\n",
++			pr_err("%s: %d byte block unsupported in 4/8 bit mode\n",
+ 			       mmc_hostname(host->mmc), data->blksz);
+ 			return -EINVAL;
+ 		}
+@@ -860,14 +863,16 @@ static void tmio_mmc_power_off(struct tmio_mmc_host *host)
+ static void tmio_mmc_set_bus_width(struct tmio_mmc_host *host,
+ 				unsigned char bus_width)
+ {
+-	switch (bus_width) {
+-	case MMC_BUS_WIDTH_1:
+-		sd_ctrl_write16(host, CTL_SD_MEM_CARD_OPT, 0x80e0);
+-		break;
+-	case MMC_BUS_WIDTH_4:
+-		sd_ctrl_write16(host, CTL_SD_MEM_CARD_OPT, 0x00e0);
+-		break;
+-	}
++	u16 reg = sd_ctrl_read16(host, CTL_SD_MEM_CARD_OPT)
++				& ~(CARD_OPT_WIDTH | CARD_OPT_WIDTH8);
++
++	/* reg now applies to MMC_BUS_WIDTH_4 */
++	if (bus_width == MMC_BUS_WIDTH_1)
++		reg |= CARD_OPT_WIDTH;
++	else if (bus_width == MMC_BUS_WIDTH_8)
++		reg |= CARD_OPT_WIDTH8;
++
++	sd_ctrl_write16(host, CTL_SD_MEM_CARD_OPT, reg);
+ }
+ 
+ /* Set MMC clock / power.
+@@ -1085,6 +1090,15 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
+ 				  mmc->caps & MMC_CAP_NONREMOVABLE ||
+ 				  mmc->slot.cd_irq >= 0);
+ 
++	/*
++	 * On Gen2+, eMMC with NONREMOVABLE currently fails because native
++	 * hotplug gets disabled. It seems RuntimePM related yet we need further
++	 * research. Since we are planning a PM overhaul anyway, let's enforce
++	 * for now the device being active by enabling native hotplug always.
++	 */
++	if (pdata->flags & TMIO_MMC_MIN_RCAR2)
++		_host->native_hotplug = true;
++
+ 	if (tmio_mmc_clk_enable(_host) < 0) {
+ 		mmc->f_max = pdata->hclk;
+ 		mmc->f_min = mmc->f_max / 512;
 -- 
 2.7.4
