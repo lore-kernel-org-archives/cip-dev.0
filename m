@@ -1,27 +1,28 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu,  7 Nov 2019 08:32:50 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 81/83] ARM: dts: r8a77470: Add SDHI0
+Date: Thu,  7 Nov 2019 08:32:51 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 82/83] ARM: dts: r8a77470: Add SDHI1
 	support
 In-Reply-To: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
 References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1573115572-13513-82-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1573115572-13513-83-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-commit 15aa5a95e820e8183aa34535131e7c97789b8504 upstream.
+commit 0485da788028ecd525291974c8efe2d072607476 upstream.
 
-RZ/G1C comes with two different types of IP for the SDHI
-interfaces, SDHI0 and SDHI2 share the same IP type, and
-such an IP is also compatible with the one found in R-Car
-Gen2. SDHI1 IP on the other hand is compatible with R-Car
-Gen3 with internal DMA.
-This patch completes the SDHI support of the R-Car Gen2
-compatible IPs, including fixing the max-frequency
-definition of SDHI2, as it turns out there is a bug in
-Section 1.3.9 of the RZ/G1C Hardware User's Manual (Rev.
-1.00 Oct. 2017).
+Althought interface SDHI1 found on the RZ/G1C SoC (a.k.a.
+r8a77470) is compatible with the R-Car Gen3 ones, its OF
+compatibility is restricted to the SoC specific compatible
+string to avoid confusion, as from a more generic perspective
+the RZ/G1C is sharing the most similarities with the R-Car
+Gen2 family of SoCs, and there is a combination of R-Car
+Gen2 compatible SDHI IPs and R-Car Gen3 compatible SDHI IP
+on this specific chip.
+This patch adds the SoC specific part of SDHI1 support, and
+since SDHI1 comes with internal DMA, its DT node looks fairly
+different from SDHI0 and SDHI2.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das@bp.renesas.com>
@@ -29,26 +30,22 @@ Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 [ Removed reset and updated clk and power domain properties ]
 ---
- arch/arm/boot/dts/r8a77470.dtsi | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a77470.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
 diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-index fd9d92c..f8fccd4 100644
+index f8fccd4..757c935 100644
 --- a/arch/arm/boot/dts/r8a77470.dtsi
 +++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -655,6 +655,20 @@
+@@ -669,6 +669,16 @@
  			status = "disabled";
  		};
  
-+		sdhi0: sd at ee100000 {
-+			compatible = "renesas,sdhi-r8a77470",
-+				     "renesas,rcar-gen2-sdhi";
-+			reg = <0 0xee100000 0 0x328>;
-+			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp3_clks R8A77470_CLK_SDHI0>;
-+			dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
-+			       <&dmac1 0xcd>, <&dmac1 0xce>;
-+			dma-names = "tx", "rx", "tx", "rx";
++		sdhi1: sd at ee300000 {
++			compatible = "renesas,sdhi-mmc-r8a77470";
++			reg = <0 0xee300000 0 0x2000>;
++			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp3_clks R8A77470_CLK_SDHI1>;
 +			max-frequency = <156000000>;
 +			power-domains = <&cpg_clocks>;
 +			status = "disabled";
@@ -57,14 +54,5 @@ index fd9d92c..f8fccd4 100644
  		sdhi2: sd at ee160000 {
  			compatible = "renesas,sdhi-r8a77470",
  				     "renesas,rcar-gen2-sdhi";
-@@ -664,7 +678,7 @@
- 			dmas = <&dmac0 0xd3>, <&dmac0 0xd4>,
- 			       <&dmac1 0xd3>, <&dmac1 0xd4>;
- 			dma-names = "tx", "rx", "tx", "rx";
--			max-frequency = <97500000>;
-+			max-frequency = <78000000>;
- 			power-domains = <&cpg_clocks>;
- 			status = "disabled";
- 		};
 -- 
 2.7.4
