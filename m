@@ -1,92 +1,98 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu,  7 Nov 2019 08:32:40 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 71/83] mmc: tmio,
-	renesas-sdhi: add max_{segs, blk_count} to tmio_mmc_data
+Date: Thu,  7 Nov 2019 08:32:41 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 72/83] mmc: tmio,
+	renesas-sdhi: add dataend to DMA ops
 In-Reply-To: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
 References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1573115572-13513-72-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1573115572-13513-73-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Simon Horman <horms+renesas@verge.net.au>
 
-commit 603aa14d3daaa7073bab4c472025c4963030e0cc upstream.
+commit 92d0f925e6344a24b12a6eeb4f1030ec0e70e8d1 upstream.
 
-Allow TMIO and SDHI driver implementations to provide values for
-max_segs and max_blk_count.
+Add dataend to DMA ops to allow DMAC implementation dependent
+handling of DMA data end.
 
-A follow-up patch will set these values for Renesas Gen3 SoCs
-the using an SDHI driver.
+Also implement the operation for SDHI.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Ai Kyuse <ai.kyuse.uw@renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/mmc/host/renesas_sdhi.h      | 2 ++
- drivers/mmc/host/renesas_sdhi_core.c | 2 ++
- drivers/mmc/host/tmio_mmc_core.c     | 6 +++---
- include/linux/mfd/tmio.h             | 2 ++
- 4 files changed, 9 insertions(+), 3 deletions(-)
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c |  6 ++++++
+ drivers/mmc/host/tmio_mmc.h              |  1 +
+ drivers/mmc/host/tmio_mmc_core.c         | 10 ++++++++--
+ 3 files changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
-index 781fe4c..6e33266 100644
---- a/drivers/mmc/host/renesas_sdhi.h
-+++ b/drivers/mmc/host/renesas_sdhi.h
-@@ -31,6 +31,8 @@ struct renesas_sdhi_of_data {
- 	int scc_offset;
- 	struct renesas_sdhi_scc *taps;
- 	int taps_num;
-+	unsigned int max_blk_count;
-+	unsigned short max_segs;
+diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+index d7757dd..86a81fd 100644
+--- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+@@ -114,6 +114,11 @@ static void renesas_sdhi_sys_dmac_abort_dma(struct tmio_mmc_host *host)
+ 	renesas_sdhi_sys_dmac_enable_dma(host, true);
+ }
+ 
++static void renesas_sdhi_sys_dmac_dataend_dma(struct tmio_mmc_host *host)
++{
++	complete(&host->dma_dataend);
++}
++
+ static void renesas_sdhi_sys_dmac_dma_callback(void *arg)
+ {
+ 	struct tmio_mmc_host *host = arg;
+@@ -439,6 +444,7 @@ static const struct tmio_mmc_dma_ops renesas_sdhi_sys_dmac_dma_ops = {
+ 	.request = renesas_sdhi_sys_dmac_request_dma,
+ 	.release = renesas_sdhi_sys_dmac_release_dma,
+ 	.abort = renesas_sdhi_sys_dmac_abort_dma,
++	.dataend = renesas_sdhi_sys_dmac_dataend_dma,
  };
  
- int renesas_sdhi_probe(struct platform_device *pdev,
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index a64a3ba..2f8c7b8 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -502,6 +502,8 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 		mmc_data->capabilities |= of_data->capabilities;
- 		mmc_data->capabilities2 |= of_data->capabilities2;
- 		mmc_data->dma_rx_offset = of_data->dma_rx_offset;
-+		mmc_data->max_blk_count = of_data->max_blk_count;
-+		mmc_data->max_segs = of_data->max_segs;
- 		dma_priv->dma_buswidth = of_data->dma_buswidth;
- 		host->bus_shift = of_data->bus_shift;
- 	}
+ static int renesas_sdhi_sys_dmac_probe(struct platform_device *pdev)
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index cd5b4f3..17ea4b6 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -120,6 +120,7 @@ struct tmio_mmc_dma_ops {
+ 			struct tmio_mmc_data *pdata);
+ 	void (*release)(struct tmio_mmc_host *host);
+ 	void (*abort)(struct tmio_mmc_host *host);
++	void (*dataend)(struct tmio_mmc_host *host);
+ };
+ 
+ struct tmio_mmc_host {
 diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 8ab58ca..810d2d8 100644
+index 810d2d8..43209ea28 100644
 --- a/drivers/mmc/host/tmio_mmc_core.c
 +++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -1224,10 +1224,10 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
+@@ -86,6 +86,12 @@ static inline void tmio_mmc_abort_dma(struct tmio_mmc_host *host)
+ 		host->dma_ops->abort(host);
+ }
  
- 	mmc->caps |= MMC_CAP_4_BIT_DATA | pdata->capabilities;
- 	mmc->caps2 |= pdata->capabilities2;
--	mmc->max_segs = 32;
-+	mmc->max_segs = pdata->max_segs ? : 32;
- 	mmc->max_blk_size = 512;
--	mmc->max_blk_count = (PAGE_CACHE_SIZE / mmc->max_blk_size) *
--		mmc->max_segs;
-+	mmc->max_blk_count = pdata->max_blk_count ? :
-+		(PAGE_SIZE / mmc->max_blk_size) * mmc->max_segs;
- 	mmc->max_req_size = mmc->max_blk_size * mmc->max_blk_count;
- 	mmc->max_seg_size = mmc->max_req_size;
++static inline void tmio_mmc_dataend_dma(struct tmio_mmc_host *host)
++{
++	if (host->dma_ops)
++		host->dma_ops->dataend(host);
++}
++
+ void tmio_mmc_enable_mmc_irqs(struct tmio_mmc_host *host, u32 i)
+ {
+ 	host->sdcard_irq_mask &= ~(i & TMIO_MASK_IRQ);
+@@ -637,11 +643,11 @@ static void tmio_mmc_data_irq(struct tmio_mmc_host *host, unsigned int stat)
  
-diff --git a/include/linux/mfd/tmio.h b/include/linux/mfd/tmio.h
-index a1520d8..662fedc 100644
---- a/include/linux/mfd/tmio.h
-+++ b/include/linux/mfd/tmio.h
-@@ -128,6 +128,8 @@ struct tmio_mmc_data {
- 	unsigned int			cd_gpio;
- 	int				alignment_shift;
- 	dma_addr_t			dma_rx_offset;
-+	unsigned int			max_blk_count;
-+	unsigned short			max_segs;
- 	void (*set_pwr)(struct platform_device *host, int state);
- 	void (*set_clk_div)(struct platform_device *host, int state);
- };
+ 		if (done) {
+ 			tmio_mmc_disable_mmc_irqs(host, TMIO_STAT_DATAEND);
+-			complete(&host->dma_dataend);
++			tmio_mmc_dataend_dma(host);
+ 		}
+ 	} else if (host->chan_rx && (data->flags & MMC_DATA_READ) && !host->force_pio) {
+ 		tmio_mmc_disable_mmc_irqs(host, TMIO_STAT_DATAEND);
+-		complete(&host->dma_dataend);
++		tmio_mmc_dataend_dma(host);
+ 	} else {
+ 		tmio_mmc_do_data_irq(host);
+ 		tmio_mmc_disable_mmc_irqs(host, TMIO_MASK_READOP | TMIO_MASK_WRITEOP);
 -- 
 2.7.4
