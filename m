@@ -1,18 +1,18 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu,  7 Nov 2019 08:32:45 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 76/83] dt-bindings: mmc: renesas_sdhi:
-	add R-Car Gen[123] fallback compatibility strings
+Date: Thu,  7 Nov 2019 08:32:46 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 77/83] mmc: renesas_sdhi: implement
+	R-Car Gen[123] fallback compatibility strings
 In-Reply-To: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
 References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1573115572-13513-77-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1573115572-13513-78-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Simon Horman <horms+renesas@verge.net.au>
 
-commit 54839d012d5f98cde2fa102fdcd22e1da661d138 upstream.
+commit d6dc425ae595e14026beac3720e43edd70215dc8 upstream.
 
-Add fallback compatibility strings for R-Car Gen 1, 2 and 3.
+Implement fallback compatibility strings for R-Car Gen 1, 2 and 3.
 
 In the case of Renesas R-Car hardware we know that there are generations of
 SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationship
@@ -28,32 +28,41 @@ For the above reasons and convenience when enabling new SoCs a
 per-generation fallback compatibility string scheme is being adopted for
 drivers for Renesas SoCs.
 
+Also, improve readability by listing the shmobile fallback compatibility
+string after the more-specific compatibility strings they provide a
+fallback for.
+
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+[ Removed R-Car Gen3  devices ]
 ---
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-index 1d23a43..25f06e6 100644
---- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-+++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-@@ -24,6 +24,13 @@ Required properties:
- 		"renesas,sdhi-r8a7792" - SDHI IP on R8A7792 SoC
- 		"renesas,sdhi-r8a7793" - SDHI IP on R8A7793 SoC
- 		"renesas,sdhi-r8a7794" - SDHI IP on R8A7794 SoC
-+		"renesas,rcar-gen1-sdhi" - a generic R-Car Gen1 SDHI controller
-+		"renesas,rcar-gen2-sdhi" - a generic R-Car Gen2 or RZ/G1
-+					   SDHI controller
-+
-+		When compatible with the generic version, nodes must list
-+		the SoC-specific version corresponding to the platform
-+		first followed by the generic version.
+diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+index 84bb945..77f3af4 100644
+--- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+@@ -75,7 +75,6 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
+ };
  
- Optional properties:
- - toshiba,mmc-wrprotect-disable: write-protect detection is unavailable
+ static const struct of_device_id renesas_sdhi_sys_dmac_of_match[] = {
+-	{ .compatible = "renesas,sdhi-shmobile" },
+ 	{ .compatible = "renesas,sdhi-sh73a0", .data = &of_default_cfg, },
+ 	{ .compatible = "renesas,sdhi-r8a73a4", .data = &of_default_cfg, },
+ 	{ .compatible = "renesas,sdhi-r8a7740", .data = &of_default_cfg, },
+@@ -88,6 +87,9 @@ static const struct of_device_id renesas_sdhi_sys_dmac_of_match[] = {
+ 	{ .compatible = "renesas,sdhi-r8a7792", .data = &of_rcar_gen2_compatible, },
+ 	{ .compatible = "renesas,sdhi-r8a7793", .data = &of_rcar_gen2_compatible, },
+ 	{ .compatible = "renesas,sdhi-r8a7794", .data = &of_rcar_gen2_compatible, },
++	{ .compatible = "renesas,rcar-gen1-sdhi", .data = &of_rcar_gen1_compatible, },
++	{ .compatible = "renesas,rcar-gen2-sdhi", .data = &of_rcar_gen2_compatible, },
++	{ .compatible = "renesas,sdhi-shmobile" },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, renesas_sdhi_sys_dmac_of_match);
 -- 
 2.7.4
