@@ -1,40 +1,51 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu,  7 Nov 2019 08:32:04 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 35/83] mmc: add define for R1 response
-	without CRC
+Date: Thu,  7 Nov 2019 08:32:05 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 36/83] mmc: sh_mobile_sdhi: add ocr_mask
+	option
 In-Reply-To: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
 References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1573115572-13513-36-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1573115572-13513-37-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Chris Brandt <chris.brandt@renesas.com>
 
-commit 51b50c961676428cd356d6fa494a2e9f53dc77bf upstream.
+commit f19417f38264f9a2f7b4627aa4060133c237b211 upstream.
 
-The core uses it for polling. Give drivers a proper define handle this
-case like for other response types.
+In moving platforms from board files to DT, there still needs to be a way
+to set the ocr_mask setting for the tmio driver during probe. Without this
+setting, the probe will fail because the supported voltages are not known.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+This patch will also traditional platform registration platforms to
+migrate to DT.
+
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- include/linux/mmc/core.h | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/mmc/host/sh_mobile_sdhi.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/include/linux/mmc/core.h b/include/linux/mmc/core.h
-index 37967b6..6c2e285 100644
---- a/include/linux/mmc/core.h
-+++ b/include/linux/mmc/core.h
-@@ -55,6 +55,9 @@ struct mmc_command {
- #define MMC_RSP_R6	(MMC_RSP_PRESENT|MMC_RSP_CRC|MMC_RSP_OPCODE)
- #define MMC_RSP_R7	(MMC_RSP_PRESENT|MMC_RSP_CRC|MMC_RSP_OPCODE)
+diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
+index 3d186cc..9124246 100644
+--- a/drivers/mmc/host/sh_mobile_sdhi.c
++++ b/drivers/mmc/host/sh_mobile_sdhi.c
+@@ -49,6 +49,7 @@
  
-+/* Can be used by core to poll after switch to MMC HS mode */
-+#define MMC_RSP_R1_NO_CRC	(MMC_RSP_PRESENT|MMC_RSP_OPCODE)
-+
- #define mmc_resp_type(cmd)	((cmd)->flags & (MMC_RSP_PRESENT|MMC_RSP_136|MMC_RSP_CRC|MMC_RSP_BUSY|MMC_RSP_OPCODE))
+ struct sh_mobile_sdhi_of_data {
+ 	unsigned long tmio_flags;
++	u32	      tmio_ocr_mask;
+ 	unsigned long capabilities;
+ 	unsigned long capabilities2;
+ 	enum dma_slave_buswidth dma_buswidth;
+@@ -370,6 +371,7 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
+ 		const struct sh_mobile_sdhi_of_data *of_data = of_id->data;
  
- /*
+ 		mmc_data->flags |= of_data->tmio_flags;
++		mmc_data->ocr_mask = of_data->tmio_ocr_mask;
+ 		mmc_data->capabilities |= of_data->capabilities;
+ 		mmc_data->capabilities2 |= of_data->capabilities2;
+ 		mmc_data->dma_rx_offset = of_data->dma_rx_offset;
 -- 
 2.7.4
