@@ -1,107 +1,105 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu,  7 Nov 2019 08:31:43 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 14/83] mmc: tmio: always start clock
-	after frequency calculation
+Date: Thu,  7 Nov 2019 08:31:44 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 15/83] mmc: tmio: stop clock when 0Hz is
+	requested
 In-Reply-To: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
 References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1573115572-13513-15-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1573115572-13513-16-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit 7fbc030da800d07193da4a4355ca2e197cf00cfb upstream.
+commit 148634d24d4a7dc82a49efcf1a215e1d0695f62c upstream.
 
-Starting the clock is always done after frequency change anyhow, so we can
-do it directly after the clock calculation and remove the specific calls.
-This is the first part of doing proper clock de-/activation at calculation
-time.
+Setting frequency to 0 is not enough, the clock explicitly has to be
+disabled. Otherwise voltage switching (which needs SDCLK to be quiet)
+fails for various cards.
+
+Because we now do the 'new_clock == 0' check right at the beginning,
+the indentation level of the rest of the code can be decreased a little.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/mmc/host/tmio_mmc_pio.c | 34 ++++++++++++++++------------------
- 1 file changed, 16 insertions(+), 18 deletions(-)
+ drivers/mmc/host/tmio_mmc_pio.c | 50 +++++++++++++++++++++--------------------
+ 1 file changed, 26 insertions(+), 24 deletions(-)
 
 diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 1935706..99139b8 100644
+index 99139b8..6c09b1d 100644
 --- a/drivers/mmc/host/tmio_mmc_pio.c
 +++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -154,6 +154,18 @@ static void tmio_mmc_enable_sdio_irq(struct mmc_host *mmc, int enable)
+@@ -166,25 +166,39 @@ static void tmio_mmc_clk_start(struct tmio_mmc_host *host)
  	}
  }
  
-+static void tmio_mmc_clk_start(struct tmio_mmc_host *host)
++static void tmio_mmc_clk_stop(struct tmio_mmc_host *host)
 +{
-+	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
-+		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
-+	msleep(host->pdata->flags & TMIO_MMC_FAST_CLK_CHG ? 1 : 10);
-+
 +	if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG) {
-+		sd_ctrl_write16(host, CTL_CLK_AND_WAIT_CTL, 0x0100);
++		sd_ctrl_write16(host, CTL_CLK_AND_WAIT_CTL, 0x0000);
 +		msleep(10);
 +	}
++
++	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
++		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
++	msleep(host->pdata->flags & TMIO_MMC_FAST_CLK_CHG ? 5 : 10);
 +}
 +
  static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
  				unsigned int new_clock)
  {
-@@ -182,6 +194,8 @@ static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
- 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, clk & CLK_CTL_DIV_MASK);
- 	if (!(host->pdata->flags & TMIO_MMC_FAST_CLK_CHG))
- 		msleep(10);
+ 	u32 clk = 0, clock;
+ 
+-	if (new_clock) {
+-		if (host->clk_update)
+-			clock = host->clk_update(host, new_clock) / 512;
+-		else
+-			clock = host->mmc->f_min;
++	if (new_clock == 0) {
++		tmio_mmc_clk_stop(host);
++		return;
++	}
+ 
+-		for (clk = 0x80000080; new_clock >= (clock << 1); clk >>= 1)
+-			clock <<= 1;
++	if (host->clk_update)
++		clock = host->clk_update(host, new_clock) / 512;
++	else
++		clock = host->mmc->f_min;
+ 
+-		/* 1/1 clock is option */
+-		if ((host->pdata->flags & TMIO_MMC_CLK_ACTUAL) &&
+-		   ((clk >> 22) & 0x1))
+-			clk |= 0xff;
+-	}
++	for (clk = 0x80000080; new_clock >= (clock << 1); clk >>= 1)
++		clock <<= 1;
 +
-+	tmio_mmc_clk_start(host);
++	/* 1/1 clock is option */
++	if ((host->pdata->flags & TMIO_MMC_CLK_ACTUAL) && ((clk >> 22) & 0x1))
++		clk |= 0xff;
+ 
+ 	if (host->set_clk_div)
+ 		host->set_clk_div(host->pdev, (clk >> 22) & 1);
+@@ -198,18 +212,6 @@ static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
+ 	tmio_mmc_clk_start(host);
  }
  
- static void tmio_mmc_clk_stop(struct tmio_mmc_host *host)
-@@ -196,18 +210,6 @@ static void tmio_mmc_clk_stop(struct tmio_mmc_host *host)
- 	msleep(host->pdata->flags & TMIO_MMC_FAST_CLK_CHG ? 5 : 10);
- }
- 
--static void tmio_mmc_clk_start(struct tmio_mmc_host *host)
+-static void tmio_mmc_clk_stop(struct tmio_mmc_host *host)
 -{
--	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
--		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
--	msleep(host->pdata->flags & TMIO_MMC_FAST_CLK_CHG ? 1 : 10);
--
 -	if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG) {
--		sd_ctrl_write16(host, CTL_CLK_AND_WAIT_CTL, 0x0100);
+-		sd_ctrl_write16(host, CTL_CLK_AND_WAIT_CTL, 0x0000);
 -		msleep(10);
 -	}
+-
+-	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
+-		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+-	msleep(host->pdata->flags & TMIO_MMC_FAST_CLK_CHG ? 5 : 10);
 -}
 -
  static void tmio_mmc_reset(struct tmio_mmc_host *host)
  {
  	/* FIXME - should we set stop clock reg here */
-@@ -953,14 +955,12 @@ static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
- 		tmio_mmc_clk_stop(host);
- 		break;
- 	case MMC_POWER_UP:
--		tmio_mmc_set_clock(host, ios->clock);
- 		tmio_mmc_power_on(host, ios->vdd);
--		tmio_mmc_clk_start(host);
-+		tmio_mmc_set_clock(host, ios->clock);
- 		tmio_mmc_set_bus_width(host, ios->bus_width);
- 		break;
- 	case MMC_POWER_ON:
- 		tmio_mmc_set_clock(host, ios->clock);
--		tmio_mmc_clk_start(host);
- 		tmio_mmc_set_bus_width(host, ios->bus_width);
- 		break;
- 	}
-@@ -1269,10 +1269,8 @@ int tmio_mmc_host_runtime_resume(struct device *dev)
- 	tmio_mmc_reset(host);
- 	tmio_mmc_clk_enable(host);
- 
--	if (host->clk_cache) {
-+	if (host->clk_cache)
- 		tmio_mmc_set_clock(host, host->clk_cache);
--		tmio_mmc_clk_start(host);
--	}
- 
- 	tmio_mmc_enable_dma(host, true);
- 
 -- 
 2.7.4
