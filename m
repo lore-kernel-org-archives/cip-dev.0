@@ -1,83 +1,61 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu,  7 Nov 2019 08:31:51 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 22/83] mmc: tmio: use BIT() within
-	defines
+Date: Thu,  7 Nov 2019 08:31:52 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 23/83] mmc: tmio: use CTL_STATUS
+	consistently
 In-Reply-To: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
 References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1573115572-13513-23-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1573115572-13513-24-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit 2cafc5cb4fcbe648d0d16ec5039ee292d85d7bfa upstream.
+commit 83e95351d49f60d6cf37706bf94529116d03e648 upstream.
 
-BIT() makes it easier to match the bits to the datasheet. This is
-especially important here, since some variants have different names in
-their datasheets (like with Renesas R-Car).
+To prevent confusion, use the virtual u32 CTL_STATUS in card_busy() the
+same way as in other parts of this driver.
 
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/mmc/host/tmio_mmc.h | 44 +++++++++++++++++++++++---------------------
- 1 file changed, 23 insertions(+), 21 deletions(-)
+ drivers/mmc/host/tmio_mmc.h     | 3 +--
+ drivers/mmc/host/tmio_mmc_pio.c | 2 +-
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index e75e5ca..74945c1a 100644
+index 74945c1a..55f251f 100644
 --- a/drivers/mmc/host/tmio_mmc.h
 +++ b/drivers/mmc/host/tmio_mmc.h
-@@ -49,27 +49,29 @@
- #define CTL_RESET_SDIO 0x1e0
+@@ -67,14 +67,13 @@
+ #define TMIO_STAT_RXOVERFLOW    BIT(20)
+ #define TMIO_STAT_TXUNDERRUN    BIT(21)
+ #define TMIO_STAT_CMDTIMEOUT    BIT(22)
++#define TMIO_STAT_DAT0		BIT(23)	/* only known on R-Car so far */
+ #define TMIO_STAT_RXRDY         BIT(24)
+ #define TMIO_STAT_TXRQ          BIT(25)
+ #define TMIO_STAT_ILL_FUNC      BIT(29)
+ #define TMIO_STAT_CMD_BUSY      BIT(30)
+ #define TMIO_STAT_ILL_ACCESS    BIT(31)
  
- /* Definitions for values the CTRL_STATUS register can take. */
--#define TMIO_STAT_CMDRESPEND    0x00000001
--#define TMIO_STAT_DATAEND       0x00000004
--#define TMIO_STAT_CARD_REMOVE   0x00000008
--#define TMIO_STAT_CARD_INSERT   0x00000010
--#define TMIO_STAT_SIGSTATE      0x00000020
--#define TMIO_STAT_WRPROTECT     0x00000080
--#define TMIO_STAT_CARD_REMOVE_A 0x00000100
--#define TMIO_STAT_CARD_INSERT_A 0x00000200
--#define TMIO_STAT_SIGSTATE_A    0x00000400
--#define TMIO_STAT_CMD_IDX_ERR   0x00010000
--#define TMIO_STAT_CRCFAIL       0x00020000
--#define TMIO_STAT_STOPBIT_ERR   0x00040000
--#define TMIO_STAT_DATATIMEOUT   0x00080000
--#define TMIO_STAT_RXOVERFLOW    0x00100000
--#define TMIO_STAT_TXUNDERRUN    0x00200000
--#define TMIO_STAT_CMDTIMEOUT    0x00400000
--#define TMIO_STAT_RXRDY         0x01000000
--#define TMIO_STAT_TXRQ          0x02000000
--#define TMIO_STAT_ILL_FUNC      0x20000000
--#define TMIO_STAT_CMD_BUSY      0x40000000
--#define TMIO_STAT_ILL_ACCESS    0x80000000
-+#define TMIO_STAT_CMDRESPEND    BIT(0)
-+#define TMIO_STAT_DATAEND       BIT(2)
-+#define TMIO_STAT_CARD_REMOVE   BIT(3)
-+#define TMIO_STAT_CARD_INSERT   BIT(4)
-+#define TMIO_STAT_SIGSTATE      BIT(5)
-+#define TMIO_STAT_WRPROTECT     BIT(7)
-+#define TMIO_STAT_CARD_REMOVE_A BIT(8)
-+#define TMIO_STAT_CARD_INSERT_A BIT(9)
-+#define TMIO_STAT_SIGSTATE_A    BIT(10)
-+
-+/* These belong technically to CTRL_STATUS2, but the driver merges them */
-+#define TMIO_STAT_CMD_IDX_ERR   BIT(16)
-+#define TMIO_STAT_CRCFAIL       BIT(17)
-+#define TMIO_STAT_STOPBIT_ERR   BIT(18)
-+#define TMIO_STAT_DATATIMEOUT   BIT(19)
-+#define TMIO_STAT_RXOVERFLOW    BIT(20)
-+#define TMIO_STAT_TXUNDERRUN    BIT(21)
-+#define TMIO_STAT_CMDTIMEOUT    BIT(22)
-+#define TMIO_STAT_RXRDY         BIT(24)
-+#define TMIO_STAT_TXRQ          BIT(25)
-+#define TMIO_STAT_ILL_FUNC      BIT(29)
-+#define TMIO_STAT_CMD_BUSY      BIT(30)
-+#define TMIO_STAT_ILL_ACCESS    BIT(31)
+-#define TMIO_STATUS2_DAT0	BIT(7)
+-
+ #define	CLK_CTL_DIV_MASK	0xff
+ #define	CLK_CTL_SCLKEN		BIT(8)
  
- #define TMIO_STATUS2_DAT0	BIT(7)
+diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+index fcc6879..3a9620f 100644
+--- a/drivers/mmc/host/tmio_mmc_pio.c
++++ b/drivers/mmc/host/tmio_mmc_pio.c
+@@ -967,7 +967,7 @@ static int tmio_mmc_card_busy(struct mmc_host *mmc)
+ {
+ 	struct tmio_mmc_host *host = mmc_priv(mmc);
  
+-	return !(sd_ctrl_read16_and_16_as_32(host, CTL_STATUS2) & TMIO_STATUS2_DAT0);
++	return !(sd_ctrl_read16_and_16_as_32(host, CTL_STATUS) & TMIO_STAT_DAT0);
+ }
+ 
+ static struct mmc_host_ops tmio_mmc_ops = {
 -- 
 2.7.4
