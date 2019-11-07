@@ -1,73 +1,54 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu,  7 Nov 2019 08:31:32 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 03/83] mmc: tmio: add flag to reduce
-	delay after changing clock status
+Date: Thu,  7 Nov 2019 08:31:33 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 04/83] mmc: tmio: remove stale comments
 In-Reply-To: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
 References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1573115572-13513-4-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1573115572-13513-5-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit 04e24b80a3ddf4cdf85e49a99d33aec27c9432ad upstream.
+commit 6d2bcbe5d1ee44271b30d445b55c49219b33fc6e upstream.
 
-The docs for RCar Gen2 & 3 I have access to, mention delays of 5ms after
-stop and 1ms after start. Make it possible to apply these values.
+These don't make sense anymore. Since commit 5d60e500541ed1 ("mmc: tmio:
+add new TMIO_MMC_HAVE_HIGH_REG flags"), we don't deal with a resource
+here.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/mmc/host/tmio_mmc_pio.c | 7 ++++---
- include/linux/mfd/tmio.h        | 4 ++++
- 2 files changed, 8 insertions(+), 3 deletions(-)
+ drivers/mmc/host/tmio_mmc_pio.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
 diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 3c7c3a1..66c65fe 100644
+index 66c65fe..99df39a 100644
 --- a/drivers/mmc/host/tmio_mmc_pio.c
 +++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -172,7 +172,8 @@ static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
- 		host->set_clk_div(host->pdev, (clk>>22) & 1);
- 
- 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, clk & 0x1ff);
--	msleep(10);
-+	if (!(host->pdata->flags & TMIO_MMC_FAST_CLK_CHG))
-+		msleep(10);
- }
+@@ -178,7 +178,6 @@ static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
  
  static void tmio_mmc_clk_stop(struct tmio_mmc_host *host)
-@@ -185,14 +186,14 @@ static void tmio_mmc_clk_stop(struct tmio_mmc_host *host)
- 
- 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~0x0100 &
- 		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
--	msleep(10);
-+	msleep(host->pdata->flags & TMIO_MMC_FAST_CLK_CHG ? 5 : 10);
- }
- 
- static void tmio_mmc_clk_start(struct tmio_mmc_host *host)
  {
- 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, 0x0100 |
- 		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
--	msleep(10);
-+	msleep(host->pdata->flags & TMIO_MMC_FAST_CLK_CHG ? 1 : 10);
- 
- 	/* implicit BUG_ON(!res) */
+-	/* implicit BUG_ON(!res) */
  	if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG) {
-diff --git a/include/linux/mfd/tmio.h b/include/linux/mfd/tmio.h
-index 24b86d5..05d58ee 100644
---- a/include/linux/mfd/tmio.h
-+++ b/include/linux/mfd/tmio.h
-@@ -65,6 +65,10 @@
-  * Some controllers can support SDIO IRQ signalling.
-  */
- #define TMIO_MMC_SDIO_IRQ		(1 << 2)
-+
-+/* Some controllers don't need to wait 10ms for clock changes */
-+#define TMIO_MMC_FAST_CLK_CHG		(1 << 3)
-+
- /*
-  * Some controllers require waiting for the SD bus to become
-  * idle before writing to some registers.
+ 		sd_ctrl_write16(host, CTL_CLK_AND_WAIT_CTL, 0x0000);
+ 		msleep(10);
+@@ -195,7 +194,6 @@ static void tmio_mmc_clk_start(struct tmio_mmc_host *host)
+ 		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+ 	msleep(host->pdata->flags & TMIO_MMC_FAST_CLK_CHG ? 1 : 10);
+ 
+-	/* implicit BUG_ON(!res) */
+ 	if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG) {
+ 		sd_ctrl_write16(host, CTL_CLK_AND_WAIT_CTL, 0x0100);
+ 		msleep(10);
+@@ -206,7 +204,6 @@ static void tmio_mmc_reset(struct tmio_mmc_host *host)
+ {
+ 	/* FIXME - should we set stop clock reg here */
+ 	sd_ctrl_write16(host, CTL_RESET_SD, 0x0000);
+-	/* implicit BUG_ON(!res) */
+ 	if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG)
+ 		sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0000);
+ 	msleep(10);
 -- 
 2.7.4
