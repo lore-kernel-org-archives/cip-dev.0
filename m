@@ -1,131 +1,107 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu,  7 Nov 2019 08:31:42 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 13/83] mmc: sh_mobile_sdhi: Add UHS-I
-	mode support
+Date: Thu,  7 Nov 2019 08:31:43 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 14/83] mmc: tmio: always start clock
+	after frequency calculation
 In-Reply-To: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
 References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1573115572-13513-14-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1573115572-13513-15-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit 057a4592e6dbad0e571628968f3e20a3706e4701 upstream.
+commit 7fbc030da800d07193da4a4355ca2e197cf00cfb upstream.
 
-Implement voltage switch, supporting modes up to SDR-50.
+Starting the clock is always done after frequency change anyhow, so we can
+do it directly after the clock calculation and remove the specific calls.
+This is the first part of doing proper clock de-/activation at calculation
+time.
 
-Based on work by Shinobu Uehara, Rob Taylor, William Towle and Ian Molton.
-
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt |  3 ++
- drivers/mmc/host/sh_mobile_sdhi.c                  | 52 ++++++++++++++++++++++
- 2 files changed, 55 insertions(+)
+ drivers/mmc/host/tmio_mmc_pio.c | 34 ++++++++++++++++------------------
+ 1 file changed, 16 insertions(+), 18 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-index cbf9135..1d23a43 100644
---- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-+++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-@@ -27,3 +27,6 @@ Required properties:
- 
- Optional properties:
- - toshiba,mmc-wrprotect-disable: write-protect detection is unavailable
-+- pinctrl-names: should be "default", "state_uhs"
-+- pinctrl-0: should contain default/high speed pin ctrl
-+- pinctrl-1: should contain uhs mode pin ctrl
-diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
-index 51e49eb..d6035b4 100644
---- a/drivers/mmc/host/sh_mobile_sdhi.c
-+++ b/drivers/mmc/host/sh_mobile_sdhi.c
-@@ -32,6 +32,9 @@
- #include <linux/mfd/tmio.h>
- #include <linux/sh_dma.h>
- #include <linux/delay.h>
-+#include <linux/pinctrl/consumer.h>
-+#include <linux/pinctrl/pinctrl-state.h>
-+#include <linux/regulator/consumer.h>
- 
- #include "tmio_mmc.h"
- 
-@@ -98,6 +101,8 @@ struct sh_mobile_sdhi {
- 	struct clk *clk;
- 	struct tmio_mmc_data mmc_data;
- 	struct tmio_mmc_dma dma_priv;
-+	struct pinctrl *pinctrl;
-+	struct pinctrl_state *pins_default, *pins_uhs;
- };
- 
- static void sh_mobile_sdhi_sdbuf_width(struct tmio_mmc_host *host, int width)
-@@ -206,6 +211,44 @@ static void sh_mobile_sdhi_clk_disable(struct tmio_mmc_host *host)
- 	clk_disable_unprepare(priv->clk);
+diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+index 1935706..99139b8 100644
+--- a/drivers/mmc/host/tmio_mmc_pio.c
++++ b/drivers/mmc/host/tmio_mmc_pio.c
+@@ -154,6 +154,18 @@ static void tmio_mmc_enable_sdio_irq(struct mmc_host *mmc, int enable)
+ 	}
  }
  
-+static int sh_mobile_sdhi_start_signal_voltage_switch(struct mmc_host *mmc,
-+						      struct mmc_ios *ios)
++static void tmio_mmc_clk_start(struct tmio_mmc_host *host)
 +{
-+	struct tmio_mmc_host *host = mmc_priv(mmc);
-+	struct sh_mobile_sdhi *priv = host_to_priv(host);
-+	struct pinctrl_state *pin_state;
-+	int ret;
++	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
++		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
++	msleep(host->pdata->flags & TMIO_MMC_FAST_CLK_CHG ? 1 : 10);
 +
-+	switch (ios->signal_voltage) {
-+	case MMC_SIGNAL_VOLTAGE_330:
-+		pin_state = priv->pins_default;
-+		break;
-+	case MMC_SIGNAL_VOLTAGE_180:
-+		pin_state = priv->pins_uhs;
-+		break;
-+	default:
-+		return -EINVAL;
++	if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG) {
++		sd_ctrl_write16(host, CTL_CLK_AND_WAIT_CTL, 0x0100);
++		msleep(10);
 +	}
-+
-+	/*
-+	 * If anything is missing, assume signal voltage is fixed at
-+	 * 3.3V and succeed/fail accordingly.
-+	 */
-+	if (IS_ERR(priv->pinctrl) || IS_ERR(pin_state))
-+		return ios->signal_voltage ==
-+			MMC_SIGNAL_VOLTAGE_330 ? 0 : -EINVAL;
-+
-+	ret = mmc_regulator_set_vqmmc(host->mmc, ios);
-+	if (ret)
-+		return ret;
-+
-+	ret = pinctrl_select_state(priv->pinctrl, pin_state);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
 +}
 +
- static int sh_mobile_sdhi_wait_idle(struct tmio_mmc_host *host)
+ static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
+ 				unsigned int new_clock)
  {
- 	int timeout = 1000;
-@@ -296,6 +339,14 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
- 		goto eprobe;
- 	}
- 
-+	priv->pinctrl = devm_pinctrl_get(&pdev->dev);
-+	if (!IS_ERR(priv->pinctrl)) {
-+		priv->pins_default = pinctrl_lookup_state(priv->pinctrl,
-+						PINCTRL_STATE_DEFAULT);
-+		priv->pins_uhs = pinctrl_lookup_state(priv->pinctrl,
-+						"state_uhs");
-+	}
+@@ -182,6 +194,8 @@ static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
+ 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, clk & CLK_CTL_DIV_MASK);
+ 	if (!(host->pdata->flags & TMIO_MMC_FAST_CLK_CHG))
+ 		msleep(10);
 +
- 	host = tmio_mmc_host_alloc(pdev);
- 	if (!host) {
- 		ret = -ENOMEM;
-@@ -319,6 +370,7 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
- 	host->clk_update	= sh_mobile_sdhi_clk_update;
- 	host->clk_disable	= sh_mobile_sdhi_clk_disable;
- 	host->multi_io_quirk	= sh_mobile_sdhi_multi_io_quirk;
-+	host->start_signal_voltage_switch = sh_mobile_sdhi_start_signal_voltage_switch;
++	tmio_mmc_clk_start(host);
+ }
  
- 	/* Orginally registers were 16 bit apart, could be 32 or 64 nowadays */
- 	if (!host->bus_shift && resource_size(res) > 0x100) /* old way to determine the shift */
+ static void tmio_mmc_clk_stop(struct tmio_mmc_host *host)
+@@ -196,18 +210,6 @@ static void tmio_mmc_clk_stop(struct tmio_mmc_host *host)
+ 	msleep(host->pdata->flags & TMIO_MMC_FAST_CLK_CHG ? 5 : 10);
+ }
+ 
+-static void tmio_mmc_clk_start(struct tmio_mmc_host *host)
+-{
+-	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
+-		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+-	msleep(host->pdata->flags & TMIO_MMC_FAST_CLK_CHG ? 1 : 10);
+-
+-	if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG) {
+-		sd_ctrl_write16(host, CTL_CLK_AND_WAIT_CTL, 0x0100);
+-		msleep(10);
+-	}
+-}
+-
+ static void tmio_mmc_reset(struct tmio_mmc_host *host)
+ {
+ 	/* FIXME - should we set stop clock reg here */
+@@ -953,14 +955,12 @@ static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ 		tmio_mmc_clk_stop(host);
+ 		break;
+ 	case MMC_POWER_UP:
+-		tmio_mmc_set_clock(host, ios->clock);
+ 		tmio_mmc_power_on(host, ios->vdd);
+-		tmio_mmc_clk_start(host);
++		tmio_mmc_set_clock(host, ios->clock);
+ 		tmio_mmc_set_bus_width(host, ios->bus_width);
+ 		break;
+ 	case MMC_POWER_ON:
+ 		tmio_mmc_set_clock(host, ios->clock);
+-		tmio_mmc_clk_start(host);
+ 		tmio_mmc_set_bus_width(host, ios->bus_width);
+ 		break;
+ 	}
+@@ -1269,10 +1269,8 @@ int tmio_mmc_host_runtime_resume(struct device *dev)
+ 	tmio_mmc_reset(host);
+ 	tmio_mmc_clk_enable(host);
+ 
+-	if (host->clk_cache) {
++	if (host->clk_cache)
+ 		tmio_mmc_set_clock(host, host->clk_cache);
+-		tmio_mmc_clk_start(host);
+-	}
+ 
+ 	tmio_mmc_enable_dma(host, true);
+ 
 -- 
 2.7.4
