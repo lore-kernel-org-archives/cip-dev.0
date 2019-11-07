@@ -1,76 +1,59 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu,  7 Nov 2019 08:32:44 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 75/83] mmc: renesas_sdhi: consolidate
-	DMAC CONFIG options
+Date: Thu,  7 Nov 2019 08:32:45 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 76/83] dt-bindings: mmc: renesas_sdhi:
+	add R-Car Gen[123] fallback compatibility strings
 In-Reply-To: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
 References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1573115572-13513-76-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1573115572-13513-77-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Simon Horman <horms+renesas@verge.net.au>
 
-commit c813e10a6bbad9ef56bc115c64d48c5a7d0a7dd5 upstream.
+commit 54839d012d5f98cde2fa102fdcd22e1da661d138 upstream.
 
-The description in the Makefile is odd.  Fix the CONFIG selection
-in a cleaner way.
+Add fallback compatibility strings for R-Car Gen 1, 2 and 3.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+In the case of Renesas R-Car hardware we know that there are generations of
+SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationship
+between IP blocks might be. For example, I believe that r8a7790 is older
+than r8a7791 but that doesn't imply that the latter is a descendant of the
+former or vice versa.
+
+We can, however, by examining the documentation and behaviour of the
+hardware at run-time observe that the current driver implementation appears
+to be compatible with the IP blocks on SoCs within a given generation.
+
+For the above reasons and convenience when enabling new SoCs a
+per-generation fallback compatibility string scheme is being adopted for
+drivers for Renesas SoCs.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/mmc/host/Kconfig  | 4 ++--
- drivers/mmc/host/Makefile | 8 ++------
- 2 files changed, 4 insertions(+), 8 deletions(-)
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 54d98ee..7b947ce 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -563,8 +563,6 @@ config MMC_SDHI
- 	depends on SUPERH || ARM
- 	depends on SUPERH || ARCH_SHMOBILE || COMPILE_TEST
- 	select MMC_TMIO_CORE
--	select MMC_SDHI_SYS_DMAC if (SUPERH || ARM)
--	select MMC_SDHI_INTERNAL_DMAC if ARM64
- 	help
- 	  This provides support for the SDHI SD/SDIO controller found in
- 	  Renesas SuperH, ARM and ARM64 based SoCs
-@@ -572,6 +570,7 @@ config MMC_SDHI
- config MMC_SDHI_SYS_DMAC
- 	tristate "DMA for SDHI SD/SDIO controllers using SYS-DMAC"
- 	depends on MMC_SDHI
-+	default MMC_SDHI if (SUPERH || ARM)
- 	help
- 	  This provides DMA support for SDHI SD/SDIO controllers
- 	  using SYS-DMAC via DMA Engine. This supports the controllers
-@@ -581,6 +580,7 @@ config MMC_SDHI_INTERNAL_DMAC
- 	tristate "DMA for SDHI SD/SDIO controllers using on-chip bus mastering"
- 	depends on ARM64 || COMPILE_TEST
- 	depends on MMC_SDHI
-+	default MMC_SDHI if ARM64
- 	help
- 	  This provides DMA support for SDHI SD/SDIO controllers
- 	  using on-chip bus mastering. This supports the controllers
-diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
-index f10bb0c..5de0c72 100644
---- a/drivers/mmc/host/Makefile
-+++ b/drivers/mmc/host/Makefile
-@@ -37,12 +37,8 @@ obj-$(CONFIG_MMC_SDRICOH_CS)	+= sdricoh_cs.o
- obj-$(CONFIG_MMC_TMIO)		+= tmio_mmc.o
- obj-$(CONFIG_MMC_TMIO_CORE)	+= tmio_mmc_core.o
- obj-$(CONFIG_MMC_SDHI)		+= renesas_sdhi_core.o
--ifeq ($(subst m,y,$(CONFIG_MMC_SDHI_SYS_DMAC)),y)
--obj-$(CONFIG_MMC_SDHI)		+= renesas_sdhi_sys_dmac.o
--endif
--ifeq ($(subst m,y,$(CONFIG_MMC_SDHI_INTERNAL_DMAC)),y)
--obj-$(CONFIG_MMC_SDHI)		+= renesas_sdhi_internal_dmac.o
--endif
-+obj-$(CONFIG_MMC_SDHI_SYS_DMAC)		+= renesas_sdhi_sys_dmac.o
-+obj-$(CONFIG_MMC_SDHI_INTERNAL_DMAC)	+= renesas_sdhi_internal_dmac.o
- obj-$(CONFIG_MMC_CB710)		+= cb710-mmc.o
- obj-$(CONFIG_MMC_VIA_SDMMC)	+= via-sdmmc.o
- obj-$(CONFIG_SDH_BFIN)		+= bfin_sdh.o
+diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+index 1d23a43..25f06e6 100644
+--- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
++++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+@@ -24,6 +24,13 @@ Required properties:
+ 		"renesas,sdhi-r8a7792" - SDHI IP on R8A7792 SoC
+ 		"renesas,sdhi-r8a7793" - SDHI IP on R8A7793 SoC
+ 		"renesas,sdhi-r8a7794" - SDHI IP on R8A7794 SoC
++		"renesas,rcar-gen1-sdhi" - a generic R-Car Gen1 SDHI controller
++		"renesas,rcar-gen2-sdhi" - a generic R-Car Gen2 or RZ/G1
++					   SDHI controller
++
++		When compatible with the generic version, nodes must list
++		the SoC-specific version corresponding to the platform
++		first followed by the generic version.
+ 
+ Optional properties:
+ - toshiba,mmc-wrprotect-disable: write-protect detection is unavailable
 -- 
 2.7.4
