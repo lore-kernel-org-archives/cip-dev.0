@@ -1,121 +1,119 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu,  7 Nov 2019 08:31:46 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 17/83] mmc: sh_mobile_sdhi: remove
-	obsolete irq_by_name registration
+Date: Thu,  7 Nov 2019 08:31:47 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 18/83] mmc: tmio: remove now unneeded
+	seperate irq handlers
 In-Reply-To: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
 References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1573115572-13513-18-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1573115572-13513-19-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit adcbc949046366edb46e44f72ac9197c32675cfd upstream.
+commit 4da986703882b2987b5731e8b31b88eece8c2fbb upstream.
 
-There is no user left in the kernel, so this code can be removed.
-(Legacy, non-DT sh_mobile boards have been removed a while ago.) The
-
-diff looks more complicated than it is: The if-block for multiplexed isr
-is now the main code path, the rest is removed.
+We removed installation of separate handlers previously, so we can also
+remove the separate handlers.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Acked-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+[ Backported to 4.4 kernel ]
 ---
- drivers/mmc/host/sh_mobile_sdhi.c | 57 ++++++---------------------------------
- 1 file changed, 8 insertions(+), 49 deletions(-)
+ drivers/mmc/host/tmio_mmc.h     |  3 ---
+ drivers/mmc/host/tmio_mmc_pio.c | 36 +++++++-----------------------------
+ 2 files changed, 7 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
-index d6035b4..ea78c77 100644
---- a/drivers/mmc/host/sh_mobile_sdhi.c
-+++ b/drivers/mmc/host/sh_mobile_sdhi.c
-@@ -28,7 +28,6 @@
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/mmc/host.h>
--#include <linux/mmc/sh_mobile_sdhi.h>
- #include <linux/mfd/tmio.h>
- #include <linux/sh_dma.h>
- #include <linux/delay.h>
-@@ -318,7 +317,6 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
- 	struct tmio_mmc_host *host;
- 	struct resource *res;
- 	int irq, ret, i = 0;
--	bool multiplexed_isr = true;
- 	struct tmio_mmc_dma *dma_priv;
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index b1819c7..032188b 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -115,9 +115,6 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host);
+ void tmio_mmc_enable_mmc_irqs(struct tmio_mmc_host *host, u32 i);
+ void tmio_mmc_disable_mmc_irqs(struct tmio_mmc_host *host, u32 i);
+ irqreturn_t tmio_mmc_irq(int irq, void *devid);
+-irqreturn_t tmio_mmc_sdcard_irq(int irq, void *devid);
+-irqreturn_t tmio_mmc_card_detect_irq(int irq, void *devid);
+-irqreturn_t tmio_mmc_sdio_irq(int irq, void *devid);
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-@@ -410,62 +408,23 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto efree;
+ static inline char *tmio_mmc_kmap_atomic(struct scatterlist *sg,
+ 					 unsigned long *flags)
+diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+index ff861f6..1e050a4 100644
+--- a/drivers/mmc/host/tmio_mmc_pio.c
++++ b/drivers/mmc/host/tmio_mmc_pio.c
+@@ -658,18 +658,6 @@ static bool __tmio_mmc_card_detect_irq(struct tmio_mmc_host *host,
+ 	return false;
+ }
  
--	/*
--	 * Allow one or more specific (named) ISRs or
--	 * one or more multiplexed (un-named) ISRs.
--	 */
+-irqreturn_t tmio_mmc_card_detect_irq(int irq, void *devid)
+-{
+-	unsigned int ireg, status;
+-	struct tmio_mmc_host *host = devid;
 -
--	irq = platform_get_irq_byname(pdev, SH_MOBILE_SDHI_IRQ_CARD_DETECT);
--	if (irq >= 0) {
--		multiplexed_isr = false;
--		ret = devm_request_irq(&pdev->dev, irq, tmio_mmc_card_detect_irq, 0,
-+	while (1) {
-+		irq = platform_get_irq(pdev, i);
-+		if (irq < 0)
-+			break;
-+		i++;
-+		ret = devm_request_irq(&pdev->dev, irq, tmio_mmc_irq, 0,
- 				  dev_name(&pdev->dev), host);
- 		if (ret)
- 			goto eirq;
- 	}
+-	tmio_mmc_card_irq_status(host, &ireg, &status);
+-	__tmio_mmc_card_detect_irq(host, ireg, status);
+-
+-	return IRQ_HANDLED;
+-}
+-EXPORT_SYMBOL(tmio_mmc_card_detect_irq);
+-
+ static bool __tmio_mmc_sdcard_irq(struct tmio_mmc_host *host,
+ 				 int ireg, int status)
+ {
+@@ -699,19 +687,7 @@ static bool __tmio_mmc_sdcard_irq(struct tmio_mmc_host *host,
+ 	return false;
+ }
  
--	irq = platform_get_irq_byname(pdev, SH_MOBILE_SDHI_IRQ_SDIO);
--	if (irq >= 0) {
--		multiplexed_isr = false;
--		ret = devm_request_irq(&pdev->dev, irq, tmio_mmc_sdio_irq, 0,
--				  dev_name(&pdev->dev), host);
--		if (ret)
--			goto eirq;
--	}
+-irqreturn_t tmio_mmc_sdcard_irq(int irq, void *devid)
+-{
+-	unsigned int ireg, status;
+-	struct tmio_mmc_host *host = devid;
 -
--	irq = platform_get_irq_byname(pdev, SH_MOBILE_SDHI_IRQ_SDCARD);
--	if (irq >= 0) {
--		multiplexed_isr = false;
--		ret = devm_request_irq(&pdev->dev, irq, tmio_mmc_sdcard_irq, 0,
--				  dev_name(&pdev->dev), host);
--		if (ret)
--			goto eirq;
--	} else if (!multiplexed_isr) {
--		dev_err(&pdev->dev,
--			"Principal SD-card IRQ is missing among named interrupts\n");
-+	/* There must be at least one IRQ source */
-+	if (!i) {
- 		ret = irq;
- 		goto eirq;
- 	}
+-	tmio_mmc_card_irq_status(host, &ireg, &status);
+-	__tmio_mmc_sdcard_irq(host, ireg, status);
+-
+-	return IRQ_HANDLED;
+-}
+-EXPORT_SYMBOL(tmio_mmc_sdcard_irq);
+-
+-irqreturn_t tmio_mmc_sdio_irq(int irq, void *devid)
++static bool tmio_mmc_sdio_irq(int irq, void *devid)
+ {
+ 	struct tmio_mmc_host *host = devid;
+ 	struct mmc_host *mmc = host->mmc;
+@@ -720,7 +696,7 @@ irqreturn_t tmio_mmc_sdio_irq(int irq, void *devid)
+ 	unsigned int sdio_status;
  
--	if (multiplexed_isr) {
--		while (1) {
--			irq = platform_get_irq(pdev, i);
--			if (irq < 0)
--				break;
--			i++;
--			ret = devm_request_irq(&pdev->dev, irq, tmio_mmc_irq, 0,
--					  dev_name(&pdev->dev), host);
--			if (ret)
--				goto eirq;
--		}
--
--		/* There must be at least one IRQ source */
--		if (!i) {
--			ret = irq;
--			goto eirq;
--		}
--	}
--
- 	dev_info(&pdev->dev, "%s base at 0x%08lx max clock rate %u MHz\n",
- 		 mmc_hostname(host->mmc), (unsigned long)
- 		 (platform_get_resource(pdev, IORESOURCE_MEM, 0)->start),
+ 	if (!(pdata->flags & TMIO_MMC_SDIO_IRQ))
+-		return IRQ_NONE;
++		return false;
+ 
+ 	status = sd_ctrl_read16(host, CTL_SDIO_STATUS);
+ 	ireg = status & TMIO_SDIO_MASK_ALL & ~host->sdcard_irq_mask;
+@@ -734,9 +710,8 @@ irqreturn_t tmio_mmc_sdio_irq(int irq, void *devid)
+ 	if (mmc->caps & MMC_CAP_SDIO_IRQ && ireg & TMIO_SDIO_STAT_IOIRQ)
+ 		mmc_signal_sdio_irq(mmc);
+ 
+-	return IRQ_RETVAL(ireg);
++	return ireg;
+ }
+-EXPORT_SYMBOL(tmio_mmc_sdio_irq);
+ 
+ irqreturn_t tmio_mmc_irq(int irq, void *devid)
+ {
+@@ -751,7 +726,10 @@ irqreturn_t tmio_mmc_irq(int irq, void *devid)
+ 	if (__tmio_mmc_sdcard_irq(host, ireg, status))
+ 		return IRQ_HANDLED;
+ 
+-	return tmio_mmc_sdio_irq(irq, devid);
++	if (tmio_mmc_sdio_irq(irq, devid))
++		return IRQ_HANDLED;
++
++	return IRQ_NONE;
+ }
+ EXPORT_SYMBOL(tmio_mmc_irq);
+ 
 -- 
 2.7.4
