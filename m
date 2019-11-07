@@ -1,42 +1,52 @@
-From: quirin.gylstorff@siemens.com (Gylstorff Quirin)
-Date: Thu, 7 Nov 2019 16:53:48 +0100
-Subject: [cip-dev] [isar-cip-core PATCH 3/4] hihope-rzg2m: Add board
- support
-In-Reply-To: <TYAPR01MB4286445DBFE0BE6FD3D9CC49E1780@TYAPR01MB4286.jpnprd01.prod.outlook.com>
-References: <20191106124439.10532-1-Quirin.Gylstorff@siemens.com>
-	<20191106124439.10532-4-Quirin.Gylstorff@siemens.com>
-	<TYAPR01MB2285255EF4A6521577D5F789B7790@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-	<66a2849e-bbf8-7e67-0da3-490b052f18cb@siemens.com>
-	<TYAPR01MB4286445DBFE0BE6FD3D9CC49E1780@TYAPR01MB4286.jpnprd01.prod.outlook.com>
-Message-ID: <d41024b8-0d3f-a4e6-fef3-76dc350dfc62@siemens.com>
+From: Quirin.Gylstorff@siemens.com (Q. Gylstorff)
+Date: Thu,  7 Nov 2019 17:39:38 +0100
+Subject: [cip-dev] [isar-cip-core PATCH v2 0/4] Add rzg2m support
+In-Reply-To: <TYAPR01MB2285BB4C180DBB805DC1C079B7790@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+References: <TYAPR01MB2285BB4C180DBB805DC1C079B7790@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+Message-ID: <20191107163942.23513-1-Quirin.Gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
+Add the rzg2m reference board.
+Add the option to build rootfs tarballs for LAVA tests.
+This option needs to be activated in the gitlab-ci.yml by
+adding it to the builds for testing.
 
-On 11/7/19 3:29 AM, kazuhiro3.hayashi at toshiba.co.jp wrote:
-> Hello Quirin,
-> 
->> I will look into it using the cip-kernel-config instead of using copies
->> in isar.
-> 
-> Are you planning to "fetch" required config(s) for each target from cip-kernel-config?
-> or, keep copies of the configs in isar-cip-core then synchronize them at the specific point?
+Version 2:
+  Change used devicetree to r8a774a1-hihope-rzg2m-ex.dtb.
+  The changes to fetch the cip-kernel configuration instead
+  of using copies stored in the repository will be a seperate
+  patch set.
+  
 
-I try to fetch the configuration for each target from cip-kernel-config.
-Currently I need to patch the config as Isar doesn't allow setting  
-CONFIG_LOCALVERSION in the kernel configuration.
+Quirin Gylstorff (4):
+  kas: Increase Isar version
+  classes: add wic-targz-img.bbclass
+  hihope-rzg2m: Add board support
+  ci: add hihope-rzg2m to ci chain
 
-> 
-> Deby also has its own kernel configs (arm64 defconfig + Tiny hihope-rzg2m.config)
-> for HiHope RZG2M:
-> https://gitlab.com/cip-project/cip-core/deby/blob/cip-core-buster/meta-hihope-rzg2m/recipes-kernel/linux/linux-base_git.bbappend
-> but they also should be replaced by the common kernel configs in CIP.
-> As the first step, I would provide configs by the same way as isar-cip-core.
-> 
-> Best regards,
-> Kazu
-> 
-> 
+ .gitlab-ci.yml                                |   4 +
+ board-rzg2m.yml                               |  16 +
+ classes/wic-targz-img.bbclass                 |  13 +
+ conf/machine/bbb.conf                         |   2 +-
+ conf/machine/hihope-rzg2m.conf                |  18 +
+ conf/machine/iwg20m.conf                      |   2 +-
+ conf/machine/qemu-amd64.conf                  |   2 +-
+ conf/machine/simatic-ipc227e.conf             |   2 +-
+ kas.yml                                       |   2 +-
+ opt-targz-img.yml                             |  20 ++
+ .../linux/files/hihope-rzg2m_defconfig        | 330 ++++++++++++++++++
+ scripts/deploy-cip-core.sh                    |   4 +
+ wic/hihope-rzg2m.wks                          |  15 +
+ 13 files changed, 425 insertions(+), 5 deletions(-)
+ create mode 100644 board-rzg2m.yml
+ create mode 100644 classes/wic-targz-img.bbclass
+ create mode 100644 conf/machine/hihope-rzg2m.conf
+ create mode 100644 opt-targz-img.yml
+ create mode 100644 recipes-kernel/linux/files/hihope-rzg2m_defconfig
+ create mode 100644 wic/hihope-rzg2m.wks
 
-Quirin
+-- 
+2.20.1
