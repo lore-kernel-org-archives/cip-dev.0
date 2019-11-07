@@ -1,81 +1,76 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu,  7 Nov 2019 08:32:43 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 74/83] mmc: tmio-mmc: fix bad pointer
-	math
+Date: Thu,  7 Nov 2019 08:32:44 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 75/83] mmc: renesas_sdhi: consolidate
+	DMAC CONFIG options
 In-Reply-To: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
 References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1573115572-13513-75-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1573115572-13513-76-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Chris Brandt <chris.brandt@renesas.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-commit b5dd7985e8d3357ff9537c0be231190ab1a131fe upstream.
+commit c813e10a6bbad9ef56bc115c64d48c5a7d0a7dd5 upstream.
 
-commit 9c284c41c0886f09e75c323a16278b6d353b0b4a upstream.
+The description in the Makefile is odd.  Fix the CONFIG selection
+in a cleaner way.
 
-The existing code gives an incorrect pointer value.
-The buffer pointer 'buf' was of type unsigned short *, and 'count' was a
-number in bytes. A cast of buf should have been used.
-
-However, instead of casting, just change the code to use u32 pointers.
-
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Fixes: 8185e51f358a: ("mmc: tmio-mmc: add support for 32bit data port")
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: <stable@vger.kernel.org>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/mmc/host/tmio_mmc_core.c | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
+ drivers/mmc/host/Kconfig  | 4 ++--
+ drivers/mmc/host/Makefile | 8 ++------
+ 2 files changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 43209ea28..b6500a6 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -446,30 +446,29 @@ static void tmio_mmc_transfer_data(struct tmio_mmc_host *host,
- 	 * Transfer the data
- 	 */
- 	if (host->pdata->flags & TMIO_MMC_32BIT_DATA_PORT) {
--		u8 data[4] = { };
-+		u32 data = 0;
-+		u32 *buf32 = (u32 *)buf;
- 
- 		if (is_read)
--			sd_ctrl_read32_rep(host, CTL_SD_DATA_PORT, (u32 *)buf,
-+			sd_ctrl_read32_rep(host, CTL_SD_DATA_PORT, buf32,
- 					   count >> 2);
- 		else
--			sd_ctrl_write32_rep(host, CTL_SD_DATA_PORT, (u32 *)buf,
-+			sd_ctrl_write32_rep(host, CTL_SD_DATA_PORT, buf32,
- 					    count >> 2);
- 
- 		/* if count was multiple of 4 */
- 		if (!(count & 0x3))
- 			return;
- 
--		buf8 = (u8 *)(buf + (count >> 2));
-+		buf32 += count >> 2;
- 		count %= 4;
- 
- 		if (is_read) {
--			sd_ctrl_read32_rep(host, CTL_SD_DATA_PORT,
--					   (u32 *)data, 1);
--			memcpy(buf8, data, count);
-+			sd_ctrl_read32_rep(host, CTL_SD_DATA_PORT, &data, 1);
-+			memcpy(buf32, &data, count);
- 		} else {
--			memcpy(data, buf8, count);
--			sd_ctrl_write32_rep(host, CTL_SD_DATA_PORT,
--					    (u32 *)data, 1);
-+			memcpy(&data, buf32, count);
-+			sd_ctrl_write32_rep(host, CTL_SD_DATA_PORT, &data, 1);
- 		}
- 
- 		return;
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 54d98ee..7b947ce 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -563,8 +563,6 @@ config MMC_SDHI
+ 	depends on SUPERH || ARM
+ 	depends on SUPERH || ARCH_SHMOBILE || COMPILE_TEST
+ 	select MMC_TMIO_CORE
+-	select MMC_SDHI_SYS_DMAC if (SUPERH || ARM)
+-	select MMC_SDHI_INTERNAL_DMAC if ARM64
+ 	help
+ 	  This provides support for the SDHI SD/SDIO controller found in
+ 	  Renesas SuperH, ARM and ARM64 based SoCs
+@@ -572,6 +570,7 @@ config MMC_SDHI
+ config MMC_SDHI_SYS_DMAC
+ 	tristate "DMA for SDHI SD/SDIO controllers using SYS-DMAC"
+ 	depends on MMC_SDHI
++	default MMC_SDHI if (SUPERH || ARM)
+ 	help
+ 	  This provides DMA support for SDHI SD/SDIO controllers
+ 	  using SYS-DMAC via DMA Engine. This supports the controllers
+@@ -581,6 +580,7 @@ config MMC_SDHI_INTERNAL_DMAC
+ 	tristate "DMA for SDHI SD/SDIO controllers using on-chip bus mastering"
+ 	depends on ARM64 || COMPILE_TEST
+ 	depends on MMC_SDHI
++	default MMC_SDHI if ARM64
+ 	help
+ 	  This provides DMA support for SDHI SD/SDIO controllers
+ 	  using on-chip bus mastering. This supports the controllers
+diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+index f10bb0c..5de0c72 100644
+--- a/drivers/mmc/host/Makefile
++++ b/drivers/mmc/host/Makefile
+@@ -37,12 +37,8 @@ obj-$(CONFIG_MMC_SDRICOH_CS)	+= sdricoh_cs.o
+ obj-$(CONFIG_MMC_TMIO)		+= tmio_mmc.o
+ obj-$(CONFIG_MMC_TMIO_CORE)	+= tmio_mmc_core.o
+ obj-$(CONFIG_MMC_SDHI)		+= renesas_sdhi_core.o
+-ifeq ($(subst m,y,$(CONFIG_MMC_SDHI_SYS_DMAC)),y)
+-obj-$(CONFIG_MMC_SDHI)		+= renesas_sdhi_sys_dmac.o
+-endif
+-ifeq ($(subst m,y,$(CONFIG_MMC_SDHI_INTERNAL_DMAC)),y)
+-obj-$(CONFIG_MMC_SDHI)		+= renesas_sdhi_internal_dmac.o
+-endif
++obj-$(CONFIG_MMC_SDHI_SYS_DMAC)		+= renesas_sdhi_sys_dmac.o
++obj-$(CONFIG_MMC_SDHI_INTERNAL_DMAC)	+= renesas_sdhi_internal_dmac.o
+ obj-$(CONFIG_MMC_CB710)		+= cb710-mmc.o
+ obj-$(CONFIG_MMC_VIA_SDMMC)	+= via-sdmmc.o
+ obj-$(CONFIG_SDH_BFIN)		+= bfin_sdh.o
 -- 
 2.7.4
