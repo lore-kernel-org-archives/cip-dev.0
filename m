@@ -1,54 +1,109 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu,  7 Nov 2019 08:31:33 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 04/83] mmc: tmio: remove stale comments
+Date: Thu,  7 Nov 2019 08:31:34 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 05/83] mmc: tmio: refactor set_clock a
+	little
 In-Reply-To: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
 References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1573115572-13513-5-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1573115572-13513-6-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit 6d2bcbe5d1ee44271b30d445b55c49219b33fc6e upstream.
+commit bf96208f0539d2009ca0b031da2ed7c430edc3a2 upstream.
 
-These don't make sense anymore. Since commit 5d60e500541ed1 ("mmc: tmio:
-add new TMIO_MMC_HAVE_HIGH_REG flags"), we don't deal with a resource
-here.
+Some of the indentation made the code awful to read. Fix that. Also,
+introduce defines instead of magic hex values. Note that this includes
+one change: We mask out know 0xff instead of 0x1ff. But 0x100 has always
+been the clock enable bit. It doesn't make any sense to set it depending
+on the clock calculation. Update copyright notices, too. I'll be working
+on those files some more in the future.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/mmc/host/tmio_mmc_pio.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/mmc/host/tmio_mmc_pio.c | 15 +++++++++------
+ include/linux/mmc/tmio.h        |  5 +++++
+ 2 files changed, 14 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 66c65fe..99df39a 100644
+index 99df39a..bb09b51 100644
 --- a/drivers/mmc/host/tmio_mmc_pio.c
 +++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -178,7 +178,6 @@ static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
+@@ -1,6 +1,8 @@
+ /*
+  * linux/drivers/mmc/host/tmio_mmc_pio.c
+  *
++ * Copyright (C) 2016 Sang Engineering, Wolfram Sang
++ * Copyright (C) 2015-16 Renesas Electronics Corporation
+  * Copyright (C) 2011 Guennadi Liakhovetski
+  * Copyright (C) 2007 Ian Molton
+  * Copyright (C) 2004 Ian Molton
+@@ -159,19 +161,20 @@ static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
  
- static void tmio_mmc_clk_stop(struct tmio_mmc_host *host)
- {
--	/* implicit BUG_ON(!res) */
- 	if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG) {
- 		sd_ctrl_write16(host, CTL_CLK_AND_WAIT_CTL, 0x0000);
+ 	if (new_clock) {
+ 		for (clock = host->mmc->f_min, clk = 0x80000080;
+-			new_clock >= (clock<<1); clk >>= 1)
++		     new_clock >= (clock << 1);
++		     clk >>= 1)
+ 			clock <<= 1;
+ 
+ 		/* 1/1 clock is option */
+ 		if ((host->pdata->flags & TMIO_MMC_CLK_ACTUAL) &&
+-		    ((clk >> 22) & 0x1))
++		   ((clk >> 22) & 0x1))
+ 			clk |= 0xff;
+ 	}
+ 
+ 	if (host->set_clk_div)
+-		host->set_clk_div(host->pdev, (clk>>22) & 1);
++		host->set_clk_div(host->pdev, (clk >> 22) & 1);
+ 
+-	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, clk & 0x1ff);
++	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, clk & CLK_CTL_DIV_MASK);
+ 	if (!(host->pdata->flags & TMIO_MMC_FAST_CLK_CHG))
  		msleep(10);
-@@ -195,7 +194,6 @@ static void tmio_mmc_clk_start(struct tmio_mmc_host *host)
+ }
+@@ -183,14 +186,14 @@ static void tmio_mmc_clk_stop(struct tmio_mmc_host *host)
+ 		msleep(10);
+ 	}
+ 
+-	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~0x0100 &
++	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
+ 		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+ 	msleep(host->pdata->flags & TMIO_MMC_FAST_CLK_CHG ? 5 : 10);
+ }
+ 
+ static void tmio_mmc_clk_start(struct tmio_mmc_host *host)
+ {
+-	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, 0x0100 |
++	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
  		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
  	msleep(host->pdata->flags & TMIO_MMC_FAST_CLK_CHG ? 1 : 10);
  
--	/* implicit BUG_ON(!res) */
- 	if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG) {
- 		sd_ctrl_write16(host, CTL_CLK_AND_WAIT_CTL, 0x0100);
- 		msleep(10);
-@@ -206,7 +204,6 @@ static void tmio_mmc_reset(struct tmio_mmc_host *host)
- {
- 	/* FIXME - should we set stop clock reg here */
- 	sd_ctrl_write16(host, CTL_RESET_SD, 0x0000);
--	/* implicit BUG_ON(!res) */
- 	if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG)
- 		sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0000);
- 	msleep(10);
+diff --git a/include/linux/mmc/tmio.h b/include/linux/mmc/tmio.h
+index 84d9053..5f5cd80 100644
+--- a/include/linux/mmc/tmio.h
++++ b/include/linux/mmc/tmio.h
+@@ -1,6 +1,8 @@
+ /*
+  * include/linux/mmc/tmio.h
+  *
++ * Copyright (C) 2016 Sang Engineering, Wolfram Sang
++ * Copyright (C) 2015-16 Renesas Electronics Corporation
+  * Copyright (C) 2007 Ian Molton
+  * Copyright (C) 2004 Ian Molton
+  *
+@@ -61,6 +63,9 @@
+ #define TMIO_STAT_CMD_BUSY      0x40000000
+ #define TMIO_STAT_ILL_ACCESS    0x80000000
+ 
++#define	CLK_CTL_DIV_MASK	0xff
++#define	CLK_CTL_SCLKEN		BIT(8)
++
+ #define TMIO_BBS		512		/* Boot block size */
+ 
+ #endif /* LINUX_MMC_TMIO_H */
 -- 
 2.7.4
