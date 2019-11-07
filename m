@@ -1,105 +1,102 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu,  7 Nov 2019 08:31:44 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 15/83] mmc: tmio: stop clock when 0Hz is
-	requested
+Date: Thu,  7 Nov 2019 08:31:45 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 16/83] mmc: tmio: Remove redundant
+	runtime PM calls
 In-Reply-To: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
 References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1573115572-13513-16-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1573115572-13513-17-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
 
-commit 148634d24d4a7dc82a49efcf1a215e1d0695f62c upstream.
+commit 6aef2eecc4d4c9edb8c8d3e3a7f6af3cee42b2ec upstream.
 
-Setting frequency to 0 is not enough, the clock explicitly has to be
-disabled. Otherwise voltage switching (which needs SDCLK to be quiet)
-fails for various cards.
+Commit 9250aea76bfc ("mmc: core: Enable runtime PM management of host
+devices"), made some calls to the runtime PM API from the driver
+redundant. Especially those which deals with runtime PM reference
+counting, so let's remove them.
 
-Because we now do the 'new_clock == 0' check right at the beginning,
-the indentation level of the rest of the code can be decreased a little.
-
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Ian Molton <ian@mnementh.co.uk>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/mmc/host/tmio_mmc_pio.c | 50 +++++++++++++++++++++--------------------
- 1 file changed, 26 insertions(+), 24 deletions(-)
+ drivers/mmc/host/tmio_mmc_pio.c | 19 -------------------
+ 1 file changed, 19 deletions(-)
 
 diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 99139b8..6c09b1d 100644
+index 6c09b1d..ff861f6 100644
 --- a/drivers/mmc/host/tmio_mmc_pio.c
 +++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -166,25 +166,39 @@ static void tmio_mmc_clk_start(struct tmio_mmc_host *host)
- 	}
+@@ -271,9 +271,6 @@ static void tmio_mmc_reset_work(struct work_struct *work)
+ 
+ 	tmio_mmc_abort_dma(host);
+ 	mmc_request_done(host->mmc, mrq);
+-
+-	pm_runtime_mark_last_busy(mmc_dev(host->mmc));
+-	pm_runtime_put_autosuspend(mmc_dev(host->mmc));
  }
  
-+static void tmio_mmc_clk_stop(struct tmio_mmc_host *host)
-+{
-+	if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG) {
-+		sd_ctrl_write16(host, CTL_CLK_AND_WAIT_CTL, 0x0000);
-+		msleep(10);
-+	}
-+
-+	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
-+		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
-+	msleep(host->pdata->flags & TMIO_MMC_FAST_CLK_CHG ? 5 : 10);
-+}
-+
- static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
- 				unsigned int new_clock)
- {
- 	u32 clk = 0, clock;
+ /* called with host->lock held, interrupts disabled */
+@@ -303,9 +300,6 @@ static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
+ 		tmio_mmc_abort_dma(host);
  
--	if (new_clock) {
--		if (host->clk_update)
--			clock = host->clk_update(host, new_clock) / 512;
--		else
--			clock = host->mmc->f_min;
-+	if (new_clock == 0) {
-+		tmio_mmc_clk_stop(host);
-+		return;
-+	}
- 
--		for (clk = 0x80000080; new_clock >= (clock << 1); clk >>= 1)
--			clock <<= 1;
-+	if (host->clk_update)
-+		clock = host->clk_update(host, new_clock) / 512;
-+	else
-+		clock = host->mmc->f_min;
- 
--		/* 1/1 clock is option */
--		if ((host->pdata->flags & TMIO_MMC_CLK_ACTUAL) &&
--		   ((clk >> 22) & 0x1))
--			clk |= 0xff;
--	}
-+	for (clk = 0x80000080; new_clock >= (clock << 1); clk >>= 1)
-+		clock <<= 1;
-+
-+	/* 1/1 clock is option */
-+	if ((host->pdata->flags & TMIO_MMC_CLK_ACTUAL) && ((clk >> 22) & 0x1))
-+		clk |= 0xff;
- 
- 	if (host->set_clk_div)
- 		host->set_clk_div(host->pdev, (clk >> 22) & 1);
-@@ -198,18 +212,6 @@ static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
- 	tmio_mmc_clk_start(host);
+ 	mmc_request_done(host->mmc, mrq);
+-
+-	pm_runtime_mark_last_busy(mmc_dev(host->mmc));
+-	pm_runtime_put_autosuspend(mmc_dev(host->mmc));
  }
  
--static void tmio_mmc_clk_stop(struct tmio_mmc_host *host)
--{
--	if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG) {
--		sd_ctrl_write16(host, CTL_CLK_AND_WAIT_CTL, 0x0000);
--		msleep(10);
--	}
+ static void tmio_mmc_done_work(struct work_struct *work)
+@@ -817,8 +811,6 @@ static void tmio_mmc_request(struct mmc_host *mmc, struct mmc_request *mrq)
+ 
+ 	spin_unlock_irqrestore(&host->lock, flags);
+ 
+-	pm_runtime_get_sync(mmc_dev(mmc));
 -
--	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
--		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
--	msleep(host->pdata->flags & TMIO_MMC_FAST_CLK_CHG ? 5 : 10);
--}
+ 	if (mrq->data) {
+ 		ret = tmio_mmc_start_data(host, mrq->data);
+ 		if (ret)
+@@ -837,9 +829,6 @@ fail:
+ 	host->mrq = NULL;
+ 	mrq->cmd->error = ret;
+ 	mmc_request_done(mmc, mrq);
 -
- static void tmio_mmc_reset(struct tmio_mmc_host *host)
- {
- 	/* FIXME - should we set stop clock reg here */
+-	pm_runtime_mark_last_busy(mmc_dev(mmc));
+-	pm_runtime_put_autosuspend(mmc_dev(mmc));
+ }
+ 
+ static int tmio_mmc_clk_enable(struct tmio_mmc_host *host)
+@@ -923,8 +912,6 @@ static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ 	struct device *dev = &host->pdev->dev;
+ 	unsigned long flags;
+ 
+-	pm_runtime_get_sync(mmc_dev(mmc));
+-
+ 	mutex_lock(&host->ios_lock);
+ 
+ 	spin_lock_irqsave(&host->lock, flags);
+@@ -979,9 +966,6 @@ static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ 	host->clk_cache = ios->clock;
+ 
+ 	mutex_unlock(&host->ios_lock);
+-
+-	pm_runtime_mark_last_busy(mmc_dev(mmc));
+-	pm_runtime_put_autosuspend(mmc_dev(mmc));
+ }
+ 
+ static int tmio_mmc_get_ro(struct mmc_host *mmc)
+@@ -992,11 +976,8 @@ static int tmio_mmc_get_ro(struct mmc_host *mmc)
+ 	if (ret >= 0)
+ 		return ret;
+ 
+-	pm_runtime_get_sync(mmc_dev(mmc));
+ 	ret = !((pdata->flags & TMIO_MMC_WRPROTECT_DISABLE) ||
+ 		(sd_ctrl_read32(host, CTL_STATUS) & TMIO_STAT_WRPROTECT));
+-	pm_runtime_mark_last_busy(mmc_dev(mmc));
+-	pm_runtime_put_autosuspend(mmc_dev(mmc));
+ 
+ 	return ret;
+ }
 -- 
 2.7.4
