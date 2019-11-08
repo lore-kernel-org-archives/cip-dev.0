@@ -1,43 +1,53 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Fri, 8 Nov 2019 13:20:13 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 41/83] mmc: tmio: Add tuning support
-In-Reply-To: <20191108093637.GJ1017@amd>
+Date: Fri, 8 Nov 2019 13:26:24 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 56/83] mmc: host: tmio: refactor
+ calls to sdio irq
+In-Reply-To: <20191108094211.GK1017@amd>
 References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
-	<1573115572-13513-42-git-send-email-biju.das@bp.renesas.com>
-	<20191108093637.GJ1017@amd>
-Message-ID: <OSBPR01MB2103A157456F537A791DEDF5B87B0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+	<1573115572-13513-57-git-send-email-biju.das@bp.renesas.com>
+	<20191108094211.GK1017@amd>
+Message-ID: <OSBPR01MB2103EB4DFA03801E6F8C76C0B87B0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi Pavel,
 
-> Subject: Re: [PATCH 4.4.y-cip 41/83] mmc: tmio: Add tuning support
+Thanks for the feedback.
+
+> Subject: Re: [PATCH 4.4.y-cip 56/83] mmc: host: tmio: refactor calls to sdio irq
 > 
-> Hi!
-> 
-> > commit 4f11997773b6b452b5a0d620c5ac5050e75c227e upstream.
+> On Thu 2019-11-07 08:32:25, Biju Das wrote:
+> > From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > >
-> > Add tuning support for use with SDR104 mode
+> > commit e4f38eb18aedd098b3019e82df07f583a5cbcc58 upstream.
+> >
+> > tmio_mmc_sdio_irq() is not used as a seperate irq handler anymore, so
+> > we can make it similar to the other irq helper functions, namely:
+> >
+> > * only give the host as argument function which is what it really
+> > needs
+> > * prefix function name with __
 > >
 > 
-> > +	/* Tuning values: 1 for success, 0 for failure */
-> > +	DECLARE_BITMAP(taps, BITS_PER_BYTE * sizeof(long));
+> > +++ b/drivers/mmc/host/tmio_mmc_pio.c
+> > @@ -709,7 +709,7 @@ static bool __tmio_mmc_sdcard_irq(struct
+> tmio_mmc_host *host,
+> >  	return false;
+> >  }
+> >
+> > -static bool tmio_mmc_sdio_irq(int irq, void *devid)
+> > +static bool __tmio_mmc_sdio_irq(int irq, void *devid)
+> >  {
+> >  	struct tmio_mmc_host *host = devid;
+> >  	struct mmc_host *mmc = host->mmc;
 > 
-> I don't see why tuning should depend on register size (thus
-> sizeof(long)) of the host CPU. If 32 is enough, put 32 there... if not, just use
-> 64?
 > 
-> > +	if (host->tap_num * 2 >= sizeof(host->taps) * BITS_PER_BYTE) {
-> > +		dev_warn_once(&host->pdev->dev,
-> > +		      "Too many taps, skipping tuning. Please consider updating
-> size of taps field of tmio_mmc_host\n");
-> > +		goto out;
-> > +	}
+> In mainline, the commit removes the argument, as it says in the changelog.
+> Not here in the backport. Why the difference?
 > 
-> Or perhaps introduce a #define MAX_TAPS; it will be cleaner than checking
-> bit sizes like this.
-> 
-Yes there is a room for improvement for this patch in Mainline.
+Good catch. I will check this. It should not deviate from the original patch.
+
+I will check and let you know.
 
 Regards,
 Biju
