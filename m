@@ -1,43 +1,38 @@
 From: pavel@denx.de (Pavel Machek)
-Date: Fri, 8 Nov 2019 10:30:17 +0100
-Subject: [cip-dev] [PATCH 4.4.y-cip 37/83] mmc: tmio: enhance illegal
- sequence handling
-In-Reply-To: <1573115572-13513-38-git-send-email-biju.das@bp.renesas.com>
+Date: Fri, 8 Nov 2019 10:31:27 +0100
+Subject: [cip-dev] [PATCH 4.4.y-cip 40/83] mmc: core: Add helper to see
+ if a host can be retuned
+In-Reply-To: <1573115572-13513-41-git-send-email-biju.das@bp.renesas.com>
 References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
-	<1573115572-13513-38-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <20191108093017.GH1017@amd>
+	<1573115572-13513-41-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <20191108093127.GI1017@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi!
+On Thu 2019-11-07 08:32:09, Biju Das wrote:
+> From: Simon Horman <horms+renesas@verge.net.au>
+> 
+> commit c820af5f18ec248b3cb61a9a9ce47ef0f2e9ec63 upstream.
+> 
+> This is in preparation for restoring saved tuning parameters
+> when resuming the TMIO driver.
 
-> commit 96e0b2ba00ee5dacb12bed6585145ce784ec9153 upstream.
-> 
-> An illegal sequence command error may occur if there is a stopbit or
-> cmd_index error as well as a CRC error. The correct course of action
-> is to re-enable IRQs
-> 
-> An illegal sequence data error may occur if there is a CRC or stopbit
-> error,  or underrun. In this case set data->error correctly.
-> 
-> This is in preparation for enabling tuning support which relies on
-> differentiating between illegal sequence and other errors.
-> 
-
-> @@ -609,8 +612,6 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host,
->  		goto out;
->  	}
+> @@ -515,4 +515,9 @@ static inline void mmc_retune_recheck(struct mmc_host *host)
+>  		host->retune_now = 1;
+>  }
 >  
-> -	host->cmd = NULL;
-> -
->  	/* This controller is sicker than the PXA one. Not only do we need to
->  	 * drop the top 8 bits of the first response word, we also need to
->  	 * modify the order of the response for short response command
+> +static inline bool mmc_can_retune(struct mmc_host *host)
+> +{
+> +	return host->can_retune == 1;
+> +}
+> +
 
-Is this removal intentional? I'm not sure from the changelog.
+Probably not worth changing any more, but it would be easier to review
+if it was merged with the first user.
 
 Best regards,
 								Pavel
+
 -- 
 DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
@@ -47,4 +42,4 @@ Name: signature.asc
 Type: application/pgp-signature
 Size: 181 bytes
 Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191108/1194cc00/attachment.sig>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191108/b4456945/attachment.sig>
