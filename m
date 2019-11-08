@@ -1,109 +1,63 @@
-From: JohnsonCH.Chen@moxa.com (=?utf-8?B?Sm9obnNvbiBDSCBDaGVuICjpmbPmmK3li7Mp?=)
-Date: Fri, 8 Nov 2019 11:59:40 +0000
-Subject: [cip-dev] [PATCH] gpiolib: Support 'gpio-reserved-ranges' property
-Message-ID: <HK0PR01MB35212249E99AB47FA9830B6CFA7B0@HK0PR01MB3521.apcprd01.prod.exchangelabs.com>
+From: biju.das@bp.renesas.com (Biju Das)
+Date: Fri, 8 Nov 2019 12:50:21 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 15/83] mmc: tmio: stop clock when
+ 0Hz is requested
+In-Reply-To: <20191108091528.GB1017@amd>
+References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
+	<1573115572-13513-16-git-send-email-biju.das@bp.renesas.com>
+	<20191108091528.GB1017@amd>
+Message-ID: <OSBPR01MB2103333FF68AC0116208ED4CB87B0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Fabrizio Castro,
+Hi Pavel,
 
-I find a kernel panic issue by gpio when I upgrade kernel to 4.4.182-cip34 with Freescale LS1021A (gpiochip is mpc8xxx series):
+>
+> Subject: Re: [PATCH 4.4.y-cip 15/83] mmc: tmio: stop clock when 0Hz is
+> requested
+> 
+> Hi!
+> 
+> > From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >
+> > commit 148634d24d4a7dc82a49efcf1a215e1d0695f62c upstream.
+> >
+> > Setting frequency to 0 is not enough, the clock explicitly has to be
+> > disabled. Otherwise voltage switching (which needs SDCLK to be quiet)
+> > fails for various cards.
+> >
+> > Because we now do the 'new_clock == 0' check right at the beginning,
+> > the indentation level of the rest of the code can be decreased a
+> > little.
+> 
+> >  {
+> >  	u32 clk = 0, clock;
+> >
+> 
+> clk = 0 initialization is never used.
+> 
+> > +	for (clk = 0x80000080; new_clock >= (clock << 1); clk >>= 1)
+> > +		clock <<= 1;
+> 
+> This is black magic. Where does 0x80000080 come from? Would it be possible
+> to get some comment/explanation?
+> 
+> > +	/* 1/1 clock is option */
+> > +	if ((host->pdata->flags & TMIO_MMC_CLK_ACTUAL) && ((clk >> 22)
+> & 0x1))
+> > +		clk |= 0xff;
+> >
+> >  	if (host->set_clk_div)
+> >  		host->set_clk_div(host->pdev, (clk >> 22) & 1);
+> 
+> What does bit 22 in clk mean? Should it go to temporary variable with
+> explanation? (Also it is & 1 in one operation and & 0x1 in other operation).
+> 
+> It seems that low bits of clk variable are used as an actual clock divider, with
+> high bit doing something else. That is quite confusing...
 
-Kernel log shows ?Unable to handle kernel NULL pointer dereference at virtual address 000000b4.?
+Yes I agree this could have been done with Macro. Not sure,  may be because of HALA [SD Host/Ancillary Product License Agreement],
+ it is defined as magic number at that time.
 
-Subsequently, I find the commit baff4777cdb80256cd24dede2a3d0af761356307 (gpiolib: Support 'gpio-reserved-ranges' property) could result in kernel panic because the code ?*np= chip->dev->of_node? is executed when chip->dev is NULL:
-
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 5fe34a9df3e6..ec642bf1d976 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-
-+static void of_gpiochip_init_valid_mask(struct gpio_chip *chip)
-+{
-+      int len, i;
-+      u32 start, count;
-+      struct device_node *np = chip->dev->of_node;
-+
-+      len = of_property_count_u32_elems(np,  "gpio-reserved-ranges");
-+      if (len < 0 || len % 2 != 0)
-+              return;
-+
-+      for (i = 0; i < len; i += 2) {
-+              of_property_read_u32_index(np, "gpio-reserved-ranges",
-+                                         i, &start);
-+              of_property_read_u32_index(np, "gpio-reserved-ranges",
-+                                         i + 1, &count);
-+              if (start >= chip->ngpio || start + count >= chip->ngpio)
-+                      continue;
-+
-+              bitmap_clear(chip->valid_mask, start, count);
-+      }
-+};
-+
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index adb474089733..487a86495163 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -292,6 +292,43 @@ static unsigned long *gpiochip_allocate_mask(struct gpio_chip *chip)
-      return p;
-}
-
-+static int gpiochip_init_valid_mask(struct gpio_chip *gpiochip)
-+{
-+#ifdef CONFIG_OF_GPIO
-+      int size;
-+      struct device_node *np = gpiochip->dev->of_node;
-+
-+      size = of_property_count_u32_elems(np,  "gpio-reserved-ranges");
-+      if (size > 0 && size % 2 == 0)
-+              gpiochip->need_valid_mask = true;
-+#endif
-+
-+      if (!gpiochip->need_valid_mask)
-+              return 0;
-+
-+      gpiochip->valid_mask = gpiochip_allocate_mask(gpiochip);
-+      if (!gpiochip->valid_mask)
-+              return -ENOMEM;
-+
-+      return 0;
-+}
-+
-
-Could you help me understand why we need to replaced chip->of_node with chip->dev->of_node?
-
-The following two items I try have no kernel panic:
-
-1. For gpio drivers:
-
-It?s fine and no kernel panic issue if probe(struct platform_device *pdev) in gpio drivers executes the following codes:
-
-struct cpio_chip *gc;
-gc->dev = &pdev->dev; //Put platform?s dev to gpiochip?s dev, and of_node info in pdev->dev->of_node also put in gpiochip structure.
-
-But some gpio drivers doesn?t do this, such as gpio-mpc8xxx.c (mpc8xxx series), and result in kernel panic when use this commit.
-
-2. For gpiolib:
-
-//set the following code in gpiolib.c and gpiolib-of.c
-struct device_node *np = gpiochip->of_node;
-
-Device node of platform will put in gpio chip when of_mm_gpiochip_add() is executed:
-
-int of_mm_gpiochip_add(struct device_node *np,
-                       struct of_mm_gpio_chip *mm_gc)
-{
-        int ret = -ENOMEM;
-        struct gpio_chip *gc = &mm_gc->gc;
-?..
-        mm_gc->gc.of_node = np;
-}
-
-It?s seems chip->of_node is good.
-
-Thanks,
-Johnson
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191108/02a5be16/attachment-0001.html>
+Regards,
+Biju
