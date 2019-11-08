@@ -1,47 +1,109 @@
-From: pavel@denx.de (Pavel Machek)
-Date: Fri, 8 Nov 2019 12:37:23 +0100
-Subject: [cip-dev] [PATCH 4.4.y-cip 02/83] mmc: tmio_dma: remove debug
- messages with little information
-In-Reply-To: <OSBPR01MB2103B4571650137144EC86B7B87B0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
-	<1573115572-13513-3-git-send-email-biju.das@bp.renesas.com>
-	<20191108090732.GA1017@amd>
-	<OSBPR01MB2103B4571650137144EC86B7B87B0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-Message-ID: <20191108113723.GR1017@amd>
+From: JohnsonCH.Chen@moxa.com (=?utf-8?B?Sm9obnNvbiBDSCBDaGVuICjpmbPmmK3li7Mp?=)
+Date: Fri, 8 Nov 2019 11:59:40 +0000
+Subject: [cip-dev] [PATCH] gpiolib: Support 'gpio-reserved-ranges' property
+Message-ID: <HK0PR01MB35212249E99AB47FA9830B6CFA7B0@HK0PR01MB3521.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi!
+Hi Fabrizio Castro,
 
-> > > From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > >
-> > > commit 254d1456560fa42d4ca901c9b9308e87c951fee1 upstream.
-> > >
-> > > When compiling the driver with CONFIG_MMC_DEBUG set, I got build
-> > > warnings. They have been 'fixed' meanwhile. However, because these
-> > > debug messages look random anyhow (some duplicate information printed
-> > > etc), let's just drop them and rather re-add something consistent if
-> > > that should ever be needed.
-> > 
-> > Its too late to change that now, but 1/ fixes messages and then 2/ just
-> > deletes them. Single patch would do.
-> 
-> Are you ok to merge this patches while applying? or Do you want me to send another series fixing this?
-> Please let me know.
+I find a kernel panic issue by gpio when I upgrade kernel to 4.4.182-cip34 with Freescale LS1021A (gpiochip is mpc8xxx series):
 
-I believe this is minor detail, and we can use the patches as-is.
+Kernel log shows ?Unable to handle kernel NULL pointer dereference at virtual address 000000b4.?
 
-See my reply to Chris for thoughts about rest of the series.
+Subsequently, I find the commit baff4777cdb80256cd24dede2a3d0af761356307 (gpiolib: Support 'gpio-reserved-ranges' property) could result in kernel panic because the code ?*np= chip->dev->of_node? is executed when chip->dev is NULL:
 
-Best regards,
-								Pavel
--- 
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 5fe34a9df3e6..ec642bf1d976 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+
++static void of_gpiochip_init_valid_mask(struct gpio_chip *chip)
++{
++      int len, i;
++      u32 start, count;
++      struct device_node *np = chip->dev->of_node;
++
++      len = of_property_count_u32_elems(np,  "gpio-reserved-ranges");
++      if (len < 0 || len % 2 != 0)
++              return;
++
++      for (i = 0; i < len; i += 2) {
++              of_property_read_u32_index(np, "gpio-reserved-ranges",
++                                         i, &start);
++              of_property_read_u32_index(np, "gpio-reserved-ranges",
++                                         i + 1, &count);
++              if (start >= chip->ngpio || start + count >= chip->ngpio)
++                      continue;
++
++              bitmap_clear(chip->valid_mask, start, count);
++      }
++};
++
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index adb474089733..487a86495163 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -292,6 +292,43 @@ static unsigned long *gpiochip_allocate_mask(struct gpio_chip *chip)
+      return p;
+}
+
++static int gpiochip_init_valid_mask(struct gpio_chip *gpiochip)
++{
++#ifdef CONFIG_OF_GPIO
++      int size;
++      struct device_node *np = gpiochip->dev->of_node;
++
++      size = of_property_count_u32_elems(np,  "gpio-reserved-ranges");
++      if (size > 0 && size % 2 == 0)
++              gpiochip->need_valid_mask = true;
++#endif
++
++      if (!gpiochip->need_valid_mask)
++              return 0;
++
++      gpiochip->valid_mask = gpiochip_allocate_mask(gpiochip);
++      if (!gpiochip->valid_mask)
++              return -ENOMEM;
++
++      return 0;
++}
++
+
+Could you help me understand why we need to replaced chip->of_node with chip->dev->of_node?
+
+The following two items I try have no kernel panic:
+
+1. For gpio drivers:
+
+It?s fine and no kernel panic issue if probe(struct platform_device *pdev) in gpio drivers executes the following codes:
+
+struct cpio_chip *gc;
+gc->dev = &pdev->dev; //Put platform?s dev to gpiochip?s dev, and of_node info in pdev->dev->of_node also put in gpiochip structure.
+
+But some gpio drivers doesn?t do this, such as gpio-mpc8xxx.c (mpc8xxx series), and result in kernel panic when use this commit.
+
+2. For gpiolib:
+
+//set the following code in gpiolib.c and gpiolib-of.c
+struct device_node *np = gpiochip->of_node;
+
+Device node of platform will put in gpio chip when of_mm_gpiochip_add() is executed:
+
+int of_mm_gpiochip_add(struct device_node *np,
+                       struct of_mm_gpio_chip *mm_gc)
+{
+        int ret = -ENOMEM;
+        struct gpio_chip *gc = &mm_gc->gc;
+?..
+        mm_gc->gc.of_node = np;
+}
+
+It?s seems chip->of_node is good.
+
+Thanks,
+Johnson
 -------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 181 bytes
-Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191108/ebf3161b/attachment.sig>
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191108/02a5be16/attachment-0001.html>
