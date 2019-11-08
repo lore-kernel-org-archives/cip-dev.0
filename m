@@ -1,37 +1,38 @@
 From: pavel@denx.de (Pavel Machek)
-Date: Fri, 8 Nov 2019 10:31:27 +0100
-Subject: [cip-dev] [PATCH 4.4.y-cip 40/83] mmc: core: Add helper to see
- if a host can be retuned
-In-Reply-To: <1573115572-13513-41-git-send-email-biju.das@bp.renesas.com>
+Date: Fri, 8 Nov 2019 10:36:37 +0100
+Subject: [cip-dev] [PATCH 4.4.y-cip 41/83] mmc: tmio: Add tuning support
+In-Reply-To: <1573115572-13513-42-git-send-email-biju.das@bp.renesas.com>
 References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
-	<1573115572-13513-41-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <20191108093127.GI1017@amd>
+	<1573115572-13513-42-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <20191108093637.GJ1017@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Thu 2019-11-07 08:32:09, Biju Das wrote:
-> From: Simon Horman <horms+renesas@verge.net.au>
-> 
-> commit c820af5f18ec248b3cb61a9a9ce47ef0f2e9ec63 upstream.
-> 
-> This is in preparation for restoring saved tuning parameters
-> when resuming the TMIO driver.
+Hi!
 
-> @@ -515,4 +515,9 @@ static inline void mmc_retune_recheck(struct mmc_host *host)
->  		host->retune_now = 1;
->  }
->  
-> +static inline bool mmc_can_retune(struct mmc_host *host)
-> +{
-> +	return host->can_retune == 1;
-> +}
-> +
+> commit 4f11997773b6b452b5a0d620c5ac5050e75c227e upstream.
+> 
+> Add tuning support for use with SDR104 mode
+> 
 
-Probably not worth changing any more, but it would be easier to review
-if it was merged with the first user.
+> +	/* Tuning values: 1 for success, 0 for failure */
+> +	DECLARE_BITMAP(taps, BITS_PER_BYTE * sizeof(long));
+
+I don't see why tuning should depend on register size (thus
+sizeof(long)) of the host CPU. If 32 is enough, put 32 there... if
+not, just use 64?
+
+> +	if (host->tap_num * 2 >= sizeof(host->taps) * BITS_PER_BYTE) {
+> +		dev_warn_once(&host->pdev->dev,
+> +		      "Too many taps, skipping tuning. Please consider updating size of taps field of tmio_mmc_host\n");
+> +		goto out;
+> +	}
+
+Or perhaps introduce a #define MAX_TAPS; it will be cleaner than
+checking bit sizes like this.
 
 Best regards,
-								Pavel
+							Pavel
 
 -- 
 DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
@@ -42,4 +43,4 @@ Name: signature.asc
 Type: application/pgp-signature
 Size: 181 bytes
 Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191108/b4456945/attachment.sig>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191108/2fa8c8d9/attachment.sig>
