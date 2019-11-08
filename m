@@ -1,75 +1,53 @@
 From: pavel@denx.de (Pavel Machek)
-Date: Fri, 8 Nov 2019 11:38:17 +0100
-Subject: [cip-dev] [PATCH 4.4.y-cip 74/83] mmc: tmio-mmc: fix bad
-	pointer math
-In-Reply-To: <1573115572-13513-75-git-send-email-biju.das@bp.renesas.com>
+Date: Fri, 8 Nov 2019 12:32:09 +0100
+Subject: [cip-dev] [PATCH 4.4.y-cip 00/83] Add RZ/G1C SD/eMMC support
+In-Reply-To: <TYAPR01MB2285DD15243063CDEA363B91B77B0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
 References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
-	<1573115572-13513-75-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <20191108103817.GP1017@amd>
+	<20191107210149.GA26444@amd>
+	<TYAPR01MB2285DD15243063CDEA363B91B77B0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+Message-ID: <20191108113209.GQ1017@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi!
 
-> From: Chris Brandt <chris.brandt@renesas.com>
+> Thank you for your work on reviewing this series.
+
+(For the record, I'm now done with the review... with exception of
+renames&modifications in 66-69).
+
+> Looking at some of your comments, it looks like there are lots of issues to do with the original patches that were upstreamed, rather than changes that were made specifically for the CIP Kernel.
 > 
-> commit b5dd7985e8d3357ff9537c0be231190ab1a131fe upstream.
+> My understanding is that the CIP project follows an upstream first policy, i.e. code must all be upstreamed before being backported to the CIP kernel(s).
 > 
-> commit 9c284c41c0886f09e75c323a16278b6d353b0b4a upstream.
-> 
-> The existing code gives an incorrect pointer value.
-> The buffer pointer 'buf' was of type unsigned short *, and 'count' was a
-> number in bytes. A cast of buf should have been used.
-> 
-> However, instead of casting, just change the code to use u32
-> pointers.
+> For the changes that you're pointing out, should we be upstreaming the relevant fixes, waiting for them to be released upstream, then re-submitting the whole patch series? Or should we be modifying the patches that we're submitting to the CIP kernel directly?
+>
 
-Yep, I see, nasty; silent data corruption. Could this be merged to the
-patch that introduces the problem, or the original patch somehow
-modified that it will not corrupt data ... for example during bisection?
+It really depends on case by case basis -- on severity of the problem.
 
-> +++ b/drivers/mmc/host/tmio_mmc_core.c
-> @@ -446,30 +446,29 @@ static void tmio_mmc_transfer_data(struct tmio_mmc_host *host,
->  	 * Transfer the data
->  	 */
->  	if (host->pdata->flags & TMIO_MMC_32BIT_DATA_PORT) {
-> -		u8 data[4] = { };
-> +		u32 data = 0;
-> +		u32 *buf32 = (u32 *)buf;
->  
->  		if (is_read)
-> -			sd_ctrl_read32_rep(host, CTL_SD_DATA_PORT, (u32 *)buf,
-> +			sd_ctrl_read32_rep(host, CTL_SD_DATA_PORT, buf32,
->  					   count >> 2);
->  		else
-> -			sd_ctrl_write32_rep(host, CTL_SD_DATA_PORT, (u32 *)buf,
-> +			sd_ctrl_write32_rep(host, CTL_SD_DATA_PORT, buf32,
->  					    count >> 2);
->  
->  		/* if count was multiple of 4 */
->  		if (!(count & 0x3))
->  			return;
->  
-> -		buf8 = (u8 *)(buf + (count >> 2));
-> +		buf32 += count >> 2;
->  		count %= 4;
+I can take explanations, maybe I'm just misunderstanding the code.
 
-Can we do count &= 0x3, to keep style of if () above? Actually you can
-do 
+Or perhaps code is really right, but unclear/needs additional comment,
+etc... In such case I guess we can take patch as is, and just queue
+cleanups/comments to the mainline.
 
-    count &= 0x3;
-    if (!count) return;
+But patch 34/ introduces data corrupting bug, which is only fixed at
+the end of the series. I'd prefer having patches changed / reshuffled
+/ something so that it does not corrupt someone's data during bisect.
 
-Plus, there's code handling 16 bit case just below this; it is
-different in style, and by using
+Plus we need to figure out how to review the renames.
 
-    *buf8 = sd_ctrl_read16(host, CTL_SD_DATA_PORT) & 0xff;
+> If the former, I'm not actually sure this will always be technically possible.
+> If the latter, do you want Biju to update each of the patches in his series? Or submit the new cip-specific changes in a new patch?
+>
 
-instead of read16_rep(), it is buggy on big endian (as comment
-says). Perhaps synchronizing to similar, non-buggy version would be
-good?
+Not sure really.
+
+One possible way forward would be to submit 1..33/ as separate series,
+then figure out 34.. first rename, then figure out the rest.
 
 Best regards,
+
 								Pavel
 -- 
 DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
@@ -80,4 +58,4 @@ Name: signature.asc
 Type: application/pgp-signature
 Size: 181 bytes
 Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191108/617ad473/attachment.sig>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191108/3e8f4f47/attachment.sig>
