@@ -1,7 +1,8 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Fri,  8 Nov 2019 16:36:48 +0000
-Subject: [cip-dev] [RFT/RFC linux-4.4.y-cip] gpiolib: Fix bad of_node pointer
-Message-ID: <1573231008-24239-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Date: Fri,  8 Nov 2019 16:46:49 +0000
+Subject: [cip-dev] [RFT/RFC linux-4.4.y-cip v2] gpiolib: Fix bad of_node
+	pointer
+Message-ID: <1573231609-25023-1-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
@@ -19,22 +20,18 @@ first usage.
 Fixes: baff4777cdb8 ("gpiolib: Support 'gpio-reserved-ranges' property")
 Reported-by: Johnson CH Chen <JohnsonCH.Chen@moxa.com>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+
 ---
-
-Hi Johnson,
-
-could you please test this patch on your system?
-
-Thanks,
-Fab
-
-
- drivers/gpio/gpiolib-of.c | 4 +++-
- drivers/gpio/gpiolib.c    | 6 +++++-
- 2 files changed, 8 insertions(+), 2 deletions(-)
+v1->v2:
+* v1 was for testing purposes only, but no point in sending
+  out a dirty patch, therefore cleaned it up
+---
+ drivers/gpio/gpiolib-of.c | 2 +-
+ drivers/gpio/gpiolib.c    | 5 ++++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index ec642bf..36b60dd 100644
+index ec642bf..6fa1818 100644
 --- a/drivers/gpio/gpiolib-of.c
 +++ b/drivers/gpio/gpiolib-of.c
 @@ -338,7 +338,7 @@ static void of_gpiochip_init_valid_mask(struct gpio_chip *chip)
@@ -46,19 +43,8 @@ index ec642bf..36b60dd 100644
  
  	len = of_property_count_u32_elems(np,  "gpio-reserved-ranges");
  	if (len < 0 || len % 2 != 0)
-@@ -445,8 +445,10 @@ int of_gpiochip_add(struct gpio_chip *chip)
- {
- 	int status;
- 
-+	/*
- 	if ((!chip->of_node) && (chip->dev))
- 		chip->of_node = chip->dev->of_node;
-+	*/
- 
- 	if (!chip->of_node)
- 		return 0;
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index d72218f..0fd443a 100644
+index d72218f..820e3e3d 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
 @@ -296,7 +296,7 @@ static int gpiochip_init_valid_mask(struct gpio_chip *gpiochip)
@@ -70,14 +56,7 @@ index d72218f..0fd443a 100644
  
  	size = of_property_count_u32_elems(np,  "gpio-reserved-ranges");
  	if (size > 0 && size % 2 == 0)
-@@ -354,12 +354,16 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
- 	int		base = chip->base;
- 	struct gpio_desc *descs;
- 
-+
- 	descs = kcalloc(chip->ngpio, sizeof(descs[0]), GFP_KERNEL);
- 	if (!descs)
- 		return -ENOMEM;
+@@ -360,6 +360,9 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
  
  	chip->data = data;
  
