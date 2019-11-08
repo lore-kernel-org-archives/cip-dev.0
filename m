@@ -1,50 +1,49 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Fri, 8 Nov 2019 12:58:19 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 33/83] mmc: tmio: add eMMC support
-In-Reply-To: <20191108092457.GF1017@amd>
+Date: Fri, 8 Nov 2019 13:17:44 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 37/83] mmc: tmio: enhance illegal
+ sequence handling
+In-Reply-To: <20191108093017.GH1017@amd>
 References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
-	<1573115572-13513-34-git-send-email-biju.das@bp.renesas.com>
-	<20191108092457.GF1017@amd>
-Message-ID: <OSBPR01MB210300F18B4D0B99A15D4B33B87B0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+	<1573115572-13513-38-git-send-email-biju.das@bp.renesas.com>
+	<20191108093017.GH1017@amd>
+Message-ID: <OSBPR01MB21035E103142DB13071AA15BB87B0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Pavel,
+HI Pavel,
 
-> Subject: Re: [PATCH 4.4.y-cip 33/83] mmc: tmio: add eMMC support
+> Subject: Re: [PATCH 4.4.y-cip 37/83] mmc: tmio: enhance illegal sequence
+> handling
 > 
-> On Thu 2019-11-07 08:32:02, Biju Das wrote:
-> > From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> >
-> > commit 0bc0b6e86524526c92a9409faea79d53db8e7e6e upstream.
-> >
-> > We need to add R1 without CRC support, refactor the bus width routine
-> > a little and extend a quirk check. To support "non-removable;" we need
-> > a workaround which will be hopefully removed when reworking PM soon.
+> Hi!
 > 
-> > index addbc71..eafd92d 100644
-> > --- a/drivers/mmc/host/tmio_mmc.h
-> > +++ b/drivers/mmc/host/tmio_mmc.h
-> > @@ -79,6 +79,9 @@
-> >  #define	CLK_CTL_DIV_MASK	0xff
-> >  #define	CLK_CTL_SCLKEN		BIT(8)
+> > commit 96e0b2ba00ee5dacb12bed6585145ce784ec9153 upstream.
 > >
-> > +#define CARD_OPT_WIDTH8		BIT(13)
-> > +#define CARD_OPT_WIDTH		BIT(15)
+> > An illegal sequence command error may occur if there is a stopbit or
+> > cmd_index error as well as a CRC error. The correct course of action
+> > is to re-enable IRQs
+> >
+> > An illegal sequence data error may occur if there is a CRC or stopbit
+> > error,  or underrun. In this case set data->error correctly.
+> >
+> > This is in preparation for enabling tuning support which relies on
+> > differentiating between illegal sequence and other errors.
+> >
 > 
-> WIDTH_1 and WIDTH_8 would be better names, for consistency with rest of
-> code. "WIDTH" without number is quite confusing.
+> > @@ -609,8 +612,6 @@ static void tmio_mmc_cmd_irq(struct
+> tmio_mmc_host *host,
+> >  		goto out;
+> >  	}
+> >
+> > -	host->cmd = NULL;
+> > -
+> >  	/* This controller is sicker than the PXA one. Not only do we need to
+> >  	 * drop the top 8 bits of the first response word, we also need to
+> >  	 * modify the order of the response for short response command
+> 
+> Is this removal intentional? I'm not sure from the changelog.
 
-I agree, it is little bit confusing. May be we should fixing this Mainline first and then backport to cip kernel.
+Yes, it is not clear from the changelog.
 
-Cheers,
+Regards,
 Biju
- 
-> > +	/* Some hardware cannot perform 2 byte requests in 4/8 bit mode
-> */
-> > +	if (host->mmc->ios.bus_width == MMC_BUS_WIDTH_4 ||
-> > +	    host->mmc->ios.bus_width == MMC_BUS_WIDTH_8) {
-> 
-> --
-> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
