@@ -1,70 +1,45 @@
-From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Fri,  8 Nov 2019 16:46:49 +0000
-Subject: [cip-dev] [RFT/RFC linux-4.4.y-cip v2] gpiolib: Fix bad of_node
-	pointer
-Message-ID: <1573231609-25023-1-git-send-email-fabrizio.castro@bp.renesas.com>
+From: pavel@denx.de (Pavel Machek)
+Date: Fri, 8 Nov 2019 20:58:23 +0100
+Subject: [cip-dev] [PATCH 4.4.y-cip 00/83] Add RZ/G1C SD/eMMC support
+In-Reply-To: <OSBPR01MB21039D7435442185F6280EADB87B0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
+	<20191107210149.GA26444@amd>
+	<TYAPR01MB2285DD15243063CDEA363B91B77B0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+	<20191108113209.GQ1017@amd>
+	<OSBPR01MB21039D7435442185F6280EADB87B0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+Message-ID: <20191108195823.GA23750@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Not every driver initialises of_node from struct gpio_chip,
-therefore the replacement of of_node from struct gpio_chip
-with dev->of_node in the below commit won't work on every
-platform:
-baff4777cdb8 ("gpiolib: Support 'gpio-reserved-ranges' property")
-The final result is that on some platforms the kernel will
-try to dereference a NULL pointer, with obvious consequences.
+Hi!
 
-This patch makes sure the pointer gets initialised before its
-first usage.
+> > Plus we need to figure out how to review the renames.
+> > 
+> > > If the former, I'm not actually sure this will always be technically possible.
+> > > If the latter, do you want Biju to update each of the patches in his series?
+> > Or submit the new cip-specific changes in a new patch?
+> > >
+> > 
+> > Not sure really.
+> > 
+> > One possible way forward would be to submit 1..33/ as separate series, then
+> > figure out 34.. first rename, then figure out the rest.
+> 
+> OK. I will send 1--33 as a separate series and then rest. 
 
-Fixes: baff4777cdb8 ("gpiolib: Support 'gpio-reserved-ranges' property")
-Reported-by: Johnson CH Chen <JohnsonCH.Chen@moxa.com>
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Actually, it seems that review on 1--33 is "minor updates are possible
+in mainline", so if you want (and there are no other comments from
+other maintainers), I can just take 1--33 and apply them to -cip tree.
 
----
-v1->v2:
-* v1 was for testing purposes only, but no point in sending
-  out a dirty patch, therefore cleaned it up
----
- drivers/gpio/gpiolib-of.c | 2 +-
- drivers/gpio/gpiolib.c    | 5 ++++-
- 2 files changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index ec642bf..6fa1818 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -338,7 +338,7 @@ static void of_gpiochip_init_valid_mask(struct gpio_chip *chip)
- {
- 	int len, i;
- 	u32 start, count;
--	struct device_node *np = chip->dev->of_node;
-+	struct device_node *np = chip->of_node;
- 
- 	len = of_property_count_u32_elems(np,  "gpio-reserved-ranges");
- 	if (len < 0 || len % 2 != 0)
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index d72218f..820e3e3d 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -296,7 +296,7 @@ static int gpiochip_init_valid_mask(struct gpio_chip *gpiochip)
- {
- #ifdef CONFIG_OF_GPIO
- 	int size;
--	struct device_node *np = gpiochip->dev->of_node;
-+	struct device_node *np = gpiochip->of_node;
- 
- 	size = of_property_count_u32_elems(np,  "gpio-reserved-ranges");
- 	if (size > 0 && size % 2 == 0)
-@@ -360,6 +360,9 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
- 
- 	chip->data = data;
- 
-+	if ((!chip->of_node) && (chip->dev))
-+		chip->of_node = chip->dev->of_node;
-+
- 	spin_lock_irqsave(&gpio_lock, flags);
- 
- 	if (base < 0) {
+Best regards,
+								Pavel
 -- 
-2.7.4
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 195 bytes
+Desc: not available
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191108/dadcc1e5/attachment.sig>
