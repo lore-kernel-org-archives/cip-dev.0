@@ -1,24 +1,45 @@
 From: pavel@denx.de (Pavel Machek)
-Date: Fri, 8 Nov 2019 10:44:34 +0100
-Subject: [cip-dev] [PATCH 4.4.y-cip 63/83] mmc: tmio: always get number
-	of taps
-In-Reply-To: <1573115572-13513-64-git-send-email-biju.das@bp.renesas.com>
+Date: Fri, 8 Nov 2019 10:47:52 +0100
+Subject: [cip-dev] [PATCH 4.4.y-cip 66/83] mmc: tmio: rename
+ tmio_mmc_{pio => core}.c
+In-Reply-To: <1573115572-13513-67-git-send-email-biju.das@bp.renesas.com>
 References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
-	<1573115572-13513-64-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <20191108094434.GL1017@amd>
+	<1573115572-13513-67-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <20191108094752.GM1017@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi!
 
-> commit 43b0b361b0170030603cf76f70b099f3323edcf3 upstream.
+> commit 426e95d1766bad20e59f219af64fdd50c39bcfee upstream.
 > 
-> Current code gets number of taps only once and keeps the value. This is
-> not correct, we need to obtain it every time before executing tuning,
-> so remove the outer if-block.
+> Rename tmio_mmc_pio.c to tmio_mmc_core.c to more accurately reflect its
+> function: to provide core code for the tmio-mmc and sh-mobole-sdhi drivers.
+> 
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> ---
+>  drivers/mmc/host/Makefile        |    1 -
+>  drivers/mmc/host/tmio_mmc_core.c | 1394 ++++++++++++++++++++++++++++++++++++++
+>  drivers/mmc/host/tmio_mmc_pio.c  | 1394 --------------------------------------
 
-I'd somehow assume number of tuning parameters would be fixed... Does
-the hardware really change it? Out of curiosity, why is it doing so?
+This patch creates tmio_mmc_core.c ...
+
+> +++ b/drivers/mmc/host/Makefile
+> @@ -36,7 +36,6 @@ obj-$(CONFIG_MMC_S3C)   	+= s3cmci.o
+>  obj-$(CONFIG_MMC_SDRICOH_CS)	+= sdricoh_cs.o
+>  obj-$(CONFIG_MMC_TMIO)		+= tmio_mmc.o
+>  obj-$(CONFIG_MMC_TMIO_CORE)	+= tmio_mmc_core.o
+> -tmio_mmc_core-y			:= tmio_mmc_pio.o
+>  obj-$(CONFIG_MMC_SDHI)		+= sh_mobile_sdhi.o tmio_mmc_dma.o
+>  obj-$(CONFIG_MMC_CB710)		+= cb710-mmc.o
+>  obj-$(CONFIG_MMC_VIA_SDMMC)	+= via-sdmmc.o
+
+... which is already present in the Makefile before the patch. That
+can't be right.
 
 Best regards,
 								Pavel
@@ -31,4 +52,4 @@ Name: signature.asc
 Type: application/pgp-signature
 Size: 181 bytes
 Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191108/79f69835/attachment.sig>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191108/28981284/attachment.sig>
