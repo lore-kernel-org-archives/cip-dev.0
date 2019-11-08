@@ -1,19 +1,33 @@
 From: pavel@denx.de (Pavel Machek)
-Date: Fri, 8 Nov 2019 22:27:02 +0100
-Subject: [cip-dev] [PATCH] gpiolib: Support 'gpio-reserved-ranges'
- property
-In-Reply-To: <TY1PR01MB1770B2AC0DCF960F29247C38C07B0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <HK0PR01MB35212249E99AB47FA9830B6CFA7B0@HK0PR01MB3521.apcprd01.prod.exchangelabs.com>
-	<TY1PR01MB1770B2AC0DCF960F29247C38C07B0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-Message-ID: <20191108212701.GF23750@amd>
+Date: Fri, 8 Nov 2019 22:29:01 +0100
+Subject: [cip-dev] [isar-cip-core PATCH 3/4] hihope-rzg2m: Add board
+ support
+In-Reply-To: <d41024b8-0d3f-a4e6-fef3-76dc350dfc62@siemens.com>
+References: <20191106124439.10532-1-Quirin.Gylstorff@siemens.com>
+	<20191106124439.10532-4-Quirin.Gylstorff@siemens.com>
+	<TYAPR01MB2285255EF4A6521577D5F789B7790@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+	<66a2849e-bbf8-7e67-0da3-490b052f18cb@siemens.com>
+	<TYAPR01MB4286445DBFE0BE6FD3D9CC49E1780@TYAPR01MB4286.jpnprd01.prod.outlook.com>
+	<d41024b8-0d3f-a4e6-fef3-76dc350dfc62@siemens.com>
+Message-ID: <20191108212901.GG23750@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi!
 
-> Thank you for reporting this.
+> > > I will look into it using the cip-kernel-config instead of using copies
+> > > in isar.
+> > 
+> > Are you planning to "fetch" required config(s) for each target from cip-kernel-config?
+> > or, keep copies of the configs in isar-cip-core then synchronize them at the specific point?
+> 
+> I try to fetch the configuration for each target from cip-kernel-config.
+> Currently I need to patch the config as Isar doesn't allow setting
+> CONFIG_LOCALVERSION in the kernel configuration.
 
-Is it -cip problem, or -stable problem?
+I have feeling that configurations in cip-kernel-config are a good
+start, but it is what we use for testing, and production needs may be
+slightly different.
 
 Best regards,
 								Pavel
@@ -26,4 +40,4 @@ Name: signature.asc
 Type: application/pgp-signature
 Size: 195 bytes
 Desc: not available
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191108/19a5cab4/attachment.sig>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191108/7f6a8ae8/attachment.sig>
