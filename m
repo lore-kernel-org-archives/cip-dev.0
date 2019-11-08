@@ -1,54 +1,52 @@
-From: pavel@denx.de (Pavel Machek)
-Date: Fri, 8 Nov 2019 11:03:49 +0100
-Subject: [cip-dev] [PATCH 4.4.y-cip 71/83] mmc: tmio,
- renesas-sdhi: add max_{segs, blk_count} to tmio_mmc_data
-In-Reply-To: <1573115572-13513-72-git-send-email-biju.das@bp.renesas.com>
+From: Chris.Paterson2@renesas.com (Chris Paterson)
+Date: Fri, 8 Nov 2019 10:32:49 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 00/83] Add RZ/G1C SD/eMMC support
+In-Reply-To: <20191107210149.GA26444@amd>
 References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
-	<1573115572-13513-72-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <20191108100349.GO1017@amd>
+	<20191107210149.GA26444@amd>
+Message-ID: <TYAPR01MB2285DD15243063CDEA363B91B77B0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi!
+Hello Pavel,
 
-> commit 603aa14d3daaa7073bab4c472025c4963030e0cc upstream.
-> 
-> Allow TMIO and SDHI driver implementations to provide values for
-> max_segs and max_blk_count.
-> 
-> A follow-up patch will set these values for Renesas Gen3 SoCs
-> the using an SDHI driver.
-> 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> From: Pavel Machek <pavel@denx.de>
+> Sent: 07 November 2019 21:02
+>
+> Hi!
+>
+> > This patch series add SD/eMMC support support for RZ/G1C sbc.
+> >
+> > RZ/G1C eMMC IP is different from other RZ/G1 SoC's. It is having an
+> > internal DMA for data transfer which is similar to R-Car Gen3.
+> >
+> > Support for internal DMAC is added in 4.14 kernel and support for
+> > RZ/G1C added on 4.20 kernel.
+> >
+> > Backported the relevent patches to linux-4.4.y-cip.
+> >
+> > This patch series is based on linux-4.4.y-cip and all the patches
+> > in this series are cherry-picked from linux rc tree.
+>
+> Thanks for the series. I'm currently reviewing it, I have some
+> comments but nothing really bad so far. I'm now around the middle.
 
-> +++ b/drivers/mmc/host/tmio_mmc_core.c
-> @@ -1224,10 +1224,10 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
->  
->  	mmc->caps |= MMC_CAP_4_BIT_DATA | pdata->capabilities;
->  	mmc->caps2 |= pdata->capabilities2;
-> -	mmc->max_segs = 32;
-> +	mmc->max_segs = pdata->max_segs ? : 32;
->  	mmc->max_blk_size = 512;
-> -	mmc->max_blk_count = (PAGE_CACHE_SIZE / mmc->max_blk_size) *
-> -		mmc->max_segs;
-> +	mmc->max_blk_count = pdata->max_blk_count ? :
-> +		(PAGE_SIZE / mmc->max_blk_size) * mmc->max_segs;
->  	mmc->max_req_size = mmc->max_blk_size * mmc->max_blk_count;
->  	mmc->max_seg_size = mmc->max_req_size;
+Thank you for your work on reviewing this series.
 
-This also changes PAGE_CACHE_SIZE -> PAGE_SIZE. I guess that's
-okay/bugfix, as PAGE_CACHE_SIZE probably is equal to PAGE_SIZE in all
-relevant configurations, but...
+Looking at some of your comments, it looks like there are lots of issues to do with the original patches that were upstreamed, rather than changes that were made specifically for the CIP Kernel.
 
-Best regards,
-								Pavel
--- 
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 181 bytes
-Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191108/c2a3f7fc/attachment.sig>
+My understanding is that the CIP project follows an upstream first policy, i.e. code must all be upstreamed before being backported to the CIP kernel(s).
+
+For the changes that you're pointing out, should we be upstreaming the relevant fixes, waiting for them to be released upstream, then re-submitting the whole patch series? Or should we be modifying the patches that we're submitting to the CIP kernel directly?
+
+If the former, I'm not actually sure this will always be technically possible.
+If the latter, do you want Biju to update each of the patches in his series? Or submit the new cip-specific changes in a new patch?
+
+Kind regards, Chris
+
+>
+> Best regards,
+> ????? ??????? ??????? ??????? ??????? ??????? ??????? ??????? Pavel
+> --
+> DENX Software Engineering GmbH,????? Managing Director: Wolfgang Denk
+> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
