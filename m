@@ -1,43 +1,31 @@
-From: pavel@denx.de (Pavel Machek)
-Date: Fri, 8 Nov 2019 22:29:01 +0100
-Subject: [cip-dev] [isar-cip-core PATCH 3/4] hihope-rzg2m: Add board
- support
-In-Reply-To: <d41024b8-0d3f-a4e6-fef3-76dc350dfc62@siemens.com>
-References: <20191106124439.10532-1-Quirin.Gylstorff@siemens.com>
-	<20191106124439.10532-4-Quirin.Gylstorff@siemens.com>
-	<TYAPR01MB2285255EF4A6521577D5F789B7790@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-	<66a2849e-bbf8-7e67-0da3-490b052f18cb@siemens.com>
-	<TYAPR01MB4286445DBFE0BE6FD3D9CC49E1780@TYAPR01MB4286.jpnprd01.prod.outlook.com>
-	<d41024b8-0d3f-a4e6-fef3-76dc350dfc62@siemens.com>
-Message-ID: <20191108212901.GG23750@amd>
+From: nobuhiro1.iwamatsu@toshiba.co.jp (Nobuhiro Iwamatsu)
+Date: Sat, 9 Nov 2019 07:22:11 +0900
+Subject: [cip-dev] [ANNOUNCE] Release v4.19.82-cip14 and v4.4.199-cip39
+Message-ID: <e10295b7-eca9-ac37-4902-9a561427bf4a@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi!
+Hi,
 
-> > > I will look into it using the cip-kernel-config instead of using copies
-> > > in isar.
-> > 
-> > Are you planning to "fetch" required config(s) for each target from cip-kernel-config?
-> > or, keep copies of the configs in isar-cip-core then synchronize them at the specific point?
-> 
-> I try to fetch the configuration for each target from cip-kernel-config.
-> Currently I need to patch the config as Isar doesn't allow setting
-> CONFIG_LOCALVERSION in the kernel configuration.
+CIP kernel team has released Linux kernel v4.19.82-cip14 and v4.4.199-cip39.
+The linux-4.19.y-cip tree has been updated from base version from 
+4.19.80 to 4.19.82.
+The linux-4.4.y-cip tree has been updated from base version from 4.4.196 
+  to 4.4.199.
 
-I have feeling that configurations in cip-kernel-config are a good
-start, but it is what we use for testing, and production needs may be
-slightly different.
+You can get this release via the git tree at:
+
+   v4.19.82-cip14:
+     repository: 
+https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+     branch: linux-4.19.y-cip
+     commit: 052a6e67d9a250f8bc9cf958669e34b799f56011
+
+   v4.4.199-cip39:
+     repository: 
+https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+     branch: linux-4.4.y-cip
+     commit: 40f8b87413b972f4939beb9387e7f7883cff8f39
 
 Best regards,
-								Pavel
--- 
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 195 bytes
-Desc: not available
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191108/7f6a8ae8/attachment.sig>
+   Nobuhiro
