@@ -1,67 +1,250 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Fri, 8 Nov 2019 13:43:46 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 00/83] Add RZ/G1C SD/eMMC support
-In-Reply-To: <20191108113209.GQ1017@amd>
-References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
-	<20191107210149.GA26444@amd>
-	<TYAPR01MB2285DD15243063CDEA363B91B77B0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-	<20191108113209.GQ1017@amd>
-Message-ID: <OSBPR01MB21039D7435442185F6280EADB87B0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+From: JohnsonCH.Chen@moxa.com (=?iso-2022-jp?B?Sm9obnNvbiBDSCBDaGVuICgbJEJERD48Ui4bKEIp?=)
+Date: Fri, 8 Nov 2019 14:25:27 +0000
+Subject: [cip-dev] [PATCH] gpiolib: Support 'gpio-reserved-ranges'
+ property
+In-Reply-To: <TY1PR01MB1770B2AC0DCF960F29247C38C07B0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <HK0PR01MB35212249E99AB47FA9830B6CFA7B0@HK0PR01MB3521.apcprd01.prod.exchangelabs.com>,
+	<TY1PR01MB1770B2AC0DCF960F29247C38C07B0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+Message-ID: <HK0PR01MB3521EF3DE93E60A99C1B12EBFA7B0@HK0PR01MB3521.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Pavel,
+Hi Fab,
 
-Thanks for the feedback.
+Thanks your info. It seems be the same problem for of_node inconsistency of gpiolib. I am glad to test the patch and some patches you provide me later.
 
-> Subject: Re: [PATCH 4.4.y-cip 00/83] Add RZ/G1C SD/eMMC support
-> 
-> Hi!
-> 
-> > Thank you for your work on reviewing this series.
-> 
-> (For the record, I'm now done with the review... with exception of
-> renames&modifications in 66-69).
-> 
-> > Looking at some of your comments, it looks like there are lots of issues to
-> do with the original patches that were upstreamed, rather than changes that
-> were made specifically for the CIP Kernel.
-> >
-> > My understanding is that the CIP project follows an upstream first policy,
-> i.e. code must all be upstreamed before being backported to the CIP
-> kernel(s).
-> >
-> > For the changes that you're pointing out, should we be upstreaming the
-> relevant fixes, waiting for them to be released upstream, then re-submitting
-> the whole patch series? Or should we be modifying the patches that we're
-> submitting to the CIP kernel directly?
-> >
-> 
-> It really depends on case by case basis -- on severity of the problem.
-> 
-> I can take explanations, maybe I'm just misunderstanding the code.
-> 
-> Or perhaps code is really right, but unclear/needs additional comment, etc...
-> In such case I guess we can take patch as is, and just queue
-> cleanups/comments to the mainline.
-> 
-> But patch 34/ introduces data corrupting bug, which is only fixed at the end
-> of the series. I'd prefer having patches changed / reshuffled / something so
-> that it does not corrupt someone's data during bisect.
-> 
-> Plus we need to figure out how to review the renames.
-> 
-> > If the former, I'm not actually sure this will always be technically possible.
-> > If the latter, do you want Biju to update each of the patches in his series?
-> Or submit the new cip-specific changes in a new patch?
-> >
-> 
-> Not sure really.
-> 
-> One possible way forward would be to submit 1..33/ as separate series, then
-> figure out 34.. first rename, then figure out the rest.
+Thanks,
+Johnson
 
-OK. I will send 1--33 as a separate series and then rest. 
 
-Regards,
-Biju
+?? iOS ? Outlook<https://aka.ms/o0ukef>
+________________________________
+???: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+????: Friday, November 8, 2019 9:18:30 PM
+???: Johnson CH Chen (???) <JohnsonCH.Chen@moxa.com>
+??: cip-dev at lists.cip-project.org <cip-dev@lists.cip-project.org>; Biju Das <biju.das@bp.renesas.com>
+??: RE: [cip-dev] [PATCH] gpiolib: Support 'gpio-reserved-ranges' property
+
+Hi Johnson,
+
+Thank you for reporting this.
+
+> From: Johnson CH Chen (???) <JohnsonCH.Chen@moxa.com>
+> Subject: [cip-dev] [PATCH] gpiolib: Support 'gpio-reserved-ranges' property
+>
+> Hi Fabrizio Castro,
+>
+>
+>
+> I find a kernel panic issue by gpio when I upgrade kernel to 4.4.182-cip34 with Freescale LS1021A (gpiochip is mpc8xxx series):
+>
+>
+>
+> Kernel log shows ?Unable to handle kernel NULL pointer dereference at virtual address 000000b4.?
+>
+>
+>
+> Subsequently, I find the commit baff4777cdb80256cd24dede2a3d0af761356307 (gpiolib: Support 'gpio-reserved-ranges' property)
+> could result in kernel panic because the code ?*np= chip->dev->of_node? is executed when chip->dev is NULL:
+>
+>
+>
+> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+>
+> index 5fe34a9df3e6..ec642bf1d976 100644
+>
+> --- a/drivers/gpio/gpiolib-of.c
+>
+> +++ b/drivers/gpio/gpiolib-of.c
+>
+>
+>
+> +static void of_gpiochip_init_valid_mask(struct gpio_chip *chip)
+>
+> +{
+>
+> +      int len, i;
+>
+> +      u32 start, count;
+>
+> +      struct device_node *np = chip->dev->of_node;
+>
+> +
+>
+> +      len = of_property_count_u32_elems(np,  "gpio-reserved-ranges");
+>
+> +      if (len < 0 || len % 2 != 0)
+>
+> +              return;
+>
+> +
+>
+> +      for (i = 0; i < len; i += 2) {
+>
+> +              of_property_read_u32_index(np, "gpio-reserved-ranges",
+>
+> +                                         i, &start);
+>
+> +              of_property_read_u32_index(np, "gpio-reserved-ranges",
+>
+> +                                         i + 1, &count);
+>
+> +              if (start >= chip->ngpio || start + count >= chip->ngpio)
+>
+> +                      continue;
+>
+> +
+>
+> +              bitmap_clear(chip->valid_mask, start, count);
+>
+> +      }
+>
+> +};
+>
+> +
+>
+>
+>
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+>
+> index adb474089733..487a86495163 100644
+>
+> --- a/drivers/gpio/gpiolib.c
+>
+> +++ b/drivers/gpio/gpiolib.c
+>
+> @@ -292,6 +292,43 @@ static unsigned long *gpiochip_allocate_mask(struct gpio_chip *chip)
+>
+>       return p;
+>
+> }
+>
+>
+>
+> +static int gpiochip_init_valid_mask(struct gpio_chip *gpiochip)
+>
+> +{
+>
+> +#ifdef CONFIG_OF_GPIO
+>
+> +      int size;
+>
+> +      struct device_node *np = gpiochip->dev->of_node;
+>
+> +
+>
+> +      size = of_property_count_u32_elems(np,  "gpio-reserved-ranges");
+>
+> +      if (size > 0 && size % 2 == 0)
+>
+> +              gpiochip->need_valid_mask = true;
+>
+> +#endif
+>
+> +
+>
+> +      if (!gpiochip->need_valid_mask)
+>
+> +              return 0;
+>
+> +
+>
+> +      gpiochip->valid_mask = gpiochip_allocate_mask(gpiochip);
+>
+> +      if (!gpiochip->valid_mask)
+>
+> +              return -ENOMEM;
+>
+> +
+>
+> +      return 0;
+>
+> +}
+>
+> +
+>
+>
+>
+> Could you help me understand why we need to replaced chip->of_node with chip->dev->of_node?
+
+It looks like that solved the issues I was seeing, but it was short sighted as some drivers don't
+initialize that.
+
+I think I need to make some adjustments to this patch, and I also think I need to backport patch:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?h=v5.4-rc6&id=6ff0497402ef7269ee6a72f62eb85adaa7a4768e
+
+I need to make a couple of experiments, and I'll send something across for you to try if you don't
+mind.
+
+Thanks,
+Fab
+
+>
+>
+>
+> The following two items I try have no kernel panic:
+>
+>
+>
+> 1. For gpio drivers:
+>
+>
+>
+> It?s fine and no kernel panic issue if probe(struct platform_device *pdev) in gpio drivers executes the following codes:
+>
+>
+>
+> struct cpio_chip *gc;
+>
+> gc->dev = &pdev->dev; //Put platform?s dev to gpiochip?s dev, and of_node info in pdev->dev->of_node also put in gpiochip
+> structure.
+>
+>
+>
+> But some gpio drivers doesn?t do this, such as gpio-mpc8xxx.c (mpc8xxx series), and result in kernel panic when use this commit.
+>
+>
+>
+> 2. For gpiolib:
+>
+>
+>
+> //set the following code in gpiolib.c and gpiolib-of.c
+>
+> struct device_node *np = gpiochip->of_node;
+>
+>
+>
+> Device node of platform will put in gpio chip when of_mm_gpiochip_add() is executed:
+>
+>
+>
+> int of_mm_gpiochip_add(struct device_node *np,
+>
+>                        struct of_mm_gpio_chip *mm_gc)
+>
+> {
+>
+>         int ret = -ENOMEM;
+>
+>         struct gpio_chip *gc = &mm_gc->gc;
+>
+> ?..
+>
+>         mm_gc->gc.of_node = np;
+>
+> }
+>
+>
+>
+> It?s seems chip->of_node is good.
+>
+>
+>
+> Thanks,
+>
+> Johnson
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191108/24940fb1/attachment-0001.html>
