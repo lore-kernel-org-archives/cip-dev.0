@@ -1,36 +1,47 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Fri, 8 Nov 2019 12:54:20 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 26/83] mmc: tmio/sdhi: introduce
- flag for RCar 2+ specific features
-In-Reply-To: <20191108092054.GD1017@amd>
+Date: Fri, 8 Nov 2019 12:56:44 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 31/83] mmc: host: sh_mobile_sdhi:
+ move card_busy from tmio to sdhi
+In-Reply-To: <20191108092251.GE1017@amd>
 References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
-	<1573115572-13513-27-git-send-email-biju.das@bp.renesas.com>
-	<20191108092054.GD1017@amd>
-Message-ID: <OSBPR01MB2103D1889B13EFACAE6BE7CEB87B0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+	<1573115572-13513-32-git-send-email-biju.das@bp.renesas.com>
+	<20191108092251.GE1017@amd>
+Message-ID: <OSBPR01MB2103E1A343A0226718FBB127B87B0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi Pavel,
-[>] 
-> Subject: Re: [PATCH 4.4.y-cip 26/83] mmc: tmio/sdhi: introduce flag for RCar
-> 2+ specific features
-> 
-> Hi!
-> 
-> > @@ -66,8 +66,8 @@
-> >   */
-> >  #define TMIO_MMC_SDIO_IRQ		(1 << 2)
-> >
-> > -/* Some controllers don't need to wait 10ms for clock changes */
-> > -#define TMIO_MMC_FAST_CLK_CHG		(1 << 3)
-> > +/* Some features are only available or tested on RCar Gen2 or later */
-> > +#define TMIO_MMC_MIN_RCAR2		(1 << 3)
-> >
-> 
-> I'd add a comment here that gen2 allows fast clock changes ... and whatever
-> other features the driver is actually using.
 
-Yes, I agree it should have done in the mainline first.
+> Subject: Re: [PATCH 4.4.y-cip 31/83] mmc: host: sh_mobile_sdhi: move
+> card_busy from tmio to sdhi
+> 
+> On Thu 2019-11-07 08:32:00, Biju Das wrote:
+> > From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >
+> > commit 6a4679f312357ac7c74c0e1b996efdd1d0a612fa upstream.
+> >
+> > card_busy is only used/tested on SDHI for R-Car Gen2 and later.
+> > Move it to the SDHI driver, so we can then activate it conditionally
+> > depending on the SDHI type.
+> 
+> 
+> > @@ -217,6 +217,13 @@ static void sh_mobile_sdhi_clk_disable(struct
+> tmio_mmc_host *host)
+> >  	clk_disable_unprepare(priv->clk);
+> >  }
+> >
+> > +static int sh_mobile_sdhi_card_busy(struct mmc_host *mmc) {
+> > +	struct tmio_mmc_host *host = mmc_priv(mmc);
+> > +
+> > +	return !(sd_ctrl_read16_and_16_as_32(host, CTL_STATUS) &
+> > +TMIO_STAT_DAT0); }
+> > +
+> 
+> Bool would make sense here, if the change is practical without changing too
+> many interfaces... (and unless interface is something like 0/1/-ERRNO...)
+> 
+
+Yes I agree with you. Last statement is clearly returns a Boolean value.
 
 Regards,
 Biju
