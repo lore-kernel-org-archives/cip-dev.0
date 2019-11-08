@@ -1,50 +1,42 @@
 From: pavel@denx.de (Pavel Machek)
-Date: Fri, 8 Nov 2019 10:28:24 +0100
-Subject: [cip-dev] [PATCH 4.4.y-cip 36/83] mmc: sh_mobile_sdhi: add
-	ocr_mask option
-In-Reply-To: <1573115572-13513-37-git-send-email-biju.das@bp.renesas.com>
+Date: Fri, 8 Nov 2019 10:30:17 +0100
+Subject: [cip-dev] [PATCH 4.4.y-cip 37/83] mmc: tmio: enhance illegal
+ sequence handling
+In-Reply-To: <1573115572-13513-38-git-send-email-biju.das@bp.renesas.com>
 References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
-	<1573115572-13513-37-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <20191108092824.GG1017@amd>
+	<1573115572-13513-38-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <20191108093017.GH1017@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi!
 
-> commit f19417f38264f9a2f7b4627aa4060133c237b211 upstream.
+> commit 96e0b2ba00ee5dacb12bed6585145ce784ec9153 upstream.
 > 
-> In moving platforms from board files to DT, there still needs to be a way
-> to set the ocr_mask setting for the tmio driver during probe. Without this
-> setting, the probe will fail because the supported voltages are not known.
+> An illegal sequence command error may occur if there is a stopbit or
+> cmd_index error as well as a CRC error. The correct course of action
+> is to re-enable IRQs
 > 
-> This patch will also traditional platform registration platforms to
-> migrate to DT.
+> An illegal sequence data error may occur if there is a CRC or stopbit
+> error,  or underrun. In this case set data->error correctly.
+> 
+> This is in preparation for enabling tuning support which relies on
+> differentiating between illegal sequence and other errors.
+> 
 
-This is not quite english.
-
-> +++ b/drivers/mmc/host/sh_mobile_sdhi.c
-> @@ -49,6 +49,7 @@
+> @@ -609,8 +612,6 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host,
+>  		goto out;
+>  	}
 >  
->  struct sh_mobile_sdhi_of_data {
->  	unsigned long tmio_flags;
-> +	u32	      tmio_ocr_mask;
->  	unsigned long capabilities;
->  	unsigned long capabilities2;
->  	enum dma_slave_buswidth dma_buswidth;
-> @@ -370,6 +371,7 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
->  		const struct sh_mobile_sdhi_of_data *of_data = of_id->data;
->  
->  		mmc_data->flags |= of_data->tmio_flags;
-> +		mmc_data->ocr_mask = of_data->tmio_ocr_mask;
->  		mmc_data->capabilities |= of_data->capabilities;
->  		mmc_data->capabilities2 |= of_data->capabilities2;
->  		mmc_data->dma_rx_offset = of_data->dma_rx_offset;
+> -	host->cmd = NULL;
+> -
+>  	/* This controller is sicker than the PXA one. Not only do we need to
+>  	 * drop the top 8 bits of the first response word, we also need to
+>  	 * modify the order of the response for short response command
 
-And as of_data->tmio_ocr_mask is never written, I don't see how this
-can fix the problem effect.
+Is this removal intentional? I'm not sure from the changelog.
 
 Best regards,
-
 								Pavel
 -- 
 DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
@@ -55,4 +47,4 @@ Name: signature.asc
 Type: application/pgp-signature
 Size: 181 bytes
 Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191108/d31f69fd/attachment.sig>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191108/1194cc00/attachment.sig>
