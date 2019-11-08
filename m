@@ -1,66 +1,67 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Fri, 8 Nov 2019 13:41:58 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 71/83] mmc: tmio,
- renesas-sdhi: add max_{segs, blk_count} to tmio_mmc_data
-In-Reply-To: <20191108100349.GO1017@amd>
+Date: Fri, 8 Nov 2019 13:43:46 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 00/83] Add RZ/G1C SD/eMMC support
+In-Reply-To: <20191108113209.GQ1017@amd>
 References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
-	<1573115572-13513-72-git-send-email-biju.das@bp.renesas.com>
-	<20191108100349.GO1017@amd>
-Message-ID: <OSBPR01MB21031E81E0B14CF37FF39715B87B0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+	<20191107210149.GA26444@amd>
+	<TYAPR01MB2285DD15243063CDEA363B91B77B0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+	<20191108113209.GQ1017@amd>
+Message-ID: <OSBPR01MB21039D7435442185F6280EADB87B0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Pavel,
+Hello Pavel,
 
 Thanks for the feedback.
 
-> -----Original Message-----
-> From: Pavel Machek <pavel@denx.de>
-> Sent: Friday, November 8, 2019 10:04 AM
-> To: Biju Das <biju.das@bp.renesas.com>
-> Cc: cip-dev at lists.cip-project.org; Nobuhiro Iwamatsu
-> <nobuhiro1.iwamatsu@toshiba.co.jp>; Pavel Machek <pavel@denx.de>;
-> Chris Paterson <Chris.Paterson2@renesas.com>; Fabrizio Castro
-> <fabrizio.castro@bp.renesas.com>
-> Subject: Re: [PATCH 4.4.y-cip 71/83] mmc: tmio, renesas-sdhi: add
-> max_{segs, blk_count} to tmio_mmc_data
+> Subject: Re: [PATCH 4.4.y-cip 00/83] Add RZ/G1C SD/eMMC support
 > 
 > Hi!
 > 
-> > commit 603aa14d3daaa7073bab4c472025c4963030e0cc upstream.
-> >
-> > Allow TMIO and SDHI driver implementations to provide values for
-> > max_segs and max_blk_count.
-> >
-> > A follow-up patch will set these values for Renesas Gen3 SoCs the
-> > using an SDHI driver.
-> >
-> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> > Thank you for your work on reviewing this series.
 > 
-> > +++ b/drivers/mmc/host/tmio_mmc_core.c
-> > @@ -1224,10 +1224,10 @@ int tmio_mmc_host_probe(struct
-> tmio_mmc_host
-> > *_host,
-> >
-> >  	mmc->caps |= MMC_CAP_4_BIT_DATA | pdata->capabilities;
-> >  	mmc->caps2 |= pdata->capabilities2;
-> > -	mmc->max_segs = 32;
-> > +	mmc->max_segs = pdata->max_segs ? : 32;
-> >  	mmc->max_blk_size = 512;
-> > -	mmc->max_blk_count = (PAGE_CACHE_SIZE / mmc->max_blk_size)
-> *
-> > -		mmc->max_segs;
-> > +	mmc->max_blk_count = pdata->max_blk_count ? :
-> > +		(PAGE_SIZE / mmc->max_blk_size) * mmc->max_segs;
-> >  	mmc->max_req_size = mmc->max_blk_size * mmc-
-> >max_blk_count;
-> >  	mmc->max_seg_size = mmc->max_req_size;
+> (For the record, I'm now done with the review... with exception of
+> renames&modifications in 66-69).
 > 
-> This also changes PAGE_CACHE_SIZE -> PAGE_SIZE. I guess that's
-> okay/bugfix, as PAGE_CACHE_SIZE probably is equal to PAGE_SIZE in all
-> relevant configurations, but...
+> > Looking at some of your comments, it looks like there are lots of issues to
+> do with the original patches that were upstreamed, rather than changes that
+> were made specifically for the CIP Kernel.
+> >
+> > My understanding is that the CIP project follows an upstream first policy,
+> i.e. code must all be upstreamed before being backported to the CIP
+> kernel(s).
+> >
+> > For the changes that you're pointing out, should we be upstreaming the
+> relevant fixes, waiting for them to be released upstream, then re-submitting
+> the whole patch series? Or should we be modifying the patches that we're
+> submitting to the CIP kernel directly?
+> >
+> 
+> It really depends on case by case basis -- on severity of the problem.
+> 
+> I can take explanations, maybe I'm just misunderstanding the code.
+> 
+> Or perhaps code is really right, but unclear/needs additional comment, etc...
+> In such case I guess we can take patch as is, and just queue
+> cleanups/comments to the mainline.
+> 
+> But patch 34/ introduces data corrupting bug, which is only fixed at the end
+> of the series. I'd prefer having patches changed / reshuffled / something so
+> that it does not corrupt someone's data during bisect.
+> 
+> Plus we need to figure out how to review the renames.
+> 
+> > If the former, I'm not actually sure this will always be technically possible.
+> > If the latter, do you want Biju to update each of the patches in his series?
+> Or submit the new cip-specific changes in a new patch?
+> >
+> 
+> Not sure really.
+> 
+> One possible way forward would be to submit 1..33/ as separate series, then
+> figure out 34.. first rename, then figure out the rest.
 
-It is a big change from PAGE_CACHE_SIZE -> PAGE_SIZE at start of kernel tree Please see the commit (09cbfea  " mm, fs: get rid of PAGE_CACHE_* and page_cache_{get,release} macros")
+OK. I will send 1--33 as a separate series and then rest. 
 
 Regards,
 Biju
