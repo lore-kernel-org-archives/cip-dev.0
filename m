@@ -1,76 +1,72 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Mon, 11 Nov 2019 13:52:03 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 66/83] mmc: tmio: rename
- tmio_mmc_{pio => core}.c
-In-Reply-To: <20191108200237.GB23750@amd>
-References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
-	<1573115572-13513-67-git-send-email-biju.das@bp.renesas.com>
-	<20191108094752.GM1017@amd>
-	<OSBPR01MB2103AE0B3CB3C1538ACCB534B87B0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-	<20191108200237.GB23750@amd>
-Message-ID: <OSBPR01MB21039FC0AD3BEFE8549FCEC6B8740@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+From: JohnsonCH.Chen@moxa.com (=?iso-2022-jp?B?Sm9obnNvbiBDSCBDaGVuICgbJEJERD48Ui4bKEIp?=)
+Date: Mon, 11 Nov 2019 13:53:07 +0000
+Subject: [cip-dev] Build fail for linux-4.4.y-rc
+In-Reply-To: <20191111134737.GA23643@amd>
+References: <TYAPR01MB2285C54E0BFE44F1970EFA7DB7740@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+	<20191111094226.GA15737@amd>,<20191111134737.GA23643@amd>
+Message-ID: <HK0PR01MB3521F7B55D2D37D84E963FA1FA740@HK0PR01MB3521.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi Pavel,
 
+Could you set ?RTC_DRV_DS1374_WDT=y? in moxa_mxc_defconfig and then build again?
 
-> Subject: Re: [PATCH 4.4.y-cip 66/83] mmc: tmio: rename tmio_mmc_{pio =>
-> core}.c
-> 
-> Hi!
-> 
-> > > > commit 426e95d1766bad20e59f219af64fdd50c39bcfee upstream.
-> > > >
-> > > > Rename tmio_mmc_pio.c to tmio_mmc_core.c to more accurately
-> > > > reflect its
-> > > > function: to provide core code for the tmio-mmc and sh-mobole-sdhi
-> > > drivers.
-> > > >
-> > > > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> > > > Acked-by: Arnd Bergmann <arnd@arndb.de>
-> > > > Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > > > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> > > > ---
-> > > >  drivers/mmc/host/Makefile        |    1 -
-> > > >  drivers/mmc/host/tmio_mmc_core.c | 1394
-> > > > ++++++++++++++++++++++++++++++++++++++
-> > > >  drivers/mmc/host/tmio_mmc_pio.c  | 1394
-> > > > --------------------------------------
-> > >
-> > > This patch creates tmio_mmc_core.c ...
+I can build uImage and kernel modules successfully with Linux 4.4.201-rc1 in my local part.
+
+Thanks,
+Johnson
+
+?? iOS ? Outlook<https://aka.ms/o0ukef>
+________________________________
+???: cip-dev-bounces at lists.cip-project.org <cip-dev-bounces@lists.cip-project.org> ?? Pavel Machek <pavel@denx.de>
+????: Monday, November 11, 2019 9:47:37 PM
+???: Pavel Machek <pavel@denx.de>
+??: cip-dev at lists.cip-project.org <cip-dev@lists.cip-project.org>
+??: Re: [cip-dev] Build fail for linux-4.4.y-rc
+
+Hi!
+
+> > I've seen a failure this morning with our linux stable-rc build testing.
 > >
-> > yes, if you see the subec mmc: tmio: rename tmio_mmc_{pio => core}.c
+> > Version: 4cb9b88c651a2fff886dd64b6d797343e7ddb4dd Linux 4.4.201-rc1
+> > Arch: arm
+> > Config: moxa_mxc_defconfig
 > >
-> > Is it anything wrong? Am I missing something here?
-> 
-> There were more comments in my email, see below.
-> 
-> But reading them again, I see I was wrong. Makefile magic was used to turn
-> tmio_mmc_pio.c into tmio_mmc_core.o, so there's no bug here.
-> 
-> Sorry for the noise.
+> > Pipeline: https://gitlab.com/cip-playground/linux-stable-rc-ci/pipelines/95016985
+> > Failure: https://gitlab.com/cip-playground/linux-stable-rc-ci/pipelines/95016985/failures
+> > Log: https://gitlab.com/cip-playground/linux-stable-rc-ci/-/jobs/346974180
+> > Config: https://gitlab.com/cip-playground/linux-stable-rc-ci/-/jobs/346974180
+> >
+> > All other configurations that we build were successful.
+>
+> Thanks for heads-up!
+>
+> I see warning during configuration:
+>
+> HOSTLD  scripts/kconfig/conf
+> arch/arm/configs/moxa_mxc_defconfig:745:warning: symbol value 'm'
+> invalid for RTC_DRV_DS1374_WDT
+> #
 
-OK.
+This one seems to be reponsible. I have mailed author & lists...
+.
 
-Cheers,
-Biju
+commit df82285ab4b974f2040f31dbabdd11e055a282c2
+Author: Mel Gorman <mgorman@techsingularity.net>
+Date:   Tue Nov 5 21:16:27 2019 -0800
 
-> > > > +++ b/drivers/mmc/host/Makefile
-> > > > @@ -36,7 +36,6 @@ obj-$(CONFIG_MMC_S3C)   	+= s3cmci.o
-> > > >  obj-$(CONFIG_MMC_SDRICOH_CS)	+= sdricoh_cs.o
-> > > >  obj-$(CONFIG_MMC_TMIO)		+= tmio_mmc.o
-> > > >  obj-$(CONFIG_MMC_TMIO_CORE)	+= tmio_mmc_core.o
-> > > > -tmio_mmc_core-y			:= tmio_mmc_pio.o
-> > > >  obj-$(CONFIG_MMC_SDHI)		+= sh_mobile_sdhi.o
-> > > tmio_mmc_dma.o
-> > > >  obj-$(CONFIG_MMC_CB710)		+= cb710-mmc.o
-> > > >  obj-$(CONFIG_MMC_VIA_SDMMC)	+= via-sdmmc.o
-> > >
-> > > ... which is already present in the Makefile before the patch. That
-> > > can't be right.
-> 
-> --
-> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+    mm, meminit: recalculate pcpu batch and high limits after init
+    completes
+
+ commit 3e8fc0075e24338b1117cdff6a79477427b8dbed upstream.
+
+Best regards,
+                                                                Pavel
+
+--
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191111/29bbec7d/attachment.html>
