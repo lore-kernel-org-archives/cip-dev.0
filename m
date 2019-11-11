@@ -1,84 +1,59 @@
-From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Mon, 11 Nov 2019 09:49:17 +0000
-Subject: [cip-dev] [RFT/RFC linux-4.4.y-cip v2] gpiolib: Fix bad of_node
- pointer
-In-Reply-To: <1573231609-25023-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1573231609-25023-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <TY1PR01MB177031AE5F473C0A0B0D9FBAC0740@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+From: pavel@denx.de (Pavel Machek)
+Date: Mon, 11 Nov 2019 14:47:37 +0100
+Subject: [cip-dev] Build fail for linux-4.4.y-rc
+In-Reply-To: <20191111094226.GA15737@amd>
+References: <TYAPR01MB2285C54E0BFE44F1970EFA7DB7740@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+	<20191111094226.GA15737@amd>
+Message-ID: <20191111134737.GA23643@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi guys,
+Hi!
 
-We have got a good feedback from Johnson, what do you think
-about this patch?
+> > I've seen a failure this morning with our linux stable-rc build testing.
+> > 
+> > Version: 4cb9b88c651a2fff886dd64b6d797343e7ddb4dd Linux 4.4.201-rc1
+> > Arch: arm
+> > Config: moxa_mxc_defconfig
+> > 
+> > Pipeline: https://gitlab.com/cip-playground/linux-stable-rc-ci/pipelines/95016985
+> > Failure: https://gitlab.com/cip-playground/linux-stable-rc-ci/pipelines/95016985/failures
+> > Log: https://gitlab.com/cip-playground/linux-stable-rc-ci/-/jobs/346974180
+> > Config: https://gitlab.com/cip-playground/linux-stable-rc-ci/-/jobs/346974180
+> > 
+> > All other configurations that we build were successful.
+> 
+> Thanks for heads-up!
+> 
+> I see warning during configuration:
+> 
+> HOSTLD  scripts/kconfig/conf
+> arch/arm/configs/moxa_mxc_defconfig:745:warning: symbol value 'm'
+> invalid for RTC_DRV_DS1374_WDT
+> #
 
-Thanks,
-Fab
+This one seems to be reponsible. I have mailed author & lists...
+.
 
-> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Sent: 08 November 2019 16:47
-> Subject: [cip-dev][RFT/RFC linux-4.4.y-cip v2] gpiolib: Fix bad of_node pointer
-> 
-> Not every driver initialises of_node from struct gpio_chip,
-> therefore the replacement of of_node from struct gpio_chip
-> with dev->of_node in the below commit won't work on every
-> platform:
-> baff4777cdb8 ("gpiolib: Support 'gpio-reserved-ranges' property")
-> The final result is that on some platforms the kernel will
-> try to dereference a NULL pointer, with obvious consequences.
-> 
-> This patch makes sure the pointer gets initialised before its
-> first usage.
-> 
-> Fixes: baff4777cdb8 ("gpiolib: Support 'gpio-reserved-ranges' property")
-> Reported-by: Johnson CH Chen <JohnsonCH.Chen@moxa.com>
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> 
-> ---
-> v1->v2:
-> * v1 was for testing purposes only, but no point in sending
->   out a dirty patch, therefore cleaned it up
-> ---
->  drivers/gpio/gpiolib-of.c | 2 +-
->  drivers/gpio/gpiolib.c    | 5 ++++-
->  2 files changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-> index ec642bf..6fa1818 100644
-> --- a/drivers/gpio/gpiolib-of.c
-> +++ b/drivers/gpio/gpiolib-of.c
-> @@ -338,7 +338,7 @@ static void of_gpiochip_init_valid_mask(struct gpio_chip *chip)
->  {
->  	int len, i;
->  	u32 start, count;
-> -	struct device_node *np = chip->dev->of_node;
-> +	struct device_node *np = chip->of_node;
-> 
->  	len = of_property_count_u32_elems(np,  "gpio-reserved-ranges");
->  	if (len < 0 || len % 2 != 0)
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index d72218f..820e3e3d 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -296,7 +296,7 @@ static int gpiochip_init_valid_mask(struct gpio_chip *gpiochip)
->  {
->  #ifdef CONFIG_OF_GPIO
->  	int size;
-> -	struct device_node *np = gpiochip->dev->of_node;
-> +	struct device_node *np = gpiochip->of_node;
-> 
->  	size = of_property_count_u32_elems(np,  "gpio-reserved-ranges");
->  	if (size > 0 && size % 2 == 0)
-> @@ -360,6 +360,9 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
-> 
->  	chip->data = data;
-> 
-> +	if ((!chip->of_node) && (chip->dev))
-> +		chip->of_node = chip->dev->of_node;
-> +
->  	spin_lock_irqsave(&gpio_lock, flags);
-> 
->  	if (base < 0) {
-> --
-> 2.7.4
+commit df82285ab4b974f2040f31dbabdd11e055a282c2
+Author: Mel Gorman <mgorman@techsingularity.net>
+Date:   Tue Nov 5 21:16:27 2019 -0800
+
+    mm, meminit: recalculate pcpu batch and high limits after init
+    completes
+
+ commit 3e8fc0075e24338b1117cdff6a79477427b8dbed upstream.
+    
+Best regards,
+								Pavel
+
+-- 
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 181 bytes
+Desc: Digital signature
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191111/bdb61abb/attachment.sig>
