@@ -1,72 +1,33 @@
-From: JohnsonCH.Chen@moxa.com (=?iso-2022-jp?B?Sm9obnNvbiBDSCBDaGVuICgbJEJERD48Ui4bKEIp?=)
-Date: Mon, 11 Nov 2019 13:53:07 +0000
-Subject: [cip-dev] Build fail for linux-4.4.y-rc
-In-Reply-To: <20191111134737.GA23643@amd>
-References: <TYAPR01MB2285C54E0BFE44F1970EFA7DB7740@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-	<20191111094226.GA15737@amd>,<20191111134737.GA23643@amd>
-Message-ID: <HK0PR01MB3521F7B55D2D37D84E963FA1FA740@HK0PR01MB3521.apcprd01.prod.exchangelabs.com>
+From: pavel@denx.de (Pavel Machek)
+Date: Mon, 11 Nov 2019 14:57:06 +0100
+Subject: [cip-dev] [ANNOUNCE] v4.19.72-cip10-rt4
+Message-ID: <20191111135705.GB23643@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Pavel,
-
-Could you set ?RTC_DRV_DS1374_WDT=y? in moxa_mxc_defconfig and then build again?
-
-I can build uImage and kernel modules successfully with Linux 4.4.201-rc1 in my local part.
-
-Thanks,
-Johnson
-
-?? iOS ? Outlook<https://aka.ms/o0ukef>
-________________________________
-???: cip-dev-bounces at lists.cip-project.org <cip-dev-bounces@lists.cip-project.org> ?? Pavel Machek <pavel@denx.de>
-????: Monday, November 11, 2019 9:47:37 PM
-???: Pavel Machek <pavel@denx.de>
-??: cip-dev at lists.cip-project.org <cip-dev@lists.cip-project.org>
-??: Re: [cip-dev] Build fail for linux-4.4.y-rc
-
 Hi!
 
-> > I've seen a failure this morning with our linux stable-rc build testing.
-> >
-> > Version: 4cb9b88c651a2fff886dd64b6d797343e7ddb4dd Linux 4.4.201-rc1
-> > Arch: arm
-> > Config: moxa_mxc_defconfig
-> >
-> > Pipeline: https://gitlab.com/cip-playground/linux-stable-rc-ci/pipelines/95016985
-> > Failure: https://gitlab.com/cip-playground/linux-stable-rc-ci/pipelines/95016985/failures
-> > Log: https://gitlab.com/cip-playground/linux-stable-rc-ci/-/jobs/346974180
-> > Config: https://gitlab.com/cip-playground/linux-stable-rc-ci/-/jobs/346974180
-> >
-> > All other configurations that we build were successful.
->
-> Thanks for heads-up!
->
-> I see warning during configuration:
->
-> HOSTLD  scripts/kconfig/conf
-> arch/arm/configs/moxa_mxc_defconfig:745:warning: symbol value 'm'
-> invalid for RTC_DRV_DS1374_WDT
-> #
+v4.19.72-cip10-rt4 should be available at kernel.org. As of friday,
+upstream -rt tree did not move from v4.19.72. If it stays there for
+much longer, I'll need to figure out something.
 
-This one seems to be reponsible. I have mailed author & lists...
-.
+Trees are available at
 
-commit df82285ab4b974f2040f31dbabdd11e055a282c2
-Author: Mel Gorman <mgorman@techsingularity.net>
-Date:   Tue Nov 5 21:16:27 2019 -0800
+https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.19.y-cip-rt
 
-    mm, meminit: recalculate pcpu batch and high limits after init
-    completes
-
- commit 3e8fc0075e24338b1117cdff6a79477427b8dbed upstream.
+https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.19.y-cip-rt-rebase
+ 
+And their content should be identical.
 
 Best regards,
-                                                                Pavel
-
---
+								Pavel
+-- 
 DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 -------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191111/29bbec7d/attachment.html>
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 181 bytes
+Desc: Digital signature
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191111/c2c82867/attachment.sig>
