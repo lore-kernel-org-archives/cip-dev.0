@@ -1,36 +1,52 @@
-From: JohnsonCH.Chen@moxa.com (=?iso-2022-jp?B?Sm9obnNvbiBDSCBDaGVuICgbJEJERD48Ui4bKEIp?=)
-Date: Mon, 11 Nov 2019 04:08:14 +0000
-Subject: [cip-dev] [PATCH] gpiolib: Support 'gpio-reserved-ranges'
- property
-In-Reply-To: <20191108212701.GF23750@amd>
-References: <HK0PR01MB35212249E99AB47FA9830B6CFA7B0@HK0PR01MB3521.apcprd01.prod.exchangelabs.com>
-	<TY1PR01MB1770B2AC0DCF960F29247C38C07B0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-	<20191108212701.GF23750@amd>
-Message-ID: <HK0PR01MB35216A1208045D9AFD14562CFA740@HK0PR01MB3521.apcprd01.prod.exchangelabs.com>
+From: kazuhiro3.hayashi@toshiba.co.jp (kazuhiro3.hayashi at toshiba.co.jp)
+Date: Mon, 11 Nov 2019 06:18:31 +0000
+Subject: [cip-dev] [isar-cip-core PATCH 3/4] hihope-rzg2m: Add board
+ support
+In-Reply-To: <d41024b8-0d3f-a4e6-fef3-76dc350dfc62@siemens.com>
+References: <20191106124439.10532-1-Quirin.Gylstorff@siemens.com>
+	<20191106124439.10532-4-Quirin.Gylstorff@siemens.com>
+	<TYAPR01MB2285255EF4A6521577D5F789B7790@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+	<66a2849e-bbf8-7e67-0da3-490b052f18cb@siemens.com>
+	<TYAPR01MB4286445DBFE0BE6FD3D9CC49E1780@TYAPR01MB4286.jpnprd01.prod.outlook.com>
+	<d41024b8-0d3f-a4e6-fef3-76dc350dfc62@siemens.com>
+Message-ID: <TYAPR01MB42866037FF77023DC54A373EE1740@TYAPR01MB4286.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+Hello Quirin,
 
-I try stable kernel (Linux 4.4.194) with my system. It's good and without gpio's kernel panic phenomena. Just for your reference.
+> On 11/7/19 3:29 AM, kazuhiro3.hayashi at toshiba.co.jp wrote:
+> > Hello Quirin,
+> >
+> >> I will look into it using the cip-kernel-config instead of using copies
+> >> in isar.
+> >
+> > Are you planning to "fetch" required config(s) for each target from cip-kernel-config?
+> > or, keep copies of the configs in isar-cip-core then synchronize them at the specific point?
+> 
+> I try to fetch the configuration for each target from cip-kernel-config.
 
-Thanks,
-Johnson
------Original Message-----
-From: Pavel Machek <pavel@denx.de> 
-Sent: Saturday, November 9, 2019 5:27 AM
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Johnson CH Chen (???) <JohnsonCH.Chen@moxa.com>; cip-dev at lists.cip-project.org; Biju Das <biju.das@bp.renesas.com>
-Subject: Re: [cip-dev] [PATCH] gpiolib: Support 'gpio-reserved-ranges' property
-
-Hi!
-
-> Thank you for reporting this.
-
-Is it -cip problem, or -stable problem?
+Thanks!
+As the first step, I will do the same way in deby to use existing configs in cip-kernel-config.
 
 Best regards,
-								Pavel
--- 
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Kazu
+
+> Currently I need to patch the config as Isar doesn't allow setting
+> CONFIG_LOCALVERSION in the kernel configuration.
+> 
+> >
+> > Deby also has its own kernel configs (arm64 defconfig + Tiny hihope-rzg2m.config)
+> > for HiHope RZG2M:
+> >
+> https://gitlab.com/cip-project/cip-core/deby/blob/cip-core-buster/meta-hihope-rzg2m/recipes-kernel/linux/linux-ba
+> se_git.bbappend
+> > but they also should be replaced by the common kernel configs in CIP.
+> > As the first step, I would provide configs by the same way as isar-cip-core.
+> >
+> > Best regards,
+> > Kazu
+> >
+> >
+> 
+> Quirin
