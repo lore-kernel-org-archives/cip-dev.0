@@ -1,97 +1,36 @@
 From: JohnsonCH.Chen@moxa.com (=?iso-2022-jp?B?Sm9obnNvbiBDSCBDaGVuICgbJEJERD48Ui4bKEIp?=)
-Date: Mon, 11 Nov 2019 03:36:19 +0000
-Subject: [cip-dev] [RFT/RFC linux-4.4.y-cip] gpiolib: Fix bad of_node
- pointer
-In-Reply-To: <1573231008-24239-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1573231008-24239-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Message-ID: <HK0PR01MB35215EB8C89C5B0B23F876D5FA740@HK0PR01MB3521.apcprd01.prod.exchangelabs.com>
+Date: Mon, 11 Nov 2019 04:08:14 +0000
+Subject: [cip-dev] [PATCH] gpiolib: Support 'gpio-reserved-ranges'
+ property
+In-Reply-To: <20191108212701.GF23750@amd>
+References: <HK0PR01MB35212249E99AB47FA9830B6CFA7B0@HK0PR01MB3521.apcprd01.prod.exchangelabs.com>
+	<TY1PR01MB1770B2AC0DCF960F29247C38C07B0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+	<20191108212701.GF23750@amd>
+Message-ID: <HK0PR01MB35216A1208045D9AFD14562CFA740@HK0PR01MB3521.apcprd01.prod.exchangelabs.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Fab,
+Hi,
 
-This patch is good for my system (ls1021a), so many thanks!
+I try stable kernel (Linux 4.4.194) with my system. It's good and without gpio's kernel panic phenomena. Just for your reference.
 
 Thanks,
 Johnson
-
 -----Original Message-----
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com> 
-Sent: Saturday, November 9, 2019 12:37 AM
-To: cip-dev at lists.cip-project.org
-Cc: nobuhiro1.iwamatsu at toshiba.co.jp; pavel at denx.de; Chris Paterson <Chris.Paterson2@renesas.com>; Biju Das <biju.das@bp.renesas.com>; Fabrizio Castro <fabrizio.castro@bp.renesas.com>; Johnson CH Chen (???) <JohnsonCH.Chen@moxa.com>
-Subject: [cip-dev][RFT/RFC linux-4.4.y-cip] gpiolib: Fix bad of_node pointer
+From: Pavel Machek <pavel@denx.de> 
+Sent: Saturday, November 9, 2019 5:27 AM
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Johnson CH Chen (???) <JohnsonCH.Chen@moxa.com>; cip-dev at lists.cip-project.org; Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [cip-dev] [PATCH] gpiolib: Support 'gpio-reserved-ranges' property
 
-Not every driver initialises of_node from struct gpio_chip, therefore the replacement of of_node from struct gpio_chip with dev->of_node in the below commit won't work on every
-platform:
-baff4777cdb8 ("gpiolib: Support 'gpio-reserved-ranges' property") The final result is that on some platforms the kernel will try to dereference a NULL pointer, with obvious consequences.
+Hi!
 
-This patch makes sure the pointer gets initialised before its first usage.
+> Thank you for reporting this.
 
-Fixes: baff4777cdb8 ("gpiolib: Support 'gpio-reserved-ranges' property")
-Reported-by: Johnson CH Chen <JohnsonCH.Chen@moxa.com>
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
+Is it -cip problem, or -stable problem?
 
-Hi Johnson,
-
-could you please test this patch on your system?
-
-Thanks,
-Fab
-
-
- drivers/gpio/gpiolib-of.c | 4 +++-
- drivers/gpio/gpiolib.c    | 6 +++++-
- 2 files changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c index ec642bf..36b60dd 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -338,7 +338,7 @@ static void of_gpiochip_init_valid_mask(struct gpio_chip *chip)  {
- 	int len, i;
- 	u32 start, count;
--	struct device_node *np = chip->dev->of_node;
-+	struct device_node *np = chip->of_node;
- 
- 	len = of_property_count_u32_elems(np,  "gpio-reserved-ranges");
- 	if (len < 0 || len % 2 != 0)
-@@ -445,8 +445,10 @@ int of_gpiochip_add(struct gpio_chip *chip)  {
- 	int status;
- 
-+	/*
- 	if ((!chip->of_node) && (chip->dev))
- 		chip->of_node = chip->dev->of_node;
-+	*/
- 
- 	if (!chip->of_node)
- 		return 0;
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c index d72218f..0fd443a 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -296,7 +296,7 @@ static int gpiochip_init_valid_mask(struct gpio_chip *gpiochip)  {  #ifdef CONFIG_OF_GPIO
- 	int size;
--	struct device_node *np = gpiochip->dev->of_node;
-+	struct device_node *np = gpiochip->of_node;
- 
- 	size = of_property_count_u32_elems(np,  "gpio-reserved-ranges");
- 	if (size > 0 && size % 2 == 0)
-@@ -354,12 +354,16 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
- 	int		base = chip->base;
- 	struct gpio_desc *descs;
- 
-+
- 	descs = kcalloc(chip->ngpio, sizeof(descs[0]), GFP_KERNEL);
- 	if (!descs)
- 		return -ENOMEM;
- 
- 	chip->data = data;
- 
-+	if ((!chip->of_node) && (chip->dev))
-+		chip->of_node = chip->dev->of_node;
-+
- 	spin_lock_irqsave(&gpio_lock, flags);
- 
- 	if (base < 0) {
---
-2.7.4
+Best regards,
+								Pavel
+-- 
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
