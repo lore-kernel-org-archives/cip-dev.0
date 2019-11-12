@@ -1,73 +1,66 @@
-From: szlin@debian.org (=?UTF-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Tue, 12 Nov 2019 13:22:47 +0800
+From: Chris.Paterson2@renesas.com (Chris Paterson)
+Date: Tue, 12 Nov 2019 07:29:31 +0000
 Subject: [cip-dev] Build fail for linux-4.4.y-rc
-In-Reply-To: <CAFk6z8OBbmc1KJRD7M3vHENG+zWLqyWR7wypaSWxsRviYTQoqA@mail.gmail.com>
+In-Reply-To: <20191111134737.GA23643@amd>
 References: <TYAPR01MB2285C54E0BFE44F1970EFA7DB7740@TYAPR01MB2285.jpnprd01.prod.outlook.com>
 	<20191111094226.GA15737@amd> <20191111134737.GA23643@amd>
-	<CAFk6z8OBbmc1KJRD7M3vHENG+zWLqyWR7wypaSWxsRviYTQoqA@mail.gmail.com>
-Message-ID: <CAFk6z8M87=xvxeOfQ8kOMW-nsTet6Q0G6R3U-7qQ4p9Ed=-qKA@mail.gmail.com>
+Message-ID: <TYAPR01MB2285B33B65F68145719362BFB7770@TYAPR01MB2285.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+Hello all,
 
-SZ Lin (???) <sz.lin@moxa.com> ? 2019?11?11? ?? ??10:43???
+> From: Pavel Machek <pavel@denx.de>
+> Sent: 11 November 2019 13:48
 >
-> Hi Pavel,
+> Hi!
 >
-> Pavel Machek <pavel@denx.de> ? 2019?11?11? ?? ??9:47???
-> >
->
-> <snip>
->
-> >
-> > This one seems to be reponsible. I have mailed author & lists...
->
-> Ack with thanks!.
->
-> After using git bisect, I confirmed that the commit id
-> "23160bd11f183b0e77ea54befff63e5d2607155b" caused the failure,
-> the previous version of kernel works fine.
+> > > I've seen a failure this morning with our linux stable-rc build testing.
+> > >
+> > > Version: 4cb9b88c651a2fff886dd64b6d797343e7ddb4dd Linux 4.4.201-rc1
 
-Regression occurred [1] with the same patch in the 4.14 stable kernel, but it
-failed during the boot time instead of compile time.
+Thanks to Pavel's reporting, Greg has now fixed this build issue in Linux 4.4.201-rc2 (ca1d1b5f0f2a).
+https://gitlab.com/cip-playground/linux-stable-rc-ci/-/jobs/347861814
 
-[1] https://marc.info/?l=linux-kernel&m=157352880515619&w=2
+Kind regards, Chris
 
-SZ
-
+> > > Arch: arm
+> > > Config: moxa_mxc_defconfig
+> > >
+> > > Pipeline: https://gitlab.com/cip-playground/linux-stable-rc-
+> ci/pipelines/95016985
+> > > Failure: https://gitlab.com/cip-playground/linux-stable-rc-
+> ci/pipelines/95016985/failures
+> > > Log: https://gitlab.com/cip-playground/linux-stable-rc-ci/-/jobs/346974180
+> > > Config: https://gitlab.com/cip-playground/linux-stable-rc-ci/-
+> /jobs/346974180
+> > >
+> > > All other configurations that we build were successful.
+> >
+> > Thanks for heads-up!
+> >
+> > I see warning during configuration:
+> >
+> > HOSTLD? scripts/kconfig/conf
+> > arch/arm/configs/moxa_mxc_defconfig:745:warning: symbol value 'm'
+> > invalid for RTC_DRV_DS1374_WDT
+> > #
 >
-> The below modification in "mm/page_alloc.c" seems to be the root cause.
+> This one seems to be reponsible. I have mailed author & lists...
+> .
 >
-> +       /*
-> +        * The number of managed pages has changed due to the initialisation
-> +        * so the pcpu batch and high limits needs to be updated or the limits
-> +        * will be artificially small.
-> +        */
-> +       for_each_populated_zone(zone)
-> +               zone_pcp_update(zone);
-> +
+> commit df82285ab4b974f2040f31dbabdd11e055a282c2
+> Author: Mel Gorman <mgorman@techsingularity.net>
+> Date:?? Tue Nov 5 21:16:27 2019 -0800
 >
-> SZ
+>???? mm, meminit: recalculate pcpu batch and high limits after init
+>???? completes
 >
-> > .
-> >
-> > commit df82285ab4b974f2040f31dbabdd11e055a282c2
-> > Author: Mel Gorman <mgorman@techsingularity.net>
-> > Date:   Tue Nov 5 21:16:27 2019 -0800
-> >
-> >     mm, meminit: recalculate pcpu batch and high limits after init
-> >     completes
-> >
-> >  commit 3e8fc0075e24338b1117cdff6a79477427b8dbed upstream.
-> >
-> > Best regards,
-> >                                                                 Pavel
-> >
-> > --
-> > DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-> > HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-> > _______________________________________________
-> > cip-dev mailing list
-> > cip-dev at lists.cip-project.org
-> > https://lists.cip-project.org/mailman/listinfo/cip-dev
+>? commit 3e8fc0075e24338b1117cdff6a79477427b8dbed upstream.
+>
+> Best regards,
+> ????? ??????? ??????? ??????? ??????? ??????? ??????? ??????? Pavel
+>
+> --
+> DENX Software Engineering GmbH,????? Managing Director: Wolfgang Denk
+> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
