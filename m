@@ -1,48 +1,74 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 14 Nov 2019 01:41:24 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-Message-ID: <HK0PR01MB2979D98158320FF96BBC9818E2710@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+From: biju.das@bp.renesas.com (Biju Das)
+Date: Thu, 14 Nov 2019 13:24:16 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 00/21] Add iWave RZ/G1N support
+Message-ID: <1573737877-11733-1-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+This patch series add support for iWave G20D-Q7 board based on RZ/G1N.
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
+This patch series is based on linux-4.4.y-cip and all the patches
+in this series are cherry-picked from linux rc tree.
 
-*Please note that the IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=11&day=14&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
-          
-US-West US-East   UK     DE     TW     JP
-01:00    04:00   09:00   10:00   17:00   18:00
+Biju Das (20):
+  dt-bindings: reset: rcar-rst: Document r8a7744 reset module
+  soc: renesas: rcar-rst: Add support for RZ/G1N
+  ARM: shmobile: r8a7744: Add clock index macros for DT sources
+  clk: shmobile: Compile clk-rcar-gen2.c when using the r8a7744
+  ARM: shmobile: r8a7744: Basic SoC support
+  clk: shmobile: Document r8a7744 CPG clock support
+  clk: shmobile: Document r8a7744 MSTP clock support
+  clk: shmobile: Document r8a7744 CPG DIV6 clock support
+  ARM: multi_v7_defconfig: Enable r8a7744 SoC
+  ARM: shmobile: defconfig: Enable r8a7744 SoC
+  ARM: debug-ll: Add support for r8a7744
+  dt-bindings: pinctrl: sh-pfc: Document r8a7744 PFC support
+  pinctrl: sh-pfc: r8a7791: Add r8a7744 support
+  ARM: dts: iwg20d-q7-common: Move pciec node out of common dtsi
+  dt-bindings: serial: sh-sci: Document r8a7744 bindings
+  ARM: dts: r8a7744: Initial SoC device tree
+  dt-bindings: arm: renesas: Document iWave RZ/G1N SOM
+  dt-bindings: arm: renesas: Document iW-RainboW-G20D-Qseven-RZG1N board
+  ARM: dts: r8a7744-iwg20m: Add iWave RZ/G1N Qseven SOM
+  ARM: dts: r8a7744-iwg20d-q7: Add support for iWave G20D-Q7 board based
+    on RZ/G1N
 
-Channel:
-* irc:chat.freenode.net:6667/cip
+Geert Uytterhoeven (1):
+  ARM: shmobile: Document RZ/G1N SoC DT binding
 
-Last week's meeting minutes:
-https://irclogs.baserock.org/meetings/cip/2019/11/cip.2019-11-07-09.00.log.html
+ Documentation/devicetree/bindings/arm/shmobile.txt |   6 +
+ .../bindings/clock/renesas,cpg-div6-clocks.txt     |   1 +
+ .../bindings/clock/renesas,cpg-mstp-clocks.txt     |   1 +
+ .../clock/renesas,rcar-gen2-cpg-clocks.txt         |   1 +
+ .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |   1 +
+ .../devicetree/bindings/reset/renesas,rst.txt      |   1 +
+ .../bindings/serial/renesas,sci-serial.txt         |   4 +
+ arch/arm/Kconfig.debug                             |   7 +-
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/iwg20d-q7-common.dtsi            |   4 -
+ arch/arm/boot/dts/r8a7743-iwg20d-q7-dbcm-ca.dts    |   4 +
+ arch/arm/boot/dts/r8a7743-iwg20d-q7.dts            |   4 +
+ arch/arm/boot/dts/r8a7744-iwg20d-q7.dts            |  15 +
+ arch/arm/boot/dts/r8a7744-iwg20m.dtsi              |  31 +
+ arch/arm/boot/dts/r8a7744.dtsi                     | 778 +++++++++++++++++++++
+ arch/arm/configs/multi_v7_defconfig                |   1 +
+ arch/arm/configs/shmobile_defconfig                |   1 +
+ arch/arm/mach-shmobile/Kconfig                     |   5 +
+ arch/arm/mach-shmobile/pm-rcar-gen2.c              |   2 +
+ arch/arm/mach-shmobile/setup-rcar-gen2.c           |   1 +
+ drivers/clk/shmobile/Makefile                      |   1 +
+ drivers/pinctrl/sh-pfc/Kconfig                     |   5 +
+ drivers/pinctrl/sh-pfc/Makefile                    |   1 +
+ drivers/pinctrl/sh-pfc/core.c                      |   6 +
+ drivers/pinctrl/sh-pfc/core.h                      |   1 +
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c               |  21 +
+ drivers/soc/renesas/rcar-rst.c                     |   1 +
+ include/dt-bindings/clock/r8a7744-clock.h          | 166 +++++
+ 28 files changed, 1064 insertions(+), 7 deletions(-)
+ create mode 100644 arch/arm/boot/dts/r8a7744-iwg20d-q7.dts
+ create mode 100644 arch/arm/boot/dts/r8a7744-iwg20m.dtsi
+ create mode 100644 arch/arm/boot/dts/r8a7744.dtsi
+ create mode 100644 include/dt-bindings/clock/r8a7744-clock.h
 
-Agenda:
-
-* Action item
-1. Test LTS (pre)releases directly - patersonc 
-2. Ask KernelCI for recommendations on what tests to run - patersonc 
-3. Create a way/process to run LTP only for release tests - patersonc 
-4. Investigate the RT test tools - Pavel 
-5. Combine rootfilesystem with kselftest binary - Iwamatsu-san 
-6. Document a process on how to add tests to the CIP test setup - patersonc 
-7. Split out non-Kernel config sections from gitlab-ci.yml - patersonc 
-8. Do we want to go with the current approach where GitLab CI is run ?out of tree?- Kernel team
-9. Ask RT admin to put CIP RT kernel to their CI-RT - Kernel team
-10. Provide the CIP mini-summit slide with as a PDF file - Pavel
-
-* Kernel maintenance updates
-* Kernel testing
-* CIP Core
-* Software update
-* AOB
-
-The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
-
-Best regards,
-
-SZ Lin, Moxa.
+-- 
+2.7.4
