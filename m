@@ -1,59 +1,51 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 14 Nov 2019 13:24:37 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 21/21] ARM: dts: r8a7744-iwg20d-q7: Add
-	support for iWave G20D-Q7 board based on RZ/G1N
-In-Reply-To: <1573737877-11733-1-git-send-email-biju.das@bp.renesas.com>
-References: <1573737877-11733-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1573737877-11733-22-git-send-email-biju.das@bp.renesas.com>
+Date: Thu, 14 Nov 2019 16:13:41 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 00/83] Add RZ/G1C SD/eMMC support
+In-Reply-To: <20191108195823.GA23750@amd>
+References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
+	<20191107210149.GA26444@amd>
+	<TYAPR01MB2285DD15243063CDEA363B91B77B0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+	<20191108113209.GQ1017@amd>
+	<OSBPR01MB21039D7435442185F6280EADB87B0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+	<20191108195823.GA23750@amd>
+Message-ID: <OSBPR01MB21032A76533C40F71367C4A4B8710@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit 45c660ecdfd598eb93c46f5a95da6eb75008abb9 upstream.
+Hi Pavel,
 
-Add support for iWave RainboW-G20D-Qseven board based on RZ/G1N.
+Thanks for the feedback.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm/boot/dts/Makefile              |  1 +
- arch/arm/boot/dts/r8a7744-iwg20d-q7.dts | 15 +++++++++++++++
- 2 files changed, 16 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a7744-iwg20d-q7.dts
+> Subject: Re: [PATCH 4.4.y-cip 00/83] Add RZ/G1C SD/eMMC support
+> 
+> Hi!
+> 
+> > > Plus we need to figure out how to review the renames.
+> > >
+> > > > If the former, I'm not actually sure this will always be technically
+> possible.
+> > > > If the latter, do you want Biju to update each of the patches in his
+> series?
+> > > Or submit the new cip-specific changes in a new patch?
+> > > >
+> > >
+> > > Not sure really.
+> > >
+> > > One possible way forward would be to submit 1..33/ as separate
+> > > series, then figure out 34.. first rename, then figure out the rest.
+> >
+> > OK. I will send 1--33 as a separate series and then rest.
+> 
+> Actually, it seems that review on 1--33 is "minor updates are possible in
+> mainline", so if you want (and there are no other comments from other
+> maintainers), I can just take 1--33 and apply them to -cip tree.
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 28fbcdb..88c3f12 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -546,6 +546,7 @@ dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) += \
- 	r8a7740-armadillo800eva.dtb \
- 	r8a7743-iwg20d-q7.dtb \
- 	r8a7743-iwg20d-q7-dbcm-ca.dtb \
-+	r8a7744-iwg20d-q7.dtb \
- 	r8a7745-iwg22d-sodimm.dtb \
- 	r8a7745-iwg22d-sodimm-dbhd-ca.dtb \
- 	r8a77470-iwg23s-sbc.dtb \
-diff --git a/arch/arm/boot/dts/r8a7744-iwg20d-q7.dts b/arch/arm/boot/dts/r8a7744-iwg20d-q7.dts
-new file mode 100644
-index 0000000..1fdac52
---- /dev/null
-+++ b/arch/arm/boot/dts/r8a7744-iwg20d-q7.dts
-@@ -0,0 +1,15 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the iWave-RZ/G1N Qseven board
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ */
-+
-+/dts-v1/;
-+#include "r8a7744-iwg20m.dtsi"
-+#include "iwg20d-q7-common.dtsi"
-+
-+/ {
-+	model = "iWave Systems RainboW-G20D-Qseven board based on RZ/G1N";
-+	compatible = "iwave,g20d", "iwave,g20m", "renesas,r8a7744";
-+};
--- 
-2.7.4
+Yes please, if other maintainers are happy.
+
+Please apply the below patch patch before 33,
+https://patchwork.kernel.org/patch/11232167/
+
+Can you please suggest, how you want to handle rest of the patches?
+
+Regards,
+Biju
