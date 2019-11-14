@@ -1,35 +1,69 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 14 Nov 2019 13:24:21 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 05/21] clk: shmobile: Compile
-	clk-rcar-gen2.c when using the r8a7744
+Date: Thu, 14 Nov 2019 13:24:22 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 06/21] ARM: shmobile: r8a7744: Basic SoC
+	support
 In-Reply-To: <1573737877-11733-1-git-send-email-biju.das@bp.renesas.com>
 References: <1573737877-11733-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1573737877-11733-6-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1573737877-11733-7-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This patch makes sure clk-rcar-gen2,c gets compiled when
-CONFIG_ARCH_R8A7744 is selected, similarly to what done by
-commit:
-7bac4ad3e40f ("CIP: Build essential clock driver for Renesas
-RZ/G1 platforms")
+commit bc8871536246e489407a7114a597c0a2a72de895 upstream.
+
+Add minimal support for the RZ/G1N (R8A7744) SoC.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+[ removed compatible string renesas,r8a7744-cpg-mssr ]
 ---
- drivers/clk/shmobile/Makefile | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mach-shmobile/Kconfig           | 5 +++++
+ arch/arm/mach-shmobile/pm-rcar-gen2.c    | 2 ++
+ arch/arm/mach-shmobile/setup-rcar-gen2.c | 1 +
+ 3 files changed, 8 insertions(+)
 
-diff --git a/drivers/clk/shmobile/Makefile b/drivers/clk/shmobile/Makefile
-index 2412eb9..6badac5 100644
---- a/drivers/clk/shmobile/Makefile
-+++ b/drivers/clk/shmobile/Makefile
-@@ -3,6 +3,7 @@ obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o
- obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o
- obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o
- obj-$(CONFIG_ARCH_R8A7743)		+= clk-rcar-gen2.o
-+obj-$(CONFIG_ARCH_R8A7744)		+= clk-rcar-gen2.o
- obj-$(CONFIG_ARCH_R8A7745)		+= clk-rcar-gen2.o
- obj-$(CONFIG_ARCH_R8A77470)		+= clk-rcar-gen2.o
- obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
+diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
+index 31549b7..79b66a1 100644
+--- a/arch/arm/mach-shmobile/Kconfig
++++ b/arch/arm/mach-shmobile/Kconfig
+@@ -68,6 +68,11 @@ config ARCH_R8A7743
+ 	bool "RZ/G1M (R8A77430)"
+ 	select ARCH_RCAR_GEN2
+ 
++config ARCH_R8A7744
++	bool "RZ/G1N (R8A77440)"
++	select ARCH_RCAR_GEN2
++	select ARM_ERRATA_798181 if SMP
++
+ config ARCH_R8A7745
+ 	bool "RZ/G1E (R8A77450)"
+ 	select ARCH_RCAR_GEN2
+diff --git a/arch/arm/mach-shmobile/pm-rcar-gen2.c b/arch/arm/mach-shmobile/pm-rcar-gen2.c
+index 419575e..dd1c9e0 100644
+--- a/arch/arm/mach-shmobile/pm-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/pm-rcar-gen2.c
+@@ -99,6 +99,8 @@ void __init rcar_gen2_pm_init(void)
+ 		syscier = 0x00111003;
+ 	else if (of_machine_is_compatible("renesas,r8a7743"))
+ 		syscier = 0x00101003;
++	else if (of_machine_is_compatible("renesas,r8a7744"))
++		syscier = 0x00101003;
+ 	else if (of_machine_is_compatible("renesas,r8a7745"))
+ 		syscier = 0x00300060;
+ 	else if (of_machine_is_compatible("renesas,r8a77470"))
+diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+index 6e0c0ce..50c57c8 100644
+--- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+@@ -208,6 +208,7 @@ MACHINE_END
+ 
+ static const char * const rz_g1_boards_compat_dt[] __initconst = {
+ 	"renesas,r8a7743",
++	"renesas,r8a7744",
+ 	"renesas,r8a7745",
+ 	"renesas,r8a77470",
+ 	NULL,
 -- 
 2.7.4
