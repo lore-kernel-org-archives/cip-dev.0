@@ -1,46 +1,36 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 14 Nov 2019 13:24:28 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 12/21] ARM: debug-ll: Add support for
-	r8a7744
+Date: Thu, 14 Nov 2019 13:24:29 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 13/21] dt-bindings: pinctrl: sh-pfc:
+	Document r8a7744 PFC support
 In-Reply-To: <1573737877-11733-1-git-send-email-biju.das@bp.renesas.com>
 References: <1573737877-11733-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1573737877-11733-13-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1573737877-11733-14-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit abf3bf537d298db18ad929ceb71c0353d6794f42 upstream.
+commit a6a7d2c2dc668fb19bc16b4cda397cb1831df54d upstream.
 
-Enable low-level debugging support for RZ/G1N (R8A7744). RZ/G1N uses
-SCIF0 for the debug console.
+Document PFC support for the RZ/G1N (R8A7744) SoC.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-[biju: Removed ARCH_R8A7792]
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/Kconfig.debug | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index e5c9e93..c4ac149 100644
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@ -818,11 +818,12 @@ choice
- 
- 	config DEBUG_RCAR_GEN2_SCIF0
- 		bool "Kernel low-level debugging messages via SCIF0 on R-Car Gen2 and RZ/G1"
--		depends on ARCH_R8A7743 || ARCH_R8A7790 || ARCH_R8A7791 || ARCH_R8A7793
-+		depends on ARCH_R8A7743 || ARCH_R8A7744 || ARCH_R8A7790 || \
-+			ARCH_R8A7791 || ARCH_R8A7793
- 		help
- 		  Say Y here if you want kernel low-level debugging support
--		  via SCIF0 on Renesas RZ/G1M (R8A7743), R-Car H2 (R8A7790),
--		  M2-W (R8A7791), or M2-N (R8A7793).
-+		  via SCIF0 on Renesas RZ/G1M (R8A7743), RZ/G1N (R8A7744),
-+		  R-Car H2 (R8A7790), M2-W (R8A7791), or M2-N (R8A7793).
- 
- 	config DEBUG_RCAR_GEN2_SCIF1
- 		bool "Kernel low-level debugging messages via SCIF1 on R8A77470"
+diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
+index b2264d9..f2008d0 100644
+--- a/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
+@@ -14,6 +14,7 @@ Required Properties:
+     - "renesas,pfc-r8a73a4": for R8A73A4 (R-Mobile APE6) compatible pin-controller.
+     - "renesas,pfc-r8a7740": for R8A7740 (R-Mobile A1) compatible pin-controller.
+     - "renesas,pfc-r8a7743": for R8A7743 (RZ/G1M) compatible pin-controller.
++    - "renesas,pfc-r8a7744": for R8A7744 (RZ/G1N) compatible pin-controller.
+     - "renesas,pfc-r8a7745": for R8A7745 (RZ/G1E) compatible pin-controller.
+     - "renesas,pfc-r8a77470": for R8A77470 (RZ/G1C) compatible pin-controller.
+     - "renesas,pfc-r8a7778": for R8A7778 (R-Mobile M1) compatible pin-controller.
 -- 
 2.7.4
