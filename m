@@ -1,47 +1,63 @@
 From: pavel@denx.de (Pavel Machek)
-Date: Mon, 18 Nov 2019 11:38:07 +0100
-Subject: [cip-dev] [PATCH 4.4.y-cip 00/83] Add RZ/G1C SD/eMMC support
-In-Reply-To: <OSBPR01MB2103F597589DEDA848C1246BB84D0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-References: <20191107210149.GA26444@amd>
- <TYAPR01MB2285DD15243063CDEA363B91B77B0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
- <20191108113209.GQ1017@amd>
- <OSBPR01MB21039D7435442185F6280EADB87B0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
- <20191108195823.GA23750@amd>
- <OSBPR01MB21032A76533C40F71367C4A4B8710@OSBPR01MB2103.jpnprd01.prod.outlook.com>
- <20191115123012.GA29996@duo.ucw.cz>
- <OSBPR01MB2103290FD10A0643F9A78824B8700@OSBPR01MB2103.jpnprd01.prod.outlook.com>
- <20191115211004.GA30273@duo.ucw.cz>
- <OSBPR01MB2103F597589DEDA848C1246BB84D0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-Message-ID: <20191118103807.GA7700@duo.ucw.cz>
+Date: Mon, 18 Nov 2019 16:30:45 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 16/57] ASoC: add for_each_dpcm_fe()
+	macro
+In-Reply-To: <87a79sz1vf.wl-kuninori.morimoto.gx@renesas.com>
+References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
+ <1571295929-47286-17-git-send-email-biju.das@bp.renesas.com>
+ <20191020094805.GF8003@amd>
+ <OSBPR01MB2103CC08EA8249635E23798EB8690@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+ <87a79sz1vf.wl-kuninori.morimoto.gx@renesas.com>
+Message-ID: <20191118153045.GB26236@duo.ucw.cz>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi!
-
-> > > > > Yes please, if other maintainers are happy.
-> > > > >
-> > > > > Please apply the below patch patch before 33,
-> > > > > https://patchwork.kernel.org/patch/11232167/
-> > > >
-> > > > I applied 1..33. That caused build failure. I added 35, which fixes
-> > > > the compile problem.
-> > >
-> > > Yes. I knew, that is the reason I provided the above link.
-> > 
-> > Oops, I was not paying close enough attention. Sorry about that.
+On Wed 2019-10-23 10:28:36, Kuninori Morimoto wrote:
 > 
-> Is it possible for you to rearrange the patch?
+> Hi
+> 
+> > > > --- a/include/sound/soc-dpcm.h
+> > > > +++ b/include/sound/soc-dpcm.h
+> > > > @@ -103,6 +103,9 @@ struct snd_soc_dpcm_runtime {
+> > > >  	int trigger_pending; /* trigger cmd + 1 if pending, 0 if not */  };
+> > > >
+> > > > +#define for_each_dpcm_fe(be, stream, dpcm)
+> > > 	\
+> > > > +	list_for_each_entry(dpcm, &(be)->dpcm[stream].fe_clients, list_fe)
+> > > > +
+> > > 
+> > > This macro is really confusing. dpcm is used as both control variable of the
+> > > loop and name of the field in *be.
+> 
+> Ohh, yes, indeed.
+> Thank you for pointing it. I will post fixup patch
 
-> Ie, patch " mmc: add define for R1 response without CRC" should go before
-> " mmc: tmio: add eMMC support". Other wise you will get a compilation error
-> If someone checkout the branch with the commit id of  later patch.
+Thanks!
 
-It is possible, but it would require me to rebase and then force push,
-causing problems for people who pulled the tree in the meantime. I
-believe risks outweight the advantages at this point.
+> > Plus it relies on list_fe variable to be
+> > > present in the context including it... that's non-standard.
+> 
+> sorry I couldn't understand about this
 
-Best regards,
+Macro is:
+
+> +#define for_each_dpcm_fe(be, stream, dpcm) \
+> +	list_for_each_entry(dpcm, &(be)->dpcm[stream].fe_clients, list_fe)
+
+It should be:
+
+> +#define for_each_dpcm_fe(be, stream, dpcm, list_de) \
+> +	list_for_each_entry(dpcm, &(be)->dpcm[stream].fe_clients, list_fe)
+
+[accessing variables not passed as macro arguments is strange/surprising].
+
+> > > Oh and "&(be)->" can be written as "(be)." AFAICT.
+> 
+> This "&" is for fe_clients
+
+Aha, sorry, I misparsed that one.
 								Pavel
+
 -- 
 DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
@@ -51,4 +67,4 @@ Name: signature.asc
 Type: application/pgp-signature
 Size: 195 bytes
 Desc: not available
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191118/efea7154/attachment.sig>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191118/13bfaf44/attachment.sig>
