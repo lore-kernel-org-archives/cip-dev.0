@@ -1,295 +1,38 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Tue, 19 Nov 2019 14:53:34 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 09/17] ARM: dts: r8a7744: Add
-	[H]SCIF{A|B} support
+Date: Tue, 19 Nov 2019 14:53:35 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 10/17] dt-bindings: i2c: rcar: Document
+	r8a7744 support
 In-Reply-To: <1574175222-52858-1-git-send-email-biju.das@bp.renesas.com>
 References: <1574175222-52858-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1574175222-52858-10-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1574175222-52858-11-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit 28c0cf739819124573cb24d3ab23b213f3b0d011 upstream.
+commit 8bca7089af56be53ecd87091b1f5bf81030e571b upstream.
 
-Describe [H]SCIF{|A|B} ports in the R8A7744 device tree.
+Document i2c Device Tree support for RZ/G1N (R8A7744) SoC, which is
+compatible with R-Car Gen2 SoC family.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[biju: removed resets property. Updated power-domains and clocks properties]
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 ---
- arch/arm/boot/dts/r8a7744.dtsi | 240 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 237 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/i2c/i2c-rcar.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index e712b13..fdfd099 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -386,9 +386,130 @@
- 			status = "disabled";
- 		};
- 
-+		scifa0: serial at e6c40000 {
-+			compatible = "renesas,scifa-r8a7744",
-+				     "renesas,rcar-gen2-scifa", "renesas,scifa";
-+			reg = <0 0xe6c40000 0 0x40>;
-+			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp2_clks R8A7744_CLK_SCIFA0>;
-+			clock-names = "sci_ick";
-+			dmas = <&dmac0 0x21>, <&dmac0 0x22>,
-+			       <&dmac1 0x21>, <&dmac1 0x22>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
-+
-+		scifa1: serial at e6c50000 {
-+			compatible = "renesas,scifa-r8a7744",
-+				     "renesas,rcar-gen2-scifa", "renesas,scifa";
-+			reg = <0 0xe6c50000 0 0x40>;
-+			interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp2_clks R8A7744_CLK_SCIFA1>;
-+			clock-names = "sci_ick";
-+			dmas = <&dmac0 0x25>, <&dmac0 0x26>,
-+			       <&dmac1 0x25>, <&dmac1 0x26>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
-+
-+		scifa2: serial at e6c60000 {
-+			compatible = "renesas,scifa-r8a7744",
-+				     "renesas,rcar-gen2-scifa", "renesas,scifa";
-+			reg = <0 0xe6c60000 0 0x40>;
-+			interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp2_clks R8A7744_CLK_SCIFA2>;
-+			clock-names = "sci_ick";
-+			dmas = <&dmac0 0x27>, <&dmac0 0x28>,
-+			       <&dmac1 0x27>, <&dmac1 0x28>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
-+
-+		scifa3: serial at e6c70000 {
-+			compatible = "renesas,scifa-r8a7744",
-+				     "renesas,rcar-gen2-scifa", "renesas,scifa";
-+			reg = <0 0xe6c70000 0 0x40>;
-+			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp11_clks R8A7744_CLK_SCIFA3>;
-+			clock-names = "sci_ick";
-+			dmas = <&dmac0 0x1b>, <&dmac0 0x1c>,
-+			       <&dmac1 0x1b>, <&dmac1 0x1c>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
-+
-+		scifa4: serial at e6c78000 {
-+			compatible = "renesas,scifa-r8a7744",
-+				     "renesas,rcar-gen2-scifa", "renesas,scifa";
-+			reg = <0 0xe6c78000 0 0x40>;
-+			interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp11_clks R8A7744_CLK_SCIFA4>;
-+			clock-names = "sci_ick";
-+			dmas = <&dmac0 0x1f>, <&dmac0 0x20>,
-+			       <&dmac1 0x1f>, <&dmac1 0x20>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
-+
-+		scifa5: serial at e6c80000 {
-+			compatible = "renesas,scifa-r8a7744",
-+				     "renesas,rcar-gen2-scifa", "renesas,scifa";
-+			reg = <0 0xe6c80000 0 0x40>;
-+			interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp11_clks R8A7744_CLK_SCIFA5>;
-+			clock-names = "sci_ick";
-+			dmas = <&dmac0 0x23>, <&dmac0 0x24>,
-+			       <&dmac1 0x23>, <&dmac1 0x24>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
-+
-+		scifb0: serial at e6c20000 {
-+			compatible = "renesas,scifb-r8a7744",
-+				     "renesas,rcar-gen2-scifb", "renesas,scifb";
-+			reg = <0 0xe6c20000 0 0x100>;
-+			interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp2_clks R8A7744_CLK_SCIFB0>;
-+			clock-names = "sci_ick";
-+			dmas = <&dmac0 0x3d>, <&dmac0 0x3e>,
-+			       <&dmac1 0x3d>, <&dmac1 0x3e>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
-+
- 		scifb1: serial at e6c30000 {
-+			compatible = "renesas,scifb-r8a7744",
-+				     "renesas,rcar-gen2-scifb", "renesas,scifb";
- 			reg = <0 0xe6c30000 0 0x100>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp2_clks R8A7744_CLK_SCIFB1>;
-+			clock-names = "sci_ick";
-+			dmas = <&dmac0 0x19>, <&dmac0 0x1a>,
-+			       <&dmac1 0x19>, <&dmac1 0x1a>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
-+
-+		scifb2: serial at e6ce0000 {
-+			compatible = "renesas,scifb-r8a7744",
-+				     "renesas,rcar-gen2-scifb", "renesas,scifb";
-+			reg = <0 0xe6ce0000 0 0x100>;
-+			interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp2_clks R8A7744_CLK_SCIFB2>;
-+			clock-names = "sci_ick";
-+			dmas = <&dmac0 0x1d>, <&dmac0 0x1e>,
-+			       <&dmac1 0x1d>, <&dmac1 0x1e>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
- 		};
- 
- 		scif0: serial at e6e60000 {
-@@ -399,18 +520,131 @@
- 			clocks = <&mstp7_clks R8A7744_CLK_SCIF0>,
- 				 <&zs_clk>, <&scif_clk>;
- 			clock-names = "sci_ick", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x29>, <&dmac0 0x2a>,
-+			       <&dmac1 0x29>, <&dmac1 0x2a>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&cpg_clocks>;
- 			status = "disabled";
- 		};
- 
- 		scif1: serial at e6e68000 {
-+			compatible = "renesas,scif-r8a7744",
-+				     "renesas,rcar-gen2-scif", "renesas,scif";
- 			reg = <0 0xe6e68000 0 0x40>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp7_clks R8A7744_CLK_SCIF1>,
-+				 <&zs_clk>, <&scif_clk>;
-+			clock-names = "sci_ick", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x2d>, <&dmac0 0x2e>,
-+			       <&dmac1 0x2d>, <&dmac1 0x2e>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
-+
-+		scif2: serial at e6e58000 {
-+			compatible = "renesas,scif-r8a7744",
-+				     "renesas,rcar-gen2-scif", "renesas,scif";
-+			reg = <0 0xe6e58000 0 0x40>;
-+			interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp7_clks R8A7744_CLK_SCIF2>,
-+				 <&zs_clk>, <&scif_clk>;
-+			clock-names = "sci_ick", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x2b>, <&dmac0 0x2c>,
-+			       <&dmac1 0x2b>, <&dmac1 0x2c>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
-+
-+		scif3: serial at e6ea8000 {
-+			compatible = "renesas,scif-r8a7744",
-+				     "renesas,rcar-gen2-scif", "renesas,scif";
-+			reg = <0 0xe6ea8000 0 0x40>;
-+			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp7_clks R8A7744_CLK_SCIF3>,
-+				 <&zs_clk>, <&scif_clk>;
-+			clock-names = "sci_ick", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x2f>, <&dmac0 0x30>,
-+			       <&dmac1 0x2f>, <&dmac1 0x30>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
-+
-+		scif4: serial at e6ee0000 {
-+			compatible = "renesas,scif-r8a7744",
-+				     "renesas,rcar-gen2-scif", "renesas,scif";
-+			reg = <0 0xe6ee0000 0 0x40>;
-+			interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp7_clks R8A7744_CLK_SCIF4>,
-+				 <&zs_clk>, <&scif_clk>;
-+			clock-names = "sci_ick", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0xfb>, <&dmac0 0xfc>,
-+			       <&dmac1 0xfb>, <&dmac1 0xfc>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
-+
-+		scif5: serial at e6ee8000 {
-+			compatible = "renesas,scif-r8a7744",
-+				     "renesas,rcar-gen2-scif", "renesas,scif";
-+			reg = <0 0xe6ee8000 0 0x40>;
-+			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp7_clks R8A7744_CLK_SCIF5>,
-+				 <&zs_clk>, <&scif_clk>;
-+			clock-names = "sci_ick", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0xfd>, <&dmac0 0xfe>,
-+			       <&dmac1 0xfd>, <&dmac1 0xfe>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
-+
-+		hscif0: serial at e62c0000 {
-+			compatible = "renesas,hscif-r8a7744",
-+				     "renesas,rcar-gen2-hscif", "renesas,hscif";
-+			reg = <0 0xe62c0000 0 0x60>;
-+			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp7_clks R8A7744_CLK_HSCIF0>,
-+				 <&zs_clk>, <&scif_clk>;
-+			clock-names = "sci_ick", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x39>, <&dmac0 0x3a>,
-+			       <&dmac1 0x39>, <&dmac1 0x3a>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
- 		};
- 
- 		hscif1: serial at e62c8000 {
-+			compatible = "renesas,hscif-r8a7744",
-+				     "renesas,rcar-gen2-hscif", "renesas,hscif";
- 			reg = <0 0xe62c8000 0 0x60>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp7_clks R8A7744_CLK_HSCIF1>,
-+				 <&zs_clk>, <&scif_clk>;
-+			clock-names = "sci_ick", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x4d>, <&dmac0 0x4e>,
-+			       <&dmac1 0x4d>, <&dmac1 0x4e>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
-+		};
-+
-+		hscif2: serial at e62d0000 {
-+			compatible = "renesas,hscif-r8a7744",
-+				     "renesas,rcar-gen2-hscif", "renesas,hscif";
-+			reg = <0 0xe62d0000 0 0x60>;
-+			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp7_clks R8A7744_CLK_HSCIF2>,
-+				 <&zs_clk>, <&scif_clk>;
-+			clock-names = "sci_ick", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x3b>, <&dmac0 0x3c>,
-+			       <&dmac1 0x3b>, <&dmac1 0x3c>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
- 		};
- 
- 		can0: can at e6e80000 {
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-rcar.txt b/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
+index f6cb9e5..0d1aa9e 100644
+--- a/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
++++ b/Documentation/devicetree/bindings/i2c/i2c-rcar.txt
+@@ -3,6 +3,7 @@ I2C for R-Car platforms
+ Required properties:
+ - compatible:
+ 	"renesas,i2c-r8a7743" if the device is a part of a R8A7743 SoC.
++	"renesas,i2c-r8a7744" if the device is a part of a R8A7744 SoC.
+ 	"renesas,i2c-r8a7745" if the device is a part of a R8A7745 SoC.
+ 	"renesas,i2c-r8a7778" if the device is a part of a R8A7778 SoC.
+ 	"renesas,i2c-r8a7779" if the device is a part of a R8A7779 SoC.
 -- 
 2.7.4
