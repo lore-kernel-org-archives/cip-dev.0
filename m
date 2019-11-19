@@ -1,46 +1,64 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Tue, 19 Nov 2019 13:35:59 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 20/31] mmc: tmio: Remove redundant check
-	of mmc->slot.cd_irq
+Date: Tue, 19 Nov 2019 13:36:00 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 21/31] mmc: host: tmio: disable clocks
+	when unbinding
 In-Reply-To: <1574170570-15179-1-git-send-email-biju.das@bp.renesas.com>
 References: <1574170570-15179-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1574170570-15179-21-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1574170570-15179-22-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Ulf Hansson <ulf.hansson@linaro.org>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit efd7be7bfc8eb8942ba3dc319f323cfd0eda99e2 upstream.
+commit dfcba5ffca989749d1fc49d5b82a2d007b1295b7 upstream.
 
-To validate whether native hotplug needs to be used, the tmio driver checks
-whether the mmc->slot.cd_irq has been successfully assigned.
+Create a helper function to disable clocks and use it in remove(), too.
+Now, clk_summary in debugfs reports the clocks as disabled and
+unprepared after unbinding.
 
-This check is redundant at its current place in tmio_mmc_host_probe(), as
-the mmc core assigns mmc->slot.cd_irq a valid value first when
-mmc_gpiod_request_cd_irq() is called. Therefore, let's just remove the
-check for now, as that also removes a layering violation of the tmio driver
-accessing core specific data via ->slot.cd_irq.
-
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/mmc/host/tmio_mmc_pio.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/mmc/host/tmio_mmc_pio.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 2736edf..14a094c 100644
+index 14a094c..eaed795 100644
 --- a/drivers/mmc/host/tmio_mmc_pio.c
 +++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -1177,8 +1177,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
+@@ -902,6 +902,12 @@ static int tmio_mmc_clk_enable(struct tmio_mmc_host *host)
+ 	return host->clk_enable(host);
+ }
  
- 	_host->native_hotplug = !(pdata->flags & TMIO_MMC_USE_GPIO_CD ||
- 				  mmc->caps & MMC_CAP_NEEDS_POLL ||
--				  mmc->caps & MMC_CAP_NONREMOVABLE ||
--				  mmc->slot.cd_irq >= 0);
-+				  !mmc_card_is_removable(mmc));
++static void tmio_mmc_clk_disable(struct tmio_mmc_host *host)
++{
++	if (host->clk_disable)
++		host->clk_disable(host);
++}
++
+ static void tmio_mmc_power_on(struct tmio_mmc_host *host, unsigned short vdd)
+ {
+ 	struct mmc_host *mmc = host->mmc;
+@@ -1286,6 +1292,8 @@ void tmio_mmc_host_remove(struct tmio_mmc_host *host)
  
- 	/*
- 	 * On Gen2+, eMMC with NONREMOVABLE currently fails because native
+ 	pm_runtime_put_sync(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
++
++	tmio_mmc_clk_disable(host);
+ }
+ EXPORT_SYMBOL(tmio_mmc_host_remove);
+ 
+@@ -1300,8 +1308,7 @@ int tmio_mmc_host_runtime_suspend(struct device *dev)
+ 	if (host->clk_cache)
+ 		tmio_mmc_clk_stop(host);
+ 
+-	if (host->clk_disable)
+-		host->clk_disable(host);
++	tmio_mmc_clk_disable(host);
+ 
+ 	return 0;
+ }
 -- 
 2.7.4
