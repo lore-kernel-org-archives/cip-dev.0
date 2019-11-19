@@ -1,83 +1,46 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Tue, 19 Nov 2019 13:35:58 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 19/31] mmc: host: tmio: drop superfluous
-	exit path
+Date: Tue, 19 Nov 2019 13:35:59 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 20/31] mmc: tmio: Remove redundant check
+	of mmc->slot.cd_irq
 In-Reply-To: <1574170570-15179-1-git-send-email-biju.das@bp.renesas.com>
 References: <1574170570-15179-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1574170570-15179-20-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1574170570-15179-21-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
 
-commit ad7014b3949b6c2b6ce46a546d6d204b5643e621 upstream.
+commit efd7be7bfc8eb8942ba3dc319f323cfd0eda99e2 upstream.
 
-The probe exit path on error does nothing since commit 94b110aff8679b
-("mmc: tmio: add tmio_mmc_host_alloc/free()"), so we can bail out
-immediately.
+To validate whether native hotplug needs to be used, the tmio driver checks
+whether the mmc->slot.cd_irq has been successfully assigned.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+This check is redundant at its current place in tmio_mmc_host_probe(), as
+the mmc core assigns mmc->slot.cd_irq a valid value first when
+mmc_gpiod_request_cd_irq() is called. Therefore, let's just remove the
+check for now, as that also removes a layering violation of the tmio driver
+accessing core specific data via ->slot.cd_irq.
+
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/mmc/host/tmio_mmc_pio.c | 20 ++++++--------------
- 1 file changed, 6 insertions(+), 14 deletions(-)
+ drivers/mmc/host/tmio_mmc_pio.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 9854d0f..2736edf 100644
+index 2736edf..14a094c 100644
 --- a/drivers/mmc/host/tmio_mmc_pio.c
 +++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -1145,7 +1145,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
+@@ -1177,8 +1177,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
  
- 	ret = mmc_of_parse(mmc);
- 	if (ret < 0)
--		goto host_free;
-+		return ret;
- 
- 	_host->pdata = pdata;
- 	platform_set_drvdata(pdev, mmc);
-@@ -1155,14 +1155,12 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 
- 	ret = tmio_mmc_init_ocr(_host);
- 	if (ret < 0)
--		goto host_free;
-+		return ret;
- 
- 	_host->ctl = devm_ioremap(&pdev->dev,
- 				  res_ctl->start, resource_size(res_ctl));
--	if (!_host->ctl) {
--		ret = -ENOMEM;
--		goto host_free;
--	}
-+	if (!_host->ctl)
-+		return -ENOMEM;
- 
- 	tmio_mmc_ops.card_busy = _host->card_busy;
- 	tmio_mmc_ops.start_signal_voltage_switch = _host->start_signal_voltage_switch;
-@@ -1200,10 +1198,8 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 	 * Check the sanity of mmc->f_min to prevent tmio_mmc_set_clock() from
- 	 * looping forever...
- 	 */
--	if (mmc->f_min == 0) {
--		ret = -EINVAL;
--		goto host_free;
--	}
-+	if (mmc->f_min == 0)
-+		return -EINVAL;
+ 	_host->native_hotplug = !(pdata->flags & TMIO_MMC_USE_GPIO_CD ||
+ 				  mmc->caps & MMC_CAP_NEEDS_POLL ||
+-				  mmc->caps & MMC_CAP_NONREMOVABLE ||
+-				  mmc->slot.cd_irq >= 0);
++				  !mmc_card_is_removable(mmc));
  
  	/*
- 	 * While using internal tmio hardware logic for card detection, we need
-@@ -1268,10 +1264,6 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 	}
- 
- 	return 0;
--
--host_free:
--
--	return ret;
- }
- EXPORT_SYMBOL(tmio_mmc_host_probe);
- 
+ 	 * On Gen2+, eMMC with NONREMOVABLE currently fails because native
 -- 
 2.7.4
