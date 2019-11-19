@@ -1,46 +1,36 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Tue, 19 Nov 2019 14:53:31 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 06/17] ARM: dts: r8a7744: Add Ethernet
-	AVB support
+Date: Tue, 19 Nov 2019 14:53:32 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 07/17] dt-bindings: apmu: Document
+	r8a7744 support
 In-Reply-To: <1574175222-52858-1-git-send-email-biju.das@bp.renesas.com>
 References: <1574175222-52858-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1574175222-52858-7-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1574175222-52858-8-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit d94369fe69fd235e2109331c41f28dcfcfac28eb upstream.
+commit fae210bb5bfbd29118e18881f7108c6bd59293b9 upstream.
 
-Add Ethernet AVB support for R8A7744 SoC.
+Document APMU and SMP enable method for RZ/G1N (R8A7744) SoC.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[biju: removed resets property. Updated power-domains and clocks properties]
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7744.dtsi | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/power/renesas,apmu.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index 3e125f6..b0c4be2 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -349,10 +349,15 @@
- 		};
- 
- 		avb: ethernet at e6800000 {
-+			compatible = "renesas,etheravb-r8a7744",
-+				     "renesas,etheravb-rcar-gen2";
- 			reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
-+			interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp8_clks R8A7744_CLK_ETHERAVB>;
-+			power-domains = <&cpg_clocks>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			/* placeholder */
-+			status = "disabled";
- 		};
- 
- 		scifb1: serial at e6c30000 {
+diff --git a/Documentation/devicetree/bindings/power/renesas,apmu.txt b/Documentation/devicetree/bindings/power/renesas,apmu.txt
+index e80f5f6..21157fb 100644
+--- a/Documentation/devicetree/bindings/power/renesas,apmu.txt
++++ b/Documentation/devicetree/bindings/power/renesas,apmu.txt
+@@ -8,6 +8,7 @@ Required properties:
+ - compatible: Should be "renesas,<soctype>-apmu", "renesas,apmu" as fallback.
+ 	      Examples with soctypes are:
+ 		- "renesas,r8a7743-apmu" (RZ/G1M)
++		- "renesas,r8a7744-apmu" (RZ/G1N)
+ 		- "renesas,r8a7745-apmu" (RZ/G1E)
+ 		- "renesas,r8a77470-apmu" (RZ/G1C)
+ 		- "renesas,r8a7790-apmu" (R-Car H2)
 -- 
 2.7.4
