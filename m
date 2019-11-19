@@ -1,116 +1,51 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Tue, 19 Nov 2019 13:35:40 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 01/31] mmc: tmio-mmc: add support for
-	32bit data port
+Date: Tue, 19 Nov 2019 13:35:41 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 02/31] mmc: sh_mobile_sdhi: add ocr_mask
+	option
 In-Reply-To: <1574170570-15179-1-git-send-email-biju.das@bp.renesas.com>
 References: <1574170570-15179-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1574170570-15179-2-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1574170570-15179-3-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Chris Brandt <chris.brandt@renesas.com>
 
-commit 8185e51f358a8dd4801b67e8c66f03eb9eeaba75 upstream.
+commit f19417f38264f9a2f7b4627aa4060133c237b211 upstream.
 
-For the r7s72100 SOC, the DATA_PORT register was changed to 32-bits wide.
-Therefore a new flag has been created that will allow 32-bit reads/writes
-to the DATA_PORT register instead of 16-bit (because 16-bits accesses are
-not supported).
+In moving platforms from board files to DT, there still needs to be a way
+to set the ocr_mask setting for the tmio driver during probe. Without this
+setting, the probe will fail because the supported voltages are not known.
+
+This patch will also traditional platform registration platforms to
+migrate to DT.
 
 Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-[biju: backported the upstream commit 9c284c41c0886f09e75c323a16278b6d353b0b4a]
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/mmc/host/tmio_mmc.h     | 12 ++++++++++++
- drivers/mmc/host/tmio_mmc_pio.c | 29 +++++++++++++++++++++++++++++
- include/linux/mfd/tmio.h        |  5 +++++
- 3 files changed, 46 insertions(+)
+ drivers/mmc/host/sh_mobile_sdhi.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index eafd92d..c4131d9 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -245,6 +245,12 @@ static inline u32 sd_ctrl_read16_and_16_as_32(struct tmio_mmc_host *host, int ad
- 	       readw(host->ctl + ((addr + 2) << host->bus_shift)) << 16;
- }
+diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
+index 3d186cc..9124246 100644
+--- a/drivers/mmc/host/sh_mobile_sdhi.c
++++ b/drivers/mmc/host/sh_mobile_sdhi.c
+@@ -49,6 +49,7 @@
  
-+static inline void sd_ctrl_read32_rep(struct tmio_mmc_host *host, int addr,
-+		u32 *buf, int count)
-+{
-+	readsl(host->ctl + (addr << host->bus_shift), buf, count);
-+}
-+
- static inline void sd_ctrl_write16(struct tmio_mmc_host *host, int addr, u16 val)
- {
- 	/* If there is a hook and it returns non-zero then there
-@@ -267,4 +273,10 @@ static inline void sd_ctrl_write32_as_16_and_16(struct tmio_mmc_host *host, int
- 	writew(val >> 16, host->ctl + ((addr + 2) << host->bus_shift));
- }
+ struct sh_mobile_sdhi_of_data {
+ 	unsigned long tmio_flags;
++	u32	      tmio_ocr_mask;
+ 	unsigned long capabilities;
+ 	unsigned long capabilities2;
+ 	enum dma_slave_buswidth dma_buswidth;
+@@ -370,6 +371,7 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
+ 		const struct sh_mobile_sdhi_of_data *of_data = of_id->data;
  
-+static inline void sd_ctrl_write32_rep(struct tmio_mmc_host *host, int addr,
-+		const u32 *buf, int count)
-+{
-+	writesl(host->ctl + (addr << host->bus_shift), buf, count);
-+}
-+
- #endif
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index c927916..2010372 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -393,6 +393,35 @@ static void tmio_mmc_transfer_data(struct tmio_mmc_host *host,
- 	/*
- 	 * Transfer the data
- 	 */
-+	if (host->pdata->flags & TMIO_MMC_32BIT_DATA_PORT) {
-+		u32 data = 0;
-+		u32 *buf32 = (u32 *)buf;
-+
-+		if (is_read)
-+			sd_ctrl_read32_rep(host, CTL_SD_DATA_PORT, buf32,
-+					   count >> 2);
-+		else
-+			sd_ctrl_write32_rep(host, CTL_SD_DATA_PORT, buf32,
-+					    count >> 2);
-+
-+		/* if count was multiple of 4 */
-+		if (!(count & 0x3))
-+			return;
-+
-+		buf32 += count >> 2;
-+		count %= 4;
-+
-+		if (is_read) {
-+			sd_ctrl_read32_rep(host, CTL_SD_DATA_PORT, &data, 1);
-+			memcpy(buf32, &data, count);
-+		} else {
-+			memcpy(&data, buf32, count);
-+			sd_ctrl_write32_rep(host, CTL_SD_DATA_PORT, &data, 1);
-+		}
-+
-+		return;
-+	}
-+
- 	if (is_read)
- 		sd_ctrl_read16_rep(host, CTL_SD_DATA_PORT, buf, count >> 1);
- 	else
-diff --git a/include/linux/mfd/tmio.h b/include/linux/mfd/tmio.h
-index 7a26286..fba44ab 100644
---- a/include/linux/mfd/tmio.h
-+++ b/include/linux/mfd/tmio.h
-@@ -100,6 +100,11 @@
- #define TMIO_MMC_SDIO_STATUS_QUIRK	(1 << 8)
- 
- /*
-+ * Some controllers have a 32-bit wide data port register
-+ */
-+#define TMIO_MMC_32BIT_DATA_PORT	(1 << 9)
-+
-+/*
-  * Some controllers allows to set SDx actual clock
-  */
- #define TMIO_MMC_CLK_ACTUAL		(1 << 10)
+ 		mmc_data->flags |= of_data->tmio_flags;
++		mmc_data->ocr_mask = of_data->tmio_ocr_mask;
+ 		mmc_data->capabilities |= of_data->capabilities;
+ 		mmc_data->capabilities2 |= of_data->capabilities2;
+ 		mmc_data->dma_rx_offset = of_data->dma_rx_offset;
 -- 
 2.7.4
