@@ -1,98 +1,49 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Tue, 19 Nov 2019 13:35:42 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 03/31] mmc: tmio: enhance illegal
-	sequence handling
+Date: Tue, 19 Nov 2019 13:35:43 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 04/31] mmc: tmio: document mandatory and
+	optional callbacks
 In-Reply-To: <1574170570-15179-1-git-send-email-biju.das@bp.renesas.com>
 References: <1574170570-15179-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1574170570-15179-4-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1574170570-15179-5-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Ai Kyuse <ai.kyuse.uw@renesas.com>
+From: Simon Horman <horms+renesas@verge.net.au>
 
-commit 96e0b2ba00ee5dacb12bed6585145ce784ec9153 upstream.
+commit 2f87365f832bbc26e32f23588aaeb40abe15ff0d upstream.
 
-An illegal sequence command error may occur if there is a stopbit or
-cmd_index error as well as a CRC error. The correct course of action
-is to re-enable IRQs
-
-An illegal sequence data error may occur if there is a CRC or stopbit
-error,  or underrun. In this case set data->error correctly.
-
-This is in preparation for enabling tuning support which relies on
-differentiating between illegal sequence and other errors.
-
-Signed-off-by: Ai Kyuse <ai.kyuse.uw@renesas.com>
-[simon: broken out of a larger patch]
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/mmc/host/tmio_mmc_pio.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ drivers/mmc/host/tmio_mmc.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 2010372..0775a19 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -551,7 +551,7 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host)
- 	schedule_work(&host->done);
- }
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index c4131d9..d3d24e1 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -154,8 +154,10 @@ struct tmio_mmc_host {
+ 	bool			native_hotplug;
+ 	bool			sdio_irq_enabled;
  
--static void tmio_mmc_data_irq(struct tmio_mmc_host *host)
-+static void tmio_mmc_data_irq(struct tmio_mmc_host *host, unsigned int stat)
- {
- 	struct mmc_data *data;
- 	spin_lock(&host->lock);
-@@ -560,6 +560,9 @@ static void tmio_mmc_data_irq(struct tmio_mmc_host *host)
- 	if (!data)
- 		goto out;
+-	int (*write16_hook)(struct tmio_mmc_host *host, int addr);
++	/* Mandatory callback */
+ 	int (*clk_enable)(struct tmio_mmc_host *host);
++
++	/* Optional callbacks */
+ 	unsigned int (*clk_update)(struct tmio_mmc_host *host,
+ 				   unsigned int new_clock);
+ 	void (*clk_disable)(struct tmio_mmc_host *host);
+@@ -164,6 +166,7 @@ struct tmio_mmc_host {
+ 	int (*card_busy)(struct mmc_host *mmc);
+ 	int (*start_signal_voltage_switch)(struct mmc_host *mmc,
+ 					   struct mmc_ios *ios);
++	int (*write16_hook)(struct tmio_mmc_host *host, int addr);
+ };
  
-+	if (stat & TMIO_STAT_CRCFAIL || stat & TMIO_STAT_STOPBIT_ERR ||
-+	    stat & TMIO_STAT_TXUNDERRUN)
-+		data->error = -EILSEQ;
- 	if (host->chan_tx && (data->flags & MMC_DATA_WRITE) && !host->force_pio) {
- 		u32 status = sd_ctrl_read16_and_16_as_32(host, CTL_STATUS);
- 		bool done = false;
-@@ -608,8 +611,6 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host,
- 		goto out;
- 	}
- 
--	host->cmd = NULL;
--
- 	/* This controller is sicker than the PXA one. Not only do we need to
- 	 * drop the top 8 bits of the first response word, we also need to
- 	 * modify the order of the response for short response command types.
-@@ -629,14 +630,16 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host,
- 
- 	if (stat & TMIO_STAT_CMDTIMEOUT)
- 		cmd->error = -ETIMEDOUT;
--	else if (stat & TMIO_STAT_CRCFAIL && cmd->flags & MMC_RSP_CRC)
-+	else if ((stat & TMIO_STAT_CRCFAIL && cmd->flags & MMC_RSP_CRC) ||
-+		 stat & TMIO_STAT_STOPBIT_ERR ||
-+		 stat & TMIO_STAT_CMD_IDX_ERR)
- 		cmd->error = -EILSEQ;
- 
- 	/* If there is data to handle we enable data IRQs here, and
- 	 * we will ultimatley finish the request in the data_end handler.
- 	 * If theres no data or we encountered an error, finish now.
- 	 */
--	if (host->data && !cmd->error) {
-+	if (host->data && (!cmd->error || cmd->error == -EILSEQ)) {
- 		if (host->data->flags & MMC_DATA_READ) {
- 			if (host->force_pio || !host->chan_rx)
- 				tmio_mmc_enable_mmc_irqs(host, TMIO_MASK_READOP);
-@@ -697,7 +700,7 @@ static bool __tmio_mmc_sdcard_irq(struct tmio_mmc_host *host,
- 	/* Data transfer completion */
- 	if (ireg & TMIO_STAT_DATAEND) {
- 		tmio_mmc_ack_mmc_irqs(host, TMIO_STAT_DATAEND);
--		tmio_mmc_data_irq(host);
-+		tmio_mmc_data_irq(host, status);
- 		return true;
- 	}
- 
+ struct tmio_mmc_host *tmio_mmc_host_alloc(struct platform_device *pdev);
 -- 
 2.7.4
