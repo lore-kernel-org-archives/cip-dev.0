@@ -1,51 +1,61 @@
-From: kuninori.morimoto.gx@renesas.com (Kuninori Morimoto)
-Date: 19 Nov 2019 10:24:31 +0900
-Subject: [cip-dev] [PATCH 4.19.y-cip 16/57] ASoC: add for_each_dpcm_fe()
-	macro
-In-Reply-To: <20191118153045.GB26236@duo.ucw.cz>
-References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
- <1571295929-47286-17-git-send-email-biju.das@bp.renesas.com>
- <20191020094805.GF8003@amd>
- <OSBPR01MB2103CC08EA8249635E23798EB8690@OSBPR01MB2103.jpnprd01.prod.outlook.com>
- <87a79sz1vf.wl-kuninori.morimoto.gx@renesas.com>
- <20191118153045.GB26236@duo.ucw.cz>
-Message-ID: <87wobw64kw.wl-kuninori.morimoto.gx@renesas.com>
+From: biju.das@bp.renesas.com (Biju Das)
+Date: Tue, 19 Nov 2019 08:39:20 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 36/83] mmc: sh_mobile_sdhi: add
+	ocr_mask option
+In-Reply-To: <20191108092824.GG1017@amd>
+References: <1573115572-13513-1-git-send-email-biju.das@bp.renesas.com>
+ <1573115572-13513-37-git-send-email-biju.das@bp.renesas.com>
+ <20191108092824.GG1017@amd>
+Message-ID: <OSBPR01MB2103314D422BFEBE7811C388B84C0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
+Hi Pavel,
 
-Hi Pavel
+Thanks for the feedback.
 
-> > +#define for_each_dpcm_fe(be, stream, dpcm) \
-> > +	list_for_each_entry(dpcm, &(be)->dpcm[stream].fe_clients, list_fe)
+> Subject: Re: [PATCH 4.4.y-cip 36/83] mmc: sh_mobile_sdhi: add ocr_mask
+> option
 > 
-> It should be:
+> Hi!
 > 
-> > +#define for_each_dpcm_fe(be, stream, dpcm, list_de) \
-> > +	list_for_each_entry(dpcm, &(be)->dpcm[stream].fe_clients, list_fe)
+> > commit f19417f38264f9a2f7b4627aa4060133c237b211 upstream.
+> >
+> > In moving platforms from board files to DT, there still needs to be a
+> > way to set the ocr_mask setting for the tmio driver during probe.
+> > Without this setting, the probe will fail because the supported voltages are
+> not known.
+> >
+> > This patch will also traditional platform registration platforms to
+> > migrate to DT.
 > 
-> [accessing variables not passed as macro arguments is strange/surprising].
+> This is not quite english.
+> 
+> > +++ b/drivers/mmc/host/sh_mobile_sdhi.c
+> > @@ -49,6 +49,7 @@
+> >
+> >  struct sh_mobile_sdhi_of_data {
+> >  	unsigned long tmio_flags;
+> > +	u32	      tmio_ocr_mask;
+> >  	unsigned long capabilities;
+> >  	unsigned long capabilities2;
+> >  	enum dma_slave_buswidth dma_buswidth; @@ -370,6 +371,7 @@
+> static int
+> > sh_mobile_sdhi_probe(struct platform_device *pdev)
+> >  		const struct sh_mobile_sdhi_of_data *of_data = of_id-
+> >data;
+> >
+> >  		mmc_data->flags |= of_data->tmio_flags;
+> > +		mmc_data->ocr_mask = of_data->tmio_ocr_mask;
+> >  		mmc_data->capabilities |= of_data->capabilities;
+> >  		mmc_data->capabilities2 |= of_data->capabilities2;
+> >  		mmc_data->dma_rx_offset = of_data->dma_rx_offset;
+> 
+> And as of_data->tmio_ocr_mask is never written, I don't see how this can fix
+> the problem effect.
 
-Ahh, OK. But, I would say, Yes and No.
+This patch fixes the problem on RZ/A boards.
+https://cregit.linuxsources.org/code/4.11/drivers/mmc/host/sh_mobile_sdhi.c.html
 
-Indeed, using not passed parameter in macro is strange.
-But, this time, it is used at list_for_each_entry().
-Last one is struct location/member, not parameter.
-
-In this case, in order to use properly,
-macro name is indicating "for what".
-
-We have xx_fe and xx_be.
-
-#define for_each_dpcm_fe(be, stream, _dpcm)				\
-	list_for_each_entry(_dpcm, &(be)->dpcm[stream].fe_clients, list_fe)
-
-#define for_each_dpcm_be(fe, stream, _dpcm)				\
-	list_for_each_entry(_dpcm, &(fe)->dpcm[stream].be_clients, list_be)
-
-
-
-Thank you for your help !!
-Best regards
----
-Kuninori Morimoto
+regards,
+Biju
