@@ -1,100 +1,38 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Tue, 19 Nov 2019 14:53:27 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 02/17] ARM: dts: r8a7744: Add SYS-DMAC
-	support
+Date: Tue, 19 Nov 2019 14:53:28 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 03/17] dt-bindings: gpio: rcar: Add
+	r8a7744 (RZ/G1N) support
 In-Reply-To: <1574175222-52858-1-git-send-email-biju.das@bp.renesas.com>
 References: <1574175222-52858-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1574175222-52858-3-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1574175222-52858-4-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit 484775a5a9d9875ee3b3dde22b913286d91a0c44 upstream.
+commit 9aa64f0be3c8681c66f4a9e3b6ab0c79a5e8f3ac upstream.
 
-Describe SYS-DMAC0/1 in the R8A7744 device tree.
+Renesas RZ/G1N (R8A7744) SoC GPIO blocks are identical to the R-Car Gen2
+family. Add support for its GPIO controllers.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[biju: removed resets property. Updated power-domains and clocks properties]
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- arch/arm/boot/dts/r8a7744.dtsi | 64 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
+ Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index 23afef3..18aedf3 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -198,6 +198,70 @@
- 			/* placeholder */
- 		};
+diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+index 8addadf7..52fa8e4 100644
+--- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
++++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+@@ -4,6 +4,7 @@ Required Properties:
  
-+		dmac0: dma-controller at e6700000 {
-+			compatible = "renesas,dmac-r8a7744",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe6700000 0 0x20000>;
-+			interrupts = <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12", "ch13", "ch14";
-+			clocks = <&mstp2_clks R8A7744_CLK_SYS_DMAC0>;
-+			clock-names = "fck";
-+			power-domains = <&cpg_clocks>;
-+			#dma-cells = <1>;
-+			dma-channels = <15>;
-+		};
-+
-+		dmac1: dma-controller at e6720000 {
-+			compatible = "renesas,dmac-r8a7744",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe6720000 0 0x20000>;
-+			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12", "ch13", "ch14";
-+			clocks = <&mstp2_clks R8A7744_CLK_SYS_DMAC1>;
-+			clock-names = "fck";
-+			power-domains = <&cpg_clocks>;
-+			#dma-cells = <1>;
-+			dma-channels = <15>;
-+		};
-+
- 		avb: ethernet at e6800000 {
- 			reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
- 			#address-cells = <1>;
+   - compatible: should contain one or more of the following:
+     - "renesas,gpio-r8a7743": for R8A7743 (RZ/G1M) compatible GPIO controller.
++    - "renesas,gpio-r8a7744": for R8A7744 (RZ/G1N) compatible GPIO controller.
+     - "renesas,gpio-r8a7745": for R8A7745 (RZ/G1E) compatible GPIO controller.
+     - "renesas,gpio-r8a77470": for R8A77470 (RZ/G1C) compatible GPIO controller.
+     - "renesas,gpio-r8a7778": for R8A7778 (R-Mobile M1) compatible GPIO controller.
 -- 
 2.7.4
