@@ -1,44 +1,59 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Tue, 19 Nov 2019 13:36:07 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 28/31] mmc: host: tmio: fill in response
-	from auto cmd12
+Date: Tue, 19 Nov 2019 13:36:08 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 29/31] mmc: tmio: always get number of
+	taps
 In-Reply-To: <1574170570-15179-1-git-send-email-biju.das@bp.renesas.com>
 References: <1574170570-15179-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1574170570-15179-29-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1574170570-15179-30-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
 
-commit eb7c00e1461124ad0e85f1a9a3954d7164809c13 upstream.
+commit 43b0b361b0170030603cf76f70b099f3323edcf3 upstream.
 
-After we received the dataend interrupt, R1 response register carries
-the value from the automatically generated stop command. Report that
-info back to the MMC block layer, so we will be notified in case of e.g.
-ECC errors which happened during the last transfer.
+Current code gets number of taps only once and keeps the value. This is
+not correct, we need to obtain it every time before executing tuning,
+so remove the outer if-block.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Masaharu Hayakawa <masaharu.hayakawa.ry@renesas.com>
+[wsa: extracted from a larger patch and reworded commit message]
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/mmc/host/tmio_mmc_pio.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/mmc/host/tmio_mmc_pio.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 4faacd5..163646f 100644
+index 163646f..bcca0e2 100644
 --- a/drivers/mmc/host/tmio_mmc_pio.c
 +++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -556,6 +556,9 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host)
- 			dev_err(&host->pdev->dev, "unsupported stop: CMD%u,0x%x. We did CMD12,0\n",
- 				stop->opcode, stop->arg);
+@@ -817,16 +817,14 @@ static int tmio_mmc_execute_tuning(struct mmc_host *mmc, u32 opcode)
+ 	struct tmio_mmc_host *host = mmc_priv(mmc);
+ 	int i, ret = 0;
  
-+		/* fill in response from auto CMD12 */
-+		stop->resp[0] = sd_ctrl_read16_and_16_as_32(host, CTL_RESPONSE);
-+
- 		sd_ctrl_write16(host, CTL_STOP_INTERNAL_ACTION, 0);
- 	}
+-	if (!host->tap_num) {
+-		if (!host->init_tuning || !host->select_tuning)
+-			/* Tuning is not supported */
+-			goto out;
++	if (!host->init_tuning || !host->select_tuning)
++		/* Tuning is not supported */
++		goto out;
  
+-		host->tap_num = host->init_tuning(host);
+-		if (!host->tap_num)
+-			/* Tuning is not supported */
+-			goto out;
+-	}
++	host->tap_num = host->init_tuning(host);
++	if (!host->tap_num)
++		/* Tuning is not supported */
++		goto out;
+ 
+ 	if (host->tap_num * 2 >= sizeof(host->taps) * BITS_PER_BYTE) {
+ 		dev_warn_once(&host->pdev->dev,
 -- 
 2.7.4
