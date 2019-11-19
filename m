@@ -1,63 +1,79 @@
-From: gregkh@linuxfoundation.org (Greg Kroah-Hartman)
-Date: Tue, 19 Nov 2019 13:29:09 +0100
-Subject: [cip-dev] [PATCH 4.19 000/422] 4.19.85-stable review
-In-Reply-To: <TYAPR01MB22854E4F20C28F3A10DA65E3B74C0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-References: <20191119051400.261610025@linuxfoundation.org>
- <TYAPR01MB22854E4F20C28F3A10DA65E3B74C0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-Message-ID: <20191119122909.GC1913916@kroah.com>
+From: biju.das@bp.renesas.com (Biju Das)
+Date: Tue, 19 Nov 2019 13:35:39 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 00/31] Add RZ/G1C SD/eMMC support
+Message-ID: <1574170570-15179-1-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Tue, Nov 19, 2019 at 08:54:25AM +0000, Chris Paterson wrote:
-> Hello Greg, all,
-> 
-> > From: stable-owner at vger.kernel.org <stable-owner@vger.kernel.org> On
-> > Behalf Of Greg Kroah-Hartman
-> > Sent: 19 November 2019 05:13
-> > 
-> > This is the start of the stable review cycle for the 4.19.85 release.
-> > There are 422 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> 
-> I'm seeing some build issues with module compilation with this release (1b1960cc Linux 4.19.85-rc1), I also saw them with the previous two versions of Linux 4.19.85-rc1 (cd21ecdb and 1fd0ac64).
-> 
-> Full log available on GitLab [0]. Build conf [1].
-> [0] https://gitlab.com/cip-playground/linux-stable-rc-ci/-/jobs/354591285
-> [1] https://gitlab.com/cip-playground/linux-stable-rc-ci/-/jobs/354591285/artifacts/file/output/4.19.85-rc1_1b1960cc7/x86/siemens_iot2000.config/config/.config
-> 
-> Main error below:
-> 
-> 3907   CC [M]  drivers/net/ethernet/mellanox/mlx4/main.o
-> 3908   LD [M]  fs/ntfs/ntfs.o
-> 3909   CC [M]  drivers/net/ethernet/intel/i40evf/i40e_txrx.o
-> 3910   CC [M]  drivers/usb/musb/musb_core.o
-> 3911   CC [M]  drivers/net/ethernet/nvidia/forcedeth.o
-> 3912   CC [M]  fs/udf/balloc.o
-> 3913   CC [M]  drivers/net/ethernet/intel/fm10k/fm10k_debugfs.o
-> 3914   CC [M]  fs/udf/dir.o
-> 3915   CC [M]  drivers/net/ethernet/broadcom/bnx2x/bnx2x_vfpf.o
-> 3916   CC [M]  drivers/net/ethernet/intel/i40e/i40e_ptp.o
-> 3917 drivers/net/ethernet/mellanox/mlx4/main.c: In function 'mlx4_init_one':
-> 3918 drivers/net/ethernet/mellanox/mlx4/main.c:3985:2: error: implicit declaration of function 'devlink_reload_enable'; did you mean 'devlink_region_create'? [-Werror=implicit-function-declaration]
-> 3919   devlink_reload_enable(devlink);
-> 3920   ^~~~~~~~~~~~~~~~~~~~~
-> 3921   devlink_region_create
-> 3922   CC [M]  drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.o
-> 3923 drivers/net/ethernet/mellanox/mlx4/main.c: In function 'mlx4_remove_one':
-> 3924 drivers/net/ethernet/mellanox/mlx4/main.c:4097:2: error: implicit declaration of function 'devlink_reload_disable'; did you mean 'devlink_region_destroy'? [-Werror=implicit-function-declaration]
-> 3925   devlink_reload_disable(devlink);
-> 3926   ^~~~~~~~~~~~~~~~~~~~~~
-> 3927   devlink_region_destroy
-> 3928   CC [M]  drivers/net/ethernet/packetengines/hamachi.o
-> 3929   CC [M]  fs/udf/file.o
-> 3930   LD [M]  drivers/net/ethernet/intel/fm10k/fm10k.o
-> 
-> I haven't tried to trace the issue further yet, sorry.
+This patch series add SD/eMMC support support for RZ/G1C sbc.
 
-Any chance you can bisect this?  I don't see any obvious reason why this
-error should be happening, and it isn't showing up here :(
+RZ/G1C eMMC IP is different from other RZ/G1 SoC's. It is having an 
+internal DMA for data transfer which is similar to R-Car Gen3.
 
-thanks,
+Support for internal DMAC is added in 4.14 kernel and support for 
+RZ/G1C added on 4.20 kernel.
 
-greg k-h
+Backported the relevent patches to linux-4.4.y-cip.
+
+This patch series is based on linux-4.4.y-cip and all the patches
+in this series are cherry-picked from linux rc tree.
+
+V1-->V2
+  * Incorporated pavel's review comments.
+  https://lists.cip-project.org/pipermail/cip-dev/2019-November/003770.html
+
+Ai Kyuse (3):
+  mmc: tmio: enhance illegal sequence handling
+  mmc: tmio: Add hw reset support
+  mmc: tmio: Add tuning support
+
+Chris Brandt (2):
+  mmc: tmio-mmc: add support for 32bit data port
+  mmc: sh_mobile_sdhi: add ocr_mask option
+
+Masaharu Hayakawa (1):
+  mmc: tmio: always get number of taps
+
+Simon Horman (5):
+  mmc: tmio: document mandatory and optional callbacks
+  mmc: core: Add helper to see if a host can be retuned
+  mmc: sh_mobile_sdhi: Add tuning support
+  mmc: tmio: drop filenames from comment at top of source
+  mmc: renesas-sdhi, tmio: make dma more modular
+
+Ulf Hansson (1):
+  mmc: tmio: Remove redundant check of mmc->slot.cd_irq
+
+Wolfram Sang (19):
+  mmc: tmio: fix wrong bitmask for SDIO irqs
+  mmc: tmio: remove SDIO from TODO list
+  mmc: tmio: use SDIO master interrupt bit only when allowed
+  mmc: sh_mobile_sdhi: simplify accessing DT data
+  mmc: sh_mobile_sdhi: improve prerequisite for hw_reset
+  mmc: sh_mobile_sdhi: remove superfluous check in hw_reset
+  mmc: sh_mobile_sdhi: improve prerequisites for tuning
+  mmc: sh_mobile_sdhi: remove superfluous check in SCC error check
+  mmc: sh_mobile_sdhi: remove superfluous check in init_tuning
+  mmc: sh_mobile_sdhi: enable HS200
+  mmc: host: tmio: drop superfluous exit path
+  mmc: host: tmio: disable clocks when unbinding
+  mmc: host: tmio: refactor calls to sdio irq
+  mmc: host: tmio: SDIO_STATUS_QUIRK is rather SDIO_STATUS_SETBITS
+  mmc: tmio: discard obsolete SDIO irqs before enabling irqs
+  mmc: tmio: ensure end of DMA and SD access are in sync
+  mmc: host: tmio: use defines for CTL_STOP_INTERNAL_ACTION values
+  mmc: host: tmio: don't BUG on unsupported stop commands
+  mmc: host: tmio: fill in response from auto cmd12
+
+ drivers/mmc/host/Makefile         |   3 +-
+ drivers/mmc/host/sh_mobile_sdhi.c | 267 ++++++++++++++++++++++++++++++++++++--
+ drivers/mmc/host/tmio_mmc.c       |  10 +-
+ drivers/mmc/host/tmio_mmc.h       | 102 +++++++++------
+ drivers/mmc/host/tmio_mmc_dma.c   |  86 +++++++-----
+ drivers/mmc/host/tmio_mmc_pio.c   | 248 ++++++++++++++++++++++++++++-------
+ include/linux/mfd/tmio.h          |   7 +-
+ include/linux/mmc/host.h          |   5 +
+ 8 files changed, 588 insertions(+), 140 deletions(-)
+
+-- 
+2.7.4
