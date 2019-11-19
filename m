@@ -1,79 +1,116 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Tue, 19 Nov 2019 13:35:39 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 00/31] Add RZ/G1C SD/eMMC support
-Message-ID: <1574170570-15179-1-git-send-email-biju.das@bp.renesas.com>
+Date: Tue, 19 Nov 2019 13:35:40 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 01/31] mmc: tmio-mmc: add support for
+	32bit data port
+In-Reply-To: <1574170570-15179-1-git-send-email-biju.das@bp.renesas.com>
+References: <1574170570-15179-1-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1574170570-15179-2-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This patch series add SD/eMMC support support for RZ/G1C sbc.
+From: Chris Brandt <chris.brandt@renesas.com>
 
-RZ/G1C eMMC IP is different from other RZ/G1 SoC's. It is having an 
-internal DMA for data transfer which is similar to R-Car Gen3.
+commit 8185e51f358a8dd4801b67e8c66f03eb9eeaba75 upstream.
 
-Support for internal DMAC is added in 4.14 kernel and support for 
-RZ/G1C added on 4.20 kernel.
+For the r7s72100 SOC, the DATA_PORT register was changed to 32-bits wide.
+Therefore a new flag has been created that will allow 32-bit reads/writes
+to the DATA_PORT register instead of 16-bit (because 16-bits accesses are
+not supported).
 
-Backported the relevent patches to linux-4.4.y-cip.
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+[biju: backported the upstream commit 9c284c41c0886f09e75c323a16278b6d353b0b4a]
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+---
+ drivers/mmc/host/tmio_mmc.h     | 12 ++++++++++++
+ drivers/mmc/host/tmio_mmc_pio.c | 29 +++++++++++++++++++++++++++++
+ include/linux/mfd/tmio.h        |  5 +++++
+ 3 files changed, 46 insertions(+)
 
-This patch series is based on linux-4.4.y-cip and all the patches
-in this series are cherry-picked from linux rc tree.
-
-V1-->V2
-  * Incorporated pavel's review comments.
-  https://lists.cip-project.org/pipermail/cip-dev/2019-November/003770.html
-
-Ai Kyuse (3):
-  mmc: tmio: enhance illegal sequence handling
-  mmc: tmio: Add hw reset support
-  mmc: tmio: Add tuning support
-
-Chris Brandt (2):
-  mmc: tmio-mmc: add support for 32bit data port
-  mmc: sh_mobile_sdhi: add ocr_mask option
-
-Masaharu Hayakawa (1):
-  mmc: tmio: always get number of taps
-
-Simon Horman (5):
-  mmc: tmio: document mandatory and optional callbacks
-  mmc: core: Add helper to see if a host can be retuned
-  mmc: sh_mobile_sdhi: Add tuning support
-  mmc: tmio: drop filenames from comment at top of source
-  mmc: renesas-sdhi, tmio: make dma more modular
-
-Ulf Hansson (1):
-  mmc: tmio: Remove redundant check of mmc->slot.cd_irq
-
-Wolfram Sang (19):
-  mmc: tmio: fix wrong bitmask for SDIO irqs
-  mmc: tmio: remove SDIO from TODO list
-  mmc: tmio: use SDIO master interrupt bit only when allowed
-  mmc: sh_mobile_sdhi: simplify accessing DT data
-  mmc: sh_mobile_sdhi: improve prerequisite for hw_reset
-  mmc: sh_mobile_sdhi: remove superfluous check in hw_reset
-  mmc: sh_mobile_sdhi: improve prerequisites for tuning
-  mmc: sh_mobile_sdhi: remove superfluous check in SCC error check
-  mmc: sh_mobile_sdhi: remove superfluous check in init_tuning
-  mmc: sh_mobile_sdhi: enable HS200
-  mmc: host: tmio: drop superfluous exit path
-  mmc: host: tmio: disable clocks when unbinding
-  mmc: host: tmio: refactor calls to sdio irq
-  mmc: host: tmio: SDIO_STATUS_QUIRK is rather SDIO_STATUS_SETBITS
-  mmc: tmio: discard obsolete SDIO irqs before enabling irqs
-  mmc: tmio: ensure end of DMA and SD access are in sync
-  mmc: host: tmio: use defines for CTL_STOP_INTERNAL_ACTION values
-  mmc: host: tmio: don't BUG on unsupported stop commands
-  mmc: host: tmio: fill in response from auto cmd12
-
- drivers/mmc/host/Makefile         |   3 +-
- drivers/mmc/host/sh_mobile_sdhi.c | 267 ++++++++++++++++++++++++++++++++++++--
- drivers/mmc/host/tmio_mmc.c       |  10 +-
- drivers/mmc/host/tmio_mmc.h       | 102 +++++++++------
- drivers/mmc/host/tmio_mmc_dma.c   |  86 +++++++-----
- drivers/mmc/host/tmio_mmc_pio.c   | 248 ++++++++++++++++++++++++++++-------
- include/linux/mfd/tmio.h          |   7 +-
- include/linux/mmc/host.h          |   5 +
- 8 files changed, 588 insertions(+), 140 deletions(-)
-
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index eafd92d..c4131d9 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -245,6 +245,12 @@ static inline u32 sd_ctrl_read16_and_16_as_32(struct tmio_mmc_host *host, int ad
+ 	       readw(host->ctl + ((addr + 2) << host->bus_shift)) << 16;
+ }
+ 
++static inline void sd_ctrl_read32_rep(struct tmio_mmc_host *host, int addr,
++		u32 *buf, int count)
++{
++	readsl(host->ctl + (addr << host->bus_shift), buf, count);
++}
++
+ static inline void sd_ctrl_write16(struct tmio_mmc_host *host, int addr, u16 val)
+ {
+ 	/* If there is a hook and it returns non-zero then there
+@@ -267,4 +273,10 @@ static inline void sd_ctrl_write32_as_16_and_16(struct tmio_mmc_host *host, int
+ 	writew(val >> 16, host->ctl + ((addr + 2) << host->bus_shift));
+ }
+ 
++static inline void sd_ctrl_write32_rep(struct tmio_mmc_host *host, int addr,
++		const u32 *buf, int count)
++{
++	writesl(host->ctl + (addr << host->bus_shift), buf, count);
++}
++
+ #endif
+diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+index c927916..2010372 100644
+--- a/drivers/mmc/host/tmio_mmc_pio.c
++++ b/drivers/mmc/host/tmio_mmc_pio.c
+@@ -393,6 +393,35 @@ static void tmio_mmc_transfer_data(struct tmio_mmc_host *host,
+ 	/*
+ 	 * Transfer the data
+ 	 */
++	if (host->pdata->flags & TMIO_MMC_32BIT_DATA_PORT) {
++		u32 data = 0;
++		u32 *buf32 = (u32 *)buf;
++
++		if (is_read)
++			sd_ctrl_read32_rep(host, CTL_SD_DATA_PORT, buf32,
++					   count >> 2);
++		else
++			sd_ctrl_write32_rep(host, CTL_SD_DATA_PORT, buf32,
++					    count >> 2);
++
++		/* if count was multiple of 4 */
++		if (!(count & 0x3))
++			return;
++
++		buf32 += count >> 2;
++		count %= 4;
++
++		if (is_read) {
++			sd_ctrl_read32_rep(host, CTL_SD_DATA_PORT, &data, 1);
++			memcpy(buf32, &data, count);
++		} else {
++			memcpy(&data, buf32, count);
++			sd_ctrl_write32_rep(host, CTL_SD_DATA_PORT, &data, 1);
++		}
++
++		return;
++	}
++
+ 	if (is_read)
+ 		sd_ctrl_read16_rep(host, CTL_SD_DATA_PORT, buf, count >> 1);
+ 	else
+diff --git a/include/linux/mfd/tmio.h b/include/linux/mfd/tmio.h
+index 7a26286..fba44ab 100644
+--- a/include/linux/mfd/tmio.h
++++ b/include/linux/mfd/tmio.h
+@@ -100,6 +100,11 @@
+ #define TMIO_MMC_SDIO_STATUS_QUIRK	(1 << 8)
+ 
+ /*
++ * Some controllers have a 32-bit wide data port register
++ */
++#define TMIO_MMC_32BIT_DATA_PORT	(1 << 9)
++
++/*
+  * Some controllers allows to set SDx actual clock
+  */
+ #define TMIO_MMC_CLK_ACTUAL		(1 << 10)
 -- 
 2.7.4
