@@ -1,72 +1,49 @@
 From: kuninori.morimoto.gx@renesas.com (Kuninori Morimoto)
-Date: 19 Nov 2019 10:03:02 +0900
-Subject: [cip-dev] [PATCH 4.19.y-cip 24/57] ASoC: rsnd: rsnd_mod_name()
-	handles both name and ID
-In-Reply-To: <OSBPR01MB2103D3195402546EBB4397C5B84D0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+Date: 19 Nov 2019 10:24:31 +0900
+Subject: [cip-dev] [PATCH 4.19.y-cip 16/57] ASoC: add for_each_dpcm_fe()
+	macro
+In-Reply-To: <20191118153045.GB26236@duo.ucw.cz>
 References: <1571295929-47286-1-git-send-email-biju.das@bp.renesas.com>
- <1571295929-47286-25-git-send-email-biju.das@bp.renesas.com>
- <20191020103448.GA18709@amd>
- <OSBPR01MB2103049CFB6B4D64994D3CDEB8690@OSBPR01MB2103.jpnprd01.prod.outlook.com>
- <20191118153436.GD26236@duo.ucw.cz>
- <OSBPR01MB2103D3195402546EBB4397C5B84D0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-Message-ID: <87zhgs65kp.wl-kuninori.morimoto.gx@renesas.com>
+ <1571295929-47286-17-git-send-email-biju.das@bp.renesas.com>
+ <20191020094805.GF8003@amd>
+ <OSBPR01MB2103CC08EA8249635E23798EB8690@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+ <87a79sz1vf.wl-kuninori.morimoto.gx@renesas.com>
+ <20191118153045.GB26236@duo.ucw.cz>
+Message-ID: <87wobw64kw.wl-kuninori.morimoto.gx@renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 
-Hi Biju
+Hi Pavel
 
-> > > > > In the future, we will support BUSIFn, but it will be more
-> > > > > complicated numbering. To avoid future confusable code, this patch
-> > > > > modify
-> > > > > rsnd_mod_name() to return understandable name.
-> > > > >
-> > > > > To avoid using pointless memory, it uses static char and snprintf,
-> > > > > thus, rsnd_mod_name() user should use it immediately, and
-> > > > > shouldn't keep its pointer.
-> > > >
-> > > > No, don't do that. That's a dangerous interface.
-> > >
-> > > Can you please elaborate more on the dangerous interface ?
-> > >
-> > > > > +#define MOD_NAME_SIZE 16
-> > > > > +char *rsnd_mod_name(struct rsnd_mod *mod) {
-> > > > > +	static char name[MOD_NAME_SIZE];
-> > > > > +
-> > > > > +	/*
-> > > > > +	 * Let's use same char to avoid pointlessness memory
-> > > > > +	 * Thus, rsnd_mod_name() should be used immediately
-> > > > > +	 * Don't keep pointer
-> > > > > +	 */
-> > > > > +	if ((mod)->ops->id_sub) {
-> > > > > +		snprintf(name, MOD_NAME_SIZE, "%s[%d%d]",
-> > > > > +			 mod->ops->name,
-> > > > > +			 rsnd_mod_id(mod),
-> > > > > +			 rsnd_mod_id_sub(mod));
-> > > > > +	} else {
-> > > > > +		snprintf(name, MOD_NAME_SIZE, "%s[%d]",
-> > > > > +			 mod->ops->name,
-> > > > > +			 rsnd_mod_id(mod));
-> > > > > +	}
-> > > > > +
-> > > > > +	return name;
-> > > > > +}
-> > > >
-> > > > This is too hard to use correctly.
-> > >
-> > > Can you please suggest the correct way of doing this?
-> > 
-> > void rsnd_mod_name(char *buf, struct rsnd_mod *mod) {} would be usual
-> > way of doing it. Semantics would be similar to sprintf().
+> > +#define for_each_dpcm_fe(be, stream, dpcm) \
+> > +	list_for_each_entry(dpcm, &(be)->dpcm[stream].fe_clients, list_fe)
 > 
-> Morimoto-San, 
-> 	Please share your opinion on this.
+> It should be:
+> 
+> > +#define for_each_dpcm_fe(be, stream, dpcm, list_de) \
+> > +	list_for_each_entry(dpcm, &(be)->dpcm[stream].fe_clients, list_fe)
+> 
+> [accessing variables not passed as macro arguments is strange/surprising].
 
-rsnd_mod_name() is used for debug or error case,
-and not used in Hi frequency.
-At least, it doesn't used over 5 (= MOD_NAME_NUM) times in the same time.
-So, it is no problem *at this point*.
-But, indeed it is including potential issue...
+Ahh, OK. But, I would say, Yes and No.
+
+Indeed, using not passed parameter in macro is strange.
+But, this time, it is used at list_for_each_entry().
+Last one is struct location/member, not parameter.
+
+In this case, in order to use properly,
+macro name is indicating "for what".
+
+We have xx_fe and xx_be.
+
+#define for_each_dpcm_fe(be, stream, _dpcm)				\
+	list_for_each_entry(_dpcm, &(be)->dpcm[stream].fe_clients, list_fe)
+
+#define for_each_dpcm_be(fe, stream, _dpcm)				\
+	list_for_each_entry(_dpcm, &(fe)->dpcm[stream].be_clients, list_be)
+
+
 
 Thank you for your help !!
 Best regards
