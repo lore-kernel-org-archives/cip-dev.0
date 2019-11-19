@@ -1,40 +1,39 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Tue, 19 Nov 2019 13:35:56 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 17/31] mmc: sh_mobile_sdhi: remove
-	superfluous check in init_tuning
+Date: Tue, 19 Nov 2019 13:35:57 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 18/31] mmc: sh_mobile_sdhi: enable HS200
 In-Reply-To: <1574170570-15179-1-git-send-email-biju.das@bp.renesas.com>
 References: <1574170570-15179-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1574170570-15179-18-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1574170570-15179-19-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit 7f9096f1c89ea698c22fde91285de2ef3eabd614 upstream.
+commit b1c95170f97ef19ff63a6da1eb2c70899186aecc upstream.
 
-The function will only be available if SDR104 was detected in probe,
-so no need to check in the function itself again.
+Setup tuning when the board is HS200 enabled.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/mmc/host/sh_mobile_sdhi.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/mmc/host/sh_mobile_sdhi.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
-index 59cc513..d851535 100644
+index d851535..8e90670 100644
 --- a/drivers/mmc/host/sh_mobile_sdhi.c
 +++ b/drivers/mmc/host/sh_mobile_sdhi.c
-@@ -335,9 +335,6 @@ static unsigned int sh_mobile_sdhi_init_tuning(struct tmio_mmc_host *host)
- {
- 	struct sh_mobile_sdhi *priv;
+@@ -650,7 +650,9 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
+ 		goto efree;
  
--	if (!(host->mmc->caps & MMC_CAP_UHS_SDR104))
--		return 0;
--
- 	priv = host_to_priv(host);
+ 	/* Enable tuning iff we have an SCC and a supported mode */
+-	if (of_data && of_data->scc_offset && host->mmc->caps & MMC_CAP_UHS_SDR104) {
++	if (of_data && of_data->scc_offset &&
++	    (host->mmc->caps & MMC_CAP_UHS_SDR104 ||
++	     host->mmc->caps2 & MMC_CAP2_HS200_1_8V_SDR)) {
+ 		const struct sh_mobile_sdhi_scc *taps = of_data->taps;
+ 		bool hit = false;
  
- 	/* set sampling clock selection range */
 -- 
 2.7.4
