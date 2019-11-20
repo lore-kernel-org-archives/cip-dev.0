@@ -1,21 +1,19 @@
 From: pavel@denx.de (Pavel Machek)
-Date: Wed, 20 Nov 2019 20:28:10 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 0/5] Audio SSIU BUSIF support
-In-Reply-To: <1574264071-16816-1-git-send-email-biju.das@bp.renesas.com>
-References: <1574264071-16816-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <20191120192810.GA10588@duo.ucw.cz>
+Date: Wed, 20 Nov 2019 20:36:24 +0100
+Subject: [cip-dev] [PATCH 4.4.y-cip 0/6] Add CMT/RWDT support
+In-Reply-To: <1574268440-33507-1-git-send-email-biju.das@bp.renesas.com>
+References: <1574268440-33507-1-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <20191120193624.GC10588@duo.ucw.cz>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi!
 
-> This patch add support for SSIU BUSIF.
+> This patch series add CMT/RWDT support for RZ/G1C based iwg23s-sbc.
 > 
-> This patch series is based on linux-4.19.y-cip and all the patches
-> in this series are cherry-picked from linux rc tree.
+> Backported the relevent patches to linux-4.4.y-cip.
 
-I don't see anything obviously wrong with this series. If noone speaks
-up, I'll apply it later.
+This looks okay, too. I'll apply it if there are no objections.
 
 Best regards,
 								Pavel
@@ -28,4 +26,4 @@ Name: signature.asc
 Type: application/pgp-signature
 Size: 195 bytes
 Desc: not available
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191120/9ee974ae/attachment.sig>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191120/e9d9ee1c/attachment.sig>
