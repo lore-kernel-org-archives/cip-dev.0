@@ -1,488 +1,221 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Wed, 20 Nov 2019 15:34:30 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 4/5] ASoC: rsnd: add SSIU BUSIF support
+Date: Wed, 20 Nov 2019 15:34:27 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 1/5] ASoC: rsnd: merge .nolock_start
+	and .prepare
 In-Reply-To: <1574264071-16816-1-git-send-email-biju.das@bp.renesas.com>
 References: <1574264071-16816-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1574264071-16816-5-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1574264071-16816-2-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-commit 4e7788fb8018afbb2e34e9d59b59baea30f5b045 upstream.
+commit 6ab6a2474e0dce02f71e92adb9778a168a8931f4 upstream.
 
-Gen2 has BUSIF0-3, Gen3 has BUSIF0-7 on some SSIU.
-Current driver is assuming it is using BUSIF0 as default.
-Thus, SSI is attaching SSIU (with BUSIF0) by using rsnd_ssiu_attach().
-But, TDM split mode also needs other BUSIF to use it.
-This patch adds missing SSIU BUSIFx support.
+Main purpose of .nolock_start is we need to call
+some function without spinlock.
+OTOH we have .prepare which main purpose is
+called under atomic context.
+Then, it is called without spinlock.
 
-BUSIF is handled by SSIU instead of SSI anymore.
-Thus, its settings no longer needed on SSI node on DT.
-This patch removes its settings from Document, but driver is still
-keeping compatibility. Thus, old DT style is still working.
-But, to avoid confusing, it doesn't indicate old compatibility things on
-Document. New SoC should have SSIU on DT from this patch.
-
-1) old style DT is still supported (= no rcar_sound,ssiu node on DT)
-2) If ssiu is not indicated on playback/capture,
-   BUSIF0 will be used as default
-	playback = <&ssi3>; /* ssiu30 will be selected */
-3) you can select own ssiu
-	playback = <&ssi32 &ssi3>; /* ssiu32 will be selected */
+In summary, our main callback init/quit, and start/stop
+are called under "atomic context and with spinlock".
+And some function need to be called under
+"non-atomic context or without spinlock".
+Let's merge .nolock_start and prepare to be more clear code.
+Then, let's rename nolock_stop to cleanup
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- sound/soc/sh/rcar/core.c |   1 +
- sound/soc/sh/rcar/dma.c  |  37 ++++++++--
- sound/soc/sh/rcar/rsnd.h |   6 +-
- sound/soc/sh/rcar/ssi.c  |  22 +++---
- sound/soc/sh/rcar/ssiu.c | 178 +++++++++++++++++++++++++++++++++++++++++++----
- 5 files changed, 215 insertions(+), 29 deletions(-)
+ sound/soc/sh/rcar/core.c | 13 ++-----------
+ sound/soc/sh/rcar/dma.c  | 20 ++++++++++----------
+ sound/soc/sh/rcar/rsnd.h | 26 ++++++++++----------------
+ 3 files changed, 22 insertions(+), 37 deletions(-)
 
 diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
-index 621efc3..c660ac2 100644
+index f44ba16..def9e8b 100644
 --- a/sound/soc/sh/rcar/core.c
 +++ b/sound/soc/sh/rcar/core.c
-@@ -1093,6 +1093,7 @@ static void __rsnd_dai_probe(struct rsnd_priv *priv,
- 			break;
+@@ -876,12 +876,10 @@ static int rsnd_soc_dai_startup(struct snd_pcm_substream *substream,
+ 				struct snd_soc_dai *dai)
+ {
+ 	struct rsnd_dai *rdai = rsnd_dai_to_rdai(dai);
+-	struct rsnd_priv *priv = rsnd_rdai_to_priv(rdai);
+ 	struct rsnd_dai_stream *io = rsnd_rdai_to_io(rdai, substream);
+ 	struct snd_pcm_hw_constraint_list *constraint = &rdai->constraint;
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+ 	unsigned int max_channels = rsnd_rdai_channels_get(rdai);
+-	int ret;
+ 	int i;
  
- 		rsnd_parse_connect_ssi(rdai, playback, capture);
-+		rsnd_parse_connect_ssiu(rdai, playback, capture);
- 		rsnd_parse_connect_src(rdai, playback, capture);
- 		rsnd_parse_connect_ctu(rdai, playback, capture);
- 		rsnd_parse_connect_mix(rdai, playback, capture);
+ 	rsnd_dai_stream_init(io, substream);
+@@ -925,14 +923,7 @@ static int rsnd_soc_dai_startup(struct snd_pcm_substream *substream,
+ 				    SNDRV_PCM_HW_PARAM_RATE, -1);
+ 	}
+ 
+-	/*
+-	 * call rsnd_dai_call without spinlock
+-	 */
+-	ret = rsnd_dai_call(nolock_start, io, priv);
+-	if (ret < 0)
+-		rsnd_dai_call(nolock_stop, io, priv);
+-
+-	return ret;
++	return 0;
+ }
+ 
+ static void rsnd_soc_dai_shutdown(struct snd_pcm_substream *substream,
+@@ -945,7 +936,7 @@ static void rsnd_soc_dai_shutdown(struct snd_pcm_substream *substream,
+ 	/*
+ 	 * call rsnd_dai_call without spinlock
+ 	 */
+-	rsnd_dai_call(nolock_stop, io, priv);
++	rsnd_dai_call(cleanup, io, priv);
+ 
+ 	rsnd_dai_stream_quit(io);
+ }
 diff --git a/sound/soc/sh/rcar/dma.c b/sound/soc/sh/rcar/dma.c
-index c275635f..83bf0f6 100644
+index f8b2f8e..b5f3bf8 100644
 --- a/sound/soc/sh/rcar/dma.c
 +++ b/sound/soc/sh/rcar/dma.c
-@@ -219,7 +219,7 @@ struct dma_chan *rsnd_dma_request_channel(struct device_node *of_node,
- 	int i = 0;
- 
- 	for_each_child_of_node(of_node, np) {
--		if (i == rsnd_mod_id(mod) && (!chan))
-+		if (i == rsnd_mod_id_raw(mod) && (!chan))
- 			chan = of_dma_request_slave_channel(np, name);
- 		i++;
- 	}
-@@ -345,14 +345,16 @@ static u32 rsnd_dmapp_get_id(struct rsnd_dai_stream *io,
- 			     struct rsnd_mod *mod)
- {
- 	struct rsnd_mod *ssi = rsnd_io_to_mod_ssi(io);
-+	struct rsnd_mod *ssiu = rsnd_io_to_mod_ssiu(io);
- 	struct rsnd_mod *src = rsnd_io_to_mod_src(io);
- 	struct rsnd_mod *dvc = rsnd_io_to_mod_dvc(io);
- 	const u8 *entry = NULL;
- 	int id = 255;
- 	int size = 0;
- 
--	if (mod == ssi) {
--		int busif = rsnd_ssi_get_busif(io);
-+	if ((mod == ssi) ||
-+	    (mod == ssiu)) {
-+		int busif = rsnd_mod_id_sub(ssiu);
- 
- 		entry = gen2_id_table_ssiu;
- 		size = ARRAY_SIZE(gen2_id_table_ssiu);
-@@ -532,13 +534,14 @@ rsnd_gen2_dma_addr(struct rsnd_dai_stream *io,
- 	struct device *dev = rsnd_priv_to_dev(priv);
- 	phys_addr_t ssi_reg = rsnd_gen_get_phy_addr(priv, RSND_GEN2_SSI);
- 	phys_addr_t src_reg = rsnd_gen_get_phy_addr(priv, RSND_GEN2_SCU);
--	int is_ssi = !!(rsnd_io_to_mod_ssi(io) == mod);
-+	int is_ssi = !!(rsnd_io_to_mod_ssi(io) == mod) ||
-+		     !!(rsnd_io_to_mod_ssiu(io) == mod);
- 	int use_src = !!rsnd_io_to_mod_src(io);
- 	int use_cmd = !!rsnd_io_to_mod_dvc(io) ||
- 		      !!rsnd_io_to_mod_mix(io) ||
- 		      !!rsnd_io_to_mod_ctu(io);
- 	int id = rsnd_mod_id(mod);
--	int busif = rsnd_ssi_get_busif(io);
-+	int busif = rsnd_mod_id_sub(rsnd_io_to_mod_ssiu(io));
- 	struct dma_addr {
- 		dma_addr_t out_addr;
- 		dma_addr_t in_addr;
-@@ -622,7 +625,7 @@ static void rsnd_dma_of_path(struct rsnd_mod *this,
- 			     struct rsnd_mod **mod_from,
- 			     struct rsnd_mod **mod_to)
- {
--	struct rsnd_mod *ssi = rsnd_io_to_mod_ssi(io);
-+	struct rsnd_mod *ssi;
- 	struct rsnd_mod *src = rsnd_io_to_mod_src(io);
- 	struct rsnd_mod *ctu = rsnd_io_to_mod_ctu(io);
- 	struct rsnd_mod *mix = rsnd_io_to_mod_mix(io);
-@@ -633,6 +636,28 @@ static void rsnd_dma_of_path(struct rsnd_mod *this,
- 	struct device *dev = rsnd_priv_to_dev(priv);
- 	int nr, i, idx;
- 
-+	/*
-+	 * It should use "rcar_sound,ssiu" on DT.
-+	 * But, we need to keep compatibility for old version.
-+	 *
-+	 * If it has "rcar_sound.ssiu", it will be used.
-+	 * If not, "rcar_sound.ssi" will be used.
-+	 * see
-+	 *	rsnd_ssiu_dma_req()
-+	 *	rsnd_ssi_dma_req()
-+	 */
-+	if (rsnd_ssiu_of_node(priv)) {
-+		struct rsnd_mod *ssiu = rsnd_io_to_mod_ssiu(io);
-+
-+		/* use SSIU */
-+		ssi = ssiu;
-+		if (this == rsnd_io_to_mod_ssi(io))
-+			this = ssiu;
-+	} else {
-+		/* keep compatible, use SSI */
-+		ssi = rsnd_io_to_mod_ssi(io);
-+	}
-+
- 	if (!ssi)
- 		return;
- 
-diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
-index 0eb7098..c449d9f 100644
---- a/sound/soc/sh/rcar/rsnd.h
-+++ b/sound/soc/sh/rcar/rsnd.h
-@@ -441,6 +441,7 @@ int rsnd_runtime_is_ssi_tdm(struct rsnd_dai_stream *io);
- 	of_get_child_by_name(rsnd_priv_to_dev(priv)->of_node, node)
- #define RSND_NODE_DAI	"rcar_sound,dai"
- #define RSND_NODE_SSI	"rcar_sound,ssi"
-+#define RSND_NODE_SSIU	"rcar_sound,ssiu"
- #define RSND_NODE_SRC	"rcar_sound,src"
- #define RSND_NODE_CTU	"rcar_sound,ctu"
- #define RSND_NODE_MIX	"rcar_sound,mix"
-@@ -715,7 +716,6 @@ void rsnd_ssi_remove(struct rsnd_priv *priv);
- struct rsnd_mod *rsnd_ssi_mod_get(struct rsnd_priv *priv, int id);
- int rsnd_ssi_is_dma_mode(struct rsnd_mod *mod);
- int rsnd_ssi_use_busif(struct rsnd_dai_stream *io);
--int rsnd_ssi_get_busif(struct rsnd_dai_stream *io);
- u32 rsnd_ssi_multi_slaves_runtime(struct rsnd_dai_stream *io);
- 
- #define RSND_SSI_HDMI_PORT0	0xf0
-@@ -743,6 +743,10 @@ int rsnd_ssiu_attach(struct rsnd_dai_stream *io,
- 		     struct rsnd_mod *mod);
- int rsnd_ssiu_probe(struct rsnd_priv *priv);
- void rsnd_ssiu_remove(struct rsnd_priv *priv);
-+void rsnd_parse_connect_ssiu(struct rsnd_dai *rdai,
-+			     struct device_node *playback,
-+			     struct device_node *capture);
-+#define rsnd_ssiu_of_node(priv) rsnd_parse_of_node(priv, RSND_NODE_SSIU)
- 
- /*
-  *	R-Car SRC
-diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
-index a8509e5..d94ea47 100644
---- a/sound/soc/sh/rcar/ssi.c
-+++ b/sound/soc/sh/rcar/ssi.c
-@@ -150,11 +150,6 @@ int rsnd_ssi_use_busif(struct rsnd_dai_stream *io)
- 	return use_busif;
- }
- 
--int rsnd_ssi_get_busif(struct rsnd_dai_stream *io)
--{
--	return 0; /* BUSIF0 only for now */
--}
--
- static void rsnd_ssi_status_clear(struct rsnd_mod *mod)
- {
- 	rsnd_mod_write(mod, SSISR, 0);
-@@ -764,7 +759,7 @@ static int rsnd_ssi_common_probe(struct rsnd_mod *mod,
- {
- 	struct device *dev = rsnd_priv_to_dev(priv);
- 	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
--	int ret;
-+	int ret = 0;
- 
- 	/*
- 	 * SSIP/SSIU/IRQ are not needed on
-@@ -778,10 +773,6 @@ static int rsnd_ssi_common_probe(struct rsnd_mod *mod,
- 	 * see rsnd_ssi_pcm_new()
- 	 */
- 
--	ret = rsnd_ssiu_attach(io, mod);
--	if (ret < 0)
--		return ret;
--
- 	/*
- 	 * SSI might be called again as PIO fallback
- 	 * It is easy to manual handling for IRQ request/free
-@@ -976,6 +967,17 @@ static struct dma_chan *rsnd_ssi_dma_req(struct rsnd_dai_stream *io,
- 	int is_play = rsnd_io_is_play(io);
- 	char *name;
- 
-+	/*
-+	 * It should use "rcar_sound,ssiu" on DT.
-+	 * But, we need to keep compatibility for old version.
-+	 *
-+	 * If it has "rcar_sound.ssiu", it will be used.
-+	 * If not, "rcar_sound.ssi" will be used.
-+	 * see
-+	 *	rsnd_ssiu_dma_req()
-+	 *	rsnd_dma_of_path()
-+	 */
-+
- 	if (rsnd_ssi_use_busif(io))
- 		name = is_play ? "rxu" : "txu";
- 	else
-diff --git a/sound/soc/sh/rcar/ssiu.c b/sound/soc/sh/rcar/ssiu.c
-index ebcb826..20f7b04 100644
---- a/sound/soc/sh/rcar/ssiu.c
-+++ b/sound/soc/sh/rcar/ssiu.c
-@@ -12,6 +12,8 @@ struct rsnd_ssiu {
- 	struct rsnd_mod mod;
- 	u32 busif_status[8]; /* for BUSIF0 - BUSIF7 */
- 	unsigned int usrcnt;
-+	int id;
-+	int id_sub;
- };
- 
- #define rsnd_ssiu_nr(priv) ((priv)->ssiu_nr)
-@@ -22,12 +24,29 @@ struct rsnd_ssiu {
- 		     ((pos) = ((struct rsnd_ssiu *)(priv)->ssiu + i));	\
- 	     i++)
- 
-+/*
-+ *	SSI	Gen2		Gen3
-+ *	0	BUSIF0-3	BUSIF0-7
-+ *	1	BUSIF0-3	BUSIF0-7
-+ *	2	BUSIF0-3	BUSIF0-7
-+ *	3	BUSIF0		BUSIF0-7
-+ *	4	BUSIF0		BUSIF0-7
-+ *	5	BUSIF0		BUSIF0
-+ *	6	BUSIF0		BUSIF0
-+ *	7	BUSIF0		BUSIF0
-+ *	8	BUSIF0		BUSIF0
-+ *	9	BUSIF0-3	BUSIF0-7
-+ *	total	22		52
-+ */
-+static const int gen2_id[] = { 0, 4,  8, 12, 13, 14, 15, 16, 17, 18 };
-+static const int gen3_id[] = { 0, 8, 16, 24, 32, 40, 41, 42, 43, 44 };
-+
- static u32 *rsnd_ssiu_get_status(struct rsnd_mod *mod,
- 				 struct rsnd_dai_stream *io,
- 				 enum rsnd_mod_type type)
- {
- 	struct rsnd_ssiu *ssiu = rsnd_mod_to_ssiu(mod);
--	int busif = rsnd_ssi_get_busif(io);
-+	int busif = rsnd_mod_id_sub(mod);
- 
- 	return &ssiu->busif_status[busif];
- }
-@@ -158,7 +177,7 @@ static int rsnd_ssiu_init_gen2(struct rsnd_mod *mod,
- 
- 	if (rsnd_ssi_use_busif(io)) {
- 		int id = rsnd_mod_id(mod);
--		int busif = rsnd_ssi_get_busif(io);
-+		int busif = rsnd_mod_id_sub(mod);
- 
- 		/*
- 		 * FIXME
-@@ -255,7 +274,7 @@ static int rsnd_ssiu_start_gen2(struct rsnd_mod *mod,
- 				struct rsnd_dai_stream *io,
- 				struct rsnd_priv *priv)
- {
--	int busif = rsnd_ssi_get_busif(io);
-+	int busif = rsnd_mod_id_sub(mod);
- 
- 	if (!rsnd_ssi_use_busif(io))
- 		return 0;
-@@ -273,7 +292,7 @@ static int rsnd_ssiu_stop_gen2(struct rsnd_mod *mod,
- 			       struct rsnd_priv *priv)
- {
- 	struct rsnd_ssiu *ssiu = rsnd_mod_to_ssiu(mod);
--	int busif = rsnd_ssi_get_busif(io);
-+	int busif = rsnd_mod_id_sub(mod);
- 
- 	if (!rsnd_ssi_use_busif(io))
- 		return 0;
-@@ -289,8 +308,49 @@ static int rsnd_ssiu_stop_gen2(struct rsnd_mod *mod,
+@@ -106,9 +106,9 @@ static int rsnd_dmaen_stop(struct rsnd_mod *mod,
  	return 0;
  }
  
-+static int rsnd_ssiu_id(struct rsnd_mod *mod)
-+{
-+	struct rsnd_ssiu *ssiu = rsnd_mod_to_ssiu(mod);
-+
-+	/* see rsnd_ssiu_probe() */
-+	return ssiu->id;
-+}
-+
-+static int rsnd_ssiu_id_sub(struct rsnd_mod *mod)
-+{
-+	struct rsnd_ssiu *ssiu = rsnd_mod_to_ssiu(mod);
-+
-+	/* see rsnd_ssiu_probe() */
-+	return ssiu->id_sub;
-+}
-+
-+static struct dma_chan *rsnd_ssiu_dma_req(struct rsnd_dai_stream *io,
-+					  struct rsnd_mod *mod)
-+{
-+	struct rsnd_priv *priv = rsnd_mod_to_priv(mod);
-+	int is_play = rsnd_io_is_play(io);
-+	char *name;
-+
-+	/*
-+	 * It should use "rcar_sound,ssiu" on DT.
-+	 * But, we need to keep compatibility for old version.
-+	 *
-+	 * If it has "rcar_sound.ssiu", it will be used.
-+	 * If not, "rcar_sound.ssi" will be used.
-+	 * see
-+	 *	rsnd_ssi_dma_req()
-+	 *	rsnd_dma_of_path()
-+	 */
-+
-+	name = is_play ? "rx" : "tx";
-+
-+	return rsnd_dma_request_channel(rsnd_ssiu_of_node(priv),
-+					mod, name);
-+}
-+
- static struct rsnd_mod_ops rsnd_ssiu_ops_gen2 = {
- 	.name		= SSIU_NAME,
-+	.dma_req	= rsnd_ssiu_dma_req,
- 	.init		= rsnd_ssiu_init_gen2,
- 	.start		= rsnd_ssiu_start_gen2,
- 	.stop		= rsnd_ssiu_stop_gen2,
-@@ -305,26 +365,83 @@ static struct rsnd_mod *rsnd_ssiu_mod_get(struct rsnd_priv *priv, int id)
- 	return rsnd_mod_get((struct rsnd_ssiu *)(priv->ssiu) + id);
+-static int rsnd_dmaen_nolock_stop(struct rsnd_mod *mod,
+-				   struct rsnd_dai_stream *io,
+-				   struct rsnd_priv *priv)
++static int rsnd_dmaen_cleanup(struct rsnd_mod *mod,
++			      struct rsnd_dai_stream *io,
++			      struct rsnd_priv *priv)
+ {
+ 	struct rsnd_dma *dma = rsnd_mod_to_dma(mod);
+ 	struct rsnd_dmaen *dmaen = rsnd_dma_to_dmaen(dma);
+@@ -116,7 +116,7 @@ static int rsnd_dmaen_nolock_stop(struct rsnd_mod *mod,
+ 	/*
+ 	 * DMAEngine release uses mutex lock.
+ 	 * Thus, it shouldn't be called under spinlock.
+-	 * Let's call it under nolock_start
++	 * Let's call it under prepare
+ 	 */
+ 	if (dmaen->chan)
+ 		dma_release_channel(dmaen->chan);
+@@ -126,9 +126,9 @@ static int rsnd_dmaen_nolock_stop(struct rsnd_mod *mod,
+ 	return 0;
  }
  
--int rsnd_ssiu_attach(struct rsnd_dai_stream *io,
--		     struct rsnd_mod *ssi_mod)
-+static void rsnd_parse_connect_ssiu_compatible(struct rsnd_priv *priv,
-+					       struct rsnd_dai_stream *io)
-+{
-+	struct rsnd_mod *ssi_mod = rsnd_io_to_mod_ssi(io);
-+	struct rsnd_mod *mod;
-+	struct rsnd_ssiu *ssiu;
-+	int i;
-+
-+	if (!ssi_mod)
-+		return;
-+
-+	/* select BUSIF0 */
-+	for_each_rsnd_ssiu(ssiu, priv, i) {
-+		mod = rsnd_mod_get(ssiu);
-+
-+		if ((rsnd_mod_id(ssi_mod) == rsnd_ssiu_id(mod)) &&
-+		    (rsnd_mod_id_sub(mod) == 0))
-+			rsnd_dai_connect(mod, io, mod->type);
-+	}
-+}
-+
-+void rsnd_parse_connect_ssiu(struct rsnd_dai *rdai,
-+			     struct device_node *playback,
-+			     struct device_node *capture)
+-static int rsnd_dmaen_nolock_start(struct rsnd_mod *mod,
+-			    struct rsnd_dai_stream *io,
+-			    struct rsnd_priv *priv)
++static int rsnd_dmaen_prepare(struct rsnd_mod *mod,
++			      struct rsnd_dai_stream *io,
++			      struct rsnd_priv *priv)
  {
--	struct rsnd_priv *priv = rsnd_io_to_priv(io);
--	struct rsnd_mod *mod = rsnd_ssiu_mod_get(priv, rsnd_mod_id(ssi_mod));
-+	struct rsnd_priv *priv = rsnd_rdai_to_priv(rdai);
-+	struct device_node *node = rsnd_ssiu_of_node(priv);
-+	struct device_node *np;
-+	struct rsnd_mod *mod;
-+	struct rsnd_dai_stream *io_p = &rdai->playback;
-+	struct rsnd_dai_stream *io_c = &rdai->capture;
-+	int i;
+ 	struct rsnd_dma *dma = rsnd_mod_to_dma(mod);
+ 	struct rsnd_dmaen *dmaen = rsnd_dma_to_dmaen(dma);
+@@ -142,7 +142,7 @@ static int rsnd_dmaen_nolock_start(struct rsnd_mod *mod,
+ 	/*
+ 	 * DMAEngine request uses mutex lock.
+ 	 * Thus, it shouldn't be called under spinlock.
+-	 * Let's call it under nolock_start
++	 * Let's call it under prepare
+ 	 */
+ 	dmaen->chan = rsnd_dmaen_request_channel(io,
+ 						 dma->mod_from,
+@@ -291,8 +291,8 @@ static int rsnd_dmaen_pointer(struct rsnd_mod *mod,
  
--	rsnd_mod_confirm_ssi(ssi_mod);
-+	/* use rcar_sound,ssiu if exist */
-+	if (node) {
-+		i = 0;
-+		for_each_child_of_node(node, np) {
-+			mod = rsnd_ssiu_mod_get(priv, i);
-+			if (np == playback)
-+				rsnd_dai_connect(mod, io_p, mod->type);
-+			if (np == capture)
-+				rsnd_dai_connect(mod, io_c, mod->type);
-+			i++;
-+		}
+ static struct rsnd_mod_ops rsnd_dmaen_ops = {
+ 	.name	= "audmac",
+-	.nolock_start = rsnd_dmaen_nolock_start,
+-	.nolock_stop  = rsnd_dmaen_nolock_stop,
++	.prepare = rsnd_dmaen_prepare,
++	.cleanup = rsnd_dmaen_cleanup,
+ 	.start	= rsnd_dmaen_start,
+ 	.stop	= rsnd_dmaen_stop,
+ 	.pointer= rsnd_dmaen_pointer,
+diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
+index 7a04b19..e857311 100644
+--- a/sound/soc/sh/rcar/rsnd.h
++++ b/sound/soc/sh/rcar/rsnd.h
+@@ -295,15 +295,12 @@ struct rsnd_mod_ops {
+ 	int (*fallback)(struct rsnd_mod *mod,
+ 			struct rsnd_dai_stream *io,
+ 			struct rsnd_priv *priv);
+-	int (*nolock_start)(struct rsnd_mod *mod,
+-		    struct rsnd_dai_stream *io,
+-		    struct rsnd_priv *priv);
+-	int (*nolock_stop)(struct rsnd_mod *mod,
+-		    struct rsnd_dai_stream *io,
+-		    struct rsnd_priv *priv);
+ 	int (*prepare)(struct rsnd_mod *mod,
+ 		       struct rsnd_dai_stream *io,
+ 		       struct rsnd_priv *priv);
++	int (*cleanup)(struct rsnd_mod *mod,
++		       struct rsnd_dai_stream *io,
++		       struct rsnd_priv *priv);
+ };
  
--	return rsnd_dai_connect(mod, io, mod->type);
-+		of_node_put(node);
-+	}
-+
-+	/* Keep DT compatibility */
-+	if (!rsnd_io_to_mod_ssiu(io_p))
-+		rsnd_parse_connect_ssiu_compatible(priv, io_p);
-+	if (!rsnd_io_to_mod_ssiu(io_c))
-+		rsnd_parse_connect_ssiu_compatible(priv, io_c);
- }
+ struct rsnd_dai_stream;
+@@ -323,7 +320,7 @@ struct rsnd_mod {
+  *
+  * 0xH0000CBA
+  *
+- * A	0: nolock_start	1: nolock_stop
++ * A	0: prepare	1: cleanup
+  * B	0: init		1: quit
+  * C	0: start	1: stop
+  *
+@@ -335,8 +332,8 @@ struct rsnd_mod {
+  * H	0: pointer
+  * H	0: prepare
+  */
+-#define __rsnd_mod_shift_nolock_start	0
+-#define __rsnd_mod_shift_nolock_stop	0
++#define __rsnd_mod_shift_prepare	0
++#define __rsnd_mod_shift_cleanup	0
+ #define __rsnd_mod_shift_init		4
+ #define __rsnd_mod_shift_quit		4
+ #define __rsnd_mod_shift_start		8
+@@ -348,12 +345,11 @@ struct rsnd_mod {
+ #define __rsnd_mod_shift_fallback	28 /* always called */
+ #define __rsnd_mod_shift_hw_params	28 /* always called */
+ #define __rsnd_mod_shift_pointer	28 /* always called */
+-#define __rsnd_mod_shift_prepare	28 /* always called */
  
- int rsnd_ssiu_probe(struct rsnd_priv *priv)
- {
- 	struct device *dev = rsnd_priv_to_dev(priv);
-+	struct device_node *node;
- 	struct rsnd_ssiu *ssiu;
- 	struct rsnd_mod_ops *ops;
-+	const int *list = NULL;
- 	int i, nr, ret;
+ #define __rsnd_mod_add_probe		0
+ #define __rsnd_mod_add_remove		0
+-#define __rsnd_mod_add_nolock_start	 1
+-#define __rsnd_mod_add_nolock_stop	-1
++#define __rsnd_mod_add_prepare		 1
++#define __rsnd_mod_add_cleanup		-1
+ #define __rsnd_mod_add_init		 1
+ #define __rsnd_mod_add_quit		-1
+ #define __rsnd_mod_add_start		 1
+@@ -363,10 +359,11 @@ struct rsnd_mod {
+ #define __rsnd_mod_add_fallback		0
+ #define __rsnd_mod_add_hw_params	0
+ #define __rsnd_mod_add_pointer		0
+-#define __rsnd_mod_add_prepare		0
  
--	/* same number to SSI */
--	nr	= priv->ssi_nr;
-+	/*
-+	 * Keep DT compatibility.
-+	 * if it has "rcar_sound,ssiu", use it.
-+	 * if not, use "rcar_sound,ssi"
-+	 * see
-+	 *	rsnd_ssiu_bufsif_to_id()
-+	 */
-+	node = rsnd_ssiu_of_node(priv);
-+	if (node)
-+		nr = of_get_child_count(node);
-+	else
-+		nr = priv->ssi_nr;
-+
- 	ssiu	= devm_kcalloc(dev, nr, sizeof(*ssiu), GFP_KERNEL);
- 	if (!ssiu)
- 		return -ENOMEM;
-@@ -337,7 +454,44 @@ int rsnd_ssiu_probe(struct rsnd_priv *priv)
- 	else
- 		ops = &rsnd_ssiu_ops_gen2;
+ #define __rsnd_mod_call_probe		0
+ #define __rsnd_mod_call_remove		0
++#define __rsnd_mod_call_prepare		0
++#define __rsnd_mod_call_cleanup		1
+ #define __rsnd_mod_call_init		0
+ #define __rsnd_mod_call_quit		1
+ #define __rsnd_mod_call_start		0
+@@ -376,9 +373,6 @@ struct rsnd_mod {
+ #define __rsnd_mod_call_fallback	0
+ #define __rsnd_mod_call_hw_params	0
+ #define __rsnd_mod_call_pointer		0
+-#define __rsnd_mod_call_nolock_start	0
+-#define __rsnd_mod_call_nolock_stop	1
+-#define __rsnd_mod_call_prepare		0
  
-+	/* Keep compatibility */
-+	nr = 0;
-+	if ((node) &&
-+	    (ops == &rsnd_ssiu_ops_gen2)) {
-+		ops->id		= rsnd_ssiu_id;
-+		ops->id_sub	= rsnd_ssiu_id_sub;
-+
-+		if (rsnd_is_gen2(priv)) {
-+			list	= gen2_id;
-+			nr	= ARRAY_SIZE(gen2_id);
-+		} else if (rsnd_is_gen3(priv)) {
-+			list	= gen3_id;
-+			nr	= ARRAY_SIZE(gen3_id);
-+		} else {
-+			dev_err(dev, "unknown SSIU\n");
-+			return -ENODEV;
-+		}
-+	}
-+
- 	for_each_rsnd_ssiu(ssiu, priv, i) {
-+		if (node) {
-+			int j;
-+
-+			/*
-+			 * see
-+			 *	rsnd_ssiu_get_id()
-+			 *	rsnd_ssiu_get_id_sub()
-+			 */
-+			for (j = 0; j < nr; j++) {
-+				if (list[j] > i)
-+					break;
-+				ssiu->id	= j;
-+				ssiu->id_sub	= i - list[ssiu->id];
-+			}
-+		} else {
-+			ssiu->id = i;
-+		}
-+
- 		ret = rsnd_mod_init(priv, rsnd_mod_get(ssiu),
- 				    ops, NULL, RSND_MOD_SSIU, i);
- 		if (ret)
+ #define rsnd_mod_to_priv(mod)	((mod)->priv)
+ #define rsnd_mod_name(mod)	((mod)->ops->name)
 -- 
 2.7.4
