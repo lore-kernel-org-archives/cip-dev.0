@@ -1,37 +1,95 @@
-From: pavel@denx.de (Pavel Machek)
-Date: Tue, 19 Nov 2019 23:27:57 +0100
-Subject: [cip-dev] Renesas changes pending in v4.19.85-rc
-Message-ID: <20191119222757.GA8413@amd>
+From: naresh.kamboju@linaro.org (Naresh Kamboju)
+Date: Wed, 20 Nov 2019 10:27:44 +0530
+Subject: [cip-dev] [PATCH 4.19 000/422] 4.19.85-stable review
+In-Reply-To: <20191119181619.GB2283647@kroah.com>
+References: <20191119051400.261610025@linuxfoundation.org>
+ <TYAPR01MB22854E4F20C28F3A10DA65E3B74C0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+ <20191119122909.GC1913916@kroah.com>
+ <TYAPR01MB228560FC98FFD1D449FA4EC2B74C0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+ <20191119154839.GB1982025@kroah.com>
+ <TYAPR01MB2285698B8E0F38B9EEF47128B74C0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+ <20191119165207.GA2071545@kroah.com> <20191119180002.GA17608@roeck-us.net>
+ <20191119181619.GB2283647@kroah.com>
+Message-ID: <CA+G9fYufKfsvtHHTmc+yODAeqhE4qego2R3Kd3V=4kr301M9fA@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi!
+On Tue, 19 Nov 2019 at 23:46, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+>
+> Ok, I've now done just that, and pushed out a -rc4.
 
-v4.19.85-rc (available at
-git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-)
+Results from Linaro?s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-contains at least 6 patches that look relevant to Renesas
-boards. They look ok to me, but you know more about Renesas hardware
-than i do, and maybe second set of eyes would be useful. (Also... you
-will not have to backport these :-) )
+Summary
+------------------------------------------------------------------------
 
- | e80fc88a837a 441f61e3aa9e | ARM: dts: rcar: Correct SATA device sizes to 2 MiB
- | fd2d5f44efa2 e3da41a6c28f | arm64: dts: renesas: salvator-common: adv748x: Override secondary addresses
- | 0872c56d9d73 4d76ad7d9de0 | arm64: dts: renesas: r8a77965: Attach the SYS-DMAC to the IPMMU
- | 3d9c5d05904b 99584d93e301 | arm64: dts: renesas: r8a77965: Fix HS-USB compatible
- | 070df3e61d15 7a590fe31748 | arm64: dts: renesas: r8a77965: Fix clock/reset for usb2_phy1
- | f2ecd2865105 09938ea9d136 | phy: renesas: rcar-gen3-usb2: fix vbus_ctrl for role sysfs
+kernel: 4.19.85-rc4
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+git branch: linux-4.19.y
+git commit: d0112da1f7e63d8c9a40263ced73eb673177a053
+git describe: v4.19.84-420-gd0112da1f7e6
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/build/v4.19.84-420-gd0112da1f7e6
 
-Best regards,
-									Pavel
+No regressions (compared to build v4.19.84)
+
+No fixes (compared to build v4.19.84)
+
+Ran 23846 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* build
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-dio-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* perf
+* spectre-meltdown-checker-test
+* v4l2-compliance
+* ltp-fs-tests
+* network-basic-tests
+* ltp-open-posix-tests
+* ssuite
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+* kvm-unit-tests
+
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 181 bytes
-Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191119/c53c9365/attachment.sig>
+Linaro LKFT
+https://lkft.linaro.org
