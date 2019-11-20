@@ -1,37 +1,31 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Wed, 20 Nov 2019 16:47:20 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 6/6] ARM: dts: iwg23s-sbc: Enable cmt0
-In-Reply-To: <1574268440-33507-1-git-send-email-biju.das@bp.renesas.com>
-References: <1574268440-33507-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1574268440-33507-7-git-send-email-biju.das@bp.renesas.com>
+From: pavel@denx.de (Pavel Machek)
+Date: Wed, 20 Nov 2019 20:28:10 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 0/5] Audio SSIU BUSIF support
+In-Reply-To: <1574264071-16816-1-git-send-email-biju.das@bp.renesas.com>
+References: <1574264071-16816-1-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <20191120192810.GA10588@duo.ucw.cz>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit b5079d767b881b0f516df6627e0c4297137fa5d0 upstream.
+Hi!
 
-This patch enables cmt0 support on the iWave iwg23s sbc.
+> This patch add support for SSIU BUSIF.
+> 
+> This patch series is based on linux-4.19.y-cip and all the patches
+> in this series are cherry-picked from linux rc tree.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+I don't see anything obviously wrong with this series. If noone speaks
+up, I'll apply it later.
 
-diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-index 6cae910..8c9c312d 100644
---- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-+++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-@@ -44,6 +44,10 @@
- 	};
- };
- 
-+&cmt0 {
-+	status = "okay";
-+};
-+
- &ehci1 {
- 	status = "okay";
- };
+Best regards,
+								Pavel
 -- 
-2.7.4
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 195 bytes
+Desc: not available
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191120/9ee974ae/attachment.sig>
