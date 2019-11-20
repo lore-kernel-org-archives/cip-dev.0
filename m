@@ -1,58 +1,134 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Wed, 20 Nov 2019 14:55:19 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 08/17] ARM: dts: r8a7744: Add SMP
-	support
-In-Reply-To: <20191120144402.GC4940@duo.ucw.cz>
-References: <1574175222-52858-1-git-send-email-biju.das@bp.renesas.com>
- <1574175222-52858-9-git-send-email-biju.das@bp.renesas.com>
- <20191120143601.GA4940@duo.ucw.cz>
- <OSBPR01MB21036B733D92772413ABF197B84F0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
- <20191120144402.GC4940@duo.ucw.cz>
-Message-ID: <OSBPR01MB210372DD404CA76A6B1FFF72B84F0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+Date: Wed, 20 Nov 2019 15:34:29 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 3/5] ASoC: rsnd: add .get_id/.get_id_sub
+In-Reply-To: <1574264071-16816-1-git-send-email-biju.das@bp.renesas.com>
+References: <1574264071-16816-1-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1574264071-16816-4-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
+commit c16015f36cc128244c910152663de45c3b99f551 upstream.
 
-> -----Original Message-----
-> From: Pavel Machek <pavel@denx.de>
-> Sent: Wednesday, November 20, 2019 2:44 PM
-> To: Biju Das <biju.das@bp.renesas.com>
-> Cc: Pavel Machek <pavel@denx.de>; cip-dev at lists.cip-project.org; Nobuhiro
-> Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>; Chris Paterson
-> <Chris.Paterson2@renesas.com>; Fabrizio Castro
-> <fabrizio.castro@bp.renesas.com>
-> Subject: Re: [PATCH 4.4.y-cip 08/17] ARM: dts: r8a7744: Add SMP support
-> 
-> Hi!
-> 
-> > > > +			clock-latency = <300000>; /* 300 us */
-> > > > +			power-domains = <&cpg_clocks>;
-> > > > +			next-level-cache = <&L2_CA15>;
-> > > > +
-> > > > +			/* kHz - uV - OPPs unknown yet */
-> > > > +			operating-points = <1500000 1000000>,
-> > > > +					   <1312500 1000000>,
-> > > > +					   <1125000 1000000>,
-> > > > +					   < 937500 1000000>,
-> > > > +					   < 750000 1000000>,
-> > > > +					   < 375000 1000000>;
-> > > > +		};
-> > >
-> > > Does this mean this is working progress and voltages will be lowered
-> > > for lower frequencies as testing proceeds?
-> >
-> > It supports only DFS not DVFS(ie, by controlling CPUFREQ register you
-> > can control the CPU frequency.)
-> 
-> If it does not support voltage scaling, is the /* kHz - uV - OPPs unknown yet
-> */ comment up-to-date? Would something like /* hardware does not
-> support voltage scaling */ be more useful?
+ID for CTU and SSIU are confusable.
+1 CTU has 4 sub nodes. This means, CTU0 has CTU01 - CTU03, CTU1 has
+CTU10 - CTU13. SSIU is more confusable. Gen2 SSIU has BUSIF0-3, Gen3
+SSIU has BUSIF0-7, but not for all SSIU.
+In rsnd driver, each mod drivers are assuming rsnd_mod_id() returns
+main device ID (In CTU case CTU0-1, SSIU case SSIU0-9), not serial
+number.
+This patch adds new .id/.id_sub to handling more detail ID.
 
-Yes true. As per the manual,  " Automatic transmission for PMIC control (DVFS) is not available because the RZ/G series products do not
-support the DVFS function". 
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+---
+ sound/soc/sh/rcar/core.c | 21 +++++++++++++++++++++
+ sound/soc/sh/rcar/ctu.c  | 20 ++++++++++++++++++++
+ sound/soc/sh/rcar/rsnd.h |  6 +++++-
+ 3 files changed, 46 insertions(+), 1 deletion(-)
 
-So we need to fix this upstream first and later backport to cip kernel.
-
-Regards,
-Biju
+diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
+index 1e189c5..621efc3 100644
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -144,6 +144,27 @@ u32 *rsnd_mod_get_status(struct rsnd_mod *mod,
+ 	return &mod->status;
+ }
+ 
++int rsnd_mod_id_raw(struct rsnd_mod *mod)
++{
++	return mod->id;
++}
++
++int rsnd_mod_id(struct rsnd_mod *mod)
++{
++	if ((mod)->ops->id)
++		return (mod)->ops->id(mod);
++
++	return rsnd_mod_id_raw(mod);
++}
++
++int rsnd_mod_id_sub(struct rsnd_mod *mod)
++{
++	if ((mod)->ops->id_sub)
++		return (mod)->ops->id_sub(mod);
++
++	return 0;
++}
++
+ int rsnd_mod_init(struct rsnd_priv *priv,
+ 		  struct rsnd_mod *mod,
+ 		  struct rsnd_mod_ops *ops,
+diff --git a/sound/soc/sh/rcar/ctu.c b/sound/soc/sh/rcar/ctu.c
+index 4517591..1d11ab0 100644
+--- a/sound/soc/sh/rcar/ctu.c
++++ b/sound/soc/sh/rcar/ctu.c
+@@ -334,6 +334,24 @@ static int rsnd_ctu_pcm_new(struct rsnd_mod *mod,
+ 	return ret;
+ }
+ 
++static int rsnd_ctu_id(struct rsnd_mod *mod)
++{
++	/*
++	 * ctu00: -> 0, ctu01: -> 0, ctu02: -> 0, ctu03: -> 0
++	 * ctu10: -> 1, ctu11: -> 1, ctu12: -> 1, ctu13: -> 1
++	 */
++	return mod->id / 4;
++}
++
++static int rsnd_ctu_id_sub(struct rsnd_mod *mod)
++{
++	/*
++	 * ctu00: -> 0, ctu01: -> 1, ctu02: -> 2, ctu03: -> 3
++	 * ctu10: -> 0, ctu11: -> 1, ctu12: -> 2, ctu13: -> 3
++	 */
++	return mod->id % 4;
++}
++
+ static struct rsnd_mod_ops rsnd_ctu_ops = {
+ 	.name		= CTU_NAME,
+ 	.probe		= rsnd_ctu_probe_,
+@@ -342,6 +360,8 @@ static struct rsnd_mod_ops rsnd_ctu_ops = {
+ 	.hw_params	= rsnd_ctu_hw_params,
+ 	.pcm_new	= rsnd_ctu_pcm_new,
+ 	.get_status	= rsnd_mod_get_status,
++	.id		= rsnd_ctu_id,
++	.id_sub		= rsnd_ctu_id_sub,
+ };
+ 
+ struct rsnd_mod *rsnd_ctu_mod_get(struct rsnd_priv *priv, int id)
+diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
+index 1b377f6..0eb7098 100644
+--- a/sound/soc/sh/rcar/rsnd.h
++++ b/sound/soc/sh/rcar/rsnd.h
+@@ -304,6 +304,8 @@ struct rsnd_mod_ops {
+ 	u32 *(*get_status)(struct rsnd_mod *mod,
+ 			   struct rsnd_dai_stream *io,
+ 			   enum rsnd_mod_type type);
++	int (*id)(struct rsnd_mod *mod);
++	int (*id_sub)(struct rsnd_mod *mod);
+ };
+ 
+ struct rsnd_dai_stream;
+@@ -376,7 +378,6 @@ struct rsnd_mod {
+ 
+ #define rsnd_mod_to_priv(mod)	((mod)->priv)
+ #define rsnd_mod_name(mod)	((mod)->ops->name)
+-#define rsnd_mod_id(mod)	((mod)->id)
+ #define rsnd_mod_power_on(mod)	clk_enable((mod)->clk)
+ #define rsnd_mod_power_off(mod)	clk_disable((mod)->clk)
+ #define rsnd_mod_get(ip)	(&(ip)->mod)
+@@ -396,6 +397,9 @@ void rsnd_mod_interrupt(struct rsnd_mod *mod,
+ u32 *rsnd_mod_get_status(struct rsnd_mod *mod,
+ 			 struct rsnd_dai_stream *io,
+ 			 enum rsnd_mod_type type);
++int rsnd_mod_id(struct rsnd_mod *mod);
++int rsnd_mod_id_raw(struct rsnd_mod *mod);
++int rsnd_mod_id_sub(struct rsnd_mod *mod);
+ struct rsnd_mod *rsnd_mod_next(int *iterator,
+ 			       struct rsnd_dai_stream *io,
+ 			       enum rsnd_mod_type *array,
+-- 
+2.7.4
