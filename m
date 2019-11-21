@@ -1,31 +1,31 @@
 From: chris.paterson2@renesas.com (Chris Paterson)
-Date: Thu, 21 Nov 2019 16:00:05 +0000
-Subject: [cip-dev] [PATCH linux-4.19.y-cip] gitlab-ci: Use external
+Date: Thu, 21 Nov 2019 16:00:06 +0000
+Subject: [cip-dev] [PATCH linux-4.19.y-cip-rt] gitlab-ci: Use external
 	linux-cip-pipelines repository to define CI
-Message-ID: <20191121160008.4886-1-chris.paterson2@renesas.com>
+In-Reply-To: <20191121160008.4886-1-chris.paterson2@renesas.com>
+References: <20191121160008.4886-1-chris.paterson2@renesas.com>
+Message-ID: <20191121160008.4886-2-chris.paterson2@renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 ---
- .gitlab-ci.yml | 217 +------------------------------------------------
- 1 file changed, 3 insertions(+), 214 deletions(-)
+ .gitlab-ci.yml | 271 +------------------------------------------------
+ 1 file changed, 3 insertions(+), 268 deletions(-)
 
 diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-index 3e6d493bbc89..9630992fe864 100644
+index 52f084fe37b5..9630992fe864 100644
 --- a/.gitlab-ci.yml
 +++ b/.gitlab-ci.yml
-@@ -1,214 +1,3 @@
+@@ -1,268 +1,3 @@
 -variables:
 -  GIT_STRATEGY: clone
 -  GIT_DEPTH: 10
 -  DOCKER_DRIVER: overlay2
 -  DOCKER_IMAGE_TAG: v2
 -
--###############################
--# Standard CIP configurations #
--###############################
--build:arm_hitachi_cyclonev_defconfig:
+-# Building
+-arm_hitachi_cyclonev_defconfig:
 -  stage: build
 -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
 -  variables:
@@ -41,7 +41,7 @@ index 3e6d493bbc89..9630992fe864 100644
 -    paths:
 -      - output
 -
--build:arm_hitachi_omap_defconfig:
+-arm_hitachi_omap_defconfig:
 -  stage: build
 -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
 -  variables:
@@ -57,7 +57,7 @@ index 3e6d493bbc89..9630992fe864 100644
 -    paths:
 -      - output
 -
--build:arm_moxa_mxc_defconfig:
+-arm_moxa_mxc_defconfig:
 -  stage: build
 -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
 -  variables:
@@ -73,7 +73,7 @@ index 3e6d493bbc89..9630992fe864 100644
 -    paths:
 -      - output
 -
--build:arm_renesas_shmobile_defconfig:
+-arm_renesas_shmobile_defconfig:
 -  stage: build
 -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
 -  variables:
@@ -90,21 +90,7 @@ index 3e6d493bbc89..9630992fe864 100644
 -    paths:
 -      - output
 -
--test:arm_renesas_shmobile_defconfig:
--  stage: test
--  needs: ["build:arm_renesas_shmobile_defconfig"]
--  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:test-$DOCKER_IMAGE_TAG
--  variables:
--    GIT_STRATEGY: none
--  script:
--    - /opt/submit_tests.sh
--  artifacts:
--    name: "$CI_JOB_NAME"
--    when: always
--    paths:
--      - output
--
--build:arm_siemens_imx6.config:
+-arm_siemens_imx6.config:
 -  stage: build
 -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
 -  variables:
@@ -120,7 +106,7 @@ index 3e6d493bbc89..9630992fe864 100644
 -    paths:
 -      - output
 -
--build:arm64_moxa_eds_defconfig:
+-arm64_moxa_eds_defconfig:
 -  stage: build
 -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
 -  variables:
@@ -136,7 +122,7 @@ index 3e6d493bbc89..9630992fe864 100644
 -    paths:
 -      - output
 -
--build:arm64_renesas_defconfig:
+-arm64_renesas_defconfig:
 -  stage: build
 -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
 -  variables:
@@ -153,21 +139,7 @@ index 3e6d493bbc89..9630992fe864 100644
 -    paths:
 -      - output
 -
--test:arm64_renesas_defconfig:
--  stage: test
--  needs: ["build:arm64_renesas_defconfig"]
--  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:test-$DOCKER_IMAGE_TAG
--  variables:
--    GIT_STRATEGY: none
--  script:
--    - /opt/submit_tests.sh
--  artifacts:
--    name: "$CI_JOB_NAME"
--    when: always
--    paths:
--      - output
--
--build:x86_plathome_obsvx2.config:
+-x86_plathome_obsvx2.config:
 -  stage: build
 -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
 -  variables:
@@ -183,7 +155,7 @@ index 3e6d493bbc89..9630992fe864 100644
 -    paths:
 -      - output
 -
--build:x86_siemens_iot2000.config:
+-x86_siemens_iot2000.config:
 -  stage: build
 -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
 -  variables:
@@ -199,7 +171,7 @@ index 3e6d493bbc89..9630992fe864 100644
 -    paths:
 -      - output
 -
--build:x86_siemens_server_defconfig:
+-x86_siemens_server_defconfig:
 -  stage: build
 -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
 -  variables:
@@ -215,7 +187,7 @@ index 3e6d493bbc89..9630992fe864 100644
 -    paths:
 -      - output
 -
--build:x86_toshiba_atom_baytrail_cip.config:
+-x86_toshiba_atom_baytrail_cip.config:
 -  stage: build
 -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
 -  variables:
@@ -225,6 +197,90 @@ index 3e6d493bbc89..9630992fe864 100644
 -    BUILD_ONLY: "true"
 -  script:
 -    - /opt/build_kernel.sh
+-  artifacts:
+-    name: "$CI_JOB_NAME"
+-    when: always
+-    paths:
+-      - output
+-
+-# RT build configurations
+-rt_arm_socfpga_defconfig:
+-  stage: build
+-  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+-  variables:
+-    BUILD_ARCH: arm
+-    CONFIG: socfpga_defconfig
+-    CONFIG_LOC: cip-kernel-config
+-    BUILD_ONLY: "true"
+-  script:
+-    - /opt/build_kernel.sh
+-  artifacts:
+-    name: "$CI_JOB_NAME"
+-    when: always
+-    paths:
+-      - output
+-
+-rt_x86_siemens_i386-rt.config:
+-  stage: build
+-  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+-  variables:
+-    BUILD_ARCH: x86
+-    CONFIG: siemens_i386-rt.config
+-    CONFIG_LOC: cip-kernel-config
+-    BUILD_ONLY: "true"
+-  script:
+-    - /opt/build_kernel.sh
+-  artifacts:
+-    name: "$CI_JOB_NAME"
+-    when: always
+-    paths:
+-      - output
+-
+-# Extra build configurations
+-arm_shmobile_defconfig:
+-  stage: build
+-  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+-  variables:
+-    BUILD_ARCH: arm
+-    CONFIG: shmobile_defconfig
+-    CONFIG_LOC: intree
+-    DEVICES: r8a7743-iwg20d-q7 r8a7745-iwg22d-sodimm
+-    DTBS: r8a7743-iwg20d-q7-dbcm-ca.dtb r8a7745-iwg22d-sodimm-dbhd-ca.dtb
+-  script:
+-    - /opt/build_kernel.sh
+-  artifacts:
+-    name: "$CI_JOB_NAME"
+-    when: always
+-    paths:
+-      - output
+-
+-arm64_defconfig:
+-  stage: build
+-  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+-  variables:
+-    BUILD_ARCH: arm64
+-    CONFIG: defconfig
+-    CONFIG_LOC: intree
+-    DEVICES: r8a774c0-ek874 r8a774a1-hihope-rzg2m-ex
+-    DTBS: r8a774c0-ek874.dtb r8a774a1-hihope-rzg2m-ex.dtb
+-  script:
+-    - /opt/build_kernel.sh
+-  artifacts:
+-    name: "$CI_JOB_NAME"
+-    when: always
+-    paths:
+-      - output
+-
+-# Testing
+-run_tests:
+-  stage: test
+-  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:test-$DOCKER_IMAGE_TAG
+-  when: always
+-  variables:
+-    GIT_STRATEGY: none
+-    TEST_TIMEOUT: 60
+-  script:
+-    - /opt/submit_tests.sh
 -  artifacts:
 -    name: "$CI_JOB_NAME"
 -    when: always
