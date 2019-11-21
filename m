@@ -1,29 +1,37 @@
-From: pavel@denx.de (Pavel Machek)
-Date: Wed, 20 Nov 2019 20:36:24 +0100
-Subject: [cip-dev] [PATCH 4.4.y-cip 0/6] Add CMT/RWDT support
-In-Reply-To: <1574268440-33507-1-git-send-email-biju.das@bp.renesas.com>
-References: <1574268440-33507-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <20191120193624.GC10588@duo.ucw.cz>
+From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
+Date: Thu, 21 Nov 2019 00:07:26 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 0/5] Audio SSIU BUSIF support
+In-Reply-To: <20191120192810.GA10588@duo.ucw.cz>
+References: <1574264071-16816-1-git-send-email-biju.das@bp.renesas.com>
+ <20191120192810.GA10588@duo.ucw.cz>
+Message-ID: <OSAPR01MB3234E5ABE6FEB6AD4914B9D4924E0@OSAPR01MB3234.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi!
+Hi all,
 
-> This patch series add CMT/RWDT support for RZ/G1C based iwg23s-sbc.
+> -----Original Message-----
+> From: Pavel Machek [mailto:pavel at denx.de]
+> Sent: Thursday, November 21, 2019 4:28 AM
+> To: Biju Das <biju.das@bp.renesas.com>
+> Cc: cip-dev at lists.cip-project.org; iwamatsu nobuhiro(?? ?? ???
+> ?????) <nobuhiro1.iwamatsu@toshiba.co.jp>; Pavel Machek
+> <pavel@denx.de>; Chris Paterson <chris.paterson2@renesas.com>;
+> Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Subject: Re: [PATCH 4.19.y-cip 0/5] Audio SSIU BUSIF support
 > 
-> Backported the relevent patches to linux-4.4.y-cip.
+> Hi!
+> 
+> > This patch add support for SSIU BUSIF.
+> >
+> > This patch series is based on linux-4.19.y-cip and all the patches in
+> > this series are cherry-picked from linux rc tree.
+> 
+> I don't see anything obviously wrong with this series. If noone speaks
+> up, I'll apply it later.
 
-This looks okay, too. I'll apply it if there are no objections.
+I checked this series, and I didn't see any problem.
+I applied to linux-4.19.y-cip branch.
 
 Best regards,
-								Pavel
--- 
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 195 bytes
-Desc: not available
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191120/e9d9ee1c/attachment.sig>
+  Nobuhiro
