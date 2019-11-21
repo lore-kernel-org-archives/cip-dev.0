@@ -1,141 +1,237 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 21 Nov 2019 13:00:47 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 17/17] ARM: dts: iwg23s-sbc: Add uSD and
-	eMMC support
-In-Reply-To: <1574341247-46652-1-git-send-email-biju.das@bp.renesas.com>
-References: <1574341247-46652-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1574341247-46652-18-git-send-email-biju.das@bp.renesas.com>
+From: chris.paterson2@renesas.com (Chris Paterson)
+Date: Thu, 21 Nov 2019 16:00:05 +0000
+Subject: [cip-dev] [PATCH linux-4.19.y-cip] gitlab-ci: Use external
+	linux-cip-pipelines repository to define CI
+Message-ID: <20191121160008.4886-1-chris.paterson2@renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-
-commit 9eb36b945b5c21d57c02a26cc629dd9484ced9aa upstream.
-
-Add uSD card and eMMC support to the iwg23s single board
-computer powered by the RZ/G1C SoC (a.k.a. r8a77470).
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 ---
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 75 +++++++++++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
+ .gitlab-ci.yml | 217 +------------------------------------------------
+ 1 file changed, 3 insertions(+), 214 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-index 8c9c312d..3490f6f 100644
---- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-+++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-@@ -6,6 +6,7 @@
-  */
- 
- /dts-v1/;
-+#include <dt-bindings/gpio/gpio.h>
- #include "r8a77470.dtsi"
- / {
- 	model = "iWave iW-RainboW-G23S single board computer based on RZ/G1C";
-@@ -25,6 +26,37 @@
- 		device_type = "memory";
- 		reg = <0 0x40000000 0 0x20000000>;
- 	};
-+
-+	reg_1p8v: reg-1p8v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-1.8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	reg_3p3v: reg-3p3v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	vccq_sdhi2: regulator-vccq-sdhi2 {
-+		compatible = "regulator-gpio";
-+
-+		regulator-name = "SDHI2 VccQ";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpios = <&gpio2 24 GPIO_ACTIVE_HIGH>;
-+		gpios-states = <1>;
-+		states = <3300000 1
-+			  1800000 0>;
-+	};
- };
- 
- &avb {
-@@ -88,6 +120,12 @@
- 		function = "i2c3";
- 	};
- 
-+	mmc_pins_uhs: mmc_uhs {
-+		groups = "mmc_data8", "mmc_ctrl";
-+		function = "mmc";
-+		power-source = <1800>;
-+	};
-+
- 	qspi0_pins: qspi0 {
- 		groups = "qspi0_ctrl", "qspi0_data2";
- 		function = "qspi0";
-@@ -98,6 +136,18 @@
- 		function = "scif1";
- 	};
- 
-+	sdhi2_pins: sd2 {
-+		groups = "sdhi2_data4", "sdhi2_ctrl";
-+		function = "sdhi2";
-+		power-source = <3300>;
-+	};
-+
-+	sdhi2_pins_uhs: sd2_uhs {
-+		groups = "sdhi2_data4", "sdhi2_ctrl";
-+		function = "sdhi2";
-+		power-source = <1800>;
-+	};
-+
- 	usb0_pins: usb0 {
- 		groups = "usb0";
- 		function = "usb0";
-@@ -142,6 +192,31 @@
- 	status = "okay";
- };
- 
-+&sdhi1 {
-+	pinctrl-0 = <&mmc_pins_uhs>;
-+	pinctrl-names = "state_uhs";
-+
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&reg_1p8v>;
-+	bus-width = <8>;
-+	mmc-hs200-1_8v;
-+	non-removable;
-+	fixed-emmc-driver-type = <1>;
-+	status = "okay";
-+};
-+
-+&sdhi2 {
-+	pinctrl-0 = <&sdhi2_pins>;
-+	pinctrl-1 = <&sdhi2_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
-+
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&vccq_sdhi2>;
-+	bus-width = <4>;
-+	cd-gpios = <&gpio4 20 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+};
-+
- &usb2_phy0 {
- 	status = "okay";
- };
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+index 3e6d493bbc89..9630992fe864 100644
+--- a/.gitlab-ci.yml
++++ b/.gitlab-ci.yml
+@@ -1,214 +1,3 @@
+-variables:
+-  GIT_STRATEGY: clone
+-  GIT_DEPTH: 10
+-  DOCKER_DRIVER: overlay2
+-  DOCKER_IMAGE_TAG: v2
+-
+-###############################
+-# Standard CIP configurations #
+-###############################
+-build:arm_hitachi_cyclonev_defconfig:
+-  stage: build
+-  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+-  variables:
+-    BUILD_ARCH: arm
+-    CONFIG: hitachi_cyclonev_defconfig
+-    CONFIG_LOC: cip-kernel-config
+-    BUILD_ONLY: "true"
+-  script:
+-    - /opt/build_kernel.sh
+-  artifacts:
+-    name: "$CI_JOB_NAME"
+-    when: always
+-    paths:
+-      - output
+-
+-build:arm_hitachi_omap_defconfig:
+-  stage: build
+-  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+-  variables:
+-    BUILD_ARCH: arm
+-    CONFIG: hitachi_omap_defconfig
+-    CONFIG_LOC: cip-kernel-config
+-    BUILD_ONLY: "true"
+-  script:
+-    - /opt/build_kernel.sh
+-  artifacts:
+-    name: "$CI_JOB_NAME"
+-    when: always
+-    paths:
+-      - output
+-
+-build:arm_moxa_mxc_defconfig:
+-  stage: build
+-  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+-  variables:
+-    BUILD_ARCH: arm
+-    CONFIG: moxa_mxc_defconfig
+-    CONFIG_LOC: cip-kernel-config
+-    BUILD_ONLY: "true"
+-  script:
+-    - /opt/build_kernel.sh
+-  artifacts:
+-    name: "$CI_JOB_NAME"
+-    when: always
+-    paths:
+-      - output
+-
+-build:arm_renesas_shmobile_defconfig:
+-  stage: build
+-  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+-  variables:
+-    BUILD_ARCH: arm
+-    CONFIG: renesas_shmobile_defconfig
+-    CONFIG_LOC: cip-kernel-config
+-    DEVICES: r8a7743-iwg20d-q7 r8a7745-iwg22d-sodimm
+-    DTBS: r8a7743-iwg20d-q7-dbcm-ca.dtb r8a7745-iwg22d-sodimm-dbhd-ca.dtb
+-  script:
+-    - /opt/build_kernel.sh
+-  artifacts:
+-    name: "$CI_JOB_NAME"
+-    when: always
+-    paths:
+-      - output
+-
+-test:arm_renesas_shmobile_defconfig:
+-  stage: test
+-  needs: ["build:arm_renesas_shmobile_defconfig"]
+-  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:test-$DOCKER_IMAGE_TAG
+-  variables:
+-    GIT_STRATEGY: none
+-  script:
+-    - /opt/submit_tests.sh
+-  artifacts:
+-    name: "$CI_JOB_NAME"
+-    when: always
+-    paths:
+-      - output
+-
+-build:arm_siemens_imx6.config:
+-  stage: build
+-  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+-  variables:
+-    BUILD_ARCH: arm
+-    CONFIG: siemens_imx6.config
+-    CONFIG_LOC: cip-kernel-config
+-    BUILD_ONLY: "true"
+-  script:
+-    - /opt/build_kernel.sh
+-  artifacts:
+-    name: "$CI_JOB_NAME"
+-    when: always
+-    paths:
+-      - output
+-
+-build:arm64_moxa_eds_defconfig:
+-  stage: build
+-  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+-  variables:
+-    BUILD_ARCH: arm64
+-    CONFIG: moxa_eds_defconfig
+-    CONFIG_LOC: cip-kernel-config
+-    BUILD_ONLY: "true"
+-  script:
+-    - /opt/build_kernel.sh
+-  artifacts:
+-    name: "$CI_JOB_NAME"
+-    when: always
+-    paths:
+-      - output
+-
+-build:arm64_renesas_defconfig:
+-  stage: build
+-  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+-  variables:
+-    BUILD_ARCH: arm64
+-    CONFIG: renesas_defconfig
+-    CONFIG_LOC: cip-kernel-config
+-    DEVICES: r8a774c0-ek874 r8a774a1-hihope-rzg2m-ex
+-    DTBS: r8a774c0-ek874.dtb r8a774a1-hihope-rzg2m-ex.dtb
+-  script:
+-    - /opt/build_kernel.sh
+-  artifacts:
+-    name: "$CI_JOB_NAME"
+-    when: always
+-    paths:
+-      - output
+-
+-test:arm64_renesas_defconfig:
+-  stage: test
+-  needs: ["build:arm64_renesas_defconfig"]
+-  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:test-$DOCKER_IMAGE_TAG
+-  variables:
+-    GIT_STRATEGY: none
+-  script:
+-    - /opt/submit_tests.sh
+-  artifacts:
+-    name: "$CI_JOB_NAME"
+-    when: always
+-    paths:
+-      - output
+-
+-build:x86_plathome_obsvx2.config:
+-  stage: build
+-  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+-  variables:
+-    BUILD_ARCH: x86
+-    CONFIG: plathome_obsvx2.config
+-    CONFIG_LOC: cip-kernel-config
+-    BUILD_ONLY: "true"
+-  script:
+-    - /opt/build_kernel.sh
+-  artifacts:
+-    name: "$CI_JOB_NAME"
+-    when: always
+-    paths:
+-      - output
+-
+-build:x86_siemens_iot2000.config:
+-  stage: build
+-  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+-  variables:
+-    BUILD_ARCH: x86
+-    CONFIG: siemens_iot2000.config
+-    CONFIG_LOC: cip-kernel-config
+-    BUILD_ONLY: "true"
+-  script:
+-    - /opt/build_kernel.sh
+-  artifacts:
+-    name: "$CI_JOB_NAME"
+-    when: always
+-    paths:
+-      - output
+-
+-build:x86_siemens_server_defconfig:
+-  stage: build
+-  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+-  variables:
+-    BUILD_ARCH: x86
+-    CONFIG: siemens_server_defconfig
+-    CONFIG_LOC: cip-kernel-config
+-    BUILD_ONLY: "true"
+-  script:
+-    - /opt/build_kernel.sh
+-  artifacts:
+-    name: "$CI_JOB_NAME"
+-    when: always
+-    paths:
+-      - output
+-
+-build:x86_toshiba_atom_baytrail_cip.config:
+-  stage: build
+-  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+-  variables:
+-    BUILD_ARCH: x86
+-    CONFIG: toshiba_atom_baytrail_cip.config
+-    CONFIG_LOC: cip-kernel-config
+-    BUILD_ONLY: "true"
+-  script:
+-    - /opt/build_kernel.sh
+-  artifacts:
+-    name: "$CI_JOB_NAME"
+-    when: always
+-    paths:
+-      - output
++include:
++  - https://gitlab.com/cip-project/cip-testing/linux-cip-pipelines/raw/master/linux-cip-pipeline.yml
++  - https://gitlab.com/cip-project/cip-testing/linux-cip-pipelines/raw/master/trees/linux-4.19.y-cip.yml
 -- 
-2.7.4
+2.17.1
