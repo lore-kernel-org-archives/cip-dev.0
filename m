@@ -1,29 +1,32 @@
 From: pavel@denx.de (Pavel Machek)
-Date: Thu, 21 Nov 2019 09:12:31 +0100
-Subject: [cip-dev] [PATCH 4.4.y-cip 03/31] mmc: tmio: enhance illegal
- sequence handling
-In-Reply-To: <OSBPR01MB2103E4E51D851CB7DCB0A1F0B84E0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+Date: Thu, 21 Nov 2019 09:33:55 +0100
+Subject: [cip-dev] [PATCH 4.4.y-cip 00/31] Add RZ/G1C SD/eMMC support
+In-Reply-To: <1574170570-15179-1-git-send-email-biju.das@bp.renesas.com>
 References: <1574170570-15179-1-git-send-email-biju.das@bp.renesas.com>
- <1574170570-15179-4-git-send-email-biju.das@bp.renesas.com>
- <CABMQnVJBd5BBpiONGpswAOrYg3s_zBLgRkm7DfHL7ejG87nUsw@mail.gmail.com>
- <OSBPR01MB2103E4E51D851CB7DCB0A1F0B84E0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-Message-ID: <20191121081231.GC21324@amd>
+Message-ID: <20191121083355.GD21324@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi!
 
-> > > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > >
-> > 
-> > Here is the addition of line breaks.
+> This patch series add SD/eMMC support support for RZ/G1C sbc.
 > 
-> Can you please fix this while applying or do you want me to send another patch?
+> RZ/G1C eMMC IP is different from other RZ/G1 SoC's. It is having an 
+> internal DMA for data transfer which is similar to R-Car Gen3.
+> 
+> Support for internal DMAC is added in 4.14 kernel and support for 
+> RZ/G1C added on 4.20 kernel.
+> 
+> Backported the relevent patches to linux-4.4.y-cip.
+> 
+> This patch series is based on linux-4.4.y-cip and all the patches
+> in this series are cherry-picked from linux rc tree.
 
-It will be easier to fix it while applying.
+Thanks, applied and pushed out.
 
 Best regards,
 								Pavel
+								
 -- 
 DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
@@ -33,4 +36,4 @@ Name: signature.asc
 Type: application/pgp-signature
 Size: 181 bytes
 Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191121/9fbe288a/attachment-0001.sig>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191121/f427e7e5/attachment.sig>
