@@ -1,40 +1,48 @@
 From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
-Date: Thu, 21 Nov 2019 00:16:26 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 00/17] Add
- SYS-DMAC/GPIO/AVB/SMP/SCIF/HSCIF/I2C/IIC/CMT/RWDT support
-In-Reply-To: <20191120143829.GB4940@duo.ucw.cz>
-References: <1574175222-52858-1-git-send-email-biju.das@bp.renesas.com>
- <20191120143829.GB4940@duo.ucw.cz>
-Message-ID: <OSAPR01MB32343FBFDB492F9C3CC0A8E4924E0@OSAPR01MB3234.jpnprd01.prod.outlook.com>
+Date: Thu, 21 Nov 2019 00:31:33 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 1/6] dt-bindings: watchdog:
+ renesas-wdt: Document r8a77470 support
+In-Reply-To: <1574268440-33507-2-git-send-email-biju.das@bp.renesas.com>
+References: <1574268440-33507-1-git-send-email-biju.das@bp.renesas.com>
+ <1574268440-33507-2-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <OSAPR01MB3234AC76746DEECD0AF85A88924E0@OSAPR01MB3234.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+Hi,
 
 > -----Original Message-----
-> From: Pavel Machek [mailto:pavel at denx.de]
-> Sent: Wednesday, November 20, 2019 11:38 PM
-> To: Biju Das <biju.das@bp.renesas.com>
-> Cc: cip-dev at lists.cip-project.org; iwamatsu nobuhiro(?? ?? ???
+> From: Biju Das [mailto:biju.das at bp.renesas.com]
+> Sent: Thursday, November 21, 2019 1:47 AM
+> To: cip-dev at lists.cip-project.org; iwamatsu nobuhiro(?? ?? ???
 > ?????) <nobuhiro1.iwamatsu@toshiba.co.jp>; Pavel Machek
-> <pavel@denx.de>; Chris Paterson <chris.paterson2@renesas.com>;
-> Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Subject: Re: [PATCH 4.4.y-cip 00/17] Add
-> SYS-DMAC/GPIO/AVB/SMP/SCIF/HSCIF/I2C/IIC/CMT/RWDT support
+> <pavel@denx.de>
+> Cc: Chris Paterson <chris.paterson2@renesas.com>; Biju Das
+> <biju.das@bp.renesas.com>; Fabrizio Castro
+> <fabrizio.castro@bp.renesas.com>
+> Subject: [PATCH 4.4.y-cip 1/6] dt-bindings: watchdog: renesas-wdt:
+> Document r8a77470 support
 > 
-> Hi!
+> commit 59600d045ff411da193a8b5a2999681801ecd430 upstream.
 > 
-> > This patch series add
-> > SYS-DMAC/GPIO/AVB/SMP/SCIF/HSCIF/I2C/IIC/CMT/RWDT
-> > support for iWave RZ/G1N platform.
-> >
-> > Backported the relevent patches to linux-4.4.y-cip.
+> RZ/G1C (R8A77470) watchdog implementation is compatible with R-Car Gen2,
+> therefore add relevant documentation.
 > 
-> I don't see any problems with this series, and will apply it later today
-> if there are no objections.
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
 
-I checked this series, and I didn't see any problem.
-I applied to linux-4.4y-cip branch.
+Hmm, I can not apply this patch.
+  https://patchwork.kernel.org/patch/11254441/mbox/
+----
+error: patch failed: Documentation/devicetree/bindings/watchdog/renesas-wdt.txt:7
+----
+
+Could you check on your environment?
 
 Best regards,
   Nobuhiro
