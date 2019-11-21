@@ -1,105 +1,65 @@
 From: iwamatsu@nigauri.org (Nobuhiro Iwamatsu)
-Date: Thu, 21 Nov 2019 10:13:38 +0900
-Subject: [cip-dev] [PATCH 4.4.y-cip 00/31] Add RZ/G1C SD/eMMC support
-In-Reply-To: <1574170570-15179-1-git-send-email-biju.das@bp.renesas.com>
-References: <1574170570-15179-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <CABMQnVK0AE8Z2K=211qLwxAi5rkSEwu=6aXpzDiCu6ZPOgma1A@mail.gmail.com>
+Date: Thu, 21 Nov 2019 16:38:52 +0900
+Subject: [cip-dev] CIP IRC weekly meeting today
+In-Reply-To: <HK0PR01MB2979A8112F8575E1248E5D25E24E0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+References: <HK0PR01MB2979A8112F8575E1248E5D25E24E0@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+Message-ID: <CABMQnVKCTVzTiiRN1swhqMMru+ABWRPk8=5tim10GNmOgq1jMQ@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Biju,
+Hi SZ,
 
-2019?11?19?(?) 22:42 Biju Das <biju.das@bp.renesas.com>:
->
-> This patch series add SD/eMMC support support for RZ/G1C sbc.
->
-> RZ/G1C eMMC IP is different from other RZ/G1 SoC's. It is having an
-> internal DMA for data transfer which is similar to R-Car Gen3.
->
-> Support for internal DMAC is added in 4.14 kernel and support for
-> RZ/G1C added on 4.20 kernel.
->
-> Backported the relevent patches to linux-4.4.y-cip.
->
-> This patch series is based on linux-4.4.y-cip and all the patches
-> in this series are cherry-picked from linux rc tree.
->
-> V1-->V2
->   * Incorporated pavel's review comments.
->   https://lists.cip-project.org/pipermail/cip-dev/2019-November/003770.html
->
+I can't participate IRC meeting today.
 
-I checked this series, looks good to me with out patch 03.
+2019?11?21?(?) 9:45 SZ Lin (???) <SZ.Lin@moxa.com>:
+>
+> Hi all,
+>
+> Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
+>
+> *Please note that the IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
+> https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=11&day=21&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
+>
+> US-West US-East   UK     DE     TW     JP
+> 01:00    04:00   09:00   10:00   17:00   18:00
+>
+> Channel:
+> * irc:chat.freenode.net:6667/cip
+>
+> Last week's meeting minutes:
+> https://irclogs.baserock.org/meetings/cip/2019/11/cip.2019-11-14-09.00.log.html
+>
+> Agenda:
+>
+> * Action item
+> 1. Test LTS (pre)releases directly - patersonc
+> 2. Ask KernelCI for recommendations on what tests to run - patersonc
+> 3. Create a way/process to run LTP only for release tests - patersonc
+> 4. Combine rootfilesystem with kselftest binary - Iwamatsu-san
+
+I am working yet. please keep this A.I.
+
+> 5. Document a process on how to add tests to the CIP test setup - patersonc
+> 6. Split out non-Kernel config sections from gitlab-ci.yml - patersonc
+> 7. Do we want to go with the current approach where GitLab CI is run ?out of tree?- Kernel team
+> 8. Ask RT admin to put CIP RT kernel to their CI-RT - Kernel team
+>
+> * Kernel maintenance updates
+
+I reviewed v4.4.201, 202-rc and v4.19.85-rc.
+
+> * Kernel testing
+> * CIP Core
+> * Software update
+> * AOB
+>
+> The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
+>
 
 Best regards,
   Nobuhiro
 
-
-
-> Ai Kyuse (3):
->   mmc: tmio: enhance illegal sequence handling
->   mmc: tmio: Add hw reset support
->   mmc: tmio: Add tuning support
->
-> Chris Brandt (2):
->   mmc: tmio-mmc: add support for 32bit data port
->   mmc: sh_mobile_sdhi: add ocr_mask option
->
-> Masaharu Hayakawa (1):
->   mmc: tmio: always get number of taps
->
-> Simon Horman (5):
->   mmc: tmio: document mandatory and optional callbacks
->   mmc: core: Add helper to see if a host can be retuned
->   mmc: sh_mobile_sdhi: Add tuning support
->   mmc: tmio: drop filenames from comment at top of source
->   mmc: renesas-sdhi, tmio: make dma more modular
->
-> Ulf Hansson (1):
->   mmc: tmio: Remove redundant check of mmc->slot.cd_irq
->
-> Wolfram Sang (19):
->   mmc: tmio: fix wrong bitmask for SDIO irqs
->   mmc: tmio: remove SDIO from TODO list
->   mmc: tmio: use SDIO master interrupt bit only when allowed
->   mmc: sh_mobile_sdhi: simplify accessing DT data
->   mmc: sh_mobile_sdhi: improve prerequisite for hw_reset
->   mmc: sh_mobile_sdhi: remove superfluous check in hw_reset
->   mmc: sh_mobile_sdhi: improve prerequisites for tuning
->   mmc: sh_mobile_sdhi: remove superfluous check in SCC error check
->   mmc: sh_mobile_sdhi: remove superfluous check in init_tuning
->   mmc: sh_mobile_sdhi: enable HS200
->   mmc: host: tmio: drop superfluous exit path
->   mmc: host: tmio: disable clocks when unbinding
->   mmc: host: tmio: refactor calls to sdio irq
->   mmc: host: tmio: SDIO_STATUS_QUIRK is rather SDIO_STATUS_SETBITS
->   mmc: tmio: discard obsolete SDIO irqs before enabling irqs
->   mmc: tmio: ensure end of DMA and SD access are in sync
->   mmc: host: tmio: use defines for CTL_STOP_INTERNAL_ACTION values
->   mmc: host: tmio: don't BUG on unsupported stop commands
->   mmc: host: tmio: fill in response from auto cmd12
->
->  drivers/mmc/host/Makefile         |   3 +-
->  drivers/mmc/host/sh_mobile_sdhi.c | 267 ++++++++++++++++++++++++++++++++++++--
->  drivers/mmc/host/tmio_mmc.c       |  10 +-
->  drivers/mmc/host/tmio_mmc.h       | 102 +++++++++------
->  drivers/mmc/host/tmio_mmc_dma.c   |  86 +++++++-----
->  drivers/mmc/host/tmio_mmc_pio.c   | 248 ++++++++++++++++++++++++++++-------
->  include/linux/mfd/tmio.h          |   7 +-
->  include/linux/mmc/host.h          |   5 +
->  8 files changed, 588 insertions(+), 140 deletions(-)
->
-> --
-> 2.7.4
->
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
-
-
-
---
+-- 
 Nobuhiro Iwamatsu
    iwamatsu at {nigauri.org / debian.org}
    GPG ID: 40AD1FA6
