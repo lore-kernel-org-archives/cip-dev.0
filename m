@@ -1,59 +1,60 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 21 Nov 2019 13:00:40 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 10/17] dt-bindings: mmc: renesas_sdhi:
-	add R-Car Gen[123] fallback compatibility strings
+Date: Thu, 21 Nov 2019 13:00:42 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 12/17] dt-bindings: mmc: renesas_sdhi:
+	Add r8a77470 support
 In-Reply-To: <1574341247-46652-1-git-send-email-biju.das@bp.renesas.com>
 References: <1574341247-46652-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1574341247-46652-11-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1574341247-46652-13-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Simon Horman <horms+renesas@verge.net.au>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-commit 54839d012d5f98cde2fa102fdcd22e1da661d138 upstream.
+commit be6f8db406a49511a8d213f9443ae79fe5b086c3 upstream.
 
-Add fallback compatibility strings for R-Car Gen 1, 2 and 3.
+The RZ/G1C (a.k.a. R8A77470) comes with three SDHI interfaces,
+SDHI0 and SDHI2 are compatible with R-Car Gen2 SDHIs, and
+SDHI1 is compatible with R-Car Gen3 SDHIs, as it comes with an
+internal DMAC, therefore SDHI1 is fully compatible with driver
+renesas_sdhi_internal_dmac driver. As a result, the compatible
+strings for the R8A77470 SDHI interfaces are a little bit special.
+Document SDHI support for the RZ/G1C SoC.
 
-In the case of Renesas R-Car hardware we know that there are generations of
-SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationship
-between IP blocks might be. For example, I believe that r8a7790 is older
-than r8a7791 but that doesn't imply that the latter is a descendant of the
-former or vice versa.
-
-We can, however, by examining the documentation and behaviour of the
-hardware at run-time observe that the current driver implementation appears
-to be compatible with the IP blocks on SoCs within a given generation.
-
-For the above reasons and convenience when enabling new SoCs a
-per-generation fallback compatibility string scheme is being adopted for
-drivers for Renesas SoCs.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+[biju: Removed R-Car Gen3 devices]
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 7 +++++++
- 1 file changed, 7 insertions(+)
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-index 1d23a43..25f06e6 100644
+index 25f06e6..cbce1e6 100644
 --- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
 +++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-@@ -24,6 +24,13 @@ Required properties:
- 		"renesas,sdhi-r8a7792" - SDHI IP on R8A7792 SoC
+@@ -17,6 +17,8 @@ Required properties:
+ 		"renesas,sdhi-r8a7740" - SDHI IP on R8A7740 SoC
+ 		"renesas,sdhi-r8a7743" - SDHI IP on R8A7743 SoC
+ 		"renesas,sdhi-r8a7745" - SDHI IP on R8A7745 SoC
++		"renesas,sdhi-r8a77470" - SDHI IP on R8A77470 SoC
++		"renesas,sdhi-mmc-r8a77470" - SDHI/MMC IP on R8A77470 SoC
+ 		"renesas,sdhi-r8a7778" - SDHI IP on R8A7778 SoC
+ 		"renesas,sdhi-r8a7779" - SDHI IP on R8A7779 SoC
+ 		"renesas,sdhi-r8a7790" - SDHI IP on R8A7790 SoC
+@@ -25,8 +27,8 @@ Required properties:
  		"renesas,sdhi-r8a7793" - SDHI IP on R8A7793 SoC
  		"renesas,sdhi-r8a7794" - SDHI IP on R8A7794 SoC
-+		"renesas,rcar-gen1-sdhi" - a generic R-Car Gen1 SDHI controller
-+		"renesas,rcar-gen2-sdhi" - a generic R-Car Gen2 or RZ/G1
-+					   SDHI controller
-+
-+		When compatible with the generic version, nodes must list
-+		the SoC-specific version corresponding to the platform
-+		first followed by the generic version.
+ 		"renesas,rcar-gen1-sdhi" - a generic R-Car Gen1 SDHI controller
+-		"renesas,rcar-gen2-sdhi" - a generic R-Car Gen2 or RZ/G1
+-					   SDHI controller
++		"renesas,rcar-gen2-sdhi" - a generic R-Car Gen2 and RZ/G1 SDHI
++					   (not SDHI/MMC) controller
  
- Optional properties:
- - toshiba,mmc-wrprotect-disable: write-protect detection is unavailable
+ 		When compatible with the generic version, nodes must list
+ 		the SoC-specific version corresponding to the platform
 -- 
 2.7.4
