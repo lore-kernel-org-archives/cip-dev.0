@@ -1,41 +1,30 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 21 Nov 2019 07:49:35 +0000
-Subject: [cip-dev] [PATCH V2] dt-bindings: watchdog: renesas-wdt: Document
-	r8a77470 support
-Message-ID: <1574322575-27007-1-git-send-email-biju.das@bp.renesas.com>
+From: pavel@denx.de (Pavel Machek)
+Date: Thu, 21 Nov 2019 09:01:07 +0100
+Subject: [cip-dev] [PATCH V2] dt-bindings: watchdog: renesas-wdt:
+ Document r8a77470 support
+In-Reply-To: <1574322575-27007-1-git-send-email-biju.das@bp.renesas.com>
+References: <1574322575-27007-1-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <20191121080107.GA21324@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit 59600d045ff411da193a8b5a2999681801ecd430 upstream.
+On Thu 2019-11-21 07:49:35, Biju Das wrote:
+> commit 59600d045ff411da193a8b5a2999681801ecd430 upstream.
+> 
+> RZ/G1C (R8A77470) watchdog implementation is compatible with R-Car
+> Gen2, therefore add relevant documentation.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
-RZ/G1C (R8A77470) watchdog implementation is compatible with R-Car
-Gen2, therefore add relevant documentation.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
----
-V1-->V2
-  * Rebased to latest 4.4.y-cip
----
- Documentation/devicetree/bindings/watchdog/renesas-wdt.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-index a985fd5..050bcf0 100644
---- a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-+++ b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-@@ -8,6 +8,7 @@ Required properties:
- 		 - "renesas,r8a7743-wdt" (RZ/G1M)
- 		 - "renesas,r8a7744-wdt" (RZ/G1N)
- 		 - "renesas,r8a7745-wdt" (RZ/G1E)
-+		 - "renesas,r8a77470-wdt" (RZ/G1C)
- 		The generic compatible string must be:
- 		 - "renesas,rcar-gen2-wdt" for R-Car Gen2 and RZ/G
- 
+Thanks, applied.
+								Pavel
 -- 
-2.7.4
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 181 bytes
+Desc: Digital signature
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191121/85b279e9/attachment.sig>
