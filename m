@@ -1,23 +1,23 @@
 From: chris.paterson2@renesas.com (Chris Paterson)
-Date: Thu, 21 Nov 2019 16:00:06 +0000
-Subject: [cip-dev] [PATCH linux-4.19.y-cip-rt] gitlab-ci: Use external
+Date: Thu, 21 Nov 2019 16:00:08 +0000
+Subject: [cip-dev] [PATCH linux-4.4.y-cip-rt] gitlab-ci: Use external
 	linux-cip-pipelines repository to define CI
 In-Reply-To: <20191121160008.4886-1-chris.paterson2@renesas.com>
 References: <20191121160008.4886-1-chris.paterson2@renesas.com>
-Message-ID: <20191121160008.4886-2-chris.paterson2@renesas.com>
+Message-ID: <20191121160008.4886-4-chris.paterson2@renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 ---
- .gitlab-ci.yml | 271 +------------------------------------------------
- 1 file changed, 3 insertions(+), 268 deletions(-)
+ .gitlab-ci.yml | 317 +------------------------------------------------
+ 1 file changed, 3 insertions(+), 314 deletions(-)
 
 diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-index 52f084fe37b5..9630992fe864 100644
+index 59323dd06c6a..6f8a0028d2a3 100644
 --- a/.gitlab-ci.yml
 +++ b/.gitlab-ci.yml
-@@ -1,268 +1,3 @@
+@@ -1,314 +1,3 @@
 -variables:
 -  GIT_STRATEGY: clone
 -  GIT_DEPTH: 10
@@ -25,22 +25,6 @@ index 52f084fe37b5..9630992fe864 100644
 -  DOCKER_IMAGE_TAG: v2
 -
 -# Building
--arm_hitachi_cyclonev_defconfig:
--  stage: build
--  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
--  variables:
--    BUILD_ARCH: arm
--    CONFIG: hitachi_cyclonev_defconfig
--    CONFIG_LOC: cip-kernel-config
--    BUILD_ONLY: "true"
--  script:
--    - /opt/build_kernel.sh
--  artifacts:
--    name: "$CI_JOB_NAME"
--    when: always
--    paths:
--      - output
--
 -arm_hitachi_omap_defconfig:
 -  stage: build
 -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
@@ -80,8 +64,8 @@ index 52f084fe37b5..9630992fe864 100644
 -    BUILD_ARCH: arm
 -    CONFIG: renesas_shmobile_defconfig
 -    CONFIG_LOC: cip-kernel-config
--    DEVICES: r8a7743-iwg20d-q7 r8a7745-iwg22d-sodimm
--    DTBS: r8a7743-iwg20d-q7-dbcm-ca.dtb r8a7745-iwg22d-sodimm-dbhd-ca.dtb
+-    DEVICES: r8a7743-iwg20d-q7 r8a7745-iwg22d-sodimm r8a77470-iwg23s-sbc
+-    DTBS: r8a7743-iwg20d-q7-dbcm-ca.dtb r8a7745-iwg22d-sodimm-dbhd-ca.dtb r8a77470-iwg23s-sbc.dtb
 -  script:
 -    - /opt/build_kernel.sh
 -  artifacts:
@@ -90,12 +74,12 @@ index 52f084fe37b5..9630992fe864 100644
 -    paths:
 -      - output
 -
--arm_siemens_imx6.config:
+-arm_siemens_am335x-axm2_defconfig:
 -  stage: build
 -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
 -  variables:
 -    BUILD_ARCH: arm
--    CONFIG: siemens_imx6.config
+-    CONFIG: siemens_am335x-axm2_defconfig
 -    CONFIG_LOC: cip-kernel-config
 -    BUILD_ONLY: "true"
 -  script:
@@ -106,12 +90,12 @@ index 52f084fe37b5..9630992fe864 100644
 -    paths:
 -      - output
 -
--arm64_moxa_eds_defconfig:
+-arm_siemens_am335x-draco_defconfig:
 -  stage: build
 -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
 -  variables:
--    BUILD_ARCH: arm64
--    CONFIG: moxa_eds_defconfig
+-    BUILD_ARCH: arm
+-    CONFIG: siemens_am335x-draco_defconfig
 -    CONFIG_LOC: cip-kernel-config
 -    BUILD_ONLY: "true"
 -  script:
@@ -122,15 +106,14 @@ index 52f084fe37b5..9630992fe864 100644
 -    paths:
 -      - output
 -
--arm64_renesas_defconfig:
+-arm_siemens_am335x-dxr2_defconfig:
 -  stage: build
 -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
 -  variables:
--    BUILD_ARCH: arm64
--    CONFIG: renesas_defconfig
+-    BUILD_ARCH: arm
+-    CONFIG: siemens_am335x-dxr2_defconfig
 -    CONFIG_LOC: cip-kernel-config
--    DEVICES: r8a774c0-ek874 r8a774a1-hihope-rzg2m-ex
--    DTBS: r8a774c0-ek874.dtb r8a774a1-hihope-rzg2m-ex.dtb
+-    BUILD_ONLY: "true"
 -  script:
 -    - /opt/build_kernel.sh
 -  artifacts:
@@ -139,12 +122,108 @@ index 52f084fe37b5..9630992fe864 100644
 -    paths:
 -      - output
 -
--x86_plathome_obsvx2.config:
+-arm_siemens_am335x-etamin_defconfig:
+-  stage: build
+-  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+-  variables:
+-    BUILD_ARCH: arm
+-    CONFIG: siemens_am335x-etamin_defconfig
+-    CONFIG_LOC: cip-kernel-config
+-    BUILD_ONLY: "true"
+-  script:
+-    - /opt/build_kernel.sh
+-  artifacts:
+-    name: "$CI_JOB_NAME"
+-    when: always
+-    paths:
+-      - output
+-
+-arm_siemens_am57xx-pxm3.config:
+-  stage: build
+-  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+-  variables:
+-    BUILD_ARCH: arm
+-    CONFIG: siemens_am57xx-pxm3.config
+-    CONFIG_LOC: cip-kernel-config
+-    BUILD_ONLY: "true"
+-  script:
+-    - /opt/build_kernel.sh
+-  artifacts:
+-    name: "$CI_JOB_NAME"
+-    when: always
+-    paths:
+-      - output
+-
+-arm_siemens_dcu2.config:
+-  stage: build
+-  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+-  variables:
+-    BUILD_ARCH: arm
+-    CONFIG: siemens_dcu2.config
+-    CONFIG_LOC: cip-kernel-config
+-    BUILD_ONLY: "true"
+-  script:
+-    - /opt/build_kernel.sh
+-  artifacts:
+-    name: "$CI_JOB_NAME"
+-    when: always
+-    paths:
+-      - output
+-
+-arm_siemens_imx6_defconfig:
+-  stage: build
+-  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+-  variables:
+-    BUILD_ARCH: arm
+-    CONFIG: siemens_imx6_defconfig
+-    CONFIG_LOC: cip-kernel-config
+-    BUILD_ONLY: "true"
+-  script:
+-    - /opt/build_kernel.sh
+-  artifacts:
+-    name: "$CI_JOB_NAME"
+-    when: always
+-    paths:
+-      - output
+-
+-arm_toshiba_tegra_defconfig:
+-  stage: build
+-  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+-  variables:
+-    BUILD_ARCH: arm
+-    CONFIG: toshiba_tegra_defconfig
+-    CONFIG_LOC: cip-kernel-config
+-    BUILD_ONLY: "true"
+-  script:
+-    - /opt/build_kernel.sh
+-  artifacts:
+-    name: "$CI_JOB_NAME"
+-    when: always
+-    paths:
+-      - output
+-
+-arm_toshiba_zynq_defconfig:
+-  stage: build
+-  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+-  variables:
+-    BUILD_ARCH: arm
+-    CONFIG: toshiba_zynq_defconfig
+-    CONFIG_LOC: cip-kernel-config
+-    BUILD_ONLY: "true"
+-  script:
+-    - /opt/build_kernel.sh
+-  artifacts:
+-    name: "$CI_JOB_NAME"
+-    when: always
+-    paths:
+-      - output
+-
+-x86_plathome_obsvx1.config:
 -  stage: build
 -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
 -  variables:
 -    BUILD_ARCH: x86
--    CONFIG: plathome_obsvx2.config
+-    CONFIG: plathome_obsvx1.config
 -    CONFIG_LOC: cip-kernel-config
 -    BUILD_ONLY: "true"
 -  script:
@@ -187,12 +266,12 @@ index 52f084fe37b5..9630992fe864 100644
 -    paths:
 -      - output
 -
--x86_toshiba_atom_baytrail_cip.config:
+-x86_toshiba_defconfig:
 -  stage: build
 -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
 -  variables:
 -    BUILD_ARCH: x86
--    CONFIG: toshiba_atom_baytrail_cip.config
+-    CONFIG: toshiba_defconfig
 -    CONFIG_LOC: cip-kernel-config
 -    BUILD_ONLY: "true"
 -  script:
@@ -204,22 +283,6 @@ index 52f084fe37b5..9630992fe864 100644
 -      - output
 -
 -# RT build configurations
--rt_arm_socfpga_defconfig:
--  stage: build
--  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
--  variables:
--    BUILD_ARCH: arm
--    CONFIG: socfpga_defconfig
--    CONFIG_LOC: cip-kernel-config
--    BUILD_ONLY: "true"
--  script:
--    - /opt/build_kernel.sh
--  artifacts:
--    name: "$CI_JOB_NAME"
--    when: always
--    paths:
--      - output
--
 -rt_x86_siemens_i386-rt.config:
 -  stage: build
 -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
@@ -244,25 +307,8 @@ index 52f084fe37b5..9630992fe864 100644
 -    BUILD_ARCH: arm
 -    CONFIG: shmobile_defconfig
 -    CONFIG_LOC: intree
--    DEVICES: r8a7743-iwg20d-q7 r8a7745-iwg22d-sodimm
--    DTBS: r8a7743-iwg20d-q7-dbcm-ca.dtb r8a7745-iwg22d-sodimm-dbhd-ca.dtb
--  script:
--    - /opt/build_kernel.sh
--  artifacts:
--    name: "$CI_JOB_NAME"
--    when: always
--    paths:
--      - output
--
--arm64_defconfig:
--  stage: build
--  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
--  variables:
--    BUILD_ARCH: arm64
--    CONFIG: defconfig
--    CONFIG_LOC: intree
--    DEVICES: r8a774c0-ek874 r8a774a1-hihope-rzg2m-ex
--    DTBS: r8a774c0-ek874.dtb r8a774a1-hihope-rzg2m-ex.dtb
+-    DEVICES: r8a7743-iwg20d-q7 r8a7745-iwg22d-sodimm r8a77470-iwg23s-sbc
+-    DTBS: r8a7743-iwg20d-q7-dbcm-ca.dtb r8a7745-iwg22d-sodimm-dbhd-ca.dtb r8a77470-iwg23s-sbc.dtb
 -  script:
 -    - /opt/build_kernel.sh
 -  artifacts:
@@ -288,6 +334,6 @@ index 52f084fe37b5..9630992fe864 100644
 -      - output
 +include:
 +  - https://gitlab.com/cip-project/cip-testing/linux-cip-pipelines/raw/master/linux-cip-pipeline.yml
-+  - https://gitlab.com/cip-project/cip-testing/linux-cip-pipelines/raw/master/trees/linux-4.19.y-cip.yml
++  - https://gitlab.com/cip-project/cip-testing/linux-cip-pipelines/raw/master/trees/linux-4.4.y-cip.yml
 -- 
 2.17.1
