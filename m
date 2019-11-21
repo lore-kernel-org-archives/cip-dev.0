@@ -1,68 +1,60 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 21 Nov 2019 13:00:41 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 11/17] mmc: renesas_sdhi: implement
-	R-Car Gen[123] fallback compatibility strings
+Date: Thu, 21 Nov 2019 13:00:43 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 13/17] mmc: renesas_sdhi: Add r8a77470
+	SDHI1 support
 In-Reply-To: <1574341247-46652-1-git-send-email-biju.das@bp.renesas.com>
 References: <1574341247-46652-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1574341247-46652-12-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1574341247-46652-14-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Simon Horman <horms+renesas@verge.net.au>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-commit d6dc425ae595e14026beac3720e43edd70215dc8 upstream.
+commit 60ab43ba6b6e0f888aab3ce0f84a8aaf15d15079 upstream.
 
-Implement fallback compatibility strings for R-Car Gen 1, 2 and 3.
+The RZ/G1C (a.k.a. R8A77470) comes with three SDHI interfaces,
+SDHI0 and SDHI2 are compatible with the R-Car Gen2 SDHIs, SDHI1
+is compatible with R-Car Gen3 SDHIs and it can be used as
+eMMC as well. This patch adds driver compatibility, and makes
+sure both drivers get compiled for the R8A77470.
 
-In the case of Renesas R-Car hardware we know that there are generations of
-SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationship
-between IP blocks might be. For example, I believe that r8a7790 is older
-than r8a7791 but that doesn't imply that the latter is a descendant of the
-former or vice versa.
-
-We can, however, by examining the documentation and behaviour of the
-hardware at run-time observe that the current driver implementation appears
-to be compatible with the IP blocks on SoCs within a given generation.
-
-For the above reasons and convenience when enabling new SoCs a
-per-generation fallback compatibility string scheme is being adopted for
-drivers for Renesas SoCs.
-
-Also, improve readability by listing the shmobile fallback compatibility
-string after the more-specific compatibility strings they provide a
-fallback for.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-[biju: Removed R-Car Gen3 devices]
+[biju: Removed reset and updated clk and power domain properties]
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/mmc/host/renesas_sdhi_sys_dmac.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/mmc/host/Kconfig                      | 4 ++--
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 1 +
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index 84bb945..77f3af4 100644
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -75,7 +75,6 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 7b947ce..359ec493 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -578,9 +578,9 @@ config MMC_SDHI_SYS_DMAC
+ 
+ config MMC_SDHI_INTERNAL_DMAC
+ 	tristate "DMA for SDHI SD/SDIO controllers using on-chip bus mastering"
+-	depends on ARM64 || COMPILE_TEST
++	depends on ARM64 || ARCH_R8A77470 || COMPILE_TEST
+ 	depends on MMC_SDHI
+-	default MMC_SDHI if ARM64
++	default MMC_SDHI if (ARM64 || ARCH_R8A77470)
+ 	help
+ 	  This provides DMA support for SDHI SD/SDIO controllers
+ 	  using on-chip bus mastering. This supports the controllers
+diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+index d41ff35..8056325 100644
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -84,6 +84,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
  };
  
- static const struct of_device_id renesas_sdhi_sys_dmac_of_match[] = {
--	{ .compatible = "renesas,sdhi-shmobile" },
- 	{ .compatible = "renesas,sdhi-sh73a0", .data = &of_default_cfg, },
- 	{ .compatible = "renesas,sdhi-r8a73a4", .data = &of_default_cfg, },
- 	{ .compatible = "renesas,sdhi-r8a7740", .data = &of_default_cfg, },
-@@ -88,6 +87,9 @@ static const struct of_device_id renesas_sdhi_sys_dmac_of_match[] = {
- 	{ .compatible = "renesas,sdhi-r8a7792", .data = &of_rcar_gen2_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7793", .data = &of_rcar_gen2_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7794", .data = &of_rcar_gen2_compatible, },
-+	{ .compatible = "renesas,rcar-gen1-sdhi", .data = &of_rcar_gen1_compatible, },
-+	{ .compatible = "renesas,rcar-gen2-sdhi", .data = &of_rcar_gen2_compatible, },
-+	{ .compatible = "renesas,sdhi-shmobile" },
+ static const struct of_device_id renesas_sdhi_internal_dmac_of_match[] = {
++	{ .compatible = "renesas,sdhi-mmc-r8a77470", .data = &of_rcar_gen3_compatible, },
  	{},
  };
- MODULE_DEVICE_TABLE(of, renesas_sdhi_sys_dmac_of_match);
+ MODULE_DEVICE_TABLE(of, renesas_sdhi_internal_dmac_of_match);
 -- 
 2.7.4
