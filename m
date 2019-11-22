@@ -1,60 +1,27 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Fri, 22 Nov 2019 08:22:01 +0100
-Subject: [cip-dev] [isar-cip-core PATCH v2 0/4] Add rzg2m support
-In-Reply-To: <20191107163942.23513-1-Quirin.Gylstorff@siemens.com>
-References: <TYAPR01MB2285BB4C180DBB805DC1C079B7790@TYAPR01MB2285.jpnprd01.prod.outlook.com>
- <20191107163942.23513-1-Quirin.Gylstorff@siemens.com>
-Message-ID: <fdb23b3f-f7fc-2b16-b398-f701e35c3f7a@siemens.com>
+From: pavel@denx.de (Pavel Machek)
+Date: Fri, 22 Nov 2019 10:18:11 +0100
+Subject: [cip-dev] [PATCH linux-4.19.y-cip] gitlab-ci: Use external
+ linux-cip-pipelines repository to define CI
+In-Reply-To: <20191121160008.4886-1-chris.paterson2@renesas.com>
+References: <20191121160008.4886-1-chris.paterson2@renesas.com>
+Message-ID: <20191122091811.GA30479@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 07.11.19 17:39, Q. Gylstorff wrote:
-> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> 
-> Add the rzg2m reference board.
-> Add the option to build rootfs tarballs for LAVA tests.
-> This option needs to be activated in the gitlab-ci.yml by
-> adding it to the builds for testing.
-> 
-> Version 2:
->    Change used devicetree to r8a774a1-hihope-rzg2m-ex.dtb.
->    The changes to fetch the cip-kernel configuration instead
->    of using copies stored in the repository will be a seperate
->    patch set.
->    
-> 
-> Quirin Gylstorff (4):
->    kas: Increase Isar version
->    classes: add wic-targz-img.bbclass
->    hihope-rzg2m: Add board support
->    ci: add hihope-rzg2m to ci chain
-> 
->   .gitlab-ci.yml                                |   4 +
->   board-rzg2m.yml                               |  16 +
->   classes/wic-targz-img.bbclass                 |  13 +
->   conf/machine/bbb.conf                         |   2 +-
->   conf/machine/hihope-rzg2m.conf                |  18 +
->   conf/machine/iwg20m.conf                      |   2 +-
->   conf/machine/qemu-amd64.conf                  |   2 +-
->   conf/machine/simatic-ipc227e.conf             |   2 +-
->   kas.yml                                       |   2 +-
->   opt-targz-img.yml                             |  20 ++
->   .../linux/files/hihope-rzg2m_defconfig        | 330 ++++++++++++++++++
->   scripts/deploy-cip-core.sh                    |   4 +
->   wic/hihope-rzg2m.wks                          |  15 +
->   13 files changed, 425 insertions(+), 5 deletions(-)
->   create mode 100644 board-rzg2m.yml
->   create mode 100644 classes/wic-targz-img.bbclass
->   create mode 100644 conf/machine/hihope-rzg2m.conf
->   create mode 100644 opt-targz-img.yml
->   create mode 100644 recipes-kernel/linux/files/hihope-rzg2m_defconfig
->   create mode 100644 wic/hihope-rzg2m.wks
-> 
+On Thu 2019-11-21 16:00:05, Chris Paterson wrote:
+> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 
-Thanks, merged.
+Thanks, applied.
 
-Jan
-
+Best regards,
+								Pavel
 -- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 181 bytes
+Desc: Digital signature
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191122/f03c455d/attachment.sig>
