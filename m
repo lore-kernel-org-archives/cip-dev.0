@@ -1,96 +1,88 @@
 From: pavel@denx.de (Pavel Machek)
-Date: Fri, 22 Nov 2019 10:53:12 +0100
-Subject: [cip-dev] [PATCH 4.4.y-cip 02/17] mmc: renesas-sdhi: rename
- tmio_mmc_dma.c => renesas_sdhi_sys_dmac.c
-In-Reply-To: <1574341247-46652-3-git-send-email-biju.das@bp.renesas.com>
+Date: Fri, 22 Nov 2019 11:09:17 +0100
+Subject: [cip-dev] [PATCH 4.4.y-cip 03/17] mmc: renesas-sdhi: rename
+ sh_mobile_sdhi.c => renesas_sdhi_core.c
+In-Reply-To: <1574341247-46652-4-git-send-email-biju.das@bp.renesas.com>
 References: <1574341247-46652-1-git-send-email-biju.das@bp.renesas.com>
- <1574341247-46652-3-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <20191122095312.GC30479@amd>
+ <1574341247-46652-4-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <20191122100917.GD30479@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi!
 
-> commit c2a96987c76f093be50550130f5629723b091176 upstream.
+> From: Simon Horman <horms+renesas@verge.net.au>
 > 
-> Rename the source file for DMA for SDHI as a follow-up to attaching
-> DMA code to the SDHI driver rather than the tmio_core driver.
+> commit b5b6a5f4f06c0624886b2166e2e8580327f0b943 upstream.
+> 
+> Rename the source file SDHI. A follow-up patch will make it a library
+> file used by a different top-level module file.
 > 
 > The name "renesas" is chosen as the SDHI driver is applicable to a wider
 > range of SoCs than SH-Mobile it seems to be a more appropriate name.
 > However, the SDHI driver source itself, is left as sh_mobile_sdhi to
 > avoid unnecessary churn.
 > 
-> The name sys_dmac was chosen to reflect the type of DMA used.
+> the name "core" was chosen to reflect the desired role of this file,
+> to provide core functionality to the sdhi driver. A follow-up patch will
+> move the file into that role.
 > 
 > Internal symbols have also been renamed to reflect the filename change.
 > 
-> A follow-up patch will re-organise the SDHI driver removing
-> the need for renesas_sdhi_get_dma_ops().
+> The .name member of struct platform_driver and parameter to
+> MODULE_ALIAS() have not been changed in order to avoid the complication
+> of potentially breaking SH SoCs which still use platform drivers.
 
+Ok, so this is a big rename.
 
->  drivers/mmc/host/Makefile                |   2 +-
->  drivers/mmc/host/renesas_sdhi.h          |  18 ++
->  drivers/mmc/host/renesas_sdhi_sys_dmac.c | 368 +++++++++++++++++++++++++++++++
->  drivers/mmc/host/sh_mobile_sdhi.c        |   3 +-
->  drivers/mmc/host/tmio_mmc.h              |   9 -
->  drivers/mmc/host/tmio_mmc_dma.c          | 365 ------------------------------
+>  drivers/mmc/host/renesas_sdhi_core.c | 741 ++++++++++++++++++++++++++++++++++
+>  drivers/mmc/host/sh_mobile_sdhi.c    | 746 -----------------------------------
 
-So there is rename, and function prefixes change accordingly.
+But there are subtle changes inside. Please avoid doing that when
+renaming.
 
-The real change is that !IS_ENABLED(CONFIG_MMC_SDHI) fallback below
-disappeared. I don't how this is related to the rename.
+I guess array->entry and the cleanup are okay, but can you verify the
+other two, quoted below?
 
-Are you sure it will not cause compile problems in
-!IS_ENABLED(CONFIG_MMC_SDHI) case?
+Thanks and best regards,
+								Pavel
 
-Best regards,
-									Pavel
+-static const struct sh_mobile_sdhi_of_data sh_mobile_sdhi_of_cfg[] =
+ {
+ -       {
+ -               .tmio_flags = TMIO_MMC_HAS_IDLE_WAIT,
+ -       },
+ +static const struct renesas_sdhi_of_data of_default_cfg = {
+ +       .tmio_flags = TMIO_MMC_HAS_IDLE_WAIT,
+  };
 
-> diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
-> new file mode 100644
-> index 0000000..f65d936c
-> --- /dev/null
-> +++ b/drivers/mmc/host/renesas_sdhi.h
-> @@ -0,0 +1,18 @@
-> +/*
-> + * Renesas Mobile SDHI
-> + *
-> + * Copyright (C) 2017 Horms Solutions Ltd., Simon Horman
-> + * Copyright (C) 2017 Renesas Electronics Corporation
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#ifndef RENESAS_SDHI_H
-> +#define RENESAS_SDHI_H
-> +
-> +#include "tmio_mmc.h"
-> +
-> +const struct tmio_mmc_dma_ops *renesas_sdhi_get_dma_ops(void);
-> +#endif
-> diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-> index 86aa49f3..cd5b4f3 100644
-> --- a/drivers/mmc/host/tmio_mmc.h
-> +++ b/drivers/mmc/host/tmio_mmc.h
-> @@ -212,15 +212,6 @@ void tmio_mmc_enable_mmc_irqs(struct tmio_mmc_host *host, u32 i);
->  void tmio_mmc_disable_mmc_irqs(struct tmio_mmc_host *host, u32 i);
->  irqreturn_t tmio_mmc_irq(int irq, void *devid);
->  
-> -#if IS_ENABLED(CONFIG_MMC_SDHI)
-> -const struct tmio_mmc_dma_ops *tmio_mmc_get_dma_ops(void);
-> -#else
-> -static inline const struct tmio_mmc_dma_ops *tmio_mmc_get_dma_ops(void)
-> -{
-> -	return NULL;
-> -}
-> -#endif
-> -
->  static inline char *tmio_mmc_kmap_atomic(struct scatterlist *sg,
->  					 unsigned long *flags)
->  {
+(Array -> single entry).
+
++static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
+...
+-       .capabilities   = MMC_CAP_SD_HIGHSPEED,
++       .capabilities   = MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ,
+
+(Capability change.)
+
+-       ret = pinctrl_select_state(priv->pinctrl, pin_state);
+-       if (ret)
+-               return ret;
+-
+-       return 0;
++       return pinctrl_select_state(priv->pinctrl, pin_state);
+
+(Unrelated cleanup.)
+
+@@ -511,13 +505,14 @@ static int sh_mobile_sdhi_write16_hook(struct
+...	
+        case CTL_DMA_ENABLE:
+ -               return sh_mobile_sdhi_wait_idle(host);
++       case EXT_ACC:
++               return renesas_sdhi_wait_idle(host);
+        }
+		
+(Additional case handled in a switch).
 
 -- 
 DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
@@ -101,4 +93,4 @@ Name: signature.asc
 Type: application/pgp-signature
 Size: 181 bytes
 Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191122/2ec916ff/attachment.sig>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191122/2ee1c9a0/attachment-0001.sig>
