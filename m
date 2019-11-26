@@ -1,35 +1,38 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Tue, 26 Nov 2019 16:20:21 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 00/10] Add SDHI/eMMC/USB2.0 support
-Message-ID: <1574785231-56219-1-git-send-email-biju.das@bp.renesas.com>
+Date: Tue, 26 Nov 2019 16:20:22 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 01/10] dt-bindings: mmc: renesas_sdhi:
+	Add r8a7744 support
+In-Reply-To: <1574785231-56219-1-git-send-email-biju.das@bp.renesas.com>
+References: <1574785231-56219-1-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1574785231-56219-2-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This patch series add SDHI/eMMC/USB2.0 support for iWave iwg20d
-platform based on RZ/G1N.
+commit bd451c2df99bb5b7cd2b51fe05f7bb15ddf92791 upstream.
 
-This patch series is based on linux-4.4.y-cip and all the patches
-in this series are cherry-picked from linux rc tree.
+Add support for r8a7744 SoC. Renesas RZ/G1N (R8A7744) SDHI is identical
+to the R-Car Gen2 family.
 
-Biju Das (10):
-  dt-bindings: mmc: renesas_sdhi: Add r8a7744 support
-  mmc: renesas_sdhi: Add r8a7744 support
-  ARM: dts: r8a7744: Add SDHI nodes
-  dt-bindings: mmc: sh_mmcif: Document r8a7744 DT bindings
-  ARM: dts: r8a7744: Add MMC node
-  ARM: dts: r8a7744-iwg20m: Add eMMC support
-  ARM: dts: r8a7744-iwg20m: Enable SDHI0 controller
-  dt-bindings: PCI: rcar: Add device tree support for r8a7744
-  ARM: dts: r8a7744: USB 2.0 host support
-  ARM: dts: r8a7744: Add USB-DMAC and HSUSB device nodes
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
- .../devicetree/bindings/mmc/renesas,mmcif.txt      |   1 +
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt |   1 +
- .../devicetree/bindings/pci/pci-rcar-gen2.txt      |   1 +
- arch/arm/boot/dts/r8a7744-iwg20m.dtsi              |  33 +++++
- arch/arm/boot/dts/r8a7744.dtsi                     | 162 ++++++++++++++++++++-
- drivers/mmc/host/sh_mobile_sdhi.c                  |   1 +
- 6 files changed, 191 insertions(+), 8 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+index 1d23a43..498b744 100644
+--- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
++++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+@@ -16,6 +16,7 @@ Required properties:
+ 		"renesas,sdhi-r8a73a4" - SDHI IP on R8A73A4 SoC
+ 		"renesas,sdhi-r8a7740" - SDHI IP on R8A7740 SoC
+ 		"renesas,sdhi-r8a7743" - SDHI IP on R8A7743 SoC
++		"renesas,sdhi-r8a7744" - SDHI IP on R8A7744 SoC
+ 		"renesas,sdhi-r8a7745" - SDHI IP on R8A7745 SoC
+ 		"renesas,sdhi-r8a7778" - SDHI IP on R8A7778 SoC
+ 		"renesas,sdhi-r8a7779" - SDHI IP on R8A7779 SoC
 -- 
 2.7.4
