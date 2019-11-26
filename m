@@ -1,40 +1,50 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Tue, 26 Nov 2019 16:20:25 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 04/10] dt-bindings: mmc: sh_mmcif:
-	Document r8a7744 DT bindings
+Date: Tue, 26 Nov 2019 16:20:26 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 05/10] ARM: dts: r8a7744: Add MMC node
 In-Reply-To: <1574785231-56219-1-git-send-email-biju.das@bp.renesas.com>
 References: <1574785231-56219-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1574785231-56219-5-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1574785231-56219-6-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit 2ffca7a34df5ce95efff4a481cd79ec47abf3d6d upstream.
+commit d9e792206d2101de871ea99220b59fe2930ebbcc upstream.
 
-Add support for r8a7744 SoC. Renesas RZ/G1N (R8A7744) MMCIF is identical
-to the R-Car Gen2 family.
+Add MMC node to the DT of the r8a7744 SoC.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-[biju: backported to 4.4 kernel]
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[biju: removed resets property. Updated power-domains and clocks properties]
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/mmc/renesas,mmcif.txt | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/r8a7744.dtsi | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt b/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
-index aa33691..ccbcd76 100644
---- a/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
-+++ b/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
-@@ -10,6 +10,7 @@ Required properties:
-   fallback. Examples with <soctype> are:
- 	- "renesas,mmcif-r8a7740" for the MMCIF found in r8a7740 SoCs
- 	- "renesas,mmcif-r8a7743" for the MMCIF found in r8a7743 SoCs
-+	- "renesas,mmcif-r8a7744" for the MMCIF found in r8a7744 SoCs
- 	- "renesas,mmcif-r8a7745" for the MMCIF found in r8a7745 SoCs
- 	- "renesas,mmcif-r8a7790" for the MMCIF found in r8a7790 SoCs
- 	- "renesas,mmcif-r8a7791" for the MMCIF found in r8a7791 SoCs
+diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
+index 574bdf7..e020be8 100644
+--- a/arch/arm/boot/dts/r8a7744.dtsi
++++ b/arch/arm/boot/dts/r8a7744.dtsi
+@@ -853,6 +853,21 @@
+ 			status = "disabled";
+ 		};
+ 
++		mmcif0: mmc at ee200000 {
++			compatible = "renesas,mmcif-r8a7744",
++				     "renesas,sh-mmcif";
++			reg = <0 0xee200000 0 0x80>;
++			interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp3_clks R8A7744_CLK_MMCIF0>;
++			dmas = <&dmac0 0xd1>, <&dmac0 0xd2>,
++			       <&dmac1 0xd1>, <&dmac1 0xd2>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&cpg_clocks>;
++			reg-io-width = <4>;
++			max-frequency = <97500000>;
++			status = "disabled";
++		};
++
+ 		gic: interrupt-controller at f1001000 {
+ 			compatible = "arm,gic-400";
+ 			#interrupt-cells = <3>;
 -- 
 2.7.4
