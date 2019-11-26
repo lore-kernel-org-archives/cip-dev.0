@@ -1,54 +1,42 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Tue, 26 Nov 2019 16:20:28 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 07/10] ARM: dts: r8a7744-iwg20m: Enable
-	SDHI0 controller
+Date: Tue, 26 Nov 2019 16:20:29 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 08/10] dt-bindings: PCI: rcar: Add
+	device tree support for r8a7744
 In-Reply-To: <1574785231-56219-1-git-send-email-biju.das@bp.renesas.com>
 References: <1574785231-56219-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1574785231-56219-8-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1574785231-56219-9-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit f9a3d5f23b6c8e4029a3474945971477d1f9365a upstream.
+commit 6adb734bb9c72c0fdcb1868edcc5fde3b6333d11 upstream.
 
-Enable the SDHI0 controller on iWave RZ/G1N Qseven System On Module.
+Add internal PCI bridge support for r8a7744 SoC. The Renesas RZ/G1N
+(R8A7744) internal PCI bridge is identical to the R-Car Gen2 family.
+
+This doesn't change the driver, so it does nothing by itself.  But it does
+mean that checkpatch won't complain about a future patch that adds
+"renesas,pci-r8a7744" to a DT, which helps ensure that shipped DTs use
+documented compatibility strings.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7744-iwg20m.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/r8a7744-iwg20m.dtsi b/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
-index 1e57b1f..503583e 100644
---- a/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
-+++ b/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
-@@ -35,6 +35,12 @@
- 		groups = "mmc_data8_b", "mmc_ctrl";
- 		function = "mmc";
- 	};
-+
-+	sdhi0_pins: sd0 {
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
-+		power-source = <3300>;
-+	};
- };
+diff --git a/Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt b/Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt
+index 421ab0a..8ea3ec0 100644
+--- a/Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt
++++ b/Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt
+@@ -7,6 +7,7 @@ OHCI and EHCI controllers.
  
- &mmcif0 {
-@@ -46,3 +52,13 @@
- 	non-removable;
- 	status = "okay";
- };
-+
-+&sdhi0 {
-+	pinctrl-0 = <&sdhi0_pins>;
-+	pinctrl-names = "default";
-+
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&reg_3p3v>;
-+	cd-gpios = <&gpio7 11 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+};
+ Required properties:
+ - compatible: "renesas,pci-r8a7743" for the R8A7743 SoC;
++	      "renesas,pci-r8a7744" for the R8A7744 SoC;
+ 	      "renesas,pci-r8a7745" for the R8A7745 SoC;
+ 	      "renesas,pci-r8a7790" for the R8A7790 SoC;
+ 	      "renesas,pci-r8a7791" for the R8A7791 SoC;
 -- 
 2.7.4
