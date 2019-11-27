@@ -1,98 +1,59 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Wed, 27 Nov 2019 13:46:50 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 12/22] mmc: tmio,
-	renesas-sdhi: add dataend to DMA ops
+Date: Wed, 27 Nov 2019 13:46:53 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 15/22] dt-bindings: mmc: renesas_sdhi:
+	add R-Car Gen[123] fallback compatibility strings
 In-Reply-To: <1574862420-42606-1-git-send-email-biju.das@bp.renesas.com>
 References: <1574862420-42606-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1574862420-42606-13-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1574862420-42606-16-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Simon Horman <horms+renesas@verge.net.au>
 
-commit 92d0f925e6344a24b12a6eeb4f1030ec0e70e8d1 upstream.
+commit 54839d012d5f98cde2fa102fdcd22e1da661d138 upstream.
 
-Add dataend to DMA ops to allow DMAC implementation dependent
-handling of DMA data end.
+Add fallback compatibility strings for R-Car Gen 1, 2 and 3.
 
-Also implement the operation for SDHI.
+In the case of Renesas R-Car hardware we know that there are generations of
+SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationship
+between IP blocks might be. For example, I believe that r8a7790 is older
+than r8a7791 but that doesn't imply that the latter is a descendant of the
+former or vice versa.
+
+We can, however, by examining the documentation and behaviour of the
+hardware at run-time observe that the current driver implementation appears
+to be compatible with the IP blocks on SoCs within a given generation.
+
+For the above reasons and convenience when enabling new SoCs a
+per-generation fallback compatibility string scheme is being adopted for
+drivers for Renesas SoCs.
 
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/mmc/host/renesas_sdhi_sys_dmac.c |  6 ++++++
- drivers/mmc/host/tmio_mmc.h              |  1 +
- drivers/mmc/host/tmio_mmc_core.c         | 10 ++++++++--
- 3 files changed, 15 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index d7757dd..86a81fd 100644
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -114,6 +114,11 @@ static void renesas_sdhi_sys_dmac_abort_dma(struct tmio_mmc_host *host)
- 	renesas_sdhi_sys_dmac_enable_dma(host, true);
- }
- 
-+static void renesas_sdhi_sys_dmac_dataend_dma(struct tmio_mmc_host *host)
-+{
-+	complete(&host->dma_dataend);
-+}
+diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+index 1d23a43..25f06e6 100644
+--- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
++++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+@@ -24,6 +24,13 @@ Required properties:
+ 		"renesas,sdhi-r8a7792" - SDHI IP on R8A7792 SoC
+ 		"renesas,sdhi-r8a7793" - SDHI IP on R8A7793 SoC
+ 		"renesas,sdhi-r8a7794" - SDHI IP on R8A7794 SoC
++		"renesas,rcar-gen1-sdhi" - a generic R-Car Gen1 SDHI controller
++		"renesas,rcar-gen2-sdhi" - a generic R-Car Gen2 or RZ/G1
++					   SDHI controller
 +
- static void renesas_sdhi_sys_dmac_dma_callback(void *arg)
- {
- 	struct tmio_mmc_host *host = arg;
-@@ -439,6 +444,7 @@ static const struct tmio_mmc_dma_ops renesas_sdhi_sys_dmac_dma_ops = {
- 	.request = renesas_sdhi_sys_dmac_request_dma,
- 	.release = renesas_sdhi_sys_dmac_release_dma,
- 	.abort = renesas_sdhi_sys_dmac_abort_dma,
-+	.dataend = renesas_sdhi_sys_dmac_dataend_dma,
- };
++		When compatible with the generic version, nodes must list
++		the SoC-specific version corresponding to the platform
++		first followed by the generic version.
  
- static int renesas_sdhi_sys_dmac_probe(struct platform_device *pdev)
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index cd5b4f3..17ea4b6 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -120,6 +120,7 @@ struct tmio_mmc_dma_ops {
- 			struct tmio_mmc_data *pdata);
- 	void (*release)(struct tmio_mmc_host *host);
- 	void (*abort)(struct tmio_mmc_host *host);
-+	void (*dataend)(struct tmio_mmc_host *host);
- };
- 
- struct tmio_mmc_host {
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index f93a773..ed49a76 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -86,6 +86,12 @@ static inline void tmio_mmc_abort_dma(struct tmio_mmc_host *host)
- 		host->dma_ops->abort(host);
- }
- 
-+static inline void tmio_mmc_dataend_dma(struct tmio_mmc_host *host)
-+{
-+	if (host->dma_ops)
-+		host->dma_ops->dataend(host);
-+}
-+
- void tmio_mmc_enable_mmc_irqs(struct tmio_mmc_host *host, u32 i)
- {
- 	host->sdcard_irq_mask &= ~(i & TMIO_MASK_IRQ);
-@@ -636,11 +642,11 @@ static void tmio_mmc_data_irq(struct tmio_mmc_host *host, unsigned int stat)
- 
- 		if (done) {
- 			tmio_mmc_disable_mmc_irqs(host, TMIO_STAT_DATAEND);
--			complete(&host->dma_dataend);
-+			tmio_mmc_dataend_dma(host);
- 		}
- 	} else if (host->chan_rx && (data->flags & MMC_DATA_READ) && !host->force_pio) {
- 		tmio_mmc_disable_mmc_irqs(host, TMIO_STAT_DATAEND);
--		complete(&host->dma_dataend);
-+		tmio_mmc_dataend_dma(host);
- 	} else {
- 		tmio_mmc_do_data_irq(host);
- 		tmio_mmc_disable_mmc_irqs(host, TMIO_MASK_READOP | TMIO_MASK_WRITEOP);
+ Optional properties:
+ - toshiba,mmc-wrprotect-disable: write-protect detection is unavailable
 -- 
 2.7.4
