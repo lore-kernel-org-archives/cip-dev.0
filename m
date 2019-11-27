@@ -1,76 +1,98 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Wed, 27 Nov 2019 13:46:52 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 14/22] mmc: renesas_sdhi: consolidate
-	DMAC CONFIG options
+Date: Wed, 27 Nov 2019 13:46:50 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 12/22] mmc: tmio,
+	renesas-sdhi: add dataend to DMA ops
 In-Reply-To: <1574862420-42606-1-git-send-email-biju.das@bp.renesas.com>
 References: <1574862420-42606-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1574862420-42606-15-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1574862420-42606-13-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Simon Horman <horms+renesas@verge.net.au>
 
-commit c813e10a6bbad9ef56bc115c64d48c5a7d0a7dd5 upstream.
+commit 92d0f925e6344a24b12a6eeb4f1030ec0e70e8d1 upstream.
 
-The description in the Makefile is odd.  Fix the CONFIG selection
-in a cleaner way.
+Add dataend to DMA ops to allow DMAC implementation dependent
+handling of DMA data end.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Also implement the operation for SDHI.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/mmc/host/Kconfig  | 4 ++--
- drivers/mmc/host/Makefile | 8 ++------
- 2 files changed, 4 insertions(+), 8 deletions(-)
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c |  6 ++++++
+ drivers/mmc/host/tmio_mmc.h              |  1 +
+ drivers/mmc/host/tmio_mmc_core.c         | 10 ++++++++--
+ 3 files changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 54d98ee..7b947ce 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -563,8 +563,6 @@ config MMC_SDHI
- 	depends on SUPERH || ARM
- 	depends on SUPERH || ARCH_SHMOBILE || COMPILE_TEST
- 	select MMC_TMIO_CORE
--	select MMC_SDHI_SYS_DMAC if (SUPERH || ARM)
--	select MMC_SDHI_INTERNAL_DMAC if ARM64
- 	help
- 	  This provides support for the SDHI SD/SDIO controller found in
- 	  Renesas SuperH, ARM and ARM64 based SoCs
-@@ -572,6 +570,7 @@ config MMC_SDHI
- config MMC_SDHI_SYS_DMAC
- 	tristate "DMA for SDHI SD/SDIO controllers using SYS-DMAC"
- 	depends on MMC_SDHI
-+	default MMC_SDHI if (SUPERH || ARM)
- 	help
- 	  This provides DMA support for SDHI SD/SDIO controllers
- 	  using SYS-DMAC via DMA Engine. This supports the controllers
-@@ -581,6 +580,7 @@ config MMC_SDHI_INTERNAL_DMAC
- 	tristate "DMA for SDHI SD/SDIO controllers using on-chip bus mastering"
- 	depends on ARM64 || COMPILE_TEST
- 	depends on MMC_SDHI
-+	default MMC_SDHI if ARM64
- 	help
- 	  This provides DMA support for SDHI SD/SDIO controllers
- 	  using on-chip bus mastering. This supports the controllers
-diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
-index f10bb0c..5de0c72 100644
---- a/drivers/mmc/host/Makefile
-+++ b/drivers/mmc/host/Makefile
-@@ -37,12 +37,8 @@ obj-$(CONFIG_MMC_SDRICOH_CS)	+= sdricoh_cs.o
- obj-$(CONFIG_MMC_TMIO)		+= tmio_mmc.o
- obj-$(CONFIG_MMC_TMIO_CORE)	+= tmio_mmc_core.o
- obj-$(CONFIG_MMC_SDHI)		+= renesas_sdhi_core.o
--ifeq ($(subst m,y,$(CONFIG_MMC_SDHI_SYS_DMAC)),y)
--obj-$(CONFIG_MMC_SDHI)		+= renesas_sdhi_sys_dmac.o
--endif
--ifeq ($(subst m,y,$(CONFIG_MMC_SDHI_INTERNAL_DMAC)),y)
--obj-$(CONFIG_MMC_SDHI)		+= renesas_sdhi_internal_dmac.o
--endif
-+obj-$(CONFIG_MMC_SDHI_SYS_DMAC)		+= renesas_sdhi_sys_dmac.o
-+obj-$(CONFIG_MMC_SDHI_INTERNAL_DMAC)	+= renesas_sdhi_internal_dmac.o
- obj-$(CONFIG_MMC_CB710)		+= cb710-mmc.o
- obj-$(CONFIG_MMC_VIA_SDMMC)	+= via-sdmmc.o
- obj-$(CONFIG_SDH_BFIN)		+= bfin_sdh.o
+diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+index d7757dd..86a81fd 100644
+--- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+@@ -114,6 +114,11 @@ static void renesas_sdhi_sys_dmac_abort_dma(struct tmio_mmc_host *host)
+ 	renesas_sdhi_sys_dmac_enable_dma(host, true);
+ }
+ 
++static void renesas_sdhi_sys_dmac_dataend_dma(struct tmio_mmc_host *host)
++{
++	complete(&host->dma_dataend);
++}
++
+ static void renesas_sdhi_sys_dmac_dma_callback(void *arg)
+ {
+ 	struct tmio_mmc_host *host = arg;
+@@ -439,6 +444,7 @@ static const struct tmio_mmc_dma_ops renesas_sdhi_sys_dmac_dma_ops = {
+ 	.request = renesas_sdhi_sys_dmac_request_dma,
+ 	.release = renesas_sdhi_sys_dmac_release_dma,
+ 	.abort = renesas_sdhi_sys_dmac_abort_dma,
++	.dataend = renesas_sdhi_sys_dmac_dataend_dma,
+ };
+ 
+ static int renesas_sdhi_sys_dmac_probe(struct platform_device *pdev)
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index cd5b4f3..17ea4b6 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -120,6 +120,7 @@ struct tmio_mmc_dma_ops {
+ 			struct tmio_mmc_data *pdata);
+ 	void (*release)(struct tmio_mmc_host *host);
+ 	void (*abort)(struct tmio_mmc_host *host);
++	void (*dataend)(struct tmio_mmc_host *host);
+ };
+ 
+ struct tmio_mmc_host {
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index f93a773..ed49a76 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -86,6 +86,12 @@ static inline void tmio_mmc_abort_dma(struct tmio_mmc_host *host)
+ 		host->dma_ops->abort(host);
+ }
+ 
++static inline void tmio_mmc_dataend_dma(struct tmio_mmc_host *host)
++{
++	if (host->dma_ops)
++		host->dma_ops->dataend(host);
++}
++
+ void tmio_mmc_enable_mmc_irqs(struct tmio_mmc_host *host, u32 i)
+ {
+ 	host->sdcard_irq_mask &= ~(i & TMIO_MASK_IRQ);
+@@ -636,11 +642,11 @@ static void tmio_mmc_data_irq(struct tmio_mmc_host *host, unsigned int stat)
+ 
+ 		if (done) {
+ 			tmio_mmc_disable_mmc_irqs(host, TMIO_STAT_DATAEND);
+-			complete(&host->dma_dataend);
++			tmio_mmc_dataend_dma(host);
+ 		}
+ 	} else if (host->chan_rx && (data->flags & MMC_DATA_READ) && !host->force_pio) {
+ 		tmio_mmc_disable_mmc_irqs(host, TMIO_STAT_DATAEND);
+-		complete(&host->dma_dataend);
++		tmio_mmc_dataend_dma(host);
+ 	} else {
+ 		tmio_mmc_do_data_irq(host);
+ 		tmio_mmc_disable_mmc_irqs(host, TMIO_MASK_READOP | TMIO_MASK_WRITEOP);
 -- 
 2.7.4
