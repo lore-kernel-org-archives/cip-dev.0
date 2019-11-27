@@ -1,55 +1,46 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Wed, 27 Nov 2019 13:46:43 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 05/22] mmc: tmio: always unmap DMA
-	before waiting for interrupt
+Date: Wed, 27 Nov 2019 13:46:44 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 06/22] mmc: tmio: rename tmio_mmc_{pio
+	=> core}.c
 In-Reply-To: <1574862420-42606-1-git-send-email-biju.das@bp.renesas.com>
 References: <1574862420-42606-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1574862420-42606-6-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1574862420-42606-7-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Simon Horman <horms+renesas@verge.net.au>
 
-commit 5f07ef8f603ace496ca8c20eef446c5ae7a10474 upstream.
+commit 426e95d1766bad20e59f219af64fdd50c39bcfee upstream.
 
-In the (maybe academical) case, we don't get a DATAEND interrupt after
-DMA completed, we will wait endlessly for the completion to complete.
-This is not bad per se, since we have a more generic completion tracking
-a timeout. In that rare case, however, the DMA buffer will not get
-unmapped and we have a leak. Reorder the code, so unmapping will always
-take place.
+Rename tmio_mmc_pio.c to tmio_mmc_core.c to more accurately reflect its
+function: to provide core code for the tmio-mmc and sh-mobole-sdhi drivers.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/mmc/host/tmio_mmc_dma.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/mmc/host/Makefile                            | 1 -
+ drivers/mmc/host/{tmio_mmc_pio.c => tmio_mmc_core.c} | 0
+ 2 files changed, 1 deletion(-)
+ rename drivers/mmc/host/{tmio_mmc_pio.c => tmio_mmc_core.c} (100%)
 
-diff --git a/drivers/mmc/host/tmio_mmc_dma.c b/drivers/mmc/host/tmio_mmc_dma.c
-index e743684..72596bf 100644
---- a/drivers/mmc/host/tmio_mmc_dma.c
-+++ b/drivers/mmc/host/tmio_mmc_dma.c
-@@ -45,8 +45,6 @@ static void tmio_mmc_dma_callback(void *arg)
- {
- 	struct tmio_mmc_host *host = arg;
- 
--	wait_for_completion(&host->dma_dataend);
--
- 	spin_lock_irq(&host->lock);
- 
- 	if (!host->data)
-@@ -61,6 +59,11 @@ static void tmio_mmc_dma_callback(void *arg)
- 			     host->sg_ptr, host->sg_len,
- 			     DMA_TO_DEVICE);
- 
-+	spin_unlock_irq(&host->lock);
-+
-+	wait_for_completion(&host->dma_dataend);
-+
-+	spin_lock_irq(&host->lock);
- 	tmio_mmc_do_data_irq(host);
- out:
- 	spin_unlock_irq(&host->lock);
+diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+index bf399b8..2b75a43 100644
+--- a/drivers/mmc/host/Makefile
++++ b/drivers/mmc/host/Makefile
+@@ -36,7 +36,6 @@ obj-$(CONFIG_MMC_S3C)   	+= s3cmci.o
+ obj-$(CONFIG_MMC_SDRICOH_CS)	+= sdricoh_cs.o
+ obj-$(CONFIG_MMC_TMIO)		+= tmio_mmc.o
+ obj-$(CONFIG_MMC_TMIO_CORE)	+= tmio_mmc_core.o
+-tmio_mmc_core-y			:= tmio_mmc_pio.o
+ obj-$(CONFIG_MMC_SDHI)		+= sh_mobile_sdhi.o tmio_mmc_dma.o
+ obj-$(CONFIG_MMC_CB710)		+= cb710-mmc.o
+ obj-$(CONFIG_MMC_VIA_SDMMC)	+= via-sdmmc.o
+diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_core.c
+similarity index 100%
+rename from drivers/mmc/host/tmio_mmc_pio.c
+rename to drivers/mmc/host/tmio_mmc_core.c
 -- 
 2.7.4
