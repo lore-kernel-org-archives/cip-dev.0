@@ -1,49 +1,58 @@
-From: SZ.Lin@moxa.com (=?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
-Date: Thu, 28 Nov 2019 01:51:15 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-Message-ID: <HK0PR01MB2979FAB64E305767807968D2E2470@HK0PR01MB2979.apcprd01.prod.exchangelabs.com>
+From: biju.das@bp.renesas.com (Biju Das)
+Date: Thu, 28 Nov 2019 07:56:34 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 00/22] Add RZ/G1C SD/eMMC support
+In-Reply-To: <20191127192127.GC12777@amd>
+References: <1574862420-42606-1-git-send-email-biju.das@bp.renesas.com>
+ <20191127192127.GC12777@amd>
+Message-ID: <OSBPR01MB2103A698400D778DCDFA93C2B8470@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+Hi Pavel,
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
+Regarding patch #9,
 
-*Please note that the IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=11&day=28&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
-          
-US-West US-East   UK     DE     TW     JP
-01:00    04:00   09:00   10:00   17:00   18:00
+Thanks  for the feedback.
 
-Channel:
-* irc:chat.freenode.net:6667/cip
+Please see the subject line on this patch " From: Simon Horman <horms+renesas@verge.net.au>"
 
-Last week's meeting minutes:
-https://irclogs.baserock.org/meetings/cip/2019/11/cip.2019-11-21-09.00.log.html
+It is supposed to be " mmc: renesas-sdhi: make renesas_sdhi_sys_dmac   main module file"
 
-Agenda:
+https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/commit/?h=linux-4.4.y-cip&id=1d4c381fb35658d30661ff588d0d64c79f084f9e
 
-* Action item
-1. Test LTS (pre)releases directly - patersonc 
 
-2. Create a way/process to run LTP only for release tests - patersonc 
+regards,
+Biju
 
-3. Combine rootfilesystem with kselftest binary - Iwamatsu-san 
-
-4. Document a process on how to add tests to the CIP test setup - patersonc 
-
-5. Split out non-Kernel config sections from gitlab-ci.yml - patersonc
-
-6. Ask RT admin to put CIP RT kernel to their CI-RT - Kernel team 
-
-* Kernel maintenance updates
-* Kernel testing
-* CIP Core
-* Software update
-* AOB
-
-The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
-
-Best regards,
-
-SZ Lin, Moxa.
+> Subject: Re: [PATCH 4.4.y-cip 00/22] Add RZ/G1C SD/eMMC support
+> 
+> Hi!
+> 
+> > This patch series add SD/eMMC support support for RZ/G1C sbc.
+> >
+> > RZ/G1C eMMC IP is different from other RZ/G1 SoC's. It is having an
+> internal DMA for data transfer which is similar to R-Car Gen3.
+> >
+> > Support for internal DMAC is added in 4.14 kernel and support for RZ/G1C
+> added on 4.20 kernel.
+> >
+> > Backported the relevent patches to linux-4.4.y-cip.
+> 
+> Ok, that was fun.
+> 
+> AFAICT, this clashed with "Add SDHI/eMMC/USB2.0 support" as I applied
+> them in unexpected order. So #9 and #17 rejected. I fixed up #9 by hand,
+> and simply dropped #17, as it is "just" documentation.
+> 
+> I believe I got it right, and tests seem to pass:
+> 
+> https://gitlab.com/cip-project/cip-kernel/linux-cip/pipelines/99052811
+> 
+> ...so I pushed the result. Could you verify that it looks how you expected it,
+> and resubmit patch #17 I dropped?
+> 
+> Thanks and best regards,
+> 								Pavel
+> --
+> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
