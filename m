@@ -1,58 +1,58 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Thu, 28 Nov 2019 07:56:34 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 00/22] Add RZ/G1C SD/eMMC support
-In-Reply-To: <20191127192127.GC12777@amd>
-References: <1574862420-42606-1-git-send-email-biju.das@bp.renesas.com>
- <20191127192127.GC12777@amd>
-Message-ID: <OSBPR01MB2103A698400D778DCDFA93C2B8470@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+Date: Thu, 28 Nov 2019 08:15:34 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip] dt-bindings: mmc: renesas_sdhi: Add
+	r8a77470 support
+Message-ID: <1574928934-18465-1-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Pavel,
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Regarding patch #9,
+commit be6f8db406a49511a8d213f9443ae79fe5b086c3 upstream.
 
-Thanks  for the feedback.
+The RZ/G1C (a.k.a. R8A77470) comes with three SDHI interfaces,
+SDHI0 and SDHI2 are compatible with R-Car Gen2 SDHIs, and
+SDHI1 is compatible with R-Car Gen3 SDHIs, as it comes with an
+internal DMAC, therefore SDHI1 is fully compatible with driver
+renesas_sdhi_internal_dmac driver. As a result, the compatible
+strings for the R8A77470 SDHI interfaces are a little bit special.
+Document SDHI support for the RZ/G1C SoC.
 
-Please see the subject line on this patch " From: Simon Horman <horms+renesas@verge.net.au>"
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+[biju: Removed R-Car Gen3 devices]
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-It is supposed to be " mmc: renesas-sdhi: make renesas_sdhi_sys_dmac   main module file"
-
-https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/commit/?h=linux-4.4.y-cip&id=1d4c381fb35658d30661ff588d0d64c79f084f9e
-
-
-regards,
-Biju
-
-> Subject: Re: [PATCH 4.4.y-cip 00/22] Add RZ/G1C SD/eMMC support
-> 
-> Hi!
-> 
-> > This patch series add SD/eMMC support support for RZ/G1C sbc.
-> >
-> > RZ/G1C eMMC IP is different from other RZ/G1 SoC's. It is having an
-> internal DMA for data transfer which is similar to R-Car Gen3.
-> >
-> > Support for internal DMAC is added in 4.14 kernel and support for RZ/G1C
-> added on 4.20 kernel.
-> >
-> > Backported the relevent patches to linux-4.4.y-cip.
-> 
-> Ok, that was fun.
-> 
-> AFAICT, this clashed with "Add SDHI/eMMC/USB2.0 support" as I applied
-> them in unexpected order. So #9 and #17 rejected. I fixed up #9 by hand,
-> and simply dropped #17, as it is "just" documentation.
-> 
-> I believe I got it right, and tests seem to pass:
-> 
-> https://gitlab.com/cip-project/cip-kernel/linux-cip/pipelines/99052811
-> 
-> ...so I pushed the result. Could you verify that it looks how you expected it,
-> and resubmit patch #17 I dropped?
-> 
-> Thanks and best regards,
-> 								Pavel
-> --
-> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+index 72e8185..94bb00b 100644
+--- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
++++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+@@ -18,6 +18,8 @@ Required properties:
+ 		"renesas,sdhi-r8a7743" - SDHI IP on R8A7743 SoC
+ 		"renesas,sdhi-r8a7744" - SDHI IP on R8A7744 SoC
+ 		"renesas,sdhi-r8a7745" - SDHI IP on R8A7745 SoC
++		"renesas,sdhi-r8a77470" - SDHI IP on R8A77470 SoC
++		"renesas,sdhi-mmc-r8a77470" - SDHI/MMC IP on R8A77470 SoC
+ 		"renesas,sdhi-r8a7778" - SDHI IP on R8A7778 SoC
+ 		"renesas,sdhi-r8a7779" - SDHI IP on R8A7779 SoC
+ 		"renesas,sdhi-r8a7790" - SDHI IP on R8A7790 SoC
+@@ -26,8 +28,8 @@ Required properties:
+ 		"renesas,sdhi-r8a7793" - SDHI IP on R8A7793 SoC
+ 		"renesas,sdhi-r8a7794" - SDHI IP on R8A7794 SoC
+ 		"renesas,rcar-gen1-sdhi" - a generic R-Car Gen1 SDHI controller
+-		"renesas,rcar-gen2-sdhi" - a generic R-Car Gen2 or RZ/G1
+-					   SDHI controller
++		"renesas,rcar-gen2-sdhi" - a generic R-Car Gen2 and RZ/G1 SDHI
++					   (not SDHI/MMC) controller
+ 
+ 		When compatible with the generic version, nodes must list
+ 		the SoC-specific version corresponding to the platform
+-- 
+2.7.4
