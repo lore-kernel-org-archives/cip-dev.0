@@ -1,55 +1,34 @@
-From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Wed, 4 Dec 2019 08:24:14 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip] gpiolib: Fix invalid access of
-	nullptr
-In-Reply-To: <OSAPR01MB323449CF4631A8179A0EC6BE925D0@OSAPR01MB3234.jpnprd01.prod.outlook.com>
-References: <14717888-518c-3643-b98e-4a052c14c102@siemens.com>
- <TY1PR01MB177064C0DFD2CCE7D43B3BE4C0430@TY1PR01MB1770.jpnprd01.prod.outlook.com>
- <OSAPR01MB323449CF4631A8179A0EC6BE925D0@OSAPR01MB3234.jpnprd01.prod.outlook.com>
-Message-ID: <TY1PR01MB17707D53C503898E285C6EB6C05D0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+From: pavel@denx.de (Pavel Machek)
+Date: Wed, 4 Dec 2019 12:46:20 +0100
+Subject: [cip-dev] [ANNOUNCE] v4.19.82-cip14-rt5
+Message-ID: <20191204114620.GA24345@duo.ucw.cz>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Iwamatsu-san,
+Hi!
 
-Thank you for your feedback!
+v4.19.82-cip14-rt5 should be available at kernel.org.
 
-> From: nobuhiro1.iwamatsu at toshiba.co.jp <nobuhiro1.iwamatsu@toshiba.co.jp>
-> Sent: 04 December 2019 00:20
-> Subject: RE: [PATCH 4.4.y-cip] gpiolib: Fix invalid access of nullptr
-> 
-> Hi Fabrizio, Stefan,
-> 
-> > -----Original Message-----
-> > From: Fabrizio Castro [mailto:fabrizio.castro at bp.renesas.com]
-> > Sent: Tuesday, December 3, 2019 12:43 AM
-> > To: Koch, Stefan <stefan-koch@siemens.com>;
-> > cip-dev at lists.cip-project.org
-> > Cc: pavel at denx.de; iwamatsu nobuhiro(?? ?? ????????)
-> > <nobuhiro1.iwamatsu@toshiba.co.jp>; Chris Paterson
-> > <Chris.Paterson2@renesas.com>; Biju Das <biju.das@bp.renesas.com>
-> > Subject: RE: [PATCH 4.4.y-cip] gpiolib: Fix invalid access of nullptr
-> >
-> > Hi Stefan,
-> >
-> > That's a known problem, please have a  look at:
-> > https://patchwork.kernel.org/patch/11235267/
-> >
-> > Pavel, Iwamatsu-san, could you please take patch:
-> > https://patchwork.kernel.org/patch/11235267/
-> >
-> > I think this is quite urgent as others will stumble across the problem
-> > and will try and fix it.
-> 
-> OK, I will apply this with following comment if there is no other opinion.
-> 
-> NOTE: gpiochip_add_data()'s fixes is based on 6ff0497402ef7269ee6a72f62eb85adaa7a4768e.
+Trees are available at
 
-Great, thanks!
+https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.19.y-cip-rt
 
-Fab
+https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.19.y-cip-rt-rebase
 
-> 
-> Best regards,
->   Nobuhiro
-> 
+I made a mistake and -rt-rebase still has localversion-rt and
+different .yml file in tree. I believe that should not be huge
+problem. (I already signed the tag and pushed the tree, so I'm not
+exactly sure how to fix it without creating duplicate tags). 
+
+Best regards,
+									Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 195 bytes
+Desc: not available
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191204/9d7b1680/attachment.sig>
