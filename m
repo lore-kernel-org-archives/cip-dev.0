@@ -1,105 +1,85 @@
 From: fabrizio.castro@bp.renesas.com (Fabrizio Castro)
-Date: Thu, 5 Dec 2019 10:04:09 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip] gpiolib: Fix invalid access of
-	nullptr
-In-Reply-To: <TYAPR01MB2285887DC9FCCC0BC1FAEB48B75C0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-References: <14717888-518c-3643-b98e-4a052c14c102@siemens.com>
- <TY1PR01MB177064C0DFD2CCE7D43B3BE4C0430@TY1PR01MB1770.jpnprd01.prod.outlook.com>
- <OSAPR01MB323449CF4631A8179A0EC6BE925D0@OSAPR01MB3234.jpnprd01.prod.outlook.com>
- <20191204123651.GA29179@duo.ucw.cz>
- <OSAPR01MB3234EEA22BD9140A30F7C375925D0@OSAPR01MB3234.jpnprd01.prod.outlook.com>
- <TYAPR01MB2285887DC9FCCC0BC1FAEB48B75C0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-Message-ID: <TY1PR01MB17708C10650375B7316F3199C05C0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+Date: Thu,  5 Dec 2019 13:39:37 +0000
+Subject: [cip-dev] [PATCH linux-4.4.y-cip v3] gpiolib: Fix bad of_node
+	pointer
+Message-ID: <1575553177-23044-1-git-send-email-fabrizio.castro@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Chris,
+Not every driver initialises of_node from struct gpio_chip,
+therefore the replacement of of_node from struct gpio_chip
+with dev->of_node in the below commit won't work on every
+platform:
+baff4777cdb8 ("gpiolib: Support 'gpio-reserved-ranges' property")
+The final result is that on some platforms the kernel will
+try to dereference a NULL pointer, with obvious consequences.
 
-Thank you for your feedback!
+This patch makes sure the pointer gets initialised before its
+first usage.
 
-> From: Chris Paterson <Chris.Paterson2@renesas.com>
-> Sent: 05 December 2019 09:44
-> To: nobuhiro1.iwamatsu at toshiba.co.jp; pavel at denx.de
-> Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>; stefan-koch at siemens.com; cip-dev at lists.cip-project.org; Biju Das
-> <biju.das@bp.renesas.com>
-> Subject: RE: [PATCH 4.4.y-cip] gpiolib: Fix invalid access of nullptr
-> 
-> Hello all,
-> 
-> > From: nobuhiro1.iwamatsu at toshiba.co.jp
-> > <nobuhiro1.iwamatsu@toshiba.co.jp>
-> > Sent: 04 December 2019 23:21
-> >
-> > > From: Pavel Machek [mailto:pavel at denx.de]
-> > > Sent: Wednesday, December 4, 2019 9:37 PM
-> > >
-> > > Hi!
-> > >
-> > > > > That's a known problem, please have a  look at:
-> > > > > https://patchwork.kernel.org/patch/11235267/
-> > > > >
-> > > > > Pavel, Iwamatsu-san, could you please take patch:
-> > > > > https://patchwork.kernel.org/patch/11235267/
-> > > > >
-> > > > > I think this is quite urgent as others will stumble across the
-> > > > > problem and will try and fix it.
-> > > >
-> > > > OK, I will apply this with following comment if there is no other opinion.
-> > > >
-> > > > NOTE: gpiochip_add_data()'s fixes is based on
-> > > 6ff0497402ef7269ee6a72f62eb85adaa7a4768e.
-> > >
-> > > Sounds good to me.
-> >
-> > Applied.
-> 
-> This patch seems to have broken builds for 2/16 of our v4.4.y-cip configurations.
-> Pipeline: https://gitlab.com/cip-project/cip-kernel/linux-cip/pipelines/100757773
-> 
-> 1) x86_plathome_obsvx1.config:  https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/369871332
-> 
-> Error log:
-> 3274 drivers/gpio/gpiolib.c: In function 'gpiochip_add_data':
-> 3275 drivers/gpio/gpiolib.c:363:12: error: 'struct gpio_chip' has no member named 'of_node'
-> 3276   if ((!chip->of_node) && (chip->dev))
-> 3277             ^~
-> 3278 drivers/gpio/gpiolib.c:364:7: error: 'struct gpio_chip' has no member named 'of_node'
-> 3279    chip->of_node = chip->dev->of_node;
-> 3280        ^~
-> 3281   CC      drivers/dma/ioat/prep.o
-> 3282 scripts/Makefile.build:277: recipe for target 'drivers/gpio/gpiolib.o' failed
-> 3283 make[2]: *** [drivers/gpio/gpiolib.o] Error 1
-> 3284 scripts/Makefile.build:484: recipe for target 'drivers/gpio' failed
-> 3285 make[1]: *** [drivers/gpio] Error 2
-> 3286 make[1]: *** Waiting for unfinished jobs....
-> 
-> 
-> 2) x86_siemens_iot2000.config: https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/369871333
-> 
-> Error log:
-> 2729 drivers/gpio/gpiolib.c: In function 'gpiochip_add_data':
-> 2730 drivers/gpio/gpiolib.c:363:12: error: 'struct gpio_chip' has no member named 'of_node'
-> 2731   if ((!chip->of_node) && (chip->dev))
-> 2732             ^~
-> 2733 drivers/gpio/gpiolib.c:364:7: error: 'struct gpio_chip' has no member named 'of_node'
-> 2734    chip->of_node = chip->dev->of_node;
-> 2735        ^~
-> 2736 scripts/Makefile.build:277: recipe for target 'drivers/gpio/gpiolib.o' failed
-> 2737 make[2]: *** [drivers/gpio/gpiolib.o] Error 1
-> 2738 make[1]: *** [drivers/gpio] Error 2
-> 2739 make[1]: *** Waiting for unfinished jobs....
-> 2740 scripts/Makefile.build:484: recipe for target 'drivers/gpio' failed
+Fixes: baff4777cdb8 ("gpiolib: Support 'gpio-reserved-ranges' property")
+Reported-by: Johnson CH Chen <JohnsonCH.Chen@moxa.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-This makes a lot of sense, Intel would not have CONFIG_OF_GPIO set!
-I'll send another version.
+---
+Hi guys,
+
+sorry for the trouble.
+v2 broke Intel builds (thank you Chris for spotting this), v3 fixes that.
+Are you happy to replace v2 with v3 on linux-4.4.y-cip?
 
 Thanks,
 Fab
 
-> 
-> 
-> Kind regards, Chris
-> 
-> >
-> > Best regards,
-> >   Nobuhiro
+v2->v3:
+* v2 was accessing chip->of_node regardless of CONFIG_OF_GPIO
+  being enabled or not. v3 compiles that out in case CONFIG_OF_GPIO
+  is not enabled.
+v1->v2:
+* v1 was for testing purposes only, but no point in sending
+  out a dirty patch, therefore cleaned it up
+---
+ drivers/gpio/gpiolib-of.c | 2 +-
+ drivers/gpio/gpiolib.c    | 7 ++++++-
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index ec642bf..6fa1818 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -338,7 +338,7 @@ static void of_gpiochip_init_valid_mask(struct gpio_chip *chip)
+ {
+ 	int len, i;
+ 	u32 start, count;
+-	struct device_node *np = chip->dev->of_node;
++	struct device_node *np = chip->of_node;
+ 
+ 	len = of_property_count_u32_elems(np,  "gpio-reserved-ranges");
+ 	if (len < 0 || len % 2 != 0)
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index d72218f..516498e 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -296,7 +296,7 @@ static int gpiochip_init_valid_mask(struct gpio_chip *gpiochip)
+ {
+ #ifdef CONFIG_OF_GPIO
+ 	int size;
+-	struct device_node *np = gpiochip->dev->of_node;
++	struct device_node *np = gpiochip->of_node;
+ 
+ 	size = of_property_count_u32_elems(np,  "gpio-reserved-ranges");
+ 	if (size > 0 && size % 2 == 0)
+@@ -360,6 +360,11 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
+ 
+ 	chip->data = data;
+ 
++#ifdef CONFIG_OF_GPIO
++	if ((!chip->of_node) && (chip->dev))
++		chip->of_node = chip->dev->of_node;
++#endif
++
+ 	spin_lock_irqsave(&gpio_lock, flags);
+ 
+ 	if (base < 0) {
+-- 
+2.7.4
