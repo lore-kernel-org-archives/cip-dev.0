@@ -1,61 +1,52 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Fri,  6 Dec 2019 12:12:28 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 12/12] ARM: dts:
-	r8a7744-iwg20d-q7-dbcm-ca: Add device tree for camera DB
+From: nobuhiro1.iwamatsu@toshiba.co.jp (Nobuhiro Iwamatsu)
+Date: Sat, 7 Dec 2019 06:48:27 +0900
+Subject: [cip-dev] [PATCH 4.4.y-cip 00/12] Add
+	CAN/IRQC/THERMAL/VIN/Audio support
 In-Reply-To: <1575634348-10954-1-git-send-email-biju.das@bp.renesas.com>
 References: <1575634348-10954-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1575634348-10954-13-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <20191206214827.i4y7wc565piblhy7@toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit 7fbbfe07b588cd81c1046a1846345a5cf614589a upstream.
+Hi Biju,
 
-This patch adds support for the camera daughter board which is
-connected to iWave's RZ/G1N Qseven carrier board.
+On Fri, Dec 06, 2019 at 12:12:16PM +0000, Biju Das wrote:
+> This patch series add CAN/IRQC/THERMAL/VIN/Audio support for iWave iwg20d platform based on RZ/G1N.
+> 
+> This patch series is based on linux-4.4.y-cip and all the patches in this series are cherry-picked from linux rc tree.
+> 
+> 
+> Biju Das (11):
+>   dt-bindings: can: rcar_can: Add r8a7744 support
+>   ARM: dts: r8a7744: Add CAN support
+>   dt-bindings: irqchip: renesas-irqc: Document r8a7744 support
+>   ARM: dts: r8a7744: Add IRQC support
+>   dt-bindings: thermal: rcar: Add device tree support for r8a7744
+>   ARM: dts: r8a7744: Add thermal device to DT
+>   media: dt-bindings: media: rcar_vin: add device tree support for
+>     r8a7744
+>   ARM: dts: r8a7744: add VIN dt support
+>   ASoC: rsnd: Add r8a7744 support
+>   ARM: dts: r8a7744: Add audio support
+>   ARM: dts: r8a7744-iwg20d-q7-dbcm-ca: Add device tree for camera DB
+> 
+> Kuninori Morimoto (1):
+>   thermal: trip_point_temp_store() calls thermal_zone_device_update()
+> 
+>  .../bindings/interrupt-controller/renesas,irqc.txt |   1 +
+>  .../devicetree/bindings/media/rcar_vin.txt         |   1 +
+>  .../devicetree/bindings/net/can/rcar_can.txt       |   1 +
+>  .../devicetree/bindings/sound/renesas,rsnd.txt     |   1 +
+>  .../devicetree/bindings/thermal/rcar-thermal.txt   |   1 +
+>  arch/arm/boot/dts/Makefile                         |   1 +
+>  arch/arm/boot/dts/r8a7744-iwg20d-q7-dbcm-ca.dts    |  17 ++
+>  arch/arm/boot/dts/r8a7744.dtsi                     | 334 ++++++++++++++++++++-
+>  drivers/thermal/thermal_core.c                     |   6 +-
+>  9 files changed, 352 insertions(+), 11 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/r8a7744-iwg20d-q7-dbcm-ca.dts
+> 
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/Makefile                      |  1 +
- arch/arm/boot/dts/r8a7744-iwg20d-q7-dbcm-ca.dts | 17 +++++++++++++++++
- 2 files changed, 18 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a7744-iwg20d-q7-dbcm-ca.dts
+Looks good to me. I will apply if there is no other opinion.
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 88c3f12..147c66b 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -547,6 +547,7 @@ dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) += \
- 	r8a7743-iwg20d-q7.dtb \
- 	r8a7743-iwg20d-q7-dbcm-ca.dtb \
- 	r8a7744-iwg20d-q7.dtb \
-+	r8a7744-iwg20d-q7-dbcm-ca.dtb \
- 	r8a7745-iwg22d-sodimm.dtb \
- 	r8a7745-iwg22d-sodimm-dbhd-ca.dtb \
- 	r8a77470-iwg23s-sbc.dtb \
-diff --git a/arch/arm/boot/dts/r8a7744-iwg20d-q7-dbcm-ca.dts b/arch/arm/boot/dts/r8a7744-iwg20d-q7-dbcm-ca.dts
-new file mode 100644
-index 0000000..3e58c2e9
---- /dev/null
-+++ b/arch/arm/boot/dts/r8a7744-iwg20d-q7-dbcm-ca.dts
-@@ -0,0 +1,17 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the iWave Systems RZ/G1N Qseven board development
-+ * platform with camera daughter board
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ */
-+
-+/dts-v1/;
-+#include "r8a7744-iwg20m.dtsi"
-+#include "iwg20d-q7-common.dtsi"
-+#include "iwg20d-q7-dbcm-ca.dtsi"
-+
-+/ {
-+	model = "iWave Systems RZ/G1N Qseven development platform with camera add-on";
-+	compatible = "iwave,g20d", "iwave,g20m", "renesas,r8a7744";
-+};
--- 
-2.7.4
+Best regards,
+  Nobuhiro
