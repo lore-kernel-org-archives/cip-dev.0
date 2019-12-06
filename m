@@ -1,60 +1,37 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Fri,  6 Dec 2019 12:12:18 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 02/12] ARM: dts: r8a7744: Add CAN support
+Date: Fri,  6 Dec 2019 12:12:19 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 03/12] dt-bindings: irqchip:
+	renesas-irqc: Document r8a7744 support
 In-Reply-To: <1575634348-10954-1-git-send-email-biju.das@bp.renesas.com>
 References: <1575634348-10954-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1575634348-10954-3-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1575634348-10954-4-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit 56f1896093043c63c6ecd8a53080aa89d6b41070 upstream.
+commit 0c4cb97d4ec9d98fc5e30317326f28ed206f3ac6 upstream.
 
-Add the definitions for can0 and can1 to the r8a7744 SoC dtsi.
+Document RZ/G1N (R8A7744) SoC bindings.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-[biju: Removed reset and updated clk and power domain properties]
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 ---
- arch/arm/boot/dts/r8a7744.dtsi | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index c73269c..4538689 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -819,13 +819,29 @@
- 		};
- 
- 		can0: can at e6e80000 {
-+			compatible = "renesas,can-r8a7744",
-+				     "renesas,rcar-gen2-can";
- 			reg = <0 0xe6e80000 0 0x1000>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp9_clks R8A7744_CLK_RCAN0>,
-+				 <&cpg_clocks R8A7744_CLK_RCAN>,
-+				 <&can_clk>;
-+			clock-names = "clkp1", "clkp2", "can_clk";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
- 		};
- 
- 		can1: can at e6e88000 {
-+			compatible = "renesas,can-r8a7744",
-+				     "renesas,rcar-gen2-can";
- 			reg = <0 0xe6e88000 0 0x1000>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp9_clks R8A7744_CLK_RCAN1>,
-+				 <&cpg_clocks R8A7744_CLK_RCAN>,
-+				 <&can_clk>;
-+			clock-names = "clkp1", "clkp2", "can_clk";
-+			power-domains = <&cpg_clocks>;
-+			status = "disabled";
- 		};
- 
- 		rcar_sound: sound at ec500000 {
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
+index 1ed382e..eea4c7b 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
++++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
+@@ -6,6 +6,7 @@ Required properties:
+   Examples with soctypes are:
+     - "renesas,irqc-r8a73a4" (R-Mobile APE6)
+     - "renesas,irqc-r8a7743" (RZ/G1M)
++    - "renesas,irqc-r8a7744" (RZ/G1N)
+     - "renesas,irqc-r8a7745" (RZ/G1E)
+     - "renesas,irqc-r8a77470" (RZ/G1C)
+     - "renesas,irqc-r8a7790" (R-Car H2)
 -- 
 2.7.4
