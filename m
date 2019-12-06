@@ -1,42 +1,66 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Fri,  6 Dec 2019 12:12:24 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 08/12] media: dt-bindings: media:
-	rcar_vin: add device tree support for r8a7744
+Date: Fri,  6 Dec 2019 12:12:25 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 09/12] ARM: dts: r8a7744: add VIN dt
+	support
 In-Reply-To: <1575634348-10954-1-git-send-email-biju.das@bp.renesas.com>
 References: <1575634348-10954-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1575634348-10954-9-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1575634348-10954-10-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit d07d9195c950d1cd16ec32a0819b2b98084c0753 upstream.
+commit 10fabcb817c5e37aeb8a1b79a95468c8df45898c upstream.
 
-Add compatible strings for r8a7744. No driver change is needed as
-"renesas,rcar-gen2-vin" will activate the right code.However, it is good
-practice to document compatible strings for the specific SoC as this
-allows SoC specific changes to the driver if needed, in addition to
-document SoC support and therefore allow checkpatch.pl to validate
-compatible string values.
+Add VIN[012] support to SoC dt.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-Acked-by: Niklas S?derlund <niklas.soderlund+renesas@ragnatech.se>
-Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[biju: Removed reset and updated clk and power domain properties]
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/media/rcar_vin.txt | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/r8a7744.dtsi | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
-index 08eca2e..6c7ba02 100644
---- a/Documentation/devicetree/bindings/media/rcar_vin.txt
-+++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
-@@ -7,6 +7,7 @@ channel which can be either RGB, YUYV or BT656.
+diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
+index 5fab84f..10cf55e 100644
+--- a/arch/arm/boot/dts/r8a7744.dtsi
++++ b/arch/arm/boot/dts/r8a7744.dtsi
+@@ -873,6 +873,36 @@
+ 			status = "disabled";
+ 		};
  
-  - compatible: Must be one or more of the following
-    - "renesas,vin-r8a7743" for the R8A7743 device
-+   - "renesas,vin-r8a7744" for the R8A7744 device
-    - "renesas,vin-r8a7745" for the R8A7745 device
-    - "renesas,vin-r8a7778" for the R8A7778 device
-    - "renesas,vin-r8a7779" for the R8A7779 device
++		vin0: video at e6ef0000 {
++			compatible = "renesas,vin-r8a7744",
++				     "renesas,rcar-gen2-vin";
++			reg = <0 0xe6ef0000 0 0x1000>;
++			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp8_clks R8A7744_CLK_VIN0>;
++			power-domains = <&cpg_clocks>;
++			status = "disabled";
++		};
++
++		vin1: video at e6ef1000 {
++			compatible = "renesas,vin-r8a7744",
++				     "renesas,rcar-gen2-vin";
++			reg = <0 0xe6ef1000 0 0x1000>;
++			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp8_clks R8A7744_CLK_VIN1>;
++			power-domains = <&cpg_clocks>;
++			status = "disabled";
++		};
++
++		vin2: video at e6ef2000 {
++			compatible = "renesas,vin-r8a7744",
++				     "renesas,rcar-gen2-vin";
++			reg = <0 0xe6ef2000 0 0x1000>;
++			interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp8_clks R8A7744_CLK_VIN2>;
++			power-domains = <&cpg_clocks>;
++			status = "disabled";
++		};
++
+ 		rcar_sound: sound at ec500000 {
+ 			reg = <0 0xec500000 0 0x1000>;
+ 
 -- 
 2.7.4
