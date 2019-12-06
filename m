@@ -1,44 +1,42 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Fri,  6 Dec 2019 12:12:21 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 05/12] thermal: trip_point_temp_store()
-	calls thermal_zone_device_update()
+Date: Fri,  6 Dec 2019 12:12:22 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 06/12] dt-bindings: thermal: rcar: Add
+	device tree support for r8a7744
 In-Reply-To: <1575634348-10954-1-git-send-email-biju.das@bp.renesas.com>
 References: <1575634348-10954-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1575634348-10954-6-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1575634348-10954-7-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+commit 304d9b486b3c6994c193b6693c601b463987e6ac upstream.
 
-commit ad74e46cb3ba9e706f91f3f71baf816d2d8e45db upstream.
+Add thermal sensor support for r8a7744 SoC. The Renesas RZ/G1N
+(r8a7744) thermal sensor module is identical to the R-Car Gen2 family.
 
-trip_point_temp_store() updates trip temperature. It should call
-thermal_zone_device_update() immediately.
+No driver change is needed due to the fallback compatible value
+"renesas,rcar-gen2-thermal".
 
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
 ---
- drivers/thermal/thermal_core.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/thermal/rcar-thermal.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-index 929092f..0e919c3 100644
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -700,8 +700,12 @@ trip_point_temp_store(struct device *dev, struct device_attribute *attr,
- 		return -EINVAL;
- 
- 	ret = tz->ops->set_trip_temp(tz, trip, temperature);
-+	if (ret)
-+		return ret;
- 
--	return ret ? ret : count;
-+	thermal_zone_device_update(tz);
-+
-+	return count;
- }
- 
- static ssize_t
+diff --git a/Documentation/devicetree/bindings/thermal/rcar-thermal.txt b/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
+index 689e7e8..1e0f837 100644
+--- a/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
++++ b/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
+@@ -7,6 +7,7 @@ Required properties:
+ 			  Examples with soctypes are:
+ 			    - "renesas,thermal-r8a73a4" (R-Mobile APE6)
+ 			    - "renesas,thermal-r8a7743" (RZ/G1M)
++			    - "renesas,thermal-r8a7744" (RZ/G1N)
+ 			    - "renesas,thermal-r8a7779" (R-Car H1)
+ 			    - "renesas,thermal-r8a7790" (R-Car H2)
+ 			    - "renesas,thermal-r8a7791" (R-Car M2-W)
 -- 
 2.7.4
