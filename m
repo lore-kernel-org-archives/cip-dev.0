@@ -1,73 +1,27 @@
-From: naresh.kamboju@linaro.org (Naresh Kamboju)
-Date: Mon, 9 Dec 2019 22:23:14 +0530
-Subject: [cip-dev] Linux 4.19.89-rc1 5944fcdd errors
-In-Reply-To: <TYAPR01MB228505DBC22568339F914C15B7580@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-References: <TYAPR01MB228505DBC22568339F914C15B7580@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-Message-ID: <CA+G9fYt84QXQh4YLvV0QeC9gxLhQjLVEg6MSG1wcfZQ5o8Yi6w@mail.gmail.com>
+From: gregkh@linuxfoundation.org (Greg Kroah-Hartman)
+Date: Mon, 9 Dec 2019 18:00:47 +0100
+Subject: [cip-dev] Linux 4.4.207-rc1 8dbad6fe errors
+In-Reply-To: <TYAPR01MB22854300E93B9F6D02232982B7580@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+References: <TYAPR01MB22854300E93B9F6D02232982B7580@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+Message-ID: <20191209170047.GC1290729@kroah.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Mon, 9 Dec 2019 at 21:59, Chris Paterson <Chris.Paterson2@renesas.com> wrote:
->
+On Mon, Dec 09, 2019 at 04:33:17PM +0000, Chris Paterson wrote:
 > Hello Greg, all,
->
-> I've seen a few errors with 4.19.89-rc1 (5944fcdd).
-
-LKFT build system noticed these issues on stable-rc-4.19.
-
->
+> 
+> I've seen an error with 4.4.207-rc1 (8dbad6fe).
+> 
 > 1)
-> Config: arm64 defconfig
-> Link: https://gitlab.com/cip-playground/linux-stable-rc-ci/-/jobs/373484093#L267
-> Probable culprit: 227b635dcae6 ("bpf, arm64: fix getting subprog addr from aux for calls")
-> Issue log:
-> 267 arch/arm64/net/bpf_jit_comp.c: In function 'build_insn':
-> 268 arch/arm64/net/bpf_jit_comp.c:633:9: error: implicit declaration of function 'bpf_jit_get_func_addr'; did you mean 'bpf_jit_binary_hdr'? [-Werror=implicit-function-declaration]
-> 269    ret = bpf_jit_get_func_addr(ctx->prog, insn, extra_pass,
-> 270          ^~~~~~~~~~~~~~~~~~~~~
-> 271          bpf_jit_binary_hdr
->
->
-> 2)
 > Config: arm multi_v7_defconfig
-> Link: https://gitlab.com/cip-playground/linux-stable-rc-ci/-/jobs/373484091#L2147
-> Probable culprit: 192929fd944d ("dmaengine: xilinx_dma: Fix 64-bit simple CDMA transfer")
-
-This build issue occurred on 4.19, 4.14 and 4.9 branches for armv7.
-
+> Link: https://gitlab.com/cip-playground/linux-stable-rc-ci/-/jobs/373483706#L3649
+> Probable culprit: bc15f46a10dc ("serial: pl011: Fix DMA ->flush_buffer()")
 > Issue log:
-> 2147 drivers/dma/xilinx/xilinx_dma.c: In function 'xilinx_cdma_start_transfer':
-> 2148 drivers/dma/xilinx/xilinx_dma.c:1252:9: error: implicit declaration of function 'xilinx_prep_dma_addr_t'; did you mean 'xilinx_dma_start'? [-Werror=implicit-function-declaration]
-> 2149          xilinx_prep_dma_addr_t(hw->src_addr));
-> 2150          ^~~~~~~~~~~~~~~~~~~~~~
-> 2151          xilinx_dma_start
->
->
+> 3649 drivers/tty/serial/amba-pl011.c: In function 'pl011_dma_flush_buffer':
+> 3650 drivers/tty/serial/amba-pl011.c:697:2: error: implicit declaration of function 'dmaengine_terminate_async'; did you mean 'dmaengine_terminate_all'? [-Werror=implicit-function-declaration]
+> 3651   dmaengine_terminate_async(uap->dmatx.chan);
+> 3652   ^~~~~~~~~~~~~~~~~~~~~~~~~
 
-This issue is specific to stable-rc 4.19 for arm64 build error.
-I have reverted these patches and verified builds are successful.
+I'll go drop the offending patch now, thanks for letting me know.
 
-> 3)
-> Config: arm shmobile_defconfig
-> Link: https://gitlab.com/cip-playground/linux-stable-rc-ci/-/jobs/373484089#L2249
-> Probable culprit: 984d7a8bff57 ("pinctrl: sh-pfc: r8a7792: Fix VIN versioned groups")
-> Issue log:
-> 2249 drivers/pinctrl/sh-pfc/pfc-r8a7792.c:1750:38: error: macro "VIN_DATA_PIN_GROUP" passed 3 arguments, but takes just 2
-> 2250   VIN_DATA_PIN_GROUP(vin1_data, 24, _b),
-> 2251                                       ^
-> 2252 drivers/pinctrl/sh-pfc/pfc-r8a7792.c:1750:2: error: 'VIN_DATA_PIN_GROUP' undeclared here (not in a function); did you mean 'PIN_MAP_TYPE_MUX_GROUP'?
-> 2253   VIN_DATA_PIN_GROUP(vin1_data, 24, _b),
-> 2254   ^~~~~~~~~~~~~~~~~~
-> 2255   PIN_MAP_TYPE_MUX_GROUP
-> 2256 drivers/pinctrl/sh-pfc/pfc-r8a7792.c:1751:38: error: macro "VIN_DATA_PIN_GROUP" passed 3 arguments, but takes just 2
-> 2257   VIN_DATA_PIN_GROUP(vin1_data, 20, _b),
-> 2258                                       ^
-> 2259 drivers/pinctrl/sh-pfc/pfc-r8a7792.c:1753:38: error: macro "VIN_DATA_PIN_GROUP" passed 3 arguments, but takes just 2
-> 2260   VIN_DATA_PIN_GROUP(vin1_data, 16, _b),
-
-- Naresh
-> 2261                                       ^
->
->
-> Kind regards, Chris
->
+greg k-h
