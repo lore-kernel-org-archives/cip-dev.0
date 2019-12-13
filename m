@@ -1,38 +1,34 @@
 From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
-Date: Fri, 13 Dec 2019 22:21:45 +0000
-Subject: [cip-dev] [ANNOUNCE] Release v4.19.88-cip16 and v4.4.206-cip40
-Message-ID: <OSAPR01MB323483390F138C52C363126492540@OSAPR01MB3234.jpnprd01.prod.outlook.com>
+Date: Fri, 13 Dec 2019 23:11:55 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip] net: davinci_cpdma: use dma_addr_t
+ for DMA address
+In-Reply-To: <20191213205656.GA2788@duo.ucw.cz>
+References: <20191213205656.GA2788@duo.ucw.cz>
+Message-ID: <OSAPR01MB3234810F3C1ACEB6DD43294792540@OSAPR01MB3234.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+Hi Pavel,
 
-CIP kernel team has released Linux kernel v4.19.88-cip16 and v4.4.206-cip40.
-The linux-4.19.y-cip tree has been updated base version from 4.19.85 to 4.19.88,
-and The linux-4.4.y-cip tree has been updated base version from 4.4.199 to 4.4.206.
-In addition, the following features have been backported and updated in the
-linux-4.4.y-cip:
-  - Support Renesas RZ/G1N SoC (r8a7744)
-  - Support iWave G20D-Q7 board based on RZ/G1N
-  - Update mmc driver for RZ/G1C's eMMC
+> -----Original Message-----
+> From: Pavel Machek [mailto:pavel at ucw.cz]
+> Sent: Saturday, December 14, 2019 5:57 AM
+> To: iwamatsu nobuhiro(?? ?? ????????)
+> <nobuhiro1.iwamatsu@toshiba.co.jp>; cip-dev at lists.cip-project.org
+> Subject: [PATCH 4.4.y-cip] net: davinci_cpdma: use dma_addr_t for DMA
+> address
+> 
+> Hi!
+> 
+> I have this in 4.4-rt-cip, and it would make my life easier if I applied
+> it to 4.4-cip. Would that be ok to do?
 
-You can get this release via the git tree at:
+I think your suggestion is good because the cip-rt branch is based on the
+cip branch.
 
-  v4.19.88-cip16:
-    repository:
-      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch:
-      linux-4.19.y-cip
-    commit:
-      baf9a222d9a3efbdac911457b01b6ffeb496aeb1
+Or this is not a bug but a warning, but it may be possible to include it with LTS.
 
-  v4.4.206-cip40:
-    repository:
-      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch:
-      linux-4.4.y-cip
-    commit:
-      0cddb349320426954582511b95e7d31873941aad
+https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/379209573#L8482
 
 Best regards,
-   Nobuhiro
+  Nobuhiro
