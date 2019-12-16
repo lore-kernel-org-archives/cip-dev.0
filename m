@@ -1,69 +1,35 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Mon, 16 Dec 2019 11:35:58 +0000
-Subject: [cip-dev] [ANNOUNCE] Release v4.19.88-cip16 and v4.4.206-cip40
-In-Reply-To: <TYAPR01MB2285954DF5F07BA6A3F4AD09B7510@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-References: <OSAPR01MB323483390F138C52C363126492540@OSAPR01MB3234.jpnprd01.prod.outlook.com>
- <20191216112246.GA17029@amd>
- <TYAPR01MB2285954DF5F07BA6A3F4AD09B7510@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-Message-ID: <TYAPR01MB228518B00BFF2797CCDE9EF5B7510@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+From: pavel@ucw.cz (Pavel Machek)
+Date: Mon, 16 Dec 2019 13:27:54 +0100
+Subject: [cip-dev] [PATCH 4.4.y-cip] net: davinci_cpdma: use dma_addr_t
+ for DMA address
+In-Reply-To: <OSAPR01MB3234810F3C1ACEB6DD43294792540@OSAPR01MB3234.jpnprd01.prod.outlook.com>
+References: <20191213205656.GA2788@duo.ucw.cz>
+ <OSAPR01MB3234810F3C1ACEB6DD43294792540@OSAPR01MB3234.jpnprd01.prod.outlook.com>
+Message-ID: <20191216122754.GA20005@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-> From: cip-dev <cip-dev-bounces@lists.cip-project.org> On Behalf Of Chris
-> Paterson
-> Sent: 16 December 2019 11:26
-> 
-> Hello Pavel,
-> 
-> > From: Pavel Machek <pavel@denx.de>
-> > Sent: 16 December 2019 11:23
-> >
-> > Hi!
-> >
-> > > CIP kernel team has released Linux kernel v4.19.88-cip16 and v4.4.206-cip40.
-> > > The linux-4.19.y-cip tree has been updated base version from 4.19.85 to
-> > 4.19.88,
-> > > and The linux-4.4.y-cip tree has been updated base version from 4.4.199 to
-> > 4.4.206.
-> >
-> > >?? v4.4.206-cip40:
-> > >???? repository:
-> > >?????? https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-> > >???? branch:
-> > >?????? linux-4.4.y-cip
-> > >???? commit:
-> > >?????? 0cddb349320426954582511b95e7d31873941aad
-> >
-> > I attempted to get this tested, but failed:
-> >
-> > https://gitlab.com/cip-project/cip-kernel/linux-cip/pipelines/103361420
-> >
-> > Found errors in your .gitlab-ci.yml:
-> > Resolving config took longer than expected
-> > You can also test your .gitlab-ci.yml in CI Lint
-> 
-> This error happens now and then. It's caused by GitLab taking too long to fetch
-> the CI configs from a separate GitLab repo.
+Hi!
 
-For those interested in such things, please see:
-https://gitlab.com/gitlab-org/gitlab/issues/43710
+> > I have this in 4.4-rt-cip, and it would make my life easier if I applied
+> > it to 4.4-cip. Would that be ok to do?
+> 
+> I think your suggestion is good because the cip-rt branch is based on the
+> cip branch.
 
-Kind regards, Chris
+I applied the patch to 4.4-cip, and builds should be ok. I'd prefer
+not to push it to 4.4-stable, but it might make sense for 4.4-rt. Let
+me investigate.
 
-> 
-> Usually trying again a few minutes later works. I've started the pipeline you were
-> trying to run:
-> https://gitlab.com/cip-project/cip-kernel/linux-cip/pipelines/103362219
-> 
-> Kind regards, Chris
-> 
-> >
-> > Best regards,
-> > ????? ??????? ??????? ??????? ??????? ??????? ??????? ??????? Pavel
-> > --
-> > DENX Software Engineering GmbH,????? Managing Director: Wolfgang Denk
-> > HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
+Best regards,
+									Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 181 bytes
+Desc: Digital signature
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191216/410e8f6b/attachment.sig>
