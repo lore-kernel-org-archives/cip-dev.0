@@ -1,34 +1,54 @@
-From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
-Date: Fri, 13 Dec 2019 23:11:55 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip] net: davinci_cpdma: use dma_addr_t
- for DMA address
-In-Reply-To: <20191213205656.GA2788@duo.ucw.cz>
-References: <20191213205656.GA2788@duo.ucw.cz>
-Message-ID: <OSAPR01MB3234810F3C1ACEB6DD43294792540@OSAPR01MB3234.jpnprd01.prod.outlook.com>
+From: pavel@denx.de (Pavel Machek)
+Date: Mon, 16 Dec 2019 12:14:37 +0100
+Subject: [cip-dev] gitlab mirroring broken was Re: [ANNOUNCE] Release
+ v4.19.88-cip16 and v4.4.206-cip40
+In-Reply-To: <OSAPR01MB323483390F138C52C363126492540@OSAPR01MB3234.jpnprd01.prod.outlook.com>
+References: <OSAPR01MB323483390F138C52C363126492540@OSAPR01MB3234.jpnprd01.prod.outlook.com>
+Message-ID: <20191216111437.GA14724@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Pavel,
+Hi!
 
-> -----Original Message-----
-> From: Pavel Machek [mailto:pavel at ucw.cz]
-> Sent: Saturday, December 14, 2019 5:57 AM
-> To: iwamatsu nobuhiro(?? ?? ????????)
-> <nobuhiro1.iwamatsu@toshiba.co.jp>; cip-dev at lists.cip-project.org
-> Subject: [PATCH 4.4.y-cip] net: davinci_cpdma: use dma_addr_t for DMA
-> address
+> CIP kernel team has released Linux kernel v4.19.88-cip16 and v4.4.206-cip40.
+> The linux-4.19.y-cip tree has been updated base version from 4.19.85 to 4.19.88,
+> and The linux-4.4.y-cip tree has been updated base version from 4.4.199 to 4.4.206.
+> In addition, the following features have been backported and updated in the
+> linux-4.4.y-cip:
+>   - Support Renesas RZ/G1N SoC (r8a7744)
+>   - Support iWave G20D-Q7 board based on RZ/G1N
+>   - Update mmc driver for RZ/G1C's eMMC
 > 
-> Hi!
+> You can get this release via the git tree at:
 > 
-> I have this in 4.4-rt-cip, and it would make my life easier if I applied
-> it to 4.4-cip. Would that be ok to do?
+>   v4.19.88-cip16:
+>     repository:
+>       https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
 
-I think your suggestion is good because the cip-rt branch is based on the
-cip branch.
+I attempted to check it in our gitlab, and seems that mirroring is
+broken:
 
-Or this is not a bug but a warning, but it may be possible to include it with LTS.
+https://gitlab.com/cip-project/cip-kernel/linux-cip/commits/linux-4.4.y-cip
 
-https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/379209573#L8482
+This project is mirrored from
+https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git. Updated
+23 minutes ago.  This branch has diverged from upstream.
+04 Dec, 2019 1 commit
+?
+gpiolib: Fix bad of_node pointer ?
+Fabrizio Castro authored 1 month ago
+7b4a8ef7
 
 Best regards,
-  Nobuhiro
+								Pavel
+
+-- 
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 181 bytes
+Desc: Digital signature
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191216/adcf498f/attachment.sig>
