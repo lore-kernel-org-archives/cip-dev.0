@@ -1,89 +1,52 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Wed, 18 Dec 2019 11:33:28 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 18/39] dt-bindings: clk: Add r8a774b1
-	CPG Core Clock Definitions
+Date: Wed, 18 Dec 2019 11:33:29 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 19/39] dt-bindings: clock: renesas:
+	cpg-mssr: Document r8a774b1 binding
 In-Reply-To: <1576668829-59767-1-git-send-email-biju.das@bp.renesas.com>
 References: <1576668829-59767-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1576668829-59767-19-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1576668829-59767-20-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit 54ce17dd40fd846a7ac1e87e1103032933d2bd21 upstream.
+commit 10003938a0c64c2f0d8934ef3f4f36ac5b4960dc upstream.
 
-Add all RZ/G2N Clock Pulse Generator Core Clock Outputs, as listed in
-Table 8.2d ("List of Clocks [RZ/G2N]") of the RZ/G2N Hardware User's
-Manual.
+Add binding documentation for the RZ/G2N (R8A774b1) Clock Pulse
+Generator driver.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Link: https://lore.kernel.org/r/1567666360-28035-1-git-send-email-biju.das at bp.renesas.com
+Link: https://lore.kernel.org/r/1568881036-4404-6-git-send-email-biju.das at bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- include/dt-bindings/clock/r8a774b1-cpg-mssr.h | 57 +++++++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
- create mode 100644 include/dt-bindings/clock/r8a774b1-cpg-mssr.h
+ Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/include/dt-bindings/clock/r8a774b1-cpg-mssr.h b/include/dt-bindings/clock/r8a774b1-cpg-mssr.h
-new file mode 100644
-index 0000000..1355451
---- /dev/null
-+++ b/include/dt-bindings/clock/r8a774b1-cpg-mssr.h
-@@ -0,0 +1,57 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Copyright (C) 2019 Renesas Electronics Corp.
-+ */
-+#ifndef __DT_BINDINGS_CLOCK_R8A774B1_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A774B1_CPG_MSSR_H__
-+
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+/* r8a774b1 CPG Core Clocks */
-+#define R8A774B1_CLK_Z			0
-+#define R8A774B1_CLK_ZG			1
-+#define R8A774B1_CLK_ZTR		2
-+#define R8A774B1_CLK_ZTRD2		3
-+#define R8A774B1_CLK_ZT			4
-+#define R8A774B1_CLK_ZX			5
-+#define R8A774B1_CLK_S0D1		6
-+#define R8A774B1_CLK_S0D2		7
-+#define R8A774B1_CLK_S0D3		8
-+#define R8A774B1_CLK_S0D4		9
-+#define R8A774B1_CLK_S0D6		10
-+#define R8A774B1_CLK_S0D8		11
-+#define R8A774B1_CLK_S0D12		12
-+#define R8A774B1_CLK_S1D2		13
-+#define R8A774B1_CLK_S1D4		14
-+#define R8A774B1_CLK_S2D1		15
-+#define R8A774B1_CLK_S2D2		16
-+#define R8A774B1_CLK_S2D4		17
-+#define R8A774B1_CLK_S3D1		18
-+#define R8A774B1_CLK_S3D2		19
-+#define R8A774B1_CLK_S3D4		20
-+#define R8A774B1_CLK_LB			21
-+#define R8A774B1_CLK_CL			22
-+#define R8A774B1_CLK_ZB3		23
-+#define R8A774B1_CLK_ZB3D2		24
-+#define R8A774B1_CLK_CR			25
-+#define R8A774B1_CLK_DDR		26
-+#define R8A774B1_CLK_SD0H		27
-+#define R8A774B1_CLK_SD0		28
-+#define R8A774B1_CLK_SD1H		29
-+#define R8A774B1_CLK_SD1		30
-+#define R8A774B1_CLK_SD2H		31
-+#define R8A774B1_CLK_SD2		32
-+#define R8A774B1_CLK_SD3H		33
-+#define R8A774B1_CLK_SD3		34
-+#define R8A774B1_CLK_RPC		35
-+#define R8A774B1_CLK_RPCD2		36
-+#define R8A774B1_CLK_MSO		37
-+#define R8A774B1_CLK_HDMI		38
-+#define R8A774B1_CLK_CSI0		39
-+#define R8A774B1_CLK_CP			40
-+#define R8A774B1_CLK_CPEX		41
-+#define R8A774B1_CLK_R			42
-+#define R8A774B1_CLK_OSC		43
-+#define R8A774B1_CLK_CANFD		44
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A774B1_CPG_MSSR_H__ */
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+index 6ff3a06..113d45b 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+@@ -17,6 +17,7 @@ Required Properties:
+       - "renesas,r8a7745-cpg-mssr" for the r8a7745 SoC (RZ/G1E)
+       - "renesas,r8a77470-cpg-mssr" for the r8a77470 SoC (RZ/G1C)
+       - "renesas,r8a774a1-cpg-mssr" for the r8a774a1 SoC (RZ/G2M)
++      - "renesas,r8a774b1-cpg-mssr" for the r8a774a1 SoC (RZ/G2N)
+       - "renesas,r8a774c0-cpg-mssr" for the r8a774c0 SoC (RZ/G2E)
+       - "renesas,r8a7790-cpg-mssr" for the r8a7790 SoC (R-Car H2)
+       - "renesas,r8a7791-cpg-mssr" for the r8a7791 SoC (R-Car M2-W)
+@@ -37,10 +38,11 @@ Required Properties:
+   - clocks: References to external parent clocks, one entry for each entry in
+     clock-names
+   - clock-names: List of external parent clock names. Valid names are:
+-      - "extal" (r8a7743, r8a7745, r8a77470, r8a774a1, r8a774c0, r8a7790,
+-		 r8a7791, r8a7792, r8a7793, r8a7794, r8a7795, r8a7796, r8a77965,
+-		 r8a77970, r8a77980, r8a77990, r8a77995)
+-      - "extalr" (r8a774a1, r8a7795, r8a7796, r8a77965, r8a77970, r8a77980)
++      - "extal" (r8a7743, r8a7745, r8a77470, r8a774a1, r8a774b1, r8a774c0,
++		 r8a7790, r8a7791, r8a7792, r8a7793, r8a7794, r8a7795, r8a7796,
++		 r8a77965, r8a77970, r8a77980, r8a77990, r8a77995)
++      - "extalr" (r8a774a1, r8a774b1, r8a7795, r8a7796, r8a77965, r8a77970,
++		  r8a77980)
+       - "usb_extal" (r8a7743, r8a7745, r8a77470, r8a7790, r8a7791, r8a7793,
+ 		     r8a7794)
+ 
 -- 
 2.7.4
