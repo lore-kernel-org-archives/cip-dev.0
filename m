@@ -1,42 +1,57 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Wed, 18 Dec 2019 11:33:13 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 03/39] soc: renesas: Add Renesas
-	R8A774B1 config option
+Date: Wed, 18 Dec 2019 11:33:15 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 05/39] dt-bindings: power: Add r8a774b1
+	SYSC power domain definitions
 In-Reply-To: <1576668829-59767-1-git-send-email-biju.das@bp.renesas.com>
 References: <1576668829-59767-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1576668829-59767-4-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1576668829-59767-6-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit d634055c4b0f8c24269959f64b7d4a1a8d87d630 upstream.
+commit be67c41781cb4c06a4acb0b92db0cbb728e955e2 upstream.
 
-Add configuration option for the RZ/G2N (R8A774B1) SoC.
+This patch adds power domain indices for the RZ/G2N (a.k.a r8a774b1)
+SoC.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Link: https://lore.kernel.org/r/1567675844-19247-4-git-send-email-biju.das at bp.renesas.com
+Link: https://lore.kernel.org/r/1567666326-27373-1-git-send-email-biju.das at bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[Biju: Backported to 4.19-cip kernel]
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- arch/arm64/Kconfig.platforms | 6 ++++++
- 1 file changed, 6 insertions(+)
+ include/dt-bindings/power/r8a774b1-sysc.h | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+ create mode 100644 include/dt-bindings/power/r8a774b1-sysc.h
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index a6f9b64..b624cce 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -195,6 +195,12 @@ config ARCH_R8A774A1
- 	help
- 	  This enables support for the Renesas RZ/G2M SoC.
- 
-+config ARCH_R8A774B1
-+	bool "Renesas RZ/G2N SoC Platform"
-+	depends on ARCH_RENESAS
-+	help
-+	  This enables support for the Renesas RZ/G2N SoC.
+diff --git a/include/dt-bindings/power/r8a774b1-sysc.h b/include/dt-bindings/power/r8a774b1-sysc.h
+new file mode 100644
+index 0000000..3737364
+--- /dev/null
++++ b/include/dt-bindings/power/r8a774b1-sysc.h
+@@ -0,0 +1,26 @@
++/* SPDX-License-Identifier: GPL-2.0
++ *
++ * Copyright (C) 2019 Renesas Electronics Corp.
++ */
++#ifndef __DT_BINDINGS_POWER_R8A774B1_SYSC_H__
++#define __DT_BINDINGS_POWER_R8A774B1_SYSC_H__
 +
- config ARCH_R8A774C0
- 	bool "Renesas RZ/G2E SoC Platform"
- 	depends on ARCH_RENESAS
++/*
++ * These power domain indices match the numbers of the interrupt bits
++ * representing the power areas in the various Interrupt Registers
++ * (e.g. SYSCISR, Interrupt Status Register)
++ */
++
++#define R8A774B1_PD_CA57_CPU0		 0
++#define R8A774B1_PD_CA57_CPU1		 1
++#define R8A774B1_PD_A3VP		 9
++#define R8A774B1_PD_CA57_SCU		12
++#define R8A774B1_PD_A3VC		14
++#define R8A774B1_PD_3DG_A		17
++#define R8A774B1_PD_3DG_B		18
++#define R8A774B1_PD_A2VC1		26
++
++/* Always-on power area */
++#define R8A774B1_PD_ALWAYS_ON		32
++
++#endif /* __DT_BINDINGS_POWER_R8A774B1_SYSC_H__ */
 -- 
 2.7.4
