@@ -1,101 +1,62 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Wed, 18 Dec 2019 11:33:36 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 26/39] pinctrl: sh-pfc: r8a77965: Add
-	CAN FD pins, groups and functions
+Date: Wed, 18 Dec 2019 11:33:37 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 27/39] pinctrl: sh-pfc: r8a77965:
+	Replace DU_DOTCLKIN2 by DU_DOTCLKIN3
 In-Reply-To: <1576668829-59767-1-git-send-email-biju.das@bp.renesas.com>
 References: <1576668829-59767-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1576668829-59767-27-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1576668829-59767-28-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit 1b259dde9bd9001783d2deb1c4773a2e5ce45860 upstream.
+commit 86c045c2e4201e94ef37458e5777fcb2dab33a11 upstream.
 
-This patch adds CAN FD{0,1} pins, groups and functions to the R8A77965
-SoC.
+Unlike R-Car M3-W, R-Car M3-N does not have DU_DOTCLKIN2, but the
+corresponding pin carries the DU_DOTCLKIN3 signal.  Correct all
+references to DU_DOTCLKIN2 to fix this.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+This change does not have any runtime effect, as it only changes an
+internal enum name, and a comment.
+
+Fixes: 490e687eb8b274b5 ("pinctrl: sh-pfc: Initial R-Car M3-N support")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 42 +++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-index bbc13cc..ea3d026 100644
+index ea3d026..61b33f7 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-@@ -1819,6 +1819,34 @@ static const unsigned int can_clk_mux[] = {
- 	CAN_CLK_MARK,
- };
+@@ -553,7 +553,7 @@ MOD_SEL0_4_3		MOD_SEL1_4 \
+ 	FM(AVB_RX_CTL) FM(AVB_RXC) FM(AVB_RD0) FM(AVB_RD1) FM(AVB_RD2) FM(AVB_RD3) \
+ 	FM(AVB_TXCREFCLK) FM(AVB_MDIO) \
+ 	FM(PRESETOUT) \
+-	FM(DU_DOTCLKIN0) FM(DU_DOTCLKIN1) FM(DU_DOTCLKIN2) \
++	FM(DU_DOTCLKIN0) FM(DU_DOTCLKIN1) FM(DU_DOTCLKIN3) \
+ 	FM(TMS) FM(TDO) FM(ASEBRK) FM(MLB_REF) FM(TDI) FM(TCK) FM(TRST) FM(EXTALR)
  
-+/* - CAN FD --------------------------------------------------------------- */
-+static const unsigned int canfd0_data_a_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(1, 23),     RCAR_GP_PIN(1, 24),
-+};
-+
-+static const unsigned int canfd0_data_a_mux[] = {
-+	CANFD0_TX_A_MARK,       CANFD0_RX_A_MARK,
-+};
-+
-+static const unsigned int canfd0_data_b_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(2, 0),      RCAR_GP_PIN(2, 1),
-+};
-+
-+static const unsigned int canfd0_data_b_mux[] = {
-+	CANFD0_TX_B_MARK,       CANFD0_RX_B_MARK,
-+};
-+
-+static const unsigned int canfd1_data_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(1, 22),     RCAR_GP_PIN(1, 26),
-+};
-+
-+static const unsigned int canfd1_data_mux[] = {
-+	CANFD1_TX_MARK,         CANFD1_RX_MARK,
-+};
-+
- /* - DU --------------------------------------------------------------------- */
- static const unsigned int du_rgb666_pins[] = {
- 	/* R[7:2], G[7:2], B[7:2] */
-@@ -4003,6 +4031,9 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(can0_data_b),
- 	SH_PFC_PIN_GROUP(can1_data),
- 	SH_PFC_PIN_GROUP(can_clk),
-+	SH_PFC_PIN_GROUP(canfd0_data_a),
-+	SH_PFC_PIN_GROUP(canfd0_data_b),
-+	SH_PFC_PIN_GROUP(canfd1_data),
- 	SH_PFC_PIN_GROUP(du_rgb666),
- 	SH_PFC_PIN_GROUP(du_rgb888),
- 	SH_PFC_PIN_GROUP(du_clk_out_0),
-@@ -4324,6 +4355,15 @@ static const char * const can_clk_groups[] = {
- 	"can_clk",
- };
- 
-+static const char * const canfd0_groups[] = {
-+	"canfd0_data_a",
-+	"canfd0_data_b",
-+};
-+
-+static const char * const canfd1_groups[] = {
-+	"canfd1_data",
-+};
-+
- static const char * const du_groups[] = {
- 	"du_rgb666",
- 	"du_rgb888",
-@@ -4718,6 +4758,8 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(can0),
- 	SH_PFC_FUNCTION(can1),
- 	SH_PFC_FUNCTION(can_clk),
-+	SH_PFC_FUNCTION(canfd0),
-+	SH_PFC_FUNCTION(canfd1),
- 	SH_PFC_FUNCTION(du),
- 	SH_PFC_FUNCTION(hscif0),
- 	SH_PFC_FUNCTION(hscif1),
+ enum {
+@@ -1563,7 +1563,7 @@ static const struct sh_pfc_pin pinmux_pins[] = {
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('E'),  5, QSPI1_MISO_IO1, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('P'),  7, DU_DOTCLKIN0, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('P'),  8, DU_DOTCLKIN1, CFG_FLAGS),
+-	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'),  8, DU_DOTCLKIN2, CFG_FLAGS),
++	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'),  8, DU_DOTCLKIN3, CFG_FLAGS),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 26, TRST#, SH_PFC_PIN_CFG_PULL_UP_DOWN),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 29, TDI, SH_PFC_PIN_CFG_PULL_UP_DOWN),
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 30, TMS, CFG_FLAGS),
+@@ -5740,7 +5740,7 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
+ 		[31] = PIN_A_NUMBER('P', 8),	/* DU_DOTCLKIN1 */
+ 	} },
+ 	{ PINMUX_BIAS_REG("PUEN3", 0xe606040c, "PUD3", 0xe606044c) {
+-		[ 0] = PIN_A_NUMBER('R', 8),	/* DU_DOTCLKIN2 */
++		[ 0] = PIN_A_NUMBER('R', 8),	/* DU_DOTCLKIN3 */
+ 		[ 1] = SH_PFC_PIN_NONE,
+ 		[ 2] = PIN_A_NUMBER('D', 38),	/* FSCLKST */
+ 		[ 3] = PIN_A_NUMBER('D', 39),	/* EXTALR*/
 -- 
 2.7.4
