@@ -1,62 +1,107 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Wed, 18 Dec 2019 11:33:37 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 27/39] pinctrl: sh-pfc: r8a77965:
-	Replace DU_DOTCLKIN2 by DU_DOTCLKIN3
+Date: Wed, 18 Dec 2019 11:33:38 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 28/39] pinctrl: sh-pfc: r8a77965: Add
+	TMU pins, groups and functions
 In-Reply-To: <1576668829-59767-1-git-send-email-biju.das@bp.renesas.com>
 References: <1576668829-59767-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1576668829-59767-28-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1576668829-59767-29-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-commit 86c045c2e4201e94ef37458e5777fcb2dab33a11 upstream.
+commit 729257d674bc2e68bf051af5c7202d882bccafe0 upstream.
 
-Unlike R-Car M3-W, R-Car M3-N does not have DU_DOTCLKIN2, but the
-corresponding pin carries the DU_DOTCLKIN3 signal.  Correct all
-references to DU_DOTCLKIN2 to fix this.
+This patch adds TMU TCLK{1,2} pins, groups and functions to
+the R8A77965 SoC.
 
-This change does not have any runtime effect, as it only changes an
-internal enum name, and a comment.
-
-Fixes: 490e687eb8b274b5 ("pinctrl: sh-pfc: Initial R-Car M3-N support")
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 48 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-index ea3d026..61b33f7 100644
+index 61b33f7..1908350 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-@@ -553,7 +553,7 @@ MOD_SEL0_4_3		MOD_SEL1_4 \
- 	FM(AVB_RX_CTL) FM(AVB_RXC) FM(AVB_RD0) FM(AVB_RD1) FM(AVB_RD2) FM(AVB_RD3) \
- 	FM(AVB_TXCREFCLK) FM(AVB_MDIO) \
- 	FM(PRESETOUT) \
--	FM(DU_DOTCLKIN0) FM(DU_DOTCLKIN1) FM(DU_DOTCLKIN2) \
-+	FM(DU_DOTCLKIN0) FM(DU_DOTCLKIN1) FM(DU_DOTCLKIN3) \
- 	FM(TMS) FM(TDO) FM(ASEBRK) FM(MLB_REF) FM(TDI) FM(TCK) FM(TRST) FM(EXTALR)
+@@ -3757,6 +3757,42 @@ static const unsigned int ssi9_ctrl_b_mux[] = {
+ 	SSI_SCK9_B_MARK, SSI_WS9_B_MARK,
+ };
  
- enum {
-@@ -1563,7 +1563,7 @@ static const struct sh_pfc_pin pinmux_pins[] = {
- 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('E'),  5, QSPI1_MISO_IO1, CFG_FLAGS),
- 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('P'),  7, DU_DOTCLKIN0, CFG_FLAGS),
- 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('P'),  8, DU_DOTCLKIN1, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'),  8, DU_DOTCLKIN2, CFG_FLAGS),
-+	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'),  8, DU_DOTCLKIN3, CFG_FLAGS),
- 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 26, TRST#, SH_PFC_PIN_CFG_PULL_UP_DOWN),
- 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 29, TDI, SH_PFC_PIN_CFG_PULL_UP_DOWN),
- 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 30, TMS, CFG_FLAGS),
-@@ -5740,7 +5740,7 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
- 		[31] = PIN_A_NUMBER('P', 8),	/* DU_DOTCLKIN1 */
- 	} },
- 	{ PINMUX_BIAS_REG("PUEN3", 0xe606040c, "PUD3", 0xe606044c) {
--		[ 0] = PIN_A_NUMBER('R', 8),	/* DU_DOTCLKIN2 */
-+		[ 0] = PIN_A_NUMBER('R', 8),	/* DU_DOTCLKIN3 */
- 		[ 1] = SH_PFC_PIN_NONE,
- 		[ 2] = PIN_A_NUMBER('D', 38),	/* FSCLKST */
- 		[ 3] = PIN_A_NUMBER('D', 39),	/* EXTALR*/
++/* - TMU -------------------------------------------------------------------- */
++static const unsigned int tmu_tclk1_a_pins[] = {
++	/* TCLK */
++	RCAR_GP_PIN(6, 23),
++};
++
++static const unsigned int tmu_tclk1_a_mux[] = {
++	TCLK1_A_MARK,
++};
++
++static const unsigned int tmu_tclk1_b_pins[] = {
++	/* TCLK */
++	RCAR_GP_PIN(5, 19),
++};
++
++static const unsigned int tmu_tclk1_b_mux[] = {
++	TCLK1_B_MARK,
++};
++
++static const unsigned int tmu_tclk2_a_pins[] = {
++	/* TCLK */
++	RCAR_GP_PIN(6, 19),
++};
++
++static const unsigned int tmu_tclk2_a_mux[] = {
++	TCLK2_A_MARK,
++};
++
++static const unsigned int tmu_tclk2_b_pins[] = {
++	/* TCLK */
++	RCAR_GP_PIN(6, 28),
++};
++
++static const unsigned int tmu_tclk2_b_mux[] = {
++	TCLK2_B_MARK,
++};
+ 
+ /* - USB0 ------------------------------------------------------------------- */
+ static const unsigned int usb0_pins[] = {
+@@ -4277,6 +4313,10 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(ssi9_data_b),
+ 	SH_PFC_PIN_GROUP(ssi9_ctrl_a),
+ 	SH_PFC_PIN_GROUP(ssi9_ctrl_b),
++	SH_PFC_PIN_GROUP(tmu_tclk1_a),
++	SH_PFC_PIN_GROUP(tmu_tclk1_b),
++	SH_PFC_PIN_GROUP(tmu_tclk2_a),
++	SH_PFC_PIN_GROUP(tmu_tclk2_b),
+ 	SH_PFC_PIN_GROUP(usb0),
+ 	SH_PFC_PIN_GROUP(usb1),
+ 	SH_PFC_PIN_GROUP(usb30),
+@@ -4708,6 +4748,13 @@ static const char * const ssi_groups[] = {
+ 	"ssi9_ctrl_b",
+ };
+ 
++static const char * const tmu_groups[] = {
++	"tmu_tclk1_a",
++	"tmu_tclk1_b",
++	"tmu_tclk2_a",
++	"tmu_tclk2_b",
++};
++
+ static const char * const usb0_groups[] = {
+ 	"usb0",
+ };
+@@ -4794,6 +4841,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(sdhi2),
+ 	SH_PFC_FUNCTION(sdhi3),
+ 	SH_PFC_FUNCTION(ssi),
++	SH_PFC_FUNCTION(tmu),
+ 	SH_PFC_FUNCTION(usb0),
+ 	SH_PFC_FUNCTION(usb1),
+ 	SH_PFC_FUNCTION(usb30),
 -- 
 2.7.4
