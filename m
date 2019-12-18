@@ -1,56 +1,89 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Wed, 18 Dec 2019 11:33:27 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 17/39] soc: renesas: rcar-rst: Add
-	support for RZ/G2N
+Date: Wed, 18 Dec 2019 11:33:28 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 18/39] dt-bindings: clk: Add r8a774b1
+	CPG Core Clock Definitions
 In-Reply-To: <1576668829-59767-1-git-send-email-biju.das@bp.renesas.com>
 References: <1576668829-59767-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1576668829-59767-18-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1576668829-59767-19-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit 26405045e73b184900ad43206eeda7bee1cedee1 upstream.
+commit 54ce17dd40fd846a7ac1e87e1103032933d2bd21 upstream.
 
-Add support for RZ/G2N (R8A774B1) to the R-Car RST driver.
+Add all RZ/G2N Clock Pulse Generator Core Clock Outputs, as listed in
+Table 8.2d ("List of Clocks [RZ/G2N]") of the RZ/G2N Hardware User's
+Manual.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Link: https://lore.kernel.org/r/1568881036-4404-5-git-send-email-biju.das at bp.renesas.com
+Link: https://lore.kernel.org/r/1567666360-28035-1-git-send-email-biju.das at bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[Biju: Refactored for 4.19-cip kernel]
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/soc/renesas/Kconfig    | 7 ++++---
- drivers/soc/renesas/rcar-rst.c | 1 +
- 2 files changed, 5 insertions(+), 3 deletions(-)
+ include/dt-bindings/clock/r8a774b1-cpg-mssr.h | 57 +++++++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
+ create mode 100644 include/dt-bindings/clock/r8a774b1-cpg-mssr.h
 
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index aed8794..f3727aa 100644
---- a/drivers/soc/renesas/Kconfig
-+++ b/drivers/soc/renesas/Kconfig
-@@ -3,9 +3,10 @@ config SOC_RENESAS
- 	default y if ARCH_RENESAS
- 	select SOC_BUS
- 	select RST_RCAR if ARCH_RCAR_GEN1 || ARCH_RCAR_GEN2 || \
--			   ARCH_R8A774A1 || ARCH_R8A774C0 || ARCH_R8A7795 || \
--			   ARCH_R8A7796 || ARCH_R8A77965 || ARCH_R8A77970 || \
--			   ARCH_R8A77980 || ARCH_R8A77990 || ARCH_R8A77995
-+			   ARCH_R8A774A1 || ARCH_R8A774B1 || ARCH_R8A774C0 || \
-+			   ARCH_R8A7795 || ARCH_R8A7796 || ARCH_R8A77965 || \
-+			   ARCH_R8A77970 || ARCH_R8A77980 || ARCH_R8A77990 || \
-+			   ARCH_R8A77995
- 	select SYSC_R8A7743 if ARCH_R8A7743
- 	select SYSC_R8A7745 if ARCH_R8A7745
- 	select SYSC_R8A77470 if ARCH_R8A77470
-diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
-index d5e31f4..6c17ec5 100644
---- a/drivers/soc/renesas/rcar-rst.c
-+++ b/drivers/soc/renesas/rcar-rst.c
-@@ -47,6 +47,7 @@ static const struct of_device_id rcar_rst_matches[] __initconst = {
- 	{ .compatible = "renesas,r8a77470-rst", .data = &rcar_rst_gen2 },
- 	/* RZ/G2 is handled like R-Car Gen3 */
- 	{ .compatible = "renesas,r8a774a1-rst", .data = &rcar_rst_gen3 },
-+	{ .compatible = "renesas,r8a774b1-rst", .data = &rcar_rst_gen3 },
- 	{ .compatible = "renesas,r8a774c0-rst", .data = &rcar_rst_gen3 },
- 	/* R-Car Gen1 */
- 	{ .compatible = "renesas,r8a7778-reset-wdt", .data = &rcar_rst_gen1 },
+diff --git a/include/dt-bindings/clock/r8a774b1-cpg-mssr.h b/include/dt-bindings/clock/r8a774b1-cpg-mssr.h
+new file mode 100644
+index 0000000..1355451
+--- /dev/null
++++ b/include/dt-bindings/clock/r8a774b1-cpg-mssr.h
+@@ -0,0 +1,57 @@
++/* SPDX-License-Identifier: GPL-2.0
++ *
++ * Copyright (C) 2019 Renesas Electronics Corp.
++ */
++#ifndef __DT_BINDINGS_CLOCK_R8A774B1_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A774B1_CPG_MSSR_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* r8a774b1 CPG Core Clocks */
++#define R8A774B1_CLK_Z			0
++#define R8A774B1_CLK_ZG			1
++#define R8A774B1_CLK_ZTR		2
++#define R8A774B1_CLK_ZTRD2		3
++#define R8A774B1_CLK_ZT			4
++#define R8A774B1_CLK_ZX			5
++#define R8A774B1_CLK_S0D1		6
++#define R8A774B1_CLK_S0D2		7
++#define R8A774B1_CLK_S0D3		8
++#define R8A774B1_CLK_S0D4		9
++#define R8A774B1_CLK_S0D6		10
++#define R8A774B1_CLK_S0D8		11
++#define R8A774B1_CLK_S0D12		12
++#define R8A774B1_CLK_S1D2		13
++#define R8A774B1_CLK_S1D4		14
++#define R8A774B1_CLK_S2D1		15
++#define R8A774B1_CLK_S2D2		16
++#define R8A774B1_CLK_S2D4		17
++#define R8A774B1_CLK_S3D1		18
++#define R8A774B1_CLK_S3D2		19
++#define R8A774B1_CLK_S3D4		20
++#define R8A774B1_CLK_LB			21
++#define R8A774B1_CLK_CL			22
++#define R8A774B1_CLK_ZB3		23
++#define R8A774B1_CLK_ZB3D2		24
++#define R8A774B1_CLK_CR			25
++#define R8A774B1_CLK_DDR		26
++#define R8A774B1_CLK_SD0H		27
++#define R8A774B1_CLK_SD0		28
++#define R8A774B1_CLK_SD1H		29
++#define R8A774B1_CLK_SD1		30
++#define R8A774B1_CLK_SD2H		31
++#define R8A774B1_CLK_SD2		32
++#define R8A774B1_CLK_SD3H		33
++#define R8A774B1_CLK_SD3		34
++#define R8A774B1_CLK_RPC		35
++#define R8A774B1_CLK_RPCD2		36
++#define R8A774B1_CLK_MSO		37
++#define R8A774B1_CLK_HDMI		38
++#define R8A774B1_CLK_CSI0		39
++#define R8A774B1_CLK_CP			40
++#define R8A774B1_CLK_CPEX		41
++#define R8A774B1_CLK_R			42
++#define R8A774B1_CLK_OSC		43
++#define R8A774B1_CLK_CANFD		44
++
++#endif /* __DT_BINDINGS_CLOCK_R8A774B1_CPG_MSSR_H__ */
 -- 
 2.7.4
