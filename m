@@ -1,502 +1,71 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Wed, 18 Dec 2019 11:33:47 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 37/39] arm64: dts: renesas: Initial
-	r8a774b1 SoC device tree
+Date: Wed, 18 Dec 2019 11:33:48 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 38/39] arm64: dts: renesas: Add HiHope
+	RZ/G2N main board support
 In-Reply-To: <1576668829-59767-1-git-send-email-biju.das@bp.renesas.com>
 References: <1576668829-59767-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1576668829-59767-38-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1576668829-59767-39-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit 9b33e3001b67f9dcd52548db2949f5a04d0b4017 upstream.
+commit 83f7f812a8706aa9c23b02d945f670cdef116e2c upstream.
 
-Basic support for the RZ/G2N (R8A774B1) SoC. Added placeholders
-to avoid compilation error with the common platform code.
+Basic support for the HiHope RZ/G2N main board:
+  - Memory,
+  - Main crystal,
+  - Serial console
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Link: https://lore.kernel.org/r/1569589584-56917-1-git-send-email-biju.das at bp.renesas.com
+Link: https://lore.kernel.org/r/1568725530-55241-5-git-send-email-biju.das at bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a774b1.dtsi | 472 ++++++++++++++++++++++++++++++
- 1 file changed, 472 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a774b1.dtsi
+ arch/arm64/boot/dts/renesas/Makefile               |  1 +
+ .../boot/dts/renesas/r8a774b1-hihope-rzg2n.dts     | 26 ++++++++++++++++++++++
+ 2 files changed, 27 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n.dts
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774b1.dtsi b/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index c216d4e..bfdb3b6 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m.dtb
+ dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m-ex.dtb
++dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n.dtb
+ dtb-$(CONFIG_ARCH_R8A774C0) += r8a774c0-cat874.dtb r8a774c0-ek874.dtb
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-h3ulcb-kf.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n.dts b/arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n.dts
 new file mode 100644
-index 0000000..fc7aec6
+index 0000000..094b5ef
 --- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
-@@ -0,0 +1,472 @@
++++ b/arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n.dts
+@@ -0,0 +1,26 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Device Tree Source for the r8a774b1 SoC
++ * Device Tree Source for the HiHope RZ/G2N main board
 + *
 + * Copyright (C) 2019 Renesas Electronics Corp.
 + */
 +
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/r8a774b1-cpg-mssr.h>
-+#include <dt-bindings/power/r8a774b1-sysc.h>
++/dts-v1/;
++#include "r8a774b1.dtsi"
++#include "hihope-common.dtsi"
 +
 +/ {
-+	compatible = "renesas,r8a774b1";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
++	model = "HopeRun HiHope RZ/G2N main board based on r8a774b1";
++	compatible = "hoperun,hihope-rzg2n", "renesas,r8a774b1";
 +
-+	/*
-+	 * The external audio clocks are configured as 0 Hz fixed frequency
-+	 * clocks by default.
-+	 * Boards that provide audio clocks should override them.
-+	 */
-+	audio_clk_a: audio_clk_a {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
++	memory at 48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0x0 0x48000000 0x0 0x78000000>;
 +	};
 +
-+	audio_clk_b: audio_clk_b {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	audio_clk_c: audio_clk_c {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External CAN clock - to be overridden by boards that provide it */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		a57_0: cpu at 0 {
-+			compatible = "arm,cortex-a57";
-+			reg = <0x0>;
-+			device_type = "cpu";
-+			power-domains = <&sysc R8A774B1_PD_CA57_CPU0>;
-+			next-level-cache = <&L2_CA57>;
-+			enable-method = "psci";
-+			#cooling-cells = <2>;
-+			dynamic-power-coefficient = <854>;
-+			clocks = <&cpg CPG_CORE R8A774B1_CLK_Z>;
-+		};
-+
-+		a57_1: cpu at 1 {
-+			compatible = "arm,cortex-a57";
-+			reg = <0x1>;
-+			device_type = "cpu";
-+			power-domains = <&sysc R8A774B1_PD_CA57_CPU1>;
-+			next-level-cache = <&L2_CA57>;
-+			enable-method = "psci";
-+			clocks = <&cpg CPG_CORE R8A774B1_CLK_Z>;
-+		};
-+
-+		L2_CA57: cache-controller-0 {
-+			compatible = "cache";
-+			power-domains = <&sysc R8A774B1_PD_CA57_SCU>;
-+			cache-unified;
-+			cache-level = <2>;
-+		};
-+	};
-+
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board */
-+		clock-frequency = <0>;
-+	};
-+
-+	extalr_clk: extalr {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External PCIe clock - can be overridden by the board */
-+	pcie_bus_clk: pcie_bus {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	pmu_a57 {
-+		compatible = "arm,cortex-a57-pmu";
-+		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&a57_0>, <&a57_1>;
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-1.0", "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	/* External SCIF clock - to be overridden by boards that provide it */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		rwdt: watchdog at e6020000 {
-+			reg = <0 0xe6020000 0 0x0c>;
-+			/* placeholder */
-+		};
-+
-+		gpio0: gpio at e6050000 {
-+			reg = <0 0xe6050000 0 0x50>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			/* placeholder */
-+		};
-+
-+		gpio1: gpio at e6051000 {
-+			reg = <0 0xe6051000 0 0x50>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			/* placeholder */
-+		};
-+
-+		gpio2: gpio at e6052000 {
-+			reg = <0 0xe6052000 0 0x50>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			/* placeholder */
-+		};
-+
-+		gpio3: gpio at e6053000 {
-+			reg = <0 0xe6053000 0 0x50>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			/* placeholder */
-+		};
-+
-+		gpio4: gpio at e6054000 {
-+			reg = <0 0xe6054000 0 0x50>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			/* placeholder */
-+		};
-+
-+		gpio5: gpio at e6055000 {
-+			reg = <0 0xe6055000 0 0x50>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			/* placeholder */
-+		};
-+
-+		gpio6: gpio at e6055400 {
-+			reg = <0 0xe6055400 0 0x50>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			/* placeholder */
-+		};
-+
-+		gpio7: gpio at e6055800 {
-+			reg = <0 0xe6055800 0 0x50>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			/* placeholder */
-+		};
-+
-+		pfc: pin-controller at e6060000 {
-+			compatible = "renesas,pfc-r8a774b1";
-+			reg = <0 0xe6060000 0 0x50c>;
-+		};
-+
-+		cpg: clock-controller at e6150000 {
-+			compatible = "renesas,r8a774b1-cpg-mssr";
-+			reg = <0 0xe6150000 0 0x1000>;
-+			clocks = <&extal_clk>, <&extalr_clk>;
-+			clock-names = "extal", "extalr";
-+			#clock-cells = <2>;
-+			#power-domain-cells = <0>;
-+			#reset-cells = <1>;
-+		};
-+
-+		rst: reset-controller at e6160000 {
-+			compatible = "renesas,r8a774b1-rst";
-+			reg = <0 0xe6160000 0 0x0200>;
-+		};
-+
-+		sysc: system-controller at e6180000 {
-+			compatible = "renesas,r8a774b1-sysc";
-+			reg = <0 0xe6180000 0 0x0400>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		i2c4: i2c at e66d8000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0 0xe66d8000 0 0x40>;
-+			/* placeholder */
-+		};
-+
-+		hscif0: serial at e6540000 {
-+			reg = <0 0xe6540000 0 0x60>;
-+			/* placeholder */
-+		};
-+
-+		hsusb: usb at e6590000 {
-+			reg = <0 0xe6590000 0 0x200>;
-+			/* placeholder */
-+		};
-+
-+		usb3_phy0: usb-phy at e65ee000 {
-+			reg = <0 0xe65ee000 0 0x90>;
-+			#phy-cells = <0>;
-+			/* placeholder */
-+		};
-+
-+		avb: ethernet at e6800000 {
-+			reg = <0 0xe6800000 0 0x800>;
-+			/* placeholder */
-+		};
-+
-+		can0: can at e6c30000 {
-+			reg = <0 0xe6c30000 0 0x1000>;
-+			/* placeholder */
-+		};
-+
-+		can1: can at e6c38000 {
-+			reg = <0 0xe6c38000 0 0x1000>;
-+			/* placeholder */
-+		};
-+
-+		canfd: can at e66c0000 {
-+			reg = <0 0xe66c0000 0 0x8000>;
-+			/* placeholder */
-+		};
-+
-+		scif2: serial at e6e88000 {
-+			compatible = "renesas,scif-r8a774b1",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6e88000 0 64>;
-+			interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 310>,
-+				 <&cpg CPG_CORE R8A774B1_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
-+			resets = <&cpg 310>;
-+			status = "disabled";
-+		};
-+
-+		rcar_sound: sound at ec500000 {
-+			reg = <0 0xec500000 0 0x1000>, /* SCU */
-+			      <0 0xec5a0000 0 0x100>,  /* ADG */
-+			      <0 0xec540000 0 0x1000>, /* SSIU */
-+			      <0 0xec541000 0 0x280>,  /* SSI */
-+			      <0 0xec760000 0 0x200>;  /* Audio DMAC peri peri*/
-+
-+			rcar_sound,ssi {
-+				ssi0: ssi-0 { };
-+				ssi1: ssi-1 { };
-+				ssi2: ssi-2 { };
-+				ssi3: ssi-3 { };
-+				ssi4: ssi-4 { };
-+				ssi5: ssi-5 { };
-+				ssi6: ssi-6 { };
-+				ssi7: ssi-7 { };
-+				ssi8: ssi-8 { };
-+				ssi9: ssi-9 { };
-+			};
-+		};
-+
-+		xhci0: usb at ee000000 {
-+			reg = <0 0xee000000 0 0xc00>;
-+			/* placeholder */
-+		};
-+
-+		usb3_peri0: usb at ee020000 {
-+			reg = <0 0xee020000 0 0x400>;
-+			/* placeholder */
-+		};
-+
-+		ohci0: usb at ee080000 {
-+			reg = <0 0xee080000 0 0x100>;
-+			/* placeholder */
-+		};
-+
-+		ohci1: usb at ee0a0000 {
-+			reg = <0 0xee0a0000 0 0x100>;
-+			/* placeholder */
-+		};
-+
-+		ehci0: usb at ee080100 {
-+			reg = <0 0xee080100 0 0x100>;
-+			/* placeholder */
-+		};
-+
-+		ehci1: usb at ee0a0100 {
-+			reg = <0 0xee0a0100 0 0x100>;
-+			/* placeholder */
-+		};
-+
-+		usb2_phy0: usb-phy at ee080200 {
-+			reg = <0 0xee080200 0 0x700>;
-+			/* placeholder */
-+		};
-+
-+		usb2_phy1: usb-phy at ee0a0200 {
-+			reg = <0 0xee0a0200 0 0x700>;
-+			/* placeholder */
-+		};
-+
-+		sdhi0: sd at ee100000 {
-+			reg = <0 0xee100000 0 0x2000>;
-+			/* placeholder */
-+		};
-+
-+		sdhi1: sd at ee120000 {
-+			reg = <0 0xee120000 0 0x2000>;
-+			/* placeholder */
-+		};
-+
-+		sdhi2: sd at ee140000 {
-+			reg = <0 0xee140000 0 0x2000>;
-+			/* placeholder */
-+		};
-+
-+		sdhi3: sd at ee160000 {
-+			reg = <0 0xee160000 0 0x2000>;
-+			/* placeholder */
-+		};
-+
-+		gic: interrupt-controller at f1010000 {
-+			compatible = "arm,gic-400";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0x0 0xf1010000 0 0x1000>,
-+			      <0x0 0xf1020000 0 0x20000>,
-+			      <0x0 0xf1040000 0 0x20000>,
-+			      <0x0 0xf1060000 0 0x20000>;
-+			interrupts = <GIC_PPI 9
-+					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
-+			clocks = <&cpg CPG_MOD 408>;
-+			clock-names = "clk";
-+			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
-+			resets = <&cpg 408>;
-+		};
-+
-+		pciec0: pcie at fe000000 {
-+			reg = <0 0xfe000000 0 0x80000>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			bus-range = <0x00 0xff>;
-+			/* placeholder */
-+		};
-+
-+		pciec1: pcie at ee800000 {
-+			reg = <0 0xee800000 0 0x80000>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			bus-range = <0x00 0xff>;
-+			/* placeholder */
-+		};
-+
-+		hdmi0: hdmi at fead0000 {
-+			reg = <0 0xfead0000 0 0x10000>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port at 0 {
-+					reg = <0>;
-+					dw_hdmi0_in: endpoint {
-+					};
-+				};
-+				port at 1 {
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
-+		du: display at feb00000 {
-+			reg = <0 0xfeb00000 0 0x80000>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port at 0 {
-+					reg = <0>;
-+					du_out_rgb: endpoint {
-+					};
-+				};
-+				port at 1 {
-+					reg = <1>;
-+					du_out_hdmi0: endpoint {
-+					};
-+				};
-+				port at 2 {
-+					reg = <2>;
-+					du_out_lvds0: endpoint {
-+					};
-+				};
-+			};
-+		};
-+
-+		prr: chipid at fff00044 {
-+			compatible = "renesas,prr";
-+			reg = <0 0xfff00044 0 4>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+
-+	/* External USB clocks - can be overridden by the board */
-+	usb3s0_clk: usb3s0 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	usb_extal_clk: usb_extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
++	memory at 480000000 {
++		device_type = "memory";
++		reg = <0x4 0x80000000 0x0 0x80000000>;
 +	};
 +};
 -- 
