@@ -1,39 +1,37 @@
-From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
-Date: Thu, 19 Dec 2019 08:26:54 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 00/39] Add RZ/G2N
-	SYSC/RST/Clock/PFC support
-In-Reply-To: <20191218193413.GC15353@amd>
-References: <1576668829-59767-1-git-send-email-biju.das@bp.renesas.com>
- <20191218193413.GC15353@amd>
-Message-ID: <OSAPR01MB3667BDF8365F2326057F653092520@OSAPR01MB3667.jpnprd01.prod.outlook.com>
+From: kento.yoshida.wz@renesas.com (Kento Yoshida)
+Date: Thu, 19 Dec 2019 09:36:17 +0000
+Subject: [cip-dev] [cip-core] Package Proposal #1 (Security packages)
+In-Reply-To: <OSAPR01MB21135891687655571F2FADFAE1580@OSAPR01MB2113.jpnprd01.prod.outlook.com>
+References: <OSAPR01MB21135891687655571F2FADFAE1580@OSAPR01MB2113.jpnprd01.prod.outlook.com>
+Message-ID: <TYAPR01MB23993E63E56D0B6C926BD963DF520@TYAPR01MB2399.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+Hello Kazu and CIP Core working group members,
 
-> -----Original Message-----
-> From: Pavel Machek [mailto:pavel at denx.de]
-> Sent: Thursday, December 19, 2019 4:34 AM
-> To: Biju Das <biju.das@bp.renesas.com>
-> Cc: cip-dev at lists.cip-project.org; iwamatsu nobuhiro(?? ?? ???
-> ?????) <nobuhiro1.iwamatsu@toshiba.co.jp>; Pavel Machek
-> <pavel@denx.de>; Chris Paterson <chris.paterson2@renesas.com>;
-> Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>;
-> Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Subject: Re: [PATCH 4.19.y-cip 00/39] Add RZ/G2N SYSC/RST/Clock/PFC
-> support
-> 
-> Hi!
-> 
-> > This patch series add support for RZ/G2N board with serial debug
-> > console.
-> 
-> I have made two comments on the patches, but I believe the series is good
-> enough to merge.
-> 
-> I'll do that later if there are no objections.
-
-I reviewed this series, there are no problems in particular without your comment. 
+>From Renesas, agree with this proposal.
 
 Best regards,
-  Nobuhiro
+Kent
+-----Original Message-----
+From: cip-dev <cip-dev-bounces@lists.cip-project.org> On Behalf Of kazuhiro3.hayashi at toshiba.co.jp
+Sent: Monday, December 9, 2019 10:55 PM
+To: cip-dev at lists.cip-project.org
+Subject: [cip-dev] [cip-core] Package Proposal #1 (Security packages)
+
+Hello CIP Core members,
+
+I would like to start the "review" phase (Phase 2) of the attached package proposal.
+https://gitlab.com/cip-project/cip-core/cip-pkglist/blob/master/doc/pdp.md#phase-2-proposal-review
+
+The packages are proposed by CIP security WG to satisfy their required features.
+See the "reason" fields in the proposal for more details.
+
+Please reply with you opinion, agree or disagree.
+If you cannot agree to add specific packages, please show the reasons as well.
+
+Due Date: December 23rd
+(We can extend this due date if more time required for reviews, please let me know if any requests)
+
+Best regards,
+Kazu
