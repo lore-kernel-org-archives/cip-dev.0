@@ -1,48 +1,57 @@
 From: marian-cristian.rotariu.rb@bp.renesas.com (Marian-Cristian Rotariu)
-Date: Thu, 19 Dec 2019 15:05:51 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 2/3] drm: rcar-du: Add R8A7744 support
+Date: Thu, 19 Dec 2019 15:05:52 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 3/3] ARM: dts: r8a7744: Add DU support
 In-Reply-To: <1576767952-15873-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
 References: <1576767952-15873-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
-Message-ID: <1576767952-15873-3-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
+Message-ID: <1576767952-15873-4-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Biju Das <biju.das@bp.renesas.com>
 
-commit 5dc34af19c98171174f563a4b9f79a902bf665b4 upstream.
+commit 5f152018d340d90c185ced8ef6230b7044ea5540 upstream.
 
-Add support for the R8A7744 DU (which is very similar to the R8A7743 DU);
-it has 1 DPAD (RGB) output and 1 LVDS output.
+Add du node to r8a7744 SoC DT. Boards that want to enable the DU
+need to specify the output topology.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[marian: Removed reset and updated clk and power domain properties]
 Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_drv.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7744.dtsi | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index 5187ed3..edb9c3f 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -41,7 +41,7 @@ static const struct rcar_du_device_info rzg1_du_r8a7743_info = {
- 	.num_crtcs = 2,
- 	.routes = {
- 		/*
--		 * R8A7743 has one RGB output and one LVDS output
-+		 * R8A774[34] has one RGB output and one LVDS output
- 		 */
- 		[RCAR_DU_OUTPUT_DPAD0] = {
- 			.possible_crtcs = BIT(1) | BIT(0),
-@@ -175,6 +175,7 @@ static const struct rcar_du_device_info rcar_du_r8a7794_info = {
+diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
+index 7902f7e..91e032a 100644
+--- a/arch/arm/boot/dts/r8a7744.dtsi
++++ b/arch/arm/boot/dts/r8a7744.dtsi
+@@ -1278,8 +1278,17 @@
+ 		};
  
- static const struct of_device_id rcar_du_of_table[] = {
- 	{ .compatible = "renesas,du-r8a7743", .data = &rzg1_du_r8a7743_info },
-+	{ .compatible = "renesas,du-r8a7744", .data = &rzg1_du_r8a7743_info },
- 	{ .compatible = "renesas,du-r8a7745", .data = &rzg1_du_r8a7745_info },
- 	{ .compatible = "renesas,du-r8a7779", .data = &rcar_du_r8a7779_info },
- 	{ .compatible = "renesas,du-r8a7790", .data = &rcar_du_r8a7790_info },
+ 		du: display at feb00000 {
++			compatible = "renesas,du-r8a7744";
+ 			reg = <0 0xfeb00000 0 0x40000>,
+ 			      <0 0xfeb90000 0 0x1c>;
++			reg-names = "du", "lvds.0";
++			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp7_clks R8A7744_CLK_DU0>,
++				 <&mstp7_clks R8A7744_CLK_DU1>,
++				 <&mstp7_clks R8A7744_CLK_LVDS0>;
++			clock-names = "du.0", "du.1", "lvds.0";
++			status = "disabled";
+ 
+ 			ports {
+ 				#address-cells = <1>;
+@@ -1296,7 +1305,6 @@
+ 					};
+ 				};
+ 			};
+-			/* placeholder */
+ 		};
+ 
+ 		cmt0: timer at ffca0000 {
 -- 
 2.7.4
