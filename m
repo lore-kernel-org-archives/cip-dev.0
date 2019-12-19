@@ -1,46 +1,61 @@
-From: masashi.kudo@cybertrust.co.jp (masashi.kudo at cybertrust.co.jp)
-Date: Wed, 18 Dec 2019 23:39:21 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-Message-ID: <OSBPR01MB1973536919F69EAD185992B7A0530@OSBPR01MB1973.jpnprd01.prod.outlook.com>
+From: biju.das@bp.renesas.com (Biju Das)
+Date: Thu, 19 Dec 2019 07:41:16 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 03/39] soc: renesas: Add Renesas
+ R8A774B1 config option
+In-Reply-To: <20191218192806.GA15353@amd>
+References: <1576668829-59767-1-git-send-email-biju.das@bp.renesas.com>
+ <1576668829-59767-4-git-send-email-biju.das@bp.renesas.com>
+ <20191218192806.GA15353@amd>
+Message-ID: <OSBPR01MB2103CE29693260D1539A0D59B8520@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+Hi Pavel,
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
+Thanks for the feedback.
 
-*Please note that the IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=11&day=28&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
+> -----Original Message-----
+> From: Pavel Machek <pavel@denx.de>
+> Sent: Wednesday, December 18, 2019 7:28 PM
+> To: Biju Das <biju.das@bp.renesas.com>
+> Cc: cip-dev at lists.cip-project.org; Nobuhiro Iwamatsu
+> <nobuhiro1.iwamatsu@toshiba.co.jp>; Pavel Machek <pavel@denx.de>;
+> Chris Paterson <Chris.Paterson2@renesas.com>; Marian-Cristian Rotariu
+> <marian-cristian.rotariu.rb@bp.renesas.com>; Fabrizio Castro
+> <fabrizio.castro@bp.renesas.com>
+> Subject: Re: [PATCH 4.19.y-cip 03/39] soc: renesas: Add Renesas R8A774B1
+> config option
+> 
+> Hi!
+> 
+> > Add configuration option for the RZ/G2N (R8A774B1) SoC.
+> 
+> Normally, config option should be close to the end of the series (having it in
+> the begining can be surprising during the bisect, for example).
 
-US-West US-East   UK     DE     TW     JP
-01:00    04:00   09:00   10:00   17:00   18:00
+Enabling config option should be close to the end of the series. By adding config option in the early stage
+allow us to verify each patch that we are adding is compiled properly.
 
-Channel:
-* irc:chat.freenode.net:6667/cip
+Regards,
+Biju
 
-Last week's meeting minutes:
-https://irclogs.baserock.org/meetings/cip/2019/12/cip.2019-12-12-09.00.log.html
-
-Agenda:
-
-* Action item
-1. Test LTS (pre)releases directly - patersonc
-2. Create a way/process to run LTP only for release tests - patersonc
-3. Combine rootfilesystem with kselftest binary - Iwamatsu-san
-4. Document a process on how to add tests to the CIP test setup - patersonc
-5. Arrangement of F2F Kernel Meeting in Nurnberg - masashi910
-
-* Kernel maintenance updates
-* Kernel testing
-* CIP Core
-* Software update
-* AOB
-1. IRC meeting next week
-I would like to hold an IRC meeting next week as well although it is a holiday season. I would like to double-check whether it is ok.
-
-The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
-
-Best regards,
---
-M. Kudo
-Cybertrust Japan Co., Ltd.
+[>] 
+> 
+> > +++ b/arch/arm64/Kconfig.platforms
+> > @@ -195,6 +195,12 @@ config ARCH_R8A774A1
+> >  	help
+> >  	  This enables support for the Renesas RZ/G2M SoC.
+> >
+> > +config ARCH_R8A774B1
+> > +	bool "Renesas RZ/G2N SoC Platform"
+> > +	depends on ARCH_RENESAS
+> > +	help
+> > +	  This enables support for the Renesas RZ/G2N SoC.
+> > +
+> >  config ARCH_R8A774C0
+> >  	bool "Renesas RZ/G2E SoC Platform"
+> >  	depends on ARCH_RENESAS
+> 
+> --
+> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
