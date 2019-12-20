@@ -1,47 +1,44 @@
-From: arnd@arndb.de (Arnd Bergmann)
-Date: Thu, 19 Dec 2019 21:35:44 +0100
-Subject: [cip-dev] [Y2038] [PATCH] generic/402: fix for updated behavior
- of timestamp limits
-In-Reply-To: <f913d1f409dd4b2a22bcb71a3ddaeb2b87a00671.camel@codethink.co.uk>
-References: <20190719041231.26500-1-deepa.kernel@gmail.com>
- <CAOQ4uxhxVKhUh_P_NffLbGScpiL0wOrCTLwWJWeSbRRNbHzPrg@mail.gmail.com>
- <CABeXuvoHw8W02JsmZjafnQkOs1=0dodSpBFyJ_Gq+1vs+hFkQQ@mail.gmail.com>
- <CABeXuvqO=04BJw2bWa6d2fv1FTe-B_JsNhVdYTwT=fY=ncOCkw@mail.gmail.com>
- <CAOQ4uxjaFBZZUKyu6YS08ta8pdW_FSjRYA4J7S8+_=Gfi-kO2Q@mail.gmail.com>
- <CAK8P3a1fYPq6DCqhT6ziJaxETLHt8uUgbHWryHiD4kQWwKLp2Q@mail.gmail.com>
- <20191219084046.GA1026636@kroah.com>
- <CAK8P3a1HiPLbajjoYQf0N4RBw9eUK6uyC+mOq7LaRmNpgiOgLA@mail.gmail.com>
- <f913d1f409dd4b2a22bcb71a3ddaeb2b87a00671.camel@codethink.co.uk>
-Message-ID: <CAK8P3a2bJxxrCFVLcduMykHjBMshA8B2EdV0xeFOOY5fARiN4g@mail.gmail.com>
+From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
+Date: Fri, 20 Dec 2019 00:07:44 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 0/3] Add DU support
+In-Reply-To: <1576767952-15873-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
+References: <1576767952-15873-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
+Message-ID: <OSAPR01MB3667CE946915D631AF73F3E0922D0@OSAPR01MB3667.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Thu, Dec 19, 2019 at 4:48 PM Ben Hutchings
-<ben.hutchings@codethink.co.uk> wrote:
-> On Thu, 2019-12-19 at 12:29 +0100, Arnd Bergmann wrote:
-> [...]
-> > - Users of CIP SLTS kernels with extreme service life that may involve
-> >   not upgrading until after y2038 (this is obviously not recommended if
-> >   you connect to a public network, but I'm sure some people do this anyway).
-> >   For running user space, this requires either a 32-bit kernel with the
-> >   linux-5.1 syscall changes or a 64-bit kernel. If you run a 64-bit linux-4.9
-> >   kernel in a deeply embedded non-networked machine, it still makes
-> >   sense to have working inode timestamps and be able to test that.
-> [...]
->
-> CIP is currently aiming for a 10 year support lifetime, so both of its
-> currently existing branches (4.4, 4.19) should be long out of support
-> in 2038.  Still, it's possible that some people hope to extend that
-> later.
+Hi Marian,
 
-It is also common that end-users keep relying on machines that they
-bought for many years after any support contracts end. This may be
-fine for a lot of use cases where there is no risk in running an old
-operating system, and replacing it is prohibitively expensive, as
-software generally does not suddenly stop working after support ends.
+> -----Original Message-----
+> From: Marian-Cristian Rotariu
+> [mailto:marian-cristian.rotariu.rb at bp.renesas.com]
+> Sent: Friday, December 20, 2019 12:06 AM
+> To: cip-dev at lists.cip-project.org; iwamatsu nobuhiro(?? ?? ???
+> ?????) <nobuhiro1.iwamatsu@toshiba.co.jp>; Pavel Machek
+> <pavel@denx.de>
+> Cc: Chris Paterson <chris.paterson2@renesas.com>; Biju Das
+> <biju.das@bp.renesas.com>; Fabrizio Castro
+> <fabrizio.castro@bp.renesas.com>
+> Subject: [PATCH 4.4.y-cip 0/3] Add DU support
+> 
+> This patch series add DU support for iWave iwg20d platform based on RZ/G1N.
+> 
+> This patch series is based on linux-4.4.y-cip and all the patches in this
+> series are cherry-picked from upstream.
+> 
+> Biju Das (3):
+>   dt-bindings: display: renesas: du: Document the r8a7744 bindings
+>   drm: rcar-du: Add R8A7744 support
+>   ARM: dts: r8a7744: Add DU support
+> 
+>  Documentation/devicetree/bindings/display/renesas,du.txt |  2 ++
+>  arch/arm/boot/dts/r8a7744.dtsi                           | 10
+> +++++++++-
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.c                    |  3 ++-
+>  3 files changed, 13 insertions(+), 2 deletions(-)
 
-With the y2038-safe interfaces and with file system limits, the
-difference is that there is a specific point in time when things will
-break.
+Looks good to me these patches.
+If other reviewer have no opinion, I will apply this series.
 
-        Arnd
+Best regards,
+  Nobuhiro.
