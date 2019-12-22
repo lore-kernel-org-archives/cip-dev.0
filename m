@@ -1,15 +1,32 @@
-From: masashi.kudo@cybertrust.co.jp (masashi.kudo at cybertrust.co.jp)
-Date: Sun, 22 Dec 2019 23:05:42 +0000
+From: kazuhiro3.hayashi@toshiba.co.jp (kazuhiro3.hayashi at toshiba.co.jp)
+Date: Sun, 22 Dec 2019 23:43:06 +0000
 Subject: [cip-dev] [cip-core] Package Proposal #1 (Security packages)
-In-Reply-To: <OSAPR01MB2113AFF81737726CED0E26FFE12D0@OSAPR01MB2113.jpnprd01.prod.outlook.com>
+In-Reply-To: <CAFa_k0jbziJJL1AW1EPvMAboiaLLv1JeGpMWgoBQExO7zNixPw@mail.gmail.com>
 References: <OSAPR01MB21135891687655571F2FADFAE1580@OSAPR01MB2113.jpnprd01.prod.outlook.com>
  <7d3f09c5-2b39-1a44-4e49-20de14ad9c66@siemens.com>
  <TYAPR01MB23993EFD3E091749C6DAFD62DF2D0@TYAPR01MB2399.jpnprd01.prod.outlook.com>
  <e752eb78-fa1d-6b97-884c-a5515c85521d@siemens.com>
  <OSAPR01MB2113AFF81737726CED0E26FFE12D0@OSAPR01MB2113.jpnprd01.prod.outlook.com>
-Message-ID: <CAFa_k0jbziJJL1AW1EPvMAboiaLLv1JeGpMWgoBQExO7zNixPw@mail.gmail.com>
+ <CAFa_k0jbziJJL1AW1EPvMAboiaLLv1JeGpMWgoBQExO7zNixPw@mail.gmail.com>
+Message-ID: <TYXPR01MB180860D882554FA432EC34ACE12F0@TYXPR01MB1808.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
+
+Good morning Kudo-san,
+
+>> So, please suspend this proposal process until requirements of all members become clear.
+> Does this means that the above due date is extended and the new due date will be announced later?
+
+Yes. I will share the new due date ASAP, but it would be a day in January...
+
+Best regards,
+Kazu
+
+From: masashi.kudo@cybertrust.co.jp [mailto:masashi.kudo at cybertrust.co.jp]
+Sent: Monday, December 23, 2019 7:59 AM
+To: hayashi kazuhiro(? ?? ????????) <kazuhiro3.hayashi@toshiba.co.jp>
+Cc: jan.kiszka at siemens.com; kento.yoshida.wz at renesas.com; cip-dev at lists.cip-project.org; dinesh kumar(???? DS Company) <dinesh.kumar@toshiba-tsip.com>
+Subject: Re: [cip-dev] [cip-core] Package Proposal #1 (Security packages)
 
 Kazu-san,
 
@@ -174,4 +191,4 @@ cip-dev at lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>
 https://lists.cip-project.org/mailman/listinfo/cip-dev
 -------------- next part --------------
 An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191222/2dd7606a/attachment.html>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191222/b8391513/attachment-0001.html>
