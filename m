@@ -1,27 +1,39 @@
-From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
-Date: Fri, 27 Dec 2019 21:19:04 +0000
-Subject: [cip-dev] [ANNOUNCE] Release v4.19.91-cip17
-Message-ID: <OSAPR01MB3667EB81CEA83F8E4203C5E0922A0@OSAPR01MB3667.jpnprd01.prod.outlook.com>
+From: pavel@ucw.cz (Pavel Machek)
+Date: Sun, 29 Dec 2019 18:25:57 +0100
+Subject: [cip-dev] Getting older -cip-rebase versions
+Message-ID: <20191229172557.GA18039@duo.ucw.cz>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+Hi!
 
-CIP kernel team has released Linux kernel v4.19.91-cip17.
-The linux-4.19.y-cip tree has been updated base version from 4.19.88 to 4.19.91,
-and the following features have been backported and updated:
-  - Support Renesas RZ/G2N SoC (r8a774b1)
-  - Support HiHope RZ/G2N board
+To prepare -cip-rt-rebase, I'd like to start with -cip-rebase. That
+seems to be easy with latest version, but not with the older ones:
 
-You can get this release via the git tree at:
+pavel at duo:~/cip/k$ git show v4.19.91-cip17-rebase
+tag v4.19.91-cip17-rebase
+commit 0c809da57d1f66315f0d75cab818cf1121ba652c (tag: v4.19.91-cip17-rebase, origin/linux-4.19.y-cip-rebase)
+Author: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Date:   Sat Dec 28 05:55:06 2019 +0900
 
-  v4.19.91-cip17:
-    repository:
-      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch:
-      linux-4.19.y-cip
-    commit:
-      102c40c39125184e0a72a22d3fa2e395d9deef54
+    CIP: Bump version suffix to -cip17 after merge from stable
 
-Best regards,
-   Nobuhiro
+pavel at duo:~/cip/k$ git show v4.19.88-cip16-rebase
+fatal: ambiguous argument 'v4.19.88-cip16-rebase': unknown revision or path not in the working tree.
+
+Is there way to get to that version? Would it be possible to keep
+those tags in future?
+
+Thanks,
+
+								Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 195 bytes
+Desc: not available
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191229/eabe499a/attachment.sig>
