@@ -1,39 +1,61 @@
-From: pavel@ucw.cz (Pavel Machek)
-Date: Sun, 29 Dec 2019 18:25:57 +0100
-Subject: [cip-dev] Getting older -cip-rebase versions
-Message-ID: <20191229172557.GA18039@duo.ucw.cz>
+From: info@techaffiliate.info (Joseph Gladden)
+Date: Tue, 31 Dec 2019 08:48:03 +0000
+Subject: [cip-dev] Audio Transcription Service Provider
+Message-ID: <a65ecf6b4ed0420a0756e033506549b0@techaffiliate.info>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi!
+Hello,
 
-To prepare -cip-rt-rebase, I'd like to start with -cip-rebase. That
-seems to be easy with latest version, but not with the older ones:
+Do you need someone reliable to transcribe both your short term and 
+long term projects? Or do you need an accurate transcript for your 
+audio or video? 
 
-pavel at duo:~/cip/k$ git show v4.19.91-cip17-rebase
-tag v4.19.91-cip17-rebase
-commit 0c809da57d1f66315f0d75cab818cf1121ba652c (tag: v4.19.91-cip17-rebase, origin/linux-4.19.y-cip-rebase)
-Author: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Date:   Sat Dec 28 05:55:06 2019 +0900
+Allow us to transcribe your audio and provide you accurate transcripts 
+and let us help you reach your business/project goals through the help 
+of our transcription services.
 
-    CIP: Bump version suffix to -cip17 after merge from stable
+What are our goals with each transcript?
 
-pavel at duo:~/cip/k$ git show v4.19.88-cip16-rebase
-fatal: ambiguous argument 'v4.19.88-cip16-rebase': unknown revision or path not in the working tree.
+- Speed
+- Accuracy
+- Confidentiality
+- Each transcript is properly formatted. Strict grammar and 
+punctuation rules are adhered to and of course, file security is 
+something we take very seriously. 
 
-Is there way to get to that version? Would it be possible to keep
-those tags in future?
+Have any transcription queries? Send me a message. Let's discuss what 
+you need to get done. We will address any concerns you have. 
 
-Thanks,
+- Professional transcription
+- Accurate and thorough
+- Beautifully transcribed documents.
+- Grammar, spelling and jargon thoroughly checked
 
-								Pavel
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+We have transcribed audios & videos under various requirements 
+such as :
+
+- Medical transcription
+- Technical
+- Academic
+- Lectures
+- Business
+- Groups
+- Legal
+- Research interviews
+
+more...
+
+Skilled with international accents and prompt response. Our pricing 
+is better or comparable to individual service provider. In addition 
+we also assist in APA Style formatting for research papers. Please 
+note we don?t conduct research but assist only in formatting 
+of the papers.
+
+Regards,
+Joseph Gladden
+
+http://techaffiliate.info/mailsoft/unsubscribe.php?M=769776&C=638e605fac69331e6ad41aea0558f1ce&L=13&N=22
 -------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 195 bytes
-Desc: not available
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191229/eabe499a/attachment.sig>
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20191231/a458bafa/attachment.html>
