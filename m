@@ -1,52 +1,85 @@
-From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
-Date: Wed, 8 Jan 2020 12:36:46 +0000
-Subject: [cip-dev] Force pushed linux-4.19.y and linux-4.19.y-rebase
- branches, and v4.19.88-cip16-rebase, v4.19.91-cip17-rebase,
- v4.19.91-cip17 tags (RE: Difference between
- v4.19.88-cip16-rebase..v4.19.88-cip16 was Re: Getting older -cip-rebase
- versions)
-Message-ID: <OSAPR01MB36674712DA20D725552ED6B1923E0@OSAPR01MB3667.jpnprd01.prod.outlook.com>
+From: Quirin.Gylstorff@siemens.com (Q. Gylstorff)
+Date: Wed,  8 Jan 2020 15:33:54 +0100
+Subject: [cip-dev] [isar-cip-core PATCH 1/5] recipes-kernel/linux: allow the
+	usage of the cip-kernel-config
+In-Reply-To: <20200108143358.26177-1-Quirin.Gylstorff@siemens.com>
+References: <20200108143358.26177-1-Quirin.Gylstorff@siemens.com>
+Message-ID: <20200108143358.26177-2-Quirin.Gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-> > I'm trying to prepare -cip-rt release, and I ran into differences I
-> > could not explain. After some head scratching, I realized they are in
-> > -cip,
-> > too:
-> >
-> > diff v4.19.88-cip16-rebase..v4.19.88-cip16.
-> 
-> That's my bad.
-> I missed to cherry-pick b03f03030171c862ff1f6968e5413e5d8c4f651a and
-> fixing merge conflict on -rebase branch.
-> 
-> >
-> > One more line of difference exists in newer version: git diff
-> > v4.19.91-cip17-rebase..v4.19.91-cip17
-> >
-> 
-> This is the same.
-> I missed to fixing merge conflict on -cip branch.
-> 
-> > Any idea what is going on there? Which version is ok and which should
-> > be adjusted?
-> 
-> I already fixed these issue on local repository.
-> Since first issue is on -rebase branch, I don't think it will have a big
-> impact.
-> Second issue is on cip branch, I will need to do force push and re-tag.
-> 
-> Also, to avoid the same problem, I will add a step to check the differences
-> when rebase and merge.
-> 
+To avoid the duplication of the linux cip kernel configuration
+add the option USE_CIP_KERNEL_CONFIG. If this option is set to 1
+the KERNEL_DEFCONFIG from the cip project is used. The KERNEL_DEFCONFIG
+is contains the explicit path to the defconfig in
+gitlab.com/cip-project/cip-kernel-config.git.
 
-I just force-pushed v4.19.88-cip16-rebase, v4.19.91-cip17-rebase, v4.19.91-cip17 tags,
-linux-4.19.y and linux-4.19.y-rebase branches to reflect the fix for these issues.
-And I checked 4.4.y-cip, but couldn't find any problems.
+SRCREV_cip-kernel-config sets the commit sha for checkout.
 
-Sorry, please apply the updates to your local repository.
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+ conf/machine/hihope-rzg2m.conf            |  1 -
+ kas.yml                                   |  4 ++--
+ recipes-kernel/linux/linux-cip-common.inc | 18 +++++++++++++++---
+ 3 files changed, 17 insertions(+), 6 deletions(-)
 
-Best regards,
-   Nobuhiro
+diff --git a/conf/machine/hihope-rzg2m.conf b/conf/machine/hihope-rzg2m.conf
+index 8b8849f..863e20d 100644
+--- a/conf/machine/hihope-rzg2m.conf
++++ b/conf/machine/hihope-rzg2m.conf
+@@ -13,6 +13,5 @@ DISTRO_ARCH = "arm64"
+ 
+ IMAGE_TYPE ?= "wic-img"
+ 
+-KERNEL_DEFCONFIG = "https://gitlab.com/cip-project/cip-kernel/cip-kernel-config/raw/693be1bfb92e6c0ef813cf29431ac49eab0e15be/4.19.y-cip/arm64/renesas_defconfig"
+ DTB_FILE = "r8a774a1-hihope-rzg2m-ex.dtb"
+ IMAGE_BOOT_FILES = "${KERNEL_IMAGE} ${DTB_FILE}"
+diff --git a/kas.yml b/kas.yml
+index aa7ddda..3eb6f03 100644
+--- a/kas.yml
++++ b/kas.yml
+@@ -18,8 +18,8 @@ repos:
+   cip-core:
+ 
+   isar:
+-    url: https://github.com/ilbers/isar
+-    refspec: 20a5e368021d988d8f0dcd1951b395d194a37ebb
++    url: https://github.com/ilbers/isar.git
++    refspec: 619d6d88ac8c745282fd16773d50a466567615b6
+     layers:
+       meta:
+ 
+diff --git a/recipes-kernel/linux/linux-cip-common.inc b/recipes-kernel/linux/linux-cip-common.inc
+index d65cfa3..3fae2fe 100644
+--- a/recipes-kernel/linux/linux-cip-common.inc
++++ b/recipes-kernel/linux/linux-cip-common.inc
+@@ -9,10 +9,22 @@
+ # SPDX-License-Identifier: MIT
+ #
+ 
+-require recipes-kernel/linux/linux-custom.inc
++KERNEL_DEFCONFIG ?= "${MACHINE}_defconfig"
++
++def conditional(variable, checkvalue, truevalue, falsevalue, d):
++    if d.getVar(variable) == checkvalue:
++        return truevalue
++    else:
++        return falsevalue
+ 
+-KERNEL_DEFCONFIG = "${MACHINE}_defconfig"
++require recipes-kernel/linux/linux-custom.inc
+ 
+ SRC_URI += " \
+     https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/snapshot/linux-cip-${PV}.tar.gz \
+-    file://${KERNEL_DEFCONFIG}"
++"
++
++SRC_URI_append = "${@conditional("USE_CIP_KERNEL_CONFIG","1", \
++" git://gitlab.com/cip-project/cip-kernel/cip-kernel-config.git;destsuffix=cip-kernel-config;name=cip-kernel-config" \
++," file://${KERNEL_DEFCONFIG}",d)}"
++SRCREV_cip-kernel-config ?= "f88ee1e75253104f975263cf4d0bddd557388197"
++
+-- 
+2.20.1
