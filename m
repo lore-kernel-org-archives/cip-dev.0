@@ -1,10 +1,10 @@
 From: Quirin.Gylstorff@siemens.com (Q. Gylstorff)
-Date: Wed,  8 Jan 2020 15:33:56 +0100
-Subject: [cip-dev] [isar-cip-core PATCH 3/5] Use renesas_shmobile_defconfig
-	for iwg20m
+Date: Wed,  8 Jan 2020 15:33:58 +0100
+Subject: [cip-dev] [isar-cip-core PATCH 5/5] kas: patch isar for iwg20m with
+	kernel 4.4
 In-Reply-To: <20200108143358.26177-1-Quirin.Gylstorff@siemens.com>
 References: <20200108143358.26177-1-Quirin.Gylstorff@siemens.com>
-Message-ID: <20200108143358.26177-4-Quirin.Gylstorff@siemens.com>
+Message-ID: <20200108143358.26177-6-Quirin.Gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
@@ -12,21 +12,69 @@ From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- conf/machine/iwg20m.conf | 2 ++
- 1 file changed, 2 insertions(+)
+ ...d-path-to-image-for-arm-kernels-4.12.patch | 37 +++++++++++++++++++
+ kas.yml                                       |  5 +++
+ 2 files changed, 42 insertions(+)
+ create mode 100644 isar-patches/0001-linux-custom-add-path-to-image-for-arm-kernels-4.12.patch
 
-diff --git a/conf/machine/iwg20m.conf b/conf/machine/iwg20m.conf
-index 6c1a227..37f98fa 100644
---- a/conf/machine/iwg20m.conf
-+++ b/conf/machine/iwg20m.conf
-@@ -17,6 +17,8 @@ BAUDRATE_TTY = "115200"
- # kernel version
- PREFERRED_VERSION_linux-cip ?= "4.4.%"
- PREFERRED_VERSION_linux-cip-rt ?= "4.4.%"
-+USE_CIP_KERNEL_CONFIG = "1"
-+KERNEL_DEFCONFIG = "cip-kernel-config/4.4.y-cip/arm/renesas_shmobile_defconfig"
+diff --git a/isar-patches/0001-linux-custom-add-path-to-image-for-arm-kernels-4.12.patch b/isar-patches/0001-linux-custom-add-path-to-image-for-arm-kernels-4.12.patch
+new file mode 100644
+index 0000000..3e4e13e
+--- /dev/null
++++ b/isar-patches/0001-linux-custom-add-path-to-image-for-arm-kernels-4.12.patch
+@@ -0,0 +1,37 @@
++From 4961476f3affabd2bfb8f12ccc86c0abc6a66200 Mon Sep 17 00:00:00 2001
++From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
++Date: Wed, 8 Jan 2020 14:43:01 +0100
++Subject: [PATCH] linux-custom: add path to image for arm* kernels < 4.12
++To: isar-users at googlegroups.com
++
++ARM/ARM64 Kernel with a version < 4.12 do not contain the path to
++the kernel image in image_name. This was added with commits:
++152e6744ebfc8fa6cc9fff4ba36271f5f1ba2821 for arm and
++06995804b5762f016c7a80503406da853a8f3785 for arm64.
++
++Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
++---
++ meta/recipes-kernel/linux/files/debian/isar/install.tmpl | 7 ++++++-
++ 1 file changed, 6 insertions(+), 1 deletion(-)
++
++diff --git a/meta/recipes-kernel/linux/files/debian/isar/install.tmpl b/meta/recipes-kernel/linux/files/debian/isar/install.tmpl
++index 67b7ce3..ac347aa 100644
++--- a/meta/recipes-kernel/linux/files/debian/isar/install.tmpl
+++++ b/meta/recipes-kernel/linux/files/debian/isar/install.tmpl
++@@ -56,7 +56,12 @@ EOF
++ 
++ install_image() {
++     install -m 755 -d ${deb_img_dir}/$(dirname ${kimage_path})
++-    cp ${O}/${kimage} ${deb_img_dir}/${kimage_path}
+++    # ARM/ARM64 kernels < 4.12 do not include the path to the kernel
+++    if [ -e ${O}/${kimage} ]; then
+++        cp ${O}/${kimage} ${deb_img_dir}/${kimage_path}
+++    else
+++        cp ${O}/arch/$ARCH/boot/${kimage} ${deb_img_dir}/${kimage_path}
+++    fi
++ 
++     # Make sure arm64 kernels are decompressed
++     if [ "${ARCH}" = "arm64" ]; then
++-- 
++2.20.1
++
+diff --git a/kas.yml b/kas.yml
+index 3eb6f03..a157dc9 100644
+--- a/kas.yml
++++ b/kas.yml
+@@ -22,6 +22,11 @@ repos:
+     refspec: 619d6d88ac8c745282fd16773d50a466567615b6
+     layers:
+       meta:
++    patches:
++      build-arm-with-4.4:
++        path: isar-patches/0001-linux-custom-add-path-to-image-for-arm-kernels-4.12.patch
++        repo: cip-core
++
  
- # Boot partition files
- DTB_FILE = "r8a7743-iwg20d-q7-dbcm-ca.dtb"
+ bblayers_conf_header:
+   standard: |
 -- 
 2.20.1
