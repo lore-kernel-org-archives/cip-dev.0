@@ -1,10 +1,10 @@
 From: Quirin.Gylstorff@siemens.com (Q. Gylstorff)
-Date: Thu,  9 Jan 2020 09:52:40 +0100
-Subject: [cip-dev] [isar-cip-core PATCH v2 3/5] Use
-	renesas_shmobile_defconfig for iwg20m
+Date: Thu,  9 Jan 2020 09:52:41 +0100
+Subject: [cip-dev] [isar-cip-core PATCH v2 4/5] Use
+	siemens_ipc227e_defconfig for simatic-ipc227e
 In-Reply-To: <20200108143358.26177-1-Quirin.Gylstorff@siemens.com>
 References: <20200108143358.26177-1-Quirin.Gylstorff@siemens.com>
-Message-ID: <20200109085242.4466-4-Quirin.Gylstorff@siemens.com>
+Message-ID: <20200109085242.4466-5-Quirin.Gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
@@ -12,21 +12,18 @@ From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- conf/machine/iwg20m.conf | 2 ++
+ conf/machine/simatic-ipc227e.conf | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/conf/machine/iwg20m.conf b/conf/machine/iwg20m.conf
-index 6c1a227..37f98fa 100644
---- a/conf/machine/iwg20m.conf
-+++ b/conf/machine/iwg20m.conf
-@@ -17,6 +17,8 @@ BAUDRATE_TTY = "115200"
- # kernel version
- PREFERRED_VERSION_linux-cip ?= "4.4.%"
- PREFERRED_VERSION_linux-cip-rt ?= "4.4.%"
-+USE_CIP_KERNEL_CONFIG = "1"
-+KERNEL_DEFCONFIG = "cip-kernel-config/4.4.y-cip/arm/renesas_shmobile_defconfig"
+diff --git a/conf/machine/simatic-ipc227e.conf b/conf/machine/simatic-ipc227e.conf
+index 473e6c5..3c9638f 100644
+--- a/conf/machine/simatic-ipc227e.conf
++++ b/conf/machine/simatic-ipc227e.conf
+@@ -10,3 +10,5 @@ DISTRO_ARCH = "amd64"
  
- # Boot partition files
- DTB_FILE = "r8a7743-iwg20d-q7-dbcm-ca.dtb"
+ IMAGE_TYPE ?= "wic-img"
+ IMAGER_INSTALL += "${GRUB_BOOTLOADER_INSTALL}"
++USE_CIP_KERNEL_CONFIG = "1"
++KERNEL_DEFCONFIG = "cip-kernel-config/4.19.y-cip/x86/siemens_ipc227e_defconfig"
 -- 
 2.20.1
