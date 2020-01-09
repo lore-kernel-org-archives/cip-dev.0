@@ -1,10 +1,10 @@
 From: Quirin.Gylstorff@siemens.com (Q. Gylstorff)
-Date: Thu,  9 Jan 2020 09:52:41 +0100
-Subject: [cip-dev] [isar-cip-core PATCH v2 4/5] Use
-	siemens_ipc227e_defconfig for simatic-ipc227e
+Date: Thu,  9 Jan 2020 09:52:39 +0100
+Subject: [cip-dev] [isar-cip-core PATCH v2 2/5] Use renesas-config for
+	hihope-rzg2m
 In-Reply-To: <20200108143358.26177-1-Quirin.Gylstorff@siemens.com>
 References: <20200108143358.26177-1-Quirin.Gylstorff@siemens.com>
-Message-ID: <20200109085242.4466-5-Quirin.Gylstorff@siemens.com>
+Message-ID: <20200109085242.4466-3-Quirin.Gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
@@ -12,18 +12,20 @@ From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- conf/machine/simatic-ipc227e.conf | 2 ++
+ conf/machine/hihope-rzg2m.conf | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/conf/machine/simatic-ipc227e.conf b/conf/machine/simatic-ipc227e.conf
-index 473e6c5..3c9638f 100644
---- a/conf/machine/simatic-ipc227e.conf
-+++ b/conf/machine/simatic-ipc227e.conf
-@@ -10,3 +10,5 @@ DISTRO_ARCH = "amd64"
+diff --git a/conf/machine/hihope-rzg2m.conf b/conf/machine/hihope-rzg2m.conf
+index 863e20d..8278205 100644
+--- a/conf/machine/hihope-rzg2m.conf
++++ b/conf/machine/hihope-rzg2m.conf
+@@ -13,5 +13,7 @@ DISTRO_ARCH = "arm64"
  
  IMAGE_TYPE ?= "wic-img"
- IMAGER_INSTALL += "${GRUB_BOOTLOADER_INSTALL}"
+ 
++KERNEL_DEFCONFIG = "cip-kernel-config/4.19.y-cip/arm64/renesas_defconfig"
 +USE_CIP_KERNEL_CONFIG = "1"
-+KERNEL_DEFCONFIG = "cip-kernel-config/4.19.y-cip/x86/siemens_ipc227e_defconfig"
+ DTB_FILE = "r8a774a1-hihope-rzg2m-ex.dtb"
+ IMAGE_BOOT_FILES = "${KERNEL_IMAGE} ${DTB_FILE}"
 -- 
 2.20.1
