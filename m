@@ -1,31 +1,20 @@
-From: pavel@denx.de (Pavel Machek)
-Date: Fri, 10 Jan 2020 14:33:00 +0100
-Subject: [cip-dev] [ANNOUNCE] v4.19.90-cip16-rt6
-Message-ID: <20200110133300.GA26503@duo.ucw.cz>
+From: quirin.gylstorff@siemens.com (Gylstorff Quirin)
+Date: Fri, 10 Jan 2020 18:09:33 +0100
+Subject: [cip-dev] isar-cip-core testing
+Message-ID: <48886b9e-ea2d-504b-507f-8eaecff3517d@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi!
+Hi,
 
-v4.19.90-cip16-rt6 should be available at kernel.org.
+I started to implement testing of isar-cip-core with linux-cip-ci.
+You can find the prototype at [0].
+Currently I can submit test to the my local LAVA Lab and the first
+boot test has run successfully (iwg20m).
 
-Trees are available at
 
-https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.19.y-cip-rt
+[0] 
+https://gitlab.com/Quirin.Gy/linux-cip-ci/tree/feature/add-isar-cip-testing
 
-https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-4.19.y-cip-rt-rebase
-
-And their content should be identical.
-
-Best regards,
-                                                                Pavel
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 195 bytes
-Desc: not available
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20200110/7c9d573b/attachment.sig>
+Kind regards
+Quirin
