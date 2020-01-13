@@ -1,38 +1,35 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Mon, 13 Jan 2020 12:10:09 +0000
-Subject: [cip-dev] isar-cip-core testing
-In-Reply-To: <48886b9e-ea2d-504b-507f-8eaecff3517d@siemens.com>
-References: <48886b9e-ea2d-504b-507f-8eaecff3517d@siemens.com>
-Message-ID: <TYAPR01MB2285E33230A0A605168E590BB7350@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+From: jan.kiszka@siemens.com (Jan Kiszka)
+Date: Mon, 13 Jan 2020 13:46:03 +0100
+Subject: [cip-dev] [isar-cip-core PATCH] ci: Adjust deploy-cip-core.sh to
+ new kernel build
+Message-ID: <d3acfab0-611e-c41d-e4fa-8897a973d7bb@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Quirin,
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-> From: Gylstorff Quirin <quirin.gylstorff@siemens.com>
-> Sent: 10 January 2020 17:10
-> 
-> Hi,
-> 
-> I started to implement testing of isar-cip-core with linux-cip-ci.
-> You can find the prototype at [0].
+The path structure has changed, multiple times by now in fact.
 
-Thank you for sharing this.
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
+ scripts/deploy-cip-core.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Once you're happy with it, please sent a merge request to linux-cip-ci and I'll help review it in detail.
-I've added you as a developer to the project, so you can add a branch directly to linux-cip-ci, which means the CI will be able to run.
+diff --git a/scripts/deploy-cip-core.sh b/scripts/deploy-cip-core.sh
+index e5c09ef..b8a1cd3 100755
+--- a/scripts/deploy-cip-core.sh
++++ b/scripts/deploy-cip-core.sh
+@@ -39,5 +39,5 @@ aws s3 cp --no-progress $KERNEL_IMAGE s3://download.cip-project.org/cip-core/$TA
+ aws s3 cp --no-progress $BASE_PATH-initrd.img s3://download.cip-project.org/cip-core/$TARGET/
+ 
+ if [ -n "$DTB" ]; then
+-	aws s3 cp --no-progress build/tmp/work/cip-core-*/linux-cip-*/repack/linux-image/usr/lib/linux-image-*/$DTB s3://download.cip-project.org/cip-core/$TARGET/
++	aws s3 cp --no-progress build/tmp/work/cip-core-*/linux-cip/*/linux-cip-*/debian/linux-image-cip/usr/lib/linux-image-*/$DTB s3://download.cip-project.org/cip-core/$TARGET/
+ fi
+-- 
+2.16.4
 
-> Currently I can submit test to the my local LAVA Lab and the first
-> boot test has run successfully (iwg20m).
 
-Huzzah!
-
-Kind regards, Chris
-
-> 
-> 
-> [0]
-> https://gitlab.com/Quirin.Gy/linux-cip-ci/tree/feature/add-isar-cip-testing
-> 
-> Kind regards
-> Quirin
+-- 
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+Corporate Competence Center Embedded Linux
