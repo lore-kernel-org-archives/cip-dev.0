@@ -1,46 +1,39 @@
 From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Mon, 13 Jan 2020 13:46:33 +0100
-Subject: [cip-dev] [isar-cip-core PATCH v2 0/5] Use cip-kernel-config
-	for images
-In-Reply-To: <20200109085242.4466-1-Quirin.Gylstorff@siemens.com>
-References: <20200108143358.26177-1-Quirin.Gylstorff@siemens.com>
- <20200109085242.4466-1-Quirin.Gylstorff@siemens.com>
-Message-ID: <a0b7d8b6-7bff-a9ba-9281-a940ac7ead72@siemens.com>
+Date: Mon, 13 Jan 2020 13:46:36 +0100
+Subject: [cip-dev] [isar-cip-core PATCH] classes/wic-targz-img: add
+ dependency between targz-img and wic-img
+In-Reply-To: <20200109143043.7675-1-Quirin.Gylstorff@siemens.com>
+References: <20200109143043.7675-1-Quirin.Gylstorff@siemens.com>
+Message-ID: <29667a26-8e43-a6da-4aa9-24ceb4df5145@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 09.01.20 09:52, Q. Gylstorff wrote:
+On 09.01.20 15:30, Q. Gylstorff wrote:
 > From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 > 
-> Use the kernel_defconfigs
-> from https://gitlab.com/cip-project/cip-kernel/cip-kernel-config
-> to build the images for rzg2m, iwg20m and simatic-ipc227e.
+> Add a dependency between targz_image and wic_image to avoid
+> an error during the generation of the targz image as wic modifies
+> the rootfs.
 > 
-> The final patch is necessary until isar upstream will apply it.
+> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+> ---
+>   classes/wic-targz-img.bbclass | 2 ++
+>   1 file changed, 2 insertions(+)
 > 
-> Version 2:
-> - Add the missing protocol to download the repository cip-kernel-config
-> 
-> Quirin Gylstorff (5):
->    recipes-kernel/linux: allow the usage of the cip-kernel-config
->    Use renesas-config for hihope-rzg2m
->    Use renesas_shmobile_defconfig for iwg20m
->    Use siemens_ipc227e_defconfig for simatic-ipc227e
->    kas: patch isar for iwg20m with kernel 4.4
-> 
->   conf/machine/hihope-rzg2m.conf                |  3 +-
->   conf/machine/iwg20m.conf                      |  2 +
->   conf/machine/simatic-ipc227e.conf             |  2 +
->   ...d-path-to-image-for-arm-kernels-4.12.patch | 37 +++++++++++++++++++
->   kas.yml                                       |  9 ++++-
->   recipes-kernel/linux/linux-cip-common.inc     | 18 +++++++--
->   6 files changed, 65 insertions(+), 6 deletions(-)
->   create mode 100644 isar-patches/0001-linux-custom-add-path-to-image-for-arm-kernels-4.12.patch
+> diff --git a/classes/wic-targz-img.bbclass b/classes/wic-targz-img.bbclass
+> index 4e9f89d..1327840 100644
+> --- a/classes/wic-targz-img.bbclass
+> +++ b/classes/wic-targz-img.bbclass
+> @@ -11,3 +11,5 @@
+>   
+>   inherit wic-img
+>   inherit targz-img
+> +
+> +addtask do_targz_image after do_wic_image
 > 
 
-Applied to next, just minimally massaged the style of patch 1.
+Applied to next, thanks.
 
-Thanks,
 Jan
 
 -- 
