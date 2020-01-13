@@ -1,34 +1,47 @@
 From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Mon, 13 Jan 2020 13:46:03 +0100
-Subject: [cip-dev] [isar-cip-core PATCH] ci: Adjust deploy-cip-core.sh to
- new kernel build
-Message-ID: <d3acfab0-611e-c41d-e4fa-8897a973d7bb@siemens.com>
+Date: Mon, 13 Jan 2020 13:46:33 +0100
+Subject: [cip-dev] [isar-cip-core PATCH v2 0/5] Use cip-kernel-config
+	for images
+In-Reply-To: <20200109085242.4466-1-Quirin.Gylstorff@siemens.com>
+References: <20200108143358.26177-1-Quirin.Gylstorff@siemens.com>
+ <20200109085242.4466-1-Quirin.Gylstorff@siemens.com>
+Message-ID: <a0b7d8b6-7bff-a9ba-9281-a940ac7ead72@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+On 09.01.20 09:52, Q. Gylstorff wrote:
+> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+> 
+> Use the kernel_defconfigs
+> from https://gitlab.com/cip-project/cip-kernel/cip-kernel-config
+> to build the images for rzg2m, iwg20m and simatic-ipc227e.
+> 
+> The final patch is necessary until isar upstream will apply it.
+> 
+> Version 2:
+> - Add the missing protocol to download the repository cip-kernel-config
+> 
+> Quirin Gylstorff (5):
+>    recipes-kernel/linux: allow the usage of the cip-kernel-config
+>    Use renesas-config for hihope-rzg2m
+>    Use renesas_shmobile_defconfig for iwg20m
+>    Use siemens_ipc227e_defconfig for simatic-ipc227e
+>    kas: patch isar for iwg20m with kernel 4.4
+> 
+>   conf/machine/hihope-rzg2m.conf                |  3 +-
+>   conf/machine/iwg20m.conf                      |  2 +
+>   conf/machine/simatic-ipc227e.conf             |  2 +
+>   ...d-path-to-image-for-arm-kernels-4.12.patch | 37 +++++++++++++++++++
+>   kas.yml                                       |  9 ++++-
+>   recipes-kernel/linux/linux-cip-common.inc     | 18 +++++++--
+>   6 files changed, 65 insertions(+), 6 deletions(-)
+>   create mode 100644 isar-patches/0001-linux-custom-add-path-to-image-for-arm-kernels-4.12.patch
+> 
 
-The path structure has changed, multiple times by now in fact.
+Applied to next, just minimally massaged the style of patch 1.
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
- scripts/deploy-cip-core.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/scripts/deploy-cip-core.sh b/scripts/deploy-cip-core.sh
-index e5c09ef..b8a1cd3 100755
---- a/scripts/deploy-cip-core.sh
-+++ b/scripts/deploy-cip-core.sh
-@@ -39,5 +39,5 @@ aws s3 cp --no-progress $KERNEL_IMAGE s3://download.cip-project.org/cip-core/$TA
- aws s3 cp --no-progress $BASE_PATH-initrd.img s3://download.cip-project.org/cip-core/$TARGET/
- 
- if [ -n "$DTB" ]; then
--	aws s3 cp --no-progress build/tmp/work/cip-core-*/linux-cip-*/repack/linux-image/usr/lib/linux-image-*/$DTB s3://download.cip-project.org/cip-core/$TARGET/
-+	aws s3 cp --no-progress build/tmp/work/cip-core-*/linux-cip/*/linux-cip-*/debian/linux-image-cip/usr/lib/linux-image-*/$DTB s3://download.cip-project.org/cip-core/$TARGET/
- fi
--- 
-2.16.4
-
+Thanks,
+Jan
 
 -- 
 Siemens AG, Corporate Technology, CT RDA IOT SES-DE
