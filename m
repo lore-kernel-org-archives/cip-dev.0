@@ -1,45 +1,85 @@
 From: prabhakar.mahadev-lad.rj@bp.renesas.com (Lad Prabhakar)
-Date: Thu, 16 Jan 2020 15:11:18 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 08/12] arm64: dts: renesas: r8a774c0:
-	Fix register range of display node
+Date: Thu, 16 Jan 2020 15:11:19 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 09/12] arm64: dts: renesas: Update
+	'vsps' properties for readability
 In-Reply-To: <1579187482-4626-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <1579187482-4626-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Message-ID: <1579187482-4626-9-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Message-ID: <1579187482-4626-10-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-commit 23ad2b4672a7572e0f091cfe90aac1cd9bdca28a upstream.
+commit 38290431d56d7d3928ac89e9f8d3d6b3c8df4c6e upstream.
 
-Since the R8A774C0 SoC uses DU{0,1} only, the register block length
-should be 0x40000.
+Update the 'vsps' property in the R-Car Gen3 SoC device tree files to
+match what's in the documentation example.
 
-Based on commit 06585ed38b6698bc ("arm64: dts: renesas: r8a77990: Fix
-register range of display node") for R-Car E3.
-
-Fixes: 8ed3a6b223159df3 ("arm64: dts: renesas: r8a774c0: Add display output support")
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+[fab: Dropped changes to r8a77990.dtsi as not applicable]
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
  arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi  | 2 +-
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 2 +-
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-index 438844f..3f5b659 100644
+index 3f5b659..cf25dbb 100644
 --- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-@@ -1807,7 +1807,7 @@
- 
- 		du: display at feb00000 {
- 			compatible = "renesas,du-r8a774c0";
--			reg = <0 0xfeb00000 0 0x80000>;
-+			reg = <0 0xfeb00000 0 0x40000>;
- 			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1813,7 +1813,7 @@
  			clocks = <&cpg CPG_MOD 724>,
+ 				 <&cpg CPG_MOD 723>;
+ 			clock-names = "du.0", "du.1";
+-			vsps = <&vspd0 0 &vspd1 0>;
++			vsps = <&vspd0 0>, <&vspd1 0>;
+ 			status = "disabled";
+ 
+ 			ports {
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index c87eed7..b9edb71 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -2795,7 +2795,7 @@
+ 				 <&cpg CPG_MOD 721>,
+ 				 <&cpg CPG_MOD 727>;
+ 			clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0";
+-			vsps = <&vspd0 0 &vspd1 0 &vspd2 0 &vspd0 1>;
++			vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>, <&vspd0 1>;
+ 			status = "disabled";
+ 
+ 			ports {
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index f1dfd174..7de6edf 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -1839,7 +1839,7 @@
+ 			clock-names = "du.0", "du.1", "du.3";
+ 			status = "disabled";
+ 
+-			vsps = <&vspd0 0 &vspd1 0 &vspd0 1>;
++			vsps = <&vspd0 0>, <&vspd1 0>, <&vspd0 1>;
+ 
+ 			ports {
+ 				#address-cells = <1>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index fe77bc4..db0c8ad 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -944,7 +944,7 @@
+ 			clocks = <&cpg CPG_MOD 724>,
+ 				 <&cpg CPG_MOD 723>;
+ 			clock-names = "du.0", "du.1";
+-			vsps = <&vspd0 0 &vspd1 0>;
++			vsps = <&vspd0 0>, <&vspd1 0>;
+ 			status = "disabled";
+ 
+ 			ports {
 -- 
 2.7.4
