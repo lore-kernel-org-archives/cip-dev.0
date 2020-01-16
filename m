@@ -1,42 +1,27 @@
-From: kazuhiro3.hayashi@toshiba.co.jp (kazuhiro3.hayashi at toshiba.co.jp)
-Date: Thu, 16 Jan 2020 08:25:14 +0000
-Subject: [cip-dev] [cip-core] Package Proposal #2 (Minimum base packages in
-	Debian)
-Message-ID: <TYXPR01MB1808E5730818EAB90EB9558FE1360@TYXPR01MB1808.jpnprd01.prod.outlook.com>
+From: insane79@yandex.ru (Dennis Semakin)
+Date: Thu, 16 Jan 2020 11:26:04 +0300
+Subject: [cip-dev]  Obtain full set of source code for cip image
+Message-ID: <4226511579163164@vla1-c477e3898c96.qloud-c.yandex.net>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello CIP Core members,
+Hi guys. 
+May be my email will be a little bit off-topic for this mail list, but I really have no idea where should I ask. I'm kernel and system developer and prefer ML :)
+I'm interesting in building secure images for embedded devices using CIP project.
+However obviously the preferred and one of the famous build system for this I believe is Yocto(Poky/BitBake).
 
-I created a simple package proposal for the packages that are installed in the "minimum base system" of Debian.
-These packages are installed by
-	$ debootstrap --variant=minbase buster ...
+I have goggled that it looks like there is a number of approaches (tools, frameworks) that provides such functionality: to build image for certain device using sources (e.g. Linux kernel) but inside Yocto build system.
+They are ISAR and Deby. But I haven't found how the source code repository is configured in ISAR and Deby, e.g. where from it gets source code and how to modify URL for it.
 
-It consists of 58 source packages and 84 binary packages, including all run-time dependencies.
+The main goal:
+- Build safety operating system from CIP-project source code/
 
-The common reason to propose:
-"This package is included in the minimum base system of Debian (debootstrap --variant=minbase),
-which is essential for all Debian binary package based systems"
+The main question:
+- Is it possible to change URL for userland packages for source code repository when build? E.g. for cip-kernel there's BitBake recipe (.bb file) where kernel URI is specified
+, I mean userland - CIP Core Pakages, or there is only one way to build the image, just use existing scripts (kas, docker, etc...) and all work to fetching source code is hidden?
+Why ISAR does not provide any way to change it (source code database)? At least I haven't found it.
 
+Thanks in advance.
 
-I would like to start the "review" phase (Phase 2) of the attached package proposal.
-https://gitlab.com/cip-project/cip-core/cip-pkglist/blob/master/doc/pdp.md#phase-2-proposal-review
-
-Please reply with you opinion, agree or disagree.
-If you cannot agree to add specific packages, please show the reasons as well.
-
-Due Date: January 20th (The next TSC meeting)
-
-We have only 2-3 working days for this review, but
-I think it may be enough to agree or disagree the very simple reason above.
-(We can extend this due date if more time required for reviews, please let me know if any requests)
-
-Best regards,
-Kazu
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: proposal_minbase_20200116.yml
-Type: application/octet-stream
-Size: 22265 bytes
-Desc: proposal_minbase_20200116.yml
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20200116/e99bdea4/attachment-0001.obj>
+Br,
+Denis Semakin.
