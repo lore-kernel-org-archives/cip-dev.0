@@ -1,42 +1,51 @@
 From: prabhakar.mahadev-lad.rj@bp.renesas.com (Lad Prabhakar)
-Date: Thu, 16 Jan 2020 15:11:15 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 05/12] arm64: dts: renesas: r8a774c0:
-	Add dynamic power coefficient
+Date: Thu, 16 Jan 2020 15:11:16 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 06/12] arm64: dts: renesas: r8a774c0:
+	Clean up CPU compatibles
 In-Reply-To: <1579187482-4626-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <1579187482-4626-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Message-ID: <1579187482-4626-6-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Message-ID: <1579187482-4626-7-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Robin Murphy <robin.murphy@arm.com>
 
-commit 652fd0f44e98a7fa87be9e97115749e103ccf703 upstream.
+commit 11290c09e29600f45684113d78209d1df1c22aba upstream.
 
-Describe the dynamic power coefficient of A53 CPUs.
+Apparently this DTS crossed over with commit 31af04cd60d3 ("arm64: dts:
+Remove inconsistent use of 'arm,armv8' compatible string") and missed
+out on the cleanup, so put it right.
 
-Based on work by Gaku Inami <gaku.inami.xw@bp.renesas.com> and others.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Link: https://lore.kernel.org/r/1568364608-46548-2-git-send-email-biju.das at bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-index 0c57e15..1e8b8af 100644
+index 1e8b8af..cb1b71d 100644
 --- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-@@ -77,6 +77,7 @@
- 			power-domains = <&sysc R8A774C0_PD_CA53_CPU0>;
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
-+			dynamic-power-coefficient = <277>;
- 			clocks = <&cpg CPG_CORE R8A774C0_CLK_Z2>;
- 			operating-points-v2 = <&cluster1_opp>;
+@@ -70,7 +70,7 @@
+ 		#size-cells = <0>;
+ 
+ 		a53_0: cpu at 0 {
+-			compatible = "arm,cortex-a53", "arm,armv8";
++			compatible = "arm,cortex-a53";
+ 			reg = <0>;
+ 			device_type = "cpu";
+ 			#cooling-cells = <2>;
+@@ -83,7 +83,7 @@
  		};
+ 
+ 		a53_1: cpu at 1 {
+-			compatible = "arm,cortex-a53", "arm,armv8";
++			compatible = "arm,cortex-a53";
+ 			reg = <1>;
+ 			device_type = "cpu";
+ 			power-domains = <&sysc R8A774C0_PD_CA53_CPU1>;
 -- 
 2.7.4
