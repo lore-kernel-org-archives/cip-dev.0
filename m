@@ -1,43 +1,69 @@
-From: masashi.kudo@cybertrust.co.jp (masashi.kudo at cybertrust.co.jp)
-Date: Wed, 15 Jan 2020 23:16:17 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-Message-ID: <OSBPR01MB512761344BF6867A2930E8F3A0370@OSBPR01MB5127.jpnprd01.prod.outlook.com>
+From: kazuhiro3.hayashi@toshiba.co.jp (kazuhiro3.hayashi at toshiba.co.jp)
+Date: Thu, 16 Jan 2020 06:54:54 +0000
+Subject: [cip-dev] RT Testing
+In-Reply-To: <TYAPR01MB2285FB4BDC74EB669E362E89B7340@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+References: <TYAPR01MB2285FB4BDC74EB669E362E89B7340@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+Message-ID: <TYXPR01MB18081C565B8B2F072CC2C9E5E1360@TYXPR01MB1808.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi all,
+Hello Chris,
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
+Thank you for your updates!
 
-*Please note that the IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=11&day=28&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
+> Hello Pavel, Hayashi-san, Jan, Daniel,
+> 
+[...]
+> 
+> Currently there is an issue with the way that the cyclic test case results are shown (i.e. they aren't) in LAVA due to
+> a change [0] made to Linaro's cyclictest.sh.
+> That means that the test parsing now depends on Python, which isn't included in the cip-core RFS [1] that is currently
+> being used.
+> 
+> Do either of the CIP Core profiles include Python support?
 
-US-West US-East   UK     DE     TW     JP
-01:00    04:00   09:00   10:00   17:00   18:00
+At the moment, we've just started creating the supported package list, so I cannot clearly say Yes.
+However, at least, the both profiles can create an image including python only for testing
+because the python packages are already provided in upstream projects (isar, meta-debian).
 
-Channel:
-* irc:chat.freenode.net:6667/cip
+Whether CIP Core provides Python packages or not depends on
+what kind of packages will be proposed (requested) by CIP WGs in future.
+Currently, several packages which depend on Python packages would be
+included in the next proposal from security WG (under review now).
 
-Last week's meeting minutes:
-https://irclogs.baserock.org/meetings/cip/2020/01/cip.2020-01-09-09.00.log.html
+BTW, it would be better to confirm which Python version (2.7 or 3) that cyclictest.sh depends on.
+Do you know anything about this?
 
-Agenda:
+Kazu
 
-* Action item
-1. Combine rootfilesystem with kselftest binary - Iwamatsu-san 
-2. Document a process on how to add tests to the CIP test setup - patersonc 
-3. Arrangement of F2F Kernel Meeting in Nuremberg - masashi910
-4. Add config for qemux86-64 and BBB to both 4.4 and 4.19 - Iwamatsu-san
-
-* Kernel maintenance updates
-* Kernel testing
-* CIP Core
-* Software update
-* AOB
-
-The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
-
-Best regards,
---
-M. Kudo
-Cybertrust Japan Co., Ltd.
+> 
+> Linaro test-definitions [2] have the following tests marked within the preempt-rt scope:
+>   cyclicdeadline/cyclicdeadline.yaml
+>   pmqtest/pmqtest.yaml
+>   rt-migrate-test/rt-migrate-test.yaml
+>   cyclictest/cyclictest.yaml
+>   svsematest/svsematest.yaml
+>   pi-stress/pi-stress.yaml
+>   signaltest/signaltest.yaml
+>   ptsematest/ptsematest.yaml
+>   sigwaittest/sigwaittest.yaml
+>   hackbench/hackbench.yaml
+>   ltp-realtime/ltp-realtime.yaml
+> 
+> Which of the above would be valuable to run on CIP RT Kernels?
+> 
+> A while back Daniel Wagner also did some work on a Jitterdebugger test [3], but it hasn't been merged yet and I'm not
+> sure what the current status is. Any updates Daniel?
+> 
+> Is anyone able to provide RT config/defconfigs for the x86 and arm boards in the Mentor lab? Or BBB, QEMU etc.? (assuming
+> that the hardware is suitable).
+> 
+> 
+> [0]
+> https://github.com/Linaro/test-definitions/commit/4b5c46f275632932b3045f2ee16ad9cae5bb482d#diff-c724b852b75aefda2cc3
+> 505c4517828dR50
+> [1] https://s3-us-west-2.amazonaws.com/download.cip-project.org/cip-core/iwg20m/core-image-minimal-iwg20m.tar.gz
+> [2] https://github.com/Linaro/test-definitions/blob/master/automated/linux
+> [3] https://github.com/igaw/test-definitions/blob/preempt-rt/automated/linux/jitterdebugger/jitterdebugger.yaml
+> 
+> Kind regards, Chris
