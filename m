@@ -1,58 +1,52 @@
-From: pavel@denx.de (Pavel Machek)
-Date: Thu, 16 Jan 2020 14:25:27 +0100
-Subject: [cip-dev] RT Testing
-In-Reply-To: <TYAPR01MB2285FB4BDC74EB669E362E89B7340@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-References: <TYAPR01MB2285FB4BDC74EB669E362E89B7340@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-Message-ID: <20200116132526.GA14898@duo.ucw.cz>
+From: prabhakar.mahadev-lad.rj@bp.renesas.com (Lad Prabhakar)
+Date: Thu, 16 Jan 2020 15:11:11 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 01/12] dt-bindings: can: rcar_can:
+	document r8a77965 support
+In-Reply-To: <1579187482-4626-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <1579187482-4626-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Message-ID: <1579187482-4626-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi!
+From: Eugeniu Rosca <rosca.eugeniu@gmail.com>
 
-> Addressing this email to all of you as both RT and CIP Core are involved.
-> 
-> I started to look into RT testing in more detail today.
-> 
-> I've created an RT configuration for the RZ/G1 boards:
-> https://gitlab.com/patersonc/cip-kernel-config/blob/chris/add_renesas_rt_configs/4.4.y-cip-rt/arm/renesas_shmobile-rt_defconfig
-> I'll do something similar for the RZ/G2 boards soon.
-> 
-> Built it with linux-4.4.y-cip-rt and run cyclic test:
-> https://lava.ciplatform.org/scheduler/job/9828
-> Times look okay to an rt-untrained eye:
-> T: 0 ( 1169) P:98 I:1000 C:  59993 Min:     13 Act:   16 Avg:   16 Max:      33
-> 
-> Compared to a run with linux-4.4.y-cip:
-> https://lava.ciplatform.org/scheduler/job/9829
-> T: 0 (  938) P:98 I:1000 C:   6000 Min:   1618 Act: 9604 Avg: 9603 Max:   14550
-> 
-> Pavel, does the above look okay/useful to you? Or is cyclictest not worth running unless there is some load on the system?
->
+commit 4f145f14f6b98b5aa0dd91bdae518b3f24f74b37 upstream.
 
-Even basic cyclictest is good to have, but it would be really good to
-have some kind of background load. I'd expect latency to raise by
-factor of 3 in make -j 5 of kernel.
+Document the support for rcar_can on R8A77965 SoC devices.
+Add R8A77965 to the list of SoCs which require the "assigned-clocks" and
+"assigned-clock-rates" properties (thanks, Sergei).
 
-I tried to come up with simpler test reproducing comparable latencies,
-but I did not get there. This creates cca factor of two for me:
+Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+[fab: discarded r8a77965 specfic support]
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/net/can/rcar_can.txt | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-cat /dev/urandom | head -c 10000000 | gzip -9 - > delme.random.gz
-echo "Initial phase done"
-for A in `seq 222`; do
-    ( zcat delme.random.gz | gzip -9 - | zcat > /dev/null; echo -n [$A done] ) &
-done
-
-What is easily available on the test systems? gzip? python? bzip2?
-
-Best regards,
-								Pavel
+diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+index e1d428a..2301331 100644
+--- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
++++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+@@ -31,11 +31,10 @@ Required properties:
+ - pinctrl-0: pin control group to be used for this controller.
+ - pinctrl-names: must be "default".
+ 
+-Required properties for "renesas,can-r8a7795" and "renesas,can-r8a7796"
+-compatible:
+-In R8A7795 and R8A7796 SoCs, "clkp2" can be CANFD clock. This is a div6 clock
+-and can be used by both CAN and CAN FD controller at the same time. It needs to
+-be scaled to maximum frequency if any of these controllers use it. This is done
++Required properties for R8A7795 and R8A7796:
++For the denoted SoCs, "clkp2" can be CANFD clock. This is a div6 clock and can
++be used by both CAN and CAN FD controller at the same time. It needs to be
++scaled to maximum frequency if any of these controllers use it. This is done
+ using the below properties:
+ 
+ - assigned-clocks: phandle of clkp2(CANFD) clock.
 -- 
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 195 bytes
-Desc: not available
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20200116/e96de03b/attachment.sig>
+2.7.4
