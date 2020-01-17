@@ -1,74 +1,75 @@
-From: prabhakar.mahadev-lad.rj@bp.renesas.com (Prabhakar Mahadev Lad)
-Date: Thu, 16 Jan 2020 19:37:56 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 10/12] arm64: dts: renesas:
- r8a774c0: cat874: Add definition for 12V regulator
-In-Reply-To: <20200116152953.GB27135@duo.ucw.cz>
-References: <1579187482-4626-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <1579187482-4626-11-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20200116152953.GB27135@duo.ucw.cz>
-Message-ID: <OSBPR01MB516024B157C1A58CB0B9E925AA360@OSBPR01MB5160.jpnprd01.prod.outlook.com>
+From: punit1.agrawal@toshiba.co.jp (Punit Agrawal)
+Date: Fri, 17 Jan 2020 10:01:36 +0900
+Subject: [cip-dev] RT Testing
+In-Reply-To: <TYAPR01MB22851DD503672EF581BBBD7AB7360@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+ (Chris Paterson's message of "Thu, 16 Jan 2020 09:57:08 +0000")
+References: <TYAPR01MB2285FB4BDC74EB669E362E89B7340@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+ <TYXPR01MB18081C565B8B2F072CC2C9E5E1360@TYXPR01MB1808.jpnprd01.prod.outlook.com>
+ <TYAPR01MB22851DD503672EF581BBBD7AB7360@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+Message-ID: <87lfq6hp5b.fsf@kokedama.swc.toshiba.co.jp>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Pavel,
+Hi Chris,
 
-Thank you for the review.
+Just thinking out loud below so please bear with me if I'm just stating
+the obvious.
 
-> -----Original Message-----
-> From: Pavel Machek <pavel@denx.de>
-> Sent: 16 January 2020 15:30
-> To: Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Cc: cip-dev at lists.cip-project.org; Nobuhiro Iwamatsu
-> <nobuhiro1.iwamatsu@toshiba.co.jp>; Pavel Machek <pavel@denx.de>;
-> Chris Paterson <Chris.Paterson2@renesas.com>
-> Subject: Re: [PATCH 4.19.y-cip 10/12] arm64: dts: renesas: r8a774c0: cat874:
-> Add definition for 12V regulator
->
-> Hi!
->
-> > From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> >
-> > commit 7fc009cbd7d11d6b27ba5443dbfa80a0513829e4 upstream.
-> >
-> > Power rail "D12.0V" comes straight from the power barrel connector,
-> > and it's used in both main board and sub board.
->
-> Given that line is always on, always constant, and not referenced anywhere,
-> does it need to be described in the dts?
->
-> Will it be used in future?
->
-Yes the regulator will be used in future. (we plan to add support for lvds panel, the regulator will be used by the backlight)
+Chris Paterson <Chris.Paterson2@renesas.com> writes:
 
-Cheers,
---Prabhakar
-
-> Best regards,
-> Pavel
+> Hello,
 >
-> > @@ -65,6 +65,15 @@
-> >  reg = <0x0 0x48000000 0x0 0x78000000>;
-> >  };
-> >
-> > +reg_12p0v: regulator-12p0v {
-> > +compatible = "regulator-fixed";
-> > +regulator-name = "D12.0V";
-> > +regulator-min-microvolt = <12000000>;
-> > +regulator-max-microvolt = <12000000>;
-> > +regulator-boot-on;
-> > +regulator-always-on;
-> > +};
-> > +
-> >  sound: sound {
-> >  compatible = "simple-audio-card";
-> >
-> > --
-> > 2.7.4
-> >
+>> From: kazuhiro3.hayashi at toshiba.co.jp <kazuhiro3.hayashi@toshiba.co.jp>
+>> Sent: 16 January 2020 06:55
+>> 
+>> Hello Chris,
+>> 
+>> Thank you for your updates!
+>> 
+>> > Hello Pavel, Hayashi-san, Jan, Daniel,
+>> >
+>> [...]
+>> >
+>> > Currently there is an issue with the way that the cyclic test case results are
+>> shown (i.e. they aren't) in LAVA due to
+>> > a change [0] made to Linaro's cyclictest.sh.
+>> > That means that the test parsing now depends on Python, which isn't included
+>> in the cip-core RFS [1] that is currently
+>> > being used.
+>> >
+>> > Do either of the CIP Core profiles include Python support?
+>> 
+>> At the moment, we've just started creating the supported package list, so I
+>> cannot clearly say Yes.
+>> However, at least, the both profiles can create an image including python only
+>> for testing
+>> because the python packages are already provided in upstream projects (isar,
+>> meta-debian).
 >
-> --
-> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+> Okay. I'm thinking that we aren't going to be able to escape having a
+> separate 'testing' version of CIP-Core, based on ISAR on the
+> assumption that it has more supported packages then Deby.
+>
+> Or not use CIP-Core for testing the Kernel as punit suggested ??
 
+I think CIP-core shouldn't be thought of as a complete filesystem, but
+the base components that should exist as part of any CIP system.
 
-Renesas Electronics Europe GmbH, Geschaeftsfuehrer/President: Carsten Jauch, Sitz der Gesellschaft/Registered office: Duesseldorf, Arcadiastrasse 10, 40472 Duesseldorf, Germany, Handelsregister/Commercial Register: Duesseldorf, HRB 3708 USt-IDNr./Tax identification no.: DE 119353406 WEEE-Reg.-Nr./WEEE reg. no.: DE 14978647
+As it is, it's unlikely that any real product will need only the
+functionality provided by CIP core.
+
+If that makes sense, then we should make it easy to create derived
+images / filesystems that include additional software as needed for the
+task at hand, e.g., testing CIP kernels.
+
+In addition, there is a need to test the functionality provided by the
+core components, i.e., CIP-core packages along with relevant kernels on
+supported devices. As yet, I don't think these tests exist (or even
+defined).
+
+But I'm new to the project so am very likely missing things.
+
+Thanks,
+Punit
+
+[...]
