@@ -1,32 +1,39 @@
-From: punit1.agrawal@toshiba.co.jp (Punit Agrawal)
-Date: Mon, 20 Jan 2020 10:54:13 +0900
-Subject: [cip-dev] RT Testing
-In-Reply-To: <TYAPR01MB2285530F9DBD8300AC418363B7310@TYAPR01MB2285.jpnprd01.prod.outlook.com>
- (Chris Paterson's message of "Fri, 17 Jan 2020 11:34:01 +0000")
-References: <TYAPR01MB2285FB4BDC74EB669E362E89B7340@TYAPR01MB2285.jpnprd01.prod.outlook.com>
- <TYXPR01MB18081C565B8B2F072CC2C9E5E1360@TYXPR01MB1808.jpnprd01.prod.outlook.com>
- <TYAPR01MB22851DD503672EF581BBBD7AB7360@TYAPR01MB2285.jpnprd01.prod.outlook.com>
- <87lfq6hp5b.fsf@kokedama.swc.toshiba.co.jp>
- <TYAPR01MB2285530F9DBD8300AC418363B7310@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-Message-ID: <87eevuhoze.fsf@kokedama.swc.toshiba.co.jp>
+From: pavel@denx.de (Pavel Machek)
+Date: Mon, 20 Jan 2020 10:47:19 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 00/12] Renesas RZ/G2E backport IPA
+ support along with minor fixes
+In-Reply-To: <OSAPR01MB3667652C8686D195EF98A79392320@OSAPR01MB3667.jpnprd01.prod.outlook.com>
+References: <1579187482-4626-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20200116152552.GA27135@duo.ucw.cz>
+ <OSAPR01MB3667652C8686D195EF98A79392320@OSAPR01MB3667.jpnprd01.prod.outlook.com>
+Message-ID: <20200120094719.GA8693@amd>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Chris Paterson <Chris.Paterson2@renesas.com> writes:
+Hi!
 
-> Hello Punit,
->
->> From: Punit Agrawal <punit1.agrawal@toshiba.co.jp>
->> Sent: 17 January 2020 01:02
->> 
->> Hi Chris,
->> 
->> Just thinking out loud below so please bear with me if I'm just stating
->> the obvious.
->
-> Please do ??
+> > I quickly reviewed the patches, and might have minor comments, but the
+> > series look good.
+> > 
+> > Tests are currently running at
+> > 
+> > https://gitlab.com/cip-project/cip-kernel/linux-cip/tree/ci/pavel/li
+> > nux-cip
+> > 
+> > If there are no objections and tests succeed, I can push the applied
+> > series.
+> 
+> I reviewed this series, I have nothing to point out.
 
-Apologies for the confusion - I was referring to the inline comments
-further down in the previous mail.
-
-[...]
+Thanks. I pushed the series to kernel.org.
+								Pavel
+-- 
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 181 bytes
+Desc: Digital signature
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20200120/7144f22b/attachment-0001.sig>
