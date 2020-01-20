@@ -1,83 +1,61 @@
-From: kento.yoshida.wz@renesas.com (Kento Yoshida)
-Date: Tue, 21 Jan 2020 03:14:19 +0000
-Subject: [cip-dev] RESUME REQUEST: [cip-core] Package Proposal #1
- (Security packages)
-In-Reply-To: <87a76ih15g.fsf@kokedama.swc.toshiba.co.jp>
-References: <OSAPR01MB23880B5470CDE5D534181CF5DF310@OSAPR01MB2388.jpnprd01.prod.outlook.com>
- <87a76ih15g.fsf@kokedama.swc.toshiba.co.jp>
-Message-ID: <TYAPR01MB2399B94CD0E5825B65F6D673DF0D0@TYAPR01MB2399.jpnprd01.prod.outlook.com>
+From: info@techtechnology.info (George Cooly)
+Date: Mon, 20 Jan 2020 14:19:08 +0000
+Subject: [cip-dev] Audio Transcription Service Provider
+Message-ID: <b1adef001ec1c7486845b657fa87f543@techtechnology.info>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello and thank you for your comment, Punit,
+Hello,
 
->-----Original Message-----
->From: Punit Agrawal <punit1.agrawal@toshiba.co.jp>
->Sent: Monday, January 20, 2020 7:29 PM
->To: Kento Yoshida <kento.yoshida.wz@renesas.com>
->Cc: cip-dev at lists.cip-project.org; kazuhiro3.hayashi at toshiba.co.jp;
->cip-security at lists.cip-project.org
->Subject: Re: [cip-dev] RESUME REQUEST: [cip-core] Package Proposal #1 (Security
->packages)
->
->Hello Yoshida-san,
->
->Kento Yoshida <kento.yoshida.wz@renesas.com> writes:
->
->> Hello,
->>
->> I would like to resume our proposal from security working group.
->> As you know, Kazu has modified the script to generate a proposal and posted the
->minimum base system proposal, and then I created the new proposal.
->>
->> The difference from the original (rev01) proposal is below:
->> 1. We remove 'duplicity', 'google-authenticator', 'pam-shield' and 'suricata' in the
->new proposal because they have an issue such as non-well maintained, python
->version, too much dependencies and so on. We'll separately propose them after
->solved these issues.
->> 2. The new proposal shows all source package as flat. Thanks to the new script,
->Kazu!
->> 3. Actually several packages overlap with the proposed packages for minimum
->base system in Debian, so I added comment them like that.
->>
->> @kazuhiro3.hayashi at toshiba.co.jp,
->> Would you check this proposal and set the due date to review it?
->>
->> Please reply if you have any comments or questions.
->
->I have a comment about packages in the proposal that depend on hardware /
->system features -
->
->* Some packages in the proposal depend on special purpose hardware to
->  provide their functionality. e.g., TPM.
->
->  In systems, where TPM is not present (or similar functionality is
->  provided by alternate mechanisms), the TPM related packages will not
->  be useful. e.g., the non-x86 platforms in the CIP reference hardware
->  list.
->
->* Similarly, some packages require the system to be connected to the
->  network.
->
->In both of these situations, I am wondering what is the impact on compliance? Is
->there a need to also define minimal set of hardware features expected from
->reference hardware to be able to meet compliance requirements?
->
+Do you need someone reliable to transcribe both your short term and 
+long term projects? Or do you need an accurate transcript for your 
+audio or video? 
 
-How each reference hardware satisfies the requirements should be considered by each reference hardware provider.
-If we provide hardware mechanisms similar with TPM to protect credentials and authentications, we can meet compliance requirements.
-TPM related packages are options in only systems where TPM is implemented as you said. If supporting these packages require too much costs, the necessity of them will diminish.
-Actually the standard lists TPM as a typical example, so we thought it will be useful to maintain TPM related packages for many users, but their necessities depend on supporting cost.
+Allow us to transcribe your audio and provide you accurate transcripts 
+and let us help you reach your business/project goals through the help 
+of our transcription services.
 
->To help review the package list (and also discuss alternatives), it would help to
->define the underlying functionality that is required in more detail, e.g., secure key
->storage, verified boot, etc. It'll make it possible review the proposal more
->concretely.
->
->Thoughts?
->
->Thanks,
->Punit
->
->[...]
->
+What are our goals with each transcript?
+
+- Speed
+- Accuracy
+- Confidentiality
+- Each transcript is properly formatted. Strict grammar and 
+punctuation rules are adhered to and of course, file security is 
+something we take very seriously. 
+
+Have any transcription queries? Send me a message. Let's discuss what 
+you need to get done. We will address any concerns you have. 
+
+- Professional transcription
+- Accurate and thorough
+- Beautifully transcribed documents.
+- Grammar, spelling and jargon thoroughly checked
+
+We have transcribed audios & videos under various requirements 
+such as :
+
+- Medical transcription
+- Technical
+- Academic
+- Lectures
+- Business
+- Groups
+- Legal
+- Research interviews
+
+more...
+
+Skilled with international accents and prompt response. Our pricing 
+is better or comparable to individual service provider. In addition 
+we also assist in APA Style formatting for research papers. Please 
+note we don?t conduct research but assist only in formatting 
+of the papers.
+
+Regards,
+George Cooly
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20200120/a24620f6/attachment.html>
