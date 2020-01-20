@@ -1,60 +1,33 @@
-From: punit1.agrawal@toshiba.co.jp (Punit Agrawal)
-Date: Mon, 20 Jan 2020 19:28:59 +0900
-Subject: [cip-dev] RESUME REQUEST: [cip-core] Package Proposal #1
-	(Security packages)
-In-Reply-To: <OSAPR01MB23880B5470CDE5D534181CF5DF310@OSAPR01MB2388.jpnprd01.prod.outlook.com>
- (Kento Yoshida's message of "Fri, 17 Jan 2020 08:53:23 +0000")
-References: <OSAPR01MB23880B5470CDE5D534181CF5DF310@OSAPR01MB2388.jpnprd01.prod.outlook.com>
-Message-ID: <87a76ih15g.fsf@kokedama.swc.toshiba.co.jp>
+From: kazuhiro3.hayashi@toshiba.co.jp (kazuhiro3.hayashi at toshiba.co.jp)
+Date: Mon, 20 Jan 2020 14:24:02 +0000
+Subject: [cip-dev] RFC: Python version of CIP's maintenance target
+Message-ID: <TYXPR01MB18086C7A61AAF2AE96E8E570E1320@TYXPR01MB1808.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Yoshida-san,
+Hello,
 
-Kento Yoshida <kento.yoshida.wz@renesas.com> writes:
+Python 2.x has become EOL on January 1st.
+In Debian 10 buster (and older versions), there are many packages that depend on python 2.7.
+e.g. https://packages.debian.org/buster/trace-cmd
 
-> Hello,
->
-> I would like to resume our proposal from security working group.
-> As you know, Kazu has modified the script to generate a proposal and posted the minimum base system proposal, and then I created the new proposal.
->
-> The difference from the original (rev01) proposal is below:
-> 1. We remove 'duplicity', 'google-authenticator', 'pam-shield' and 'suricata' in the new proposal because they have an issue such as non-well maintained, python version, too much dependencies and so on. We'll separately propose them after solved these issues.
-> 2. The new proposal shows all source package as flat. Thanks to the new script, Kazu!
-> 3. Actually several packages overlap with the proposed packages for minimum base system in Debian, so I added comment them like that.
->
-> @kazuhiro3.hayashi at toshiba.co.jp,
-> Would you check this proposal and set the due date to review it?
->
-> Please reply if you have any comments or questions.
+When CIP wants to support some packages that depend on python 2.7,
+though there has not been such packages are proposed to CIP Core yet,
+should we keep these dependencies on 2.7 or replace them?
 
-I have a comment about packages in the proposal that depend on hardware
-/ system features -
+There are several options to replace these dependencies:
 
-* Some packages in the proposal depend on special purpose hardware to
-  provide their functionality. e.g., TPM.
+* Replace the package that depends on 2.7 by newer packages that depends on python 3
+  e.g. Use a package in buster-backports
+* Modify the package (create CIP custom package) to replace the dependency on 2.7 by 3
+...
 
-  In systems, where TPM is not present (or similar functionality is
-  provided by alternate mechanisms), the TPM related packages will not
-  be useful. e.g., the non-x86 platforms in the CIP reference hardware
-  list.
+However, adding unnecessary changes to the existing Debian packages should be avoided.
+Also, package versions included in Debian stable release (or older releases) are
+basically fixed, so there is not so much concern about using python 2.7 packages
+provided (and maintained) in Debian / Debian (E)LTS.
 
-* Similarly, some packages require the system to be connected to the
-  network.
+Any thoughts?
 
-In both of these situations, I am wondering what is the impact on
-compliance? Is there a need to also define minimal set of hardware
-features expected from reference hardware to be able to meet compliance
-requirements?
-
-To help review the package list (and also discuss alternatives), it
-would help to define the underlying functionality that is required in
-more detail, e.g., secure key storage, verified boot, etc. It'll make it
-possible review the proposal more concretely.
-
-Thoughts?
-
-Thanks,
-Punit
-
-[...]
+Best regards,
+Kazu
