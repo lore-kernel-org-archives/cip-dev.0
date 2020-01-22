@@ -1,61 +1,43 @@
-From: info@techtechnology.info (George Cooly)
-Date: Mon, 20 Jan 2020 14:19:08 +0000
-Subject: [cip-dev] Audio Transcription Service Provider
-Message-ID: <b1adef001ec1c7486845b657fa87f543@techtechnology.info>
+From: masashi.kudo@cybertrust.co.jp (masashi.kudo at cybertrust.co.jp)
+Date: Wed, 22 Jan 2020 22:55:25 +0000
+Subject: [cip-dev] CIP IRC weekly meeting today
+Message-ID: <OSBPR01MB51271C7305D69129D40072F1A00C0@OSBPR01MB5127.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello,
+Hi all,
 
-Do you need someone reliable to transcribe both your short term and 
-long term projects? Or do you need an accurate transcript for your 
-audio or video? 
+Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
 
-Allow us to transcribe your audio and provide you accurate transcripts 
-and let us help you reach your business/project goals through the help 
-of our transcription services.
+*Please note that the IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=11&day=28&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
 
-What are our goals with each transcript?
+US-West US-East   UK     DE     TW     JP
+01:00    04:00   09:00   10:00   17:00   18:00
 
-- Speed
-- Accuracy
-- Confidentiality
-- Each transcript is properly formatted. Strict grammar and 
-punctuation rules are adhered to and of course, file security is 
-something we take very seriously. 
+Channel:
+* irc:chat.freenode.net:6667/cip
 
-Have any transcription queries? Send me a message. Let's discuss what 
-you need to get done. We will address any concerns you have. 
+Last week's meeting minutes:
+https://irclogs.baserock.org/meetings/cip/2020/01/cip.2020-01-16-09.00.log.html
 
-- Professional transcription
-- Accurate and thorough
-- Beautifully transcribed documents.
-- Grammar, spelling and jargon thoroughly checked
+Agenda:
 
-We have transcribed audios & videos under various requirements 
-such as :
+* Action item
+1. Combine rootfilesystem with kselftest binary - Iwamatsu-san 
+2. Document a process on how to add tests to the CIP test setup - patersonc 
+3. Arrangement of F2F Kernel Meeting in Nuremberg - masashi910
+4. Add config for BBB to both 4.4 and 4.19 (done for qemux86-64)  - Iwamatsu-san
 
-- Medical transcription
-- Technical
-- Academic
-- Lectures
-- Business
-- Groups
-- Legal
-- Research interviews
+* Kernel maintenance updates
+* Kernel testing
+* CIP Core
+* Software update
+* AOB
 
-more...
+The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
 
-Skilled with international accents and prompt response. Our pricing 
-is better or comparable to individual service provider. In addition 
-we also assist in APA Style formatting for research papers. Please 
-note we don?t conduct research but assist only in formatting 
-of the papers.
-
-Regards,
-George Cooly
-
-
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20200120/a24620f6/attachment.html>
+Best regards,
+--
+M. Kudo
+Cybertrust Japan Co., Ltd.
