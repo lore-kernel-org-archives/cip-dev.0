@@ -1,47 +1,100 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Thu, 23 Jan 2020 11:43:31 +0000
-Subject: [cip-dev] gitlab Test artifacts
-In-Reply-To: <a2d7cda0-1858-fa1c-add2-70916e4df493@siemens.com>
-References: <48886b9e-ea2d-504b-507f-8eaecff3517d@siemens.com>
- <TYAPR01MB2285E33230A0A605168E590BB7350@TYAPR01MB2285.jpnprd01.prod.outlook.com>
- <a2d7cda0-1858-fa1c-add2-70916e4df493@siemens.com>
-Message-ID: <OSBPR01MB228045EBD443807F92D64CA0B70F0@OSBPR01MB2280.jpnprd01.prod.outlook.com>
+From: kazuhiro3.hayashi@toshiba.co.jp (kazuhiro3.hayashi at toshiba.co.jp)
+Date: Thu, 23 Jan 2020 11:52:01 +0000
+Subject: [cip-dev] [cip-core] Package Proposal #2 (Minimum base packages
+ in Debian)
+In-Reply-To: <dc1e4578-64e7-dc3f-828c-43c907448018@renesas.com>
+References: <TYXPR01MB1808E5730818EAB90EB9558FE1360@TYXPR01MB1808.jpnprd01.prod.outlook.com>
+ <TYXPR01MB1808AFBB9C4A06F0E43B8EF4E10D0@TYXPR01MB1808.jpnprd01.prod.outlook.com>
+ <dc1e4578-64e7-dc3f-828c-43c907448018@renesas.com>
+Message-ID: <TYXPR01MB1808951D8345BDE55D6E7284E10F0@TYXPR01MB1808.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Quirin,
+Hello CIP Core members,
 
-> From: Gylstorff Quirin <quirin.gylstorff@siemens.com>
-> Sent: 23 January 2020 09:32
+Thank you for your replies.
+
+I need to wait for replies of Codethink, Hitachi, and Moxa,
+so would like to postpone the due date to
+	January 31th (Fri)
+(Lunar New Year holiday until Jan 29th)
+
+Codethink
+Cybertrust (Agreed #2)
+Hitachi
+Moxa
+Renesas (Agreed #2)
+Siemens (Agreed #2)
+Toshiba (Agreed #2)
+
+Best regards,
+Kazu
+
+> -----Original Message-----
+> From: cip-dev [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Takehisa Katayama
+> Sent: Thursday, January 23, 2020 5:07 PM
+> To: cip-dev at lists.cip-project.org
+> Subject: Re: [cip-dev] [cip-core] Package Proposal #2 (Minimum base packages in Debian)
 > 
-> Hi Chris,
+> Hi Kazu-san,
 > 
-> Is there a reason to upload the artifacts from gitlab to aws. Currently
-> the artifacts in gitlab do not expire and are public accessible.
-
-Currently the artifacts (Kernel image/DTBs) from a 'build' job are stored as artifacts in GitLab so that they are easily available for 'test' jobs to use.
-These test jobs then upload the artifacts to AWS where they can be accessed by the LAVA labs.
-
-Why don't the LAVA labs just fetch the binaries from GitLab? Good question.
-Partly because CIP was already using AWS and partly because I never got around to trying.
-
+> >> Please reply with you opinion, agree or disagree.
 > 
-> For example
-> https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/270427371
+> Renesas agree.
 > 
-> If only aws should be used as longt erm storage then maybe we should add
-> an expire date or use caches instead of artifacts for the gitlab ci builds.
-
-The benefit of using artifacts over caches in GitLab is that objects stored as artifacts can be easily accessed by users through the GitLab website or API.
-Perhaps useful if someone wants to run some tests locally, and easier to do then finding the appropriate files in AWS.
-
-Yes, there should probably be an expiry on these artifacts (artifacts:expire_in), but as the storage is all controlled/payed for by GitLab it's not a direct issue for CIP.
-I'll add a 1 month limit for now.
-
-One thing I haven't tried yet is playing around with using a cache for build objects to speed up build times, perhaps useful to store the SSTATE CACHE from OE builds.
-
-Kind regards, Chris
-
+> Thanks.
 > 
-> Kind regards,
-> Quirin
+> Best regards,
+> Takehisa Katayama.
+> 
+> 
+> 
+> On 2020/01/21 9:52, kazuhiro3.hayashi at toshiba.co.jp wrote:
+> > Hello CIP Core members,
+> >
+> >> Due Date: January 20th (The next TSC meeting)
+> >
+> > If you have not yet replied to this proposal, please send us your opinion by
+> > 	January 23th (By the next IRC meeting)
+> >
+> > Best regards,
+> > Kazu
+> >
+> >>
+> >> Hello CIP Core members,
+> >>
+> >> I created a simple package proposal for the packages that are installed in the "minimum base system" of Debian.
+> >> These packages are installed by
+> >> 	$ debootstrap --variant=minbase buster ...
+> >>
+> >> It consists of 58 source packages and 84 binary packages, including all run-time dependencies.
+> >>
+> >> The common reason to propose:
+> >> "This package is included in the minimum base system of Debian (debootstrap --variant=minbase),
+> >> which is essential for all Debian binary package based systems"
+> >>
+> >>
+> >> I would like to start the "review" phase (Phase 2) of the attached package proposal.
+> >> https://gitlab.com/cip-project/cip-core/cip-pkglist/blob/master/doc/pdp.md#phase-2-proposal-review
+> >>
+> >> Please reply with you opinion, agree or disagree.
+> >> If you cannot agree to add specific packages, please show the reasons as well.
+> >>
+> >> Due Date: January 20th (The next TSC meeting)
+> >>
+> >> We have only 2-3 working days for this review, but
+> >> I think it may be enough to agree or disagree the very simple reason above.
+> >> (We can extend this due date if more time required for reviews, please let me know if any requests)
+> >>
+> >> Best regards,
+> >> Kazu
+> > _______________________________________________
+> > cip-dev mailing list
+> > cip-dev at lists.cip-project.org
+> > https://lists.cip-project.org/mailman/listinfo/cip-dev
+> > .
+> >
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
