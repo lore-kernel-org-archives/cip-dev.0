@@ -1,78 +1,61 @@
-From: prabhakar.mahadev-lad.rj@bp.renesas.com (Prabhakar Mahadev Lad)
-Date: Fri, 24 Jan 2020 10:12:45 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 07/10] usb: host: xhci-plat: Add
- r8a7744	support
-In-Reply-To: <1579856900-21381-8-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <1579856900-21381-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <1579856900-21381-8-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Message-ID: <OSBPR01MB516071CAB831BEB6007BD8E7AA0E0@OSBPR01MB5160.jpnprd01.prod.outlook.com>
+From: info@techguardian.info (Mew Andre)
+Date: Fri, 24 Jan 2020 16:00:10 +0000
+Subject: [cip-dev] Audio Transcription Service Provider
+Message-ID: <9af8d6b2195432d41b3c2e09fd6ab9ac@techguardian.info>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi All,
+Hello,
 
-> -----Original Message-----
-> From: cip-dev <cip-dev-bounces@lists.cip-project.org> On Behalf Of Lad
-> Prabhakar
-> Sent: 24 January 2020 09:08
-> To: cip-dev at lists.cip-project.org; Nobuhiro Iwamatsu
-> <nobuhiro1.iwamatsu@toshiba.co.jp>; Pavel Machek <pavel@denx.de>
-> Subject: [cip-dev] [PATCH 4.4.y-cip 07/10] usb: host: xhci-plat: Add r8a7744
-> support
->
-> This patch adds xhci r8a7744 driver support.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
->  drivers/usb/host/xhci-plat.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
->
-Just a background wrt this patch as this isn't a backport from mainline kernel,  in mainline kernel for RZ/G1 the compatible string defaults to "renesas,rcar-gen2-xhci"  which isn't present in CIP, and the way xhci-plat.c in cip handles compatibility is different compared to mainline as a result this patch is added
-This is patch is similar to  " usb: host: xhci-plat: Add r8a7743 support" (d09ccbb733864223402b541bdb9897cfe811881c) present in cip kernel.
+Do you need someone reliable to transcribe both your short term and 
+long term projects? Or do you need an accurate transcript for your 
+audio or video? 
 
-Cheers,
---Prabhakar Lad
+Allow us to transcribe your audio and provide you accurate transcripts 
+and let us help you reach your business/project goals through the help 
+of our transcription services.
 
-> diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c index
-> 8f80da4..e7f00da 100644
-> --- a/drivers/usb/host/xhci-plat.c
-> +++ b/drivers/usb/host/xhci-plat.c
-> @@ -54,7 +54,8 @@ static int xhci_plat_setup(struct usb_hcd *hcd)
->
->  if (of_device_is_compatible(of_node, "renesas,xhci-r8a7790") ||
->      of_device_is_compatible(of_node, "renesas,xhci-r8a7791") ||
-> -    of_device_is_compatible(of_node, "renesas,xhci-r8a7743")) {
-> +    of_device_is_compatible(of_node, "renesas,xhci-r8a7743") ||
-> +    of_device_is_compatible(of_node, "renesas,xhci-r8a7744")) {
->  ret = xhci_rcar_init_quirk(hcd);
->  if (ret)
->  return ret;
-> @@ -69,7 +70,8 @@ static int xhci_plat_start(struct usb_hcd *hcd)
->
->  if (of_device_is_compatible(of_node, "renesas,xhci-r8a7790") ||
->      of_device_is_compatible(of_node, "renesas,xhci-r8a7791") ||
-> -    of_device_is_compatible(of_node, "renesas,xhci-r8a7743"))
-> +    of_device_is_compatible(of_node, "renesas,xhci-r8a7743") ||
-> +    of_device_is_compatible(of_node, "renesas,xhci-r8a7744"))
->  xhci_rcar_start(hcd);
->
->  return xhci_run(hcd);
-> @@ -270,6 +272,7 @@ static const struct of_device_id usb_xhci_of_match[]
-> = {
->  { .compatible = "marvell,armada-375-xhci"},
->  { .compatible = "marvell,armada-380-xhci"},
->  { .compatible = "renesas,xhci-r8a7743"},
-> +{ .compatible = "renesas,xhci-r8a7744"},
->  { .compatible = "renesas,xhci-r8a7790"},
->  { .compatible = "renesas,xhci-r8a7791"},
->  { },
-> --
-> 2.7.4
->
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
+What are our goals with each transcript?
+
+- Speed
+- Accuracy
+- Confidentiality
+- Each transcript is properly formatted. Strict grammar and 
+punctuation rules are adhered to and of course, file security is 
+something we take very seriously. 
+
+Have any transcription queries? Send me a message. Let's discuss what 
+you need to get done. We will address any concerns you have. 
+
+- Professional transcription
+- Accurate and thorough
+- Beautifully transcribed documents.
+- Grammar, spelling and jargon thoroughly checked
+
+We have transcribed audios & videos under various requirements 
+such as :
+
+- Medical transcription
+- Technical
+- Academic
+- Lectures
+- Business
+- Groups
+- Legal
+- Research interviews
+
+more...
+
+Skilled with international accents and prompt response. Our pricing 
+is better or comparable to individual service provider. In addition 
+we also assist in APA Style formatting for research papers. Please 
+note we don?t conduct research but assist only in formatting 
+of the papers.
+
+Regards,
+Mew Andre
 
 
-Renesas Electronics Europe GmbH, Geschaeftsfuehrer/President: Carsten Jauch, Sitz der Gesellschaft/Registered office: Duesseldorf, Arcadiastrasse 10, 40472 Duesseldorf, Germany, Handelsregister/Commercial Register: Duesseldorf, HRB 3708 USt-IDNr./Tax identification no.: DE 119353406 WEEE-Reg.-Nr./WEEE reg. no.: DE 14978647
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20200124/d97b418b/attachment.html>
