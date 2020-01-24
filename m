@@ -1,53 +1,83 @@
 From: prabhakar.mahadev-lad.rj@bp.renesas.com (Lad Prabhakar)
-Date: Fri, 24 Jan 2020 09:08:14 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 04/10] ARM: dts: r8a7744: Add QSPI
+Date: Fri, 24 Jan 2020 09:08:15 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 05/10] ARM: dts: r8a7744: Add MSIOF[012]
 	support
 In-Reply-To: <1579856900-21381-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <1579856900-21381-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Message-ID: <1579856900-21381-5-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Message-ID: <1579856900-21381-6-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Biju Das <biju.das@bp.renesas.com>
 
-commit 0faadd5a410533d3a75601b607ee5a4110b754f4 upstream.
+commit 491e70588805a8895bff6ac5a626c8bb481fea1c upstream.
 
-Add the DT node for the QSPI interface to the SoC dtsi.
+Add the DT nodes needed by MSIOF[012] interfaces to the SoC dtsi.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(changed clocks and power-domains property, removed resets property)
+(changed clocks and power-domains properties, removed resets property)
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7744.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ arch/arm/boot/dts/r8a7744.dtsi | 45 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
 diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index 425915a..b6517c3 100644
+index b6517c3..12d698c 100644
 --- a/arch/arm/boot/dts/r8a7744.dtsi
 +++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -595,6 +595,21 @@
+@@ -934,6 +934,51 @@
  			status = "disabled";
  		};
  
-+		qspi: spi at e6b10000 {
-+			compatible = "renesas,qspi-r8a7744", "renesas,qspi";
-+			reg = <0 0xe6b10000 0 0x2c>;
-+			interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp9_clks R8A7744_CLK_QSPI_MOD>;
-+			dmas = <&dmac0 0x17>, <&dmac0 0x18>,
-+			       <&dmac1 0x17>, <&dmac1 0x18>;
++		msiof0: spi at e6e20000 {
++			compatible = "renesas,msiof-r8a7744",
++				     "renesas,rcar-gen2-msiof";
++			reg = <0 0xe6e20000 0 0x0064>;
++			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp0_clks R8A7744_CLK_MSIOF0>;
++			dmas = <&dmac0 0x51>, <&dmac0 0x52>,
++			       <&dmac1 0x51>, <&dmac1 0x52>;
 +			dma-names = "tx", "rx", "tx", "rx";
 +			power-domains = <&cpg_clocks>;
-+			num-cs = <1>;
 +			#address-cells = <1>;
 +			#size-cells = <0>;
 +			status = "disabled";
 +		};
 +
- 		scifa0: serial at e6c40000 {
- 			compatible = "renesas,scifa-r8a7744",
- 				     "renesas,rcar-gen2-scifa", "renesas,scifa";
++		msiof1: spi at e6e10000 {
++			compatible = "renesas,msiof-r8a7744",
++				     "renesas,rcar-gen2-msiof";
++			reg = <0 0xe6e10000 0 0x0064>;
++			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp2_clks R8A7744_CLK_MSIOF1>;
++			dmas = <&dmac0 0x55>, <&dmac0 0x56>,
++			       <&dmac1 0x55>, <&dmac1 0x56>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&cpg_clocks>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		msiof2: spi at e6e00000 {
++			compatible = "renesas,msiof-r8a7744",
++				     "renesas,rcar-gen2-msiof";
++			reg = <0 0xe6e00000 0 0x0064>;
++			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp2_clks R8A7744_CLK_MSIOF2>;
++			dmas = <&dmac0 0x41>, <&dmac0 0x42>,
++			       <&dmac1 0x41>, <&dmac1 0x42>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&cpg_clocks>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		can0: can at e6e80000 {
+ 			compatible = "renesas,can-r8a7744",
+ 				     "renesas,rcar-gen2-can";
 -- 
 2.7.4
