@@ -1,83 +1,71 @@
 From: prabhakar.mahadev-lad.rj@bp.renesas.com (Lad Prabhakar)
-Date: Fri, 24 Jan 2020 09:08:15 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 05/10] ARM: dts: r8a7744: Add MSIOF[012]
-	support
+Date: Fri, 24 Jan 2020 09:08:16 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 06/10] ARM: dts: r8a7744-iwg20m: Add SPI
+	NOR support
 In-Reply-To: <1579856900-21381-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <1579856900-21381-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Message-ID: <1579856900-21381-6-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Message-ID: <1579856900-21381-7-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Biju Das <biju.das@bp.renesas.com>
 
-commit 491e70588805a8895bff6ac5a626c8bb481fea1c upstream.
+commit e259e04748e2798a747d9c363ded50514b15a7b9 upstream.
 
-Add the DT nodes needed by MSIOF[012] interfaces to the SoC dtsi.
+Add support for the SPI NOR device used to boot up the system
+to the iWave RZ/G1N Qseven System On Module DT.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(changed clocks and power-domains properties, removed resets property)
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7744.dtsi | 45 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+ arch/arm/boot/dts/r8a7744-iwg20m.dtsi | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index b6517c3..12d698c 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -934,6 +934,51 @@
- 			status = "disabled";
- 		};
+diff --git a/arch/arm/boot/dts/r8a7744-iwg20m.dtsi b/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
+index 503583e..82ee3c1 100644
+--- a/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
++++ b/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
+@@ -36,6 +36,11 @@
+ 		function = "mmc";
+ 	};
  
-+		msiof0: spi at e6e20000 {
-+			compatible = "renesas,msiof-r8a7744",
-+				     "renesas,rcar-gen2-msiof";
-+			reg = <0 0xe6e20000 0 0x0064>;
-+			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp0_clks R8A7744_CLK_MSIOF0>;
-+			dmas = <&dmac0 0x51>, <&dmac0 0x52>,
-+			       <&dmac1 0x51>, <&dmac1 0x52>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&cpg_clocks>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
++	qspi_pins: qspi {
++		groups = "qspi_ctrl", "qspi_data2";
++		function = "qspi";
++	};
 +
-+		msiof1: spi at e6e10000 {
-+			compatible = "renesas,msiof-r8a7744",
-+				     "renesas,rcar-gen2-msiof";
-+			reg = <0 0xe6e10000 0 0x0064>;
-+			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp2_clks R8A7744_CLK_MSIOF1>;
-+			dmas = <&dmac0 0x55>, <&dmac0 0x56>,
-+			       <&dmac1 0x55>, <&dmac1 0x56>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&cpg_clocks>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
+ 	sdhi0_pins: sd0 {
+ 		groups = "sdhi0_data4", "sdhi0_ctrl";
+ 		function = "sdhi0";
+@@ -53,6 +58,27 @@
+ 	status = "okay";
+ };
+ 
++&qspi {
++	pinctrl-0 = <&qspi_pins>;
++	pinctrl-names = "default";
 +
-+		msiof2: spi at e6e00000 {
-+			compatible = "renesas,msiof-r8a7744",
-+				     "renesas,rcar-gen2-msiof";
-+			reg = <0 0xe6e00000 0 0x0064>;
-+			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp2_clks R8A7744_CLK_MSIOF2>;
-+			dmas = <&dmac0 0x41>, <&dmac0 0x42>,
-+			       <&dmac1 0x41>, <&dmac1 0x42>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&cpg_clocks>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
++	status = "okay";
 +
- 		can0: can at e6e80000 {
- 			compatible = "renesas,can-r8a7744",
- 				     "renesas,rcar-gen2-can";
++	/* WARNING - This device contains the bootloader. Handle with care. */
++	flash: flash at 0 {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <50000000>;
++		spi-tx-bus-width = <2>;
++		spi-rx-bus-width = <2>;
++		m25p,fast-read;
++		spi-cpol;
++		spi-cpha;
++	};
++};
++
+ &sdhi0 {
+ 	pinctrl-0 = <&sdhi0_pins>;
+ 	pinctrl-names = "default";
 -- 
 2.7.4
