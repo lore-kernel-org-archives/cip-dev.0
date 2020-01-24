@@ -1,80 +1,101 @@
 From: prabhakar.mahadev-lad.rj@bp.renesas.com (Lad Prabhakar)
-Date: Fri, 24 Jan 2020 09:08:11 +0000
-Subject: [cip-dev] [PATCH 4.4.y-cip 01/10] ARM: dts: r8a7744: Add VSP support
+Date: Fri, 24 Jan 2020 09:08:12 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 02/10] ARM: dts: r8a7744: Add PWM SoC
+	support
 In-Reply-To: <1579856900-21381-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <1579856900-21381-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Message-ID: <1579856900-21381-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Message-ID: <1579856900-21381-3-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Biju Das <biju.das@bp.renesas.com>
 
-commit eddcbe813dd3c8247840859bf4d04b3423d35f8f upstream.
+commit cebc31e8b59445aaf84b8810ff76b2fcc246fea2 upstream.
 
-Add VSP support to SoC DT.
+Add the definitions for pwm[0123456] to the SoC dtsi.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(dropped resets property. changed clocks and power-domains properties.
-added vsp device configuration)
+(updated clocks and power-domains property.removed resets property)
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7744.dtsi | 42 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ arch/arm/boot/dts/r8a7744.dtsi | 63 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
 
 diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index 91e032a..cf7d8fe 100644
+index cf7d8fe..79c71ef 100644
 --- a/arch/arm/boot/dts/r8a7744.dtsi
 +++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -1277,6 +1277,48 @@
- 			power-domains = <&cpg_clocks>;
+@@ -847,6 +847,69 @@
+ 			status = "disabled";
  		};
  
-+		vsp at fe928000 {
-+			compatible = "renesas,vsp1";
-+			reg = <0 0xfe928000 0 0x8000>;
-+			interrupts = <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp1_clks R8A7744_CLK_VSP1_S>;
++		pwm0: pwm at e6e30000 {
++			compatible = "renesas,pwm-r8a7744", "renesas,pwm-rcar";
++			reg = <0 0xe6e30000 0 0x8>;
++			clocks = <&mstp5_clks R8A7744_CLK_PWM>;
 +			power-domains = <&cpg_clocks>;
-+
-+			renesas,has-lut;
-+			renesas,has-sru;
-+			renesas,#rpf = <5>;
-+			renesas,#uds = <1>;
-+			renesas,#wpf = <4>;
++			#pwm-cells = <2>;
++			status = "disabled";
 +		};
 +
-+		vsp at fe930000 {
-+			compatible = "renesas,vsp1";
-+			reg = <0 0xfe930000 0 0x8000>;
-+			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp1_clks R8A7744_CLK_VSP1_DU0>;
++		pwm1: pwm at e6e31000 {
++			compatible = "renesas,pwm-r8a7744", "renesas,pwm-rcar";
++			reg = <0 0xe6e31000 0 0x8>;
++			clocks = <&mstp5_clks R8A7744_CLK_PWM>;
 +			power-domains = <&cpg_clocks>;
-+
-+			renesas,has-lif;
-+			renesas,has-lut;
-+			renesas,#rpf = <4>;
-+			renesas,#uds = <1>;
-+			renesas,#wpf = <1>;
++			#pwm-cells = <2>;
++			status = "disabled";
 +		};
 +
-+		vsp at fe938000 {
-+			compatible = "renesas,vsp1";
-+			reg = <0 0xfe938000 0 0x8000>;
-+			interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp1_clks R8A7744_CLK_VSP1_DU1>;
++		pwm2: pwm at e6e32000 {
++			compatible = "renesas,pwm-r8a7744", "renesas,pwm-rcar";
++			reg = <0 0xe6e32000 0 0x8>;
++			clocks = <&mstp5_clks R8A7744_CLK_PWM>;
 +			power-domains = <&cpg_clocks>;
-+
-+			renesas,has-lif;
-+			renesas,has-lut;
-+			renesas,#rpf = <4>;
-+			renesas,#uds = <1>;
-+			renesas,#wpf = <1>;
++			#pwm-cells = <2>;
++			status = "disabled";
 +		};
 +
- 		du: display at feb00000 {
- 			compatible = "renesas,du-r8a7744";
- 			reg = <0 0xfeb00000 0 0x40000>,
++		pwm3: pwm at e6e33000 {
++			compatible = "renesas,pwm-r8a7744", "renesas,pwm-rcar";
++			reg = <0 0xe6e33000 0 0x8>;
++			clocks = <&mstp5_clks R8A7744_CLK_PWM>;
++			power-domains = <&cpg_clocks>;
++			#pwm-cells = <2>;
++			status = "disabled";
++		};
++
++		pwm4: pwm at e6e34000 {
++			compatible = "renesas,pwm-r8a7744", "renesas,pwm-rcar";
++			reg = <0 0xe6e34000 0 0x8>;
++			clocks = <&mstp5_clks R8A7744_CLK_PWM>;
++			power-domains = <&cpg_clocks>;
++			#pwm-cells = <2>;
++			status = "disabled";
++		};
++
++		pwm5: pwm at e6e35000 {
++			compatible = "renesas,pwm-r8a7744", "renesas,pwm-rcar";
++			reg = <0 0xe6e35000 0 0x8>;
++			clocks = <&mstp5_clks R8A7744_CLK_PWM>;
++			power-domains = <&cpg_clocks>;
++			#pwm-cells = <2>;
++			status = "disabled";
++		};
++
++		pwm6: pwm at e6e36000 {
++			compatible = "renesas,pwm-r8a7744", "renesas,pwm-rcar";
++			reg = <0 0xe6e36000 0 0x8>;
++			clocks = <&mstp5_clks R8A7744_CLK_PWM>;
++			power-domains = <&cpg_clocks>;
++			#pwm-cells = <2>;
++			status = "disabled";
++		};
++
+ 		can0: can at e6e80000 {
+ 			compatible = "renesas,can-r8a7744",
+ 				     "renesas,rcar-gen2-can";
 -- 
 2.7.4
