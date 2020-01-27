@@ -1,123 +1,78 @@
-From: laurence.urhegyi@codethink.co.uk (Laurence Urhegyi)
-Date: Mon, 27 Jan 2020 09:33:29 +0900
-Subject: [cip-dev] [cip-core] Package Proposal #2 (Minimum base packages
- in Debian)
-In-Reply-To: <TYXPR01MB1808951D8345BDE55D6E7284E10F0@TYXPR01MB1808.jpnprd01.prod.outlook.com>
-References: <TYXPR01MB1808E5730818EAB90EB9558FE1360@TYXPR01MB1808.jpnprd01.prod.outlook.com>
- <TYXPR01MB1808AFBB9C4A06F0E43B8EF4E10D0@TYXPR01MB1808.jpnprd01.prod.outlook.com>
- <dc1e4578-64e7-dc3f-828c-43c907448018@renesas.com>
- <TYXPR01MB1808951D8345BDE55D6E7284E10F0@TYXPR01MB1808.jpnprd01.prod.outlook.com>
-Message-ID: <97b91fe9-c355-1f22-a0b9-a28799bb095c@codethink.co.uk>
+From: prabhakar.mahadev-lad.rj@bp.renesas.com (Prabhakar Mahadev Lad)
+Date: Mon, 27 Jan 2020 07:09:55 +0000
+Subject: [cip-dev] [PATCH 4.4.y-cip 07/10] usb: host: xhci-plat: Add
+ r8a7744	support
+In-Reply-To: <TYAPR01MB36787FE926D7C607F6B0734F92080@TYAPR01MB3678.jpnprd01.prod.outlook.com>
+References: <1579856900-21381-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <1579856900-21381-8-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <OSBPR01MB516071CAB831BEB6007BD8E7AA0E0@OSBPR01MB5160.jpnprd01.prod.outlook.com>
+ <TYAPR01MB36787FE926D7C607F6B0734F92080@TYAPR01MB3678.jpnprd01.prod.outlook.com>
+Message-ID: <OSBPR01MB5160B0BBC566323C51A78435AA0B0@OSBPR01MB5160.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Kazu-san,
+Hi Nobuhiro,
 
-I've been away for a while, and for that I do apologise.
+> -----Original Message-----
+> From: nobuhiro1.iwamatsu at toshiba.co.jp
+> <nobuhiro1.iwamatsu@toshiba.co.jp>
+> Sent: 26 January 2020 22:07
+> To: Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>;
+> cip-dev at lists.cip-project.org; pavel at denx.de
+> Cc: Chris Paterson <Chris.Paterson2@renesas.com>
+> Subject: RE: [cip-dev] [PATCH 4.4.y-cip 07/10] usb: host: xhci-plat: Add
+> r8a7744 support
+>
+> Hi Prabhakar,
+>
+> > -----Original Message-----
+> > From: Prabhakar Mahadev Lad
+> > [mailto:prabhakar.mahadev-lad.rj at bp.renesas.com]
+> > Sent: Friday, January 24, 2020 7:13 PM
+> > To: Prabhakar Mahadev Lad <prabhakar.mahadev-
+> lad.rj at bp.renesas.com>;
+> > cip-dev at lists.cip-project.org; iwamatsu nobuhiro(?? ?? ?????
+> > ???) <nobuhiro1.iwamatsu@toshiba.co.jp>; Pavel Machek
+> <pavel@denx.de>
+> > Cc: Chris Paterson <Chris.Paterson2@renesas.com>
+> > Subject: RE: [cip-dev] [PATCH 4.4.y-cip 07/10] usb: host: xhci-plat:
+> > Add
+> > r8a7744 support
+> >
+> > Hi All,
+> >
+> > > -----Original Message-----
+> > > From: cip-dev <cip-dev-bounces@lists.cip-project.org> On Behalf Of
+> > > Lad Prabhakar
+> > > Sent: 24 January 2020 09:08
+> > > To: cip-dev at lists.cip-project.org; Nobuhiro Iwamatsu
+> > > <nobuhiro1.iwamatsu@toshiba.co.jp>; Pavel Machek <pavel@denx.de>
+> > > Subject: [cip-dev] [PATCH 4.4.y-cip 07/10] usb: host: xhci-plat: Add
+> > > r8a7744 support
+> > >
+> > > This patch adds xhci r8a7744 driver support.
+> > >
+> > > Signed-off-by: Lad Prabhakar
+> > <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > ---
+> > >  drivers/usb/host/xhci-plat.c | 7 +++++--
+> > >  1 file changed, 5 insertions(+), 2 deletions(-)
+> > >
+> > Just a background wrt this patch as this isn't a backport from
+> > mainline kernel,  in mainline kernel for RZ/G1 the compatible string
+> > defaults to "renesas,rcar-gen2-xhci"  which isn't present in CIP, and
+> > the way xhci-plat.c in cip handles compatibility is different compared
+> > to mainline as a result this patch is added This is patch is similar to  "
+> > usb: host: xhci-plat: Add r8a7743 support"
+> > (d09ccbb733864223402b541bdb9897cfe811881c) present in cip kernel.
+>
+> Thanks for your additional information.
+> I will add the above comment to the commit message and commit.
+>
+Thank you.
 
-+1 from Codethink for this.
-
-Kind regards,
-Laurence
+Cheers,
+--Prabhakar
 
 
-
-
-
-
-
-
-On 23/01/2020 20:52, kazuhiro3.hayashi at toshiba.co.jp wrote:
-> Hello CIP Core members,
-> 
-> Thank you for your replies.
-> 
-> I need to wait for replies of Codethink, Hitachi, and Moxa,
-> so would like to postpone the due date to
-> 	January 31th (Fri)
-> (Lunar New Year holiday until Jan 29th)
-> 
-> Codethink
-> Cybertrust (Agreed #2)
-> Hitachi
-> Moxa
-> Renesas (Agreed #2)
-> Siemens (Agreed #2)
-> Toshiba (Agreed #2)
-> 
-> Best regards,
-> Kazu
-> 
->> -----Original Message-----
->> From: cip-dev [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Takehisa Katayama
->> Sent: Thursday, January 23, 2020 5:07 PM
->> To: cip-dev at lists.cip-project.org
->> Subject: Re: [cip-dev] [cip-core] Package Proposal #2 (Minimum base packages in Debian)
->>
->> Hi Kazu-san,
->>
->>>> Please reply with you opinion, agree or disagree.
->>
->> Renesas agree.
->>
->> Thanks.
->>
->> Best regards,
->> Takehisa Katayama.
->>
->>
->>
->> On 2020/01/21 9:52, kazuhiro3.hayashi at toshiba.co.jp wrote:
->>> Hello CIP Core members,
->>>
->>>> Due Date: January 20th (The next TSC meeting)
->>>
->>> If you have not yet replied to this proposal, please send us your opinion by
->>> 	January 23th (By the next IRC meeting)
->>>
->>> Best regards,
->>> Kazu
->>>
->>>>
->>>> Hello CIP Core members,
->>>>
->>>> I created a simple package proposal for the packages that are installed in the "minimum base system" of Debian.
->>>> These packages are installed by
->>>> 	$ debootstrap --variant=minbase buster ...
->>>>
->>>> It consists of 58 source packages and 84 binary packages, including all run-time dependencies.
->>>>
->>>> The common reason to propose:
->>>> "This package is included in the minimum base system of Debian (debootstrap --variant=minbase),
->>>> which is essential for all Debian binary package based systems"
->>>>
->>>>
->>>> I would like to start the "review" phase (Phase 2) of the attached package proposal.
->>>> https://gitlab.com/cip-project/cip-core/cip-pkglist/blob/master/doc/pdp.md#phase-2-proposal-review
->>>>
->>>> Please reply with you opinion, agree or disagree.
->>>> If you cannot agree to add specific packages, please show the reasons as well.
->>>>
->>>> Due Date: January 20th (The next TSC meeting)
->>>>
->>>> We have only 2-3 working days for this review, but
->>>> I think it may be enough to agree or disagree the very simple reason above.
->>>> (We can extend this due date if more time required for reviews, please let me know if any requests)
->>>>
->>>> Best regards,
->>>> Kazu
->>> _______________________________________________
->>> cip-dev mailing list
->>> cip-dev at lists.cip-project.org
->>> https://lists.cip-project.org/mailman/listinfo/cip-dev
->>> .
->>>
->> _______________________________________________
->> cip-dev mailing list
->> cip-dev at lists.cip-project.org
->> https://lists.cip-project.org/mailman/listinfo/cip-dev
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
-> 
+Renesas Electronics Europe GmbH, Geschaeftsfuehrer/President: Carsten Jauch, Sitz der Gesellschaft/Registered office: Duesseldorf, Arcadiastrasse 10, 40472 Duesseldorf, Germany, Handelsregister/Commercial Register: Duesseldorf, HRB 3708 USt-IDNr./Tax identification no.: DE 119353406 WEEE-Reg.-Nr./WEEE reg. no.: DE 14978647
