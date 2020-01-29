@@ -1,57 +1,39 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Wed, 29 Jan 2020 14:30:00 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 07/12] arm64: dts: renesas:
-	hihope-rzg2-ex: Let the board specific DT decide about pciec1
+Date: Wed, 29 Jan 2020 14:30:02 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 09/12] dt-bindings: mmc: renesas_sdhi:
+	Add r8a774b1 support
 In-Reply-To: <1580308205-20435-1-git-send-email-biju.das@bp.renesas.com>
 References: <1580308205-20435-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1580308205-20435-8-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1580308205-20435-10-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit 133e6c78c4937ea7449cf8542b14f7b37bf470ac upstream.
+Document RZ/G2N (R8A774B1) SoC bindings.
 
-The plan for the HiHope RZ/G2N board is to enable pciec0 by default,
-and use pciec1 physical interface for SATA (as SATA and PCIE1 share
-the same physical interface), therefore move pciec1 enabling away
-from hihope-rzg2-ex.
+This patch is similar to commit 01a5674301fa790d05e1d2c888c9c98370082d45
+("dt-bindings: mmc: renesas_sdhi: Add r8a774b1 support") in mainline
+kernel, but since tmio_mmc.txt is renamed to renesas,sdhi.txt due to split
+of core functionality, DMA and MFD glue in mainline kernel in commit
+b6147490e6aa ("mmc: tmio: split core functionality, DMA and MFD glue")
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Link: https://lore.kernel.org/r/1570178133-21532-8-git-send-email-fabrizio.castro at bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi          | 4 ----
- arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-ex.dts | 4 ++++
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi b/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi
-index 4280b19..6870e22 100644
---- a/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi
-+++ b/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi
-@@ -47,10 +47,6 @@
- 	status = "okay";
- };
- 
--&pciec1 {
--	status = "okay";
--};
--
- &pfc {
- 	pinctrl-0 = <&scif_clk_pins>;
- 	pinctrl-names = "default";
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-ex.dts b/arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-ex.dts
-index 6e33a3b..c754fca 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-ex.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-ex.dts
-@@ -13,3 +13,7 @@
- 	compatible = "hoperun,hihope-rzg2-ex", "hoperun,hihope-rzg2m",
- 		     "renesas,r8a774a1";
- };
-+
-+&pciec1 {
-+	status = "okay";
-+};
+diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+index ac5c93c..d50c6cb 100644
+--- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
++++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+@@ -18,6 +18,7 @@ Required properties:
+ 		"renesas,sdhi-r8a7743" - SDHI IP on R8A7743 SoC
+ 		"renesas,sdhi-r8a7745" - SDHI IP on R8A7745 SoC
+ 		"renesas,sdhi-r8a774a1" - SDHI IP on R8A774A1 SoC
++		"renesas,sdhi-r8a774b1" - SDHI IP on R8A774B1 SoC
+ 		"renesas,sdhi-r8a774c0" - SDHI IP on R8A774C0 SoC
+ 		"renesas,sdhi-r8a77470" - SDHI IP on R8A77470 SoC
+ 		"renesas,sdhi-mmc-r8a77470" - SDHI/MMC IP on R8A77470 SoC
 -- 
 2.7.4
