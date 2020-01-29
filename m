@@ -1,84 +1,43 @@
-From: biju.das@bp.renesas.com (Biju Das)
-Date: Wed, 29 Jan 2020 14:30:04 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 11/12] arm64: dts: renesas: r8a774b1:
-	Add SDHI support
-In-Reply-To: <1580308205-20435-1-git-send-email-biju.das@bp.renesas.com>
-References: <1580308205-20435-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1580308205-20435-12-git-send-email-biju.das@bp.renesas.com>
+From: masashi.kudo@cybertrust.co.jp (masashi.kudo at cybertrust.co.jp)
+Date: Wed, 29 Jan 2020 22:54:45 +0000
+Subject: [cip-dev] CIP IRC weekly meeting today
+Message-ID: <TYAPR01MB5135EC53C53F84613B963113A0050@TYAPR01MB5135.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit 6317736729acbdb5bd58cb5ee0ba5f354bd51830 upstream.
+Hi all,
 
-Add SDHI support for the r8a774b1 SoC.
+Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Link: https://lore.kernel.org/r/1569313375-53428-2-git-send-email-biju.das at bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a774b1.dtsi | 36 +++++++++++++++++++++++++++----
- 1 file changed, 32 insertions(+), 4 deletions(-)
+*Please note that the IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=11&day=28&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774b1.dtsi b/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
-index 46578de..08f98b6 100644
---- a/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
-@@ -790,23 +790,51 @@
- 		};
- 
- 		sdhi0: sd at ee100000 {
-+			compatible = "renesas,sdhi-r8a774b1",
-+				     "renesas,rcar-gen3-sdhi";
- 			reg = <0 0xee100000 0 0x2000>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 314>;
-+			max-frequency = <200000000>;
-+			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
-+			resets = <&cpg 314>;
-+			status = "disabled";
- 		};
- 
- 		sdhi1: sd at ee120000 {
-+			compatible = "renesas,sdhi-r8a774b1",
-+				     "renesas,rcar-gen3-sdhi";
- 			reg = <0 0xee120000 0 0x2000>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 313>;
-+			max-frequency = <200000000>;
-+			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
-+			resets = <&cpg 313>;
-+			status = "disabled";
- 		};
- 
- 		sdhi2: sd at ee140000 {
-+			compatible = "renesas,sdhi-r8a774b1",
-+				     "renesas,rcar-gen3-sdhi";
- 			reg = <0 0xee140000 0 0x2000>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 312>;
-+			max-frequency = <200000000>;
-+			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
-+			resets = <&cpg 312>;
-+			status = "disabled";
- 		};
- 
- 		sdhi3: sd at ee160000 {
-+			compatible = "renesas,sdhi-r8a774b1",
-+				     "renesas,rcar-gen3-sdhi";
- 			reg = <0 0xee160000 0 0x2000>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 311>;
-+			max-frequency = <200000000>;
-+			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
-+			resets = <&cpg 311>;
-+			status = "disabled";
- 		};
- 
- 		gic: interrupt-controller at f1010000 {
--- 
-2.7.4
+US-West US-East   UK     DE     TW     JP
+01:00    04:00   09:00   10:00   17:00   18:00
+
+Channel:
+* irc:chat.freenode.net:6667/cip
+
+Last week's meeting minutes:
+https://irclogs.baserock.org/meetings/cip/2020/01/cip.2020-01-23-09.00.log.html
+
+Agenda:
+
+* Action item
+1. Combine rootfilesystem with kselftest binary - Iwamatsu-san 
+2. Document a process on how to add tests to the CIP test setup - patersonc 
+3. Arrangement of F2F Kernel Meeting in Nuremberg - masashi910
+4. Add config for BBB to both 4.4 and 4.19 (done for qemux86-64)  - Iwamatsu-san
+
+* Kernel maintenance updates
+* Kernel testing
+* CIP Core
+* Software update
+* AOB
+
+The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
+
+Best regards,
+--
+M. Kudo
+Cybertrust Japan Co., Ltd.
