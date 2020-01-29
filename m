@@ -1,36 +1,36 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Wed, 29 Jan 2020 14:30:03 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 10/12] mmc: renesas_sdhi_internal_dmac:
-	Add r8a774b1 support
+Date: Wed, 29 Jan 2020 14:30:05 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 12/12] arm64: dts: renesas:
+	r8a774b1-hihope-rzg2n: Enable HS400 mode
 In-Reply-To: <1580308205-20435-1-git-send-email-biju.das@bp.renesas.com>
 References: <1580308205-20435-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1580308205-20435-11-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1580308205-20435-13-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-commit c9af138c42f07a0d6d8554a9bed85ca395ed0511 upstream.
+commit 048b39fae795c713c465b6e1d55089334535d862 upstream.
 
-This patch adds SDHI support for RZ/G2N (R8A774B1) SoC.
+This patch enables HS400 mode on HiHope RZ/G2N board.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Link: https://lore.kernel.org/r/1569837778-55874-1-git-send-email-biju.das at bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index 7b0bc15..d156158 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -300,6 +300,7 @@ static const struct soc_device_attribute gen3_soc_whitelist[] = {
- 	  .data = (void *)BIT(SDHI_INTERNAL_DMAC_ONE_RX_ONLY) },
- 	/* generic ones */
- 	{ .soc_id = "r8a774a1" },
-+	{ .soc_id = "r8a774b1" },
- 	{ .soc_id = "r8a774c0" },
- 	{ .soc_id = "r8a7795" },
- 	{ .soc_id = "r8a7796" },
+diff --git a/arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n.dts b/arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n.dts
+index 094b5ef..c9e2119 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n.dts
+@@ -24,3 +24,7 @@
+ 		reg = <0x4 0x80000000 0x0 0x80000000>;
+ 	};
+ };
++
++&sdhi3 {
++	mmc-hs400-1_8v;
++};
 -- 
 2.7.4
