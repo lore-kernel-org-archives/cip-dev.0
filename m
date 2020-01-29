@@ -1,54 +1,57 @@
 From: biju.das@bp.renesas.com (Biju Das)
-Date: Wed, 29 Jan 2020 14:30:01 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 08/12] arm64: dts: renesas: r8a774b1:
-	Add INTC-EX device node
+Date: Wed, 29 Jan 2020 14:30:00 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 07/12] arm64: dts: renesas:
+	hihope-rzg2-ex: Let the board specific DT decide about pciec1
 In-Reply-To: <1580308205-20435-1-git-send-email-biju.das@bp.renesas.com>
 References: <1580308205-20435-1-git-send-email-biju.das@bp.renesas.com>
-Message-ID: <1580308205-20435-9-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <1580308205-20435-8-git-send-email-biju.das@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-commit 04360e4112c3e0e35c08b7fd8d0b2f6e68be4935 upstream.
+commit 133e6c78c4937ea7449cf8542b14f7b37bf470ac upstream.
 
-Add support for the Interrupt Controller for External Devices
-(INTC-EX) on RZ/G2N.
+The plan for the HiHope RZ/G2N board is to enable pciec0 by default,
+and use pciec1 physical interface for SATA (as SATA and PCIE1 share
+the same physical interface), therefore move pciec1 enabling away
+from hihope-rzg2-ex.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Link: https://lore.kernel.org/r/1570531132-21856-11-git-send-email-fabrizio.castro at bp.renesas.com
+Link: https://lore.kernel.org/r/1570178133-21532-8-git-send-email-fabrizio.castro at bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a774b1.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi          | 4 ----
+ arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-ex.dts | 4 ++++
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774b1.dtsi b/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
-index 2e6bca7..46578de 100644
---- a/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
-@@ -282,6 +282,22 @@
- 			#power-domain-cells = <1>;
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi b/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi
+index 4280b19..6870e22 100644
+--- a/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi
++++ b/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi
+@@ -47,10 +47,6 @@
+ 	status = "okay";
+ };
  
-+		intc_ex: interrupt-controller at e61c0000 {
-+			compatible = "renesas,intc-ex-r8a774b1", "renesas,irqc";
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			reg = <0 0xe61c0000 0 0x200>;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 407>;
-+			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
-+			resets = <&cpg 407>;
-+		};
+-&pciec1 {
+-	status = "okay";
+-};
+-
+ &pfc {
+ 	pinctrl-0 = <&scif_clk_pins>;
+ 	pinctrl-names = "default";
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-ex.dts b/arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-ex.dts
+index 6e33a3b..c754fca 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-ex.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-ex.dts
+@@ -13,3 +13,7 @@
+ 	compatible = "hoperun,hihope-rzg2-ex", "hoperun,hihope-rzg2m",
+ 		     "renesas,r8a774a1";
+ };
 +
- 		i2c4: i2c at e66d8000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
++&pciec1 {
++	status = "okay";
++};
 -- 
 2.7.4
