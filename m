@@ -1,63 +1,35 @@
-From: masashi.kudo@cybertrust.co.jp (masashi.kudo at cybertrust.co.jp)
-Date: Thu, 30 Jan 2020 13:29:43 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-In-Reply-To: <TYAPR01MB5135EC53C53F84613B963113A0050@TYAPR01MB5135.jpnprd01.prod.outlook.com>
-References: <TYAPR01MB5135EC53C53F84613B963113A0050@TYAPR01MB5135.jpnprd01.prod.outlook.com>
-Message-ID: <OSBPR01MB5127E04F6E0E60E4D064EA6BA0040@OSBPR01MB5127.jpnprd01.prod.outlook.com>
+From: pavel@denx.de (Pavel Machek)
+Date: Thu, 30 Jan 2020 20:26:54 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 05/12] arm64: dts: renesas:
+ r8a774b1: Add all MSIOF nodes
+In-Reply-To: <1580308205-20435-6-git-send-email-biju.das@bp.renesas.com>
+References: <1580308205-20435-1-git-send-email-biju.das@bp.renesas.com>
+ <1580308205-20435-6-git-send-email-biju.das@bp.renesas.com>
+Message-ID: <20200130192653.GA6721@duo.ucw.cz>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi, all,
+On Wed 2020-01-29 14:29:58, Biju Das wrote:
+> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> 
+> commit c88657c4a1ead900cf59d87511d7deee41ed92a5 upstream.
+> 
+> Add the device nodes for all MSIOF SPI controllers on the RZ/G2N
+> SoC (a.k.a. r8a774b1).
 
-> 3. Arrangement of F2F Kernel Meeting in Nuremberg - masashi910
-
-Yoshi-san just confirmed that the F2F Kernel Meeting time is allocated as follows.
-
-  3PM to 5PM on Feb 27th
-
-Thanks!
---
-M. Kudo
-
------Original Message-----
-From: ??????CTJ? 
-Sent: Thursday, January 30, 2020 7:55 AM
-To: cip-dev at lists.cip-project.org
-Subject: CIP IRC weekly meeting today
-
-Hi all,
-
-Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
-
-*Please note that the IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=11&day=28&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
-
-US-West US-East   UK     DE     TW     JP
-01:00    04:00   09:00   10:00   17:00   18:00
-
-Channel:
-* irc:chat.freenode.net:6667/cip
-
-Last week's meeting minutes:
-https://irclogs.baserock.org/meetings/cip/2020/01/cip.2020-01-23-09.00.log.html
-
-Agenda:
-
-* Action item
-1. Combine rootfilesystem with kselftest binary - Iwamatsu-san 
-2. Document a process on how to add tests to the CIP test setup - patersonc 
-3. Arrangement of F2F Kernel Meeting in Nuremberg - masashi910 
-4. Add config for BBB to both 4.4 and 4.19 (done for qemux86-64)  - Iwamatsu-san
-
-* Kernel maintenance updates
-* Kernel testing
-* CIP Core
-* Software update
-* AOB
-
-The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
+I googled a bit, and MSIOF SPI seems to be "slave" controller on
+SPI. But I still don't know what "MSIOF" stands for, if anything.
 
 Best regards,
---
-M. Kudo
-Cybertrust Japan Co., Ltd.
+								Pavel
+								
+-- 
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 195 bytes
+Desc: not available
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20200130/261a1305/attachment.sig>
