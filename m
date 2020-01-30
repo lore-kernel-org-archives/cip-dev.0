@@ -1,28 +1,44 @@
-From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Thu, 30 Jan 2020 07:35:39 +0000
+From: masashi.kudo@cybertrust.co.jp (masashi.kudo at cybertrust.co.jp)
+Date: Thu, 30 Jan 2020 08:05:15 +0000
 Subject: [cip-dev] CIP IRC weekly meeting today
-In-Reply-To: <TYAPR01MB5135EC53C53F84613B963113A0050@TYAPR01MB5135.jpnprd01.prod.outlook.com>
+In-Reply-To: <TYAPR01MB228507ADF78BD2F15FB91F8BB7040@TYAPR01MB2285.jpnprd01.prod.outlook.com>
 References: <TYAPR01MB5135EC53C53F84613B963113A0050@TYAPR01MB5135.jpnprd01.prod.outlook.com>
-Message-ID: <TYAPR01MB228507ADF78BD2F15FB91F8BB7040@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+ <TYAPR01MB228507ADF78BD2F15FB91F8BB7040@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+Message-ID: <TYAPR01MB5135DDC6E78841CDE0363529A0040@TYAPR01MB5135.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
+Chris-san,
+
+Thanks for letting us know your status.
+Then, see you next week!
+
+Best regards,
+--
+M. Kudo
+
+-----Original Message-----
+From: Chris Paterson <Chris.Paterson2@renesas.com> 
+Sent: Thursday, January 30, 2020 4:36 PM
+To: ??????CTJ? <masashi.kudo@cybertrust.co.jp>; cip-dev at lists.cip-project.org
+Subject: RE: CIP IRC weekly meeting today
+
 Hello Kudo-san, all,
 
-> From: cip-dev <cip-dev-bounces@lists.cip-project.org> On Behalf Of
+> From: cip-dev <cip-dev-bounces@lists.cip-project.org> On Behalf Of 
 > masashi.kudo at cybertrust.co.jp
 > Sent: 29 January 2020 22:55
 > 
 > Hi all,
 > 
-> Kindly be reminded to attend the weekly meeting through IRC to discuss
+> Kindly be reminded to attend the weekly meeting through IRC to discuss 
 > technical topics with CIP kernel today.
 
 Sorry for not joining in with last week's meeting. I was online, but Matrix was playing up and no messages were getting through.
 Please accept my apologies for this week's meeting. I'm on annual leave today.
 
 > 
-> *Please note that the IRC meeting was rescheduled to UTC (GMT) 09:00
+> *Please note that the IRC meeting was rescheduled to UTC (GMT) 09:00 
 > starting from the first week of Apr. according to TSC meeting*
 > https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019
 > &month=11&day=28&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=
@@ -41,13 +57,14 @@ Please accept my apologies for this week's meeting. I'm on annual leave today.
 > Agenda:
 > 
 > * Action item
-> 1. Combine rootfilesystem with kselftest binary - Iwamatsu-san
-> 2. Document a process on how to add tests to the CIP test setup - patersonc
+> 1. Combine rootfilesystem with kselftest binary - Iwamatsu-san 2. 
+> Document a process on how to add tests to the CIP test setup - 
+> patersonc
 
 No progress from me.
 
-> 3. Arrangement of F2F Kernel Meeting in Nuremberg - masashi910
-> 4. Add config for BBB to both 4.4 and 4.19 (done for qemux86-64)  -
+> 3. Arrangement of F2F Kernel Meeting in Nuremberg - masashi910 4. Add 
+> config for BBB to both 4.4 and 4.19 (done for qemux86-64)  - 
 > Iwamatsu-san
 > 
 > * Kernel maintenance updates
@@ -67,9 +84,9 @@ Kind regards, Chris
 > * Software update
 > * AOB
 > 
-> The meeting will take 30 min, although it can be extended to an hour if it
-> makes sense and those involved in the topics can stay. Otherwise, the topic
-> will be taken offline or in the next meeting.
+> The meeting will take 30 min, although it can be extended to an hour 
+> if it makes sense and those involved in the topics can stay. 
+> Otherwise, the topic will be taken offline or in the next meeting.
 > 
 > Best regards,
 > --
