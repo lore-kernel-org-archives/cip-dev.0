@@ -1,76 +1,260 @@
-From: prabhakar.mahadev-lad.rj@bp.renesas.com (Prabhakar Mahadev Lad)
-Date: Fri, 31 Jan 2020 08:49:24 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 00/12] Renesas RZ/G2N
-	extend	peripheral support
-In-Reply-To: <OSAPR01MB3667EADBA266C11168081AEE92070@OSAPR01MB3667.jpnprd01.prod.outlook.com>
-References: <1580308205-20435-1-git-send-email-biju.das@bp.renesas.com>
- <20200130224519.GA19395@duo.ucw.cz>
- <OSAPR01MB3667EADBA266C11168081AEE92070@OSAPR01MB3667.jpnprd01.prod.outlook.com>
-Message-ID: <OSBPR01MB51607560EA9769DAF51A90B9AA070@OSBPR01MB5160.jpnprd01.prod.outlook.com>
+From: jan.kiszka@siemens.com (Jan Kiszka)
+Date: Fri, 31 Jan 2020 14:02:08 +0100
+Subject: [cip-dev] [PATCH linux-4.19.y-cip] gitlab-ci: Use external
+ linux-cip-pipelines repository to define CI
+In-Reply-To: <20191121160008.4886-1-chris.paterson2@renesas.com>
+References: <20191121160008.4886-1-chris.paterson2@renesas.com>
+Message-ID: <a373951f-a300-d2c0-2fa2-e45e269d6600@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+On 21.11.19 17:00, Chris Paterson wrote:
+> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+> ---
+>   .gitlab-ci.yml | 217 +------------------------------------------------
+>   1 file changed, 3 insertions(+), 214 deletions(-)
+> 
+> diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+> index 3e6d493bbc89..9630992fe864 100644
+> --- a/.gitlab-ci.yml
+> +++ b/.gitlab-ci.yml
+> @@ -1,214 +1,3 @@
+> -variables:
+> -  GIT_STRATEGY: clone
+> -  GIT_DEPTH: 10
+> -  DOCKER_DRIVER: overlay2
+> -  DOCKER_IMAGE_TAG: v2
+> -
+> -###############################
+> -# Standard CIP configurations #
+> -###############################
+> -build:arm_hitachi_cyclonev_defconfig:
+> -  stage: build
+> -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+> -  variables:
+> -    BUILD_ARCH: arm
+> -    CONFIG: hitachi_cyclonev_defconfig
+> -    CONFIG_LOC: cip-kernel-config
+> -    BUILD_ONLY: "true"
+> -  script:
+> -    - /opt/build_kernel.sh
+> -  artifacts:
+> -    name: "$CI_JOB_NAME"
+> -    when: always
+> -    paths:
+> -      - output
+> -
+> -build:arm_hitachi_omap_defconfig:
+> -  stage: build
+> -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+> -  variables:
+> -    BUILD_ARCH: arm
+> -    CONFIG: hitachi_omap_defconfig
+> -    CONFIG_LOC: cip-kernel-config
+> -    BUILD_ONLY: "true"
+> -  script:
+> -    - /opt/build_kernel.sh
+> -  artifacts:
+> -    name: "$CI_JOB_NAME"
+> -    when: always
+> -    paths:
+> -      - output
+> -
+> -build:arm_moxa_mxc_defconfig:
+> -  stage: build
+> -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+> -  variables:
+> -    BUILD_ARCH: arm
+> -    CONFIG: moxa_mxc_defconfig
+> -    CONFIG_LOC: cip-kernel-config
+> -    BUILD_ONLY: "true"
+> -  script:
+> -    - /opt/build_kernel.sh
+> -  artifacts:
+> -    name: "$CI_JOB_NAME"
+> -    when: always
+> -    paths:
+> -      - output
+> -
+> -build:arm_renesas_shmobile_defconfig:
+> -  stage: build
+> -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+> -  variables:
+> -    BUILD_ARCH: arm
+> -    CONFIG: renesas_shmobile_defconfig
+> -    CONFIG_LOC: cip-kernel-config
+> -    DEVICES: r8a7743-iwg20d-q7 r8a7745-iwg22d-sodimm
+> -    DTBS: r8a7743-iwg20d-q7-dbcm-ca.dtb r8a7745-iwg22d-sodimm-dbhd-ca.dtb
+> -  script:
+> -    - /opt/build_kernel.sh
+> -  artifacts:
+> -    name: "$CI_JOB_NAME"
+> -    when: always
+> -    paths:
+> -      - output
+> -
+> -test:arm_renesas_shmobile_defconfig:
+> -  stage: test
+> -  needs: ["build:arm_renesas_shmobile_defconfig"]
+> -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:test-$DOCKER_IMAGE_TAG
+> -  variables:
+> -    GIT_STRATEGY: none
+> -  script:
+> -    - /opt/submit_tests.sh
+> -  artifacts:
+> -    name: "$CI_JOB_NAME"
+> -    when: always
+> -    paths:
+> -      - output
+> -
+> -build:arm_siemens_imx6.config:
+> -  stage: build
+> -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+> -  variables:
+> -    BUILD_ARCH: arm
+> -    CONFIG: siemens_imx6.config
+> -    CONFIG_LOC: cip-kernel-config
+> -    BUILD_ONLY: "true"
+> -  script:
+> -    - /opt/build_kernel.sh
+> -  artifacts:
+> -    name: "$CI_JOB_NAME"
+> -    when: always
+> -    paths:
+> -      - output
+> -
+> -build:arm64_moxa_eds_defconfig:
+> -  stage: build
+> -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+> -  variables:
+> -    BUILD_ARCH: arm64
+> -    CONFIG: moxa_eds_defconfig
+> -    CONFIG_LOC: cip-kernel-config
+> -    BUILD_ONLY: "true"
+> -  script:
+> -    - /opt/build_kernel.sh
+> -  artifacts:
+> -    name: "$CI_JOB_NAME"
+> -    when: always
+> -    paths:
+> -      - output
+> -
+> -build:arm64_renesas_defconfig:
+> -  stage: build
+> -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+> -  variables:
+> -    BUILD_ARCH: arm64
+> -    CONFIG: renesas_defconfig
+> -    CONFIG_LOC: cip-kernel-config
+> -    DEVICES: r8a774c0-ek874 r8a774a1-hihope-rzg2m-ex
+> -    DTBS: r8a774c0-ek874.dtb r8a774a1-hihope-rzg2m-ex.dtb
+> -  script:
+> -    - /opt/build_kernel.sh
+> -  artifacts:
+> -    name: "$CI_JOB_NAME"
+> -    when: always
+> -    paths:
+> -      - output
+> -
+> -test:arm64_renesas_defconfig:
+> -  stage: test
+> -  needs: ["build:arm64_renesas_defconfig"]
+> -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:test-$DOCKER_IMAGE_TAG
+> -  variables:
+> -    GIT_STRATEGY: none
+> -  script:
+> -    - /opt/submit_tests.sh
+> -  artifacts:
+> -    name: "$CI_JOB_NAME"
+> -    when: always
+> -    paths:
+> -      - output
+> -
+> -build:x86_plathome_obsvx2.config:
+> -  stage: build
+> -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+> -  variables:
+> -    BUILD_ARCH: x86
+> -    CONFIG: plathome_obsvx2.config
+> -    CONFIG_LOC: cip-kernel-config
+> -    BUILD_ONLY: "true"
+> -  script:
+> -    - /opt/build_kernel.sh
+> -  artifacts:
+> -    name: "$CI_JOB_NAME"
+> -    when: always
+> -    paths:
+> -      - output
+> -
+> -build:x86_siemens_iot2000.config:
+> -  stage: build
+> -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+> -  variables:
+> -    BUILD_ARCH: x86
+> -    CONFIG: siemens_iot2000.config
+> -    CONFIG_LOC: cip-kernel-config
+> -    BUILD_ONLY: "true"
+> -  script:
+> -    - /opt/build_kernel.sh
+> -  artifacts:
+> -    name: "$CI_JOB_NAME"
+> -    when: always
+> -    paths:
+> -      - output
+> -
+> -build:x86_siemens_server_defconfig:
+> -  stage: build
+> -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+> -  variables:
+> -    BUILD_ARCH: x86
+> -    CONFIG: siemens_server_defconfig
+> -    CONFIG_LOC: cip-kernel-config
+> -    BUILD_ONLY: "true"
+> -  script:
+> -    - /opt/build_kernel.sh
+> -  artifacts:
+> -    name: "$CI_JOB_NAME"
+> -    when: always
+> -    paths:
+> -      - output
+> -
+> -build:x86_toshiba_atom_baytrail_cip.config:
+> -  stage: build
+> -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
+> -  variables:
+> -    BUILD_ARCH: x86
+> -    CONFIG: toshiba_atom_baytrail_cip.config
+> -    CONFIG_LOC: cip-kernel-config
+> -    BUILD_ONLY: "true"
+> -  script:
+> -    - /opt/build_kernel.sh
+> -  artifacts:
+> -    name: "$CI_JOB_NAME"
+> -    when: always
+> -    paths:
+> -      - output
+> +include:
+> +  - https://gitlab.com/cip-project/cip-testing/linux-cip-pipelines/raw/master/linux-cip-pipeline.yml
+> +  - https://gitlab.com/cip-project/cip-testing/linux-cip-pipelines/raw/master/trees/linux-4.19.y-cip.yml
+> 
 
-> -----Original Message-----
-> From: cip-dev <cip-dev-bounces@lists.cip-project.org> On Behalf Of
-> nobuhiro1.iwamatsu at toshiba.co.jp
-> Sent: 31 January 2020 03:55
-> To: pavel at denx.de; biju.das at bp.renesas.com
-> Cc: cip-dev at lists.cip-project.org
-> Subject: Re: [cip-dev] [PATCH 4.19.y-cip 00/12] Renesas RZ/G2N extend
-> peripheral support
->
-> Hi,
->
-> > -----Original Message-----
-> > From: Pavel Machek [mailto:pavel at denx.de]
-> > Sent: Friday, January 31, 2020 7:45 AM
-> > To: Biju Das <biju.das@bp.renesas.com>
-> > Cc: cip-dev at lists.cip-project.org; iwamatsu nobuhiro(?? ?? ???
-> > ?????) <nobuhiro1.iwamatsu@toshiba.co.jp>; Pavel Machek
-> > <pavel@denx.de>; Chris Paterson <chris.paterson2@renesas.com>
-> > Subject: Re: [PATCH 4.19.y-cip 00/12] Renesas RZ/G2N extend peripheral
-> > support
-> >
-> > Hi!
-> >
-> > > This patch series adds support for following peripherals supported
-> > > by RZ G2N,
-> > > 1: SDHI
-> > > 2: Watchdog
-> > > 3: MSIOF
-> > > 4: PCIE
-> > >
-> > > Please note this patch series is based on top of the series [1].
-> > >
-> > > [1]
-> > >
-> > https://patchwork.kernel.org/project/cip-dev/list/?series=233689&sub
-> > mi
-> > > tter=&state=*&q=&archive=both&delegate=
-> >
-> > Series looks good to me, thanks. I guess Iwamatsu-san can apply both
-> > series if there are no objections, alternatively I can apply one or
-> > both of series.
->
-> This series looks good to me too.
-> And sorry, I had applied the previous series but had not contacted.
->
-> I applied and pushed this.
->
-Thank you for the review and acceptance.
+This causes an interesting error scenario for gitlabs on private networks:
 
-Cheers,
---Prabhakar
+"This GitLab CI configuration is invalid: Resolving config took longer 
+than expected"
 
-> Best regards,
->   Nobuhiro
->
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
+The reason is that gitlab tries to process any found .gitlab-ci.yml 
+file, in our case by fetching the includes. But when the gitlab instance 
+is isolated from public networks, the above will happen, and the user 
+will receive a notice about a failed pipeline on each update.
 
+The user can likely work around this by setting an invalid CI file for 
+such projects (we are validating this ATM), but I wonder if we should 
+rather set our .gitlab-ci.yml to a non-standard name. Or are there 
+sufficient scenarios where a user != us can make use of the CI file?
 
-Renesas Electronics Europe GmbH, Geschaeftsfuehrer/President: Carsten Jauch, Sitz der Gesellschaft/Registered office: Duesseldorf, Arcadiastrasse 10, 40472 Duesseldorf, Germany, Handelsregister/Commercial Register: Duesseldorf, HRB 3708 USt-IDNr./Tax identification no.: DE 119353406 WEEE-Reg.-Nr./WEEE reg. no.: DE 14978647
+Jan
+
+-- 
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+Corporate Competence Center Embedded Linux
