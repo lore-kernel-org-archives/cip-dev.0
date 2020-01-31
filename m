@@ -1,260 +1,111 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Fri, 31 Jan 2020 14:02:08 +0100
-Subject: [cip-dev] [PATCH linux-4.19.y-cip] gitlab-ci: Use external
- linux-cip-pipelines repository to define CI
-In-Reply-To: <20191121160008.4886-1-chris.paterson2@renesas.com>
-References: <20191121160008.4886-1-chris.paterson2@renesas.com>
-Message-ID: <a373951f-a300-d2c0-2fa2-e45e269d6600@siemens.com>
+From: sz.lin@moxa.com (=?UTF-8?B?U1ogTGluICjmnpfkuIrmmbop?=)
+Date: Fri, 31 Jan 2020 22:44:47 +0800
+Subject: [cip-dev] [cip-core] Package Proposal #2 (Minimum base packages
+ in Debian)
+In-Reply-To: <TYXPR01MB1808951D8345BDE55D6E7284E10F0@TYXPR01MB1808.jpnprd01.prod.outlook.com>
+References: <TYXPR01MB1808E5730818EAB90EB9558FE1360@TYXPR01MB1808.jpnprd01.prod.outlook.com>
+ <TYXPR01MB1808AFBB9C4A06F0E43B8EF4E10D0@TYXPR01MB1808.jpnprd01.prod.outlook.com>
+ <dc1e4578-64e7-dc3f-828c-43c907448018@renesas.com>
+ <TYXPR01MB1808951D8345BDE55D6E7284E10F0@TYXPR01MB1808.jpnprd01.prod.outlook.com>
+Message-ID: <CAFk6z8Nt4oxzCF5mH1VeP9un3Eg=k7yR1YhwA=U74LknMrdM-A@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 21.11.19 17:00, Chris Paterson wrote:
-> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-> ---
->   .gitlab-ci.yml | 217 +------------------------------------------------
->   1 file changed, 3 insertions(+), 214 deletions(-)
-> 
-> diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-> index 3e6d493bbc89..9630992fe864 100644
-> --- a/.gitlab-ci.yml
-> +++ b/.gitlab-ci.yml
-> @@ -1,214 +1,3 @@
-> -variables:
-> -  GIT_STRATEGY: clone
-> -  GIT_DEPTH: 10
-> -  DOCKER_DRIVER: overlay2
-> -  DOCKER_IMAGE_TAG: v2
-> -
-> -###############################
-> -# Standard CIP configurations #
-> -###############################
-> -build:arm_hitachi_cyclonev_defconfig:
-> -  stage: build
-> -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
-> -  variables:
-> -    BUILD_ARCH: arm
-> -    CONFIG: hitachi_cyclonev_defconfig
-> -    CONFIG_LOC: cip-kernel-config
-> -    BUILD_ONLY: "true"
-> -  script:
-> -    - /opt/build_kernel.sh
-> -  artifacts:
-> -    name: "$CI_JOB_NAME"
-> -    when: always
-> -    paths:
-> -      - output
-> -
-> -build:arm_hitachi_omap_defconfig:
-> -  stage: build
-> -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
-> -  variables:
-> -    BUILD_ARCH: arm
-> -    CONFIG: hitachi_omap_defconfig
-> -    CONFIG_LOC: cip-kernel-config
-> -    BUILD_ONLY: "true"
-> -  script:
-> -    - /opt/build_kernel.sh
-> -  artifacts:
-> -    name: "$CI_JOB_NAME"
-> -    when: always
-> -    paths:
-> -      - output
-> -
-> -build:arm_moxa_mxc_defconfig:
-> -  stage: build
-> -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
-> -  variables:
-> -    BUILD_ARCH: arm
-> -    CONFIG: moxa_mxc_defconfig
-> -    CONFIG_LOC: cip-kernel-config
-> -    BUILD_ONLY: "true"
-> -  script:
-> -    - /opt/build_kernel.sh
-> -  artifacts:
-> -    name: "$CI_JOB_NAME"
-> -    when: always
-> -    paths:
-> -      - output
-> -
-> -build:arm_renesas_shmobile_defconfig:
-> -  stage: build
-> -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
-> -  variables:
-> -    BUILD_ARCH: arm
-> -    CONFIG: renesas_shmobile_defconfig
-> -    CONFIG_LOC: cip-kernel-config
-> -    DEVICES: r8a7743-iwg20d-q7 r8a7745-iwg22d-sodimm
-> -    DTBS: r8a7743-iwg20d-q7-dbcm-ca.dtb r8a7745-iwg22d-sodimm-dbhd-ca.dtb
-> -  script:
-> -    - /opt/build_kernel.sh
-> -  artifacts:
-> -    name: "$CI_JOB_NAME"
-> -    when: always
-> -    paths:
-> -      - output
-> -
-> -test:arm_renesas_shmobile_defconfig:
-> -  stage: test
-> -  needs: ["build:arm_renesas_shmobile_defconfig"]
-> -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:test-$DOCKER_IMAGE_TAG
-> -  variables:
-> -    GIT_STRATEGY: none
-> -  script:
-> -    - /opt/submit_tests.sh
-> -  artifacts:
-> -    name: "$CI_JOB_NAME"
-> -    when: always
-> -    paths:
-> -      - output
-> -
-> -build:arm_siemens_imx6.config:
-> -  stage: build
-> -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
-> -  variables:
-> -    BUILD_ARCH: arm
-> -    CONFIG: siemens_imx6.config
-> -    CONFIG_LOC: cip-kernel-config
-> -    BUILD_ONLY: "true"
-> -  script:
-> -    - /opt/build_kernel.sh
-> -  artifacts:
-> -    name: "$CI_JOB_NAME"
-> -    when: always
-> -    paths:
-> -      - output
-> -
-> -build:arm64_moxa_eds_defconfig:
-> -  stage: build
-> -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
-> -  variables:
-> -    BUILD_ARCH: arm64
-> -    CONFIG: moxa_eds_defconfig
-> -    CONFIG_LOC: cip-kernel-config
-> -    BUILD_ONLY: "true"
-> -  script:
-> -    - /opt/build_kernel.sh
-> -  artifacts:
-> -    name: "$CI_JOB_NAME"
-> -    when: always
-> -    paths:
-> -      - output
-> -
-> -build:arm64_renesas_defconfig:
-> -  stage: build
-> -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
-> -  variables:
-> -    BUILD_ARCH: arm64
-> -    CONFIG: renesas_defconfig
-> -    CONFIG_LOC: cip-kernel-config
-> -    DEVICES: r8a774c0-ek874 r8a774a1-hihope-rzg2m-ex
-> -    DTBS: r8a774c0-ek874.dtb r8a774a1-hihope-rzg2m-ex.dtb
-> -  script:
-> -    - /opt/build_kernel.sh
-> -  artifacts:
-> -    name: "$CI_JOB_NAME"
-> -    when: always
-> -    paths:
-> -      - output
-> -
-> -test:arm64_renesas_defconfig:
-> -  stage: test
-> -  needs: ["build:arm64_renesas_defconfig"]
-> -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:test-$DOCKER_IMAGE_TAG
-> -  variables:
-> -    GIT_STRATEGY: none
-> -  script:
-> -    - /opt/submit_tests.sh
-> -  artifacts:
-> -    name: "$CI_JOB_NAME"
-> -    when: always
-> -    paths:
-> -      - output
-> -
-> -build:x86_plathome_obsvx2.config:
-> -  stage: build
-> -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
-> -  variables:
-> -    BUILD_ARCH: x86
-> -    CONFIG: plathome_obsvx2.config
-> -    CONFIG_LOC: cip-kernel-config
-> -    BUILD_ONLY: "true"
-> -  script:
-> -    - /opt/build_kernel.sh
-> -  artifacts:
-> -    name: "$CI_JOB_NAME"
-> -    when: always
-> -    paths:
-> -      - output
-> -
-> -build:x86_siemens_iot2000.config:
-> -  stage: build
-> -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
-> -  variables:
-> -    BUILD_ARCH: x86
-> -    CONFIG: siemens_iot2000.config
-> -    CONFIG_LOC: cip-kernel-config
-> -    BUILD_ONLY: "true"
-> -  script:
-> -    - /opt/build_kernel.sh
-> -  artifacts:
-> -    name: "$CI_JOB_NAME"
-> -    when: always
-> -    paths:
-> -      - output
-> -
-> -build:x86_siemens_server_defconfig:
-> -  stage: build
-> -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
-> -  variables:
-> -    BUILD_ARCH: x86
-> -    CONFIG: siemens_server_defconfig
-> -    CONFIG_LOC: cip-kernel-config
-> -    BUILD_ONLY: "true"
-> -  script:
-> -    - /opt/build_kernel.sh
-> -  artifacts:
-> -    name: "$CI_JOB_NAME"
-> -    when: always
-> -    paths:
-> -      - output
-> -
-> -build:x86_toshiba_atom_baytrail_cip.config:
-> -  stage: build
-> -  image: registry.gitlab.com/cip-project/cip-testing/linux-cip-ci:build-$DOCKER_IMAGE_TAG
-> -  variables:
-> -    BUILD_ARCH: x86
-> -    CONFIG: toshiba_atom_baytrail_cip.config
-> -    CONFIG_LOC: cip-kernel-config
-> -    BUILD_ONLY: "true"
-> -  script:
-> -    - /opt/build_kernel.sh
-> -  artifacts:
-> -    name: "$CI_JOB_NAME"
-> -    when: always
-> -    paths:
-> -      - output
-> +include:
-> +  - https://gitlab.com/cip-project/cip-testing/linux-cip-pipelines/raw/master/linux-cip-pipeline.yml
-> +  - https://gitlab.com/cip-project/cip-testing/linux-cip-pipelines/raw/master/trees/linux-4.19.y-cip.yml
-> 
+Hi,
 
-This causes an interesting error scenario for gitlabs on private networks:
+<kazuhiro3.hayashi@toshiba.co.jp> ? 2020?1?23? ?? ??7:52???
+>
+> Hello CIP Core members,
+>
+> Thank you for your replies.
+>
+> I need to wait for replies of Codethink, Hitachi, and Moxa,
+> so would like to postpone the due date to
+>         January 31th (Fri)
+> (Lunar New Year holiday until Jan 29th)
+>
+> Codethink
+> Cybertrust (Agreed #2)
+> Hitachi
+Moxa (Agreed #2)
 
-"This GitLab CI configuration is invalid: Resolving config took longer 
-than expected"
-
-The reason is that gitlab tries to process any found .gitlab-ci.yml 
-file, in our case by fetching the includes. But when the gitlab instance 
-is isolated from public networks, the above will happen, and the user 
-will receive a notice about a failed pipeline on each update.
-
-The user can likely work around this by setting an invalid CI file for 
-such projects (we are validating this ATM), but I wonder if we should 
-rather set our .gitlab-ci.yml to a non-standard name. Or are there 
-sufficient scenarios where a user != us can make use of the CI file?
-
-Jan
-
--- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+SZ
+> Renesas (Agreed #2)
+> Siemens (Agreed #2)
+> Toshiba (Agreed #2)
+>
+> Best regards,
+> Kazu
+>
+> > -----Original Message-----
+> > From: cip-dev [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Takehisa Katayama
+> > Sent: Thursday, January 23, 2020 5:07 PM
+> > To: cip-dev at lists.cip-project.org
+> > Subject: Re: [cip-dev] [cip-core] Package Proposal #2 (Minimum base packages in Debian)
+> >
+> > Hi Kazu-san,
+> >
+> > >> Please reply with you opinion, agree or disagree.
+> >
+> > Renesas agree.
+> >
+> > Thanks.
+> >
+> > Best regards,
+> > Takehisa Katayama.
+> >
+> >
+> >
+> > On 2020/01/21 9:52, kazuhiro3.hayashi at toshiba.co.jp wrote:
+> > > Hello CIP Core members,
+> > >
+> > >> Due Date: January 20th (The next TSC meeting)
+> > >
+> > > If you have not yet replied to this proposal, please send us your opinion by
+> > >     January 23th (By the next IRC meeting)
+> > >
+> > > Best regards,
+> > > Kazu
+> > >
+> > >>
+> > >> Hello CIP Core members,
+> > >>
+> > >> I created a simple package proposal for the packages that are installed in the "minimum base system" of Debian.
+> > >> These packages are installed by
+> > >>    $ debootstrap --variant=minbase buster ...
+> > >>
+> > >> It consists of 58 source packages and 84 binary packages, including all run-time dependencies.
+> > >>
+> > >> The common reason to propose:
+> > >> "This package is included in the minimum base system of Debian (debootstrap --variant=minbase),
+> > >> which is essential for all Debian binary package based systems"
+> > >>
+> > >>
+> > >> I would like to start the "review" phase (Phase 2) of the attached package proposal.
+> > >> https://gitlab.com/cip-project/cip-core/cip-pkglist/blob/master/doc/pdp.md#phase-2-proposal-review
+> > >>
+> > >> Please reply with you opinion, agree or disagree.
+> > >> If you cannot agree to add specific packages, please show the reasons as well.
+> > >>
+> > >> Due Date: January 20th (The next TSC meeting)
+> > >>
+> > >> We have only 2-3 working days for this review, but
+> > >> I think it may be enough to agree or disagree the very simple reason above.
+> > >> (We can extend this due date if more time required for reviews, please let me know if any requests)
+> > >>
+> > >> Best regards,
+> > >> Kazu
+> > > _______________________________________________
+> > > cip-dev mailing list
+> > > cip-dev at lists.cip-project.org
+> > > https://lists.cip-project.org/mailman/listinfo/cip-dev
+> > > .
+> > >
+> > _______________________________________________
+> > cip-dev mailing list
+> > cip-dev at lists.cip-project.org
+> > https://lists.cip-project.org/mailman/listinfo/cip-dev
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
