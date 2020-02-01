@@ -1,28 +1,46 @@
-From: pavel@denx.de (Pavel Machek)
-Date: Fri, 31 Jan 2020 23:43:45 +0100
+From: iwamatsu@nigauri.org (Nobuhiro Iwamatsu)
+Date: Sat, 1 Feb 2020 12:46:06 +0900
 Subject: [cip-dev] 4.19-cip: test failure
-Message-ID: <20200131224345.GA7777@amd>
+In-Reply-To: <20200131224345.GA7777@amd>
+References: <20200131224345.GA7777@amd>
+Message-ID: <CABMQnVLcW6LroC2f9fWr3JPZbHQMYaSR+WOpnWwJfuPLT9dLOA@mail.gmail.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi!
+Hi,
 
-I see test failure with current 4.19-cip kernel:
+This seems to be because this board cannot log in to rootfs.
+   https://lava.ciplatform.org/scheduler/job/10588
 
-https://gitlab.com/cip-project/cip-kernel/linux-cip/pipelines/113826697
+I retry this test now.
 
-I believe there's something wrong with the x86_siemens board (rather
-then real problem in code), but I guess someone should double check.
+Best regards,
+  Nobuhiro
 
-Thanks and best regards,
-									Pavel
+2020?2?1?(?) 7:43 Pavel Machek <pavel@denx.de>:
+>
+> Hi!
+>
+> I see test failure with current 4.19-cip kernel:
+>
+> https://gitlab.com/cip-project/cip-kernel/linux-cip/pipelines/113826697
+>
+> I believe there's something wrong with the x86_siemens board (rather
+> then real problem in code), but I guess someone should double check.
+>
+> Thanks and best regards,
+>                                                                         Pavel
+> --
+> (english) http://www.livejournal.com/~pavelmachek
+> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
+
+
+
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 181 bytes
-Desc: Digital signature
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20200131/f35c0831/attachment.sig>
+Nobuhiro Iwamatsu
+   iwamatsu at {nigauri.org / debian.org}
+   GPG ID: 40AD1FA6
