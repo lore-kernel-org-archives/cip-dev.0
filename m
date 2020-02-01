@@ -1,46 +1,56 @@
-From: iwamatsu@nigauri.org (Nobuhiro Iwamatsu)
-Date: Sat, 1 Feb 2020 12:46:06 +0900
-Subject: [cip-dev] 4.19-cip: test failure
-In-Reply-To: <20200131224345.GA7777@amd>
-References: <20200131224345.GA7777@amd>
-Message-ID: <CABMQnVLcW6LroC2f9fWr3JPZbHQMYaSR+WOpnWwJfuPLT9dLOA@mail.gmail.com>
+From: prabhakar.mahadev-lad.rj@bp.renesas.com (Lad Prabhakar)
+Date: Sat,  1 Feb 2020 12:26:48 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 00/14] Renesas RZ/G2 extend peripheral
+	support
+Message-ID: <1580560022-26873-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi,
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-This seems to be because this board cannot log in to rootfs.
-   https://lava.ciplatform.org/scheduler/job/10588
+This patch series adds support for for following peripherals supported
+by RZ/G2N:
+1] I2C and IIC-DVFS
+2] OPP's table for CPU nodes
+3] Thermal zones
+4] CMT and TMU
 
-I retry this test now.
+This patch series is based on linux-4.19.y-cip and all the patches in 
+this series are cherry-picked from upstream.
 
-Best regards,
-  Nobuhiro
+Biju Das (12):
+  dt-bindings: i2c: rcar: Add r8a774b1 support
+  dt-bindings: i2c: sh_mobile: Add r8a774b1 support
+  arm64: dts: renesas: r8a774b1: Add I2C and IIC-DVFS support
+  arm64: dts: renesas: r8a774b1: Add OPPs table for cpu devices
+  dt-bindings: thermal: rcar-gen3-thermal: Add r8a774b1 support
+  thermal: rcar_gen3_thermal: Add r8a774b1 support
+  arm64: dts: renesas: r8a774b1: Add RZ/G2N thermal support
+  dt-bindings: timer: renesas, cmt: Document r8a774b1 CMT support
+  arm64: dts: renesas: r8a774b1: Add CMT device nodes
+  dt-bindings: timer: renesas: tmu: Document r8a774b1 bindings
+  clk: renesas: r8a774b1: Add TMU clock
+  arm64: dts: renesas: r8a774b1: Add TMU device nodes
 
-2020?2?1?(?) 7:43 Pavel Machek <pavel@denx.de>:
->
-> Hi!
->
-> I see test failure with current 4.19-cip kernel:
->
-> https://gitlab.com/cip-project/cip-kernel/linux-cip/pipelines/113826697
->
-> I believe there's something wrong with the x86_siemens board (rather
-> then real problem in code), but I guess someone should double check.
->
-> Thanks and best regards,
->                                                                         Pavel
-> --
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
+Simon Horman (2):
+  dt-bindings: i2c: rcar: Rename bindings documentation file
+  dt-bindings: i2c: sh_mobile: Rename bindings documentation file
 
-
+ Documentation/devicetree/bindings/i2c/i2c-rcar.txt |  60 ----
+ .../devicetree/bindings/i2c/i2c-sh_mobile.txt      |  67 ----
+ .../devicetree/bindings/i2c/renesas,i2c.txt        |  61 ++++
+ .../devicetree/bindings/i2c/renesas,iic.txt        |  68 ++++
+ .../bindings/thermal/rcar-gen3-thermal.txt         |   1 +
+ .../devicetree/bindings/timer/renesas,cmt.txt      |   2 +
+ .../devicetree/bindings/timer/renesas,tmu.txt      |   1 +
+ arch/arm64/boot/dts/renesas/r8a774b1.dtsi          | 359 ++++++++++++++++++++-
+ drivers/clk/renesas/r8a774b1-cpg-mssr.c            |   5 +
+ drivers/thermal/rcar_gen3_thermal.c                |   4 +
+ 10 files changed, 500 insertions(+), 128 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-rcar.txt
+ delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt
+ create mode 100644 Documentation/devicetree/bindings/i2c/renesas,i2c.txt
+ create mode 100644 Documentation/devicetree/bindings/i2c/renesas,iic.txt
 
 -- 
-Nobuhiro Iwamatsu
-   iwamatsu at {nigauri.org / debian.org}
-   GPG ID: 40AD1FA6
+2.7.4
