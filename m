@@ -1,182 +1,168 @@
 From: prabhakar.mahadev-lad.rj@bp.renesas.com (Lad Prabhakar)
-Date: Sat,  1 Feb 2020 12:26:51 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 03/14] dt-bindings: i2c: sh_mobile:
-	Rename bindings documentation file
+Date: Sat,  1 Feb 2020 12:26:53 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 05/14] arm64: dts: renesas: r8a774b1:
+	Add I2C and IIC-DVFS support
 In-Reply-To: <1580560022-26873-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <1580560022-26873-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Message-ID: <1580560022-26873-4-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Message-ID: <1580560022-26873-6-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Simon Horman <horms+renesas@verge.net.au>
+From: Biju Das <biju.das@bp.renesas.com>
 
-commit 23c2556d8fbec57e72e2c8fd8b7be2715c192b25 upstream.
+commit 070302d4673a6229506226b03acb555cc8bd0eec upstream.
 
-Rename the bindings documentation file for sh_mobile I2C controller
-from i2c-sh_mobile.txt to renesas,iic.txt.
+Add the I2C[0-6] and IIC Bus Interface for DVFS (IIC for DVFS)
+devices nodes to the r8a774b1 device tree.
 
-This is part of an ongoing effort to name bindings documentation files for
-Renesas IP blocks consistently, in line with the compat strings they
-document.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-(dropped unsupported compatible strings. dropped updating MAINTAINERS
-file since the entry didnt exist)
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Link: https://lore.kernel.org/r/1569313375-53428-3-git-send-email-biju.das at bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- .../devicetree/bindings/i2c/i2c-sh_mobile.txt      | 67 ----------------------
- .../devicetree/bindings/i2c/renesas,iic.txt        | 67 ++++++++++++++++++++++
- 2 files changed, 67 insertions(+), 67 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt
- create mode 100644 Documentation/devicetree/bindings/i2c/renesas,iic.txt
+ arch/arm64/boot/dts/renesas/r8a774b1.dtsi | 126 +++++++++++++++++++++++++++++-
+ 1 file changed, 125 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt b/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt
-deleted file mode 100644
-index 392162a..0000000
---- a/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt
-+++ /dev/null
-@@ -1,67 +0,0 @@
--Device tree configuration for Renesas IIC (sh_mobile) driver
--
--Required properties:
--- compatible      :
--			- "renesas,iic-r8a73a4" (R-Mobile APE6)
--			- "renesas,iic-r8a7740" (R-Mobile A1)
--			- "renesas,iic-r8a7743" (RZ/G1M)
--			- "renesas,iic-r8a7745" (RZ/G1E)
--			- "renesas,iic-r8a774a1" (RZ/G2M)
--			- "renesas,iic-r8a774c0" (RZ/G2E)
--			- "renesas,iic-r8a7790" (R-Car H2)
--			- "renesas,iic-r8a7791" (R-Car M2-W)
--			- "renesas,iic-r8a7792" (R-Car V2H)
--			- "renesas,iic-r8a7793" (R-Car M2-N)
--			- "renesas,iic-r8a7794" (R-Car E2)
--			- "renesas,iic-r8a7795" (R-Car H3)
--			- "renesas,iic-r8a7796" (R-Car M3-W)
--			- "renesas,iic-r8a77965" (R-Car M3-N)
--			- "renesas,iic-r8a77990" (R-Car E3)
--			- "renesas,iic-sh73a0" (SH-Mobile AG5)
--			- "renesas,rcar-gen2-iic" (generic R-Car Gen2 or RZ/G1
--							compatible device)
--			- "renesas,rcar-gen3-iic" (generic R-Car Gen3 or RZ/G2
--							compatible device)
--			- "renesas,rmobile-iic" (generic device)
--
--			When compatible with a generic R-Car version, nodes
--			must list the SoC-specific version corresponding to
--			the platform first followed by the generic R-Car
--			version.
--
--			When compatible with "renesas,rmobile-iic" it should
--			be the last compatibility string listed.
--
--			The r8a77990 (R-Car E3) and r8a774c0 (RZ/G2E)
--			controllers are not considered compatible with
--			"renesas,rcar-gen3-iic" or "renesas,rmobile-iic"
--			due to the absence of automatic transmission registers.
--
--- reg             : address start and address range size of device
--- interrupts      : interrupt of device
--- clocks          : clock for device
--- #address-cells  : should be <1>
--- #size-cells     : should be <0>
--
--Optional properties:
--- clock-frequency : frequency of bus clock in Hz. Default 100kHz if unset.
--- dmas            : Must contain a list of two references to DMA
--		    specifiers, one for transmission, and one for
--		    reception.
--- dma-names       : Must contain a list of two DMA names, "tx" and "rx".
--
--
--Pinctrl properties might be needed, too. See there.
--
--Example:
--
--	iic0: i2c at e6500000 {
--		compatible = "renesas,iic-r8a7790", "renesas,rcar-gen2-iic",
--			     "renesas,rmobile-iic";
--		reg = <0 0xe6500000 0 0x425>;
--		interrupts = <0 174 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp3_clks R8A7790_CLK_IIC0>;
--		clock-frequency = <400000>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--	};
-diff --git a/Documentation/devicetree/bindings/i2c/renesas,iic.txt b/Documentation/devicetree/bindings/i2c/renesas,iic.txt
-new file mode 100644
-index 0000000..392162a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/i2c/renesas,iic.txt
-@@ -0,0 +1,67 @@
-+Device tree configuration for Renesas IIC (sh_mobile) driver
+diff --git a/arch/arm64/boot/dts/renesas/r8a774b1.dtsi b/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
+index 08f98b6..f4d60d5 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
+@@ -298,11 +298,135 @@
+ 			resets = <&cpg 407>;
+ 		};
+ 
++		i2c0: i2c at e6500000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,i2c-r8a774b1",
++				     "renesas,rcar-gen3-i2c";
++			reg = <0 0xe6500000 0 0x40>;
++			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 931>;
++			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
++			resets = <&cpg 931>;
++			dmas = <&dmac1 0x91>, <&dmac1 0x90>,
++			       <&dmac2 0x91>, <&dmac2 0x90>;
++			dma-names = "tx", "rx", "tx", "rx";
++			i2c-scl-internal-delay-ns = <110>;
++			status = "disabled";
++		};
 +
-+Required properties:
-+- compatible      :
-+			- "renesas,iic-r8a73a4" (R-Mobile APE6)
-+			- "renesas,iic-r8a7740" (R-Mobile A1)
-+			- "renesas,iic-r8a7743" (RZ/G1M)
-+			- "renesas,iic-r8a7745" (RZ/G1E)
-+			- "renesas,iic-r8a774a1" (RZ/G2M)
-+			- "renesas,iic-r8a774c0" (RZ/G2E)
-+			- "renesas,iic-r8a7790" (R-Car H2)
-+			- "renesas,iic-r8a7791" (R-Car M2-W)
-+			- "renesas,iic-r8a7792" (R-Car V2H)
-+			- "renesas,iic-r8a7793" (R-Car M2-N)
-+			- "renesas,iic-r8a7794" (R-Car E2)
-+			- "renesas,iic-r8a7795" (R-Car H3)
-+			- "renesas,iic-r8a7796" (R-Car M3-W)
-+			- "renesas,iic-r8a77965" (R-Car M3-N)
-+			- "renesas,iic-r8a77990" (R-Car E3)
-+			- "renesas,iic-sh73a0" (SH-Mobile AG5)
-+			- "renesas,rcar-gen2-iic" (generic R-Car Gen2 or RZ/G1
-+							compatible device)
-+			- "renesas,rcar-gen3-iic" (generic R-Car Gen3 or RZ/G2
-+							compatible device)
-+			- "renesas,rmobile-iic" (generic device)
++		i2c1: i2c at e6508000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,i2c-r8a774b1",
++				     "renesas,rcar-gen3-i2c";
++			reg = <0 0xe6508000 0 0x40>;
++			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 930>;
++			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
++			resets = <&cpg 930>;
++			dmas = <&dmac1 0x93>, <&dmac1 0x92>,
++			       <&dmac2 0x93>, <&dmac2 0x92>;
++			dma-names = "tx", "rx", "tx", "rx";
++			i2c-scl-internal-delay-ns = <6>;
++			status = "disabled";
++		};
 +
-+			When compatible with a generic R-Car version, nodes
-+			must list the SoC-specific version corresponding to
-+			the platform first followed by the generic R-Car
-+			version.
++		i2c2: i2c at e6510000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,i2c-r8a774b1",
++				     "renesas,rcar-gen3-i2c";
++			reg = <0 0xe6510000 0 0x40>;
++			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 929>;
++			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
++			resets = <&cpg 929>;
++			dmas = <&dmac1 0x95>, <&dmac1 0x94>,
++			       <&dmac2 0x95>, <&dmac2 0x94>;
++			dma-names = "tx", "rx", "tx", "rx";
++			i2c-scl-internal-delay-ns = <6>;
++			status = "disabled";
++		};
 +
-+			When compatible with "renesas,rmobile-iic" it should
-+			be the last compatibility string listed.
++		i2c3: i2c at e66d0000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,i2c-r8a774b1",
++				     "renesas,rcar-gen3-i2c";
++			reg = <0 0xe66d0000 0 0x40>;
++			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 928>;
++			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
++			resets = <&cpg 928>;
++			dmas = <&dmac0 0x97>, <&dmac0 0x96>;
++			dma-names = "tx", "rx";
++			i2c-scl-internal-delay-ns = <110>;
++			status = "disabled";
++		};
 +
-+			The r8a77990 (R-Car E3) and r8a774c0 (RZ/G2E)
-+			controllers are not considered compatible with
-+			"renesas,rcar-gen3-iic" or "renesas,rmobile-iic"
-+			due to the absence of automatic transmission registers.
+ 		i2c4: i2c at e66d8000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
++			compatible = "renesas,i2c-r8a774b1",
++				     "renesas,rcar-gen3-i2c";
+ 			reg = <0 0xe66d8000 0 0x40>;
+-			/* placeholder */
++			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 927>;
++			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
++			resets = <&cpg 927>;
++			dmas = <&dmac0 0x99>, <&dmac0 0x98>;
++			dma-names = "tx", "rx";
++			i2c-scl-internal-delay-ns = <110>;
++			status = "disabled";
++		};
 +
-+- reg             : address start and address range size of device
-+- interrupts      : interrupt of device
-+- clocks          : clock for device
-+- #address-cells  : should be <1>
-+- #size-cells     : should be <0>
++		i2c5: i2c at e66e0000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,i2c-r8a774b1",
++				     "renesas,rcar-gen3-i2c";
++			reg = <0 0xe66e0000 0 0x40>;
++			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 919>;
++			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
++			resets = <&cpg 919>;
++			dmas = <&dmac0 0x9b>, <&dmac0 0x9a>;
++			dma-names = "tx", "rx";
++			i2c-scl-internal-delay-ns = <110>;
++			status = "disabled";
++		};
 +
-+Optional properties:
-+- clock-frequency : frequency of bus clock in Hz. Default 100kHz if unset.
-+- dmas            : Must contain a list of two references to DMA
-+		    specifiers, one for transmission, and one for
-+		    reception.
-+- dma-names       : Must contain a list of two DMA names, "tx" and "rx".
++		i2c6: i2c at e66e8000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,i2c-r8a774b1",
++				     "renesas,rcar-gen3-i2c";
++			reg = <0 0xe66e8000 0 0x40>;
++			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 918>;
++			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
++			resets = <&cpg 918>;
++			dmas = <&dmac0 0x9d>, <&dmac0 0x9c>;
++			dma-names = "tx", "rx";
++			i2c-scl-internal-delay-ns = <6>;
++			status = "disabled";
++		};
 +
-+
-+Pinctrl properties might be needed, too. See there.
-+
-+Example:
-+
-+	iic0: i2c at e6500000 {
-+		compatible = "renesas,iic-r8a7790", "renesas,rcar-gen2-iic",
-+			     "renesas,rmobile-iic";
-+		reg = <0 0xe6500000 0 0x425>;
-+		interrupts = <0 174 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp3_clks R8A7790_CLK_IIC0>;
-+		clock-frequency = <400000>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
++		i2c_dvfs: i2c at e60b0000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,iic-r8a774b1",
++				     "renesas,rcar-gen3-iic",
++				     "renesas,rmobile-iic";
++			reg = <0 0xe60b0000 0 0x425>;
++			interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 926>;
++			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
++			resets = <&cpg 926>;
++			dmas = <&dmac0 0x11>, <&dmac0 0x10>;
++			dma-names = "tx", "rx";
++			status = "disabled";
+ 		};
+ 
+ 		hscif0: serial at e6540000 {
 -- 
 2.7.4
