@@ -1,103 +1,42 @@
-From: prabhakar.mahadev-lad.rj@bp.renesas.com (Lad Prabhakar)
-Date: Sat,  1 Feb 2020 12:27:02 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 14/14] arm64: dts: renesas: r8a774b1:
-	Add TMU device nodes
-In-Reply-To: <1580560022-26873-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <1580560022-26873-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Message-ID: <1580560022-26873-15-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: pavel@denx.de (Pavel Machek)
+Date: Sun, 2 Feb 2020 19:01:08 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 05/12] arm64: dts: renesas:
+ r8a774b1: Add all MSIOF nodes
+In-Reply-To: <OSBPR01MB5160106AB2B733ED6B690860AA040@OSBPR01MB5160.jpnprd01.prod.outlook.com>
+References: <1580308205-20435-1-git-send-email-biju.das@bp.renesas.com>
+ <1580308205-20435-6-git-send-email-biju.das@bp.renesas.com>
+ <20200130192653.GA6721@duo.ucw.cz>
+ <OSBPR01MB5160106AB2B733ED6B690860AA040@OSBPR01MB5160.jpnprd01.prod.outlook.com>
+Message-ID: <20200202180108.GA30851@duo.ucw.cz>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Biju Das <biju.das@bp.renesas.com>
+Hi!
 
-commit 928249b781eb5ca598bd32f3e72b90bc3adcf3f6 upstream.
+> > > commit c88657c4a1ead900cf59d87511d7deee41ed92a5 upstream.
+> > >
+> > > Add the device nodes for all MSIOF SPI controllers on the RZ/G2N SoC
+> > > (a.k.a. r8a774b1).
+> >
+> > I googled a bit, and MSIOF SPI seems to be "slave" controller on SPI. But I still
+> > don't know what "MSIOF" stands for, if anything.
+> >
+> "MSIOF" stands for clock-synchronized serial interface with FIFO, this interface supports IIS and
+> SPI serial formats (master and slave mode). ATM only SPI master mode is supported in mainline
+> Kernel.
 
-This patch adds TMU[01234] device tree nodes to the
-r8a774b1 SoC specific DT.
+Ok, I can imagine that. But is "MSIOF" an acronym, and if so, what
+does it stand for?
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Link: https://lore.kernel.org/r/1569250648-33857-5-git-send-email-biju.das at bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a774b1.dtsi | 65 +++++++++++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a774b1.dtsi b/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
-index 4c890d7..65d39ae 100644
---- a/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
-@@ -473,6 +473,71 @@
- 			#thermal-sensor-cells = <1>;
- 		};
- 
-+		tmu0: timer at e61e0000 {
-+			compatible = "renesas,tmu-r8a774b1", "renesas,tmu";
-+			reg = <0 0xe61e0000 0 0x30>;
-+			interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 125>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
-+			resets = <&cpg 125>;
-+			status = "disabled";
-+		};
-+
-+		tmu1: timer at e6fc0000 {
-+			compatible = "renesas,tmu-r8a774b1", "renesas,tmu";
-+			reg = <0 0xe6fc0000 0 0x30>;
-+			interrupts = <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 124>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
-+			resets = <&cpg 124>;
-+			status = "disabled";
-+		};
-+
-+		tmu2: timer at e6fd0000 {
-+			compatible = "renesas,tmu-r8a774b1", "renesas,tmu";
-+			reg = <0 0xe6fd0000 0 0x30>;
-+			interrupts = <GIC_SPI 303 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 123>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
-+			resets = <&cpg 123>;
-+			status = "disabled";
-+		};
-+
-+		tmu3: timer at e6fe0000 {
-+			compatible = "renesas,tmu-r8a774b1", "renesas,tmu";
-+			reg = <0 0xe6fe0000 0 0x30>;
-+			interrupts = <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 122>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
-+			resets = <&cpg 122>;
-+			status = "disabled";
-+		};
-+
-+		tmu4: timer at ffc00000 {
-+			compatible = "renesas,tmu-r8a774b1", "renesas,tmu";
-+			reg = <0 0xffc00000 0 0x30>;
-+			interrupts = <GIC_SPI 406 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 407 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 408 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 121>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
-+			resets = <&cpg 121>;
-+			status = "disabled";
-+		};
-+
- 		i2c4: i2c at e66d8000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
+Best regards,
+								Pavel
 -- 
-2.7.4
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 195 bytes
+Desc: not available
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20200202/2fe8a18d/attachment.sig>
