@@ -1,50 +1,88 @@
 From: Chris.Paterson2@renesas.com (Chris Paterson)
-Date: Mon, 3 Feb 2020 08:27:49 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 05/12] arm64: dts: renesas:
- r8a774b1: Add all MSIOF nodes
-In-Reply-To: <20200202180108.GA30851@duo.ucw.cz>
-References: <1580308205-20435-1-git-send-email-biju.das@bp.renesas.com>
- <1580308205-20435-6-git-send-email-biju.das@bp.renesas.com>
- <20200130192653.GA6721@duo.ucw.cz>
- <OSBPR01MB5160106AB2B733ED6B690860AA040@OSBPR01MB5160.jpnprd01.prod.outlook.com>
- <20200202180108.GA30851@duo.ucw.cz>
-Message-ID: <TYAPR01MB2285A317EF9D4BA9E721B5C4B7000@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+Date: Mon, 3 Feb 2020 08:51:18 +0000
+Subject: [cip-dev] [PATCH linux-4.19.y-cip] gitlab-ci: Use external
+ linux-cip-pipelines repository to define CI
+In-Reply-To: <a373951f-a300-d2c0-2fa2-e45e269d6600@siemens.com>
+References: <20191121160008.4886-1-chris.paterson2@renesas.com>
+ <a373951f-a300-d2c0-2fa2-e45e269d6600@siemens.com>
+Message-ID: <TYAPR01MB228554BA1F639D4323DF6CD3B7000@TYAPR01MB2285.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Pavel,
+Hello Jan,
 
-> From: cip-dev <cip-dev-bounces@lists.cip-project.org> On Behalf Of Pavel
-> Machek
-> Sent: 02 February 2020 18:01
->
-> Hi!
->
-> > > > commit c88657c4a1ead900cf59d87511d7deee41ed92a5 upstream.
-> > > >
-> > > > Add the device nodes for all MSIOF SPI controllers on the RZ/G2N SoC
-> > > > (a.k.a. r8a774b1).
-> > >
-> > > I googled a bit, and MSIOF SPI seems to be "slave" controller on SPI. But I
-> still
-> > > don't know what "MSIOF" stands for, if anything.
-> > >
-> > "MSIOF" stands for clock-synchronized serial interface with FIFO, this
-> interface supports IIS and
-> > SPI serial formats (master and slave mode). ATM only SPI master mode is
-> supported in mainline
-> > Kernel.
->
-> Ok, I can imagine that. But is "MSIOF" an acronym, and if so, what
-> does it stand for?
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+> Sent: 31 January 2020 13:02
+> 
+> On 21.11.19 17:00, Chris Paterson wrote:
+> > Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+> > ---
 
-To be honest, even I'm not sure what the acronym is meant to mean (or even if there is a direct meaning), but the 'long' name for the IP block is "Clock-Synchronized Serial Interface with FIFO".
+[...]
 
+> > +include:
+> > +  - https://gitlab.com/cip-project/cip-testing/linux-cip-
+> pipelines/raw/master/linux-cip-pipeline.yml
+> > +  - https://gitlab.com/cip-project/cip-testing/linux-cip-
+> pipelines/raw/master/trees/linux-4.19.y-cip.yml
+> >
+> 
+> This causes an interesting error scenario for gitlabs on private networks:
+> 
+> "This GitLab CI configuration is invalid: Resolving config took longer
+> than expected"
+> 
+> The reason is that gitlab tries to process any found .gitlab-ci.yml
+> file, in our case by fetching the includes. But when the gitlab instance
+> is isolated from public networks, the above will happen, and the user
+> will receive a notice about a failed pipeline on each update.
+
+Hmmm this is a good point. TBH, I didn't even consider it when making the above changes.
+
+> 
+> The user can likely work around this by setting an invalid CI file for
+> such projects (we are validating this ATM), but I wonder if we should
+> rather set our .gitlab-ci.yml to a non-standard name. 
+
+Moving .gitlab-ci.yml to another filename could be one approach to avoid failed CI jobs in local/offline GitLab instances.
+It wouldn't have much impact on CIP, we'd just have to change the CI settings to look for the new filename.
+Does anyone have any other opinions/ideas?
+
+For an offline machine though you'd have to add a gitlab-ci file to point to an internal clone/fork of linux-cip-pipelines. You'd also have to store the Docker containers from linux-cip-ci somewhere local and update the links etc.
+
+> Or are there
+> sufficient scenarios where a user != us can make use of the CI file?
+
+Others could use our current approach (assuming they have the relevant variables set up in the GitLab CI/CD settings). They may want to use different Kernel configurations with their builds, which they can do by updating the .gitlab-ci.yml with their options. For example, replacing the include to the 'tree' yml file with something else:
+
+include:
+  - https://gitlab.com/cip-project/cip-testing/linux-cip-pipelines/raw/master/linux-cip-pipeline.yml
+
+build:arm_renesas_shmobile-rt_defconfig:
+  extends: .build
+  variables:
+    BUILD_ARCH: arm
+    CONFIG: renesas_shmobile-rt_defconfig
+    CONFIG_LOC: url
+    CONFIG_URL: https://gitlab.com/patersonc/cip-kernel-config/raw/chris/add_renesas_rt_configs/4.4.y-cip-rt/arm/
+
+test:arm_renesas_shmobile-rt_defconfig:
+  extends: .test
+  needs: ["build:arm_renesas_shmobile-rt_defconfig"]
+  variables:
+    BUILD_ARCH: arm
+    CONFIG: renesas_shmobile-rt_defconfig
+    DEVICES: r8a7743-iwg20d-q7 r8a7745-iwg22d-sodimm r8a77470-iwg23s-sbc
+    DTBS: r8a7743-iwg20d-q7-dbcm-ca.dtb r8a7745-iwg22d-sodimm-dbhd-ca.dtb r8a77470-iwg23s-sbc.dtb
+    TESTS: boot smc
+
+ 
 Kind regards, Chris
 
->
-> Best regards,
-> ????? ??????? ??????? ??????? ??????? ??????? ??????? ??????? Pavel
+
+> 
+> Jan
+> 
 > --
-> DENX Software Engineering GmbH,????? Managing Director: Wolfgang Denk
-> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+> Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+> Corporate Competence Center Embedded Linux
