@@ -1,66 +1,44 @@
-From: pavel@denx.de (Pavel Machek)
-Date: Tue, 4 Feb 2020 13:47:21 +0100
-Subject: [cip-dev] [PATCH 4.4 00/53] 4.4.213-stable review
-In-Reply-To: <TYAPR01MB2285D96DC944217E7A22F8C6B7030@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-References: <20200203161902.714326084@linuxfoundation.org>
- <TYAPR01MB2285D96DC944217E7A22F8C6B7030@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-Message-ID: <20200204124721.GB6903@duo.ucw.cz>
+From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
+Date: Tue, 4 Feb 2020 23:19:15 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 00/14] Renesas RZ/G2 extend
+	peripheral support
+In-Reply-To: <20200202184325.GA1870@duo.ucw.cz>
+References: <1580560022-26873-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20200202184325.GA1870@duo.ucw.cz>
+Message-ID: <OSAPR01MB3667E28321D0C1E814401CA892030@OSAPR01MB3667.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi!
+Hi,
 
-> > From: stable-owner at vger.kernel.org <stable-owner@vger.kernel.org> On
-> > Behalf Of Greg Kroah-Hartman
-> > Sent: 03 February 2020 16:19
-> > 
-> > This is the start of the stable review cycle for the 4.4.213 release.
-> > There are 53 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed, 05 Feb 2020 16:17:59 +0000.
-> > Anything received after that time might be too late.
+> -----Original Message-----
+> From: Pavel Machek [mailto:pavel at denx.de]
+> Sent: Monday, February 3, 2020 3:43 AM
+> To: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Cc: cip-dev at lists.cip-project.org; iwamatsu nobuhiro(?? ?? ???
+> ?????) <nobuhiro1.iwamatsu@toshiba.co.jp>; Pavel Machek
+> <pavel@denx.de>; Chris Paterson <chris.paterson2@renesas.com>
+> Subject: Re: [PATCH 4.19.y-cip 00/14] Renesas RZ/G2 extend peripheral
+> support
 > 
-> We're seeing an issue with 4.4.213-rc1 (36670370c48b) and 4.4.213-rc2 (758a39807529) with our 4 am335x configurations [0]:
+> Hi!
 > 
->    AS      arch/arm/kernel/hyp-stub.o
->  arch/arm/kernel/hyp-stub.S:   CC      arch/arm/mach-omap2/sram.o
->  Assembler messages:
->    AS      arch/arm/kernel/smccc-call.o
->  arch/arm/kernel/hyp-stub.S:147: Error: selected processor does not support `ubfx r7,r7,#16,#4' in ARM mode
->  scripts/Makefile.build:375: recipe for target 'arch/arm/kernel/hyp-stub.o' failed
->  make[1]: *** [arch/arm/kernel/hyp-stub.o] Error 1
+> > From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> >
+> > This patch series adds support for for following peripherals supported
+> > by RZ/G2N:
+> > 1] I2C and IIC-DVFS
+> > 2] OPP's table for CPU nodes
+> > 3] Thermal zones
+> > 4] CMT and TMU
+> >
+> > This patch series is based on linux-4.19.y-cip and all the patches in
+> > this series are cherry-picked from upstream.
 > 
-> The culprit seems to be: 15163bcee7b5 ("ARM: 8955/1: virt: Relax arch timer version check during early boot")
-> Reverting the same resolves the build issue.
-> 
-> Latest pipeline: https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/pipelines/114683657
-> 
-> [0] https://gitlab.com/cip-project/cip-kernel/cip-kernel-config/-/blob/master/4.4.y-cip/arm/
-> siemens_am335x-axm2_defconfig, siemens_am335x-draco_defconfig, siemens_am335x-dxr2_defconfig, siemens_am335x-etamin_defconfig
-> 
+> Looks good to me. I can apply it if there are no objections.
 
-For the record, build results are here:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/pipelines/114683657
-
-4.19.102 builds okay:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/pipelines/114683672
-
-but that's probably because siemens_am335x* configurations are not
-tested in 4.19.X case.
+Looks good to me, too.
+Pavel, please apply this series.
 
 Best regards,
-									Pavel
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 195 bytes
-Desc: not available
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20200204/9be50b0a/attachment.sig>
+  Nobuhiro
