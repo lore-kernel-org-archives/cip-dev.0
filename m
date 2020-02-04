@@ -1,98 +1,284 @@
-From: masashi.kudo@cybertrust.co.jp (masashi.kudo at cybertrust.co.jp)
-Date: Tue, 4 Feb 2020 01:21:31 +0000
-Subject: [cip-dev] CIP Kernel Meeting - Embedded World in Nuremberg
-Message-ID: <TY1PR01MB1481A420182857A8D3AD995EA0030@TY1PR01MB1481.jpnprd01.prod.outlook.com>
+From: Chris.Paterson2@renesas.com (Chris Paterson)
+Date: Tue, 4 Feb 2020 09:50:56 +0000
+Subject: [cip-dev] [PATCH 4.4 00/53] 4.4.213-stable review
+In-Reply-To: <20200203161902.714326084@linuxfoundation.org>
+References: <20200203161902.714326084@linuxfoundation.org>
+Message-ID: <TYAPR01MB2285D96DC944217E7A22F8C6B7030@TYAPR01MB2285.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-For remote dial-in :
+Hi Greg,
+
+> From: stable-owner at vger.kernel.org <stable-owner@vger.kernel.org> On
+> Behalf Of Greg Kroah-Hartman
+> Sent: 03 February 2020 16:19
+> 
+> This is the start of the stable review cycle for the 4.4.213 release.
+> There are 53 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 05 Feb 2020 16:17:59 +0000.
+> Anything received after that time might be too late.
+
+We're seeing an issue with 4.4.213-rc1 (36670370c48b) and 4.4.213-rc2 (758a39807529) with our 4 am335x configurations [0]:
+
+   AS      arch/arm/kernel/hyp-stub.o
+ arch/arm/kernel/hyp-stub.S:   CC      arch/arm/mach-omap2/sram.o
+ Assembler messages:
+   AS      arch/arm/kernel/smccc-call.o
+ arch/arm/kernel/hyp-stub.S:147: Error: selected processor does not support `ubfx r7,r7,#16,#4' in ARM mode
+ scripts/Makefile.build:375: recipe for target 'arch/arm/kernel/hyp-stub.o' failed
+ make[1]: *** [arch/arm/kernel/hyp-stub.o] Error 1
+
+The culprit seems to be: 15163bcee7b5 ("ARM: 8955/1: virt: Relax arch timer version check during early boot")
+Reverting the same resolves the build issue.
+
+Latest pipeline: https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/pipelines/114683657
+
+[0] https://gitlab.com/cip-project/cip-kernel/cip-kernel-config/-/blob/master/4.4.y-cip/arm/
+siemens_am335x-axm2_defconfig, siemens_am335x-draco_defconfig, siemens_am335x-dxr2_defconfig, siemens_am335x-etamin_defconfig
 
 
+Kind regards, Chris
 
-Working Group is inviting you to a scheduled Zoom meeting.
-
-
-
-Topic: CIP Kernel - Embedded World
-
-Time: Feb 27, 2020 02:00 PM Amsterdam, Berlin, Rome, Stockholm, Vienna
-
-
-
-Join Zoom Meeting
-
-https://zoom.us/j/940958488
-
-
-
-Meeting ID: 940 958 488
-
-
-
-One tap mobile
-
-+16699006833,,940958488# US (San Jose)
-
-+16465588656,,940958488# US (New York)
-
-
-
-Dial by your location
-
-        +1 669 900 6833 US (San Jose)
-
-        +1 646 558 8656 US (New York)
-
-        855 880 1246 US Toll-free
-
-        877 369 0926 US Toll-free
-
-        +1 647 558 0588 Canada
-
-        855 703 8985 Canada Toll-free
-
-Meeting ID: 940 958 488
-
-Find your local number: https://zoom.us/u/acNR9omfRY
-
-
-Location
-Local Time
-Time Zone
-UTC Offset
-Berlin<https://www.timeanddate.com/worldclock/germany/berlin> (Germany - Berlin)
-Thursday, 27 February 2020, 14:00:00
-CET<https://www.timeanddate.com/time/zones/cet>
-UTC+1 hour
-London<https://www.timeanddate.com/worldclock/uk/london> (United Kingdom - England)
-Thursday, 27 February 2020, 13:00:00
-GMT<https://www.timeanddate.com/time/zones/gmt>
-UTC
-Taipei<https://www.timeanddate.com/worldclock/taiwan/taipei> (Taiwan)
-Thursday, 27 February 2020, 21:00:00
-CST<https://www.timeanddate.com/time/zones/cst-china>
-UTC+8 hours
-Tokyo<https://www.timeanddate.com/worldclock/japan/tokyo> (Japan)
-Thursday, 27 February 2020, 22:00:00
-JST<https://www.timeanddate.com/time/zones/jst>
-UTC+9 hours
-Corresponding UTC (GMT)
-Thursday, 27 February 2020, 13:00:00<https://www.timeanddate.com/worldclock/fixedtime.html?iso=20200227T1300>
-
-
-
-
-
-
-
-
--------------- next part --------------
-An HTML attachment was scrubbed...
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20200204/6d6b9188/attachment-0001.html>
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: not available
-Type: text/calendar
-Size: 3369 bytes
-Desc: not available
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20200204/6d6b9188/attachment-0001.ics>
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-
+> review/patch-4.4.213-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-
+> rc.git linux-4.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
+> -------------
+> Pseudo-Shortlog of commits:
+> 
+> Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>     Linux 4.4.213-rc1
+> 
+> Praveen Chaudhary <praveen5582@gmail.com>
+>     net: Fix skb->csum update in inet_proto_csum_replace16().
+> 
+> Vasily Averin <vvs@virtuozzo.com>
+>     l2t_seq_next should increase position index
+> 
+> Vasily Averin <vvs@virtuozzo.com>
+>     seq_tab_next() should increase position index
+> 
+> Finn Thain <fthain@telegraphics.com.au>
+>     net/sonic: Quiesce SONIC before re-initializing descriptor memory
+> 
+> Finn Thain <fthain@telegraphics.com.au>
+>     net/sonic: Fix receive buffer handling
+> 
+> Finn Thain <fthain@telegraphics.com.au>
+>     net/sonic: Use MMIO accessors
+> 
+> Finn Thain <fthain@telegraphics.com.au>
+>     net/sonic: Add mutual exclusion for accessing shared state
+> 
+> Madalin Bucur <madalin.bucur@oss.nxp.com>
+>     net/fsl: treat fsl,erratum-a011043
+> 
+> Manish Chopra <manishc@marvell.com>
+>     qlcnic: Fix CPU soft lockup while collecting firmware dump
+> 
+> Hayes Wang <hayeswang@realtek.com>
+>     r8152: get default setting of WOL before initializing
+> 
+> Michael Ellerman <mpe@ellerman.id.au>
+>     airo: Add missing CAP_NET_ADMIN check in
+> AIROOLDIOCTL/SIOCDEVPRIVATE
+> 
+> Michael Ellerman <mpe@ellerman.id.au>
+>     airo: Fix possible info leak in AIROOLDIOCTL/SIOCDEVPRIVATE
+> 
+> Vladimir Murzin <vladimir.murzin@arm.com>
+>     ARM: 8955/1: virt: Relax arch timer version check during early boot
+> 
+> Hannes Reinecke <hare@suse.de>
+>     scsi: fnic: do not queue commands during fwreset
+> 
+> Nicolas Dichtel <nicolas.dichtel@6wind.com>
+>     vti[6]: fix packet tx through bpf_redirect()
+> 
+> Johan Hovold <johan@kernel.org>
+>     Input: aiptek - use descriptors of current altsetting
+> 
+> Arnd Bergmann <arnd@arndb.de>
+>     wireless: wext: avoid gcc -O3 warning
+> 
+> Cambda Zhu <cambda@linux.alibaba.com>
+>     ixgbe: Fix calculation of queue with VFs and flow director on interface flap
+> 
+> Radoslaw Tyl <radoslawx.tyl@intel.com>
+>     ixgbevf: Remove limit of 10 entries for unicast filter list
+> 
+> Lubomir Rintel <lkundrak@v3.sk>
+>     clk: mmp2: Fix the order of timer mux parents
+> 
+> Lee Jones <lee.jones@linaro.org>
+>     media: si470x-i2c: Move free() past last use of 'radio'
+> 
+> Bin Liu <b-liu@ti.com>
+>     usb: dwc3: turn off VBUS when leaving host mode
+> 
+> Zhenzhong Duan <zhenzhong.duan@gmail.com>
+>     ttyprintk: fix a potential deadlock in interrupt context issue
+> 
+> Hans Verkuil <hverkuil-cisco@xs4all.nl>
+>     media: dvb-usb/dvb-usb-urb.c: initialize actlen to 0
+> 
+> Hans Verkuil <hverkuil-cisco@xs4all.nl>
+>     media: gspca: zero usb_buf
+> 
+> Sean Young <sean@mess.org>
+>     media: digitv: don't continue if remote control state can't be read
+> 
+> Jan Kara <jack@suse.cz>
+>     reiserfs: Fix memory leak of journal device string
+> 
+> Dan Carpenter <dan.carpenter@oracle.com>
+>     mm/mempolicy.c: fix out of bounds write in mpol_parse_str()
+> 
+> Dirk Behme <dirk.behme@de.bosch.com>
+>     arm64: kbuild: remove compressed images on 'make ARCH=arm64
+> (dist)clean'
+> 
+> Herbert Xu <herbert@gondor.apana.org.au>
+>     crypto: pcrypt - Fix user-after-free on module unload
+> 
+> Al Viro <viro@zeniv.linux.org.uk>
+>     vfs: fix do_last() regression
+> 
+> Herbert Xu <herbert@gondor.apana.org.au>
+>     crypto: af_alg - Use bh_lock_sock in sk_destruct
+> 
+> Eric Dumazet <edumazet@google.com>
+>     net_sched: ematch: reject invalid TCF_EM_SIMPLE
+> 
+> Laura Abbott <labbott@fedoraproject.org>
+>     usb-storage: Disable UAS on JMicron SATA enclosure
+> 
+> Arnd Bergmann <arnd@arndb.de>
+>     atm: eni: fix uninitialized variable warning
+> 
+> Krzysztof Kozlowski <krzk@kernel.org>
+>     net: wan: sdla: Fix cast from pointer to integer of different size
+> 
+> Fenghua Yu <fenghua.yu@intel.com>
+>     drivers/net/b44: Change to non-atomic bit operations on pwol_mask
+> 
+> Andreas Kemnade <andreas@kemnade.info>
+>     watchdog: rn5t618_wdt: fix module aliases
+> 
+> Johan Hovold <johan@kernel.org>
+>     zd1211rw: fix storage endpoint lookup
+> 
+> Johan Hovold <johan@kernel.org>
+>     rtl8xxxu: fix interface sanity check
+> 
+> Johan Hovold <johan@kernel.org>
+>     brcmfmac: fix interface sanity check
+> 
+> Johan Hovold <johan@kernel.org>
+>     ath9k: fix storage endpoint lookup
+> 
+> Malcolm Priestley <tvboxspy@gmail.com>
+>     staging: vt6656: Fix false Tx excessive retries reporting.
+> 
+> Malcolm Priestley <tvboxspy@gmail.com>
+>     staging: vt6656: use NULLFUCTION stack on mac80211
+> 
+> Malcolm Priestley <tvboxspy@gmail.com>
+>     staging: vt6656: correct packet types for CTS protect, mode.
+> 
+> Colin Ian King <colin.king@canonical.com>
+>     staging: wlan-ng: ensure error return is actually returned
+> 
+> Andrey Shvetsov <andrey.shvetsov@k2l.de>
+>     staging: most: net: fix buffer overflow
+> 
+> Johan Hovold <johan@kernel.org>
+>     USB: serial: ir-usb: fix IrLAP framing
+> 
+> Johan Hovold <johan@kernel.org>
+>     USB: serial: ir-usb: fix link-speed handling
+> 
+> Johan Hovold <johan@kernel.org>
+>     USB: serial: ir-usb: add missing endpoint sanity check
+> 
+> Johan Hovold <johan@kernel.org>
+>     rsi_91x_usb: fix interface sanity check
+> 
+> Johan Hovold <johan@kernel.org>
+>     orinoco_usb: fix interface sanity check
+> 
+> Takashi Iwai <tiwai@suse.de>
+>     ALSA: pcm: Add missing copy ops check before clearing buffer
+> 
+> 
+> -------------
+> 
+> Diffstat:
+> 
+>  Makefile                                           |   4 +-
+>  arch/arm/kernel/hyp-stub.S                         |   7 +-
+>  arch/arm64/boot/Makefile                           |   2 +-
+>  crypto/af_alg.c                                    |   6 +-
+>  crypto/pcrypt.c                                    |   3 +-
+>  drivers/atm/eni.c                                  |   4 +-
+>  drivers/char/ttyprintk.c                           |  15 ++-
+>  drivers/clk/mmp/clk-of-mmp2.c                      |   2 +-
+>  drivers/input/tablet/aiptek.c                      |   2 +-
+>  drivers/media/radio/si470x/radio-si470x-i2c.c      |   2 +-
+>  drivers/media/usb/dvb-usb/digitv.c                 |  10 +-
+>  drivers/media/usb/dvb-usb/dvb-usb-urb.c            |   2 +-
+>  drivers/media/usb/gspca/gspca.c                    |   2 +-
+>  drivers/net/ethernet/broadcom/b44.c                |   9 +-
+>  drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c |   3 +-
+>  drivers/net/ethernet/chelsio/cxgb4/l2t.c           |   3 +-
+>  drivers/net/ethernet/freescale/xgmac_mdio.c        |   7 +-
+>  drivers/net/ethernet/intel/ixgbe/ixgbe_main.c      |  37 ++++--
+>  drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c  |   5 -
+>  drivers/net/ethernet/natsemi/sonic.c               | 109 ++++++++++++++---
+>  drivers/net/ethernet/natsemi/sonic.h               |  25 ++--
+>  .../net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c  |   1 +
+>  .../net/ethernet/qlogic/qlcnic/qlcnic_minidump.c   |   2 +
+>  drivers/net/usb/r8152.c                            |   9 +-
+>  drivers/net/wan/sdla.c                             |   2 +-
+>  drivers/net/wireless/airo.c                        |  20 ++-
+>  drivers/net/wireless/ath/ath9k/hif_usb.c           |   2 +-
+>  drivers/net/wireless/brcm80211/brcmfmac/usb.c      |   4 +-
+>  drivers/net/wireless/orinoco/orinoco_usb.c         |   4 +-
+>  drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu.c   |   2 +-
+>  drivers/net/wireless/rsi/rsi_91x_usb.c             |   2 +-
+>  drivers/net/wireless/zd1211rw/zd_usb.c             |   2 +-
+>  drivers/scsi/fnic/fnic_scsi.c                      |   3 +
+>  drivers/staging/most/aim-network/networking.c      |  10 ++
+>  drivers/staging/vt6656/device.h                    |   2 +
+>  drivers/staging/vt6656/int.c                       |   6 +-
+>  drivers/staging/vt6656/main_usb.c                  |   1 +
+>  drivers/staging/vt6656/rxtx.c                      |  26 ++--
+>  drivers/staging/wlan-ng/prism2mgmt.c               |   2 +-
+>  drivers/usb/dwc3/core.c                            |   3 +
+>  drivers/usb/serial/ir-usb.c                        | 136 ++++++++++++++++-----
+>  drivers/usb/storage/unusual_uas.h                  |   7 +-
+>  drivers/watchdog/rn5t618_wdt.c                     |   1 +
+>  fs/namei.c                                         |   4 +-
+>  fs/reiserfs/super.c                                |   2 +
+>  include/linux/usb/irda.h                           |  13 +-
+>  mm/mempolicy.c                                     |   6 +-
+>  net/core/utils.c                                   |  20 ++-
+>  net/ipv4/ip_vti.c                                  |  13 +-
+>  net/ipv6/ip6_vti.c                                 |  13 +-
+>  net/sched/ematch.c                                 |   3 +
+>  net/wireless/wext-core.c                           |   3 +-
+>  sound/core/pcm_native.c                            |   2 +-
+>  53 files changed, 418 insertions(+), 167 deletions(-)
+> 
