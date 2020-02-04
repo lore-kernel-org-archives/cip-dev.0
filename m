@@ -1,152 +1,66 @@
-From: kazuhiro3.hayashi@toshiba.co.jp (kazuhiro3.hayashi at toshiba.co.jp)
-Date: Tue, 4 Feb 2020 11:48:23 +0000
-Subject: [cip-dev] [cip-core] Package Proposal #2 (Minimum base packages
- in Debian)
-In-Reply-To: <TYXPR01MB1808951D8345BDE55D6E7284E10F0@TYXPR01MB1808.jpnprd01.prod.outlook.com>
-References: <TYXPR01MB1808E5730818EAB90EB9558FE1360@TYXPR01MB1808.jpnprd01.prod.outlook.com>
- <TYXPR01MB1808AFBB9C4A06F0E43B8EF4E10D0@TYXPR01MB1808.jpnprd01.prod.outlook.com>
- <dc1e4578-64e7-dc3f-828c-43c907448018@renesas.com>
- <TYXPR01MB1808951D8345BDE55D6E7284E10F0@TYXPR01MB1808.jpnprd01.prod.outlook.com>
-Message-ID: <TYXPR01MB180871262DF43C33A9AC70D9E1030@TYXPR01MB1808.jpnprd01.prod.outlook.com>
+From: pavel@denx.de (Pavel Machek)
+Date: Tue, 4 Feb 2020 13:47:21 +0100
+Subject: [cip-dev] [PATCH 4.4 00/53] 4.4.213-stable review
+In-Reply-To: <TYAPR01MB2285D96DC944217E7A22F8C6B7030@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+References: <20200203161902.714326084@linuxfoundation.org>
+ <TYAPR01MB2285D96DC944217E7A22F8C6B7030@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+Message-ID: <20200204124721.GB6903@duo.ucw.cz>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello CIP Core members,
+Hi!
 
-All CIP Core members agreed this proposal (#2), so
-I would like to conclude that this proposal is accepted by CIP Core.
-Thank you for your review!
+> > From: stable-owner at vger.kernel.org <stable-owner@vger.kernel.org> On
+> > Behalf Of Greg Kroah-Hartman
+> > Sent: 03 February 2020 16:19
+> > 
+> > This is the start of the stable review cycle for the 4.4.213 release.
+> > There are 53 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Wed, 05 Feb 2020 16:17:59 +0000.
+> > Anything received after that time might be too late.
+> 
+> We're seeing an issue with 4.4.213-rc1 (36670370c48b) and 4.4.213-rc2 (758a39807529) with our 4 am335x configurations [0]:
+> 
+>    AS      arch/arm/kernel/hyp-stub.o
+>  arch/arm/kernel/hyp-stub.S:   CC      arch/arm/mach-omap2/sram.o
+>  Assembler messages:
+>    AS      arch/arm/kernel/smccc-call.o
+>  arch/arm/kernel/hyp-stub.S:147: Error: selected processor does not support `ubfx r7,r7,#16,#4' in ARM mode
+>  scripts/Makefile.build:375: recipe for target 'arch/arm/kernel/hyp-stub.o' failed
+>  make[1]: *** [arch/arm/kernel/hyp-stub.o] Error 1
+> 
+> The culprit seems to be: 15163bcee7b5 ("ARM: 8955/1: virt: Relax arch timer version check during early boot")
+> Reverting the same resolves the build issue.
+> 
+> Latest pipeline: https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/pipelines/114683657
+> 
+> [0] https://gitlab.com/cip-project/cip-kernel/cip-kernel-config/-/blob/master/4.4.y-cip/arm/
+> siemens_am335x-axm2_defconfig, siemens_am335x-draco_defconfig, siemens_am335x-dxr2_defconfig, siemens_am335x-etamin_defconfig
+> 
 
-Dear TSC members,
-Could you confirm that the attached package list (proposal_minbase_20200204.yml)
-can be registered as the (initial) CIP maintained package list?
-This is the "Phase 4" in the PDP:
-https://gitlab.com/cip-project/cip-core/cip-pkglist/-/blob/master/doc/pdp.md#phase-4-approval
+For the record, build results are here:
 
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/pipelines/114683657
 
-Just in case, I would like to share several discussions in the review process:
+4.19.102 builds okay:
 
-Q. What is the policy for the "minimum base"?
-A. The "minimum base" means here is the essential "Debian binary" packages needed for booting up.
-   These packages are installed by:
-     $ debootstrap --variant=minbase buster ...
-   and they are essential for CIP Core generic profile.
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/pipelines/114683672
 
-Q. Some binary packages listed in "depends:" of proposal_minbase_20200116.yml are duplicated, why?
-A. This issue was discussed in https://gitlab.com/cip-project/cip-core/cip-pkglist/issues/1
-   then fixed by https://gitlab.com/cip-project/cip-core/cip-pkglist/-/merge_requests/6
-
-I has recreated the .yml file after the fix above (=> proposal_minbase_20200204.yml)
-then there is no change from proposal_minbase_20200116.yml in the package information
-except several minor updates. Please check the attached files (0116-0204.diff) for more details.
+but that's probably because siemens_am335x* configurations are not
+tested in 4.19.X case.
 
 Best regards,
-Kazu
-
-> 
-> Hello CIP Core members,
-> 
-> Thank you for your replies.
-> 
-> I need to wait for replies of Codethink, Hitachi, and Moxa,
-> so would like to postpone the due date to
-> 	January 31th (Fri)
-> (Lunar New Year holiday until Jan 29th)
-> 
-> Codethink
-> Cybertrust (Agreed #2)
-> Hitachi
-> Moxa
-> Renesas (Agreed #2)
-> Siemens (Agreed #2)
-> Toshiba (Agreed #2)
-> 
-> Best regards,
-> Kazu
-> 
-> > -----Original Message-----
-> > From: cip-dev [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Takehisa Katayama
-> > Sent: Thursday, January 23, 2020 5:07 PM
-> > To: cip-dev at lists.cip-project.org
-> > Subject: Re: [cip-dev] [cip-core] Package Proposal #2 (Minimum base packages in Debian)
-> >
-> > Hi Kazu-san,
-> >
-> > >> Please reply with you opinion, agree or disagree.
-> >
-> > Renesas agree.
-> >
-> > Thanks.
-> >
-> > Best regards,
-> > Takehisa Katayama.
-> >
-> >
-> >
-> > On 2020/01/21 9:52, kazuhiro3.hayashi at toshiba.co.jp wrote:
-> > > Hello CIP Core members,
-> > >
-> > >> Due Date: January 20th (The next TSC meeting)
-> > >
-> > > If you have not yet replied to this proposal, please send us your opinion by
-> > > 	January 23th (By the next IRC meeting)
-> > >
-> > > Best regards,
-> > > Kazu
-> > >
-> > >>
-> > >> Hello CIP Core members,
-> > >>
-> > >> I created a simple package proposal for the packages that are installed in the "minimum base system" of Debian.
-> > >> These packages are installed by
-> > >> 	$ debootstrap --variant=minbase buster ...
-> > >>
-> > >> It consists of 58 source packages and 84 binary packages, including all run-time dependencies.
-> > >>
-> > >> The common reason to propose:
-> > >> "This package is included in the minimum base system of Debian (debootstrap --variant=minbase),
-> > >> which is essential for all Debian binary package based systems"
-> > >>
-> > >>
-> > >> I would like to start the "review" phase (Phase 2) of the attached package proposal.
-> > >> https://gitlab.com/cip-project/cip-core/cip-pkglist/blob/master/doc/pdp.md#phase-2-proposal-review
-> > >>
-> > >> Please reply with you opinion, agree or disagree.
-> > >> If you cannot agree to add specific packages, please show the reasons as well.
-> > >>
-> > >> Due Date: January 20th (The next TSC meeting)
-> > >>
-> > >> We have only 2-3 working days for this review, but
-> > >> I think it may be enough to agree or disagree the very simple reason above.
-> > >> (We can extend this due date if more time required for reviews, please let me know if any requests)
-> > >>
-> > >> Best regards,
-> > >> Kazu
-> > > _______________________________________________
-> > > cip-dev mailing list
-> > > cip-dev at lists.cip-project.org
-> > > https://lists.cip-project.org/mailman/listinfo/cip-dev
-> > > .
-> > >
-> > _______________________________________________
-> > cip-dev mailing list
-> > cip-dev at lists.cip-project.org
-> > https://lists.cip-project.org/mailman/listinfo/cip-dev
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
+									Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
 -------------- next part --------------
 A non-text attachment was scrubbed...
-Name: proposal_minbase_20200204.yml
-Type: application/octet-stream
-Size: 22219 bytes
-Desc: proposal_minbase_20200204.yml
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20200204/7b7b7826/attachment-0002.obj>
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: 0116-0204.diff
-Type: application/octet-stream
-Size: 1263 bytes
-Desc: 0116-0204.diff
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20200204/7b7b7826/attachment-0003.obj>
+Name: signature.asc
+Type: application/pgp-signature
+Size: 195 bytes
+Desc: not available
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20200204/9be50b0a/attachment.sig>
