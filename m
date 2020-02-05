@@ -1,45 +1,43 @@
-From: pavel@denx.de (Pavel Machek)
-Date: Wed, 5 Feb 2020 23:46:18 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 00/35] Renesas RZ/G2 extend
-	peripheral support
-In-Reply-To: <1580935141-1173-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <1580935141-1173-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Message-ID: <20200205224617.GA15516@duo.ucw.cz>
+From: masashi.kudo@cybertrust.co.jp (masashi.kudo at cybertrust.co.jp)
+Date: Wed, 5 Feb 2020 22:58:00 +0000
+Subject: [cip-dev] CIP IRC weekly meeting today
+Message-ID: <TY1PR01MB14816DA046950D3CA01F5885A0020@TY1PR01MB1481.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi!
+Hi all,
 
-Could I ask for unique subjects for the series? I have just
-applied/pushed out different "Renesas RZ/G2 extend peripheral support"
-series. That... has to be confusing for 
+Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
 
-"Renesas RZ/G2: add CAN/VSP/USB/HDMI support" would be better subject
-(but you can likely come out with something even better).
+*Please note that the IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019&month=11&day=28&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=37&p6=248
 
-Anyway, let me review the patches, there's no need to resent this just
-for this.
+US-West US-East   UK     DE     TW     JP
+01:00    04:00   09:00   10:00   17:00   18:00
+
+Channel:
+* irc:chat.freenode.net:6667/cip
+
+Last week's meeting minutes:
+https://irclogs.baserock.org/meetings/cip/2020/01/cip.2020-01-30-09.00.log.html
+
+Agenda:
+
+* Action item
+1. Combine rootfilesystem with kselftest binary - Iwamatsu-san 
+2. Document a process on how to add tests to the CIP test setup - patersonc 
+3. Arrangement of F2F Kernel Meeting in Nuremberg - masashi910
+4. Add config for BBB to both 4.4 and 4.19 (done for qemux86-64)  - Iwamatsu-san
+
+* Kernel maintenance updates
+* Kernel testing
+* CIP Core
+* Software update
+* AOB
+
+The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
 
 Best regards,
-								Pavel     
-
-On Wed 2020-02-05 20:38:26, Lad Prabhakar wrote:
-> This patch series adds supports for following peripherals supported by RZ/G2N
-> a] CAN and CANFD
-> b] IPMMU/FCPF/FCPV/VSP
-> c] USB
-> d] DU/LVDS/HDMI/FDP1/PWM
-> 
-> This patch series is based on top of series [1] all the patches 
-> in this series are cherry-picked from upstream.
-
--- 
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
--------------- next part --------------
-A non-text attachment was scrubbed...
-Name: signature.asc
-Type: application/pgp-signature
-Size: 195 bytes
-Desc: not available
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20200205/dacb21ee/attachment-0001.sig>
+--
+M. Kudo
+Cybertrust Japan Co., Ltd.
