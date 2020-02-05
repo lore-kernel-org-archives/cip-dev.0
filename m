@@ -1,63 +1,39 @@
 From: prabhakar.mahadev-lad.rj@bp.renesas.com (Lad Prabhakar)
-Date: Wed,  5 Feb 2020 20:38:44 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 18/35] arm64: dts: renesas:
-	hihope-rzg2-ex: Enable backlight
+Date: Wed,  5 Feb 2020 20:38:45 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 19/35] drm: rcar-du: lvds: Add r8a774b1
+	support
 In-Reply-To: <1580935141-1173-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <1580935141-1173-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Message-ID: <1580935141-1173-19-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Message-ID: <1580935141-1173-20-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Biju Das <biju.das@bp.renesas.com>
 
-commit 31222abb669c45afe472a6fb9c605d31b2309066 upstream.
+commit cfbcf6eb67e1cebe46978b1dd76116948bdeb7db upstream.
 
-This patch enables backlight support.
+The LVDS encoders on RZ/G2N SoC is similar to R-Car M3-N. Add support for
+RZ/G2N (R8A774B1) SoC to the LVDS encoder driver.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Link: https://lore.kernel.org/r/1570029619-43238-8-git-send-email-biju.das at bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/gpu/drm/rcar-du/rcar_lvds.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi b/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi
-index 6870e22..31c3520 100644
---- a/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi
-+++ b/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi
-@@ -13,6 +13,14 @@
- 	chosen {
- 		bootargs = "ignore_loglevel rw root=/dev/nfs ip=on";
- 	};
-+
-+	backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm0 0 50000>;
-+
-+		brightness-levels = <0 2 8 16 32 64 128 255>;
-+		default-brightness-level = <6>;
-+	};
- };
- 
- &avb {
-@@ -78,4 +86,16 @@
- 		groups = "can1_data";
- 		function = "can1";
- 	};
-+
-+	pwm0_pins: pwm0 {
-+		groups = "pwm0";
-+		function = "pwm0";
-+	};
-+};
-+
-+&pwm0 {
-+	pinctrl-0 = <&pwm0_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
- };
+diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+index 3b5884a..25b6267 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
++++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+@@ -861,6 +861,7 @@ static const struct rcar_lvds_device_info rcar_lvds_r8a77995_info = {
+ static const struct of_device_id rcar_lvds_of_table[] = {
+ 	{ .compatible = "renesas,r8a7743-lvds", .data = &rcar_lvds_gen2_info },
+ 	{ .compatible = "renesas,r8a774a1-lvds", .data = &rcar_lvds_gen3_info },
++	{ .compatible = "renesas,r8a774b1-lvds", .data = &rcar_lvds_gen3_info },
+ 	{ .compatible = "renesas,r8a774c0-lvds", .data = &rcar_lvds_r8a77990_info },
+ 	{ .compatible = "renesas,r8a7790-lvds", .data = &rcar_lvds_r8a7790_info },
+ 	{ .compatible = "renesas,r8a7791-lvds", .data = &rcar_lvds_gen2_info },
 -- 
 2.7.4
