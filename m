@@ -1,79 +1,78 @@
 From: prabhakar.mahadev-lad.rj@bp.renesas.com (Lad Prabhakar)
-Date: Wed,  5 Feb 2020 20:38:47 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 21/35] arm64: dts: renesas: Add support
-	for Advantech idk-1110wr LVDS panel
+Date: Wed,  5 Feb 2020 20:38:48 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 22/35] arm64: dts: renesas: r8a774a1:
+	Remove audio port node
 In-Reply-To: <1580935141-1173-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <1580935141-1173-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Message-ID: <1580935141-1173-22-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Message-ID: <1580935141-1173-23-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Biju Das <biju.das@bp.renesas.com>
 
-commit b6bb8a108d0b4f4097ef63020a51b1a9dd3dd41d upstream.
+commit a381325812691f57aece60aaee76938ac8fc6619 upstream.
 
-This patch adds support for Advantech idk-1110wr LVDS panel.
-The HiHope RZ/G2[MN] is advertised as compatible with panel
-idk-1110wr from Advantech, however the panel isn't sold alongside
-the board.
+This patch removes audio port node from SoC device tree and
+fixes the below dtb warning
 
+    Warning (unit_address_vs_reg): /soc/sound at ec500000/ports/port at 0: node has a unit name, but no reg property
+
+Fixes: e2f04248fcd4 ("arm64: dts: renesas: r8a774a1: Add audio support")
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Link: https://lore.kernel.org/r/1570029619-43238-10-git-send-email-biju.das at bp.renesas.com
+Link: https://lore.kernel.org/r/1570200761-884-1-git-send-email-biju.das at bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+(dropped deleting ports node from r8a774a1.dtsi as it doesnt exist)
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- .../renesas/rzg2-advantech-idk-1110wr-panel.dtsi   | 41 ++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/rzg2-advantech-idk-1110wr-panel.dtsi
+ arch/arm64/boot/dts/renesas/hihope-common.dtsi | 20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/rzg2-advantech-idk-1110wr-panel.dtsi b/arch/arm64/boot/dts/renesas/rzg2-advantech-idk-1110wr-panel.dtsi
-new file mode 100644
-index 0000000..bcc2117
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/rzg2-advantech-idk-1110wr-panel.dtsi
-@@ -0,0 +1,41 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the Advantech idk-1110wr LVDS panel connected
-+ * to RZ/G2 boards
-+ *
-+ * Copyright (C) 2019 Renesas Electronics Corp.
-+ */
-+
-+/ {
-+	panel-lvds {
-+		compatible = "advantech,idk-1110wr", "panel-lvds";
-+
-+		width-mm = <223>;
-+		height-mm = <125>;
-+
-+		data-mapping = "jeida-24";
-+
-+		panel-timing {
-+			/* 1024x600 @60Hz */
-+			clock-frequency = <51200000>;
-+			hactive = <1024>;
-+			vactive = <600>;
-+			hsync-len = <240>;
-+			hfront-porch = <40>;
-+			hback-porch = <40>;
-+			vfront-porch = <15>;
-+			vback-porch = <10>;
-+			vsync-len = <10>;
-+		};
-+
-+		port {
-+			panel_in: endpoint {
-+				remote-endpoint = <&lvds_connector>;
-+			};
-+		};
-+	};
-+};
-+
-+&lvds_connector {
-+	remote-endpoint = <&panel_in>;
-+};
+diff --git a/arch/arm64/boot/dts/renesas/hihope-common.dtsi b/arch/arm64/boot/dts/renesas/hihope-common.dtsi
+index 355d0a2..2c942a7 100644
+--- a/arch/arm64/boot/dts/renesas/hihope-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/hihope-common.dtsi
+@@ -86,7 +86,7 @@
+ 
+ 		label = "rcar-sound";
+ 
+-		dais = <&rsnd_port0>;
++		dais = <&rsnd_port>;
+ 	};
+ 
+ 	vbus0_usb2: regulator-vbus0-usb2 {
+@@ -183,7 +183,7 @@
+ 		port at 2 {
+ 			reg = <2>;
+ 			dw_hdmi0_snd_in: endpoint {
+-				remote-endpoint = <&rsnd_endpoint0>;
++				remote-endpoint = <&rsnd_endpoint>;
+ 			};
+ 		};
+ 	};
+@@ -319,17 +319,15 @@
+ 	/* Single DAI */
+ 	#sound-dai-cells = <0>;
+ 
+-	ports {
+-		rsnd_port0: port at 0 {
+-			rsnd_endpoint0: endpoint {
+-				remote-endpoint = <&dw_hdmi0_snd_in>;
++	rsnd_port: port {
++		rsnd_endpoint: endpoint {
++			remote-endpoint = <&dw_hdmi0_snd_in>;
+ 
+-				dai-format = "i2s";
+-				bitclock-master = <&rsnd_endpoint0>;
+-				frame-master = <&rsnd_endpoint0>;
++			dai-format = "i2s";
++			bitclock-master = <&rsnd_endpoint>;
++			frame-master = <&rsnd_endpoint>;
+ 
+-				playback = <&ssi2>;
+-			};
++			playback = <&ssi2>;
+ 		};
+ 	};
+ };
 -- 
 2.7.4
