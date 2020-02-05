@@ -1,46 +1,48 @@
-From: gregkh@linuxfoundation.org (Greg Kroah-Hartman)
-Date: Wed, 5 Feb 2020 13:02:07 +0000
-Subject: [cip-dev] [PATCH 4.4 00/53] 4.4.213-stable review
-In-Reply-To: <TYAPR01MB2285D96DC944217E7A22F8C6B7030@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-References: <20200203161902.714326084@linuxfoundation.org>
- <TYAPR01MB2285D96DC944217E7A22F8C6B7030@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-Message-ID: <20200205130207.GA1199959@kroah.com>
+From: prabhakar.mahadev-lad.rj@bp.renesas.com (Lad Prabhakar)
+Date: Wed,  5 Feb 2020 20:38:27 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 01/35] dt-bindings: can: rcar_can:
+	document r8a774b1 support
+In-Reply-To: <1580935141-1173-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <1580935141-1173-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Message-ID: <1580935141-1173-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On Tue, Feb 04, 2020 at 09:50:56AM +0000, Chris Paterson wrote:
-> Hi Greg,
-> 
-> > From: stable-owner at vger.kernel.org <stable-owner@vger.kernel.org> On
-> > Behalf Of Greg Kroah-Hartman
-> > Sent: 03 February 2020 16:19
-> > 
-> > This is the start of the stable review cycle for the 4.4.213 release.
-> > There are 53 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed, 05 Feb 2020 16:17:59 +0000.
-> > Anything received after that time might be too late.
-> 
-> We're seeing an issue with 4.4.213-rc1 (36670370c48b) and 4.4.213-rc2 (758a39807529) with our 4 am335x configurations [0]:
-> 
->    AS      arch/arm/kernel/hyp-stub.o
->  arch/arm/kernel/hyp-stub.S:   CC      arch/arm/mach-omap2/sram.o
->  Assembler messages:
->    AS      arch/arm/kernel/smccc-call.o
->  arch/arm/kernel/hyp-stub.S:147: Error: selected processor does not support `ubfx r7,r7,#16,#4' in ARM mode
->  scripts/Makefile.build:375: recipe for target 'arch/arm/kernel/hyp-stub.o' failed
->  make[1]: *** [arch/arm/kernel/hyp-stub.o] Error 1
-> 
-> The culprit seems to be: 15163bcee7b5 ("ARM: 8955/1: virt: Relax arch timer version check during early boot")
-> Reverting the same resolves the build issue.
-> 
-> Latest pipeline: https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/pipelines/114683657
-> 
-> [0] https://gitlab.com/cip-project/cip-kernel/cip-kernel-config/-/blob/master/4.4.y-cip/arm/
-> siemens_am335x-axm2_defconfig, siemens_am335x-draco_defconfig, siemens_am335x-dxr2_defconfig, siemens_am335x-etamin_defconfig
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Thanks, I'll go drop that patch from 4.4 and 4.9 trees.
+commit b32bfbc98a747e82d30cc8fd6e4b173a48c01530 upstream.
 
-greg k-h
+Document RZ/G2N (r8a774b1) SoC specific bindings.
+
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Link: https://lore.kernel.org/r/1570717560-7431-2-git-send-email-fabrizio.castro at bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/net/can/rcar_can.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+index aede950..b22bec8 100644
+--- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
++++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+@@ -5,6 +5,7 @@ Required properties:
+ - compatible: "renesas,can-r8a7743" if CAN controller is a part of R8A7743 SoC.
+ 	      "renesas,can-r8a7745" if CAN controller is a part of R8A7745 SoC.
+ 	      "renesas,can-r8a774a1" if CAN controller is a part of R8A774A1 SoC.
++	      "renesas,can-r8a774b1" if CAN controller is a part of R8A774B1 SoC.
+ 	      "renesas,can-r8a774c0" if CAN controller is a part of R8A774C0 SoC.
+ 	      "renesas,can-r8a7778" if CAN controller is a part of R8A7778 SoC.
+ 	      "renesas,can-r8a7779" if CAN controller is a part of R8A7779 SoC.
+@@ -31,7 +32,7 @@ Required properties:
+ - pinctrl-0: pin control group to be used for this controller.
+ - pinctrl-names: must be "default".
+ 
+-Required properties for R8A774A1, R8A774C0, R8A7795, and R8A7796:
++Required properties for R8A774A1, R8A774B1, R8A774C0, R8A7795, and R8A7796:
+ For the denoted SoCs, "clkp2" can be CANFD clock. This is a div6 clock and can
+ be used by both CAN and CAN FD controller at the same time. It needs to be
+ scaled to maximum frequency if any of these controllers use it. This is done
+-- 
+2.7.4
