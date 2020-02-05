@@ -1,94 +1,52 @@
 From: prabhakar.mahadev-lad.rj@bp.renesas.com (Lad Prabhakar)
-Date: Wed,  5 Feb 2020 20:38:26 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 00/35] Renesas RZ/G2 extend peripheral
-	support
-Message-ID: <1580935141-1173-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Date: Wed,  5 Feb 2020 20:38:28 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 02/35] dt-bindings: can: rcar_canfd:
+	document r8a774b1 support
+In-Reply-To: <1580935141-1173-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <1580935141-1173-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Message-ID: <1580935141-1173-3-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This patch series adds supports for following peripherals supported by RZ/G2N
-a] CAN and CANFD
-b] IPMMU/FCPF/FCPV/VSP
-c] USB
-d] DU/LVDS/HDMI/FDP1/PWM
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-This patch series is based on top of series [1] all the patches 
-in this series are cherry-picked from upstream.
+commit 837b7deb364c3cf927f922d88b6131c8a4f81d0e upstream.
 
-[1] https://patchwork.kernel.org/project/cip-dev/list/?series=235707&submitter=&state=*&q=&archive=both&delegate=
+Document the support for rcar_canfd on R8A774B1 SoC devices.
 
-Biju Das (21):
-  dt-bindings: iommu: ipmmu-vmsa: Add r8a774b1 support
-  iommu/ipmmu-vmsa: Hook up r8a774b1 DT matching code
-  arm64: dts: renesas: r8a774b1: Add IPMMU device nodes
-  arm64: dts: renesas: r8a774b1: Add FCPF and FCPV instances
-  arm64: dts: renesas: r8a774b1: Add VSP instances
-  arm64: dts: renesas: r8a774b1: Tie SYS-DMAC to IPMMU-DS0/1
-  arm64: dts: renesas: r8a774b1: Connect Ethernet-AVB to IPMMU-DS0
-  arm64: dts: renesas: hihope-common: Move du clk properties out of
-    common dtsi
-  drm: rcar-du: Add R8A774B1 support
-  arm64: dts: renesas: r8a774b1: Add DU device to DT
-  arm64: dts: renesas: r8a774b1: Add HDMI encoder instance
-  arm64: dts: renesas: r8a774b1-hihope-rzg2n: Add display clock
-    properties
-  arm64: dts: renesas: r8a774b1: Add FDP1 device nodes
-  arm64: dts: renesas: r8a774b1: Add PWM device nodes
-  arm64: dts: renesas: hihope-rzg2-ex: Enable backlight
-  drm: rcar-du: lvds: Add r8a774b1 support
-  arm64: dts: renesas: hihope-rzg2-ex: Add LVDS support
-  arm64: dts: renesas: Add support for Advantech idk-1110wr LVDS panel
-  arm64: dts: renesas: r8a774a1: Remove audio port node
-  ASoC: rsnd: Document r8a774b1 bindings
-  arm64: dts: renesas: r8a774b1: Add Sound and Audio DMAC device nodes
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Link: https://lore.kernel.org/r/1570717560-7431-3-git-send-email-fabrizio.castro at bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/net/can/rcar_canfd.txt | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-Fabrizio Castro (12):
-  dt-bindings: can: rcar_can: document r8a774b1 support
-  dt-bindings: can: rcar_canfd: document r8a774b1 support
-  arm64: dts: renesas: r8a774b1: Add CAN and CAN FD support
-  dt-bindings: rcar-gen3-phy-usb2: Add r8a774b1 support
-  dt-bindings: dmaengine: usb-dmac: Add binding for r8a774b1
-  dt-bindings: usb: renesas_usbhs: Add r8a774b1 support
-  dt-bindings: rcar-gen3-phy-usb3: Add r8a774b1 support
-  dt-bindings: usb-xhci: Add r8a774b1 support
-  dt-bindings: usb: renesas_usb3: Document r8a774b1 support
-  arm64: dts: renesas: r8a774b1: Add USB2.0 phy and host (EHCI/OHCI)
-    device nodes
-  arm64: dts: renesas: r8a774b1: Add USB-DMAC and HSUSB device nodes
-  arm64: dts: renesas: r8a774b1: Add USB3.0 device nodes
-
-Simon Horman (2):
-  dt-bindings: usb: renesas_usbhs: Rename bindings documentation file
-  dt-bindings: usb: renesas_gen3: Rename bindings documentation file to
-    reflect IP block
-
- .../devicetree/bindings/dma/renesas,usb-dmac.txt   |   1 +
- .../bindings/iommu/renesas,ipmmu-vmsa.txt          |   1 +
- .../devicetree/bindings/net/can/rcar_can.txt       |   3 +-
- .../devicetree/bindings/net/can/rcar_canfd.txt     |   7 +-
- .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt |   2 +
- .../devicetree/bindings/phy/rcar-gen3-phy-usb3.txt |   2 +
- .../devicetree/bindings/sound/renesas,rsnd.txt     |   1 +
- .../devicetree/bindings/usb/renesas,usb3-peri.txt  |  41 +
- .../devicetree/bindings/usb/renesas,usbhs.txt      |  53 ++
- .../devicetree/bindings/usb/renesas_usb3.txt       |  40 -
- .../devicetree/bindings/usb/renesas_usbhs.txt      |  52 --
- Documentation/devicetree/bindings/usb/usb-xhci.txt |   1 +
- arch/arm64/boot/dts/renesas/hihope-common.dtsi     |  28 +-
- arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi    |  49 ++
- .../boot/dts/renesas/r8a774a1-hihope-rzg2m.dts     |  11 +
- .../boot/dts/renesas/r8a774b1-hihope-rzg2n.dts     |  11 +
- arch/arm64/boot/dts/renesas/r8a774b1.dtsi          | 959 ++++++++++++++++++++-
- .../renesas/rzg2-advantech-idk-1110wr-panel.dtsi   |  41 +
- drivers/gpu/drm/rcar-du/rcar_du_drv.c              |  30 +
- drivers/gpu/drm/rcar-du/rcar_lvds.c                |   1 +
- drivers/iommu/ipmmu-vmsa.c                         |   5 +
- 21 files changed, 1201 insertions(+), 138 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/usb/renesas,usb3-peri.txt
- create mode 100644 Documentation/devicetree/bindings/usb/renesas,usbhs.txt
- delete mode 100644 Documentation/devicetree/bindings/usb/renesas_usb3.txt
- delete mode 100644 Documentation/devicetree/bindings/usb/renesas_usbhs.txt
- create mode 100644 arch/arm64/boot/dts/renesas/rzg2-advantech-idk-1110wr-panel.dtsi
-
+diff --git a/Documentation/devicetree/bindings/net/can/rcar_canfd.txt b/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
+index fecd6db..769f01b 100644
+--- a/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
++++ b/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
+@@ -5,6 +5,7 @@ Required properties:
+ - compatible: Must contain one or more of the following:
+   - "renesas,rcar-gen3-canfd" for R-Car Gen3 and RZ/G2 compatible controllers.
+   - "renesas,r8a774a1-canfd" for R8A774A1 (RZ/G2M) compatible controller.
++  - "renesas,r8a774b1-canfd" for R8A774B1 (RZ/G2N) compatible controller.
+   - "renesas,r8a774c0-canfd" for R8A774C0 (RZ/G2E) compatible controller.
+   - "renesas,r8a7795-canfd" for R8A7795 (R-Car H3) compatible controller.
+   - "renesas,r8a7796-canfd" for R8A7796 (R-Car M3-W) compatible controller.
+@@ -30,9 +31,9 @@ enable/disable the respective channel.
+ 
+ Required properties for "renesas,r8a774c0-canfd", "renesas,r8a7795-canfd" and
+ "renesas,r8a7796-canfd" compatible:
+-In R8A774A1, R8A774C0, R8A7795 and R8A7796 SoCs, canfd clock is a div6 clock
+-and can beused by both CAN and CAN FD controller at the same time. It needs
+-to be scaled to maximum frequency if any of these controllers use it. This
++In R8A774A1, R8A774B1, R8A774C0, R8A7795 and R8A7796 SoCs, canfd clock is a div6
++clock and can beused by both CAN and CAN FD controller at the same time. It
++needs to be scaled to maximum frequency if any of these controllers use it. This
+ is done using the below properties:
+ 
+ - assigned-clocks: phandle of canfd clock.
 -- 
 2.7.4
