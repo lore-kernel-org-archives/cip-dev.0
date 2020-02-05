@@ -1,40 +1,37 @@
 From: pavel@denx.de (Pavel Machek)
-Date: Wed, 5 Feb 2020 23:39:41 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 00/14] Renesas RZ/G2 extend
+Date: Wed, 5 Feb 2020 23:46:18 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 00/35] Renesas RZ/G2 extend
 	peripheral support
-In-Reply-To: <OSAPR01MB3667E28321D0C1E814401CA892030@OSAPR01MB3667.jpnprd01.prod.outlook.com>
-References: <1580560022-26873-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20200202184325.GA1870@duo.ucw.cz>
- <OSAPR01MB3667E28321D0C1E814401CA892030@OSAPR01MB3667.jpnprd01.prod.outlook.com>
-Message-ID: <20200205223940.GA26511@duo.ucw.cz>
+In-Reply-To: <1580935141-1173-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <1580935141-1173-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Message-ID: <20200205224617.GA15516@duo.ucw.cz>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi!
 
-> > > From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > >
-> > > This patch series adds support for for following peripherals supported
-> > > by RZ/G2N:
-> > > 1] I2C and IIC-DVFS
-> > > 2] OPP's table for CPU nodes
-> > > 3] Thermal zones
-> > > 4] CMT and TMU
-> > >
-> > > This patch series is based on linux-4.19.y-cip and all the patches in
-> > > this series are cherry-picked from upstream.
-> > 
-> > Looks good to me. I can apply it if there are no objections.
-> 
-> Looks good to me, too.
-> Pavel, please apply this series.
+Could I ask for unique subjects for the series? I have just
+applied/pushed out different "Renesas RZ/G2 extend peripheral support"
+series. That... has to be confusing for 
 
-Thanks for the series. Tests seem to pass, so applied.
+"Renesas RZ/G2: add CAN/VSP/USB/HDMI support" would be better subject
+(but you can likely come out with something even better).
 
-https://gitlab.com/cip-project/cip-kernel/linux-cip/commit/6620dd338cfe63ffd0b9e3347b22880c2a58ea46/pipelines?ref=ci%2Fpavel%2Flinux-cip
+Anyway, let me review the patches, there's no need to resent this just
+for this.
 
 Best regards,
-								Pavel
+								Pavel     
+
+On Wed 2020-02-05 20:38:26, Lad Prabhakar wrote:
+> This patch series adds supports for following peripherals supported by RZ/G2N
+> a] CAN and CANFD
+> b] IPMMU/FCPF/FCPV/VSP
+> c] USB
+> d] DU/LVDS/HDMI/FDP1/PWM
+> 
+> This patch series is based on top of series [1] all the patches 
+> in this series are cherry-picked from upstream.
 
 -- 
 DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
@@ -45,4 +42,4 @@ Name: signature.asc
 Type: application/pgp-signature
 Size: 195 bytes
 Desc: not available
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20200205/4d29c96a/attachment.sig>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20200205/dacb21ee/attachment-0001.sig>
