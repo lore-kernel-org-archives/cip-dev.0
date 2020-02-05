@@ -1,67 +1,79 @@
 From: prabhakar.mahadev-lad.rj@bp.renesas.com (Lad Prabhakar)
-Date: Wed,  5 Feb 2020 20:38:46 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 20/35] arm64: dts: renesas:
-	hihope-rzg2-ex: Add LVDS support
+Date: Wed,  5 Feb 2020 20:38:47 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 21/35] arm64: dts: renesas: Add support
+	for Advantech idk-1110wr LVDS panel
 In-Reply-To: <1580935141-1173-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <1580935141-1173-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Message-ID: <1580935141-1173-21-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Message-ID: <1580935141-1173-22-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Biju Das <biju.das@bp.renesas.com>
 
-commit 642a33259bdfd5aebca24a4b7b05681239873157 upstream.
+commit b6bb8a108d0b4f4097ef63020a51b1a9dd3dd41d upstream.
 
-This patch adds LVDS support for RZ/G2[MN] boards.
+This patch adds support for Advantech idk-1110wr LVDS panel.
+The HiHope RZ/G2[MN] is advertised as compatible with panel
+idk-1110wr from Advantech, however the panel isn't sold alongside
+the board.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Link: https://lore.kernel.org/r/1570029619-43238-9-git-send-email-biju.das at bp.renesas.com
+Link: https://lore.kernel.org/r/1570029619-43238-10-git-send-email-biju.das at bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi | 29 +++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ .../renesas/rzg2-advantech-idk-1110wr-panel.dtsi   | 41 ++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/rzg2-advantech-idk-1110wr-panel.dtsi
 
-diff --git a/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi b/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi
-index 31c3520..28fe17e 100644
---- a/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi
-+++ b/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi
-@@ -51,6 +51,35 @@
- 	status = "okay";
- };
- 
-+&gpio1 {
-+	/*
-+	 * When GP1_20 is LOW LVDS0 is connected to the LVDS connector
-+	 * When GP1_20 is HIGH LVDS0 is connected to the LT8918L
-+	 */
-+	lvds-connector-en-gpio {
-+		gpio-hog;
-+		gpios = <20 GPIO_ACTIVE_HIGH>;
-+		output-low;
-+		line-name = "lvds-connector-en-gpio";
-+	};
-+};
+diff --git a/arch/arm64/boot/dts/renesas/rzg2-advantech-idk-1110wr-panel.dtsi b/arch/arm64/boot/dts/renesas/rzg2-advantech-idk-1110wr-panel.dtsi
+new file mode 100644
+index 0000000..bcc2117
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/rzg2-advantech-idk-1110wr-panel.dtsi
+@@ -0,0 +1,41 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the Advantech idk-1110wr LVDS panel connected
++ * to RZ/G2 boards
++ *
++ * Copyright (C) 2019 Renesas Electronics Corp.
++ */
 +
-+&lvds0 {
-+	/*
-+	 * Please include the LVDS panel .dtsi file and uncomment the below line
-+	 * to enable LVDS panel connected to RZ/G2[MN] boards.
-+	 */
++/ {
++	panel-lvds {
++		compatible = "advantech,idk-1110wr", "panel-lvds";
 +
-+	/* status = "okay"; */
++		width-mm = <223>;
++		height-mm = <125>;
 +
-+	ports {
-+		port at 1 {
-+			lvds_connector: endpoint {
++		data-mapping = "jeida-24";
++
++		panel-timing {
++			/* 1024x600 @60Hz */
++			clock-frequency = <51200000>;
++			hactive = <1024>;
++			vactive = <600>;
++			hsync-len = <240>;
++			hfront-porch = <40>;
++			hback-porch = <40>;
++			vfront-porch = <15>;
++			vback-porch = <10>;
++			vsync-len = <10>;
++		};
++
++		port {
++			panel_in: endpoint {
++				remote-endpoint = <&lvds_connector>;
 +			};
 +		};
 +	};
 +};
 +
- &pciec0 {
- 	status = "okay";
- };
++&lvds_connector {
++	remote-endpoint = <&panel_in>;
++};
 -- 
 2.7.4
