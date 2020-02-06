@@ -1,64 +1,87 @@
-From: prabhakar.mahadev-lad.rj@bp.renesas.com (Prabhakar Mahadev Lad)
-Date: Thu, 6 Feb 2020 07:06:58 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 00/14] Renesas RZ/G2 extend
-	peripheral support
-In-Reply-To: <20200205223940.GA26511@duo.ucw.cz>
-References: <1580560022-26873-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20200202184325.GA1870@duo.ucw.cz>
- <OSAPR01MB3667E28321D0C1E814401CA892030@OSAPR01MB3667.jpnprd01.prod.outlook.com>
- <20200205223940.GA26511@duo.ucw.cz>
-Message-ID: <TY2PR01MB5162E1E37B8B2C17D81F813BAA1D0@TY2PR01MB5162.jpnprd01.prod.outlook.com>
+From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
+Date: Thu, 6 Feb 2020 07:25:27 +0000
+Subject: [cip-dev] CIP IRC weekly meeting today
+In-Reply-To: <TY1PR01MB14816DA046950D3CA01F5885A0020@TY1PR01MB1481.jpnprd01.prod.outlook.com>
+References: <TY1PR01MB14816DA046950D3CA01F5885A0020@TY1PR01MB1481.jpnprd01.prod.outlook.com>
+Message-ID: <OSAPR01MB366756148823EAB50BD4EA7F921D0@OSAPR01MB3667.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi Pavel/Nobuhiro,
+Hi Kudo-san,
+
+I may not be able to join IRC meeting today.
+
+> 
+> * Action item
+> 1. Combine rootfilesystem with kselftest binary - Iwamatsu-san
+
+No update.
+
+> 2. Document a process on how to add tests to the CIP test setup - patersonc
+> 3. Arrangement of F2F Kernel Meeting in Nuremberg - masashi910
+> 4. Add config for BBB to both 4.4 and 4.19 (done for qemux86-64)  - Iwamatsu-san
+> 
+
+These already was applied to cip-kernel-config repository. Please close this A.I.
+
+> * Kernel maintenance updates
+
+I reviewed 4.4.212 and 213.
+
+Best regards,
+  Nobuhiro
 
 > -----Original Message-----
-> From: Pavel Machek <pavel@denx.de>
-> Sent: 05 February 2020 22:40
-> To: nobuhiro1.iwamatsu at toshiba.co.jp
-> Cc: pavel at denx.de; Prabhakar Mahadev Lad <prabhakar.mahadev-
-> lad.rj at bp.renesas.com>; cip-dev at lists.cip-project.org; Chris Paterson
-> <Chris.Paterson2@renesas.com>
-> Subject: Re: [PATCH 4.19.y-cip 00/14] Renesas RZ/G2 extend peripheral
-> support
->
-> Hi!
->
-> > > > From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > > >
-> > > > This patch series adds support for for following peripherals
-> > > > supported by RZ/G2N:
-> > > > 1] I2C and IIC-DVFS
-> > > > 2] OPP's table for CPU nodes
-> > > > 3] Thermal zones
-> > > > 4] CMT and TMU
-> > > >
-> > > > This patch series is based on linux-4.19.y-cip and all the patches
-> > > > in this series are cherry-picked from upstream.
-> > >
-> > > Looks good to me. I can apply it if there are no objections.
-> >
-> > Looks good to me, too.
-> > Pavel, please apply this series.
->
-> Thanks for the series. Tests seem to pass, so applied.
->
-Thank you for the review and acceptance of patches.
-
-Cheers,
---Prabhakar
-
-> https://gitlab.com/cip-project/cip-kernel/linux-
-> cip/commit/6620dd338cfe63ffd0b9e3347b22880c2a58ea46/pipelines?ref=ci%
-> 2Fpavel%2Flinux-cip
->
+> From: cip-dev [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf
+> Of masashi.kudo at cybertrust.co.jp
+> Sent: Thursday, February 6, 2020 7:58 AM
+> To: cip-dev at lists.cip-project.org
+> Subject: [cip-dev] CIP IRC weekly meeting today
+> 
+> Hi all,
+> 
+> Kindly be reminded to attend the weekly meeting through IRC to discuss
+> technical topics with CIP kernel today.
+> 
+> *Please note that the IRC meeting was rescheduled to UTC (GMT) 09:00
+> starting from the first week of Apr. according to TSC meeting*
+> https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019
+> &month=11&day=28&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=3
+> 7&p6=248
+> 
+> US-West US-East   UK     DE     TW     JP
+> 01:00    04:00   09:00   10:00   17:00   18:00
+> 
+> Channel:
+> * irc:chat.freenode.net:6667/cip
+> 
+> Last week's meeting minutes:
+> https://irclogs.baserock.org/meetings/cip/2020/01/cip.2020-01-30-09.
+> 00.log.html
+> 
+> Agenda:
+> 
+> * Action item
+> 1. Combine rootfilesystem with kselftest binary - Iwamatsu-san
+> 2. Document a process on how to add tests to the CIP test setup - patersonc
+> 3. Arrangement of F2F Kernel Meeting in Nuremberg - masashi910
+> 4. Add config for BBB to both 4.4 and 4.19 (done for qemux86-64)  - Iwamatsu-san
+> 
+> * Kernel maintenance updates
+> * Kernel testing
+> * CIP Core
+> * Software update
+> * AOB
+> 
+> The meeting will take 30 min, although it can be extended to an hour if
+> it makes sense and those involved in the topics can stay. Otherwise, the
+> topic will be taken offline or in the next meeting.
+> 
 > Best regards,
-> Pavel
->
 > --
-> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
-
-Renesas Electronics Europe GmbH, Geschaeftsfuehrer/President: Carsten Jauch, Sitz der Gesellschaft/Registered office: Duesseldorf, Arcadiastrasse 10, 40472 Duesseldorf, Germany, Handelsregister/Commercial Register: Duesseldorf, HRB 3708 USt-IDNr./Tax identification no.: DE 119353406 WEEE-Reg.-Nr./WEEE reg. no.: DE 14978647
+> M. Kudo
+> Cybertrust Japan Co., Ltd.
+> _______________________________________________
+> cip-dev mailing list
+> cip-dev at lists.cip-project.org
+> https://lists.cip-project.org/mailman/listinfo/cip-dev
