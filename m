@@ -1,11 +1,27 @@
-From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
-Date: Thu, 6 Feb 2020 07:25:27 +0000
+From: masashi.kudo@cybertrust.co.jp (masashi.kudo at cybertrust.co.jp)
+Date: Thu, 6 Feb 2020 08:04:03 +0000
 Subject: [cip-dev] CIP IRC weekly meeting today
-In-Reply-To: <TY1PR01MB14816DA046950D3CA01F5885A0020@TY1PR01MB1481.jpnprd01.prod.outlook.com>
+In-Reply-To: <OSAPR01MB366756148823EAB50BD4EA7F921D0@OSAPR01MB3667.jpnprd01.prod.outlook.com>
 References: <TY1PR01MB14816DA046950D3CA01F5885A0020@TY1PR01MB1481.jpnprd01.prod.outlook.com>
-Message-ID: <OSAPR01MB366756148823EAB50BD4EA7F921D0@OSAPR01MB3667.jpnprd01.prod.outlook.com>
+ <OSAPR01MB366756148823EAB50BD4EA7F921D0@OSAPR01MB3667.jpnprd01.prod.outlook.com>
+Message-ID: <TY1PR01MB14816C3E2B943ECE1462AB30A01D0@TY1PR01MB1481.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
+
+Hi, Iwamatsu-san,
+
+Thanks for letting us know your updates.
+Then, see you next week!
+
+Best regards,
+--
+M. Kudo
+
+-----Original Message-----
+From: nobuhiro1.iwamatsu@toshiba.co.jp <nobuhiro1.iwamatsu@toshiba.co.jp> 
+Sent: Thursday, February 6, 2020 4:25 PM
+To: ??????CTJ? <masashi.kudo@cybertrust.co.jp>; cip-dev at lists.cip-project.org
+Subject: RE: CIP IRC weekly meeting today
 
 Hi Kudo-san,
 
@@ -17,9 +33,10 @@ I may not be able to join IRC meeting today.
 
 No update.
 
-> 2. Document a process on how to add tests to the CIP test setup - patersonc
-> 3. Arrangement of F2F Kernel Meeting in Nuremberg - masashi910
-> 4. Add config for BBB to both 4.4 and 4.19 (done for qemux86-64)  - Iwamatsu-san
+> 2. Document a process on how to add tests to the CIP test setup - 
+> patersonc 3. Arrangement of F2F Kernel Meeting in Nuremberg - 
+> masashi910 4. Add config for BBB to both 4.4 and 4.19 (done for 
+> qemux86-64)  - Iwamatsu-san
 > 
 
 These already was applied to cip-kernel-config repository. Please close this A.I.
@@ -32,7 +49,7 @@ Best regards,
   Nobuhiro
 
 > -----Original Message-----
-> From: cip-dev [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf
+> From: cip-dev [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf 
 > Of masashi.kudo at cybertrust.co.jp
 > Sent: Thursday, February 6, 2020 7:58 AM
 > To: cip-dev at lists.cip-project.org
@@ -40,10 +57,10 @@ Best regards,
 > 
 > Hi all,
 > 
-> Kindly be reminded to attend the weekly meeting through IRC to discuss
+> Kindly be reminded to attend the weekly meeting through IRC to discuss 
 > technical topics with CIP kernel today.
 > 
-> *Please note that the IRC meeting was rescheduled to UTC (GMT) 09:00
+> *Please note that the IRC meeting was rescheduled to UTC (GMT) 09:00 
 > starting from the first week of Apr. according to TSC meeting*
 > https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019
 > &month=11&day=28&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=3
@@ -62,10 +79,11 @@ Best regards,
 > Agenda:
 > 
 > * Action item
-> 1. Combine rootfilesystem with kselftest binary - Iwamatsu-san
-> 2. Document a process on how to add tests to the CIP test setup - patersonc
-> 3. Arrangement of F2F Kernel Meeting in Nuremberg - masashi910
-> 4. Add config for BBB to both 4.4 and 4.19 (done for qemux86-64)  - Iwamatsu-san
+> 1. Combine rootfilesystem with kselftest binary - Iwamatsu-san 2. 
+> Document a process on how to add tests to the CIP test setup - 
+> patersonc 3. Arrangement of F2F Kernel Meeting in Nuremberg - 
+> masashi910 4. Add config for BBB to both 4.4 and 4.19 (done for 
+> qemux86-64)  - Iwamatsu-san
 > 
 > * Kernel maintenance updates
 > * Kernel testing
@@ -73,9 +91,9 @@ Best regards,
 > * Software update
 > * AOB
 > 
-> The meeting will take 30 min, although it can be extended to an hour if
-> it makes sense and those involved in the topics can stay. Otherwise, the
-> topic will be taken offline or in the next meeting.
+> The meeting will take 30 min, although it can be extended to an hour 
+> if it makes sense and those involved in the topics can stay. 
+> Otherwise, the topic will be taken offline or in the next meeting.
 > 
 > Best regards,
 > --
