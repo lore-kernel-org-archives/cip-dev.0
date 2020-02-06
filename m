@@ -1,105 +1,43 @@
-From: masashi.kudo@cybertrust.co.jp (masashi.kudo at cybertrust.co.jp)
-Date: Thu, 6 Feb 2020 08:04:03 +0000
-Subject: [cip-dev] CIP IRC weekly meeting today
-In-Reply-To: <OSAPR01MB366756148823EAB50BD4EA7F921D0@OSAPR01MB3667.jpnprd01.prod.outlook.com>
-References: <TY1PR01MB14816DA046950D3CA01F5885A0020@TY1PR01MB1481.jpnprd01.prod.outlook.com>
- <OSAPR01MB366756148823EAB50BD4EA7F921D0@OSAPR01MB3667.jpnprd01.prod.outlook.com>
-Message-ID: <TY1PR01MB14816C3E2B943ECE1462AB30A01D0@TY1PR01MB1481.jpnprd01.prod.outlook.com>
+From: pavel@denx.de (Pavel Machek)
+Date: Thu, 6 Feb 2020 23:50:17 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 00/35] Renesas RZ/G2 extend
+	peripheral support
+In-Reply-To: <1580935141-1173-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <1580935141-1173-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Message-ID: <20200206225017.GA24014@duo.ucw.cz>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hi, Iwamatsu-san,
+Hi!
 
-Thanks for letting us know your updates.
-Then, see you next week!
-
-Best regards,
---
-M. Kudo
-
------Original Message-----
-From: nobuhiro1.iwamatsu@toshiba.co.jp <nobuhiro1.iwamatsu@toshiba.co.jp> 
-Sent: Thursday, February 6, 2020 4:25 PM
-To: ??????CTJ? <masashi.kudo@cybertrust.co.jp>; cip-dev at lists.cip-project.org
-Subject: RE: CIP IRC weekly meeting today
-
-Hi Kudo-san,
-
-I may not be able to join IRC meeting today.
-
+> This patch series adds supports for following peripherals supported by RZ/G2N
+> a] CAN and CANFD
+> b] IPMMU/FCPF/FCPV/VSP
+> c] USB
+> d] DU/LVDS/HDMI/FDP1/PWM
 > 
-> * Action item
-> 1. Combine rootfilesystem with kselftest binary - Iwamatsu-san
-
-No update.
-
-> 2. Document a process on how to add tests to the CIP test setup - 
-> patersonc 3. Arrangement of F2F Kernel Meeting in Nuremberg - 
-> masashi910 4. Add config for BBB to both 4.4 and 4.19 (done for 
-> qemux86-64)  - Iwamatsu-san
+> This patch series is based on top of series [1] all the patches 
+> in this series are cherry-picked from upstream.
 > 
+> [1] https://patchwork.kernel.org/project/cip-dev/list/?series=235707&submitter=&state=*&q=&archive=both&delegate=
+>
 
-These already was applied to cip-kernel-config repository. Please close this A.I.
+Series looks okay to me (I'll have some minor comments later). Tests
+seem to pass:
 
-> * Kernel maintenance updates
+https://gitlab.com/cip-project/cip-kernel/linux-cip/pipelines/115667302
 
-I reviewed 4.4.212 and 213.
+I'll push the series if there are no objections.
 
 Best regards,
-  Nobuhiro
-
-> -----Original Message-----
-> From: cip-dev [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf 
-> Of masashi.kudo at cybertrust.co.jp
-> Sent: Thursday, February 6, 2020 7:58 AM
-> To: cip-dev at lists.cip-project.org
-> Subject: [cip-dev] CIP IRC weekly meeting today
-> 
-> Hi all,
-> 
-> Kindly be reminded to attend the weekly meeting through IRC to discuss 
-> technical topics with CIP kernel today.
-> 
-> *Please note that the IRC meeting was rescheduled to UTC (GMT) 09:00 
-> starting from the first week of Apr. according to TSC meeting*
-> https://www.timeanddate.com/worldclock/meetingdetails.html?year=2019
-> &month=11&day=28&hour=9&min=0&sec=0&p1=241&p2=137&p3=179&p4=136&p5=3
-> 7&p6=248
-> 
-> US-West US-East   UK     DE     TW     JP
-> 01:00    04:00   09:00   10:00   17:00   18:00
-> 
-> Channel:
-> * irc:chat.freenode.net:6667/cip
-> 
-> Last week's meeting minutes:
-> https://irclogs.baserock.org/meetings/cip/2020/01/cip.2020-01-30-09.
-> 00.log.html
-> 
-> Agenda:
-> 
-> * Action item
-> 1. Combine rootfilesystem with kselftest binary - Iwamatsu-san 2. 
-> Document a process on how to add tests to the CIP test setup - 
-> patersonc 3. Arrangement of F2F Kernel Meeting in Nuremberg - 
-> masashi910 4. Add config for BBB to both 4.4 and 4.19 (done for 
-> qemux86-64)  - Iwamatsu-san
-> 
-> * Kernel maintenance updates
-> * Kernel testing
-> * CIP Core
-> * Software update
-> * AOB
-> 
-> The meeting will take 30 min, although it can be extended to an hour 
-> if it makes sense and those involved in the topics can stay. 
-> Otherwise, the topic will be taken offline or in the next meeting.
-> 
-> Best regards,
-> --
-> M. Kudo
-> Cybertrust Japan Co., Ltd.
-> _______________________________________________
-> cip-dev mailing list
-> cip-dev at lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-dev
+								Pavel
+-- 
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 195 bytes
+Desc: not available
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20200206/19fc0074/attachment.sig>
