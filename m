@@ -1,36 +1,42 @@
 From: pavel@denx.de (Pavel Machek)
-Date: Fri, 7 Feb 2020 14:10:03 +0100
-Subject: [cip-dev] [PATCH 4.19.y-cip 20/35] arm64: dts: renesas:
- hihope-rzg2-ex: Add LVDS support
-In-Reply-To: <1580935141-1173-21-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Date: Fri, 7 Feb 2020 14:11:08 +0100
+Subject: [cip-dev] [PATCH 4.19.y-cip 24/35] arm64: dts: renesas:
+ r8a774b1: Add Sound and Audio DMAC device nodes
+In-Reply-To: <1580935141-1173-25-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <1580935141-1173-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <1580935141-1173-21-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Message-ID: <20200207131003.GB5989@duo.ucw.cz>
+ <1580935141-1173-25-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Message-ID: <20200207131108.GC5989@duo.ucw.cz>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 Hi!
 
-> +&lvds0 {
-> +	/*
-> +	 * Please include the LVDS panel .dtsi file and uncomment the below line
-> +	 * to enable LVDS panel connected to RZ/G2[MN] boards.
-> +	 */
-> +
-> +	/* status = "okay"; */
-> +
-> +	ports {
-> +		port at 1 {
-> +			lvds_connector: endpoint {
-> +			};
-> +		};
-> +	};
-> +};
+> From: Biju Das <biju.das@bp.renesas.com>
+> 
+> commit 067eca6dc61ad3d05ba919cd5a10affc0647e19c upstream.
+> 
+> Based on a similar patch of the R8A7796 device tree
+> by Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>.
 
-Mainline does this so I applied it, but I don't believe you want
-boards to modify the dtsi -- it will get problematic if you want to
-support two different boards with different LVDS panels in one source
-code.
+> @@ -1236,24 +1236,478 @@
+>  		};
+>  
+>  		rcar_sound: sound at ec500000 {
+> +			/*
+> +			 * #sound-dai-cells is required
+> +			 *
+> +			 * Single DAI : #sound-dai-cells = <0>;	<&rcar_sound>;
+> +			 * Multi  DAI : #sound-dai-cells = <1>;	<&rcar_sound N>;
+> +			 */
+> +			/*
+> +			 * #clock-cells is required for audio_clkout0/1/2/3
+> +			 *
+> +			 * clkout	: #clock-cells = <0>;	<&rcar_sound>;
+> +			 * clkout0/1/2/3: #clock-cells = <1>;	<&rcar_sound N>;
+> +			 */
+> +			compatible =  "renesas,rcar_sound-r8a774b1", "renesas,rcar_sound-gen3";
+
+There is extra space after "=".
 
 Best regards,
 								Pavel
@@ -43,4 +49,4 @@ Name: signature.asc
 Type: application/pgp-signature
 Size: 195 bytes
 Desc: not available
-URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20200207/3027cd9c/attachment.sig>
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20200207/c8de4105/attachment.sig>
