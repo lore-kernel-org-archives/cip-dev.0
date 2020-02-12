@@ -1,152 +1,253 @@
-From: kazuhiro3.hayashi@toshiba.co.jp (kazuhiro3.hayashi at toshiba.co.jp)
-Date: Tue, 11 Feb 2020 05:39:43 +0000
-Subject: [cip-dev] [cip-core] Package Proposal #2 (Minimum base packages
- in Debian)
-In-Reply-To: <TYXPR01MB180871262DF43C33A9AC70D9E1030@TYXPR01MB1808.jpnprd01.prod.outlook.com>
-References: <TYXPR01MB1808E5730818EAB90EB9558FE1360@TYXPR01MB1808.jpnprd01.prod.outlook.com>
- <TYXPR01MB1808AFBB9C4A06F0E43B8EF4E10D0@TYXPR01MB1808.jpnprd01.prod.outlook.com>
- <dc1e4578-64e7-dc3f-828c-43c907448018@renesas.com>
- <TYXPR01MB1808951D8345BDE55D6E7284E10F0@TYXPR01MB1808.jpnprd01.prod.outlook.com>
- <TYXPR01MB180871262DF43C33A9AC70D9E1030@TYXPR01MB1808.jpnprd01.prod.outlook.com>
-Message-ID: <TYXPR01MB180807A649A2B91ED54DFF0FE1180@TYXPR01MB1808.jpnprd01.prod.outlook.com>
+From: kento.yoshida.wz@renesas.com (Kento Yoshida)
+Date: Wed, 12 Feb 2020 01:06:04 +0000
+Subject: [cip-dev] Package Proposal #1 (Security packages), rev03
+Message-ID: <TYAPR01MB23996D34ED0281C405A6C34CDF1B0@TYAPR01MB2399.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello TSC members,
+Hello CIP core group members,
 
-> Dear TSC members,
-> Could you confirm that the attached package list (proposal_minbase_20200204.yml)
-> can be registered as the (initial) CIP maintained package list?
+I'd formally like to propose to add security packages as revision 3.
+I've already the description sheet before, but I'll share all files for this review again in this mail.
 
-How can I proceed this confirmation?
-Are there any formal process for this?
+Contents:
+ proposal_SecurityWG_rev03.yml: the full flat proposal file including all source and binary sets with reason, security tag information and so on
+ Requirements_for_proposal_SecurityWG_rev03.xlsx: the same file which I've already sent before to explain the requirement in the standard
+ 2_src-bin_sort_SecurityWG.txt: the 95 proposed package lists simplified with source and binary names
+ 2_src-bin_sort_all.txt: the 179 package lists consisted of the 95 lists for this proposal and the 84 lists already approved by CIP core as a minimal base shown in brackets
 
-Best regards,
-Kazu
+I'd like to set the due date for reviewing this proposal by February 21, Friday.
+It would be very helpful if I can get your feedback, concerning or question in this week due to resolve by the due date.
 
-> 
-> Hello CIP Core members,
-> 
-> All CIP Core members agreed this proposal (#2), so
-> I would like to conclude that this proposal is accepted by CIP Core.
-> Thank you for your review!
-> 
-> Dear TSC members,
-> Could you confirm that the attached package list (proposal_minbase_20200204.yml)
-> can be registered as the (initial) CIP maintained package list?
-> This is the "Phase 4" in the PDP:
-> https://gitlab.com/cip-project/cip-core/cip-pkglist/-/blob/master/doc/pdp.md#phase-4-approval
-> 
-> 
-> Just in case, I would like to share several discussions in the review process:
-> 
-> Q. What is the policy for the "minimum base"?
-> A. The "minimum base" means here is the essential "Debian binary" packages needed for booting up.
->    These packages are installed by:
->      $ debootstrap --variant=minbase buster ...
->    and they are essential for CIP Core generic profile.
-> 
-> Q. Some binary packages listed in "depends:" of proposal_minbase_20200116.yml are duplicated, why?
-> A. This issue was discussed in https://gitlab.com/cip-project/cip-core/cip-pkglist/issues/1
->    then fixed by https://gitlab.com/cip-project/cip-core/cip-pkglist/-/merge_requests/6
-> 
-> I has recreated the .yml file after the fix above (=> proposal_minbase_20200204.yml)
-> then there is no change from proposal_minbase_20200116.yml in the package information
-> except several minor updates. Please check the attached files (0116-0204.diff) for more details.
-> 
-> Best regards,
-> Kazu
-> 
-> >
-> > Hello CIP Core members,
-> >
-> > Thank you for your replies.
-> >
-> > I need to wait for replies of Codethink, Hitachi, and Moxa,
-> > so would like to postpone the due date to
-> > 	January 31th (Fri)
-> > (Lunar New Year holiday until Jan 29th)
-> >
-> > Codethink
-> > Cybertrust (Agreed #2)
-> > Hitachi
-> > Moxa
-> > Renesas (Agreed #2)
-> > Siemens (Agreed #2)
-> > Toshiba (Agreed #2)
-> >
-> > Best regards,
-> > Kazu
-> >
-> > > -----Original Message-----
-> > > From: cip-dev [mailto:cip-dev-bounces at lists.cip-project.org] On Behalf Of Takehisa Katayama
-> > > Sent: Thursday, January 23, 2020 5:07 PM
-> > > To: cip-dev at lists.cip-project.org
-> > > Subject: Re: [cip-dev] [cip-core] Package Proposal #2 (Minimum base packages in Debian)
-> > >
-> > > Hi Kazu-san,
-> > >
-> > > >> Please reply with you opinion, agree or disagree.
-> > >
-> > > Renesas agree.
-> > >
-> > > Thanks.
-> > >
-> > > Best regards,
-> > > Takehisa Katayama.
-> > >
-> > >
-> > >
-> > > On 2020/01/21 9:52, kazuhiro3.hayashi at toshiba.co.jp wrote:
-> > > > Hello CIP Core members,
-> > > >
-> > > >> Due Date: January 20th (The next TSC meeting)
-> > > >
-> > > > If you have not yet replied to this proposal, please send us your opinion by
-> > > > 	January 23th (By the next IRC meeting)
-> > > >
-> > > > Best regards,
-> > > > Kazu
-> > > >
-> > > >>
-> > > >> Hello CIP Core members,
-> > > >>
-> > > >> I created a simple package proposal for the packages that are installed in the "minimum base system" of Debian.
-> > > >> These packages are installed by
-> > > >> 	$ debootstrap --variant=minbase buster ...
-> > > >>
-> > > >> It consists of 58 source packages and 84 binary packages, including all run-time dependencies.
-> > > >>
-> > > >> The common reason to propose:
-> > > >> "This package is included in the minimum base system of Debian (debootstrap --variant=minbase),
-> > > >> which is essential for all Debian binary package based systems"
-> > > >>
-> > > >>
-> > > >> I would like to start the "review" phase (Phase 2) of the attached package proposal.
-> > > >> https://gitlab.com/cip-project/cip-core/cip-pkglist/blob/master/doc/pdp.md#phase-2-proposal-review
-> > > >>
-> > > >> Please reply with you opinion, agree or disagree.
-> > > >> If you cannot agree to add specific packages, please show the reasons as well.
-> > > >>
-> > > >> Due Date: January 20th (The next TSC meeting)
-> > > >>
-> > > >> We have only 2-3 working days for this review, but
-> > > >> I think it may be enough to agree or disagree the very simple reason above.
-> > > >> (We can extend this due date if more time required for reviews, please let me know if any requests)
-> > > >>
-> > > >> Best regards,
-> > > >> Kazu
-> > > > _______________________________________________
-> > > > cip-dev mailing list
-> > > > cip-dev at lists.cip-project.org
-> > > > https://lists.cip-project.org/mailman/listinfo/cip-dev
-> > > > .
-> > > >
-> > > _______________________________________________
-> > > cip-dev mailing list
-> > > cip-dev at lists.cip-project.org
-> > > https://lists.cip-project.org/mailman/listinfo/cip-dev
-> > _______________________________________________
-> > cip-dev mailing list
-> > cip-dev at lists.cip-project.org
-> > https://lists.cip-project.org/mailman/listinfo/cip-dev
+@kazuhiro3.hayashi at toshiba.co.jp,
+Could you proceed this proposal? Thank you for many cooperation.
+
+Thank you all for considering my request,
+Kent
+
+>-----Original Message-----
+>From: cip-dev <cip-dev-bounces@lists.cip-project.org> On Behalf Of Kento Yoshida
+>Sent: Friday, February 7, 2020 5:58 PM
+>To: Punit Agrawal <punit1.agrawal@toshiba.co.jp>;
+>kazuhiro3.hayashi at toshiba.co.jp
+>Cc: cip-security at lists.cip-project.org; cip-dev at lists.cip-project.org
+>Subject: Re: [cip-dev] RESUME REQUEST: [cip-core] Package Proposal #1 (Security
+>packages)
+>
+>Hello reviews,
+>
+>Thank you for your supporting against our proposal.
+>I'd like to share you the description sheet for our proposal of security packages.
+>Please consider my attachment and the following note.
+>
+>Note:
+>1. Added "fail2ban" as the alternative "pam-shield" because "pam-shield" is not
+>well-maintained and replace with "fail2ban"
+>2. There are 3 packages in bottom that are under discussion to add. They are out of
+>scope for this review but I'd like to explain them, so let me know your ideas if you
+>have.
+>3. The requirements for hardware functions are out of scope for this review, but
+>tpm2 is concrete example mentioned in the standard, so I'd like to add some
+>packages related tpm2. However, they are options for only using tpm2, so let me
+>know your comments against adding the packages for a specific use case.
+>
+>BTW,
+>
+>@kazuhiro3.hayashi at toshiba.co.jp,
+>
+>I'd like to create new proposal to add "fail2ban", but the script for generating
+>proposal shows the following error, and I could not generate it.
+>
+>-------------------------------
+>Source package name:
+>Binary packages:
+>
+>any>
+>Traceback (most recent call last):
+>  File "./generate-proposal.py", line 218, in <module>
+>    generate_proposal(common.PDPProposal.ProposalInfo())
+>  File "./generate-proposal.py", line 176, in generate_proposal
+>    deb_src_pkg_info = prepare_src_pkg_info(apt, cve, dep_src_pkg,
+>dep_pkg_info.keys())
+>  File "./generate-proposal.py", line 51, in prepare_src_pkg_info
+>    dp_list_final = gpd.get_pkg_depends(pkg, apt)
+>  File "/home/yoshidak/cip-pkglist/get_pkg_depends.py", line 102, in
+>get_pkg_depends
+>    dp_list, dp_vir_pkg_dict = apt.apt_cache_get_depends_list(pkg_name)
+>  File "/home/yoshidak/cip-pkglist/common.py", line 222, in
+>apt_cache_get_depends_list
+>    dp_info=c[pkg_name]
+>  File "/usr/lib/python2.7/dist-packages/apt/cache.py", line 238, in __getitem__
+>    raise KeyError('The cache has no package named %r' % key)
+>KeyError: "The cache has no package named 'any>'"
+>-------------------------------
+>
+>I think that the reason is below. When I enter the information of "fail2ban", the
+>script get the dependency for it as <python3:any>.
+>
+>-------------------------------
+>Enter the source package name: fail2ban
+>Choose the required binary packages:
+>        1: fail2ban
+> Input the numbers in comma separated (eg: 1,3,4): 1
+>
+>fail2ban
+> Choose one of the virtual package provider: <python3:any>
+>        1: python3
+> Input the number: 1
+>        -<python3:any>:python3
+>        -lsb-base
+> Are any of the binary packages used in target rootfs?
+>        1: True
+>        2: False
+>-------------------------------
+>
+>Would you confirm this issue?
+>
+>Best regards,
+>Kent
+>
+>>-----Original Message-----
+>>From: Punit Agrawal <punit1.agrawal@toshiba.co.jp>
+>>Sent: Thursday, January 23, 2020 4:35 PM
+>>To: Kento Yoshida <kento.yoshida.wz@renesas.com>
+>>Cc: cip-dev at lists.cip-project.org; cip-security at lists.cip-project.org
+>>Subject: Re: [cip-dev] RESUME REQUEST: [cip-core] Package Proposal #1
+>>(Security
+>>packages)
+>>
+>>Thank you for your comments, Yoshida-san. Follow up comments inline.
+>>
+>>Kento Yoshida <kento.yoshida.wz@renesas.com> writes:
+>>
+>>> Hello and thank you for your comment, Punit,
+>>>
+>>>>-----Original Message-----
+>>>>From: Punit Agrawal <punit1.agrawal@toshiba.co.jp>
+>>>>Sent: Monday, January 20, 2020 7:29 PM
+>>>>To: Kento Yoshida <kento.yoshida.wz@renesas.com>
+>>>>Cc: cip-dev at lists.cip-project.org; kazuhiro3.hayashi at toshiba.co.jp;
+>>>>cip-security at lists.cip-project.org
+>>>>Subject: Re: [cip-dev] RESUME REQUEST: [cip-core] Package Proposal #1
+>>>>(Security
+>>>>packages)
+>>>>
+>>>>Hello Yoshida-san,
+>>>>
+>>>>Kento Yoshida <kento.yoshida.wz@renesas.com> writes:
+>>>>
+>>>>> Hello,
+>>>>>
+>>>>> I would like to resume our proposal from security working group.
+>>>>> As you know, Kazu has modified the script to generate a proposal
+>>>>> and posted the
+>>>>minimum base system proposal, and then I created the new proposal.
+>>>>>
+>>>>> The difference from the original (rev01) proposal is below:
+>>>>> 1. We remove 'duplicity', 'google-authenticator', 'pam-shield' and
+>>>>> 'suricata' in the
+>>>>new proposal because they have an issue such as non-well maintained,
+>>>>python version, too much dependencies and so on. We'll separately
+>>>>propose them after solved these issues.
+>>>>> 2. The new proposal shows all source package as flat. Thanks to the
+>>>>> new script,
+>>>>Kazu!
+>>>>> 3. Actually several packages overlap with the proposed packages for
+>>>>> minimum
+>>>>base system in Debian, so I added comment them like that.
+>>>>>
+>>>>> @kazuhiro3.hayashi at toshiba.co.jp,
+>>>>> Would you check this proposal and set the due date to review it?
+>>>>>
+>>>>> Please reply if you have any comments or questions.
+>>>>
+>>>>I have a comment about packages in the proposal that depend on
+>>>>hardware / system features -
+>>>>
+>>>>* Some packages in the proposal depend on special purpose hardware to
+>>>>  provide their functionality. e.g., TPM.
+>>>>
+>>>>  In systems, where TPM is not present (or similar functionality is
+>>>> provided by alternate mechanisms), the TPM related packages will not
+>>>> be useful. e.g., the non-x86 platforms in the CIP reference hardware
+>>>> list.
+>>>>
+>>>>* Similarly, some packages require the system to be connected to the
+>>>>  network.
+>>>>
+>>>>In both of these situations, I am wondering what is the impact on
+>>>>compliance? Is there a need to also define minimal set of hardware
+>>>>features expected from reference hardware to be able to meet
+>>>>compliance
+>>requirements?
+>>>>
+>>>
+>>> How each reference hardware satisfies the requirements should be
+>>> considered by each reference hardware provider.
+>>
+>>Agreed.
+>>
+>>But without an explicit statement of the requirement, how can a
+>>hardware vendor wanting to develop system for CIP users know what
+>>features to enable in their system?
+>>
+>>> If we provide hardware mechanisms similar with TPM to protect
+>>> credentials and authentications, we can meet compliance requirements.
+>>
+>>TPM2 specification is more than 2000 pages long with many features and
+>>functions. I believe the IEC standard requires a subset of this
+>>functionality. The Security WG maybe intimately familiar with the
+>>required features but for the reviewers on this list, there isn't any criteria to use
+>for evaluation.
+>>
+>>Stating these functional requirements explicitly will serve the dual
+>>purpose of -
+>>
+>>* Provide an objective criteria for evaluating the package proposal
+>>(and
+>>  discuss alternatives)
+>>
+>>* Give hardware / system vendors the features / functions needed by CIP
+>>  users.
+>>
+>>What do you think?
+>>
+>>> TPM related packages are options in only systems where TPM is
+>>> implemented as you said. If supporting these packages require too
+>>> much costs, the necessity of them will diminish.  Actually the
+>>> standard lists TPM as a typical example, so we thought it will be
+>>> useful to maintain TPM related packages for many users, but their
+>>> necessities depend on supporting cost.
+>>
+>>I see - thanks for the background of the TPM-related packages in the proposal.
+>>
+>>>
+>>>>To help review the package list (and also discuss alternatives), it
+>>>>would help to define the underlying functionality that is required in
+>>>>more detail, e.g., secure key storage, verified boot, etc. It'll make
+>>>>it possible review the proposal more concretely.
+>>
+>>[...]
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Requirements_for_proposal_SecurityWG_rev03.xlsx
+Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+Size: 17780 bytes
+Desc: Requirements_for_proposal_SecurityWG_rev03.xlsx
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20200212/4eee4f99/attachment-0001.xlsx>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: proposal_SecurityWG_rev03.yml
+Type: application/octet-stream
+Size: 25733 bytes
+Desc: proposal_SecurityWG_rev03.yml
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20200212/4eee4f99/attachment-0001.obj>
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: 2_src-bin_sort_all.txt
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20200212/4eee4f99/attachment-0002.txt>
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: 2_src-bin_sort_SecurityWG.txt
+URL: <http://lists.cip-project.org/pipermail/cip-dev/attachments/20200212/4eee4f99/attachment-0003.txt>
