@@ -1,259 +1,118 @@
-From: kazuhiro3.hayashi@toshiba.co.jp (kazuhiro3.hayashi at toshiba.co.jp)
-Date: Fri, 14 Feb 2020 02:05:19 +0000
-Subject: [cip-dev] Package Proposal #1 (Security packages), rev03
-In-Reply-To: <TYAPR01MB23996D34ED0281C405A6C34CDF1B0@TYAPR01MB2399.jpnprd01.prod.outlook.com>
-References: <TYAPR01MB23996D34ED0281C405A6C34CDF1B0@TYAPR01MB2399.jpnprd01.prod.outlook.com>
-Message-ID: <TYXPR01MB18087F36FC412ADF27A97F9AE1150@TYXPR01MB1808.jpnprd01.prod.outlook.com>
+From: nobuhiro1.iwamatsu@toshiba.co.jp (nobuhiro1.iwamatsu at toshiba.co.jp)
+Date: Fri, 14 Feb 2020 20:32:53 +0000
+Subject: [cip-dev] [ANNOUNCE] Release v4.19.103-cip20 and v4.4.213-cip42
+Message-ID: <OSAPR01MB3667EF4D96C5C13C476497F492150@OSAPR01MB3667.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-Hello Kent,
+Hi,
 
-Thank you for updating the proposal.
+CIP kernel team has released Linux kernel v4.19.103-cip20 and v4.4.213-cip42.
+The linux-4.19.y-cip tree has been updated base version from v4.19.98 to v4.19.103,
+and many features of r8a774b1 have been added.
+Then the linux-4.4.y-cip tree has been updated base version from v4.4.208 to v4.4.213,
+and QSPI, TPU, PWM, VSP, USB and  MSIOF support for r8a7744 has been added.
 
-Dear reviewers,
+We can get this release via the git tree at:
 
-First, please confirm the attachment in Kent's mail, especially
-the "Proposal description" sheet in "Requirements_for_proposal_SecurityWG_rev03.xlsx",
-which includes "detail description" of top level security packages (18 packages).
-After that, we can check more details in .yml file (like dependencies)
-based on our agreements about the 18 packages.
+  v4.19.103-cip20:
+    repository:
+      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+    branch:
+      linux-4.19.y-cip
+    commit hash:
+      d8d2f780968e403b42ecf61d498032ade45546d0
+    added commits:
+      CIP: Bump version suffix to -cip20 after merge from stable
+      arm64: dts: renesas: r8a774b1: Add USB3.0 device nodes
+      arm64: dts: renesas: r8a774b1: Add USB-DMAC and HSUSB device nodes
+      arm64: dts: renesas: r8a774b1: Add USB2.0 phy and host (EHCI/OHCI) device nodes
+      dt-bindings: usb: renesas_usb3: Document r8a774b1 support
+      dt-bindings: usb: renesas_gen3: Rename bindings documentation file to reflect IP block
+      dt-bindings: usb-xhci: Add r8a774b1 support
+      dt-bindings: rcar-gen3-phy-usb3: Add r8a774b1 support
+      dt-bindings: usb: renesas_usbhs: Add r8a774b1 support
+      dt-bindings: usb: renesas_usbhs: Rename bindings documentation file
+      dt-bindings: dmaengine: usb-dmac: Add binding for r8a774b1
+      dt-bindings: rcar-gen3-phy-usb2: Add r8a774b1 support
+      arm64: dts: renesas: r8a774b1: Add Sound and Audio DMAC device nodes
+      ASoC: rsnd: Document r8a774b1 bindings
+      arm64: dts: renesas: r8a774a1: Remove audio port node
+      arm64: dts: renesas: Add support for Advantech idk-1110wr LVDS panel
+      arm64: dts: renesas: hihope-rzg2-ex: Add LVDS support
+      drm: rcar-du: lvds: Add r8a774b1 support
+      arm64: dts: renesas: hihope-rzg2-ex: Enable backlight
+      arm64: dts: renesas: r8a774b1: Add PWM device nodes
+      arm64: dts: renesas: r8a774b1: Add FDP1 device nodes
+      arm64: dts: renesas: r8a774b1-hihope-rzg2n: Add display clock properties
+      arm64: dts: renesas: r8a774b1: Add HDMI encoder instance
+      arm64: dts: renesas: r8a774b1: Add DU device to DT
+      drm: rcar-du: Add R8A774B1 support
+      arm64: dts: renesas: hihope-common: Move du clk properties out of common dtsi
+      arm64: dts: renesas: r8a774b1: Connect Ethernet-AVB to IPMMU-DS0
+      arm64: dts: renesas: r8a774b1: Tie SYS-DMAC to IPMMU-DS0/1
+      arm64: dts: renesas: r8a774b1: Add VSP instances
+      arm64: dts: renesas: r8a774b1: Add FCPF and FCPV instances
+      arm64: dts: renesas: r8a774b1: Add IPMMU device nodes
+      iommu/ipmmu-vmsa: Hook up r8a774b1 DT matching code
+      dt-bindings: iommu: ipmmu-vmsa: Add r8a774b1 support
+      arm64: dts: renesas: r8a774b1: Add CAN and CAN FD support
+      dt-bindings: can: rcar_canfd: document r8a774b1 support
+      dt-bindings: can: rcar_can: document r8a774b1 support
+      arm64: dts: renesas: r8a774b1: Add TMU device nodes
+      clk: renesas: r8a774b1: Add TMU clock
+      dt-bindings: timer: renesas: tmu: Document r8a774b1 bindings
+      arm64: dts: renesas: r8a774b1: Add CMT device nodes
+      dt-bindings: timer: renesas, cmt: Document r8a774b1 CMT support
+      arm64: dts: renesas: r8a774b1: Add RZ/G2N thermal support
+      thermal: rcar_gen3_thermal: Add r8a774b1 support
+      dt-bindings: thermal: rcar-gen3-thermal: Add r8a774b1 support
+      arm64: dts: renesas: r8a774b1: Add OPPs table for cpu devices
+      arm64: dts: renesas: r8a774b1: Add I2C and IIC-DVFS support
+      dt-bindings: i2c: sh_mobile: Add r8a774b1 support
+      dt-bindings: i2c: sh_mobile: Rename bindings documentation file
+      dt-bindings: i2c: rcar: Add r8a774b1 support
+      dt-bindings: i2c: rcar: Rename bindings documentation file
+      arm64: dts: renesas: r8a774b1-hihope-rzg2n: Enable HS400 mode
+      arm64: dts: renesas: r8a774b1: Add SDHI support
+      mmc: renesas_sdhi_internal_dmac: Add r8a774b1 support
+      dt-bindings: mmc: renesas_sdhi: Add r8a774b1 support
+      arm64: dts: renesas: r8a774b1: Add INTC-EX device node
+      arm64: dts: renesas: hihope-rzg2-ex: Let the board specific DT decide about pciec1
+      arm64: dts: renesas: r8a774b1: Add PCIe device nodes
+      arm64: dts: renesas: r8a774b1: Add all MSIOF nodes
+      arm64: dts: renesas: r8a774b1: Add RWDT node
+      dt-bindings: watchdog: renesas-wdt: Document r8a774b1 support
+      dt-bindings: watchdog: Rename bindings documentation file
+      dt-bindings: spi: sh-msiof: Add r8a774b1 support
+      arm64: dts: renesas: Add HiHope RZ/G2N sub board support
+      arm64: dts: renesas: r8a774b1: Add Ethernet AVB node
+      dt-bindings: net: ravb: Add support for r8a774b1 SoC
+      arm64: dts: renesas: r8a774b1: Add GPIO device nodes
+      dt-bindings: gpio: rcar: Add DT binding for r8a774b1
+      arm64: dts: renesas: r8a774b1: Add SCIF and HSCIF nodes
+      arm64: dts: renesas: r8a774b1: Add SYS-DMAC device nodes
+      dt-bindings: dmaengine: rcar-dmac: Document R8A774B1 bindings
 
-Due date: February 21, Friday
-
-I think this duration might be short to check all information in .yml file,
-but it's enough to confirm the information in "Proposal description" in .xlsx
-or just to start the discussion about them.
+  v4.4.213-cip42:
+    repository:
+      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+    branch:
+      linux-4.4.y-cip
+    commit hash:
+      2507dd95fec1b330c3c62881e43d3d10d44a1a04
+    added commits:
+      CIP: Bump version suffix to -cip42 after merge from stable
+      ARM: dts: r8a7744: Add PCIe Controller device node
+      ARM: dts: r8a7744: Add xhci support
+      dt-bindings: usb-xhci: Document r8a7744 support
+      usb: host: xhci-plat: Add r8a7744 support
+      ARM: dts: r8a7744-iwg20m: Add SPI NOR support
+      ARM: dts: r8a7744: Add MSIOF[012] support
+      ARM: dts: r8a7744: Add QSPI support
+      ARM: dts: r8a7744: Add TPU support
+      ARM: dts: r8a7744: Add PWM SoC support
+      ARM: dts: r8a7744: Add VSP support
 
 Best regards,
-Kazu
-
-> Could you proceed this proposal? Thank you for many cooperation.
-
-> 
-> Hello CIP core group members,
-> 
-> I'd formally like to propose to add security packages as revision 3.
-> I've already the description sheet before, but I'll share all files for this review again in this mail.
-> 
-> Contents:
->  proposal_SecurityWG_rev03.yml: the full flat proposal file including all source and binary sets with reason, security
-> tag information and so on
->  Requirements_for_proposal_SecurityWG_rev03.xlsx: the same file which I've already sent before to explain the requirement
-> in the standard
->  2_src-bin_sort_SecurityWG.txt: the 95 proposed package lists simplified with source and binary names
->  2_src-bin_sort_all.txt: the 179 package lists consisted of the 95 lists for this proposal and the 84 lists already approved
-> by CIP core as a minimal base shown in brackets
-> 
-> I'd like to set the due date for reviewing this proposal by February 21, Friday.
-> It would be very helpful if I can get your feedback, concerning or question in this week due to resolve by the due date.
-> 
-> @kazuhiro3.hayashi at toshiba.co.jp,
-> Could you proceed this proposal? Thank you for many cooperation.
-> 
-> Thank you all for considering my request,
-> Kent
-> 
-> >-----Original Message-----
-> >From: cip-dev <cip-dev-bounces@lists.cip-project.org> On Behalf Of Kento Yoshida
-> >Sent: Friday, February 7, 2020 5:58 PM
-> >To: Punit Agrawal <punit1.agrawal@toshiba.co.jp>;
-> >kazuhiro3.hayashi at toshiba.co.jp
-> >Cc: cip-security at lists.cip-project.org; cip-dev at lists.cip-project.org
-> >Subject: Re: [cip-dev] RESUME REQUEST: [cip-core] Package Proposal #1 (Security
-> >packages)
-> >
-> >Hello reviews,
-> >
-> >Thank you for your supporting against our proposal.
-> >I'd like to share you the description sheet for our proposal of security packages.
-> >Please consider my attachment and the following note.
-> >
-> >Note:
-> >1. Added "fail2ban" as the alternative "pam-shield" because "pam-shield" is not
-> >well-maintained and replace with "fail2ban"
-> >2. There are 3 packages in bottom that are under discussion to add. They are out of
-> >scope for this review but I'd like to explain them, so let me know your ideas if you
-> >have.
-> >3. The requirements for hardware functions are out of scope for this review, but
-> >tpm2 is concrete example mentioned in the standard, so I'd like to add some
-> >packages related tpm2. However, they are options for only using tpm2, so let me
-> >know your comments against adding the packages for a specific use case.
-> >
-> >BTW,
-> >
-> >@kazuhiro3.hayashi at toshiba.co.jp,
-> >
-> >I'd like to create new proposal to add "fail2ban", but the script for generating
-> >proposal shows the following error, and I could not generate it.
-> >
-> >-------------------------------
-> >Source package name:
-> >Binary packages:
-> >
-> >any>
-> >Traceback (most recent call last):
-> >  File "./generate-proposal.py", line 218, in <module>
-> >    generate_proposal(common.PDPProposal.ProposalInfo())
-> >  File "./generate-proposal.py", line 176, in generate_proposal
-> >    deb_src_pkg_info = prepare_src_pkg_info(apt, cve, dep_src_pkg,
-> >dep_pkg_info.keys())
-> >  File "./generate-proposal.py", line 51, in prepare_src_pkg_info
-> >    dp_list_final = gpd.get_pkg_depends(pkg, apt)
-> >  File "/home/yoshidak/cip-pkglist/get_pkg_depends.py", line 102, in
-> >get_pkg_depends
-> >    dp_list, dp_vir_pkg_dict = apt.apt_cache_get_depends_list(pkg_name)
-> >  File "/home/yoshidak/cip-pkglist/common.py", line 222, in
-> >apt_cache_get_depends_list
-> >    dp_info=c[pkg_name]
-> >  File "/usr/lib/python2.7/dist-packages/apt/cache.py", line 238, in __getitem__
-> >    raise KeyError('The cache has no package named %r' % key)
-> >KeyError: "The cache has no package named 'any>'"
-> >-------------------------------
-> >
-> >I think that the reason is below. When I enter the information of "fail2ban", the
-> >script get the dependency for it as <python3:any>.
-> >
-> >-------------------------------
-> >Enter the source package name: fail2ban
-> >Choose the required binary packages:
-> >        1: fail2ban
-> > Input the numbers in comma separated (eg: 1,3,4): 1
-> >
-> >fail2ban
-> > Choose one of the virtual package provider: <python3:any>
-> >        1: python3
-> > Input the number: 1
-> >        -<python3:any>:python3
-> >        -lsb-base
-> > Are any of the binary packages used in target rootfs?
-> >        1: True
-> >        2: False
-> >-------------------------------
-> >
-> >Would you confirm this issue?
-> >
-> >Best regards,
-> >Kent
-> >
-> >>-----Original Message-----
-> >>From: Punit Agrawal <punit1.agrawal@toshiba.co.jp>
-> >>Sent: Thursday, January 23, 2020 4:35 PM
-> >>To: Kento Yoshida <kento.yoshida.wz@renesas.com>
-> >>Cc: cip-dev at lists.cip-project.org; cip-security at lists.cip-project.org
-> >>Subject: Re: [cip-dev] RESUME REQUEST: [cip-core] Package Proposal #1
-> >>(Security
-> >>packages)
-> >>
-> >>Thank you for your comments, Yoshida-san. Follow up comments inline.
-> >>
-> >>Kento Yoshida <kento.yoshida.wz@renesas.com> writes:
-> >>
-> >>> Hello and thank you for your comment, Punit,
-> >>>
-> >>>>-----Original Message-----
-> >>>>From: Punit Agrawal <punit1.agrawal@toshiba.co.jp>
-> >>>>Sent: Monday, January 20, 2020 7:29 PM
-> >>>>To: Kento Yoshida <kento.yoshida.wz@renesas.com>
-> >>>>Cc: cip-dev at lists.cip-project.org; kazuhiro3.hayashi at toshiba.co.jp;
-> >>>>cip-security at lists.cip-project.org
-> >>>>Subject: Re: [cip-dev] RESUME REQUEST: [cip-core] Package Proposal #1
-> >>>>(Security
-> >>>>packages)
-> >>>>
-> >>>>Hello Yoshida-san,
-> >>>>
-> >>>>Kento Yoshida <kento.yoshida.wz@renesas.com> writes:
-> >>>>
-> >>>>> Hello,
-> >>>>>
-> >>>>> I would like to resume our proposal from security working group.
-> >>>>> As you know, Kazu has modified the script to generate a proposal
-> >>>>> and posted the
-> >>>>minimum base system proposal, and then I created the new proposal.
-> >>>>>
-> >>>>> The difference from the original (rev01) proposal is below:
-> >>>>> 1. We remove 'duplicity', 'google-authenticator', 'pam-shield' and
-> >>>>> 'suricata' in the
-> >>>>new proposal because they have an issue such as non-well maintained,
-> >>>>python version, too much dependencies and so on. We'll separately
-> >>>>propose them after solved these issues.
-> >>>>> 2. The new proposal shows all source package as flat. Thanks to the
-> >>>>> new script,
-> >>>>Kazu!
-> >>>>> 3. Actually several packages overlap with the proposed packages for
-> >>>>> minimum
-> >>>>base system in Debian, so I added comment them like that.
-> >>>>>
-> >>>>> @kazuhiro3.hayashi at toshiba.co.jp,
-> >>>>> Would you check this proposal and set the due date to review it?
-> >>>>>
-> >>>>> Please reply if you have any comments or questions.
-> >>>>
-> >>>>I have a comment about packages in the proposal that depend on
-> >>>>hardware / system features -
-> >>>>
-> >>>>* Some packages in the proposal depend on special purpose hardware to
-> >>>>  provide their functionality. e.g., TPM.
-> >>>>
-> >>>>  In systems, where TPM is not present (or similar functionality is
-> >>>> provided by alternate mechanisms), the TPM related packages will not
-> >>>> be useful. e.g., the non-x86 platforms in the CIP reference hardware
-> >>>> list.
-> >>>>
-> >>>>* Similarly, some packages require the system to be connected to the
-> >>>>  network.
-> >>>>
-> >>>>In both of these situations, I am wondering what is the impact on
-> >>>>compliance? Is there a need to also define minimal set of hardware
-> >>>>features expected from reference hardware to be able to meet
-> >>>>compliance
-> >>requirements?
-> >>>>
-> >>>
-> >>> How each reference hardware satisfies the requirements should be
-> >>> considered by each reference hardware provider.
-> >>
-> >>Agreed.
-> >>
-> >>But without an explicit statement of the requirement, how can a
-> >>hardware vendor wanting to develop system for CIP users know what
-> >>features to enable in their system?
-> >>
-> >>> If we provide hardware mechanisms similar with TPM to protect
-> >>> credentials and authentications, we can meet compliance requirements.
-> >>
-> >>TPM2 specification is more than 2000 pages long with many features and
-> >>functions. I believe the IEC standard requires a subset of this
-> >>functionality. The Security WG maybe intimately familiar with the
-> >>required features but for the reviewers on this list, there isn't any criteria to use
-> >for evaluation.
-> >>
-> >>Stating these functional requirements explicitly will serve the dual
-> >>purpose of -
-> >>
-> >>* Provide an objective criteria for evaluating the package proposal
-> >>(and
-> >>  discuss alternatives)
-> >>
-> >>* Give hardware / system vendors the features / functions needed by CIP
-> >>  users.
-> >>
-> >>What do you think?
-> >>
-> >>> TPM related packages are options in only systems where TPM is
-> >>> implemented as you said. If supporting these packages require too
-> >>> much costs, the necessity of them will diminish.  Actually the
-> >>> standard lists TPM as a typical example, so we thought it will be
-> >>> useful to maintain TPM related packages for many users, but their
-> >>> necessities depend on supporting cost.
-> >>
-> >>I see - thanks for the background of the TPM-related packages in the proposal.
-> >>
-> >>>
-> >>>>To help review the package list (and also discuss alternatives), it
-> >>>>would help to define the underlying functionality that is required in
-> >>>>more detail, e.g., secure key storage, verified boot, etc. It'll make
-> >>>>it possible review the proposal more concretely.
-> >>
-> >>[...]
+   Nobuhiro
