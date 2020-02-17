@@ -1,52 +1,15 @@
-From: jan.kiszka@siemens.com (Jan Kiszka)
-Date: Mon, 17 Feb 2020 13:58:04 +0100
-Subject: [cip-dev] [PATCH] ci: build targz images for testing
-In-Reply-To: <20200108151910.7973-1-Quirin.Gylstorff@siemens.com>
-References: <20200108151910.7973-1-Quirin.Gylstorff@siemens.com>
-Message-ID: <e466ed6e-3d1f-223e-b0a1-29ae6eb703ce@siemens.com>
+From: kazuhiro3.hayashi@toshiba.co.jp (kazuhiro3.hayashi at toshiba.co.jp)
+Date: Mon, 17 Feb 2020 14:40:41 +0000
+Subject: [cip-dev] cip-core: Permission issue in AWS S3
+Message-ID: <TYXPR01MB1808CD447B552BCDD94D7860E1160@TYXPR01MB1808.jpnprd01.prod.outlook.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-On 08.01.20 16:19, Q. Gylstorff wrote:
-> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> 
-> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> ---
->   .gitlab-ci.yml | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-> index 319c5a2..523e759 100644
-> --- a/.gitlab-ci.yml
-> +++ b/.gitlab-ci.yml
-> @@ -13,17 +13,17 @@ all:
->       - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
->       - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
->   
-> -    - kas build kas.yml:board-simatic-ipc227e.yml:opt-rt.yml
-> +    - kas build kas.yml:board-simatic-ipc227e.yml:opt-rt.yml:opt-targz-img.yml
->       - scripts/deploy-cip-core.sh buster simatic-ipc227e
->   
->       - sudo rm -rf build/tmp
-> -    - kas build kas.yml:board-bbb.yml:opt-rt.yml
-> +    - kas build kas.yml:board-bbb.yml:opt-rt.yml:opt-targz-img.yml
->       - scripts/deploy-cip-core.sh buster bbb am335x-boneblack.dtb
->   
->       - sudo rm -rf build/tmp
-> -    - kas build kas.yml:board-iwg20m.yml:opt-rt.yml
-> +    - kas build kas.yml:board-iwg20m.yml:opt-rt.yml:opt-targz-img.yml
->       - scripts/deploy-cip-core.sh buster iwg20m r8a7743-iwg20d-q7-dbcm-ca.dtb
->   
->       - sudo rm -rf build/tmp
-> -    - kas build kas.yml:board-rzg2m.yml:opt-rt.yml
-> +    - kas build kas.yml:board-rzg2m.yml:opt-rt.yml:opt-targz-img.yml
->       - scripts/deploy-cip-core.sh buster hihope-rz2gm r8a774a1-hihope-rzg2m-ex.dtb
-> 
+Hello Chris,
 
-Thanks, applied to isar-cip-core (where this was aiming at).
+I'm facing an issue about access permission (Access Denied) in S3 while submitting test request to LAVA.
+Could you take a look at https://gitlab.com/cip-project/cip-core/deby/issues/7#note_289132698
+then let me know if you find anything missing there?
 
-Jan
-
--- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+Best regards,
+Kazu
