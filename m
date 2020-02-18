@@ -1,81 +1,73 @@
 From: marian-cristian.rotariu.rb@bp.renesas.com (Marian-Cristian Rotariu)
-Date: Tue, 18 Feb 2020 14:05:07 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 10/23] usb: roles: Introduce stubs for
-	the exiting functions in role.h
+Date: Tue, 18 Feb 2020 14:05:10 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 13/23] dt-bindings: usb: hd3ss3220
+	device tree binding document
 In-Reply-To: <1582034720-5249-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
 References: <1582034720-5249-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
-Message-ID: <1582034720-5249-11-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
+Message-ID: <1582034720-5249-14-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Yu Chen <chenyu56@huawei.com>
+From: Biju Das <biju.das@bp.renesas.com>
 
-commit 977607653cdd06a2c4d1d0f179ff46cc0cbe83a5 upstream.
+commit 1918fa0d44985cbc8ab2f315c120525b207b2195 upstream.
 
-This patch adds stubs for the exiting functions while
-CONFIG_USB_ROLE_SWITCH does not enabled.
+Add device tree binding document for TI HD3SS3220 Type-C DRP port
+controller driver.
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: John Stultz <john.stultz@linaro.org>
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Signed-off-by: Yu Chen <chenyu56@huawei.com>
-Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Link: https://lore.kernel.org/r/1567070558-29417-6-git-send-email-chunfeng.yun at mediatek.com
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Link: https://lore.kernel.org/r/1567584941-13690-2-git-send-email-biju.das at bp.renesas.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-(fixed checkpatch alignment warnings)
 Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 ---
- include/linux/usb/role.h | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ .../devicetree/bindings/usb/ti,hd3ss3220.txt       | 38 ++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
 
-diff --git a/include/linux/usb/role.h b/include/linux/usb/role.h
-index c05ffa6..b880e6a 100644
---- a/include/linux/usb/role.h
-+++ b/include/linux/usb/role.h
-@@ -42,6 +42,7 @@ struct usb_role_switch_desc {
- 	bool allow_userspace_control;
- };
- 
-+#if IS_ENABLED(CONFIG_USB_ROLE_SWITCH)
- int usb_role_switch_set_role(struct usb_role_switch *sw, enum usb_role role);
- enum usb_role usb_role_switch_get_role(struct usb_role_switch *sw);
- struct usb_role_switch *usb_role_switch_get(struct device *dev);
-@@ -51,5 +52,33 @@ struct usb_role_switch *
- usb_role_switch_register(struct device *parent,
- 			 const struct usb_role_switch_desc *desc);
- void usb_role_switch_unregister(struct usb_role_switch *sw);
-+#else
-+static inline int usb_role_switch_set_role(struct usb_role_switch *sw,
-+					   enum usb_role role)
-+{
-+	return 0;
-+}
+diff --git a/Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
+new file mode 100644
+index 0000000..25780e9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
+@@ -0,0 +1,38 @@
++TI HD3SS3220 TypeC DRP Port Controller.
 +
-+static inline enum usb_role usb_role_switch_get_role(struct usb_role_switch *sw)
-+{
-+	return USB_ROLE_NONE;
-+}
++Required properties:
++ - compatible: Must be "ti,hd3ss3220".
++ - reg: I2C slave address, must be 0x47 or 0x67 based on ADDR pin.
++ - interrupts: An interrupt specifier.
 +
-+static inline struct usb_role_switch *usb_role_switch_get(struct device *dev)
-+{
-+	return ERR_PTR(-ENODEV);
-+}
++Required sub-node:
++ - connector: The "usb-c-connector" attached to the hd3ss3220 chip. The
++   bindings of the connector node are specified in:
 +
-+static inline void usb_role_switch_put(struct usb_role_switch *sw) { }
++	Documentation/devicetree/bindings/connector/usb-connector.txt
 +
-+static inline struct usb_role_switch *
-+usb_role_switch_register(struct device *parent,
-+			 const struct usb_role_switch_desc *desc)
-+{
-+	return ERR_PTR(-ENODEV);
-+}
++Example:
++hd3ss3220 at 47 {
++	compatible = "ti,hd3ss3220";
++	reg = <0x47>;
++	interrupt-parent = <&gpio6>;
++	interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
 +
-+static inline void usb_role_switch_unregister(struct usb_role_switch *sw) { }
-+#endif
- 
- #endif /* __LINUX_USB_ROLE_H */
++	connector {
++		compatible = "usb-c-connector";
++		label = "USB-C";
++		data-role = "dual";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port at 1 {
++				reg = <1>;
++				hd3ss3220_ep: endpoint {
++					remote-endpoint = <&usb3_role_switch>;
++				};
++			};
++		};
++	};
++};
 -- 
 2.7.4
