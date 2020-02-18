@@ -1,87 +1,107 @@
 From: marian-cristian.rotariu.rb@bp.renesas.com (Marian-Cristian Rotariu)
-Date: Tue, 18 Feb 2020 14:04:57 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 00/23] Renesas RZ/G2E USB Type-C
-	Backport
-Message-ID: <1582034720-5249-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
+Date: Tue, 18 Feb 2020 14:05:01 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 04/23] usb: roles: Find the muxes by
+	also matching against the device node
+In-Reply-To: <1582034720-5249-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
+References: <1582034720-5249-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
+Message-ID: <1582034720-5249-5-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-This patchset revolves around the following patch set from upstream:
-https://patchwork.kernel.org/cover/10969899/
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-Unfortunately, the driver is using a slightly different version of the USB
-API. In upstream, the connection between the fwnode of the USB controller
-device tree node, that is the connector device tree node, and the USB
-peripheral device tree node is nicely done via some new function calls that
-are basically some extensions to the graph traverse and graph discovery
-methods for the device tree parser. This is needed for role switch feature.
+commit ec69e9533c4879c81eb7122771792864eb49af35 upstream.
 
-I tried to create the minimum set for the USB API extension and it should
-not affect at all the current behavior. All the modifications are additions
-and some rewritings of some of the current functions.
+When the connections are defined in firmware, struct
+device_connection will have the fwnode member pointing to
+the device node (struct fwnode_handle) of the requested
+device, and the endpoint will not be used at all in that
+case.
 
-I also backported some fixes where I have found them.
+Acked-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Reviewed-by: Jun Li <jun.li@nxp.com>
+Tested-by: Jun Li <jun.li@nxp.com>
+Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+---
+ drivers/usb/roles/class.c | 21 ++++++++++++++++++---
+ include/linux/usb/role.h  |  2 ++
+ 2 files changed, 20 insertions(+), 3 deletions(-)
 
-Tested on Si-Linux EK874 (with RZ/G2E SoC) that we have in house.
-
-Biju Das (8):
-  dt-bindings: usb: hd3ss3220 device tree binding document
-  dt-bindings: usb: renesas_usb3: Document usb role switch support
-  usb: typec: driver for TI HD3SS3220 USB Type-C DRP port controller
-  usb: typec: hd3ss3220: hd3ss3220_probe() warn: passing zero to
-    'PTR_ERR'
-  usb: gadget: udc: renesas_usb3: Enhance role switch support
-  arm64: defconfig: enable TYPEC_HD3SS3220 config option
-  arm64: dts: renesas: cat874: Enable USB3.0 host/peripheral device node
-  arm64: dts: renesas: cat874: Enable usb role switch support
-
-Dan Carpenter (1):
-  usb: typec: fix an IS_ERR() vs NULL bug in hd3ss3220_probe()
-
-Heikki Krogerus (10):
-  device connection: Add fwnode member to struct device_connection
-  usb: typec: mux: Find the muxes by also matching against the device
-    node
-  usb: roles: Find the muxes by also matching against the device node
-  usb: typec: Find the ports by also matching against the device node
-  device connection: Prepare support for firmware described connections
-  device connection: Find device connections also from device graphs
-  device property: Introduce fwnode_find_reference()
-  device connection: Find connections also by checking the references
-  device connection: Add fwnode_connection_find_match()
-  usb: roles: Add fwnode_usb_role_switch_get() function
-
-Mao Wenan (1):
-  usb: typec: add dependency for TYPEC_HD3SS3220
-
-Yu Chen (1):
-  usb: roles: Introduce stubs for the exiting functions in role.h
-
-YueHaibing (1):
-  usb: typec: mux: Fix unsigned comparison with less than zero
-
-kbuild test robot (1):
-  usb: typec: hd3ss3220_irq() can be static
-
- .../devicetree/bindings/usb/renesas,usb3-peri.txt  |  23 ++
- .../devicetree/bindings/usb/ti,hd3ss3220.txt       |  38 +++
- arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts    |  49 ++++
- arch/arm64/configs/defconfig                       |   2 +
- drivers/base/devcon.c                              | 107 ++++++++-
- drivers/base/property.c                            |  24 ++
- drivers/usb/gadget/udc/renesas_usb3.c              |  91 ++++++-
- drivers/usb/roles/class.c                          |  41 +++-
- drivers/usb/typec/Kconfig                          |  11 +
- drivers/usb/typec/Makefile                         |   1 +
- drivers/usb/typec/class.c                          |  24 +-
- drivers/usb/typec/hd3ss3220.c                      | 262 +++++++++++++++++++++
- drivers/usb/typec/mux.c                            |  86 ++++++-
- include/linux/device.h                             |  16 +-
- include/linux/property.h                           |   4 +
- include/linux/usb/role.h                           |  38 +++
- 16 files changed, 786 insertions(+), 31 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
- create mode 100644 drivers/usb/typec/hd3ss3220.c
-
+diff --git a/drivers/usb/roles/class.c b/drivers/usb/roles/class.c
+index 1dd492e..44a4af2 100644
+--- a/drivers/usb/roles/class.c
++++ b/drivers/usb/roles/class.c
+@@ -8,6 +8,7 @@
+  */
+ 
+ #include <linux/usb/role.h>
++#include <linux/property.h>
+ #include <linux/device.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+@@ -84,7 +85,12 @@ enum usb_role usb_role_switch_get_role(struct usb_role_switch *sw)
+ }
+ EXPORT_SYMBOL_GPL(usb_role_switch_get_role);
+ 
+-static int __switch_match(struct device *dev, const void *name)
++static int switch_fwnode_match(struct device *dev, const void *fwnode)
++{
++	return dev_fwnode(dev) == fwnode;
++}
++
++static int switch_name_match(struct device *dev, const void *name)
+ {
+ 	return !strcmp((const char *)name, dev_name(dev));
+ }
+@@ -94,8 +100,16 @@ static void *usb_role_switch_match(struct device_connection *con, int ep,
+ {
+ 	struct device *dev;
+ 
+-	dev = class_find_device(role_class, NULL, con->endpoint[ep],
+-				__switch_match);
++	if (con->fwnode) {
++		if (!fwnode_property_present(con->fwnode, con->id))
++			return NULL;
++
++		dev = class_find_device(role_class, NULL, con->fwnode,
++					switch_fwnode_match);
++	} else {
++		dev = class_find_device(role_class, NULL, con->endpoint[ep],
++					switch_name_match);
++	}
+ 
+ 	return dev ? to_role_switch(dev) : ERR_PTR(-EPROBE_DEFER);
+ }
+@@ -266,6 +280,7 @@ usb_role_switch_register(struct device *parent,
+ 	sw->get = desc->get;
+ 
+ 	sw->dev.parent = parent;
++	sw->dev.fwnode = desc->fwnode;
+ 	sw->dev.class = role_class;
+ 	sw->dev.type = &usb_role_dev_type;
+ 	dev_set_name(&sw->dev, "%s-role-switch", dev_name(parent));
+diff --git a/include/linux/usb/role.h b/include/linux/usb/role.h
+index edc51be..c05ffa6 100644
+--- a/include/linux/usb/role.h
++++ b/include/linux/usb/role.h
+@@ -18,6 +18,7 @@ typedef enum usb_role (*usb_role_switch_get_t)(struct device *dev);
+ 
+ /**
+  * struct usb_role_switch_desc - USB Role Switch Descriptor
++ * @fwnode: The device node to be associated with the role switch
+  * @usb2_port: Optional reference to the host controller port device (USB2)
+  * @usb3_port: Optional reference to the host controller port device (USB3)
+  * @udc: Optional reference to the peripheral controller device
+@@ -32,6 +33,7 @@ typedef enum usb_role (*usb_role_switch_get_t)(struct device *dev);
+  * usb_role_switch_register() before registering the switch.
+  */
+ struct usb_role_switch_desc {
++	struct fwnode_handle *fwnode;
+ 	struct device *usb2_port;
+ 	struct device *usb3_port;
+ 	struct device *udc;
 -- 
 2.7.4
