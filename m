@@ -1,58 +1,95 @@
 From: marian-cristian.rotariu.rb@bp.renesas.com (Marian-Cristian Rotariu)
-Date: Tue, 18 Feb 2020 14:05:14 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 17/23] usb: typec: add dependency for
-	TYPEC_HD3SS3220
+Date: Tue, 18 Feb 2020 14:05:15 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 18/23] usb: typec: hd3ss3220:
+	hd3ss3220_probe() warn: passing zero to 'PTR_ERR'
 In-Reply-To: <1582034720-5249-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
 References: <1582034720-5249-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
-Message-ID: <1582034720-5249-18-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
+Message-ID: <1582034720-5249-19-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Mao Wenan <maowenan@huawei.com>
+From: Biju Das <biju.das@bp.renesas.com>
 
-commit da4b5d18dd949abdda7c8ea76c9483b5edd49616 upstream.
+commit 5a9a8a4c505851cfb1fe5772851fb528476575bb upstream.
 
-If CONFIG_TYPEC_HD3SS3220=y, CONFIG_USB_ROLE_SWITCH=m, below errors
-can be found:
-drivers/usb/typec/hd3ss3220.o: In function `hd3ss3220_remove':
-hd3ss3220.c:(.text+0x64): undefined reference to `usb_role_switch_put'
-drivers/usb/typec/hd3ss3220.o: In function `hd3ss3220_dr_set':
-hd3ss3220.c:(.text+0x154): undefined reference to `usb_role_switch_set_role'
-drivers/usb/typec/hd3ss3220.o: In function `hd3ss3220_set_role':
-hd3ss3220.c:(.text+0x294): undefined reference to `usb_role_switch_set_role'
-hd3ss3220.c:(.text+0x2f4): undefined reference to `usb_role_switch_set_role'
-hd3ss3220.c:(.text+0x348): undefined reference to `usb_role_switch_set_role'
-hd3ss3220.c:(.text+0x390): undefined reference to `usb_role_switch_set_role'
-drivers/usb/typec/hd3ss3220.o: In function `hd3ss3220_probe':
-hd3ss3220.c:(.text+0x5e8): undefined reference to `fwnode_usb_role_switch_get'
-hd3ss3220.c:(.text+0x8a4): undefined reference to `usb_role_switch_put'
-make: *** [vmlinux] Error 1
-
-This patch add dependency USB_ROLE_SWITCH for TYPEC_HD3SS3220.
+This patch fixes the warning passing zero to 'PTR_ERR' by changing the
+check from 'IS_ERR_OR_NULL' to 'IS_ERR'. Also improved the error handling
+on probe function.
 
 Fixes: 1c48c759ef4b ("usb: typec: driver for TI HD3SS3220 USB Type-C DRP port controller")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
+Reported-by: kbuild test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Link: https://lore.kernel.org/r/20191009014707.38716-1-maowenan at huawei.com
+Link: https://lore.kernel.org/r/1570462729-25722-1-git-send-email-biju.das at bp.renesas.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 ---
- drivers/usb/typec/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/typec/hd3ss3220.c | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/usb/typec/Kconfig b/drivers/usb/typec/Kconfig
-index fde51c5..a4bdb5c 100644
---- a/drivers/usb/typec/Kconfig
-+++ b/drivers/usb/typec/Kconfig
-@@ -95,6 +95,7 @@ source "drivers/usb/typec/ucsi/Kconfig"
- config TYPEC_HD3SS3220
- 	tristate "TI HD3SS3220 Type-C DRP Port controller driver"
- 	depends on I2C
-+	depends on USB_ROLE_SWITCH
- 	help
- 	  Say Y or M here if your system has TI HD3SS3220 Type-C DRP Port
- 	  controller driver.
+diff --git a/drivers/usb/typec/hd3ss3220.c b/drivers/usb/typec/hd3ss3220.c
+index 658e6aa..0b28ca9 100644
+--- a/drivers/usb/typec/hd3ss3220.c
++++ b/drivers/usb/typec/hd3ss3220.c
+@@ -178,7 +178,7 @@ static int hd3ss3220_probe(struct i2c_client *client,
+ 
+ 	hd3ss3220->role_sw = fwnode_usb_role_switch_get(connector);
+ 	fwnode_handle_put(connector);
+-	if (IS_ERR_OR_NULL(hd3ss3220->role_sw))
++	if (IS_ERR(hd3ss3220->role_sw))
+ 		return PTR_ERR(hd3ss3220->role_sw);
+ 
+ 	hd3ss3220->typec_cap.prefer_role = TYPEC_NO_PREFERRED_ROLE;
+@@ -188,20 +188,22 @@ static int hd3ss3220_probe(struct i2c_client *client,
+ 
+ 	hd3ss3220->port = typec_register_port(&client->dev,
+ 					      &hd3ss3220->typec_cap);
+-	if (IS_ERR(hd3ss3220->port))
+-		return PTR_ERR(hd3ss3220->port);
++	if (IS_ERR(hd3ss3220->port)) {
++		ret = PTR_ERR(hd3ss3220->port);
++		goto err_put_role;
++	}
+ 
+ 	hd3ss3220_set_role(hd3ss3220);
+ 	ret = regmap_read(hd3ss3220->regmap, HD3SS3220_REG_CN_STAT_CTRL, &data);
+ 	if (ret < 0)
+-		goto error;
++		goto err_unreg_port;
+ 
+ 	if (data & HD3SS3220_REG_CN_STAT_CTRL_INT_STATUS) {
+ 		ret = regmap_write(hd3ss3220->regmap,
+ 				   HD3SS3220_REG_CN_STAT_CTRL,
+ 				data | HD3SS3220_REG_CN_STAT_CTRL_INT_STATUS);
+ 		if (ret < 0)
+-			goto error;
++			goto err_unreg_port;
+ 	}
+ 
+ 	if (client->irq > 0) {
+@@ -210,18 +212,19 @@ static int hd3ss3220_probe(struct i2c_client *client,
+ 					IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
+ 					"hd3ss3220", &client->dev);
+ 		if (ret)
+-			goto error;
++			goto err_unreg_port;
+ 	}
+ 
+ 	ret = i2c_smbus_read_byte_data(client, HD3SS3220_REG_DEV_REV);
+ 	if (ret < 0)
+-		goto error;
++		goto err_unreg_port;
+ 
+ 	dev_info(&client->dev, "probed revision=0x%x\n", ret);
+ 
+ 	return 0;
+-error:
++err_unreg_port:
+ 	typec_unregister_port(hd3ss3220->port);
++err_put_role:
+ 	usb_role_switch_put(hd3ss3220->role_sw);
+ 
+ 	return ret;
 -- 
 2.7.4
