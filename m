@@ -1,59 +1,47 @@
-From: marian-cristian.rotariu.rb@bp.renesas.com (Marian-Cristian Rotariu)
-Date: Tue, 18 Feb 2020 14:05:19 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 22/23] arm64: dts: renesas: cat874:
-	Enable USB3.0 host/peripheral device node
-In-Reply-To: <1582034720-5249-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
-References: <1582034720-5249-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
-Message-ID: <1582034720-5249-23-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
+From: quirin.gylstorff@siemens.com (Gylstorff Quirin)
+Date: Tue, 18 Feb 2020 17:20:01 +0100
+Subject: [cip-dev] : isar-cip-core and cip-kernel-config
+Message-ID: <ca39ce48-8602-0e79-99af-2f44200e2b12@siemens.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Biju Das <biju.das@bp.renesas.com>
+Hi all,
 
-commit cf7b175ae4deee43e3408bece10246d6a54cbe4c upstream.
+I am currently trying to have all targets in isar-cip-core running with 
+the matching configuration from cip-kernel-config. For some targets 
+there are missing config entries to boot Debian 10 e.g. [1].
 
-This patch enables USB3.0 host/peripheral device node for the cat874
-board.
+Should I add these configuration directly to the matching defconfig in
+cip-kernel-config or add new defconfig/snippets for isar-cip-core?
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-(fixed cherry-pick confict as patch has different context in upstream)
-Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+Currently I am adding them directly to the defconfigs as it is IHMO
+more manageable as it avoid snippets/configs all over the place.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-index 5be3bad..6b48f87 100644
---- a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-@@ -297,6 +297,11 @@
- 		groups = "ssi01239_ctrl", "ssi0_data";
- 		function = "ssi";
- 	};
-+
-+	usb30_pins: usb30 {
-+		groups = "usb30", "usb30_id";
-+		function = "usb30";
-+	};
- };
- 
- &rcar_sound {
-@@ -370,3 +375,15 @@
- 	renesas,no-otg-pins;
- 	status = "okay";
- };
-+
-+&usb3_peri0 {
-+	companion = <&xhci0>;
-+	status = "okay";
-+};
-+
-+&xhci0 {
-+	pinctrl-0 = <&usb30_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
+[1]: 
+https://gitlab.com/Quirin.Gy/cip-kernel-config/-/commit/92979dba2e3c03a422b5b9e8f9c592db9ff43f30
+
 -- 
-2.7.4
+Quirin Gylstorff
+
+Siemens AG
+Corporate Technology
+Research in Digitalization and Automation
+Smart Embedded Systems
+CT RDA IOT SES-DE
+Otto-Hahn-Ring 6
+81739 Muenchen, Germany
+Mobile: +49 173 3746683
+mailto:quirin.gylstorff at siemens.com
+www.siemens.com/ingenuityforlife
+
+Siemens Aktiengesellschaft: Chairman of the Supervisory Board: Jim 
+Hagemann Snabe; Managing Board: Joe Kaeser, Chairman, President and 
+Chief Executive Officer; Roland Busch, Lisa Davis, Klaus Helmrich, 
+Cedrik Neike, Michael Sen, Ralf P. Thomas; Registered offices: Berlin 
+and Munich, Germany; Commercial registries: Berlin Charlottenburg, HRB 
+12300, Munich, HRB 6684; WEEE-Reg.-No. DE 23691322
+
+Important notice: This e-mail and any attachment thereof contain 
+corporate proprietary information. If you have received it by mistake, 
+please notify us immediately by reply e-mail and delete this e-mail and 
+its attachments from your system. Thank you.
