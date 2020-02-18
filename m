@@ -1,86 +1,87 @@
 From: marian-cristian.rotariu.rb@bp.renesas.com (Marian-Cristian Rotariu)
-Date: Tue, 18 Feb 2020 14:05:06 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 09/23] device connection: Find
-	connections also by checking the references
+Date: Tue, 18 Feb 2020 14:05:09 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 12/23] usb: roles: Add
+	fwnode_usb_role_switch_get() function
 In-Reply-To: <1582034720-5249-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
 References: <1582034720-5249-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
-Message-ID: <1582034720-5249-10-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
+Message-ID: <1582034720-5249-13-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
 From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-commit fde777791eb83f6c5845b81af89de6be60a2b2ce upstream.
+commit a31f01777bc54a0a9d57628956d05f8d454d3418 upstream.
 
-We can also use this API to find named references that the
-device nodes have by using fwnode_property_get_reference_args()
-function.
+The fwnode_usb_role_switch_get() function is exactly the
+same as usb_role_switch_get(), except that it takes struct
+fwnode_handle as parameter instead of struct device.
 
 Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Tested-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Tested-by: Biju Das <biju.das@bp.renesas.com>
+Link: https://lore.kernel.org/r/1567070558-29417-8-git-send-email-chunfeng.yun at mediatek.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 ---
- drivers/base/devcon.c     | 26 ++++++++++++++++++++++++++
- drivers/usb/roles/class.c |  2 +-
- 2 files changed, 27 insertions(+), 1 deletion(-)
+ drivers/usb/roles/class.c | 20 ++++++++++++++++++++
+ include/linux/usb/role.h  |  7 +++++++
+ 2 files changed, 27 insertions(+)
 
-diff --git a/drivers/base/devcon.c b/drivers/base/devcon.c
-index 04db9ae..f7035fc 100644
---- a/drivers/base/devcon.c
-+++ b/drivers/base/devcon.c
-@@ -38,6 +38,28 @@ fwnode_graph_devcon_match(struct fwnode_handle *fwnode, const char *con_id,
- 	return NULL;
- }
- 
-+static void *
-+fwnode_devcon_match(struct fwnode_handle *fwnode, const char *con_id,
-+		    void *data, devcon_match_fn_t match)
-+{
-+	struct device_connection con = { };
-+	void *ret;
-+	int i;
-+
-+	for (i = 0; ; i++) {
-+		con.fwnode = fwnode_find_reference(fwnode, con_id, i);
-+		if (IS_ERR(con.fwnode))
-+			break;
-+
-+		ret = match(&con, -1, data);
-+		fwnode_handle_put(con.fwnode);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return NULL;
-+}
-+
- /**
-  * device_connection_find_match - Find physical connection to a device
-  * @dev: Device with the connection
-@@ -65,6 +87,10 @@ void *device_connection_find_match(struct device *dev, const char *con_id,
- 		ret = fwnode_graph_devcon_match(fwnode, con_id, data, match);
- 		if (ret)
- 			return ret;
-+
-+		ret = fwnode_devcon_match(fwnode, con_id, data, match);
-+		if (ret)
-+			return ret;
- 	}
- 
- 	mutex_lock(&devcon_lock);
 diff --git a/drivers/usb/roles/class.c b/drivers/usb/roles/class.c
-index 44a4af2..6b3c087 100644
+index 6b3c087..a4e498e 100644
 --- a/drivers/usb/roles/class.c
 +++ b/drivers/usb/roles/class.c
-@@ -101,7 +101,7 @@ static void *usb_role_switch_match(struct device_connection *con, int ep,
- 	struct device *dev;
+@@ -136,6 +136,26 @@ struct usb_role_switch *usb_role_switch_get(struct device *dev)
+ EXPORT_SYMBOL_GPL(usb_role_switch_get);
  
- 	if (con->fwnode) {
--		if (!fwnode_property_present(con->fwnode, con->id))
-+		if (con->id && !fwnode_property_present(con->fwnode, con->id))
- 			return NULL;
+ /**
++ * fwnode_usb_role_switch_get - Find USB role switch linked with the caller
++ * @fwnode: The caller device node
++ *
++ * This is similar to the usb_role_switch_get() function above, but it searches
++ * the switch using fwnode instead of device entry.
++ */
++struct usb_role_switch *fwnode_usb_role_switch_get(struct fwnode_handle *fwnode)
++{
++	struct usb_role_switch *sw;
++
++	sw = fwnode_connection_find_match(fwnode, "usb-role-switch", NULL,
++					  usb_role_switch_match);
++	if (!IS_ERR_OR_NULL(sw))
++		WARN_ON(!try_module_get(sw->dev.parent->driver->owner));
++
++	return sw;
++}
++EXPORT_SYMBOL_GPL(fwnode_usb_role_switch_get);
++
++/**
+  * usb_role_switch_put - Release handle to a switch
+  * @sw: USB Role Switch
+  *
+diff --git a/include/linux/usb/role.h b/include/linux/usb/role.h
+index b880e6a..8029d1b 100644
+--- a/include/linux/usb/role.h
++++ b/include/linux/usb/role.h
+@@ -46,6 +46,7 @@ struct usb_role_switch_desc {
+ int usb_role_switch_set_role(struct usb_role_switch *sw, enum usb_role role);
+ enum usb_role usb_role_switch_get_role(struct usb_role_switch *sw);
+ struct usb_role_switch *usb_role_switch_get(struct device *dev);
++struct usb_role_switch *fwnode_usb_role_switch_get(struct fwnode_handle *node);
+ void usb_role_switch_put(struct usb_role_switch *sw);
  
- 		dev = class_find_device(role_class, NULL, con->fwnode,
+ struct usb_role_switch *
+@@ -69,6 +70,12 @@ static inline struct usb_role_switch *usb_role_switch_get(struct device *dev)
+ 	return ERR_PTR(-ENODEV);
+ }
+ 
++static inline struct usb_role_switch *
++fwnode_usb_role_switch_get(struct fwnode_handle *node)
++{
++	return ERR_PTR(-ENODEV);
++}
++
+ static inline void usb_role_switch_put(struct usb_role_switch *sw) { }
+ 
+ static inline struct usb_role_switch *
 -- 
 2.7.4
