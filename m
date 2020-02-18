@@ -1,122 +1,81 @@
 From: marian-cristian.rotariu.rb@bp.renesas.com (Marian-Cristian Rotariu)
-Date: Tue, 18 Feb 2020 14:05:08 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 11/23] device connection: Add
-	fwnode_connection_find_match()
+Date: Tue, 18 Feb 2020 14:05:07 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 10/23] usb: roles: Introduce stubs for
+	the exiting functions in role.h
 In-Reply-To: <1582034720-5249-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
 References: <1582034720-5249-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
-Message-ID: <1582034720-5249-12-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
+Message-ID: <1582034720-5249-11-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+From: Yu Chen <chenyu56@huawei.com>
 
-commit 44493062abc38e5895e0cf8d22698f2ca39a1e4d upstream.
+commit 977607653cdd06a2c4d1d0f179ff46cc0cbe83a5 upstream.
 
-The fwnode_connection_find_match() function is exactly the
-same as device_connection_find_match(), except it takes
-struct fwnode_handle as parameter instead of struct device.
-That allows locating device connections before the device
-entries have been created.
+This patch adds stubs for the exiting functions while
+CONFIG_USB_ROLE_SWITCH does not enabled.
 
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: John Stultz <john.stultz@linaro.org>
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Signed-off-by: Yu Chen <chenyu56@huawei.com>
 Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Link: https://lore.kernel.org/r/1567070558-29417-7-git-send-email-chunfeng.yun at mediatek.com
+Link: https://lore.kernel.org/r/1567070558-29417-6-git-send-email-chunfeng.yun at mediatek.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+(fixed checkpatch alignment warnings)
 Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 ---
- drivers/base/devcon.c  | 43 +++++++++++++++++++++++++++++++------------
- include/linux/device.h | 10 +++++++---
- 2 files changed, 38 insertions(+), 15 deletions(-)
+ include/linux/usb/role.h | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/drivers/base/devcon.c b/drivers/base/devcon.c
-index f7035fc..5bf9537bd7 100644
---- a/drivers/base/devcon.c
-+++ b/drivers/base/devcon.c
-@@ -12,9 +12,6 @@
- static DEFINE_MUTEX(devcon_lock);
- static LIST_HEAD(devcon_list);
- 
--typedef void *(*devcon_match_fn_t)(struct device_connection *con, int ep,
--				   void *data);
--
- static void *
- fwnode_graph_devcon_match(struct fwnode_handle *fwnode, const char *con_id,
- 			  void *data, devcon_match_fn_t match)
-@@ -61,6 +58,34 @@ fwnode_devcon_match(struct fwnode_handle *fwnode, const char *con_id,
- }
- 
- /**
-+ * fwnode_connection_find_match - Find connection from a device node
-+ * @fwnode: Device node with the connection
-+ * @con_id: Identifier for the connection
-+ * @data: Data for the match function
-+ * @match: Function to check and convert the connection description
-+ *
-+ * Find a connection with unique identifier @con_id between @fwnode and another
-+ * device node. @match will be used to convert the connection description to
-+ * data the caller is expecting to be returned.
-+ */
-+void *fwnode_connection_find_match(struct fwnode_handle *fwnode,
-+				   const char *con_id, void *data,
-+				   devcon_match_fn_t match)
-+{
-+	void *ret;
-+
-+	if (!fwnode || !match)
-+		return NULL;
-+
-+	ret = fwnode_graph_devcon_match(fwnode, con_id, data, match);
-+	if (ret)
-+		return ret;
-+
-+	return fwnode_devcon_match(fwnode, con_id, data, match);
-+}
-+EXPORT_SYMBOL_GPL(fwnode_connection_find_match);
-+
-+/**
-  * device_connection_find_match - Find physical connection to a device
-  * @dev: Device with the connection
-  * @con_id: Identifier for the connection
-@@ -83,15 +108,9 @@ void *device_connection_find_match(struct device *dev, const char *con_id,
- 	if (!match)
- 		return NULL;
- 
--	if (fwnode) {
--		ret = fwnode_graph_devcon_match(fwnode, con_id, data, match);
--		if (ret)
--			return ret;
--
--		ret = fwnode_devcon_match(fwnode, con_id, data, match);
--		if (ret)
--			return ret;
--	}
-+	ret = fwnode_connection_find_match(fwnode, con_id, data, match);
-+	if (ret)
-+		return ret;
- 
- 	mutex_lock(&devcon_lock);
- 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index ceb69b9..f4c89e7 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -769,10 +769,14 @@ struct device_connection {
- 	struct list_head	list;
+diff --git a/include/linux/usb/role.h b/include/linux/usb/role.h
+index c05ffa6..b880e6a 100644
+--- a/include/linux/usb/role.h
++++ b/include/linux/usb/role.h
+@@ -42,6 +42,7 @@ struct usb_role_switch_desc {
+ 	bool allow_userspace_control;
  };
  
-+typedef void *(*devcon_match_fn_t)(struct device_connection *con, int ep,
-+				   void *data);
++#if IS_ENABLED(CONFIG_USB_ROLE_SWITCH)
+ int usb_role_switch_set_role(struct usb_role_switch *sw, enum usb_role role);
+ enum usb_role usb_role_switch_get_role(struct usb_role_switch *sw);
+ struct usb_role_switch *usb_role_switch_get(struct device *dev);
+@@ -51,5 +52,33 @@ struct usb_role_switch *
+ usb_role_switch_register(struct device *parent,
+ 			 const struct usb_role_switch_desc *desc);
+ void usb_role_switch_unregister(struct usb_role_switch *sw);
++#else
++static inline int usb_role_switch_set_role(struct usb_role_switch *sw,
++					   enum usb_role role)
++{
++	return 0;
++}
 +
-+void *fwnode_connection_find_match(struct fwnode_handle *fwnode,
-+				   const char *con_id, void *data,
-+				   devcon_match_fn_t match);
- void *device_connection_find_match(struct device *dev, const char *con_id,
--				void *data,
--				void *(*match)(struct device_connection *con,
--					       int ep, void *data));
-+				   void *data, devcon_match_fn_t match);
++static inline enum usb_role usb_role_switch_get_role(struct usb_role_switch *sw)
++{
++	return USB_ROLE_NONE;
++}
++
++static inline struct usb_role_switch *usb_role_switch_get(struct device *dev)
++{
++	return ERR_PTR(-ENODEV);
++}
++
++static inline void usb_role_switch_put(struct usb_role_switch *sw) { }
++
++static inline struct usb_role_switch *
++usb_role_switch_register(struct device *parent,
++			 const struct usb_role_switch_desc *desc)
++{
++	return ERR_PTR(-ENODEV);
++}
++
++static inline void usb_role_switch_unregister(struct usb_role_switch *sw) { }
++#endif
  
- struct device *device_connection_find(struct device *dev, const char *con_id);
- 
+ #endif /* __LINUX_USB_ROLE_H */
 -- 
 2.7.4
