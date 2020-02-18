@@ -1,95 +1,44 @@
 From: marian-cristian.rotariu.rb@bp.renesas.com (Marian-Cristian Rotariu)
-Date: Tue, 18 Feb 2020 14:05:15 +0000
-Subject: [cip-dev] [PATCH 4.19.y-cip 18/23] usb: typec: hd3ss3220:
-	hd3ss3220_probe() warn: passing zero to 'PTR_ERR'
+Date: Tue, 18 Feb 2020 14:05:16 +0000
+Subject: [cip-dev] [PATCH 4.19.y-cip 19/23] usb: typec: fix an IS_ERR() vs
+	NULL bug in hd3ss3220_probe()
 In-Reply-To: <1582034720-5249-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
 References: <1582034720-5249-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
-Message-ID: <1582034720-5249-19-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
+Message-ID: <1582034720-5249-20-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
 List-Id: cip-dev.lists.cip-project.org
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 5a9a8a4c505851cfb1fe5772851fb528476575bb upstream.
+commit c8dd192be821039d7023e0a5869d2cdf3acdef7e upstream.
 
-This patch fixes the warning passing zero to 'PTR_ERR' by changing the
-check from 'IS_ERR_OR_NULL' to 'IS_ERR'. Also improved the error handling
-on probe function.
+The device_get_named_child_node() function doesn't return error
+pointers, it returns NULL on error.
 
 Fixes: 1c48c759ef4b ("usb: typec: driver for TI HD3SS3220 USB Type-C DRP port controller")
-Reported-by: kbuild test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Link: https://lore.kernel.org/r/1570462729-25722-1-git-send-email-biju.das at bp.renesas.com
+Link: https://lore.kernel.org/r/20191011185055.GA20972 at mwanda
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 ---
- drivers/usb/typec/hd3ss3220.c | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+ drivers/usb/typec/hd3ss3220.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/usb/typec/hd3ss3220.c b/drivers/usb/typec/hd3ss3220.c
-index 658e6aa..0b28ca9 100644
+index 0b28ca9..ac4bd17 100644
 --- a/drivers/usb/typec/hd3ss3220.c
 +++ b/drivers/usb/typec/hd3ss3220.c
-@@ -178,7 +178,7 @@ static int hd3ss3220_probe(struct i2c_client *client,
+@@ -173,8 +173,8 @@ static int hd3ss3220_probe(struct i2c_client *client,
+ 	hd3ss3220_set_source_pref(hd3ss3220,
+ 				  HD3SS3220_REG_GEN_CTRL_SRC_PREF_DRP_DEFAULT);
+ 	connector = device_get_named_child_node(hd3ss3220->dev, "connector");
+-	if (IS_ERR(connector))
+-		return PTR_ERR(connector);
++	if (!connector)
++		return -ENODEV;
  
  	hd3ss3220->role_sw = fwnode_usb_role_switch_get(connector);
  	fwnode_handle_put(connector);
--	if (IS_ERR_OR_NULL(hd3ss3220->role_sw))
-+	if (IS_ERR(hd3ss3220->role_sw))
- 		return PTR_ERR(hd3ss3220->role_sw);
- 
- 	hd3ss3220->typec_cap.prefer_role = TYPEC_NO_PREFERRED_ROLE;
-@@ -188,20 +188,22 @@ static int hd3ss3220_probe(struct i2c_client *client,
- 
- 	hd3ss3220->port = typec_register_port(&client->dev,
- 					      &hd3ss3220->typec_cap);
--	if (IS_ERR(hd3ss3220->port))
--		return PTR_ERR(hd3ss3220->port);
-+	if (IS_ERR(hd3ss3220->port)) {
-+		ret = PTR_ERR(hd3ss3220->port);
-+		goto err_put_role;
-+	}
- 
- 	hd3ss3220_set_role(hd3ss3220);
- 	ret = regmap_read(hd3ss3220->regmap, HD3SS3220_REG_CN_STAT_CTRL, &data);
- 	if (ret < 0)
--		goto error;
-+		goto err_unreg_port;
- 
- 	if (data & HD3SS3220_REG_CN_STAT_CTRL_INT_STATUS) {
- 		ret = regmap_write(hd3ss3220->regmap,
- 				   HD3SS3220_REG_CN_STAT_CTRL,
- 				data | HD3SS3220_REG_CN_STAT_CTRL_INT_STATUS);
- 		if (ret < 0)
--			goto error;
-+			goto err_unreg_port;
- 	}
- 
- 	if (client->irq > 0) {
-@@ -210,18 +212,19 @@ static int hd3ss3220_probe(struct i2c_client *client,
- 					IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
- 					"hd3ss3220", &client->dev);
- 		if (ret)
--			goto error;
-+			goto err_unreg_port;
- 	}
- 
- 	ret = i2c_smbus_read_byte_data(client, HD3SS3220_REG_DEV_REV);
- 	if (ret < 0)
--		goto error;
-+		goto err_unreg_port;
- 
- 	dev_info(&client->dev, "probed revision=0x%x\n", ret);
- 
- 	return 0;
--error:
-+err_unreg_port:
- 	typec_unregister_port(hd3ss3220->port);
-+err_put_role:
- 	usb_role_switch_put(hd3ss3220->role_sw);
- 
- 	return ret;
 -- 
 2.7.4
