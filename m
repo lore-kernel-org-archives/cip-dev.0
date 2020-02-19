@@ -1,152 +1,89 @@
+Return-Path: <pavel@ucw.cz>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from APC01-PU1-obe.outbound.protection.outlook.com (APC01-PU1-obe.outbound.protection.outlook.com [40.107.132.41])
- by mx.groups.io with SMTP id smtpd.web10.910.1588217620703999340
- for <cip-dev@lists.cip-project.org>;
- Wed, 29 Apr 2020 20:33:41 -0700
-Authentication-Results: mx.groups.io;
- dkim=pass header.i=@moxa.com header.s=selector1 header.b=gaXA41tx;
- spf=pass (domain: moxa.com, ip: 40.107.132.41, mailfrom: johnsonch.chen@moxa.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LCebzrYK6tVm0VYkaTu+2zaO4/x8s7mJepcWuYPyEatkqrJVr8ziF66shgYbBpIY5yEaTzNOoUuNejjE+8O++riP5tLyL/VjExQ5CCXviXU8PQGihSyNNVUYv6rgx7NqAczDnr0CGKqbLIVoRKwtPgqhBJyYUf8idCGpNTsJaChLU7OL8Z5cE7ycEpI1HUj7prgzwEu0zRX83J7jboczINHXr60Y5kI9OjomTapgH3YcVItGOw7N2ka7dX03xzDfyZm0SvFwas8i8fKyFuAG2Le1BUJwTNb8MQPxCOr0Jg4tLiUqijNddru2nvWlCWGAxi/mRYy6O/2iPAbtL7ysWA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6rZ4mIhCwx2yrWK4TeNxQwkBIHAey2/vPviU5TgeSaA=;
- b=bjg8/XgL5CwLlrwulPRQLFdABlHmJrLF2vRVk0ugRiQTs8ODQX+/nqNrkTvH2bCuOalXx8U6IG0ws9Bv4HSqGtq3hSFtNhvnwe/NC4hqIX1SEP1JavMDluPLqmbtSICZ0J8rHFeXUJmsv7Z1lLNsyqwzGbN91JLD9iprTDf+5xF8b/WRVOa0ZVkfAlCtzW97UTRcxXHMQaLMdxMouKqvBclY2vlC01S0TIICLok2glaveO63mNAcoipw3/inn2AM1MicY8xAXM23229fEfYqJtToOMdo6Ys/5UqsUHNLJugrCrWtHT8mu6XuD05b6QoAWlUKLUSJeggRQ2yLwj73/w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=moxa.com; dmarc=pass action=none header.from=moxa.com;
- dkim=pass header.d=moxa.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=moxa.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6rZ4mIhCwx2yrWK4TeNxQwkBIHAey2/vPviU5TgeSaA=;
- b=gaXA41tx9u4Pgx+zmESNpjoM+xvkW4p3lVqk055uNOVWXpCBkSKUYeoZ9+FXrut5OtQYpe9EsyqwCNxE9LtU7brOcNDoBA2ZKqbHboeOdIIu8tVz8daavnSrCwLZqdjaIVKr1iG+c8293ShA+bmhSXcqi3q2qoh57roN603BKXk=
-Received: from HK2PR01MB3281.apcprd01.prod.exchangelabs.com
- (2603:1096:202:22::12) by HK2PR01MB3313.apcprd01.prod.exchangelabs.com
- (2603:1096:202:19::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2958.19; Thu, 30 Apr
- 2020 03:33:38 +0000
-Received: from HK2PR01MB3281.apcprd01.prod.exchangelabs.com
- ([fe80::f0d1:8e7c:a9aa:46b1]) by HK2PR01MB3281.apcprd01.prod.exchangelabs.com
- ([fe80::f0d1:8e7c:a9aa:46b1%7]) with mapi id 15.20.2937.023; Thu, 30 Apr 2020
- 03:33:37 +0000
-From: =?utf-8?B?Sm9obnNvbiBDSCBDaGVuICjpmbPmmK3li7Mp?=
-	<JohnsonCH.Chen@moxa.com>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	"nobuhiro1.iwamatsu@toshiba.co.jp" <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	"pavel@denx.de" <pavel@denx.de>
-Subject: [cip-dev] [PATCH 4.4.y-cip 1/3] PM / OPP: Add "opp-supported-hw" binding
-Thread-Topic: [cip-dev] [PATCH 4.4.y-cip 1/3] PM / OPP: Add "opp-supported-hw"
- binding
-Thread-Index: AdYenxNSCEZO6mr5QSyFUuDS2m/e2g==
-Date: Thu, 30 Apr 2020 03:33:37 +0000
-Message-ID: 
- <HK2PR01MB3281E995E06A187975BEE6F3FAAA0@HK2PR01MB3281.apcprd01.prod.exchangelabs.com>
-Accept-Language: zh-TW, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: lists.cip-project.org; dkim=none (message not signed)
- header.d=none;lists.cip-project.org; dmarc=none action=none
- header.from=moxa.com;
-x-originating-ip: [123.51.145.16]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: d30de5d8-b9dc-4d6e-835c-08d7ecb74504
-x-ms-traffictypediagnostic: HK2PR01MB3313:
-x-microsoft-antispam-prvs: 
- <HK2PR01MB331384AF1EFBE8AAC6828E2AFAAA0@HK2PR01MB3313.apcprd01.prod.exchangelabs.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 0389EDA07F
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- m5m0N4vEImSUVWFLsdFuMWHHM+Kaq/uXuFKrVRr5NalElkcGQsqKQaL5Bo9Xw1a+QZdNaajQt9vzvdy1aKIAPqCEjmGhE0jygwj7Lyv1dB70c42hEi9nOG/kPuw02MpyiYfLuG8DvA9lSH0B3547kXllTBdxnGs/QS/rH1M/dMsurlX600DlTey0OH/JJ1YnhDQLciwJOhe9k9v2gQpQt9Rze4/8e2B2jkzzglqUZ+DBmZk5WpR1O+yAf4+YLMRqIkNsf/le52eEYx3xvcVd6Tqf/d6lr1kqwVgbLDLfvKNpwYLur3Ijt2orcOu+Yt58ecemps4idiy8ZmXfjCfhmdoA/e4kbOap5vppWE0MKWuEQ3JgFzMytOsGrVxoTxSn55MEYNtdVXeRWyt0JMEo11JghsOHPSdvE714jMhhuxJZG7q6a7ijaD86jsuRWdxM
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:HK2PR01MB3281.apcprd01.prod.exchangelabs.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(39850400004)(366004)(396003)(136003)(346002)(376002)(2906002)(71200400001)(55016002)(5660300002)(86362001)(110136005)(9686003)(52536014)(316002)(8936002)(64756008)(66946007)(66476007)(33656002)(8676002)(66556008)(478600001)(186003)(26005)(66446008)(76116006)(7696005)(85182001)(6506007);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: 
- okLwLxioRIqV2R+NPSyvEtHP2md8468EzJHApGX3AC/Ty6ypeqshA0iTFCmftifEqiw+4qXBi0ucXpicludwcedHevjdu51vf5OogIEfJX1rHSG9hysRJwI+aoJTx9walHN87wmf82yAhllvkF1VbFumJ4ng9nIEIDh8Q08HqB/Q4sKzCXVKNoDR/iB9BUF6K8fYgZrzUOEoF8hWy6Y+T5S3SUY22qU+ZAM1vYLdrEJ7FB2gfp1ct9PRZJd+uHLHJK1itWZaBYRxHOpCwYAKufAJ/IdvxQLVqdHAF9+pbOO604k2L+G3dzjO20x9oSfXRlWzbUuH8PueyBQdWRp9h+Jdv71a8wG0ZHJLgUDl3ewpIwQ8ltEztmfSjLP6sd3PMLFir/SauJajWuY2ukihrEomlYDZ/KPwJ9SIDKA82dz1UTmCw4MsJnbdcHig4AM0yUyraTbv/5BX51OQlaLHq7RVJ8DmIfpM+pYv7jN4mb2dA+lFPMmsUmqNuxj0TmgQ8e8fFTYllL9e34A3TN5+K1u5pnvICUsPio84zyBCHg7Zdo75erEThjeSzduhXFMlzfWX+DDPt2zKj0wovhyLTU9LGQe9zrDGDRXbiUQNKX3/mthNF30jL/N2UfocHNWrYZ/Icya64JvmHZ/h6ImUokHFn4sQVhfi4+435fJHI9RrnxRafsqeitkmCqVwfc5TbUlE0VjJq1G5LwP/n4elW8K+85k8Yfal+vot/USqvT8J4zmi518guE8LIl7ts8hbicTyCjd1/rNMV6wFOdfqA7ymxgUSuyrz9DWUUhF4TDk=
-x-ms-exchange-transport-forked: True
+Received: from whitealder.osuosl.org (smtp1.osuosl.org [140.211.166.138])
+ by lists.linuxfoundation.org (Postfix) with ESMTP id 725FAC08A0
+ for <cip-dev@lists.cip-project.org>; Wed, 19 Feb 2020 08:19:06 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+ by whitealder.osuosl.org (Postfix) with ESMTP id 61A1684BCF
+ for <cip-dev@lists.cip-project.org>; Wed, 19 Feb 2020 08:19:06 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at osuosl.org
+Received: from whitealder.osuosl.org ([127.0.0.1])
+ by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id aFxsbXENLA8h for <cip-dev@lists.cip-project.org>;
+ Wed, 19 Feb 2020 08:19:05 +0000 (UTC)
+X-Greylist: domain auto-whitelisted by SQLgrey-1.7.6
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by whitealder.osuosl.org (Postfix) with ESMTPS id A23B284B22
+ for <cip-dev@lists.cip-project.org>; Wed, 19 Feb 2020 08:19:05 +0000 (UTC)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+ id 42B3A1C0357; Wed, 19 Feb 2020 09:19:04 +0100 (CET)
+Date: Wed, 19 Feb 2020 09:19:03 +0100
+From: Pavel Machek <pavel@denx.de>
+To: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+Message-ID: <20200219081903.GF31996@amd>
+References: <1582034720-5249-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
+ <1582034720-5249-22-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
 MIME-Version: 1.0
-X-OriginatorOrg: moxa.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d30de5d8-b9dc-4d6e-835c-08d7ecb74504
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Apr 2020 03:33:37.6169
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5571c7d4-286b-47f6-9dd5-0aa688773c8e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: TCxau/bsSP14zbGLl4jGcQRG7wBeB6l3xk34BYOxRkiGuYfrJ16mubYayBD8PSAsW6EF89DVS8JZHbynwdecrg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK2PR01MB3313
-Content-Language: zh-TW
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1582034720-5249-22-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+Cc: cip-dev@lists.cip-project.org
+Subject: Re: [PATCH 4.19.y-cip 21/23] arm64: defconfig: enable TYPEC_HD3SS3220 config option
+X-BeenThere: cip-dev@lists.cip-project.org
+X-Mailman-Version: 2.1.15
+Precedence: list
 List-Id: <cip-dev.lists.cip-project.org>
+List-Unsubscribe: <https://lists.cip-project.org/mailman/options/cip-dev>,
+ <mailto:cip-dev-request@lists.cip-project.org?subject=unsubscribe>
+List-Archive: <http://lists.cip-project.org/pipermail/cip-dev/>
+List-Post: <mailto:cip-dev@lists.cip-project.org>
+List-Help: <mailto:cip-dev-request@lists.cip-project.org?subject=help>
+List-Subscribe: <https://lists.cip-project.org/mailman/listinfo/cip-dev>,
+ <mailto:cip-dev-request@lists.cip-project.org?subject=subscribe>
+X-List-Received-Date: Wed, 19 Feb 2020 08:19:06 -0000
+X-Groupsio-MsgNum: 4409
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature"; boundary="E7i4zwmWs5DOuDSH"
+Content-Disposition: inline
 
-RnJvbTogVmlyZXNoIEt1bWFyIDx2aXJlc2gua3VtYXJAbGluYXJvLm9yZz4NCg0KY29tbWl0IDFj
-NGQxMmRlMjcxOWRmZGYyN2M2ZGFiMzFlN2E1NjQxZWUyOTNjOTQgdXBzdHJlYW0NCg0KV2UgbWF5
-IHdhbnQgdG8gZW5hYmxlIG9ubHkgYSBzdWJzZXQgb2YgT1BQcywgZnJvbSB0aGUgYmlnZ2VyIGxp
-c3Qgb2YNCk9QUHMsIGJhc2VkIG9uIHdoYXQgdmVyc2lvbiBvZiB0aGUgaGFyZHdhcmUgd2UgYXJl
-IHJ1bm5pbmcgb24uIFRoaXMNCndvdWxkIGVuYWJsZSB1cyB0byBub3QgZHVwbGljYXRlIE9QUCB0
-YWJsZXMgZm9yIGV2ZXJ5IHZlcnNpb24gb2YgdGhlDQpoYXJkd2FyZSB3ZSBzdXBwb3J0Lg0KDQpU
-byBlbmFibGUgdGhhdCwgdGhpcyBwYXRjaCBkZWZpbmVzIGEgbmV3IHByb3BlcnR5ICdvcHAtc3Vw
-cG9ydGVkLWh3Jy4gSXQNCmNhbiBzdXBwb3J0IGFueSBudW1iZXIgb2YgaGllcmFyY2h5IGxldmVs
-cyBvZiB0aGUgdmVyc2lvbnMgdGhlIGhhcmR3YXJlDQpmb2xsb3dzLiBBbmQgYmFzZWQgb24gdGhl
-IHNlbGVjdGVkIGhhcmR3YXJlIHZlcnNpb25zLCB3ZSBjYW4gcGljayBvbmx5DQp0aGUgcmVsZXZh
-bnQgT1BQcyBhdCBydW50aW1lLg0KDQpSZXZpZXdlZC1ieTogU3RlcGhlbiBCb3lkIDxzYm95ZEBj
-b2RlYXVyb3JhLm9yZz4NCkFja2VkLWJ5OiBSb2IgSGVycmluZyA8cm9iaEBrZXJuZWwub3JnPg0K
-U2lnbmVkLW9mZi1ieTogVmlyZXNoIEt1bWFyIDx2aXJlc2gua3VtYXJAbGluYXJvLm9yZz4NClNp
-Z25lZC1vZmYtYnk6IFJhZmFlbCBKLiBXeXNvY2tpIDxyYWZhZWwuai53eXNvY2tpQGludGVsLmNv
-bT4NClNpZ25lZC1vZmYtYnk6IEpvaG5zb24gQ2hlbiA8am9obnNvbmNoLmNoZW5AbW94YS5jb20+
-DQpTaWduZWQtb2ZmLWJ5OiBWaWN0b3IgWXUgPHZpY3Rvci55dUBtb3hhLmNvbT4NCi0tLQ0KIERv
-Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9vcHAvb3BwLnR4dCB8IDY1ICsrKysrKysr
-KysrKysrKysrKysrKysrKysrKw0KIDEgZmlsZSBjaGFuZ2VkLCA2NSBpbnNlcnRpb25zKCspDQoN
-CmRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mvb3BwL29wcC50
-eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mvb3BwL29wcC50eHQNCmluZGV4
-IDBjYjQ0ZGMyMWY5Ny4uZDA3MmZhMGZmYmQ0IDEwMDY0NA0KLS0tIGEvRG9jdW1lbnRhdGlvbi9k
-ZXZpY2V0cmVlL2JpbmRpbmdzL29wcC9vcHAudHh0DQorKysgYi9Eb2N1bWVudGF0aW9uL2Rldmlj
-ZXRyZWUvYmluZGluZ3Mvb3BwL29wcC50eHQNCkBAIC0xMjMsNiArMTIzLDI2IEBAIE9wdGlvbmFs
-IHByb3BlcnRpZXM6DQogLSBvcHAtc3VzcGVuZDogTWFya3MgdGhlIE9QUCB0byBiZSB1c2VkIGR1
-cmluZyBkZXZpY2Ugc3VzcGVuZC4gT25seSBvbmUgT1BQIGluDQogICB0aGUgdGFibGUgc2hvdWxk
-IGhhdmUgdGhpcy4NCiANCistIG9wcC1zdXBwb3J0ZWQtaHc6IFRoaXMgZW5hYmxlcyB1cyB0byBz
-ZWxlY3Qgb25seSBhIHN1YnNldCBvZiBPUFBzIGZyb20gdGhlDQorICBsYXJnZXIgT1BQIHRhYmxl
-LCBiYXNlZCBvbiB3aGF0IHZlcnNpb24gb2YgdGhlIGhhcmR3YXJlIHdlIGFyZSBydW5uaW5nIG9u
-LiBXZQ0KKyAgc3RpbGwgY2FuJ3QgaGF2ZSBtdWx0aXBsZSBub2RlcyB3aXRoIHRoZSBzYW1lIG9w
-cC1oeiB2YWx1ZSBpbiBPUFAgdGFibGUuDQorDQorICBJdCdzIGFuIHVzZXIgZGVmaW5lZCBhcnJh
-eSBjb250YWluaW5nIGEgaGllcmFyY2h5IG9mIGhhcmR3YXJlIHZlcnNpb24gbnVtYmVycywNCisg
-IHN1cHBvcnRlZCBieSB0aGUgT1BQLiBGb3IgZXhhbXBsZTogYSBwbGF0Zm9ybSB3aXRoIGhpZXJh
-cmNoeSBvZiB0aHJlZSBsZXZlbHMNCisgIG9mIHZlcnNpb25zIChBLCBCIGFuZCBDKSwgdGhpcyBm
-aWVsZCBzaG91bGQgYmUgbGlrZSA8WCBZIFo+LCB3aGVyZSBYDQorICBjb3JyZXNwb25kcyB0byBW
-ZXJzaW9uIGhpZXJhcmNoeSBBLCBZIGNvcnJlc3BvbmRzIHRvIHZlcnNpb24gaGllcmFyY2h5IEIg
-YW5kIFoNCisgIGNvcnJlc3BvbmRzIHRvIHZlcnNpb24gaGllcmFyY2h5IEMuDQorDQorICBFYWNo
-IGxldmVsIG9mIGhpZXJhcmNoeSBpcyByZXByZXNlbnRlZCBieSBhIDMyIGJpdCB2YWx1ZSwgYW5k
-IHNvIHRoZXJlIGNhbiBiZQ0KKyAgb25seSAzMiBkaWZmZXJlbnQgc3VwcG9ydGVkIHZlcnNpb24g
-cGVyIGhpZXJhcmNoeS4gaS5lLiAxIGJpdCBwZXIgdmVyc2lvbi4gQQ0KKyAgdmFsdWUgb2YgMHhG
-RkZGRkZGRiB3aWxsIGVuYWJsZSB0aGUgT1BQIGZvciBhbGwgdmVyc2lvbnMgZm9yIHRoYXQgaGll
-cmFyY2h5DQorICBsZXZlbC4gQW5kIGEgdmFsdWUgb2YgMHgwMDAwMDAwMCB3aWxsIGRpc2FibGUg
-dGhlIE9QUCBjb21wbGV0ZWx5LCBhbmQgc28gd2UNCisgIG5ldmVyIHdhbnQgdGhhdCB0byBoYXBw
-ZW4uDQorDQorICBJZiAzMiB2YWx1ZXMgYXJlbid0IHN1ZmZpY2llbnQgZm9yIGEgdmVyc2lvbiBo
-aWVyYXJjaHksIHRoYW4gdGhhdCB2ZXJzaW9uDQorICBoaWVyYXJjaHkgY2FuIGJlIGNvbnRhaW5l
-ZCBpbiBtdWx0aXBsZSAzMiBiaXQgdmFsdWVzLiBpLmUuIDxYIFkgWjEgWjI+IGluIHRoZQ0KKyAg
-YWJvdmUgZXhhbXBsZSwgWjEgJiBaMiByZWZlciB0byB0aGUgdmVyc2lvbiBoaWVyYXJjaHkgWi4N
-CisNCiAtIHN0YXR1czogTWFya3MgdGhlIG5vZGUgZW5hYmxlZC9kaXNhYmxlZC4NCiANCiBFeGFt
-cGxlIDE6IFNpbmdsZSBjbHVzdGVyIER1YWwtY29yZSBBUk0gY29ydGV4IEE5LCBzd2l0Y2ggRFZG
-UyBzdGF0ZXMgdG9nZXRoZXIuDQpAQCAtNDYzLDMgKzQ4Myw0OCBAQCBFeGFtcGxlIDU6IE11bHRp
-cGxlIE9QUCB0YWJsZXMNCiAJCX07DQogCX07DQogfTsNCisNCitFeGFtcGxlIDY6IG9wcC1zdXBw
-b3J0ZWQtaHcNCisoZXhhbXBsZTogdGhyZWUgbGV2ZWwgaGllcmFyY2h5IG9mIHZlcnNpb25zOiBj
-dXRzLCBzdWJzdHJhdGUgYW5kIHByb2Nlc3MpDQorDQorLyB7DQorCWNwdXMgew0KKwkJY3B1QDAg
-ew0KKwkJCWNvbXBhdGlibGUgPSAiYXJtLGNvcnRleC1hNyI7DQorCQkJLi4uDQorDQorCQkJY3B1
-LXN1cHBseSA9IDwmY3B1X3N1cHBseT4NCisJCQlvcGVyYXRpbmctcG9pbnRzLXYyID0gPCZjcHUw
-X29wcF90YWJsZV9zbG93PjsNCisJCX07DQorCX07DQorDQorCW9wcF90YWJsZSB7DQorCQljb21w
-YXRpYmxlID0gIm9wZXJhdGluZy1wb2ludHMtdjIiOw0KKwkJc3RhdHVzID0gIm9rYXkiOw0KKwkJ
-b3BwLXNoYXJlZDsNCisNCisJCW9wcDAwIHsNCisJCQkvKg0KKwkJCSAqIFN1cHBvcnRzIGFsbCBz
-dWJzdHJhdGUgYW5kIHByb2Nlc3MgdmVyc2lvbnMgZm9yIDB4Rg0KKwkJCSAqIGN1dHMsIGkuZS4g
-b25seSBmaXJzdCBmb3VyIGN1dHMuDQorCQkJICovDQorCQkJb3BwLXN1cHBvcnRlZC1odyA9IDww
-eEYgMHhGRkZGRkZGRiAweEZGRkZGRkZGPg0KKwkJCW9wcC1oeiA9IC9iaXRzLyA2NCA8NjAwMDAw
-MDAwPjsNCisJCQlvcHAtbWljcm92b2x0ID0gPDkwMDAwMCA5MTUwMDAgOTI1MDAwPjsNCisJCQku
-Li4NCisJCX07DQorDQorCQlvcHAwMSB7DQorCQkJLyoNCisJCQkgKiBTdXBwb3J0czoNCisJCQkg
-KiAtIGN1dHM6IG9ubHkgb25lLCA2dGggY3V0IChyZXByZXNlbnRlZCBieSA2dGggYml0KS4NCisJ
-CQkgKiAtIHN1YnN0cmF0ZTogc3VwcG9ydHMgMTYgZGlmZmVyZW50IHN1YnN0cmF0ZSB2ZXJzaW9u
-cw0KKwkJCSAqIC0gcHJvY2Vzczogc3VwcG9ydHMgOSBkaWZmZXJlbnQgcHJvY2VzcyB2ZXJzaW9u
-cw0KKwkJCSAqLw0KKwkJCW9wcC1zdXBwb3J0ZWQtaHcgPSA8MHgyMCAweGZmMDAwMGZmIDB4MDAw
-MGY0ZjA+DQorCQkJb3BwLWh6ID0gL2JpdHMvIDY0IDw4MDAwMDAwMDA+Ow0KKwkJCW9wcC1taWNy
-b3ZvbHQgPSA8OTAwMDAwIDkxNTAwMCA5MjUwMDA+Ow0KKwkJCS4uLg0KKwkJfTsNCisJfTsNCit9
-Ow0KLS0gDQoyLjExLjANCg0K
+--E7i4zwmWs5DOuDSH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue 2020-02-18 14:05:18, Marian-Cristian Rotariu wrote:
+> From: Biju Das <biju.das@bp.renesas.com>
+>=20
+> commit c24f6886b2ee321b50543d3683573689a1817336 upstream
+>=20
+> Enable support for the TI HD3SS320 USB Type-C DRP Port controller driver
+> by turning on CONFIG_TYPEC and CONFIG_TYPEC_HD3SS3220 as modules.
+
+No, just no.
+
+Lets enable new code for your boards (cip-kernel-config repository),
+but keep it disabled for other people. We don't want to break build by
+mistake, or something like that.
+
+Best regards,
+								Pavel
+							=09
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--E7i4zwmWs5DOuDSH
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl5M73cACgkQMOfwapXb+vI9zwCePaXbKFX7glwiEOX4bFuAI8Qo
+vDwAn3mhoLA8VGQO5GiNhLWfO8bYHK8k
+=G4uZ
+-----END PGP SIGNATURE-----
+
+--E7i4zwmWs5DOuDSH--
 
