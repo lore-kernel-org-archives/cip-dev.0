@@ -1,229 +1,131 @@
+Return-Path: <pavel@ucw.cz>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from APC01-PU1-obe.outbound.protection.outlook.com (APC01-PU1-obe.outbound.protection.outlook.com [40.107.132.55])
- by mx.groups.io with SMTP id smtpd.web11.829.1588217631492708503
- for <cip-dev@lists.cip-project.org>;
- Wed, 29 Apr 2020 20:33:52 -0700
-Authentication-Results: mx.groups.io;
- dkim=pass header.i=@moxa.com header.s=selector1 header.b=JcTk5QbH;
- spf=pass (domain: moxa.com, ip: 40.107.132.55, mailfrom: johnsonch.chen@moxa.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=k0vyJdpd4jXhYTwUsLWgX22CedpNSa3zAmInNC6dKoXpF9XeLuad/491Kw5kiFFI4+pU3uehtQJ2uXpyl6lC4Rw1sHOlpWDWn+t4cWQ9+NJTsCsUB7ml6Z2vpr4ssyQX4hkSo9ZwwFqdwHPRh8SAeFX+iqvsXS0AD45Jz9lXGSr/wLyvo+bVZqJi3EfeoWvACMiyXqPlWZN7enAjS9lP9YVJ+JIjB5UlFKAXlwlrNNzXGVE9iVO4S0CaGAEXFa5kHAnJzBJitb35eKaEawZDcjRY2np2c6eaNNIrIXAdGHFqZjHAbsnrVJG9QvWzONt1KUVNqk2ZcsgZsH9v2B4tMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BcrlTVc7kJtLSBAUYyBECVl0twRYu8W8uFNb71D9yR0=;
- b=JHIEn5bP5jcAtEgXICzqtWyTkildc+j5gr38DxOuGqWsNAU0wS+TJhkMnOx0d6oMuMl/alJQVZ0+heVSoB4vg4lE1h+2p3b7YnzKzKxRuR/TnpP6RFAVZ6q0GRuJHTBYF0EJpSCL6OC2IDiFtVQ4TSsyShKSjLH6CwROScw/XJbfdUC0Xo0IWhhIHYhv9ig19gNyL3gxHiILgkLQe49+HovqksUdawViiHWPERHMGzhLQBNCdrYUzBAihPCVsnCUOHDcTX/Pa4AxL8YzPtJ0nPT6xc5jZxKGum9eBOFc+sjPAgrs9LGBepup2TrOTecroCR0g8cCgInRDiS0/WEnrA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=moxa.com; dmarc=pass action=none header.from=moxa.com;
- dkim=pass header.d=moxa.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=moxa.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BcrlTVc7kJtLSBAUYyBECVl0twRYu8W8uFNb71D9yR0=;
- b=JcTk5QbHfG7utuQtbyLiH1xNWfQx+sZ7XV5j5OOq9XzsE9EsTg5chBffSk+qH4rQLGg/i5FQ5SextO/XqIAox/0GB+qyndNVMD4LkWmAy/AsTftbi31kOHMh6c6Zw6uGT4EBjrYEkbRKODouW97u/yzsye0ALm7HAiWLvgXe4Uc=
-Received: from HK2PR01MB3281.apcprd01.prod.exchangelabs.com
- (2603:1096:202:22::12) by HK2PR01MB3313.apcprd01.prod.exchangelabs.com
- (2603:1096:202:19::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2958.19; Thu, 30 Apr
- 2020 03:33:48 +0000
-Received: from HK2PR01MB3281.apcprd01.prod.exchangelabs.com
- ([fe80::f0d1:8e7c:a9aa:46b1]) by HK2PR01MB3281.apcprd01.prod.exchangelabs.com
- ([fe80::f0d1:8e7c:a9aa:46b1%7]) with mapi id 15.20.2937.023; Thu, 30 Apr 2020
- 03:33:48 +0000
-From: =?utf-8?B?Sm9obnNvbiBDSCBDaGVuICjpmbPmmK3li7Mp?=
-	<JohnsonCH.Chen@moxa.com>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	"nobuhiro1.iwamatsu@toshiba.co.jp" <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	"pavel@denx.de" <pavel@denx.de>
-Subject: [cip-dev] [PATCH 4.4.y-cip 2/3] PM / OPP: Parse 'opp-supported-hw' binding
-Thread-Topic: [cip-dev] [PATCH 4.4.y-cip 2/3] PM / OPP: Parse
- 'opp-supported-hw' binding
-Thread-Index: AdYenyd2Y/FHWYseQiebT5Joqk+ONA==
-Date: Thu, 30 Apr 2020 03:33:48 +0000
-Message-ID: 
- <HK2PR01MB3281BAAC7EE31E5FF5D43C1DFAAA0@HK2PR01MB3281.apcprd01.prod.exchangelabs.com>
-Accept-Language: zh-TW, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: lists.cip-project.org; dkim=none (message not signed)
- header.d=none;lists.cip-project.org; dmarc=none action=none
- header.from=moxa.com;
-x-originating-ip: [123.51.145.16]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 58e99d6a-2806-4465-8c21-08d7ecb74b98
-x-ms-traffictypediagnostic: HK2PR01MB3313:
-x-microsoft-antispam-prvs: 
- <HK2PR01MB3313265AC568AF0DEDCB65BCFAAA0@HK2PR01MB3313.apcprd01.prod.exchangelabs.com>
-x-ms-oob-tlc-oobclassifiers: OLM:262;
-x-forefront-prvs: 0389EDA07F
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- xrkoMHclQGPJglfT57aCurn1ZSUClHB5bpkNJsMCjNpXOGbkPKkleCXOhIBe1m7WEn883FKT2y4xpDxPM6/YucymV2WDylrrZO/JSYUfqRdbcOoKfEIbbC55XM9s50CDJTGiH/MSCEC8hcesLtGxn9WmHMcvh9+YK9Ay0AeNWUYlnjvCpmegirx6myU4c08yo2NBNkTuJHYh4pB02kWivnNstB6XWqmpXpYwGL7SxU/MDgvlefDWUG99rFadgCUDP+zC1pBDd4CQ4qhEabFARvmIJsOemEK1voViX/iLu8gh2c6i0Ebb+qb0nIRGxrKLSdoyQCeTisaNMocoLd0aL2lQZd0QBX+MGFRjHmNXGJknVmqRm9v1rvIPtb4V0IvgD+XpNaSnojxFYYrQiLg8aKsJD6qz5ZixjG6Ix06KKiJYBuu4wBik1UsHKhH5FBL1
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:HK2PR01MB3281.apcprd01.prod.exchangelabs.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(39850400004)(366004)(396003)(136003)(346002)(376002)(2906002)(71200400001)(55016002)(5660300002)(86362001)(110136005)(9686003)(52536014)(316002)(8936002)(64756008)(66946007)(66476007)(33656002)(8676002)(66556008)(478600001)(186003)(26005)(66446008)(76116006)(7696005)(85182001)(6506007);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: 
- W6X3WRSxH0+9Slb6crSvv9YOVsCluwV74ekF0rhpOeDgpsEdva0zNCBzo7XfTh7076XiOpxEJY33d0i7YrSXx6YeWR6vzwIIcJhx7K4QPm2WF456UMmfcWvmYmivwrgbvMpiTt4V5bDqe1ewBvcBvFnOKvzIHr3HF48IsnvHSWi93cpWdiMcXs54orzeox+rh8GYGDaYUumf++xNCXCDbHTl/PIycHpRZV9RGNPppdzYH+kqlbv4/xg/yAPcm1ARAGDgNlWvO1jYrUjYCoJ/FGK6R4T9FGFIH1TeGsABzeq0xJgy4m+0vXAHoQ6QPOu/QbuHofktq/FjTM/AStC4dL57uS8J+OJL9bJ8mhMeJ40T4ncoESw/TEX6T9uXipPBcbcQCax4kGEI5Y5cLQGMVp/wJ2nCd9ybNZCkjdNRvo14j4YnrDKYpymLpC6JkodXc1JKbko9seBBfP8blT2q1T+2euVd0e0aouxW1TyxN7Z+C03ty8nk78Gi+CBF4EUsAuPV85itaStxW7EG9lyEJPRdL22xF9SCWXZBPLPwYojyUbSzhri/mcwcwfBTeYzu2lg7j73m539iIFBwRijbqN7p+saB/odBhcMTIoXbafZkifQanCwGQHv7CxoGGk/x/hu9jklWEDxm0T1q3KNJx0DEJREANRKkwp2s2m6+JuFS64tTuZZl01PAszyHTydBFBG8QtcKlJ/lnC1su61S1Nej69rWwxYJs+8GdJO4WJ/d8cKidyT4+ti6/oomDascycIp+ZRM+5TRm1B6gXp08oDzG8DJmFjif1jj7Uur2kM=
-x-ms-exchange-transport-forked: True
+Received: from silver.osuosl.org (smtp3.osuosl.org [140.211.166.136])
+ by lists.linuxfoundation.org (Postfix) with ESMTP id C6E78C013E
+ for <cip-dev@lists.cip-project.org>; Wed, 19 Feb 2020 21:35:09 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+ by silver.osuosl.org (Postfix) with ESMTP id C242020004
+ for <cip-dev@lists.cip-project.org>; Wed, 19 Feb 2020 21:35:09 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at osuosl.org
+Received: from silver.osuosl.org ([127.0.0.1])
+ by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id KcWTV01Supu9 for <cip-dev@lists.cip-project.org>;
+ Wed, 19 Feb 2020 21:35:07 +0000 (UTC)
+X-Greylist: domain auto-whitelisted by SQLgrey-1.7.6
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by silver.osuosl.org (Postfix) with ESMTPS id C46521FFFE
+ for <cip-dev@lists.cip-project.org>; Wed, 19 Feb 2020 21:35:07 +0000 (UTC)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+ id 00E641C0139; Wed, 19 Feb 2020 22:35:05 +0100 (CET)
+Date: Wed, 19 Feb 2020 22:35:05 +0100
+From: Pavel Machek <pavel@denx.de>
+To: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+Message-ID: <20200219213505.GA17284@amd>
+References: <1582034720-5249-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
+ <20200219074158.GA29804@amd>
+ <OSAPR01MB50283C072294D5EC66955D12AE100@OSAPR01MB5028.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-X-OriginatorOrg: moxa.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 58e99d6a-2806-4465-8c21-08d7ecb74b98
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Apr 2020 03:33:48.6024
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5571c7d4-286b-47f6-9dd5-0aa688773c8e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Q8cKy1aEMjNrxyfZWx2p3kmelVDSLts8lHLfAp+xB3qQk/8c4OiS9Z3XxSqLrgnPytE9Op8e/iGdMxa34MY1gA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK2PR01MB3313
-Content-Language: zh-TW
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <OSAPR01MB50283C072294D5EC66955D12AE100@OSAPR01MB5028.jpnprd01.prod.outlook.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+Cc: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
+Subject: Re: [PATCH 4.19.y-cip 00/23] Renesas RZ/G2E USB Type-C Backport
+X-BeenThere: cip-dev@lists.cip-project.org
+X-Mailman-Version: 2.1.15
+Precedence: list
 List-Id: <cip-dev.lists.cip-project.org>
+List-Unsubscribe: <https://lists.cip-project.org/mailman/options/cip-dev>,
+ <mailto:cip-dev-request@lists.cip-project.org?subject=unsubscribe>
+List-Archive: <http://lists.cip-project.org/pipermail/cip-dev/>
+List-Post: <mailto:cip-dev@lists.cip-project.org>
+List-Help: <mailto:cip-dev-request@lists.cip-project.org?subject=help>
+List-Subscribe: <https://lists.cip-project.org/mailman/listinfo/cip-dev>,
+ <mailto:cip-dev-request@lists.cip-project.org?subject=subscribe>
+X-List-Received-Date: Wed, 19 Feb 2020 21:35:09 -0000
+X-Groupsio-MsgNum: 4418
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature"; boundary="BXVAT5kNtrzKuDFl"
+Content-Disposition: inline
 
-RnJvbTogVmlyZXNoIEt1bWFyIDx2aXJlc2gua3VtYXJAbGluYXJvLm9yZz4NCg0KY29tbWl0IDdk
-ZTM2YjBhYTUxYTVhNTllMjhmYjJkYTc2OGZhM2FiMDdkZTA2NzQgdXBzdHJlYW0NCg0KT1BQIGJp
-bmRpbmdzIGFsbG93IGEgcGxhdGZvcm0gdG8gZW5hYmxlIE9QUHMgYmFzZWQgb24gdGhlIHZlcnNp
-b24gb2YgdGhlDQpoYXJkd2FyZSB0aGV5IGFyZSB1c2VkIGZvci4NCg0KQWRkIHN1cHBvcnQgdG8g
-dGhlIE9QUC1jb3JlIHRvIHBhcnNlIHRoZXNlIGJpbmRpbmdzLCBieSBpbnRyb2R1Y2luZw0KZGV2
-X3BtX29wcF97c2V0fHB1dH1fc3VwcG9ydGVkX2h3KCkgQVBJcy4NCg0KU2lnbmVkLW9mZi1ieTog
-VmlyZXNoIEt1bWFyIDx2aXJlc2gua3VtYXJAbGluYXJvLm9yZz4NClRlc3RlZC1ieTogTGVlIEpv
-bmVzIDxsZWUuam9uZXNAbGluYXJvLm9yZz4NClNpZ25lZC1vZmYtYnk6IFJhZmFlbCBKLiBXeXNv
-Y2tpIDxyYWZhZWwuai53eXNvY2tpQGludGVsLmNvbT4NClNpZ25lZC1vZmYtYnk6IEpvaG5zb24g
-Q2hlbiA8am9obnNvbmNoLmNoZW5AbW94YS5jb20+DQpTaWduZWQtb2ZmLWJ5OiBWaWN0b3IgWXUg
-PHZpY3Rvci55dUBtb3hhLmNvbT4NCi0tLQ0KIGRyaXZlcnMvYmFzZS9wb3dlci9vcHAvY29yZS5j
-IHwgMTQ4ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKw0KIGRyaXZl
-cnMvYmFzZS9wb3dlci9vcHAvb3BwLmggIHwgICA2ICsrDQogaW5jbHVkZS9saW51eC9wbV9vcHAu
-aCAgICAgICAgfCAgMTMgKysrKw0KIDMgZmlsZXMgY2hhbmdlZCwgMTY3IGluc2VydGlvbnMoKykN
-Cg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvYmFzZS9wb3dlci9vcHAvY29yZS5jIGIvZHJpdmVycy9i
-YXNlL3Bvd2VyL29wcC9jb3JlLmMNCmluZGV4IGU4MjJkYzcwNmQ2Ny4uYzUzYTNlMjYxMzA2IDEw
-MDY0NA0KLS0tIGEvZHJpdmVycy9iYXNlL3Bvd2VyL29wcC9jb3JlLmMNCisrKyBiL2RyaXZlcnMv
-YmFzZS9wb3dlci9vcHAvY29yZS5jDQpAQCAtNTUxLDYgKzU1MSw5IEBAIHN0YXRpYyB2b2lkIF9y
-ZW1vdmVfZGV2aWNlX29wcChzdHJ1Y3QgZGV2aWNlX29wcCAqZGV2X29wcCkNCiAJaWYgKCFsaXN0
-X2VtcHR5KCZkZXZfb3BwLT5vcHBfbGlzdCkpDQogCQlyZXR1cm47DQogDQorCWlmIChkZXZfb3Bw
-LT5zdXBwb3J0ZWRfaHcpDQorCQlyZXR1cm47DQorDQogCWxpc3RfZGV2ID0gbGlzdF9maXJzdF9l
-bnRyeSgmZGV2X29wcC0+ZGV2X2xpc3QsIHN0cnVjdCBkZXZpY2VfbGlzdF9vcHAsDQogCQkJCSAg
-ICBub2RlKTsNCiANCkBAIC04MjUsNiArODI4LDE0NSBAQCBzdGF0aWMgaW50IG9wcF9wYXJzZV9z
-dXBwbGllcyhzdHJ1Y3QgZGV2X3BtX29wcCAqb3BwLCBzdHJ1Y3QgZGV2aWNlICpkZXYpDQogfQ0K
-IA0KIC8qKg0KKyAqIGRldl9wbV9vcHBfc2V0X3N1cHBvcnRlZF9odygpIC0gU2V0IHN1cHBvcnRl
-ZCBwbGF0Zm9ybXMNCisgKiBAZGV2OiBEZXZpY2UgZm9yIHdoaWNoIHN1cHBvcnRlZC1odyBoYXMg
-dG8gYmUgc2V0Lg0KKyAqIEB2ZXJzaW9uczogQXJyYXkgb2YgaGllcmFyY2h5IG9mIHZlcnNpb25z
-IHRvIG1hdGNoLg0KKyAqIEBjb3VudDogTnVtYmVyIG9mIGVsZW1lbnRzIGluIHRoZSBhcnJheS4N
-CisgKg0KKyAqIFRoaXMgaXMgcmVxdWlyZWQgb25seSBmb3IgdGhlIFYyIGJpbmRpbmdzLCBhbmQg
-aXQgZW5hYmxlcyBhIHBsYXRmb3JtIHRvDQorICogc3BlY2lmeSB0aGUgaGllcmFyY2h5IG9mIHZl
-cnNpb25zIGl0IHN1cHBvcnRzLiBPUFAgbGF5ZXIgd2lsbCB0aGVuIGVuYWJsZQ0KKyAqIE9QUHMs
-IHdoaWNoIGFyZSBhdmFpbGFibGUgZm9yIHRob3NlIHZlcnNpb25zLCBiYXNlZCBvbiBpdHMgJ29w
-cC1zdXBwb3J0ZWQtaHcnDQorICogcHJvcGVydHkuDQorICoNCisgKiBMb2NraW5nOiBUaGUgaW50
-ZXJuYWwgZGV2aWNlX29wcCBhbmQgb3BwIHN0cnVjdHVyZXMgYXJlIFJDVSBwcm90ZWN0ZWQuDQor
-ICogSGVuY2UgdGhpcyBmdW5jdGlvbiBpbnRlcm5hbGx5IHVzZXMgUkNVIHVwZGF0ZXIgc3RyYXRl
-Z3kgd2l0aCBtdXRleCBsb2Nrcw0KKyAqIHRvIGtlZXAgdGhlIGludGVncml0eSBvZiB0aGUgaW50
-ZXJuYWwgZGF0YSBzdHJ1Y3R1cmVzLiBDYWxsZXJzIHNob3VsZCBlbnN1cmUNCisgKiB0aGF0IHRo
-aXMgZnVuY3Rpb24gaXMgKk5PVCogY2FsbGVkIHVuZGVyIFJDVSBwcm90ZWN0aW9uIG9yIGluIGNv
-bnRleHRzIHdoZXJlDQorICogbXV0ZXggY2Fubm90IGJlIGxvY2tlZC4NCisgKi8NCitpbnQgZGV2
-X3BtX29wcF9zZXRfc3VwcG9ydGVkX2h3KHN0cnVjdCBkZXZpY2UgKmRldiwgY29uc3QgdTMyICp2
-ZXJzaW9ucywNCisJCQkJdW5zaWduZWQgaW50IGNvdW50KQ0KK3sNCisJc3RydWN0IGRldmljZV9v
-cHAgKmRldl9vcHA7DQorCWludCByZXQgPSAwOw0KKw0KKwkvKiBIb2xkIG91ciBsaXN0IG1vZGlm
-aWNhdGlvbiBsb2NrIGhlcmUgKi8NCisJbXV0ZXhfbG9jaygmZGV2X29wcF9saXN0X2xvY2spOw0K
-Kw0KKwlkZXZfb3BwID0gX2FkZF9kZXZpY2Vfb3BwKGRldik7DQorCWlmICghZGV2X29wcCkgew0K
-KwkJcmV0ID0gLUVOT01FTTsNCisJCWdvdG8gdW5sb2NrOw0KKwl9DQorDQorCS8qIE1ha2Ugc3Vy
-ZSB0aGVyZSBhcmUgbm8gY29uY3VycmVudCByZWFkZXJzIHdoaWxlIHVwZGF0aW5nIGRldl9vcHAg
-Ki8NCisJV0FSTl9PTighbGlzdF9lbXB0eSgmZGV2X29wcC0+b3BwX2xpc3QpKTsNCisNCisJLyog
-RG8gd2UgYWxyZWFkeSBoYXZlIGEgdmVyc2lvbiBoaWVyYXJjaHkgYXNzb2NpYXRlZCB3aXRoIGRl
-dl9vcHA/ICovDQorCWlmIChkZXZfb3BwLT5zdXBwb3J0ZWRfaHcpIHsNCisJCWRldl9lcnIoZGV2
-LCAiJXM6IEFscmVhZHkgaGF2ZSBzdXBwb3J0ZWQgaGFyZHdhcmUgbGlzdFxuIiwNCisJCQlfX2Z1
-bmNfXyk7DQorCQlyZXQgPSAtRUJVU1k7DQorCQlnb3RvIGVycjsNCisJfQ0KKw0KKwlkZXZfb3Bw
-LT5zdXBwb3J0ZWRfaHcgPSBrbWVtZHVwKHZlcnNpb25zLCBjb3VudCAqIHNpemVvZigqdmVyc2lv
-bnMpLA0KKwkJCQkJR0ZQX0tFUk5FTCk7DQorCWlmICghZGV2X29wcC0+c3VwcG9ydGVkX2h3KSB7
-DQorCQlyZXQgPSAtRU5PTUVNOw0KKwkJZ290byBlcnI7DQorCX0NCisNCisJZGV2X29wcC0+c3Vw
-cG9ydGVkX2h3X2NvdW50ID0gY291bnQ7DQorCW11dGV4X3VubG9jaygmZGV2X29wcF9saXN0X2xv
-Y2spOw0KKwlyZXR1cm4gMDsNCisNCitlcnI6DQorCV9yZW1vdmVfZGV2aWNlX29wcChkZXZfb3Bw
-KTsNCit1bmxvY2s6DQorCW11dGV4X3VubG9jaygmZGV2X29wcF9saXN0X2xvY2spOw0KKw0KKwly
-ZXR1cm4gcmV0Ow0KK30NCitFWFBPUlRfU1lNQk9MX0dQTChkZXZfcG1fb3BwX3NldF9zdXBwb3J0
-ZWRfaHcpOw0KKw0KKy8qKg0KKyAqIGRldl9wbV9vcHBfcHV0X3N1cHBvcnRlZF9odygpIC0gUmVs
-ZWFzZXMgcmVzb3VyY2VzIGJsb2NrZWQgZm9yIHN1cHBvcnRlZCBodw0KKyAqIEBkZXY6IERldmlj
-ZSBmb3Igd2hpY2ggc3VwcG9ydGVkLWh3IGhhcyB0byBiZSBzZXQuDQorICoNCisgKiBUaGlzIGlz
-IHJlcXVpcmVkIG9ubHkgZm9yIHRoZSBWMiBiaW5kaW5ncywgYW5kIGlzIGNhbGxlZCBmb3IgYSBt
-YXRjaGluZw0KKyAqIGRldl9wbV9vcHBfc2V0X3N1cHBvcnRlZF9odygpLiBVbnRpbCB0aGlzIGlz
-IGNhbGxlZCwgdGhlIGRldmljZV9vcHAgc3RydWN0dXJlDQorICogd2lsbCBub3QgYmUgZnJlZWQu
-DQorICoNCisgKiBMb2NraW5nOiBUaGUgaW50ZXJuYWwgZGV2aWNlX29wcCBhbmQgb3BwIHN0cnVj
-dHVyZXMgYXJlIFJDVSBwcm90ZWN0ZWQuDQorICogSGVuY2UgdGhpcyBmdW5jdGlvbiBpbnRlcm5h
-bGx5IHVzZXMgUkNVIHVwZGF0ZXIgc3RyYXRlZ3kgd2l0aCBtdXRleCBsb2Nrcw0KKyAqIHRvIGtl
-ZXAgdGhlIGludGVncml0eSBvZiB0aGUgaW50ZXJuYWwgZGF0YSBzdHJ1Y3R1cmVzLiBDYWxsZXJz
-IHNob3VsZCBlbnN1cmUNCisgKiB0aGF0IHRoaXMgZnVuY3Rpb24gaXMgKk5PVCogY2FsbGVkIHVu
-ZGVyIFJDVSBwcm90ZWN0aW9uIG9yIGluIGNvbnRleHRzIHdoZXJlDQorICogbXV0ZXggY2Fubm90
-IGJlIGxvY2tlZC4NCisgKi8NCit2b2lkIGRldl9wbV9vcHBfcHV0X3N1cHBvcnRlZF9odyhzdHJ1
-Y3QgZGV2aWNlICpkZXYpDQorew0KKwlzdHJ1Y3QgZGV2aWNlX29wcCAqZGV2X29wcDsNCisNCisJ
-LyogSG9sZCBvdXIgbGlzdCBtb2RpZmljYXRpb24gbG9jayBoZXJlICovDQorCW11dGV4X2xvY2so
-JmRldl9vcHBfbGlzdF9sb2NrKTsNCisNCisJLyogQ2hlY2sgZm9yIGV4aXN0aW5nIGxpc3QgZm9y
-ICdkZXYnIGZpcnN0ICovDQorCWRldl9vcHAgPSBfZmluZF9kZXZpY2Vfb3BwKGRldik7DQorCWlm
-IChJU19FUlIoZGV2X29wcCkpIHsNCisJCWRldl9lcnIoZGV2LCAiRmFpbGVkIHRvIGZpbmQgZGV2
-X29wcDogJWxkXG4iLCBQVFJfRVJSKGRldl9vcHApKTsNCisJCWdvdG8gdW5sb2NrOw0KKwl9DQor
-DQorCS8qIE1ha2Ugc3VyZSB0aGVyZSBhcmUgbm8gY29uY3VycmVudCByZWFkZXJzIHdoaWxlIHVw
-ZGF0aW5nIGRldl9vcHAgKi8NCisJV0FSTl9PTighbGlzdF9lbXB0eSgmZGV2X29wcC0+b3BwX2xp
-c3QpKTsNCisNCisJaWYgKCFkZXZfb3BwLT5zdXBwb3J0ZWRfaHcpIHsNCisJCWRldl9lcnIoZGV2
-LCAiJXM6IERvZXNuJ3QgaGF2ZSBzdXBwb3J0ZWQgaGFyZHdhcmUgbGlzdFxuIiwNCisJCQlfX2Z1
-bmNfXyk7DQorCQlnb3RvIHVubG9jazsNCisJfQ0KKw0KKwlrZnJlZShkZXZfb3BwLT5zdXBwb3J0
-ZWRfaHcpOw0KKwlkZXZfb3BwLT5zdXBwb3J0ZWRfaHcgPSBOVUxMOw0KKwlkZXZfb3BwLT5zdXBw
-b3J0ZWRfaHdfY291bnQgPSAwOw0KKw0KKwkvKiBUcnkgZnJlZWluZyBkZXZpY2Vfb3BwIGlmIHRo
-aXMgd2FzIHRoZSBsYXN0IGJsb2NraW5nIHJlc291cmNlICovDQorCV9yZW1vdmVfZGV2aWNlX29w
-cChkZXZfb3BwKTsNCisNCit1bmxvY2s6DQorCW11dGV4X3VubG9jaygmZGV2X29wcF9saXN0X2xv
-Y2spOw0KK30NCitFWFBPUlRfU1lNQk9MX0dQTChkZXZfcG1fb3BwX3B1dF9zdXBwb3J0ZWRfaHcp
-Ow0KKw0KK3N0YXRpYyBib29sIF9vcHBfaXNfc3VwcG9ydGVkKHN0cnVjdCBkZXZpY2UgKmRldiwg
-c3RydWN0IGRldmljZV9vcHAgKmRldl9vcHAsDQorCQkJICAgICAgc3RydWN0IGRldmljZV9ub2Rl
-ICpucCkNCit7DQorCXVuc2lnbmVkIGludCBjb3VudCA9IGRldl9vcHAtPnN1cHBvcnRlZF9od19j
-b3VudDsNCisJdTMyIHZlcnNpb247DQorCWludCByZXQ7DQorDQorCWlmICghZGV2X29wcC0+c3Vw
-cG9ydGVkX2h3KQ0KKwkJcmV0dXJuIHRydWU7DQorDQorCXdoaWxlIChjb3VudC0tKSB7DQorCQly
-ZXQgPSBvZl9wcm9wZXJ0eV9yZWFkX3UzMl9pbmRleChucCwgIm9wcC1zdXBwb3J0ZWQtaHciLCBj
-b3VudCwNCisJCQkJCQkgJnZlcnNpb24pOw0KKwkJaWYgKHJldCkgew0KKwkJCWRldl93YXJuKGRl
-diwgIiVzOiBmYWlsZWQgdG8gcmVhZCBvcHAtc3VwcG9ydGVkLWh3IHByb3BlcnR5IGF0IGluZGV4
-ICVkOiAlZFxuIiwNCisJCQkJIF9fZnVuY19fLCBjb3VudCwgcmV0KTsNCisJCQlyZXR1cm4gZmFs
-c2U7DQorCQl9DQorDQorCQkvKiBCb3RoIG9mIHRoZXNlIGFyZSBiaXR3aXNlIG1hc2tzIG9mIHRo
-ZSB2ZXJzaW9ucyAqLw0KKwkJaWYgKCEodmVyc2lvbiAmIGRldl9vcHAtPnN1cHBvcnRlZF9od1tj
-b3VudF0pKQ0KKwkJCXJldHVybiBmYWxzZTsNCisJfQ0KKw0KKwlyZXR1cm4gdHJ1ZTsNCit9DQor
-DQorLyoqDQogICogX29wcF9hZGRfc3RhdGljX3YyKCkgLSBBbGxvY2F0ZSBzdGF0aWMgT1BQcyAo
-QXMgcGVyICd2MicgRFQgYmluZGluZ3MpDQogICogQGRldjoJZGV2aWNlIGZvciB3aGljaCB3ZSBk
-byB0aGlzIG9wZXJhdGlvbg0KICAqIEBucDoJCWRldmljZSBub2RlDQpAQCAtODcwLDYgKzEwMTIs
-MTIgQEAgc3RhdGljIGludCBfb3BwX2FkZF9zdGF0aWNfdjIoc3RydWN0IGRldmljZSAqZGV2LCBz
-dHJ1Y3QgZGV2aWNlX25vZGUgKm5wKQ0KIAkJZ290byBmcmVlX29wcDsNCiAJfQ0KIA0KKwkvKiBD
-aGVjayBpZiB0aGUgT1BQIHN1cHBvcnRzIGhhcmR3YXJlJ3MgaGllcmFyY2h5IG9mIHZlcnNpb25z
-IG9yIG5vdCAqLw0KKwlpZiAoIV9vcHBfaXNfc3VwcG9ydGVkKGRldiwgZGV2X29wcCwgbnApKSB7
-DQorCQlkZXZfZGJnKGRldiwgIk9QUCBub3Qgc3VwcG9ydGVkIGJ5IGhhcmR3YXJlOiAlbGx1XG4i
-LCByYXRlKTsNCisJCWdvdG8gZnJlZV9vcHA7DQorCX0NCisNCiAJLyoNCiAJICogUmF0ZSBpcyBk
-ZWZpbmVkIGFzIGFuIHVuc2lnbmVkIGxvbmcgaW4gY2xrIEFQSSwgYW5kIHNvIGNhc3RpbmcNCiAJ
-ICogZXhwbGljaXRseSB0byBpdHMgdHlwZS4gTXVzdCBiZSBmaXhlZCBvbmNlIHJhdGUgaXMgNjQg
-Yml0DQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9iYXNlL3Bvd2VyL29wcC9vcHAuaCBiL2RyaXZlcnMv
-YmFzZS9wb3dlci9vcHAvb3BwLmgNCmluZGV4IDczNjZiMmFhODk5Ny4uYjY3NzY3MDQ4OWUwIDEw
-MDY0NA0KLS0tIGEvZHJpdmVycy9iYXNlL3Bvd2VyL29wcC9vcHAuaA0KKysrIGIvZHJpdmVycy9i
-YXNlL3Bvd2VyL29wcC9vcHAuaA0KQEAgLTExNCw2ICsxMTQsOSBAQCBzdHJ1Y3QgZGV2aWNlX2xp
-c3Rfb3BwIHsNCiAgKiBAb3BwX2xpc3Q6CWxpc3Qgb2Ygb3Bwcw0KICAqIEBucDoJCXN0cnVjdCBk
-ZXZpY2Vfbm9kZSBwb2ludGVyIGZvciBvcHAncyBEVCBub2RlLg0KICAqIEBzaGFyZWRfb3BwOiBP
-UFAgaXMgc2hhcmVkIGJldHdlZW4gbXVsdGlwbGUgZGV2aWNlcy4NCisgKiBAc3VwcG9ydGVkX2h3
-OiBBcnJheSBvZiB2ZXJzaW9uIG51bWJlciB0byBzdXBwb3J0Lg0KKyAqIEBzdXBwb3J0ZWRfaHdf
-Y291bnQ6IE51bWJlciBvZiBlbGVtZW50cyBpbiBzdXBwb3J0ZWRfaHcgYXJyYXkuDQorDQogICoN
-CiAgKiBUaGlzIGlzIGFuIGludGVybmFsIGRhdGEgc3RydWN0dXJlIG1haW50YWluaW5nIHRoZSBs
-aW5rIHRvIG9wcHMgYXR0YWNoZWQgdG8NCiAgKiBhIGRldmljZS4gVGhpcyBzdHJ1Y3R1cmUgaXMg
-bm90IG1lYW50IHRvIGJlIHNoYXJlZCB0byB1c2VycyBhcyBpdCBpcw0KQEAgLTEzNSw2ICsxMzgs
-OSBAQCBzdHJ1Y3QgZGV2aWNlX29wcCB7DQogCXVuc2lnbmVkIGxvbmcgY2xvY2tfbGF0ZW5jeV9u
-c19tYXg7DQogCWJvb2wgc2hhcmVkX29wcDsNCiAJc3RydWN0IGRldl9wbV9vcHAgKnN1c3BlbmRf
-b3BwOw0KKwl1bnNpZ25lZCBpbnQgKnN1cHBvcnRlZF9odzsNCisJdW5zaWduZWQgaW50IHN1cHBv
-cnRlZF9od19jb3VudDsNCisNCiB9Ow0KIA0KIC8qIFJvdXRpbmVzIGludGVybmFsIHRvIG9wcCBj
-b3JlICovDQpkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9wbV9vcHAuaCBiL2luY2x1ZGUvbGlu
-dXgvcG1fb3BwLmgNCmluZGV4IDlhMmU1MDMzN2FmOS4uM2E4NTExMDI0MmYwIDEwMDY0NA0KLS0t
-IGEvaW5jbHVkZS9saW51eC9wbV9vcHAuaA0KKysrIGIvaW5jbHVkZS9saW51eC9wbV9vcHAuaA0K
-QEAgLTU1LDYgKzU1LDkgQEAgaW50IGRldl9wbV9vcHBfZW5hYmxlKHN0cnVjdCBkZXZpY2UgKmRl
-diwgdW5zaWduZWQgbG9uZyBmcmVxKTsNCiBpbnQgZGV2X3BtX29wcF9kaXNhYmxlKHN0cnVjdCBk
-ZXZpY2UgKmRldiwgdW5zaWduZWQgbG9uZyBmcmVxKTsNCiANCiBzdHJ1Y3Qgc3JjdV9ub3RpZmll
-cl9oZWFkICpkZXZfcG1fb3BwX2dldF9ub3RpZmllcihzdHJ1Y3QgZGV2aWNlICpkZXYpOw0KK2lu
-dCBkZXZfcG1fb3BwX3NldF9zdXBwb3J0ZWRfaHcoc3RydWN0IGRldmljZSAqZGV2LCBjb25zdCB1
-MzIgKnZlcnNpb25zLA0KKwkJCQl1bnNpZ25lZCBpbnQgY291bnQpOw0KK3ZvaWQgZGV2X3BtX29w
-cF9wdXRfc3VwcG9ydGVkX2h3KHN0cnVjdCBkZXZpY2UgKmRldik7DQogI2Vsc2UNCiBzdGF0aWMg
-aW5saW5lIHVuc2lnbmVkIGxvbmcgZGV2X3BtX29wcF9nZXRfdm9sdGFnZShzdHJ1Y3QgZGV2X3Bt
-X29wcCAqb3BwKQ0KIHsNCkBAIC0xMjksNiArMTMyLDE2IEBAIHN0YXRpYyBpbmxpbmUgc3RydWN0
-IHNyY3Vfbm90aWZpZXJfaGVhZCAqZGV2X3BtX29wcF9nZXRfbm90aWZpZXIoDQogew0KIAlyZXR1
-cm4gRVJSX1BUUigtRUlOVkFMKTsNCiB9DQorDQorc3RhdGljIGlubGluZSBpbnQgZGV2X3BtX29w
-cF9zZXRfc3VwcG9ydGVkX2h3KHN0cnVjdCBkZXZpY2UgKmRldiwNCisJCQkJCSAgICAgIGNvbnN0
-IHUzMiAqdmVyc2lvbnMsDQorCQkJCQkgICAgICB1bnNpZ25lZCBpbnQgY291bnQpDQorew0KKwly
-ZXR1cm4gLUVJTlZBTDsNCit9DQorDQorc3RhdGljIGlubGluZSB2b2lkIGRldl9wbV9vcHBfcHV0
-X3N1cHBvcnRlZF9odyhzdHJ1Y3QgZGV2aWNlICpkZXYpIHt9DQorDQogI2VuZGlmCQkvKiBDT05G
-SUdfUE1fT1BQICovDQogDQogI2lmIGRlZmluZWQoQ09ORklHX1BNX09QUCkgJiYgZGVmaW5lZChD
-T05GSUdfT0YpDQotLSANCjIuMTEuMA0KDQo=
+--BXVAT5kNtrzKuDFl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+> First of all, thank you for the review.
+
+You are welcome :-).
+
+> > > I also backported some fixes where I have found them.
+> > >
+> > > Tested on Si-Linux EK874 (with RZ/G2E SoC) that we have in house.
+> >=20
+> > Ok, so this does not look bad, but it affects other people's boards, to=
+o. I went
+> > through it and will have some questions/comments.
+> >=20
+> > Is someone else in -cip project using usb-otg? Are we reasonably sure t=
+his
+> > won't cause problems elsewhere?
+>=20
+> There are not many USB Type-C connectors, not even in upstream. For the c=
+ommon
+> area of the code (drivers/usb/roles/class.c) I see only two drivers that =
+call
+> usb_role_switch_register(), Renesas's and x86 Intel xHCI driver.
+>=20
+> Does linux-cip support x86 platforms?
+
+Yes, we have several x86 configurations. But you may be right that
+Type-C is less common than I thought.
+
+cip-kernel-config/4.19.y-cip-rt/x86:
+siemens_i386-rt.config	siemens_i386-rt.sources
+
+cip-kernel-config/4.19.y-cip/x86:
+plathome_obsvx2.config	   siemens_ipc227e.sources
+plathome_obsvx2.sources    siemens_server_defconfig
+siemens_iot2000.config	      siemens_server.sources
+siemens_iot2000.sources    toshiba_atom_baytrail_cip.config
+siemens_ipc227e_defconfig  toshiba_atom_baytrail_cip.sources
+
+> I am actively trying to find what could go wrong with this implementation=
+=2E Also, there
+> might be another way of doing this by attaching the graph connection to t=
+he port
+> controller device tree node and create a device connection between the tw=
+o devices
+> (the role switch device and the port controller device). This might get r=
+id of all the extra
+> additional patches in the general area of the code (no reference to fwnod=
+e), but might
+> introduce modifications into the port controller driver and into the role=
+ switch driver of
+> Renesas.
+
+I believe that general approach of the patches is okay. You should not
+need to do big changes.
+
+Best regards,
+
+								Pavel
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--BXVAT5kNtrzKuDFl
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl5NqgkACgkQMOfwapXb+vJCWQCghGEA4i2WM8rcIpUyu5VQKhuy
+Pc8An14DGoGofpMAysjHlUQDk1tRCPkC
+=ygZx
+-----END PGP SIGNATURE-----
+
+--BXVAT5kNtrzKuDFl--
 
