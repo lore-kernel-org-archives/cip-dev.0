@@ -1,56 +1,56 @@
 Return-Path: <marian-cristian.rotariu.rb@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from whitealder.osuosl.org (smtp1.osuosl.org [140.211.166.138])
- by lists.linuxfoundation.org (Postfix) with ESMTP id D34CEC013E
- for <cip-dev@lists.cip-project.org>; Wed, 19 Feb 2020 19:11:05 +0000 (UTC)
+Received: from fraxinus.osuosl.org (smtp4.osuosl.org [140.211.166.137])
+ by lists.linuxfoundation.org (Postfix) with ESMTP id 32BA2C013E
+ for <cip-dev@lists.cip-project.org>; Wed, 19 Feb 2020 19:04:23 +0000 (UTC)
 Received: from localhost (localhost [127.0.0.1])
- by whitealder.osuosl.org (Postfix) with ESMTP id C1878866AB
- for <cip-dev@lists.cip-project.org>; Wed, 19 Feb 2020 19:11:05 +0000 (UTC)
+ by fraxinus.osuosl.org (Postfix) with ESMTP id 1C30284587
+ for <cip-dev@lists.cip-project.org>; Wed, 19 Feb 2020 19:04:23 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from whitealder.osuosl.org ([127.0.0.1])
+Received: from fraxinus.osuosl.org ([127.0.0.1])
  by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id E+8LTF4ycbEn for <cip-dev@lists.cip-project.org>;
- Wed, 19 Feb 2020 19:11:04 +0000 (UTC)
+ with ESMTP id u6CIWP9YRwot for <cip-dev@lists.cip-project.org>;
+ Wed, 19 Feb 2020 19:04:21 +0000 (UTC)
 X-Greylist: domain auto-whitelisted by SQLgrey-1.7.6
 Received: from JPN01-OS2-obe.outbound.protection.outlook.com
- (mail-eopbgr1410099.outbound.protection.outlook.com [40.107.141.99])
- by whitealder.osuosl.org (Postfix) with ESMTPS id 651218663C
- for <cip-dev@lists.cip-project.org>; Wed, 19 Feb 2020 19:11:04 +0000 (UTC)
+ (mail-eopbgr1410113.outbound.protection.outlook.com [40.107.141.113])
+ by fraxinus.osuosl.org (Postfix) with ESMTPS id AAA7D8443D
+ for <cip-dev@lists.cip-project.org>; Wed, 19 Feb 2020 19:04:21 +0000 (UTC)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=G4pGyyAQDrycIbL3Zb5W8TRMQdaT92zCnr94xA+3vRJ6GH0dVrAIV7J1xG6cDZpU9vePkSkt984RJFMORcYJdsMFH/hWaY9dHQ4dd9pScw/M6x8XUGx8QHVWOA3K3QCHj5BAJealbkeJL+e8/ns+swMaOKr2ZMmIMx+05T0t3NSyeXy+3C+ClSaC9eAmppkfkPtJfqj30Fg/tKfvmnB7OoToTwG2pz7oABnW+0h0rj5FiEZnfRySsX2Xe/LsROb4hEYfL01TBTRc/NCVPgpn4w4cqyKuiI06OrYMMzeRZK9Wv++/YO3h+Ic+QFlrnECR0DL8J1AdmyblumP/XPskBA==
+ b=ATGcRvaxEmOORPa9tcHYCpqKsR3gea9zFhWFm6J7tSAkvCeDMAHEHmul7603vbC5inAoVoxG2ILwayaY+5uP2QWK67I1FcSLkEvseArtLaCCc59G6Yhz4mxBj9WwVFqx/SO7v2my+y+dNnzr0vPvB/txKhlDwaoqRfNBKAOLffwOmSpcB41OI8AmisN7sr8a8JOIjV6Gv0J5KzU7VeOL1aVQ42DfAjjOUcks4eoRcLIpCqf/yYOfjH2pCC1sDkcWLN1BA32XA3WzPoV1eXylQS35/25ydKBUC59V07ANXBw3J2TzGzs16URCtCfn8t03rxE2436VlJi2uQrjtTTFfQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VRtTsQb2YqPi97FX5M/kgpH79QIo4SO9Dna6M56q0Jo=;
- b=m1eLxUCI/UFb8ro8tU4/kYcxp3BSwr1Vql2Yxd+My723idSLxpHPlWPFETxq8W/8855IwnpbR/u58SWV64ZUuhmEPcFmdmpFPzsobVzghQ9ySLrl2GqGCU32hhzQvDOPHeXnNIBYW0jj1LTrQxE/LT6bOEmzhVFizMuyfoLosh18NjapsZQC1QYZzzfLKqW/A+v6AdjvXtd78u+vxm0BN/B+JF0MZ513jL+9h6v2qiXprLsKfJ/s6IldnW7bCTidkV4GgzBwlnhH8jMYvQpuMO2OBun+sjwE9+wDY6Jsdr7JQTkFNZWdWQl5CUj6h71wwF0xn18dleW/bS6e61mEmg==
+ bh=nhI1k+jkh39xmw06JWpUZxmynK18HxSe0D6ysyugfoU=;
+ b=SwkL2F0nFRKvOZCKbRzjmUGPvcFLfr5ajuBon4Zs56T7WANQO2puH0KlPKdRLYHt4iGDRnCY0E82n2uxPpBEkd6mgtYjkcaA7BgKGGSWXkqUcB2W2UPk/UWjwdwIWpLekW41gtEx66WTtTjnaD8xxDQOD66LbY1J1tOq7kaB29gszzR0ZaqacTcTR1vX5KeA6Hn/dsjRT26HYKuVofkPqPC8iVnMgCAX8U30VoCKbLWeuRKPizyTHatNviCkEJn1/LjGHLcKCsQyyuMzFVt1wtIQjjThmiZ6F84nDrxx14BOYk11wITp2Igkd9MfeH9fa/Uu1cNIkzC7Ynpw1HFAHg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VRtTsQb2YqPi97FX5M/kgpH79QIo4SO9Dna6M56q0Jo=;
- b=LdtOYIHb7rI0e/tWFwtT2FPysyG7szSsMpbiexFNptjj7cNS/CbJPxnDcYV7XPLRyUD6Oo2Bdc7lNqDSnqh8J/s4FRSitPJZwb/jixMVJqutiodF2Gndmr+yvizej+GzhpgmwhMbfqSu7f3OFN0cY2DioYurRKGEkogXYEfsEmY=
+ bh=nhI1k+jkh39xmw06JWpUZxmynK18HxSe0D6ysyugfoU=;
+ b=s3w2bIKTpiqA0Vjl+/C8z/8wInhYMeyj6T6S+9yivSfPKnEn+fNpBfmm2ZxbvrZjpWk6mmPBAzo2jVjGpvGnhw5GPN2fUgwtSCcAPFTZCiPGoTJQHuZlFyyU/XUO6a66QGT4rs26Wk10SaW6JcC90xpPwQp54TPtB7JaDzgtIkI=
 Received: from OSAPR01MB5028.jpnprd01.prod.outlook.com (20.179.179.149) by
- OSAPR01MB4673.jpnprd01.prod.outlook.com (20.179.179.75) with Microsoft SMTP
+ OSAPR01MB3620.jpnprd01.prod.outlook.com (20.178.128.14) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2729.25; Wed, 19 Feb 2020 19:11:00 +0000
+ 15.20.2729.23; Wed, 19 Feb 2020 19:04:17 +0000
 Received: from OSAPR01MB5028.jpnprd01.prod.outlook.com
  ([fe80::50c1:d043:233d:2092]) by OSAPR01MB5028.jpnprd01.prod.outlook.com
  ([fe80::50c1:d043:233d:2092%7]) with mapi id 15.20.2729.033; Wed, 19 Feb 2020
- 19:11:00 +0000
+ 19:04:17 +0000
 From: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 To: Pavel Machek <pavel@denx.de>
-Thread-Topic: [cip-dev] [PATCH 4.19.y-cip 01/23] device connection: Add fwnode
- member to struct device_connection
-Thread-Index: AQHV5vgpA1MVZiLBuEKexsAY1lfzSKgi4SOw
-Date: Wed, 19 Feb 2020 19:11:00 +0000
-Message-ID: <OSAPR01MB50284ABED8F0CD0555EDF057AE100@OSAPR01MB5028.jpnprd01.prod.outlook.com>
+Thread-Topic: [cip-dev] [PATCH 4.19.y-cip 04/23] usb: roles: Find the muxes by
+ also matching against the device node
+Thread-Index: AQHV5vlgmn+ZrgaDyEK7nGIgcqkG7Kgi3LTw
+Date: Wed, 19 Feb 2020 19:04:16 +0000
+Message-ID: <OSAPR01MB502856456636C79D7F6490ADAE100@OSAPR01MB5028.jpnprd01.prod.outlook.com>
 References: <1582034720-5249-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
- <1582034720-5249-2-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
- <20200219074232.GA31996@amd>
-In-Reply-To: <20200219074232.GA31996@amd>
+ <1582034720-5249-5-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
+ <20200219075114.GB31996@amd>
+In-Reply-To: <20200219075114.GB31996@amd>
 Accept-Language: en-GB, en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
@@ -59,34 +59,34 @@ authentication-results: spf=none (sender IP is )
 x-originating-ip: [193.141.220.21]
 x-ms-publictraffictype: Email
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: a27fe086-e031-4e25-90f7-08d7b56f7515
-x-ms-traffictypediagnostic: OSAPR01MB4673:
-x-microsoft-antispam-prvs: <OSAPR01MB467363F4BE5E49FFCB5FA165AE100@OSAPR01MB4673.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1332;
+x-ms-office365-filtering-correlation-id: 8ff39354-1b8c-4209-e0e8-08d7b56e84a5
+x-ms-traffictypediagnostic: OSAPR01MB3620:
+x-microsoft-antispam-prvs: <OSAPR01MB36201ABD25D25F19ADC4A214AE100@OSAPR01MB3620.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
 x-forefront-prvs: 0318501FAE
 x-forefront-antispam-report: SFV:NSPM;
- SFS:(10019020)(4636009)(39860400002)(396003)(136003)(366004)(376002)(346002)(199004)(189003)(76116006)(8676002)(6506007)(478600001)(66946007)(81166006)(4326008)(66446008)(66476007)(66556008)(64756008)(2906002)(81156014)(8936002)(4744005)(6916009)(7696005)(86362001)(5660300002)(52536014)(316002)(55016002)(71200400001)(33656002)(9686003)(26005)(186003);
- DIR:OUT; SFP:1102; SCL:1; SRVR:OSAPR01MB4673;
+ SFS:(10019020)(4636009)(39860400002)(376002)(136003)(396003)(366004)(346002)(189003)(199004)(55016002)(9686003)(86362001)(4326008)(478600001)(52536014)(5660300002)(6916009)(966005)(33656002)(7696005)(53546011)(6506007)(8936002)(71200400001)(81156014)(81166006)(8676002)(66476007)(186003)(64756008)(26005)(2906002)(76116006)(66946007)(66556008)(66446008)(316002);
+ DIR:OUT; SFP:1102; SCL:1; SRVR:OSAPR01MB3620;
  H:OSAPR01MB5028.jpnprd01.prod.outlook.com; FPR:; SPF:None; LANG:en;
- PTR:InfoNoRecords; A:0; MX:1; 
+ PTR:InfoNoRecords; MX:1; A:0; 
 received-spf: None (protection.outlook.com: bp.renesas.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: CgJQjiS2DS9yC+cm+IhWDCM10ISES0/PXNQUjhoPMEw0qo1/brQfwpVA0idtAwzocDwG95TO1kpaUQ+GMrBWd8mCJtL3L/Bimmo40FzMOHhTY2LTComjOxmu4J/5yjwZdV5+c43cx1RbM7RadUmFSufXUxoWUX7h+fU90vYP6x6Hd1Kzrf+nlj29/Qb8IWYcIfd9t4yYmRJ989MxPFynINm9Qs2dWzeFXD62O7EhrudXIdOPKjzoy/RztAdvUUkDoQ3iPkAGNOwa7XeVRmNFBUBYnsiLYZIpbBn1GykCJdmvwcZFjb7vuA3XmMep9tYKsITKi/ANUIbwNEZBs3IzQ2DScTkEKe0EG64yZDKE8qYQXAXbI4sslDE9oNZ1OVzplDR9To6K+BhaWUT1ZSNTtc3mR9i3y/5jYb7FQT3JoD7FmFiKgaoq2cgLTKsIfQbM
-x-ms-exchange-antispam-messagedata: IA6Q7GyL6ys8FQ6Ui1MygZMxVzZP+EXgc74B7K5voAwsxs7ZA4XG+iAEwxKo5HnelaFwuAtNxl3Mk3H8/9QiRZZhnFqdal6WQq2MwaSGJHbjqyTTF/i2MC49poYol57+9bIqDmQm91xXV/dvCHpuAw==
+x-microsoft-antispam-message-info: XXIkry+IUMiydM3LLYgof0ZKPawmFKobpzHipQJjRj64u8WqmtsG2KgvCLMTmij+W2rj+r9TF67wZ5DUjj6x8EQyVu/WGZL9hIIqyflpTBrpw1sSmPjUNvQXKgGYaTUMgpCESza3VSZgZDj7gKzcoJPDVYMOUCGyK69bKWOqinewyOjDhoicv2JzX4RgcXhAgiCkj27bb7y1it1kqoFt1JyVw7mCq7eM2SALeAbCNZ9KZ+h00+Ju6UpUBWETzdoTC8WXSAMa8H+hwRkIvq0iz7vM7XFzBr70ZQlR6hjiw4gFv1mJPPmDrBF1Kb3wmrTwu1avWRpBkillTu4oIzcT3dOWA0k3z6JU5YPLqtqiyoOh2Pix2iJQ6K9cXhRZ6rIuLLPeO5D0d4T54VcMkLqKbp1fnqYrytw2stj9coOTGHBumyuyXzHaiUmnSIW9tSqCG/L26UqM33liNy/ehxSivfrF3I8QJU3bIoso4qjcYNZ/rdS/XL69MLhgW2F02j/hw737iaVfUMHva8UNnWtJOA==
+x-ms-exchange-antispam-messagedata: RjqkzXtB0ErNvFcsqHcI0KXxFl17fB0omNzaQBZCXwnX9O8qONSChLnFJB3KgOaJFU0279GQMSaNJ9H8g+TiwIHpE3HRGbIDprq6YUle5vEkcBDtXbj8a+VksEMrY1LUZF1eMs4hv/Q/44YvmPk3uQ==
 x-ms-exchange-transport-forked: True
 MIME-Version: 1.0
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a27fe086-e031-4e25-90f7-08d7b56f7515
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Feb 2020 19:11:00.4010 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ff39354-1b8c-4209-e0e8-08d7b56e84a5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Feb 2020 19:04:16.9419 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zqTCttthbZYyd5eXf/jXFJNhVTBL66iwptqHkYC9L96IV/1ekNxgZpBAzM79ucR2+WBQd141AdkLZJin5QQIf6GbQmA6q4kGUbFHN/GoyeZXK7BeEBa7AOoC8OrNrm7NkjAUrc06s9JErz3gN0Gh9A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB4673
+X-MS-Exchange-CrossTenant-userprincipalname: IEJfu67tGg71ki2NaZVKcWc8D6CEicqavi2ybeMxcwh/2r3Zb3lZA76JRRz74urYErY6lZVVkxxE4HuyYxDOndcMiXvIfGdcfswnhKri83DdSOCNyAnpjesJx1sPj5oJEcqMNniHEU0HhR+8TItYFA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB3620
 Cc: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-Subject: Re: [PATCH 4.19.y-cip 01/23] device connection: Add fwnode member to struct device_connection
+Subject: Re: [PATCH 4.19.y-cip 04/23] usb: roles: Find the muxes by also matching against the device node
 X-BeenThere: cip-dev@lists.cip-project.org
 X-Mailman-Version: 2.1.15
 Precedence: list
@@ -98,39 +98,63 @@ List-Post: <mailto:cip-dev@lists.cip-project.org>
 List-Help: <mailto:cip-dev-request@lists.cip-project.org?subject=help>
 List-Subscribe: <https://lists.cip-project.org/mailman/listinfo/cip-dev>,
  <mailto:cip-dev-request@lists.cip-project.org?subject=subscribe>
-X-List-Received-Date: Wed, 19 Feb 2020 19:11:05 -0000
+X-List-Received-Date: Wed, 19 Feb 2020 19:04:23 -0000
 Content-Language: en-US
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 
-> > From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> >
-> > commit 09aa11cfda9d8186046bcd1adcd6498b688114f4 upstream.
-> >
-> > This will prepare the device connection API for connections described
-> > in firmware.
+> -----Original Message-----
+> From: Pavel Machek <pavel@denx.de>
+> Sent: 19 February 2020 07:51
+> To: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+> Cc: cip-dev@lists.cip-project.org
+> Subject: Re: [cip-dev] [PATCH 4.19.y-cip 04/23] usb: roles: Find the muxe=
+s by
+> also matching against the device node
 >=20
-> > @@ -753,11 +753,17 @@ struct device_dma_parameters {
-> >   */
-> >  struct device_connection {
-> > +	struct fwnode_handle	*fwnode;
-> >  	const char		*endpoint[2];
-> >  	const char		*id;
-> >  	struct list_head	list;
+> Hi!
 >=20
-> Ok, so this really needs to be 0-initialized in all cases, or we'll be br=
-eaking
-> existing setups. Are we reasonably sure that's the case?
+> > @@ -84,7 +85,12 @@ enum usb_role usb_role_switch_get_role(struct
+> > usb_role_switch *sw)  }
+> EXPORT_SYMBOL_GPL(usb_role_switch_get_role);
+> >
+> > -static int __switch_match(struct device *dev, const void *name)
+> > +static int switch_fwnode_match(struct device *dev, const void
+> > +*fwnode) {
+> > +	return dev_fwnode(dev) =3D=3D fwnode;
+> > +}
+> > +
+> > +static int switch_name_match(struct device *dev, const void *name)
+> >  {
+> >  	return !strcmp((const char *)name, dev_name(dev));  }
+>=20
+> This renames  __switch_match -> switch_name_match. That is welcome
+> cleanup for mainline, but not quite neccessary change here. As the functi=
+on
+> is static and local to the file, we can live with that, but I hope you ha=
+ve not
+> had to do extra effort to backport it :-).
 
-Yes, I need to add two 0-initialization to the following drivers:
-drivers/platform/x86/intel_cht_int33fe.c
-drivers/extcon/extcon-axp288.c
+Unfortunately, this patch is necessary for the following patches as it intr=
+oduces
+the necessary fwnode. Generally, yes, I had to find the minimum set of chan=
+ges,
+not to modify too much the USB core code. I opted for complete backport
+of the upstream patches, not to chop them off and also not to add much code=
+ on
+top of them (only some minor checkpatch fixes). I think it is better not to=
+ increase
+the delta between linux-cip and upstream too much.
 
-In upstream, these drivers opt for fwnode node discovery instead of device_=
-connection definitions.
-I will do the modifications in v2.
+But, looking retrospectively, this might not be the best strategy.
 
-Thanks,
-Marian
+>=20
+> Best regards,
+>=20
+> 									Pavel
+> --
+> (english) http://www.livejournal.com/~pavelmachek
+> (cesky, pictures)
+> http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
 
 
