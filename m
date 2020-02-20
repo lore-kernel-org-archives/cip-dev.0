@@ -2,123 +2,120 @@ Return-Path: <SRS0=6jSD=4I=lists.cip-project.org=cip-dev-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A04DC11D04
-	for <cip-dev@archiver.kernel.org>; Thu, 20 Feb 2020 10:44:54 +0000 (UTC)
-Received: from fraxinus.osuosl.org (smtp4.osuosl.org [140.211.166.137])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AF5CC11D04
+	for <cip-dev@archiver.kernel.org>; Thu, 20 Feb 2020 11:06:56 +0000 (UTC)
+Received: from whitealder.osuosl.org (smtp1.osuosl.org [140.211.166.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 9830D2071E
-	for <cip-dev@archiver.kernel.org>; Thu, 20 Feb 2020 10:44:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 64D1D24654
+	for <cip-dev@archiver.kernel.org>; Thu, 20 Feb 2020 11:06:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="W5w6cu3C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9830D2071E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="F0t/D67P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64D1D24654
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=cip-dev-bounces@lists.cip-project.org
 Received: from localhost (localhost [127.0.0.1])
-	by fraxinus.osuosl.org (Postfix) with ESMTP id 6B90882465;
-	Thu, 20 Feb 2020 10:44:53 +0000 (UTC)
+	by whitealder.osuosl.org (Postfix) with ESMTP id 2684D86D39;
+	Thu, 20 Feb 2020 11:06:56 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from fraxinus.osuosl.org ([127.0.0.1])
+Received: from whitealder.osuosl.org ([127.0.0.1])
 	by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id n0_Tf9fdUgN1; Thu, 20 Feb 2020 10:44:52 +0000 (UTC)
+	with ESMTP id VTnRO37Yp6Hq; Thu, 20 Feb 2020 11:06:54 +0000 (UTC)
 Received: from lists.linuxfoundation.org (lf-lists.osuosl.org [140.211.9.56])
-	by fraxinus.osuosl.org (Postfix) with ESMTP id 93AC6822C6;
-	Thu, 20 Feb 2020 10:44:52 +0000 (UTC)
+	by whitealder.osuosl.org (Postfix) with ESMTP id E5A3986CE1;
+	Thu, 20 Feb 2020 11:06:54 +0000 (UTC)
 Received: from lf-lists.osuosl.org (localhost [127.0.0.1])
-	by lists.linuxfoundation.org (Postfix) with ESMTP id 7FF0BC013E;
-	Thu, 20 Feb 2020 10:44:52 +0000 (UTC)
-Received: from silver.osuosl.org (smtp3.osuosl.org [140.211.166.136])
- by lists.linuxfoundation.org (Postfix) with ESMTP id 03FFBC013E
- for <cip-dev@lists.cip-project.org>; Thu, 20 Feb 2020 10:44:51 +0000 (UTC)
+	by lists.linuxfoundation.org (Postfix) with ESMTP id D8EE9C013E;
+	Thu, 20 Feb 2020 11:06:54 +0000 (UTC)
+Received: from whitealder.osuosl.org (smtp1.osuosl.org [140.211.166.138])
+ by lists.linuxfoundation.org (Postfix) with ESMTP id 80872C013E
+ for <cip-dev@lists.cip-project.org>; Thu, 20 Feb 2020 11:06:53 +0000 (UTC)
 Received: from localhost (localhost [127.0.0.1])
- by silver.osuosl.org (Postfix) with ESMTP id E2E5A20789
- for <cip-dev@lists.cip-project.org>; Thu, 20 Feb 2020 10:44:50 +0000 (UTC)
+ by whitealder.osuosl.org (Postfix) with ESMTP id 7693586D03
+ for <cip-dev@lists.cip-project.org>; Thu, 20 Feb 2020 11:06:53 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from silver.osuosl.org ([127.0.0.1])
+Received: from whitealder.osuosl.org ([127.0.0.1])
  by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id PXhsuYWYCkks for <cip-dev@lists.cip-project.org>;
- Thu, 20 Feb 2020 10:44:49 +0000 (UTC)
+ with ESMTP id F7ap-r1dofW3 for <cip-dev@lists.cip-project.org>;
+ Thu, 20 Feb 2020 11:06:52 +0000 (UTC)
 X-Greylist: domain auto-whitelisted by SQLgrey-1.7.6
-Received: from JPN01-TY1-obe.outbound.protection.outlook.com
- (mail-eopbgr1400101.outbound.protection.outlook.com [40.107.140.101])
- by silver.osuosl.org (Postfix) with ESMTPS id 36B241FEF0
- for <cip-dev@lists.cip-project.org>; Thu, 20 Feb 2020 10:44:49 +0000 (UTC)
+Received: from JPN01-OS2-obe.outbound.protection.outlook.com
+ (mail-eopbgr1410097.outbound.protection.outlook.com [40.107.141.97])
+ by whitealder.osuosl.org (Postfix) with ESMTPS id E609686CE1
+ for <cip-dev@lists.cip-project.org>; Thu, 20 Feb 2020 11:06:51 +0000 (UTC)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bC3/zRAcb/ljDyuGd8TO+suUQ4IlTmjtFeo8trhktPhJgsNQZGymznXvwG0Mqp4R2j2nNy3+7gGWYCV1ZyHElaK99ypmEkum19/ZD3H0XF64HPbyYkacWiy4QIqWW0C9YECvIE0ycbHN3xErzONwSanAWx0zyboXVqDopoPUVZFg/oQ9aVhK31VD1T4nZUb6kD0+fVXwDF3Ii6sLqD1y1fqmy4r4uqReTIBU9ziwAqKQFtg6fqm5bsCpvGN4YIvxR5+rCmFYI0u7lkBa0Nsk8CSCR9EdXdIzfqtV4FJOCU8h047qNa0SuhM/x6S5V6bRlR9vydQsm2lZF6RD/9F9Bw==
+ b=i3pBX7JaUuxOEaLmbAxtsqib5g9idf/avn5YMdDzALta8RV+ex9YYAswtXYnq8LbHL/Yj4tPUe+D6QgLGNqznc0llKpB35gR8uFgxbdZTAUmo1c3og1fcGYmwGvbnrXKgYhYt27ilTE3lFMk+JrVvzHT2q0c06ZtUwhtYdWnX9MmSMKUyvwhBWHrL1On4TUkyam06ccPI2X5xuo4Oj939Dp/b9Lp8jk61Ci4pKM1adD9SkPZgFWxsb55s16IOvYRPo5pnbsbP+2abz7vaQmf71hR3sQbub5IUJ54g+fOg6AY1xB/Fq2ED85nk4BfQjLammaEiz53cxM+lcxMae6v4g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8cmHSKslqsAsw+qU7Zo5wZHxx9n53yx8Wc3d9QJTeg0=;
- b=B57VufLMw4dhHd7qeMijo+xK7f19irFnKKlocaKRfcl3Y+I5CbaWiNEWnJosKIPkdmTWpnGMngcH5/3+HBf898jxHUtl1+SeCALmwnq4G/JSlBv9XJiHCYnAU+Es8GwNGhRkYKthpE+hW4RioHv2mfAAFGhi6IiRCHmkB/vnKERXQyQIT5l0sjP7KfKEd/WD03FUV8qgoVaPN4XY4PVQ0kfx4u+JvuDkG9iKXpSgPjJbANwxzESsqK7ZrtVw8yc50WyDlve8mPgbQ/vGwHktkOvV2S254wluOBHV87Ed3eSgIjha7iBRmEVwYk0j1Dfibrl+T8VM65Upef2OJoKatQ==
+ bh=x6UcWYXATwRPD38FMdn5SQ/EE9jNOTYFNcQjkMcm/D4=;
+ b=NGHppSBL9rpARW4N08pvp19ajJa27zFpHjMbbr/EuKVaX3GA5EUJ8jO2JBKfNmxzAj2TY/fzH2xcJz6qvg8NOmn/A0Ll2uccLxtOA4UzewWOHGzebqZelmh3oWfXsmYOo0vNQfQsXdKVYsD//B90gKLwfSCI23Wg8+3XCXdYZFuP/kegcVd2WiIpQPaw9nStOy8TDbNjOuEcWTA7TC4eUjQRkIpz2ddsGJTWsVjHUdBnHijAXdIPtlMjYLv5iZwiOZmIn7vdPS7IWdf4yIyR4YtVqOO7FmaipOwfEv05fz7sBVTz51C7eqaBx9g9QurPHKXin7V0bp4cvcMTaHt+PQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8cmHSKslqsAsw+qU7Zo5wZHxx9n53yx8Wc3d9QJTeg0=;
- b=W5w6cu3C+wqzjppMf/iVlSlOxzN7WCPXalP0HTVXslGom/FQ3S/oINslmuadiVzdmGHSCp+lv0vdZErTMCZv75td+0BvEsx3ScF/y8qvDTWd80FLrbrHEFqC5SqD2dfUqL8zpukRQaoPdTzLKVpN2BBwl5b2QCsgu6Qx/T+qnmc=
-Received: from OSAPR01MB5028.jpnprd01.prod.outlook.com (20.179.179.149) by
- OSAPR01MB3889.jpnprd01.prod.outlook.com (20.178.100.151) with Microsoft SMTP
+ bh=x6UcWYXATwRPD38FMdn5SQ/EE9jNOTYFNcQjkMcm/D4=;
+ b=F0t/D67P5sus1A3b4PLOL6akzzgXNhI2QEwV5BsXtN61uSXqaSkB/VATI6/p3895YYA7JYejeKBpmD7lTwp7PgTKInQTbqlNA6SRNUczJOWVjT36z9bpyvsKC4nznYba3I4k2+hd/ZnY/gACMF2OL28fUrArHCrPBGRUjU6PM2E=
+Received: from TYAPR01MB2285.jpnprd01.prod.outlook.com (52.133.177.145) by
+ TYAPR01MB3502.jpnprd01.prod.outlook.com (20.178.137.78) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2729.25; Thu, 20 Feb 2020 10:44:45 +0000
-Received: from OSAPR01MB5028.jpnprd01.prod.outlook.com
- ([fe80::50c1:d043:233d:2092]) by OSAPR01MB5028.jpnprd01.prod.outlook.com
- ([fe80::50c1:d043:233d:2092%7]) with mapi id 15.20.2729.033; Thu, 20 Feb 2020
- 10:44:45 +0000
-From: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
-To: Pavel Machek <pavel@denx.de>
-Thread-Topic: [cip-dev] [PATCH 4.19.y-cip 05/23] usb: typec: Find the ports by
- also matching against the device node
-Thread-Index: AQHV5vock8qsPk6fpUqIY6lBRA6ZOqgj4sjw
-Date: Thu, 20 Feb 2020 10:44:45 +0000
-Message-ID: <OSAPR01MB5028928128CE601FDAFB1AF1AE130@OSAPR01MB5028.jpnprd01.prod.outlook.com>
-References: <1582034720-5249-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
- <1582034720-5249-6-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
- <20200219075630.GC31996@amd>
-In-Reply-To: <20200219075630.GC31996@amd>
+ 15.20.2750.18; Thu, 20 Feb 2020 11:06:49 +0000
+Received: from TYAPR01MB2285.jpnprd01.prod.outlook.com
+ ([fe80::1045:4879:77ed:8a70]) by TYAPR01MB2285.jpnprd01.prod.outlook.com
+ ([fe80::1045:4879:77ed:8a70%7]) with mapi id 15.20.2729.033; Thu, 20 Feb 2020
+ 11:06:48 +0000
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: Gylstorff Quirin <quirin.gylstorff@siemens.com>,
+ "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>, "Kiszka, Jan
+ (CT RDA IOT SES-DE)" <jan.kiszka@siemens.com>
+Thread-Topic: [cip-dev]: isar-cip-core and cip-kernel-config
+Thread-Index: AQHV5ndNUlKGEDWsrkO3+RD9IKnV26gj66kw
+Date: Thu, 20 Feb 2020 11:06:48 +0000
+Message-ID: <TYAPR01MB22857E4B676B416B215236D3B7130@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+References: <ca39ce48-8602-0e79-99af-2f44200e2b12@siemens.com>
+In-Reply-To: <ca39ce48-8602-0e79-99af-2f44200e2b12@siemens.com>
 Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=marian-cristian.rotariu.rb@bp.renesas.com; 
+ smtp.mailfrom=Chris.Paterson2@renesas.com; 
 x-originating-ip: [193.141.220.21]
 x-ms-publictraffictype: Email
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: dbd7ad3f-29f2-4b05-73ac-08d7b5f1e674
-x-ms-traffictypediagnostic: OSAPR01MB3889:
-x-microsoft-antispam-prvs: <OSAPR01MB3889E527EF5C611944A75A8CAE130@OSAPR01MB3889.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2449;
+x-ms-office365-filtering-correlation-id: df868548-a7fe-4156-672d-08d7b5f4fb59
+x-ms-traffictypediagnostic: TYAPR01MB3502:
+x-microsoft-antispam-prvs: <TYAPR01MB3502C9BB46510A1269775F7FB7130@TYAPR01MB3502.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
 x-forefront-prvs: 031996B7EF
 x-forefront-antispam-report: SFV:NSPM;
- SFS:(10019020)(4636009)(376002)(366004)(346002)(39860400002)(136003)(396003)(189003)(199004)(71200400001)(316002)(4326008)(52536014)(86362001)(6916009)(5660300002)(55016002)(9686003)(8676002)(53546011)(7696005)(66946007)(76116006)(186003)(2906002)(64756008)(6506007)(66446008)(8936002)(81166006)(81156014)(33656002)(66476007)(66556008)(478600001)(26005);
- DIR:OUT; SFP:1102; SCL:1; SRVR:OSAPR01MB3889;
- H:OSAPR01MB5028.jpnprd01.prod.outlook.com; FPR:; SPF:None; LANG:en;
- PTR:InfoNoRecords; MX:1; A:0; 
-received-spf: None (protection.outlook.com: bp.renesas.com does not designate
+ SFS:(10019020)(4636009)(396003)(136003)(346002)(366004)(376002)(39860400002)(199004)(189003)(966005)(64756008)(66446008)(66946007)(316002)(6506007)(66556008)(110136005)(66476007)(86362001)(4326008)(54906003)(76116006)(2906002)(5660300002)(478600001)(33656002)(8676002)(81166006)(71200400001)(81156014)(186003)(7696005)(52536014)(26005)(55016002)(9686003)(15974865002)(8936002);
+ DIR:OUT; SFP:1102; SCL:1; SRVR:TYAPR01MB3502;
+ H:TYAPR01MB2285.jpnprd01.prod.outlook.com; FPR:; SPF:None; LANG:en;
+ PTR:InfoNoRecords; A:1; MX:1; 
+received-spf: None (protection.outlook.com: renesas.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: V0FpgfygMnfDHG8EQ2tEZOllF3VggHZIY6ZhxZEPhNChVKL5ZmqGaaEua3gL/qR7ptX+li9OXlnX5elQ1nVy8abBfKjsTosNw4llG9JcVmIKcvWrtV1gTYk2Y0ngSID/+M9p+WtimEVSaMq/+UFSjUJiZxuJGJ3ys98XSSDy+bvKmzdokQThHHmAwjygPRYDJg/U1PUuxm3nFazWTTASA5XVdLyIRYg/eCT73FGADlPjMCq4AXiDFESzkqWrJjGzZnZh/d79MwHGNPBOh9C6PTXU+X/ES+tR5QkZGTaeaISWhuhMy8Cy1r83Ao8rw8A0eLMtOENg4UJCmqRYTc4eoX8bsxRmvw6ipRFs/ESsXLa7wqPKHIxjA5dxQobr3NJiCJxffCTWSE8qCfBYO4zbENiuSC38EDLxWNPComniBZXIZURivpvz6vuXTqdfMnoV
-x-ms-exchange-antispam-messagedata: fg1YJI4syG5DQQaPsKMKcphBxkUDAzCJa0+jVmrcTpCXrlIuidZ2AUbIQawXnVILFvV7R67f7yMooIaEopBvxtPo794Yk+1FmcZFBQO4gxjdxiGV1RjUxNpyREqWCloNmM4nbHNY8Tqde4jGtVJ+NA==
+x-microsoft-antispam-message-info: a16R8PNQjgSLXOByAWWU/BiYkcnPoYlKiDKDMQoCCe9CEda9Y5aeNXzOv7njXvv1WvqPN4C9220zY+B7gUMeDIv3WpwacJixEPsYMgmnLtacJndYtTtfLhIAwKIjzKrRRqyoFGcB7A6t06rl58DSfDgxOJr2VYKVKtJx0uJ09gWFqUInEg55xa0vUPnpJssNqrZMgZKoV2LZ+dOxa7qO/yZjFWLCmY+GBuQcIgNXH1RlPWe3dQEFsnbDUOxEa0kBwl0gAZwBRwJQjP4kk2Zee8b3UaVE3im0mYwYJhPBxigld7zjIN8VWecgd33Q2x1i8THtlwHw7T9adSbjB8UgUGpOtfs5FCpuaz3cPT6yirBEAOfdgNJNUsAw+7VuEAeBIKkKj2OKyYVRkRJumaIYr4QGNr3SAnoNZrBEyNr+OpoJV9Hyf9p24r6EvrQnxpIJDLPxrEUrqXDOTEU8p9O/hmq9Ba3pk67vaJ1I3QcZyObH3LxybnEKYOsyAKDScCdWYajkHEHp/waiyo7qLZ5vLQ==
+x-ms-exchange-antispam-messagedata: hGpDZawli4dPxGuiX7VqUd/CpkTR02cw3ISgi6+sYrL1PH0Vu4W3TAoRv7pEO/S7eQxGDnOclArdJ6aZIC0tTV3itHgVEhszNbFRP8HzGGIRVAli5Z6SoBxSxWv5KYWNBIjjPTXo1LqdlfAunQ4Spg==
 x-ms-exchange-transport-forked: True
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dbd7ad3f-29f2-4b05-73ac-08d7b5f1e674
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Feb 2020 10:44:45.2972 (UTC)
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: df868548-a7fe-4156-672d-08d7b5f4fb59
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Feb 2020 11:06:48.8823 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: CTtgW7NChNOL2CZvy3UByri+Fnkxqxr7XuSkiBNpffCcghsTEp+wlBncsXQmTw1JIjnNJAvEAA1kk+OlJ74tuTDQccMQSMKjZTuyhWpzg3rvzHHljlJW2NF/RBL6QCv7snjNh9FpSTwNDWM4w+nlZQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB3889
-Cc: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-Subject: Re: [cip-dev] [PATCH 4.19.y-cip 05/23] usb: typec: Find the ports
- by also matching against the device node
+X-MS-Exchange-CrossTenant-userprincipalname: ViXHKSwMyGhEbF/zrJqZicR5WxN0phP8jCsOAQm8l3Rgow7aShwHuqQsPnVRx43ineMBEu87vNkiuM5Ycyy/yfP/A485THQ4d8kfEZ30gGw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB3502
+Subject: Re: [cip-dev] : isar-cip-core and cip-kernel-config
 X-BeenThere: cip-dev@lists.cip-project.org
 X-Mailman-Version: 2.1.15
 Precedence: list
@@ -135,53 +132,66 @@ Content-Transfer-Encoding: 7bit
 Errors-To: cip-dev-bounces@lists.cip-project.org
 Sender: "cip-dev" <cip-dev-bounces@lists.cip-project.org>
 
-> -----Original Message-----
-> From: Pavel Machek <pavel@denx.de>
-> Sent: 19 February 2020 07:57
-> To: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
-> Cc: cip-dev@lists.cip-project.org
-> Subject: Re: [cip-dev] [PATCH 4.19.y-cip 05/23] usb: typec: Find the ports by
-> also matching against the device node
-> 
-> Hi!
-> 
-> > From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> >
-> > commit 6a0bbcf96b2273f110a14d11a5952527c5921191 upstream.
-> >
-> > When the connections are defined in firmware, struct device_connection
-> > will have the fwnode member pointing to the device node (struct
-> > fwnode_handle) of the requested device, and the endpoint will not be
-> > used at all in that case.
-> 
-> >  static void *typec_port_match(struct device_connection *con, int ep,
-> > void *data)  {
-> > -	return class_find_device(typec_class, NULL, con->endpoint[ep],
-> > -				 __typec_port_match);
-> ...
-> > +	dev = class_find_device(typec_class, NULL, con->endpoint[ep],
-> > +				typec_port_name_match);
-> > +
-> > +	return dev ? dev : ERR_PTR(-EPROBE_DEFER);
-> >  }
-> 
-> So... this adds handling in fwnode != NULL (expected, okay with me), but it
-> also changes behaviour in fwnode == NULL case: return value changed from
-> NULL to ERR_PTR(-EPROBE_DEFER). Are all callers ready to handle the
-> changed situation in -cip? Could we get some explanation why it is
-> neccessary/good idea?
+Hello Quirin,
 
-This is part of the Type-C Alternate Modes. This callback is used only by the
-typec_altmode_register_notifier() that should be called by the upper driver
-that uses the USB Type-C port in the Alternate Mode. In this way it can receive
-notifications from it. 
+> From: Gylstorff Quirin <quirin.gylstorff@siemens.com>
+> Sent: 18 February 2020 16:20
+> 
+> Hi all,
+> 
+> I am currently trying to have all targets in isar-cip-core running with
+> the matching configuration from cip-kernel-config. For some targets
+> there are missing config entries to boot Debian 10 e.g. [1].
+> 
+> Should I add these configuration directly to the matching defconfig in
+> cip-kernel-config or add new defconfig/snippets for isar-cip-core?
 
-In its initial form, this function explores the graph child nodes and finds the
-adequate USB port controller device. But, this device might not be ready/probed
-yet. Hence, the EPROBE_DEFER addition of this patch.
+Good question.
 
-Strangely enough, no one is using this notification chain so far, not even in
-mainstream. I guess Type-C is still in its infancy. 
+I think cip-kernel-config was created to help the CIP maintainers know what configurations etc. to support/maintain.
+How will it affect the maintainers if we start adding config options that are only required for testing, rather then for SLTS support? (Or do we technically also need SLTS support for the 'test' config options?)
+
+> 
+> Currently I am adding them directly to the defconfigs as it is IHMO
+> more manageable as it avoid snippets/configs all over the place.
+
+Would another option be to have complete configurations for testing, rather than just the extra snippets?
+It would mean we need to maintain two copies of mostly the same thing, but it'll make scripting easier and be clear what is for the Kernel maintainers and what is for testing.
+
+Would it be possible to use the same 'testing' configurations/snippets for both deby and isar versions of cip-core?
+
+Kind regards, Chris
+
+> 
+> [1]:
+> https://gitlab.com/Quirin.Gy/cip-kernel-config/-
+> /commit/92979dba2e3c03a422b5b9e8f9c592db9ff43f30
+> 
+> --
+> Quirin Gylstorff
+> 
+> Siemens AG
+> Corporate Technology
+> Research in Digitalization and Automation
+> Smart Embedded Systems
+> CT RDA IOT SES-DE
+> Otto-Hahn-Ring 6
+> 81739 Muenchen, Germany
+> Mobile: +49 173 3746683
+> mailto:quirin.gylstorff@siemens.com
+> www.siemens.com/ingenuityforlife
+> 
+> Siemens Aktiengesellschaft: Chairman of the Supervisory Board: Jim
+> Hagemann Snabe; Managing Board: Joe Kaeser, Chairman, President and
+> Chief Executive Officer; Roland Busch, Lisa Davis, Klaus Helmrich,
+> Cedrik Neike, Michael Sen, Ralf P. Thomas; Registered offices: Berlin
+> and Munich, Germany; Commercial registries: Berlin Charlottenburg, HRB
+> 12300, Munich, HRB 6684; WEEE-Reg.-No. DE 23691322
+> 
+> Important notice: This e-mail and any attachment thereof contain
+> corporate proprietary information. If you have received it by mistake,
+> please notify us immediately by reply e-mail and delete this e-mail and
+> its attachments from your system. Thank you.
 _______________________________________________
 cip-dev mailing list
 cip-dev@lists.cip-project.org
