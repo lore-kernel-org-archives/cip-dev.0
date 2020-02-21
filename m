@@ -6,61 +6,61 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2AC7C35646
-	for <cip-dev@archiver.kernel.org>; Fri, 21 Feb 2020 16:52:25 +0000 (UTC)
-Received: from hemlock.osuosl.org (smtp2.osuosl.org [140.211.166.133])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60AA4C35656
+	for <cip-dev@archiver.kernel.org>; Fri, 21 Feb 2020 16:52:27 +0000 (UTC)
+Received: from whitealder.osuosl.org (smtp1.osuosl.org [140.211.166.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id AFB7D24650
-	for <cip-dev@archiver.kernel.org>; Fri, 21 Feb 2020 16:52:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFB7D24650
+	by mail.kernel.org (Postfix) with ESMTPS id 3F61124650
+	for <cip-dev@archiver.kernel.org>; Fri, 21 Feb 2020 16:52:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F61124650
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=cip-dev-bounces@lists.cip-project.org
 Received: from localhost (localhost [127.0.0.1])
-	by hemlock.osuosl.org (Postfix) with ESMTP id A0D3C87F38;
-	Fri, 21 Feb 2020 16:52:25 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from hemlock.osuosl.org ([127.0.0.1])
-	by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 7XxTjsbHTZKg; Fri, 21 Feb 2020 16:52:24 +0000 (UTC)
-Received: from lists.linuxfoundation.org (lf-lists.osuosl.org [140.211.9.56])
-	by hemlock.osuosl.org (Postfix) with ESMTP id DB0A2879A6;
-	Fri, 21 Feb 2020 16:52:23 +0000 (UTC)
-Received: from lf-lists.osuosl.org (localhost [127.0.0.1])
-	by lists.linuxfoundation.org (Postfix) with ESMTP id C676FC1D88;
-	Fri, 21 Feb 2020 16:52:23 +0000 (UTC)
-Received: from whitealder.osuosl.org (smtp1.osuosl.org [140.211.166.138])
- by lists.linuxfoundation.org (Postfix) with ESMTP id 9E8B1C013E
- for <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2020 16:52:22 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
- by whitealder.osuosl.org (Postfix) with ESMTP id 9BBF784BCF
- for <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2020 16:52:22 +0000 (UTC)
+	by whitealder.osuosl.org (Postfix) with ESMTP id 9B8488761D;
+	Fri, 21 Feb 2020 16:52:26 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
 Received: from whitealder.osuosl.org ([127.0.0.1])
+	by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id aGE74d5ii7TK; Fri, 21 Feb 2020 16:52:24 +0000 (UTC)
+Received: from lists.linuxfoundation.org (lf-lists.osuosl.org [140.211.9.56])
+	by whitealder.osuosl.org (Postfix) with ESMTP id F009087635;
+	Fri, 21 Feb 2020 16:52:23 +0000 (UTC)
+Received: from lf-lists.osuosl.org (localhost [127.0.0.1])
+	by lists.linuxfoundation.org (Postfix) with ESMTP id DB9AEC1D8E;
+	Fri, 21 Feb 2020 16:52:23 +0000 (UTC)
+Received: from fraxinus.osuosl.org (smtp4.osuosl.org [140.211.166.137])
+ by lists.linuxfoundation.org (Postfix) with ESMTP id AEDDAC07FE
+ for <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2020 16:52:22 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+ by fraxinus.osuosl.org (Postfix) with ESMTP id ABB348645E
+ for <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2020 16:52:22 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at osuosl.org
+Received: from fraxinus.osuosl.org ([127.0.0.1])
  by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id rEDVAAXbTT0u for <cip-dev@lists.cip-project.org>;
- Fri, 21 Feb 2020 16:52:21 +0000 (UTC)
+ with ESMTP id GyuHNd1t4zYF for <cip-dev@lists.cip-project.org>;
+ Fri, 21 Feb 2020 16:52:22 +0000 (UTC)
 X-Greylist: domain auto-whitelisted by SQLgrey-1.7.6
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com
- [210.160.252.172])
- by whitealder.osuosl.org (Postfix) with ESMTP id C187D875DC
- for <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2020 16:52:20 +0000 (UTC)
-X-IronPort-AV: E=Sophos;i="5.70,468,1574089200"; d="scan'208";a="39726128"
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com
+ [210.160.252.171])
+ by fraxinus.osuosl.org (Postfix) with ESMTP id 02A2886356
+ for <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2020 16:52:21 +0000 (UTC)
+X-IronPort-AV: E=Sophos;i="5.70,468,1574089200"; d="scan'208";a="39942232"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
- by relmlie6.idc.renesas.com with ESMTP; 22 Feb 2020 01:52:20 +0900
+ by relmlie5.idc.renesas.com with ESMTP; 22 Feb 2020 01:52:21 +0900
 Received: from marian-VirtualBox.ree.adwin.renesas.com (unknown
  [10.226.36.164])
- by relmlir6.idc.renesas.com (Postfix) with ESMTP id A95D740A3602;
- Sat, 22 Feb 2020 01:52:19 +0900 (JST)
+ by relmlir6.idc.renesas.com (Postfix) with ESMTP id DE9F040A3602;
+ Sat, 22 Feb 2020 01:52:20 +0900 (JST)
 From: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
-Date: Fri, 21 Feb 2020 16:51:55 +0000
-Message-Id: <1582303929-5773-9-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
+Date: Fri, 21 Feb 2020 16:51:56 +0000
+Message-Id: <1582303929-5773-10-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1582303929-5773-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
 References: <1582303929-5773-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
-Subject: [cip-dev] [PATCH v2 4.19.y-cip 08/22] device property: Introduce
-	fwnode_find_reference()
+Subject: [cip-dev] [PATCH v2 4.19.y-cip 09/22] device connection: Find
+	connections also by checking the references
 X-BeenThere: cip-dev@lists.cip-project.org
 X-Mailman-Version: 2.1.15
 Precedence: list
@@ -80,72 +80,78 @@ Sender: "cip-dev" <cip-dev-bounces@lists.cip-project.org>
 
 From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-commit 83b34afb6b79c69f5478a7249451cab858af97d6 upstream.
+commit fde777791eb83f6c5845b81af89de6be60a2b2ce upstream.
 
-In most cases the references that the drivers look for don't
-have any arguments. This introduces a wrapper function for
-fwnode_property_get_reference_args() that looks for
-references by using only the name and index.
+We can also use this API to find named references that the
+device nodes have by using fwnode_property_get_reference_args()
+function.
 
 Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 Tested-by: Hans de Goede <hdegoede@redhat.com>
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 ---
- drivers/base/property.c  | 24 ++++++++++++++++++++++++
- include/linux/property.h |  4 ++++
- 2 files changed, 28 insertions(+)
+ drivers/base/devcon.c     | 26 ++++++++++++++++++++++++++
+ drivers/usb/roles/class.c |  2 +-
+ 2 files changed, 27 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/base/property.c b/drivers/base/property.c
-index 240ab52..52be8c8 100644
---- a/drivers/base/property.c
-+++ b/drivers/base/property.c
-@@ -946,6 +946,30 @@ static struct property_set *pset_copy_set(const struct property_set *pset)
+diff --git a/drivers/base/devcon.c b/drivers/base/devcon.c
+index 04db9ae..f7035fc 100644
+--- a/drivers/base/devcon.c
++++ b/drivers/base/devcon.c
+@@ -38,6 +38,28 @@ fwnode_graph_devcon_match(struct fwnode_handle *fwnode, const char *con_id,
+ 	return NULL;
  }
  
- /**
-+ * fwnode_find_reference - Find named reference to a fwnode_handle
-+ * @fwnode: Firmware node where to look for the reference
-+ * @name: The name of the reference
-+ * @index: Index of the reference
-+ *
-+ * @index can be used when the named reference holds a table of references.
-+ *
-+ * Returns pointer to the reference fwnode, or ERR_PTR. Caller is responsible to
-+ * call fwnode_handle_put() on the returned fwnode pointer.
-+ */
-+struct fwnode_handle *fwnode_find_reference(const struct fwnode_handle *fwnode,
-+					    const char *name,
-+					    unsigned int index)
++static void *
++fwnode_devcon_match(struct fwnode_handle *fwnode, const char *con_id,
++		    void *data, devcon_match_fn_t match)
 +{
-+	struct fwnode_reference_args args;
-+	int ret;
++	struct device_connection con = { };
++	void *ret;
++	int i;
 +
-+	ret = fwnode_property_get_reference_args(fwnode, name, NULL, 0, index,
-+						 &args);
-+	return ret ? ERR_PTR(ret) : args.fwnode;
++	for (i = 0; ; i++) {
++		con.fwnode = fwnode_find_reference(fwnode, con_id, i);
++		if (IS_ERR(con.fwnode))
++			break;
++
++		ret = match(&con, -1, data);
++		fwnode_handle_put(con.fwnode);
++		if (ret)
++			return ret;
++	}
++
++	return NULL;
 +}
-+EXPORT_SYMBOL_GPL(fwnode_find_reference);
 +
-+/**
-  * device_remove_properties - Remove properties from a device object.
-  * @dev: Device whose properties to remove.
-  *
-diff --git a/include/linux/property.h b/include/linux/property.h
-index 1a12364..216dcfe 100644
---- a/include/linux/property.h
-+++ b/include/linux/property.h
-@@ -78,6 +78,10 @@ int fwnode_property_get_reference_args(const struct fwnode_handle *fwnode,
- 				       unsigned int nargs, unsigned int index,
- 				       struct fwnode_reference_args *args);
+ /**
+  * device_connection_find_match - Find physical connection to a device
+  * @dev: Device with the connection
+@@ -65,6 +87,10 @@ void *device_connection_find_match(struct device *dev, const char *con_id,
+ 		ret = fwnode_graph_devcon_match(fwnode, con_id, data, match);
+ 		if (ret)
+ 			return ret;
++
++		ret = fwnode_devcon_match(fwnode, con_id, data, match);
++		if (ret)
++			return ret;
+ 	}
  
-+struct fwnode_handle *fwnode_find_reference(const struct fwnode_handle *fwnode,
-+					    const char *name,
-+					    unsigned int index);
-+
- struct fwnode_handle *fwnode_get_parent(const struct fwnode_handle *fwnode);
- struct fwnode_handle *fwnode_get_next_parent(
- 	struct fwnode_handle *fwnode);
+ 	mutex_lock(&devcon_lock);
+diff --git a/drivers/usb/roles/class.c b/drivers/usb/roles/class.c
+index 44a4af2..6b3c087 100644
+--- a/drivers/usb/roles/class.c
++++ b/drivers/usb/roles/class.c
+@@ -101,7 +101,7 @@ static void *usb_role_switch_match(struct device_connection *con, int ep,
+ 	struct device *dev;
+ 
+ 	if (con->fwnode) {
+-		if (!fwnode_property_present(con->fwnode, con->id))
++		if (con->id && !fwnode_property_present(con->fwnode, con->id))
+ 			return NULL;
+ 
+ 		dev = class_find_device(role_class, NULL, con->fwnode,
 -- 
 2.7.4
 
