@@ -6,61 +6,61 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C8C4C3565A
-	for <cip-dev@archiver.kernel.org>; Fri, 21 Feb 2020 16:52:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0766C35646
+	for <cip-dev@archiver.kernel.org>; Fri, 21 Feb 2020 16:52:28 +0000 (UTC)
 Received: from fraxinus.osuosl.org (smtp4.osuosl.org [140.211.166.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 18049222C4
-	for <cip-dev@archiver.kernel.org>; Fri, 21 Feb 2020 16:52:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18049222C4
+	by mail.kernel.org (Postfix) with ESMTPS id 9E82D208C4
+	for <cip-dev@archiver.kernel.org>; Fri, 21 Feb 2020 16:52:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E82D208C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=cip-dev-bounces@lists.cip-project.org
 Received: from localhost (localhost [127.0.0.1])
-	by fraxinus.osuosl.org (Postfix) with ESMTP id CF5DC86469;
-	Fri, 21 Feb 2020 16:52:26 +0000 (UTC)
+	by fraxinus.osuosl.org (Postfix) with ESMTP id 948CA8648C;
+	Fri, 21 Feb 2020 16:52:28 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
 Received: from fraxinus.osuosl.org ([127.0.0.1])
 	by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id sblXstBkOexh; Fri, 21 Feb 2020 16:52:26 +0000 (UTC)
+	with ESMTP id TCkY_T1PxGAS; Fri, 21 Feb 2020 16:52:27 +0000 (UTC)
 Received: from lists.linuxfoundation.org (lf-lists.osuosl.org [140.211.9.56])
-	by fraxinus.osuosl.org (Postfix) with ESMTP id 4FFBB8648C;
-	Fri, 21 Feb 2020 16:52:26 +0000 (UTC)
+	by fraxinus.osuosl.org (Postfix) with ESMTP id 7567986493;
+	Fri, 21 Feb 2020 16:52:27 +0000 (UTC)
 Received: from lf-lists.osuosl.org (localhost [127.0.0.1])
-	by lists.linuxfoundation.org (Postfix) with ESMTP id 3E934C013E;
-	Fri, 21 Feb 2020 16:52:26 +0000 (UTC)
-Received: from whitealder.osuosl.org (smtp1.osuosl.org [140.211.166.138])
- by lists.linuxfoundation.org (Postfix) with ESMTP id A2B6EC013E
- for <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2020 16:52:24 +0000 (UTC)
+	by lists.linuxfoundation.org (Postfix) with ESMTP id 55132C013E;
+	Fri, 21 Feb 2020 16:52:27 +0000 (UTC)
+Received: from fraxinus.osuosl.org (smtp4.osuosl.org [140.211.166.137])
+ by lists.linuxfoundation.org (Postfix) with ESMTP id 5EEE1C013E
+ for <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2020 16:52:26 +0000 (UTC)
 Received: from localhost (localhost [127.0.0.1])
- by whitealder.osuosl.org (Postfix) with ESMTP id 8F0578761F
- for <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2020 16:52:24 +0000 (UTC)
+ by fraxinus.osuosl.org (Postfix) with ESMTP id 4F2AB86469
+ for <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2020 16:52:26 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from whitealder.osuosl.org ([127.0.0.1])
+Received: from fraxinus.osuosl.org ([127.0.0.1])
  by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id ktwAk4kvAcZK for <cip-dev@lists.cip-project.org>;
- Fri, 21 Feb 2020 16:52:23 +0000 (UTC)
+ with ESMTP id 7sY41w4JGB08 for <cip-dev@lists.cip-project.org>;
+ Fri, 21 Feb 2020 16:52:24 +0000 (UTC)
 X-Greylist: domain auto-whitelisted by SQLgrey-1.7.6
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com
- [210.160.252.172])
- by whitealder.osuosl.org (Postfix) with ESMTP id 36FC9875E2
- for <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2020 16:52:23 +0000 (UTC)
-X-IronPort-AV: E=Sophos;i="5.70,468,1574089200"; d="scan'208";a="39726135"
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com
+ [210.160.252.171])
+ by fraxinus.osuosl.org (Postfix) with ESMTP id 6C8AD8645E
+ for <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2020 16:52:24 +0000 (UTC)
+X-IronPort-AV: E=Sophos;i="5.70,468,1574089200"; d="scan'208";a="39942237"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
- by relmlie6.idc.renesas.com with ESMTP; 22 Feb 2020 01:52:22 +0900
+ by relmlie5.idc.renesas.com with ESMTP; 22 Feb 2020 01:52:24 +0900
 Received: from marian-VirtualBox.ree.adwin.renesas.com (unknown
  [10.226.36.164])
- by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1F71540A3602;
- Sat, 22 Feb 2020 01:52:21 +0900 (JST)
+ by relmlir6.idc.renesas.com (Postfix) with ESMTP id 540CF40A35F7;
+ Sat, 22 Feb 2020 01:52:23 +0900 (JST)
 From: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
-Date: Fri, 21 Feb 2020 16:51:57 +0000
-Message-Id: <1582303929-5773-11-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
+Date: Fri, 21 Feb 2020 16:51:58 +0000
+Message-Id: <1582303929-5773-12-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1582303929-5773-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
 References: <1582303929-5773-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
-Subject: [cip-dev] [PATCH v2 4.19.y-cip 10/22] usb: roles: Introduce stubs
-	for the exiting functions in role.h
+Subject: [cip-dev] [PATCH v2 4.19.y-cip 11/22] device connection: Add
+	fwnode_connection_find_match()
 X-BeenThere: cip-dev@lists.cip-project.org
 X-Mailman-Version: 2.1.15
 Precedence: list
@@ -78,75 +78,116 @@ Content-Transfer-Encoding: 7bit
 Errors-To: cip-dev-bounces@lists.cip-project.org
 Sender: "cip-dev" <cip-dev-bounces@lists.cip-project.org>
 
-From: Yu Chen <chenyu56@huawei.com>
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-commit 977607653cdd06a2c4d1d0f179ff46cc0cbe83a5 upstream.
+commit 44493062abc38e5895e0cf8d22698f2ca39a1e4d upstream.
 
-This patch adds stubs for the exiting functions while
-CONFIG_USB_ROLE_SWITCH does not enabled.
+The fwnode_connection_find_match() function is exactly the
+same as device_connection_find_match(), except it takes
+struct fwnode_handle as parameter instead of struct device.
+That allows locating device connections before the device
+entries have been created.
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: John Stultz <john.stultz@linaro.org>
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Signed-off-by: Yu Chen <chenyu56@huawei.com>
+Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Link: https://lore.kernel.org/r/1567070558-29417-6-git-send-email-chunfeng.yun@mediatek.com
+Link: https://lore.kernel.org/r/1567070558-29417-7-git-send-email-chunfeng.yun@mediatek.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-(fixed checkpatch alignment warnings)
 Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 ---
- include/linux/usb/role.h | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ drivers/base/devcon.c  | 43 +++++++++++++++++++++++++++++++------------
+ include/linux/device.h | 10 +++++++---
+ 2 files changed, 38 insertions(+), 15 deletions(-)
 
-diff --git a/include/linux/usb/role.h b/include/linux/usb/role.h
-index c05ffa6..b880e6a 100644
---- a/include/linux/usb/role.h
-+++ b/include/linux/usb/role.h
-@@ -42,6 +42,7 @@ struct usb_role_switch_desc {
- 	bool allow_userspace_control;
+diff --git a/drivers/base/devcon.c b/drivers/base/devcon.c
+index f7035fc..5bf9537bd7 100644
+--- a/drivers/base/devcon.c
++++ b/drivers/base/devcon.c
+@@ -12,9 +12,6 @@
+ static DEFINE_MUTEX(devcon_lock);
+ static LIST_HEAD(devcon_list);
+ 
+-typedef void *(*devcon_match_fn_t)(struct device_connection *con, int ep,
+-				   void *data);
+-
+ static void *
+ fwnode_graph_devcon_match(struct fwnode_handle *fwnode, const char *con_id,
+ 			  void *data, devcon_match_fn_t match)
+@@ -61,6 +58,34 @@ fwnode_devcon_match(struct fwnode_handle *fwnode, const char *con_id,
+ }
+ 
+ /**
++ * fwnode_connection_find_match - Find connection from a device node
++ * @fwnode: Device node with the connection
++ * @con_id: Identifier for the connection
++ * @data: Data for the match function
++ * @match: Function to check and convert the connection description
++ *
++ * Find a connection with unique identifier @con_id between @fwnode and another
++ * device node. @match will be used to convert the connection description to
++ * data the caller is expecting to be returned.
++ */
++void *fwnode_connection_find_match(struct fwnode_handle *fwnode,
++				   const char *con_id, void *data,
++				   devcon_match_fn_t match)
++{
++	void *ret;
++
++	if (!fwnode || !match)
++		return NULL;
++
++	ret = fwnode_graph_devcon_match(fwnode, con_id, data, match);
++	if (ret)
++		return ret;
++
++	return fwnode_devcon_match(fwnode, con_id, data, match);
++}
++EXPORT_SYMBOL_GPL(fwnode_connection_find_match);
++
++/**
+  * device_connection_find_match - Find physical connection to a device
+  * @dev: Device with the connection
+  * @con_id: Identifier for the connection
+@@ -83,15 +108,9 @@ void *device_connection_find_match(struct device *dev, const char *con_id,
+ 	if (!match)
+ 		return NULL;
+ 
+-	if (fwnode) {
+-		ret = fwnode_graph_devcon_match(fwnode, con_id, data, match);
+-		if (ret)
+-			return ret;
+-
+-		ret = fwnode_devcon_match(fwnode, con_id, data, match);
+-		if (ret)
+-			return ret;
+-	}
++	ret = fwnode_connection_find_match(fwnode, con_id, data, match);
++	if (ret)
++		return ret;
+ 
+ 	mutex_lock(&devcon_lock);
+ 
+diff --git a/include/linux/device.h b/include/linux/device.h
+index ceb69b9..f4c89e7 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -769,10 +769,14 @@ struct device_connection {
+ 	struct list_head	list;
  };
  
-+#if IS_ENABLED(CONFIG_USB_ROLE_SWITCH)
- int usb_role_switch_set_role(struct usb_role_switch *sw, enum usb_role role);
- enum usb_role usb_role_switch_get_role(struct usb_role_switch *sw);
- struct usb_role_switch *usb_role_switch_get(struct device *dev);
-@@ -51,5 +52,33 @@ struct usb_role_switch *
- usb_role_switch_register(struct device *parent,
- 			 const struct usb_role_switch_desc *desc);
- void usb_role_switch_unregister(struct usb_role_switch *sw);
-+#else
-+static inline int usb_role_switch_set_role(struct usb_role_switch *sw,
-+					   enum usb_role role)
-+{
-+	return 0;
-+}
++typedef void *(*devcon_match_fn_t)(struct device_connection *con, int ep,
++				   void *data);
 +
-+static inline enum usb_role usb_role_switch_get_role(struct usb_role_switch *sw)
-+{
-+	return USB_ROLE_NONE;
-+}
-+
-+static inline struct usb_role_switch *usb_role_switch_get(struct device *dev)
-+{
-+	return ERR_PTR(-ENODEV);
-+}
-+
-+static inline void usb_role_switch_put(struct usb_role_switch *sw) { }
-+
-+static inline struct usb_role_switch *
-+usb_role_switch_register(struct device *parent,
-+			 const struct usb_role_switch_desc *desc)
-+{
-+	return ERR_PTR(-ENODEV);
-+}
-+
-+static inline void usb_role_switch_unregister(struct usb_role_switch *sw) { }
-+#endif
++void *fwnode_connection_find_match(struct fwnode_handle *fwnode,
++				   const char *con_id, void *data,
++				   devcon_match_fn_t match);
+ void *device_connection_find_match(struct device *dev, const char *con_id,
+-				void *data,
+-				void *(*match)(struct device_connection *con,
+-					       int ep, void *data));
++				   void *data, devcon_match_fn_t match);
  
- #endif /* __LINUX_USB_ROLE_H */
+ struct device *device_connection_find(struct device *dev, const char *con_id);
+ 
 -- 
 2.7.4
 
