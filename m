@@ -6,61 +6,61 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADF8BC35646
-	for <cip-dev@archiver.kernel.org>; Fri, 21 Feb 2020 16:52:22 +0000 (UTC)
-Received: from whitealder.osuosl.org (smtp1.osuosl.org [140.211.166.138])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76A87C35656
+	for <cip-dev@archiver.kernel.org>; Fri, 21 Feb 2020 16:52:24 +0000 (UTC)
+Received: from hemlock.osuosl.org (smtp2.osuosl.org [140.211.166.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 8D274208C4
-	for <cip-dev@archiver.kernel.org>; Fri, 21 Feb 2020 16:52:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D274208C4
+	by mail.kernel.org (Postfix) with ESMTPS id 57409208C4
+	for <cip-dev@archiver.kernel.org>; Fri, 21 Feb 2020 16:52:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57409208C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=cip-dev-bounces@lists.cip-project.org
 Received: from localhost (localhost [127.0.0.1])
-	by whitealder.osuosl.org (Postfix) with ESMTP id 69483875E2;
-	Fri, 21 Feb 2020 16:52:22 +0000 (UTC)
+	by hemlock.osuosl.org (Postfix) with ESMTP id E6CED87AF4;
+	Fri, 21 Feb 2020 16:52:23 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from whitealder.osuosl.org ([127.0.0.1])
+Received: from hemlock.osuosl.org ([127.0.0.1])
 	by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id gPrhsEYjQJce; Fri, 21 Feb 2020 16:52:20 +0000 (UTC)
+	with ESMTP id pK5eUJnuS6pB; Fri, 21 Feb 2020 16:52:20 +0000 (UTC)
 Received: from lists.linuxfoundation.org (lf-lists.osuosl.org [140.211.9.56])
-	by whitealder.osuosl.org (Postfix) with ESMTP id DD21F8761A;
+	by hemlock.osuosl.org (Postfix) with ESMTP id B9DDA84ADE;
 	Fri, 21 Feb 2020 16:52:20 +0000 (UTC)
 Received: from lf-lists.osuosl.org (localhost [127.0.0.1])
-	by lists.linuxfoundation.org (Postfix) with ESMTP id D668BC013E;
+	by lists.linuxfoundation.org (Postfix) with ESMTP id A4D85C013E;
 	Fri, 21 Feb 2020 16:52:20 +0000 (UTC)
-Received: from silver.osuosl.org (smtp3.osuosl.org [140.211.166.136])
- by lists.linuxfoundation.org (Postfix) with ESMTP id 4B99AC1D8E
+Received: from fraxinus.osuosl.org (smtp4.osuosl.org [140.211.166.137])
+ by lists.linuxfoundation.org (Postfix) with ESMTP id 3B977C013E
  for <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2020 16:52:16 +0000 (UTC)
 Received: from localhost (localhost [127.0.0.1])
- by silver.osuosl.org (Postfix) with ESMTP id 488C92207F
+ by fraxinus.osuosl.org (Postfix) with ESMTP id 2789586475
  for <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2020 16:52:16 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from silver.osuosl.org ([127.0.0.1])
+Received: from fraxinus.osuosl.org ([127.0.0.1])
  by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id WbtioiwAllXQ for <cip-dev@lists.cip-project.org>;
- Fri, 21 Feb 2020 16:52:14 +0000 (UTC)
+ with ESMTP id dHQnrv5BwAZf for <cip-dev@lists.cip-project.org>;
+ Fri, 21 Feb 2020 16:52:15 +0000 (UTC)
 X-Greylist: domain auto-whitelisted by SQLgrey-1.7.6
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com
  [210.160.252.172])
- by silver.osuosl.org (Postfix) with ESMTP id 0D6B020432
- for <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2020 16:52:13 +0000 (UTC)
-X-IronPort-AV: E=Sophos;i="5.70,468,1574089200"; d="scan'208";a="39726107"
+ by fraxinus.osuosl.org (Postfix) with ESMTP id 10DAD8634C
+ for <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2020 16:52:14 +0000 (UTC)
+X-IronPort-AV: E=Sophos;i="5.70,468,1574089200"; d="scan'208";a="39726110"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
- by relmlie6.idc.renesas.com with ESMTP; 22 Feb 2020 01:52:13 +0900
+ by relmlie6.idc.renesas.com with ESMTP; 22 Feb 2020 01:52:14 +0900
 Received: from marian-VirtualBox.ree.adwin.renesas.com (unknown
  [10.226.36.164])
- by relmlir6.idc.renesas.com (Postfix) with ESMTP id 5D0A240A3602;
- Sat, 22 Feb 2020 01:52:12 +0900 (JST)
+ by relmlir6.idc.renesas.com (Postfix) with ESMTP id 93C2840A35F7;
+ Sat, 22 Feb 2020 01:52:13 +0900 (JST)
 From: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
-Date: Fri, 21 Feb 2020 16:51:49 +0000
-Message-Id: <1582303929-5773-3-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
+Date: Fri, 21 Feb 2020 16:51:50 +0000
+Message-Id: <1582303929-5773-4-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1582303929-5773-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
 References: <1582303929-5773-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
-Subject: [cip-dev] [PATCH v2 4.19.y-cip 02/22] usb: typec: mux: Find the
-	muxes by also matching against the device node
+Subject: [cip-dev] [PATCH v2 4.19.y-cip 03/22] usb: typec: mux: Fix unsigned
+	comparison with less than zero
 X-BeenThere: cip-dev@lists.cip-project.org
 X-Mailman-Version: 2.1.15
 Precedence: list
@@ -78,145 +78,40 @@ Content-Transfer-Encoding: 7bit
 Errors-To: cip-dev-bounces@lists.cip-project.org
 Sender: "cip-dev" <cip-dev-bounces@lists.cip-project.org>
 
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-commit 96a6d031ca9930938bd66d0052fc7ed2b56e3583 upstream.
+commit 4e46f271c37415323f2b650d02ef50c87ff8d092 upstream.
 
-When the connections are defined in firmware, struct
-device_connection will have the fwnode member pointing to
-the device node (struct fwnode_handle) of the requested
-device, and the endpoint will not be used at all in that
-case.
+The return from the call to fwnode_property_read_u16_array is int,
+it can be a negative error code however this is being assigned to
+an size_t variable 'nval', hence the check is always false.
+Fix this by making 'nval' an int.
 
-Acked-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Reviewed-by: Jun Li <jun.li@nxp.com>
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Detected by Coccinelle ("Unsigned expression compared with
+zero: nval < 0")
+
+Fixes: 96a6d031ca99 ("usb: typec: mux: Find the muxes by also matching against the device node")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 ---
- drivers/usb/typec/mux.c | 86 ++++++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 74 insertions(+), 12 deletions(-)
+ drivers/usb/typec/mux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/usb/typec/mux.c b/drivers/usb/typec/mux.c
-index d990aa5..0c4e0b5 100644
+index 0c4e0b5..e49c138 100644
 --- a/drivers/usb/typec/mux.c
 +++ b/drivers/usb/typec/mux.c
-@@ -11,6 +11,8 @@
- #include <linux/list.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
-+#include <linux/property.h>
-+#include <linux/slab.h>
- #include <linux/usb/typec_mux.h>
- 
- static DEFINE_MUTEX(switch_lock);
-@@ -23,15 +25,25 @@ static void *typec_switch_match(struct device_connection *con, int ep,
+@@ -126,7 +126,7 @@ static void *typec_mux_match(struct device_connection *con, int ep, void *data)
  {
- 	struct typec_switch *sw;
- 
--	list_for_each_entry(sw, &switch_list, entry)
--		if (!strcmp(con->endpoint[ep], dev_name(sw->dev)))
--			return sw;
-+	if (!con->fwnode) {
-+		list_for_each_entry(sw, &switch_list, entry)
-+			if (!strcmp(con->endpoint[ep], dev_name(sw->dev)))
-+				return sw;
-+		return ERR_PTR(-EPROBE_DEFER);
-+	}
- 
- 	/*
--	 * We only get called if a connection was found, tell the caller to
--	 * wait for the switch to show up.
-+	 * With OF graph the mux node must have a boolean device property named
-+	 * "orientation-switch".
- 	 */
--	return ERR_PTR(-EPROBE_DEFER);
-+	if (con->id && !fwnode_property_present(con->fwnode, con->id))
-+		return NULL;
-+
-+	list_for_each_entry(sw, &switch_list, entry)
-+		if (dev_fwnode(sw->dev) == con->fwnode)
-+			return sw;
-+
-+	return con->id ? ERR_PTR(-EPROBE_DEFER) : NULL;
- }
- 
- /**
-@@ -112,17 +124,67 @@ EXPORT_SYMBOL_GPL(typec_switch_unregister);
- 
- static void *typec_mux_match(struct device_connection *con, int ep, void *data)
- {
-+	const struct typec_altmode_desc *desc = data;
+ 	const struct typec_altmode_desc *desc = data;
  	struct typec_mux *mux;
-+	size_t nval;
-+	bool match;
-+	u16 *val;
-+	int i;
- 
--	list_for_each_entry(mux, &mux_list, entry)
--		if (!strcmp(con->endpoint[ep], dev_name(mux->dev)))
--			return mux;
-+	if (!con->fwnode) {
-+		list_for_each_entry(mux, &mux_list, entry)
-+			if (!strcmp(con->endpoint[ep], dev_name(mux->dev)))
-+				return mux;
-+		return ERR_PTR(-EPROBE_DEFER);
-+	}
- 
- 	/*
--	 * We only get called if a connection was found, tell the caller to
--	 * wait for the switch to show up.
-+	 * Check has the identifier already been "consumed". If it
-+	 * has, no need to do any extra connection identification.
- 	 */
--	return ERR_PTR(-EPROBE_DEFER);
-+	match = !con->id;
-+	if (match)
-+		goto find_mux;
-+
-+	/* Accessory Mode muxes */
-+	if (!desc) {
-+		match = fwnode_property_present(con->fwnode, "accessory");
-+		if (match)
-+			goto find_mux;
-+		return NULL;
-+	}
-+
-+	/* Alternate Mode muxes */
-+	nval = fwnode_property_read_u16_array(con->fwnode, "svid", NULL, 0);
-+	if (nval <= 0)
-+		return NULL;
-+
-+	val = kcalloc(nval, sizeof(*val), GFP_KERNEL);
-+	if (!val)
-+		return ERR_PTR(-ENOMEM);
-+
-+	nval = fwnode_property_read_u16_array(con->fwnode, "svid", val, nval);
-+	if (nval < 0) {
-+		kfree(val);
-+		return ERR_PTR(nval);
-+	}
-+
-+	for (i = 0; i < nval; i++) {
-+		match = val[i] == desc->svid;
-+		if (match) {
-+			kfree(val);
-+			goto find_mux;
-+		}
-+	}
-+	kfree(val);
-+	return NULL;
-+
-+find_mux:
-+	list_for_each_entry(mux, &mux_list, entry)
-+		if (dev_fwnode(mux->dev) == con->fwnode)
-+			return mux;
-+
-+	return match ? ERR_PTR(-EPROBE_DEFER) : NULL;
- }
- 
- /**
+-	size_t nval;
++	int nval;
+ 	bool match;
+ 	u16 *val;
+ 	int i;
 -- 
 2.7.4
 
