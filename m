@@ -6,60 +6,60 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC4BC35657
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C11C4C35659
 	for <cip-dev@archiver.kernel.org>; Fri, 21 Feb 2020 16:52:22 +0000 (UTC)
-Received: from silver.osuosl.org (smtp3.osuosl.org [140.211.166.136])
+Received: from hemlock.osuosl.org (smtp2.osuosl.org [140.211.166.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 4C94F208C4
+	by mail.kernel.org (Postfix) with ESMTPS id A0BA024656
 	for <cip-dev@archiver.kernel.org>; Fri, 21 Feb 2020 16:52:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C94F208C4
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0BA024656
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=cip-dev-bounces@lists.cip-project.org
 Received: from localhost (localhost [127.0.0.1])
-	by silver.osuosl.org (Postfix) with ESMTP id 3E56A20432;
+	by hemlock.osuosl.org (Postfix) with ESMTP id 91D4587D35;
 	Fri, 21 Feb 2020 16:52:22 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from silver.osuosl.org ([127.0.0.1])
+Received: from hemlock.osuosl.org ([127.0.0.1])
 	by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id aJE02S9J1q1n; Fri, 21 Feb 2020 16:52:21 +0000 (UTC)
+	with ESMTP id GRubv3wBaex8; Fri, 21 Feb 2020 16:52:21 +0000 (UTC)
 Received: from lists.linuxfoundation.org (lf-lists.osuosl.org [140.211.9.56])
-	by silver.osuosl.org (Postfix) with ESMTP id 5AA4520408;
+	by hemlock.osuosl.org (Postfix) with ESMTP id 1C08387762;
 	Fri, 21 Feb 2020 16:52:21 +0000 (UTC)
 Received: from lf-lists.osuosl.org (localhost [127.0.0.1])
-	by lists.linuxfoundation.org (Postfix) with ESMTP id 42950C013E;
+	by lists.linuxfoundation.org (Postfix) with ESMTP id 059DCC07FE;
 	Fri, 21 Feb 2020 16:52:21 +0000 (UTC)
-Received: from whitealder.osuosl.org (smtp1.osuosl.org [140.211.166.138])
- by lists.linuxfoundation.org (Postfix) with ESMTP id 10F7CC013E
- for <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2020 16:52:19 +0000 (UTC)
+Received: from fraxinus.osuosl.org (smtp4.osuosl.org [140.211.166.137])
+ by lists.linuxfoundation.org (Postfix) with ESMTP id DFAF3C013E
+ for <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2020 16:52:17 +0000 (UTC)
 Received: from localhost (localhost [127.0.0.1])
- by whitealder.osuosl.org (Postfix) with ESMTP id F1595875CD
- for <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2020 16:52:18 +0000 (UTC)
+ by fraxinus.osuosl.org (Postfix) with ESMTP id CEE428634C
+ for <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2020 16:52:17 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from whitealder.osuosl.org ([127.0.0.1])
+Received: from fraxinus.osuosl.org ([127.0.0.1])
  by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id JmBpDHArEGg5 for <cip-dev@lists.cip-project.org>;
+ with ESMTP id kaKgzpnzDo8f for <cip-dev@lists.cip-project.org>;
  Fri, 21 Feb 2020 16:52:17 +0000 (UTC)
 X-Greylist: domain auto-whitelisted by SQLgrey-1.7.6
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com
- [210.160.252.172])
- by whitealder.osuosl.org (Postfix) with ESMTP id 1B8AE875DC
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com
+ [210.160.252.171])
+ by fraxinus.osuosl.org (Postfix) with ESMTP id 2132186451
  for <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2020 16:52:16 +0000 (UTC)
-X-IronPort-AV: E=Sophos;i="5.70,468,1574089200"; d="scan'208";a="39726114"
+X-IronPort-AV: E=Sophos;i="5.70,468,1574089200"; d="scan'208";a="39942221"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
- by relmlie6.idc.renesas.com with ESMTP; 22 Feb 2020 01:52:15 +0900
+ by relmlie5.idc.renesas.com with ESMTP; 22 Feb 2020 01:52:16 +0900
 Received: from marian-VirtualBox.ree.adwin.renesas.com (unknown
  [10.226.36.164])
- by relmlir6.idc.renesas.com (Postfix) with ESMTP id C7ED340A35F7;
- Sat, 22 Feb 2020 01:52:14 +0900 (JST)
+ by relmlir6.idc.renesas.com (Postfix) with ESMTP id 094B640A35F7;
+ Sat, 22 Feb 2020 01:52:15 +0900 (JST)
 From: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
-Date: Fri, 21 Feb 2020 16:51:51 +0000
-Message-Id: <1582303929-5773-5-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
+Date: Fri, 21 Feb 2020 16:51:52 +0000
+Message-Id: <1582303929-5773-6-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1582303929-5773-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
 References: <1582303929-5773-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
-Subject: [cip-dev] [PATCH v2 4.19.y-cip 04/22] usb: roles: Find the muxes by
+Subject: [cip-dev] [PATCH v2 4.19.y-cip 05/22] usb: typec: Find the ports by
 	also matching against the device node
 X-BeenThere: cip-dev@lists.cip-project.org
 X-Mailman-Version: 2.1.15
@@ -80,7 +80,7 @@ Sender: "cip-dev" <cip-dev-bounces@lists.cip-project.org>
 
 From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-commit ec69e9533c4879c81eb7122771792864eb49af35 upstream.
+commit 6a0bbcf96b2273f110a14d11a5952527c5921191 upstream.
 
 When the connections are defined in firmware, struct
 device_connection will have the fwnode member pointing to
@@ -91,88 +91,61 @@ case.
 Acked-by: Hans de Goede <hdegoede@redhat.com>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 Reviewed-by: Jun Li <jun.li@nxp.com>
-Tested-by: Jun Li <jun.li@nxp.com>
 Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 ---
- drivers/usb/roles/class.c | 21 ++++++++++++++++++---
- include/linux/usb/role.h  |  2 ++
- 2 files changed, 20 insertions(+), 3 deletions(-)
+ drivers/usb/typec/class.c | 24 +++++++++++++++++++++---
+ 1 file changed, 21 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/roles/class.c b/drivers/usb/roles/class.c
-index 1dd492e..44a4af2 100644
---- a/drivers/usb/roles/class.c
-+++ b/drivers/usb/roles/class.c
-@@ -8,6 +8,7 @@
-  */
- 
- #include <linux/usb/role.h>
-+#include <linux/property.h>
+diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
+index 1916ee1..65e95b6 100644
+--- a/drivers/usb/typec/class.c
++++ b/drivers/usb/typec/class.c
+@@ -9,6 +9,7 @@
  #include <linux/device.h>
  #include <linux/module.h>
  #include <linux/mutex.h>
-@@ -84,7 +85,12 @@ enum usb_role usb_role_switch_get_role(struct usb_role_switch *sw)
- }
- EXPORT_SYMBOL_GPL(usb_role_switch_get_role);
++#include <linux/property.h>
+ #include <linux/slab.h>
  
--static int __switch_match(struct device *dev, const void *name)
-+static int switch_fwnode_match(struct device *dev, const void *fwnode)
+ #include "bus.h"
+@@ -204,15 +205,32 @@ static void typec_altmode_put_partner(struct altmode *altmode)
+ 	put_device(&adev->dev);
+ }
+ 
+-static int __typec_port_match(struct device *dev, const void *name)
++static int typec_port_fwnode_match(struct device *dev, const void *fwnode)
 +{
 +	return dev_fwnode(dev) == fwnode;
 +}
 +
-+static int switch_name_match(struct device *dev, const void *name)
++static int typec_port_name_match(struct device *dev, const void *name)
  {
  	return !strcmp((const char *)name, dev_name(dev));
  }
-@@ -94,8 +100,16 @@ static void *usb_role_switch_match(struct device_connection *con, int ep,
+ 
+ static void *typec_port_match(struct device_connection *con, int ep, void *data)
  {
- 	struct device *dev;
- 
--	dev = class_find_device(role_class, NULL, con->endpoint[ep],
--				__switch_match);
-+	if (con->fwnode) {
-+		if (!fwnode_property_present(con->fwnode, con->id))
-+			return NULL;
+-	return class_find_device(typec_class, NULL, con->endpoint[ep],
+-				 __typec_port_match);
++	struct device *dev;
 +
-+		dev = class_find_device(role_class, NULL, con->fwnode,
-+					switch_fwnode_match);
-+	} else {
-+		dev = class_find_device(role_class, NULL, con->endpoint[ep],
-+					switch_name_match);
-+	}
- 
- 	return dev ? to_role_switch(dev) : ERR_PTR(-EPROBE_DEFER);
++	/*
++	 * FIXME: Check does the fwnode supports the requested SVID. If it does
++	 * we need to return ERR_PTR(-PROBE_DEFER) when there is no device.
++	 */
++	if (con->fwnode)
++		return class_find_device(typec_class, NULL, con->fwnode,
++					 typec_port_fwnode_match);
++
++	dev = class_find_device(typec_class, NULL, con->endpoint[ep],
++				typec_port_name_match);
++
++	return dev ? dev : ERR_PTR(-EPROBE_DEFER);
  }
-@@ -266,6 +280,7 @@ usb_role_switch_register(struct device *parent,
- 	sw->get = desc->get;
  
- 	sw->dev.parent = parent;
-+	sw->dev.fwnode = desc->fwnode;
- 	sw->dev.class = role_class;
- 	sw->dev.type = &usb_role_dev_type;
- 	dev_set_name(&sw->dev, "%s-role-switch", dev_name(parent));
-diff --git a/include/linux/usb/role.h b/include/linux/usb/role.h
-index edc51be..c05ffa6 100644
---- a/include/linux/usb/role.h
-+++ b/include/linux/usb/role.h
-@@ -18,6 +18,7 @@ typedef enum usb_role (*usb_role_switch_get_t)(struct device *dev);
- 
- /**
-  * struct usb_role_switch_desc - USB Role Switch Descriptor
-+ * @fwnode: The device node to be associated with the role switch
-  * @usb2_port: Optional reference to the host controller port device (USB2)
-  * @usb3_port: Optional reference to the host controller port device (USB3)
-  * @udc: Optional reference to the peripheral controller device
-@@ -32,6 +33,7 @@ typedef enum usb_role (*usb_role_switch_get_t)(struct device *dev);
-  * usb_role_switch_register() before registering the switch.
-  */
- struct usb_role_switch_desc {
-+	struct fwnode_handle *fwnode;
- 	struct device *usb2_port;
- 	struct device *usb3_port;
- 	struct device *udc;
+ struct typec_altmode *
 -- 
 2.7.4
 
