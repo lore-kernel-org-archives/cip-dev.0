@@ -6,61 +6,61 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87EDDC35657
-	for <cip-dev@archiver.kernel.org>; Fri, 21 Feb 2020 16:52:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB6DDC35656
+	for <cip-dev@archiver.kernel.org>; Fri, 21 Feb 2020 16:52:38 +0000 (UTC)
 Received: from fraxinus.osuosl.org (smtp4.osuosl.org [140.211.166.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 665AC222C4
-	for <cip-dev@archiver.kernel.org>; Fri, 21 Feb 2020 16:52:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 665AC222C4
+	by mail.kernel.org (Postfix) with ESMTPS id C5D8E24650
+	for <cip-dev@archiver.kernel.org>; Fri, 21 Feb 2020 16:52:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5D8E24650
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=cip-dev-bounces@lists.cip-project.org
 Received: from localhost (localhost [127.0.0.1])
-	by fraxinus.osuosl.org (Postfix) with ESMTP id 504D186481;
-	Fri, 21 Feb 2020 16:52:35 +0000 (UTC)
+	by fraxinus.osuosl.org (Postfix) with ESMTP id B5F6786481;
+	Fri, 21 Feb 2020 16:52:38 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
 Received: from fraxinus.osuosl.org ([127.0.0.1])
 	by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id rxGIG4y4MySm; Fri, 21 Feb 2020 16:52:34 +0000 (UTC)
+	with ESMTP id WDynhtu2naqu; Fri, 21 Feb 2020 16:52:38 +0000 (UTC)
 Received: from lists.linuxfoundation.org (lf-lists.osuosl.org [140.211.9.56])
-	by fraxinus.osuosl.org (Postfix) with ESMTP id DBAB9864A6;
-	Fri, 21 Feb 2020 16:52:34 +0000 (UTC)
+	by fraxinus.osuosl.org (Postfix) with ESMTP id 5117B864CD;
+	Fri, 21 Feb 2020 16:52:38 +0000 (UTC)
 Received: from lf-lists.osuosl.org (localhost [127.0.0.1])
-	by lists.linuxfoundation.org (Postfix) with ESMTP id CB361C013E;
-	Fri, 21 Feb 2020 16:52:34 +0000 (UTC)
+	by lists.linuxfoundation.org (Postfix) with ESMTP id 3F9E4C013E;
+	Fri, 21 Feb 2020 16:52:38 +0000 (UTC)
 Received: from fraxinus.osuosl.org (smtp4.osuosl.org [140.211.166.137])
- by lists.linuxfoundation.org (Postfix) with ESMTP id B141DC013E
- for <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2020 16:52:33 +0000 (UTC)
+ by lists.linuxfoundation.org (Postfix) with ESMTP id 4E5B6C013E
+ for <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2020 16:52:37 +0000 (UTC)
 Received: from localhost (localhost [127.0.0.1])
- by fraxinus.osuosl.org (Postfix) with ESMTP id A1730864BD
- for <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2020 16:52:33 +0000 (UTC)
+ by fraxinus.osuosl.org (Postfix) with ESMTP id 3DFA186493
+ for <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2020 16:52:37 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
 Received: from fraxinus.osuosl.org ([127.0.0.1])
  by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id kxrRQJGJRhiB for <cip-dev@lists.cip-project.org>;
- Fri, 21 Feb 2020 16:52:33 +0000 (UTC)
+ with ESMTP id KXLLtWEiqq1p for <cip-dev@lists.cip-project.org>;
+ Fri, 21 Feb 2020 16:52:36 +0000 (UTC)
 X-Greylist: domain auto-whitelisted by SQLgrey-1.7.6
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com
  [210.160.252.171])
- by fraxinus.osuosl.org (Postfix) with ESMTP id EE3DD8648C
- for <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2020 16:52:32 +0000 (UTC)
-X-IronPort-AV: E=Sophos;i="5.70,468,1574089200"; d="scan'208";a="39942255"
+ by fraxinus.osuosl.org (Postfix) with ESMTP id 98F4A86481
+ for <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2020 16:52:36 +0000 (UTC)
+X-IronPort-AV: E=Sophos;i="5.70,468,1574089200"; d="scan'208";a="39942267"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
- by relmlie5.idc.renesas.com with ESMTP; 22 Feb 2020 01:52:32 +0900
+ by relmlie5.idc.renesas.com with ESMTP; 22 Feb 2020 01:52:36 +0900
 Received: from marian-VirtualBox.ree.adwin.renesas.com (unknown
  [10.226.36.164])
- by relmlir6.idc.renesas.com (Postfix) with ESMTP id D6D4740A3602;
- Sat, 22 Feb 2020 01:52:31 +0900 (JST)
+ by relmlir6.idc.renesas.com (Postfix) with ESMTP id 81B0740A35F7;
+ Sat, 22 Feb 2020 01:52:35 +0900 (JST)
 From: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 To: cip-dev@lists.cip-project.org
-Date: Fri, 21 Feb 2020 16:52:05 +0000
-Message-Id: <1582303929-5773-19-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
+Date: Fri, 21 Feb 2020 16:52:08 +0000
+Message-Id: <1582303929-5773-22-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1582303929-5773-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
 References: <1582303929-5773-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
-Subject: [cip-dev] [PATCH v2 4.19.y-cip 18/22] usb: typec: hd3ss3220:
-	hd3ss3220_probe() warn: passing zero to 'PTR_ERR'
+Subject: [cip-dev] [PATCH v2 4.19.y-cip 21/22] arm64: dts: renesas: cat874:
+	Enable USB3.0 host/peripheral device node
 X-BeenThere: cip-dev@lists.cip-project.org
 X-Mailman-Version: 2.1.15
 Precedence: list
@@ -80,92 +80,51 @@ Sender: "cip-dev" <cip-dev-bounces@lists.cip-project.org>
 
 From: Biju Das <biju.das@bp.renesas.com>
 
-commit 5a9a8a4c505851cfb1fe5772851fb528476575bb upstream.
+commit cf7b175ae4deee43e3408bece10246d6a54cbe4c upstream.
 
-This patch fixes the warning passing zero to 'PTR_ERR' by changing the
-check from 'IS_ERR_OR_NULL' to 'IS_ERR'. Also improved the error handling
-on probe function.
+This patch enables USB3.0 host/peripheral device node for the cat874
+board.
 
-Fixes: 1c48c759ef4b ("usb: typec: driver for TI HD3SS3220 USB Type-C DRP port controller")
-Reported-by: kbuild test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Link: https://lore.kernel.org/r/1570462729-25722-1-git-send-email-biju.das@bp.renesas.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-(fixed label issue)
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+(fixed cherry-pick confict as patch has different context in upstream)
 Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 ---
- drivers/usb/typec/hd3ss3220.c | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/drivers/usb/typec/hd3ss3220.c b/drivers/usb/typec/hd3ss3220.c
-index 71fc29e..0c808ea 100644
---- a/drivers/usb/typec/hd3ss3220.c
-+++ b/drivers/usb/typec/hd3ss3220.c
-@@ -188,7 +188,7 @@ static int hd3ss3220_probe(struct i2c_client *client,
+diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
+index 5be3bad..6b48f87 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
+@@ -297,6 +297,11 @@
+ 		groups = "ssi01239_ctrl", "ssi0_data";
+ 		function = "ssi";
+ 	};
++
++	usb30_pins: usb30 {
++		groups = "usb30", "usb30_id";
++		function = "usb30";
++	};
+ };
  
- 	hd3ss3220->role_sw = fwnode_usb_role_switch_get(connector);
- 	fwnode_handle_put(connector);
--	if (IS_ERR_OR_NULL(hd3ss3220->role_sw))
-+	if (IS_ERR(hd3ss3220->role_sw))
- 		return PTR_ERR(hd3ss3220->role_sw);
- 
- 	hd3ss3220->typec_cap.prefer_role = TYPEC_NO_PREFERRED_ROLE;
-@@ -198,23 +198,25 @@ static int hd3ss3220_probe(struct i2c_client *client,
- 
- 	hd3ss3220->port = typec_register_port(&client->dev,
- 					      &hd3ss3220->typec_cap);
--	if (IS_ERR(hd3ss3220->port))
--		return PTR_ERR(hd3ss3220->port);
-+	if (IS_ERR(hd3ss3220->port)) {
-+		ret = PTR_ERR(hd3ss3220->port);
-+		goto err_put_role;
-+	}
- 
- 	ret = hd3ss3220_set_role(hd3ss3220);
- 	if (ret < 0)
--		goto error;
-+		goto err_unreg_port;
- 
- 	ret = regmap_read(hd3ss3220->regmap, HD3SS3220_REG_CN_STAT_CTRL, &data);
- 	if (ret < 0)
--		goto error;
-+		goto err_unreg_port;
- 
- 	if (data & HD3SS3220_REG_CN_STAT_CTRL_INT_STATUS) {
- 		ret = regmap_write(hd3ss3220->regmap,
- 				   HD3SS3220_REG_CN_STAT_CTRL,
- 				data | HD3SS3220_REG_CN_STAT_CTRL_INT_STATUS);
- 		if (ret < 0)
--			goto error;
-+			goto err_unreg_port;
- 	}
- 
- 	if (client->irq > 0) {
-@@ -223,18 +225,19 @@ static int hd3ss3220_probe(struct i2c_client *client,
- 					IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
- 					"hd3ss3220", &client->dev);
- 		if (ret)
--			goto error;
-+			goto err_unreg_port;
- 	}
- 
- 	ret = i2c_smbus_read_byte_data(client, HD3SS3220_REG_DEV_REV);
- 	if (ret < 0)
--		goto error;
-+		goto err_unreg_port;
- 
- 	dev_info(&client->dev, "probed revision=0x%x\n", ret);
- 
- 	return 0;
--error:
-+err_unreg_port:
- 	typec_unregister_port(hd3ss3220->port);
-+err_put_role:
- 	usb_role_switch_put(hd3ss3220->role_sw);
- 
- 	return ret;
+ &rcar_sound {
+@@ -370,3 +375,15 @@
+ 	renesas,no-otg-pins;
+ 	status = "okay";
+ };
++
++&usb3_peri0 {
++	companion = <&xhci0>;
++	status = "okay";
++};
++
++&xhci0 {
++	pinctrl-0 = <&usb30_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
 -- 
 2.7.4
 
