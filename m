@@ -1,84 +1,85 @@
-Return-Path: <SRS0=/m59=4O=lists.cip-project.org=cip-dev-bounces@kernel.org>
+Return-Path: <SRS0=eDDd=4P=lists.cip-project.org=cip-dev-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: **
 X-Spam-Status: No, score=2.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,HTML_FONT_FACE_BAD,HTML_MESSAGE,
-	HTML_OBFUSCATE_05_10,LOTS_OF_MONEY,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,HTML_FONT_FACE_BAD,HTML_MESSAGE,LOTS_OF_MONEY,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA939C4BA0A
-	for <cip-dev@archiver.kernel.org>; Wed, 26 Feb 2020 08:04:26 +0000 (UTC)
-Received: from whitealder.osuosl.org (smtp1.osuosl.org [140.211.166.138])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E83A1C4BA24
+	for <cip-dev@archiver.kernel.org>; Thu, 27 Feb 2020 09:04:36 +0000 (UTC)
+Received: from hemlock.osuosl.org (smtp2.osuosl.org [140.211.166.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 4D63021556
-	for <cip-dev@archiver.kernel.org>; Wed, 26 Feb 2020 08:04:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 7F47F2467F
+	for <cip-dev@archiver.kernel.org>; Thu, 27 Feb 2020 09:04:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=intra01.onmicrosoft.com header.i=@intra01.onmicrosoft.com header.b="Sml2U2Bi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D63021556
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=intra01.onmicrosoft.com header.i=@intra01.onmicrosoft.com header.b="ifl20QFx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F47F2467F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cybertrust.co.jp
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=cip-dev-bounces@lists.cip-project.org
 Received: from localhost (localhost [127.0.0.1])
-	by whitealder.osuosl.org (Postfix) with ESMTP id 00B4A875C7;
-	Wed, 26 Feb 2020 08:04:26 +0000 (UTC)
+	by hemlock.osuosl.org (Postfix) with ESMTP id 4D06487E90;
+	Thu, 27 Feb 2020 09:04:36 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from whitealder.osuosl.org ([127.0.0.1])
+Received: from hemlock.osuosl.org ([127.0.0.1])
 	by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id WsfOqQ+nJeil; Wed, 26 Feb 2020 08:04:21 +0000 (UTC)
+	with ESMTP id lSc24R8Arg7w; Thu, 27 Feb 2020 09:04:35 +0000 (UTC)
 Received: from lists.linuxfoundation.org (lf-lists.osuosl.org [140.211.9.56])
-	by whitealder.osuosl.org (Postfix) with ESMTP id AC19D8759A;
-	Wed, 26 Feb 2020 08:04:21 +0000 (UTC)
+	by hemlock.osuosl.org (Postfix) with ESMTP id 85CAB87E81;
+	Thu, 27 Feb 2020 09:04:35 +0000 (UTC)
 Received: from lf-lists.osuosl.org (localhost [127.0.0.1])
-	by lists.linuxfoundation.org (Postfix) with ESMTP id 9B1EAC0177;
-	Wed, 26 Feb 2020 08:04:21 +0000 (UTC)
-Received: from silver.osuosl.org (smtp3.osuosl.org [140.211.166.136])
- by lists.linuxfoundation.org (Postfix) with ESMTP id 2282EC0177
- for <cip-dev@lists.cip-project.org>; Wed, 26 Feb 2020 08:04:20 +0000 (UTC)
+	by lists.linuxfoundation.org (Postfix) with ESMTP id 79C84C0177;
+	Thu, 27 Feb 2020 09:04:35 +0000 (UTC)
+Received: from hemlock.osuosl.org (smtp2.osuosl.org [140.211.166.133])
+ by lists.linuxfoundation.org (Postfix) with ESMTP id 85618C0177
+ for <cip-dev@lists.cip-project.org>; Thu, 27 Feb 2020 09:04:34 +0000 (UTC)
 Received: from localhost (localhost [127.0.0.1])
- by silver.osuosl.org (Postfix) with ESMTP id EE6482041B
- for <cip-dev@lists.cip-project.org>; Wed, 26 Feb 2020 08:04:19 +0000 (UTC)
+ by hemlock.osuosl.org (Postfix) with ESMTP id 7139387E88
+ for <cip-dev@lists.cip-project.org>; Thu, 27 Feb 2020 09:04:34 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from silver.osuosl.org ([127.0.0.1])
+Received: from hemlock.osuosl.org ([127.0.0.1])
  by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id yxkunmn3CjqE for <cip-dev@lists.cip-project.org>;
- Wed, 26 Feb 2020 08:04:15 +0000 (UTC)
-X-Greylist: domain auto-whitelisted by SQLgrey-1.7.6
-Received: from JPN01-OS2-obe.outbound.protection.outlook.com
- (mail-eopbgr1410102.outbound.protection.outlook.com [40.107.141.102])
- by silver.osuosl.org (Postfix) with ESMTPS id 3D0012014A
- for <cip-dev@lists.cip-project.org>; Wed, 26 Feb 2020 08:04:15 +0000 (UTC)
+ with ESMTP id Jro9RZdqNxNm for <cip-dev@lists.cip-project.org>;
+ Thu, 27 Feb 2020 09:04:32 +0000 (UTC)
+X-Greylist: from auto-whitelisted by SQLgrey-1.7.6
+Received: from JPN01-TY1-obe.outbound.protection.outlook.com
+ (mail-eopbgr1400091.outbound.protection.outlook.com [40.107.140.91])
+ by hemlock.osuosl.org (Postfix) with ESMTPS id 2150687E81
+ for <cip-dev@lists.cip-project.org>; Thu, 27 Feb 2020 09:04:31 +0000 (UTC)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YNelIMC3rSgPwUMqmbKydVWa2Nf6R6oSE7z9BbSll0BB3xp6xEODZdOn3ydoRJjALnALtMqxx7Ks3+kiKC/gHNFY1ojnS85DiYX5rgMwnlBwpfTvaQmfxn1Yv5ZSl63n0ZlimpPrfIllWFC5y6O3foarL8znnz/wI6N89dqn7VnXE6H3pRrdYmriI9NNJzyi71aLW4HTeq3LSvAHuvoVL8sZP9MNZhxN32npHwg9IXq07Lau7LhGn3LMdxteK7QVsCKPKOYEm9kd5nbnyallDZjSQDaWF/t6xKkCazGIkFWoAerQRydjHCWmEhnlhjZRkNEUeXswp3viyL107A56/w==
+ b=iDgrcG7hYgTVD0P6f0b1mDqQ/pb1My1K8fCqKHO7/3wo8HP28jxJYJXyLdwVJRrY9ApROXtRc9TSJS1kkfF9Dfujy58K70N9xssfSwmdXwJzDlFN83YyRWgxxDRvKEgyAQn3NMNr58Y/nG+EcqXARcAoj1yMJtQGAI/FNuaUZwUfov0XMYuKR+QchapzB8uPkdtlP4nQcTnsZRs86JP5y6cjDLiWBIhcn+NmJ7YpcsxSxOdzxMEtCJGty95ehKHQPuxj809TcHP+zm9dmb4ZNdZ39dzgFswvJ2WCHAqxVhGJ3OzqeE0RfksD6RZ6auRYrfJd+BpW6OKvK9SrUeD1Hg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=x1JykRXqw40RdOvllAl8Ho/Br9DDKZrRoETCsZDIxEs=;
- b=EWz8jPLwWFt/vsKp2B1nVDcoqlW8Jp/vfT4rix6MOsRJA4+Dc4VyuDOak4MkiKg+P0GOYpW7fnERcRiy8vSDD06Nmg/seUCOweJHnzZG1LQm+YvYdzTBhsAb7Wk6cAvsUtBWt1coXJwEZttGFTYvXvpvJ/0vm4uT3wygoe8c89y6RzGroO3H2wbqOarfPp0QPWUilNM9DPDvT+dkmWOY/erkrCcJf9w+u/NdPrZFKuPHu7RZLz3RfgeLu5WRFCy6HkQKZ1NveQsKy6DXpyv8bDdG6MKHdHDLJvGLlC8BgAaHDErO5LGG6TSusFYwWPMP3HG6tkUUxzPQPDidaWO7nQ==
+ bh=qUmtjesszbWxmY2vwV4CKGW9xQ8sf+F0iccGPGorMvk=;
+ b=WzDMAm3qXSg0Pi3gI7zTHMCtm711qs73K63uoAcTia1T+DscnWULP1QzD9AX14Ldse9Yw+QwBUPjw37gCZd1bPtuSBbQyDJbcT9n8Tg2C05rJ0oJc6Fbx/vXYXNjieli4VnAVmXIzLC+0oWCrULCo4xqY4RvItACxPKbeThTgJflrdm3zr1RCQZlLKMLRmJlcPpfVXL19yOTBwDvrvmyAgGoJinBWXGpC3yAvKsoKtoPldc/GddHUAhOGFwkodh6DUVwzXaYR9dsFIC1gmHvcbd8JEL0kzzoBp+jaKYEAEty80Z5eKJF3ISwnDwpqTCsf5e/Ns8qEZ+aj6LQYIZU4A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=cybertrust.co.jp; dmarc=pass action=none
  header.from=cybertrust.co.jp; dkim=pass header.d=cybertrust.co.jp; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=intra01.onmicrosoft.com; s=selector1-intra01-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=x1JykRXqw40RdOvllAl8Ho/Br9DDKZrRoETCsZDIxEs=;
- b=Sml2U2Bitzzc2PujkJfBjTu0jXes+1f8dWhNxi6hEg4CKYqtP/t7BFczcUD1w2z0bp+2icT40zvH8s9rZLUqcsHqrMI0HOZTIe87aLWZcMCPJmBFn4K0lBtyPDdRNMR/TiNilhUrfvbuniKx6HNwugPT9poMbTyGuvdzzF/UD64=
+ bh=qUmtjesszbWxmY2vwV4CKGW9xQ8sf+F0iccGPGorMvk=;
+ b=ifl20QFxnX995a9YKn0usy3hMsf3IxESVejn4FFp+jQa/L+gpwbos3+tx3bvalRp2KpCU0sh9NitZITmX3JTP2t4wSslI5SZ7kojfhiwoNup9cAxIDNMT5fXTtn2e1tgsXCSQO8L1wXty37FskSrS6LiMycQxcLL24l23rnQa0o=
 Received: from TY1PR01MB1481.jpnprd01.prod.outlook.com (52.133.160.148) by
- TY1SPR01MB1.jpnprd01.prod.outlook.com (52.133.164.23) with Microsoft SMTP
+ TY1PR01MB1546.jpnprd01.prod.outlook.com (52.133.162.13) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2772.14; Wed, 26 Feb 2020 08:04:02 +0000
+ 15.20.2772.14; Thu, 27 Feb 2020 09:04:26 +0000
 Received: from TY1PR01MB1481.jpnprd01.prod.outlook.com
  ([fe80::503f:3885:b1d9:a8c7]) by TY1PR01MB1481.jpnprd01.prod.outlook.com
- ([fe80::503f:3885:b1d9:a8c7%5]) with mapi id 15.20.2750.021; Wed, 26 Feb 2020
- 08:04:02 +0000
+ ([fe80::503f:3885:b1d9:a8c7%5]) with mapi id 15.20.2772.012; Thu, 27 Feb 2020
+ 09:04:25 +0000
 From: <masashi.kudo@cybertrust.co.jp>
 To: <cip-dev@lists.cip-project.org>
 Thread-Topic: CIP Kernel Team Call
-Thread-Index: AdXoPotTDCgPYozLTDaeyEj6Md9s7gAACH+wAQ76MLA=
-Date: Wed, 26 Feb 2020 08:04:02 +0000
-Message-ID: <TY1PR01MB1481EE0DD938E1A1547335B1A0EA0@TY1PR01MB1481.jpnprd01.prod.outlook.com>
+Thread-Index: AdXoPotTDCgPYozLTDaeyEj6Md9s7gAACH+wAQ76MLAANH9aYA==
+Date: Thu, 27 Feb 2020 09:04:25 +0000
+Message-ID: <TY1PR01MB148163C4CA1D93220538B86CA0EB0@TY1PR01MB1481.jpnprd01.prod.outlook.com>
 References: <TY1PR01MB14816C3E23543732B6F76311A0130@TY1PR01MB1481.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY1PR01MB14816C3E23543732B6F76311A0130@TY1PR01MB1481.jpnprd01.prod.outlook.com>
+ <TY1PR01MB1481EE0DD938E1A1547335B1A0EA0@TY1PR01MB1481.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY1PR01MB1481EE0DD938E1A1547335B1A0EA0@TY1PR01MB1481.jpnprd01.prod.outlook.com>
 Accept-Language: ja-JP, en-US
 Content-Language: ja-JP
 X-MS-Has-Attach: 
@@ -88,32 +89,32 @@ authentication-results: spf=none (sender IP is )
 x-originating-ip: [122.216.27.145]
 x-ms-publictraffictype: Email
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: c1232a84-19f3-4177-e361-08d7ba92711b
-x-ms-traffictypediagnostic: TY1SPR01MB1:
-x-microsoft-antispam-prvs: <TY1SPR01MB17CBC90E9CD71214D3CD9A0EA0@TY1SPR01MB1.jpnprd01.prod.outlook.com>
+x-ms-office365-filtering-correlation-id: 94248679-1ceb-4a4b-0642-08d7bb640b77
+x-ms-traffictypediagnostic: TY1PR01MB1546:
+x-microsoft-antispam-prvs: <TY1PR01MB1546AD29AABBBC2BAB03FCE0A0EB0@TY1PR01MB1546.jpnprd01.prod.outlook.com>
 x-ms-oob-tlc-oobclassifiers: OLM:1332;
-x-forefront-prvs: 0325F6C77B
+x-forefront-prvs: 03264AEA72
 x-forefront-antispam-report: SFV:NSPM;
- SFS:(10019020)(4636009)(346002)(376002)(366004)(39860400002)(396003)(136003)(189003)(199004)(81156014)(71200400001)(8936002)(85182001)(7696005)(81166006)(316002)(3480700007)(9686003)(30864003)(33656002)(5660300002)(6916009)(52536014)(6506007)(66446008)(8676002)(64756008)(966005)(55016002)(2906002)(26005)(186003)(66476007)(66556008)(86362001)(478600001)(76116006)(66946007);
- DIR:OUT; SFP:1102; SCL:1; SRVR:TY1SPR01MB1;
+ SFS:(10019020)(4636009)(366004)(39860400002)(136003)(396003)(376002)(346002)(199004)(189003)(33656002)(52536014)(71200400001)(3480700007)(30864003)(2906002)(478600001)(85182001)(6916009)(66476007)(76116006)(7696005)(86362001)(66556008)(64756008)(26005)(186003)(66946007)(66446008)(6506007)(316002)(966005)(8676002)(5660300002)(55016002)(9686003)(81156014)(8936002)(81166006);
+ DIR:OUT; SFP:1102; SCL:1; SRVR:TY1PR01MB1546;
  H:TY1PR01MB1481.jpnprd01.prod.outlook.com; FPR:; SPF:None; LANG:en;
- PTR:InfoNoRecords; MX:1; A:1; 
+ PTR:InfoNoRecords; A:1; MX:1; 
 received-spf: None (protection.outlook.com: cybertrust.co.jp does not
  designate permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: L9wnrANNTwvNLUxq6wZEdZaq45VHLaniLUz/7IiiQnVdJAINsZ83OAMc1FsUE21nTOxjoPbLrKPBfgyqXNIhP5u8xmKiSwvwf3MepzG2CW14PQeoI1u/DWBBuRMxclftZEIWnxBfgeJtS76xNv9+tF+PvRr6p8+mW1QakEooU8RcZtOKdPBEDj0bnxc0x8sE8ezSKP4WXZQUiOtvoPnPoYYq1RJx0TOjk7K9R5eefc+MBtqxKGy/TY3ZP9ktWgvKy5BuX6uWUWvk/V9STl6HVcHaOg4SjuQ+u9Xm4jodOa5ItJx0ogiPpC48Zmao5jQHTd21EZGu0taMzOU6vaGtdZ1m7LbIJxf8DCdO1kF2IrwQUe+TMnZLlW++Jc7cgO4KHua2jGDXzCHk42jpTaHY8dzsK3YWphBaxcQ+oRe6S3zC2nKb9H45wJyCITSGhCjc
-x-ms-exchange-antispam-messagedata: 7Nh3TJ9tfNEPvBzSxUXoKn2xmkFgT+2CZuTsvHxrh4vs4nLaT383tmwLiUOQj8L5FL/W0KoAjPnMiKhva5h3/VUmURqFTTjUHsNj1AR87oF2TTuwC2iMB2y8n3UfCqBZoSTx/nKCYzZwXqFf6GgCUw==
+x-microsoft-antispam-message-info: acTwI6dWPDGJt3KLwQ/l/GmVJS+C+F2pHfWI21GqH42eNvPcUHAJYVrF/txugcGMNdh16JBkY8XJIXfpDVbG8uuqHBcHMt5jXWkvb2FqDarXu2GkPJkMYYKolXn0c1SUQS0TZe5DTI3YUh1H6kwOPMsbA7rgl6YlIU7iz0eqv8/zbpuHW8JrTv0tO3UvmwZV6GynlQTe7D6w0lkszEToNA0rY8423a2wWFCe4yj9hgKWtdfbtpDQvIUgfH8Q6arcjCqBC+Q3g67hwWW/fri4kVUK7YRI09Rc/IYj/hoEaHDVAAFAXLVi2nOj2WbjLOfUNH/4tb18yi34v6D4F7UMDejjHatk7nzXNsW5gjsi23Y6K3R0eRiY/frDx5X6kA1t829bANFUiAkx5q4Qe+GYkDe/aq8lmQBMiYF8fXWgAC8y6GkTcYqcnW6Impx29avD
+x-ms-exchange-antispam-messagedata: 598MAs45lh2S2T/r4DtwM78Z+bRIrh2PkWsUGMEy7aTxv4OA2zb7htHEucyc7Qg4NWiqpoxnsx6ZNFxlbkvsyxk/Zx8BWY62nyNvpGksZYt7GXJMcXGWtIr+rRSMuCiiZhOMxInzCc3tQus092BMwA==
 x-ms-exchange-transport-forked: True
 MIME-Version: 1.0
 X-OriginatorOrg: cybertrust.co.jp
-X-MS-Exchange-CrossTenant-Network-Message-Id: c1232a84-19f3-4177-e361-08d7ba92711b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2020 08:04:02.1399 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 94248679-1ceb-4a4b-0642-08d7bb640b77
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2020 09:04:25.8768 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72cc4624-32b4-4dab-b80a-8563e559bd82
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: UvSY8LLWctQeax6GNqjFzQRYbmOCmQcsIIPYSznLNUYvy/LgxvRBRioT+Pzg8I8leaEc3XuTVABpo1rfmmaGOWoZSVRe65cYtoeo9LvhJsw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1SPR01MB1
+X-MS-Exchange-CrossTenant-userprincipalname: tQZaW7PU8Nmcgkwt+lBeWzsPDSKqZtx54En5Usrk4zYc+expMSg/HhEZH8p0X4+tEzo4GbR6Edbn4hjRSjPGmNi9d8a0aGqQd6DKRx4r5xw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1546
 Subject: Re: [cip-dev] CIP Kernel Team Call
 X-BeenThere: cip-dev@lists.cip-project.org
 X-Mailman-Version: 2.1.15
@@ -126,18 +127,35 @@ List-Post: <mailto:cip-dev@lists.cip-project.org>
 List-Help: <mailto:cip-dev-request@lists.cip-project.org?subject=help>
 List-Subscribe: <https://lists.cip-project.org/mailman/listinfo/cip-dev>,
  <mailto:cip-dev-request@lists.cip-project.org?subject=subscribe>
-Content-Type: multipart/mixed; boundary="===============8448645483812209094=="
+Content-Type: multipart/mixed; boundary="===============8715588180430028238=="
 Errors-To: cip-dev-bounces@lists.cip-project.org
 Sender: "cip-dev" <cip-dev-bounces@lists.cip-project.org>
 
---===============8448645483812209094==
+--===============8715588180430028238==
 Content-Language: ja-JP
 Content-Type: multipart/alternative;
-	boundary="_000_TY1PR01MB1481EE0DD938E1A1547335B1A0EA0TY1PR01MB1481jpnp_"
+	boundary="_000_TY1PR01MB148163C4CA1D93220538B86CA0EB0TY1PR01MB1481jpnp_"
 
---_000_TY1PR01MB1481EE0DD938E1A1547335B1A0EA0TY1PR01MB1481jpnp_
+--_000_TY1PR01MB148163C4CA1D93220538B86CA0EB0TY1PR01MB1481jpnp_
 Content-Type: text/plain; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
+
+Hello,
+
+Here is an agenda for the Kernel Team Meeting today.
+https://docs.google.com/document/d/1IlXKF4N3QnswEbyWFLMuR3Ig1FjUK_6w8tnjwI2=
+lsng/edit?usp=3Dsharing
+
+See you soon!
+--
+M. Kudo
+
+_____________________________________________
+From: =1B$B9)F#!!2m;J!J=1B(BCTJ=1B$B!K=1B(B
+Sent: Wednesday, February 26, 2020 5:04 PM
+To: cip-dev@lists.cip-project.org
+Subject: RE: CIP Kernel Team Call
+
 
 Hello,
 
@@ -155,7 +173,8 @@ M. Kudo
 -----Original Appointment-----
 From: =1B$B9)F#!!2m;J!J=1B(BCTJ=1B$B!K=1B(B
 Sent: Friday, February 21, 2020 7:40 AM
-To: =1B$B9)F#!!2m;J!J=1B(BCTJ=1B$B!K=1B(B; cip-dev@lists.cip-project.org
+To: =1B$B9)F#!!2m;J!J=1B(BCTJ=1B$B!K=1B(B; cip-dev@lists.cip-project.org<ma=
+ilto:cip-dev@lists.cip-project.org>
 Subject: CIP Kernel Team Call
 When: 2020=1B$BG/=1B(B2=1B$B7n=1B(B27=1B$BF|LZMKF|=1B(B 21:00-22:00 (UTC+09=
 :00) =1B$BBg:e!";%KZ!"El5~=1B(B
@@ -186,7 +205,7 @@ Find your local number: https://zoom.us/u/acNR9omfRY
 
 
 
---_000_TY1PR01MB1481EE0DD938E1A1547335B1A0EA0TY1PR01MB1481jpnp_
+--_000_TY1PR01MB148163C4CA1D93220538B86CA0EB0TY1PR01MB1481jpnp_
 Content-Type: text/html; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
 
@@ -204,21 +223,58 @@ jp">
 t;">
 <div>Hello,</div>
 <div>&nbsp;</div>
-<div>The agenda at the call is the following.</div>
-<ol style=3D"margin:0;padding-left:29pt;list-style-type:decimal;">
-<li>Discuss CIP Kernel Team Roadmap for CY2020</li><li>Review CIP Kernel Te=
-am status</li></ol>
+<div>Here is an agenda for the Kernel Team Meeting today.</div>
+<div><font face=3D"Times New Roman" size=3D"3"><span style=3D"font-size:12p=
+t;"><a href=3D"https://docs.google.com/document/d/1IlXKF4N3QnswEbyWFLMuR3Ig=
+1FjUK_6w8tnjwI2lsng/edit?usp=3Dsharing"><font face=3D"=1B$B^b%4%7%C%/=1B(B"=
+ size=3D"2" color=3D"#0563C1"><span style=3D"font-size:11pt;"><u>https://do=
+cs.google.com/document/d/1IlXKF4N3QnswEbyWFLMuR3Ig1FjUK_6w8tnjwI2lsng/edit?=
+usp=3Dsharing</u></span></font></a></span></font></div>
 <div><font face=3D"Times New Roman" size=3D"3"><span style=3D"font-size:12p=
 t;">&nbsp;</span></font></div>
-<div>Please note that we skip a regular IRC weekly meeting on 27<font size=
-=3D"1"><span style=3D"font-size:7.3pt;"><sup>th</sup></span></font> tomorro=
-w, because we have this call instead.</div>
-<div>&nbsp;</div>
-<div>See you then!</div>
+<div>See you soon!</div>
 <div><font face=3D"=1B$B#M#S=1B(B =1B$B#P%4%7%C%/=1B(B">--</font></div>
-<div>M. Kudo</div>
+<div>M<font face=3D"=1B$B#M#S=1B(B =1B$B#P%4%7%C%/=1B(B">.</font> Kudo</div=
+>
 <div><font face=3D"Times New Roman" size=3D"3"><span style=3D"font-size:12p=
 t;">&nbsp;</span></font></div>
+<div><font face=3D"Calibri">_____________________________________________<b=
+r>
+
+<b>From:</b> <font face=3D"=1B$B#M#S=1B(B =1B$B#P%4%7%C%/=1B(B">=1B$B9)F#!!=
+2m;J!J=1B(B</font>CTJ<font face=3D"=1B$B#M#S=1B(B =1B$B#P%4%7%C%/=1B(B">=1B=
+$B!K=1B(B</font>
+<br>
+
+<b>Sent:</b> Wednesday, February 26, 2020 5:04 PM<br>
+
+<b>To:</b> cip-dev@lists.cip-project.org<br>
+
+<b>Subject:</b> RE: CIP Kernel Team Call</font></div>
+<div><font face=3D"Times New Roman" size=3D"3"><span style=3D"font-size:12p=
+t;">&nbsp;</span></font></div>
+<div><font face=3D"Times New Roman" size=3D"3"><span style=3D"font-size:12p=
+t;">&nbsp;</span></font></div>
+<div><font face=3D"=1B$B^b%4%7%C%/=1B(B">Hello,</font></div>
+<div><font face=3D"=1B$B^b%4%7%C%/=1B(B">&nbsp;</font></div>
+<div><font face=3D"=1B$B^b%4%7%C%/=1B(B">The agenda at the call is the foll=
+owing.</font></div>
+<ol style=3D"margin:0;padding-left:29pt;list-style-type:decimal;">
+<font face=3D"=1B$B^b%4%7%C%/=1B(B">
+<li>Discuss CIP Kernel Team Roadmap for CY2020</li><li>Review CIP Kernel Te=
+am status</li></font>
+</ol>
+<div><font face=3D"Times New Roman" size=3D"3"><span style=3D"font-size:12p=
+t;">&nbsp;</span></font></div>
+<div><font face=3D"=1B$B^b%4%7%C%/=1B(B">Please note that we skip a regular=
+ IRC weekly meeting on 27<font size=3D"1"><span style=3D"font-size:7.3pt;">=
+<sup>th</sup></span></font> tomorrow, because we have this call instead.</f=
+ont></div>
+<div><font face=3D"=1B$B^b%4%7%C%/=1B(B">&nbsp;</font></div>
+<div><font face=3D"=1B$B^b%4%7%C%/=1B(B">See you then!</font></div>
+<div><font face=3D"=1B$B^b%4%7%C%/=1B(B">--</font></div>
+<div><font face=3D"=1B$B^b%4%7%C%/=1B(B">M. Kudo</font></div>
+<div><font face=3D"=1B$B^b%4%7%C%/=1B(B">&nbsp;</font></div>
 <div><font face=3D"Calibri">-----Original Appointment-----<br>
 
 <b>From:</b> <font face=3D"=1B$B#M#S=1B(B =1B$B#P%4%7%C%/=1B(B">=1B$B9)F#!!=
@@ -230,7 +286,8 @@ $B!K=1B(B</font>
 
 <b>To:</b> <font face=3D"=1B$B#M#S=1B(B =1B$B#P%4%7%C%/=1B(B">=1B$B9)F#!!2m=
 ;J!J=1B(B</font>CTJ<font face=3D"=1B$B#M#S=1B(B =1B$B#P%4%7%C%/=1B(B">=1B$B=
-!K=1B(B</font>; cip-dev@lists.cip-project.org<br>
+!K=1B(B</font>; <a href=3D"mailto:cip-dev@lists.cip-project.org"><font colo=
+r=3D"#0563C1"><u>cip-dev@lists.cip-project.org</u></font></a><br>
 
 <b>Subject:</b> CIP Kernel Team Call<br>
 
@@ -296,9 +353,9 @@ nt color=3D"#0563C1"><u>https://zoom.us/u/acNR9omfRY</u></font></a></span><=
 </body>
 </html>
 
---_000_TY1PR01MB1481EE0DD938E1A1547335B1A0EA0TY1PR01MB1481jpnp_--
+--_000_TY1PR01MB148163C4CA1D93220538B86CA0EB0TY1PR01MB1481jpnp_--
 
---===============8448645483812209094==
+--===============8715588180430028238==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -309,4 +366,4 @@ cip-dev mailing list
 cip-dev@lists.cip-project.org
 https://lists.cip-project.org/mailman/listinfo/cip-dev
 
---===============8448645483812209094==--
+--===============8715588180430028238==--
