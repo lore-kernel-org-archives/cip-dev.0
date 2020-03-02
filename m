@@ -1,115 +1,82 @@
-Return-Path: <SRS0=0JtD=4Q=lists.cip-project.org=cip-dev-bounces@kernel.org>
+Return-Path: <SRS0=Ya7F=4T=lists.cip-project.org=cip-dev-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48369C3F2D2
-	for <cip-dev@archiver.kernel.org>; Fri, 28 Feb 2020 13:44:17 +0000 (UTC)
-Received: from hemlock.osuosl.org (smtp2.osuosl.org [140.211.166.133])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 562A6C3F2D2
+	for <cip-dev@archiver.kernel.org>; Mon,  2 Mar 2020 09:59:18 +0000 (UTC)
+Received: from fraxinus.osuosl.org (smtp4.osuosl.org [140.211.166.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 034FB246AE
-	for <cip-dev@archiver.kernel.org>; Fri, 28 Feb 2020 13:44:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 034FB246AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=toshiba.co.jp
+	by mail.kernel.org (Postfix) with ESMTPS id 1E0C8246B4
+	for <cip-dev@archiver.kernel.org>; Mon,  2 Mar 2020 09:59:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E0C8246B4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=TOSHIBA-TSIP.COM
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=cip-dev-bounces@lists.cip-project.org
 Received: from localhost (localhost [127.0.0.1])
-	by hemlock.osuosl.org (Postfix) with ESMTP id CF85287B62;
-	Fri, 28 Feb 2020 13:44:16 +0000 (UTC)
+	by fraxinus.osuosl.org (Postfix) with ESMTP id EE21F85566;
+	Mon,  2 Mar 2020 09:59:16 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from hemlock.osuosl.org ([127.0.0.1])
+Received: from fraxinus.osuosl.org ([127.0.0.1])
 	by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id SHi6rtpcNmh6; Fri, 28 Feb 2020 13:44:16 +0000 (UTC)
+	with ESMTP id Np37z15nwKUW; Mon,  2 Mar 2020 09:59:16 +0000 (UTC)
 Received: from lists.linuxfoundation.org (lf-lists.osuosl.org [140.211.9.56])
-	by hemlock.osuosl.org (Postfix) with ESMTP id 49CBB87B4D;
-	Fri, 28 Feb 2020 13:44:16 +0000 (UTC)
+	by fraxinus.osuosl.org (Postfix) with ESMTP id 5E84585321;
+	Mon,  2 Mar 2020 09:59:16 +0000 (UTC)
 Received: from lf-lists.osuosl.org (localhost [127.0.0.1])
-	by lists.linuxfoundation.org (Postfix) with ESMTP id 32BBEC0177;
-	Fri, 28 Feb 2020 13:44:16 +0000 (UTC)
-Received: from hemlock.osuosl.org (smtp2.osuosl.org [140.211.166.133])
- by lists.linuxfoundation.org (Postfix) with ESMTP id 01769C0177
- for <cip-dev@lists.cip-project.org>; Fri, 28 Feb 2020 13:44:14 +0000 (UTC)
+	by lists.linuxfoundation.org (Postfix) with ESMTP id 4505DC013E;
+	Mon,  2 Mar 2020 09:59:16 +0000 (UTC)
+Received: from fraxinus.osuosl.org (smtp4.osuosl.org [140.211.166.137])
+ by lists.linuxfoundation.org (Postfix) with ESMTP id A4F51C013E;
+ Mon,  2 Mar 2020 09:59:14 +0000 (UTC)
 Received: from localhost (localhost [127.0.0.1])
- by hemlock.osuosl.org (Postfix) with ESMTP id E47DE87B62
- for <cip-dev@lists.cip-project.org>; Fri, 28 Feb 2020 13:44:13 +0000 (UTC)
+ by fraxinus.osuosl.org (Postfix) with ESMTP id 9A5918547D;
+ Mon,  2 Mar 2020 09:59:14 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from hemlock.osuosl.org ([127.0.0.1])
+Received: from fraxinus.osuosl.org ([127.0.0.1])
  by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id FfhzkS6tZo5N for <cip-dev@lists.cip-project.org>;
- Fri, 28 Feb 2020 13:44:12 +0000 (UTC)
-X-Greylist: domain auto-whitelisted by SQLgrey-1.7.6
-Received: from mo-csw.securemx.jp (mo-csw1115.securemx.jp [210.130.202.157])
- by hemlock.osuosl.org (Postfix) with ESMTPS id 1AAA687B4D
- for <cip-dev@lists.cip-project.org>; Fri, 28 Feb 2020 13:44:11 +0000 (UTC)
-Received: by mo-csw.securemx.jp (mx-mo-csw1115) id 01SDhmHT003438;
- Fri, 28 Feb 2020 22:43:48 +0900
-X-Iguazu-Qid: 2wGrHliUwtO3XIngTQ
-X-Iguazu-QSIG: v=2; s=0; t=1582897428; q=2wGrHliUwtO3XIngTQ;
- m=IHDtdTf7I2jujwJ/rr9kBmb/2qpQr/qNjMKU6FaIqS4=
-Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
- by relay.securemx.jp (mx-mr1112) id 01SDhkNH035146;
- Fri, 28 Feb 2020 22:43:47 +0900
-Received: from enc01.localdomain ([106.186.93.100])
- by imx2.toshiba.co.jp  with ESMTP id 01SDhkqx008840;
- Fri, 28 Feb 2020 22:43:46 +0900 (JST)
-Received: from hop001.toshiba.co.jp ([133.199.164.63])
- by enc01.localdomain  with ESMTP id 01SDhjue015248;
- Fri, 28 Feb 2020 22:43:45 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ghbqqMI55qBGNeytcA3v9S427FTTU9OGaJtGpM7S1zYwOC3d/14jrh/dXm7cCBb3eEIAWK98evDa0TguEdCi7t7yihsWbU6JrHXNUVnF517G9YGBylpDC2WwY4PLO/8R23QHty7NxxHAtYkhi7/q5o3tGw1FLnQc1soI4hjET8ejY/Hv/DnCmllZUlmjx0o2Wd18rVMCo7HuMVZ4VAvgfCS2Q4U919Gtr7EpCYu1eCbnC7ecxhZKgwx/wyK6LoyGAcqR3cgCRRy4VdFVZdjjLeCm7JnnZk8TOE4HfPdo1RRX/8X5poKvKgkjX5YcQcxHtHLL5iCz1BfppZZ1TU9JRA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ovacKkca+GAsG6Rx0dn2BCBDvCXE0Ei6Oor/gQJjD3s=;
- b=FrjYpNzsk0qaFlpomdfKLc8uYB/ULXdFr2uzBCv2ORgaljiim0vKqwsv/mhcyi3Ru7LLDzpOOES/eaiDHYLINSsda2NTOtOK/JsBI15hj7uIBtU86AJnZz1TsGBjaRCLXdF2eRHmfKDJV+l9udIxPBRQapWlpjBeTD0gmnXREbtjtx0LTsFIslYPINnllrp7witMQ8PgWhj1QY77tigoQ8SB2eMvPGG7vTx9jWqUeZixlyUJYVy4/JlLFjn9LhrZ2G4HRuWazgqTeRCOK5nL8uheNUkbj3edcH/Q8OWwAa9p0JqVw1oTAqPZwrPjMDilxh2FnOt5ZqdxqflAv36/EQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
- header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
-From: <nobuhiro1.iwamatsu@toshiba.co.jp>
-To: <cip-dev@lists.cip-project.org>
-Thread-Topic: [ANNOUNCE] Release v4.19.106-cip21
-Thread-Index: AdXuM6SPZAC85KKiSoSFBBBj9LWlOQ==
-Date: Fri, 28 Feb 2020 13:43:43 +0000
-X-TSB-HOP: ON
-Message-ID: <OSAPR01MB3667E6430A1E38A9DBEA8E5092E80@OSAPR01MB3667.jpnprd01.prod.outlook.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=nobuhiro1.iwamatsu@toshiba.co.jp; 
-x-originating-ip: [209.137.146.201]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 1be7fabe-fea5-41c1-c882-08d7bc543a55
-x-ms-traffictypediagnostic: OSAPR01MB4883:
-x-microsoft-antispam-prvs: <OSAPR01MB488372866F66FB6E36CC835492E80@OSAPR01MB4883.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1186;
-x-forefront-prvs: 0327618309
-x-forefront-antispam-report: SFV:NSPM;
- SFS:(10009020)(4636009)(346002)(366004)(396003)(136003)(376002)(39860400002)(199004)(189003)(5660300002)(2906002)(4326008)(26005)(966005)(186003)(86362001)(54906003)(7696005)(6506007)(478600001)(316002)(64756008)(66556008)(81156014)(76116006)(66446008)(8676002)(52536014)(71200400001)(55016002)(9686003)(6916009)(33656002)(66946007)(8936002)(66476007)(81166006);
- DIR:OUT; SFP:1101; SCL:1; SRVR:OSAPR01MB4883;
- H:OSAPR01MB3667.jpnprd01.prod.outlook.com; FPR:; SPF:None; LANG:en;
- PTR:InfoNoRecords; A:1; MX:1; 
-received-spf: None (protection.outlook.com: toshiba.co.jp does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: lqAdAgjpT0xwLyDvaZZCjmUp5922/U4pUAplD2j+qAPxJittIV4Bw7MnzAeP5h9K0sN7/jwAAOSmmWTolbw4cccaVztWbd8y9renMWt9adKhDZU4ngPi5dU2QmSS/4fe0QZv2DpHN2c/VTdW+qnRpUGs0sH2rBpCRsHB82oy/gAZNG58FTVIC3Wa1T8YixhqndMcIbdirPgkmQS1e+wzdoWvv5mi6sJbQj703HBcqTXBAbCs1yLmgsIjwCKslaDt5IctNxYMwMco8+slacFKSzwvh60eLRetQT7d+ExsnRHJT66vpSXly3DxlL7Kj3hgXUmGQr0kW16ATEte+OgXPlRL6q+8vTuLcIxdLarhe+Kuk8GMo+bNnTM757NsUyywNGNL45dZE0PhujrMLgL5wKiqfBFeF7ruMBN51tRF3bqugnYnz2aF0hBzK9ggoqFtFMdbSn17LWXp0ChXWxx0LPsAsEUfacOsn3Rgb36sXH+wp3JnSq+1fsrW2ra+zNmaTj64DFAFy6/HVV5z0hkL8g==
-x-ms-exchange-antispam-messagedata: PsP43GRpNrmKQo0zrh0qk07KneECuZ2Sh6juSYJ2hTBVzXIR8eooKQbv5NmT6et8bcKqFPpx7mJRUsTtPMczF64stXr3kLdKUS7T8WKt0FqvSYhSHQaKni51Ox+IsIOMXxno72eUxY8NykiKxnVSRg==
-x-ms-exchange-transport-forked: True
+ with ESMTP id 3OoYVmhMleht; Mon,  2 Mar 2020 09:59:12 +0000 (UTC)
+X-Greylist: from auto-whitelisted by SQLgrey-1.7.6
+X-Greylist: from auto-whitelisted by SQLgrey-1.7.6
+Received: from peak.toshiba-tesi.com (mail.toshiba-tsip.com [202.56.254.199])
+ by fraxinus.osuosl.org (Postfix) with ESMTP id 8ABF285321;
+ Mon,  2 Mar 2020 09:59:11 +0000 (UTC)
+IronPort-SDR: rgBQDMAI7fA9Dc7a4Uyck3r+4jYqebKvaJwNu6rH2dLDESsDIc0OMWIoxOX4MTVcrogvCi1kNx
+ T69GSyKI+bHg==
+X-IronPort-AV: E=Sophos;i="5.70,506,1574101800"; 
+ d="xml'?xlsx'72,48?scan'72,48,208,72,48?bin'72,48,208,72,48?rels'72,48,208,72,48";
+ a="2210098"
+Received: from unknown (HELO TOSBLRMBX0119.TOSHIBA-TSIP.COM) ([172.28.80.118])
+ by peak.toshiba-tesi.com with ESMTP; 02 Mar 2020 15:44:55 +0530
+Received: from TOSBLRMBX0119.TOSHIBA-TSIP.COM (172.28.80.118) by
+ TOSBLRMBX0119.TOSHIBA-TSIP.COM (172.28.80.118) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1847.3; Mon, 2 Mar 2020 15:29:04 +0530
+Received: from TOSBLRMBX0119.TOSHIBA-TSIP.COM ([::1]) by
+ TOSBLRMBX0119.TOSHIBA-TSIP.COM ([fe80::fc54:5765:a052:196%9]) with mapi id
+ 15.01.1847.003; Mon, 2 Mar 2020 15:29:04 +0530
+From: Dinesh Kumar <Dinesh.Kumar@TOSHIBA-TSIP.COM>
+To: "kazuhiro3.hayashi@toshiba.co.jp" <kazuhiro3.hayashi@toshiba.co.jp>
+Thread-Topic: Sample image including security packages
+Thread-Index: AdXod0daEQ5yvAxmSqGjegxSRddNWwH/ZrKg
+Date: Mon, 2 Mar 2020 09:59:04 +0000
+Message-ID: <7ba7bb426c814ffcaefeccd646b0e302@TOSHIBA-TSIP.COM>
+References: <TYXPR01MB1808AD5423CA82AE50EC4D90E1120@TYXPR01MB1808.jpnprd01.prod.outlook.com>
+In-Reply-To: <TYXPR01MB1808AD5423CA82AE50EC4D90E1120@TYXPR01MB1808.jpnprd01.prod.outlook.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.28.80.121]
+Content-Type: multipart/mixed;
+ boundary="_002_7ba7bb426c814ffcaefeccd646b0e302TOSHIBATSIPCOM_"
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1be7fabe-fea5-41c1-c882-08d7bc543a55
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Feb 2020 13:43:43.6730 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: cXiyQug3h1dv3pr1rGStQYKuKG1/75Ns7lf/2LH/65/ysAQwic1Sc61yXmkAgnx4lJwVFOIJb22DZJT4Fw5R9svLAQl7HwWyzFNsPUo+V6z1QRjxlewFDb6bboTG2sC0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB4883
-X-OriginatorOrg: toshiba.co.jp
-MSSCP.TransferMailToMossAgent: 103
-Cc: SZ.Lin@moxa.com
-Subject: [cip-dev] [ANNOUNCE] Release v4.19.106-cip21
+Cc: "cip-security@lists.cip-project.org" <cip-security@lists.cip-project.org>,
+ "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
+Subject: Re: [cip-dev] Sample image including security packages
 X-BeenThere: cip-dev@lists.cip-project.org
 X-Mailman-Version: 2.1.15
 Precedence: list
@@ -121,54 +88,389 @@ List-Post: <mailto:cip-dev@lists.cip-project.org>
 List-Help: <mailto:cip-dev-request@lists.cip-project.org?subject=help>
 List-Subscribe: <https://lists.cip-project.org/mailman/listinfo/cip-dev>,
  <mailto:cip-dev-request@lists.cip-project.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 Errors-To: cip-dev-bounces@lists.cip-project.org
 Sender: "cip-dev" <cip-dev-bounces@lists.cip-project.org>
 
-Hi all,
+--_002_7ba7bb426c814ffcaefeccd646b0e302TOSHIBATSIPCOM_
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 
-CIP kernel team has released Linux kernel v4.19.106-cip21.
-The linux-4.19.y-cip tree has been updated base version from v4.19.103 to v4.19.106,
-and USB updates and cat874's USB were added.
+Dear Kazu-san,
 
-You can get this release via the git tree at:
+Thanks for sharing the isar-cip-core repository details with us.
 
-  v4.19.106-cip21:
-    repository:
-      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch:
-      linux-4.19.y-cip
-    commit hash:
-      0bf4ec5b1b8419e1c67a72182ee8d9b8d4a9337b
-    added commits:
-      CIP: Bump version suffix to -cip21 after merge from stable
-      arm64: dts: renesas: cat874: Enable usb role switch support
-      arm64: dts: renesas: cat874: Enable USB3.0 host/peripheral device node
-      usb: gadget: udc: renesas_usb3: Enhance role switch support
-      usb: typec: fix an IS_ERR() vs NULL bug in hd3ss3220_probe()
-      usb: typec: hd3ss3220: hd3ss3220_probe() warn: passing zero to 'PTR_ERR'
-      usb: typec: add dependency for TYPEC_HD3SS3220
-      usb: typec: hd3ss3220_irq() can be static
-      usb: typec: driver for TI HD3SS3220 USB Type-C DRP port controller
-      dt-bindings: usb: renesas_usb3: Document usb role switch support
-      dt-bindings: usb: hd3ss3220 device tree binding document
-      usb: roles: Add fwnode_usb_role_switch_get() function
-      device connection: Add fwnode_connection_find_match()
-      usb: roles: Introduce stubs for the exiting functions in role.h
-      device connection: Find connections also by checking the references
-      device property: Introduce fwnode_find_reference()
-      device connection: Find device connections also from device graphs
-      device connection: Prepare support for firmware described connections
-      usb: typec: Find the ports by also matching against the device node
-      usb: roles: Find the muxes by also matching against the device node
-      usb: typec: mux: Fix unsigned comparison with less than zero
-      usb: typec: mux: Find the muxes by also matching against the device node
-      device connection: Add fwnode member to struct device_connection
+We followed below steps to first confirm whether all the proposed binaries =
+are included when we create CIP isar based image.
+1. Create CIP isar based image from "https://gitlab.com/zuka0828/isar-cip-c=
+ore/-/tree/master"  for QEMU_x86-64 platform
+2. Booted the image in QEMU virtual machine
+3. For each security package we compared the binaries listed on Debian page=
+ e.g. for acl package at (https://packages.debian.org/buster/amd64/acl/file=
+list)
+     According to the Debian page there are three binaries which should be =
+present in the image "/bin/chacl", "/bin/getfacl", "/bin/setfacl".
+     Then we check in the CIP running image at /bin whether all three packa=
+ges are included or not.
+4. Based on this kind of investigation we have prepare the attached list of=
+ missing binary packages in current CIP isar image.
+
+We found most of the packages are not included in the isar image, could you=
+ please confirm whether all the proposed packages are included in the given=
+ source?
+If it is included, could you please let us know how to install them in the =
+image?
+
+Once all the security packages are included in the CIP isar image, we will =
+proceed to next step of verifying applicable IEC 62443-4-2 security require=
+ments.
+
+Thanks & Regards,
+Dinesh Kumar
+
+
+-----Original Message-----
+From: Cip-security <cip-security-bounces@lists.cip-project.org> On Behalf O=
+f kazuhiro3.hayashi@toshiba.co.jp
+Sent: 21 February 2020 10:58
+To: cip-security@lists.cip-project.org
+Cc: cip-dev@lists.cip-project.org
+Subject: [Cip-security] Sample image including security packages
+
+Hello CIP Security WG,
+
+I've created a sample setting to customize CIP Core generic profile.
+https://gitlab.com/zuka0828/isar-cip-core/-/tree/master
+(Now in my personal account)
+
+Introduction: https://gitlab.com/zuka0828/isar-cip-core/-/blob/master/SECUR=
+ITY.md
+
+Please ask in cip-dev if you need more development information :)
+
+Note: `sudo` and `sudo-ldap` conflict each other, but both were proposed.
+We need to select one from them.
+I temporally removed the both from `IMAGE_PREINSTALL`.
 
 Best regards,
-   Nobuhiro
+Kazu
+
+_______________________________________________
+Cip-security mailing list
+Cip-security@lists.cip-project.org
+https://lists.cip-project.org/mailman/listinfo/cip-security
+The information contained in this e-mail message and in any
+attachments/annexure/appendices is confidential to the =
+
+recipient and may contain privileged information. =
+
+If you are not the intended recipient, please notify the
+sender and delete the message along with any =
+
+attachments/annexure/appendices. You should not disclose,
+copy or otherwise use the information contained in the
+message or any annexure. Any views expressed in this e-mail =
+
+are those of the individual sender except where the sender =
+
+specifically states them to be the views of =
+
+Toshiba Software India Pvt. Ltd. (TSIP),Bangalore.
+
+Although this transmission and any attachments are believed to be
+free of any virus or other defect that might affect any computer =
+
+system into which it is received and opened, it is the responsibility
+of the recipient to ensure that it is virus free and no responsibility =
+
+is accepted by Toshiba Embedded Software India Pvt. Ltd, for any loss or
+damage arising in any way from its use.
+
+--_002_7ba7bb426c814ffcaefeccd646b0e302TOSHIBATSIPCOM_
+Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;
+	name="CIP_Security_MissingBinaries_GenericProfile_Rev01.xlsx"
+Content-Description: CIP_Security_MissingBinaries_GenericProfile_Rev01.xlsx
+Content-Disposition: attachment;
+	filename="CIP_Security_MissingBinaries_GenericProfile_Rev01.xlsx";
+	size=15012; creation-date="Mon, 02 Mar 2020 09:26:03 GMT";
+	modification-date="Mon, 02 Mar 2020 09:56:07 GMT"
+Content-Transfer-Encoding: base64
+
+UEsDBBQABgAIAAAAIQB7ksghegEAAIEFAAATAAgCW0NvbnRlbnRfVHlwZXNdLnhtbCCiBAIooAAC
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACs
+lMtuwjAQRfeV+g+RtxUxdFFVFYFFH8sWCfoBJp4kFolteQYKf9+JeaiqeCiCTaLYnnvuTGY8HK+b
+OllBQONsJgZpXyRgc6eNLTPxPfvoPYsESVmtamchExtAMR7d3w1nGw+YcLTFTFRE/kVKzCtoFKbO
+g+WdwoVGEX+GUnqVL1QJ8rHff5K5swSWetRqiNHwDQq1rCl5X/Py1sncWJG8bs+1qEwo72uTK2Kj
+cmX1P0jPFYXJQbt82bB0ij6A0lgBUFOnPhgmhikQcWIo5FFmgBq7QXdZpRwZjWFlPD5w6icI7c7p
+rHZxX/w7gtGQTFSgT9Vw7nJdyx8XFnPnFul5ka6liSVKG2Xs3vcZfjyMMr4GNzbS5heFL/gg7jGQ
+8Xm9hShzAYi0qQFvXfYoeolcqQB6Sty95c0N/NU+54NHahKcR57aAN2rsB+RNrrnWQgCGTgMybFm
+OxB55K8uO7R3igbdlZ0vkVxzNX4rcwQu4wU6+gUAAP//AwBQSwMEFAAGAAgAAAAhABNevmUCAQAA
+3wIAAAsACAJfcmVscy8ucmVscyCiBAIooAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACskk1LAzEQhu+C/yHMvTvbKiLSbC9F6E1k/QExmf1g
+N5mQpLr990ZBdKG2Hnqcr3eeeZn1ZrKjeKMQe3YSlkUJgpxm07tWwkv9uLgHEZNyRo3sSMKBImyq
+66v1M40q5aHY9T6KrOKihC4l/4AYdUdWxYI9uVxpOFiVchha9EoPqiVcleUdht8aUM00xc5ICDtz
+A6I++Lz5vDY3Ta9py3pvyaUjK5CmRM6QWfiQ2ULq8zWiVqGlJMGwfsrpiMr7ImMDHida/Z/o72vR
+UlJGJYWaA53m+ew4BbS8pEVzE3/cmUZ85zC8Mg+nWG4vyaL3MbE9Y85XzzcSzt6y+gAAAP//AwBQ
+SwMEFAAGAAgAAAAhAIE+lJfzAAAAugIAABoACAF4bC9fcmVscy93b3JrYm9vay54bWwucmVscyCi
+BAEooAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKxSTUvEMBC9C/6HMHebdhUR2XQvIuxV
+6w8IybQp2yYhM3703xsqul1Y1ksvA2+Gee/Nx3b3NQ7iAxP1wSuoihIEehNs7zsFb83zzQMIYu2t
+HoJHBRMS7Orrq+0LDppzE7k+ksgsnhQ45vgoJRmHo6YiRPS50oY0as4wdTJqc9Adyk1Z3su05ID6
+hFPsrYK0t7cgmilm5f+5Q9v2Bp+CeR/R8xkJSTwNeQDR6NQhK/jBRfYI8rz8Zk15zmvBo/oM5Ryr
+Sx6qNT18hnQgh8hHH38pknPlopm7Ve/hdEL7yim/2/Isy/TvZuTJx9XfAAAA//8DAFBLAwQUAAYA
+CAAAACEAx/YSEkACAAB0BAAADwAAAHhsL3dvcmtib29rLnhtbKSUX0/bMBTF3yftO3hWX2matLAR
+NUFQQOsLqmCDl0qR69w2Xv1vtkvbb7/rhI5uvDDtJfF1lJ+Pz7n2+GKnJHkG54XRBU37A0pAc1ML
+vSro92+3J18o8YHpmkmjoaB78PSi/PhhvDVuvTBmTRCgfUGbEGyeJJ43oJjvGwsavyyNUyxg6VaJ
+tw5Y7RuAoGSSDQZniWJC046Qu/cwzHIpOFwbvlGgQwdxIFlA+b4R1h9oir8Hp5hbb+wJN8oiYiGk
+CPsWSoni+XSljWMLidvepacHMg7foJXgznizDH1EJZ3IN/tNB0madlsux0sh4bGznTBr75iKq0hK
+JPPhphYB6oKeYWm28DqBItzGXm2ExK/paJQNaFL+jmLmsEDdlzKA0yzAxOiANr0Y/L+WtOxJYzAA
+cg8/N8IB5h6dKcf4ZDxnCz9joSEbJwt6k8+5sJV15gfwME/Pr6preAZpbIxuPpnOqgfgSAn7KjbT
+3DK+ZiuIf1jjmZwfOc7exvkPnjMebUrQmk5+N/7bpnIc+/lRwNa/ehpLsnsSujbbguLp2B+Nt+30
+k6hDU9Dsc5ZhPt3cVxCrJmBGwyFmRAJb3MceLej5+bDVcrRUeyJwyfZNdNsJHp1x2IyVXa/wAMYz
+M42RY/65wIGb1mnLOfxcw1JoqGMfIeqoegFWO6lVv7oVsTeuGQpiHmJ7cSYfDnhU2oi6hngT0PJY
+w6feZS/Ne7e9LBsnR3R08s+VEcdnjsRXK3g0OkVXovuHC6P8BQAA//8DAFBLAwQUAAYACAAAACEA
+U051HEEDAAB9CwAAFAAAAHhsL3NoYXJlZFN0cmluZ3MueG1slFbbjtssEL5fad8B+Z44idT+1Spx
+VVVqe/OvVj08wMSQhC4Gl4Fs06fv4EOTYLtypVXWDN8Mc+IbNm9/VpqdpENlzTZbLZYZk6a0QpnD
+Nvv29QN/kzH0YARoa+Q2O0vM3hb3dxtEz0jX4DY7el8/5DmWR1kBLmwtDe3sravA09IdcqydBIFH
+KX2l8/Vy+TqvQJmMlTYYv83e/JexYNSPIN+3gtevsmKDqtj44suCPdrFJvfFJo+STmqDKyWroXyG
+g0x3P8sfQTkp2E4ZcOcehinuf4VIkbYwuOCYMq37lJWh7Qrc88AUlDpFghABpUvEMWsPSI5TNikt
+BDjJrGCcjcOLdydQGnZ6ECQokcqmbRP2/i4eQh+8tFU1DOzRegaThwWhfBqgCLVWpfLnuSFOKRQH
+aw9acgj+KI1XJXg7O29a7Wqo+AwTRWxNxGMaRyse1I+spsh4UP1c4mo1N+TOu1GlAo8g7MtsU/ag
+TFPFGhBfROocBmFTma+rNYedq1L0ZKtMahSfwIkXcJIJSXkUxBNp4YtG2Vur0/vx9+PGNDpbOLhp
+wSvNtTLhZxpseXTWzG7GUXRh9j5ettn+9/imLlTsfr0cVsfFvoa51cYwii/wjNoeuDmkBzyB8wq0
+Pk/f4j1RyXoHKadNFmcCX3yURpJ3rHZ2r7SME8KH2Sn7EwGvrODfickN6CZ/l53SugHhtQV7SOPu
+M/5wf3ed/wFu9FhSuj10oBYZk1BXxJlAHE2p8QxCJE3R+gWhBodySas2AFKLf0/0g7/YCTSN31WW
+k+iDNb4VvAeKyKko3UOlqLQNbh0FeaPqi3gI1oLXOhA9YOccWb2alh3BDWLr6zvYCEEJ7mg2q0oO
+NjtKKx0NX/pO9ye7KfLT/R1n8T/XAuq5V6Gjbd7MStd0Si8qtaKBcSPCva876BhDxor3DkyFNs7W
+jzQgn5ytLcrZbEr58YhrLqnLlj1HNJIg5GlWApq2vjHSG51tIg7+sr1ipEufs8dX28K9482qez7c
+yFaXVdvm7WPjtjX/rdx/3EXUq8W/ztu+OXu/4uAmtgnE7CMiTu/Ea3HX+VeiZUq3k11+GU+N+vVN
+uiQgp+dz8RsAAP//AwBQSwMEFAAGAAgAAAAhADttMkvBAAAAQgEAACMAAAB4bC93b3Jrc2hlZXRz
+L19yZWxzL3NoZWV0MS54bWwucmVsc4SPwYrCMBRF9wP+Q3h7k9aFDENTNyK4VecDYvraBtuXkPcU
+/XuzHGXA5eVwz+U2m/s8qRtmDpEs1LoCheRjF2iw8HvaLb9BsTjq3BQJLTyQYdMuvpoDTk5KiceQ
+WBULsYVRJP0Yw37E2bGOCamQPubZSYl5MMn5ixvQrKpqbfJfB7QvTrXvLOR9V4M6PVJZ/uyOfR88
+bqO/zkjyz4RJOZBgPqJIOchF7fKAYkHrd/aea30OBKZtzMvz9gkAAP//AwBQSwMEFAAGAAgAAAAh
+AOcm/DnRBQAAOhkAABMAAAB4bC90aGVtZS90aGVtZTEueG1s7FlLbxs3EL4X6H9Y7L2RZOthGZED
+W4+4iZ0EsZIiR2qX2mXEXS5Iyo5uRXLqpUCBtOilQG89FEUDNECDXvpjDCRo0x/RIXe1S1pUnIcD
+pEWki5b7zXA4M/yGQ12+8iCh3jHmgrC05zcu1X0PpwELSRr1/Dvj0WdbvickSkNEWYp7/gIL/8rO
+p59cRtsyxgn2QD4V26jnx1Jm27WaCGAYiUsswym8mzKeIAmPPKqFHJ2A3oTWNur1di1BJPW9FCWg
+9uZ0SgLsjZVKf2epfEjhMZVCDQSUHynV2JLQ2HDWUAixEH3KvWNEez7ME7KTMX4gfY8iIeFFz6/r
+j1/buVxD24UQlWtkDbmR/hRyhUA429Bz8mhSTtpstprt3VK/BlC5iht2hu1hu9SnASgIYKW5LabO
+1l53b9AqsAYo/+nQPegMNhsW3tC/uWLzbkt9LbwG5fqbK/jRqA9etPAalONbDp90NvpNC69BOb69
+gu/UdwfNjoXXoJiSdLaCrrfam/3lakvIlNF9J7zbao46G4XyCgXZUGaXmmLKUrku1xJ0n/ERABSQ
+IklSTy4yPEUBZHEfUTLhxDsgUSzVNGgbI+N9PhSIlSE1oycCTjLZ869lCPZFpfX5s2enD5+ePvz9
+9NGj04e/mtotuX2URqbcy5+++eeHL72/f/vx5eNv86nP4oWJf/HLVy/++PNV6mEzGWZ99+TF0yfP
+v//6r58fO7TvcjQx4WOSYOHdwCfebZbAArV3bHvwhL+ZxDhGxJJAMeh2qB7K2ALeWCDqwu1h24V3
+OfCIC3h1ft+y9Sjmc0kcM1+PEwt4yBjdY9zpgOtqLsPD43kauSfncxN3G6Fj19x9lFoBHs4zIFDi
+UtmPsWXmLYpSiSKcYumpd2yGsWN19wix/HpIAs4Em0rvHvH2EHG6ZEwmViJVQvskgbgsXAZCqC3f
+HN719hh1rXqAj20kbAtEHcaPMbXceBXNJUpcKscooabDD5CMXUYeLXhg4oZCQqQjTJk3DLEQLpmb
+HNZrBP06cIg77Id0kdhILsnMpfMAMWYiB2zWj1GSOW0maWxiPxczSFHk3WLSBT9k9g5RzxAHlK4N
+912CrXCfTwR3gD5Nk6oEUW/m3BHLq5jZ+3FBpwhrlgF2t0g7Iem5DP6+uNvNwhfA2m7F78LXu5w4
+d83+GZZeh/sPcvMAzdNbGLbDam36SM0fqdn/31Pzur188YRccTDQc3Xe1qfvZO3he0ooPZILig+E
+Pn8LqDzhCAZ1Y6C7w7IZy2L4WRz1LVzEkZbxOJNfEBkfxSiDs3tDt5KRKFRHwsuYgJ5RD+umFp/R
+rTuAeXLIwrznbDRUf5mTh0CyGq+3ynHoF2SObneqPqpUrzvTSPe7SwOU7JsYYUxmG7HpMKKzHIQo
+vMoIvbILsaLrsGJLqV+GahnF0hVgWhkVOBp5cKDq+a1m3stD04QoDlWc8rZ+GV0VnAuN9DpnUjMD
+6nCxUWRAFemusnXt8tTq8lR7jUhbRhjpZhthpGGMQlxkp3n5cZGx7lYhtcxTrljuhsqMztb7iLUi
+kTPcQFOTKWjqnfT89mYL7rcClPX8KfTu8DPJIHeEOtIiGsEFWCB5vuHfhlkyLuQAiTh3uCadnA0S
+IjH3KEl6vlp+mQ001RyibWtsACF8sMZ1gVY+NOMg6HaQ8XSKA2mG3RjRlzEaAAyfc4XzrRZ/e7CS
+ZHMI91EcnngTOue3EaRYq9NQDgyJgAueRu7NkMCdZElkVf6dKUwF7ZqXgjqH8nFEsxgVFcUk8xyu
+SbQ0Rz/li9ZVDhxoucB+LgrhJFIF9p2r7vmlWnnOIM2qZlqsoqqmm0zfX5E3rKqKqGVVTt26bRAV
+13WXXAeJ6qwS51Td1ygIhmnVZJZpyuJVGlacXYzapl3ggcDwRHuN38oa4fTE21Z+kDubtapALM+V
+ehvoPy/M/xfY5D6QxwBucudUivzu9gFc38ChL78LLmlDi+78CwAA//8DAFBLAwQUAAYACAAAACEA
+rt2+JtgEAAABGQAADQAAAHhsL3N0eWxlcy54bWzcWUtv4zYQvhfofxB0V/SyFMuwvFg7EbDAdi9J
+gV5pibKJpShDonftFv3vndHDVmKyMVzHu6h8iMjRfPMkZ8hMP+wKbnyjVc1KEZvunWMaVKRlxsQq
+Nn9/TqyxadSSiIzwUtDY3NPa/DD79ZdpLfecPq0plQZAiDo211JuJrZdp2takPqu3FABlLysCiJh
+WK3selNRktXIVHDbc5zQLggTZoswKdJzQApSfd1urLQsNkSyJeNM7hss0yjSyaeVKCuy5KDqzh2R
+1Ni5YeX1EpqpEyEFS6uyLnN5B6B2mecspae6RnZkk/SIBLCXIbmB7Xit4bNpXgpZG2m5FTI2wdeN
+hpOvovwuEiRBTMz2q9m0/tP4RjjMuKY9m6YlLyujWi1jM0mc5sFpQQrafrYgnC0r1ny7JlUNkWrZ
+ccZGwT3wEiYuB89Jwfi+xfYQu8mATomCQTx+vMCbWvcDhSmjf0GAXppwHuqLlLqRDxqZNeQx4/yw
+jEJcMTAxm8IOIWklEhgY3fvzfgN7g4DNrM3K5rs3vl5VZO96wfkMdclZhlqsFsNVmsDjOAiz1BHs
+gcq4Ss9R77U0CRsw2AhbuWS4rVjOnTeKovt7F5/7ceQPVWAiozuaxWY4agy8uQLdFraAJ0mursLA
+2edY2ngcEmpZVhlUxX5n9iCY7dRsymkuAbViqzX+leUGZZRSQvGYTTNGVqUgHPfYnmPICdUUCmds
+yjUUvn4XJ1tZ4k6PTAjfob/5baNDo8Kbn4KavZZvftsao7alMwpclFLOn9CYP/KDn7BY7XJDbIuk
+kJ8gqSAJsdL0r5DO3Wvrk3aAZg/RWuwhbHARrrHLDwJ0WrmgYKcVtAlHrWC+5zbIZsP3WI4xRt0I
+eI6jeZMtXQR1kgD+RpJGR0ng//e0yb+upNa3HzlbiYK27p5NoY1ph8b3imye6a4JA+bMLtdn25U1
+A3G6uA4kwet7ensQV3i9UVyvYdP7xDV4Xx8AfL9eryHpij64/2lX3cBn19h5ruizgWY/WUYPNLvG
+qr7AZ03xhXI7qOkvKvqhNht4EojNL3im54MCudwyDr2mopoDZrY79gdN8yvxfN50DgcpkCwZzcmW
+y+cDMTaP77/RjG2L5nTZnHsBtuvmmgYbhtBFDnrt9jzc9tqvKdiFt43mKQX5sAs7Res7d5UcHZqO
+B+fVPDivpowPJ/xTDZCm1tpxxkrKGObVPDiv5sF5NWWe4E+lAXKoeSJ41JZGke+HoQoNfbNYqCh4
+dFCjhSFcM2nQdLohh05Of0hR5YHaUn20j+dBVb7p80AXU3326i3VZ6LOUr2vkaL2G1oaRarIRZFO
+DnLooqDLHZSvloM5pfao7+PRU6ebbg9ZLHSUKNJRMBdVckJ4NN4JI/ip17Zulfh+FKkz3nF8X62B
+D4+agqtRT1HLQTRdFJD2f7THflWP7L5OwXnlcw0nevhrbCsWm389zu+jh8fEs8bOfGyNfBpYUTB/
+sILRYv7wkESO5yz+HlxZ/4cL6+Z6HY4u7mhSc7jWrrqy2xXbp+NcbA4Gn/Fuo72OALWHukde6HwM
+XMdKfMe1RiEZW+PQD6wkcL2HcDR/DJJgoHtw4RW5Y7tuf0W+c4OJZAXlTPRdQ98rDGehXYDhvxhh
+95Gwj/+7mP0DAAD//wMAUEsDBBQABgAIAAAAIQDOsNrxUAYAAC4aAAAYAAAAeGwvd29ya3NoZWV0
+cy9zaGVldDEueG1snFlbc9o4FH7fmf0PHr8XWzYmgQnp1BDP9mE7nc1enh0jgqc2Ym2TtP31e3RF
+OnKAbB9KsD4d6Ts3fRZ3H7+3TfBCu75m+2VIJnEY0H3FNvX+eRn+9Wfx4TYM+qHcb8qG7eky/EH7
+8OP9r7/cvbLuW7+jdAjAwr5fhrthOCyiqK92tC37CTvQPYxsWdeWA3ztnqP+0NFyIya1TZTE8Sxq
+y3ofSguL7hobbLutK7pm1bGl+0Ea6WhTDrD/flcfem2tra4x15bdt+PhQ8XaA5h4qpt6+CGMhkFb
+LT4/71lXPjXA+zuZlpW2Lb545tu66ljPtsMEzEVyoz7neTSPwNL93aYGBtztQUe3y/ATWRRJEkb3
+d8JBf9f0tbf+Doby6ZE2tBroBuIUBj8Zax+rku/tNrO+fuEOb+RDHqMnxr5xY59hWgzL9sIIX7as
+hvqFrmgD6Ace5n/FRuBP2ERkdmH/rXdUiKh+7YIN3ZbHZlix5p96M+yW4TzUz/5gr7/R+nk3wHZh
+g8Jni82PNe0riBxsZpJkfKWKNWAW/g/amqcgeL78Lj5fpcnZhEzjGYCD6tgPrFUrETVZTkvUNPhU
+09JYz5OLSFyqcPDp4c7Zn6p58Hmal93EKTEs5AKwTbF/+FTALLuGwEzNg0+9QDZJbjOSXaJ+oz0W
+Q/7oybcTa3OR9LEI6bocyvu7jr0GUG/g7P5Q8uolC1h4PEYQHI79xMFiCgSvh0x6uY/vohdIj0oh
+ch9BXMTKRyQuYu0jpgjyICHA1WwkdY0UI0YMIgLuxgFgxHYAT9YUWuB5R/BJyzATLkAEczkG2WX2
+liEXSASxtz9DjlzrFSyGc9fMg4RAOr61UKEWEnXikIbdXR91DtZkUSByOWaTnSGyEuGQvUEB1wuc
+iNwiqhIxFfXOM7GwHjjEwBvvjyafpAmiPMr12GlvKAwriXAIEhxN3wpBafMgIXY0p8hPhYbw5myn
+MDQaTPrmzX6ra5lP0qSnqIr12Ik0QYFfSYibw4jS2jeT4hyWEIc1in2hIZg1dKvrc5iD4UQUBYvK
+MddjFluUBSsJIXaeE+S0tW8mQwF80BB+HIk0th44EYWGfj03DtbcUPXleszihruRhLjckJm1b8bj
+piGGm/XA4cZ1hnXi8IY7vZitfBKXFvzMQV7N5ZgTGwRZSQiBvn7qlTh+eom3u5CxYjjaTxySIILe
+34f4JF2SqApyOeaQRJCVhLglic9WvcSZY0VCnJJEVVtoCC5J7uD3dyIxS/NGS+Vq0CGOO7DCuMxR
+Ca/NKmeoK4xzpCIPFgbjkX+flJICRUkIT0bp0dNmE4RZESVxbBmR4BasQFBfJvG9k0dhHNaoARQG
+47FG+umCgNSahdcx3kjOAwgF4KSex3pEPE091r568lmPyCe0WGE25LFGAuo61ch77Ek2YillRq2Y
+41NXYZxMT7xMv6ynlB1LUNlPnE5G/pekErOMQsaiSo3aRZ2gdrxSGIdq5lG9QlgpQ056ozOwMBgv
+0EhbXUhvW1RhgZDzd2AIv8MaH8YK4wYYn8YKdL6ofWWVeKxHMKeT082Cd6ktInWNam5Yb5lRK9Hx
+WaYwrh9Q31+PGPLLXG7Fjn6CFaay42De8gNSZtepFyK1kPIH1mhq1M6L1Gt7SqXZzT5DPNZmmXPN
+XhpyqgEf78rOVf4YUXOXX5+J1E3KH1jPqVHHH94tglJezjs0VnRmmXNHvjTk+AMtVig7olu6VYFk
+3oXuYOs7ggUe8RVe6rX/EYmXej3R13h+VYyIPOS9Qm3IZ52MqLwrrkz4LHMiYJknbLq9McUngsI4
+PSFFzWWtQGd7o8I4OgP3RoPBJ0LyLpkn0MtwJl5csITL1SiU5OkeC9+fKAw/oU4gfIOiQJDLp/cb
+/PJpMObtxX7i3okhUXflpZhWXVzcYSWa85tJdPqluOsrjBPhKc5vBTof4REliSWtsmPlt7zxltej
+5XFgRd0MtMOX84fymf5eds/1vg8auhX32LP5PI0z828Oh04nL77jycjYwA789ptf0jyxAS609bcd
+/DpC4X4rnmQknpKZ+cctbhmD7YwPQkz5vh7pcDwE27rrh6/w9cuxfRIzwoB1Ndy5ix9JluGBdUNX
+1kMYHHtaYDQkeLeo4ceC7vNGXh2aX3ru/wMAAP//AwBQSwMEFAAGAAgAAAAhAC0nJ62EAQAABAMA
+ABAACAFkb2NQcm9wcy9hcHAueG1sIKIEASigAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+nJJPTxsxEMXvlfgOK9+JN7RCVeQ1qqCIQ6tGSqBH5Hpns1Yc2/IMq6SfvrO7JWyAE7f58/T887PV
+1X7niw4yuhgqMZ+VooBgY+3CphL369vzr6JAMqE2PgaoxAFQXOmzT2qZY4JMDrBgi4CVaInSQkq0
+LewMzngdeNPEvDPEbd7I2DTOwk20TzsIJC/K8lLCniDUUJ+no6EYHRcdfdS0jrbnw4f1ITGwVt9S
+8s4a4lvqn87miLGh4vvegldyulRMtwL7lB0ddKnktFUrazxcs7FujEdQ8mWg7sD0oS2Ny6hVR4sO
+LMVcoPvLsV2I4o9B6HEq0ZnsTCDG6mVjM9Q+IWX9O+YttgCESrJgHA7lVDut3Rc9HwRcnAp7gxGE
+F6eIa0ce8FezNJneIZ5PiQeGkXfEwf8RPabt5g3lcHE+79UJP1zY4n1axxtD8Jzg6VCtWpOh5tCP
+CR8H6o7Dy743uW5N2ED9rHm76N/7YfzUen45Kz+X/JSTmZIv31f/AwAA//8DAFBLAwQUAAYACAAA
+ACEAxBY272oBAACPAgAAEQAIAWRvY1Byb3BzL2NvcmUueG1sIKIEASigAAEAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAfJJda8IwGIXvB/sPJfc1qc6PhbbCJt5sgqD7YHchedVgk5YkWvvvl1bt
+KhuD3qTnvE/Oedt4elJZcARjZa4TFPUICkDzXEi9TdDbeh5OUGAd04JluYYEVWDRNL2/i3lBeW5g
+afICjJNgA0/SlvIiQTvnCoqx5TtQzPa8Q3txkxvFnD+aLS4Y37Mt4D4hI6zAMcEcwzUwLFoiuiAF
+b5HFwWQNQHAMGSjQzuKoF+EfrwOj7J8DjdJxKumqwne6xO2yBT+LrftkZWssy7JXDpoYPn+EPxev
+q6ZqKHW9Kw4ojQWn3ABzuUnfQe99vWAFdse20shgWWUsxh1Lvc6MWbfwm99IEE9VOpPa+4OXg2Im
+xr/1esTAUdZfLp00jvbob2/KniOACHx8ei57VT4Gz7P1HKV9Eg1DMvLPOiL0YUwJ+aqj3czXdc4v
+1CXgv8Q+CckgJP01eaTDESXjDvEKSJvEt79Q+g0AAP//AwBQSwMEFAAGAAgAAAAhACjHA6RSDQAA
+iCwAACcAAAB4bC9wcmludGVyU2V0dGluZ3MvcHJpbnRlclNldHRpbmdzMS5iaW7sWXs01fkW/3nl
+FVEexYyQZoYi8ugo4pyDECdhV6jkcYoSxyu6JdJMoWFSKglJ9Bi9TDVKEaWaIyoySiKmkmeSUVG4
+P35mHfu46665d91/7lrnnLX8fLf9+OzPd+/v4wcIFmFHrCDUiSAikPzpSNgQTuTTgDAl5hN65NOE
+oJHP+YTx6EifwB8hUZFJz4mzc5jDMeJChBDRLhUk4Us+xYlVwsKE8OhPIcKBYBNh5JdNhPDZ/zdD
+oTGjkafwyO/kL8Pkh9+XlR0LNAknobMixHcVTtFL/10sacoNn8qk/wFagYv/Fwb+qqu/g9eJVHZx
+dLUf0ZUjLP8TU0FB/CsGviMIhvVKmwXyBJGtTBBFBs1JAJ0VRkE04Q9yooQYaRO/Mc8NwPp0m1K4
+cBKNkp1hv04HmBQq5XxMeHhYghAZ5xvAYsu+rQtEfZNFR9cJX/JvAHsLqkJ+FA1eTNm32cWUAGQG
+ZE9rFhsepvRGXADoZTQe9RSPrKJkfnIjsn+07up7In4xgLKd/9LTDEBiitTBRxItJyjZUo0jfwBE
+pett5UpifwvSCuNtpSNmjsPIuWcJ4PZTiriXdL8TZe9aflcJwLvV4LGjDLYf/PNiM8gIiVJ4RgoO
+QPxSS/9tmeqoMS6SkyUAqqK2RlaRtgQhOqrTPU2kM0bWXJfSuWy8sR3gjOQls+NTsC+hMrNWWbnC
+L5TecptbXgCpUYs+qsp1MynZE7kL7gDu1RVugXLZkymZ8df7SgHuqZ1wcJXHMeq/4lQkKPBw7J5l
+WCqliHUWhbal6ii6qlG+GN2zhwCUXVcP0Pj0eqUYGXsUP/yD0psn+6wJoHDZH8enKeHakP3QUeyo
+xIt5LXH+oVnTMdZDa7RX9U/H3Ho3JLBVVcJLKP+xihkMgCI1ZmOZCuYDEqpshVWfWFB6Qp2JawGM
+b4twaarLb1Cy3POaDQAaFjN6+r/i4Sjg2jv3fT2xPn+8ubNvoRqOkeIWoxOlhuvOwp0rljIT6700
+63iYOhPzubd/qGm6Oo0mNDr3NIDEorf729Vxss75JutmamDSoyMrAgo1ejlUEnkf990CyA4szHqh
+IT+PkqnaLQwBiFx5vFhDc82YXsgD9UGAm+xmrs43rb+PFU452w9g00mxnKPf8Ah41+RmOlsHT9Yj
+7W33z8zBkyN9d3ee4VyMTXxLeIbZ3KQPlP/o/PhagFqha2J75yZzRUcTZQUFssmG9dY5aqg7keRS
+pcjqZ3q2GlTj2I42RfGB+hkO8zDJXyrVxTLn4aaQFmrxFTVgMilCmQBpu66zaw0w63HDkGA/n9lM
+AbRiOAYBRPxsWqdrhIlnPS752dwI2x5e1mzoZHRprMOGoTUC4LzB063+xni2E32K9M6bYNl2E9PL
+aQuwrPiW45VYWrC/FlUBCxZYmRpaM3X1rW3oukb6Xj66NCu6ia4hnWFsYmVEYxpbGQL8sMir6iJt
+yJfCf6z2RR7AkqELjJ9NMVbHfvbuXtOUNErv9s7iAwCXs4SaDy7EeX5XsPHYS1L21wrUsu2h1exF
+2NeWe8aadYsw2YeTa5z1zbEv986t9UWLsR47jum93QLrVeVJ05ItMBelEs03zlu+N6Pw2hlIbwb4
+pSB4U5/l8U9U4biGhJOF4/u25o0bHRdnqpFlcy4dr+q3rurrXaTjPBY/63N7R8dxtZbQmlYwsF51
+S6XBesYNH8nReZmlr08b/QI4JLaacBi44umX7c8+YOBlt8KUe0ObWTtIJbPhATgA9A3u7DZiYuC+
+MtfF3a0wOV7yg9mJNlVKlK3v42BtsoMs96s02GO9p+Grv3FxwB3p4ey11sGRN5nTW92yAhz19amO
+0Ac4d9aAtd8Rt9LveRvWi7CwI3/x3O+NWJipjOHZceWs940UMEMRBw6ASR+nvpFPT657bkq3M06U
+VaK0ytwFx21SDcrxXeGfM7Znk5skwB2F0iXeK3Gihi8tl+9dhbEIZ36rk8Yn8z/erd3lhqvPuqNS
+TtKDb2/+3FkW7YFn3D1kY3YMn4wWtbMqejX2VxFbvo6xlkewpoOHUfhajC02vSjNzZNvD5+xSYHr
+ybP7MO3XTzrrsN2jz6unMrz49nSxQgW2F8Z/5fD37xr4ZAXup11WefP8n5S6y2L4dPRTc7VlqQJ5
+TinR0PH54lPTJz5a1c7sDeEBXuQuoXNIYU2zL4a7200mRYaNZQ/PPDzWtR5Pq4beg7uaGzC8t6b7
+IZWU8R/v6E8N0oc2YPsiFc9chh+WiV4wbyr1b6oZg37Yhywz+xT1Ry0BxuWUrKxlhwyA1b2EPzdu
+XrtXeDQdXQOAHWqu8WGBmEDPtZ0BWkE4Ey//yKU2QWnWlLeIDOltpLeBpG67IIwk7sS3uzYH8Ujt
+a5DRS+HwdVx6+fRDHOy/b/Uuq8JgzEomh719byjGtqk8/+PZ0CtvKByySV265CFa+Y3I7S2dY/uz
+zeBX5MF62VMFzawIHo4pU29nlkXgmB+f+B3IihxuoHxVh8UsBLgf6p3xenvnFrFRhmy8AkLJ9bPC
+d8+mzB0YiIe9Xm9BNAasWPGo6wkp+2tfkMz/fc2raByUlrEtoS8G+xIvUukTicV6N0QVotxjcfef
+SIq/2riL5180jqP84Qfe2KMm2nPwB3wbqNfVFJm9B3fk5aSaLS/i+JbQyMoy83isN+1p4Rr/hIll
+eeBmfK5/AsbLZmgfUfqRh2XuQ6ONSYlYJ7tSaeOlxNlXKMLXJzG6AeQvpt7oTcQn070+r7jLkni+
+fjotlrNy3Niy+F61RxLm8LpKeWcQqcPfQlXu1otvjrN1mLxMvyIJ43rjs+OucLJfFoXL5s7zWIBP
+GpNEPJIxR8TWmgOHkrHt6pMNur/sx01gxGHfuZqC8R0pvrK4N0VtbHU5PbU0B8D00Sb/ioM4xp/6
+d+32Hca2P65PFMvlk62STLtUe9hVa9ZooWrZWbl42jnSl1h7Lge6g52rm6cVeSICB1fPJdYsa2e6
+wyKA7pCEB58OT6RI6/ThZ2dScVr0Iz3P6lMxtDOK9LlzjnSEKI+G9Nns7WnFXu/IDnRhh3mGeXl7
+enuF+vsA0BXq0uccmRhm8M0yY8O0Oi41Q+ll6hdD/JItyPvWs7gemzTebHPczJgscsw/k4VHr2RU
+jtN7nSLFakufqDens8NwKB2nozvVJQwysCy+VN21MAMzfSFnaHhFJpYVak0OST/Gw2cydGd10bFn
+T6hqcWx2Ie/slkd7idysiVg8JLICerKwv0WnOjbPz8YVk/dy/m6HHEy3dNOl5nU5GLP9uZ5MhZM8
+LIm0XnG9U9i/W6Xa8u9PY1nDeX9bpTNdERRmTcX+YoBgtc+flM9gPZn7rNi4PLwK7GjT8vsjb9yB
+yF++tMDkXN4KqdE6cAr3DvD3UWcERQJ4/ezGksg/AVSY0FnyXwDmcKNeTs/nQa6tts82IcfjX0WE
+e1fPKs3HlJSIiJhX8Ol9YyrdVfwLhtylvBRkL4+7wYRVPnOLv4ID2O5o/fbOr9jQ6s3K1bUFfOec
+bVcHfrqGZetopl2Tr+N5kLo576HjdayXKtOs8Pg6vidL3AwN7y7iOyhsOXshoHjcuYYbQxSMG+eW
+71vSWywrRRHUpDdyxit+zfHTLMHxytuiu7VLsO+Ft1sk79/CeVZwPj6PKMOyjHcR938qm1ivp8o+
+LzC/g30+bm+8FXCXhzfA3Tqgd9y47jfC3PsetlEOlPObw62/RxXCa83+5wAK+zbWSJTjHAJZj10l
+KrBt6mZb14iKdAXKNuHqpncA7FNz4+9UipGykffhI+/KAGqCTFKNH2B/Lq9iJCwe4FzbN5y1CeCT
+FTKtV9hVY1uVi8s5j6rxUcXiOXPgaTV+/9Rj5mQbVstXrGtOTNpVi+MG20kaZfHJ1qgc3Bz2FNsq
+qtnevvkUcyBpkXK+o44vt8l7uL/WYz2W3fwlC5/juEpr2m5oNGA90+MnpfIaeHNopzNFfWEjbxxl
+JzzVqRFfyLLSxGk7X/B0HF6ocpY14Rtj3EDt5OV/8K2rx4KfHHvFtyY1Gq8ceDX+4Nk68Jm58nX7
+NuqgRQ/x9woAmL1j7/uS13ytm2Bh3MEnS9RWr6a9+RJJXXItyA+5jWS5vOO04rBRMh1+D1sxvLct
+ts+nteHXqxkRt8u12nDcga4iIfO2N9+OlfDCr84BfF1RsnZSO56+7syjKertuGwWt8SdzGlfqktd
+G/T1Rr8ArTLauXM6cZhD97eFD3Rh2JNUlY1k32LZjJ6jzYu6cSpliTP7Z7w7OImCqHaKS74dzVp/
+9pViD17BnTed1N/cg1cU5gEzWdZ73GXyV+s/hL/Ht9WP53aaB/Y6xVAx8t8tDgaISTRXMunjVcb7
+2DD6730Y2291xtfqPmIc88p6n6v0z5xN+Rq5QQO8kJ9heKk/X4+SGdYZhJEv9aZ/en16ANPMtVOc
+EvgFV2jOBiPN9C+Y+js1qn9e+zJudZ21/UjzIOZ8vc0gV2ho4pvqx3vU0tYOj+dd8K8MAQMCBgQM
+CBgQMCBgQMCAgAEBAwIGBAwIGBAwIGBAwMDfZ+CfAAAA//8DAFBLAwQUAAYACAAAACEAb0CNT3YB
+AABKBAAAEwAIAWRvY1Byb3BzL2N1c3RvbS54bWwgogQBKKAAAQAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAC8lF1rgzAUhu8H+w+SezVqbWtRS6sdgw026Md9FmMN0yQksVsZ++9L62xhsJut9C4n
+J7zPOYf3JJ6+N7W1I1JRzhLgORBYhGFeULZNwHp1Z4+BpTRiBao5IwnYEwWm6e1N/Cy5IFJToiwj
+wVQCKq3FxHUVrkiDlGPSzGRKLhukTSi3Li9LiknOcdsQpl0fwqGLW6V5Y4uTHOj0Jjv9V8mC40N1
+arPaC1NuGn+L762y0bRIwEceZnkewtD2F1Fme9Cb21EQjWw4htCf+9ldNFt8AkscHvvAYqgxrc+E
+2HSDMpI7PanFm9Iy9YYODCCM3fNV7PbEf7KDnm1mtiS4lVTvOzgdpB3SHC6GG/S4ezM4WVP2qrIK
+sS0pOugL53VaolqRY7fH8GLwsIc/HrhrseI50uQK4GEPXmJUk8w45wrQ0QlaIXlYiSswzSp3Tn5Y
+PpkFKVqs5y2tC+PqH44OosBshWO+AyccwdFv3nbPn0D6BQAA//8DAFBLAQItABQABgAIAAAAIQB7
+ksghegEAAIEFAAATAAAAAAAAAAAAAAAAAAAAAABbQ29udGVudF9UeXBlc10ueG1sUEsBAi0AFAAG
+AAgAAAAhABNevmUCAQAA3wIAAAsAAAAAAAAAAAAAAAAAswMAAF9yZWxzLy5yZWxzUEsBAi0AFAAG
+AAgAAAAhAIE+lJfzAAAAugIAABoAAAAAAAAAAAAAAAAA5gYAAHhsL19yZWxzL3dvcmtib29rLnht
+bC5yZWxzUEsBAi0AFAAGAAgAAAAhAMf2EhJAAgAAdAQAAA8AAAAAAAAAAAAAAAAAGQkAAHhsL3dv
+cmtib29rLnhtbFBLAQItABQABgAIAAAAIQBTTnUcQQMAAH0LAAAUAAAAAAAAAAAAAAAAAIYLAAB4
+bC9zaGFyZWRTdHJpbmdzLnhtbFBLAQItABQABgAIAAAAIQA7bTJLwQAAAEIBAAAjAAAAAAAAAAAA
+AAAAAPkOAAB4bC93b3Jrc2hlZXRzL19yZWxzL3NoZWV0MS54bWwucmVsc1BLAQItABQABgAIAAAA
+IQDnJvw50QUAADoZAAATAAAAAAAAAAAAAAAAAPsPAAB4bC90aGVtZS90aGVtZTEueG1sUEsBAi0A
+FAAGAAgAAAAhAK7dvibYBAAAARkAAA0AAAAAAAAAAAAAAAAA/RUAAHhsL3N0eWxlcy54bWxQSwEC
+LQAUAAYACAAAACEAzrDa8VAGAAAuGgAAGAAAAAAAAAAAAAAAAAAAGwAAeGwvd29ya3NoZWV0cy9z
+aGVldDEueG1sUEsBAi0AFAAGAAgAAAAhAC0nJ62EAQAABAMAABAAAAAAAAAAAAAAAAAAhiEAAGRv
+Y1Byb3BzL2FwcC54bWxQSwECLQAUAAYACAAAACEAxBY272oBAACPAgAAEQAAAAAAAAAAAAAAAABA
+JAAAZG9jUHJvcHMvY29yZS54bWxQSwECLQAUAAYACAAAACEAKMcDpFINAACILAAAJwAAAAAAAAAA
+AAAAAADhJgAAeGwvcHJpbnRlclNldHRpbmdzL3ByaW50ZXJTZXR0aW5nczEuYmluUEsBAi0AFAAG
+AAgAAAAhAG9AjU92AQAASgQAABMAAAAAAAAAAAAAAAAAeDQAAGRvY1Byb3BzL2N1c3RvbS54bWxQ
+SwUGAAAAAA0ADQBnAwAAJzcAAAAA
+
+--_002_7ba7bb426c814ffcaefeccd646b0e302TOSHIBATSIPCOM_
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
 _______________________________________________
 cip-dev mailing list
 cip-dev@lists.cip-project.org
 https://lists.cip-project.org/mailman/listinfo/cip-dev
+
+--_002_7ba7bb426c814ffcaefeccd646b0e302TOSHIBATSIPCOM_--
+
