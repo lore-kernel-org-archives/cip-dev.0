@@ -2,116 +2,57 @@ Return-Path: <SRS0=W4f2=4U=lists.cip-project.org=cip-dev-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32193C3F2C6
-	for <cip-dev@archiver.kernel.org>; Tue,  3 Mar 2020 08:54:52 +0000 (UTC)
-Received: from hemlock.osuosl.org (smtp2.osuosl.org [140.211.166.133])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 536CFC3F2CD
+	for <cip-dev@archiver.kernel.org>; Tue,  3 Mar 2020 09:16:06 +0000 (UTC)
+Received: from fraxinus.osuosl.org (smtp4.osuosl.org [140.211.166.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id A7DAE20842
-	for <cip-dev@archiver.kernel.org>; Tue,  3 Mar 2020 08:54:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="GHGe8RmV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7DAE20842
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	by mail.kernel.org (Postfix) with ESMTPS id 12680214D8
+	for <cip-dev@archiver.kernel.org>; Tue,  3 Mar 2020 09:16:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12680214D8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=cip-dev-bounces@lists.cip-project.org
 Received: from localhost (localhost [127.0.0.1])
-	by hemlock.osuosl.org (Postfix) with ESMTP id 5C2AB8704A;
-	Tue,  3 Mar 2020 08:54:51 +0000 (UTC)
+	by fraxinus.osuosl.org (Postfix) with ESMTP id C086185308;
+	Tue,  3 Mar 2020 09:16:05 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from hemlock.osuosl.org ([127.0.0.1])
+Received: from fraxinus.osuosl.org ([127.0.0.1])
 	by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id fJ6BrJiPKz7B; Tue,  3 Mar 2020 08:54:50 +0000 (UTC)
+	with ESMTP id gwvOM-ZZq5tT; Tue,  3 Mar 2020 09:16:04 +0000 (UTC)
 Received: from lists.linuxfoundation.org (lf-lists.osuosl.org [140.211.9.56])
-	by hemlock.osuosl.org (Postfix) with ESMTP id E2E6986EC8;
-	Tue,  3 Mar 2020 08:54:50 +0000 (UTC)
+	by fraxinus.osuosl.org (Postfix) with ESMTP id 8EA3B857D8;
+	Tue,  3 Mar 2020 09:16:04 +0000 (UTC)
 Received: from lf-lists.osuosl.org (localhost [127.0.0.1])
-	by lists.linuxfoundation.org (Postfix) with ESMTP id D0C0DC013E;
-	Tue,  3 Mar 2020 08:54:50 +0000 (UTC)
-Received: from hemlock.osuosl.org (smtp2.osuosl.org [140.211.166.133])
- by lists.linuxfoundation.org (Postfix) with ESMTP id DA8E5C013E
- for <cip-dev@lists.cip-project.org>; Tue,  3 Mar 2020 08:54:48 +0000 (UTC)
+	by lists.linuxfoundation.org (Postfix) with ESMTP id 77F30C013E;
+	Tue,  3 Mar 2020 09:16:04 +0000 (UTC)
+Received: from whitealder.osuosl.org (smtp1.osuosl.org [140.211.166.138])
+ by lists.linuxfoundation.org (Postfix) with ESMTP id 11364C013E
+ for <cip-dev@lists.cip-project.org>; Tue,  3 Mar 2020 09:16:03 +0000 (UTC)
 Received: from localhost (localhost [127.0.0.1])
- by hemlock.osuosl.org (Postfix) with ESMTP id C101D86ECC
- for <cip-dev@lists.cip-project.org>; Tue,  3 Mar 2020 08:54:48 +0000 (UTC)
+ by whitealder.osuosl.org (Postfix) with ESMTP id 0E07D8620F
+ for <cip-dev@lists.cip-project.org>; Tue,  3 Mar 2020 09:16:03 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from hemlock.osuosl.org ([127.0.0.1])
+Received: from whitealder.osuosl.org ([127.0.0.1])
  by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id uu2XJxuHrmQS for <cip-dev@lists.cip-project.org>;
- Tue,  3 Mar 2020 08:54:47 +0000 (UTC)
+ with ESMTP id LIMVG5V6mtKC for <cip-dev@lists.cip-project.org>;
+ Tue,  3 Mar 2020 09:16:01 +0000 (UTC)
 X-Greylist: domain auto-whitelisted by SQLgrey-1.7.6
-Received: from JPN01-TY1-obe.outbound.protection.outlook.com
- (mail-eopbgr1400109.outbound.protection.outlook.com [40.107.140.109])
- by hemlock.osuosl.org (Postfix) with ESMTPS id 644D486CD7
- for <cip-dev@lists.cip-project.org>; Tue,  3 Mar 2020 08:54:47 +0000 (UTC)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fQE+pWPWrooP7syqcw0Dr9IvJn3uS0AtwXymGeQCGyC7vhYvjdmLDbONktxEQquWC38/RfRXc3zSilph79YvQf1ki7XRjmINPMlao0SOPwmjsOVh3QWmj0C2levSWY0ht4/PJmmflh/2U6TfS8/RjwtJspbmxp2UpWf8HB+oOg6YPhxzjjk3MrMufioKAVmsLO2D1zYp4i2IRjxbbWZbnRvL2Zvcz+L/pnJnJTZiFbBXHu2bfuVG8pUAuysi8X77IcIEIOXArXMQiUpBosgOJ3YfBBk9pPDHRsFqf0KPRQGnMdrcqokY+s+Rv3eluVdiOh8vPc7LdQi/v/IedYKqXg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2rZzwAmnxQcqO8DbkCo8onLrjkJZIX1M7rJnQJXQvug=;
- b=caN66IWjHEB40Ertw9zoigRu08kDsEsEZj8R2M0ipAjs8KxJ7vMvIPhwFNM+KeCCboYq6P0p8PJ7Srhdlvsmir9qxHEgpJGmhqmm1G1RI8IfRMGhgfUbpl8WdzpFY0+7RNyGE7wf8x1CNfmI1RGfSMXpeDc0KQHpzGNn0THHwZPCjTQNTzhCuEaVAUWRlVo8a+ot3d3ChcdUvPduuN2QtzPHmzRnvo5apDiKZ7KyS9vL6JOH2HVE1+8RRYAgvywd8t84Maf1Jf9Hjsw7UmAi791QfjPray4PCm50InnDzEyaE2N9/5lsN7BH2DBsVwuk59H1jvD6C5zR8/J5vdpaJA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2rZzwAmnxQcqO8DbkCo8onLrjkJZIX1M7rJnQJXQvug=;
- b=GHGe8RmVeM/bKJnAY4BEMMasmYVUrX9MKejG+RssuX6yaqfZzYerlClK6C64ekEipRnvU0RSKNlYyM6UC5E/CMywHKfv5n9TMVrSHQL5yrUQdtCkTUlfGNCUUPa9QK5YiovRqXz0wWeO7ImYL2ceiKLVzoifa/X3BTTgzrpRiOA=
-Received: from TYAPR01MB2285.jpnprd01.prod.outlook.com (52.133.177.145) by
- TYAPR01MB3982.jpnprd01.prod.outlook.com (20.178.139.14) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2772.15; Tue, 3 Mar 2020 08:54:44 +0000
-Received: from TYAPR01MB2285.jpnprd01.prod.outlook.com
- ([fe80::1045:4879:77ed:8a70]) by TYAPR01MB2285.jpnprd01.prod.outlook.com
- ([fe80::1045:4879:77ed:8a70%7]) with mapi id 15.20.2772.019; Tue, 3 Mar 2020
- 08:54:44 +0000
-From: Chris Paterson <Chris.Paterson2@renesas.com>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-Thread-Topic: lab-cip-cybertrust online
-Thread-Index: AdXxOOoHiaJjfkejSbefSiMWIdBTkA==
-Date: Tue, 3 Mar 2020 08:54:43 +0000
-Message-ID: <TYAPR01MB22858ECB4F2CB1275372BB77B7E40@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Chris.Paterson2@renesas.com; 
-x-originating-ip: [176.27.142.199]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: f8140a8f-1363-4123-d003-08d7bf5084d4
-x-ms-traffictypediagnostic: TYAPR01MB3982:
-x-microsoft-antispam-prvs: <TYAPR01MB398227995FCF42BE592EF630B7E40@TYAPR01MB3982.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3383;
-x-forefront-prvs: 03319F6FEF
-x-forefront-antispam-report: SFV:NSPM;
- SFS:(10019020)(4636009)(366004)(396003)(346002)(39860400002)(136003)(376002)(189003)(199004)(64756008)(3480700007)(86362001)(186003)(6506007)(9686003)(66556008)(81156014)(81166006)(66946007)(66476007)(478600001)(66446008)(76116006)(55016002)(558084003)(966005)(52536014)(71200400001)(33656002)(5660300002)(2906002)(7696005)(8936002)(6916009)(316002)(26005)(8676002);
- DIR:OUT; SFP:1102; SCL:1; SRVR:TYAPR01MB3982;
- H:TYAPR01MB2285.jpnprd01.prod.outlook.com; FPR:; SPF:None; LANG:en;
- PTR:InfoNoRecords; MX:1; A:1; 
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 3nK2VWoIMbQ5yoLxI9sy62i95sSvrQyXwOTcvnQqyX2RZo2JruXgb/dHEnvGWiKF0hoDLZuC3zNuBnO6v+UM3swND2TkWhnxubszoqZlB9VslEuIUm2KrlFR6rWAuC+LkIRyPu1Za8jFSY3f2VR8lFJZyefPGBVTY8kp1tUNYmmncZF0fEpVVNJUZvMDraGu0jYkjWJvFfUcJE4xw8UGDKaisZ8Il+wHUfTRPLooXuC+Vaz2QPp/r2Ze7c3gP63J+kPa6FXSzZxO/8UeTWq7VcyojNk3yIu9ieSwvXzvv0Z5TOBXPafk1U2JQkw1kQzCqJobcIGhoxLYigu+LEHJky4s77RJzQj6z00ZL33avaAydWsbFnyIJU4jPzNKrG57rnivKKy9qIWqb/mjQ94L29jkah03oOPo01xrWJcJM9FtipDtuQdsD4Dz+BmkksU1j6UwTylpNYqp0GZpiFF02usOfrDmqma+BlIRAUhgJdRc3dDnWQAVZ63tkgJyxARPF57G6Bm++JPooBXvyyuu1w==
-x-ms-exchange-antispam-messagedata: NbT5l/DTicS8obOodYbNrv0IgM1PmzzeyPr1HS+Sr7vjeor8/A8RQW2UGyAWB8yLT50RrRoC0BA/EZn79+3xiWrx4b9ruBX95NjwnFvNFICH8pb07YUB9ALL1oGTpSycl7x3Y2du3nF74qw26Q7PwQ==
-x-ms-exchange-transport-forked: True
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by whitealder.osuosl.org (Postfix) with ESMTPS id 3215286044
+ for <cip-dev@lists.cip-project.org>; Tue,  3 Mar 2020 09:16:01 +0000 (UTC)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+ id 9B4F91C031E; Tue,  3 Mar 2020 10:15:56 +0100 (CET)
+Date: Tue, 3 Mar 2020 10:15:56 +0100
+From: Pavel Machek <pavel@denx.de>
+To: Chris.Paterson2@renesas.com, cip-dev@lists.cip-project.org
+Message-ID: <20200303091556.GA10040@duo.ucw.cz>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f8140a8f-1363-4123-d003-08d7bf5084d4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2020 08:54:44.1823 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: yyZ7R0EM0D1QraTT49qkhJjgymHgo0UGopVkKrPygN4uWtW+aaNTzgDmo9h8jLeLVX2uIm46vAby8z/Hj+0HakhrV7PVCC0Gz3jmjuL18z4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB3982
-Subject: [cip-dev] lab-cip-cybertrust online
+User-Agent: Mutt/1.10.1 (2018-07-13)
+Subject: [cip-dev] 4.19.106-cip21-rt8 problems on de0-nano
 X-BeenThere: cip-dev@lists.cip-project.org
 X-Mailman-Version: 2.1.15
 Precedence: list
@@ -123,21 +64,73 @@ List-Post: <mailto:cip-dev@lists.cip-project.org>
 List-Help: <mailto:cip-dev-request@lists.cip-project.org?subject=help>
 List-Subscribe: <https://lists.cip-project.org/mailman/listinfo/cip-dev>,
  <mailto:cip-dev-request@lists.cip-project.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============4967653075159135552=="
 Errors-To: cip-dev-bounces@lists.cip-project.org
 Sender: "cip-dev" <cip-dev-bounces@lists.cip-project.org>
 
-Hello all,
 
-Just a quick note to say that a new LAVA worker hosted at Cybertrust is now online.
-https://lava.ciplatform.org/scheduler/worker/lab-cip-cybertrust
+--===============4967653075159135552==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="MGYHOYXEY6WxJCY8"
+Content-Disposition: inline
 
-Currently it supports a qemu VM and a Xilinx zynqmp-zcu102 platform.
 
-Kind regards, Chris
+--MGYHOYXEY6WxJCY8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+I pushed candidate for -cip-rt, but it seems to fail on de0-nano
+board. Code under testing is at:
+
+https://gitlab.com/cip-project/cip-kernel/linux-cip/tree/ci/pavel/linux-cip
+
+So far testing fails, I did few steps to narrow it down.
+
+? 0f2960c75dd68d339f0aff2935f51652b5625fbf 4.19.106-rt44
+? 68541faf398c02bfa6a65ffcf4484e71b8e0306d v4.19.103-cip20.
+ok  122663369 c7691f9c497d0f8393724875a8875b61daa9fc29 v4.19.100-rt41.
+? b7f7a3d15716de6d78b6d4807e23fa46de106c2f v4.19.103-rt42.
+ok  122667425 51184ac81b2de92545a3b9d330d4d53a176e0976 v4.19.104-rt43.
+bad 122671461 f019fe97731d222ee59ac8e54a62753e9c69ef31 v4.19.106-rt44.
+bad 122657523 881b771ab11616e2aab6e914d950467f7c8914bd v4.19.106-cip21.
+
+So it seems failure was introduced between v4.19.104-rt43 and
+v4.19.106-rt44. Unfortunately, I don't understand the logs enough to
+know what the real failure is. If someone can help...
+
+I'll proceed to narrow it down.
+
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--MGYHOYXEY6WxJCY8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXl4gTAAKCRAw5/Bqldv6
+8l9pAKCxl1bQ8BZIU4pfqolGX70GkJyo3wCgpLR5X8Jby2hUQ9xdB7AUs0WOwMI=
+=uLvq
+-----END PGP SIGNATURE-----
+
+--MGYHOYXEY6WxJCY8--
+
+--===============4967653075159135552==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
 cip-dev mailing list
 cip-dev@lists.cip-project.org
 https://lists.cip-project.org/mailman/listinfo/cip-dev
+
+--===============4967653075159135552==--
