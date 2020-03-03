@@ -1,81 +1,62 @@
-Return-Path: <SRS0=Ya7F=4T=lists.cip-project.org=cip-dev-bounces@kernel.org>
+Return-Path: <SRS0=W4f2=4U=lists.cip-project.org=cip-dev-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.3 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,HTML_IMAGE_RATIO_02,HTML_MESSAGE,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05F65C3F2D2
-	for <cip-dev@archiver.kernel.org>; Mon,  2 Mar 2020 14:15:38 +0000 (UTC)
-Received: from hemlock.osuosl.org (smtp2.osuosl.org [140.211.166.133])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E629DC3F2CD
+	for <cip-dev@archiver.kernel.org>; Tue,  3 Mar 2020 07:28:01 +0000 (UTC)
+Received: from whitealder.osuosl.org (smtp1.osuosl.org [140.211.166.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 848DD2173E
-	for <cip-dev@archiver.kernel.org>; Mon,  2 Mar 2020 14:15:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 848DD2173E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toshiba-tsip.com
+	by mail.kernel.org (Postfix) with ESMTPS id B69D120CC7
+	for <cip-dev@archiver.kernel.org>; Tue,  3 Mar 2020 07:28:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B69D120CC7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=cip-dev-bounces@lists.cip-project.org
 Received: from localhost (localhost [127.0.0.1])
-	by hemlock.osuosl.org (Postfix) with ESMTP id 46477875B9;
-	Mon,  2 Mar 2020 14:15:37 +0000 (UTC)
+	by whitealder.osuosl.org (Postfix) with ESMTP id 7FE6F86044;
+	Tue,  3 Mar 2020 07:28:01 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from hemlock.osuosl.org ([127.0.0.1])
+Received: from whitealder.osuosl.org ([127.0.0.1])
 	by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id Wq0YCNLXbGCe; Mon,  2 Mar 2020 14:15:35 +0000 (UTC)
+	with ESMTP id VbGl41w4+3sp; Tue,  3 Mar 2020 07:27:59 +0000 (UTC)
 Received: from lists.linuxfoundation.org (lf-lists.osuosl.org [140.211.9.56])
-	by hemlock.osuosl.org (Postfix) with ESMTP id 38E35875F4;
-	Mon,  2 Mar 2020 14:15:35 +0000 (UTC)
+	by whitealder.osuosl.org (Postfix) with ESMTP id 387B185D4B;
+	Tue,  3 Mar 2020 07:27:59 +0000 (UTC)
 Received: from lf-lists.osuosl.org (localhost [127.0.0.1])
-	by lists.linuxfoundation.org (Postfix) with ESMTP id 2A6D8C013E;
-	Mon,  2 Mar 2020 14:15:35 +0000 (UTC)
+	by lists.linuxfoundation.org (Postfix) with ESMTP id 1B0CAC013E;
+	Tue,  3 Mar 2020 07:27:59 +0000 (UTC)
 Received: from whitealder.osuosl.org (smtp1.osuosl.org [140.211.166.138])
- by lists.linuxfoundation.org (Postfix) with ESMTP id 108C8C013E;
- Mon,  2 Mar 2020 14:15:33 +0000 (UTC)
+ by lists.linuxfoundation.org (Postfix) with ESMTP id E2012C013E
+ for <cip-dev@lists.cip-project.org>; Tue,  3 Mar 2020 07:27:55 +0000 (UTC)
 Received: from localhost (localhost [127.0.0.1])
- by whitealder.osuosl.org (Postfix) with ESMTP id 003AC85C19;
- Mon,  2 Mar 2020 14:15:33 +0000 (UTC)
+ by whitealder.osuosl.org (Postfix) with ESMTP id D772185D4B
+ for <cip-dev@lists.cip-project.org>; Tue,  3 Mar 2020 07:27:55 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
 Received: from whitealder.osuosl.org ([127.0.0.1])
  by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id m8JEDC2Qly8S; Mon,  2 Mar 2020 14:15:30 +0000 (UTC)
-X-Greylist: delayed 00:07:12 by SQLgrey-1.7.6
-X-Greylist: domain auto-whitelisted by SQLgrey-1.7.6
-Received: from peak.toshiba-tesi.com (mail.toshiba-tsip.com [202.56.254.199])
- by whitealder.osuosl.org (Postfix) with ESMTP id 4244D85BFA;
- Mon,  2 Mar 2020 14:15:29 +0000 (UTC)
-IronPort-SDR: 4fMUbT5U+sblIPiS3lFBa+58LshtArd52hI5AKs0fUt765djmzwulfTogG99vzsw9G2a4S4sTR
- eFe3v8dvqNog==
-X-IronPort-AV: E=Sophos;i="5.70,507,1574101800"; 
-   d="scan'208";a="2215214"
-Received: from unknown (HELO TOSBLRMBX0319.TOSHIBA-TSIP.COM) ([172.28.80.120])
- by peak.toshiba-tesi.com with ESMTP; 02 Mar 2020 19:54:05 +0530
-Received: from TOSBLRMBX0219.TOSHIBA-TSIP.COM (172.28.80.119) by
- TOSBLRMBX0319.TOSHIBA-TSIP.COM (172.28.80.120) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1847.3; Mon, 2 Mar 2020 19:38:12 +0530
-Received: from TOSBLRMBX0219.TOSHIBA-TSIP.COM ([::1]) by
- TOSBLRMBX0219.TOSHIBA-TSIP.COM ([fe80::8d35:f069:2af2:deff%9]) with mapi id
- 15.01.1847.003; Mon, 2 Mar 2020 19:38:12 +0530
-From: Venkata Seshagiri Pyla <Venkata.Pyla@toshiba-tsip.com>
-To: Dinesh Kumar <Dinesh.Kumar@TOSHIBA-TSIP.COM>,
- "kazuhiro3.hayashi@toshiba.co.jp" <kazuhiro3.hayashi@toshiba.co.jp>
-Thread-Topic: Sample image including security packages
-Thread-Index: AdXod0daEQ5yvAxmSqGjegxSRddNWwH/ZrKgAAl2o6A=
-Date: Mon, 2 Mar 2020 14:08:12 +0000
-Message-ID: <ef0872f23b424419b4894f1179c16e6b@toshiba-tsip.com>
-References: <TYXPR01MB1808AD5423CA82AE50EC4D90E1120@TYXPR01MB1808.jpnprd01.prod.outlook.com>
- <7ba7bb426c814ffcaefeccd646b0e302@TOSHIBA-TSIP.COM>
-In-Reply-To: <7ba7bb426c814ffcaefeccd646b0e302@TOSHIBA-TSIP.COM>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.28.80.121]
+ with ESMTP id 4KCOlsRgfwv3 for <cip-dev@lists.cip-project.org>;
+ Tue,  3 Mar 2020 07:27:51 +0000 (UTC)
+X-Greylist: from auto-whitelisted by SQLgrey-1.7.6
+Received: from info.mymicky.top (unknown [42.51.16.124])
+ by whitealder.osuosl.org (Postfix) with ESMTP id CDCC286044
+ for <cip-dev@lists.cip-project.org>; Tue,  3 Mar 2020 07:27:49 +0000 (UTC)
+Received: from LAPTOP-PAPO9T28 (60.28.36.218) by info.mymicky.top id
+ hbo2re0e97cp for <cip-dev@lists.cip-project.org>;
+ Tue, 3 Mar 2020 15:22:23 +0800 (envelope-from <info1@mymicky.top>)
+From: "WORLDS VALVE" <tjwdsv@163.com>
+To: cip-dev@lists.cip-project.org
 MIME-Version: 1.0
-Cc: "cip-security@lists.cip-project.org" <cip-security@lists.cip-project.org>,
- "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-Subject: Re: [cip-dev] Sample image including security packages
+Date: Tue, 3 Mar 2020 15:27:42 +0800
+X-Priority: 3
+X-MSMail-Priority: Normal
+X-MimeOLE: Produced By Microsoft MimeOLE V6.00.3790.4913
+Message-Id: <20200303072755.D772185D4B@whitealder.osuosl.org>
+Subject: [cip-dev] bv test
 X-BeenThere: cip-dev@lists.cip-project.org
 X-Mailman-Version: 2.1.15
 Precedence: list
@@ -87,102 +68,283 @@ List-Post: <mailto:cip-dev@lists.cip-project.org>
 List-Help: <mailto:cip-dev-request@lists.cip-project.org?subject=help>
 List-Subscribe: <https://lists.cip-project.org/mailman/listinfo/cip-dev>,
  <mailto:cip-dev-request@lists.cip-project.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Reply-To: tjwdsv@163.com
+Content-Type: multipart/mixed; boundary="===============3118903722685606891=="
 Errors-To: cip-dev-bounces@lists.cip-project.org
 Sender: "cip-dev" <cip-dev-bounces@lists.cip-project.org>
 
-Hi Kazu-san and Dinesh,
+--===============3118903722685606891==
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
 
->We found most of the packages are not included in the isar image, could you please confirm whether all the proposed packages are included in the given source?
->If it is included, could you please let us know how to install them in the image?
-I think we have to create the image for the target "cip-core-image-security" instead of "cip-core-image".
+PCFET0NUWVBFIEhUTUwgUFVCTElDICItLy9XM0MvL0RURCBIVE1MIDQuMCBUcmFuc2l0aW9uYWwv
+L0VOIj4NCjxIVE1MPjxIRUFEPg0KPE1FVEEgbmFtZT1HRU5FUkFUT1IgY29udGVudD0iTVNIVE1M
+IDExLjAwLjEwNTcwLjEwMDEiPjwvSEVBRD4NCjxCT0RZPg0KPFA+PFNQQU4gc3R5bGU9IkZPTlQt
+U0laRTogN3B0OyBGT05ULUZBTUlMWTogSGVsdmV0aWNhOyBCQUNLR1JPVU5EOiByZ2IoMjU1LDI1
+NSwyNTUpOyBURVhULVRSQU5TRk9STTogbm9uZTsgQ09MT1I6IHJnYigxNywxNywxNyk7IEZPTlQt
+U1RZTEU6IG5vcm1hbDsgTEVUVEVSLVNQQUNJTkc6IDBwdDsgbXNvLXNwYWNlcnVuOiAneWVzJzsg
+bXNvLWZvbnQta2VybmluZzogMS4wMDAwcHQ7IG1zby1zaGFkaW5nOiByZ2IoMjU1LDI1NSwyNTUp
+Ij48Rk9OVCBjb2xvcj0jMDAwMGZmIGZhY2U9IlRpbWVzIE5ldyBSb21hbiI+PFNQQU4gc3R5bGU9
+IkZPTlQtU0laRTogN3B0OyBGT05ULUZBTUlMWTogJ+W+rui9r+mbhem7kSBMaWdodCc7IEJBQ0tH
+Uk9VTkQ6IHJnYigyNTUsMjU1LDI1NSk7IFRFWFQtVFJBTlNGT1JNOiBub25lOyBDT0xPUjogcmdi
+KDE3LDE3LDE3KTsgRk9OVC1TVFlMRTogbm9ybWFsOyBMRVRURVItU1BBQ0lORzogMHB0OyBtc28t
+c3BhY2VydW46ICd5ZXMnOyBtc28tZm9udC1rZXJuaW5nOiAxLjAwMDBwdDsgbXNvLXNoYWRpbmc6
+IHJnYigyNTUsMjU1LDI1NSkiPjw/eG1sOm5hbWVzcGFjZSBwcmVmaXggPSAibyIgLz48bzpwPjxG
+T05UIGNvbG9yPSMwMDAwZmY+PFNQQU4gc3R5bGU9IkZPTlQtU0laRTogMTJwdDsgRk9OVC1GQU1J
+TFk6IOWui+S9kzsgVEVYVC1UUkFOU0ZPUk06IG5vbmU7IENPTE9SOiByZ2IoMTcsMTcsMTcpOyBG
+T05ULVNUWUxFOiBub3JtYWw7IExFVFRFUi1TUEFDSU5HOiAwcHQ7IG1zby1zcGFjZXJ1bjogJ3ll
+cyc7IG1zby1mb250LWtlcm5pbmc6IDEuMDAwMHB0OyBtc28tYXNjaWktZm9udC1mYW1pbHk6ICdD
+YWxpYnJpIExpZ2h0JzsgbXNvLWhhbnNpLWZvbnQtZmFtaWx5OiBIZWx2ZXRpY2E7IG1zby1iaWRp
+LWZvbnQtZmFtaWx5OiBIZWx2ZXRpY2EiPkhpIFNpci9NYWRhbSw8L1NQQU4+PC9GT05UPjwvbzpw
+PjwvU1BBTj48L0ZPTlQ+PC9TUEFOPjwvUD4NCjxQPjxTUEFOIHN0eWxlPSJGT05ULVNJWkU6IDdw
+dDsgRk9OVC1GQU1JTFk6IEhlbHZldGljYTsgQkFDS0dST1VORDogcmdiKDI1NSwyNTUsMjU1KTsg
+VEVYVC1UUkFOU0ZPUk06IG5vbmU7IENPTE9SOiByZ2IoMTcsMTcsMTcpOyBGT05ULVNUWUxFOiBu
+b3JtYWw7IExFVFRFUi1TUEFDSU5HOiAwcHQ7IG1zby1zcGFjZXJ1bjogJ3llcyc7IG1zby1mb250
+LWtlcm5pbmc6IDEuMDAwMHB0OyBtc28tc2hhZGluZzogcmdiKDI1NSwyNTUsMjU1KSI+PEZPTlQg
+Y29sb3I9IzAwMDBmZiBmYWNlPSJUaW1lcyBOZXcgUm9tYW4iPjxTUEFOIHN0eWxlPSJGT05ULVNJ
+WkU6IDdwdDsgRk9OVC1GQU1JTFk6ICflvq7ova/pm4Xpu5EgTGlnaHQnOyBCQUNLR1JPVU5EOiBy
+Z2IoMjU1LDI1NSwyNTUpOyBURVhULVRSQU5TRk9STTogbm9uZTsgQ09MT1I6IHJnYigxNywxNywx
+Nyk7IEZPTlQtU1RZTEU6IG5vcm1hbDsgTEVUVEVSLVNQQUNJTkc6IDBwdDsgbXNvLXNwYWNlcnVu
+OiAneWVzJzsgbXNvLWZvbnQta2VybmluZzogMS4wMDAwcHQ7IG1zby1zaGFkaW5nOiByZ2IoMjU1
+LDI1NSwyNTUpIj48bzpwPjxGT05UIGNvbG9yPSMwMDAwZmY+PFNQQU4gc3R5bGU9IkZPTlQtU0la
+RTogMTJwdDsgRk9OVC1GQU1JTFk6IOWui+S9kzsgVEVYVC1UUkFOU0ZPUk06IG5vbmU7IENPTE9S
+OiByZ2IoMTcsMTcsMTcpOyBGT05ULVNUWUxFOiBub3JtYWw7IExFVFRFUi1TUEFDSU5HOiAwcHQ7
+IG1zby1zcGFjZXJ1bjogJ3llcyc7IG1zby1mb250LWtlcm5pbmc6IDEuMDAwMHB0OyBtc28tYXNj
+aWktZm9udC1mYW1pbHk6ICdDYWxpYnJpIExpZ2h0JzsgbXNvLWhhbnNpLWZvbnQtZmFtaWx5OiBI
+ZWx2ZXRpY2E7IG1zby1iaWRpLWZvbnQtZmFtaWx5OiBIZWx2ZXRpY2EiPjwvU1BBTj48L0ZPTlQ+
+PEZPTlQgY29sb3I9IzAwMDBmZj48U1BBTiBzdHlsZT0iRk9OVC1TSVpFOiAxMnB0OyBGT05ULUZB
+TUlMWTog5a6L5L2TOyBURVhULVRSQU5TRk9STTogbm9uZTsgQ09MT1I6IHJnYigxNywxNywxNyk7
+IEZPTlQtU1RZTEU6IG5vcm1hbDsgTEVUVEVSLVNQQUNJTkc6IDBwdDsgbXNvLXNwYWNlcnVuOiAn
+eWVzJzsgbXNvLWZvbnQta2VybmluZzogMS4wMDAwcHQ7IG1zby1hc2NpaS1mb250LWZhbWlseTog
+J0NhbGlicmkgTGlnaHQnOyBtc28taGFuc2ktZm9udC1mYW1pbHk6IEhlbHZldGljYTsgbXNvLWJp
+ZGktZm9udC1mYW1pbHk6IEhlbHZldGljYSI+R2xhZCB0byBoZWFyIHRoYXQgeW91IGFyZSBvbiB0
+aGUgbWFya2V0IGZvciB2YWx2ZXMsIHdlIHNwZWNpYWxpemUgaW4gdGhpcyBmaWVsZCBmb3IgMTMg
+eWVhcnMgd2l0aCB0aGUgc3RyZW5ndGggb2YgPFU+PFNUUk9ORz5CVVRURVJGTFkgVkFMVkVTPC9T
+VFJPTkc+PC9VPiB3aXRoIGdvb2QgcXVhbGl0eSBhbmQgcHJldHR5IGNvbXBldGl0aXZlIHByaWNl
+LjwvU1BBTj48L0ZPTlQ+PC9QPjwvbzpwPjwvU1BBTj48L0ZPTlQ+PC9TUEFOPg0KPFA+PFNQQU4g
+c3R5bGU9IkZPTlQtU0laRTogN3B0OyBGT05ULUZBTUlMWTogSGVsdmV0aWNhOyBCQUNLR1JPVU5E
+OiByZ2IoMjU1LDI1NSwyNTUpOyBURVhULVRSQU5TRk9STTogbm9uZTsgQ09MT1I6IHJnYigxNywx
+NywxNyk7IEZPTlQtU1RZTEU6IG5vcm1hbDsgTEVUVEVSLVNQQUNJTkc6IDBwdDsgbXNvLXNwYWNl
+cnVuOiAneWVzJzsgbXNvLWZvbnQta2VybmluZzogMS4wMDAwcHQ7IG1zby1zaGFkaW5nOiByZ2Io
+MjU1LDI1NSwyNTUpIj48Rk9OVCBjb2xvcj0jMDAwMGZmIGZhY2U9IlRpbWVzIE5ldyBSb21hbiI+
+PFNQQU4gc3R5bGU9IkZPTlQtU0laRTogN3B0OyBGT05ULUZBTUlMWTogJ+W+rui9r+mbhem7kSBM
+aWdodCc7IEJBQ0tHUk9VTkQ6IHJnYigyNTUsMjU1LDI1NSk7IFRFWFQtVFJBTlNGT1JNOiBub25l
+OyBDT0xPUjogcmdiKDE3LDE3LDE3KTsgRk9OVC1TVFlMRTogbm9ybWFsOyBMRVRURVItU1BBQ0lO
+RzogMHB0OyBtc28tc3BhY2VydW46ICd5ZXMnOyBtc28tZm9udC1rZXJuaW5nOiAxLjAwMDBwdDsg
+bXNvLXNoYWRpbmc6IHJnYigyNTUsMjU1LDI1NSkiPjxvOnA+PEZPTlQgY29sb3I9IzAwMDBmZj48
+U1BBTiBzdHlsZT0iRk9OVC1TSVpFOiAxMnB0OyBGT05ULUZBTUlMWTog5a6L5L2TOyBURVhULVRS
+QU5TRk9STTogbm9uZTsgQ09MT1I6IHJnYigxNywxNywxNyk7IEZPTlQtU1RZTEU6IG5vcm1hbDsg
+TEVUVEVSLVNQQUNJTkc6IDBwdDsgbXNvLXNwYWNlcnVuOiAneWVzJzsgbXNvLWZvbnQta2Vybmlu
+ZzogMS4wMDAwcHQ7IG1zby1hc2NpaS1mb250LWZhbWlseTogJ0NhbGlicmkgTGlnaHQnOyBtc28t
+aGFuc2ktZm9udC1mYW1pbHk6IEhlbHZldGljYTsgbXNvLWJpZGktZm9udC1mYW1pbHk6IEhlbHZl
+dGljYSI+PEZPTlQgY29sb3I9IzAwMDBmZj48U1BBTiBzdHlsZT0iRk9OVC1TSVpFOiAxMnB0OyBG
+T05ULUZBTUlMWTog5a6L5L2TOyBURVhULVRSQU5TRk9STTogbm9uZTsgQ09MT1I6IHJnYigxNywx
+NywxNyk7IEZPTlQtU1RZTEU6IG5vcm1hbDsgTEVUVEVSLVNQQUNJTkc6IDBwdDsgbXNvLXNwYWNl
+cnVuOiAneWVzJzsgbXNvLWZvbnQta2VybmluZzogMS4wMDAwcHQ7IG1zby1hc2NpaS1mb250LWZh
+bWlseTogJ0NhbGlicmkgTGlnaHQnOyBtc28taGFuc2ktZm9udC1mYW1pbHk6IEhlbHZldGljYTsg
+bXNvLWJpZGktZm9udC1mYW1pbHk6IEhlbHZldGljYSI+PEZPTlQgY29sb3I9IzAwMDBmZj48U1BB
+TiBzdHlsZT0iRk9OVC1TSVpFOiAxMnB0OyBGT05ULUZBTUlMWTog5a6L5L2TOyBURVhULVRSQU5T
+Rk9STTogbm9uZTsgQ09MT1I6IHJnYigxNywxNywxNyk7IEZPTlQtU1RZTEU6IG5vcm1hbDsgTEVU
+VEVSLVNQQUNJTkc6IDBwdDsgbXNvLXNwYWNlcnVuOiAneWVzJzsgbXNvLWZvbnQta2VybmluZzog
+MS4wMDAwcHQ7IG1zby1hc2NpaS1mb250LWZhbWlseTogJ0NhbGlicmkgTGlnaHQnOyBtc28taGFu
+c2ktZm9udC1mYW1pbHk6IEhlbHZldGljYTsgbXNvLWJpZGktZm9udC1mYW1pbHk6IEhlbHZldGlj
+YSI+PC9TUEFOPjwvRk9OVD48L1NQQU4+PC9GT05UPjwvU1BBTj48L0ZPTlQ+PC9vOnA+PC9TUEFO
+PjwvRk9OVD48L1NQQU4+Jm5ic3A7PElNRyBzdHlsZT0iSEVJR0hUOiA1OThweDsgV0lEVEg6IDY1
+NHB4IiBib3JkZXI9MCBoc3BhY2U9MCBhbHQ9aHR0cHM6Ly9pbWcud2FpbWFvbml1Lm5ldC8xMjEy
+LzEyMTItMjAxOTEyMzAxNjE5MzQ5ODc2LmpwZyBzcmM9Imh0dHBzOi8vaW1nLndhaW1hb25pdS5u
+ZXQvMTIxMi8xMjEyLTIwMTkxMjMwMTYxOTM0OTg3Ni5qcGciIHdpZHRoPTgwMSBhbGlnbj1iYXNl
+bGluZSBoZWlnaHQ9ODAwPjwvUD4NCjxQPjxTUEFOIHN0eWxlPSJGT05ULVNJWkU6IDdwdDsgRk9O
+VC1GQU1JTFk6IEhlbHZldGljYTsgQkFDS0dST1VORDogcmdiKDI1NSwyNTUsMjU1KTsgVEVYVC1U
+UkFOU0ZPUk06IG5vbmU7IENPTE9SOiByZ2IoMTcsMTcsMTcpOyBGT05ULVNUWUxFOiBub3JtYWw7
+IExFVFRFUi1TUEFDSU5HOiAwcHQ7IG1zby1zcGFjZXJ1bjogJ3llcyc7IG1zby1mb250LWtlcm5p
+bmc6IDEuMDAwMHB0OyBtc28tc2hhZGluZzogcmdiKDI1NSwyNTUsMjU1KSI+PEZPTlQgY29sb3I9
+IzAwMDBmZiBmYWNlPSJUaW1lcyBOZXcgUm9tYW4iPjxTUEFOIHN0eWxlPSJGT05ULVNJWkU6IDdw
+dDsgRk9OVC1GQU1JTFk6ICflvq7ova/pm4Xpu5EgTGlnaHQnOyBCQUNLR1JPVU5EOiByZ2IoMjU1
+LDI1NSwyNTUpOyBURVhULVRSQU5TRk9STTogbm9uZTsgQ09MT1I6IHJnYigxNywxNywxNyk7IEZP
+TlQtU1RZTEU6IG5vcm1hbDsgTEVUVEVSLVNQQUNJTkc6IDBwdDsgbXNvLXNwYWNlcnVuOiAneWVz
+JzsgbXNvLWZvbnQta2VybmluZzogMS4wMDAwcHQ7IG1zby1zaGFkaW5nOiByZ2IoMjU1LDI1NSwy
+NTUpIj48bzpwPjxGT05UIGNvbG9yPSMwMDAwZmY+PFNQQU4gc3R5bGU9IkZPTlQtU0laRTogMTJw
+dDsgRk9OVC1GQU1JTFk6IOWui+S9kzsgVEVYVC1UUkFOU0ZPUk06IG5vbmU7IENPTE9SOiByZ2Io
+MTcsMTcsMTcpOyBGT05ULVNUWUxFOiBub3JtYWw7IExFVFRFUi1TUEFDSU5HOiAwcHQ7IG1zby1z
+cGFjZXJ1bjogJ3llcyc7IG1zby1mb250LWtlcm5pbmc6IDEuMDAwMHB0OyBtc28tYXNjaWktZm9u
+dC1mYW1pbHk6ICdDYWxpYnJpIExpZ2h0JzsgbXNvLWhhbnNpLWZvbnQtZmFtaWx5OiBIZWx2ZXRp
+Y2E7IG1zby1iaWRpLWZvbnQtZmFtaWx5OiBIZWx2ZXRpY2EiPjxGT05UIGNvbG9yPSMwMDAwZmY+
+PFNQQU4gc3R5bGU9IkZPTlQtU0laRTogMTJwdDsgRk9OVC1GQU1JTFk6IOWui+S9kzsgVEVYVC1U
+UkFOU0ZPUk06IG5vbmU7IENPTE9SOiByZ2IoMTcsMTcsMTcpOyBGT05ULVNUWUxFOiBub3JtYWw7
+IExFVFRFUi1TUEFDSU5HOiAwcHQ7IG1zby1zcGFjZXJ1bjogJ3llcyc7IG1zby1mb250LWtlcm5p
+bmc6IDEuMDAwMHB0OyBtc28tYXNjaWktZm9udC1mYW1pbHk6ICdDYWxpYnJpIExpZ2h0JzsgbXNv
+LWhhbnNpLWZvbnQtZmFtaWx5OiBIZWx2ZXRpY2E7IG1zby1iaWRpLWZvbnQtZmFtaWx5OiBIZWx2
+ZXRpY2EiPjxGT05UIGNvbG9yPSMwMDAwZmY+PFNQQU4gc3R5bGU9IkZPTlQtU0laRTogMTJwdDsg
+Rk9OVC1GQU1JTFk6IOWui+S9kzsgVEVYVC1UUkFOU0ZPUk06IG5vbmU7IENPTE9SOiByZ2IoMTcs
+MTcsMTcpOyBGT05ULVNUWUxFOiBub3JtYWw7IExFVFRFUi1TUEFDSU5HOiAwcHQ7IG1zby1zcGFj
+ZXJ1bjogJ3llcyc7IG1zby1mb250LWtlcm5pbmc6IDEuMDAwMHB0OyBtc28tYXNjaWktZm9udC1m
+YW1pbHk6ICdDYWxpYnJpIExpZ2h0JzsgbXNvLWhhbnNpLWZvbnQtZmFtaWx5OiBIZWx2ZXRpY2E7
+IG1zby1iaWRpLWZvbnQtZmFtaWx5OiBIZWx2ZXRpY2EiPkFsc28gd2UgaGF2ZSBvdXIgb3duIHBy
+b2Zlc3Npb25hbCBkZXNpZ25lcnMgdG8gbWVldCBhbnkgb2YgeW91ciByZXF1aXJlbWVudHMuPC9T
+UEFOPjxTUEFOIHN0eWxlPSJGT05ULVNJWkU6IDEycHQ7IEZPTlQtRkFNSUxZOiDlrovkvZM7IFRF
+WFQtVFJBTlNGT1JNOiBub25lOyBDT0xPUjogcmdiKDE3LDE3LDE3KTsgRk9OVC1TVFlMRTogbm9y
+bWFsOyBMRVRURVItU1BBQ0lORzogMHB0OyBtc28tc3BhY2VydW46ICd5ZXMnOyBtc28tZm9udC1r
+ZXJuaW5nOiAxLjAwMDBwdDsgbXNvLWFzY2lpLWZvbnQtZmFtaWx5OiAnQ2FsaWJyaSBMaWdodCc7
+IG1zby1oYW5zaS1mb250LWZhbWlseTogSGVsdmV0aWNhOyBtc28tYmlkaS1mb250LWZhbWlseTog
+SGVsdmV0aWNhIj48P3htbDpuYW1lc3BhY2UgcHJlZml4ID0gIm8iIG5zID0gInVybjpzY2hlbWFz
+LW1pY3Jvc29mdC1jb206b2ZmaWNlOm9mZmljZSIgLz48bzpwPjwvbzpwPjwvU1BBTj48L0ZPTlQ+
+PC9QPg0KPFAgY2xhc3M9TXNvTm9ybWFsIHN0eWxlPSJNQVJHSU46IDBwdCI+PEZPTlQgY29sb3I9
+IzAwMDBmZj48U1BBTiBzdHlsZT0iRk9OVC1TSVpFOiAxMnB0OyBGT05ULUZBTUlMWTog5a6L5L2T
+OyBDT0xPUjogcmdiKDE3LDE3LDE3KTsgRk9OVC1TVFlMRTogbm9ybWFsOyBMRVRURVItU1BBQ0lO
+RzogMHB0OyBtc28tc3BhY2VydW46ICd5ZXMnOyBtc28tZm9udC1rZXJuaW5nOiAxLjAwMDBwdDsg
+bXNvLWFzY2lpLWZvbnQtZmFtaWx5OiAnQ2FsaWJyaSBMaWdodCc7IG1zby1oYW5zaS1mb250LWZh
+bWlseTogSGVsdmV0aWNhOyBtc28tYmlkaS1mb250LWZhbWlseTogSGVsdmV0aWNhIj5JPC9TUEFO
+PjxTUEFOIHN0eWxlPSJGT05ULVNJWkU6IDEycHQ7IEZPTlQtRkFNSUxZOiDlrovkvZM7IFRFWFQt
+VFJBTlNGT1JNOiBub25lOyBDT0xPUjogcmdiKDE3LDE3LDE3KTsgRk9OVC1TVFlMRTogbm9ybWFs
+OyBMRVRURVItU1BBQ0lORzogMHB0OyBtc28tc3BhY2VydW46ICd5ZXMnOyBtc28tZm9udC1rZXJu
+aW5nOiAxLjAwMDBwdDsgbXNvLWFzY2lpLWZvbnQtZmFtaWx5OiAnQ2FsaWJyaSBMaWdodCc7IG1z
+by1oYW5zaS1mb250LWZhbWlseTogSGVsdmV0aWNhOyBtc28tYmlkaS1mb250LWZhbWlseTogSGVs
+dmV0aWNhIj5mIHlvdSBhcmUgaW50ZXJlc3RlZCBpbixQbGVhc2UgbGV0IG1lIGtub3c8L1NQQU4+
+PFNQQU4gc3R5bGU9IkZPTlQtU0laRTogMTJwdDsgRk9OVC1GQU1JTFk6IOWui+S9kzsgVEVYVC1U
+UkFOU0ZPUk06IG5vbmU7IENPTE9SOiByZ2IoMTcsMTcsMTcpOyBGT05ULVNUWUxFOiBub3JtYWw7
+IExFVFRFUi1TUEFDSU5HOiAwcHQ7IG1zby1zcGFjZXJ1bjogJ3llcyc7IG1zby1mb250LWtlcm5p
+bmc6IDEuMDAwMHB0OyBtc28tYXNjaWktZm9udC1mYW1pbHk6ICdDYWxpYnJpIExpZ2h0JzsgbXNv
+LWhhbnNpLWZvbnQtZmFtaWx5OiBIZWx2ZXRpY2E7IG1zby1iaWRpLWZvbnQtZmFtaWx5OiBIZWx2
+ZXRpY2EiPi48L1NQQU4+PFNQQU4gc3R5bGU9IkZPTlQtU0laRTogMTJwdDsgRk9OVC1GQU1JTFk6
+IOWui+S9kzsgVEVYVC1UUkFOU0ZPUk06IG5vbmU7IENPTE9SOiByZ2IoMTcsMTcsMTcpOyBGT05U
+LVNUWUxFOiBub3JtYWw7IExFVFRFUi1TUEFDSU5HOiAwcHQ7IG1zby1zcGFjZXJ1bjogJ3llcyc7
+IG1zby1mb250LWtlcm5pbmc6IDEuMDAwMHB0OyBtc28tYXNjaWktZm9udC1mYW1pbHk6ICdDYWxp
+YnJpIExpZ2h0JzsgbXNvLWhhbnNpLWZvbnQtZmFtaWx5OiBIZWx2ZXRpY2E7IG1zby1iaWRpLWZv
+bnQtZmFtaWx5OiBIZWx2ZXRpY2EiPjxvOnA+PC9vOnA+PC9TUEFOPjwvRk9OVD48L1A+DQo8UCBj
+bGFzcz1Nc29Ob3JtYWwgc3R5bGU9Ik1BUkdJTjogMHB0Ij48U1BBTiBzdHlsZT0iRk9OVC1TSVpF
+OiAxMnB0OyBGT05ULUZBTUlMWTog5a6L5L2TOyBURVhULVRSQU5TRk9STTogbm9uZTsgQ09MT1I6
+IHJnYigxNywxNywxNyk7IEZPTlQtU1RZTEU6IG5vcm1hbDsgTEVUVEVSLVNQQUNJTkc6IDBwdDsg
+bXNvLXNwYWNlcnVuOiAneWVzJzsgbXNvLWZvbnQta2VybmluZzogMS4wMDAwcHQ7IG1zby1hc2Np
+aS1mb250LWZhbWlseTogJ0NhbGlicmkgTGlnaHQnOyBtc28taGFuc2ktZm9udC1mYW1pbHk6IEhl
+bHZldGljYTsgbXNvLWJpZGktZm9udC1mYW1pbHk6IEhlbHZldGljYSI+PG86cD48Rk9OVCBjb2xv
+cj0jMDAwMGZmPiZuYnNwOzwvRk9OVD48L286cD48L1NQQU4+PC9QPg0KPFAgY2xhc3M9TXNvTm9y
+bWFsIHN0eWxlPSJNQVJHSU46IDBwdCI+PEZPTlQgY29sb3I9IzAwMDBmZj48U1BBTiBzdHlsZT0i
+Rk9OVC1TSVpFOiAxMnB0OyBGT05ULUZBTUlMWTog5a6L5L2TOyBURVhULVRSQU5TRk9STTogbm9u
+ZTsgQ09MT1I6IHJnYigxNywxNywxNyk7IEZPTlQtU1RZTEU6IG5vcm1hbDsgTEVUVEVSLVNQQUNJ
+Tkc6IDBwdDsgbXNvLXNwYWNlcnVuOiAneWVzJzsgbXNvLWZvbnQta2VybmluZzogMS4wMDAwcHQ7
+IG1zby1hc2NpaS1mb250LWZhbWlseTogJ0NhbGlicmkgTGlnaHQnOyBtc28taGFuc2ktZm9udC1m
+YW1pbHk6IEhlbHZldGljYTsgbXNvLWJpZGktZm9udC1mYW1pbHk6IEhlbHZldGljYSI+QmVzdCBS
+ZWdhcmRzITwvU1BBTj48L0ZPTlQ+PC9QPg0KPFAgY2xhc3M9TXNvTm9ybWFsIHN0eWxlPSJNQVJH
+SU46IDBwdCI+PEZPTlQgY29sb3I9IzAwMDBmZj48U1BBTiBzdHlsZT0iRk9OVC1TSVpFOiAxMnB0
+OyBGT05ULUZBTUlMWTog5a6L5L2TOyBURVhULVRSQU5TRk9STTogbm9uZTsgQ09MT1I6IHJnYigx
+NywxNywxNyk7IEZPTlQtU1RZTEU6IG5vcm1hbDsgTEVUVEVSLVNQQUNJTkc6IDBwdDsgbXNvLXNw
+YWNlcnVuOiAneWVzJzsgbXNvLWZvbnQta2VybmluZzogMS4wMDAwcHQ7IG1zby1hc2NpaS1mb250
+LWZhbWlseTogJ0NhbGlicmkgTGlnaHQnOyBtc28taGFuc2ktZm9udC1mYW1pbHk6IEhlbHZldGlj
+YTsgbXNvLWJpZGktZm9udC1mYW1pbHk6IEhlbHZldGljYSI+PC9TUEFOPjxTUEFOIHN0eWxlPSJG
+T05ULVNJWkU6IDdwdDsgRk9OVC1GQU1JTFk6ICflvq7ova/pm4Xpu5EgTGlnaHQnOyBCQUNLR1JP
+VU5EOiByZ2IoMjU1LDI1NSwyNTUpOyBURVhULVRSQU5TRk9STTogbm9uZTsgQ09MT1I6IHJnYigx
+NywxNywxNyk7IEZPTlQtU1RZTEU6IG5vcm1hbDsgTEVUVEVSLVNQQUNJTkc6IDBwdDsgbXNvLXNw
+YWNlcnVuOiAneWVzJzsgbXNvLWZvbnQta2VybmluZzogMS4wMDAwcHQ7IG1zby1zaGFkaW5nOiBy
+Z2IoMjU1LDI1NSwyNTUpIj48bzpwPjwvbzpwPjwvU1BBTj48L0ZPTlQ+Jm5ic3A7PC9QPjxTUEFO
+IHN0eWxlPSJGT05ULVNJWkU6IDdwdDsgRk9OVC1GQU1JTFk6IEhlbHZldGljYTsgQkFDS0dST1VO
+RDogcmdiKDI1NSwyNTUsMjU1KTsgVEVYVC1UUkFOU0ZPUk06IG5vbmU7IENPTE9SOiByZ2IoMTcs
+MTcsMTcpOyBGT05ULVNUWUxFOiBub3JtYWw7IExFVFRFUi1TUEFDSU5HOiAwcHQ7IG1zby1zcGFj
+ZXJ1bjogJ3llcyc7IG1zby1mb250LWtlcm5pbmc6IDEuMDAwMHB0OyBtc28tc2hhZGluZzogcmdi
+KDI1NSwyNTUsMjU1KSI+PFNQQU4gc3R5bGU9IkZPTlQtRkFNSUxZOiBDb21pYyBTYW5zIE1TOyBD
+T0xPUjogcmdiKDAsMCwyNTUpIj48Rk9OVCBjb2xvcj0jMDAwMGZmIHNpemU9MiBmYWNlPSJUaW1l
+cyBOZXcgUm9tYW4gQ0UiPg0KPFAgY2xhc3M9TXNvTm9ybWFsIHN0eWxlPSJNQVJHSU46IDBwdCI+
+PFNQQU4gc3R5bGU9IkZPTlQtU0laRTogN3B0OyBGT05ULUZBTUlMWTogSGVsdmV0aWNhOyBCQUNL
+R1JPVU5EOiByZ2IoMjU1LDI1NSwyNTUpOyBURVhULVRSQU5TRk9STTogbm9uZTsgQ09MT1I6IHJn
+YigxNywxNywxNyk7IEZPTlQtU1RZTEU6IG5vcm1hbDsgTEVUVEVSLVNQQUNJTkc6IDBwdDsgbXNv
+LXNwYWNlcnVuOiAneWVzJzsgbXNvLWZvbnQta2VybmluZzogMS4wMDAwcHQ7IG1zby1zaGFkaW5n
+OiByZ2IoMjU1LDI1NSwyNTUpIj48U1BBTiBzdHlsZT0iRk9OVC1GQU1JTFk6IENvbWljIFNhbnMg
+TVM7IENPTE9SOiByZ2IoMCwwLDI1NSkiPjxCPjxGT05UIGNvbG9yPSMwMDAwZmYgc2l6ZT0yIGZh
+Y2U9IlRpbWVzIE5ldyBSb21hbiBDRSI+SHVhbmcgRGVrYWk8L0ZPTlQ+PC9CPjwvU1BBTj48L1NQ
+QU4+PC9QPg0KPFAgY2xhc3M9TXNvTm9ybWFsIHN0eWxlPSJNQVJHSU46IDBwdCI+PFNQQU4gc3R5
+bGU9IkZPTlQtU0laRTogN3B0OyBGT05ULUZBTUlMWTogSGVsdmV0aWNhOyBCQUNLR1JPVU5EOiBy
+Z2IoMjU1LDI1NSwyNTUpOyBURVhULVRSQU5TRk9STTogbm9uZTsgQ09MT1I6IHJnYigxNywxNywx
+Nyk7IEZPTlQtU1RZTEU6IG5vcm1hbDsgTEVUVEVSLVNQQUNJTkc6IDBwdDsgbXNvLXNwYWNlcnVu
+OiAneWVzJzsgbXNvLWZvbnQta2VybmluZzogMS4wMDAwcHQ7IG1zby1zaGFkaW5nOiByZ2IoMjU1
+LDI1NSwyNTUpIj48U1BBTiBzdHlsZT0iRk9OVC1GQU1JTFk6IENvbWljIFNhbnMgTVM7IENPTE9S
+OiByZ2IoMCwwLDI1NSkiPjwvU1BBTj48L1NQQU4+PFNQQU4gc3R5bGU9IkZPTlQtU0laRTogN3B0
+OyBGT05ULUZBTUlMWTogSGVsdmV0aWNhOyBCQUNLR1JPVU5EOiByZ2IoMjU1LDI1NSwyNTUpOyBU
+RVhULVRSQU5TRk9STTogbm9uZTsgQ09MT1I6IHJnYigxNywxNywxNyk7IEZPTlQtU1RZTEU6IG5v
+cm1hbDsgTEVUVEVSLVNQQUNJTkc6IDBwdDsgbXNvLXNwYWNlcnVuOiAneWVzJzsgbXNvLWZvbnQt
+a2VybmluZzogMS4wMDAwcHQ7IG1zby1zaGFkaW5nOiByZ2IoMjU1LDI1NSwyNTUpIj48U1BBTiBz
+dHlsZT0iQ09MT1I6IHJnYigwLDAsMjU1KSI+PEZPTlQgY29sb3I9IzAwMDBmZiBzaXplPTIgZmFj
+ZT0iVGltZXMgTmV3IFJvbWFuIENFIj5fX19fX19fX19fX19fX19fX19fX19fX19fX19fPC9GT05U
+PjwvU1BBTj48L1NQQU4+PC9QPg0KPFAgY2xhc3M9TXNvTm9ybWFsIHN0eWxlPSJNQVJHSU46IDBw
+dCI+PFNQQU4gc3R5bGU9IkZPTlQtU0laRTogN3B0OyBGT05ULUZBTUlMWTogSGVsdmV0aWNhOyBC
+QUNLR1JPVU5EOiByZ2IoMjU1LDI1NSwyNTUpOyBURVhULVRSQU5TRk9STTogbm9uZTsgQ09MT1I6
+IHJnYigxNywxNywxNyk7IEZPTlQtU1RZTEU6IG5vcm1hbDsgTEVUVEVSLVNQQUNJTkc6IDBwdDsg
+bXNvLXNwYWNlcnVuOiAneWVzJzsgbXNvLWZvbnQta2VybmluZzogMS4wMDAwcHQ7IG1zby1zaGFk
+aW5nOiByZ2IoMjU1LDI1NSwyNTUpIj48U1BBTiBzdHlsZT0iQ09MT1I6IHJnYigwLDAsMjU1KSI+
+PC9TUEFOPjwvU1BBTj48U1BBTiBzdHlsZT0iRk9OVC1TSVpFOiA3cHQ7IEZPTlQtRkFNSUxZOiBI
+ZWx2ZXRpY2E7IEJBQ0tHUk9VTkQ6IHJnYigyNTUsMjU1LDI1NSk7IFRFWFQtVFJBTlNGT1JNOiBu
+b25lOyBDT0xPUjogcmdiKDE3LDE3LDE3KTsgRk9OVC1TVFlMRTogbm9ybWFsOyBMRVRURVItU1BB
+Q0lORzogMHB0OyBtc28tc3BhY2VydW46ICd5ZXMnOyBtc28tZm9udC1rZXJuaW5nOiAxLjAwMDBw
+dDsgbXNvLXNoYWRpbmc6IHJnYigyNTUsMjU1LDI1NSkiPjxTUEFOIHN0eWxlPSJDT0xPUjogcmdi
+KDAsMCwyNTUpIj48Rk9OVCBjb2xvcj0jMDAwMGZmIHNpemU9MyBmYWNlPSJUaW1lcyBOZXcgUm9t
+YW4gQ0UiPlRpYW5qaW4gV29ybGRzIFZhbHZlIGNvLiwgbHRkLjwvRk9OVD48L1NQQU4+PC9TUEFO
+PjwvUD4NCjxQIGNsYXNzPU1zb05vcm1hbCBzdHlsZT0iTUFSR0lOOiAwcHQiPjxTUEFOIHN0eWxl
+PSJGT05ULVNJWkU6IDdwdDsgRk9OVC1GQU1JTFk6IEhlbHZldGljYTsgQkFDS0dST1VORDogcmdi
+KDI1NSwyNTUsMjU1KTsgVEVYVC1UUkFOU0ZPUk06IG5vbmU7IENPTE9SOiByZ2IoMTcsMTcsMTcp
+OyBGT05ULVNUWUxFOiBub3JtYWw7IExFVFRFUi1TUEFDSU5HOiAwcHQ7IG1zby1zcGFjZXJ1bjog
+J3llcyc7IG1zby1mb250LWtlcm5pbmc6IDEuMDAwMHB0OyBtc28tc2hhZGluZzogcmdiKDI1NSwy
+NTUsMjU1KSI+PFNQQU4gc3R5bGU9IkNPTE9SOiByZ2IoMCwwLDI1NSkiPjxBIGhyZWY9Imh0dHA6
+Ly93d3cud2RzdmFsdmUuY29tLyI+PEZPTlQgc2l6ZT0zIGZhY2U9IlRpbWVzIE5ldyBSb21hbiI+
+d3d3Lndkc3ZhbHZlLmNvbTwvRk9OVD48L0E+PC9TUEFOPjwvU1BBTj48L1A+DQo8UCBjbGFzcz1N
+c29Ob3JtYWwgc3R5bGU9Ik1BUkdJTjogMHB0Ij48U1BBTiBzdHlsZT0iRk9OVC1TSVpFOiA3cHQ7
+IEZPTlQtRkFNSUxZOiBIZWx2ZXRpY2E7IEJBQ0tHUk9VTkQ6IHJnYigyNTUsMjU1LDI1NSk7IFRF
+WFQtVFJBTlNGT1JNOiBub25lOyBDT0xPUjogcmdiKDE3LDE3LDE3KTsgRk9OVC1TVFlMRTogbm9y
+bWFsOyBMRVRURVItU1BBQ0lORzogMHB0OyBtc28tc3BhY2VydW46ICd5ZXMnOyBtc28tZm9udC1r
+ZXJuaW5nOiAxLjAwMDBwdDsgbXNvLXNoYWRpbmc6IHJnYigyNTUsMjU1LDI1NSkiPjxTUEFOIHN0
+eWxlPSJDT0xPUjogcmdiKDAsMCwyNTUpIj48L1NQQU4+PC9TUEFOPjxTUEFOIHN0eWxlPSJGT05U
+LVNJWkU6IDdwdDsgRk9OVC1GQU1JTFk6IEhlbHZldGljYTsgQkFDS0dST1VORDogcmdiKDI1NSwy
+NTUsMjU1KTsgVEVYVC1UUkFOU0ZPUk06IG5vbmU7IENPTE9SOiByZ2IoMTcsMTcsMTcpOyBGT05U
+LVNUWUxFOiBub3JtYWw7IExFVFRFUi1TUEFDSU5HOiAwcHQ7IG1zby1zcGFjZXJ1bjogJ3llcyc7
+IG1zby1mb250LWtlcm5pbmc6IDEuMDAwMHB0OyBtc28tc2hhZGluZzogcmdiKDI1NSwyNTUsMjU1
+KSI+PFNQQU4gc3R5bGU9IkNPTE9SOiByZ2IoMCwwLDI1NSkiPjxGT05UIGNvbG9yPSMwMDAwZmYg
+c2l6ZT0zIGZhY2U9IlRpbWVzIE5ldyBSb21hbiBDRSI+PEEgaHJlZj0iaHR0cDovL3d3dy53b3Js
+ZHN2YWx2ZS5jb20vIj53d3cud29ybGRzdmFsdmUuY29tPC9BPjwvRk9OVD48L1NQQU4+PC9QPg0K
+PERJViBzdHlsZT0iRk9OVC1TSVpFOiAxNHB4OyBURVhULURFQ09SQVRJT046IG5vbmU7IEZPTlQt
+RkFNSUxZOiBBcmlhbDsgRk9OVC1WQVJJQU5UOiBub3JtYWw7IFdISVRFLVNQQUNFOiBub3JtYWw7
+IFdPUkQtU1BBQ0lORzogMHB4OyBURVhULVRSQU5TRk9STTogbm9uZTsgRk9OVC1XRUlHSFQ6IDQw
+MDsgQ09MT1I6IHJnYigwLDAsMCk7IEZPTlQtU1RZTEU6IG5vcm1hbDsgVEVYVC1BTElHTjogbGVm
+dDsgT1JQSEFOUzogMjsgTEVUVEVSLVNQQUNJTkc6IG5vcm1hbDsgVEVYVC1JTkRFTlQ6IDBweDsg
+LXdlYmtpdC10ZXh0LXN0cm9rZS13aWR0aDogMHB4Ij48U1BBTiBzdHlsZT0iQ09MT1I6IHJnYigw
+LDAsMjU1KSI+PEZPTlQgY29sb3I9IzAwMDBmZiBzaXplPTMgZmFjZT0iVGltZXMgTmV3IFJvbWFu
+IENFIj5UZWw6MDA4Ni0xMzY4MjA3MDI4ODwvRk9OVD48L1NQQU4+PC9ESVY+DQo8RElWIHN0eWxl
+PSJGT05ULVNJWkU6IDE0cHg7IFRFWFQtREVDT1JBVElPTjogbm9uZTsgRk9OVC1GQU1JTFk6IEFy
+aWFsOyBGT05ULVZBUklBTlQ6IG5vcm1hbDsgV0hJVEUtU1BBQ0U6IG5vcm1hbDsgV09SRC1TUEFD
+SU5HOiAwcHg7IFRFWFQtVFJBTlNGT1JNOiBub25lOyBGT05ULVdFSUdIVDogNDAwOyBDT0xPUjog
+cmdiKDAsMCwwKTsgRk9OVC1TVFlMRTogbm9ybWFsOyBURVhULUFMSUdOOiBsZWZ0OyBPUlBIQU5T
+OiAyOyBMRVRURVItU1BBQ0lORzogbm9ybWFsOyBURVhULUlOREVOVDogMHB4OyAtd2Via2l0LXRl
+eHQtc3Ryb2tlLXdpZHRoOiAwcHgiPjxTUEFOIHN0eWxlPSJDT0xPUjogcmdiKDAsMCwyNTUpIj48
+Rk9OVCBzaXplPTMgZmFjZT0iVGltZXMgTmV3IFJvbWFuIENFIj5MaW5rZWRpbjo8QSBocmVmPSJo
+dHRwczovL3d3dy5saW5rZWRpbi5jb20vaW4vYnV0dGVyZmx5dmFsdmVzMS8iPmh0dHBzOi8vd3d3
+LmxpbmtlZGluLmNvbS9pbi9idXR0ZXJmbHl2YWx2ZXMxLzwvQT48L0ZPTlQ+PC9TUEFOPjwvRElW
+Pg0KPERJViBzdHlsZT0iRk9OVC1TSVpFOiAxNHB4OyBURVhULURFQ09SQVRJT046IG5vbmU7IEZP
+TlQtRkFNSUxZOiBBcmlhbDsgRk9OVC1WQVJJQU5UOiBub3JtYWw7IFdISVRFLVNQQUNFOiBub3Jt
+YWw7IFdPUkQtU1BBQ0lORzogMHB4OyBURVhULVRSQU5TRk9STTogbm9uZTsgRk9OVC1XRUlHSFQ6
+IDQwMDsgQ09MT1I6IHJnYigwLDAsMCk7IEZPTlQtU1RZTEU6IG5vcm1hbDsgVEVYVC1BTElHTjog
+bGVmdDsgT1JQSEFOUzogMjsgTEVUVEVSLVNQQUNJTkc6IG5vcm1hbDsgVEVYVC1JTkRFTlQ6IDBw
+eDsgLXdlYmtpdC10ZXh0LXN0cm9rZS13aWR0aDogMHB4Ij48U1BBTiBzdHlsZT0iQ09MT1I6IHJn
+YigwLDAsMjU1KSI+PEZPTlQgc2l6ZT0zIGZhY2U9IlRpbWVzIE5ldyBSb21hbiBDRSI+PEEgaHJl
+Zj0iaHR0cHM6Ly93d3cubGlua2VkaW4uY29tL2NvbXBhbnkvdGlhbmppbi13b3JsZHMtdmFsdmUt
+Y28tbHRkLyI+aHR0cHM6Ly93d3cubGlua2VkaW4uY29tL2NvbXBhbnkvdGlhbmppbi13b3JsZHMt
+dmFsdmUtY28tbHRkLzwvQT48L0ZPTlQ+PC9TUEFOPjwvRElWPg0KPERJViBzdHlsZT0iRk9OVC1T
+SVpFOiAxNHB4OyBURVhULURFQ09SQVRJT046IG5vbmU7IEZPTlQtRkFNSUxZOiBBcmlhbDsgRk9O
+VC1WQVJJQU5UOiBub3JtYWw7IFdISVRFLVNQQUNFOiBub3JtYWw7IFdPUkQtU1BBQ0lORzogMHB4
+OyBURVhULVRSQU5TRk9STTogbm9uZTsgRk9OVC1XRUlHSFQ6IDQwMDsgQ09MT1I6IHJnYigwLDAs
+MCk7IEZPTlQtU1RZTEU6IG5vcm1hbDsgVEVYVC1BTElHTjogbGVmdDsgT1JQSEFOUzogMjsgTEVU
+VEVSLVNQQUNJTkc6IG5vcm1hbDsgVEVYVC1JTkRFTlQ6IDBweDsgLXdlYmtpdC10ZXh0LXN0cm9r
+ZS13aWR0aDogMHB4Ij48U1BBTiBzdHlsZT0iQ09MT1I6IHJnYigwLDAsMjU1KSI+PEZPTlQgY29s
+b3I9IzAwMDBmZiBzaXplPTMgZmFjZT0iVGltZXMgTmV3IFJvbWFuIENFIj5BZGQ6Tm8uMjUsRnVo
+dWkgUm9hZCxKaW5uYW4gRGlzdHJpY3QsVGlhbmppbiwgQ2hpbmE8L0ZPTlQ+PC9TUEFOPjwvU1BB
+Tj48L0RJVj48L0ZPTlQ+PC9TUEFOPjwvU1BBTj48L1NQQU4+PC9GT05UPjwvU1BBTj48L0ZPTlQ+
+PC9vOnA+PC9TUEFOPjwvRk9OVD48L1NQQU4+PC9CT0RZPjwvSFRNTD4NCg==
 
-All the security packages are configured to install are present in this file "cip-core-image-security.bb".
-
-I will generate the image for target "cip-core-image-security" and recheck all the security functionality.
-
-Thanks,
-Venkata.
-
------Original Message-----
-From: Cip-security [mailto:cip-security-bounces@lists.cip-project.org] On Behalf Of Dinesh Kumar
-Sent: 02 March 2020 15:29
-To: kazuhiro3.hayashi@toshiba.co.jp
-Cc: cip-security@lists.cip-project.org; cip-dev@lists.cip-project.org
-Subject: Re: [Cip-security] Sample image including security packages
-
-Dear Kazu-san,
-
-Thanks for sharing the isar-cip-core repository details with us.
-
-We followed below steps to first confirm whether all the proposed binaries are included when we create CIP isar based image.
-1. Create CIP isar based image from "https://gitlab.com/zuka0828/isar-cip-core/-/tree/master"  for QEMU_x86-64 platform 2. Booted the image in QEMU virtual machine 3. For each security package we compared the binaries listed on Debian page e.g. for acl package at (https://packages.debian.org/buster/amd64/acl/filelist)
-     According to the Debian page there are three binaries which should be present in the image "/bin/chacl", "/bin/getfacl", "/bin/setfacl".
-     Then we check in the CIP running image at /bin whether all three packages are included or not.
-4. Based on this kind of investigation we have prepare the attached list of missing binary packages in current CIP isar image.
-
-We found most of the packages are not included in the isar image, could you please confirm whether all the proposed packages are included in the given source?
-If it is included, could you please let us know how to install them in the image?
-
-Once all the security packages are included in the CIP isar image, we will proceed to next step of verifying applicable IEC 62443-4-2 security requirements.
-
-Thanks & Regards,
-Dinesh Kumar
-
-
------Original Message-----
-From: Cip-security <cip-security-bounces@lists.cip-project.org> On Behalf Of kazuhiro3.hayashi@toshiba.co.jp
-Sent: 21 February 2020 10:58
-To: cip-security@lists.cip-project.org
-Cc: cip-dev@lists.cip-project.org
-Subject: [Cip-security] Sample image including security packages
-
-Hello CIP Security WG,
-
-I've created a sample setting to customize CIP Core generic profile.
-https://gitlab.com/zuka0828/isar-cip-core/-/tree/master
-(Now in my personal account)
-
-Introduction: https://gitlab.com/zuka0828/isar-cip-core/-/blob/master/SECURITY.md
-
-Please ask in cip-dev if you need more development information :)
-
-Note: `sudo` and `sudo-ldap` conflict each other, but both were proposed.
-We need to select one from them.
-I temporally removed the both from `IMAGE_PREINSTALL`.
-
-Best regards,
-Kazu
-
-_______________________________________________
-Cip-security mailing list
-Cip-security@lists.cip-project.org
-https://lists.cip-project.org/mailman/listinfo/cip-security
-The information contained in this e-mail message and in any attachments/annexure/appendices is confidential to the recipient and may contain privileged information. 
-If you are not the intended recipient, please notify the sender and delete the message along with any attachments/annexure/appendices. You should not disclose, copy or otherwise use the information contained in the message or any annexure. Any views expressed in this e-mail are those of the individual sender except where the sender specifically states them to be the views of Toshiba Software India Pvt. Ltd. (TSIP),Bangalore.
-
-Although this transmission and any attachments are believed to be free of any virus or other defect that might affect any computer system into which it is received and opened, it is the responsibility of the recipient to ensure that it is virus free and no responsibility is accepted by Toshiba Embedded Software India Pvt. Ltd, for any loss or damage arising in any way from its use.
-The information contained in this e-mail message and in any
-attachments/annexure/appendices is confidential to the 
-recipient and may contain privileged information. 
-If you are not the intended recipient, please notify the
-sender and delete the message along with any 
-attachments/annexure/appendices. You should not disclose,
-copy or otherwise use the information contained in the
-message or any annexure. Any views expressed in this e-mail 
-are those of the individual sender except where the sender 
-specifically states them to be the views of 
-Toshiba Software India Pvt. Ltd. (TSIP),Bangalore.
-
-Although this transmission and any attachments are believed to be
-free of any virus or other defect that might affect any computer 
-system into which it is received and opened, it is the responsibility
-of the recipient to ensure that it is virus free and no responsibility 
-is accepted by Toshiba Embedded Software India Pvt. Ltd, for any loss or
-damage arising in any way from its use.
+--===============3118903722685606891==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
 cip-dev mailing list
 cip-dev@lists.cip-project.org
 https://lists.cip-project.org/mailman/listinfo/cip-dev
+
+--===============3118903722685606891==--
