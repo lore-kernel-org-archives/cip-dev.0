@@ -1,80 +1,86 @@
-Return-Path: <SRS0=huxU=4W=lists.cip-project.org=cip-dev-bounces@kernel.org>
+Return-Path: <SRS0=RU50=4X=lists.cip-project.org=cip-dev-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94794C3F2CD
-	for <cip-dev@archiver.kernel.org>; Thu,  5 Mar 2020 09:06:23 +0000 (UTC)
-Received: from hemlock.osuosl.org (smtp2.osuosl.org [140.211.166.133])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62DB3C10DCE
+	for <cip-dev@archiver.kernel.org>; Fri,  6 Mar 2020 08:21:43 +0000 (UTC)
+Received: from whitealder.osuosl.org (smtp1.osuosl.org [140.211.166.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 20C60208CD
-	for <cip-dev@archiver.kernel.org>; Thu,  5 Mar 2020 09:06:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20C60208CD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toshiba-tsip.com
+	by mail.kernel.org (Postfix) with ESMTPS id 1F30220848
+	for <cip-dev@archiver.kernel.org>; Fri,  6 Mar 2020 08:21:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="prerTpmb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F30220848
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=cip-dev-bounces@lists.cip-project.org
 Received: from localhost (localhost [127.0.0.1])
-	by hemlock.osuosl.org (Postfix) with ESMTP id EB67582028;
-	Thu,  5 Mar 2020 09:06:22 +0000 (UTC)
+	by whitealder.osuosl.org (Postfix) with ESMTP id D661A87475;
+	Fri,  6 Mar 2020 08:21:42 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from hemlock.osuosl.org ([127.0.0.1])
+Received: from whitealder.osuosl.org ([127.0.0.1])
 	by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id PtR0LD1kf7WP; Thu,  5 Mar 2020 09:06:21 +0000 (UTC)
+	with ESMTP id LDlmbgl60lTS; Fri,  6 Mar 2020 08:21:41 +0000 (UTC)
 Received: from lists.linuxfoundation.org (lf-lists.osuosl.org [140.211.9.56])
-	by hemlock.osuosl.org (Postfix) with ESMTP id C54568545D;
-	Thu,  5 Mar 2020 09:06:21 +0000 (UTC)
+	by whitealder.osuosl.org (Postfix) with ESMTP id E751286BE0;
+	Fri,  6 Mar 2020 08:21:41 +0000 (UTC)
 Received: from lf-lists.osuosl.org (localhost [127.0.0.1])
-	by lists.linuxfoundation.org (Postfix) with ESMTP id B277DC013E;
-	Thu,  5 Mar 2020 09:06:21 +0000 (UTC)
-Received: from fraxinus.osuosl.org (smtp4.osuosl.org [140.211.166.137])
- by lists.linuxfoundation.org (Postfix) with ESMTP id 734AFC013E;
- Thu,  5 Mar 2020 09:06:18 +0000 (UTC)
+	by lists.linuxfoundation.org (Postfix) with ESMTP id CB7B1C013E;
+	Fri,  6 Mar 2020 08:21:41 +0000 (UTC)
+Received: from silver.osuosl.org (smtp3.osuosl.org [140.211.166.136])
+ by lists.linuxfoundation.org (Postfix) with ESMTP id 8EBC4C013E
+ for <cip-dev@lists.cip-project.org>; Fri,  6 Mar 2020 08:21:40 +0000 (UTC)
 Received: from localhost (localhost [127.0.0.1])
- by fraxinus.osuosl.org (Postfix) with ESMTP id 5D5D5842DD;
- Thu,  5 Mar 2020 09:06:18 +0000 (UTC)
+ by silver.osuosl.org (Postfix) with ESMTP id 78FBF20380
+ for <cip-dev@lists.cip-project.org>; Fri,  6 Mar 2020 08:21:40 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from fraxinus.osuosl.org ([127.0.0.1])
+Received: from silver.osuosl.org ([127.0.0.1])
  by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id l-R6zidn2WZX; Thu,  5 Mar 2020 09:06:14 +0000 (UTC)
+ with ESMTP id NSxypodeL+Y6 for <cip-dev@lists.cip-project.org>;
+ Fri,  6 Mar 2020 08:21:39 +0000 (UTC)
 X-Greylist: domain auto-whitelisted by SQLgrey-1.7.6
-X-Greylist: domain auto-whitelisted by SQLgrey-1.7.6
-Received: from peak.toshiba-tesi.com (mail.toshiba-tsip.com [202.56.254.199])
- by fraxinus.osuosl.org (Postfix) with ESMTP id 6A40884493;
- Thu,  5 Mar 2020 09:06:11 +0000 (UTC)
-IronPort-SDR: W20ruLiaW7Ez81/PvmbbpdnBfYrWVix2lf7VjgiDUKZocxOywHzYPJ68WF7vxBX4LP1V5bjAxQ
- +c+3z4CTIpaA==
-X-IronPort-AV: E=Sophos;i="5.70,517,1574101800"; 
-   d="scan'208";a="2277766"
-Received: from unknown (HELO TOSBLRMBX0119.TOSHIBA-TSIP.COM) ([172.28.80.118])
- by peak.toshiba-tesi.com with ESMTP; 05 Mar 2020 14:52:18 +0530
-Received: from TOSBLRMBX0219.TOSHIBA-TSIP.COM (172.28.80.119) by
- TOSBLRMBX0119.TOSHIBA-TSIP.COM (172.28.80.118) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1847.3; Thu, 5 Mar 2020 14:36:04 +0530
-Received: from TOSBLRMBX0219.TOSHIBA-TSIP.COM ([::1]) by
- TOSBLRMBX0219.TOSHIBA-TSIP.COM ([fe80::8d35:f069:2af2:deff%9]) with mapi id
- 15.01.1847.003; Thu, 5 Mar 2020 14:36:04 +0530
-From: Venkata Seshagiri Pyla <Venkata.Pyla@toshiba-tsip.com>
-To: "kazuhiro3.hayashi@toshiba.co.jp" <kazuhiro3.hayashi@toshiba.co.jp>,
- Dinesh Kumar <Dinesh.Kumar@TOSHIBA-TSIP.COM>
-Thread-Topic: Sample image including security packages
-Thread-Index: AdXod0daEQ5yvAxmSqGjegxSRddNWwH/ZrKgAAl2o6AAi1X9QA==
-Date: Thu, 5 Mar 2020 09:06:04 +0000
-Message-ID: <5dda4cb9fd40483d92ee99145522cca0@toshiba-tsip.com>
-References: <TYXPR01MB1808AD5423CA82AE50EC4D90E1120@TYXPR01MB1808.jpnprd01.prod.outlook.com>
- <7ba7bb426c814ffcaefeccd646b0e302@TOSHIBA-TSIP.COM> 
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.28.80.121]
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com
+ [209.85.160.169])
+ by silver.osuosl.org (Postfix) with ESMTPS id 7FB8C20242
+ for <cip-dev@lists.cip-project.org>; Fri,  6 Mar 2020 08:21:39 +0000 (UTC)
+Received: by mail-qt1-f169.google.com with SMTP id a4so1103308qto.12
+ for <cip-dev@lists.cip-project.org>; Fri, 06 Mar 2020 00:21:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025;
+ h=mime-version:from:date:message-id:subject:to:cc;
+ bh=UNCJEdk/3/9gB2GYr2f+TGx1yThVLscfwj7O5mRYoo0=;
+ b=prerTpmbsWJ3NZE+2qZa2Sv+YKTKOKaitOorxwaIuhkoRI3uOWkIhN+oUKxpVMJ88G
+ FgsojdjGmUiYQvsR4G/cPEV0e/phhxwFMNmLaHh3qyZVCQ3Avp7A6xO6NnxRGoAyCWE0
+ nInaUwV61TTXP3wvx/IZ+Ade14dvBrA15gmhwD5+Ku/XLzVd6aJDtMjKXglZAwzXwqWl
+ KOWUpYam6DMNzHHYxQNNiPyLaNvKfpOtfE32Qp5dj76HC1UTCy2Rb4VoQ6GEj6/9gTaM
+ FYUUms9Mi09CSGtggkbTxDN8wKDSVnG1yEJXQ3Aekcm/t2iwMBU8s6Nd5VKsb7nreocb
+ OZwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20161025;
+ h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+ bh=UNCJEdk/3/9gB2GYr2f+TGx1yThVLscfwj7O5mRYoo0=;
+ b=Pbon9e5UMhS3G+Hpytcn+gL+CTOkp5ovvA1X3XNOMTp81wAAbbJWJX3CVXuOrwV42f
+ 4dU5dRIva78tDs73H8tnyyZE5sPij1MzXO+yEI2rmw6TMyGTj4eD8HVuErF2SzKiJWo5
+ KkcYChGKjCKcYfxoxtB+Kl3F9aKzUjfXGiKXniOQRjEEgxF0o9+bc9u50e7Jl3Mg+QwG
+ SJNKzDImuMsGWKPZI/DuS2X5ufC5gHyW4WfaZ8vYcWKCireqHMQMrF2Tg7VzQLJMHk71
+ gkZvqTybiYAk1855zGfxbKEQ6weyug4nu4FfjXZfewwRW6Q0mVfWPNG9Qsg04M03NXuA
+ Mf2g==
+X-Gm-Message-State: ANhLgQ0RiqHSYVSBxmtgkqUx0QjEVQ5OOBWZwuu1BZA6QoY8Rqxbtj8j
+ NM+hxi9l2prQThchq+4FSOas95dmRA6xuG4GYCH7bhtN5Io=
+X-Google-Smtp-Source: ADFU+vsYA1unzv3mLcPic+kQyARctFs33JQM+zk4jwMPzaB9jO1DRVWIIn0zT3mD8lfNKpQ3eXNJDBZHcwh8d/2Y4kE=
+X-Received: by 2002:ac8:3671:: with SMTP id n46mr1945525qtb.33.1583482898268; 
+ Fri, 06 Mar 2020 00:21:38 -0800 (PST)
 MIME-Version: 1.0
-Cc: "cip-security@lists.cip-project.org" <cip-security@lists.cip-project.org>,
- "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-Subject: Re: [cip-dev] Sample image including security packages
+From: vijai kumar <vijaikumar.kanagarajan@gmail.com>
+Date: Fri, 6 Mar 2020 13:51:27 +0530
+Message-ID: <CALLGG_Juuz3wktbc71uo68shAU4ZpaxKzAqycKtzKd0R4Meemg@mail.gmail.com>
+To: cip-dev@lists.cip-project.org
+Cc: Jan Kiszka <jan.kiszka@siemens.com>
+Subject: [cip-dev] Linux-cip: Kselftest plans
 X-BeenThere: cip-dev@lists.cip-project.org
 X-Mailman-Version: 2.1.15
 Precedence: list
@@ -91,126 +97,22 @@ Content-Transfer-Encoding: 7bit
 Errors-To: cip-dev-bounces@lists.cip-project.org
 Sender: "cip-dev" <cip-dev-bounces@lists.cip-project.org>
 
-Hi Kazu-san and Dinesh,
+Hi All,
 
-I have created the image with all proposed security packages included.
-applied the below change, and booted the image in QEMU correctly.
------------------
-diff --git a/recipes-core/images/cip-core-image-security.bb b/recipes-core/images/cip-core-image-security.bb
-index 70571f8..b883414 100644
---- a/recipes-core/images/cip-core-image-security.bb
-+++ b/recipes-core/images/cip-core-image-security.bb
-@@ -18,7 +18,7 @@ IMAGE_INSTALL += "customizations"
- 
- # Debian packages that provide security features
- # TODO: Add sudo or sudo-ldap which conflict each other
--IMAGE_PREINSTALL = " \
-+IMAGE_PREINSTALL += " \
- 	openssl libssl1.1 \
- 	fail2ban \
- 	openssh-server openssh-sftp-server openssh-client \
---
------------------
+Is kselftest maintained in the cip-kernel tree? I do see some
+branch[1] maintained by Nobuhiro-san for kselftest, but it's out of
+5.6 linux tree.
 
-Thanks
-venkata
------Original Message-----
-From: Venkata Seshagiri Pyla 
-Sent: 02 March 2020 19:38
-To: Dinesh Kumar <Dinesh.Kumar@TOSHIBA-TSIP.COM>; kazuhiro3.hayashi@toshiba.co.jp
-Cc: cip-security@lists.cip-project.org; cip-dev@lists.cip-project.org
-Subject: RE: Sample image including security packages
+The reason being to gather collective thoughts about the plan for
+kselftest based tests for cip kernel. Are there any existing or future
+plans for using kselftest for testing cip kernels? If so are we going
+to use the latest tree from upstream or plan to fix/backport test
+cases to current cip kernel versions?
 
-Hi Kazu-san and Dinesh,
-
->We found most of the packages are not included in the isar image, could you please confirm whether all the proposed packages are included in the given source?
->If it is included, could you please let us know how to install them in the image?
-I think we have to create the image for the target "cip-core-image-security" instead of "cip-core-image".
-
-All the security packages are configured to install are present in this file "cip-core-image-security.bb".
-
-I will generate the image for target "cip-core-image-security" and recheck all the security functionality.
+[1] https://gitlab.com/cip-project/cip-kernel/linux-cip/-/tree/ci/iwamatsu/linux-cip-kselftest
 
 Thanks,
-Venkata.
-
------Original Message-----
-From: Cip-security [mailto:cip-security-bounces@lists.cip-project.org] On Behalf Of Dinesh Kumar
-Sent: 02 March 2020 15:29
-To: kazuhiro3.hayashi@toshiba.co.jp
-Cc: cip-security@lists.cip-project.org; cip-dev@lists.cip-project.org
-Subject: Re: [Cip-security] Sample image including security packages
-
-Dear Kazu-san,
-
-Thanks for sharing the isar-cip-core repository details with us.
-
-We followed below steps to first confirm whether all the proposed binaries are included when we create CIP isar based image.
-1. Create CIP isar based image from "https://gitlab.com/zuka0828/isar-cip-core/-/tree/master"  for QEMU_x86-64 platform 2. Booted the image in QEMU virtual machine 3. For each security package we compared the binaries listed on Debian page e.g. for acl package at (https://packages.debian.org/buster/amd64/acl/filelist)
-     According to the Debian page there are three binaries which should be present in the image "/bin/chacl", "/bin/getfacl", "/bin/setfacl".
-     Then we check in the CIP running image at /bin whether all three packages are included or not.
-4. Based on this kind of investigation we have prepare the attached list of missing binary packages in current CIP isar image.
-
-We found most of the packages are not included in the isar image, could you please confirm whether all the proposed packages are included in the given source?
-If it is included, could you please let us know how to install them in the image?
-
-Once all the security packages are included in the CIP isar image, we will proceed to next step of verifying applicable IEC 62443-4-2 security requirements.
-
-Thanks & Regards,
-Dinesh Kumar
-
-
------Original Message-----
-From: Cip-security <cip-security-bounces@lists.cip-project.org> On Behalf Of kazuhiro3.hayashi@toshiba.co.jp
-Sent: 21 February 2020 10:58
-To: cip-security@lists.cip-project.org
-Cc: cip-dev@lists.cip-project.org
-Subject: [Cip-security] Sample image including security packages
-
-Hello CIP Security WG,
-
-I've created a sample setting to customize CIP Core generic profile.
-https://gitlab.com/zuka0828/isar-cip-core/-/tree/master
-(Now in my personal account)
-
-Introduction: https://gitlab.com/zuka0828/isar-cip-core/-/blob/master/SECURITY.md
-
-Please ask in cip-dev if you need more development information :)
-
-Note: `sudo` and `sudo-ldap` conflict each other, but both were proposed.
-We need to select one from them.
-I temporally removed the both from `IMAGE_PREINSTALL`.
-
-Best regards,
-Kazu
-
-_______________________________________________
-Cip-security mailing list
-Cip-security@lists.cip-project.org
-https://lists.cip-project.org/mailman/listinfo/cip-security
-The information contained in this e-mail message and in any attachments/annexure/appendices is confidential to the recipient and may contain privileged information. 
-If you are not the intended recipient, please notify the sender and delete the message along with any attachments/annexure/appendices. You should not disclose, copy or otherwise use the information contained in the message or any annexure. Any views expressed in this e-mail are those of the individual sender except where the sender specifically states them to be the views of Toshiba Software India Pvt. Ltd. (TSIP),Bangalore.
-
-Although this transmission and any attachments are believed to be free of any virus or other defect that might affect any computer system into which it is received and opened, it is the responsibility of the recipient to ensure that it is virus free and no responsibility is accepted by Toshiba Embedded Software India Pvt. Ltd, for any loss or damage arising in any way from its use.
-The information contained in this e-mail message and in any
-attachments/annexure/appendices is confidential to the 
-recipient and may contain privileged information. 
-If you are not the intended recipient, please notify the
-sender and delete the message along with any 
-attachments/annexure/appendices. You should not disclose,
-copy or otherwise use the information contained in the
-message or any annexure. Any views expressed in this e-mail 
-are those of the individual sender except where the sender 
-specifically states them to be the views of 
-Toshiba Software India Pvt. Ltd. (TSIP),Bangalore.
-
-Although this transmission and any attachments are believed to be
-free of any virus or other defect that might affect any computer 
-system into which it is received and opened, it is the responsibility
-of the recipient to ensure that it is virus free and no responsibility 
-is accepted by Toshiba Embedded Software India Pvt. Ltd, for any loss or
-damage arising in any way from its use.
-
+Vijai Kumar K
 _______________________________________________
 cip-dev mailing list
 cip-dev@lists.cip-project.org
