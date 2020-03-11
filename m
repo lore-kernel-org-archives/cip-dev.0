@@ -1,125 +1,205 @@
+Return-Path: <Bikram_Bhola@mentor.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from APC01-HK2-obe.outbound.protection.outlook.com (APC01-HK2-obe.outbound.protection.outlook.com [40.107.130.93])
- by mx.groups.io with SMTP id smtpd.web11.2976.1588233573402726965
- for <cip-dev@lists.cip-project.org>;
- Thu, 30 Apr 2020 00:59:34 -0700
-Authentication-Results: mx.groups.io;
- dkim=pass header.i=@intra01.onmicrosoft.com header.s=selector1-intra01-onmicrosoft-com header.b=A7/9XUb+;
- spf=pass (domain: cybertrust.co.jp, ip: 40.107.130.93, mailfrom: masashi.kudo@cybertrust.co.jp)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=e5/fPSPcs28ncYY9EGR+QESG+HroT1fuPJMiBUYgThwUykZ6AvamwPcc/gxlhIqqvqLYqRHfMUxGONRjgBvPU/4le10dIWYDntiIVp0TI+w3VC/bDWYKU0Gs46duqsbMVIFMjMC+oechdNppecFoV/g33gk2AO606ZgDhvVCu6QvlaJV3ZH85OgITDZr3EWvD0Ud0XYv42NGcnflzD3HYOP7G0u15JTpd3bktqc9SfqyrGtZ277p9RqYPB/7IzEqCbiWEQn2rV50pkrNf+U7sHPtlZUqVPDdjCHt04DpQVBr/0lvdc7hJjS89MHtuM+kB+1kqe2EOOL1cm3UxdtkPA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gDK8C4nIFH8AstSr/ZnnpABFLH9Y5+3c2DIGpS5wDVg=;
- b=Mehdr2DBpALe4/x6b555rME7r/YASEVwmiKWgQQUBwCwKs4lAEF/N37tfJjNaHGX4VNE6S7GYovvevqJ8l+j9gyKBtqROAl5xtso2WZoOIUC9dG+bw72MhF1Vnvq3cn4idbi99YLMc+yWkqLFtLOu9ZIIjkCPQr96SJO3FaiX2rlwisrN3+waUtNvtQxwwsx7sFOSLFVz8euIoDYScYQ6c3p0A0alfcdibNfQ81yD6V2vzC7kWxdCbU7QiH2wNpR7xLS5YrLixXe0j1x61oZpf6HoROCyyspnAiNe0lSmr6zzZ9t0duBkSLRt81UmT4nmjDCe3xfHgh89tVV3irKbw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cybertrust.co.jp; dmarc=pass action=none
- header.from=cybertrust.co.jp; dkim=pass header.d=cybertrust.co.jp; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=intra01.onmicrosoft.com; s=selector1-intra01-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gDK8C4nIFH8AstSr/ZnnpABFLH9Y5+3c2DIGpS5wDVg=;
- b=A7/9XUb+zKleFax1Rd6aF8JPlZ6/McJKp+7XllPCJ30nAIHNAMS1H5Dw1Mi5O5e87/EDfJC8stu06utcuiJ//0B0AntSxNus/RRZ1UQSm58aK2SN+gewVs7/WjI20igSoQ1KCdTOR207jKMFZSY6nnUGo2PrLu1t52S+iKLAN4c=
-Received: from TY2PR01MB4972.jpnprd01.prod.outlook.com (20.179.172.148) by
- TY2PR01MB2457.jpnprd01.prod.outlook.com (20.177.97.74) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2937.22; Thu, 30 Apr 2020 07:59:17 +0000
-Received: from TY2PR01MB4972.jpnprd01.prod.outlook.com
- ([fe80::d9d9:60fe:a138:6752]) by TY2PR01MB4972.jpnprd01.prod.outlook.com
- ([fe80::d9d9:60fe:a138:6752%4]) with mapi id 15.20.2937.028; Thu, 30 Apr 2020
- 07:59:17 +0000
-From: "masashi.kudo@cybertrust.co.jp" <masashi.kudo@cybertrust.co.jp>
-To: <cip-dev@lists.cip-project.org>
-Subject: Re: [cip-dev] CIP IRC weekly meeting today
-Thread-Topic: [cip-dev] CIP IRC weekly meeting today
-Thread-Index: AdYeii420HEWkZLJTG+HNfuVKCzjngAOb5uQAABLbLA=
-Date: Thu, 30 Apr 2020 07:59:17 +0000
-Message-ID: 
- <TY2PR01MB497278C2FC9FA3D574DBBA1CA0AA0@TY2PR01MB4972.jpnprd01.prod.outlook.com>
-References: 
- <TY2PR01MB497292B5ABFEA4BC5CC874F9A0AA0@TY2PR01MB4972.jpnprd01.prod.outlook.com>
- <OSAPR01MB3667B7F6BD8666E1A789657E92AA0@OSAPR01MB3667.jpnprd01.prod.outlook.com>
-In-Reply-To: 
- <OSAPR01MB3667B7F6BD8666E1A789657E92AA0@OSAPR01MB3667.jpnprd01.prod.outlook.com>
-Accept-Language: ja-JP, en-US
+Received: from whitealder.osuosl.org (smtp1.osuosl.org [140.211.166.138])
+ by lists.linuxfoundation.org (Postfix) with ESMTP id F3D10C0177
+ for <cip-dev@lists.cip-project.org>; Wed, 11 Mar 2020 15:44:03 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+ by whitealder.osuosl.org (Postfix) with ESMTP id E0E30876FD
+ for <cip-dev@lists.cip-project.org>; Wed, 11 Mar 2020 15:44:03 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at osuosl.org
+Received: from whitealder.osuosl.org ([127.0.0.1])
+ by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id P-aXvd77aqYW for <cip-dev@lists.cip-project.org>;
+ Wed, 11 Mar 2020 15:44:02 +0000 (UTC)
+X-Greylist: delayed 00:07:06 by SQLgrey-1.7.6
+Received: from esa1.mentor.iphmx.com (esa1.mentor.iphmx.com [68.232.129.153])
+ by whitealder.osuosl.org (Postfix) with ESMTPS id C1D19876DB
+ for <cip-dev@lists.cip-project.org>; Wed, 11 Mar 2020 15:44:02 +0000 (UTC)
+IronPort-SDR: z/tk2sNhjAu2SiYQk9J2vyxwYu5ZeQXqnOwcjJQXK4on54OKYD41x6hVOYF1rSQm3jhS+1GuUp
+ bwezHWovnvXTMnb9+EIVnIyvTTtygejJC29nSjVIt6m7B+dBU4CC45/VtGBjSei/eYvMa65IIv
+ NWpfrXa1xt8TEKkA6kj6lE2FLLeWrHecWzfsv4m51nklxELXkNHcH9bgwVmlGLqvtDIZF6fQpL
+ hGtZOyXVwKTpgQ9pGmlLZwm0qn10pSLShZbyWkq0MrGhA25vDW2k3f0Bl1tIHizmaM+PLV2cTl
+ A2M=
+X-URL-LookUp-ScanningError: 1
+X-IronPort-AV: E=Sophos;i="5.70,541,1574150400"; d="scan'208";a="48578644"
+Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
+ by esa1.mentor.iphmx.com with ESMTP; 11 Mar 2020 07:36:55 -0800
+IronPort-SDR: nV8fQEMZZwSBeL+2nFd7Snn6Mss4amJFQ+DFGI4PjkeeeH9Ibw4cpd/j+eekwBYggKPqzjPUsl
+ edqssqZINhvpYQ4aXPtVs7+9NFOVWuq1wXB3Vy+iIFQX5XDVXwPB2eNCX6S5G+o6B8tihsl53Z
+ 4eFao8LpLTNA6TQXn9Hxac1BaIa3E1fCXbOrFLY6Ipy4YeN+B3EZr4wMDk3saCnpENhWutw36D
+ iGZblh6wtmBIv3GWTw/R5hRQrKKenAYhfxlSqyXnTiGTB4girau9Sdql1wFdcBtu7k50GcC7n7
+ 9qE=
+From: "Bhola, Bikram" <Bikram_Bhola@mentor.com>
+To: Jan Kiszka <jan.kiszka@siemens.com>, Pavel Machek <pavel@denx.de>, "Quirin
+ Gylstorff" <quirin.gylstorff@siemens.com>
+Thread-Topic: I need de0-nano testing for -rt release was Re: [cip-dev]
+ 4.19.106-cip21-rt8 problems on de0-nano
+Thread-Index: AQHV9kP24swRbJhFDEOoDhesdkjwTahBz/4AgAG354A=
+Date: Wed, 11 Mar 2020 15:36:50 +0000
+Message-ID: <a9aa2dd7e7fd43eca840d7825e835ffc@SVR-IES-MBX-04.mgc.mentorg.com>
+References: <20200303091556.GA10040@duo.ucw.cz>
+ <20200303092343.GA11594@duo.ucw.cz> <20200303171049.GB24044@duo.ucw.cz>
+ <20200303212826.GA16402@duo.ucw.cz>
+ <fe189e62-baee-4f6a-cc19-295c4c023dc7@siemens.com>
+ <20200309102132.GB18031@duo.ucw.cz>
+ <c3f20059-7663-b216-a799-14cb943669ea@siemens.com>
+ <78fd4f1df8034021ae195b8287cf2f29@SVR-IES-MBX-03.mgc.mentorg.com>
+In-Reply-To: <78fd4f1df8034021ae195b8287cf2f29@SVR-IES-MBX-03.mgc.mentorg.com>
+Accept-Language: en-US, en-IE
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-authentication-results: lists.cip-project.org; dkim=none (message not signed)
- header.d=none;lists.cip-project.org; dmarc=none action=none
- header.from=cybertrust.co.jp;
-x-originating-ip: [122.216.27.145]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: ed071e88-2fad-4709-5696-08d7ecdc61b0
-x-ms-traffictypediagnostic: TY2PR01MB2457:
-x-microsoft-antispam-prvs: 
- <TY2PR01MB2457CD18AEA3C2F242A2D439A0AA0@TY2PR01MB2457.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 0389EDA07F
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PR01MB4972.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(346002)(376002)(366004)(136003)(396003)(39860400002)(33656002)(6916009)(71200400001)(2906002)(9686003)(85182001)(478600001)(966005)(86362001)(5660300002)(55016002)(66946007)(66556008)(66476007)(52536014)(76116006)(53546011)(64756008)(66446008)(8936002)(186003)(6506007)(316002)(26005)(8676002)(7696005);DIR:OUT;SFP:1102;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- mDHvPnayw8mtSMO9YefJ6J+t/mR/5eL47+L7IRAH8uDcoFo9kTG6Z3WABY32hKLEb1TlkcTzvZkaMz32t4n9GZD+NkHyYzhkMZNzMh5BbYlNZrEd552A5oOhZ/gvU6yuJ8Xy4KJ3Kf9I6El86NlV00YSCjOp3Gj8n0gAz5y5fYSnnn20dc5EiYLBTm48jrIls7EnVeBsfZbkOoKeS6yoh/r0PzCyxc8lHkRh6lNL6R5bGYU3T2ESoNLCvr+U5vDcg/jXJpEtkod+UkPDSxrZy3lq/mwfLTOT80Hr9YYAUMUOfYU4ejlNf5nFaWQILqINw+DLlv/nFfg85DQp+RNdmv1dAnh+YIjUjZ7R+5ljGDiAgh/chJeC8DCxNn9lCvr9Xu+hlumMVIhFZAFjbJQbDCxIh16TA9MxZfkETtykXH81jsiXjtnZQFyClssWYU+CKz6qHEbZluWeYUNu9UPKbm/7liX1rpcpNAiUU6qje+IabFmftYyLKn+v5ciXDny1D1nWdgzVizvclld+l3I9pw==
-x-ms-exchange-antispam-messagedata: 
- jPaquGyBekD1eofLZT4uHN3sWxZzNByAKPEmLpdgCrJxj98z9ocpOi+5DTCSvQeysSz/7A/iPvkkWz8m3PBWElXFYHYnZHOnJ1s2qtFzMR0ZOV+8BlDwQhT4Oqy3Rt9MKxL8HqsAJBlaVVnziGCZoGOQDaPSTK85QQX5ZOOzJyLHjNcYCaVZSLH91ZCFNoDcsXkJiC1SwQ7bde/crl3rdZ3ynt/3ShOsW46kAkRNOwRv4jkpzHFqlzE6Qs2ahhn638JxA3i2vnQRtFf9v6v/91KLQHV4tsNsthRbFjGSNjC6H7w4p0LkcmkJy/cQNmTzcvbqn25maPFfGZofSJX7bXTp9Kl7ebiwtEr5pyHAIolF//TVoa6XkVwjBopeLn5r9e1k+UbL+n7IyAHYnCv2j9CH/5Ld6QoIal8mpJdg3ohYd8x9n+SPEu/SSMUH+IKTVdk3bkYeQZdowlsoNB+ZI0v/gRErdnAhztDyM8j53qsmb+j8aB2wevcY4SOAyGmJ6YzP30NcoO2pBqdayFTV/XrnYJRDaOLDBBWEyy+zGUH8SyaKt9MX3xeio3UguUdkeDvsAtsOxMynldICCqKNdXZC6eFsjBpcDOpsQwfOYm9pQ1PSXfa+3NZHKC0+mFkHnDZQEoI3xAHTCkobP2S7HCIKHmrpJsh//xmoETslMMz8WEtsPN3GgvLr3X1TFAre2lVYBkX3UTlhtyOlLtue0mIZ8NWeYGGMfhj6bBCVb9WuWxYdpQS++SxjbuT7OjH9kai83Ox7FBC4jycdoqS2qhbxi1pLGYKYVGtwwfzzsuM=
-x-ms-exchange-transport-forked: True
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [137.202.0.90]
 MIME-Version: 1.0
-X-OriginatorOrg: cybertrust.co.jp
-X-MS-Exchange-CrossTenant-Network-Message-Id: ed071e88-2fad-4709-5696-08d7ecdc61b0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Apr 2020 07:59:17.1641
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72cc4624-32b4-4dab-b80a-8563e559bd82
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 6kZNO1doZU3MJ+9rNzE6YwxMpQ4xGPvfIZZgKLIg2bNrksvXn07hYqXY1tl5H5gsVhHa6jEtpuV0ax7xnc4UDobW0k9sBLpy/WvAJf4qvoI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB2457
-Content-Language: ja-JP
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset="us-ascii"
+Cc: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
+Subject: Re: I need de0-nano testing for -rt release was Re: 4.19.106-cip21-rt8 problems on de0-nano
+X-BeenThere: cip-dev@lists.cip-project.org
+X-Mailman-Version: 2.1.15
+Precedence: list
 List-Id: <cip-dev.lists.cip-project.org>
+List-Unsubscribe: <https://lists.cip-project.org/mailman/options/cip-dev>,
+ <mailto:cip-dev-request@lists.cip-project.org?subject=unsubscribe>
+List-Archive: <http://lists.cip-project.org/pipermail/cip-dev/>
+List-Post: <mailto:cip-dev@lists.cip-project.org>
+List-Help: <mailto:cip-dev-request@lists.cip-project.org?subject=help>
+List-Subscribe: <https://lists.cip-project.org/mailman/listinfo/cip-dev>,
+ <mailto:cip-dev-request@lists.cip-project.org?subject=subscribe>
+X-List-Received-Date: Wed, 11 Mar 2020 15:44:04 -0000
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 
-SGksIEl3YW1hdHN1LXNhbiwNCg0KVGhhbmtzIGZvciB5b3VyIGVtYWlsLg0KVGhlbiwgc3RheSBz
-YWZlIGR1cmluZyB0aGlzIGdvbGRlbiB3ZWVrIQ0KDQpCZXN0IHJlZ2FyZHMsDQotLQ0KTS4gS3Vk
-bw0KDQotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogY2lwLWRldkBsaXN0cy5jaXAt
-cHJvamVjdC5vcmcgPGNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnPiBPbiBCZWhhbGYgT2Yg
-Tm9idWhpcm8gSXdhbWF0c3UNClNlbnQ6IFRodXJzZGF5LCBBcHJpbCAzMCwgMjAyMCA0OjUzIFBN
-DQpUbzogY2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmcNClN1YmplY3Q6IFJlOiBbY2lwLWRl
-dl0gQ0lQIElSQyB3ZWVrbHkgbWVldGluZyB0b2RheQ0KDQpIaSBLdWRvLXNhbiwNCg0KSSBhbSBv
-biB2YWNhdGlvbiBhbmQgY2Fubm90IGF0dGVuZCBJUkMgbWVldGluZ3MgdG9kYXkuDQpBbmQgb3Ro
-ZXIgVG9zaGliYSBtZW1iZXJzIChEYW5pZWwtc2FuLCBTdXp1a2ktc2FuKSBhcmUgaW4gdGhlIHNh
-bWUgc2l0dWF0aW9uLg0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IGNp
-cC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnIA0KPiBbbWFpbHRvOmNpcC1kZXZAbGlzdHMuY2lw
-LXByb2plY3Qub3JnXSBPbiBCZWhhbGYgT2YgDQo+IG1hc2FzaGkua3Vkb0BjeWJlcnRydXN0LmNv
-LmpwDQo+IFNlbnQ6IFRodXJzZGF5LCBBcHJpbCAzMCwgMjAyMCA5OjU3IEFNDQo+IFRvOiBjaXAt
-ZGV2QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZw0KPiBTdWJqZWN0OiBbY2lwLWRldl0gQ0lQIElSQyB3
-ZWVrbHkgbWVldGluZyB0b2RheQ0KPiANCj4gSGkgYWxsLA0KPiANCj4gS2luZGx5IGJlIHJlbWlu
-ZGVkIHRvIGF0dGVuZCB0aGUgd2Vla2x5IG1lZXRpbmcgdGhyb3VnaCBJUkMgdG8gZGlzY3VzcyB0
-ZWNobmljYWwgdG9waWNzIHdpdGggQ0lQIGtlcm5lbCB0b2RheS4NCj4gDQo+ICpQbGVhc2Ugbm90
-ZSB0aGF0IHRoZSBJUkMgbWVldGluZyB3YXMgcmVzY2hlZHVsZWQgdG8gVVRDIChHTVQpIDA5OjAw
-IA0KPiBzdGFydGluZyBmcm9tIHRoZSBmaXJzdCB3ZWVrIG9mIEFwci4gYWNjb3JkaW5nIHRvIFRT
-QyBtZWV0aW5nKiANCj4gaHR0cHM6Ly93d3cudGltZWFuZGRhdGUuY29tL3dvcmxkY2xvY2svbWVl
-dGluZ2RldGFpbHMuaHRtbD95ZWFyPTIwMjAmbQ0KPiBvbnRoPTQmZGF5PTMwJmhvdXI9OSZtaW49
-MCZzZWM9MCZwMT0yMjQmcDI9DQo+IDE3OSZwMz0xMzYmcDQ9MzcmcDU9MjQxJnA2PTI0OA0KPiAN
-Cj4gVVNXZXN0CVVTRWFzdAlVSwlERQlUVwlKUA0KPiAwMjowMAkwNTowMAkxMDowMAkxMTowMAkx
-NzowMAkxODowMA0KPiANCj4gQ2hhbm5lbDoNCj4gKiBpcmM6Y2hhdC5mcmVlbm9kZS5uZXQ6NjY2
-Ny9jaXANCj4gDQo+IExhc3QgbWVldGluZyBtaW51dGVzOg0KPiBodHRwczovL2lyY2xvZ3MuYmFz
-ZXJvY2sub3JnL21lZXRpbmdzL2NpcC8yMDIwLzA0L2NpcC4yMDIwLTA0LTIzLTA5LjAwDQo+IC5s
-b2cuaHRtbA0KPiANCj4gQWdlbmRhOg0KPiANCj4gKiBBY3Rpb24gaXRlbQ0KPiAxLiBDb21iaW5l
-IHJvb3QgZmlsZXN5c3RlbSB3aXRoIGtzZWxmdGVzdCBiaW5hcnkgLSBJd2FtYXRzdS1zYW4NCg0K
-Tm8gdXBkYXRlLg0KDQo+IDIuIFN0cmVuZ3RoZW4gc3VzdGFpbmFibGUgcHJvY2VzcyB0byBiYWNr
-cG9ydCBwYXRjaGVzIGZyb20gDQo+IE1haW5saW5lL0xUUyAtIEtlcm5lbCBUZWFtIDMuIFVwbG9h
-ZCBhIGd1aWRlbGluZSBmb3IgcmVmZXJlbmNlIA0KPiBoYXJkd2FyZSBwbGF0Zm9ybSBhZGRpdGlv
-biAtIG1hc2FzaGk5MTANCj4gDQo+ICogS2VybmVsIG1haW50ZW5hbmNlIHVwZGF0ZXMNCg0KSSBy
-ZXZpZXdkIHY0LjQuMjE5IGFuZCAyMjAuDQoNCj4gKiBLZXJuZWwgdGVzdGluZw0KPiAqIENJUCBD
-b3JlDQo+ICogU29mdHdhcmUgdXBkYXRlDQo+ICogQ0lQIFNlY3VyaXR5DQo+ICogQU9CDQo+IDEu
-IFNvbWUgdG9waWNzIGZyb20gVFNDIGNhbGwNCj4gDQo+IFRoZSBtZWV0aW5nIHdpbGwgdGFrZSAz
-MCBtaW4sIGFsdGhvdWdoIGl0IGNhbiBiZSBleHRlbmRlZCB0byBhbiBob3VyIA0KPiBpZiBpdCBt
-YWtlcyBzZW5zZSBhbmQgdGhvc2UgaW52b2x2ZWQgaW4gdGhlIHRvcGljcyBjYW4gc3RheS4gT3Ro
-ZXJ3aXNlLCB0aGUgdG9waWMgd2lsbCBiZSB0YWtlbiBvZmZsaW5lIG9yIGluIHRoZSBuZXh0IG1l
-ZXRpbmcuDQo+IA0KPiBCZXN0IHJlZ2FyZHMsDQoNCkJlc3QgcmVnYXJkcywNCiAgTm9idWhpcm8N
-Cg0KDQo+IC0tDQo+IE0uIEt1ZG8NCj4gQ3liZXJ0cnVzdCBKYXBhbiBDby4sIEx0ZC4NCg==
+Hi Jan and All,
+
+Both de0-nano and IPC227E targets are up and running. I have monitored for =
+test jobs on it and those completed successfully.=20
+
+Thank You!!
+
+Regards,
+Bikram=20
+-----Original Message-----
+From: Bhola, Bikram=20
+Sent: 10 March 2020 22:20
+To: 'Jan Kiszka' <jan.kiszka@siemens.com>; Pavel Machek <pavel@denx.de>; Qu=
+irin Gylstorff <quirin.gylstorff@siemens.com>
+Cc: cip-dev@lists.cip-project.org
+Subject: RE: I need de0-nano testing for -rt release was Re: [cip-dev] 4.19=
+.106-cip21-rt8 problems on de0-nano
+
+Hi Jan and All,,
+
+We are working on it.=20
+
+Looks like we have a slow network in last few days in our lab that results =
+in rootfs download timeout failure. Time being we need to increase the curr=
+ent timeout from 15 mins to 30 mins for safer side (its failing in between =
+90% completion). Meantime I am working with our network team to diagnose th=
+e slowness.=20
+
+Thank You!!
+
+Regards,
+Bikram=20
+
+-----Original Message-----
+From: Jan Kiszka [mailto:jan.kiszka@siemens.com]
+Sent: 10 March 2020 00:23
+To: Pavel Machek <pavel@denx.de>; Bhola, Bikram <Bikram_Bhola@mentor.com>; =
+Quirin Gylstorff <quirin.gylstorff@siemens.com>
+Cc: cip-dev@lists.cip-project.org
+Subject: Re: I need de0-nano testing for -rt release was Re: [cip-dev] 4.19=
+.106-cip21-rt8 problems on de0-nano
+
+On 09.03.20 11:21, Pavel Machek wrote:
+> Hi!
+>=20
+>>>>>> I pushed candidate for -cip-rt, but it seems to fail on de0-nano=20
+>>>>>> board. Code under testing is at:
+>>>>>>
+>>>>>> https://gitlab.com/cip-project/cip-kernel/linux-cip/tree/ci/pavel
+>>>>>> /linux-cip
+>>>>>
+>>>>> It is pipeline
+>>>>>
+>>>>> https://gitlab.com/cip-project/cip-kernel/linux-cip/pipelines/1227
+>>>>> 62401
+>>>>>
+>>>>> I'll reuse the branch for more testing.
+>>>>
+>>>> I managed to narrow the bad commit to the -rt tree, between:
+>>>>
+>>>> OK 122904930 pick 69aa73357e6a rcu: Don't allow to change=20
+>>>> rcu_normal_after_boot on RT pick 849ef8789077 pci/switchtec: fix=20
+>>>> stream_open.cocci warnings pick ad8a5e8279c4 sched/core: Drop a
+>>>> preempt_disable_rt() statement pick 966f066d96cb timers: Redo the=20
+>>>> notification of canceling timers on -RT pick 0393fd5a4f9a Revert "fute=
+x: Ensure lock/unlock symetry versus pi_lock and hash bucket lock"
+>>>> pick 84eb0b64a27a Revert "futex: Fix bug on when a requeued RT task ti=
+mes out"
+>>>> pick fcc893280f4e Revert "rtmutex: Handle the various new futex race c=
+onditions"
+>>>> pick 2eac93cf9d16 Revert "futex: workaround migrate_disable/enable in =
+different context"
+>>>> pick 9b8964629f4f futex: Make the futex_hash_bucket lock raw pick=20
+>>>> cc1812bf198b futex: Delay deallocation of pi_state
+>>>>> pick f5e115c43100 mm/zswap: Do not disable preemption in
+>>>>> zswap_frontswap_store()
+>>>> pick e0d0d09a08ad revert-aio
+>>>> pick a0a40bfb4300 fs/aio: simple simple work pick 0fae581d8c5e=20
+>>>> revert-thermal pick c0d95b4a8a1b thermal: Defer thermal wakups to=20
+>>>> threads pick 700fbb4afb6e revert-block pick 4cda50ff12cf block:
+>>>> blk-mq: move blk_queue_usage_counter_release() into process context=20
+>>>> pick 9e982f55745b workqueue: rework pick c0db53dc3bf4 i2c: exynos5:
+>>>> Remove IRQF_ONESHOT pick 1f160d170203 i2c: hix5hd2: Remove=20
+>>>> IRQF_ONESHOT BAD 122882826 eae5a7cab722 sched/deadline: Ensure=20
+>>>> inactive_timer runs in hardirq context
+>>>>
+>>>
+>>> And something went seriously wrong after these tests. I submitted=20
+>>> same tree twice, and got different results.
+>>>
+>>> First this -- de0-nano succeeds:
+>>>
+>>> https://gitlab.com/cip-project/cip-kernel/linux-cip/pipelines/122904
+>>> 930
+>>>
+>>> Now this -- de0-nano fails (and ipc227e is unfinished for long time):
+>>>
+>>> https://gitlab.com/cip-project/cip-kernel/linux-cip/pipelines/122959
+>>> 477
+>>>
+>>> I'll need some help here.
+>>
+>> The logs read like the targets are not (always) coming up, e.g.
+>> https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/457824214#
+>> L377
+>=20
+> Yes... I don't need that target, but I need de0-nano... and it did not=20
+> work last time I checked.
+
+Bikram, could someone on your side check the board status in the Mentor lab=
+? Thanks!
+
+>=20
+> On a related note... it would be good to somehow show difference=20
+> between "kernel test failure" and "target failure".
+>=20
+> If we see bootloader in the logs, and then test fails/timeouts =3D>=20
+> "kernel test failure", I need to solve it.
+>=20
+> If we don't get messages from the bootloader =3D> "target failure",=20
+> someone needs to check the power relays or something...
+
+I'm not happy about the parsability of those LAVA logs either, but I have n=
+o idea if/how that can be improved best. Maybe Quirin has some idea based o=
+n his work with them.
+
+Jan
+
+--
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE Corporate Competence Ce=
+nter Embedded Linux
+
 
