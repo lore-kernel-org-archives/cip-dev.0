@@ -1,120 +1,120 @@
-Return-Path: <SRS0=BiZv=44=lists.cip-project.org=cip-dev-bounces@kernel.org>
+Return-Path: <SRS0=DIdx=45=lists.cip-project.org=cip-dev-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69DF3C0044D
-	for <cip-dev@archiver.kernel.org>; Wed, 11 Mar 2020 23:45:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6228DC1975A
+	for <cip-dev@archiver.kernel.org>; Thu, 12 Mar 2020 03:50:02 +0000 (UTC)
 Received: from silver.osuosl.org (smtp3.osuosl.org [140.211.166.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 4BF34206B1
-	for <cip-dev@archiver.kernel.org>; Wed, 11 Mar 2020 23:45:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BF34206B1
+	by mail.kernel.org (Postfix) with ESMTPS id 13AB1206E2
+	for <cip-dev@archiver.kernel.org>; Thu, 12 Mar 2020 03:50:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13AB1206E2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=toshiba.co.jp
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=cip-dev-bounces@lists.cip-project.org
 Received: from localhost (localhost [127.0.0.1])
-	by silver.osuosl.org (Postfix) with ESMTP id EEB1420BF8;
-	Wed, 11 Mar 2020 23:45:49 +0000 (UTC)
+	by silver.osuosl.org (Postfix) with ESMTP id AE2B62612E;
+	Thu, 12 Mar 2020 03:50:01 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
 Received: from silver.osuosl.org ([127.0.0.1])
 	by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id Gj3LYCAb5mHa; Wed, 11 Mar 2020 23:45:48 +0000 (UTC)
+	with ESMTP id KPFSG6iCai2n; Thu, 12 Mar 2020 03:49:59 +0000 (UTC)
 Received: from lists.linuxfoundation.org (lf-lists.osuosl.org [140.211.9.56])
-	by silver.osuosl.org (Postfix) with ESMTP id 1F54D20387;
-	Wed, 11 Mar 2020 23:45:48 +0000 (UTC)
+	by silver.osuosl.org (Postfix) with ESMTP id 77954265BB;
+	Thu, 12 Mar 2020 03:49:59 +0000 (UTC)
 Received: from lf-lists.osuosl.org (localhost [127.0.0.1])
-	by lists.linuxfoundation.org (Postfix) with ESMTP id 12031C0177;
-	Wed, 11 Mar 2020 23:45:48 +0000 (UTC)
-Received: from fraxinus.osuosl.org (smtp4.osuosl.org [140.211.166.137])
- by lists.linuxfoundation.org (Postfix) with ESMTP id E1D11C0177;
- Wed, 11 Mar 2020 23:45:45 +0000 (UTC)
+	by lists.linuxfoundation.org (Postfix) with ESMTP id 5D33EC0177;
+	Thu, 12 Mar 2020 03:49:59 +0000 (UTC)
+Received: from hemlock.osuosl.org (smtp2.osuosl.org [140.211.166.133])
+ by lists.linuxfoundation.org (Postfix) with ESMTP id BF54CC0177
+ for <cip-dev@lists.cip-project.org>; Thu, 12 Mar 2020 03:49:57 +0000 (UTC)
 Received: from localhost (localhost [127.0.0.1])
- by fraxinus.osuosl.org (Postfix) with ESMTP id DDF258613E;
- Wed, 11 Mar 2020 23:45:45 +0000 (UTC)
+ by hemlock.osuosl.org (Postfix) with ESMTP id A88C38929E
+ for <cip-dev@lists.cip-project.org>; Thu, 12 Mar 2020 03:49:57 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from fraxinus.osuosl.org ([127.0.0.1])
+Received: from hemlock.osuosl.org ([127.0.0.1])
  by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id Rvvg3Gww1P90; Wed, 11 Mar 2020 23:45:44 +0000 (UTC)
-X-Greylist: domain auto-whitelisted by SQLgrey-1.7.6
+ with ESMTP id 5xiIDr2kOp8T for <cip-dev@lists.cip-project.org>;
+ Thu, 12 Mar 2020 03:49:56 +0000 (UTC)
 X-Greylist: domain auto-whitelisted by SQLgrey-1.7.6
 Received: from mo-csw.securemx.jp (mo-csw1514.securemx.jp [210.130.202.153])
- by fraxinus.osuosl.org (Postfix) with ESMTPS id DE2F685DC4;
- Wed, 11 Mar 2020 23:45:43 +0000 (UTC)
-Received: by mo-csw.securemx.jp (mx-mo-csw1514) id 02BNjgTm009722;
- Thu, 12 Mar 2020 08:45:42 +0900
-X-Iguazu-Qid: 34trcFcTQxFsHlJN1n
-X-Iguazu-QSIG: v=2; s=0; t=1583970341; q=34trcFcTQxFsHlJN1n;
- m=pHltq/Kg2nWH6svB0XG2UKF36ejp2KFt47P6FVrZDdE=
+ by hemlock.osuosl.org (Postfix) with ESMTPS id DB62E89299
+ for <cip-dev@lists.cip-project.org>; Thu, 12 Mar 2020 03:49:55 +0000 (UTC)
+Received: by mo-csw.securemx.jp (mx-mo-csw1514) id 02C3nltb029099;
+ Thu, 12 Mar 2020 12:49:47 +0900
+X-Iguazu-Qid: 34trcFcTQxXjkOSiyf
+X-Iguazu-QSIG: v=2; s=0; t=1583984987; q=34trcFcTQxXjkOSiyf;
+ m=UvztHTVvyWOWnhVPforOC6rYSOdsqDhE5o/Y0W20k/I=
 Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
- by relay.securemx.jp (mx-mr1512) id 02BNjf56022908;
- Thu, 12 Mar 2020 08:45:41 +0900
+ by relay.securemx.jp (mx-mr1512) id 02C3nkAb034714;
+ Thu, 12 Mar 2020 12:49:47 +0900
 Received: from enc01.localdomain ([106.186.93.100])
- by imx2.toshiba.co.jp  with ESMTP id 02BNjfTx019433;
- Thu, 12 Mar 2020 08:45:41 +0900 (JST)
+ by imx2.toshiba.co.jp  with ESMTP id 02C3nkmb002583;
+ Thu, 12 Mar 2020 12:49:46 +0900 (JST)
 Received: from hop001.toshiba.co.jp ([133.199.164.63])
- by enc01.localdomain  with ESMTP id 02BNjfV2025665;
- Thu, 12 Mar 2020 08:45:41 +0900
+ by enc01.localdomain  with ESMTP id 02C3nkNn018069;
+ Thu, 12 Mar 2020 12:49:46 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jb77rgB3f+ejMdRNNDOuqxAVT3K8iznP17emYQa7JghQxs9JmN0z/D3nsxZW3Gpuj2bbdvPdduQhy3aeb5gCdcxDsiL90NYShGpxbQLbXVgm4bQXw9koUnausRyO+yPOoNB3RPEolvtaGZlUwTZTpbR2oB7qkmG6M8Nl3ICodLrhO/Ojme+Sl0InJhjBQ8FkprhWzv3bXHmA9nNBVPEUmFR9L9/Iy0hMhZAUxYnEM5a5D2Bgde40kdo2X/E1GKCaOSsXod68yxCCzLcBRW2B+wch/MVlrqwht8L2iwdZQoqIJo/PFynOafOCFXRc3+X9nXkRIsP84cmvLQ3FwiKwqg==
+ b=P+wYlJ59WWm7gQtjecSdVb6/9dxyspEsnrFhgTAPrEz1G1TCeDMzsg09In8cS/8Z9ph5oYbHH1OZ05FuQilODHL6GW0IRMozQLZADHbyJRcWOU/kx1Vx07dpmvHYML2pVDgbpTGW2XrTihieyE4oMFyDb9sykV16C/WXSDiqSCEk2GFj4ORyuMqdZrhqPXzTEBENuB2F0YTT0+/mDxBDGS4dIUyAfrGvvSmmRJNcOZpCHkb9ZRF8VGqyLe9ivXY8Eoc0JGnqP6tB8YXU+aeQsy0uyhrL4ZsFRjgrJQJDvF3udq0HaIWepcmjBAtMuHQja+8EB+/bQgCq2cyAmnuJhA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ajG42kzLJCDjTMsld1GPccgRkd5OPDKR5jIz3rKz8T8=;
- b=R3em4SYDkF6eCA6DWpuJ7vNnNt9qwEDzN7dT3rRtMD1r/plwMR5WzEgq5Egz5p5a3oZp/S1imFJZfWClWYj/1g2127ZfRelO/sSmSTFqHMpZYRYcriS6djFTIerEKLA0Vt4hO/RkzUKgNUxzRv1epB/Inir/R/ZR8kaoFjUwd6zpk2uVti9sPCy8m9mcmea0i2J+ftJkpELPcc9f4IDomFpfG3cF+YV4rxhP6vITf/+H4wK4Dsrdq3BsKZNsyHJl7Bme+AWVvq2iKJGppGjWAIMfLgCvSPmd0+OlXrY8ZW+4jbqdbcSR768zPL76mjlSfEDGt455upUSWiMff09Jmg==
+ bh=gVA5vav3fyepkncAK+8W04P1ZQm8ZM7xPn2gxXgfBg4=;
+ b=eVQpH5vApQnrBD2JTiWe+yCJZlgf2n6o7P+MoowbFxcMyy7jlfGD1vxnsft5FRinEM8+fWOauAQTc1vHURWXXkZ8F7RbV6nT+nPXzj76in5/Jc2yxWG+ngCo82ysCOZc9c5NmFWCGe/Zc6pKyu2vcAkwzxU1e3SHeh9qPp2asjWtikdELAUvM8RfRIXAz47y14K3P1ITsUe6UvZzvIZxE3QPnwoP555lK864h8pd1mqKRpPTGIZ1fNxNMDQ74M+KX1yPh+d0AW90uw718MNshE5hXH33u8VIRoxmo8exdW2EaAqCfPCWGp7zTV2cNPD6nEgmLoxGVN1tcVTa6mtNsg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
  header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
-From: <kazuhiro3.hayashi@toshiba.co.jp>
-To: <Venkata.Pyla@toshiba-tsip.com>, <dinesh.kumar@toshiba-tsip.com>
-Thread-Topic: Sample image including security packages
-Thread-Index: AdXod0daEQ5yvAxmSqGjegxSRddNWwH/ZrKgAAl2o6AAi1X9QAE8vGfQ
-Date: Wed, 11 Mar 2020 23:45:38 +0000
+From: <nobuhiro1.iwamatsu@toshiba.co.jp>
+To: <pavel@denx.de>
+Thread-Topic: How to handle diffs created in -rebase branch
+Thread-Index: AdXjKlkyLRv0rzztQySPKpryzgkrqgDGNnKAAE+cnsACdGeZAAGxaRFw
+Date: Thu, 12 Mar 2020 03:49:44 +0000
 X-TSB-HOP: ON
-Message-ID: <TYXPR01MB1808B8B8709CBBC91634721EE1FC0@TYXPR01MB1808.jpnprd01.prod.outlook.com>
-References: <TYXPR01MB1808AD5423CA82AE50EC4D90E1120@TYXPR01MB1808.jpnprd01.prod.outlook.com>
- <7ba7bb426c814ffcaefeccd646b0e302@TOSHIBA-TSIP.COM>
- <5dda4cb9fd40483d92ee99145522cca0@toshiba-tsip.com>
-In-Reply-To: <5dda4cb9fd40483d92ee99145522cca0@toshiba-tsip.com>
+Message-ID: <OSAPR01MB36678CD3167D6F6F5427BCF092FD0@OSAPR01MB3667.jpnprd01.prod.outlook.com>
+References: <OSAPR01MB366723B45768B553CBAE532392150@OSAPR01MB3667.jpnprd01.prod.outlook.com>
+ <20200218100717.GB20615@duo.ucw.cz>
+ <OSAPR01MB36676CE7E99B28155861453192130@OSAPR01MB3667.jpnprd01.prod.outlook.com>
+ <20200303120000.GA26229@duo.ucw.cz>
+In-Reply-To: <20200303120000.GA26229@duo.ucw.cz>
 Accept-Language: ja-JP, en-US
 Content-Language: ja-JP
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=kazuhiro3.hayashi@toshiba.co.jp; 
-x-originating-ip: [124.211.28.0]
+ smtp.mailfrom=nobuhiro1.iwamatsu@toshiba.co.jp; 
+x-originating-ip: [209.137.146.201]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: bc603876-d669-498d-3eed-08d7c6164d72
-x-ms-traffictypediagnostic: TYXPR01MB1742:
-x-ld-processed: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f,ExtAddr
-x-microsoft-antispam-prvs: <TYXPR01MB174270D505B9645A677D27E8E1FC0@TYXPR01MB1742.jpnprd01.prod.outlook.com>
+x-ms-office365-filtering-correlation-id: 93ca3408-8100-464e-559a-08d7c6386723
+x-ms-traffictypediagnostic: OSAPR01MB2052:
+x-microsoft-antispam-prvs: <OSAPR01MB2052D2E5A2C7E9D11D3CF88A92FD0@OSAPR01MB2052.jpnprd01.prod.outlook.com>
 x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 0339F89554
+x-forefront-prvs: 0340850FCD
 x-forefront-antispam-report: SFV:NSPM;
- SFS:(10009020)(4636009)(366004)(376002)(136003)(346002)(396003)(39860400002)(199004)(81156014)(2906002)(81166006)(8676002)(66574012)(110136005)(54906003)(9686003)(53546011)(55236004)(7696005)(86362001)(6506007)(966005)(55016002)(5660300002)(52536014)(478600001)(71200400001)(15650500001)(76116006)(66446008)(66476007)(66556008)(64756008)(66946007)(4326008)(316002)(33656002)(186003)(26005)(8936002);
- DIR:OUT; SFP:1101; SCL:1; SRVR:TYXPR01MB1742;
- H:TYXPR01MB1808.jpnprd01.prod.outlook.com; FPR:; SPF:None; LANG:en;
+ SFS:(10009020)(4636009)(396003)(366004)(136003)(39860400002)(346002)(376002)(199004)(55016002)(71200400001)(316002)(9686003)(7696005)(26005)(33656002)(86362001)(81156014)(2906002)(52536014)(8936002)(478600001)(966005)(8676002)(6916009)(81166006)(4326008)(76116006)(186003)(66446008)(66476007)(66556008)(6506007)(66946007)(64756008)(5660300002)(53546011);
+ DIR:OUT; SFP:1101; SCL:1; SRVR:OSAPR01MB2052;
+ H:OSAPR01MB3667.jpnprd01.prod.outlook.com; FPR:; SPF:None; LANG:en;
  PTR:InfoNoRecords; A:1; 
 received-spf: None (protection.outlook.com: toshiba.co.jp does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: bgphO/TF7J5uMYQTIFaTSv2vGSdQhUpHTyDDJcCptPr8FdamhZsximVRU1ewfyfAMOkR8AW6QmufjS9cjMPMb1PPJXCeRQ7LCGIOuRS9u5kR2GJKgaiYURFQUvbQErreexlPmUymXZ9R0QoC5Zq/2RBplqjBSBilFIY4EA+UP3IhVrNATHRWoUey5ijU2i0wlMSaF/JbsKJ79Jg0t/z0RbwbAwlNYZrYmVKsY6sd/PngisQ+Rf6Zif14j7hzyKeUd2LG/C0W3A20GqDiEkjNf7ctv7E9R/1eCxgI1jXsb9RHlxj4fXM1SK6WWgLS6eDZo+/s4tOqTAHXZr51MdeQX0FpEWnW5W7PBoCwgDaEr1BuG4FxVHaT1DSP0R9BWSjrtJj9NgrJFRAEx70t74sxQ3JmfhjzSCRcH7u3yMHx7bDj8ANTzkjitzRH98IFvFf33H56F0fVJPHWLCBVFD97Wlk/8R5oSRwivK268MXjt0YJfGFAPrN9KzFHnpQlDEuG5FUTP/4qi7NbUPxldGNZlA==
-x-ms-exchange-antispam-messagedata: q9XY1Gwu0W2tmtxy8xqNdBCbyVEu44thLxK6D9E7VDI4QSEkF7UMOHdLqdW7cYrcFF1mQxiiiuAGkIbtIn8i4xm75o/Q4ZbJbzI3iW8KWmPiQLBd9dE6UTz2jCaDKCynDej3URCtznV6uIb0ei+24g==
+x-microsoft-antispam-message-info: C11EbuKoCBtjwoio+BDrLuvQ3PIP0Hn3/++wQNNCvb+grAai0dNWEhfU+dYSbS3xZFwFsfl0+Z/AWA/GNq4uLMz4b7zE8XRGAu4QgBysiYQOkuw2t4O1ZsV+/F5p5f5VEnh7y05UtIoR0wtDDuRQP2w5tp4/SwCn8WeKMlQmNbzxGkHY0Xcf7IcHjtshkT7WSlqWR41Rl6QDjEq9GVh/93iSj1ARxC/VUIL1zvVu5yTbAj01llvxqubKgySbOkL1/7wOswwa43cWlcn3oIDPbwpLSbXSvdP1akOHmrBxmvDLiA8QmxiiA6GuXbEmo37Qj2Wl6rupLZTnJURVsJ8WwhybFYQF1+dyWhwtYIIJ3COYUqabI01vDgrEEUgIiMO+cI7pdV+5wOzZ75FCWEQA1mScliWQO8boDEAWV33tdhTVlOa+OzB9vrdblzL74k/njeeRmJIQIN4zUkilnkJc0PFDucGGowUCf5XmQz/eOhF4S8RMzz6gzJrSbqQLvWuud3/2iZqnQOAgeJ6GgI46BA==
+x-ms-exchange-antispam-messagedata: cqDZvQqeXc1PWghEohmTrKQw0juIiMWxm5fN07Sky7rE1x8CXCWtYtVBa2th5jxk8FmXZ7AvM3M81AhK/IEjoj9/yNxzMkirDZHx/XZqp/EMoAeNgglQ5ggjCbtNk47a69WDsCEXA6He6sk2D9FL4g==
 x-ms-exchange-transport-forked: True
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: bc603876-d669-498d-3eed-08d7c6164d72
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Mar 2020 23:45:38.6577 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 93ca3408-8100-464e-559a-08d7c6386723
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Mar 2020 03:49:44.5462 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: yX6E8X+X23eH9nn9TASiNT3kRnQRCRqXQScccvqhusjKla2uPonkRdWPfS6/dp8KV0QUUbYJkLgIzJzCIzrnFf/U6kCV+uqj8e6FAt5Izi0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYXPR01MB1742
+X-MS-Exchange-CrossTenant-userprincipalname: W1dj0UvjtrIQ1LUm6fZsyUWmhV/EgxpUCic6MlN8s1OU3ttL8AV8gefCWpSXb4r21tpD9FBv6mkf1mO39WsXj/xLwC3RDo9daY5unc8cWjXAYVXWNHIDL0w4HBRmP299
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB2052
 X-OriginatorOrg: toshiba.co.jp
 MSSCP.TransferMailToMossAgent: 103
-Cc: cip-security@lists.cip-project.org, cip-dev@lists.cip-project.org
-Subject: Re: [cip-dev] Sample image including security packages
+Cc: cip-dev@lists.cip-project.org
+Subject: Re: [cip-dev] How to handle diffs created in -rebase branch
 X-BeenThere: cip-dev@lists.cip-project.org
 X-Mailman-Version: 2.1.15
 Precedence: list
@@ -126,166 +126,85 @@ List-Post: <mailto:cip-dev@lists.cip-project.org>
 List-Help: <mailto:cip-dev-request@lists.cip-project.org?subject=help>
 List-Subscribe: <https://lists.cip-project.org/mailman/listinfo/cip-dev>,
  <mailto:cip-dev-request@lists.cip-project.org?subject=subscribe>
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: cip-dev-bounces@lists.cip-project.org
 Sender: "cip-dev" <cip-dev-bounces@lists.cip-project.org>
 
-Hello Venkata,
-
-Thank you for the information.
-
-Regarding the usage of `IMAGE_PREINSTALL`, I'm not sure if we always need `+` in the image recipe.
-Example: https://github.com/ilbers/isar/blob/master/doc/user_manual.md#create-a-custom-image-recipe
-Could you dump the value of `IMAGE_PREINSTALL` with/without `+` by `bitbake -e` command?
-
-Best regards,
-Kazu
-
-> -----Original Message-----
-> From: Venkata Seshagiri Pyla [mailto:Venkata.Pyla@toshiba-tsip.com]
-> Sent: Thursday, March 5, 2020 6:06 PM
-> To: hayashi kazuhiro(林 和宏 ○ＳＷＣ□ＯＳＴ) <kazuhiro3.hayashi@toshiba.co.jp>; dinesh kumar(ＴＳＩＰ DS Company)
-> <dinesh.kumar@toshiba-tsip.com>
-> Cc: cip-security@lists.cip-project.org; cip-dev@lists.cip-project.org
-> Subject: RE: Sample image including security packages
-> 
-> Hi Kazu-san and Dinesh,
-> 
-> I have created the image with all proposed security packages included.
-> applied the below change, and booted the image in QEMU correctly.
-> -----------------
-> diff --git a/recipes-core/images/cip-core-image-security.bb b/recipes-core/images/cip-core-image-security.bb
-> index 70571f8..b883414 100644
-> --- a/recipes-core/images/cip-core-image-security.bb
-> +++ b/recipes-core/images/cip-core-image-security.bb
-> @@ -18,7 +18,7 @@ IMAGE_INSTALL += "customizations"
-> 
->  # Debian packages that provide security features
->  # TODO: Add sudo or sudo-ldap which conflict each other
-> -IMAGE_PREINSTALL = " \
-> +IMAGE_PREINSTALL += " \
->  	openssl libssl1.1 \
->  	fail2ban \
->  	openssh-server openssh-sftp-server openssh-client \
-> --
-> -----------------
-> 
-> Thanks
-> venkata
-> -----Original Message-----
-> From: Venkata Seshagiri Pyla
-> Sent: 02 March 2020 19:38
-> To: Dinesh Kumar <Dinesh.Kumar@TOSHIBA-TSIP.COM>; kazuhiro3.hayashi@toshiba.co.jp
-> Cc: cip-security@lists.cip-project.org; cip-dev@lists.cip-project.org
-> Subject: RE: Sample image including security packages
-> 
-> Hi Kazu-san and Dinesh,
-> 
-> >We found most of the packages are not included in the isar image, could you please confirm whether all the proposed packages
-> are included in the given source?
-> >If it is included, could you please let us know how to install them in the image?
-> I think we have to create the image for the target "cip-core-image-security" instead of "cip-core-image".
-> 
-> All the security packages are configured to install are present in this file "cip-core-image-security.bb".
-> 
-> I will generate the image for target "cip-core-image-security" and recheck all the security functionality.
-> 
-> Thanks,
-> Venkata.
-> 
-> -----Original Message-----
-> From: Cip-security [mailto:cip-security-bounces@lists.cip-project.org] On Behalf Of Dinesh Kumar
-> Sent: 02 March 2020 15:29
-> To: kazuhiro3.hayashi@toshiba.co.jp
-> Cc: cip-security@lists.cip-project.org; cip-dev@lists.cip-project.org
-> Subject: Re: [Cip-security] Sample image including security packages
-> 
-> Dear Kazu-san,
-> 
-> Thanks for sharing the isar-cip-core repository details with us.
-> 
-> We followed below steps to first confirm whether all the proposed binaries are included when we create CIP isar based
-> image.
-> 1. Create CIP isar based image from "https://gitlab.com/zuka0828/isar-cip-core/-/tree/master"  for QEMU_x86-64 platform
-> 2. Booted the image in QEMU virtual machine 3. For each security package we compared the binaries listed on Debian page
-> e.g. for acl package at (https://packages.debian.org/buster/amd64/acl/filelist)
->      According to the Debian page there are three binaries which should be present in the image "/bin/chacl", "/bin/getfacl",
-> "/bin/setfacl".
->      Then we check in the CIP running image at /bin whether all three packages are included or not.
-> 4. Based on this kind of investigation we have prepare the attached list of missing binary packages in current CIP isar
-> image.
-> 
-> We found most of the packages are not included in the isar image, could you please confirm whether all the proposed packages
-> are included in the given source?
-> If it is included, could you please let us know how to install them in the image?
-> 
-> Once all the security packages are included in the CIP isar image, we will proceed to next step of verifying applicable
-> IEC 62443-4-2 security requirements.
-> 
-> Thanks & Regards,
-> Dinesh Kumar
-> 
-> 
-> -----Original Message-----
-> From: Cip-security <cip-security-bounces@lists.cip-project.org> On Behalf Of kazuhiro3.hayashi@toshiba.co.jp
-> Sent: 21 February 2020 10:58
-> To: cip-security@lists.cip-project.org
-> Cc: cip-dev@lists.cip-project.org
-> Subject: [Cip-security] Sample image including security packages
-> 
-> Hello CIP Security WG,
-> 
-> I've created a sample setting to customize CIP Core generic profile.
-> https://gitlab.com/zuka0828/isar-cip-core/-/tree/master
-> (Now in my personal account)
-> 
-> Introduction: https://gitlab.com/zuka0828/isar-cip-core/-/blob/master/SECURITY.md
-> 
-> Please ask in cip-dev if you need more development information :)
-> 
-> Note: `sudo` and `sudo-ldap` conflict each other, but both were proposed.
-> We need to select one from them.
-> I temporally removed the both from `IMAGE_PREINSTALL`.
-> 
-> Best regards,
-> Kazu
-> 
-> _______________________________________________
-> Cip-security mailing list
-> Cip-security@lists.cip-project.org
-> https://lists.cip-project.org/mailman/listinfo/cip-security
-> The information contained in this e-mail message and in any attachments/annexure/appendices is confidential to the recipient
-> and may contain privileged information.
-> If you are not the intended recipient, please notify the sender and delete the message along with any
-> attachments/annexure/appendices. You should not disclose, copy or otherwise use the information contained in the message
-> or any annexure. Any views expressed in this e-mail are those of the individual sender except where the sender specifically
-> states them to be the views of Toshiba Software India Pvt. Ltd. (TSIP),Bangalore.
-> 
-> Although this transmission and any attachments are believed to be free of any virus or other defect that might affect
-> any computer system into which it is received and opened, it is the responsibility of the recipient to ensure that it
-> is virus free and no responsibility is accepted by Toshiba Embedded Software India Pvt. Ltd, for any loss or damage arising
-> in any way from its use.
-> The information contained in this e-mail message and in any
-> attachments/annexure/appendices is confidential to the
-> recipient and may contain privileged information.
-> If you are not the intended recipient, please notify the
-> sender and delete the message along with any
-> attachments/annexure/appendices. You should not disclose,
-> copy or otherwise use the information contained in the
-> message or any annexure. Any views expressed in this e-mail
-> are those of the individual sender except where the sender
-> specifically states them to be the views of
-> Toshiba Software India Pvt. Ltd. (TSIP),Bangalore.
-> 
-> Although this transmission and any attachments are believed to be
-> free of any virus or other defect that might affect any computer
-> system into which it is received and opened, it is the responsibility
-> of the recipient to ensure that it is virus free and no responsibility
-> is accepted by Toshiba Embedded Software India Pvt. Ltd, for any loss or
-> damage arising in any way from its use.
-
-_______________________________________________
-cip-dev mailing list
-cip-dev@lists.cip-project.org
-https://lists.cip-project.org/mailman/listinfo/cip-dev
+IyBBZGQgY2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmcgdG8gQ0MNCkhpIFBhdmVsLA0KDQpU
+aGFua3MgZm9yIHlvdXIgY29tbWVudC4NCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0K
+PiBGcm9tOiBQYXZlbCBNYWNoZWsgW21haWx0bzpwYXZlbEBkZW54LmRlXQ0KPiBTZW50OiBUdWVz
+ZGF5LCBNYXJjaCAzLCAyMDIwIDk6MDAgUE0NCj4gVG86IGl3YW1hdHN1IG5vYnVoaXJvKOWyqead
+viDkv6HmtIsg4peL77yz77y377yj4pah77yv77yz77y0KQ0KPiA8bm9idWhpcm8xLml3YW1hdHN1
+QHRvc2hpYmEuY28uanA+DQo+IFN1YmplY3Q6IFJlOiBIb3cgdG8gaGFuZGxlIGRpZmZzIGNyZWF0
+ZWQgaW4gLXJlYmFzZSBicmFuY2gNCj4gDQo+IEhpIQ0KPiANCj4gKEkgYmVsaWV2ZSB3ZSBzaG91
+bGQgY2MgY2lwLWRldiBmb3IgdGhpcyBkaXNjdXNzaW9uKS4NCg0KWWVzLCBJIGFkZGVkIGNpcC1k
+ZXYgdG8gQ0MuDQoNCj4gDQo+ID4gPiA+IENvbW1pdCA5YzA3NWQzMjVlYzIzYTliZDk5YjcwOTdm
+MGI4MmVjMDRiMDA3MDkzIFsxXSBoYXMgdGhpcyBmaXgNCj4gPiA+ID4gaW4NCj4gPiA+IHY0LjQu
+MjExLCBidXQgY29tbWl0IGVkZWVkNWY5MTBkYjU5NjJmNGVjYzA5N2FkNmQ5MzVhMzMwNDFlZTAg
+WzJdDQo+ID4gPiBkZWxldGVzIHRoZSBmaWxlIG9uY2UgYW5kIGNvbW1pdA0KPiA+ID4gNWEwZDE1
+N2I2MTUzYjQ2MmVhYmQ4YWZjZjgyNzg3N2U4ODUzMzZiOSBbM10gcmVjcmVhdGVkIHRoZSBmaWxl
+Lg0KPiA+ID4gPiBJZiB3ZSByZWJhc2UgdGhpcywgc2luY2UgdGhlIG9yZGVyIG9mIGNvbW1pdHMg
+aXMgMiwgMywgIDEgdG8gMSwNCj4gMiwNCj4gPiA+ID4gMywgdGhlIGFib3ZlIGRpZmZzIHdhcyBj
+cmVhdGVkLg0KPiA+ID4NCj4gPiA+IEkgYmVsaWV2ZSBjb21taXQgWzFdIGlzIGdvb2QsIGFuZCB3
+ZSBzaG91bGQgbm90IHVuZG8gaXRzIGVmZmVjdHMNCj4gPiA+IHdpdGggb3RoZXIgY29tbWl0cy4g
+VGh1cyBsaW51eC00LjQueS1jaXAgaXMgb2theSwgYW5kDQo+ID4gPiBsaW51eC00LjQueS1jaXAt
+cmViYXNlIHNob3VsZCBiZSBmaXhlZC4gT25lIHdheSB3b3VsZCBiZSB0bw0KPiA+ID4gY2hlcnJ5
+LXBpY2sgMSBpbnRvIGxpbnV4LTQuNC55LWNpcC1yZWJhc2UuDQo+ID4NCj4gPiBJIHNlZSwgYnV0
+IGNvbW1pdCBbMV0gd2FzIGFscmVhZHkgYXBwbGllZCB0byB2NC40LjIxMSBieSB1cHN0cmVhbS4g
+U28NCj4gPiB0aGUgc2FtZSBjb21taXQgaXMgYXBwbHkgdHdpY2UuIElzIHRoaXMgdW5kZXJzdGFu
+ZGluZyBzYW1lIHlvdXIgc3VnZ2VzdD8NCj4gPg0KPiA+ICAgMS4gY29tbWl0IFsxXSAvIGluIHY0
+LjQuMjExDQo+ID4gICAuLi4uLg0KPiA+ICAgeC4gY29tbWl0IC8gcmVsZWFzZSB2NC40LjIxMw0K
+PiA+ICAgLi4uLi4NCj4gPiAgIHggKyAxLiBjb21taXQgWzJdIC8gRGVsZXRlIGZpeCBieSBjb21t
+aXQgWzFdIC8gQ0lQJ3MgY29tbWl0DQo+ID4gICB4ICsgMi4gY29tbWl0IFszXSAvIENJUCdzIGNv
+bW1pdA0KPiA+ICAgeCArIDMuIGNoZXJyeS1waWNrIGNvbW1pdCBbMV0gPC0tLSB5b3VyIHN1Z2dl
+c3QNCj4gPg0KPiA+IC1yZWJhc2UgYnJhbmNoIGlzIGEgYnJhbmNoIHRoYXQgbWFuYWdlcyBjb21t
+aXRzIGluIHRoZSBMVFMgdHJlZSBhbmQNCj4gQ0lQIHRyZWUuDQo+ID4gU28gYSBmaXggbGlrZSB0
+aGlzIG9uZSBhbHdheXMgbWFrZXMgYSBkaWZmZXJlbmNlLg0KPiA+IEkgdGhpbmsgdGhlcmUgYXJl
+IHR3byBtZWFzdXJlcy4NCj4gPg0KPiA+ICAxLiBJZ25vcmUgZGlmZmVyZW5jZXMgYmVjYXVzZSBp
+dCBpcyBhIGJyYW5jaCB0aGF0IG1hbmFnZXMgY29tbWl0cy4NCj4gPiAgMi4gSWYgYSBkaWZmZXJl
+bmNlIG9jY3VycywgY29tbWl0IHRvIGZpeCBpdC4gKFlvdXIgc3VnZ2VzdGlvbikNCj4gPg0KPiA+
+IEkgdGhpbmsgdGhhdCBib3RoIGFyZSB1c2VmdWwsIGJ1dCBJIHdhbnQgdG8gZ2V0IGNvbnNlbnN1
+cyB3aXRoIHlvdSBhcw0KPiA+IGtlcm5lbCBtYWludGFpbmVycyBvZiBDSVAuDQo+IA0KPiBJdCBp
+cyBpbXBvcnRhbnQgZm9yIG1lIGZvciBib3RoIGJyYW5jaGVzIHRvIGVuZCB1cCB3aXRoIHNhbWUg
+cmVzdWx0Lg0KDQpPSy4NCg0KPiANCj4gIklmIGEgZGlmZmVyZW5jZSBvY2N1cnMsIGNvbW1pdCB0
+byBmaXggaXQiIGlzIGFuIGFjY2VwdGFibGUgc29sdXRpb24gdG8NCj4gaXQuIEJ1dCB0aGlua2lu
+ZyBhYm91dCBpdCBzb21lIG1vcmUsIHRoZXJlIG1heSBiZSBldmVuIGJldHRlciBvbmUuDQo+IA0K
+PiBDZW50cmFsIHByb2JsZW0gaXMgdGhhdCB3ZSBkZWxldGUgZml4ZWQgdmVyc2lvbiBvZiBmaWxl
+LCB0aGVuIHJlLWNyZWF0ZQ0KPiB0aGUgZmlsZSB3aXRob3V0IHRoZSBmaXguIFdlIHNob3VsZCBz
+aW1wbHkgbW9kaWZ5IHRoZSByZS1jcmVhdGluZyBwYXRjaA0KPiB0byBjcmVhdGUgdGhlIGZpeGVk
+IHZlcnNpb24uDQoNCkkgdW5kZXJzdG9vZC4NCg0KPiANCj4gSWYgeW91IHdhbnQsIEkgY2FuIHRy
+eSB0byBkbyBqdXN0IHRoYXQ7IGJ1dCBhdCB0aGUgbW9tZW50LCBjdXJyZW50IHZlcnNpb25zDQo+
+IGRvIG5vdCBzZWVtIHRvIGJlIG9uIGtlcm5lbC5vcmc6DQo+IA0KPiA0LjQuMjEzLWJhc2VkOg0K
+PiBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9jaXAvbGlu
+dXgtY2lwLmdpdC9sbw0KPiBnLz9oPWxpbnV4LTQuNC55LWNpcA0KPiA0LjQuMjA4LWJhc2VkOg0K
+PiBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9jaXAvbGlu
+dXgtY2lwLmdpdC9sbw0KPiBnLz9oPWxpbnV4LTQuNC55LWNpcC1yZWJhc2UNCg0KWWVzLCB3ZSBo
+YXZlbid0IHJlc29sdmVkIHRoaXMgaXNzdWUsIHNvIEkgaGF2ZW4ndCBjb21taXR0ZWQgdG8gdGhl
+IHJlYmFzZSBicmFuY2ggeWV0Lg0KQW5kLCBJIGZpeGVzIHN1Z2dlc3RlZCBhYm92ZS4NCg0KQ3Vy
+cmVudCB0cmVlOg0KICAgaHR0cHM6Ly9naXRsYWIuY29tL2l3YW1hdHN1L2xpbnV4LWNpcC8tL3Ry
+ZWUvcmViYXNlLWNoZWNrL2xpbnV4LTQuNC55LWNpcC1yZWJhc2UtYmFzZQ0KQ2F1c2UgY29tbWl0
+Og0KICAgaHR0cHM6Ly9naXRsYWIuY29tL2l3YW1hdHN1L2xpbnV4LWNpcC8tL2NvbW1pdC81YjQ1
+MTk1NmMyYzY3NjU2ZjFjNmRjYjVjYWE5ZmQ3YjlhYjc1NjEzDQogICAtIDViNDUxOTU2YzJjNiBm
+aXJtd2FyZTogUmVzdG9yZSBzdXBwb3J0IGZvciBidWlsdC1pbiBmaXJtd2FyZQ0KDQpGaXhlZCB0
+cmVlOiANCiAgIGh0dHBzOi8vZ2l0bGFiLmNvbS9pd2FtYXRzdS9saW51eC1jaXAvLS90cmVlL3Jl
+YmFzZS1jaGVjay9saW51eC00LjQueS1jaXAtcmViYXNlLWZpeDANCkZpeGVkIGNvbW1pdDoNCiAg
+IGh0dHBzOi8vZ2l0bGFiLmNvbS9pd2FtYXRzdS9saW51eC1jaXAvLS9jb21taXQvZDg0MWZlYzcx
+YjliZjQxMTdiOTg1OWQ3ZmZiYTY4MjEwMTYwYzQ4NA0KICAgLSBkODQxZmVjNzFiOWIgZmlybXdh
+cmU6IFJlc3RvcmUgc3VwcG9ydCBmb3IgYnVpbHQtaW4gZmlybXdhcmUNCg0KLS0tDQokIGdpdCBk
+aWZmIHJlYmFzZS1jaGVjay9saW51eC00LjQueS1jaXAtcmViYXNlLWJhc2UgcmViYXNlLWNoZWNr
+L2xpbnV4LTQuNC55LWNpcC1yZWJhc2UtZml4MA0KZGlmZiAtLWdpdCBhL2Zpcm13YXJlL01ha2Vm
+aWxlIGIvZmlybXdhcmUvTWFrZWZpbGUNCmluZGV4IGZhMDgwODg1Mzg4My4uYzk0NGNmMDkyOTI2
+IDEwMDY0NA0KLS0tIGEvZmlybXdhcmUvTWFrZWZpbGUNCisrKyBiL2Zpcm13YXJlL01ha2VmaWxl
+DQpAQCAtMTgsNyArMTgsNyBAQCBxdWlldF9jbWRfZndiaW4gPSBNS19GVyAgICRADQogCQkgIFBS
+T0dCSVRTPSQoaWYgJChDT05GSUdfQVJNKSwlLEApcHJvZ2JpdHM7CQkgICAgIFwNCiAJCSAgZWNo
+byAiLyogR2VuZXJhdGVkIGJ5IGZpcm13YXJlL01ha2VmaWxlICovIgkJPiAkQDtcDQogCQkgIGVj
+aG8gIiAgICAuc2VjdGlvbiAucm9kYXRhIgkJCQk+PiRAO1wNCi0JCSAgZWNobyAiICAgIC5wMmFs
+aWduICQke0FTTV9BTElHTn0iCQkJPj4kQDtcDQorCQkgIGVjaG8gIiAgICAucDJhbGlnbiA0IgkJ
+CQkJPj4kQDtcDQogCQkgIGVjaG8gIl9md18kJHtGV1NUUn1fYmluOiIJCQkJPj4kQDtcDQogCQkg
+IGVjaG8gIiAgICAuaW5jYmluIFwiJCgyKVwiIgkJCQk+PiRAO1wNCiAJCSAgZWNobyAiX2Z3X2Vu
+ZDoiCQkJCQk+PiRAO1wNCi0tLQ0KDQpDb3VsZCB5b3UgcGxlYXNlIGNoZWNrIGFuZCBjb21tZW50
+IG9uIGZpeGVkIGNvbW1pdD8NCg0KQmVzdCByZWdhcmRzLA0KICBOb2J1aGlybw0KX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KY2lwLWRldiBtYWlsaW5nIGxp
+c3QKY2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmcKaHR0cHM6Ly9saXN0cy5jaXAtcHJvamVj
+dC5vcmcvbWFpbG1hbi9saXN0aW5mby9jaXAtZGV2Cg==
