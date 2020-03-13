@@ -1,83 +1,59 @@
-Return-Path: <SRS0=DIdx=45=lists.cip-project.org=cip-dev-bounces@kernel.org>
+Return-Path: <SRS0=vcH8=46=lists.cip-project.org=cip-dev-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.4 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,HTML_MESSAGE,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAD79C10DCE
-	for <cip-dev@archiver.kernel.org>; Thu, 12 Mar 2020 19:50:48 +0000 (UTC)
-Received: from fraxinus.osuosl.org (smtp4.osuosl.org [140.211.166.137])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC88DC10DCE
+	for <cip-dev@archiver.kernel.org>; Fri, 13 Mar 2020 21:03:12 +0000 (UTC)
+Received: from hemlock.osuosl.org (smtp2.osuosl.org [140.211.166.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 8C72D20637
-	for <cip-dev@archiver.kernel.org>; Thu, 12 Mar 2020 19:50:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="QAlaDcsR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C72D20637
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTPS id 44BC72074D
+	for <cip-dev@archiver.kernel.org>; Fri, 13 Mar 2020 21:03:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44BC72074D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=cip-dev-bounces@lists.cip-project.org
 Received: from localhost (localhost [127.0.0.1])
-	by fraxinus.osuosl.org (Postfix) with ESMTP id 77F0985DE1;
-	Thu, 12 Mar 2020 19:50:48 +0000 (UTC)
+	by hemlock.osuosl.org (Postfix) with ESMTP id 2840E89859;
+	Fri, 13 Mar 2020 21:03:12 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from fraxinus.osuosl.org ([127.0.0.1])
+Received: from hemlock.osuosl.org ([127.0.0.1])
 	by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id bEmgxpy9PVoL; Thu, 12 Mar 2020 19:50:48 +0000 (UTC)
+	with ESMTP id Uyxfndx4Tl1e; Fri, 13 Mar 2020 21:03:11 +0000 (UTC)
 Received: from lists.linuxfoundation.org (lf-lists.osuosl.org [140.211.9.56])
-	by fraxinus.osuosl.org (Postfix) with ESMTP id 09D4E85D4C;
-	Thu, 12 Mar 2020 19:50:48 +0000 (UTC)
+	by hemlock.osuosl.org (Postfix) with ESMTP id 21A44895FD;
+	Fri, 13 Mar 2020 21:03:11 +0000 (UTC)
 Received: from lf-lists.osuosl.org (localhost [127.0.0.1])
-	by lists.linuxfoundation.org (Postfix) with ESMTP id E1830C0177;
-	Thu, 12 Mar 2020 19:50:47 +0000 (UTC)
-Received: from whitealder.osuosl.org (smtp1.osuosl.org [140.211.166.138])
- by lists.linuxfoundation.org (Postfix) with ESMTP id 836D0C0177
- for <cip-dev@lists.cip-project.org>; Thu, 12 Mar 2020 19:50:46 +0000 (UTC)
+	by lists.linuxfoundation.org (Postfix) with ESMTP id 04971C0177;
+	Fri, 13 Mar 2020 21:03:11 +0000 (UTC)
+Received: from hemlock.osuosl.org (smtp2.osuosl.org [140.211.166.133])
+ by lists.linuxfoundation.org (Postfix) with ESMTP id 65678C0177
+ for <cip-dev@lists.cip-project.org>; Fri, 13 Mar 2020 21:03:09 +0000 (UTC)
 Received: from localhost (localhost [127.0.0.1])
- by whitealder.osuosl.org (Postfix) with ESMTP id 80410877DC
- for <cip-dev@lists.cip-project.org>; Thu, 12 Mar 2020 19:50:46 +0000 (UTC)
+ by hemlock.osuosl.org (Postfix) with ESMTP id 53CB88943D
+ for <cip-dev@lists.cip-project.org>; Fri, 13 Mar 2020 21:03:09 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from whitealder.osuosl.org ([127.0.0.1])
+Received: from hemlock.osuosl.org ([127.0.0.1])
  by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id AEX7mjdrctcu for <cip-dev@lists.cip-project.org>;
- Thu, 12 Mar 2020 19:50:45 +0000 (UTC)
+ with ESMTP id UWLPNnC8esTt for <cip-dev@lists.cip-project.org>;
+ Fri, 13 Mar 2020 21:03:07 +0000 (UTC)
 X-Greylist: domain auto-whitelisted by SQLgrey-1.7.6
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com
- [209.85.167.176])
- by whitealder.osuosl.org (Postfix) with ESMTPS id 341FF877D6
- for <cip-dev@lists.cip-project.org>; Thu, 12 Mar 2020 19:50:45 +0000 (UTC)
-Received: by mail-oi1-f176.google.com with SMTP id w17so4533573oic.9
- for <cip-dev@lists.cip-project.org>; Thu, 12 Mar 2020 12:50:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=linuxfoundation.org; s=google;
- h=mime-version:from:date:message-id:subject:to;
- bh=4nqsT6D8tmu54F1alsfMNpXucAx17bxXR3aHKoffApI=;
- b=QAlaDcsRn+96JsJ+NPqk4fQ50VadDypw8NKa5InRbaimZP3LC8xPAE0jdAyosclNF7
- IbJ1ufQuCJrMu9KZHWw0EfpKqdE5i7Q6T3TqCfDBtzf1k4eg55y/xN4I1NZuW+lHU+wG
- 9hzbbKFm79q0+N0e/J90kGI/Mvmsrcj4J661c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20161025;
- h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
- bh=4nqsT6D8tmu54F1alsfMNpXucAx17bxXR3aHKoffApI=;
- b=j8JcWYfg2lml8Gu9yxmrGbC3pa3EL7KVzbfQDSKtIIHmDT5LmduXr5a5L3Z0MHitpY
- Nrt5B736ac8CaPiPaBM+RgUPoLO6HznW1o3J39Gcde4nok26lsp+3rVEMgVykn3aRkHv
- j1mjwwyn8GHaoEHMAqB+sg2wlxvfYmOED6MTYurbV5+/OP5FoJKxALaNug4ih9d8U7ev
- S4R3YgEOOn9F6aIk8XsUhoj88pXyLoORfY0eXjWzMQNKtKFYoNqASre5L5mK7IIKq8mf
- RhGeEzlhxF4fN4H3jHFdsU2qOa1cbnMfYx5KzuKpjxc5t/1ddrT2KFS8LUvr71FXbHix
- EOIg==
-X-Gm-Message-State: ANhLgQ1DJnwxs3qd67cZg+mYw18Ylg/iiVM68X+hf3bujP445/9LGmPm
- K1G3XYPHTVGZXoY1FSBoy9SDdsCqZ7Gr2EwlWBoVYw==
-X-Google-Smtp-Source: ADFU+vvODBRbnBITT5nZJCbPMRGN1py51BWGBnZDeMNNc69OeG9jQ3Sy1ZD7d3wMmwbYDtN5d+9Eaur247lhxqIGRuE=
-X-Received: by 2002:aca:a9d4:: with SMTP id s203mr4175896oie.106.1584042644268; 
- Thu, 12 Mar 2020 12:50:44 -0700 (PDT)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by hemlock.osuosl.org (Postfix) with ESMTPS id 1A8F7893E2
+ for <cip-dev@lists.cip-project.org>; Fri, 13 Mar 2020 21:03:06 +0000 (UTC)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+ id C87981C0327; Fri, 13 Mar 2020 22:03:02 +0100 (CET)
+Date: Fri, 13 Mar 2020 22:03:02 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: cip-dev@lists.cip-project.org
+Message-ID: <20200313210302.GA16410@duo.ucw.cz>
 MIME-Version: 1.0
-From: Neal Caidin <ncaidin@linuxfoundation.org>
-Date: Thu, 12 Mar 2020 15:50:28 -0400
-Message-ID: <CAODMxsLOOk7EZwoUgd5fNpXpOoR16ZunzZe0W6nL5NrLN2JWSw@mail.gmail.com>
-To: cip-members@lists.cip-project.org, cip-board@lists.cip-project.org, 
- cip-security@lists.cip-project.org, cip-dev@lists.cip-project.org
-Subject: [cip-dev] April 6 cutover from Mailman2 to Group.io
+User-Agent: Mutt/1.10.1 (2018-07-13)
+Subject: [cip-dev] Backporting "net: ipv6_stub: use ip6_dst_lookup_flow
+ instead of ip6_dst_lookup"
 X-BeenThere: cip-dev@lists.cip-project.org
 X-Mailman-Version: 2.1.15
 Precedence: list
@@ -89,69 +65,269 @@ List-Post: <mailto:cip-dev@lists.cip-project.org>
 List-Help: <mailto:cip-dev-request@lists.cip-project.org?subject=help>
 List-Subscribe: <https://lists.cip-project.org/mailman/listinfo/cip-dev>,
  <mailto:cip-dev-request@lists.cip-project.org?subject=subscribe>
-Content-Type: multipart/mixed; boundary="===============3454110174305344073=="
+Content-Type: multipart/mixed; boundary="===============7185357500749227259=="
 Errors-To: cip-dev-bounces@lists.cip-project.org
 Sender: "cip-dev" <cip-dev-bounces@lists.cip-project.org>
 
---===============3454110174305344073==
-Content-Type: multipart/alternative; boundary="0000000000001f025305a0adab80"
 
---0000000000001f025305a0adab80
-Content-Type: text/plain; charset="UTF-8"
+--===============7185357500749227259==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="tThc/1wpZn/ma/RB"
+Content-Disposition: inline
 
-[x-posted]
-Dear CIP community,
 
-These Mailman2 email lists will be converted starting on Monday, April 6
-and may take up to 24 hours to complete.
-
-There is no action required on your part.
-
-Any emails that are sent during the downtime will be queued up and come
-through when the system is up and running.
-
-Please let me know if you have any questions.
-
-Best regards,
-Neal
-
-*Neal Caidin*
-Program Manager, Program Management & Operations
-The Linux Foundation
-+1 (919) 238-9104 (w/h)
-+1 (919) 949-1861 (m)
-ncaidin@linuxfoundation.org
-
---0000000000001f025305a0adab80
-Content-Type: text/html; charset="UTF-8"
+--tThc/1wpZn/ma/RB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-<div dir=3D"ltr"><div>[x-posted]</div>Dear CIP community,<div><br></div><di=
-v>These Mailman2 email lists will be converted starting on Monday, April 6 =
-and may take up to 24 hours to complete.=C2=A0</div><div><br></div><div>The=
-re is no action required on your=C2=A0part.=C2=A0</div><div><br></div><div>=
-Any emails that are sent during the downtime will be queued up and come thr=
-ough when the system is up and running.</div><div><br></div><div>Please let=
- me know if you have any questions.</div><div><br></div><div>Best regards,<=
-/div><div>Neal</div><div><br></div><div><div><div dir=3D"ltr" class=3D"gmai=
-l_signature" data-smartmail=3D"gmail_signature"><div dir=3D"ltr"><div><div =
-dir=3D"ltr"><span><font color=3D"#888888"><div dir=3D"ltr"><div dir=3D"ltr"=
-><div><div dir=3D"ltr"><div><div dir=3D"ltr"><div dir=3D"ltr"><div dir=3D"l=
-tr"><div dir=3D"ltr"><b style=3D"color:rgb(136,136,136)"><font color=3D"#66=
-6666"><font color=3D"#888888">Neal Caidin</font></font></b><br><div style=
-=3D"color:rgb(136,136,136)"><span style=3D"border-collapse:collapse"><div><=
-font color=3D"#666666"><font>Program Manager, Program Management &amp; Oper=
-ations</font></font></div><div><font color=3D"#666666"><font>The Linux Foun=
-dation</font></font></div><div><font color=3D"#666666">+1 (919) 238-9104 (w=
-/h)<br>+1 (919) 949-1861 (m)</font></div><div><font color=3D"#666666"><a hr=
-ef=3D"mailto:ncaidin@linuxfoundation.org" target=3D"_blank">ncaidin@linuxfo=
-undation.org</a></font></div></span></div></div></div></div></div></div></d=
-iv></div></div></div></font></span></div></div></div></div></div></div></di=
-v>
+Hi!
 
---0000000000001f025305a0adab80--
+Here's backport of `subj` to 4.19. ip6_dst_lookup_flow() prototype
+changed between 4.19 and mainline, files were moved around, and I
+could not find some instances to update. Fun!
 
---===============3454110174305344073==
+I did minimal compile testing, I'll need to run it behind gitlab ci;
+but... if you are using IPv6 and can test this, it would be nice.
+
+Best regards,
+								Pavel
+
+
+
+diff --git a/drivers/infiniband/core/addr.c b/drivers/infiniband/core/addr.c
+index 46b855a42884..e3c948617c73 100644
+--- a/drivers/infiniband/core/addr.c
++++ b/drivers/infiniband/core/addr.c
+@@ -415,9 +415,9 @@ static int addr6_resolve(struct sockaddr_in6 *src_in,
+ 	fl6.saddr =3D src_in->sin6_addr;
+ 	fl6.flowi6_oif =3D addr->bound_dev_if;
+=20
+-	ret =3D ipv6_stub->ipv6_dst_lookup(addr->net, NULL, &dst, &fl6);
+-	if (ret < 0)
+-		return ret;
++	dst =3D ipv6_stub->ipv6_dst_lookup_flow(addr->net, NULL, &fl6, NULL);
++	if (IS_ERR(dst))
++		return PTR_ERR(dst);
+=20
+ 	rt =3D (struct rt6_info *)dst;
+ 	if (ipv6_addr_any(&src_in->sin6_addr)) {
+diff --git a/drivers/infiniband/sw/rxe/rxe_net.c b/drivers/infiniband/sw/rx=
+e/rxe_net.c
+index 8094cbaa54a9..95cf4fd69c55 100644
+--- a/drivers/infiniband/sw/rxe/rxe_net.c
++++ b/drivers/infiniband/sw/rxe/rxe_net.c
+@@ -154,10 +154,12 @@ static struct dst_entry *rxe_find_route6(struct net_d=
+evice *ndev,
+ 	memcpy(&fl6.daddr, daddr, sizeof(*daddr));
+ 	fl6.flowi6_proto =3D IPPROTO_UDP;
+=20
+-	if (unlikely(ipv6_stub->ipv6_dst_lookup(sock_net(recv_sockets.sk6->sk),
+-						recv_sockets.sk6->sk, &ndst, &fl6))) {
++	ndst =3D ipv6_stub->ipv6_dst_lookup_flow(sock_net(recv_sockets.sk6->sk),
++					       recv_sockets.sk6->sk, &fl6,
++					       NULL);
++	if (unlikely(IS_ERR(ndst))) {
+ 		pr_err_ratelimited("no route to %pI6\n", daddr);
+-		goto put;
++		return NULL;
+ 	}
+=20
+ 	if (unlikely(ndst->error)) {
+diff --git a/drivers/net/geneve.c b/drivers/net/geneve.c
+index 493cd382b8aa..f22f187a91cd 100644
+--- a/drivers/net/geneve.c
++++ b/drivers/net/geneve.c
+@@ -796,7 +796,9 @@ static struct dst_entry *geneve_get_v6_dst(struct sk_bu=
+ff *skb,
+ 		if (dst)
+ 			return dst;
+ 	}
+-	if (ipv6_stub->ipv6_dst_lookup(geneve->net, gs6->sock->sk, &dst, fl6)) {
++	dst =3D ipv6_stub->ipv6_dst_lookup_flow(geneve->net, gs6->sock->sk, fl6,
++					      NULL);
++	if (IS_ERR(dst)) {
+ 		netdev_dbg(dev, "no route to %pI6\n", &fl6->daddr);
+ 		return ERR_PTR(-ENETUNREACH);
+ 	}
+diff --git a/drivers/net/vxlan.c b/drivers/net/vxlan.c
+index 27bd586b94b0..0b6e899bd02e 100644
+--- a/drivers/net/vxlan.c
++++ b/drivers/net/vxlan.c
+@@ -1952,7 +1952,6 @@ static struct dst_entry *vxlan6_get_route(struct vxla=
+n_dev *vxlan,
+ 	bool use_cache =3D ip_tunnel_dst_cache_usable(skb, info);
+ 	struct dst_entry *ndst;
+ 	struct flowi6 fl6;
+-	int err;
+=20
+ 	if (!sock6)
+ 		return ERR_PTR(-EIO);
+@@ -1975,10 +1974,9 @@ static struct dst_entry *vxlan6_get_route(struct vxl=
+an_dev *vxlan,
+ 	fl6.fl6_dport =3D dport;
+ 	fl6.fl6_sport =3D sport;
+=20
+-	err =3D ipv6_stub->ipv6_dst_lookup(vxlan->net,
+-					 sock6->sock->sk,
+-					 &ndst, &fl6);
+-	if (unlikely(err < 0)) {
++	ndst =3D ipv6_stub->ipv6_dst_lookup_flow(vxlan->net, sock6->sock->sk,
++					       &fl6, NULL);
++	if (unlikely(IS_ERR(ndst))) {
+ 		netdev_dbg(dev, "no route to %pI6\n", daddr);
+ 		return ERR_PTR(-ENETUNREACH);
+ 	}
+diff --git a/include/net/addrconf.h b/include/net/addrconf.h
+index 6def0351bcc3..ceb36cce91ee 100644
+--- a/include/net/addrconf.h
++++ b/include/net/addrconf.h
+@@ -235,9 +235,10 @@ struct ipv6_stub {
+ 				 const struct in6_addr *addr);
+ 	int (*ipv6_sock_mc_drop)(struct sock *sk, int ifindex,
+ 				 const struct in6_addr *addr);
+-	int (*ipv6_dst_lookup)(struct net *net, struct sock *sk,
+-			       struct dst_entry **dst, struct flowi6 *fl6);
+-
++	struct dst_entry *(*ipv6_dst_lookup_flow)(struct net *net,
++						  const struct sock *sk,
++						  struct flowi6 *fl6,
++						  const struct in6_addr *final_dst);
+ 	struct fib6_table *(*fib6_get_table)(struct net *net, u32 id);
+ 	struct fib6_info *(*fib6_lookup)(struct net *net, int oif,
+ 					 struct flowi6 *fl6, int flags);
+diff --git a/include/net/ipv6.h b/include/net/ipv6.h
+index ff33f498c137..035cd7dc3836 100644
+--- a/include/net/ipv6.h
++++ b/include/net/ipv6.h
+@@ -961,6 +961,13 @@ int ip6_dst_lookup(struct net *net, struct sock *sk, s=
+truct dst_entry **dst,
+ 		   struct flowi6 *fl6);
+ struct dst_entry *ip6_dst_lookup_flow(const struct sock *sk, struct flowi6=
+ *fl6,
+ 				      const struct in6_addr *final_dst);
++
++static inline struct dst_entry *ip6_dst_lookup_flow_net(struct net *ign, c=
+onst struct sock *sk, struct flowi6 *fl6,
++				      const struct in6_addr *final_dst)
++{
++	return ip6_dst_lookup_flow(sk, fl6, final_dst);
++}
++
+ struct dst_entry *ip6_sk_dst_lookup_flow(struct sock *sk, struct flowi6 *f=
+l6,
+ 					 const struct in6_addr *final_dst,
+ 					 bool connected);
+diff --git a/net/ipv6/addrconf_core.c b/net/ipv6/addrconf_core.c
+index 5cd0029d930e..fe7f59193bb1 100644
+--- a/net/ipv6/addrconf_core.c
++++ b/net/ipv6/addrconf_core.c
+@@ -127,11 +127,12 @@ int inet6addr_validator_notifier_call_chain(unsigned =
+long val, void *v)
+ }
+ EXPORT_SYMBOL(inet6addr_validator_notifier_call_chain);
+=20
+-static int eafnosupport_ipv6_dst_lookup(struct net *net, struct sock *u1,
+-					struct dst_entry **u2,
+-					struct flowi6 *u3)
++static struct dst_entry *eafnosupport_ipv6_dst_lookup_flow(struct net *net,
++							   const struct sock *sk,
++							   struct flowi6 *fl6,
++							   const struct in6_addr *final_dst)
+ {
+-	return -EAFNOSUPPORT;
++	return ERR_PTR(-EAFNOSUPPORT);
+ }
+=20
+ static struct fib6_table *eafnosupport_fib6_get_table(struct net *net, u32=
+ id)
+@@ -169,7 +170,7 @@ eafnosupport_ip6_mtu_from_fib6(struct fib6_info *f6i, s=
+truct in6_addr *daddr,
+ }
+=20
+ const struct ipv6_stub *ipv6_stub __read_mostly =3D &(struct ipv6_stub) {
+-	.ipv6_dst_lookup   =3D eafnosupport_ipv6_dst_lookup,
++	.ipv6_dst_lookup_flow   =3D eafnosupport_ipv6_dst_lookup_flow,
+ 	.fib6_get_table    =3D eafnosupport_fib6_get_table,
+ 	.fib6_table_lookup =3D eafnosupport_fib6_table_lookup,
+ 	.fib6_lookup       =3D eafnosupport_fib6_lookup,
+diff --git a/net/ipv6/af_inet6.c b/net/ipv6/af_inet6.c
+index 9a4261e50272..e44534f22e00 100644
+--- a/net/ipv6/af_inet6.c
++++ b/net/ipv6/af_inet6.c
+@@ -889,7 +889,7 @@ static struct pernet_operations inet6_net_ops =3D {
+ static const struct ipv6_stub ipv6_stub_impl =3D {
+ 	.ipv6_sock_mc_join =3D ipv6_sock_mc_join,
+ 	.ipv6_sock_mc_drop =3D ipv6_sock_mc_drop,
+-	.ipv6_dst_lookup   =3D ip6_dst_lookup,
++	.ipv6_dst_lookup_flow   =3D ip6_dst_lookup_flow_net,
+ 	.fib6_get_table	   =3D fib6_get_table,
+ 	.fib6_table_lookup =3D fib6_table_lookup,
+ 	.fib6_lookup       =3D fib6_lookup,
+diff --git a/net/mpls/af_mpls.c b/net/mpls/af_mpls.c
+index 8fbe6cdbe255..e42ef8f835fa 100644
+--- a/net/mpls/af_mpls.c
++++ b/net/mpls/af_mpls.c
+@@ -618,16 +618,15 @@ static struct net_device *inet6_fib_lookup_dev(struct=
+ net *net,
+ 	struct net_device *dev;
+ 	struct dst_entry *dst;
+ 	struct flowi6 fl6;
+-	int err;
+=20
+ 	if (!ipv6_stub)
+ 		return ERR_PTR(-EAFNOSUPPORT);
+=20
+ 	memset(&fl6, 0, sizeof(fl6));
+ 	memcpy(&fl6.daddr, addr, sizeof(struct in6_addr));
+-	err =3D ipv6_stub->ipv6_dst_lookup(net, NULL, &dst, &fl6);
+-	if (err)
+-		return ERR_PTR(err);
++	dst =3D ipv6_stub->ipv6_dst_lookup_flow(net, NULL, &fl6, NULL);
++	if (IS_ERR(dst))
++		return ERR_CAST(dst);
+=20
+ 	dev =3D dst->dev;
+ 	dev_hold(dev);
+diff --git a/net/tipc/udp_media.c b/net/tipc/udp_media.c
+index 9783101bc4a9..1ab684a4f565 100644
+--- a/net/tipc/udp_media.c
++++ b/net/tipc/udp_media.c
+@@ -190,6 +190,14 @@ static int tipc_udp_xmit(struct net *net, struct sk_bu=
+ff *skb,
+ 			.saddr =3D src->ipv6,
+ 			.flowi6_proto =3D IPPROTO_UDP
+ 		};
++		ndst =3D ipv6_stub->ipv6_dst_lookup_flow(net,
++						       ub->ubsock->sk,
++						       &fl6, NULL);
++		if (IS_ERR(ndst)) {
++			err =3D PTR_ERR(ndst);
++			goto tx_error;
++		}
++	=09
+ 		err =3D ipv6_stub->ipv6_dst_lookup(net, ub->ubsock->sk, &ndst,
+ 						 &fl6);
+ 		if (err)
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--tThc/1wpZn/ma/RB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXmv1BgAKCRAw5/Bqldv6
+8plrAJ9ur6TQwqDYhHSSMNwSLpKt2sdKEgCgiJYICkphq/TsVL9DvQpPXB7a+5M=
+=tsD7
+-----END PGP SIGNATURE-----
+
+--tThc/1wpZn/ma/RB--
+
+--===============7185357500749227259==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -162,4 +338,4 @@ cip-dev mailing list
 cip-dev@lists.cip-project.org
 https://lists.cip-project.org/mailman/listinfo/cip-dev
 
---===============3454110174305344073==--
+--===============7185357500749227259==--
