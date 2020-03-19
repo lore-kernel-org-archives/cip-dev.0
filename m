@@ -2,63 +2,61 @@ Return-Path: <SRS0=K/mb=5E=lists.cip-project.org=cip-dev-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65005C4332D
-	for <cip-dev@archiver.kernel.org>; Thu, 19 Mar 2020 21:24:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B266C4332B
+	for <cip-dev@archiver.kernel.org>; Thu, 19 Mar 2020 21:52:09 +0000 (UTC)
 Received: from fraxinus.osuosl.org (smtp4.osuosl.org [140.211.166.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 20C0E2072C
-	for <cip-dev@archiver.kernel.org>; Thu, 19 Mar 2020 21:24:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20C0E2072C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTPS id DC1552076F
+	for <cip-dev@archiver.kernel.org>; Thu, 19 Mar 2020 21:52:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org; dmarc=permerror header.from=codethink.co.uk
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=cip-dev-bounces@lists.cip-project.org
 Received: from localhost (localhost [127.0.0.1])
-	by fraxinus.osuosl.org (Postfix) with ESMTP id F1163857D1;
-	Thu, 19 Mar 2020 21:24:08 +0000 (UTC)
+	by fraxinus.osuosl.org (Postfix) with ESMTP id BE64B86F57;
+	Thu, 19 Mar 2020 21:52:08 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
 Received: from fraxinus.osuosl.org ([127.0.0.1])
 	by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id gH00MpANboBU; Thu, 19 Mar 2020 21:24:08 +0000 (UTC)
+	with ESMTP id Qb1gk8qejW9f; Thu, 19 Mar 2020 21:52:06 +0000 (UTC)
 Received: from lists.linuxfoundation.org (lf-lists.osuosl.org [140.211.9.56])
-	by fraxinus.osuosl.org (Postfix) with ESMTP id 2209C86E41;
-	Thu, 19 Mar 2020 21:24:08 +0000 (UTC)
+	by fraxinus.osuosl.org (Postfix) with ESMTP id 9C88086EFD;
+	Thu, 19 Mar 2020 21:52:06 +0000 (UTC)
 Received: from lf-lists.osuosl.org (localhost [127.0.0.1])
-	by lists.linuxfoundation.org (Postfix) with ESMTP id 1039DC07FF;
-	Thu, 19 Mar 2020 21:24:08 +0000 (UTC)
-Received: from whitealder.osuosl.org (smtp1.osuosl.org [140.211.166.138])
- by lists.linuxfoundation.org (Postfix) with ESMTP id 71685C07FF
- for <cip-dev@lists.cip-project.org>; Thu, 19 Mar 2020 21:24:06 +0000 (UTC)
+	by lists.linuxfoundation.org (Postfix) with ESMTP id 8808DC07FF;
+	Thu, 19 Mar 2020 21:52:06 +0000 (UTC)
+Received: from fraxinus.osuosl.org (smtp4.osuosl.org [140.211.166.137])
+ by lists.linuxfoundation.org (Postfix) with ESMTP id 737F8C07FF
+ for <cip-dev@lists.cip-project.org>; Thu, 19 Mar 2020 21:52:05 +0000 (UTC)
 Received: from localhost (localhost [127.0.0.1])
- by whitealder.osuosl.org (Postfix) with ESMTP id 6084888146
- for <cip-dev@lists.cip-project.org>; Thu, 19 Mar 2020 21:24:06 +0000 (UTC)
+ by fraxinus.osuosl.org (Postfix) with ESMTP id 6063786EC1
+ for <cip-dev@lists.cip-project.org>; Thu, 19 Mar 2020 21:52:05 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from whitealder.osuosl.org ([127.0.0.1])
+Received: from fraxinus.osuosl.org ([127.0.0.1])
  by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id Fr7vULleSooD for <cip-dev@lists.cip-project.org>;
- Thu, 19 Mar 2020 21:24:03 +0000 (UTC)
+ with ESMTP id SdSWnqBzBt-1 for <cip-dev@lists.cip-project.org>;
+ Thu, 19 Mar 2020 21:52:04 +0000 (UTC)
 X-Greylist: domain auto-whitelisted by SQLgrey-1.7.6
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by whitealder.osuosl.org (Postfix) with ESMTPS id 4B1A288120
- for <cip-dev@lists.cip-project.org>; Thu, 19 Mar 2020 21:24:03 +0000 (UTC)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
- id 1B5C81C0320; Thu, 19 Mar 2020 22:23:59 +0100 (CET)
-Date: Thu, 19 Mar 2020 22:23:58 +0100
-From: Pavel Machek <pavel@denx.de>
-To: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Message-ID: <20200319212357.GA28591@duo.ucw.cz>
-References: <20200319110524.GA8475@duo.ucw.cz>
- <TYAPR01MB2285F2D82C8049EE8E7F073DB7F40@TYAPR01MB2285.jpnprd01.prod.outlook.com>
- <TYAPR01MB228523C8A226D17D38E7C3CDB7F40@TYAPR01MB2285.jpnprd01.prod.outlook.com>
- <5f2a3e394d6a5e9bc8b9e05df0b17c758c9c46fb.camel@codethink.co.uk>
+Received: from imap3.hz.codethink.co.uk (imap3.hz.codethink.co.uk [176.9.8.87])
+ by fraxinus.osuosl.org (Postfix) with ESMTPS id 8959C86EB7
+ for <cip-dev@lists.cip-project.org>; Thu, 19 Mar 2020 21:52:04 +0000 (UTC)
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126] helo=xylophone)
+ by imap3.hz.codethink.co.uk with esmtpsa  (Exim 4.92 #3 (Debian))
+ id 1jF357-0001dD-Qx; Thu, 19 Mar 2020 21:52:02 +0000
+Message-ID: <dc33d80bcae7830803faf5e41d9b83d7f23ea30a.camel@codethink.co.uk>
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+To: Pavel Machek <pavel@ucw.cz>, cip-dev@lists.cip-project.org
+Date: Thu, 19 Mar 2020 21:52:00 +0000
+In-Reply-To: <20200313210302.GA16410@duo.ucw.cz>
+References: <20200313210302.GA16410@duo.ucw.cz>
+Organization: Codethink Ltd.
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-In-Reply-To: <5f2a3e394d6a5e9bc8b9e05df0b17c758c9c46fb.camel@codethink.co.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-Cc: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-Subject: Re: [cip-dev] realtime on de0-nano bisection
+Subject: Re: [cip-dev] Backporting "net: ipv6_stub: use ip6_dst_lookup_flow
+ instead of ip6_dst_lookup"
 X-BeenThere: cip-dev@lists.cip-project.org
 X-Mailman-Version: 2.1.15
 Precedence: list
@@ -70,97 +68,102 @@ List-Post: <mailto:cip-dev@lists.cip-project.org>
 List-Help: <mailto:cip-dev-request@lists.cip-project.org?subject=help>
 List-Subscribe: <https://lists.cip-project.org/mailman/listinfo/cip-dev>,
  <mailto:cip-dev-request@lists.cip-project.org?subject=subscribe>
-Content-Type: multipart/mixed; boundary="===============3477853244801550388=="
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: cip-dev-bounces@lists.cip-project.org
 Sender: "cip-dev" <cip-dev-bounces@lists.cip-project.org>
 
+On Fri, 2020-03-13 at 22:03 +0100, Pavel Machek wrote:
+> Hi!
+> 
+> Here's backport of `subj` to 4.19. ip6_dst_lookup_flow() prototype
+> changed between 4.19 and mainline, files were moved around, and I
+> could not find some instances to update. Fun!
 
---===============3477853244801550388==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="qDbXVdCdHGoSgWSk"
-Content-Disposition: inline
+I also had a go at this before catching up on cip-dev and finding you
+had also done so.  So I've compared this with my version.
 
+> I did minimal compile testing, I'll need to run it behind gitlab ci;
+> but... if you are using IPv6 and can test this, it would be nice.
 
---qDbXVdCdHGoSgWSk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I haven't done real testing yet either.
 
-Hi!
+> Best regards,
+> 								Pavel
+> 
+> 
+> 
+> diff --git a/drivers/infiniband/core/addr.c b/drivers/infiniband/core/addr.c
+> index 46b855a42884..e3c948617c73 100644
+> --- a/drivers/infiniband/core/addr.c
+> +++ b/drivers/infiniband/core/addr.c
+> @@ -415,9 +415,9 @@ static int addr6_resolve(struct sockaddr_in6 *src_in,
+>  	fl6.saddr = src_in->sin6_addr;
+>  	fl6.flowi6_oif = addr->bound_dev_if;
+>  
+> -	ret = ipv6_stub->ipv6_dst_lookup(addr->net, NULL, &dst, &fl6);
+> -	if (ret < 0)
+> -		return ret;
+> +	dst = ipv6_stub->ipv6_dst_lookup_flow(addr->net, NULL, &fl6, NULL);
+> +	if (IS_ERR(dst))
+> +		return PTR_ERR(dst);
 
-> > > From: cip-dev <cip-dev-bounces@lists.cip-project.org> On Behalf Of Ch=
-ris
-> > > Paterson
-> > > Sent: 19 March 2020 11:23
-> > >=20
-> > > Hello Pavel,
-> > >=20
-> > > > From: Pavel Machek <pavel@denx.de>
-> > > > Sent: 19 March 2020 11:05
-> [...]
-> > > > like tests are unreliable (and even my basic assumptions may be wor=
-th
-> > > > re-testing).
-> > > >=20
-> > > > Can you help? I'll be away from console for a few hours now.
-> > >=20
-> > > I'll get bisecting.
-> >=20
-> > Last 'good' patch is: 2089f853a8c3 ("drm/i915: disable tracing on
-> > -RT")
-> > The first 'bad' path is: c82fe0af5e58 ("drm/i915: skip
-> > DRM_I915_LOW_LEVEL_TRACEPOINTS with NOTRACE")
-> >=20
-> > Don't ask me why c82fe0af5e58 causes a boot issue on the de0-nano
-> > board but at least it's a starting point for you.
-> [...]
->=20
-> When bisection finds a commit touching code that you're not even
-> building, the answer should not be "don't ask me why" but "this is not
-> a reproducible bug".
+This leaves the ret variable unused, so I deleted it.
 
-That's my job, I guess. I asked for bisect and got bisect
-(thanks!). And yes, I have to agree:
+[...]
+> diff --git a/include/net/ipv6.h b/include/net/ipv6.h
+> index ff33f498c137..035cd7dc3836 100644
+> --- a/include/net/ipv6.h
+> +++ b/include/net/ipv6.h
+> @@ -961,6 +961,13 @@ int ip6_dst_lookup(struct net *net, struct sock *sk, struct dst_entry **dst,
+>  		   struct flowi6 *fl6);
+>  struct dst_entry *ip6_dst_lookup_flow(const struct sock *sk, struct flowi6 *fl6,
+>  				      const struct in6_addr *final_dst);
+> +
+> +static inline struct dst_entry *ip6_dst_lookup_flow_net(struct net *ign, const struct sock *sk, struct flowi6 *fl6,
+> +				      const struct in6_addr *final_dst)
+> +{
+> +	return ip6_dst_lookup_flow(sk, fl6, final_dst);
+> +}
+> +
 
-In the meantime:
+I think we should pick commit c4e85f73afb6 "net: ipv6: add net argument
+to ip6_dst_lookup_flow" first instead of adding this adapter.  It is
+explicitly described as preparation for this fix.
 
-https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/478548891
-https://lava.ciplatform.org/scheduler/job/13037
+[...]
+> --- a/net/tipc/udp_media.c
+> +++ b/net/tipc/udp_media.c
+> @@ -190,6 +190,14 @@ static int tipc_udp_xmit(struct net *net, struct sk_buff *skb,
+>  			.saddr = src->ipv6,
+>  			.flowi6_proto = IPPROTO_UDP
+>  		};
+> +		ndst = ipv6_stub->ipv6_dst_lookup_flow(net,
+> +						       ub->ubsock->sk,
+> +						       &fl6, NULL);
+> +		if (IS_ERR(ndst)) {
+> +			err = PTR_ERR(ndst);
+> +			goto tx_error;
+> +		}
+> +		
+>  		err = ipv6_stub->ipv6_dst_lookup(net, ub->ubsock->sk, &ndst,
+>  						 &fl6);
+>  		if (err)
 
-So yes, it seems this is not reproducible. Is it easy to make the test
-run .. say 5 times?
+You've not deleted the call to the old ipv6_dst_lookup operation here.
 
-I'm starting to suspect
+The mlx5_en driver *does* use the ipv6_dst_lookup operation in 4.19 so
+it should be converted to ipv6_dst_lookup_flow.  The relevant code is
+in drivers/net/ethernet/mellanox/mlx5/core/en_tc.c.
 
-pick fc9f4631a290 irqwork: push most work into softirq context
+Ben.
 
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---qDbXVdCdHGoSgWSk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXnPi7QAKCRAw5/Bqldv6
-8vb7AKCKLT4biw/nbyaA089nKBTOJ5nFrwCgrWTpM86zJyuIV+IitrkJWh41zLk=
-=Help
------END PGP SIGNATURE-----
-
---qDbXVdCdHGoSgWSk--
-
---===============3477853244801550388==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+-- 
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
 
 _______________________________________________
 cip-dev mailing list
 cip-dev@lists.cip-project.org
 https://lists.cip-project.org/mailman/listinfo/cip-dev
-
---===============3477853244801550388==--
