@@ -1,68 +1,59 @@
-Return-Path: <SRS0=yIDp=5J=lists.cip-project.org=cip-dev-bounces@kernel.org>
+Return-Path: <SRS0=dsOr=5K=lists.cip-project.org=cip-dev-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E75C10DCE
-	for <cip-dev@archiver.kernel.org>; Tue, 24 Mar 2020 06:12:12 +0000 (UTC)
-Received: from fraxinus.osuosl.org (smtp4.osuosl.org [140.211.166.137])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF942C1975A
+	for <cip-dev@archiver.kernel.org>; Wed, 25 Mar 2020 09:33:50 +0000 (UTC)
+Received: from whitealder.osuosl.org (smtp1.osuosl.org [140.211.166.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id A5E1320719
-	for <cip-dev@archiver.kernel.org>; Tue, 24 Mar 2020 06:12:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5E1320719
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=siemens.com
+	by mail.kernel.org (Postfix) with ESMTPS id A135520714
+	for <cip-dev@archiver.kernel.org>; Wed, 25 Mar 2020 09:33:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A135520714
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=cip-dev-bounces@lists.cip-project.org
 Received: from localhost (localhost [127.0.0.1])
-	by fraxinus.osuosl.org (Postfix) with ESMTP id 6ED12850DC;
-	Tue, 24 Mar 2020 06:12:11 +0000 (UTC)
+	by whitealder.osuosl.org (Postfix) with ESMTP id 7711C84FB6;
+	Wed, 25 Mar 2020 09:33:50 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from fraxinus.osuosl.org ([127.0.0.1])
+Received: from whitealder.osuosl.org ([127.0.0.1])
 	by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id tTRGaIT0EVIu; Tue, 24 Mar 2020 06:12:10 +0000 (UTC)
+	with ESMTP id HS5no6PAUXGA; Wed, 25 Mar 2020 09:33:49 +0000 (UTC)
 Received: from lists.linuxfoundation.org (lf-lists.osuosl.org [140.211.9.56])
-	by fraxinus.osuosl.org (Postfix) with ESMTP id 2789B850D6;
-	Tue, 24 Mar 2020 06:12:10 +0000 (UTC)
+	by whitealder.osuosl.org (Postfix) with ESMTP id E28A984FB1;
+	Wed, 25 Mar 2020 09:33:49 +0000 (UTC)
 Received: from lf-lists.osuosl.org (localhost [127.0.0.1])
-	by lists.linuxfoundation.org (Postfix) with ESMTP id 090BEC0177;
-	Tue, 24 Mar 2020 06:12:10 +0000 (UTC)
-Received: from silver.osuosl.org (smtp3.osuosl.org [140.211.166.136])
- by lists.linuxfoundation.org (Postfix) with ESMTP id D42B1C0177
- for <cip-dev@lists.cip-project.org>; Tue, 24 Mar 2020 06:12:08 +0000 (UTC)
+	by lists.linuxfoundation.org (Postfix) with ESMTP id CD741C0177;
+	Wed, 25 Mar 2020 09:33:49 +0000 (UTC)
+Received: from whitealder.osuosl.org (smtp1.osuosl.org [140.211.166.138])
+ by lists.linuxfoundation.org (Postfix) with ESMTP id C9200C0177
+ for <cip-dev@lists.cip-project.org>; Wed, 25 Mar 2020 09:33:47 +0000 (UTC)
 Received: from localhost (localhost [127.0.0.1])
- by silver.osuosl.org (Postfix) with ESMTP id C96CE204AB
- for <cip-dev@lists.cip-project.org>; Tue, 24 Mar 2020 06:12:08 +0000 (UTC)
+ by whitealder.osuosl.org (Postfix) with ESMTP id B7AA784FB1
+ for <cip-dev@lists.cip-project.org>; Wed, 25 Mar 2020 09:33:47 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from silver.osuosl.org ([127.0.0.1])
+Received: from whitealder.osuosl.org ([127.0.0.1])
  by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id DeCIVx9MP9dk for <cip-dev@lists.cip-project.org>;
- Tue, 24 Mar 2020 06:12:07 +0000 (UTC)
+ with ESMTP id lj0+R+lgSIiC for <cip-dev@lists.cip-project.org>;
+ Wed, 25 Mar 2020 09:33:46 +0000 (UTC)
 X-Greylist: domain auto-whitelisted by SQLgrey-1.7.6
-Received: from goliath.siemens.de (goliath.siemens.de [192.35.17.28])
- by silver.osuosl.org (Postfix) with ESMTPS id 80DD320130
- for <cip-dev@lists.cip-project.org>; Tue, 24 Mar 2020 06:12:07 +0000 (UTC)
-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
- by goliath.siemens.de (8.15.2/8.15.2) with ESMTPS id 02O6C410012115
- (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
- Tue, 24 Mar 2020 07:12:04 +0100
-Received: from [139.22.35.139] ([139.22.35.139])
- by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 02O6C3d9018553;
- Tue, 24 Mar 2020 07:12:04 +0100
-To: =?UTF-8?Q?Andreas_Wei=c3=9fel?= <andreas.weissel@gmail.com>,
- cip-dev@lists.cip-project.org
-References: <CAC4QREfMtM1MQBVf2ZhRbBstUkCBbny5pwWEd_dJ09GcQpyiHA@mail.gmail.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Message-ID: <fc23117d-9d46-0765-ccb7-640b685824d2@siemens.com>
-Date: Tue, 24 Mar 2020 07:12:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by whitealder.osuosl.org (Postfix) with ESMTPS id 8B270847BE
+ for <cip-dev@lists.cip-project.org>; Wed, 25 Mar 2020 09:33:46 +0000 (UTC)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+ id 202471C0309; Wed, 25 Mar 2020 10:33:43 +0100 (CET)
+Date: Wed, 25 Mar 2020 10:33:42 +0100
+From: Pavel Machek <pavel@denx.de>
+To: jan.kiszka@siemens.com, cip-dev@lists.cip-project.org, SZ.Lin@moxa.com,
+ ben.hutchings@codethink.co.uk, Chris.Paterson2@renesas.com
+Message-ID: <20200325093342.GA10079@duo.ucw.cz>
 MIME-Version: 1.0
-In-Reply-To: <CAC4QREfMtM1MQBVf2ZhRbBstUkCBbny5pwWEd_dJ09GcQpyiHA@mail.gmail.com>
-Content-Language: en-US
-Subject: Re: [cip-dev] Super long-term kernel support
+User-Agent: Mutt/1.10.1 (2018-07-13)
+Subject: [cip-dev] [ANNOUNCE] v4.19.106-cip21-rt8
 X-BeenThere: cip-dev@lists.cip-project.org
 X-Mailman-Version: 2.1.15
 Precedence: list
@@ -74,27 +65,76 @@ List-Post: <mailto:cip-dev@lists.cip-project.org>
 List-Help: <mailto:cip-dev-request@lists.cip-project.org?subject=help>
 List-Subscribe: <https://lists.cip-project.org/mailman/listinfo/cip-dev>,
  <mailto:cip-dev-request@lists.cip-project.org?subject=subscribe>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Type: multipart/mixed; boundary="===============2806146285367478154=="
 Errors-To: cip-dev-bounces@lists.cip-project.org
 Sender: "cip-dev" <cip-dev-bounces@lists.cip-project.org>
 
-T24gMjMuMDMuMjAgMTc6NTQsIEFuZHJlYXMgV2Vpw59lbCB3cm90ZToKPiBIaSBDSVAga2VybmVs
-IHRlYW0sCj4gCj4gSSBoYXZlIGEgcXVlc3Rpb24gcmVnYXJkaW5nIHRoZSBzdXBlciBsb25nLXRl
-cm0ga2VybmVsIHN1cHBvcnQ6IGNhbgo+IG90aGVyIGNvbW1lcmNpYWwgb3Igbm9uLWNvbW1lcmNp
-YWwgcHJvamVjdHMgbWFrZSB1c2Ugb2Ygc3VjaCBrZXJuZWwKPiB2ZXJzaW9ucyBsaWtlICJsaW51
-eC00LjE5LnktY2lwIiwgaS5lLiwgdXNlIHRoZSBDSVAgZ2l0IHJlcG9zaXRvcmllcwo+IHRvIGFk
-ZHJlc3Mgc2VjdXJpdHkgaXNzdWVzIChDVkVzKSBpbiB0aGUgTGludXgga2VybmVsIGV2ZW4gYWZ0
-ZXIgdGhlCj4gdXBzdHJlYW0gbG9uZy10ZXJtIHZlcnNpb25zIGFyZSBubyBsb25nZXIgc3VwcG9y
-dGVkLCBvciBpcyB0aGlzCj4gY29uc2lkZXJlZCBhIHNlcnZpY2UgZm9yIG1lbWJlcnMgb25seT8K
-CkFzIFBhdmVsIGFscmVhZHkgcG9pbnRlZCBvdXQ6IFRoZSBDSVAga2VybmVsIG5hdHVyYWxseSBy
-ZW1haW5zIGEgR1BMIApwcm9qZWN0LCB1c2FnZSBpcyBmcmVlIHVuZGVyIHRoZSB0ZXJtcyBvZiB0
-aGlzIGxpY2Vuc2UuCgpUaGUgYmVuZWZpdHMgb2YgYmVpbmcgYSBDSVAgbWVtYmVyIC0gYmVzaWRl
-cyBlbnN1cmluZyB0aGUgZnVuZGluZyBvZiAKdGhpcyB3b3JrIC0gaXMgdGhlIGNoYW5jZSB0byBp
-bmZsdWVuY2Ugd2hpY2ggY29uZmlndXJhdGlvbnMgYW5kLCB0aHVzLCAKc3Vic3lzdGVtcyB0aGUg
-Q0lQIGtlcm5lbCB3aWxsIHN1cHBvcnQsIGFuZCBvbiB3aGljaCBoYXJkd2FyZS4KCkJlc3QgcmVn
-YXJkcywKSmFuCgotLSAKU2llbWVucyBBRywgQ29ycG9yYXRlIFRlY2hub2xvZ3ksIENUIFJEQSBJ
-T1QgU0VTLURFCkNvcnBvcmF0ZSBDb21wZXRlbmNlIENlbnRlciBFbWJlZGRlZCBMaW51eApfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpjaXAtZGV2IG1haWxp
-bmcgbGlzdApjaXAtZGV2QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZwpodHRwczovL2xpc3RzLmNpcC1w
-cm9qZWN0Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2NpcC1kZXYK
+
+--===============2806146285367478154==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="tKW2IUtsqtDRztdT"
+Content-Disposition: inline
+
+
+--tKW2IUtsqtDRztdT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+vv4.19.106-cip21-rt8 should be available at kernel.org.
+
+We are only testing kernels in non-realtime configurations, but this
+proved useful in this case, and uncovered problem on de0-nano (32-bit
+arm). Bisecting was quite interesting, but in the end we got close
+enough to guess the guilty commit, and fix was comparatively
+easy. Thanks for all the help (and that includes upstream). I still
+need that or equivalent patch merged into -rt tree. Technical details
+are here:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/commit/?h=
+=3Dlinux-4.19.y-cip-rt&id=3D1edcec1ee609d349e520e85e7cdfd938f6bafdda
+
+Trees are available at
+
+https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=3D=
+linux-4.19.y-cip-rt
+
+https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=3D=
+linux-4.19.y-cip-rt-rebase
+
+And their content should be identical.
+
+Best regards,
+                                                                Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--tKW2IUtsqtDRztdT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXnsldgAKCRAw5/Bqldv6
+8q2jAJ4xQ64Pw8zl5Pdvl21PHJ8L77VfwQCfSw0Ny5AxlLFHr21JqT4PKwfKmWM=
+=psQ8
+-----END PGP SIGNATURE-----
+
+--tKW2IUtsqtDRztdT--
+
+--===============2806146285367478154==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+cip-dev mailing list
+cip-dev@lists.cip-project.org
+https://lists.cip-project.org/mailman/listinfo/cip-dev
+
+--===============2806146285367478154==--
