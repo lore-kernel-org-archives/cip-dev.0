@@ -1,87 +1,117 @@
 Return-Path: <SRS0=dsOr=5K=lists.cip-project.org=cip-dev-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,HTML_MESSAGE,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A73C1975A
-	for <cip-dev@archiver.kernel.org>; Wed, 25 Mar 2020 16:34:16 +0000 (UTC)
-Received: from hemlock.osuosl.org (smtp2.osuosl.org [140.211.166.133])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 430F3C43331
+	for <cip-dev@archiver.kernel.org>; Wed, 25 Mar 2020 23:26:53 +0000 (UTC)
+Received: from whitealder.osuosl.org (smtp1.osuosl.org [140.211.166.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 076A420740
-	for <cip-dev@archiver.kernel.org>; Wed, 25 Mar 2020 16:34:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id DD43420714
+	for <cip-dev@archiver.kernel.org>; Wed, 25 Mar 2020 23:26:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NgRN6Pp2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 076A420740
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=intra01.onmicrosoft.com header.i=@intra01.onmicrosoft.com header.b="qC4uAKch"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD43420714
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cybertrust.co.jp
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=cip-dev-bounces@lists.cip-project.org
 Received: from localhost (localhost [127.0.0.1])
-	by hemlock.osuosl.org (Postfix) with ESMTP id BD5F986A9B;
-	Wed, 25 Mar 2020 16:34:15 +0000 (UTC)
+	by whitealder.osuosl.org (Postfix) with ESMTP id 9CDEF875E9;
+	Wed, 25 Mar 2020 23:26:52 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from hemlock.osuosl.org ([127.0.0.1])
+Received: from whitealder.osuosl.org ([127.0.0.1])
 	by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id uoCKpSpOC+I1; Wed, 25 Mar 2020 16:34:15 +0000 (UTC)
+	with ESMTP id 4VbJ2VZL0eHG; Wed, 25 Mar 2020 23:26:52 +0000 (UTC)
 Received: from lists.linuxfoundation.org (lf-lists.osuosl.org [140.211.9.56])
-	by hemlock.osuosl.org (Postfix) with ESMTP id 20A6E85EA7;
-	Wed, 25 Mar 2020 16:34:15 +0000 (UTC)
+	by whitealder.osuosl.org (Postfix) with ESMTP id 03CA8875BD;
+	Wed, 25 Mar 2020 23:26:51 +0000 (UTC)
 Received: from lf-lists.osuosl.org (localhost [127.0.0.1])
-	by lists.linuxfoundation.org (Postfix) with ESMTP id 07C7BC0177;
-	Wed, 25 Mar 2020 16:34:15 +0000 (UTC)
+	by lists.linuxfoundation.org (Postfix) with ESMTP id DB00DC0177;
+	Wed, 25 Mar 2020 23:26:51 +0000 (UTC)
 Received: from whitealder.osuosl.org (smtp1.osuosl.org [140.211.166.138])
- by lists.linuxfoundation.org (Postfix) with ESMTP id D62F7C1D74
- for <cip-dev@lists.cip-project.org>; Wed, 25 Mar 2020 16:34:13 +0000 (UTC)
+ by lists.linuxfoundation.org (Postfix) with ESMTP id 02414C0177
+ for <cip-dev@lists.cip-project.org>; Wed, 25 Mar 2020 23:26:51 +0000 (UTC)
 Received: from localhost (localhost [127.0.0.1])
- by whitealder.osuosl.org (Postfix) with ESMTP id BFF2A875D1
- for <cip-dev@lists.cip-project.org>; Wed, 25 Mar 2020 16:34:13 +0000 (UTC)
+ by whitealder.osuosl.org (Postfix) with ESMTP id E5264875BD
+ for <cip-dev@lists.cip-project.org>; Wed, 25 Mar 2020 23:26:50 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
 Received: from whitealder.osuosl.org ([127.0.0.1])
  by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id X8ZJ4fJiMpgB for <cip-dev@lists.cip-project.org>;
- Wed, 25 Mar 2020 16:34:13 +0000 (UTC)
-X-Greylist: domain auto-whitelisted by SQLgrey-1.7.6
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com
- [209.85.166.52])
- by whitealder.osuosl.org (Postfix) with ESMTPS id 01CA9871C0
- for <cip-dev@lists.cip-project.org>; Wed, 25 Mar 2020 16:34:12 +0000 (UTC)
-Received: by mail-io1-f52.google.com with SMTP id c19so2884981ioo.6
- for <cip-dev@lists.cip-project.org>; Wed, 25 Mar 2020 09:34:12 -0700 (PDT)
+ with ESMTP id Ufq9APVfECYa for <cip-dev@lists.cip-project.org>;
+ Wed, 25 Mar 2020 23:26:48 +0000 (UTC)
+X-Greylist: from auto-whitelisted by SQLgrey-1.7.6
+Received: from APC01-PU1-obe.outbound.protection.outlook.com
+ (mail-eopbgr1320092.outbound.protection.outlook.com [40.107.132.92])
+ by whitealder.osuosl.org (Postfix) with ESMTPS id 9237A875D1
+ for <cip-dev@lists.cip-project.org>; Wed, 25 Mar 2020 23:26:48 +0000 (UTC)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lM2Auy74odhQ3dgv7FFqL1e61TsANnwVtlTn1Vv0d8ei3eswjngynP6qNM7+8/bnSIm/o4COQqeeE19rAP5Lfr4w+TDa4WwA56hPPVE+faOyCVPBGiMqvr9uhUazlbiUpmHeDZgk7Y7u5t0vF7mJY9pJrvJYouiNKPHL/9RC3V1Z65XsVHN761C5rjTaDLXPh0+thMmgF02/8qHbzEYiYG4MLPwMh2ssrPm193cgj8LdvlQukt+sJU4MEMzbn+okjSsxYhE0iZ6UxFz/RtFVqwJaYP6Tc7EJcn3KY5yN5cOUANitMYdsG9OArHJK1Ff3xjyeS1nTI4rJ22lNXYsG4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MpDtqNXWPUGDpiNeNN4JhAu3I8yVCniiDMaNd56xYVg=;
+ b=E3V98RXHTlCOGV766GB9I/QX9KBzNWqw8U9plVY6y96mTtbefGB+KtCBLnjDfybxbrz6LpA6+mVSsf26o7aI677xwoWp0juU2Cr87eMNBjLIoaN6hiOnSzFAxBzIEZcB6q14770MH86UT0R7YXAZaT4zkzmQJ9xh8WIu+dIJ0sAMCV0DiSHYoV7RA3sI9/4MKT7CkjHArp1Q5luC9JlBn8OVfj88LluoMaSUr586/fZUqyhgMqfQmfH2DUlg+g6KJ7pC8y0h0OwhT9vi8ePC5O3dN5xaWUY+c+s+E80L1qZP6MzOY6H8Ybh2nb1ESxRULe/X6HAzXG7NRabekm36LA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cybertrust.co.jp; dmarc=pass action=none
+ header.from=cybertrust.co.jp; dkim=pass header.d=cybertrust.co.jp; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=linuxfoundation.org; s=google;
- h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
- bh=DITXQbGW/b472iF6G9AaJA0ofR6InO/EcNFYujQV8tI=;
- b=NgRN6Pp2vx0eN+fn2AHTDI7vsWn52osxncvg1/Ib3sn03iTTzee+TMby1wzhVMOe3d
- QiyGiHnFJXlnoea+0hPB2beUsvCNI5WtF7PFwvZ2xnWgc8PEG68LJb0Cu5OHJoTMWspi
- i1MHQgRn9L66KdnN4hKDFyvmCGozn7zDCc6GY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20161025;
- h=x-gm-message-state:mime-version:references:in-reply-to:from:date
- :message-id:subject:to;
- bh=DITXQbGW/b472iF6G9AaJA0ofR6InO/EcNFYujQV8tI=;
- b=L1JKcOaljh5StxKUSnBAetBAiFPOkSRGG8lVwnokfkEI2HH4Ofr8FQCMrdqH1mAQ/Z
- KTJ+SRj3zsKy5RaF9R5S9Gxha+w8nvJwMg061nNoAQ3+s5sDrsPGF6zW4sImIYaQ8okn
- 394xKPQ6gmBBLjflA49N484zjBpESXlPdD3fX3cKMxrMcKa8tzdCXZU7NAUTa7NwqHWe
- OGdmMzanhlksjRsC6OXKVpYolmRvmmCYYzXGj9Y18FVWCgJfB4PIKy635sg7+xbG4nWB
- As6R6d1Ta38g4LzW1FsbYZxuvY9R0YWTui7AZeSHBZ2JnNlao/sTEEvo8IJFQtI9YMMc
- RzPw==
-X-Gm-Message-State: ANhLgQ0GilYiK17ofPd4EX1AJOkDkEqJ/CEOeQabFODtZ2APDcap84c0
- G06v9NBMw5lYLzED38IzEZVTzsAAkSf0hxDs3T1H8VTcpJY=
-X-Google-Smtp-Source: ADFU+vsCURMPjimmWuY9YiwL3dqc8qtn1XS8thRCxCCVFz0FSMUv8KM6vdY7Kc6W42Xa5iEmuq8aIhwh8eeuoBMyiq0=
-X-Received: by 2002:a05:6602:24d5:: with SMTP id
- h21mr3710512ioe.154.1585154052069; 
- Wed, 25 Mar 2020 09:34:12 -0700 (PDT)
+ d=intra01.onmicrosoft.com; s=selector1-intra01-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MpDtqNXWPUGDpiNeNN4JhAu3I8yVCniiDMaNd56xYVg=;
+ b=qC4uAKchyZKPMV5zhO/zTyVFYaQ+wjtSZYoyYOj5mcRNENk9wFxxDgliKIo/UzK29gwlqAF5MhuAdPlJPNC1uaW1fdU+R6s4rRH6WtbgtLxUzquAoQeEJqk5bOTXsbADxgFqn9hy/XXOUdoT57APO6y5oC7RCUGZmnMJV6GOcZI=
+Received: from TY2PR01MB4972.jpnprd01.prod.outlook.com (20.179.172.148) by
+ TY2PR01MB3098.jpnprd01.prod.outlook.com (20.177.97.207) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2835.19; Wed, 25 Mar 2020 22:52:00 +0000
+Received: from TY2PR01MB4972.jpnprd01.prod.outlook.com
+ ([fe80::e845:c7d4:4f:c3cc]) by TY2PR01MB4972.jpnprd01.prod.outlook.com
+ ([fe80::e845:c7d4:4f:c3cc%7]) with mapi id 15.20.2814.021; Wed, 25 Mar 2020
+ 22:52:00 +0000
+From: <masashi.kudo@cybertrust.co.jp>
+To: <cip-dev@lists.cip-project.org>
+Thread-Topic: CIP IRC weekly meeting today
+Thread-Index: AdYC9/DApTGyuYmoSqOpRjj3/fUEgg==
+Date: Wed, 25 Mar 2020 22:52:00 +0000
+Message-ID: <TY2PR01MB49720412F80004F01E9BF8DDA0CE0@TY2PR01MB4972.jpnprd01.prod.outlook.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=masashi.kudo@cybertrust.co.jp; 
+x-originating-ip: [122.216.27.145]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 93506874-31e1-4bab-0103-08d7d10f20e6
+x-ms-traffictypediagnostic: TY2PR01MB3098:
+x-microsoft-antispam-prvs: <TY2PR01MB3098FFB062DB03306055A478A0CE0@TY2PR01MB3098.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6430;
+x-forefront-prvs: 0353563E2B
+x-forefront-antispam-report: SFV:NSPM;
+ SFS:(10019020)(4636009)(396003)(366004)(376002)(346002)(39860400002)(136003)(33656002)(55016002)(52536014)(2906002)(86362001)(85182001)(66946007)(71200400001)(66446008)(76116006)(64756008)(478600001)(316002)(66476007)(66556008)(6916009)(81156014)(5660300002)(186003)(26005)(8936002)(6506007)(966005)(8676002)(7696005)(81166006)(9686003);
+ DIR:OUT; SFP:1102; SCL:1; SRVR:TY2PR01MB3098;
+ H:TY2PR01MB4972.jpnprd01.prod.outlook.com; FPR:; SPF:None; LANG:en;
+ PTR:InfoNoRecords; 
+received-spf: None (protection.outlook.com: cybertrust.co.jp does not
+ designate permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: HgSeqoqvwn/SBEHje8iLo9YY/1TfPeL3Iy41YByj31UoFBCv/jy9OyBR06pwdbI7k4KeQnFgcORW4ONR+/yxL1OO0JxEQAdpvm4kxWjn/+XDJprSbUL8ckMbECpv60cPFPEGFZoGwslJLXlEEVpktiBLNUFookOpBjl3UnGySvrpcfikRMwEpuqS//ZLNu4H5WV2Rk6lHAHrVnGgnavTV7KHtF/cyXS9/wPuk012nE+Kj5qpUJ3nHdUseuLstmFxWUeE9hFKXKVWu7fOx++bVJ3gppH2gFWovqsGdkwIb0Wl0Z598BF1wynz1grnGYzZpvrBvlnPjvI4tw7Cas82oPaSJItRx72nAN3+4CHySu4ma7sjt4Lbs8Vr4a4KDeLKT6fLiUGr2LFiTdAhoM52Hx5dSNNfo82HA9SmPB9Hr96pQvn3CEACGZrHn9MTsZb8DhJoZPB4AjS7zncb7WF2HCLCR3eG8EYjcUQK4GbD7dwMMkl6PL0JQZuZJtCydrRRWoSdWaUhut8/qVGK87NEmw==
+x-ms-exchange-antispam-messagedata: 82G2AZy/oc5wmVkfyCoLCZq6Z9c9OKhpfilQyS8Hm80+arOj2JXqXfAx6aVACy4UWy1ci2xO9XAJs/odF2muycoFJJR7bgSWPdjjOUSEdVwlrBtsY0HzhlrmQqtmxbd09OpYhZjL/ZcTGR/DInd42g==
+x-ms-exchange-transport-forked: True
 MIME-Version: 1.0
-References: <CAODMxsLOOk7EZwoUgd5fNpXpOoR16ZunzZe0W6nL5NrLN2JWSw@mail.gmail.com>
-In-Reply-To: <CAODMxsLOOk7EZwoUgd5fNpXpOoR16ZunzZe0W6nL5NrLN2JWSw@mail.gmail.com>
-From: Neal Caidin <ncaidin@linuxfoundation.org>
-Date: Wed, 25 Mar 2020 12:33:56 -0400
-Message-ID: <CAODMxsJ3UzAghVfLpHQ1eiizowpWUi0q5WvYxtSOYbKi36TdEw@mail.gmail.com>
-To: cip-members@lists.cip-project.org, cip-board@lists.cip-project.org, 
- cip-security@lists.cip-project.org, cip-dev@lists.cip-project.org
-Subject: [cip-dev] Update - Re: April 6 cutover from Mailman2 to Group.io
+X-OriginatorOrg: cybertrust.co.jp
+X-MS-Exchange-CrossTenant-Network-Message-Id: 93506874-31e1-4bab-0103-08d7d10f20e6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Mar 2020 22:52:00.2453 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72cc4624-32b4-4dab-b80a-8563e559bd82
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: fxjyLX3NFCVX41yv5kRISGmaSC2pbipgJV4Im9xNA76yL2cQ/jaKTUxEJxmwD38zCqKOELXVPzbRN3CNoC75nbZ2g2pWYJDqqFNlFzVOkrQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB3098
+Subject: [cip-dev] CIP IRC weekly meeting today
 X-BeenThere: cip-dev@lists.cip-project.org
 X-Mailman-Version: 2.1.15
 Precedence: list
@@ -93,136 +123,54 @@ List-Post: <mailto:cip-dev@lists.cip-project.org>
 List-Help: <mailto:cip-dev-request@lists.cip-project.org?subject=help>
 List-Subscribe: <https://lists.cip-project.org/mailman/listinfo/cip-dev>,
  <mailto:cip-dev-request@lists.cip-project.org?subject=subscribe>
-Content-Type: multipart/mixed; boundary="===============5836439075189547625=="
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: cip-dev-bounces@lists.cip-project.org
 Sender: "cip-dev" <cip-dev-bounces@lists.cip-project.org>
 
---===============5836439075189547625==
-Content-Type: multipart/alternative; boundary="00000000000030408205a1b070f8"
+Hi all,
 
---00000000000030408205a1b070f8
-Content-Type: text/plain; charset="UTF-8"
+Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
 
-Dear CIP community,
+*Please note that the IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2020&month=3&day=26&hour=9&min=0&sec=0&p1=224&p2=179&p3=136&p4=37&p5=241&p6=248
 
-I have learned more information about the cutover plans. The migration is
-planned to start at 2 pm Pacific time on April 6, which is :
-5 pm Eastern / 11 pm CET / and Tuesday, April 7 , 6 am JST
+US-West US-East   UK     DE     TW     JP
+02:00    05:00   09:00   10:00   17:00   18:00
 
-The migration will probably take just a few hours, but the migration team
-would like to reserve 24 hours in case they run into any issues with
-transferring the archives into the new system.
+Channel:
+* irc:chat.freenode.net:6667/cip
 
-I'll send more information about the migration as I learn more and as we
-get closer to the conversion date.
+Last meeting minutes:
+https://irclogs.baserock.org/meetings/cip/2020/03/cip.2020-03-19-09.00.log.html
 
-Thanks for your patience and understanding.
+Agenda:
+
+* Action item
+1. Combine root filesystem with kselftest binary - Iwamatsu-san 
+2. Assign the owner of "CIP kernel config" - masashi910
+3. Strengthen sustainable process to backport patches from Mainline/LTS - Kernel Team
+ 3-1. Workflow for identifying important fixes, backporting, and reviewing them
+ 3-2. Prepare the tools to be used for this workflow
+ 3-3. Get practice in backporting patches
+4. Upload a guideline for reference hardware platform addition - masashi910
+
+* Kernel maintenance updates
+* Kernel testing
+* CIP Core
+* Software update
+* CIP Security 
+* AOB
+1. Summer Time
+US summer time started on March 8. CEST starts on March 29. This IRC meeting stays to start at UTC (GMT) 09:00.
+
+The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
 
 Best regards,
-Neal
-
-*Neal Caidin*
-Program Manager, Program Management & Operations
-The Linux Foundation
-+1 (919) 238-9104 (w/h)
-+1 (919) 949-1861 (m)
-ncaidin@linuxfoundation.org
-
-
-On Thu, Mar 12, 2020 at 3:50 PM Neal Caidin <ncaidin@linuxfoundation.org>
-wrote:
-
-> [x-posted]
-> Dear CIP community,
->
-> These Mailman2 email lists will be converted starting on Monday, April 6
-> and may take up to 24 hours to complete.
->
-> There is no action required on your part.
->
-> Any emails that are sent during the downtime will be queued up and come
-> through when the system is up and running.
->
-> Please let me know if you have any questions.
->
-> Best regards,
-> Neal
->
-> *Neal Caidin*
-> Program Manager, Program Management & Operations
-> The Linux Foundation
-> +1 (919) 238-9104 (w/h)
-> +1 (919) 949-1861 (m)
-> ncaidin@linuxfoundation.org
->
-
---00000000000030408205a1b070f8
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div dir=3D"ltr">Dear CIP community,</div><div dir=3D"ltr"=
-><br></div><div>I have learned more information about the cutover plans. Th=
-e migration is planned to start at 2 pm Pacific time on April 6, which is :=
-</div><div>5 pm Eastern / 11 pm CET / and Tuesday, April 7 , 6 am JST=C2=A0=
-</div><div><br></div><div>The migration will probably take just a few hours=
-, but the migration team would like to reserve 24 hours in case they run in=
-to any issues with transferring=C2=A0the archives into the new system.</div=
-><div><br></div><div>I&#39;ll send more information about the migration as =
-I learn more and as we get closer to the conversion date.</div><div><br></d=
-iv><div>Thanks for your patience and understanding.</div><div><br></div><di=
-v>Best regards,</div><div>Neal</div><div><br></div><div dir=3D"ltr"><div><d=
-iv dir=3D"ltr" class=3D"gmail_signature" data-smartmail=3D"gmail_signature"=
-><div dir=3D"ltr"><div><div dir=3D"ltr"><span><font color=3D"#888888"><div =
-dir=3D"ltr"><div dir=3D"ltr"><div><div dir=3D"ltr"><div><div dir=3D"ltr"><d=
-iv dir=3D"ltr"><div dir=3D"ltr"><div dir=3D"ltr"><b style=3D"color:rgb(136,=
-136,136)"><font color=3D"#666666"><font color=3D"#888888">Neal Caidin</font=
-></font></b><br><div style=3D"color:rgb(136,136,136)"><span style=3D"border=
--collapse:collapse"><div><font color=3D"#666666"><font>Program Manager, Pro=
-gram Management &amp; Operations</font></font></div><div><font color=3D"#66=
-6666"><font>The Linux Foundation</font></font></div><div><font color=3D"#66=
-6666">+1 (919) 238-9104 (w/h)<br>+1 (919) 949-1861 (m)</font></div><div><fo=
-nt color=3D"#666666"><a href=3D"mailto:ncaidin@linuxfoundation.org" target=
-=3D"_blank">ncaidin@linuxfoundation.org</a></font></div></span></div></div>=
-</div></div></div></div></div></div></div></div></font></span></div></div><=
-/div></div></div><br></div><br><div class=3D"gmail_quote"><div dir=3D"ltr" =
-class=3D"gmail_attr">On Thu, Mar 12, 2020 at 3:50 PM Neal Caidin &lt;<a hre=
-f=3D"mailto:ncaidin@linuxfoundation.org">ncaidin@linuxfoundation.org</a>&gt=
-; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px=
- 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex"><div di=
-r=3D"ltr"><div>[x-posted]</div>Dear CIP community,<div><br></div><div>These=
- Mailman2 email lists will be converted starting on Monday, April 6 and may=
- take up to 24 hours to complete.=C2=A0</div><div><br></div><div>There is n=
-o action required on your=C2=A0part.=C2=A0</div><div><br></div><div>Any ema=
-ils that are sent during the downtime will be queued up and come through wh=
-en the system is up and running.</div><div><br></div><div>Please let me kno=
-w if you have any questions.</div><div><br></div><div>Best regards,</div><d=
-iv>Neal</div><div><br></div><div><div><div dir=3D"ltr"><div dir=3D"ltr"><di=
-v><div dir=3D"ltr"><span><font color=3D"#888888"><div dir=3D"ltr"><div dir=
-=3D"ltr"><div><div dir=3D"ltr"><div><div dir=3D"ltr"><div dir=3D"ltr"><div =
-dir=3D"ltr"><div dir=3D"ltr"><b style=3D"color:rgb(136,136,136)"><font colo=
-r=3D"#666666"><font color=3D"#888888">Neal Caidin</font></font></b><br><div=
- style=3D"color:rgb(136,136,136)"><span style=3D"border-collapse:collapse">=
-<div><font color=3D"#666666"><font>Program Manager, Program Management &amp=
-; Operations</font></font></div><div><font color=3D"#666666"><font>The Linu=
-x Foundation</font></font></div><div><font color=3D"#666666">+1 (919) 238-9=
-104 (w/h)<br>+1 (919) 949-1861 (m)</font></div><div><font color=3D"#666666"=
-><a href=3D"mailto:ncaidin@linuxfoundation.org" target=3D"_blank">ncaidin@l=
-inuxfoundation.org</a></font></div></span></div></div></div></div></div></d=
-iv></div></div></div></div></font></span></div></div></div></div></div></di=
-v></div>
-</blockquote></div></div>
-
---00000000000030408205a1b070f8--
-
---===============5836439075189547625==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
+--
+M. Kudo
+Cybertrust Japan Co., Ltd.
 _______________________________________________
 cip-dev mailing list
 cip-dev@lists.cip-project.org
 https://lists.cip-project.org/mailman/listinfo/cip-dev
-
---===============5836439075189547625==--
