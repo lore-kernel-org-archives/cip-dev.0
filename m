@@ -1,4 +1,4 @@
-Return-Path: <SRS0=ggYA=5M=lists.cip-project.org=cip-dev-bounces@kernel.org>
+Return-Path: <SRS0=Tvce=5O=lists.cip-project.org=cip-dev-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -6,55 +6,54 @@ X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A94FFC43331
-	for <cip-dev@archiver.kernel.org>; Fri, 27 Mar 2020 07:57:29 +0000 (UTC)
-Received: from fraxinus.osuosl.org (smtp4.osuosl.org [140.211.166.137])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 824E6C43331
+	for <cip-dev@archiver.kernel.org>; Sun, 29 Mar 2020 10:58:03 +0000 (UTC)
+Received: from silver.osuosl.org (smtp3.osuosl.org [140.211.166.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 73E5620714
-	for <cip-dev@archiver.kernel.org>; Fri, 27 Mar 2020 07:57:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73E5620714
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTPS id 21297206DB
+	for <cip-dev@archiver.kernel.org>; Sun, 29 Mar 2020 10:58:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21297206DB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=cip-dev-bounces@lists.cip-project.org
 Received: from localhost (localhost [127.0.0.1])
-	by fraxinus.osuosl.org (Postfix) with ESMTP id 1E2C8875AB;
-	Fri, 27 Mar 2020 07:57:29 +0000 (UTC)
+	by silver.osuosl.org (Postfix) with ESMTP id C1F012044A;
+	Sun, 29 Mar 2020 10:58:02 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from fraxinus.osuosl.org ([127.0.0.1])
+Received: from silver.osuosl.org ([127.0.0.1])
 	by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id ZcnF7TC7_oyQ; Fri, 27 Mar 2020 07:57:27 +0000 (UTC)
+	with ESMTP id WfphmvnGoit7; Sun, 29 Mar 2020 10:58:01 +0000 (UTC)
 Received: from lists.linuxfoundation.org (lf-lists.osuosl.org [140.211.9.56])
-	by fraxinus.osuosl.org (Postfix) with ESMTP id E6DB387484;
-	Fri, 27 Mar 2020 07:57:27 +0000 (UTC)
+	by silver.osuosl.org (Postfix) with ESMTP id BA1A220403;
+	Sun, 29 Mar 2020 10:58:01 +0000 (UTC)
 Received: from lf-lists.osuosl.org (localhost [127.0.0.1])
-	by lists.linuxfoundation.org (Postfix) with ESMTP id CBC7EC0177;
-	Fri, 27 Mar 2020 07:57:27 +0000 (UTC)
-Received: from whitealder.osuosl.org (smtp1.osuosl.org [140.211.166.138])
- by lists.linuxfoundation.org (Postfix) with ESMTP id 99EB7C0177
- for <cip-dev@lists.cip-project.org>; Fri, 27 Mar 2020 07:57:26 +0000 (UTC)
+	by lists.linuxfoundation.org (Postfix) with ESMTP id 9CFD8C07FF;
+	Sun, 29 Mar 2020 10:58:01 +0000 (UTC)
+Received: from silver.osuosl.org (smtp3.osuosl.org [140.211.166.136])
+ by lists.linuxfoundation.org (Postfix) with ESMTP id DBECAC07FF
+ for <cip-dev@lists.cip-project.org>; Sun, 29 Mar 2020 10:57:59 +0000 (UTC)
 Received: from localhost (localhost [127.0.0.1])
- by whitealder.osuosl.org (Postfix) with ESMTP id 84A9388808
- for <cip-dev@lists.cip-project.org>; Fri, 27 Mar 2020 07:57:26 +0000 (UTC)
+ by silver.osuosl.org (Postfix) with ESMTP id C06C72044A
+ for <cip-dev@lists.cip-project.org>; Sun, 29 Mar 2020 10:57:59 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from whitealder.osuosl.org ([127.0.0.1])
+Received: from silver.osuosl.org ([127.0.0.1])
  by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id J+es8FUazchX for <cip-dev@lists.cip-project.org>;
- Fri, 27 Mar 2020 07:57:24 +0000 (UTC)
+ with ESMTP id MC3JoVq0fT-a for <cip-dev@lists.cip-project.org>;
+ Sun, 29 Mar 2020 10:57:57 +0000 (UTC)
 X-Greylist: domain auto-whitelisted by SQLgrey-1.7.6
 Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by whitealder.osuosl.org (Postfix) with ESMTPS id 8739A88802
- for <cip-dev@lists.cip-project.org>; Fri, 27 Mar 2020 07:57:24 +0000 (UTC)
+ by silver.osuosl.org (Postfix) with ESMTPS id 07AE520403
+ for <cip-dev@lists.cip-project.org>; Sun, 29 Mar 2020 10:57:57 +0000 (UTC)
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
- id 163D41C0323; Fri, 27 Mar 2020 08:57:21 +0100 (CET)
-Date: Fri, 27 Mar 2020 08:57:20 +0100
-From: Pavel Machek <pavel@ucw.cz>
-To: cip-dev@lists.cip-project.org, stable@kernel.org, eperezma@redhat.com,
- mst@redhat.com, davem@davemloft.net
-Message-ID: <20200327075720.GA32000@duo.ucw.cz>
+ id ED7071C0323; Sun, 29 Mar 2020 12:57:52 +0200 (CEST)
+Date: Sun, 29 Mar 2020 12:57:52 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Chris.Paterson2@renesas.com, ben.hutchings@codethink.co.uk,
+ cip-dev@lists.cip-project.org
+Message-ID: <20200329105752.GA8804@duo.ucw.cz>
 MIME-Version: 1.0
 User-Agent: Mutt/1.10.1 (2018-07-13)
-Subject: [cip-dev] [PATCH 4.4] vhost: Check docket sk_family instead of call
-	getname
+Subject: [cip-dev] 4.4-rt: Need testing on arm32
 X-BeenThere: cip-dev@lists.cip-project.org
 X-Mailman-Version: 2.1.15
 Precedence: list
@@ -66,103 +65,102 @@ List-Post: <mailto:cip-dev@lists.cip-project.org>
 List-Help: <mailto:cip-dev-request@lists.cip-project.org?subject=help>
 List-Subscribe: <https://lists.cip-project.org/mailman/listinfo/cip-dev>,
  <mailto:cip-dev-request@lists.cip-project.org?subject=subscribe>
-Content-Type: multipart/mixed; boundary="===============7443118387676941657=="
+Content-Type: multipart/mixed; boundary="===============0736732002087664028=="
 Errors-To: cip-dev-bounces@lists.cip-project.org
 Sender: "cip-dev" <cip-dev-bounces@lists.cip-project.org>
 
 
---===============7443118387676941657==
+--===============0736732002087664028==
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="3MwIy2ne0vdjdPXF"
+	protocol="application/pgp-signature"; boundary="sdtB3X0nJg68CQEu"
 Content-Disposition: inline
 
 
---3MwIy2ne0vdjdPXF
-Content-Type: text/plain; charset=iso-8859-1
+--sdtB3X0nJg68CQEu
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-=46rom: Eugenio P=E9rez <eperezma@redhat.com>
+Hi!
 
-Doing so, we save one call to get data we already have in the struct.
+I tried to prepare next 4.4-rt release. I have code ready, but while
+running tests I realized that only two targets are used to run them.
 
-Also, since there is no guarantee that getname use sockaddr_ll
-parameter beyond its size, we add a little bit of security here.
-It should do not do beyond MAX_ADDR_LEN, but syzbot found that
-ax25_getname writes more (72 bytes, the size of full_sockaddr_ax25,
-versus 20 + 32 bytes of sockaddr_ll + MAX_ADDR_LEN in syzbot repro).
+We 4.19-rt has known bugs breaking boot on de0-nano (and probably
+other) boards, and according to code inspection, same bug is present
+in 4.4-rt. Fix is not complex, but I'm not comfortable applying it
+without _any_ testing.
 
-Fixes: 3a4d5c94e9593 ("vhost_net: a kernel-level virtio server")
-Reported-by: syzbot+f2a62d07a5198c819c7b@syzkaller.appspotmail.com
-Signed-off-by: Eugenio P=E9rez <eperezma@redhat.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Upstream: 42d84c8490f9f0931786f1623191fcab397c3d64
-Signed-off-by: Pavel Machek <pavel@denx.de>
----
- drivers/vhost/net.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
+If I'm right, 4.4-rt should be broken on socfpga boards (arm32) in
+non-realtime configuration; it should panic on boot in cca 50% of
+cases. Patch below should fix it.
 
----
+Best regards,
+								Pavel
 
-Since it is a security problem, I backported the patch to 4.4. I
-compile tested it on cip test farm, but it was only built for single
-target, probably due to too big config.
+commit 20124aef8572b764ffd90d836253153102c763c5
+Author: Pavel Machek <pavel@ucw.cz>
+Date:   Sat Mar 21 22:58:43 2020 +0100
 
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index 1459dc9fd701..5efac33c29dc 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -815,11 +815,7 @@ static int vhost_net_release(struct inode *inode, stru=
-ct file *f)
+    With -rt tree but prempt-rt not enabled, de0-nano was getting failures
+    during boot, such as this:
+   =20
+    https://lava.ciplatform.org/scheduler/job/13037
+   =20
+    [    6.813352] Freeing unused kernel memory: 1024K
+    [    6.817927] Unable to handle kernel paging request at virtual addres=
+s e7fddef0
+    [    6.825121] pgd =3D (ptrval)
+    [    6.827816] [e7fddef0] *pgd=3D27e1141e(bad)
+    [    6.831818] Internal error: Oops: 8000000d [#1] SMP ARM
+    [    6.837019] Modules linked in:
+    [    6.840067] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.19.106-cip21=
+-gc82fe0af5 #1
+    [    6.847601] Hardware name: Altera SOCFPGA
+    [    6.851596] PC is at 0xe7fddef0
+    [    6.854733] LR is at irq_work_run_list+0x84/0xc0
+   =20
+    Bisect revealed fc9f4631a290 is the problematic commit, and some code
+    auditing revealed that it is working with wrong list. Fix it.
+   =20
+    Signed-off-by: Pavel Machek <pavel@denx.de>
+    Fixes: fc9f4631a290 ("irqwork: push most work into softirq context")
+
+diff --git a/kernel/irq_work.c b/kernel/irq_work.c
+index 2899ba0d23d1..19896e6f1b2a 100644
+--- a/kernel/irq_work.c
++++ b/kernel/irq_work.c
+@@ -78,7 +78,8 @@ bool irq_work_queue_on(struct irq_work *work, int cpu)
+ 	if (!irq_work_claim(work))
+ 		return false;
 =20
- static struct socket *get_raw_socket(int fd)
- {
--	struct {
--		struct sockaddr_ll sa;
--		char  buf[MAX_ADDR_LEN];
--	} uaddr;
--	int uaddr_len =3D sizeof uaddr, r;
-+	int r;
- 	struct socket *sock =3D sockfd_lookup(fd, &r);
-=20
- 	if (!sock)
-@@ -831,12 +827,7 @@ static struct socket *get_raw_socket(int fd)
- 		goto err;
- 	}
-=20
--	r =3D sock->ops->getname(sock, (struct sockaddr *)&uaddr.sa,
--			       &uaddr_len, 0);
--	if (r)
--		goto err;
--
--	if (uaddr.sa.sll_family !=3D AF_PACKET) {
-+	if (sock->sk->sk_family !=3D AF_PACKET) {
- 		r =3D -EPFNOSUPPORT;
- 		goto err;
- 	}
---=20
-2.20.1
-
+-	if (IS_ENABLED(CONFIG_PREEMPT_RT_FULL) && !(work->flags & IRQ_WORK_HARD_I=
+RQ))
++	if ((IS_ENABLED(CONFIG_PREEMPT_RT_FULL) && !(work->flags & IRQ_WORK_HARD_=
+IRQ))
++	    || (work->flags & IRQ_WORK_LAZY))
+ 		list =3D &per_cpu(lazy_list, cpu);
+ 	else
+ 		list =3D &per_cpu(raised_list, cpu);
 
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---3MwIy2ne0vdjdPXF
+--sdtB3X0nJg68CQEu
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXn2x4AAKCRAw5/Bqldv6
-8oU2AKCNW5qsWL5T8Vz4wUtwK8/AmmexKACgxDclkg1le6/s5CIARX+3EOReQ3M=
-=C/lz
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXoB/MAAKCRAw5/Bqldv6
+8rBZAKCUFxHGD4EVTGAsx+8G7A2wa/pAIgCeIynPBwFlzT3J4sV2TcqKuRAwLzk=
+=fl7k
 -----END PGP SIGNATURE-----
 
---3MwIy2ne0vdjdPXF--
+--sdtB3X0nJg68CQEu--
 
---===============7443118387676941657==
+--===============0736732002087664028==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -173,4 +171,4 @@ cip-dev mailing list
 cip-dev@lists.cip-project.org
 https://lists.cip-project.org/mailman/listinfo/cip-dev
 
---===============7443118387676941657==--
+--===============0736732002087664028==--
