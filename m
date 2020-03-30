@@ -1,61 +1,77 @@
-Return-Path: <SRS0=Tvce=5O=lists.cip-project.org=cip-dev-bounces@kernel.org>
+Return-Path: <SRS0=bK8j=5P=lists.cip-project.org=cip-dev-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D12C43331
-	for <cip-dev@archiver.kernel.org>; Sun, 29 Mar 2020 17:57:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36FACC43331
+	for <cip-dev@archiver.kernel.org>; Mon, 30 Mar 2020 04:39:06 +0000 (UTC)
 Received: from fraxinus.osuosl.org (smtp4.osuosl.org [140.211.166.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 428A12076A
-	for <cip-dev@archiver.kernel.org>; Sun, 29 Mar 2020 17:57:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 428A12076A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTPS id DA51F20786
+	for <cip-dev@archiver.kernel.org>; Mon, 30 Mar 2020 04:39:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA51F20786
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=toshiba.co.jp
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=cip-dev-bounces@lists.cip-project.org
 Received: from localhost (localhost [127.0.0.1])
-	by fraxinus.osuosl.org (Postfix) with ESMTP id 1BE8A86200;
-	Sun, 29 Mar 2020 17:57:55 +0000 (UTC)
+	by fraxinus.osuosl.org (Postfix) with ESMTP id A227185EA5;
+	Mon, 30 Mar 2020 04:39:05 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
 Received: from fraxinus.osuosl.org ([127.0.0.1])
 	by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 6rlq-kVGOBRl; Sun, 29 Mar 2020 17:57:53 +0000 (UTC)
+	with ESMTP id O34PhUDdoD8p; Mon, 30 Mar 2020 04:39:05 +0000 (UTC)
 Received: from lists.linuxfoundation.org (lf-lists.osuosl.org [140.211.9.56])
-	by fraxinus.osuosl.org (Postfix) with ESMTP id 63C01860B2;
-	Sun, 29 Mar 2020 17:57:53 +0000 (UTC)
+	by fraxinus.osuosl.org (Postfix) with ESMTP id 10F5C85E9B;
+	Mon, 30 Mar 2020 04:39:05 +0000 (UTC)
 Received: from lf-lists.osuosl.org (localhost [127.0.0.1])
-	by lists.linuxfoundation.org (Postfix) with ESMTP id 48CCFC07FF;
-	Sun, 29 Mar 2020 17:57:53 +0000 (UTC)
-Received: from whitealder.osuosl.org (smtp1.osuosl.org [140.211.166.138])
- by lists.linuxfoundation.org (Postfix) with ESMTP id 18472C07FF
- for <cip-dev@lists.cip-project.org>; Sun, 29 Mar 2020 17:57:51 +0000 (UTC)
+	by lists.linuxfoundation.org (Postfix) with ESMTP id EB6BDC07FF;
+	Mon, 30 Mar 2020 04:39:04 +0000 (UTC)
+Received: from fraxinus.osuosl.org (smtp4.osuosl.org [140.211.166.137])
+ by lists.linuxfoundation.org (Postfix) with ESMTP id 75F78C07FF
+ for <cip-dev@lists.cip-project.org>; Mon, 30 Mar 2020 04:39:03 +0000 (UTC)
 Received: from localhost (localhost [127.0.0.1])
- by whitealder.osuosl.org (Postfix) with ESMTP id 026858735E
- for <cip-dev@lists.cip-project.org>; Sun, 29 Mar 2020 17:57:51 +0000 (UTC)
+ by fraxinus.osuosl.org (Postfix) with ESMTP id 6598B85EA4
+ for <cip-dev@lists.cip-project.org>; Mon, 30 Mar 2020 04:39:03 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from whitealder.osuosl.org ([127.0.0.1])
+Received: from fraxinus.osuosl.org ([127.0.0.1])
  by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id cRTjN3v5PlRU for <cip-dev@lists.cip-project.org>;
- Sun, 29 Mar 2020 17:57:49 +0000 (UTC)
+ with ESMTP id YN3hZXtoIRGm for <cip-dev@lists.cip-project.org>;
+ Mon, 30 Mar 2020 04:39:01 +0000 (UTC)
 X-Greylist: domain auto-whitelisted by SQLgrey-1.7.6
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by whitealder.osuosl.org (Postfix) with ESMTPS id 3206B86E15
- for <cip-dev@lists.cip-project.org>; Sun, 29 Mar 2020 17:57:49 +0000 (UTC)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
- id 2015D1C0323; Sun, 29 Mar 2020 19:57:41 +0200 (CEST)
-Date: Sun, 29 Mar 2020 19:57:40 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Pavel Machek <pavel@denx.de>
-Message-ID: <20200329175740.GA32392@duo.ucw.cz>
-References: <20200329105752.GA8804@duo.ucw.cz>
+Received: from mo-csw.securemx.jp (mo-csw1515.securemx.jp [210.130.202.154])
+ by fraxinus.osuosl.org (Postfix) with ESMTPS id 65B3185E9B
+ for <cip-dev@lists.cip-project.org>; Mon, 30 Mar 2020 04:39:01 +0000 (UTC)
+Received: by mo-csw.securemx.jp (mx-mo-csw1515) id 02U4csOQ024399;
+ Mon, 30 Mar 2020 13:38:54 +0900
+X-Iguazu-Qid: 34trWq5aw3qGsq5ZwG
+X-Iguazu-QSIG: v=2; s=0; t=1585543134; q=34trWq5aw3qGsq5ZwG;
+ m=24P0RYaeo69FDrQAz9EE4DXXbtIpax0ZWyw5Ob23+2g=
+Received: from imx12.toshiba.co.jp (imx12.toshiba.co.jp [61.202.160.132])
+ by relay.securemx.jp (mx-mr1511) id 02U4cqTX027042;
+ Mon, 30 Mar 2020 13:38:53 +0900
+Received: from enc02.toshiba.co.jp ([61.202.160.51])
+ by imx12.toshiba.co.jp  with ESMTP id 02U4cqpw003904;
+ Mon, 30 Mar 2020 13:38:52 +0900 (JST)
+Received: from hop101.toshiba.co.jp ([133.199.85.107])
+ by enc02.toshiba.co.jp  with ESMTP id 02U4cqpI011807;
+ Mon, 30 Mar 2020 13:38:52 +0900
+From: Punit Agrawal <punit1.agrawal@toshiba.co.jp>
+To: Pavel Machek <pavel@ucw.cz>
+References: <20200327075720.GA32000@duo.ucw.cz>
+Date: Mon, 30 Mar 2020 13:38:44 +0900
+In-Reply-To: <20200327075720.GA32000@duo.ucw.cz> (Pavel Machek's message of
+ "Fri, 27 Mar 2020 08:57:20 +0100")
+X-TSB-HOP: ON
+Message-ID: <87wo725uej.fsf@kokedama.swc.toshiba.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20200329105752.GA8804@duo.ucw.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-Cc: cip-dev@lists.cip-project.org
-Subject: Re: [cip-dev] 4.4-rt: Need testing on arm32
+Cc: eperezma@redhat.com, davem@davemloft.net, stable@kernel.org,
+ cip-dev@lists.cip-project.org, mst@redhat.com
+Subject: Re: [cip-dev] [PATCH 4.4] vhost: Check docket sk_family instead of
+	call getname
 X-BeenThere: cip-dev@lists.cip-project.org
 X-Mailman-Version: 2.1.15
 Precedence: list
@@ -67,69 +83,68 @@ List-Post: <mailto:cip-dev@lists.cip-project.org>
 List-Help: <mailto:cip-dev-request@lists.cip-project.org?subject=help>
 List-Subscribe: <https://lists.cip-project.org/mailman/listinfo/cip-dev>,
  <mailto:cip-dev-request@lists.cip-project.org?subject=subscribe>
-Content-Type: multipart/mixed; boundary="===============1916908633521455910=="
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: cip-dev-bounces@lists.cip-project.org
 Sender: "cip-dev" <cip-dev-bounces@lists.cip-project.org>
 
-
---===============1916908633521455910==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="lrZ03NoBR/3+SXJZ"
-Content-Disposition: inline
-
-
---lrZ03NoBR/3+SXJZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> I tried to prepare next 4.4-rt release. I have code ready, but while
-> running tests I realized that only two targets are used to run them.
->=20
-> We 4.19-rt has known bugs breaking boot on de0-nano (and probably
-> other) boards, and according to code inspection, same bug is present
-> in 4.4-rt. Fix is not complex, but I'm not comfortable applying it
-> without _any_ testing.
->=20
-> If I'm right, 4.4-rt should be broken on socfpga boards (arm32) in
-> non-realtime configuration; it should panic on boot in cca 50% of
-> cases. Patch below should fix it.
-
-And I pushed code _without_ the patch to kernel.org,
-
-To gitolite.kernel.org:pub/scm/linux/kernel/git/cip/linux-cip.git
-   924af895a033..fbc533f445d2  linux-4.4.y-cip-rt -> linux-4.4.y-cip-rt
-
-Best regards,
-								Pavel
-
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---lrZ03NoBR/3+SXJZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXoDhlAAKCRAw5/Bqldv6
-8ugDAJ4o7ANFyycTSjQtyQiyiUd/Mv0bXwCfYtBrxHOaNas1meKhL3Sb19hCBCw=
-=ZGqn
------END PGP SIGNATURE-----
-
---lrZ03NoBR/3+SXJZ--
-
---===============1916908633521455910==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-cip-dev mailing list
-cip-dev@lists.cip-project.org
-https://lists.cip-project.org/mailman/listinfo/cip-dev
-
---===============1916908633521455910==--
+SGkgUGF2ZWwsCgpBIGNvdXBsZSBvZiBjb21tZW50cyBiZWxvdyAtCgpQYXZlbCBNYWNoZWsgPHBh
+dmVsQHVjdy5jej4gd3JpdGVzOgoKPiBGcm9tOiBFdWdlbmlvIFDDqXJleiA8ZXBlcmV6bWFAcmVk
+aGF0LmNvbT4KPgo+IERvaW5nIHNvLCB3ZSBzYXZlIG9uZSBjYWxsIHRvIGdldCBkYXRhIHdlIGFs
+cmVhZHkgaGF2ZSBpbiB0aGUgc3RydWN0Lgo+Cj4gQWxzbywgc2luY2UgdGhlcmUgaXMgbm8gZ3Vh
+cmFudGVlIHRoYXQgZ2V0bmFtZSB1c2Ugc29ja2FkZHJfbGwKPiBwYXJhbWV0ZXIgYmV5b25kIGl0
+cyBzaXplLCB3ZSBhZGQgYSBsaXR0bGUgYml0IG9mIHNlY3VyaXR5IGhlcmUuCj4gSXQgc2hvdWxk
+IGRvIG5vdCBkbyBiZXlvbmQgTUFYX0FERFJfTEVOLCBidXQgc3l6Ym90IGZvdW5kIHRoYXQKPiBh
+eDI1X2dldG5hbWUgd3JpdGVzIG1vcmUgKDcyIGJ5dGVzLCB0aGUgc2l6ZSBvZiBmdWxsX3NvY2th
+ZGRyX2F4MjUsCj4gdmVyc3VzIDIwICsgMzIgYnl0ZXMgb2Ygc29ja2FkZHJfbGwgKyBNQVhfQURE
+Ul9MRU4gaW4gc3l6Ym90IHJlcHJvKS4KPgo+IEZpeGVzOiAzYTRkNWM5NGU5NTkzICgidmhvc3Rf
+bmV0OiBhIGtlcm5lbC1sZXZlbCB2aXJ0aW8gc2VydmVyIikKPiBSZXBvcnRlZC1ieTogc3l6Ym90
+K2YyYTYyZDA3YTUxOThjODE5YzdiQHN5emthbGxlci5hcHBzcG90bWFpbC5jb20KPiBTaWduZWQt
+b2ZmLWJ5OiBFdWdlbmlvIFDDqXJleiA8ZXBlcmV6bWFAcmVkaGF0LmNvbT4KPiBBY2tlZC1ieTog
+TWljaGFlbCBTLiBUc2lya2luIDxtc3RAcmVkaGF0LmNvbT4KPiBTaWduZWQtb2ZmLWJ5OiBEYXZp
+ZCBTLiBNaWxsZXIgPGRhdmVtQGRhdmVtbG9mdC5uZXQ+Cj4gVXBzdHJlYW06IDQyZDg0Yzg0OTBm
+OWYwOTMxNzg2ZjE2MjMxOTFmY2FiMzk3YzNkNjQKClBsZWFzZSBmb2xsb3cgdGhlIHN0eWxlIGd1
+aWRlbGluZXMgZG9jdW1lbnRlZCBpbgpEb2N1bWVudGF0aW9uL3Byb2Nlc3Mvc3RhYmxlLWtlcm5l
+bC1ydWxlcy5yc3QuIEluIHRoaXMgaW5zdGFuY2UsIHBsZWFzZQptZW50aW9uIHRoZSB1cHN0cmVh
+bSBjb21taXQgaWQgZm9sbG93aW5nIC0KCiAgICBUaGUgdXBzdHJlYW0gY29tbWl0IElEIG11c3Qg
+YmUgc3BlY2lmaWVkIHdpdGggYSBzZXBhcmF0ZSBsaW5lIGFib3ZlIHRoZQogICAgY29tbWl0CiAg
+ICB0ZXh0LCBsaWtlIHRoaXM6CgogICAgICAgIGNvbW1pdCA8c2hhMT4gdXBzdHJlYW0uCgpGb3Ig
+YW4gZXhhbXBsZSwgdGFrZSBhIGxvb2sgYXQgQ29tbWl0IGFkNTk4YTQ4ZmU2MSAoInZob3N0OiBD
+aGVjayBkb2NrZXQKc2tfZmFtaWx5IGluc3RlYWQgb2YgY2FsbCBnZXRuYW1lIikuIEl0J3MgYSBi
+YWNrcG9ydCBvZiB0aGUgc2FtZQp1cHN0cmVhbSBwYXRjaCB0byA0LjE5IHN0YWJsZSBrZXJuZWwu
+Cgo+IFNpZ25lZC1vZmYtYnk6IFBhdmVsIE1hY2hlayA8cGF2ZWxAZGVueC5kZT4KPiAtLS0KPiAg
+ZHJpdmVycy92aG9zdC9uZXQuYyB8IDEzICsrLS0tLS0tLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQs
+IDIgaW5zZXJ0aW9ucygrKSwgMTEgZGVsZXRpb25zKC0pCj4KPiAtLS0KPgo+IFNpbmNlIGl0IGlz
+IGEgc2VjdXJpdHkgcHJvYmxlbSwgSSBiYWNrcG9ydGVkIHRoZSBwYXRjaCB0byA0LjQuIEkKPiBj
+b21waWxlIHRlc3RlZCBpdCBvbiBjaXAgdGVzdCBmYXJtLCBidXQgaXQgd2FzIG9ubHkgYnVpbHQg
+Zm9yIHNpbmdsZQo+IHRhcmdldCwgcHJvYmFibHkgZHVlIHRvIHRvbyBiaWcgY29uZmlnLgo+Cj4g
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvdmhvc3QvbmV0LmMgYi9kcml2ZXJzL3Zob3N0L25ldC5jCj4g
+aW5kZXggMTQ1OWRjOWZkNzAxLi41ZWZhYzMzYzI5ZGMgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy92
+aG9zdC9uZXQuYwo+ICsrKyBiL2RyaXZlcnMvdmhvc3QvbmV0LmMKPiBAQCAtODE1LDExICs4MTUs
+NyBAQCBzdGF0aWMgaW50IHZob3N0X25ldF9yZWxlYXNlKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHN0
+cnVjdCBmaWxlICpmKQo+ICAKPiAgc3RhdGljIHN0cnVjdCBzb2NrZXQgKmdldF9yYXdfc29ja2V0
+KGludCBmZCkKPiAgewo+IC0Jc3RydWN0IHsKPiAtCQlzdHJ1Y3Qgc29ja2FkZHJfbGwgc2E7Cj4g
+LQkJY2hhciAgYnVmW01BWF9BRERSX0xFTl07Cj4gLQl9IHVhZGRyOwo+IC0JaW50IHVhZGRyX2xl
+biA9IHNpemVvZiB1YWRkciwgcjsKPiArCWludCByOwo+ICAJc3RydWN0IHNvY2tldCAqc29jayA9
+IHNvY2tmZF9sb29rdXAoZmQsICZyKTsKPiAgCj4gIAlpZiAoIXNvY2spCj4gQEAgLTgzMSwxMiAr
+ODI3LDcgQEAgc3RhdGljIHN0cnVjdCBzb2NrZXQgKmdldF9yYXdfc29ja2V0KGludCBmZCkKPiAg
+CQlnb3RvIGVycjsKPiAgCX0KPiAgCj4gLQlyID0gc29jay0+b3BzLT5nZXRuYW1lKHNvY2ssIChz
+dHJ1Y3Qgc29ja2FkZHIgKikmdWFkZHIuc2EsCj4gLQkJCSAgICAgICAmdWFkZHJfbGVuLCAwKTsK
+PiAtCWlmIChyKQo+IC0JCWdvdG8gZXJyOwo+IC0KPiAtCWlmICh1YWRkci5zYS5zbGxfZmFtaWx5
+ICE9IEFGX1BBQ0tFVCkgewo+ICsJaWYgKHNvY2stPnNrLT5za19mYW1pbHkgIT0gQUZfUEFDS0VU
+KSB7Cj4gIAkJciA9IC1FUEZOT1NVUFBPUlQ7Cj4gIAkJZ290byBlcnI7Cj4gIAl9Cj4gLS0gCj4g
+Mi4yMC4xCgpUaGlzIHBhdGNoIGZhaWxzIHRvIGFwcGx5IHdpdGggdGhlIGZvbGxvd2luZyBlcnJv
+ciAtCgogICAgJSBnaXQgYW0gdmhvc3QubWJveAogICAgQXBwbHlpbmc6IHZob3N0OiBDaGVjayBk
+b2NrZXQgc2tfZmFtaWx5IGluc3RlYWQgb2YgY2FsbCBnZXRuYW1lCiAgICBlcnJvcjogY29ycnVw
+dCBwYXRjaCBhdCBsaW5lIDE2CiAgICBQYXRjaCBmYWlsZWQgYXQgMDAwMSB2aG9zdDogQ2hlY2sg
+ZG9ja2V0IHNrX2ZhbWlseSBpbnN0ZWFkIG9mIGNhbGwKICAgIGdldG5hbWUKICAgIGhpbnQ6IFVz
+ZSAnZ2l0IGFtIC0tc2hvdy1jdXJyZW50LXBhdGNoJyB0byBzZWUgdGhlIGZhaWxlZCBwYXRjaAog
+ICAgV2hlbiB5b3UgaGF2ZSByZXNvbHZlZCB0aGlzIHByb2JsZW0sIHJ1biAiZ2l0IGFtIC0tY29u
+dGludWUiLgogICAgSWYgeW91IHByZWZlciB0byBza2lwIHRoaXMgcGF0Y2gsIHJ1biAiZ2l0IGFt
+IC0tc2tpcCIgaW5zdGVhZC4KICAgIFRvIHJlc3RvcmUgdGhlIG9yaWdpbmFsIGJyYW5jaCBhbmQg
+c3RvcCBwYXRjaGluZywgcnVuICJnaXQgYW0gLS1hYm9ydCIuCgpUaGVyZSBpcyBzb21lIGVuY29k
+aW5nIGlzc3VlIGluIHlvdXIgbWFpbCBjbGllbnQuIFRoZSBzYW1lIHdvcmtmbG93CndvcmtzIGZv
+ciBvdGhlciBrZXJuZWwgcGF0Y2hlcy4KClRoYW5rcywKUHVuaXQKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KY2lwLWRldiBtYWlsaW5nIGxpc3QKY2lwLWRl
+dkBsaXN0cy5jaXAtcHJvamVjdC5vcmcKaHR0cHM6Ly9saXN0cy5jaXAtcHJvamVjdC5vcmcvbWFp
+bG1hbi9saXN0aW5mby9jaXAtZGV2Cg==
