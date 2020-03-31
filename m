@@ -1,115 +1,62 @@
 Return-Path: <SRS0=Mg3o=5Q=lists.cip-project.org=cip-dev-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Level: **
+X-Spam-Status: No, score=2.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,HTML_IMAGE_RATIO_02,HTML_MESSAGE,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5766AC43331
-	for <cip-dev@archiver.kernel.org>; Tue, 31 Mar 2020 01:48:07 +0000 (UTC)
-Received: from silver.osuosl.org (smtp3.osuosl.org [140.211.166.136])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E12CC43331
+	for <cip-dev@archiver.kernel.org>; Tue, 31 Mar 2020 08:16:08 +0000 (UTC)
+Received: from whitealder.osuosl.org (smtp1.osuosl.org [140.211.166.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 0DA46206CC
-	for <cip-dev@archiver.kernel.org>; Tue, 31 Mar 2020 01:48:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DA46206CC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=toshiba.co.jp
+	by mail.kernel.org (Postfix) with ESMTPS id F1D6420787
+	for <cip-dev@archiver.kernel.org>; Tue, 31 Mar 2020 08:16:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1D6420787
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=cip-dev-bounces@lists.cip-project.org
 Received: from localhost (localhost [127.0.0.1])
-	by silver.osuosl.org (Postfix) with ESMTP id EC9BE24AF4;
-	Tue, 31 Mar 2020 01:48:06 +0000 (UTC)
+	by whitealder.osuosl.org (Postfix) with ESMTP id C8329876B6;
+	Tue, 31 Mar 2020 08:16:07 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from silver.osuosl.org ([127.0.0.1])
+Received: from whitealder.osuosl.org ([127.0.0.1])
 	by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id v8DE2cm2FJ2U; Tue, 31 Mar 2020 01:48:04 +0000 (UTC)
+	with ESMTP id DOt-1wiRSiWq; Tue, 31 Mar 2020 08:16:07 +0000 (UTC)
 Received: from lists.linuxfoundation.org (lf-lists.osuosl.org [140.211.9.56])
-	by silver.osuosl.org (Postfix) with ESMTP id BE34524A5C;
-	Tue, 31 Mar 2020 01:48:04 +0000 (UTC)
+	by whitealder.osuosl.org (Postfix) with ESMTP id 3800187691;
+	Tue, 31 Mar 2020 08:16:07 +0000 (UTC)
 Received: from lf-lists.osuosl.org (localhost [127.0.0.1])
-	by lists.linuxfoundation.org (Postfix) with ESMTP id A159FC07FF;
-	Tue, 31 Mar 2020 01:48:04 +0000 (UTC)
-Received: from silver.osuosl.org (smtp3.osuosl.org [140.211.166.136])
- by lists.linuxfoundation.org (Postfix) with ESMTP id 94DC7C07FF
- for <cip-dev@lists.cip-project.org>; Tue, 31 Mar 2020 01:48:03 +0000 (UTC)
+	by lists.linuxfoundation.org (Postfix) with ESMTP id 2DAC1C07FF;
+	Tue, 31 Mar 2020 08:16:07 +0000 (UTC)
+Received: from whitealder.osuosl.org (smtp1.osuosl.org [140.211.166.138])
+ by lists.linuxfoundation.org (Postfix) with ESMTP id 97B1AC07FF
+ for <cip-dev@lists.cip-project.org>; Tue, 31 Mar 2020 08:16:05 +0000 (UTC)
 Received: from localhost (localhost [127.0.0.1])
- by silver.osuosl.org (Postfix) with ESMTP id 8C54C24A5C
- for <cip-dev@lists.cip-project.org>; Tue, 31 Mar 2020 01:48:03 +0000 (UTC)
+ by whitealder.osuosl.org (Postfix) with ESMTP id 94983876D4
+ for <cip-dev@lists.cip-project.org>; Tue, 31 Mar 2020 08:16:05 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at osuosl.org
-Received: from silver.osuosl.org ([127.0.0.1])
+Received: from whitealder.osuosl.org ([127.0.0.1])
  by localhost (.osuosl.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id UBQ5c6PWrYW2 for <cip-dev@lists.cip-project.org>;
- Tue, 31 Mar 2020 01:48:01 +0000 (UTC)
+ with ESMTP id cqs5XbKvzvZn for <cip-dev@lists.cip-project.org>;
+ Tue, 31 Mar 2020 08:16:03 +0000 (UTC)
 X-Greylist: domain auto-whitelisted by SQLgrey-1.7.6
-Received: from mo-csw.securemx.jp (mo-csw1515.securemx.jp [210.130.202.154])
- by silver.osuosl.org (Postfix) with ESMTPS id EBAA624AF1
- for <cip-dev@lists.cip-project.org>; Tue, 31 Mar 2020 01:48:00 +0000 (UTC)
-Received: by mo-csw.securemx.jp (mx-mo-csw1515) id 02V1lbmW030970;
- Tue, 31 Mar 2020 10:47:37 +0900
-X-Iguazu-Qid: 34ts1iCWJY91Nrgexz
-X-Iguazu-QSIG: v=2; s=0; t=1585619256; q=34ts1iCWJY91Nrgexz;
- m=eklW37mxsFsDr+44aJGhHZE8Aqvnb8eKAtZpYz8Hj68=
-Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
- by relay.securemx.jp (mx-mr1510) id 02V1lYFa011197;
- Tue, 31 Mar 2020 10:47:35 +0900
-Received: from enc01.localdomain ([106.186.93.100])
- by imx2.toshiba.co.jp  with ESMTP id 02V1lYKe005912;
- Tue, 31 Mar 2020 10:47:34 +0900 (JST)
-Received: from hop001.toshiba.co.jp ([133.199.164.63])
- by enc01.localdomain  with ESMTP id 02V1lYnU022365;
- Tue, 31 Mar 2020 10:47:34 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Rk6tJniF1TdLqRrBnD4SF8aPWKcFgJxiBzP4G2rZNU7kDcAv4u/Ii94DZRdvGQQYGWs9FmM9PYuqNbKDMkLxeK8FCaNNpLTdpDTK5NcbfMUVyG3I9kZiQOpjRxq6fuQpRcmG+XYscujQVs46MZG7vKjfnloIp/OaUaamrjPAi5PJC4drLGZzogeBYN1duQODLT+BVGT8bxo4Xxel9kJ/4RF4kS3qlyuYylSMZ4Uexme9zjUPlh5PtZ5s0p2+uSaiEfaZ5jByfYVRtCYNFmXtpxpdrocHsyDf2uEsPHdC4LEr9qa3JJ4xpdwJR8C0n7x9EBR413x/cds5sprzOU6kww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DdRzj8HDoRbVZLcFXWes39qaO/ZquLhQ4UMAP+SySL0=;
- b=lsMu/bF+A5PcrRvU7NyDEefUZgxrM/UsXGwO/aYh2b4evS27Ms6I2dNM7PmPwzGMPOlXN8wzoJ/gVDtYiyFEOQ5ECiUiJtW9pfCbKDlBuox5uffn6H4vt+ZxSuPHLTYVnTWd499N1qx85di6by7eydCbFdWkZYb+XNjVYKhYFeThWMhkMOyG4fB+BiWv0yZUhEXkw+agCbqQ/7knG1LcMbe0KheSTNk8ej8I8X0DM0GZC+vDgdGqagU5PS3oNcLC8lHJuMz9HIN5HIdUpeZbNJmWvygdX8nFaLjK3J6N38wlKEzXuk6U2s98FZbw2TlUbnsZheQBhaZ6256eNdTDTg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
- header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
-From: <nobuhiro1.iwamatsu@toshiba.co.jp>
-To: <cip-dev@lists.cip-project.org>
-Thread-Topic: [ANNOUNCE] Release v4.19.113-cip23
-Thread-Index: AdYG/IkZq7HozWS/QmqcYlJe0wf/FQ==
-Date: Tue, 31 Mar 2020 01:47:15 +0000
-X-TSB-HOP: ON
-Message-ID: <OSAPR01MB366742FF65F76126C72C4B1D92C80@OSAPR01MB3667.jpnprd01.prod.outlook.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=nobuhiro1.iwamatsu@toshiba.co.jp; 
-x-originating-ip: [209.137.146.201]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 7a0b05d2-b604-48f8-b452-08d7d515704e
-x-ms-traffictypediagnostic: OSAPR01MB3604:
-x-microsoft-antispam-prvs: <OSAPR01MB3604F08B65E7081C1C9C1DF392C80@OSAPR01MB3604.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:393;
-x-forefront-prvs: 0359162B6D
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:OSAPR01MB3667.jpnprd01.prod.outlook.com; PTR:; CAT:NONE;
- SFTY:;
- SFS:(10009020)(4636009)(346002)(376002)(396003)(136003)(39860400002)(366004)(66556008)(478600001)(64756008)(4744005)(26005)(66476007)(76116006)(6506007)(66446008)(186003)(66946007)(8936002)(966005)(71200400001)(2906002)(52536014)(55016002)(33656002)(81166006)(81156014)(6916009)(7696005)(4326008)(9686003)(54906003)(5660300002)(86362001)(316002)(8676002);
- DIR:OUT; SFP:1101; 
-received-spf: None (protection.outlook.com: toshiba.co.jp does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 2l4KoX4jTuiYq3KUOv21IYWBwhAPGQxYL2Pb8rXh1hnoh8rTPlzaHCaga93Uc26+emMb6ZlAvjnhi/xdnnX9daFu8Er09j+gC7+kFRyrrTF2gLlKpp+tgy3Yt04VDUaIH487/xWeq7RBWSut5KEwukWIMe2wKjjbS1rXubdYlh6Np+ZD3LmWE41fXDmlGGco08qWxxWc2YVCMD6ZUWVh8iWmkuhCXedS8dSL7a/HVcfkN2M4imm9ODYJUsBGkWXm6elI5ENiP0ehfHkjPC96JTa+bPAJn04SRIdLBuS5i23TNOczlyozsyAfP4yIcmvE6polpdslhpSsNgtRWKaMGLBCdTN86FylzfqV52J60Wzh9PIjVgqboTeFbBynaxVczBXZfLCha9TCC+OKmylGNNwiVRflrfMyAgi5ZY6pQIxbTYCb92SKRjAogB5BZFwBp59iin7vSs2CIOSejb4GdxqxIR0Svq/9SC11iLYo8RyOBJUgU0hoDXGrvZopmQLiTvzMp5618Gja6uqQ/t82OA==
-x-ms-exchange-antispam-messagedata: DD3vTi7R5AhbqPf+XCDju9UZpzL32PEmhtmY6PtVFLjCkbSDE6Lh24TDlKghGxnWoYBtGu2Y1kKanPv40wYl6KtY/zQAoe08pfHHzl+p+sXJSGEzWjcT3mX0o4kIjtH1JfNLFs3Vu2SV/2f6Y5LZGw==
-x-ms-exchange-transport-forked: True
+Received: from info.mymicky.top (unknown [42.51.16.124])
+ by whitealder.osuosl.org (Postfix) with ESMTP id D655B875DB
+ for <cip-dev@lists.cip-project.org>; Tue, 31 Mar 2020 08:16:00 +0000 (UTC)
+Received: from LAPTOP-PAPO9T28 (60.28.36.218) by info.mymicky.top id
+ hgbtds0e97ca for <cip-dev@lists.cip-project.org>;
+ Tue, 31 Mar 2020 16:10:00 +0800 (envelope-from <info1@mymicky.top>)
+From: "WORLDS VALVE" <tjwdsv@163.com>
+To: cip-dev@lists.cip-project.org
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a0b05d2-b604-48f8-b452-08d7d515704e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Mar 2020 01:47:15.0200 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 2r9CRmId/L4uHpLOEyLbql4+qoLynpYINBSL4KGycqTJTZ0CTSP2LS8DdoZgq32r+UEgTp0BOTXZeeapzwag1XcFBBUul8XqtlMf1Q6Iy4DVo2L2pE834Qmw8VgjmwzA
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB3604
-X-OriginatorOrg: toshiba.co.jp
-MSSCP.TransferMailToMossAgent: 103
-Cc: wens@csie.org, SZ.Lin@moxa.com
-Subject: [cip-dev] [ANNOUNCE] Release v4.19.113-cip23
+Date: Tue, 31 Mar 2020 16:15:56 +0800
+X-Priority: 3
+X-MSMail-Priority: Normal
+X-MimeOLE: Produced By Microsoft MimeOLE V6.00.3790.4913
+Message-Id: <20200331081605.94983876D4@whitealder.osuosl.org>
+Subject: [cip-dev] Enquiry of BV
 X-BeenThere: cip-dev@lists.cip-project.org
 X-Mailman-Version: 2.1.15
 Precedence: list
@@ -121,31 +68,248 @@ List-Post: <mailto:cip-dev@lists.cip-project.org>
 List-Help: <mailto:cip-dev-request@lists.cip-project.org?subject=help>
 List-Subscribe: <https://lists.cip-project.org/mailman/listinfo/cip-dev>,
  <mailto:cip-dev-request@lists.cip-project.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Reply-To: tjwdsv@163.com
+Content-Type: multipart/mixed; boundary="===============0666287383691796169=="
 Errors-To: cip-dev-bounces@lists.cip-project.org
 Sender: "cip-dev" <cip-dev-bounces@lists.cip-project.org>
 
-Hi all,
+--===============0666287383691796169==
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
 
-CIP kernel team has released Linux kernel v4.19.113-cip23.
+PCFET0NUWVBFIEhUTUwgUFVCTElDICItLy9XM0MvL0RURCBIVE1MIDQuMCBUcmFuc2l0aW9uYWwv
+L0VOIj4NCjxIVE1MPjxIRUFEPg0KPE1FVEEgbmFtZT1HRU5FUkFUT1IgY29udGVudD0iTVNIVE1M
+IDExLjAwLjEwNTcwLjEwMDEiPjwvSEVBRD4NCjxCT0RZPg0KPFA+PFNQQU4gc3R5bGU9IkZPTlQt
+U0laRTogN3B0OyBGT05ULUZBTUlMWTogSGVsdmV0aWNhOyBCQUNLR1JPVU5EOiByZ2IoMjU1LDI1
+NSwyNTUpOyBURVhULVRSQU5TRk9STTogbm9uZTsgQ09MT1I6IHJnYigxNywxNywxNyk7IEZPTlQt
+U1RZTEU6IG5vcm1hbDsgTEVUVEVSLVNQQUNJTkc6IDBwdDsgbXNvLXNwYWNlcnVuOiAneWVzJzsg
+bXNvLWZvbnQta2VybmluZzogMS4wMDAwcHQ7IG1zby1zaGFkaW5nOiByZ2IoMjU1LDI1NSwyNTUp
+Ij48Rk9OVCBjb2xvcj0jMDAwMGZmIGZhY2U9IlRpbWVzIE5ldyBSb21hbiI+PFNQQU4gc3R5bGU9
+IkZPTlQtU0laRTogN3B0OyBGT05ULUZBTUlMWTogJ+W+rui9r+mbhem7kSBMaWdodCc7IEJBQ0tH
+Uk9VTkQ6IHJnYigyNTUsMjU1LDI1NSk7IFRFWFQtVFJBTlNGT1JNOiBub25lOyBDT0xPUjogcmdi
+KDE3LDE3LDE3KTsgRk9OVC1TVFlMRTogbm9ybWFsOyBMRVRURVItU1BBQ0lORzogMHB0OyBtc28t
+c3BhY2VydW46ICd5ZXMnOyBtc28tZm9udC1rZXJuaW5nOiAxLjAwMDBwdDsgbXNvLXNoYWRpbmc6
+IHJnYigyNTUsMjU1LDI1NSkiPjw/eG1sOm5hbWVzcGFjZSBwcmVmaXggPSAibyIgLz48bzpwPjxG
+T05UIGNvbG9yPSMwMDAwZmY+PFNQQU4gc3R5bGU9IkZPTlQtU0laRTogMTJwdDsgRk9OVC1GQU1J
+TFk6IOWui+S9kzsgVEVYVC1UUkFOU0ZPUk06IG5vbmU7IENPTE9SOiByZ2IoMTcsMTcsMTcpOyBG
+T05ULVNUWUxFOiBub3JtYWw7IExFVFRFUi1TUEFDSU5HOiAwcHQ7IG1zby1zcGFjZXJ1bjogJ3ll
+cyc7IG1zby1mb250LWtlcm5pbmc6IDEuMDAwMHB0OyBtc28tYXNjaWktZm9udC1mYW1pbHk6ICdD
+YWxpYnJpIExpZ2h0JzsgbXNvLWhhbnNpLWZvbnQtZmFtaWx5OiBIZWx2ZXRpY2E7IG1zby1iaWRp
+LWZvbnQtZmFtaWx5OiBIZWx2ZXRpY2EiPkhpIFNpci9NYWRhbSw8L1NQQU4+PFNQQU4gc3R5bGU9
+IkZPTlQtU0laRTogMTJwdDsgRk9OVC1GQU1JTFk6IOWui+S9kzsgVEVYVC1UUkFOU0ZPUk06IG5v
+bmU7IENPTE9SOiByZ2IoMTcsMTcsMTcpOyBGT05ULVNUWUxFOiBub3JtYWw7IExFVFRFUi1TUEFD
+SU5HOiAwcHQ7IG1zby1zcGFjZXJ1bjogJ3llcyc7IG1zby1mb250LWtlcm5pbmc6IDEuMDAwMHB0
+OyBtc28tYXNjaWktZm9udC1mYW1pbHk6ICdDYWxpYnJpIExpZ2h0JzsgbXNvLWhhbnNpLWZvbnQt
+ZmFtaWx5OiBIZWx2ZXRpY2E7IG1zby1iaWRpLWZvbnQtZmFtaWx5OiBIZWx2ZXRpY2EiPjw/eG1s
+Om5hbWVzcGFjZSBwcmVmaXggPSAibyIgbnMgPSAidXJuOnNjaGVtYXMtbWljcm9zb2Z0LWNvbTpv
+ZmZpY2U6b2ZmaWNlIiAvPjxvOnA+PC9vOnA+PC9TUEFOPjwvRk9OVD48L1A+DQo8UCBjbGFzcz1N
+c29Ob3JtYWwgc3R5bGU9Ik1BUkdJTjogMHB0Ij48Rk9OVCBjb2xvcj0jMDAwMGZmPjxTUEFOIHN0
+eWxlPSJGT05ULVNJWkU6IDEycHQ7IEZPTlQtRkFNSUxZOiDlrovkvZM7IFRFWFQtVFJBTlNGT1JN
+OiBub25lOyBDT0xPUjogcmdiKDE3LDE3LDE3KTsgRk9OVC1TVFlMRTogbm9ybWFsOyBMRVRURVIt
+U1BBQ0lORzogMHB0OyBtc28tc3BhY2VydW46ICd5ZXMnOyBtc28tZm9udC1rZXJuaW5nOiAxLjAw
+MDBwdDsgbXNvLWFzY2lpLWZvbnQtZmFtaWx5OiAnQ2FsaWJyaSBMaWdodCc7IG1zby1oYW5zaS1m
+b250LWZhbWlseTogSGVsdmV0aWNhOyBtc28tYmlkaS1mb250LWZhbWlseTogSGVsdmV0aWNhIj5H
+bGFkIHRvIGhlYXIgdGhhdCB5b3UgYXJlIG9uIHRoZSBtYXJrZXQgZm9yIHZhbHZlcywgd2Ugc3Bl
+Y2lhbGl6ZSBpbiB0aGlzIGZpZWxkIGZvciAxMyB5ZWFycyB3aXRoIHRoZSBzdHJlbmd0aCBvZiZu
+YnNwOzxVPjxTVFJPTkc+QlVUVEVSRkxZIFZBTFZFUzwvU1RST05HPjwvVT4gd2l0aCBnb29kIHF1
+YWxpdHkgYW5kIHByZXR0eSBjb21wZXRpdGl2ZSBwcmljZS48L1NQQU4+PC9GT05UPjwvUD4NCjxQ
+IGNsYXNzPU1zb05vcm1hbCBzdHlsZT0iTUFSR0lOOiAwcHQiPjxGT05UIGNvbG9yPSMwMDAwZmY+
+PFNQQU4gc3R5bGU9IkZPTlQtU0laRTogMTJwdDsgRk9OVC1GQU1JTFk6IOWui+S9kzsgVEVYVC1U
+UkFOU0ZPUk06IG5vbmU7IENPTE9SOiByZ2IoMTcsMTcsMTcpOyBGT05ULVNUWUxFOiBub3JtYWw7
+IExFVFRFUi1TUEFDSU5HOiAwcHQ7IG1zby1zcGFjZXJ1bjogJ3llcyc7IG1zby1mb250LWtlcm5p
+bmc6IDEuMDAwMHB0OyBtc28tYXNjaWktZm9udC1mYW1pbHk6ICdDYWxpYnJpIExpZ2h0JzsgbXNv
+LWhhbnNpLWZvbnQtZmFtaWx5OiBIZWx2ZXRpY2E7IG1zby1iaWRpLWZvbnQtZmFtaWx5OiBIZWx2
+ZXRpY2EiPjxJTUcgc3R5bGU9IkhFSUdIVDogMzA5cHg7IFdJRFRIOiA1MTJweCIgYm9yZGVyPTAg
+aHNwYWNlPTAgYWx0PSIiIHNyYz0iaHR0cHM6Ly9pbWcud2FpbWFvbml1Lm5ldC8xMjEyLzEyMTIt
+MjAyMDAxMTMxNTIyMDcxNjQwLmpwZyIgd2lkdGg9MTAwMCBhbGlnbj1iYXNlbGluZSBoZWlnaHQ9
+NjY1PjwvU1BBTj48L0ZPTlQ+PC9QPjxGT05UIGNvbG9yPSMwMDAwZmY+PFNQQU4gc3R5bGU9IkZP
+TlQtU0laRTogMTJwdDsgRk9OVC1GQU1JTFk6IOWui+S9kzsgVEVYVC1UUkFOU0ZPUk06IG5vbmU7
+IENPTE9SOiByZ2IoMTcsMTcsMTcpOyBGT05ULVNUWUxFOiBub3JtYWw7IExFVFRFUi1TUEFDSU5H
+OiAwcHQ7IG1zby1zcGFjZXJ1bjogJ3llcyc7IG1zby1mb250LWtlcm5pbmc6IDEuMDAwMHB0OyBt
+c28tYXNjaWktZm9udC1mYW1pbHk6ICdDYWxpYnJpIExpZ2h0JzsgbXNvLWhhbnNpLWZvbnQtZmFt
+aWx5OiBIZWx2ZXRpY2E7IG1zby1iaWRpLWZvbnQtZmFtaWx5OiBIZWx2ZXRpY2EiPg0KPFAgY2xh
+c3M9TXNvTm9ybWFsIHN0eWxlPSJNQVJHSU46IDBwdCI+PEZPTlQgY29sb3I9IzAwMDBmZj48U1BB
+TiBzdHlsZT0iRk9OVC1TSVpFOiAxMnB0OyBGT05ULUZBTUlMWTog5a6L5L2TOyBURVhULVRSQU5T
+Rk9STTogbm9uZTsgQ09MT1I6IHJnYigxNywxNywxNyk7IEZPTlQtU1RZTEU6IG5vcm1hbDsgTEVU
+VEVSLVNQQUNJTkc6IDBwdDsgbXNvLXNwYWNlcnVuOiAneWVzJzsgbXNvLWZvbnQta2VybmluZzog
+MS4wMDAwcHQ7IG1zby1hc2NpaS1mb250LWZhbWlseTogJ0NhbGlicmkgTGlnaHQnOyBtc28taGFu
+c2ktZm9udC1mYW1pbHk6IEhlbHZldGljYTsgbXNvLWJpZGktZm9udC1mYW1pbHk6IEhlbHZldGlj
+YSI+QWxzbyB3ZSBoYXZlIG91ciBvd24gcHJvZmVzc2lvbmFsIGRlc2lnbmVycyB0byBtZWV0IGFu
+eSBvZiB5b3VyIHJlcXVpcmVtZW50cy48L1NQQU4+PFNQQU4gc3R5bGU9IkZPTlQtU0laRTogMTJw
+dDsgRk9OVC1GQU1JTFk6IOWui+S9kzsgVEVYVC1UUkFOU0ZPUk06IG5vbmU7IENPTE9SOiByZ2Io
+MTcsMTcsMTcpOyBGT05ULVNUWUxFOiBub3JtYWw7IExFVFRFUi1TUEFDSU5HOiAwcHQ7IG1zby1z
+cGFjZXJ1bjogJ3llcyc7IG1zby1mb250LWtlcm5pbmc6IDEuMDAwMHB0OyBtc28tYXNjaWktZm9u
+dC1mYW1pbHk6ICdDYWxpYnJpIExpZ2h0JzsgbXNvLWhhbnNpLWZvbnQtZmFtaWx5OiBIZWx2ZXRp
+Y2E7IG1zby1iaWRpLWZvbnQtZmFtaWx5OiBIZWx2ZXRpY2EiPjxvOnA+PC9vOnA+PC9TUEFOPjwv
+Rk9OVD48L1A+DQo8UCBjbGFzcz1Nc29Ob3JtYWwgc3R5bGU9Ik1BUkdJTjogMHB0Ij48Rk9OVCBj
+b2xvcj0jMDAwMGZmPjxTUEFOIHN0eWxlPSJGT05ULVNJWkU6IDEycHQ7IEZPTlQtRkFNSUxZOiDl
+rovkvZM7IENPTE9SOiByZ2IoMTcsMTcsMTcpOyBGT05ULVNUWUxFOiBub3JtYWw7IExFVFRFUi1T
+UEFDSU5HOiAwcHQ7IG1zby1zcGFjZXJ1bjogJ3llcyc7IG1zby1mb250LWtlcm5pbmc6IDEuMDAw
+MHB0OyBtc28tYXNjaWktZm9udC1mYW1pbHk6ICdDYWxpYnJpIExpZ2h0JzsgbXNvLWhhbnNpLWZv
+bnQtZmFtaWx5OiBIZWx2ZXRpY2E7IG1zby1iaWRpLWZvbnQtZmFtaWx5OiBIZWx2ZXRpY2EiPkk8
+L1NQQU4+PFNQQU4gc3R5bGU9IkZPTlQtU0laRTogMTJwdDsgRk9OVC1GQU1JTFk6IOWui+S9kzsg
+VEVYVC1UUkFOU0ZPUk06IG5vbmU7IENPTE9SOiByZ2IoMTcsMTcsMTcpOyBGT05ULVNUWUxFOiBu
+b3JtYWw7IExFVFRFUi1TUEFDSU5HOiAwcHQ7IG1zby1zcGFjZXJ1bjogJ3llcyc7IG1zby1mb250
+LWtlcm5pbmc6IDEuMDAwMHB0OyBtc28tYXNjaWktZm9udC1mYW1pbHk6ICdDYWxpYnJpIExpZ2h0
+JzsgbXNvLWhhbnNpLWZvbnQtZmFtaWx5OiBIZWx2ZXRpY2E7IG1zby1iaWRpLWZvbnQtZmFtaWx5
+OiBIZWx2ZXRpY2EiPmYgeW91IGFyZSBpbnRlcmVzdGVkIGluLFBsZWFzZSBsZXQgbWUga25vdzwv
+U1BBTj48U1BBTiBzdHlsZT0iRk9OVC1TSVpFOiAxMnB0OyBGT05ULUZBTUlMWTog5a6L5L2TOyBU
+RVhULVRSQU5TRk9STTogbm9uZTsgQ09MT1I6IHJnYigxNywxNywxNyk7IEZPTlQtU1RZTEU6IG5v
+cm1hbDsgTEVUVEVSLVNQQUNJTkc6IDBwdDsgbXNvLXNwYWNlcnVuOiAneWVzJzsgbXNvLWZvbnQt
+a2VybmluZzogMS4wMDAwcHQ7IG1zby1hc2NpaS1mb250LWZhbWlseTogJ0NhbGlicmkgTGlnaHQn
+OyBtc28taGFuc2ktZm9udC1mYW1pbHk6IEhlbHZldGljYTsgbXNvLWJpZGktZm9udC1mYW1pbHk6
+IEhlbHZldGljYSI+LjwvU1BBTj48U1BBTiBzdHlsZT0iRk9OVC1TSVpFOiAxMnB0OyBGT05ULUZB
+TUlMWTog5a6L5L2TOyBURVhULVRSQU5TRk9STTogbm9uZTsgQ09MT1I6IHJnYigxNywxNywxNyk7
+IEZPTlQtU1RZTEU6IG5vcm1hbDsgTEVUVEVSLVNQQUNJTkc6IDBwdDsgbXNvLXNwYWNlcnVuOiAn
+eWVzJzsgbXNvLWZvbnQta2VybmluZzogMS4wMDAwcHQ7IG1zby1hc2NpaS1mb250LWZhbWlseTog
+J0NhbGlicmkgTGlnaHQnOyBtc28taGFuc2ktZm9udC1mYW1pbHk6IEhlbHZldGljYTsgbXNvLWJp
+ZGktZm9udC1mYW1pbHk6IEhlbHZldGljYSI+PG86cD48L286cD48L1NQQU4+PC9GT05UPjwvUD4N
+CjxQIGNsYXNzPU1zb05vcm1hbCBzdHlsZT0iTUFSR0lOOiAwcHQiPjxTUEFOIHN0eWxlPSJGT05U
+LVNJWkU6IDEycHQ7IEZPTlQtRkFNSUxZOiDlrovkvZM7IFRFWFQtVFJBTlNGT1JNOiBub25lOyBD
+T0xPUjogcmdiKDE3LDE3LDE3KTsgRk9OVC1TVFlMRTogbm9ybWFsOyBMRVRURVItU1BBQ0lORzog
+MHB0OyBtc28tc3BhY2VydW46ICd5ZXMnOyBtc28tZm9udC1rZXJuaW5nOiAxLjAwMDBwdDsgbXNv
+LWFzY2lpLWZvbnQtZmFtaWx5OiAnQ2FsaWJyaSBMaWdodCc7IG1zby1oYW5zaS1mb250LWZhbWls
+eTogSGVsdmV0aWNhOyBtc28tYmlkaS1mb250LWZhbWlseTogSGVsdmV0aWNhIj48bzpwPjxGT05U
+IGNvbG9yPSMwMDAwZmY+Jm5ic3A7PC9GT05UPjwvbzpwPjwvU1BBTj48L1A+DQo8UCBjbGFzcz1N
+c29Ob3JtYWwgc3R5bGU9Ik1BUkdJTjogMHB0Ij48Rk9OVCBjb2xvcj0jMDAwMGZmPjxTUEFOIHN0
+eWxlPSJGT05ULVNJWkU6IDEycHQ7IEZPTlQtRkFNSUxZOiDlrovkvZM7IFRFWFQtVFJBTlNGT1JN
+OiBub25lOyBDT0xPUjogcmdiKDE3LDE3LDE3KTsgRk9OVC1TVFlMRTogbm9ybWFsOyBMRVRURVIt
+U1BBQ0lORzogMHB0OyBtc28tc3BhY2VydW46ICd5ZXMnOyBtc28tZm9udC1rZXJuaW5nOiAxLjAw
+MDBwdDsgbXNvLWFzY2lpLWZvbnQtZmFtaWx5OiAnQ2FsaWJyaSBMaWdodCc7IG1zby1oYW5zaS1m
+b250LWZhbWlseTogSGVsdmV0aWNhOyBtc28tYmlkaS1mb250LWZhbWlseTogSGVsdmV0aWNhIj5C
+ZXN0IFJlZ2FyZHMhPC9TUEFOPjwvRk9OVD48L1A+DQo8UCBjbGFzcz1Nc29Ob3JtYWwgc3R5bGU9
+Ik1BUkdJTjogMHB0Ij48Rk9OVCBjb2xvcj0jMDAwMGZmPjxTUEFOIHN0eWxlPSJGT05ULVNJWkU6
+IDEycHQ7IEZPTlQtRkFNSUxZOiDlrovkvZM7IFRFWFQtVFJBTlNGT1JNOiBub25lOyBDT0xPUjog
+cmdiKDE3LDE3LDE3KTsgRk9OVC1TVFlMRTogbm9ybWFsOyBMRVRURVItU1BBQ0lORzogMHB0OyBt
+c28tc3BhY2VydW46ICd5ZXMnOyBtc28tZm9udC1rZXJuaW5nOiAxLjAwMDBwdDsgbXNvLWFzY2lp
+LWZvbnQtZmFtaWx5OiAnQ2FsaWJyaSBMaWdodCc7IG1zby1oYW5zaS1mb250LWZhbWlseTogSGVs
+dmV0aWNhOyBtc28tYmlkaS1mb250LWZhbWlseTogSGVsdmV0aWNhIj48L1NQQU4+PFNQQU4gc3R5
+bGU9IkZPTlQtU0laRTogN3B0OyBGT05ULUZBTUlMWTogJ+W+rui9r+mbhem7kSBMaWdodCc7IEJB
+Q0tHUk9VTkQ6IHJnYigyNTUsMjU1LDI1NSk7IFRFWFQtVFJBTlNGT1JNOiBub25lOyBDT0xPUjog
+cmdiKDE3LDE3LDE3KTsgRk9OVC1TVFlMRTogbm9ybWFsOyBMRVRURVItU1BBQ0lORzogMHB0OyBt
+c28tc3BhY2VydW46ICd5ZXMnOyBtc28tZm9udC1rZXJuaW5nOiAxLjAwMDBwdDsgbXNvLXNoYWRp
+bmc6IHJnYigyNTUsMjU1LDI1NSkiPjxvOnA+PC9vOnA+PC9TUEFOPjwvRk9OVD4mbmJzcDs8L1A+
+DQo8UCBjbGFzcz1Nc29Ob3JtYWwgc3R5bGU9Ik1BUkdJTjogMHB0Ij48U1BBTiBzdHlsZT0iRk9O
+VC1TSVpFOiA3cHQ7IEZPTlQtRkFNSUxZOiBIZWx2ZXRpY2E7IEJBQ0tHUk9VTkQ6IHJnYigyNTUs
+MjU1LDI1NSk7IFRFWFQtVFJBTlNGT1JNOiBub25lOyBDT0xPUjogcmdiKDE3LDE3LDE3KTsgRk9O
+VC1TVFlMRTogbm9ybWFsOyBMRVRURVItU1BBQ0lORzogMHB0OyBtc28tc3BhY2VydW46ICd5ZXMn
+OyBtc28tZm9udC1rZXJuaW5nOiAxLjAwMDBwdDsgbXNvLXNoYWRpbmc6IHJnYigyNTUsMjU1LDI1
+NSkiPjxTUEFOIHN0eWxlPSJGT05ULUZBTUlMWTogQ29taWMgU2FucyBNUzsgQ09MT1I6IHJnYigw
+LDAsMjU1KSI+PEZPTlQgY29sb3I9IzAwMDBmZiBzaXplPTIgZmFjZT0iVGltZXMgTmV3IFJvbWFu
+IENFIj48U1BBTiBzdHlsZT0iRk9OVC1TSVpFOiA3cHQ7IEZPTlQtRkFNSUxZOiBIZWx2ZXRpY2E7
+IEJBQ0tHUk9VTkQ6IHJnYigyNTUsMjU1LDI1NSk7IFRFWFQtVFJBTlNGT1JNOiBub25lOyBDT0xP
+UjogcmdiKDE3LDE3LDE3KTsgRk9OVC1TVFlMRTogbm9ybWFsOyBMRVRURVItU1BBQ0lORzogMHB0
+OyBtc28tc3BhY2VydW46ICd5ZXMnOyBtc28tZm9udC1rZXJuaW5nOiAxLjAwMDBwdDsgbXNvLXNo
+YWRpbmc6IHJnYigyNTUsMjU1LDI1NSkiPjxTUEFOIHN0eWxlPSJGT05ULUZBTUlMWTogQ29taWMg
+U2FucyBNUzsgQ09MT1I6IHJnYigwLDAsMjU1KSI+PEZPTlQgY29sb3I9IzAwMDBmZiBzaXplPTIg
+ZmFjZT0iVGltZXMgTmV3IFJvbWFuIENFIj4mbmJzcDs8L1A+DQo8UCBjbGFzcz1Nc29Ob3JtYWwg
+c3R5bGU9Ik1BUkdJTjogMHB0Ij48U1BBTiBzdHlsZT0iRk9OVC1TSVpFOiA3cHQ7IEZPTlQtRkFN
+SUxZOiBIZWx2ZXRpY2E7IEJBQ0tHUk9VTkQ6IHJnYigyNTUsMjU1LDI1NSk7IFRFWFQtVFJBTlNG
+T1JNOiBub25lOyBDT0xPUjogcmdiKDE3LDE3LDE3KTsgRk9OVC1TVFlMRTogbm9ybWFsOyBMRVRU
+RVItU1BBQ0lORzogMHB0OyBtc28tc3BhY2VydW46ICd5ZXMnOyBtc28tZm9udC1rZXJuaW5nOiAx
+LjAwMDBwdDsgbXNvLXNoYWRpbmc6IHJnYigyNTUsMjU1LDI1NSkiPjxTUEFOIHN0eWxlPSJGT05U
+LUZBTUlMWTogQ29taWMgU2FucyBNUzsgQ09MT1I6IHJnYigwLDAsMjU1KSI+PEI+PEZPTlQgY29s
+b3I9IzAwMDBmZiBzaXplPTIgZmFjZT0iVGltZXMgTmV3IFJvbWFuIENFIj5IdWFuZyBEZWthaTwv
+Rk9OVD48L0I+PC9TUEFOPjwvU1BBTj48L1A+DQo8UCBjbGFzcz1Nc29Ob3JtYWwgc3R5bGU9Ik1B
+UkdJTjogMHB0Ij48U1BBTiBzdHlsZT0iRk9OVC1TSVpFOiA3cHQ7IEZPTlQtRkFNSUxZOiBIZWx2
+ZXRpY2E7IEJBQ0tHUk9VTkQ6IHJnYigyNTUsMjU1LDI1NSk7IFRFWFQtVFJBTlNGT1JNOiBub25l
+OyBDT0xPUjogcmdiKDE3LDE3LDE3KTsgRk9OVC1TVFlMRTogbm9ybWFsOyBMRVRURVItU1BBQ0lO
+RzogMHB0OyBtc28tc3BhY2VydW46ICd5ZXMnOyBtc28tZm9udC1rZXJuaW5nOiAxLjAwMDBwdDsg
+bXNvLXNoYWRpbmc6IHJnYigyNTUsMjU1LDI1NSkiPjxTUEFOIHN0eWxlPSJGT05ULUZBTUlMWTog
+Q29taWMgU2FucyBNUzsgQ09MT1I6IHJnYigwLDAsMjU1KSI+PC9TUEFOPjwvU1BBTj48U1BBTiBz
+dHlsZT0iRk9OVC1TSVpFOiA3cHQ7IEZPTlQtRkFNSUxZOiBIZWx2ZXRpY2E7IEJBQ0tHUk9VTkQ6
+IHJnYigyNTUsMjU1LDI1NSk7IFRFWFQtVFJBTlNGT1JNOiBub25lOyBDT0xPUjogcmdiKDE3LDE3
+LDE3KTsgRk9OVC1TVFlMRTogbm9ybWFsOyBMRVRURVItU1BBQ0lORzogMHB0OyBtc28tc3BhY2Vy
+dW46ICd5ZXMnOyBtc28tZm9udC1rZXJuaW5nOiAxLjAwMDBwdDsgbXNvLXNoYWRpbmc6IHJnYigy
+NTUsMjU1LDI1NSkiPjxTUEFOIHN0eWxlPSJDT0xPUjogcmdiKDAsMCwyNTUpIj48Rk9OVCBjb2xv
+cj0jMDAwMGZmIHNpemU9MiBmYWNlPSJUaW1lcyBOZXcgUm9tYW4gQ0UiPl9fX19fX19fX19fX19f
+X19fX19fX19fX19fX188L0ZPTlQ+PC9TUEFOPjwvU1BBTj48L1A+DQo8UCBjbGFzcz1Nc29Ob3Jt
+YWwgc3R5bGU9Ik1BUkdJTjogMHB0Ij48U1BBTiBzdHlsZT0iRk9OVC1TSVpFOiA3cHQ7IEZPTlQt
+RkFNSUxZOiBIZWx2ZXRpY2E7IEJBQ0tHUk9VTkQ6IHJnYigyNTUsMjU1LDI1NSk7IFRFWFQtVFJB
+TlNGT1JNOiBub25lOyBDT0xPUjogcmdiKDE3LDE3LDE3KTsgRk9OVC1TVFlMRTogbm9ybWFsOyBM
+RVRURVItU1BBQ0lORzogMHB0OyBtc28tc3BhY2VydW46ICd5ZXMnOyBtc28tZm9udC1rZXJuaW5n
+OiAxLjAwMDBwdDsgbXNvLXNoYWRpbmc6IHJnYigyNTUsMjU1LDI1NSkiPjxTUEFOIHN0eWxlPSJD
+T0xPUjogcmdiKDAsMCwyNTUpIj48L1NQQU4+PC9TUEFOPjxTUEFOIHN0eWxlPSJGT05ULVNJWkU6
+IDdwdDsgRk9OVC1GQU1JTFk6IEhlbHZldGljYTsgQkFDS0dST1VORDogcmdiKDI1NSwyNTUsMjU1
+KTsgVEVYVC1UUkFOU0ZPUk06IG5vbmU7IENPTE9SOiByZ2IoMTcsMTcsMTcpOyBGT05ULVNUWUxF
+OiBub3JtYWw7IExFVFRFUi1TUEFDSU5HOiAwcHQ7IG1zby1zcGFjZXJ1bjogJ3llcyc7IG1zby1m
+b250LWtlcm5pbmc6IDEuMDAwMHB0OyBtc28tc2hhZGluZzogcmdiKDI1NSwyNTUsMjU1KSI+PFNQ
+QU4gc3R5bGU9IkNPTE9SOiByZ2IoMCwwLDI1NSkiPjxGT05UIGNvbG9yPSMwMDAwZmYgc2l6ZT0z
+IGZhY2U9IlRpbWVzIE5ldyBSb21hbiBDRSI+VGlhbmppbiBXb3JsZHMgVmFsdmUgY28uLCBsdGQu
+PC9GT05UPjwvU1BBTj48L1NQQU4+PC9QPg0KPFAgY2xhc3M9TXNvTm9ybWFsIHN0eWxlPSJNQVJH
+SU46IDBwdCI+PFNQQU4gc3R5bGU9IkZPTlQtU0laRTogN3B0OyBGT05ULUZBTUlMWTogSGVsdmV0
+aWNhOyBCQUNLR1JPVU5EOiByZ2IoMjU1LDI1NSwyNTUpOyBURVhULVRSQU5TRk9STTogbm9uZTsg
+Q09MT1I6IHJnYigxNywxNywxNyk7IEZPTlQtU1RZTEU6IG5vcm1hbDsgTEVUVEVSLVNQQUNJTkc6
+IDBwdDsgbXNvLXNwYWNlcnVuOiAneWVzJzsgbXNvLWZvbnQta2VybmluZzogMS4wMDAwcHQ7IG1z
+by1zaGFkaW5nOiByZ2IoMjU1LDI1NSwyNTUpIj48U1BBTiBzdHlsZT0iQ09MT1I6IHJnYigwLDAs
+MjU1KSI+PEEgaHJlZj0iaHR0cDovL3d3dy53ZHN2YWx2ZS5jb20vIj48Rk9OVCBzaXplPTMgZmFj
+ZT0iVGltZXMgTmV3IFJvbWFuIj53d3cud2RzdmFsdmUuY29tPC9GT05UPjwvQT48L1NQQU4+PC9T
+UEFOPjwvUD4NCjxQIGNsYXNzPU1zb05vcm1hbCBzdHlsZT0iTUFSR0lOOiAwcHQiPjxTUEFOIHN0
+eWxlPSJGT05ULVNJWkU6IDdwdDsgRk9OVC1GQU1JTFk6IEhlbHZldGljYTsgQkFDS0dST1VORDog
+cmdiKDI1NSwyNTUsMjU1KTsgVEVYVC1UUkFOU0ZPUk06IG5vbmU7IENPTE9SOiByZ2IoMTcsMTcs
+MTcpOyBGT05ULVNUWUxFOiBub3JtYWw7IExFVFRFUi1TUEFDSU5HOiAwcHQ7IG1zby1zcGFjZXJ1
+bjogJ3llcyc7IG1zby1mb250LWtlcm5pbmc6IDEuMDAwMHB0OyBtc28tc2hhZGluZzogcmdiKDI1
+NSwyNTUsMjU1KSI+PFNQQU4gc3R5bGU9IkNPTE9SOiByZ2IoMCwwLDI1NSkiPjwvU1BBTj48L1NQ
+QU4+PFNQQU4gc3R5bGU9IkZPTlQtU0laRTogN3B0OyBGT05ULUZBTUlMWTogSGVsdmV0aWNhOyBC
+QUNLR1JPVU5EOiByZ2IoMjU1LDI1NSwyNTUpOyBURVhULVRSQU5TRk9STTogbm9uZTsgQ09MT1I6
+IHJnYigxNywxNywxNyk7IEZPTlQtU1RZTEU6IG5vcm1hbDsgTEVUVEVSLVNQQUNJTkc6IDBwdDsg
+bXNvLXNwYWNlcnVuOiAneWVzJzsgbXNvLWZvbnQta2VybmluZzogMS4wMDAwcHQ7IG1zby1zaGFk
+aW5nOiByZ2IoMjU1LDI1NSwyNTUpIj48U1BBTiBzdHlsZT0iQ09MT1I6IHJnYigwLDAsMjU1KSI+
+PEZPTlQgY29sb3I9IzAwMDBmZiBzaXplPTMgZmFjZT0iVGltZXMgTmV3IFJvbWFuIENFIj48QSBo
+cmVmPSJodHRwOi8vd3d3Lndvcmxkc3ZhbHZlLmNvbS8iPnd3dy53b3JsZHN2YWx2ZS5jb208L0E+
+PC9GT05UPjwvU1BBTj48L1A+DQo8RElWIHN0eWxlPSJGT05ULVNJWkU6IDE0cHg7IFRFWFQtREVD
+T1JBVElPTjogbm9uZTsgRk9OVC1GQU1JTFk6IEFyaWFsOyBGT05ULVZBUklBTlQ6IG5vcm1hbDsg
+V0hJVEUtU1BBQ0U6IG5vcm1hbDsgV09SRC1TUEFDSU5HOiAwcHg7IFRFWFQtVFJBTlNGT1JNOiBu
+b25lOyBGT05ULVdFSUdIVDogNDAwOyBDT0xPUjogcmdiKDAsMCwwKTsgRk9OVC1TVFlMRTogbm9y
+bWFsOyBURVhULUFMSUdOOiBsZWZ0OyBPUlBIQU5TOiAyOyBMRVRURVItU1BBQ0lORzogbm9ybWFs
+OyBURVhULUlOREVOVDogMHB4OyAtd2Via2l0LXRleHQtc3Ryb2tlLXdpZHRoOiAwcHgiPjxTUEFO
+IHN0eWxlPSJDT0xPUjogcmdiKDAsMCwyNTUpIj48Rk9OVCBjb2xvcj0jMDAwMGZmIHNpemU9MyBm
+YWNlPSJUaW1lcyBOZXcgUm9tYW4gQ0UiPlRlbDowMDg2LTEzNjgyMDcwMjg4PC9GT05UPjwvU1BB
+Tj48L0RJVj4NCjxESVYgc3R5bGU9IkZPTlQtU0laRTogMTRweDsgVEVYVC1ERUNPUkFUSU9OOiBu
+b25lOyBGT05ULUZBTUlMWTogQXJpYWw7IEZPTlQtVkFSSUFOVDogbm9ybWFsOyBXSElURS1TUEFD
+RTogbm9ybWFsOyBXT1JELVNQQUNJTkc6IDBweDsgVEVYVC1UUkFOU0ZPUk06IG5vbmU7IEZPTlQt
+V0VJR0hUOiA0MDA7IENPTE9SOiByZ2IoMCwwLDApOyBGT05ULVNUWUxFOiBub3JtYWw7IFRFWFQt
+QUxJR046IGxlZnQ7IE9SUEhBTlM6IDI7IExFVFRFUi1TUEFDSU5HOiBub3JtYWw7IFRFWFQtSU5E
+RU5UOiAwcHg7IC13ZWJraXQtdGV4dC1zdHJva2Utd2lkdGg6IDBweCI+PFNQQU4gc3R5bGU9IkNP
+TE9SOiByZ2IoMCwwLDI1NSkiPjxGT05UIHNpemU9MyBmYWNlPSJUaW1lcyBOZXcgUm9tYW4gQ0Ui
+PkxpbmtlZGluOjxBIGhyZWY9Imh0dHBzOi8vd3d3LmxpbmtlZGluLmNvbS9pbi9idXR0ZXJmbHl2
+YWx2ZXMxLyI+aHR0cHM6Ly93d3cubGlua2VkaW4uY29tL2luL2J1dHRlcmZseXZhbHZlczEvPC9B
+PjwvRk9OVD48L1NQQU4+PC9ESVY+DQo8RElWIHN0eWxlPSJGT05ULVNJWkU6IDE0cHg7IFRFWFQt
+REVDT1JBVElPTjogbm9uZTsgRk9OVC1GQU1JTFk6IEFyaWFsOyBGT05ULVZBUklBTlQ6IG5vcm1h
+bDsgV0hJVEUtU1BBQ0U6IG5vcm1hbDsgV09SRC1TUEFDSU5HOiAwcHg7IFRFWFQtVFJBTlNGT1JN
+OiBub25lOyBGT05ULVdFSUdIVDogNDAwOyBDT0xPUjogcmdiKDAsMCwwKTsgRk9OVC1TVFlMRTog
+bm9ybWFsOyBURVhULUFMSUdOOiBsZWZ0OyBPUlBIQU5TOiAyOyBMRVRURVItU1BBQ0lORzogbm9y
+bWFsOyBURVhULUlOREVOVDogMHB4OyAtd2Via2l0LXRleHQtc3Ryb2tlLXdpZHRoOiAwcHgiPjxT
+UEFOIHN0eWxlPSJDT0xPUjogcmdiKDAsMCwyNTUpIj48Rk9OVCBzaXplPTMgZmFjZT0iVGltZXMg
+TmV3IFJvbWFuIENFIj48QSBocmVmPSJodHRwczovL3d3dy5saW5rZWRpbi5jb20vY29tcGFueS90
+aWFuamluLXdvcmxkcy12YWx2ZS1jby1sdGQvIj5odHRwczovL3d3dy5saW5rZWRpbi5jb20vY29t
+cGFueS90aWFuamluLXdvcmxkcy12YWx2ZS1jby1sdGQvPC9BPjwvRk9OVD48L1NQQU4+PC9ESVY+
+DQo8RElWIHN0eWxlPSJGT05ULVNJWkU6IDE0cHg7IFRFWFQtREVDT1JBVElPTjogbm9uZTsgRk9O
+VC1GQU1JTFk6IEFyaWFsOyBGT05ULVZBUklBTlQ6IG5vcm1hbDsgV0hJVEUtU1BBQ0U6IG5vcm1h
+bDsgV09SRC1TUEFDSU5HOiAwcHg7IFRFWFQtVFJBTlNGT1JNOiBub25lOyBGT05ULVdFSUdIVDog
+NDAwOyBDT0xPUjogcmdiKDAsMCwwKTsgRk9OVC1TVFlMRTogbm9ybWFsOyBURVhULUFMSUdOOiBs
+ZWZ0OyBPUlBIQU5TOiAyOyBMRVRURVItU1BBQ0lORzogbm9ybWFsOyBURVhULUlOREVOVDogMHB4
+OyAtd2Via2l0LXRleHQtc3Ryb2tlLXdpZHRoOiAwcHgiPjxTUEFOIHN0eWxlPSJDT0xPUjogcmdi
+KDAsMCwyNTUpIj48Rk9OVCBjb2xvcj0jMDAwMGZmIHNpemU9MyBmYWNlPSJUaW1lcyBOZXcgUm9t
+YW4gQ0UiPkFkZDpOby4yNSxGdWh1aSBSb2FkLEppbm5hbiBEaXN0cmljdCxUaWFuamluLCBDaGlu
+YTwvRk9OVD48L1NQQU4+PC9TUEFOPjwvRElWPjwvRk9OVD48L1NQQU4+PC9TUEFOPjwvRk9OVD48
+L1NQQU4+PC9TUEFOPjxTUEFOIHN0eWxlPSJGT05ULVNJWkU6IDdwdDsgRk9OVC1GQU1JTFk6IEhl
+bHZldGljYTsgQkFDS0dST1VORDogcmdiKDI1NSwyNTUsMjU1KTsgVEVYVC1UUkFOU0ZPUk06IG5v
+bmU7IENPTE9SOiByZ2IoMTcsMTcsMTcpOyBGT05ULVNUWUxFOiBub3JtYWw7IExFVFRFUi1TUEFD
+SU5HOiAwcHQ7IG1zby1zcGFjZXJ1bjogJ3llcyc7IG1zby1mb250LWtlcm5pbmc6IDEuMDAwMHB0
+OyBtc28tc2hhZGluZzogcmdiKDI1NSwyNTUsMjU1KSI+PC9TUEFOPjwvU1BBTj48L0ZPTlQ+PC9v
+OnA+PC9TUEFOPjwvRk9OVD48L1NQQU4+PC9CT0RZPjwvSFRNTD4NCg==
 
-The linux-4.19.y-cip tree has been updated base version from v4.19.109 to v4.19.113.
-You can get this release via the git tree at:
+--===============0666287383691796169==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-  v4.19.113-cip23:
-    repository:
-      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch:
-      linux-4.19.y-cip
-    commit hash:
-      	52f7171e0b7fcf44b37d9dc270de2576bcefe169
-    added commits:
-      CIP: Bump version suffix to -cip23 after merge from stable
-
-Best regards,
-   Nobuhiro
 _______________________________________________
 cip-dev mailing list
 cip-dev@lists.cip-project.org
 https://lists.cip-project.org/mailman/listinfo/cip-dev
+
+--===============0666287383691796169==--
