@@ -1,175 +1,180 @@
-Return-Path: <SRS0=oS0j=5X=lists.cip-project.org=bounce+64572+4566+4520388+8129055@kernel.org>
+Return-Path: <SRS0=jeEJ=5Y=lists.cip-project.org=bounce+64572+4567+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,HTML_MESSAGE,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8CC0C2BA2B
-	for <cip-dev@archiver.kernel.org>; Tue,  7 Apr 2020 15:40:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63E94C2D0EA
+	for <cip-dev@archiver.kernel.org>; Wed,  8 Apr 2020 09:24:16 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 957812076E
-	for <cip-dev@archiver.kernel.org>; Tue,  7 Apr 2020 15:40:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id C174120747
+	for <cip-dev@archiver.kernel.org>; Wed,  8 Apr 2020 09:24:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="cpRa9U24"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 957812076E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4566+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id K3JqYY4521723xgiJKLU9ntk; Tue, 07 Apr 2020 08:40:40 -0700
-X-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
- by mx.groups.io with SMTP id smtpd.web12.462.1586274039436037941
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="Z0A/Pl5L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C174120747
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cybertrust.co.jp
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4567+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id QykEYY4521723xSyo40Zlc2U; Wed, 08 Apr 2020 02:24:15 -0700
+X-Received: from APC01-SG2-obe.outbound.protection.outlook.com (APC01-SG2-obe.outbound.protection.outlook.com [40.107.131.138])
+ by mx.groups.io with SMTP id smtpd.web10.8182.1586337853592601811
  for <cip-dev@lists.cip-project.org>;
- Tue, 07 Apr 2020 08:40:39 -0700
-X-Received: by mail-il1-f172.google.com with SMTP id j9so3636222ilr.7
-        for <cip-dev@lists.cip-project.org>; Tue, 07 Apr 2020 08:40:39 -0700 (PDT)
-X-Gm-Message-State: oMikqbxOfMzac3HOjIbSNhQ6x4520388AA=
-X-Google-Smtp-Source: APiQypJHeAlLzjS6uPVi0K4wIRkTKxGxc2u7omirjDyHUaf2Vn669X5sUjr+5ncSn6I64Bq24Bc2Q5pACI1JusxMe0I=
-X-Received: by 2002:a92:d20e:: with SMTP id y14mr3237380ily.104.1586274038723;
- Tue, 07 Apr 2020 08:40:38 -0700 (PDT)
+ Wed, 08 Apr 2020 02:24:14 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nX9nvGJNfUZS0lgfMnYH4p02iXNmm8RH0ZkOLd4q/Z1l+tohs42sC1wQEQY9qsiQqDmWRbp1g6sx9ze9YVUqw8Nxl6Btmn63qpQBuYJM/meY2YyFVh3vR5q/upeiWUyISUFu1TIyKTG9Ky2pthZSk3UF2AdRZBXsUyt+9txs0+45ECS0AjHGPwa4kZ4vf1i8/51TA8PAMRuP3yS0nIqcsNBpV7fDxEOmlVCWR2kypVSEh+fbE7lnXsf2F8gQMW1XBpvVmJOYx6IaQdzfkEyRvcLxin5Zl/U6bme7EPWn77sGhs5GsEFPQrKk0VDZ2HB8jaN0mGpKNh/U/dFTYSqEjQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lBYvPPTdZKT//eQGIfCV0sSOAG2La3g2OrVU4ehgLCU=;
+ b=O/kPnsk1cRzzy0LF2DPqJr/pfIvDv7bTrFVtyjbfOjeYndaXjBJbrFxTVZjWRjDUmWMXOnGLYAEemk2YRTAXAIUIUZKVx+VEn3iAa2jQo+56gs+2HXLgaNCxaHh8k/8PVn8e7Iq+4fk1B/fuP8p1UyMXBZdHrLwDHjRagrLf3Lrpitm0y+MXaVlVo5kjK4BlLOSa7uvZ3gHfpGGRC1HimN255anIHaVy7D7tOUqfs7Iwmp1x4SxNZBdt1dL8ALKbmEo91iuY9SJj0n0Mpry3bLKzXra9y6Dp8wZGnAsRRLpEhpKuvAWuGlA3g1qQC7af1D7LefZOf58Pb18bVxy2Pw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cybertrust.co.jp; dmarc=pass action=none
+ header.from=cybertrust.co.jp; dkim=pass header.d=cybertrust.co.jp; arc=none
+X-Received: from TY2PR01MB4972.jpnprd01.prod.outlook.com (20.179.172.148) by
+ TY2PR01MB3033.jpnprd01.prod.outlook.com (20.177.99.22) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2878.19; Wed, 8 Apr 2020 09:24:05 +0000
+X-Received: from TY2PR01MB4972.jpnprd01.prod.outlook.com
+ ([fe80::e845:c7d4:4f:c3cc]) by TY2PR01MB4972.jpnprd01.prod.outlook.com
+ ([fe80::e845:c7d4:4f:c3cc%7]) with mapi id 15.20.2878.021; Wed, 8 Apr 2020
+ 09:24:05 +0000
+From: "masashi.kudo@cybertrust.co.jp" <masashi.kudo@cybertrust.co.jp>
+To: <cip-security@lists.cip-project.org>, <pavel@denx.de>,
+	<jan.kiszka@siemens.com>
+CC: <cip-dev@lists.cip-project.org>
+Subject: Re: [cip-security] [cip-dev] Python 3.x vs 2.7
+Thread-Topic: [cip-security] [cip-dev] Python 3.x vs 2.7
+Thread-Index: AdYI0Y7wF02Ds+P+SQqCBlZlaiG5IABL904AAH62CgAAGFYHgAAR8NGQADgryrA=
+Date: Wed, 8 Apr 2020 09:24:05 +0000
+Message-ID: 
+ <TY2PR01MB4972F1FB23E46E7D2DA46482A0C00@TY2PR01MB4972.jpnprd01.prod.outlook.com>
+References: 
+ <TYAPR01MB2399241EB327E673BD6F48EFDFC60@TYAPR01MB2399.jpnprd01.prod.outlook.com>
+ <20200403214708.GA32080@duo.ucw.cz>
+ <8d490687-c9fb-239e-5d01-55fec493168f@siemens.com>
+ <20200406215205.GA14162@amd.ucw.cz>
+ <TYAPR01MB2399CAF8B56C489427E7A791DFC30@TYAPR01MB2399.jpnprd01.prod.outlook.com>
+In-Reply-To: 
+ <TYAPR01MB2399CAF8B56C489427E7A791DFC30@TYAPR01MB2399.jpnprd01.prod.outlook.com>
+Accept-Language: ja-JP, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [122.216.27.145]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 38bb4290-e6c2-4446-a082-08d7db9e9558
+x-ms-traffictypediagnostic: TY2PR01MB3033:
+x-microsoft-antispam-prvs: 
+ <TY2PR01MB303377BEFFC05766DEA61204A0C00@TY2PR01MB3033.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+received-spf: None (protection.outlook.com: cybertrust.co.jp does not
+ designate permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 
+ Hd5W1C16bKJpp/c6/91jh0EgLOV+TA07n60nSY1/n+CSBDbtycN8+Kp1Jm3SLFHBdMb6vyDfw/yDlPNnQTAs4EBT6nPJRLrMeC8GVWcErkjvlah4XphjKYK/YZILFEJTWmmTnXlPfCU5vgHc6JWjIMxT7clNlMDK2HsT80ugVR1y3/6JgzTTYUPvX7rsQm+6X+hM+LRnTEs/wjommXTmrByQhzYf+JwufB1wnqr8UXeuqrKfrtmCvG57rL8oE1YJIeGR6sNsThVdmhcatjG5IchNyz+hVzWRx1Uq6qgdI1xTXHi8QvWaW1nc4ZP2LG7bkeO8kepcS6lJVWlaCZ5cLvExNvv2/mmHsv3ZDj4QYFAjiYUgS1+IM2lWlVZZnytCjcJfhqMwJbQpG/4U2QdI3IU1b5GTC2gfeQA49Tm8ciezUTjBcarAt+rQ0W0nC1TEEc3NKNPeJ94xguA4PO3+HnItvTYGpopGljtCLhHtCyS8pRWqviK5mZKJgGeSyMScLFCkoEPLKNcCRz3LqZ657g==
+x-ms-exchange-antispam-messagedata: 
+ D7fuztIFhWqqaxkzjiIwMmA/5O5jO+mMCfQAucV3qaeRQQVj+Geh5R8zu7e0y+GYvo5t8vyvvMlKpxsn72r0ZLqLcePgxurZ3LAmda4dv5G/8QigU1rWiWFYZ15MkABfzF/1i7HrdSKAAi6QwjvxCQ==
+x-ms-exchange-transport-forked: True
 MIME-Version: 1.0
-References: <CAODMxsK_vgo-=FikL1Z2iYXtetRh+KpRJNL4MchmfXvLMqBTUA@mail.gmail.com>
- <CAODMxsJ5anJK+heh9rnWtAsvCCFLhVnm40cffABgG686_312mQ@mail.gmail.com>
- <CAODMxsKB87WswBCwDHcpaB1TyO6QmTy_vy4qVzdni8OrmEwr7A@mail.gmail.com>
- <20200406224358.GC14162@amd.ucw.cz> <874ktwysrj.fsf@kokedama.swc.toshiba.co.jp>
- <03bf3028-3ea5-55fa-cead-861db2f980ed@siemens.com> <20200407151223.5nj4433u3il264zk@chatter.i7.local>
- <eced03e3-465b-2b81-ee43-a78cce6ee35c@siemens.com>
-In-Reply-To: <eced03e3-465b-2b81-ee43-a78cce6ee35c@siemens.com>
-From: "Neal Caidin" <ncaidin@linuxfoundation.org>
-Date: Tue, 7 Apr 2020 11:40:22 -0400
-Message-ID: <CAODMxsK7xCTJW4NMTqjn_nZcm8JLEL87w2siTSggymGBxmbhnA@mail.gmail.com>
-Subject: Re: [cip-members] [cip-dev] Migration complete - Re: Mailman2 to Groups.io reminder
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Konstantin Ryabitsev <mricon@kernel.org>, cip-members@lists.cip-project.org, 
-	Pavel Machek <pavel@ucw.cz>, cip-dev@lists.cip-project.org, 
-	cip-board@lists.cip-project.org, cip-security@lists.cip-project.org
+X-OriginatorOrg: cybertrust.co.jp
+X-MS-Exchange-CrossTenant-Network-Message-Id: 38bb4290-e6c2-4446-a082-08d7db9e9558
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Apr 2020 09:24:05.2414
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72cc4624-32b4-4dab-b80a-8563e559bd82
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: DsgAoamyCfsTzecxM42UlZhzFrR7N/jzJOD1FcLkkNc4x/pEbnUMjj2PjCyZsRgqBNE9ctvy6vzWUaIDgtDahp7dal9CHxnJtIPIAunXvVA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB3033
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-Content-Type: multipart/mixed; boundary="tx7koGcSf91vIinglGSf"
+X-Gm-Message-State: VEvm3zODTbsSA9DfjUPeyExEx4520388AA=
+Content-Type: multipart/mixed; boundary="aQ8UPz8cQyvHjQvuQZi5"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1586274040;
- bh=va7WvxNiSOvWkAMPwvLYzcJlgAJdI5cAUgp0f/Cvs4U=;
- h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=cpRa9U24z64DDwGIFIQSloouu1oztohYFu0os/Y6NopQUjG1BwIsQAkA41Uao2btlI+
- aBqH+aQZh76btjn60GkJ1cBsrZvKRAIU49IRlvI/cFTBdYlPBPclD0g/op9VaLkXoBZVH
- Pt3ji5MSpt3UgtrRqa+34Mnt8VppKFk29Kg=
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1586337855;
+ bh=bHKfoufeMDWoRK22cH73X3nk2qAV0ZddcXbOIWkMFQ8=;
+ h=CC:Content-Type:Date:From:Reply-To:Subject:To;
+ b=Z0A/Pl5LHf34Xjo19obyX9NzZmmBKSZ2gNkH1UQvOs+t0IvJkMNEu3hLpWOxHm7/+Oc
+ 1qJswTvMhIQ6hp58ZYb/eJrn6QBW6MBev3zEJoyUVjgAJo6eY/0ZoCd8xgiO5REkAZcjx
+ Kf+rCMJb3WfhEnQuyZ5y3sJl16S8om4py0c=
 
---tx7koGcSf91vIinglGSf
-Content-Type: multipart/alternative; boundary="00000000000098557205a2b5343b"
+--aQ8UPz8cQyvHjQvuQZi5
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
---00000000000098557205a2b5343b
-Content-Type: text/plain; charset="UTF-8"
+SGksIA0KDQpUaGUgc2VjdXJpdHkgV0cgbm9taW5hdGVkIGR1cGxpY2l0eSBhcyBhIHNvbHV0aW9u
+IGZvciAiQ29udHJvbCBzeXN0ZW0gYmFja3VwIiAoQ1I3LjMpLg0KT25lIG9mIHRoZSBjb21tb24g
+cmVxdWlyZW1lbnRzIG9mIHN1Y2ggYmFja3VwIHNvZnR3YXJlIGlzIGNoZWNrLXBvaW50IHJlc3Rh
+cnQgY2FwYWJpbGl0eS4NCkR1cGxpY2l0eSBwcm92aWRlcyB0aGlzIGxpa2UgdGhlIGZvbGxvd2lu
+Zy4NCmh0dHBzOi8vbGlzdHMubm9uZ251Lm9yZy9hcmNoaXZlL2h0bWwvZHVwbGljaXR5LWFubm91
+bmNlLzIwMDktMDYvbXNnMDAwMDAuaHRtbA0KDQpJTUhPLCBJIHRoaW5rIHRhciBpcyBub3QgbWV0
+IElFQzYzNDQzLTQtMiByZXF1aXJlbWVudCwgYmVjYXVzZSB0YXIgaXRzZWxmIGRvZXMgbm90IGhh
+dmUgdGhpcyBjYXBhYmlsaXR5LA0KDQpCZXN0IHJlZ2FyZHMsDQotLQ0KTS4gS3Vkbw0KDQotLS0t
+LU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogY2lwLXNlY3VyaXR5QGxpc3RzLmNpcC1wcm9q
+ZWN0Lm9yZyA8Y2lwLXNlY3VyaXR5QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZz4gT24gQmVoYWxmIE9m
+IEtlbnRvIFlvc2hpZGENClNlbnQ6IFR1ZXNkYXksIEFwcmlsIDcsIDIwMjAgMzo0OSBQTQ0KVG86
+IFBhdmVsIE1hY2hlayA8cGF2ZWxAZGVueC5kZT47IEphbiBLaXN6a2EgPGphbi5raXN6a2FAc2ll
+bWVucy5jb20+DQpDYzogY2lwLXNlY3VyaXR5QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZzsgY2lwLWRl
+dkBsaXN0cy5jaXAtcHJvamVjdC5vcmcNClN1YmplY3Q6IFJlOiBbY2lwLXNlY3VyaXR5XSBbY2lw
+LWRldl0gUHl0aG9uIDMueCB2cyAyLjcNCg0KSGksDQoNCj4tLS0tLU9yaWdpbmFsIE1lc3NhZ2Ut
+LS0tLQ0KPkZyb206IFBhdmVsIE1hY2hlayA8cGF2ZWxAZGVueC5kZT4NCj5TZW50OiBUdWVzZGF5
+LCBBcHJpbCA3LCAyMDIwIDY6NTIgQU0NCj5UbzogSmFuIEtpc3prYSA8amFuLmtpc3prYUBzaWVt
+ZW5zLmNvbT4NCj5DYzogUGF2ZWwgTWFjaGVrIDxwYXZlbEBkZW54LmRlPjsgS2VudG8gWW9zaGlk
+YSANCj48a2VudG8ueW9zaGlkYS53ekByZW5lc2FzLmNvbT47IGNpcC1zZWN1cml0eUBsaXN0cy5j
+aXAtcHJvamVjdC5vcmc7DQo+Y2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmcNCj5TdWJqZWN0
+OiBSZTogW2NpcC1kZXZdIFB5dGhvbiAzLnggdnMgMi43DQo+DQo+T24gTW9uIDIwMjAtMDQtMDYg
+MTI6MTU6MTYsIEphbiBLaXN6a2Egd3JvdGU6DQo+PiBPbiAwMy4wNC4yMCAyMzo0NywgUGF2ZWwg
+TWFjaGVrIHdyb3RlOg0KPj4gPiBIaSENCj4+ID4NCj4+ID4gPg0KPj4gPiA+IEZZSSwgdW5mb3J0
+dW5hdGVseSB3ZSBjb3VsZG4ndCBmaW5kIHRoZSBhbHRlcm5hdGl2ZSBwYWNrYWdlIGZvcg0KPnN5
+c3RlbSBiYWNrdXAuIFRoZSBkdXBsaWNpdHkgaXMgdGhlIGJlc3QgcGFja2FnZSBmb3IgdXMgZnJv
+bSB0aGUgDQo+bGljZW5zZSBhbmQgbnVtIG9mIGRlcGVuZGVuY2llcyBwb2ludCBvZiB2aWV3Lg0K
+Pg0KPj4gPiA+IFNlZSB0aGUgZm9sbG93aW5nLg0KPj4gPiA+DQo+PiA+DQo+PiA+ID4gPGR1cGxp
+Y2l0eT4NCj4+ID4gPiBFbmNyeXB0aW9uOiBZZXMNCj4+ID4gPiBTY2hlZHVsZSBiYWNrdXA6IE5v
+DQo+PiA+ID4gSW5jcmVtZW50YWwgYmFja3VwOiBZZXMNCj4+ID4gPiBMaWNlbnNlOiBHUEwgdjIN
+Cj4+ID4gPiBEZXBlbmRlbmNpZXMgY291bnQgKGFwcm94KTogODANCj4+ID4gPiBSZWZlcmVuY2U6
+IGh0dHA6Ly9kdXBsaWNpdHkubm9uZ251Lm9yZy9mZWF0dXJlcy5odA0KPj4gPg0KPj4gPiBJJ20g
+bm90IHN1cmUgd2hhdCB5b3VyIGV4YWN0IHJlcXVpcmVtZW50cyBhcmUsIGJ1dCBoYXZlIHlvdQ0K
+PmNvbnNpZGVyZWQNCj4+ID4gInRhciI/IEl0IHNob3VsZCBiZSBwb3NzaWJsZSB0byBwaXBlIGl0
+cyBvdXRwdXQgdG8gYWVzcGlwZSAoYW5kIA0KPj4gPiBwb3NzaWJseSBvdGhlciB0b29scykgdG8g
+Z2V0IGVuY3J5cHRpb24sIGFuZCBpdCBzaG91bGQgYmUgYWJsZSB0bw0KPmRvDQo+PiA+IGluY3Jl
+bWVudGFsIGJhY2t1cHMuLi4NCj4+DQo+PiBJIHN1cHBvc2UgdGhlcmUgaXMgdGhhdCBjb25jZXJu
+IGFib3V0IEdQTHYzIGFnYWluIChhcyB3aXRoIGJyb2FkbHkNCj51c2VkDQo+PiByc3luYykgLSB3
+aGljaCBpcyBnZW5lcmFsbHkgb3ZlcnJhdGVkLiBUaGVyZSBleGlzdHMgbGVnYWwgdmlld3MgdGhh
+dA0KPmFscmVhZHkNCj4+IEdQTHYyIHJlcXVpcmVzIHRvIGtlZXAgc3VjaCBsaWNlbnNlZCBjb21w
+b25lbnRzIHJlcGxhY2VhYmxlIG9uIHRoZQ0KPnRhcmdldC4NCj4+IFdoYXQgdGhlbiBlZmZlY3Rp
+dmVseSByZW1haW5zIHdpdGggdjMgaXMgaXRzLCB3ZWxsLCB3b3JkaW5nDQo+Y29tcGxleGl0eS4N
+Cj4NCj5Eb2VzICJ0YXIiIG1hdGNoIHRoZSByZXF1aXJlbWVudHM/DQo+DQo+QW5kIEkgYWdyZWUg
+dGhhdCBiZXN0IG9wdGlvbiB3b3VsZCBiZSB0byBhY2NlcHQgR1BMdjMuDQo+DQoNClNvbWUgb2Yg
+dGhlIHNlY3VyaXR5IG1lbWJlcnMgZGlkbid0IGFjY2VwdCBHUEx2Mywgc28gY3VycmVudGx5IHdl
+IGRyb3BwZWQgR1BMdjMgcGFja2FnZXMgZnJvbSB0aGUgY2FuZGlkYXRlcy4NCg0KQlRXLCBJJ20g
+bm90IHN1cmUgYnV0IGlzIHRoZSBDSVAgcG9saWN5IG9uIGFjY2VwdGluZyBHUEx2MyBzdGlsbCB0
+byBiZSBkZWNpZGVkPw0KDQo+SWYgdGhhdCdzIG91dCBvZiBxdWVzdGlvbiwgSSdtIHByZXR0eSBz
+dXJlIHdlIGNhbiBnZXQgR1BMdjIgdGFyIA0KPmltcGxlbWVudGF0aW9uIHNvbWV3aGVyZS4gYnVz
+eWJveCBoYXMgaW1wbGVtZW50YXRpb24sIGFuZCBJJ20gcHJldHR5IA0KPnN1cmUgdGhlcmUncyBH
+UEx2MiBmb3JrIG9mIGJ1c3lib3guIE9sZCB2ZXJzaW9uIG9mIHRhciBzaG91bGQgYmUgR1BMdjIu
+IA0KPlN0aWxsIGJldHRlciB0aGFuIHBvcnRpbmcgZHVwbGljaXR5IHRvIGRpZmZlcmVudCBweXRo
+b24gdmVyc2lvbi4uLg0KPg0KDQpUaGFuayB5b3UgZm9yIGludHJvZHVjdGlvbiBhYm91dCAidGFy
+Ii4NCkkgd2lsbCBpbnZlc3RpZ2F0ZSB3aGV0aGVyIGl0IG1lZXRzIHRoZSByZXF1aXJlbWVudHMu
+DQpBbmQgYWxzbyBJJ2xsIHNlYXJjaCBHUEx2MiBpbXBsZW1lbnRhdGlvbiBpZiBpdCBtZWV0cyB0
+aGUgcmVxdWlyZW1lbnRzLg0KSWYgaXQncyBub3QgZGVjaWRlZCB5ZXQgYWJvdXQgdGhlIENJUCBw
+b2xpY3kgb24gYWNjZXB0aW5nIEdQTHYzLCB3ZSBjYW5ub3QgYWRvcHQgR1BMdjMgcGFja2FnZXMu
+DQoNCkFueXdheSwgSSBhZ3JlZWQgaXQgaXMgZGlmZmljdWx0IHRvIHN1cHBvcnQgcHl0aG9uIDIg
+Zm9yIGEgc3VwZXIgbG9uZyB0ZXJtLiBBbmQgZXZlcnlvbmUgYWdyZWVkIG9uIHRoaXMgcG9pbnQu
+DQpTbywgd2UgY2Fubm90IHN1cHBvcnQgZWFjaCBsaWJyYXJpZXMgdXNpbmcgcHl0aG9uIDIsIGF0
+IGxlYXN0Lg0KDQpCZXN0IHJlZ2FyZHMsIEtlbnQNCg0KPkJlc3QgcmVnYXJkcywNCj4gICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+UGF2ZWwNCj4tLQ0KPkRFTlggU29mdHdhcmUgRW5naW5lZXJpbmcgR21iSCwgICAgICBNYW5hZ2lu
+ZyBEaXJlY3RvcjogV29sZmdhbmcgRGVuaw0KPkhSQiAxNjUyMzUgTXVuaWNoLCBPZmZpY2U6IEtp
+cmNoZW5zdHIuNSwgRC04MjE5NCBHcm9lYmVuemVsbCwgR2VybWFueQ0KDQoNCg0K
 
-Sure!
-
-I just set it for cip-dev . See if that is working now?
-
-Happy to do it for other lists if needed.
-
--- Neal
-
-*Neal Caidin*
-Program Manager, Program Management & Operations
-The Linux Foundation
-+1 (919) 238-9104 (w/h)
-+1 (919) 949-1861 (m)
-ncaidin@linuxfoundation.org
-
-
-On Tue, Apr 7, 2020 at 11:17 AM Jan Kiszka <jan.kiszka@siemens.com> wrote:
-
-> On 07.04.20 17:12, Konstantin Ryabitsev wrote:
-> > On Tue, Apr 07, 2020 at 08:58:31AM +0200, Jan Kiszka wrote:
-> >>
-> >> Konstantin, could you have a look or organize help? This is a blocker
-> for
-> >> us, groups.io must not mess with messages.
-> >>
-> >> But given that other projects are using this workflow as well, I
-> strongly
-> >> suspect there is a way to fix it.
-> >
-> > On each list's "Settings" page there is an option called:
-> >
-> > Separate Message Footers
-> > (Place message footers in a separate MIME part)
-> >
-> > That's the one you want enabled.
->
-> Perfect! Neal, you are admin? Can you change that?
->
-> Thanks,
-> Jan
->
-> --
-> Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-> Corporate Competence Center Embedded Linux
->
-
---00000000000098557205a2b5343b
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr">Sure!=C2=A0<div><br></div><div>I just set it for cip-dev .=
- See if that is working now?</div><div><br></div><div>Happy to do it for ot=
-her lists if needed.</div><div><br></div><div>-- Neal</div><div><br clear=
-=3D"all"><div><div dir=3D"ltr" class=3D"gmail_signature" data-smartmail=3D"=
-gmail_signature"><div dir=3D"ltr"><div><div dir=3D"ltr"><span><font color=
-=3D"#888888"><div dir=3D"ltr"><div dir=3D"ltr"><div><div dir=3D"ltr"><div><=
-div dir=3D"ltr"><div dir=3D"ltr"><div dir=3D"ltr"><div dir=3D"ltr"><b style=
-=3D"color:rgb(136,136,136)"><font color=3D"#666666"><font color=3D"#888888"=
->Neal Caidin</font></font></b><br><div style=3D"color:rgb(136,136,136)"><sp=
-an style=3D"border-collapse:collapse"><div><font color=3D"#666666"><font>Pr=
-ogram Manager, Program Management &amp; Operations</font></font></div><div>=
-<font color=3D"#666666"><font>The Linux Foundation</font></font></div><div>=
-<font color=3D"#666666">+1 (919) 238-9104 (w/h)<br>+1 (919) 949-1861 (m)</f=
-ont></div><div><font color=3D"#666666"><a href=3D"mailto:ncaidin@linuxfound=
-ation.org" target=3D"_blank">ncaidin@linuxfoundation.org</a></font></div></=
-span></div></div></div></div></div></div></div></div></div></div></font></s=
-pan></div></div></div></div></div><br></div></div><br><div class=3D"gmail_q=
-uote"><div dir=3D"ltr" class=3D"gmail_attr">On Tue, Apr 7, 2020 at 11:17 AM=
- Jan Kiszka &lt;<a href=3D"mailto:jan.kiszka@siemens.com">jan.kiszka@siemen=
-s.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"ma=
-rgin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:=
-1ex">On 07.04.20 17:12, Konstantin Ryabitsev wrote:<br>
-&gt; On Tue, Apr 07, 2020 at 08:58:31AM +0200, Jan Kiszka wrote:<br>
-&gt;&gt;<br>
-&gt;&gt; Konstantin, could you have a look or organize help? This is a bloc=
-ker for<br>
-&gt;&gt; us, <a href=3D"http://groups.io" rel=3D"noreferrer" target=3D"_bla=
-nk">groups.io</a> must not mess with messages.<br>
-&gt;&gt;<br>
-&gt;&gt; But given that other projects are using this workflow as well, I s=
-trongly<br>
-&gt;&gt; suspect there is a way to fix it.<br>
-&gt; <br>
-&gt; On each list&#39;s &quot;Settings&quot; page there is an option called=
-:<br>
-&gt; <br>
-&gt; Separate Message Footers<br>
-&gt; (Place message footers in a separate MIME part)<br>
-&gt; <br>
-&gt; That&#39;s the one you want enabled.<br>
-<br>
-Perfect! Neal, you are admin? Can you change that?<br>
-<br>
-Thanks,<br>
-Jan<br>
-<br>
--- <br>
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE<br>
-Corporate Competence Center Embedded Linux<br>
-</blockquote></div>
-
---00000000000098557205a2b5343b--
-
---tx7koGcSf91vIinglGSf
+--aQ8UPz8cQyvHjQvuQZi5
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -177,12 +182,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#4566): https://lists.cip-project.org/g/cip-dev/message=
-/4566
-Mute This Topic: https://lists.cip-project.org/mt/72845465/4520388
+View/Reply Online (#4567): https://lists.cip-project.org/g/cip-dev/message=
+/4567
+Mute This Topic: https://lists.cip-project.org/mt/72870644/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---tx7koGcSf91vIinglGSf--
+--aQ8UPz8cQyvHjQvuQZi5--
