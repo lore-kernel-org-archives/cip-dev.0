@@ -1,156 +1,147 @@
-Return-Path: <SRS0=jA0H=5Y=lists.cip-project.org=bounce+64572+4568+4520388+8129055@kernel.org>
+Return-Path: <SRS0=0lnv=5Z=lists.cip-project.org=bounce+64572+4569+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E976EC2BA2B
-	for <cip-dev@archiver.kernel.org>; Wed,  8 Apr 2020 23:24:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E66C2D0EA
+	for <cip-dev@archiver.kernel.org>; Thu,  9 Apr 2020 05:27:31 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 783732087E
-	for <cip-dev@archiver.kernel.org>; Wed,  8 Apr 2020 23:24:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id E7D7C20B1F
+	for <cip-dev@archiver.kernel.org>; Thu,  9 Apr 2020 05:27:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="O6Aydh3H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 783732087E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cybertrust.co.jp
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4568+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id I2vyYY4521723xkGuB6ONMBO; Wed, 08 Apr 2020 16:24:14 -0700
-X-Received: from APC01-PU1-obe.outbound.protection.outlook.com (APC01-PU1-obe.outbound.protection.outlook.com [40.107.132.133])
- by mx.groups.io with SMTP id smtpd.web11.1562.1586388252538934532
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="N/x9yd62"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7D7C20B1F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=toshiba.co.jp
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4569+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id d4WKYY4521723xGXpsfIIxsI; Wed, 08 Apr 2020 22:27:30 -0700
+X-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
+ by mx.groups.io with SMTP id smtpd.web11.3575.1586410048978973769
  for <cip-dev@lists.cip-project.org>;
- Wed, 08 Apr 2020 16:24:13 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AT4D39eywYMB6ksgQMcjDtFpjtERa3ffoOrQGheWbW1bQX5Mon9nUmA/DNkqS3xGVscQ9leDtYyLap0qa9UrWSYl8mXobcX8dFSGPG+UZEuDJ2bhpc0L3njoJI7KCE4SP4Avu6+a5OPdBUcCZFyRp/XQrSv/2S6B3+Ajy15GlB/cwGfwcHKTu4b6YK/0u1+wR+L6vPC1gNQqKYDyYOjiOn3sI6m+MMXjeoy39oFnTJC6xGn1LJFfkdvFlIePng91rJbdisdyt3h0DfiAtiGdkv72Yzmr/tF4jdFBdapc9YoKnhr0e020zTBK+ZdLxO1+VnR/9ppVbRzNGVRAQSdXng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=P8T0ADgUFDBeusCTr8nfLwPqzhIBsXKMB8NJCOsku/o=;
- b=G9DycctjoK/huTP9vVPy9PSSi0ZuMeTHFllISyAhyuA43bhfQhLF+KN0KOVTBkYfOGl7O7EzqPXifgqfvKqoQbiWxLUSvElCvu5K3FTl3SlgIrNyw3/Mcyt0wWC1H6n9TwocH3mGdvIh93Djd/t4BncMlA4GMoqBfy09kn0ubYHFxyk1lnMFaCZp+Xo8X0raEtf+2gGvyYf9YUxO86271wlD53bSVBe0wJ7LGu22/FMumqHHNEhPt1klBH4Z0Yb58daxPzAjyK75O3MslGMAj17LeQXCKkKvZdaIJZC+zaJMhhy1C10lHhlfVgQZm/x9OsjZeVuPz2Gt8lTCPMQzzg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cybertrust.co.jp; dmarc=pass action=none
- header.from=cybertrust.co.jp; dkim=pass header.d=cybertrust.co.jp; arc=none
-X-Received: from TY2PR01MB4972.jpnprd01.prod.outlook.com (20.179.172.148) by
- TY2PR01MB3692.jpnprd01.prod.outlook.com (20.178.142.214) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2878.15; Wed, 8 Apr 2020 23:24:07 +0000
-X-Received: from TY2PR01MB4972.jpnprd01.prod.outlook.com
- ([fe80::e845:c7d4:4f:c3cc]) by TY2PR01MB4972.jpnprd01.prod.outlook.com
- ([fe80::e845:c7d4:4f:c3cc%7]) with mapi id 15.20.2878.023; Wed, 8 Apr 2020
- 23:24:07 +0000
-From: "masashi.kudo@cybertrust.co.jp" <masashi.kudo@cybertrust.co.jp>
-To: <cip-dev@lists.cip-project.org>
-Subject: [cip-dev] CIP IRC weekly meeting today
-Thread-Topic: CIP IRC weekly meeting today
-Thread-Index: AdYN/LPnEOA8oZrPT6yhRsAobarbfg==
-Date: Wed, 8 Apr 2020 23:24:07 +0000
-Message-ID: 
- <TY2PR01MB4972F65EEBA6627C5D5AF693A0C00@TY2PR01MB4972.jpnprd01.prod.outlook.com>
-Accept-Language: ja-JP, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [122.216.27.145]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 3995ecfb-61bc-4ea9-07e0-08d7dc13ef45
-x-ms-traffictypediagnostic: TY2PR01MB3692:
-x-microsoft-antispam-prvs: 
- <TY2PR01MB36929BE6E152955BA9B3578FA0C00@TY2PR01MB3692.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5236;
-received-spf: None (protection.outlook.com: cybertrust.co.jp does not
- designate permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 
- //4GPbdtaPBNXy1C1wlY+sCRTWhzClI6/qJVqAnh0Ti/eB4R99fD1A2MD50Pqdrc/5S7mP2QFrzqjpIq9NCTieqn959QluCyT2CWbQRP0Vjx+vkIe5rRLT2QzKaU3GN8wwFITBgVxW5SR7fA7txY2AfoxWU4QYGgrWONz4goe12edU5gE0IMYq3nLfwF03/s85Z6H/0+IxfOPg9aRVHMQC84+ymllpGwanH3Ip/vUxtKVWVa5i1d/eevc3B+eVTmqlGDqRKMH9W14S6m9Y1O+IuL8xvM5nk6uWUht35KTwb+Xi4bP1/6EmIg3rYz754O2t73AU30z0Lq/oYq7CVgMsjKtPpr38Ml23tm2Ey+g8tdga64QWnfrYVfOTgYZuDb9AdWEU5rIjdpfqVTfOmPoy1hwvk5yFZlfWJhC0yWTZXLrMQvvUpCsxeebIwJByN/0x3VHUkc95wsxFlsM4Ky8s+FpctlbyyKpugi1mZKL/N8T2KM3yoaC8EI7MJwEJFeF+gEPrD74UbtafsDzPvfJA==
-x-ms-exchange-antispam-messagedata: 
- umCVAXzS73NwpABCUjr9J/e+tXFJDhJgmMQMR+kIsg0pOLA6KM50kySphT6/U10vVJ4b6ineXaYvetUNNlmFlvdLFl3FePq4N6b9tfTzuyOJ0wmn5nA+XZIyv+zec+RrhnjnGkw92/32SzWB6+Lblg==
-x-ms-exchange-transport-forked: True
+ Wed, 08 Apr 2020 22:27:29 -0700
+X-Received: by mo-csw.securemx.jp (mx-mo-csw1116) id 0395RQx0029725; Thu, 9 Apr 2020 14:27:27 +0900
+X-Iguazu-Qid: 2wHHQAbmtwf1YKJoGr
+X-Iguazu-QSIG: v=2; s=0; t=1586410046; q=2wHHQAbmtwf1YKJoGr; m=AyrCu4pc+sqqKFzgcXoR8VDeIqEThY68TdBPRtp45GI=
+X-Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
+	by relay.securemx.jp (mx-mr1110) id 0395RPsN024295;
+	Thu, 9 Apr 2020 14:27:26 +0900
+X-Received: from enc01.localdomain ([106.186.93.100])
+	by imx2.toshiba.co.jp  with ESMTP id 0395RPbs013093
+	for <cip-dev@lists.cip-project.org>; Thu, 9 Apr 2020 14:27:25 +0900 (JST)
+X-Received: from hop001.toshiba.co.jp ([133.199.164.63])
+	by enc01.localdomain  with ESMTP id 0395ROH5005025
+	for <cip-dev@lists.cip-project.org>; Thu, 9 Apr 2020 14:27:25 +0900
+From: punit1.agrawal@toshiba.co.jp
+To: cip-dev@lists.cip-project.org
+Cc: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>,
+        Kazuhiro Hayashi <kazuhiro3.hayashi@toshiba.co.jp>
+Subject: [cip-dev] CIP Core target EOL dates
+Date: Thu, 09 Apr 2020 14:27:23 +0900
+X-TSB-HOP: ON
+Message-ID: <871roxxm84.fsf@kokedama.swc.toshiba.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-X-OriginatorOrg: cybertrust.co.jp
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3995ecfb-61bc-4ea9-07e0-08d7dc13ef45
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Apr 2020 23:24:07.1713
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72cc4624-32b4-4dab-b80a-8563e559bd82
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: aR5V6sCsuapKd7Bl6R8hh1XhxJwrlXYNDeBPRzN+dSYWRArqyXUi9ZcHH11Eua3UkEoHvbitrW/44BoPslBhpqv7MW52+zLklzJ1JeiWJWw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB3692
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: cyaZPOPZ9mTjyLwNHWA5Rnqnx4520388AA=
-Content-Type: multipart/mixed; boundary="l5K8fAD3S8JfrkiqWZHv"
+X-Gm-Message-State: 44VUuLGbHiiVCUyb2RCf2hlMx4520388AA=
+Content-Type: multipart/mixed; boundary="67YJmq8Ab4eJvJ9G8uHu"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1586388254;
- bh=FMYByAZEnen6haFSNPZ+UBdnnQL76mt4NsxhvuuvkwA=;
- h=Content-Type:Date:From:Reply-To:Subject:To;
- b=O6Aydh3HKzhuK5qUYBzObym0bFyzAQQ7GtqdxFSiNNmv7TrDOuUg5cDajQKoTBJrXFR
- mGmW5nw+HN2MXUxdxryuqZQgIOKHAk2SoSr8kV2e9t5Wbg0XSCrQqXXUe/uxN39Xf5Mfj
- RDz1PfUPBnqVwZjv9YF8koaZybS43F/wyD0=
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1586410050;
+ bh=fvGvJoxepfCC6YM2f2JNNLmUi5zUdtMTauIGPapwoKo=;
+ h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
+ b=N/x9yd62hlLjJIluB6i1ZKDMUkzo9bhzCBXkpn2fUNfF51MHcUxsfGjJxHxUwj1h8+5
+ mrggeSG/Hkk2RwLHnw55+KO1o38I2Eb88xgME48TpU5o5VSKmyi2RzlL0oSDCZROZdxxb
+ oVk6bnByQddlk/9VSLHG1seMWzNVLI6t60w=
 
---l5K8fAD3S8JfrkiqWZHv
-Content-Language: ja-JP
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+--67YJmq8Ab4eJvJ9G8uHu
+Content-Type: text/plain
 
-Hi all,
+Hi,
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss tech=
-nical topics with CIP kernel today.
+CIP is planning to support the Kernels + Debian Rootfs combinations
+marked with 'x' in the table below.
 
-*Please note that the IRC meeting was rescheduled to UTC (GMT) 09:00 starti=
-ng from the first week of Apr. according to TSC meeting*
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=3D2020&mont=
-h=3D4&day=3D9&hour=3D9&min=3D0&sec=3D0&p1=3D224&p2=3D179&p3=3D136&p4=3D37&p=
-5=3D241&p6=3D248
++----------+----------+-----------+-----------+
+|          | Debian 8 | Debian 9  | Debian 10 |
+|          |  Jessie  |  Stretch  |  Buster   |
+|  Kernel  |          |           |           |
++----------+----------+-----------+-----------+
+|   v4.4   |    x     |     x     |           |
++----------+----------+-----------+-----------+
+|  v4.19   |          |     x     |     x     |
++----------+----------+-----------+-----------+
 
-USWest	USEast	UK	DE	TW	JP
-02:00	05:00	10:00	11:00	17:00	18:00
+So far, the details of when the support is expected to end haven't been
+explicitly called out for Core components. It would be good to rectify
+this in order to set expectations and gather feedback from the user
+community.
 
-Channel:
-* irc:chat.freenode.net:6667/cip
+In addition, it will be helpful in estimating the required effort and
+planning to resource the projects appropriately.
 
-Last meeting minutes:
-https://irclogs.baserock.org/meetings/cip/2020/04/cip.2020-04-02-09.00.log.=
-html
+To start the conversation, I would like to propose the following target
+EOL dates for each of the supported combination.
 
-Agenda:
+Note: All the dates are in YYYY-MM-DD format
 
-* Action item
-1. Combine root filesystem with kselftest binary - Iwamatsu-san=20
-2. Strengthen sustainable process to backport patches from Mainline/LTS - K=
-ernel Team
- 2-1. Workflow for identifying important fixes, backporting, and reviewing =
-them
- 2-2. Prepare the tools to be used for this workflow
- 2-3. Get practice in backporting patches
-3. Upload a guideline for reference hardware platform addition - masashi910
-4. Identify target boards and configs for RT kernel testing (4.4rt and 4.19=
-rt) - masashi910
++----------+--------------+--------------+--------------+
+|          |   Debian 8   |   Debian 9   |  Debian 10   |
+|          |    Jessie    |   Stretch    |    Buster    |
+|  Kernel  |              |              |              |
++----------+--------------+--------------+--------------+
+|   v4.4   |  2025-04-26  |  2026-01-10  |              |
++----------+--------------+--------------+--------------+
+|  v4.19   |              |  2027-06-17  |  2019-10-18  |
++----------+--------------+--------------+--------------+
 
-* Kernel maintenance updates
-* Kernel testing
-* CIP Core
-* Software update
-* CIP Security=20
-* AOB
+The proposed dates have been calculated as
 
-The meeting will take 30 min, although it can be extended to an hour if it =
-makes sense and those involved in the topics can stay. Otherwise, the topic=
- will be taken offline or in the next meeting.
+    earlier of (Kernel, Debian) release date + 10 yrs
 
-Best regards,
---
-M. Kudo
-Cybertrust Japan Co., Ltd.
+The choice of duration (10 yrs) is arbitrary and should be adjusted
+based on requirement and available resources. Also, some of the
+combinations could be dropped if there are no users for them.
 
---l5K8fAD3S8JfrkiqWZHv
+Ideally, the dates for the Core components should be aligned with CIP
+maintained kernels but there doesn't seem to be any public documentation
+for the CIP kernel EOL dates. Let me know if this is written down
+somewhere.
+
+All feedback welcome.
+
+Thanks,
+Punit
+
+
+The relevant Debian[0][1][2] and Kernel[3] release dates are copied
+below for reference.
+
+Debian Release Dates
+--------------------
+Jessie  - 2015-04-26
+Stretch - 2017-06-17
+Buster  - 2019-07-06
+
+Linux Kernel Release Dates
+--------------------------
+v4.4  - 2016-01-10
+v4.19 - 2018-10-18
+
+
+[0] https://www.debian.org/releases/jessie/
+[1] https://www.debian.org/releases/stretch/
+[2] https://www.debian.org/releases/buster/
+[3] https://www.kernel.org/category/releases.html
+
+--67YJmq8Ab4eJvJ9G8uHu
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -158,12 +149,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#4568): https://lists.cip-project.org/g/cip-dev/message=
-/4568
-Mute This Topic: https://lists.cip-project.org/mt/72886394/4520388
+View/Reply Online (#4569): https://lists.cip-project.org/g/cip-dev/message=
+/4569
+Mute This Topic: https://lists.cip-project.org/mt/72890803/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---l5K8fAD3S8JfrkiqWZHv--
+--67YJmq8Ab4eJvJ9G8uHu--
