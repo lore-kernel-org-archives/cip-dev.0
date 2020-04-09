@@ -1,426 +1,740 @@
-Return-Path: <SRS0=TLxP=5Z=lists.cip-project.org=bounce+64572+4571+4520388+8129055@kernel.org>
+Return-Path: <SRS0=Dymx=5Z=lists.cip-project.org=bounce+64572+4572+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: **
 X-Spam-Status: No, score=2.3 required=3.0 tests=AC_DIV_BONANZA,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,HTML_MESSAGE,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87A97C2BA2B
-	for <cip-dev@archiver.kernel.org>; Thu,  9 Apr 2020 15:26:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4097C2BA19
+	for <cip-dev@archiver.kernel.org>; Thu,  9 Apr 2020 17:18:18 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id ED5E92074F
-	for <cip-dev@archiver.kernel.org>; Thu,  9 Apr 2020 15:26:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 2ACD9206F7
+	for <cip-dev@archiver.kernel.org>; Thu,  9 Apr 2020 17:18:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="sXpW+PTn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED5E92074F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4571+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id vJWyYY4521723ximZTpuEpbu; Thu, 09 Apr 2020 08:26:26 -0700
-X-Received: from JPN01-OS2-obe.outbound.protection.outlook.com (JPN01-OS2-obe.outbound.protection.outlook.com [40.107.141.114])
- by mx.groups.io with SMTP id smtpd.web11.11400.1586445984627437720
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="WjGqgL22"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ACD9206F7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4572+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id WoWjYY4521723xLQj4H9GxJt; Thu, 09 Apr 2020 10:18:17 -0700
+X-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+ by mx.groups.io with SMTP id smtpd.web11.14089.1586452697129843008
  for <cip-dev@lists.cip-project.org>;
- Thu, 09 Apr 2020 08:26:26 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nhLmvelSnyL+wv/6fFA0lsXwwUcnfuZhVkqxzSkw3W76Okk7o58wNr2o/JhOWXwlT3sPmMYqEee4JXD/niR1OM0su+VvPKUF2APxWWzh7oq75hnqxr/azo8P6k6PEy5s7QNDQH/Is6Pr0nucXa0wgFR8b0UZJU2rU2XlAHtPtgB/hFwpQ+fON11OitBL7ezhtOLSwyteBShrEzxlKirjkfwgBSAF726yfMrDDzaaqsSQ9ayLsCSlbL7eeJL+0Eo43804jDKOO+M08p2EcauL80EzRA4zOuXPTG0wn3Y7BJJWPYys5c3tGGTE3s0XV8ZzWyK2DAr5+Rk5k5VSBDLJRw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EmYrl/IJ8Cgu3irmjodW7X8+LxxI3mV9t2422zPf4z8=;
- b=mFqC0bF4fb6FhgUOE1+NTf2h744WG3vEEPw0G8UQgsH7z9kBf2AmANaN68Pj4RC2Rd4n5KCnz90ecg27N0MrJtkEXUpXqlI6wtxKElzRrOqSJh+a04MIZX1zjf9Fv8VSTVL7jZZRlPt18FqK/aa2mrfp64t7j6H7norxUaVToFCFw9Hmo9/V+Wb2vXRtCXmvMCCQ+zBGYh0cCcediKitX+k2gafMFfMbRvvQHqngG2SqkmE7xJ72ljoWEcIjzU18/yAXW9E8pYxm/9TV55RosQGJ4iN8CJaC2neKxn5cw9DJpkbFdidrJt6zIgAzYlkdbezaaAvGhyAdFLkXA0pQKw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-X-Received: from TYAPR01MB2285.jpnprd01.prod.outlook.com (52.133.177.145) by
- TYAPR01MB4157.jpnprd01.prod.outlook.com (20.178.136.74) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2878.15; Thu, 9 Apr 2020 15:26:21 +0000
-X-Received: from TYAPR01MB2285.jpnprd01.prod.outlook.com
- ([fe80::a882:860e:5745:25e1]) by TYAPR01MB2285.jpnprd01.prod.outlook.com
- ([fe80::a882:860e:5745:25e1%6]) with mapi id 15.20.2878.022; Thu, 9 Apr 2020
- 15:26:21 +0000
-From: "Chris Paterson" <chris.paterson2@renesas.com>
-To: "cip-members@lists.cip-project.org" <cip-members@lists.cip-project.org>,
-	"cip-board@lists.cip-project.org" <cip-board@lists.cip-project.org>,
-	"cip-security@lists.cip-project.org" <cip-security@lists.cip-project.org>,
-	"cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-Subject: Re: [cip-dev] [cip-members] Migration complete - Re: Mailman2 to Groups.io reminder
-Thread-Topic: [cip-members] Migration complete - Re: Mailman2 to Groups.io
- reminder
-Thread-Index: AQHWDFytHq9ajkLTYkGIGdA87ufzkKhw7TbQ
-Date: Thu, 9 Apr 2020 15:26:21 +0000
-Message-ID: 
- <TYAPR01MB2285F51468AEBD8F87036A6FB7C10@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-References: 
- <CAODMxsK_vgo-=FikL1Z2iYXtetRh+KpRJNL4MchmfXvLMqBTUA@mail.gmail.com>
- <CAODMxsJ5anJK+heh9rnWtAsvCCFLhVnm40cffABgG686_312mQ@mail.gmail.com>
- <CAODMxsKB87WswBCwDHcpaB1TyO6QmTy_vy4qVzdni8OrmEwr7A@mail.gmail.com>
-In-Reply-To: 
- <CAODMxsKB87WswBCwDHcpaB1TyO6QmTy_vy4qVzdni8OrmEwr7A@mail.gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [151.224.220.27]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: f1f5d12d-a625-4c35-071c-08d7dc9a5bb6
-x-ms-traffictypediagnostic: TYAPR01MB4157:
-x-microsoft-antispam-prvs: 
- <TYAPR01MB4157AE5C91513F89B0798DAEB7C10@TYAPR01MB4157.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 
- WaWR9J6Vlqr1S/NHqlCKeHghnMaAb1EPtRU4xp4s7eWun0jVKScKmP3+wszcakVwuQozRSg4hMxe9NatfNNvzGEBsDbzszqY/7frRzH99jz++xPqqFAFpLbs9XsxIJrDAXyVm+Hodek/judGR4KHDDIDgLruo857diaB334k/5nbI4ULqZL5+t4rl1YAI9VUl4a5MHfN4a2bCtS+TRMfAN45mbJFUHWuJqWB6G98/lZY5yyOdgcd2/AWY4l/ucN1sp28QIRswjImYp6/5iiSgngG6J9gPq39z14ikacErpFyk6zUoJ5+OnJRYqWW0yJCcpoVYtWvvcy4Lr7nMSyzFTRZyjEfuthOX+Vh2dU3Xayi2I05WySFuRTN3rZK3Yo6XAHPmlBLckcPYIW/UgYUHGzQDooQ7RIqoUP6S7Bg3MFW51kpQPvtYSQLJa9HZDweqr0hDIec8VQTE4+AGehZXYrjZk31IhAufQOAeNLXB3ckFgsDxMmHKyBdHXr465sK7Y6VthUkq5sqFeAJFHA/7A==
-x-ms-exchange-antispam-messagedata: 
- qUdCY7KwLbCytY4xJJ2rGhmmx9YJwmXCMm0Zz0so6NDzKanzrUYk7PSlog4CXCX8LRZUDYFMkAjSoVrdPHvKN9fKCrv26z3toGzQe7EV781xqFatYAWCu4qU4IEMwPoyqo8VLxy1DPgL6DJ17ZJbJQ==
-x-ms-exchange-transport-forked: True
+ Thu, 09 Apr 2020 10:18:17 -0700
+X-Received: by mail-io1-f52.google.com with SMTP id y17so311701iow.9
+        for <cip-dev@lists.cip-project.org>; Thu, 09 Apr 2020 10:18:17 -0700 (PDT)
+X-Gm-Message-State: jdhuk96JbW1CmpllcOHG8Ldbx4520388AA=
+X-Google-Smtp-Source: APiQypIdc8Yj03Loe+GYnDNNTboGrpSrZRwJ0hjRLS2Os8p9i1ZAPuaBgUf1NoSnmtIxo41dvcnuxUMXovErldPSdsw=
+X-Received: by 2002:a05:6638:38e:: with SMTP id y14mr425680jap.123.1586452694731;
+ Thu, 09 Apr 2020 10:18:14 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f1f5d12d-a625-4c35-071c-08d7dc9a5bb6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2020 15:26:21.6875
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: aa5I+5dThRMHvkERhS3gPwbTM3uz3kf5T7xApeHYRVG4/xP8oCSTPOcnXyXnu6yMZd4uR10OxEmvqVCHCgjoNnEMlxmGBcRqazR4MuKuXwE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB4157
+References: <CAODMxsK_vgo-=FikL1Z2iYXtetRh+KpRJNL4MchmfXvLMqBTUA@mail.gmail.com>
+ <CAODMxsJ5anJK+heh9rnWtAsvCCFLhVnm40cffABgG686_312mQ@mail.gmail.com>
+ <CAODMxsKB87WswBCwDHcpaB1TyO6QmTy_vy4qVzdni8OrmEwr7A@mail.gmail.com> <TYAPR01MB2285F51468AEBD8F87036A6FB7C10@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+In-Reply-To: <TYAPR01MB2285F51468AEBD8F87036A6FB7C10@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+From: "Neal Caidin" <ncaidin@linuxfoundation.org>
+Date: Thu, 9 Apr 2020 13:17:58 -0400
+Message-ID: <CAODMxsKyq8YCJVcTyhYyE80_T6d43Xu6CAn=pQu5sWGR_V5yfw@mail.gmail.com>
+Subject: Re: [cip-dev] [cip-board] [cip-members] Migration complete - Re: Mailman2 to Groups.io reminder
+To: cip-board@lists.cip-project.org
+Cc: "cip-members@lists.cip-project.org" <cip-members@lists.cip-project.org>, 
+	"cip-security@lists.cip-project.org" <cip-security@lists.cip-project.org>, 
+	"cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: 93lJjGZk9TXOLLr1Itl0jSfax4520388AA=
-Content-Type: multipart/mixed; boundary="FeKs4eTdwipqWeOzaCWx"
+Content-Type: multipart/mixed; boundary="JJ4Mxb1zIsTDMbwVIf8g"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1586445986;
- bh=sO4azv00pvOFaCmpXJ98Yf/nauBAzsiQAc82vq4pruA=;
- h=Content-Type:Date:From:Reply-To:Subject:To;
- b=sXpW+PTnGGHrZgtweLR9K3evjlifXUN7G43iGof3q+9GmWzOdjVU/NZFpVyuKhyanmT
- wU1U7VNRwcBbu549cN+UfBhJPOhBFLdCYgYexOXyPs4ay0sV+/swHXN4RkjTeApEtLuB9
- x9NoJhAEdTadU6Q/fo/F8k4i5THjpqvzZY0=
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1586452697;
+ bh=uEU+xqrqMKKOamB229sSZ/2uS1t4RFse38GSAexMYmo=;
+ h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
+ b=WjGqgL22kjCijDH58wzH11BmpMIwNs6DFQJ7artKWIp0HSKqEecagV3E3JMItx3h4oc
+ wWP5u4Cp2Raln4laKk5Rd6jTPP5TC/3S2S8HocPmSOcNUqwQn87yr6ZpeDNJmMAJckYq0
+ 3li/giVmnwp0vu3j1W2Pex6RRPhJ5z4uL90=
 
---FeKs4eTdwipqWeOzaCWx
-Content-Language: en-US
-Content-Type: multipart/alternative;
-	boundary="_000_TYAPR01MB2285F51468AEBD8F87036A6FB7C10TYAPR01MB2285jpnp_"
+--JJ4Mxb1zIsTDMbwVIf8g
+Content-Type: multipart/alternative; boundary="00000000000052a30d05a2decd41"
 
---_000_TYAPR01MB2285F51468AEBD8F87036A6FB7C10TYAPR01MB2285jpnp_
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+--00000000000052a30d05a2decd41
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGVsbG8gYWxsLA0KDQpJcyBhbnlvbmUgc3RpbGwgcmVjZWl2aW5nIGVtYWlscyBmcm9tIGNpcC10
-ZXN0aW5nLXJlc3VsdHNAbGlzdHMuY2lwLXByb2plY3Qub3JnPG1haWx0bzpjaXAtdGVzdGluZy1y
-ZXN1bHRzQGxpc3RzLmNpcC1wcm9qZWN0Lm9yZz4gc2luY2UgdGhlIG1pZ3JhdGlvbj8NCkkgZG9u
-4oCZdCBzZWVtIHRvIGJlLg0KDQpUaGFua3MsIENocmlzDQoNCkZyb206IGNpcC1tZW1iZXJzQGxp
-c3RzLmNpcC1wcm9qZWN0Lm9yZyA8Y2lwLW1lbWJlcnNAbGlzdHMuY2lwLXByb2plY3Qub3JnPiBP
-biBCZWhhbGYgT2YgTmVhbCBDYWlkaW4gdmlhIGxpc3RzLmNpcC1wcm9qZWN0Lm9yZw0KU2VudDog
-MDYgQXByaWwgMjAyMCAyMjo0NQ0KVG86IGNpcC1ib2FyZEBsaXN0cy5jaXAtcHJvamVjdC5vcmc7
-IGNpcC1tZW1iZXJzQGxpc3RzLmNpcC1wcm9qZWN0Lm9yZzsgY2lwLXNlY3VyaXR5QGxpc3RzLmNp
-cC1wcm9qZWN0Lm9yZzsgY2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmcNClN1YmplY3Q6IFtj
-aXAtbWVtYmVyc10gTWlncmF0aW9uIGNvbXBsZXRlIC0gUmU6IE1haWxtYW4yIHRvIEdyb3Vwcy5p
-byByZW1pbmRlcg0KDQpEZWFyIENJUCBDb21tdW5pdHksDQoNClRoZSBtaWdyYXRpb24gaXMgY29t
-cGxldGUuDQoNCllvdSBzaG91bGQgcmVjZWl2ZSBhbiBlbWFpbCBzaG9ydGx5IGFza2luZyB5b3Ug
-dG8gbG9nIGluIHdpdGggeW91ciBlbWFpbCBhZGRyZXNzIGFuZCBzZXQgYSBwYXNzd29yZC4NCg0K
-T25lIGltcG9ydGFudCBub3RlLCBwbGVhc2UgZG8gTk9UIHVuc3Vic2NyaWJlIGZyb20gdGhlICJt
-YWluIiBsaXN0LiBUaGlzIHdvdWxkIHVuc3Vic2NyaWJlIHlvdSBmcm9tIGFsbCBvZiB0aGUgQ0lQ
-IGxpc3RzLiAibWFpbiIgaXMgYW4gYWRtaW5pc3RyYXRpdmUgbGlzdCB1c2VkIGJ5IEdyb3Vwcy5p
-byBhcyBhIHBhcmVudCBsaXN0IHRvIG1hbmFnZSB0aGUgb3RoZXIgbGlzdHMuIFBsZWFzZSBsZXQg
-bWUga25vdyBpZiB5b3UgaGF2ZSBhbnkgcXVlc3Rpb25zIG9yIGlzc3Vlcy4NCg0KTGlzdHMNCg0K
-aHR0cHM6Ly9saXN0cy5jaXAtcHJvamVjdC5vcmcvbWFpbg0KDQoNCg0KaHR0cHM6Ly9saXN0cy5j
-aXAtcHJvamVjdC5vcmcvY2lwLWJvYXJkDQoNCmh0dHBzOi8vbGlzdHMuY2lwLXByb2plY3Qub3Jn
-L2NpcC1kZXYNCg0KaHR0cHM6Ly9saXN0cy5jaXAtcHJvamVjdC5vcmcvY2lwLXRlc3RpbmctcmVz
-dWx0cw0KDQpodHRwczovL2xpc3RzLmNpcC1wcm9qZWN0Lm9yZy9jaXAtbWVtYmVycw0KDQpodHRw
-czovL2xpc3RzLmNpcC1wcm9qZWN0Lm9yZy9jaXAtc2VjdXJpdHkNCg0KDQoNCg0KRW1haWwgYWRk
-cmVzc2VzDQoNCmNpcC1ib2FyZEBsaXN0cy5jaXAtcHJvamVjdC5vcmc8bWFpbHRvOmNpcC1ib2Fy
-ZEBsaXN0cy5jaXAtcHJvamVjdC5vcmc+DQoNCmNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3Jn
-PG1haWx0bzpjaXAtZGV2QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZz4NCg0KY2lwLXRlc3RpbmctcmVz
-dWx0c0BsaXN0cy5jaXAtcHJvamVjdC5vcmc8bWFpbHRvOmNpcC10ZXN0aW5nLXJlc3VsdHNAbGlz
-dHMuY2lwLXByb2plY3Qub3JnPg0KDQpjaXAtbWVtYmVyc0BsaXN0cy5jaXAtcHJvamVjdC5vcmc8
-bWFpbHRvOmNpcC1tZW1iZXJzQGxpc3RzLmNpcC1wcm9qZWMub3JnPg0KDQpjaXAtc2VjdXJpdHlA
-bGlzdHMuY2lwLXByb2plY3Qub3JnPG1haWx0bzpjaXAtc2VjdXJpdHlAbGlzdHMuY2lwLXByb2pl
-Y3Qub3JnPg0KDQpCZXN0IHJlZ2FyZHMsDQpOZWFsDQoNCk5lYWwgQ2FpZGluDQpQcm9ncmFtIE1h
-bmFnZXIsIFByb2dyYW0gTWFuYWdlbWVudCAmIE9wZXJhdGlvbnMNClRoZSBMaW51eCBGb3VuZGF0
-aW9uDQorMSAoOTE5KSAyMzgtOTEwNCAody9oKQ0KKzEgKDkxOSkgOTQ5LTE4NjEgKG0pDQpuY2Fp
-ZGluQGxpbnV4Zm91bmRhdGlvbi5vcmc8bWFpbHRvOm5jYWlkaW5AbGludXhmb3VuZGF0aW9uLm9y
-Zz4NCg0KDQpPbiBNb24sIEFwciA2LCAyMDIwIGF0IDM6MzQgUE0gTmVhbCBDYWlkaW4gPG5jYWlk
-aW5AbGludXhmb3VuZGF0aW9uLm9yZzxtYWlsdG86bmNhaWRpbkBsaW51eGZvdW5kYXRpb24ub3Jn
-Pj4gd3JvdGU6DQpSZW1pbmRlci4gIE1haWxtYW4yIHRvIEdyb3Vwcy5pbyBjb252ZXJzaW9uIGFi
-b3V0IHRvIGtpY2sgb2ZmIChhYm91dCBhbiAxIDEvMiBob3VycyBmcm9tIG5vdykuDQoNCg0KUGxl
-YXNlIHNlZSBzY2hlZHVsZSBiZWxvdy4NCg0KQmVzdCBSZWdhcmRzLA0KTmVhbA0KDQoNCg0KTmVh
-bCBDYWlkaW4NClByb2dyYW0gTWFuYWdlciwgUHJvZ3JhbSBNYW5hZ2VtZW50ICYgT3BlcmF0aW9u
-cw0KVGhlIExpbnV4IEZvdW5kYXRpb24NCisxICg5MTkpIDIzOC05MTA0ICh3L2gpDQorMSAoOTE5
-KSA5NDktMTg2MSAobSkNCm5jYWlkaW5AbGludXhmb3VuZGF0aW9uLm9yZzxtYWlsdG86bmNhaWRp
-bkBsaW51eGZvdW5kYXRpb24ub3JnPg0KDQoNCk9uIFRodSwgQXByIDIsIDIwMjAgYXQgNDo1NiBQ
-TSBOZWFsIENhaWRpbiA8bmNhaWRpbkBsaW51eGZvdW5kYXRpb24ub3JnPG1haWx0bzpuY2FpZGlu
-QGxpbnV4Zm91bmRhdGlvbi5vcmc+PiB3cm90ZToNCltjcm9zcyBwb3N0ZWRdDQoNClJlbWluZGVy
-LiAgTWFpbG1hbjIgdG8gR3JvdXBzLmlvIGVtYWlsIGlzIHNjaGVkdWxlZCB0byBzdGFydCBvbg0K
-DQpQYWNpZmljIC0gMiBwbSAsIE1vbmRheSwgQXByaWwgNg0KRWFzdGVybiAtIDUgcG0sIE1vbmRh
-eSBBcHJpbCA2DQpDRVQgLSAxMSBwbSwgTW9uZGF5IEFwcmlsIDYNCkpTVCAtIDYgYW0sIFR1ZXNk
-YXksIEFwcmlsIDcNCg0KSXQgaXMgZXhwZWN0ZWQgdG8gdGFrZSBzZXZlcmFsIGhvdXJzLCBidXQg
-Y291bGQgYmUgYXMgbXVjaCBhcyBhIGZ1bGwgMjQgaG91cnMuDQoNCldoZW4gdGhlIG1pZ3JhdGlv
-biBpcyBjb21wbGV0ZWQsIEkgd2lsbCBzZW5kIG91dCB0aGUgbGlua3Mgc28gdGhhdCB5b3UgY2Fu
-IGFjY2VzcyBlbWFpbCBhcmNoaXZlcy4NCg0KQmVzdCByZWdhcmRzLA0KTmVhbA0KDQoNCk5lYWwg
-Q2FpZGluDQpQcm9ncmFtIE1hbmFnZXIsIFByb2dyYW0gTWFuYWdlbWVudCAmIE9wZXJhdGlvbnMN
-ClRoZSBMaW51eCBGb3VuZGF0aW9uDQorMSAoOTE5KSAyMzgtOTEwNCAody9oKQ0KKzEgKDkxOSkg
-OTQ5LTE4NjEgKG0pDQpuY2FpZGluQGxpbnV4Zm91bmRhdGlvbi5vcmc8bWFpbHRvOm5jYWlkaW5A
-bGludXhmb3VuZGF0aW9uLm9yZz4NCg0K
+Hi Chris,
 
---_000_TYAPR01MB2285F51468AEBD8F87036A6FB7C10TYAPR01MB2285jpnp_
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: base64
+Anything I can do to help?
 
-PGh0bWwgeG1sbnM6dj0idXJuOnNjaGVtYXMtbWljcm9zb2Z0LWNvbTp2bWwiIHhtbG5zOm89InVy
-bjpzY2hlbWFzLW1pY3Jvc29mdC1jb206b2ZmaWNlOm9mZmljZSIgeG1sbnM6dz0idXJuOnNjaGVt
-YXMtbWljcm9zb2Z0LWNvbTpvZmZpY2U6d29yZCIgeG1sbnM6bT0iaHR0cDovL3NjaGVtYXMubWlj
-cm9zb2Z0LmNvbS9vZmZpY2UvMjAwNC8xMi9vbW1sIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv
-VFIvUkVDLWh0bWw0MCI+DQo8aGVhZD4NCjxtZXRhIGh0dHAtZXF1aXY9IkNvbnRlbnQtVHlwZSIg
-Y29udGVudD0idGV4dC9odG1sOyBjaGFyc2V0PXV0Zi04Ij4NCjxtZXRhIG5hbWU9IkdlbmVyYXRv
-ciIgY29udGVudD0iTWljcm9zb2Z0IFdvcmQgMTUgKGZpbHRlcmVkIG1lZGl1bSkiPg0KPCEtLVtp
-ZiAhbXNvXT48c3R5bGU+dlw6KiB7YmVoYXZpb3I6dXJsKCNkZWZhdWx0I1ZNTCk7fQ0Kb1w6KiB7
-YmVoYXZpb3I6dXJsKCNkZWZhdWx0I1ZNTCk7fQ0Kd1w6KiB7YmVoYXZpb3I6dXJsKCNkZWZhdWx0
-I1ZNTCk7fQ0KLnNoYXBlIHtiZWhhdmlvcjp1cmwoI2RlZmF1bHQjVk1MKTt9DQo8L3N0eWxlPjwh
-W2VuZGlmXS0tPjxzdHlsZT48IS0tDQovKiBGb250IERlZmluaXRpb25zICovDQpAZm9udC1mYWNl
-DQoJe2ZvbnQtZmFtaWx5OiJDYW1icmlhIE1hdGgiOw0KCXBhbm9zZS0xOjIgNCA1IDMgNSA0IDYg
-MyAyIDQ7fQ0KQGZvbnQtZmFjZQ0KCXtmb250LWZhbWlseTpDYWxpYnJpOw0KCXBhbm9zZS0xOjIg
-MTUgNSAyIDIgMiA0IDMgMiA0O30NCi8qIFN0eWxlIERlZmluaXRpb25zICovDQpwLk1zb05vcm1h
-bCwgbGkuTXNvTm9ybWFsLCBkaXYuTXNvTm9ybWFsDQoJe21hcmdpbjowY207DQoJbWFyZ2luLWJv
-dHRvbTouMDAwMXB0Ow0KCWZvbnQtc2l6ZToxMS4wcHQ7DQoJZm9udC1mYW1pbHk6IkNhbGlicmki
-LHNhbnMtc2VyaWY7fQ0KYTpsaW5rLCBzcGFuLk1zb0h5cGVybGluaw0KCXttc28tc3R5bGUtcHJp
-b3JpdHk6OTk7DQoJY29sb3I6Ymx1ZTsNCgl0ZXh0LWRlY29yYXRpb246dW5kZXJsaW5lO30NCnNw
-YW4uRW1haWxTdHlsZTIxDQoJe21zby1zdHlsZS10eXBlOnBlcnNvbmFsLXJlcGx5Ow0KCWZvbnQt
-ZmFtaWx5OiJDYWxpYnJpIixzYW5zLXNlcmlmOw0KCWNvbG9yOiM3MDMwQTA7fQ0KLk1zb0NocERl
-ZmF1bHQNCgl7bXNvLXN0eWxlLXR5cGU6ZXhwb3J0LW9ubHk7DQoJZm9udC1mYW1pbHk6IkNhbGli
-cmkiLHNhbnMtc2VyaWY7DQoJbXNvLWZhcmVhc3QtbGFuZ3VhZ2U6RU4tVVM7fQ0KQHBhZ2UgV29y
-ZFNlY3Rpb24xDQoJe3NpemU6NjEyLjBwdCA3OTIuMHB0Ow0KCW1hcmdpbjo3Mi4wcHQgNzIuMHB0
-IDcyLjBwdCA3Mi4wcHQ7fQ0KZGl2LldvcmRTZWN0aW9uMQ0KCXtwYWdlOldvcmRTZWN0aW9uMTt9
-DQotLT48L3N0eWxlPjwhLS1baWYgZ3RlIG1zbyA5XT48eG1sPg0KPG86c2hhcGVkZWZhdWx0cyB2
-OmV4dD0iZWRpdCIgc3BpZG1heD0iMTAyNiIgLz4NCjwveG1sPjwhW2VuZGlmXS0tPjwhLS1baWYg
-Z3RlIG1zbyA5XT48eG1sPg0KPG86c2hhcGVsYXlvdXQgdjpleHQ9ImVkaXQiPg0KPG86aWRtYXAg
-djpleHQ9ImVkaXQiIGRhdGE9IjEiIC8+DQo8L286c2hhcGVsYXlvdXQ+PC94bWw+PCFbZW5kaWZd
-LS0+DQo8L2hlYWQ+DQo8Ym9keSBsYW5nPSJFTi1HQiIgbGluaz0iYmx1ZSIgdmxpbms9InB1cnBs
-ZSI+DQo8ZGl2IGNsYXNzPSJXb3JkU2VjdGlvbjEiPg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNw
-YW4gc3R5bGU9ImNvbG9yOiM3MDMwQTA7bXNvLWZhcmVhc3QtbGFuZ3VhZ2U6RU4tVVMiPkhlbGxv
-IGFsbCw8bzpwPjwvbzpwPjwvc3Bhbj48L3A+DQo8cCBjbGFzcz0iTXNvTm9ybWFsIj48c3BhbiBz
-dHlsZT0iY29sb3I6IzcwMzBBMDttc28tZmFyZWFzdC1sYW5ndWFnZTpFTi1VUyI+PG86cD4mbmJz
-cDs8L286cD48L3NwYW4+PC9wPg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNwYW4gc3R5bGU9ImNv
-bG9yOiM3MDMwQTA7bXNvLWZhcmVhc3QtbGFuZ3VhZ2U6RU4tVVMiPklzIGFueW9uZSBzdGlsbCBy
-ZWNlaXZpbmcgZW1haWxzIGZyb20NCjxhIGhyZWY9Im1haWx0bzpjaXAtdGVzdGluZy1yZXN1bHRz
-QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZyI+Y2lwLXRlc3RpbmctcmVzdWx0c0BsaXN0cy5jaXAtcHJv
-amVjdC5vcmc8L2E+IHNpbmNlIHRoZSBtaWdyYXRpb24/PG86cD48L286cD48L3NwYW4+PC9wPg0K
-PHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNwYW4gc3R5bGU9ImNvbG9yOiM3MDMwQTA7bXNvLWZhcmVh
-c3QtbGFuZ3VhZ2U6RU4tVVMiPkkgZG9u4oCZdCBzZWVtIHRvIGJlLg0KPG86cD48L286cD48L3Nw
-YW4+PC9wPg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNwYW4gc3R5bGU9ImNvbG9yOiM3MDMwQTA7
-bXNvLWZhcmVhc3QtbGFuZ3VhZ2U6RU4tVVMiPjxvOnA+Jm5ic3A7PC9vOnA+PC9zcGFuPjwvcD4N
-CjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxzcGFuIHN0eWxlPSJjb2xvcjojNzAzMEEwIj5UaGFua3Ms
-IENocmlzPG86cD48L286cD48L3NwYW4+PC9wPg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNwYW4g
-c3R5bGU9ImNvbG9yOiM3MDMwQTA7bXNvLWZhcmVhc3QtbGFuZ3VhZ2U6RU4tVVMiPjxvOnA+Jm5i
-c3A7PC9vOnA+PC9zcGFuPjwvcD4NCjxkaXYgc3R5bGU9ImJvcmRlcjpub25lO2JvcmRlci1sZWZ0
-OnNvbGlkIGJsdWUgMS41cHQ7cGFkZGluZzowY20gMGNtIDBjbSA0LjBwdCI+DQo8ZGl2Pg0KPGRp
-diBzdHlsZT0iYm9yZGVyOm5vbmU7Ym9yZGVyLXRvcDpzb2xpZCAjRTFFMUUxIDEuMHB0O3BhZGRp
-bmc6My4wcHQgMGNtIDBjbSAwY20iPg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PGI+PHNwYW4gbGFu
-Zz0iRU4tVVMiPkZyb206PC9zcGFuPjwvYj48c3BhbiBsYW5nPSJFTi1VUyI+IGNpcC1tZW1iZXJz
-QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZyAmbHQ7Y2lwLW1lbWJlcnNAbGlzdHMuY2lwLXByb2plY3Qu
-b3JnJmd0Ow0KPGI+T24gQmVoYWxmIE9mIDwvYj5OZWFsIENhaWRpbiB2aWEgbGlzdHMuY2lwLXBy
-b2plY3Qub3JnPGJyPg0KPGI+U2VudDo8L2I+IDA2IEFwcmlsIDIwMjAgMjI6NDU8YnI+DQo8Yj5U
-bzo8L2I+IGNpcC1ib2FyZEBsaXN0cy5jaXAtcHJvamVjdC5vcmc7IGNpcC1tZW1iZXJzQGxpc3Rz
-LmNpcC1wcm9qZWN0Lm9yZzsgY2lwLXNlY3VyaXR5QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZzsgY2lw
-LWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmc8YnI+DQo8Yj5TdWJqZWN0OjwvYj4gW2NpcC1tZW1i
-ZXJzXSBNaWdyYXRpb24gY29tcGxldGUgLSBSZTogTWFpbG1hbjIgdG8gR3JvdXBzLmlvIHJlbWlu
-ZGVyPG86cD48L286cD48L3NwYW4+PC9wPg0KPC9kaXY+DQo8L2Rpdj4NCjxwIGNsYXNzPSJNc29O
-b3JtYWwiPjxvOnA+Jm5ic3A7PC9vOnA+PC9wPg0KPGRpdj4NCjxkaXY+DQo8cCBjbGFzcz0iTXNv
-Tm9ybWFsIj5EZWFyIENJUCBDb21tdW5pdHksPG86cD48L286cD48L3A+DQo8L2Rpdj4NCjxkaXY+
-DQo8cCBjbGFzcz0iTXNvTm9ybWFsIj48bzpwPiZuYnNwOzwvbzpwPjwvcD4NCjwvZGl2Pg0KPGRp
-dj4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPlRoZSBtaWdyYXRpb24gaXMgY29tcGxldGUuJm5ic3A7
-PG86cD48L286cD48L3A+DQo8L2Rpdj4NCjxkaXY+DQo8cCBjbGFzcz0iTXNvTm9ybWFsIj48bzpw
-PiZuYnNwOzwvbzpwPjwvcD4NCjwvZGl2Pg0KPGRpdj4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPllv
-dSBzaG91bGQgcmVjZWl2ZSBhbiBlbWFpbCBzaG9ydGx5IGFza2luZyB5b3UgdG8gbG9nIGluIHdp
-dGggeW91ciBlbWFpbCBhZGRyZXNzIGFuZCBzZXQgYSBwYXNzd29yZC48bzpwPjwvbzpwPjwvcD4N
-CjwvZGl2Pg0KPGRpdj4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxvOnA+Jm5ic3A7PC9vOnA+PC9w
-Pg0KPC9kaXY+DQo8ZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+T25lIGltcG9ydGFudCBub3Rl
-LCBwbGVhc2UgZG8gTk9UIHVuc3Vic2NyaWJlIGZyb20gdGhlICZxdW90O21haW4mcXVvdDsgbGlz
-dC4gVGhpcyB3b3VsZCB1bnN1YnNjcmliZSB5b3UgZnJvbSBhbGwgb2YgdGhlIENJUCBsaXN0cy4g
-JnF1b3Q7bWFpbiZxdW90OyBpcyBhbiBhZG1pbmlzdHJhdGl2ZSBsaXN0IHVzZWQgYnkgR3JvdXBz
-LmlvIGFzIGEgcGFyZW50IGxpc3QgdG8gbWFuYWdlIHRoZSBvdGhlciBsaXN0cy4gUGxlYXNlJm5i
-c3A7bGV0Jm5ic3A7bWUga25vdw0KIGlmIHlvdSBoYXZlIGFueSBxdWVzdGlvbnMgb3IgaXNzdWVz
-LiZuYnNwOzxvOnA+PC9vOnA+PC9wPg0KPC9kaXY+DQo8ZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1h
-bCI+PG86cD4mbmJzcDs8L286cD48L3A+DQo8L2Rpdj4NCjxkaXY+DQo8cCBjbGFzcz0iTXNvTm9y
-bWFsIj5MaXN0czxvOnA+PC9vOnA+PC9wPg0KPC9kaXY+DQo8ZGl2Pg0KPHAgc3R5bGU9Im1hcmdp
-bjowY207bWFyZ2luLWJvdHRvbTouMDAwMXB0Ij48YSBocmVmPSJodHRwczovL2xpc3RzLmNpcC1w
-cm9qZWN0Lm9yZy9tYWluIj48c3BhbiBzdHlsZT0iZm9udC1mYW1pbHk6JnF1b3Q7QXJpYWwmcXVv
-dDssc2Fucy1zZXJpZiI+aHR0cHM6Ly9saXN0cy5jaXAtcHJvamVjdC5vcmcvbWFpbjwvc3Bhbj48
-L2E+PG86cD48L286cD48L3A+DQo8cCBzdHlsZT0ibWFyZ2luOjBjbTttYXJnaW4tYm90dG9tOi4w
-MDAxcHQiPiZuYnNwOzxvOnA+PC9vOnA+PC9wPg0KPHAgc3R5bGU9Im1hcmdpbjowY207bWFyZ2lu
-LWJvdHRvbTouMDAwMXB0Ij48YSBocmVmPSJodHRwczovL2xpc3RzLmNpcC1wcm9qZWN0Lm9yZy9j
-aXAtYm9hcmQiPjxzcGFuIHN0eWxlPSJmb250LWZhbWlseTomcXVvdDtBcmlhbCZxdW90OyxzYW5z
-LXNlcmlmIj5odHRwczovL2xpc3RzLmNpcC1wcm9qZWN0Lm9yZy9jaXAtYm9hcmQ8L3NwYW4+PC9h
-PjxvOnA+PC9vOnA+PC9wPg0KPHAgc3R5bGU9Im1hcmdpbjowY207bWFyZ2luLWJvdHRvbTouMDAw
-MXB0Ij48YSBocmVmPSJodHRwczovL2xpc3RzLmNpcC1wcm9qZWN0Lm9yZy9jaXAtZGV2Ij48c3Bh
-biBzdHlsZT0iZm9udC1mYW1pbHk6JnF1b3Q7QXJpYWwmcXVvdDssc2Fucy1zZXJpZiI+aHR0cHM6
-Ly9saXN0cy5jaXAtcHJvamVjdC5vcmcvY2lwLWRldjwvc3Bhbj48L2E+PG86cD48L286cD48L3A+
-DQo8cCBzdHlsZT0ibWFyZ2luOjBjbTttYXJnaW4tYm90dG9tOi4wMDAxcHQiPjxhIGhyZWY9Imh0
-dHBzOi8vbGlzdHMuY2lwLXByb2plY3Qub3JnL2NpcC10ZXN0aW5nLXJlc3VsdHMiPjxzcGFuIHN0
-eWxlPSJmb250LWZhbWlseTomcXVvdDtBcmlhbCZxdW90OyxzYW5zLXNlcmlmIj5odHRwczovL2xp
-c3RzLmNpcC1wcm9qZWN0Lm9yZy9jaXAtdGVzdGluZy1yZXN1bHRzPC9zcGFuPjwvYT48bzpwPjwv
-bzpwPjwvcD4NCjxwIHN0eWxlPSJtYXJnaW46MGNtO21hcmdpbi1ib3R0b206LjAwMDFwdCI+PGEg
-aHJlZj0iaHR0cHM6Ly9saXN0cy5jaXAtcHJvamVjdC5vcmcvY2lwLW1lbWJlcnMiPjxzcGFuIHN0
-eWxlPSJmb250LWZhbWlseTomcXVvdDtBcmlhbCZxdW90OyxzYW5zLXNlcmlmIj5odHRwczovL2xp
-c3RzLmNpcC1wcm9qZWN0Lm9yZy9jaXAtbWVtYmVyczwvc3Bhbj48L2E+PG86cD48L286cD48L3A+
-DQo8cCBzdHlsZT0ibWFyZ2luOjBjbTttYXJnaW4tYm90dG9tOi4wMDAxcHQiPjxhIGhyZWY9Imh0
-dHBzOi8vbGlzdHMuY2lwLXByb2plY3Qub3JnL2NpcC1zZWN1cml0eSI+PHNwYW4gc3R5bGU9ImZv
-bnQtZmFtaWx5OiZxdW90O0FyaWFsJnF1b3Q7LHNhbnMtc2VyaWYiPmh0dHBzOi8vbGlzdHMuY2lw
-LXByb2plY3Qub3JnL2NpcC1zZWN1cml0eTwvc3Bhbj48L2E+PG86cD48L286cD48L3A+DQo8cCBj
-bGFzcz0iTXNvTm9ybWFsIj48bzpwPiZuYnNwOzwvbzpwPjwvcD4NCjxwIHN0eWxlPSJtYXJnaW46
-MGNtO21hcmdpbi1ib3R0b206LjAwMDFwdCI+PHNwYW4gc3R5bGU9ImZvbnQtc2l6ZToxMi4wcHQ7
-Zm9udC1mYW1pbHk6JnF1b3Q7QXJpYWwmcXVvdDssc2Fucy1zZXJpZjtjb2xvcjojMUQxQzFEIj4m
-bmJzcDs8L3NwYW4+PG86cD48L286cD48L3A+DQo8cCBzdHlsZT0ibWFyZ2luOjBjbTttYXJnaW4t
-Ym90dG9tOi4wMDAxcHQiPjxzcGFuIHN0eWxlPSJmb250LXNpemU6MTIuMHB0O2ZvbnQtZmFtaWx5
-OiZxdW90O0FyaWFsJnF1b3Q7LHNhbnMtc2VyaWY7Y29sb3I6IzFEMUMxRCI+RW1haWwgYWRkcmVz
-c2VzPC9zcGFuPjxvOnA+PC9vOnA+PC9wPg0KPHAgc3R5bGU9Im1hcmdpbjowY207bWFyZ2luLWJv
-dHRvbTouMDAwMXB0Ij48YSBocmVmPSJtYWlsdG86Y2lwLWJvYXJkQGxpc3RzLmNpcC1wcm9qZWN0
-Lm9yZyI+PHNwYW4gc3R5bGU9ImZvbnQtZmFtaWx5OiZxdW90O0FyaWFsJnF1b3Q7LHNhbnMtc2Vy
-aWYiPmNpcC1ib2FyZEBsaXN0cy5jaXAtcHJvamVjdC5vcmc8L3NwYW4+PC9hPjxvOnA+PC9vOnA+
-PC9wPg0KPHAgc3R5bGU9Im1hcmdpbjowY207bWFyZ2luLWJvdHRvbTouMDAwMXB0Ij48YSBocmVm
-PSJtYWlsdG86Y2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmciPjxzcGFuIHN0eWxlPSJmb250
-LWZhbWlseTomcXVvdDtBcmlhbCZxdW90OyxzYW5zLXNlcmlmIj5jaXAtZGV2QGxpc3RzLmNpcC1w
-cm9qZWN0Lm9yZzwvc3Bhbj48L2E+PG86cD48L286cD48L3A+DQo8cCBzdHlsZT0ibWFyZ2luOjBj
-bTttYXJnaW4tYm90dG9tOi4wMDAxcHQiPjxhIGhyZWY9Im1haWx0bzpjaXAtdGVzdGluZy1yZXN1
-bHRzQGxpc3RzLmNpcC1wcm9qZWN0Lm9yZyI+PHNwYW4gc3R5bGU9ImZvbnQtZmFtaWx5OiZxdW90
-O0FyaWFsJnF1b3Q7LHNhbnMtc2VyaWYiPmNpcC10ZXN0aW5nLXJlc3VsdHNAbGlzdHMuY2lwLXBy
-b2plY3Qub3JnPC9zcGFuPjwvYT48bzpwPjwvbzpwPjwvcD4NCjxwIHN0eWxlPSJtYXJnaW46MGNt
-O21hcmdpbi1ib3R0b206LjAwMDFwdCI+PGEgaHJlZj0ibWFpbHRvOmNpcC1tZW1iZXJzQGxpc3Rz
-LmNpcC1wcm9qZWMub3JnIj48c3BhbiBzdHlsZT0iZm9udC1mYW1pbHk6JnF1b3Q7QXJpYWwmcXVv
-dDssc2Fucy1zZXJpZiI+Y2lwLW1lbWJlcnNAbGlzdHMuY2lwLXByb2plY3Qub3JnPC9zcGFuPjwv
-YT48bzpwPjwvbzpwPjwvcD4NCjxwIHN0eWxlPSJtYXJnaW46MGNtO21hcmdpbi1ib3R0b206LjAw
-MDFwdCI+PGEgaHJlZj0ibWFpbHRvOmNpcC1zZWN1cml0eUBsaXN0cy5jaXAtcHJvamVjdC5vcmci
-PjxzcGFuIHN0eWxlPSJmb250LWZhbWlseTomcXVvdDtBcmlhbCZxdW90OyxzYW5zLXNlcmlmIj5j
-aXAtc2VjdXJpdHlAbGlzdHMuY2lwLXByb2plY3Qub3JnPC9zcGFuPjwvYT48bzpwPjwvbzpwPjwv
-cD4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxvOnA+Jm5ic3A7PC9vOnA+PC9wPg0KPGRpdj4NCjxk
-aXY+DQo8ZGl2Pg0KPGRpdj4NCjxkaXY+DQo8ZGl2Pg0KPGRpdj4NCjxkaXY+DQo8ZGl2Pg0KPGRp
-dj4NCjxkaXY+DQo8cCBjbGFzcz0iTXNvTm9ybWFsIj48Yj48c3BhbiBzdHlsZT0iY29sb3I6Izg4
-ODg4OCI+QmVzdCByZWdhcmRzLDwvc3Bhbj48L2I+PHNwYW4gc3R5bGU9ImNvbG9yOiM4ODg4ODgi
-PjxvOnA+PC9vOnA+PC9zcGFuPjwvcD4NCjwvZGl2Pg0KPGRpdj4NCjxwIGNsYXNzPSJNc29Ob3Jt
-YWwiPjxiPjxzcGFuIHN0eWxlPSJjb2xvcjojODg4ODg4Ij5OZWFsPC9zcGFuPjwvYj48c3BhbiBz
-dHlsZT0iY29sb3I6Izg4ODg4OCI+PG86cD48L286cD48L3NwYW4+PC9wPg0KPC9kaXY+DQo8ZGl2
-Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNwYW4gc3R5bGU9ImNvbG9yOiM4ODg4ODgiPjxvOnA+
-Jm5ic3A7PC9vOnA+PC9zcGFuPjwvcD4NCjwvZGl2Pg0KPGRpdj4NCjxwIGNsYXNzPSJNc29Ob3Jt
-YWwiPjxiPjxzcGFuIHN0eWxlPSJjb2xvcjojODg4ODg4Ij5OZWFsIENhaWRpbjwvc3Bhbj48L2I+
-PHNwYW4gc3R5bGU9ImNvbG9yOiM4ODg4ODgiPjxvOnA+PC9vOnA+PC9zcGFuPjwvcD4NCjxkaXY+
-DQo8ZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNwYW4gc3R5bGU9ImNvbG9yOiM2NjY2NjYi
-PlByb2dyYW0gTWFuYWdlciwgUHJvZ3JhbSBNYW5hZ2VtZW50ICZhbXA7IE9wZXJhdGlvbnM8L3Nw
-YW4+PHNwYW4gc3R5bGU9ImNvbG9yOiM4ODg4ODgiPjxvOnA+PC9vOnA+PC9zcGFuPjwvcD4NCjwv
-ZGl2Pg0KPGRpdj4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxzcGFuIHN0eWxlPSJjb2xvcjojNjY2
-NjY2Ij5UaGUgTGludXggRm91bmRhdGlvbjwvc3Bhbj48c3BhbiBzdHlsZT0iY29sb3I6Izg4ODg4
-OCI+PG86cD48L286cD48L3NwYW4+PC9wPg0KPC9kaXY+DQo8ZGl2Pg0KPHAgY2xhc3M9Ik1zb05v
-cm1hbCI+PHNwYW4gc3R5bGU9ImNvbG9yOiM2NjY2NjYiPiYjNDM7MSAoOTE5KSAyMzgtOTEwNCAo
-dy9oKTxicj4NCiYjNDM7MSAoOTE5KSA5NDktMTg2MSAobSk8L3NwYW4+PHNwYW4gc3R5bGU9ImNv
-bG9yOiM4ODg4ODgiPjxvOnA+PC9vOnA+PC9zcGFuPjwvcD4NCjwvZGl2Pg0KPGRpdj4NCjxwIGNs
-YXNzPSJNc29Ob3JtYWwiPjxzcGFuIHN0eWxlPSJjb2xvcjojNjY2NjY2Ij48YSBocmVmPSJtYWls
-dG86bmNhaWRpbkBsaW51eGZvdW5kYXRpb24ub3JnIiB0YXJnZXQ9Il9ibGFuayI+bmNhaWRpbkBs
-aW51eGZvdW5kYXRpb24ub3JnPC9hPjwvc3Bhbj48c3BhbiBzdHlsZT0iY29sb3I6Izg4ODg4OCI+
-PG86cD48L286cD48L3NwYW4+PC9wPg0KPC9kaXY+DQo8L2Rpdj4NCjwvZGl2Pg0KPC9kaXY+DQo8
-L2Rpdj4NCjwvZGl2Pg0KPC9kaXY+DQo8L2Rpdj4NCjwvZGl2Pg0KPC9kaXY+DQo8L2Rpdj4NCjwv
-ZGl2Pg0KPC9kaXY+DQo8cCBjbGFzcz0iTXNvTm9ybWFsIj48bzpwPiZuYnNwOzwvbzpwPjwvcD4N
-CjwvZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PG86cD4mbmJzcDs8L286cD48L3A+DQo8ZGl2
-Pg0KPGRpdj4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPk9uIE1vbiwgQXByIDYsIDIwMjAgYXQgMzoz
-NCBQTSBOZWFsIENhaWRpbiAmbHQ7PGEgaHJlZj0ibWFpbHRvOm5jYWlkaW5AbGludXhmb3VuZGF0
-aW9uLm9yZyI+bmNhaWRpbkBsaW51eGZvdW5kYXRpb24ub3JnPC9hPiZndDsgd3JvdGU6PG86cD48
-L286cD48L3A+DQo8L2Rpdj4NCjxibG9ja3F1b3RlIHN0eWxlPSJib3JkZXI6bm9uZTtib3JkZXIt
-bGVmdDpzb2xpZCAjQ0NDQ0NDIDEuMHB0O3BhZGRpbmc6MGNtIDBjbSAwY20gNi4wcHQ7bWFyZ2lu
-LWxlZnQ6NC44cHQ7bWFyZ2luLXJpZ2h0OjBjbSI+DQo8ZGl2Pg0KPGRpdj4NCjxwIGNsYXNzPSJN
-c29Ob3JtYWwiPlJlbWluZGVyLiZuYnNwOyBNYWlsbWFuMiB0byBHcm91cHMuaW8gY29udmVyc2lv
-biBhYm91dCB0byBraWNrIG9mZiAoYWJvdXQgYW4gMSAxLzIgaG91cnMmbmJzcDtmcm9tIG5vdyku
-PG86cD48L286cD48L3A+DQo8L2Rpdj4NCjxkaXY+DQo8cCBjbGFzcz0iTXNvTm9ybWFsIj48bzpw
-PiZuYnNwOzwvbzpwPjwvcD4NCjwvZGl2Pg0KPGRpdj4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxv
-OnA+Jm5ic3A7PC9vOnA+PC9wPg0KPC9kaXY+DQo8ZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+
-UGxlYXNlIHNlZSBzY2hlZHVsZSBiZWxvdy48bzpwPjwvbzpwPjwvcD4NCjwvZGl2Pg0KPGRpdj4N
-CjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxvOnA+Jm5ic3A7PC9vOnA+PC9wPg0KPC9kaXY+DQo8ZGl2
-Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+QmVzdCBSZWdhcmRzLDxvOnA+PC9vOnA+PC9wPg0KPC9k
-aXY+DQo8ZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+TmVhbDxvOnA+PC9vOnA+PC9wPg0KPC9k
-aXY+DQo8ZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PG86cD4mbmJzcDs8L286cD48L3A+DQo8
-L2Rpdj4NCjxkaXY+DQo8ZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PG86cD4mbmJzcDs8L286
-cD48L3A+DQo8L2Rpdj4NCjxkaXY+DQo8cCBjbGFzcz0iTXNvTm9ybWFsIj48YnIgY2xlYXI9ImFs
-bCI+DQo8bzpwPjwvbzpwPjwvcD4NCjxkaXY+DQo8ZGl2Pg0KPGRpdj4NCjxkaXY+DQo8ZGl2Pg0K
-PGRpdj4NCjxkaXY+DQo8ZGl2Pg0KPGRpdj4NCjxkaXY+DQo8ZGl2Pg0KPGRpdj4NCjxkaXY+DQo8
-ZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PGI+PHNwYW4gc3R5bGU9ImNvbG9yOiM4ODg4ODgi
-Pk5lYWwgQ2FpZGluPC9zcGFuPjwvYj48c3BhbiBzdHlsZT0iY29sb3I6Izg4ODg4OCI+PG86cD48
-L286cD48L3NwYW4+PC9wPg0KPGRpdj4NCjxkaXY+DQo8cCBjbGFzcz0iTXNvTm9ybWFsIj48c3Bh
-biBzdHlsZT0iY29sb3I6IzY2NjY2NiI+UHJvZ3JhbSBNYW5hZ2VyLCBQcm9ncmFtIE1hbmFnZW1l
-bnQgJmFtcDsgT3BlcmF0aW9uczwvc3Bhbj48c3BhbiBzdHlsZT0iY29sb3I6Izg4ODg4OCI+PG86
-cD48L286cD48L3NwYW4+PC9wPg0KPC9kaXY+DQo8ZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+
-PHNwYW4gc3R5bGU9ImNvbG9yOiM2NjY2NjYiPlRoZSBMaW51eCBGb3VuZGF0aW9uPC9zcGFuPjxz
-cGFuIHN0eWxlPSJjb2xvcjojODg4ODg4Ij48bzpwPjwvbzpwPjwvc3Bhbj48L3A+DQo8L2Rpdj4N
-CjxkaXY+DQo8cCBjbGFzcz0iTXNvTm9ybWFsIj48c3BhbiBzdHlsZT0iY29sb3I6IzY2NjY2NiI+
-JiM0MzsxICg5MTkpIDIzOC05MTA0ICh3L2gpPGJyPg0KJiM0MzsxICg5MTkpIDk0OS0xODYxICht
-KTwvc3Bhbj48c3BhbiBzdHlsZT0iY29sb3I6Izg4ODg4OCI+PG86cD48L286cD48L3NwYW4+PC9w
-Pg0KPC9kaXY+DQo8ZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNwYW4gc3R5bGU9ImNvbG9y
-OiM2NjY2NjYiPjxhIGhyZWY9Im1haWx0bzpuY2FpZGluQGxpbnV4Zm91bmRhdGlvbi5vcmciIHRh
-cmdldD0iX2JsYW5rIj5uY2FpZGluQGxpbnV4Zm91bmRhdGlvbi5vcmc8L2E+PC9zcGFuPjxzcGFu
-IHN0eWxlPSJjb2xvcjojODg4ODg4Ij48bzpwPjwvbzpwPjwvc3Bhbj48L3A+DQo8L2Rpdj4NCjwv
-ZGl2Pg0KPC9kaXY+DQo8L2Rpdj4NCjwvZGl2Pg0KPC9kaXY+DQo8L2Rpdj4NCjwvZGl2Pg0KPC9k
-aXY+DQo8L2Rpdj4NCjwvZGl2Pg0KPC9kaXY+DQo8L2Rpdj4NCjwvZGl2Pg0KPC9kaXY+DQo8L2Rp
-dj4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxvOnA+Jm5ic3A7PC9vOnA+PC9wPg0KPC9kaXY+DQo8
-L2Rpdj4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxvOnA+Jm5ic3A7PC9vOnA+PC9wPg0KPGRpdj4N
-CjxkaXY+DQo8cCBjbGFzcz0iTXNvTm9ybWFsIj5PbiBUaHUsIEFwciAyLCAyMDIwIGF0IDQ6NTYg
-UE0gTmVhbCBDYWlkaW4gJmx0OzxhIGhyZWY9Im1haWx0bzpuY2FpZGluQGxpbnV4Zm91bmRhdGlv
-bi5vcmciIHRhcmdldD0iX2JsYW5rIj5uY2FpZGluQGxpbnV4Zm91bmRhdGlvbi5vcmc8L2E+Jmd0
-OyB3cm90ZTo8bzpwPjwvbzpwPjwvcD4NCjwvZGl2Pg0KPGJsb2NrcXVvdGUgc3R5bGU9ImJvcmRl
-cjpub25lO2JvcmRlci1sZWZ0OnNvbGlkICNDQ0NDQ0MgMS4wcHQ7cGFkZGluZzowY20gMGNtIDBj
-bSA2LjBwdDttYXJnaW4tbGVmdDo0LjhwdDttYXJnaW4tcmlnaHQ6MGNtIj4NCjxkaXY+DQo8cCBj
-bGFzcz0iTXNvTm9ybWFsIj5bY3Jvc3MgcG9zdGVkXTxvOnA+PC9vOnA+PC9wPg0KPGRpdj4NCjxw
-IGNsYXNzPSJNc29Ob3JtYWwiPjxvOnA+Jm5ic3A7PC9vOnA+PC9wPg0KPC9kaXY+DQo8ZGl2Pg0K
-PHAgY2xhc3M9Ik1zb05vcm1hbCI+UmVtaW5kZXIuJm5ic3A7IE1haWxtYW4yIHRvIEdyb3Vwcy5p
-byBlbWFpbCBpcyBzY2hlZHVsZWQgdG8gc3RhcnQgb24mbmJzcDs8bzpwPjwvbzpwPjwvcD4NCjwv
-ZGl2Pg0KPGRpdj4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxvOnA+Jm5ic3A7PC9vOnA+PC9wPg0K
-PC9kaXY+DQo8ZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+UGFjaWZpYyAtIDIgcG0gLCBNb25k
-YXksIEFwcmlsIDY8bzpwPjwvbzpwPjwvcD4NCjwvZGl2Pg0KPGRpdj4NCjxwIGNsYXNzPSJNc29O
-b3JtYWwiPkVhc3Rlcm4gLSA1IHBtLCBNb25kYXkgQXByaWwgNjxvOnA+PC9vOnA+PC9wPg0KPC9k
-aXY+DQo8ZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+Q0VUIC0gMTEgcG0sIE1vbmRheSBBcHJp
-bCA2PG86cD48L286cD48L3A+DQo8L2Rpdj4NCjxkaXY+DQo8cCBjbGFzcz0iTXNvTm9ybWFsIj5K
-U1QgLSA2IGFtLCBUdWVzZGF5LCBBcHJpbCA3PG86cD48L286cD48L3A+DQo8L2Rpdj4NCjxkaXY+
-DQo8cCBjbGFzcz0iTXNvTm9ybWFsIj48bzpwPiZuYnNwOzwvbzpwPjwvcD4NCjwvZGl2Pg0KPGRp
-dj4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPkl0IGlzIGV4cGVjdGVkIHRvIHRha2Ugc2V2ZXJhbCBo
-b3VycywgYnV0IGNvdWxkIGJlIGFzIG11Y2ggYXMgYSBmdWxsIDI0IGhvdXJzLiZuYnNwOzxvOnA+
-PC9vOnA+PC9wPg0KPC9kaXY+DQo8ZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PG86cD4mbmJz
-cDs8L286cD48L3A+DQo8L2Rpdj4NCjxkaXY+DQo8cCBjbGFzcz0iTXNvTm9ybWFsIj5XaGVuIHRo
-ZSBtaWdyYXRpb24gaXMgY29tcGxldGVkLCBJIHdpbGwgc2VuZCBvdXQgdGhlIGxpbmtzIHNvIHRo
-YXQgeW91IGNhbiBhY2Nlc3MgZW1haWwgYXJjaGl2ZXMuPG86cD48L286cD48L3A+DQo8L2Rpdj4N
-CjxkaXY+DQo8cCBjbGFzcz0iTXNvTm9ybWFsIj48bzpwPiZuYnNwOzwvbzpwPjwvcD4NCjwvZGl2
-Pg0KPGRpdj4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPkJlc3QgcmVnYXJkcyw8bzpwPjwvbzpwPjwv
-cD4NCjwvZGl2Pg0KPGRpdj4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPk5lYWw8bzpwPjwvbzpwPjwv
-cD4NCjwvZGl2Pg0KPGRpdj4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxvOnA+Jm5ic3A7PC9vOnA+
-PC9wPg0KPC9kaXY+DQo8ZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PGJyIGNsZWFyPSJhbGwi
-Pg0KPG86cD48L286cD48L3A+DQo8ZGl2Pg0KPGRpdj4NCjxkaXY+DQo8ZGl2Pg0KPGRpdj4NCjxk
-aXY+DQo8ZGl2Pg0KPGRpdj4NCjxkaXY+DQo8ZGl2Pg0KPGRpdj4NCjxkaXY+DQo8ZGl2Pg0KPGRp
-dj4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxiPjxzcGFuIHN0eWxlPSJjb2xvcjojODg4ODg4Ij5O
-ZWFsIENhaWRpbjwvc3Bhbj48L2I+PHNwYW4gc3R5bGU9ImNvbG9yOiM4ODg4ODgiPjxvOnA+PC9v
-OnA+PC9zcGFuPjwvcD4NCjxkaXY+DQo8ZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNwYW4g
-c3R5bGU9ImNvbG9yOiM2NjY2NjYiPlByb2dyYW0gTWFuYWdlciwgUHJvZ3JhbSBNYW5hZ2VtZW50
-ICZhbXA7IE9wZXJhdGlvbnM8L3NwYW4+PHNwYW4gc3R5bGU9ImNvbG9yOiM4ODg4ODgiPjxvOnA+
-PC9vOnA+PC9zcGFuPjwvcD4NCjwvZGl2Pg0KPGRpdj4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxz
-cGFuIHN0eWxlPSJjb2xvcjojNjY2NjY2Ij5UaGUgTGludXggRm91bmRhdGlvbjwvc3Bhbj48c3Bh
-biBzdHlsZT0iY29sb3I6Izg4ODg4OCI+PG86cD48L286cD48L3NwYW4+PC9wPg0KPC9kaXY+DQo8
-ZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNwYW4gc3R5bGU9ImNvbG9yOiM2NjY2NjYiPiYj
-NDM7MSAoOTE5KSAyMzgtOTEwNCAody9oKTxicj4NCiYjNDM7MSAoOTE5KSA5NDktMTg2MSAobSk8
-L3NwYW4+PHNwYW4gc3R5bGU9ImNvbG9yOiM4ODg4ODgiPjxvOnA+PC9vOnA+PC9zcGFuPjwvcD4N
-CjwvZGl2Pg0KPGRpdj4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxzcGFuIHN0eWxlPSJjb2xvcjoj
-NjY2NjY2Ij48YSBocmVmPSJtYWlsdG86bmNhaWRpbkBsaW51eGZvdW5kYXRpb24ub3JnIiB0YXJn
-ZXQ9Il9ibGFuayI+bmNhaWRpbkBsaW51eGZvdW5kYXRpb24ub3JnPC9hPjwvc3Bhbj48c3BhbiBz
-dHlsZT0iY29sb3I6Izg4ODg4OCI+PG86cD48L286cD48L3NwYW4+PC9wPg0KPC9kaXY+DQo8L2Rp
-dj4NCjwvZGl2Pg0KPC9kaXY+DQo8L2Rpdj4NCjwvZGl2Pg0KPC9kaXY+DQo8L2Rpdj4NCjwvZGl2
-Pg0KPC9kaXY+DQo8L2Rpdj4NCjwvZGl2Pg0KPC9kaXY+DQo8L2Rpdj4NCjwvZGl2Pg0KPC9kaXY+
-DQo8L2Rpdj4NCjwvZGl2Pg0KPC9ibG9ja3F1b3RlPg0KPC9kaXY+DQo8L2Rpdj4NCjwvYmxvY2tx
-dW90ZT4NCjwvZGl2Pg0KPC9kaXY+DQo8ZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PC9vOnA+
-PC9zcGFuPjwvcD4NCjwvZGl2Pg0KPC9kaXY+DQo8L2Rpdj4NCjwvYm9keT4NCjwvaHRtbD4NCg==
+-- Neal
 
---_000_TYAPR01MB2285F51468AEBD8F87036A6FB7C10TYAPR01MB2285jpnp_--
+*Neal Caidin*
+Program Manager, Program Management & Operations
+The Linux Foundation
++1 (919) 238-9104 (w/h)
++1 (919) 949-1861 (m)
+ncaidin@linuxfoundation.org
 
---FeKs4eTdwipqWeOzaCWx
+
+On Thu, Apr 9, 2020 at 11:26 AM Chris Paterson <chris.paterson2@renesas.co=
+m>
+wrote:
+
+> Hello all,
+>
+>
+>
+> Is anyone still receiving emails from
+> cip-testing-results@lists.cip-project.org since the migration?
+>
+> I don=E2=80=99t seem to be.
+>
+>
+>
+> Thanks, Chris
+>
+>
+>
+> *From:* cip-members@lists.cip-project.org <
+> cip-members@lists.cip-project.org> *On Behalf Of *Neal Caidin via
+> lists.cip-project.org
+> *Sent:* 06 April 2020 22:45
+> *To:* cip-board@lists.cip-project.org; cip-members@lists.cip-project.org=
+;
+> cip-security@lists.cip-project.org; cip-dev@lists.cip-project.org
+> *Subject:* [cip-members] Migration complete - Re: Mailman2 to Groups.io
+> reminder
+>
+>
+>
+> Dear CIP Community,
+>
+>
+>
+> The migration is complete.
+>
+>
+>
+> You should receive an email shortly asking you to log in with your email
+> address and set a password.
+>
+>
+>
+> One important note, please do NOT unsubscribe from the "main" list. This
+> would unsubscribe you from all of the CIP lists. "main" is an
+> administrative list used by Groups.io as a parent list to manage the oth=
+er
+> lists. Please let me know if you have any questions or issues.
+>
+>
+>
+> Lists
+>
+> https://lists.cip-project.org/main
+>
+>
+>
+> https://lists.cip-project.org/cip-board
+>
+> https://lists.cip-project.org/cip-dev
+>
+> https://lists.cip-project.org/cip-testing-results
+>
+> https://lists.cip-project.org/cip-members
+>
+> https://lists.cip-project.org/cip-security
+>
+>
+>
+>
+>
+> Email addresses
+>
+> cip-board@lists.cip-project.org
+>
+> cip-dev@lists.cip-project.org
+>
+> cip-testing-results@lists.cip-project.org
+>
+> cip-members@lists.cip-project.org <cip-members@lists.cip-projec.org>
+>
+> cip-security@lists.cip-project.org
+>
+>
+>
+> *Best regards,*
+>
+> *Neal*
+>
+>
+>
+> *Neal Caidin*
+>
+> Program Manager, Program Management & Operations
+>
+> The Linux Foundation
+>
+> +1 (919) 238-9104 (w/h)
+> +1 (919) 949-1861 (m)
+>
+> ncaidin@linuxfoundation.org
+>
+>
+>
+>
+>
+> On Mon, Apr 6, 2020 at 3:34 PM Neal Caidin <ncaidin@linuxfoundation.org>
+> wrote:
+>
+> Reminder.  Mailman2 to Groups.io conversion about to kick off (about an =
+1
+> 1/2 hours from now).
+>
+>
+>
+>
+>
+> Please see schedule below.
+>
+>
+>
+> Best Regards,
+>
+> Neal
+>
+>
+>
+>
+>
+>
+> *Neal Caidin*
+>
+> Program Manager, Program Management & Operations
+>
+> The Linux Foundation
+>
+> +1 (919) 238-9104 (w/h)
+> +1 (919) 949-1861 (m)
+>
+> ncaidin@linuxfoundation.org
+>
+>
+>
+>
+>
+> On Thu, Apr 2, 2020 at 4:56 PM Neal Caidin <ncaidin@linuxfoundation.org>
+> wrote:
+>
+> [cross posted]
+>
+>
+>
+> Reminder.  Mailman2 to Groups.io email is scheduled to start on
+>
+>
+>
+> Pacific - 2 pm , Monday, April 6
+>
+> Eastern - 5 pm, Monday April 6
+>
+> CET - 11 pm, Monday April 6
+>
+> JST - 6 am, Tuesday, April 7
+>
+>
+>
+> It is expected to take several hours, but could be as much as a full 24
+> hours.
+>
+>
+>
+> When the migration is completed, I will send out the links so that you c=
+an
+> access email archives.
+>
+>
+>
+> Best regards,
+>
+> Neal
+>
+>
+>
+>
+> *Neal Caidin*
+>
+> Program Manager, Program Management & Operations
+>
+> The Linux Foundation
+>
+> +1 (919) 238-9104 (w/h)
+> +1 (919) 949-1861 (m)
+>
+> ncaidin@linuxfoundation.org
+>
+>=20
+>
+>
+
+--00000000000052a30d05a2decd41
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Hi Chris,<div><br></div><div>Anything I can do=C2=A0to hel=
+p?</div><div><br></div><div>-- Neal</div><div><br clear=3D"all"><div><div d=
+ir=3D"ltr" class=3D"gmail_signature" data-smartmail=3D"gmail_signature"><di=
+v dir=3D"ltr"><div><div dir=3D"ltr"><span><font color=3D"#888888"><div dir=
+=3D"ltr"><div dir=3D"ltr"><div><div dir=3D"ltr"><div><div dir=3D"ltr"><div=
+ dir=3D"ltr"><div dir=3D"ltr"><div dir=3D"ltr"><b style=3D"color:rgb(136,13=
+6,136)"><font color=3D"#666666"><font color=3D"#888888">Neal Caidin</font><=
+/font></b><br><div style=3D"color:rgb(136,136,136)"><span style=3D"border-c=
+ollapse:collapse"><div><font color=3D"#666666"><font>Program Manager, Progr=
+am Management &amp; Operations</font></font></div><div><font color=3D"#6666=
+66"><font>The Linux Foundation</font></font></div><div><font color=3D"#6666=
+66">+1 (919) 238-9104 (w/h)<br>+1 (919) 949-1861 (m)</font></div><div><font=
+ color=3D"#666666"><a href=3D"mailto:ncaidin@linuxfoundation.org" target=3D=
+"_blank">ncaidin@linuxfoundation.org</a></font></div></span></div></div></d=
+iv></div></div></div></div></div></div></div></font></span></div></div></di=
+v></div></div><br></div></div><br><div class=3D"gmail_quote"><div dir=3D"lt=
+r" class=3D"gmail_attr">On Thu, Apr 9, 2020 at 11:26 AM Chris Paterson &lt;=
+<a href=3D"mailto:chris.paterson2@renesas.com">chris.paterson2@renesas.com<=
+/a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0=
+px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
+
+
+
+
+
+<div lang=3D"EN-GB">
+<div class=3D"gmail-m_850370888494414381WordSection1">
+<p class=3D"MsoNormal"><span style=3D"color:rgb(112,48,160)">Hello all,<u>=
+</u><u></u></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:rgb(112,48,160)"><u></u>=C2=A0=
+<u></u></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:rgb(112,48,160)">Is anyone sti=
+ll receiving emails from
+<a href=3D"mailto:cip-testing-results@lists.cip-project.org" target=3D"_bl=
+ank">cip-testing-results@lists.cip-project.org</a> since the migration?<u><=
+/u><u></u></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:rgb(112,48,160)">I don=E2=80=
+=99t seem to be.
+<u></u><u></u></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:rgb(112,48,160)"><u></u>=C2=A0=
+<u></u></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:rgb(112,48,160)">Thanks, Chris=
+<u></u><u></u></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:rgb(112,48,160)"><u></u>=C2=A0=
+<u></u></span></p>
+<div style=3D"border-top:none;border-right:none;border-bottom:none;border-=
+left:1.5pt solid blue;padding:0cm 0cm 0cm 4pt">
+<div>
+<div style=3D"border-right:none;border-bottom:none;border-left:none;border=
+-top:1pt solid rgb(225,225,225);padding:3pt 0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US">From:</span></b><span lang=
+=3D"EN-US"> <a href=3D"mailto:cip-members@lists.cip-project.org" target=3D=
+"_blank">cip-members@lists.cip-project.org</a> &lt;<a href=3D"mailto:cip-me=
+mbers@lists.cip-project.org" target=3D"_blank">cip-members@lists.cip-projec=
+t.org</a>&gt;
+<b>On Behalf Of </b>Neal Caidin via <a href=3D"http://lists.cip-project.or=
+g" target=3D"_blank">lists.cip-project.org</a><br>
+<b>Sent:</b> 06 April 2020 22:45<br>
+<b>To:</b> <a href=3D"mailto:cip-board@lists.cip-project.org" target=3D"_b=
+lank">cip-board@lists.cip-project.org</a>; <a href=3D"mailto:cip-members@li=
+sts.cip-project.org" target=3D"_blank">cip-members@lists.cip-project.org</a=
+>; <a href=3D"mailto:cip-security@lists.cip-project.org" target=3D"_blank">=
+cip-security@lists.cip-project.org</a>; <a href=3D"mailto:cip-dev@lists.cip=
+-project.org" target=3D"_blank">cip-dev@lists.cip-project.org</a><br>
+<b>Subject:</b> [cip-members] Migration complete - Re: Mailman2 to Groups.=
+io reminder<u></u><u></u></span></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><u></u>=C2=A0<u></u></p>
+<div>
+<div>
+<p class=3D"MsoNormal">Dear CIP Community,<u></u><u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><u></u>=C2=A0<u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal">The migration is complete.=C2=A0<u></u><u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><u></u>=C2=A0<u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal">You should receive an email shortly asking you to l=
+og in with your email address and set a password.<u></u><u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><u></u>=C2=A0<u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal">One important note, please do NOT unsubscribe from =
+the &quot;main&quot; list. This would unsubscribe you from all of the CIP l=
+ists. &quot;main&quot; is an administrative list used by Groups.io as a par=
+ent list to manage the other lists. Please=C2=A0let=C2=A0me know
+ if you have any questions or issues.=C2=A0<u></u><u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><u></u>=C2=A0<u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal">Lists<u></u><u></u></p>
+</div>
+<div>
+<p style=3D"margin:0cm 0cm 0.0001pt"><a href=3D"https://lists.cip-project.=
+org/main" target=3D"_blank"><span style=3D"font-family:Arial,sans-serif">ht=
+tps://lists.cip-project.org/main</span></a><u></u><u></u></p>
+<p style=3D"margin:0cm 0cm 0.0001pt">=C2=A0<u></u><u></u></p>
+<p style=3D"margin:0cm 0cm 0.0001pt"><a href=3D"https://lists.cip-project.=
+org/cip-board" target=3D"_blank"><span style=3D"font-family:Arial,sans-seri=
+f">https://lists.cip-project.org/cip-board</span></a><u></u><u></u></p>
+<p style=3D"margin:0cm 0cm 0.0001pt"><a href=3D"https://lists.cip-project.=
+org/cip-dev" target=3D"_blank"><span style=3D"font-family:Arial,sans-serif"=
+>https://lists.cip-project.org/cip-dev</span></a><u></u><u></u></p>
+<p style=3D"margin:0cm 0cm 0.0001pt"><a href=3D"https://lists.cip-project.=
+org/cip-testing-results" target=3D"_blank"><span style=3D"font-family:Arial=
+,sans-serif">https://lists.cip-project.org/cip-testing-results</span></a><u=
+></u><u></u></p>
+<p style=3D"margin:0cm 0cm 0.0001pt"><a href=3D"https://lists.cip-project.=
+org/cip-members" target=3D"_blank"><span style=3D"font-family:Arial,sans-se=
+rif">https://lists.cip-project.org/cip-members</span></a><u></u><u></u></p>
+<p style=3D"margin:0cm 0cm 0.0001pt"><a href=3D"https://lists.cip-project.=
+org/cip-security" target=3D"_blank"><span style=3D"font-family:Arial,sans-s=
+erif">https://lists.cip-project.org/cip-security</span></a><u></u><u></u></=
+p>
+<p class=3D"MsoNormal"><u></u>=C2=A0<u></u></p>
+<p style=3D"margin:0cm 0cm 0.0001pt"><span style=3D"font-size:12pt;font-fa=
+mily:Arial,sans-serif;color:rgb(29,28,29)">=C2=A0</span><u></u><u></u></p>
+<p style=3D"margin:0cm 0cm 0.0001pt"><span style=3D"font-size:12pt;font-fa=
+mily:Arial,sans-serif;color:rgb(29,28,29)">Email addresses</span><u></u><u>=
+</u></p>
+<p style=3D"margin:0cm 0cm 0.0001pt"><a href=3D"mailto:cip-board@lists.cip=
+-project.org" target=3D"_blank"><span style=3D"font-family:Arial,sans-serif=
+">cip-board@lists.cip-project.org</span></a><u></u><u></u></p>
+<p style=3D"margin:0cm 0cm 0.0001pt"><a href=3D"mailto:cip-dev@lists.cip-p=
+roject.org" target=3D"_blank"><span style=3D"font-family:Arial,sans-serif">=
+cip-dev@lists.cip-project.org</span></a><u></u><u></u></p>
+<p style=3D"margin:0cm 0cm 0.0001pt"><a href=3D"mailto:cip-testing-results=
+@lists.cip-project.org" target=3D"_blank"><span style=3D"font-family:Arial,=
+sans-serif">cip-testing-results@lists.cip-project.org</span></a><u></u><u><=
+/u></p>
+<p style=3D"margin:0cm 0cm 0.0001pt"><a href=3D"mailto:cip-members@lists.c=
+ip-projec.org" target=3D"_blank"><span style=3D"font-family:Arial,sans-seri=
+f">cip-members@lists.cip-project.org</span></a><u></u><u></u></p>
+<p style=3D"margin:0cm 0cm 0.0001pt"><a href=3D"mailto:cip-security@lists.=
+cip-project.org" target=3D"_blank"><span style=3D"font-family:Arial,sans-se=
+rif">cip-security@lists.cip-project.org</span></a><u></u><u></u></p>
+<p class=3D"MsoNormal"><u></u>=C2=A0<u></u></p>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<p class=3D"MsoNormal"><b><span style=3D"color:rgb(136,136,136)">Best rega=
+rds,</span></b><span style=3D"color:rgb(136,136,136)"><u></u><u></u></span>=
+</p>
+</div>
+<div>
+<p class=3D"MsoNormal"><b><span style=3D"color:rgb(136,136,136)">Neal</spa=
+n></b><span style=3D"color:rgb(136,136,136)"><u></u><u></u></span></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><span style=3D"color:rgb(136,136,136)"><u></u>=C2=
+=A0<u></u></span></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><b><span style=3D"color:rgb(136,136,136)">Neal Caid=
+in</span></b><span style=3D"color:rgb(136,136,136)"><u></u><u></u></span></=
+p>
+<div>
+<div>
+<p class=3D"MsoNormal"><span style=3D"color:rgb(102,102,102)">Program Mana=
+ger, Program Management &amp; Operations</span><span style=3D"color:rgb(136=
+,136,136)"><u></u><u></u></span></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><span style=3D"color:rgb(102,102,102)">The Linux Fo=
+undation</span><span style=3D"color:rgb(136,136,136)"><u></u><u></u></span>=
+</p>
+</div>
+<div>
+<p class=3D"MsoNormal"><span style=3D"color:rgb(102,102,102)">+1 (919) 238=
+-9104 (w/h)<br>
++1 (919) 949-1861 (m)</span><span style=3D"color:rgb(136,136,136)"><u></u>=
+<u></u></span></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><span style=3D"color:rgb(102,102,102)"><a href=3D"m=
+ailto:ncaidin@linuxfoundation.org" target=3D"_blank">ncaidin@linuxfoundatio=
+n.org</a></span><span style=3D"color:rgb(136,136,136)"><u></u><u></u></span=
+></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p class=3D"MsoNormal"><u></u>=C2=A0<u></u></p>
+</div>
+<p class=3D"MsoNormal"><u></u>=C2=A0<u></u></p>
+<div>
+<div>
+<p class=3D"MsoNormal">On Mon, Apr 6, 2020 at 3:34 PM Neal Caidin &lt;<a h=
+ref=3D"mailto:ncaidin@linuxfoundation.org" target=3D"_blank">ncaidin@linuxf=
+oundation.org</a>&gt; wrote:<u></u><u></u></p>
+</div>
+<blockquote style=3D"border-top:none;border-right:none;border-bottom:none;=
+border-left:1pt solid rgb(204,204,204);padding:0cm 0cm 0cm 6pt;margin-left:=
+4.8pt;margin-right:0cm">
+<div>
+<div>
+<p class=3D"MsoNormal">Reminder.=C2=A0 Mailman2 to Groups.io conversion ab=
+out to kick off (about an 1 1/2 hours=C2=A0from now).<u></u><u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><u></u>=C2=A0<u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><u></u>=C2=A0<u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal">Please see schedule below.<u></u><u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><u></u>=C2=A0<u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal">Best Regards,<u></u><u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal">Neal<u></u><u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><u></u>=C2=A0<u></u></p>
+</div>
+<div>
+<div>
+<p class=3D"MsoNormal"><u></u>=C2=A0<u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><br clear=3D"all">
+<u></u><u></u></p>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<p class=3D"MsoNormal"><b><span style=3D"color:rgb(136,136,136)">Neal Caid=
+in</span></b><span style=3D"color:rgb(136,136,136)"><u></u><u></u></span></=
+p>
+<div>
+<div>
+<p class=3D"MsoNormal"><span style=3D"color:rgb(102,102,102)">Program Mana=
+ger, Program Management &amp; Operations</span><span style=3D"color:rgb(136=
+,136,136)"><u></u><u></u></span></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><span style=3D"color:rgb(102,102,102)">The Linux Fo=
+undation</span><span style=3D"color:rgb(136,136,136)"><u></u><u></u></span>=
+</p>
+</div>
+<div>
+<p class=3D"MsoNormal"><span style=3D"color:rgb(102,102,102)">+1 (919) 238=
+-9104 (w/h)<br>
++1 (919) 949-1861 (m)</span><span style=3D"color:rgb(136,136,136)"><u></u>=
+<u></u></span></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><span style=3D"color:rgb(102,102,102)"><a href=3D"m=
+ailto:ncaidin@linuxfoundation.org" target=3D"_blank">ncaidin@linuxfoundatio=
+n.org</a></span><span style=3D"color:rgb(136,136,136)"><u></u><u></u></span=
+></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p class=3D"MsoNormal"><u></u>=C2=A0<u></u></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><u></u>=C2=A0<u></u></p>
+<div>
+<div>
+<p class=3D"MsoNormal">On Thu, Apr 2, 2020 at 4:56 PM Neal Caidin &lt;<a h=
+ref=3D"mailto:ncaidin@linuxfoundation.org" target=3D"_blank">ncaidin@linuxf=
+oundation.org</a>&gt; wrote:<u></u><u></u></p>
+</div>
+<blockquote style=3D"border-top:none;border-right:none;border-bottom:none;=
+border-left:1pt solid rgb(204,204,204);padding:0cm 0cm 0cm 6pt;margin-left:=
+4.8pt;margin-right:0cm">
+<div>
+<p class=3D"MsoNormal">[cross posted]<u></u><u></u></p>
+<div>
+<p class=3D"MsoNormal"><u></u>=C2=A0<u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal">Reminder.=C2=A0 Mailman2 to Groups.io email is sche=
+duled to start on=C2=A0<u></u><u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><u></u>=C2=A0<u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal">Pacific - 2 pm , Monday, April 6<u></u><u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal">Eastern - 5 pm, Monday April 6<u></u><u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal">CET - 11 pm, Monday April 6<u></u><u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal">JST - 6 am, Tuesday, April 7<u></u><u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><u></u>=C2=A0<u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal">It is expected to take several hours, but could be =
+as much as a full 24 hours.=C2=A0<u></u><u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><u></u>=C2=A0<u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal">When the migration is completed, I will send out th=
+e links so that you can access email archives.<u></u><u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><u></u>=C2=A0<u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal">Best regards,<u></u><u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal">Neal<u></u><u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><u></u>=C2=A0<u></u></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><br clear=3D"all">
+<u></u><u></u></p>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<div>
+<p class=3D"MsoNormal"><b><span style=3D"color:rgb(136,136,136)">Neal Caid=
+in</span></b><span style=3D"color:rgb(136,136,136)"><u></u><u></u></span></=
+p>
+<div>
+<div>
+<p class=3D"MsoNormal"><span style=3D"color:rgb(102,102,102)">Program Mana=
+ger, Program Management &amp; Operations</span><span style=3D"color:rgb(136=
+,136,136)"><u></u><u></u></span></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><span style=3D"color:rgb(102,102,102)">The Linux Fo=
+undation</span><span style=3D"color:rgb(136,136,136)"><u></u><u></u></span>=
+</p>
+</div>
+<div>
+<p class=3D"MsoNormal"><span style=3D"color:rgb(102,102,102)">+1 (919) 238=
+-9104 (w/h)<br>
++1 (919) 949-1861 (m)</span><span style=3D"color:rgb(136,136,136)"><u></u>=
+<u></u></span></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><span style=3D"color:rgb(102,102,102)"><a href=3D"m=
+ailto:ncaidin@linuxfoundation.org" target=3D"_blank">ncaidin@linuxfoundatio=
+n.org</a></span><span style=3D"color:rgb(136,136,136)"><u></u><u></u></span=
+></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</blockquote>
+</div>
+</div>
+</blockquote>
+</div>
+</div>
+<div>
+<p class=3D"MsoNormal"><u></u></p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+<p></p><p></p></blockquote></div>
+
+--00000000000052a30d05a2decd41--
+
+--JJ4Mxb1zIsTDMbwVIf8g
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -428,12 +742,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#4571): https://lists.cip-project.org/g/cip-dev/message=
-/4571
-Mute This Topic: https://lists.cip-project.org/mt/72898917/4520388
+View/Reply Online (#4572): https://lists.cip-project.org/g/cip-dev/message=
+/4572
+Mute This Topic: https://lists.cip-project.org/mt/72901916/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---FeKs4eTdwipqWeOzaCWx--
+--JJ4Mxb1zIsTDMbwVIf8g--
