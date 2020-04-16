@@ -1,4 +1,4 @@
-Return-Path: <SRS0=gzRl=6A=lists.cip-project.org=bounce+64572+4581+4520388+8129055@kernel.org>
+Return-Path: <SRS0=K/uD=6A=lists.cip-project.org=bounce+64572+4582+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: **
@@ -6,120 +6,135 @@ X-Spam-Status: No, score=2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,HTML_MESSAGE,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C38CC2BB85
-	for <cip-dev@archiver.kernel.org>; Thu, 16 Apr 2020 08:16:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAF0DC2BB85
+	for <cip-dev@archiver.kernel.org>; Thu, 16 Apr 2020 08:18:15 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id ABCF221655
-	for <cip-dev@archiver.kernel.org>; Thu, 16 Apr 2020 08:16:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 98D142078B
+	for <cip-dev@archiver.kernel.org>; Thu, 16 Apr 2020 08:18:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="ELme7XnZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABCF221655
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4581+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id rAqfYY4521723xPem6KpSldy; Thu, 16 Apr 2020 01:16:01 -0700
-X-Received: from JPN01-OS2-obe.outbound.protection.outlook.com (JPN01-OS2-obe.outbound.protection.outlook.com [40.107.141.97])
- by mx.groups.io with SMTP id smtpd.web12.2531.1587024960237187388
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="B5YWAHaT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98D142078B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cybertrust.co.jp
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4582+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id NK8eYY4521723xcbpmMCNWMp; Thu, 16 Apr 2020 01:18:15 -0700
+X-Received: from APC01-HK2-obe.outbound.protection.outlook.com (APC01-HK2-obe.outbound.protection.outlook.com [40.107.130.132])
+ by mx.groups.io with SMTP id smtpd.web12.2549.1587025093491550618
  for <cip-dev@lists.cip-project.org>;
- Thu, 16 Apr 2020 01:16:00 -0700
+ Thu, 16 Apr 2020 01:18:14 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lXaoRpOArlpgvt0ty9np/B0Na6YZlRTRt0Tg1yPymihafqxZHOlvsOsVm7a/iHfdWzLhOyu5pvKAlImQRmyVenSDUWfO9tKLnpc/KsQuXel6u8DD/V/Ts74s0SHQgW/jFVL+SmYYDJqMZAXeZFW9srs5G3aH/Q9JWUNEvetc972uB421WkdIvFi3pjPxX8fx9I3+deueRg4hBL0UmvcUTMyAIvgdm8AviaqaX6y2LKc5Od/EGlluZjBFqFtfBeBbtSsbpxSb36i7SDoC+Vw2vouebDRkETHoUsE0o51uq+BwaxaFXa6Y1gs1V427UqeJc30vP42jsUDm6Kx0XavHmA==
+ b=beB6AhGo8ZWPnRE1laBIQcgMZSNzSJu5XY2LoAqpatGEb5h3c+GK+7CckkFBwWQYd2jZwwPl6FQTJKUsLp1+RBH2TXOjv6VNF3hcbblVx/Y7q1on4a2vYJrUwQc5eKzV6uMzJrdT4gmOTEo/Qau8rMPmtOfWnqvfJE6pKROKdL0yT0l3xIkVuY2bz860KnUR02fqCcds24hwK/qhjEg0H0p4f2iK0eFglc66GNLzybcrgfAPlzc3zV4EI6U1qEcw5NnsP9M9cB6w7IGdRiQ99vUnJRP78z638Y2K/747duiJ9MrJBPafRdv3Rc30vLyRQtHsSbKCOWqrf4arrgr25w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c05SnldjDGzYvtEY2tG/fXhOyuvDs//GUt70gufr+1Q=;
- b=CvW4jqietrmb8x7TIPBkBTGuhsfEKj4AG3g3mSOFAx2Vj2lBLU3i++7N4zs5uH3EfSyyEmroFGSd0U/d3oOy7DEm1i+6eWfIC+xleKmedolu6CU/RVv0qXFfKCBaGRLzv6KVAJtkWm34yt36iiWsMKfW517hisorBYcjzkQ03Mpj6arrGYTkyMwU0pHnq+GNfTm9QwF87iGEF5m1KGqJwCftEdZrOlq7iRN7IhaR/6IZdDDwVc96EYJMsTnStEiwyRswEh/j0C825cNkG7DyA8C3CC4MhnX1FemLN6owV7SzsrjaUleiTP0YPAUEe2rHuciSr1N4+nC7j/qW2YxZJg==
+ bh=8XqV7KYX6P4I9w3u63zMAuF7lKfLzrq8rMUm7kQyd9Q=;
+ b=mXUidDg79iOLqEaTi8SqSbwUEJaPBD85AT0eXbq5GpSL+KiwpnYbieG2Fb9pMPCIzUw7K42zo3/ZcNE3BNjnGzjhzMoFe0jlH/ZFGAd0vdEnyU64eu7PXoboLqxUyPnVD9186LX+i5Pjh5gqs8T8ujclV19cbzIzVRCHoqBeYpsCvGGDqlxvOBDS+9KWev0geKOpFWIaoLbeeSS5N/85jFF04gE7NQ3Du0+NrxihYebL8Kw4VHvGMEgp3w9/TyoWdLpy7RjMOc1fEY9ITeGcHvHr/USwJtZz0jOlkGeB/1NaPpuvYVKgbqeS9fBhHanR1oZmPfWhC6gBWv+LJrY+QQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-X-Received: from OSAPR01MB2274.jpnprd01.prod.outlook.com (52.134.237.151) by
- OSAPR01MB4658.jpnprd01.prod.outlook.com (20.178.129.151) with Microsoft SMTP
+ smtp.mailfrom=cybertrust.co.jp; dmarc=pass action=none
+ header.from=cybertrust.co.jp; dkim=pass header.d=cybertrust.co.jp; arc=none
+X-Received: from TY2PR01MB4972.jpnprd01.prod.outlook.com (20.179.172.148) by
+ TY2PR01MB3130.jpnprd01.prod.outlook.com (20.177.99.21) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2878.19; Thu, 16 Apr 2020 08:15:56 +0000
-X-Received: from OSAPR01MB2274.jpnprd01.prod.outlook.com
- ([fe80::5408:e563:4528:4b92]) by OSAPR01MB2274.jpnprd01.prod.outlook.com
- ([fe80::5408:e563:4528:4b92%5]) with mapi id 15.20.2900.028; Thu, 16 Apr 2020
- 08:15:56 +0000
-From: "Chris Paterson" <chris.paterson2@renesas.com>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
+ 15.20.2878.20; Thu, 16 Apr 2020 08:18:10 +0000
+X-Received: from TY2PR01MB4972.jpnprd01.prod.outlook.com
+ ([fe80::e845:c7d4:4f:c3cc]) by TY2PR01MB4972.jpnprd01.prod.outlook.com
+ ([fe80::e845:c7d4:4f:c3cc%7]) with mapi id 15.20.2878.023; Thu, 16 Apr 2020
+ 08:18:09 +0000
+From: "masashi.kudo@cybertrust.co.jp" <masashi.kudo@cybertrust.co.jp>
+To: <cip-dev@lists.cip-project.org>
 Subject: Re: [cip-dev] CIP IRC weekly meeting today
-Thread-Topic: CIP IRC weekly meeting today
-Thread-Index: AdYTkwPVJpEHHN+iQmCdazHKo4mwewANAr4G
-Date: Thu, 16 Apr 2020 08:15:56 +0000
+Thread-Topic: [cip-dev] CIP IRC weekly meeting today
+Thread-Index: AdYTkwPVJpEHHN+iQmCdazHKo4mwewANAr4GAAAQoAA=
+Date: Thu, 16 Apr 2020 08:18:09 +0000
 Message-ID: 
- <OSAPR01MB227422068AA5F1DBFDF37DA2B7D80@OSAPR01MB2274.jpnprd01.prod.outlook.com>
+ <TY2PR01MB49729AE1CA852AC36C2F57FCA0D80@TY2PR01MB4972.jpnprd01.prod.outlook.com>
 References: 
  <TY2PR01MB497244C4E5B3D48167AFF5ADA0D80@TY2PR01MB4972.jpnprd01.prod.outlook.com>
+ <OSAPR01MB227422068AA5F1DBFDF37DA2B7D80@OSAPR01MB2274.jpnprd01.prod.outlook.com>
 In-Reply-To: 
- <TY2PR01MB497244C4E5B3D48167AFF5ADA0D80@TY2PR01MB4972.jpnprd01.prod.outlook.com>
-Accept-Language: en-GB, en-US
+ <OSAPR01MB227422068AA5F1DBFDF37DA2B7D80@OSAPR01MB2274.jpnprd01.prod.outlook.com>
+Accept-Language: ja-JP, en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [151.224.220.27]
+x-originating-ip: [122.216.27.145]
 x-ms-publictraffictype: Email
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 462859f5-183c-45db-45dd-08d7e1de6359
-x-ms-traffictypediagnostic: OSAPR01MB4658:
+x-ms-office365-filtering-correlation-id: 92bf750a-125f-4e36-a504-08d7e1deb30f
+x-ms-traffictypediagnostic: TY2PR01MB3130:
 x-microsoft-antispam-prvs: 
- <OSAPR01MB46587F2BAA6075D84AA6C4E0B7D80@OSAPR01MB4658.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3276;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
+ <TY2PR01MB3130544C7941FDADB46FEF94A0D80@TY2PR01MB3130.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4941;
+received-spf: None (protection.outlook.com: cybertrust.co.jp does not
+ designate permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam-message-info: 
- AEC2sKFssR5Hf5vOu6fPgs8nJ13im0QXKCE0jd/AXfDsLrawNPcSCswF4lNMVLuhmsbMFdbfNx0z0brFuqxU9VYBTCP4eEaWYFBaDXotaWYSoEWxDip+JSSjHWUJ+e2RE4VSe+2ifkmeiBBkjKx2BQimJnfWOn8TNzLUdHC6RVCYv6g+qhRIX1QVQExNUmsIK1kNtRGBDzx87XzoJZ8lJki9EKwtw64HEr7VanOP501vURLw8/B5+vfaAL7C0yDDvATuTT3apqid81HRsI8yb3n5IO+HwnawZ3eUxyDpekTzFZkyQoIcWYfVBAFMklNJzRI/DQTCWuwvCTZvdKcRsRFD06Y4ykHNGOLAoGxawIZEvkFGEHHMcSwEqyKwAbWL++GjL8cJ0OgotQCrZCKOVOEonn/b/TUsi5J8+ckU48zyt/gucyHLA9OCSThY9DFC7a1VOd+3lC6+O5EQ7p9RD5/9GHjv/FQgV+b5S09wOeFz439zMEpwUeAu/dZxgspJHwywHS3K/kcFKIpaCb7GZQ==
+ nnZv0yANZ7/kluEAe7GY8RRhhfnf2/0ztOHS6q5dT1TkiKAN80CpLPByVo2bauwFNEy7eNgrzFtXEazA8h4I37mI8Kr2Q06b3dDly8qGRJicVDV8HQck8FwPrkkKhGYoKbupYOu6la/5aVVmHW7ryWcvnhPaCOxK+3YfNAMpCq7Gd0zILrK8AwZhBVzkX2zBxOv9EHKnOa9vno43fPqMmY262CChOOT/IQkFJSJHU77D/YUY3FFQ2p8vxYFRAPoLGGfXVoNTmWe0xjGo6+oVFc3gvgcDk4tPqlEaZCRySqmwICbtuV5AehzzJJypPOxTb2xmUOsunKm9ulzFc3yV25cNMG51RjEM3+X5m0DxNA00pi21ZAYZnSy8ARNkGtT4nuIb0vxJQWXnFhEQYBvcRKUu1g2vBhqvrkFnk4lbyPUf/pgbsjpnDOSebOdXPgTZmD/R+KuSsqxHWjNRA1hfCudGd3cpdAQ7KaOOnq2V0zuOV6E9mOpOeU31c1o5f05qn+oAJD9IIucfzobLR7oozQ==
 x-ms-exchange-antispam-messagedata: 
- 3BVCSdq1ajznZNokgoYsoxom8T07lsFIYftVn2/vUUxuftPwfx1zkiiyBd9ko+iPv+NuuX9IXgUs5MF9vO4pTLuiKcw7njVYTsuGwTL7xTWWA5xm/YexWv9q2sLf0gQflwcdCXEZIOvjyZPRMEKvYg==
+ mvzr/MkeUkKr/98vbI9XHcVdN22fnQb+rXccQko3sgbtS11YCPVfvIRjHgDxsQgeFYEVqmAfXjGpexi2jrnnkhafIf2O93GVjahgsR6djIue+A7xAybUxMZjvkHWUe48lsfzR8T9Wr9uf6nmec1ZZQ==
 x-ms-exchange-transport-forked: True
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 462859f5-183c-45db-45dd-08d7e1de6359
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Apr 2020 08:15:56.0299
+X-OriginatorOrg: cybertrust.co.jp
+X-MS-Exchange-CrossTenant-Network-Message-Id: 92bf750a-125f-4e36-a504-08d7e1deb30f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Apr 2020 08:18:09.8671
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-id: 72cc4624-32b4-4dab-b80a-8563e559bd82
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: L6457GW2zeZNL8NdrqrVpFgfUhRFNz2PVxTWzVG0QljepMu3xGiXZfbTBupvtqdME7pg17jZMQ3VKJ0Jv+ozW9LKcgLuEklCM4ymTtobr9U=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB4658
+X-MS-Exchange-CrossTenant-userprincipalname: cVSJO1WAl0ZL+2k6A+K5E84A0a1za4I6SzfvlT/89Iti+Qbr0jnhHy4J6+3vij0n/pe1F+McTJ7TNVR7bOvgTkJk7lr4+6dt3s/uXJQUHO0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB3130
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: KokaUfSFAzO6CfH6Y7KxRZElx4520388AA=
-Content-Type: multipart/mixed; boundary="RSNpOfwxC0ptztMotynS"
+X-Gm-Message-State: bngSswKDy3fSpbmJELFneKyPx4520388AA=
+Content-Type: multipart/mixed; boundary="ZSnJVmISl6D1nzFmd7OH"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1587024961;
- bh=sc/FQ9Qzw9SlVWx7Sa8M/nSjxeX/lpfVv0dJ9UzFHiQ=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1587025095;
+ bh=olZjUNRwECHxnQpeH05tyrZLjH6t+Jnkl2AMFAYtNVE=;
  h=Content-Type:Date:From:Reply-To:Subject:To;
- b=ELme7XnZM9Kw4P75Akp9h11L3scedTpwVEow6U2h+bLAZ0xfVYQhOiBgbeuusRD4syF
- T/CcXDm6FVDBQaIZ8VRvmEBu0RLW1btPhv3sL39tFYAWcwC7Rk+3hbv+4ZQQ9FWJ5XSEb
- 3gS9wlFnFdhR2gS5ruBoWA4m05RPNO6Pu94=
+ b=B5YWAHaTGyqwbtQwjthNYgS1CWGH9C3tjioS3zq+pVoLWGb6ZxWui2Aiwa3KxNmngo/
+ f5moPnP8m/DB7p1tn3D1u5CcKFWSp6whCelZscOzBttEPMoUMq0hTa0NU+6JQulFS8WJI
+ U52UUBdqe0uUZ/j/Cgh7VdXBDJg9LwkVZj0=
 
---RSNpOfwxC0ptztMotynS
-Content-Language: en-GB
+--ZSnJVmISl6D1nzFmd7OH
+Content-Language: ja-JP
 Content-Type: multipart/alternative;
-	boundary="_000_OSAPR01MB227422068AA5F1DBFDF37DA2B7D80OSAPR01MB2274jpnp_"
+	boundary="_000_TY2PR01MB49729AE1CA852AC36C2F57FCA0D80TY2PR01MB4972jpnp_"
 
---_000_OSAPR01MB227422068AA5F1DBFDF37DA2B7D80OSAPR01MB2274jpnp_
-Content-Type: text/plain; charset="us-ascii"
+--_000_TY2PR01MB49729AE1CA852AC36C2F57FCA0D80TY2PR01MB4972jpnp_
+Content-Type: text/plain; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
 
+Hi, Chris-san,
+
+Sure, please rest at ease, and stay safe. See you next week.
+
+Best regards,
+--
+M. Kudo
+
+From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On Beha=
+lf Of Chris Paterson
+Sent: Thursday, April 16, 2020 5:16 PM
+To: cip-dev@lists.cip-project.org
+Subject: Re: [cip-dev] CIP IRC weekly meeting today
+
 Hello Kudo-san,
-
 Please accept my apologies for today's meeting as I am on leave this week.
-
 No major updates to report from the testing working group.
-
 Kind regards, Chris
 ________________________________
-From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> on beha=
-lf of masashi.kudo@cybertrust.co.jp via lists.cip-project.org <masashi.kudo=
-=3Dcybertrust.co.jp@lists.cip-project.org>
+From: cip-dev@lists.cip-project.org<mailto:cip-dev@lists.cip-project.org> <=
+cip-dev@lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>> on beh=
+alf of masashi.kudo@cybertrust.co.jp<mailto:masashi.kudo@cybertrust.co.jp> =
+via lists.cip-project.org <masashi.kudo=3Dcybertrust.co.jp@lists.cip-projec=
+t.org<mailto:masashi.kudo=3Dcybertrust.co.jp@lists.cip-project.org>>
 Sent: Thursday, April 16, 2020 3:02:49 AM
-To: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org>
+To: cip-dev@lists.cip-project.org<mailto:cip-dev@lists.cip-project.org> <ci=
+p-dev@lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>>
 Subject: [cip-dev] CIP IRC weekly meeting today
 
 Hi all,
@@ -174,50 +189,159 @@ Best regards,
 M. Kudo
 Cybertrust Japan Co., Ltd.
 
---_000_OSAPR01MB227422068AA5F1DBFDF37DA2B7D80OSAPR01MB2274jpnp_
-Content-Type: text/html; charset="us-ascii"
+--_000_TY2PR01MB49729AE1CA852AC36C2F57FCA0D80TY2PR01MB4972jpnp_
+Content-Type: text/html; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
 
-<html>
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
+osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
+//www.w3.org/TR/REC-html40">
 <head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
->
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
+jp">
+<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
+<!--[if !mso]><style>v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style><![endif]--><style><!--
+/* Font Definitions */
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:=1B$B^b%4%7%C%/=1B(B;
+	panose-1:2 11 4 0 0 0 0 0 0 0;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+@font-face
+	{font-family:"\@=1B$B^b%4%7%C%/=1B(B";
+	panose-1:2 11 4 0 0 0 0 0 0 0;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0mm;
+	margin-bottom:.0001pt;
+	font-size:11.0pt;
+	font-family:"Calibri",sans-serif;}
+a:link, span.MsoHyperlink
+	{mso-style-priority:99;
+	color:blue;
+	text-decoration:underline;}
+a:visited, span.MsoHyperlinkFollowed
+	{mso-style-priority:99;
+	color:purple;
+	text-decoration:underline;}
+p.msonormal0, li.msonormal0, div.msonormal0
+	{mso-style-name:msonormal;
+	mso-margin-top-alt:auto;
+	margin-right:0mm;
+	mso-margin-bottom-alt:auto;
+	margin-left:0mm;
+	font-size:11.0pt;
+	font-family:"Calibri",sans-serif;}
+span.19
+	{mso-style-type:personal-reply;
+	font-family:=1B$B^b%4%7%C%/=1B(B;
+	color:windowtext;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	font-size:10.0pt;}
+@page WordSection1
+	{size:612.0pt 792.0pt;
+	margin:99.25pt 30.0mm 30.0mm 30.0mm;}
+div.WordSection1
+	{page:WordSection1;}
+--></style><!--[if gte mso 9]><xml>
+<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026">
+<v:textbox inset=3D"5.85pt,.7pt,5.85pt,.7pt" />
+</o:shapedefaults></xml><![endif]--><!--[if gte mso 9]><xml>
+<o:shapelayout v:ext=3D"edit">
+<o:idmap v:ext=3D"edit" data=3D"1" />
+</o:shapelayout></xml><![endif]-->
 </head>
-<body>
-<div dir=3D"auto" style=3D"direction: ltr; margin: 0; padding: 0; font-fami=
-ly: sans-serif; font-size: 11pt; color: black; ">
-Hello Kudo-san,<br>
-<br>
+<body lang=3D"JA" link=3D"blue" vlink=3D"purple">
+<div class=3D"WordSection1">
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:=1B$B^b%4%=
+7%C%/=1B(B">Hi, Chris-san,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:=1B$B^b%4%=
+7%C%/=1B(B"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:=1B$B^b%4%=
+7%C%/=1B(B">Sure, please rest at ease, and stay safe. See you next week.<o:=
+p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:=1B$B^b%4%=
+7%C%/=1B(B"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:=1B$B^b%4%=
+7%C%/=1B(B">Best regards,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:=1B$B^b%4%=
+7%C%/=1B(B">--<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:=1B$B^b%4%=
+7%C%/=1B(B">M. Kudo<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:=1B$B^b%4%=
+7%C%/=1B(B"><o:p>&nbsp;</o:p></span></p>
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0mm =
+0mm 0mm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US">From:</span></b><span lang=
+=3D"EN-US"> cip-dev@lists.cip-project.org &lt;cip-dev@lists.cip-project.org=
+&gt;
+<b>On Behalf Of </b>Chris Paterson<br>
+<b>Sent:</b> Thursday, April 16, 2020 5:16 PM<br>
+<b>To:</b> cip-dev@lists.cip-project.org<br>
+<b>Subject:</b> Re: [cip-dev] CIP IRC weekly meeting today<o:p></o:p></span=
+></p>
 </div>
-<div dir=3D"auto" style=3D"direction: ltr; margin: 0; padding: 0; font-fami=
-ly: sans-serif; font-size: 11pt; color: black; ">
-Please accept my apologies for today's meeting as I am on leave this week.<=
-br>
-<br>
 </div>
-<div dir=3D"auto" style=3D"direction: ltr; margin: 0; padding: 0; font-fami=
-ly: sans-serif; font-size: 11pt; color: black; ">
-No major updates to report from the testing working group.<br>
-<br>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<div>
+<p class=3D"MsoNormal" style=3D"margin-bottom:12.0pt"><span lang=3D"EN-US" =
+style=3D"font-family:&quot;Arial&quot;,sans-serif;color:black">Hello Kudo-s=
+an,<o:p></o:p></span></p>
 </div>
-<div dir=3D"auto" style=3D"direction: ltr; margin: 0; padding: 0; font-fami=
-ly: sans-serif; font-size: 11pt; color: black; ">
-Kind regards, Chris</div>
-<hr style=3D"display:inline-block;width:98%" tabindex=3D"-1">
-<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" st=
-yle=3D"font-size:11pt" color=3D"#000000"><b>From:</b> cip-dev@lists.cip-pro=
-ject.org &lt;cip-dev@lists.cip-project.org&gt; on behalf of masashi.kudo@cy=
-bertrust.co.jp via lists.cip-project.org &lt;masashi.kudo=3Dcybertrust.co.j=
-p@lists.cip-project.org&gt;<br>
+<div>
+<p class=3D"MsoNormal" style=3D"margin-bottom:12.0pt"><span lang=3D"EN-US" =
+style=3D"font-family:&quot;Arial&quot;,sans-serif;color:black">Please accep=
+t my apologies for today's meeting as I am on leave this week.<o:p></o:p></=
+span></p>
+</div>
+<div>
+<p class=3D"MsoNormal" style=3D"margin-bottom:12.0pt"><span lang=3D"EN-US" =
+style=3D"font-family:&quot;Arial&quot;,sans-serif;color:black">No major upd=
+ates to report from the testing working group.<o:p></o:p></span></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Aria=
+l&quot;,sans-serif;color:black">Kind regards, Chris<o:p></o:p></span></p>
+</div>
+<div class=3D"MsoNormal" align=3D"center" style=3D"text-align:center"><span=
+ lang=3D"EN-US">
+<hr size=3D"2" width=3D"98%" align=3D"center">
+</span></div>
+<div id=3D"divRplyFwdMsg">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"color:black">From:<=
+/span></b><span lang=3D"EN-US" style=3D"color:black">
+<a href=3D"mailto:cip-dev@lists.cip-project.org">cip-dev@lists.cip-project.=
+org</a> &lt;<a href=3D"mailto:cip-dev@lists.cip-project.org">cip-dev@lists.=
+cip-project.org</a>&gt; on behalf of
+<a href=3D"mailto:masashi.kudo@cybertrust.co.jp">masashi.kudo@cybertrust.co=
+.jp</a> via lists.cip-project.org &lt;<a href=3D"mailto:masashi.kudo=3Dcybe=
+rtrust.co.jp@lists.cip-project.org">masashi.kudo=3Dcybertrust.co.jp@lists.c=
+ip-project.org</a>&gt;<br>
 <b>Sent:</b> Thursday, April 16, 2020 3:02:49 AM<br>
-<b>To:</b> cip-dev@lists.cip-project.org &lt;cip-dev@lists.cip-project.org&=
-gt;<br>
-<b>Subject:</b> [cip-dev] CIP IRC weekly meeting today</font>
-<div>&nbsp;</div>
+<b>To:</b> <a href=3D"mailto:cip-dev@lists.cip-project.org">cip-dev@lists.c=
+ip-project.org</a> &lt;<a href=3D"mailto:cip-dev@lists.cip-project.org">cip=
+-dev@lists.cip-project.org</a>&gt;<br>
+<b>Subject:</b> [cip-dev] CIP IRC weekly meeting today</span><span lang=3D"=
+EN-US"> <o:p>
+</o:p></span></p>
+<div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;<o:p></o:p></span></p>
 </div>
-<div class=3D"BodyFragment"><font size=3D"2"><span style=3D"font-size:11pt;=
-">
-<div class=3D"PlainText">Hi all,<br>
+</div>
+<div>
+<div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">Hi all,<br>
 <br>
 Kindly be reminded to attend the weekly meeting through IRC to discuss tech=
 nical topics with CIP kernel today.<br>
@@ -274,15 +398,16 @@ makes sense and those involved in the topics can stay. Otherwise, the topic=
 Best regards,<br>
 --<br>
 M. Kudo<br>
-Cybertrust Japan Co., Ltd.<br>
+Cybertrust Japan Co., Ltd.<o:p></o:p></span></p>
 </div>
-</span></font></div>
+</div>
+</div>
 </body>
 </html>
 
---_000_OSAPR01MB227422068AA5F1DBFDF37DA2B7D80OSAPR01MB2274jpnp_--
+--_000_TY2PR01MB49729AE1CA852AC36C2F57FCA0D80TY2PR01MB4972jpnp_--
 
---RSNpOfwxC0ptztMotynS
+--ZSnJVmISl6D1nzFmd7OH
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -290,12 +415,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#4581): https://lists.cip-project.org/g/cip-dev/message=
-/4581
+View/Reply Online (#4582): https://lists.cip-project.org/g/cip-dev/message=
+/4582
 Mute This Topic: https://lists.cip-project.org/mt/73047683/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---RSNpOfwxC0ptztMotynS--
+--ZSnJVmISl6D1nzFmd7OH--
