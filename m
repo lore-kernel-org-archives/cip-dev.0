@@ -1,44 +1,43 @@
-Return-Path: <SRS0=PAYY=6G=lists.cip-project.org=bounce+64572+4595+4520388+8129055@kernel.org>
+Return-Path: <SRS0=Ys6w=6G=lists.cip-project.org=bounce+64572+4594+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D291C5518A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 786FCC5518B
 	for <cip-dev@archiver.kernel.org>; Wed, 22 Apr 2020 07:13:15 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 092872075E
+	by mail.kernel.org (Postfix) with ESMTPS id 08A682074F
 	for <cip-dev@archiver.kernel.org>; Wed, 22 Apr 2020 07:13:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="h5youhkA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 092872075E
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="UHj+uhvU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08A682074F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4595+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id 9MGyYY4521723xYcbmGaMTe9; Wed, 22 Apr 2020 00:13:14 -0700
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4594+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id Ak9PYY4521723xcApDLqNdx3; Wed, 22 Apr 2020 00:13:14 -0700
 X-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web10.1642.1587538311120287589
+ by mx.groups.io with SMTP id smtpd.web11.1671.1587538284277690755
  for <cip-dev@lists.cip-project.org>;
- Tue, 21 Apr 2020 23:51:51 -0700
+ Tue, 21 Apr 2020 23:51:25 -0700
 X-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 990761C00B7; Wed, 22 Apr 2020 08:51:49 +0200 (CEST)
-Date: Wed, 22 Apr 2020 08:51:49 +0200
+	id 85C891C00B7; Wed, 22 Apr 2020 08:51:20 +0200 (CEST)
+Date: Wed, 22 Apr 2020 08:51:20 +0200
 From: Pavel Machek <pavel@denx.de>
-To: Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	Pavel Machek <pavel@denx.de>,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+To: cip-dev@lists.cip-project.org
+Cc: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: Re: [cip-dev] [PATCH 0/2] Add HiHope RZ/G2M board with idk-1110wr display
-Message-ID: <20200422065149.GB12827@amd>
+Subject: Re: [cip-dev] [PATCH 1/2] dt-bindings: display: Add idk-1110wr binding
+Message-ID: <20200422065120.GA12827@amd>
 References: <1587412250-16752-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20200420202445.GA22198@duo.ucw.cz>
- <OSBPR01MB3590E5EA28170A1E12750991AAD50@OSBPR01MB3590.jpnprd01.prod.outlook.com>
+ <1587412250-16752-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20200420201554.GA15616@duo.ucw.cz>
+ <OSBPR01MB359064AC4D27A061E7671640AAD50@OSBPR01MB3590.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <OSBPR01MB3590E5EA28170A1E12750991AAD50@OSBPR01MB3590.jpnprd01.prod.outlook.com>
+In-Reply-To: <OSBPR01MB359064AC4D27A061E7671640AAD50@OSBPR01MB3590.jpnprd01.prod.outlook.com>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
@@ -46,36 +45,52 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: EDMtkYxPcVki70g9d4ff61yBx4520388AA=
-Content-Type: multipart/mixed; boundary="aYO6sErjmSL9QlZsb09T"
+X-Gm-Message-State: arQMjDC64T8HrNnv9XR1r7CMx4520388AA=
+Content-Type: multipart/mixed; boundary="Pu4agvcA591z71hlicp0"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=lists.cip-project.org; q=dns/txt; s=20140610; t=1587539594;
- bh=PxLEVhRPMA5l6c7ygPyF17kFVExF2PUOyjWbuN16C/M=;
+ bh=78dHF77PLEG1b8+VFghSjwIGlkDskznBfEUb+j9nzPE=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=h5youhkA/Ua5eNXpLLh7kSKzoOtDBgXG6T9/rn4HjqBNXqNaIc28qeX+JPoXKDozBTe
- uWnIvvT8etlNpuYz4uW+4eeS1k9UKYbQrf90HYYSds0psBXSCt7GeVAEFi4SmBbQ3Nkxu
- qGwGbSCsQrX5iG/RMSAe16tMeyiAIziv2Po=
+ b=UHj+uhvUM/e3xUJaijqeU9cVE4bzDssYc2uZuExZzghmjazS/68IdEFmvaEDJk5xPjN
+ OquDl0hxL+l4e5Fvvpg0V/dFzMC7hAQrci37lTWXuAjgPtdX6K2TUSIMsbEgSbHt6Vt5m
+ arPRbACb/2wL2avlXGgQpwtVwYM4ljtYSRw=
 
---aYO6sErjmSL9QlZsb09T
+--Pu4agvcA591z71hlicp0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="9zSXsLTf0vkW971A"
+	protocol="application/pgp-signature"; boundary="oyUTqETQ0mS9luUI"
 Content-Disposition: inline
 
---9zSXsLTf0vkW971A
+--oyUTqETQ0mS9luUI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> > > This patch series adds support idk-1110wr display on RZ/G2M board.
+> > > Add binding for the idk-1110wr LVDS panel from Advantech.
+> > >
+> > > Some panel-specific documentation can be found here:
+> > > https://buy.advantech.eu/Displays/Embedded-LCD-Kits-LCD-Kit-Modules/m=
+odel-IDK-1110WR-55WSA1E.htm
+> > >
+> > > This patch is based on commit d26087162857b12bd9d0424f2dea2cd9654e50a0
+> > > upstream ("dt-bindings: display: Add idk-1110wr binding") which adds =
+yaml
+> > > bindings.
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > >
-> > I assume it is for 4.19; subject does not say. Otherwise it looks good,
-> > so I'll test it and apply unless someone sees problem with it.
+> > Okay. In future, I believe we can take yaml binding, even for kernel
+> > where yaml support is not included. The markup is designed to be
+> > human-readable anyway.
 > >
-> Oops my bad, yes it's for 4.19.
+> Thanks I shall do that in future. Just for reference in case a yaml bindi=
+ng has a reference to other yaml binding  so should there be a patch for co=
+nverting to yaml format (for example panel.txt -> panel.yaml) ?
+>=20
 
-Thanks, I applied the series.
+Goal here is to save work, and this is just a documentation, so no, I
+don't believe we need to do more conversions.
 
 Best regards,
 								Pavel
@@ -83,21 +98,21 @@ Best regards,
 DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---9zSXsLTf0vkW971A
+--oyUTqETQ0mS9luUI
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAl6f6YUACgkQMOfwapXb+vLUewCguawRjZegMkcwVSi3Z+Y6Ru8p
-pRAAoIGKSh1JbN3xaqHVcD+H9geC2TIQ
-=4FC/
+iEYEARECAAYFAl6f6WgACgkQMOfwapXb+vJ9CACbBwgE93mUlSTR0W9T+u6EdTzm
+x5AAn3+qjntoh2eKwpQdnI49tZHutzqr
+=q7w+
 -----END PGP SIGNATURE-----
 
---9zSXsLTf0vkW971A--
+--oyUTqETQ0mS9luUI--
 
---aYO6sErjmSL9QlZsb09T
+--Pu4agvcA591z71hlicp0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -105,12 +120,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#4595): https://lists.cip-project.org/g/cip-dev/message=
-/4595
-Mute This Topic: https://lists.cip-project.org/mt/73158050/4520388
+View/Reply Online (#4594): https://lists.cip-project.org/g/cip-dev/message=
+/4594
+Mute This Topic: https://lists.cip-project.org/mt/73158052/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---aYO6sErjmSL9QlZsb09T--
+--Pu4agvcA591z71hlicp0--
