@@ -1,205 +1,193 @@
-Return-Path: <SRS0=5i49=7A=lists.cip-project.org=bounce+64572+4627+4520388+8129055@kernel.org>
+Return-Path: <SRS0=Pi9s=7A=lists.cip-project.org=bounce+64572+4628+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0659BC433E0
-	for <cip-dev@archiver.kernel.org>; Mon, 18 May 2020 08:35:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5BC3C433E0
+	for <cip-dev@archiver.kernel.org>; Mon, 18 May 2020 10:43:13 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 90F6C20657
-	for <cip-dev@archiver.kernel.org>; Mon, 18 May 2020 08:35:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 4C089207F5
+	for <cip-dev@archiver.kernel.org>; Mon, 18 May 2020 10:43:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="QjTxjQM7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90F6C20657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=siemens.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4627+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id JXaIYY4521723xFdVqgmzoj8; Mon, 18 May 2020 01:35:58 -0700
-X-Received: from goliath.siemens.de (goliath.siemens.de [192.35.17.28])
- by mx.groups.io with SMTP id smtpd.web12.37604.1589790956289868881
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="mtXQUPhE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C089207F5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toshiba-tsip.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4628+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id crT2YY4521723x9qDhlrcSQQ; Mon, 18 May 2020 03:43:12 -0700
+X-Received: from peak.toshiba-tesi.com (peak.toshiba-tesi.com [202.56.254.199])
+ by mx.groups.io with SMTP id smtpd.web11.39437.1589798591156330325
  for <cip-dev@lists.cip-project.org>;
- Mon, 18 May 2020 01:35:57 -0700
-X-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-	by goliath.siemens.de (8.15.2/8.15.2) with ESMTPS id 04I8ZrG3001180
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 18 May 2020 10:35:53 +0200
-X-Received: from [139.22.125.205] ([139.22.125.205])
-	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 04I8ZqgI016044;
-	Mon, 18 May 2020 10:35:52 +0200
+ Mon, 18 May 2020 03:43:12 -0700
+IronPort-SDR: hhnH6zvcl2bo4AJm4tPcmO3D1S6Xy+EGlFktgpdIcI9eEVM0TtKcRFryJFwTQCsaXJjH6BnWQC
+ 6plHiB94zwBQ==
+X-IronPort-AV: E=Sophos;i="5.73,406,1583173800"; 
+   d="scan'208";a="3742037"
+X-Received: from unknown (HELO TOSBLRMBX0219.TOSHIBA-TSIP.COM) ([172.28.80.119])
+  by peak.toshiba-tesi.com with ESMTP; 18 May 2020 16:38:50 +0530
+X-Received: from TOSBLRMBX0119.TOSHIBA-TSIP.COM (172.28.80.118) by
+ TOSBLRMBX0219.TOSHIBA-TSIP.COM (172.28.80.119) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1847.3; Mon, 18 May 2020 16:13:08 +0530
+X-Received: from TOSBLRMBX0119.TOSHIBA-TSIP.COM ([::1]) by
+ TOSBLRMBX0119.TOSHIBA-TSIP.COM ([fe80::fc54:5765:a052:196%9]) with mapi id
+ 15.01.1847.003; Mon, 18 May 2020 16:13:08 +0530
+From: "Dinesh Kumar" <dinesh.kumar@toshiba-tsip.com>
+To: "daniel.sangorrin@toshiba.co.jp" <daniel.sangorrin@toshiba.co.jp>,
+	"jan.kiszka@siemens.com" <jan.kiszka@siemens.com>,
+	"Chris.Paterson2@renesas.com" <Chris.Paterson2@renesas.com>
+CC: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	"cip-security@lists.cip-project.org" <cip-security@lists.cip-project.org>
 Subject: Re: [cip-dev][isar-cip-core] Integration of test and security dependencies with cip-core
-To: cip-dev@lists.cip-project.org,
-        "daniel.sangorrin@toshiba.co.jp" <daniel.sangorrin@toshiba.co.jp>,
-        "dinesh.kumar@toshiba-tsip.com" <dinesh.kumar@toshiba-tsip.com>,
-        "jan.kiszka@siemens.com" <jan.kiszka@siemens.com>
-Cc: "cip-security@lists.cip-project.org" <cip-security@lists.cip-project.org>
+Thread-Topic: [cip-dev][isar-cip-core] Integration of test and security
+ dependencies with cip-core
+Thread-Index: AdYs0vpAUKy4cgndQaKwQlyaddtP7gAKPr/g
+Date: Mon, 18 May 2020 10:43:08 +0000
+Message-ID: <46f4f0c5f28c47a29ce238b4b8b144f8@TOSHIBA-TSIP.COM>
 References: <OSBPR01MB2053900CD653D4E5CD4278EAD0B80@OSBPR01MB2053.jpnprd01.prod.outlook.com>
- <OSAPR01MB2385B768C9B6FF689451C626B7B80@OSAPR01MB2385.jpnprd01.prod.outlook.com>
-From: "Quirin Gylstorff" <quirin.gylstorff@siemens.com>
-Message-ID: <83617f18-4aed-f6cb-6ba6-2cb8e274d5be@siemens.com>
-Date: Mon, 18 May 2020 10:35:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+In-Reply-To: <OSBPR01MB2053900CD653D4E5CD4278EAD0B80@OSBPR01MB2053.jpnprd01.prod.outlook.com>
+Accept-Language: en-IN, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.28.80.121]
 MIME-Version: 1.0
-In-Reply-To: <OSAPR01MB2385B768C9B6FF689451C626B7B80@OSAPR01MB2385.jpnprd01.prod.outlook.com>
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: 1XhNTmuRWbcDVEIGnQhyhcxgx4520388AA=
-Content-Type: multipart/mixed; boundary="mXeuzArYVGKjSJ1YPEca"
+X-Gm-Message-State: dS8A55xguk9wiDqwR71PWB5rx4520388AA=
+Content-Type: multipart/mixed; boundary="WYzo53sLnp5WkQUiXEQ6"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1589790958;
- bh=k89Z/KeAYO5lyeY7bvS2U0zu6KGXWHYV8UDHxh7BfuA=;
- h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=QjTxjQM73P4z1V2OgFrkSdlrF72FoQJ+0XvM/56qCNWJMUYeOh8yxSXLqHCWRj5jr2b
- oO2lzIOzPvL83j3GwkSZPV9K2YRw+AoJrEX1p5Slm4EqI6zx9D+NenD9Q9NJL2Ds3RDiH
- mqUaso5MaNqx1hka4B8YuUIjz1QaG9Qsb3g=
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1589798592;
+ bh=vDiHnEMnXqIUhzLK2YnMy7hTArO889rUxRrNaQaH3io=;
+ h=CC:Content-Type:Date:From:Reply-To:Subject:To;
+ b=mtXQUPhENYbljjlJM6hRnSmUIQTaE/oKT8vYU0uGCgFWmOHleyyt9bfgSrfCWGadOLW
+ +mnDAb/T+kEMITGLBng/PPE4YcHCH2iETMrj6R6tNU7UeY5/6eMDE35oxkMvaf94dDR4w
+ EiPlAr1KYHuFa4YQZoc0Vk/NR5NJ6SRPYig=
 
---mXeuzArYVGKjSJ1YPEca
-Content-Type: text/plain; charset=utf-8; format=flowed
+--WYzo53sLnp5WkQUiXEQ6
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+
+SGVsbG8gRGFuaWVsLXNhbg0KDQpUaGFua3MgZm9yIGJyaW5naW5nIHRoaXMgdG9waWMgYXMgdGhp
+cyB3aWxsIGhlbHAgdXMgaW4gbWFueSB3YXlzIHN1Y2ggYXMgY3JlYXRpbmcgaW1hZ2VzIGZvciB2
+YXJpb3VzIHJlcXVpcmVtZW50cyBhcyB3ZWxsIGFzIGZsZXhpYmlsaXR5IGZvciBjdXN0b21pemF0
+aW9ucy4NCkkgaGF2ZSBhIHF1ZXN0aW9uLCB3aGlsZSBwbGFubmluZyB0aGlzIGFjdGl2aXR5IGNh
+biB3ZSBkZWZpbmUgc29tZSB2ZXJzaW9uIGZvciBDSVAgQ29yZSBpdHNlbGY/IEFzIGN1cnJlbnRs
+eSB3ZSBoYXZlIENJUCBLZXJuZWwgdmVyc2lvbnMgYW5kIHZlcnNpb25zIGZvciBpbmRpdmlkdWFs
+IGFwcGxpY2F0aW9uIHBhY2thZ2VzLg0KZS5nLiBJZiB3ZSB3YW50IHRvIHNoYXJlIENJUCBLZXJu
+ZWwgYW5kIENJUCBDb3JlIHZlcnNpb24gZm9yIElFQyBhc3Nlc3NtZW50IHdlIGxhY2sgQ0lQIENv
+cmUgdmVyc2lvbi4NCk1heSBiZSB3ZSBjYW4gZGlzY3VzcyBpdCBpbiB1cGNvbWluZyBDSVAgQ29y
+ZSBtZWV0aW5nLg0KDQpJIGhhdmUgYWRkZWQgbXkgY29tbWVudHMgaW5saW5lLg0KDQpUaGFua3Mg
+JiBSZWdhcmRzLA0KRGluZXNoIEt1bWFyDQoNCi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQpG
+cm9tOiBkYW5pZWwuc2FuZ29ycmluQHRvc2hpYmEuY28uanAgPGRhbmllbC5zYW5nb3JyaW5AdG9z
+aGliYS5jby5qcD4gDQpTZW50OiAxOCBNYXkgMjAyMCAxMjowNw0KVG86IERpbmVzaCBLdW1hciA8
+RGluZXNoLkt1bWFyQFRPU0hJQkEtVFNJUC5DT00+OyBqYW4ua2lzemthQHNpZW1lbnMuY29tOyBD
+aHJpcy5QYXRlcnNvbjJAcmVuZXNhcy5jb20NCkNjOiBjaXAtZGV2QGxpc3RzLmNpcC1wcm9qZWN0
+Lm9yZzsgY2lwLXNlY3VyaXR5QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZw0KU3ViamVjdDogW2NpcC1k
+ZXZdW2lzYXItY2lwLWNvcmVdIEludGVncmF0aW9uIG9mIHRlc3QgYW5kIHNlY3VyaXR5IGRlcGVu
+ZGVuY2llcyB3aXRoIGNpcC1jb3JlDQoNCkhlbGxvIERpbmVzaCwgQ2hyaXMsIEphbjoNCg0KIyBC
+QUNLR1JPVU5EDQoNCkFzIEkgbWVudGlvbmVkIGluIG91ciBsYXN0IHRlY2huaWNhbCBzdGVlcmlu
+ZyBjb21taXRlIG1lZXRpbmcsIG91ciBnaXRsYWItY2kgc2NyaXB0cyBzaG91bGQgYmUgYWJsZSB0
+byBwcm9kdWNlIG11bHRpcGxlIE9TIGltYWdlcy4gRm9yIGV4YW1wbGUsIHRoZSB0ZXN0aW5nIHRl
+YW0gbmVlZHMgdG8gaGF2ZSBweXRob24gYW5kIHBvc3NpYmx5IG90aGVyIHNvZnR3YXJlIGluY2x1
+ZGluZyB0aGUgdGVzdHMgdGhlbXNoZWx2ZXM7IGFuZCB0aGUgc2VjdXJpdHkgdGVhbSBuZWVkcyB0
+byBoYXZlIGV4dHJhIHBhY2thZ2VzIGFuZCBwcm9iYWJseSBsb3RzIG9mIGN1c3RvbWl6YXRpb25z
+Lg0KDQojIENVUlJFTlQgU1RBVFVTDQoNCkF0IHRoZSBtb21lbnQgd2UgaGF2ZSB3aGF0IEkgd291
+bGQgY2FsbCAidGFyZ2V0IGltYWdlcyIsIHdoaWNoIGNvbnRhaW46DQoNCiogc29tZXRoaW5nIGNs
+b3NlIHRvIHdoYXQgSSB3b3VsZCBjYWxsIHRoZSAiQ0lQIENvcmUgR2VuZXJpYyBwcm9maWxlIjog
+DQogICAgKiB0aGUgSVNBUiBjb3JlIHBhY2thZ2VzDQogICAgICAgICogSSB0aGluayB0aGVzZSBh
+cmUgYmFzaWNhbGx5IGRlYm9vdHN0cmFwIG1pbmJhc2UgKGlzYXIvbWV0YS9yZWNpcGVzLWNvcmUv
+aXNhci1ib290c3RyYXApDQogICAgKiBzb21lIGV4dHJhIGN1c3RvbWl6YXRpb25zDQogICAgICAg
+ICogaHR0cHM6Ly9naXRsYWIuY29tL2NpcC1wcm9qZWN0L2NpcC1jb3JlL2lzYXItY2lwLWNvcmUv
+LS90cmVlL21hc3Rlci9yZWNpcGVzLWNvcmUvDQoqIHRhcmdldC1kZXBlbmRlbnQgcGFja2FnZXMg
+KGtlcm5lbCwgdS1ib290LCBmaXJtd2FyZSwgZXRjKQ0KICAgICogdGhlc2UgYXJlIGFkZGVkIHVz
+aW5nIEtBUyBvcHQueWFtbCBzeW50YXgsIGluc3RlYWQgb2YgdXNpbmcgYSBtZXRhLWxheWVyDQoq
+IG9wdGlvbnMNCiAgICAqIG9wdC1ydDogd2lsbCB1c2UgYSBrZXJuZWwgd2l0aCBQUkVFTVBULVJU
+IHBhdGNoDQogICAgKiBvcHQtc3RyZXRjaDogd2lsbCB1c2Ugc3RyZXRjaCBhcyBkaXN0cm8NCiAg
+ICAqIG9wdC00LjQ6IHdpbGwgdXNlIGtlcm5lbCB2NC40IGluc3RlYWQgb2YgdGhlIGRlZmF1bHQg
+NC4xMA0KICAgICogb3B0LXRhcmd6LWltZzogZXhwb3J0cyB0aGUgaW1hZ2UgYXMgYSB0YXJiYWxs
+IGZvciBMQVZBDQoNCk9uIHRoZSBicmFuY2gsIGllYy1ldmFsdWF0aW9uIHRoZXJlIGlzIGFuIGlu
+aXRpYWwgaW1wbGVtZW50YXRpb24gb2YgdGhlIHNlY3VyaXR5IGltYWdlOg0KICAgICogaHR0cHM6
+Ly9naXRsYWIuY29tL2NpcC1wcm9qZWN0L2NpcC1jb3JlL2lzYXItY2lwLWNvcmUvLS90cmVlL3Nl
+Y3VyaXR5L2llYy1ldmFsdWF0aW9uDQogICAgKiBhdCBmaXJzdCB0aGV5IGFkZGVkIGFuIG9wdC1z
+ZWN1cml0eS55YW1sIGZpbGU6DQogICAgICAgICogaHR0cHM6Ly9naXRsYWIuY29tL2NpcC1wcm9q
+ZWN0L2NpcC1jb3JlL2lzYXItY2lwLWNvcmUvLS9jb21taXQvYTgyMTZkNGNhNWVlZDRkNzNkZmYy
+ZTAwNjAxZGVhN2M5ZDczM2Y0NQ0KICAgICogdGhlbiB0aGV5IGNoYW5nZWQgdG8gdXNlIHJlY2lw
+ZXMtY29yZS9pbWFnZXMvY2lwLWNvcmUtaW1hZ2Utc2VjdXJpdHkuYmIgdGhhdCBleHRlbmRzIElN
+QUdFX1BSRUlOU1RBTEwNCiAgICAgICAgKiBodHRwczovL2dpdGxhYi5jb20vY2lwLXByb2plY3Qv
+Y2lwLWNvcmUvaXNhci1jaXAtY29yZS8tL2NvbW1pdC8zNDYxYTUwMjk3ZTM3MDIxMGQ3NmQ4NWQ0
+MzRmYjYyNWM4YzQyNDhjDQogICAgKiBzZWUgdGhlIG9yaWdpbmFsIHRocmVhZCBoZXJlOg0KICAg
+ICAgICAqIGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2NpcC1kZXYvVFlYUFIwMU1CMTgwODE3Qzg4
+M0Y4NzRCMzIxREJBMjY0RTFGRDBAVFlYUFIwMU1CMTgwOC5qcG5wcmQwMS5wcm9kLm91dGxvb2su
+Y29tL1QvI203NTJhMTE2ZDgzNzIyMjJkNzI3NzIyZjRmZTE4Y2ExOWQ5NDgzOGViDQoNCiMgTVkg
+UFJPUE9TQUwNCg0KTXkgcHJvcG9zYWwgYXMgdGhlIG5leHQgdGFzayBmb3IgdGhlIENJUCBDb3Jl
+IHdvcmsgZ3JvdXAgaXMgdG8gYWRkIG1ldGFkYXRhIGZvciByZWxlYXNpbmcgdGhlc2UgaW1hZ2Vz
+Og0KDQoqIHRhcmdldCBpbWFnZXM6IGlzYXIgZGVib290c3RyYXAgKyBjdXN0b21pemF0aW9ucyAr
+IGtlcm5lbC91LWJvb3QvZncNCiAgICAqIFtORVddIHJlbGVhc2UgdGhlbSBhcyBibWFwIGltYWdl
+cyBmb3Igb3VyIHJlZmVyZW5jZSBoYXJkd2FyZSBib2FyZHMNCiAgICAqIFtORVddIGNyZWF0ZSBh
+IHBhZ2UgKGdpdGxhYiB3aWtpKSB0aGF0IHdpbGwgY29udGFpbiBsaW5rcyB0byB0aGUgbGF0ZXN0
+IGltYWdlcyBhbmQgaG93LXRvLWluc3RhbGwgcmVhZG1lcyBmb3IgZWFjaCByZWZlcmVuY2UgYm9h
+cmQNCiAgICAqIFtORVddIHJlZmVyIHRvIHRoYXQgcGFnZSBmcm9tIHRoZSBDSVAgd2lraSBwYWdl
+IChodHRwczovL3dpa2kubGludXhmb3VuZGF0aW9uLm9yZy9jaXZpbGluZnJhc3RydWN0dXJlcGxh
+dGZvcm0vY2lwdGVzdGluZy9jaXByZWZlcmVuY2VoYXJkd2FyZSkNCiogW05FV10gdGVzdGluZyBp
+bWFnZXM6IHRhcmdldCBpbWFnZXMgKyB0ZXN0IGRlcGVuZGVuY2llcw0KICAgICogcmVsZWFzZSB0
+aGVtIHVzaW5nIG9wdC10YXJnei1pbWcgc28gdGhleSBjYW4gYmUgdXNlZCBpbiBMQVZBDQogICAg
+KiBhZGQgdGhlIHRlc3QgZGVwZW5kZW5jaWVzDQogICAgICAgICogcGFja2FnZXM6IHB5dGhvbjIu
+NywgcHl0aG9uMywgLi4uDQogICAgICAgICogdGVzdHM6IExUUCwgLi4uDQogICAgICAgICAgICAq
+IG1ldGhvZCAxOiBidWlsZCB0aGVtIG9uIGEgc2VwYXJhdGUgcmVwbyBhbmQgaW5jbHVkZSBpbiB0
+aGUgaW1hZ2UNCiAgICAgICAgICAgICogbWV0aG9kIDI6IGJ1aWxkIHRoZW0gd2l0aCBJU0FSIChu
+ZXcgcmVjaXBlcykgYW5kIGluY2x1ZGUgaW4gdGhlIGltYWdlDQogICAgICAgICAgICAqIG1ldGhv
+ZCAzOiB0aGUgYXJ0aWZhY3RzIGFyZSBkb3dubG9hZGVkIGJ5IExBVkEgPC0tIE15IHByZWZlcmVu
+Y2UNCiAgICAgICAgKiBIb3cgdG8gaW1wbGVtZW50IHRoaXMNCiAgICAgICAgICAgICogbWV0aG9k
+IDE6IHVzaW5nIHRoZSBvcHQgeWFtbCBmb3JtYXQgPC0tIE15IHByZWZlcmVuY2UgaWYgd2Ugb25s
+eSBuZWVkIHRvIHNwZWNpZnkgcGFja2FnZXMNCiAgICAgICAgICAgICogbWV0aG9kIDI6IGNyZWF0
+aW5nIGEgc2VwYXJhdGUgbWV0YSBsYXllcg0KICAgICAgICAgICAgKiBtZXRob2QgMzogdXNpbmcg
+YSBuZXcgaW1hZ2UgKGNpcC1jb3JlLWltYWdlLXRlc3RpbmcuYmIpDQoqIFtORVddIHNlY3VyaXR5
+OiB0YXJnZXQgKyBzZWN1cml0eSBwYWNrYWdlcyArIHNlY3VyaXR5IHRlc3RzIGFuZCBkZXBlbmRl
+bmNpZXMNCiAgICAqIHJlbGVhc2UgaW4gdHdvIGZvcm1hdHMNCiAgICAgICAgKiB1c2luZyBvcHQt
+dGFyZ3otaW1nIHNvIHRoZXkgY2FuIGJlIHVzZWQgaW4gTEFWQQ0KICAgICAgICAqIGFzIGltYWdl
+cyBmb3Igb3VyIHJlZmVyZW5jZSBoYXJkd2FyZSBib2FyZHMNCiAgICAgICAgICAgICogYWRkIHRv
+IHRoZSBnaXRsYWIgd2lraSBsaW5rcyB0byB0aGUgbGF0ZXN0IGltYWdlcyBhbmQgaG93LXRvLWlu
+c3RhbGwgcmVhZG1lcyB0b28NCiAgICAqIEhvdyB0byBpbXBsZW1lbnQgdGhpcw0KICAgICAgICAq
+IG1ldGhvZCAxOiB1c2luZyB0aGUgb3B0IHlhbWwgZm9ybWF0DQogICAgICAgICogbWV0aG9kIDI6
+IGNyZWF0aW5nIGEgc2VwYXJhdGUgbWV0YSBsYXllciA8LS0gTXkgcHJlZmVyZW5jZSBpZiBpdCBn
+ZXRzIGNvbXBsZXgNCiAgICAgICAgKiBtZXRob2QgMzogdXNpbmcgYSBuZXcgaW1hZ2UgKGNpcC1j
+b3JlLWltYWdlLXNlY3VyaXR5LmJiKSA8LS0gQ3VycmVudCBtZXRob2QNCkRpbmVzaD4+SSBhbSBm
+aW5lIHdpdGggeW91ciBjdXJyZW50IHByb3Bvc2FsLiBIb3dldmVyLCBhcyBKYW4gbWVudGlvbmVk
+IGluIGZ1dHVyZSBiYXNlZCBvbiBuZWVkIG9yIHNob3J0Y29taW5ncyBvZiBhYm92ZSBwcm9wb3Nh
+bCB3ZSBtYXkgaGF2ZSB0byBtYWtlIGNoYW5nZXMgYXMgcmVxdWlyZWQuDQoNCiMgRkVFREJBQ0sN
+Cg0KUGxlYXNlIGNoZWNrIG15IGluaXRpYWwgcHJvcG9zYWwgYW5kIHNlbmQgbWUgZmVlZGJhY2su
+DQoNClRoYW5rcywNCkRhbmllbCBTYW5nb3JyaW4NCg0KDQoNCg0KVGhlIGluZm9ybWF0aW9uIGNv
+bnRhaW5lZCBpbiB0aGlzIGUtbWFpbCBtZXNzYWdlIGFuZCBpbiBhbnkNCmF0dGFjaG1lbnRzL2Fu
+bmV4dXJlL2FwcGVuZGljZXMgaXMgY29uZmlkZW50aWFsIHRvIHRoZSANCnJlY2lwaWVudCBhbmQg
+bWF5IGNvbnRhaW4gcHJpdmlsZWdlZCBpbmZvcm1hdGlvbi4gDQpJZiB5b3UgYXJlIG5vdCB0aGUg
+aW50ZW5kZWQgcmVjaXBpZW50LCBwbGVhc2Ugbm90aWZ5IHRoZQ0Kc2VuZGVyIGFuZCBkZWxldGUg
+dGhlIG1lc3NhZ2UgYWxvbmcgd2l0aCBhbnkgDQphdHRhY2htZW50cy9hbm5leHVyZS9hcHBlbmRp
+Y2VzLiBZb3Ugc2hvdWxkIG5vdCBkaXNjbG9zZSwNCmNvcHkgb3Igb3RoZXJ3aXNlIHVzZSB0aGUg
+aW5mb3JtYXRpb24gY29udGFpbmVkIGluIHRoZQ0KbWVzc2FnZSBvciBhbnkgYW5uZXh1cmUuIEFu
+eSB2aWV3cyBleHByZXNzZWQgaW4gdGhpcyBlLW1haWwgDQphcmUgdGhvc2Ugb2YgdGhlIGluZGl2
+aWR1YWwgc2VuZGVyIGV4Y2VwdCB3aGVyZSB0aGUgc2VuZGVyIA0Kc3BlY2lmaWNhbGx5IHN0YXRl
+cyB0aGVtIHRvIGJlIHRoZSB2aWV3cyBvZiANClRvc2hpYmEgU29mdHdhcmUgSW5kaWEgUHZ0LiBM
+dGQuIChUU0lQKSxCYW5nYWxvcmUuDQoNCkFsdGhvdWdoIHRoaXMgdHJhbnNtaXNzaW9uIGFuZCBh
+bnkgYXR0YWNobWVudHMgYXJlIGJlbGlldmVkIHRvIGJlDQpmcmVlIG9mIGFueSB2aXJ1cyBvciBv
+dGhlciBkZWZlY3QgdGhhdCBtaWdodCBhZmZlY3QgYW55IGNvbXB1dGVyIA0Kc3lzdGVtIGludG8g
+d2hpY2ggaXQgaXMgcmVjZWl2ZWQgYW5kIG9wZW5lZCwgaXQgaXMgdGhlIHJlc3BvbnNpYmlsaXR5
+DQpvZiB0aGUgcmVjaXBpZW50IHRvIGVuc3VyZSB0aGF0IGl0IGlzIHZpcnVzIGZyZWUgYW5kIG5v
+IHJlc3BvbnNpYmlsaXR5IA0KaXMgYWNjZXB0ZWQgYnkgVG9zaGliYSBFbWJlZGRlZCBTb2Z0d2Fy
+ZSBJbmRpYSBQdnQuIEx0ZCwgZm9yIGFueSBsb3NzIG9yDQpkYW1hZ2UgYXJpc2luZyBpbiBhbnkg
+d2F5IGZyb20gaXRzIHVzZS4K
 
 
-
-On 5/18/20 10:10 AM, Chris Paterson wrote:
-> Hello,
-> 
->> From: daniel.sangorrin@toshiba.co.jp <daniel.sangorrin@toshiba.co.jp>
->> Sent: 18 May 2020 07:37
->>
->> Hello Dinesh, Chris, Jan:
->>
->> # BACKGROUND
->>
->> As I mentioned in our last technical steering commite meeting, our gitlab-ci
->> scripts should be able to produce multiple OS images. For example, the testing
->> team needs to have python and possibly other software including the tests
->> themshelves; and the security team needs to have extra packages and probably
->> lots of customizations.
-> 
-> Thanks for starting the conversation.
-> 
->>
->> # CURRENT STATUS
->>
->> At the moment we have what I would call "target images", which contain:
->>
->> * something close to what I would call the "CIP Core Generic profile":
->>      * the ISAR core packages
->>          * I think these are basically debootstrap minbase (isar/meta/recipes-
->> core/isar-bootstrap)
->>      * some extra customizations
->>          * https://gitlab.com/cip-project/cip-core/isar-cip-core/-
->> /tree/master/recipes-core/
->> * target-dependent packages (kernel, u-boot, firmware, etc)
->>      * these are added using KAS opt.yaml syntax, instead of using a meta-layer
->> * options
->>      * opt-rt: will use a kernel with PREEMPT-RT patch
->>      * opt-stretch: will use stretch as distro
->>      * opt-4.4: will use kernel v4.4 instead of the default 4.10
->>      * opt-targz-img: exports the image as a tarball for LAVA
->>
->> On the branch, iec-evaluation there is an initial implementation of the security
->> image:
->>      * https://gitlab.com/cip-project/cip-core/isar-cip-core/-/tree/security/iec-
->> evaluation
->>      * at first they added an opt-security.yaml file:
->>          * https://gitlab.com/cip-project/cip-core/isar-cip-core/-
->> /commit/a8216d4ca5eed4d73dff2e00601dea7c9d733f45
->>      * then they changed to use recipes-core/images/cip-core-image-security.bb
->> that extends IMAGE_PREINSTALL
->>          * https://gitlab.com/cip-project/cip-core/isar-cip-core/-
->> /commit/3461a50297e370210d76d85d434fb625c8c4248c
->>      * see the original thread here:
->>          * https://lore.kernel.org/cip-
->> dev/TYXPR01MB180817C883F874B321DBA264E1FD0@TYXPR01MB1808.jpnprd
->> 01.prod.outlook.com/T/#m752a116d8372222d727722f4fe18ca19d94838eb
->>
->> # MY PROPOSAL
->>
->> My proposal as the next task for the CIP Core work group is to add metadata for
->> releasing these images:
->>
->> * target images: isar debootstrap + customizations + kernel/u-boot/fw
->>      * [NEW] release them as bmap images for our reference hardware boards
->>      * [NEW] create a page (gitlab wiki) that will contain links to the latest images
->> and how-to-install readmes for each reference board
->>      * [NEW] refer to that page from the CIP wiki page
->> (https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptesting/ciprefer
->> encehardware)
-> 
-> All +1
-> 
->> * [NEW] testing images: target images + test dependencies
->>      * release them using opt-targz-img so they can be used in LAVA
->>      * add the test dependencies
->>          * packages: python2.7, python3, ...
->>          * tests: LTP, ...
->>              * method 1: build them on a separate repo and include in the image
->>              * method 2: build them with ISAR (new recipes) and include in the image
->>              * method 3: the artifacts are downloaded by LAVA <-- My preference
-
-> 
-> By "artifacts" do you meant the entire filesystem? Or just individual test packages etc.?
-> 
-> My preference would be for the whole filesystem including the test packages to be built by ISAR, then LAVA just downloads the 'latest' cip-core-test image when running tests.
-> 
-
-Only as info LTP is part of isar-cip-core in next since commit 
-f84a815dc6969eb2b0b276e15c8fce2d52937114
-
-
->>          * How to implement this
->>              * method 1: using the opt yaml format <-- My preference if we only need
->> to specify packages
->>              * method 2: creating a separate meta layer
->>              * method 3: using a new image (cip-core-image-testing.bb)
-> 
-> As long as the 'standard' cip-core is included/inherited rather than copied I don't mind the method.
-> This will reduce the maintenance burden.
-> 
-> Kind regards, Chris
-> 
->> * [NEW] security: target + security packages + security tests and dependencies
->>      * release in two formats
->>          * using opt-targz-img so they can be used in LAVA
->>          * as images for our reference hardware boards
->>              * add to the gitlab wiki links to the latest images and how-to-install
->> readmes too
->>      * How to implement this
->>          * method 1: using the opt yaml format
->>          * method 2: creating a separate meta layer <-- My preference if it gets
->> complex
->>          * method 3: using a new image (cip-core-image-security.bb) <-- Current
->> method
->>
->> # FEEDBACK
->>
->> Please check my initial proposal and send me feedback.
->>
->> Thanks,
->> Daniel Sangorrin
->>
->>
->>
-> 
-> 
-> 
-> 
-Best regards,
-
--- 
-Quirin
-
---mXeuzArYVGKjSJ1YPEca
+--WYzo53sLnp5WkQUiXEQ6
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -207,12 +195,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#4627): https://lists.cip-project.org/g/cip-dev/message=
-/4627
+View/Reply Online (#4628): https://lists.cip-project.org/g/cip-dev/message=
+/4628
 Mute This Topic: https://lists.cip-project.org/mt/74286250/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---mXeuzArYVGKjSJ1YPEca--
+--WYzo53sLnp5WkQUiXEQ6--
