@@ -1,178 +1,185 @@
-Return-Path: <SRS0=PNny=7A=lists.cip-project.org=bounce+64572+4624+4520388+8129055@kernel.org>
+Return-Path: <SRS0=YTyt=7A=lists.cip-project.org=bounce+64572+4625+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65A98C433E0
-	for <cip-dev@archiver.kernel.org>; Mon, 18 May 2020 06:37:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1127AC433DF
+	for <cip-dev@archiver.kernel.org>; Mon, 18 May 2020 07:14:24 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id C694920787
-	for <cip-dev@archiver.kernel.org>; Mon, 18 May 2020 06:37:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id B6EA0207D4
+	for <cip-dev@archiver.kernel.org>; Mon, 18 May 2020 07:14:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="POIDdWZ+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C694920787
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=toshiba.co.jp
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4624+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id R1GWYY4521723xIkO7SrSdzA; Sun, 17 May 2020 23:37:37 -0700
-X-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.155])
- by mx.groups.io with SMTP id smtpd.web12.36682.1589783854917304819
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="Txd2X6kn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6EA0207D4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=siemens.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4625+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id 5ueRYY4521723xzYqMpQZxyA; Mon, 18 May 2020 00:14:23 -0700
+X-Received: from david.siemens.de (david.siemens.de [192.35.17.14])
+ by mx.groups.io with SMTP id smtpd.web12.36968.1589786061250610594
  for <cip-dev@lists.cip-project.org>;
- Sun, 17 May 2020 23:37:36 -0700
-X-Received: by mo-csw.securemx.jp (mx-mo-csw1516) id 04I6bWJq020179; Mon, 18 May 2020 15:37:32 +0900
-X-Iguazu-Qid: 34trDAmeJ2nWOahHQG
-X-Iguazu-QSIG: v=2; s=0; t=1589783851; q=34trDAmeJ2nWOahHQG; m=cNHfjkrqAsgj1VprR2yHoRJ7Ji7bXnYp1IIsPqTFgcM=
-X-Received: from imx12.toshiba.co.jp (imx12.toshiba.co.jp [61.202.160.132])
-	by relay.securemx.jp (mx-mr1511) id 04I6bVvA027148;
-	Mon, 18 May 2020 15:37:31 +0900
-X-Received: from enc02.toshiba.co.jp ([61.202.160.51])
-	by imx12.toshiba.co.jp  with ESMTP id 04I6bU3D025617;
-	Mon, 18 May 2020 15:37:30 +0900 (JST)
-X-Received: from hop101.toshiba.co.jp ([133.199.85.107])
-	by enc02.toshiba.co.jp  with ESMTP id 04I6bUtu009282;
-	Mon, 18 May 2020 15:37:30 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ANDMazRhLYoXXbyyDxWD2hMdQS1AQSivzpf1qPp7+TAK93toxkL9rPBdYU+5eoKR5NPECMepbhpDH5tXl6z/10RF/qRFy0AMUW9XW2bWG2oBUH043gD0dyfLE0YAPl31aocs0t4LY5jnE4rV6wNhazS51i8HeCOzJC0LHgQv3m8UzxHjoUA+yse9lpQ/8H1/0ImuNMEPaeTCpxtdlHeID3iBCWsQLvvznu7ZqErYjuRAc8WUUL6+ri3ywMGwxPUULqlt0GYUbbu1/hwcY3KIQnqhAI20m2SlnElnbf29jrm+3qATHNV8NEq8TG64z66B+MEl7cmqVhsJARtifVrXnw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mdwmXHTDT8FxsXdMpOYTfQc03rUkRovym4dIahqExTw=;
- b=Kku7uD3JcoanOeQkf4RMeRPDtsYH/0GVsZKykE4Zm2IsrtPnQv7LvsGtRtgd3rG62AoJ7AavjVtPLtA/Gx4Ug8SqMifmeGZBHjgUlhcr7QsQPLOWa2IafSXa6VfNyveVIplT4yYOh86JpsgIagePZ2ylzlwjiUGX0Tx3afXlvVKGitExkXH6aLAJzknr7NLG+1bfUbu6WYt+p5J+JoRNm7ztk5+DptZOtg+AGqFSe8Y8eJ1zy5AbvuVrw1XyMgU3OTFGyu6MFH9dGjRudIP2OvyAsQdqXm4C1YMSh2Mv0rz3Rg1rC4XstB6Et81L0oKjpjjKmNyiWi0XujqFGyKxTQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
- header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
-From: "Daniel Sangorrin" <daniel.sangorrin@toshiba.co.jp>
-To: <dinesh.kumar@toshiba-tsip.com>, <jan.kiszka@siemens.com>,
-        <Chris.Paterson2@renesas.com>
-CC: <cip-dev@lists.cip-project.org>, <cip-security@lists.cip-project.org>
-Subject: [cip-dev][isar-cip-core] Integration of test and security dependencies with cip-core
-Thread-Topic: [cip-dev][isar-cip-core] Integration of test and security
- dependencies with cip-core
-Thread-Index: AdYs0vpAUKy4cgndQaKwQlyaddtP7g==
-Date: Mon, 18 May 2020 06:37:10 +0000
-X-TSB-HOP: ON
-Message-ID: <OSBPR01MB2053900CD653D4E5CD4278EAD0B80@OSBPR01MB2053.jpnprd01.prod.outlook.com>
-Accept-Language: en-US
-x-originating-ip: [103.91.184.6]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c8d27f62-f425-4cb8-3a91-08d7faf5e4b7
-x-ms-traffictypediagnostic: OSBPR01MB5285:
-x-ld-processed: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f,ExtAddr
-x-microsoft-antispam-prvs: <OSBPR01MB5285FF9315FE9AC4026FF338D0B80@OSBPR01MB5285.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: VsRmpTIi6IwIrpVqrMolXLO/ryA8UWpDw2iSuvBfqG+CTB+8JoRELPHIbP7A94DxLFzPwSYd2taVA032b1u63RyUtH6g29yOgD8+LptGoOcrsaby5XeTIac55+K4FXuXZD0yM3BnD0jmy8y76clrQjitwFo5N2AXIwhqHU4Gbtmxai+MvgyODyYbqpsuU3aWgUAMyJt0Xu6UlVBI/kVFxz5YyL2zDNteh3DmTIx6k28xY9pmIOLquTrvsa5+Zu1AkzLci0ERAcrQjag9I4hBw+0G/fCrcuKUBfu//rIt3Y53yEPzAQMf7rzMIu4bd1MDHDBIEJTv53xeSn8A/iw7Yn/Wr6SoKMpqljF+k8SUbfRqw2oIazCHNLBlV4KwXUb5XQyOTcpvyUaPI19/DuDiJF6fUs+6XYqgjOmOoRhAC5AJW8kALQIn1psK0/gabQKi15E0uSn5yl9DaA9zD86qz7joo/Eok7UB2A9LasQ3AfLyq2/YD/GDRwIgD+oaD9hnor7ay66gNY+BrWkSIz9tXA==
-x-ms-exchange-antispam-messagedata: E6QPpeeSEjS/LnBtcmo3r4sjnVqLAFXDg8MAyEyNviG6huJyBKalyGVraSkAiyBLHKUh/RVNBJBK5exxjzyMe/gU+nffCEpnfNnCchJ38azyVW+ntYr8C66oq8noDmmC8sXsIOujVPRtNpXsLg5EuJFw+P051aqAe27nyck8YouvtrYrQGKPmYPL8zLyBc0QP/8k9ZUpExaDEf3UoieOPLGGaE3rivegaebY0EfQuIecoPbAJW5J2MTKL4Y3RgMx/3j63iZsSXW8RLPHFO+QvS1l1sMCMRYaQD6LROu0xEi6XOZb+aasLk/X1oyKBEtWXul8LC2XAg3QLqPF74JEtb28y+TUGeZhXSQoOOmb5OjL6n/wbyaOIo5JUZ8GtQLr2AXIGHVIxpDov9MNQVx8/ogoRK5qvPoIOamPTQulHkpOXt4R/7T30w+8Ut5bMyteJA7ixo0Qw09ZffjSJ5MMajoz+uM0mIWbXFgzsITmvC8=
-x-ms-exchange-transport-forked: True
+ Mon, 18 May 2020 00:14:22 -0700
+X-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
+	by david.siemens.de (8.15.2/8.15.2) with ESMTPS id 04I7EHYm023828
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 18 May 2020 09:14:18 +0200
+X-Received: from [167.87.94.217] ([167.87.94.217])
+	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 04I7EFGn006819;
+	Mon, 18 May 2020 09:14:16 +0200
+Subject: Re: [cip-dev][isar-cip-core] Integration of test and security dependencies with cip-core
+To: daniel.sangorrin@toshiba.co.jp, dinesh.kumar@toshiba-tsip.com,
+        Chris.Paterson2@renesas.com,
+        Quirin Gylstorff <quirin.gylstorff@siemens.com>
+Cc: cip-dev@lists.cip-project.org, cip-security@lists.cip-project.org
+References: <OSBPR01MB2053900CD653D4E5CD4278EAD0B80@OSBPR01MB2053.jpnprd01.prod.outlook.com>
+From: "Jan Kiszka" <jan.kiszka@siemens.com>
+Message-ID: <52a7bbd6-1d6a-53e9-6e17-f6516f374060@siemens.com>
+Date: Mon, 18 May 2020 09:14:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: c8d27f62-f425-4cb8-3a91-08d7faf5e4b7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 May 2020 06:37:10.6160
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: IPZJyOFvjdSbpURcAlyJbnH2rrjwqqqsXo+xQup7dXkiCqHrZXWILdkqlYOgxE9zbfVzKr1Lo0EI26qgacyQsL4p3zDXOS47BXjKfmISiA8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB5285
-MSSCP.TransferMailToMossAgent: 103
-X-OriginatorOrg: toshiba.co.jp
+In-Reply-To: <OSBPR01MB2053900CD653D4E5CD4278EAD0B80@OSBPR01MB2053.jpnprd01.prod.outlook.com>
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: modrTTOFqtq6Xqwk5AKLcW4rx4520388AA=
-Content-Type: multipart/mixed; boundary="r5YCsWPz2b8873VtAWHB"
+X-Gm-Message-State: gbzmJ2PFQL7l7oaRpAiTZF2px4520388AA=
+Content-Type: multipart/mixed; boundary="HUgJr49i1ifhPJf6PID1"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1589783857;
- bh=06hicYFQUEKb4imItxtlDXFT0XHQCwUPIKJjvSc4lSs=;
- h=CC:Content-Type:Date:From:Reply-To:Subject:To;
- b=POIDdWZ+0clQV2D9GLpmA79QjjVI8W1OAkzIjy8hLKGajvSt4J2mRwSNsOaNa4FUHNL
- rVhUAAn+MPk4PeOR8tDpjcFlnFDNxyS4jV5sGrHPnGgPKxw3yfyBLS1etqJ76WvIMw5X5
- 0N5WAriUnNXV/MLpH3F/qy4efL8b0/zVQ9k=
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1589786063;
+ bh=+bATG0M98ep48R1sYV/9zka2UaNhws407xLSeqC1Ka0=;
+ h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
+ b=Txd2X6kno3xhCp864xxrTGH0r8Wg4sb4KRzNlPLvNiICgVRXbBN+mKR1xDXr9013jmC
+ ZEXLGogGNOEGHJ6EFaudAHsFtQOWFQ/Zt1Ta3hW8zFzktGeGDW/si5XR6uIXKSuxNBWhc
+ 28+XGVNsJy8Di9Zsum/PxrD7j9xwB6gFpRA=
 
---r5YCsWPz2b8873VtAWHB
+--HUgJr49i1ifhPJf6PID1
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 7bit
 
-SGVsbG8gRGluZXNoLCBDaHJpcywgSmFuOg0KDQojIEJBQ0tHUk9VTkQNCg0KQXMgSSBtZW50aW9u
-ZWQgaW4gb3VyIGxhc3QgdGVjaG5pY2FsIHN0ZWVyaW5nIGNvbW1pdGUgbWVldGluZywgb3VyIGdp
-dGxhYi1jaSBzY3JpcHRzIHNob3VsZCBiZSBhYmxlIHRvIHByb2R1Y2UgbXVsdGlwbGUgT1MgaW1h
-Z2VzLiBGb3IgZXhhbXBsZSwgdGhlIHRlc3RpbmcgdGVhbSBuZWVkcyB0byBoYXZlIHB5dGhvbiBh
-bmQgcG9zc2libHkgb3RoZXIgc29mdHdhcmUgaW5jbHVkaW5nIHRoZSB0ZXN0cyB0aGVtc2hlbHZl
-czsgYW5kIHRoZSBzZWN1cml0eSB0ZWFtIG5lZWRzIHRvIGhhdmUgZXh0cmEgcGFja2FnZXMgYW5k
-IHByb2JhYmx5IGxvdHMgb2YgY3VzdG9taXphdGlvbnMuDQoNCiMgQ1VSUkVOVCBTVEFUVVMNCg0K
-QXQgdGhlIG1vbWVudCB3ZSBoYXZlIHdoYXQgSSB3b3VsZCBjYWxsICJ0YXJnZXQgaW1hZ2VzIiwg
-d2hpY2ggY29udGFpbjoNCg0KKiBzb21ldGhpbmcgY2xvc2UgdG8gd2hhdCBJIHdvdWxkIGNhbGwg
-dGhlICJDSVAgQ29yZSBHZW5lcmljIHByb2ZpbGUiOiANCiAgICAqIHRoZSBJU0FSIGNvcmUgcGFj
-a2FnZXMNCiAgICAgICAgKiBJIHRoaW5rIHRoZXNlIGFyZSBiYXNpY2FsbHkgZGVib290c3RyYXAg
-bWluYmFzZSAoaXNhci9tZXRhL3JlY2lwZXMtY29yZS9pc2FyLWJvb3RzdHJhcCkNCiAgICAqIHNv
-bWUgZXh0cmEgY3VzdG9taXphdGlvbnMNCiAgICAgICAgKiBodHRwczovL2dpdGxhYi5jb20vY2lw
-LXByb2plY3QvY2lwLWNvcmUvaXNhci1jaXAtY29yZS8tL3RyZWUvbWFzdGVyL3JlY2lwZXMtY29y
-ZS8NCiogdGFyZ2V0LWRlcGVuZGVudCBwYWNrYWdlcyAoa2VybmVsLCB1LWJvb3QsIGZpcm13YXJl
-LCBldGMpDQogICAgKiB0aGVzZSBhcmUgYWRkZWQgdXNpbmcgS0FTIG9wdC55YW1sIHN5bnRheCwg
-aW5zdGVhZCBvZiB1c2luZyBhIG1ldGEtbGF5ZXINCiogb3B0aW9ucw0KICAgICogb3B0LXJ0OiB3
-aWxsIHVzZSBhIGtlcm5lbCB3aXRoIFBSRUVNUFQtUlQgcGF0Y2gNCiAgICAqIG9wdC1zdHJldGNo
-OiB3aWxsIHVzZSBzdHJldGNoIGFzIGRpc3Rybw0KICAgICogb3B0LTQuNDogd2lsbCB1c2Uga2Vy
-bmVsIHY0LjQgaW5zdGVhZCBvZiB0aGUgZGVmYXVsdCA0LjEwDQogICAgKiBvcHQtdGFyZ3otaW1n
-OiBleHBvcnRzIHRoZSBpbWFnZSBhcyBhIHRhcmJhbGwgZm9yIExBVkENCg0KT24gdGhlIGJyYW5j
-aCwgaWVjLWV2YWx1YXRpb24gdGhlcmUgaXMgYW4gaW5pdGlhbCBpbXBsZW1lbnRhdGlvbiBvZiB0
-aGUgc2VjdXJpdHkgaW1hZ2U6DQogICAgKiBodHRwczovL2dpdGxhYi5jb20vY2lwLXByb2plY3Qv
-Y2lwLWNvcmUvaXNhci1jaXAtY29yZS8tL3RyZWUvc2VjdXJpdHkvaWVjLWV2YWx1YXRpb24NCiAg
-ICAqIGF0IGZpcnN0IHRoZXkgYWRkZWQgYW4gb3B0LXNlY3VyaXR5LnlhbWwgZmlsZToNCiAgICAg
-ICAgKiBodHRwczovL2dpdGxhYi5jb20vY2lwLXByb2plY3QvY2lwLWNvcmUvaXNhci1jaXAtY29y
-ZS8tL2NvbW1pdC9hODIxNmQ0Y2E1ZWVkNGQ3M2RmZjJlMDA2MDFkZWE3YzlkNzMzZjQ1DQogICAg
-KiB0aGVuIHRoZXkgY2hhbmdlZCB0byB1c2UgcmVjaXBlcy1jb3JlL2ltYWdlcy9jaXAtY29yZS1p
-bWFnZS1zZWN1cml0eS5iYiB0aGF0IGV4dGVuZHMgSU1BR0VfUFJFSU5TVEFMTA0KICAgICAgICAq
-IGh0dHBzOi8vZ2l0bGFiLmNvbS9jaXAtcHJvamVjdC9jaXAtY29yZS9pc2FyLWNpcC1jb3JlLy0v
-Y29tbWl0LzM0NjFhNTAyOTdlMzcwMjEwZDc2ZDg1ZDQzNGZiNjI1YzhjNDI0OGMNCiAgICAqIHNl
-ZSB0aGUgb3JpZ2luYWwgdGhyZWFkIGhlcmU6DQogICAgICAgICogaHR0cHM6Ly9sb3JlLmtlcm5l
-bC5vcmcvY2lwLWRldi9UWVhQUjAxTUIxODA4MTdDODgzRjg3NEIzMjFEQkEyNjRFMUZEMEBUWVhQ
-UjAxTUIxODA4LmpwbnByZDAxLnByb2Qub3V0bG9vay5jb20vVC8jbTc1MmExMTZkODM3MjIyMmQ3
-Mjc3MjJmNGZlMThjYTE5ZDk0ODM4ZWINCg0KIyBNWSBQUk9QT1NBTA0KDQpNeSBwcm9wb3NhbCBh
-cyB0aGUgbmV4dCB0YXNrIGZvciB0aGUgQ0lQIENvcmUgd29yayBncm91cCBpcyB0byBhZGQgbWV0
-YWRhdGEgZm9yIHJlbGVhc2luZyB0aGVzZSBpbWFnZXM6DQoNCiogdGFyZ2V0IGltYWdlczogaXNh
-ciBkZWJvb3RzdHJhcCArIGN1c3RvbWl6YXRpb25zICsga2VybmVsL3UtYm9vdC9mdw0KICAgICog
-W05FV10gcmVsZWFzZSB0aGVtIGFzIGJtYXAgaW1hZ2VzIGZvciBvdXIgcmVmZXJlbmNlIGhhcmR3
-YXJlIGJvYXJkcw0KICAgICogW05FV10gY3JlYXRlIGEgcGFnZSAoZ2l0bGFiIHdpa2kpIHRoYXQg
-d2lsbCBjb250YWluIGxpbmtzIHRvIHRoZSBsYXRlc3QgaW1hZ2VzIGFuZCBob3ctdG8taW5zdGFs
-bCByZWFkbWVzIGZvciBlYWNoIHJlZmVyZW5jZSBib2FyZA0KICAgICogW05FV10gcmVmZXIgdG8g
-dGhhdCBwYWdlIGZyb20gdGhlIENJUCB3aWtpIHBhZ2UgKGh0dHBzOi8vd2lraS5saW51eGZvdW5k
-YXRpb24ub3JnL2NpdmlsaW5mcmFzdHJ1Y3R1cmVwbGF0Zm9ybS9jaXB0ZXN0aW5nL2NpcHJlZmVy
-ZW5jZWhhcmR3YXJlKQ0KKiBbTkVXXSB0ZXN0aW5nIGltYWdlczogdGFyZ2V0IGltYWdlcyArIHRl
-c3QgZGVwZW5kZW5jaWVzDQogICAgKiByZWxlYXNlIHRoZW0gdXNpbmcgb3B0LXRhcmd6LWltZyBz
-byB0aGV5IGNhbiBiZSB1c2VkIGluIExBVkENCiAgICAqIGFkZCB0aGUgdGVzdCBkZXBlbmRlbmNp
-ZXMNCiAgICAgICAgKiBwYWNrYWdlczogcHl0aG9uMi43LCBweXRob24zLCAuLi4NCiAgICAgICAg
-KiB0ZXN0czogTFRQLCAuLi4NCiAgICAgICAgICAgICogbWV0aG9kIDE6IGJ1aWxkIHRoZW0gb24g
-YSBzZXBhcmF0ZSByZXBvIGFuZCBpbmNsdWRlIGluIHRoZSBpbWFnZQ0KICAgICAgICAgICAgKiBt
-ZXRob2QgMjogYnVpbGQgdGhlbSB3aXRoIElTQVIgKG5ldyByZWNpcGVzKSBhbmQgaW5jbHVkZSBp
-biB0aGUgaW1hZ2UNCiAgICAgICAgICAgICogbWV0aG9kIDM6IHRoZSBhcnRpZmFjdHMgYXJlIGRv
-d25sb2FkZWQgYnkgTEFWQSA8LS0gTXkgcHJlZmVyZW5jZQ0KICAgICAgICAqIEhvdyB0byBpbXBs
-ZW1lbnQgdGhpcw0KICAgICAgICAgICAgKiBtZXRob2QgMTogdXNpbmcgdGhlIG9wdCB5YW1sIGZv
-cm1hdCA8LS0gTXkgcHJlZmVyZW5jZSBpZiB3ZSBvbmx5IG5lZWQgdG8gc3BlY2lmeSBwYWNrYWdl
-cw0KICAgICAgICAgICAgKiBtZXRob2QgMjogY3JlYXRpbmcgYSBzZXBhcmF0ZSBtZXRhIGxheWVy
-DQogICAgICAgICAgICAqIG1ldGhvZCAzOiB1c2luZyBhIG5ldyBpbWFnZSAoY2lwLWNvcmUtaW1h
-Z2UtdGVzdGluZy5iYikNCiogW05FV10gc2VjdXJpdHk6IHRhcmdldCArIHNlY3VyaXR5IHBhY2th
-Z2VzICsgc2VjdXJpdHkgdGVzdHMgYW5kIGRlcGVuZGVuY2llcw0KICAgICogcmVsZWFzZSBpbiB0
-d28gZm9ybWF0cw0KICAgICAgICAqIHVzaW5nIG9wdC10YXJnei1pbWcgc28gdGhleSBjYW4gYmUg
-dXNlZCBpbiBMQVZBDQogICAgICAgICogYXMgaW1hZ2VzIGZvciBvdXIgcmVmZXJlbmNlIGhhcmR3
-YXJlIGJvYXJkcw0KICAgICAgICAgICAgKiBhZGQgdG8gdGhlIGdpdGxhYiB3aWtpIGxpbmtzIHRv
-IHRoZSBsYXRlc3QgaW1hZ2VzIGFuZCBob3ctdG8taW5zdGFsbCByZWFkbWVzIHRvbw0KICAgICog
-SG93IHRvIGltcGxlbWVudCB0aGlzDQogICAgICAgICogbWV0aG9kIDE6IHVzaW5nIHRoZSBvcHQg
-eWFtbCBmb3JtYXQNCiAgICAgICAgKiBtZXRob2QgMjogY3JlYXRpbmcgYSBzZXBhcmF0ZSBtZXRh
-IGxheWVyIDwtLSBNeSBwcmVmZXJlbmNlIGlmIGl0IGdldHMgY29tcGxleA0KICAgICAgICAqIG1l
-dGhvZCAzOiB1c2luZyBhIG5ldyBpbWFnZSAoY2lwLWNvcmUtaW1hZ2Utc2VjdXJpdHkuYmIpIDwt
-LSBDdXJyZW50IG1ldGhvZA0KDQojIEZFRURCQUNLDQoNClBsZWFzZSBjaGVjayBteSBpbml0aWFs
-IHByb3Bvc2FsIGFuZCBzZW5kIG1lIGZlZWRiYWNrLg0KDQpUaGFua3MsDQpEYW5pZWwgU2FuZ29y
-cmluDQoNCg0KDQoNCg==
+Hi all,
 
---r5YCsWPz2b8873VtAWHB
+On 18.05.20 08:37, daniel.sangorrin@toshiba.co.jp wrote:
+> Hello Dinesh, Chris, Jan:
+> 
+> # BACKGROUND
+> 
+> As I mentioned in our last technical steering commite meeting, our gitlab-ci scripts should be able to produce multiple OS images. For example, the testing team needs to have python and possibly other software including the tests themshelves; and the security team needs to have extra packages and probably lots of customizations.
+> 
+> # CURRENT STATUS
+> 
+> At the moment we have what I would call "target images", which contain:
+> 
+> * something close to what I would call the "CIP Core Generic profile":
+>      * the ISAR core packages
+>          * I think these are basically debootstrap minbase (isar/meta/recipes-core/isar-bootstrap)
+>      * some extra customizations
+>          * https://gitlab.com/cip-project/cip-core/isar-cip-core/-/tree/master/recipes-core/
+> * target-dependent packages (kernel, u-boot, firmware, etc)
+>      * these are added using KAS opt.yaml syntax, instead of using a meta-layer
+> * options
+>      * opt-rt: will use a kernel with PREEMPT-RT patch
+>      * opt-stretch: will use stretch as distro
+>      * opt-4.4: will use kernel v4.4 instead of the default 4.10
+>      * opt-targz-img: exports the image as a tarball for LAVA
+> 
+> On the branch, iec-evaluation there is an initial implementation of the security image:
+>      * https://gitlab.com/cip-project/cip-core/isar-cip-core/-/tree/security/iec-evaluation
+>      * at first they added an opt-security.yaml file:
+>          * https://gitlab.com/cip-project/cip-core/isar-cip-core/-/commit/a8216d4ca5eed4d73dff2e00601dea7c9d733f45
+>      * then they changed to use recipes-core/images/cip-core-image-security.bb that extends IMAGE_PREINSTALL
+>          * https://gitlab.com/cip-project/cip-core/isar-cip-core/-/commit/3461a50297e370210d76d85d434fb625c8c4248c
+>      * see the original thread here:
+>          * https://lore.kernel.org/cip-dev/TYXPR01MB180817C883F874B321DBA264E1FD0@TYXPR01MB1808.jpnprd01.prod.outlook.com/T/#m752a116d8372222d727722f4fe18ca19d94838eb
+> 
+> # MY PROPOSAL
+> 
+> My proposal as the next task for the CIP Core work group is to add metadata for releasing these images:
+> 
+> * target images: isar debootstrap + customizations + kernel/u-boot/fw
+>      * [NEW] release them as bmap images for our reference hardware boards
+>      * [NEW] create a page (gitlab wiki) that will contain links to the latest images and how-to-install readmes for each reference board
+>      * [NEW] refer to that page from the CIP wiki page (https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptesting/cipreferencehardware)
+> * [NEW] testing images: target images + test dependencies
+>      * release them using opt-targz-img so they can be used in LAVA
+>      * add the test dependencies
+>          * packages: python2.7, python3, ...
+>          * tests: LTP, ...
+>              * method 1: build them on a separate repo and include in the image
+>              * method 2: build them with ISAR (new recipes) and include in the image
+>              * method 3: the artifacts are downloaded by LAVA <-- My preference
+
+1 or 2. We can start with 2 and factor out 1 when it becomes too large.
+
+You do not want to create the tested image only in lava "on the fly", 
+you want that locally as well.
+
+>          * How to implement this
+>              * method 1: using the opt yaml format <-- My preference if we only need to specify packages
+>              * method 2: creating a separate meta layer
+>              * method 3: using a new image (cip-core-image-testing.bb)
+
+Define a test image, that is cleanest. It shall be derived from the base 
+image and contain all packages needed for testing. We do this internally 
+as well. That image is selected by a kas option: opt-targz-img could 
+become opt-lava-img or so.
+
+> * [NEW] security: target + security packages + security tests and dependencies
+>      * release in two formats
+>          * using opt-targz-img so they can be used in LAVA
+
+opt-lava-img -> select test image (with extra packages), switch output 
+format.
+
+>          * as images for our reference hardware boards
+>              * add to the gitlab wiki links to the latest images and how-to-install readmes too
+>      * How to implement this
+>          * method 1: using the opt yaml format
+>          * method 2: creating a separate meta layer <-- My preference if it gets complex
+
+Something for later. At this stage, it will only increase the CM effort.
+
+>          * method 3: using a new image (cip-core-image-security.bb) <-- Current method
+> 
+
+A new image recipe together with a new top-level kas file to select the 
+image - and likely more. I can imagine that a secure core image will 
+eventually not only affect the image recipe but also configuration 
+options of the build, filesystem, secure boot etc. So, something like
+
+  - kas-cip-core.yml
+  - kas-cip-secure.yml
+
+could make sense as entry points.
+
+> # FEEDBACK
+> 
+> Please check my initial proposal and send me feedback.
+> 
+> Thanks,
+> Daniel Sangorrin
+> 
+
+All that said: Nothing needs to be set in stone upfront. We can adjust 
+the modeling as the usage evolves and the variants threaten to increase. 
+But specifically due to the last aspect, the matrix should remain as 
+small as possible.
+
+Jan
+
+-- 
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+Corporate Competence Center Embedded Linux
+
+--HUgJr49i1ifhPJf6PID1
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -180,12 +187,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#4624): https://lists.cip-project.org/g/cip-dev/message=
-/4624
+View/Reply Online (#4625): https://lists.cip-project.org/g/cip-dev/message=
+/4625
 Mute This Topic: https://lists.cip-project.org/mt/74286250/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---r5YCsWPz2b8873VtAWHB--
+--HUgJr49i1ifhPJf6PID1--
