@@ -1,4 +1,4 @@
-Return-Path: <SRS0=x3Gh=7D=lists.cip-project.org=bounce+64572+4636+4520388+8129055@kernel.org>
+Return-Path: <SRS0=3x/w=7D=lists.cip-project.org=bounce+64572+4637+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -6,125 +6,136 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CAEFC433E0
-	for <cip-dev@archiver.kernel.org>; Thu, 21 May 2020 00:51:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28358C433DF
+	for <cip-dev@archiver.kernel.org>; Thu, 21 May 2020 06:08:28 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id CA35220756
-	for <cip-dev@archiver.kernel.org>; Thu, 21 May 2020 00:51:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 82951207D8
+	for <cip-dev@archiver.kernel.org>; Thu, 21 May 2020 06:08:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="fKX8MhkT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA35220756
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cybertrust.co.jp
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4636+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id 7awrYY4521723xcbn1D5wyns; Wed, 20 May 2020 17:51:57 -0700
-X-Received: from APC01-SG2-obe.outbound.protection.outlook.com (APC01-SG2-obe.outbound.protection.outlook.com [40.107.131.110])
- by mx.groups.io with SMTP id smtpd.web11.2014.1590022315298028676
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="JMBJA9Jx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82951207D8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=toshiba.co.jp
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4637+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id 8G6lYY4521723xdD9jKcLwqB; Wed, 20 May 2020 23:08:27 -0700
+X-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
+ by mx.groups.io with SMTP id smtpd.web10.802.1590041304225001969
  for <cip-dev@lists.cip-project.org>;
- Wed, 20 May 2020 17:51:56 -0700
+ Wed, 20 May 2020 23:08:25 -0700
+X-Received: by mo-csw.securemx.jp (mx-mo-csw1116) id 04L68Lpg013643; Thu, 21 May 2020 15:08:21 +0900
+X-Iguazu-Qid: 2wHHbNmoGWre4ZGAbo
+X-Iguazu-QSIG: v=2; s=0; t=1590041301; q=2wHHbNmoGWre4ZGAbo; m=PTUWKKyBOqOguWI9D5H7Qu628BrVF1tqD6xIgA1W2c4=
+X-Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
+	by relay.securemx.jp (mx-mr1112) id 04L68Kc8005207;
+	Thu, 21 May 2020 15:08:20 +0900
+X-Received: from enc01.localdomain ([106.186.93.100])
+	by imx2.toshiba.co.jp  with ESMTP id 04L68KCe009090
+	for <cip-dev@lists.cip-project.org>; Thu, 21 May 2020 15:08:20 +0900 (JST)
+X-Received: from hop001.toshiba.co.jp ([133.199.164.63])
+	by enc01.localdomain  with ESMTP id 04L68Jvg020932
+	for <cip-dev@lists.cip-project.org>; Thu, 21 May 2020 15:08:20 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TfoCxxnhCGMZXJwshA4xK+/EcHNTQxL9txdVbQC8qQctie/GGtYA8lGAzkKMLBQvjLgadqE5ioMWdWwr9LtZbcOXYr3B38Tl4hCZcHLI8SQO5weWJWIy82bSHdRQjMay3D1o1VvhZcz0L3vrg+ttWuoLrwn5qlzF3kPqZG7XpJiR1eqdt978UsZ7JAvs/PJ6nGREzXoNEJNfUUUt4JEZx1fWadFRsQ4d0MpRIbN2vIPbynBjT+XjfinKp/o2AbDyovJe9DnY7H54R6Iw0aT4rdaibXBWNj4A6efwoXAFJVgtc7ZMK4SwdLc1iwUkUC/W7YiIVfZo9XP/CWP7t3xygQ==
+ b=jnF+UpWPebXBqZtq6RcPQTzBZz3a/BryKaykRXIh6IHTPjdZeYrKEuOAZx5g+VntEvlWYBfi7WgO1ODRd3it3VlFb5ExEmBa9mk/LmzKT8EoFuJW4/ZDwlYnZaijWGKa2aL6NcL4rLUcPWNm7BdCQHYm4K5767+5AjkE2IX6y0tetJUOet6n8s3XLzhbym61nY/4hz6i8Qaailq9J9LFW7pXP9Jum+/nx5k6iykmX0Bzqf8n93i8wLFt/kaW9GrIrpacchhFhqISqP267gubm3TIolUlfWMwFnNFY2x/Vr+PyoaukjmgB2SZvVQI3pGD9o59rKc8WGGBXNzBvu0WbA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4K6sQq1AwdMNyxF6kFvobqaxVm6w9XyjCYIwSrxQOME=;
- b=C8QI+kuTml0GMWetMhPbLZhr6MlDPsVslnH343wWbnuLyuJgaJ/SOjETpmNbDOsbvV3fGubomUCWNm3Am1Uw4Qfbsma5NDcmGolMw0RHEXRntC3HBFeLWPh3AF6p0thYjnGNSfjHR6SadgYw7sk9yzYiUJoFd4R6sJh4whcU8FOt89hyWXgaSKNV3rV5ovj/zQFlkWfngNRIyNV+UbN0ALNq3S0Tclt/E5twStV0xvE2+d3iLtl+2ggtTJopMY0MBqtXRJZZTBrPSJO84szRmjFc20rGNojNS/F5HPBkgSNqR74rrJHFndL+C4+Mi3d3Jtto7DIl4DnQNyHmyKoVYw==
+ bh=NsJx0csixu2+EsZ2RLYGeUZ+VS+/yEBM43V9kGZz4EA=;
+ b=STZxmgZgAlUlm7GPzmTZm4zwFDv6j+v39quMemFfHiAXQjSychqAL48gADDbAk9/BxTMnfSCpetIMC0jSgJKareRwKmXYfh7y8J7KeBY6Hv4HMpoxyOizN4fOgYZ7qx1IFq9HBn7nnhqcRJYKk2HBbC90yx6aQtGaOrKcQRoWzw1P7E+mboPzxDhcLxRmW0VShoJAaeTnet5MO8EdwxC0WPKPgaYl0DyRylmuAOPQooVFmjFkVVJ8hsLvBETQcyoNUYTbKiuAfiHTDP2/WihuD57RDRSUYx5x4xeF7cvBLJ6vEABwryL/fM+eGlTRIbQSLtZyAl5ZfwmYpLaqbOg4g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cybertrust.co.jp; dmarc=pass action=none
- header.from=cybertrust.co.jp; dkim=pass header.d=cybertrust.co.jp; arc=none
-X-Received: from TY2PR01MB4972.jpnprd01.prod.outlook.com (2603:1096:404:11c::20)
- by TY2PR01MB5196.jpnprd01.prod.outlook.com (2603:1096:404:10f::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3021.24; Thu, 21 May
- 2020 00:51:51 +0000
-X-Received: from TY2PR01MB4972.jpnprd01.prod.outlook.com
- ([fe80::d9d9:60fe:a138:6752]) by TY2PR01MB4972.jpnprd01.prod.outlook.com
- ([fe80::d9d9:60fe:a138:6752%4]) with mapi id 15.20.3021.020; Thu, 21 May 2020
- 00:51:51 +0000
-From: "masashi.kudo@cybertrust.co.jp" <masashi.kudo@cybertrust.co.jp>
+ smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
+ header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
+From: "Nobuhiro Iwamatsu" <nobuhiro1.iwamatsu@toshiba.co.jp>
 To: <cip-dev@lists.cip-project.org>
-Subject: [cip-dev] Needs of security patches on reference platforms
-Thread-Topic: Needs of security patches on reference platforms
-Thread-Index: AdYvCCtlcLXwbkOIQ0qYRTqGFX3KBw==
-Date: Thu, 21 May 2020 00:51:51 +0000
-Message-ID: 
- <TY2PR01MB497299162A4205C540691913A0B70@TY2PR01MB4972.jpnprd01.prod.outlook.com>
+Subject: Re: [cip-dev] CIP IRC weekly meeting today
+Thread-Topic: CIP IRC weekly meeting today
+Thread-Index: AdYvB7QVKLJJTSekT7GTmv8mJ06fZwALeVzA
+Date: Thu, 21 May 2020 06:08:17 +0000
+X-TSB-HOP: ON
+Message-ID: <OSBPR01MB2983629D897D216A673CFB4F92B70@OSBPR01MB2983.jpnprd01.prod.outlook.com>
+References: <TY2PR01MB4972A13626095E5A9810C62AA0B70@TY2PR01MB4972.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY2PR01MB4972A13626095E5A9810C62AA0B70@TY2PR01MB4972.jpnprd01.prod.outlook.com>
 Accept-Language: ja-JP, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [122.216.27.145]
+x-originating-ip: [103.91.184.4]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 29139a00-bb63-4e65-b5e5-08d7fd21265e
-x-ms-traffictypediagnostic: TY2PR01MB5196:
-x-microsoft-antispam-prvs: 
- <TY2PR01MB51967C8DF3537BCFDD6328A3A0B70@TY2PR01MB5196.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-ms-office365-filtering-correlation-id: 9783f56d-62f8-4dab-8658-08d7fd4d5abd
+x-ms-traffictypediagnostic: OSBPR01MB1974:
+x-microsoft-antispam-prvs: <OSBPR01MB1974CAC936CCA9985C4FF07892B70@OSBPR01MB1974.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 
- Bb2Nf8PRxwVNC4e+zOp7AWnvBVz9zfYfuPwSeh2U33M78fxCuDMI+OtKnL4B9ttMhGux+YdwIUuulsZKGE6s7xi45fL3PUCVot05sNgqrzKd6X7Sw83T2sXeSOSaiCNj2rpn+j4raWqu+j71XaA5wf3eWZgk2toZ0CwH5+qGceh7DYP+cmvrNq6Z3lygqTusSVouicQ6C2odpPP2auRgbRrHrAtuz2EVFPgcWT+Jregw1kLFKx7UC4tZTAAQ82xuzgbit7cf67GPh4SehO4cyQAGUfRi8l0Z6ZnLv3rNvny12NxynDyOzto8jF3LBkuk
-x-ms-exchange-antispam-messagedata: 
- d/692uG8WmRszrEj8i4SSKOaYWKtxKEfgHQm7ED8D/sBcPVDfYKCGDt1aUce542HEQT4I0czTKhkC9Tiyga00ifCmMgboshoJirQblDjFHfNbPS6lz0piTbzVgOWirNZmRwKdfajygzezOdA3hwj9FYTPzw++1FulOw1g7O/hq3e8sUI9RJq76ikUbTzr1vvRi8BS91jlBDzNCT64xkDmFZLOAD6c8YhAuA1WWx7DWlVpm7lmtyHFVnmGNje7368yXK8DjbGN1r4ojhpWiD1Q+cNqhWWXiSefx4CU4Czi0DUKHg4TwMhDdd4/XIdxVH+9IdC7dosfH5C1/2rvv8LEeGEqC61czuZzfC1X+pssxxHnLicOnJfDN9X7xfjDSh97GHLi6+bOLi7aMMmH2PII1OLYiOrfbXLx9xl07kF5VNo1R4EzdQeVbki5p+vD+YabETS5bEk+OGDLo/vKUbuRqfZuC1WgzO2/PfR+6rgmT7Mcy5yzKulMk7QNFrcgXD4
+x-microsoft-antispam-message-info: 1NHwFS+vGbO+yMddMHehoWqPCInar2kPz0m8n857B5oy0VbeCdgvbsPRUnPY6paz7JsFQApqxmqse7Cy8TYkwEaxN/XlgOuYcIiMJihoYS1IvDpefUMRjh8lizgCSv34PwMWI9SKi6gU+6ieYBfPNAJEZ/oksyokgLHO7H4G/i+2tr8FwSnzvNdxQsL1T/U9YKpVmvzmR35nqMOZMdx1WjnGUmiv0Y6qrvAkXHaDnFVWv4BX+EwImAjzShVtwuMuR6jNSuh8n8UzYTuVkvOaPDXX7HtGH999oBzjm2xzShHUK7bWwWlq4AKMeHI1EO7FOejae+1r4xjH6Ih8X/BbCHG08oQLGM+HiI0QpZ1uQQZqGf9WF88xArc3LuPgGBF1ddPrmOQvcKpv7m2VadabICOsslSwwdGEhHaQej0ZHfL1KO5ypPBcXW5TcYXV61VaaKvObnV4v6DnhleZ4SG3PvcHBKjYYZOjsatLGE3Dry++CBDctAeW5Jm4CryYBtJwfDUDxojRahsqZDzGc/njyQ==
+x-ms-exchange-antispam-messagedata: KniMCT5NDQ4zmR8Iii11V++Q9byASDBWLrf5lD/PNYXu8hm4CKvQpYv0Sn4EZmCP4YMLSjfd3wVuocuOSILwcTNl/duae/QTPIKfmwa5b+mQ8ZPgGpG8suwKJWvC0+aAdXCIjmqfTwDxWdLva/lKsHGwOVSvWAC51fkVHNc4Qev+49BKYO2D2+/h88ia2bT9nUH2qiyYqjubsakv34zcRKLKVV2uoJx0l5J2DjLjaMIM1Nbf6zuN+o7Sd83kPDJ+QFjxtLmQnqLC+7y7qV6ob/wBgCvQ12UfHvyEt3Khj7hER4CoIHTvf+JAuiuq5Vt8UA9ghGPhOjOyhs5cQx3Pnyb3D7DKOlhpV08vIG8BAFtAEy4fWznh04GFTxJ+/DaHlOeiBMBBZmH2wG5e93psPQVXpqxKkub77TqSh2a3dESRElrhKt/bYwVGulukwMx6aouIaS0lYOosrH0DmgR+tZssn03E00TXiUmZM7afCq8=
 x-ms-exchange-transport-forked: True
 MIME-Version: 1.0
-X-OriginatorOrg: cybertrust.co.jp
-X-MS-Exchange-CrossTenant-Network-Message-Id: 29139a00-bb63-4e65-b5e5-08d7fd21265e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 May 2020 00:51:51.4614
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9783f56d-62f8-4dab-8658-08d7fd4d5abd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 May 2020 06:08:17.2254
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72cc4624-32b4-4dab-b80a-8563e559bd82
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: SdT+qJh3rX5liV/nYwmTqPuiWRnZ+8mI8O9zKGtoOEcEW6EDU6mBLcpZdYdOp78ehFqlwdiPedV0UCQ952pbYp9h/pNAIWGdS/5v/OC3Eqg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB5196
+X-MS-Exchange-CrossTenant-userprincipalname: SZJv5DIXNCSPVcS2R377QC+AkBSCNCPTz56A6zcbKwfl+4q+ZDji6KmEQT0fp9A2+EIoDCU88lBPPYf739nE3NyBjQNFSUsy65Z48CDzAtBVKICDjMBqK+M2+18/IDnZ
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB1974
+X-OriginatorOrg: toshiba.co.jp
+MSSCP.TransferMailToMossAgent: 103
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: poCVc2O9Q8vGTTXewgj69K56x4520388AA=
-Content-Type: multipart/mixed; boundary="7j1GeuQAy6cDNMGKChmc"
+X-Gm-Message-State: XjA9vU7Jqed9X7VyIBoE3wXBx4520388AA=
+Content-Type: multipart/mixed; boundary="mbamePLIogKn5rQLeuoW"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1590022317;
- bh=xHzewCk2kH20PA1z2tBdyh5hL3Soi3hloPH1fAzPM9g=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1590041307;
+ bh=7AE+aiVyMLotkfuaPCslfIdQp2IxawZwcJG3HvEMmTE=;
  h=Content-Type:Date:From:Reply-To:Subject:To;
- b=fKX8MhkTKs772Crld7DuYS3mTIThwj4gjGGeSlZHr99qbEGFJSCPaIBRcIy1cAxJ6by
- DJuIPbpnsjPQcEW2JzseQf7wY3r7Fp9QYoLddy/9WwPckZ4bzh2QDr7+V04xGLagim4KY
- oP8iV1CxFR1ca2f4hkBqxmq6cstUMJsvuPE=
+ b=JMBJA9JxqwkT222PMzY4xVgwdDvvsQHxOX68UkVNgTry1/Tgdc0rDVGRGlyK91yyEdq
+ Q0T0cvkCrcSbJrENf8DF2C8r2oiVHdxQCByqOh5DhSM3YaootCHAkVsQEYu7RyKd3DoOK
+ bjSJgu2xLILP+sKqW0/UQ4Ywof5GBNKAJmw=
 
---7j1GeuQAy6cDNMGKChmc
+--mbamePLIogKn5rQLeuoW
 Content-Language: ja-JP
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-Hi, board owners,
-=20
-At the IRC meeting (May 14th), the following two security patches were disc=
-ussed.=20
+SGksDQoNClNvcnJ5LCBJIGNhbiBub3Qgam9pbiBJUkMgbWVldGluZyB0b2RheS4NCg0KPiAtLS0t
+LU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBjaXAtZGV2QGxpc3RzLmNpcC1wcm9qZWN0
+Lm9yZyBbbWFpbHRvOmNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnXSBPbiBCZWhhbGYgT2YN
+Cj4gbWFzYXNoaS5rdWRvQGN5YmVydHJ1c3QuY28uanANCj4gU2VudDogVGh1cnNkYXksIE1heSAy
+MSwgMjAyMCA5OjM3IEFNDQo+IFRvOiBjaXAtZGV2QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZw0KPiBT
+dWJqZWN0OiBbY2lwLWRldl0gQ0lQIElSQyB3ZWVrbHkgbWVldGluZyB0b2RheQ0KPiANCj4gSGkg
+YWxsLA0KPiANCj4gS2luZGx5IGJlIHJlbWluZGVkIHRvIGF0dGVuZCB0aGUgd2Vla2x5IG1lZXRp
+bmcgdGhyb3VnaCBJUkMgdG8gZGlzY3VzcyB0ZWNobmljYWwgdG9waWNzIHdpdGggQ0lQIGtlcm5l
+bCB0b2RheS4NCj4gDQo+ICpQbGVhc2Ugbm90ZSB0aGF0IHRoZSBJUkMgbWVldGluZyB3YXMgcmVz
+Y2hlZHVsZWQgdG8gVVRDIChHTVQpIDA5OjAwIHN0YXJ0aW5nIGZyb20gdGhlIGZpcnN0IHdlZWsg
+b2YgQXByLiBhY2NvcmRpbmcNCj4gdG8gVFNDIG1lZXRpbmcqDQo+IGh0dHBzOi8vd3d3LnRpbWVh
+bmRkYXRlLmNvbS93b3JsZGNsb2NrL21lZXRpbmdkZXRhaWxzLmh0bWw/eWVhcj0yMDIwJm1vbnRo
+PTUmZGF5PTIxJmhvdXI9OSZtaW49MCZzZWM9MCZwMT0yMjQmcDI9DQo+IDE3OSZwMz0xMzYmcDQ9
+MzcmcDU9MjQxJnA2PTI0OA0KPiANCj4gVVNXZXN0CVVTRWFzdAlVSwlERQlUVwlKUA0KPiAwMjow
+MAkwNTowMAkxMDowMAkxMTowMAkxNzowMAkxODowMA0KPiANCj4gQ2hhbm5lbDoNCj4gKiBpcmM6
+Y2hhdC5mcmVlbm9kZS5uZXQ6NjY2Ny9jaXANCj4gDQo+IExhc3QgbWVldGluZyBtaW51dGVzOg0K
+PiBodHRwczovL2lyY2xvZ3MuYmFzZXJvY2sub3JnL21lZXRpbmdzL2NpcC8yMDIwLzA1L2NpcC4y
+MDIwLTA1LTE0LTA5LjAwLmxvZy5odG1sDQo+IA0KPiBBZ2VuZGE6DQo+IA0KPiAqIEFjdGlvbiBp
+dGVtDQo+IDEuIENvbWJpbmUgcm9vdCBmaWxlc3lzdGVtIHdpdGgga3NlbGZ0ZXN0IGJpbmFyeSAt
+IGl3YW1hdHN1DQoNCk5vIHVwZGF0ZS4NCg0KPiAyLiBTdHJlbmd0aGVuIHN1c3RhaW5hYmxlIHBy
+b2Nlc3MgdG8gYmFja3BvcnQgcGF0Y2hlcyBmcm9tIE1haW5saW5lL0xUUyAtIEtlcm5lbCBUZWFt
+DQo+IDMuIFVwbG9hZCBhIGd1aWRlbGluZSBmb3IgcmVmZXJlbmNlIGhhcmR3YXJlIHBsYXRmb3Jt
+IGFkZGl0aW9uIC0gbWFzYXNoaTkxMA0KPiA0LiBQcm9wb3NlIGEgcmVkdWN0aW9uIG9mIGtlcm5l
+bCByZXBvc2l0b3J5IG1pcnJvcnMgdG8gVFNDICAtIG1hc2FzaGk5MTAsIHN6bGluDQo+IDUuIFBv
+c3QgTFRQIHJlc3VsdHMgdG8gS2VybmVsQ0kgLSBwYXRlcnNvbmMNCj4gNi4gQXNrIGJvYXJkIG93
+bmVycyB0byByZXZpZXcgcmVmZXJlbmNlIHBsYXRmb3JtIGNvbmZpZ3MgdG8gb3B0aW1pemUgYmFj
+a3BvcnRpbmcgLSBtYXNhc2hpOTEwDQo+IA0KPiANCj4gKiBLZXJuZWwgbWFpbnRlbmFuY2UgdXBk
+YXRlcw0KDQpJIHJldmlld2VkIHY0LDQuMjIzIGFuZCAyMjQuDQpBbmQgSSBzZW50IGEgcGF0Y2gg
+Zm9yIGZpeGluZyBDVkUtMjAyMC0xMjc2OSB0byA0LjQsIGFuZCA0LjkgYW5kIDMuMTYuDQpUaGlz
+IHdhcyBhbHJlYWRseSBhcHBsaWVkIHRvIGVhY2ggTFRTIHRyZWUuDQoNCj4gKiBLZXJuZWwgdGVz
+dGluZw0KPiAqIENJUCBDb3JlDQo+ICogU29mdHdhcmUgdXBkYXRlDQo+ICogQ0lQIFNlY3VyaXR5
+DQo+ICogQU9CDQo+IA0KPiBUaGUgbWVldGluZyB3aWxsIHRha2UgMzAgbWluLCBhbHRob3VnaCBp
+dCBjYW4gYmUgZXh0ZW5kZWQgdG8gYW4gaG91ciBpZiBpdCBtYWtlcyBzZW5zZSBhbmQgdGhvc2Ug
+aW52b2x2ZWQgaW4gdGhlIHRvcGljcw0KPiBjYW4gc3RheS4gT3RoZXJ3aXNlLCB0aGUgdG9waWMg
+d2lsbCBiZSB0YWtlbiBvZmZsaW5lIG9yIGluIHRoZSBuZXh0IG1lZXRpbmcuDQoNCkJlc3QgcmVn
+YXJkcywNCiAgTm9idWhpcm8NCg0K
 
- a. CVE related to KVM SVM on x86,
- b. XDP sockets enabled for Cyclone V
-
-They were recently ported to upstream, and we would like to decide whether =
-they should be backported to CIP or not.
-
-Regarding a., SVM is for AMD CPUs only, so it might not actually be used.
-If it is the case, we would like to ignore this patch.
-
-Regarding b., XDP (express data path) is used for network intensive workloa=
-ds to bypass certain parts of the network stack
-So, it may be used by big tech / web stuff, not embedded.
-If it is the case, we would like to ignore this patch as well.
-
-Please let us know your comments.
-
-Best regards,
---
-M. Kudo
-
-
---7j1GeuQAy6cDNMGKChmc
+--mbamePLIogKn5rQLeuoW
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -132,12 +143,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#4636): https://lists.cip-project.org/g/cip-dev/message=
-/4636
-Mute This Topic: https://lists.cip-project.org/mt/74364844/4520388
+View/Reply Online (#4637): https://lists.cip-project.org/g/cip-dev/message=
+/4637
+Mute This Topic: https://lists.cip-project.org/mt/74364606/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---7j1GeuQAy6cDNMGKChmc--
+--mbamePLIogKn5rQLeuoW--
