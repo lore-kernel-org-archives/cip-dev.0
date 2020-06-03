@@ -1,41 +1,36 @@
-Return-Path: <SRS0=NpUv=7Q=lists.cip-project.org=bounce+64572+4668+4520388+8129055@kernel.org>
+Return-Path: <SRS0=7bx0=7Q=lists.cip-project.org=bounce+64572+4669+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04654C433DF
-	for <cip-dev@archiver.kernel.org>; Wed,  3 Jun 2020 15:24:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37387C433DF
+	for <cip-dev@archiver.kernel.org>; Wed,  3 Jun 2020 15:28:31 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id C023220738
-	for <cip-dev@archiver.kernel.org>; Wed,  3 Jun 2020 15:24:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id ECE92207D8
+	for <cip-dev@archiver.kernel.org>; Wed,  3 Jun 2020 15:28:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="qsmdxOOw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C023220738
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="mkaKbqv3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECE92207D8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4668+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id PulOYY4521723x3mpzWXxQCb; Wed, 03 Jun 2020 08:24:19 -0700
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4669+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id Ah0tYY4521723xH1PRNkRh03; Wed, 03 Jun 2020 08:28:30 -0700
 X-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web10.16377.1591197858103954495
+ by mx.groups.io with SMTP id smtpd.web10.16470.1591198108124938412
  for <cip-dev@lists.cip-project.org>;
- Wed, 03 Jun 2020 08:24:18 -0700
+ Wed, 03 Jun 2020 08:28:28 -0700
 X-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 941D01C0BD2; Wed,  3 Jun 2020 17:24:16 +0200 (CEST)
-Date: Wed, 3 Jun 2020 17:24:16 +0200
+	id 03AF71C0BD2; Wed,  3 Jun 2020 17:28:26 +0200 (CEST)
+Date: Wed, 3 Jun 2020 17:28:25 +0200
 From: "Pavel Machek" <pavel@ucw.cz>
-To: Johnson CH Chen =?utf-8?B?KOmZs+aYreWLsyk=?= <JohnsonCH.Chen@moxa.com>
-Cc: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	"nobuhiro1.iwamatsu@toshiba.co.jp" <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	"pavel@denx.de" <pavel@denx.de>
-Subject: Re: [cip-dev] [PATCH 4.4.y-cip] ARM: dts: am33xx: Added macros for numeric pinmux addresses
-Message-ID: <20200603152416.GB16550@amd>
-References: <HK2PR01MB3281497DDEAFCA27D58CB642FA880@HK2PR01MB3281.apcprd01.prod.exchangelabs.com>
+To: cip-dev@lists.cip-project.org
+Subject: [cip-dev] CVE-2020-10742 -- nfs client weirdness with max_rqst_size
+Message-ID: <20200603152825.GA26103@amd>
 MIME-Version: 1.0
-In-Reply-To: <HK2PR01MB3281497DDEAFCA27D58CB642FA880@HK2PR01MB3281.apcprd01.prod.exchangelabs.com>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
@@ -43,69 +38,68 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: ulw41AyLb33vnCXYMxF6zD6mx4520388AA=
-Content-Type: multipart/mixed; boundary="aGO4OEhn2xOZAcJiXhsg"
+X-Gm-Message-State: 6xpf3eTM61kKewCkeO48fzSFx4520388AA=
+Content-Type: multipart/mixed; boundary="QFbBWEKyHIRIQne9Gy75"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1591197859;
- bh=eCRDdm9fEC7q1aSXBWpqsW2ZWGZj65QrZOrLGhLTRNM=;
- h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=qsmdxOOwORNffyrhvUzQWb9Z/LGRimB+59wia8+WoyevIABE6ebfiIA/WYuR1Kg89Eb
- rvtXi4P8O6e6DZ8iBkEfjJRZBmA491eb8nQMf8coCqDKYo2fApXK5qT+lK+HEFT/Ozeby
- v8HDZkKXHYsZTSZTntm7/ZJnZ0OxFrUSEwU=
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1591198110;
+ bh=3DX4jklKssV8+aQ82BpohM7/KIHJEpFPYBhWmMyGF9s=;
+ h=Content-Type:Date:From:Reply-To:Subject:To;
+ b=mkaKbqv39sE9Efjwhc43it4rFwD5rtoekIdziz9gupAWOKpLWuUCoq7yBiB6hhFSNQa
+ xj8yKRV9MrzZh17JWZd22h40jIYsDCephBfhlzHN7V6AjzP1vaVODxVsoqahrKmWWpNxB
+ 9Au9rBtgQtQFrNFrF2Z22f3k+ppEUVHRoiw=
 
---aGO4OEhn2xOZAcJiXhsg
+--QFbBWEKyHIRIQne9Gy75
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="A6N2fC+uXW/VQSAv"
+	protocol="application/pgp-signature"; boundary="mYCpIKhGyMATD0i+"
 Content-Disposition: inline
 
---A6N2fC+uXW/VQSAv
+--mYCpIKhGyMATD0i+
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> From: Christina Quast <cquast@hanoverdisplays.com>
->=20
-> commit 7ebd1ea798a4932231b18499df136fb552f6f648 upstream.
->=20
-> The values are extraced from the "AM335x SitaraTM Processors Technical
-> Reference Manual", Section 9.3.1 CONTROL_MODULE Registers, based on the
-> file autogenerated by TI PinMux.
+I did a bit of research on CVE-2020-10742.
 
-I don't see anything wrong with the patch. OTOH I'd expect to see this
-in a series with the code actually using these defines.
+Unfortunately, RedHat is a bad player here, and bug reports are partly
+hidden from public.
 
-Is there a reason to merge it on its own?
+https://bugzilla.redhat.com/show_bug.cgi?id=3D1824270
+
+https://bugzilla.redhat.com/show_bug.cgi?id=3D1835127
+
+The bug does not seem especially bad (it looks like it needs specific
+configuration to trigger), and Salvatore Bonaccorso was not able to
+trigger it in 4.19.118.
+
+Original report is for 3.10 kernels, so that makes some sense.
+
+I don't believe we need to do anything here.
 
 Best regards,
-								Pavel
 
-> Signed-off-by: Christina Quast <cquast@hanoverdisplays.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
-> Signed-off-by: Johnson Chen <johnsonch.chen@moxa.com>
-
-
+									Pavel
 --=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
---A6N2fC+uXW/VQSAv
+--mYCpIKhGyMATD0i+
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAl7XwKAACgkQMOfwapXb+vJQcgCeKDIYZtsVxZ0M6GhhaUbrji6R
-GtcAoL9aKgRgp1UxdzA0tN18Sx1jqFFo
-=p+PL
+iEYEARECAAYFAl7XwZkACgkQMOfwapXb+vK9XwCgntvzRGOVwTG4MjiojkZH+E1+
+p34AoKV477aHzj095SuT4g2z/m2zdVCx
+=HznC
 -----END PGP SIGNATURE-----
 
---A6N2fC+uXW/VQSAv--
+--mYCpIKhGyMATD0i+--
 
---aGO4OEhn2xOZAcJiXhsg
+--QFbBWEKyHIRIQne9Gy75
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -113,12 +107,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#4668): https://lists.cip-project.org/g/cip-dev/message=
-/4668
-Mute This Topic: https://lists.cip-project.org/mt/74646578/4520388
+View/Reply Online (#4669): https://lists.cip-project.org/g/cip-dev/message=
+/4669
+Mute This Topic: https://lists.cip-project.org/mt/74651769/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---aGO4OEhn2xOZAcJiXhsg--
+--QFbBWEKyHIRIQne9Gy75--
