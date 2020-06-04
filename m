@@ -1,4 +1,4 @@
-Return-Path: <SRS0=u5Jb=7R=lists.cip-project.org=bounce+64572+4681+4520388+8129055@kernel.org>
+Return-Path: <SRS0=oxsV=7R=lists.cip-project.org=bounce+64572+4680+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -7,33 +7,33 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF1EEC433E4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0085C433E6
 	for <cip-dev@archiver.kernel.org>; Thu,  4 Jun 2020 04:18:07 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 809692072E
+	by mail.kernel.org (Postfix) with ESMTPS id 80D8C20772
 	for <cip-dev@archiver.kernel.org>; Thu,  4 Jun 2020 04:18:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="QVSsu6Gh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 809692072E
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="lBfpy9v7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80D8C20772
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4681+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id 2QdtYY4521723xIjDEyCqjgB; Wed, 03 Jun 2020 21:18:07 -0700
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4680+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id U7g1YY4521723xGR2kMw7Dhq; Wed, 03 Jun 2020 21:18:07 -0700
 X-Received: from wens.tw (wens.tw [140.112.30.76])
- by mx.groups.io with SMTP id smtpd.web12.7083.1591244286374460159
+ by mx.groups.io with SMTP id smtpd.web10.7310.1591244286348601999
  for <cip-dev@lists.cip-project.org>;
  Wed, 03 Jun 2020 21:18:06 -0700
 X-Received: by wens.tw (Postfix, from userid 1000)
-	id B77BD60020; Thu,  4 Jun 2020 12:18:02 +0800 (CST)
+	id 997135FE3B; Thu,  4 Jun 2020 12:18:02 +0800 (CST)
 From: "Chen-Yu Tsai (Moxa)" <wens@csie.org>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: cip-dev@lists.cip-project.org,
 	JohnsonCH.Chen@moxa.com
-Subject: [cip-dev] [PATCH RESEND 4.4.y-cip 09/15] PM / OPP: Fix parsing of opp-microvolt and opp-microamp properties
-Date: Thu,  4 Jun 2020 12:17:39 +0800
-Message-Id: <20200604041745.28886-10-wens@csie.org>
+Subject: [cip-dev] [PATCH RESEND 4.4.y-cip 05/15] PM / OPP: Rename OPP nodes as opp@<opp-hz>
+Date: Thu,  4 Jun 2020 12:17:35 +0800
+Message-Id: <20200604041745.28886-6-wens@csie.org>
 In-Reply-To: <20200604041745.28886-1-wens@csie.org>
 References: <20200604041745.28886-1-wens@csie.org>
 MIME-Version: 1.0
@@ -43,67 +43,211 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: pcufAKXv1IVx4z2nHCkPPDTKx4520388AA=
-Content-Type: multipart/mixed; boundary="PV5RU87e6oWQoyw3EEJl"
+X-Gm-Message-State: Qfh8dHKM7ai7wjNAV3joJfxCx4520388AA=
+Content-Type: multipart/mixed; boundary="L6rY5mai6JqCGiN6QPL8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=lists.cip-project.org; q=dns/txt; s=20140610; t=1591244287;
- bh=XBzI5r3B618iLF7671hUiG9jX3E2llDqAa/pR8ODl4o=;
+ bh=ILVPcQRTU/fi59TwHuUONnVdHh4TCek4bSr0u+JMUkA=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=QVSsu6GhsTTp7KiTEBoHYeGbL5kvSkyQ5HC7WhfV4uDj3Icqnii1JtJdW+eGr/TsxwM
- cAyN+We4ZBM//GKC55xFtg6Fc/zP/BZ6Oj9WGw4g0OAmTRlw9g94sxpc9jRe4FFJj7SjV
- 4v+W9cLfWLMPfEZ0jHuLyFNjQbrXrz1A6Kg=
+ b=lBfpy9v7YJzs8AbcpkYI/sdZ8HRBepUlzPW55Emlcgo/G2vPGmgSTEM5BX4GVgye3I2
+ 53eBXIIvGk4pNBH+vJmwYfZpkXQn1KFGDOIYEoE/2rHJRTjNT7t/47oR4IaAwy5ApOFcf
+ CEZaBWyTgYlcX5waMQQv0Zga6Kzg3xaBDwc=
 
---PV5RU87e6oWQoyw3EEJl
+--L6rY5mai6JqCGiN6QPL8
 Content-Transfer-Encoding: quoted-printable
 
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
 
-commit fd8d8e63467c922be9ae4452cca2980d473477d9 upstream.
+commit 754dcf35f34698661801ae1d391efa02affe83a7 upstream.
 
-Commit 01fb4d3c39d3 ("PM / OPP: Parse 'opp-<prop>-<name>'
-bindings") broke support for parsing standard opp-microvolt and
-opp-microamp properties.  Fix it by setting 'name' string to
-proper value for !prop cases.
+It would be better to name OPP nodes as opp@<opp-hz> as that will ensure
+that multiple DT nodes don't contain the same frequency. Of course we
+expect the writer to name the node with its opp-hz frequency and not any
+other frequency.
 
-Fixes: 01fb4d3c39d3 ("PM / OPP: Parse 'opp-<prop>-<name> 'bindings")
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+And that will let the compile error out if multiple nodes are using the
+same opp-hz frequency.
+
+Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
+Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Chen-Yu Tsai (Moxa) <wens@csie.org>
 ---
- drivers/base/power/opp/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/opp/opp.txt | 38 +++++++++----------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/base/power/opp/core.c b/drivers/base/power/opp/core.=
-c
-index 408fee4cb72df..504a6d4e46723 100644
---- a/drivers/base/power/opp/core.c
-+++ b/drivers/base/power/opp/core.c
-@@ -814,7 +814,7 @@ static int opp_parse_supplies(struct dev_pm_opp *opp,=
- struct device *dev,
+diff --git a/Documentation/devicetree/bindings/opp/opp.txt b/Documentatio=
+n/devicetree/bindings/opp/opp.txt
+index 24eac9a977494..601256fe8c0dd 100644
+--- a/Documentation/devicetree/bindings/opp/opp.txt
++++ b/Documentation/devicetree/bindings/opp/opp.txt
+@@ -177,20 +177,20 @@ Example 1: Single cluster Dual-core ARM cortex A9, =
+switch DVFS states together.
+ 		compatible =3D "operating-points-v2";
+ 		opp-shared;
 =20
- 	if (!prop) {
- 		/* Search for "opp-microvolt" */
--		name[13] =3D '\0';
-+		sprintf(name, "opp-microvolt");
- 		prop =3D of_find_property(opp->np, name, NULL);
+-		opp00 {
++		opp@1000000000 {
+ 			opp-hz =3D /bits/ 64 <1000000000>;
+ 			opp-microvolt =3D <970000 975000 985000>;
+ 			opp-microamp =3D <70000>;
+ 			clock-latency-ns =3D <300000>;
+ 			opp-suspend;
+ 		};
+-		opp01 {
++		opp@1100000000 {
+ 			opp-hz =3D /bits/ 64 <1100000000>;
+ 			opp-microvolt =3D <980000 1000000 1010000>;
+ 			opp-microamp =3D <80000>;
+ 			clock-latency-ns =3D <310000>;
+ 		};
+-		opp02 {
++		opp@1200000000 {
+ 			opp-hz =3D /bits/ 64 <1200000000>;
+ 			opp-microvolt =3D <1025000>;
+ 			clock-latency-ns =3D <290000>;
+@@ -256,20 +256,20 @@ independently.
+ 		 * independently.
+ 		 */
 =20
- 		/* Missing property isn't a problem, but an invalid entry is */
-@@ -861,7 +861,7 @@ static int opp_parse_supplies(struct dev_pm_opp *opp,=
- struct device *dev,
+-		opp00 {
++		opp@1000000000 {
+ 			opp-hz =3D /bits/ 64 <1000000000>;
+ 			opp-microvolt =3D <970000 975000 985000>;
+ 			opp-microamp =3D <70000>;
+ 			clock-latency-ns =3D <300000>;
+ 			opp-suspend;
+ 		};
+-		opp01 {
++		opp@1100000000 {
+ 			opp-hz =3D /bits/ 64 <1100000000>;
+ 			opp-microvolt =3D <980000 1000000 1010000>;
+ 			opp-microamp =3D <80000>;
+ 			clock-latency-ns =3D <310000>;
+ 		};
+-		opp02 {
++		opp@1200000000 {
+ 			opp-hz =3D /bits/ 64 <1200000000>;
+ 			opp-microvolt =3D <1025000>;
+ 			opp-microamp =3D <90000;
+@@ -332,20 +332,20 @@ DVFS state together.
+ 		compatible =3D "operating-points-v2";
+ 		opp-shared;
 =20
- 	if (!prop) {
- 		/* Search for "opp-microamp" */
--		name[12] =3D '\0';
-+		sprintf(name, "opp-microamp");
- 		prop =3D of_find_property(opp->np, name, NULL);
- 	}
+-		opp00 {
++		opp@1000000000 {
+ 			opp-hz =3D /bits/ 64 <1000000000>;
+ 			opp-microvolt =3D <970000 975000 985000>;
+ 			opp-microamp =3D <70000>;
+ 			clock-latency-ns =3D <300000>;
+ 			opp-suspend;
+ 		};
+-		opp01 {
++		opp@1100000000 {
+ 			opp-hz =3D /bits/ 64 <1100000000>;
+ 			opp-microvolt =3D <980000 1000000 1010000>;
+ 			opp-microamp =3D <80000>;
+ 			clock-latency-ns =3D <310000>;
+ 		};
+-		opp02 {
++		opp@1200000000 {
+ 			opp-hz =3D /bits/ 64 <1200000000>;
+ 			opp-microvolt =3D <1025000>;
+ 			opp-microamp =3D <90000>;
+@@ -358,20 +358,20 @@ DVFS state together.
+ 		compatible =3D "operating-points-v2";
+ 		opp-shared;
 =20
+-		opp10 {
++		opp@1300000000 {
+ 			opp-hz =3D /bits/ 64 <1300000000>;
+ 			opp-microvolt =3D <1045000 1050000 1055000>;
+ 			opp-microamp =3D <95000>;
+ 			clock-latency-ns =3D <400000>;
+ 			opp-suspend;
+ 		};
+-		opp11 {
++		opp@1400000000 {
+ 			opp-hz =3D /bits/ 64 <1400000000>;
+ 			opp-microvolt =3D <1075000>;
+ 			opp-microamp =3D <100000>;
+ 			clock-latency-ns =3D <400000>;
+ 		};
+-		opp12 {
++		opp@1500000000 {
+ 			opp-hz =3D /bits/ 64 <1500000000>;
+ 			opp-microvolt =3D <1010000 1100000 1110000>;
+ 			opp-microamp =3D <95000>;
+@@ -398,7 +398,7 @@ Example 4: Handling multiple regulators
+ 		compatible =3D "operating-points-v2";
+ 		opp-shared;
+=20
+-		opp00 {
++		opp@1000000000 {
+ 			opp-hz =3D /bits/ 64 <1000000000>;
+ 			opp-microvolt =3D <970000>, /* Supply 0 */
+ 					<960000>, /* Supply 1 */
+@@ -411,7 +411,7 @@ Example 4: Handling multiple regulators
+=20
+ 		/* OR */
+=20
+-		opp00 {
++		opp@1000000000 {
+ 			opp-hz =3D /bits/ 64 <1000000000>;
+ 			opp-microvolt =3D <970000 975000 985000>, /* Supply 0 */
+ 					<960000 965000 975000>, /* Supply 1 */
+@@ -424,7 +424,7 @@ Example 4: Handling multiple regulators
+=20
+ 		/* OR */
+=20
+-		opp00 {
++		opp@1000000000 {
+ 			opp-hz =3D /bits/ 64 <1000000000>;
+ 			opp-microvolt =3D <970000 975000 985000>, /* Supply 0 */
+ 					<960000 965000 975000>, /* Supply 1 */
+@@ -456,7 +456,7 @@ Example 5: opp-supported-hw
+ 		status =3D "okay";
+ 		opp-shared;
+=20
+-		opp00 {
++		opp@600000000 {
+ 			/*
+ 			 * Supports all substrate and process versions for 0xF
+ 			 * cuts, i.e. only first four cuts.
+@@ -467,7 +467,7 @@ Example 5: opp-supported-hw
+ 			...
+ 		};
+=20
+-		opp01 {
++		opp@800000000 {
+ 			/*
+ 			 * Supports:
+ 			 * - cuts: only one, 6th cut (represented by 6th bit).
+@@ -499,7 +499,7 @@ Example 6: opp-microvolt-<name>, opp-microamp-<name>:
+ 		compatible =3D "operating-points-v2";
+ 		opp-shared;
+=20
+-		opp00 {
++		opp@1000000000 {
+ 			opp-hz =3D /bits/ 64 <1000000000>;
+ 			opp-microvolt-slow =3D <900000 915000 925000>;
+ 			opp-microvolt-fast =3D <970000 975000 985000>;
+@@ -507,7 +507,7 @@ Example 6: opp-microvolt-<name>, opp-microamp-<name>:
+ 			opp-microamp-fast =3D  <71000>;
+ 		};
+=20
+-		opp01 {
++		opp@1200000000 {
+ 			opp-hz =3D /bits/ 64 <1200000000>;
+ 			opp-microvolt-slow =3D <900000 915000 925000>, /* Supply vcc0 */
+ 					      <910000 925000 935000>; /* Supply vcc1 */
 --=20
 2.27.0.rc0
 
 
---PV5RU87e6oWQoyw3EEJl
+--L6rY5mai6JqCGiN6QPL8
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -111,12 +255,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#4681): https://lists.cip-project.org/g/cip-dev/message=
-/4681
-Mute This Topic: https://lists.cip-project.org/mt/74665634/4520388
+View/Reply Online (#4680): https://lists.cip-project.org/g/cip-dev/message=
+/4680
+Mute This Topic: https://lists.cip-project.org/mt/74665633/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---PV5RU87e6oWQoyw3EEJl--
+--L6rY5mai6JqCGiN6QPL8--
