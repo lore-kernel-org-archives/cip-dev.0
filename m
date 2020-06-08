@@ -1,185 +1,121 @@
-Return-Path: <SRS0=BDSe=7V=lists.cip-project.org=bounce+64572+4769+4520388+8129055@kernel.org>
+Return-Path: <SRS0=q90H=7V=lists.cip-project.org=bounce+64572+4770+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E7C2C433ED
-	for <cip-dev@archiver.kernel.org>; Mon,  8 Jun 2020 12:01:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85901C433DF
+	for <cip-dev@archiver.kernel.org>; Mon,  8 Jun 2020 21:30:26 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E45402078C
-	for <cip-dev@archiver.kernel.org>; Mon,  8 Jun 2020 12:01:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id C827D20760
+	for <cip-dev@archiver.kernel.org>; Mon,  8 Jun 2020 21:30:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="PsHnQKfU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E45402078C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4769+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id 3oIEYY4521723xVwJ67q1xcc; Mon, 08 Jun 2020 05:01:39 -0700
-X-Received: from wens.tw (wens.tw [140.112.30.76])
- by mx.groups.io with SMTP id smtpd.web10.26111.1591607689004076582
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="QdcZep+K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C827D20760
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4770+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id Pe7jYY4521723xvRKzFjudlj; Mon, 08 Jun 2020 14:30:25 -0700
+X-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web10.1158.1591651823378887740
  for <cip-dev@lists.cip-project.org>;
- Mon, 08 Jun 2020 02:14:49 -0700
-X-Received: by wens.tw (Postfix, from userid 1000)
-	id AF2015FD21; Mon,  8 Jun 2020 17:14:43 +0800 (CST)
-From: "Chen-Yu Tsai (Moxa)" <wens@csie.org>
-To: nobuhiro1.iwamatsu@toshiba.co.jp,
-	pavel@denx.de
-Cc: cip-dev@lists.cip-project.org,
-	JohnsonCH.Chen@moxa.com
-Subject: [cip-dev] [PATCH 4.4.y-cip v2 02/15] PM / OPP: Add "opp-supported-hw" binding
-Date: Mon,  8 Jun 2020 17:14:19 +0800
-Message-Id: <20200608091432.15366-3-wens@csie.org>
-In-Reply-To: <20200608091432.15366-1-wens@csie.org>
-References: <20200608091432.15366-1-wens@csie.org>
+ Mon, 08 Jun 2020 14:30:24 -0700
+X-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 25A3A1C0C0D; Mon,  8 Jun 2020 23:30:20 +0200 (CEST)
+Date: Mon, 8 Jun 2020 23:30:19 +0200
+From: "Pavel Machek" <pavel@ucw.cz>
+To: Johnson CH Chen =?utf-8?B?KOmZs+aYreWLsyk=?= <JohnsonCH.Chen@moxa.com>
+Cc: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	"nobuhiro1.iwamatsu@toshiba.co.jp" <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Pavel Machek <pavel@denx.de>
+Subject: Re: [cip-dev] [PATCH 4.4.y-cip 0/3] ARM: dts: am335x: Replace numeric pinmux address with macro defines
+Message-ID: <20200608213019.GA2851@amd>
+References: <HK2PR01MB3281084A8DA1542518F65818FA850@HK2PR01MB3281.apcprd01.prod.exchangelabs.com>
+ <HK2PR01MB32818C637F6FB1F0AE969A95FA850@HK2PR01MB3281.apcprd01.prod.exchangelabs.com>
 MIME-Version: 1.0
+In-Reply-To: <HK2PR01MB32818C637F6FB1F0AE969A95FA850@HK2PR01MB3281.apcprd01.prod.exchangelabs.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: dQtoppZ2QQeazFwHYzM9DeBcx4520388AA=
-Content-Type: multipart/mixed; boundary="6AwlKUmrYa7CqQouQfjZ"
+X-Gm-Message-State: bRj4ZPDtjOE22IxuvHRAQrhux4520388AA=
+Content-Type: multipart/mixed; boundary="3YcCBW9ekIhotRrRK46J"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1591617699;
- bh=4iR9vTkzog/R1oQWUlm0yJHU4OxUgpEI0ejjJ9CPslQ=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1591651825;
+ bh=1N54kSBmGYgAEIKF5rrnf7v3dONJ20a1mUyDGOiGwUY=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=PsHnQKfU6aDKVnf5O9zDxhYKxNb6oRdm4l0jxB+lRHjHZ2BxAuKfnz3fZytBwsQsDOU
- /5bV5pqH2tkkNV3nFbRexqjvrL1qikS54Hs+QAQvIvk899jPPTXTQ98n3U/+XDFMdI3EC
- 20i+d+qTgx4MEbiIud3vhNaQ0RLfKFG5Zwc=
+ b=QdcZep+KKLrPPlWz/kZAxE3vzZXswfwNPM1Qif0nuJcNaC1oX1a3qwYtR/jik+wF3ZO
+ q5XOCE0gD3b/FqeyxrgGHOj6Hq+I8HkqEiN9syEKoqmQpVAQ+t3IvhDfOfI6xxtcHfbI7
+ QxnjbiUpmcEN6YvmqbZLJQ+q/pM9TZn3zgs=
 
---6AwlKUmrYa7CqQouQfjZ
+--3YcCBW9ekIhotRrRK46J
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
+Content-Disposition: inline
+
+--XsQoSWH+UP9D9v3l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-From: Viresh Kumar <viresh.kumar@linaro.org>
+Hi!
 
-commit 1c4d12de2719dfdf27c6dab31e7a5641ee293c94 upstream.
+> > Tony Lindgren (1):
+> >   ARM: dts: am33xx: Added AM33XX_PADCONF macro
+> >
+> >  arch/arm/boot/dts/am335x-moxa-uc-8100-me-t.dts | 116 +++++++++++------=
+-----
+> >  include/dt-bindings/pinctrl/am33xx.h           | 130 +++++++++++++++++=
++++++++-
+> >  include/dt-bindings/pinctrl/omap.h             |   1 +
+> >  3 files changed, 188 insertions(+), 59 deletions(-)
+> >
+> These should be the following:
+>=20
+> Christina Quast (3):
+>   ARM: dts: am33xx: Added macros for numeric pinmux addresses
+>   ARM: dts: am33xx: Added AM33XX_PADCONF macro
+>   ARM: dts: am335x: moxa-uc-8100-me-t: Replaced register offsets with
+>     defines
 
-We may want to enable only a subset of OPPs, from the bigger list of
-OPPs, based on what version of the hardware we are running on. This
-would enable us to not duplicate OPP tables for every version of the
-hardware we support.
+There's nothing obviously wrong with the patches (and they won't break
+anything but am335x-moxa platform, so they are low risk).
 
-To enable that, this patch defines a new property 'opp-supported-hw'. It
-can support any number of hierarchy levels of the versions the hardware
-follows. And based on the selected hardware versions, we can pick only
-the relevant OPPs at runtime.
+On the other hand, I don't see any obvious benefit. Whether we use hex
+constants or symbolic constants affects readability, but has no effect
+on functionality.
 
-Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Chen-Yu Tsai (Moxa) <wens@csie.org>
----
- Documentation/devicetree/bindings/opp/opp.txt | 65 +++++++++++++++++++
- 1 file changed, 65 insertions(+)
+Do you have any patches on top of these that rely on symbolic
+constants in the dts? Are there any changes in the generated .dtb?
+What is the benefit of this series (besides cleanup)?
 
-diff --git a/Documentation/devicetree/bindings/opp/opp.txt b/Documentatio=
-n/devicetree/bindings/opp/opp.txt
-index 0cb44dc21f97c..d072fa0ffbd44 100644
---- a/Documentation/devicetree/bindings/opp/opp.txt
-+++ b/Documentation/devicetree/bindings/opp/opp.txt
-@@ -123,6 +123,26 @@ Optional properties:
- - opp-suspend: Marks the OPP to be used during device suspend. Only one =
-OPP in
-   the table should have this.
-=20
-+- opp-supported-hw: This enables us to select only a subset of OPPs from=
- the
-+  larger OPP table, based on what version of the hardware we are running=
- on. We
-+  still can't have multiple nodes with the same opp-hz value in OPP tabl=
-e.
-+
-+  It's an user defined array containing a hierarchy of hardware version =
-numbers,
-+  supported by the OPP. For example: a platform with hierarchy of three =
-levels
-+  of versions (A, B and C), this field should be like <X Y Z>, where X
-+  corresponds to Version hierarchy A, Y corresponds to version hierarchy=
- B and Z
-+  corresponds to version hierarchy C.
-+
-+  Each level of hierarchy is represented by a 32 bit value, and so there=
- can be
-+  only 32 different supported version per hierarchy. i.e. 1 bit per vers=
-ion. A
-+  value of 0xFFFFFFFF will enable the OPP for all versions for that hier=
-archy
-+  level. And a value of 0x00000000 will disable the OPP completely, and =
-so we
-+  never want that to happen.
-+
-+  If 32 values aren't sufficient for a version hierarchy, than that vers=
-ion
-+  hierarchy can be contained in multiple 32 bit values. i.e. <X Y Z1 Z2>=
- in the
-+  above example, Z1 & Z2 refer to the version hierarchy Z.
-+
- - status: Marks the node enabled/disabled.
-=20
- Example 1: Single cluster Dual-core ARM cortex A9, switch DVFS states to=
-gether.
-@@ -463,3 +483,48 @@ Example 5: Multiple OPP tables
- 		};
- 	};
- };
-+
-+Example 6: opp-supported-hw
-+(example: three level hierarchy of versions: cuts, substrate and process=
-)
-+
-+/ {
-+	cpus {
-+		cpu@0 {
-+			compatible =3D "arm,cortex-a7";
-+			...
-+
-+			cpu-supply =3D <&cpu_supply>
-+			operating-points-v2 =3D <&cpu0_opp_table_slow>;
-+		};
-+	};
-+
-+	opp_table {
-+		compatible =3D "operating-points-v2";
-+		status =3D "okay";
-+		opp-shared;
-+
-+		opp00 {
-+			/*
-+			 * Supports all substrate and process versions for 0xF
-+			 * cuts, i.e. only first four cuts.
-+			 */
-+			opp-supported-hw =3D <0xF 0xFFFFFFFF 0xFFFFFFFF>
-+			opp-hz =3D /bits/ 64 <600000000>;
-+			opp-microvolt =3D <900000 915000 925000>;
-+			...
-+		};
-+
-+		opp01 {
-+			/*
-+			 * Supports:
-+			 * - cuts: only one, 6th cut (represented by 6th bit).
-+			 * - substrate: supports 16 different substrate versions
-+			 * - process: supports 9 different process versions
-+			 */
-+			opp-supported-hw =3D <0x20 0xff0000ff 0x0000f4f0>
-+			opp-hz =3D /bits/ 64 <800000000>;
-+			opp-microvolt =3D <900000 915000 925000>;
-+			...
-+		};
-+	};
-+};
+Best regards,
+								Pavel
 --=20
-2.27.0.rc0
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
+--XsQoSWH+UP9D9v3l
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
---6AwlKUmrYa7CqQouQfjZ
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl7eresACgkQMOfwapXb+vKaVQCeKIgfKS5wwXUP4o/E6ATVJBAJ
+90oAoMBNxC7M9WNNpss0wb85ieQfdBdQ
+=/vNa
+-----END PGP SIGNATURE-----
+
+--XsQoSWH+UP9D9v3l--
+
+--3YcCBW9ekIhotRrRK46J
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -187,12 +123,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#4769): https://lists.cip-project.org/g/cip-dev/message=
-/4769
-Mute This Topic: https://lists.cip-project.org/mt/74750034/4520388
+View/Reply Online (#4770): https://lists.cip-project.org/g/cip-dev/message=
+/4770
+Mute This Topic: https://lists.cip-project.org/mt/74749053/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---6AwlKUmrYa7CqQouQfjZ--
+--3YcCBW9ekIhotRrRK46J--
