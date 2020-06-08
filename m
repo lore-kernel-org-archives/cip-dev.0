@@ -1,4 +1,4 @@
-Return-Path: <SRS0=1sjO=7V=lists.cip-project.org=bounce+64572+4766+4520388+8129055@kernel.org>
+Return-Path: <SRS0=BDSe=7V=lists.cip-project.org=bounce+64572+4769+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -7,33 +7,33 @@ X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C69B5C433EB
-	for <cip-dev@archiver.kernel.org>; Mon,  8 Jun 2020 12:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E7C2C433ED
+	for <cip-dev@archiver.kernel.org>; Mon,  8 Jun 2020 12:01:40 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 91B7E2078C
+	by mail.kernel.org (Postfix) with ESMTPS id E45402078C
 	for <cip-dev@archiver.kernel.org>; Mon,  8 Jun 2020 12:01:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="t3QAqFVJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91B7E2078C
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="PsHnQKfU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E45402078C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4766+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id JldvYY4521723xG35zIVRXNl; Mon, 08 Jun 2020 05:01:39 -0700
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4769+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id 3oIEYY4521723xVwJ67q1xcc; Mon, 08 Jun 2020 05:01:39 -0700
 X-Received: from wens.tw (wens.tw [140.112.30.76])
- by mx.groups.io with SMTP id smtpd.web11.26096.1591607689007928631
+ by mx.groups.io with SMTP id smtpd.web10.26111.1591607689004076582
  for <cip-dev@lists.cip-project.org>;
  Mon, 08 Jun 2020 02:14:49 -0700
 X-Received: by wens.tw (Postfix, from userid 1000)
-	id B4E7F5FD69; Mon,  8 Jun 2020 17:14:43 +0800 (CST)
+	id AF2015FD21; Mon,  8 Jun 2020 17:14:43 +0800 (CST)
 From: "Chen-Yu Tsai (Moxa)" <wens@csie.org>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: cip-dev@lists.cip-project.org,
 	JohnsonCH.Chen@moxa.com
-Subject: [cip-dev] [PATCH 4.4.y-cip v2 03/15] PM / OPP: Add {opp-microvolt|opp-microamp}-<name> binding
-Date: Mon,  8 Jun 2020 17:14:20 +0800
-Message-Id: <20200608091432.15366-4-wens@csie.org>
+Subject: [cip-dev] [PATCH 4.4.y-cip v2 02/15] PM / OPP: Add "opp-supported-hw" binding
+Date: Mon,  8 Jun 2020 17:14:19 +0800
+Message-Id: <20200608091432.15366-3-wens@csie.org>
 In-Reply-To: <20200608091432.15366-1-wens@csie.org>
 References: <20200608091432.15366-1-wens@csie.org>
 MIME-Version: 1.0
@@ -43,96 +43,96 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: TCd1Kt50FCu1kHxYs1VGZJmxx4520388AA=
-Content-Type: multipart/mixed; boundary="LjDjLmzAMnmyTt41tYal"
+X-Gm-Message-State: dQtoppZ2QQeazFwHYzM9DeBcx4520388AA=
+Content-Type: multipart/mixed; boundary="6AwlKUmrYa7CqQouQfjZ"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=lists.cip-project.org; q=dns/txt; s=20140610; t=1591617699;
- bh=en5nbrmkVHpqmUR0/iJ3HNGWsTf9867TmXD0uSCPSd4=;
+ bh=4iR9vTkzog/R1oQWUlm0yJHU4OxUgpEI0ejjJ9CPslQ=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=t3QAqFVJD9/WreqAI6mNFFzQf8XGnDKTAKFpXSeSz0HninTpZ/rZHL1GigxNZg+PQ8f
- CzeI57RRUbvgK8cy7alvGw01TPj+1/cEe7Os/735xrPRykPOeWwNM0VV0ob4rEVyj+P0e
- LGkX19t2phHjA+2gJfSjQ78Y/fl5w0rRiKI=
+ b=PsHnQKfU6aDKVnf5O9zDxhYKxNb6oRdm4l0jxB+lRHjHZ2BxAuKfnz3fZytBwsQsDOU
+ /5bV5pqH2tkkNV3nFbRexqjvrL1qikS54Hs+QAQvIvk899jPPTXTQ98n3U/+XDFMdI3EC
+ 20i+d+qTgx4MEbiIud3vhNaQ0RLfKFG5Zwc=
 
---LjDjLmzAMnmyTt41tYal
+--6AwlKUmrYa7CqQouQfjZ
 Content-Transfer-Encoding: quoted-printable
 
 From: Viresh Kumar <viresh.kumar@linaro.org>
 
-commit ffdb8cc7a27c89175e541e68e2a73f1f63ab8c6b upstream.
+commit 1c4d12de2719dfdf27c6dab31e7a5641ee293c94 upstream.
 
-Depending on the version of hardware or its properties, which are only
-known at runtime, various properties of the OPP can change. For example,
-an OPP with frequency 1.2 GHz, may have different voltage/current
-requirements based on the version of the hardware it is running on.
+We may want to enable only a subset of OPPs, from the bigger list of
+OPPs, based on what version of the hardware we are running on. This
+would enable us to not duplicate OPP tables for every version of the
+hardware we support.
 
-In order to not replicate the same OPP tables for varying values of all
-such fields, this commit introduces the concept of opp-property-<name>.
-The <name> can be chosen by the platform at runtime, and OPPs will be
-initialized depending on that name string. Currently support is extended
-for the following properties:
-- opp-microvolt-<name>
-- opp-microamp-<name>
-
-If the name string isn't provided by the platform, or if it is provided
-but doesn't match the properties present in the OPP node, we will fall
-back to the original properties without the -<name> string, if they are
-available.
+To enable that, this patch defines a new property 'opp-supported-hw'. It
+can support any number of hierarchy levels of the versions the hardware
+follows. And based on the selected hardware versions, we can pick only
+the relevant OPPs at runtime.
 
 Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
+Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Chen-Yu Tsai (Moxa) <wens@csie.org>
 ---
- Documentation/devicetree/bindings/opp/opp.txt | 47 +++++++++++++++++++
- 1 file changed, 47 insertions(+)
+ Documentation/devicetree/bindings/opp/opp.txt | 65 +++++++++++++++++++
+ 1 file changed, 65 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/opp/opp.txt b/Documentatio=
 n/devicetree/bindings/opp/opp.txt
-index d072fa0ffbd44..a3e7f0d5e1fb4 100644
+index 0cb44dc21f97c..d072fa0ffbd44 100644
 --- a/Documentation/devicetree/bindings/opp/opp.txt
 +++ b/Documentation/devicetree/bindings/opp/opp.txt
-@@ -100,6 +100,14 @@ Optional properties:
-   Entries for multiple regulators must be present in the same order as
-   regulators are specified in device's DT node.
+@@ -123,6 +123,26 @@ Optional properties:
+ - opp-suspend: Marks the OPP to be used during device suspend. Only one =
+OPP in
+   the table should have this.
 =20
-+- opp-microvolt-<name>: Named opp-microvolt property. This is exactly si=
-milar to
-+  the above opp-microvolt property, but allows multiple voltage ranges t=
-o be
-+  provided for the same OPP. At runtime, the platform can pick a <name> =
-and
-+  matching opp-microvolt-<name> property will be enabled for all OPPs. I=
-f the
-+  platform doesn't pick a specific <name> or the <name> doesn't match wi=
-th any
-+  opp-microvolt-<name> properties, then opp-microvolt property shall be =
-used, if
-+  present.
++- opp-supported-hw: This enables us to select only a subset of OPPs from=
+ the
++  larger OPP table, based on what version of the hardware we are running=
+ on. We
++  still can't have multiple nodes with the same opp-hz value in OPP tabl=
+e.
 +
- - opp-microamp: The maximum current drawn by the device in microamperes
-   considering system specific parameters (such as transients, process, a=
-ging,
-   maximum operating temperature range etc.) as necessary. This may be us=
-ed to
-@@ -112,6 +120,9 @@ Optional properties:
-   for few regulators, then this should be marked as zero for them. If it=
- isn't
-   required for any regulator, then this property need not be present.
-=20
-+- opp-microamp-<name>: Named opp-microamp property. Similar to
-+  opp-microvolt-<name> property, but for microamp instead.
++  It's an user defined array containing a hierarchy of hardware version =
+numbers,
++  supported by the OPP. For example: a platform with hierarchy of three =
+levels
++  of versions (A, B and C), this field should be like <X Y Z>, where X
++  corresponds to Version hierarchy A, Y corresponds to version hierarchy=
+ B and Z
++  corresponds to version hierarchy C.
 +
- - clock-latency-ns: Specifies the maximum possible transition latency (i=
-n
-   nanoseconds) for switching to this OPP from any other OPP.
++  Each level of hierarchy is represented by a 32 bit value, and so there=
+ can be
++  only 32 different supported version per hierarchy. i.e. 1 bit per vers=
+ion. A
++  value of 0xFFFFFFFF will enable the OPP for all versions for that hier=
+archy
++  level. And a value of 0x00000000 will disable the OPP completely, and =
+so we
++  never want that to happen.
++
++  If 32 values aren't sufficient for a version hierarchy, than that vers=
+ion
++  hierarchy can be contained in multiple 32 bit values. i.e. <X Y Z1 Z2>=
+ in the
++  above example, Z1 & Z2 refer to the version hierarchy Z.
++
+ - status: Marks the node enabled/disabled.
 =20
-@@ -528,3 +539,39 @@ Example 6: opp-supported-hw
+ Example 1: Single cluster Dual-core ARM cortex A9, switch DVFS states to=
+gether.
+@@ -463,3 +483,48 @@ Example 5: Multiple OPP tables
  		};
  	};
  };
 +
-+Example 7: opp-microvolt-<name>, opp-microamp-<name>:
-+(example: device with two possible microvolt ranges: slow and fast)
++Example 6: opp-supported-hw
++(example: three level hierarchy of versions: cuts, substrate and process=
+)
 +
 +/ {
 +	cpus {
@@ -140,29 +140,38 @@ n
 +			compatible =3D "arm,cortex-a7";
 +			...
 +
-+			operating-points-v2 =3D <&cpu0_opp_table>;
++			cpu-supply =3D <&cpu_supply>
++			operating-points-v2 =3D <&cpu0_opp_table_slow>;
 +		};
 +	};
 +
-+	cpu0_opp_table: opp_table0 {
++	opp_table {
 +		compatible =3D "operating-points-v2";
++		status =3D "okay";
 +		opp-shared;
 +
 +		opp00 {
-+			opp-hz =3D /bits/ 64 <1000000000>;
-+			opp-microvolt-slow =3D <900000 915000 925000>;
-+			opp-microvolt-fast =3D <970000 975000 985000>;
-+			opp-microamp-slow =3D  <70000>;
-+			opp-microamp-fast =3D  <71000>;
++			/*
++			 * Supports all substrate and process versions for 0xF
++			 * cuts, i.e. only first four cuts.
++			 */
++			opp-supported-hw =3D <0xF 0xFFFFFFFF 0xFFFFFFFF>
++			opp-hz =3D /bits/ 64 <600000000>;
++			opp-microvolt =3D <900000 915000 925000>;
++			...
 +		};
 +
 +		opp01 {
-+			opp-hz =3D /bits/ 64 <1200000000>;
-+			opp-microvolt-slow =3D <900000 915000 925000>, /* Supply vcc0 */
-+					      <910000 925000 935000>; /* Supply vcc1 */
-+			opp-microvolt-fast =3D <970000 975000 985000>, /* Supply vcc0 */
-+					     <960000 965000 975000>; /* Supply vcc1 */
-+			opp-microamp =3D  <70000>; /* Will be used for both slow/fast */
++			/*
++			 * Supports:
++			 * - cuts: only one, 6th cut (represented by 6th bit).
++			 * - substrate: supports 16 different substrate versions
++			 * - process: supports 9 different process versions
++			 */
++			opp-supported-hw =3D <0x20 0xff0000ff 0x0000f4f0>
++			opp-hz =3D /bits/ 64 <800000000>;
++			opp-microvolt =3D <900000 915000 925000>;
++			...
 +		};
 +	};
 +};
@@ -170,7 +179,7 @@ n
 2.27.0.rc0
 
 
---LjDjLmzAMnmyTt41tYal
+--6AwlKUmrYa7CqQouQfjZ
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -178,12 +187,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#4766): https://lists.cip-project.org/g/cip-dev/message=
-/4766
-Mute This Topic: https://lists.cip-project.org/mt/74750031/4520388
+View/Reply Online (#4769): https://lists.cip-project.org/g/cip-dev/message=
+/4769
+Mute This Topic: https://lists.cip-project.org/mt/74750034/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---LjDjLmzAMnmyTt41tYal--
+--6AwlKUmrYa7CqQouQfjZ--
