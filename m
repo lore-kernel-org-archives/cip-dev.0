@@ -1,38 +1,40 @@
-Return-Path: <SRS0=y66e=7V=lists.cip-project.org=bounce+64572+4733+4520388+8129055@kernel.org>
+Return-Path: <SRS0=zUg9=7V=lists.cip-project.org=bounce+64572+4735+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE6DC433E0
-	for <cip-dev@archiver.kernel.org>; Mon,  8 Jun 2020 09:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63265C433E2
+	for <cip-dev@archiver.kernel.org>; Mon,  8 Jun 2020 09:30:53 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 2E83F206A4
-	for <cip-dev@archiver.kernel.org>; Mon,  8 Jun 2020 09:30:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 3613C2076A
+	for <cip-dev@archiver.kernel.org>; Mon,  8 Jun 2020 09:30:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="L7Ow/0Js"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E83F206A4
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="M97wwO7p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3613C2076A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4733+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id m9jnYY4521723xiBNrAG698X; Mon, 08 Jun 2020 02:30:37 -0700
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4735+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id 5Et6YY4521723xbyjhT4w1Ir; Mon, 08 Jun 2020 02:30:53 -0700
 X-Received: from wens.tw (wens.tw [140.112.30.76])
- by mx.groups.io with SMTP id smtpd.web12.26368.1591608636336806405
+ by mx.groups.io with SMTP id smtpd.web10.26291.1591608651669542342
  for <cip-dev@lists.cip-project.org>;
- Mon, 08 Jun 2020 02:30:36 -0700
+ Mon, 08 Jun 2020 02:30:52 -0700
 X-Received: by wens.tw (Postfix, from userid 1000)
-	id 51F185FCF6; Mon,  8 Jun 2020 17:30:34 +0800 (CST)
+	id 149335FD80; Mon,  8 Jun 2020 17:30:50 +0800 (CST)
 From: "Chen-Yu Tsai (Moxa)" <wens@csie.org>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: cip-dev@lists.cip-project.org,
 	JohnsonCH.Chen@moxa.com
-Subject: [cip-dev] [PATCH 4.4.y-cip v2 00/15] PM / OPP v2 & cpufreq backports part 1
-Date: Mon,  8 Jun 2020 17:30:13 +0800
-Message-Id: <20200608093028.21612-1-wens@csie.org>
+Subject: [cip-dev] [PATCH 4.4.y-cip v2 05/15] PM / OPP: Rename OPP nodes as opp@<opp-hz>
+Date: Mon,  8 Jun 2020 17:30:18 +0800
+Message-Id: <20200608093028.21612-6-wens@csie.org>
+In-Reply-To: <20200608093028.21612-1-wens@csie.org>
+References: <20200608093028.21612-1-wens@csie.org>
 MIME-Version: 1.0
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
@@ -40,132 +42,211 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: VHRXIQlZUW5jCCVXJ0IktSClx4520388AA=
-Content-Type: multipart/mixed; boundary="El8cXVPw8mQ9R45h5hHp"
+X-Gm-Message-State: hb5JqLkSuqKpszm8cWyPhSBtx4520388AA=
+Content-Type: multipart/mixed; boundary="1KpxawJJN9aVsgfZxFJJ"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1591608637;
- bh=aYMU0zCkUHuIVRIIaYCzOhk+2EAtfpukkxP2LFDwO2U=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1591608653;
+ bh=vFSpvCqpGkQaOX9f2CsWfZDosA9d5WWfDsSN9L5kMDQ=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=L7Ow/0Jsh7LL/onRiU1MQdlF3lXIfyFlFJLsti5ai5HZxM0qYfwQ49p3EHeBjMUORh6
- eQsOprhFq/aG1wdTkhBYtKz1Rtxx+lTLID9QhW8oBMOLr/mb3mLCjLy2sqdvI3Pxt2mLF
- ye1XAkMZYBCOj0zLm85q1iYDzMZqgMdjW2s=
+ b=M97wwO7pYqxvLIFzjFPpBRIE9FR2i04SRYYNzxPcRLpguc/oZjxE8F7aHgLPAAusZQl
+ PaSK/dUI6JAkbKEK7THzOeOAy9WuyALRuBLRohgDktrdTrvscVoVr+pOJolTrerZ6IbC0
+ eBtMgRH2DLJRABnPMDWAOc0JibkIKRz5Vz0=
 
---El8cXVPw8mQ9R45h5hHp
+--1KpxawJJN9aVsgfZxFJJ
 Content-Transfer-Encoding: quoted-printable
 
-(resending from correct address...)
+From: Viresh Kumar <viresh.kumar@linaro.org>
 
-Hi everyone,
+commit 754dcf35f34698661801ae1d391efa02affe83a7 upstream.
 
-This is v2 of the part 1 of MOXA's PM / OPP / cpufreq backport series.
-Changes since v1:
+It would be better to name OPP nodes as opp@<opp-hz> as that will ensure
+that multiple DT nodes don't contain the same frequency. Of course we
+expect the writer to name the node with its opp-hz frequency and not any
+other frequency.
 
-  - Added missing SoB and upstream commit hash for "PM / OPP: Set
-    cpu_dev->id in cpumask first"
+And that will let the compile error out if multiple nodes are using the
+same opp-hz frequency.
 
-Original cover letter:
+Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
+Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Chen-Yu Tsai (Moxa) <wens@csie.org>
+---
+ Documentation/devicetree/bindings/opp/opp.txt | 38 +++++++++----------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
 
-This is part 1 of MOXA's PM / OPP / cpufreq backport series. The whole
-series aims to backport patches related to PM / OPPv2 and cpufreq
-which were included in the v4.4 kernel from TI's SDK. The end goal is
-to include cpufreq-ti and convert am33xx to using it and OPPv2.
-
-Part 1 here includes patches from the v4.5 cycle, listed in topological
-order:
-
-    deaa51465105 PM / OPP: Add debugfs support
-    1c4d12de2719 PM / OPP: Add "opp-supported-hw" binding
-    ffdb8cc7a27c PM / OPP: Add {opp-microvolt|opp-microamp}-<name> bindin=
-g
-    af87a39a5f7c PM / OPP: Remove 'operating-points-names' binding
-    754dcf35f346 PM / OPP: Rename OPP nodes as opp@<opp-hz>
-    dc4e7b1fa20a PM / OPP: Add missing doc comments
-    7de36b0aa51a PM / OPP: Parse 'opp-supported-hw' binding
-    01fb4d3c39d3 PM / OPP: Parse 'opp-<prop>-<name>' bindings
-    fd8d8e63467c PM / OPP: Fix parsing of opp-microvolt and opp-microamp =
-properties
-    d9de19b1cc01 PM / OPP: Set cpu_dev->id in cpumask first
-    5ff24d601092 PM / OPP: Use snprintf() instead of sprintf()
-    3be3f8f36e73 devicetree: bindings: Add optional dynamic-power-coeffic=
-ient property
-    f8fa8ae06b8c cpufreq-dt: Supply power coefficient when registering co=
-oling devices
-    929ca89c305a cpufreq-dt: fix handling regulator_get_voltage() result
-    b331bc20d928 cpufreq: cpufreq-dt: avoid uninitialized variable warnin=
-gs:
-
-Of these,
-
-    dc4e7b1fa20a PM / OPP: Add missing doc comments
-
-was identified as a patch dependency, but otherwise serves no purpose. An=
-d
-
-    d9de19b1cc01 PM / OPP: Set cpu_dev->id in cpumask first
-
-was found while looking through git logs. Last,
-
-    3be3f8f36e73 devicetree: bindings: Add optional dynamic-power-coeffic=
-ient property
-
-is related to
-
-    f8fa8ae06b8c cpufreq-dt: Supply power coefficient when registering co=
-oling devices
-
-All other patches were included from TI's SDK.
-
-The patches apply cleanly on top of linux-4.4.y-cip. Please have a look.
-
-
-Regards
-ChenYu
-
-
-Andrzej Hajda (1):
-  cpufreq-dt: fix handling regulator_get_voltage() result
-
-Arnd Bergmann (1):
-  cpufreq: cpufreq-dt: avoid uninitialized variable warnings:
-
-Bartlomiej Zolnierkiewicz (1):
-  PM / OPP: Fix parsing of opp-microvolt and opp-microamp properties
-
-Pi-Cheng Chen (1):
-  PM / OPP: Set cpu_dev->id in cpumask first
-
-Punit Agrawal (2):
-  devicetree: bindings: Add optional dynamic-power-coefficient property
-  cpufreq-dt: Supply power coefficient when registering cooling devices
-
-Viresh Kumar (9):
-  PM / OPP: Add debugfs support
-  PM / OPP: Add "opp-supported-hw" binding
-  PM / OPP: Add {opp-microvolt|opp-microamp}-<name> binding
-  PM / OPP: Remove 'operating-points-names' binding
-  PM / OPP: Rename OPP nodes as opp@<opp-hz>
-  PM / OPP: Add missing doc comments
-  PM / OPP: Parse 'opp-supported-hw' binding
-  PM / OPP: Parse 'opp-<prop>-<name>' bindings
-  PM / OPP: Use snprintf() instead of sprintf()
-
- .../devicetree/bindings/arm/cpus.txt          |  17 +
- Documentation/devicetree/bindings/opp/opp.txt | 132 +++++--
- drivers/base/power/opp/Makefile               |   1 +
- drivers/base/power/opp/core.c                 | 336 +++++++++++++++++-
- drivers/base/power/opp/cpu.c                  |   3 +-
- drivers/base/power/opp/debugfs.c              | 219 ++++++++++++
- drivers/base/power/opp/opp.h                  |  53 ++-
- drivers/cpufreq/cpufreq-dt.c                  |  29 +-
- include/linux/pm_opp.h                        |  22 ++
- 9 files changed, 742 insertions(+), 70 deletions(-)
- create mode 100644 drivers/base/power/opp/debugfs.c
-
+diff --git a/Documentation/devicetree/bindings/opp/opp.txt b/Documentatio=
+n/devicetree/bindings/opp/opp.txt
+index 24eac9a977494..601256fe8c0dd 100644
+--- a/Documentation/devicetree/bindings/opp/opp.txt
++++ b/Documentation/devicetree/bindings/opp/opp.txt
+@@ -177,20 +177,20 @@ Example 1: Single cluster Dual-core ARM cortex A9, =
+switch DVFS states together.
+ 		compatible =3D "operating-points-v2";
+ 		opp-shared;
+=20
+-		opp00 {
++		opp@1000000000 {
+ 			opp-hz =3D /bits/ 64 <1000000000>;
+ 			opp-microvolt =3D <970000 975000 985000>;
+ 			opp-microamp =3D <70000>;
+ 			clock-latency-ns =3D <300000>;
+ 			opp-suspend;
+ 		};
+-		opp01 {
++		opp@1100000000 {
+ 			opp-hz =3D /bits/ 64 <1100000000>;
+ 			opp-microvolt =3D <980000 1000000 1010000>;
+ 			opp-microamp =3D <80000>;
+ 			clock-latency-ns =3D <310000>;
+ 		};
+-		opp02 {
++		opp@1200000000 {
+ 			opp-hz =3D /bits/ 64 <1200000000>;
+ 			opp-microvolt =3D <1025000>;
+ 			clock-latency-ns =3D <290000>;
+@@ -256,20 +256,20 @@ independently.
+ 		 * independently.
+ 		 */
+=20
+-		opp00 {
++		opp@1000000000 {
+ 			opp-hz =3D /bits/ 64 <1000000000>;
+ 			opp-microvolt =3D <970000 975000 985000>;
+ 			opp-microamp =3D <70000>;
+ 			clock-latency-ns =3D <300000>;
+ 			opp-suspend;
+ 		};
+-		opp01 {
++		opp@1100000000 {
+ 			opp-hz =3D /bits/ 64 <1100000000>;
+ 			opp-microvolt =3D <980000 1000000 1010000>;
+ 			opp-microamp =3D <80000>;
+ 			clock-latency-ns =3D <310000>;
+ 		};
+-		opp02 {
++		opp@1200000000 {
+ 			opp-hz =3D /bits/ 64 <1200000000>;
+ 			opp-microvolt =3D <1025000>;
+ 			opp-microamp =3D <90000;
+@@ -332,20 +332,20 @@ DVFS state together.
+ 		compatible =3D "operating-points-v2";
+ 		opp-shared;
+=20
+-		opp00 {
++		opp@1000000000 {
+ 			opp-hz =3D /bits/ 64 <1000000000>;
+ 			opp-microvolt =3D <970000 975000 985000>;
+ 			opp-microamp =3D <70000>;
+ 			clock-latency-ns =3D <300000>;
+ 			opp-suspend;
+ 		};
+-		opp01 {
++		opp@1100000000 {
+ 			opp-hz =3D /bits/ 64 <1100000000>;
+ 			opp-microvolt =3D <980000 1000000 1010000>;
+ 			opp-microamp =3D <80000>;
+ 			clock-latency-ns =3D <310000>;
+ 		};
+-		opp02 {
++		opp@1200000000 {
+ 			opp-hz =3D /bits/ 64 <1200000000>;
+ 			opp-microvolt =3D <1025000>;
+ 			opp-microamp =3D <90000>;
+@@ -358,20 +358,20 @@ DVFS state together.
+ 		compatible =3D "operating-points-v2";
+ 		opp-shared;
+=20
+-		opp10 {
++		opp@1300000000 {
+ 			opp-hz =3D /bits/ 64 <1300000000>;
+ 			opp-microvolt =3D <1045000 1050000 1055000>;
+ 			opp-microamp =3D <95000>;
+ 			clock-latency-ns =3D <400000>;
+ 			opp-suspend;
+ 		};
+-		opp11 {
++		opp@1400000000 {
+ 			opp-hz =3D /bits/ 64 <1400000000>;
+ 			opp-microvolt =3D <1075000>;
+ 			opp-microamp =3D <100000>;
+ 			clock-latency-ns =3D <400000>;
+ 		};
+-		opp12 {
++		opp@1500000000 {
+ 			opp-hz =3D /bits/ 64 <1500000000>;
+ 			opp-microvolt =3D <1010000 1100000 1110000>;
+ 			opp-microamp =3D <95000>;
+@@ -398,7 +398,7 @@ Example 4: Handling multiple regulators
+ 		compatible =3D "operating-points-v2";
+ 		opp-shared;
+=20
+-		opp00 {
++		opp@1000000000 {
+ 			opp-hz =3D /bits/ 64 <1000000000>;
+ 			opp-microvolt =3D <970000>, /* Supply 0 */
+ 					<960000>, /* Supply 1 */
+@@ -411,7 +411,7 @@ Example 4: Handling multiple regulators
+=20
+ 		/* OR */
+=20
+-		opp00 {
++		opp@1000000000 {
+ 			opp-hz =3D /bits/ 64 <1000000000>;
+ 			opp-microvolt =3D <970000 975000 985000>, /* Supply 0 */
+ 					<960000 965000 975000>, /* Supply 1 */
+@@ -424,7 +424,7 @@ Example 4: Handling multiple regulators
+=20
+ 		/* OR */
+=20
+-		opp00 {
++		opp@1000000000 {
+ 			opp-hz =3D /bits/ 64 <1000000000>;
+ 			opp-microvolt =3D <970000 975000 985000>, /* Supply 0 */
+ 					<960000 965000 975000>, /* Supply 1 */
+@@ -456,7 +456,7 @@ Example 5: opp-supported-hw
+ 		status =3D "okay";
+ 		opp-shared;
+=20
+-		opp00 {
++		opp@600000000 {
+ 			/*
+ 			 * Supports all substrate and process versions for 0xF
+ 			 * cuts, i.e. only first four cuts.
+@@ -467,7 +467,7 @@ Example 5: opp-supported-hw
+ 			...
+ 		};
+=20
+-		opp01 {
++		opp@800000000 {
+ 			/*
+ 			 * Supports:
+ 			 * - cuts: only one, 6th cut (represented by 6th bit).
+@@ -499,7 +499,7 @@ Example 6: opp-microvolt-<name>, opp-microamp-<name>:
+ 		compatible =3D "operating-points-v2";
+ 		opp-shared;
+=20
+-		opp00 {
++		opp@1000000000 {
+ 			opp-hz =3D /bits/ 64 <1000000000>;
+ 			opp-microvolt-slow =3D <900000 915000 925000>;
+ 			opp-microvolt-fast =3D <970000 975000 985000>;
+@@ -507,7 +507,7 @@ Example 6: opp-microvolt-<name>, opp-microamp-<name>:
+ 			opp-microamp-fast =3D  <71000>;
+ 		};
+=20
+-		opp01 {
++		opp@1200000000 {
+ 			opp-hz =3D /bits/ 64 <1200000000>;
+ 			opp-microvolt-slow =3D <900000 915000 925000>, /* Supply vcc0 */
+ 					      <910000 925000 935000>; /* Supply vcc1 */
 --=20
 2.27.0.rc0
 
 
---El8cXVPw8mQ9R45h5hHp
+--1KpxawJJN9aVsgfZxFJJ
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -173,12 +254,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#4733): https://lists.cip-project.org/g/cip-dev/message=
-/4733
-Mute This Topic: https://lists.cip-project.org/mt/74748491/4520388
+View/Reply Online (#4735): https://lists.cip-project.org/g/cip-dev/message=
+/4735
+Mute This Topic: https://lists.cip-project.org/mt/74748495/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---El8cXVPw8mQ9R45h5hHp--
+--1KpxawJJN9aVsgfZxFJJ--
