@@ -1,41 +1,38 @@
-Return-Path: <SRS0=zvnZ=7V=lists.cip-project.org=bounce+64572+4763+4520388+8129055@kernel.org>
+Return-Path: <SRS0=7JgL=7V=lists.cip-project.org=bounce+64572+4765+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A048C433E7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8E2C433EA
 	for <cip-dev@archiver.kernel.org>; Mon,  8 Jun 2020 12:01:39 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E56AC2072F
-	for <cip-dev@archiver.kernel.org>; Mon,  8 Jun 2020 12:01:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 40D082076C
+	for <cip-dev@archiver.kernel.org>; Mon,  8 Jun 2020 12:01:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="cQaTSyId"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E56AC2072F
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="hp+D3AzJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40D082076C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4763+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id rMjDYY4521723xUIpK3zaJcR; Mon, 08 Jun 2020 05:01:38 -0700
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4765+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id qDX0YY4521723xQgPUpuBxFv; Mon, 08 Jun 2020 05:01:39 -0700
 X-Received: from wens.tw (wens.tw [140.112.30.76])
- by mx.groups.io with SMTP id smtpd.web12.26184.1591607692974870957
+ by mx.groups.io with SMTP id smtpd.web10.26112.1591607689005941619
  for <cip-dev@lists.cip-project.org>;
- Mon, 08 Jun 2020 02:14:53 -0700
+ Mon, 08 Jun 2020 02:14:49 -0700
 X-Received: by wens.tw (Postfix, from userid 1000)
-	id 2427160191; Mon,  8 Jun 2020 17:14:44 +0800 (CST)
+	id 9D8365FCF6; Mon,  8 Jun 2020 17:14:43 +0800 (CST)
 From: "Chen-Yu Tsai (Moxa)" <wens@csie.org>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: cip-dev@lists.cip-project.org,
 	JohnsonCH.Chen@moxa.com
-Subject: [cip-dev] [PATCH 4.4.y-cip v2 15/15] cpufreq: cpufreq-dt: avoid uninitialized variable warnings:
-Date: Mon,  8 Jun 2020 17:14:32 +0800
-Message-Id: <20200608091432.15366-16-wens@csie.org>
-In-Reply-To: <20200608091432.15366-1-wens@csie.org>
-References: <20200608091432.15366-1-wens@csie.org>
+Subject: [cip-dev] [PATCH 4.4.y-cip v2 00/15] PM / OPP v2 & cpufreq backports part 1
+Date: Mon,  8 Jun 2020 17:14:17 +0800
+Message-Id: <20200608091432.15366-1-wens@csie.org>
 MIME-Version: 1.0
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
@@ -43,105 +40,130 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: S1foZRFriXg6CkcllL54Mf6Dx4520388AA=
-Content-Type: multipart/mixed; boundary="GQMTOHtghBykGKZRDoIm"
+X-Gm-Message-State: nO78Gy2ztj6H2CdTlxcTgaH4x4520388AA=
+Content-Type: multipart/mixed; boundary="KQx95YHl8yPCBESkYQgb"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1591617698;
- bh=4VZgngKtAD8VRnjA3ykpAHjL8ylVk3qRTyWwOaFBnXc=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1591617699;
+ bh=Gm4YocgxQCFjXax6rbmBjkDUeQMTCb/1jyB/5RWQrs0=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=cQaTSyId3KihT+hLAHAfvTDXaWcsBhNFxz+D/oeNUPGiSaBmayEBni6jFk22vrLuhEs
- ssDGnQLCPiWCjK9jfsv74Gjuu5wKkYZP5NzcLzO/DF4LplVguDiLK4WyayOvPd19lzXOz
- 8QzN+76lorYKP/hxD7DNCY2SnfPix1B6Kyw=
+ b=hp+D3AzJbIGeTUoM9kihrySWAycSps4oOqF+KhK3KIjAB5XTGx5u+Z3ppZ11dSRrhws
+ aBHehfRKehXHtZaaw6Xn3TkCdEPAaavSInezGhhkuG6nw6jzZ1PzqM0FaBaq9fwH/slOB
+ dVHHIUwLNhbR9tGn8UMqnxK8bxrrnZqq84c=
 
---GQMTOHtghBykGKZRDoIm
+--KQx95YHl8yPCBESkYQgb
 Content-Transfer-Encoding: quoted-printable
 
-From: Arnd Bergmann <arnd@arndb.de>
+Hi everyone,
 
-commit b331bc20d9281213f7fb67912638e0fb5baeb324 upstream.
+This is v2 of the part 1 of MOXA's PM / OPP / cpufreq backport series.
+Changes since v1:
 
-gcc warns quite a bit about values returned from allocate_resources()
-in cpufreq-dt.c:
+  - Added missing SoB and upstream commit hash for "PM / OPP: Set
+    cpu_dev->id in cpumask first"
 
-cpufreq-dt.c: In function 'cpufreq_init':
-cpufreq-dt.c:327:6: error: 'cpu_dev' may be used uninitialized in this fu=
-nction [-Werror=3Dmaybe-uninitialized]
-cpufreq-dt.c:197:17: note: 'cpu_dev' was declared here
-cpufreq-dt.c:376:2: error: 'cpu_clk' may be used uninitialized in this fu=
-nction [-Werror=3Dmaybe-uninitialized]
-cpufreq-dt.c:199:14: note: 'cpu_clk' was declared here
-cpufreq-dt.c: In function 'dt_cpufreq_probe':
-cpufreq-dt.c:461:2: error: 'cpu_clk' may be used uninitialized in this fu=
-nction [-Werror=3Dmaybe-uninitialized]
-cpufreq-dt.c:447:14: note: 'cpu_clk' was declared here
+Original cover letter:
 
-The problem is that it's slightly hard for gcc to follow return
-codes across PTR_ERR() calls.
+This is part 1 of MOXA's PM / OPP / cpufreq backport series. The whole
+series aims to backport patches related to PM / OPPv2 and cpufreq
+which were included in the v4.4 kernel from TI's SDK. The end goal is
+to include cpufreq-ti and convert am33xx to using it and OPPv2.
 
-This patch uses explicit assignments to the "ret" variable to make
-it easier for gcc to verify that the code is actually correct,
-without the need to add a bogus initialization.
+Part 1 here includes patches from the v4.5 cycle, listed in topological
+order:
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Chen-Yu Tsai (Moxa) <wens@csie.org>
----
- drivers/cpufreq/cpufreq-dt.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+    deaa51465105 PM / OPP: Add debugfs support
+    1c4d12de2719 PM / OPP: Add "opp-supported-hw" binding
+    ffdb8cc7a27c PM / OPP: Add {opp-microvolt|opp-microamp}-<name> bindin=
+g
+    af87a39a5f7c PM / OPP: Remove 'operating-points-names' binding
+    754dcf35f346 PM / OPP: Rename OPP nodes as opp@<opp-hz>
+    dc4e7b1fa20a PM / OPP: Add missing doc comments
+    7de36b0aa51a PM / OPP: Parse 'opp-supported-hw' binding
+    01fb4d3c39d3 PM / OPP: Parse 'opp-<prop>-<name>' bindings
+    fd8d8e63467c PM / OPP: Fix parsing of opp-microvolt and opp-microamp =
+properties
+    d9de19b1cc01 PM / OPP: Set cpu_dev->id in cpumask first
+    5ff24d601092 PM / OPP: Use snprintf() instead of sprintf()
+    3be3f8f36e73 devicetree: bindings: Add optional dynamic-power-coeffic=
+ient property
+    f8fa8ae06b8c cpufreq-dt: Supply power coefficient when registering co=
+oling devices
+    929ca89c305a cpufreq-dt: fix handling regulator_get_voltage() result
+    b331bc20d928 cpufreq: cpufreq-dt: avoid uninitialized variable warnin=
+gs:
 
-diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-index 9bc37c437874a..0ca74d0700583 100644
---- a/drivers/cpufreq/cpufreq-dt.c
-+++ b/drivers/cpufreq/cpufreq-dt.c
-@@ -142,15 +142,16 @@ static int allocate_resources(int cpu, struct devic=
-e **cdev,
-=20
- try_again:
- 	cpu_reg =3D regulator_get_optional(cpu_dev, reg);
--	if (IS_ERR(cpu_reg)) {
-+	ret =3D PTR_ERR_OR_ZERO(cpu_reg);
-+	if (ret) {
- 		/*
- 		 * If cpu's regulator supply node is present, but regulator is
- 		 * not yet registered, we should try defering probe.
- 		 */
--		if (PTR_ERR(cpu_reg) =3D=3D -EPROBE_DEFER) {
-+		if (ret =3D=3D -EPROBE_DEFER) {
- 			dev_dbg(cpu_dev, "cpu%d regulator not ready, retry\n",
- 				cpu);
--			return -EPROBE_DEFER;
-+			return ret;
- 		}
-=20
- 		/* Try with "cpu-supply" */
-@@ -159,18 +160,16 @@ try_again:
- 			goto try_again;
- 		}
-=20
--		dev_dbg(cpu_dev, "no regulator for cpu%d: %ld\n",
--			cpu, PTR_ERR(cpu_reg));
-+		dev_dbg(cpu_dev, "no regulator for cpu%d: %d\n", cpu, ret);
- 	}
-=20
- 	cpu_clk =3D clk_get(cpu_dev, NULL);
--	if (IS_ERR(cpu_clk)) {
-+	ret =3D PTR_ERR_OR_ZERO(cpu_clk);
-+	if (ret) {
- 		/* put regulator */
- 		if (!IS_ERR(cpu_reg))
- 			regulator_put(cpu_reg);
-=20
--		ret =3D PTR_ERR(cpu_clk);
--
- 		/*
- 		 * If cpu's clk node is present, but clock is not yet
- 		 * registered, we should try defering probe.
+Of these,
+
+    dc4e7b1fa20a PM / OPP: Add missing doc comments
+
+was identified as a patch dependency, but otherwise serves no purpose. An=
+d
+
+    d9de19b1cc01 PM / OPP: Set cpu_dev->id in cpumask first
+
+was found while looking through git logs. Last,
+
+    3be3f8f36e73 devicetree: bindings: Add optional dynamic-power-coeffic=
+ient property
+
+is related to
+
+    f8fa8ae06b8c cpufreq-dt: Supply power coefficient when registering co=
+oling devices
+
+All other patches were included from TI's SDK.
+
+The patches apply cleanly on top of linux-4.4.y-cip. Please have a look.
+
+
+Regards
+ChenYu
+
+
+Andrzej Hajda (1):
+  cpufreq-dt: fix handling regulator_get_voltage() result
+
+Arnd Bergmann (1):
+  cpufreq: cpufreq-dt: avoid uninitialized variable warnings:
+
+Bartlomiej Zolnierkiewicz (1):
+  PM / OPP: Fix parsing of opp-microvolt and opp-microamp properties
+
+Pi-Cheng Chen (1):
+  PM / OPP: Set cpu_dev->id in cpumask first
+
+Punit Agrawal (2):
+  devicetree: bindings: Add optional dynamic-power-coefficient property
+  cpufreq-dt: Supply power coefficient when registering cooling devices
+
+Viresh Kumar (9):
+  PM / OPP: Add debugfs support
+  PM / OPP: Add "opp-supported-hw" binding
+  PM / OPP: Add {opp-microvolt|opp-microamp}-<name> binding
+  PM / OPP: Remove 'operating-points-names' binding
+  PM / OPP: Rename OPP nodes as opp@<opp-hz>
+  PM / OPP: Add missing doc comments
+  PM / OPP: Parse 'opp-supported-hw' binding
+  PM / OPP: Parse 'opp-<prop>-<name>' bindings
+  PM / OPP: Use snprintf() instead of sprintf()
+
+ .../devicetree/bindings/arm/cpus.txt          |  17 +
+ Documentation/devicetree/bindings/opp/opp.txt | 132 +++++--
+ drivers/base/power/opp/Makefile               |   1 +
+ drivers/base/power/opp/core.c                 | 336 +++++++++++++++++-
+ drivers/base/power/opp/cpu.c                  |   3 +-
+ drivers/base/power/opp/debugfs.c              | 219 ++++++++++++
+ drivers/base/power/opp/opp.h                  |  53 ++-
+ drivers/cpufreq/cpufreq-dt.c                  |  29 +-
+ include/linux/pm_opp.h                        |  22 ++
+ 9 files changed, 742 insertions(+), 70 deletions(-)
+ create mode 100644 drivers/base/power/opp/debugfs.c
+
 --=20
 2.27.0.rc0
 
 
---GQMTOHtghBykGKZRDoIm
+--KQx95YHl8yPCBESkYQgb
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -149,12 +171,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#4763): https://lists.cip-project.org/g/cip-dev/message=
-/4763
-Mute This Topic: https://lists.cip-project.org/mt/74748508/4520388
+View/Reply Online (#4765): https://lists.cip-project.org/g/cip-dev/message=
+/4765
+Mute This Topic: https://lists.cip-project.org/mt/74748491/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---GQMTOHtghBykGKZRDoIm--
+--KQx95YHl8yPCBESkYQgb--
