@@ -1,4 +1,4 @@
-Return-Path: <SRS0=uFP7=7V=lists.cip-project.org=bounce+64572+4758+4520388+8129055@kernel.org>
+Return-Path: <SRS0=3cVV=7V=lists.cip-project.org=bounce+64572+4756+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -7,33 +7,33 @@ X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D75D2C433E3
-	for <cip-dev@archiver.kernel.org>; Mon,  8 Jun 2020 12:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D79EC433E4
+	for <cip-dev@archiver.kernel.org>; Mon,  8 Jun 2020 12:01:38 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id A69CC2072F
-	for <cip-dev@archiver.kernel.org>; Mon,  8 Jun 2020 12:01:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 5E3AA2072F
+	for <cip-dev@archiver.kernel.org>; Mon,  8 Jun 2020 12:01:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="cgemNXjX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A69CC2072F
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="od6Fz4IY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E3AA2072F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4758+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id J4VBYY4521723xOIFfwYxwhf; Mon, 08 Jun 2020 05:01:37 -0700
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4756+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id jlYIYY4521723xdZ6jFGLhss; Mon, 08 Jun 2020 05:01:37 -0700
 X-Received: from wens.tw (wens.tw [140.112.30.76])
- by mx.groups.io with SMTP id smtpd.web12.26182.1591607691357521029
+ by mx.groups.io with SMTP id smtpd.web11.26098.1591607691115984235
  for <cip-dev@lists.cip-project.org>;
  Mon, 08 Jun 2020 02:14:51 -0700
 X-Received: by wens.tw (Postfix, from userid 1000)
-	id DBC0A60020; Mon,  8 Jun 2020 17:14:43 +0800 (CST)
+	id D56C55FD9E; Mon,  8 Jun 2020 17:14:43 +0800 (CST)
 From: "Chen-Yu Tsai (Moxa)" <wens@csie.org>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: cip-dev@lists.cip-project.org,
 	JohnsonCH.Chen@moxa.com
-Subject: [cip-dev] [PATCH 4.4.y-cip v2 08/15] PM / OPP: Parse 'opp-<prop>-<name>' bindings
-Date: Mon,  8 Jun 2020 17:14:25 +0800
-Message-Id: <20200608091432.15366-9-wens@csie.org>
+Subject: [cip-dev] [PATCH 4.4.y-cip v2 07/15] PM / OPP: Parse 'opp-supported-hw' binding
+Date: Mon,  8 Jun 2020 17:14:24 +0800
+Message-Id: <20200608091432.15366-8-wens@csie.org>
 In-Reply-To: <20200608091432.15366-1-wens@csie.org>
 References: <20200608091432.15366-1-wens@csie.org>
 MIME-Version: 1.0
@@ -43,164 +43,74 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: OcoKvnyKkHLPMkDj0C8u9dSjx4520388AA=
-Content-Type: multipart/mixed; boundary="YNbUKlSBHOdR2EskFQ1U"
+X-Gm-Message-State: STCTRs4zXeLuPKTXpVRCTpTax4520388AA=
+Content-Type: multipart/mixed; boundary="HJFKjZCSHUhjpdCb2HO7"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=lists.cip-project.org; q=dns/txt; s=20140610; t=1591617697;
- bh=/6CkgPg2iMp8Mhhp6mdp7eiItSeRkPdykcT9ldMf0CA=;
+ bh=QwUy3ftJZRRhWZ7vqFFqXbu6j8YkGVGq+Mvu3EcQfQI=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=cgemNXjXmeJqoOjvXiMhOvYXXVkidl+4QgRRUVEg5ZuFWh/SNBgKFlXZZ258rR+iO51
- 7bO7M+MBjJ8xNYg7v9Vwm50ln9uzF6mB62EC3ujmbBkdoW5Wz1W33L+EhAfOqzMmkvmer
- g3sEY/Z2gp+UwLWlcvgOaRNJHehXHtOvqrI=
+ b=od6Fz4IYEY6obR/QhGYZTpH+pNQVFVJNvxqrP1149oDDzNJSBGHX7SxsW6dERbfMktV
+ zl+RZSP2bx1Exa9NhKHdAH4G78z9HhOrvlUanwnKxGUQj//zn5lz9maPT5Q4/lAAnf3vc
+ VmMcnXHGhsM7Ulswrg8qgLbsvUDltFv2lEw=
 
---YNbUKlSBHOdR2EskFQ1U
+--HJFKjZCSHUhjpdCb2HO7
 Content-Transfer-Encoding: quoted-printable
 
 From: Viresh Kumar <viresh.kumar@linaro.org>
 
-commit 01fb4d3c39d35b725441e8a9a26b3f3ad67793ed upstream.
+commit 7de36b0aa51a5a59e28fb2da768fa3ab07de0674 upstream.
 
-OPP bindings (for few properties) allow a platform to choose a
-value/range among a set of available options. The options are present as
-opp-<prop>-<name>, where the platform needs to supply the <name> string.
-
-The OPP properties which allow such an option are: opp-microvolt and
-opp-microamp.
+OPP bindings allow a platform to enable OPPs based on the version of the
+hardware they are used for.
 
 Add support to the OPP-core to parse these bindings, by introducing
-dev_pm_opp_{set|put}_prop_name() APIs.
+dev_pm_opp_{set|put}_supported_hw() APIs.
 
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 Tested-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Chen-Yu Tsai (Moxa) <wens@csie.org>
 ---
- drivers/base/power/opp/core.c | 165 ++++++++++++++++++++++++++++++----
- drivers/base/power/opp/opp.h  |   2 +
- include/linux/pm_opp.h        |   9 ++
- 3 files changed, 161 insertions(+), 15 deletions(-)
+ drivers/base/power/opp/core.c | 148 ++++++++++++++++++++++++++++++++++
+ drivers/base/power/opp/opp.h  |   5 ++
+ include/linux/pm_opp.h        |  13 +++
+ 3 files changed, 166 insertions(+)
 
 diff --git a/drivers/base/power/opp/core.c b/drivers/base/power/opp/core.=
 c
-index a73433c3cbe45..408fee4cb72df 100644
+index 22d91d9b1b037..a73433c3cbe45 100644
 --- a/drivers/base/power/opp/core.c
 +++ b/drivers/base/power/opp/core.c
-@@ -562,6 +562,9 @@ static void _remove_device_opp(struct device_opp *dev=
+@@ -559,6 +559,9 @@ static void _remove_device_opp(struct device_opp *dev=
 _opp)
- 	if (dev_opp->supported_hw)
+ 	if (!list_empty(&dev_opp->opp_list))
  		return;
 =20
-+	if (dev_opp->prop_name)
++	if (dev_opp->supported_hw)
 +		return;
 +
  	list_dev =3D list_first_entry(&dev_opp->dev_list, struct device_list_op=
 p,
  				    node);
 =20
-@@ -794,35 +797,48 @@ unlock:
- }
-=20
- /* TODO: Support multiple regulators */
--static int opp_parse_supplies(struct dev_pm_opp *opp, struct device *dev=
-)
-+static int opp_parse_supplies(struct dev_pm_opp *opp, struct device *dev=
-,
-+			      struct device_opp *dev_opp)
- {
- 	u32 microvolt[3] =3D {0};
- 	u32 val;
- 	int count, ret;
-+	struct property *prop =3D NULL;
-+	char name[NAME_MAX];
-+
-+	/* Search for "opp-microvolt-<name>" */
-+	if (dev_opp->prop_name) {
-+		sprintf(name, "opp-microvolt-%s", dev_opp->prop_name);
-+		prop =3D of_find_property(opp->np, name, NULL);
-+	}
-+
-+	if (!prop) {
-+		/* Search for "opp-microvolt" */
-+		name[13] =3D '\0';
-+		prop =3D of_find_property(opp->np, name, NULL);
-=20
--	/* Missing property isn't a problem, but an invalid entry is */
--	if (!of_find_property(opp->np, "opp-microvolt", NULL))
--		return 0;
-+		/* Missing property isn't a problem, but an invalid entry is */
-+		if (!prop)
-+			return 0;
-+	}
-=20
--	count =3D of_property_count_u32_elems(opp->np, "opp-microvolt");
-+	count =3D of_property_count_u32_elems(opp->np, name);
- 	if (count < 0) {
--		dev_err(dev, "%s: Invalid opp-microvolt property (%d)\n",
--			__func__, count);
-+		dev_err(dev, "%s: Invalid %s property (%d)\n",
-+			__func__, name, count);
- 		return count;
- 	}
-=20
- 	/* There can be one or three elements here */
- 	if (count !=3D 1 && count !=3D 3) {
--		dev_err(dev, "%s: Invalid number of elements in opp-microvolt property=
- (%d)\n",
--			__func__, count);
-+		dev_err(dev, "%s: Invalid number of elements in %s property (%d)\n",
-+			__func__, name, count);
- 		return -EINVAL;
- 	}
-=20
--	ret =3D of_property_read_u32_array(opp->np, "opp-microvolt", microvolt,
--					 count);
-+	ret =3D of_property_read_u32_array(opp->np, name, microvolt, count);
- 	if (ret) {
--		dev_err(dev, "%s: error parsing opp-microvolt: %d\n", __func__,
--			ret);
-+		dev_err(dev, "%s: error parsing %s: %d\n", __func__, name, ret);
- 		return -EINVAL;
- 	}
-=20
-@@ -836,7 +852,20 @@ static int opp_parse_supplies(struct dev_pm_opp *opp=
-, struct device *dev)
- 		opp->u_volt_max =3D microvolt[2];
- 	}
-=20
--	if (!of_property_read_u32(opp->np, "opp-microamp", &val))
-+	/* Search for "opp-microamp-<name>" */
-+	prop =3D NULL;
-+	if (dev_opp->prop_name) {
-+		sprintf(name, "opp-microamp-%s", dev_opp->prop_name);
-+		prop =3D of_find_property(opp->np, name, NULL);
-+	}
-+
-+	if (!prop) {
-+		/* Search for "opp-microamp" */
-+		name[12] =3D '\0';
-+		prop =3D of_find_property(opp->np, name, NULL);
-+	}
-+
-+	if (prop && !of_property_read_u32(opp->np, name, &val))
- 		opp->u_amp =3D val;
-=20
+@@ -839,6 +842,145 @@ static int opp_parse_supplies(struct dev_pm_opp *op=
+p, struct device *dev)
  	return 0;
-@@ -954,6 +983,112 @@ unlock:
  }
- EXPORT_SYMBOL_GPL(dev_pm_opp_put_supported_hw);
 =20
 +/**
-+ * dev_pm_opp_set_prop_name() - Set prop-extn name
-+ * @dev: Device for which the regulator has to be set.
-+ * @name: name to postfix to properties.
++ * dev_pm_opp_set_supported_hw() - Set supported platforms
++ * @dev: Device for which supported-hw has to be set.
++ * @versions: Array of hierarchy of versions to match.
++ * @count: Number of elements in the array.
 + *
 + * This is required only for the V2 bindings, and it enables a platform =
 to
-+ * specify the extn to be used for certain property names. The propertie=
-s to
-+ * which the extension will apply are opp-microvolt and opp-microamp. OP=
-P core
-+ * should postfix the property name with -<name> while looking for them.
++ * specify the hierarchy of versions it supports. OPP layer will then en=
+able
++ * OPPs, which are available for those versions, based on its 'opp-suppo=
+rted-hw'
++ * property.
 + *
 + * Locking: The internal device_opp and opp structures are RCU protected=
 .
@@ -212,7 +122,8 @@ ocks
 s where
 + * mutex cannot be locked.
 + */
-+int dev_pm_opp_set_prop_name(struct device *dev, const char *name)
++int dev_pm_opp_set_supported_hw(struct device *dev, const u32 *versions,
++				unsigned int count)
 +{
 +	struct device_opp *dev_opp;
 +	int ret =3D 0;
@@ -229,20 +140,22 @@ s where
 +	/* Make sure there are no concurrent readers while updating dev_opp */
 +	WARN_ON(!list_empty(&dev_opp->opp_list));
 +
-+	/* Do we already have a prop-name associated with dev_opp? */
-+	if (dev_opp->prop_name) {
-+		dev_err(dev, "%s: Already have prop-name %s\n", __func__,
-+			dev_opp->prop_name);
++	/* Do we already have a version hierarchy associated with dev_opp? */
++	if (dev_opp->supported_hw) {
++		dev_err(dev, "%s: Already have supported hardware list\n",
++			__func__);
 +		ret =3D -EBUSY;
 +		goto err;
 +	}
 +
-+	dev_opp->prop_name =3D kstrdup(name, GFP_KERNEL);
-+	if (!dev_opp->prop_name) {
++	dev_opp->supported_hw =3D kmemdup(versions, count * sizeof(*versions),
++					GFP_KERNEL);
++	if (!dev_opp->supported_hw) {
 +		ret =3D -ENOMEM;
 +		goto err;
 +	}
 +
++	dev_opp->supported_hw_count =3D count;
 +	mutex_unlock(&dev_opp_list_lock);
 +	return 0;
 +
@@ -253,16 +166,17 @@ s where
 +
 +	return ret;
 +}
-+EXPORT_SYMBOL_GPL(dev_pm_opp_set_prop_name);
++EXPORT_SYMBOL_GPL(dev_pm_opp_set_supported_hw);
 +
 +/**
-+ * dev_pm_opp_put_prop_name() - Releases resources blocked for prop-name
-+ * @dev: Device for which the regulator has to be set.
++ * dev_pm_opp_put_supported_hw() - Releases resources blocked for suppor=
+ted hw
++ * @dev: Device for which supported-hw has to be set.
 + *
 + * This is required only for the V2 bindings, and is called for a matchi=
 ng
-+ * dev_pm_opp_set_prop_name(). Until this is called, the device_opp stru=
-cture
++ * dev_pm_opp_set_supported_hw(). Until this is called, the device_opp s=
+tructure
 + * will not be freed.
 + *
 + * Locking: The internal device_opp and opp structures are RCU protected=
@@ -275,7 +189,7 @@ ocks
 s where
 + * mutex cannot be locked.
 + */
-+void dev_pm_opp_put_prop_name(struct device *dev)
++void dev_pm_opp_put_supported_hw(struct device *dev)
 +{
 +	struct device_opp *dev_opp;
 +
@@ -292,13 +206,15 @@ s where
 +	/* Make sure there are no concurrent readers while updating dev_opp */
 +	WARN_ON(!list_empty(&dev_opp->opp_list));
 +
-+	if (!dev_opp->prop_name) {
-+		dev_err(dev, "%s: Doesn't have a prop-name\n", __func__);
++	if (!dev_opp->supported_hw) {
++		dev_err(dev, "%s: Doesn't have supported hardware list\n",
++			__func__);
 +		goto unlock;
 +	}
 +
-+	kfree(dev_opp->prop_name);
-+	dev_opp->prop_name =3D NULL;
++	kfree(dev_opp->supported_hw);
++	dev_opp->supported_hw =3D NULL;
++	dev_opp->supported_hw_count =3D 0;
 +
 +	/* Try freeing device_opp if this was the last blocking resource */
 +	_remove_device_opp(dev_opp);
@@ -306,71 +222,108 @@ s where
 +unlock:
 +	mutex_unlock(&dev_opp_list_lock);
 +}
-+EXPORT_SYMBOL_GPL(dev_pm_opp_put_prop_name);
++EXPORT_SYMBOL_GPL(dev_pm_opp_put_supported_hw);
 +
- static bool _opp_is_supported(struct device *dev, struct device_opp *dev=
++static bool _opp_is_supported(struct device *dev, struct device_opp *dev=
 _opp,
- 			      struct device_node *np)
- {
-@@ -1048,7 +1183,7 @@ static int _opp_add_static_v2(struct device *dev, s=
++			      struct device_node *np)
++{
++	unsigned int count =3D dev_opp->supported_hw_count;
++	u32 version;
++	int ret;
++
++	if (!dev_opp->supported_hw)
++		return true;
++
++	while (count--) {
++		ret =3D of_property_read_u32_index(np, "opp-supported-hw", count,
++						 &version);
++		if (ret) {
++			dev_warn(dev, "%s: failed to read opp-supported-hw property at index =
+%d: %d\n",
++				 __func__, count, ret);
++			return false;
++		}
++
++		/* Both of these are bitwise masks of the versions */
++		if (!(version & dev_opp->supported_hw[count]))
++			return false;
++	}
++
++	return true;
++}
++
+ /**
+  * _opp_add_static_v2() - Allocate static OPPs (As per 'v2' DT bindings)
+  * @dev:	device for which we do this operation
+@@ -885,6 +1027,12 @@ static int _opp_add_static_v2(struct device *dev, s=
 truct device_node *np)
- 	if (!of_property_read_u32(np, "clock-latency-ns", &val))
- 		new_opp->clock_latency_ns =3D val;
-=20
--	ret =3D opp_parse_supplies(new_opp, dev);
-+	ret =3D opp_parse_supplies(new_opp, dev, dev_opp);
- 	if (ret)
  		goto free_opp;
+ 	}
 =20
++	/* Check if the OPP supports hardware's hierarchy of versions or not */
++	if (!_opp_is_supported(dev, dev_opp, np)) {
++		dev_dbg(dev, "OPP not supported by hardware: %llu\n", rate);
++		goto free_opp;
++	}
++
+ 	/*
+ 	 * Rate is defined as an unsigned long in clk API, and so casting
+ 	 * explicitly to its type. Must be fixed once rate is 64 bit
 diff --git a/drivers/base/power/opp/opp.h b/drivers/base/power/opp/opp.h
-index 70f4564a6ab9d..690638ef36ee5 100644
+index b8880c7f8be1c..70f4564a6ab9d 100644
 --- a/drivers/base/power/opp/opp.h
 +++ b/drivers/base/power/opp/opp.h
-@@ -131,6 +131,7 @@ struct device_list_opp {
+@@ -129,6 +129,8 @@ struct device_list_opp {
+  * @clock_latency_ns_max: Max clock latency in nanoseconds.
+  * @shared_opp: OPP is shared between multiple devices.
   * @suspend_opp: Pointer to OPP to be used during device suspend.
-  * @supported_hw: Array of version number to support.
-  * @supported_hw_count: Number of elements in supported_hw array.
-+ * @prop_name: A name to postfix to many DT properties, while parsing th=
-em.
++ * @supported_hw: Array of version number to support.
++ * @supported_hw_count: Number of elements in supported_hw array.
   * @dentry:	debugfs dentry pointer of the real device directory (not lin=
 ks).
   * @dentry_name: Name of the real dentry.
   *
-@@ -157,6 +158,7 @@ struct device_opp {
+@@ -153,6 +155,9 @@ struct device_opp {
+ 	bool shared_opp;
+ 	struct dev_pm_opp *suspend_opp;
 =20
- 	unsigned int *supported_hw;
- 	unsigned int supported_hw_count;
-+	const char *prop_name;
-=20
++	unsigned int *supported_hw;
++	unsigned int supported_hw_count;
++
  #ifdef CONFIG_DEBUG_FS
  	struct dentry *dentry;
+ 	char dentry_name[NAME_MAX];
 diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
-index 3a85110242f00..95403d2ccaf56 100644
+index 9a2e50337af9f..3a85110242f00 100644
 --- a/include/linux/pm_opp.h
 +++ b/include/linux/pm_opp.h
-@@ -58,6 +58,8 @@ struct srcu_notifier_head *dev_pm_opp_get_notifier(stru=
-ct device *dev);
- int dev_pm_opp_set_supported_hw(struct device *dev, const u32 *versions,
- 				unsigned int count);
- void dev_pm_opp_put_supported_hw(struct device *dev);
-+int dev_pm_opp_set_prop_name(struct device *dev, const char *name);
-+void dev_pm_opp_put_prop_name(struct device *dev);
+@@ -55,6 +55,9 @@ int dev_pm_opp_enable(struct device *dev, unsigned long=
+ freq);
+ int dev_pm_opp_disable(struct device *dev, unsigned long freq);
+=20
+ struct srcu_notifier_head *dev_pm_opp_get_notifier(struct device *dev);
++int dev_pm_opp_set_supported_hw(struct device *dev, const u32 *versions,
++				unsigned int count);
++void dev_pm_opp_put_supported_hw(struct device *dev);
  #else
  static inline unsigned long dev_pm_opp_get_voltage(struct dev_pm_opp *op=
 p)
  {
-@@ -142,6 +144,13 @@ static inline int dev_pm_opp_set_supported_hw(struct=
- device *dev,
-=20
- static inline void dev_pm_opp_put_supported_hw(struct device *dev) {}
-=20
-+static inline int dev_pm_opp_set_prop_name(struct device *dev, const cha=
-r *name)
+@@ -129,6 +132,16 @@ static inline struct srcu_notifier_head *dev_pm_opp_=
+get_notifier(
+ {
+ 	return ERR_PTR(-EINVAL);
+ }
++
++static inline int dev_pm_opp_set_supported_hw(struct device *dev,
++					      const u32 *versions,
++					      unsigned int count)
 +{
 +	return -EINVAL;
 +}
 +
-+static inline void dev_pm_opp_put_prop_name(struct device *dev) {}
++static inline void dev_pm_opp_put_supported_hw(struct device *dev) {}
 +
  #endif		/* CONFIG_PM_OPP */
 =20
@@ -379,7 +332,7 @@ r *name)
 2.27.0.rc0
 
 
---YNbUKlSBHOdR2EskFQ1U
+--HJFKjZCSHUhjpdCb2HO7
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -387,12 +340,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#4758): https://lists.cip-project.org/g/cip-dev/message=
-/4758
-Mute This Topic: https://lists.cip-project.org/mt/74748503/4520388
+View/Reply Online (#4756): https://lists.cip-project.org/g/cip-dev/message=
+/4756
+Mute This Topic: https://lists.cip-project.org/mt/74748501/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---YNbUKlSBHOdR2EskFQ1U--
+--HJFKjZCSHUhjpdCb2HO7--
