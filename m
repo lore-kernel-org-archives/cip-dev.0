@@ -1,4 +1,4 @@
-Return-Path: <SRS0=5WqT=7V=lists.cip-project.org=bounce+64572+4743+4520388+8129055@kernel.org>
+Return-Path: <SRS0=1m22=7V=lists.cip-project.org=bounce+64572+4748+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A338DC433EA
-	for <cip-dev@archiver.kernel.org>; Mon,  8 Jun 2020 09:30:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D69C433ED
+	for <cip-dev@archiver.kernel.org>; Mon,  8 Jun 2020 09:30:56 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 715612076A
-	for <cip-dev@archiver.kernel.org>; Mon,  8 Jun 2020 09:30:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 6B93B2076A
+	for <cip-dev@archiver.kernel.org>; Mon,  8 Jun 2020 09:30:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="PdtIR3rH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 715612076A
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="wW5Lx5ZQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B93B2076A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4743+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id X3UBYY4521723xBGIiNi5qT3; Mon, 08 Jun 2020 02:30:55 -0700
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4748+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id WuqLYY4521723xLbfzfdT2CM; Mon, 08 Jun 2020 02:30:56 -0700
 X-Received: from wens.tw (wens.tw [140.112.30.76])
- by mx.groups.io with SMTP id smtpd.web10.26296.1591608654150838931
+ by mx.groups.io with SMTP id smtpd.web12.26375.1591608655061703563
  for <cip-dev@lists.cip-project.org>;
- Mon, 08 Jun 2020 02:30:54 -0700
+ Mon, 08 Jun 2020 02:30:55 -0700
 X-Received: by wens.tw (Postfix, from userid 1000)
-	id 32BBD5F899; Mon,  8 Jun 2020 17:30:50 +0800 (CST)
+	id 6EF446010D; Mon,  8 Jun 2020 17:30:50 +0800 (CST)
 From: "Chen-Yu Tsai (Moxa)" <wens@csie.org>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: cip-dev@lists.cip-project.org,
 	JohnsonCH.Chen@moxa.com
-Subject: [cip-dev] [PATCH 4.4.y-cip v2 08/15] PM / OPP: Parse 'opp-<prop>-<name>' bindings
-Date: Mon,  8 Jun 2020 17:30:21 +0800
-Message-Id: <20200608093028.21612-9-wens@csie.org>
+Subject: [cip-dev] [PATCH 4.4.y-cip v2 14/15] cpufreq-dt: fix handling regulator_get_voltage() result
+Date: Mon,  8 Jun 2020 17:30:27 +0800
+Message-Id: <20200608093028.21612-15-wens@csie.org>
 In-Reply-To: <20200608093028.21612-1-wens@csie.org>
 References: <20200608093028.21612-1-wens@csie.org>
 MIME-Version: 1.0
@@ -42,343 +42,68 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: hIGld6Ek6haiyKPZos95dmSYx4520388AA=
-Content-Type: multipart/mixed; boundary="W55gH1Z6pbolJNKlmPbb"
+X-Gm-Message-State: rBeeVm8g5KOKaQ4o4SUdf03wx4520388AA=
+Content-Type: multipart/mixed; boundary="hm8nJ2dyvMkbtJlSNLKd"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1591608655;
- bh=v4siZcEhRREW/QYTxNldBIz8PcXVN8lY7sxBrgs6XuA=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1591608656;
+ bh=A+ajo4LnEsW55eccqSWGu+MJKCalUDbdKQFEA090Dl0=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=PdtIR3rHYbYjDesP1aG5DKuCXWJutnHcvk8TromtpwbKwnN8wQpQykRkdV+DWBY5v/g
- jigI/+No4f5Fv5ISECh+otGXqCAUIovgLFiNTPEUTZ5JOJPd4gkTvk6riURrTnA2o18Tm
- daRGEZFIi7SrCbAAZEKkyqcoBgdP/D9Ndco=
+ b=wW5Lx5ZQ/L7/n69QCxz33f+4cb40E1t0/RJaggSviuZbWiCssc3grRGNBbRhw7MO64v
+ 3yJC7Se/JJ7dumc+QzPOy9vavz3UJz4Yn/V7v2s/rfkF1fhgRUzTWQeLUqXyUAAy5IdJ9
+ eyb/w2QASawbuheMs/rBWVc1T23bPi+Je2U=
 
---W55gH1Z6pbolJNKlmPbb
+--hm8nJ2dyvMkbtJlSNLKd
 Content-Transfer-Encoding: quoted-printable
 
-From: Viresh Kumar <viresh.kumar@linaro.org>
+From: Andrzej Hajda <a.hajda@samsung.com>
 
-commit 01fb4d3c39d35b725441e8a9a26b3f3ad67793ed upstream.
+commit 929ca89c305a6ed7a4149115be99af6d73c36918 upstream.
 
-OPP bindings (for few properties) allow a platform to choose a
-value/range among a set of available options. The options are present as
-opp-<prop>-<name>, where the platform needs to supply the <name> string.
+The function can return negative values so it should be assigned
+to signed type.
 
-The OPP properties which allow such an option are: opp-microvolt and
-opp-microamp.
+The problem has been detected using proposed semantic patch
+scripts/coccinelle/tests/unsigned_lesser_than_zero.cocci.
 
-Add support to the OPP-core to parse these bindings, by introducing
-dev_pm_opp_{set|put}_prop_name() APIs.
-
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-Tested-by: Lee Jones <lee.jones@linaro.org>
+Link: http://permalink.gmane.org/gmane.linux.kernel/2038576
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Chen-Yu Tsai (Moxa) <wens@csie.org>
 ---
- drivers/base/power/opp/core.c | 165 ++++++++++++++++++++++++++++++----
- drivers/base/power/opp/opp.h  |   2 +
- include/linux/pm_opp.h        |   9 ++
- 3 files changed, 161 insertions(+), 15 deletions(-)
+ drivers/cpufreq/cpufreq-dt.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/base/power/opp/core.c b/drivers/base/power/opp/core.=
-c
-index a73433c3cbe45..408fee4cb72df 100644
---- a/drivers/base/power/opp/core.c
-+++ b/drivers/base/power/opp/core.c
-@@ -562,6 +562,9 @@ static void _remove_device_opp(struct device_opp *dev=
-_opp)
- 	if (dev_opp->supported_hw)
- 		return;
-=20
-+	if (dev_opp->prop_name)
-+		return;
-+
- 	list_dev =3D list_first_entry(&dev_opp->dev_list, struct device_list_op=
-p,
- 				    node);
-=20
-@@ -794,35 +797,48 @@ unlock:
- }
-=20
- /* TODO: Support multiple regulators */
--static int opp_parse_supplies(struct dev_pm_opp *opp, struct device *dev=
-)
-+static int opp_parse_supplies(struct dev_pm_opp *opp, struct device *dev=
-,
-+			      struct device_opp *dev_opp)
- {
- 	u32 microvolt[3] =3D {0};
- 	u32 val;
- 	int count, ret;
-+	struct property *prop =3D NULL;
-+	char name[NAME_MAX];
-+
-+	/* Search for "opp-microvolt-<name>" */
-+	if (dev_opp->prop_name) {
-+		sprintf(name, "opp-microvolt-%s", dev_opp->prop_name);
-+		prop =3D of_find_property(opp->np, name, NULL);
-+	}
-+
-+	if (!prop) {
-+		/* Search for "opp-microvolt" */
-+		name[13] =3D '\0';
-+		prop =3D of_find_property(opp->np, name, NULL);
-=20
--	/* Missing property isn't a problem, but an invalid entry is */
--	if (!of_find_property(opp->np, "opp-microvolt", NULL))
--		return 0;
-+		/* Missing property isn't a problem, but an invalid entry is */
-+		if (!prop)
-+			return 0;
-+	}
-=20
--	count =3D of_property_count_u32_elems(opp->np, "opp-microvolt");
-+	count =3D of_property_count_u32_elems(opp->np, name);
- 	if (count < 0) {
--		dev_err(dev, "%s: Invalid opp-microvolt property (%d)\n",
--			__func__, count);
-+		dev_err(dev, "%s: Invalid %s property (%d)\n",
-+			__func__, name, count);
- 		return count;
+diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+index 1ceece9d67112..9bc37c437874a 100644
+--- a/drivers/cpufreq/cpufreq-dt.c
++++ b/drivers/cpufreq/cpufreq-dt.c
+@@ -50,7 +50,8 @@ static int set_target(struct cpufreq_policy *policy, un=
+signed int index)
+ 	struct private_data *priv =3D policy->driver_data;
+ 	struct device *cpu_dev =3D priv->cpu_dev;
+ 	struct regulator *cpu_reg =3D priv->cpu_reg;
+-	unsigned long volt =3D 0, volt_old =3D 0, tol =3D 0;
++	unsigned long volt =3D 0, tol =3D 0;
++	int volt_old =3D 0;
+ 	unsigned int old_freq, new_freq;
+ 	long freq_Hz, freq_exact;
+ 	int ret;
+@@ -83,7 +84,7 @@ static int set_target(struct cpufreq_policy *policy, un=
+signed int index)
+ 			opp_freq / 1000, volt);
  	}
 =20
- 	/* There can be one or three elements here */
- 	if (count !=3D 1 && count !=3D 3) {
--		dev_err(dev, "%s: Invalid number of elements in opp-microvolt property=
- (%d)\n",
--			__func__, count);
-+		dev_err(dev, "%s: Invalid number of elements in %s property (%d)\n",
-+			__func__, name, count);
- 		return -EINVAL;
- 	}
+-	dev_dbg(cpu_dev, "%u MHz, %ld mV --> %u MHz, %ld mV\n",
++	dev_dbg(cpu_dev, "%u MHz, %d mV --> %u MHz, %ld mV\n",
+ 		old_freq / 1000, (volt_old > 0) ? volt_old / 1000 : -1,
+ 		new_freq / 1000, volt ? volt / 1000 : -1);
 =20
--	ret =3D of_property_read_u32_array(opp->np, "opp-microvolt", microvolt,
--					 count);
-+	ret =3D of_property_read_u32_array(opp->np, name, microvolt, count);
- 	if (ret) {
--		dev_err(dev, "%s: error parsing opp-microvolt: %d\n", __func__,
--			ret);
-+		dev_err(dev, "%s: error parsing %s: %d\n", __func__, name, ret);
- 		return -EINVAL;
- 	}
-=20
-@@ -836,7 +852,20 @@ static int opp_parse_supplies(struct dev_pm_opp *opp=
-, struct device *dev)
- 		opp->u_volt_max =3D microvolt[2];
- 	}
-=20
--	if (!of_property_read_u32(opp->np, "opp-microamp", &val))
-+	/* Search for "opp-microamp-<name>" */
-+	prop =3D NULL;
-+	if (dev_opp->prop_name) {
-+		sprintf(name, "opp-microamp-%s", dev_opp->prop_name);
-+		prop =3D of_find_property(opp->np, name, NULL);
-+	}
-+
-+	if (!prop) {
-+		/* Search for "opp-microamp" */
-+		name[12] =3D '\0';
-+		prop =3D of_find_property(opp->np, name, NULL);
-+	}
-+
-+	if (prop && !of_property_read_u32(opp->np, name, &val))
- 		opp->u_amp =3D val;
-=20
- 	return 0;
-@@ -954,6 +983,112 @@ unlock:
- }
- EXPORT_SYMBOL_GPL(dev_pm_opp_put_supported_hw);
-=20
-+/**
-+ * dev_pm_opp_set_prop_name() - Set prop-extn name
-+ * @dev: Device for which the regulator has to be set.
-+ * @name: name to postfix to properties.
-+ *
-+ * This is required only for the V2 bindings, and it enables a platform =
-to
-+ * specify the extn to be used for certain property names. The propertie=
-s to
-+ * which the extension will apply are opp-microvolt and opp-microamp. OP=
-P core
-+ * should postfix the property name with -<name> while looking for them.
-+ *
-+ * Locking: The internal device_opp and opp structures are RCU protected=
-.
-+ * Hence this function internally uses RCU updater strategy with mutex l=
-ocks
-+ * to keep the integrity of the internal data structures. Callers should=
- ensure
-+ * that this function is *NOT* called under RCU protection or in context=
-s where
-+ * mutex cannot be locked.
-+ */
-+int dev_pm_opp_set_prop_name(struct device *dev, const char *name)
-+{
-+	struct device_opp *dev_opp;
-+	int ret =3D 0;
-+
-+	/* Hold our list modification lock here */
-+	mutex_lock(&dev_opp_list_lock);
-+
-+	dev_opp =3D _add_device_opp(dev);
-+	if (!dev_opp) {
-+		ret =3D -ENOMEM;
-+		goto unlock;
-+	}
-+
-+	/* Make sure there are no concurrent readers while updating dev_opp */
-+	WARN_ON(!list_empty(&dev_opp->opp_list));
-+
-+	/* Do we already have a prop-name associated with dev_opp? */
-+	if (dev_opp->prop_name) {
-+		dev_err(dev, "%s: Already have prop-name %s\n", __func__,
-+			dev_opp->prop_name);
-+		ret =3D -EBUSY;
-+		goto err;
-+	}
-+
-+	dev_opp->prop_name =3D kstrdup(name, GFP_KERNEL);
-+	if (!dev_opp->prop_name) {
-+		ret =3D -ENOMEM;
-+		goto err;
-+	}
-+
-+	mutex_unlock(&dev_opp_list_lock);
-+	return 0;
-+
-+err:
-+	_remove_device_opp(dev_opp);
-+unlock:
-+	mutex_unlock(&dev_opp_list_lock);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(dev_pm_opp_set_prop_name);
-+
-+/**
-+ * dev_pm_opp_put_prop_name() - Releases resources blocked for prop-name
-+ * @dev: Device for which the regulator has to be set.
-+ *
-+ * This is required only for the V2 bindings, and is called for a matchi=
-ng
-+ * dev_pm_opp_set_prop_name(). Until this is called, the device_opp stru=
-cture
-+ * will not be freed.
-+ *
-+ * Locking: The internal device_opp and opp structures are RCU protected=
-.
-+ * Hence this function internally uses RCU updater strategy with mutex l=
-ocks
-+ * to keep the integrity of the internal data structures. Callers should=
- ensure
-+ * that this function is *NOT* called under RCU protection or in context=
-s where
-+ * mutex cannot be locked.
-+ */
-+void dev_pm_opp_put_prop_name(struct device *dev)
-+{
-+	struct device_opp *dev_opp;
-+
-+	/* Hold our list modification lock here */
-+	mutex_lock(&dev_opp_list_lock);
-+
-+	/* Check for existing list for 'dev' first */
-+	dev_opp =3D _find_device_opp(dev);
-+	if (IS_ERR(dev_opp)) {
-+		dev_err(dev, "Failed to find dev_opp: %ld\n", PTR_ERR(dev_opp));
-+		goto unlock;
-+	}
-+
-+	/* Make sure there are no concurrent readers while updating dev_opp */
-+	WARN_ON(!list_empty(&dev_opp->opp_list));
-+
-+	if (!dev_opp->prop_name) {
-+		dev_err(dev, "%s: Doesn't have a prop-name\n", __func__);
-+		goto unlock;
-+	}
-+
-+	kfree(dev_opp->prop_name);
-+	dev_opp->prop_name =3D NULL;
-+
-+	/* Try freeing device_opp if this was the last blocking resource */
-+	_remove_device_opp(dev_opp);
-+
-+unlock:
-+	mutex_unlock(&dev_opp_list_lock);
-+}
-+EXPORT_SYMBOL_GPL(dev_pm_opp_put_prop_name);
-+
- static bool _opp_is_supported(struct device *dev, struct device_opp *dev=
-_opp,
- 			      struct device_node *np)
- {
-@@ -1048,7 +1183,7 @@ static int _opp_add_static_v2(struct device *dev, s=
-truct device_node *np)
- 	if (!of_property_read_u32(np, "clock-latency-ns", &val))
- 		new_opp->clock_latency_ns =3D val;
-=20
--	ret =3D opp_parse_supplies(new_opp, dev);
-+	ret =3D opp_parse_supplies(new_opp, dev, dev_opp);
- 	if (ret)
- 		goto free_opp;
-=20
-diff --git a/drivers/base/power/opp/opp.h b/drivers/base/power/opp/opp.h
-index 70f4564a6ab9d..690638ef36ee5 100644
---- a/drivers/base/power/opp/opp.h
-+++ b/drivers/base/power/opp/opp.h
-@@ -131,6 +131,7 @@ struct device_list_opp {
-  * @suspend_opp: Pointer to OPP to be used during device suspend.
-  * @supported_hw: Array of version number to support.
-  * @supported_hw_count: Number of elements in supported_hw array.
-+ * @prop_name: A name to postfix to many DT properties, while parsing th=
-em.
-  * @dentry:	debugfs dentry pointer of the real device directory (not lin=
-ks).
-  * @dentry_name: Name of the real dentry.
-  *
-@@ -157,6 +158,7 @@ struct device_opp {
-=20
- 	unsigned int *supported_hw;
- 	unsigned int supported_hw_count;
-+	const char *prop_name;
-=20
- #ifdef CONFIG_DEBUG_FS
- 	struct dentry *dentry;
-diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
-index 3a85110242f00..95403d2ccaf56 100644
---- a/include/linux/pm_opp.h
-+++ b/include/linux/pm_opp.h
-@@ -58,6 +58,8 @@ struct srcu_notifier_head *dev_pm_opp_get_notifier(stru=
-ct device *dev);
- int dev_pm_opp_set_supported_hw(struct device *dev, const u32 *versions,
- 				unsigned int count);
- void dev_pm_opp_put_supported_hw(struct device *dev);
-+int dev_pm_opp_set_prop_name(struct device *dev, const char *name);
-+void dev_pm_opp_put_prop_name(struct device *dev);
- #else
- static inline unsigned long dev_pm_opp_get_voltage(struct dev_pm_opp *op=
-p)
- {
-@@ -142,6 +144,13 @@ static inline int dev_pm_opp_set_supported_hw(struct=
- device *dev,
-=20
- static inline void dev_pm_opp_put_supported_hw(struct device *dev) {}
-=20
-+static inline int dev_pm_opp_set_prop_name(struct device *dev, const cha=
-r *name)
-+{
-+	return -EINVAL;
-+}
-+
-+static inline void dev_pm_opp_put_prop_name(struct device *dev) {}
-+
- #endif		/* CONFIG_PM_OPP */
-=20
- #if defined(CONFIG_PM_OPP) && defined(CONFIG_OF)
 --=20
 2.27.0.rc0
 
 
---W55gH1Z6pbolJNKlmPbb
+--hm8nJ2dyvMkbtJlSNLKd
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -386,12 +111,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#4743): https://lists.cip-project.org/g/cip-dev/message=
-/4743
-Mute This Topic: https://lists.cip-project.org/mt/74748503/4520388
+View/Reply Online (#4748): https://lists.cip-project.org/g/cip-dev/message=
+/4748
+Mute This Topic: https://lists.cip-project.org/mt/74748509/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---W55gH1Z6pbolJNKlmPbb--
+--hm8nJ2dyvMkbtJlSNLKd--
