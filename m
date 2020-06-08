@@ -1,4 +1,4 @@
-Return-Path: <SRS0=0GqT=7V=lists.cip-project.org=bounce+64572+4762+4520388+8129055@kernel.org>
+Return-Path: <SRS0=S26m=7V=lists.cip-project.org=bounce+64572+4767+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -7,33 +7,33 @@ X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A610C433E8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3D31C433E0
 	for <cip-dev@archiver.kernel.org>; Mon,  8 Jun 2020 12:01:39 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E5E702076C
-	for <cip-dev@archiver.kernel.org>; Mon,  8 Jun 2020 12:01:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 83E432072F
+	for <cip-dev@archiver.kernel.org>; Mon,  8 Jun 2020 12:01:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="cNed2vKI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5E702076C
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="ngICpVPj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83E432072F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4762+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id 8WYXYY4521723xdpYeUVwVwJ; Mon, 08 Jun 2020 05:01:38 -0700
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4767+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id HC3VYY4521723xxiy2bzy8qD; Mon, 08 Jun 2020 05:01:39 -0700
 X-Received: from wens.tw (wens.tw [140.112.30.76])
- by mx.groups.io with SMTP id smtpd.web12.26177.1591607690994890276
+ by mx.groups.io with SMTP id smtpd.web12.26176.1591607689005962385
  for <cip-dev@lists.cip-project.org>;
- Mon, 08 Jun 2020 02:14:51 -0700
+ Mon, 08 Jun 2020 02:14:49 -0700
 X-Received: by wens.tw (Postfix, from userid 1000)
-	id C0C455FD2B; Mon,  8 Jun 2020 17:14:43 +0800 (CST)
+	id BA9815FD80; Mon,  8 Jun 2020 17:14:43 +0800 (CST)
 From: "Chen-Yu Tsai (Moxa)" <wens@csie.org>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: cip-dev@lists.cip-project.org,
 	JohnsonCH.Chen@moxa.com
-Subject: [cip-dev] [PATCH 4.4.y-cip v2 05/15] PM / OPP: Rename OPP nodes as opp@<opp-hz>
-Date: Mon,  8 Jun 2020 17:14:22 +0800
-Message-Id: <20200608091432.15366-6-wens@csie.org>
+Subject: [cip-dev] [PATCH 4.4.y-cip v2 04/15] PM / OPP: Remove 'operating-points-names' binding
+Date: Mon,  8 Jun 2020 17:14:21 +0800
+Message-Id: <20200608091432.15366-5-wens@csie.org>
 In-Reply-To: <20200608091432.15366-1-wens@csie.org>
 References: <20200608091432.15366-1-wens@csie.org>
 MIME-Version: 1.0
@@ -43,211 +43,148 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: 5KrdnyHDxJfpYdjVprROpTv8x4520388AA=
-Content-Type: multipart/mixed; boundary="VQA6w33ILbsAayGhoFSt"
+X-Gm-Message-State: I6CuFfzpfkJcZOqhx1j8mDMRx4520388AA=
+Content-Type: multipart/mixed; boundary="yUFsDgbsCx68XjDwBGuf"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1591617698;
- bh=vOxVTyvC5XgySKe5CI6aih0AhIlsXWZoj5VO2qU6Pv8=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1591617699;
+ bh=pkQ4AttFOwZfhEv5jEbYsS1j/zhiuJ+hbTnDnxraqN0=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=cNed2vKIIsMokSRumXBX5bw/wIYf709WIcwX+TKnyVEA4yVJcI4Xyzjds5BhCn4AbLB
- BPOR2n1lXupXDvC2pyjlEvt2gUNCsdaemBvYyeNsYymSDix4l89syIwXYnhvaimfXroZT
- 6Hw7SXKImIziDhG+cgIRQ03pFumf6ZoXt7c=
+ b=ngICpVPjk+kJyllsskb1mGtCm3EoooVcACbgS8tulJgAPymtaOhoMfEHS+Mhc5FSAgB
+ 0IPLm6OwUrJFqNMuj108/QG1XVIi4R2ZktECB5bieCFXvIMXme26QbHcFWL18MFGITE13
+ 6kCJy8jVs1gAuUolWR6zloGPyDSyF4ISDY0=
 
---VQA6w33ILbsAayGhoFSt
+--yUFsDgbsCx68XjDwBGuf
 Content-Transfer-Encoding: quoted-printable
 
 From: Viresh Kumar <viresh.kumar@linaro.org>
 
-commit 754dcf35f34698661801ae1d391efa02affe83a7 upstream.
+commit af87a39a5f7cf6ef252b1aec3e2e6508a40e51f1 upstream.
 
-It would be better to name OPP nodes as opp@<opp-hz> as that will ensure
-that multiple DT nodes don't contain the same frequency. Of course we
-expect the writer to name the node with its opp-hz frequency and not any
-other frequency.
+These aren't used until now by any DT files and wouldn't be used now as
+we have a better scheme in place now, i.e. opp-property-<name>
+properties.
 
-And that will let the compile error out if multiple nodes are using the
-same opp-hz frequency.
+Remove the (useless) binding without breaking ABI.
 
-Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
 Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
 Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Chen-Yu Tsai (Moxa) <wens@csie.org>
 ---
- Documentation/devicetree/bindings/opp/opp.txt | 38 +++++++++----------
- 1 file changed, 19 insertions(+), 19 deletions(-)
+ Documentation/devicetree/bindings/opp/opp.txt | 62 +------------------
+ 1 file changed, 2 insertions(+), 60 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/opp/opp.txt b/Documentatio=
 n/devicetree/bindings/opp/opp.txt
-index 24eac9a977494..601256fe8c0dd 100644
+index a3e7f0d5e1fb4..24eac9a977494 100644
 --- a/Documentation/devicetree/bindings/opp/opp.txt
 +++ b/Documentation/devicetree/bindings/opp/opp.txt
-@@ -177,20 +177,20 @@ Example 1: Single cluster Dual-core ARM cortex A9, =
-switch DVFS states together.
- 		compatible =3D "operating-points-v2";
- 		opp-shared;
+@@ -45,21 +45,10 @@ Devices supporting OPPs must set their "operating-poi=
+nts-v2" property with
+ phandle to a OPP table in their DT node. The OPP core will use this phan=
+dle to
+ find the operating points for the device.
 =20
+-Devices may want to choose OPP tables at runtime and so can provide a li=
+st of
+-phandles here. But only *one* of them should be chosen at runtime. This =
+must be
+-accompanied by a corresponding "operating-points-names" property, to uni=
+quely
+-identify the OPP tables.
+-
+ If required, this can be extended for SoC vendor specfic bindings. Such =
+bindings
+ should be documented as Documentation/devicetree/bindings/power/<vendor>=
+-opp.txt
+ and should have a compatible description like: "operating-points-v2-<ven=
+dor>".
+=20
+-Optional properties:
+-- operating-points-names: Names of OPP tables (required if multiple OPP
+-  tables are present), to uniquely identify them. The same list must be =
+present
+-  for all the CPUs which are sharing clock/voltage rails and hence the O=
+PP
+-  tables.
+-
+ * OPP Table Node
+=20
+ This describes the OPPs belonging to a device. This node can have follow=
+ing
+@@ -448,54 +437,7 @@ Example 4: Handling multiple regulators
+ 	};
+ };
+=20
+-Example 5: Multiple OPP tables
+-
+-/ {
+-	cpus {
+-		cpu@0 {
+-			compatible =3D "arm,cortex-a7";
+-			...
+-
+-			cpu-supply =3D <&cpu_supply>
+-			operating-points-v2 =3D <&cpu0_opp_table_slow>, <&cpu0_opp_table_fast=
+>;
+-			operating-points-names =3D "slow", "fast";
+-		};
+-	};
+-
+-	cpu0_opp_table_slow: opp_table_slow {
+-		compatible =3D "operating-points-v2";
+-		status =3D "okay";
+-		opp-shared;
+-
 -		opp00 {
-+		opp@1000000000 {
- 			opp-hz =3D /bits/ 64 <1000000000>;
- 			opp-microvolt =3D <970000 975000 985000>;
- 			opp-microamp =3D <70000>;
- 			clock-latency-ns =3D <300000>;
- 			opp-suspend;
- 		};
+-			opp-hz =3D /bits/ 64 <600000000>;
+-			...
+-		};
+-
 -		opp01 {
-+		opp@1100000000 {
- 			opp-hz =3D /bits/ 64 <1100000000>;
- 			opp-microvolt =3D <980000 1000000 1010000>;
- 			opp-microamp =3D <80000>;
- 			clock-latency-ns =3D <310000>;
- 		};
--		opp02 {
-+		opp@1200000000 {
- 			opp-hz =3D /bits/ 64 <1200000000>;
- 			opp-microvolt =3D <1025000>;
- 			clock-latency-ns =3D <290000>;
-@@ -256,20 +256,20 @@ independently.
- 		 * independently.
- 		 */
-=20
--		opp00 {
-+		opp@1000000000 {
- 			opp-hz =3D /bits/ 64 <1000000000>;
- 			opp-microvolt =3D <970000 975000 985000>;
- 			opp-microamp =3D <70000>;
- 			clock-latency-ns =3D <300000>;
- 			opp-suspend;
- 		};
--		opp01 {
-+		opp@1100000000 {
- 			opp-hz =3D /bits/ 64 <1100000000>;
- 			opp-microvolt =3D <980000 1000000 1010000>;
- 			opp-microamp =3D <80000>;
- 			clock-latency-ns =3D <310000>;
- 		};
--		opp02 {
-+		opp@1200000000 {
- 			opp-hz =3D /bits/ 64 <1200000000>;
- 			opp-microvolt =3D <1025000>;
- 			opp-microamp =3D <90000;
-@@ -332,20 +332,20 @@ DVFS state together.
- 		compatible =3D "operating-points-v2";
- 		opp-shared;
-=20
--		opp00 {
-+		opp@1000000000 {
- 			opp-hz =3D /bits/ 64 <1000000000>;
- 			opp-microvolt =3D <970000 975000 985000>;
- 			opp-microamp =3D <70000>;
- 			clock-latency-ns =3D <300000>;
- 			opp-suspend;
- 		};
--		opp01 {
-+		opp@1100000000 {
- 			opp-hz =3D /bits/ 64 <1100000000>;
- 			opp-microvolt =3D <980000 1000000 1010000>;
- 			opp-microamp =3D <80000>;
- 			clock-latency-ns =3D <310000>;
- 		};
--		opp02 {
-+		opp@1200000000 {
- 			opp-hz =3D /bits/ 64 <1200000000>;
- 			opp-microvolt =3D <1025000>;
- 			opp-microamp =3D <90000>;
-@@ -358,20 +358,20 @@ DVFS state together.
- 		compatible =3D "operating-points-v2";
- 		opp-shared;
-=20
+-			opp-hz =3D /bits/ 64 <800000000>;
+-			...
+-		};
+-	};
+-
+-	cpu0_opp_table_fast: opp_table_fast {
+-		compatible =3D "operating-points-v2";
+-		status =3D "okay";
+-		opp-shared;
+-
 -		opp10 {
-+		opp@1300000000 {
- 			opp-hz =3D /bits/ 64 <1300000000>;
- 			opp-microvolt =3D <1045000 1050000 1055000>;
- 			opp-microamp =3D <95000>;
- 			clock-latency-ns =3D <400000>;
- 			opp-suspend;
- 		};
+-			opp-hz =3D /bits/ 64 <1000000000>;
+-			...
+-		};
+-
 -		opp11 {
-+		opp@1400000000 {
- 			opp-hz =3D /bits/ 64 <1400000000>;
- 			opp-microvolt =3D <1075000>;
- 			opp-microamp =3D <100000>;
- 			clock-latency-ns =3D <400000>;
- 		};
--		opp12 {
-+		opp@1500000000 {
- 			opp-hz =3D /bits/ 64 <1500000000>;
- 			opp-microvolt =3D <1010000 1100000 1110000>;
- 			opp-microamp =3D <95000>;
-@@ -398,7 +398,7 @@ Example 4: Handling multiple regulators
- 		compatible =3D "operating-points-v2";
- 		opp-shared;
+-			opp-hz =3D /bits/ 64 <1100000000>;
+-			...
+-		};
+-	};
+-};
+-
+-Example 6: opp-supported-hw
++Example 5: opp-supported-hw
+ (example: three level hierarchy of versions: cuts, substrate and process=
+)
 =20
--		opp00 {
-+		opp@1000000000 {
- 			opp-hz =3D /bits/ 64 <1000000000>;
- 			opp-microvolt =3D <970000>, /* Supply 0 */
- 					<960000>, /* Supply 1 */
-@@ -411,7 +411,7 @@ Example 4: Handling multiple regulators
+ / {
+@@ -540,7 +482,7 @@ Example 6: opp-supported-hw
+ 	};
+ };
 =20
- 		/* OR */
+-Example 7: opp-microvolt-<name>, opp-microamp-<name>:
++Example 6: opp-microvolt-<name>, opp-microamp-<name>:
+ (example: device with two possible microvolt ranges: slow and fast)
 =20
--		opp00 {
-+		opp@1000000000 {
- 			opp-hz =3D /bits/ 64 <1000000000>;
- 			opp-microvolt =3D <970000 975000 985000>, /* Supply 0 */
- 					<960000 965000 975000>, /* Supply 1 */
-@@ -424,7 +424,7 @@ Example 4: Handling multiple regulators
-=20
- 		/* OR */
-=20
--		opp00 {
-+		opp@1000000000 {
- 			opp-hz =3D /bits/ 64 <1000000000>;
- 			opp-microvolt =3D <970000 975000 985000>, /* Supply 0 */
- 					<960000 965000 975000>, /* Supply 1 */
-@@ -456,7 +456,7 @@ Example 5: opp-supported-hw
- 		status =3D "okay";
- 		opp-shared;
-=20
--		opp00 {
-+		opp@600000000 {
- 			/*
- 			 * Supports all substrate and process versions for 0xF
- 			 * cuts, i.e. only first four cuts.
-@@ -467,7 +467,7 @@ Example 5: opp-supported-hw
- 			...
- 		};
-=20
--		opp01 {
-+		opp@800000000 {
- 			/*
- 			 * Supports:
- 			 * - cuts: only one, 6th cut (represented by 6th bit).
-@@ -499,7 +499,7 @@ Example 6: opp-microvolt-<name>, opp-microamp-<name>:
- 		compatible =3D "operating-points-v2";
- 		opp-shared;
-=20
--		opp00 {
-+		opp@1000000000 {
- 			opp-hz =3D /bits/ 64 <1000000000>;
- 			opp-microvolt-slow =3D <900000 915000 925000>;
- 			opp-microvolt-fast =3D <970000 975000 985000>;
-@@ -507,7 +507,7 @@ Example 6: opp-microvolt-<name>, opp-microamp-<name>:
- 			opp-microamp-fast =3D  <71000>;
- 		};
-=20
--		opp01 {
-+		opp@1200000000 {
- 			opp-hz =3D /bits/ 64 <1200000000>;
- 			opp-microvolt-slow =3D <900000 915000 925000>, /* Supply vcc0 */
- 					      <910000 925000 935000>; /* Supply vcc1 */
+ / {
 --=20
 2.27.0.rc0
 
 
---VQA6w33ILbsAayGhoFSt
+--yUFsDgbsCx68XjDwBGuf
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -255,12 +192,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#4762): https://lists.cip-project.org/g/cip-dev/message=
-/4762
-Mute This Topic: https://lists.cip-project.org/mt/74748495/4520388
+View/Reply Online (#4767): https://lists.cip-project.org/g/cip-dev/message=
+/4767
+Mute This Topic: https://lists.cip-project.org/mt/74750032/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---VQA6w33ILbsAayGhoFSt--
+--yUFsDgbsCx68XjDwBGuf--
