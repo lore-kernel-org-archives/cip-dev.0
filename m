@@ -1,121 +1,547 @@
-Return-Path: <SRS0=MstX=7W=lists.cip-project.org=bounce+64572+4791+4520388+8129055@kernel.org>
+Return-Path: <SRS0=E7AS=7X=lists.cip-project.org=bounce+64572+4792+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,HTML_MESSAGE,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF577C433DF
-	for <cip-dev@archiver.kernel.org>; Tue,  9 Jun 2020 11:25:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FAB6C433E0
+	for <cip-dev@archiver.kernel.org>; Wed, 10 Jun 2020 13:02:24 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 1393C20812
-	for <cip-dev@archiver.kernel.org>; Tue,  9 Jun 2020 11:25:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id B12BB20734
+	for <cip-dev@archiver.kernel.org>; Wed, 10 Jun 2020 13:02:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="G2iAlYXA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1393C20812
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=toshiba.co.jp
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4791+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id d3aWYY4521723xxIkLvSgkAc; Tue, 09 Jun 2020 04:25:31 -0700
-X-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.156])
- by mx.groups.io with SMTP id smtpd.web12.4996.1591701928588283068
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="ZJycgSIu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B12BB20734
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toshiba-tsip.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4792+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id B9j1YY4521723xWhnqMuSVFp; Wed, 10 Jun 2020 06:02:23 -0700
+X-Received: from peak.toshiba-tesi.com (peak.toshiba-tesi.com [202.56.254.199])
+ by mx.groups.io with SMTP id smtpd.web10.10067.1591794140168835301
  for <cip-dev@lists.cip-project.org>;
- Tue, 09 Jun 2020 04:25:30 -0700
-X-Received: by mo-csw.securemx.jp (mx-mo-csw1114) id 059BPPMM021628; Tue, 9 Jun 2020 20:25:26 +0900
-X-Iguazu-Qid: 2wHHidEfETbCXAmnmW
-X-Iguazu-QSIG: v=2; s=0; t=1591701924; q=2wHHidEfETbCXAmnmW; m=U+71g/5tRws5bHgRevLVU7zszFsFubWgcMkCr8VhH44=
-X-Received: from imx12.toshiba.co.jp (imx12.toshiba.co.jp [61.202.160.132])
-	by relay.securemx.jp (mx-mr1112) id 059BPONv014202;
-	Tue, 9 Jun 2020 20:25:24 +0900
-X-Received: from enc02.toshiba.co.jp ([61.202.160.51])
-	by imx12.toshiba.co.jp  with ESMTP id 059BPOBl001569
-	for <cip-dev@lists.cip-project.org>; Tue, 9 Jun 2020 20:25:24 +0900 (JST)
-X-Received: from hop101.toshiba.co.jp ([133.199.85.107])
-	by enc02.toshiba.co.jp  with ESMTP id 059BPNpC022660
-	for <cip-dev@lists.cip-project.org>; Tue, 9 Jun 2020 20:25:23 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OSxbrDH7DrBWUdp8fKbiIlCXf7tD1ZBy4fGIFnurkQgNRubhyYo8TTMIH7o9rMTNDX+nc4OzHT6SPz9VW+Qz2sRUuGTIIyOqe1601oO++647HtHuxVvJnf+Ijj9ysnt2rmNqZzVJtbRA1DmwGT6UoSCa2p0borpBqHa/DjnayRyS0dFCKKPSTLfFrJ86YqcltZGQSw3aS8OPzu1PDkATJzso7q0FK9MSwP/cavyFJs25KVeTvoToODUQC8cjDmndbx3YcS850SfvWVdRMVOa7NZR6tQdDRRqZe7VulvGXVvlhsLdpSQfGP5j36Ug++7NX6ZUEsI8twUUIyroL4fiaw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3IOvKoq/7LHWakLlQgrSHcunnLl8lLSN2hfly6dmRIk=;
- b=OpHkitnGEbTeIN9iWVcjfw1Ij+DXD/KjFnhKyQujblFpWcpanV6sTYWgtBndIMK86SyxE34/TEyQY8sUoU6mDTsKR4QKzNmSn+EtP+YNt65pWOVHpNvZT/5EfwvvWeLzTB0WuOl4JNP9+fhSJJlXzC6FzUwfU1DYZmsWOJFr9VutVxbSz0NDDtPikdwHkhy6b18hJOceUrKRb6xNl9IEv7avycnzZBHqOMWK/FOjCCvrvTojlwennc5+thlDFuIUztFvwTe9BhakFpWCuCCV6limUXKYvWt09g9VCOwL6x45zZZXIaKqc0lVK6YjpH8hKgK2SaPRgryRuFUJPxwL8g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
- header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
-From: "Daniel Sangorrin" <daniel.sangorrin@toshiba.co.jp>
-To: <cip-dev@lists.cip-project.org>
-Subject: Re: [cip-dev] isar-cip-core and cip-kernel-config
-Thread-Topic: [cip-dev] isar-cip-core and cip-kernel-config
-Thread-Index: AQHWPkTxVR3D2hSN9E6dp3Qwbhm+7qjQJLZQ
-Date: Tue, 9 Jun 2020 11:25:22 +0000
-X-TSB-HOP: ON
-Message-ID: <TYAPR01MB2064955529EA8A3DF3B90702D0820@TYAPR01MB2064.jpnprd01.prod.outlook.com>
-References: <e9ae3b47-7f38-0da3-b90c-b0b4dbdf1eae@siemens.com>
-In-Reply-To: <e9ae3b47-7f38-0da3-b90c-b0b4dbdf1eae@siemens.com>
-Accept-Language: en-US
-x-originating-ip: [103.91.184.2]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a3a42bb0-ada9-464e-fe2b-08d80c67cc60
-x-ms-traffictypediagnostic: TYAPR01MB5151:
-x-microsoft-antispam-prvs: <TYAPR01MB51518A06BD08C6B758CE15FFD0820@TYAPR01MB5151.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: OJ7VqjCPB1G9JO2+ZY0aZMwjNpmlaAH9Z9VG/sEK2y1TwUyrcIFkNxDt1V+O2LVoCAbDoRW2zU2FhBdDvgba98Es/JWyEsrkLU162YNiS1NklYEkfCSF01loIaXFbQs5WIBg4fF+94cwdSRxJa1E5nwz/gH9jV/Bd/FNq49P4cz6SLKFLQ3UgRnVR+w5xL2O2S9KmMP8ZTsUbq0i0kUKrFjt2fOP1ug2USUFdxU8B2TIslb11DYYSCo5OlQGqpeJwAxi+z44a+CwB4t8IUhfym5g7xJiD7jONgPbu4NMGcZr6G8pyREyVysWJgedsJRQ
-x-ms-exchange-antispam-messagedata: EkpYpBa96UUoNSpIiNrunL1S3qD2o0GcXG7dYcJl75j3ZXSnhECueCEjeVGaAdVmSkXbk4nZ4ME2IW8vsLU1bP85GKifpDy1jnSBCikHOSnxgFCVdCKUPc9okRFVQf6Whvvp1QIu3zc2/VhHJqtKsSFe9fwEZx6kGfXPsRbYIh+RtT6qp2i8UzBG0UotMWZmx9dqYVLDRZ28YmM+S0vrzkIw9V0BYu4aVeSVqwqTtiWVfwxRCw7VvjhrVFdqV6tqSL+j6SmLY0qOu3vDedl5YII05b6ws0pPMMPM/g7+snSR+neT3oynYnGyVL+fg9a+M84wiKAG+eFTZ6hZdbxuQGgVZbayp8WPFSI+Xx6xQ+htTQS57P97/5bPcD0pPrHskfMs3Gf6NAlRqfuAwydMUWJ2RQns+K5LslalgnpCfEhGb9P4Q+8YTBsgsWsFOvMKFbjepHYLUCXOlKJ8xPL12zy29bOsAfRKdeBx29A/g4g=
-x-ms-exchange-transport-forked: True
+ Wed, 10 Jun 2020 06:02:21 -0700
+IronPort-SDR: TGpsJo46EErYnh1Ye9lB3C3RN72eWokSwfDk716KPOxH8q0RFF0xMayA+uy58f7Z/STthmX4t4
+ ynA9m5aIFdGA==
+X-IronPort-AV: E=Sophos;i="5.73,496,1583173800"; 
+   d="c'?scan'208,217";a="4220142"
+X-Received: from unknown (HELO TOSBLRMBX0319.TOSHIBA-TSIP.COM) ([172.28.80.120])
+  by peak.toshiba-tesi.com with ESMTP; 10 Jun 2020 19:00:55 +0530
+X-Received: from TOSBLRMBX0119.TOSHIBA-TSIP.COM (172.28.80.118) by
+ TOSBLRMBX0319.TOSHIBA-TSIP.COM (172.28.80.120) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1847.3; Wed, 10 Jun 2020 18:32:17 +0530
+X-Received: from TOSBLRMBX0119.TOSHIBA-TSIP.COM ([::1]) by
+ TOSBLRMBX0119.TOSHIBA-TSIP.COM ([fe80::fc54:5765:a052:196%9]) with mapi id
+ 15.01.1847.003; Wed, 10 Jun 2020 18:32:17 +0530
+From: "Dinesh Kumar" <dinesh.kumar@toshiba-tsip.com>
+To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
+CC: "cip-security@lists.cip-project.org" <cip-security@lists.cip-project.org>
+Subject: [cip-dev] Share your suggestions for supporting session lock requirement in CIP
+Thread-Topic: Share your suggestions for supporting session lock requirement
+ in CIP
+Thread-Index: AdY/Iijpzub5lY9cRtm76jsyK2EKtA==
+Date: Wed, 10 Jun 2020 13:02:17 +0000
+Message-ID: <3999decc9e9743b7b4061b38b91f4575@TOSHIBA-TSIP.COM>
+Accept-Language: en-IN, en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.28.80.121]
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: a3a42bb0-ada9-464e-fe2b-08d80c67cc60
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jun 2020 11:25:22.1929
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: kcI20EzjBNhJUnZkuuzDHgjhH8dvxU/qVnrPdcRIkAMc8YO6h+/Ja1ZMJleyWsmWtyNAIBPzS0Qy0qtDvJBeSqpR04nW7LtETZ+mpWx4ICI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB5151
-X-OriginatorOrg: toshiba.co.jp
-MSSCP.TransferMailToMossAgent: 103
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: 6ECa7GJI4bZmiVeycRvD4BXgx4520388AA=
-Content-Type: multipart/mixed; boundary="z5XbRcelTuwFbfzokkeX"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1591701931;
- bh=blyACrmPAHSVFViN27dI7XsYnu7TeQK2vyjpFpdPf1Y=;
- h=Content-Type:Date:From:Reply-To:Subject:To;
- b=G2iAlYXAmCVmrgrYJ5gMgIcrmZ7yJdNQtBIzOd7ebEjWZp85mcFciNMnO9VjfSDiChk
- K1hOm39Gujxk2D7r9HoYf2yzYwqkQ7qHTzNWTuMET7PWtmkSGBnPE232/iucW1/JJ9Liw
- 0XCA+DhkAVu7Q+zppav+A4ijSXuI1EE8m6A=
-
---z5XbRcelTuwFbfzokkeX
+X-Gm-Message-State: A6npSETQN4uy25q0Gmb4RnB0x4520388AA=
 Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
+Content-Type: multipart/mixed;
+	boundary="_004_3999decc9e9743b7b4061b38b91f4575TOSHIBATSIPCOM_"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1591794143;
+ bh=HMl4w6I+XOOQ8qoeG8hj75YMPBwEgL1JCzgyPpYsjzY=;
+ h=CC:Content-Type:Date:From:Reply-To:Subject:To;
+ b=ZJycgSIu91lpMQu3l9vG4OWoo4UwRAqxr+lPlezCZBqQ63kB0IyZOW/Hdq6wkCdgbtD
+ 4aJZopBbJbOrd37pgfl2S5JNJxpMgVZhAED8NHTbhVCYa/5lYk4Q2zN5ZUcYY7nD2QNYA
+ M1+k5VlMOE4qa+One9BMKaEy7gWJzj7cM6A=
+
+--_004_3999decc9e9743b7b4061b38b91f4575TOSHIBATSIPCOM_
+Content-Type: multipart/alternative;
+	boundary="_000_3999decc9e9743b7b4061b38b91f4575TOSHIBATSIPCOM_"
+
+--_000_3999decc9e9743b7b4061b38b91f4575TOSHIBATSIPCOM_
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+
+Hi All,
+
+IEC-62443-4-2 has following two requirements related to session termination=
+ and session lock.
+CR2.5 Req-1 Session lock: Component should support session lock after a con=
+figurable time period of inactivity.
+CR2.6 Req-2 Remote session termination: Component should support terminatin=
+g remote session after a configurable time of inactivity
+
+CR2.6 Req-2 can be met by adding system variable TMOUT.
+
+For meeting CR2.5 we need following changes in CIP.
+
+1.       Systemd code changes
+
+2.       Add deamon which subscribes to dbus notification(sample code attac=
+hed)
+
+3.       Add vlock Debian package which performs session lock
+
+4.       Enable dbus in systemd
+
+Systemd code change are as follows.
+
+
+--- a/src/login/logind.c
+
++++ b/src/login/logind.c
+
+@@ -1019,7 +1019,7 @@ static int manager_dispatch_idle_action(sd_event_sour=
+ce *s, uint64_t t, void *us
+
+                     (m->idle_action_not_before_usec <=3D 0 || n >=3D m->id=
+le_action_not_before_usec + m->idle_action_usec)) {
+
+                         log_info("System idle. Taking action.");
+
+
+
+-                        manager_handle_action(m, 0, m->idle_action, false,=
+ false);
+
++                        manager_handle_action(m, 0, m->idle_action, false,=
+ true);
+
+                         m->idle_action_not_before_usec =3D n;
+
+                 }
+
+It means there are several changes required in CIP as well as it would be d=
+ifficult to maintain for long term, if we chose this option.
+
+My request is, if anyone has any better idea to achieve session lock, pleas=
+e share so we can evaluate it further.
+
+Thanks & Regards,
+Dinesh Kumar
+
+The information contained in this e-mail message and in any
+attachments/annexure/appendices is confidential to the =
+
+recipient and may contain privileged information. =
+
+If you are not the intended recipient, please notify the
+sender and delete the message along with any =
+
+attachments/annexure/appendices. You should not disclose,
+copy or otherwise use the information contained in the
+message or any annexure. Any views expressed in this e-mail =
+
+are those of the individual sender except where the sender =
+
+specifically states them to be the views of =
+
+Toshiba Software India Pvt. Ltd. (TSIP),Bangalore.
+
+Although this transmission and any attachments are believed to be
+free of any virus or other defect that might affect any computer =
+
+system into which it is received and opened, it is the responsibility
+of the recipient to ensure that it is virus free and no responsibility =
+
+is accepted by Toshiba Embedded Software India Pvt. Ltd, for any loss or
+damage arising in any way from its use.
+
+--_000_3999decc9e9743b7b4061b38b91f4575TOSHIBATSIPCOM_
+Content-Type: text/html; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
+osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
+//www.w3.org/TR/REC-html40">
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii">
+<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
+<style><!--
+/* Font Definitions */
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	font-size:11.0pt;
+	font-family:"Calibri",sans-serif;
+	mso-fareast-language:EN-US;}
+a:link, span.MsoHyperlink
+	{mso-style-priority:99;
+	color:#0563C1;
+	text-decoration:underline;}
+a:visited, span.MsoHyperlinkFollowed
+	{mso-style-priority:99;
+	color:#954F72;
+	text-decoration:underline;}
+pre
+	{mso-style-priority:99;
+	mso-style-link:"HTML Preformatted Char";
+	margin:0cm;
+	margin-bottom:.0001pt;
+	font-size:10.0pt;
+	font-family:"Courier New";}
+p.MsoListParagraph, li.MsoListParagraph, div.MsoListParagraph
+	{mso-style-priority:34;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:36.0pt;
+	margin-bottom:.0001pt;
+	font-size:11.0pt;
+	font-family:"Calibri",sans-serif;
+	mso-fareast-language:EN-US;}
+span.EmailStyle17
+	{mso-style-type:personal-compose;
+	font-family:"Calibri",sans-serif;
+	color:windowtext;}
+span.HTMLPreformattedChar
+	{mso-style-name:"HTML Preformatted Char";
+	mso-style-priority:99;
+	mso-style-link:"HTML Preformatted";
+	font-family:"Courier New";
+	mso-fareast-language:EN-IN;}
+span.coderay
+	{mso-style-name:coderay;}
+span.line
+	{mso-style-name:line;}
+span.head3
+	{mso-style-name:head3;}
+span.filename2
+	{mso-style-name:filename2;}
+span.change3
+	{mso-style-name:change3;}
+span.directive2
+	{mso-style-name:directive2;}
+span.predefined-type2
+	{mso-style-name:predefined-type2;}
+span.integer2
+	{mso-style-name:integer2;}
+span.delimiter9
+	{mso-style-name:delimiter9;}
+span.content6
+	{mso-style-name:content6;}
+span.delete2
+	{mso-style-name:delete2;}
+span.predefined-constant2
+	{mso-style-name:predefined-constant2;}
+span.insert2
+	{mso-style-name:insert2;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	mso-fareast-language:EN-US;}
+@page WordSection1
+	{size:612.0pt 792.0pt;
+	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
+div.WordSection1
+	{page:WordSection1;}
+/* List Definitions */
+@list l0
+	{mso-list-id:338700431;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-407596782 1074331663 1074331673 1074331675 10743316=
+63 1074331673 1074331675 1074331663 1074331673 1074331675;}
+@list l0:level1
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l0:level2
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l0:level3
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l0:level4
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l0:level5
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l0:level6
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l0:level7
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l0:level8
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l0:level9
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+ol
+	{margin-bottom:0cm;}
+ul
+	{margin-bottom:0cm;}
+--></style><!--[if gte mso 9]><xml>
+<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
+</xml><![endif]--><!--[if gte mso 9]><xml>
+<o:shapelayout v:ext=3D"edit">
+<o:idmap v:ext=3D"edit" data=3D"1" />
+</o:shapelayout></xml><![endif]-->
+</head>
+<body lang=3D"EN-IN" link=3D"#0563C1" vlink=3D"#954F72">
+<div class=3D"WordSection1">
+<p class=3D"MsoNormal">Hi All,<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">IEC-62443-4-2 has following two requirements related=
+ to session termination and session lock.<o:p></o:p></p>
+<p class=3D"MsoNormal"><b>CR2.5 Req-1 Session lock: </b>Component should su=
+pport session lock after a configurable time period of inactivity<b>.<o:p><=
+/o:p></b></p>
+<p class=3D"MsoNormal"><b>CR2.6 Req-2 Remote session termination: </b>Compo=
+nent should support terminating remote session after a configurable time of=
+ inactivity<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">CR2.6 Req-2 can be met by adding system variable TMO=
+UT.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">For meeting CR2.5 we need following changes in CIP. =
+<o:p></o:p></p>
+<p class=3D"MsoListParagraph" style=3D"text-indent:-18.0pt;mso-list:l0 leve=
+l1 lfo1"><![if !supportLists]><span style=3D"mso-list:Ignore">1.<span style=
+=3D"font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;
+</span></span><![endif]>Systemd code changes<o:p></o:p></p>
+<p class=3D"MsoListParagraph" style=3D"text-indent:-18.0pt;mso-list:l0 leve=
+l1 lfo1"><![if !supportLists]><span style=3D"mso-list:Ignore">2.<span style=
+=3D"font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;
+</span></span><![endif]>Add deamon which subscribes to dbus notification(sa=
+mple code attached)<o:p></o:p></p>
+<p class=3D"MsoListParagraph" style=3D"text-indent:-18.0pt;mso-list:l0 leve=
+l1 lfo1"><![if !supportLists]><span style=3D"mso-list:Ignore">3.<span style=
+=3D"font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;
+</span></span><![endif]>Add vlock Debian package which performs session loc=
+k<o:p></o:p></p>
+<p class=3D"MsoListParagraph" style=3D"text-indent:-18.0pt;mso-list:l0 leve=
+l1 lfo1"><![if !supportLists]><span style=3D"mso-list:Ignore">4.<span style=
+=3D"font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;
+</span></span><![endif]>Enable dbus in systemd<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Systemd code change are as follows.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<pre style=3D"background:white"><span class=3D"head3"><span lang=3D"EN" sty=
+le=3D"color:#484848">--- </span></span><span class=3D"filename2"><span lang=
+=3D"EN" style=3D"color:#484848">a/src/login/logind.c</span></span><span cla=
+ss=3D"coderay"><span lang=3D"EN" style=3D"color:#484848"><o:p></o:p></span>=
+</span></pre>
+<pre style=3D"background:white"><span class=3D"head3"><span lang=3D"EN" sty=
+le=3D"color:#484848">&#43;&#43;&#43; </span></span><span class=3D"filename2=
+"><span lang=3D"EN" style=3D"color:#484848">b/src/login/logind.c</span></sp=
+an><span class=3D"coderay"><span lang=3D"EN" style=3D"color:#484848"><o:p><=
+/o:p></span></span></pre>
+<pre style=3D"background:white"><span class=3D"change3"><span lang=3D"EN" s=
+tyle=3D"color:#484848">@@ -1019,7 &#43;1019,7 @@</span></span><span class=
+=3D"coderay"><span lang=3D"EN" style=3D"color:#484848"> </span></span><span=
+ class=3D"directive2"><span lang=3D"EN" style=3D"color:#484848">static</spa=
+n></span><span class=3D"coderay"><span lang=3D"EN" style=3D"color:#484848">=
+ </span></span><span class=3D"predefined-type2"><span lang=3D"EN" style=3D"=
+color:#484848">int</span></span><span class=3D"coderay"><span lang=3D"EN" s=
+tyle=3D"color:#484848"> manager_dispatch_idle_action(sd_event_source *s, ui=
+nt64_t t, </span></span><span class=3D"directive2"><span lang=3D"EN" style=
+=3D"color:#484848">void</span></span><span class=3D"coderay"><span lang=3D"=
+EN" style=3D"color:#484848"> *us<o:p></o:p></span></span></pre>
+<pre style=3D"background:white"><span class=3D"coderay"><span lang=3D"EN" s=
+tyle=3D"color:#484848">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (m-&gt=
+;idle_action_not_before_usec &lt;=3D </span></span><span class=3D"integer2"=
+><span lang=3D"EN" style=3D"color:#484848">0</span></span><span class=3D"co=
+deray"><span lang=3D"EN" style=3D"color:#484848"> || n &gt;=3D m-&gt;idle_a=
+ction_not_before_usec &#43; m-&gt;idle_action_usec)) {<o:p></o:p></span></s=
+pan></pre>
+<pre style=3D"background:white"><span class=3D"coderay"><span lang=3D"EN" s=
+tyle=3D"color:#484848">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp; log_info(</span></span><span class=3D"delimiter9"><span l=
+ang=3D"EN" style=3D"color:#484848">&quot;</span></span><span class=3D"conte=
+nt6"><span lang=3D"EN" style=3D"color:#484848">System idle. Taking action.<=
+/span></span><span class=3D"delimiter9"><span lang=3D"EN" style=3D"color:#4=
+84848">&quot;</span></span><span class=3D"coderay"><span lang=3D"EN" style=
+=3D"color:#484848">);<o:p></o:p></span></span></pre>
+<pre style=3D"background:white"><span class=3D"coderay"><span lang=3D"EN" s=
+tyle=3D"color:#484848"><o:p>&nbsp;</o:p></span></span></pre>
+<pre style=3D"background:white"><span class=3D"delete2"><span lang=3D"EN" s=
+tyle=3D"color:#484848">-</span></span><span class=3D"line"><span lang=3D"EN=
+" style=3D"color:#484848">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp; manager_handle_action(m, </span></span><span class=3D"intege=
+r2"><span lang=3D"EN" style=3D"color:#484848">0</span></span><span class=3D=
+"line"><span lang=3D"EN" style=3D"color:#484848">, m-&gt;idle_action, </spa=
+n></span><span class=3D"predefined-constant2"><span lang=3D"EN" style=3D"co=
+lor:#484848">false</span></span><span class=3D"line"><span lang=3D"EN" styl=
+e=3D"color:#484848">, </span></span><span class=3D"predefined-constant2"><s=
+pan lang=3D"EN" style=3D"color:#484848">false</span></span><span class=3D"l=
+ine"><span lang=3D"EN" style=3D"color:#484848">);</span></span><span class=
+=3D"coderay"><span lang=3D"EN" style=3D"color:#484848"><o:p></o:p></span></=
+span></pre>
+<pre style=3D"background:white"><span class=3D"insert2"><span lang=3D"EN" s=
+tyle=3D"color:#484848">&#43;</span></span><span class=3D"line"><span lang=
+=3D"EN" style=3D"color:#484848">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp; manager_handle_action(m, </span></span><span class=3D"=
+integer2"><span lang=3D"EN" style=3D"color:#484848">0</span></span><span cl=
+ass=3D"line"><span lang=3D"EN" style=3D"color:#484848">, m-&gt;idle_action,=
+ </span></span><span class=3D"predefined-constant2"><span lang=3D"EN" style=
+=3D"color:#484848">false</span></span><span class=3D"line"><span lang=3D"EN=
+" style=3D"color:#484848">, </span></span><span class=3D"predefined-constan=
+t2"><span lang=3D"EN" style=3D"color:#484848">true</span></span><span class=
+=3D"line"><span lang=3D"EN" style=3D"color:#484848">);</span></span><span c=
+lass=3D"coderay"><span lang=3D"EN" style=3D"color:#484848"><o:p></o:p></spa=
+n></span></pre>
+<pre style=3D"background:white"><span class=3D"coderay"><span lang=3D"EN" s=
+tyle=3D"color:#484848"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;m-&gt;idle_action_not_before_usec =3D n;<o:p></o:p></span=
+></span></pre>
+<pre style=3D"background:white"><span class=3D"coderay"><span lang=3D"EN" s=
+tyle=3D"color:#484848">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<o:p></o:p></span></span></pr=
+e>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">It means there are several changes required in CIP a=
+s well as it would be difficult to maintain for long term, if we chose this=
+ option.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">My request is, if anyone has any better idea to achi=
+eve session lock, please share so we can evaluate it further.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-IN">Thanks &a=
+mp; Regards,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-IN">Dinesh Ku=
+mar<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+</div>
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+@font-face
+	{font-family:"Segoe UI";
+	panose-1:2 11 5 2 4 2 4 2 2 3;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:8.0pt;
+	margin-left:0in;
+	line-height:107%;
+	font-size:11.0pt;
+	font-family:"Calibri",sans-serif;}
+.MsoChpDefault
+	{font-family:"Calibri",sans-serif;}
+.MsoPapDefault
+	{margin-bottom:8.0pt;
+	line-height:107%;}
+ /* Page Definitions */
+ @page WordSection1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.0in 1.0in 1.0in;}
+div.WordSection1
+	{page:WordSection1;}
+ /* List Definitions */
+ ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+
+
+
+
+
+<div class=3D"WordSection1 ">
+
+<p class=3D"MsoNormal" style=3D"margin-top:2.0pt;margin-right:0in;margin-bo=
+ttom:2.0pt;
+margin-left:0in;line-height:normal;text-autospace:none"><span  style=3D"fon=
+t-family: Times New Roman, serif;"><span style=3D"font-size: 16px;">.</span=
+></span></p></body>
+</html>
+
+--_000_3999decc9e9743b7b4061b38b91f4575TOSHIBATSIPCOM_--
+
+--_004_3999decc9e9743b7b4061b38b91f4575TOSHIBATSIPCOM_
+Content-Type: text/plain; name="subscribe_systemd_lock_signal.c"
+Content-Description: subscribe_systemd_lock_signal.c
+Content-Disposition: attachment; filename="subscribe_systemd_lock_signal.c";
+	size=1440; creation-date="Wed, 10 Jun 2020 12:16:40 GMT";
+	modification-date="Wed, 10 Jun 2020 12:16:35 GMT"
 Content-Transfer-Encoding: base64
 
-R29vZCB0byBrbm93IEphbiwgdGhhbmtzIGZvciB0aGUgdXBkYXRlLg0KDQo+IC0tLS0tT3JpZ2lu
-YWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IGNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnIDxj
-aXAtZGV2QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZz4gT24gQmVoYWxmIE9mIEphbiBLaXN6a2ENCj4g
-U2VudDogVHVlc2RheSwgSnVuZSA5LCAyMDIwIDc6MDEgUE0NCj4gVG86IGNpcC1kZXYgPGNpcC1k
-ZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnPg0KPiBTdWJqZWN0OiBbY2lwLWRldl0gaXNhci1jaXAt
-Y29yZSBhbmQgY2lwLWtlcm5lbC1jb25maWcNCj4gDQo+IEhpIGFsbCwNCj4gDQo+IGEgcXVpY2sg
-Zm9sbG93LXVwIGZyb20gb3VyIGNpcC1jb3JlIG1lZXRpbmcgdG9kYXk6DQo+IA0KPiBpc2FyLWNp
-cC1jb3JlIGlzIGFscmVhZHkgYWJsZSB0byBwdWxsIGNvbmZpZ3MgZnJvbSBjaXAta2VybmVsLWNv
-bmZpZy4gSXQNCj4gZG9lcyBzbyBmb3IgYWxsIG1hY2hpbmVzIHdoZXJlIFVTRV9DSVBfS0VSTkVM
-X0NPTkZJRyA9ICIxIiwgaWUuDQo+IGhpaG9wZS1yemcybSwgaXdnMjBtIGFuZCBzaW1hdGljLWlw
-YzIyN2UuIFNvIHdlICJvbmx5IiBuZWVkIHRvIGNoZWNrIHRoZQ0KPiBvdGhlciB0YXJnZXRzIGFu
-ZCBzZWUgaG93IHRoZXkgY2FuIGJlIG1pZ3JhdGVkLg0KPiANCj4gQW5kIHdlIHNob3VsZCByZW1v
-dmUgdGhlIG9sZCBkZWZjb25maWdzIGZyb20gaXNhci1jaXAtY29yZSB0aGVuIChzb21lDQo+IGNv
-dWxkIGFscmVhZHkgZ28pLg0KPiANCj4gSmFuDQo+IA0KPiAtLQ0KPiBTaWVtZW5zIEFHLCBDb3Jw
-b3JhdGUgVGVjaG5vbG9neSwgQ1QgUkRBIElPVCBTRVMtREUNCj4gQ29ycG9yYXRlIENvbXBldGVu
-Y2UgQ2VudGVyIEVtYmVkZGVkIExpbnV4DQo=
+I2luY2x1ZGUgPGRidXMvZGJ1cy1nbGliLmg+DQojaW5jbHVkZSA8c3RkaW8uaD4NCg0Kc3RhdGlj
+IHZvaWQNCnRlc3RfaGludF9zaWduYWxfaGFuZGxlciAoREJ1c0dQcm94eSAqIHByb3h5LA0KICAg
+ICAgIGdwb2ludGVyIHVzZXJfZGF0YSkNCnsNCiAgcHJpbnRmKCJJIGFtIGhlcmUiKTsNCiAgZ193
+YXJuaW5nICgiQ2FsbCBiYWNrIGlzIGNhbGxlZCIpOw0KfQ0KDQpnaW50DQptYWluIChnaW50IGFy
+Z2MsIGdjaGFyICphcmd2W10pDQp7DQoJcHJpbnRmKCJJbiBNYWluXG4iKTsNCglEQnVzR0Nvbm5l
+Y3Rpb24gKmRidXNfZ2xpYl9jb25uZWN0aW9uID0gTlVMTDsNCglHTWFpbkxvb3AgKmxvb3AgPSBO
+VUxMOw0KCUdFcnJvciAqZXJyb3IgPSBOVUxMOw0KCURCdXNHUHJveHkgKmNvbnRyb2xfcHJveHkg
+PSBOVUxMOw0KDQoJZ190eXBlX2luaXQgKCk7DQoNCglsb29wID0gZ19tYWluX2xvb3BfbmV3IChO
+VUxMLCBGQUxTRSk7DQoNCglkYnVzX2dsaWJfY29ubmVjdGlvbiA9IGRidXNfZ19idXNfZ2V0IChE
+QlVTX0JVU19TWVNURU0sICZlcnJvcik7DQoJaWYgKGVycm9yICE9IE5VTEwpew0KCQlnX3dhcm5p
+bmcgKCJGYWlsZWQgY29ubmVjdGluZyB0byBzeXN0ZW0gYnVzOiAlcyIsIGVycm9yLT5tZXNzYWdl
+KTsNCgkJZGJ1c19nbGliX2Nvbm5lY3Rpb24gPSBOVUxMOw0KCQlnX2Vycm9yX2ZyZWUgKGVycm9y
+KTsNCgl9DQoJaWYgKGRidXNfZ2xpYl9jb25uZWN0aW9uICE9IE5VTEwpew0KCQljb250cm9sX3By
+b3h5ID0gZGJ1c19nX3Byb3h5X25ld19mb3JfbmFtZSggZGJ1c19nbGliX2Nvbm5lY3Rpb24sDQog
+ICAgICAgICAgICAib3JnLmZyZWVkZXNrdG9wLmxvZ2luMSIsDQogICAgICAgICAgICAiL29yZy9m
+cmVlZGVza3RvcC9sb2dpbjEvc2Vzc2lvbi9fMzIiLA0KICAgICAgICAgICAgIm9yZy5mcmVlZGVz
+a3RvcC5sb2dpbjEuU2Vzc2lvbiINCiAgICAgICAgICAgICk7DQoJCWlmIChjb250cm9sX3Byb3h5
+ID09IE5VTEwpDQoJCXsNCgkJCWdfd2FybmluZyAoIkZhaWxlZCB0byBnZXQgcHJveHkiKTsNCgkJ
+fQ0KICAgIH0NCglpZiAoY29udHJvbF9wcm94eSAhPSBOVUxMKXsNCiAgICAgICAgZGJ1c19nX3By
+b3h5X2FkZF9zaWduYWwoIGNvbnRyb2xfcHJveHksDQogICAgICAgICAgICAiTG9jayIsDQogICAg
+ICAgICAgICBHX1RZUEVfSU5WQUxJRA0KICAgICAgICAgICAgKTsNCg0KCQlkYnVzX2dfcHJveHlf
+Y29ubmVjdF9zaWduYWwoIGNvbnRyb2xfcHJveHksDQogICAgICAgICAgICAiTG9jayIsDQogICAg
+ICAgICAgICBHX0NBTExCQUNLKHRlc3RfaGludF9zaWduYWxfaGFuZGxlciksDQogICAgICAgICAg
+ICBOVUxMLA0KICAgICAgICAgICAgTlVMTA0KICAgICAgICAgICAgKTsNCg0KICAgIH0NCg0KCWdf
+ZGVidWcoIlN0YXJ0aW5nIG1haW5sb29wIik7DQoJZ19tYWluX2xvb3BfcnVuIChsb29wKTsNCg0K
+CXJldHVybiAwOw0KfQ0K
 
---z5XbRcelTuwFbfzokkeX
+--_004_3999decc9e9743b7b4061b38b91f4575TOSHIBATSIPCOM_
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -123,12 +549,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#4791): https://lists.cip-project.org/g/cip-dev/message=
-/4791
-Mute This Topic: https://lists.cip-project.org/mt/74770939/4520388
+View/Reply Online (#4792): https://lists.cip-project.org/g/cip-dev/message=
+/4792
+Mute This Topic: https://lists.cip-project.org/mt/74795832/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---z5XbRcelTuwFbfzokkeX--
+--_004_3999decc9e9743b7b4061b38b91f4575TOSHIBATSIPCOM_--
