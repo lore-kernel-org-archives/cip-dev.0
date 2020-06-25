@@ -1,4 +1,4 @@
-Return-Path: <SRS0=r1AO=AG=lists.cip-project.org=bounce+64572+4823+4520388+8129055@kernel.org>
+Return-Path: <SRS0=kt/n=AG=lists.cip-project.org=bounce+64572+4822+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F1BFC433DF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11B88C433E1
 	for <cip-dev@archiver.kernel.org>; Thu, 25 Jun 2020 14:10:22 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 96B532065F
+	by mail.kernel.org (Postfix) with ESMTPS id 970A8206C3
 	for <cip-dev@archiver.kernel.org>; Thu, 25 Jun 2020 14:10:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="EGsYaYRm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96B532065F
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="NTzkxceW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 970A8206C3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=siemens.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4823+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id 61rRYY4521723x59A4g9s08A; Thu, 25 Jun 2020 07:10:21 -0700
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4822+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id UZEnYY4521723xy4yATmYvZl; Thu, 25 Jun 2020 07:10:21 -0700
 X-Received: from lizzard.sbs.de (lizzard.sbs.de [194.138.37.39])
- by mx.groups.io with SMTP id smtpd.web10.11411.1593094219592760648
+ by mx.groups.io with SMTP id smtpd.web12.11376.1593094219799759141
  for <cip-dev@lists.cip-project.org>;
  Thu, 25 Jun 2020 07:10:20 -0700
 X-Received: from mail1.sbs.de (mail1.sbs.de [192.129.41.35])
-	by lizzard.sbs.de (8.15.2/8.15.2) with ESMTPS id 05PEAHMN026959
+	by lizzard.sbs.de (8.15.2/8.15.2) with ESMTPS id 05PEAIhn026970
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
 	for <cip-dev@lists.cip-project.org>; Thu, 25 Jun 2020 16:10:18 +0200
 X-Received: from md2dvrtc.ad001.siemens.net ([167.87.6.122])
-	by mail1.sbs.de (8.15.2/8.15.2) with ESMTP id 05PEAFXU000356;
-	Thu, 25 Jun 2020 16:10:17 +0200
+	by mail1.sbs.de (8.15.2/8.15.2) with ESMTP id 05PEAFXW000356;
+	Thu, 25 Jun 2020 16:10:18 +0200
 From: "Quirin Gylstorff" <quirin.gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org, Jan.Kiszka@siemens.com
 Cc: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-Subject: [cip-dev] [isar-cip-core RFC 1/7] kernel: add fat for qemu-amd64
-Date: Thu, 25 Jun 2020 16:10:09 +0200
-Message-Id: <20200625141015.31719-2-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev] [isar-cip-core RFC 3/7] secure-boot: select boot partition in initramfs
+Date: Thu, 25 Jun 2020 16:10:11 +0200
+Message-Id: <20200625141015.31719-4-Quirin.Gylstorff@siemens.com>
 In-Reply-To: <20200625141015.31719-1-Quirin.Gylstorff@siemens.com>
 References: <20200625141015.31719-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
@@ -45,48 +45,320 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: dDK9gvfQZtt1kPt54x1PaKYbx4520388AA=
-Content-Type: multipart/mixed; boundary="0hrWgzztZxpdn56zJ4Y0"
+X-Gm-Message-State: hvU85AkFjbw2cAKQSOxmZq4wx4520388AA=
+Content-Type: multipart/mixed; boundary="Xog4Guq1V4Zt74JIqLBJ"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=lists.cip-project.org; q=dns/txt; s=20140610; t=1593094221;
- bh=926fQKxoHjqCuTJhtZoF+FssvaG0awseGFrCF77qFdo=;
+ bh=cr1C74snZm4OPEh5CtLhCwXvMAPWIkTeWUg15YGrsEo=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=EGsYaYRmm50Wnu2RJzlAjdxEWrkUIO4dBVsugJkn/zNeJQ9Btj0DiywMBQObP+JTkce
- 1+YPx7nyAzv0dAND54d/luR+7JQEarshz2cTdLs6NoElYigt/eFNioxHF6yroMVYeV5N7
- ISW/GKfUj+SVc8GiP1C2ynNBTXlPzqEMHyw=
+ b=NTzkxceWuuWF081binkOPHMyb6VR1MVvVCqt+yUycPAdmImRS6z4L2NvzbWoJ4iogb1
+ nnPNRrBDvIs0tVABeWpi18WlNeiRIIscCi4ymbn+XaINqj2ebzp6/naNbTcOfGHJ5qM7w
+ VYsBbEmp765Ri5RPmiA94hv+myViNN9s/fM=
 
---0hrWgzztZxpdn56zJ4Y0
+--Xog4Guq1V4Zt74JIqLBJ
 Content-Transfer-Encoding: 8bit
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-Add a fat configuration to access FAT Partitions on the qemu-amd64
-target.
+As the usage of a unified kernel image freeze the kernel commmandline
+during build time the rootfs selection for swupdate can no longer be
+done with the kernel commandline and must be done later in the boot
+process. Read the root filesystem /etc/os-release and check if it contains
+the same uuid as stored in the initramfs . If the uuids are the same
+boot the root file system.
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- recipes-kernel/linux/files/qemu-amd64_defconfig | 6 ++++++
- 1 file changed, 6 insertions(+)
+ classes/image_uuid.bbclass                    | 29 +++++++
+ .../files/initramfs.image_uuid.hook           | 33 ++++++++
+ .../files/initramfs.lsblk.hook                | 29 +++++++
+ .../initramfs-config/files/postinst.tmpl      | 31 ++++++++
+ .../files/secure-boot-debian-local-patch      | 77 +++++++++++++++++++
+ .../initramfs-config_0.1-cip.bb               | 35 +++++++++
+ 6 files changed, 234 insertions(+)
+ create mode 100644 classes/image_uuid.bbclass
+ create mode 100644 recipes-support/initramfs-config/files/initramfs.image_uuid.hook
+ create mode 100644 recipes-support/initramfs-config/files/initramfs.lsblk.hook
+ create mode 100644 recipes-support/initramfs-config/files/postinst.tmpl
+ create mode 100644 recipes-support/initramfs-config/files/secure-boot-debian-local-patch
+ create mode 100644 recipes-support/initramfs-config/initramfs-config_0.1-cip.bb
 
-diff --git a/recipes-kernel/linux/files/qemu-amd64_defconfig b/recipes-kernel/linux/files/qemu-amd64_defconfig
-index 7487152..5449317 100644
---- a/recipes-kernel/linux/files/qemu-amd64_defconfig
-+++ b/recipes-kernel/linux/files/qemu-amd64_defconfig
-@@ -351,3 +351,9 @@ CONFIG_CRYPTO_DEV_CCP=y
- # CONFIG_XZ_DEC_ARM is not set
- # CONFIG_XZ_DEC_ARMTHUMB is not set
- # CONFIG_XZ_DEC_SPARC is not set
-+CONFIG_MSDOS_FS=y
-+CONFIG_VFAT_FS=y
-+CONFIG_NLS_ASCII=y
-+CONFIG_NLS_CODEPAGE_437=y
-+CONFIG_NLS_ISO8859_1=y
-+CONFIG_NLS_UTF8=y
+diff --git a/classes/image_uuid.bbclass b/classes/image_uuid.bbclass
+new file mode 100644
+index 0000000..3bd03d5
+--- /dev/null
++++ b/classes/image_uuid.bbclass
+@@ -0,0 +1,29 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2020
++#
++# Authors:
++#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++#
++
++def generate_image_uuid():
++    import uuid
++    return str(uuid.uuid4())
++
++
++IMAGE_UUID ?= "${@generate_image_uuid()}"
++
++
++do_generate_image_uuid() {
++    sudo sed -i '/^IMAGE_UUID=.*/d' '${IMAGE_ROOTFS}/etc/os-release'
++    echo "IMAGE_UUID=\"${IMAGE_UUID}\"" | \
++        sudo tee -a '${IMAGE_ROOTFS}/etc/os-release'
++    image_do_mounts
++
++    # update initramfs to add uuid
++    sudo chroot '${IMAGE_ROOTFS}' update-initramfs -u
++}
++addtask generate_image_uuid before do_copy_boot_files after do_rootfs_install
+diff --git a/recipes-support/initramfs-config/files/initramfs.image_uuid.hook b/recipes-support/initramfs-config/files/initramfs.image_uuid.hook
+new file mode 100644
+index 0000000..910ce84
+--- /dev/null
++++ b/recipes-support/initramfs-config/files/initramfs.image_uuid.hook
+@@ -0,0 +1,33 @@
++# This software is a part of ISAR.
++# Copyright (C) Siemens AG, 2020
++#
++# SPDX-License-Identifier: MIT
++
++#!/bin/sh
++set -x
++PREREQ=""
++
++prereqs()
++{
++     echo "$PREREQ"
++}
++
++case $1 in
++prereqs)
++     prereqs
++     exit 0
++     ;;
++esac
++
++. /usr/share/initramfs-tools/scripts/functions
++. /usr/share/initramfs-tools/hook-functions
++
++if [ ! -e /etc/os-release ]; then
++	echo "Warning: couldn't find /etc/os-release!"
++	exit 0
++fi
++
++IMAGE_UUID=$(sed -n 's/^IMAGE_UUID="\(.*\)"/\1/p' /etc/os-release)
++echo "${IMAGE_UUID}" > "${DESTDIR}/conf/image_uuid"
++
++exit 0
+\ No newline at end of file
+diff --git a/recipes-support/initramfs-config/files/initramfs.lsblk.hook b/recipes-support/initramfs-config/files/initramfs.lsblk.hook
+new file mode 100644
+index 0000000..cf32404
+--- /dev/null
++++ b/recipes-support/initramfs-config/files/initramfs.lsblk.hook
+@@ -0,0 +1,29 @@
++# This software is a part of ISAR.
++# Copyright (C) Siemens AG, 2020
++#
++# SPDX-License-Identifier: MIT
++
++#!/bin/sh
++PREREQ=""
++
++prereqs()
++{
++     echo "$PREREQ"
++}
++
++case $1 in
++prereqs)
++     prereqs
++     exit 0
++     ;;
++esac
++
++. /usr/share/initramfs-tools/scripts/functions
++. /usr/share/initramfs-tools/hook-functions
++
++if [ ! -x /usr/bin/lsblk ]; then
++	echo "Warning: couldn't find /usr/bin/lsblk!"
++	exit 0
++fi
++
++copy_exec /usr/bin/lsblk
+diff --git a/recipes-support/initramfs-config/files/postinst.tmpl b/recipes-support/initramfs-config/files/postinst.tmpl
+new file mode 100644
+index 0000000..008f68d
+--- /dev/null
++++ b/recipes-support/initramfs-config/files/postinst.tmpl
+@@ -0,0 +1,31 @@
++#!/bin/sh
++if [ -d /usr/share/secureboot ]; then
++    patch -s -p0 /usr/share/initramfs-tools/scripts/local /usr/share/secureboot/secure-boot-debian-local.patch
++fi
++
++INITRAMFS_CONF=/etc/initramfs-tools/initramfs.conf
++if [ -f ${INITRAMFS_CONF} ]; then
++    sed -i -E 's/(^MODULES=).*/\1${INITRAMFS_MODULES}/' ${INITRAMFS_CONF}
++    sed -i -E 's/(^BUSYBOX=).*/\1${INITRAMFS_BUSYBOX}/' ${INITRAMFS_CONF}
++    sed -i -E 's/(^COMPRESS=).*/\1${INITRAMFS_COMPRESS}/' ${INITRAMFS_CONF}
++    sed -i -E 's/(^KEYMAP=).*/\1${INITRAMFS_KEYMAP}/' ${INITRAMFS_CONF}
++    sed -i -E 's/(^DEVICE=).*/\1${INITRAMFS_NET_DEVICE}/' ${INITRAMFS_CONF}
++    sed -i -E 's/(^NFSROOT=).*/\1${INITRAMFS_NFSROOT}/' ${INITRAMFS_CONF}
++    sed -i -E 's/(^RUNSIZE=).*/\1${INITRAMFS_RUNSIZE}/' ${INITRAMFS_CONF}
++    if grep -Fxq "ROOT=" "${INITRAMFS_CONF}"; then
++        sed -i -E 's/(^ROOT=).*/\1${INITRAMFS_ROOT}/' ${INITRAMFS_CONF}
++    else
++        sed -i -E "\$aROOT=${INITRAMFS_ROOT}" ${INITRAMFS_CONF}
++    fi
++fi
++
++MODULES_LIST_FILE=/etc/initramfs-tools/modules
++if [ -f ${MODULES_LIST_FILE} ]; then
++    for modname in ${INITRAMFS_MODULE_LIST}; do
++        if ! grep -Fxq "$modname" "${MODULES_LIST_FILE}"; then
++            echo "$modname" >> "${MODULES_LIST_FILE}"
++        fi
++    done
++fi
++
++update-initramfs -v -u
+diff --git a/recipes-support/initramfs-config/files/secure-boot-debian-local-patch b/recipes-support/initramfs-config/files/secure-boot-debian-local-patch
+new file mode 100644
+index 0000000..31d4c40
+--- /dev/null
++++ b/recipes-support/initramfs-config/files/secure-boot-debian-local-patch
+@@ -0,0 +1,77 @@
++--- local	2020-06-10 14:54:42.148263121 +0200
+++++ ../../../../../../../../../../../recipes-support/initramfs-config/files/local	2020-06-10 14:53:03.723314458 +0200
++@@ -1,5 +1,4 @@
++ # Local filesystem mounting			-*- shell-script -*-
++-
++ local_top()
++ {
++ 	if [ "${local_top_used}" != "yes" ]; then
++@@ -155,34 +154,46 @@
++ local_mount_root()
++ {
++ 	local_top
++-	if [ -z "${ROOT}" ]; then
++-		panic "No root device specified. Boot arguments must include a root= parameter."
+++	if [ ! -e /conf/image_uuid ]; then
+++		 panic "could not find image_uuid to select correct root file system"
++ 	fi
++-	local_device_setup "${ROOT}" "root file system"
++-	ROOT="${DEV}"
+++	local INITRAMFS_IMAGE_UUID=$(cat /conf/image_uuid)
+++	local partitions=$(lsblk -nlp -o name)
+++	for part in $partitions; do
+++			local_device_setup "${part}" "root file system"
+++			ROOT="${DEV}"
+++
+++			# Get the root filesystem type if not set
+++			if [ -z "${ROOTFSTYPE}" ] || [ "${ROOTFSTYPE}" = auto ]; then
+++					FSTYPE=$(get_fstype "${ROOT}")
+++			else
+++					FSTYPE=${ROOTFSTYPE}
+++			fi
++ 
++-	# Get the root filesystem type if not set
++-	if [ -z "${ROOTFSTYPE}" ] || [ "${ROOTFSTYPE}" = auto ]; then
++-		FSTYPE=$(get_fstype "${ROOT}")
++-	else
++-		FSTYPE=${ROOTFSTYPE}
++-	fi
+++		local_premount
++ 
++-	local_premount
+++			if [ "${readonly?}" = "y" ]; then
+++					roflag=-r
+++			else
+++					roflag=-w
+++			fi
++ 
++-	if [ "${readonly?}" = "y" ]; then
++-		roflag=-r
++-	else
++-		roflag=-w
++-	fi
+++			checkfs "${ROOT}" root "${FSTYPE}"
++ 
++-	checkfs "${ROOT}" root "${FSTYPE}"
+++			# Mount root
+++			# shellcheck disable=SC2086
+++			if mount ${roflag} ${FSTYPE:+-t "${FSTYPE}"} ${ROOTFLAGS} "${ROOT}" "${rootmnt?}"; then
+++					if [ -e "${rootmnt?}"/etc/os-release ]; then
+++							image_uuid=$(sed -n 's/^IMAGE_UUID=//p' "${rootmnt?}"/etc/os-release | tr -d '"' )
+++							if [ "${INITRAMFS_IMAGE_UUID}" = "${image_uuid}" ]; then
+++									return
+++							fi
+++					fi
+++					umount "${rootmnt?}"
+++      fi
+++	done
+++	panic "Could not find ROOTFS with matching UUID $INITRAMFS_IMAGE_UUID"
++ 
++-	# Mount root
++-	# shellcheck disable=SC2086
++-	if ! mount ${roflag} ${FSTYPE:+-t "${FSTYPE}"} ${ROOTFLAGS} "${ROOT}" "${rootmnt?}"; then
++-		panic "Failed to mount ${ROOT} as root file system."
++-	fi
++ }
++ 
++ local_mount_fs()
+diff --git a/recipes-support/initramfs-config/initramfs-config_0.1-cip.bb b/recipes-support/initramfs-config/initramfs-config_0.1-cip.bb
+new file mode 100644
+index 0000000..ba1c898
+--- /dev/null
++++ b/recipes-support/initramfs-config/initramfs-config_0.1-cip.bb
+@@ -0,0 +1,35 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2020
++#
++# Authors:
++#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++
++require recipes-support/initramfs-config/initramfs-config.inc
++
++FILESPATH =. "${LAYERDIR_isar-siemens}/recipes-support/initramfs-config/files:"
++
++DEBIAN_DEPENDS += ", busybox, patch"
++
++SRC_URI += "file://initramfs.lsblk.hook \
++            file://initramfs.image_uuid.hook \
++            file://secure-boot-debian-local-patch"
++
++INITRAMFS_BUSYBOX = "y"
++
++do_install() {
++    # add patch for local to /usr/share/secure boot
++    TARGET=${D}/usr/share/secureboot
++    install -m 0755 -d ${TARGET}
++    install -m 0644 ${WORKDIR}/secure-boot-debian-local-patch ${TARGET}/secure-boot-debian-local.patch
++
++    # add hooks for secure boot
++    HOOKS=${D}/etc/initramfs-tools/hooks
++install -m 0755 -d ${HOOKS}
++    install -m 0740 ${WORKDIR}/initramfs.lsblk.hook ${HOOKS}/lsblk.hook
++    install -m 0740 ${WORKDIR}/initramfs.image_uuid.hook ${HOOKS}/image_uuid.hook
++}
++addtask do_install after do_transform_template
 -- 
 2.20.1
 
 
---0hrWgzztZxpdn56zJ4Y0
+--Xog4Guq1V4Zt74JIqLBJ
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -94,12 +366,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#4823): https://lists.cip-project.org/g/cip-dev/message=
-/4823
-Mute This Topic: https://lists.cip-project.org/mt/75103449/4520388
+View/Reply Online (#4822): https://lists.cip-project.org/g/cip-dev/message=
+/4822
+Mute This Topic: https://lists.cip-project.org/mt/75103448/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---0hrWgzztZxpdn56zJ4Y0--
+--Xog4Guq1V4Zt74JIqLBJ--
