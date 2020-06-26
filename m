@@ -1,304 +1,192 @@
-Return-Path: <SRS0=XfYW=AH=lists.cip-project.org=bounce+64572+4837+4520388+8129055@kernel.org>
+Return-Path: <SRS0=anCn=AH=lists.cip-project.org=bounce+64572+4838+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,HTML_MESSAGE,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A813C433E0
-	for <cip-dev@archiver.kernel.org>; Fri, 26 Jun 2020 06:45:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD2D9C433DF
+	for <cip-dev@archiver.kernel.org>; Fri, 26 Jun 2020 07:52:18 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 16FB0207E8
-	for <cip-dev@archiver.kernel.org>; Fri, 26 Jun 2020 06:45:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 7172E207E8
+	for <cip-dev@archiver.kernel.org>; Fri, 26 Jun 2020 07:52:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="muEfRbSg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16FB0207E8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toshiba-tsip.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4837+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id 98dyYY4521723xUkjyDU4ZmI; Thu, 25 Jun 2020 23:45:05 -0700
-X-Received: from peak.toshiba-tesi.com (peak.toshiba-tesi.com [202.56.254.199])
- by mx.groups.io with SMTP id smtpd.web12.2478.1593153904285716553
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="ri8Lj9RR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7172E207E8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=siemens.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4838+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id a4nsYY4521723xu1gMDhxNit; Fri, 26 Jun 2020 00:52:18 -0700
+X-Received: from thoth.sbs.de (thoth.sbs.de [192.35.17.2])
+ by mx.groups.io with SMTP id smtpd.web12.3229.1593157936379271507
  for <cip-dev@lists.cip-project.org>;
- Thu, 25 Jun 2020 23:45:05 -0700
-IronPort-SDR: +4vl1NmgkTkQ+OCTzAsIrtngwluL0wrDdjROemWm9KxWr9UgKzEl4YRk8WKWcyL0ZTIkmiCXnG
- 7OcQWDr1Kt/Q==
-X-IronPort-AV: E=Sophos;i="5.75,282,1589221800"; 
-   d="scan'208,217";a="4552759"
-X-Received: from unknown (HELO TOSBLRMBX0119.TOSHIBA-TSIP.COM) ([172.28.80.118])
-  by peak.toshiba-tesi.com with ESMTP; 26 Jun 2020 12:45:40 +0530
-X-Received: from TOSBLRMBX0219.TOSHIBA-TSIP.COM (172.28.80.119) by
- TOSBLRMBX0119.TOSHIBA-TSIP.COM (172.28.80.118) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1847.3; Fri, 26 Jun 2020 12:15:02 +0530
-X-Received: from TOSBLRMBX0219.TOSHIBA-TSIP.COM ([::1]) by
- TOSBLRMBX0219.TOSHIBA-TSIP.COM ([fe80::8d35:f069:2af2:deff%9]) with mapi id
- 15.01.1847.003; Fri, 26 Jun 2020 12:15:02 +0530
-From: "venkata" <venkata.pyla@toshiba-tsip.com>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-CC: "cip-security@lists.cip-project.org" <cip-security@lists.cip-project.org>
-Subject: [cip-dev][isar-cip-core PATCH 6/6] cip-core-image-security.bb: Add sudo package
-Thread-Topic: [cip-dev][isar-cip-core PATCH 6/6] cip-core-image-security.bb:
- Add sudo package
-Thread-Index: AdZLhWWGu/SW/DItShSBvOuATnEm2Q==
-Date: Fri, 26 Jun 2020 06:45:02 +0000
-Message-ID: <31b1675663114343b3888f3c601a0b20@toshiba-tsip.com>
-Accept-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.28.80.121]
+ Fri, 26 Jun 2020 00:52:17 -0700
+X-Received: from mail1.sbs.de (mail1.sbs.de [192.129.41.35])
+	by thoth.sbs.de (8.15.2/8.15.2) with ESMTPS id 05Q7qDg3027748
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+	for <cip-dev@lists.cip-project.org>; Fri, 26 Jun 2020 09:52:14 +0200
+X-Received: from [167.87.6.122] ([167.87.6.122])
+	by mail1.sbs.de (8.15.2/8.15.2) with ESMTP id 05Q7qCf2018803;
+	Fri, 26 Jun 2020 09:52:13 +0200
+Subject: Re: [cip-dev] [isar-cip-core PATCH 2/2] kas: Restructure kas files.
+To: Jan Kiszka <jan.kiszka@siemens.com>, cip-dev@lists.cip-project.org
+References: <20200625131248.15742-1-Quirin.Gylstorff@siemens.com>
+ <20200625131248.15742-3-Quirin.Gylstorff@siemens.com>
+ <b7714d3d-256d-2ec7-441b-a04b3029205f@siemens.com>
+From: "Quirin Gylstorff" <quirin.gylstorff@siemens.com>
+Message-ID: <6064dc73-a947-fa1c-53f9-1371296f3626@siemens.com>
+Date: Fri, 26 Jun 2020 09:52:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
+In-Reply-To: <b7714d3d-256d-2ec7-441b-a04b3029205f@siemens.com>
+X-MIME-Autoconverted: from 8bit to base64 by thoth.sbs.de id 05Q7qDg3027748
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: 2NVFeLhIRIzHHT9CQYcTs9YCx4520388AA=
-Content-Type: multipart/mixed; boundary="DVURNZAgbxMrnt9mQvDh"
+X-Gm-Message-State: YkBtZ63y9RyKLAwHqTINe2Znx4520388AA=
+Content-Type: multipart/mixed; boundary="05TePGXCmFXeOD40ADiF"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1593153905;
- bh=I0tN2cy3Iiie24fkYvZm9KtBYbet7Lu1upcDZ01YYC4=;
- h=CC:Content-Type:Date:From:Reply-To:Subject:To;
- b=muEfRbSgH5i9Ss+MTBOeFIH/cYx1+D2Fghy5vgNLMMJERmi8uznTTBuRp79MNIrFtbe
- 99eg7TbAKcXdAArzh8Ig22pqFScnoh07fC0MV+7PHLZJ6JPerWTCMgiiX1pBZ7juoV2hY
- 71Hi/R3IF+VbNd9jiY+Z3qcYE/mXIDtX8QE=
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1593157938;
+ bh=mlpRvfLYbTLnpwWCSbu3hh1nRpoRNXgmJ97gmpumR00=;
+ h=Content-Type:Date:From:Reply-To:Subject:To;
+ b=ri8Lj9RR1gjUgqsYpLu9Ddoz8BUouGgcdB6j2mLo2FfPn87Aq22TaFOjZbj2RU+L/7x
+ ZAWrWCXSI7hzGMSdh2lMPevQ/RhA5Cc5R6NHl9jWDACTf0kyjTjL2KZoVYTcSqsD+8Cdu
+ yZgl1ozHZkNgifwC4Hkqmem5Wwz52Pxe0eI=
 
---DVURNZAgbxMrnt9mQvDh
+--05TePGXCmFXeOD40ADiF
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Type: multipart/alternative;
-	boundary="_000_31b1675663114343b3888f3c601a0b20toshibatsipcom_"
+Content-Transfer-Encoding: base64
 
---_000_31b1675663114343b3888f3c601a0b20toshibatsipcom_
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+DQoNCk9uIDYvMjUvMjAgNDo1MyBQTSwgSmFuIEtpc3prYSB3cm90ZToNCj4gT24gMjUuMDYu
+MjAgMTU6MTIsIFEuIEd5bHN0b3JmZiB3cm90ZToNCj4+IEZyb206IFF1aXJpbiBHeWxzdG9y
+ZmYgPHF1aXJpbi5neWxzdG9yZmZAc2llbWVucy5jb20+DQo+Pg0KPj4gQ3JlYXRlIGZvbGRl
+ciBzdHJ1Y3R1cmUNCj4+IGthcyAtPiBnZW5lcmFsIGNvbmZpZ3VyYXRpb24NCj4+IGthcy9i
+b2FyZCAtPiBhbGwgc3VwcG9ydGVkIGJvYXJkcw0KPj4ga2FzL29wdCAtPiBhbGwga2FzIG9w
+dGlvbiBmaWxlcw0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IFF1aXJpbiBHeWxzdG9yZmYgPHF1
+aXJpbi5neWxzdG9yZmZAc2llbWVucy5jb20+DQo+PiAtLS0NCj4+IMKgIC5naXRsYWItY2ku
+eW1swqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCA4ICsrKystLS0tDQo+PiDC
+oCBSRUFETUUubWTCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+fCA0ICsrLS0NCj4+IMKgIGJvYXJkLWJiYi55bWwgPT4ga2FzL2JvYXJkL2JiYi55bWzCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgMA0KPj4gwqAg
+Ym9hcmQtaXdnMjBtLnltbCA9PiBrYXMvYm9hcmQvaXdnMjBtLnltbMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqAgfCAwDQo+PiDCoCBib2FyZC1xZW11LWFtZDY0LnltbCA9
+PiBrYXMvYm9hcmQvcWVtdS1hbWQ2NC55bWzCoMKgwqDCoMKgwqDCoMKgwqAgfCAwDQo+PiDC
+oCBib2FyZC1yemcybS55bWwgPT4ga2FzL2JvYXJkL3J6ZzJtLnltbMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgMA0KPj4gwqAgLi4uL2JvYXJkL3NpbWF0aWMt
+aXBjMjI3ZS55bWzCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCB8IDANCj4+IMKgIGthcy55bWwgPT4ga2FzL2NpcC55bWzCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgIHwgMA0KPj4gwqAgb3B0LTQuNC55bWwgPT4ga2FzL29wdC80LjQueW1swqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwg
+MA0KPj4gwqAgb3B0LXJ0LnltbCA9PiBrYXMvb3B0L3J0LnltbMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCAwDQo+PiDCoCBv
+cHQtc3RyZXRjaC55bWwgPT4ga2FzL29wdC9zdHJldGNoLnltbMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgMA0KPj4gwqAgb3B0LXRhcmd6LWltZy55bWwgPT4g
+a2FzL29wdC90YXJnei1pbWcueW1swqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwg
+MA0KPj4gwqAgMTIgZmlsZXMgY2hhbmdlZCwgNiBpbnNlcnRpb25zKCspLCA2IGRlbGV0aW9u
+cygtKQ0KPj4gwqAgcmVuYW1lIGJvYXJkLWJiYi55bWwgPT4ga2FzL2JvYXJkL2JiYi55bWwg
+KDEwMCUpDQo+PiDCoCByZW5hbWUgYm9hcmQtaXdnMjBtLnltbCA9PiBrYXMvYm9hcmQvaXdn
+MjBtLnltbCAoMTAwJSkNCj4+IMKgIHJlbmFtZSBib2FyZC1xZW11LWFtZDY0LnltbCA9PiBr
+YXMvYm9hcmQvcWVtdS1hbWQ2NC55bWwgKDEwMCUpDQo+PiDCoCByZW5hbWUgYm9hcmQtcnpn
+Mm0ueW1sID0+IGthcy9ib2FyZC9yemcybS55bWwgKDEwMCUpDQo+PiDCoCByZW5hbWUgYm9h
+cmQtc2ltYXRpYy1pcGMyMjdlLnltbCA9PiBrYXMvYm9hcmQvc2ltYXRpYy1pcGMyMjdlLnlt
+bCANCj4+ICgxMDAlKQ0KPj4gwqAgcmVuYW1lIGthcy55bWwgPT4ga2FzL2NpcC55bWwgKDEw
+MCUpDQo+PiDCoCByZW5hbWUgb3B0LTQuNC55bWwgPT4ga2FzL29wdC80LjQueW1sICgxMDAl
+KQ0KPj4gwqAgcmVuYW1lIG9wdC1ydC55bWwgPT4ga2FzL29wdC9ydC55bWwgKDEwMCUpDQo+
+PiDCoCByZW5hbWUgb3B0LXN0cmV0Y2gueW1sID0+IGthcy9vcHQvc3RyZXRjaC55bWwgKDEw
+MCUpDQo+PiDCoCByZW5hbWUgb3B0LXRhcmd6LWltZy55bWwgPT4ga2FzL29wdC90YXJnei1p
+bWcueW1sICgxMDAlKQ0KPj4NCj4+IGRpZmYgLS1naXQgYS8uZ2l0bGFiLWNpLnltbCBiLy5n
+aXRsYWItY2kueW1sDQo+PiBpbmRleCA2ZjFkYzkxLi41NjQzOThkIDEwMDY0NA0KPj4gLS0t
+IGEvLmdpdGxhYi1jaS55bWwNCj4+ICsrKyBiLy5naXRsYWItY2kueW1sDQo+PiBAQCAtMTMs
+MTcgKzEzLDE3IEBAIGFsbDoNCj4+IMKgwqDCoMKgwqAgLSBleHBvcnQgQVdTX0FDQ0VTU19L
+RVlfSUQ9JEFXU19BQ0NFU1NfS0VZX0lEDQo+PiDCoMKgwqDCoMKgIC0gZXhwb3J0IEFXU19T
+RUNSRVRfQUNDRVNTX0tFWT0kQVdTX1NFQ1JFVF9BQ0NFU1NfS0VZDQo+PiAtwqDCoMKgIC0g
+a2FzIGJ1aWxkIA0KPj4ga2FzLnltbDpib2FyZC1zaW1hdGljLWlwYzIyN2UueW1sOm9wdC1y
+dC55bWw6b3B0LXRhcmd6LWltZy55bWwNCj4+ICvCoMKgwqAgLSBrYXMgYnVpbGQgDQo+PiBr
+YXMvY2lwLnltbDprYXMvYm9hcmQvc2ltYXRpYy1pcGMyMjdlLnltbDprYXMvb3B0L3J0Lnlt
+bDprYXMvb3B0L3Rhcmd6LWltZy55bWwgDQo+Pg0KPj4gwqDCoMKgwqDCoCAtIHNjcmlwdHMv
+ZGVwbG95LWNpcC1jb3JlLnNoIGJ1c3RlciBzaW1hdGljLWlwYzIyN2UNCj4+IMKgwqDCoMKg
+wqAgLSBzdWRvIHJtIC1yZiBidWlsZC90bXANCj4+IC3CoMKgwqAgLSBrYXMgYnVpbGQga2Fz
+LnltbDpib2FyZC1iYmIueW1sOm9wdC1ydC55bWw6b3B0LXRhcmd6LWltZy55bWwNCj4+ICvC
+oMKgwqAgLSBrYXMgYnVpbGQgDQo+PiBrYXMvY2lwLnltbDprYXMvYm9hcmQvYmJiLnltbDpr
+YXMvb3B0L3J0LnltbDprYXMvb3B0L3Rhcmd6LWltZy55bWwNCj4+IMKgwqDCoMKgwqAgLSBz
+Y3JpcHRzL2RlcGxveS1jaXAtY29yZS5zaCBidXN0ZXIgYmJiIGFtMzM1eC1ib25lYmxhY2su
+ZHRiDQo+PiDCoMKgwqDCoMKgIC0gc3VkbyBybSAtcmYgYnVpbGQvdG1wDQo+PiAtwqDCoMKg
+IC0ga2FzIGJ1aWxkIGthcy55bWw6Ym9hcmQtaXdnMjBtLnltbDpvcHQtcnQueW1sOm9wdC10
+YXJnei1pbWcueW1sDQo+PiArwqDCoMKgIC0ga2FzIGJ1aWxkIA0KPj4ga2FzL2NpcC55bWw6
+a2FzL2JvYXJkL2l3ZzIwbS55bWw6a2FzL29wdC9ydC55bWw6a2FzL29wdC90YXJnei1pbWcu
+eW1sDQo+PiDCoMKgwqDCoMKgIC0gc2NyaXB0cy9kZXBsb3ktY2lwLWNvcmUuc2ggYnVzdGVy
+IGl3ZzIwbSANCj4+IHI4YTc3NDMtaXdnMjBkLXE3LWRiY20tY2EuZHRiDQo+PiDCoMKgwqDC
+oMKgIC0gc3VkbyBybSAtcmYgYnVpbGQvdG1wDQo+PiAtwqDCoMKgIC0ga2FzIGJ1aWxkIGth
+cy55bWw6Ym9hcmQtcnpnMm0ueW1sOm9wdC1ydC55bWw6b3B0LXRhcmd6LWltZy55bWwNCj4+
+ICvCoMKgwqAgLSBrYXMgYnVpbGQgDQo+PiBrYXMvY2lwLnltbDprYXMvYm9hcmQvcnpnMm0u
+eW1sOmthcy9vcHQvcnQueW1sOmthcy9vcHQvdGFyZ3otaW1nLnltbA0KPj4gwqDCoMKgwqDC
+oCAtIHNjcmlwdHMvZGVwbG95LWNpcC1jb3JlLnNoIGJ1c3RlciBoaWhvcGUtcnpnMm0gDQo+
+PiByZW5lc2FzL3I4YTc3NGExLWhpaG9wZS1yemcybS1leC5kdGINCj4+IGRpZmYgLS1naXQg
+YS9SRUFETUUubWQgYi9SRUFETUUubWQNCj4+IGluZGV4IGJiYWQxYTAuLmViYmRlZTQgMTAw
+NjQ0DQo+PiAtLS0gYS9SRUFETUUubWQNCj4+ICsrKyBiL1JFQURNRS5tZA0KPj4gQEAgLTIx
+LDExICsyMSwxMSBAQCBzdGFydCBjb250YWluZXJzLg0KPj4gwqAgVG8gYnVpbGQsIGUuZy4s
+IHRoZSBRRU1VIEFNRDY0IHRhcmdldCBpbnNpZGUgRG9ja2VyLCBpbnZva2UgDQo+PiBrYXMt
+ZG9ja2VyIGxpa2UNCj4+IMKgIHRoaXM6DQo+PiAtwqDCoMKgIC4va2FzLWRvY2tlciAtLWlz
+YXIgYnVpbGQga2FzLnltbDpib2FyZC1xZW11LWFtZDY0LnltbA0KPj4gK8KgwqDCoCAuL2th
+cy1kb2NrZXIgLS1pc2FyIGJ1aWxkIGthcy9jaXAueW1sOmthcy9ib2FyZC9xZW11LWFtZDY0
+LnltbA0KPj4gwqAgVGhpcyBpbWFnZSBjYW4gYmUgcnVuIHVzaW5nIGBzdGFydC1xZW11LnNo
+IHg4NmAuDQo+PiAtVGhlIEJlYWdsZUJvbmUgQmxhY2sgdGFyZ2V0IGlzIHNlbGVjdGVkIGJ5
+IGAuLi4gDQo+PiBrYXMueW1sOmJvYXJkLWJiYi55bWxgLiBJbg0KPj4gK1RoZSBCZWFnbGVC
+b25lIEJsYWNrIHRhcmdldCBpcyBzZWxlY3RlZCBieSBgLi4uIA0KPj4ga2FzL2NpcC55bWw6
+a2FzL2JvYXJkL2JiYi55bWxgLiBJbg0KPj4gwqAgb3JkZXIgdG8gYnVpbGQgdGhlIGltYWdl
+IHdpdGggdGhlIFBSRUVNUFQtUlQga2VybmVsLCBhcHBlbmQgDQo+PiBgOm9wdC1ydC55bWxg
+IHRvDQo+PiDCoCB0aGUgYWJvdmUuIEFwcGVuZCAnOm9wdC00LjQueW1sJyB0byB1c2UgdGhl
+IGtlcm5lbCB2ZXJzaW9uIDQuNCANCj4+IGluc3RlYWQgb2YgNC4xOS4NCj4+IGRpZmYgLS1n
+aXQgYS9ib2FyZC1iYmIueW1sIGIva2FzL2JvYXJkL2JiYi55bWwNCj4+IHNpbWlsYXJpdHkg
+aW5kZXggMTAwJQ0KPj4gcmVuYW1lIGZyb20gYm9hcmQtYmJiLnltbA0KPj4gcmVuYW1lIHRv
+IGthcy9ib2FyZC9iYmIueW1sDQo+PiBkaWZmIC0tZ2l0IGEvYm9hcmQtaXdnMjBtLnltbCBi
+L2thcy9ib2FyZC9pd2cyMG0ueW1sDQo+PiBzaW1pbGFyaXR5IGluZGV4IDEwMCUNCj4+IHJl
+bmFtZSBmcm9tIGJvYXJkLWl3ZzIwbS55bWwNCj4+IHJlbmFtZSB0byBrYXMvYm9hcmQvaXdn
+MjBtLnltbA0KPj4gZGlmZiAtLWdpdCBhL2JvYXJkLXFlbXUtYW1kNjQueW1sIGIva2FzL2Jv
+YXJkL3FlbXUtYW1kNjQueW1sDQo+PiBzaW1pbGFyaXR5IGluZGV4IDEwMCUNCj4+IHJlbmFt
+ZSBmcm9tIGJvYXJkLXFlbXUtYW1kNjQueW1sDQo+PiByZW5hbWUgdG8ga2FzL2JvYXJkL3Fl
+bXUtYW1kNjQueW1sDQo+PiBkaWZmIC0tZ2l0IGEvYm9hcmQtcnpnMm0ueW1sIGIva2FzL2Jv
+YXJkL3J6ZzJtLnltbA0KPj4gc2ltaWxhcml0eSBpbmRleCAxMDAlDQo+PiByZW5hbWUgZnJv
+bSBib2FyZC1yemcybS55bWwNCj4+IHJlbmFtZSB0byBrYXMvYm9hcmQvcnpnMm0ueW1sDQo+
+PiBkaWZmIC0tZ2l0IGEvYm9hcmQtc2ltYXRpYy1pcGMyMjdlLnltbCBiL2thcy9ib2FyZC9z
+aW1hdGljLWlwYzIyN2UueW1sDQo+PiBzaW1pbGFyaXR5IGluZGV4IDEwMCUNCj4+IHJlbmFt
+ZSBmcm9tIGJvYXJkLXNpbWF0aWMtaXBjMjI3ZS55bWwNCj4+IHJlbmFtZSB0byBrYXMvYm9h
+cmQvc2ltYXRpYy1pcGMyMjdlLnltbA0KPj4gZGlmZiAtLWdpdCBhL2thcy55bWwgYi9rYXMv
+Y2lwLnltbA0KPj4gc2ltaWxhcml0eSBpbmRleCAxMDAlDQo+PiByZW5hbWUgZnJvbSBrYXMu
+eW1sDQo+PiByZW5hbWUgdG8ga2FzL2NpcC55bWwNCj4+IGRpZmYgLS1naXQgYS9vcHQtNC40
+LnltbCBiL2thcy9vcHQvNC40LnltbA0KPj4gc2ltaWxhcml0eSBpbmRleCAxMDAlDQo+PiBy
+ZW5hbWUgZnJvbSBvcHQtNC40LnltbA0KPj4gcmVuYW1lIHRvIGthcy9vcHQvNC40LnltbA0K
+Pj4gZGlmZiAtLWdpdCBhL29wdC1ydC55bWwgYi9rYXMvb3B0L3J0LnltbA0KPj4gc2ltaWxh
+cml0eSBpbmRleCAxMDAlDQo+PiByZW5hbWUgZnJvbSBvcHQtcnQueW1sDQo+PiByZW5hbWUg
+dG8ga2FzL29wdC9ydC55bWwNCj4+IGRpZmYgLS1naXQgYS9vcHQtc3RyZXRjaC55bWwgYi9r
+YXMvb3B0L3N0cmV0Y2gueW1sDQo+PiBzaW1pbGFyaXR5IGluZGV4IDEwMCUNCj4+IHJlbmFt
+ZSBmcm9tIG9wdC1zdHJldGNoLnltbA0KPj4gcmVuYW1lIHRvIGthcy9vcHQvc3RyZXRjaC55
+bWwNCj4+IGRpZmYgLS1naXQgYS9vcHQtdGFyZ3otaW1nLnltbCBiL2thcy9vcHQvdGFyZ3ot
+aW1nLnltbA0KPj4gc2ltaWxhcml0eSBpbmRleCAxMDAlDQo+PiByZW5hbWUgZnJvbSBvcHQt
+dGFyZ3otaW1nLnltbA0KPj4gcmVuYW1lIHRvIGthcy9vcHQvdGFyZ3otaW1nLnltbA0KPj4N
+Cj4gDQo+IFRoZXJlIGlzIG9uZSBjYXRjaCB3aXRoIG1vdmluZyBldmVyeXRoaW5nIGludG8g
+YSBzdWJkaXJlY3Rvcnk6IElmIGEgdXNlciANCj4gcHVsbHMgYSB0YXJiYWxsIG9mIHRoZSBs
+YXllciwgdGh1cyB0cmllcyB0byB1c2UgaXQgd2l0aCBnaXQsIGthcyB3aWxsIA0KPiBub3Qg
+YmUgYWJsZSB0byBpZGVudGlmeSB0aGUgdG9wLWxldmVsIGRpcmVjdG9yeSwgYW5kIHZhcmlv
+dXMgdGhpbmdzIGNhbiANCj4gZmFpbC4NCj4gDQo+IFRoZXJlZm9yZSwgd2UgYXJlIG5vdyBv
+ZnRlbiB1c2luZyB0aGUgcGF0dGVybiBvZiBrZWVwaW5nIHRoZSBrYXMtKi55bWwgDQo+IGZp
+bGUgYXQgdGhlIHRvcCBsZXZlbCB3aGlsZSBtb3Zpbmcgb3B0aW9ucyBvciBib2FyZHMgdW5k
+ZXIga2FzLy4gU2VlIA0KPiBlLmcuIGh0dHBzOi8vZ2l0aHViLmNvbS9zaWVtZW5zL21ldGEt
+aW90MjA1MC8uDQo+IA0KPiBKYW4NCj4gDQoNCk9rIEkgd2lsbCBzZW5kIGEgdjIgdG8gYWRk
+IGEgdG9wIGxldmVsIGthcy1jaXAueW1sIHRvIGFkZHJlc3MgdGhhdC4NCg0KUXVpcmluDQo=
 
-From: venkata pyla venkata.pyla@toshiba-tsip.com<mailto:venkata.pyla@toshib=
-a-tsip.com>
-
-Added sudo package for security feature
-
-Signed-off-by: venkata pyla <venkata.pyla@toshiba-tsip.com>
----
-recipes-core/images/cip-core-image-security.bb | 2 +-
-1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/recipes-core/images/cip-core-image-security.bb b/recipes-core/=
-images/cip-core-image-security.bb
-index b883414..8253952 100644
---- a/recipes-core/images/cip-core-image-security.bb
-+++ b/recipes-core/images/cip-core-image-security.bb
-@@ -17,7 +17,6 @@ DESCRIPTION =3D "CIP Core image including security packag=
-es"
-IMAGE_INSTALL +=3D "customizations"
- # Debian packages that provide security features
--# TODO: Add sudo or sudo-ldap which conflict each other
-IMAGE_PREINSTALL +=3D " \
-               openssl libssl1.1 \
-               fail2ban \
-@@ -34,4 +33,5 @@ IMAGE_PREINSTALL +=3D " \
-               acl \
-               libauparse0 audispd-plugins auditd \
-               uuid-runtime \
-+             sudo \
-"
---
-2.20.1
-The information contained in this e-mail message and in any
-attachments/annexure/appendices is confidential to the =
-
-recipient and may contain privileged information. =
-
-If you are not the intended recipient, please notify the
-sender and delete the message along with any =
-
-attachments/annexure/appendices. You should not disclose,
-copy or otherwise use the information contained in the
-message or any annexure. Any views expressed in this e-mail =
-
-are those of the individual sender except where the sender =
-
-specifically states them to be the views of =
-
-Toshiba Software India Pvt. Ltd. (TSIP),Bangalore.
-
-Although this transmission and any attachments are believed to be
-free of any virus or other defect that might affect any computer =
-
-system into which it is received and opened, it is the responsibility
-of the recipient to ensure that it is virus free and no responsibility =
-
-is accepted by Toshiba Embedded Software India Pvt. Ltd, for any loss or
-damage arising in any way from its use.
-
---_000_31b1675663114343b3888f3c601a0b20toshibatsipcom_
-Content-Type: text/html; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-
-<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
-osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
-xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
-//www.w3.org/TR/REC-html40">
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii">
-<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
-<style><!--
-/* Font Definitions */
-@font-face
-	{font-family:"Cambria Math";
-	panose-1:2 4 5 3 5 4 6 3 2 4;}
-@font-face
-	{font-family:Calibri;
-	panose-1:2 15 5 2 2 2 4 3 2 4;}
-/* Style Definitions */
-p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{margin:0cm;
-	margin-bottom:.0001pt;
-	font-size:11.0pt;
-	font-family:"Calibri",sans-serif;
-	mso-fareast-language:EN-US;}
-a:link, span.MsoHyperlink
-	{mso-style-priority:99;
-	color:#0563C1;
-	text-decoration:underline;}
-a:visited, span.MsoHyperlinkFollowed
-	{mso-style-priority:99;
-	color:#954F72;
-	text-decoration:underline;}
-span.EmailStyle17
-	{mso-style-type:personal-compose;
-	font-family:"Calibri",sans-serif;
-	color:windowtext;}
-.MsoChpDefault
-	{mso-style-type:export-only;
-	font-family:"Calibri",sans-serif;
-	mso-fareast-language:EN-US;}
-@page WordSection1
-	{size:612.0pt 792.0pt;
-	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
-div.WordSection1
-	{page:WordSection1;}
---></style><!--[if gte mso 9]><xml>
-<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
-</xml><![endif]--><!--[if gte mso 9]><xml>
-<o:shapelayout v:ext=3D"edit">
-<o:idmap v:ext=3D"edit" data=3D"1" />
-</o:shapelayout></xml><![endif]-->
-</head>
-<body lang=3D"EN-IN" link=3D"#0563C1" vlink=3D"#954F72">
-<div class=3D"WordSection1">
-<p class=3D"MsoNormal">From: venkata pyla <a href=3D"mailto:venkata.pyla@to=
-shiba-tsip.com">
-venkata.pyla@toshiba-tsip.com</a><o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Added sudo package for security feature<o:p></o:p></=
-p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Signed-off-by: venkata pyla &lt;venkata.pyla@toshiba=
--tsip.com&gt;<o:p></o:p></p>
-<p class=3D"MsoNormal">---<o:p></o:p></p>
-<p class=3D"MsoNormal">recipes-core/images/cip-core-image-security.bb | 2 &=
-#43;-<o:p></o:p></p>
-<p class=3D"MsoNormal">1 file changed, 1 insertion(&#43;), 1 deletion(-)<o:=
-p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">diff --git a/recipes-core/images/cip-core-image-secu=
-rity.bb b/recipes-core/images/cip-core-image-security.bb<o:p></o:p></p>
-<p class=3D"MsoNormal">index b883414..8253952 100644<o:p></o:p></p>
-<p class=3D"MsoNormal">--- a/recipes-core/images/cip-core-image-security.bb=
-<o:p></o:p></p>
-<p class=3D"MsoNormal">&#43;&#43;&#43; b/recipes-core/images/cip-core-image=
--security.bb<o:p></o:p></p>
-<p class=3D"MsoNormal">@@ -17,7 &#43;17,6 @@ DESCRIPTION =3D &quot;CIP Core=
- image including security packages&quot;<o:p></o:p></p>
-<p class=3D"MsoNormal">IMAGE_INSTALL &#43;=3D &quot;customizations&quot;<o:=
-p></o:p></p>
-<p class=3D"MsoNormal"><o:p></o:p></p>
-<p class=3D"MsoNormal">&nbsp;# Debian packages that provide security featur=
-es<o:p></o:p></p>
-<p class=3D"MsoNormal">-# TODO: Add sudo or sudo-ldap which conflict each o=
-ther<o:p></o:p></p>
-<p class=3D"MsoNormal">IMAGE_PREINSTALL &#43;=3D &quot; \<o:p></o:p></p>
-<p class=3D"MsoNormal">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
-p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; openssl libssl1.1 \<o:p></o:p></p>
-<p class=3D"MsoNormal">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
-p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; fail2ban \<o:p></o:p></p>
-<p class=3D"MsoNormal">@@ -34,4 &#43;33,5 @@ IMAGE_PREINSTALL &#43;=3D &quo=
-t; \<o:p></o:p></p>
-<p class=3D"MsoNormal">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
-p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; acl \<o:p></o:p></p>
-<p class=3D"MsoNormal">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
-p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; libauparse0 audispd-plugins auditd \<o:p><=
-/o:p></p>
-<p class=3D"MsoNormal">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
-p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; uuid-runtime \<o:p></o:p></p>
-<p class=3D"MsoNormal">&#43;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp; sudo \<o:p></o:p></p>
-<p class=3D"MsoNormal">&quot;<o:p></o:p></p>
-<p class=3D"MsoNormal">-- <o:p></o:p></p>
-<p class=3D"MsoNormal">2.20.1<o:p></o:p></p>
-</div>
-<style>
-<!--
- /* Font Definitions */
- @font-face
-	{font-family:"Cambria Math";
-	panose-1:2 4 5 3 5 4 6 3 2 4;}
-@font-face
-	{font-family:Calibri;
-	panose-1:2 15 5 2 2 2 4 3 2 4;}
-@font-face
-	{font-family:"Segoe UI";
-	panose-1:2 11 5 2 4 2 4 2 2 3;}
- /* Style Definitions */
- p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{margin-top:0in;
-	margin-right:0in;
-	margin-bottom:8.0pt;
-	margin-left:0in;
-	line-height:107%;
-	font-size:11.0pt;
-	font-family:"Calibri",sans-serif;}
-.MsoChpDefault
-	{font-family:"Calibri",sans-serif;}
-.MsoPapDefault
-	{margin-bottom:8.0pt;
-	line-height:107%;}
- /* Page Definitions */
- @page WordSection1
-	{size:8.5in 11.0in;
-	margin:1.0in 1.0in 1.0in 1.0in;}
-div.WordSection1
-	{page:WordSection1;}
- /* List Definitions */
- ol
-	{margin-bottom:0in;}
-ul
-	{margin-bottom:0in;}
--->
-</style>
-
-
-
-
-
-<div class=3D"WordSection1 ">
-
-<p class=3D"MsoNormal" style=3D"margin-top:2.0pt;margin-right:0in;margin-bo=
-ttom:2.0pt;
-margin-left:0in;line-height:normal;text-autospace:none"><span  style=3D"fon=
-t-family: Times New Roman, serif;"><span style=3D"font-size: 16px;">.</span=
-></span></p></body>
-</html>
-
---_000_31b1675663114343b3888f3c601a0b20toshibatsipcom_--
-
---DVURNZAgbxMrnt9mQvDh
+--05TePGXCmFXeOD40ADiF
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -306,12 +194,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#4837): https://lists.cip-project.org/g/cip-dev/message=
-/4837
-Mute This Topic: https://lists.cip-project.org/mt/75119575/4520388
+View/Reply Online (#4838): https://lists.cip-project.org/g/cip-dev/message=
+/4838
+Mute This Topic: https://lists.cip-project.org/mt/75102306/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---DVURNZAgbxMrnt9mQvDh--
+--05TePGXCmFXeOD40ADiF--
