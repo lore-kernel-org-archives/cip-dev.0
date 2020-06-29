@@ -1,200 +1,118 @@
-Return-Path: <SRS0=NjMc=AH=lists.cip-project.org=bounce+64572+4844+4520388+8129055@kernel.org>
+Return-Path: <SRS0=71f2=AK=lists.cip-project.org=bounce+64572+4845+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF15C433E0
-	for <cip-dev@archiver.kernel.org>; Fri, 26 Jun 2020 18:51:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 798DAC433DF
+	for <cip-dev@archiver.kernel.org>; Mon, 29 Jun 2020 01:15:52 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 8E1B6207E8
-	for <cip-dev@archiver.kernel.org>; Fri, 26 Jun 2020 18:51:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id D8EF620768
+	for <cip-dev@archiver.kernel.org>; Mon, 29 Jun 2020 01:15:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="ju6FWBYj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E1B6207E8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=siemens.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4844+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id mh3cYY4521723xYkyW7gUppl; Fri, 26 Jun 2020 11:51:24 -0700
-X-Received: from goliath.siemens.de (goliath.siemens.de [192.35.17.28])
- by mx.groups.io with SMTP id smtpd.web12.1374.1593197482736638857
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="sRoUBKYJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8EF620768
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=toshiba.co.jp
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4845+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id a6lEYY4521723xwjV06TJomC; Sun, 28 Jun 2020 18:15:51 -0700
+X-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.154])
+ by mx.groups.io with SMTP id smtpd.web10.9614.1593393348459183675
  for <cip-dev@lists.cip-project.org>;
- Fri, 26 Jun 2020 11:51:23 -0700
-X-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-	by goliath.siemens.de (8.15.2/8.15.2) with ESMTPS id 05QIpKGM027497
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-	for <cip-dev@lists.cip-project.org>; Fri, 26 Jun 2020 20:51:20 +0200
-X-Received: from [167.87.7.201] ([167.87.7.201])
-	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 05QIpJUF007568;
-	Fri, 26 Jun 2020 20:51:19 +0200
-Subject: Re: [cip-dev] [isar-cip-core PATCH v2 1/1] kas: Restructure kas files.
-To: "Q. Gylstorff" <Quirin.Gylstorff@siemens.com>,
-        cip-dev@lists.cip-project.org
-References: <b7714d3d-256d-2ec7-441b-a04b3029205f@siemens.com>
- <20200626165651.26960-1-Quirin.Gylstorff@siemens.com>
- <20200626165651.26960-2-Quirin.Gylstorff@siemens.com>
-From: "Jan Kiszka" <jan.kiszka@siemens.com>
-Message-ID: <47081476-b0ca-cbbe-fda6-1a361e9e4641@siemens.com>
-Date: Fri, 26 Jun 2020 20:51:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+ Sun, 28 Jun 2020 18:15:50 -0700
+X-Received: by mo-csw.securemx.jp (mx-mo-csw1515) id 05T1FGtB021449; Mon, 29 Jun 2020 10:15:16 +0900
+X-Iguazu-Qid: 34ts1iCWM14HFR1W69
+X-Iguazu-QSIG: v=2; s=0; t=1593393315; q=34ts1iCWM14HFR1W69; m=2i34J5vGMBEnE6zo7XQdQWYdjVNUQf6LCc5NxRNu+p0=
+X-Received: from imx12.toshiba.co.jp (imx12.toshiba.co.jp [61.202.160.132])
+	by relay.securemx.jp (mx-mr1510) id 05T1FDj8015040;
+	Mon, 29 Jun 2020 10:15:13 +0900
+X-Received: from enc02.toshiba.co.jp ([61.202.160.51])
+	by imx12.toshiba.co.jp  with ESMTP id 05T1FD1i019327;
+	Mon, 29 Jun 2020 10:15:13 +0900 (JST)
+X-Received: from hop101.toshiba.co.jp ([133.199.85.107])
+	by enc02.toshiba.co.jp  with ESMTP id 05T1FCc7014223;
+	Mon, 29 Jun 2020 10:15:12 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gaEHmMD3VJ6hTpd/g4VH2Sc7GQFdtaGZ80QKle8hTrWjE/geOGXxuH4beKJvmG09DMA+9lciWsIobcI1TeZhCQjNnVCd5Kv2BovXv6IgZrD2U/pcDYiHxudGHhqYlNBh3AvjM49FMZSPq1y4E4HGTjaLKJLySK/V2lh9NDI+jR/EaRBqAWrq1PGGfKNZsHjIcuKmSY93bmWTq3BVeR3+8BUYA6zKeAqgpsK6BjpmR797Px3bNPR+tnAI/v0evc5PIS79YRalQGcZALoMA3/dDE1ISV3vhAiHdYIouBTu4SQ8yDq92f+fPyNsl4jYHSDB925ClM39hN2Ff2HNAqNuAg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yltwXQn8rgLoMpWQK+bSP6Wh5GVZ9tih8sTdC1ID7i0=;
+ b=Ha1S3vYfnMHGqItS6cbZLtcwrcNIYkDhZpe6B6UUtcLmxCLQsN/fldzAjpLHqadK78MFMe/AgjjQY7swcQs7WhLa0hHaFZBdEGBfivd8qbBktaQkw9H9FSvvALnOGizJkAPrO4t4aN1NrXcbjig4Q/EAfH6/VzKjiZt8DXUk6AaYQP1EVLdeK5isJ0uGxNbrfwi3CbL0ZPWdG2vHxk2hENKn0SvBFQ4dWlH4tZbO16j9SrE2LQ562RWKfMEfj4lZlZaQcGDV93xFASDsH09o6j+ZMqleV/snwUKX/TlTZlXSHjqX19wcEKZZo1m+i2C9zYf6TVPiJ/ka7eaId4LX9Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
+ header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
+From: "Nobuhiro Iwamatsu" <nobuhiro1.iwamatsu@toshiba.co.jp>
+To: <cip-dev@lists.cip-project.org>
+CC: <pavel@denx.de>, <masashi.kudo@cybertrust.co.jp>, <wens@csie.org>,
+        <ben.hutchings@codethink.co.uk>, <Chris.Paterson2@renesas.com>,
+        <SZ.Lin@moxa.com>
+Subject: [cip-dev] [ANNOUNCE] Release v4.19.130-cip29
+Thread-Topic: [ANNOUNCE] Release v4.19.130-cip29
+Thread-Index: AdZNsoWhNbdVs7OgTvOgTa3nwk6Ghg==
+Date: Mon, 29 Jun 2020 01:14:33 +0000
+X-TSB-HOP: ON
+Message-ID: <OSBPR01MB298356DF8DDEE58D47ACAA01926E0@OSBPR01MB2983.jpnprd01.prod.outlook.com>
+Accept-Language: ja-JP, en-US
+x-originating-ip: [103.91.184.5]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 1651c9e3-eb16-44ee-5a28-08d81bc9c810
+x-ms-traffictypediagnostic: OSAPR01MB1553:
+x-microsoft-antispam-prvs: <OSAPR01MB1553ABF72EA80D3416EA36D2926E0@OSAPR01MB1553.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:393;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: LdMer404OS/jmQ+myxqjKgzn7A2lgpxhDdl/WjEDkqYnKv81HFzJv3DImsMdsbVR4yqACjkij/iZGpHWH3DMVUHrrTIMb13tJUoS3XVIPlgy/7Md0liei7qolFn5b1xCyY/ygC4/WxmFHAtFloIwXq97VG9LTF7hP4Q4wXFaSw2dil2CaEkdQ16/E8/BL7TUp74x6DGWMkeYBXries+EbtiesCOC68rmePwGri8xRBV/gkbzGSgqdEFb3cPeTCUfcLpBUDpj+5D6+TMLrFDvaVuyob9NS5JBH0qBWPAqYLeIM9Xqx6Jk/zgO96kysiU3r8IcgupVzwV7J4CjObhcjwJ4WmLldQarMhX2s5YSLVf9GLhS73giydgmgJ6D3AzQwQYQO8qvk/FaLOMSrR5w4w==
+x-ms-exchange-antispam-messagedata: BHkzYSgLQlgG3VpLg0xn2SVK6x8UxcWhyBUrnMlKaqqnlu6BIcfQpma4RIIN6APyAxUElBcqcEypKDWkagB37r/mJSZtdBprzSg3l845o6o3d9jHqXfccMUaSnZ78FD/323f4PxWN5g7tRGHP/JIX2xEZeuEiXtDYQ44uVmneIU2L+hUwTEyh62+5I+cREnJY85ZIsBaGbFfLKKuiXitgp49HBJC2EyHs99EdgAx5BpI2g4so+qZsRcLAET/62TuJr/RurTJFKvOWvMhWLk4iu2ExsP7w+chCRuL+20oa0C9HcYq8Ug8HhWpfG+BauhJLo2+Pf1c861NPYgFhal7BN8HCNBSZFPyOS807aw/YwbE9wCikmH2s5Z9JnpN9ZRWBu0dpWkRR/Z9nLMSpwBP7pfYknROD+63hltHc97Ma4qunZv5mn4pbEGFo9kzNKtg5oe0kh8oREes9+64SsBY2aBISQESGwSYE5JV/4k06ig=
+x-ms-exchange-transport-forked: True
 MIME-Version: 1.0
-In-Reply-To: <20200626165651.26960-2-Quirin.Gylstorff@siemens.com>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OSBPR01MB2983.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1651c9e3-eb16-44ee-5a28-08d81bc9c810
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jun 2020 01:14:33.0457
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: WuHSOC7CiDFsfZU+/uX1MqMEMoUmsUNxri72MEqsMiGeOWFcZwdqBatlc20yWGy6TF5HKcdOEu+ERvQ58SpYa7Nu8Jdw39G6iQDTR05h3UdmhbgD81QV//rSn9R5/qN9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB1553
+X-OriginatorOrg: toshiba.co.jp
+MSSCP.TransferMailToMossAgent: 103
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: 3ZsWho85BzwqJ10JZhg6hSmRx4520388AA=
-Content-Type: multipart/mixed; boundary="BjKql5Fq6iSxtyaYHrzU"
+X-Gm-Message-State: EDIhMCpBBtQhE1g2PUdSQ0qvx4520388AA=
+Content-Type: multipart/mixed; boundary="0BH4XyYb4iOoMY2wJ9f4"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1593197484;
- bh=ytzns+0R+m65ZiDFdDl/lacL83gVpADfeDI3hJhYvl8=;
- h=Content-Type:Date:From:Reply-To:Subject:To;
- b=ju6FWBYj7PvDoIz7YLKgQnimdXtrcOttWT3K62/7vc/9rgnJHpdkZt5thL+b6ERyteg
- Do4VEY5VsMI70Sq8jBpKlvDxwRcJDSVUs+GYkL+l0DCVqSVG/qa9ZVIfTpDMzA1Yc06OW
- ULQrfkA5mxPvQmbjpzbpNE/T/9FbWgeQS5k=
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1593393351;
+ bh=UtIYAlhsaFctii2pQ+NVXncd4wFujYDSqRhjDpHTeDE=;
+ h=CC:Content-Type:Date:From:Reply-To:Subject:To;
+ b=sRoUBKYJgHh8Sg2rzDDsAWUcRy5/iBMOBg0ncy3F9Urk3bYLvmiDjM2jp1J2P/Bsa0c
+ o4ewr/GugXxWt1ZlbdRcvB013ZGYbAOqS4CgIvol/OnN23ACjGVyNSCAx911q+T+8kTqR
+ hAiSjscKpufYgTLnal4amklxUtpmZiuoGkw=
 
---BjKql5Fq6iSxtyaYHrzU
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+--0BH4XyYb4iOoMY2wJ9f4
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-On 26.06.20 18:56, Q. Gylstorff wrote:
-> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> 
-> Create folder structure
-> kas -> general configuration
-> kas/board -> all supported boards
-> kas/opt -> all kas option files
-> 
-> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> ---
->   .gitlab-ci.yml                                            | 8 ++++----
->   README.md                                                 | 4 ++--
->   kas.yml => kas-cip.yml                                    | 0
->   board-bbb.yml => kas/board/bbb.yml                        | 0
->   board-iwg20m.yml => kas/board/iwg20m.yml                  | 0
->   board-qemu-amd64.yml => kas/board/qemu-amd64.yml          | 0
->   board-rzg2m.yml => kas/board/rzg2m.yml                    | 0
->   .../board/simatic-ipc227e.yml                             | 0
->   opt-4.4.yml => kas/opt/4.4.yml                            | 0
->   opt-rt.yml => kas/opt/rt.yml                              | 0
->   opt-stretch.yml => kas/opt/stretch.yml                    | 0
->   opt-targz-img.yml => kas/opt/targz-img.yml                | 0
->   12 files changed, 6 insertions(+), 6 deletions(-)
->   rename kas.yml => kas-cip.yml (100%)
->   rename board-bbb.yml => kas/board/bbb.yml (100%)
->   rename board-iwg20m.yml => kas/board/iwg20m.yml (100%)
->   rename board-qemu-amd64.yml => kas/board/qemu-amd64.yml (100%)
->   rename board-rzg2m.yml => kas/board/rzg2m.yml (100%)
->   rename board-simatic-ipc227e.yml => kas/board/simatic-ipc227e.yml (100%)
->   rename opt-4.4.yml => kas/opt/4.4.yml (100%)
->   rename opt-rt.yml => kas/opt/rt.yml (100%)
->   rename opt-stretch.yml => kas/opt/stretch.yml (100%)
->   rename opt-targz-img.yml => kas/opt/targz-img.yml (100%)
-> 
-> diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-> index 6f1dc91..241b09e 100644
-> --- a/.gitlab-ci.yml
-> +++ b/.gitlab-ci.yml
-> @@ -13,17 +13,17 @@ all:
->       - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
->       - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
->   
-> -    - kas build kas.yml:board-simatic-ipc227e.yml:opt-rt.yml:opt-targz-img.yml
-> +    - kas build kas-cip.yml:kas/board/simatic-ipc227e.yml:kas/opt/rt.yml:kas/opt/targz-img.yml
->       - scripts/deploy-cip-core.sh buster simatic-ipc227e
->   
->       - sudo rm -rf build/tmp
-> -    - kas build kas.yml:board-bbb.yml:opt-rt.yml:opt-targz-img.yml
-> +    - kas build kas-cip.yml:kas/board/bbb.yml:kas/opt/rt.yml:kas/opt/targz-img.yml
->       - scripts/deploy-cip-core.sh buster bbb am335x-boneblack.dtb
->   
->       - sudo rm -rf build/tmp
-> -    - kas build kas.yml:board-iwg20m.yml:opt-rt.yml:opt-targz-img.yml
-> +    - kas build kas-cip.yml:kas/board/iwg20m.yml:kas/opt/rt.yml:kas/opt/targz-img.yml
->       - scripts/deploy-cip-core.sh buster iwg20m r8a7743-iwg20d-q7-dbcm-ca.dtb
->   
->       - sudo rm -rf build/tmp
-> -    - kas build kas.yml:board-rzg2m.yml:opt-rt.yml:opt-targz-img.yml
-> +    - kas build kas-cip.yml:kas/board/rzg2m.yml:kas/opt/rt.yml:kas/opt/targz-img.yml
->       - scripts/deploy-cip-core.sh buster hihope-rzg2m renesas/r8a774a1-hihope-rzg2m-ex.dtb
-> diff --git a/README.md b/README.md
-> index bbad1a0..1a7af21 100644
-> --- a/README.md
-> +++ b/README.md
-> @@ -21,11 +21,11 @@ start containers.
->   To build, e.g., the QEMU AMD64 target inside Docker, invoke kas-docker like
->   this:
->   
-> -    ./kas-docker --isar build kas.yml:board-qemu-amd64.yml
-> +    ./kas-docker --isar build kas-cip.yml:kas/board/qemu-amd64.yml
->   
->   This image can be run using `start-qemu.sh x86`.
->   
-> -The BeagleBone Black target is selected by `... kas.yml:board-bbb.yml`. In
-> +The BeagleBone Black target is selected by `... kas-cip.yml:kas/board/bbb.yml`. In
->   order to build the image with the PREEMPT-RT kernel, append `:opt-rt.yml` to
->   the above. Append ':opt-4.4.yml' to use the kernel version 4.4 instead of 4.19.
->   
-> diff --git a/kas.yml b/kas-cip.yml
-> similarity index 100%
-> rename from kas.yml
-> rename to kas-cip.yml
-> diff --git a/board-bbb.yml b/kas/board/bbb.yml
-> similarity index 100%
-> rename from board-bbb.yml
-> rename to kas/board/bbb.yml
-> diff --git a/board-iwg20m.yml b/kas/board/iwg20m.yml
-> similarity index 100%
-> rename from board-iwg20m.yml
-> rename to kas/board/iwg20m.yml
-> diff --git a/board-qemu-amd64.yml b/kas/board/qemu-amd64.yml
-> similarity index 100%
-> rename from board-qemu-amd64.yml
-> rename to kas/board/qemu-amd64.yml
-> diff --git a/board-rzg2m.yml b/kas/board/rzg2m.yml
-> similarity index 100%
-> rename from board-rzg2m.yml
-> rename to kas/board/rzg2m.yml
-> diff --git a/board-simatic-ipc227e.yml b/kas/board/simatic-ipc227e.yml
-> similarity index 100%
-> rename from board-simatic-ipc227e.yml
-> rename to kas/board/simatic-ipc227e.yml
-> diff --git a/opt-4.4.yml b/kas/opt/4.4.yml
-> similarity index 100%
-> rename from opt-4.4.yml
-> rename to kas/opt/4.4.yml
-> diff --git a/opt-rt.yml b/kas/opt/rt.yml
-> similarity index 100%
-> rename from opt-rt.yml
-> rename to kas/opt/rt.yml
-> diff --git a/opt-stretch.yml b/kas/opt/stretch.yml
-> similarity index 100%
-> rename from opt-stretch.yml
-> rename to kas/opt/stretch.yml
-> diff --git a/opt-targz-img.yml b/kas/opt/targz-img.yml
-> similarity index 100%
-> rename from opt-targz-img.yml
-> rename to kas/opt/targz-img.yml
-> 
+SGksDQoNCkNJUCBrZXJuZWwgdGVhbSBoYXMgcmVsZWFzZWQgTGludXgga2VybmVsIHY0LjE5LjEz
+MC1jaXAyOS4NClRoZSBsaW51eC00LjE5LnktY2lwIHRyZWUgaGFzIGJlZW4gdXBkYXRlZCBiYXNl
+IHZlcnNpb24gZnJvbSB2NC4xOS4xMjggdG8gdjQuMTkuMTMwLg0KIA0KWW91IGNhbiBnZXQgdGhp
+cyByZWxlYXNlIHZpYSB0aGUgZ2l0IHRyZWUgYXQ6DQoNCiAgdjQuMTkuMTMwLWNpcDI5Og0KICAg
+IHJlcG9zaXRvcnk6DQogICAgICBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgv
+a2VybmVsL2dpdC9jaXAvbGludXgtY2lwLmdpdA0KICAgIGJyYW5jaDoNCiAgICAgIGxpbnV4LTQu
+MTkueS1jaXANCiAgICBjb21taXQgaGFzaDoNCiAgICAgIAk0YWRiMTlkYTNmMjAyMDgwNzFmMzhj
+OWE3NzA2YmE2YTRlYTBhNjMyDQogICAgYWRkZWQgY29tbWl0czoNCiAgICAgIENJUDogQnVtcCB2
+ZXJzaW9uIHN1ZmZpeCB0byAtY2lwMjkgYWZ0ZXIgbWVyZ2UgZnJvbSBzdGFibGUNCg0KQmVzdCBy
+ZWdhcmRzLA0KICAgTm9idWhpcm8NCg==
 
-Applied to next, also fixing up the remaining README spots.
-
-Thanks,
-Jan
-
--- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
-
---BjKql5Fq6iSxtyaYHrzU
+--0BH4XyYb4iOoMY2wJ9f4
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -202,12 +120,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#4844): https://lists.cip-project.org/g/cip-dev/message=
-/4844
-Mute This Topic: https://lists.cip-project.org/mt/75128487/4520388
+View/Reply Online (#4845): https://lists.cip-project.org/g/cip-dev/message=
+/4845
+Mute This Topic: https://lists.cip-project.org/mt/75183469/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---BjKql5Fq6iSxtyaYHrzU--
+--0BH4XyYb4iOoMY2wJ9f4--
