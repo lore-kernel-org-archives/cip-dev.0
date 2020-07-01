@@ -1,4 +1,4 @@
-Return-Path: <SRS0=dF4X=AM=lists.cip-project.org=bounce+64572+4875+4520388+8129055@kernel.org>
+Return-Path: <SRS0=Qjw8=AM=lists.cip-project.org=bounce+64572+4876+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -7,361 +7,480 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFED7C433DF
-	for <cip-dev@archiver.kernel.org>; Wed,  1 Jul 2020 09:40:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB8DC433DF
+	for <cip-dev@archiver.kernel.org>; Wed,  1 Jul 2020 11:56:52 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 5975B206C3
-	for <cip-dev@archiver.kernel.org>; Wed,  1 Jul 2020 09:40:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 8511D2067D
+	for <cip-dev@archiver.kernel.org>; Wed,  1 Jul 2020 11:56:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="LaW7ROFL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5975B206C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=toshiba.co.jp
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4875+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id GqVgYY4521723xWt2WqcgAab; Wed, 01 Jul 2020 02:40:48 -0700
-X-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.153])
- by mx.groups.io with SMTP id smtpd.web10.17931.1593596445158498128
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="rK+3GDs6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8511D2067D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mab-labs.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4876+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id wI3YYY4521723xyS3GEQmpxw; Wed, 01 Jul 2020 04:56:48 -0700
+X-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+ by mx.groups.io with SMTP id smtpd.web10.19740.1593604606446219030
  for <cip-dev@lists.cip-project.org>;
- Wed, 01 Jul 2020 02:40:46 -0700
-X-Received: by mo-csw.securemx.jp (mx-mo-csw1514) id 0619ehEo029366; Wed, 1 Jul 2020 18:40:43 +0900
-X-Iguazu-Qid: 34trDAmeKFnMdafGZl
-X-Iguazu-QSIG: v=2; s=0; t=1593596442; q=34trDAmeKFnMdafGZl; m=KH+dQa9dk7SSB1y2iZdpLlUQ6Y1+EuV3QCoUO9iKEvA=
-X-Received: from imx12.toshiba.co.jp (imx12.toshiba.co.jp [61.202.160.132])
-	by relay.securemx.jp (mx-mr1510) id 0619efne030654;
-	Wed, 1 Jul 2020 18:40:42 +0900
-X-Received: from enc02.toshiba.co.jp ([61.202.160.51])
-	by imx12.toshiba.co.jp  with ESMTP id 0619efMj026135;
-	Wed, 1 Jul 2020 18:40:41 +0900 (JST)
-X-Received: from hop101.toshiba.co.jp ([133.199.85.107])
-	by enc02.toshiba.co.jp  with ESMTP id 0619ef4a009074;
-	Wed, 1 Jul 2020 18:40:41 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=e0rUWboRat3vmGwhb0DcykrV07VhDmua43tswILDLH3i16RMMmXjoTWS4zsRq3wSTsOr9ubeAh9fsmrKS6pgOxHeEd/nLQq35jWAP8Nwznfk05wRa10GsZI9dhdHhyZ7+NyiooqadJ7HUjGtrAh0WFvuhYT2l1QA6d4WdS9Siqfcfm3l0yL5+MRPYlFZYXRS+Dr2944FXWEBXFB1CDZabLqB5pIhN4fC2SL3fyKnqS0U5uI3GkYjGrzSvklkYVBuE1sISf0uNkxtQmqXpXmy+aMSC9bTXtOSuwhvGZ/8OlgwfETJVPGPKQhBwwbbqmAveDaXmNjhVULespjhHboYRA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UmTpi4+VperJrkHcjVlcZvUjD9cQFdcFhUv3rTT9j0A=;
- b=RopVeKJhha2hR5wvv8CRW+fW3d0/N6QIfTTb7u/9NmjnzgM5nRUWzMdAdwX99aclDvdyET+ptioqJvltW9HGtcZl+14/svJA5SxhXyhcWthWmoB4EajYynFaPeOnSRLG2gGg7pGdkX3RUPbNv8IjG7vY1g+rHhKkm283PinVMZker4Vg9X0Gfyi8L07SPkKbjyst+CVEeKcmqJGRU4gcuyAO11VfZBLVIgnBd0ng7qgYA9OaoeWE2ZzbNypIZc8N3e2aBCbEiIp3jOfyFkhIK7g5bROXwvM6e5d5adwYcDfcYU8HyQ6SNdD74cJAjcJ/AV58uy9Qj6+XDpUW/+m8PA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
- header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
-From: "Akihiro Suzuki" <akihiro27.suzuki@toshiba.co.jp>
-To: <mab@mab-labs.com>
-CC: <cip-dev@lists.cip-project.org>
-Subject: Re: [cip-dev] Setting up SWUpdate
-Thread-Topic: [cip-dev] Setting up SWUpdate
-Thread-Index: AQHWTzC6BMLDszSQF0m8U20OH/JBwqjyH3oggABXpuA=
-Date: Wed, 1 Jul 2020 09:40:39 +0000
-X-TSB-HOP: ON
-Message-ID: <OSYPR01MB5334D919E8CA6060F4332346D96C0@OSYPR01MB5334.jpnprd01.prod.outlook.com>
-References: <CALkjhPqjz9E22YtzR+QkjmiMRE_w-jQdfgawmAsaZECfSLEgRQ@mail.gmail.com> 
-Accept-Language: ja-JP, en-US
-x-originating-ip: [103.91.184.1]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f35d11a2-01b2-4b48-bfe4-08d81da2d0bb
-x-ms-traffictypediagnostic: OSBPR01MB1733:
-x-microsoft-antispam-prvs: <OSBPR01MB1733D14E2F375FEA6648C0D0D96C0@OSBPR01MB1733.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: dH0X1XD70U5pMikdAYm5Nias7DXg/WORSxkAnbvc9kwGEQDoUVbPyqPlZb+GToH0kvXsTpsaz/fJiA8zeqR1OLqvpnUMCwHlap/Om899bZLbzObZ/5G7ySE+48dVNEDMY8EeBD57756U1pefGkRn2yLgEYw3AuLIrnxrmrb1XNiBW550qicPj91NmmE/sy5/TtVURPq8HsGL9eyPREDP+L+usBbMubK+5Rzth3u/G4MSmCrEexo7tRA9V7DZaITYkQIT//o1OiRh8TnWqg6X5lZhRSgLglT4z8783iZt7Dyb1qR0a15Wcti/6OZMLdUItVw/mBJdDkDAHyCPJQD8tBWLDB+VdkobQwVnDpu8pKrPmAO7695wFPkqvq11E5nnTaEMRKy9NIEQEmbKU+W6Zw==
-x-ms-exchange-antispam-messagedata: EZNq+JW/PgWN7IYxZWZxACS9qVkh7OoEfuf07pHulAYTXGGl9fj0E7gEV7l9vmqil/xnKknxzGt+hJbl4pKKUVrjXjJFcChLY85MK223MteWbs9494TxPdgyi/axpTUMJfwHiw9ENBlk5bgylYZLZy1ds8jVbWWFtGoujvIl+FIw/jnr0u/HrA0cdwMrAaRssBMKQ3oXJP68NyVijZ4WQTjxTEJwZBl47kgeA60Y0PjJFN9B+3EWpFTBVr9ujFNP9/UxF16Fv22tPWc6lYwii0HQRi6ci9UQqMHaRkEjoAsteg0PezkuGrgClsFx7NuFQr8D9cW2PPLIhrlAp/y64B1G4f1/9yePUi3SI3jlyFgFXroIzu3QErTrmqWOrNZDICF4UkYsdwzwTgSfKt2r/T/q+8S4VvXClrJNmNanh7BLGZssD0dxy3H5AibGNJUjk7E7P36W/YondvG0OWzMgLK6UVO0S0SYOLEHm+AIHlM=
-x-ms-exchange-transport-forked: True
+ Wed, 01 Jul 2020 04:56:47 -0700
+X-Received: by mail-lj1-f180.google.com with SMTP id f8so14292109ljc.2
+        for <cip-dev@lists.cip-project.org>; Wed, 01 Jul 2020 04:56:46 -0700 (PDT)
+X-Gm-Message-State: UN9lzZGeiKsm0J50Ffgbk6AYx4520388AA=
+X-Google-Smtp-Source: ABdhPJxdr5sgTQ5nD5v1w4ovqLa6jW3zPcFX0ZJJoqI8l/TEa5ldjyftg1eTsxCHnrIkHmAZjjfw5r2yZo/wjXvfdnA=
+X-Received: by 2002:a2e:b4b6:: with SMTP id q22mr12058645ljm.53.1593604604457;
+ Wed, 01 Jul 2020 04:56:44 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSYPR01MB5334.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f35d11a2-01b2-4b48-bfe4-08d81da2d0bb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jul 2020 09:40:39.5752
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jTRkaZJi0bfs3GYXu9wu/NyBeP4IRKBpMUJe5opgv36Gr1WCIzvvwNi+wDZjaZn6FO1sigu8hAIeF4FBCW2Fn1mZHEDZ2m7ueMpi2w+aexo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB1733
-X-OriginatorOrg: toshiba.co.jp
-MSSCP.TransferMailToMossAgent: 103
+References: <CALkjhPqjz9E22YtzR+QkjmiMRE_w-jQdfgawmAsaZECfSLEgRQ@mail.gmail.com>
+ <OSYPR01MB5334D919E8CA6060F4332346D96C0@OSYPR01MB5334.jpnprd01.prod.outlook.com>
+In-Reply-To: <OSYPR01MB5334D919E8CA6060F4332346D96C0@OSYPR01MB5334.jpnprd01.prod.outlook.com>
+From: "Mohammed Billoo" <mab@mab-labs.com>
+Date: Wed, 1 Jul 2020 07:56:33 -0400
+Message-ID: <CALkjhPpuc-U2LepVHCdqj=SN8EfgHgRjuiKym-kBhivOmOHAiA@mail.gmail.com>
+Subject: Re: [cip-dev] Setting up SWUpdate
+To: akihiro27.suzuki@toshiba.co.jp
+Cc: cip-dev@lists.cip-project.org
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: AgEpSknUvKzY3EnY3a5FiCXfx4520388AA=
-Content-Type: multipart/mixed; boundary="xKKXl8Bu2XNCxI5e0JCL"
+Content-Type: multipart/mixed; boundary="22geoBbfOea1j8yUMoKP"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1593596448;
- bh=wobMeZ7ETuZkVgkr10Mrw7Uxcy1kIxeiuMQNYhzsqw4=;
- h=CC:Content-Type:Date:From:Reply-To:Subject:To;
- b=LaW7ROFLz4x77x9qifto6AA1yKdHV1EJrKrYthgXlTrNctKEZWsvTptFp4sF2P1tTkM
- v51iQGc/Vifs1qDoQuM0oaAWVOPGXcAOi2MqH/MzuM49IQYwfIDlcP/NGC4zqDDGt/jQd
- RRrJUMEnzZzRqTNsubJvV/U8hNLZJQPCjr4=
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1593604608;
+ bh=LfbEyakieUCUvIp+6OYYl8ddDprc9xBPZ+j+MHU1gn8=;
+ h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
+ b=rK+3GDs61ooO5my/Upp7MqRQZ4fjvJtIUv9fd+wEDwoGBuDQAHMoutD88zVyDjfvV4/
+ 2iEzMGy/Z473ymcgSSUNiw8lDodqB1+OR8cEVRDbbGN311oRnJoCxBuafJfP42Bypj0VY
+ +k8aQoYylkAQbpRtI8FPU5WXVxQDLupB6lg=
 
---xKKXl8Bu2XNCxI5e0JCL
-Content-Language: ja-JP
-Content-Type: multipart/alternative;
-	boundary="_000_OSYPR01MB5334D919E8CA6060F4332346D96C0OSYPR01MB5334jpnp_"
+--22geoBbfOea1j8yUMoKP
+Content-Type: multipart/alternative; boundary="0000000000005c82c805a95ffc67"
 
---_000_OSYPR01MB5334D919E8CA6060F4332346D96C0OSYPR01MB5334jpnp_
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+--0000000000005c82c805a95ffc67
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGkgTW9oYW1tZWQsDQoNCj4gTk9URTogTm93IEkgaGF2ZSBhIHByb2JsZW0gd2l0aCB0aGUgZGVt
-by4gSeKAmWxsIG1ha2UgdGhlIGlzc3VlIGFib3V0IGl0IGluIGNpcC1zdy11cGRhdGVzLXRhc2tz
-IHJlcG9zaXRvcnkgbGF0ZXIuDQpJ4oCZdmUgbWFkZSB0aGUgaXNzdWUgYWJvdXQgaXQ6IGh0dHBz
-Oi8vZ2l0bGFiLmNvbS9jaXAtcHJvamVjdC9jaXAtc3ctdXBkYXRlcy9jaXAtc3ctdXBkYXRlcy10
-YXNrcy8tL2lzc3Vlcy8xNA0KSXQgbWlnaHQgYmUgYmV0dGVyIHRvIHdhaXQgZm9yIHRyeWluZyBj
-aXAtc3ctdXBkYXRlcy1kZW1vIHVudGlsIHRoZSBpc3N1ZSBpcyByZXNvbHZlZC4NCg0KVGhhbmtz
-LA0KU3V6dWtpDQoNCkZyb206IHN1enVraSBha2loaXJvKOmItOacqCDnq6Dmtakg4pah77yz77y3
-77yj4pev77yh77yj77y0KQ0KU2VudDogV2VkbmVzZGF5LCBKdWx5IDEsIDIwMjAgMjowOSBQTQ0K
-VG86IE1vaGFtbWVkIEJpbGxvbyA8bWFiQG1hYi1sYWJzLmNvbT4NCkNjOiBjaXAtZGV2QGxpc3Rz
-LmNpcC1wcm9qZWN0Lm9yZw0KU3ViamVjdDogUkU6IFtjaXAtZGV2XSBTZXR0aW5nIHVwIFNXVXBk
-YXRlDQoNCkhpIE1vaGFtbWVkLA0KDQo+IFNob3VsZCBJIGJlIHVzaW5nIHRoZSBpbnN0cnVjdGlv
-bnMgb3V0bGluZWQgaW4gaHR0cHM6Ly9naXRsYWIuY29tL2NpcC1wcm9qZWN0L2NpcC1zdy11cGRh
-dGVzL2NpcC1zdy11cGRhdGVzLWRlbW8gdG8gcnVuIGEgYmFzaWMgdXBkYXRlIG9mIHRoZSBDSVAg
-aW1hZ2Ugb24gYSBCQkIgZnJvbSBoYXdrQml0PyBDYW4gdGhlIHVwZGF0ZSBwcm9jZXNzIGJlIHZl
-cmlmaWVkIHVzaW5nIGhhd2tiaXQgYW5kL29yIHRoZSBCQkI/DQpZZXMsIHlvdSBjYW4gdmVyaWZ5
-IGEgYmFzaWMgdXBkYXRlIHByb2Nlc3MgdmlhIFJFQURNRS5tZCBpbiBjaXAtc3ctdXBkYXRlcy1k
-ZW1vIHJlcG9zaXRvcnkuDQpJdCB1c2VzIEJCQiBhbmQgaGF3a0JpdC4NClBsZWFzZSBsZXQgbWUg
-a25vdyBpZiB5b3UgaGF2ZSBhIHByb2JsZW0gYWJvdXQgdGhlIGluc3RydWN0aW9ucyB3cml0dGVu
-IGluIHRoZSBSRUFETUUubWQuDQpOT1RFOiBOb3cgSSBoYXZlIGEgcHJvYmxlbSB3aXRoIHRoZSBk
-ZW1vLiBJ4oCZbGwgbWFrZSB0aGUgaXNzdWUgYWJvdXQgaXQgaW4gY2lwLXN3LXVwZGF0ZXMtdGFz
-a3MgcmVwb3NpdG9yeSBsYXRlci4NCg0KPiBBbHNvLCB0aGVyZSBsb29rcyB0byBiZSBhIHBhdGNo
-c2V0IHRvIGJyaW5nIGluIHN3dXBkYXRlIHRvIGNpcC1jb3JlIChodHRwczovL3BhdGNod29yay5r
-ZXJuZWwub3JnL3Byb2plY3QvY2lwLWRldi9saXN0Lz9zZXJpZXM9MzA5NzQxKS4gU2hvdWxkIEkg
-d2FpdCBmb3IgdGhpcyBwYXRjaHNldCB0byBiZSBhcHByb3ZlZD8NClRoZSBwYXRjaHNldCBpcyBm
-b3IgeDg2IHdpdGggVUVGSSB0byBwcm92aWRlIHVwZGF0YWJsZSBzZWN1cmUgYm9vdCBmb3IgVUVG
-SS4NCkl0IHVzZXMgRUZJIEJvb3QgR3VhcmQgKGh0dHBzOi8vZ2l0aHViLmNvbS9zaWVtZW5zL2Vm
-aWJvb3RndWFyZCkgaW5zdGVhZCBvZiB1LWJvb3QuDQpJdCB3aWxsIGJlIGFibGUgdG8gY292ZXIg
-dGhlIG1haW4gdXNlIGNhc2VzIGZvciBzb2Z0d2FyZSB1cGRhdGUgb24gZGV2aWNlcy4NCkFsdGhv
-dWdoIGNpcC1zdy11cGRhdGVzLWRlbW8gcmVwb3NpdG9yeSBkb2VzbuKAmXQgaW5jbHVkZSB0aGUg
-ZGVtbyBmb3IgeDg2IHdpdGggVUVGSSBhdCB0aGUgbW9tZW50LA0KeW91IGNhbiB0cnkgYmFzaWMg
-dXBkYXRlIGZlYXR1cmVzIHVzaW5nIEJCQi4NCg0KVGhhbmtzLA0KU3V6dWtpDQoNCkZyb206IGNp
-cC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnPG1haWx0bzpjaXAtZGV2QGxpc3RzLmNpcC1wcm9q
-ZWN0Lm9yZz4gPGNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnPG1haWx0bzpjaXAtZGV2QGxp
-c3RzLmNpcC1wcm9qZWN0Lm9yZz4+IE9uIEJlaGFsZiBPZiBNb2hhbW1lZCBCaWxsb28NClNlbnQ6
-IFdlZG5lc2RheSwgSnVseSAxLCAyMDIwIDc6NDkgQU0NClRvOiBjaXAtZGV2QGxpc3RzLmNpcC1w
-cm9qZWN0Lm9yZzxtYWlsdG86Y2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmc+DQpTdWJqZWN0
-OiBbY2lwLWRldl0gU2V0dGluZyB1cCBTV1VwZGF0ZQ0KDQpIZWxsbywNCg0KU2hvdWxkIEkgYmUg
-dXNpbmcgdGhlIGluc3RydWN0aW9ucyBvdXRsaW5lZCBpbiBodHRwczovL2dpdGxhYi5jb20vY2lw
-LXByb2plY3QvY2lwLXN3LXVwZGF0ZXMvY2lwLXN3LXVwZGF0ZXMtZGVtbyB0byBydW4gYSBiYXNp
-YyB1cGRhdGUgb2YgdGhlIENJUCBpbWFnZSBvbiBhIEJCQiBmcm9tIGhhd2tCaXQ/IENhbiB0aGUg
-dXBkYXRlIHByb2Nlc3MgYmUgdmVyaWZpZWQgdXNpbmcgaGF3a2JpdCBhbmQvb3IgdGhlIEJCQj8N
-Cg0KQWxzbywgdGhlcmUgbG9va3MgdG8gYmUgYSBwYXRjaHNldCB0byBicmluZyBpbiBzd3VwZGF0
-ZSB0byBjaXAtY29yZSAoaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wcm9qZWN0L2NpcC1k
-ZXYvbGlzdC8/c2VyaWVzPTMwOTc0MSkuIFNob3VsZCBJIHdhaXQgZm9yIHRoaXMgcGF0Y2hzZXQg
-dG8gYmUgYXBwcm92ZWQ/DQoNCi0tDQpNb2hhbW1lZCBBIEJpbGxvbw0KRm91bmRlcg0KTUFCIExh
-YnMsIExMQw0Kd3d3Lm1hYi1sYWJzLmNvbTxodHRwOi8vd3d3Lm1hYi1sYWJzLmNvbT4NCjIwMS0z
-MzgtMjAyMg0KDQotLQ0KTW9oYW1tZWQgQmlsbG9vDQpNQUIgTGFicywgTExDDQp3d3cubWFiLWxh
-YnMuY29tPGh0dHA6Ly93d3cubWFiLWxhYnMuY29tPg0K
+Suzuki,
 
---_000_OSYPR01MB5334D919E8CA6060F4332346D96C0OSYPR01MB5334jpnp_
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: base64
+I can look into this issue as well (when my BBB comes in). It's focused
+enough that I can learn enough about SWUpdate and how it fits into CIP.
 
-PGh0bWwgeG1sbnM6dj0idXJuOnNjaGVtYXMtbWljcm9zb2Z0LWNvbTp2bWwiIHhtbG5zOm89InVy
-bjpzY2hlbWFzLW1pY3Jvc29mdC1jb206b2ZmaWNlOm9mZmljZSIgeG1sbnM6dz0idXJuOnNjaGVt
-YXMtbWljcm9zb2Z0LWNvbTpvZmZpY2U6d29yZCIgeG1sbnM6bT0iaHR0cDovL3NjaGVtYXMubWlj
-cm9zb2Z0LmNvbS9vZmZpY2UvMjAwNC8xMi9vbW1sIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv
-VFIvUkVDLWh0bWw0MCI+DQo8aGVhZD4NCjxtZXRhIGh0dHAtZXF1aXY9IkNvbnRlbnQtVHlwZSIg
-Y29udGVudD0idGV4dC9odG1sOyBjaGFyc2V0PXV0Zi04Ij4NCjxtZXRhIG5hbWU9IkdlbmVyYXRv
-ciIgY29udGVudD0iTWljcm9zb2Z0IFdvcmQgMTUgKGZpbHRlcmVkIG1lZGl1bSkiPg0KPHN0eWxl
-PjwhLS0NCi8qIEZvbnQgRGVmaW5pdGlvbnMgKi8NCkBmb250LWZhY2UNCgl7Zm9udC1mYW1pbHk6
-IkNhbWJyaWEgTWF0aCI7DQoJcGFub3NlLTE6MiA0IDUgMyA1IDQgNiAzIDIgNDt9DQpAZm9udC1m
-YWNlDQoJe2ZvbnQtZmFtaWx5Oua4uOOCtOOCt+ODg+OCrzsNCglwYW5vc2UtMToyIDExIDQgMCAw
-IDAgMCAwIDAgMDt9DQpAZm9udC1mYWNlDQoJe2ZvbnQtZmFtaWx5OkNhbGlicmk7DQoJcGFub3Nl
-LTE6MiAxNSA1IDIgMiAyIDQgMyAyIDQ7fQ0KQGZvbnQtZmFjZQ0KCXtmb250LWZhbWlseToi77yt
-77yzIO+8sOOCtOOCt+ODg+OCryI7DQoJcGFub3NlLTE6MiAxMSA2IDAgNyAyIDUgOCAyIDQ7fQ0K
-QGZvbnQtZmFjZQ0KCXtmb250LWZhbWlseToiXEDmuLjjgrTjgrfjg4Pjgq8iOw0KCXBhbm9zZS0x
-OjIgMTEgNCAwIDAgMCAwIDAgMCAwO30NCkBmb250LWZhY2UNCgl7Zm9udC1mYW1pbHk6IlxA77yt
-77yzIO+8sOOCtOOCt+ODg+OCryI7fQ0KLyogU3R5bGUgRGVmaW5pdGlvbnMgKi8NCnAuTXNvTm9y
-bWFsLCBsaS5Nc29Ob3JtYWwsIGRpdi5Nc29Ob3JtYWwNCgl7bWFyZ2luOjBtbTsNCgltYXJnaW4t
-Ym90dG9tOi4wMDAxcHQ7DQoJZm9udC1zaXplOjEyLjBwdDsNCglmb250LWZhbWlseToi77yt77yz
-IO+8sOOCtOOCt+ODg+OCryIsc2VyaWY7fQ0KYTpsaW5rLCBzcGFuLk1zb0h5cGVybGluaw0KCXtt
-c28tc3R5bGUtcHJpb3JpdHk6OTk7DQoJY29sb3I6Ymx1ZTsNCgl0ZXh0LWRlY29yYXRpb246dW5k
-ZXJsaW5lO30NCmE6dmlzaXRlZCwgc3Bhbi5Nc29IeXBlcmxpbmtGb2xsb3dlZA0KCXttc28tc3R5
-bGUtcHJpb3JpdHk6OTk7DQoJY29sb3I6cHVycGxlOw0KCXRleHQtZGVjb3JhdGlvbjp1bmRlcmxp
-bmU7fQ0KcC5tc29ub3JtYWwwLCBsaS5tc29ub3JtYWwwLCBkaXYubXNvbm9ybWFsMA0KCXttc28t
-c3R5bGUtbmFtZTptc29ub3JtYWw7DQoJbXNvLW1hcmdpbi10b3AtYWx0OmF1dG87DQoJbWFyZ2lu
-LXJpZ2h0OjBtbTsNCgltc28tbWFyZ2luLWJvdHRvbS1hbHQ6YXV0bzsNCgltYXJnaW4tbGVmdDow
-bW07DQoJZm9udC1zaXplOjEyLjBwdDsNCglmb250LWZhbWlseToi77yt77yzIO+8sOOCtOOCt+OD
-g+OCryIsc2VyaWY7fQ0Kc3Bhbi4xOA0KCXttc28tc3R5bGUtdHlwZTpwZXJzb25hbDsNCglmb250
-LWZhbWlseTrmuLjjgrTjgrfjg4Pjgq87DQoJY29sb3I6d2luZG93dGV4dDt9DQpzcGFuLjE5DQoJ
-e21zby1zdHlsZS10eXBlOnBlcnNvbmFsOw0KCWZvbnQtZmFtaWx5Oua4uOOCtOOCt+ODg+OCrzsN
-Cgljb2xvcjp3aW5kb3d0ZXh0O30NCnNwYW4uMjENCgl7bXNvLXN0eWxlLXR5cGU6cGVyc29uYWwt
-cmVwbHk7DQoJZm9udC1mYW1pbHk65ri444K044K344OD44KvOw0KCWNvbG9yOndpbmRvd3RleHQ7
-fQ0KLk1zb0NocERlZmF1bHQNCgl7bXNvLXN0eWxlLXR5cGU6ZXhwb3J0LW9ubHk7DQoJZm9udC1z
-aXplOjEwLjBwdDt9DQpAcGFnZSBXb3JkU2VjdGlvbjENCgl7c2l6ZTo2MTIuMHB0IDc5Mi4wcHQ7
-DQoJbWFyZ2luOjk5LjI1cHQgMzAuMG1tIDMwLjBtbSAzMC4wbW07fQ0KZGl2LldvcmRTZWN0aW9u
-MQ0KCXtwYWdlOldvcmRTZWN0aW9uMTt9DQotLT48L3N0eWxlPjwhLS1baWYgZ3RlIG1zbyA5XT48
-eG1sPg0KPG86c2hhcGVkZWZhdWx0cyB2OmV4dD0iZWRpdCIgc3BpZG1heD0iMTAyNiI+DQo8djp0
-ZXh0Ym94IGluc2V0PSI1Ljg1cHQsLjdwdCw1Ljg1cHQsLjdwdCIgLz4NCjwvbzpzaGFwZWRlZmF1
-bHRzPjwveG1sPjwhW2VuZGlmXS0tPjwhLS1baWYgZ3RlIG1zbyA5XT48eG1sPg0KPG86c2hhcGVs
-YXlvdXQgdjpleHQ9ImVkaXQiPg0KPG86aWRtYXAgdjpleHQ9ImVkaXQiIGRhdGE9IjEiIC8+DQo8
-L286c2hhcGVsYXlvdXQ+PC94bWw+PCFbZW5kaWZdLS0+DQo8L2hlYWQ+DQo8Ym9keSBsYW5nPSJK
-QSIgbGluaz0iYmx1ZSIgdmxpbms9InB1cnBsZSI+DQo8ZGl2IGNsYXNzPSJXb3JkU2VjdGlvbjEi
-Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNwYW4gbGFuZz0iRU4tVVMiIHN0eWxlPSJmb250LXNp
-emU6MTEuMHB0O2ZvbnQtZmFtaWx5Oua4uOOCtOOCt+ODg+OCryI+SGkgTW9oYW1tZWQsPG86cD48
-L286cD48L3NwYW4+PC9wPg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNwYW4gbGFuZz0iRU4tVVMi
-IHN0eWxlPSJmb250LXNpemU6MTEuMHB0O2ZvbnQtZmFtaWx5Oua4uOOCtOOCt+ODg+OCryI+PG86
-cD4mbmJzcDs8L286cD48L3NwYW4+PC9wPg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNwYW4gbGFu
-Zz0iRU4tVVMiIHN0eWxlPSJmb250LXNpemU6MTEuMHB0O2ZvbnQtZmFtaWx5Oua4uOOCtOOCt+OD
-g+OCryI+Jmd0OyBOT1RFOiBOb3cgSSBoYXZlIGEgcHJvYmxlbSB3aXRoIHRoZSBkZW1vLiBJPC9z
-cGFuPjxzcGFuIHN0eWxlPSJmb250LXNpemU6MTEuMHB0O2ZvbnQtZmFtaWx5Oua4uOOCtOOCt+OD
-g+OCryI+4oCZPHNwYW4gbGFuZz0iRU4tVVMiPmxsIG1ha2UgdGhlIGlzc3VlIGFib3V0IGl0IGlu
-IGNpcC1zdy11cGRhdGVzLXRhc2tzIHJlcG9zaXRvcnkNCiBsYXRlci48bzpwPjwvbzpwPjwvc3Bh
-bj48L3NwYW4+PC9wPg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNwYW4gbGFuZz0iRU4tVVMiIHN0
-eWxlPSJmb250LXNpemU6MTEuMHB0O2ZvbnQtZmFtaWx5Oua4uOOCtOOCt+ODg+OCryI+SeKAmXZl
-IG1hZGUgdGhlIGlzc3VlIGFib3V0IGl0Og0KPGEgaHJlZj0iaHR0cHM6Ly9naXRsYWIuY29tL2Np
-cC1wcm9qZWN0L2NpcC1zdy11cGRhdGVzL2NpcC1zdy11cGRhdGVzLXRhc2tzLy0vaXNzdWVzLzE0
-Ij4NCmh0dHBzOi8vZ2l0bGFiLmNvbS9jaXAtcHJvamVjdC9jaXAtc3ctdXBkYXRlcy9jaXAtc3ct
-dXBkYXRlcy10YXNrcy8tL2lzc3Vlcy8xNDwvYT48bzpwPjwvbzpwPjwvc3Bhbj48L3A+DQo8cCBj
-bGFzcz0iTXNvTm9ybWFsIj48c3BhbiBsYW5nPSJFTi1VUyIgc3R5bGU9ImZvbnQtc2l6ZToxMS4w
-cHQ7Zm9udC1mYW1pbHk65ri444K044K344OD44KvIj5JdCBtaWdodCBiZSBiZXR0ZXIgdG8gd2Fp
-dCBmb3IgdHJ5aW5nIGNpcC1zdy11cGRhdGVzLWRlbW8gdW50aWwgdGhlIGlzc3VlIGlzIHJlc29s
-dmVkLjxvOnA+PC9vOnA+PC9zcGFuPjwvcD4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxzcGFuIGxh
-bmc9IkVOLVVTIiBzdHlsZT0iZm9udC1zaXplOjExLjBwdDtmb250LWZhbWlseTrmuLjjgrTjgrfj
-g4Pjgq8iPjxvOnA+Jm5ic3A7PC9vOnA+PC9zcGFuPjwvcD4NCjxwIGNsYXNzPSJNc29Ob3JtYWwi
-PjxzcGFuIGxhbmc9IkVOLVVTIiBzdHlsZT0iZm9udC1zaXplOjExLjBwdDtmb250LWZhbWlseTrm
-uLjjgrTjgrfjg4Pjgq8iPlRoYW5rcyw8YnI+DQpTdXp1a2k8bzpwPjwvbzpwPjwvc3Bhbj48L3A+
-DQo8cCBjbGFzcz0iTXNvTm9ybWFsIj48c3BhbiBsYW5nPSJFTi1VUyIgc3R5bGU9ImZvbnQtc2l6
-ZToxMS4wcHQ7Zm9udC1mYW1pbHk65ri444K044K344OD44KvIj48bzpwPiZuYnNwOzwvbzpwPjwv
-c3Bhbj48L3A+DQo8ZGl2Pg0KPGRpdiBzdHlsZT0iYm9yZGVyOm5vbmU7Ym9yZGVyLXRvcDpzb2xp
-ZCAjRTFFMUUxIDEuMHB0O3BhZGRpbmc6My4wcHQgMG1tIDBtbSAwbW0iPg0KPHAgY2xhc3M9Ik1z
-b05vcm1hbCI+PGI+PHNwYW4gbGFuZz0iRU4tVVMiIHN0eWxlPSJmb250LXNpemU6MTEuMHB0O2Zv
-bnQtZmFtaWx5OiZxdW90O0NhbGlicmkmcXVvdDssc2Fucy1zZXJpZiI+RnJvbTo8L3NwYW4+PC9i
-PjxzcGFuIGxhbmc9IkVOLVVTIiBzdHlsZT0iZm9udC1zaXplOjExLjBwdDtmb250LWZhbWlseTom
-cXVvdDtDYWxpYnJpJnF1b3Q7LHNhbnMtc2VyaWYiPiBzdXp1a2kgYWtpaGlybyg8L3NwYW4+PHNw
-YW4gc3R5bGU9ImZvbnQtc2l6ZToxMS4wcHQiPumItOacqDwvc3Bhbj48c3BhbiBzdHlsZT0iZm9u
-dC1zaXplOjExLjBwdDtmb250LWZhbWlseTomcXVvdDtDYWxpYnJpJnF1b3Q7LHNhbnMtc2VyaWYi
-Pg0KPC9zcGFuPjxzcGFuIHN0eWxlPSJmb250LXNpemU6MTEuMHB0Ij7nq6Dmtak8L3NwYW4+PHNw
-YW4gbGFuZz0iRU4tVVMiIHN0eWxlPSJmb250LXNpemU6MTEuMHB0O2ZvbnQtZmFtaWx5OiZxdW90
-O0NhbGlicmkmcXVvdDssc2Fucy1zZXJpZiI+IOKWoTwvc3Bhbj48c3BhbiBzdHlsZT0iZm9udC1z
-aXplOjExLjBwdCI+77yz77y377yjPC9zcGFuPjxzcGFuIGxhbmc9IkVOLVVTIiBzdHlsZT0iZm9u
-dC1zaXplOjExLjBwdDtmb250LWZhbWlseTomcXVvdDtDYW1icmlhIE1hdGgmcXVvdDssc2VyaWYi
-PuKXrzwvc3Bhbj48c3BhbiBzdHlsZT0iZm9udC1zaXplOjExLjBwdCI+77yh77yj77y0PC9zcGFu
-PjxzcGFuIGxhbmc9IkVOLVVTIiBzdHlsZT0iZm9udC1zaXplOjExLjBwdDtmb250LWZhbWlseTom
-cXVvdDtDYWxpYnJpJnF1b3Q7LHNhbnMtc2VyaWYiPikNCjxicj4NCjxiPlNlbnQ6PC9iPiBXZWRu
-ZXNkYXksIEp1bHkgMSwgMjAyMCAyOjA5IFBNPGJyPg0KPGI+VG86PC9iPiBNb2hhbW1lZCBCaWxs
-b28gJmx0O21hYkBtYWItbGFicy5jb20mZ3Q7PGJyPg0KPGI+Q2M6PC9iPiBjaXAtZGV2QGxpc3Rz
-LmNpcC1wcm9qZWN0Lm9yZzxicj4NCjxiPlN1YmplY3Q6PC9iPiBSRTogW2NpcC1kZXZdIFNldHRp
-bmcgdXAgU1dVcGRhdGU8bzpwPjwvbzpwPjwvc3Bhbj48L3A+DQo8L2Rpdj4NCjwvZGl2Pg0KPHAg
-Y2xhc3M9Ik1zb05vcm1hbCI+PHNwYW4gbGFuZz0iRU4tVVMiPjxvOnA+Jm5ic3A7PC9vOnA+PC9z
-cGFuPjwvcD4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxzcGFuIGxhbmc9IkVOLVVTIiBzdHlsZT0i
-Zm9udC1zaXplOjExLjBwdDtmb250LWZhbWlseTrmuLjjgrTjgrfjg4Pjgq8iPkhpIE1vaGFtbWVk
-LDxvOnA+PC9vOnA+PC9zcGFuPjwvcD4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxzcGFuIGxhbmc9
-IkVOLVVTIiBzdHlsZT0iZm9udC1zaXplOjExLjBwdDtmb250LWZhbWlseTrmuLjjgrTjgrfjg4Pj
-gq8iPjxvOnA+Jm5ic3A7PC9vOnA+PC9zcGFuPjwvcD4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxz
-cGFuIGxhbmc9IkVOLVVTIj4mZ3Q7IFNob3VsZCBJIGJlIHVzaW5nIHRoZSBpbnN0cnVjdGlvbnMg
-b3V0bGluZWQgaW4NCjxhIGhyZWY9Imh0dHBzOi8vZ2l0bGFiLmNvbS9jaXAtcHJvamVjdC9jaXAt
-c3ctdXBkYXRlcy9jaXAtc3ctdXBkYXRlcy1kZW1vIj5odHRwczovL2dpdGxhYi5jb20vY2lwLXBy
-b2plY3QvY2lwLXN3LXVwZGF0ZXMvY2lwLXN3LXVwZGF0ZXMtZGVtbzwvYT4gdG8gcnVuIGEgYmFz
-aWMgdXBkYXRlIG9mIHRoZSBDSVAgaW1hZ2Ugb24gYSBCQkIgZnJvbSBoYXdrQml0PyBDYW4gdGhl
-IHVwZGF0ZSBwcm9jZXNzIGJlIHZlcmlmaWVkIHVzaW5nIGhhd2tiaXQNCiBhbmQvb3IgdGhlIEJC
-Qj8gPG86cD48L286cD48L3NwYW4+PC9wPg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNwYW4gbGFu
-Zz0iRU4tVVMiIHN0eWxlPSJmb250LXNpemU6MTEuMHB0O2ZvbnQtZmFtaWx5Oua4uOOCtOOCt+OD
-g+OCryI+WWVzLCB5b3UgY2FuIHZlcmlmeSBhIGJhc2ljIHVwZGF0ZSBwcm9jZXNzIHZpYSBSRUFE
-TUUubWQgaW4gY2lwLXN3LXVwZGF0ZXMtZGVtbyByZXBvc2l0b3J5LjxvOnA+PC9vOnA+PC9zcGFu
-PjwvcD4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxzcGFuIGxhbmc9IkVOLVVTIiBzdHlsZT0iZm9u
-dC1zaXplOjExLjBwdDtmb250LWZhbWlseTrmuLjjgrTjgrfjg4Pjgq8iPkl0IHVzZXMgQkJCIGFu
-ZCBoYXdrQml0LjxvOnA+PC9vOnA+PC9zcGFuPjwvcD4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxz
-cGFuIGxhbmc9IkVOLVVTIiBzdHlsZT0iZm9udC1zaXplOjExLjBwdDtmb250LWZhbWlseTrmuLjj
-grTjgrfjg4Pjgq8iPlBsZWFzZSBsZXQgbWUga25vdyBpZiB5b3UgaGF2ZSBhIHByb2JsZW0gYWJv
-dXQgdGhlIGluc3RydWN0aW9ucyB3cml0dGVuIGluIHRoZSBSRUFETUUubWQuPG86cD48L286cD48
-L3NwYW4+PC9wPg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNwYW4gbGFuZz0iRU4tVVMiIHN0eWxl
-PSJmb250LXNpemU6MTEuMHB0O2ZvbnQtZmFtaWx5Oua4uOOCtOOCt+ODg+OCryI+Tk9URTogTm93
-IEkgaGF2ZSBhIHByb2JsZW0gd2l0aCB0aGUgZGVtby4gSTwvc3Bhbj48c3BhbiBzdHlsZT0iZm9u
-dC1zaXplOjExLjBwdDtmb250LWZhbWlseTrmuLjjgrTjgrfjg4Pjgq8iPuKAmTxzcGFuIGxhbmc9
-IkVOLVVTIj5sbCBtYWtlIHRoZSBpc3N1ZSBhYm91dCBpdCBpbiBjaXAtc3ctdXBkYXRlcy10YXNr
-cyByZXBvc2l0b3J5DQogbGF0ZXIuPG86cD48L286cD48L3NwYW4+PC9zcGFuPjwvcD4NCjxwIGNs
-YXNzPSJNc29Ob3JtYWwiPjxzcGFuIGxhbmc9IkVOLVVTIiBzdHlsZT0iZm9udC1zaXplOjExLjBw
-dDtmb250LWZhbWlseTrmuLjjgrTjgrfjg4Pjgq8iPjxvOnA+Jm5ic3A7PC9vOnA+PC9zcGFuPjwv
-cD4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxzcGFuIGxhbmc9IkVOLVVTIj4mZ3Q7IEFsc28sIHRo
-ZXJlIGxvb2tzIHRvIGJlIGEgcGF0Y2hzZXQgdG8gYnJpbmcgaW4gc3d1cGRhdGUgdG8gY2lwLWNv
-cmUgKDxhIGhyZWY9Imh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcHJvamVjdC9jaXAtZGV2
-L2xpc3QvP3Nlcmllcz0zMDk3NDEiPmh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcHJvamVj
-dC9jaXAtZGV2L2xpc3QvP3Nlcmllcz0zMDk3NDE8L2E+KS4NCiBTaG91bGQgSSB3YWl0IGZvciB0
-aGlzIHBhdGNoc2V0IHRvIGJlIGFwcHJvdmVkPzxvOnA+PC9vOnA+PC9zcGFuPjwvcD4NCjxwIGNs
-YXNzPSJNc29Ob3JtYWwiPjxzcGFuIGxhbmc9IkVOLVVTIiBzdHlsZT0iZm9udC1zaXplOjExLjBw
-dDtmb250LWZhbWlseTrmuLjjgrTjgrfjg4Pjgq8iPlRoZSBwYXRjaHNldCBpcyBmb3IgeDg2IHdp
-dGggVUVGSSB0byBwcm92aWRlIHVwZGF0YWJsZSBzZWN1cmUgYm9vdCBmb3IgVUVGSS48bzpwPjwv
-bzpwPjwvc3Bhbj48L3A+DQo8cCBjbGFzcz0iTXNvTm9ybWFsIj48c3BhbiBsYW5nPSJFTi1VUyIg
-c3R5bGU9ImZvbnQtc2l6ZToxMS4wcHQ7Zm9udC1mYW1pbHk65ri444K044K344OD44KvIj5JdCB1
-c2VzIEVGSSBCb290IEd1YXJkICg8L3NwYW4+PHNwYW4gbGFuZz0iRU4tVVMiPjxhIGhyZWY9Imh0
-dHBzOi8vZ2l0aHViLmNvbS9zaWVtZW5zL2VmaWJvb3RndWFyZCI+aHR0cHM6Ly9naXRodWIuY29t
-L3NpZW1lbnMvZWZpYm9vdGd1YXJkPC9hPikNCjwvc3Bhbj48c3BhbiBsYW5nPSJFTi1VUyIgc3R5
-bGU9ImZvbnQtc2l6ZToxMS4wcHQ7Zm9udC1mYW1pbHk65ri444K044K344OD44KvIj5pbnN0ZWFk
-IG9mIHUtYm9vdC48bzpwPjwvbzpwPjwvc3Bhbj48L3A+DQo8cCBjbGFzcz0iTXNvTm9ybWFsIj48
-c3BhbiBsYW5nPSJFTi1VUyIgc3R5bGU9ImZvbnQtc2l6ZToxMS4wcHQ7Zm9udC1mYW1pbHk65ri4
-44K044K344OD44KvIj5JdCB3aWxsIGJlIGFibGUgdG8gY292ZXIgdGhlIG1haW4gdXNlIGNhc2Vz
-IGZvciBzb2Z0d2FyZSB1cGRhdGUgb24gZGV2aWNlcy48bzpwPjwvbzpwPjwvc3Bhbj48L3A+DQo8
-cCBjbGFzcz0iTXNvTm9ybWFsIj48c3BhbiBsYW5nPSJFTi1VUyIgc3R5bGU9ImZvbnQtc2l6ZTox
-MS4wcHQ7Zm9udC1mYW1pbHk65ri444K044K344OD44KvIj5BbHRob3VnaCBjaXAtc3ctdXBkYXRl
-cy1kZW1vIHJlcG9zaXRvcnkgZG9lc248L3NwYW4+PHNwYW4gc3R5bGU9ImZvbnQtc2l6ZToxMS4w
-cHQ7Zm9udC1mYW1pbHk65ri444K044K344OD44KvIj7igJk8c3BhbiBsYW5nPSJFTi1VUyI+dCBp
-bmNsdWRlIHRoZSBkZW1vIGZvciB4ODYgd2l0aCBVRUZJIGF0IHRoZSBtb21lbnQsPG86cD48L286
-cD48L3NwYW4+PC9zcGFuPjwvcD4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxzcGFuIGxhbmc9IkVO
-LVVTIiBzdHlsZT0iZm9udC1zaXplOjExLjBwdDtmb250LWZhbWlseTrmuLjjgrTjgrfjg4Pjgq8i
-PnlvdSBjYW4gdHJ5IGJhc2ljIHVwZGF0ZSBmZWF0dXJlcyB1c2luZyBCQkIuPG86cD48L286cD48
-L3NwYW4+PC9wPg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNwYW4gbGFuZz0iRU4tVVMiIHN0eWxl
-PSJmb250LXNpemU6MTEuMHB0O2ZvbnQtZmFtaWx5Oua4uOOCtOOCt+ODg+OCryI+PG86cD4mbmJz
-cDs8L286cD48L3NwYW4+PC9wPg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNwYW4gbGFuZz0iRU4t
-VVMiIHN0eWxlPSJmb250LXNpemU6MTEuMHB0O2ZvbnQtZmFtaWx5Oua4uOOCtOOCt+ODg+OCryI+
-VGhhbmtzLDxvOnA+PC9vOnA+PC9zcGFuPjwvcD4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxzcGFu
-IGxhbmc9IkVOLVVTIiBzdHlsZT0iZm9udC1zaXplOjExLjBwdDtmb250LWZhbWlseTrmuLjjgrTj
-grfjg4Pjgq8iPlN1enVraTxvOnA+PC9vOnA+PC9zcGFuPjwvcD4NCjxwIGNsYXNzPSJNc29Ob3Jt
-YWwiPjxzcGFuIGxhbmc9IkVOLVVTIiBzdHlsZT0iZm9udC1zaXplOjExLjBwdDtmb250LWZhbWls
-eTrmuLjjgrTjgrfjg4Pjgq8iPjxvOnA+Jm5ic3A7PC9vOnA+PC9zcGFuPjwvcD4NCjxwIGNsYXNz
-PSJNc29Ob3JtYWwiPjxiPjxzcGFuIGxhbmc9IkVOLVVTIiBzdHlsZT0iZm9udC1zaXplOjExLjBw
-dDtmb250LWZhbWlseTomcXVvdDtDYWxpYnJpJnF1b3Q7LHNhbnMtc2VyaWYiPkZyb206PC9zcGFu
-PjwvYj48c3BhbiBsYW5nPSJFTi1VUyIgc3R5bGU9ImZvbnQtc2l6ZToxMS4wcHQ7Zm9udC1mYW1p
-bHk6JnF1b3Q7Q2FsaWJyaSZxdW90OyxzYW5zLXNlcmlmIj4NCjxhIGhyZWY9Im1haWx0bzpjaXAt
-ZGV2QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZyI+Y2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmc8
-L2E+ICZsdDs8YSBocmVmPSJtYWlsdG86Y2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmciPmNp
-cC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnPC9hPiZndDsNCjxiPk9uIEJlaGFsZiBPZiA8L2I+
-TW9oYW1tZWQgQmlsbG9vPGJyPg0KPGI+U2VudDo8L2I+IFdlZG5lc2RheSwgSnVseSAxLCAyMDIw
-IDc6NDkgQU08YnI+DQo8Yj5Ubzo8L2I+IDxhIGhyZWY9Im1haWx0bzpjaXAtZGV2QGxpc3RzLmNp
-cC1wcm9qZWN0Lm9yZyI+Y2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmc8L2E+PGJyPg0KPGI+
-U3ViamVjdDo8L2I+IFtjaXAtZGV2XSBTZXR0aW5nIHVwIFNXVXBkYXRlPG86cD48L286cD48L3Nw
-YW4+PC9wPg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNwYW4gbGFuZz0iRU4tVVMiPjxvOnA+Jm5i
-c3A7PC9vOnA+PC9zcGFuPjwvcD4NCjxkaXY+DQo8ZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+
-PHNwYW4gbGFuZz0iRU4tVVMiPkhlbGxvLDxvOnA+PC9vOnA+PC9zcGFuPjwvcD4NCjwvZGl2Pg0K
-PGRpdj4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxzcGFuIGxhbmc9IkVOLVVTIj48bzpwPiZuYnNw
-OzwvbzpwPjwvc3Bhbj48L3A+DQo8L2Rpdj4NCjxkaXY+DQo8cCBjbGFzcz0iTXNvTm9ybWFsIj48
-c3BhbiBsYW5nPSJFTi1VUyI+U2hvdWxkIEkgYmUgdXNpbmcgdGhlIGluc3RydWN0aW9ucyBvdXRs
-aW5lZCBpbg0KPGEgaHJlZj0iaHR0cHM6Ly9naXRsYWIuY29tL2NpcC1wcm9qZWN0L2NpcC1zdy11
-cGRhdGVzL2NpcC1zdy11cGRhdGVzLWRlbW8iPmh0dHBzOi8vZ2l0bGFiLmNvbS9jaXAtcHJvamVj
-dC9jaXAtc3ctdXBkYXRlcy9jaXAtc3ctdXBkYXRlcy1kZW1vPC9hPiB0byBydW4gYSBiYXNpYyB1
-cGRhdGUgb2YgdGhlIENJUCBpbWFnZSBvbiBhIEJCQiBmcm9tIGhhd2tCaXQ/IENhbiB0aGUgdXBk
-YXRlIHByb2Nlc3MgYmUgdmVyaWZpZWQgdXNpbmcgaGF3a2JpdA0KIGFuZC9vciB0aGUgQkJCPyA8
-bzpwPjwvbzpwPjwvc3Bhbj48L3A+DQo8L2Rpdj4NCjxkaXY+DQo8cCBjbGFzcz0iTXNvTm9ybWFs
-Ij48c3BhbiBsYW5nPSJFTi1VUyI+PG86cD4mbmJzcDs8L286cD48L3NwYW4+PC9wPg0KPC9kaXY+
-DQo8ZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNwYW4gbGFuZz0iRU4tVVMiPkFsc28sIHRo
-ZXJlIGxvb2tzIHRvIGJlIGEgcGF0Y2hzZXQgdG8gYnJpbmcgaW4gc3d1cGRhdGUgdG8gY2lwLWNv
-cmUgKDxhIGhyZWY9Imh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcHJvamVjdC9jaXAtZGV2
-L2xpc3QvP3Nlcmllcz0zMDk3NDEiPmh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcHJvamVj
-dC9jaXAtZGV2L2xpc3QvP3Nlcmllcz0zMDk3NDE8L2E+KS4gU2hvdWxkDQogSSB3YWl0IGZvciB0
-aGlzIHBhdGNoc2V0IHRvIGJlIGFwcHJvdmVkPzxvOnA+PC9vOnA+PC9zcGFuPjwvcD4NCjwvZGl2
-Pg0KPGRpdj4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxzcGFuIGxhbmc9IkVOLVVTIj48bzpwPiZu
-YnNwOzwvbzpwPjwvc3Bhbj48L3A+DQo8L2Rpdj4NCjxkaXY+DQo8cCBjbGFzcz0iTXNvTm9ybWFs
-Ij48c3BhbiBsYW5nPSJFTi1VUyI+LS0gPG86cD48L286cD48L3NwYW4+PC9wPg0KPGRpdj4NCjxk
-aXY+DQo8ZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNwYW4gbGFuZz0iRU4tVVMiPk1vaGFt
-bWVkIEEgQmlsbG9vPG86cD48L286cD48L3NwYW4+PC9wPg0KPC9kaXY+DQo8ZGl2Pg0KPHAgY2xh
-c3M9Ik1zb05vcm1hbCI+PHNwYW4gbGFuZz0iRU4tVVMiPkZvdW5kZXI8bzpwPjwvbzpwPjwvc3Bh
-bj48L3A+DQo8L2Rpdj4NCjxkaXY+DQo8cCBjbGFzcz0iTXNvTm9ybWFsIj48c3BhbiBsYW5nPSJF
-Ti1VUyI+TUFCIExhYnMsIExMQzxvOnA+PC9vOnA+PC9zcGFuPjwvcD4NCjwvZGl2Pg0KPGRpdj4N
-CjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxzcGFuIGxhbmc9IkVOLVVTIj48YSBocmVmPSJodHRwOi8v
-d3d3Lm1hYi1sYWJzLmNvbSIgdGFyZ2V0PSJfYmxhbmsiPnd3dy5tYWItbGFicy5jb208L2E+PG86
-cD48L286cD48L3NwYW4+PC9wPg0KPC9kaXY+DQo8ZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+
-PHNwYW4gbGFuZz0iRU4tVVMiPjIwMS0zMzgtMjAyMjxvOnA+PC9vOnA+PC9zcGFuPjwvcD4NCjwv
-ZGl2Pg0KPC9kaXY+DQo8L2Rpdj4NCjwvZGl2Pg0KPC9kaXY+DQo8cCBjbGFzcz0iTXNvTm9ybWFs
-Ij48c3BhbiBsYW5nPSJFTi1VUyI+PGJyPg0KLS0gPGJyPg0KTW9oYW1tZWQgQmlsbG9vPGJyPg0K
-TUFCIExhYnMsIExMQzxicj4NCjxhIGhyZWY9Imh0dHA6Ly93d3cubWFiLWxhYnMuY29tIj53d3cu
-bWFiLWxhYnMuY29tPC9hPiA8bzpwPjwvbzpwPjwvc3Bhbj48L3A+DQo8L2Rpdj4NCjwvYm9keT4N
-CjwvaHRtbD4NCg==
+Let me know what you think.
 
---_000_OSYPR01MB5334D919E8CA6060F4332346D96C0OSYPR01MB5334jpnp_--
+Mohammed
 
---xKKXl8Bu2XNCxI5e0JCL
+On Wed, Jul 1, 2020 at 5:40 AM <akihiro27.suzuki@toshiba.co.jp> wrote:
+
+> Hi Mohammed,
+>
+>
+>
+> > NOTE: Now I have a problem with the demo. I=E2=80=99ll make the issue a=
+bout it
+> in cip-sw-updates-tasks repository later.
+>
+> I=E2=80=99ve made the issue about it:
+> https://gitlab.com/cip-project/cip-sw-updates/cip-sw-updates-tasks/-/issu=
+es/14
+>
+> It might be better to wait for trying cip-sw-updates-demo until the issue
+> is resolved.
+>
+>
+>
+> Thanks,
+> Suzuki
+>
+>
+>
+> *From:* suzuki akihiro(=E9=88=B4=E6=9C=A8 =E7=AB=A0=E6=B5=A9 =E2=96=A1=EF=
+=BC=B3=EF=BC=B7=EF=BC=A3=E2=97=AF=EF=BC=A1=EF=BC=A3=EF=BC=B4)
+> *Sent:* Wednesday, July 1, 2020 2:09 PM
+> *To:* Mohammed Billoo <mab@mab-labs.com>
+> *Cc:* cip-dev@lists.cip-project.org
+> *Subject:* RE: [cip-dev] Setting up SWUpdate
+>
+>
+>
+> Hi Mohammed,
+>
+>
+>
+> > Should I be using the instructions outlined in
+> https://gitlab.com/cip-project/cip-sw-updates/cip-sw-updates-demo to run
+> a basic update of the CIP image on a BBB from hawkBit? Can the update
+> process be verified using hawkbit and/or the BBB?
+>
+> Yes, you can verify a basic update process via README.md in
+> cip-sw-updates-demo repository.
+>
+> It uses BBB and hawkBit.
+>
+> Please let me know if you have a problem about the instructions written i=
+n
+> the README.md.
+>
+> NOTE: Now I have a problem with the demo. I=E2=80=99ll make the issue abo=
+ut it in
+> cip-sw-updates-tasks repository later.
+>
+>
+>
+> > Also, there looks to be a patchset to bring in swupdate to cip-core (
+> https://patchwork.kernel.org/project/cip-dev/list/?series=3D309741). Shou=
+ld
+> I wait for this patchset to be approved?
+>
+> The patchset is for x86 with UEFI to provide updatable secure boot for
+> UEFI.
+>
+> It uses EFI Boot Guard (https://github.com/siemens/efibootguard) instead
+> of u-boot.
+>
+> It will be able to cover the main use cases for software update on device=
+s.
+>
+> Although cip-sw-updates-demo repository doesn=E2=80=99t include the demo =
+for x86
+> with UEFI at the moment,
+>
+> you can try basic update features using BBB.
+>
+>
+>
+> Thanks,
+>
+> Suzuki
+>
+>
+>
+> *From:* cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> *On
+> Behalf Of *Mohammed Billoo
+> *Sent:* Wednesday, July 1, 2020 7:49 AM
+> *To:* cip-dev@lists.cip-project.org
+> *Subject:* [cip-dev] Setting up SWUpdate
+>
+>
+>
+> Hello,
+>
+>
+>
+> Should I be using the instructions outlined in
+> https://gitlab.com/cip-project/cip-sw-updates/cip-sw-updates-demo to run
+> a basic update of the CIP image on a BBB from hawkBit? Can the update
+> process be verified using hawkbit and/or the BBB?
+>
+>
+>
+> Also, there looks to be a patchset to bring in swupdate to cip-core (
+> https://patchwork.kernel.org/project/cip-dev/list/?series=3D309741). Shou=
+ld
+> I wait for this patchset to be approved?
+>
+>
+>
+> --
+>
+> Mohammed A Billoo
+>
+> Founder
+>
+> MAB Labs, LLC
+>
+> www.mab-labs.com
+>
+> 201-338-2022
+>
+>
+> --
+> Mohammed Billoo
+> MAB Labs, LLC
+> www.mab-labs.com
+>
+
+
+--=20
+Mohammed A Billoo
+Founder
+MAB Labs, LLC
+www.mab-labs.com
+201-338-2022
+
+--0000000000005c82c805a95ffc67
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div>Suzuki,</div><div><br></div><div>I can look into this=
+ issue as well (when my BBB comes in). It&#39;s focused enough that I can l=
+earn enough about SWUpdate and how it fits into CIP.</div><div><br></div><d=
+iv>Let me know what you think.</div><div><br></div><div>Mohammed<br></div><=
+/div><br><div class=3D"gmail_quote"><div dir=3D"ltr" class=3D"gmail_attr">O=
+n Wed, Jul 1, 2020 at 5:40 AM &lt;<a href=3D"mailto:akihiro27.suzuki@toshib=
+a.co.jp">akihiro27.suzuki@toshiba.co.jp</a>&gt; wrote:<br></div><blockquote=
+ class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px so=
+lid rgb(204,204,204);padding-left:1ex">
+
+
+
+
+
+<div lang=3D"JA">
+<div>
+<p class=3D"MsoNormal"><span style=3D"font-size:11pt;font-family:=E6=B8=B8=
+=
+=E3=82=B4=E3=82=B7=E3=83=83=E3=82=AF" lang=3D"EN-US">Hi Mohammed,<u></u><u=
+></u></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11pt;font-family:=E6=B8=B8=
+=
+=E3=82=B4=E3=82=B7=E3=83=83=E3=82=AF" lang=3D"EN-US"><u></u>=C2=A0<u></u><=
+/span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11pt;font-family:=E6=B8=B8=
+=
+=E3=82=B4=E3=82=B7=E3=83=83=E3=82=AF" lang=3D"EN-US">&gt; NOTE: Now I have=
+ a problem with the demo. I</span><span style=3D"font-size:11pt;font-family=
+:=E6=B8=B8=E3=82=B4=E3=82=B7=E3=83=83=E3=82=AF">=E2=80=99<span lang=3D"EN-U=
+S">ll make the issue about it in cip-sw-updates-tasks repository
+ later.<u></u><u></u></span></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11pt;font-family:=E6=B8=B8=
+=
+=E3=82=B4=E3=82=B7=E3=83=83=E3=82=AF" lang=3D"EN-US">I=E2=80=99ve made the=
+ issue about it:
+<a href=3D"https://gitlab.com/cip-project/cip-sw-updates/cip-sw-updates-ta=
+sks/-/issues/14" target=3D"_blank">
+https://gitlab.com/cip-project/cip-sw-updates/cip-sw-updates-tasks/-/issue=
+s/14</a><u></u><u></u></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11pt;font-family:=E6=B8=B8=
+=
+=E3=82=B4=E3=82=B7=E3=83=83=E3=82=AF" lang=3D"EN-US">It might be better to=
+ wait for trying cip-sw-updates-demo until the issue is resolved.<u></u><u>=
+</u></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11pt;font-family:=E6=B8=B8=
+=
+=E3=82=B4=E3=82=B7=E3=83=83=E3=82=AF" lang=3D"EN-US"><u></u>=C2=A0<u></u><=
+/span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11pt;font-family:=E6=B8=B8=
+=
+=E3=82=B4=E3=82=B7=E3=83=83=E3=82=AF" lang=3D"EN-US">Thanks,<br>
+Suzuki<u></u><u></u></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11pt;font-family:=E6=B8=B8=
+=
+=E3=82=B4=E3=82=B7=E3=83=83=E3=82=AF" lang=3D"EN-US"><u></u>=C2=A0<u></u><=
+/span></p>
+<div>
+<div style=3D"border-color:rgb(225,225,225) currentcolor currentcolor;bord=
+er-style:solid none none;border-width:1pt medium medium;padding:3pt 0mm 0mm=
+">
+<p class=3D"MsoNormal"><b><span style=3D"font-size:11pt;font-family:&quot;=
+Calibri&quot;,sans-serif" lang=3D"EN-US">From:</span></b><span style=3D"fon=
+t-size:11pt;font-family:&quot;Calibri&quot;,sans-serif" lang=3D"EN-US"> suz=
+uki akihiro(</span><span style=3D"font-size:11pt">=E9=88=B4=E6=9C=A8</span>=
+<span style=3D"font-size:11pt;font-family:&quot;Calibri&quot;,sans-serif">
+</span><span style=3D"font-size:11pt">=E7=AB=A0=E6=B5=A9</span><span style=
+=
+=3D"font-size:11pt;font-family:&quot;Calibri&quot;,sans-serif" lang=3D"EN-=
+US"> =E2=96=A1</span><span style=3D"font-size:11pt">=EF=BC=B3=EF=BC=B7=EF=
+=BC=A3</span><span style=3D"font-size:11pt;font-family:&quot;Cambria Math&=
+quot;,serif" lang=3D"EN-US">=E2=97=AF</span><span style=3D"font-size:11pt">=
+=
+=EF=BC=A1=EF=BC=A3=EF=BC=B4</span><span style=3D"font-size:11pt;font-famil=
+y:&quot;Calibri&quot;,sans-serif" lang=3D"EN-US">)
+<br>
+<b>Sent:</b> Wednesday, July 1, 2020 2:09 PM<br>
+<b>To:</b> Mohammed Billoo &lt;<a href=3D"mailto:mab@mab-labs.com" target=
+=3D"_blank">mab@mab-labs.com</a>&gt;<br>
+<b>Cc:</b> <a href=3D"mailto:cip-dev@lists.cip-project.org" target=3D"_bla=
+nk">cip-dev@lists.cip-project.org</a><br>
+<b>Subject:</b> RE: [cip-dev] Setting up SWUpdate<u></u><u></u></span></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><u></u>=C2=A0<u></u></span></p=
+>
+<p class=3D"MsoNormal"><span style=3D"font-size:11pt;font-family:=E6=B8=B8=
+=
+=E3=82=B4=E3=82=B7=E3=83=83=E3=82=AF" lang=3D"EN-US">Hi Mohammed,<u></u><u=
+></u></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11pt;font-family:=E6=B8=B8=
+=
+=E3=82=B4=E3=82=B7=E3=83=83=E3=82=AF" lang=3D"EN-US"><u></u>=C2=A0<u></u><=
+/span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">&gt; Should I be using the ins=
+tructions outlined in
+<a href=3D"https://gitlab.com/cip-project/cip-sw-updates/cip-sw-updates-de=
+mo" target=3D"_blank">https://gitlab.com/cip-project/cip-sw-updates/cip-sw-=
+updates-demo</a> to run a basic update of the CIP image on a BBB from hawkB=
+it? Can the update process be verified using hawkbit
+ and/or the BBB? <u></u><u></u></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11pt;font-family:=E6=B8=B8=
+=
+=E3=82=B4=E3=82=B7=E3=83=83=E3=82=AF" lang=3D"EN-US">Yes, you can verify a=
+ basic update process via README.md in cip-sw-updates-demo repository.<u></=
+u><u></u></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11pt;font-family:=E6=B8=B8=
+=
+=E3=82=B4=E3=82=B7=E3=83=83=E3=82=AF" lang=3D"EN-US">It uses BBB and hawkB=
+it.<u></u><u></u></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11pt;font-family:=E6=B8=B8=
+=
+=E3=82=B4=E3=82=B7=E3=83=83=E3=82=AF" lang=3D"EN-US">Please let me know if=
+ you have a problem about the instructions written in the README.md.<u></u>=
+<u></u></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11pt;font-family:=E6=B8=B8=
+=
+=E3=82=B4=E3=82=B7=E3=83=83=E3=82=AF" lang=3D"EN-US">NOTE: Now I have a pr=
+oblem with the demo. I</span><span style=3D"font-size:11pt;font-family:=E6=
+=B8=B8=E3=82=B4=E3=82=B7=E3=83=83=E3=82=AF">=E2=80=99<span lang=3D"EN-US">=
+ll make the issue about it in cip-sw-updates-tasks repository
+ later.<u></u><u></u></span></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11pt;font-family:=E6=B8=B8=
+=
+=E3=82=B4=E3=82=B7=E3=83=83=E3=82=AF" lang=3D"EN-US"><u></u>=C2=A0<u></u><=
+/span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">&gt; Also, there looks to be a=
+ patchset to bring in swupdate to cip-core (<a href=3D"https://patchwork.ke=
+rnel.org/project/cip-dev/list/?series=3D309741" target=3D"_blank">https://p=
+atchwork.kernel.org/project/cip-dev/list/?series=3D309741</a>).
+ Should I wait for this patchset to be approved?<u></u><u></u></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11pt;font-family:=E6=B8=B8=
+=
+=E3=82=B4=E3=82=B7=E3=83=83=E3=82=AF" lang=3D"EN-US">The patchset is for x=
+86 with UEFI to provide updatable secure boot for UEFI.<u></u><u></u></span=
+></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11pt;font-family:=E6=B8=B8=
+=
+=E3=82=B4=E3=82=B7=E3=83=83=E3=82=AF" lang=3D"EN-US">It uses EFI Boot Guar=
+d (</span><span lang=3D"EN-US"><a href=3D"https://github.com/siemens/efiboo=
+tguard" target=3D"_blank">https://github.com/siemens/efibootguard</a>)
+</span><span style=3D"font-size:11pt;font-family:=E6=B8=B8=E3=82=B4=E3=82=
+=B7=E3=83=83=E3=82=AF" lang=3D"EN-US">instead of u-boot.<u></u><u></u></sp=
+an></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11pt;font-family:=E6=B8=B8=
+=
+=E3=82=B4=E3=82=B7=E3=83=83=E3=82=AF" lang=3D"EN-US">It will be able to co=
+ver the main use cases for software update on devices.<u></u><u></u></span>=
+</p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11pt;font-family:=E6=B8=B8=
+=
+=E3=82=B4=E3=82=B7=E3=83=83=E3=82=AF" lang=3D"EN-US">Although cip-sw-updat=
+es-demo repository doesn</span><span style=3D"font-size:11pt;font-family:=
+=E6=B8=B8=E3=82=B4=E3=82=B7=E3=83=83=E3=82=AF">=E2=80=99<span lang=3D"EN-U=
+S">t include the demo for x86 with UEFI at the moment,<u></u><u></u></span>=
+</span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11pt;font-family:=E6=B8=B8=
+=
+=E3=82=B4=E3=82=B7=E3=83=83=E3=82=AF" lang=3D"EN-US">you can try basic upd=
+ate features using BBB.<u></u><u></u></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11pt;font-family:=E6=B8=B8=
+=
+=E3=82=B4=E3=82=B7=E3=83=83=E3=82=AF" lang=3D"EN-US"><u></u>=C2=A0<u></u><=
+/span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11pt;font-family:=E6=B8=B8=
+=
+=E3=82=B4=E3=82=B7=E3=83=83=E3=82=AF" lang=3D"EN-US">Thanks,<u></u><u></u>=
+</span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11pt;font-family:=E6=B8=B8=
+=
+=E3=82=B4=E3=82=B7=E3=83=83=E3=82=AF" lang=3D"EN-US">Suzuki<u></u><u></u><=
+/span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11pt;font-family:=E6=B8=B8=
+=
+=E3=82=B4=E3=82=B7=E3=83=83=E3=82=AF" lang=3D"EN-US"><u></u>=C2=A0<u></u><=
+/span></p>
+<p class=3D"MsoNormal"><b><span style=3D"font-size:11pt;font-family:&quot;=
+Calibri&quot;,sans-serif" lang=3D"EN-US">From:</span></b><span style=3D"fon=
+t-size:11pt;font-family:&quot;Calibri&quot;,sans-serif" lang=3D"EN-US">
+<a href=3D"mailto:cip-dev@lists.cip-project.org" target=3D"_blank">cip-dev=
+@lists.cip-project.org</a> &lt;<a href=3D"mailto:cip-dev@lists.cip-project.=
+org" target=3D"_blank">cip-dev@lists.cip-project.org</a>&gt;
+<b>On Behalf Of </b>Mohammed Billoo<br>
+<b>Sent:</b> Wednesday, July 1, 2020 7:49 AM<br>
+<b>To:</b> <a href=3D"mailto:cip-dev@lists.cip-project.org" target=3D"_bla=
+nk">cip-dev@lists.cip-project.org</a><br>
+<b>Subject:</b> [cip-dev] Setting up SWUpdate<u></u><u></u></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><u></u>=C2=A0<u></u></span></p=
+>
+<div>
+<div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">Hello,<u></u><u></u></span></p=
+>
+</div>
+<div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><u></u>=C2=A0<u></u></span></p=
+>
+</div>
+<div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">Should I be using the instruct=
+ions outlined in
+<a href=3D"https://gitlab.com/cip-project/cip-sw-updates/cip-sw-updates-de=
+mo" target=3D"_blank">https://gitlab.com/cip-project/cip-sw-updates/cip-sw-=
+updates-demo</a> to run a basic update of the CIP image on a BBB from hawkB=
+it? Can the update process be verified using hawkbit
+ and/or the BBB? <u></u><u></u></span></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><u></u>=C2=A0<u></u></span></p=
+>
+</div>
+<div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">Also, there looks to be a patc=
+hset to bring in swupdate to cip-core (<a href=3D"https://patchwork.kernel.=
+org/project/cip-dev/list/?series=3D309741" target=3D"_blank">https://patchw=
+ork.kernel.org/project/cip-dev/list/?series=3D309741</a>). Should
+ I wait for this patchset to be approved?<u></u><u></u></span></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><u></u>=C2=A0<u></u></span></p=
+>
+</div>
+<div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">-- <u></u><u></u></span></p>
+<div>
+<div>
+<div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">Mohammed A Billoo<u></u><u></u=
+></span></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">Founder<u></u><u></u></span></=
+p>
+</div>
+<div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">MAB Labs, LLC<u></u><u></u></s=
+pan></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><a href=3D"http://www.mab-labs=
+.com" target=3D"_blank">www.mab-labs.com</a><u></u><u></u></span></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">201-338-2022<u></u><u></u></sp=
+an></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><br>
+-- <br>
+Mohammed Billoo<br>
+MAB Labs, LLC<br>
+<a href=3D"http://www.mab-labs.com" target=3D"_blank">www.mab-labs.com</a>=
+ <u></u><u></u></span></p>
+</div>
+</div>
+
+</blockquote></div><br clear=3D"all"><br>-- <br><div dir=3D"ltr" class=3D"=
+gmail_signature"><div dir=3D"ltr"><div>Mohammed A Billoo</div><div>Founder<=
+/div><div>MAB Labs, LLC</div><div><a href=3D"http://www.mab-labs.com" targe=
+t=3D"_blank">www.mab-labs.com</a></div><div>201-338-2022<br></div></div></d=
+iv>
+<br>-- <br>Mohammed Billoo<br />MAB Labs, LLC<br />www.mab-labs.com
+
+--0000000000005c82c805a95ffc67--
+
+--22geoBbfOea1j8yUMoKP
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -369,12 +488,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#4875): https://lists.cip-project.org/g/cip-dev/message=
-/4875
+View/Reply Online (#4876): https://lists.cip-project.org/g/cip-dev/message=
+/4876
 Mute This Topic: https://lists.cip-project.org/mt/75224479/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---xKKXl8Bu2XNCxI5e0JCL--
+--22geoBbfOea1j8yUMoKP--
