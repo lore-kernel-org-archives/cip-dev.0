@@ -1,4 +1,4 @@
-Return-Path: <SRS0=ZTnn=AT=lists.cip-project.org=bounce+64572+4905+4520388+8129055@kernel.org>
+Return-Path: <SRS0=Soxr=AT=lists.cip-project.org=bounce+64572+4907+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -7,33 +7,33 @@ X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83197C433DF
-	for <cip-dev@archiver.kernel.org>; Wed,  8 Jul 2020 15:46:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3A41C433E1
+	for <cip-dev@archiver.kernel.org>; Wed,  8 Jul 2020 15:46:49 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 51B97206DF
-	for <cip-dev@archiver.kernel.org>; Wed,  8 Jul 2020 15:46:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 75BFB207DF
+	for <cip-dev@archiver.kernel.org>; Wed,  8 Jul 2020 15:46:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="k1kCXXYa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51B97206DF
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="MH20tQEV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75BFB207DF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4905+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id ier5YY4521723xX7Zxj2EdCS; Wed, 08 Jul 2020 08:46:46 -0700
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4907+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id mkIIYY4521723xyYifWXuVVB; Wed, 08 Jul 2020 08:46:47 -0700
 X-Received: from wens.tw (wens.tw [140.112.194.72])
- by mx.groups.io with SMTP id smtpd.web12.13611.1594223184681079847
+ by mx.groups.io with SMTP id smtpd.web12.13612.1594223184726015876
  for <cip-dev@lists.cip-project.org>;
  Wed, 08 Jul 2020 08:46:25 -0700
 X-Received: by wens.tw (Postfix, from userid 1000)
-	id 8274160337; Wed,  8 Jul 2020 23:46:17 +0800 (CST)
+	id BE512608FC; Wed,  8 Jul 2020 23:46:17 +0800 (CST)
 From: "Chen-Yu Tsai (Moxa)" <wens@csie.org>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: cip-dev@lists.cip-project.org,
 	JohnsonCH.Chen@moxa.com
-Subject: [cip-dev] [PATCH 4.4.y-cip 15/23] cpufreq: dt: No need to fetch voltage-tolerance
-Date: Wed,  8 Jul 2020 23:45:46 +0800
-Message-Id: <20200708154554.26450-16-wens@csie.org>
+Subject: [cip-dev] [PATCH 4.4.y-cip 22/23] PM / OPP: Remove useless check
+Date: Wed,  8 Jul 2020 23:45:53 +0800
+Message-Id: <20200708154554.26450-23-wens@csie.org>
 In-Reply-To: <20200708154554.26450-1-wens@csie.org>
 References: <20200708154554.26450-1-wens@csie.org>
 MIME-Version: 1.0
@@ -43,178 +43,64 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: HMNeEDJDBJnEKCtATeKVltasx4520388AA=
-Content-Type: multipart/mixed; boundary="Fml3xCWQGwRajPCOgENm"
+X-Gm-Message-State: QYdS88do2rzXapWW9gHxW3q6x4520388AA=
+Content-Type: multipart/mixed; boundary="momUEAru02DWoGJKNfME"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1594223206;
- bh=Y5fsNAzNQPBcZbfjvAT7QVBETcPwjJ9KWYfVIsS5LcM=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1594223207;
+ bh=B0el0livnC/+zz6M3xbpf4JxR5sXx7aq0ayNSVaYy5g=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=k1kCXXYaJ5EywKg1HYNCmAliXC6Nra/15VfkWZMK5L8qzsUnn5Pox4LeRzN45Mb24Ho
- Alv7teQ0RNbJRPVQxw0X3UdayW/hhkoRzYPHVjWLezmzBs1fMAct/c9AXKiVWNBLJ+NBu
- LwzTbZKAc/eRjIsA6p67wv6rPtaJVy2FGVE=
+ b=MH20tQEVU8A9mPJdRfdxtqLBrNf05XHD5+N/KDPgMXu75Sz6HBv1lZdjfFHJzB2MXR3
+ Us1+OS5/pFkT+Ofo+1VWYVyckXjj02ySxAZE+Ce1kZ8Eq0TwTXvzJhtQOm1avizeoZs8z
+ 27cIsMI6Hq+PZMST5p1SyerVlBwS542yyiI=
 
---Fml3xCWQGwRajPCOgENm
+--momUEAru02DWoGJKNfME
 Content-Transfer-Encoding: quoted-printable
 
 From: Viresh Kumar <viresh.kumar@linaro.org>
 
-commit df2c8ec28e73d47392b8cb24828c15c54819da41 upstream.
+commit 21f8a99ce61b2d4b74bd425a5bf7e9efbe162788 upstream.
 
-Its already done by core and we don't need to get it anymore.  And so,
-we don't need to get of node in cpufreq_init() anymore, move that to
-find_supply_name() instead.
+Regulators are optional for devices using OPPs and the OPP core
+shouldn't be printing any errors for such missing regulators.
 
+It was fine before the commit 0c717d0f9cb4, but that failed to update
+this part of the code to remove an 'always true' check and an extra
+unwanted print message.
+
+Fix that now.
+
+Fixes: 0c717d0f9cb4 (PM / OPP: Initialize regulator pointer to an error v=
+alue)
+Reported-by: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Chen-Yu Tsai (Moxa) <wens@csie.org>
 ---
- drivers/cpufreq/cpufreq-dt.c | 46 ++++++++++++++++++------------------
- 1 file changed, 23 insertions(+), 23 deletions(-)
+ drivers/base/power/opp/core.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-index 150a172c7d0a7..bbafd7b63d1a2 100644
---- a/drivers/cpufreq/cpufreq-dt.c
-+++ b/drivers/cpufreq/cpufreq-dt.c
-@@ -33,7 +33,6 @@ struct private_data {
- 	struct device *cpu_dev;
- 	struct regulator *cpu_reg;
- 	struct thermal_cooling_device *cdev;
--	unsigned int voltage_tolerance; /* in percentage */
- 	const char *reg_name;
- };
-=20
-@@ -55,24 +54,38 @@ static int set_target(struct cpufreq_policy *policy, =
-unsigned int index)
-  * An earlier version of opp-v1 bindings used to name the regulator
-  * "cpu0-supply", we still need to handle that for backwards compatibili=
-ty.
-  */
--static const char *find_supply_name(struct device *dev, struct device_no=
-de *np)
-+static const char *find_supply_name(struct device *dev)
- {
-+	struct device_node *np;
- 	struct property *pp;
- 	int cpu =3D dev->id;
-+	const char *name =3D NULL;
-+
-+	np =3D of_node_get(dev->of_node);
-+
-+	/* This must be valid for sure */
-+	if (WARN_ON(!np))
-+		return NULL;
-=20
- 	/* Try "cpu0" for older DTs */
- 	if (!cpu) {
- 		pp =3D of_find_property(np, "cpu0-supply", NULL);
--		if (pp)
--			return "cpu0";
-+		if (pp) {
-+			name =3D "cpu0";
-+			goto node_put;
-+		}
+diff --git a/drivers/base/power/opp/core.c b/drivers/base/power/opp/core.=
+c
+index 7fc3848df17f5..c91eacf8d2ed3 100644
+--- a/drivers/base/power/opp/core.c
++++ b/drivers/base/power/opp/core.c
+@@ -259,9 +259,6 @@ unsigned long dev_pm_opp_get_max_volt_latency(struct =
+device *dev)
+ 	reg =3D opp_table->regulator;
+ 	if (IS_ERR(reg)) {
+ 		/* Regulator may not be required for device */
+-		if (reg)
+-			dev_err(dev, "%s: Invalid regulator (%ld)\n", __func__,
+-				PTR_ERR(reg));
+ 		rcu_read_unlock();
+ 		return 0;
  	}
-=20
- 	pp =3D of_find_property(np, "cpu-supply", NULL);
--	if (pp)
--		return "cpu";
-+	if (pp) {
-+		name =3D "cpu";
-+		goto node_put;
-+	}
-=20
- 	dev_dbg(dev, "no regulator for cpu%d\n", cpu);
--	return NULL;
-+node_put:
-+	of_node_put(np);
-+	return name;
- }
-=20
- static int allocate_resources(int cpu, struct device **cdev,
-@@ -147,7 +160,6 @@ try_again:
- static int cpufreq_init(struct cpufreq_policy *policy)
- {
- 	struct cpufreq_frequency_table *freq_table;
--	struct device_node *np;
- 	struct private_data *priv;
- 	struct device *cpu_dev;
- 	struct regulator *cpu_reg;
-@@ -164,13 +176,6 @@ static int cpufreq_init(struct cpufreq_policy *polic=
-y)
- 		return ret;
- 	}
-=20
--	np =3D of_node_get(cpu_dev->of_node);
--	if (!np) {
--		dev_err(cpu_dev, "failed to find cpu%d node\n", policy->cpu);
--		ret =3D -ENOENT;
--		goto out_put_reg_clk;
--	}
--
- 	/* Get OPP-sharing information from "operating-points-v2" bindings */
- 	ret =3D dev_pm_opp_of_get_sharing_cpus(cpu_dev, policy->cpus);
- 	if (ret) {
-@@ -181,20 +186,20 @@ static int cpufreq_init(struct cpufreq_policy *poli=
-cy)
- 		if (ret =3D=3D -ENOENT)
- 			opp_v1 =3D true;
- 		else
--			goto out_node_put;
-+			goto out_put_reg_clk;
- 	}
-=20
- 	/*
- 	 * OPP layer will be taking care of regulators now, but it needs to kno=
-w
- 	 * the name of the regulator first.
- 	 */
--	name =3D find_supply_name(cpu_dev, np);
-+	name =3D find_supply_name(cpu_dev);
- 	if (name) {
- 		ret =3D dev_pm_opp_set_regulator(cpu_dev, name);
- 		if (ret) {
- 			dev_err(cpu_dev, "Failed to set regulator for cpu%d: %d\n",
- 				policy->cpu, ret);
--			goto out_node_put;
-+			goto out_put_reg_clk;
- 		}
- 	}
-=20
-@@ -244,7 +249,6 @@ static int cpufreq_init(struct cpufreq_policy *policy=
-)
- 	}
-=20
- 	priv->reg_name =3D name;
--	of_property_read_u32(np, "voltage-tolerance", &priv->voltage_tolerance)=
-;
-=20
- 	ret =3D dev_pm_opp_init_cpufreq_table(cpu_dev, &freq_table);
- 	if (ret) {
-@@ -286,8 +290,6 @@ static int cpufreq_init(struct cpufreq_policy *policy=
-)
-=20
- 	policy->cpuinfo.transition_latency =3D transition_latency;
-=20
--	of_node_put(np);
--
- 	return 0;
-=20
- out_free_cpufreq_table:
-@@ -298,8 +300,6 @@ out_free_opp:
- 	dev_pm_opp_of_cpumask_remove_table(policy->cpus);
- 	if (name)
- 		dev_pm_opp_put_regulator(cpu_dev);
--out_node_put:
--	of_node_put(np);
- out_put_reg_clk:
- 	clk_put(cpu_clk);
- 	if (!IS_ERR(cpu_reg))
 --=20
 2.27.0
 
 
---Fml3xCWQGwRajPCOgENm
+--momUEAru02DWoGJKNfME
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -222,12 +108,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#4905): https://lists.cip-project.org/g/cip-dev/message=
-/4905
-Mute This Topic: https://lists.cip-project.org/mt/75379097/4520388
+View/Reply Online (#4907): https://lists.cip-project.org/g/cip-dev/message=
+/4907
+Mute This Topic: https://lists.cip-project.org/mt/75379099/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---Fml3xCWQGwRajPCOgENm--
+--momUEAru02DWoGJKNfME--
