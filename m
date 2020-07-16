@@ -1,4 +1,4 @@
-Return-Path: <SRS0=iMf0=A3=lists.cip-project.org=bounce+64572+4929+4520388+8129055@kernel.org>
+Return-Path: <SRS0=VkBu=A3=lists.cip-project.org=bounce+64572+4930+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -6,145 +6,120 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95C04C433EB
-	for <cip-dev@archiver.kernel.org>; Thu, 16 Jul 2020 01:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA2B4C433DF
+	for <cip-dev@archiver.kernel.org>; Thu, 16 Jul 2020 06:11:43 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id C95FD20791
-	for <cip-dev@archiver.kernel.org>; Thu, 16 Jul 2020 01:29:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 2D73620578
+	for <cip-dev@archiver.kernel.org>; Thu, 16 Jul 2020 06:11:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="WmpWLG98"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C95FD20791
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cybertrust.co.jp
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4929+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id iBh1YY4521723xB8aZ0aY240; Wed, 15 Jul 2020 18:29:56 -0700
-X-Received: from APC01-PU1-obe.outbound.protection.outlook.com (APC01-PU1-obe.outbound.protection.outlook.com [40.107.132.92])
- by mx.groups.io with SMTP id smtpd.web10.6523.1594862994094109600
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="IPhgUJdF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D73620578
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4930+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id aCI2YY4521723xsibbwfbCjy; Wed, 15 Jul 2020 23:11:42 -0700
+X-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+ by mx.groups.io with SMTP id smtpd.web10.9814.1594879901142028182
  for <cip-dev@lists.cip-project.org>;
- Wed, 15 Jul 2020 18:29:55 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MLqegXYB+LE2imPRx/VceqGrYNf0UZCWefO/y0Ng1EyAMV7BOFyyIkpl4TgLoEBcUrvsCadoqq5Qf0v/OAP9S8pxfyw9u4cRrYLE/WpF0HwrS7Gq6z6a6FwulrC2sDMsIuVQsAUg85ZhwLThDUlTMKFI3JnK+aNfOTSYc+tZOcStIBQMFqQoQCpGlc+r5rfWUF31ASxUZlWevKOTQvlgdzc/Sb+1hdy0F6k1jZvLZCaEZIBKDVHCdxS4czVhueOtRCsi9b92sf4RLP8gXWjqG9OAM/B+iBNSkZbZZcQccWRE2rqxeIVRiEbUbHtDbvb67pPEEKUTLpoF6igrrzUDNg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Bd5pFDAUmsujjnpmHRKnnbhWtZ2tFXIVpCjQnY/kV2w=;
- b=FEVl02xjzHRB50BNmev1Zb+ZgbWVqiYpxy4vpdPCwcq9kXPozWM0gA9ZRFdkBP0vFcCtw81Etau/5WD8qX/q7n3OlVDEsUt1wMakYqhkDqGwENiYm9goePZ+juBa57ng81iAZOFcoYeeK7miCsiqqOUUdtECdIWAvDVLobPhYfDdBxJ7kf1EZ8kO2m9zU8M2LieuihhFLQvc+qLyDtR4zmVhdJooUTxqDrP4mNcsNjMEl35SsoaZIqkySKZZHAf72RYZ3l+hf4GZc+tC/CDCvON985F3W7ohAqMvHFWO57UH4tr2inv+6GjjosgPRtBRi1xfEHcuznsEFKGhDsHNUA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cybertrust.co.jp; dmarc=pass action=none
- header.from=cybertrust.co.jp; dkim=pass header.d=cybertrust.co.jp; arc=none
-X-Received: from TY2PR01MB4972.jpnprd01.prod.outlook.com (2603:1096:404:11c::20)
- by TY2PR01MB2889.jpnprd01.prod.outlook.com (2603:1096:404:71::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3174.23; Thu, 16 Jul
- 2020 01:29:34 +0000
-X-Received: from TY2PR01MB4972.jpnprd01.prod.outlook.com
- ([fe80::fdf6:bf77:e369:aa20]) by TY2PR01MB4972.jpnprd01.prod.outlook.com
- ([fe80::fdf6:bf77:e369:aa20%3]) with mapi id 15.20.3174.026; Thu, 16 Jul 2020
- 01:29:34 +0000
-From: "masashi.kudo@cybertrust.co.jp" <masashi.kudo@cybertrust.co.jp>
-To: <cip-dev@lists.cip-project.org>
-Subject: [cip-dev] CIP IRC weekly meeting today
-Thread-Topic: CIP IRC weekly meeting today
-Thread-Index: AdZbEHjVmr+4nIOmTZuqD6Y282OipA==
-Date: Thu, 16 Jul 2020 01:29:34 +0000
-Message-ID: 
- <TY2PR01MB497247C1E04F817F6E364E73A07F0@TY2PR01MB4972.jpnprd01.prod.outlook.com>
-Accept-Language: ja-JP, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [122.216.27.145]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 595621c0-ca62-4f10-2ae7-08d82927b24d
-x-ms-traffictypediagnostic: TY2PR01MB2889:
-x-microsoft-antispam-prvs: 
- <TY2PR01MB28897325B43419FA8C48BBF9A07F0@TY2PR01MB2889.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 
- YvLJMYPOAtn3VTZUFMHIVv1NXkia15/dENxY5S39JAFCR4KcLR5TlDimcnMBP+U08ME11UkxF5Jz/hRU+1qoKP6kgoJCQogJ9zvRrv22438hMAYX/dqomPk7ZMbZsTnqv1mG7gY61sjxcxJrqYacHP8Jmach3ywXTzI0AncPMSTDFOA94nejwk+lBluUzZ8AKYLTLzU21Gq8xcASeU8tgmOhOcfstrJxxDijNxMRIuaL1qG1gi/VjF91++r0lYEKYRwGEQJbzYe4cTjZCPNHvG0/+LGHb3Tci2e7dsDZrPLxswkpsNNx+62yt7gr3CG12DPAUCLhSepPZCO9EXrhLCePyQdOWL/gdWelwq3dUCogGI/jjjvBLU/J/Fgt6z5Ok1PsuYJzDBogS5XKPg2/Zw==
-x-ms-exchange-antispam-messagedata: 
- 2542QBpwF1LrPiQOnf7XNaGlDpVgFdoho+Ji3P1xyIogT+9gaW86rpYXOmV36HVyaFN6IqB/dcmPuQijvQq/C4f4EGo8HuoirSVaTCYfaOHazxJbPWkeG3UHDE/h3hDGo0HwC/WlTSOmO6pc2d5OMDM2W3t5pnVDj6teEqWEb2f+z+aiX/Qab8zh1TUJ9OfhH1d2ufMJwhDow3Xne7AOyA3oNqTSEH8rwtDqaJoAe06DvQIbPr2c+WvCsWu41305b/RZmb9wktxlL6/ukAMsWsN/SzWpTmM6rVdMx+lArp8foJTTiq9HgaGgNVl/s/zITvEv8c4dChNJTs8B2MQeTg5gOdQVusVrF341/Bq6+ehB3NGZR9BSdIrksDcgYhN6SVc5b9R3/KzDymUbcptTXaaL7daspTDY9W/O5hfqv8i5l2qwexaqy5ellk23NOh15mmYrojvaFdQNMu85nNpQuUh7L3zRXtVdaGdnHqYEkgxBs+7TIpIshVmkx0FE3YB
-x-ms-exchange-transport-forked: True
+ Wed, 15 Jul 2020 23:11:41 -0700
+X-Received: by mail-lj1-f170.google.com with SMTP id x9so5804172ljc.5
+        for <cip-dev@lists.cip-project.org>; Wed, 15 Jul 2020 23:11:40 -0700 (PDT)
+X-Gm-Message-State: 9ccXWtR1Dr9rwYRhguoN8qabx4520388AA=
+X-Google-Smtp-Source: ABdhPJwdnis9qa/SK6K6Rg/1+N8opVpGCoJZ9FLcXqCGRPKOBGx9eT+Jn1E7axPnprr5ERUu8XjfLQ==
+X-Received: by 2002:a2e:2a84:: with SMTP id q126mr1166676ljq.1.1594879898679;
+        Wed, 15 Jul 2020 23:11:38 -0700 (PDT)
+X-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id m14sm1157415lfp.18.2020.07.15.23.11.38
+        for <cip-dev@lists.cip-project.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Jul 2020 23:11:38 -0700 (PDT)
+X-Received: by mail-lj1-f178.google.com with SMTP id e4so5816470ljn.4
+        for <cip-dev@lists.cip-project.org>; Wed, 15 Jul 2020 23:11:38 -0700 (PDT)
+X-Received: by 2002:a2e:958f:: with SMTP id w15mr1148571ljh.190.1594879898217;
+ Wed, 15 Jul 2020 23:11:38 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: cybertrust.co.jp
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY2PR01MB4972.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 595621c0-ca62-4f10-2ae7-08d82927b24d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jul 2020 01:29:34.3431
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72cc4624-32b4-4dab-b80a-8563e559bd82
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: qwKDkTY/DqGCPbmNQG1fJZwzXfYpwqFquFLGD76UYbeOj5cYCP2NRnYRnIU1QSHGkLTKDzabLea3PyejSLOrJww5Iu1jz0LCN8aSvIpYc8E=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB2889
+References: <TY2PR01MB497247C1E04F817F6E364E73A07F0@TY2PR01MB4972.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY2PR01MB497247C1E04F817F6E364E73A07F0@TY2PR01MB4972.jpnprd01.prod.outlook.com>
+From: "Chen-Yu Tsai (Moxa)" <wens@csie.org>
+Date: Thu, 16 Jul 2020 14:11:28 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65652De21w-sut7wEqL38CP6ugxkKKLV0t9G-yJH5mmWg@mail.gmail.com>
+Message-ID: <CAGb2v65652De21w-sut7wEqL38CP6ugxkKKLV0t9G-yJH5mmWg@mail.gmail.com>
+Subject: Re: [cip-dev] CIP IRC weekly meeting today
+To: cip-dev@lists.cip-project.org
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: eS0ho94jMiLeB8GSJezCxXs1x4520388AA=
-Content-Type: multipart/mixed; boundary="mTMtP6YouddZV0ICCMbP"
+Content-Type: multipart/mixed; boundary="fWoql5gqLlY5RpR9EhsO"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1594862996;
- bh=Pl0KYzc2cgd9b5qVClplL6Fx+c5QEAXDtZvkQlpOU70=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1594879902;
+ bh=E8Ooddekgz8XQaS/ONo0wC/QiCJ1iW1lj95CQNrKG2I=;
  h=Content-Type:Date:From:Reply-To:Subject:To;
- b=WmpWLG98MeFgvoV80SFSsdJ0Oa0zbzFAl6dhEdk6K1djOuuLSdSw7zgWXJkNfBzx4r8
- zNcSjQDGboW+uVFLe5Amw3KLPBSn1OCKebbSyOc/O482K8zexxm882yuYCXFEUuHMCRZ2
- qdexs9vajBiFA7ZDhVetYm/nL6eTRtlqaUc=
+ b=IPhgUJdFbkQW7DnSunmhdYieI+ljFi4qNjA/7J0V+eulO5r3WQSENpv5eZl0gPpW0Bx
+ RFAHcprStWSYhZAYPZ1RJhobtYsN2M/qvr/OvCuQwzd6l0hQScm0me1/eIZnXfBe9Ky+p
+ cTDIDzbQlJQyxe3EPUhInbO+OL7n4tniWVk=
 
---mTMtP6YouddZV0ICCMbP
-Content-Language: ja-JP
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+--fWoql5gqLlY5RpR9EhsO
+Content-Type: text/plain; charset="UTF-8"
 
-Hi all,
+Hi,
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss tech=
-nical topics with CIP kernel today.
+On Thu, Jul 16, 2020 at 9:30 AM masashi.kudo@cybertrust.co.jp
+<masashi.kudo@cybertrust.co.jp> wrote:
+>
+> Hi all,
+>
+> Kindly be reminded to attend the weekly meeting through IRC to discuss technical topics with CIP kernel today.
+>
+> *Please note that the IRC meeting was rescheduled to UTC (GMT) 09:00 starting from the first week of Apr. according to TSC meeting*
+> https://www.timeanddate.com/worldclock/meetingdetails.html?year=2020&month=7&day=16&hour=9&min=0&sec=0&p1=224&p2=179&p3=136&p4=37&p5=241&p6=248
+>
+> USWest  USEast  UK      DE      TW      JP
+> 02:00   05:00   10:00   11:00   17:00   18:00
+>
+> Channel:
+> * irc:chat.freenode.net:6667/cip
+>
+> Last meeting minutes:
+> https://irclogs.baserock.org/meetings/cip/2020/07/cip.2020-07-09-09.00.log.html
+>
+> Agenda:
+>
+> * Action item
+>   1. Combine root filesystem with kselftest binary - iwamatsu
+>   2. Post LTP results to KernelCI - patersonc
+>   3. Issues to be fixed for swupdate "copyright correction and salsa CI testing" - iwamatsu
+>
+> * Kernel maintenance updates
 
-*Please note that the IRC meeting was rescheduled to UTC (GMT) 09:00 starti=
-ng from the first week of Apr. according to TSC meeting*
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=3D2020&mont=
-h=3D7&day=3D16&hour=3D9&min=3D0&sec=3D0&p1=3D224&p2=3D179&p3=3D136&p4=3D37&=
-p5=3D241&p6=3D248
+I might not make it, so here are updates from me for this week:
 
-USWest	USEast	UK	DE	TW	JP
-02:00	05:00	10:00	11:00	17:00	18:00
+Two new issues:
 
-Channel:
-* irc:chat.freenode.net:6667/cip
+  - CVE-2020-11935 (aufs, not applicable to mainline)
+  - CVE-2020-14314 (ext4 related, fix posted)
 
-Last meeting minutes:
-https://irclogs.baserock.org/meetings/cip/2020/07/cip.2020-07-09-09.00.log.=
-html
 
-Agenda:
+Regards
+ChenYu
 
-* Action item
-  1. Combine root filesystem with kselftest binary - iwamatsu=20
-  2. Post LTP results to KernelCI - patersonc=20
-  3. Issues to be fixed for swupdate "copyright correction and salsa CI tes=
-ting" - iwamatsu
+> * Kernel testing
+> * Software update
+> * CIP Security
+> * AOB
+>
+> The meeting will take 30 min, although it can be extended to an hour if it makes sense and those involved in the topics can stay. Otherwise, the topic will be taken offline or in the next meeting.
+>
+> Best regards,
+> --
+> M. Kudo
+> Cybertrust Japan Co., Ltd.
+> 
 
-* Kernel maintenance updates
-* Kernel testing
-* Software update
-* CIP Security=20
-* AOB
-
-The meeting will take 30 min, although it can be extended to an hour if it =
-makes sense and those involved in the topics can stay. Otherwise, the topic=
- will be taken offline or in the next meeting.
-
-Best regards,
---
-M. Kudo
-Cybertrust Japan Co., Ltd.
-
---mTMtP6YouddZV0ICCMbP
+--fWoql5gqLlY5RpR9EhsO
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -152,12 +127,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#4929): https://lists.cip-project.org/g/cip-dev/message=
-/4929
+View/Reply Online (#4930): https://lists.cip-project.org/g/cip-dev/message=
+/4930
 Mute This Topic: https://lists.cip-project.org/mt/75533779/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---mTMtP6YouddZV0ICCMbP--
+--fWoql5gqLlY5RpR9EhsO--
