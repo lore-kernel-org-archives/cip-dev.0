@@ -1,4 +1,4 @@
-Return-Path: <SRS0=wY9T=BB=lists.cip-project.org=bounce+64572+4976+4520388+8129055@kernel.org>
+Return-Path: <SRS0=8EuT=BB=lists.cip-project.org=bounce+64572+4977+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MIME_HEADER_CTYPE_ONLY,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	T_TVD_MIME_NO_HEADERS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8ADDC433F7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0F82C433FB
 	for <cip-dev@archiver.kernel.org>; Wed, 22 Jul 2020 17:47:09 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 907D7207BB
+	by mail.kernel.org (Postfix) with ESMTPS id 9829D207E8
 	for <cip-dev@archiver.kernel.org>; Wed, 22 Jul 2020 17:47:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="hHK2RVMD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 907D7207BB
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="BzbKHCNd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9829D207E8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4976+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id ks5RYY4521723xIiYyrk9jNx; Wed, 22 Jul 2020 10:47:09 -0700
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4977+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id FkeXYY4521723xoJK7edLnjZ; Wed, 22 Jul 2020 10:47:09 -0700
 X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [])
  by mx.groups.io with SMTP id smtpd.web12.23023.1595435721535782356
  for <cip-dev@lists.cip-project.org>;
- Wed, 22 Jul 2020 09:35:23 -0700
+ Wed, 22 Jul 2020 09:35:25 -0700
 X-IronPort-AV: E=Sophos;i="5.75,383,1589209200"; 
-   d="scan'208";a="52832265"
+   d="scan'208";a="52832269"
 X-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 23 Jul 2020 01:35:23 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 23 Jul 2020 01:35:25 +0900
 X-Received: from localhost.localdomain (unknown [172.29.51.128])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 808514006CC9;
-	Thu, 23 Jul 2020 01:35:21 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 83E7240078CA;
+	Thu, 23 Jul 2020 01:35:23 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -38,9 +38,9 @@ To: cip-dev@lists.cip-project.org,
 Cc: Chris Paterson <chris.paterson2@renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [cip-dev] [PATCH 4.19.y-cip 16/17] dt-bindings: display: Add idk-2121wr binding
-Date: Wed, 22 Jul 2020 17:34:48 +0100
-Message-Id: <20200722163449.3513-17-biju.das.jz@bp.renesas.com>
+Subject: [cip-dev] [PATCH 4.19.y-cip 17/17] arm64: dts: renesas: Add EK874 board with idk-2121wr display support
+Date: Wed, 22 Jul 2020 17:34:49 +0100
+Message-Id: <20200722163449.3513-18-biju.das.jz@bp.renesas.com>
 In-Reply-To: <20200722163449.3513-1-biju.das.jz@bp.renesas.com>
 References: <20200722163449.3513-1-biju.das.jz@bp.renesas.com>
 Precedence: Bulk
@@ -49,170 +49,180 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: 1W0wbhYbTZqZWX6SxAhtLDGDx4520388AA=
-Content-Type: multipart/mixed; boundary="5rz0kxdEUviYrj6EQkWG"
+X-Gm-Message-State: kp97zxHiOdXIhUYCiBnyVUFrx4520388AA=
+Content-Type: multipart/mixed; boundary="VzFAlZxNB9lzWY1MvaRh"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=lists.cip-project.org; q=dns/txt; s=20140610; t=1595440029;
- bh=0gEpqvTG2gBAa83n1XfLbyLa7m+OSxOFlLF8yI0B5Uw=;
+ bh=xtD3q5AgdP9bF4Zc/YlbKurk+pDc9jDZ9X+Qg9u6o+0=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=hHK2RVMDGVmpKnYTbR1Xy9TxjVS37dJ+WRsb2GBq2EWf2cUPh46GNmtCkIu9a6wiynl
- W61CBirDMy0SAH9/bA5Nc08k8Bq7p2kTdlgULULxAmGIEaJWIRp3OvfRu4VcTWN7T5+TE
- wcYjYbgctNkushkfy2452tZASiiPKBqY7LQ=
+ b=BzbKHCNdJrXonbHss6OOvwDw8mI86oIQDL9pZ0Os0jLXJzZr6nv4iWLEq4ld4/dG1A0
+ qx21bd6AkQT+QxkOJbtc24CmCXK3OJH22FAYWm3X92QOy0BRqLTpGsz8uPzW/4Hevj4oX
+ J6eV4oUT2/7UEW7pbNRgXvwHBKV37ijU7IU=
 
---5rz0kxdEUviYrj6EQkWG
+--VzFAlZxNB9lzWY1MvaRh
 
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-commit 8efef33eff5088ecc748e9d5b3bff6c1c955348f upstream.
+commit ae56c940f188c1dde440c8456229adaad733908e upstream.
 
-Add binding for the idk-2121wr LVDS panel from Advantech.
-
-Some panel-specific documentation can be found here:
-https://buy.advantech.eu/Displays/Embedded-LCD-Kits-High-Brightness/model-IDK-2121WR-K2FHA2E.htm
+The EK874 is advertised as compatible with panel IDK-2121WR from
+Advantech, however the panel isn't sold alongside the board.
+A new dts, adding everything that's required to get the panel to
+to work with the EK874, is the most convenient way to support the
+EK874 when it's connected to the IDK-2121WR.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/1583869169-1006-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Link: https://lore.kernel.org/r/1576590361-28244-7-git-send-email-fabrizio.castro@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- .../display/panel/advantech,idk-2121wr.yaml   | 122 ++++++++++++++++++
- 1 file changed, 122 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/panel/advantech,idk-2121wr.yaml
+ arch/arm64/boot/dts/renesas/Makefile          |   3 +-
+ .../dts/renesas/r8a774c0-ek874-idk-2121wr.dts | 116 ++++++++++++++++++
+ 2 files changed, 118 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a774c0-ek874-idk-2121wr.dts
 
-diff --git a/Documentation/devicetree/bindings/display/panel/advantech,idk-2121wr.yaml b/Documentation/devicetree/bindings/display/panel/advantech,idk-2121wr.yaml
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index c05feec80636..d22ede9e3ee4 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -4,7 +4,8 @@ dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m-ex.dtb
+ dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m-ex-idk-1110wr.dtb
+ dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n.dtb
+ dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n-ex.dtb
+-dtb-$(CONFIG_ARCH_R8A774C0) += r8a774c0-cat874.dtb r8a774c0-ek874.dtb
++dtb-$(CONFIG_ARCH_R8A774C0) += r8a774c0-cat874.dtb r8a774c0-ek874.dtb \
++			       r8a774c0-ek874-idk-2121wr.dtb
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-h3ulcb-kf.dtb
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-xs.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-ek874-idk-2121wr.dts b/arch/arm64/boot/dts/renesas/r8a774c0-ek874-idk-2121wr.dts
 new file mode 100644
-index 000000000000..6b7fddc80c41
+index 000000000000..a7b27d09f6c2
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/advantech,idk-2121wr.yaml
-@@ -0,0 +1,122 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/display/panel/advantech,idk-2121wr.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/arch/arm64/boot/dts/renesas/r8a774c0-ek874-idk-2121wr.dts
+@@ -0,0 +1,116 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the Silicon Linux RZ/G2E evaluation kit (EK874),
++ * connected to an Advantech IDK-2121WR 21.5" LVDS panel
++ *
++ * Copyright (C) 2019 Renesas Electronics Corp.
++ */
 +
-+title: Advantech IDK-2121WR 21.5" Full-HD dual-LVDS panel
++#include "r8a774c0-ek874.dts"
 +
-+maintainers:
-+  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-+  - Thierry Reding <thierry.reding@gmail.com>
++/ {
++	backlight: backlight {
++		compatible = "pwm-backlight";
++		pwms = <&pwm5 0 50000>;
 +
-+description: |
-+  The IDK-2121WR from Advantech is a Full-HD dual-LVDS panel.
-+  A dual-LVDS interface is a dual-link connection with even pixels traveling
-+  on one link, and with odd pixels traveling on the other link.
++		brightness-levels = <0 4 8 16 32 64 128 255>;
++		default-brightness-level = <6>;
 +
-+  The panel expects odd pixels on the first port, and even pixels on the
-+  second port, therefore the ports must be marked accordingly (with either
-+  dual-lvds-odd-pixels or dual-lvds-even-pixels).
++		power-supply = <&reg_12p0v>;
++		enable-gpios = <&gpio6 12 GPIO_ACTIVE_HIGH>;
++	};
 +
-+properties:
-+  compatible:
-+    items:
-+      - const: advantech,idk-2121wr
-+      - {} # panel-lvds, but not listed here to avoid false select
++	panel-lvds {
++		compatible = "advantech,idk-2121wr", "panel-lvds";
 +
-+  width-mm:
-+    const: 476
++		width-mm = <476>;
++		height-mm = <268>;
 +
-+  height-mm:
-+    const: 268
++		data-mapping = "vesa-24";
 +
-+  data-mapping:
-+    const: vesa-24
++		panel-timing {
++			clock-frequency = <148500000>;
++			hactive = <1920>;
++			vactive = <1080>;
++			hsync-len = <44>;
++			hfront-porch = <88>;
++			hback-porch = <148>;
++			vfront-porch = <4>;
++			vback-porch = <36>;
++			vsync-len = <5>;
++		};
 +
-+  panel-timing: true
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
 +
-+  ports:
-+    type: object
-+    properties:
-+      port@0:
-+        type: object
-+        description: The sink for odd pixels.
-+        properties:
-+          reg:
-+            const: 0
++			port@0 {
++				reg = <0>;
++				dual-lvds-odd-pixels;
++				panel_in0: endpoint {
++					remote-endpoint = <&lvds0_out>;
++				};
++			};
 +
-+          dual-lvds-odd-pixels: true
++			port@1 {
++				reg = <1>;
++				dual-lvds-even-pixels;
++				panel_in1: endpoint {
++					remote-endpoint = <&lvds1_out>;
++				};
++			};
++		};
++	};
++};
 +
-+        required:
-+          - reg
-+          - dual-lvds-odd-pixels
++&gpio0 {
++	/*
++	 * When GP0_17 is low LVDS[01] are connected to the LVDS connector
++	 * When GP0_17 is high LVDS[01] are connected to the LT8918L
++	 */
++	lvds-connector-en-gpio{
++		gpio-hog;
++		gpios = <17 GPIO_ACTIVE_HIGH>;
++		output-low;
++		line-name = "lvds-connector-en-gpio";
++	};
++};
 +
-+      port@1:
-+        type: object
-+        description: The sink for even pixels.
-+        properties:
-+          reg:
-+            const: 1
++&lvds0 {
++	ports {
++		port@1 {
++			lvds0_out: endpoint {
++				remote-endpoint = <&panel_in0>;
++			};
++		};
++	};
++};
 +
-+          dual-lvds-even-pixels: true
++&lvds1 {
++	status = "okay";
 +
-+        required:
-+          - reg
-+          - dual-lvds-even-pixels
++	clocks = <&cpg CPG_MOD 727>, <&x13_clk>, <&extal_clk>;
++	clock-names = "fck", "dclkin.0", "extal";
 +
-+additionalProperties: false
++	ports {
++		port@1 {
++			lvds1_out: endpoint {
++				remote-endpoint = <&panel_in1>;
++			};
++		};
++	};
++};
 +
-+required:
-+  - compatible
-+  - width-mm
-+  - height-mm
-+  - data-mapping
-+  - panel-timing
-+  - ports
++&pfc {
++	pwm5_pins: pwm5 {
++		groups = "pwm5_a";
++		function = "pwm5";
++	};
++};
 +
-+examples:
-+  - |+
-+    panel-lvds {
-+      compatible = "advantech,idk-2121wr", "panel-lvds";
++&pwm5 {
++	pinctrl-0 = <&pwm5_pins>;
++	pinctrl-names = "default";
 +
-+      width-mm = <476>;
-+      height-mm = <268>;
-+
-+      data-mapping = "vesa-24";
-+
-+      panel-timing {
-+        clock-frequency = <148500000>;
-+        hactive = <1920>;
-+        vactive = <1080>;
-+        hsync-len = <44>;
-+        hfront-porch = <88>;
-+        hback-porch = <148>;
-+        vfront-porch = <4>;
-+        vback-porch = <36>;
-+        vsync-len = <5>;
-+      };
-+
-+      ports {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        port@0 {
-+          reg = <0>;
-+          dual-lvds-odd-pixels;
-+          panel_in0: endpoint {
-+            remote-endpoint = <&lvds0_out>;
-+          };
-+        };
-+
-+        port@1 {
-+          reg = <1>;
-+          dual-lvds-even-pixels;
-+          panel_in1: endpoint {
-+            remote-endpoint = <&lvds1_out>;
-+          };
-+        };
-+      };
-+    };
-+
-+...
++	status = "okay";
++};
 -- 
 2.17.1
 
 
---5rz0kxdEUviYrj6EQkWG
+--VzFAlZxNB9lzWY1MvaRh
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -220,12 +230,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#4976): https://lists.cip-project.org/g/cip-dev/message=
-/4976
-Mute This Topic: https://lists.cip-project.org/mt/75730038/4520388
+View/Reply Online (#4977): https://lists.cip-project.org/g/cip-dev/message=
+/4977
+Mute This Topic: https://lists.cip-project.org/mt/75730039/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---5rz0kxdEUviYrj6EQkWG--
+--VzFAlZxNB9lzWY1MvaRh--
