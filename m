@@ -1,4 +1,4 @@
-Return-Path: <SRS0=cMsI=BB=lists.cip-project.org=bounce+64572+4971+4520388+8129055@kernel.org>
+Return-Path: <SRS0=JH3N=BB=lists.cip-project.org=bounce+64572+4970+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MIME_HEADER_CTYPE_ONLY,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	T_TVD_MIME_NO_HEADERS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21CFEC433F1
-	for <cip-dev@archiver.kernel.org>; Wed, 22 Jul 2020 17:47:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7E86C433ED
+	for <cip-dev@archiver.kernel.org>; Wed, 22 Jul 2020 17:47:08 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id ECA84207BB
+	by mail.kernel.org (Postfix) with ESMTPS id 9C1CA207E8
 	for <cip-dev@archiver.kernel.org>; Wed, 22 Jul 2020 17:47:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="IdvbbSra"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECA84207BB
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="cNdFyy9d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C1CA207E8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4971+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id G9RiYY4521723xsF9HytXoVz; Wed, 22 Jul 2020 10:47:08 -0700
-X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web12.23023.1595435721535782356
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+4970+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id WFiWYY4521723xtxV5GbNs3L; Wed, 22 Jul 2020 10:47:08 -0700
+X-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [])
+ by mx.groups.io with SMTP id smtpd.web10.23134.1595435708098355441
  for <cip-dev@lists.cip-project.org>;
- Wed, 22 Jul 2020 09:35:21 -0700
+ Wed, 22 Jul 2020 09:35:15 -0700
 X-IronPort-AV: E=Sophos;i="5.75,383,1589209200"; 
-   d="scan'208";a="52832260"
+   d="scan'208";a="52620974"
 X-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 23 Jul 2020 01:35:20 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 23 Jul 2020 01:35:15 +0900
 X-Received: from localhost.localdomain (unknown [172.29.51.128])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 4E50440078CA;
-	Thu, 23 Jul 2020 01:35:19 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 946044006CC9;
+	Thu, 23 Jul 2020 01:35:13 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -38,9 +38,9 @@ To: cip-dev@lists.cip-project.org,
 Cc: Chris Paterson <chris.paterson2@renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [cip-dev] [PATCH 4.19.y-cip 15/17] arm64: dts: renesas: rzg2: Add reset control properties for display
-Date: Wed, 22 Jul 2020 17:34:47 +0100
-Message-Id: <20200722163449.3513-16-biju.das.jz@bp.renesas.com>
+Subject: [cip-dev] [PATCH 4.19.y-cip 12/17] drm: rcar-du: lvds: Get dual link configuration from DT
+Date: Wed, 22 Jul 2020 17:34:44 +0100
+Message-Id: <20200722163449.3513-13-biju.das.jz@bp.renesas.com>
 In-Reply-To: <20200722163449.3513-1-biju.das.jz@bp.renesas.com>
 References: <20200722163449.3513-1-biju.das.jz@bp.renesas.com>
 Precedence: Bulk
@@ -49,98 +49,130 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: nWJd2dFpcZcQ63hBYFxHZM4yx4520388AA=
-Content-Type: multipart/mixed; boundary="dxMCfpZ4Lz7jYkJRqLbG"
+X-Gm-Message-State: IvK0tFa4PILLQt36WSbnP8kFx4520388AA=
+Content-Type: multipart/mixed; boundary="8L3qhKVwqycs2Hn4sXUQ"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=lists.cip-project.org; q=dns/txt; s=20140610; t=1595440028;
- bh=B0IYVoJPN5nV+CHI21RDVz8A7jCbdBNGx0qcnS7tqYg=;
+ bh=niOh+7qVMnhiIWcEJZcWwHttnezuEElIbcqYvG6ImsM=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=IdvbbSracydKqR8wTMVVGPtrTXKa+JWYtgJQkrGsf2UF8jTseLubgPGkQPQYgTTHdEX
- o/bHeyFaYGwX/v8KUAYa7zjSTnJ490I7/FiBPl2bH4qU4rmgCVzHMaMy8fmzBN+pieKUp
- f8qalhB6G27Kjs09LZfeh0lpjBP8TuY18U8=
+ b=cNdFyy9dRFlFFIX3Et3bOGU4AObAvxgNZ53HFp85Rk0tsVY5gRgVYr1wew5ZyyJKNpP
+ tdA5wa0yOo8RW6QCvt1U+EYnvZcIeWU/lORxnMhsNrYJnE3HNN5KJQuBUrsZM9rPgWLi5
+ neJ1wwgHKFsR3Vjfmd5IVXJazd5dFFx/GXc=
 
---dxMCfpZ4Lz7jYkJRqLbG
+--8L3qhKVwqycs2Hn4sXUQ
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-commit 721b76195b31467e56851fbab3855e700f281270 upstream.
+commit 65112cfa56c32030a7f04a8a4c28251b89b5cf26 upstream.
 
-Add reset control properties to the device nodes for the Display Units
-on all supported RZ/G2 SoCs.  Note that on these SoCs, there is only a
-single reset for each pair of DU channels.
+For dual-LVDS configurations, it is now possible to mark the
+DT port nodes for the sink with boolean properties (like
+dual-lvds-even-pixels and dual-lvds-odd-pixels) to let drivers
+know the encoders need to be configured in dual-LVDS mode.
 
-Join the clocks lines while at it, to increase uniformity.
+Rework the implementation of rcar_lvds_parse_dt_companion
+to make use of the DT markers while keeping backward
+compatibility.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Link: https://lore.kernel.org/r/20200218133019.22299-5-geert+renesas@glider.be
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 5 +++--
- arch/arm64/boot/dts/renesas/r8a774b1.dtsi | 5 +++--
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 6 ++++--
- 3 files changed, 10 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_lvds.c | 54 ++++++++++++++++++++++++-----
+ 1 file changed, 46 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index 570093ce77be..86ad9b34810f 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -2278,10 +2278,11 @@
- 			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 724>,
--				 <&cpg CPG_MOD 723>,
-+			clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>,
- 				 <&cpg CPG_MOD 722>;
- 			clock-names = "du.0", "du.1", "du.2";
-+			resets = <&cpg 724>, <&cpg 722>;
-+			reset-names = "du.0", "du.2";
- 			status = "disabled";
+diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+index f81a0d730db8..12d2bbbb02f0 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
++++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+@@ -670,7 +670,10 @@ static int rcar_lvds_parse_dt_companion(struct rcar_lvds *lvds)
+ {
+ 	const struct of_device_id *match;
+ 	struct device_node *companion;
++	struct device_node *port0, *port1;
++	struct rcar_lvds *companion_lvds;
+ 	struct device *dev = lvds->dev;
++	int dual_link;
+ 	int ret = 0;
  
- 			vsps = <&vspd0 &vspd1 &vspd2>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a774b1.dtsi b/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
-index 5948f782ab48..5e4768fb6842 100644
---- a/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
-@@ -2103,10 +2103,11 @@
- 			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 724>,
--				 <&cpg CPG_MOD 723>,
-+			clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>,
- 				 <&cpg CPG_MOD 721>;
- 			clock-names = "du.0", "du.1", "du.3";
-+			resets = <&cpg 724>, <&cpg 722>;
-+			reset-names = "du.0", "du.3";
- 			status = "disabled";
+ 	/* Locate the companion LVDS encoder for dual-link operation, if any. */
+@@ -689,13 +692,54 @@ static int rcar_lvds_parse_dt_companion(struct rcar_lvds *lvds)
+ 		goto done;
+ 	}
  
- 			vsps = <&vspd0 0>, <&vspd1 0>, <&vspd0 1>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-index 75d4fbd2579e..783a8cf16eaa 100644
---- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-@@ -1810,10 +1810,12 @@
- 			reg = <0 0xfeb00000 0 0x40000>;
- 			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 724>,
--				 <&cpg CPG_MOD 723>;
-+			clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>;
- 			clock-names = "du.0", "du.1";
-+			resets = <&cpg 724>;
-+			reset-names = "du.0";
- 			vsps = <&vspd0 0>, <&vspd1 0>;
++	/*
++	 * We need to work out if the sink is expecting us to function in
++	 * dual-link mode. We do this by looking at the DT port nodes we are
++	 * connected to, if they are marked as expecting even pixels and
++	 * odd pixels than we need to enable vertical stripe output.
++	 */
++	port0 = of_graph_get_port_by_id(dev->of_node, 1);
++	port1 = of_graph_get_port_by_id(companion, 1);
++	dual_link = drm_of_lvds_get_dual_link_pixel_order(port0, port1);
++	of_node_put(port0);
++	of_node_put(port1);
 +
- 			status = "disabled";
++	if (dual_link >= DRM_LVDS_DUAL_LINK_EVEN_ODD_PIXELS)
++		lvds->dual_link = true;
++	else if (lvds->next_bridge && lvds->next_bridge->timings)
++		/*
++		 * Early dual-link bridge specific implementations populate the
++		 * timings field of drm_bridge, read the dual_link flag off the
++		 * bridge directly for backward compatibility.
++		 */
++		lvds->dual_link = lvds->next_bridge->timings->dual_link;
++
++	if (!lvds->dual_link) {
++		dev_dbg(dev, "Single-link configuration detected\n");
++		goto done;
++	}
++
+ 	lvds->companion = of_drm_find_bridge(companion);
+ 	if (!lvds->companion) {
+ 		ret = -EPROBE_DEFER;
+ 		goto done;
+ 	}
  
- 			ports {
+-	dev_dbg(dev, "Found companion encoder %pOF\n", companion);
++	dev_dbg(dev,
++		"Dual-link configuration detected (companion encoder %pOF)\n",
++		companion);
++
++	/*
++	 * FIXME: We should not be messing with the companion encoder private
++	 * data from the primary encoder, we should rather let the companion
++	 * encoder work things out on its own. However, the companion encoder
++	 * doesn't hold a reference to the primary encoder, and
++	 * drm_of_lvds_get_dual_link_pixel_order needs to be given references
++	 * to the output ports of both encoders, therefore leave it like this
++	 * for the time being.
++	 */
++	companion_lvds = bridge_to_rcar_lvds(lvds->companion);
++	companion_lvds->dual_link = true;
+ 
+ done:
+ 	of_node_put(companion);
+@@ -712,13 +756,7 @@ static int rcar_lvds_parse_dt(struct rcar_lvds *lvds)
+ 	if (ret)
+ 		goto done;
+ 
+-	if ((lvds->info->quirks & RCAR_LVDS_QUIRK_DUAL_LINK) &&
+-	    lvds->next_bridge)
+-		lvds->dual_link = lvds->next_bridge->timings
+-				? lvds->next_bridge->timings->dual_link
+-				: false;
+-
+-	if (lvds->dual_link)
++	if (lvds->info->quirks & RCAR_LVDS_QUIRK_DUAL_LINK)
+ 		ret = rcar_lvds_parse_dt_companion(lvds);
+ 
+ done:
 -- 
 2.17.1
 
 
---dxMCfpZ4Lz7jYkJRqLbG
+--8L3qhKVwqycs2Hn4sXUQ
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -148,12 +180,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#4971): https://lists.cip-project.org/g/cip-dev/message=
-/4971
-Mute This Topic: https://lists.cip-project.org/mt/75730033/4520388
+View/Reply Online (#4970): https://lists.cip-project.org/g/cip-dev/message=
+/4970
+Mute This Topic: https://lists.cip-project.org/mt/75730032/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---dxMCfpZ4Lz7jYkJRqLbG--
+--8L3qhKVwqycs2Hn4sXUQ--
