@@ -1,4 +1,4 @@
-Return-Path: <SRS0=4gAh=BD=lists.cip-project.org=bounce+64572+5007+4520388+8129055@kernel.org>
+Return-Path: <SRS0=NumX=BD=lists.cip-project.org=bounce+64572+5008+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEA18C433E4
-	for <cip-dev@archiver.kernel.org>; Fri, 24 Jul 2020 15:01:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77762C433EA
+	for <cip-dev@archiver.kernel.org>; Fri, 24 Jul 2020 15:01:53 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 7BDAA20714
-	for <cip-dev@archiver.kernel.org>; Fri, 24 Jul 2020 15:01:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 44EFB206D8
+	for <cip-dev@archiver.kernel.org>; Fri, 24 Jul 2020 15:01:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="a6rk1RGq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BDAA20714
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="uDCzSKfF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44EFB206D8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=siemens.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5007+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id zIxGYY4521723xfg2AKvRBu4; Fri, 24 Jul 2020 08:01:52 -0700
-X-Received: from goliath.siemens.de (goliath.siemens.de [192.35.17.28])
- by mx.groups.io with SMTP id smtpd.web12.8006.1595602910939223282
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5008+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id QJNxYY4521723xQCnWo4tJ5S; Fri, 24 Jul 2020 08:01:53 -0700
+X-Received: from lizzard.sbs.de (lizzard.sbs.de [194.138.37.39])
+ by mx.groups.io with SMTP id smtpd.web11.7925.1595602911657542747
  for <cip-dev@lists.cip-project.org>;
- Fri, 24 Jul 2020 08:01:51 -0700
+ Fri, 24 Jul 2020 08:01:52 -0700
 X-Received: from mail1.sbs.de (mail1.sbs.de [192.129.41.35])
-	by goliath.siemens.de (8.15.2/8.15.2) with ESMTPS id 06OF1n4h020661
+	by lizzard.sbs.de (8.15.2/8.15.2) with ESMTPS id 06OF1nV2031672
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-	for <cip-dev@lists.cip-project.org>; Fri, 24 Jul 2020 17:01:49 +0200
+	for <cip-dev@lists.cip-project.org>; Fri, 24 Jul 2020 17:01:50 +0200
 X-Received: from md2dvrtc.fritz.box ([167.87.3.170])
-	by mail1.sbs.de (8.15.2/8.15.2) with ESMTP id 06OF1lbp027266;
-	Fri, 24 Jul 2020 17:01:48 +0200
+	by mail1.sbs.de (8.15.2/8.15.2) with ESMTP id 06OF1lbq027266;
+	Fri, 24 Jul 2020 17:01:49 +0200
 From: "Quirin Gylstorff" <quirin.gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org, Jan.Kiszka@siemens.com
 Cc: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-Subject: [cip-dev] [isar-cip-core PATCH v3 4/6] secure-boot: Add secure boot with unified kernel image
-Date: Fri, 24 Jul 2020 17:01:45 +0200
-Message-Id: <20200724150147.8253-5-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev] [isar-cip-core PATCH v3 5/6] secure-boot: Add Debian snakeoil keys for ease-of-use
+Date: Fri, 24 Jul 2020 17:01:46 +0200
+Message-Id: <20200724150147.8253-6-Quirin.Gylstorff@siemens.com>
 In-Reply-To: <20200724150147.8253-1-Quirin.Gylstorff@siemens.com>
 References: <20200629125400.13968-1-Quirin.Gylstorff@siemens.com>
  <20200724150147.8253-1-Quirin.Gylstorff@siemens.com>
@@ -47,84 +47,68 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: 6CH0o2RTNp5urTjgNdgvjlWnx4520388AA=
-Content-Type: multipart/mixed; boundary="FTaSPKi0o5qwkztJGilA"
+X-Gm-Message-State: 2wS36LC0YlhMrJ3NHTYsS3BAx4520388AA=
+Content-Type: multipart/mixed; boundary="SKLkB5yKlYtt8oWa1Rss"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1595602912;
- bh=/UPyILDBKvxKIBr02AdjCWt6+g4k0lq+90vajiHL7rk=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1595602913;
+ bh=O9yaCSZAamdki/PjYWoZP2EuyQjLRDeJ+6szx1+1Jkw=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=a6rk1RGq220gpgxTZpVsExQbeUCRDjK3RRAUdjO6fBNnwAWeryBl6Y7lUNvgZDX6ufv
- u9yGuTI5uEL5CB8mc24yFnzlKsEmDnWfWfR+us8xo0g/KC3qcJNCg/8MtrL+cWDxE/aNb
- /Dvk0S3fCVZ0aCJpRTy5X0gWKgb9tha8oZU=
+ b=uDCzSKfFDiTgkGkkbcQUgS9hZHx17A9K9bsYR+IQpXTlXT1ettpvVpUXS9MK8Ty7NDK
+ o6WR/cG7I5pVmA0mM5uFZEmDYvfj47wH0LPwpw9hPRs3uzygEiDsN9EXrx0vv1bfePnnq
+ JIl5K3M6ePzknZeeRfs+KY8k/aFj1DVcG20=
 
---FTaSPKi0o5qwkztJGilA
+--SKLkB5yKlYtt8oWa1Rss
 Content-Transfer-Encoding: 8bit
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-A unified kernel image contains the os-release, kernel,
-kernel commandline, initramfs and efi-stub in one binary.
-This binary can be boot by systemd-boot and efibootguard.
-It also allows to sign kernel and initramfs as one packages.
+Use the Debian snakeoil keys to have a demo case available without
+the OVMF setup. Copy the used keys from the build to the deploy
+directory to allow usage in non-Debian distributions.
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- classes/image_uuid.bbclass                    |  2 +-
- kas/opt/ebg-secure-boot-base.yml              | 18 ++++
- recipes-core/images/cip-core-image.bb         | 11 +--
- .../files/secure-boot/sw-description.tmpl     | 29 +++++++
- recipes-core/images/files/sw-description.tmpl |  2 +-
- recipes-core/images/secureboot.inc            | 21 +++++
- recipes-core/images/swupdate.inc              | 19 ++++
- .../ebg-secure-boot-secrets_0.1.bb            | 51 +++++++++++
- .../ebg-secure-boot-secrets/files/README.md   |  1 +
- .../files/control.tmpl                        | 12 +++
- .../files/sign_secure_image.sh.tmpl           | 22 +++++
- .../initramfs-config/files/postinst.tmpl      | 31 -------
- ...enerate-sb-db-from-existing-certificate.sh | 16 ++++
- scripts/generate_secure_boot_keys.sh          | 51 +++++++++++
- .../wic/plugins/source/efibootguard-boot.py   | 87 +++++++++++++++++--
- .../wic/plugins/source/efibootguard-efi.py    | 40 ++++++++-
- scripts/start-efishell.sh                     | 12 +++
- start-qemu.sh                                 | 54 +++++++++---
- wic/ebg-signed-bootloader.inc                 |  2 +
- wic/qemu-amd64-efibootguard-secureboot.wks    |  9 ++
- wic/qemu-amd64-efibootguard.wks               |  6 +-
- 21 files changed, 430 insertions(+), 66 deletions(-)
- create mode 100644 kas/opt/ebg-secure-boot-base.yml
- create mode 100644 recipes-core/images/files/secure-boot/sw-description.tmpl
- create mode 100644 recipes-core/images/secureboot.inc
- create mode 100644 recipes-core/images/swupdate.inc
- create mode 100644 recipes-devtools/ebg-secure-boot-secrets/ebg-secure-boot-secrets_0.1.bb
- create mode 100644 recipes-devtools/ebg-secure-boot-secrets/files/README.md
- create mode 100644 recipes-devtools/ebg-secure-boot-secrets/files/control.tmpl
- create mode 100644 recipes-devtools/ebg-secure-boot-secrets/files/sign_secure_image.sh.tmpl
- delete mode 100644 recipes-support/initramfs-config/files/postinst.tmpl
- create mode 100755 scripts/generate-sb-db-from-existing-certificate.sh
- create mode 100755 scripts/generate_secure_boot_keys.sh
- create mode 100755 scripts/start-efishell.sh
- create mode 100644 wic/ebg-signed-bootloader.inc
- create mode 100644 wic/qemu-amd64-efibootguard-secureboot.wks
+ conf/distro/debian-buster-backports.list      |  1 +
+ conf/distro/preferences.ovmf-snakeoil.conf    |  3 ++
+ kas/opt/ebg-secure-boot-snakeoil.yml          | 28 +++++++++++++++
+ .../ebg-secure-boot-snakeoil_0.1.bb           | 35 ++++++++++++++++++
+ .../files/control.tmpl                        | 12 +++++++
+ .../files/sign_secure_image.sh                | 36 +++++++++++++++++++
+ .../ovmf-binaries/files/control.tmpl          | 11 ++++++
+ .../ovmf-binaries/ovmf-binaries_0.1.bb        | 30 ++++++++++++++++
+ start-qemu.sh                                 |  4 +--
+ 9 files changed, 158 insertions(+), 2 deletions(-)
+ create mode 100644 conf/distro/debian-buster-backports.list
+ create mode 100644 conf/distro/preferences.ovmf-snakeoil.conf
+ create mode 100644 kas/opt/ebg-secure-boot-snakeoil.yml
+ create mode 100644 recipes-devtools/ebg-secure-boot-snakeoil/ebg-secure-boot-snakeoil_0.1.bb
+ create mode 100644 recipes-devtools/ebg-secure-boot-snakeoil/files/control.tmpl
+ create mode 100644 recipes-devtools/ebg-secure-boot-snakeoil/files/sign_secure_image.sh
+ create mode 100644 recipes-devtools/ovmf-binaries/files/control.tmpl
+ create mode 100644 recipes-devtools/ovmf-binaries/ovmf-binaries_0.1.bb
 
-diff --git a/classes/image_uuid.bbclass b/classes/image_uuid.bbclass
-index 9098411..d5337b8 100644
---- a/classes/image_uuid.bbclass
-+++ b/classes/image_uuid.bbclass
-@@ -17,7 +17,7 @@ def generate_image_uuid(d):
-         return None
-     return str(uuid.UUID(base_hash[:32], version=4))
- 
--IMAGE_UUID ?= "${@generate_image_uuid()}"
-+IMAGE_UUID ?= "${@generate_image_uuid(d)}"
- 
- do_generate_image_uuid[vardeps] += "IMAGE_UUID"
- do_generate_image_uuid[depends] = "buildchroot-target:do_build"
-diff --git a/kas/opt/ebg-secure-boot-base.yml b/kas/opt/ebg-secure-boot-base.yml
+diff --git a/conf/distro/debian-buster-backports.list b/conf/distro/debian-buster-backports.list
 new file mode 100644
-index 0000000..c1d98b1
+index 0000000..f2dd104
 --- /dev/null
-+++ b/kas/opt/ebg-secure-boot-base.yml
-@@ -0,0 +1,18 @@
++++ b/conf/distro/debian-buster-backports.list
+@@ -0,0 +1 @@
++deb http://ftp.us.debian.org/debian buster-backports main contrib non-free
+diff --git a/conf/distro/preferences.ovmf-snakeoil.conf b/conf/distro/preferences.ovmf-snakeoil.conf
+new file mode 100644
+index 0000000..b51d1d4
+--- /dev/null
++++ b/conf/distro/preferences.ovmf-snakeoil.conf
+@@ -0,0 +1,3 @@
++Package: ovmf
++Pin: release n=buster-backports
++Pin-Priority: 801
+diff --git a/kas/opt/ebg-secure-boot-snakeoil.yml b/kas/opt/ebg-secure-boot-snakeoil.yml
+new file mode 100644
+index 0000000..cda8177
+--- /dev/null
++++ b/kas/opt/ebg-secure-boot-snakeoil.yml
+@@ -0,0 +1,28 @@
 +#
 +# CIP Core, generic profile
 +#
@@ -138,144 +122,27 @@ index 0000000..c1d98b1
 +
 +header:
 +  version: 8
++  includes:
++   - ebg-secure-boot-base.yml
++
 +
 +local_conf_header:
-+  initramfs: |
-+    IMAGE_INSTALL += "initramfs-abrootfs-secureboot"
-+    SWU_DESCRIPTION = "secureboot"
-diff --git a/recipes-core/images/cip-core-image.bb b/recipes-core/images/cip-core-image.bb
-index b1ed491..f7e22b8 100644
---- a/recipes-core/images/cip-core-image.bb
-+++ b/recipes-core/images/cip-core-image.bb
-@@ -10,7 +10,7 @@
- #
- 
- inherit image
--
-+inherit image_uuid
- ISAR_RELEASE_CMD = "git -C ${LAYERDIR_cip-core} describe --tags --dirty --always --match 'v[0-9].[0-9]*'"
- DESCRIPTION = "CIP Core image"
- 
-@@ -19,11 +19,6 @@ IMAGE_INSTALL += "customizations"
- IMAGE_INSTALL += "ltp-full"
- 
- # for swupdate
--EXTRACT_PARTITIONS = "img4"
--ROOTFS_PARTITION_NAME="img4.gz"
--
--SRC_URI += "file://sw-description.tmpl"
--TEMPLATE_FILES += "sw-description.tmpl"
--TEMPLATE_VARS += "PN ROOTFS_PARTITION_NAME KERNEL_IMAGE INITRD_IMAGE"
-+SWU_DESCRIPTION ??= "swupdate"
-+include ${SWU_DESCRIPTION}.inc
- 
--SWU_ADDITIONAL_FILES += "${INITRD_IMAGE} ${KERNEL_IMAGE} ${ROOTFS_PARTITION_NAME}"
-diff --git a/recipes-core/images/files/secure-boot/sw-description.tmpl b/recipes-core/images/files/secure-boot/sw-description.tmpl
++  secure-boot: |
++    # Add snakeoil and ovmf binaries for qemu
++    IMAGER_BUILD_DEPS += "ebg-secure-boot-snakeoil ovmf-binaries"
++    IMAGER_INSTALL += "ebg-secure-boot-snakeoil"
++    WKS_FILE = "${MACHINE}-${BOOTLOADER}-secureboot.wks"
++
++  ovmf: |
++    # snakeoil certs are only part of backports
++    DISTRO_APT_SOURCES_append = " conf/distro/debian-buster-backports.list"
++    DISTRO_APT_PREFERENCES_append = " conf/distro/preferences.ovmf-snakeoil.conf"
+diff --git a/recipes-devtools/ebg-secure-boot-snakeoil/ebg-secure-boot-snakeoil_0.1.bb b/recipes-devtools/ebg-secure-boot-snakeoil/ebg-secure-boot-snakeoil_0.1.bb
 new file mode 100644
-index 0000000..bce97d0
+index 0000000..89abbcf
 --- /dev/null
-+++ b/recipes-core/images/files/secure-boot/sw-description.tmpl
-@@ -0,0 +1,29 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2020
-+#
-+# Authors:
-+#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+software =
-+{
-+    version = "0.2";
-+    name = "secure boot update"
-+    images: ({
-+            filename = "${ROOTFS_PARTITION_NAME}";
-+            device = "fedcba98-7654-3210-cafe-5e0710000001,fedcba98-7654-3210-cafe-5e0710000002";
-+            type = "roundrobin";
-+            compressed = "true";
-+            filesystem = "ext4";
-+    });
-+    files: ({
-+            filename = "linux.signed.efi";
-+            path = "linux.signed.efi";
-+            type = "kernelfile";
-+            device = "sda2,sda3";
-+            filesystem = "vfat";
-+    })
-+}
-diff --git a/recipes-core/images/files/sw-description.tmpl b/recipes-core/images/files/sw-description.tmpl
-index 4d32f6f..f01b500 100644
---- a/recipes-core/images/files/sw-description.tmpl
-+++ b/recipes-core/images/files/sw-description.tmpl
-@@ -16,7 +16,7 @@ software =
-             filename = "${ROOTFS_PARTITION_NAME}";
-             device = "fedcba98-7654-3210-cafe-5e0710000001,fedcba98-7654-3210-cafe-5e0710000002";
-             type = "roundrobin";
--            compressed = true;
-+            compressed = "true";
-             filesystem = "ext4";
-     });
-     files: ({
-diff --git a/recipes-core/images/secureboot.inc b/recipes-core/images/secureboot.inc
-new file mode 100644
-index 0000000..8d9f381
---- /dev/null
-+++ b/recipes-core/images/secureboot.inc
-@@ -0,0 +1,21 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2020
-+#
-+# Authors:
-+#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+
-+EXTRACT_PARTITIONS = "img4"
-+ROOTFS_PARTITION_NAME="img4.gz"
-+
-+SRC_URI += "file://secure-boot/sw-description.tmpl"
-+TEMPLATE_FILES += "secure-boot/sw-description.tmpl"
-+
-+TEMPLATE_VARS += "PN ROOTFS_PARTITION_NAME"
-+
-+SWU_DESCRIPTION_FILE = "secure-boot/sw-description"
-+SWU_ADDITIONAL_FILES += "linux.signed.efi ${ROOTFS_PARTITION_NAME}"
-diff --git a/recipes-core/images/swupdate.inc b/recipes-core/images/swupdate.inc
-new file mode 100644
-index 0000000..6708a7e
---- /dev/null
-+++ b/recipes-core/images/swupdate.inc
-@@ -0,0 +1,19 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2020
-+#
-+# Authors:
-+#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+
-+EXTRACT_PARTITIONS = "img4"
-+ROOTFS_PARTITION_NAME="img4.gz"
-+
-+SRC_URI += "file://sw-description.tmpl"
-+TEMPLATE_FILES += "sw-description.tmpl"
-+TEMPLATE_VARS += "PN ROOTFS_PARTITION_NAME KERNEL_IMAGE INITRD_IMAGE"
-+
-+SWU_ADDITIONAL_FILES += "${INITRD_IMAGE} ${KERNEL_IMAGE} ${ROOTFS_PARTITION_NAME}"
-diff --git a/recipes-devtools/ebg-secure-boot-secrets/ebg-secure-boot-secrets_0.1.bb b/recipes-devtools/ebg-secure-boot-secrets/ebg-secure-boot-secrets_0.1.bb
-new file mode 100644
-index 0000000..37b35c9
---- /dev/null
-+++ b/recipes-devtools/ebg-secure-boot-secrets/ebg-secure-boot-secrets_0.1.bb
-@@ -0,0 +1,51 @@
++++ b/recipes-devtools/ebg-secure-boot-snakeoil/ebg-secure-boot-snakeoil_0.1.bb
+@@ -0,0 +1,35 @@
 +#
 +# CIP Core, generic profile
 +#
@@ -289,56 +156,33 @@ index 0000000..37b35c9
 +
 +inherit dpkg-raw
 +
-+DESCRIPTION = "Add user defined secureboot certifcates to the buildchroot and the script to \
-+               sign an image with the given keys"
-+
-+# variables
-+SB_CERT_PATH = "/usr/share/ebg-secure-boot"
-+SB_CERTDB ??= ""
-+SB_VERIFY_CERT ??= ""
-+SB_KEY_NAME ??= "demoDB"
-+
++DESCRIPTION = "Add script to sign for secure boot with the debian snakeoil keys"
 +# used to sign the image
-+DEBIAN_DEPENDS = "pesign, sbsigntool"
++DEBIAN_DEPENDS = "pesign,  sbsigntool, ovmf, openssl, libnss3-tools"
++
 +
 +# this package cannot be install together with:
-+DEBIAN_CONFLICTS = "ebg-secure-boot-snakeoil"
++DEBIAN_CONFLICTS = "ebg-secure-boot-secrets"
 +
-+SRC_URI = " \
-+    file://sign_secure_image.sh.tmpl \
-+    file://control.tmpl"
-+SRC_URI_append = " ${@ d.getVar(SB_CERTDB) or "" }"
-+SRC_URI_append = " ${@ d.getVar(SB_VERIFY_CERT) or "" }"
-+TEMPLATE_FILES = "sign_secure_image.sh.tmpl"
-+TEMPLATE_VARS += "SB_CERT_PATH SB_CERTDB SB_VERIFY_CERT SB_KEY_NAME"
++SRC_URI = "file://sign_secure_image.sh \
++           file://control.tmpl"
 +
-+TEMPLATE_FILES += "control.tmpl"
++TEMPLATE_FILES = "control.tmpl"
 +TEMPLATE_VARS += "PN MAINTAINER DPKG_ARCH DEBIAN_DEPENDS DESCRIPTION DEBIAN_CONFLICTS"
 +
 +do_install() {
-+    TARGET=${D}${SB_CERT_PATH}
-+    install -m 0700 -d ${TARGET}
-+    cp -a ${WORKDIR}/${SB_CERTDB} ${TARGET}/${SB_CERTDB}
-+    chmod 700 ${TARGET}/${SB_CERTDB}
-+    install -m 0600 ${WORKDIR}/${SB_VERIFY_CERT} ${TARGET}/${SB_VERIFY_CERT}
 +    TARGET=${D}/usr/bin
 +    install -d ${TARGET}
 +    install -m 755 ${WORKDIR}/sign_secure_image.sh ${TARGET}/sign_secure_image.sh
 +}
 +
 +addtask do_install after do_transform_template
-diff --git a/recipes-devtools/ebg-secure-boot-secrets/files/README.md b/recipes-devtools/ebg-secure-boot-secrets/files/README.md
-new file mode 100644
-index 0000000..c739c51
---- /dev/null
-+++ b/recipes-devtools/ebg-secure-boot-secrets/files/README.md
-@@ -0,0 +1 @@
-+For a secure boot image this directory needs to contain the certdb directory and the db.crt file.
-diff --git a/recipes-devtools/ebg-secure-boot-secrets/files/control.tmpl b/recipes-devtools/ebg-secure-boot-secrets/files/control.tmpl
++
+diff --git a/recipes-devtools/ebg-secure-boot-snakeoil/files/control.tmpl b/recipes-devtools/ebg-secure-boot-snakeoil/files/control.tmpl
 new file mode 100644
 index 0000000..8361a49
 --- /dev/null
-+++ b/recipes-devtools/ebg-secure-boot-secrets/files/control.tmpl
++++ b/recipes-devtools/ebg-secure-boot-snakeoil/files/control.tmpl
 @@ -0,0 +1,12 @@
 +Source: ${PN}
 +Section: misc
@@ -352,12 +196,12 @@ index 0000000..8361a49
 +Depends: ${DEBIAN_DEPENDS}
 +Description: ${DESCRIPTION}
 +Conflicts: ${DEBIAN_CONFLICTS}
-diff --git a/recipes-devtools/ebg-secure-boot-secrets/files/sign_secure_image.sh.tmpl b/recipes-devtools/ebg-secure-boot-secrets/files/sign_secure_image.sh.tmpl
+diff --git a/recipes-devtools/ebg-secure-boot-snakeoil/files/sign_secure_image.sh b/recipes-devtools/ebg-secure-boot-snakeoil/files/sign_secure_image.sh
 new file mode 100644
-index 0000000..e84fd4c
+index 0000000..081dbe9
 --- /dev/null
-+++ b/recipes-devtools/ebg-secure-boot-secrets/files/sign_secure_image.sh.tmpl
-@@ -0,0 +1,22 @@
++++ b/recipes-devtools/ebg-secure-boot-snakeoil/files/sign_secure_image.sh
+@@ -0,0 +1,36 @@
 +#!/bin/sh
 +set -e
 +set -x
@@ -377,439 +221,96 @@ index 0000000..e84fd4c
 +    exit 1
 +fi
 +
-+pesign --force --verbose --padding -n ${SB_CERT_PATH}/${SB_CERTDB} -c "${SB_KEY_NAME}" -s -i $signee -o $signed
-+sbverify --cert ${SB_CERT_PATH}/${SB_VERIFY_CERT} $signed
-+exit 0
-diff --git a/recipes-support/initramfs-config/files/postinst.tmpl b/recipes-support/initramfs-config/files/postinst.tmpl
-deleted file mode 100644
-index 008f68d..0000000
---- a/recipes-support/initramfs-config/files/postinst.tmpl
-+++ /dev/null
-@@ -1,31 +0,0 @@
--#!/bin/sh
--if [ -d /usr/share/secureboot ]; then
--    patch -s -p0 /usr/share/initramfs-tools/scripts/local /usr/share/secureboot/secure-boot-debian-local.patch
--fi
--
--INITRAMFS_CONF=/etc/initramfs-tools/initramfs.conf
--if [ -f ${INITRAMFS_CONF} ]; then
--    sed -i -E 's/(^MODULES=).*/\1${INITRAMFS_MODULES}/' ${INITRAMFS_CONF}
--    sed -i -E 's/(^BUSYBOX=).*/\1${INITRAMFS_BUSYBOX}/' ${INITRAMFS_CONF}
--    sed -i -E 's/(^COMPRESS=).*/\1${INITRAMFS_COMPRESS}/' ${INITRAMFS_CONF}
--    sed -i -E 's/(^KEYMAP=).*/\1${INITRAMFS_KEYMAP}/' ${INITRAMFS_CONF}
--    sed -i -E 's/(^DEVICE=).*/\1${INITRAMFS_NET_DEVICE}/' ${INITRAMFS_CONF}
--    sed -i -E 's/(^NFSROOT=).*/\1${INITRAMFS_NFSROOT}/' ${INITRAMFS_CONF}
--    sed -i -E 's/(^RUNSIZE=).*/\1${INITRAMFS_RUNSIZE}/' ${INITRAMFS_CONF}
--    if grep -Fxq "ROOT=" "${INITRAMFS_CONF}"; then
--        sed -i -E 's/(^ROOT=).*/\1${INITRAMFS_ROOT}/' ${INITRAMFS_CONF}
--    else
--        sed -i -E "\$aROOT=${INITRAMFS_ROOT}" ${INITRAMFS_CONF}
--    fi
--fi
--
--MODULES_LIST_FILE=/etc/initramfs-tools/modules
--if [ -f ${MODULES_LIST_FILE} ]; then
--    for modname in ${INITRAMFS_MODULE_LIST}; do
--        if ! grep -Fxq "$modname" "${MODULES_LIST_FILE}"; then
--            echo "$modname" >> "${MODULES_LIST_FILE}"
--        fi
--    done
--fi
--
--update-initramfs -v -u
-diff --git a/scripts/generate-sb-db-from-existing-certificate.sh b/scripts/generate-sb-db-from-existing-certificate.sh
-new file mode 100755
-index 0000000..035f189
---- /dev/null
-+++ b/scripts/generate-sb-db-from-existing-certificate.sh
-@@ -0,0 +1,16 @@
-+#!/bin/sh
-+name=${SB_NAME:-snakeoil}
-+keydir=${SB_KEYDIR:-./keys}
-+if [ ! -d  ${keydir} ]; then
-+    mkdir -p ${keydir}
-+fi
-+inkey=${INKEY:-/usr/share/ovmf/PkKek-1-snakeoil.key}
-+incert=${INCERT:-/usr/share/ovmf/PkKek-1-snakeoil.pem}
-+nick_name=${IN_NICK:-snakeoil}
++name=snakeoil
++keydir=$(mktemp -d)
++inkey=/usr/share/ovmf/PkKek-1-snakeoil.key
++incert=/usr/share/ovmf/PkKek-1-snakeoil.pem
++nick_name=snakeoil
 +TMP=$(mktemp -d)
 +mkdir -p ${keydir}/${name}certdb
 +certutil -N --empty-password -d ${keydir}/${name}certdb
-+openssl pkcs12 -export -out ${TMP}/foo_key.p12 -inkey $inkey  -in $incert  -name $nick_name
-+pk12util -i ${TMP}/foo_key.p12 -d ${keydir}/${name}certdb
++openssl pkcs12 -export -passin pass:"snakeoil" -passout pass: -out ${TMP}/foo_key.p12 -inkey $inkey  -in $incert  -name $nick_name
++pk12util -W "" -i ${TMP}/foo_key.p12 -d ${keydir}/${name}certdb
 +cp $incert ${keydir}/$(basename $incert)
 +rm -rf $TMP
-diff --git a/scripts/generate_secure_boot_keys.sh b/scripts/generate_secure_boot_keys.sh
-new file mode 100755
-index 0000000..8d3f8c0
++
++pesign --force --verbose --padding -n ${keydir}/${name}certdb -c "$nick_name" -s -i $signee -o $signed
++sbverify --cert $incert $signed
++rm -rf $keydir
++exit 0
+diff --git a/recipes-devtools/ovmf-binaries/files/control.tmpl b/recipes-devtools/ovmf-binaries/files/control.tmpl
+new file mode 100644
+index 0000000..54641d6
 --- /dev/null
-+++ b/scripts/generate_secure_boot_keys.sh
-@@ -0,0 +1,51 @@
-+#!/bin/sh
-+name=${SB_NAME:-demo}
-+keydir=${SB_KEYDIR:-./keys}
-+if [ ! -d  ${keydir} ]; then
-+    mkdir -p ${keydir}
-+fi
-+openssl req -new -x509 -newkey rsa:4096 -subj "/CN=${name}PK/" -outform PEM \
-+        -keyout ${keydir}/${name}PK.key  -out ${keydir}/${name}PK.crt  -days 3650 -nodes -sha256
-+openssl req -new -x509 -newkey rsa:4096 -subj "/CN=${name}KEK/" -outform PEM \
-+        -keyout ${keydir}/${name}KEK.key -out ${keydir}/${name}KEK.crt -days 3650 -nodes -sha256
-+openssl req -new -x509 -newkey rsa:4096 -subj "/CN=${name}DB/" -outform PEM \
-+        -keyout ${keydir}/${name}DB.key  -out ${keydir}/${name}DB.crt  -days 3650 -nodes -sha256
-+openssl x509 -in ${keydir}/${name}PK.crt  -out ${keydir}/${name}PK.cer  -outform DER
-+openssl x509 -in ${keydir}/${name}KEK.crt -out ${keydir}/${name}KEK.cer -outform DER
-+openssl x509 -in ${keydir}/${name}DB.crt  -out ${keydir}/${name}DB.cer  -outform DER
++++ b/recipes-devtools/ovmf-binaries/files/control.tmpl
+@@ -0,0 +1,11 @@
++Source: ${PN}
++Section: misc
++Priority: optional
++Standards-Version: 3.9.6
++Maintainer: ${MAINTAINER}
++Build-Depends: debhelper (>= 9), ${DEBIAN_BUILD_DEPENDS}
 +
-+openssl pkcs12 -export -out ${keydir}/${name}DB.p12 \
-+        -in ${keydir}/${name}DB.crt -inkey ${keydir}/${name}DB.key -passout pass:
-+
-+GUID=$(uuidgen --random)
-+echo $GUID > ${keydir}/${name}GUID
-+
-+cert-to-efi-sig-list -g $GUID ${keydir}/${name}PK.crt  ${keydir}/${name}PK.esl
-+cert-to-efi-sig-list -g $GUID ${keydir}/${name}KEK.crt ${keydir}/${name}KEK.esl
-+cert-to-efi-sig-list -g $GUID ${keydir}/${name}DB.crt  ${keydir}/${name}DB.esl
-+rm -f ${keydir}/${name}noPK.esl
-+touch ${keydir}/${name}noPK.esl
-+
-+sign-efi-sig-list -g $GUID  \
-+                  -k ${keydir}/${name}PK.key -c ${keydir}/${name}PK.crt \
-+                  PK ${keydir}/${name}PK.esl   ${keydir}/${name}PK.auth
-+sign-efi-sig-list -g $GUID  \
-+                  -k ${keydir}/${name}PK.key -c ${keydir}/${name}PK.crt \
-+                  PK ${keydir}/${name}noPK.esl ${keydir}/${name}noPK.auth
-+sign-efi-sig-list -g $GUID  \
-+                  -k ${keydir}/${name}PK.key -c ${keydir}/${name}PK.crt \
-+                  KEK ${keydir}/${name}KEK.esl ${keydir}/${name}KEK.auth
-+sign-efi-sig-list -g $GUID  \
-+                  -k ${keydir}/${name}PK.key -c ${keydir}/${name}PK.crt \
-+                  DB ${keydir}/${name}DB.esl ${keydir}/${name}DB.auth
-+
-+chmod 0600 ${keydir}/${name}*.key
-+mkdir -p ${keydir}/${name}certdb
-+certutil -N --empty-password -d ${keydir}/${name}certdb
-+
-+certutil -A -n 'PK' -d ${keydir}/${name}certdb -t CT,CT,CT -i ${keydir}/${name}PK.crt
-+pk12util -W "" -d ${keydir}/${name}certdb -i ${keydir}/${name}DB.p12
-+certutil -d ${keydir}/${name}certdb -A -i ${keydir}/${name}DB.crt -n "" -t u
-+
-+certutil -d ${keydir}/${name}certdb -K
-+certutil -d ${keydir}/${name}certdb -L
-diff --git a/scripts/lib/wic/plugins/source/efibootguard-boot.py b/scripts/lib/wic/plugins/source/efibootguard-boot.py
-index 38d2b2e..d291f75 100644
---- a/scripts/lib/wic/plugins/source/efibootguard-boot.py
-+++ b/scripts/lib/wic/plugins/source/efibootguard-boot.py
-@@ -80,17 +80,29 @@ class EfibootguardBootPlugin(SourcePlugin):
- 
- 
-         boot_files = source_params.get("files", "").split(' ')
-+        uefi_kernel = source_params.get("unified-kernel")
-         cmdline = bootloader.append
--        root_dev = source_params.get("root", None)
--        if not root_dev:
--            msger.error("Specify root in source params")
--            exit(1)
-+        if uefi_kernel:
-+            boot_image = cls._create_unified_kernel_image(rootfs_dir,
-+                                                          cr_workdir,
-+                                                          cmdline,
-+                                                          uefi_kernel,
-+                                                          deploy_dir,
-+                                                          kernel_image,
-+                                                          initrd_image,
-+                                                          source_params)
-+            boot_files.append(boot_image)
-+        else:
-+            root_dev = source_params.get("root", None)
-+            if not root_dev:
-+                msger.error("Specify root in source params")
-+                exit(1)
-             root_dev = root_dev.replace(":", "=")
- 
--        cmdline += " root=%s rw" % root_dev
--        boot_files.append(kernel_image)
--        boot_files.append(initrd_image)
--        cmdline += "initrd=%s" % initrd_image if initrd_image else ""
-+            cmdline += " root=%s rw" % root_dev
-+            boot_files.append(kernel_image)
-+            boot_files.append(initrd_image)
-+            cmdline += "initrd=%s" % initrd_image if initrd_image else ""
- 
-         part_rootfs_dir = "%s/disk/%s.%s" % (cr_workdir,
-                                              part.label, part.lineno)
-@@ -160,3 +172,62 @@ class EfibootguardBootPlugin(SourcePlugin):
- 
-         part.size = bootimg_size
-         part.source_file = bootimg
-+
-+    @classmethod
-+    def _create_unified_kernel_image(cls, rootfs_dir, cr_workdir, cmdline,
-+                                     uefi_kernel, deploy_dir, kernel_image,
-+                                     initrd_image, source_params):
-+        rootfs_path = rootfs_dir.get('ROOTFS_DIR')
-+        os_release_file = "{root}/etc/os-release".format(root=rootfs_path)
-+        efistub = "{rootfs_path}/usr/lib/systemd/boot/efi/linuxx64.efi.stub"\
-+            .format(rootfs_path=rootfs_path)
-+        msger.debug("osrelease path: %s", os_release_file)
-+        kernel_cmdline_file = "{cr_workdir}/kernel-command-line-file.txt"\
-+            .format(cr_workdir=cr_workdir)
-+        with open(kernel_cmdline_file, "w") as cmd_fd:
-+            cmd_fd.write(cmdline)
-+        uefi_kernel_name = "linux.efi"
-+        uefi_kernel_file = "{deploy_dir}/{uefi_kernel_name}"\
-+            .format(deploy_dir=deploy_dir, uefi_kernel_name=uefi_kernel_name)
-+        kernel = "{deploy_dir}/{kernel_image}"\
-+            .format(deploy_dir=deploy_dir, kernel_image=kernel_image)
-+        initrd = "{deploy_dir}/{initrd_image}"\
-+            .format(deploy_dir=deploy_dir, initrd_image=initrd_image)
-+        objcopy_cmd = 'objcopy \
-+            --add-section .osrel={os_release_file} \
-+            --change-section-vma .osrel=0x20000 \
-+            --add-section .cmdline={kernel_cmdline_file} \
-+            --change-section-vma .cmdline=0x30000 \
-+            --add-section .linux={kernel} \
-+            --change-section-vma .linux=0x2000000 \
-+            --add-section .initrd={initrd} \
-+            --change-section-vma .initrd=0x3000000 \
-+            {efistub} {uefi_kernel_file}'.format(
-+                os_release_file=os_release_file,
-+                kernel_cmdline_file=kernel_cmdline_file,
-+                kernel=kernel,
-+                initrd=initrd,
-+                efistub=efistub,
-+                uefi_kernel_file=uefi_kernel_file)
-+        exec_cmd(objcopy_cmd)
-+
-+        return cls._sign_file(name=uefi_kernel_name,
-+                              signee=uefi_kernel_file,
-+                              deploy_dir=deploy_dir,
-+                              source_params=source_params)
-+
-+    @classmethod
-+    def _sign_file(cls, name, signee, deploy_dir, source_params):
-+        sign_script = source_params.get("signwith")
-+        if sign_script and os.path.exists(sign_script):
-+            msger.info("sign with script %s", sign_script)
-+            name = name.replace(".efi", ".signed.efi")
-+            sign_cmd = "{sign_script} {signee} {deploy_dir}/{name}"\
-+                .format(sign_script=sign_script, signee=signee,
-+                        deploy_dir=deploy_dir, name=name)
-+            exec_cmd(sign_cmd)
-+        elif sign_script and not os.path.exists(sign_script):
-+            msger.error("Could not find script %s", sign_script)
-+            exit(1)
-+
-+        return name
-diff --git a/scripts/lib/wic/plugins/source/efibootguard-efi.py b/scripts/lib/wic/plugins/source/efibootguard-efi.py
-index 5ee451f..6647212 100644
---- a/scripts/lib/wic/plugins/source/efibootguard-efi.py
-+++ b/scripts/lib/wic/plugins/source/efibootguard-efi.py
-@@ -64,10 +64,17 @@ class EfibootguardEFIPlugin(SourcePlugin):
-         exec_cmd(create_dir_cmd)
- 
-         for bootloader in bootloader_files:
--            cp_cmd = "cp %s/%s %s/EFI/BOOT/%s" % (deploy_dir,
--                                                  bootloader,
--                                                  part_rootfs_dir,
--                                                  bootloader)
-+            signed_bootloader = cls._sign_file(bootloader,
-+                                               "{}/{}".format(deploy_dir,
-+                                                              bootloader
-+                                                              ),
-+                                               cr_workdir,
-+                                               source_params)
-+            # important the bootloader in deploy_dir is no longer signed
-+            cp_cmd = "cp %s/%s %s/EFI/BOOT/%s" % (cr_workdir,
-+                                                signed_bootloader,
-+                                                part_rootfs_dir,
-+                                                bootloader)
-             exec_cmd(cp_cmd, True)
-         du_cmd = "du --apparent-size -ks %s" % part_rootfs_dir
-         blocks = int(exec_cmd(du_cmd).split()[0])
-@@ -100,3 +107,28 @@ class EfibootguardEFIPlugin(SourcePlugin):
- 
-         part.size = efi_part_image_size
-         part.source_file = efi_part_image
-+
-+
-+    @classmethod
-+    def _sign_file(cls, name, signee, cr_workdir, source_params):
-+        sign_script = source_params.get("signwith")
-+        if sign_script and os.path.exists(sign_script):
-+            work_name = name.replace(".efi", ".signed.efi")
-+            sign_cmd = "{sign_script} {signee} \
-+            {cr_workdir}/{work_name}".format(sign_script=sign_script,
-+                                             signee=signee,
-+                                             cr_workdir=cr_workdir,
-+                                             work_name=work_name)
-+            exec_cmd(sign_cmd)
-+        elif sign_script and not os.path.exists(sign_script):
-+            msger.error("Could not find script %s", sign_script)
-+            exit(1)
-+        else:
-+            # if we do nothing copy the signee to the work directory
-+            work_name = name
-+            cp_cmd = "cp {signee} {cr_workdir}/{work_name}".format(
-+                signee=signee,
-+                cr_workdir=cr_workdir,
-+                work_name=work_name)
-+            exec_cmd(cp_cmd)
-+        return work_name
-diff --git a/scripts/start-efishell.sh b/scripts/start-efishell.sh
-new file mode 100755
-index 0000000..3c56ebc
++Package: ${PN}
++Architecture: ${DPKG_ARCH}
++Depends: ${DEBIAN_DEPENDS}
++Description: ${DESCRIPTION}
+diff --git a/recipes-devtools/ovmf-binaries/ovmf-binaries_0.1.bb b/recipes-devtools/ovmf-binaries/ovmf-binaries_0.1.bb
+new file mode 100644
+index 0000000..025b970
 --- /dev/null
-+++ b/scripts/start-efishell.sh
-@@ -0,0 +1,12 @@
-+#!/bin/sh
-+ovmf_code=${OVMF_CODE:-/usr/share/OVMF/OVMF_CODE.secboot.fd}
-+ovmf_vars=${OVMF_VARS:-./OVMF_VARS.fd}
-+DISK=$1
-+qemu-system-x86_64 -enable-kvm -M q35 \
-+ 	                 -cpu host,hv_relaxed,hv_vapic,hv-spinlocks=0xfff -smp 2 -m 2G -no-hpet \
-+ 	                 -global ICH9-LPC.disable_s3=1 \
-+ 	                 -global isa-fdc.driveA= \
-+                   -boot menu=on \
-+ 	                 -drive if=pflash,format=raw,unit=0,readonly=on,file=${ovmf_code} \
-+ 	                 -drive if=pflash,format=raw,file=${ovmf_vars} \
-+                   -drive file=fat:rw:$DISK
++++ b/recipes-devtools/ovmf-binaries/ovmf-binaries_0.1.bb
+@@ -0,0 +1,30 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2020
++#
++# Authors:
++#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++#
++
++inherit dpkg-raw
++
++DESCRIPTION = "Copy the OVMF biniaries from the build changeroot to the deploy dir"
++
++# this is a empty debian package
++SRC_URI = "file://control.tmpl"
++
++DEBIAN_BUILD_DEPENDS = "ovmf"
++TEMPLATE_FILES = "control.tmpl"
++TEMPLATE_VARS += "PN DEBIAN_DEPENDS MAINTAINER DESCRIPTION DPKG_ARCH DEBIAN_BUILD_DEPENDS"
++
++
++do_extract_ovmf() {
++    install -m 0755 -d ${DEPLOY_DIR_IMAGE}
++    cp -r ${BUILDCHROOT_DIR}/usr/share/OVMF ${DEPLOY_DIR_IMAGE}
++    chown $(id -u):$(id -g) ${DEPLOY_DIR_IMAGE}/OVMF
++}
++
++addtask do_extract_ovmf after do_install_builddeps before do_dpkg_build
 diff --git a/start-qemu.sh b/start-qemu.sh
-index 49f0266..74d1b54 100755
+index 74d1b54..3a3b2f7 100755
 --- a/start-qemu.sh
 +++ b/start-qemu.sh
-@@ -15,6 +15,8 @@ usage()
- 	echo "Usage: $0 ARCHITECTURE [QEMU_OPTIONS]"
- 	echo -e "\nSet QEMU_PATH environment variable to use a locally " \
- 		"built QEMU version"
-+	echo -e "\nSet SECURE_BOOT environment variable to boot a secure boot environment " \
-+		"This environment also needs the variables OVMF_VARS and OVMF_CODE set"
- 	exit 1
- }
+@@ -94,8 +94,8 @@ fi
  
-@@ -22,17 +24,25 @@ if [ -n "${QEMU_PATH}" ]; then
- 	QEMU_PATH="${QEMU_PATH}/"
- fi
  
-+if [ -z "${DISTRO_RELEASE}" ]; then
-+  DISTRO_RELEASE="buster"
-+fi
-+if [ -z "${TARGET_IMAGE}" ];then
-+	TARGET_IMAGE="cip-core-image"
-+fi
-+
- case "$1" in
- 	x86|x86_64|amd64)
- 		DISTRO_ARCH=amd64
- 		QEMU=qemu-system-x86_64
+ if [ -n "SECURE_BOOT" ]; then
+-		ovmf_code=${OVMF_CODE:-/usr/share/OVMF/OVMF_CODE.secboot.fd}
+-		ovmf_vars=${OVMF_VARS:-./OVMF_VARS.fd}
++		ovmf_code=${OVMF_CODE:-./build/tmp/deploy/images/qemu-amd64/OVMF/OVMF_CODE.secboot.fd}
++		ovmf_vars=${OVMF_VARS:-./build/tmp/deploy/images/qemu-amd64/OVMF/OVMF_VARS.snakeoil.fd}
  		QEMU_EXTRA_ARGS=" \
--			-cpu host -smp 4 \
--			-enable-kvm -machine q35 \
-+			-cpu qemu64 \
-+			-smp 4 \
-+			-machine q35,accel=kvm:tcg \
- 			-device ide-hd,drive=disk \
- 			-device virtio-net-pci,netdev=net"
- 		KERNEL_CMDLINE=" \
--			root=/dev/sda vga=0x305 console=ttyS0"
-+			root=/dev/sda vga=0x305"
- 		;;
- 	arm64|aarch64)
- 		DISTRO_ARCH=arm64
-@@ -71,21 +81,41 @@ case "$1" in
- 		;;
- esac
- 
--if [ -z "${DISTRO_RELEASE}" ]; then
--	DISTRO_RELEASE="buster"
--fi
--
--IMAGE_PREFIX="$(dirname $0)/build/tmp/deploy/images/qemu-${DISTRO_ARCH}/cip-core-image-cip-core-${DISTRO_RELEASE}-qemu-${DISTRO_ARCH}"
--IMAGE_FILE=$(ls ${IMAGE_PREFIX}.ext4.img)
-+IMAGE_PREFIX="$(dirname $0)/build/tmp/deploy/images/qemu-${DISTRO_ARCH}/${TARGET_IMAGE}-cip-core-${DISTRO_RELEASE}-qemu-${DISTRO_ARCH}"
- 
- if [ -z "${DISPLAY}" ]; then
- 	QEMU_EXTRA_ARGS="${QEMU_EXTRA_ARGS} -nographic"
-+	case "$1" in
-+		x86|x86_64|amd64)
-+			KERNEL_CMDLINE="${KERNEL_CMDLINE} console=ttyS0"
-+	esac
-+fi
-+
-+
-+
-+if [ -n "SECURE_BOOT" ]; then
-+		ovmf_code=${OVMF_CODE:-/usr/share/OVMF/OVMF_CODE.secboot.fd}
-+		ovmf_vars=${OVMF_VARS:-./OVMF_VARS.fd}
-+		QEMU_EXTRA_ARGS=" \
-+										${QEMU_EXTRA_ARGS} \
-+										-global ICH9-LPC.disable_s3=1 \
-+											-global isa-fdc.driveA= \
-+										"
-+		BOOT_FILES="-drive if=pflash,format=raw,unit=0,readonly=on,file=${ovmf_code} \
-+									-drive if=pflash,format=raw,file=${ovmf_vars} \
-+								-drive file=${IMAGE_PREFIX}.wic.img,discard=unmap,if=none,id=disk,format=raw"
-+else
-+		IMAGE_FILE=$(ls ${IMAGE_PREFIX}.ext4.img)
-+
-+		KERNEL_FILE=$(ls ${IMAGE_PREFIX}-vmlinuz* | tail -1)
-+		INITRD_FILE=$(ls ${IMAGE_PREFIX}-initrd.img* | tail -1)
-+
-+		BOOT_FILES=-kernel ${KERNEL_FILE} -append "${KERNEL_CMDLINE}" \
-+						-initrd ${INITRD_FILE}
- fi
- 
- shift 1
- 
- ${QEMU_PATH}${QEMU} \
--	-drive file=${IMAGE_FILE},discard=unmap,if=none,id=disk,format=raw \
- 	-m 1G -serial mon:stdio -netdev user,id=net \
--	-kernel ${IMAGE_PREFIX}-vmlinuz -append "${KERNEL_CMDLINE}" \
--	-initrd ${IMAGE_PREFIX}-initrd.img ${QEMU_EXTRA_ARGS} "$@"
-+	${BOOT_FILES} ${QEMU_EXTRA_ARGS} "$@"
-diff --git a/wic/ebg-signed-bootloader.inc b/wic/ebg-signed-bootloader.inc
-new file mode 100644
-index 0000000..667e014
---- /dev/null
-+++ b/wic/ebg-signed-bootloader.inc
-@@ -0,0 +1,2 @@
-+# EFI partition containing efibootguard bootloader binary
-+part --source efibootguard-efi  --ondisk sda --size 16M --extra-space 0 --overhead-factor 1 --label efi   --align 1024 --part-type=EF00 --active --sourceparams "signwith=/usr/bin/sign_secure_image.sh"
-diff --git a/wic/qemu-amd64-efibootguard-secureboot.wks b/wic/qemu-amd64-efibootguard-secureboot.wks
-new file mode 100644
-index 0000000..9ccf501
---- /dev/null
-+++ b/wic/qemu-amd64-efibootguard-secureboot.wks
-@@ -0,0 +1,9 @@
-+# short-description: Qemu-amd64 with Efibootguard and SWUpdate
-+# long-description: Disk image for qemu-amd64 with EFI Boot Guard and SWUpdate
-+include ebg-signed-bootloader.inc
-+
-+# EFI Boot Guard environment/config partitions plus Kernel files
-+part --source efibootguard-boot --ondisk sda --size 32M --extra-space 0 --overhead-factor 1 --label BOOT0 --align 1024 --part-type=0700 --sourceparams "revision=2,unified-kernel=y,signwith=/usr/bin/sign_secure_image.sh"
-+part --source efibootguard-boot --ondisk sda --size 32M --extra-space 0 --overhead-factor 1 --label BOOT1 --align 1024 --part-type=0700 --sourceparams "revision=1,unified-kernel=y,signwith=/usr/bin/sign_secure_image.sh"
-+
-+include swupdate-partition.inc
-diff --git a/wic/qemu-amd64-efibootguard.wks b/wic/qemu-amd64-efibootguard.wks
-index 3cd7360..9ccf501 100644
---- a/wic/qemu-amd64-efibootguard.wks
-+++ b/wic/qemu-amd64-efibootguard.wks
-@@ -1,5 +1,9 @@
- # short-description: Qemu-amd64 with Efibootguard and SWUpdate
- # long-description: Disk image for qemu-amd64 with EFI Boot Guard and SWUpdate
-+include ebg-signed-bootloader.inc
-+
-+# EFI Boot Guard environment/config partitions plus Kernel files
-+part --source efibootguard-boot --ondisk sda --size 32M --extra-space 0 --overhead-factor 1 --label BOOT0 --align 1024 --part-type=0700 --sourceparams "revision=2,unified-kernel=y,signwith=/usr/bin/sign_secure_image.sh"
-+part --source efibootguard-boot --ondisk sda --size 32M --extra-space 0 --overhead-factor 1 --label BOOT1 --align 1024 --part-type=0700 --sourceparams "revision=1,unified-kernel=y,signwith=/usr/bin/sign_secure_image.sh"
- 
--include ebg-sysparts.inc
- include swupdate-partition.inc
+ 										${QEMU_EXTRA_ARGS} \
+ 										-global ICH9-LPC.disable_s3=1 \
 -- 
 2.20.1
 
 
---FTaSPKi0o5qwkztJGilA
+--SKLkB5yKlYtt8oWa1Rss
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -817,12 +318,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#5007): https://lists.cip-project.org/g/cip-dev/message=
-/5007
-Mute This Topic: https://lists.cip-project.org/mt/75767905/4520388
+View/Reply Online (#5008): https://lists.cip-project.org/g/cip-dev/message=
+/5008
+Mute This Topic: https://lists.cip-project.org/mt/75767906/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---FTaSPKi0o5qwkztJGilA--
+--SKLkB5yKlYtt8oWa1Rss--
