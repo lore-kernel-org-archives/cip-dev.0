@@ -1,4 +1,4 @@
-Return-Path: <SRS0=NctE=BD=lists.cip-project.org=bounce+64572+5000+4520388+8129055@kernel.org>
+Return-Path: <SRS0=57BF=BD=lists.cip-project.org=bounce+64572+5001+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEF1CC433E3
-	for <cip-dev@archiver.kernel.org>; Fri, 24 Jul 2020 14:52:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 446FBC433EA
+	for <cip-dev@archiver.kernel.org>; Fri, 24 Jul 2020 14:52:32 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id BFBD4206D8
-	for <cip-dev@archiver.kernel.org>; Fri, 24 Jul 2020 14:52:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 166CA206D8
+	for <cip-dev@archiver.kernel.org>; Fri, 24 Jul 2020 14:52:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="jmUur3IJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFBD4206D8
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="jVhbZjpp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 166CA206D8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=siemens.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5000+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id xQ8CYY4521723xWYK1uIaTRX; Fri, 24 Jul 2020 07:52:31 -0700
-X-Received: from goliath.siemens.de (goliath.siemens.de [192.35.17.28])
- by mx.groups.io with SMTP id smtpd.web12.7792.1595602349370987165
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5001+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id 1TBFYY4521723x6pGAZgZHQc; Fri, 24 Jul 2020 07:52:31 -0700
+X-Received: from david.siemens.de (david.siemens.de [192.35.17.14])
+ by mx.groups.io with SMTP id smtpd.web10.7795.1595602349621708445
  for <cip-dev@lists.cip-project.org>;
- Fri, 24 Jul 2020 07:52:29 -0700
+ Fri, 24 Jul 2020 07:52:30 -0700
 X-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-	by goliath.siemens.de (8.15.2/8.15.2) with ESMTPS id 06OEqRdQ005669
+	by david.siemens.de (8.15.2/8.15.2) with ESMTPS id 06OEqRTD025229
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-	for <cip-dev@lists.cip-project.org>; Fri, 24 Jul 2020 16:52:27 +0200
+	for <cip-dev@lists.cip-project.org>; Fri, 24 Jul 2020 16:52:28 +0200
 X-Received: from md2dvrtc.fritz.box ([167.87.3.170])
-	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 06OEqPij031602;
+	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 06OEqPik031602;
 	Fri, 24 Jul 2020 16:52:27 +0200
 From: "Quirin Gylstorff" <quirin.gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org, Jan.Kiszka@siemens.com
 Cc: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-Subject: [cip-dev] [isar-cip-core PATCH v3 4/5] wic: Add wks files for A/B Partition update
-Date: Fri, 24 Jul 2020 16:52:24 +0200
-Message-Id: <20200724145225.7895-5-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev] [isar-cip-core PATCH v3 5/5] swupdate: create swu file from wic image
+Date: Fri, 24 Jul 2020 16:52:25 +0200
+Message-Id: <20200724145225.7895-6-Quirin.Gylstorff@siemens.com>
 In-Reply-To: <20200724145225.7895-1-Quirin.Gylstorff@siemens.com>
 References: <20200625132111.16367-1-Quirin.Gylstorff@siemens.com>
  <20200724145225.7895-1-Quirin.Gylstorff@siemens.com>
@@ -47,44 +47,42 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: 7692d93tEktnBQMgtTNSox8jx4520388AA=
-Content-Type: multipart/mixed; boundary="dQTxkUBxT5Cku9G6lXwH"
+X-Gm-Message-State: Yq3vs1pI5WtYVF59IIAcEdMgx4520388AA=
+Content-Type: multipart/mixed; boundary="EOFU6DAcwJmy1wytK1Wy"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=lists.cip-project.org; q=dns/txt; s=20140610; t=1595602351;
- bh=z0ZCgo1fXA3ttNClf538l379lQHPdvBrK6av4qJrIPs=;
+ bh=A07IAaBH9tbjnn/i1dtp+yLK4NPwa2olsK/MrQmw2XE=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=jmUur3IJ6cYonhZZ5StZNQxVj/L8KI0zd+rQvCkp9zWPgM+vP/0n+hV0KRkw+W0oAWA
- cBHLSCuY+4UWsyuoYF9ysCeUB0M9od6SOH0FgsbA0/+ioprbq495lKooty2nCmo3HCARz
- WWvcHipDqk8ZtVmezeaOMrGX+dhiMf3xgEE=
+ b=jVhbZjppdaJpP2cbYbEAj/5QX29LfW+z+B8SlDHMzx85RrtL42SIFsWJH5XnaKm7i1g
+ rYoVvrIr3ITDSI2h1j1kZTjjn0eTW6HS+aNW17nCMmme/h2fNp00prt97YZZTUcJZ9b1q
+ K2Vw7I5KjwBCZ6wlVPjNp2gRXgCWWRoOG/4=
 
---dQTxkUBxT5Cku9G6lXwH
+--EOFU6DAcwJmy1wytK1Wy
 Content-Transfer-Encoding: 8bit
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-Add wks for:
-- simatic-ipc227e
-- qemu-amd64
+Create a swu file for swupdate to update devices in the field.
+This is done in the same step as the complete image build
+to avoid diverging images.
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- kas/opt/ebg-swu.yml                  | 26 ++++++++++++++++++++++++++
- wic/ebg-sysparts.inc                 |  8 ++++++++
- wic/qemu-amd64-efibootguard.wks      |  5 +++++
- wic/simatic-ipc227e-efibootguard.wks |  5 +++++
- wic/swupdate-partition.inc           |  4 ++++
- 5 files changed, 48 insertions(+)
- create mode 100644 kas/opt/ebg-swu.yml
- create mode 100644 wic/ebg-sysparts.inc
- create mode 100644 wic/qemu-amd64-efibootguard.wks
- create mode 100644 wic/simatic-ipc227e-efibootguard.wks
- create mode 100644 wic/swupdate-partition.inc
+ classes/extract-partition.bbclass             | 26 +++++++++++++
+ classes/wic-swu-img.bbclass                   | 20 ++++++++++
+ kas/opt/ebg-swu.yml                           |  4 +-
+ recipes-core/images/cip-core-image.bb         | 10 +++++
+ recipes-core/images/files/sw-description.tmpl | 37 +++++++++++++++++++
+ 5 files changed, 95 insertions(+), 2 deletions(-)
+ create mode 100644 classes/extract-partition.bbclass
+ create mode 100644 classes/wic-swu-img.bbclass
+ create mode 100644 recipes-core/images/files/sw-description.tmpl
 
-diff --git a/kas/opt/ebg-swu.yml b/kas/opt/ebg-swu.yml
+diff --git a/classes/extract-partition.bbclass b/classes/extract-partition.bbclass
 new file mode 100644
-index 0000000..5b39730
+index 0000000..e9de8fc
 --- /dev/null
-+++ b/kas/opt/ebg-swu.yml
++++ b/classes/extract-partition.bbclass
 @@ -0,0 +1,26 @@
 +#
 +# CIP Core, generic profile
@@ -97,72 +95,125 @@ index 0000000..5b39730
 +# SPDX-License-Identifier: MIT
 +#
 +
-+header:
-+  version: 8
++SOURCE_IMAGE_FILE ?= "${WIC_IMAGE_FILE}"
++EXTRACT_PARTITIONS ?= "img4"
 +
-+local_conf_header:
-+  swupdate: |
-+    IMAGE_INSTALL_append = " swupdate efibootguard"
-+    BOOTLOADER = "efibootguard"
++do_extract_partition () {
++    for PARTITION in ${EXTRACT_PARTITIONS}; do
++        rm -f ${DEPLOY_DIR_IMAGE}/${PARTITION}.gz
++        PART_START=$(fdisk -lu ${SOURCE_IMAGE_FILE} | grep ${PARTITION} | awk '{ print $2 }'  )
++        PART_END=$(fdisk -lu ${SOURCE_IMAGE_FILE} | grep ${PARTITION} | awk '{ print $3 }'  )
++        PART_COUNT=$(expr ${PART_END} - ${PART_START} + 1 )
 +
-+  efibootguard: |
-+    WDOG_TIMEOUT = "0"
-+    WICVARS += "WDOG_TIMEOUT"
++        dd if=${SOURCE_IMAGE_FILE} of=${DEPLOY_DIR_IMAGE}/${PARTITION} bs=512 skip=${PART_START} count=${PART_COUNT}
 +
-+  wic: |
-+    IMAGE_TYPE = "wic-img"
-+    WKS_FILE = "${MACHINE}-${BOOTLOADER}.wks"
-diff --git a/wic/ebg-sysparts.inc b/wic/ebg-sysparts.inc
++        gzip ${DEPLOY_DIR_IMAGE}/${PARTITION}
++    done
++}
+diff --git a/classes/wic-swu-img.bbclass b/classes/wic-swu-img.bbclass
 new file mode 100644
-index 0000000..dea99e8
+index 0000000..c8532ba
 --- /dev/null
-+++ b/wic/ebg-sysparts.inc
-@@ -0,0 +1,8 @@
-+# default partition layout EFI Boot Guard usage
++++ b/classes/wic-swu-img.bbclass
+@@ -0,0 +1,20 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2020
++#
++# Authors:
++#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++#
 +
-+# EFI partition containing efibootguard bootloader binary
-+part --source efibootguard-efi  --ondisk sda --size 16M --extra-space 0 --overhead-factor 1 --label efi   --align 1024 --part-type=EF00 --active
 +
-+# EFI Boot Guard environment/config partitions plus Kernel files
-+part --source efibootguard-boot --ondisk sda --size 32M --extra-space 0 --overhead-factor 1 --label BOOT0 --align 1024 --part-type=0700 --sourceparams "revision=2,root=PARTUUID:fedcba98-7654-3210-cafe-5e0710000001"
-+part --source efibootguard-boot --ondisk sda --size 32M --extra-space 0 --overhead-factor 1 --label BOOT1 --align 1024 --part-type=0700 --sourceparams "revision=1,root=PARTUUID:fedcba98-7654-3210-cafe-5e0710000002"
-diff --git a/wic/qemu-amd64-efibootguard.wks b/wic/qemu-amd64-efibootguard.wks
++inherit wic-img
++inherit extract-partition
++inherit swupdate-img
++
++SOURCE_IMAGE_FILE = "${WIC_IMAGE_FILE}"
++
++addtask do_extract_partition after do_wic_image
++addtask do_swupdate_image after do_extract_partition
+diff --git a/kas/opt/ebg-swu.yml b/kas/opt/ebg-swu.yml
+index 5b39730..304fa4d 100644
+--- a/kas/opt/ebg-swu.yml
++++ b/kas/opt/ebg-swu.yml
+@@ -22,5 +22,5 @@ local_conf_header:
+     WICVARS += "WDOG_TIMEOUT"
+ 
+   wic: |
+-    IMAGE_TYPE = "wic-img"
+-    WKS_FILE = "${MACHINE}-${BOOTLOADER}.wks"
++    IMAGE_TYPE = "wic-swu-img"
++    WKS_FILE ?= "${MACHINE}-${BOOTLOADER}.wks"
+diff --git a/recipes-core/images/cip-core-image.bb b/recipes-core/images/cip-core-image.bb
+index 9ee4b25..b1ed491 100644
+--- a/recipes-core/images/cip-core-image.bb
++++ b/recipes-core/images/cip-core-image.bb
+@@ -17,3 +17,13 @@ DESCRIPTION = "CIP Core image"
+ IMAGE_INSTALL += "customizations"
+ # for cip-testing
+ IMAGE_INSTALL += "ltp-full"
++
++# for swupdate
++EXTRACT_PARTITIONS = "img4"
++ROOTFS_PARTITION_NAME="img4.gz"
++
++SRC_URI += "file://sw-description.tmpl"
++TEMPLATE_FILES += "sw-description.tmpl"
++TEMPLATE_VARS += "PN ROOTFS_PARTITION_NAME KERNEL_IMAGE INITRD_IMAGE"
++
++SWU_ADDITIONAL_FILES += "${INITRD_IMAGE} ${KERNEL_IMAGE} ${ROOTFS_PARTITION_NAME}"
+diff --git a/recipes-core/images/files/sw-description.tmpl b/recipes-core/images/files/sw-description.tmpl
 new file mode 100644
-index 0000000..3cd7360
+index 0000000..4d32f6f
 --- /dev/null
-+++ b/wic/qemu-amd64-efibootguard.wks
-@@ -0,0 +1,5 @@
-+# short-description: Qemu-amd64 with Efibootguard and SWUpdate
-+# long-description: Disk image for qemu-amd64 with EFI Boot Guard and SWUpdate
++++ b/recipes-core/images/files/sw-description.tmpl
+@@ -0,0 +1,37 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2020
++#
++# Authors:
++#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++#
++software =
++{
++    version = "0.2";
++    name = "cip software update"
++    images: ({
++            filename = "${ROOTFS_PARTITION_NAME}";
++            device = "fedcba98-7654-3210-cafe-5e0710000001,fedcba98-7654-3210-cafe-5e0710000002";
++            type = "roundrobin";
++            compressed = true;
++            filesystem = "ext4";
++    });
++    files: ({
++            filename = "${KERNEL_IMAGE}";
++            path = "vmlinuz";
++            type = "kernelfile";
++            device = "sda2,sda3";
++            filesystem = "vfat";
++    },
++    {
++            filename = "${INITRD_IMAGE}";
++            path = "initrd.img";
++            type = "kernelfile";
++            device = "sda2,sda3";
++            filesystem = "vfat";
++    });
++}
 +
-+include ebg-sysparts.inc
-+include swupdate-partition.inc
-diff --git a/wic/simatic-ipc227e-efibootguard.wks b/wic/simatic-ipc227e-efibootguard.wks
-new file mode 100644
-index 0000000..74446d3
---- /dev/null
-+++ b/wic/simatic-ipc227e-efibootguard.wks
-@@ -0,0 +1,5 @@
-+# short-description: Simatic-ipc227e with EFI Boot Guard and SWUpdate
-+# long-description: Disk image for Simatic-ipc227e with EFI Boot Guard and SWUpdate
-+
-+include ebg-sysparts.inc
-+include swupdate-partition.inc
-diff --git a/wic/swupdate-partition.inc b/wic/swupdate-partition.inc
-new file mode 100644
-index 0000000..15fbe80
---- /dev/null
-+++ b/wic/swupdate-partition.inc
-@@ -0,0 +1,4 @@
-+part --source rootfs --uuid "fedcba98-7654-3210-cafe-5e0710000001" --size 1000M   --extra-space 128M --overhead-factor 1 --label systema --align 1024 --fstype=ext4
-+part  --source rootfs --uuid "fedcba98-7654-3210-cafe-5e0710000002" --size 1000M   --extra-space 128M --overhead-factor 1 --label systemb --align 1024 --fstype=ext4
-+
-+bootloader --ptable gpt --append="console=tty0 console=ttyS0,115200 rootwait earlyprintk"
 -- 
 2.20.1
 
 
---dQTxkUBxT5Cku9G6lXwH
+--EOFU6DAcwJmy1wytK1Wy
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -170,12 +221,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#5000): https://lists.cip-project.org/g/cip-dev/message=
-/5000
-Mute This Topic: https://lists.cip-project.org/mt/75767667/4520388
+View/Reply Online (#5001): https://lists.cip-project.org/g/cip-dev/message=
+/5001
+Mute This Topic: https://lists.cip-project.org/mt/75767668/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---dQTxkUBxT5Cku9G6lXwH--
+--EOFU6DAcwJmy1wytK1Wy--
