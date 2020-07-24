@@ -1,309 +1,184 @@
-Return-Path: <SRS0=nJaJ=BD=lists.cip-project.org=bounce+64572+5004+4520388+8129055@kernel.org>
+Return-Path: <SRS0=XxHb=BD=lists.cip-project.org=bounce+64572+5010+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63F54C433EB
-	for <cip-dev@archiver.kernel.org>; Fri, 24 Jul 2020 15:01:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8861DC433DF
+	for <cip-dev@archiver.kernel.org>; Fri, 24 Jul 2020 17:07:35 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 2F34B206F0
-	for <cip-dev@archiver.kernel.org>; Fri, 24 Jul 2020 15:01:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 0F4DB206D8
+	for <cip-dev@archiver.kernel.org>; Fri, 24 Jul 2020 17:07:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="lR7UCIyf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F34B206F0
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="mUUH4oq8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F4DB206D8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=siemens.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5004+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id DHHpYY4521723xawBm7ecUrW; Fri, 24 Jul 2020 08:01:57 -0700
-X-Received: from thoth.sbs.de (thoth.sbs.de [192.35.17.2])
- by mx.groups.io with SMTP id smtpd.web10.7988.1595602910374331847
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5010+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id ooxzYY4521723xh2tyoOVZvR; Fri, 24 Jul 2020 10:07:34 -0700
+X-Received: from gecko.sbs.de (gecko.sbs.de [194.138.37.40])
+ by mx.groups.io with SMTP id smtpd.web10.293.1595610452133231703
  for <cip-dev@lists.cip-project.org>;
- Fri, 24 Jul 2020 08:01:50 -0700
-X-Received: from mail1.sbs.de (mail1.sbs.de [192.129.41.35])
-	by thoth.sbs.de (8.15.2/8.15.2) with ESMTPS id 06OF1mI7020708
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-	for <cip-dev@lists.cip-project.org>; Fri, 24 Jul 2020 17:01:48 +0200
-X-Received: from md2dvrtc.fritz.box ([167.87.3.170])
-	by mail1.sbs.de (8.15.2/8.15.2) with ESMTP id 06OF1lbn027266;
-	Fri, 24 Jul 2020 17:01:48 +0200
-From: "Quirin Gylstorff" <quirin.gylstorff@siemens.com>
-To: cip-dev@lists.cip-project.org, Jan.Kiszka@siemens.com
-Cc: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-Subject: [cip-dev] [isar-cip-core PATCH v3 2/6] isar-patch: Add initramfs-config patch
-Date: Fri, 24 Jul 2020 17:01:43 +0200
-Message-Id: <20200724150147.8253-3-Quirin.Gylstorff@siemens.com>
-In-Reply-To: <20200724150147.8253-1-Quirin.Gylstorff@siemens.com>
-References: <20200629125400.13968-1-Quirin.Gylstorff@siemens.com>
- <20200724150147.8253-1-Quirin.Gylstorff@siemens.com>
+ Fri, 24 Jul 2020 10:07:33 -0700
+X-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
+	by gecko.sbs.de (8.15.2/8.15.2) with ESMTPS id 06OH7AVU029510
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 24 Jul 2020 19:07:10 +0200
+X-Received: from [139.22.112.247] ([139.22.112.247])
+	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 06OH76bs007058;
+	Fri, 24 Jul 2020 19:07:07 +0200
+Subject: Re: [cip-dev] [PATCH 4.9 18/22] x86/fpu: Disable bottom halves while loading FPU registers
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen
+ <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>, kvm ML <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?=
+ <rkrcmar@redhat.com>,
+        Rik van Riel <riel@surriel.com>, x86-ml <x86@kernel.org>,
+        cip-dev <cip-dev@lists.cip-project.org>
+References: <20181228113126.144310132@linuxfoundation.org>
+ <20181228113127.414176417@linuxfoundation.org>
+From: "Jan Kiszka" <jan.kiszka@siemens.com>
+Message-ID: <01857944-ce1a-c6cd-3666-1e9b6ca8cccc@siemens.com>
+Date: Fri, 24 Jul 2020 19:07:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <20181228113127.414176417@linuxfoundation.org>
+X-MIME-Autoconverted: from 8bit to quoted-printable by gecko.sbs.de id 06OH7AVU029510
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: hEk8MniLrfd7kMd1LTlnLHFfx4520388AA=
-Content-Type: multipart/mixed; boundary="FzvjQrwHNVYW0oeseyPi"
+X-Gm-Message-State: KIckXhV9V3M4If7FepqcWrxNx4520388AA=
+Content-Type: multipart/mixed; boundary="qOnjBIBJAvjte8waj7OO"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1595602917;
- bh=6EXaqy9cJezMxCO0BX06NG77ou/Jh4eCNPb6p2XMROY=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1595610454;
+ bh=N7sMpaVvV8ZA+uOSKFku4BmC3J5QHuPBsLllQTaI3c0=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=lR7UCIyf2yitwXJRgBIysV3EwHHUedk7RpG8UOdcvum9EvX70h3pGhOursXnlI2tz9E
- NlzcZoNPSSAA3bFSIxH0g8JC7O1b67BZLpAACVvhkgd7/WSm3OB51KKM3NaDPuSVw2gJ0
- sBWCMRITb4X3E0azSYUYyjoNP3Z1pLExXTE=
+ b=mUUH4oq84KvlEtRDuZfPGMXa/xdFuGrSOdVyO9ZnY60gWUt5MOR7/YhN9QrxsIbBAoV
+ 0yANh90CpjfXaoEyeaOVd3GMDpzlIg8BdLGIqwztT2cp4vyW4xoS8laoGabCOOJgijjhW
+ XSiAOb1zVTAm30pzs9cFu+2bUA6pBDyHd/E=
 
---FzvjQrwHNVYW0oeseyPi
-Content-Transfer-Encoding: 8bit
+--qOnjBIBJAvjte8waj7OO
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+On 28.12.18 12:52, Greg Kroah-Hartman wrote:
+> 4.9-stable review patch.  If anyone has any objections, please let me k=
+now.
+>=20
+> ------------------
+>=20
+> From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+>=20
+> commit 68239654acafe6aad5a3c1dc7237e60accfebc03 upstream.
+>=20
+> The sequence
+>=20
+>    fpu->initialized =3D 1;		/* step A */
+>    preempt_disable();		/* step B */
+>    fpu__restore(fpu);
+>    preempt_enable();
+>=20
+> in __fpu__restore_sig() is racy in regard to a context switch.
+>=20
+> For 32bit frames, __fpu__restore_sig() prepares the FPU state within
+> fpu->state. To ensure that a context switch (switch_fpu_prepare() in
+> particular) does not modify fpu->state it uses fpu__drop() which sets
+> fpu->initialized to 0.
+>=20
+> After fpu->initialized is cleared, the CPU's FPU state is not saved
+> to fpu->state during a context switch. The new state is loaded via
+> fpu__restore(). It gets loaded into fpu->state from userland and
+> ensured it is sane. fpu->initialized is then set to 1 in order to avoid
+> fpu__initialize() doing anything (overwrite the new state) which is par=
+t
+> of fpu__restore().
+>=20
+> A context switch between step A and B above would save CPU's current FP=
+U
+> registers to fpu->state and overwrite the newly prepared state. This
+> looks like a tiny race window but the Kernel Test Robot reported this
+> back in 2016 while we had lazy FPU support. Borislav Petkov made the
+> link between that report and another patch that has been posted. Since
+> the removal of the lazy FPU support, this race goes unnoticed because
+> the warning has been removed.
+>=20
+> Disable bottom halves around the restore sequence to avoid the race. BH
+> need to be disabled because BH is allowed to run (even with preemption
+> disabled) and might invoke kernel_fpu_begin() by doing IPsec.
+>=20
+>   [ bp: massage commit message a bit. ]
+>=20
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Signed-off-by: Borislav Petkov <bp@suse.de>
+> Acked-by: Ingo Molnar <mingo@kernel.org>
+> Acked-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
+> Cc: kvm ML <kvm@vger.kernel.org>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
+> Cc: Rik van Riel <riel@surriel.com>
+> Cc: stable@vger.kernel.org
+> Cc: x86-ml <x86@kernel.org>
+> Link: http://lkml.kernel.org/r/20181120102635.ddv3fvavxajjlfqk@linutron=
+ix.de
+> Link: https://lkml.kernel.org/r/20160226074940.GA28911@pd.tnic
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>   arch/x86/kernel/fpu/signal.c |    4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> --- a/arch/x86/kernel/fpu/signal.c
+> +++ b/arch/x86/kernel/fpu/signal.c
+> @@ -342,10 +342,10 @@ static int __fpu__restore_sig(void __use
+>   			sanitize_restored_xstate(tsk, &env, xfeatures, fx_only);
+>   		}
+>  =20
+> +		local_bh_disable();
+>   		fpu->fpstate_active =3D 1;
+> -		preempt_disable();
+>   		fpu__restore(fpu);
+> -		preempt_enable();
+> +		local_bh_enable();
+>  =20
+>   		return err;
+>   	} else {
+>=20
+>=20
 
-Adapt the initramfs generation to set for example the root device
-in the initramfs
+Any reason why the backport stopped back than at 4.9? I just debugged=20
+this out of a 4.4 kernel, and it is needed there as well. I'm happy to=20
+propose a backport, would just appreciate a hint if the BH protection is=20
+needed also there (my case was without BH).
 
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
----
- ...-support-Generate-a-custom-initramfs.patch | 207 ++++++++++++++++++
- kas-cip.yml                                   |   3 +
- 2 files changed, 210 insertions(+)
- create mode 100644 isar-patches/v7-0001-meta-support-Generate-a-custom-initramfs.patch
+Thanks,
+Jan
 
-diff --git a/isar-patches/v7-0001-meta-support-Generate-a-custom-initramfs.patch b/isar-patches/v7-0001-meta-support-Generate-a-custom-initramfs.patch
-new file mode 100644
-index 0000000..f8fb28e
---- /dev/null
-+++ b/isar-patches/v7-0001-meta-support-Generate-a-custom-initramfs.patch
-@@ -0,0 +1,207 @@
-+From 7c85e2e363fd39e60bf5041d02e14e8bd62c1a68 Mon Sep 17 00:00:00 2001
-+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+Date: Tue, 24 Mar 2020 17:58:08 +0100
-+Subject: [PATCH v7 1/3] meta/support: Generate a custom initramfs
-+
-+This package sets the Parameters for mkinitramfs/update-intramfs
-+before it regenerates the initrd.img of debian with a modified version.
-+
-+Use cases are the remove unnecessary kernel modules to reduce the
-+size of the initrd by using the parameters:
-+```
-+INITRAMFS_MODULES = "list"
-+INITRAMFS_MODULE_LIST += "ext4"
-+```
-+
-+Set the boot root during the initrd generation by setting `INITRAMFS_ROOT`.
-+
-+see also man pages of mkinitramfs and initramfs.conf.
-+
-+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+---
-+ .../initramfs-config/initramfs-config_0.1.bb  |  6 +++
-+ .../initramfs-config/files/control.tmpl       | 12 +++++
-+ .../initramfs-config/files/postinst.tmpl      | 50 +++++++++++++++++++
-+ .../initramfs-config/files/postrm.tmpl        | 41 +++++++++++++++
-+ .../initramfs-config/initramfs-config.inc     | 32 ++++++++++++
-+ 5 files changed, 141 insertions(+)
-+ create mode 100644 meta-isar/recipes-support/initramfs-config/initramfs-config_0.1.bb
-+ create mode 100644 meta/recipes-support/initramfs-config/files/control.tmpl
-+ create mode 100644 meta/recipes-support/initramfs-config/files/postinst.tmpl
-+ create mode 100644 meta/recipes-support/initramfs-config/files/postrm.tmpl
-+ create mode 100644 meta/recipes-support/initramfs-config/initramfs-config.inc
-+
-+diff --git a/meta-isar/recipes-support/initramfs-config/initramfs-config_0.1.bb b/meta-isar/recipes-support/initramfs-config/initramfs-config_0.1.bb
-+new file mode 100644
-+index 0000000..c951e8a
-+--- /dev/null
-++++ b/meta-isar/recipes-support/initramfs-config/initramfs-config_0.1.bb
-+@@ -0,0 +1,6 @@
-++#
-++# Copyright (C) Siemens AG, 2020
-++#
-++# SPDX-License-Identifier: MIT
-++
-++require recipes-support/initramfs-config/initramfs-config.inc
-+diff --git a/meta/recipes-support/initramfs-config/files/control.tmpl b/meta/recipes-support/initramfs-config/files/control.tmpl
-+new file mode 100644
-+index 0000000..66984eb
-+--- /dev/null
-++++ b/meta/recipes-support/initramfs-config/files/control.tmpl
-+@@ -0,0 +1,12 @@
-++Source: ${PN}
-++Section: misc
-++Priority: optional
-++Standards-Version: 3.9.6
-++Maintainer: isar-users <isar-users@googlegroups.com>
-++Build-Depends: debhelper (>= 9)
-++
-++
-++Package: ${PN}
-++Architecture: any
-++Depends: ${shlibs:Depends}, ${misc:Depends}, initramfs-tools-core, ${DEBIAN_DEPENDS}
-++Description: Configuration files for a custom initramfs
-+diff --git a/meta/recipes-support/initramfs-config/files/postinst.tmpl b/meta/recipes-support/initramfs-config/files/postinst.tmpl
-+new file mode 100644
-+index 0000000..e523906
-+--- /dev/null
-++++ b/meta/recipes-support/initramfs-config/files/postinst.tmpl
-+@@ -0,0 +1,50 @@
-++#!/bin/sh
-++# postinst script for initramfs-config
-++#
-++# see: dh_installdeb(1)
-++
-++set -e
-++
-++case "$1" in
-++    configure)
-++        INITRAMFS_CONF=/etc/initramfs-tools/initramfs.conf
-++        if [ -f ${INITRAMFS_CONF} ]; then
-++            sed -i -E 's/(^MODULES=).*/\1${INITRAMFS_MODULES}/' ${INITRAMFS_CONF}
-++            sed -i -E 's/(^BUSYBOX=).*/\1${INITRAMFS_BUSYBOX}/' ${INITRAMFS_CONF}
-++            sed -i -E 's/(^COMPRESS=).*/\1${INITRAMFS_COMPRESS}/' ${INITRAMFS_CONF}
-++            sed -i -E 's/(^KEYMAP=).*/\1${INITRAMFS_KEYMAP}/' ${INITRAMFS_CONF}
-++            sed -i -E 's/(^DEVICE=).*/\1${INITRAMFS_NET_DEVICE}/' ${INITRAMFS_CONF}
-++            sed -i -E 's/(^NFSROOT=).*/\1${INITRAMFS_NFSROOT}/' ${INITRAMFS_CONF}
-++            sed -i -E 's/(^RUNSIZE=).*/\1${INITRAMFS_RUNSIZE}/' ${INITRAMFS_CONF}
-++            if grep -Fxq "ROOT=" "${INITRAMFS_CONF}"; then
-++                sed -i -E 's/(^ROOT=).*/\1${INITRAMFS_ROOT}/' ${INITRAMFS_CONF}
-++            else
-++                sed -i -E "\$aROOT=${INITRAMFS_ROOT}" ${INITRAMFS_CONF}
-++            fi
-++        fi
-++
-++        MODULES_LIST_FILE=/etc/initramfs-tools/modules
-++        if [ -f ${MODULES_LIST_FILE} ]; then
-++            for modname in ${INITRAMFS_MODULE_LIST}; do
-++                if ! grep -Fxq "$modname" "${MODULES_LIST_FILE}"; then
-++                    echo "$modname" >> "${MODULES_LIST_FILE}"
-++                fi
-++            done
-++        fi
-++
-++        update-initramfs -v -u
-++
-++    ;;
-++    abort-upgrade|abort-remove|abort-deconfigure)
-++    ;;
-++
-++    *)
-++        echo "postinst called with unknown argument \`$1'" >&2
-++        exit 1
-++        ;;
-++esac
-++# dh_installdeb will replace this with shell code automatically
-++# generated by other debhelper scripts.
-++#DEBHELPER#
-++
-++exit 0
-+diff --git a/meta/recipes-support/initramfs-config/files/postrm.tmpl b/meta/recipes-support/initramfs-config/files/postrm.tmpl
-+new file mode 100644
-+index 0000000..115d9b6
-+--- /dev/null
-++++ b/meta/recipes-support/initramfs-config/files/postrm.tmpl
-+@@ -0,0 +1,41 @@
-++#!/bin/sh
-++# postrm script for initramfs-config
-++#
-++# see: dh_installdeb(1)
-++
-++set -e
-++
-++case "$1" in
-++    purge|remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
-++        # back to the debian defaults
-++        INITRAMFS_CONF=/etc/initramfs-tools/initramfs.conf
-++        sed -i -E 's/(^MODULES=).*/\1most/' ${INITRAMFS_CONF}
-++        sed -i -E 's/(^BUSYBOX=).*/\1auto/' ${INITRAMFS_CONF}
-++        sed -i -E 's/(^COMPRESS=).*/\1gzip/' ${INITRAMFS_CONF}
-++        sed -i -E 's/(^KEYMAP=).*/\1n/' ${INITRAMFS_CONF}
-++        sed -i -E 's/(^DEVICE=).*/\1/' ${INITRAMFS_CONF}
-++        sed -i -E 's/(^NFSROOT=).*/\1auto/' ${INITRAMFS_CONF}
-++        sed -i -E 's/(^RUNSIZE=).*/\110%/' ${INITRAMFS_CONF}
-++        sed -i -E 's/(^ROOT=).*//' ${INITRAMFS_CONF}
-++
-++        # remove the added modules
-++        MODULES_LIST_FILE=/etc/initramfs-tools/modules
-++        for modname in ${INITRAMFS_MODULE_LIST}; do
-++            sed -i -E 's/$modname//'
-++        done
-++
-++        update-initramfs -v -u
-++    ;;
-++
-++    *)
-++        echo "postrm called with unknown argument \`$1'" >&2
-++        exit 1
-++        ;;
-++esac
-++
-++# dh_installdeb will replace this with shell code automatically
-++# generated by other debhelper scripts.
-++
-++#DEBHELPER#
-++
-++exit 0
-+diff --git a/meta/recipes-support/initramfs-config/initramfs-config.inc b/meta/recipes-support/initramfs-config/initramfs-config.inc
-+new file mode 100644
-+index 0000000..16049a9
-+--- /dev/null
-++++ b/meta/recipes-support/initramfs-config/initramfs-config.inc
-+@@ -0,0 +1,32 @@
-++# This software is a part of ISAR.
-++# Copyright (C) 2020 Siemens AG
-++#
-++# SPDX-License-Identifier: MIT
-++inherit dpkg-raw
-++inherit template
-++DESCRIPTION = "Recipe to set the initramfs configuration and generate a new ramfs"
-++
-++FILESEXTRAPATHS_prepend := "${FILE_DIRNAME}/files:"
-++
-++SRC_URI = "file://postinst.tmpl \
-++           file://postrm.tmpl \
-++           file://control.tmpl \
-++          "
-++
-++INITRAMFS_MODULES ?= "most"
-++INITRAMFS_BUSYBOX ?= "auto"
-++INITRAMFS_COMPRESS ?= "gzip"
-++INITRAMFS_KEYMAP ?= "n"
-++INITRAMFS_NET_DEVICE ?= ""
-++INITRAMFS_NFSROOT ?= "auto"
-++INITRAMFS_RUNSIZE ?= "10%"
-++INITRAMFS_ROOT ?= ""
-++INITRAMFS_MODULE_LIST ?= ""
-++CREATE_NEW_INITRAMFS ?= "n"
-++KERNEL_PACKAGE = "${@ ("linux-image-" + d.getVar("KERNEL_NAME", True)) if d.getVar("KERNEL_NAME", True) else ""}"
-++DEBIAN_DEPENDS += ", ${KERNEL_PACKAGE}"
-++TEMPLATE_FILES = "postinst.tmpl control.tmpl postrm.tmpl"
-++TEMPLATE_VARS += "INITRAMFS_MODULES INITRAMFS_BUSYBOX INITRAMFS_COMPRESS \
-++                  INITRAMFS_KEYMAP INITRAMFS_NET_DEVICE INITRAMFS_NFSROOT \
-++                  INITRAMFS_RUNSIZE INITRAMFS_ROOT INITRAMFS_MODULE_LIST \
-++                  CREATE_NEW_INITRAMFS DEBIAN_DEPENDS PN"
-+-- 
-+2.20.1
-+
-diff --git a/kas-cip.yml b/kas-cip.yml
-index 0da07db..da99d51 100644
---- a/kas-cip.yml
-+++ b/kas-cip.yml
-@@ -26,6 +26,9 @@ repos:
-       01-libubootenv:
-         path: isar-patches/0001-u-boot-add-libubootenv.patch
-         repo: cip-core
-+      02-initramfs:
-+        path: isar-patches/v7-0001-meta-support-Generate-a-custom-initramfs.patch
-+        repo: cip-core
- 
- bblayers_conf_header:
-   standard: |
--- 
-2.20.1
+--=20
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+Corporate Competence Center Embedded Linux
 
-
---FzvjQrwHNVYW0oeseyPi
+--qOnjBIBJAvjte8waj7OO
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -311,12 +186,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#5004): https://lists.cip-project.org/g/cip-dev/message=
-/5004
-Mute This Topic: https://lists.cip-project.org/mt/75767902/4520388
+View/Reply Online (#5010): https://lists.cip-project.org/g/cip-dev/message=
+/5010
+Mute This Topic: https://lists.cip-project.org/mt/75770466/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---FzvjQrwHNVYW0oeseyPi--
+--qOnjBIBJAvjte8waj7OO--
