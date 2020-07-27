@@ -1,158 +1,322 @@
-Return-Path: <SRS0=zw98=BG=lists.cip-project.org=bounce+64572+5027+4520388+8129055@kernel.org>
+Return-Path: <SRS0=idMj=BG=lists.cip-project.org=bounce+64572+5028+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,HTML_MESSAGE,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0743BC433E3
-	for <cip-dev@archiver.kernel.org>; Mon, 27 Jul 2020 13:40:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 680FAC433DF
+	for <cip-dev@archiver.kernel.org>; Mon, 27 Jul 2020 13:44:22 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 7954E2074F
-	for <cip-dev@archiver.kernel.org>; Mon, 27 Jul 2020 13:40:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 372732078A
+	for <cip-dev@archiver.kernel.org>; Mon, 27 Jul 2020 13:44:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="pMu81tOH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7954E2074F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=toshiba.co.jp
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5027+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id NtN0YY4521723x5ZTQVLvE2Z; Mon, 27 Jul 2020 06:40:36 -0700
-X-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.153])
- by mx.groups.io with SMTP id smtpd.web11.55670.1595857232992606774
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="Sh6piuoH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 372732078A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mab-labs.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5028+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id iNs0YY4521723xfJjWVnHdNk; Mon, 27 Jul 2020 06:44:21 -0700
+X-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+ by mx.groups.io with SMTP id smtpd.web12.55808.1595857460552898467
  for <cip-dev@lists.cip-project.org>;
- Mon, 27 Jul 2020 06:40:34 -0700
-X-Received: by mo-csw.securemx.jp (mx-mo-csw1514) id 06RDeTpB021388; Mon, 27 Jul 2020 22:40:30 +0900
-X-Iguazu-Qid: 34trcFcTUj58ypskJl
-X-Iguazu-QSIG: v=2; s=0; t=1595857229; q=34trcFcTUj58ypskJl; m=5oQrCeeDp54txKzfQ3214WMw/PU1Q0h0lMD3GIG27i8=
-X-Received: from imx12.toshiba.co.jp (imx12.toshiba.co.jp [61.202.160.132])
-	by relay.securemx.jp (mx-mr1513) id 06RDeSWx027745;
-	Mon, 27 Jul 2020 22:40:29 +0900
-X-Received: from enc02.toshiba.co.jp ([61.202.160.51])
-	by imx12.toshiba.co.jp  with ESMTP id 06RDeSgH016064
-	for <cip-dev@lists.cip-project.org>; Mon, 27 Jul 2020 22:40:28 +0900 (JST)
-X-Received: from hop101.toshiba.co.jp ([133.199.85.107])
-	by enc02.toshiba.co.jp  with ESMTP id 06RDeSVD006144
-	for <cip-dev@lists.cip-project.org>; Mon, 27 Jul 2020 22:40:28 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Mh9IOI4sL7/1/6A4fZhQL+QWzgjni5s419wNfPyARZsxPk9dmqm8WYc0dOm7wn41CXfUYN/5BnWPo/DjOwrKkoupQzYl2428pfNLE5f6EkCGDR34lBthqlm5ANeyw02cHij25ou+LdGPgF9Wg6IqS3UxfnbdkCqLCfqNAuGkMlIHuAbNgHvKO9dFw30JiTz0eNYKhOneAjXxgcuZTKn28L0Ja+AxOVs/l1Z+CP5Rcp93afTtd+2X6xjMCATmiG4v2DslktEmcC95Qw0VK7kMYSHh3+XFaugjp8BfMuxKtekrG04AN3NJUJdwvQ3bOt/5RLEvoXZzXycvtQgCtAXv9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IM26YBuCbbAM3dIaT8eksIG0RphVIIiEPoHy46PISxQ=;
- b=J/m6Bx7drlF+d+dMt4IYdxXxs2bqEiWCO3SFvGfn7lAacz8JjOpqYkgEk9kCfea8jrtljLeuaxLonQzFxNwx8UJI3R8n5cvEK1JNJZuaRhuGUYBu2Z24a2f00xvT8i+qaT43kKm8TFsewtaw3ftdoqNbD5hA9YSNBY8eW2cIrMoIra+UlSru+SqK7TcAqDN4QogEd5JtDfhk6dfnb5HhGuaNi1JSLGlhwHUGpP6aR3S8JGQETaZ8mpexyXFJxlq8HNlk0zvNiWJg0vBB+mTimMrTJg4TJs36EBeoWYt49hzgTLdKdITGgSi+oIIC/i1P7ovs67UjcegwmdBlM1vTkg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
- header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
-From: "Daniel Sangorrin" <daniel.sangorrin@toshiba.co.jp>
-To: <cip-dev@lists.cip-project.org>
-Subject: Re: [cip-dev] The security of NTP
-Thread-Topic: [cip-dev] The security of NTP
-Thread-Index: AdZjtVn+GEKdZ28XRvayTupQL0QETAAVEF8AAAG2C0AAASlUgAABYrsQ
-Date: Mon, 27 Jul 2020 13:40:25 +0000
-X-TSB-HOP: ON
-Message-ID: <OSBPR01MB2053E68E6BB520655A3C7362D0720@OSBPR01MB2053.jpnprd01.prod.outlook.com>
-References: <OSBPR01MB2053682B08257AC2230531FDD0720@OSBPR01MB2053.jpnprd01.prod.outlook.com>
- <7438.1595849548430257093@lists.cip-project.org>
- <OSBPR01MB20538C134703474587A50658D0720@OSBPR01MB2053.jpnprd01.prod.outlook.com>
- <CALkjhPqeTJQkuz3RPmm0W-xcZBS+xvofWq9R2RYxCpSMZNFVSQ@mail.gmail.com>
-In-Reply-To: <CALkjhPqeTJQkuz3RPmm0W-xcZBS+xvofWq9R2RYxCpSMZNFVSQ@mail.gmail.com>
-Accept-Language: en-US
-x-originating-ip: [126.194.221.15]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c123714b-0fca-42e7-4c55-08d832329e1a
-x-ms-traffictypediagnostic: OSAPR01MB3378:
-x-microsoft-antispam-prvs: <OSAPR01MB33785FCAB854648D510C9477D0720@OSAPR01MB3378.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: tbOXLwX9pMW1I3OHmHuQ9doJgX4fD4A8n1RnwGOsPBfOJpqsuBAz9+Pn7lJu0DZhWxgBJefSYf+ixcEUGQ+IQOXIUZQku2tB24L/VbQkba+qGtN1t7W6c6YMQe2ReHvh5sWLzL8/iIEsh26gakWhhR6M2Ydam5bmldcHJl2jRCzBgOkPi09y6igTuRIKvf5yPoXVO9qfpRY+fl7cy7bfAF4UX6BAAHtGKt8hVeVaH578fvRsrztYfcHZg3wbRnCcP3y0e6M37H3FPD3/wXMKPY9Xif2LpUQTLljxaHgjwuAU1R+/jIX+MPO1iX1tUiFjKZl/nmryC38wpXDs9wKbVs7t2k4WnhRABSAb+bw9CRYuFfEqD/4okRVazhzW2HmAs0h6ttv1g+juDqGLLZI0XHyX1JN0HWxVvgkDiWmWX6cL9RVhUDEFYgh65z33o7Jvc9yblrhmu53owl5V4ONf8A==
-x-ms-exchange-antispam-messagedata: mk85Y4lGNp0GNbMYzgQE/vxu7OrJHFbla8nyCUBbqZKAcukXG5QBm0f7idfu2mi/JImgB+VOl2qQFyfOxPzZdmBk0hnTYh6aUGafCE5MHsCBHrIveu2oJ+Yo/Ue8ehbM03+lb52ucI5G5zbVvKtnaQAonxHTUK9me2RSLF1Bsrzga4DkZokDcVlausleq5CM9d56IXh/TE7NEB6h1xWZ5xlgEkFlE4RlmgeAGyoOQi5wQZvuEnDcwYi03wKhZaavgE8uh4lVTiAzj753FK41NNf8TxdTw9F3v5mp+RSVO0GSvbqw11+7GZK7Nnoga7jPFJmCdnrupvahzmnlk9KqlOhgW4xag0TL36EohCUxOyUmhHcaFAT9jwYUs52xgAe6WARDm8MltwrCHXemDP5in6u+q0Q/1LvUFTW3qQbitHnduQ2jJXNEHPty0b35YF58OAsf1KDXOCdMivwDGzxf6GSPhHGOlMxs/u/eOIac/59kByy2rIMXW9weAUdOPsqi
-x-ms-exchange-transport-forked: True
+ Mon, 27 Jul 2020 06:44:21 -0700
+X-Received: by mail-pj1-f46.google.com with SMTP id e22so2275651pjt.3
+        for <cip-dev@lists.cip-project.org>; Mon, 27 Jul 2020 06:44:20 -0700 (PDT)
+X-Gm-Message-State: oLk7T8riQYuWFpeGMlxmi7nzx4520388AA=
+X-Google-Smtp-Source: ABdhPJyhNFR/n1vibhcXW78Vyfq0SyG25h6rOyRNpzrJy5bwAukvPMy3FvjXAk58rkEsnj4m4Fs7/P/twOEZ8zRhWgE=
+X-Received: by 2002:a17:90b:1287:: with SMTP id fw7mr2141469pjb.218.1595857459702;
+ Mon, 27 Jul 2020 06:44:19 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSBPR01MB2053.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c123714b-0fca-42e7-4c55-08d832329e1a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jul 2020 13:40:25.4812
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: UOA10YKyELigchFqU9F62amcO2TM9/wh2YE+y+HRCVZlEHVr/WhWd6PHHW2nUHL1a3JmbU+VjOzKf3Y66om4B8hzIBMLw+faEfMUQq9nLY0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB3378
-X-OriginatorOrg: toshiba.co.jp
-MSSCP.TransferMailToMossAgent: 103
+References: <OSBPR01MB2053682B08257AC2230531FDD0720@OSBPR01MB2053.jpnprd01.prod.outlook.com>
+ <7438.1595849548430257093@lists.cip-project.org> <OSBPR01MB20538C134703474587A50658D0720@OSBPR01MB2053.jpnprd01.prod.outlook.com>
+ <CALkjhPqeTJQkuz3RPmm0W-xcZBS+xvofWq9R2RYxCpSMZNFVSQ@mail.gmail.com> <OSBPR01MB2053E68E6BB520655A3C7362D0720@OSBPR01MB2053.jpnprd01.prod.outlook.com>
+In-Reply-To: <OSBPR01MB2053E68E6BB520655A3C7362D0720@OSBPR01MB2053.jpnprd01.prod.outlook.com>
+From: "Mohammed Billoo" <mab@mab-labs.com>
+Date: Mon, 27 Jul 2020 09:44:08 -0400
+Message-ID: <CALkjhPo08QOSAg+yjVTmGw7A+nejAPR6CBj6rbZH21Yg=sRfpA@mail.gmail.com>
+Subject: Re: [cip-dev] The security of NTP
+To: cip-dev@lists.cip-project.org
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: UN0OzzYXlLkugd34wuN1ObzVx4520388AA=
-Content-Type: multipart/mixed; boundary="g80ajOtlmS68hr1dWzQr"
+Content-Type: multipart/mixed; boundary="KgDGV2LpyiLc1b12gOk1"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1595857236;
- bh=kPGz62rFEPver5W84ZiDAJM6s7gBDkIvIJsnuFWu/Nk=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1595857461;
+ bh=+OhPHLb9DKc2jx7HgyFT5cVQq5RhBqcrLYhNGABxDIE=;
  h=Content-Type:Date:From:Reply-To:Subject:To;
- b=pMu81tOHspdlKNkayauBZwKd52mgsRaGz781QOKYWU4YR8frx3FFE+94dcWxxXT/SBk
- +Tfu4emMRnWTTp7h40xUXZIHSawTBywOYMej+tiv1T6oKKuiGlwLEhXEW8P1u0yHXt7IU
- u25J5HKq6WG2tPZ0XjocgGr4nDooubGStB8=
+ b=Sh6piuoHT9x9HVoWiP9Kg4fwcwl92YIdhjqgMyrjBmgfBAlMDdYT6weACrrcZpkzgmk
+ ybfzsLe8r/cQPipgDmrmtH2BktI65uKACsmL7SgoV12KONim9YN7PFFa3ziBGX4vGwxr2
+ /VXVnbttekIzepB3Re1sT+0/RoyPgEfvXds=
 
---g80ajOtlmS68hr1dWzQr
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+--KgDGV2LpyiLc1b12gOk1
+Content-Type: multipart/alternative; boundary="000000000000ff82ef05ab6c8413"
 
-SGkgTW9oYW1tZWQNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBjaXAt
-ZGV2QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZyA8Y2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmc+
-IE9uIEJlaGFsZiBPZiBNb2hhbW1lZCBCaWxsb28NCj4gU2VudDogTW9uZGF5LCBKdWx5IDI3LCAy
-MDIwIDk6NTUgUE0NCj4gVG86IGNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnDQo+IFN1Ympl
-Y3Q6IFJlOiBbY2lwLWRldl0gVGhlIHNlY3VyaXR5IG9mIE5UUA0KPiANCj4gRGFuaWVsLA0KPiAN
-Cj4gVGhhbmtzIGZvciBwb2ludGluZyB0aGF0IG91dC4gU2luY2UgQ0lQIGlzIHJlbGlhbnQgb24g
-YXZhaWxhYmxlIHBhY2thZ2VzIG9uIHBhcnRpY3VsYXIgdmVyc2lvbnMgb2YgRGViaWFuLCB3b3Vs
-ZCB0aGUgcHJvY2Vzcy93b3JrZmxvdyB0aGVuDQo+IGJlIHRvIHdhaXQgZm9yIHRsc2RhdGUgdG8g
-YmUgYXZhaWxhYmxlIGluIEJ1c3RlciBhbmQgdGhlbiBwdWxsIGl0IGludG8gQ0lQIGFuZCBjb250
-aW51ZSB3b3JraW5nIG9uIHRoaXMgaXNzdWU/IE9yLCBzaG91bGQgSSBqdXN0IGdvIGFoZWFkIGFu
-ZCB0cnkNCj4gdG8gZ2V0IHRsc2RhdGUgaW5jb3Jwb3JhdGVkIGludG8gQnVzdGVyIGJ5IGZvbGxv
-d2luZyB0aGUgY29udHJpYnV0aW9uIGd1aWRlbGluZXMgaW4gRGViaWFuPw0KDQpUaGF0IHdvdWxk
-IGJlIHNvbWV0aGluZyB0aGF0IG5lZWRzIHRvIGJlIGRlY2lkZWQgYnkgdGhlIHdob2xlIENJUCBw
-cm9qZWN0LCBidXQgSSByZWFkIHRoYXQgdGxzZGF0ZSBkZXBlbmRzIG9uIGEgdGltZXN0YW1wIHRo
-YXQgaGFzIGJlZW4gcmVtb3ZlZCBvbiBUTFMgMS4zLg0KaHR0cHM6Ly93d3cuZmVpc3R5ZHVjay5j
-b20vYnVsbGV0cHJvb2YtdGxzLW5ld3NsZXR0ZXIvaXNzdWVfNTRfbmV0d29ya190aW1lX3NlY3Vy
-aXR5X250c19jb3VsZF9maW5hbGx5X2JyaW5nX3N1cHBvcnRfZm9yX2F1dGhlbnRpY2F0ZWRfbmV0
-d29ya190aW1lDQoNClBlcnNvbmFsbHksIEkgdGhpbmsgdGhhdCBDSVAgc2hvdWxkIGZvY3VzIG9u
-IE5UUyAoYWxyZWFkeSBpbmNsdWRlZCBpbiBjaHJvbnkgZm9yIGV4YW1wbGUpDQpodHRwczovL3d3
-dy5pYW5hLm9yZy9hc3NpZ25tZW50cy9udHMvbnRzLnhodG1sDQoNClRoYW5rcywNCkRhbmllbA0K
-DQo+IE9uIE1vbiwgSnVsIDI3LCAyMDIwIGF0IDg6NDEgQU0gRGFuaWVsIFNhbmdvcnJpbiA8ZGFu
-aWVsLnNhbmdvcnJpbkB0b3NoaWJhLmNvLmpwIDxtYWlsdG86ZGFuaWVsLnNhbmdvcnJpbkB0b3No
-aWJhLmNvLmpwPiA+IHdyb3RlOg0KPiANCj4gDQo+IA0KPiAJPiAtLS0tLU9yaWdpbmFsIE1lc3Nh
-Z2UtLS0tLQ0KPiAJPiBGcm9tOiBjaXAtZGV2QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZyA8bWFpbHRv
-OmNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnPiAgPGNpcC1kZXZAbGlzdHMuY2lwLXByb2pl
-Y3Qub3JnIDxtYWlsdG86Y2lwLQ0KPiBkZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnPiA+IE9uIEJl
-aGFsZiBPZiBNb2hhbW1lZCBCaWxsb28NCj4gCT4gU2VudDogTW9uZGF5LCBKdWx5IDI3LCAyMDIw
-IDg6MzIgUE0NCj4gCT4gRGFuaWVsLCBQYXZlbDoNCj4gCT4NCj4gCT4gVGhhbmtzIGZvciB0aGUg
-ZmVlZGJhY2suIElzIHRsc2RhdGUgYSBiZXR0ZXIgYWx0ZXJuYXRpdmUgKGh0dHBzOi8vZ2l0aHVi
-LmNvbS9pb2Vycm9yL3Rsc2RhdGUvKT8gVGhlIG9ubHkgY2F2ZWF0IGlmIHVzaW5nIHRsc2RhdGUg
-KG9yDQo+IGFueSBzb3J0IG9mDQo+IAk+IHRpbWUgbWVjaGFuaXNtIHRoYXQgcmVsaWVzIG9uIGEg
-IndlbGwta25vd24iIHNlcnZlcikgaXMgdGhhdCBhbiBJbnRlcm5ldCBjb25uZWN0aW9uIGlzIG5l
-Y2Vzc2FyeS4gSXQgaXNuJ3Qgb2J2aW91cyB0byBtZSB3aGV0aGVyDQo+IHRoaXMgaXMNCj4gCT4g
-YWNjZXB0YWJsZSBvciBub3QuIENhbiBzb21lb25lIGNoaW1lIGluPw0KPiANCj4gCUl0IHNlZW1z
-IHRoYXQgdGhhdCBwcm9qZWN0IGlzIGRlYWQsIGJ1dCB0aGVyZSBpcyBhIGZvcmsgZm9yIENocm9t
-aXVtT1MgcmVtYWluaW5nIHRoYXQgc2VlbXMgdG8gYmUgd2VsbCBtYWludGFpbmVkIChmb3INCj4g
-Q2hyb21pdW1PUykNCj4gCWh0dHBzOi8vZ2l0aHViLmNvbS9pb2Vycm9yL3Rsc2RhdGUvaXNzdWVz
-LzE5OQ0KPiAJaHR0cHM6Ly9jaHJvbWl1bS5nb29nbGVzb3VyY2UuY29tL2Nocm9taXVtb3MvdGhp
-cmRfcGFydHkvdGxzZGF0ZQ0KPiANCj4gCVRoZXJlIGFyZSBzb21lIHBhY2thZ2VzIGluIERlYmlh
-bg0KPiAJaHR0cHM6Ly9wYWNrYWdlcy5kZWJpYW4ub3JnL3NlYXJjaD9rZXl3b3Jkcz10bHNkYXRl
-DQo+IAlidXQgbm90IGZvciBCdXN0ZXIuDQo+IA0KPiAJVGhhbmtzLA0KPiAJRGFuaWVsDQo+IA0K
-PiANCj4gDQo+IAk+DQo+IAk+IFRoYW5rcw0KPiAJPiAtLQ0KPiAJPiBNb2hhbW1lZCBCaWxsb28N
-Cj4gCT4gTUFCIExhYnMsIExMQw0KPiAJPiB3d3cubWFiLWxhYnMuY29tIDxodHRwOi8vd3d3Lm1h
-Yi1sYWJzLmNvbT4NCj4gDQo+IA0KPiANCj4gDQo+IA0KPiAtLQ0KPiANCj4gTW9oYW1tZWQgQSBC
-aWxsb28NCj4gRm91bmRlcg0KPiBNQUIgTGFicywgTExDDQo+IHd3dy5tYWItbGFicy5jb20gPGh0
-dHA6Ly93d3cubWFiLWxhYnMuY29tPg0KPiAyMDEtMzM4LTIwMjINCj4gDQo+IA0KPiAtLQ0KPiBN
-b2hhbW1lZCBCaWxsb28NCj4gTUFCIExhYnMsIExMQw0KPiB3d3cubWFiLWxhYnMuY29tDQo=
+--000000000000ff82ef05ab6c8413
+Content-Type: text/plain; charset="UTF-8"
 
---g80ajOtlmS68hr1dWzQr
+Cool. I'll check out NTS and I'll just respond in this group with silly
+questions as I stumble along (I'm new to CIP and am not a security expert
+at all).
+
+On Mon, Jul 27, 2020 at 9:40 AM Daniel Sangorrin <
+daniel.sangorrin@toshiba.co.jp> wrote:
+
+> Hi Mohammed
+>
+> > -----Original Message-----
+> > From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On
+> Behalf Of Mohammed Billoo
+> > Sent: Monday, July 27, 2020 9:55 PM
+> > To: cip-dev@lists.cip-project.org
+> > Subject: Re: [cip-dev] The security of NTP
+> >
+> > Daniel,
+> >
+> > Thanks for pointing that out. Since CIP is reliant on available packages
+> on particular versions of Debian, would the process/workflow then
+> > be to wait for tlsdate to be available in Buster and then pull it into
+> CIP and continue working on this issue? Or, should I just go ahead and try
+> > to get tlsdate incorporated into Buster by following the contribution
+> guidelines in Debian?
+>
+> That would be something that needs to be decided by the whole CIP project,
+> but I read that tlsdate depends on a timestamp that has been removed on TLS
+> 1.3.
+>
+> https://www.feistyduck.com/bulletproof-tls-newsletter/issue_54_network_time_security_nts_could_finally_bring_support_for_authenticated_network_time
+>
+> Personally, I think that CIP should focus on NTS (already included in
+> chrony for example)
+> https://www.iana.org/assignments/nts/nts.xhtml
+>
+> Thanks,
+> Daniel
+>
+> > On Mon, Jul 27, 2020 at 8:41 AM Daniel Sangorrin <
+> daniel.sangorrin@toshiba.co.jp <mailto:daniel.sangorrin@toshiba.co.jp> >
+> wrote:
+> >
+> >
+> >
+> >       > -----Original Message-----
+> >       > From: cip-dev@lists.cip-project.org <mailto:
+> cip-dev@lists.cip-project.org>  <cip-dev@lists.cip-project.org <mailto:
+> cip-
+> > dev@lists.cip-project.org> > On Behalf Of Mohammed Billoo
+> >       > Sent: Monday, July 27, 2020 8:32 PM
+> >       > Daniel, Pavel:
+> >       >
+> >       > Thanks for the feedback. Is tlsdate a better alternative (
+> https://github.com/ioerror/tlsdate/)? The only caveat if using tlsdate (or
+> > any sort of
+> >       > time mechanism that relies on a "well-known" server) is that an
+> Internet connection is necessary. It isn't obvious to me whether
+> > this is
+> >       > acceptable or not. Can someone chime in?
+> >
+> >       It seems that that project is dead, but there is a fork for
+> ChromiumOS remaining that seems to be well maintained (for
+> > ChromiumOS)
+> >       https://github.com/ioerror/tlsdate/issues/199
+> >       https://chromium.googlesource.com/chromiumos/third_party/tlsdate
+> >
+> >       There are some packages in Debian
+> >       https://packages.debian.org/search?keywords=tlsdate
+> >       but not for Buster.
+> >
+> >       Thanks,
+> >       Daniel
+> >
+> >
+> >
+> >       >
+> >       > Thanks
+> >       > --
+> >       > Mohammed Billoo
+> >       > MAB Labs, LLC
+> >       > www.mab-labs.com <http://www.mab-labs.com>
+> >
+> >
+> >
+> >
+> >
+> > --
+> >
+> > Mohammed A Billoo
+> > Founder
+> > MAB Labs, LLC
+> > www.mab-labs.com <http://www.mab-labs.com>
+> > 201-338-2022
+> >
+> >
+> > --
+> > Mohammed Billoo
+> > MAB Labs, LLC
+> > www.mab-labs.com
+> 
+>
+
+
+-- 
+Mohammed A Billoo
+Founder
+MAB Labs, LLC
+www.mab-labs.com
+201-338-2022
+
+--000000000000ff82ef05ab6c8413
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Cool. I&#39;ll check out NTS and I&#39;ll just respond in =
+this group with silly questions as I stumble along (I&#39;m new to CIP and =
+am not a security expert at all).<br></div><br><div class=3D"gmail_quote"><=
+div dir=3D"ltr" class=3D"gmail_attr">On Mon, Jul 27, 2020 at 9:40 AM Daniel=
+ Sangorrin &lt;<a href=3D"mailto:daniel.sangorrin@toshiba.co.jp">daniel.san=
+gorrin@toshiba.co.jp</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quo=
+te" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204=
+);padding-left:1ex">Hi Mohammed<br>
+<br>
+&gt; -----Original Message-----<br>
+&gt; From: <a href=3D"mailto:cip-dev@lists.cip-project.org" target=3D"_bla=
+nk">cip-dev@lists.cip-project.org</a> &lt;<a href=3D"mailto:cip-dev@lists.c=
+ip-project.org" target=3D"_blank">cip-dev@lists.cip-project.org</a>&gt; On =
+Behalf Of Mohammed Billoo<br>
+&gt; Sent: Monday, July 27, 2020 9:55 PM<br>
+&gt; To: <a href=3D"mailto:cip-dev@lists.cip-project.org" target=3D"_blank=
+">cip-dev@lists.cip-project.org</a><br>
+&gt; Subject: Re: [cip-dev] The security of NTP<br>
+&gt; <br>
+&gt; Daniel,<br>
+&gt; <br>
+&gt; Thanks for pointing that out. Since CIP is reliant on available packa=
+ges on particular versions of Debian, would the process/workflow then<br>
+&gt; be to wait for tlsdate to be available in Buster and then pull it int=
+o CIP and continue working on this issue? Or, should I just go ahead and tr=
+y<br>
+&gt; to get tlsdate incorporated into Buster by following the contribution=
+ guidelines in Debian?<br>
+<br>
+That would be something that needs to be decided by the whole CIP project,=
+ but I read that tlsdate depends on a timestamp that has been removed on TL=
+S 1.3.<br>
+<a href=3D"https://www.feistyduck.com/bulletproof-tls-newsletter/issue_54_=
+network_time_security_nts_could_finally_bring_support_for_authenticated_net=
+work_time" rel=3D"noreferrer" target=3D"_blank">https://www.feistyduck.com/=
+bulletproof-tls-newsletter/issue_54_network_time_security_nts_could_finally=
+_bring_support_for_authenticated_network_time</a><br>
+<br>
+Personally, I think that CIP should focus on NTS (already included in chro=
+ny for example)<br>
+<a href=3D"https://www.iana.org/assignments/nts/nts.xhtml" rel=3D"noreferr=
+er" target=3D"_blank">https://www.iana.org/assignments/nts/nts.xhtml</a><br=
+>
+<br>
+Thanks,<br>
+Daniel<br>
+<br>
+&gt; On Mon, Jul 27, 2020 at 8:41 AM Daniel Sangorrin &lt;<a href=3D"mailt=
+o:daniel.sangorrin@toshiba.co.jp" target=3D"_blank">daniel.sangorrin@toshib=
+a.co.jp</a> &lt;mailto:<a href=3D"mailto:daniel.sangorrin@toshiba.co.jp" ta=
+rget=3D"_blank">daniel.sangorrin@toshiba.co.jp</a>&gt; &gt; wrote:<br>
+&gt; <br>
+&gt; <br>
+&gt; <br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0&gt; -----Original Message-----<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0&gt; From: <a href=3D"mailto:cip-dev@lists.=
+cip-project.org" target=3D"_blank">cip-dev@lists.cip-project.org</a> &lt;ma=
+ilto:<a href=3D"mailto:cip-dev@lists.cip-project.org" target=3D"_blank">cip=
+-dev@lists.cip-project.org</a>&gt;=C2=A0 &lt;<a href=3D"mailto:cip-dev@list=
+s.cip-project.org" target=3D"_blank">cip-dev@lists.cip-project.org</a> &lt;=
+mailto:<a href=3D"mailto:cip-" target=3D"_blank">cip-</a><br>
+&gt; <a href=3D"mailto:dev@lists.cip-project.org" target=3D"_blank">dev@li=
+sts.cip-project.org</a>&gt; &gt; On Behalf Of Mohammed Billoo<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0&gt; Sent: Monday, July 27, 2020 8:32 PM<br=
+>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0&gt; Daniel, Pavel:<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0&gt;<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0&gt; Thanks for the feedback. Is tlsdate a =
+better alternative (<a href=3D"https://github.com/ioerror/tlsdate/" rel=3D"=
+noreferrer" target=3D"_blank">https://github.com/ioerror/tlsdate/</a>)? The=
+ only caveat if using tlsdate (or<br>
+&gt; any sort of<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0&gt; time mechanism that relies on a &quot;=
+well-known&quot; server) is that an Internet connection is necessary. It is=
+n&#39;t obvious to me whether<br>
+&gt; this is<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0&gt; acceptable or not. Can someone chime i=
+n?<br>
+&gt; <br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0It seems that that project is dead, but the=
+re is a fork for ChromiumOS remaining that seems to be well maintained (for=
+<br>
+&gt; ChromiumOS)<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0<a href=3D"https://github.com/ioerror/tlsda=
+te/issues/199" rel=3D"noreferrer" target=3D"_blank">https://github.com/ioer=
+ror/tlsdate/issues/199</a><br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0<a href=3D"https://chromium.googlesource.co=
+m/chromiumos/third_party/tlsdate" rel=3D"noreferrer" target=3D"_blank">http=
+s://chromium.googlesource.com/chromiumos/third_party/tlsdate</a><br>
+&gt; <br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0There are some packages in Debian<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0<a href=3D"https://packages.debian.org/sear=
+ch?keywords=3Dtlsdate" rel=3D"noreferrer" target=3D"_blank">https://package=
+s.debian.org/search?keywords=3Dtlsdate</a><br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0but not for Buster.<br>
+&gt; <br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0Thanks,<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0Daniel<br>
+&gt; <br>
+&gt; <br>
+&gt; <br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0&gt;<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0&gt; Thanks<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0&gt; --<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0&gt; Mohammed Billoo<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0&gt; MAB Labs, LLC<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0&gt; <a href=3D"http://www.mab-labs.com" re=
+l=3D"noreferrer" target=3D"_blank">www.mab-labs.com</a> &lt;<a href=3D"http=
+://www.mab-labs.com" rel=3D"noreferrer" target=3D"_blank">http://www.mab-la=
+bs.com</a>&gt;<br>
+&gt; <br>
+&gt; <br>
+&gt; <br>
+&gt; <br>
+&gt; <br>
+&gt; --<br>
+&gt; <br>
+&gt; Mohammed A Billoo<br>
+&gt; Founder<br>
+&gt; MAB Labs, LLC<br>
+&gt; <a href=3D"http://www.mab-labs.com" rel=3D"noreferrer" target=3D"_bla=
+nk">www.mab-labs.com</a> &lt;<a href=3D"http://www.mab-labs.com" rel=3D"nor=
+eferrer" target=3D"_blank">http://www.mab-labs.com</a>&gt;<br>
+&gt; 201-338-2022<br>
+&gt; <br>
+&gt; <br>
+&gt; --<br>
+&gt; Mohammed Billoo<br>
+&gt; MAB Labs, LLC<br>
+&gt; <a href=3D"http://www.mab-labs.com" rel=3D"noreferrer" target=3D"_bla=
+nk">www.mab-labs.com</a><br>
+<br>
+</blockquote></div><br clear=3D"all"><br>-- <br><div dir=3D"ltr" class=3D"=
+gmail_signature"><div dir=3D"ltr"><div>Mohammed A Billoo</div><div>Founder<=
+/div><div>MAB Labs, LLC</div><div><a href=3D"http://www.mab-labs.com" targe=
+t=3D"_blank">www.mab-labs.com</a></div><div>201-338-2022<br></div></div></d=
+iv>
+<br>-- <br>Mohammed Billoo<br />MAB Labs, LLC<br />www.mab-labs.com
+
+--000000000000ff82ef05ab6c8413--
+
+--KgDGV2LpyiLc1b12gOk1
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -160,12 +324,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#5027): https://lists.cip-project.org/g/cip-dev/message=
-/5027
+View/Reply Online (#5028): https://lists.cip-project.org/g/cip-dev/message=
+/5028
 Mute This Topic: https://lists.cip-project.org/mt/75814887/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---g80ajOtlmS68hr1dWzQr--
+--KgDGV2LpyiLc1b12gOk1--
