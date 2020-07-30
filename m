@@ -1,620 +1,173 @@
-Return-Path: <SRS0=DRZx=BJ=lists.cip-project.org=bounce+64572+5062+4520388+8129055@kernel.org>
+Return-Path: <SRS0=GGOo=BJ=lists.cip-project.org=bounce+64572+5063+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,UPPERCASE_75_100,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B2D4C433E1
-	for <cip-dev@archiver.kernel.org>; Thu, 30 Jul 2020 08:32:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82C39C433E0
+	for <cip-dev@archiver.kernel.org>; Thu, 30 Jul 2020 08:39:42 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 6EFEF2083E
-	for <cip-dev@archiver.kernel.org>; Thu, 30 Jul 2020 08:32:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 29CE5204EA
+	for <cip-dev@archiver.kernel.org>; Thu, 30 Jul 2020 08:39:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="mo+xBB0c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EFEF2083E
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="lyuzGfST"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29CE5204EA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=toshiba.co.jp
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5062+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id GyVBYY4521723xZQ4KTfEaLy; Thu, 30 Jul 2020 01:32:44 -0700
-X-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.157])
- by mx.groups.io with SMTP id smtpd.web10.4098.1596097963188439858
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5063+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id O20lYY4521723xNsw4QV99rt; Thu, 30 Jul 2020 01:39:41 -0700
+X-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
+ by mx.groups.io with SMTP id smtpd.web12.4281.1596098379762726738
  for <cip-dev@lists.cip-project.org>;
- Thu, 30 Jul 2020 01:32:43 -0700
-X-Received: by mo-csw.securemx.jp (mx-mo-csw1115) id 06U8Wecg009091; Thu, 30 Jul 2020 17:32:40 +0900
-X-Iguazu-Qid: 2wHHWzHtRLel4FUNgx
-X-Iguazu-QSIG: v=2; s=0; t=1596097960; q=2wHHWzHtRLel4FUNgx; m=8+IJc2cUo4h4XjhthAy3Y0cWx012RoeVOfT17HzG8ak=
+ Thu, 30 Jul 2020 01:39:41 -0700
+X-Received: by mo-csw.securemx.jp (mx-mo-csw1116) id 06U8dXUw022323; Thu, 30 Jul 2020 17:39:33 +0900
+X-Iguazu-Qid: 2wHHsainSNnMTe7UOI
+X-Iguazu-QSIG: v=2; s=0; t=1596098373; q=2wHHsainSNnMTe7UOI; m=bO8nCNdfSDxN7Yzn/NW166UExojil2Q/BI0jvenB5/Q=
 X-Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
-	by relay.securemx.jp (mx-mr1110) id 06U8WdSF008139;
-	Thu, 30 Jul 2020 17:32:39 +0900
+	by relay.securemx.jp (mx-mr1111) id 06U8dWRX018739;
+	Thu, 30 Jul 2020 17:39:33 +0900
 X-Received: from enc01.localdomain ([106.186.93.100])
-	by imx2.toshiba.co.jp  with ESMTP id 06U8WdSL006163;
-	Thu, 30 Jul 2020 17:32:39 +0900 (JST)
+	by imx2.toshiba.co.jp  with ESMTP id 06U8dWUk009753;
+	Thu, 30 Jul 2020 17:39:32 +0900 (JST)
 X-Received: from hop001.toshiba.co.jp ([133.199.164.63])
-	by enc01.localdomain  with ESMTP id 06U8WdfA031248;
-	Thu, 30 Jul 2020 17:32:39 +0900
-From: "Daniel Sangorrin" <daniel.sangorrin@toshiba.co.jp>
-To: cip-dev@lists.cip-project.org
-Cc: jan.kiszka@siemens.com
-Subject: [cip-dev] Remove QEMU kernel config from isar-cip-core
-Date: Thu, 30 Jul 2020 17:32:31 +0900
+	by enc01.localdomain  with ESMTP id 06U8dW32005153;
+	Thu, 30 Jul 2020 17:39:32 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=m5kiC9NtUUE6jMUhMZbCXsPvYQ+xvbZK8hzVR9Un9Iafzo0tjBQG/jA8j/LYRM+hCR9d6L0M0Df/Ftd8hjSWBQbiaSNf4o7grefjVLiEQfHm9946rsjstWTUqERfdjcaIhmBqxVuY7kwFdRKxc3xuowDhbf7ZiVE6jgoGnt9SUf9/jQWGwv0aRQbiZ0wVAKWVdOohIlMPriMULJhzQ1RdfjKMxRlyqXE8ViktRNDzRY3xP5tqzHSh8ecOJanZaHOWcby/HOdj9mzZV6axtv9MI6w700gy50OubpnkEQBQA/k7oSBVV1CnhrF/0uF5OQZv4dZSXcvdkH1GMCQHZW8Zw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=w2uiJK1miB+PBnwSx/QgxJ+tpaAcRCWPPn2TMhhjs+0=;
+ b=ZCUCWsldEaJj76HA/rfWWw9Bu6EnAtxuaKTLFDVaUc/FR5EMvgRriOLQNcvAoE9bmbjLSiGA76hsPX36Hrkp3a+S5bTG/w7SXOdNq7o2MTXRKWyMYZJQvqJ0S63tp+XtpzCvPftE2KzMmBwItQ8wMYXaKOkbro+XVtzr9rb++2zg0MzPaMC++54gxJvidabiVTXN4GM3O15y5baSh4Tb9VjQJzHH4hO/HvyDl9E0DBJFc2deagMFUMC54DI/18CWc6kdZrrG242cETYOADM/dKMi7B3bJiUswrYUMreJ1e01tVQk66Be/AVz1i1Oj0WfDbUFAJe3WtaABhNdYq1pWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
+ header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
+From: "Akihiro Suzuki" <akihiro27.suzuki@toshiba.co.jp>
+To: <masashi.kudo@cybertrust.co.jp>
+CC: <cip-dev@lists.cip-project.org>
+Subject: Re: [cip-dev] CIP IRC weekly meeting today
+Thread-Topic: CIP IRC weekly meeting today
+Thread-Index: AdZmFKJ294ZreUmzR2eGB/pCjYQSbwAN0dgQ
+Date: Thu, 30 Jul 2020 08:39:29 +0000
 X-TSB-HOP: ON
-Message-Id: <20200730083232.412826-1-daniel.sangorrin@toshiba.co.jp>
+Message-ID: <OSYPR01MB53340E7A5C5C3BC2B05AF484D9710@OSYPR01MB5334.jpnprd01.prod.outlook.com>
+References: <TY2PR01MB49720968B08C56B3122950A5A0710@TY2PR01MB4972.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY2PR01MB49720968B08C56B3122950A5A0710@TY2PR01MB4972.jpnprd01.prod.outlook.com>
+Accept-Language: ja-JP, en-US
+x-originating-ip: [103.91.184.7]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e5e51c62-1c27-47b3-9f53-08d834641370
+x-ms-traffictypediagnostic: OSAPR01MB5105:
+x-microsoft-antispam-prvs: <OSAPR01MB5105931475437C180E68E172D9710@OSAPR01MB5105.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: pmE79jiu1X/yKdx6VBHMPsbPELIusbI9vfXLPbGvd6o9iBWWglfLlPS0/uY2+pxH7e+/QwWYfWq/rjuG2RewfmkC35HCKKFr9FO1FmLUrcK81gNr6GBsc3VvlF25UCjpDHIO0VTRL3Ut0VXik8EZrlIg/s8r/EJC63dMRli1W7//3wynqNoQ5jg65JnRE0mUa3VYPBc13D+/I+YkrWWZb/2DPR8eTkT63RxEbgLMkZjPG9b2LfPRowOrx180vPd+FJD27bnZiBY1w0ojeGg5HG+xUAiQGQpYgFnudaLcC7DRZfKsze/XFaL+mX/4uMBPIN7/Y7kuH8MYpREE8uL0UOANmvlJezaR9WbneczNXeKm1A6as2Jsa8Ok4bjryTJX5coG6hHMy2WWUhvTpvT/+w==
+x-ms-exchange-antispam-messagedata: talxP2zHi2FbYg8QdfjXeP1VJBPNQud4RmYrzmwb+z0itxzc9/HBoSixs0preYcYefBA27KirAFKM0ux2AG1ISXZY3Ug9VizsrdyvOtpUpirwAG61rs6dKeaZRqq7Zr4f32QhCjJ9e0jcaeqYUflQo8DWaxnCFLGjiKlYlcRYAoCrzF166XoRZODggdUAfJLbPeKgj/b5JVoc3dHacIBEEV0wQxVwb1cQyss78nB3cYG0wkJUX3oqGBAZnXBB2Oi2WzWHsHBKYnzU+FbCII3Ut/uvx4oCXQtdEi2atNPmXwSf15wD9mAf5FlQGDCB2gaCQjH5HT9WfwyNPQgoZfx5xW8d63ijqszGmyfYm2JrWT28lZqUIAzcDk//1k5ndxhFF0LNG7OIpHAwp9eg94+8thPTTJIG9zg4Hij16GxdrPhHH48XlsY1vYBOXNi1VcslbBlbEnB3GHv9ZD6s/Onlulv3Txo+U5M6RN2JllcdyIJ/fSPqC9T7sheHg7WM5hxFtuRZpA4k5eGqqrcZKtBRBSYoomnmQK0biI1e5TmiI/XVvtLAs1ExhLgVNUVQCLBTh1dmTBFcbGJ/M6OsGKxaZWIgKGpwLYSoqYiTRfXmx5SnPgRyzlXAtlQHqq/tRajlcb8/4DOhPyjCuAHOR1rJw==
+x-ms-exchange-transport-forked: True
 MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OSYPR01MB5334.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e5e51c62-1c27-47b3-9f53-08d834641370
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jul 2020 08:39:29.9481
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: bWu37nXm6O8I1ejQ3kBVvAoJrBIOxWKUDCfS7kz95oJtevxv+r6PTZ8ru63oYM+Tx7syUBYqChUeVApvftFbTv7MbaCvHwoOaRgp2dtiwds=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB5105
+X-OriginatorOrg: toshiba.co.jp
+MSSCP.TransferMailToMossAgent: 103
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: fjq4Gs2yETOsmCI4EDOEf1R4x4520388AA=
-Content-Type: multipart/mixed; boundary="GnNKDo1jwIOPH9EnrMAe"
+X-Gm-Message-State: PAYwSEvy8scQZ7egWJDrqxv0x4520388AA=
+Content-Type: multipart/mixed; boundary="fXjMgigJ1UlwL1HUJN3l"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1596097964;
- bh=8EeY19qzQXSrPKVUl/NZrZRGhJR9RdtFwRgkt596cyw=;
- h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=mo+xBB0cLYEu0OgFWoa/oYAVMmyuxvtlJZKgNL4QuZpyP6PVMGf6Toa1Vx2yJz2l6Vu
- +Ibblrfa2ZTjvTo/45SH4TrauK717chrvw6Ub7JZzST2WptgyPXmNWb1R7t+Kvqr02VIJ
- dbfc2mJ9rUB7Vgo+2/y089XtTm6I/fYIDbU=
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1596098381;
+ bh=BIyupu+4NMMZjV8IB1sTv6SoXUYvM6ZXGo5AluuKV90=;
+ h=CC:Content-Type:Date:From:Reply-To:Subject:To;
+ b=lyuzGfSTctNkAydPh3g2UT0nI2tL/jKk1gajk51aZACEHEyFQzTLqBDGCmJNNGTPSYQ
+ ST2HEXHYJnVNrPumanExhbfX1IFivotdC2tbEut7yfqg2XKgjGb2yiKuJaJCTkB5LVXfH
+ h/AIP1kbdT36GSQDIWiR0qGWaCkThX+ujgQ=
 
---GnNKDo1jwIOPH9EnrMAe
-Content-Transfer-Encoding: 8bit
+--fXjMgigJ1UlwL1HUJN3l
+Content-Language: ja-JP
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Kudo-san,
 
-The following patch removes QEMU's config from isar-cip-core and uses cip-kernel-config's instead.
-   [isar-cip-core] qemu-amd64: use cip-kernel-config file
-
-As I say in the commit message, I had to upgrade cip-kernel-config's commit id which could have effects on other targets. I boot-tested QEMU but I hope the CI will test for regressions in other targets as well.
-
-If you prefer, I could override the cip-kernel-config commit id on the QEMU machine's configuration file only to avoid regressions at all.
-
-For your reference, I put below a diff between the isar-cip-core configuration and the cip-kernel-config configuration.
-I can put it in the commit message if you prefer, but I thought it was too long.
-There are a lot of changes and I have not really reviewed them so we may need to do that and postpone this patch.
-For example, -CONFIG_CC_STACKPROTECTOR_STRONG=y doesn't look like a good change.
-
-On the other hand, I wish that cip-kernel-config had the base kernel config (per-arch) separated from the target-dependent options.
-For example, CONFIG_CC_STACKPROTECTOR_STRONG=y could be part of the base.
-
-Another thing that needs to be fixed is the configuration for the RT kernel.
-ATM, we are appending a set of config fragments (preempt-rt.cfg i think) in isar-cip-core. However, cip-kernel-config has its own folder for linux-rt configs.
+I'm sorry I won't be able to join the IRC meeting today.
+SW Updates WG still work on supporting HTTPS connection between SWUpdate an=
+d hawkBit.
+https://gitlab.com/cip-project/cip-sw-updates/cip-sw-updates-tasks/-/issues=
+/8
 
 Thanks,
-Daniel
+Suzuki
 
-List of changes from isar-cip-core's config to cip-kernel-config's config.
+-----Original Message-----
+From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On Beha=
+lf Of masashi.kudo@cybertrust.co.jp
+Sent: Thursday, July 30, 2020 10:57 AM
+To: cip-dev@lists.cip-project.org
+Subject: [cip-dev] CIP IRC weekly meeting today
 
---- isar-sorted	2020-07-30 11:05:43.418894507 +0900
-+++ cip-sorted	2020-07-30 11:06:21.358244870 +0900
-@@ -1,318 +1,250 @@
--# CONFIG_ACPI_AC is not set
--# CONFIG_ACPI_BATTERY is not set
--# CONFIG_ACPI_FAN is not set
--# CONFIG_ACPI_THERMAL is not set
--# CONFIG_ATA_SFF is not set
--# CONFIG_BACKLIGHT_GENERIC is not set
- # CONFIG_COMPAT_BRK is not set
--# CONFIG_CRYPTO_DEV_CCP_DD is not set
--# CONFIG_CRYPTO_ECHAINIV is not set
--# CONFIG_CRYPTO_MANAGER_DISABLE_TESTS is not set
--# CONFIG_DEBUG_RODATA_TEST is not set
--# CONFIG_DEVKMEM is not set
--# CONFIG_EDAC_DECODE_MCE is not set
--# CONFIG_EFIVAR_FS is not set
--# CONFIG_FIRMWARE_IN_KERNEL is not set
--# CONFIG_FRAME_POINTER is not set
--# CONFIG_HID is not set
--# CONFIG_HW_RANDOM is not set
--# CONFIG_INET6_XFRM_MODE_BEET is not set
--# CONFIG_INET6_XFRM_MODE_TRANSPORT is not set
--# CONFIG_INET6_XFRM_MODE_TUNNEL is not set
-+# CONFIG_HPET_MMAP is not set
-+# CONFIG_HW_RANDOM_AMD is not set
-+# CONFIG_HW_RANDOM_INTEL is not set
- # CONFIG_INET_DIAG is not set
- # CONFIG_INET_XFRM_MODE_BEET is not set
- # CONFIG_INET_XFRM_MODE_TRANSPORT is not set
- # CONFIG_INET_XFRM_MODE_TUNNEL is not set
- # CONFIG_INTEL_IOMMU_DEFAULT_ON is not set
--# CONFIG_IPV6_SIT is not set
- # CONFIG_LCD_CLASS_DEVICE is not set
- # CONFIG_LEGACY_PTYS is not set
- # CONFIG_LOCALVERSION_AUTO is not set
--# CONFIG_MEMCG_SWAP_ENABLED is not set
--# CONFIG_NET_VENDOR_ARC is not set
--# CONFIG_NET_VENDOR_SEEQ is not set
--# CONFIG_NUMA_BALANCING_DEFAULT_ENABLED is not set
--# CONFIG_PNP_DEBUG_MESSAGES is not set
--# CONFIG_SATA_PMP is not set
--# CONFIG_SCSI_PROC_FS is not set
--# CONFIG_SERIAL_8250_DEPRECATED_OPTIONS is not set
--# CONFIG_SERIO_SERPORT is not set
-+# CONFIG_LOGO_LINUX_MONO is not set
-+# CONFIG_LOGO_LINUX_VGA16 is not set
-+# CONFIG_MTRR_SANITIZER is not set
-+# CONFIG_NETFILTER_ADVANCED is not set
-+# CONFIG_PRINT_QUOTA_WARNING is not set
-+# CONFIG_RTC_HCTOSYS is not set
-+# CONFIG_SCHED_DEBUG is not set
-+# CONFIG_SCSI_LOWLEVEL is not set
- # CONFIG_TCP_CONG_BIC is not set
- # CONFIG_TCP_CONG_HTCP is not set
- # CONFIG_TCP_CONG_WESTWOOD is not set
--# CONFIG_UEVENT_HELPER is not set
- # CONFIG_UNUSED_SYMBOLS is not set
--# CONFIG_VIRTUALIZATION is not set
--# CONFIG_X86_EXTENDED_PLATFORM is not set
--# CONFIG_X86_PKG_TEMP_THERMAL is not set
--# CONFIG_X86_VERBOSE_BOOTUP is not set
--# CONFIG_XZ_DEC_ARM is not set
--# CONFIG_XZ_DEC_ARMTHUMB is not set
--# CONFIG_XZ_DEC_IA64 is not set
--# CONFIG_XZ_DEC_POWERPC is not set
--# CONFIG_XZ_DEC_SPARC is not set
--CONFIG_A11Y_BRAILLE_CONSOLE=y
--CONFIG_ACCESSIBILITY=y
--CONFIG_ACPI_APEI=y
--CONFIG_ACPI_APEI_GHES=y
--CONFIG_ACPI_APEI_MEMORY_FAILURE=y
--CONFIG_ACPI_APEI_PCIEAER=y
--CONFIG_ACPI_BGRT=y
--CONFIG_ACPI_BUTTON=m
-+CONFIG_8139TOO=y
- CONFIG_ACPI_DOCK=y
--CONFIG_ACPI_EXTLOG=y
--CONFIG_ACPI_HOTPLUG_MEMORY=y
--CONFIG_ACPI_PCI_SLOT=y
- CONFIG_AGP=y
- CONFIG_AGP_AMD64=y
- CONFIG_AGP_INTEL=y
--CONFIG_AGP_SIS=y
--CONFIG_AGP_VIA=y
- CONFIG_AMD_IOMMU=y
--CONFIG_AMD_IOMMU_V2=y
-+CONFIG_AMIGA_PARTITION=y
- CONFIG_ATA=y
--CONFIG_AUTOFS4_FS=m
--CONFIG_BACKLIGHT_CLASS_DEVICE=y
--CONFIG_BACKLIGHT_LCD_SUPPORT=y
--CONFIG_BLK_CGROUP=y
--CONFIG_BLK_DEV_BSGLIB=y
-+CONFIG_ATA_PIIX=y
-+CONFIG_AUDIT=y
-+CONFIG_AUTOFS4_FS=y
-+CONFIG_BINFMT_MISC=y
-+CONFIG_BLK_DEV_DM=y
- CONFIG_BLK_DEV_INITRD=y
--CONFIG_BLK_DEV_INTEGRITY=y
- CONFIG_BLK_DEV_IO_TRACE=y
--CONFIG_BLK_DEV_SD=m
--CONFIG_BLK_DEV_THROTTLING=y
--CONFIG_BOOT_PRINTK_DELAY=y
--CONFIG_BPF_JIT=y
--CONFIG_BPF_SYSCALL=y
-+CONFIG_BLK_DEV_LOOP=y
-+CONFIG_BLK_DEV_MD=y
-+CONFIG_BLK_DEV_SD=y
-+CONFIG_BLK_DEV_SR=y
-+CONFIG_BLK_DEV_SR_VENDOR=y
-+CONFIG_BSD_DISKLABEL=y
- CONFIG_BSD_PROCESS_ACCT=y
--CONFIG_BSD_PROCESS_ACCT_V3=y
- CONFIG_CALGARY_IOMMU=y
--CONFIG_CC_STACKPROTECTOR_STRONG=y
--CONFIG_CFQ_GROUP_IOSCHED=y
--CONFIG_CFS_BANDWIDTH=y
-+CONFIG_CFG80211=y
-+CONFIG_CGROUPS=y
- CONFIG_CGROUP_CPUACCT=y
--CONFIG_CGROUP_DEVICE=y
- CONFIG_CGROUP_FREEZER=y
--CONFIG_CGROUP_NET_CLASSID=y
--CONFIG_CGROUP_NET_PRIO=y
--CONFIG_CGROUP_PERF=y
--CONFIG_CGROUP_PIDS=y
--CONFIG_CHECKPOINT_RESTORE=y
--CONFIG_CHR_DEV_SG=m
-+CONFIG_CGROUP_SCHED=y
-+CONFIG_CHR_DEV_SG=y
- CONFIG_CONNECTOR=y
- CONFIG_CPUSETS=y
--CONFIG_CPU_FREQ=y
--CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
-+CONFIG_CPU_FREQ_DEFAULT_GOV_USERSPACE=y
-+CONFIG_CPU_FREQ_GOV_ONDEMAND=y
-+CONFIG_CPU_FREQ_GOV_PERFORMANCE=y
- CONFIG_CRASH_DUMP=y
--CONFIG_CRYPTO_CRC32C=y
--CONFIG_CRYPTO_CRC32C_INTEL=y
--CONFIG_CRYPTO_DEV_CCP=y
--CONFIG_CRYPTO_SHA256=y
--CONFIG_DCB=y
--CONFIG_DEBUG_MEMORY_INIT=y
--CONFIG_DEBUG_SET_MODULE_RONX=y
--CONFIG_DEFAULT_MMAP_MIN_ADDR=65536
--CONFIG_DEFAULT_SECURITY_DAC=y
--CONFIG_DEVPTS_MULTIPLE_INSTANCES=y
-+CONFIG_DEBUG_BOOT_PARAMS=y
-+CONFIG_DEBUG_DEVRES=y
-+CONFIG_DEBUG_KERNEL=y
-+CONFIG_DEBUG_STACKOVERFLOW=y
-+CONFIG_DEBUG_STACK_USAGE=y
- CONFIG_DEVTMPFS=y
-+CONFIG_DEVTMPFS_MOUNT=y
- CONFIG_DMADEVICES=y
--CONFIG_DMI_SYSFS=y
--CONFIG_DYNAMIC_DEBUG=y
--CONFIG_EARLY_PRINTK_EFI=y
-+CONFIG_DM_MIRROR=y
-+CONFIG_DM_ZERO=y
-+CONFIG_DRM=y
-+CONFIG_DRM_I915=y
-+CONFIG_E1000=y
-+CONFIG_E1000E=y
-+CONFIG_E100=y
-+CONFIG_EARLY_PRINTK_DBGP=y
- CONFIG_EDAC=y
-+CONFIG_EEEPC_LAPTOP=y
- CONFIG_EFI=y
--CONFIG_EFI_MIXED=y
--CONFIG_EFI_STUB=y
--CONFIG_EXPERT=y
--CONFIG_EXT4_FS=m
-+CONFIG_EFI_VARS=y
-+CONFIG_EXT4_FS=y
- CONFIG_EXT4_FS_POSIX_ACL=y
- CONFIG_EXT4_FS_SECURITY=y
--CONFIG_FANOTIFY=y
--CONFIG_FANOTIFY_ACCESS_PERMISSIONS=y
--CONFIG_FB=y
- CONFIG_FB_EFI=y
- CONFIG_FB_MODE_HELPERS=y
- CONFIG_FB_TILEBLITTING=y
--CONFIG_FB_VESA=y
--CONFIG_FHANDLE=y
--CONFIG_FIRMWARE_EDID=y
--CONFIG_FRAMEBUFFER_CONSOLE=y
--CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY=y
--CONFIG_FRAMEBUFFER_CONSOLE_ROTATION=y
--CONFIG_FRONTSWAP=y
--CONFIG_FS_DAX=y
--CONFIG_FTRACE_SYSCALLS=y
--CONFIG_GART_IOMMU=y
--CONFIG_GENERIC_PHY=y
--CONFIG_GPIO_INTEL_MID=y
--CONFIG_GPIO_SYSFS=y
-+CONFIG_FDDI=y
-+CONFIG_FORCEDETH=y
-+CONFIG_HAMRADIO=y
- CONFIG_HIBERNATION=y
-+CONFIG_HIDRAW=y
-+CONFIG_HID_GYRATION=y
-+CONFIG_HID_NTRIG=y
-+CONFIG_HID_PANTHERLORD=y
-+CONFIG_HID_PETALYNX=y
-+CONFIG_HID_PID=y
-+CONFIG_HID_SAMSUNG=y
-+CONFIG_HID_SONY=y
-+CONFIG_HID_SUNPLUS=y
-+CONFIG_HID_TOPSEED=y
- CONFIG_HIGH_RES_TIMERS=y
- CONFIG_HOTPLUG_PCI=y
--CONFIG_HOTPLUG_PCI_ACPI=y
--CONFIG_HOTPLUG_PCI_CPCI=y
--CONFIG_HOTPLUG_PCI_PCIE=y
- CONFIG_HPET=y
- CONFIG_HUGETLBFS=y
--CONFIG_HYPERVISOR_GUEST=y
--CONFIG_I2C=y
--CONFIG_I2C_I801=m
--CONFIG_IA32_AOUT=y
-+CONFIG_HW_RANDOM=y
-+CONFIG_HZ_1000=y
-+CONFIG_I2C_I801=y
- CONFIG_IA32_EMULATION=y
--CONFIG_IKCONFIG=m
--CONFIG_IMA=y
--CONFIG_IMA_APPRAISE=y
--CONFIG_IMA_DEFAULT_HASH_SHA256=y
-+CONFIG_INET6_AH=y
-+CONFIG_INET6_ESP=y
- CONFIG_INET=y
--CONFIG_INPUT_EVDEV=m
-+CONFIG_INPUT_EVDEV=y
- CONFIG_INPUT_JOYSTICK=y
- CONFIG_INPUT_MISC=y
--CONFIG_INPUT_PCSPKR=m
-+CONFIG_INPUT_POLLDEV=y
- CONFIG_INPUT_TABLET=y
- CONFIG_INPUT_TOUCHSCREEN=y
--CONFIG_INTEL_IDLE=y
- CONFIG_INTEL_IOMMU=y
--CONFIG_INTEL_IOMMU_SVM=y
--CONFIG_IOSF_MBI=y
--CONFIG_IPV6_MIP6=y
--CONFIG_IPV6_MROUTE=y
--CONFIG_IPV6_MROUTE_MULTIPLE_TABLES=y
--CONFIG_IPV6_MULTIPLE_TABLES=y
--CONFIG_IPV6_OPTIMISTIC_DAD=y
--CONFIG_IPV6_PIMSM_V2=y
--CONFIG_IPV6_ROUTER_PREF=y
--CONFIG_IPV6_ROUTE_INFO=y
--CONFIG_IPV6_SUBTREES=y
-+CONFIG_IP6_NF_FILTER=y
-+CONFIG_IP6_NF_IPTABLES=y
-+CONFIG_IP6_NF_MANGLE=y
-+CONFIG_IP6_NF_MATCH_IPV6HEADER=y
-+CONFIG_IP6_NF_TARGET_REJECT=y
- CONFIG_IP_ADVANCED_ROUTER=y
--CONFIG_IP_FIB_TRIE_STATS=y
- CONFIG_IP_MROUTE=y
--CONFIG_IP_MROUTE_MULTIPLE_TABLES=y
- CONFIG_IP_MULTICAST=y
- CONFIG_IP_MULTIPLE_TABLES=y
--CONFIG_IP_NF_IPTABLES=m
-+CONFIG_IP_NF_FILTER=y
-+CONFIG_IP_NF_IPTABLES=y
-+CONFIG_IP_NF_MANGLE=y
-+CONFIG_IP_NF_TARGET_REJECT=y
- CONFIG_IP_PIMSM_V1=y
- CONFIG_IP_PIMSM_V2=y
-+CONFIG_IP_PNP=y
-+CONFIG_IP_PNP_BOOTP=y
-+CONFIG_IP_PNP_DHCP=y
-+CONFIG_IP_PNP_RARP=y
- CONFIG_IP_ROUTE_MULTIPATH=y
- CONFIG_IP_ROUTE_VERBOSE=y
--CONFIG_IRQ_REMAP=y
--CONFIG_ISCSI_IBFT_FIND=y
--CONFIG_ITCO_VENDOR_SUPPORT=y
--CONFIG_ITCO_WDT=m
-+CONFIG_ISO9660_FS=y
-+CONFIG_JOLIET=y
- CONFIG_JUMP_LABEL=y
--CONFIG_KALLSYMS_ALL=y
-+CONFIG_KARMA_PARTITION=y
- CONFIG_KEXEC=y
--CONFIG_KEXEC_FILE=y
--CONFIG_KEXEC_VERIFY_SIG=y
--CONFIG_KEYS=y
- CONFIG_KPROBES=y
--CONFIG_KSM=y
--CONFIG_LEDS_CLASS=y
--CONFIG_LEDS_TRIGGERS=y
--CONFIG_LEDS_TRIGGER_CPU=y
--CONFIG_LIVEPATCH=y
--CONFIG_LOCKUP_DETECTOR=y
--CONFIG_LPC_ICH=m
--CONFIG_LWTUNNEL=y
-+CONFIG_LOGITECH_FF=y
-+CONFIG_LOGO=y
-+CONFIG_LOG_BUF_SHIFT=18
-+CONFIG_MAC80211=y
-+CONFIG_MAC80211_LEDS=y
-+CONFIG_MACINTOSH_DRIVERS=y
-+CONFIG_MAC_EMUMOUSEBTN=y
-+CONFIG_MAC_PARTITION=y
- CONFIG_MAGIC_SYSRQ=y
--CONFIG_MAGIC_SYSRQ_DEFAULT_ENABLE=0x01b6
- CONFIG_MD=y
--CONFIG_MEGARAID_NEWGEN=y
--CONFIG_MEMCG=y
--CONFIG_MEMCG_SWAP=y
--CONFIG_MEMORY=y
--CONFIG_MEMORY_FAILURE=y
--CONFIG_MEMORY_HOTPLUG=y
--CONFIG_MEMORY_HOTREMOVE=y
--CONFIG_MEMTEST=y
--CONFIG_MEM_SOFT_DIRTY=y
- CONFIG_MICROCODE_AMD=y
--CONFIG_MMIOTRACE=y
-+CONFIG_MINIX_SUBPARTITION=y
- CONFIG_MODULES=y
-+CONFIG_MODULE_FORCE_UNLOAD=y
- CONFIG_MODULE_UNLOAD=y
--CONFIG_MODVERSIONS=y
--CONFIG_MOUSE_PS2=m
--CONFIG_MOUSE_PS2_ELANTECH=y
--CONFIG_MOUSE_PS2_SENTELIC=y
--CONFIG_MOUSE_PS2_VMMOUSE=y
--CONFIG_MPLS=y
--CONFIG_NAMESPACES=y
-+CONFIG_MSDOS_FS=y
- CONFIG_NET=y
-+CONFIG_NETCONSOLE=y
- CONFIG_NETDEVICES=y
- CONFIG_NETFILTER=y
-+CONFIG_NETFILTER_XT_MATCH_CONNTRACK=y
-+CONFIG_NETFILTER_XT_MATCH_POLICY=y
-+CONFIG_NETFILTER_XT_MATCH_STATE=y
-+CONFIG_NETFILTER_XT_TARGET_CONNSECMARK=y
-+CONFIG_NETFILTER_XT_TARGET_NFLOG=y
-+CONFIG_NETFILTER_XT_TARGET_SECMARK=y
-+CONFIG_NETFILTER_XT_TARGET_TCPMSS=y
-+CONFIG_NETLABEL=y
- CONFIG_NET_CLS_ACT=y
- CONFIG_NET_EMATCH=y
--CONFIG_NET_FC=y
--CONFIG_NET_L3_MASTER_DEV=y
--CONFIG_NET_MPLS_GSO=y
- CONFIG_NET_SCHED=y
- CONFIG_NET_TULIP=y
--CONFIG_NEW_LEDS=y
-+CONFIG_NFS_FS=y
-+CONFIG_NFS_V3_ACL=y
-+CONFIG_NFS_V4=y
-+CONFIG_NF_CONNTRACK=y
-+CONFIG_NF_CONNTRACK_FTP=y
-+CONFIG_NF_CONNTRACK_IRC=y
-+CONFIG_NF_CONNTRACK_SIP=y
-+CONFIG_NF_CT_NETLINK=y
-+CONFIG_NLS_ASCII=y
-+CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_DEFAULT="utf8"
--CONFIG_NO_HZ_IDLE=y
--CONFIG_NR_CPUS=512
-+CONFIG_NLS_ISO8859_1=y
-+CONFIG_NLS_UTF8=y
-+CONFIG_NO_HZ=y
- CONFIG_NUMA=y
--CONFIG_NUMA_BALANCING=y
--CONFIG_NUMA_EMU=y
-+CONFIG_NVRAM=y
- CONFIG_OPTIMIZE_INLINING=y
-+CONFIG_OSF_PARTITION=y
- CONFIG_PACKET=y
--CONFIG_PAGE_POISONING=y
--CONFIG_PARAVIRT=y
--CONFIG_PARAVIRT_SPINLOCKS=y
-+CONFIG_PANTHERLORD_FF=y
- CONFIG_PARTITION_ADVANCED=y
-+CONFIG_PATA_AMD=y
-+CONFIG_PATA_OLDPIIX=y
-+CONFIG_PATA_SCH=y
-+CONFIG_PCCARD=y
- CONFIG_PCIEPORTBUS=y
--CONFIG_PCI_IOV=y
--CONFIG_PCI_MMCONFIG=y
--CONFIG_PCI_REALLOC_ENABLE_AUTO=y
--CONFIG_PINCTRL_BAYTRAIL=y
--CONFIG_PINCTRL_BROXTON=y
--CONFIG_PINCTRL_CHERRYVIEW=y
--CONFIG_PINCTRL_SUNRISEPOINT=y
--CONFIG_PM_ADVANCED_DEBUG=y
- CONFIG_PM_DEBUG=y
--CONFIG_PM_DEVFREQ=y
-+CONFIG_PM_TRACE_RTC=y
- CONFIG_POSIX_MQUEUE=y
--CONFIG_POWERCAP=y
--CONFIG_POWER_SUPPLY=y
- CONFIG_PREEMPT_VOLUNTARY=y
- CONFIG_PRINTK_TIME=y
- CONFIG_PROC_KCORE=y
- CONFIG_PROFILING=y
-+CONFIG_PROVIDE_OHCI1394_DMA_INIT=y
-+CONFIG_QFMT_V2=y
- CONFIG_QUOTA=y
- CONFIG_QUOTA_NETLINK_INTERFACE=y
--CONFIG_RANDOMIZE_BASE=y
-+CONFIG_R8169=y
-+CONFIG_RFKILL=y
-+CONFIG_ROOT_NFS=y
- CONFIG_RTC_CLASS=y
- CONFIG_SATA_AHCI=y
- CONFIG_SCHEDSTATS=y
--CONFIG_SCHED_AUTOGROUP=y
--CONFIG_SCHED_SMT=y
--CONFIG_SCHED_STACK_END_CHECK=y
- CONFIG_SCSI_CONSTANTS=y
--CONFIG_SCSI_DH=y
--CONFIG_SCSI_LOGGING=y
--CONFIG_SCSI_SCAN_ASYNC=y
-+CONFIG_SCSI_SPI_ATTRS=y
- CONFIG_SECURITY=y
--CONFIG_SECURITY_APPARMOR=y
--CONFIG_SECURITY_DMESG_RESTRICT=y
--CONFIG_SECURITY_NETWORK_XFRM=y
-+CONFIG_SECURITY_NETWORK=y
- CONFIG_SECURITY_SELINUX=y
--CONFIG_SECURITY_TOMOYO=y
--CONFIG_SECURITY_YAMA=y
-+CONFIG_SECURITY_SELINUX_BOOTPARAM=y
-+CONFIG_SECURITY_SELINUX_DISABLE=y
- CONFIG_SERIAL_8250=y
- CONFIG_SERIAL_8250_CONSOLE=y
-+CONFIG_SERIAL_8250_DETECT_IRQ=y
- CONFIG_SERIAL_8250_EXTENDED=y
- CONFIG_SERIAL_8250_MANY_PORTS=y
- CONFIG_SERIAL_8250_NR_UARTS=32
- CONFIG_SERIAL_8250_RSA=y
- CONFIG_SERIAL_8250_SHARE_IRQ=y
- CONFIG_SERIAL_NONSTANDARD=y
--CONFIG_SERIO_RAW=m
--CONFIG_SFI=y
--CONFIG_SLAB=y
-+CONFIG_SGI_PARTITION=y
-+CONFIG_SKY2=y
- CONFIG_SMP=y
--CONFIG_SPI=y
--CONFIG_STACK_TRACER=y
--CONFIG_STRICT_DEVMEM=y
--CONFIG_STRIP_ASM_SYMS=y
-+CONFIG_SND=y
-+CONFIG_SND_HDA_HWDEP=y
-+CONFIG_SND_HDA_INTEL=y
-+CONFIG_SND_HRTIMER=y
-+CONFIG_SND_SEQUENCER=y
-+CONFIG_SND_SEQ_DUMMY=y
-+CONFIG_SOLARIS_X86_PARTITION=y
-+CONFIG_SOUND=y
-+CONFIG_SUN_PARTITION=y
- CONFIG_SYN_COOKIES=y
- CONFIG_SYSVIPC=y
- CONFIG_TASKSTATS=y
-@@ -321,33 +253,32 @@
- CONFIG_TASK_XACCT=y
- CONFIG_TCP_CONG_ADVANCED=y
- CONFIG_TCP_MD5SIG=y
--CONFIG_THERMAL_GOV_BANG_BANG=y
--CONFIG_THERMAL_GOV_FAIR_SHARE=y
--CONFIG_THERMAL_GOV_USER_SPACE=y
--CONFIG_THERMAL_WRITABLE_TRIPS=y
--CONFIG_TMPFS=y
-+CONFIG_TIGON3=y
- CONFIG_TMPFS_POSIX_ACL=y
--CONFIG_TRACER_SNAPSHOT=y
--CONFIG_TRANSPARENT_HUGEPAGE=y
--CONFIG_TRANSPARENT_HUGEPAGE_MADVISE=y
-+CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
- CONFIG_UNIX=y
--CONFIG_UPROBE_EVENT=y
--CONFIG_USERFAULTFD=y
--CONFIG_USER_NS=y
--CONFIG_VGA_SWITCHEROO=y
-+CONFIG_UNIXWARE_DISKLABEL=y
-+CONFIG_USB=y
-+CONFIG_USB_ANNOUNCE_NEW_DEVICES=y
-+CONFIG_USB_EHCI_HCD=y
-+CONFIG_USB_HIDDEV=y
-+CONFIG_USB_MON=y
-+CONFIG_USB_OHCI_HCD=y
-+CONFIG_USB_PRINTER=y
-+CONFIG_USB_STORAGE=y
-+CONFIG_USB_UHCI_HCD=y
-+CONFIG_VFAT_FS=y
-+CONFIG_VGACON_SOFT_SCROLLBACK=y
-+CONFIG_VIRTIO_BALLOON=y
- CONFIG_VIRTIO_BLK=y
- CONFIG_VIRTIO_NET=y
- CONFIG_VIRTIO_PCI=y
--CONFIG_VIRT_DRIVERS=y
- CONFIG_WATCHDOG=y
--CONFIG_X86_AMD_PLATFORM_DEVICE=y
--CONFIG_X86_INTEL_LPSS=y
--CONFIG_X86_INTEL_MPX=y
--CONFIG_X86_INTEL_PSTATE=y
-+CONFIG_X86_ACPI_CPUFREQ=y
-+CONFIG_X86_CHECK_BIOS_CORRUPTION=y
-+CONFIG_X86_CPUID=y
-+CONFIG_X86_MSR=y
- CONFIG_X86_REROUTE_FOR_BROKEN_BOOT_IRQS=y
--CONFIG_X86_X2APIC=y
--CONFIG_X86_X32=y
--CONFIG_XFRM_MIGRATE=y
--CONFIG_XFRM_SUB_POLICY=y
--CONFIG_ZBUD=y
--CONFIG_ZSWAP=y
-+CONFIG_XFRM_USER=y
-+CONFIG_YENTA=y
-+CONFIG_ZISOFS=y
+Hi all,
+
+Kindly be reminded to attend the weekly meeting through IRC to discuss tech=
+nical topics with CIP kernel today.
+
+*Please note that the IRC meeting was rescheduled to UTC (GMT) 09:00 starti=
+ng from the first week of Apr. according to TSC meeting*
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=3D2020&mont=
+h=3D7&day=3D30&hour=3D9&min=3D0&sec=3D0&p1=3D224&p2=3D179&p3=3D136&p4=3D37&=
+p5=3D241&p6=3D248
+
+USWest	USEast	UK	DE	TW	JP
+02:00	05:00	10:00	11:00	17:00	18:00
+
+Channel:
+* irc:chat.freenode.net:6667/cip
+
+Last meeting minutes:
+https://lore.kernel.org/cip-dev/OSAPR01MB23857705B82D0D163B5E5211B7770@OSAP=
+R01MB2385.jpnprd01.prod.outlook.com/T/#m873e67bf005078f86fe9f659682614def4a=
+448a6
+
+Agenda:
+
+* Action item
+  1. Combine root filesystem with kselftest binary - iwamatsu=20
+  2. Post LTP results to KernelCI - patersonc=20
+  3. Email Kernel team/cip-dev about patchwork usage - patersonc
+Old AI "Issues to be fixed for swupdate "copyright correction and salsa CI =
+testing" - iwamatsu" was taken care by SZ-san and was closed last week.
+
+* Kernel maintenance updates
+* Kernel testing
+* Software update
+* CIP Security=20
+* AOB
+
+The meeting will take 30 min, although it can be extended to an hour if it =
+makes sense and those involved in the topics can stay. Otherwise, the topic=
+ will be taken offline or in the next meeting.
+
+Best regards,
+--
+M. Kudo
+Cybertrust Japan Co., Ltd.
 
 
-
---GnNKDo1jwIOPH9EnrMAe
+--fXjMgigJ1UlwL1HUJN3l
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -622,12 +175,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#5062): https://lists.cip-project.org/g/cip-dev/message=
-/5062
-Mute This Topic: https://lists.cip-project.org/mt/75882586/4520388
+View/Reply Online (#5063): https://lists.cip-project.org/g/cip-dev/message=
+/5063
+Mute This Topic: https://lists.cip-project.org/mt/75878882/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---GnNKDo1jwIOPH9EnrMAe--
+--fXjMgigJ1UlwL1HUJN3l--
