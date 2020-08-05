@@ -1,59 +1,49 @@
-Return-Path: <SRS0=0PoC=BP=lists.cip-project.org=bounce+64572+5100+4520388+8129055@kernel.org>
+Return-Path: <SRS0=S5eb=BP=lists.cip-project.org=bounce+64572+5101+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,HTML_MESSAGE,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,LOTS_OF_MONEY,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDAD4C433E3
-	for <cip-dev@archiver.kernel.org>; Wed,  5 Aug 2020 09:23:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4501C433E0
+	for <cip-dev@archiver.kernel.org>; Wed,  5 Aug 2020 13:03:21 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 622CB20792
-	for <cip-dev@archiver.kernel.org>; Wed,  5 Aug 2020 09:23:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 7C22722D00
+	for <cip-dev@archiver.kernel.org>; Wed,  5 Aug 2020 13:03:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="Ia1qNTcu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 622CB20792
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=siemens.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5100+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id idhCYY4521723xcs4ypW7Q4T; Wed, 05 Aug 2020 02:23:48 -0700
-X-Received: from gw-eagle1.siemens.com (gw-eagle1.siemens.com [194.138.20.72])
- by mx.groups.io with SMTP id smtpd.web11.3538.1596619426095046641
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="rstFS+ZR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C22722D00
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toshiba-tsip.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5101+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id mR2MYY4521723xEMNxmUiwCa; Wed, 05 Aug 2020 06:03:21 -0700
+X-Received: from peak.toshiba-tesi.com (peak.toshiba-tesi.com [202.56.254.199])
+ by mx.groups.io with SMTP id smtpd.web11.6626.1596632599684555108
  for <cip-dev@lists.cip-project.org>;
- Wed, 05 Aug 2020 02:23:47 -0700
-X-Received: from mail1.dc4ca.siemens.de (mail1.dc4ca.siemens.de [139.25.224.78])
-	by gw-eagle1.siemens.com (Postfix) with ESMTPS id 338C04F00BD;
-	Wed,  5 Aug 2020 11:23:42 +0200 (CEST)
-X-Received: from DEMCHDC8A0A.ad011.siemens.net (demchdc8a0a.ad011.siemens.net [139.25.226.106])
-	by mail1.dc4ca.siemens.de (Postfix) with ESMTPS id CBA1815E93800;
-	Wed,  5 Aug 2020 11:23:42 +0200 (CEST)
-X-Received: from DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) by
- DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) with Microsoft SMTP Server
+ Wed, 05 Aug 2020 06:03:20 -0700
+IronPort-SDR: WMrmSDunjMRip9fOwH6JsoecQrOsh0BUXQBIEDDlmEBtX/+wHKvnyWoJMnHwbpiGFLw3CliZBY
+ oJPh83CgyKUQ==
+X-IronPort-AV: E=Sophos;i="5.75,436,1589221800"; 
+   d="scan'208";a="5375237"
+X-Received: from unknown (HELO TOSBLRMBX0519.TOSHIBA-TSIP.COM) ([10.116.85.29])
+  by peak.toshiba-tesi.com with ESMTP; 05 Aug 2020 19:08:54 +0530
+X-Received: from TOSBLRMBX0219.TOSHIBA-TSIP.COM (172.28.80.119) by
+ TOSBLRMBX0519.TOSHIBA-TSIP.COM (10.116.85.29) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2044.4; Wed, 5 Aug 2020 11:23:40 +0200
-X-Received: from DEMCHDC8A0A.ad011.siemens.net ([139.25.226.106]) by
- DEMCHDC8A0A.ad011.siemens.net ([139.25.226.106]) with mapi id 15.01.2044.004;
- Wed, 5 Aug 2020 11:23:40 +0200
-From: "Quirin Gylstorff" <quirin.gylstorff@siemens.com>
-To: "daniel.sangorrin@toshiba.co.jp" <daniel.sangorrin@toshiba.co.jp>,
-	"cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-CC: "Kiszka, Jan" <jan.kiszka@siemens.com>
-Subject: Re: [cip-dev] [isar-cip-core] remove remaining configs from isar-cip-core
-Thread-Topic: [cip-dev] [isar-cip-core] remove remaining configs from
- isar-cip-core
-Thread-Index: AQHWahpuSfjftSSrQEiDDzc9LDN4Vakn8ROAgACodwCAAKZ3zA==
-Date: Wed, 5 Aug 2020 09:23:40 +0000
-Message-ID: <f8f989ef-7ee2-42ee-a922-f53c6d2b07fe@siemens.com>
-References: <20200804044724.629026-1-daniel.sangorrin@toshiba.co.jp>
- <0eca9df0-675d-ab68-f199-d029f4d779aa@siemens.com>,<OSBPR01MB2053E648BDBD2C9934BAD1A8D04B0@OSBPR01MB2053.jpnprd01.prod.outlook.com>
-In-Reply-To: <OSBPR01MB2053E648BDBD2C9934BAD1A8D04B0@OSBPR01MB2053.jpnprd01.prod.outlook.com>
-Accept-Language: de-DE, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-tm-snts-smtp: 7C17DBBA97B6E2CB80EA283D3B4BD674E8E972C7DCE6A8D452B221C2A5F17FA62000:8
+ 15.1.1847.3; Wed, 5 Aug 2020 18:33:12 +0530
+X-Received: from pvenkat.TOSHIBA-TSIP.COM (172.28.80.121) by
+ TOSBLRMBX0219.TOSHIBA-TSIP.COM (172.28.80.119) with Microsoft SMTP Server id
+ 15.1.1847.3 via Frontend Transport; Wed, 5 Aug 2020 18:33:11 +0530
+From: "Venkata Pyla" <venkata.pyla@toshiba-tsip.com>
+To: <jan.kiszka@siemens.com>
+CC: venkata pyla <venkata.pyla@toshiba-tsip.com>,
+	<cip-dev@lists.cip-project.org>, <cip-security@lists.cip-project.org>
+Subject: [cip-dev] [isar-cip-core] security-customizations: Recipe to apply security configurations
+Date: Wed, 5 Aug 2020 18:34:11 +0530
+Message-ID: <20200805130412.1427-1-venkata.pyla@toshiba-tsip.com>
 MIME-Version: 1.0
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
@@ -61,195 +51,159 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: FLh2wYoNTEo4nicVqS8U1KjRx4520388AA=
-Content-Type: multipart/mixed; boundary="3u1ijGcao9tri87F6ttj"
+X-Gm-Message-State: LghY0RSPeYEoDIIeXaZz7TdVx4520388AA=
+Content-Type: multipart/mixed; boundary="Gv03mUbiIpyldXB5nnDK"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1596619428;
- bh=gCpGsOwAHETJiNCHjci0qjp8iQIDY100898aTGugoBQ=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1596632601;
+ bh=13NdlaU7CUsNTVk32xOlm2/2w5vtILFCkg4K++e4DgY=;
  h=CC:Content-Type:Date:From:Reply-To:Subject:To;
- b=Ia1qNTcuBuyzJ7nppMJ+3imLooDyj/Lx+As5yG+fDbPLtDJqdSK26o7liBhBoRBf726
- p3BgzTrdyccJEXgcmm7ZXVcpjyZUy+vqgwhg328J2uo7keTMcXD2usOG31d0dNzFncc2T
- u7PTRSKPBhjdRUee7h/gGvwuip9gZBbnwak=
+ b=rstFS+ZRwkthl4xdZMZDHoPtFic/ntHfcxEWr2+zPxOl3eZ6T7cf6Hs4adgmdMIPLSR
+ MRZHite65gj5a09qtjzCpY4cFFEc7PWanDVgsfa81BILxMCCwsobegZmT+Q9XfcGN796m
+ HRkAA2fI3yuJqqJCoXjo4z6+3nRPxTJU3DE=
 
---3u1ijGcao9tri87F6ttj
-Content-Language: en-US
-Content-Type: multipart/alternative;
-	boundary="_000_f8f989ef7ee242eea922f53c6d2b07fesiemenscom_"
-
---_000_f8f989ef7ee242eea922f53c6d2b07fesiemenscom_
+--Gv03mUbiIpyldXB5nnDK
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-Sure, i will look into it. You get a Patch if something is missing.
+From: venkata pyla <venkata.pyla@toshiba-tsip.com>
 
-Quirin
-________________________________
-Von: daniel.sangorrin@toshiba.co.jp
-Gesendet: Mittwoch, 5. August 2020 03:28
-An: cip-dev@lists.cip-project.org
-Cc: Kiszka, Jan (CT RDA IOT SES-DE)
-Betreff: RE: [cip-dev] [isar-cip-core] remove remaining configs from isar-c=
-ip-core
+This recipe will apply security policies* to the reference image
+that will be used for IEC62443-4-2 Evaluation
 
-Hi Quirin,
+*Security policies:
+ 1. Enforcing strong password to user accounts
+ 2. Lock user accounts for failed login attempts
+ 3. Terminate remote session for inactive time period
+ 4. Limit the concurrent login sessions
+ 5. Warn audit stroage failure
 
-> -----Original Message-----
-> From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On Be=
-half Of Quirin Gylstorff
-> Sent: Tuesday, August 4, 2020 10:25 PM
-> To: cip-dev@lists.cip-project.org
-> Cc: jan.kiszka@siemens.com
-> Subject: Re: [cip-dev] [isar-cip-core] remove remaining configs from isar=
--cip-core
->
->
->
-> On 8/4/20 6:47 AM, Daniel Sangorrin wrote:
-> > Hi Jan,
-> >
-> > This patch just removes the already unused defconfigs from
-> > isar-cip-core
-> >
-> > [isar-cip-core] kernel: remove configs that are already in
-> >
-> > I didn't know what to do with bbb_defconfig because it does not seem
-> > to be used at all by isar-cip-core (maybe it is in a rather obscure way=
-).
-> > However, that should also be removed and use cip_bbb_defconfig.
-> >
-> > Thanks,
-> > Daniel
-> >
->
->
-> In
-> https://gitlab.com/cip-project/cip-core/isar-cip-core/-/tree/cip-sw-updat=
-es/swupdate
-> bbb is used as demo system.
+Signed-off-by: venkata pyla <venkata.pyla@toshiba-tsip.com>
+---
+ .../images/cip-core-image-security.bb         |  2 +-
+ .../security-customizations/files/postinst    | 51 +++++++++++++++++++
+ .../security-customizations.bb                | 18 +++++++
+ 3 files changed, 70 insertions(+), 1 deletion(-)
+ create mode 100644 recipes-core/security-customizations/files/postinst
+ create mode 100644 recipes-core/security-customizations/security-customizations.bb
 
-Thanks, I guess I was confused because there were no KERNEL_DEFCONFIG defin=
-itions.
-But it seems that linux-cip-common.inc sets up one by default if you dont s=
-pecify it
-KERNEL_DEFCONFIG ?=3D "${MACHINE}_defconfig"
+diff --git a/recipes-core/images/cip-core-image-security.bb b/recipes-core/images/cip-core-image-security.bb
+index a17c522..61ddc39 100644
+--- a/recipes-core/images/cip-core-image-security.bb
++++ b/recipes-core/images/cip-core-image-security.bb
+@@ -13,7 +13,7 @@ inherit image
+ 
+ DESCRIPTION = "CIP Core image including security packages"
+ 
+-IMAGE_INSTALL += "customizations"
++IMAGE_INSTALL += "security-customizations"
+ 
+ # Debian packages that provide security features
+ IMAGE_PREINSTALL += " \
+diff --git a/recipes-core/security-customizations/files/postinst b/recipes-core/security-customizations/files/postinst
+new file mode 100644
+index 0000000..3699ba2
+--- /dev/null
++++ b/recipes-core/security-customizations/files/postinst
+@@ -0,0 +1,51 @@
++#!/bin/sh
++#
++# CIP Security, generic profile
++# Security Package configurations
++#
++
++echo "CIP Core Security Image (login: root/root)" > /etc/issue
++
++HOSTNAME=demo
++echo "$HOSTNAME" > /etc/hostname
++echo "127.0.0.1 $HOSTNAME" >> /etc/hosts
++
++# CR1.7: Strength of password-based authentication
++# Pam configuration to  enforce password strength
++PAM_PWD_FILE="/etc/pam.d/common-password"
++pam_cracklib_config="password  requisite    pam_cracklib.so retry=3 minlen=8 maxrepeat=3 ucredit=-1 lcredit=-1 dcredit=-1 ocredit=-1  difok=3 gecoscheck=1 reject_username  enforce_for_root"
++if grep -c "pam_cracklib.so" "${PAM_PWD_FILE}";then
++        sed -i '/pam_cracklib.so/ s/^#*/#/'  "${PAM_PWD_FILE}"
++fi
++sed -i "0,/^password.*/s/^password.*/${pam_cracklib_config}\n&/" "${PAM_PWD_FILE}"
++
++# CR1.11: Unsuccessful login attempts
++# Lock user account after unsuccessful login attempts
++PAM_AUTH_FILE="/etc/pam.d/common-auth"
++pam_tally="auth   required  pam_tally2.so  deny=3 even_deny_root unlock_time=60 root_unlock_time=60"
++if grep -c "pam_tally2.so" "${PAM_AUTH_FILE}";then
++        sed -i '/pam_tally2/ s/^#*/#/'  "${PAM_AUTH_FILE}"
++fi
++sed -i "0,/^auth.*/s/^auth.*/${pam_tally}\n&/" "${PAM_AUTH_FILE}"
++
++# CR2.6: Remote session termination
++# Terminate remote session after inactive time period
++SSHD_CONFIG="/etc/ssh/sshd_config"
++alive_interval=$(sed -n '/ClientAliveInterval/p' "${SSHD_CONFIG}")
++alive_countmax=$(sed -n '/ClientAliveCountMax/p' "${SSHD_CONFIG}")
++sed -i "/${alive_interval}/c ClientAliveInterval 120"  "${SSHD_CONFIG}"
++sed -i "/${alive_countmax}/c ClientAliveCountMax 0" "${SSHD_CONFIG}"
++
++# CR2.7: Concurrent session control
++# Limit the concurrent login sessions
++LIMITS_CONFIG="/etc/security/limits.conf"
++echo "* hard maxlogins 2" >> ${LIMITS_CONFIG}
++
++# CR2.9: Audit storage capacity
++# CR2.9 RE-1: Warn when audit record storage capacity threshold reached
++AUDIT_CONF_FILE="/etc/audit/auditd.conf"
++sed -i 's/space_left_action = .*/space_left_action = SYSLOG/'  $AUDIT_CONF_FILE
++sed -i 's/admin_space_left_action = .*/admin_space_left_action = SYSLOG/' $AUDIT_CONF_FILE
++
++# CR2.10: Response to audit processing failures
++sed -i 's/disk_error_action = .*/disk_error_action = SYSLOG/' $AUDIT_CONF_FILE
+diff --git a/recipes-core/security-customizations/security-customizations.bb b/recipes-core/security-customizations/security-customizations.bb
+new file mode 100644
+index 0000000..dbb06d9
+--- /dev/null
++++ b/recipes-core/security-customizations/security-customizations.bb
+@@ -0,0 +1,18 @@
++#
++# CIP Security, generic profile
++#
++# Copyright (c) Toshiba Corporation, 2020
++#
++# Authors:
++#  Venkata Pyla <venkata.pyla@toshiba-tsip.com>#
++#
++# SPDX-License-Identifier: MIT
++#
++
++inherit dpkg-raw
++
++DESCRIPTION = "CIP Security image for IEC62443-4-2 evaluation"
++
++SRC_URI = " file://postinst"
++
++DEBIAN_DEPENDS = "sshd-regen-keys"
+-- 
+2.20.1
 
-I see quite a few differences between
-https://gitlab.com/cip-project/cip-kernel/cip-kernel-config.git's cip-kerne=
-l-config/4.19.y-cip/arm/cip_bbb_defconfig
-and isar-cip-core's bbb_defconfig.
+The information contained in this e-mail message and in any
+attachments/annexure/appendices is confidential to the 
+recipient and may contain privileged information. 
+If you are not the intended recipient, please notify the
+sender and delete the message along with any 
+attachments/annexure/appendices. You should not disclose,
+copy or otherwise use the information contained in the
+message or any annexure. Any views expressed in this e-mail 
+are those of the individual sender except where the sender 
+specifically states them to be the views of 
+Toshiba Software India Pvt. Ltd. (TSIP),Bangalore.
 
-Could you try using cip_bbb_defconfig and see if you need some extra config=
-uration for software updates to work?
+Although this transmission and any attachments are believed to be
+free of any virus or other defect that might affect any computer 
+system into which it is received and opened, it is the responsibility
+of the recipient to ensure that it is virus free and no responsibility 
+is accepted by Toshiba Embedded Software India Pvt. Ltd, for any loss or
+damage arising in any way from its use.
 
-Thanks,
-Daniel
 
-
---_000_f8f989ef7ee242eea922f53c6d2b07fesiemenscom_
-Content-Type: text/html; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
->
-<meta name=3D"Generator" content=3D"Microsoft Exchange Server">
-<!-- converted from text --><style><!-- .EmailQuote { margin-left: 1pt; pad=
-ding-left: 4pt; border-left: #800000 2px solid; } --></style>
-</head>
-<body>
-<div>
-<div style=3D"font-family:Calibri,Arial,Helvetica,sans-serif; font-size:12.=
-0pt; line-height:1.3; color:#1F497D">
-<div>Sure, i will look into it. You get a Patch if something is missing. <b=
-r>
-<br>
-</div>
-Quirin<br>
-</div>
-<div id=3D"x_quoted_header" style=3D"clear:both">
-<hr style=3D"border:none; height:1px; color:#E1E1E1; background-color:#E1E1=
-E1">
-<div style=3D"border:none; padding:3.0pt 0cm 0cm 0cm"><span style=3D"font-s=
-ize:11.0pt; font-family:'Calibri','sans-serif'"><b>Von:</b> daniel.sangorri=
-n@toshiba.co.jp<br>
-<b>Gesendet:</b> Mittwoch, 5. August 2020 03:28<br>
-<b>An:</b> cip-dev@lists.cip-project.org<br>
-<b>Cc:</b> Kiszka, Jan (CT RDA IOT SES-DE)<br>
-<b>Betreff:</b> RE: [cip-dev] [isar-cip-core] remove remaining configs from=
- isar-cip-core
-<br>
-</span></div>
-</div>
-<br type=3D"attribution">
-</div>
-<font size=3D"2"><span style=3D"font-size:10pt;">
-<div class=3D"PlainText">Hi Quirin,<br>
-<br>
-&gt; -----Original Message-----<br>
-&gt; From: cip-dev@lists.cip-project.org &lt;cip-dev@lists.cip-project.org&=
-gt; On Behalf Of Quirin Gylstorff<br>
-&gt; Sent: Tuesday, August 4, 2020 10:25 PM<br>
-&gt; To: cip-dev@lists.cip-project.org<br>
-&gt; Cc: jan.kiszka@siemens.com<br>
-&gt; Subject: Re: [cip-dev] [isar-cip-core] remove remaining configs from i=
-sar-cip-core<br>
-&gt; <br>
-&gt; <br>
-&gt; <br>
-&gt; On 8/4/20 6:47 AM, Daniel Sangorrin wrote:<br>
-&gt; &gt; Hi Jan,<br>
-&gt; &gt;<br>
-&gt; &gt; This patch just removes the already unused defconfigs from<br>
-&gt; &gt; isar-cip-core<br>
-&gt; &gt;<br>
-&gt; &gt; [isar-cip-core] kernel: remove configs that are already in<br>
-&gt; &gt;<br>
-&gt; &gt; I didn't know what to do with bbb_defconfig because it does not s=
-eem<br>
-&gt; &gt; to be used at all by isar-cip-core (maybe it is in a rather obscu=
-re way).<br>
-&gt; &gt; However, that should also be removed and use cip_bbb_defconfig.<b=
-r>
-&gt; &gt;<br>
-&gt; &gt; Thanks,<br>
-&gt; &gt; Daniel<br>
-&gt; &gt;<br>
-&gt; <br>
-&gt; <br>
-&gt; In<br>
-&gt; <a href=3D"https://gitlab.com/cip-project/cip-core/isar-cip-core/-/tre=
-e/cip-sw-updates/swupdate">
-https://gitlab.com/cip-project/cip-core/isar-cip-core/-/tree/cip-sw-updates=
-/swupdate</a><br>
-&gt; bbb is used as demo system.<br>
-<br>
-Thanks, I guess I was confused because there were no KERNEL_DEFCONFIG defin=
-itions.<br>
-But it seems that linux-cip-common.inc sets up one by default if you dont s=
-pecify it<br>
-KERNEL_DEFCONFIG ?=3D &quot;${MACHINE}_defconfig&quot;<br>
-<br>
-I see quite a few differences between <br>
-<a href=3D"https://gitlab.com/cip-project/cip-kernel/cip-kernel-config.git'=
-s">https://gitlab.com/cip-project/cip-kernel/cip-kernel-config.git's</a> ci=
-p-kernel-config/4.19.y-cip/arm/cip_bbb_defconfig<br>
-and isar-cip-core's bbb_defconfig.<br>
-<br>
-Could you try using cip_bbb_defconfig and see if you need some extra config=
-uration for software updates to work?<br>
-<br>
-Thanks,<br>
-Daniel<br>
-<br>
-</div>
-</span></font>
-</body>
-</html>
-
---_000_f8f989ef7ee242eea922f53c6d2b07fesiemenscom_--
-
---3u1ijGcao9tri87F6ttj
+--Gv03mUbiIpyldXB5nnDK
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -257,12 +211,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#5100): https://lists.cip-project.org/g/cip-dev/message=
-/5100
-Mute This Topic: https://lists.cip-project.org/mt/75981585/4520388
+View/Reply Online (#5101): https://lists.cip-project.org/g/cip-dev/message=
+/5101
+Mute This Topic: https://lists.cip-project.org/mt/76006733/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---3u1ijGcao9tri87F6ttj--
+--Gv03mUbiIpyldXB5nnDK--
