@@ -1,209 +1,148 @@
-Return-Path: <SRS0=S5eb=BP=lists.cip-project.org=bounce+64572+5101+4520388+8129055@kernel.org>
+Return-Path: <SRS0=s/Fx=BP=lists.cip-project.org=bounce+64572+5102+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,LOTS_OF_MONEY,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4501C433E0
-	for <cip-dev@archiver.kernel.org>; Wed,  5 Aug 2020 13:03:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 185CFC433DF
+	for <cip-dev@archiver.kernel.org>; Wed,  5 Aug 2020 23:51:23 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 7C22722D00
-	for <cip-dev@archiver.kernel.org>; Wed,  5 Aug 2020 13:03:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 43A9C21D95
+	for <cip-dev@archiver.kernel.org>; Wed,  5 Aug 2020 23:51:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="rstFS+ZR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C22722D00
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toshiba-tsip.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5101+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id mR2MYY4521723xEMNxmUiwCa; Wed, 05 Aug 2020 06:03:21 -0700
-X-Received: from peak.toshiba-tesi.com (peak.toshiba-tesi.com [202.56.254.199])
- by mx.groups.io with SMTP id smtpd.web11.6626.1596632599684555108
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="pvT9yefe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43A9C21D95
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cybertrust.co.jp
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5102+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id R6T7YY4521723xDQYD3YRDeQ; Wed, 05 Aug 2020 16:51:21 -0700
+X-Received: from APC01-SG2-obe.outbound.protection.outlook.com (APC01-SG2-obe.outbound.protection.outlook.com [40.107.131.134])
+ by mx.groups.io with SMTP id smtpd.web10.2713.1596671479359660514
  for <cip-dev@lists.cip-project.org>;
- Wed, 05 Aug 2020 06:03:20 -0700
-IronPort-SDR: WMrmSDunjMRip9fOwH6JsoecQrOsh0BUXQBIEDDlmEBtX/+wHKvnyWoJMnHwbpiGFLw3CliZBY
- oJPh83CgyKUQ==
-X-IronPort-AV: E=Sophos;i="5.75,436,1589221800"; 
-   d="scan'208";a="5375237"
-X-Received: from unknown (HELO TOSBLRMBX0519.TOSHIBA-TSIP.COM) ([10.116.85.29])
-  by peak.toshiba-tesi.com with ESMTP; 05 Aug 2020 19:08:54 +0530
-X-Received: from TOSBLRMBX0219.TOSHIBA-TSIP.COM (172.28.80.119) by
- TOSBLRMBX0519.TOSHIBA-TSIP.COM (10.116.85.29) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1847.3; Wed, 5 Aug 2020 18:33:12 +0530
-X-Received: from pvenkat.TOSHIBA-TSIP.COM (172.28.80.121) by
- TOSBLRMBX0219.TOSHIBA-TSIP.COM (172.28.80.119) with Microsoft SMTP Server id
- 15.1.1847.3 via Frontend Transport; Wed, 5 Aug 2020 18:33:11 +0530
-From: "Venkata Pyla" <venkata.pyla@toshiba-tsip.com>
-To: <jan.kiszka@siemens.com>
-CC: venkata pyla <venkata.pyla@toshiba-tsip.com>,
-	<cip-dev@lists.cip-project.org>, <cip-security@lists.cip-project.org>
-Subject: [cip-dev] [isar-cip-core] security-customizations: Recipe to apply security configurations
-Date: Wed, 5 Aug 2020 18:34:11 +0530
-Message-ID: <20200805130412.1427-1-venkata.pyla@toshiba-tsip.com>
+ Wed, 05 Aug 2020 16:51:20 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CdErq+XfSiSgf7ZaU/WuoWuM8sVxNLSW/36pu2SOaoRG4uO11zInuKdg33/eBe+xkMCoFhjm2n3SNXSHimOqWLAokHqbelHNtWn2MMFszQJ0rm8Pa3O+pXai8IMJAryD9PiD93Z9s1/1z4ftwqrW2QLqCOA8A0IyFnObta/J6UlJNN2NuZSaqQtURQ+n1Du6DFWRx+uF5Cl/+FltPAAqknPC8YVePOa3mIqkg7s0FLMSRYAXzHwcTG2ZcqUwrZMFdorA9EkBjYJdq76Aab9oy3t0BfH0+rKzh6qM6VjvSd7P9S6NflMRV251pcvqDJWw/+5HVJtL+wEgpRjx9cQwpQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MPz1XXxpDb0yuR/+urrMrd/W06nrOw5ymHsoSo/3s8c=;
+ b=nLkphRDnFNqWT9pD3Sl4BFf53qmtcme1h5eBveTF5W9Kx1GKZQCsDtDAtop+P/4dfw5N6pCzFOVEPrBQyd4m3k/9SiOuXd0u0UaHOk+WU39PtvM+V/SS9FYY0U/42lOnNFOnNiDS5dS5STCtvI1vcgUBESIuYG3OENciv3xH5uPU7EykhE/z8YC4klRgoPn1o3WRj5wWi600OGjBK06i1hengZQYbJqJdEouxvb1EO+hV2mR4UVGCRzoLjXFYb/PmDgJ3PXjFqECOTxA6X4yXF+fBt/FzKB6dTddl2zbrrbQiWq+WMzuBIYJy25YiDnJVDE1X19YKqVozyL7dnKG1g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cybertrust.co.jp; dmarc=pass action=none
+ header.from=cybertrust.co.jp; dkim=pass header.d=cybertrust.co.jp; arc=none
+X-Received: from TY2PR01MB4972.jpnprd01.prod.outlook.com (2603:1096:404:11c::20)
+ by TY2PR01MB4810.jpnprd01.prod.outlook.com (2603:1096:404:116::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3239.20; Wed, 5 Aug
+ 2020 23:51:10 +0000
+X-Received: from TY2PR01MB4972.jpnprd01.prod.outlook.com
+ ([fe80::fdf6:bf77:e369:aa20]) by TY2PR01MB4972.jpnprd01.prod.outlook.com
+ ([fe80::fdf6:bf77:e369:aa20%3]) with mapi id 15.20.3261.019; Wed, 5 Aug 2020
+ 23:51:10 +0000
+From: "masashi.kudo@cybertrust.co.jp" <masashi.kudo@cybertrust.co.jp>
+To: <cip-dev@lists.cip-project.org>
+Subject: [cip-dev] CIP IRC weekly meeting today
+Thread-Topic: CIP IRC weekly meeting today
+Thread-Index: AdZrg0gU8V9oy5dKRZSf58YyOjpD/w==
+Date: Wed, 5 Aug 2020 23:51:10 +0000
+Message-ID: 
+ <TY2PR01MB497285E1CEF6341915A14DF1A04B0@TY2PR01MB4972.jpnprd01.prod.outlook.com>
+Accept-Language: ja-JP, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [122.216.27.145]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: f56a5ba0-3692-499c-5226-08d8399a6ddf
+x-ms-traffictypediagnostic: TY2PR01MB4810:
+x-microsoft-antispam-prvs: 
+ <TY2PR01MB4810DBDF1588DBE6BE9F17BDA04B0@TY2PR01MB4810.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 
+ m7+VrECXmV76sPGeavD5XvdIpApKxnxZP/Ldk8JA2r84M29H7xBORaAhnyCam+/wX+GI/oek8uFwNh+81ukoGxq//Or8OqtAKPNC25VIiq/UvY3ekgSUIbob/Wd4vMhAwQbniB5Yr0l/Qbhq2m64k1oECIS6yKslp/7f7EaC61JRO6A13ByV6fUG50kwX+wcjGHzZ8OsSarrRIS0pCFLkXdLF7KDAieVPMHfslOJP0Vv4IgJSfw+f7xatanH2kGnYN4gmornKf63spQqBGNq/C4ibM/ad72D0RrV4Qw9UWWu+eceH4Q842oo82GxhQRDGaD68j+Q39w/MzeDJmYp0pZZVzdgkhe0xMOUe1fVstt+Ff8wjgpeatts7+rlXiqh0RMz6aD3EtVMXduwtDmIuQ==
+x-ms-exchange-antispam-messagedata: 
+ +QrjzQQri5SQG1jaUwEsmdGRLUrwsPalhz8VVzLr4/BY1j3vezr8qxXKNoXcTU1WNHD2xH3vjS4mEnJGxaL5lLUCt2T4CDTb/bVciVTvWLj1WswEbQ4QPnqHdBUp8radA6tMTxvqokvbkR26NOig4KVg/qTiTirOZSViRjFwB6GxvQ4jkZKQDyB5bm1oRlJ9aDTHDuy0ZRFLt39BUtqLxllKyZnprS+GSKHyDw8JTOgDyMlXkjzjlAHLA3gwvP9FbkAfB96rYHr/SSC8umLWaaXZt3950kQYqu1jwagUhAxyYBWMEBjVkxvNs1TqAqa9GW2kBQJFNAxaVfrEeuv+A6fLnLLgmRzSlI6tFK62xpCGmY69myu8urCK5zIohqJ2uayG4KPXPcSaoL5UP0tH5RR0QDEZaFQZyrhhNpjnyl08ibK6ubKu2dL+p/NdmTftlUsTPp1wqgb0PEEZd7eW6B8pFgzaQwRjhyL0RaOahLKnqitYfX45B0Kz56U3xy26FlK3wfuZsoGLVTQI/DlwDPXqEJmyeN8E3mkXtwzb3y1/NhW2MfRkY4UwC+zxa9IaNoLNeuMAyiSVgiT32/7IJq7q3VNC5AHtYN5Knom5KsNd/vBo8rbsd2aB9VILQr2bIkO/qrAk3C4k4uE5JjcXag==
+x-ms-exchange-transport-forked: True
 MIME-Version: 1.0
+X-OriginatorOrg: cybertrust.co.jp
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY2PR01MB4972.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f56a5ba0-3692-499c-5226-08d8399a6ddf
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Aug 2020 23:51:10.2974
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72cc4624-32b4-4dab-b80a-8563e559bd82
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: /ZtSydaeP1SP+QQ8u3xAZGnN3JJX4RAcpLz31KIJTk5FQVMUKLV7PsGLI9okPq5jEXlSKe48/6Vxy/SPVOq37SKznKp2XNUrqClLh3ypwBA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB4810
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: LghY0RSPeYEoDIIeXaZz7TdVx4520388AA=
-Content-Type: multipart/mixed; boundary="Gv03mUbiIpyldXB5nnDK"
+X-Gm-Message-State: UM1KzMpxeDj0NX2nfqx2BZ1ox4520388AA=
+Content-Type: multipart/mixed; boundary="D3XhcRzbl3bDUkIr7LfL"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1596632601;
- bh=13NdlaU7CUsNTVk32xOlm2/2w5vtILFCkg4K++e4DgY=;
- h=CC:Content-Type:Date:From:Reply-To:Subject:To;
- b=rstFS+ZRwkthl4xdZMZDHoPtFic/ntHfcxEWr2+zPxOl3eZ6T7cf6Hs4adgmdMIPLSR
- MRZHite65gj5a09qtjzCpY4cFFEc7PWanDVgsfa81BILxMCCwsobegZmT+Q9XfcGN796m
- HRkAA2fI3yuJqqJCoXjo4z6+3nRPxTJU3DE=
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1596671481;
+ bh=kz+uhERSePWosh1ekM/sR6x6etZl3eon1xCeK17xa/o=;
+ h=Content-Type:Date:From:Reply-To:Subject:To;
+ b=pvT9yefeBbdPfjT/hSkmQeHT30UR6G9Yw01wSe0yVsY+eUDCZDGL5eG0zICsoO8sNHc
+ 3G0uf2bReN6zw+khOpZ0UqJtXGJyn0Kc2M0518wN3nXYAOcldSoJCoqF3CmaVXQWNg+JQ
+ sPJ807J+H/wcotmDOpTWCGbFCX92UjJCm08=
 
---Gv03mUbiIpyldXB5nnDK
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+--D3XhcRzbl3bDUkIr7LfL
+Content-Language: ja-JP
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 
-From: venkata pyla <venkata.pyla@toshiba-tsip.com>
+Hi all,
 
-This recipe will apply security policies* to the reference image
-that will be used for IEC62443-4-2 Evaluation
+Kindly be reminded to attend the weekly meeting through IRC to discuss tech=
+nical topics with CIP kernel today.
 
-*Security policies:
- 1. Enforcing strong password to user accounts
- 2. Lock user accounts for failed login attempts
- 3. Terminate remote session for inactive time period
- 4. Limit the concurrent login sessions
- 5. Warn audit stroage failure
+*Please note that the IRC meeting was rescheduled to UTC (GMT) 09:00 starti=
+ng from the first week of Apr. according to TSC meeting*
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=3D2020&mont=
+h=3D8&day=3D6&hour=3D9&min=3D0&sec=3D0&p1=3D224&p2=3D179&p3=3D136&p4=3D37&p=
+5=3D241&p6=3D248
 
-Signed-off-by: venkata pyla <venkata.pyla@toshiba-tsip.com>
----
- .../images/cip-core-image-security.bb         |  2 +-
- .../security-customizations/files/postinst    | 51 +++++++++++++++++++
- .../security-customizations.bb                | 18 +++++++
- 3 files changed, 70 insertions(+), 1 deletion(-)
- create mode 100644 recipes-core/security-customizations/files/postinst
- create mode 100644 recipes-core/security-customizations/security-customizations.bb
+USWest	USEast	UK	DE	TW	JP
+02:00	05:00	10:00	11:00	17:00	18:00
 
-diff --git a/recipes-core/images/cip-core-image-security.bb b/recipes-core/images/cip-core-image-security.bb
-index a17c522..61ddc39 100644
---- a/recipes-core/images/cip-core-image-security.bb
-+++ b/recipes-core/images/cip-core-image-security.bb
-@@ -13,7 +13,7 @@ inherit image
- 
- DESCRIPTION = "CIP Core image including security packages"
- 
--IMAGE_INSTALL += "customizations"
-+IMAGE_INSTALL += "security-customizations"
- 
- # Debian packages that provide security features
- IMAGE_PREINSTALL += " \
-diff --git a/recipes-core/security-customizations/files/postinst b/recipes-core/security-customizations/files/postinst
-new file mode 100644
-index 0000000..3699ba2
---- /dev/null
-+++ b/recipes-core/security-customizations/files/postinst
-@@ -0,0 +1,51 @@
-+#!/bin/sh
-+#
-+# CIP Security, generic profile
-+# Security Package configurations
-+#
-+
-+echo "CIP Core Security Image (login: root/root)" > /etc/issue
-+
-+HOSTNAME=demo
-+echo "$HOSTNAME" > /etc/hostname
-+echo "127.0.0.1 $HOSTNAME" >> /etc/hosts
-+
-+# CR1.7: Strength of password-based authentication
-+# Pam configuration to  enforce password strength
-+PAM_PWD_FILE="/etc/pam.d/common-password"
-+pam_cracklib_config="password  requisite    pam_cracklib.so retry=3 minlen=8 maxrepeat=3 ucredit=-1 lcredit=-1 dcredit=-1 ocredit=-1  difok=3 gecoscheck=1 reject_username  enforce_for_root"
-+if grep -c "pam_cracklib.so" "${PAM_PWD_FILE}";then
-+        sed -i '/pam_cracklib.so/ s/^#*/#/'  "${PAM_PWD_FILE}"
-+fi
-+sed -i "0,/^password.*/s/^password.*/${pam_cracklib_config}\n&/" "${PAM_PWD_FILE}"
-+
-+# CR1.11: Unsuccessful login attempts
-+# Lock user account after unsuccessful login attempts
-+PAM_AUTH_FILE="/etc/pam.d/common-auth"
-+pam_tally="auth   required  pam_tally2.so  deny=3 even_deny_root unlock_time=60 root_unlock_time=60"
-+if grep -c "pam_tally2.so" "${PAM_AUTH_FILE}";then
-+        sed -i '/pam_tally2/ s/^#*/#/'  "${PAM_AUTH_FILE}"
-+fi
-+sed -i "0,/^auth.*/s/^auth.*/${pam_tally}\n&/" "${PAM_AUTH_FILE}"
-+
-+# CR2.6: Remote session termination
-+# Terminate remote session after inactive time period
-+SSHD_CONFIG="/etc/ssh/sshd_config"
-+alive_interval=$(sed -n '/ClientAliveInterval/p' "${SSHD_CONFIG}")
-+alive_countmax=$(sed -n '/ClientAliveCountMax/p' "${SSHD_CONFIG}")
-+sed -i "/${alive_interval}/c ClientAliveInterval 120"  "${SSHD_CONFIG}"
-+sed -i "/${alive_countmax}/c ClientAliveCountMax 0" "${SSHD_CONFIG}"
-+
-+# CR2.7: Concurrent session control
-+# Limit the concurrent login sessions
-+LIMITS_CONFIG="/etc/security/limits.conf"
-+echo "* hard maxlogins 2" >> ${LIMITS_CONFIG}
-+
-+# CR2.9: Audit storage capacity
-+# CR2.9 RE-1: Warn when audit record storage capacity threshold reached
-+AUDIT_CONF_FILE="/etc/audit/auditd.conf"
-+sed -i 's/space_left_action = .*/space_left_action = SYSLOG/'  $AUDIT_CONF_FILE
-+sed -i 's/admin_space_left_action = .*/admin_space_left_action = SYSLOG/' $AUDIT_CONF_FILE
-+
-+# CR2.10: Response to audit processing failures
-+sed -i 's/disk_error_action = .*/disk_error_action = SYSLOG/' $AUDIT_CONF_FILE
-diff --git a/recipes-core/security-customizations/security-customizations.bb b/recipes-core/security-customizations/security-customizations.bb
-new file mode 100644
-index 0000000..dbb06d9
---- /dev/null
-+++ b/recipes-core/security-customizations/security-customizations.bb
-@@ -0,0 +1,18 @@
-+#
-+# CIP Security, generic profile
-+#
-+# Copyright (c) Toshiba Corporation, 2020
-+#
-+# Authors:
-+#  Venkata Pyla <venkata.pyla@toshiba-tsip.com>#
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+
-+inherit dpkg-raw
-+
-+DESCRIPTION = "CIP Security image for IEC62443-4-2 evaluation"
-+
-+SRC_URI = " file://postinst"
-+
-+DEBIAN_DEPENDS = "sshd-regen-keys"
--- 
-2.20.1
+Channel:
+* irc:chat.freenode.net:6667/cip
 
-The information contained in this e-mail message and in any
-attachments/annexure/appendices is confidential to the 
-recipient and may contain privileged information. 
-If you are not the intended recipient, please notify the
-sender and delete the message along with any 
-attachments/annexure/appendices. You should not disclose,
-copy or otherwise use the information contained in the
-message or any annexure. Any views expressed in this e-mail 
-are those of the individual sender except where the sender 
-specifically states them to be the views of 
-Toshiba Software India Pvt. Ltd. (TSIP),Bangalore.
+Last meeting minutes:
+https://irclogs.baserock.org/meetings/cip/2020/07/cip.2020-07-30-09.00.log.=
+html
 
-Although this transmission and any attachments are believed to be
-free of any virus or other defect that might affect any computer 
-system into which it is received and opened, it is the responsibility
-of the recipient to ensure that it is virus free and no responsibility 
-is accepted by Toshiba Embedded Software India Pvt. Ltd, for any loss or
-damage arising in any way from its use.
+Agenda:
 
+* Action item
+  1. Combine root filesystem with kselftest binary - iwamatsu=20
+  2. Post LTP results to KernelCI - patersonc=20
 
---Gv03mUbiIpyldXB5nnDK
+* Kernel maintenance updates
+* Kernel testing
+* Software update
+* CIP Security=20
+* AOB
+
+The meeting will take 30 min, although it can be extended to an hour if it =
+makes sense and those involved in the topics can stay. Otherwise, the topic=
+ will be taken offline or in the next meeting.
+
+Best regards,
+--
+M. Kudo
+Cybertrust Japan Co., Ltd.
+
+--D3XhcRzbl3bDUkIr7LfL
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -211,12 +150,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#5101): https://lists.cip-project.org/g/cip-dev/message=
-/5101
-Mute This Topic: https://lists.cip-project.org/mt/76006733/4520388
+View/Reply Online (#5102): https://lists.cip-project.org/g/cip-dev/message=
+/5102
+Mute This Topic: https://lists.cip-project.org/mt/76018886/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---Gv03mUbiIpyldXB5nnDK--
+--D3XhcRzbl3bDUkIr7LfL--
