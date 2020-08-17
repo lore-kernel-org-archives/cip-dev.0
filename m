@@ -1,110 +1,88 @@
-Return-Path: <SRS0=jip9=BX=lists.cip-project.org=bounce+64572+5122+4520388+8129055@kernel.org>
+Return-Path: <SRS0=pwIo=B3=lists.cip-project.org=bounce+64572+5124+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B733C433E1
-	for <cip-dev@archiver.kernel.org>; Thu, 13 Aug 2020 20:49:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8984C433E1
+	for <cip-dev@archiver.kernel.org>; Mon, 17 Aug 2020 09:29:34 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 1E70F20675
-	for <cip-dev@archiver.kernel.org>; Thu, 13 Aug 2020 20:49:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 335E4207DF
+	for <cip-dev@archiver.kernel.org>; Mon, 17 Aug 2020 09:29:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="LymtfWoF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E70F20675
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5122+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id TLVRYY4521723x5LvODdx94x; Thu, 13 Aug 2020 13:49:07 -0700
-X-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web11.4525.1597351746982160572
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="U3S9OenQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 335E4207DF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=siemens.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5124+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id bwAcYY4521723xsrnIihZSlW; Mon, 17 Aug 2020 02:29:33 -0700
+X-Received: from thoth.sbs.de (thoth.sbs.de [192.35.17.2])
+ by mx.groups.io with SMTP id smtpd.web11.39870.1597656571760696562
  for <cip-dev@lists.cip-project.org>;
- Thu, 13 Aug 2020 13:49:07 -0700
-X-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 711581C0BD2; Thu, 13 Aug 2020 22:49:02 +0200 (CEST)
-Date: Thu, 13 Aug 2020 22:49:02 +0200
-From: "Pavel Machek" <pavel@ucw.cz>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: cip-dev@lists.cip-project.org,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Pavel Machek <pavel@denx.de>,
-	Chris Paterson <chris.paterson2@renesas.com>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [cip-dev] [PATCH 4.19.y-cip 2/2] drm: atomic helper: fix W=1 warnings
-Message-ID: <20200813204902.GB24086@duo.ucw.cz>
-References: <20200813083925.7830-1-biju.das.jz@bp.renesas.com>
- <20200813083925.7830-2-biju.das.jz@bp.renesas.com>
+ Mon, 17 Aug 2020 02:29:33 -0700
+X-Received: from mail1.sbs.de (mail1.sbs.de [192.129.41.35])
+	by thoth.sbs.de (8.15.2/8.15.2) with ESMTPS id 07H9TSLj016209
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 17 Aug 2020 11:29:29 +0200
+X-Received: from md2dvrtc.fritz.box ([167.87.24.184])
+	by mail1.sbs.de (8.15.2/8.15.2) with ESMTP id 07H9TRbi029755;
+	Mon, 17 Aug 2020 11:29:27 +0200
+From: "Quirin Gylstorff" <quirin.gylstorff@siemens.com>
+To: daniel.sangorrin@toshiba.co.jp, cip-dev@lists.cip-project.org,
+        jan.kiszka@siemens.com
+Cc: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+Subject: [cip-dev] [cip-kernel-config ][ RFC 0/1] Remove Remaining configs from isar-cip-core
+Date: Mon, 17 Aug 2020 11:29:26 +0200
+Message-Id: <20200817092927.14658-1-Quirin.Gylstorff@siemens.com>
+In-Reply-To: <OSBPR01MB2053E648BDBD2C9934BAD1A8D04B0@OSBPR01MB2053.jpnprd01.prod.outlook.com>
+References: <OSBPR01MB2053E648BDBD2C9934BAD1A8D04B0@OSBPR01MB2053.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <20200813083925.7830-2-biju.das.jz@bp.renesas.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: m1LQ5xA0OOjgDi8MDSONcp8px4520388AA=
-Content-Type: multipart/mixed; boundary="lQNT4JAMxzvk9K0FVC1V"
+X-Gm-Message-State: NQBNDJoLSQrcOewkdPRaHwibx4520388AA=
+Content-Type: multipart/mixed; boundary="GIDPoaHAIQa2ZMfwYcBU"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1597351747;
- bh=zmbOjv18kPPsrNMlFqnpHpWAiDQTKlamMwzkhCjK0F8=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1597656573;
+ bh=R94LWaZ1uxs6hzPeK7XxpCvZJDZJkbiSGOCcsSZTAzA=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=LymtfWoFg/Q2ABwfLikn/HAVC09Qz4G73bT9XMN0UclyIzSXMundRqnhAOjncd889cv
- MElHD0OjgXLJPwjyrc7BfjQZrl1q6HYh+AiH0oMEsDnc6R0mYFagsjC18b36TdGYDtL+I
- sFvPI0jwu/tRs27tVWbhlQ2D04gjJbkY9gQ=
+ b=U3S9OenQCJwAUA8i4LXLbpQSh6KBGGjQhtxTaYykOb2YG6eYA6BaK2oWRD+kUjqiUSy
+ swfPGEfcoAELo5bbqd7yGd+d7xSXF7QkDX1QmyQQ7Ibui7Vxn7+4u8K5MbR5ppzbvRrDa
+ L6fDWt122SghJUxBx9BtLrezS10hzJ3J+Lk=
 
---lQNT4JAMxzvk9K0FVC1V
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="98e8jtXdkpgskNou"
-Content-Disposition: inline
+--GIDPoaHAIQa2ZMfwYcBU
+Content-Transfer-Encoding: 8bit
 
---98e8jtXdkpgskNou
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-Hi!
+Hi Daniel,
 
-> From: Benjamin Gaignard <benjamin.gaignard@st.com>
->=20
-> commit bf5d837a0a4ced7cc223befc9e76d4ad30697d27 upstream.
->=20
-> Few for_each macro set variables that are never used later which led
-> to generate unused-but-set-variable warnings.
-> Add (void)(foo) inside the macros to remove these warnings
->=20
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Link: https://patchwork.freedesktop.org/patch/msgid/20191008124254.2144-1=
--benjamin.gaignard@st.com
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+I check the cip_bbb_defconfig and swupdate should work with the current config.
 
-Thanks for the fixes. Applied and pushed out.
+The following patch contains the additional config switches from isar-cip-core.
 
-Best regards,
-									Pavel
-								=09
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+If someone needs one of these switches active we should imported them into
+the cip_bbb_defconfig.
 
---98e8jtXdkpgskNou
-Content-Type: application/pgp-signature; name="signature.asc"
+Quirin
 
------BEGIN PGP SIGNATURE-----
+Quirin Gylstorff (1):
+  4.19.y-cip/cip_bbb_defconfig: Add config switches from isar-cip-core
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXzWnPgAKCRAw5/Bqldv6
-8imWAJ4h0t7RDjwSuH/iZCon9bg7UPqoMwCgh7wsQovXLGCOVUmGWYZXUuxEAnA=
-=XdkE
------END PGP SIGNATURE-----
+ 4.19.y-cip/arm/cip_bbb_defconfig | 339 +++++++++++++++++++++++++++++++
+ 1 file changed, 339 insertions(+)
 
---98e8jtXdkpgskNou--
+-- 
+2.20.1
 
---lQNT4JAMxzvk9K0FVC1V
+
+--GIDPoaHAIQa2ZMfwYcBU
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -112,12 +90,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#5122): https://lists.cip-project.org/g/cip-dev/message=
-/5122
-Mute This Topic: https://lists.cip-project.org/mt/76165489/4520388
+View/Reply Online (#5124): https://lists.cip-project.org/g/cip-dev/message=
+/5124
+Mute This Topic: https://lists.cip-project.org/mt/76240453/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---lQNT4JAMxzvk9K0FVC1V--
+--GIDPoaHAIQa2ZMfwYcBU--
