@@ -1,145 +1,106 @@
-Return-Path: <SRS0=7Nh/=B4=lists.cip-project.org=bounce+64572+5128+4520388+8129055@kernel.org>
+Return-Path: <SRS0=P9FF=B4=lists.cip-project.org=bounce+64572+5129+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8E66C433E1
-	for <cip-dev@archiver.kernel.org>; Tue, 18 Aug 2020 05:29:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 958ABC433DF
+	for <cip-dev@archiver.kernel.org>; Tue, 18 Aug 2020 07:57:14 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 61C9C2076E
-	for <cip-dev@archiver.kernel.org>; Tue, 18 Aug 2020 05:29:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 2E9BC206B5
+	for <cip-dev@archiver.kernel.org>; Tue, 18 Aug 2020 07:57:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="YMYR+LXM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61C9C2076E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=siemens.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5128+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id x2NmYY4521723xfBcx2VMogM; Mon, 17 Aug 2020 22:29:43 -0700
-X-Received: from david.siemens.de (david.siemens.de [192.35.17.14])
- by mx.groups.io with SMTP id smtpd.web11.60539.1597728581909194147
- for <cip-dev@lists.cip-project.org>;
- Mon, 17 Aug 2020 22:29:43 -0700
-X-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-	by david.siemens.de (8.15.2/8.15.2) with ESMTPS id 07I5TcNf028922
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 18 Aug 2020 07:29:39 +0200
-X-Received: from [139.22.40.250] ([139.22.40.250])
-	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 07I5TboG018008;
-	Tue, 18 Aug 2020 07:29:38 +0200
-Subject: Re: [cip-dev] [isar-cip-core][PATCH 1/3] cip-core-image-test: Add recipe
-To: cip-dev@lists.cip-project.org,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-References: <16281511DE955BB5.19258@lists.cip-project.org>
- <OSBPR01MB298327233BFADC291456E190925C0@OSBPR01MB2983.jpnprd01.prod.outlook.com>
-From: "Jan Kiszka" <jan.kiszka@siemens.com>
-Message-ID: <b2289205-5f7e-9f57-ba0a-496a4c8749b3@siemens.com>
-Date: Tue, 18 Aug 2020 07:29:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="i6UcNjq8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E9BC206B5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toshiba-tsip.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5129+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id 5H2jYY4521723xaLHYHJTH3o; Tue, 18 Aug 2020 00:57:13 -0700
+Subject: Re: [cip-dev] [isar-cip-core] security-customizations: Recipe to apply security configurations
+To: cip-dev@lists.cip-project.org
+From: "Venkata Pyla" <venkata.pyla@toshiba-tsip.com>
+X-Originating-Location: Hyderabad, Telangana, IN (157.44.118.144)
+X-Originating-Platform: Windows Chrome 84
+User-Agent: GROUPS.IO Web Poster
 MIME-Version: 1.0
-In-Reply-To: <OSBPR01MB298327233BFADC291456E190925C0@OSBPR01MB2983.jpnprd01.prod.outlook.com>
-X-MIME-Autoconverted: from 8bit to quoted-printable by david.siemens.de id 07I5TcNf028922
+Date: Tue, 18 Aug 2020 00:57:13 -0700
+References: <20ae8e8c-fded-c2ee-517a-d1f077f3224b@siemens.com>
+In-Reply-To: <20ae8e8c-fded-c2ee-517a-d1f077f3224b@siemens.com>
+Message-ID: <12712.1597737433226203230@lists.cip-project.org>
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: em41dPXHUc1AcBaqG2nL7Uhox4520388AA=
-Content-Type: multipart/mixed; boundary="kaRWn5yE2csNB5ZRbhMH"
+X-Gm-Message-State: voOPJyosL6aTjDZDI4w0YV4yx4520388AA=
+Content-Type: multipart/mixed; boundary="cSA2MKvzks8IwJKBntvc"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1597728583;
- bh=konS1eyyYaz+O5/g21wV8bKc/1HjM6QEFyzK4rrnHDo=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1597737433;
+ bh=cfwpWzlBC1Cg7DmK3s0aUIoKBAKQMdaCp8KNypu3FeY=;
  h=Content-Type:Date:From:Reply-To:Subject:To;
- b=YMYR+LXM2MO7W9zaPWVZ/pkvoZp2kR00CmsrQgr+X8LDk5GI5+Zk2Euzr+NfLQe2w7Q
- T+DQXB6fZ4ZMiQ/To2NrGkoHWp+lH4YBEWBDz0XVMUrtB5WewcgckOHSwCogJU9HYNIDi
- WZ7Q9/uxDmUXKgi37Hb2XU2TbW5XA38SKlc=
+ b=i6UcNjq8Yl6LTFsI0tYI37AWO0WUr+ce55F5KufdoMw3SnjMt0mV6Ga2hmEt/I6uayg
+ lNiPjyydyeS12Qp8qWq06sc6R4Y0S1fpwnMn8i0+4YWWdKKaVhzrU62zpwV84RIGY4YZ/
+ dHppuco5hjJCmVnSN13OlXpHddqRQcX4MVA=
 
---kaRWn5yE2csNB5ZRbhMH
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+--cSA2MKvzks8IwJKBntvc
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On 18.08.20 06:57, Nobuhiro Iwamatsu wrote:
-> Hi Jan,
+On Mon, Aug 17, 2020 at 08:49 PM, Jan Kiszka wrote:
+
+>
+> >=20
+> >=20
+> >> +++ b/recipes-core/security-customizations/security-customizations.bb
+> >> @@ -0,0 +1,18 @@
+> >> +#
+> >> +# CIP Security, generic profile
+> >> +#
+> >> +# Copyright (c) Toshiba Corporation, 2020
+> >> +#
+> >> +# Authors:
+> >> +# Venkata Pyla <venkata.pyla@...>#
+> >> +#
+> >> +# SPDX-License-Identifier: MIT
+> >> +#
+> >> +
+> >> +inherit dpkg-raw
+> >> +
+> >> +DESCRIPTION =3D "CIP Security image for IEC62443-4-2 evaluation"
+> >> +
+> >> +SRC_URI =3D " file://postinst"
+> >> +
+> >=20
+> >=20
 >=20
-> Could you comment on this patch series?
+> Was missing
+>=20
+> DEPENDS =3D "sshd-regen-keys"
+>=20
+> Added this, CI should be passing now. I suspect you tested over a
+> non-clean build with leftovers that papered over it.
 >=20
 
-Ah, yeah, sorry.
+sorry, i have not verified on clean build,
+Thanks for fixing it.
 
-I think now it's better to model that as extension of an image, given
-that we already have two (regular + security). Or will we implicitly
-test the security image via the regular one?
+> Jan
+>=20
+> >=20
+> >=20
+> >> +DEBIAN_DEPENDS =3D "sshd-regen-keys"
+> >>=20
+> >=20
+> > Thanks, applied to next.
+> >=20
+> > Jan
+>
 
-Jan
-
-> Best regards,
->  Nobuhiro
->=20
->> -----Original Message-----
->> From: cip-dev@lists.cip-project.org [mailto:cip-dev@lists.cip-project.o=
-rg] On Behalf Of Nobuhiro Iwamatsu
->> Sent: Tuesday, August 4, 2020 10:54 PM
->> To: cip-dev@lists.cip-project.org
->> Cc: iwamatsu nobuhiro(=E5=B2=A9=E6=9D=BE =E4=BF=A1=E6=B4=8B =E2=96=A1=
-=EF=BC=B3=EF=BC=B7=EF=BC=A3=E2=97=AF=EF=BC=A1=EF=BC=A3=EF=BC=B4) <nobuhiro=
-1.iwamatsu@toshiba.co.jp>
->> Subject: [cip-dev] [isar-cip-core][PATCH 1/3] cip-core-image-test: Add =
-recipe
->>
->> This recipe provides an image for testing.
->> If use this, it will create an image containing LTP(ltp-full), rt-tests=
- and stress-ng.
->>
->> Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
->> ---
->>  recipes-core/images/cip-core-image-test.bb | 18 ++++++++++++++++++
->>  1 file changed, 18 insertions(+)
->>  create mode 100644 recipes-core/images/cip-core-image-test.bb
->>
->> diff --git a/recipes-core/images/cip-core-image-test.bb b/recipes-core/=
-images/cip-core-image-test.bb
->> new file mode 100644
->> index 0000000..e2b15fc
->> --- /dev/null
->> +++ b/recipes-core/images/cip-core-image-test.bb
->> @@ -0,0 +1,18 @@
->> +#
->> +# CIP Core, generic profile
->> +#
->> +# Copyright (c) Siemens AG, 2019
->> +#
->> +# Authors:
->> +#  Jan Kiszka <jan.kiszka@siemens.com>
->> +#
->> +# SPDX-License-Identifier: MIT
->> +#
->> +#
->> +inherit dpkg-raw
->> +require cip-core-image.bb
->> +
->> +DESCRIPTION =3D "CIP Core image including test packages"
->> +
->> +IMAGE_INSTALL +=3D "ltp-full"
->> +DEBIAN_DEPENDS +=3D "rt-tests, stress-ng"
->> --
->> 2.27.0
->=20
->=20
->=20
->=20
-
---=20
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
-
---kaRWn5yE2csNB5ZRbhMH
+--cSA2MKvzks8IwJKBntvc
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -147,12 +108,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#5128): https://lists.cip-project.org/g/cip-dev/message=
-/5128
-Mute This Topic: https://lists.cip-project.org/mt/75987091/4520388
+View/Reply Online (#5129): https://lists.cip-project.org/g/cip-dev/message=
+/5129
+Mute This Topic: https://lists.cip-project.org/mt/76006733/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---kaRWn5yE2csNB5ZRbhMH--
+--cSA2MKvzks8IwJKBntvc--
