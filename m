@@ -1,158 +1,106 @@
-Return-Path: <SRS0=2IP/=B5=lists.cip-project.org=bounce+64572+5152+4520388+8129055@kernel.org>
+Return-Path: <SRS0=akmg=B5=lists.cip-project.org=bounce+64572+5154+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MIME_HEADER_CTYPE_ONLY,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	T_TVD_MIME_NO_HEADERS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D450C433E3
-	for <cip-dev@archiver.kernel.org>; Wed, 19 Aug 2020 16:45:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BBC1C433DF
+	for <cip-dev@archiver.kernel.org>; Wed, 19 Aug 2020 17:39:06 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E9CE420882
-	for <cip-dev@archiver.kernel.org>; Wed, 19 Aug 2020 16:45:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 8EBC2207DA
+	for <cip-dev@archiver.kernel.org>; Wed, 19 Aug 2020 17:39:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="VF5qMEm+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9CE420882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5152+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id EqeGYY4521723xwq8ueXkMaZ; Wed, 19 Aug 2020 09:45:13 -0700
-X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [])
- by mx.groups.io with SMTP id smtpd.web11.92110.1597854998224602430
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="RlCeGYu9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EBC2207DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5154+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id U72SYY4521723xweGzfNfBtL; Wed, 19 Aug 2020 10:39:05 -0700
+X-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web10.93734.1597858743333680109
  for <cip-dev@lists.cip-project.org>;
- Wed, 19 Aug 2020 09:36:41 -0700
-X-IronPort-AV: E=Sophos;i="5.76,332,1592838000"; 
-   d="scan'208";a="54984473"
-X-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 20 Aug 2020 01:36:40 +0900
-X-Received: from localhost.localdomain (unknown [172.29.53.200])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 4BACD400967A;
-	Thu, 20 Aug 2020 01:36:39 +0900 (JST)
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: cip-dev@lists.cip-project.org,
+ Wed, 19 Aug 2020 10:39:04 -0700
+X-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 09A611C0BBB; Wed, 19 Aug 2020 19:38:58 +0200 (CEST)
+Date: Wed, 19 Aug 2020 19:38:57 +0200
+From: "Pavel Machek" <pavel@ucw.cz>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Pavel Machek <pavel@denx.de>
-Cc: Chris Paterson <chris.paterson2@renesas.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
+	Pavel Machek <pavel@denx.de>,
+	Chris Paterson <chris.paterson2@renesas.com>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [cip-dev] [PATCH 4.19.y-cip 02/12] arm64: dts: renesas: r8a774b1-hihope-rzg2n[-ex]: Rename HiHope RZ/G2N boards
-Date: Wed, 19 Aug 2020 17:36:24 +0100
-Message-Id: <20200819163634.5430-3-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20200819163634.5430-1-biju.das.jz@bp.renesas.com>
+Subject: Re: [cip-dev] [PATCH 4.19.y-cip 00/12] Support RZ/G2[MN] rev4 board
+Message-ID: <20200819173857.GA5567@amd>
 References: <20200819163634.5430-1-biju.das.jz@bp.renesas.com>
+MIME-Version: 1.0
+In-Reply-To: <20200819163634.5430-1-biju.das.jz@bp.renesas.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: ypidEbCB889o7FBWevla14lSx4520388AA=
-Content-Type: multipart/mixed; boundary="m92760l5inklNfxWaNF6"
+X-Gm-Message-State: YpYpbXY9aIrUn7cazxERwAN1x4520388AA=
+Content-Type: multipart/mixed; boundary="ASkUOY4uWparYzXNxw5u"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1597855513;
- bh=5EHnC0vPC4df11uLcq1b8/rcMjEdVy0ypg8ZQj+998s=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1597858745;
+ bh=N2DCHHb1vnGGXcF4XAaoQB+27sb/v1Lcd3C690XhxWM=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=VF5qMEm+zMHbG6j/xe1Dye3ZEOC2jNxsJhCZ+ZbuckDM+q648eOFcWy8XfwkF0fRBwx
- tFU0vpeIJ1XAvgu6/VS5CzkXBY9KUCkzv4Rld8kSMJwIslo1Nsa4vRLkQwTpibx080cmS
- U9zk4w6i/ZrYSJHhWhgEzNyts0MtRe2QAuY=
+ b=RlCeGYu9CLbRw6gxZiDfDm8F0/41980zk8IJfDolhFqnn2uj4Xt9grugFVPfMm2+DnF
+ F3ZmltBLp7Nk2e0kcRKTTUxjXSxHFzG0hdy3IzHP/GaQAO6M8cYlr4KJ+K9IPpGvwgyuG
+ IUZtkeCDP/IX16PF2gqnCwPRDy/eb2AL0hg=
 
---m92760l5inklNfxWaNF6
+--ASkUOY4uWparYzXNxw5u
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="fUYQa+Pmc3FrFX/N"
+Content-Disposition: inline
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+--fUYQa+Pmc3FrFX/N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-commit 59d8eee863ab5936e8fbb9b9b6a26e21d5078229 upstream.
+Hi!
 
-The existing DTS files for HiHope RZ/G2N boards are for Rev.2.0 version
-so reflect the same for the DTS file names so that the existing naming
-convention can be used for Rev.3.0/4.0 boards.
+> This patch series for supporting RZ/G2[MN] rev4 board to cip-4.19.y
+> kernel.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
-Link: https://lore.kernel.org/r/1593004330-5039-3-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/Makefile                        | 4 ++--
- ...ihope-rzg2n-ex.dts => r8a774b1-hihope-rzg2n-rev2-ex.dts} | 6 +++---
- ...74b1-hihope-rzg2n.dts => r8a774b1-hihope-rzg2n-rev2.dts} | 4 ++--
- 3 files changed, 7 insertions(+), 7 deletions(-)
- rename arch/arm64/boot/dts/renesas/{r8a774b1-hihope-rzg2n-ex.dts => r8a774b1-hihope-rzg2n-rev2-ex.dts} (56%)
- rename arch/arm64/boot/dts/renesas/{r8a774b1-hihope-rzg2n.dts => r8a774b1-hihope-rzg2n-rev2.dts} (84%)
+>  arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 11 -----------
+>  1 file changed, 11 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 5230e1ebdfd3..e77140d382ac 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -2,8 +2,8 @@
- dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m-rev2.dtb
- dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m-rev2-ex.dtb
- dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m-rev2-ex-idk-1110wr.dtb
--dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n.dtb
--dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n-ex.dtb
-+dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n-rev2.dtb
-+dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n-rev2-ex.dtb
- dtb-$(CONFIG_ARCH_R8A774C0) += r8a774c0-cat874.dtb r8a774c0-ek874.dtb \
- 			       r8a774c0-ek874-idk-2121wr.dtb
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n-ex.dts b/arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n-rev2-ex.dts
-similarity index 56%
-rename from arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n-ex.dts
-rename to arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n-rev2-ex.dts
-index ab47c0bd9c19..2e5e1de04049 100644
---- a/arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n-ex.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n-rev2-ex.dts
-@@ -1,15 +1,15 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Device Tree Source for the HiHope RZ/G2N sub board
-+ * Device Tree Source for the HiHope RZ/G2N Rev.2.0 connected to sub board
-  *
-  * Copyright (C) 2019 Renesas Electronics Corp.
-  */
- 
--#include "r8a774b1-hihope-rzg2n.dts"
-+#include "r8a774b1-hihope-rzg2n-rev2.dts"
- #include "hihope-rzg2-ex.dtsi"
- 
- / {
--	model = "HopeRun HiHope RZ/G2N with sub board";
-+	model = "HopeRun HiHope RZ/G2N (Rev.2.0) with sub board";
- 	compatible = "hoperun,hihope-rzg2-ex", "hoperun,hihope-rzg2n",
- 		     "renesas,r8a774b1";
- };
-diff --git a/arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n.dts b/arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n-rev2.dts
-similarity index 84%
-rename from arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n.dts
-rename to arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n-rev2.dts
-index 9910c1aa0a61..eb1206b2d97a 100644
---- a/arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n-rev2.dts
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Device Tree Source for the HiHope RZ/G2N main board
-+ * Device Tree Source for the HiHope RZ/G2N Rev.2.0 main board
-  *
-  * Copyright (C) 2019 Renesas Electronics Corp.
-  */
-@@ -10,7 +10,7 @@
- #include "hihope-common.dtsi"
- 
- / {
--	model = "HopeRun HiHope RZ/G2N main board based on r8a774b1";
-+	model = "HopeRun HiHope RZ/G2N main board (Rev.2.0) based on r8a774b1";
- 	compatible = "hoperun,hihope-rzg2n", "renesas,r8a774b1";
- 
- 	memory@48000000 {
--- 
-2.17.1
+I'm pretty sure this is not the real diffstat.
 
+Let me go through the changes. One concern: you are renaming dts
+files. New names make a lot of sense, but that will likely break the
+users, including our test infrastructure, no?
 
---m92760l5inklNfxWaNF6
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--fUYQa+Pmc3FrFX/N
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl89Y7EACgkQMOfwapXb+vL5PQCfQL4fI/HEu8OFY4UCkmnl50qP
+OG4Amwbs8NHju1B2sVZFz0vhoEhh6c7x
+=iYpp
+-----END PGP SIGNATURE-----
+
+--fUYQa+Pmc3FrFX/N--
+
+--ASkUOY4uWparYzXNxw5u
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -160,12 +108,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#5152): https://lists.cip-project.org/g/cip-dev/message=
-/5152
-Mute This Topic: https://lists.cip-project.org/mt/76290782/4520388
+View/Reply Online (#5154): https://lists.cip-project.org/g/cip-dev/message=
+/5154
+Mute This Topic: https://lists.cip-project.org/mt/76290780/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---m92760l5inklNfxWaNF6--
+--ASkUOY4uWparYzXNxw5u--
