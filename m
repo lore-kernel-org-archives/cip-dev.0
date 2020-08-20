@@ -1,166 +1,134 @@
-Return-Path: <SRS0=62d8=B6=lists.cip-project.org=bounce+64572+5164+4520388+8129055@kernel.org>
+Return-Path: <SRS0=ONPv=B6=lists.cip-project.org=bounce+64572+5165+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=BAYES_00,DATE_IN_PAST_03_06,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CEB1C433DF
-	for <cip-dev@archiver.kernel.org>; Thu, 20 Aug 2020 11:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5753FC433E1
+	for <cip-dev@archiver.kernel.org>; Thu, 20 Aug 2020 23:08:28 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 7066C2078D
-	for <cip-dev@archiver.kernel.org>; Thu, 20 Aug 2020 11:09:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id B846E2075E
+	for <cip-dev@archiver.kernel.org>; Thu, 20 Aug 2020 23:08:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="a/+t9q2D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7066C2078D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5164+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id iw8BYY4521723xhxhiVp68Um; Thu, 20 Aug 2020 04:09:48 -0700
-X-Received: from APC01-SG2-obe.outbound.protection.outlook.com (APC01-SG2-obe.outbound.protection.outlook.com [40.107.131.91])
- by mx.groups.io with SMTP id smtpd.web12.104951.1597906494513305599
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="LI3ID/kG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B846E2075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=toshiba.co.jp
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5165+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id fMi1YY4521723xuGjN5VwROZ; Thu, 20 Aug 2020 16:08:27 -0700
+X-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.157])
+ by mx.groups.io with SMTP id smtpd.web12.121735.1597964904621620298
  for <cip-dev@lists.cip-project.org>;
- Wed, 19 Aug 2020 23:54:55 -0700
+ Thu, 20 Aug 2020 16:08:26 -0700
+X-Received: by mo-csw.securemx.jp (mx-mo-csw1115) id 07KN8Lpe013755; Fri, 21 Aug 2020 08:08:22 +0900
+X-Iguazu-Qid: 2wGrGhpI0NzimyMHwX
+X-Iguazu-QSIG: v=2; s=0; t=1597964901; q=2wGrGhpI0NzimyMHwX; m=Fo7HKfL4Acrc3oN9Jr7OuFxQojNzKvEkNpZ1opmk4L8=
+X-Received: from imx12.toshiba.co.jp (imx12.toshiba.co.jp [61.202.160.132])
+	by relay.securemx.jp (mx-mr1113) id 07KN8Kju024047;
+	Fri, 21 Aug 2020 08:08:21 +0900
+X-Received: from enc03.toshiba.co.jp ([106.186.93.13])
+	by imx12.toshiba.co.jp  with ESMTP id 07KN8KA8018004
+	for <cip-dev@lists.cip-project.org>; Fri, 21 Aug 2020 08:08:20 +0900 (JST)
+X-Received: from hop101.toshiba.co.jp ([133.199.85.107])
+	by enc03.toshiba.co.jp  with ESMTP id 07KN8KL7027689
+	for <cip-dev@lists.cip-project.org>; Fri, 21 Aug 2020 08:08:20 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VaKbitcNySbh/+a2c+to0MSWV0ZBxkjEnUzbyt1xdlXHg1+mmdXeuNDFFP7Lo8IizZ10MFwSWTEJsAeCJi7GK2HzmWggOXlozAzKSCZg/dDl2KnVnEq8IusQvqc252lLrRio6+4gBsGp72Ls7KsZVVEMk1mKFDpDgjQ2sjWw1GDA7fqysYLz799kwhtsjqbO5aeK1AQmFAds0GFAoAfdQ3gkJ+7GCBhlp2945o+V15mh/L4YR2QUY5iuTYZ3gbssqLd1DRUoIgXstvTae0R2cwTLOvLCIlYIkYQ8p5xNrsgT3yGL9aQPKH1uaF3fhEsy4iU57IXRk5onznx2DuHMHQ==
+ b=IclfnzzTUYawBby1BCjzgr5AmBT2IYHy8C98xo1fcuYtcY5Gi00Dtwf6gROt68fFyvhvbJy021gNiWOUYOiAlbvu+lEq7dw0p9IDElFjK3RF+26435PH+L+4h+x7nscmS51BeF23Jm2R+Vx3jE6M3oFv6KKLty4n9B6V1UdJs6hNDv9nzUHz16dabjhgxf1ap+6C091CInKFpLWxBoroxmoMmiftTnzJcsBjpAyBSCzXdpwU1N2Nl7V42JDGO/X44dIvJvBDFwLBE5IAg/pCazY0hJzFkbBvoTIA3mT15RSsOEctrA8wZ9vwBh2nmdCdpnQ982ehFij1Fd05+4rV4A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LnJMQMPW85nOfaXrdxHjSh0pZ0rpG25qv7IKQAZU0Y4=;
- b=HyYVyT+xX8vTXn6uttUq/s17NcQnTzQvV6UZF2oaVz8Ddk1NtVQf5CMuinfRSkf8h9S6WPJQ2Zh2UVwgfScb7sLnd91Js38LzGpIVMVbLOSMMjqirKczUYVC7gAHnS3fDhCJOhFmlJjlcTEz70gIaetCt01Jj7v4RR/wRIIWWYt20C3EKb4+7QSyDobth++XroQGhgqdaGvH6HCQ4TEIhZdafEQKcry1HXTloQVQmkNNSol03MifAESphiJrhh6+cwRDaoVkZT1X9lH0+PeRmSIox/Se43DjYCpYRIcXbiUloRLJmPFhY9cWRZAwadYkEWXnTuyLWAp2j1/17C7png==
+ bh=IuhfYmnJL4w+6rqFzTG/W3kQjOnSmahscWpA2o5KvcY=;
+ b=KvNKGGd5zwIS4ElWghdLu4KJedsStnM3ox2hpei5S3bQoDV6IyslmtzkO/aRkEmEKBpfOCFOW35xL4FrJBbW9yQLkRVq0VzexaeFpF9LENhvLIMzJgIxB17+e8mICEf33ZGFhehIk+tL2C+gbAOf4v6KjOn2ptLQvTgNmYAvkJqAcwv87FHoNN80sC08vpRk21JTNThG9mH0hAL0hup4dDtyu7B1Pmxl++bEeHHQxRMDCITga+svh26WT3BMikicomlxxyd7az2H5Gam1NNVQSdxCcYn2ZJPCeVW7mGgWtdEIKL6DEwWYyPYq1jbqIUBHLokvrxPMZaeF1EzQ2kQgQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-X-Received: from TYBPR01MB5309.jpnprd01.prod.outlook.com
- (2603:1096:404:8025::15) by TY2PR01MB2811.jpnprd01.prod.outlook.com
- (2603:1096:404:6f::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3305.24; Thu, 20 Aug
- 2020 06:54:50 +0000
-X-Received: from TYBPR01MB5309.jpnprd01.prod.outlook.com
- ([fe80::c141:37ba:af8c:b2ee]) by TYBPR01MB5309.jpnprd01.prod.outlook.com
- ([fe80::c141:37ba:af8c:b2ee%7]) with mapi id 15.20.3283.028; Thu, 20 Aug 2020
- 06:54:50 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Pavel Machek <pavel@denx.de>
-CC: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>, Nobuhiro
- Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, Chris Paterson
-	<Chris.Paterson2@renesas.com>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [cip-dev] [PATCH 4.19.y-cip 01/12] arm64: dts: renesas: r8a774a1-hihope-rzg2m[-ex/-ex-idk-1110wr]: Rename HiHope RZ/G2M boards
-Thread-Topic: [PATCH 4.19.y-cip 01/12] arm64: dts: renesas:
- r8a774a1-hihope-rzg2m[-ex/-ex-idk-1110wr]: Rename HiHope RZ/G2M boards
-Thread-Index: AQHWdkbqXtL0A747EU6r2uPCYoBY1Kk/ufqAgADSAtA=
-Date: Thu, 20 Aug 2020 06:54:49 +0000
-Message-ID: 
- <TYBPR01MB5309709F469C1BBDCB012749865A0@TYBPR01MB5309.jpnprd01.prod.outlook.com>
-References: <20200819163634.5430-1-biju.das.jz@bp.renesas.com>
- <20200819163634.5430-2-biju.das.jz@bp.renesas.com>
- <20200819180505.GB5567@amd>
-In-Reply-To: <20200819180505.GB5567@amd>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [109.154.85.152]
+ smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
+ header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
+From: "Nobuhiro Iwamatsu" <nobuhiro1.iwamatsu@toshiba.co.jp>
+To: <cip-dev@lists.cip-project.org>
+Subject: Re: [cip-dev] [cip-kernel-config PATCH] qemu_cip_defconfig: Add EFI_STUB to config
+Thread-Topic: [cip-dev] [cip-kernel-config PATCH] qemu_cip_defconfig: Add
+ EFI_STUB to config
+Thread-Index: AQHWaX6lfBZmtPjHaUaZ6kNYeyjoB6kqp0XQgACA/YCAAghzEIATmjUAgADvPmA=
+Date: Thu, 20 Aug 2020 23:08:03 +0000
+X-TSB-HOP: ON
+Message-ID: <OSBPR01MB2983A7A6D1FE5604D1AE647A925A0@OSBPR01MB2983.jpnprd01.prod.outlook.com>
+References: <20200803101217.6961-1-Quirin.Gylstorff@siemens.com>
+ <OSBPR01MB298330C0C2BA66778FAB84AD92480@OSBPR01MB2983.jpnprd01.prod.outlook.com>
+ <c0e08e23-2cc0-0ded-6266-2c4da2ccf4af@siemens.com>
+ <OSBPR01MB298341D4C5B082E32DB5587792490@OSBPR01MB2983.jpnprd01.prod.outlook.com>
+ <d5786804-0453-cfe5-aeef-f090c363a0fd@siemens.com>
+In-Reply-To: <d5786804-0453-cfe5-aeef-f090c363a0fd@siemens.com>
+Accept-Language: ja-JP, en-US
+x-originating-ip: [103.91.184.3]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 9aecdb2c-b77f-48b6-7b17-08d844d5eef9
-x-ms-traffictypediagnostic: TY2PR01MB2811:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: 
- <TY2PR01MB281109E9AE334D5466E6AB11865A0@TY2PR01MB2811.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-ms-office365-filtering-correlation-id: d998fd09-b7a7-4d30-b0d4-08d8455de46c
+x-ms-traffictypediagnostic: OSAPR01MB4818:
+x-microsoft-antispam-prvs: <OSAPR01MB48185DB0DAD8F04F22647674925A0@OSAPR01MB4818.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 
- Yt+EPkwG7hPl58h5SoBrPs5pEvegnlLOcnkbNVc+91hi6DAouT988nlSifsiR0LoCoBXSZqwcxtgwfH1kJtBTH23MgHKBCgvUrPK0RhEznZRfFEn14iIdRbqMhVj3BG6VRpiP/8nXFWVveTRvPUvgotS+lhAd25zZ0aH/kwBapFtSLjeJ6i39E4sz4E7uT5JipxD2UrxFTICj/AAaBzfai5Bl2qAkrUVrLPq7Pwyn0RQjWeWj2F3o59wS74tENCuMTU/4WnPxFy8iQS8PIU2zG40ls5UuP1aQTG8AugZDuyNBKNL9uLb7LOuwkr4uslF
-x-ms-exchange-antispam-messagedata: 
- EDcVEFBgfpKzWUBOO94SXKOPGH3iXPk6BSP5a6zdREUbhN/8ZNq/pmUo1pWljWcfyWdPjFH/vvp+DOiHN99AZgOwPZZ0+Mtz2X8s/R5SIZ/t2EoZpxzjihWtkjIKXdhFlLyWGeTJ/AC+g9CklDPmgcOIT8UnCMvN4xHhjwBgIGdG9iUTMuuJd3svm6H/0x5/KQ28IIaKpuT6gkE4OIqmE/wQt+F6UlmWOrRc3+A3pF4nFzKRDmGuMISYnD9KHogFg9ems7eNgzBfD+QccwJG9z664BCYZi39kpRrCEB9IOhsyGuHCjgMzBO5nWzPammhSBO17sxR/5tRyaYWg/k52aYflDPAGn28HXAbLkWQG/rn+8Lvnb5uitCGS9Ur8TRlzvZSPZWv6P37zE6ga1X1RcH5QXSXGBqwSNzwC5ng9HrCf8FGQPVDsFIqDB6Y/kTVruFMos/06pRL0P/fq0dO35+aai2oOyNDnYOhnacef4CjvWqTQVS850ItkWmzmOjc3HEGPTUSccamkJ1XBBfLnWOvMKqowZa8oYTtcfWJprfHPTot9matPv5DUQEG+mbrMGfq3Thcjt9RIp0TwNqfY87bQ1uhsZkx75mVJJuIyeeAx3wh4Y89rB1AyBs2hlkaCqOTCGPY/xc0eLu3S/tcRQ==
+x-microsoft-antispam-message-info: NiMrc4oONERaKR5vqSBWkRgtP35fcgtPV6wL2FZ1Uy2vQgJ8AGxfMH536X0fQtiUrkZ2yCTE6ks7CKTW8Ce3SITElUDmsQzPkMtFENbYZEdXW0pKwob52S0QqKbFdMn7ecF+TDyMzUQzjzxqDKnkrd+4RAamdWbODatB7+FNsF2e4d/ipnP5Ipyt8XlCraWxjQgmRlOMefMQ917vGNhJiIQXLxkA5ZvFCCzB0SH/39t5qQLlLqvP0MdAcb3ZdJMLv1/u2V4r5PmZUiZXY5eg65XlVcPg5gkX+TSDEMtcKv4vrYzd3PbK73PMMUFDzbYCTJKpp9ag0Ec8LCSdeMqirQ==
+x-ms-exchange-antispam-messagedata: J24ML9tLUeavqrLxmI/xSdGqQjv1KqUa0UI9r1KIFBLsyKnPqPn9J9igYUjROMNpnUkXiMU2M5cLv/D9ZwuSq7lPomh1tcw/qf3Nq3xXlhEVzTE+ZOW0Wwk/J6KK0TlX94jVVY1WBBWCEE/C6wiAQYeERPbZZrt88PLnpVVcZaMu+LZtGrnh/RSTmku0E9cHbpeuXc2Q5wWliQR+GQxccsqPkQyrwUIsqb8IEq1Si4Q9hO07WjCSV6HaBhpz6zEX/Zft2pwUR7XsqhhGs9NYw2p9iJu4tzYm1WvxMXsk+Zy6Q0tnvi6HEUMe/47jgQjI7l2Q1UM1p3V2X3KSoNKcX6B6iTs1/dV7aySwusYC+UJYKaIYsSYgWU8qQGYK/MicMpY/0U2nL9J28wLHZSJDyQ9T+s2SGjC4jK8edZZtz0xIvgivgetxx7S7uIkkt52IJLt7ANmG2Lpzqh/pYcCm23Ae8G/mh3BH/5Wl6tVN7DNNnQczegVYpq3nuL/u8GWxcgxW8HsrH8Z5xYy7iRjJvkvxkj7TQLkulxnXbTORE6nDi6vSMyIQ69MdUA4vdW27LSjitHKjGaoja0LGvbaz20MA9zAU0tvj8LhGHjeMxKUBrtiWTTIcoYNDaYiABVhuF3m/QcU8nZHcVKgiLTygRQ==
+x-ms-exchange-transport-forked: True
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYBPR01MB5309.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9aecdb2c-b77f-48b6-7b17-08d844d5eef9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2020 06:54:49.9501
+X-MS-Exchange-CrossTenant-AuthSource: OSBPR01MB2983.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d998fd09-b7a7-4d30-b0d4-08d8455de46c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2020 23:08:03.8629
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: oZJYDY+UHD40Vr8pWVcPJ9X1HAMLb2K7Ba0AsQTO3/z3pKklxma+WswScnD64C6tnV4vWqMDtGfLbMpyGKzh4w407j9oKAOzriPoaxQaZnA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB2811
+X-MS-Exchange-CrossTenant-userprincipalname: CmOH1dr6CVejD1Dbn4vYBKjtwiiPwKTaVNCrcCELY29MVPlIjqIn9+mD8vPby1Xw/QA2O5ULpl9CR77bcwDnyOtyBriKP3+9egq4vkZSDqwBdVi5/KeTCgJiM+y8Hmlo
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB4818
+X-OriginatorOrg: toshiba.co.jp
+MSSCP.TransferMailToMossAgent: 103
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: 6TV1ktWCHtWptjRUTcHFkzP0x4520388AA=
-Content-Type: multipart/mixed; boundary="b0UmGbf0daej0ICJTBTk"
+X-Gm-Message-State: VUHtVn4HgwVjr3i6u5oIpOGUx4520388AA=
+Content-Type: multipart/mixed; boundary="XKpdsHG9yCtcAbFvWEfZ"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1597921788;
- bh=ZByGs0eUFMM54BCODC5bfFlXmhDxlQy2nvvQ/MKqlEY=;
- h=CC:Content-Type:Date:From:Reply-To:Subject:To;
- b=a/+t9q2D0kB/X3/yvbZsyp69YrFFEJrLmb2rw5GAwD5muscqQqX0gB7XsRfC9ZI+o3Z
- 5RPGU2/cTgCNFlvYOlwf4J3GhhkvFmcrI5ngWtVTfAFKrOqQ2EAecV2u394eQqcu/ne6N
- IiNO7rwj7maIz33ACqYwaS5mAR9jm2WXrno=
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1597964907;
+ bh=ehzDX88Kwa/i9A6pf1cgQAqQqlhbUtJ/jbQwakDmAdk=;
+ h=Content-Type:Date:From:Reply-To:Subject:To;
+ b=LI3ID/kGed2fvmvWppc3N1WC7cJq1LyZhi2NfgVJ534Of0dBrB+k9bIbMk01sPjToe/
+ UxDMcrIqou3NADGSjcERRW/5FssYCq2kbEGqtDkMzPUT9rxoeHiJ0crsZTcoIMzIb/Vph
+ lQ/ELmjGbzK4ahbNzN4HmDKqBA3azGELwD0=
 
---b0UmGbf0daej0ICJTBTk
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+--XKpdsHG9yCtcAbFvWEfZ
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-Hi Pavel,
+SGksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogY2lwLWRldkBsaXN0
+cy5jaXAtcHJvamVjdC5vcmcgW21haWx0bzpjaXAtZGV2QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZ10g
+T24gQmVoYWxmIE9mIFF1aXJpbiBHeWxzdG9yZmYNCj4gU2VudDogVGh1cnNkYXksIEF1Z3VzdCAy
+MCwgMjAyMCA1OjUwIFBNDQo+IFRvOiBjaXAtZGV2QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZzsgaXdh
+bWF0c3Ugbm9idWhpcm8o5bKp5p2+IOS/oea0iyDilqHvvLPvvLfvvKPil6/vvKHvvKPvvLQpIDxu
+b2J1aGlybzEuaXdhbWF0c3VAdG9zaGliYS5jby5qcD4NCj4gU3ViamVjdDogUmU6IFtjaXAtZGV2
+XSBbY2lwLWtlcm5lbC1jb25maWcgUEFUQ0hdIHFlbXVfY2lwX2RlZmNvbmZpZzogQWRkIEVGSV9T
+VFVCIHRvIGNvbmZpZw0KPiANCg0KPHNuaXA+DQoNCj4gPj4+Pg0KPiA+Pj4+IFNpZ25lZC1vZmYt
+Ynk6IFF1aXJpbiBHeWxzdG9yZmYgPHF1aXJpbi5neWxzdG9yZmZAc2llbWVucy5jb20+DQo+ID4+
+Pj4gLS0tDQo+ID4+Pj4gICAgNC4xOS55LWNpcC94ODYvY2lwX3FlbXVfZGVmY29uZmlnIHwgMSAr
+DQo+ID4+Pj4gICAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspDQo+ID4+Pg0KPiA+Pj4g
+UGxlYXNlIHVwZGF0ZSBjaXBfcWVtdS5zb3VyY2VzIHRvby4NCj4gPj4NCj4gPj4gV2hlbiBpIHRy
+eSB0byBnZW5lcmF0ZSB0aGUgc291cmNlcyAtIGFsbCAuYyBhbmQgYXNtIGZpbGVzIGFyZSBubyBs
+b25nZXINCj4gPj4gcGFydCBvZiB0aGUgY2lwLXFlbXUuc291cmNlcy4gRGlkIEkgbWlzcyBzb21l
+dGhpbmc/IE9yIHNob3VsZCBJIHRyeQ0KPiA+PiBhZ2FpbiBsaWtlIHRoZSBsYXN0IHRpbWUgdGhp
+cyBoYXBwZW5lZD8NCj4gPg0KPiA+IFRoYW5rcyBmb3IgeW91ciBjaGVjay4NCj4gPiBTb3JyeSwg
+SSB3YW50ZWQgdG8gY2hlY2sgaWYgdGhlcmUgd2FzIGEgZml4IGluIGNpcF9xZW11LnNvdXJjZXMu
+DQo+ID4gSSBhcHBsaWVkIHRoaXMgcGF0Y2guDQo+ID4NCj4gDQo+IEhpLA0KPiANCj4gSSBkaWRu
+J3QgZmluZCB0aGUgcGF0Y2ggYXBwbGllZCB0byBjaXAta2VybmVsLWNvbmZpZy4gSXMgc29tZXRo
+aW5nIG1pc3Npbmc/DQo+IA0KDQpTb3JyeSwgSSBqdXN0IHB1c2hlZC4NCg0KPiBLaW5kIHJlZ2Fy
+ZHMsDQo+IHF1aXJpbg0KDQpCZXN0IHJlZ2FyZHMsDQogIE5vYnVoaXJvDQo=
 
-Thanks for the feedback.
-
-> Subject: Re: [PATCH 4.19.y-cip 01/12] arm64: dts: renesas: r8a774a1-hihop=
-e-
-> rzg2m[-ex/-ex-idk-1110wr]: Rename HiHope RZ/G2M boards
->
-> Hi!
->
-> Ok, so this is anti-social:
->
-> > -dtb-$(CONFIG_ARCH_R8A774A1) +=3D r8a774a1-hihope-rzg2m.dtb
-> > +dtb-$(CONFIG_ARCH_R8A774A1) +=3D r8a774a1-hihope-rzg2m-rev2.dtb
->
-> This renames dts away, but at the end of series, new dts is created with =
-the
-> r8a774a1-hihope-rzg2m.dts name, but this time it is for rev4 (not rev2) b=
-oard.
->
-> So... people with rev2 boards and existing build script will get rev4 dts=
-..
-> without any error.
-
-Yes, that is true. But if you agree, We need to use our latest/greatest SoC=
-/board as the main SoC/Board and rest are with explicit revision in dts/dtb=
- .
-
-The existing users can read gpio values to differentiate rev2.0/rev4.0 boar=
-ds and load the appropriate dtb/execute the test script accordingly.
-
->
-> Would it be better to always require explicit revision in dts/dtb name?
-
-This is our thoughts on this.  We need to use our latest/greatest SoC/board=
- as the main SoC/Board and rest are with explicit revision in dts/dtb .
-So this is inline with your suggested comment.
-
-Please share your comments, I may be wrong.
-
-Cheers,
-Biju
-
-
-Renesas Electronics Europe GmbH, Geschaeftsfuehrer/President: Carsten Jauch=
-, Sitz der Gesellschaft/Registered office: Duesseldorf, Arcadiastrasse 10, =
-40472 Duesseldorf, Germany, Handelsregister/Commercial Register: Duesseldor=
-f, HRB 3708 USt-IDNr./Tax identification no.: DE 119353406 WEEE-Reg.-Nr./WE=
-EE reg. no.: DE 14978647
-
---b0UmGbf0daej0ICJTBTk
+--XKpdsHG9yCtcAbFvWEfZ
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -168,12 +136,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#5164): https://lists.cip-project.org/g/cip-dev/message=
-/5164
-Mute This Topic: https://lists.cip-project.org/mt/76290781/4520388
+View/Reply Online (#5165): https://lists.cip-project.org/g/cip-dev/message=
+/5165
+Mute This Topic: https://lists.cip-project.org/mt/75962579/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---b0UmGbf0daej0ICJTBTk--
+--XKpdsHG9yCtcAbFvWEfZ--
