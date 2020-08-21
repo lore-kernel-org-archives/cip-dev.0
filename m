@@ -1,715 +1,187 @@
-Return-Path: <SRS0=w8wr=B7=lists.cip-project.org=bounce+64572+5168+4520388+8129055@kernel.org>
+Return-Path: <SRS0=D5eq=B7=lists.cip-project.org=bounce+64572+5169+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE62AC433E1
-	for <cip-dev@archiver.kernel.org>; Fri, 21 Aug 2020 09:52:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44CBBC433DF
+	for <cip-dev@archiver.kernel.org>; Fri, 21 Aug 2020 09:56:04 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 3F05C20732
-	for <cip-dev@archiver.kernel.org>; Fri, 21 Aug 2020 09:52:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 1252B207DF
+	for <cip-dev@archiver.kernel.org>; Fri, 21 Aug 2020 09:56:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="tKNirGox"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F05C20732
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="W5l59Dp3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1252B207DF
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=siemens.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5168+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id v7OVYY4521723xg2j3DfJUs3; Fri, 21 Aug 2020 02:52:24 -0700
-X-Received: from goliath.siemens.de (goliath.siemens.de [192.35.17.28])
- by mx.groups.io with SMTP id smtpd.web10.131257.1598003541950889352
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5169+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id h0fkYY4521723xWOWR7MmlQa; Fri, 21 Aug 2020 02:56:03 -0700
+X-Received: from lizzard.sbs.de (lizzard.sbs.de [194.138.37.39])
+ by mx.groups.io with SMTP id smtpd.web10.131306.1598003762441890022
  for <cip-dev@lists.cip-project.org>;
- Fri, 21 Aug 2020 02:52:23 -0700
-X-Received: from mail1.sbs.de (mail1.sbs.de [192.129.41.35])
-	by goliath.siemens.de (8.15.2/8.15.2) with ESMTPS id 07L9qIT0023757
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Aug 2020 11:52:19 +0200
-X-Received: from [167.87.58.237] ([167.87.58.237])
-	by mail1.sbs.de (8.15.2/8.15.2) with ESMTP id 07L9qHgC005021;
-	Fri, 21 Aug 2020 11:52:18 +0200
-Subject: Re: [cip-dev] [cip-kernel-config ][ RFC 1/1] 4.19.y-cip/cip_bbb_defconfig: Add config switches from isar-cip-core
-To: cip-dev@lists.cip-project.org, daniel.sangorrin@toshiba.co.jp,
-        jan.kiszka@siemens.com
-References: <OSBPR01MB2053E648BDBD2C9934BAD1A8D04B0@OSBPR01MB2053.jpnprd01.prod.outlook.com>
- <20200817092927.14658-1-Quirin.Gylstorff@siemens.com>
- <20200817092927.14658-2-Quirin.Gylstorff@siemens.com>
- <OSBPR01MB2983FB2BF167336EB6181B8A925A0@OSBPR01MB2983.jpnprd01.prod.outlook.com>
+ Fri, 21 Aug 2020 02:56:03 -0700
+X-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
+	by lizzard.sbs.de (8.15.2/8.15.2) with ESMTPS id 07L9u0X0027356
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+	for <cip-dev@lists.cip-project.org>; Fri, 21 Aug 2020 11:56:00 +0200
+X-Received: from md2dvrtc.fritz.box ([167.87.58.237])
+	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 07L9u0Qp003248;
+	Fri, 21 Aug 2020 11:56:00 +0200
 From: "Quirin Gylstorff" <quirin.gylstorff@siemens.com>
-Message-ID: <c465136f-efdf-9a1b-b187-e0511e05aa52@siemens.com>
-Date: Fri, 21 Aug 2020 11:52:17 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
+Cc: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH v4 0/6] secureboot with efibootguard
+Date: Fri, 21 Aug 2020 11:55:53 +0200
+Message-Id: <20200821095559.28467-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
-In-Reply-To: <OSBPR01MB2983FB2BF167336EB6181B8A925A0@OSBPR01MB2983.jpnprd01.prod.outlook.com>
-X-MIME-Autoconverted: from 8bit to quoted-printable by goliath.siemens.de id 07L9qIT0023757
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: v6tmSg6OE0eKSK7oVX7GR6NTx4520388AA=
-Content-Type: multipart/mixed; boundary="PvOGaZzMjPHgyDGEKjih"
+X-Gm-Message-State: lwGmAIdX0gndEuMSCZJPdOcOx4520388AA=
+Content-Type: multipart/mixed; boundary="ZW1CSP2hflFhQewn2lYf"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1598003544;
- bh=uVvQhJ/zZQKYtU1b4ZNeYUTmGltAMoaNkX0BJKSmyvU=;
- h=Content-Type:Date:From:Reply-To:Subject:To;
- b=tKNirGox4OoW/9mP8fAkbT0DP5jcU/5R0owP9ht183ssFBgPsVqv3BJD1E5MymA+WYB
- 2W0SBjOrjuOfDQXSCE2eK0adz5HCJl0fX+h/RiprwkBeviicZjQhhpjrP7fEcCT/E0SkN
- 4bIHVg7dcglnSBUQWTs61xy+mMKc53TsQEY=
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1598003763;
+ bh=tDHHXICVyvgkSrlwqrznNoBYWGK2eLLOx+DBZNFn3K4=;
+ h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
+ b=W5l59Dp3ZntYkw6BV3ZZRdROR1J2yAFiS5le7Niw5FiF46YFyjrQZ9ZcaPb4hMG1YG7
+ 2/OBFxQ5ieT+ZiHUKf+lx9LqD4djRQlEHHByct98bJLQfWyS0cbB8azXKLLunjX5SfNtc
+ YNA55pcXZW6dmiMlFSUynSP7UhMXX+7kvZM=
 
---PvOGaZzMjPHgyDGEKjih
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+--ZW1CSP2hflFhQewn2lYf
+Content-Transfer-Encoding: 8bit
+
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+
+This patchset adds secureboot with efibootguard to cip-core.
+
+The image build signs the efibootguard bootloader (bootx64.efi) and generates
+a signed [unified kernel image](https://systemd.io/BOOT_LOADER_SPECIFICATION/).
+A unified kernel image packs the kernel, initramfs and the kernel command-line
+in one binary object. As the kernel command-line is immutable after the build
+process, the previous selection of the root file system with a command-line parameter is no longer
+possible. Therefore the selection of the root file-system occurs now in the initramfs.
+
+The image uses an A/B partition layout to update the root file system. The sample implementation to
+select the root file system generates a uuid and stores the id in /etc/os-release and in the initramfs.
+During boot the initramfs compares its own uuid with the uuid stored in /etc/os-release of each rootfs.
+If a match is found the rootfs is used for the boot.
+
+Changes V2:
+
+ - rebase to [1]
+ - removed luahandler patch as it now part of [1]
+ - add handling for sw-description
+
+Changes V3:
+
+ - rewrite the image id creation to ensure a new uuid is generated if a new package is
+  added or another change of the rootfs
+ - add readme section how to execute/test the software update mechnism
+ - adapt to version v3 of [1]
+ - update the patch
+ - add wks file for efibootguard and swupdate
+
+[1]: a/b rootfsupdate with software update
+
+Changes V4:
+
+ - rebase onto next 619edb509bd287277749580cbc842e57d5044756
+ - fix indent of ./start-qemu.sh
+ - whitespace fixes
+ - update libubootenv patch to v2
+ - update revision of cip-kernel-config to ca24d965adf77730caf1cd32bdfcffd69e369502
+   to boot secureboot with qemu
+ - swupdate swdescription for non-secure-boot images
+
+Quirin Gylstorff (6):
+  linux-cip: Update revision of kernel config
+  isar-patch: Add initramfs-config patch
+  secure-boot: select boot partition in initramfs
+  secure-boot: Add secure boot with unified kernel image
+  secure-boot: Add Debian snakeoil keys for ease-of-use
+  doc: Add README for secureboot
+
+ classes/image_uuid.bbclass                    |  33 +++
+ conf/distro/debian-buster-backports.list      |   1 +
+ conf/distro/preferences.ovmf-snakeoil.conf    |   3 +
+ doc/README.secureboot.md                      | 229 ++++++++++++++++++
+ .../0001-u-boot-add-libubootenv.patch         | 161 ++++++------
+ ...-support-Generate-a-custom-initramfs.patch | 207 ++++++++++++++++
+ kas-cip.yml                                   |   3 +
+ kas/opt/ebg-secure-boot-base.yml              |  18 ++
+ kas/opt/ebg-secure-boot-snakeoil.yml          |  28 +++
+ kas/opt/ebg-swu.yml                           |   4 +-
+ recipes-core/images/cip-core-image.bb         |  12 +-
+ .../files/secure-boot/sw-description.tmpl     |  29 +++
+ recipes-core/images/files/sw-description.tmpl |  19 +-
+ recipes-core/images/secureboot.inc            |  21 ++
+ recipes-core/images/swupdate.inc              |  21 ++
+ .../ebg-secure-boot-secrets_0.1.bb            |  51 ++++
+ .../ebg-secure-boot-secrets/files/README.md   |   1 +
+ .../files/control.tmpl                        |  12 +
+ .../files/sign_secure_image.sh.tmpl           |  22 ++
+ .../ebg-secure-boot-snakeoil_0.1.bb           |  34 +++
+ .../files/control.tmpl                        |  12 +
+ .../files/sign_secure_image.sh                |  36 +++
+ .../ovmf-binaries/files/control.tmpl          |  11 +
+ .../ovmf-binaries/ovmf-binaries_0.1.bb        |  30 +++
+ recipes-kernel/linux/linux-cip-common.inc     |   2 +-
+ .../files/initramfs.image_uuid.hook           |  33 +++
+ .../files/initramfs.lsblk.hook                |  29 +++
+ .../initramfs-config/files/postinst.ext       |   3 +
+ .../files/secure-boot-debian-local-patch      |  79 ++++++
+ .../initramfs-abrootfs-secureboot_0.1.bb      |  38 +++
+ ...enerate-sb-db-from-existing-certificate.sh |  16 ++
+ scripts/generate_secure_boot_keys.sh          |  51 ++++
+ .../wic/plugins/source/efibootguard-boot.py   |  87 ++++++-
+ .../wic/plugins/source/efibootguard-efi.py    |  40 ++-
+ scripts/start-efishell.sh                     |  12 +
+ start-qemu.sh                                 |  59 +++--
+ wic/ebg-signed-bootloader.inc                 |   2 +
+ wic/qemu-amd64-efibootguard-secureboot.wks    |   9 +
+ wic/qemu-amd64-efibootguard.wks               |   1 -
+ 39 files changed, 1330 insertions(+), 129 deletions(-)
+ create mode 100644 classes/image_uuid.bbclass
+ create mode 100644 conf/distro/debian-buster-backports.list
+ create mode 100644 conf/distro/preferences.ovmf-snakeoil.conf
+ create mode 100644 doc/README.secureboot.md
+ create mode 100644 isar-patches/v7-0001-meta-support-Generate-a-custom-initramfs.patch
+ create mode 100644 kas/opt/ebg-secure-boot-base.yml
+ create mode 100644 kas/opt/ebg-secure-boot-snakeoil.yml
+ create mode 100644 recipes-core/images/files/secure-boot/sw-description.tmpl
+ create mode 100644 recipes-core/images/secureboot.inc
+ create mode 100644 recipes-core/images/swupdate.inc
+ create mode 100644 recipes-devtools/ebg-secure-boot-secrets/ebg-secure-boot-secrets_0.1.bb
+ create mode 100644 recipes-devtools/ebg-secure-boot-secrets/files/README.md
+ create mode 100644 recipes-devtools/ebg-secure-boot-secrets/files/control.tmpl
+ create mode 100644 recipes-devtools/ebg-secure-boot-secrets/files/sign_secure_image.sh.tmpl
+ create mode 100644 recipes-devtools/ebg-secure-boot-snakeoil/ebg-secure-boot-snakeoil_0.1.bb
+ create mode 100644 recipes-devtools/ebg-secure-boot-snakeoil/files/control.tmpl
+ create mode 100644 recipes-devtools/ebg-secure-boot-snakeoil/files/sign_secure_image.sh
+ create mode 100644 recipes-devtools/ovmf-binaries/files/control.tmpl
+ create mode 100644 recipes-devtools/ovmf-binaries/ovmf-binaries_0.1.bb
+ create mode 100644 recipes-support/initramfs-config/files/initramfs.image_uuid.hook
+ create mode 100644 recipes-support/initramfs-config/files/initramfs.lsblk.hook
+ create mode 100644 recipes-support/initramfs-config/files/postinst.ext
+ create mode 100644 recipes-support/initramfs-config/files/secure-boot-debian-local-patch
+ create mode 100644 recipes-support/initramfs-config/initramfs-abrootfs-secureboot_0.1.bb
+ create mode 100755 scripts/generate-sb-db-from-existing-certificate.sh
+ create mode 100755 scripts/generate_secure_boot_keys.sh
+ create mode 100755 scripts/start-efishell.sh
+ create mode 100644 wic/ebg-signed-bootloader.inc
+ create mode 100644 wic/qemu-amd64-efibootguard-secureboot.wks
+
+-- 
+2.20.1
 
 
-
-On 8/21/20 1:34 AM, Nobuhiro Iwamatsu wrote:
-> Hi,
->=20
->> -----Original Message-----
->> From: cip-dev@lists.cip-project.org [mailto:cip-dev@lists.cip-project.o=
-rg] On Behalf Of Quirin Gylstorff
->> Sent: Monday, August 17, 2020 6:29 PM
->> To: sangorrin daniel(=E3=82=B5=E3=83=B3=E3=82=B4=E3=83=AA=E3=83=B3 =E3=
-=83=80=E3=83=8B=E3=82=A8=E3=83=AB =E2=96=A1=EF=BC=B3=EF=BC=B7=EF=BC=A3=E2=
-=97=AF=EF=BC=A1=EF=BC=A3=EF=BC=B4) <daniel.sangorrin@toshiba.co.jp>;
->> cip-dev@lists.cip-project.org; jan.kiszka@siemens.com
->> Cc: Quirin Gylstorff <quirin.gylstorff@siemens.com>
->> Subject: [cip-dev] [cip-kernel-config ][ RFC 1/1] 4.19.y-cip/cip_bbb_de=
-fconfig: Add config switches from isar-cip-core
->>
->> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
->>
->> Add the config switches which exist only in isar-cip-core
->> to the defconfig in cip-kernel-config for the beagle bone black.
->>
->=20
-> Thanks for your patch.
-> The cip_bbb_defconfig created by me had minimal functionality enabled. I=
- didn't know that Siemens didn't include the required features.
-> So I think this patch is necessary.
-> However, we think that it is difficult to do it with one defconfig when =
-testing the necessary functions as CIP in the future.
-> Therefore, it may be necessary to prepare defconfig for each required fu=
-nction in the future.
->=20
-> By the way, is this only 4.19? Do I need to change RT or 4.4.y?
-
-This patch is only for 4.19. I can prepare a v2 which includes v4.4. As=20
-posted it was intented to show the current difference between the bbb
-config in isar-cip-core and cip-kernel-config.
-
-Best regards,
-Quirin
->=20
-> Best regards,
->    Nobuhiro
->=20
->> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
->> ---
->>   4.19.y-cip/arm/cip_bbb_defconfig | 339 ++++++++++++++++++++++++++++++=
-+
->>   1 file changed, 339 insertions(+)
->>
->> diff --git a/4.19.y-cip/arm/cip_bbb_defconfig b/4.19.y-cip/arm/cip_bbb_=
-defconfig
->> index 3e22365..445cdee 100644
->> --- a/4.19.y-cip/arm/cip_bbb_defconfig
->> +++ b/4.19.y-cip/arm/cip_bbb_defconfig
->> @@ -1,6 +1,9 @@
->>   # CONFIG_LOCALVERSION_AUTO is not set
->> +CONFIG_KERNEL_LZMA=3Dy
->>   CONFIG_SYSVIPC=3Dy
->>   CONFIG_POSIX_MQUEUE=3Dy
->> +CONFIG_FHANDLE=3Dy
->> +CONFIG_AUDIT=3Dy
->>   CONFIG_NO_HZ=3Dy
->>   CONFIG_HIGH_RES_TIMERS=3Dy
->>   CONFIG_PREEMPT=3Dy
->> @@ -8,6 +11,7 @@ CONFIG_BSD_PROCESS_ACCT=3Dy
->>   CONFIG_BSD_PROCESS_ACCT_V3=3Dy
->>   CONFIG_IKCONFIG=3Dy
->>   CONFIG_IKCONFIG_PROC=3Dy
->> +CONFIG_LOG_BUF_SHIFT=3D16
->>   CONFIG_CGROUPS=3Dy
->>   CONFIG_MEMCG=3Dy
->>   CONFIG_MEMCG_SWAP=3Dy
->> @@ -17,24 +21,67 @@ CONFIG_RT_GROUP_SCHED=3Dy
->>   CONFIG_CGROUP_PIDS=3Dy
->>   CONFIG_CGROUP_FREEZER=3Dy
->>   CONFIG_CGROUP_DEVICE=3Dy
->> +CONFIG_CPUSETS=3Dy
->>   CONFIG_CGROUP_CPUACCT=3Dy
->> +CONFIG_MEMCG=3Dy
->> +CONFIG_MEMCG_SWAP=3Dy
->> +CONFIG_MEMCG_KMEM=3Dy
->>   CONFIG_CGROUP_PERF=3Dy
->>   CONFIG_CGROUP_DEBUG=3Dy
->>   CONFIG_USER_NS=3Dy
->> +CONFIG_CGROUP_SCHED=3Dy
->> +CONFIG_CFS_BANDWIDTH=3Dy
->> +CONFIG_RT_GROUP_SCHED=3Dy
->> +CONFIG_BLK_CGROUP=3Dy
->> +CONFIG_NAMESPACES=3Dy
->>   CONFIG_BLK_DEV_INITRD=3Dy
->>   CONFIG_CC_OPTIMIZE_FOR_SIZE=3Dy
->>   CONFIG_BPF_SYSCALL=3Dy
->> +CONFIG_EXPERT=3Dy
->> +CONFIG_SLAB=3Dy
->>   CONFIG_PROFILING=3Dy
->>   CONFIG_ARCH_VIRT=3Dy
->> +CONFIG_OPROFILE=3Dy
->> +CONFIG_KPROBES=3Dy
->> +CONFIG_MODULES=3Dy
->> +CONFIG_MODULE_FORCE_LOAD=3Dy
->> +CONFIG_MODULE_UNLOAD=3Dy
->> +CONFIG_MODULE_FORCE_UNLOAD=3Dy
->> +CONFIG_MODVERSIONS=3Dy
->> +CONFIG_MODULE_SRCVERSION_ALL=3Dy
->> +# CONFIG_BLK_DEV_BSG is not set
->> +CONFIG_PARTITION_ADVANCED=3Dy
->> +CONFIG_POWER_AVS_OMAP=3Dy
->> +CONFIG_POWER_AVS_OMAP_CLASS3=3Dy
->>   CONFIG_OMAP_RESET_CLOCKS=3Dy
->>   CONFIG_ARCH_OMAP3=3Dy
->> +CONFIG_OMAP_MUX_DEBUG=3Dy
->>   CONFIG_SOC_AM33XX=3Dy
->>   CONFIG_ARM_THUMBEE=3Dy
->>   CONFIG_OABI_COMPAT=3Dy
->> +CONFIG_ARM_ERRATA_411920=3Dy
->> +CONFIG_ARM_ERRATA_430973=3Dy
->> +CONFIG_SMP=3Dy
->> +CONFIG_NR_CPUS=3D2
->> +CONFIG_CMA=3Dy
->> +CONFIG_SECCOMP=3Dy
->> +CONFIG_ZBOOT_ROM_TEXT=3D0x0
->> +CONFIG_ZBOOT_ROM_BSS=3D0x0
->>   CONFIG_ARM_APPENDED_DTB=3Dy
->>   CONFIG_ARM_ATAG_DTB_COMPAT=3Dy
->> +CONFIG_CMDLINE=3D""
->> +CONFIG_KEXEC=3Dy
->> +CONFIG_CPU_FREQ=3Dy
->> +CONFIG_CPU_FREQ_STAT_DETAILS=3Dy
->> +CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=3Dy
->> +CONFIG_CPU_FREQ_GOV_POWERSAVE=3Dy
->> +CONFIG_CPU_FREQ_GOV_USERSPACE=3Dy
->> +CONFIG_CPU_FREQ_GOV_CONSERVATIVE=3Dy
->> +CONFIG_CPUFREQ_DT=3Dy
->> +# CONFIG_ARM_OMAP2PLUS_CPUFREQ is not set
->>   CONFIG_CPU_IDLE=3Dy
->>   CONFIG_CPU_IDLE_GOV_LADDER=3Dy
->> +CONFIG_BINFMT_MISC=3Dy
->>   CONFIG_PM_DEBUG=3Dy
->>   CONFIG_OPROFILE=3Dy
->>   CONFIG_KPROBES=3Dy
->> @@ -48,6 +95,8 @@ CONFIG_UNIX=3Dy
->>   CONFIG_XFRM_USER=3Dm
->>   CONFIG_XFRM_SUB_POLICY=3Dy
->>   CONFIG_NET_KEY=3Dm
->> +CONFIG_XFRM_USER=3Dy
->> +CONFIG_NET_KEY=3Dy
->>   CONFIG_NET_KEY_MIGRATE=3Dy
->>   CONFIG_INET=3Dy
->>   CONFIG_IP_MULTICAST=3Dy
->> @@ -74,6 +123,7 @@ CONFIG_INET6_AH=3Dy
->>   CONFIG_INET6_ESP=3Dy
->>   CONFIG_INET6_IPCOMP=3Dm
->>   CONFIG_IPV6_TUNNEL=3Dm
->> +# CONFIG_INET_LRO is not set
->>   CONFIG_NETFILTER=3Dy
->>   CONFIG_NF_CONNTRACK=3Dm
->>   CONFIG_NF_CONNTRACK_AMANDA=3Dm
->> @@ -196,40 +246,108 @@ CONFIG_NET_PKTGEN=3Dm
->>   CONFIG_CFG80211=3Dy
->>   CONFIG_MAC80211=3Dy
->>   CONFIG_RFKILL=3Dy
->> +CONFIG_PHONET=3Dm
->> +CONFIG_CAN=3Dm
->> +CONFIG_CAN_C_CAN=3Dm
->> +CONFIG_CAN_C_CAN_PLATFORM=3Dm
->> +CONFIG_BT=3Dm
->> +CONFIG_BT_RFCOMM=3Dm
->> +CONFIG_BT_RFCOMM_TTY=3Dy
->> +CONFIG_BT_BNEP=3Dm
->> +CONFIG_BT_BNEP_MC_FILTER=3Dy
->> +CONFIG_BT_BNEP_PROTO_FILTER=3Dy
->> +CONFIG_BT_HIDP=3Dm
->> +CONFIG_BT_HCIBTUSB=3Dm
->> +CONFIG_BT_HCIBTSDIO=3Dm
->> +CONFIG_BT_HCIUART=3Dm
->> +CONFIG_BT_HCIUART_H4=3Dy
->> +CONFIG_BT_HCIUART_BCSP=3Dy
->> +CONFIG_BT_HCIUART_LL=3Dy
->> +CONFIG_BT_HCIUART_3WIRE=3Dy
->> +CONFIG_BT_HCIBCM203X=3Dm
->> +CONFIG_BT_HCIBPA10X=3Dm
->> +CONFIG_CFG80211=3Dm
->> +CONFIG_BT_HCIBFUSB=3Dm
->> +CONFIG_BT_HCIVHCI=3Dm
->> +CONFIG_BT_MRVL=3Dm
->> +CONFIG_BT_MRVL_SDIO=3Dm
->> +CONFIG_AF_RXRPC=3Dm
->> +CONFIG_RXKAD=3Dm
->> +CONFIG_MAC80211=3Dm
->>   CONFIG_DEVTMPFS=3Dy
->>   CONFIG_DEVTMPFS_MOUNT=3Dy
->>   CONFIG_DMA_CMA=3Dy
->>   CONFIG_OMAP_OCP2SCP=3Dy
->> +CONFIG_CONNECTOR=3Dm
->>   CONFIG_MTD=3Dy
->>   CONFIG_MTD_CMDLINE_PARTS=3Dy
->>   CONFIG_MTD_BLOCK=3Dy
->>   CONFIG_MTD_OOPS=3Dy
->>   CONFIG_MTD_CFI=3Dy
->>   CONFIG_MTD_CFI_INTELEXT=3Dy
->> +CONFIG_MTD_PHYSMAP=3Dy
->> +CONFIG_MTD_PHYSMAP_OF=3Dy
->>   CONFIG_MTD_NAND=3Dy
->> +CONFIG_MTD_NAND_ECC_BCH=3Dy
->>   CONFIG_MTD_NAND_OMAP2=3Dy
->>   CONFIG_MTD_NAND_OMAP_BCH=3Dy
->> +CONFIG_MTD_ONENAND=3Dy
->> +CONFIG_MTD_ONENAND_VERIFY_WRITE=3Dy
->> +CONFIG_MTD_ONENAND_OMAP2=3Dy
->>   CONFIG_MTD_UBI=3Dy
->>   CONFIG_OF_OVERLAY=3Dy
->>   CONFIG_BLK_DEV_LOOP=3Dm
->>   CONFIG_BLK_DEV_CRYPTOLOOP=3Dm
->>   CONFIG_BLK_DEV_NBD=3Dm
->> +CONFIG_MTD_SPI_NOR=3Dm
->> +CONFIG_MTD_M25P80=3Dm
->> +CONFIG_BLK_DEV_LOOP=3Dy
->>   CONFIG_BLK_DEV_RAM=3Dy
->>   CONFIG_VIRTIO_BLK=3Dy
->>   CONFIG_EEPROM_93CX6=3Dy
->>   CONFIG_SCSI=3Dy
->>   # CONFIG_SCSI_MQ_DEFAULT is not set
->> +CONFIG_BLK_DEV_RAM_SIZE=3D16384
->> +CONFIG_SENSORS_TSL2550=3Dm
->> +CONFIG_BMP085_I2C=3Dm
->> +CONFIG_SRAM=3Dy
->> +CONFIG_SENSORS_LIS3_I2C=3Dm
->>   CONFIG_BLK_DEV_SD=3Dy
->>   CONFIG_SCSI_VIRTIO=3Dy
->> +CONFIG_SCSI_SCAN_ASYNC=3Dy
->> +CONFIG_ATA=3Dy
->> +CONFIG_SATA_AHCI_PLATFORM=3Dy
->>   CONFIG_NETDEVICES=3Dy
->>   CONFIG_BONDING=3Dm
->>   CONFIG_DUMMY=3Dm
->>   CONFIG_NETCONSOLE=3Dy
->>   CONFIG_TUN=3Dm
->>   CONFIG_VIRTIO_NET=3Dy
->> +# CONFIG_NET_VENDOR_ARC is not set
->> +# CONFIG_NET_CADENCE is not set
->> +# CONFIG_NET_VENDOR_BROADCOM is not set
->> +# CONFIG_NET_VENDOR_CIRRUS is not set
->> +CONFIG_DM9000=3Dy
->> +# CONFIG_NET_VENDOR_FARADAY is not set
->> +# CONFIG_NET_VENDOR_HISILICON is not set
->> +# CONFIG_NET_VENDOR_INTEL is not set
->> +# CONFIG_NET_VENDOR_MARVELL is not set
->> +CONFIG_KS8851=3Dy
->> +CONFIG_KS8851_MLL=3Dy
->> +# CONFIG_NET_VENDOR_MICROCHIP is not set
->> +# CONFIG_NET_VENDOR_NATSEMI is not set
->> +# CONFIG_NET_VENDOR_QUALCOMM is not set
->> +# CONFIG_NET_VENDOR_SAMSUNG is not set
->> +# CONFIG_NET_VENDOR_SEEQ is not set
->>   CONFIG_SMC91X=3Dy
->>   CONFIG_SMSC911X=3Dy
->> +# CONFIG_NET_VENDOR_STMICRO is not set
->> +CONFIG_TI_DAVINCI_EMAC=3Dy
->>   CONFIG_TI_CPSW=3Dy
->> +CONFIG_TI_CPTS=3Dy
->> +# CONFIG_NET_VENDOR_VIA is not set
->> +# CONFIG_NET_VENDOR_WIZNET is not set
->> +CONFIG_AT803X_PHY=3Dy
->>   CONFIG_SMSC_PHY=3Dy
->>   CONFIG_PPP=3Dm
->>   CONFIG_PPP_BSDCOMP=3Dm
->> @@ -257,16 +375,49 @@ CONFIG_USB_NET_MCS7830=3Dm
->>   CONFIG_USB_NET_RNDIS_HOST=3Dm
->>   CONFIG_USB_ALI_M5632=3Dy
->>   CONFIG_USB_AN2720=3Dy
->> +CONFIG_USB_EPSON2888=3Dy
->> +CONFIG_USB_EHCI_HCD=3Dm
->> +CONFIG_USB_OHCI_HCD=3Dm
->>   CONFIG_USB_KC2190=3Dy
->>   CONFIG_INPUT_FF_MEMLESS=3Dy
->>   CONFIG_INPUT_EVDEV=3Dy
->>   CONFIG_KEYBOARD_GPIO=3Dy
->> +CONFIG_USB_CDC_PHONET=3Dm
->> +CONFIG_LIBERTAS=3Dm
->> +CONFIG_LIBERTAS_USB=3Dm
->> +CONFIG_LIBERTAS_SDIO=3Dm
->> +CONFIG_LIBERTAS_DEBUG=3Dy
->> +CONFIG_WL_TI=3Dy
->> +CONFIG_WL12XX=3Dm
->> +CONFIG_WL18XX=3Dm
->> +CONFIG_WLCORE_SPI=3Dm
->> +CONFIG_WLCORE_SDIO=3Dm
->> +CONFIG_MWIFIEX=3Dm
->> +CONFIG_MWIFIEX_SDIO=3Dm
->> +CONFIG_MWIFIEX_USB=3Dm
->> +CONFIG_INPUT_JOYDEV=3Dm
->> +CONFIG_INPUT_EVDEV=3Dm
->> +CONFIG_KEYBOARD_ATKBD=3Dm
->> +CONFIG_KEYBOARD_GPIO=3Dm
->>   CONFIG_KEYBOARD_MATRIX=3Dm
->>   CONFIG_KEYBOARD_TWL4030=3Dy
->> +CONFIG_KEYBOARD_OMAP4=3Dm
->> +CONFIG_KEYBOARD_TWL4030=3Dm
->> +# CONFIG_INPUT_MOUSE is not set
->>   CONFIG_INPUT_TOUCHSCREEN=3Dy
->>   CONFIG_TOUCHSCREEN_ADS7846=3Dy
->> +CONFIG_TOUCHSCREEN_ADS7846=3Dm
->> +CONFIG_TOUCHSCREEN_EDT_FT5X06=3Dm
->> +CONFIG_TOUCHSCREEN_PIXCIR=3Dm
->> +CONFIG_TOUCHSCREEN_TSC2005=3Dm
->> +CONFIG_TOUCHSCREEN_TSC2007=3Dm
->> +CONFIG_TOUCHSCREEN_TI_AM335X_TSC=3Dm
->>   CONFIG_INPUT_MISC=3Dy
->>   CONFIG_INPUT_TWL4030_PWRBUTTON=3Dy
->> +CONFIG_INPUT_TPS65218_PWRBUTTON=3Dm
->> +CONFIG_INPUT_TWL4030_PWRBUTTON=3Dm
->> +CONFIG_INPUT_PALMAS_PWRBUTTON=3Dm
->> +CONFIG_SERIO=3Dm
->>   # CONFIG_LEGACY_PTYS is not set
->>   CONFIG_SERIAL_8250=3Dy
->>   CONFIG_SERIAL_8250_CONSOLE=3Dy
->> @@ -276,30 +427,79 @@ CONFIG_SERIAL_AMBA_PL011_CONSOLE=3Dy
->>   CONFIG_VIRTIO_CONSOLE=3Dy
->>   CONFIG_HW_RANDOM=3Dy
->>   CONFIG_HW_RANDOM_VIRTIO=3Dy
->> +CONFIG_SERIAL_8250_NR_UARTS=3D32
->> +CONFIG_SERIAL_8250_RUNTIME_UARTS=3D6
->> +CONFIG_SERIAL_8250_EXTENDED=3Dy
->> +CONFIG_SERIAL_8250_MANY_PORTS=3Dy
->> +CONFIG_SERIAL_8250_SHARE_IRQ=3Dy
->> +CONFIG_SERIAL_8250_DETECT_IRQ=3Dy
->> +CONFIG_SERIAL_8250_RSA=3Dy
->> +CONFIG_SERIAL_OF_PLATFORM=3Dy
->> +CONFIG_SERIAL_OMAP=3Dy
->> +CONFIG_SERIAL_OMAP_CONSOLE=3Dy
->>   CONFIG_I2C_CHARDEV=3Dy
->>   CONFIG_SPI=3Dy
->>   CONFIG_SPI_OMAP24XX=3Dy
->>   CONFIG_SPI_PL022=3Dy
->> +CONFIG_SPI_TI_QSPI=3Dm
->> +CONFIG_HSI=3Dm
->> +CONFIG_OMAP_SSI=3Dm
->> +CONFIG_NOKIA_MODEM=3Dm
->> +CONFIG_SSI_PROTOCOL=3Dm
->>   CONFIG_PINCTRL_SINGLE=3Dy
->> +CONFIG_DEBUG_GPIO=3Dy
->>   CONFIG_GPIO_SYSFS=3Dy
->> +CONFIG_GPIO_PCA953X=3Dm
->>   CONFIG_GPIO_PCF857X=3Dy
->>   CONFIG_GPIO_TWL4030=3Dy
->>   CONFIG_POWER_SUPPLY=3Dy
->> +CONFIG_GPIO_PALMAS=3Dy
->> +CONFIG_W1=3Dm
->> +CONFIG_HDQ_MASTER_OMAP=3Dm
->> +CONFIG_BATTERY_BQ27XXX=3Dm
->> +CONFIG_CHARGER_ISP1704=3Dm
->> +CONFIG_CHARGER_TWL4030=3Dm
->> +CONFIG_CHARGER_BQ2415X=3Dm
->> +CONFIG_CHARGER_BQ24190=3Dm
->> +CONFIG_CHARGER_BQ24735=3Dm
->> +CONFIG_POWER_RESET=3Dy
->> +CONFIG_POWER_AVS=3Dy
->> +CONFIG_HWMON=3Dm
->> +CONFIG_SENSORS_GPIO_FAN=3Dm
->> +CONFIG_SENSORS_LM75=3Dm
->> +CONFIG_SENSORS_TMP102=3Dm
->> +CONFIG_THERMAL=3Dm
->> +CONFIG_THERMAL_GOV_FAIR_SHARE=3Dy
->> +CONFIG_THERMAL_GOV_USER_SPACE=3Dy
->> +CONFIG_CPU_THERMAL=3Dy
->> +CONFIG_TI_SOC_THERMAL=3Dm
->> +CONFIG_TI_THERMAL=3Dy
->> +CONFIG_OMAP4_THERMAL=3Dy
->> +CONFIG_OMAP5_THERMAL=3Dy
->> +CONFIG_DRA752_THERMAL=3Dy
->>   CONFIG_WATCHDOG=3Dy
->>   CONFIG_WATCHDOG_NOWAYOUT=3Dy
->>   CONFIG_SOFT_WATCHDOG=3Dm
->>   CONFIG_ARM_SP805_WATCHDOG=3Dy
->>   CONFIG_OMAP_WATCHDOG=3Dy
->>   CONFIG_TWL4030_WATCHDOG=3Dy
->> +CONFIG_OMAP_WATCHDOG=3Dm
->> +CONFIG_TWL4030_WATCHDOG=3Dm
->>   CONFIG_MFD_PALMAS=3Dy
->>   CONFIG_MFD_TPS65217=3Dy
->> +CONFIG_MFD_TPS65218=3Dy
->>   CONFIG_MFD_TPS65910=3Dy
->>   CONFIG_MFD_TWL4030_AUDIO=3Dy
->> +CONFIG_MFD_TI_AM335X_TSCADC=3Dm
->>   CONFIG_TWL6040_CORE=3Dy
->>   CONFIG_REGULATOR_PALMAS=3Dy
->> +CONFIG_REGULATOR_PBIAS=3Dy
->> +CONFIG_REGULATOR_TI_ABB=3Dy
->> +CONFIG_REGULATOR_TPS62360=3Dm
->>   CONFIG_REGULATOR_TPS65023=3Dy
->>   CONFIG_REGULATOR_TPS6507X=3Dy
->>   CONFIG_REGULATOR_TPS65217=3Dy
->> +CONFIG_REGULATOR_TPS65218=3Dy
->>   CONFIG_REGULATOR_TPS65910=3Dy
->>   CONFIG_REGULATOR_TWL4030=3Dy
->>   CONFIG_DRM=3Dy
->> @@ -308,15 +508,55 @@ CONFIG_DRM_OMAP=3Dy
->>   CONFIG_OMAP2_DSS_DSI=3Dy
->>   CONFIG_DRM_TILCDC=3Dy
->>   CONFIG_DRM_VIRTIO_GPU=3Dy
->> +CONFIG_FB=3Dy
->> +CONFIG_FIRMWARE_EDID=3Dy
->>   CONFIG_FB_MODE_HELPERS=3Dy
->>   CONFIG_FB_TILEBLITTING=3Dy
->> +CONFIG_OMAP2_DSS=3Dm
->> +CONFIG_OMAP5_DSS_HDMI=3Dy
->> +CONFIG_OMAP2_DSS_SDI=3Dy
->> +CONFIG_OMAP2_DSS_DSI=3Dy
->> +CONFIG_FB_OMAP2=3Dm
->> +CONFIG_DISPLAY_ENCODER_TFP410=3Dm
->> +CONFIG_DISPLAY_ENCODER_TPD12S015=3Dm
->> +CONFIG_DISPLAY_CONNECTOR_DVI=3Dm
->> +CONFIG_DISPLAY_CONNECTOR_HDMI=3Dm
->> +CONFIG_DISPLAY_CONNECTOR_ANALOG_TV=3Dm
->> +CONFIG_DISPLAY_PANEL_DPI=3Dm
->> +CONFIG_DISPLAY_PANEL_DSI_CM=3Dm
->> +CONFIG_DISPLAY_PANEL_SONY_ACX565AKM=3Dm
->> +CONFIG_DISPLAY_PANEL_LGPHILIPS_LB035Q02=3Dm
->> +CONFIG_DISPLAY_PANEL_SHARP_LS037V7DW01=3Dm
->> +CONFIG_DISPLAY_PANEL_TPO_TD028TTEC1=3Dm
->> +CONFIG_DISPLAY_PANEL_TPO_TD043MTEA1=3Dm
->> +CONFIG_DISPLAY_PANEL_NEC_NL8048HL11=3Dm
->> +CONFIG_BACKLIGHT_LCD_SUPPORT=3Dy
->>   CONFIG_LCD_CLASS_DEVICE=3Dy
->>   CONFIG_LCD_PLATFORM=3Dy
->> +CONFIG_BACKLIGHT_CLASS_DEVICE=3Dy
->> +CONFIG_BACKLIGHT_GENERIC=3Dm
->> +CONFIG_BACKLIGHT_PWM=3Dm
->> +CONFIG_BACKLIGHT_PANDORA=3Dm
->> +CONFIG_BACKLIGHT_GPIO=3Dm
->> +CONFIG_FRAMEBUFFER_CONSOLE=3Dy
->> +CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY=3Dy
->>   CONFIG_FRAMEBUFFER_CONSOLE_ROTATION=3Dy
->>   CONFIG_LOGO=3Dy
->>   CONFIG_SOUND=3Dm
->>   CONFIG_SND=3Dm
->> +CONFIG_SND_MIXER_OSS=3Dm
->> +CONFIG_SND_PCM_OSS=3Dm
->> +CONFIG_SND_VERBOSE_PRINTK=3Dy
->> +CONFIG_SND_DEBUG=3Dy
->> +CONFIG_SND_USB_AUDIO=3Dm
->>   CONFIG_SND_SOC=3Dm
->> +CONFIG_SND_EDMA_SOC=3Dm
->> +CONFIG_SND_AM33XX_SOC_EVM=3Dm
->> +CONFIG_SND_DAVINCI_SOC_MCASP=3Dm
->> +CONFIG_SND_OMAP_SOC=3Dm
->> +CONFIG_SND_OMAP_SOC_OMAP_TWL4030=3Dm
->> +CONFIG_SND_OMAP_SOC_OMAP_ABE_TWL6040=3Dm
->> +CONFIG_SND_OMAP_SOC_OMAP3_PANDORA=3Dm
->>   CONFIG_SND_SIMPLE_CARD=3Dm
->>   CONFIG_USB=3Dy
->>   CONFIG_USB_EHCI_HCD=3Dy
->> @@ -324,22 +564,79 @@ CONFIG_USB_STORAGE=3Dy
->>   CONFIG_USB_MUSB_HDRC=3Dy
->>   CONFIG_USB_MUSB_OMAP2PLUS=3Dy
->>   CONFIG_USB_MUSB_DSPS=3Dy
->> +CONFIG_SND_SOC_TLV320AIC3X=3Dm
->> +CONFIG_HID_GENERIC=3Dm
->> +CONFIG_USB_HIDDEV=3Dy
->> +CONFIG_USB_KBD=3Dm
->> +CONFIG_USB_MOUSE=3Dm
->> +CONFIG_USB=3Dm
->> +CONFIG_USB_ANNOUNCE_NEW_DEVICES=3Dy
->> +CONFIG_USB_MON=3Dm
->> +CONFIG_USB_XHCI_HCD=3Dm
->> +CONFIG_USB_WDM=3Dm
->> +CONFIG_USB_STORAGE=3Dm
->> +CONFIG_USB_MUSB_HDRC=3Dm
->> +CONFIG_USB_MUSB_OMAP2PLUS=3Dm
->> +CONFIG_USB_MUSB_AM35X=3Dm
->> +CONFIG_USB_MUSB_DSPS=3Dm
->> +CONFIG_USB_INVENTRA_DMA=3Dy
->>   CONFIG_USB_TI_CPPI41_DMA=3Dy
->>   CONFIG_NOP_USB_XCEIV=3Dy
->> +CONFIG_USB_DWC3=3Dm
->> +CONFIG_USB_TEST=3Dm
->>   CONFIG_AM335X_PHY_USB=3Dy
->>   CONFIG_USB_GADGET=3Dy
->>   CONFIG_USB_G_NCM=3Dm
->>   CONFIG_USB_MASS_STORAGE=3Dm
->> +CONFIG_USB_GADGET=3Dm
->> +CONFIG_USB_GADGET_DEBUG=3Dy
->> +CONFIG_USB_GADGET_DEBUG_FILES=3Dy
->> +CONFIG_USB_GADGET_DEBUG_FS=3Dy
->> +CONFIG_USB_CONFIGFS=3Dm
->> +CONFIG_USB_CONFIGFS_SERIAL=3Dy
->> +CONFIG_USB_CONFIGFS_ACM=3Dy
->> +CONFIG_USB_CONFIGFS_OBEX=3Dy
->> +CONFIG_USB_CONFIGFS_NCM=3Dy
->> +CONFIG_USB_CONFIGFS_ECM=3Dy
->> +CONFIG_USB_CONFIGFS_ECM_SUBSET=3Dy
->> +CONFIG_USB_CONFIGFS_RNDIS=3Dy
->> +CONFIG_USB_CONFIGFS_EEM=3Dy
->> +CONFIG_USB_CONFIGFS_PHONET=3Dy
->> +CONFIG_USB_CONFIGFS_MASS_STORAGE=3Dy
->> +CONFIG_USB_CONFIGFS_F_LB_SS=3Dy
->> +CONFIG_USB_CONFIGFS_F_FS=3Dy
->> +CONFIG_USB_CONFIGFS_F_UAC1=3Dy
->> +CONFIG_USB_CONFIGFS_F_UAC2=3Dy
->> +CONFIG_USB_CONFIGFS_F_MIDI=3Dy
->> +CONFIG_USB_CONFIGFS_F_HID=3Dy
->> +CONFIG_USB_ZERO=3Dm
->> +CONFIG_USB_G_NOKIA=3Dm
->>   CONFIG_MMC=3Dy
->>   CONFIG_SDIO_UART=3Dy
->>   CONFIG_MMC_OMAP=3Dy
->>   CONFIG_MMC_OMAP_HS=3Dy
->>   CONFIG_NEW_LEDS=3Dy
->> +CONFIG_LEDS_CLASS=3Dm
->> +CONFIG_LEDS_GPIO=3Dm
->> +CONFIG_LEDS_PWM=3Dm
->> +CONFIG_LEDS_TRIGGERS=3Dy
->> +CONFIG_LEDS_TRIGGER_TIMER=3Dm
->> +CONFIG_LEDS_TRIGGER_ONESHOT=3Dm
->> +CONFIG_LEDS_TRIGGER_HEARTBEAT=3Dm
->> +CONFIG_LEDS_TRIGGER_BACKLIGHT=3Dm
->> +CONFIG_LEDS_TRIGGER_CPU=3Dy
->> +CONFIG_LEDS_TRIGGER_GPIO=3Dm
->> +CONFIG_LEDS_TRIGGER_DEFAULT_ON=3Dm
->>   CONFIG_RTC_CLASS=3Dy
->>   CONFIG_RTC_DRV_TWL4030=3Dy
->>   CONFIG_RTC_DRV_PALMAS=3Dy
->>   CONFIG_RTC_DRV_OMAP=3Dy
->>   CONFIG_RTC_DRV_PL031=3Dy
->> +CONFIG_RTC_DRV_DS1307=3Dm
->> +CONFIG_RTC_DRV_PALMAS=3Dm
->> +CONFIG_RTC_DRV_TWL92330=3Dy
->> +CONFIG_RTC_DRV_TWL4030=3Dm
->> +CONFIG_RTC_DRV_OMAP=3Dm
->>   CONFIG_DMADEVICES=3Dy
->>   CONFIG_PL330_DMA=3Dy
->>   CONFIG_VIRTIO_BALLOON=3Dy
->> @@ -348,6 +645,27 @@ CONFIG_VIRTIO_MMIO=3Dy
->>   CONFIG_ARM_TIMER_SP804=3Dy
->>   CONFIG_EXTCON_PALMAS=3Dy
->>   CONFIG_OMAP_USB2=3Dy
->> +CONFIG_TI_EDMA=3Dy
->> +CONFIG_DMA_OMAP=3Dy
->> +# CONFIG_IOMMU_SUPPORT is not set
->> +CONFIG_EXTCON=3Dm
->> +CONFIG_EXTCON_USB_GPIO=3Dm
->> +CONFIG_EXTCON_PALMAS=3Dm
->> +CONFIG_TI_EMIF=3Dm
->> +CONFIG_IIO=3Dm
->> +CONFIG_TI_AM335X_ADC=3Dm
->> +CONFIG_PWM=3Dy
->> +CONFIG_PWM_TIECAP=3Dm
->> +CONFIG_PWM_TIEHRPWM=3Dm
->> +CONFIG_PWM_TWL=3Dm
->> +CONFIG_PWM_TWL_LED=3Dm
->> +CONFIG_PHY_DM816X_USB=3Dm
->> +CONFIG_OMAP_USB2=3Dm
->> +CONFIG_TI_PIPE3=3Dy
->> +CONFIG_TWL4030_USB=3Dm
->> +CONFIG_EXT2_FS=3Dy
->> +CONFIG_EXT3_FS=3Dy
->> +# CONFIG_EXT3_FS_XATTR is not set
->>   CONFIG_EXT4_FS=3Dy
->>   CONFIG_EXT4_FS_POSIX_ACL=3Dy
->>   CONFIG_EXT4_FS_SECURITY=3Dy
->> @@ -355,12 +673,20 @@ CONFIG_EXT4_ENCRYPTION=3Dy
->>   CONFIG_AUTOFS4_FS=3Dy
->>   CONFIG_FUSE_FS=3Dm
->>   CONFIG_CUSE=3Dm
->> +CONFIG_FANOTIFY=3Dy
->> +CONFIG_QUOTA=3Dy
->> +CONFIG_QFMT_V2=3Dy
->> +CONFIG_AUTOFS4_FS=3Dm
->>   CONFIG_MSDOS_FS=3Dy
->>   CONFIG_VFAT_FS=3Dy
->>   CONFIG_TMPFS=3Dy
->>   CONFIG_TMPFS_POSIX_ACL=3Dy
->>   CONFIG_ROMFS_FS=3Dm
->> +CONFIG_CONFIGFS_FS=3Dy
->> +CONFIG_UBIFS_FS=3Dy
->> +CONFIG_CRAMFS=3Dy
->>   CONFIG_NFS_FS=3Dy
->> +CONFIG_NFS_V3_ACL=3Dy
->>   CONFIG_NFS_V4=3Dy
->>   CONFIG_ROOT_NFS=3Dy
->>   CONFIG_CIFS=3Dm
->> @@ -405,6 +731,13 @@ CONFIG_NLS_KOI8_R=3Dm
->>   CONFIG_NLS_KOI8_U=3Dm
->>   CONFIG_NLS_UTF8=3Dm
->>   CONFIG_ENCRYPTED_KEYS=3Dy
->> +CONFIG_PRINTK_TIME=3Dy
->> +CONFIG_DEBUG_INFO=3Dy
->> +CONFIG_MAGIC_SYSRQ=3Dy
->> +CONFIG_SCHEDSTATS=3Dy
->> +CONFIG_TIMER_STATS=3Dy
->> +CONFIG_PROVE_LOCKING=3Dy
->> +# CONFIG_DEBUG_BUGVERBOSE is not set
->>   CONFIG_SECURITY=3Dy
->>   CONFIG_CRYPTO_TEST=3Dm
->>   CONFIG_CRYPTO_XCBC=3Dm
->> @@ -419,6 +752,12 @@ CONFIG_CRYPTO_KHAZAD=3Dm
->>   CONFIG_CRYPTO_SERPENT=3Dm
->>   CONFIG_CRYPTO_TEA=3Dm
->>   CONFIG_CRYPTO_TWOFISH=3Dm
->> +CONFIG_CRYPTO_MICHAEL_MIC=3Dy
->> +# CONFIG_CRYPTO_ANSI_CPRNG is not set
->> +CONFIG_CRC_CCITT=3Dy
->> +CONFIG_CRC_T10DIF=3Dy
->> +CONFIG_CRC_ITU_T=3Dy
->> +CONFIG_CRC7=3Dy
->>   CONFIG_LIBCRC32C=3Dy
->>   CONFIG_FONTS=3Dy
->>   CONFIG_FONT_8x8=3Dy
->> --
->> 2.20.1
->=20
->=20
->=20
->=20
-
---=20
-Quirin Gylstorff
-
-Siemens AG
-Corporate Technology
-Research in Digitalization and Automation
-Smart Embedded Systems
-CT RDA IOT SES-DE
-Otto-Hahn-Ring 6
-81739 Muenchen, Germany
-Mobile: +49 173 3746683
-mailto:quirin.gylstorff@siemens.com
-www.siemens.com/ingenuityforlife
-
-Siemens Aktiengesellschaft: Chairman of the Supervisory Board: Jim=20
-Hagemann Snabe; Managing Board: Joe Kaeser, Chairman, President and=20
-Chief Executive Officer; Roland Busch, Lisa Davis, Klaus Helmrich,=20
-Cedrik Neike, Michael Sen, Ralf P. Thomas; Registered offices: Berlin=20
-and Munich, Germany; Commercial registries: Berlin Charlottenburg, HRB=20
-12300, Munich, HRB 6684; WEEE-Reg.-No. DE 23691322
-
-Important notice: This e-mail and any attachment thereof contain=20
-corporate proprietary information. If you have received it by mistake,=20
-please notify us immediately by reply e-mail and delete this e-mail and=20
-its attachments from your system. Thank you.
-
---PvOGaZzMjPHgyDGEKjih
+--ZW1CSP2hflFhQewn2lYf
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -717,12 +189,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#5168): https://lists.cip-project.org/g/cip-dev/message=
-/5168
-Mute This Topic: https://lists.cip-project.org/mt/76240452/4520388
+View/Reply Online (#5169): https://lists.cip-project.org/g/cip-dev/message=
+/5169
+Mute This Topic: https://lists.cip-project.org/mt/76326081/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---PvOGaZzMjPHgyDGEKjih--
+--ZW1CSP2hflFhQewn2lYf--
