@@ -1,361 +1,116 @@
-Return-Path: <SRS0=BJHA=B7=lists.cip-project.org=bounce+64572+5175+4520388+8129055@kernel.org>
+Return-Path: <SRS0=QR5O=B7=lists.cip-project.org=bounce+64572+5182+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	MIME_HEADER_CTYPE_ONLY,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	T_TVD_MIME_NO_HEADERS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F33C433E1
-	for <cip-dev@archiver.kernel.org>; Fri, 21 Aug 2020 09:56:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03C66C433E3
+	for <cip-dev@archiver.kernel.org>; Fri, 21 Aug 2020 10:58:34 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 35EA4207DE
-	for <cip-dev@archiver.kernel.org>; Fri, 21 Aug 2020 09:56:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 5B3452072D
+	for <cip-dev@archiver.kernel.org>; Fri, 21 Aug 2020 10:58:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="c0NNLvzT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35EA4207DE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=siemens.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5175+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id A0r6YY4521723xO3kFLS0tPl; Fri, 21 Aug 2020 02:56:07 -0700
-X-Received: from david.siemens.de (david.siemens.de [192.35.17.14])
- by mx.groups.io with SMTP id smtpd.web10.131308.1598003765596000008
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="XF2DO6jJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B3452072D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5182+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id n4vLYY4521723x2Ej5ipBCNi; Fri, 21 Aug 2020 03:58:32 -0700
+X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [])
+ by mx.groups.io with SMTP id smtpd.web10.131155.1598003026037330255
  for <cip-dev@lists.cip-project.org>;
- Fri, 21 Aug 2020 02:56:06 -0700
-X-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-	by david.siemens.de (8.15.2/8.15.2) with ESMTPS id 07L9u3hA003068
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-	for <cip-dev@lists.cip-project.org>; Fri, 21 Aug 2020 11:56:03 +0200
-X-Received: from md2dvrtc.fritz.box ([167.87.58.237])
-	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 07L9u0Qv003248;
-	Fri, 21 Aug 2020 11:56:03 +0200
-From: "Quirin Gylstorff" <quirin.gylstorff@siemens.com>
-To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
-Cc: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-Subject: [cip-dev][isar-cip-core][PATCH v4 6/6] doc: Add README for secureboot
-Date: Fri, 21 Aug 2020 11:55:59 +0200
-Message-Id: <20200821095559.28467-7-Quirin.Gylstorff@siemens.com>
-In-Reply-To: <20200821095559.28467-1-Quirin.Gylstorff@siemens.com>
-References: <20200821095559.28467-1-Quirin.Gylstorff@siemens.com>
-MIME-Version: 1.0
-X-MIME-Autoconverted: from 8bit to quoted-printable by david.siemens.de id 07L9u3hA003068
+ Fri, 21 Aug 2020 02:43:47 -0700
+X-IronPort-AV: E=Sophos;i="5.76,335,1592838000"; 
+   d="scan'208";a="55170330"
+X-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 21 Aug 2020 18:43:47 +0900
+X-Received: from localhost.localdomain (unknown [172.29.52.2])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id DDFE44232061;
+	Fri, 21 Aug 2020 18:43:45 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Pavel Machek <pavel@denx.de>
+Cc: Chris Paterson <chris.paterson2@renesas.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [cip-dev] [PATCH 17/36] pinctrl: sh-pfc: r8a77965: Fix DU_DOTCLKIN3 drive/bias control
+Date: Fri, 21 Aug 2020 10:42:53 +0100
+Message-Id: <20200821094312.3249-18-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20200821094312.3249-1-biju.das.jz@bp.renesas.com>
+References: <20200821094312.3249-1-biju.das.jz@bp.renesas.com>
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: be5WXFvCm5FJEtG3HJxtkfUqx4520388AA=
-Content-Type: multipart/mixed; boundary="4UZFwG9HSeSDfZbOLBoS"
+X-Gm-Message-State: uUoUrK8hBCeAwoU2aZZ6DWSvx4520388AA=
+Content-Type: multipart/mixed; boundary="EZjOQZF3pg5EoWW61Tue"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1598003767;
- bh=y9vZQkJvaqtdrWqS1WsMiXl7oX2Jgiaycf24dJQFUKU=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1598007512;
+ bh=VVtoQshdbtzqTr8dcJtz7B7GgY4YgamcjWMxzVSL/vY=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=c0NNLvzT9bif7Jf7ob9thGOmHeu4WkpxO3G/mMGDrea2MyS59QUSXBHFMEsz6CQfzUr
- N3DXHLTRgX7WpZbxhq1e/N8VOAlN4ZVFh4kQEgyXUjPHR0XXuKal/5OJrOhRbiuNx02/m
- f1p0jcqPPhMzwFdsmLIKgOnvlFplpN+QOmc=
+ b=XF2DO6jJ/AImiNzIGlP2QdDlcK0ctNdyNkovI1uq6xKv3SbrskUPsYGcCMEHWyESlAv
+ Hh5XDaxMjDLWxxBwzEeLQvXhSAp67DqW+Qdvq2ue5cmi9AYgHp+aXR1W0uTciT7yPOlMW
+ TxuTU5S2jl153d35TwzWR3xaELKa8ZhYQuU=
 
---4UZFwG9HSeSDfZbOLBoS
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+--EZjOQZF3pg5EoWW61Tue
 
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+commit a34cd9dfd03fa9ec380405969f1d638bc63b8d63 upstream.
+
+R-Car Gen3 Hardware Manual Errata for Rev. 2.00 of October 24, 2019
+changed the configuration bits for drive and bias control for the
+DU_DOTCLKIN3 pin on R-Car M3-N, to match the same pin on R-Car H3.
+Update the driver to reflect this.
+
+After this, the handling of drive and bias control for the various
+DU_DOTCLKINx pins is consistent across all of the R-Car H3, M3-W,
+M3-W+, and M3-N SoCs.
+
+Fixes: 86c045c2e4201e94 ("pinctrl: sh-pfc: r8a77965: Replace DU_DOTCLKIN2 by DU_DOTCLKIN3")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20191113101653.28428-1-geert+renesas@glider.be
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- doc/README.secureboot.md | 229 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 229 insertions(+)
- create mode 100644 doc/README.secureboot.md
+ drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/doc/README.secureboot.md b/doc/README.secureboot.md
-new file mode 100644
-index 0000000..d79248b
---- /dev/null
-+++ b/doc/README.secureboot.md
-@@ -0,0 +1,229 @@
-+# Efibootguard Secure boot
-+
-+This document describes how to generate a secure boot capable image with
-+[efibootguard](https://github.com/siemens/efibootguard).
-+
-+## Description
-+
-+The image build signs the efibootguard bootloader (bootx64.efi) and gene=
-rates
-+a signed [unified kernel image](https://systemd.io/BOOT_LOADER_SPECIFICA=
-TION/).
-+A unified kernel image packs the kernel, initramfs and the kernel comman=
-d-line
-+in one binary object. As the kernel command-line is immutable after the =
-build
-+process, the previous selection of the root file system with a command-l=
-ine parameter is no longer
-+possible. Therefore the selection of the root file-system occurs now in =
-the initramfs.
-+
-+The image uses an A/B partition layout to update the root file system. T=
-he sample implementation to
-+select the root file system generates a uuid and stores the id in /etc/o=
-s-release and in the initramfs.
-+During boot the initramfs compares its own uuid with the uuid stored in =
-/etc/os-release of each rootfs.
-+If a match is found the rootfs is used for the boot.
-+
-+## Adaptation for Images
-+
-+###  WIC
-+The following elements must be present in a wks file to create a secure =
-boot capable image.
-+
-+```
-+part --source efibootguard-efi  --sourceparams "signwith=3D<script or ex=
-ecutable to sign the image>"
-+part --source efibootguard-boot --sourceparams "uefikernel=3D<name of th=
-e unified kernel>,signwith=3D<script or executable to sign the image>"
-+```
-+
-+#### Script or executable to sign the image
-+
-+The wic plugins for the [bootloader](./scripts/lib/wic/plugins/source/ef=
-ibootguard-efi.py)
-+and [boot partition](./scripts/lib/wic/plugins/source/efibootguard-boot.=
-py) require an
-+executable or script with the following interface:
-+```
-+<script_name> <inputfile> <outputfile>
-+```
-+- script name: name and path of the script added with
-+`--sourceparams "signwith=3D/usr/bin/sign_secure_image.sh"` to the wic i=
-mage
-+- inputfile: path and name of the file to be signed
-+- outputfile: path and name of the signed input
-+
-+Supply the script name and path to wic by adding
-+`signwith=3D<path and name of the script to sign>"` to sourceparams of t=
-he partition.
-+
-+
-+### Existing packages to sign an image
-+
-+#### ebg-secure-boot-snakeoil
-+
-+This package uses the snakeoil key and certificate from the ovmf package=
-(0.0~20200229-2)
-+backported from Debian bullseye and signs the image.
-+
-+#### ebg-secure-boot-secrets
-+This package takes a user-generated certificate and adds it to the build=
- system.
-+The following variable and steps are necessary to build a secure boot ca=
-pable image:
-+- Set certification information to sign and verify the image with:
-+    - SB_CERTDB: The directory containing the certificate database creat=
-e with certutil
-+    - SB_VERIFY_CERT: The certificate to verify the signing process
-+    - SB_KEY_NAME: Name of the key in the certificate database
-+- if necessary change the script to select the boot partition after an u=
-pdate
-+    - recipes-support/initramfs-config/files/initramfs.selectrootfs.scri=
-pt
-+
-+The files referred by SB_CERTDB and SB_VERIFY_CERT must be store in  `re=
-cipes-devtools/ebg-secure-boot-secrets/files/`
-+
-+## QEMU
-+
-+Set up a secure boot test environment with [QEMU](https://www.qemu.org/)
-+
-+### Prerequisites
-+
-+- OVMF from edk2 release edk2-stable201911 or newer
-+  - This documentation was tested under Debian 10 with OVMF (0.0~2020022=
-9-2) backported from Debian
-+  bullseye
-+- efitools for KeyTool.efi
-+  - This documentation was tested under Debian 10 with efitools (1.9.2-1=
-) backported from Debian bullseye
-+- libnss3-tools
-+
-+### Debian Snakeoil keys
-+
-+The build copies the  Debian Snakeoil keys to the directory `./build/tmp=
-/deploy/images/<machine>/OVMF. Y
-+u can use them as described in section [Start Image](### Start the image=
-).
-+
-+### Generate Keys
-+
-+#### Reuse exiting keys
-+
-+It is possible to use exiting keys like /usr/share/ovmf/PkKek-1-snakeoil=
-.pem' from Debian
-+by executing the script  `scripts/generate-sb-db-from-existing-certifica=
-te.sh`, e.g.:
-+```
-+export SB_NAME=3D<name for the secureboot config>
-+export SB_KEYDIR=3D<location to store the database>
-+export INKEY=3D<secret key of the certificate>
-+export INCERT=3D<certificate>
-+export INNICK=3D<name of the certificate in the database>
-+scripts/generate-sb-db-from-existing-certificate.sh
-+```
-+This will create the directory `SB_KEYDIR` and will store the `${SB_NAME=
-}certdb` with the given name.
-+
-+Copy the used certificate and database to `recipes-devtools/ebg-secure-b=
-oot-secrets/files/`
-+
-+#### Generate keys
-+
-+To generate the necessary keys and information to test secure-boot with =
-QEMU
-+execute the script `scripts/generate_secure_boot_keys.sh`
-+
-+##### Add Keys to OVMF
-+1. Create a folder and copy the generated keys and KeyTool.efi
-+(in Debian the file can be found at: /lib/efitools/x86_64-linux-gnu/KeyT=
-ool.efi) to the folder
-+```
-+mkdir secureboot-tools
-+cp -r keys secureboot-tools
-+cp /lib/efitools/x86_64-linux-gnu/KeyTool.efi secureboot-tools
-+```
-+2. Copy the file OVMF_VARS.fd (in Debian the file can be found at /usr/s=
-hare/OVMF/OVMF_VARS.fd)
-+to the current directory. OVMF_VARS.fd contains no keys can be instrumen=
-ted for secureboot.
-+3. Start QEMU with the script scripts/start-efishell.sh
-+```
-+scripts/start-efishell.sh secureboot-tools
-+```
-+4. Start the KeyTool.efi FS0:\KeyTool.efi and execute the the following =
-steps:
-+          -> "Edit Keys"
-+             -> "The Allowed Signatures Database (db)"
-+                -> "Add New Key"
-+                -> Change/Confirm device
-+                -> Select "DB.esl" file
-+             -> "The Key Exchange Key Database (KEK)"
-+                -> "Add New Key"
-+                -> Change/Confirm device
-+                -> Select "KEK.esl" file
-+             -> "The Platform Key (PK)
-+                -> "Replace Key(s)"
-+                -> Change/Confirm device
-+                -> Select "PK.auth" file
-+5. quit QEMU
-+
-+### Build image
-+
-+Build the image with a signed efibootguard and unified kernel image
-+with the snakeoil keys by executing:
-+```
-+kas-docker --isar build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg=
--swu.yml:kas/opt/ebg-secure-boot-snakeoil.yml
-+```
-+
-+For user-generated keys, create a new option file. This option file coul=
-d look like this:
-+```
-+header:
-+  version: 8
-+  includes:
-+   - opt/ebg-swu.yml
-+   - opt/ebg-secure-boot-initramfs.yml
-+
-+local_conf_header:
-+  secure-boot: |
-+    IMAGER_BUILD_DEPS +=3D "ebg-secure-boot-secrets"
-+    IMAGER_INSTALL +=3D "ebg-secure-boot-secrets"
-+  user-keys:
-+    SB_CERTDB =3D "democertdb"
-+    SB_VERIFY_CERT =3D "demo.crt"
-+    SB_KEY_NAME =3D "demo"
-+```
-+
-+Replace `demo` with the name of the user-generated certificates.
-+
-+### Start the image
-+
-+#### Debian snakeoil
-+
-+Start the image with the following command:
-+```
-+SECURE_BOOT=3Dy \
-+./start-qemu.sh amd64
-+```
-+
-+The default `OVMF_VARS.snakeoil.fd` boot to the EFI shell. To boot Linux=
- enter the following command:
-+```
-+FS0:\EFI\BOOT\bootx64.efi
-+```
-+To change the boot behavior, enter `exit` in the shell to enter the bios=
- and change the boot order.
-+
-+#### User-generated keys
-+Start the image with the following command:
-+```
-+SECURE_BOOT=3Dy \
-+OVMF_CODE=3D./build/tmp/deploy/images/qemu-amd64/OVMF/OVMF_CODE.secboot.=
-fd \
-+OVMF_VARS=3D<path to the modified OVMF_VARS.fd> \
-+./start-qemu.sh amd64
-+```
-+# Example: Update the image
-+
-+For updating the image, the following steps are necessary:
-+- [Build the image with snakeoil keys](### Build image)
-+- save the generated swu `build/tmp/deploy/images/qemu-amd64/cip-core-im=
-age-cip-core-buster-qemu-amd64.swu` to /tmp
-+- modify the image for example add a new version to the image by adding =
-`PV=3D2.0.0` to
-+  [cip-core-image.bb](recipes-core/images/cip-core-image.bb)
-+- start the new target and copy the swu `cip-core-image-cip-core-buster-=
-qemu-amd64.swu`
-+  to the running system, e.g.:
-+```
-+SECURE=3Dy ./start-qemu.sh amd64 -virtfs local,path=3D/tmp,mount_tag=3Dh=
-ost0,security_model=3Dpassthrough,id=3Dhost0
-+```
-+- mount `host0` on target with:
-+```
-+mount -t 9p -o trans=3Dvirtio,version=3D9p2000.L host0 /mnt
-+```
-+- check which partition is booted, e.g. with `lsblk`:
-+```
-+root@demo:/mnt# lsblk
-+NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-+sda      8:0    0    2G  0 disk
-+=E2=94=9C=E2=94=80sda1   8:1    0 16.4M  0 part
-+=E2=94=9C=E2=94=80sda2   8:2    0   32M  0 part
-+=E2=94=9C=E2=94=80sda3   8:3    0   32M  0 part
-+=E2=94=9C=E2=94=80sda4   8:4    0 1000M  0 part /
-+=E2=94=94=E2=94=80sda5   8:5    0 1000M  0 part
-+```
-+
-+- install with `swupdate -i /mnt/cip-core-image-cip-core-buster-qemu-amd=
-64.swu`
-+- reboot
-+- check which partition is booted, e.g. with `lsblk`. The rootfs should =
-have changed:
-+```
-+root@demo:~# lsblk
-+NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-+sda      8:0    0    2G  0 disk
-+=E2=94=9C=E2=94=80sda1   8:1    0 16.4M  0 part
-+=E2=94=9C=E2=94=80sda2   8:2    0   32M  0 part
-+=E2=94=9C=E2=94=80sda3   8:3    0   32M  0 part
-+=E2=94=9C=E2=94=80sda4   8:4    0 1000M  0 part
-+=E2=94=94=E2=94=80sda5   8:5    0 1000M  0 part /
-+```
---=20
-2.20.1
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
+index dc2c5082e317..816341230c08 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
+@@ -5998,7 +5998,7 @@ static const struct pinmux_drive_reg pinmux_drive_regs[] = {
+ 		{ PIN_DU_DOTCLKIN1,    0, 2 },	/* DU_DOTCLKIN1 */
+ 	} },
+ 	{ PINMUX_DRIVE_REG("DRVCTRL12", 0xe6060330) {
+-		{ PIN_DU_DOTCLKIN3,   28, 2 },	/* DU_DOTCLKIN3 */
++		{ PIN_DU_DOTCLKIN3,   24, 2 },	/* DU_DOTCLKIN3 */
+ 		{ PIN_FSCLKST,        20, 2 },	/* FSCLKST */
+ 		{ PIN_TMS,             4, 2 },	/* TMS */
+ 	} },
+@@ -6252,8 +6252,8 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
+ 		[31] = PIN_DU_DOTCLKIN1,	/* DU_DOTCLKIN1 */
+ 	} },
+ 	{ PINMUX_BIAS_REG("PUEN3", 0xe606040c, "PUD3", 0xe606044c) {
+-		[ 0] = PIN_DU_DOTCLKIN3,	/* DU_DOTCLKIN3 */
+-		[ 1] = SH_PFC_PIN_NONE,
++		[ 0] = SH_PFC_PIN_NONE,
++		[ 1] = PIN_DU_DOTCLKIN3,	/* DU_DOTCLKIN3 */
+ 		[ 2] = PIN_FSCLKST,		/* FSCLKST */
+ 		[ 3] = PIN_EXTALR,		/* EXTALR*/
+ 		[ 4] = PIN_TRST_N,		/* TRST# */
+-- 
+2.17.1
 
 
---4UZFwG9HSeSDfZbOLBoS
+--EZjOQZF3pg5EoWW61Tue
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -363,12 +118,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#5175): https://lists.cip-project.org/g/cip-dev/message=
-/5175
-Mute This Topic: https://lists.cip-project.org/mt/76326088/4520388
+View/Reply Online (#5182): https://lists.cip-project.org/g/cip-dev/message=
+/5182
+Mute This Topic: https://lists.cip-project.org/mt/76326721/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---4UZFwG9HSeSDfZbOLBoS--
+--EZjOQZF3pg5EoWW61Tue--
