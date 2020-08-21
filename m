@@ -1,192 +1,208 @@
-Return-Path: <SRS0=2YWL=B7=lists.cip-project.org=bounce+64572+5225+4520388+8129055@kernel.org>
+Return-Path: <SRS0=Vs9A=B7=lists.cip-project.org=bounce+64572+5226+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70CAFC433E1
-	for <cip-dev@archiver.kernel.org>; Fri, 21 Aug 2020 15:18:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 390FFC433DF
+	for <cip-dev@archiver.kernel.org>; Fri, 21 Aug 2020 16:44:47 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 180E020FC3
-	for <cip-dev@archiver.kernel.org>; Fri, 21 Aug 2020 15:18:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id BE6D02072D
+	for <cip-dev@archiver.kernel.org>; Fri, 21 Aug 2020 16:44:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="qd6lHYPR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 180E020FC3
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="cVXNmavy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE6D02072D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=siemens.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5225+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id IvFrYY4521723xcrfW5VI9pd; Fri, 21 Aug 2020 08:18:40 -0700
-X-Received: from gecko.sbs.de (gecko.sbs.de [194.138.37.40])
- by mx.groups.io with SMTP id smtpd.web11.136067.1598023119123671482
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5226+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id FvvhYY4521723xmBWDymtgHP; Fri, 21 Aug 2020 09:44:46 -0700
+X-Received: from david.siemens.de (david.siemens.de [192.35.17.14])
+ by mx.groups.io with SMTP id smtpd.web12.137213.1598028284661959850
  for <cip-dev@lists.cip-project.org>;
- Fri, 21 Aug 2020 08:18:40 -0700
+ Fri, 21 Aug 2020 09:44:45 -0700
 X-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-	by gecko.sbs.de (8.15.2/8.15.2) with ESMTPS id 07LFIbL1014477
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-	for <cip-dev@lists.cip-project.org>; Fri, 21 Aug 2020 17:18:37 +0200
+	by david.siemens.de (8.15.2/8.15.2) with ESMTPS id 07LGifjV003438
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 21 Aug 2020 18:44:42 +0200
 X-Received: from [139.22.122.86] ([139.22.122.86])
-	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 07LFIVDd027592;
-	Fri, 21 Aug 2020 17:18:31 +0200
-Subject: Re: [cip-dev][isar-cip-core][PATCH v4 0/6] secureboot with efibootguard
-To: "Q. Gylstorff" <Quirin.Gylstorff@siemens.com>,
-        cip-dev@lists.cip-project.org
-References: <20200821095559.28467-1-Quirin.Gylstorff@siemens.com>
+	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 07LGie7Y009103;
+	Fri, 21 Aug 2020 18:44:40 +0200
+Subject: Re: [cip-dev] [isar-cip-core][PATCH 1/2] ci: Rewrite using extends
 From: "Jan Kiszka" <jan.kiszka@siemens.com>
-Message-ID: <5636e8fc-839d-de07-1c17-30fce9efd905@siemens.com>
-Date: Fri, 21 Aug 2020 17:18:30 +0200
+To: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        cip-dev@lists.cip-project.org
+References: <20200820082434.1302460-1-nobuhiro1.iwamatsu@toshiba.co.jp>
+ <4f1fd7b8-4fc0-714b-8205-e6a6b93929d8@siemens.com>
+Message-ID: <997dba20-23b6-a170-6a89-b6a894b13e69@siemens.com>
+Date: Fri, 21 Aug 2020 18:44:39 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.11.0
 MIME-Version: 1.0
-In-Reply-To: <20200821095559.28467-1-Quirin.Gylstorff@siemens.com>
+In-Reply-To: <4f1fd7b8-4fc0-714b-8205-e6a6b93929d8@siemens.com>
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: XU9Luk7CxjqexEXC8Fn5klQbx4520388AA=
-Content-Type: multipart/mixed; boundary="GQ4sbcc7q1fkmGyzHPG6"
+X-Gm-Message-State: qxYPDlDrngJZFYyVDXoHV1WTx4520388AA=
+Content-Type: multipart/mixed; boundary="DiobEdrTgrdUDfJTe9ph"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1598023120;
- bh=VaZuofkV7RhGyDsx047q4Sp/OiiCGDWJnuw3UrrfB94=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1598028286;
+ bh=IcJBdxmBR0nxcWmQ/i54CZxFqql7UUIO0Yxd9Has3os=;
  h=Content-Type:Date:From:Reply-To:Subject:To;
- b=qd6lHYPRsXTrLzXgne2NB54b58vKauDWIfIZhA3K/o4dfjkwnFfJC2qvn5+SrSxKUqB
- wCpme0qtdMgKaPSrvIF2xqZVH20hL5Ur9RS5skf8RtoLbSYTCGHHzAX4B07EjbeHt4mWZ
- hcEXlG6bvibFJCKA6nt2YpWS0D57xzGnD5w=
+ b=cVXNmavy6x4YE7Mo4VaC1tDRBmDuuEpclfXbldws1yyBlbPwlgiH0w1f7QVh8FahCpP
+ fFXnt0XA0gDsQc98b0XY+Nrz/jrpN7UKm8YUxPcgVPEN7o2iUYa3/kT12cZYWVL14hmUF
+ K390pBOt1VppgqVvvBsfa+/H/F6GXU+yrbw=
 
---GQ4sbcc7q1fkmGyzHPG6
+--DiobEdrTgrdUDfJTe9ph
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 
-On 21.08.20 11:55, Q. Gylstorff wrote:
-> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+On 21.08.20 17:04, Jan Kiszka wrote:
+> On 20.08.20 10:24, Nobuhiro Iwamatsu wrote:
+>> Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+>> ---
+>>  .gitlab-ci.yml             | 70 +++++++++++++++++++++++++++++---------
+>>  scripts/deploy-cip-core.sh |  8 +++--
+>>  2 files changed, 60 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+>> index 3fe7af2..e23345f 100644
+>> --- a/.gitlab-ci.yml
+>> +++ b/.gitlab-ci.yml
+>> @@ -2,10 +2,17 @@ image: kasproject/kas-isar:1.1
+>>  
+>>  variables:
+>>    GIT_STRATEGY: clone
+>> +  release: buster
+>> +  extention: base
+>> +  use_rt: enable
+>> +  targz: enable
+>> +  dtb: none
+>>  
+>> -all:
+>> -  stage: build
+>> -  script:
+>> +stages:
+>> +  - build
+>> +
+>> +default:
+>> +  before_script:
+>>      - export http_proxy=$HTTP_PROXY
+>>      - export https_proxy=$HTTPS_PROXY
+>>      - export ftp_proxy=$FTP_PROXY
+>> @@ -13,20 +20,51 @@ all:
+>>      - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+>>      - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+>>  
+>> -    - kas build kas-cip.yml:kas/board/simatic-ipc227e.yml:kas/opt/rt.yml:kas/opt/targz-img.yml
+>> -    - scripts/deploy-cip-core.sh buster simatic-ipc227e
+>> -
+>> +.build_base:
+>> +  stage: build
+>> +  variables:
+>> +    base_yaml: "kas-cip.yml:kas/board/${target}.yml"
+>> +  script:
+>>      - sudo rm -rf build/tmp
+>> -    - kas build kas-cip.yml:kas/board/bbb.yml:kas/opt/rt.yml:kas/opt/targz-img.yml
+>> -    - scripts/deploy-cip-core.sh buster bbb am335x-boneblack.dtb
+>> +    - if [ "${use_rt}" = "enable" ]; then base_yaml="${base_yaml}:kas/opt/rt.yml"; fi;
+>> +    - if [ "${extention}" != "base" ]; then base_yaml="${base_yaml}:kas/opt/${extention}.yml"; fi;
+>> +    - if [ "${targz}" = "enable" ]; then base_yaml="${base_yaml}:kas/opt/targz-img.yml"; fi;
+>> +    - kas build ${base_yaml}
+>> +    - scripts/deploy-cip-core.sh ${release} ${target} ${extention} ${dtb}
+>>  
+>> -    - sudo rm -rf build/tmp
+>> -    - kas build kas-cip.yml:kas/board/iwg20m.yml:kas/opt/rt.yml:kas/opt/targz-img.yml
+>> -    - scripts/deploy-cip-core.sh buster iwg20m r8a7743-iwg20d-q7-dbcm-ca.dtb
+>> +# base image
+>> +build:simatic-ipc227e-base:
+>> +  extends:
+>> +    - .build_base
+>> +  variables:
+>> +    target: simatic-ipc227e
+>>  
+>> -    - sudo rm -rf build/tmp
+>> -    - kas build kas-cip.yml:kas/board/rzg2m.yml:kas/opt/rt.yml:kas/opt/targz-img.yml
+>> -    - scripts/deploy-cip-core.sh buster hihope-rzg2m renesas/r8a774a1-hihope-rzg2m-ex.dtb
+>> +build:bbb-base:
+>> +  extends:
+>> +    - .build_base
+>> +  variables:
+>> +    target: bbb
+>> +    dtb: am335x-boneblack.dtb
+>>  
+>> -    - sudo rm -rf build/tmp
+>> -    - kas build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/security.yml
+>> +build:iwg20m-base:
+>> +  extends:
+>> +    - .build_base
+>> +  variables:
+>> +    target: iwg20m
+>> +    dtb: r8a7743-iwg20d-q7-dbcm-ca.dtb
+>> +
+>> +build:hihope-rzg2m-base:
+>> +  extends:
+>> +    - .build_base
+>> +  variables:
+>> +    target: rzg2m
+>> +    dtb: renesas/r8a774a1-hihope-rzg2m-ex.dtb
+>> +
+>> +build:qemu-amd64-base:
+>> +  extends:
+>> +    - .build_base
+>> +  variables:
+>> +    target: qemu-amd64
+>> +    extention: security
+>> +    use_rt: disable
+>> +    targz: disable
+>> diff --git a/scripts/deploy-cip-core.sh b/scripts/deploy-cip-core.sh
+>> index 4c8d4c9..5b7eab9 100755
+>> --- a/scripts/deploy-cip-core.sh
+>> +++ b/scripts/deploy-cip-core.sh
+>> @@ -16,9 +16,13 @@ fi
+>>  
+>>  RELEASE=$1
+>>  TARGET=$2
+>> -DTB=$3
+>> +EXTENSION=$3
+>> +DTB=$4
+>>  
+>>  BASE_PATH=build/tmp/deploy/images/$TARGET/cip-core-image-cip-core-$RELEASE-$TARGET
+>> +if [ "${EXTENSION}" != "base" ] ; then
+>> +	BASE_PATH=build/tmp/deploy/images/$TARGET/cip-core-image-cip-core-$RELEASE-$TARGET-$EXTENSION
+>> +fi
+>>  
+>>  echo "Compressing cip-core-image-cip-core-$RELEASE-$TARGET.wic.img..."
+>>  xz -9 -k $BASE_PATH.wic.img
+>> @@ -38,6 +42,6 @@ fi
+>>  aws s3 cp --no-progress $KERNEL_IMAGE s3://download.cip-project.org/cip-core/$TARGET/
+>>  aws s3 cp --no-progress $BASE_PATH-initrd.img s3://download.cip-project.org/cip-core/$TARGET/
+>>  
+>> -if [ -n "$DTB" ]; then
+>> +if [ "$DTB" != "none" ]; then
+>>  	aws s3 cp --no-progress build/tmp/work/cip-core-*/linux-cip*/*/linux-cip-*/debian/linux-image-cip*/usr/lib/linux-image-*/$DTB s3://download.cip-project.org/cip-core/$TARGET/
+>>  fi
+>>
 > 
-> This patchset adds secureboot with efibootguard to cip-core.
+> Unfortunately, this scale out to multiple jobs seem to cause download
+> issues, see e.g.
 > 
-> The image build signs the efibootguard bootloader (bootx64.efi) and generates
-> a signed [unified kernel image](https://systemd.io/BOOT_LOADER_SPECIFICATION/).
-> A unified kernel image packs the kernel, initramfs and the kernel command-line
-> in one binary object. As the kernel command-line is immutable after the build
-> process, the previous selection of the root file system with a command-line parameter is no longer
-> possible. Therefore the selection of the root file-system occurs now in the initramfs.
+> - https://gitlab.com/cip-project/cip-core/isar-cip-core/-/jobs/697844276
+> - https://gitlab.com/cip-project/cip-core/isar-cip-core/-/jobs/696946649
 > 
-> The image uses an A/B partition layout to update the root file system. The sample implementation to
-> select the root file system generates a uuid and stores the id in /etc/os-release and in the initramfs.
-> During boot the initramfs compares its own uuid with the uuid stored in /etc/os-release of each rootfs.
-> If a match is found the rootfs is used for the boot.
-> 
-> Changes V2:
-> 
->  - rebase to [1]
->  - removed luahandler patch as it now part of [1]
->  - add handling for sw-description
-> 
-> Changes V3:
-> 
->  - rewrite the image id creation to ensure a new uuid is generated if a new package is
->   added or another change of the rootfs
->  - add readme section how to execute/test the software update mechnism
->  - adapt to version v3 of [1]
->  - update the patch
->  - add wks file for efibootguard and swupdate
-> 
-> [1]: a/b rootfsupdate with software update
-> 
-> Changes V4:
-> 
->  - rebase onto next 619edb509bd287277749580cbc842e57d5044756
->  - fix indent of ./start-qemu.sh
->  - whitespace fixes
->  - update libubootenv patch to v2
->  - update revision of cip-kernel-config to ca24d965adf77730caf1cd32bdfcffd69e369502
->    to boot secureboot with qemu
->  - swupdate swdescription for non-secure-boot images
-> 
-> Quirin Gylstorff (6):
->   linux-cip: Update revision of kernel config
->   isar-patch: Add initramfs-config patch
->   secure-boot: select boot partition in initramfs
->   secure-boot: Add secure boot with unified kernel image
->   secure-boot: Add Debian snakeoil keys for ease-of-use
->   doc: Add README for secureboot
-> 
->  classes/image_uuid.bbclass                    |  33 +++
->  conf/distro/debian-buster-backports.list      |   1 +
->  conf/distro/preferences.ovmf-snakeoil.conf    |   3 +
->  doc/README.secureboot.md                      | 229 ++++++++++++++++++
->  .../0001-u-boot-add-libubootenv.patch         | 161 ++++++------
->  ...-support-Generate-a-custom-initramfs.patch | 207 ++++++++++++++++
->  kas-cip.yml                                   |   3 +
->  kas/opt/ebg-secure-boot-base.yml              |  18 ++
->  kas/opt/ebg-secure-boot-snakeoil.yml          |  28 +++
->  kas/opt/ebg-swu.yml                           |   4 +-
->  recipes-core/images/cip-core-image.bb         |  12 +-
->  .../files/secure-boot/sw-description.tmpl     |  29 +++
->  recipes-core/images/files/sw-description.tmpl |  19 +-
->  recipes-core/images/secureboot.inc            |  21 ++
->  recipes-core/images/swupdate.inc              |  21 ++
->  .../ebg-secure-boot-secrets_0.1.bb            |  51 ++++
->  .../ebg-secure-boot-secrets/files/README.md   |   1 +
->  .../files/control.tmpl                        |  12 +
->  .../files/sign_secure_image.sh.tmpl           |  22 ++
->  .../ebg-secure-boot-snakeoil_0.1.bb           |  34 +++
->  .../files/control.tmpl                        |  12 +
->  .../files/sign_secure_image.sh                |  36 +++
->  .../ovmf-binaries/files/control.tmpl          |  11 +
->  .../ovmf-binaries/ovmf-binaries_0.1.bb        |  30 +++
->  recipes-kernel/linux/linux-cip-common.inc     |   2 +-
->  .../files/initramfs.image_uuid.hook           |  33 +++
->  .../files/initramfs.lsblk.hook                |  29 +++
->  .../initramfs-config/files/postinst.ext       |   3 +
->  .../files/secure-boot-debian-local-patch      |  79 ++++++
->  .../initramfs-abrootfs-secureboot_0.1.bb      |  38 +++
->  ...enerate-sb-db-from-existing-certificate.sh |  16 ++
->  scripts/generate_secure_boot_keys.sh          |  51 ++++
->  .../wic/plugins/source/efibootguard-boot.py   |  87 ++++++-
->  .../wic/plugins/source/efibootguard-efi.py    |  40 ++-
->  scripts/start-efishell.sh                     |  12 +
->  start-qemu.sh                                 |  59 +++--
->  wic/ebg-signed-bootloader.inc                 |   2 +
->  wic/qemu-amd64-efibootguard-secureboot.wks    |   9 +
->  wic/qemu-amd64-efibootguard.wks               |   1 -
->  39 files changed, 1330 insertions(+), 129 deletions(-)
->  create mode 100644 classes/image_uuid.bbclass
->  create mode 100644 conf/distro/debian-buster-backports.list
->  create mode 100644 conf/distro/preferences.ovmf-snakeoil.conf
->  create mode 100644 doc/README.secureboot.md
->  create mode 100644 isar-patches/v7-0001-meta-support-Generate-a-custom-initramfs.patch
->  create mode 100644 kas/opt/ebg-secure-boot-base.yml
->  create mode 100644 kas/opt/ebg-secure-boot-snakeoil.yml
->  create mode 100644 recipes-core/images/files/secure-boot/sw-description.tmpl
->  create mode 100644 recipes-core/images/secureboot.inc
->  create mode 100644 recipes-core/images/swupdate.inc
->  create mode 100644 recipes-devtools/ebg-secure-boot-secrets/ebg-secure-boot-secrets_0.1.bb
->  create mode 100644 recipes-devtools/ebg-secure-boot-secrets/files/README.md
->  create mode 100644 recipes-devtools/ebg-secure-boot-secrets/files/control.tmpl
->  create mode 100644 recipes-devtools/ebg-secure-boot-secrets/files/sign_secure_image.sh.tmpl
->  create mode 100644 recipes-devtools/ebg-secure-boot-snakeoil/ebg-secure-boot-snakeoil_0.1.bb
->  create mode 100644 recipes-devtools/ebg-secure-boot-snakeoil/files/control.tmpl
->  create mode 100644 recipes-devtools/ebg-secure-boot-snakeoil/files/sign_secure_image.sh
->  create mode 100644 recipes-devtools/ovmf-binaries/files/control.tmpl
->  create mode 100644 recipes-devtools/ovmf-binaries/ovmf-binaries_0.1.bb
->  create mode 100644 recipes-support/initramfs-config/files/initramfs.image_uuid.hook
->  create mode 100644 recipes-support/initramfs-config/files/initramfs.lsblk.hook
->  create mode 100644 recipes-support/initramfs-config/files/postinst.ext
->  create mode 100644 recipes-support/initramfs-config/files/secure-boot-debian-local-patch
->  create mode 100644 recipes-support/initramfs-config/initramfs-abrootfs-secureboot_0.1.bb
->  create mode 100755 scripts/generate-sb-db-from-existing-certificate.sh
->  create mode 100755 scripts/generate_secure_boot_keys.sh
->  create mode 100755 scripts/start-efishell.sh
->  create mode 100644 wic/ebg-signed-bootloader.inc
->  create mode 100644 wic/qemu-amd64-efibootguard-secureboot.wks
+> First thought it was a sporadic hic-up, but it reoccurs, now with
+> master. Is kernel.org throttling us here?
 > 
 
-I've taken this to next, but this also needs a hook-up with the CI system.
+And I'm afraid there is more broken, namely in the deployment that is
+only triggered over master. Please have a look at the failing jobs.
 
 Thanks,
 Jan
@@ -195,7 +211,7 @@ Jan
 Siemens AG, Corporate Technology, CT RDA IOT SES-DE
 Corporate Competence Center Embedded Linux
 
---GQ4sbcc7q1fkmGyzHPG6
+--DiobEdrTgrdUDfJTe9ph
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -203,12 +219,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#5225): https://lists.cip-project.org/g/cip-dev/message=
-/5225
-Mute This Topic: https://lists.cip-project.org/mt/76326081/4520388
+View/Reply Online (#5226): https://lists.cip-project.org/g/cip-dev/message=
+/5226
+Mute This Topic: https://lists.cip-project.org/mt/76304024/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---GQ4sbcc7q1fkmGyzHPG6--
+--DiobEdrTgrdUDfJTe9ph--
