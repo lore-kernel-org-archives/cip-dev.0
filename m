@@ -1,4 +1,4 @@
-Return-Path: <SRS0=gRRb=B7=lists.cip-project.org=bounce+64572+5181+4520388+8129055@kernel.org>
+Return-Path: <SRS0=KzfU=B7=lists.cip-project.org=bounce+64572+5185+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MIME_HEADER_CTYPE_ONLY,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	T_TVD_MIME_NO_HEADERS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A24C433EA
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2216C433E8
 	for <cip-dev@archiver.kernel.org>; Fri, 21 Aug 2020 10:58:34 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id BDC2D207BB
+	by mail.kernel.org (Postfix) with ESMTPS id 6FA5B207DF
 	for <cip-dev@archiver.kernel.org>; Fri, 21 Aug 2020 10:58:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="by4GeynQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDC2D207BB
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="pqKQ72Yz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FA5B207DF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5181+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id sQVnYY4521723x4VZcQEBy7G; Fri, 21 Aug 2020 03:58:34 -0700
-X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [])
- by mx.groups.io with SMTP id smtpd.web11.130425.1598002998984331784
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5185+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id LUkwYY4521723x83jta8gpdu; Fri, 21 Aug 2020 03:58:34 -0700
+X-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [])
+ by mx.groups.io with SMTP id smtpd.web10.131152.1598003016916343991
  for <cip-dev@lists.cip-project.org>;
- Fri, 21 Aug 2020 02:43:27 -0700
+ Fri, 21 Aug 2020 02:43:40 -0700
 X-IronPort-AV: E=Sophos;i="5.76,335,1592838000"; 
-   d="scan'208";a="55170291"
+   d="scan'208";a="54954570"
 X-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 21 Aug 2020 18:43:27 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 21 Aug 2020 18:43:40 +0900
 X-Received: from localhost.localdomain (unknown [172.29.52.2])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id E0879423205B;
-	Fri, 21 Aug 2020 18:43:25 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 965B94231AD9;
+	Fri, 21 Aug 2020 18:43:38 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -38,9 +38,9 @@ To: cip-dev@lists.cip-project.org,
 Cc: Chris Paterson <chris.paterson2@renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [cip-dev] [PATCH 06/36] soc: renesas: Identify RZ/G2H
-Date: Fri, 21 Aug 2020 10:42:42 +0100
-Message-Id: <20200821094312.3249-7-biju.das.jz@bp.renesas.com>
+Subject: [cip-dev] [PATCH 13/36] clk: renesas: rzg2: Mark RWDT clocks as critical
+Date: Fri, 21 Aug 2020 10:42:49 +0100
+Message-Id: <20200821094312.3249-14-biju.das.jz@bp.renesas.com>
 In-Reply-To: <20200821094312.3249-1-biju.das.jz@bp.renesas.com>
 References: <20200821094312.3249-1-biju.das.jz@bp.renesas.com>
 Precedence: Bulk
@@ -49,64 +49,78 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: mK5qRXgGnVPqckXbKHDBY5ztx4520388AA=
-Content-Type: multipart/mixed; boundary="r5zd6mWEuPXOO84Yra35"
+X-Gm-Message-State: Py2jGlvJ2hItUajAl4kwn5qsx4520388AA=
+Content-Type: multipart/mixed; boundary="wj6hUjVITAiD2Np7ECaz"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=lists.cip-project.org; q=dns/txt; s=20140610; t=1598007514;
- bh=einJnmo+LGbjsfnTeZPgqpAy6Io/uDa3Cz/4jqWJiIg=;
+ bh=etoaxKM41rn+UkC868sREOqc5h9lVRURwGkt5NN3SyI=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=by4GeynQSeUq/oNa9eASPuUKvxaTx4VUhoxNYqT5d5umubLhkqpRplJzZNqFk3r83nb
- ugabirvBLxoTiipVH8nkSdIwFTcuXSRu0fcwIhrCN62vDblTA82YeGETzn2tq2Ux22E3T
- 3GtaqR8xYAVEznKkUpgjHiIW+da1Y3XvogA=
+ b=pqKQ72Yzrfq9MqslgTG+h15051C4RyBwzDqDMB1Eg2TDgn3jjsi197Bhuqf8h8pI80z
+ pSZL/JobPnZmeg8Uu2aJGSqGBJyh45LhEGT2Svd1Bdl1W3mf7ZXb7yZBDgv2J2Bu6GDnB
+ JgsMejMAsVvUTLQzAndsWsl1VykicoVZglw=
 
---r5zd6mWEuPXOO84Yra35
+--wj6hUjVITAiD2Np7ECaz
 
-From: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+From: Ulrich Hecht <uli+renesas@fpond.eu>
 
-commit 5b83cc42cf871d3079cc370432de6b5925c71ce5 upstream.
+commit 52bc5ea6edde35bc65ed6ecd7639534e78002c74 upstream.
 
-This patch adds support for identifying the RZ/G2H (r8a774e1) SoC.
+Ensures RWDT remains alert throughout the boot process if enabled.
 
-Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://lore.kernel.org/r/1594138692-16816-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com
+This patch applies the change to the following SoCs: r8a774a1,
+r8a774b1 and r8a774c0.
+
+Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
+Link: https://lore.kernel.org/r/20200616162626.27944-4-uli+renesas@fpond.eu
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/soc/renesas/renesas-soc.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/clk/renesas/r8a774a1-cpg-mssr.c | 1 +
+ drivers/clk/renesas/r8a774b1-cpg-mssr.c | 1 +
+ drivers/clk/renesas/r8a774c0-cpg-mssr.c | 1 +
+ 3 files changed, 3 insertions(+)
 
-diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
-index 1a40c1e7ba27..7f29182a1d08 100644
---- a/drivers/soc/renesas/renesas-soc.c
-+++ b/drivers/soc/renesas/renesas-soc.c
-@@ -125,6 +125,11 @@ static const struct renesas_soc soc_rz_g2e __initconst __maybe_unused = {
- 	.id	= 0x57,
+diff --git a/drivers/clk/renesas/r8a774a1-cpg-mssr.c b/drivers/clk/renesas/r8a774a1-cpg-mssr.c
+index e05bfa200480..fd54b9f625da 100644
+--- a/drivers/clk/renesas/r8a774a1-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a774a1-cpg-mssr.c
+@@ -237,6 +237,7 @@ static const struct mssr_mod_clk r8a774a1_mod_clks[] __initconst = {
  };
  
-+static const struct renesas_soc soc_rz_g2h __initconst __maybe_unused = {
-+	.family	= &fam_rzg2,
-+	.id	= 0x4f,
-+};
-+
- static const struct renesas_soc soc_rcar_m1a __initconst __maybe_unused = {
- 	.family	= &fam_rcar_gen1,
+ static const unsigned int r8a774a1_crit_mod_clks[] __initconst = {
++	MOD_CLK_ID(402),	/* RWDT */
+ 	MOD_CLK_ID(408),	/* INTC-AP (GIC) */
  };
-@@ -234,6 +239,9 @@ static const struct of_device_id renesas_socs[] __initconst = {
- #ifdef CONFIG_ARCH_R8A774C0
- 	{ .compatible = "renesas,r8a774c0",	.data = &soc_rz_g2e },
- #endif
-+#ifdef CONFIG_ARCH_R8A774E1
-+	{ .compatible = "renesas,r8a774e1",	.data = &soc_rz_g2h },
-+#endif
- #ifdef CONFIG_ARCH_R8A7778
- 	{ .compatible = "renesas,r8a7778",	.data = &soc_rcar_m1a },
- #endif
+ 
+diff --git a/drivers/clk/renesas/r8a774b1-cpg-mssr.c b/drivers/clk/renesas/r8a774b1-cpg-mssr.c
+index c9af70917312..f436691271ec 100644
+--- a/drivers/clk/renesas/r8a774b1-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a774b1-cpg-mssr.c
+@@ -233,6 +233,7 @@ static const struct mssr_mod_clk r8a774b1_mod_clks[] __initconst = {
+ };
+ 
+ static const unsigned int r8a774b1_crit_mod_clks[] __initconst = {
++	MOD_CLK_ID(402),	/* RWDT */
+ 	MOD_CLK_ID(408),	/* INTC-AP (GIC) */
+ };
+ 
+diff --git a/drivers/clk/renesas/r8a774c0-cpg-mssr.c b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+index f91e7a484753..9fc9fa9e531a 100644
+--- a/drivers/clk/renesas/r8a774c0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+@@ -238,6 +238,7 @@ static const struct mssr_mod_clk r8a774c0_mod_clks[] __initconst = {
+ };
+ 
+ static const unsigned int r8a774c0_crit_mod_clks[] __initconst = {
++	MOD_CLK_ID(402),	/* RWDT */
+ 	MOD_CLK_ID(408),	/* INTC-AP (GIC) */
+ };
+ 
 -- 
 2.17.1
 
 
---r5zd6mWEuPXOO84Yra35
+--wj6hUjVITAiD2Np7ECaz
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -114,12 +128,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#5181): https://lists.cip-project.org/g/cip-dev/message=
-/5181
-Mute This Topic: https://lists.cip-project.org/mt/76326720/4520388
+View/Reply Online (#5185): https://lists.cip-project.org/g/cip-dev/message=
+/5185
+Mute This Topic: https://lists.cip-project.org/mt/76326724/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---r5zd6mWEuPXOO84Yra35--
+--wj6hUjVITAiD2Np7ECaz--
