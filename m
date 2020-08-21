@@ -1,36 +1,36 @@
-Return-Path: <SRS0=bQGU=B7=lists.cip-project.org=bounce+64572+5179+4520388+8129055@kernel.org>
+Return-Path: <SRS0=ZW4U=B7=lists.cip-project.org=bounce+64572+5189+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MIME_HEADER_CTYPE_ONLY,SPF_HELO_NONE,SPF_PASS,T_TVD_MIME_NO_HEADERS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MIME_HEADER_CTYPE_ONLY,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	T_TVD_MIME_NO_HEADERS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E60AC433ED
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D69E1C433F4
 	for <cip-dev@archiver.kernel.org>; Fri, 21 Aug 2020 10:58:35 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 31AED20656
+	by mail.kernel.org (Postfix) with ESMTPS id A92D820656
 	for <cip-dev@archiver.kernel.org>; Fri, 21 Aug 2020 10:58:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="s/h67raY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31AED20656
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="OSY4fX7i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A92D820656
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5179+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id hw2AYY4521723xlYS1m1iaBw; Fri, 21 Aug 2020 03:58:34 -0700
-X-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web11.130424.1598002997752220163
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5189+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id 5r3LYY4521723x1i5boZWFR3; Fri, 21 Aug 2020 03:58:35 -0700
+X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [])
+ by mx.groups.io with SMTP id smtpd.web11.130425.1598002998984331784
  for <cip-dev@lists.cip-project.org>;
- Fri, 21 Aug 2020 02:43:18 -0700
+ Fri, 21 Aug 2020 02:43:31 -0700
 X-IronPort-AV: E=Sophos;i="5.76,335,1592838000"; 
-   d="scan'208";a="54954520"
+   d="scan'208";a="55170296"
 X-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 21 Aug 2020 18:43:16 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 21 Aug 2020 18:43:30 +0900
 X-Received: from localhost.localdomain (unknown [172.29.52.2])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id BAAA64231AD9;
-	Fri, 21 Aug 2020 18:43:14 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 81905423206E;
+	Fri, 21 Aug 2020 18:43:29 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -38,150 +38,61 @@ To: cip-dev@lists.cip-project.org,
 Cc: Chris Paterson <chris.paterson2@renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [cip-dev] [PATCH 00/36] Add Hihope RZ/G2H basic board support
-Date: Fri, 21 Aug 2020 10:42:36 +0100
-Message-Id: <20200821094312.3249-1-biju.das.jz@bp.renesas.com>
+Subject: [cip-dev] [PATCH 08/36] soc: renesas: rcar-rst: Add support for RZ/G2H
+Date: Fri, 21 Aug 2020 10:42:44 +0100
+Message-Id: <20200821094312.3249-9-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20200821094312.3249-1-biju.das.jz@bp.renesas.com>
+References: <20200821094312.3249-1-biju.das.jz@bp.renesas.com>
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: vBCUYr11eGZ7mUKmhtpSTnB7x4520388AA=
-Content-Type: multipart/mixed; boundary="NoaHMy8gd3fkYlSZ6JEM"
+X-Gm-Message-State: HEhXEVVSdcdWKJ0WR77aU53Xx4520388AA=
+Content-Type: multipart/mixed; boundary="6lEBHxwf2FQvpRVgIbzI"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1598007514;
- bh=46ad7hAAuuRrRLoA4HwLWHOZ4j9K3GELiKYEm6wpQ4Q=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1598007515;
+ bh=5O6gV4I+3Gs08Ns69BFbN6v6WNzgQ4OE3c2gqWComj0=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=s/h67raYWtlwwSzHaefLLhyp1wiqDMP/nI2O4C7HtQkDj3kPLhaBxUPDly1bDngd+xt
- ZLCog4yM78nrWXIqHQT3xdwfjR9YoE8rY5k9dk70j7l4PoMWys+6SgfY+Ty0zz1/TTSEv
- AY0qb7Wkz77Mav+EcA1uOBeF1dKVvQ0z9E8=
+ b=OSY4fX7iALU7JPbixZutyLWg/Rk17ezH288j9YpucuApfaHbthVXlGrkYYKVNJDSXJx
+ LDt3i3hFkqeuj4ljcjPBshxupG9cXE1OS8sMo1axRB6ZuXdQDaUEDfJD5BjSlhtGUnZuR
+ CQOXo5BFGQDvrSp325pxR+dZtma7JLYxk44=
 
---NoaHMy8gd3fkYlSZ6JEM
+--6lEBHxwf2FQvpRVgIbzI
 
-This patch series add basic support for Hihope RZ/G2H based on
-r8a774e1 SoC to 4.19.y-cip kernel. All patches in this series
-are cherry-picked from mainline.
+From: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 
-This patch series depends on [1]
-[1]: https://patchwork.kernel.org/project/cip-dev/list/?series=335409
+commit 7f8fa833dc739c4a28574c335eb08dbde2cb23d0 upstream.
 
-Geert Uytterhoeven (7):
-  pinctrl: sh-pfc: r8a77965: Fix DU_DOTCLKIN3 drive/bias control
-  pinctrl: sh-pfc: r8a7795: Deduplicate VIN5 pin definitions
-  pinctrl: sh-pfc: r8a7795-es1: Add TPU pins, groups and functions
-  pinctrl: sh-pfc: r8a7795: Add TPU pins, groups and functions
-  pinctrl: sh-pfc: r8a7795-es1: Use new macros for non-GPIO pins
-  pinctrl: sh-pfc: r8a7795: Use new macros for non-GPIO pins
-  pinctrl: sh-pfc: Split R-Car H3 support in two independent drivers
+Add support for RZ/G2H (R8A774E1) to the R-Car RST driver.
 
-Jacopo Mondi (1):
-  pinctrl: sh-pfc: r8a7795: Fix VIN versioned groups
+Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Link: https://lore.kernel.org/r/1594138692-16816-8-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/soc/renesas/rcar-rst.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Keiya Nobuta (2):
-  pinctrl: sh-pfc: pfc-r8a7795-es1: Fix typo in pinmux macro for SCL3
-  pinctrl: sh-pfc: pfc-r8a7795: Fix typo in pinmux macro for SCL3
-
-Lad Prabhakar (1):
-  pinctrl: sh-pfc: pfc-r8a77951: Add R8A774E1 PFC support
-
-Marek Vasut (1):
-  pinctrl: sh-pfc: rcar-gen3: Retain TDSELCTRL register across
-    suspend/resume
-
-Marian-Cristian Rotariu (17):
-  dt-bindings: power: Add r8a774e1 SYSC power domain definitions
-  dt-bindings: power: renesas,rcar-sysc: Document r8a774e1 SYSC binding
-  soc: renesas: rcar-sysc: Add r8a774e1 support
-  soc: renesas: Add Renesas R8A774E1 config option
-  dt-bindings: arm: renesas: Document RZ/G2H SoC DT bindings
-  soc: renesas: Identify RZ/G2H
-  dt-bindings: reset: rcar-rst: Document r8a774e1 reset module
-  soc: renesas: rcar-rst: Add support for RZ/G2H
-  clk: renesas: Add r8a774e1 CPG Core Clock Definitions
-  dt-bindings: clock: renesas,cpg-mssr: Document r8a774e1
-  clk: renesas: cpg-mssr: Add r8a774e1 support
-  arm64: defconfig: Enable R8A774E1 SoC
-  dt-bindings: pinctrl: sh-pfc: Document r8a774e1 PFC support
-  arm64: dts: renesas: Initial r8a774e1 SoC device tree
-  dt-bindings: arm: renesas: Add HopeRun RZ/G2H boards
-  arm64: dts: renesas: Add HiHope RZ/G2H main board support
-  arm64: dts: renesas: Add HiHope RZ/G2H sub board support
-
-Sergei Shtylyov (2):
-  clk: renesas: rcar-gen3: Add RPC clocks
-  clk: renesas: rcar-gen3: Allow changing the RPC[D2] clocks
-
-Takeshi Kihara (3):
-  pinctrl: sh-pfc: r8a7795-es1: Add I2C{0,3,5} pins, groups and
-    functions
-  pinctrl: sh-pfc: r8a7795: Add I2C{0,3,5} pins, groups and functions
-  pinctrl: sh-pfc: rcar-gen3: Rename RTS{0,1,3,4}# pin function
-    definitions
-
-Ulrich Hecht (2):
-  clk: renesas: cpg-mssr: Mark clocks as critical only if on at boot
-  clk: renesas: rzg2: Mark RWDT clocks as critical
-
- .../devicetree/bindings/arm/shmobile.txt      |    7 +-
- .../bindings/clock/renesas,cpg-mssr.txt       |    1 +
- .../bindings/pinctrl/renesas,pfc-pinctrl.txt  |    1 +
- .../bindings/power/renesas,rcar-sysc.txt      |    1 +
- .../devicetree/bindings/reset/renesas,rst.txt |    1 +
- arch/arm64/Kconfig.platforms                  |    6 +
- arch/arm64/boot/dts/renesas/Makefile          |    2 +
- .../arm64/boot/dts/renesas/hihope-common.dtsi |    4 +-
- arch/arm64/boot/dts/renesas/hihope-rev4.dtsi  |    4 +-
- .../boot/dts/renesas/hihope-rzg2-ex.dtsi      |    2 +-
- .../dts/renesas/r8a774e1-hihope-rzg2h-ex.dts  |   15 +
- .../dts/renesas/r8a774e1-hihope-rzg2h.dts     |   26 +
- arch/arm64/boot/dts/renesas/r8a774e1.dtsi     |  652 ++++++++
- arch/arm64/configs/defconfig                  |    1 +
- drivers/clk/renesas/Kconfig                   |    5 +
- drivers/clk/renesas/Makefile                  |    1 +
- drivers/clk/renesas/r8a774a1-cpg-mssr.c       |    1 +
- drivers/clk/renesas/r8a774b1-cpg-mssr.c       |    1 +
- drivers/clk/renesas/r8a774c0-cpg-mssr.c       |    1 +
- drivers/clk/renesas/r8a774e1-cpg-mssr.c       |  349 ++++
- drivers/clk/renesas/rcar-gen3-cpg.c           |  103 ++
- drivers/clk/renesas/rcar-gen3-cpg.h           |    4 +
- drivers/clk/renesas/renesas-cpg-mssr.c        |   23 +-
- drivers/clk/renesas/renesas-cpg-mssr.h        |    1 +
- drivers/pinctrl/sh-pfc/Kconfig                |   14 +-
- drivers/pinctrl/sh-pfc/Makefile               |    5 +-
- drivers/pinctrl/sh-pfc/core.c                 |   63 +-
- .../{pfc-r8a7795-es1.c => pfc-r8a77950.c}     |  546 ++++---
- .../sh-pfc/{pfc-r8a7795.c => pfc-r8a77951.c}  | 1420 +++++++++--------
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c         |    8 +-
- drivers/pinctrl/sh-pfc/pfc-r8a77970.c         |   24 +-
- drivers/pinctrl/sh-pfc/pfc-r8a77980.c         |   32 +-
- drivers/pinctrl/sh-pfc/pfc-r8a77995.c         |   22 +-
- drivers/pinctrl/sh-pfc/sh_pfc.h               |    5 +-
- drivers/soc/renesas/Kconfig                   |   11 +-
- drivers/soc/renesas/Makefile                  |    1 +
- drivers/soc/renesas/r8a774e1-sysc.c           |   43 +
- drivers/soc/renesas/rcar-rst.c                |    1 +
- drivers/soc/renesas/rcar-sysc.c               |    3 +
- drivers/soc/renesas/rcar-sysc.h               |    1 +
- drivers/soc/renesas/renesas-soc.c             |    8 +
- include/dt-bindings/clock/r8a774e1-cpg-mssr.h |   59 +
- include/dt-bindings/power/r8a774e1-sysc.h     |   36 +
- 43 files changed, 2547 insertions(+), 967 deletions(-)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a774e1-hihope-rzg2h-ex.dts
- create mode 100644 arch/arm64/boot/dts/renesas/r8a774e1-hihope-rzg2h.dts
- create mode 100644 arch/arm64/boot/dts/renesas/r8a774e1.dtsi
- create mode 100644 drivers/clk/renesas/r8a774e1-cpg-mssr.c
- rename drivers/pinctrl/sh-pfc/{pfc-r8a7795-es1.c => pfc-r8a77950.c} (93%)
- rename drivers/pinctrl/sh-pfc/{pfc-r8a7795.c => pfc-r8a77951.c} (87%)
- create mode 100644 drivers/soc/renesas/r8a774e1-sysc.c
- create mode 100644 include/dt-bindings/clock/r8a774e1-cpg-mssr.h
- create mode 100644 include/dt-bindings/power/r8a774e1-sysc.h
-
+diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
+index 6c17ec510586..09a1e418a5e2 100644
+--- a/drivers/soc/renesas/rcar-rst.c
++++ b/drivers/soc/renesas/rcar-rst.c
+@@ -49,6 +49,7 @@ static const struct of_device_id rcar_rst_matches[] __initconst = {
+ 	{ .compatible = "renesas,r8a774a1-rst", .data = &rcar_rst_gen3 },
+ 	{ .compatible = "renesas,r8a774b1-rst", .data = &rcar_rst_gen3 },
+ 	{ .compatible = "renesas,r8a774c0-rst", .data = &rcar_rst_gen3 },
++	{ .compatible = "renesas,r8a774e1-rst", .data = &rcar_rst_gen3 },
+ 	/* R-Car Gen1 */
+ 	{ .compatible = "renesas,r8a7778-reset-wdt", .data = &rcar_rst_gen1 },
+ 	{ .compatible = "renesas,r8a7779-reset-wdt", .data = &rcar_rst_gen1 },
 -- 
 2.17.1
 
 
---NoaHMy8gd3fkYlSZ6JEM
+--6lEBHxwf2FQvpRVgIbzI
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -189,12 +100,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#5179): https://lists.cip-project.org/g/cip-dev/message=
-/5179
-Mute This Topic: https://lists.cip-project.org/mt/76326718/4520388
+View/Reply Online (#5189): https://lists.cip-project.org/g/cip-dev/message=
+/5189
+Mute This Topic: https://lists.cip-project.org/mt/76326728/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---NoaHMy8gd3fkYlSZ6JEM--
+--6lEBHxwf2FQvpRVgIbzI--
