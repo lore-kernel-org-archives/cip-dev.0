@@ -1,36 +1,36 @@
-Return-Path: <SRS0=nUmL=B7=lists.cip-project.org=bounce+64572+5210+4520388+8129055@kernel.org>
+Return-Path: <SRS0=l97G=B7=lists.cip-project.org=bounce+64572+5205+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75 autolearn=ham
-	autolearn_force=no version=3.4.0
+	MIME_HEADER_CTYPE_ONLY,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	T_TVD_MIME_NO_HEADERS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD4D1C433EA
-	for <cip-dev@archiver.kernel.org>; Fri, 21 Aug 2020 10:58:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B2E1C433EC
+	for <cip-dev@archiver.kernel.org>; Fri, 21 Aug 2020 10:58:46 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id A6AE72078D
-	for <cip-dev@archiver.kernel.org>; Fri, 21 Aug 2020 10:58:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 460652072D
+	for <cip-dev@archiver.kernel.org>; Fri, 21 Aug 2020 10:58:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="AqZgB/j7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6AE72078D
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="BfE05msJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 460652072D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5210+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id 1B0mYY4521723xkM4kdiQ4Hv; Fri, 21 Aug 2020 03:58:45 -0700
-X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.131162.1598003046570191988
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5205+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id xOWNYY4521723xzPx3fGJE1N; Fri, 21 Aug 2020 03:58:46 -0700
+X-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [])
+ by mx.groups.io with SMTP id smtpd.web10.131152.1598003016916343991
  for <cip-dev@lists.cip-project.org>;
- Fri, 21 Aug 2020 02:44:07 -0700
+ Fri, 21 Aug 2020 02:43:59 -0700
 X-IronPort-AV: E=Sophos;i="5.76,335,1592838000"; 
-   d="scan'208";a="55170365"
+   d="scan'208";a="54954604"
 X-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 21 Aug 2020 18:44:05 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 21 Aug 2020 18:43:58 +0900
 X-Received: from localhost.localdomain (unknown [172.29.52.2])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 7BED04232071;
-	Fri, 21 Aug 2020 18:44:04 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id E08C44232061;
+	Fri, 21 Aug 2020 18:43:56 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -38,472 +38,559 @@ To: cip-dev@lists.cip-project.org,
 Cc: Chris Paterson <chris.paterson2@renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [cip-dev] [PATCH 27/36] pinctrl: sh-pfc: r8a7795: Use new macros for non-GPIO pins
-Date: Fri, 21 Aug 2020 10:43:03 +0100
-Message-Id: <20200821094312.3249-28-biju.das.jz@bp.renesas.com>
+Subject: [cip-dev] [PATCH 23/36] pinctrl: sh-pfc: rcar-gen3: Rename RTS{0,1,3,4}# pin function definitions
+Date: Fri, 21 Aug 2020 10:42:59 +0100
+Message-Id: <20200821094312.3249-24-biju.das.jz@bp.renesas.com>
 In-Reply-To: <20200821094312.3249-1-biju.das.jz@bp.renesas.com>
 References: <20200821094312.3249-1-biju.das.jz@bp.renesas.com>
-MIME-Version: 1.0
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: pOg28gYNCOFkw0T7D3dLiF9dx4520388AA=
-Content-Type: multipart/mixed; boundary="FeZRrNjXJJ9EeWNf76HM"
+X-Gm-Message-State: jdKPDcLmaoWPxYc0BtqlMqq7x4520388AA=
+Content-Type: multipart/mixed; boundary="AziB6g08Hk12Qz7IQLyf"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1598007525;
- bh=uDW9+hjsWmmwf7Jvxfx2mzhIgpXjbRv9z81qm4rRAY4=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1598007526;
+ bh=5M/7gaVuEqAKpWPOCz7w1dL5LZRjQk+6n5yyWohRT7k=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=AqZgB/j7e5eR1+8I9C12b2XpAK1bEzGFWa5WMj5aF0PKg+eoaMDOa8eS487eId0RMnZ
- LcsJnXkB4JrfVpYQThShQVlndoIo2WJP5n7BGYWY+NDz8hrKMw2k/ZmDjhaACVpgmvsx+
- O3GVGlfz/cuK/xp/fxWpawHM2GQ389Ah3Gw=
+ b=BfE05msJF5xsrzs4nJe/i4Ix7p74kcnp6ma3UJWeHT3jwo3B5a4ypwJg2dNOIX79nDS
+ 4PbnbOElgNfGdZ21iEj4+lt/vtCEW+OmZDqLmtxSprIJG1xjDNmrvpcFBxjMVynRIwpnS
+ SGrVbxQcrC5VACfKCo2UKkAVeaPcn95LPrw=
 
---FeZRrNjXJJ9EeWNf76HM
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+--AziB6g08Hk12Qz7IQLyf
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-commit 42ee6c3395465cea948a462b4605fc7fa53e3704 upstream.
+commit 624a7a12cc0cc776c9c82347ffe5ddce7218eeca upstream.
 
-Update the R-Car H3 ES2.0 and later pin control driver to use the new
-macros for describing pins without GPIO functionality.  This replaces
-the use of physical pin numbers on the R-Car H3 ES2.0 SiP (in 39x39
-BGA package) by symbolic enum values, referring to signal names.
+According to the R-Car Gen3 Hardware Manual Errata for Rev 1.50 of
+Feb 12, 2019, the RTS{0,1,3,4}_#/TANS pin names defined in the GPSR and
+IPSR registers are renamed to RTS{0,1,3,4}_#.
+This patch updates the pin control drivers to reflect this.
 
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[geert: Update R-Car H3 ES1.x, V3M, V3H, and D3]
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+[Biju: removed E3 related changes since it is already backported]
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 313 +++++++++++++--------------
- 1 file changed, 154 insertions(+), 159 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 48 ++++++++++++------------
+ drivers/pinctrl/sh-pfc/pfc-r8a77970.c    | 24 ++++++------
+ drivers/pinctrl/sh-pfc/pfc-r8a77980.c    | 32 ++++++++--------
+ drivers/pinctrl/sh-pfc/pfc-r8a77995.c    | 12 +++---
+ 4 files changed, 58 insertions(+), 58 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 054fec90eded..3172ef6a9b20 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -30,6 +30,52 @@
- 	PORT_GP_CFG_26(5, fn, sfx, CFG_FLAGS),	\
- 	PORT_GP_CFG_32(6, fn, sfx, CFG_FLAGS),	\
- 	PORT_GP_CFG_4(7, fn, sfx, CFG_FLAGS)
-+
-+#define CPU_ALL_NOGP(fn)						\
-+	PIN_NOGP_CFG(ASEBRK, "ASEBRK", fn, CFG_FLAGS),			\
-+	PIN_NOGP_CFG(AVB_MDIO, "AVB_MDIO", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(AVB_RD0, "AVB_RD0", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(AVB_RD1, "AVB_RD1", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(AVB_RD2, "AVB_RD2", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(AVB_RD3, "AVB_RD3", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(AVB_RXC, "AVB_RXC", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(AVB_RX_CTL, "AVB_RX_CTL", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(AVB_TD0, "AVB_TD0", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(AVB_TD1, "AVB_TD1", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(AVB_TD2, "AVB_TD2", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(AVB_TD3, "AVB_TD3", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(AVB_TXC, "AVB_TXC", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(AVB_TXCREFCLK, "AVB_TXCREFCLK", fn, CFG_FLAGS),	\
-+	PIN_NOGP_CFG(AVB_TX_CTL, "AVB_TX_CTL", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(DU_DOTCLKIN0, "DU_DOTCLKIN0", fn, CFG_FLAGS),	\
-+	PIN_NOGP_CFG(DU_DOTCLKIN1, "DU_DOTCLKIN1", fn, CFG_FLAGS),	\
-+	PIN_NOGP_CFG(DU_DOTCLKIN2, "DU_DOTCLKIN2", fn, CFG_FLAGS),	\
-+	PIN_NOGP_CFG(DU_DOTCLKIN3, "DU_DOTCLKIN3", fn, CFG_FLAGS),	\
-+	PIN_NOGP_CFG(EXTALR, "EXTALR", fn, SH_PFC_PIN_CFG_PULL_UP_DOWN),\
-+	PIN_NOGP_CFG(FSCLKST_N, "FSCLKST#", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(MLB_REF, "MLB_REF", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(PRESETOUT_N, "PRESETOUT#", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(QSPI0_IO2, "QSPI0_IO2", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(QSPI0_IO3, "QSPI0_IO3", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(QSPI0_MISO_IO1, "QSPI0_MISO_IO1", fn, CFG_FLAGS),	\
-+	PIN_NOGP_CFG(QSPI0_MOSI_IO0, "QSPI0_MOSI_IO0", fn, CFG_FLAGS),	\
-+	PIN_NOGP_CFG(QSPI0_SPCLK, "QSPI0_SPCLK", fn, CFG_FLAGS),	\
-+	PIN_NOGP_CFG(QSPI0_SSL, "QSPI0_SSL", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(QSPI1_IO2, "QSPI1_IO2", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(QSPI1_IO3, "QSPI1_IO3", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(QSPI1_MISO_IO1, "QSPI1_MISO_IO1", fn, CFG_FLAGS),	\
-+	PIN_NOGP_CFG(QSPI1_MOSI_IO0, "QSPI1_MOSI_IO0", fn, CFG_FLAGS),	\
-+	PIN_NOGP_CFG(QSPI1_SPCLK, "QSPI1_SPCLK", fn, CFG_FLAGS),	\
-+	PIN_NOGP_CFG(QSPI1_SSL, "QSPI1_SSL", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(RPC_INT_N, "RPC_INT#", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(RPC_RESET_N, "RPC_RESET#", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(RPC_WP_N, "RPC_WP#", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(TCK, "TCK", fn, SH_PFC_PIN_CFG_PULL_UP_DOWN),	\
-+	PIN_NOGP_CFG(TDI, "TDI", fn, SH_PFC_PIN_CFG_PULL_UP_DOWN),	\
-+	PIN_NOGP_CFG(TDO, "TDO", fn, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
-+	PIN_NOGP_CFG(TMS, "TMS", fn, CFG_FLAGS),			\
-+	PIN_NOGP_CFG(TRST_N, "TRST#", fn, SH_PFC_PIN_CFG_PULL_UP_DOWN)
-+
- /*
-  * F_() : just information
-  * FM() : macro for FN_xxx / xxx_MARK
-@@ -1509,67 +1555,16 @@ static const u16 pinmux_data[] = {
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
+index d92c979dfb98..97a6b0221855 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
+@@ -155,11 +155,11 @@
+ #define GPSR5_11	F_(RX2_A,		IP12_7_4)
+ #define GPSR5_10	F_(TX2_A,		IP12_3_0)
+ #define GPSR5_9		F_(SCK2,		IP11_31_28)
+-#define GPSR5_8		F_(RTS1_N_TANS,		IP11_27_24)
++#define GPSR5_8		F_(RTS1_N,		IP11_27_24)
+ #define GPSR5_7		F_(CTS1_N,		IP11_23_20)
+ #define GPSR5_6		F_(TX1_A,		IP11_19_16)
+ #define GPSR5_5		F_(RX1_A,		IP11_15_12)
+-#define GPSR5_4		F_(RTS0_N_TANS,		IP11_11_8)
++#define GPSR5_4		F_(RTS0_N,		IP11_11_8)
+ #define GPSR5_3		F_(CTS0_N,		IP11_7_4)
+ #define GPSR5_2		F_(TX0,			IP11_3_0)
+ #define GPSR5_1		F_(RX0,			IP10_31_28)
+@@ -212,7 +212,7 @@
+ #define IP0_11_8	FM(AVB_PHY_INT)		F_(0, 0)	FM(MSIOF2_SYNC_C)	FM(RX4_A)			F_(0, 0)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0_15_12	FM(AVB_LINK)		F_(0, 0)	FM(MSIOF2_SCK_C)	FM(TX4_A)			F_(0, 0)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0_19_16	FM(AVB_AVTP_MATCH_A)	F_(0, 0)	FM(MSIOF2_RXD_C)	FM(CTS4_N_A)			F_(0, 0)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP0_23_20	FM(AVB_AVTP_CAPTURE_A)	F_(0, 0)	FM(MSIOF2_TXD_C)	FM(RTS4_N_TANS_A)		F_(0, 0)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP0_23_20	FM(AVB_AVTP_CAPTURE_A)	F_(0, 0)	FM(MSIOF2_TXD_C)	FM(RTS4_N_A)			F_(0, 0)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0_27_24	FM(IRQ0)		FM(QPOLB)	F_(0, 0)		FM(DU_CDE)			FM(VI4_DATA0_B)	FM(CAN0_TX_B)	FM(CANFD0_TX_B)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0_31_28	FM(IRQ1)		FM(QPOLA)	F_(0, 0)		FM(DU_DISP)			FM(VI4_DATA1_B)	FM(CAN0_RX_B)	FM(CANFD0_RX_B)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP1_3_0		FM(IRQ2)		FM(QCPV_QDE)	F_(0, 0)		FM(DU_EXODDF_DU_ODDF_DISP_CDE)	FM(VI4_DATA2_B)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)		FM(PWM3_B)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+@@ -234,7 +234,7 @@
+ #define IP2_27_24	FM(A7)			FM(LCDOUT23)	FM(MSIOF2_SS2_A)	FM(TX4_B)			FM(VI4_DATA15)	FM(VI5_DATA15)	FM(DU_DB7)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP2_31_28	FM(A8)			FM(RX3_B)	FM(MSIOF2_SYNC_A)	FM(HRX4_B)			F_(0, 0)	F_(0, 0)	F_(0, 0)		FM(SDA6_A)	FM(AVB_AVTP_MATCH_B)	FM(PWM1_B)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP3_3_0		FM(A9)			F_(0, 0)	FM(MSIOF2_SCK_A)	FM(CTS4_N_B)			F_(0, 0)	FM(VI5_VSYNC_N)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP3_7_4		FM(A10)			F_(0, 0)	FM(MSIOF2_RXD_A)	FM(RTS4_N_TANS_B)		F_(0, 0)	FM(VI5_HSYNC_N)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP3_7_4		FM(A10)			F_(0, 0)	FM(MSIOF2_RXD_A)	FM(RTS4_N_B)			F_(0, 0)	FM(VI5_HSYNC_N)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP3_11_8	FM(A11)			FM(TX3_B)	FM(MSIOF2_TXD_A)	FM(HTX4_B)			FM(HSCK4)	FM(VI5_FIELD)	F_(0, 0)		FM(SCL6_A)	FM(AVB_AVTP_CAPTURE_B)	FM(PWM2_B)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP3_15_12	FM(A12)			FM(LCDOUT12)	FM(MSIOF3_SCK_C)	F_(0, 0)			FM(HRX4_A)	FM(VI5_DATA8)	FM(DU_DG4)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP3_19_16	FM(A13)			FM(LCDOUT13)	FM(MSIOF3_SYNC_C)	F_(0, 0)			FM(HTX4_A)	FM(VI5_DATA9)	FM(DU_DG5)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+@@ -250,7 +250,7 @@
+ #define IP4_27_24	FM(RD_N)		F_(0, 0)	FM(MSIOF3_SYNC_D)	FM(RX3_A)			FM(HRX3_A)	F_(0, 0)	F_(0, 0)		F_(0, 0)	FM(CAN0_TX_A)		FM(CANFD0_TX_A)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP4_31_28	FM(RD_WR_N)		F_(0, 0)	FM(MSIOF3_RXD_D)	FM(TX3_A)			FM(HTX3_A)	F_(0, 0)	F_(0, 0)		F_(0, 0)	FM(CAN0_RX_A)		FM(CANFD0_RX_A)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP5_3_0		FM(WE0_N)		F_(0, 0)	FM(MSIOF3_TXD_D)	FM(CTS3_N)			FM(HCTS3_N)	F_(0, 0)	F_(0, 0)		FM(SCL6_B)	FM(CAN_CLK)		F_(0, 0)	FM(IECLK_A)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP5_7_4		FM(WE1_N)		F_(0, 0)	FM(MSIOF3_SS1_D)	FM(RTS3_N_TANS)			FM(HRTS3_N)	F_(0, 0)	F_(0, 0)		FM(SDA6_B)	FM(CAN1_RX)		FM(CANFD1_RX)	FM(IERX_A)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP5_7_4		FM(WE1_N)		F_(0, 0)	FM(MSIOF3_SS1_D)	FM(RTS3_N)			FM(HRTS3_N)	F_(0, 0)	F_(0, 0)		FM(SDA6_B)	FM(CAN1_RX)		FM(CANFD1_RX)	FM(IERX_A)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP5_11_8	FM(EX_WAIT0_A)		FM(QCLK)	F_(0, 0)		F_(0, 0)			FM(VI4_CLK)	F_(0, 0)	FM(DU_DOTCLKOUT0)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP5_15_12	FM(D0)			FM(MSIOF2_SS1_B)FM(MSIOF3_SCK_A)	F_(0, 0)			FM(VI4_DATA16)	FM(VI5_DATA0)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP5_19_16	FM(D1)			FM(MSIOF2_SS2_B)FM(MSIOF3_SYNC_A)	F_(0, 0)			FM(VI4_DATA17)	FM(VI5_DATA1)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+@@ -263,7 +263,7 @@
+ #define IP6_15_12	FM(D8)			FM(LCDOUT0)	FM(MSIOF2_SCK_D)	FM(SCK4_C)			FM(VI4_DATA0_A)	F_(0, 0)	FM(DU_DR0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP6_19_16	FM(D9)			FM(LCDOUT1)	FM(MSIOF2_SYNC_D)	F_(0, 0)			FM(VI4_DATA1_A)	F_(0, 0)	FM(DU_DR1)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP6_23_20	FM(D10)			FM(LCDOUT2)	FM(MSIOF2_RXD_D)	FM(HRX3_B)			FM(VI4_DATA2_A)	FM(CTS4_N_C)	FM(DU_DR2)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP6_27_24	FM(D11)			FM(LCDOUT3)	FM(MSIOF2_TXD_D)	FM(HTX3_B)			FM(VI4_DATA3_A)	FM(RTS4_N_TANS_C)FM(DU_DR3)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP6_27_24	FM(D11)			FM(LCDOUT3)	FM(MSIOF2_TXD_D)	FM(HTX3_B)			FM(VI4_DATA3_A)	FM(RTS4_N_C)	FM(DU_DR3)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP6_31_28	FM(D12)			FM(LCDOUT4)	FM(MSIOF2_SS1_D)	FM(RX4_C)			FM(VI4_DATA4_A)	F_(0, 0)	FM(DU_DR4)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP7_3_0		FM(D13)			FM(LCDOUT5)	FM(MSIOF2_SS2_D)	FM(TX4_C)			FM(VI4_DATA5_A)	F_(0, 0)	FM(DU_DR5)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP7_7_4		FM(D14)			FM(LCDOUT6)	FM(MSIOF3_SS1_A)	FM(HRX3_C)			FM(VI4_DATA6_A)	F_(0, 0)	FM(DU_DR6)		FM(SCL6_C)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+@@ -301,11 +301,11 @@
+ #define IP10_31_28	FM(RX0)			FM(HRX1_B)	F_(0, 0)		F_(0, 0)			F_(0, 0)	FM(TS_SCK0_C)	FM(STP_ISCLK_0_C)	FM(RIF0_D0_B)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP11_3_0	FM(TX0)			FM(HTX1_B)	F_(0, 0)		F_(0, 0)			F_(0, 0)	FM(TS_SPSYNC0_C)FM(STP_ISSYNC_0_C)	FM(RIF0_D1_B)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP11_7_4	FM(CTS0_N)		FM(HCTS1_N_B)	FM(MSIOF1_SYNC_B)	F_(0, 0)			F_(0, 0)	FM(TS_SPSYNC1_C)FM(STP_ISSYNC_1_C)	FM(RIF1_SYNC_B)	FM(AUDIO_CLKOUT_C)	FM(ADICS_SAMP)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP11_11_8	FM(RTS0_N_TANS)		FM(HRTS1_N_B)	FM(MSIOF1_SS1_B)	FM(AUDIO_CLKA_B)		FM(SCL2_A)	F_(0, 0)	FM(STP_IVCXO27_1_C)	FM(RIF0_SYNC_B)	F_(0, 0)		FM(ADICHS1)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP11_11_8	FM(RTS0_N)		FM(HRTS1_N_B)	FM(MSIOF1_SS1_B)	FM(AUDIO_CLKA_B)		FM(SCL2_A)	F_(0, 0)	FM(STP_IVCXO27_1_C)	FM(RIF0_SYNC_B)	F_(0, 0)		FM(ADICHS1)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP11_15_12	FM(RX1_A)		FM(HRX1_A)	F_(0, 0)		F_(0, 0)			F_(0, 0)	FM(TS_SDAT0_C)	FM(STP_ISD_0_C)		FM(RIF1_CLK_C)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP11_19_16	FM(TX1_A)		FM(HTX1_A)	F_(0, 0)		F_(0, 0)			F_(0, 0)	FM(TS_SDEN0_C)	FM(STP_ISEN_0_C)	FM(RIF1_D0_C)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP11_23_20	FM(CTS1_N)		FM(HCTS1_N_A)	FM(MSIOF1_RXD_B)	F_(0, 0)			F_(0, 0)	FM(TS_SDEN1_C)	FM(STP_ISEN_1_C)	FM(RIF1_D0_B)	F_(0, 0)		FM(ADIDATA)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP11_27_24	FM(RTS1_N_TANS)		FM(HRTS1_N_A)	FM(MSIOF1_TXD_B)	F_(0, 0)			F_(0, 0)	FM(TS_SDAT1_C)	FM(STP_ISD_1_C)		FM(RIF1_D1_B)	F_(0, 0)		FM(ADICHS0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP11_27_24	FM(RTS1_N)		FM(HRTS1_N_A)	FM(MSIOF1_TXD_B)	F_(0, 0)			F_(0, 0)	FM(TS_SDAT1_C)	FM(STP_ISD_1_C)		FM(RIF1_D1_B)	F_(0, 0)		FM(ADICHS0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP11_31_28	FM(SCK2)		FM(SCIF_CLK_B)	FM(MSIOF1_SCK_B)	F_(0, 0)			F_(0, 0)	FM(TS_SCK1_C)	FM(STP_ISCLK_1_C)	FM(RIF1_CLK_B)	F_(0, 0)		FM(ADICLK)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP12_3_0	FM(TX2_A)		F_(0, 0)	F_(0, 0)		FM(SD2_CD_B)			FM(SCL1_A)	F_(0, 0)	FM(FMCLK_A)		FM(RIF1_D1_C)	F_(0, 0)		FM(FSO_CFE_0_B)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP12_7_4	FM(RX2_A)		F_(0, 0)	F_(0, 0)		FM(SD2_WP_B)			FM(SDA1_A)	F_(0, 0)	FM(FMIN_A)		FM(RIF1_SYNC_C)	F_(0, 0)		FM(FSO_CFE_1_B)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+@@ -618,7 +618,7 @@ static const u16 pinmux_data[] = {
+ 
+ 	PINMUX_IPSR_PHYS_MSEL(IP0_23_20, AVB_AVTP_CAPTURE_A,	I2C_SEL_5_0,	SEL_ETHERAVB_0),
+ 	PINMUX_IPSR_PHYS_MSEL(IP0_23_20, MSIOF2_TXD_C,		I2C_SEL_5_0,	SEL_MSIOF2_2),
+-	PINMUX_IPSR_PHYS_MSEL(IP0_23_20, RTS4_N_TANS_A,		I2C_SEL_5_0,	SEL_SCIF4_0),
++	PINMUX_IPSR_PHYS_MSEL(IP0_23_20, RTS4_N_A,		I2C_SEL_5_0,	SEL_SCIF4_0),
+ 	PINMUX_IPSR_PHYS(IP0_23_20,	SDA5,			I2C_SEL_5_1),
+ 
+ 	PINMUX_IPSR_GPSR(IP0_27_24,	IRQ0),
+@@ -758,7 +758,7 @@ static const u16 pinmux_data[] = {
+ 
+ 	PINMUX_IPSR_GPSR(IP3_7_4,	A10),
+ 	PINMUX_IPSR_MSEL(IP3_7_4,	MSIOF2_RXD_A,		SEL_MSIOF2_0),
+-	PINMUX_IPSR_MSEL(IP3_7_4,	RTS4_N_TANS_B,		SEL_SCIF4_1),
++	PINMUX_IPSR_MSEL(IP3_7_4,	RTS4_N_B,		SEL_SCIF4_1),
+ 	PINMUX_IPSR_GPSR(IP3_7_4,	VI5_HSYNC_N),
+ 
+ 	PINMUX_IPSR_GPSR(IP3_11_8,	A11),
+@@ -861,7 +861,7 @@ static const u16 pinmux_data[] = {
+ 
+ 	PINMUX_IPSR_GPSR(IP5_7_4,	WE1_N),
+ 	PINMUX_IPSR_MSEL(IP5_7_4,	MSIOF3_SS1_D,		SEL_MSIOF3_3),
+-	PINMUX_IPSR_GPSR(IP5_7_4,	RTS3_N_TANS),
++	PINMUX_IPSR_GPSR(IP5_7_4,	RTS3_N),
+ 	PINMUX_IPSR_GPSR(IP5_7_4,	HRTS3_N),
+ 	PINMUX_IPSR_MSEL(IP5_7_4,	SDA6_B,			SEL_I2C6_1),
+ 	PINMUX_IPSR_GPSR(IP5_7_4,	CAN1_RX),
+@@ -942,7 +942,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_MSEL(IP6_27_24,	MSIOF2_TXD_D,		SEL_MSIOF2_3),
+ 	PINMUX_IPSR_MSEL(IP6_27_24,	HTX3_B,			SEL_HSCIF3_1),
+ 	PINMUX_IPSR_MSEL(IP6_27_24,	VI4_DATA3_A,		SEL_VIN4_0),
+-	PINMUX_IPSR_MSEL(IP6_27_24,	RTS4_N_TANS_C,		SEL_SCIF4_2),
++	PINMUX_IPSR_MSEL(IP6_27_24,	RTS4_N_C,		SEL_SCIF4_2),
+ 	PINMUX_IPSR_GPSR(IP6_27_24,	DU_DR3),
+ 
+ 	PINMUX_IPSR_GPSR(IP6_31_28,	D12),
+@@ -1114,7 +1114,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_MSEL(IP11_7_4,	AUDIO_CLKOUT_C,		SEL_ADG_2),
+ 	PINMUX_IPSR_GPSR(IP11_7_4,	ADICS_SAMP),
+ 
+-	PINMUX_IPSR_GPSR(IP11_11_8,	RTS0_N_TANS),
++	PINMUX_IPSR_GPSR(IP11_11_8,	RTS0_N),
+ 	PINMUX_IPSR_MSEL(IP11_11_8,	HRTS1_N_B,		SEL_HSCIF1_1),
+ 	PINMUX_IPSR_MSEL(IP11_11_8,	MSIOF1_SS1_B,		SEL_MSIOF1_1),
+ 	PINMUX_IPSR_MSEL(IP11_11_8,	AUDIO_CLKA_B,		SEL_ADG_1),
+@@ -1143,7 +1143,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_MSEL(IP11_23_20,	RIF1_D0_B,		SEL_DRIF1_1),
+ 	PINMUX_IPSR_GPSR(IP11_23_20,	ADIDATA),
+ 
+-	PINMUX_IPSR_GPSR(IP11_27_24,	RTS1_N_TANS),
++	PINMUX_IPSR_GPSR(IP11_27_24,	RTS1_N),
+ 	PINMUX_IPSR_MSEL(IP11_27_24,	HRTS1_N_A,		SEL_HSCIF1_0),
+ 	PINMUX_IPSR_MSEL(IP11_27_24,	MSIOF1_TXD_B,		SEL_MSIOF1_1),
+ 	PINMUX_IPSR_MSEL(IP11_27_24,	TS_SDAT1_C,		SEL_TSIF1_2),
+@@ -3219,7 +3219,7 @@ static const unsigned int scif0_ctrl_pins[] = {
+ 	RCAR_GP_PIN(5, 4), RCAR_GP_PIN(5, 3),
+ };
+ static const unsigned int scif0_ctrl_mux[] = {
+-	RTS0_N_TANS_MARK, CTS0_N_MARK,
++	RTS0_N_MARK, CTS0_N_MARK,
+ };
+ /* - SCIF1 ------------------------------------------------------------------ */
+ static const unsigned int scif1_data_a_pins[] = {
+@@ -3241,7 +3241,7 @@ static const unsigned int scif1_ctrl_pins[] = {
+ 	RCAR_GP_PIN(5, 8), RCAR_GP_PIN(5, 7),
+ };
+ static const unsigned int scif1_ctrl_mux[] = {
+-	RTS1_N_TANS_MARK, CTS1_N_MARK,
++	RTS1_N_MARK, CTS1_N_MARK,
  };
  
- /*
-- * R8A7795 has 8 banks with 32 GPIOs in each => 256 GPIOs.
-- * Physical layout rows: A - AW, cols: 1 - 39.
-+ * Pins not associated with a GPIO port.
-  */
--#define ROW_GROUP_A(r) ('Z' - 'A' + 1 + (r))
--#define PIN_NUMBER(r, c) (((r) - 'A') * 39 + (c) + 300)
--#define PIN_A_NUMBER(r, c) PIN_NUMBER(ROW_GROUP_A(r), c)
-+enum {
-+	GP_ASSIGN_LAST(),
-+	NOGP_ALL(),
-+};
+ static const unsigned int scif1_data_b_pins[] = {
+@@ -3293,7 +3293,7 @@ static const unsigned int scif3_ctrl_pins[] = {
+ 	RCAR_GP_PIN(1, 26), RCAR_GP_PIN(1, 25),
+ };
+ static const unsigned int scif3_ctrl_mux[] = {
+-	RTS3_N_TANS_MARK, CTS3_N_MARK,
++	RTS3_N_MARK, CTS3_N_MARK,
+ };
+ static const unsigned int scif3_data_b_pins[] = {
+ 	/* RX, TX */
+@@ -3322,7 +3322,7 @@ static const unsigned int scif4_ctrl_a_pins[] = {
+ 	RCAR_GP_PIN(2, 14), RCAR_GP_PIN(2, 13),
+ };
+ static const unsigned int scif4_ctrl_a_mux[] = {
+-	RTS4_N_TANS_A_MARK, CTS4_N_A_MARK,
++	RTS4_N_A_MARK, CTS4_N_A_MARK,
+ };
+ static const unsigned int scif4_data_b_pins[] = {
+ 	/* RX, TX */
+@@ -3343,7 +3343,7 @@ static const unsigned int scif4_ctrl_b_pins[] = {
+ 	RCAR_GP_PIN(1, 10), RCAR_GP_PIN(1, 9),
+ };
+ static const unsigned int scif4_ctrl_b_mux[] = {
+-	RTS4_N_TANS_B_MARK, CTS4_N_B_MARK,
++	RTS4_N_B_MARK, CTS4_N_B_MARK,
+ };
+ static const unsigned int scif4_data_c_pins[] = {
+ 	/* RX, TX */
+@@ -3364,7 +3364,7 @@ static const unsigned int scif4_ctrl_c_pins[] = {
+ 	RCAR_GP_PIN(0, 11), RCAR_GP_PIN(0, 10),
+ };
+ static const unsigned int scif4_ctrl_c_mux[] = {
+-	RTS4_N_TANS_C_MARK, CTS4_N_C_MARK,
++	RTS4_N_C_MARK, CTS4_N_C_MARK,
+ };
+ /* - SCIF5 ------------------------------------------------------------------ */
+ static const unsigned int scif5_data_pins[] = {
+@@ -5448,11 +5448,11 @@ static const struct pinmux_drive_reg pinmux_drive_regs[] = {
+ 		{ RCAR_GP_PIN(5,  3),  0, 3 },	/* CTS0 */
+ 	} },
+ 	{ PINMUX_DRIVE_REG("DRVCTRL18", 0xe6060348) {
+-		{ RCAR_GP_PIN(5,  4), 28, 3 },	/* RTS0_TANS */
++		{ RCAR_GP_PIN(5,  4), 28, 3 },	/* RTS0 */
+ 		{ RCAR_GP_PIN(5,  5), 24, 3 },	/* RX1 */
+ 		{ RCAR_GP_PIN(5,  6), 20, 3 },	/* TX1 */
+ 		{ RCAR_GP_PIN(5,  7), 16, 3 },	/* CTS1 */
+-		{ RCAR_GP_PIN(5,  8), 12, 3 },	/* RTS1_TANS */
++		{ RCAR_GP_PIN(5,  8), 12, 3 },	/* RTS1 */
+ 		{ RCAR_GP_PIN(5,  9),  8, 3 },	/* SCK2 */
+ 		{ RCAR_GP_PIN(5, 10),  4, 3 },	/* TX2 */
+ 		{ RCAR_GP_PIN(5, 11),  0, 3 },	/* RX2 */
+@@ -5700,11 +5700,11 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
+ 		[13] = RCAR_GP_PIN(5,  1),	/* RX0 */
+ 		[14] = RCAR_GP_PIN(5,  2),	/* TX0 */
+ 		[15] = RCAR_GP_PIN(5,  3),	/* CTS0_N */
+-		[16] = RCAR_GP_PIN(5,  4),	/* RTS0_N_TANS */
++		[16] = RCAR_GP_PIN(5,  4),	/* RTS0_N */
+ 		[17] = RCAR_GP_PIN(5,  5),	/* RX1_A */
+ 		[18] = RCAR_GP_PIN(5,  6),	/* TX1_A */
+ 		[19] = RCAR_GP_PIN(5,  7),	/* CTS1_N */
+-		[20] = RCAR_GP_PIN(5,  8),	/* RTS1_N_TANS */
++		[20] = RCAR_GP_PIN(5,  8),	/* RTS1_N */
+ 		[21] = RCAR_GP_PIN(5,  9),	/* SCK2 */
+ 		[22] = RCAR_GP_PIN(5, 10),	/* TX2_A */
+ 		[23] = RCAR_GP_PIN(5, 11),	/* RX2_A */
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77970.c b/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
+index 57859287287c..78159b146e3f 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
+@@ -180,14 +180,14 @@
+ #define IP3_3_0		FM(VI0_CLKENB)			FM(MSIOF2_RXD)		FM(RX3)		FM(RD_WR_N)	FM(HCTS3_N)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP3_7_4		FM(VI0_HSYNC_N)			FM(MSIOF2_TXD)		FM(TX3)		F_(0, 0)	FM(HRTS3_N)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP3_11_8	FM(VI0_VSYNC_N)			FM(MSIOF2_SYNC)		FM(CTS3_N)	F_(0, 0)	FM(HTX3)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP3_15_12	FM(VI0_DATA0)			FM(MSIOF2_SS1)		FM(RTS3_N_TANS)	F_(0, 0)	FM(HRX3)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP3_15_12	FM(VI0_DATA0)			FM(MSIOF2_SS1)		FM(RTS3_N)	F_(0, 0)	FM(HRX3)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP3_19_16	FM(VI0_DATA1)			FM(MSIOF2_SS2)		FM(SCK1)	F_(0, 0)	FM(SPEEDIN_A)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP3_23_20	FM(VI0_DATA2)			FM(AVB0_AVTP_PPS)	FM(SDA3_A)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP3_27_24	FM(VI0_DATA3)			FM(HSCK1)		FM(SCL3_A)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP3_31_28	FM(VI0_DATA4)			FM(HRTS1_N)		FM(RX1_A)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP4_3_0		FM(VI0_DATA5)			FM(HCTS1_N)		FM(TX1_A)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP4_7_4		FM(VI0_DATA6)			FM(HTX1)		FM(CTS1_N)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP4_11_8	FM(VI0_DATA7)			FM(HRX1)		FM(RTS1_N_TANS)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP4_11_8	FM(VI0_DATA7)			FM(HRX1)		FM(RTS1_N)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP4_15_12	FM(VI0_DATA8)			FM(HSCK2)		FM(PWM0_A)	FM(A22)		F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP4_19_16	FM(VI0_DATA9)			FM(HCTS2_N)		FM(PWM1_A)	FM(A23)		FM(FSO_CFE_0_N_B)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP4_23_20	FM(VI0_DATA10)			FM(HRTS2_N)		FM(PWM2_A)	FM(A24)		FM(FSO_CFE_1_N_B)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+@@ -206,14 +206,14 @@
+ #define IP6_11_8	FM(VI1_DATA6)			F_(0,0)			FM(RX4)		FM(D9)		FM(MMC_CLK)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP6_15_12	FM(VI1_DATA7)			F_(0,0)			FM(TX4)		FM(D10)		FM(MMC_D4)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP6_19_16	FM(VI1_DATA8)			F_(0,0)			FM(CTS4_N)	FM(D11)		FM(MMC_D5)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP6_23_20	FM(VI1_DATA9)			F_(0,0)			FM(RTS4_N_TANS)	FM(D12)		FM(MMC_D6)		FM(SCL3_B)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP6_23_20	FM(VI1_DATA9)			F_(0,0)			FM(RTS4_N)	FM(D12)		FM(MMC_D6)		FM(SCL3_B)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP6_27_24	FM(VI1_DATA10)			F_(0,0)			F_(0, 0)	FM(D13)		FM(MMC_D7)		FM(SDA3_B)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP6_31_28	FM(VI1_DATA11)			FM(SCL4)		FM(IRQ4)	FM(D14)		FM(MMC_WP)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP7_3_0		FM(VI1_FIELD)			FM(SDA4)		FM(IRQ5)	FM(D15)		FM(MMC_CD)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP7_7_4		FM(SCL0)			FM(DU_DR0)		FM(TPU0TO0)	FM(CLKOUT)	F_(0, 0)		FM(MSIOF0_RXD)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP7_11_8	FM(SDA0)			FM(DU_DR1)		FM(TPU0TO1)	FM(BS_N)	FM(SCK0)		FM(MSIOF0_TXD)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP7_15_12	FM(SCL1)			FM(DU_DG0)		FM(TPU0TO2)	FM(RD_N)	FM(CTS0_N)		FM(MSIOF0_SCK)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP7_19_16	FM(SDA1)			FM(DU_DG1)		FM(TPU0TO3)	FM(WE0_N)	FM(RTS0_N_TANS)		FM(MSIOF0_SYNC)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP7_19_16	FM(SDA1)			FM(DU_DG1)		FM(TPU0TO3)	FM(WE0_N)	FM(RTS0_N)		FM(MSIOF0_SYNC)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP7_23_20	FM(SCL2)			FM(DU_DB0)		FM(TCLK1_A)	FM(WE1_N)	FM(RX0)			FM(MSIOF0_SS1)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP7_27_24	FM(SDA2)			FM(DU_DB1)		FM(TCLK2_A)	FM(EX_WAIT0)	FM(TX0)			FM(MSIOF0_SS2)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP7_31_28	FM(AVB0_AVTP_CAPTURE)		F_(0, 0)		F_(0, 0)	F_(0, 0)	FM(FSCLKST2_N_B)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+@@ -499,7 +499,7 @@ static const u16 pinmux_data[] = {
  
- static const struct sh_pfc_pin pinmux_pins[] = {
- 	PINMUX_GPIO_GP_ALL(),
--
--	/*
--	 * Pins not associated with a GPIO port.
--	 *
--	 * The pin positions are different between different r8a7795
--	 * packages, all that is needed for the pfc driver is a unique
--	 * number for each pin. To this end use the pin layout from
--	 * R-Car H3SiP to calculate a unique number for each pin.
--	 */
--	SH_PFC_PIN_NAMED_CFG('A',  8, AVB_TX_CTL, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('A',  9, AVB_MDIO, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('A', 12, AVB_TXCREFCLK, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('A', 13, AVB_RD0, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('A', 14, AVB_RD2, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('A', 16, AVB_RX_CTL, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('A', 17, AVB_TD2, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('A', 18, AVB_TD0, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('A', 19, AVB_TXC, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('B', 13, AVB_RD1, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('B', 14, AVB_RD3, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('B', 17, AVB_TD3, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('B', 18, AVB_TD1, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('B', 19, AVB_RXC, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('C',  1, PRESETOUT#, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('H', 37, MLB_REF, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('V',  3, QSPI1_SPCLK, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('V',  5, QSPI1_SSL, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('V',  6, RPC_WP#, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('V',  7, RPC_RESET#, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('W',  3, QSPI0_SPCLK, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('Y',  3, QSPI0_SSL, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('Y',  6, QSPI0_IO2, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('Y',  7, RPC_INT#, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('B'),  4, QSPI0_MISO_IO1, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('B'),  6, QSPI0_IO3, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('C'),  3, QSPI1_IO3, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('C'),  5, QSPI0_MOSI_IO0, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('C'),  7, QSPI1_MOSI_IO0, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('D'), 38, FSCLKST#, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('D'), 39, EXTALR, SH_PFC_PIN_CFG_PULL_UP_DOWN),
--	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('E'),  4, QSPI1_IO2, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('E'),  5, QSPI1_MISO_IO1, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('P'),  7, DU_DOTCLKIN0, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('P'),  8, DU_DOTCLKIN1, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'),  7, DU_DOTCLKIN2, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'),  8, DU_DOTCLKIN3, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 26, TRST#, SH_PFC_PIN_CFG_PULL_UP_DOWN),
--	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 29, TDI, SH_PFC_PIN_CFG_PULL_UP_DOWN),
--	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 30, TMS, CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 27, TCK, SH_PFC_PIN_CFG_PULL_UP_DOWN),
--	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 28, TDO, SH_PFC_PIN_CFG_DRIVE_STRENGTH),
--	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 30, ASEBRK, CFG_FLAGS),
-+	PINMUX_NOGP_ALL(),
+ 	PINMUX_IPSR_GPSR(IP3_15_12,	VI0_DATA0),
+ 	PINMUX_IPSR_GPSR(IP3_15_12,	MSIOF2_SS1),
+-	PINMUX_IPSR_GPSR(IP3_15_12,	RTS3_N_TANS),
++	PINMUX_IPSR_GPSR(IP3_15_12,	RTS3_N),
+ 	PINMUX_IPSR_GPSR(IP3_15_12,	HRX3),
+ 
+ 	PINMUX_IPSR_GPSR(IP3_19_16,	VI0_DATA1),
+@@ -530,7 +530,7 @@ static const u16 pinmux_data[] = {
+ 
+ 	PINMUX_IPSR_GPSR(IP4_11_8,	VI0_DATA7),
+ 	PINMUX_IPSR_GPSR(IP4_11_8,	HRX1),
+-	PINMUX_IPSR_GPSR(IP4_11_8,	RTS1_N_TANS),
++	PINMUX_IPSR_GPSR(IP4_11_8,	RTS1_N),
+ 
+ 	PINMUX_IPSR_GPSR(IP4_15_12,	VI0_DATA8),
+ 	PINMUX_IPSR_GPSR(IP4_15_12,	HSCK2),
+@@ -620,7 +620,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_GPSR(IP6_19_16,	MMC_D5),
+ 
+ 	PINMUX_IPSR_GPSR(IP6_23_20,	VI1_DATA9),
+-	PINMUX_IPSR_GPSR(IP6_23_20,	RTS4_N_TANS),
++	PINMUX_IPSR_GPSR(IP6_23_20,	RTS4_N),
+ 	PINMUX_IPSR_GPSR(IP6_23_20,	D12),
+ 	PINMUX_IPSR_GPSR(IP6_23_20,	MMC_D6),
+ 	PINMUX_IPSR_MSEL(IP6_23_20,	SCL3_B,	SEL_I2C3_1),
+@@ -667,7 +667,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_GPSR(IP7_19_16,	DU_DG1),
+ 	PINMUX_IPSR_GPSR(IP7_19_16,	TPU0TO3),
+ 	PINMUX_IPSR_GPSR(IP7_19_16,	WE0_N),
+-	PINMUX_IPSR_GPSR(IP7_19_16,	RTS0_N_TANS),
++	PINMUX_IPSR_GPSR(IP7_19_16,	RTS0_N),
+ 	PINMUX_IPSR_GPSR(IP7_19_16,	MSIOF0_SYNC),
+ 
+ 	PINMUX_IPSR_GPSR(IP7_23_20,	SCL2),
+@@ -1421,7 +1421,7 @@ static const unsigned int scif0_ctrl_pins[] = {
+ 	RCAR_GP_PIN(4, 3), RCAR_GP_PIN(4, 2),
+ };
+ static const unsigned int scif0_ctrl_mux[] = {
+-	RTS0_N_TANS_MARK, CTS0_N_MARK,
++	RTS0_N_MARK, CTS0_N_MARK,
  };
  
- /* - AUDIO CLOCK ------------------------------------------------------------ */
-@@ -1717,7 +1712,7 @@ static const unsigned int avb_phy_int_mux[] = {
+ /* - SCIF1 ------------------------------------------------------------------ */
+@@ -1444,7 +1444,7 @@ static const unsigned int scif1_ctrl_pins[] = {
+ 	RCAR_GP_PIN(2, 11), RCAR_GP_PIN(2, 10),
  };
- static const unsigned int avb_mdio_pins[] = {
- 	/* AVB_MDC, AVB_MDIO */
--	RCAR_GP_PIN(2, 9), PIN_NUMBER('A', 9),
-+	RCAR_GP_PIN(2, 9), PIN_AVB_MDIO,
+ static const unsigned int scif1_ctrl_mux[] = {
+-	RTS1_N_TANS_MARK, CTS1_N_MARK,
++	RTS1_N_MARK, CTS1_N_MARK,
  };
- static const unsigned int avb_mdio_mux[] = {
- 	AVB_MDC_MARK, AVB_MDIO_MARK,
-@@ -1730,11 +1725,11 @@ static const unsigned int avb_mii_pins[] = {
- 	 * AVB_RD1, AVB_RD2, AVB_RD3,
- 	 * AVB_TXCREFCLK
- 	 */
--	PIN_NUMBER('A', 8), PIN_NUMBER('A', 19), PIN_NUMBER('A', 18),
--	PIN_NUMBER('B', 18), PIN_NUMBER('A', 17), PIN_NUMBER('B', 17),
--	PIN_NUMBER('A', 16), PIN_NUMBER('B', 19), PIN_NUMBER('A', 13),
--	PIN_NUMBER('B', 13), PIN_NUMBER('A', 14), PIN_NUMBER('B', 14),
--	PIN_NUMBER('A', 12),
-+	PIN_AVB_TX_CTL, PIN_AVB_TXC, PIN_AVB_TD0,
-+	PIN_AVB_TD1, PIN_AVB_TD2, PIN_AVB_TD3,
-+	PIN_AVB_RX_CTL, PIN_AVB_RXC, PIN_AVB_RD0,
-+	PIN_AVB_RD1, PIN_AVB_RD2, PIN_AVB_RD3,
-+	PIN_AVB_TXCREFCLK,
- 
+ static const unsigned int scif1_data_b_pins[] = {
+ 	/* RX, TX */
+@@ -1474,7 +1474,7 @@ static const unsigned int scif3_ctrl_pins[] = {
+ 	RCAR_GP_PIN(2, 4), RCAR_GP_PIN(2, 3),
  };
- static const unsigned int avb_mii_mux[] = {
-@@ -5665,44 +5660,44 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ static const unsigned int scif3_ctrl_mux[] = {
+-	RTS3_N_TANS_MARK, CTS3_N_MARK,
++	RTS3_N_MARK, CTS3_N_MARK,
+ };
  
- static const struct pinmux_drive_reg pinmux_drive_regs[] = {
- 	{ PINMUX_DRIVE_REG("DRVCTRL0", 0xe6060300) {
--		{ PIN_NUMBER('W', 3),   28, 2 },	/* QSPI0_SPCLK */
--		{ PIN_A_NUMBER('C', 5), 24, 2 },	/* QSPI0_MOSI_IO0 */
--		{ PIN_A_NUMBER('B', 4), 20, 2 },	/* QSPI0_MISO_IO1 */
--		{ PIN_NUMBER('Y', 6),   16, 2 },	/* QSPI0_IO2 */
--		{ PIN_A_NUMBER('B', 6), 12, 2 },	/* QSPI0_IO3 */
--		{ PIN_NUMBER('Y', 3),    8, 2 },	/* QSPI0_SSL */
--		{ PIN_NUMBER('V', 3),    4, 2 },	/* QSPI1_SPCLK */
--		{ PIN_A_NUMBER('C', 7),  0, 2 },	/* QSPI1_MOSI_IO0 */
-+		{ PIN_QSPI0_SPCLK,    28, 2 },	/* QSPI0_SPCLK */
-+		{ PIN_QSPI0_MOSI_IO0, 24, 2 },	/* QSPI0_MOSI_IO0 */
-+		{ PIN_QSPI0_MISO_IO1, 20, 2 },	/* QSPI0_MISO_IO1 */
-+		{ PIN_QSPI0_IO2,      16, 2 },	/* QSPI0_IO2 */
-+		{ PIN_QSPI0_IO3,      12, 2 },	/* QSPI0_IO3 */
-+		{ PIN_QSPI0_SSL,       8, 2 },	/* QSPI0_SSL */
-+		{ PIN_QSPI1_SPCLK,     4, 2 },	/* QSPI1_SPCLK */
-+		{ PIN_QSPI1_MOSI_IO0,  0, 2 },	/* QSPI1_MOSI_IO0 */
- 	} },
- 	{ PINMUX_DRIVE_REG("DRVCTRL1", 0xe6060304) {
--		{ PIN_A_NUMBER('E', 5), 28, 2 },	/* QSPI1_MISO_IO1 */
--		{ PIN_A_NUMBER('E', 4), 24, 2 },	/* QSPI1_IO2 */
--		{ PIN_A_NUMBER('C', 3), 20, 2 },	/* QSPI1_IO3 */
--		{ PIN_NUMBER('V', 5),   16, 2 },	/* QSPI1_SSL */
--		{ PIN_NUMBER('Y', 7),   12, 2 },	/* RPC_INT# */
--		{ PIN_NUMBER('V', 6),    8, 2 },	/* RPC_WP# */
--		{ PIN_NUMBER('V', 7),    4, 2 },	/* RPC_RESET# */
--		{ PIN_NUMBER('A', 16),   0, 3 },	/* AVB_RX_CTL */
-+		{ PIN_QSPI1_MISO_IO1, 28, 2 },	/* QSPI1_MISO_IO1 */
-+		{ PIN_QSPI1_IO2,      24, 2 },	/* QSPI1_IO2 */
-+		{ PIN_QSPI1_IO3,      20, 2 },	/* QSPI1_IO3 */
-+		{ PIN_QSPI1_SSL,      16, 2 },	/* QSPI1_SSL */
-+		{ PIN_RPC_INT_N,      12, 2 },	/* RPC_INT# */
-+		{ PIN_RPC_WP_N,        8, 2 },	/* RPC_WP# */
-+		{ PIN_RPC_RESET_N,     4, 2 },	/* RPC_RESET# */
-+		{ PIN_AVB_RX_CTL,      0, 3 },	/* AVB_RX_CTL */
- 	} },
- 	{ PINMUX_DRIVE_REG("DRVCTRL2", 0xe6060308) {
--		{ PIN_NUMBER('B', 19),  28, 3 },	/* AVB_RXC */
--		{ PIN_NUMBER('A', 13),  24, 3 },	/* AVB_RD0 */
--		{ PIN_NUMBER('B', 13),  20, 3 },	/* AVB_RD1 */
--		{ PIN_NUMBER('A', 14),  16, 3 },	/* AVB_RD2 */
--		{ PIN_NUMBER('B', 14),  12, 3 },	/* AVB_RD3 */
--		{ PIN_NUMBER('A', 8),    8, 3 },	/* AVB_TX_CTL */
--		{ PIN_NUMBER('A', 19),   4, 3 },	/* AVB_TXC */
--		{ PIN_NUMBER('A', 18),   0, 3 },	/* AVB_TD0 */
-+		{ PIN_AVB_RXC,        28, 3 },	/* AVB_RXC */
-+		{ PIN_AVB_RD0,        24, 3 },	/* AVB_RD0 */
-+		{ PIN_AVB_RD1,        20, 3 },	/* AVB_RD1 */
-+		{ PIN_AVB_RD2,        16, 3 },	/* AVB_RD2 */
-+		{ PIN_AVB_RD3,        12, 3 },	/* AVB_RD3 */
-+		{ PIN_AVB_TX_CTL,      8, 3 },	/* AVB_TX_CTL */
-+		{ PIN_AVB_TXC,         4, 3 },	/* AVB_TXC */
-+		{ PIN_AVB_TD0,         0, 3 },	/* AVB_TD0 */
- 	} },
- 	{ PINMUX_DRIVE_REG("DRVCTRL3", 0xe606030c) {
--		{ PIN_NUMBER('B', 18),  28, 3 },	/* AVB_TD1 */
--		{ PIN_NUMBER('A', 17),  24, 3 },	/* AVB_TD2 */
--		{ PIN_NUMBER('B', 17),  20, 3 },	/* AVB_TD3 */
--		{ PIN_NUMBER('A', 12),  16, 3 },	/* AVB_TXCREFCLK */
--		{ PIN_NUMBER('A', 9),   12, 3 },	/* AVB_MDIO */
--		{ RCAR_GP_PIN(2,  9),    8, 3 },	/* AVB_MDC */
--		{ RCAR_GP_PIN(2, 10),    4, 3 },	/* AVB_MAGIC */
--		{ RCAR_GP_PIN(2, 11),    0, 3 },	/* AVB_PHY_INT */
-+		{ PIN_AVB_TD1,        28, 3 },	/* AVB_TD1 */
-+		{ PIN_AVB_TD2,        24, 3 },	/* AVB_TD2 */
-+		{ PIN_AVB_TD3,        20, 3 },	/* AVB_TD3 */
-+		{ PIN_AVB_TXCREFCLK,  16, 3 },	/* AVB_TXCREFCLK */
-+		{ PIN_AVB_MDIO,       12, 3 },	/* AVB_MDIO */
-+		{ RCAR_GP_PIN(2,  9),  8, 3 },	/* AVB_MDC */
-+		{ RCAR_GP_PIN(2, 10),  4, 3 },	/* AVB_MAGIC */
-+		{ RCAR_GP_PIN(2, 11),  0, 3 },	/* AVB_PHY_INT */
- 	} },
- 	{ PINMUX_DRIVE_REG("DRVCTRL4", 0xe6060310) {
- 		{ RCAR_GP_PIN(2, 12), 28, 3 },	/* AVB_LINK */
-@@ -5756,7 +5751,7 @@ static const struct pinmux_drive_reg pinmux_drive_regs[] = {
- 	} },
- 	{ PINMUX_DRIVE_REG("DRVCTRL9", 0xe6060324) {
- 		{ RCAR_GP_PIN(1, 27), 28, 3 },	/* EX_WAIT0 */
--		{ PIN_NUMBER('C', 1), 24, 3 },	/* PRESETOUT# */
-+		{ PIN_PRESETOUT_N,    24, 3 },	/* PRESETOUT# */
- 		{ RCAR_GP_PIN(0,  0), 20, 3 },	/* D0 */
- 		{ RCAR_GP_PIN(0,  1), 16, 3 },	/* D1 */
- 		{ RCAR_GP_PIN(0,  2), 12, 3 },	/* D2 */
-@@ -5775,30 +5770,30 @@ static const struct pinmux_drive_reg pinmux_drive_regs[] = {
- 		{ RCAR_GP_PIN(0, 13),  0, 3 },	/* D13 */
- 	} },
- 	{ PINMUX_DRIVE_REG("DRVCTRL11", 0xe606032c) {
--		{ RCAR_GP_PIN(0, 14),   28, 3 },	/* D14 */
--		{ RCAR_GP_PIN(0, 15),   24, 3 },	/* D15 */
--		{ RCAR_GP_PIN(7,  0),   20, 3 },	/* AVS1 */
--		{ RCAR_GP_PIN(7,  1),   16, 3 },	/* AVS2 */
--		{ RCAR_GP_PIN(7,  2),   12, 3 },	/* GP7_02 */
--		{ RCAR_GP_PIN(7,  3),    8, 3 },	/* GP7_03 */
--		{ PIN_A_NUMBER('P', 7),  4, 2 },	/* DU_DOTCLKIN0 */
--		{ PIN_A_NUMBER('P', 8),  0, 2 },	/* DU_DOTCLKIN1 */
-+		{ RCAR_GP_PIN(0, 14), 28, 3 },	/* D14 */
-+		{ RCAR_GP_PIN(0, 15), 24, 3 },	/* D15 */
-+		{ RCAR_GP_PIN(7,  0), 20, 3 },	/* AVS1 */
-+		{ RCAR_GP_PIN(7,  1), 16, 3 },	/* AVS2 */
-+		{ RCAR_GP_PIN(7,  2), 12, 3 },	/* GP7_02 */
-+		{ RCAR_GP_PIN(7,  3),  8, 3 },	/* GP7_03 */
-+		{ PIN_DU_DOTCLKIN0,    4, 2 },	/* DU_DOTCLKIN0 */
-+		{ PIN_DU_DOTCLKIN1,    0, 2 },	/* DU_DOTCLKIN1 */
- 	} },
- 	{ PINMUX_DRIVE_REG("DRVCTRL12", 0xe6060330) {
--		{ PIN_A_NUMBER('R', 7),  28, 2 },	/* DU_DOTCLKIN2 */
--		{ PIN_A_NUMBER('R', 8),  24, 2 },	/* DU_DOTCLKIN3 */
--		{ PIN_A_NUMBER('D', 38), 20, 2 },	/* FSCLKST# */
--		{ PIN_A_NUMBER('R', 30),  4, 2 },	/* TMS */
-+		{ PIN_DU_DOTCLKIN2,   28, 2 },	/* DU_DOTCLKIN2 */
-+		{ PIN_DU_DOTCLKIN3,   24, 2 },	/* DU_DOTCLKIN3 */
-+		{ PIN_FSCLKST_N,      20, 2 },	/* FSCLKST# */
-+		{ PIN_TMS,             4, 2 },	/* TMS */
- 	} },
- 	{ PINMUX_DRIVE_REG("DRVCTRL13", 0xe6060334) {
--		{ PIN_A_NUMBER('T', 28), 28, 2 },	/* TDO */
--		{ PIN_A_NUMBER('T', 30), 24, 2 },	/* ASEBRK */
--		{ RCAR_GP_PIN(3,  0),    20, 3 },	/* SD0_CLK */
--		{ RCAR_GP_PIN(3,  1),    16, 3 },	/* SD0_CMD */
--		{ RCAR_GP_PIN(3,  2),    12, 3 },	/* SD0_DAT0 */
--		{ RCAR_GP_PIN(3,  3),     8, 3 },	/* SD0_DAT1 */
--		{ RCAR_GP_PIN(3,  4),     4, 3 },	/* SD0_DAT2 */
--		{ RCAR_GP_PIN(3,  5),     0, 3 },	/* SD0_DAT3 */
-+		{ PIN_TDO,            28, 2 },	/* TDO */
-+		{ PIN_ASEBRK,         24, 2 },	/* ASEBRK */
-+		{ RCAR_GP_PIN(3,  0), 20, 3 },	/* SD0_CLK */
-+		{ RCAR_GP_PIN(3,  1), 16, 3 },	/* SD0_CMD */
-+		{ RCAR_GP_PIN(3,  2), 12, 3 },	/* SD0_DAT0 */
-+		{ RCAR_GP_PIN(3,  3),  8, 3 },	/* SD0_DAT1 */
-+		{ RCAR_GP_PIN(3,  4),  4, 3 },	/* SD0_DAT2 */
-+		{ RCAR_GP_PIN(3,  5),  0, 3 },	/* SD0_DAT3 */
- 	} },
- 	{ PINMUX_DRIVE_REG("DRVCTRL14", 0xe6060338) {
- 		{ RCAR_GP_PIN(3,  6), 28, 3 },	/* SD1_CLK */
-@@ -5867,7 +5862,7 @@ static const struct pinmux_drive_reg pinmux_drive_regs[] = {
- 		{ RCAR_GP_PIN(5, 23), 16, 3 },	/* MLB_CLK */
- 		{ RCAR_GP_PIN(5, 24), 12, 3 },	/* MLB_SIG */
- 		{ RCAR_GP_PIN(5, 25),  8, 3 },	/* MLB_DAT */
--		{ PIN_NUMBER('H', 37),  4, 3 },	/* MLB_REF */
-+		{ PIN_MLB_REF,         4, 3 },	/* MLB_REF */
- 		{ RCAR_GP_PIN(6,  0),  0, 3 },	/* SSI_SCK01239 */
- 	} },
- 	{ PINMUX_DRIVE_REG("DRVCTRL21", 0xe6060354) {
-@@ -5940,35 +5935,35 @@ static int r8a7795_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin, u32 *poc
+ /* - SCIF4 ------------------------------------------------------------------ */
+@@ -1497,7 +1497,7 @@ static const unsigned int scif4_ctrl_pins[] = {
+ 	RCAR_GP_PIN(3, 13), RCAR_GP_PIN(3, 12),
+ };
+ static const unsigned int scif4_ctrl_mux[] = {
+-	RTS4_N_TANS_MARK, CTS4_N_MARK,
++	RTS4_N_MARK, CTS4_N_MARK,
+ };
  
- static const struct pinmux_bias_reg pinmux_bias_regs[] = {
- 	{ PINMUX_BIAS_REG("PUEN0", 0xe6060400, "PUD0", 0xe6060440) {
--		[ 0] = PIN_NUMBER('W', 3),	/* QSPI0_SPCLK */
--		[ 1] = PIN_A_NUMBER('C', 5),	/* QSPI0_MOSI_IO0 */
--		[ 2] = PIN_A_NUMBER('B', 4),	/* QSPI0_MISO_IO1 */
--		[ 3] = PIN_NUMBER('Y', 6),	/* QSPI0_IO2 */
--		[ 4] = PIN_A_NUMBER('B', 6),	/* QSPI0_IO3 */
--		[ 5] = PIN_NUMBER('Y', 3),	/* QSPI0_SSL */
--		[ 6] = PIN_NUMBER('V', 3),	/* QSPI1_SPCLK */
--		[ 7] = PIN_A_NUMBER('C', 7),	/* QSPI1_MOSI_IO0 */
--		[ 8] = PIN_A_NUMBER('E', 5),	/* QSPI1_MISO_IO1 */
--		[ 9] = PIN_A_NUMBER('E', 4),	/* QSPI1_IO2 */
--		[10] = PIN_A_NUMBER('C', 3),	/* QSPI1_IO3 */
--		[11] = PIN_NUMBER('V', 5),	/* QSPI1_SSL */
--		[12] = PIN_NUMBER('Y', 7),	/* RPC_INT# */
--		[13] = PIN_NUMBER('V', 6),	/* RPC_WP# */
--		[14] = PIN_NUMBER('V', 7),	/* RPC_RESET# */
--		[15] = PIN_NUMBER('A', 16),	/* AVB_RX_CTL */
--		[16] = PIN_NUMBER('B', 19),	/* AVB_RXC */
--		[17] = PIN_NUMBER('A', 13),	/* AVB_RD0 */
--		[18] = PIN_NUMBER('B', 13),	/* AVB_RD1 */
--		[19] = PIN_NUMBER('A', 14),	/* AVB_RD2 */
--		[20] = PIN_NUMBER('B', 14),	/* AVB_RD3 */
--		[21] = PIN_NUMBER('A', 8),	/* AVB_TX_CTL */
--		[22] = PIN_NUMBER('A', 19),	/* AVB_TXC */
--		[23] = PIN_NUMBER('A', 18),	/* AVB_TD0 */
--		[24] = PIN_NUMBER('B', 18),	/* AVB_TD1 */
--		[25] = PIN_NUMBER('A', 17),	/* AVB_TD2 */
--		[26] = PIN_NUMBER('B', 17),	/* AVB_TD3 */
--		[27] = PIN_NUMBER('A', 12),	/* AVB_TXCREFCLK */
--		[28] = PIN_NUMBER('A', 9),	/* AVB_MDIO */
-+		[ 0] = PIN_QSPI0_SPCLK,		/* QSPI0_SPCLK */
-+		[ 1] = PIN_QSPI0_MOSI_IO0,	/* QSPI0_MOSI_IO0 */
-+		[ 2] = PIN_QSPI0_MISO_IO1,	/* QSPI0_MISO_IO1 */
-+		[ 3] = PIN_QSPI0_IO2,		/* QSPI0_IO2 */
-+		[ 4] = PIN_QSPI0_IO3,		/* QSPI0_IO3 */
-+		[ 5] = PIN_QSPI0_SSL,		/* QSPI0_SSL */
-+		[ 6] = PIN_QSPI1_SPCLK,		/* QSPI1_SPCLK */
-+		[ 7] = PIN_QSPI1_MOSI_IO0,	/* QSPI1_MOSI_IO0 */
-+		[ 8] = PIN_QSPI1_MISO_IO1,	/* QSPI1_MISO_IO1 */
-+		[ 9] = PIN_QSPI1_IO2,		/* QSPI1_IO2 */
-+		[10] = PIN_QSPI1_IO3,		/* QSPI1_IO3 */
-+		[11] = PIN_QSPI1_SSL,		/* QSPI1_SSL */
-+		[12] = PIN_RPC_INT_N,		/* RPC_INT# */
-+		[13] = PIN_RPC_WP_N,		/* RPC_WP# */
-+		[14] = PIN_RPC_RESET_N,		/* RPC_RESET# */
-+		[15] = PIN_AVB_RX_CTL,		/* AVB_RX_CTL */
-+		[16] = PIN_AVB_RXC,		/* AVB_RXC */
-+		[17] = PIN_AVB_RD0,		/* AVB_RD0 */
-+		[18] = PIN_AVB_RD1,		/* AVB_RD1 */
-+		[19] = PIN_AVB_RD2,		/* AVB_RD2 */
-+		[20] = PIN_AVB_RD3,		/* AVB_RD3 */
-+		[21] = PIN_AVB_TX_CTL,		/* AVB_TX_CTL */
-+		[22] = PIN_AVB_TXC,		/* AVB_TXC */
-+		[23] = PIN_AVB_TD0,		/* AVB_TD0 */
-+		[24] = PIN_AVB_TD1,		/* AVB_TD1 */
-+		[25] = PIN_AVB_TD2,		/* AVB_TD2 */
-+		[26] = PIN_AVB_TD3,		/* AVB_TD3 */
-+		[27] = PIN_AVB_TXCREFCLK,	/* AVB_TXCREFCLK */
-+		[28] = PIN_AVB_MDIO,		/* AVB_MDIO */
- 		[29] = RCAR_GP_PIN(2,  9),	/* AVB_MDC */
- 		[30] = RCAR_GP_PIN(2, 10),	/* AVB_MAGIC */
- 		[31] = RCAR_GP_PIN(2, 11),	/* AVB_PHY_INT */
-@@ -6017,7 +6012,7 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
- 		[ 6] = RCAR_GP_PIN(1, 25),	/* WE0_N */
- 		[ 7] = RCAR_GP_PIN(1, 26),	/* WE1_N */
- 		[ 8] = RCAR_GP_PIN(1, 27),	/* EX_WAIT0_A */
--		[ 9] = PIN_NUMBER('C', 1),	/* PRESETOUT# */
-+		[ 9] = PIN_PRESETOUT_N,		/* PRESETOUT# */
- 		[10] = RCAR_GP_PIN(0,  0),	/* D0 */
- 		[11] = RCAR_GP_PIN(0,  1),	/* D1 */
- 		[12] = RCAR_GP_PIN(0,  2),	/* D2 */
-@@ -6038,20 +6033,20 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
- 		[27] = RCAR_GP_PIN(7,  1),	/* AVS2 */
- 		[28] = RCAR_GP_PIN(7,  2),	/* GP7_02 */
- 		[29] = RCAR_GP_PIN(7,  3),	/* GP7_03 */
--		[30] = PIN_A_NUMBER('P', 7),	/* DU_DOTCLKIN0 */
--		[31] = PIN_A_NUMBER('P', 8),	/* DU_DOTCLKIN1 */
-+		[30] = PIN_DU_DOTCLKIN0,	/* DU_DOTCLKIN0 */
-+		[31] = PIN_DU_DOTCLKIN1,	/* DU_DOTCLKIN1 */
- 	} },
- 	{ PINMUX_BIAS_REG("PUEN3", 0xe606040c, "PUD3", 0xe606044c) {
--		[ 0] = PIN_A_NUMBER('R', 7),	/* DU_DOTCLKIN2 */
--		[ 1] = PIN_A_NUMBER('R', 8),	/* DU_DOTCLKIN3 */
--		[ 2] = PIN_A_NUMBER('D', 38),	/* FSCLKST# */
--		[ 3] = PIN_A_NUMBER('D', 39),	/* EXTALR*/
--		[ 4] = PIN_A_NUMBER('R', 26),	/* TRST# */
--		[ 5] = PIN_A_NUMBER('T', 27),	/* TCK */
--		[ 6] = PIN_A_NUMBER('R', 30),	/* TMS */
--		[ 7] = PIN_A_NUMBER('R', 29),	/* TDI */
-+		[ 0] = PIN_DU_DOTCLKIN2,	/* DU_DOTCLKIN2 */
-+		[ 1] = PIN_DU_DOTCLKIN3,	/* DU_DOTCLKIN3 */
-+		[ 2] = PIN_FSCLKST_N,		/* FSCLKST# */
-+		[ 3] = PIN_EXTALR,		/* EXTALR*/
-+		[ 4] = PIN_TRST_N,		/* TRST# */
-+		[ 5] = PIN_TCK,			/* TCK */
-+		[ 6] = PIN_TMS,			/* TMS */
-+		[ 7] = PIN_TDI,			/* TDI */
- 		[ 8] = SH_PFC_PIN_NONE,
--		[ 9] = PIN_A_NUMBER('T', 30),	/* ASEBRK */
-+		[ 9] = PIN_ASEBRK,		/* ASEBRK */
- 		[10] = RCAR_GP_PIN(3,  0),	/* SD0_CLK */
- 		[11] = RCAR_GP_PIN(3,  1),	/* SD0_CMD */
- 		[12] = RCAR_GP_PIN(3,  2),	/* SD0_DAT0 */
-@@ -6116,7 +6111,7 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
- 		[ 3] = RCAR_GP_PIN(5, 23),	/* MLB_CLK */
- 		[ 4] = RCAR_GP_PIN(5, 24),	/* MLB_SIG */
- 		[ 5] = RCAR_GP_PIN(5, 25),	/* MLB_DAT */
--		[ 6] = PIN_NUMBER('H', 37),	/* MLB_REF */
-+		[ 6] = PIN_MLB_REF,		/* MLB_REF */
- 		[ 7] = RCAR_GP_PIN(6,  0),	/* SSI_SCK01239 */
- 		[ 8] = RCAR_GP_PIN(6,  1),	/* SSI_WS01239 */
- 		[ 9] = RCAR_GP_PIN(6,  2),	/* SSI_SDATA0 */
+ /* - TMU -------------------------------------------------------------------- */
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77980.c b/drivers/pinctrl/sh-pfc/pfc-r8a77980.c
+index 27c4392cbbbd..8c6707f9a335 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77980.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77980.c
+@@ -187,7 +187,7 @@
+ #define IP0_7_4		FM(DU_DR3)			FM(RX4)			FM(GETHER_RMII_RX_ER)	FM(A1)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0_11_8	FM(DU_DR4)			FM(TX4)			FM(GETHER_RMII_RXD0)	FM(A2)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0_15_12	FM(DU_DR5)			FM(CTS4_N)		FM(GETHER_RMII_RXD1)	FM(A3)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP0_19_16	FM(DU_DR6)			FM(RTS4_N_TANS)		FM(GETHER_RMII_TXD_EN)	FM(A4)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP0_19_16	FM(DU_DR6)			FM(RTS4_N)		FM(GETHER_RMII_TXD_EN)	FM(A4)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0_23_20	FM(DU_DR7)			F_(0, 0)		FM(GETHER_RMII_TXD0)	FM(A5)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0_27_24	FM(DU_DG2)			F_(0, 0)		FM(GETHER_RMII_TXD1)	FM(A6)		F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0_31_28	FM(DU_DG3)			FM(CPG_CPCKOUT)		FM(GETHER_RMII_REFCLK)	FM(A7)		FM(PWMFSW0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+@@ -210,14 +210,14 @@
+ #define IP3_3_0		FM(VI0_CLKENB)			FM(MSIOF2_RXD)		FM(RX3)			FM(RD_WR_N)	FM(HCTS3_N)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP3_7_4		FM(VI0_HSYNC_N)			FM(MSIOF2_TXD)		FM(TX3)			F_(0, 0)	FM(HRTS3_N)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP3_11_8	FM(VI0_VSYNC_N)			FM(MSIOF2_SYNC)		FM(CTS3_N)		F_(0, 0)	FM(HTX3)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP3_15_12	FM(VI0_DATA0)			FM(MSIOF2_SS1)		FM(RTS3_N_TANS)		F_(0, 0)	FM(HRX3)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP3_15_12	FM(VI0_DATA0)			FM(MSIOF2_SS1)		FM(RTS3_N)		F_(0, 0)	FM(HRX3)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP3_19_16	FM(VI0_DATA1)			FM(MSIOF2_SS2)		FM(SCK1)		F_(0, 0)	FM(SPEEDIN_A)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP3_23_20	FM(VI0_DATA2)			FM(AVB_AVTP_PPS)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP3_27_24	FM(VI0_DATA3)			FM(HSCK1)		F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP3_31_28	FM(VI0_DATA4)			FM(HRTS1_N)		FM(RX1_A)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP4_3_0		FM(VI0_DATA5)			FM(HCTS1_N)		FM(TX1_A)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP4_7_4		FM(VI0_DATA6)			FM(HTX1)		FM(CTS1_N)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP4_11_8	FM(VI0_DATA7)			FM(HRX1)		FM(RTS1_N_TANS)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP4_11_8	FM(VI0_DATA7)			FM(HRX1)		FM(RTS1_N)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP4_15_12	FM(VI0_DATA8)			FM(HSCK2)		F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP4_19_16	FM(VI0_DATA9)			FM(HCTS2_N)		FM(PWM1_A)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP4_23_20	FM(VI0_DATA10)			FM(HRTS2_N)		FM(PWM2_A)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+@@ -243,7 +243,7 @@
+ #define IP7_7_4		FM(SCL0)			F_(0, 0)		F_(0, 0)		FM(CLKOUT)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP7_11_8	FM(SDA0)			F_(0, 0)		F_(0, 0)		FM(BS_N)	FM(SCK0)	FM(HSCK0_B)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP7_15_12	FM(SCL1)			F_(0, 0)		FM(TPU0TO2)		FM(RD_N)	FM(CTS0_N)	FM(HCTS0_N_B)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP7_19_16	FM(SDA1)			F_(0, 0)		FM(TPU0TO3)		FM(WE0_N)	FM(RTS0_N_TANS)	FM(HRTS0_N_B)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP7_19_16	FM(SDA1)			F_(0, 0)		FM(TPU0TO3)		FM(WE0_N)	FM(RTS0_N)	FM(HRTS0_N_B)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP7_23_20	FM(SCL2)			F_(0, 0)		F_(0, 0)		FM(WE1_N)	FM(RX0)		FM(HRX0_B)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP7_27_24	FM(SDA2)			F_(0, 0)		F_(0, 0)		FM(EX_WAIT0)	FM(TX0)		FM(HTX0_B)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP7_31_28	FM(AVB_AVTP_MATCH)		FM(TPU0TO0)		F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+@@ -470,7 +470,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_GPSR(IP0_15_12,	A3),
+ 
+ 	PINMUX_IPSR_GPSR(IP0_19_16,	DU_DR6),
+-	PINMUX_IPSR_GPSR(IP0_19_16,	RTS4_N_TANS),
++	PINMUX_IPSR_GPSR(IP0_19_16,	RTS4_N),
+ 	PINMUX_IPSR_GPSR(IP0_19_16,	GETHER_RMII_TXD_EN),
+ 	PINMUX_IPSR_GPSR(IP0_19_16,	A4),
+ 
+@@ -580,7 +580,7 @@ static const u16 pinmux_data[] = {
+ 
+ 	PINMUX_IPSR_GPSR(IP3_15_12,	VI0_DATA0),
+ 	PINMUX_IPSR_GPSR(IP3_15_12,	MSIOF2_SS1),
+-	PINMUX_IPSR_GPSR(IP3_15_12,	RTS3_N_TANS),
++	PINMUX_IPSR_GPSR(IP3_15_12,	RTS3_N),
+ 	PINMUX_IPSR_GPSR(IP3_15_12,	HRX3),
+ 
+ 	PINMUX_IPSR_GPSR(IP3_19_16,	VI0_DATA1),
+@@ -609,7 +609,7 @@ static const u16 pinmux_data[] = {
+ 
+ 	PINMUX_IPSR_GPSR(IP4_11_8,	VI0_DATA7),
+ 	PINMUX_IPSR_GPSR(IP4_11_8,	HRX1),
+-	PINMUX_IPSR_GPSR(IP4_11_8,	RTS1_N_TANS),
++	PINMUX_IPSR_GPSR(IP4_11_8,	RTS1_N),
+ 
+ 	PINMUX_IPSR_GPSR(IP4_15_12,	VI0_DATA8),
+ 	PINMUX_IPSR_GPSR(IP4_15_12,	HSCK2),
+@@ -728,7 +728,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_GPSR(IP7_19_16,	SDA1),
+ 	PINMUX_IPSR_GPSR(IP7_19_16,	TPU0TO3),
+ 	PINMUX_IPSR_GPSR(IP7_19_16,	WE0_N),
+-	PINMUX_IPSR_GPSR(IP7_19_16,	RTS0_N_TANS),
++	PINMUX_IPSR_GPSR(IP7_19_16,	RTS0_N),
+ 	PINMUX_IPSR_MSEL(IP1_23_20,	HRTS0_N_B, SEL_HSCIF0_1),
+ 
+ 	PINMUX_IPSR_GPSR(IP7_23_20,	SCL2),
+@@ -1676,11 +1676,11 @@ static const unsigned int scif0_clk_mux[] = {
+ 	SCK0_MARK,
+ };
+ static const unsigned int scif0_ctrl_pins[] = {
+-	/* RTS0#/TANS, CTS0# */
++	/* RTS0#, CTS0# */
+ 	RCAR_GP_PIN(4, 3), RCAR_GP_PIN(4, 2),
+ };
+ static const unsigned int scif0_ctrl_mux[] = {
+-	RTS0_N_TANS_MARK, CTS0_N_MARK,
++	RTS0_N_MARK, CTS0_N_MARK,
+ };
+ 
+ /* - SCIF1 ------------------------------------------------------------------ */
+@@ -1699,11 +1699,11 @@ static const unsigned int scif1_clk_mux[] = {
+ 	SCK1_MARK,
+ };
+ static const unsigned int scif1_ctrl_pins[] = {
+-	/* RTS1#/TANS, CTS1# */
++	/* RTS1#, CTS1# */
+ 	RCAR_GP_PIN(2, 11), RCAR_GP_PIN(2, 10),
+ };
+ static const unsigned int scif1_ctrl_mux[] = {
+-	RTS1_N_TANS_MARK, CTS1_N_MARK,
++	RTS1_N_MARK, CTS1_N_MARK,
+ };
+ static const unsigned int scif1_data_b_pins[] = {
+ 	/* RX1, TX1 */
+@@ -1729,11 +1729,11 @@ static const unsigned int scif3_clk_mux[] = {
+ 	SCK3_MARK,
+ };
+ static const unsigned int scif3_ctrl_pins[] = {
+-	/* RTS3#/TANS, CTS3# */
++	/* RTS3#, CTS3# */
+ 	RCAR_GP_PIN(2, 4), RCAR_GP_PIN(2, 3),
+ };
+ static const unsigned int scif3_ctrl_mux[] = {
+-	RTS3_N_TANS_MARK, CTS3_N_MARK,
++	RTS3_N_MARK, CTS3_N_MARK,
+ };
+ 
+ /* - SCIF4 ------------------------------------------------------------------ */
+@@ -1752,11 +1752,11 @@ static const unsigned int scif4_clk_mux[] = {
+ 	SCK4_MARK,
+ };
+ static const unsigned int scif4_ctrl_pins[] = {
+-	/* RTS4#/TANS, CTS4# */
++	/* RTS4#, CTS4# */
+ 	RCAR_GP_PIN(0, 4), RCAR_GP_PIN(0, 3),
+ };
+ static const unsigned int scif4_ctrl_mux[] = {
+-	RTS4_N_TANS_MARK, CTS4_N_MARK,
++	RTS4_N_MARK, CTS4_N_MARK,
+ };
+ 
+ /* - SCIF Clock ------------------------------------------------------------- */
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+index 20b58e4602c9..6e952fe0818a 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+@@ -291,7 +291,7 @@
+ #define IP10_23_20	FM(SSI_SDATA4_A)	FM(HTX0)		FM(SCL2_A)		FM(CAN1_RX_B)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP10_27_24	FM(SSI_WS4_A)		FM(HRX0)		FM(SDA2_A)		FM(CAN1_TX_B)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP10_31_28	FM(SCL1)		FM(CTS1_N)		F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP11_3_0	FM(SDA1)		FM(RTS1_N_TANS)		F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP11_3_0	FM(SDA1)		FM(RTS1_N)		F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP11_7_4	FM(MSIOF1_SCK)		FM(AVB0_AVTP_PPS_B)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP11_11_8	FM(MSIOF1_TXD)		FM(AVB0_AVTP_CAPTURE_B)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP11_15_12	FM(MSIOF1_RXD)		FM(AVB0_AVTP_MATCH_B)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+@@ -302,7 +302,7 @@
+ 
+ /* IPSRx */		/* 0 */			/* 1 */			/* 2 */			/* 3 */		/* 4 */			/* 5 */		/* 6  - F */
+ #define IP12_3_0	FM(RX1_A)		FM(CTS0_N)		FM(TPU0TO0_B)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP12_7_4	FM(TX1_A)		FM(RTS0_N_TANS)		FM(TPU0TO1_B)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP12_7_4	FM(TX1_A)		FM(RTS0_N)		FM(TPU0TO1_B)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP12_11_8	FM(SCK2)		FM(MSIOF1_SS1)		FM(TPU0TO3_B)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP12_15_12	FM(TPU0TO0_A)		FM(AVB0_AVTP_CAPTURE_A)	FM(HCTS0_N)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP12_19_16	FM(TPU0TO1_A)		FM(AVB0_AVTP_MATCH_A)	FM(HRTS0_N)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+@@ -854,7 +854,7 @@ static const u16 pinmux_data[] = {
+ 
+ 	/* IPSR11 */
+ 	PINMUX_IPSR_GPSR(IP11_3_0,	SDA1),
+-	PINMUX_IPSR_GPSR(IP11_3_0,	RTS1_N_TANS),
++	PINMUX_IPSR_GPSR(IP11_3_0,	RTS1_N),
+ 
+ 	PINMUX_IPSR_GPSR(IP11_7_4,	MSIOF1_SCK),
+ 	PINMUX_IPSR_MSEL(IP11_7_4,	AVB0_AVTP_PPS_B, SEL_ETHERAVB_1),
+@@ -889,7 +889,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_GPSR(IP12_3_0,	TPU0TO0_B),
+ 
+ 	PINMUX_IPSR_MSEL(IP12_7_4,	TX1_A, SEL_SCIF1_0),
+-	PINMUX_IPSR_GPSR(IP12_7_4,	RTS0_N_TANS),
++	PINMUX_IPSR_GPSR(IP12_7_4,	RTS0_N),
+ 	PINMUX_IPSR_GPSR(IP12_7_4,	TPU0TO1_B),
+ 
+ 	PINMUX_IPSR_GPSR(IP12_11_8,	SCK2),
+@@ -1418,7 +1418,7 @@ static const unsigned int scif0_ctrl_pins[] = {
+ 	RCAR_GP_PIN(4, 24), RCAR_GP_PIN(4, 23),
+ };
+ static const unsigned int scif0_ctrl_mux[] = {
+-	RTS0_N_TANS_MARK, CTS0_N_MARK,
++	RTS0_N_MARK, CTS0_N_MARK,
+ };
+ /* - SCIF1 ------------------------------------------------------------------ */
+ static const unsigned int scif1_data_a_pins[] = {
+@@ -1454,7 +1454,7 @@ static const unsigned int scif1_ctrl_pins[] = {
+ 	RCAR_GP_PIN(4, 11), RCAR_GP_PIN(4, 10),
+ };
+ static const unsigned int scif1_ctrl_mux[] = {
+-	RTS1_N_TANS_MARK, CTS1_N_MARK,
++	RTS1_N_MARK, CTS1_N_MARK,
+ };
+ 
+ /* - SCIF2 ------------------------------------------------------------------ */
 -- 
 2.17.1
 
 
---FeZRrNjXJJ9EeWNf76HM
+--AziB6g08Hk12Qz7IQLyf
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -511,12 +598,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#5210): https://lists.cip-project.org/g/cip-dev/message=
-/5210
-Mute This Topic: https://lists.cip-project.org/mt/76326750/4520388
+View/Reply Online (#5205): https://lists.cip-project.org/g/cip-dev/message=
+/5205
+Mute This Topic: https://lists.cip-project.org/mt/76326745/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---FeZRrNjXJJ9EeWNf76HM--
+--AziB6g08Hk12Qz7IQLyf--
