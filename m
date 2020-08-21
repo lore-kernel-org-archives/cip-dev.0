@@ -1,4 +1,4 @@
-Return-Path: <SRS0=/maM=B7=lists.cip-project.org=bounce+64572+5212+4520388+8129055@kernel.org>
+Return-Path: <SRS0=OtkO=B7=lists.cip-project.org=bounce+64572+5206+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MIME_HEADER_CTYPE_ONLY,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	T_TVD_MIME_NO_HEADERS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D29A2C433F2
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C55E9C433ED
 	for <cip-dev@archiver.kernel.org>; Fri, 21 Aug 2020 10:58:46 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 9AE332078D
+	by mail.kernel.org (Postfix) with ESMTPS id 93C152072D
 	for <cip-dev@archiver.kernel.org>; Fri, 21 Aug 2020 10:58:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="K4tr/Kp4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AE332078D
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="PZLK97zl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93C152072D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5212+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id 8mDHYY4521723xTmD55kAto1; Fri, 21 Aug 2020 03:58:46 -0700
-X-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [])
- by mx.groups.io with SMTP id smtpd.web10.131152.1598003016916343991
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5206+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id 1dpkYY4521723x45vWaxajem; Fri, 21 Aug 2020 03:58:46 -0700
+X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [])
+ by mx.groups.io with SMTP id smtpd.web10.131162.1598003046570191988
  for <cip-dev@lists.cip-project.org>;
- Fri, 21 Aug 2020 02:44:00 -0700
+ Fri, 21 Aug 2020 02:44:08 -0700
 X-IronPort-AV: E=Sophos;i="5.76,335,1592838000"; 
-   d="scan'208";a="54954607"
+   d="scan'208";a="55170370"
 X-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 21 Aug 2020 18:44:00 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 21 Aug 2020 18:44:08 +0900
 X-Received: from localhost.localdomain (unknown [172.29.52.2])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id DCC5D4231AD9;
-	Fri, 21 Aug 2020 18:43:58 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 610C84232078;
+	Fri, 21 Aug 2020 18:44:06 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -38,9 +38,9 @@ To: cip-dev@lists.cip-project.org,
 Cc: Chris Paterson <chris.paterson2@renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [cip-dev] [PATCH 24/36] pinctrl: sh-pfc: r8a7795-es1: Add TPU pins, groups and functions
-Date: Fri, 21 Aug 2020 10:43:00 +0100
-Message-Id: <20200821094312.3249-25-biju.das.jz@bp.renesas.com>
+Subject: [cip-dev] [PATCH 28/36] pinctrl: sh-pfc: pfc-r8a7795-es1: Fix typo in pinmux macro for SCL3
+Date: Fri, 21 Aug 2020 10:43:04 +0100
+Message-Id: <20200821094312.3249-29-biju.das.jz@bp.renesas.com>
 In-Reply-To: <20200821094312.3249-1-biju.das.jz@bp.renesas.com>
 References: <20200821094312.3249-1-biju.das.jz@bp.renesas.com>
 Precedence: Bulk
@@ -49,111 +49,50 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: ok43UKjSIh0vQWuxXZTLp7AEx4520388AA=
-Content-Type: multipart/mixed; boundary="y1giYCPGu7JvzGZyCITe"
+X-Gm-Message-State: L3LJPcdVYsG2FmIrQnZV6RCwx4520388AA=
+Content-Type: multipart/mixed; boundary="gWVXa1mQhUjANQaUbCec"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=lists.cip-project.org; q=dns/txt; s=20140610; t=1598007526;
- bh=ATJTFhgjUkdJ113PAbhy1cN2vtOGGZmBXz8sVyyR4w0=;
+ bh=na4yTVLbXErJN9gG/XL28n3DU75HvGTFDnbcWrYz3bc=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=K4tr/Kp4QfXbEcnN5Fv2y2cpUFrzVZ6L5QVHeula8rOA4U1XKcLQiqYM36XwPWqSBrG
- 7L+aMnsYw6svANTO3R66pZOu7XOP7kpm/6KQhXPKKaHljd0pEtA8Ccki0ZiVK3pWjuO/9
- ZKfh07lt2fgbi0tjWZvbB+b1C0VKcndmr1o=
+ b=PZLK97zlEtoiMY1cJQ0TuBwPMEvdNWhJNwi9UmU1LsSISfqsc+NLYgjXTQpcenZ2bcn
+ 6Apc1knyuA75KUkky9dZdYlczwWAcHC5+XMvaxDBFwn5d9tNebJpYP34QVgemFKaM0Ukm
+ gqPWgZwwRIDQgJR7o2a9Cv/ILMrZx+IaL2I=
 
---y1giYCPGu7JvzGZyCITe
+--gWVXa1mQhUjANQaUbCec
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Keiya Nobuta <nobuta.keiya@fujitsu.com>
 
-commit 0cbdf1b876243c73a795783ce69004302e250a43 upstream.
+commit dcfdaa92a417706c880daa4f94396a1cd53278d0 upstream.
 
-Add pins, groups and functions for the 16-Bit Timer Pulse Unit outputs
-on revision ES1.x of the R-Car H3 SoC.
+SCL3 is assigned to GPSR2 bit7 referred by IP1_23_20 macro.
 
+Signed-off-by: Keiya Nobuta <nobuta.keiya@fujitsu.com>
+Link: https://lore.kernel.org/r/20191008060619.30237-2-nobuta.keiya@fujitsu.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 42 ++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-index 97a6b0221855..aea009f40f49 100644
+index 2e565dfbbf33..17f7b1596a62 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-@@ -3812,6 +3812,36 @@ static const unsigned int tmu_tclk2_b_mux[] = {
- 	TCLK2_B_MARK,
- };
+@@ -721,7 +721,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_PHYS_MSEL(IP1_23_20, HRX3_D,		I2C_SEL_3_0,	SEL_HSCIF3_3),
+ 	PINMUX_IPSR_PHYS_MSEL(IP1_23_20, VI4_DATA7_B,		I2C_SEL_3_0,	SEL_VIN4_1),
+ 	PINMUX_IPSR_PHYS_MSEL(IP1_23_20, IERX_B,		I2C_SEL_3_0,	SEL_IEBUS_1),
+-	PINMUX_IPSR_PHYS(IP0_23_20,	SCL3,			I2C_SEL_3_1),
++	PINMUX_IPSR_PHYS(IP1_23_20,	SCL3,			I2C_SEL_3_1),
  
-+/* - TPU ------------------------------------------------------------------- */
-+static const unsigned int tpu_to0_pins[] = {
-+	/* TPU0TO0 */
-+	RCAR_GP_PIN(6, 28),
-+};
-+static const unsigned int tpu_to0_mux[] = {
-+	TPU0TO0_MARK,
-+};
-+static const unsigned int tpu_to1_pins[] = {
-+	/* TPU0TO1 */
-+	RCAR_GP_PIN(6, 29),
-+};
-+static const unsigned int tpu_to1_mux[] = {
-+	TPU0TO1_MARK,
-+};
-+static const unsigned int tpu_to2_pins[] = {
-+	/* TPU0TO2 */
-+	RCAR_GP_PIN(6, 30),
-+};
-+static const unsigned int tpu_to2_mux[] = {
-+	TPU0TO2_MARK,
-+};
-+static const unsigned int tpu_to3_pins[] = {
-+	/* TPU0TO3 */
-+	RCAR_GP_PIN(6, 31),
-+};
-+static const unsigned int tpu_to3_mux[] = {
-+	TPU0TO3_MARK,
-+};
-+
- /* - USB0 ------------------------------------------------------------------- */
- static const unsigned int usb0_pins[] = {
- 	/* PWEN, OVC */
-@@ -4165,6 +4195,10 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(tmu_tclk1_b),
- 	SH_PFC_PIN_GROUP(tmu_tclk2_a),
- 	SH_PFC_PIN_GROUP(tmu_tclk2_b),
-+	SH_PFC_PIN_GROUP(tpu_to0),
-+	SH_PFC_PIN_GROUP(tpu_to1),
-+	SH_PFC_PIN_GROUP(tpu_to2),
-+	SH_PFC_PIN_GROUP(tpu_to3),
- 	SH_PFC_PIN_GROUP(usb0),
- 	SH_PFC_PIN_GROUP(usb1),
- 	SH_PFC_PIN_GROUP(usb2),
-@@ -4635,6 +4669,13 @@ static const char * const tmu_groups[] = {
- 	"tmu_tclk2_b",
- };
- 
-+static const char * const tpu_groups[] = {
-+	"tpu_to0",
-+	"tpu_to1",
-+	"tpu_to2",
-+	"tpu_to3",
-+};
-+
- static const char * const usb0_groups[] = {
- 	"usb0",
- };
-@@ -4707,6 +4748,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(sdhi3),
- 	SH_PFC_FUNCTION(ssi),
- 	SH_PFC_FUNCTION(tmu),
-+	SH_PFC_FUNCTION(tpu),
- 	SH_PFC_FUNCTION(usb0),
- 	SH_PFC_FUNCTION(usb1),
- 	SH_PFC_FUNCTION(usb2),
+ 	PINMUX_IPSR_PHYS_MSEL(IP1_27_24, PWM2_A,		I2C_SEL_3_0,	SEL_PWM2_0),
+ 	PINMUX_IPSR_MSEL(IP1_27_24,	A20,			I2C_SEL_3_0),
 -- 
 2.17.1
 
 
---y1giYCPGu7JvzGZyCITe
+--gWVXa1mQhUjANQaUbCec
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -161,12 +100,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#5212): https://lists.cip-project.org/g/cip-dev/message=
-/5212
-Mute This Topic: https://lists.cip-project.org/mt/76326752/4520388
+View/Reply Online (#5206): https://lists.cip-project.org/g/cip-dev/message=
+/5206
+Mute This Topic: https://lists.cip-project.org/mt/76326746/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---y1giYCPGu7JvzGZyCITe--
+--gWVXa1mQhUjANQaUbCec--
