@@ -1,150 +1,404 @@
-Return-Path: <SRS0=Tk1j=CB=lists.cip-project.org=bounce+64572+5234+4520388+8129055@kernel.org>
+Return-Path: <SRS0=dNQ0=CC=lists.cip-project.org=bounce+64572+5235+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87D54C433DF
-	for <cip-dev@archiver.kernel.org>; Sun, 23 Aug 2020 23:15:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FAF5C433DF
+	for <cip-dev@archiver.kernel.org>; Mon, 24 Aug 2020 08:10:48 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 2C07A2072D
-	for <cip-dev@archiver.kernel.org>; Sun, 23 Aug 2020 23:15:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 033A82072D
+	for <cip-dev@archiver.kernel.org>; Mon, 24 Aug 2020 08:10:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="pRWpvbw5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C07A2072D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=toshiba.co.jp
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5234+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id AM3DYY4521723xP3QTyuTYb0; Sun, 23 Aug 2020 16:15:15 -0700
-X-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.156])
- by mx.groups.io with SMTP id smtpd.web10.184970.1598224513477493485
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="uEk8yxEi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 033A82072D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=siemens.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5235+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id t7n3YY4521723xyKolEnFsDi; Mon, 24 Aug 2020 01:10:47 -0700
+X-Received: from gecko.sbs.de (gecko.sbs.de [194.138.37.40])
+ by mx.groups.io with SMTP id smtpd.web11.190749.1598256645916522390
  for <cip-dev@lists.cip-project.org>;
- Sun, 23 Aug 2020 16:15:14 -0700
-X-Received: by mo-csw.securemx.jp (mx-mo-csw1114) id 07NNF3NK013786; Mon, 24 Aug 2020 08:15:04 +0900
-X-Iguazu-Qid: 2wGrV5Exka3PLUfZqd
-X-Iguazu-QSIG: v=2; s=0; t=1598224503; q=2wGrV5Exka3PLUfZqd; m=CnXorI+ooFNSOuF8YU6NicF3h4FqxZM3yb4e1SWuSfU=
-X-Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
-	by relay.securemx.jp (mx-mr1112) id 07NNF2li021442;
-	Mon, 24 Aug 2020 08:15:02 +0900
-X-Received: from enc01.localdomain ([106.186.93.100])
-	by imx2.toshiba.co.jp  with ESMTP id 07NNF2ZI015508;
-	Mon, 24 Aug 2020 08:15:02 +0900 (JST)
-X-Received: from hop001.toshiba.co.jp ([133.199.164.63])
-	by enc01.localdomain  with ESMTP id 07NNF1C2009230;
-	Mon, 24 Aug 2020 08:15:02 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MwdGQlmhDBZ9K6ephrJTnwK7LLiTtyKPJUFBaHNgUV+bOzcy2fEtBEYbDWCcOR7DLytqIMeIZdc7HVhjRYvez7UbmONR4U5sam2TECpPRSscmtUhQFdlLY3IbXYCW048qfl6zFg7myLvYyyJQTXsen/vbwwZiGZ77z6gyz8iJEqZjCixHLEgNeoBDYE0l0Izm/Q3ExyPX5UPV+nps7/LCsuGC+h0t0q9p63Prr9uprk2QhuOxsXguYKV7XsRF6uLsTMsPqUMM2vN3Nd7qvBz3n9sv4fl5eivOsG0DBSQ7B7cMxBw2OZnLKFifv39UwrgqjqX/IBh1NN6Ekp6tOlaIQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bRYvSs0vCPaDxvGWSZl7LUhub+O7TnXZiLkUdqCH26c=;
- b=KGI87Sr0yyAfZhLEj3oVUCkKy8SusXPx+qLdDOYfy16I+t8F//ecpUuZU/9zigjyVlcdPYIWiK78eHzMhuW0ydZxnkm+Ilr9PsJBxnz/oUT4mLagXCaMehgwILj3XvqBjP3LQQXkYlkWSD/M+ptPnAn04UfyDzl1HvyPC0HXOBeEsoXXRwSWfgXxe6erMvZDAJbTlpdCF8vIqAEyg0owM20LDTIIdustKS9n70TtrNi1mkFf1OjV9xs5CKAdgej5HDcSMc7h9G2h8bwL7QeDqlrUPNv78wRQfjOF+daKnEcdasefPtuz92X2TRHqGfC9vjKFYmlTishTPws1vW9/WA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
- header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
-From: "Nobuhiro Iwamatsu" <nobuhiro1.iwamatsu@toshiba.co.jp>
-To: <pavel@denx.de>, <cip-dev@lists.cip-project.org>
-CC: <biju.das.jz@bp.renesas.com>, <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [cip-dev] [PATCH 4.19.y-cip 00/12] Support RZ/G2[MN] rev4 board
-Thread-Topic: [cip-dev] [PATCH 4.19.y-cip 00/12] Support RZ/G2[MN] rev4 board
-Thread-Index: AQHWdkbxX/juT+uBnkyQ61ZJRT4BiKk/sq2AgAEF8YCABWSRgIAAPBnw
-Date: Sun, 23 Aug 2020 23:15:00 +0000
-X-TSB-HOP: ON
-Message-ID: <OSBPR01MB29835B16492823EE8943DCE592590@OSBPR01MB2983.jpnprd01.prod.outlook.com>
-References: <20200819163634.5430-1-biju.das.jz@bp.renesas.com>
- <20200819173857.GA5567@amd>
- <OSAPR01MB238513FFAB73D179C17BDE5CB75A0@OSAPR01MB2385.jpnprd01.prod.outlook.com>
- <20200823193743.GE25365@duo.ucw.cz>
-In-Reply-To: <20200823193743.GE25365@duo.ucw.cz>
-Accept-Language: ja-JP, en-US
-x-originating-ip: [103.91.184.1]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f765614f-587c-4511-e79b-08d847ba5bce
-x-ms-traffictypediagnostic: OSAPR01MB4340:
-x-microsoft-antispam-prvs: <OSAPR01MB43409697BA892D87C9D8355292590@OSAPR01MB4340.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: aJGq05zkPNOPsk+sljPzh+Mb4m9o1/OTA+HzNInWsVV+zSzopMdpwPNsXDFnaTi41GBDB6s5edUQJfJ7Z35GerN5nN7Vze/8Y/3xauW7cGKfNTqPpFf5BsCfHA8UhVGLkGESRUr2xxdKGA4tKjBJld1A8KzJ8CvGULlup09F1qQjJysObG8xKR+E2AnVFKAkxW9JSM3WHXi2z3D+9QPAEilN5jspq3pFr4sCHbiIOBU5tjQ0huFv9uAx0kG6vC3YdlADvYlyKcN4oy79tn3nbp2pCjNUnB0d8+GJ/HetXE2luHpfZWV2fPYLs1pX0KNljyThj0YlxVeMIaBFRWzNow==
-x-ms-exchange-antispam-messagedata: JL8a8Z9+7YbZT3idgzDOPINvWl3Pvvh9f6xDRDtpu9jM79BG55Aidnf2Eh0xN1/2IIX1RTEYp9pEhMmzMrkIObEtPdvumLYTRQ7kLg4F9vzKKbeF9YTkhMQGe+mKdQogM8RFsh88XeNMseWmyw6o+xdiqAw0hRlwrDukXVsQhpewM+UePJuq1Sxyf+ndKJM9tpUKER9p1Sf9hTedtER0l1faIDj2lIfvKdXcBjn9G/NkcclfRaLG07s+vKcflm2Dp7KKGF7QqS8Q43K60OZFHFitZ+pt/PjfcVFIq9S3H94DZuWNDoQRZ6bRl6PELv4V4q/OexnOrMF/t/WIcGy2UCtFbz3xyHcfH+3UQx3WRa1PyIbSBB0QMcLyJ9SQDox0QGrFZkjUaBPBa7xpvLBCCHKi2EE5V+Nn3KrQaI0DGHYCIy4DTe34lzlEqDHmPp/YqOMr8f5pxNRMNKUxW46XOMjie7q7SXmmQ51SiZGzDeGtSyFMbu/1JZbJkdnryTyB8es2mVdnDX96AyvfzV6qifV1BVt7SGVhMFMMHWU9PVW8d6gn4ObeuxBTPWiTE5MRbSn88xHTsvODmanrodYB7oAeJO6T31iwG/jPVGYxU7gg27wr75Ps42L64Ie8Vpt1jA45H7wOV8chs97CrF4vug==
-x-ms-exchange-transport-forked: True
+ Mon, 24 Aug 2020 01:10:47 -0700
+X-Received: from mail1.sbs.de (mail1.sbs.de [192.129.41.35])
+	by gecko.sbs.de (8.15.2/8.15.2) with ESMTPS id 07O8AhWm024944
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+	for <cip-dev@lists.cip-project.org>; Mon, 24 Aug 2020 10:10:43 +0200
+X-Received: from [139.21.20.4] ([139.21.20.4])
+	by mail1.sbs.de (8.15.2/8.15.2) with ESMTP id 07O8Ag5o001593;
+	Mon, 24 Aug 2020 10:10:43 +0200
+Subject: Re: [cip-dev][isar-cip-core][PATCH v4 3/6] secure-boot: select boot partition in initramfs
+To: Jan Kiszka <jan.kiszka@siemens.com>, cip-dev@lists.cip-project.org
+References: <20200821095559.28467-1-Quirin.Gylstorff@siemens.com>
+ <20200821095559.28467-4-Quirin.Gylstorff@siemens.com>
+ <f2585c80-6608-d444-2fda-d68bb7bf0608@siemens.com>
+From: "Quirin Gylstorff" <quirin.gylstorff@siemens.com>
+Message-ID: <aac87c25-265b-8838-1be1-022cc6b11a14@siemens.com>
+Date: Mon, 24 Aug 2020 10:10:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSBPR01MB2983.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f765614f-587c-4511-e79b-08d847ba5bce
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Aug 2020 23:15:00.1641
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: rnZhx8hVLnBlPwBctPOXeuJDJ+8NMuGVNMBnhCZQAtFkEdxwe6trjRUiHh2oNyHx2fdPgFkgtUaNJgCgJQC7KnBl5AubPXEQPhTzmMBYtVw3kWWSk+RrD7VX40iSg1mW
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB4340
-X-OriginatorOrg: toshiba.co.jp
-MSSCP.TransferMailToMossAgent: 103
+In-Reply-To: <f2585c80-6608-d444-2fda-d68bb7bf0608@siemens.com>
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: 9kEMy3c0OEQB2xTtRQ5Z6hx2x4520388AA=
-Content-Type: multipart/mixed; boundary="X3w3ZnuodaMtFSL49YiH"
+X-Gm-Message-State: EcVNWCpXZQYJTI0hqfWq06fEx4520388AA=
+Content-Type: multipart/mixed; boundary="r27flHXIhDV9NLUj1udN"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1598224515;
- bh=1g1TrA7XbU1BXQeFRUsfcnBw4Fdk9LevtnphAYFRo0I=;
- h=CC:Content-Type:Date:From:Reply-To:Subject:To;
- b=pRWpvbw5alBm6NW2EctyYHKd50pqOXPDN18nSmgwunJSufLoB5L5yXgyhni84uB/vMG
- 5sCHlDZNCZW0wuFMb3YVrmaBl1EvTua37IV23cVUu+BusLX7XHQ1xYA4h+/MF4wfJtjbs
- yRBTSJl1FoUmIE7eh/R+CR8KG8rRx4jOHkg=
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1598256647;
+ bh=tfrrLCvx9V98OeM671DB8JEEd0cZultQQZ1HfDuo+Bs=;
+ h=Content-Type:Date:From:Reply-To:Subject:To;
+ b=uEk8yxEiIxj/juAGXiQQ9qRusNYhg0FHfVLqC8KZ4dax+ET33tk650Bs25tkUiI4xr5
+ rNSczMTkaueH/OyGWhYpMtZgKw0VgSrWcFj4rIBwKwGJjSMh83Ap9h9ucpJmzhZn2a7+d
+ gn2hYfNW0XaT3jBstgzKn1EMAuNM+L/2XPc=
 
---X3w3ZnuodaMtFSL49YiH
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+--r27flHXIhDV9NLUj1udN
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 
-SGksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUGF2ZWwgTWFjaGVr
-IFttYWlsdG86cGF2ZWxAZGVueC5kZV0NCj4gU2VudDogTW9uZGF5LCBBdWd1c3QgMjQsIDIwMjAg
-NDozOCBBTQ0KPiBUbzogY2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmcNCj4gQ2M6IFBhdmVs
-IE1hY2hlayA8cGF2ZWxAZGVueC5kZT47IEJpanUgRGFzIDxiaWp1LmRhcy5qekBicC5yZW5lc2Fz
-LmNvbT47IGl3YW1hdHN1IG5vYnVoaXJvKOWyqeadviDkv6HmtIsg4pah77yz77y377yj4pev77yh
-DQo+IO+8o++8tCkgPG5vYnVoaXJvMS5pd2FtYXRzdUB0b3NoaWJhLmNvLmpwPjsgUHJhYmhha2Fy
-IE1haGFkZXYgTGFkIDxwcmFiaGFrYXIubWFoYWRldi1sYWQucmpAYnAucmVuZXNhcy5jb20+DQo+
-IFN1YmplY3Q6IFJlOiBbY2lwLWRldl0gW1BBVENIIDQuMTkueS1jaXAgMDAvMTJdIFN1cHBvcnQg
-UlovRzJbTU5dIHJldjQgYm9hcmQNCj4gDQo+IEhpIQ0KPiANCj4gPiA+ICoqKiBncGc0byB8IFRo
-ZSBzaWduYXR1cmUgb2YgdGhpcyBlbWFpbCBjb3VsZCBub3QgYmUgdmVyaWZpZWQgYmVjYXVzZSB0
-aGUNCj4gPiA+IGZvbGxvd2luZyBwdWJsaWMga2V5IGlzIG1pc3NpbmcuIENsaWNrIGhlcmUgdG8g
-c2VhcmNoIGFuZCBpbXBvcnQgdGhlIGtleQ0KPiA+ID4gMzBFN0YwNkE5NURCRkFGMiAqKioNCj4g
-PiA+DQo+ID4gPiBIaSENCj4gPiA+DQo+ID4gPiA+IFRoaXMgcGF0Y2ggc2VyaWVzIGZvciBzdXBw
-b3J0aW5nIFJaL0cyW01OXSByZXY0IGJvYXJkIHRvIGNpcC00LjE5LnkNCj4gPiA+ID4ga2VybmVs
-Lg0KPiA+ID4NCj4gPiA+ID7CoCBhcmNoL2FybTY0L2Jvb3QvZHRzL3JlbmVzYXMvcjhhNzc0YTEu
-ZHRzaSB8IDExIC0tLS0tLS0tLS0tDQo+ID4gPiA+wqAgMSBmaWxlIGNoYW5nZWQsIDExIGRlbGV0
-aW9ucygtKQ0KPiA+ID4NCj4gPiA+IEknbSBwcmV0dHkgc3VyZSB0aGlzIGlzIG5vdCB0aGUgcmVh
-bCBkaWZmc3RhdC4NCj4gPiA+DQo+ID4gPiBMZXQgbWUgZ28gdGhyb3VnaCB0aGUgY2hhbmdlcy4g
-T25lIGNvbmNlcm46IHlvdSBhcmUgcmVuYW1pbmcgZHRzDQo+ID4gPiBmaWxlcy4gTmV3IG5hbWVz
-IG1ha2UgYSBsb3Qgb2Ygc2Vuc2UsIGJ1dCB0aGF0IHdpbGwgbGlrZWx5IGJyZWFrIHRoZQ0KPiA+
-ID4gdXNlcnMsIGluY2x1ZGluZyBvdXIgdGVzdCBpbmZyYXN0cnVjdHVyZSwgbm8/DQo+IA0KPiA+
-ICBUZWNobmljYWxseSB5ZXMsIGl0IHdvdWxkIGNhdXNlIHByb2JsZW1zLiBIb3dldmVyIHRoaXMg
-c2VlbXMgdG8gYmUNCj4gPiB0aGUgd2F5IG9mIGRvaW5nIHRoaW5ncyB1cHN0cmVhbS4gIEkgZ3Vl
-c3MgdXBzdHJlYW0gaXMgYSBiaXQNCj4gPiBkaWZmZXJlbnQgdGhvdWdoIGFzIHVzZXJzIHdvdWxk
-IGV4cGVjdCBzdWNoIHRoaW5ncyB3aGVuIHVwZ3JhZGluZw0KPiA+IEtlcm5lbCB2ZXJzaW9ucy4N
-Cj4gDQo+IFllcywgaXQgaXMgdXBzdHJlYW0gcHJvYmxlbSwgYW5kIHNob3VsZCBiZSBmaXhlZCB1
-cHN0cmVhbS4NCj4gDQo+IEFuZCBubywgbm90IGV2ZW4gdXBncmFkaW5nIGtlcm5lbCB2ZXJzaW9u
-cyBzaG91bGQgYnJlYWsgYW55dGhpbmcuDQo+IA0KPiA+IGxhYi1jaXAtcmVuZXNhcyB1c2VzIHJl
-djQgYm9hcmRzLCBzbyBmcm9tIGEgQ0lQIHRlc3RpbmcgcG9pbnQgb2YNCj4gPiAgdmlldyB0aGVy
-ZSB3aWxsIGJlIG5vIGlzc3Vlcy4NCj4gDQo+IE9rLCBnb29kIHRvIGtub3csIGl0IHNlZW1zIC1y
-ZXYyIGJvYXJkcyBhcmUga2luZCBvZiByYXJlPw0KPiANCj4gSSBndWVzcyB3ZSBjb3VsZCBjcmVh
-dGUgIlJFQURNRS5jaXAiIGV4cGxhaW5pbmcgc3VjaCBub24tc3RhbmRhcmQNCj4gaXNzdWVzLCBh
-bmQgbWVudGlvbiBpdCBpbiByZWxlYXNlIGNoYW5nZWxvZy4NCg0KT3IgSSB0aGluayB3ZSBjYW4g
-ZG8gdGhpcyBieSBpbmNsdWRpbmcgbW9yZSBpbmZvcm1hdGlvbiBvbiB0aGUgcmVmZXJlbmNlIGhh
-cmR3YXJlDQphbmQgdGVzdCBpbmZvcm1hdGlvbiBvbiBDSVAgd2lraS4NCg0KPiANCj4gQmVzdCBy
-ZWdhcmRzLA0KPiAJCQkJCQkJCVBhdmVsDQoNCkJlc3QgcmVnYXJkcywNCiAgTm9idWhpcm8NCg0K
-PiAtLQ0KPiBERU5YIFNvZnR3YXJlIEVuZ2luZWVyaW5nIEdtYkgsICAgICAgTWFuYWdpbmcgRGly
-ZWN0b3I6IFdvbGZnYW5nIERlbmsNCj4gSFJCIDE2NTIzNSBNdW5pY2gsIE9mZmljZTogS2lyY2hl
-bnN0ci41LCBELTgyMTk0IEdyb2ViZW56ZWxsLCBHZXJtYW55DQo=
 
---X3w3ZnuodaMtFSL49YiH
+
+On 8/21/20 4:45 PM, Jan Kiszka wrote:
+> On 21.08.20 11:55, Q. Gylstorff wrote:
+>> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>>
+>> As the usage of a unified kernel image freeze the kernel commmandline
+>> during build time the rootfs selection for swupdate can no longer be
+>> done with the kernel commandline and must be done later in the boot
+>> process. Read the root filesystem /etc/os-release and check if it contains
+>> the same uuid as stored in the initramfs . If the uuids are the same
+>> boot the root file system.
+>>
+>> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>> ---
+>>   classes/image_uuid.bbclass                    | 33 ++++++++
+>>   .../files/initramfs.image_uuid.hook           | 33 ++++++++
+>>   .../files/initramfs.lsblk.hook                | 29 +++++++
+>>   .../initramfs-config/files/postinst.ext       |  3 +
+>>   .../initramfs-config/files/postinst.tmpl      | 31 ++++++++
+>>   .../files/secure-boot-debian-local-patch      | 79 +++++++++++++++++++
+>>   .../initramfs-abrootfs-secureboot_0.1.bb      | 38 +++++++++
+>>   7 files changed, 246 insertions(+)
+>>   create mode 100644 classes/image_uuid.bbclass
+>>   create mode 100644 recipes-support/initramfs-config/files/initramfs.image_uuid.hook
+>>   create mode 100644 recipes-support/initramfs-config/files/initramfs.lsblk.hook
+>>   create mode 100644 recipes-support/initramfs-config/files/postinst.ext
+>>   create mode 100644 recipes-support/initramfs-config/files/postinst.tmpl
+>>   create mode 100644 recipes-support/initramfs-config/files/secure-boot-debian-local-patch
+>>   create mode 100644 recipes-support/initramfs-config/initramfs-abrootfs-secureboot_0.1.bb
+>>
+>> diff --git a/classes/image_uuid.bbclass b/classes/image_uuid.bbclass
+>> new file mode 100644
+>> index 0000000..d5337b8
+>> --- /dev/null
+>> +++ b/classes/image_uuid.bbclass
+>> @@ -0,0 +1,33 @@
+>> +#
+>> +# CIP Core, generic profile
+>> +#
+>> +# Copyright (c) Siemens AG, 2020
+>> +#
+>> +# Authors:
+>> +#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>> +
+>> +def generate_image_uuid(d):
+>> +    import uuid
+>> +
+>> +    base_hash = d.getVar("BB_BASEHASH_task-do_rootfs_install", True)
+>> +    if base_hash is None:
+>> +        return None
+>> +    return str(uuid.UUID(base_hash[:32], version=4))
+>> +
+>> +IMAGE_UUID ?= "${@generate_image_uuid(d)}"
+>> +
+>> +do_generate_image_uuid[vardeps] += "IMAGE_UUID"
+>> +do_generate_image_uuid[depends] = "buildchroot-target:do_build"
+>> +do_generate_image_uuid() {
+>> +    sudo sed -i '/^IMAGE_UUID=.*/d' '${IMAGE_ROOTFS}/etc/os-release'
+>> +    echo "IMAGE_UUID=\"${IMAGE_UUID}\"" | \
+>> +        sudo tee -a '${IMAGE_ROOTFS}/etc/os-release'
+>> +    image_do_mounts
+>> +
+>> +    # update initramfs to add uuid
+>> +    sudo chroot '${IMAGE_ROOTFS}' update-initramfs -u
+>> +}
+>> +addtask generate_image_uuid before do_copy_boot_files after do_rootfs_install
+>> diff --git a/recipes-support/initramfs-config/files/initramfs.image_uuid.hook b/recipes-support/initramfs-config/files/initramfs.image_uuid.hook
+>> new file mode 100644
+>> index 0000000..910ce84
+>> --- /dev/null
+>> +++ b/recipes-support/initramfs-config/files/initramfs.image_uuid.hook
+>> @@ -0,0 +1,33 @@
+>> +# This software is a part of ISAR.
+>> +# Copyright (C) Siemens AG, 2020
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +
+>> +#!/bin/sh
+>> +set -x
+>> +PREREQ=""
+>> +
+>> +prereqs()
+>> +{
+>> +     echo "$PREREQ"
+>> +}
+>> +
+>> +case $1 in
+>> +prereqs)
+>> +     prereqs
+>> +     exit 0
+>> +     ;;
+>> +esac
+>> +
+>> +. /usr/share/initramfs-tools/scripts/functions
+>> +. /usr/share/initramfs-tools/hook-functions
+>> +
+>> +if [ ! -e /etc/os-release ]; then
+>> +	echo "Warning: couldn't find /etc/os-release!"
+>> +	exit 0
+>> +fi
+>> +
+>> +IMAGE_UUID=$(sed -n 's/^IMAGE_UUID="\(.*\)"/\1/p' /etc/os-release)
+>> +echo "${IMAGE_UUID}" > "${DESTDIR}/conf/image_uuid"
+>> +
+>> +exit 0
+>> \ No newline at end of file
+>> diff --git a/recipes-support/initramfs-config/files/initramfs.lsblk.hook b/recipes-support/initramfs-config/files/initramfs.lsblk.hook
+>> new file mode 100644
+>> index 0000000..cf32404
+>> --- /dev/null
+>> +++ b/recipes-support/initramfs-config/files/initramfs.lsblk.hook
+>> @@ -0,0 +1,29 @@
+>> +# This software is a part of ISAR.
+>> +# Copyright (C) Siemens AG, 2020
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +
+>> +#!/bin/sh
+>> +PREREQ=""
+>> +
+>> +prereqs()
+>> +{
+>> +     echo "$PREREQ"
+>> +}
+>> +
+>> +case $1 in
+>> +prereqs)
+>> +     prereqs
+>> +     exit 0
+>> +     ;;
+>> +esac
+>> +
+>> +. /usr/share/initramfs-tools/scripts/functions
+>> +. /usr/share/initramfs-tools/hook-functions
+>> +
+>> +if [ ! -x /usr/bin/lsblk ]; then
+>> +	echo "Warning: couldn't find /usr/bin/lsblk!"
+>> +	exit 0
+>> +fi
+>> +
+>> +copy_exec /usr/bin/lsblk
+>> diff --git a/recipes-support/initramfs-config/files/postinst.ext b/recipes-support/initramfs-config/files/postinst.ext
+>> new file mode 100644
+>> index 0000000..cdafa74
+>> --- /dev/null
+>> +++ b/recipes-support/initramfs-config/files/postinst.ext
+>> @@ -0,0 +1,3 @@
+>> +if [ -d /usr/share/secureboot ]; then
+>> +    patch -s -p0 /usr/share/initramfs-tools/scripts/local /usr/share/secureboot/secure-boot-debian-local.patch
+>> +fi
+>> diff --git a/recipes-support/initramfs-config/files/postinst.tmpl b/recipes-support/initramfs-config/files/postinst.tmpl
+>> new file mode 100644
+>> index 0000000..008f68d
+>> --- /dev/null
+>> +++ b/recipes-support/initramfs-config/files/postinst.tmpl
+>> @@ -0,0 +1,31 @@
+>> +#!/bin/sh
+>> +if [ -d /usr/share/secureboot ]; then
+>> +    patch -s -p0 /usr/share/initramfs-tools/scripts/local /usr/share/secureboot/secure-boot-debian-local.patch
+>> +fi
+>> +
+>> +INITRAMFS_CONF=/etc/initramfs-tools/initramfs.conf
+>> +if [ -f ${INITRAMFS_CONF} ]; then
+>> +    sed -i -E 's/(^MODULES=).*/\1${INITRAMFS_MODULES}/' ${INITRAMFS_CONF}
+>> +    sed -i -E 's/(^BUSYBOX=).*/\1${INITRAMFS_BUSYBOX}/' ${INITRAMFS_CONF}
+>> +    sed -i -E 's/(^COMPRESS=).*/\1${INITRAMFS_COMPRESS}/' ${INITRAMFS_CONF}
+>> +    sed -i -E 's/(^KEYMAP=).*/\1${INITRAMFS_KEYMAP}/' ${INITRAMFS_CONF}
+>> +    sed -i -E 's/(^DEVICE=).*/\1${INITRAMFS_NET_DEVICE}/' ${INITRAMFS_CONF}
+>> +    sed -i -E 's/(^NFSROOT=).*/\1${INITRAMFS_NFSROOT}/' ${INITRAMFS_CONF}
+>> +    sed -i -E 's/(^RUNSIZE=).*/\1${INITRAMFS_RUNSIZE}/' ${INITRAMFS_CONF}
+>> +    if grep -Fxq "ROOT=" "${INITRAMFS_CONF}"; then
+>> +        sed -i -E 's/(^ROOT=).*/\1${INITRAMFS_ROOT}/' ${INITRAMFS_CONF}
+>> +    else
+>> +        sed -i -E "\$aROOT=${INITRAMFS_ROOT}" ${INITRAMFS_CONF}
+>> +    fi
+>> +fi
+>> +
+>> +MODULES_LIST_FILE=/etc/initramfs-tools/modules
+>> +if [ -f ${MODULES_LIST_FILE} ]; then
+>> +    for modname in ${INITRAMFS_MODULE_LIST}; do
+>> +        if ! grep -Fxq "$modname" "${MODULES_LIST_FILE}"; then
+>> +            echo "$modname" >> "${MODULES_LIST_FILE}"
+>> +        fi
+>> +    done
+>> +fi
+>> +
+>> +update-initramfs -v -u
+>> diff --git a/recipes-support/initramfs-config/files/secure-boot-debian-local-patch b/recipes-support/initramfs-config/files/secure-boot-debian-local-patch
+>> new file mode 100644
+>> index 0000000..219578c
+>> --- /dev/null
+>> +++ b/recipes-support/initramfs-config/files/secure-boot-debian-local-patch
+>> @@ -0,0 +1,79 @@
+>> +--- local	2020-07-02 14:59:15.461895194 +0200
+>> ++++ ../../../../../../../../../../../recipes-support/initramfs-config/files/local	2020-07-02 14:58:58.405730914 +0200
+>> +@@ -1,5 +1,4 @@
+>> + # Local filesystem mounting			-*- shell-script -*-
+>> +-
+>> + local_top()
+>> + {
+>> + 	if [ "${local_top_used}" != "yes" ]; then
+>> +@@ -155,34 +154,47 @@
+>> + local_mount_root()
+>> + {
+>> + 	local_top
+>> +-	if [ -z "${ROOT}" ]; then
+>> +-		panic "No root device specified. Boot arguments must include a root= parameter."
+>> +-	fi
+>> +-	local_device_setup "${ROOT}" "root file system"
+>> +-	ROOT="${DEV}"
+>> +-
+>> +-	# Get the root filesystem type if not set
+>> +-	if [ -z "${ROOTFSTYPE}" ] || [ "${ROOTFSTYPE}" = auto ]; then
+>> +-		FSTYPE=$(get_fstype "${ROOT}")
+>> +-	else
+>> +-		FSTYPE=${ROOTFSTYPE}
+>> ++	if [ ! -e /conf/image_uuid ]; then
+>> ++		 panic "could not find image_uuid to select correct root file system"
+>> + 	fi
+>> ++	local INITRAMFS_IMAGE_UUID=$(cat /conf/image_uuid)
+>> ++	local partitions=$(blkid -o device)
+>> ++	for part in $partitions; do
+>> ++			if [ "$(blkid -p ${part} --match-types novfat -s USAGE -o value)" = "filesystem" ]; then
+>> ++					local_device_setup "${part}" "root file system"
+>> ++					ROOT="${DEV}"
+>> ++
+>> ++					# Get the root filesystem type if not set
+>> ++					if [ -z "${ROOTFSTYPE}" ] || [ "${ROOTFSTYPE}" = auto ]; then
+>> ++							FSTYPE=$(get_fstype "${ROOT}")
+>> ++					else
+>> ++							FSTYPE=${ROOTFSTYPE}
+>> ++					fi
+>> +
+>> +-	local_premount
+>> ++				local_premount
+>> +
+>> +-	if [ "${readonly?}" = "y" ]; then
+>> +-		roflag=-r
+>> +-	else
+>> +-		roflag=-w
+>> +-	fi
+>> ++				if [ "${readonly?}" = "y" ]; then
+>> ++						roflag=-r
+>> ++				else
+>> ++						roflag=-w
+>> ++				fi
+>> ++				checkfs "${ROOT}" root "${FSTYPE}"
+>> +
+>> +-	checkfs "${ROOT}" root "${FSTYPE}"
+>> ++				# Mount root
+>> ++				# shellcheck disable=SC2086
+>> ++				if mount ${roflag} ${FSTYPE:+-t "${FSTYPE}"} ${ROOTFLAGS} "${ROOT}" "${rootmnt?}"; then
+>> ++						if [ -e "${rootmnt?}"/etc/os-release ]; then
+>> ++								image_uuid=$(sed -n 's/^IMAGE_UUID=//p' "${rootmnt?}"/etc/os-release | tr -d '"' )
+>> ++								if [ "${INITRAMFS_IMAGE_UUID}" = "${image_uuid}" ]; then
+>> ++										return
+>> ++								fi
+>> ++						fi
+>> ++						umount "${rootmnt?}"
+>> ++				fi
+>> ++			fi
+>> ++	done
+>> ++	panic "Could not find ROOTFS with matching UUID $INITRAMFS_IMAGE_UUID"
+>> +
+>> +-	# Mount root
+>> +-	# shellcheck disable=SC2086
+>> +-	if ! mount ${roflag} ${FSTYPE:+-t "${FSTYPE}"} ${ROOTFLAGS} "${ROOT}" "${rootmnt?}"; then
+>> +-		panic "Failed to mount ${ROOT} as root file system."
+>> +-	fi
+>> + }
+>> +
+>> + local_mount_fs()
+>> diff --git a/recipes-support/initramfs-config/initramfs-abrootfs-secureboot_0.1.bb b/recipes-support/initramfs-config/initramfs-abrootfs-secureboot_0.1.bb
+>> new file mode 100644
+>> index 0000000..0be9871
+>> --- /dev/null
+>> +++ b/recipes-support/initramfs-config/initramfs-abrootfs-secureboot_0.1.bb
+>> @@ -0,0 +1,38 @@
+>> +#
+>> +# CIP Core, generic profile
+>> +#
+>> +# Copyright (c) Siemens AG, 2020
+>> +#
+>> +# Authors:
+>> +#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +
+>> +require recipes-support/initramfs-config/initramfs-config.inc
+>> +
+>> +FILESPATH =. "${LAYERDIR_isar-siemens}/recipes-support/initramfs-config/files:"
+>> +
+>> +DEBIAN_DEPENDS += ", busybox, patch"
+>> +
+>> +SRC_URI += "file://postinst.ext \
+>> +            file://initramfs.lsblk.hook \
+>> +            file://initramfs.image_uuid.hook \
+>> +            file://secure-boot-debian-local-patch"
+>> +
+>> +INITRAMFS_BUSYBOX = "y"
+>> +
+>> +do_install() {
+>> +    # add patch for local to /usr/share/secure boot
+>> +    TARGET=${D}/usr/share/secureboot
+>> +    install -m 0755 -d ${TARGET}
+>> +    install -m 0644 ${WORKDIR}/secure-boot-debian-local-patch ${TARGET}/secure-boot-debian-local.patch
+>> +    # patch postinst
+>> +    sed -i -e '/configure)/r ${WORKDIR}/postinst.ext' ${WORKDIR}/postinst
+>> +
+>> +    # add hooks for secure boot
+>> +    HOOKS=${D}/etc/initramfs-tools/hooks
+>> +install -m 0755 -d ${HOOKS}
+>> +    install -m 0740 ${WORKDIR}/initramfs.lsblk.hook ${HOOKS}/lsblk.hook
+>> +    install -m 0740 ${WORKDIR}/initramfs.image_uuid.hook ${HOOKS}/image_uuid.hook
+> 
+> Fixed this indention while merging.
+> 
+
+Thanks.
+
+>> +}
+>> +addtask do_install after do_transform_template
+>>
+> 
+> Jan
+> 
+
+-- 
+Quirin
+
+--r27flHXIhDV9NLUj1udN
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -152,12 +406,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#5234): https://lists.cip-project.org/g/cip-dev/message=
-/5234
-Mute This Topic: https://lists.cip-project.org/mt/76290780/4520388
+View/Reply Online (#5235): https://lists.cip-project.org/g/cip-dev/message=
+/5235
+Mute This Topic: https://lists.cip-project.org/mt/76326085/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---X3w3ZnuodaMtFSL49YiH--
+--r27flHXIhDV9NLUj1udN--
