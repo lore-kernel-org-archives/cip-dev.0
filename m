@@ -1,37 +1,35 @@
-Return-Path: <SRS0=DoaH=CD=lists.cip-project.org=bounce+64572+5241+4520388+8129055@kernel.org>
+Return-Path: <SRS0=obY3=CD=lists.cip-project.org=bounce+64572+5240+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MIME_HEADER_CTYPE_ONLY,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	T_TVD_MIME_NO_HEADERS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD7BAC433E4
-	for <cip-dev@archiver.kernel.org>; Tue, 25 Aug 2020 13:41:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B82BC433E1
+	for <cip-dev@archiver.kernel.org>; Tue, 25 Aug 2020 13:42:00 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id A06372076C
+	by mail.kernel.org (Postfix) with ESMTPS id F26902076C
 	for <cip-dev@archiver.kernel.org>; Tue, 25 Aug 2020 13:41:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="CNylt1jQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A06372076C
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="tgxzVYvy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F26902076C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5241+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id 3weXYY4521723xotgCZGsmsA; Tue, 25 Aug 2020 06:41:59 -0700
-X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.13479.1598361721660454951
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5240+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id BuuMYY4521723x0sfLU5gjZX; Tue, 25 Aug 2020 06:41:59 -0700
+X-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web12.13293.1598361720422412146
  for <cip-dev@lists.cip-project.org>;
- Tue, 25 Aug 2020 06:22:02 -0700
+ Tue, 25 Aug 2020 06:22:00 -0700
 X-IronPort-AV: E=Sophos;i="5.76,352,1592838000"; 
-   d="scan'208";a="55486173"
+   d="scan'208";a="55269165"
 X-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 25 Aug 2020 22:22:01 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 25 Aug 2020 22:21:59 +0900
 X-Received: from localhost.localdomain (unknown [172.29.51.65])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id A39E0400517E;
-	Tue, 25 Aug 2020 22:21:59 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id CE6FA4004950;
+	Tue, 25 Aug 2020 22:21:57 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -39,188 +37,71 @@ To: cip-dev@lists.cip-project.org,
 Cc: Chris Paterson <chris.paterson2@renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [cip-dev] [PATCH 4.19.y-cip 01/10] arm64: dts: renesas: r8a774e1: Add operating points
-Date: Tue, 25 Aug 2020 14:21:47 +0100
-Message-Id: <20200825132156.7839-2-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20200825132156.7839-1-biju.das.jz@bp.renesas.com>
-References: <20200825132156.7839-1-biju.das.jz@bp.renesas.com>
+Subject: [cip-dev] [PATCH 4.19.y-cip 00/10] Add OPP/Thermal/Timer/CAN[FD] support
+Date: Tue, 25 Aug 2020 14:21:46 +0100
+Message-Id: <20200825132156.7839-1-biju.das.jz@bp.renesas.com>
+MIME-Version: 1.0
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: XFNSAqANEiNxGUxTvEajpmYyx4520388AA=
-Content-Type: multipart/mixed; boundary="BFT9V2oTwusCcbb6B2rq"
+X-Gm-Message-State: LI2IOwW2aJ8p9CwaEqXC8QNMx4520388AA=
+Content-Type: multipart/mixed; boundary="tMVXZmqxI7g1ASKKF1YR"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=lists.cip-project.org; q=dns/txt; s=20140610; t=1598362919;
- bh=+Mtwvj9w4QIT7fLPWoHCAA/M3yoKS80XyORjQJEDn/I=;
+ bh=o8WcA/pD3MZC94zR/LZTRMnoJWNdK9WI+kQmsE2tZ9I=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=CNylt1jQ/Jx8f5+QxO6g42hQQt36zDF4nMNdPGE7A5rD0X5VOw6xZsfKiaxB0KglYTb
- OFPgyG31fiytzK52jo+VPnOfwO7u5VJJS4Nm2ZOlwF6RCx8kuLURg92/WJ+ZNC2cnoEYy
- Fnl6XvmdUtyiRs3dX9edOx4mWw0q3R6vLH4=
+ b=tgxzVYvy4ND5bWauc9Ti4dsXkVJtrqEHFNn3AAtD60I+vHvcJEbbZQa5LlM8MCz76AH
+ iUTtCss5k5dCDzmmIBPfiEbbeQ+EOLBxg/Fob/I2gxpHesMtEcNU4A7B5H79UJnWvh++f
+ ERSyjqihb16scvC/ei/6C2qL1/Jww+muYkU=
 
---BFT9V2oTwusCcbb6B2rq
+--tMVXZmqxI7g1ASKKF1YR
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+This patch series add RZ/G2H SoC support for OPP/Thermal/Timer/CAN[FD]
+to 4.19.y cip kernel.
 
-commit d18dbce4e8c02634866dc80c7873e6121fcae970 upstream.
+All the patches in this series are cherry-picked from ML.
 
-The RZ/G2H (r8a774e1) comes with two clusters of processors, similarly to
-the r8a774a1. The first cluster is made of A57s, the second cluster is made
-of A53s.
+This patch series depend upon [1]
+[1]: https://patchwork.kernel.org/project/cip-dev/list/?series=336609
 
-The operating points for the cluster with the A57s are:
+Dien Pham (1):
+  thermal/drivers/rcar_gen3: Fix undefined temperature if negative
 
-Frequency | Voltage
-----------|---------
-500 MHz   | 0.82V
-1.0 GHz   | 0.82V
-1.5 GHz   | 0.82V
+Geert Uytterhoeven (1):
+  can: rcar_can: Remove unused platform data support
 
-The operating points for the cluster with the A53s are:
+Lad Prabhakar (1):
+  arm64: dts: renesas: r8a774e1: Add CAN[FD] support
 
-Frequency | Voltage
-----------|---------
-800 MHz   | 0.82V
-1.0 GHz   | 0.82V
-1.2 GHz   | 0.82V
+Marian-Cristian Rotariu (5):
+  arm64: dts: renesas: r8a774e1: Add operating points
+  thermal: rcar_gen3_thermal: Add r8a774e1 support
+  arm64: dts: renesas: r8a774e1: Add RZ/G2H thermal support
+  arm64: dts: renesas: r8a774e1: Add CMT device nodes
+  arm64: dts: renesas: r8a774e1: Add TMU device nodes
 
-This patch adds the definitions for the operating points to the SoC
-specific DT.
+Niklas Söderlund (2):
+  thermal: rcar_gen3_thermal: Remove temperature bound
+  thermal: rcar_gen3_thermal: Generate interrupt when temperature
+    changes
 
-Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://lore.kernel.org/r/1594811350-14066-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a774e1.dtsi | 51 +++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a774e1.dtsi | 323 +++++++++++++++++++++-
+ drivers/net/can/rcar/rcar_can.c           |  22 +-
+ drivers/thermal/rcar_gen3_thermal.c       |  34 +--
+ include/linux/can/platform/rcar_can.h     |  18 --
+ 4 files changed, 347 insertions(+), 50 deletions(-)
+ delete mode 100644 include/linux/can/platform/rcar_can.h
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-index d76aec73aa28..3a3490adc8a0 100644
---- a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-@@ -34,6 +34,49 @@
- 		clock-frequency = <0>;
- 	};
- 
-+	cluster0_opp: opp_table0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp-500000000 {
-+			opp-hz = /bits/ 64 <500000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-1000000000 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-1500000000 {
-+			opp-hz = /bits/ 64 <1500000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+			opp-suspend;
-+		};
-+	};
-+
-+	cluster1_opp: opp_table1 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp-800000000 {
-+			opp-hz = /bits/ 64 <800000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-1000000000 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-1200000000 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+	};
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -79,6 +122,7 @@
- 			enable-method = "psci";
- 			dynamic-power-coefficient = <854>;
- 			clocks = <&cpg CPG_CORE R8A774E1_CLK_Z>;
-+			operating-points-v2 = <&cluster0_opp>;
- 			capacity-dmips-mhz = <1024>;
- 			#cooling-cells = <2>;
- 		};
-@@ -91,6 +135,7 @@
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R8A774E1_CLK_Z>;
-+			operating-points-v2 = <&cluster0_opp>;
- 			capacity-dmips-mhz = <1024>;
- 			#cooling-cells = <2>;
- 		};
-@@ -103,6 +148,7 @@
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R8A774E1_CLK_Z>;
-+			operating-points-v2 = <&cluster0_opp>;
- 			capacity-dmips-mhz = <1024>;
- 			#cooling-cells = <2>;
- 		};
-@@ -115,6 +161,7 @@
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R8A774E1_CLK_Z>;
-+			operating-points-v2 = <&cluster0_opp>;
- 			capacity-dmips-mhz = <1024>;
- 			#cooling-cells = <2>;
- 		};
-@@ -129,6 +176,7 @@
- 			#cooling-cells = <2>;
- 			dynamic-power-coefficient = <277>;
- 			clocks = <&cpg CPG_CORE R8A774E1_CLK_Z2>;
-+			operating-points-v2 = <&cluster1_opp>;
- 			capacity-dmips-mhz = <535>;
- 		};
- 
-@@ -140,6 +188,7 @@
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R8A774E1_CLK_Z2>;
-+			operating-points-v2 = <&cluster1_opp>;
- 			capacity-dmips-mhz = <535>;
- 		};
- 
-@@ -151,6 +200,7 @@
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R8A774E1_CLK_Z2>;
-+			operating-points-v2 = <&cluster1_opp>;
- 			capacity-dmips-mhz = <535>;
- 		};
- 
-@@ -162,6 +212,7 @@
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R8A774E1_CLK_Z2>;
-+			operating-points-v2 = <&cluster1_opp>;
- 			capacity-dmips-mhz = <535>;
- 		};
- 
 -- 
 2.17.1
 
 
---BFT9V2oTwusCcbb6B2rq
+--tMVXZmqxI7g1ASKKF1YR
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -228,12 +109,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#5241): https://lists.cip-project.org/g/cip-dev/message=
-/5241
-Mute This Topic: https://lists.cip-project.org/mt/76406705/4520388
+View/Reply Online (#5240): https://lists.cip-project.org/g/cip-dev/message=
+/5240
+Mute This Topic: https://lists.cip-project.org/mt/76406704/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---BFT9V2oTwusCcbb6B2rq--
+--tMVXZmqxI7g1ASKKF1YR--
