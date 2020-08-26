@@ -1,230 +1,172 @@
-Return-Path: <SRS0=WSbC=CE=lists.cip-project.org=bounce+64572+5267+4520388+8129055@kernel.org>
+Return-Path: <SRS0=A8cy=CE=lists.cip-project.org=bounce+64572+5258+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MIME_HEADER_CTYPE_ONLY,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	T_TVD_MIME_NO_HEADERS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=BAYES_00,DATE_IN_PAST_03_06,
+	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55D6AC433EC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB317C433F4
 	for <cip-dev@archiver.kernel.org>; Wed, 26 Aug 2020 11:35:17 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 27EAD2087D
+	by mail.kernel.org (Postfix) with ESMTPS id BD5AD2087C
 	for <cip-dev@archiver.kernel.org>; Wed, 26 Aug 2020 11:35:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="QAgagwsN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27EAD2087D
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="gCMNlrv4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD5AD2087C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5267+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id LjSzYY4521723xfFS0lImhLH; Wed, 26 Aug 2020 04:35:17 -0700
-X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [])
- by mx.groups.io with SMTP id smtpd.web12.10258.1598440908658796256
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5258+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id 3eCqYY4521723xJBLPez5rm8; Wed, 26 Aug 2020 04:35:17 -0700
+X-Received: from JPN01-OS2-obe.outbound.protection.outlook.com (JPN01-OS2-obe.outbound.protection.outlook.com [40.107.141.107])
+ by mx.groups.io with SMTP id smtpd.web11.7799.1598427649415184596
  for <cip-dev@lists.cip-project.org>;
- Wed, 26 Aug 2020 04:21:50 -0700
-X-IronPort-AV: E=Sophos;i="5.76,355,1592838000"; 
-   d="scan'208";a="55588071"
-X-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 26 Aug 2020 20:21:49 +0900
-X-Received: from localhost.localdomain (unknown [172.29.51.148])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 7ED9D4296934;
-	Wed, 26 Aug 2020 20:21:48 +0900 (JST)
+ Wed, 26 Aug 2020 00:40:49 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JVYiZ+tkvZDcEiI3tBHY7y++/CX3XP8QcqbkxY0Jb8Pzu27uz2iVFp0bMG3EbWWHJ90yHe+jt8/F+PfLz19lhPlt9Var2aSFX14Ijy98L97p0gsSLwQS6biWxHBZ+vxMA/sxF2aiyHOHmjHvwgzMVkNEjlCHqFNIzWCxxuhN5K9tOkIhuOWbVvWpn/6ff4o14LW6OTAjhI/0jy06blKRbU8A+GTWBELZmCuyQKphgORC0vKpsX7EfxuzyCiRhzCsceGXLcxqp7p5eLgECBGVaBmWd1ww647nRXFU1nvBG2M37o/kKtM9oHdZfpMM6YBgnAd/jSXKbbRM1zMnijiYPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=75txI/tjBuIeTdKtaG59heI6XKNf7z6zPN8uKb54zY4=;
+ b=QNvoqCtl8DDNcori22OdoqNsbnjRopp82Rg0+5ReXK1nHdEwrWbemHfb77ClPSctcLicW2MKmq+IzT97pX+wZC14t35HACjOKg2pZpHnems9+cAV02zPJwk9JZU+1s0F3YLZi621caPpFtyzSg8WF/nk4NkZu1ID1fPZR3MudJ5HFqgpvYqIKwkBMl8bH41EmpxcgcqYiOaMKc06L6gPClpgS97jVHP37f+SH159juevxIr7CFhjcsTF/jKoJTOmfSEiOJM12I5QeL0lRmWSExGWMtGHlezSDww6bDvtf5K1eIH1PppTentDSj+tsMUebOux+LYKtt3AJNRv3wJt0g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+X-Received: from TYBPR01MB5309.jpnprd01.prod.outlook.com
+ (2603:1096:404:8025::15) by TYAPR01MB3663.jpnprd01.prod.outlook.com
+ (2603:1096:404:c1::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3305.25; Wed, 26 Aug
+ 2020 07:40:46 +0000
+X-Received: from TYBPR01MB5309.jpnprd01.prod.outlook.com
+ ([fe80::c141:37ba:af8c:b2ee]) by TYBPR01MB5309.jpnprd01.prod.outlook.com
+ ([fe80::c141:37ba:af8c:b2ee%7]) with mapi id 15.20.3305.026; Wed, 26 Aug 2020
+ 07:40:46 +0000
 From: Biju Das <biju.das.jz@bp.renesas.com>
-To: cip-dev@lists.cip-project.org,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Pavel Machek <pavel@denx.de>
-Cc: Chris Paterson <chris.paterson2@renesas.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [cip-dev] [PATCH 4.19.y-cip 06/10] arm64: dts: renesas: r8a774e1: Add I2C and IIC-DVFS support
-Date: Wed, 26 Aug 2020 12:21:28 +0100
-Message-Id: <20200826112132.4090-7-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20200826112132.4090-1-biju.das.jz@bp.renesas.com>
-References: <20200826112132.4090-1-biju.das.jz@bp.renesas.com>
+To: Pavel Machek <pavel@denx.de>, Niklas <niklas.soderlund@ragnatech.se>
+CC: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>, Nobuhiro
+ Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, Chris Paterson
+	<Chris.Paterson2@renesas.com>, Prabhakar Mahadev Lad
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [cip-dev] [PATCH 4.19.y-cip 02/10] thermal: rcar_gen3_thermal: Remove temperature bound
+Thread-Topic: [PATCH 4.19.y-cip 02/10] thermal: rcar_gen3_thermal: Remove
+ temperature bound
+Thread-Index: AQHWeuK6XTx19eY46EuanJGrB82pyKlJ/UYAgAADzAA=
+Date: Wed, 26 Aug 2020 07:40:46 +0000
+Message-ID: 
+ <TYBPR01MB5309A40EDFAF9156799B296886540@TYBPR01MB5309.jpnprd01.prod.outlook.com>
+References: <20200825132156.7839-1-biju.das.jz@bp.renesas.com>
+ <20200825132156.7839-3-biju.das.jz@bp.renesas.com>
+ <20200826072132.GA7244@amd>
+In-Reply-To: <20200826072132.GA7244@amd>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [109.154.85.152]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: c053795c-6961-4dbb-90f0-08d849935845
+x-ms-traffictypediagnostic: TYAPR01MB3663:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: 
+ <TYAPR01MB36633002112B16E89E9654F886540@TYAPR01MB3663.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 
+ u1LiWm+eGZR2oxL1czSRDxDa0j6v3FNwi4RoHP9RfSFaMO/+bd6XEoCIYNzG7YzVwFiqGGW5ZFPERJ4NbG+M8HM7RyjhEX6wgBADg3ino1EBXGbyVzySHqjdRw5Anjtv1RWj4Fil6sHv71fyLNItFzsqjW2czKenYhzpPQ2VHl5bcxJS+zkrJE/2pM/JRXqC33mEnaFUkKstAqEy1pPk3UcThMgCTFr4XwVdV3pyY2HJW1/UC9ZcNuKJQ13sYKrRk4ljVfd1r6Q5gGEqHI6mqBKX8yX2yZXoUi9W3Al2W+L6K4x4goJKULANVBPhdNbExCj4Nez1YCKPw+nzt2b2TQ==
+x-ms-exchange-antispam-messagedata: 
+ 5yv+HSxzsUUJEUGNhSqSUIAcd/EO59os7QPF3pxP5y+dNN8znmojfO/bxFzWfCDEwHmYORNoKUWBd3Mg6LI6Xa5risdPRqIFt+dZOuHZz/cq19oMd7741ecRRIkubH08oHfNvSKY9Czc5zeKRGjH5Qb1NqgK7GNfbhombuYdzDOVjAGAAM4IAAfwvWZvl9r+Zy8LbJWva6E6Ye3YtxWefsvAQf4LINsaHwkX1YBrUR8NL0ORmjp7LUr+nF1Jh7WBN0QKJuaHB0tQfPXgRqro3GWXk2lAEvsE6Kt1jv2Ap5heyrNTfVAAAYVEQkhGEIMqFs8/hHBgt1N8dQ4hAvNWaCDOyown/hrqhFhZl60xDMb7hu552Co5adqchbNe18v72u04N4N7v5t0RNUq6ih8ZE5KXo4RlkPv3qHaNKEpkwZeM/hmiEw9QATVZ0riEejYl+YD0alB2VKmQeIzeq9y1aXJhnXuXSHpC2Q6+JVJzpTuolzza0GWNu8pyvSKqEyB7dE8fw4dRwbjrfKYpq8D3NNLSDXANNkKW21Ra1RrjJNzvAEDo1YAvsHghrmWlCqUtY567a6Ky60cmTE51zxJc3Lh+b2lvaty9kO1D5iyzLIswKvVD7PqzudLHakvx4meNOzCL9DJy5S0plGyRCnRog==
+MIME-Version: 1.0
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYBPR01MB5309.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c053795c-6961-4dbb-90f0-08d849935845
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Aug 2020 07:40:46.1834
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 56wp8EvS3b1XVqbUPQzEsMJbLMuwTooU4pR10TrwELVMnTsdmtN3thkuGmsSTfKNNE8s4igIoGp72+j6wlovBnhOVYxmSNoc8+3VK+OAf8Y=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB3663
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: FifKb8j8fQDlmhfodY8yu4RXx4520388AA=
-Content-Type: multipart/mixed; boundary="yWlotDZQXVxfTn0dZzfX"
+X-Gm-Message-State: Kb8KI3hu5SsiHTC3fm78PHj0x4520388AA=
+Content-Type: multipart/mixed; boundary="P6BTxNz3zKpgb4riomXw"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=lists.cip-project.org; q=dns/txt; s=20140610; t=1598441717;
- bh=/87HDtG9ewINa/+5gGNvyAX/puDQaVbKoSO6CVoCfro=;
- h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=QAgagwsNx9MF1CQhNvc4qujeRIf0lUXmkgaUfcAbVtZ2VUYkRIfY4Hzdik5HrcyY3pS
- g4R4WcUGtrIeJFZ6txlKzVCwkm9jHZNTAiiVc3AzuknPPZCk8IJQwErkEBqzGe//MPdP1
- yBD4PuodB8P26e3mdCWprRpCDDC/1FtbYhU=
+ bh=irMq1mKjuuDBLzvGszrY/PxW9C07fuyorYnVWwEU3io=;
+ h=CC:Content-Type:Date:From:Reply-To:Subject:To;
+ b=gCMNlrv4MmZEHU5uJ8/c0AXiX1+p1KgOzZawZhEj85g4Z7Z6LWjoBbok4xvsDg2Dp/N
+ 220MIyhp9f3BKkJs0TqMGc/jHzzz5NeO/gLx0zHUXWvnI83RePXns6ziZyceAjBqn7hnB
+ Y4fyXPRJ4hqfdSas3M7MgD7k4O7kKcx3zKY=
 
---yWlotDZQXVxfTn0dZzfX
+--P6BTxNz3zKpgb4riomXw
+Content-Language: en-US
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi Pavel,
 
-commit 950a3a7951cdeb908798a49d57e5303ad7afd05a upstream.
+Thanks for the feedback.
 
-Add the I2C[0-6] and IIC Bus Interface for DVFS (IIC for DVFS)
-devices nodes to the r8a774e1 device tree.
+> Subject: Re: [PATCH 4.19.y-cip 02/10] thermal: rcar_gen3_thermal: Remove
+> temperature bound
+>
+> On Tue 2020-08-25 14:21:48, Biju Das wrote:
+> > From: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+> >
+> > commit 0f510a2457cbbba18a98492bab1bf540be57ebd1 upstream.
+> >
+> > The hardware manual states that the operation of the sensor is not
+> > guaranteed with temperatures above 125=B0C, not that the readings are
+> > invalid. Remove the bound check and try to deliver temperature
+> > readings even if we are outside the guaranteed operation range.
+>
+> I'm tempted to ask "how was this tested?" :-).
+>
+> Sometimes sensors have glitches producing very high values in normal
+> temperatures, and it such case clamping can be useful, but I'll assume yo=
+ur
+> sensor works ok.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
-Link: https://lore.kernel.org/r/1594811350-14066-14-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a774e1.dtsi | 119 +++++++++++++++++++++-
- 1 file changed, 116 insertions(+), 3 deletions(-)
+Niklas,  Can you please clarify?
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-index 838f8f0440cf..f4d4a2a4e725 100644
---- a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-@@ -614,22 +614,135 @@
- 			status = "disabled";
- 		};
- 
-+		i2c0: i2c@e6500000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a774e1",
-+				     "renesas,rcar-gen3-i2c";
-+			reg = <0 0xe6500000 0 0x40>;
-+			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 931>;
-+			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
-+			resets = <&cpg 931>;
-+			dmas = <&dmac1 0x91>, <&dmac1 0x90>,
-+			       <&dmac2 0x91>, <&dmac2 0x90>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			i2c-scl-internal-delay-ns = <110>;
-+			status = "disabled";
-+		};
-+
-+		i2c1: i2c@e6508000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a774e1",
-+				     "renesas,rcar-gen3-i2c";
-+			reg = <0 0xe6508000 0 0x40>;
-+			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 930>;
-+			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
-+			resets = <&cpg 930>;
-+			dmas = <&dmac1 0x93>, <&dmac1 0x92>,
-+			       <&dmac2 0x93>, <&dmac2 0x92>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			i2c-scl-internal-delay-ns = <6>;
-+			status = "disabled";
-+		};
-+
- 		i2c2: i2c@e6510000 {
--			reg = <0 0xe6510000 0 0x40>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a774e1",
-+				     "renesas,rcar-gen3-i2c";
-+			reg = <0 0xe6510000 0 0x40>;
-+			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 929>;
-+			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
-+			resets = <&cpg 929>;
-+			dmas = <&dmac1 0x95>, <&dmac1 0x94>,
-+			       <&dmac2 0x95>, <&dmac2 0x94>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			i2c-scl-internal-delay-ns = <6>;
- 			status = "disabled";
-+		};
- 
--			/* placeholder */
-+		i2c3: i2c@e66d0000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a774e1",
-+				     "renesas,rcar-gen3-i2c";
-+			reg = <0 0xe66d0000 0 0x40>;
-+			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 928>;
-+			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
-+			resets = <&cpg 928>;
-+			dmas = <&dmac0 0x97>, <&dmac0 0x96>;
-+			dma-names = "tx", "rx";
-+			i2c-scl-internal-delay-ns = <110>;
-+			status = "disabled";
- 		};
- 
- 		i2c4: i2c@e66d8000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a774e1",
-+				     "renesas,rcar-gen3-i2c";
- 			reg = <0 0xe66d8000 0 0x40>;
-+			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 927>;
-+			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
-+			resets = <&cpg 927>;
-+			dmas = <&dmac0 0x99>, <&dmac0 0x98>;
-+			dma-names = "tx", "rx";
-+			i2c-scl-internal-delay-ns = <110>;
- 			status = "disabled";
-+		};
- 
--			/* placeholder */
-+		i2c5: i2c@e66e0000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a774e1",
-+				     "renesas,rcar-gen3-i2c";
-+			reg = <0 0xe66e0000 0 0x40>;
-+			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 919>;
-+			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
-+			resets = <&cpg 919>;
-+			dmas = <&dmac0 0x9b>, <&dmac0 0x9a>;
-+			dma-names = "tx", "rx";
-+			i2c-scl-internal-delay-ns = <110>;
-+			status = "disabled";
-+		};
-+
-+		i2c6: i2c@e66e8000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a774e1",
-+				     "renesas,rcar-gen3-i2c";
-+			reg = <0 0xe66e8000 0 0x40>;
-+			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 918>;
-+			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
-+			resets = <&cpg 918>;
-+			dmas = <&dmac0 0x9d>, <&dmac0 0x9c>;
-+			dma-names = "tx", "rx";
-+			i2c-scl-internal-delay-ns = <6>;
-+			status = "disabled";
-+		};
-+
-+		i2c_dvfs: i2c@e60b0000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,iic-r8a774e1",
-+				     "renesas,rcar-gen3-iic",
-+				     "renesas,rmobile-iic";
-+			reg = <0 0xe60b0000 0 0x425>;
-+			interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 926>;
-+			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
-+			resets = <&cpg 926>;
-+			dmas = <&dmac0 0x11>, <&dmac0 0x10>;
-+			dma-names = "tx", "rx";
-+			status = "disabled";
- 		};
- 
- 		hscif0: serial@e6540000 {
--- 
-2.17.1
+Cheers,
+Biju
 
 
---yWlotDZQXVxfTn0dZzfX
+
+>
+> > +++ b/drivers/thermal/rcar_gen3_thermal.c
+> > @@ -182,9 +182,7 @@ static int rcar_gen3_thermal_get_temp(void
+> *devdata, int *temp)
+> >  tsc->coef.a2);
+> >  mcelsius =3D FIXPT_TO_MCELSIUS(val);
+> >
+> > -/* Make sure we are inside specifications */
+> > -if ((mcelsius < MCELSIUS(-40)) || (mcelsius > MCELSIUS(125)))
+> > -return -EIO;
+> > +/* Guaranteed operating range is -40C to 125C. */
+> >
+> >  /* Round value to device granularity setting */
+> >  *temp =3D rcar_gen3_thermal_round(mcelsius);
+>
+> --
+> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+
+Renesas Electronics Europe GmbH, Geschaeftsfuehrer/President: Carsten Jauch=
+, Sitz der Gesellschaft/Registered office: Duesseldorf, Arcadiastrasse 10, =
+40472 Duesseldorf, Germany, Handelsregister/Commercial Register: Duesseldor=
+f, HRB 3708 USt-IDNr./Tax identification no.: DE 119353406 WEEE-Reg.-Nr./WE=
+EE reg. no.: DE 14978647
+
+--P6BTxNz3zKpgb4riomXw
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -232,12 +174,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#5267): https://lists.cip-project.org/g/cip-dev/message=
-/5267
-Mute This Topic: https://lists.cip-project.org/mt/76426360/4520388
+View/Reply Online (#5258): https://lists.cip-project.org/g/cip-dev/message=
+/5258
+Mute This Topic: https://lists.cip-project.org/mt/76406706/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---yWlotDZQXVxfTn0dZzfX--
+--P6BTxNz3zKpgb4riomXw--
