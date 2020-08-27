@@ -1,263 +1,125 @@
-Return-Path: <SRS0=27kN=CF=lists.cip-project.org=bounce+64572+5285+4520388+8129055@kernel.org>
+Return-Path: <SRS0=CesS=CF=lists.cip-project.org=bounce+64572+5286+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MIME_HEADER_CTYPE_ONLY,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	T_TVD_MIME_NO_HEADERS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B42BC433E1
-	for <cip-dev@archiver.kernel.org>; Thu, 27 Aug 2020 15:40:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC62C433E2
+	for <cip-dev@archiver.kernel.org>; Thu, 27 Aug 2020 21:41:06 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id C8AC5206EB
-	for <cip-dev@archiver.kernel.org>; Thu, 27 Aug 2020 15:40:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id CBE7F20848
+	for <cip-dev@archiver.kernel.org>; Thu, 27 Aug 2020 21:41:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="rl9pMHAh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8AC5206EB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5285+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id v3GsYY4521723xpm6saZK8Lc; Thu, 27 Aug 2020 08:40:39 -0700
-X-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web12.21848.1598542836989238535
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="PBIJPc0Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBE7F20848
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nigauri.org
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5286+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id BTw7YY4521723x0Pr65HUN30; Thu, 27 Aug 2020 14:41:05 -0700
+X-Received: from mail-oi1-f195.google.com (mail-oi1-f195.google.com [209.85.167.195])
+ by mx.groups.io with SMTP id smtpd.web12.29873.1598564464244885407
  for <cip-dev@lists.cip-project.org>;
- Thu, 27 Aug 2020 08:40:37 -0700
-X-IronPort-AV: E=Sophos;i="5.76,359,1592838000"; 
-   d="scan'208";a="55484415"
-X-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 28 Aug 2020 00:40:35 +0900
-X-Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id B5113400C9F9;
-	Fri, 28 Aug 2020 00:40:33 +0900 (JST)
-From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: cip-dev@lists.cip-project.org,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Pavel Machek <pavel@denx.de>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [cip-dev] [PATCH 4.19.y-cip] arm64: dts: renesas: Fix SD Card/eMMC interface device node names
-Date: Thu, 27 Aug 2020 16:40:32 +0100
-Message-Id: <20200827154032.28116-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ Thu, 27 Aug 2020 14:41:04 -0700
+X-Received: by mail-oi1-f195.google.com with SMTP id e6so5961684oii.4
+        for <cip-dev@lists.cip-project.org>; Thu, 27 Aug 2020 14:41:04 -0700 (PDT)
+X-Gm-Message-State: D3YYg8DJA1Gm3XncGSlmveA0x4520388AA=
+X-Google-Smtp-Source: ABdhPJzMydltPjgnRHuIWKohnO6EOtFhiYjKS3o85XyGpcYN7TNkWmVxGggujNvuOD5k0x/2n+xBO0ZzPgDtC3D6z3Q=
+X-Received: by 2002:a05:6808:204:: with SMTP id l4mr616139oie.62.1598564463343;
+ Thu, 27 Aug 2020 14:41:03 -0700 (PDT)
+MIME-Version: 1.0
+References: <12b9b0c0-7117-81fc-8360-a0bd858715a8@siemens.com>
+ <20200827082132.ca3vmztk43723bas@kratos.fritz.box> <20200827131025.GA28744@duo.ucw.cz>
+In-Reply-To: <20200827131025.GA28744@duo.ucw.cz>
+From: "Nobuhiro Iwamatsu" <iwamatsu@nigauri.org>
+Date: Fri, 28 Aug 2020 06:40:37 +0900
+Message-ID: <CABMQnVLyjmJSEBce_oJSgSTGU5muMEyy3iwhikjuAS=DT3o3Hw@mail.gmail.com>
+Subject: Re: [cip-dev] Everything failed in gitlab
+To: cip-dev@lists.cip-project.org
+Cc: Jan Kiszka <jan.kiszka@siemens.com>, 
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, 
+	Chris Paterson <Chris.Paterson2@renesas.com>, 
+	Quirin Gylstorff <quirin.gylstorff@siemens.com>
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: qZBLwTjR1fGBmwWvWLc1KHdXx4520388AA=
-Content-Type: multipart/mixed; boundary="493aQQ6imhHX7cexySk5"
+Content-Type: multipart/mixed; boundary="yhc850qphRqvF99OFDkr"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1598542839;
- bh=JYGqSXDlFDqhGqozLHdCbFtXeQCyBtR8TGKP3FBMQhU=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1598564465;
+ bh=XtswV3qnwS97OtvO+PI8fSW5X3FyWtf6MDyVb5solj8=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=rl9pMHAh79pMG5xMwJUe/1BSJY9DlZk/bQ1ljRsvIvMK9x1Bcp1LwP0kI6p90hot4SI
- OEpIhTZwh2UrkProUOO0NYyWndQbJcqUL9yUcqo+hQdtiq3kOOFgyVAQW4C5jkKKbQNZt
- L1l8oiI2nsJ6WhPRA94IVmORm2Q/HTteahw=
+ b=PBIJPc0ZH+V2GX+GxWEv186tuzpI5rltQ3i5ULcEeT+m9wthIzsDC5hd17N0EMcmF9j
+ T4nZKs0C2mfUGzs8evSGvFG7tcTpJQbTzUnt4jXJGrchmSm/fU+yyRVR7wd+0BJG4noMn
+ X8hnECPXLFoLKRcKAPuYRb6+hCEmAXL8DiU=
 
---493aQQ6imhHX7cexySk5
+--yhc850qphRqvF99OFDkr
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Hi all,
 
-commit a6cb262af1e1adfa6287cb43f09021ee42beb21c upstream.
+This is happening not only in cip-testing (kernel test) but also in
+cip-core[0][1].
+I don't manage these runners. Has anyone changed permissions etc?
 
-Fix the device node names as "mmc@".
+Best regards,
+  Nobuhiro
 
-Fixes: 663386c3e1aa ("arm64: dts: renesas: r8a774a1: Add SDHI nodes")
-Fixes: 9b33e3001b67 ("arm64: dts: renesas: Initial r8a774b1 SoC device tree")
-Fixes: 77223211f44d ("arm64: dts: renesas: r8a774c0: Add SDHI nodes")
-Fixes: d9d67010e0c6 ("arm64: dts: r8a7795: Add SDHI support to dtsi")
-Fixes: a513cf1e6457 ("arm64: dts: r8a7796: add SDHI nodes")
-Fixes: 111cc9ace2b5 ("arm64: dts: renesas: r8a77961: Add SDHI nodes")
-Fixes: f51746ad7d1f ("arm64: dts: renesas: Add Renesas R8A77961 SoC support")
-Fixes: df863d6f95f5 ("arm64: dts: renesas: initial R8A77965 SoC device tree")
-Fixes: 9aa3558a02f0 ("arm64: dts: renesas: ebisu: Add and enable SDHI device nodes")
-Fixes: 83f18749c2f6 ("arm64: dts: renesas: r8a77995: Add SDHI (MMC) support")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Link: https://lore.kernel.org/r/1594382634-13714-1-git-send-email-yoshihiro.shimoda.uh@renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[PL: dropped changes to r8a77990.dtsi, r8a77961.dtsi, r8a77960.dtsi
-and r8a77951.dtsi files]
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 8 ++++----
- arch/arm64/boot/dts/renesas/r8a774b1.dtsi | 8 ++++----
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 6 +++---
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 8 ++++----
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 2 +-
- 5 files changed, 16 insertions(+), 16 deletions(-)
+[0]:https://gitlab.com/cip-project/cip-core/isar-cip-core/-/jobs/705783916
+[1]:https://gitlab.com/cip-project/cip-core/deby/-/jobs/699772711
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index f2cd97a9d36c..16166f3b66a0 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -1996,7 +1996,7 @@
- 			status = "disabled";
- 		};
- 
--		sdhi0: sd@ee100000 {
-+		sdhi0: mmc@ee100000 {
- 			compatible = "renesas,sdhi-r8a774a1",
- 				     "renesas,rcar-gen3-sdhi";
- 			reg = <0 0xee100000 0 0x2000>;
-@@ -2008,7 +2008,7 @@
- 			status = "disabled";
- 		};
- 
--		sdhi1: sd@ee120000 {
-+		sdhi1: mmc@ee120000 {
- 			compatible = "renesas,sdhi-r8a774a1",
- 				     "renesas,rcar-gen3-sdhi";
- 			reg = <0 0xee120000 0 0x2000>;
-@@ -2020,7 +2020,7 @@
- 			status = "disabled";
- 		};
- 
--		sdhi2: sd@ee140000 {
-+		sdhi2: mmc@ee140000 {
- 			compatible = "renesas,sdhi-r8a774a1",
- 				     "renesas,rcar-gen3-sdhi";
- 			reg = <0 0xee140000 0 0x2000>;
-@@ -2032,7 +2032,7 @@
- 			status = "disabled";
- 		};
- 
--		sdhi3: sd@ee160000 {
-+		sdhi3: mmc@ee160000 {
- 			compatible = "renesas,sdhi-r8a774a1",
- 				     "renesas,rcar-gen3-sdhi";
- 			reg = <0 0xee160000 0 0x2000>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a774b1.dtsi b/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
-index c3b858c13e67..62d011107cc5 100644
---- a/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
-@@ -1854,7 +1854,7 @@
- 			status = "disabled";
- 		};
- 
--		sdhi0: sd@ee100000 {
-+		sdhi0: mmc@ee100000 {
- 			compatible = "renesas,sdhi-r8a774b1",
- 				     "renesas,rcar-gen3-sdhi";
- 			reg = <0 0xee100000 0 0x2000>;
-@@ -1866,7 +1866,7 @@
- 			status = "disabled";
- 		};
- 
--		sdhi1: sd@ee120000 {
-+		sdhi1: mmc@ee120000 {
- 			compatible = "renesas,sdhi-r8a774b1",
- 				     "renesas,rcar-gen3-sdhi";
- 			reg = <0 0xee120000 0 0x2000>;
-@@ -1878,7 +1878,7 @@
- 			status = "disabled";
- 		};
- 
--		sdhi2: sd@ee140000 {
-+		sdhi2: mmc@ee140000 {
- 			compatible = "renesas,sdhi-r8a774b1",
- 				     "renesas,rcar-gen3-sdhi";
- 			reg = <0 0xee140000 0 0x2000>;
-@@ -1890,7 +1890,7 @@
- 			status = "disabled";
- 		};
- 
--		sdhi3: sd@ee160000 {
-+		sdhi3: mmc@ee160000 {
- 			compatible = "renesas,sdhi-r8a774b1",
- 				     "renesas,rcar-gen3-sdhi";
- 			reg = <0 0xee160000 0 0x2000>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-index 783a8cf16eaa..7ba934c32696 100644
---- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-@@ -1618,7 +1618,7 @@
- 			status = "disabled";
- 		};
- 
--		sdhi0: sd@ee100000 {
-+		sdhi0: mmc@ee100000 {
- 			compatible = "renesas,sdhi-r8a774c0",
- 				     "renesas,rcar-gen3-sdhi";
- 			reg = <0 0xee100000 0 0x2000>;
-@@ -1630,7 +1630,7 @@
- 			status = "disabled";
- 		};
- 
--		sdhi1: sd@ee120000 {
-+		sdhi1: mmc@ee120000 {
- 			compatible = "renesas,sdhi-r8a774c0",
- 				     "renesas,rcar-gen3-sdhi";
- 			reg = <0 0xee120000 0 0x2000>;
-@@ -1642,7 +1642,7 @@
- 			status = "disabled";
- 		};
- 
--		sdhi3: sd@ee160000 {
-+		sdhi3: mmc@ee160000 {
- 			compatible = "renesas,sdhi-r8a774c0",
- 				     "renesas,rcar-gen3-sdhi";
- 			reg = <0 0xee160000 0 0x2000>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 7de6edf1d738..e5cd760356cd 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -1486,7 +1486,7 @@
- 			status = "disabled";
- 		};
- 
--		sdhi0: sd@ee100000 {
-+		sdhi0: mmc@ee100000 {
- 			compatible = "renesas,sdhi-r8a77965",
- 				     "renesas,rcar-gen3-sdhi";
- 			reg = <0 0xee100000 0 0x2000>;
-@@ -1498,7 +1498,7 @@
- 			status = "disabled";
- 		};
- 
--		sdhi1: sd@ee120000 {
-+		sdhi1: mmc@ee120000 {
- 			compatible = "renesas,sdhi-r8a77965",
- 				     "renesas,rcar-gen3-sdhi";
- 			reg = <0 0xee120000 0 0x2000>;
-@@ -1510,7 +1510,7 @@
- 			status = "disabled";
- 		};
- 
--		sdhi2: sd@ee140000 {
-+		sdhi2: mmc@ee140000 {
- 			compatible = "renesas,sdhi-r8a77965",
- 				     "renesas,rcar-gen3-sdhi";
- 			reg = <0 0xee140000 0 0x2000>;
-@@ -1522,7 +1522,7 @@
- 			status = "disabled";
- 		};
- 
--		sdhi3: sd@ee160000 {
-+		sdhi3: mmc@ee160000 {
- 			compatible = "renesas,sdhi-r8a77965",
- 				     "renesas,rcar-gen3-sdhi";
- 			reg = <0 0xee160000 0 0x2000>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index ce53cb2c22c4..dfe81476b984 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -850,7 +850,7 @@
- 			status = "disabled";
- 		};
- 
--		sdhi2: sd@ee140000 {
-+		sdhi2: mmc@ee140000 {
- 			compatible = "renesas,sdhi-r8a77995",
- 				     "renesas,rcar-gen3-sdhi";
- 			reg = <0 0xee140000 0 0x2000>;
--- 
-2.17.1
+2020=E5=B9=B48=E6=9C=8827=E6=97=A5(=E6=9C=A8) 22:10 Pavel Machek <pavel@uc=
+w.cz>:
+>
+> Hi!
+>
+> > > Michael, Quirin, any ideas?
+> >
+> > yes. I took a brief look at the logs and found the problem:
+> >
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D
+> > Aug 27 08:16:05 ip-172-20-42-140 kubelet[2152]: E0827 08:16:05.109337 =
+   2152 kuberuntime_manager.go:784] container start failed: ErrImagePull: r=
+pc error: code =3D Unknown desc =3D Error response from daemon: Get https:/=
+/registry.gitlab.com/v2/cip-project/cip-testing/linux-cip-ci/manifests/buil=
+d-v3: unauthorized: HTTP Basic: Access denied
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> > =3D> HTTP Basic: Access denied
+> >
+> > Please check your setup/permissions?
+>
+> I believe that Chris is unavailable this week. Is there anyone else
+> that knows how this is supposed to work?
+>
+> Best regards,
+>                                                                 Pavel
+>
+> --
+> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+>=20
 
 
---493aQQ6imhHX7cexySk5
+
+--=20
+Nobuhiro Iwamatsu
+   iwamatsu at {nigauri.org / debian.org}
+   GPG ID: 40AD1FA6
+
+--yhc850qphRqvF99OFDkr
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -265,12 +127,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#5285): https://lists.cip-project.org/g/cip-dev/message=
-/5285
-Mute This Topic: https://lists.cip-project.org/mt/76454173/4520388
+View/Reply Online (#5286): https://lists.cip-project.org/g/cip-dev/message=
+/5286
+Mute This Topic: https://lists.cip-project.org/mt/76423839/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---493aQQ6imhHX7cexySk5--
+--yhc850qphRqvF99OFDkr--
