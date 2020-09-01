@@ -1,4 +1,4 @@
-Return-Path: <SRS0=mhf6=CK=lists.cip-project.org=bounce+64572+5358+4520388+8129055@kernel.org>
+Return-Path: <SRS0=S4NS=CK=lists.cip-project.org=bounce+64572+5357+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -8,30 +8,30 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	T_TVD_MIME_NO_HEADERS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F10B2C28E83
-	for <cip-dev@archiver.kernel.org>; Tue,  1 Sep 2020 11:45:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 483FCC2BC11
+	for <cip-dev@archiver.kernel.org>; Tue,  1 Sep 2020 11:45:12 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id C55E620707
-	for <cip-dev@archiver.kernel.org>; Tue,  1 Sep 2020 11:45:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 1CF3F20707
+	for <cip-dev@archiver.kernel.org>; Tue,  1 Sep 2020 11:45:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="O3FvYdLK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C55E620707
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="tsZaCSYg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CF3F20707
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5358+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id NIdkYY4521723xy4oO2xfGUk; Tue, 01 Sep 2020 04:45:11 -0700
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5357+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id lA1OYY4521723xeuv8fFBeQp; Tue, 01 Sep 2020 04:45:11 -0700
 X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [])
  by mx.groups.io with SMTP id smtpd.web12.11107.1598960480272809138
  for <cip-dev@lists.cip-project.org>;
- Tue, 01 Sep 2020 04:41:34 -0700
+ Tue, 01 Sep 2020 04:41:32 -0700
 X-IronPort-AV: E=Sophos;i="5.76,378,1592838000"; 
-   d="scan'208";a="56086800"
+   d="scan'208";a="56086797"
 X-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 01 Sep 2020 20:41:34 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 01 Sep 2020 20:41:32 +0900
 X-Received: from localhost.localdomain (unknown [172.29.53.50])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id C0BEC400752B;
-	Tue,  1 Sep 2020 20:41:32 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id E7051400752B;
+	Tue,  1 Sep 2020 20:41:30 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -39,9 +39,9 @@ To: cip-dev@lists.cip-project.org,
 Cc: Chris Paterson <chris.paterson2@renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [cip-dev] [PATCH 4.4.y-cip 09/10] dt-bindings: power: renesas,apmu: Document r8a7742 support
-Date: Tue,  1 Sep 2020 12:41:13 +0100
-Message-Id: <20200901114114.3465-10-biju.das.jz@bp.renesas.com>
+Subject: [cip-dev] [PATCH 4.4.y-cip 08/10] ARM: dts: r8a7742-iwg21d-q7: Enable Ethernet AVB
+Date: Tue,  1 Sep 2020 12:41:12 +0100
+Message-Id: <20200901114114.3465-9-biju.das.jz@bp.renesas.com>
 In-Reply-To: <20200901114114.3465-1-biju.das.jz@bp.renesas.com>
 References: <20200901114114.3465-1-biju.das.jz@bp.renesas.com>
 Precedence: Bulk
@@ -50,53 +50,78 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: B08QTsd3XThIJFEwNxZBkqzux4520388AA=
-Content-Type: multipart/mixed; boundary="cAziSr1jvlOE3Wigt3i1"
+X-Gm-Message-State: DBn8BePiAxQ8Dsf7bDT9jT2px4520388AA=
+Content-Type: multipart/mixed; boundary="wSfwK5JubUmEXQcJWOm1"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=lists.cip-project.org; q=dns/txt; s=20140610; t=1598960711;
- bh=RcHWSnxmOTFkGiAwwgrffbrmBf9nALYRCMSX7C7jDAM=;
+ bh=ZIQm285jndFNELnCjHI7KHAZeEIfv87Q6iASq4Q9ev4=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=O3FvYdLKcFDybuiV/vf1d8LDozexDAvEjC3KTDCXNU0Ne70BAD4wT5StCAjQG/tfsXM
- 07jrp1C2CkJXjecmclhuKWhl921MOH+4G3uYesT8MTZrNs4YeHU9lWWwMpIYjGkKW1+dz
- e92AiZoTrd73tMB5S00+cFjM70cRXaweZQE=
+ b=tsZaCSYgnT5WPp9DTb6NI+BG0g8Xa9B4cwqLgAAvV+0qgGimI26jzzKc1lEJNN28GXU
+ g50iKri0S7MiZlixv9+FIcbz742c6QzvFmO7F+eq2H554LHIJAcyhN329XNhbwZUrIwdg
+ 0AM+Vu6uCT5soAwPk5ipq3MXK+gkXFRRHvs=
 
---cAziSr1jvlOE3Wigt3i1
+--wSfwK5JubUmEXQcJWOm1
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit a08790960382c24d92af43a34626ed0f3899d299 upstream.
+commit 8a8c81aa605cec4a086bd46a9b9214b9671f8f42 upstream.
 
-Document APMU and SMP enable method for RZ/G1H (also known as r8a7742)
-SoC.
+Enable Ethernet AVB on iWave RZ/G1H carrier board.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Rob Herring <robh@kernel.org>
-[biju: Patched text version of bindings file]
+Link: https://lore.kernel.org/r/1590420129-7531-4-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/power/renesas,apmu.txt | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/r8a7742-iwg21d-q7.dts | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/power/renesas,apmu.txt b/Documentation/devicetree/bindings/power/renesas,apmu.txt
-index 21157fb60f36..8ffb21e20bc4 100644
---- a/Documentation/devicetree/bindings/power/renesas,apmu.txt
-+++ b/Documentation/devicetree/bindings/power/renesas,apmu.txt
-@@ -7,6 +7,7 @@ Required properties:
+diff --git a/arch/arm/boot/dts/r8a7742-iwg21d-q7.dts b/arch/arm/boot/dts/r8a7742-iwg21d-q7.dts
+index 1f5c35c66d91..8ce82ad3d946 100644
+--- a/arch/arm/boot/dts/r8a7742-iwg21d-q7.dts
++++ b/arch/arm/boot/dts/r8a7742-iwg21d-q7.dts
+@@ -14,6 +14,7 @@
  
- - compatible: Should be "renesas,<soctype>-apmu", "renesas,apmu" as fallback.
- 	      Examples with soctypes are:
-+		- "renesas,r8a7742-apmu" (RZ/G1H)
- 		- "renesas,r8a7743-apmu" (RZ/G1M)
- 		- "renesas,r8a7744-apmu" (RZ/G1N)
- 		- "renesas,r8a7745-apmu" (RZ/G1E)
+ 	aliases {
+ 		serial2 = &scifa2;
++		ethernet0 = &avb;
+ 	};
+ 
+ 	chosen {
+@@ -22,7 +23,27 @@
+ 	};
+ };
+ 
++&avb {
++	pinctrl-0 = <&avb_pins>;
++	pinctrl-names = "default";
++
++	phy-handle = <&phy3>;
++	phy-mode = "gmii";
++	renesas,no-ether-link;
++	status = "okay";
++
++	phy3: ethernet-phy@3 {
++		reg = <3>;
++		micrel,led-mode = <1>;
++	};
++};
++
+ &pfc {
++	avb_pins: avb {
++		groups = "avb_mdio", "avb_gmii";
++		function = "avb";
++	};
++
+ 	scifa2_pins: scifa2 {
+ 		groups = "scifa2_data_c";
+ 		function = "scifa2";
 -- 
 2.17.1
 
 
---cAziSr1jvlOE3Wigt3i1
+--wSfwK5JubUmEXQcJWOm1
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -104,12 +129,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#5358): https://lists.cip-project.org/g/cip-dev/message=
-/5358
-Mute This Topic: https://lists.cip-project.org/mt/76554014/4520388
+View/Reply Online (#5357): https://lists.cip-project.org/g/cip-dev/message=
+/5357
+Mute This Topic: https://lists.cip-project.org/mt/76554013/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---cAziSr1jvlOE3Wigt3i1--
+--wSfwK5JubUmEXQcJWOm1--
