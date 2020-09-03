@@ -1,4 +1,4 @@
-Return-Path: <SRS0=LSaN=CM=lists.cip-project.org=bounce+64572+5391+4520388+8129055@kernel.org>
+Return-Path: <SRS0=k3M6=CM=lists.cip-project.org=bounce+64572+5392+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -8,38 +8,38 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	T_TVD_MIME_NO_HEADERS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 716A3C433E2
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B98D0C43461
 	for <cip-dev@archiver.kernel.org>; Thu,  3 Sep 2020 14:27:25 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 3E192206EB
+	by mail.kernel.org (Postfix) with ESMTPS id 7A91420758
 	for <cip-dev@archiver.kernel.org>; Thu,  3 Sep 2020 14:27:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="H/pjT+V/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E192206EB
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="LKTmFfto"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A91420758
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5391+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id a45QYY4521723xXr7b2txx1k; Thu, 03 Sep 2020 07:27:24 -0700
-X-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [])
- by mx.groups.io with SMTP id smtpd.web11.15150.1599143242092612777
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5392+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id IKdBYY4521723x8sTTgrbQ9v; Thu, 03 Sep 2020 07:27:25 -0700
+X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web12.15229.1599143244490577166
  for <cip-dev@lists.cip-project.org>;
  Thu, 03 Sep 2020 07:27:24 -0700
 X-IronPort-AV: E=Sophos;i="5.76,387,1592838000"; 
-   d="scan'208";a="56080646"
+   d="scan'208";a="56296901"
 X-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 03 Sep 2020 23:27:24 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 03 Sep 2020 23:27:22 +0900
 X-Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 3B47040062CD;
-	Thu,  3 Sep 2020 23:27:23 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id E59AC40062AB;
+	Thu,  3 Sep 2020 23:27:21 +0900 (JST)
 From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [cip-dev] [PATCH 4.4.y-cip 2/4] serial: sh-sci: Terminate TX DMA during buffer flushing
-Date: Thu,  3 Sep 2020 15:27:17 +0100
-Message-Id: <20200903142719.13010-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [cip-dev] [PATCH 4.4.y-cip 1/4] serial: mctrl_gpio: Check if GPIO property exisits before requesting it
+Date: Thu,  3 Sep 2020 15:27:16 +0100
+Message-Id: <20200903142719.13010-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 In-Reply-To: <20200903142719.13010-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20200903142719.13010-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: Bulk
@@ -48,71 +48,130 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: H2orq7qMvXe48sLKrmNXR7y7x4520388AA=
-Content-Type: multipart/mixed; boundary="mNO3zl1f2K6VNEYjIozA"
+X-Gm-Message-State: wg0OWkUd4djhLf159R7Ho6vNx4520388AA=
+Content-Type: multipart/mixed; boundary="Y2w0ioVmGUxEqofugjxj"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1599143244;
- bh=9DbZ5OHjbO4/EiaipcCkVVYnHsndzbislJPV4gRLa1s=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1599143245;
+ bh=mvLhSjOiftRAuTkQ2Dd8iQ+SDIjx+qaHq0OU5yuCFFA=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=H/pjT+V/qYM9/PMrBBWkbsFLMVYR+5i3iDSR+VICNyTu5ukJXbeRTrFVnAauPY60gPK
- M9INH+Ww/rlPu+6AyhM6tKRBU2FzM55bSGUjiU9YfTSQdLzy12hxKAoTFQfidzCX/Xryh
- HpSZOYapaRSMNP01qvS30SUHsw61gkMjGW0=
+ b=LKTmFftoZW6gIneLujVhEzidqA2N6QbhV6W6KO8iI6uBfspWPtxk8cJ7klwjCAiUfAD
+ q8eMYRnlFm9vp7xqslP5PWHzZAh7ItnhGdNvDgBQTlW2eIy373IO03Ze6zxzlbAi5Hr13
+ N19gTmPNH7smgFrwiSVAnlnuNZ6br2U9zZ8=
 
---mNO3zl1f2K6VNEYjIozA
+--Y2w0ioVmGUxEqofugjxj
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Stefan Roese <sr@denx.de>
 
-commit 775b7ffd7d6d5db320d99b0a485c51e04dfcf9f1 upstream.
+commit d99482673f950817b30caf3fcdfb31179b050ce1 upstream.
 
-While the .flush_buffer() callback clears sci_port.tx_dma_len since
-commit 1cf4a7efdc71cab8 ("serial: sh-sci: Fix race condition causing
-garbage during shutdown"), it does not terminate a transmit DMA
-operation that may be in progress.
+This patch adds a check for the GPIOs property existence, before the
+GPIO is requested. This fixes an issue seen when the 8250 mctrl_gpio
+support is added (2nd patch in this patch series) on x86 platforms using
+ACPI.
 
-Fix this by terminating any pending DMA operations, and resetting the
-corresponding cookie.
+Here Mika's comments from 2016-08-09:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-Tested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+"
+I noticed that with v4.8-rc1 serial console of some of our Broxton
+systems does not work properly anymore. I'm able to see output but input
+does not work.
 
-Link: https://lore.kernel.org/r/20190624123540.20629-3-geert+renesas@glider.be
+I bisected it down to commit 4ef03d328769eddbfeca1f1c958fdb181a69c341
+("tty/serial/8250: use mctrl_gpio helpers").
+
+The reason why it fails is that in ACPI we do not have names for GPIOs
+(except when _DSD is used) so we use the "idx" to index into _CRS GPIO
+resources. Now mctrl_gpio_init_noauto() goes through a list of GPIOs
+calling devm_gpiod_get_index_optional() passing "idx" of 0 for each. The
+UART device in Broxton has following (simplified) ACPI description:
+
+    Device (URT4)
+    {
+        ...
+        Name (_CRS, ResourceTemplate () {
+            GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
+                    "\\_SB.GPO0", 0x00, ResourceConsumer)
+            {
+                0x003A
+            }
+            GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
+                    "\\_SB.GPO0", 0x00, ResourceConsumer)
+            {
+                0x003D
+            }
+        })
+
+In this case it finds the first GPIO (0x003A which happens to be RX pin
+for that UART), turns it into GPIO which then breaks input for the UART
+device. This also breaks systems with bluetooth connected to UART (those
+typically have some GPIOs in their _CRS).
+
+Any ideas how to fix this?
+
+We cannot just drop the _CRS index lookup fallback because that would
+break many existing machines out there so maybe we can limit this to
+only DT enabled machines. Or alternatively probe if the property first
+exists before trying to acquire the GPIOs (using
+device_property_present()).
+"
+
+This patch implements the fix suggested by Mika in his statement above.
+
+Signed-off-by: Stefan Roese <sr@denx.de>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Tested-by: Yegor Yefremov <yegorslists@googlemail.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Yegor Yefremov <yegorslists@googlemail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Giulio Benetti <giulio.benetti@micronovasrl.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[PL: Included slab.h for build error]
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/tty/serial/sh-sci.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/tty/serial/serial_mctrl_gpio.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 2b5b342b7462..166ca04aad4e 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1475,11 +1475,18 @@ static void sci_free_dma(struct uart_port *port)
+diff --git a/drivers/tty/serial/serial_mctrl_gpio.c b/drivers/tty/serial/serial_mctrl_gpio.c
+index 2b5329a3d716..18dfba725239 100644
+--- a/drivers/tty/serial/serial_mctrl_gpio.c
++++ b/drivers/tty/serial/serial_mctrl_gpio.c
+@@ -20,7 +20,9 @@
+ #include <linux/gpio/consumer.h>
+ #include <linux/termios.h>
+ #include <linux/serial_core.h>
++#include <linux/slab.h>
+ #include <linux/module.h>
++#include <linux/property.h>
  
- static void sci_flush_buffer(struct uart_port *port)
- {
-+	struct sci_port *s = to_sci_port(port);
+ #include "serial_mctrl_gpio.h"
+ 
+@@ -102,6 +104,19 @@ struct mctrl_gpios *mctrl_gpio_init_noauto(struct device *dev, unsigned int idx)
+ 
+ 	for (i = 0; i < UART_GPIO_MAX; i++) {
+ 		enum gpiod_flags flags;
++		char *gpio_str;
++		bool present;
 +
- 	/*
- 	 * In uart_flush_buffer(), the xmit circular buffer has just been
--	 * cleared, so we have to reset tx_dma_len accordingly.
-+	 * cleared, so we have to reset tx_dma_len accordingly, and stop any
-+	 * pending transfers
- 	 */
--	to_sci_port(port)->tx_dma_len = 0;
-+	s->tx_dma_len = 0;
-+	if (s->chan_tx) {
-+		dmaengine_terminate_async(s->chan_tx);
-+		s->cookie_tx = -EINVAL;
-+	}
- }
- #else /* !CONFIG_SERIAL_SH_SCI_DMA */
- static inline void sci_request_dma(struct uart_port *port)
++		/* Check if GPIO property exists and continue if not */
++		gpio_str = kasprintf(GFP_KERNEL, "%s-gpios",
++				     mctrl_gpios_desc[i].name);
++		if (!gpio_str)
++			continue;
++
++		present = device_property_present(dev, gpio_str);
++		kfree(gpio_str);
++		if (!present)
++			continue;
+ 
+ 		if (mctrl_gpios_desc[i].dir_out)
+ 			flags = GPIOD_OUT_LOW;
 -- 
 2.17.1
 
 
---mNO3zl1f2K6VNEYjIozA
+--Y2w0ioVmGUxEqofugjxj
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -120,12 +179,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#5391): https://lists.cip-project.org/g/cip-dev/message=
-/5391
-Mute This Topic: https://lists.cip-project.org/mt/76607962/4520388
+View/Reply Online (#5392): https://lists.cip-project.org/g/cip-dev/message=
+/5392
+Mute This Topic: https://lists.cip-project.org/mt/76607963/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---mNO3zl1f2K6VNEYjIozA--
+--Y2w0ioVmGUxEqofugjxj--
