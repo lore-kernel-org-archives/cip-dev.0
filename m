@@ -1,105 +1,100 @@
-Return-Path: <SRS0=A4ae=CM=lists.cip-project.org=bounce+64572+5402+4520388+8129055@kernel.org>
+Return-Path: <SRS0=tM/V=CM=lists.cip-project.org=bounce+64572+5403+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MIME_HEADER_CTYPE_ONLY,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	T_TVD_MIME_NO_HEADERS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBAC4C433E9
-	for <cip-dev@archiver.kernel.org>; Thu,  3 Sep 2020 16:00:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47A18C433E9
+	for <cip-dev@archiver.kernel.org>; Thu,  3 Sep 2020 17:23:43 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 3A03B208C7
-	for <cip-dev@archiver.kernel.org>; Thu,  3 Sep 2020 16:00:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 808B020716
+	for <cip-dev@archiver.kernel.org>; Thu,  3 Sep 2020 17:23:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="kFpoVZoq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A03B208C7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5402+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id Cua5YY4521723xmSGGT7mYZb; Thu, 03 Sep 2020 09:00:57 -0700
-X-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web10.17513.1599148855608010585
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="KOoChUlI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 808B020716
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5403+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id yVbrYY4521723xw4qGf6RQ8X; Thu, 03 Sep 2020 10:23:42 -0700
+X-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web10.19417.1599153820280750019
  for <cip-dev@lists.cip-project.org>;
- Thu, 03 Sep 2020 09:00:55 -0700
-X-IronPort-AV: E=Sophos;i="5.76,387,1592838000"; 
-   d="scan'208";a="56085134"
-X-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 04 Sep 2020 01:00:54 +0900
-X-Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 34ED04003875;
-	Fri,  4 Sep 2020 01:00:53 +0900 (JST)
-From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: cip-dev@lists.cip-project.org,
+ Thu, 03 Sep 2020 10:23:41 -0700
+X-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id A9F4C1C0B7A; Thu,  3 Sep 2020 19:23:36 +0200 (CEST)
+Date: Thu, 3 Sep 2020 19:23:35 +0200
+From: "Pavel Machek" <pavel@ucw.cz>
+To: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Pavel Machek <pavel@denx.de>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [cip-dev] [PATCH 4.4.y-cip] of: Add missing exports of node name compare functions
-Date: Thu,  3 Sep 2020 17:00:52 +0100
-Message-Id: <20200903160052.8806-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	Pavel Machek <pavel@denx.de>, Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [cip-dev] [PATCH 4.4.y-cip 0/6] RZ/G1H add support for Ether/[H]SCIF{A|B}
+Message-ID: <20200903172335.GA7795@duo.ucw.cz>
+References: <20200903144303.13275-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+MIME-Version: 1.0
+In-Reply-To: <20200903144303.13275-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: mOT23RXtmgp52zWMTHKzbcvmx4520388AA=
-Content-Type: multipart/mixed; boundary="geA5mE5qUtH9Fz4cyJ1c"
+X-Gm-Message-State: QrEj0FTncLYEuobfhx6nwUUAx4520388AA=
+Content-Type: multipart/mixed; boundary="CSRhj1F4izT1B7m7T4Un"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1599148857;
- bh=5YW4bwNmhIksmLIL1QFxLF5AxAgBfNLDWJOTAZ8mUG8=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1599153822;
+ bh=j3leglNSIY7kQ3CH2JF+o2dWD51DctFtlsFbbmuO/Q8=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=kFpoVZoqSkdVf5BeF2fkAE5xR+NW/7Nhm3x1zGAv4PvQLoO4CoXX2+eN+y6j03phuGo
- oiuQjLElDPC9B/bQL4kwtIa0FsfpJ/ZeTUjb9vFf/wxJhdjc2qfmiuGGCLmICt/D4VPMm
- cgitSSIpvhHauxO8kp7w7Jz0vVkdh2eXflM=
+ b=KOoChUlIXyrF/Sxr+Gp+0IiQ/2/jGfE+AR9ZsRuFUvLWQVMZNWi8anf3DgQgoo/NJTV
+ 5IbVCpQftPx2lFVSlLQRziQ3frZomzJbnxJ9GlJexfyvbI/oesomgu9vlUBd7b0/YfObO
+ DnMKhYk1/tkb9KyLNpi8sfrz6XYkS/Y86bM=
 
---geA5mE5qUtH9Fz4cyJ1c
+--CSRhj1F4izT1B7m7T4Un
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="17pEHd4RhPHOinZp"
+Content-Disposition: inline
 
-From: Rob Herring <robh@kernel.org>
+--17pEHd4RhPHOinZp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-commit 173ee3962959a1985a109f81539a403b5cd07ae7 upstream.
+Hi!
 
-Commit f42b0e18f2e5 ("of: add node name compare helper functions")
-failed to add the module exports to of_node_name_eq() and
-of_node_name_prefix(). Add them now.
+> This patch series adds support for ETHER/[H]SCIF{A|B} to
+> R8A7742 SoC and alongside adds camera daughter board dts
+> which fits on iwg21d-q7 development platform.
+>=20
+> Patches 1/6, 3/6, 5/6, 6/6 have been cherry picked from
+> upstream kernel, patch 2/6 is a hookup patch to enable=20
+> eth on R8A7742 SoC and patch 4/6 is a fixup patch.
 
-Fixes: f42b0e18f2e5 ("of: add node name compare helper functions")
-Signed-off-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-Fixes build failure for multi_v7_defconfig
----
- drivers/of/base.c | 2 ++
- 1 file changed, 2 insertions(+)
+This series looks okay to me.
 
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index b02f4b272e5b..4e6af7c6c792 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -67,6 +67,7 @@ bool of_node_name_eq(const struct device_node *np, const char *name)
- 
- 	return (strlen(name) == len) && (strncmp(node_name, name, len) == 0);
- }
-+EXPORT_SYMBOL(of_node_name_eq);
- 
- bool of_node_name_prefix(const struct device_node *np, const char *prefix)
- {
-@@ -75,6 +76,7 @@ bool of_node_name_prefix(const struct device_node *np, const char *prefix)
- 
- 	return strncmp(kbasename(np->full_name), prefix, strlen(prefix)) == 0;
- }
-+EXPORT_SYMBOL(of_node_name_prefix);
- 
- int of_n_addr_cells(struct device_node *np)
- {
--- 
-2.17.1
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
+--17pEHd4RhPHOinZp
+Content-Type: application/pgp-signature; name="signature.asc"
 
---geA5mE5qUtH9Fz4cyJ1c
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCX1EmlwAKCRAw5/Bqldv6
+8kH5AKCiYmh2CHGCiwR7rocCWLL8DYFIzgCfVMjZi9ViDbtPtTmBFPgkj/wW15g=
+=Yzk/
+-----END PGP SIGNATURE-----
+
+--17pEHd4RhPHOinZp--
+
+--CSRhj1F4izT1B7m7T4Un
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -107,12 +102,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#5402): https://lists.cip-project.org/g/cip-dev/message=
-/5402
-Mute This Topic: https://lists.cip-project.org/mt/76610346/4520388
+View/Reply Online (#5403): https://lists.cip-project.org/g/cip-dev/message=
+/5403
+Mute This Topic: https://lists.cip-project.org/mt/76608365/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---geA5mE5qUtH9Fz4cyJ1c--
+--CSRhj1F4izT1B7m7T4Un--
