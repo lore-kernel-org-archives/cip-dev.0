@@ -1,30 +1,31 @@
-Return-Path: <SRS0=atJt=CS=lists.cip-project.org=bounce+64572+5422+4520388+8129055@kernel.org>
+Return-Path: <SRS0=Z/l/=CS=lists.cip-project.org=bounce+64572+5423+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69812C2D0E2
-	for <cip-dev@archiver.kernel.org>; Wed,  9 Sep 2020 04:44:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1252C10DAA
+	for <cip-dev@archiver.kernel.org>; Wed,  9 Sep 2020 04:44:45 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E921321D43
+	by mail.kernel.org (Postfix) with ESMTPS id 536BC21D43
 	for <cip-dev@archiver.kernel.org>; Wed,  9 Sep 2020 04:44:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="DMhyggaM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E921321D43
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="AWeDB8Vz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 536BC21D43
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5422+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id TaZdYY4521723xpl3CCkVUI7; Tue, 08 Sep 2020 21:44:45 -0700
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5423+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id YffcYY4521723x2rwPf2kaKM; Tue, 08 Sep 2020 21:44:45 -0700
 X-Received: from wens.tw (wens.tw [140.112.194.72])
- by mx.groups.io with SMTP id smtpd.web10.6631.1599626681622422639
+ by mx.groups.io with SMTP id smtpd.web12.6683.1599626681623362607
  for <cip-dev@lists.cip-project.org>;
  Tue, 08 Sep 2020 21:44:42 -0700
 X-Received: by wens.tw (Postfix, from userid 1000)
-	id AB9175FCF0; Wed,  9 Sep 2020 12:44:32 +0800 (CST)
+	id CCD095FD01; Wed,  9 Sep 2020 12:44:32 +0800 (CST)
 From: "Chen-Yu Tsai (Moxa)" <wens@csie.org>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
@@ -32,9 +33,11 @@ Cc: cip-dev@lists.cip-project.org,
 	JohnsonCH.Chen@moxa.com,
 	victor.yu@moxa.com,
 	wens@csie.org
-Subject: [cip-dev] [PATCH 4.4.y-cip 00/11] ti-cpufreq backport
-Date: Wed,  9 Sep 2020 12:42:22 +0800
-Message-Id: <20200909044233.4115-1-wens@csie.org>
+Subject: [cip-dev] [PATCH 4.4.y-cip 01/11] PM / OPP: Parse clock-latency and voltage-tolerance for v1 bindings
+Date: Wed,  9 Sep 2020 12:42:23 +0800
+Message-Id: <20200909044233.4115-2-wens@csie.org>
+In-Reply-To: <20200909044233.4115-1-wens@csie.org>
+References: <20200909044233.4115-1-wens@csie.org>
 MIME-Version: 1.0
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
@@ -42,85 +45,135 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: 7xmtVkrCHkO1TqId1PwwsQQQx4520388AA=
-Content-Type: multipart/mixed; boundary="pbySSQmKdMAJugja8RcB"
+X-Gm-Message-State: fLDVHzoWbUutNgXnN4qqnPYhx4520388AA=
+Content-Type: multipart/mixed; boundary="eGsIqeVHlrIUlBv2Tynl"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=lists.cip-project.org; q=dns/txt; s=20140610; t=1599626685;
- bh=cJPEoVAt82LyOYlmiyGDocrfFPw3uHMYwHyueF/ZNuE=;
+ bh=wyESVM+01iZJpMCMTloOjt0l1DFXRtjQMkPY6sZO/ao=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=DMhyggaMnZk4t1iNBhk1XG9VyovD79hJybmu44/NV/jmy3OFeW17WIaZGBR89najt/h
- 2lfQcpKRkwjywaNM+Lq2JnHaWm4xjqDfA90BTCJKLDj5Ui9uJntRhIb7qb8CUyxQe04Bd
- dCvBQPY/yB4/RdUEc1gHhI7QGcHtaMULT5A=
+ b=AWeDB8VzuJxGmZs6XMYVwIyb/W9P0XuFp0oGMorravWH/nSpHBD/uwZd0nvb1tc1g/l
+ NvS8SnHxgkve0yk/RHcBM8j8cnAzyv4Fc7VTXgOz++Km7QvdvHZ1vo+gBAjW4zKi3J+xw
+ j5qFocmk/EIB9byzG7cLAygRYXKwBv1xRSc=
 
---pbySSQmKdMAJugja8RcB
+--eGsIqeVHlrIUlBv2Tynl
 Content-Transfer-Encoding: quoted-printable
 
-Hi everyone,
+From: Viresh Kumar <viresh.kumar@linaro.org>
 
-This is the final part of MOXA's PM / OPP / ti-cpufreq backport series.
-Part 2, which consisted of OPP / cpufreq-dt cleanups, is abandoned in
-favor of directly backporting the ti-cpufreq driver.
+V2 bindings have better support for clock-latency and voltage-tolerance
+and doesn't need special care. To use callbacks, like
+dev_pm_opp_get_max_{transition|volt}_latency(), irrespective of the
+bindings, the core needs to know clock-latency/voltage-tolerance for the
+earlier bindings.
 
-This part includes a couple of patches to the PM / OPP subsystem to
-expose required APIs, and deal with the v1/v2 mixed OPP table used
-by am33xx. The rest are the backport of the ti-cpufreq driver, and
-fixes for this driver. The fixes were requested by CIP kernel
-maintainers as part of MOXA's previous attempt to backport ti-cpufreq.
-They are included as separate patches, as there are quite a few of them
-spread over multiple kernel releases.
+This patch reads clock-latency/voltage-tolerance from the device node,
+irrespective of the bindings (to keep it simple) and use them only for
+V1 bindings.
 
-The result is that my BeagleBone Black can run at higher speeds than
-without the ti-cpufreq driver due to having a better silicon revision.
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Chen-Yu Tsai (Moxa) <wens@csie.org>
+---
 
-Please have a look.
+This patch is needed because the OPPv2 table does not include
+clock-latency-ns properties, but instead uses the clock-latency
+property from OPPv1.
 
-Regards
-ChenYu
+---
+ drivers/base/power/opp/core.c | 20 ++++++++++++++++++++
+ drivers/base/power/opp/opp.h  |  6 ++++++
+ 2 files changed, 26 insertions(+)
 
-
-Christophe Jaillet (1):
-  cpufreq: ti: Fix 'of_node_put' being called twice in error handling
-    path
-
-Dave Gerlach (6):
-  PM / OPP: Expose _of_get_opp_desc_node as dev_pm_opp API
-  Documentation: dt: add bindings for ti-cpufreq
-  cpufreq: ti: Add cpufreq driver to determine available OPPs at runtime
-  cpufreq: dt: Don't use generic platdev driver for ti-cpufreq platforms
-  ARM: omap2plus_defconfig: Enable support for ti-cpufreq
-  ARM: dts: am33xx: Add updated operating-points-v2 table for cpu
-
-Suman Anna (1):
-  cpufreq: ti-cpufreq: Fix an incorrect error return value
-
-Viresh Kumar (1):
-  PM / OPP: Parse clock-latency and voltage-tolerance for v1 bindings
-
-Zumeng Chen (2):
-  cpufreq: ti-cpufreq: kfree opp_data when failure
-  cpufreq: ti-cpufreq: add missing of_node_put()
-
- .../bindings/cpufreq/ti-cpufreq.txt           | 128 ++++++++
- arch/arm/boot/dts/am33xx.dtsi                 |  87 +++++-
- arch/arm/configs/omap2plus_defconfig          |   1 +
- arch/arm/mach-omap2/pm.c                      |   3 +
- drivers/base/power/opp/core.c                 |  25 +-
- drivers/base/power/opp/cpu.c                  |   4 +-
- drivers/base/power/opp/opp.h                  |   6 +
- drivers/cpufreq/Kconfig.arm                   |  11 +
- drivers/cpufreq/Makefile                      |   1 +
- drivers/cpufreq/ti-cpufreq.c                  | 276 ++++++++++++++++++
- include/linux/pm_opp.h                        |   6 +
- 11 files changed, 531 insertions(+), 17 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/cpufreq/ti-cpufreq.=
-txt
- create mode 100644 drivers/cpufreq/ti-cpufreq.c
-
+diff --git a/drivers/base/power/opp/core.c b/drivers/base/power/opp/core.=
+c
+index 1e0a2ddf73323..f983d5d30fa94 100644
+--- a/drivers/base/power/opp/core.c
++++ b/drivers/base/power/opp/core.c
+@@ -505,6 +505,7 @@ static struct device_opp *_add_device_opp(struct devi=
+ce *dev)
+ {
+ 	struct device_opp *dev_opp;
+ 	struct device_list_opp *list_dev;
++	struct device_node *np;
+=20
+ 	/* Check for existing list for 'dev' first */
+ 	dev_opp =3D _find_device_opp(dev);
+@@ -527,6 +528,21 @@ static struct device_opp *_add_device_opp(struct dev=
+ice *dev)
+ 		return NULL;
+ 	}
+=20
++	/*
++	 * Only required for backward compatibility with v1 bindings, but isn't
++	 * harmful for other cases. And so we do it unconditionally.
++	 */
++	np =3D of_node_get(dev->of_node);
++	if (np) {
++		u32 val;
++
++		if (!of_property_read_u32(np, "clock-latency", &val))
++			dev_opp->clock_latency_ns_max =3D val;
++		of_property_read_u32(np, "voltage-tolerance",
++				     &dev_opp->voltage_tolerance_v1);
++		of_node_put(np);
++	}
++
+ 	srcu_init_notifier_head(&dev_opp->srcu_head);
+ 	INIT_LIST_HEAD(&dev_opp->opp_list);
+=20
+@@ -759,6 +775,7 @@ static int _opp_add_v1(struct device *dev, unsigned l=
+ong freq, long u_volt,
+ {
+ 	struct device_opp *dev_opp;
+ 	struct dev_pm_opp *new_opp;
++	unsigned long tol;
+ 	int ret;
+=20
+ 	/* Hold our list modification lock here */
+@@ -772,7 +789,10 @@ static int _opp_add_v1(struct device *dev, unsigned =
+long freq, long u_volt,
+=20
+ 	/* populate the opp table */
+ 	new_opp->rate =3D freq;
++	tol =3D u_volt * dev_opp->voltage_tolerance_v1 / 100;
+ 	new_opp->u_volt =3D u_volt;
++	new_opp->u_volt_min =3D u_volt - tol;
++	new_opp->u_volt_max =3D u_volt + tol;
+ 	new_opp->available =3D true;
+ 	new_opp->dynamic =3D dynamic;
+=20
+diff --git a/drivers/base/power/opp/opp.h b/drivers/base/power/opp/opp.h
+index 690638ef36ee5..7f0d7c8bfef00 100644
+--- a/drivers/base/power/opp/opp.h
++++ b/drivers/base/power/opp/opp.h
+@@ -135,6 +135,8 @@ struct device_list_opp {
+  * @dentry:	debugfs dentry pointer of the real device directory (not lin=
+ks).
+  * @dentry_name: Name of the real dentry.
+  *
++ * @voltage_tolerance_v1: In percentage, for v1 bindings only.
++ *
+  * This is an internal data structure maintaining the link to opps attac=
+hed to
+  * a device. This structure is not meant to be shared to users as it is
+  * meant for book keeping and private to OPP library.
+@@ -153,6 +155,10 @@ struct device_opp {
+=20
+ 	struct device_node *np;
+ 	unsigned long clock_latency_ns_max;
++
++	/* For backward compatibility with v1 bindings */
++	unsigned int voltage_tolerance_v1;
++
+ 	bool shared_opp;
+ 	struct dev_pm_opp *suspend_opp;
+=20
 --=20
 2.28.0
 
 
---pbySSQmKdMAJugja8RcB
+--eGsIqeVHlrIUlBv2Tynl
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -128,12 +181,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#5422): https://lists.cip-project.org/g/cip-dev/message=
-/5422
-Mute This Topic: https://lists.cip-project.org/mt/76726426/4520388
+View/Reply Online (#5423): https://lists.cip-project.org/g/cip-dev/message=
+/5423
+Mute This Topic: https://lists.cip-project.org/mt/76726427/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---pbySSQmKdMAJugja8RcB--
+--eGsIqeVHlrIUlBv2Tynl--
