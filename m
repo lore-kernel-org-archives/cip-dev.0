@@ -1,4 +1,4 @@
-Return-Path: <SRS0=LWus=CS=lists.cip-project.org=bounce+64572+5430+4520388+8129055@kernel.org>
+Return-Path: <SRS0=bw6L=CS=lists.cip-project.org=bounce+64572+5428+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A953C31E5C
-	for <cip-dev@archiver.kernel.org>; Wed,  9 Sep 2020 04:44:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CECECC2D0F6
+	for <cip-dev@archiver.kernel.org>; Wed,  9 Sep 2020 04:44:47 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 2FFD621D46
-	for <cip-dev@archiver.kernel.org>; Wed,  9 Sep 2020 04:44:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 739F521D43
+	for <cip-dev@archiver.kernel.org>; Wed,  9 Sep 2020 04:44:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="uRtBL3Pg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FFD621D46
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="RDJZlnDC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 739F521D43
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5430+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id y8YmYY4521723x8wk8LPUGso; Tue, 08 Sep 2020 21:44:48 -0700
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5428+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id HkTuYY4521723xUg3EbLEYxW; Tue, 08 Sep 2020 21:44:47 -0700
 X-Received: from wens.tw (wens.tw [140.112.194.72])
- by mx.groups.io with SMTP id smtpd.web11.6578.1599626683840206784
+ by mx.groups.io with SMTP id smtpd.web11.6576.1599626683742757130
  for <cip-dev@lists.cip-project.org>;
  Tue, 08 Sep 2020 21:44:44 -0700
 X-Received: by wens.tw (Postfix, from userid 1000)
-	id 0201B5FDD7; Wed,  9 Sep 2020 12:44:32 +0800 (CST)
+	id 18CAA601BD; Wed,  9 Sep 2020 12:44:33 +0800 (CST)
 From: "Chen-Yu Tsai (Moxa)" <wens@csie.org>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
@@ -33,9 +33,9 @@ Cc: cip-dev@lists.cip-project.org,
 	JohnsonCH.Chen@moxa.com,
 	victor.yu@moxa.com,
 	wens@csie.org
-Subject: [cip-dev] [PATCH 4.4.y-cip 06/11] cpufreq: ti-cpufreq: kfree opp_data when failure
-Date: Wed,  9 Sep 2020 12:42:28 +0800
-Message-Id: <20200909044233.4115-7-wens@csie.org>
+Subject: [cip-dev] [PATCH 4.4.y-cip 09/11] cpufreq: dt: Don't use generic platdev driver for ti-cpufreq platforms
+Date: Wed,  9 Sep 2020 12:42:31 +0800
+Message-Id: <20200909044233.4115-10-wens@csie.org>
 In-Reply-To: <20200909044233.4115-1-wens@csie.org>
 References: <20200909044233.4115-1-wens@csie.org>
 MIME-Version: 1.0
@@ -45,86 +45,63 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: 3FHFGQO4VwP6vDsAwnwqy2CKx4520388AA=
-Content-Type: multipart/mixed; boundary="fUHp5WrLjsAGycmKYbtz"
+X-Gm-Message-State: c95JAb6WlWAJJtS4SIAhN8X9x4520388AA=
+Content-Type: multipart/mixed; boundary="kk2tSPbfYEqk7YINRxMS"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1599626688;
- bh=8JwoUR7t1SS/mocIVGT2M9TQkyDCh/jlqonuJE1mA2Q=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1599626687;
+ bh=jH5Toe9NBeT6FFvV5wyTEWmEjqNBHi5zj2qBVP6kA7Y=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=uRtBL3PgkegeggmUTQjoHPvTWjQsBPco8tG7RAZ97VLMG1cRAUDBMKWK1HE6djWD0JC
- ToY3xq7Li8LoO3KANTf5gjW62s/ddjpNm5IdCF3/U+jQvaDknewoiShLXf9pqdbNwLsGg
- FuKTHdf/7+b3/t7agle6vK4QSJfJ/7I4XsE=
+ b=RDJZlnDCT3FEBW7LOVTCuqD1xYPewSnf23nf3lSYU3zX2YcBL0usuncjjA15PmGqeuY
+ ZU2mwX20Qgo0e+g+uF1dhR4YAj1OlKCF94IIeyooxR5uQvASnlFsyCrPbyyG3jPYBKO6o
+ ZR/L66rsXKaTQptfTA8QOx+DI9s/lyppidk=
 
---fUHp5WrLjsAGycmKYbtz
+--kk2tSPbfYEqk7YINRxMS
 Content-Transfer-Encoding: quoted-printable
 
-From: Zumeng Chen <zumeng.chen@gmail.com>
+From: Dave Gerlach <d-gerlach@ti.com>
 
-commit 05829d9431df1bf6de98679fbcfbad282c1c55a4 upstream.
+commit 051bd84bb45bc994b7d762467f60b3bd0c7aa6bc upstream.
 
-memory leakage was found by kmemleak. opp_data needs to be freed
-when failure, including fail_put_node.
+Some TI platforms, specifically those in the am33xx, am43xx, dra7xx, and
+am57xx families of SoCs can make use of the ti-cpufreq driver to
+selectively enable OPPs based on the exact configuration in use. The
+ti-cpufreq is given the responsibility of creating the cpufreq-dt
+platform device when the driver is in use so drop am33xx and dra7xx
+from the cpufreq-dt-platdev driver so it is not created twice.
 
-unreferenced object 0xccdd4c40 (size 64):
-  comm "swapper", pid 1, jiffies 4294938465 (age 888.520s)
-  hex dump (first 32 bytes):
-    00 7c 00 c1 98 69 d8 ce 00 24 03 ce 00 24 03 ce  .|...i...$...$..
-    20 35 23 c1 00 00 00 00 00 00 00 00 00 00 00 00   5#.............
-  backtrace:
-    [<c028fb64>] kmem_cache_alloc_trace+0x2c4/0x3cc
-    [<c076d5f0>] ti_cpufreq_probe+0x6c/0x334
-    [<c068d6e4>] platform_drv_probe+0x60/0xc0
-    [<c068b384>] driver_probe_device+0x218/0x2c4
-    [<c068b5a4>] __device_attach_driver+0xa8/0xdc
-    [<c0689340>] bus_for_each_drv+0x70/0xa4
-    [<c068b020>] __device_attach+0xc0/0x124
-    [<c068b634>] device_initial_probe+0x1c/0x20
-    [<c068a3b8>] bus_probe_device+0x94/0x9c
-    [<c0688300>] device_add+0x404/0x590
-    [<c068d408>] platform_device_add+0x11c/0x230
-    [<c068df40>] platform_device_register_full+0x10c/0x128
-    [<c076d578>] ti_cpufreq_init+0x44/0x50
-    [<c01017c4>] do_one_initcall+0x54/0x180
-    [<c0e00fe0>] kernel_init_freeable+0x270/0x33c
-    [<c093f2bc>] kernel_init+0x18/0x124
-
-Signed-off-by: Zumeng Chen <zumeng.chen@gmail.com>
 Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+[wens@csie.org: Backport to pre generic platdev driver]
 Signed-off-by: Chen-Yu Tsai (Moxa) <wens@csie.org>
 ---
- drivers/cpufreq/ti-cpufreq.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
-index 1c63e96cba1f2..36627b2b256f8 100644
---- a/drivers/cpufreq/ti-cpufreq.c
-+++ b/drivers/cpufreq/ti-cpufreq.c
-@@ -217,7 +217,8 @@ static int ti_cpufreq_init(void)
- 	opp_data->cpu_dev =3D get_cpu_device(0);
- 	if (!opp_data->cpu_dev) {
- 		pr_err("%s: Failed to get device for CPU0\n", __func__);
--		return -ENODEV;
-+		ret =3D ENODEV;
-+		goto free_opp_data;
- 	}
+I kept the original patch subject to make it easier for scripts to match
+against upstream patches.
+
+---
+ arch/arm/mach-omap2/pm.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm/mach-omap2/pm.c b/arch/arm/mach-omap2/pm.c
+index 3d876bde8c859..88cb34c608ab8 100644
+--- a/arch/arm/mach-omap2/pm.c
++++ b/arch/arm/mach-omap2/pm.c
+@@ -281,6 +281,9 @@ static inline void omap_init_cpufreq(void)
 =20
- 	opp_data->opp_node =3D dev_pm_opp_of_get_opp_desc_node(opp_data->cpu_de=
-v);
-@@ -262,6 +263,8 @@ register_cpufreq_dt:
-=20
- fail_put_node:
- 	of_node_put(opp_data->opp_node);
-+free_opp_data:
-+	kfree(opp_data);
-=20
- 	return ret;
- }
+ 	if (!of_have_populated_dt())
+ 		devinfo.name =3D "omap-cpufreq";
++	else if (of_machine_is_compatible("ti,am33xx") ||
++		 of_machine_is_compatible("ti,dra7"))
++		return;
+ 	else
+ 		devinfo.name =3D "cpufreq-dt";
+ 	platform_device_register_full(&devinfo);
 --=20
 2.28.0
 
 
---fUHp5WrLjsAGycmKYbtz
+--kk2tSPbfYEqk7YINRxMS
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -132,12 +109,12 @@ Content-Disposition: inline
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
 
-View/Reply Online (#5430): https://lists.cip-project.org/g/cip-dev/message=
-/5430
-Mute This Topic: https://lists.cip-project.org/mt/76726434/4520388
+View/Reply Online (#5428): https://lists.cip-project.org/g/cip-dev/message=
+/5428
+Mute This Topic: https://lists.cip-project.org/mt/76726432/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy  [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
---fUHp5WrLjsAGycmKYbtz--
+--kk2tSPbfYEqk7YINRxMS--
