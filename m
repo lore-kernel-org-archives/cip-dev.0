@@ -1,4 +1,4 @@
-Return-Path: <SRS0=S646=C2=lists.cip-project.org=bounce+64572+5457+4520388+8129055@kernel.org>
+Return-Path: <SRS0=MrVU=C2=lists.cip-project.org=bounce+64572+5458+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -7,81 +7,81 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A085C433E2
-	for <cip-dev@archiver.kernel.org>; Thu, 17 Sep 2020 03:02:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E22E1C43461
+	for <cip-dev@archiver.kernel.org>; Thu, 17 Sep 2020 03:06:06 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id A9C2D2075E
-	for <cip-dev@archiver.kernel.org>; Thu, 17 Sep 2020 03:02:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id CF1952078D
+	for <cip-dev@archiver.kernel.org>; Thu, 17 Sep 2020 03:06:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="okunVZed"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9C2D2075E
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="BXxBvZOT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF1952078D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=toshiba.co.jp
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5457+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id 0eBJYY4521723xoudf2SiOPG; Wed, 16 Sep 2020 20:02:21 -0700
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5458+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id 5sgsYY4521723xnxVhjb83Yf; Wed, 16 Sep 2020 20:06:04 -0700
 X-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.153])
- by mx.groups.io with SMTP id smtpd.web10.7319.1600311737945517672
+ by mx.groups.io with SMTP id smtpd.web12.7313.1600311960446181489
  for <cip-dev@lists.cip-project.org>;
- Wed, 16 Sep 2020 20:02:19 -0700
-X-Received: by mo-csw.securemx.jp (mx-mo-csw1514) id 08H32FXm018395; Thu, 17 Sep 2020 12:02:16 +0900
-X-Iguazu-Qid: 34tMJPQpiME2AoU0dX
-X-Iguazu-QSIG: v=2; s=0; t=1600311735; q=34tMJPQpiME2AoU0dX; m=e7rfSj1IcpwNH6xsiyW/305GgmFvTy8DctDNabX+I9Q=
-X-Received: from imx12.toshiba.co.jp (imx12.toshiba.co.jp [61.202.160.132])
-	by relay.securemx.jp (mx-mr1513) id 08H32EMP032461;
-	Thu, 17 Sep 2020 12:02:15 +0900
-X-Received: from enc02.toshiba.co.jp ([61.202.160.51])
-	by imx12.toshiba.co.jp  with ESMTP id 08H32EsJ004773
-	for <cip-dev@lists.cip-project.org>; Thu, 17 Sep 2020 12:02:14 +0900 (JST)
-X-Received: from hop101.toshiba.co.jp ([133.199.85.107])
-	by enc02.toshiba.co.jp  with ESMTP id 08H32EhZ017685
-	for <cip-dev@lists.cip-project.org>; Thu, 17 Sep 2020 12:02:14 +0900
+ Wed, 16 Sep 2020 20:06:02 -0700
+X-Received: by mo-csw.securemx.jp (mx-mo-csw1514) id 08H35xk7030590; Thu, 17 Sep 2020 12:05:59 +0900
+X-Iguazu-Qid: 34tKSwRU9Sq277YTEt
+X-Iguazu-QSIG: v=2; s=0; t=1600311958; q=34tKSwRU9Sq277YTEt; m=LdWvE8AtJjo6reHOQ6rm3PImNSaP3+RKRSGBS76u9w8=
+X-Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
+	by relay.securemx.jp (mx-mr1513) id 08H35wfh001916;
+	Thu, 17 Sep 2020 12:05:58 +0900
+X-Received: from enc01.toshiba.co.jp ([106.186.93.100])
+	by imx2.toshiba.co.jp  with ESMTP id 08H35wAE012046
+	for <cip-dev@lists.cip-project.org>; Thu, 17 Sep 2020 12:05:58 +0900 (JST)
+X-Received: from hop001.toshiba.co.jp ([133.199.164.63])
+	by enc01.toshiba.co.jp  with ESMTP id 08H35wZN019935
+	for <cip-dev@lists.cip-project.org>; Thu, 17 Sep 2020 12:05:58 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TDAHUtW/oMkOilBkL6TQl+EekpUECnyqkbu9oqoqBGrHcGiE+bmlldqu4rwCo95Pv/nQTh1urcSBQ4GPqVDQOXjjs//mkDPW/RcDaTYYy73wdAfh8EdE1T8el/vt9/jXGIuUI6lH5ZAsT7HZQPBNPxdHhVeKwB11gcpL4B8BrxwpEICXY4OhzRq3UKsw5H0yAZCtC2Krmpgr8YkCfcOZbNCinX9H1LAyRBg5JrJ4BZEmoZMGIbP2iYAE8oJoQ0IKctzzzLXJi+mZnby6q9ULZGOWTEiGv32KqH5EMrrz2mLa4MEN2oq/Jg+ccJtWoPrOaLKNH2sl8nEHSWFwDzl/4Q==
+ b=a7/0ethDLsGnikbCjQj9o3X4kOh6Kbb81E4lPRmzMQO9aTf6mTVM1DSceRcK+VPObK6BE3UT3sNhwcSwdqdTep+upGMeuuRP0GOlk8IYsTIqgUmEgEcnwUlIhusme01/b/USRdehSJ+mDJVh425UiIOYNhXvkk++r7IIN8JMMy/Qk12OApwgmh3K1uX16xU82pnul/roDoAWy3AIvxl7NX+m/qgGVUUosZbKO2PdFgHPM+CObT+MgZFAow6gbeO6mcMktpsDxFKtAimJMGY7Z5LhWBSiHh6n52SmGzvqwTIy9p2nF9rcyAq8TYlEM9BP/wtsd0uxn4F/CRJQj9VOqQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nEZVu1IvD7/I57r9HCxZaFTLrbkbwkHh7+OIkQe1QIU=;
- b=a6ODYG7l60ifpR45N6+1OJRNm4pwlueCxbaybsRPdDw+r+AKjMNIWmGI58aq0Eb72rii5WSOw0F4Iv3ATCm8vGYHuEt1xk2Lx/drhb6M6TEke3GH5YRKm5x1JnI3OlOgtXpeQCLa3tym2he6Jsu07BJWwyOinl3WkBOmkPDwiTYdjKYGzguhszEp0DNUfANw0hkxufAhFa1DNVKDpagCeIuqOTSDZAPuGY9fOVMXyqYVAotfo5RYpWO8F4Zy3WCQFMhhqDBSsKhOeJYfSiBIyPMqIZVKD+npy7N46/nUhu0rf8jvG7tXNMwkWJchkaXe565w2oq2FGbB7Y9d79i5ug==
+ bh=JePKmM2zlTCXZIPqPyVjsDB2Kgv65/8iwktc++374Ns=;
+ b=fEVHxpzYR9UJ9pXpNM4y9iigyIL13J/Di7N3QUpu15wMpSXGZqvoNd+1dilRLWD1TdjDDFQqyK8HhVjsj4yUpHYhf9uSCrufRCQHgqk/GbLk4fYQe+8OW8bNY0SrhP7zwsGPu2GSXxITMgbQ1orl9QST8dRWPTuv6Acfh0SA6/DC7wqSyE3Sy0qnAxaP42lfOq+Mrgf/4EPUWzT6r0VRvmrcTOB3CL+9UBj0imUMVL0DnH/vm7glzyUWzUvXiI9AqHZy9vCdzGiHq6C8wBCuUU3rLRnx2qL3XXElVcyezafb/eoiufi4hswJj6PXSI+NQB/SStpG8BwNYdtjnGGnrQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
  header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
 From: "Daniel Sangorrin" <daniel.sangorrin@toshiba.co.jp>
 To: <Venkata.Pyla@toshiba-tsip.com>
 CC: <Venkata.Pyla@toshiba-tsip.com>, <cip-dev@lists.cip-project.org>
-Subject: Re: [cip-dev] [cip-core:deby 2/3] security-configuration: apply security polcies using package bbappend
-Thread-Topic: [cip-core:deby 2/3] security-configuration: apply security
- polcies using package bbappend
-Thread-Index: AQHWi2u46TUwVz9swE+h2Hixe4LQvalsG64A
-Date: Thu, 17 Sep 2020 03:02:12 +0000
+Subject: Re: [cip-dev] [cip-core:deby 1/3] cip-security: Create new layer for cip security
+Thread-Topic: [cip-core:deby 1/3] cip-security: Create new layer for cip
+ security
+Thread-Index: AQHWi2u5g+r7QizZWkeHH9x1nf/C1alsJ9EA
+Date: Thu, 17 Sep 2020 03:05:56 +0000
 X-TSB-HOP: ON
-Message-ID: <OSBPR01MB20537A78A4552A894CC11207D03E0@OSBPR01MB2053.jpnprd01.prod.outlook.com>
+Message-ID: <OSBPR01MB205319021F908B4D20A055B7D03E0@OSBPR01MB2053.jpnprd01.prod.outlook.com>
 References: <20200915142345.179-1-venkata.pyla@toshiba-tsip.com>
- <20200915142345.179-3-venkata.pyla@toshiba-tsip.com>
-In-Reply-To: <20200915142345.179-3-venkata.pyla@toshiba-tsip.com>
+ <20200915142345.179-2-venkata.pyla@toshiba-tsip.com>
+In-Reply-To: <20200915142345.179-2-venkata.pyla@toshiba-tsip.com>
 Accept-Language: en-US
 x-originating-ip: [103.91.184.3]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 65ac4d49-4354-48a1-4f2f-08d85ab61372
-x-ms-traffictypediagnostic: OSBPR01MB3397:
+x-ms-office365-filtering-correlation-id: ae711579-d6bf-4392-2758-08d85ab69887
+x-ms-traffictypediagnostic: OSBPR01MB4166:
 x-ld-processed: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f,ExtAddr
-x-microsoft-antispam-prvs: <OSBPR01MB3397DE21F6918B3B6BDD2DCED03E0@OSBPR01MB3397.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1122;
+x-microsoft-antispam-prvs: <OSBPR01MB4166906FE57B5E05AA54C46DD03E0@OSBPR01MB4166.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: JfrvT1xQnpEOKU4MkN+d/rm4LjasH8p6vdFsxe4U5ykWLPg9biG8mWwApDzhTjFrkNiyui4V2KheOcErl7qbyrRdHE+dBoAq4HUFf3eMzIxaDL0jTa3WB+9R2zCH0mGXXesO40mmJ6sUH6PXRHJhjVNxu2hoLvL1yflE8KZQDVSOO9Av+KG/mFIJvkyoPrs9bAVe/T8dt++GWQyJk+2xxq5QlxTcjLmDrFb/ypPTVpmsSzWw079z3bcX4H4rK3VIzORXviNiRY4FWMoTarQKrVcEK3leP0blPmNQFpxfoIMFe0yPonkfwJTrs/SmUDRnrrM5nwcpfXG/EQuNEmYbog2MI8PyfgiVuXnfu5c/1PXa2Da78csDZTD3jB6I2x/Vy7/lB6iqaOUOZFT0TpBQP/8LASoHrU+q5TTJpSsMCYzJGQIOrck6DEE2GqSulE/PvfyUIvF+DV05VM1qs1FDCQ==
-x-ms-exchange-antispam-messagedata: YR3jbPqSYeSklvmo7VikaZvCPVrR4o95xIc5G3jD5NdYDA+1s0BkYrvWzWnbh5bz1IHo07z+0vkRy8AmNbNmav1I8k2iNnUyZZY0CsTj2deiJJr4KkM9O1NB7DodHyvPLQT50cYhS5uvL06AA4DM5HJ+C/9IaIo7qtUU1G9nINWaNXtbyGPfrozcKNe42ZodnF3AJNxcr0m2HPi/0RjblImCEFHHnNXD/TvBxMlVYFUq8hivz1JdG+/bCSmwUVAWiaVAMg/H8yejZoEZcNEL7XzXG65akD0qkDD0YJhpmt5Ntp2r6LC5zZ1GPxZbk3kFHf7X6uHBlPJS+07sDGDH3CV52tWtUaYKqZ0tz6fE+rCmNtjdv2eY6cYBQv4s7rlMdMYhGb2mFgt+cD3FQvtbWqSOYvHYDqmS9ZcTgJOXK+gCIoaHMJ9XlMnu99alRydh7OSiXGafbHcq09J45mIn04CpNY+PVJGV2jpVGUqbTSnNRYW76/JtXKbjo2aNSqmcJjrGK97VebVla1fvjpGiMuGFi/jdSw+jXGykDtV82m5KNVGLrjlA9TbRnC6LQjNMhlHGVho/h0h/tJ1Bxy+la6dSyrKkmTZHK3cTtLBHnI0sqF49wgW4xQfK9LQEUO0aR9JFZcPdoVqiv62rxLLhiw==
+x-microsoft-antispam-message-info: uw/oeLx2jLuI7fGuwvOTkmGrC6umYcCFPFIN7ijovS4cLFlbo2PmGrH8tK2oCLsy/Ead6p19XVTlqTQhubYCLstnQ6PzJo0k115rdsvxpxFauJbdpCmvdYyWtJ6VK4E+9Ovp2zngteyThdIfIBcZ7iQCtC63A+wittm8MykyyTKOZSKLZy5sUmSanyCc/9P9Q/5gGlVK/IuNROFG1KVo+oC78Ici3g2Iw7HZtnimHSq/u7MS/RDQC7gBTOAR9cKijPG0eFuk1BQo+Ym9OyLaQPy68WZkIJ5CB4NYxiYmZLNLGcMPEis+2x9zHZVOconhT4JL0CET9gEdkvQXAMbMQz62h+4H08O+EJEJ8kDts9aBnLq32gwS8CVarRoEsIjH
+x-ms-exchange-antispam-messagedata: L8OR7kO7X4iduJaP+SAyegIxCY3aZcbgHY5SUw7BCVxZdI8d3mkauhoN7f7wmfqaRZIbsO+2IgzQWhqhxR+vGZnR5ZzI9BB3VPaSF9uxTZIAXqCl41v8Vfjl1nCuhPSbZik5BV+K87IKU44k/Ku4t86YKwr7lWtdYzZsh9OZumUMBcfmjYSu09kAg9grM23DBhYmKijM9/XgQWv0Rjy3mKzbVwJLxnzW1GsjDl588k25q660IZcq+uWCq42yecvieHKxJwUB5wD9DSgHJbTbUlMoB++z96pwsTVc0Ia5d8oOycBUqJdqmPUe0uNNaT+MfS3nL+hc62WxPwpMsflGAW50n1eRUOYOEX1JKGkOvCmzyG3obWo4IzUHx1H8IA06EYR8yvGr68evuVfKnttP+zUmpGeYhIUMIlOybwS/Zd2BUb3zCPzWtoxiZGkYlaBc4NmCc9CgHOEA+qiw+ri1BHIsQr/b27pFu4Wcuc4poZfomlbMwzX0BKf+jXZJslscffOSBKPuN/JgBCN8B/RuZ62x3/SkJQe+hRplaYQvvDj8IvTb9oaE0bUixCqEgHa65YYSxROCHFa/k7n1GMzthiscxhjYcUXkVUzYNwq675+3NcsAtEoKcv1/5mm+/FE3zkdVMrCAofXOXb+bPLMFOg==
 x-ms-exchange-transport-forked: True
 MIME-Version: 1.0
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: OSBPR01MB2053.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 65ac4d49-4354-48a1-4f2f-08d85ab61372
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2020 03:02:12.8652
+X-MS-Exchange-CrossTenant-Network-Message-Id: ae711579-d6bf-4392-2758-08d85ab69887
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2020 03:05:56.1687
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zoGsB3Pm0kKOPGE0fHK/QQpUxQY51hwgyubqPSBftW2Nyfz1T3EWPF4XjzqN3iHp/4XBPOzwVLIbsuAzpIsd+cCAUc6iKCIdNb0zMIu8GIc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB3397
+X-MS-Exchange-CrossTenant-userprincipalname: BYk7Qwgw3Jt8s8xB7M7bpwQfO9pT9Hu+7gKDaWTdudB55niwbw81e32ELnm9etCHNdUjhZpBdkASrnTCnmxGV4Vins5EnQE4QiilK0iINTw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB4166
 X-OriginatorOrg: toshiba.co.jp
 MSSCP.TransferMailToMossAgent: 103
 Precedence: Bulk
@@ -90,25 +90,23 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: FfW9bueMLXZHHZqtrz8mpc5sx4520388AA=
-Content-Type: multipart/mixed; boundary="UIqcsOeDXRDoYQrRrz89"
+X-Gm-Message-State: 6uHzDjKjQcQTKBctKSwA8yrkx4520388AA=
+Content-Type: multipart/mixed; boundary="Adf7b1sMWrnJGU3fiFJ8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1600311741;
- bh=Wiicj1O5AKu+IOhPU20RnfiZABc/NqqkC5QDibX9k00=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1600311964;
+ bh=VNiWMGD1LII+AJ9/pdPGkqErj5vmRmgsQl02Ok/wP4c=;
  h=CC:Content-Type:Date:From:Reply-To:Subject:To;
- b=okunVZedLwu7d0V47gHUHNYkk/kIiNlXw3ElThEWP5ctDVQWjfGSUTqacYYhcKQ2W0I
- HbHXCUiaiiSOW2600ioQ5zn2LjJu/BZ8Q36xgEcqoKN0lo2K5FhK0k5LnF7ZqDr0IAXcz
- t6cWZMIEGDuvRA6HJbHdZwXuhUe6A6d3LjA=
+ b=BXxBvZOTB8Tr2xmIbymTKsauLvUxbeXf0/IfQoglF+h1ds15FMWMO6buM/8dAmmfoQE
+ /EJaNLWlVHm6PSJ2IVPIXw9KbjgeGdDBqXFNhW0zDNXxSrtLCrRIliarEbfN+6+9zhVAw
+ y7MogBXIhyn7FRUxyVYSU5u9v+NW5i5J/o0=
 
---UIqcsOeDXRDoYQrRrz89
+--Adf7b1sMWrnJGU3fiFJ8
 Content-Language: en-US
 Content-Type: text/plain; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Venkata-san
-
-Please check my inline comments and send me a merge request when you solve =
-them.
+Thanks, it looks good
+Please send me a merge request
 
 > -----Original Message-----
 > From: venkata.pyla@toshiba-tsip.com <venkata.pyla@toshiba-tsip.com>
@@ -117,199 +115,126 @@ them.
 C"~#A#C#T=1B(B) <daniel.sangorrin@toshiba.co.jp>
 > Cc: pyla venkata(=1B$B#T#S#I#P=1B(B) <Venkata.Pyla@toshiba-tsip.com>; cip=
 -dev@lists.cip-project.org
-> Subject: [cip-core:deby 2/3] security-configuration: apply security polci=
-es using package bbappend
+> Subject: [cip-core:deby 1/3] cip-security: Create new layer for cip secur=
+ity
 >=20
 > From: venkata pyla <venkata.pyla@toshiba-tsip.com>
 >=20
-> add package bbappaned files in the security layer that will apply
-
-bbappend
-
-> the security configurations like
->     e.g: Set password strength in pam configurations
->          Set audit failure actions in audit package configurations
->          etc.
+> This layer enables security packages and default configurations
+> required to evaluate IEC62443-4-2 assessment
+>=20
 > Signed-off-by: venkata pyla <venkata.pyla@toshiba-tsip.com>
 > ---
->  .../audit/audit_debian.bbappend               | 20 ++++++++++
->  .../base-files/base-files_debian.bbappend     |  3 ++
->  .../openssh/openssh_debian.bbappend           | 19 +++++++++
->  .../recipes-debian/pam/libpam_debian.bbappend | 39 +++++++++++++++++++
->  4 files changed, 81 insertions(+)
->  create mode 100644 meta-cip-security/recipes-debian/audit/audit_debian.b=
-bappend
->  create mode 100644 meta-cip-security/recipes-debian/base-files/base-file=
-s_debian.bbappend
->  create mode 100644 meta-cip-security/recipes-debian/openssh/openssh_debi=
-an.bbappend
->  create mode 100644 meta-cip-security/recipes-debian/pam/libpam_debian.bb=
-append
-
-Ideally, you would separate the patches for each file unless they have some=
-thing in common.
-=20
-> diff --git a/meta-cip-security/recipes-debian/audit/audit_debian.bbappend=
- b/meta-cip-security/recipes-
-> debian/audit/audit_debian.bbappend
+>  README.md                         |  5 +++++
+>  kas/opt/security.yml              | 32 +++++++++++++++++++++++++++++++
+>  meta-cip-security/conf/layer.conf | 18 +++++++++++++++++
+>  3 files changed, 55 insertions(+)
+>  create mode 100644 kas/opt/security.yml
+>  create mode 100644 meta-cip-security/conf/layer.conf
+>=20
+> diff --git a/README.md b/README.md
+> index f90e040..f59dd0c 100644
+> --- a/README.md
+> +++ b/README.md
+> @@ -88,3 +88,8 @@ LTP test image for QEMU arm64 / hihope-rzg2m
+>=20
+>      $ ./scripts/kas-build.sh kas/board/qemuarm64.yml:kas/opt/deby.yml:ka=
+s/opt/dhcp.yml:kas/opt/ltp.yml
+>=20
+> +Create Security image for QEMU x86-64
+> +-------------------------------------
+> +
+> +    $ ./scripts/kas-build.sh kas/board/qemux86-64.yml:kas/opt/deby.yml:k=
+as/opt/security.yml
+> +
+> diff --git a/kas/opt/security.yml b/kas/opt/security.yml
 > new file mode 100644
-> index 0000000..c148f27
+> index 0000000..e84290c
 > --- /dev/null
-> +++ b/meta-cip-security/recipes-debian/audit/audit_debian.bbappend
-> @@ -0,0 +1,20 @@
+> +++ b/kas/opt/security.yml
+> @@ -0,0 +1,32 @@
 > +#
-> +# CIP Security, tiny profile
+> +# CIP Core tiny profile with Security
+> +# packages and configuration
 > +#
-> +# Copyright (c) Toshiba Corporation, 2020
+> +# Copyright (c) 2019 TOSHIBA Corp.
 > +#
 > +# SPDX-License-Identifier: MIT
 > +#
 > +
-> +DESCRIPTION =3D "CIP Security customizations"
-Append "for audit" to the description.
-
+> +header:
+> +    version: 8
 > +
-> +pkg_postinst_audit_append() {
-> +	# CR2.9: Audit storage capacity
-> +	# CR2.9 RE-1: Warn when audit record storage capacity threshold reached
-> +	AUDIT_CONF_FILE=3D"$D${sysconfdir}/audit/auditd.conf"
-> +	sed -i 's/space_left_action =3D .*/space_left_action =3D SYSLOG/'  $AUD=
-IT_CONF_FILE
-> +	sed -i 's/admin_space_left_action =3D .*/admin_space_left_action =3D SY=
-SLOG/' $AUDIT_CONF_FILE
-
-Don't you need to specify the values for space_left and admin_space_left?
-Perhaps these variables should be configurable  and have a default value.
-Example:
-AUDIT_SPACE_LEFT ?=3D "100"
-
-Then you can change the value in local.conf (or using kas's local_conf_head=
-ers)
-
+> +repos:
+> +    meta-cip-security:
+> +       layers:
+> +          meta-cip-security:
 > +
-> +	# CR2.10: Response to audit processing failures
-> +	sed -i 's/disk_error_action =3D .*/disk_error_action =3D SYSLOG/' $AUDI=
-T_CONF_FILE
-> +}
-
-Please check if you need other options as well here:
-https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/ht=
-ml/security_guide/sec-configuring_the_audit_service
-
-> diff --git a/meta-cip-security/recipes-debian/base-files/base-files_debia=
-n.bbappend b/meta-cip-security/recipes-debian/base-
-> files/base-files_debian.bbappend
+> +local_conf_header:
+> +  security: |
+> +    DISTRO_FEATURES_append +=3D " pam"
+> +    CORE_IMAGE_EXTRA_INSTALL +=3D " \
+> +                                 aide aide-common \
+> +                                 openssl openssl-bin \
+> +                                 openssh openssh-misc \
+> +                                 chrony chronyc \
+> +                                 libpam pam-plugin-cracklib pam-plugin-t=
+ally2 \
+> +                                 syslog-ng \
+> +                                 acl \
+> +                                 sudo \
+> +                                 auditd \
+> +                                 util-linux \
+> +                                 "
+> diff --git a/meta-cip-security/conf/layer.conf b/meta-cip-security/conf/l=
+ayer.conf
 > new file mode 100644
-> index 0000000..895dc9f
+> index 0000000..b015436
 > --- /dev/null
-> +++ b/meta-cip-security/recipes-debian/base-files/base-files_debian.bbapp=
-end
-> @@ -0,0 +1,3 @@
-> +do_install_append() {
-> +	echo "${MACHINE}" > ${D}${sysconfdir}/hostname
-> +}
-
-Is this related to the security layer?
-If not, please separate it into a different patch and explain why it is nec=
-essary.
-
-> diff --git a/meta-cip-security/recipes-debian/openssh/openssh_debian.bbap=
-pend b/meta-cip-security/recipes-
-> debian/openssh/openssh_debian.bbappend
-> new file mode 100644
-> index 0000000..ddd2bfc
-> --- /dev/null
-> +++ b/meta-cip-security/recipes-debian/openssh/openssh_debian.bbappend
-> @@ -0,0 +1,19 @@
-> +#
-> +# CIP Security, tiny profile
-> +#
-> +# Copyright (c) Toshiba Corporation, 2020
-> +#
-> +# SPDX-License-Identifier: MIT
-> +#
+> +++ b/meta-cip-security/conf/layer.conf
+> @@ -0,0 +1,18 @@
+> +# We have a conf and classes directory, add to BBPATH
+> +BBPATH =3D. "${LAYERDIR}:"
 > +
-> +DESCRIPTION =3D "CIP Security customizations"
-
-Same as before, append "for openssh". The description for different things =
-should be different.
-
+> +# We have recipes-* directories, add to BBFILES
+> +BBFILES +=3D "${LAYERDIR}/recipes-*/*/*.bb \
+> +            ${LAYERDIR}/recipes-*/*/*.bbappend"
 > +
-> +pkg_postinst_${PN}_append() {
-> +	# CR2.6: Remote session termination
-> +	# Terminate remote session after inactive time period
-> +	SSHD_CONFIG=3D"$D${sysconfdir}/ssh/sshd_config"
-> +	alive_interval=3D$(sed -n '/ClientAliveInterval/p' "${SSHD_CONFIG}")
-> +	alive_countmax=3D$(sed -n '/ClientAliveCountMax/p' "${SSHD_CONFIG}")
-> +	sed -i "/${alive_interval}/c ClientAliveInterval 120"  "${SSHD_CONFIG}"
-> +	sed -i "/${alive_countmax}/c ClientAliveCountMax 0" "${SSHD_CONFIG}"
-
-Perhaps make the value for ClientAliveInterval configurable and use 120 as =
-default.
-
-> +}
-> diff --git a/meta-cip-security/recipes-debian/pam/libpam_debian.bbappend =
-b/meta-cip-security/recipes-
-> debian/pam/libpam_debian.bbappend
-> new file mode 100644
-> index 0000000..c9c1605
-> --- /dev/null
-> +++ b/meta-cip-security/recipes-debian/pam/libpam_debian.bbappend
-> @@ -0,0 +1,39 @@
-> +#
-> +# CIP Security, tiny profile
-> +#
-> +# Copyright (c) Toshiba Corporation, 2020
-> +#
-> +# SPDX-License-Identifier: MIT
-> +#
+> +BBFILE_COLLECTIONS +=3D "cip-security"
+> +BBFILE_PATTERN_cip-security =3D "^${LAYERDIR}/"
+> +BBFILE_PRIORITY_cip-security =3D "11"
 > +
-> +DESCRIPTION =3D "CIP Security customizations"
-
-Same thing: "for libpam"
-
+> +# This should only be incremented on significant changes that will
+> +# cause compatibility issues with other layers
+> +LAYERVERSION_cip-security =3D "1"
 > +
-> +pkg_postinst_pam-plugin-cracklib_append() {
-> +	# CR1.7: Strength of password-based authentication
-> +	# Pam configuration to  enforce password strength
-> +	PAM_PWD_FILE=3D"$D${sysconfdir}/pam.d/common-password"
-> +	CRACKLIB_CONFIG=3D"password  requisite    pam_cracklib.so retry=3D3 min=
-len=3D8 maxrepeat=3D3 ucredit=3D-1 lcredit=3D-1 dcredit=3D-1
-> ocredit=3D-1 difok=3D3 gecoscheck=3D1 reject_username enforce_for_root"
-> +	if grep -c "pam_cracklib.so" "${PAM_PWD_FILE}";then
-> +		sed -i '/pam_cracklib.so/ s/^#*/#/'  "${PAM_PWD_FILE}"
-> +	fi
-> +	sed -i "0,/^password.*/s/^password.*/${CRACKLIB_CONFIG}\n&/" "${PAM_PWD=
-_FILE}"
-> +}
-
-Perhaps set minlen configurable.
-
+> +LAYERDEPENDS_cip-security =3D "debian"
 > +
-> +pkg_postinst_pam-plugin-tally2_append() {
-> +	# CR1.11: Unsuccessful login attempts
-> +	# Lock user account after unsuccessful login attempts
-> +	PAM_AUTH_FILE=3D"$D${sysconfdir}/pam.d/common-auth"
-> +	pam_tally=3D"auth   required  pam_tally2.so  deny=3D3 even_deny_root un=
-lock_time=3D60 root_unlock_time=3D60"
-> +	if grep -c "pam_tally2.so" "${PAM_AUTH_FILE}";then
-> +        	sed -i '/pam_tally2/ s/^#*/#/'  "${PAM_AUTH_FILE}"
-> +	fi
-> +	sed -i "0,/^auth.*/s/^auth.*/${pam_tally}\n&/" "${PAM_AUTH_FILE}"
-> +}
-> +
-> +
-> +pkg_postinst_libpam_append() {
-> +	# CR2.7: Concurrent session control
-> +	# Limit the concurrent login sessions
-> +	LIMITS_CONFIG=3D"$D${sysconfdir}/security/limits.conf"
-> +	echo "* hard maxlogins 2" >> ${LIMITS_CONFIG}
-> +}
+> +LAYERSERIES_COMPAT_cip-security =3D "warrior"
+> --
+> 2.27.0.windows.1
+>=20
+> The information contained in this e-mail message and in any
+> attachments/annexure/appendices is confidential to the
+> recipient and may contain privileged information.
+> If you are not the intended recipient, please notify the
+> sender and delete the message along with any
+> attachments/annexure/appendices. You should not disclose,
+> copy or otherwise use the information contained in the
+> message or any annexure. Any views expressed in this e-mail
+> are those of the individual sender except where the sender
+> specifically states them to be the views of
+> Toshiba Software India Pvt. Ltd. (TSIP),Bangalore.
+>=20
+> Although this transmission and any attachments are believed to be
+> free of any virus or other defect that might affect any computer
+> system into which it is received and opened, it is the responsibility
+> of the recipient to ensure that it is virus free and no responsibility
+> is accepted by Toshiba Embedded Software India Pvt. Ltd, for any loss or
+> damage arising in any way from its use.
 
-Thanks,
-Daniel
 
---UIqcsOeDXRDoYQrRrz89
+--Adf7b1sMWrnJGU3fiFJ8
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -317,13 +242,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#5457): https://lists.cip-project.org/g/cip-dev/message=
-/5457
-Mute This Topic: https://lists.cip-project.org/mt/76865928/4520388
+View/Reply Online (#5458): https://lists.cip-project.org/g/cip-dev/message=
+/5458
+Mute This Topic: https://lists.cip-project.org/mt/76865927/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---UIqcsOeDXRDoYQrRrz89--
+--Adf7b1sMWrnJGU3fiFJ8--
