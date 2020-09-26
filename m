@@ -1,362 +1,119 @@
-Return-Path: <SRS0=HXZj=DC=lists.cip-project.org=bounce+64572+5478+4520388+8129055@kernel.org>
+Return-Path: <SRS0=uDtd=DD=lists.cip-project.org=bounce+64572+5479+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60DFFC4363D
-	for <cip-dev@archiver.kernel.org>; Fri, 25 Sep 2020 05:08:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E3DC2D0A8
+	for <cip-dev@archiver.kernel.org>; Sat, 26 Sep 2020 07:46:59 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id A2899208B6
-	for <cip-dev@archiver.kernel.org>; Fri, 25 Sep 2020 05:08:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 8EB632080A
+	for <cip-dev@archiver.kernel.org>; Sat, 26 Sep 2020 07:46:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="eWkTyLDd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2899208B6
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="CIUAS33r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EB632080A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=toshiba.co.jp
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5478+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id ScfvYY4521723x0Vk04j09vT; Thu, 24 Sep 2020 22:08:49 -0700
-X-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
- by mx.groups.io with SMTP id smtpd.web10.783.1601010528282774349
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5479+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id hktnYY4521723x8SiNiVZrMO; Sat, 26 Sep 2020 00:46:58 -0700
+X-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.155])
+ by mx.groups.io with SMTP id smtpd.web11.7036.1601106415234871882
  for <cip-dev@lists.cip-project.org>;
- Thu, 24 Sep 2020 22:08:48 -0700
-X-Received: by mo-csw.securemx.jp (mx-mo-csw1116) id 08P585pk013427; Fri, 25 Sep 2020 14:08:06 +0900
-X-Iguazu-Qid: 2wHHnVxnkEFv8KTXML
-X-Iguazu-QSIG: v=2; s=0; t=1601010485; q=2wHHnVxnkEFv8KTXML; m=0f/99m+Z+HrsxHvHv42pR/9bDGAlWGUHdaOxDrObz2A=
+ Sat, 26 Sep 2020 00:46:56 -0700
+X-Received: by mo-csw.securemx.jp (mx-mo-csw1516) id 08Q7jxFa004161; Sat, 26 Sep 2020 16:46:00 +0900
+X-Iguazu-Qid: 34trJE3d6YvJDLB8cM
+X-Iguazu-QSIG: v=2; s=0; t=1601106359; q=34trJE3d6YvJDLB8cM; m=VHyDttLsRyxcJxcVx4MZttox+lt8Zh0Zdrgn95lc+zc=
 X-Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
-	by relay.securemx.jp (mx-mr1112) id 08P583l9020174;
-	Fri, 25 Sep 2020 14:08:04 +0900
+	by relay.securemx.jp (mx-mr1511) id 08Q7jw2T014677;
+	Sat, 26 Sep 2020 16:45:58 +0900
 X-Received: from enc01.toshiba.co.jp ([106.186.93.100])
-	by imx2.toshiba.co.jp  with ESMTP id 08P583sZ023192;
-	Fri, 25 Sep 2020 14:08:03 +0900 (JST)
+	by imx2.toshiba.co.jp  with ESMTP id 08Q7jv0H002607;
+	Sat, 26 Sep 2020 16:45:57 +0900 (JST)
 X-Received: from hop001.toshiba.co.jp ([133.199.164.63])
-	by enc01.toshiba.co.jp  with ESMTP id 08P5820x027724;
-	Fri, 25 Sep 2020 14:08:03 +0900
-From: "Daniel Sangorrin" <daniel.sangorrin@toshiba.co.jp>
-To: sz.lin@moxa.com, ben.hutchings@codethink.co.uk, wens@csie.org
-Cc: cip-dev@lists.cip-project.org
-Subject: [cip-dev] [cip-kernel-sec] reports: add script to convert reports to csv format
-Date: Fri, 25 Sep 2020 14:07:56 +0900
+	by enc01.toshiba.co.jp  with ESMTP id 08Q7jvkG006610;
+	Sat, 26 Sep 2020 16:45:57 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UBKY2b3HUp8ITOyHtZN+cl2hUDc3a+AEYLN7egNbr4AgfjS2QBcUSLo0836kdiN7uoHM0q49tGo4cxTu/2BfvbfTDagYYBODwXgS28f5Hf+WDTqyM5PV/LvVHoQ7RKP4kKilvtAqu87AxS7X7geZRYFCgb6NmCSvUYJswl9pYIk1GLTxGLrxz4nPDsz1eZML90efyZpnQoR43CeohtT5/U7AfDyOMZFRcQCFsxLdHXaeOtNR+ddKGl+7g/MSW+sC5SViKi2dAfCYPX94rJ3k+TH7SDb9ctVLj0UgXgSnzpzQuU+mJ78m3+HDDt+tdMbvoTJ6BAuWWYj7BPNFa9+UHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=z+vF7hvSDEpU8xPlFS+PpcNw7vlJMQdvRsEme+NVgak=;
+ b=ADMpEjwttpluvsWCyGWPCmS3xsdr758kM8j8ywhL5pB4T/VuD5fJ5wZODtmvwnyWx7JdACh0gnHJ/ZJV0CRt+tvIuex2jcFaKiVQ2ZVAL0rllGUNReuxOrbJJX/hpTzggxwmh6krRQGSN2dpT2jQA6uyuXXZO7oYQc6U7JxsJfl4X0e76T4JcE1MLRMyrXlbLLhRrlE4BlaENKPv3ozY7rWXZNzgdYt2JyXTCYUfA69WEYmtLLxgxp/7NSH0EJvBCE03n8IBO2b3bw3AbtTWQaWxLPkKNRzROAGrzZCExGPDkFH0z5xE2d0zlnxunZtMRoazRY8Qb56cl8npTcAUsQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
+ header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
+From: "Nobuhiro Iwamatsu" <nobuhiro1.iwamatsu@toshiba.co.jp>
+To: <cip-dev@lists.cip-project.org>
+CC: <masashi.kudo@cybertrust.co.jp>, <ben.hutchings@codethink.co.uk>,
+        <pavel@denx.de>, <wens@csie.org>, <SZ.Lin@moxa.com>,
+        <Chris.Paterson2@renesas.com>
+Subject: [cip-dev] [ANNOUNCE] Release v4.19.147-cip35
+Thread-Topic: [ANNOUNCE] Release v4.19.147-cip35
+Thread-Index: AdaT2Outh4HhKIv9SCCYNkK8RfhQFg==
+Date: Sat, 26 Sep 2020 07:45:55 +0000
 X-TSB-HOP: ON
-Message-Id: <20200925050756.1960978-2-daniel.sangorrin@toshiba.co.jp>
-In-Reply-To: <20200925050756.1960978-1-daniel.sangorrin@toshiba.co.jp>
-References: <20200925050756.1960978-1-daniel.sangorrin@toshiba.co.jp>
+Message-ID: <OSBPR01MB29831FA29F42D1EA889F810D92370@OSBPR01MB2983.jpnprd01.prod.outlook.com>
+Accept-Language: ja-JP, en-US
+x-originating-ip: [103.91.184.0]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 2f61b601-ccaa-44b1-4d89-08d861f0337e
+x-ms-traffictypediagnostic: OSBPR01MB2246:
+x-microsoft-antispam-prvs: <OSBPR01MB2246AE0094D2B6A2DF5FB6BB92370@OSBPR01MB2246.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:393;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: pUB2A7xjbRqIdO59VkjenEKxjHYHQQSTmmKlJwH5lCVWX3RriZOSIrB1XJoSunN3pW4CrLJrG98+jjVyc5op7XNBe4shAidDkfeubfWzy9UIqrD8XT+1tS1+hkOMUNyWY5GW9LfGGj2UJmdT7EvzZ4KwYBE7q2MJXSg+WzJI5GtH1pCU3iylUH5EdmMNaqqwB98v/VDcikKtSBAUTnRUiw3IyyXmkpxuyFqphJGZ2SUKaTJcBaelqnxT8Gvl8JZ0SWA5J29wEV8RP/gJ+Web5H3JJz7wPus9EsQyyG4bhkOCeG5C21wKSdhPqA/AFqfKXdGkThwyrsT9t25EwKVHFTg4jEUGqMV7z8i1bg4JTuBMoMhbQfSoUvPiadlhoclLaWMBYwPi5wiDecbWp0QP2Z4V5tOnFJjfuT8HVxusbf5LaTdvjZihIbL90xoNtEnszeenuHtPqF2GxX3V6ZsuNw==
+x-ms-exchange-antispam-messagedata: +iQqMbjta8m0FWwO5wBcrKWxerMn62FjPxQHtJtnPbj++k2UTs6RHxro2w3H1CvffrsvhR39xLf4WEh5XGjr4H1b30WEcvXbQaZS5GZ9L0AG4Eiw5xGtRCbb2BLqc+o/1EmfqtTxWLdmYn/hL7quro2RU9rdK6QkpRYfz6n0a20OUxSOlexcfTW6JtQhGR8fajl9ctA5SzPEKGkLjCKB3r6g8XYNnoS+0231mpbKsMMlUgug0RjxgG2+DEzwd9K1IT/NlmnEeQKbNJFQLlFh21k19m8ZV8DsK4mWJuwUUVeQXYlGG0zYHKkJW6ZKw/RZQPftQ33WCWt/N29Jf+TVERtORaYOT1oLz7o9WaNniKsr9wgeKhnXpqw2X15DdrBH6Kvql0lrisGKn4buHOgBQVDNiDaxQmlqARR8aD6ctvnbnZrsNveiBscGn/Kv3RUOf/PpMN5wP2Cy4ZU61N+bvUzWv8EyAGmMb5uS2/KqN5AtIo0y9dQNp0b59gxtySJXSf9UGgvDrl2bTTtCAAQoMyZFoIk3vrarKuggY5Xz/YGyoFAeGFuJ/6tQcmqci3HXMd2pc0PlyYJCYwYS26zKHEyccpHCf2hYx9GlL5of5NPnhQLndUkKwDv8oPjoihdqcKMOAgb335qCm3kbIX2Jbw==
+x-ms-exchange-transport-forked: True
 MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OSBPR01MB2983.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2f61b601-ccaa-44b1-4d89-08d861f0337e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Sep 2020 07:45:55.6126
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: MYVlYyxzyFP6VxxqIw0xkSWgu4Z1LuKhUwtp0xum6pxpUzCbsooGzA0jlUYMPkFWdtPqk1mFjNcxD/yz6tPrnH0CgBsBq7wwbfk+yMAMmLc2j1tMXOmrO8Cp5f0ivT3t
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB2246
+X-OriginatorOrg: toshiba.co.jp
+MSSCP.TransferMailToMossAgent: 103
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: WWyXNiWmtmxBXFKXizR0U6otx4520388AA=
-Content-Type: multipart/mixed; boundary="klzH6aVQARTEqWz8SwuA"
+X-Gm-Message-State: KeQxRJOrAUNxEXCos1XhhCytx4520388AA=
+Content-Type: multipart/mixed; boundary="x52nD5CJRvBYeJesPi5y"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1601010529;
- bh=CtjUNJTq/E1z0aZflVe91A0AE21hZKoQuf4q+jY3FcQ=;
- h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=eWkTyLDdTO9usYJP4gMPLFFgUb02QKD0V1vVvCxU6WEupRGcG43ruVczONSo3IzbfiM
- Luma1VA87suWQzN54OXpFM59YaOKQX5rt5NuWjQ4OE5Rh3oZeDnEM+frIex19hjZuecQK
- xa7YVOzoX/1RhHwCfJHgyFs8BZ28MX8ZS+s=
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1601106418;
+ bh=+pnisGCvI9ulrfpHTRKKzl36Avk80PkDtBZG5u0RCTw=;
+ h=CC:Content-Type:Date:From:Reply-To:Subject:To;
+ b=CIUAS33rpHPREpA04VQAdrlKAKaLuBQK859ljEgd9ZUx6eWSqlsJYTGD3a9Bhn+I0ZY
+ nQTgsB/hkGOzlrIfayBcmlZ6NrestPQCurXz/hcjNPxSsRd2wk4Hi30DT7yx1NS5CpSpv
+ Vj96qBIc5pq8sCADpCyXz5J0qQNcYzcG+8Y=
 
---klzH6aVQARTEqWz8SwuA
-Content-Transfer-Encoding: 8bit
+--x52nD5CJRvBYeJesPi5y
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-The text version is probably enough for developers but
-customers usually prefer to have a CSV that you can
-open with a spreadsheet program and contains additional
-information. CVEs are sorted in rows according to their
-criticality.
-)
-Example usage:
-  $ ./scripts/report_affected.py stable/4.19 > security-report.txt
-  $ ./scripts/report_to_csv.py \
-      --security-report security-report.txt \
-      --issues-dir issues
+SGksDQoNCkNJUCBrZXJuZWwgdGVhbSBoYXMgcmVsZWFzZWQgTGludXgga2VybmVsIHY0LjE5LjE0
+Ny1jaXAzNS4NClRoZSBsaW51eC00LjE5LnktY2lwIHRyZWUgaGFzIGJlZW4gdXBkYXRlZCBiYXNl
+IHZlcnNpb24gZnJvbSB2NC4xOS4xNDQNCnRvIHY0LjE5LjE0Ny4NCg0KWW91IGNhbiBnZXQgdGhp
+cyByZWxlYXNlIHZpYSB0aGUgZ2l0IHRyZWUgYXQ6DQoNCiAgdjQuMTkuMTQ3LWNpcDM1Og0KICAg
+IHJlcG9zaXRvcnk6DQogICAgICBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgv
+a2VybmVsL2dpdC9jaXAvbGludXgtY2lwLmdpdA0KICAgIGJyYW5jaDoNCiAgICAgIGxpbnV4LTQu
+MTkueS1jaXANCiAgICBjb21taXQgaGFzaDoNCiAgICAgIGIzODUzODFlZjNkOWFhYjY2MWI4MTE1
+YjJjNTAwZTBkYjUxMDkxNGQNCiAgICBhZGRlZCBjb21taXRzOg0KICAgICAgQ0lQOiBCdW1wIHZl
+cnNpb24gc3VmZml4IHRvIC1jaXAzNSBhZnRlciBtZXJnZSBmcm9tIHN0YWJsZQ0KDQpCZXN0IHJl
+Z2FyZHMsDQogICBOb2J1aGlybw0K
 
-Signed-off-by: nguyen van hieu <hieu2.nguyenvan@toshiba.co.jp>
-Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
----
- scripts/report_to_csv.py | 262 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 262 insertions(+)
- create mode 100755 scripts/report_to_csv.py
-
-diff --git a/scripts/report_to_csv.py b/scripts/report_to_csv.py
-new file mode 100755
-index 0000000..a3a984f
---- /dev/null
-+++ b/scripts/report_to_csv.py
-@@ -0,0 +1,262 @@
-+#!/usr/bin/python3
-+
-+"""
-+This script will parse the text output from report_affected.py
-+(without options) and generate a CSV file that contains
-+additional information extracted from the NVD database (json format)
-+
-+Example usage:
-+  $ ./scripts/report_affected.py stable/4.19 > security-report.txt
-+  $ ./scripts/report_to_csv.py \
-+      --security-report security-report.txt \
-+      --issues-dir issues
-+"""
-+
-+import re
-+import wget
-+import os
-+import sys
-+import gzip
-+import json
-+import csv
-+import filecmp
-+
-+DATABASE_DIR = os.getcwd() + "/nvd-data/"
-+
-+def parse_cmd():
-+    """Parse command options.
-+    """
-+    import argparse
-+
-+    CURRENT_DIR = os.getcwd()
-+    parser = argparse.ArgumentParser()
-+    parser.add_argument('--security-report', dest='security_report', metavar='FILE',
-+                      default=CURRENT_DIR + '/security-report.txt',
-+                      help='Output from report_affected.py (without options)')
-+    parser.add_argument('--issues-dir', dest='issues_dir', metavar='DIRECTORY',
-+                      default=CURRENT_DIR + '/issues',
-+                      help='directory containing the issues in YAML format')
-+
-+    args = parser.parse_args()
-+    return args
-+
-+def download_file(src, file, bar=""):
-+    """Re-download file when an error occurred due to network connection problem.
-+    """
-+    for i in range(3):
-+        try:
-+            wget.download(src, file, bar)
-+            break
-+        except:
-+            pass
-+
-+    if not os.path.exists(file):
-+        print("ERROR: Can't download %s" % src)
-+        exit(1)
-+
-+def get_cves_database(years):
-+    """Get NVD data (json format) from NVD Data Feeds
-+    """
-+    DATABASE_URL = "https://nvd.nist.gov/feeds/json/cve/1.1"
-+
-+    for year in years:
-+        if not os.path.exists(DATABASE_DIR + year):
-+            os.makedirs(DATABASE_DIR + year)
-+
-+        json_data = '/nvdcve-1.1-' + year + '.json.gz'
-+        meta_data = '/nvdcve-1.1-' + year + '.meta'
-+        # Download meta and database files if they don't exist
-+        if not os.path.exists(DATABASE_DIR + year + meta_data):
-+            download_file(DATABASE_URL + meta_data, DATABASE_DIR + year + meta_data)
-+        else:
-+            download_file(DATABASE_URL + meta_data, DATABASE_DIR + year + meta_data + '.new')
-+            if filecmp.cmp(DATABASE_DIR + year + meta_data, DATABASE_DIR + year + meta_data + '.new'):
-+                os.remove(DATABASE_DIR + year + meta_data + '.new')
-+
-+            # Update meta and database files if they have any modified
-+            else:
-+                os.rename(DATABASE_DIR + year + meta_data + '.new', DATABASE_DIR + year + meta_data)
-+                if os.path.exists(DATABASE_DIR + year + json_data):
-+                    os.remove(DATABASE_DIR + year + json_data)
-+
-+        if not os.path.exists(DATABASE_DIR + year + json_data):
-+            download_file(DATABASE_URL + json_data, DATABASE_DIR + year + json_data)
-+
-+def get_severity(cve_id, cve_items):
-+    """Parse NVD database to get the `severity` of each CVE
-+    """
-+    severity = ''
-+    for cve_item in cve_items['CVE_Items']:
-+        if cve_id == cve_item['cve']['CVE_data_meta']['ID']:
-+            if 'baseMetricV3' in cve_item['impact']:
-+                severity = cve_item['impact']['baseMetricV3']['cvssV3']['baseSeverity']
-+            elif 'baseMetricV2' in cve_item['impact']:
-+                severity = cve_item['impact']['baseMetricV2']['severity']
-+            break
-+    if not severity:
-+        severity = "N/A"
-+    return severity
-+
-+def get_description(cve_id, cve_items):
-+    """Parse NVD database to get the `description` of each CVE
-+    """
-+    DEBIAN_TRACKER = "https://security-tracker.debian.org/tracker/"
-+    description = ''
-+    for cve_item in cve_items['CVE_Items']:
-+        if cve_id == cve_item['cve']['CVE_data_meta']['ID']:
-+            description = cve_item['cve']['description']['description_data'][0]['value']
-+            break
-+
-+    # Get CVE's description from debian tracker if that CVE is RESERVED in NVD
-+    if not description:
-+        if os.path.exists(cve_id):
-+            os.remove(cve_id)
-+
-+        download_file(DEBIAN_TRACKER + cve_id, cve_id)
-+        try:
-+            file = open(cve_id,'r')
-+        except:
-+            print("ERROR: Can't open CVE tracker file: %s" % cve_id)
-+            exit(1)
-+        content = file.read()
-+        try:
-+            description = re.search('Description.*?<td>(.*?)</td>',content).group(1)
-+        except:
-+            description = "N/A"
-+        file.close()
-+        os.remove(cve_id)
-+    return description
-+
-+def parse_kernel_log(security_report):
-+    """Parsing the security report text file to get list CVEs of each branch|tag
-+    """
-+    if not os.path.exists(security_report):
-+        print("ERROR: the security report text file doesn't exist")
-+        exit(1)
-+    if os.stat(security_report).st_size == 0:
-+        print("LOG: the security report text file is empty")
-+        exit(1)
-+
-+    CVE_IDS = {}
-+    with open(security_report, 'r') as file:
-+        for line in file.read().splitlines():
-+            if not line:
-+                continue
-+            try:
-+                branch = line.split(':')[-2].replace("/", "_")
-+                cve_list = line.split(':')[-1]
-+
-+                cves_by_year = {}
-+                for cve in cve_list.split():
-+                    year = cve.split('-')[1]
-+                    if year not in cves_by_year.keys():
-+                        cves_by_year[year] = []
-+                    cves_by_year[year].append(cve)
-+
-+                if not branch or not cves_by_year:
-+                    print("LOG: Don't have any CVEs in branch|tag: '%s'" % branch)
-+                    break
-+                if branch in CVE_IDS.keys():
-+                    print("LOG: The branch|tag '%s' is duplicated in the security report text file" % branch)
-+
-+                CVE_IDS[branch] = cves_by_year
-+            except:
-+                print("ERROR: The format of the security report text file is incorrect")
-+                exit(1)
-+    return CVE_IDS
-+
-+def get_cve_info(issues_dir, cves_by_year):
-+    """Get the list of CVE-ids from the output of report_affected.py,
-+       and parse the information from the CVE*.yml issues.
-+    """
-+    import yaml
-+    import subprocess
-+
-+    CVES = []
-+    for year in cves_by_year.keys():
-+        json_data = '/nvdcve-1.1-' + year + '.json.gz'
-+        # Parse json data file to get the severity/description of CVE
-+        try:
-+            file = gzip.open(DATABASE_DIR + year + json_data, 'r').read()
-+        except:
-+            print("ERROR: Can't open json data file: %s" % json_data)
-+            exit(1)
-+        cve_items = json.loads(file)
-+
-+        for cve_id in cves_by_year[year]:
-+            if not os.path.exists(issues_dir + "/" + cve_id + '.yml'):
-+                print("ERROR: Issues directory or %s.yml doesn't exist" % cve_id)
-+                exit(1)
-+
-+            with open(issues_dir + "/" + cve_id + '.yml', encoding='utf-8') as f:
-+                description = ''
-+                references = ''
-+                comments = ''
-+                introduced_by = ''
-+                fixed_by = ''
-+
-+                cve_info = yaml.load(f, Loader=yaml.Loader)
-+                if "description" in cve_info:
-+                    description = cve_info["description"]
-+                # get the description in NVD database or Debian tracker if it doesn't exist in .yml file
-+                if not description or description.isspace():
-+                    description = get_description(cve_id, cve_items)
-+
-+                severity = get_severity(cve_id, cve_items)
-+
-+                if "references" in cve_info:
-+                    for str in cve_info["references"]:
-+                        references += str + "\n"
-+                else:
-+                    references = "N/A"
-+
-+                if "comments" in cve_info:
-+                    for key in cve_info["comments"]:
-+                        comments += key + ": " + cve_info["comments"][key] + "\n"
-+                else:
-+                    comments = "N/A"
-+
-+                if "introduced-by" in cve_info:
-+                    for key in cve_info["introduced-by"]:
-+                        introduced_by += key + ": " + " ".join(cve_info["introduced-by"][key]).replace(',', '+') + "\n"
-+                else:
-+                    introduced_by = "N/A"
-+                if "fixed-by" in cve_info:
-+                    for key in cve_info["fixed-by"]:
-+                        fixed_by += key + ": " + ", ".join(cve_info["fixed-by"][key]) + "\n"
-+                else:
-+                    fixed_by = "N/A"
-+
-+            CVES.append({'CVE-id': cve_id, 'Description': description,
-+                        'Severity': severity, 'References': references,
-+                        'Comments': comments, 'Introduced-by': introduced_by,
-+                        'Fixed-by': fixed_by})
-+    return CVES
-+
-+def generate_csv_report(CVES, file_name):
-+    with open(file_name, mode='w') as csv_file:
-+        # writing the header fields
-+        headers = CVES[0].keys()
-+        csvwriter = csv.DictWriter(csv_file, fieldnames=headers)
-+        csvwriter.writeheader()
-+
-+        weight_severity = {"CRITICAL": 0, "HIGH" : 1, "MEDIUM" : 2, "LOW" : 3, "N/A": 4, "": 5}
-+        sorted_CVES = sorted(CVES, key=lambda x: weight_severity[x['Severity'].upper()])
-+        # Writing the contents
-+        for data in sorted_CVES:
-+            csvwriter.writerow(data)
-+
-+if __name__ == "__main__":
-+    args = parse_cmd()
-+
-+    CVE_IDS = parse_kernel_log(args.security_report)
-+
-+    # Getting CVEs database from NVD
-+    YEARS = {}
-+    for branch in CVE_IDS.keys():
-+        YEARS |= CVE_IDS[branch].keys()
-+    get_cves_database(YEARS)
-+
-+    for branch, cves_by_year in CVE_IDS.items():
-+        CVES = get_cve_info(args.issues_dir, cves_by_year)
-+        generate_csv_report(CVES, "security-report-%s.csv" % branch)
--- 
-2.25.1
-
-
---klzH6aVQARTEqWz8SwuA
+--x52nD5CJRvBYeJesPi5y
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -364,13 +121,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#5478): https://lists.cip-project.org/g/cip-dev/message=
-/5478
-Mute This Topic: https://lists.cip-project.org/mt/77073673/4520388
+View/Reply Online (#5479): https://lists.cip-project.org/g/cip-dev/message=
+/5479
+Mute This Topic: https://lists.cip-project.org/mt/77133147/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---klzH6aVQARTEqWz8SwuA--
+--x52nD5CJRvBYeJesPi5y--
