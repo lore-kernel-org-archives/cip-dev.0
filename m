@@ -1,128 +1,221 @@
-Return-Path: <SRS0=ikhr=DI=lists.cip-project.org=bounce+64572+5486+4520388+8129055@kernel.org>
+Return-Path: <SRS0=rDDv=DI=lists.cip-project.org=bounce+64572+5487+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,HTML_MESSAGE,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,WEIRD_PORT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 334F7C4363D
-	for <cip-dev@archiver.kernel.org>; Thu,  1 Oct 2020 03:03:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8B6CC4727C
+	for <cip-dev@archiver.kernel.org>; Thu,  1 Oct 2020 04:37:38 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 5F8CA21D7D
-	for <cip-dev@archiver.kernel.org>; Thu,  1 Oct 2020 03:03:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id B03062184D
+	for <cip-dev@archiver.kernel.org>; Thu,  1 Oct 2020 04:37:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="ZX84iSXk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F8CA21D7D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=toshiba.co.jp
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5486+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id 39VYYY4521723xX9pp5x9khH; Wed, 30 Sep 2020 20:03:32 -0700
-X-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.153])
- by mx.groups.io with SMTP id smtpd.web11.3937.1601521410152702600
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="Idii6Hy/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B03062184D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5487+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id Oy8lYY4521723xahmg0y2Gft; Wed, 30 Sep 2020 21:37:37 -0700
+X-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+ by mx.groups.io with SMTP id smtpd.web12.5153.1601527055905450459
  for <cip-dev@lists.cip-project.org>;
- Wed, 30 Sep 2020 20:03:31 -0700
-X-Received: by mo-csw.securemx.jp (mx-mo-csw1514) id 09133RSm002063; Thu, 1 Oct 2020 12:03:27 +0900
-X-Iguazu-Qid: 34trJE3d6h5V7YLNBj
-X-Iguazu-QSIG: v=2; s=0; t=1601521407; q=34trJE3d6h5V7YLNBj; m=qgbbInrWvtZEcyGQjs7W8A+B7DJQyoBmVU7ShYdRALc=
-X-Received: from imx12.toshiba.co.jp (imx12.toshiba.co.jp [61.202.160.132])
-	by relay.securemx.jp (mx-mr1510) id 09133QQq006626;
-	Thu, 1 Oct 2020 12:03:26 +0900
-X-Received: from enc02.toshiba.co.jp ([61.202.160.51])
-	by imx12.toshiba.co.jp  with ESMTP id 09133QZI029818;
-	Thu, 1 Oct 2020 12:03:26 +0900 (JST)
-X-Received: from hop101.toshiba.co.jp ([133.199.85.107])
-	by enc02.toshiba.co.jp  with ESMTP id 09133P3A010410;
-	Thu, 1 Oct 2020 12:03:25 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nfEW6azUn+3lR1mpb9gA0oQ69cQO2Z4btP6Oo1xJQzzRdteqwp9+9drMCKtFgMk0fFz9U1nhczKbfijmW3sFkigFgsbRfT/DXsYlf5/hOZECX9P+q+/blsv0k3leGbISl+/DwfIGEkiRnP8exws10aLkrqwlfojmdPxpi7M0sZyfb9lg5ARKzWWP+zRWxnlZE8PoGbeKPZzIK8/SQBvNp+Xsd6v0lnYw5d//PEtmTgV50ysBGu6FDzfblvhyIHlLnbH3dQaoIJScvBmqEGg4OlWbY9cPJB5Vlowl3k0INzSQHRk96AS5IE2NBXuU2jEI52MWyVh2iO6lRbnGsvC8eA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+6frPpGO7uxylKQbq0UtqpC8zZs7nsQHleZckcN8Efs=;
- b=lU9dINwqZCeB5o3MdY8yuqupcXirMfubDHDms26mx+Jm9zoO+Q5VoJm6eCfsG0bs53IY5KpduWvpjVXc+VkiYCpRFPKhs9NX2qa62Vhaey7CdFErfDj1DvTXBHYdtz6Kaho9khMNll+RqyaKZG31PjhPkGQxPThcjWPSfvg3RRsSIgzrGCQ1uPglvK3WaGN/zSt2/CUlS0GrzIwtzF9Fnn78twZLschWN1OejXleS+bCsF0xNTUGEtDHxJfmmeBTQF8UreIqhqzgZjKS29DVrl583nIdC/qwXXCW66w/S2s20Azyn0ZV+XBmz3Z4VZQbjRUVnQHSUERRfCfpdFbUdA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
- header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
-From: "Daniel Sangorrin" <daniel.sangorrin@toshiba.co.jp>
-To: <jan.kiszka@web.de>, <cip-dev@lists.cip-project.org>
-Subject: Re: [cip-dev] [isar-cip-core] image: export dpkg status file for debsecan
-Thread-Topic: [cip-dev] [isar-cip-core] image: export dpkg status file for
- debsecan
-Thread-Index: AQHWlvjz2mwSipOuB0+WVfLbj9/OM6mB5CHwgAAtPJA=
-Date: Thu, 1 Oct 2020 03:03:24 +0000
-X-TSB-HOP: ON
-Message-ID: <OSBPR01MB2053F771D826EE8349CCA258D0300@OSBPR01MB2053.jpnprd01.prod.outlook.com>
-References: <20200930020815.2474349-1-daniel.sangorrin@toshiba.co.jp>
- <20200930020815.2474349-2-daniel.sangorrin@toshiba.co.jp>
- <7596cf39-b8f9-cedc-3b51-b164553b3ee4@web.de> 
-Accept-Language: en-US
-x-originating-ip: [124.211.28.3]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 18a56402-66aa-4207-30b3-08d865b68fc4
-x-ms-traffictypediagnostic: OSBPR01MB1815:
-x-microsoft-antispam-prvs: <OSBPR01MB1815FB1D74D1DA501C08FB21D0300@OSBPR01MB1815.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2958;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: vqbMAZTVo50P7oD/MAX6JCxzJT9oSaBKlZ0T/aKxgn6UF2oKTvA95YP0aNiaFDiTW43SntpiI/8GjwxwtMJmGXCaJ0j8OWpf+7InZ2f4CxcyvF9nYfzpvmh7Rs8o7Nx3YHcAJvN+JrR4ESlm0SoDwjWFD+vEYk4xngdV8+gx24A31Z5LznYje0eqjKzZbuVB6aLzgp7vwjzofAoR1uD2V+NiyFwYMxGmDDNdhSw19EHjZck0XkIxALBnLL/0FSOH8qu/QeZJBUWwlZfqJNBLaPu0SzpvTgwP2CWBCEZLyY1k4tn0sNRv09PvRE915GdyE6ClOmoog/FKRK2i3b+WLfmkecimgzi/MX2Ugu72lviUar1NjwGFYgmLh+K80xWN
-x-ms-exchange-antispam-messagedata: 8DWgYCvr1IGMrnpFnZMcrTGPifeQr08/UcHXhzqK3RdTnYIitVqrVznzUcL3HkZFpBqekVMp2G+BMgomO5CFxx/oqdwy1FTMQVbMCY8zc6FBs7vx1ra736hL9a9fAnC3Lp3c7E1RXkTgvfx4WYMYyEI+c3/Y4mtf9SYQs4pYV0Z56WDhHRZQZV+GY3mMfgCpeSW4sV0IBSi9WvTf0EOAN3pPII6BFmvGHnhUx7RR+JvuLyN1A3iAdXKJ1EkR4FtW1vSqtAYMhgholj30nbsOjH0vvNTNFpfRPAm3u0GlA9TUMw/7U5RTYj9MeGptXP/hf8VIhkyWnmqW5Y1pw1RQtT/79HHaL6SDnrKsRn8niN6TedL20tsIsRlTemhI/SwX3PSSvKdIVWBONkvSF7eH+gMFiLC+TfKq900Kaf0vb+bkO1XMp0lq5f3M2kO+J0TCsIqj1ICFT/EJV5W4JJrRZOZ2Q2zN7nSmDBDLrxhrTcD8h3zpBpar9fpJoHX9OWCwFn4luMC6aLaNJ3LgjIJE20p7YjjawKHq6/ODxYaTBN0fYKd2j2LWi00sgnW1T0Dxq4PhrgihMRSovK1mk8SHRZWO6wUhIRtiAMn9zB7VXHeHethT0r/SnUljOiiwuqpEGMO3AKkqLYwIdKjKCjWj1w==
-x-ms-exchange-transport-forked: True
+ Wed, 30 Sep 2020 21:37:36 -0700
+X-Received: by mail-lf1-f52.google.com with SMTP id 197so4265627lfo.11
+        for <cip-dev@lists.cip-project.org>; Wed, 30 Sep 2020 21:37:35 -0700 (PDT)
+X-Gm-Message-State: tCbtgZjcNzjLvyQWxUaINQN4x4520388AA=
+X-Google-Smtp-Source: ABdhPJw5QIYjntlRn4uj3eh/m69Fr/1fRHRaVCEWuvSr3Jw6l6kQMwYnK+y96c92wMUN7+Gf4vPP8Q==
+X-Received: by 2002:ac2:5323:: with SMTP id f3mr1827251lfh.257.1601527053613;
+        Wed, 30 Sep 2020 21:37:33 -0700 (PDT)
+X-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
+        by smtp.gmail.com with ESMTPSA id h22sm325280ljl.101.2020.09.30.21.37.33
+        for <cip-dev@lists.cip-project.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Sep 2020 21:37:33 -0700 (PDT)
+X-Received: by mail-lj1-f177.google.com with SMTP id k25so3487503ljk.0
+        for <cip-dev@lists.cip-project.org>; Wed, 30 Sep 2020 21:37:33 -0700 (PDT)
+X-Received: by 2002:a2e:7c03:: with SMTP id x3mr1633451ljc.190.1601527053133;
+ Wed, 30 Sep 2020 21:37:33 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSBPR01MB2053.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 18a56402-66aa-4207-30b3-08d865b68fc4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2020 03:03:24.2868
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Ot96Vb78Mf3MKBYFTDdC3+bjO1VUMiFmSvaBbmo6qTFogzPYcfkr0PCwX5z0mDbevz8Gr3exLG3iKSYz6/5sl2aAjYFAnuzPM9WKsjEjN5c=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB1815
-X-OriginatorOrg: toshiba.co.jp
-MSSCP.TransferMailToMossAgent: 103
+References: <TY2PR01MB49725DFFB3B4CD4E0A1777E0A0300@TY2PR01MB4972.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY2PR01MB49725DFFB3B4CD4E0A1777E0A0300@TY2PR01MB4972.jpnprd01.prod.outlook.com>
+From: "Chen-Yu Tsai (Moxa)" <wens@csie.org>
+Date: Thu, 1 Oct 2020 12:37:22 +0800
+X-Gmail-Original-Message-ID: <CAGb2v648QgCp_eUQtLQOyax5ej3+NA7kgUmmOMNZGXzjtRfsqQ@mail.gmail.com>
+Message-ID: <CAGb2v648QgCp_eUQtLQOyax5ej3+NA7kgUmmOMNZGXzjtRfsqQ@mail.gmail.com>
+Subject: Re: [cip-dev] CIP IRC weekly meeting today
+To: cip-dev@lists.cip-project.org
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: zKXVUOOSSWgIGWyUFJ19obM0x4520388AA=
-Content-Type: multipart/mixed; boundary="9rpAlGeMRRjPqnvVYQHC"
+Content-Type: multipart/mixed; boundary="diMeEEu7F2AVjm1tX7IE"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1601521412;
- bh=u3aYKaAq5is5rd3MQb0sdhcxUoJ7GCrASv/lTNoWo/c=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1601527057;
+ bh=BuTJKilMtThNIfJTzH4+DjYZlj4a+VqCx4RrtkWYieM=;
  h=Content-Type:Date:From:Reply-To:Subject:To;
- b=ZX84iSXkNNL1BLAbDkvBUlTP8ON5zgnuxg9SjlfJ4X2xT5E29ofifAnSX13+pWABClE
- kUHBqpRIVgVDjLFy920QOEfMpM+2XPJlgAuJ9V6Iuc8h7mBF1m7esp97WD9i1B5e8JKHC
- Vz/LMRtKemiaGzJXV0HT3W/U6hH8lhVo9/U=
+ b=Idii6Hy/b5zKj6CfwIkbodQx0WDnBgc36HJjmdDr08xNPH2HIhyoXigSKvcHN9jvbxd
+ o6WsGL4J8mHFjcqGbqyt+e93yiytYVecEm1Wa3GXmk6m7C3tQxfS74oFwyhg24E9hxnEk
+ XvVUohEwKx3YvJRWaMjIgWL6YzvOnerjzCE=
 
---9rpAlGeMRRjPqnvVYQHC
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+--diMeEEu7F2AVjm1tX7IE
+Content-Type: multipart/alternative; boundary="00000000000019aecb05b09493c0"
 
-SGkgSmFuLA0KDQpOb3cgaXQgc2VlbXMgdG8gd29yay4gSSB0aGluayBpdCB3YXMgc29tZSBzdWJ0
-bGUgaXNzdWUgd2l0aCB0aGUgdXNlIG9mIHF1b3Rlcy4NCg0KVGhhbmtzLA0KRGFuaWVsDQoNCj4g
-LS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogc2FuZ29ycmluIGRhbmllbCjjgrXj
-g7PjgrTjg6rjg7Mg44OA44OL44Ko44OrIOKWoe+8s++8t++8o+KXr++8oe+8o++8tCkNCj4gU2Vu
-dDogVGh1cnNkYXksIE9jdG9iZXIgMSwgMjAyMCA5OjIzIEFNDQo+IFRvOiAnSmFuIEtpc3prYScg
-PGphbi5raXN6a2FAd2ViLmRlPjsgY2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmcNCj4gU3Vi
-amVjdDogUkU6IFtjaXAtZGV2XSBbaXNhci1jaXAtY29yZV0gaW1hZ2U6IGV4cG9ydCBkcGtnIHN0
-YXR1cyBmaWxlIGZvciBkZWJzZWNhbg0KPiANCj4gSGkgSmFuLA0KPiANCj4gSSBmb3Jnb3QgdG8g
-cmVwbHkgb25lIGNvbW1lbnQuDQo+IA0KPiA+ID4gKyMgZm9yIGNpcC1jb3JlLXNlYy9kZWJzZWNh
-bg0KPiA+ID4gK1JPT1RGU19QT1NUUFJPQ0VTU19DT01NQU5EICs9ICJleHBvcnRfZHBrZ19zdGF0
-dXMiDQo+ID4gPiArZXhwb3J0X2Rwa2dfc3RhdHVzKCkgew0KPiA+ID4gKyAgICBzdWRvIC1FIGNo
-cm9vdCAtLXVzZXJzcGVjPSQoaWQgLXUpOiQoaWQgLWcpICcke1JPT1RGU0RJUn0nIFwNCj4gPiA+
-ICsgICAgICAgIGNhdCAvdmFyL2xpYi9kcGtnL3N0YXR1cyA+IFwNCj4gPiA+ICsgICAgICAgICR7
-Uk9PVEZTX01BTklGRVNUX0RFUExPWV9ESVJ9LyIke1BGfSIuZHBrZ19zdGF0dXMNCj4gPg0KPiA+
-IFRoaXMgaXMganVzdCBhIGNvcHktb3V0LCBJIGRvbid0IHNlZSB0aGUgY2hyb290IG5lZWQgaGVy
-ZS4NCj4gDQo+IFRoaXMgd2FzIGJhc2VkIG9uIHRoZSBnZW5lcmF0ZV9tYW5pZmVzdCBmdW5jdGlv
-bi4NCj4gRm9yIHNvbWUgcmVhc29uLCBjb3B5aW5nIHdpdGhvdXQgY2hyb290IGRpZG4ndCB3b3Jr
-IGZvciBtZS4gSSB3aWxsIGdpdmUgaXQgYW5vdGhlciB0cnkuDQo+IA0KPiBUaGFua3MsDQo+IERh
-bmllbA0K
+--00000000000019aecb05b09493c0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
---9rpAlGeMRRjPqnvVYQHC
+Hi,
+
+It's the Mid-Autumn Festival, and we have a long weekend here.
+So I will not be attending today's meeting.
+
+3 new CVEs this week. Please check the merge request
+In cip-kernel-sec for details.
+
+
+ChenYu
+
+masashi.kudo@cybertrust.co.jp <masashi.kudo@cybertrust.co.jp> =E6=96=BC 20=
+20=E5=B9=B410=E6=9C=881=E6=97=A5
+=E9=80=B1=E5=9B=9B 08:54 =E5=AF=AB=E9=81=93=EF=BC=9A
+
+> Hi all,
+>
+> Kindly be reminded to attend the weekly meeting through IRC to discuss
+> technical topics with CIP kernel today.
+>
+> *Please note that the IRC meeting was rescheduled to UTC (GMT) 09:00
+> starting from the first week of Apr. according to TSC meeting*
+>
+> https://www.timeanddate.com/worldclock/meetingdetails.html?year=3D2020&m=
+onth=3D10&day=3D1&hour=3D9&min=3D0&sec=3D0&p1=3D224&p2=3D179&p3=3D136&p4=3D=
+37&p5=3D241&p6=3D248
+>
+> USWest  USEast  UK      DE      TW      JP
+> 02:00   05:00   10:00   11:00   17:00   18:00
+>
+> Channel:
+> * irc:chat.freenode.net:6667/cip
+>
+> Last meeting minutes:
+>
+> https://irclogs.baserock.org/meetings/cip/2020/09/cip.2020-09-24-09.00.l=
+og.html
+>
+> Agenda:
+>
+> * Action item
+>   1. Combine root filesystem with kselftest binary - iwamatsu
+>   2. Check whether CVE-2020-25284 needs to be backported to 4.4-rt
+>       ->  Delete rbd ( Ceph block device ) from 4.4-rt x86 config -
+> iwamatsu
+>
+> * Kernel maintenance updates
+> * Kernel testing
+> * Software update
+> * CIP Security
+> * AOB
+>
+> The meeting will take 30 min, although it can be extended to an hour if =
+it
+> makes sense and those involved in the topics can stay. Otherwise, the to=
+pic
+> will be taken offline or in the next meeting.
+>
+> Best regards,
+> --
+> M. Kudo
+> Cybertrust Japan Co., Ltd.
+>
+>=20
+>
+>
+
+--00000000000019aecb05b09493c0
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"auto">Hi,<div dir=3D"auto"><br></div><div dir=3D"auto">It&#39;s=
+ the Mid-Autumn Festival, and we have a long weekend here.</div><div dir=3D=
+"auto">So I will not be attending today&#39;s meeting.</div><div dir=3D"aut=
+o"><br></div><div dir=3D"auto">3 new CVEs this week. Please check the merge=
+ request</div><div dir=3D"auto">In cip-kernel-sec for details.</div><div di=
+r=3D"auto"><br></div><div dir=3D"auto"><br></div><div dir=3D"auto">ChenYu</=
+div></div><br><div class=3D"gmail_quote"><div dir=3D"ltr" class=3D"gmail_at=
+tr"><a href=3D"mailto:masashi.kudo@cybertrust.co.jp">masashi.kudo@cybertrus=
+t.co.jp</a> &lt;<a href=3D"mailto:masashi.kudo@cybertrust.co.jp">masashi.ku=
+do@cybertrust.co.jp</a>&gt; =E6=96=BC 2020=E5=B9=B410=E6=9C=881=E6=97=A5 =
+=E9=80=B1=E5=9B=9B 08:54 =E5=AF=AB=E9=81=93=EF=BC=9A<br></div><blockquote =
+class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid=
+;padding-left:1ex">Hi all,<br>
+<br>
+Kindly be reminded to attend the weekly meeting through IRC to discuss tec=
+hnical topics with CIP kernel today.<br>
+<br>
+*Please note that the IRC meeting was rescheduled to UTC (GMT) 09:00 start=
+ing from the first week of Apr. according to TSC meeting*<br>
+<a href=3D"https://www.timeanddate.com/worldclock/meetingdetails.html?year=
+=
+=3D2020&amp;month=3D10&amp;day=3D1&amp;hour=3D9&amp;min=3D0&amp;sec=3D0&am=
+p;p1=3D224&amp;p2=3D179&amp;p3=3D136&amp;p4=3D37&amp;p5=3D241&amp;p6=3D248"=
+ rel=3D"noreferrer noreferrer" target=3D"_blank">https://www.timeanddate.co=
+m/worldclock/meetingdetails.html?year=3D2020&amp;month=3D10&amp;day=3D1&amp=
+;hour=3D9&amp;min=3D0&amp;sec=3D0&amp;p1=3D224&amp;p2=3D179&amp;p3=3D136&am=
+p;p4=3D37&amp;p5=3D241&amp;p6=3D248</a><br>
+<br>
+USWest=C2=A0 USEast=C2=A0 UK=C2=A0 =C2=A0 =C2=A0 DE=C2=A0 =C2=A0 =C2=A0 TW=
+=
+=C2=A0 =C2=A0 =C2=A0 JP<br>
+02:00=C2=A0 =C2=A005:00=C2=A0 =C2=A010:00=C2=A0 =C2=A011:00=C2=A0 =C2=A017=
+:00=C2=A0 =C2=A018:00<br>
+<br>
+Channel:<br>
+* irc:<a href=3D"http://chat.freenode.net:6667/cip" rel=3D"noreferrer nore=
+ferrer" target=3D"_blank">chat.freenode.net:6667/cip</a><br>
+<br>
+Last meeting minutes:<br>
+<a href=3D"https://irclogs.baserock.org/meetings/cip/2020/09/cip.2020-09-2=
+4-09.00.log.html" rel=3D"noreferrer noreferrer" target=3D"_blank">https://i=
+rclogs.baserock.org/meetings/cip/2020/09/cip.2020-09-24-09.00.log.html</a><=
+br>
+<br>
+Agenda:<br>
+<br>
+* Action item<br>
+=C2=A0 1. Combine root filesystem with kselftest binary - iwamatsu <br>
+=C2=A0 2. Check whether CVE-2020-25284 needs to be backported to 4.4-rt<br=
+>
+=C2=A0 =C2=A0 =C2=A0 -&gt;=C2=A0 Delete rbd ( Ceph block device ) from 4.4=
+-rt x86 config - iwamatsu <br>
+<br>
+* Kernel maintenance updates<br>
+* Kernel testing<br>
+* Software update<br>
+* CIP Security <br>
+* AOB<br>
+<br>
+The meeting will take 30 min, although it can be extended to an hour if it=
+ makes sense and those involved in the topics can stay. Otherwise, the topi=
+c will be taken offline or in the next meeting.<br>
+<br>
+Best regards,<br>
+--<br>
+M. Kudo<br>
+Cybertrust Japan Co., Ltd.<br>
+<br>
+<br>
+<br>
+</blockquote></div>
+
+--00000000000019aecb05b09493c0--
+
+--diMeEEu7F2AVjm1tX7IE
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -130,13 +223,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#5486): https://lists.cip-project.org/g/cip-dev/message=
-/5486
-Mute This Topic: https://lists.cip-project.org/mt/77210404/4520388
+View/Reply Online (#5487): https://lists.cip-project.org/g/cip-dev/message=
+/5487
+Mute This Topic: https://lists.cip-project.org/mt/77230659/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---9rpAlGeMRRjPqnvVYQHC--
+--diMeEEu7F2AVjm1tX7IE--
