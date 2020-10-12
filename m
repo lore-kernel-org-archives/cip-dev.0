@@ -1,4 +1,4 @@
-Return-Path: <SRS0=mqj5=DT=lists.cip-project.org=bounce+64572+5543+4520388+8129055@kernel.org>
+Return-Path: <SRS0=K6WF=DT=lists.cip-project.org=bounce+64572+5546+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -8,39 +8,39 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	T_TVD_MIME_NO_HEADERS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C482CC433DF
-	for <cip-dev@archiver.kernel.org>; Mon, 12 Oct 2020 14:20:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20531C433DF
+	for <cip-dev@archiver.kernel.org>; Mon, 12 Oct 2020 14:21:00 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id AC1A72076E
-	for <cip-dev@archiver.kernel.org>; Mon, 12 Oct 2020 14:20:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id B81AB2076E
+	for <cip-dev@archiver.kernel.org>; Mon, 12 Oct 2020 14:20:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="TW1kyZVB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC1A72076E
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="Ck3jg6ng"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B81AB2076E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5543+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id eJDZYY4521723xdEhHHQmkNL; Mon, 12 Oct 2020 07:20:50 -0700
-X-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [])
- by mx.groups.io with SMTP id smtpd.web10.41790.1602512409498286210
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5546+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id TkCkYY4521723xBaWEt1Klyj; Mon, 12 Oct 2020 07:20:59 -0700
+X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web10.41794.1602512415549265316
  for <cip-dev@lists.cip-project.org>;
- Mon, 12 Oct 2020 07:20:11 -0700
+ Mon, 12 Oct 2020 07:20:16 -0700
 X-IronPort-AV: E=Sophos;i="5.77,366,1596466800"; 
-   d="scan'208";a="59351926"
+   d="scan'208";a="59566847"
 X-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 12 Oct 2020 23:20:10 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 12 Oct 2020 23:20:14 +0900
 X-Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 5515442A764A;
-	Mon, 12 Oct 2020 23:20:09 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id D9CB241D31C7;
+	Mon, 12 Oct 2020 23:20:13 +0900 (JST)
 From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [cip-dev] [RFC PATCH 4.19.y-cip 23/50] PCI: endpoint: Use notification chain mechanism to notify EPC events to EPF
-Date: Mon, 12 Oct 2020 15:19:06 +0100
-Message-Id: <20201012141933.9652-24-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [cip-dev] [RFC PATCH 4.19.y-cip 26/50] PCI: endpoint: Assign function number for each PF in EPC core
+Date: Mon, 12 Oct 2020 15:19:09 +0100
+Message-Id: <20201012141933.9652-27-prabhakar.mahadev-lad.rj@bp.renesas.com>
 In-Reply-To: <20201012141933.9652-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20201012141933.9652-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: Bulk
@@ -49,231 +49,184 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: 26i7AM4PvMrNTX56cbX0S9Mhx4520388AA=
-Content-Type: multipart/mixed; boundary="uHxL8W6uG1Mifu4hWq59"
+X-Gm-Message-State: mGlpIrEIa5LFlyZFMOwdDUHTx4520388AA=
+Content-Type: multipart/mixed; boundary="l6RobmMQfgb0XRlSdaog"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1602512450;
- bh=vc6eifbBDjpDlMvglukEjfkyRRmzdZ5/eMA+5Q+yAJE=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1602512459;
+ bh=pLzP1eqFjJMFtHIJ45hKQpJo9LduDxr6oj+ibsDqWJY=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=TW1kyZVB63m1CdtYylefJgGY7dqxltkpKvBlB/mFj8frpGaigrulnyvbw+BOBDuEr/c
- I96dyXDkgWCTqCp8AgBKpXbhs1n7Lg+1HgiuSvmx4AmIgi4w2ugJL0VDj/iGyvaorNO9E
- bsxojh7d3Ml62gyr3linP3I+pkkTGx32oks=
+ b=Ck3jg6ngS2aaO8cZG5wBK41a90NG9jB6E+kFygDvKBk4zi1ILt2T0OwYfb8OwdSifp2
+ ceg2qS3gvkF6H3217sXFUy5PWxqFTjgyQBArd5ENWHLSvVq9TuIZ/7MkvnqxoaO7gohMj
+ MWO1gWZqh+s9hTFPN3cfKs7Akfi/VIFh2O8=
 
---uHxL8W6uG1Mifu4hWq59
+--l6RobmMQfgb0XRlSdaog
 
 From: Kishon Vijay Abraham I <kishon@ti.com>
 
-commit 5779dd0a7dbd71e82478fb0bf125cc6cd3c43266 upstream.
+commit 2499ee84e02774a8573b7b4c76c8f2ea38669313 upstream.
 
-Use atomic_notifier_call_chain() to notify EPC events like linkup to EPF
-driver instead of using linkup ops in EPF driver. This is in preparation
-for adding proper locking mechanism to EPF ops. This will also enable to
-add more events (in addition to linkup) in the future.
+The PCIe endpoint core relies on the drivers that invoke the
+pci_epc_add_epf() API to allocate and assign a function number
+to each physical function (PF). Since endpoint function device can
+be created by multiple mechanisms (configfs, devicetree, etc..),
+allowing each of these mechanisms to assign a function number
+would result in mutliple endpoint function devices having the
+same function number. In order to avoid this, let EPC core assign
+a function number to the endpoint device.
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Tested-by: Vidya Sagar <vidyas@nvidia.com>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/pci/endpoint/functions/pci-epf-test.c | 13 ++++++++---
- drivers/pci/endpoint/pci-epc-core.c           |  9 ++------
- drivers/pci/endpoint/pci-epf-core.c           | 22 +------------------
- include/linux/pci-epc.h                       |  8 +++++++
- include/linux/pci-epf.h                       |  6 ++---
- 5 files changed, 23 insertions(+), 35 deletions(-)
+ drivers/pci/endpoint/pci-ep-cfs.c   | 27 +++++----------------------
+ drivers/pci/endpoint/pci-epc-core.c | 26 ++++++++++++++++++++++----
+ include/linux/pci-epc.h             |  2 ++
+ 3 files changed, 29 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-index 1cfe3687a211..7dd40ab8b5d2 100644
---- a/drivers/pci/endpoint/functions/pci-epf-test.c
-+++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-@@ -360,12 +360,16 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
- 			   msecs_to_jiffies(1));
- }
+diff --git a/drivers/pci/endpoint/pci-ep-cfs.c b/drivers/pci/endpoint/pci-ep-cfs.c
+index d1288a0bd530..e7e8367eead1 100644
+--- a/drivers/pci/endpoint/pci-ep-cfs.c
++++ b/drivers/pci/endpoint/pci-ep-cfs.c
+@@ -29,7 +29,6 @@ struct pci_epc_group {
+ 	struct config_group group;
+ 	struct pci_epc *epc;
+ 	bool start;
+-	unsigned long function_num_map;
+ };
  
--static void pci_epf_test_linkup(struct pci_epf *epf)
-+static int pci_epf_test_notifier(struct notifier_block *nb, unsigned long val,
-+				 void *data)
+ static inline struct pci_epf_group *to_pci_epf_group(struct config_item *item)
+@@ -89,37 +88,22 @@ static int pci_epc_epf_link(struct config_item *epc_item,
+ 			    struct config_item *epf_item)
  {
-+	struct pci_epf *epf = container_of(nb, struct pci_epf, nb);
- 	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
+ 	int ret;
+-	u32 func_no = 0;
+ 	struct pci_epf_group *epf_group = to_pci_epf_group(epf_item);
+ 	struct pci_epc_group *epc_group = to_pci_epc_group(epc_item);
+ 	struct pci_epc *epc = epc_group->epc;
+ 	struct pci_epf *epf = epf_group->epf;
  
- 	queue_delayed_work(kpcitest_workqueue, &epf_test->cmd_handler,
- 			   msecs_to_jiffies(1));
-+
-+	return NOTIFY_OK;
- }
+-	func_no = find_first_zero_bit(&epc_group->function_num_map,
+-				      BITS_PER_LONG);
+-	if (func_no >= BITS_PER_LONG)
+-		return -EINVAL;
+-
+-	set_bit(func_no, &epc_group->function_num_map);
+-	epf->func_no = func_no;
+-
+ 	ret = pci_epc_add_epf(epc, epf);
+ 	if (ret)
+-		goto err_add_epf;
++		return ret;
  
- static void pci_epf_test_unbind(struct pci_epf *epf)
-@@ -546,8 +550,12 @@ static int pci_epf_test_bind(struct pci_epf *epf)
- 		}
- 	}
- 
--	if (!linkup_notifier)
-+	if (linkup_notifier) {
-+		epf->nb.notifier_call = pci_epf_test_notifier;
-+		pci_epc_register_notifier(epc, &epf->nb);
-+	} else {
- 		queue_work(kpcitest_workqueue, &epf_test->cmd_handler.work);
+ 	ret = pci_epf_bind(epf);
+-	if (ret)
+-		goto err_epf_bind;
++	if (ret) {
++		pci_epc_remove_epf(epc, epf);
++		return ret;
 +	}
  
  	return 0;
+-
+-err_epf_bind:
+-	pci_epc_remove_epf(epc, epf);
+-
+-err_add_epf:
+-	clear_bit(func_no, &epc_group->function_num_map);
+-
+-	return ret;
  }
-@@ -580,7 +588,6 @@ static int pci_epf_test_probe(struct pci_epf *epf)
- static struct pci_epf_ops ops = {
- 	.unbind	= pci_epf_test_unbind,
- 	.bind	= pci_epf_test_bind,
--	.linkup = pci_epf_test_linkup,
- };
  
- static struct pci_epf_driver test_driver = {
+ static void pci_epc_epf_unlink(struct config_item *epc_item,
+@@ -134,7 +118,6 @@ static void pci_epc_epf_unlink(struct config_item *epc_item,
+ 
+ 	epc = epc_group->epc;
+ 	epf = epf_group->epf;
+-	clear_bit(epf->func_no, &epc_group->function_num_map);
+ 	pci_epf_unbind(epf);
+ 	pci_epc_remove_epf(epc, epf);
+ }
 diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
-index 2091508c1620..2f6436599fcb 100644
+index e51a12ed85bb..dc1c673534e0 100644
 --- a/drivers/pci/endpoint/pci-epc-core.c
 +++ b/drivers/pci/endpoint/pci-epc-core.c
-@@ -539,16 +539,10 @@ EXPORT_SYMBOL_GPL(pci_epc_remove_epf);
+@@ -471,22 +471,39 @@ EXPORT_SYMBOL_GPL(pci_epc_write_header);
   */
- void pci_epc_linkup(struct pci_epc *epc)
+ int pci_epc_add_epf(struct pci_epc *epc, struct pci_epf *epf)
  {
--	unsigned long flags;
--	struct pci_epf *epf;
--
- 	if (!epc || IS_ERR(epc))
++	u32 func_no;
++	int ret = 0;
++
+ 	if (epf->epc)
+ 		return -EBUSY;
+ 
+ 	if (IS_ERR(epc))
+ 		return -EINVAL;
+ 
+-	if (epf->func_no > epc->max_functions - 1)
+-		return -EINVAL;
++	mutex_lock(&epc->lock);
++	func_no = find_first_zero_bit(&epc->function_num_map,
++				      BITS_PER_LONG);
++	if (func_no >= BITS_PER_LONG) {
++		ret = -EINVAL;
++		goto ret;
++	}
++
++	if (func_no > epc->max_functions - 1) {
++		dev_err(&epc->dev, "Exceeding max supported Function Number\n");
++		ret = -EINVAL;
++		goto ret;
++	}
+ 
++	set_bit(func_no, &epc->function_num_map);
++	epf->func_no = func_no;
+ 	epf->epc = epc;
+ 
+-	mutex_lock(&epc->lock);
+ 	list_add_tail(&epf->list, &epc->pci_epf);
++
++ret:
+ 	mutex_unlock(&epc->lock);
+ 
+-	return 0;
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(pci_epc_add_epf);
+ 
+@@ -503,6 +520,7 @@ void pci_epc_remove_epf(struct pci_epc *epc, struct pci_epf *epf)
  		return;
  
--	spin_lock_irqsave(&epc->lock, flags);
--	list_for_each_entry(epf, &epc->pci_epf, list)
--		pci_epf_linkup(epf);
--	spin_unlock_irqrestore(&epc->lock, flags);
-+	atomic_notifier_call_chain(&epc->notifier, 0, NULL);
- }
- EXPORT_SYMBOL_GPL(pci_epc_linkup);
- 
-@@ -612,6 +606,7 @@ __pci_epc_create(struct device *dev, const struct pci_epc_ops *ops,
- 
- 	spin_lock_init(&epc->lock);
- 	INIT_LIST_HEAD(&epc->pci_epf);
-+	ATOMIC_INIT_NOTIFIER_HEAD(&epc->notifier);
- 
- 	device_initialize(&epc->dev);
- 	epc->dev.class = pci_epc_class;
-diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
-index fb1306de8f40..93f28c65ace0 100644
---- a/drivers/pci/endpoint/pci-epf-core.c
-+++ b/drivers/pci/endpoint/pci-epf-core.c
-@@ -20,26 +20,6 @@ static DEFINE_MUTEX(pci_epf_mutex);
- static struct bus_type pci_epf_bus_type;
- static const struct device_type pci_epf_type;
- 
--/**
-- * pci_epf_linkup() - Notify the function driver that EPC device has
-- *		      established a connection with the Root Complex.
-- * @epf: the EPF device bound to the EPC device which has established
-- *	 the connection with the host
-- *
-- * Invoke to notify the function driver that EPC device has established
-- * a connection with the Root Complex.
-- */
--void pci_epf_linkup(struct pci_epf *epf)
--{
--	if (!epf->driver) {
--		dev_WARN(&epf->dev, "epf device not bound to driver\n");
--		return;
--	}
--
--	epf->driver->ops->linkup(epf);
--}
--EXPORT_SYMBOL_GPL(pci_epf_linkup);
--
- /**
-  * pci_epf_unbind() - Notify the function driver that the binding between the
-  *		      EPF device and EPC device has been lost
-@@ -214,7 +194,7 @@ int __pci_epf_register_driver(struct pci_epf_driver *driver,
- 	if (!driver->ops)
- 		return -EINVAL;
- 
--	if (!driver->ops->bind || !driver->ops->unbind || !driver->ops->linkup)
-+	if (!driver->ops->bind || !driver->ops->unbind)
- 		return -EINVAL;
- 
- 	driver->driver.bus = &pci_epf_bus_type;
+ 	mutex_lock(&epc->lock);
++	clear_bit(epf->func_no, &epc->function_num_map);
+ 	list_del(&epf->list);
+ 	epf->epc = NULL;
+ 	mutex_unlock(&epc->lock);
 diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
-index 0c12d69dde92..8c61908d2c41 100644
+index 9b21692bc2e4..44bfbeb480bb 100644
 --- a/include/linux/pci-epc.h
 +++ b/include/linux/pci-epc.h
 @@ -92,6 +92,7 @@ struct pci_epc_mem {
   * @max_functions: max number of functions that can be configured in this EPC
   * @group: configfs group representing the PCI EPC device
-  * @lock: spinlock to protect pci_epc ops
-+ * @notifier: used to notify EPF of any EPC events (like linkup)
+  * @lock: mutex to protect pci_epc ops
++ * @function_num_map: bitmap to manage physical function number
+  * @notifier: used to notify EPF of any EPC events (like linkup)
   */
  struct pci_epc {
- 	struct device			dev;
-@@ -102,6 +103,7 @@ struct pci_epc {
+@@ -103,6 +104,7 @@ struct pci_epc {
  	struct config_group		*group;
- 	/* spinlock to protect against concurrent access of EP controller */
- 	spinlock_t			lock;
-+	struct atomic_notifier_head	notifier;
+ 	/* mutex to protect against concurrent access of EP controller */
+ 	struct mutex			lock;
++	unsigned long			function_num_map;
+ 	struct atomic_notifier_head	notifier;
  };
  
- /**
-@@ -144,6 +146,12 @@ static inline void *epc_get_drvdata(struct pci_epc *epc)
- 	return dev_get_drvdata(&epc->dev);
- }
- 
-+static inline int
-+pci_epc_register_notifier(struct pci_epc *epc, struct notifier_block *nb)
-+{
-+	return atomic_notifier_chain_register(&epc->notifier, nb);
-+}
-+
- struct pci_epc *
- __devm_pci_epc_create(struct device *dev, const struct pci_epc_ops *ops,
- 		      struct module *owner);
-diff --git a/include/linux/pci-epf.h b/include/linux/pci-epf.h
-index 2d6f07556682..4993f7f6439b 100644
---- a/include/linux/pci-epf.h
-+++ b/include/linux/pci-epf.h
-@@ -55,13 +55,10 @@ struct pci_epf_header {
-  * @bind: ops to perform when a EPC device has been bound to EPF device
-  * @unbind: ops to perform when a binding has been lost between a EPC device
-  *	    and EPF device
-- * @linkup: ops to perform when the EPC device has established a connection with
-- *	    a host system
-  */
- struct pci_epf_ops {
- 	int	(*bind)(struct pci_epf *epf);
- 	void	(*unbind)(struct pci_epf *epf);
--	void	(*linkup)(struct pci_epf *epf);
- };
- 
- /**
-@@ -112,6 +109,7 @@ struct pci_epf_bar {
-  * @epc: the EPC device to which this EPF device is bound
-  * @driver: the EPF driver to which this EPF device is bound
-  * @list: to add pci_epf as a list of PCI endpoint functions to pci_epc
-+ * @nb: notifier block to notify EPF of any EPC events (like linkup)
-  */
- struct pci_epf {
- 	struct device		dev;
-@@ -125,6 +123,7 @@ struct pci_epf {
- 	struct pci_epc		*epc;
- 	struct pci_epf_driver	*driver;
- 	struct list_head	list;
-+	struct notifier_block   nb;
- };
- 
- #define to_pci_epf(epf_dev) container_of((epf_dev), struct pci_epf, dev)
-@@ -154,5 +153,4 @@ void *pci_epf_alloc_space(struct pci_epf *epf, size_t size, enum pci_barno bar,
- void pci_epf_free_space(struct pci_epf *epf, void *addr, enum pci_barno bar);
- int pci_epf_bind(struct pci_epf *epf);
- void pci_epf_unbind(struct pci_epf *epf);
--void pci_epf_linkup(struct pci_epf *epf);
- #endif /* __LINUX_PCI_EPF_H */
 -- 
 2.17.1
 
 
---uHxL8W6uG1Mifu4hWq59
+--l6RobmMQfgb0XRlSdaog
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -281,13 +234,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#5543): https://lists.cip-project.org/g/cip-dev/message=
-/5543
-Mute This Topic: https://lists.cip-project.org/mt/77461690/4520388
+View/Reply Online (#5546): https://lists.cip-project.org/g/cip-dev/message=
+/5546
+Mute This Topic: https://lists.cip-project.org/mt/77461698/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---uHxL8W6uG1Mifu4hWq59--
+--l6RobmMQfgb0XRlSdaog--
