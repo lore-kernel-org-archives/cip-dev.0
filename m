@@ -1,4 +1,4 @@
-Return-Path: <SRS0=/rVC=DT=lists.cip-project.org=bounce+64572+5563+4520388+8129055@kernel.org>
+Return-Path: <SRS0=GJXd=DT=lists.cip-project.org=bounce+64572+5554+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -8,39 +8,39 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	T_TVD_MIME_NO_HEADERS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9974EC43457
-	for <cip-dev@archiver.kernel.org>; Mon, 12 Oct 2020 14:21:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76149C433DF
+	for <cip-dev@archiver.kernel.org>; Mon, 12 Oct 2020 14:21:06 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 387E12076E
-	for <cip-dev@archiver.kernel.org>; Mon, 12 Oct 2020 14:21:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 2AF252076E
+	for <cip-dev@archiver.kernel.org>; Mon, 12 Oct 2020 14:21:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="ryXj7QuW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 387E12076E
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="i5vEV2Yu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AF252076E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5563+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id rkBBYY4521723x6YJJGk4k4W; Mon, 12 Oct 2020 07:21:08 -0700
-X-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [])
- by mx.groups.io with SMTP id smtpd.web12.42187.1602512428927900524
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5554+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id ss0WYY4521723xyccbqLVxF5; Mon, 12 Oct 2020 07:21:06 -0700
+X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [])
+ by mx.groups.io with SMTP id smtpd.web11.41766.1602512424455510129
  for <cip-dev@lists.cip-project.org>;
- Mon, 12 Oct 2020 07:20:40 -0700
+ Mon, 12 Oct 2020 07:20:27 -0700
 X-IronPort-AV: E=Sophos;i="5.77,366,1596466800"; 
-   d="scan'208";a="59351976"
+   d="scan'208";a="59566871"
 X-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 12 Oct 2020 23:20:40 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 12 Oct 2020 23:20:26 +0900
 X-Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3D5A341F6302;
-	Mon, 12 Oct 2020 23:20:39 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id C268A41D31C7;
+	Mon, 12 Oct 2020 23:20:25 +0900 (JST)
 From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [cip-dev] [RFC PATCH 4.19.y-cip 43/50] dt-bindings: pci: rcar-pci-ep: Document r8a774a1 and r8a774b1
-Date: Mon, 12 Oct 2020 15:19:26 +0100
-Message-Id: <20201012141933.9652-44-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [cip-dev] [RFC PATCH 4.19.y-cip 34/50] PCI: endpoint: Add support to handle multiple base for mapping outbound memory
+Date: Mon, 12 Oct 2020 15:19:17 +0100
+Message-Id: <20201012141933.9652-35-prabhakar.mahadev-lad.rj@bp.renesas.com>
 In-Reply-To: <20201012141933.9652-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20201012141933.9652-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: Bulk
@@ -49,62 +49,453 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: F1QWc7N6tZZQMS6S5lAEQFhIx4520388AA=
-Content-Type: multipart/mixed; boundary="hjEuv03qBNVhcUSc972n"
+X-Gm-Message-State: PIt7tDECa69SBeIJYoKdF51Wx4520388AA=
+Content-Type: multipart/mixed; boundary="PabRhin35i9cqmj9u8qe"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1602512468;
- bh=1pZUnlXXJcYRGmbmdRxI5+c3TnrYz2gge1NqmoXLq0g=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1602512466;
+ bh=uGuOzETWq4liOJNkIHEV3suVLCds2A7bCxjnl6EeNVg=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=ryXj7QuWPnNNaFh8JSHCniYPm35APqogt028czejMOk5wiOEfVqKKxD37HaCAblIRzc
- FFJ04S102yrushT5kze/0ybvbIO+dqWT2VcQ7+PPr+cSlFBsVqQ+kGpew1kMjWDKTXnFJ
- Pn69SYjNlxPwij5csI5p/s94oxQqpXGee4U=
+ b=i5vEV2YumiMjTSqvbsQOPs+RtbtOv/Ti4SVn5O9DARmidAryWIkDa2LK4/Mqs56AXqp
+ B8JGnCD3OwBgwJDKBeSHqZc4DTBMIwUjn2E+k9j3p/ucE0PpEsOMH4Fm6eFcf0XXxx8WH
+ xoxky23qRZOfpuXHGlcUkEyQf5vSJNTqgjs=
 
---hjEuv03qBNVhcUSc972n
+--PabRhin35i9cqmj9u8qe
 
-commit 2de82ec8667465236e15f8c6af7cecf8da63fc60 upstream.
+commit d45e3c1a5979efd40dbbac9a5c3586f4fa41f734 upstream.
 
-Document the support for R-Car PCIe EP on R8A774A1 and R8A774B1 SoC
-devices.
+R-Car PCIe controller has support to map multiple memory regions for
+mapping the outbound memory in local system also the controller limits
+single allocation for each region (that is, once a chunk is used from the
+region it cannot be used to allocate a new one). This features inspires to
+add support for handling multiple memory bases in endpoint framework.
 
-Also constify "renesas,rcar-gen3-pcie-ep" so that it can be used as
-fallback compatible string for R-Car Gen3 and RZ/G2 devices as the
-PCIe module is identical.
+With this patch pci_epc_mem_init() initializes address space for endpoint
+controller which support single window and pci_epc_multi_mem_init()
+initializes multiple windows supported by endpoint controller.
 
-Link: https://lore.kernel.org/r/20200814173037.17822-2-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://lore.kernel.org/r/1588854799-13710-6-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+[PL: manually applied changes to pcie-designware-ep.c]
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ .../pci/controller/dwc/pcie-designware-ep.c   |  12 +-
+ drivers/pci/endpoint/pci-epc-mem.c            | 199 ++++++++++++------
+ include/linux/pci-epc.h                       |  33 ++-
+ 3 files changed, 168 insertions(+), 76 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml b/Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml
-index aa483c7f27fd..70c45f72ab20 100644
---- a/Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml
-+++ b/Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml
-@@ -14,8 +14,11 @@ maintainers:
- properties:
-   compatible:
-     items:
--      - const: renesas,r8a774c0-pcie-ep
--      - const: renesas,rcar-gen3-pcie-ep
-+      - enum:
-+          - renesas,r8a774a1-pcie-ep     # RZ/G2M
-+          - renesas,r8a774b1-pcie-ep     # RZ/G2N
-+          - renesas,r8a774c0-pcie-ep     # RZ/G2E
-+      - const: renesas,rcar-gen3-pcie-ep # R-Car Gen3 and RZ/G2
+diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+index 667763fd868f..471855feab03 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-ep.c
++++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+@@ -434,11 +434,11 @@ int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
+ 		reg = ep->msi_cap + PCI_MSI_DATA_32;
+ 		msg_data = dw_pcie_readw_dbi(pci, reg);
+ 	}
+-	aligned_offset = msg_addr_lower & (epc->mem->page_size - 1);
++	aligned_offset = msg_addr_lower & (epc->mem->window.page_size - 1);
+ 	msg_addr = ((u64)msg_addr_upper) << 32 |
+ 			(msg_addr_lower & ~aligned_offset);
+ 	ret = dw_pcie_ep_map_addr(epc, func_no, ep->msi_mem_phys, msg_addr,
+-				  epc->mem->page_size);
++				  epc->mem->window.page_size);
+ 	if (ret)
+ 		return ret;
  
-   reg:
-     maxItems: 5
+@@ -495,7 +495,7 @@ int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
+ 		return -EPERM;
+ 
+ 	ret = dw_pcie_ep_map_addr(epc, func_no, ep->msi_mem_phys, msg_addr,
+-				  epc->mem->page_size);
++				  epc->mem->window.page_size);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -511,7 +511,7 @@ void dw_pcie_ep_exit(struct dw_pcie_ep *ep)
+ 	struct pci_epc *epc = ep->epc;
+ 
+ 	pci_epc_mem_free_addr(epc, ep->msi_mem_phys, ep->msi_mem,
+-			      epc->mem->page_size);
++			      epc->mem->window.page_size);
+ 
+ 	pci_epc_mem_exit(epc);
+ }
+@@ -586,7 +586,7 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
+ 	if (ret < 0)
+ 		epc->max_functions = 1;
+ 
+-	ret = __pci_epc_mem_init(epc, ep->phys_base, ep->addr_size,
++	ret = pci_epc_mem_init(epc, ep->phys_base, ep->addr_size,
+ 				 ep->page_size);
+ 	if (ret < 0) {
+ 		dev_err(dev, "Failed to initialize address space\n");
+@@ -594,7 +594,7 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
+ 	}
+ 
+ 	ep->msi_mem = pci_epc_mem_alloc_addr(epc, &ep->msi_mem_phys,
+-					     epc->mem->page_size);
++					     epc->mem->window.page_size);
+ 	if (!ep->msi_mem) {
+ 		dev_err(dev, "Failed to reserve memory for MSI/MSI-X\n");
+ 		return -ENOMEM;
+diff --git a/drivers/pci/endpoint/pci-epc-mem.c b/drivers/pci/endpoint/pci-epc-mem.c
+index cdd1d3821249..80c46f3a4590 100644
+--- a/drivers/pci/endpoint/pci-epc-mem.c
++++ b/drivers/pci/endpoint/pci-epc-mem.c
+@@ -23,7 +23,7 @@
+ static int pci_epc_mem_get_order(struct pci_epc_mem *mem, size_t size)
+ {
+ 	int order;
+-	unsigned int page_shift = ilog2(mem->page_size);
++	unsigned int page_shift = ilog2(mem->window.page_size);
+ 
+ 	size--;
+ 	size >>= page_shift;
+@@ -36,67 +36,95 @@ static int pci_epc_mem_get_order(struct pci_epc_mem *mem, size_t size)
+ }
+ 
+ /**
+- * __pci_epc_mem_init() - initialize the pci_epc_mem structure
++ * pci_epc_multi_mem_init() - initialize the pci_epc_mem structure
+  * @epc: the EPC device that invoked pci_epc_mem_init
+- * @phys_base: the physical address of the base
+- * @size: the size of the address space
+- * @page_size: size of each page
++ * @windows: pointer to windows supported by the device
++ * @num_windows: number of windows device supports
+  *
+  * Invoke to initialize the pci_epc_mem structure used by the
+  * endpoint functions to allocate mapped PCI address.
+  */
+-int __pci_epc_mem_init(struct pci_epc *epc, phys_addr_t phys_base, size_t size,
+-		       size_t page_size)
++int pci_epc_multi_mem_init(struct pci_epc *epc,
++			   struct pci_epc_mem_window *windows,
++			   unsigned int num_windows)
+ {
+-	int ret;
+-	struct pci_epc_mem *mem;
+-	unsigned long *bitmap;
++	struct pci_epc_mem *mem = NULL;
++	unsigned long *bitmap = NULL;
+ 	unsigned int page_shift;
+-	int pages;
++	size_t page_size;
+ 	int bitmap_size;
++	int pages;
++	int ret;
++	int i;
+ 
+-	if (page_size < PAGE_SIZE)
+-		page_size = PAGE_SIZE;
++	epc->num_windows = 0;
+ 
+-	page_shift = ilog2(page_size);
+-	pages = size >> page_shift;
+-	bitmap_size = BITS_TO_LONGS(pages) * sizeof(long);
++	if (!windows || !num_windows)
++		return -EINVAL;
+ 
+-	mem = kzalloc(sizeof(*mem), GFP_KERNEL);
+-	if (!mem) {
+-		ret = -ENOMEM;
+-		goto err;
+-	}
++	epc->windows = kcalloc(num_windows, sizeof(*epc->windows), GFP_KERNEL);
++	if (!epc->windows)
++		return -ENOMEM;
+ 
+-	bitmap = kzalloc(bitmap_size, GFP_KERNEL);
+-	if (!bitmap) {
+-		ret = -ENOMEM;
+-		goto err_mem;
+-	}
++	for (i = 0; i < num_windows; i++) {
++		page_size = windows[i].page_size;
++		if (page_size < PAGE_SIZE)
++			page_size = PAGE_SIZE;
++		page_shift = ilog2(page_size);
++		pages = windows[i].size >> page_shift;
++		bitmap_size = BITS_TO_LONGS(pages) * sizeof(long);
+ 
+-	mem->bitmap = bitmap;
+-	mem->phys_base = phys_base;
+-	mem->page_size = page_size;
+-	mem->pages = pages;
+-	mem->size = size;
+-	mutex_init(&mem->lock);
++		mem = kzalloc(sizeof(*mem), GFP_KERNEL);
++		if (!mem) {
++			ret = -ENOMEM;
++			i--;
++			goto err_mem;
++		}
+ 
+-	epc->mem = mem;
++		bitmap = kzalloc(bitmap_size, GFP_KERNEL);
++		if (!bitmap) {
++			ret = -ENOMEM;
++			kfree(mem);
++			i--;
++			goto err_mem;
++		}
++
++		mem->window.phys_base = windows[i].phys_base;
++		mem->window.size = windows[i].size;
++		mem->window.page_size = page_size;
++		mem->bitmap = bitmap;
++		mem->pages = pages;
++		mutex_init(&mem->lock);
++		epc->windows[i] = mem;
++	}
++
++	epc->mem = epc->windows[0];
++	epc->num_windows = num_windows;
+ 
+ 	return 0;
+ 
+ err_mem:
+-	kfree(mem);
++	for (; i >= 0; i--) {
++		mem = epc->windows[i];
++		kfree(mem->bitmap);
++		kfree(mem);
++	}
++	kfree(epc->windows);
+ 
+-err:
+-return ret;
++	return ret;
+ }
+-EXPORT_SYMBOL_GPL(__pci_epc_mem_init);
++EXPORT_SYMBOL_GPL(pci_epc_multi_mem_init);
+ 
+ int pci_epc_mem_init(struct pci_epc *epc, phys_addr_t base,
+ 		     size_t size, size_t page_size)
+ {
+-	return __pci_epc_mem_init(epc, base, size, page_size);
++	struct pci_epc_mem_window mem_window;
++
++	mem_window.phys_base = base;
++	mem_window.size = size;
++	mem_window.page_size = page_size;
++
++	return pci_epc_multi_mem_init(epc, &mem_window, 1);
+ }
+ EXPORT_SYMBOL_GPL(pci_epc_mem_init);
+ 
+@@ -109,11 +137,22 @@ EXPORT_SYMBOL_GPL(pci_epc_mem_init);
+  */
+ void pci_epc_mem_exit(struct pci_epc *epc)
+ {
+-	struct pci_epc_mem *mem = epc->mem;
++	struct pci_epc_mem *mem;
++	int i;
+ 
++	if (!epc->num_windows)
++		return;
++
++	for (i = 0; i < epc->num_windows; i++) {
++		mem = epc->windows[i];
++		kfree(mem->bitmap);
++		kfree(mem);
++	}
++	kfree(epc->windows);
++
++	epc->windows = NULL;
+ 	epc->mem = NULL;
+-	kfree(mem->bitmap);
+-	kfree(mem);
++	epc->num_windows = 0;
+ }
+ EXPORT_SYMBOL_GPL(pci_epc_mem_exit);
+ 
+@@ -129,31 +168,60 @@ EXPORT_SYMBOL_GPL(pci_epc_mem_exit);
+ void __iomem *pci_epc_mem_alloc_addr(struct pci_epc *epc,
+ 				     phys_addr_t *phys_addr, size_t size)
+ {
+-	int pageno;
+ 	void __iomem *virt_addr = NULL;
+-	struct pci_epc_mem *mem = epc->mem;
+-	unsigned int page_shift = ilog2(mem->page_size);
++	struct pci_epc_mem *mem;
++	unsigned int page_shift;
++	size_t align_size;
++	int pageno;
+ 	int order;
++	int i;
+ 
+-	size = ALIGN(size, mem->page_size);
+-	order = pci_epc_mem_get_order(mem, size);
+-
+-	mutex_lock(&mem->lock);
+-	pageno = bitmap_find_free_region(mem->bitmap, mem->pages, order);
+-	if (pageno < 0)
+-		goto ret;
++	for (i = 0; i < epc->num_windows; i++) {
++		mem = epc->windows[i];
++		mutex_lock(&mem->lock);
++		align_size = ALIGN(size, mem->window.page_size);
++		order = pci_epc_mem_get_order(mem, align_size);
+ 
+-	*phys_addr = mem->phys_base + ((phys_addr_t)pageno << page_shift);
+-	virt_addr = ioremap(*phys_addr, size);
+-	if (!virt_addr)
+-		bitmap_release_region(mem->bitmap, pageno, order);
++		pageno = bitmap_find_free_region(mem->bitmap, mem->pages,
++						 order);
++		if (pageno >= 0) {
++			page_shift = ilog2(mem->window.page_size);
++			*phys_addr = mem->window.phys_base +
++				((phys_addr_t)pageno << page_shift);
++			virt_addr = ioremap(*phys_addr, align_size);
++			if (!virt_addr) {
++				bitmap_release_region(mem->bitmap,
++						      pageno, order);
++				mutex_unlock(&mem->lock);
++				continue;
++			}
++			mutex_unlock(&mem->lock);
++			return virt_addr;
++		}
++		mutex_unlock(&mem->lock);
++	}
+ 
+-ret:
+-	mutex_unlock(&mem->lock);
+ 	return virt_addr;
+ }
+ EXPORT_SYMBOL_GPL(pci_epc_mem_alloc_addr);
+ 
++static struct pci_epc_mem *pci_epc_get_matching_window(struct pci_epc *epc,
++						       phys_addr_t phys_addr)
++{
++	struct pci_epc_mem *mem;
++	int i;
++
++	for (i = 0; i < epc->num_windows; i++) {
++		mem = epc->windows[i];
++
++		if (phys_addr >= mem->window.phys_base &&
++		    phys_addr < (mem->window.phys_base + mem->window.size))
++			return mem;
++	}
++
++	return NULL;
++}
++
+ /**
+  * pci_epc_mem_free_addr() - free the allocated memory address
+  * @epc: the EPC device on which memory was allocated
+@@ -166,14 +234,23 @@ EXPORT_SYMBOL_GPL(pci_epc_mem_alloc_addr);
+ void pci_epc_mem_free_addr(struct pci_epc *epc, phys_addr_t phys_addr,
+ 			   void __iomem *virt_addr, size_t size)
+ {
++	struct pci_epc_mem *mem;
++	unsigned int page_shift;
++	size_t page_size;
+ 	int pageno;
+-	struct pci_epc_mem *mem = epc->mem;
+-	unsigned int page_shift = ilog2(mem->page_size);
+ 	int order;
+ 
++	mem = pci_epc_get_matching_window(epc, phys_addr);
++	if (!mem) {
++		pr_err("failed to get matching window\n");
++		return;
++	}
++
++	page_size = mem->window.page_size;
++	page_shift = ilog2(page_size);
+ 	iounmap(virt_addr);
+-	pageno = (phys_addr - mem->phys_base) >> page_shift;
+-	size = ALIGN(size, mem->page_size);
++	pageno = (phys_addr - mem->window.phys_base) >> page_shift;
++	size = ALIGN(size, page_size);
+ 	order = pci_epc_mem_get_order(mem, size);
+ 	mutex_lock(&mem->lock);
+ 	bitmap_release_region(mem->bitmap, pageno, order);
+diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
+index e5f6ca8c36a8..5adb881bbcd7 100644
+--- a/include/linux/pci-epc.h
++++ b/include/linux/pci-epc.h
+@@ -65,20 +65,28 @@ struct pci_epc_ops {
+ 	struct module *owner;
+ };
+ 
++/**
++ * struct pci_epc_mem_window - address window of the endpoint controller
++ * @phys_base: physical base address of the PCI address window
++ * @size: the size of the PCI address window
++ * @page_size: size of each page
++ */
++struct pci_epc_mem_window {
++	phys_addr_t	phys_base;
++	size_t		size;
++	size_t		page_size;
++};
++
+ /**
+  * struct pci_epc_mem - address space of the endpoint controller
+- * @phys_base: physical base address of the PCI address space
+- * @size: the size of the PCI address space
++ * @window: address window of the endpoint controller
+  * @bitmap: bitmap to manage the PCI address space
+  * @pages: number of bits representing the address region
+- * @page_size: size of each page
+  * @lock: mutex to protect bitmap
+  */
+ struct pci_epc_mem {
+-	phys_addr_t	phys_base;
+-	size_t		size;
++	struct pci_epc_mem_window window;
+ 	unsigned long	*bitmap;
+-	size_t		page_size;
+ 	int		pages;
+ 	/* mutex to protect against concurrent access for memory allocation*/
+ 	struct mutex	lock;
+@@ -89,7 +97,11 @@ struct pci_epc_mem {
+  * @dev: PCI EPC device
+  * @pci_epf: list of endpoint functions present in this EPC device
+  * @ops: function pointers for performing endpoint operations
+- * @mem: address space of the endpoint controller
++ * @windows: array of address space of the endpoint controller
++ * @mem: first window of the endpoint controller, which corresponds to
++ *       default address space of the endpoint controller supporting
++ *       single window.
++ * @num_windows: number of windows supported by device
+  * @max_functions: max number of functions that can be configured in this EPC
+  * @group: configfs group representing the PCI EPC device
+  * @lock: mutex to protect pci_epc ops
+@@ -100,7 +112,9 @@ struct pci_epc {
+ 	struct device			dev;
+ 	struct list_head		pci_epf;
+ 	const struct pci_epc_ops	*ops;
++	struct pci_epc_mem		**windows;
+ 	struct pci_epc_mem		*mem;
++	unsigned int			num_windows;
+ 	u8				max_functions;
+ 	struct config_group		*group;
+ 	/* mutex to protect against concurrent access of EP controller */
+@@ -194,8 +208,9 @@ void pci_epc_put(struct pci_epc *epc);
+ 
+ int pci_epc_mem_init(struct pci_epc *epc, phys_addr_t base,
+ 		     size_t size, size_t page_size);
+-int __pci_epc_mem_init(struct pci_epc *epc, phys_addr_t phys_addr, size_t size,
+-		       size_t page_size);
++int pci_epc_multi_mem_init(struct pci_epc *epc,
++			   struct pci_epc_mem_window *window,
++			   unsigned int num_windows);
+ void pci_epc_mem_exit(struct pci_epc *epc);
+ void __iomem *pci_epc_mem_alloc_addr(struct pci_epc *epc,
+ 				     phys_addr_t *phys_addr, size_t size);
 -- 
 2.17.1
 
 
---hjEuv03qBNVhcUSc972n
+--PabRhin35i9cqmj9u8qe
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -112,13 +503,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#5563): https://lists.cip-project.org/g/cip-dev/message=
-/5563
-Mute This Topic: https://lists.cip-project.org/mt/77461726/4520388
+View/Reply Online (#5554): https://lists.cip-project.org/g/cip-dev/message=
+/5554
+Mute This Topic: https://lists.cip-project.org/mt/77461711/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---hjEuv03qBNVhcUSc972n--
+--PabRhin35i9cqmj9u8qe--
