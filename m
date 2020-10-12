@@ -1,4 +1,4 @@
-Return-Path: <SRS0=cWfP=DT=lists.cip-project.org=bounce+64572+5549+4520388+8129055@kernel.org>
+Return-Path: <SRS0=Fq4j=DT=lists.cip-project.org=bounce+64572+5555+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -8,39 +8,39 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	T_TVD_MIME_NO_HEADERS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5769CC4363D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA4EC4363A
 	for <cip-dev@archiver.kernel.org>; Mon, 12 Oct 2020 14:21:05 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 11F2820838
+	by mail.kernel.org (Postfix) with ESMTPS id 72D4520838
 	for <cip-dev@archiver.kernel.org>; Mon, 12 Oct 2020 14:21:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="dFq5ySSH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11F2820838
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="LkB9SSAq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72D4520838
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5549+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id aRlJYY4521723xxUfZpqsuMW; Mon, 12 Oct 2020 07:21:04 -0700
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5555+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id iV5rYY4521723xm7DOTsIGa3; Mon, 12 Oct 2020 07:21:05 -0700
 X-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web12.42182.1602512420027305830
+ by mx.groups.io with SMTP id smtpd.web12.42187.1602512428927900524
  for <cip-dev@lists.cip-project.org>;
- Mon, 12 Oct 2020 07:20:20 -0700
+ Mon, 12 Oct 2020 07:20:29 -0700
 X-IronPort-AV: E=Sophos;i="5.77,366,1596466800"; 
-   d="scan'208";a="59351944"
+   d="scan'208";a="59351959"
 X-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 12 Oct 2020 23:20:19 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 12 Oct 2020 23:20:28 +0900
 X-Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 5938340BA087;
-	Mon, 12 Oct 2020 23:20:18 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 4695141D31C7;
+	Mon, 12 Oct 2020 23:20:27 +0900 (JST)
 From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [cip-dev] [RFC PATCH 4.19.y-cip 29/50] PCI: pci-epf-test: Add support to defer core initialization
-Date: Mon, 12 Oct 2020 15:19:12 +0100
-Message-Id: <20201012141933.9652-30-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [cip-dev] [RFC PATCH 4.19.y-cip 35/50] PCI: endpoint: functions/pci-epf-test: Print throughput information
+Date: Mon, 12 Oct 2020 15:19:18 +0100
+Message-Id: <20201012141933.9652-36-prabhakar.mahadev-lad.rj@bp.renesas.com>
 In-Reply-To: <20201012141933.9652-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20201012141933.9652-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: Bulk
@@ -49,209 +49,141 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: 7DeqxAxur6OTohMPJFB7gltKx4520388AA=
-Content-Type: multipart/mixed; boundary="couiD0A2pyWMQU0HHvCJ"
+X-Gm-Message-State: miY26lOefLMJwCFbJpSxwMMXx4520388AA=
+Content-Type: multipart/mixed; boundary="yO37nWxqTXFKDAjG5Yeq"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1602512464;
- bh=TOqlYj0dEbpKbscn8x1wzVJ2K6dvrbgHE43sIoGTcxM=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1602512465;
+ bh=vVhI3e1DaztJwRJvBmaGkvuzCAsJ+ixLH6EbjbB+Gv8=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=dFq5ySSHBZLxbFssbdbzZPJW623x4PBY/Cd8f1yfY2zzl+k4zjIK5vFPzYyyy8qcsRI
- kSqPd7MgfKBdcz0iWoh01qpMvXmZngjsO+/HinuXvoTI+KLPRfXL3SKLUWDqL7Kc54eGp
- x7SYBYgnEe4NQ807JXzK7E050OWLJZicvZE=
+ b=LkB9SSAqZzon6qUHOEahCc/7syAMHef/RQbrdpjxlQkjYKJqRQMdYOrZeXt6vXhhCVF
+ IEfghcFK6SxCN8sHaBNoHgMnnyySOBerFwqzgMydiRD1YJbj1BHv665SdQRxxIWCh5UwG
+ 3qMXPCNPz344GouY2iimVKPfvacSeUAVfK8=
 
---couiD0A2pyWMQU0HHvCJ
+--yO37nWxqTXFKDAjG5Yeq
 
-From: Vidya Sagar <vidyas@nvidia.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
 
-commit 5e50ee27d4a52a817ab152128c48690ec7c5cdf1 upstream.
+commit 5893c2e5353bb9a723d862d8b6ba8028a8f6a6eb upstream.
 
-Add support to defer core initialization for the endpoint mode of
-operation.
+Print throughput information in KB/s after every completed transfer,
+including information on whether DMA is used or not.
 
-This would enable support for implementations where the core
-initialization needs to be deferred until the PCIe reference clock is
-available from the host system.
-
-Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-[lorenzo.pieralisi@arm.com: commit log]
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+Tested-by: Alan Mikhak <alan.mikhak@sifive.com>
+[PL: Applied changes to pci-epf-test.c manually, always pass dma variable
+to pci_epf_test_print_rate() function as false since streaming DMA support
+is missing in EPF]
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/pci/endpoint/functions/pci-epf-test.c | 118 ++++++++++++------
- 1 file changed, 77 insertions(+), 41 deletions(-)
+ drivers/pci/endpoint/functions/pci-epf-test.c | 44 +++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
 diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-index 7dd40ab8b5d2..865a09d583df 100644
+index f6905c242194..8d9b5521ed50 100644
 --- a/drivers/pci/endpoint/functions/pci-epf-test.c
 +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-@@ -360,18 +360,6 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
- 			   msecs_to_jiffies(1));
- }
+@@ -73,6 +73,36 @@ static struct pci_epf_header test_header = {
  
--static int pci_epf_test_notifier(struct notifier_block *nb, unsigned long val,
--				 void *data)
--{
--	struct pci_epf *epf = container_of(nb, struct pci_epf, nb);
--	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
--
--	queue_delayed_work(kpcitest_workqueue, &epf_test->cmd_handler,
--			   msecs_to_jiffies(1));
--
--	return NOTIFY_OK;
--}
--
- static void pci_epf_test_unbind(struct pci_epf *epf)
- {
- 	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
-@@ -428,6 +416,78 @@ static int pci_epf_test_set_bar(struct pci_epf *epf)
- 	return 0;
- }
+ static size_t bar_size[] = { 512, 512, 1024, 16384, 131072, 1048576 };
  
-+static int pci_epf_test_core_init(struct pci_epf *epf)
++static void pci_epf_test_print_rate(const char *ops, u64 size,
++				    struct timespec64 *start,
++				    struct timespec64 *end, bool dma)
 +{
-+	struct pci_epf_header *header = epf->header;
-+	const struct pci_epc_features *epc_features;
-+	struct pci_epc *epc = epf->epc;
-+	struct device *dev = &epf->dev;
-+	bool msix_capable = false;
-+	bool msi_capable = true;
-+	int ret;
++	struct timespec64 ts;
++	u64 rate, ns;
 +
-+	epc_features = pci_epc_get_features(epc, epf->func_no);
-+	if (epc_features) {
-+		msix_capable = epc_features->msix_capable;
-+		msi_capable = epc_features->msi_capable;
++	ts = timespec64_sub(*end, *start);
++
++	/* convert both size (stored in 'rate') and time in terms of 'ns' */
++	ns = timespec64_to_ns(&ts);
++	rate = size * NSEC_PER_SEC;
++
++	/* Divide both size (stored in 'rate') and ns by a common factor */
++	while (ns > UINT_MAX) {
++		rate >>= 1;
++		ns >>= 1;
 +	}
 +
-+	ret = pci_epc_write_header(epc, epf->func_no, header);
-+	if (ret) {
-+		dev_err(dev, "Configuration header write failed\n");
-+		return ret;
-+	}
++	if (!ns)
++		return;
 +
-+	ret = pci_epf_test_set_bar(epf);
-+	if (ret)
-+		return ret;
++	/* calculate the rate */
++	do_div(rate, (uint32_t)ns);
 +
-+	if (msi_capable) {
-+		ret = pci_epc_set_msi(epc, epf->func_no, epf->msi_interrupts);
-+		if (ret) {
-+			dev_err(dev, "MSI configuration failed\n");
-+			return ret;
-+		}
-+	}
-+
-+	if (msix_capable) {
-+		ret = pci_epc_set_msix(epc, epf->func_no, epf->msix_interrupts);
-+		if (ret) {
-+			dev_err(dev, "MSI-X configuration failed\n");
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
++	pr_info("\n%s => Size: %llu bytes\t DMA: %s\t Time: %llu.%09u seconds\t"
++		"Rate: %llu KB/s\n", ops, size, dma ? "YES" : "NO",
++		(u64)ts.tv_sec, (u32)ts.tv_nsec, rate / 1024);
 +}
 +
-+static int pci_epf_test_notifier(struct notifier_block *nb, unsigned long val,
-+				 void *data)
-+{
-+	struct pci_epf *epf = container_of(nb, struct pci_epf, nb);
-+	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
-+	int ret;
-+
-+	switch (val) {
-+	case CORE_INIT:
-+		ret = pci_epf_test_core_init(epf);
-+		if (ret)
-+			return NOTIFY_BAD;
-+		break;
-+
-+	case LINK_UP:
-+		queue_delayed_work(kpcitest_workqueue, &epf_test->cmd_handler,
-+				   msecs_to_jiffies(1));
-+		break;
-+
-+	default:
-+		dev_err(&epf->dev, "Invalid EPF test notifier event\n");
-+		return NOTIFY_BAD;
-+	}
-+
-+	return NOTIFY_OK;
-+}
-+
- static int pci_epf_test_alloc_space(struct pci_epf *epf)
- {
- 	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
-@@ -496,14 +556,11 @@ static int pci_epf_test_bind(struct pci_epf *epf)
+ static int pci_epf_test_copy(struct pci_epf_test *epf_test)
  {
  	int ret;
- 	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
--	struct pci_epf_header *header = epf->header;
- 	const struct pci_epc_features *epc_features;
- 	enum pci_barno test_reg_bar = BAR_0;
+@@ -80,6 +110,7 @@ static int pci_epf_test_copy(struct pci_epf_test *epf_test)
+ 	void __iomem *dst_addr;
+ 	phys_addr_t src_phys_addr;
+ 	phys_addr_t dst_phys_addr;
++	struct timespec64 start, end;
+ 	struct pci_epf *epf = epf_test->epf;
+ 	struct device *dev = &epf->dev;
  	struct pci_epc *epc = epf->epc;
--	struct device *dev = &epf->dev;
- 	bool linkup_notifier = false;
--	bool msix_capable = false;
--	bool msi_capable = true;
-+	bool core_init_notifier = false;
- 
- 	if (WARN_ON_ONCE(!epc))
- 		return -EINVAL;
-@@ -511,8 +568,7 @@ static int pci_epf_test_bind(struct pci_epf *epf)
- 	epc_features = pci_epc_get_features(epc, epf->func_no);
- 	if (epc_features) {
- 		linkup_notifier = epc_features->linkup_notifier;
--		msix_capable = epc_features->msix_capable;
--		msi_capable = epc_features->msi_capable;
-+		core_init_notifier = epc_features->core_init_notifier;
- 		test_reg_bar = pci_epc_get_first_free_bar(epc_features);
- 		pci_epf_configure_bar(epf, epc_features);
- 	}
-@@ -520,34 +576,14 @@ static int pci_epf_test_bind(struct pci_epf *epf)
- 	epf_test->test_reg_bar = test_reg_bar;
- 	epf_test->epc_features = epc_features;
- 
--	ret = pci_epc_write_header(epc, epf->func_no, header);
--	if (ret) {
--		dev_err(dev, "Configuration header write failed\n");
--		return ret;
--	}
--
- 	ret = pci_epf_test_alloc_space(epf);
- 	if (ret)
- 		return ret;
- 
--	ret = pci_epf_test_set_bar(epf);
--	if (ret)
--		return ret;
--
--	if (msi_capable) {
--		ret = pci_epc_set_msi(epc, epf->func_no, epf->msi_interrupts);
--		if (ret) {
--			dev_err(dev, "MSI configuration failed\n");
--			return ret;
--		}
--	}
--
--	if (msix_capable) {
--		ret = pci_epc_set_msix(epc, epf->func_no, epf->msix_interrupts);
--		if (ret) {
--			dev_err(dev, "MSI-X configuration failed\n");
-+	if (!core_init_notifier) {
-+		ret = pci_epf_test_core_init(epf);
-+		if (ret)
- 			return ret;
--		}
+@@ -118,7 +149,10 @@ static int pci_epf_test_copy(struct pci_epf_test *epf_test)
+ 		goto err_dst_addr;
  	}
  
- 	if (linkup_notifier) {
++	ktime_get_ts64(&start);
+ 	memcpy(dst_addr, src_addr, reg->size);
++	ktime_get_ts64(&end);
++	pci_epf_test_print_rate("COPY", reg->size, &start, &end, false);
+ 
+ 	pci_epc_unmap_addr(epc, epf->func_no, dst_phys_addr);
+ 
+@@ -142,6 +176,7 @@ static int pci_epf_test_read(struct pci_epf_test *epf_test)
+ 	void *buf;
+ 	u32 crc32;
+ 	phys_addr_t phys_addr;
++	struct timespec64 start, end;
+ 	struct pci_epf *epf = epf_test->epf;
+ 	struct device *dev = &epf->dev;
+ 	struct pci_epc *epc = epf->epc;
+@@ -170,7 +205,11 @@ static int pci_epf_test_read(struct pci_epf_test *epf_test)
+ 		goto err_map_addr;
+ 	}
+ 
++	ktime_get_ts64(&start);
+ 	memcpy_fromio(buf, src_addr, reg->size);
++	ktime_get_ts64(&end);
++
++	pci_epf_test_print_rate("READ", reg->size, &start, &end, false);
+ 
+ 	crc32 = crc32_le(~0, buf, reg->size);
+ 	if (crc32 != reg->checksum)
+@@ -194,6 +233,7 @@ static int pci_epf_test_write(struct pci_epf_test *epf_test)
+ 	void __iomem *dst_addr;
+ 	void *buf;
+ 	phys_addr_t phys_addr;
++	struct timespec64 start, end;
+ 	struct pci_epf *epf = epf_test->epf;
+ 	struct device *dev = &epf->dev;
+ 	struct pci_epc *epc = epf->epc;
+@@ -225,7 +265,11 @@ static int pci_epf_test_write(struct pci_epf_test *epf_test)
+ 	get_random_bytes(buf, reg->size);
+ 	reg->checksum = crc32_le(~0, buf, reg->size);
+ 
++	ktime_get_ts64(&start);
+ 	memcpy_toio(dst_addr, buf, reg->size);
++	ktime_get_ts64(&end);
++
++	pci_epf_test_print_rate("WRITE", reg->size, &start, &end, false);
+ 
+ 	/*
+ 	 * wait 1ms inorder for the write to complete. Without this delay L3
 -- 
 2.17.1
 
 
---couiD0A2pyWMQU0HHvCJ
+--yO37nWxqTXFKDAjG5Yeq
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -259,13 +191,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#5549): https://lists.cip-project.org/g/cip-dev/message=
-/5549
-Mute This Topic: https://lists.cip-project.org/mt/77461705/4520388
+View/Reply Online (#5555): https://lists.cip-project.org/g/cip-dev/message=
+/5555
+Mute This Topic: https://lists.cip-project.org/mt/77461713/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---couiD0A2pyWMQU0HHvCJ--
+--yO37nWxqTXFKDAjG5Yeq--
