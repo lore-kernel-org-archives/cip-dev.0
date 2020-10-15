@@ -1,37 +1,39 @@
-Return-Path: <SRS0=DmvY=DW=lists.cip-project.org=bounce+64572+5584+4520388+8129055@kernel.org>
+Return-Path: <SRS0=KbGP=DW=lists.cip-project.org=bounce+64572+5585+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90368C433E7
-	for <cip-dev@archiver.kernel.org>; Thu, 15 Oct 2020 18:06:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9D6DC433E7
+	for <cip-dev@archiver.kernel.org>; Thu, 15 Oct 2020 18:09:51 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id ED68A20797
-	for <cip-dev@archiver.kernel.org>; Thu, 15 Oct 2020 18:06:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id AD46022240
+	for <cip-dev@archiver.kernel.org>; Thu, 15 Oct 2020 18:09:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="oySRPUQS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED68A20797
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="OMDbTwFf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD46022240
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5584+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id LrQuYY4521723xO8nhHPBhqY; Thu, 15 Oct 2020 11:06:34 -0700
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5585+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id y2BnYY4521723xu64OB6jaJ0; Thu, 15 Oct 2020 11:09:50 -0700
 X-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web11.18896.1602785193258647448
+ by mx.groups.io with SMTP id smtpd.web11.18966.1602785389220960802
  for <cip-dev@lists.cip-project.org>;
- Thu, 15 Oct 2020 11:06:33 -0700
+ Thu, 15 Oct 2020 11:09:49 -0700
 X-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id D346C1C0B77; Thu, 15 Oct 2020 20:06:28 +0200 (CEST)
-Date: Thu, 15 Oct 2020 20:06:28 +0200
+	id B30E41C0B77; Thu, 15 Oct 2020 20:09:47 +0200 (CEST)
+Date: Thu, 15 Oct 2020 20:09:47 +0200
 From: "Pavel Machek" <pavel@ucw.cz>
 To: cip-dev@lists.cip-project.org, wens@csie.org
-Subject: [cip-dev] Bluetooth CVEs deciphered?
-Message-ID: <20201015180628.GB14732@duo.ucw.cz>
+Subject: [cip-dev] CVE-2020-24490: backporting a2ec905d to 4.4.
+Message-ID: <20201015180947.GA15809@duo.ucw.cz>
+References: <20201015180628.GB14732@duo.ucw.cz>
 MIME-Version: 1.0
+In-Reply-To: <20201015180628.GB14732@duo.ucw.cz>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
@@ -39,267 +41,148 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: oj8rNJpKnV7rzJ9ZrHg0Mlcrx4520388AA=
-Content-Type: multipart/mixed; boundary="4xjEBK3zOHzawd2dfEYg"
+X-Gm-Message-State: BmUcGFmJ3y8rZlhkOJVN6uJdx4520388AA=
+Content-Type: multipart/mixed; boundary="wkK7tI86c8NRxluTzsC9"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1602785194;
- bh=y1qNr0l4sUFvA9zjyPfp0ayx6t7fyzTF11dq9nGwNLo=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1602785390;
+ bh=Rx1NODbLY5kz/cJFg879cnuGE9LsApFfXnwO1LhXKFM=;
  h=Content-Type:Date:From:Reply-To:Subject:To;
- b=oySRPUQSCJvXy2wSvTNa2uTs414mv2tt+lL1mqQTMiOV9Flj6W7KMFfJMfse+sp4Hfr
- iWfNUHQo9tMfg/Inod5Mof4EnAQdAGdgWO2UU8U+AiO2SnYZUrQsb1hxOL3kz9gpLuVlG
- JW3wYXtnFBWygRzp1pMd6gGJwo/CHpPWUdo=
+ b=OMDbTwFfzcSHfnmMoloI3tBuyqjuynqgcM5pCf3uiZDJ5qy/ewN61SsyR9LdiloxFov
+ pczrdNO9c7bpgV/T6Ggmnk8jAr+hd2S+1dno0uKE0uSgRTEAcTgEdxyJt/+3q8uNLS4s+
+ KSR35lPq5ji7AIaIGVKLFmdfLLytmONjTyA=
 
---4xjEBK3zOHzawd2dfEYg
+--wkK7tI86c8NRxluTzsC9
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="V0207lvV8h4k8FAm"
+	protocol="application/pgp-signature"; boundary="J2SCkAp4GZ/dPZZf"
 Content-Disposition: inline
 
---V0207lvV8h4k8FAm
+--J2SCkAp4GZ/dPZZf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
 
-I believe Google has good information which CVE corresponds to which
-patch, and I used that to improve cip-kernel-sec. Result is here. Can
-you take a look before I start fighting yml?
+    CVE-2020-24490: backporting a2ec905d to 4.4.
+
+Yes, "ext_adv" is always false here, so code could be simplified, but
+I believe this is good enough for -stable.
 
 Best regards,
 								Pavel
 
-diff --git a/issues/CVE-2020-12351.yml b/issues/CVE-2020-12351.yml
-index 63f8b60..b7f519b 100644
---- a/issues/CVE-2020-12351.yml
-+++ b/issues/CVE-2020-12351.yml
-@@ -1,37 +1,9 @@
--description: INTEL-SA-00435
-+description: |
-+  A heap-based type confusion affecting Linux kernel 4.8 and higher was di=
-scovered in net/bluetooth/l2cap_core.c.
-+advisory: |
- references:
--- https://www.intel.com/content/www/us/en/security-center/advisory/intel-s=
-a-00435.html
--comments:
--  debian/carnil: |-
--    CVE-2020-12351, CVE-2020-12352 and CVE-2020-24490 are three
--    issues covered by a set of commits/patches sent upstream but
--    there is no clear association from the CVEs to the commits. So
--    duplicate this entry for now to all three CVEs.
--    The commits are:
--    https://lore.kernel.org/linux-bluetooth/20200806181714.3216076-1-luiz.=
-dentz@gmail.com/
--    https://lore.kernel.org/linux-bluetooth/20200806181714.3216076-2-luiz.=
-dentz@gmail.com/
--    https://lore.kernel.org/linux-bluetooth/20200806181714.3216076-3-luiz.=
-dentz@gmail.com/
--    https://lore.kernel.org/linux-bluetooth/20200806181714.3216076-4-luiz.=
-dentz@gmail.com/
--    which are not yet in mainline, and
--    a2ec905d1e16 ("Bluetooth: fix kernel oops in
--    store_pending_adv_report") which is in 5.8 (and which was
--    backported to 5.7.13, 5.4.56 and 4.19.137).
--    The "fixed version" information in INTEL-SA-00435 is thus as
--    well contradictory as it mentions the issue to be fixed in 5.9
--    or later.
--  wens: |-
--    The four patches are already in net-next as of 2020-10-14 and should h=
-it
--    mainline soon. As far as I can tell, ("Bluetooth: A2MP: Fix not
--    initializing all members") fixes commits going all the way back to
--    3.6, when A2MP was added.
--    Regarding the culprit commits, the first commit is fixed by a2ec905d1e=
-16
--    ("Bluetooth: fix kernel oops in store_pending_adv_report"); the next
--    nine are the various "not fully initialized stack variables"; the last
--    two are the sk_filter and BT_HS ones, respectfully.
-+  https://github.com/google/security-research/security/advisories/GHSA-h63=
-7-c88j-47wq
-+aliases:
-+  GHSA-h637-c88j-47wq
- introduced-by:
--  mainline: [c215e9397b00b3045a668120ed7dbd89f2866e74, 6b44d9b8d96b37f72cc=
-d7335b32f386a67b7f1f4,
--    a28381dc9ca3e54b0678e2cd7c68c1afb2d7cc76, e072f5dab22e7bf0a10daf854acc=
-0fc271396ee7,
--    6113f84fc1a8962aed25f54a115b196e9aea151f, 8e2a0d92c56ec6955526a8b60838=
-c9b00f70540d,
--    aa09537d80bf7e6282103618eb496f03e76f2953, 0d868de9d8760c76f6d4c6c77793=
-5c05ef272caa,
--    8e05e3ba88adcf7ac644e6ef26676ea7c048a08c, 93c3e8f5c9a0e4dc6b6c93108dcf=
-3ec54ab1191a,
--    dbb50887c8f619fc5c3489783ebc3122bc134a31, 6d80dfd094a7b286e95cdcac79ef=
-eb7bbb4e226f]
-+  mainline: dbb50887c8f619fc5c3489783ebc3122bc134a31
-diff --git a/issues/CVE-2020-12352.yml b/issues/CVE-2020-12352.yml
-index 63f8b60..372e3ce 100644
---- a/issues/CVE-2020-12352.yml
-+++ b/issues/CVE-2020-12352.yml
-@@ -1,37 +1,13 @@
--description: INTEL-SA-00435
-+description: |
-+  BadChoice: Stack-Based Information Leak (BleedingTooth)
-+  A stack-based information leak affecting Linux kernel 3.6 and higher was=
- discovered in net/bluetooth/a2mp.c.
-+advisory: |
- references:
--- https://www.intel.com/content/www/us/en/security-center/advisory/intel-s=
-a-00435.html
--comments:
--  debian/carnil: |-
--    CVE-2020-12351, CVE-2020-12352 and CVE-2020-24490 are three
--    issues covered by a set of commits/patches sent upstream but
--    there is no clear association from the CVEs to the commits. So
--    duplicate this entry for now to all three CVEs.
--    The commits are:
--    https://lore.kernel.org/linux-bluetooth/20200806181714.3216076-1-luiz.=
-dentz@gmail.com/
--    https://lore.kernel.org/linux-bluetooth/20200806181714.3216076-2-luiz.=
-dentz@gmail.com/
--    https://lore.kernel.org/linux-bluetooth/20200806181714.3216076-3-luiz.=
-dentz@gmail.com/
--    https://lore.kernel.org/linux-bluetooth/20200806181714.3216076-4-luiz.=
-dentz@gmail.com/
--    which are not yet in mainline, and
--    a2ec905d1e16 ("Bluetooth: fix kernel oops in
--    store_pending_adv_report") which is in 5.8 (and which was
--    backported to 5.7.13, 5.4.56 and 4.19.137).
--    The "fixed version" information in INTEL-SA-00435 is thus as
--    well contradictory as it mentions the issue to be fixed in 5.9
--    or later.
--  wens: |-
--    The four patches are already in net-next as of 2020-10-14 and should h=
-it
--    mainline soon. As far as I can tell, ("Bluetooth: A2MP: Fix not
--    initializing all members") fixes commits going all the way back to
--    3.6, when A2MP was added.
--    Regarding the culprit commits, the first commit is fixed by a2ec905d1e=
-16
--    ("Bluetooth: fix kernel oops in store_pending_adv_report"); the next
--    nine are the various "not fully initialized stack variables"; the last
--    two are the sk_filter and BT_HS ones, respectfully.
-+  https://github.com/google/security-research/security/advisories/GHSA-7mh=
-3-gq28-gfrq
-+aliases:
-+  GHSA-7mh3-gq28-gfrq
- introduced-by:
--  mainline: [c215e9397b00b3045a668120ed7dbd89f2866e74, 6b44d9b8d96b37f72cc=
-d7335b32f386a67b7f1f4,
--    a28381dc9ca3e54b0678e2cd7c68c1afb2d7cc76, e072f5dab22e7bf0a10daf854acc=
-0fc271396ee7,
--    6113f84fc1a8962aed25f54a115b196e9aea151f, 8e2a0d92c56ec6955526a8b60838=
-c9b00f70540d,
--    aa09537d80bf7e6282103618eb496f03e76f2953, 0d868de9d8760c76f6d4c6c77793=
-5c05ef272caa,
--    8e05e3ba88adcf7ac644e6ef26676ea7c048a08c, 93c3e8f5c9a0e4dc6b6c93108dcf=
-3ec54ab1191a,
--    dbb50887c8f619fc5c3489783ebc3122bc134a31, 6d80dfd094a7b286e95cdcac79ef=
-eb7bbb4e226f]
-+  mainline:
-+    47f2d97d38816aaca94c9b6961c6eff1cfcd0bd6
-+    8e2a0d92c56ec6955526a8b60838c9b00f70540d
-+fixed-by:
-\ No newline at end of file
-diff --git a/issues/CVE-2020-24490.yml b/issues/CVE-2020-24490.yml
-index 63f8b60..8fe3617 100644
---- a/issues/CVE-2020-24490.yml
-+++ b/issues/CVE-2020-24490.yml
-@@ -1,37 +1,25 @@
--description: INTEL-SA-00435
-+description: |
-+  BadVibes: Heap-Based Buffer Overflow (BleedingTooth)
-+  A heap-based buffer overflow affecting Linux kernel 4.19 and higher was =
-discovered in net/bluetooth/hci_event.c. =20
-+advisory: |
-+ =20
- references:
--- https://www.intel.com/content/www/us/en/security-center/advisory/intel-s=
-a-00435.html
-+  https://github.com/google/security-research/security/advisories/GHSA-ccx=
-2-w2r4-x649
-+aliases:
-+  GHSA-ccx2-w2r4-x649
- comments:
--  debian/carnil: |-
--    CVE-2020-12351, CVE-2020-12352 and CVE-2020-24490 are three
--    issues covered by a set of commits/patches sent upstream but
--    there is no clear association from the CVEs to the commits. So
--    duplicate this entry for now to all three CVEs.
--    The commits are:
--    https://lore.kernel.org/linux-bluetooth/20200806181714.3216076-1-luiz.=
-dentz@gmail.com/
--    https://lore.kernel.org/linux-bluetooth/20200806181714.3216076-2-luiz.=
-dentz@gmail.com/
--    https://lore.kernel.org/linux-bluetooth/20200806181714.3216076-3-luiz.=
-dentz@gmail.com/
--    https://lore.kernel.org/linux-bluetooth/20200806181714.3216076-4-luiz.=
-dentz@gmail.com/
--    which are not yet in mainline, and
--    a2ec905d1e16 ("Bluetooth: fix kernel oops in
--    store_pending_adv_report") which is in 5.8 (and which was
--    backported to 5.7.13, 5.4.56 and 4.19.137).
--    The "fixed version" information in INTEL-SA-00435 is thus as
--    well contradictory as it mentions the issue to be fixed in 5.9
--    or later.
--  wens: |-
--    The four patches are already in net-next as of 2020-10-14 and should h=
-it
--    mainline soon. As far as I can tell, ("Bluetooth: A2MP: Fix not
--    initializing all members") fixes commits going all the way back to
--    3.6, when A2MP was added.
--    Regarding the culprit commits, the first commit is fixed by a2ec905d1e=
-16
--    ("Bluetooth: fix kernel oops in store_pending_adv_report"); the next
--    nine are the various "not fully initialized stack variables"; the last
--    two are the sk_filter and BT_HS ones, respectfully.
-+  Pavel Machek:
-+    This actually looks like most severe from the recent bluetooth stuff.
+
+
+diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
+index 03319ab8a7c6..3794616cd87b 100644
+--- a/net/bluetooth/hci_event.c
++++ b/net/bluetooth/hci_event.c
+@@ -1133,6 +1133,9 @@ static void store_pending_adv_report(struct hci_dev *=
+hdev, bdaddr_t *bdaddr,
+ {
+ 	struct discovery_state *d =3D &hdev->discovery;
+=20
++	if (len > HCI_MAX_AD_LENGTH)
++		return;
 +
-+    Fix is not one-liner but also not scary. Adds checking at expected pla=
-ces.
- introduced-by:
--  mainline: [c215e9397b00b3045a668120ed7dbd89f2866e74, 6b44d9b8d96b37f72cc=
-d7335b32f386a67b7f1f4,
--    a28381dc9ca3e54b0678e2cd7c68c1afb2d7cc76, e072f5dab22e7bf0a10daf854acc=
-0fc271396ee7,
--    6113f84fc1a8962aed25f54a115b196e9aea151f, 8e2a0d92c56ec6955526a8b60838=
-c9b00f70540d,
--    aa09537d80bf7e6282103618eb496f03e76f2953, 0d868de9d8760c76f6d4c6c77793=
-5c05ef272caa,
--    8e05e3ba88adcf7ac644e6ef26676ea7c048a08c, 93c3e8f5c9a0e4dc6b6c93108dcf=
-3ec54ab1191a,
--    dbb50887c8f619fc5c3489783ebc3122bc134a31, 6d80dfd094a7b286e95cdcac79ef=
-eb7bbb4e226f]
-+  mainline:=20
-+    c215e9397b00b3045a668120ed7dbd89f2866e74
-+    b2cc9761f144e8ef714be8c590603073b80ddc13
-+fixed-by:
-+  mainline:
-+    a2ec905d1e160a33b2e210e45ad30445ef26ce0e
-+  4.19:
-+    5df9e5613d1c51e16b1501a4c75e139fbbe0fb6c
-+    -- needs to be backported to 4.4?
-+   =20
-\ No newline at end of file
+ 	bacpy(&d->last_adv_addr, bdaddr);
+ 	d->last_adv_addr_type =3D bdaddr_type;
+ 	d->last_adv_rssi =3D rssi;
+@@ -4743,7 +4746,8 @@ static struct hci_conn *check_pending_le_conn(struct =
+hci_dev *hdev,
+=20
+ static void process_adv_report(struct hci_dev *hdev, u8 type, bdaddr_t *bd=
+addr,
+ 			       u8 bdaddr_type, bdaddr_t *direct_addr,
+-			       u8 direct_addr_type, s8 rssi, u8 *data, u8 len)
++			       u8 direct_addr_type, s8 rssi, u8 *data, u8 len,
++			       bool ext_adv)
+ {
+ 	struct discovery_state *d =3D &hdev->discovery;
+ 	struct smp_irk *irk;
+@@ -4752,6 +4756,11 @@ static void process_adv_report(struct hci_dev *hdev,=
+ u8 type, bdaddr_t *bdaddr,
+ 	u32 flags;
+ 	u8 *ptr, real_len;
+=20
++	if (!ext_adv && len > HCI_MAX_AD_LENGTH) {
++		BT_ERR_RATELIMITED("legacy adv larger than 31 bytes");
++		return;
++	}
++
+ 	/* Find the end of the data in case the report contains padded zero
+ 	 * bytes at the end causing an invalid length value.
+ 	 *
+@@ -4812,7 +4821,7 @@ static void process_adv_report(struct hci_dev *hdev, =
+u8 type, bdaddr_t *bdaddr,
+ 	 */
+ 	conn =3D check_pending_le_conn(hdev, bdaddr, bdaddr_type, type,
+ 								direct_addr);
+-	if (conn && type =3D=3D LE_ADV_IND) {
++	if (!ext_adv && conn && type =3D=3D LE_ADV_IND && len <=3D HCI_MAX_AD_LEN=
+GTH) {
+ 		/* Store report for later inclusion by
+ 		 * mgmt_device_connected
+ 		 */
+@@ -4866,7 +4875,7 @@ static void process_adv_report(struct hci_dev *hdev, =
+u8 type, bdaddr_t *bdaddr,
+ 	 * event or send an immediate device found event if the data
+ 	 * should not be stored for later.
+ 	 */
+-	if (!has_pending_adv_report(hdev)) {
++	if (!ext_adv &&	!has_pending_adv_report(hdev)) {
+ 		/* If the report will trigger a SCAN_REQ store it for
+ 		 * later merging.
+ 		 */
+@@ -4901,7 +4910,8 @@ static void process_adv_report(struct hci_dev *hdev, =
+u8 type, bdaddr_t *bdaddr,
+ 		/* If the new report will trigger a SCAN_REQ store it for
+ 		 * later merging.
+ 		 */
+-		if (type =3D=3D LE_ADV_IND || type =3D=3D LE_ADV_SCAN_IND) {
++		if (!ext_adv && (type =3D=3D LE_ADV_IND ||
++				 type =3D=3D LE_ADV_SCAN_IND)) {
+ 			store_pending_adv_report(hdev, bdaddr, bdaddr_type,
+ 						 rssi, flags, data, len);
+ 			return;
+@@ -4940,7 +4950,7 @@ static void hci_le_adv_report_evt(struct hci_dev *hde=
+v, struct sk_buff *skb)
+ 		rssi =3D ev->data[ev->length];
+ 		process_adv_report(hdev, ev->evt_type, &ev->bdaddr,
+ 				   ev->bdaddr_type, NULL, 0, rssi,
+-				   ev->data, ev->length);
++				   ev->data, ev->length, false);
+=20
+ 		ptr +=3D sizeof(*ev) + ev->length + 1;
+ 	}
+@@ -5137,7 +5147,8 @@ static void hci_le_direct_adv_report_evt(struct hci_d=
+ev *hdev,
+=20
+ 		process_adv_report(hdev, ev->evt_type, &ev->bdaddr,
+ 				   ev->bdaddr_type, &ev->direct_addr,
+-				   ev->direct_addr_type, ev->rssi, NULL, 0);
++				   ev->direct_addr_type, ev->rssi, NULL, 0,
++				   false);
+=20
+ 		ptr +=3D sizeof(*ev);
+ 	}
+
 
 --=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+http://www.livejournal.com/~pavelmachek
 
---V0207lvV8h4k8FAm
+--J2SCkAp4GZ/dPZZf
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCX4iPpAAKCRAw5/Bqldv6
-8rSAAJ9S5na2S5aMl88fv16mLSal/SiX5wCfcomZpKrltJG4li7a79oR75yC5SQ=
-=hTJW
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCX4iQawAKCRAw5/Bqldv6
+8mHvAKC4LqfQBmK17MQdC/VGXI8DdqSDDwCgosNO9gx9oNnZKbk/+g5MnKFgjg0=
+=jiCX
 -----END PGP SIGNATURE-----
 
---V0207lvV8h4k8FAm--
+--J2SCkAp4GZ/dPZZf--
 
---4xjEBK3zOHzawd2dfEYg
+--wkK7tI86c8NRxluTzsC9
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -307,13 +190,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#5584): https://lists.cip-project.org/g/cip-dev/message=
-/5584
-Mute This Topic: https://lists.cip-project.org/mt/77534365/4520388
+View/Reply Online (#5585): https://lists.cip-project.org/g/cip-dev/message=
+/5585
+Mute This Topic: https://lists.cip-project.org/mt/77534428/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---4xjEBK3zOHzawd2dfEYg--
+--wkK7tI86c8NRxluTzsC9--
