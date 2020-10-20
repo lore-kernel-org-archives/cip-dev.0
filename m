@@ -1,4 +1,4 @@
-Return-Path: <SRS0=yNoG=D3=lists.cip-project.org=bounce+64572+5608+4520388+8129055@kernel.org>
+Return-Path: <SRS0=cQOh=D3=lists.cip-project.org=bounce+64572+5611+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -8,39 +8,39 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	T_TVD_MIME_NO_HEADERS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C000C388F7
-	for <cip-dev@archiver.kernel.org>; Tue, 20 Oct 2020 14:57:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B7BBC4363D
+	for <cip-dev@archiver.kernel.org>; Tue, 20 Oct 2020 14:57:58 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 6BA1A21D7B
-	for <cip-dev@archiver.kernel.org>; Tue, 20 Oct 2020 14:57:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 862B52222C
+	for <cip-dev@archiver.kernel.org>; Tue, 20 Oct 2020 14:57:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="CqG7qyvE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BA1A21D7B
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="pRdGaKoy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 862B52222C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5608+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id mrmIYY4521723xlVrfGlVgla; Tue, 20 Oct 2020 07:57:53 -0700
-X-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [])
- by mx.groups.io with SMTP id smtpd.web09.8061.1603205857454945281
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5611+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id NSbpYY4521723xFdWr0u7VVB; Tue, 20 Oct 2020 07:57:57 -0700
+X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [])
+ by mx.groups.io with SMTP id smtpd.web10.7918.1603205873822040734
  for <cip-dev@lists.cip-project.org>;
- Tue, 20 Oct 2020 07:57:52 -0700
+ Tue, 20 Oct 2020 07:57:56 -0700
 X-IronPort-AV: E=Sophos;i="5.77,397,1596466800"; 
-   d="scan'208";a="60088197"
+   d="scan'208";a="60303495"
 X-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 20 Oct 2020 23:57:51 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 20 Oct 2020 23:57:56 +0900
 X-Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8BEE6433DEA1;
-	Tue, 20 Oct 2020 23:57:50 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 20788433DEA2;
+	Tue, 20 Oct 2020 23:57:54 +0900 (JST)
 From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [cip-dev] [PATCH 4.19.y-cip 11/26] PCI: pci-epf-test: Use pci_epc_get_features() to get EPC features
-Date: Tue, 20 Oct 2020 15:57:17 +0100
-Message-Id: <20201020145732.30343-12-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [cip-dev] [PATCH 4.19.y-cip 14/26] PCI: designware-plat: Remove setting epc->features in Designware plat EP driver
+Date: Tue, 20 Oct 2020 15:57:20 +0100
+Message-Id: <20201020145732.30343-15-prabhakar.mahadev-lad.rj@bp.renesas.com>
 In-Reply-To: <20201020145732.30343-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20201020145732.30343-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: Bulk
@@ -49,221 +49,59 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: f1GRyD1VOPVc5WHCESXjAek3x4520388AA=
-Content-Type: multipart/mixed; boundary="GP1GRIn4sg3hd0iOjrre"
+X-Gm-Message-State: pdHMIuUKh0BXoHGs08BWuecCx4520388AA=
+Content-Type: multipart/mixed; boundary="7juXSgBGCzMz8iSLQpUb"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1603205873;
- bh=ja3ZzVxnnynIvQeiiQGdqpAnigZzChXYSLLx9oxzmb0=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1603205877;
+ bh=39yDlEPuGuwunhK1rHcJLjbSitXhsU0oOgDk/e3Up8c=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=CqG7qyvE7uPAFbgLgx7jzb5p4/By+44sflvPatn+Tq6i97t1khvLO83Hdz6vGx4fGv+
- zJRpUfJBfbbOfZnI4Lq7Kq8gu8h+nwiCfMFTi0qncR9sqgA1dSmdzKrNeeV35KHhWocWl
- XWmMCMFmF98jsi3jx8xDQdDibvi12SCFwEo=
+ b=pRdGaKoyc+SRgoLzPN61tutNPZ0AyVq7vcbP52rYf9QNJu89I5fjP625cwAByEzuQWp
+ Mm3MsOwBV519v7IqOuO6DXx2aVCaKKMZaOltKmZ+HHAx+/trAEVGwDZJW+aYF7G1LfnSv
+ tgmeTi2iFWAVGNpUqTCQo2ttbo1KFG/bjoI=
 
---GP1GRIn4sg3hd0iOjrre
+--7juXSgBGCzMz8iSLQpUb
 
 From: Kishon Vijay Abraham I <kishon@ti.com>
 
-commit 2c04c5b8eef797dca99699cfb55ff42dd3c12c23 upstream.
+commit 92f2b028418c6f59f92703eed111136ca0d22c39 upstream.
 
-Use pci_epc_get_features() to get EPC features such as linkup
-notifier support, MSI/MSIX capable, BAR configuration etc and use it
-for configuring pci-epf-test. Since these features are now obtained
-directly from EPC driver, remove pci_epf_test_data which was initially
-added to have EPC features in endpoint function driver.
+Now that pci-epf-test uses get_features callback and
+dw_plat_pcie_epc_features in Designware plat EP driver already indicates
+it doesn't support linkup notification and is MSIX capable, remove setting
+epc->features which is not used anymore by the endpoint function driver.
 
 Tested-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/pci/endpoint/functions/pci-epf-test.c | 87 ++++++++++++-------
- 1 file changed, 54 insertions(+), 33 deletions(-)
+ drivers/pci/controller/dwc/pcie-designware-plat.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-index a385927a9239..d0b91da49bf4 100644
---- a/drivers/pci/endpoint/functions/pci-epf-test.c
-+++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-@@ -47,9 +47,8 @@ struct pci_epf_test {
- 	void			*reg[6];
- 	struct pci_epf		*epf;
- 	enum pci_barno		test_reg_bar;
--	bool			linkup_notifier;
--	bool			msix_available;
- 	struct delayed_work	cmd_handler;
-+	const struct pci_epc_features *epc_features;
- };
+diff --git a/drivers/pci/controller/dwc/pcie-designware-plat.c b/drivers/pci/controller/dwc/pcie-designware-plat.c
+index bd0516afc86f..3be87126aef3 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-plat.c
++++ b/drivers/pci/controller/dwc/pcie-designware-plat.c
+@@ -70,14 +70,10 @@ static const struct dw_pcie_ops dw_pcie_ops = {
+ static void dw_plat_pcie_ep_init(struct dw_pcie_ep *ep)
+ {
+ 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+-	struct pci_epc *epc = ep->epc;
+ 	enum pci_barno bar;
  
- struct pci_epf_test_reg {
-@@ -71,11 +70,6 @@ static struct pci_epf_header test_header = {
- 	.interrupt_pin	= PCI_INTERRUPT_INTA,
- };
- 
--struct pci_epf_test_data {
--	enum pci_barno	test_reg_bar;
--	bool		linkup_notifier;
--};
+ 	for (bar = BAR_0; bar <= BAR_5; bar++)
+ 		dw_pcie_ep_reset_bar(pci, bar);
 -
- static size_t bar_size[] = { 512, 512, 1024, 16384, 131072, 1048576 };
- 
- static int pci_epf_test_copy(struct pci_epf_test *epf_test)
-@@ -402,10 +396,16 @@ static int pci_epf_test_set_bar(struct pci_epf *epf)
- 	struct device *dev = &epf->dev;
- 	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
- 	enum pci_barno test_reg_bar = epf_test->test_reg_bar;
-+	const struct pci_epc_features *epc_features;
-+
-+	epc_features = epf_test->epc_features;
- 
- 	for (bar = BAR_0; bar <= BAR_5; bar++) {
- 		epf_bar = &epf->bar[bar];
- 
-+		if (!!(epc_features->reserved_bar & (1 << bar)))
-+			continue;
-+
- 		ret = pci_epc_set_bar(epc, epf->func_no, epf_bar);
- 		if (ret) {
- 			pci_epf_free_space(epf, epf_test->reg[bar], bar);
-@@ -433,6 +433,9 @@ static int pci_epf_test_alloc_space(struct pci_epf *epf)
- 	void *base;
- 	int bar;
- 	enum pci_barno test_reg_bar = epf_test->test_reg_bar;
-+	const struct pci_epc_features *epc_features;
-+
-+	epc_features = epf_test->epc_features;
- 
- 	base = pci_epf_alloc_space(epf, sizeof(struct pci_epf_test_reg),
- 				   test_reg_bar);
-@@ -446,6 +449,10 @@ static int pci_epf_test_alloc_space(struct pci_epf *epf)
- 		epf_bar = &epf->bar[bar];
- 		if (bar == test_reg_bar)
- 			continue;
-+
-+		if (!!(epc_features->reserved_bar & (1 << bar)))
-+			continue;
-+
- 		base = pci_epf_alloc_space(epf, bar_size[bar], bar);
- 		if (!base)
- 			dev_err(dev, "Failed to allocate space for BAR%d\n",
-@@ -458,25 +465,50 @@ static int pci_epf_test_alloc_space(struct pci_epf *epf)
- 	return 0;
+-	epc->features |= EPC_FEATURE_NO_LINKUP_NOTIFIER;
+-	epc->features |= EPC_FEATURE_MSIX_AVAILABLE;
  }
  
-+static void pci_epf_configure_bar(struct pci_epf *epf,
-+				  const struct pci_epc_features *epc_features)
-+{
-+	struct pci_epf_bar *epf_bar;
-+	bool bar_fixed_64bit;
-+	int i;
-+
-+	for (i = BAR_0; i <= BAR_5; i++) {
-+		epf_bar = &epf->bar[i];
-+		bar_fixed_64bit = !!(epc_features->bar_fixed_64bit & (1 << i));
-+		if (bar_fixed_64bit)
-+			epf_bar->flags |= PCI_BASE_ADDRESS_MEM_TYPE_64;
-+		if (epc_features->bar_fixed_size[i])
-+			bar_size[i] = epc_features->bar_fixed_size[i];
-+	}
-+}
-+
- static int pci_epf_test_bind(struct pci_epf *epf)
- {
- 	int ret;
- 	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
- 	struct pci_epf_header *header = epf->header;
-+	const struct pci_epc_features *epc_features;
-+	enum pci_barno test_reg_bar = BAR_0;
- 	struct pci_epc *epc = epf->epc;
- 	struct device *dev = &epf->dev;
-+	bool linkup_notifier = false;
-+	bool msix_capable = false;
-+	bool msi_capable = true;
- 
- 	if (WARN_ON_ONCE(!epc))
- 		return -EINVAL;
- 
--	if (epc->features & EPC_FEATURE_NO_LINKUP_NOTIFIER)
--		epf_test->linkup_notifier = false;
--	else
--		epf_test->linkup_notifier = true;
--
--	epf_test->msix_available = epc->features & EPC_FEATURE_MSIX_AVAILABLE;
-+	epc_features = pci_epc_get_features(epc, epf->func_no);
-+	if (epc_features) {
-+		linkup_notifier = epc_features->linkup_notifier;
-+		msix_capable = epc_features->msix_capable;
-+		msi_capable = epc_features->msi_capable;
-+		test_reg_bar = pci_epc_get_first_free_bar(epc_features);
-+		pci_epf_configure_bar(epf, epc_features);
-+	}
- 
--	epf_test->test_reg_bar = EPC_FEATURE_GET_BAR(epc->features);
-+	epf_test->test_reg_bar = test_reg_bar;
-+	epf_test->epc_features = epc_features;
- 
- 	ret = pci_epc_write_header(epc, epf->func_no, header);
- 	if (ret) {
-@@ -492,13 +524,15 @@ static int pci_epf_test_bind(struct pci_epf *epf)
- 	if (ret)
- 		return ret;
- 
--	ret = pci_epc_set_msi(epc, epf->func_no, epf->msi_interrupts);
--	if (ret) {
--		dev_err(dev, "MSI configuration failed\n");
--		return ret;
-+	if (msi_capable) {
-+		ret = pci_epc_set_msi(epc, epf->func_no, epf->msi_interrupts);
-+		if (ret) {
-+			dev_err(dev, "MSI configuration failed\n");
-+			return ret;
-+		}
- 	}
- 
--	if (epf_test->msix_available) {
-+	if (msix_capable) {
- 		ret = pci_epc_set_msix(epc, epf->func_no, epf->msix_interrupts);
- 		if (ret) {
- 			dev_err(dev, "MSI-X configuration failed\n");
-@@ -506,7 +540,7 @@ static int pci_epf_test_bind(struct pci_epf *epf)
- 		}
- 	}
- 
--	if (!epf_test->linkup_notifier)
-+	if (!linkup_notifier)
- 		queue_work(kpcitest_workqueue, &epf_test->cmd_handler.work);
- 
- 	return 0;
-@@ -523,17 +557,6 @@ static int pci_epf_test_probe(struct pci_epf *epf)
- {
- 	struct pci_epf_test *epf_test;
- 	struct device *dev = &epf->dev;
--	const struct pci_epf_device_id *match;
--	struct pci_epf_test_data *data;
--	enum pci_barno test_reg_bar = BAR_0;
--	bool linkup_notifier = true;
--
--	match = pci_epf_match_device(pci_epf_test_ids, epf);
--	data = (struct pci_epf_test_data *)match->driver_data;
--	if (data) {
--		test_reg_bar = data->test_reg_bar;
--		linkup_notifier = data->linkup_notifier;
--	}
- 
- 	epf_test = devm_kzalloc(dev, sizeof(*epf_test), GFP_KERNEL);
- 	if (!epf_test)
-@@ -541,8 +564,6 @@ static int pci_epf_test_probe(struct pci_epf *epf)
- 
- 	epf->header = &test_header;
- 	epf_test->epf = epf;
--	epf_test->test_reg_bar = test_reg_bar;
--	epf_test->linkup_notifier = linkup_notifier;
- 
- 	INIT_DELAYED_WORK(&epf_test->cmd_handler, pci_epf_test_cmd_handler);
- 
+ static int dw_plat_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
 -- 
 2.17.1
 
 
---GP1GRIn4sg3hd0iOjrre
+--7juXSgBGCzMz8iSLQpUb
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -271,13 +109,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#5608): https://lists.cip-project.org/g/cip-dev/message=
-/5608
-Mute This Topic: https://lists.cip-project.org/mt/77683525/4520388
+View/Reply Online (#5611): https://lists.cip-project.org/g/cip-dev/message=
+/5611
+Mute This Topic: https://lists.cip-project.org/mt/77683528/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---GP1GRIn4sg3hd0iOjrre--
+--7juXSgBGCzMz8iSLQpUb--
