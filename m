@@ -1,166 +1,139 @@
-Return-Path: <SRS0=DZv+=D3=lists.cip-project.org=bounce+64572+5596+4520388+8129055@kernel.org>
+Return-Path: <SRS0=57pI=D3=lists.cip-project.org=bounce+64572+5597+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MIME_HEADER_CTYPE_ONLY,SPF_HELO_NONE,SPF_PASS,T_TVD_MIME_NO_HEADERS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D942C5517A
-	for <cip-dev@archiver.kernel.org>; Tue, 20 Oct 2020 13:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DE3AC388F7
+	for <cip-dev@archiver.kernel.org>; Tue, 20 Oct 2020 14:57:40 +0000 (UTC)
 Received: from web01.groups.io (web01.groups.io [66.175.222.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 82C7122475
-	for <cip-dev@archiver.kernel.org>; Tue, 20 Oct 2020 13:01:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 24035206DB
+	for <cip-dev@archiver.kernel.org>; Tue, 20 Oct 2020 14:57:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="FVzxugSh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82C7122475
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="f/Fyd2Gv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24035206DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5596+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id JyKnYY4521723x5kOTTqeKFR; Tue, 20 Oct 2020 06:01:34 -0700
-X-Received: from JPN01-TY1-obe.outbound.protection.outlook.com (JPN01-TY1-obe.outbound.protection.outlook.com [40.107.140.113])
- by mx.groups.io with SMTP id smtpd.web10.5706.1603198893275194077
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5597+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id vhqrYY4521723xNCJqeSgHHP; Tue, 20 Oct 2020 07:57:38 -0700
+X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web11.8062.1603205857220566607
  for <cip-dev@lists.cip-project.org>;
- Tue, 20 Oct 2020 06:01:33 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LHl1BpdVecjG4nFEHFszdrH7B9GnqapcE0L/pOWSkXEshkNZsBN1z74SWGMdBDj6fph+fKOAfBcbBQ4D/ABslRZbd90++neATo4xbKwke74PtpB123XvBJ7J22ATli2PRZ9sKoAOwsoD3Ne/ZX8RVCcsyQO0W+v0wy+1xoxH4q+nP+4UGwp5yYwYvdO1b392Ys2aQQ4V4K70lCeRcqMaHx/y5aY4luqTwqnK4msOQOA5DE3J8+G3e7MHQLw2qx09iKKV25zst/neDc3Fv4MuGPKt3uHzrhHih4Lp2CP5LvFwFGOuXwkgIRtIWKKmyCbVdcIWYXzZWsBvumB660JIdQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=U+AlG/3Uq42PTCXpSgPShwYp9ftXVo4tn5r9y1QNTL4=;
- b=JYTDD4yVwSdU7peA+GtlAdHlKRu9lKEbGvO70Dzr4xQzFO99b+vPdrhAm9C36a8ePstLLfeO/bO3UW2L1Xl4cxOXoUi1IvolOAolFRPpvdheXq+oVQyvYnTma5ml1/ma0RJyBr6uznyWUThLvpydC97MqZ+jutLlVZ1KdMVL9+IpEJZPMiR++hQGHdjHi0mo6m01lNU8EK1mNZD+gND9ISsANTTohAC4QjL1WuTHR8134N69klLix5W7l6htwa6Tefn88e+aEeVmOF2ELsKCE2lJEtL8Fa8N7QhAXC/yVTEAPDdW8cSIsP9IhpPDUN5QOwNFynlj7m3c8hc9Hcq2xQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-X-Received: from OSBPR01MB5048.jpnprd01.prod.outlook.com (2603:1096:604:38::10)
- by OSBPR01MB5223.jpnprd01.prod.outlook.com (2603:1096:604:7f::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3477.25; Tue, 20 Oct
- 2020 13:01:30 +0000
-X-Received: from OSBPR01MB5048.jpnprd01.prod.outlook.com
- ([fe80::18f:c7ea:e9e4:db70]) by OSBPR01MB5048.jpnprd01.prod.outlook.com
- ([fe80::18f:c7ea:e9e4:db70%3]) with mapi id 15.20.3477.028; Tue, 20 Oct 2020
- 13:01:30 +0000
+ Tue, 20 Oct 2020 07:57:37 -0700
+X-IronPort-AV: E=Sophos;i="5.77,397,1596466800"; 
+   d="scan'208";a="60303457"
+X-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 20 Oct 2020 23:57:35 +0900
+X-Received: from localhost.localdomain (unknown [10.226.36.204])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 08B65433DEA0;
+	Tue, 20 Oct 2020 23:57:33 +0900 (JST)
 From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-CC: Pavel Machek <pavel@denx.de>, Nobuhiro Iwamatsu
-	<nobuhiro1.iwamatsu@toshiba.co.jp>, Biju Das <biju.das.jz@bp.renesas.com>
-Subject: Re: [cip-dev] If you are using PCIe EP, speak up was Re: [RFC PATCH 4.19.y-cip 00/50] Add PCIe EP support for Renesas R-Car Gen3 and RZ/G2x
-Thread-Topic: [cip-dev] If you are using PCIe EP, speak up was Re: [RFC PATCH
- 4.19.y-cip 00/50] Add PCIe EP support for Renesas R-Car Gen3 and RZ/G2x
-Thread-Index: AQHWoKK3exH1hEUZukOZtIVkSqUhZ6mW2nsAgAlFTmCAAFCAAIAAEBAw
-Date: Tue, 20 Oct 2020 13:01:30 +0000
-Message-ID: 
- <OSBPR01MB504893210A9C263F008A8F04AA1F0@OSBPR01MB5048.jpnprd01.prod.outlook.com>
-References: <20201012141933.9652-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20201014093914.GB1866@amd>
- <OSBPR01MB50488430A9BE629033D6990FAA1F0@OSBPR01MB5048.jpnprd01.prod.outlook.com>
- <20201020120144.GA15948@duo.ucw.cz>
-In-Reply-To: <20201020120144.GA15948@duo.ucw.cz>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 483ad426-d144-4db3-4b58-08d874f84376
-x-ms-traffictypediagnostic: OSBPR01MB5223:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: 
- <OSBPR01MB5223DBA7439AFC72E2018075AA1F0@OSBPR01MB5223.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 
- BpaKGvBOU58KFP+AT+QxacbFA2Z3QoVDJ6r8RVr3oo23jpQNpByxpuUOH9HHtaI40G4cbej7AaMew2g3K8yqtHlNsegzkmUzr78WtyGaJXy+uhaoj3YwSwy21rk+gII71tZxc25PdVK9Rvw8+Kcd0xLlE6dptsMJeFogGm7UBlkOVJqFcFiKSRA9BjJ8n4+VUNocnbWbBe/k85t2iVgkr77tpYr5GUl1Z+t57VZVwTVRbBkIb/PWcFMOB0SLNtedhdQ35X7alae7I4TJDHfc/kIozdDTDPDTobNfTAqhq+G4GYC4GapChlX/iQci11JSLVI3Y8/dvPNdoiSQYJh3wQ==
-x-ms-exchange-antispam-messagedata: 
- onICjhyPQn+LEC12YRIfkUeB1LIw3Qy5sJJiMbtndpObb6V3isRV7cYrXwgaKjG5KURKrrfJV3QQQhAYXA1Bb8eo9QtJSiWB5h4wsAewFuSNcOg94502yUJz9zIuOpxDjUJVq0JTVAwi657VBquPOmrNZVqV3yee8GWWKzOlRikIh90hsNWHRJ5WSZb48uQ6e91SuL9EH9dbJNejmNiJwRcLlXr/RpoklL/RVepCtdE0rtUHXKBv9GqtSkPpb+QFNy0GR39Cchx7+Gv2EtOXI5XFFQfCdwQYM4GNVkWbqKFVekUQ3RpYVjC8y9l+1lslDyGlQ6B0zloagCxxjN14STZPLRLA5RzanRu5oSIVoaz3lgaY3giHO8Q0PDQ1sxtFH4S9k8RcJoDZc8V7jljrRwozlu3a6L/PnjxRBYFLdnepybguPSGBJ6ymDyztdV2tf3/ZfaeQnwGQSch5/FyVxybwa3j0knp48qSu0s5iHfwBTYU+oFgkugDAxGpdhPZfkka5GSOsy8dU97hYzfO20Daf/c7F4PHhwqOBZx86hBmir6/E50eVEQHZgaX+CoXxIN9wt2ZA328395DUbiKLxg/2GWJdwYQBzL3pvbKYjyvgWJMbF3imE1NZ9ZieW2qCFQo+o0cLu/oV5Vi26hIOMA==
-MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSBPR01MB5048.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 483ad426-d144-4db3-4b58-08d874f84376
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Oct 2020 13:01:30.3853
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: DOn7OsGv6vAgnGIkf2L5NYcJhdRIK7ATgPIrBJiK3vjd7iGSnySDGlBOBgV3AyVH1d2pGMQx3jCSIzTFRE8Os78HSF4TWpN+yaBltF++p4g9YlYRjETUDRwCsLw6Px7A
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB5223
+To: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Pavel Machek <pavel@denx.de>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [cip-dev] [PATCH 4.19.y-cip 00/26] Fixes and extension to PCIe EPF
+Date: Tue, 20 Oct 2020 15:57:06 +0100
+Message-Id: <20201020145732.30343-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: gJAG9jdShFt9RAU6NSAFWmREx4520388AA=
-Content-Type: multipart/mixed; boundary="G8OdVROJYDGdWzW1sIb6"
+X-Gm-Message-State: 7zMjpZsRrCX0of65m0KJfbcjx4520388AA=
+Content-Type: multipart/mixed; boundary="3mzqSWALIJ2n1V1N4WSD"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1603198894;
- bh=Lz8N2AbR49wgug0jPr+XCC3Fe/y1xQKugRdJY60zwuA=;
- h=CC:Content-Type:Date:From:Reply-To:Subject:To;
- b=FVzxugShKGR3UDsVQM8LjJs12ggoQHlIlMg7uqtaBBSsfW5D37LzRU9tXF5UG9VHVKa
- npNl84IR9Wd1VuchC8cg1l8l2n35PHjzZbQdcAT1wgr+SjDCocVEv3G3lXuyAO9WeQQDk
- nAAF7f0g5A0ALAcdiI711kvHEQ3FvxOMCAk=
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1603205858;
+ bh=aG9xjTv6p0mR2aeO6OkPe2uYzfK3XyuyTOU27oHZ6zA=;
+ h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
+ b=f/Fyd2GvokM77R6CmpNk/O7b6EBRdGSReifmTSFeCKFy14e9U4jZznpJyeLVo62UBMD
+ IWpGhDMf8yT2TGOH7JfT3V5js6A4bNSeihCee8VR2ykxUG2TJxYQGb/JsrHXZSS2gWFB+
+ 8Yk4QyxNo4jCt0qiEqm4YN5hQF3fpOIm4Yk=
 
---G8OdVROJYDGdWzW1sIb6
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+--3mzqSWALIJ2n1V1N4WSD
 
-Hi Pavel,
+Hi All,
 
-> -----Original Message-----
-> From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On Be=
-half Of Pavel Machek via lists.cip-project.org
-> Sent: 20 October 2020 13:02
-> To: cip-dev@lists.cip-project.org
-> Cc: Pavel Machek <pavel@denx.de>; Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@t=
-oshiba.co.jp>; Biju Das <biju.das.jz@bp.renesas.com>
-> Subject: Re: [cip-dev] If you are using PCIe EP, speak up was Re: [RFC PA=
-TCH 4.19.y-cip 00/50] Add PCIe EP support for Renesas R-Car Gen3
-> and RZ/G2x
->=20
-> Hi!
->=20
-> > > > This patch series adds support for PCIe EP on Renesas R-Car Gen3 an=
-d
-> > > > RZ/G2x platforms.
-> > >
-> > > I quickly went through a series and code seems reasonably nice.
-> > >
-> > > > * Since the changes are huge I am sending the patches as RFC.
-> > >
-> > > And yes, it is quite big, which might be a problem. OTOH only Renesas
-> > > seems to have PCIe EP drivers enabled in their CIP defconfigs, so
-> > > there's good chance noone else in CIP project is using this code.
-> > >
-> > > [If someone else _is_ using it or is considering using it, please
-> > > speak up.]
-> > >
-> > We haven't received any response yet, is it OK if I send a non RFC
-> > version or shall we wait for couple of days more ?
->=20
-> I guess I'd like non-RFC version of patches 1-22 in a series. I
-> believe it makes sense to add 30, 32, 49, 50 to them, as they are
-> simple and fix a bug.
->=20
-> Would that work for you?
->=20
-Sure ill get on posting the above mentioned patches as non-RFC in a series.
+This patch series is part of RFC series [1] ("Add PCIe EP support for
+Renesas R-Car Gen3 and RZ/G2x"). For making it more cleaner and easier
+to review series [1] is split up as suggested by Pavel, patches 1-22,
+30, 32, 49, 50  are included in this set from [1].
 
-How do we tackle with rest of the patches ?
+[1] https://patchwork.kernel.org/project/cip-dev/list/?series=363279
 
 Cheers,
 Prabhakar
 
-> Best regards,
-> 								Pavel
-> --
-> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---G8OdVROJYDGdWzW1sIb6
+Alan Mikhak (5):
+  PCI: endpoint: Set endpoint controller pointer to NULL
+  PCI: endpoint: Allocate enough space for fixed size BAR
+  PCI: endpoint: Skip odd BAR when skipping 64bit BAR
+  PCI: endpoint: Clear BAR before freeing its space
+  PCI: endpoint: Cast the page number to phys_addr_t
+
+Hewenliang (1):
+  tools: PCI: Fix fd leakage
+
+Jean-Jacques Hiblot (1):
+  tools: PCI: Exit with error code when test fails
+
+Kangjie Lu (1):
+  PCI: endpoint: Fix a potential NULL pointer dereference
+
+Kishon Vijay Abraham I (17):
+  PCI: endpoint: Add new pci_epc_ops to get EPC features
+  PCI: dwc: Add ->get_features() callback function to dw_pcie_ep_ops
+  PCI: designware-plat: Populate ->get_features() dw_pcie_ep_ops
+  PCI: pci-dra7xx: Populate ->get_features() dw_pcie_ep_ops
+  PCI: rockchip: Populate ->get_features() dw_pcie_ep_ops
+  PCI: cadence: Populate ->get_features() cdns_pcie_epc_ops
+  PCI: endpoint: Add helper to get first unreserved BAR
+  PCI: endpoint: Fix pci_epf_alloc_space() to set correct MEM TYPE flags
+  PCI: pci-epf-test: Remove setting epf_bar flags in function driver
+  PCI: pci-epf-test: Do not allocate next BARs memory if current BAR is
+    64Bit
+  PCI: pci-epf-test: Use pci_epc_get_features() to get EPC features
+  PCI: cadence: Remove pci_epf_linkup() from Cadence EP driver
+  PCI: rockchip: Remove pci_epf_linkup() from Rockchip EP driver
+  PCI: designware-plat: Remove setting epc->features in Designware plat
+    EP driver
+  PCI: endpoint: Remove features member in struct pci_epc
+  PCI: endpoint: Add support to specify alignment for buffers allocated
+    to BARs
+  PCI: dwc: Fix dw_pcie_ep_raise_msix_irq() to get correct MSI-X table
+    address
+
+Kunihiko Hayashi (1):
+  PCI: endpoint: Fix clearing start entry in configfs
+
+ drivers/pci/controller/dwc/pci-dra7xx.c       |  13 ++
+ .../pci/controller/dwc/pcie-designware-ep.c   |  12 ++
+ .../pci/controller/dwc/pcie-designware-plat.c |  17 ++-
+ drivers/pci/controller/dwc/pcie-designware.h  |   1 +
+ drivers/pci/controller/pcie-cadence-ep.c      |  25 ++--
+ drivers/pci/controller/pcie-rockchip-ep.c     |  16 ++-
+ drivers/pci/endpoint/functions/pci-epf-test.c | 134 +++++++++++-------
+ drivers/pci/endpoint/pci-ep-cfs.c             |   1 +
+ drivers/pci/endpoint/pci-epc-core.c           |  56 +++++++-
+ drivers/pci/endpoint/pci-epc-mem.c            |   2 +-
+ drivers/pci/endpoint/pci-epf-core.c           |  16 ++-
+ include/linux/pci-epc.h                       |  33 +++--
+ include/linux/pci-epf.h                       |  18 ++-
+ tools/pci/pcitest.c                           |   5 +-
+ 14 files changed, 263 insertions(+), 86 deletions(-)
+
+-- 
+2.17.1
+
+
+--3mzqSWALIJ2n1V1N4WSD
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -168,13 +141,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#5596): https://lists.cip-project.org/g/cip-dev/message=
-/5596
-Mute This Topic: https://lists.cip-project.org/mt/77501866/4520388
+View/Reply Online (#5597): https://lists.cip-project.org/g/cip-dev/message=
+/5597
+Mute This Topic: https://lists.cip-project.org/mt/77683509/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---G8OdVROJYDGdWzW1sIb6--
+--3mzqSWALIJ2n1V1N4WSD--
