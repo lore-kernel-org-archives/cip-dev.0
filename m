@@ -1,116 +1,124 @@
-Return-Path: <SRS0=Ty36=D5=lists.cip-project.org=bounce+64572+5639+4520388+8129055@kernel.org>
+Return-Path: <SRS0=rWRV=D5=lists.cip-project.org=bounce+64572+5640+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MIME_HEADER_CTYPE_ONLY,SPF_HELO_NONE,SPF_PASS,T_TVD_MIME_NO_HEADERS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89208C4363A
-	for <cip-dev@archiver.kernel.org>; Thu, 22 Oct 2020 10:01:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CB26C4363A
+	for <cip-dev@archiver.kernel.org>; Thu, 22 Oct 2020 10:16:21 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 2725A2245F
-	for <cip-dev@archiver.kernel.org>; Thu, 22 Oct 2020 10:01:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 4BE062419B
+	for <cip-dev@archiver.kernel.org>; Thu, 22 Oct 2020 10:16:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="n4XsJBPv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2725A2245F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5639+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id ITd5YY4521723x4cIMVpjkUn; Thu, 22 Oct 2020 03:01:09 -0700
-X-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
- by mx.groups.io with SMTP id smtpd.web11.8034.1603360868306408505
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="WQGECT7K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BE062419B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5640+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id s7s8YY4521723xRbl2UnCmTC; Thu, 22 Oct 2020 03:16:19 -0700
+X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web12.8475.1603361778321978533
  for <cip-dev@lists.cip-project.org>;
- Thu, 22 Oct 2020 03:01:08 -0700
-X-Received: by mail-lf1-f48.google.com with SMTP id b1so1483472lfp.11
-        for <cip-dev@lists.cip-project.org>; Thu, 22 Oct 2020 03:01:08 -0700 (PDT)
-X-Gm-Message-State: NpBYZz2tMwCymlKDyUDLqzMDx4520388AA=
-X-Google-Smtp-Source: ABdhPJzRQtlHCOPzL5J2Wu95H0m/1y6WD8W/bt73KtNwuFTawiCjdRgd6EB9Z3RRIzbV0O3t4CvzDg==
-X-Received: by 2002:a19:c154:: with SMTP id r81mr638654lff.154.1603360866118;
-        Thu, 22 Oct 2020 03:01:06 -0700 (PDT)
-X-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
-        by smtp.gmail.com with ESMTPSA id r24sm226029ljk.112.2020.10.22.03.01.05
-        for <cip-dev@lists.cip-project.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Oct 2020 03:01:05 -0700 (PDT)
-X-Received: by mail-lf1-f51.google.com with SMTP id a9so1497597lfc.7
-        for <cip-dev@lists.cip-project.org>; Thu, 22 Oct 2020 03:01:05 -0700 (PDT)
-X-Received: by 2002:a19:4281:: with SMTP id p123mr536290lfa.398.1603360865591;
- Thu, 22 Oct 2020 03:01:05 -0700 (PDT)
-MIME-Version: 1.0
-From: "Chen-Yu Tsai (Moxa)" <wens@csie.org>
-Date: Thu, 22 Oct 2020 18:00:53 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65SBE5GnV4o-6y-PMz-on2Mav6iDVeuJ3KRVYgx76a__w@mail.gmail.com>
-Message-ID: <CAGb2v65SBE5GnV4o-6y-PMz-on2Mav6iDVeuJ3KRVYgx76a__w@mail.gmail.com>
-Subject: [cip-dev] Direct Pushes for cip-kernel-sec
-To: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: cip-dev@lists.cip-project.org, Pavel Machek <pavel@denx.de>, 
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, =?UTF-8?B?U1ogTGluICjmnpfkuIrmmbop?= <sz.lin@moxa.com>
+ Thu, 22 Oct 2020 03:16:18 -0700
+X-IronPort-AV: E=Sophos;i="5.77,404,1596466800"; 
+   d="scan'208";a="60507847"
+X-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 22 Oct 2020 19:16:16 +0900
+X-Received: from localhost.localdomain (unknown [10.226.36.204])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 6B0A74002C32;
+	Thu, 22 Oct 2020 19:16:15 +0900 (JST)
+From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: cip-dev@lists.cip-project.org,
+	Pavel Machek <pavel@denx.de>,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>
+Subject: [cip-dev] [PATCH 4.19.y-cip 00/13] Enhancements to PCIe EPF
+Date: Thu, 22 Oct 2020 11:16:01 +0100
+Message-Id: <20201022101614.9298-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-Content-Type: multipart/mixed; boundary="NmMVS2BaLpLVaBf6Gdlg"
+X-Gm-Message-State: LeJdm4Igw530Ygs9lBH2KyHyx4520388AA=
+Content-Type: multipart/mixed; boundary="DMDXpvlWPdXdmDzXOGGX"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1603360869;
- bh=GJCmd6BIgt4K6a232VpaMxVuW6UHopjP9/qYWx0/yr0=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1603361779;
+ bh=5P4Pg0u282vGVFGQsqToUxmvsq2JROGoK7J1++6AGfw=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=n4XsJBPvJz3TGbYgQI7cDYgeeOyyqknwMEmNtJcJxINabI9I4AfvfjWaOI1KymRYcwq
- tO84bJV5KwLEOUxDBISxAmpMQo7RsqmsuwaYDkP7QI4of5ICho1r5jnfbayekjtSc7kLO
- Co9x1b+hBM2wyZN++LxWg7Fl8xjpxKPg5gU=
+ b=WQGECT7K8iAndrozEMG9rzp8mYxOG79W4/Kh3YkO4nPQXuqhHFlRxSasHfsW6aU9xx9
+ eWYB6i062rRXj8FO70gcvVm5w8wKr0mEeWnvO4SD04whYmk5DR6BLK205PYpA5OZHO9yb
+ mT0+I4VUxIUJAnjGFQhNYNSOLPJPoyx36Qk=
 
---NmMVS2BaLpLVaBf6Gdlg
-Content-Type: text/plain; charset="UTF-8"
+--DMDXpvlWPdXdmDzXOGGX
 
-Hi,
+Hi All,
 
-After today's CIP weekly meeting, Pavel proposed the idea of skipping
-merge requests for the cip-kernel-sec repository:
+This patch series is part of RFC series [1] ("Add PCIe EP support for
+Renesas R-Car Gen3 and RZ/G2x"). For making it more cleaner and easier
+to review series [1] is split up as suggested by Pavel, patches 23-29,
+31, 33-37 are included in this set from [1].
 
-17:25 < pave1> wens: I see that currently merges to cip-kernel-sec are
-               approved, etc... which adds a delay.
-17:25 < pave1> wens: Would it be possible to direct pushes, so we can
-               colaborate in the repository?
-17:25 < wens> pave1: I don't have push access to cip-kernel-sec
-17:26 < pave1> wens: Who can I talk to to get you one?
-17:26 < pave1> wens: Because repository that is delayed like this... is not too
-               useful.
-17:28 < wens> not sure who has admin access, maybe szlin would know.
-17:28 < iwamatsu> wens: I can add permisson, maybe
-17:28 < pave1> iwamatsu: That would be nice. cip-kernel-sec is kind of
-               dashboard, not a code repository.
-17:28 < pave1> iwamatsu: So approving commits only delays stuff...
-17:29 < wens> right, we are mostly pulling in data from other projects.
-17:29 < pave1> wens: Right. Plus, you announce CVEs here, and it would be very
-               nice to be able to git pull and have the information available.
-17:29 < wens> occasionally we have to fill in data ourselves, but maybe we
-              could do those separately with review, while having the automated
-              scripts just push directly?
-17:30 < iwamatsu> wens: I just send invite.
-17:30 < pave1> wens: I'd prefer not to do reviews. It is our internal status,
-               it does not go into product.
-17:30 < wens> iwamatsu: thanks. looks like I can merge stuff now.
-17:30 < pave1> wens: if we make mistake, we fix a mistake.
-17:31 < pave1> iwamatsu: Thanks a lot!
-17:31 < wens> pave1: so, auditing instead of reviewing
-17:31 < pave1> wens: Yes, I guess.
-17:32 < wens> bwh isn't around right now. we should let him know.
-17:32 < pave1> Yes, I guess we need to discuss that.
-17:32 < wens> I am in favor of pushing directly.
-17:33 < iwamatsu> +1
-17:33 < pave1> +1 :-)
+This adds following features to EPF
+* Deferred core initialization
+* Support for notification after core init
+* Replace spinlock with mutex
+* Support to handle multiple base for mapping outbound memory
 
-Ben, could you share your thoughts on this?
+[1] https://patchwork.kernel.org/project/cip-dev/list/?series=363279&state=*
+
+Cheers,
+Prabhakar
 
 
-Regards
-ChenYu
-Moxa
+Kishon Vijay Abraham I (6):
+  PCI: endpoint: Use notification chain mechanism to notify EPC events
+    to EPF
+  PCI: endpoint: Replace spinlock with mutex
+  PCI: endpoint: Protect concurrent access to pci_epf_ops with mutex
+  PCI: endpoint: Assign function number for each PF in EPC core
+  PCI: endpoint: Fix ->set_msix() to take BIR and offset as arguments
+  PCI: endpoint: functions/pci-epf-test: Print throughput information
 
---NmMVS2BaLpLVaBf6Gdlg
+Lad Prabhakar (4):
+  PCI: endpoint: Pass page size as argument to pci_epc_mem_init()
+  PCI: endpoint: Add support to handle multiple base for mapping
+    outbound memory
+  PCI: rcar: Rename pcie-rcar.c to pcie-rcar-host.c
+  arm64: defconfig: Enable CONFIG_PCIE_RCAR_HOST
+
+Vidya Sagar (3):
+  PCI: endpoint: Add core init notifying feature
+  PCI: endpoint: Add notification for core init completion
+  PCI: pci-epf-test: Add support to defer core initialization
+
+ arch/arm64/configs/defconfig                  |   2 +-
+ drivers/pci/controller/Kconfig                |  10 +
+ drivers/pci/controller/Makefile               |   2 +-
+ .../pci/controller/dwc/pcie-designware-ep.c   |  27 ++-
+ drivers/pci/controller/pcie-cadence-ep.c      |   2 +-
+ .../{pcie-rcar.c => pcie-rcar-host.c}         |   0
+ drivers/pci/controller/pcie-rockchip-ep.c     |   2 +-
+ drivers/pci/endpoint/functions/pci-epf-test.c | 195 +++++++++++++----
+ drivers/pci/endpoint/pci-ep-cfs.c             |  27 +--
+ drivers/pci/endpoint/pci-epc-core.c           | 137 ++++++------
+ drivers/pci/endpoint/pci-epc-mem.c            | 204 ++++++++++++------
+ drivers/pci/endpoint/pci-epf-core.c           |  33 +--
+ include/linux/pci-epc.h                       |  62 ++++--
+ include/linux/pci-epf.h                       |  14 +-
+ 14 files changed, 474 insertions(+), 243 deletions(-)
+ rename drivers/pci/controller/{pcie-rcar.c => pcie-rcar-host.c} (100%)
+
+-- 
+2.17.1
+
+
+--DMDXpvlWPdXdmDzXOGGX
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -118,13 +126,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#5639): https://lists.cip-project.org/g/cip-dev/message=
-/5639
-Mute This Topic: https://lists.cip-project.org/mt/77727077/4520388
+View/Reply Online (#5640): https://lists.cip-project.org/g/cip-dev/message=
+/5640
+Mute This Topic: https://lists.cip-project.org/mt/77727245/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---NmMVS2BaLpLVaBf6Gdlg--
+--DMDXpvlWPdXdmDzXOGGX--
