@@ -1,4 +1,4 @@
-Return-Path: <SRS0=Hj9v=D5=lists.cip-project.org=bounce+64572+5644+4520388+8129055@kernel.org>
+Return-Path: <SRS0=mNS8=D5=lists.cip-project.org=bounce+64572+5645+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -8,38 +8,38 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	T_TVD_MIME_NO_HEADERS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28A5AC388F2
-	for <cip-dev@archiver.kernel.org>; Thu, 22 Oct 2020 10:16:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A83C4363A
+	for <cip-dev@archiver.kernel.org>; Thu, 22 Oct 2020 10:16:25 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 5F3662419B
-	for <cip-dev@archiver.kernel.org>; Thu, 22 Oct 2020 10:16:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 5461C2419B
+	for <cip-dev@archiver.kernel.org>; Thu, 22 Oct 2020 10:16:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="h/gZlcKv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F3662419B
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="p5kf3EIV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5461C2419B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5644+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id WnRLYY4521723xHIHBXloEWb; Thu, 22 Oct 2020 03:16:23 -0700
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5645+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id jni4YY4521723xKJWuxh8gmt; Thu, 22 Oct 2020 03:16:23 -0700
 X-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [])
  by mx.groups.io with SMTP id smtpd.web10.8438.1603361778788177942
  for <cip-dev@lists.cip-project.org>;
- Thu, 22 Oct 2020 03:16:22 -0700
+ Thu, 22 Oct 2020 03:16:23 -0700
 X-IronPort-AV: E=Sophos;i="5.77,404,1596466800"; 
-   d="scan'208";a="60292584"
+   d="scan'208";a="60292587"
 X-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 22 Oct 2020 19:16:21 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 22 Oct 2020 19:16:23 +0900
 X-Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id BA22640062B1;
-	Thu, 22 Oct 2020 19:16:20 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 156F140104CA;
+	Thu, 22 Oct 2020 19:16:21 +0900 (JST)
 From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Pavel Machek <pavel@denx.de>,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [cip-dev] [PATCH 4.19.y-cip 04/13] PCI: endpoint: Assign function number for each PF in EPC core
-Date: Thu, 22 Oct 2020 11:16:05 +0100
-Message-Id: <20201022101614.9298-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [cip-dev] [PATCH 4.19.y-cip 05/13] PCI: endpoint: Add core init notifying feature
+Date: Thu, 22 Oct 2020 11:16:06 +0100
+Message-Id: <20201022101614.9298-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
 In-Reply-To: <20201022101614.9298-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20201022101614.9298-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: Bulk
@@ -48,184 +48,50 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: 7KQRYWhLWaLxgdzVK463mmIgx4520388AA=
-Content-Type: multipart/mixed; boundary="76DtHlkvIAKidOZCTdj5"
+X-Gm-Message-State: rEozodE2bC8prNi27Y1svjQsx4520388AA=
+Content-Type: multipart/mixed; boundary="zTjhZoGLNJSOveV7sR8g"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=lists.cip-project.org; q=dns/txt; s=20140610; t=1603361783;
- bh=zV/UZsZm5EXkesIzXI8KwgvD44GQGBTASry4U1fzA0Q=;
+ bh=wlcPFt7qTebouhNwAobshO9cBsEfRI9VyWNodmmeG7s=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=h/gZlcKvdrxwrkQJP8I6gqgt6WOGKBeTVUUekfea1G6k3FxKw57MwYOnHLulWVn+pyQ
- kBEdVJqkrJjoUSEuWZEDRRMU5yG6gmzJsGrMOnrSBI1lzTLTsrFV1FRkwGVN9VZfrusRO
- BoCKbmOC3eUnq4/Cn9liTnwlLu9M9TebVKo=
+ b=p5kf3EIVyfj/fhTDUVkcipO7VgNfObsneCDS7RCw+bV6CEQtIopekRK9oAlRXc1hT/3
+ 700Jx7uEKHYMsjT+t5tQSzs0wp542W5IMX7PrkohLl7ml/kvwQcVPPVw2+/JLWBh4lC0T
+ jj+BjV03erWvPk+hiHi0krpB7EOxTUgmuro=
 
---76DtHlkvIAKidOZCTdj5
+--zTjhZoGLNJSOveV7sR8g
 
-From: Kishon Vijay Abraham I <kishon@ti.com>
+From: Vidya Sagar <vidyas@nvidia.com>
 
-commit 2499ee84e02774a8573b7b4c76c8f2ea38669313 upstream.
+commit 3d5f7d9f6a38ddcc105ebfb23b640630bbabba65 upstream.
 
-The PCIe endpoint core relies on the drivers that invoke the
-pci_epc_add_epf() API to allocate and assign a function number
-to each physical function (PF). Since endpoint function device can
-be created by multiple mechanisms (configfs, devicetree, etc..),
-allowing each of these mechanisms to assign a function number
-would result in mutliple endpoint function devices having the
-same function number. In order to avoid this, let EPC core assign
-a function number to the endpoint device.
+Add a new feature core_init_notifier for cores that can notify about
+their availability for initialization.
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/pci/endpoint/pci-ep-cfs.c   | 27 +++++----------------------
- drivers/pci/endpoint/pci-epc-core.c | 26 ++++++++++++++++++++++----
- include/linux/pci-epc.h             |  2 ++
- 3 files changed, 29 insertions(+), 26 deletions(-)
+ include/linux/pci-epc.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pci/endpoint/pci-ep-cfs.c b/drivers/pci/endpoint/pci-ep-cfs.c
-index 4fead88257bb..55edce50be96 100644
---- a/drivers/pci/endpoint/pci-ep-cfs.c
-+++ b/drivers/pci/endpoint/pci-ep-cfs.c
-@@ -29,7 +29,6 @@ struct pci_epc_group {
- 	struct config_group group;
- 	struct pci_epc *epc;
- 	bool start;
--	unsigned long function_num_map;
- };
- 
- static inline struct pci_epf_group *to_pci_epf_group(struct config_item *item)
-@@ -90,37 +89,22 @@ static int pci_epc_epf_link(struct config_item *epc_item,
- 			    struct config_item *epf_item)
- {
- 	int ret;
--	u32 func_no = 0;
- 	struct pci_epf_group *epf_group = to_pci_epf_group(epf_item);
- 	struct pci_epc_group *epc_group = to_pci_epc_group(epc_item);
- 	struct pci_epc *epc = epc_group->epc;
- 	struct pci_epf *epf = epf_group->epf;
- 
--	func_no = find_first_zero_bit(&epc_group->function_num_map,
--				      BITS_PER_LONG);
--	if (func_no >= BITS_PER_LONG)
--		return -EINVAL;
--
--	set_bit(func_no, &epc_group->function_num_map);
--	epf->func_no = func_no;
--
- 	ret = pci_epc_add_epf(epc, epf);
- 	if (ret)
--		goto err_add_epf;
-+		return ret;
- 
- 	ret = pci_epf_bind(epf);
--	if (ret)
--		goto err_epf_bind;
-+	if (ret) {
-+		pci_epc_remove_epf(epc, epf);
-+		return ret;
-+	}
- 
- 	return 0;
--
--err_epf_bind:
--	pci_epc_remove_epf(epc, epf);
--
--err_add_epf:
--	clear_bit(func_no, &epc_group->function_num_map);
--
--	return ret;
- }
- 
- static void pci_epc_epf_unlink(struct config_item *epc_item,
-@@ -135,7 +119,6 @@ static void pci_epc_epf_unlink(struct config_item *epc_item,
- 
- 	epc = epc_group->epc;
- 	epf = epf_group->epf;
--	clear_bit(epf->func_no, &epc_group->function_num_map);
- 	pci_epf_unbind(epf);
- 	pci_epc_remove_epf(epc, epf);
- }
-diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
-index e51a12ed85bb..dc1c673534e0 100644
---- a/drivers/pci/endpoint/pci-epc-core.c
-+++ b/drivers/pci/endpoint/pci-epc-core.c
-@@ -471,22 +471,39 @@ EXPORT_SYMBOL_GPL(pci_epc_write_header);
-  */
- int pci_epc_add_epf(struct pci_epc *epc, struct pci_epf *epf)
- {
-+	u32 func_no;
-+	int ret = 0;
-+
- 	if (epf->epc)
- 		return -EBUSY;
- 
- 	if (IS_ERR(epc))
- 		return -EINVAL;
- 
--	if (epf->func_no > epc->max_functions - 1)
--		return -EINVAL;
-+	mutex_lock(&epc->lock);
-+	func_no = find_first_zero_bit(&epc->function_num_map,
-+				      BITS_PER_LONG);
-+	if (func_no >= BITS_PER_LONG) {
-+		ret = -EINVAL;
-+		goto ret;
-+	}
-+
-+	if (func_no > epc->max_functions - 1) {
-+		dev_err(&epc->dev, "Exceeding max supported Function Number\n");
-+		ret = -EINVAL;
-+		goto ret;
-+	}
- 
-+	set_bit(func_no, &epc->function_num_map);
-+	epf->func_no = func_no;
- 	epf->epc = epc;
- 
--	mutex_lock(&epc->lock);
- 	list_add_tail(&epf->list, &epc->pci_epf);
-+
-+ret:
- 	mutex_unlock(&epc->lock);
- 
--	return 0;
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(pci_epc_add_epf);
- 
-@@ -503,6 +520,7 @@ void pci_epc_remove_epf(struct pci_epc *epc, struct pci_epf *epf)
- 		return;
- 
- 	mutex_lock(&epc->lock);
-+	clear_bit(epf->func_no, &epc->function_num_map);
- 	list_del(&epf->list);
- 	epf->epc = NULL;
- 	mutex_unlock(&epc->lock);
 diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
-index 9b21692bc2e4..44bfbeb480bb 100644
+index 44bfbeb480bb..8f9bbc4b7ad1 100644
 --- a/include/linux/pci-epc.h
 +++ b/include/linux/pci-epc.h
-@@ -92,6 +92,7 @@ struct pci_epc_mem {
-  * @max_functions: max number of functions that can be configured in this EPC
-  * @group: configfs group representing the PCI EPC device
-  * @lock: mutex to protect pci_epc ops
-+ * @function_num_map: bitmap to manage physical function number
-  * @notifier: used to notify EPF of any EPC events (like linkup)
+@@ -120,6 +120,7 @@ struct pci_epc {
   */
- struct pci_epc {
-@@ -103,6 +104,7 @@ struct pci_epc {
- 	struct config_group		*group;
- 	/* mutex to protect against concurrent access of EP controller */
- 	struct mutex			lock;
-+	unsigned long			function_num_map;
- 	struct atomic_notifier_head	notifier;
- };
- 
+ struct pci_epc_features {
+ 	unsigned int	linkup_notifier : 1;
++	unsigned int	core_init_notifier : 1;
+ 	unsigned int	msi_capable : 1;
+ 	unsigned int	msix_capable : 1;
+ 	u8	reserved_bar;
 -- 
 2.17.1
 
 
---76DtHlkvIAKidOZCTdj5
+--zTjhZoGLNJSOveV7sR8g
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -233,13 +99,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#5644): https://lists.cip-project.org/g/cip-dev/message=
-/5644
-Mute This Topic: https://lists.cip-project.org/mt/77727249/4520388
+View/Reply Online (#5645): https://lists.cip-project.org/g/cip-dev/message=
+/5645
+Mute This Topic: https://lists.cip-project.org/mt/77727250/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---76DtHlkvIAKidOZCTdj5--
+--zTjhZoGLNJSOveV7sR8g--
