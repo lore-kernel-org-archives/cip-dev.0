@@ -1,4 +1,4 @@
-Return-Path: <SRS0=KrxC=D6=lists.cip-project.org=bounce+64572+5669+4520388+8129055@kernel.org>
+Return-Path: <SRS0=RA38=D6=lists.cip-project.org=bounce+64572+5670+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -6,104 +6,103 @@ X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A7FAC388F9
-	for <cip-dev@archiver.kernel.org>; Fri, 23 Oct 2020 19:58:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 051A4C388F9
+	for <cip-dev@archiver.kernel.org>; Fri, 23 Oct 2020 20:16:31 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 4E7F320882
-	for <cip-dev@archiver.kernel.org>; Fri, 23 Oct 2020 19:58:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id EA7CB20882
+	for <cip-dev@archiver.kernel.org>; Fri, 23 Oct 2020 20:16:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="DFQkqX37"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E7F320882
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="qwCM0iBR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA7CB20882
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5669+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id EigMYY4521723xYj60o88o2g; Fri, 23 Oct 2020 12:58:39 -0700
-X-Received: from JPN01-OS2-obe.outbound.protection.outlook.com (JPN01-OS2-obe.outbound.protection.outlook.com [40.107.141.129])
- by mx.groups.io with SMTP id smtpd.web11.2124.1603483118456404616
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5670+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id 9IEHYY4521723x8DVcZnZaaD; Fri, 23 Oct 2020 13:16:29 -0700
+X-Received: from JPN01-OS2-obe.outbound.protection.outlook.com (JPN01-OS2-obe.outbound.protection.outlook.com [40.107.141.104])
+ by mx.groups.io with SMTP id smtpd.web10.2340.1603484188203172820
  for <cip-dev@lists.cip-project.org>;
- Fri, 23 Oct 2020 12:58:38 -0700
+ Fri, 23 Oct 2020 13:16:28 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XtL74oeb0OqwMKrSakaQJeUBMYpkOnCEh3P30Pt+v0LqB/yvwMiAQsV0UGUWSvzak9qIRurCqGfXOn9KmorjELWec5SYUuCOkrB6LYXPzUUCGbuNXY4b+6CO8W2gK7xkPi7bzauW67xac9WgAs0P1T2m9fjvPWUL0P4EkFUXd0jJr1+2sbh0LSu+u8AnOmZqmob4m4QuI1XLrCQcIdFZa6AAv10WpuNMeeZGdkVW035dnuKeQFWdw1jU4ImNvkgf6cR+5kfDdUe0c2qM9tCbVBIay1n5u85sD9mtJdcBfeA1gvNYtGltSfRXC/TUhDutsRS2JcW7uJRwVtfCjsnAnQ==
+ b=dcgY3GLmfLAJLHtSjsF/4eQC1MvSJ/1uEKUI+EYgc5y1vAll6dhTclA9c69f0QxY3VlvGxPWHKJwxRFDDIXFjOeaq/9QiqgySeyAOlBP1tSxQsQvd3MofBs9yhIVdbGr4lID/MJAKE6KeutEGDL9aoXILXzcYK2pjEqppTO5mLWSIpVSzSULUuotu7ynVSQFpSLykOeGPTQu14HxWkQahWwsNcNS83cErxAJTUSPt/an7CSreoVZlDSG5HhWEHtcOCh1upGGBxW2jwFnkVvBPWLMW53ZxA0hoH9cGpm/bTJa/P4rB4VECaAPrQuLWRoVa8xFfTybGEdmvsUAQdL2Fg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AsJG1xZjSnDBBjslzm3wPV9zUV9vZG70Q/uBv9uJ9Bc=;
- b=XR9Bu4C8j5zocRw+iM3hgfzGmzRJcZSBCGS006B45JMkL3Y26LqaaCBU8cGk+CdZSNOnwwmX+fkZ/konkCj1D63I5g0p2NC3sT/N/8Them0HcSdGjpQDNDVvLgoY8hw0VVvjzz1y56RfwYX96TTC8CU5bxFPUtoBesL50LZOlGbRMalV0HbzZrIs69BshmiEyZf+x26g32pU1ns48dfA4wCyZ0gWf4XH1kzTXw9s45iWM4/Jx5LC6UqFAtQ35LTF/tGdObURMjvozd5aGY+aB5xq3bqUKJZ0D9hyX8Df53eQxwX5prtKLHok9wp/+fpe1ooeSU49ryToti+2Ze5cnQ==
+ bh=rYoNgYMF7PwYvtT9Jc1Sg30b358o3sqatr3EKv+5kdI=;
+ b=H8psFdaNdSbmlRXIkvNxhx3ocJx2vlXMH72Gs+iqR7ySxm4/JMbZtVPj8O2CkOFQvt93uwn9xEH/jkfLmFAxhHstzYHXdcvVE7E47XFEXKS/iI8Jx6y0Z9Zk0yqNtkILNEaf8du26PHjpH4ygXhCOsrofnhhMICBNxSF+6tm6v3JydTNmJKwhUwoItkSRE9W58rA69FF8fiG84GZaoIhHnBx1Df3UdQCAOSb3jFDpTbtx/5vRT5Ua+aSAirCJZ3mSlafsqHq6Ll0mY6wLgrHItTwM2+t9cFtmRGv6wml1NjHqnDfxrW5lG471xOZhhNRPUlyqW1uHypD3csA37vgwA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 X-Received: from OSBPR01MB5048.jpnprd01.prod.outlook.com (2603:1096:604:38::10)
- by OSBPR01MB3864.jpnprd01.prod.outlook.com (2603:1096:604:4a::12) with
+ by OSAPR01MB2260.jpnprd01.prod.outlook.com (2603:1096:603:1b::22) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3477.21; Fri, 23 Oct
- 2020 19:58:35 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3499.18; Fri, 23 Oct
+ 2020 20:16:25 +0000
 X-Received: from OSBPR01MB5048.jpnprd01.prod.outlook.com
  ([fe80::18f:c7ea:e9e4:db70]) by OSBPR01MB5048.jpnprd01.prod.outlook.com
  ([fe80::18f:c7ea:e9e4:db70%3]) with mapi id 15.20.3477.028; Fri, 23 Oct 2020
- 19:58:29 +0000
+ 20:16:25 +0000
 From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Pavel Machek <pavel@denx.de>
 CC: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>, Nobuhiro
  Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, Biju Das
 	<biju.das.jz@bp.renesas.com>
-Subject: Re: [cip-dev] [PATCH 4.19.y-cip 1/6] PCI: rcar: Move shareable code to a common file
-Thread-Topic: [PATCH 4.19.y-cip 1/6] PCI: rcar: Move shareable code to a
- common file
-Thread-Index: AQHWqXRndcu3UUbobEqfpineXOeQYqmll+lQ
-Date: Fri, 23 Oct 2020 19:58:29 +0000
+Subject: Re: [cip-dev] [PATCH 4.19.y-cip 4/6] PCI: rcar: Add endpoint mode support
+Thread-Topic: [PATCH 4.19.y-cip 4/6] PCI: rcar: Add endpoint mode support
+Thread-Index: AQHWqXSFYmjja6JTBUa216fmGX/U8Kmlnsvg
+Date: Fri, 23 Oct 2020 20:16:24 +0000
 Message-ID: 
- <OSBPR01MB5048EA292D626F32EB60B393AA1A0@OSBPR01MB5048.jpnprd01.prod.outlook.com>
+ <OSBPR01MB50487F84AAFD3B0C556CBE33AA1A0@OSBPR01MB5048.jpnprd01.prod.outlook.com>
 References: <20201023165805.1910-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20201023165805.1910-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20201023194039.GB6002@duo.ucw.cz>
-In-Reply-To: <20201023194039.GB6002@duo.ucw.cz>
+ <20201023165805.1910-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20201023194131.GC6002@duo.ucw.cz>
+In-Reply-To: <20201023194131.GC6002@duo.ucw.cz>
 Accept-Language: en-GB, en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [193.141.220.21]
 x-ms-publictraffictype: Email
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 689f6e3f-ffa5-442d-27a5-08d8778e030d
-x-ms-traffictypediagnostic: OSBPR01MB3864:
+x-ms-office365-filtering-correlation-id: f060c0d7-3b6c-45aa-3358-08d877908448
+x-ms-traffictypediagnostic: OSAPR01MB2260:
 x-ms-exchange-transport-forked: True
 x-microsoft-antispam-prvs: 
- <OSBPR01MB3864650E2A799BF914156183AA1A0@OSBPR01MB3864.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
+ <OSAPR01MB226004CDE85F680BF02662BEAA1A0@OSAPR01MB2260.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam-message-info: 
- CTgwg3DQcD8uMjrLNFyxW5Sz7ftKImd7sEJkUPYgsQNTV0RlyutmPoqapI0kkaCVnFA2pF6fRSCsGJbWkdCIFlPp8IfR/115TM0JLNuHEc/YjvCHsmGjLaq/2n5/wENQ7x7y+FDj7SnCe2tEXVBcQ3KD76c5oQqP4LmqllLYGXMJG4dSi4DOc0wBZNmE+R580MX+enO7ZtH4BTZHjxUZXdkAGgLxN3O5HqqCFsDIiUaP6bWDVS9b78k/WvH3SAUw2StLFuOVDUrGfYUQ0m21nklkmq7i1z2wq1eF+q5p6/XXEA8CLR0aHvfwb0m2RVzasQ+R5akjzDZeRiH9qU93/Q==
+ 1ktaVvNAGEehUQvJKog/qRqKOpixPk8WA1w4iNwLgqB8HuqwP5ewUPC3byScxKORiYKQBCj6eOa130l4YWnMXY/aNj9mMFxCymAdYCcycYpdM0xdZq982Wo5h+TXbhtKye+2MDe3PGbQ0OkmA5letamPYiP5XsPy/2T6snznB9OixV8KHwZu+elLwPuKak90jXx8xSsb2pV6nOisXcF/D2aNeyRLw9EpaBou9UUUF/NU4z4P5secXLry33gfJFz1qxrDiR9qIuoK9zhUPOmsQK5DmG9We8qPFoXtEm6Fdv7LSieGgSkwmy48ku8Lne8d
 x-ms-exchange-antispam-messagedata: 
- JTWQsjazfPRzEmtL1Q1BgHlE6KkQUB2b2FgFBuwCZbuDW8Vye3wf7YdjHZRSwgjdixrmV40ayYqeMYd8Al15bpbgchZGDDgDhoNQM036e3Qylj6+81QIe90d06Ac1G4ZLd3PmhbwP4ZO0FvDutYdhWRy/xWX3pGL5fIQas4J62BoqdRIvSL/cpLXfRpoRz4hyG0I74X72s6J6JQaJe+D8DKlf3CP8qXOeSGh4aqIZ5gI48OIqj6icY23+lWDYLyXyHWIodGHxuUwEg02D9UMOFKGuAAAkvIXzckfJrRoopy9oMCRJhjyzMa8Qd+i0QBY0jpRnspbApIKkyi0gTYJNNHuWjNHQ35DPabyQYYW3/mbAeep7B7E6LJ1U9TIY3ZY+SI5AQ4R9m44Iat0pTBfmpJeyFzf4IrQkarHmFLArZ+QlDiA0vEBvMPEE6s5pecS/jgBgHgvAbt04+yuaK64VYGzkc9+tCmYSG9KKhLnP8dLvjQSEO/DMO8G95cgawUf6PWstff8VWBP7k+JJYwXC0crZbesJNMPxb4Ain1AXj8ag6+bBKtpGiSpGtcVVHQ0BS/jBOGk1scP5fhthIpE36CeNEGFhM8MsIJ16+Z3+xEtd52fXsipYlk/jeZc91lOyC4RvXhOanlANlNBVWMC5w==
+ yQQInujyoYDJ9CYlTLp10BHT0ml5yHnRvvBnFuvRwJL/KHdD8rbggKC89l8C6xezR+wMi5m/mcZIZhk2Kd5iqhRbsPnnF716U/JTiU+LOgf3itbwcBfiMp4ZxAerA0sTNWE38BdqzClLlg77YQ19KsYWLPnqUK7lpdZU5U/0FMbbgpmdVecB4d+hsaC2Fno+Yzi4/3PKpMVHCg4ZUoXgsDPuIHCz87FAezc0aqHNGXqkq7MEv/S0gA/q2xd73B9umf3luf/wN1eGjWQDe2rsGEftanSlxHqgxGywewnBmIR0UFbeel3VAYVROLEVstFtqKDZLXG5oRZupH991lzqJjwJT/cZt6Hlr27lY12Hq8G/rbPpwVGgY8RviOIar0tqA5EaYUQrEAx+lhukvAanN04fLB4lwImPFH+q/vat3lgxRczohlDIz33mOOndGcdzjNm9p+6nYkovYTWU6l2lpaW1cXN2iglS7pb+TyFMTwJF1+/Lnw8GyiX3uM3hfdJpble4eUFNbYjS4JBNs3/xpPhPZ/diFfCJAtFuXGCgOwULGDcy9gPLlrHHt/C+/qDg3EEBMgunAlOROLGQHkQaiRBrwSphnCFpsrk05f0kOq0FvgNgNfe9aFAPT/vEQ5rtvhe3H2X5HlnIcGNgUjqHDg==
 MIME-Version: 1.0
 X-OriginatorOrg: bp.renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: OSBPR01MB5048.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 689f6e3f-ffa5-442d-27a5-08d8778e030d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2020 19:58:29.2320
+X-MS-Exchange-CrossTenant-Network-Message-Id: f060c0d7-3b6c-45aa-3358-08d877908448
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2020 20:16:25.0166
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: BoDfEK2Z0UxriORtFwS/0he0rfEMdRpID2ZgS+P94GxNFGSGDiy+VV5+NVOAtgad8+vuAoFc8hxumfGyHpbAzG38IJSisuILFBjKDEpz0Zl8hMvEgoZczv932ye0/daz
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB3864
+X-MS-Exchange-CrossTenant-userprincipalname: pOTTdqsagxKTImmMLFhAyErHr5CECEcA67xkWGo4RUCewlErepf9zpxZpyMBz2Fl+ndtfhx5tDYp8SRymJ24aeVGUTuEGJpz/QNRxv0Gyll7ctxFTSsdAlbnD3n7PX0e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB2260
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: 1BVrZdL0jTnzZccshdLJsEucx4520388AA=
-Content-Type: multipart/mixed; boundary="wZkaz8QTsBFIBIolddGS"
+X-Gm-Message-State: 36cf3iqBg9DX2q87KMEiUaQFx4520388AA=
+Content-Type: multipart/mixed; boundary="HM9IuYJpX05L9sDplkam"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1603483119;
- bh=DK6XMO3EyNPGRqW/hNKfyD4DFi7m2y/+l7q4CMP5kmc=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1603484189;
+ bh=LVVjY2WWLQupr12t7eib8nJIcUkGME/ORiKkIB5ka8o=;
  h=CC:Content-Type:Date:From:Reply-To:Subject:To;
- b=DFQkqX37TLDkw+m2X5PLMj2hSgEr7LWguGrPPkHK7soNS1BVdZ8zyumufNBKNtnWLls
- twwq0zLixS8gm0hE0f+Ag6U99CkNlbrWJtOjeXog0ikptTK7BUztoNaMnnOr0rE5mf15T
- 2CI8vh7wtxUQEDJTdqQ8haYGVosomyl0Anc=
+ b=qwCM0iBRJegOQk44MjWRwwYTSQSO0GQA0+trWSSfbisxoMbrNk4Tw2bFDyeI86CLD7w
+ YLvVvFGoh6vCpH2Uu9Ma6HNSUqREEP/APZjluHB/CpKOj4aBQhSZ8O1Uzic2QW5Nt57Vy
+ 7LGySQv6VvTwRYhZxfI1gLYz8euo10X++9k=
 
---wZkaz8QTsBFIBIolddGS
+--HM9IuYJpX05L9sDplkam
 Content-Language: en-US
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -114,86 +113,56 @@ Thank you for the review.
 
 > -----Original Message-----
 > From: Pavel Machek <pavel@denx.de>
-> Sent: 23 October 2020 20:41
+> Sent: 23 October 2020 20:42
 > To: Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > Cc: cip-dev@lists.cip-project.org; Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@=
 toshiba.co.jp>; Pavel Machek <pavel@denx.de>; Biju Das
 > <biju.das.jz@bp.renesas.com>
-> Subject: Re: [PATCH 4.19.y-cip 1/6] PCI: rcar: Move shareable code to a c=
-ommon file
+> Subject: Re: [PATCH 4.19.y-cip 4/6] PCI: rcar: Add endpoint mode support
 >=20
 > Hi!
 >=20
-> > Move shareable code to common file pcie-rcar.c and the #defines to
-> > pcie-rcar.h so that the common code can be reused with endpoint driver.
-> > There are no functional changes with this patch for the host controller
-> > driver.
 >=20
-> I have merged the patches, but this should be cleaned up IMO...
+> > Add support for R-Car PCIe controller to work in endpoint mode.
+> >
 >=20
-> > +int rcar_pcie_wait_for_phyrdy(struct rcar_pcie *pcie)
+> > +static int rcar_pcie_ep_probe(struct platform_device *pdev)
 > > +{
-> > +	unsigned int timeout =3D 10;
+> > +	struct device *dev =3D &pdev->dev;
+> > +	struct rcar_pcie_endpoint *ep;
+> > +	struct rcar_pcie *pcie;
+> > +	struct pci_epc *epc;
+> > +	int err;
 > > +
-> > +	while (timeout--) {
-> > +		if (rcar_pci_read_reg(pcie, PCIEPHYSR) & PHYRDY)
-> > +			return 0;
+> > +	ep =3D devm_kzalloc(dev, sizeof(*ep), GFP_KERNEL);
+> > +	if (!ep)
+> > +		return -ENOMEM;
 > > +
-> > +		msleep(5);
+> > +	pcie =3D &ep->pcie;
+> > +	pcie->dev =3D dev;
+> > +
+> > +	pm_runtime_enable(dev);
+> > +	err =3D pm_runtime_get_sync(dev);
+> > +	if (err < 0) {
+> > +		dev_err(dev, "pm_runtime_get_sync failed\n");
+> > +		goto err_pm_disable;
 > > +	}
-> > +
-> > +	return -ETIMEDOUT;
 >=20
-> Kind of fun. We test the PHYRDY, not ready, so we wait (now phy
-> becomes ready).. and we time out.
+> I believe this should go to pm_put.
 >=20
-> What about
->=20
-> while (1) {
-> 	if (rcar_pci_read_reg(pcie, PCIEPHYSR) & PHYRDY)
-> 		return 0;
-> 	timeout--;
->  	if (!timeout)
-> 		return -ETIMEDOUT;
-> 	msleep(5);
-> }
->=20
-> ?
->=20
-Agreed, Ill get this upstream first and then backport.
-
-> > +int rcar_pcie_wait_for_dl(struct rcar_pcie *pcie)
-> > +{
-> > +	unsigned int timeout =3D 10000;
-> > +
-> > +	while (timeout--) {
-> > +		if ((rcar_pci_read_reg(pcie, PCIETSTR) & DATA_LINK_ACTIVE))
-> > +			return 0;
-> > +
-> > +		udelay(5);
-> > +		cpu_relax();
-> > +	}
-> > +
-> > +	return -ETIMEDOUT;
-> > +}
->=20
-> This has same problem. Plus, I don't believe cpu_relax() is good idea
-> there. Relaxing CPU every 5usec will not change anything.
->=20
-Agreed (as above).  wrt cpu_relax() I believe this was added to improve the=
- performance of other HW threads.
+Agreed pm_runtime_get_sync() increments the runtime PM usage counter even w=
+hen it fails. I'll fix this in upstream first and then backport.
 
 Cheers,
 Prabhakar
-=20
+
 > Best regards,
 > 								Pavel
->=20
 > --
 > DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
 > HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---wZkaz8QTsBFIBIolddGS
+--HM9IuYJpX05L9sDplkam
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -201,13 +170,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#5669): https://lists.cip-project.org/g/cip-dev/message=
-/5669
-Mute This Topic: https://lists.cip-project.org/mt/77756293/4520388
+View/Reply Online (#5670): https://lists.cip-project.org/g/cip-dev/message=
+/5670
+Mute This Topic: https://lists.cip-project.org/mt/77756297/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---wZkaz8QTsBFIBIolddGS--
+--HM9IuYJpX05L9sDplkam--
