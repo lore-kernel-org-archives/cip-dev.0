@@ -1,4 +1,4 @@
-Return-Path: <SRS0=ewtX=EJ=lists.cip-project.org=bounce+64572+5727+4520388+8129055@kernel.org>
+Return-Path: <SRS0=Y/IU=EJ=lists.cip-project.org=bounce+64572+5728+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -8,38 +8,38 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	T_TVD_MIME_NO_HEADERS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A964C388F7
-	for <cip-dev@archiver.kernel.org>; Tue,  3 Nov 2020 17:33:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C467C2D0A3
+	for <cip-dev@archiver.kernel.org>; Tue,  3 Nov 2020 17:33:59 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id F40CE22264
-	for <cip-dev@archiver.kernel.org>; Tue,  3 Nov 2020 17:33:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 39C1022226
+	for <cip-dev@archiver.kernel.org>; Tue,  3 Nov 2020 17:33:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="TSJpT1Ps"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F40CE22264
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="S9KmrrV0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39C1022226
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5727+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id W4DTYY4521723xuEC1mquIhC; Tue, 03 Nov 2020 09:33:57 -0800
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5728+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id 3IPmYY4521723xIJEFjmfT2R; Tue, 03 Nov 2020 09:33:58 -0800
 X-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [])
  by mx.groups.io with SMTP id smtpd.web11.794.1604424834598542940
  for <cip-dev@lists.cip-project.org>;
- Tue, 03 Nov 2020 09:33:57 -0800
+ Tue, 03 Nov 2020 09:33:58 -0800
 X-IronPort-AV: E=Sophos;i="5.77,448,1596466800"; 
-   d="scan'208";a="61344835"
+   d="scan'208";a="61344839"
 X-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 04 Nov 2020 02:33:56 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 04 Nov 2020 02:33:57 +0900
 X-Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id BA8734009BE5;
-	Wed,  4 Nov 2020 02:33:55 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0F2614009BE5;
+	Wed,  4 Nov 2020 02:33:56 +0900 (JST)
 From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [cip-dev] [PATCH 4.19.y-cip 14/17] arm64: dts: renesas: r8a774e1: Add PWM device nodes
-Date: Tue,  3 Nov 2020 17:33:33 +0000
-Message-Id: <20201103173336.2829-15-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [cip-dev] [PATCH 4.19.y-cip 15/17] arm64: dts: renesas: Add HiHope RZ/G2H board with idk-1110wr display
+Date: Tue,  3 Nov 2020 17:33:34 +0000
+Message-Id: <20201103173336.2829-16-prabhakar.mahadev-lad.rj@bp.renesas.com>
 In-Reply-To: <20201103173336.2829-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20201103173336.2829-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: Bulk
@@ -48,118 +48,73 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: rKIkm7YG0gFJl8vDxKiPVkrNx4520388AA=
-Content-Type: multipart/mixed; boundary="IYtAeWXmqG2TOLSz0pWR"
+X-Gm-Message-State: jttQx3EnaZxSwpw003UDiNU7x4520388AA=
+Content-Type: multipart/mixed; boundary="JzwPrMgCfhrcEO5AQMHW"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1604424837;
- bh=x5prk6z5qvuE3dtzfI7xcOqTxLRov2fNmBSjWTbx35U=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1604424838;
+ bh=xG96c55+sIFer2w36mAr32TRQwS0PXTIEPOgskyf2q8=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=TSJpT1PsMQMOuk+eokM8fq61WmDfg/M7C5sFOd8Tb3s85/0cNpr8haPknX7129q7DQz
- /uJt9dseb/sJa+cBwtmbuNsy/ATlQsK6fw/kT4qh+CzAMfzpOqF/k5NOOKS6fB/tXAIZ7
- +p1oBrkgBoh+saeJUy3W0s3bnM5ERbBQ8A0=
+ b=S9KmrrV0sxyR2fN6pBKY5yA5ta6RDt72H6UqXR+4UqAxJ1yFcZEFjwi888YCXItoMUP
+ /AqWJs3kQqzl1gM/MhZCvrk56FqP3PpL5rzeWebrQsoPNDCeT47mDvMpRnLa4rger4jnN
+ d+GYBhMGygKGqU5lUyDOyqj6zIKDhjsEcNk=
 
---IYtAeWXmqG2TOLSz0pWR
+--JzwPrMgCfhrcEO5AQMHW
 
-From: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+commit e9f0fb53ac88c1ccf3728b47c687838b6054f481 upstream.
 
-commit 557e64084abae2a31f494ac51e4cec549a3bf5ae upstream.
+The HiHope RZ/G2H is advertised as compatible with panel idk-1110wr from
+Advantech, however the panel isn't sold alongside the board. New dts,
+enabling the lvds node to get the panel to work with HiHope RZ/G2H.
 
-This patch adds PWM[0123456] device nodes to the RZ/G2H (a.k.a R8A774E1)
-device tree.
-
-Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://lore.kernel.org/r/20200825104455.18000-3-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://lore.kernel.org/r/20200827181918.30130-1-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[PL: Manually applied changes to Makefile]
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a774e1.dtsi | 64 ++++++++++++++++++++++-
- 1 file changed, 63 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/Makefile              |  1 +
+ .../r8a774e1-hihope-rzg2h-ex-idk-1110wr.dts       | 15 +++++++++++++++
+ 2 files changed, 16 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a774e1-hihope-rzg2h-ex-idk-1110wr.dts
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-index b6e491954c9a..271045556aa0 100644
---- a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-@@ -1203,11 +1203,73 @@
- 		};
- 
- 		pwm0: pwm@e6e30000 {
-+			compatible = "renesas,pwm-r8a774e1", "renesas,pwm-rcar";
- 			reg = <0 0xe6e30000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
- 			#pwm-cells = <2>;
- 			status = "disabled";
-+		};
- 
--			/* placeholder */
-+		pwm1: pwm@e6e31000 {
-+			compatible = "renesas,pwm-r8a774e1", "renesas,pwm-rcar";
-+			reg = <0 0xe6e31000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index 73cf57a3919b..16d63679f358 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -15,6 +15,7 @@ dtb-$(CONFIG_ARCH_R8A774C0) += r8a774c0-cat874.dtb r8a774c0-ek874.dtb \
+ 			       r8a774c0-ek874-idk-2121wr.dtb
+ dtb-$(CONFIG_ARCH_R8A774E1) += r8a774e1-hihope-rzg2h.dtb
+ dtb-$(CONFIG_ARCH_R8A774E1) += r8a774e1-hihope-rzg2h-ex.dtb
++dtb-$(CONFIG_ARCH_R8A774E1) += r8a774e1-hihope-rzg2h-ex-idk-1110wr.dtb
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-h3ulcb-kf.dtb
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-xs.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r8a774e1-hihope-rzg2h-ex-idk-1110wr.dts b/arch/arm64/boot/dts/renesas/r8a774e1-hihope-rzg2h-ex-idk-1110wr.dts
+new file mode 100644
+index 000000000000..3b7339127bc0
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a774e1-hihope-rzg2h-ex-idk-1110wr.dts
+@@ -0,0 +1,15 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the HiHope RZ/G2H sub board connected
++ * to an Advantech IDK-1110WR 10.1" LVDS panel
++ *
++ * Copyright (C) 2020 Renesas Electronics Corp.
++ */
 +
-+		pwm2: pwm@e6e32000 {
-+			compatible = "renesas,pwm-r8a774e1", "renesas,pwm-rcar";
-+			reg = <0 0xe6e32000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
++#include "r8a774e1-hihope-rzg2h-ex.dts"
++#include "hihope-rzg2-ex-lvds.dtsi"
++#include "rzg2-advantech-idk-1110wr-panel.dtsi"
 +
-+		pwm3: pwm@e6e33000 {
-+			compatible = "renesas,pwm-r8a774e1", "renesas,pwm-rcar";
-+			reg = <0 0xe6e33000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm4: pwm@e6e34000 {
-+			compatible = "renesas,pwm-r8a774e1", "renesas,pwm-rcar";
-+			reg = <0 0xe6e34000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm5: pwm@e6e35000 {
-+			compatible = "renesas,pwm-r8a774e1", "renesas,pwm-rcar";
-+			reg = <0 0xe6e35000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm6: pwm@e6e36000 {
-+			compatible = "renesas,pwm-r8a774e1", "renesas,pwm-rcar";
-+			reg = <0 0xe6e36000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
- 		};
- 
- 		scif0: serial@e6e60000 {
++&lvds0 {
++	status = "okay";
++};
 -- 
 2.17.1
 
 
---IYtAeWXmqG2TOLSz0pWR
+--JzwPrMgCfhrcEO5AQMHW
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -167,13 +122,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#5727): https://lists.cip-project.org/g/cip-dev/message=
-/5727
-Mute This Topic: https://lists.cip-project.org/mt/78011706/4520388
+View/Reply Online (#5728): https://lists.cip-project.org/g/cip-dev/message=
+/5728
+Mute This Topic: https://lists.cip-project.org/mt/78011708/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---IYtAeWXmqG2TOLSz0pWR--
+--JzwPrMgCfhrcEO5AQMHW--
