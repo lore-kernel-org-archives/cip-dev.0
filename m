@@ -1,588 +1,127 @@
-Return-Path: <SRS0=UQXX=EJ=lists.cip-project.org=bounce+64572+5730+4520388+8129055@kernel.org>
+Return-Path: <SRS0=I3q5=EK=lists.cip-project.org=bounce+64572+5731+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MIME_HEADER_CTYPE_ONLY,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	T_TVD_MIME_NO_HEADERS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E22BC2D0A3
-	for <cip-dev@archiver.kernel.org>; Tue,  3 Nov 2020 17:34:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E61A5C2D0A3
+	for <cip-dev@archiver.kernel.org>; Wed,  4 Nov 2020 00:42:25 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id BA42821D91
-	for <cip-dev@archiver.kernel.org>; Tue,  3 Nov 2020 17:34:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id D162E223C7
+	for <cip-dev@archiver.kernel.org>; Wed,  4 Nov 2020 00:42:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="QoafOo0d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA42821D91
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5730+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id aCe0YY4521723xxh6kfTzia0; Tue, 03 Nov 2020 09:34:02 -0800
-X-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [])
- by mx.groups.io with SMTP id smtpd.web11.794.1604424834598542940
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="G2J7tNHt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D162E223C7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=toshiba.co.jp
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5731+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id uyG8YY4521723x1ToDgOllA9; Tue, 03 Nov 2020 16:42:24 -0800
+X-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
+ by mx.groups.io with SMTP id smtpd.web11.6369.1604450541792309710
  for <cip-dev@lists.cip-project.org>;
- Tue, 03 Nov 2020 09:34:01 -0800
-X-IronPort-AV: E=Sophos;i="5.77,448,1596466800"; 
-   d="scan'208";a="61344842"
-X-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 04 Nov 2020 02:34:00 +0900
-X-Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id A4AD340061A2;
-	Wed,  4 Nov 2020 02:33:59 +0900 (JST)
-From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: cip-dev@lists.cip-project.org,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Pavel Machek <pavel@denx.de>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [cip-dev] [PATCH 4.19.y-cip 17/17] arm64: dts: renesas: r8a774e1: Add audio support
-Date: Tue,  3 Nov 2020 17:33:36 +0000
-Message-Id: <20201103173336.2829-18-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20201103173336.2829-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20201103173336.2829-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ Tue, 03 Nov 2020 16:42:23 -0800
+X-Received: by mo-csw.securemx.jp (mx-mo-csw1116) id 0A40gAjC023925; Wed, 4 Nov 2020 09:42:10 +0900
+X-Iguazu-Qid: 2wHHmca9fXKVMBclz4
+X-Iguazu-QSIG: v=2; s=0; t=1604450529; q=2wHHmca9fXKVMBclz4; m=+21Wn0dmUdJXdU68yIoCMgyfiBLK4R8U5J6vRLt1bV4=
+X-Received: from imx12.toshiba.co.jp (imx12.toshiba.co.jp [61.202.160.132])
+	by relay.securemx.jp (mx-mr1110) id 0A40g8sU016063;
+	Wed, 4 Nov 2020 09:42:08 +0900
+X-Received: from enc02.toshiba.co.jp ([61.202.160.51])
+	by imx12.toshiba.co.jp  with ESMTP id 0A40g8jk016881;
+	Wed, 4 Nov 2020 09:42:08 +0900 (JST)
+X-Received: from hop101.toshiba.co.jp ([133.199.85.107])
+	by enc02.toshiba.co.jp  with ESMTP id 0A40g74p023881;
+	Wed, 4 Nov 2020 09:42:08 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=VWvkWlP8wPL1cA9LLxvj95CtTT4ehCBOgicxdtvaiBiKu8/zPKy7R+GxDoU3hEFT7iTPpAk+59FNcTORfXlaWpsrrRyb6IfsOgvUHxCAnU4tb4LG+Sh4O4um77MxFnIdGe16v6u8+MS839YDB98QFiDRxLrJVzub1lQCt0ChVqN2Cjly3H1qgUPzSTyQ3FKHXu4Gbp/MvhanIlhEIxe5cxKVbWMfJOCwYKKsUMVwQAr7qAjWfErZeP4Zg7T1TpJx9OqKwo3uDw/cCsSDl2isETCjeg9IN00I8YL1bN0cD3/QXn0OVaut5JQYfo//5gkNb38taNaJ91VuENXE5fNagg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XZgSKYe+J2Gneh1vWOGRegqt5VYeaFOUsS7Fkg3Wn0w=;
+ b=nHlv/SNoYrw+ftUhf21M0WdxIO92XFK2jlgSA1eu2vBg+BiQUn2TF7RM+pE31NNqaxrfFHn33MslL0QY1u8UfASM0Tu1Rz2mrQzUKemkI3Bg5vp9UN942sACaNnx4/cg3FJoKvQfGctSHa3JdzlDc508A44rIKoMN3vvKkgYTs5FWUiEldBJpqsi4KG/42gvc0DPXUT4lQi4kliVg91yffG9zqvSUSvUxdc38EaScYgVNibuVT7END8Y3r/QqCF8AQ6cySszGl8hFolMt6ZoEXDol6AwQxwrRRGXp2Z3v/1N3zx0AifFpf9DF7uqnVKj1Gfeb0a7H1ktYsUq6VnfrA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
+ header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
+From: "Nobuhiro Iwamatsu" <nobuhiro1.iwamatsu@toshiba.co.jp>
+To: <pavel@denx.de>, <prabhakar.mahadev-lad.rj@bp.renesas.com>
+CC: <cip-dev@lists.cip-project.org>, <biju.das.jz@bp.renesas.com>
+Subject: Re: [cip-dev] [PATCH 4.19.y-cip 0/6] Renesas RZ/G2H add PCIe{EP}/SATA support
+Thread-Topic: [PATCH 4.19.y-cip 0/6] Renesas RZ/G2H add PCIe{EP}/SATA support
+Thread-Index: AQHWsPoM1gPszC7nCECmEi6KVGZDiam0pKaAgAJ/0/A=
+Date: Wed, 4 Nov 2020 00:42:04 +0000
+X-TSB-HOP: ON
+Message-ID: <OSBPR01MB29836C35A943408A503624D792EF0@OSBPR01MB2983.jpnprd01.prod.outlook.com>
+References: <20201102092443.4142-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20201102103119.GA6161@duo.ucw.cz>
+In-Reply-To: <20201102103119.GA6161@duo.ucw.cz>
+Accept-Language: ja-JP, en-US
+x-originating-ip: [103.91.184.1]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: b2c3a8ca-c9d2-4a24-c11f-08d8805a73bd
+x-ms-traffictypediagnostic: OSBPR01MB4534:
+x-microsoft-antispam-prvs: <OSBPR01MB4534DEBD19F248615374310F92EF0@OSBPR01MB4534.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5516;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 0X2rkMAVCWBcyCqY1Fil8qAB0oUNW5OcLWpZZeGE5D1isKYYzv/8B5j+gALDb5wIHAiS9AHCjsBQUbKmRmakH081KNX69pfsTK/+EBQho4MD3/AsKY3TGoR/bnPJKBruRzWUdzf4UARD4BUMfBif9bds4Z3NVTI32wfUT8z2rIG2xpX1qiBqEkDrqcU0TRqROse/NNqyuLGeJ+DVxcP80qxHE1R7/e9h12aqmXfn32gUt4Fol5gIKVEcSm25SFkI/GsUSA2OBT7kp1uIaYGzTrGWW3ek4drCYgrHr4dQqFDskBFZQ7U7TXICyNGAjVH724Dxpb5VEU0XTIAKgPWuSg==
+x-ms-exchange-antispam-messagedata: 6ifm9187NG/UJKNpOnYmWmuUXvKMoe93cFY9eYBIy2n95Qrm8EAZKESZadTyxPf4iusWb5LGIV25j3T5rBxsGSEYNjTsCXEdOZJzodOOoXOqkzY2PJGVQ0wrFlh8JcrNpDhr0jmrOMPhY8qJS6L3qi/+ZZFfHc9Ne9uFLR1p5H0pRkjbIuEVmUPb0pMConC0QpNgYR02Ew/A/BH6QZOg7gTiDxaxX8+oO1g9N2IuB/+Qb+hD10MmlCMIgu93vhu4dI25Qcj9oy6rl5B+SLCSeEdQC+d+dsbuBr1z5NcyZYnZmB4v0C+SHRttfL+799yIDlR3qQuZw8IULJ9HEmuK7Zyouct2rkizvZK4A/0IXG/q81KkXcC6TIwPwqU7FcmXpGVA+Bh7VEWag9bhROwGza8wRfD3ml0RI3r5o5SyPCMQIUfYGPA3iGumT6Lz7lHzPgZPnEd2rdW7n3VtpuQ3CRWXOtFERZ75m/KaowndpXjaMXk9d/ZzkpTgyn7KUXL1DI6fMtrEYWSgrG6aScUCOmX9svIUyrJeqyWNnVOkiBZMxerX1NY/oQ9INVA0lhA6JrTSShKZHnR4NbTbXPeGxnRPWhqcR8O+rC8ZIeB2fpT4qWWNwsB+rK5hlne38Tn3ao1gRva6sQRWgottrKns0Q==
+x-ms-exchange-transport-forked: True
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OSBPR01MB2983.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b2c3a8ca-c9d2-4a24-c11f-08d8805a73bd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Nov 2020 00:42:04.9623
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: xq158nGrDy97nK8UtgNoNUe2nb452GLlFd2fiICKI4D5YOVcLdrGBwdQCr9AVj+aQz6kBQjfLYJ6f82xI70Nr9y8m1LzYyE27HAc6ht3ain8Wm8hdZqoS4jNiJEPmM0b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB4534
+X-OriginatorOrg: toshiba.co.jp
+MSSCP.TransferMailToMossAgent: 103
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: armU1SD6wurkfYMSxax9FUQKx4520388AA=
-Content-Type: multipart/mixed; boundary="X08zutE82VhX74sdjuHj"
+X-Gm-Message-State: M4XOUwFc4cZ5NKv8HNv3QNGAx4520388AA=
+Content-Type: multipart/mixed; boundary="LAVVld6oOFq8WUxOolWx"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1604424842;
- bh=UKWFU3uijIwqhcY4JS0GCll2hqWH5dgmlvW1Zgus1jw=;
- h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=QoafOo0dZ2HnCzXTacMCyEjlQXjyqB8m8Bee6aad/tofR7uQbvoLxpTMqkd2aGgx7Kr
- uKMF7nT7hYLLjiQbHfpGztKvU8JLHfuzrFc9PHTR+p6hY2ShsbMu4fNXRhjAGtcq7mXby
- yFVM0BDzOr8S47l9s4Jdbdmckb+4I2rMmCI=
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1604450544;
+ bh=Yb6dDC/8znGqiG9ySvAuEyWEgVKbqxcuvYFPZaZImYM=;
+ h=CC:Content-Type:Date:From:Reply-To:Subject:To;
+ b=G2J7tNHtDwrUAiTCdCE2wd8xpsPu7TIXgX9//YUZS8l/9cT6TSa0ChVihSLk3QOBRn/
+ OpHGdEPkOAuUdXOUsmonX941uefkQjligpOVvDd7yg6frlAWSxK5RD5XbF0VhsAk9emeQ
+ E9MikWmDig/49TdYal8MlwNNQ1Dj4mmuZ6Y=
 
---X08zutE82VhX74sdjuHj
+--LAVVld6oOFq8WUxOolWx
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-commit 8183a7938cfec0569d77755af5ce5ff5589f3540 upstream.
+SGksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUGF2ZWwgTWFjaGVr
+IFttYWlsdG86cGF2ZWxAZGVueC5kZV0NCj4gU2VudDogTW9uZGF5LCBOb3ZlbWJlciAyLCAyMDIw
+IDc6MzEgUE0NCj4gVG86IExhZCBQcmFiaGFrYXIgPHByYWJoYWthci5tYWhhZGV2LWxhZC5yakBi
+cC5yZW5lc2FzLmNvbT4NCj4gQ2M6IGNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnOyBpd2Ft
+YXRzdSBub2J1aGlybyjlsqnmnb4g5L+h5rSLIOKWoe+8s++8t++8o+KXr++8oe+8o++8tCkNCj4g
+PG5vYnVoaXJvMS5pd2FtYXRzdUB0b3NoaWJhLmNvLmpwPjsgUGF2ZWwgTWFjaGVrIDxwYXZlbEBk
+ZW54LmRlPjsgQmlqdSBEYXMgPGJpanUuZGFzLmp6QGJwLnJlbmVzYXMuY29tPg0KPiBTdWJqZWN0
+OiBSZTogW1BBVENIIDQuMTkueS1jaXAgMC82XSBSZW5lc2FzIFJaL0cySCBhZGQgUENJZXtFUH0v
+U0FUQSBzdXBwb3J0DQo+IA0KPiBIaSENCj4gDQo+ID4gVGhpcyBwYXRjaCBzZXJpZXMgYWRkcyBQ
+Q0lle0VQfS9TQVRBIHN1cHBvcnQgdG8gUmVuZXNhcyBSWi9HMkguDQo+ID4NCj4gPiBBbGwgdGhl
+IHBhdGNoZXMgaGF2ZSBiZWVuIGNoZXJyeS1waWNrZWQgZnJvbSBtYWlubGluZSBrZXJuZWwNCj4g
+PiB2NS4xMC1yYzIuDQo+IA0KPiBMb29rcyBnb29kIGFuZCBwYXNzZXMgb3VyIHRlc3RzLiBJIGNh
+biBhcHBseSBpdCBpZiB0aGVyZSBhcmUgbm8gb3RoZXINCj4gY29tbWVudHMuDQoNCkxvb2tzIGdv
+b2QgdG8gbWUsIHRvby4NCg0KQmVzdCByZWdhcmRzLA0KICBOb2J1aGlybw0KDQo+IA0KPiBCZXN0
+IHJlZ2FyZHMsDQo+IAkJCQkJCQkJUGF2ZWwNCj4gDQo+IC0tDQo+IERFTlggU29mdHdhcmUgRW5n
+aW5lZXJpbmcgR21iSCwgICAgICBNYW5hZ2luZyBEaXJlY3RvcjogV29sZmdhbmcgRGVuaw0KPiBI
+UkIgMTY1MjM1IE11bmljaCwgT2ZmaWNlOiBLaXJjaGVuc3RyLjUsIEQtODIxOTQgR3JvZWJlbnpl
+bGwsIEdlcm1hbnkNCg==
 
-Add sound support for the RZ/G2H SoC (a.k.a. R8A774E1).
-
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
-Link: https://lore.kernel.org/r/1594919915-5225-16-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[PL: Manually applied the changes to dtsi]
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a774e1.dtsi | 478 +++++++++++++++++++++-
- 1 file changed, 475 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-index 271045556aa0..9af3ddbe5454 100644
---- a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-@@ -1435,6 +1435,19 @@
- 		};
- 
- 		rcar_sound: sound@ec500000 {
-+			/*
-+			 * #sound-dai-cells is required
-+			 *
-+			 * Single DAI : #sound-dai-cells = <0>;	<&rcar_sound>;
-+			 * Multi  DAI : #sound-dai-cells = <1>;	<&rcar_sound N>;
-+			 */
-+			/*
-+			 * #clock-cells is required for audio_clkout0/1/2/3
-+			 *
-+			 * clkout	: #clock-cells = <0>;	<&rcar_sound>;
-+			 * clkout0/1/2/3: #clock-cells = <1>;	<&rcar_sound N>;
-+			 */
-+			compatible =  "renesas,rcar_sound-r8a774e1", "renesas,rcar_sound-gen3";
- 			reg = <0 0xec500000 0 0x1000>, /* SCU */
- 			      <0 0xec5a0000 0 0x100>,  /* ADG */
- 			      <0 0xec540000 0 0x1000>, /* SSIU */
-@@ -1442,17 +1455,476 @@
- 			      <0 0xec760000 0 0x200>;  /* Audio DMAC peri peri*/
- 			reg-names = "scu", "adg", "ssiu", "ssi", "audmapp";
- 
--			status = "disabled";
-+			clocks = <&cpg CPG_MOD 1005>,
-+				 <&cpg CPG_MOD 1006>, <&cpg CPG_MOD 1007>,
-+				 <&cpg CPG_MOD 1008>, <&cpg CPG_MOD 1009>,
-+				 <&cpg CPG_MOD 1010>, <&cpg CPG_MOD 1011>,
-+				 <&cpg CPG_MOD 1012>, <&cpg CPG_MOD 1013>,
-+				 <&cpg CPG_MOD 1014>, <&cpg CPG_MOD 1015>,
-+				 <&cpg CPG_MOD 1022>, <&cpg CPG_MOD 1023>,
-+				 <&cpg CPG_MOD 1024>, <&cpg CPG_MOD 1025>,
-+				 <&cpg CPG_MOD 1026>, <&cpg CPG_MOD 1027>,
-+				 <&cpg CPG_MOD 1028>, <&cpg CPG_MOD 1029>,
-+				 <&cpg CPG_MOD 1030>, <&cpg CPG_MOD 1031>,
-+				 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
-+				 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
-+				 <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
-+				 <&audio_clk_a>, <&audio_clk_b>,
-+				 <&audio_clk_c>,
-+				 <&cpg CPG_CORE R8A774E1_CLK_S0D4>;
-+			clock-names = "ssi-all",
-+				      "ssi.9", "ssi.8", "ssi.7", "ssi.6",
-+				      "ssi.5", "ssi.4", "ssi.3", "ssi.2",
-+				      "ssi.1", "ssi.0",
-+				      "src.9", "src.8", "src.7", "src.6",
-+				      "src.5", "src.4", "src.3", "src.2",
-+				      "src.1", "src.0",
-+				      "mix.1", "mix.0",
-+				      "ctu.1", "ctu.0",
-+				      "dvc.0", "dvc.1",
-+				      "clk_a", "clk_b", "clk_c", "clk_i";
-+			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
-+			resets = <&cpg 1005>,
-+				 <&cpg 1006>, <&cpg 1007>,
-+				 <&cpg 1008>, <&cpg 1009>,
-+				 <&cpg 1010>, <&cpg 1011>,
-+				 <&cpg 1012>, <&cpg 1013>,
-+				 <&cpg 1014>, <&cpg 1015>;
-+			reset-names = "ssi-all",
-+				      "ssi.9", "ssi.8", "ssi.7", "ssi.6",
-+				      "ssi.5", "ssi.4", "ssi.3", "ssi.2",
-+				      "ssi.1", "ssi.0";
-+			status = "disabled";
-+
-+			rcar_sound,dvc {
-+				dvc0: dvc-0 {
-+					dmas = <&audma1 0xbc>;
-+					dma-names = "tx";
-+				};
-+				dvc1: dvc-1 {
-+					dmas = <&audma1 0xbe>;
-+					dma-names = "tx";
-+				};
-+			};
- 
--			/* placeholder */
-+			rcar_sound,mix {
-+				mix0: mix-0 { };
-+				mix1: mix-1 { };
-+			};
-+
-+			rcar_sound,ctu {
-+				ctu00: ctu-0 { };
-+				ctu01: ctu-1 { };
-+				ctu02: ctu-2 { };
-+				ctu03: ctu-3 { };
-+				ctu10: ctu-4 { };
-+				ctu11: ctu-5 { };
-+				ctu12: ctu-6 { };
-+				ctu13: ctu-7 { };
-+			};
-+
-+			rcar_sound,src {
-+				src0: src-0 {
-+					interrupts = <GIC_SPI 352 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x85>, <&audma1 0x9a>;
-+					dma-names = "rx", "tx";
-+				};
-+				src1: src-1 {
-+					interrupts = <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x87>, <&audma1 0x9c>;
-+					dma-names = "rx", "tx";
-+				};
-+				src2: src-2 {
-+					interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x89>, <&audma1 0x9e>;
-+					dma-names = "rx", "tx";
-+				};
-+				src3: src-3 {
-+					interrupts = <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x8b>, <&audma1 0xa0>;
-+					dma-names = "rx", "tx";
-+				};
-+				src4: src-4 {
-+					interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x8d>, <&audma1 0xb0>;
-+					dma-names = "rx", "tx";
-+				};
-+				src5: src-5 {
-+					interrupts = <GIC_SPI 357 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x8f>, <&audma1 0xb2>;
-+					dma-names = "rx", "tx";
-+				};
-+				src6: src-6 {
-+					interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x91>, <&audma1 0xb4>;
-+					dma-names = "rx", "tx";
-+				};
-+				src7: src-7 {
-+					interrupts = <GIC_SPI 359 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x93>, <&audma1 0xb6>;
-+					dma-names = "rx", "tx";
-+				};
-+				src8: src-8 {
-+					interrupts = <GIC_SPI 360 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x95>, <&audma1 0xb8>;
-+					dma-names = "rx", "tx";
-+				};
-+				src9: src-9 {
-+					interrupts = <GIC_SPI 361 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x97>, <&audma1 0xba>;
-+					dma-names = "rx", "tx";
-+				};
-+			};
-+
-+			rcar_sound,ssiu {
-+				ssiu00: ssiu-0 {
-+					dmas = <&audma0 0x15>, <&audma1 0x16>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu01: ssiu-1 {
-+					dmas = <&audma0 0x35>, <&audma1 0x36>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu02: ssiu-2 {
-+					dmas = <&audma0 0x37>, <&audma1 0x38>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu03: ssiu-3 {
-+					dmas = <&audma0 0x47>, <&audma1 0x48>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu04: ssiu-4 {
-+					dmas = <&audma0 0x3F>, <&audma1 0x40>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu05: ssiu-5 {
-+					dmas = <&audma0 0x43>, <&audma1 0x44>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu06: ssiu-6 {
-+					dmas = <&audma0 0x4F>, <&audma1 0x50>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu07: ssiu-7 {
-+					dmas = <&audma0 0x53>, <&audma1 0x54>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu10: ssiu-8 {
-+					dmas = <&audma0 0x49>, <&audma1 0x4a>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu11: ssiu-9 {
-+					dmas = <&audma0 0x4B>, <&audma1 0x4C>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu12: ssiu-10 {
-+					dmas = <&audma0 0x57>, <&audma1 0x58>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu13: ssiu-11 {
-+					dmas = <&audma0 0x59>, <&audma1 0x5A>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu14: ssiu-12 {
-+					dmas = <&audma0 0x5F>, <&audma1 0x60>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu15: ssiu-13 {
-+					dmas = <&audma0 0xC3>, <&audma1 0xC4>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu16: ssiu-14 {
-+					dmas = <&audma0 0xC7>, <&audma1 0xC8>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu17: ssiu-15 {
-+					dmas = <&audma0 0xCB>, <&audma1 0xCC>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu20: ssiu-16 {
-+					dmas = <&audma0 0x63>, <&audma1 0x64>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu21: ssiu-17 {
-+					dmas = <&audma0 0x67>, <&audma1 0x68>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu22: ssiu-18 {
-+					dmas = <&audma0 0x6B>, <&audma1 0x6C>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu23: ssiu-19 {
-+					dmas = <&audma0 0x6D>, <&audma1 0x6E>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu24: ssiu-20 {
-+					dmas = <&audma0 0xCF>, <&audma1 0xCE>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu25: ssiu-21 {
-+					dmas = <&audma0 0xEB>, <&audma1 0xEC>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu26: ssiu-22 {
-+					dmas = <&audma0 0xED>, <&audma1 0xEE>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu27: ssiu-23 {
-+					dmas = <&audma0 0xEF>, <&audma1 0xF0>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu30: ssiu-24 {
-+					dmas = <&audma0 0x6f>, <&audma1 0x70>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu31: ssiu-25 {
-+					dmas = <&audma0 0x21>, <&audma1 0x22>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu32: ssiu-26 {
-+					dmas = <&audma0 0x23>, <&audma1 0x24>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu33: ssiu-27 {
-+					dmas = <&audma0 0x25>, <&audma1 0x26>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu34: ssiu-28 {
-+					dmas = <&audma0 0x27>, <&audma1 0x28>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu35: ssiu-29 {
-+					dmas = <&audma0 0x29>, <&audma1 0x2A>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu36: ssiu-30 {
-+					dmas = <&audma0 0x2B>, <&audma1 0x2C>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu37: ssiu-31 {
-+					dmas = <&audma0 0x2D>, <&audma1 0x2E>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu40: ssiu-32 {
-+					dmas =	<&audma0 0x71>, <&audma1 0x72>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu41: ssiu-33 {
-+					dmas = <&audma0 0x17>, <&audma1 0x18>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu42: ssiu-34 {
-+					dmas = <&audma0 0x19>, <&audma1 0x1A>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu43: ssiu-35 {
-+					dmas = <&audma0 0x1B>, <&audma1 0x1C>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu44: ssiu-36 {
-+					dmas = <&audma0 0x1D>, <&audma1 0x1E>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu45: ssiu-37 {
-+					dmas = <&audma0 0x1F>, <&audma1 0x20>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu46: ssiu-38 {
-+					dmas = <&audma0 0x31>, <&audma1 0x32>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu47: ssiu-39 {
-+					dmas = <&audma0 0x33>, <&audma1 0x34>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu50: ssiu-40 {
-+					dmas = <&audma0 0x73>, <&audma1 0x74>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu60: ssiu-41 {
-+					dmas = <&audma0 0x75>, <&audma1 0x76>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu70: ssiu-42 {
-+					dmas = <&audma0 0x79>, <&audma1 0x7a>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu80: ssiu-43 {
-+					dmas = <&audma0 0x7b>, <&audma1 0x7c>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu90: ssiu-44 {
-+					dmas = <&audma0 0x7d>, <&audma1 0x7e>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu91: ssiu-45 {
-+					dmas = <&audma0 0x7F>, <&audma1 0x80>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu92: ssiu-46 {
-+					dmas = <&audma0 0x81>, <&audma1 0x82>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu93: ssiu-47 {
-+					dmas = <&audma0 0x83>, <&audma1 0x84>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu94: ssiu-48 {
-+					dmas = <&audma0 0xA3>, <&audma1 0xA4>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu95: ssiu-49 {
-+					dmas = <&audma0 0xA5>, <&audma1 0xA6>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu96: ssiu-50 {
-+					dmas = <&audma0 0xA7>, <&audma1 0xA8>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssiu97: ssiu-51 {
-+					dmas = <&audma0 0xA9>, <&audma1 0xAA>;
-+					dma-names = "rx", "tx";
-+				};
-+			};
- 
- 			rcar_sound,ssi {
-+				ssi0: ssi-0 {
-+					interrupts = <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x01>, <&audma1 0x02>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssi1: ssi-1 {
-+					interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x03>, <&audma1 0x04>;
-+					dma-names = "rx", "tx";
-+				};
- 				ssi2: ssi-2 {
--					/* placeholder */
-+					interrupts = <GIC_SPI 372 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x05>, <&audma1 0x06>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssi3: ssi-3 {
-+					interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x07>, <&audma1 0x08>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssi4: ssi-4 {
-+					interrupts = <GIC_SPI 374 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x09>, <&audma1 0x0a>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssi5: ssi-5 {
-+					interrupts = <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x0b>, <&audma1 0x0c>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssi6: ssi-6 {
-+					interrupts = <GIC_SPI 376 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x0d>, <&audma1 0x0e>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssi7: ssi-7 {
-+					interrupts = <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x0f>, <&audma1 0x10>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssi8: ssi-8 {
-+					interrupts = <GIC_SPI 378 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x11>, <&audma1 0x12>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssi9: ssi-9 {
-+					interrupts = <GIC_SPI 379 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x13>, <&audma1 0x14>;
-+					dma-names = "rx", "tx";
- 				};
- 			};
- 		};
- 
-+		audma0: dma-controller@ec700000 {
-+			compatible = "renesas,dmac-r8a774e1",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xec700000 0 0x10000>;
-+			interrupts = <GIC_SPI 350 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12", "ch13", "ch14", "ch15";
-+			clocks = <&cpg CPG_MOD 502>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
-+			resets = <&cpg 502>;
-+			#dma-cells = <1>;
-+			dma-channels = <16>;
-+			iommus = <&ipmmu_mp0 0>, <&ipmmu_mp0 1>,
-+				 <&ipmmu_mp0 2>, <&ipmmu_mp0 3>,
-+				 <&ipmmu_mp0 4>, <&ipmmu_mp0 5>,
-+				 <&ipmmu_mp0 6>, <&ipmmu_mp0 7>,
-+				 <&ipmmu_mp0 8>, <&ipmmu_mp0 9>,
-+				 <&ipmmu_mp0 10>, <&ipmmu_mp0 11>,
-+				 <&ipmmu_mp0 12>, <&ipmmu_mp0 13>,
-+				 <&ipmmu_mp0 14>, <&ipmmu_mp0 15>;
-+		};
-+
-+		audma1: dma-controller@ec720000 {
-+			compatible = "renesas,dmac-r8a774e1",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xec720000 0 0x10000>;
-+			interrupts = <GIC_SPI 351 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 348 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 349 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 382 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 383 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12", "ch13", "ch14", "ch15";
-+			clocks = <&cpg CPG_MOD 501>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
-+			resets = <&cpg 501>;
-+			#dma-cells = <1>;
-+			dma-channels = <16>;
-+			iommus = <&ipmmu_mp0 16>, <&ipmmu_mp0 17>,
-+				 <&ipmmu_mp0 18>, <&ipmmu_mp0 19>,
-+				 <&ipmmu_mp0 20>, <&ipmmu_mp0 21>,
-+				 <&ipmmu_mp0 22>, <&ipmmu_mp0 23>,
-+				 <&ipmmu_mp0 24>, <&ipmmu_mp0 25>,
-+				 <&ipmmu_mp0 26>, <&ipmmu_mp0 27>,
-+				 <&ipmmu_mp0 28>, <&ipmmu_mp0 29>,
-+				 <&ipmmu_mp0 30>, <&ipmmu_mp0 31>;
-+		};
-+
- 		xhci0: usb@ee000000 {
- 			reg = <0 0xee000000 0 0xc00>;
- 			status = "disabled";
--- 
-2.17.1
-
-
---X08zutE82VhX74sdjuHj
+--LAVVld6oOFq8WUxOolWx
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -590,13 +129,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#5730): https://lists.cip-project.org/g/cip-dev/message=
-/5730
-Mute This Topic: https://lists.cip-project.org/mt/78011712/4520388
+View/Reply Online (#5731): https://lists.cip-project.org/g/cip-dev/message=
+/5731
+Mute This Topic: https://lists.cip-project.org/mt/77977469/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---X08zutE82VhX74sdjuHj--
+--LAVVld6oOFq8WUxOolWx--
