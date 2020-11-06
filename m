@@ -1,4 +1,4 @@
-Return-Path: <SRS0=A1bT=EM=lists.cip-project.org=bounce+64572+5762+4520388+8129055@kernel.org>
+Return-Path: <SRS0=3Nwe=EM=lists.cip-project.org=bounce+64572+5763+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -8,38 +8,38 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	T_TVD_MIME_NO_HEADERS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEBF7C2D0A3
-	for <cip-dev@archiver.kernel.org>; Fri,  6 Nov 2020 09:52:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14777C5517A
+	for <cip-dev@archiver.kernel.org>; Fri,  6 Nov 2020 09:52:06 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 55A4F2087E
-	for <cip-dev@archiver.kernel.org>; Fri,  6 Nov 2020 09:52:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 5A63E2087E
+	for <cip-dev@archiver.kernel.org>; Fri,  6 Nov 2020 09:52:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="uvjyJXOK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55A4F2087E
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="VlQNELBx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A63E2087E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5762+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id LG2NYY4521723x2IjfLdZr6C; Fri, 06 Nov 2020 01:52:03 -0800
-X-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web11.9756.1604656323253544205
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5763+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id STrxYY4521723xnA2GE2xZzG; Fri, 06 Nov 2020 01:52:04 -0800
+X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [])
+ by mx.groups.io with SMTP id smtpd.web08.9517.1604656315663802830
  for <cip-dev@lists.cip-project.org>;
- Fri, 06 Nov 2020 01:52:03 -0800
+ Fri, 06 Nov 2020 01:52:04 -0800
 X-IronPort-AV: E=Sophos;i="5.77,456,1596466800"; 
-   d="scan'208";a="61650207"
+   d="scan'208";a="61866369"
 X-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 06 Nov 2020 18:52:02 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 06 Nov 2020 18:52:04 +0900
 X-Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id BDF474266632;
-	Fri,  6 Nov 2020 18:52:01 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 146FE4266632;
+	Fri,  6 Nov 2020 18:52:02 +0900 (JST)
 From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [cip-dev] [PATCH 4.4.y-cip 7/8] ARM: dts: r8a7742: Add SATA nodes
-Date: Fri,  6 Nov 2020 09:51:50 +0000
-Message-Id: <20201106095151.25880-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [cip-dev] [PATCH 4.4.y-cip 8/8] ARM: dts: r8a7742: Add VSP support
+Date: Fri,  6 Nov 2020 09:51:51 +0000
+Message-Id: <20201106095151.25880-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
 In-Reply-To: <20201106095151.25880-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20201106095151.25880-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: Bulk
@@ -48,69 +48,104 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: szLJnHXm5g1MTnC4b9VyXXk1x4520388AA=
-Content-Type: multipart/mixed; boundary="f3lCxZTHXD71D0V9ehg3"
+X-Gm-Message-State: 6LJ9GsswSphiqMIqzEKhVe0px4520388AA=
+Content-Type: multipart/mixed; boundary="AZd0v3TDZ0H3nq4zcImI"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1604656323;
- bh=Cx00J0tMY3x8o+QwfI4zbfPOilejp+QkOXloQgvc5tw=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1604656324;
+ bh=oehBZAy/9B6kozRLZjCM+wPYjvJI176PyrwaDUTPXfE=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=uvjyJXOKEKdeHQSg/oifrC+oN0atNbtQOP3vaK4I1Qr07uQxt08V0ZKEfyTP+OTK4PX
- S4kxdqDAmREk9/fp74TMwn6hcrLA6kI2q6m0a9n8jZwGf4/ckQF7OoWrkZ3+2ggUtk929
- nFvJliokKBASblv1kczP/5f4LVuMbu+EhFA=
+ b=VlQNELBxaezM1lipL9S+9Y9FW8+Olzyvk5APtOC0ZQqGz0r5Kuxm4FPCbxpyNduOf41
+ hcDkJJcU9+ahu4jsOEul3LGvbRNoxTDzbHY/lNUm12NS0KQkqgze9mnSOmgUuxqvRw5To
+ YD9v7idH/bq3AzOO5x2Dl6w59WG49EkYn2w=
 
---f3lCxZTHXD71D0V9ehg3
+--AZd0v3TDZ0H3nq4zcImI
 
-commit b9884a16398161bea177f48ddc05884741a8b944 upstream.
+commit a937909702e00d98eac5b91b31a7f2ae112f47bf upstream.
 
-Add the SATA device nodes to the R8A7742 device tree.
+Add VSP support to R8A7742 (RZ/G1H) SoC dtsi.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Link: https://lore.kernel.org/r/1589555337-5498-10-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com
+Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+Link: https://lore.kernel.org/r/20200911080929.15058-1-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[PL: changed clocks and power-domain properties, removed resets property]
+[PL: dropped resets property. changed clocks and power-domains properties.
+added vsp device configuration]
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7742.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ arch/arm/boot/dts/r8a7742.dtsi | 55 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
 
 diff --git a/arch/arm/boot/dts/r8a7742.dtsi b/arch/arm/boot/dts/r8a7742.dtsi
-index 0268c46d8f59..ae7c8cbf9f79 100644
+index ae7c8cbf9f79..eff54f7ed812 100644
 --- a/arch/arm/boot/dts/r8a7742.dtsi
 +++ b/arch/arm/boot/dts/r8a7742.dtsi
-@@ -1557,6 +1557,26 @@
+@@ -1617,6 +1617,61 @@
  			status = "disabled";
  		};
  
-+		sata0: sata@ee300000 {
-+			compatible = "renesas,sata-r8a7742",
-+				     "renesas,rcar-gen2-sata";
-+			reg = <0 0xee300000 0 0x200000>;
-+			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp8_clks R8A7742_CLK_SATA0>;
++		vsp@fe920000 {
++			compatible = "renesas,vsp1";
++			reg = <0 0xfe920000 0 0x8000>;
++			interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp1_clks R8A7742_CLK_VSP1_R>;
 +			power-domains = <&cpg_clocks>;
-+			status = "disabled";
++
++			renesas,has-sru;
++			renesas,#rpf = <5>;
++			renesas,#uds = <1>;
++			renesas,#wpf = <4>;
 +		};
 +
-+		sata1: sata@ee500000 {
-+			compatible = "renesas,sata-r8a7742",
-+				     "renesas,rcar-gen2-sata";
-+			reg = <0 0xee500000 0 0x200000>;
-+			interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp8_clks R8A7742_CLK_SATA1>;
++		vsp@fe928000 {
++			compatible = "renesas,vsp1";
++			reg = <0 0xfe928000 0 0x8000>;
++			interrupts = <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp1_clks R8A7742_CLK_VSP1_S>;
 +			power-domains = <&cpg_clocks>;
-+			status = "disabled";
++
++			renesas,has-lut;
++			renesas,has-sru;
++			renesas,#rpf = <5>;
++			renesas,#uds = <3>;
++			renesas,#wpf = <4>;
 +		};
 +
- 		gic: interrupt-controller@f1001000 {
- 			compatible = "arm,gic-400";
- 			#interrupt-cells = <3>;
++		vsp@fe930000 {
++			compatible = "renesas,vsp1";
++			reg = <0 0xfe930000 0 0x8000>;
++			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp1_clks R8A7742_CLK_VSP1_DU0>;
++			power-domains = <&cpg_clocks>;
++
++			renesas,has-lif;
++			renesas,has-lut;
++			renesas,#rpf = <4>;
++			renesas,#uds = <1>;
++			renesas,#wpf = <4>;
++		};
++
++		vsp@fe938000 {
++			compatible = "renesas,vsp1";
++			reg = <0 0xfe938000 0 0x8000>;
++			interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp1_clks R8A7742_CLK_VSP1_DU1>;
++			power-domains = <&cpg_clocks>;
++
++			renesas,has-lif;
++			renesas,has-lut;
++			renesas,#rpf = <4>;
++			renesas,#uds = <1>;
++			renesas,#wpf = <4>;
++		};
++
+ 		cmt0: timer@ffca0000 {
+ 			compatible = "renesas,cmt-48-r8a7742",
+ 				     "renesas,cmt-48-gen2";
 -- 
 2.17.1
 
 
---f3lCxZTHXD71D0V9ehg3
+--AZd0v3TDZ0H3nq4zcImI
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -118,13 +153,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#5762): https://lists.cip-project.org/g/cip-dev/message=
-/5762
-Mute This Topic: https://lists.cip-project.org/mt/78070987/4520388
+View/Reply Online (#5763): https://lists.cip-project.org/g/cip-dev/message=
+/5763
+Mute This Topic: https://lists.cip-project.org/mt/78070988/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---f3lCxZTHXD71D0V9ehg3--
+--AZd0v3TDZ0H3nq4zcImI--
