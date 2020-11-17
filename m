@@ -1,4 +1,4 @@
-Return-Path: <SRS0=o7Yi=EX=lists.cip-project.org=bounce+64572+5803+4520388+8129055@kernel.org>
+Return-Path: <SRS0=WDV7=EX=lists.cip-project.org=bounce+64572+5804+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -6,117 +6,115 @@ X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75930C5519F
-	for <cip-dev@archiver.kernel.org>; Tue, 17 Nov 2020 08:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AA92C56202
+	for <cip-dev@archiver.kernel.org>; Tue, 17 Nov 2020 11:39:12 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 64BDE238E6
-	for <cip-dev@archiver.kernel.org>; Tue, 17 Nov 2020 08:57:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id B88C522240
+	for <cip-dev@archiver.kernel.org>; Tue, 17 Nov 2020 11:39:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="Pj4lXU2u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64BDE238E6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cybertrust.co.jp
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5803+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id TZFIYY4521723xsY9ANtkVAw; Tue, 17 Nov 2020 00:57:15 -0800
-X-Received: from APC01-HK2-obe.outbound.protection.outlook.com (APC01-HK2-obe.outbound.protection.outlook.com [40.107.130.121])
- by mx.groups.io with SMTP id smtpd.web12.5394.1605603433465909588
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="t2Y2KTUV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B88C522240
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=moxa.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5804+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id 5f2sYY4521723x367U59VG1l; Tue, 17 Nov 2020 03:39:10 -0800
+X-Received: from APC01-PU1-obe.outbound.protection.outlook.com (APC01-PU1-obe.outbound.protection.outlook.com [40.107.132.48])
+ by mx.groups.io with SMTP id smtpd.web09.6596.1605613149656649541
  for <cip-dev@lists.cip-project.org>;
- Tue, 17 Nov 2020 00:57:14 -0800
+ Tue, 17 Nov 2020 03:39:10 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BEwj3kxWpQccQ19rpLRJ5J7Qku6SoAf9Wbn2L9v/IP6YkocKQjuG2aUBzUXYnXJ2pFaIbmHmmb+nkw9QANeznHiLDKomTO6dPSVYdgSMUITj5ATyx3c7J5Z/Np1lAXyaOSFtClxTue9t0dXvbSNq3KLYB6Ks4JF6LcrVLK7iz81B0FIHrhjABBAr3TuXT33zibTKp6LQBHlaqce1XtI0DyTvKKVbsKh6CPbaJ2TCwfuBwpsgCyyguEr0GHNTUg5B3iuZ4c+Yu8URypPcF7hHBuhNZspGZLu50m1f3XDWXxvxOIIx1wugKxOI4xKulMv1YZQDai1wnBglMMm0tNN37A==
+ b=Lp9pc11XFCKSQnelmgaE62UYM3t9zUAQ4lRcxw5EbsnsUHghnR7zKFyE1Vh4Sz8pfNdaO9k3YTbzdcGhcF23Xj5kHvjtCHKTT0uU8FC/FXFcJRdl8dVOz/rHWALjvU/eGjT/O79Com+6Wd4xlEaA22JWCvHkyg4IXLtPfydXVh6AM728t93hVouK3X61e1TCd+JyWX4vVY37E1tlM3IAuX59YWBTgOrkkSZgR6E5GrnIqWiBuY2SycVkcRlVwbcZ0A3kN6OTwuxDXmhvkacogUMi45vfu8JBab5zq12ulBDSlqPnYRQOnWCJf6DP76t+GSQmCW8FyyjRna9j8kZJUg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8pjavg4S5/PkTKe8pwN8L1Rf1CKuCPIA2eugyj9L1iQ=;
- b=Voe54lidNDLRnXCD9i0ISO2g8FCQ2BUhTVbCjZvfJR9dPt5N5P8K3WHWddDy5NV/LxVWnXbU4nxWIR7Bf3KuJBtL2/3+jkO0nFglJoKrnzhKXhhIUOEy/upO8WhopLxt1R95io+EI7OSE21aQeXMMgjflxzPfiSPYsofqZFEHQkx7SkwJ+5tyAGxIU6lYPy8KzVf7Qpr+zHpgfGYGlIUB7MqiVChHxjFyuD8LrcL2eNk6W19pePg4NPk5g/raA2UiDkDezOuGigQkBBi7G/XBnWuMt28GkfgTOX94aFyeDBA27s+N/u+OnVj4m0TVqCvtrdLSaeRNepMbNUtPG0V1g==
+ bh=TPCk+z4C8yA8MnsNLVmzbhWf9L9wSpraenNH2EqLPOk=;
+ b=HmZPUfTt0QzHTc+ZNrrLjH6hCUtpn8enFl+kfUMKroZ3diLvU25O4cE5I/4Ndv8CfbgbXsqw8Ygps2cokeEMeRbxUaWK/7jVH0Xy/fQsohBRrEoeeSX5w4951sa/CLjiTXhS7p0nKMcycCG7HxX/qSDrbZS8N8Tst8udEpQQpTj1+NMq7K+izp7kvyfZROYTtCa39HDJ7RTbeR+JhDComlQrHDqr5dZ8aDENugxQwoEHJs2CjcV4dMpWAhGh3osuE3rHYjpXfZ77t7aBX4gdv8q7HEyFe67dfskyeHYiYTDI1im/9e9RvdWGhLlcS9RshLy2JmU1xd5k5+Ynk/GGSg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cybertrust.co.jp; dmarc=pass action=none
- header.from=cybertrust.co.jp; dkim=pass header.d=cybertrust.co.jp; arc=none
-X-Received: from TY2PR01MB4972.jpnprd01.prod.outlook.com (2603:1096:404:11c::20)
- by TY2PR01MB2700.jpnprd01.prod.outlook.com (2603:1096:404:71::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3564.28; Tue, 17 Nov
- 2020 08:57:09 +0000
-X-Received: from TY2PR01MB4972.jpnprd01.prod.outlook.com
- ([fe80::bc60:b903:db5a:4abe]) by TY2PR01MB4972.jpnprd01.prod.outlook.com
- ([fe80::bc60:b903:db5a:4abe%2]) with mapi id 15.20.3564.028; Tue, 17 Nov 2020
- 08:57:09 +0000
-From: "masashi.kudo@cybertrust.co.jp" <masashi.kudo@cybertrust.co.jp>
-To: <cip-dev@lists.cip-project.org>
+ smtp.mailfrom=moxa.com; dmarc=pass action=none header.from=moxa.com;
+ dkim=pass header.d=moxa.com; arc=none
+X-Received: from HK0PR01MB2450.apcprd01.prod.exchangelabs.com
+ (2603:1096:203:3c::12) by HK0PR01MB2561.apcprd01.prod.exchangelabs.com
+ (2603:1096:203:9f::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3564.25; Tue, 17 Nov
+ 2020 11:39:04 +0000
+X-Received: from HK0PR01MB2450.apcprd01.prod.exchangelabs.com
+ ([fe80::356c:79f8:86b0:6e42]) by HK0PR01MB2450.apcprd01.prod.exchangelabs.com
+ ([fe80::356c:79f8:86b0:6e42%7]) with mapi id 15.20.3564.028; Tue, 17 Nov 2020
+ 11:39:04 +0000
+From: =?UTF-8?B?U1ogTGluICjmnpfkuIrmmbop?= <sz.lin@moxa.com>
+To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
 Subject: Re: [cip-dev] Joining CIP from Codethink
 Thread-Topic: [cip-dev] Joining CIP from Codethink
-Thread-Index: AQHWvCBwyQVAWKz2gEO7dPFsR7xZCanMBqDQ
-Date: Tue, 17 Nov 2020 08:57:09 +0000
+Thread-Index: AQHWvCBy42mkyHBgDEiMu9fhBArl2anMKFVg
+Date: Tue, 17 Nov 2020 11:39:03 +0000
 Message-ID: 
- <TY2PR01MB4972E0E72776C8C5E4223DE8A0E20@TY2PR01MB4972.jpnprd01.prod.outlook.com>
+ <HK0PR01MB2450F2350CF15EA9ECC342FEE2E20@HK0PR01MB2450.apcprd01.prod.exchangelabs.com>
 References: <9bd054d9-3b0e-d339-2d3f-7471ebc5421d@codethink.co.uk>
 In-Reply-To: <9bd054d9-3b0e-d339-2d3f-7471ebc5421d@codethink.co.uk>
-Accept-Language: ja-JP, en-US
+Accept-Language: zh-TW, en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [122.216.27.145]
+x-originating-ip: [114.43.160.151]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: d13e46a5-5641-4da2-3533-08d88ad6c445
-x-ms-traffictypediagnostic: TY2PR01MB2700:
+x-ms-office365-filtering-correlation-id: 4a3c266a-53cc-4ff3-9975-08d88aed62c3
+x-ms-traffictypediagnostic: HK0PR01MB2561:
 x-microsoft-antispam-prvs: 
- <TY2PR01MB2700854DADAF553E6B78DA19A0E20@TY2PR01MB2700.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5516;
+ <HK0PR01MB256149A4770EC6CFADD823CBE2E20@HK0PR01MB2561.apcprd01.prod.exchangelabs.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam-message-info: 
- YcFExZGtqjtqHBym71vjRvgoyO61RbUCZb3YiL/xZVKN5j3zu1FDAexhPGub+F1aTsjhVaf15haoB1DhRS1wWKEfXRP2Mcc4DSigH6rWNDwcC4p20WGoy4uPfSwKlaby0c9NAn+5oK5p4svpdu0MjDyIWWInUsFDqO4NqYPMltQYU0YeEeV8qS8yEhK2rYdQlHkSNK6jsoJ6tzZNiL9ERF/Oduo3rkTn26oAh0WpBhBABjEdiHOSj9RJsgLFQmAfqYSFbZVWUwbV/EpsvSO11ZILD5/Efu2T1iKBQ+MuwBVR0vNd/idIdDzXOcfz21kZoHH4Y/7RHg5WwFx5k4RlGQ==
+ emUmjyMRkLGQXhJqaJZI+aJV5T8A4uIuAvulukELcPX3/y/zPkXXRrmEgiJigceV9FAKv96V7jRw7B0hcU2WbbJbdJoy/9XMRxe9hdzFxXYPmiGmPmC7Pp37Vin1TAHVjaP+O36wmdc7nZutNz7aJK8hGHEwxosfTREriRUJZGYfw35PaB06tSrv7rssycBA6C9it1yGoGwGRCdu6MaEJwZ1vyWdqMNS2wa9LrFhNbXDucEiWzTdk6+cE+eX/o/W+UFSDhoBaJyQRmrRZNi4av8N1os5fcfmED4ZgbuXGit80E8XPG/FLJy76Ty/C1rs5ZNzJlXEzSn+ZrBQjavD7Y/TYUtyr/N6i3LwLbWObgMGAVaaOD4/tzY67a1WBEMJ
 x-ms-exchange-antispam-messagedata: 
- rjuGMB/p5uwsTp9gsnM4zZM8b0z1yruLiXJVO9GmzKSlHxBH9UndikkQhKXr6/0Gof2CNSvMD/pTHYtPOuBWveJthzxlme9LbdgDSCIDIqsXmwpOdRB1nsr2nV/n+w8oUIcKEcFrjlYi0UjrRKe9kMnzB3EEJnFEP1DURszVi7viBuEuYRhzX7gDlsGKDmSvkev9VQrD2dwBDAh/wS9zegu3s7Z0Thd/3+6UK85qJ6Ux4RzwT1JBiKSBQ+p2Irsv6YlFue/VKWO3tKGruPWhpMlW9bL7KgDaD1z7jjO0eT3Zb4r8PpZU0tRW2hM3VcxgjUX0rwCl+zH/7yNUkGBwjmH6FPYDbB23W2i6zyjY0OQUtWdYyJxw9af75YmYJjw8XM1at0H2GFoybsAlan0sdO/a0oY+Puf153qWuCflw/yG+iaZlfBiGeF7x6183k/sfiVkGeUDEYnbs9Oyhdcqfa4j9wpF8SaDI0Bt8BMAqP1DAwsMb1VL8GUGKU+IsiNzkFJsA64XiCPODgAUfeDEv1I5Ghd1NAmjIskx3ZG7Ub4Y8a7PiLoPnZ6DV9bNTgKsXCuxrc/jw9+5r/+vK6M2ii2DrD95HeAyvpexvVx+MstvlmjaQyfGYfr1eH4wcMG/IuiTkUInGCA3cU83CdnV8g==
+ KO4F9hu8S+dznHodYjc99qw1dZucqTLebG83goXNlHm6H6tqWJYsFxKZVVdiLzmI1+Vool0gBJo4burLfz7mf9pZ37xVip+WN8+3PY4vH/6vMP7ONcEzPwE8zZ/c09vSp+6KfBNDwRfuTa7p5ef2w7mZoCLALFIWKX+sxYf4JzVZfTSSeWGk6v/762FmrcqWF3sSriOT6/wdgygMMBf2zI1KpkbLM/nV0rl4YWlFkBfia5v2762skBrbXX1ZPvsZ9wNKtwpIF41anh9G4P8vrMleqnKt8ujYRxPxXHFsGuSWtFUToHPph7fBNFdWXMFQ5lBfo8UAIuHtVg1MHMYuS71tmjNc+r/wLKgx1q/7udboTPCZWgptnvUQwbxzIPddngE3YKvTkyF8FYXUF08KeOj+6mzFHuIFA1uPJn7x70J1YkJprHuohYyi+4PTjfDan4U0uquVo6ITqsL2Rx5TynWzp5uJABDqsGsTJFhuMCJIk6BGiApvag93CWL/Rx0vNk1vuKAsOVFYJgbRAc2skBNghoDORc1horXi5HV5PAfVAb/1MN3sYAdw9aBVeogF7la1VRsQ1ZZGKorsV1rXcAIwJKo+upsSJv79+zTeLQfsVqI6aUbezQfWlk7g8RdJBJqLQcr3gRMe52+DwoNbbQ==
 x-ms-exchange-transport-forked: True
 MIME-Version: 1.0
-X-OriginatorOrg: cybertrust.co.jp
+X-OriginatorOrg: moxa.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY2PR01MB4972.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d13e46a5-5641-4da2-3533-08d88ad6c445
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Nov 2020 08:57:09.2210
+X-MS-Exchange-CrossTenant-AuthSource: HK0PR01MB2450.apcprd01.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4a3c266a-53cc-4ff3-9975-08d88aed62c3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Nov 2020 11:39:03.8705
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72cc4624-32b4-4dab-b80a-8563e559bd82
+X-MS-Exchange-CrossTenant-id: 5571c7d4-286b-47f6-9dd5-0aa688773c8e
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: tJurQZ6RMIHbBF5WMXPK08m2vORuy3J+yPhSh88SNpIn8u8Rarnf50nd3wKz4t1+ldAjTn3kdy7usZ6rFhibeOCQhsJUr9jrHOlBtjn4avc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB2700
+X-MS-Exchange-CrossTenant-userprincipalname: SMgJYd5uYrnMDahvEaPADEF8O8SY1wvN+s8ce9H0uojTSu1C68Q67C2Vrm2Kzt6S
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK0PR01MB2561
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: gUOpWSypUzekphlzA0iGBFYmx4520388AA=
-Content-Type: multipart/mixed; boundary="WUCYaPtDtWOsBxMFDeZq"
+X-Gm-Message-State: rKb0Ywagowjuw2JwWb81nVBLx4520388AA=
+Content-Type: multipart/mixed; boundary="lzSdZazYqXaA3BP6Vkm8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1605603435;
- bh=7IvWvIEkLdNoOSaHNIvP6HOWhlHsnK9phjbe+C1Zmcg=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1605613150;
+ bh=SjWfNtfSZat9LD7aV//hSIh6rjpR83yL2P2rhDxbtr0=;
  h=Content-Type:Date:From:Reply-To:Subject:To;
- b=Pj4lXU2uBrmg7SquiyrPMTXl4le0XCr4Tottu9l4/shjWC2jFf7n8rJGOo011Xzb/BG
- UFJB09UEDDThsugFWxtYlp/S4YU6JyQRbonX7Gda3hIEnaHO0MNnrrWc8mUIFsTrU86Ly
- TIARHiCH/n6R4A0a3juf6SLRFaGxIjsLMlk=
+ b=t2Y2KTUVjkkSqhraE7IWEbUp6Pd5UfJiOxaW1o5aqo72faMMo6/jUrjwSl9aAn71/Ai
+ V3nykmWBujqqUGB9lH1Lpeg5H+d/lK13qkYGbbEcldib8LVvGbOGuyGuPdjAp3/lkkaTt
+ d7cUSKB8E5ZuPv8kF4LOI21jy5TbnwD+bJI=
 
---WUCYaPtDtWOsBxMFDeZq
-Content-Language: ja-JP
+--lzSdZazYqXaA3BP6Vkm8
+Content-Language: zh-TW
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
 
-SGksIFN1ZGlwLXNhbiwNCg0KV2VsY29tZSB0byBDSVAhIEkgYW0gaG9waW5nIHRvIHdvcmsgd2l0
-aCB5b3UgY2xvc2VseSENCg0KQmVzdCByZWdhcmRzLA0KLS0NCk0uIEt1ZG8NCg0KPiAtLS0tLU9y
-aWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBjaXAtZGV2QGxpc3RzLmNpcC1wcm9qZWN0Lm9y
-ZyA8Y2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmc+IE9uIEJlaGFsZiBPZg0KPiBTdWRpcCBN
-dWtoZXJqZWUNCj4gU2VudDogTW9uZGF5LCBOb3ZlbWJlciAxNiwgMjAyMCAxMDo1NyBQTQ0KPiBU
-bzogY2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmcNCj4gU3ViamVjdDogW2NpcC1kZXZdIEpv
-aW5pbmcgQ0lQIGZyb20gQ29kZXRoaW5rDQo+IA0KPiBIaSBBbGwsDQo+IA0KPiBJIGFtIHN0YXJ0
-aW5nIHdpdGggQ0lQIGFuZCB3aWxsIGJlIHRyeWluZyB0byBkbyB3aGF0IEJlbiB1c2VkIHRvIGRv
-Lg0KPiBUaG91Z2ggbWFueSBvZiBteSBjb2xsZWFndWVzIGFuZCBleC1jb2xsZWFndWVzIGhhdmUg
-d29ya2VkIHdpdGggQ0lQLCB0aGlzIHdpbGwNCj4gYmUgbXkgZmlyc3QgdGltZSBkaXJlY3RseSB3
-b3JraW5nIHdpdGggQ0lQIGFuZCBleGNpdGVkIHdpdGggdGhlIGNoYW5jZSB0bw0KPiBjb250cmli
-dXRlIHRvIHRoZSBzdXBlci1sb25nLXRlcm0gTGludXggS2VybmVsLg0KPiANCj4gDQo+IA0KPiAt
-LQ0KPiBSZWdhcmRzDQo+IFN1ZGlwDQo=
+SGkgU3VkaXAsDQoNCldlbGNvbWUgYWJvYXJkIQ0KDQpTWg0KDQo+IC0tLS0tT3JpZ2luYWwgTWVz
+c2FnZS0tLS0tDQo+IEZyb206IGNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnIDxjaXAtZGV2
+QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZz4gT24gQmVoYWxmIE9mDQo+IFN1ZGlwIE11a2hlcmplZSB2
+aWEgbGlzdHMuY2lwLXByb2plY3Qub3JnDQo+IFNlbnQ6IE1vbmRheSwgTm92ZW1iZXIgMTYsIDIw
+MjAgOTo1NyBQTQ0KPiBUbzogY2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmcNCj4gU3ViamVj
+dDogW2NpcC1kZXZdIEpvaW5pbmcgQ0lQIGZyb20gQ29kZXRoaW5rDQo+IA0KPiBIaSBBbGwsDQo+
+IA0KPiBJIGFtIHN0YXJ0aW5nIHdpdGggQ0lQIGFuZCB3aWxsIGJlIHRyeWluZyB0byBkbyB3aGF0
+IEJlbiB1c2VkIHRvIGRvLg0KPiBUaG91Z2ggbWFueSBvZiBteSBjb2xsZWFndWVzIGFuZCBleC1j
+b2xsZWFndWVzIGhhdmUgd29ya2VkIHdpdGggQ0lQLCB0aGlzIHdpbGwNCj4gYmUgbXkgZmlyc3Qg
+dGltZSBkaXJlY3RseSB3b3JraW5nIHdpdGggQ0lQIGFuZCBleGNpdGVkIHdpdGggdGhlIGNoYW5j
+ZSB0bw0KPiBjb250cmlidXRlIHRvIHRoZSBzdXBlci1sb25nLXRlcm0gTGludXggS2VybmVsLg0K
+PiANCj4gDQo+IA0KPiAtLQ0KPiBSZWdhcmRzDQo+IFN1ZGlwDQo=
 
---WUCYaPtDtWOsBxMFDeZq
+--lzSdZazYqXaA3BP6Vkm8
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -124,8 +122,8 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#5803): https://lists.cip-project.org/g/cip-dev/message=
-/5803
+View/Reply Online (#5804): https://lists.cip-project.org/g/cip-dev/message=
+/5804
 Mute This Topic: https://lists.cip-project.org/mt/78291887/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
@@ -133,4 +131,4 @@ Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---WUCYaPtDtWOsBxMFDeZq--
+--lzSdZazYqXaA3BP6Vkm8--
