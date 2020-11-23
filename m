@@ -1,4 +1,4 @@
-Return-Path: <SRS0=5b4s=E5=lists.cip-project.org=bounce+64572+5817+4520388+8129055@kernel.org>
+Return-Path: <SRS0=SOC+=E5=lists.cip-project.org=bounce+64572+5819+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -8,38 +8,38 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	T_TVD_MIME_NO_HEADERS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03195C2D0E4
-	for <cip-dev@archiver.kernel.org>; Mon, 23 Nov 2020 12:04:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9DF5C63798
+	for <cip-dev@archiver.kernel.org>; Mon, 23 Nov 2020 12:04:02 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 2F9A820888
-	for <cip-dev@archiver.kernel.org>; Mon, 23 Nov 2020 12:03:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id F285520888
+	for <cip-dev@archiver.kernel.org>; Mon, 23 Nov 2020 12:04:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="hspsByku"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F9A820888
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="UYCdJ6UV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F285520888
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5817+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id kH2EYY4521723xRRRIdp3o4h; Mon, 23 Nov 2020 04:03:59 -0800
-X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.33680.1606133038436296189
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5819+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id s2P4YY4521723xpXsDXqXHov; Mon, 23 Nov 2020 04:04:01 -0800
+X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [])
+ by mx.groups.io with SMTP id smtpd.web08.34009.1606133039933459828
  for <cip-dev@lists.cip-project.org>;
- Mon, 23 Nov 2020 04:03:58 -0800
+ Mon, 23 Nov 2020 04:04:01 -0800
 X-IronPort-AV: E=Sophos;i="5.78,363,1599490800"; 
-   d="scan'208";a="63589387"
+   d="scan'208";a="63589393"
 X-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 23 Nov 2020 21:03:57 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 23 Nov 2020 21:04:00 +0900
 X-Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id F13DA40061B0;
-	Mon, 23 Nov 2020 21:03:56 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id BC7C940061B0;
+	Mon, 23 Nov 2020 21:03:59 +0900 (JST)
 From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [cip-dev] [PATCH 4.19.y-cip 1/7] dt-bindings: memory: document Renesas RPC-IF bindings
-Date: Mon, 23 Nov 2020 12:03:48 +0000
-Message-Id: <20201123120354.26413-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [cip-dev] [PATCH 4.19.y-cip 3/7] spi: spi-mem: Add SPI_MEM_NO_DATA to the spi_mem_data_dir enum
+Date: Mon, 23 Nov 2020 12:03:50 +0000
+Message-Id: <20201123120354.26413-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 In-Reply-To: <20201123120354.26413-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20201123120354.26413-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: Bulk
@@ -48,139 +48,75 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: 4N2acPn4SrbccCaTbolm2IBDx4520388AA=
-Content-Type: multipart/mixed; boundary="H6ah7WcQRBr3nVuMzYrv"
+X-Gm-Message-State: KLWukkbz4XQnMYJe8dTYx4bmx4520388AA=
+Content-Type: multipart/mixed; boundary="zGvbw5j8G45hGeTp5T1v"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1606133039;
- bh=3bqpgKbt7mOWlZWDcp95n90v1eO6bZ5QYQwMa9m3qrw=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1606133041;
+ bh=ONPADo9qFCeKW+B4qynxN0RDGyjfEtFYKvzOWzmQcOc=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=hspsBykuc8ixBjnbXpg9xHursntSjTeFhaBpxt1I2MAyhY905yhXN9QRq1EOM1sGyxw
- H6gbelvB8Sd2q+/xtSpyYlsgII1Tej7HfYF4PJh+rawJYtLQrU4npumR7lOgRSITnPHzM
- VTs3gLrK4UtSthQCRq2e5RIUyRU9ITy7AZo=
+ b=UYCdJ6UVD1XbKr4KaLSQUqm74akWEzS/GCLqxiFDopXKkUGnHKUdKtL5UyQrRYWTvUU
+ 7V13yaf/MCVcEY9ZHUN0s/RCj6MIbKgJQCdmsUQ8ctuT0MV/AjX9TXXqt2+i/GnJHgg1K
+ g9LfU0KX0mcaHeCYGDWvE9yDJO4mZa4j31c=
 
---H6ah7WcQRBr3nVuMzYrv
+--zGvbw5j8G45hGeTp5T1v
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
 
-commit ab1c362061d92556bd96fd2c0b188f8e4223e3e3 upstream.
+commit 0ebb261a0b2d090de618a383d2378d4a00834958 upstream.
 
-Renesas Reduced Pin Count Interface (RPC-IF) allows a SPI flash or
-HyperFlash connected to the SoC to be accessed via the external address
-space read mode or the manual mode.
+When defining spi_mem_op templates we don't necessarily know the size
+that will be passed when the template is actually used, and basing the
+supports_op() check on op->data.nbytes to know whether there will be
+data transferred for a specific operation is this not possible.
 
-Document the device tree bindings for the Renesas RPC-IF found in the R-Car
-gen3 SoCs.
+Add SPI_MEM_NO_DATA to the spi_mem_data_dir enum so that we can base
+our checks on op->data.dir instead of op->data.nbytes.
 
-Based on the original patch by Mason Yang <masonccyang@mxic.com.tw>.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Link: https://lore.kernel.org/r/54a84c75-fa17-9976-d9a6-a69ef67c418b@cogentembedded.com
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
+[PL: manually applied the changes]
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- .../memory-controllers/renesas,rpc-if.yaml    | 88 +++++++++++++++++++
- 1 file changed, 88 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml
+ drivers/spi/spi-mem.c       | 2 +-
+ include/linux/spi/spi-mem.h | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml b/Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml
-new file mode 100644
-index 000000000000..660005601a7f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml
-@@ -0,0 +1,88 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/memory-controllers/renesas,rpc-if.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Renesas Reduced Pin Count Interface (RPC-IF)
-+
-+maintainers:
-+  - Sergei Shtylyov <sergei.shtylyov@gmail.com>
-+
-+description: |
-+  Renesas RPC-IF allows a SPI flash or HyperFlash connected to the SoC to
-+  be accessed via the external address space read mode or the manual mode.
-+
-+  The flash chip itself should be represented by a subnode of the RPC-IF node.
-+  The flash interface is selected based on the "compatible" property of this
-+  subnode:
-+  - if it contains "jedec,spi-nor", then SPI is used;
-+  - if it contains "cfi-flash", then HyperFlash is used.
-+
-+allOf:
-+  - $ref: "/schemas/spi/spi-controller.yaml#"
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+        - renesas,r8a77970-rpc-if       # R-Car V3M
-+        - renesas,r8a77980-rpc-if       # R-Car V3H
-+        - renesas,r8a77995-rpc-if       # R-Car D3
-+      - const: renesas,rcar-gen3-rpc-if # a generic R-Car gen3 device
-+
-+  reg:
-+    items:
-+      - description: RPC-IF registers
-+      - description: direct mapping read mode area
-+      - description: write buffer area
-+
-+  reg-names:
-+    items:
-+      - const: regs
-+      - const: dirmap
-+      - const: wbuf
-+
-+  clocks:
-+    maxItems: 1
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 1
-+
-+patternProperties:
-+  "flash@[0-9a-f]+$":
-+    type: object
-+    properties:
-+      compatible:
-+        enum:
-+          - cfi-flash
-+          - jedec,spi-nor
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/renesas-cpg-mssr.h>
-+    #include <dt-bindings/power/r8a77995-sysc.h>
-+
-+    spi@ee200000 {
-+      compatible = "renesas,r8a77995-rpc-if", "renesas,rcar-gen3-rpc-if";
-+      reg = <0xee200000 0x200>,
-+            <0x08000000 0x4000000>,
-+            <0xee208000 0x100>;
-+      reg-names = "regs", "dirmap", "wbuf";
-+      clocks = <&cpg CPG_MOD 917>;
-+      power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+      resets = <&cpg 917>;
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      flash@0 {
-+        compatible = "jedec,spi-nor";
-+        reg = <0>;
-+        spi-max-frequency = <40000000>;
-+        spi-tx-bus-width = <1>;
-+        spi-rx-bus-width = <1>;
-+      };
-+    };
+diff --git a/drivers/spi/spi-mem.c b/drivers/spi/spi-mem.c
+index 62a7b80801d2..967f581bca4f 100644
+--- a/drivers/spi/spi-mem.c
++++ b/drivers/spi/spi-mem.c
+@@ -142,7 +142,7 @@ static bool spi_mem_default_supports_op(struct spi_mem *mem,
+ 	    spi_check_buswidth_req(mem, op->dummy.buswidth, true))
+ 		return false;
+ 
+-	if (op->data.nbytes &&
++	if (op->data.dir != SPI_MEM_NO_DATA &&
+ 	    spi_check_buswidth_req(mem, op->data.buswidth,
+ 				   op->data.dir == SPI_MEM_DATA_OUT))
+ 		return false;
+diff --git a/include/linux/spi/spi-mem.h b/include/linux/spi/spi-mem.h
+index 69ee30456864..80db2de83402 100644
+--- a/include/linux/spi/spi-mem.h
++++ b/include/linux/spi/spi-mem.h
+@@ -57,10 +57,12 @@
+ /**
+  * enum spi_mem_data_dir - describes the direction of a SPI memory data
+  *			   transfer from the controller perspective
++ * @SPI_MEM_NO_DATA: no data transferred
+  * @SPI_MEM_DATA_IN: data coming from the SPI memory
+  * @SPI_MEM_DATA_OUT: data sent the SPI memory
+  */
+ enum spi_mem_data_dir {
++	SPI_MEM_NO_DATA,
+ 	SPI_MEM_DATA_IN,
+ 	SPI_MEM_DATA_OUT,
+ };
 -- 
 2.17.1
 
 
---H6ah7WcQRBr3nVuMzYrv
+--zGvbw5j8G45hGeTp5T1v
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -188,13 +124,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#5817): https://lists.cip-project.org/g/cip-dev/message=
-/5817
-Mute This Topic: https://lists.cip-project.org/mt/78451539/4520388
+View/Reply Online (#5819): https://lists.cip-project.org/g/cip-dev/message=
+/5819
+Mute This Topic: https://lists.cip-project.org/mt/78451542/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---H6ah7WcQRBr3nVuMzYrv--
+--zGvbw5j8G45hGeTp5T1v--
