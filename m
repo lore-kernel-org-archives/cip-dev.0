@@ -1,4 +1,4 @@
-Return-Path: <SRS0=70rD=E5=lists.cip-project.org=bounce+64572+5822+4520388+8129055@kernel.org>
+Return-Path: <SRS0=HPSe=E5=lists.cip-project.org=bounce+64572+5823+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -8,38 +8,38 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	T_TVD_MIME_NO_HEADERS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2228C2D0E4
-	for <cip-dev@archiver.kernel.org>; Mon, 23 Nov 2020 12:04:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1FE3C56202
+	for <cip-dev@archiver.kernel.org>; Mon, 23 Nov 2020 12:04:07 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 229572076E
-	for <cip-dev@archiver.kernel.org>; Mon, 23 Nov 2020 12:04:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 522F72076E
+	for <cip-dev@archiver.kernel.org>; Mon, 23 Nov 2020 12:04:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="S4ygZI04"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 229572076E
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="O+AYRyGw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 522F72076E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5822+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id m3rLYY4521723xBwmUZmso3p; Mon, 23 Nov 2020 04:04:05 -0800
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5823+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id 4mkaYY4521723x8BUvkNJATu; Mon, 23 Nov 2020 04:04:07 -0800
 X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [])
  by mx.groups.io with SMTP id smtpd.web08.34009.1606133039933459828
  for <cip-dev@lists.cip-project.org>;
- Mon, 23 Nov 2020 04:04:05 -0800
+ Mon, 23 Nov 2020 04:04:06 -0800
 X-IronPort-AV: E=Sophos;i="5.78,363,1599490800"; 
-   d="scan'208";a="63589408"
+   d="scan'208";a="63589412"
 X-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 23 Nov 2020 21:04:04 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 23 Nov 2020 21:04:05 +0900
 X-Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id B020C40061B0;
-	Mon, 23 Nov 2020 21:04:03 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 067CD4007F28;
+	Mon, 23 Nov 2020 21:04:04 +0900 (JST)
 From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [cip-dev] [PATCH 4.19.y-cip 6/7] spi: spi-mem: Add a new API to support direct mapping
-Date: Mon, 23 Nov 2020 12:03:53 +0000
-Message-Id: <20201123120354.26413-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [cip-dev] [PATCH 4.19.y-cip 7/7] spi: add Renesas RPC-IF driver
+Date: Mon, 23 Nov 2020 12:03:54 +0000
+Message-Id: <20201123120354.26413-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
 In-Reply-To: <20201123120354.26413-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20201123120354.26413-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: Bulk
@@ -48,376 +48,296 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: 686k98tYMayOPZvGrzfqPSJtx4520388AA=
-Content-Type: multipart/mixed; boundary="SntR81G4qBALBIcGkALd"
+X-Gm-Message-State: rQQemGg5jIDs2SZNiN2FfP1sx4520388AA=
+Content-Type: multipart/mixed; boundary="gwW2dItwkonBpQsHt4Ar"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1606133045;
- bh=lVu0wyZ9Mpcl/VqDdh1LdSdQKATvoNVM4KoeCs0ElZg=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1606133047;
+ bh=v0B3W3DYQ2M8O9cqsXRoPjEKxw5Ycr7Z25JlqjomxbM=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=S4ygZI046FBaqmepzRTvfV8LTJoPxkK26obSUnbu/TCn+NxMkbU374qmgPBIe3PZ9C6
- mdpmvdoc8MrJZqQoIMcfh7sBKkl8q2mNvbxXdI9H7+vOtBJW+EQ0c/h/G+YyqYcLE5UCq
- bWwBEufWOCSSfsaottmjjiONXALIYL9BUTk=
+ b=O+AYRyGwbPqUadIn9fGYMp/k2OVX10Xq6pXYoSav8BTTMsnC5z0YI375Jx9aPTYVimn
+ llb2S0HHnLEv7mBddqly/VwCBYarke41sw0okUS4kYK+NoEXdlt30vTZJU6RxtXKFN25g
+ NBmqwS7mMY9WTOT5EoAm86cUsJNVv4ah3u4=
 
---SntR81G4qBALBIcGkALd
+--gwW2dItwkonBpQsHt4Ar
 
-From: Boris Brezillon <boris.brezillon@bootlin.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-commit aa167f3fed0c37e0e4c707d4331d827661f46644 upstream.
+commit eb8d6d464a27850498dced21a8450e85d4a02009 upstream.
 
-Most modern SPI controllers can directly map a SPI memory (or a portion
-of the SPI memory) in the CPU address space. Most of the time this
-brings significant performance improvements as it automates the whole
-process of sending SPI memory operations every time a new region is
-accessed.
+Add the SPI driver for the Renesas RPC-IF.  It's the "front end" driver
+using the "back end" APIs in the main driver to talk to the real hardware.
+We only implement the 'spi-mem' interface -- there's no need to implement
+the usual SPI driver methods...
 
-This new API allows SPI memory drivers to create direct mappings and
-then use them to access the memory instead of using spi_mem_exec_op().
+Based on the original patch by Mason Yang <masonccyang@mxic.com.tw>.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Link: https://lore.kernel.org/r/1ece0e6c-71af-f0f1-709e-571f4b0b4853@cogentembedded.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/spi/spi-mem.c       | 204 ++++++++++++++++++++++++++++++++++++
- include/linux/spi/spi-mem.h |  80 ++++++++++++++
- 2 files changed, 284 insertions(+)
+ drivers/spi/Kconfig      |   6 ++
+ drivers/spi/Makefile     |   1 +
+ drivers/spi/spi-rpc-if.c | 216 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 223 insertions(+)
+ create mode 100644 drivers/spi/spi-rpc-if.c
 
-diff --git a/drivers/spi/spi-mem.c b/drivers/spi/spi-mem.c
-index 0908f979f6a8..349ab2077f19 100644
---- a/drivers/spi/spi-mem.c
-+++ b/drivers/spi/spi-mem.c
-@@ -432,6 +432,210 @@ int spi_mem_adjust_op_size(struct spi_mem *mem, struct spi_mem_op *op)
- }
- EXPORT_SYMBOL_GPL(spi_mem_adjust_op_size);
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index 0a7fd56c1ed9..461315967f96 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -514,6 +514,12 @@ config SPI_RB4XX
+ 	help
+ 	  SPI controller driver for the Mikrotik RB4xx series boards.
  
-+static ssize_t spi_mem_no_dirmap_read(struct spi_mem_dirmap_desc *desc,
-+				      u64 offs, size_t len, void *buf)
++config SPI_RPCIF
++	tristate "Renesas RPC-IF SPI driver"
++	depends on RENESAS_RPCIF
++	help
++	  SPI driver for Renesas R-Car Gen3 RPC-IF.
++
+ config SPI_RSPI
+ 	tristate "Renesas RSPI/QSPI controller"
+ 	depends on SUPERH || ARCH_RENESAS || COMPILE_TEST
+diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
+index a90d55970036..e0b5478fde62 100644
+--- a/drivers/spi/Makefile
++++ b/drivers/spi/Makefile
+@@ -77,6 +77,7 @@ obj-$(CONFIG_SPI_PXA2XX_PCI)		+= spi-pxa2xx-pci.o
+ obj-$(CONFIG_SPI_QUP)			+= spi-qup.o
+ obj-$(CONFIG_SPI_ROCKCHIP)		+= spi-rockchip.o
+ obj-$(CONFIG_SPI_RB4XX)			+= spi-rb4xx.o
++obj-$(CONFIG_SPI_RPCIF)			+= spi-rpc-if.o
+ obj-$(CONFIG_SPI_RSPI)			+= spi-rspi.o
+ obj-$(CONFIG_SPI_S3C24XX)		+= spi-s3c24xx-hw.o
+ spi-s3c24xx-hw-y			:= spi-s3c24xx.o
+diff --git a/drivers/spi/spi-rpc-if.c b/drivers/spi/spi-rpc-if.c
+new file mode 100644
+index 000000000000..ed3e548227f4
+--- /dev/null
++++ b/drivers/spi/spi-rpc-if.c
+@@ -0,0 +1,216 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// RPC-IF SPI/QSPI/Octa driver
++//
++// Copyright (C) 2018 ~ 2019 Renesas Solutions Corp.
++// Copyright (C) 2019 Macronix International Co., Ltd.
++// Copyright (C) 2019 - 2020 Cogent Embedded, Inc.
++//
++
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/spi/spi.h>
++#include <linux/spi/spi-mem.h>
++
++#include <memory/renesas-rpc-if.h>
++
++#include <asm/unaligned.h>
++
++static void rpcif_spi_mem_prepare(struct spi_device *spi_dev,
++				  const struct spi_mem_op *spi_op,
++				  u64 *offs, size_t *len)
 +{
-+	struct spi_mem_op op = desc->info.op_tmpl;
-+	int ret;
++	struct rpcif *rpc = spi_controller_get_devdata(spi_dev->controller);
++	struct rpcif_op rpc_op = { };
 +
-+	op.addr.val = desc->info.offset + offs;
-+	op.data.buf.in = buf;
-+	op.data.nbytes = len;
-+	ret = spi_mem_adjust_op_size(desc->mem, &op);
-+	if (ret)
-+		return ret;
++	rpc_op.cmd.opcode = spi_op->cmd.opcode;
++	rpc_op.cmd.buswidth = spi_op->cmd.buswidth;
 +
-+	ret = spi_mem_exec_op(desc->mem, &op);
-+	if (ret)
-+		return ret;
-+
-+	return op.data.nbytes;
-+}
-+
-+static ssize_t spi_mem_no_dirmap_write(struct spi_mem_dirmap_desc *desc,
-+				       u64 offs, size_t len, const void *buf)
-+{
-+	struct spi_mem_op op = desc->info.op_tmpl;
-+	int ret;
-+
-+	op.addr.val = desc->info.offset + offs;
-+	op.data.buf.out = buf;
-+	op.data.nbytes = len;
-+	ret = spi_mem_adjust_op_size(desc->mem, &op);
-+	if (ret)
-+		return ret;
-+
-+	ret = spi_mem_exec_op(desc->mem, &op);
-+	if (ret)
-+		return ret;
-+
-+	return op.data.nbytes;
-+}
-+
-+/**
-+ * spi_mem_dirmap_create() - Create a direct mapping descriptor
-+ * @mem: SPI mem device this direct mapping should be created for
-+ * @info: direct mapping information
-+ *
-+ * This function is creating a direct mapping descriptor which can then be used
-+ * to access the memory using spi_mem_dirmap_read() or spi_mem_dirmap_write().
-+ * If the SPI controller driver does not support direct mapping, this function
-+ * fallback to an implementation using spi_mem_exec_op(), so that the caller
-+ * doesn't have to bother implementing a fallback on his own.
-+ *
-+ * Return: a valid pointer in case of success, and ERR_PTR() otherwise.
-+ */
-+struct spi_mem_dirmap_desc *
-+spi_mem_dirmap_create(struct spi_mem *mem,
-+		      const struct spi_mem_dirmap_info *info)
-+{
-+	struct spi_controller *ctlr = mem->spi->controller;
-+	struct spi_mem_dirmap_desc *desc;
-+	int ret = -ENOTSUPP;
-+
-+	/* Make sure the number of address cycles is between 1 and 8 bytes. */
-+	if (!info->op_tmpl.addr.nbytes || info->op_tmpl.addr.nbytes > 8)
-+		return ERR_PTR(-EINVAL);
-+
-+	/* data.dir should either be SPI_MEM_DATA_IN or SPI_MEM_DATA_OUT. */
-+	if (info->op_tmpl.data.dir == SPI_MEM_NO_DATA)
-+		return ERR_PTR(-EINVAL);
-+
-+	desc = kzalloc(sizeof(*desc), GFP_KERNEL);
-+	if (!desc)
-+		return ERR_PTR(-ENOMEM);
-+
-+	desc->mem = mem;
-+	desc->info = *info;
-+	if (ctlr->mem_ops && ctlr->mem_ops->dirmap_create)
-+		ret = ctlr->mem_ops->dirmap_create(desc);
-+
-+	if (ret) {
-+		desc->nodirmap = true;
-+		if (!spi_mem_supports_op(desc->mem, &desc->info.op_tmpl))
-+			ret = -ENOTSUPP;
-+		else
-+			ret = 0;
++	if (spi_op->addr.nbytes) {
++		rpc_op.addr.buswidth = spi_op->addr.buswidth;
++		rpc_op.addr.nbytes = spi_op->addr.nbytes;
++		rpc_op.addr.val = spi_op->addr.val;
 +	}
 +
-+	if (ret) {
-+		kfree(desc);
-+		return ERR_PTR(ret);
++	if (spi_op->dummy.nbytes) {
++		rpc_op.dummy.buswidth = spi_op->dummy.buswidth;
++		rpc_op.dummy.ncycles  = spi_op->dummy.nbytes * 8 /
++					spi_op->dummy.buswidth;
 +	}
 +
-+	return desc;
++	if (spi_op->data.nbytes || (offs && len)) {
++		rpc_op.data.buswidth = spi_op->data.buswidth;
++		rpc_op.data.nbytes = spi_op->data.nbytes;
++		switch (spi_op->data.dir) {
++		case SPI_MEM_DATA_IN:
++			rpc_op.data.dir = RPCIF_DATA_IN;
++			rpc_op.data.buf.in = spi_op->data.buf.in;
++			break;
++		case SPI_MEM_DATA_OUT:
++			rpc_op.data.dir = RPCIF_DATA_OUT;
++			rpc_op.data.buf.out = spi_op->data.buf.out;
++			break;
++		case SPI_MEM_NO_DATA:
++			rpc_op.data.dir = RPCIF_NO_DATA;
++			break;
++		}
++	} else	{
++		rpc_op.data.dir = RPCIF_NO_DATA;
++	}
++
++	rpcif_prepare(rpc, &rpc_op, offs, len);
 +}
-+EXPORT_SYMBOL_GPL(spi_mem_dirmap_create);
 +
-+/**
-+ * spi_mem_dirmap_destroy() - Destroy a direct mapping descriptor
-+ * @desc: the direct mapping descriptor to destroy
-+ * @info: direct mapping information
-+ *
-+ * This function destroys a direct mapping descriptor previously created by
-+ * spi_mem_dirmap_create().
-+ */
-+void spi_mem_dirmap_destroy(struct spi_mem_dirmap_desc *desc)
++static bool rpcif_spi_mem_supports_op(struct spi_mem *mem,
++				      const struct spi_mem_op *op)
 +{
-+	struct spi_controller *ctlr = desc->mem->spi->controller;
++	if (!spi_mem_default_supports_op(mem, op))
++		return false;
 +
-+	if (!desc->nodirmap && ctlr->mem_ops && ctlr->mem_ops->dirmap_destroy)
-+		ctlr->mem_ops->dirmap_destroy(desc);
++	if (op->data.buswidth > 4 || op->addr.buswidth > 4 ||
++	    op->dummy.buswidth > 4 || op->cmd.buswidth > 4 ||
++	    op->addr.nbytes > 4)
++		return false;
++
++	return true;
 +}
-+EXPORT_SYMBOL_GPL(spi_mem_dirmap_destroy);
 +
-+/**
-+ * spi_mem_dirmap_dirmap_read() - Read data through a direct mapping
-+ * @desc: direct mapping descriptor
-+ * @offs: offset to start reading from. Note that this is not an absolute
-+ *	  offset, but the offset within the direct mapping which already has
-+ *	  its own offset
-+ * @len: length in bytes
-+ * @buf: destination buffer. This buffer must be DMA-able
-+ *
-+ * This function reads data from a memory device using a direct mapping
-+ * previously instantiated with spi_mem_dirmap_create().
-+ *
-+ * Return: the amount of data read from the memory device or a negative error
-+ * code. Note that the returned size might be smaller than @len, and the caller
-+ * is responsible for calling spi_mem_dirmap_read() again when that happens.
-+ */
-+ssize_t spi_mem_dirmap_read(struct spi_mem_dirmap_desc *desc,
-+			    u64 offs, size_t len, void *buf)
++static ssize_t rpcif_spi_mem_dirmap_read(struct spi_mem_dirmap_desc *desc,
++					 u64 offs, size_t len, void *buf)
 +{
-+	struct spi_controller *ctlr = desc->mem->spi->controller;
-+	ssize_t ret;
++	struct rpcif *rpc =
++		spi_controller_get_devdata(desc->mem->spi->controller);
 +
-+	if (desc->info.op_tmpl.data.dir != SPI_MEM_DATA_IN)
++	if (offs + desc->info.offset + len > U32_MAX)
 +		return -EINVAL;
 +
-+	if (!len)
-+		return 0;
++	rpcif_spi_mem_prepare(desc->mem->spi, &desc->info.op_tmpl, &offs, &len);
 +
-+	if (desc->nodirmap) {
-+		ret = spi_mem_no_dirmap_read(desc, offs, len, buf);
-+	} else if (ctlr->mem_ops && ctlr->mem_ops->dirmap_read) {
-+		ret = spi_mem_access_start(desc->mem);
-+		if (ret)
-+			return ret;
-+
-+		ret = ctlr->mem_ops->dirmap_read(desc, offs, len, buf);
-+
-+		spi_mem_access_end(desc->mem);
-+	} else {
-+		ret = -ENOTSUPP;
-+	}
-+
-+	return ret;
++	return rpcif_dirmap_read(rpc, offs, len, buf);
 +}
-+EXPORT_SYMBOL_GPL(spi_mem_dirmap_read);
 +
-+/**
-+ * spi_mem_dirmap_dirmap_write() - Write data through a direct mapping
-+ * @desc: direct mapping descriptor
-+ * @offs: offset to start writing from. Note that this is not an absolute
-+ *	  offset, but the offset within the direct mapping which already has
-+ *	  its own offset
-+ * @len: length in bytes
-+ * @buf: source buffer. This buffer must be DMA-able
-+ *
-+ * This function writes data to a memory device using a direct mapping
-+ * previously instantiated with spi_mem_dirmap_create().
-+ *
-+ * Return: the amount of data written to the memory device or a negative error
-+ * code. Note that the returned size might be smaller than @len, and the caller
-+ * is responsible for calling spi_mem_dirmap_write() again when that happens.
-+ */
-+ssize_t spi_mem_dirmap_write(struct spi_mem_dirmap_desc *desc,
-+			     u64 offs, size_t len, const void *buf)
++static int rpcif_spi_mem_dirmap_create(struct spi_mem_dirmap_desc *desc)
 +{
-+	struct spi_controller *ctlr = desc->mem->spi->controller;
-+	ssize_t ret;
++	struct rpcif *rpc =
++		spi_controller_get_devdata(desc->mem->spi->controller);
 +
-+	if (desc->info.op_tmpl.data.dir != SPI_MEM_DATA_OUT)
-+		return -EINVAL;
++	if (desc->info.offset + desc->info.length > U32_MAX)
++		return -ENOTSUPP;
 +
-+	if (!len)
-+		return 0;
++	if (!rpcif_spi_mem_supports_op(desc->mem, &desc->info.op_tmpl))
++		return -ENOTSUPP;
 +
-+	if (desc->nodirmap) {
-+		ret = spi_mem_no_dirmap_write(desc, offs, len, buf);
-+	} else if (ctlr->mem_ops && ctlr->mem_ops->dirmap_write) {
-+		ret = spi_mem_access_start(desc->mem);
-+		if (ret)
-+			return ret;
++	if (!rpc->dirmap && desc->info.op_tmpl.data.dir == SPI_MEM_DATA_IN)
++		return -ENOTSUPP;
 +
-+		ret = ctlr->mem_ops->dirmap_write(desc, offs, len, buf);
++	if (desc->info.op_tmpl.data.dir == SPI_MEM_DATA_OUT)
++		return -ENOTSUPP;
 +
-+		spi_mem_access_end(desc->mem);
-+	} else {
-+		ret = -ENOTSUPP;
-+	}
-+
-+	return ret;
++	return 0;
 +}
-+EXPORT_SYMBOL_GPL(spi_mem_dirmap_write);
 +
- static inline struct spi_mem_driver *to_spi_mem_drv(struct device_driver *drv)
- {
- 	return container_of(drv, struct spi_mem_driver, spidrv.driver);
-diff --git a/include/linux/spi/spi-mem.h b/include/linux/spi/spi-mem.h
-index 253a8d451d4c..762b3974cf9c 100644
---- a/include/linux/spi/spi-mem.h
-+++ b/include/linux/spi/spi-mem.h
-@@ -124,6 +124,49 @@ struct spi_mem_op {
- 		.data = __data,					\
- 	}
- 
-+/**
-+ * struct spi_mem_dirmap_info - Direct mapping information
-+ * @op_tmpl: operation template that should be used by the direct mapping when
-+ *	     the memory device is accessed
-+ * @offset: absolute offset this direct mapping is pointing to
-+ * @length: length in byte of this direct mapping
-+ *
-+ * These information are used by the controller specific implementation to know
-+ * the portion of memory that is directly mapped and the spi_mem_op that should
-+ * be used to access the device.
-+ * A direct mapping is only valid for one direction (read or write) and this
-+ * direction is directly encoded in the ->op_tmpl.data.dir field.
-+ */
-+struct spi_mem_dirmap_info {
-+	struct spi_mem_op op_tmpl;
-+	u64 offset;
-+	u64 length;
++static int rpcif_spi_mem_exec_op(struct spi_mem *mem,
++				 const struct spi_mem_op *op)
++{
++	struct rpcif *rpc =
++		spi_controller_get_devdata(mem->spi->controller);
++
++	rpcif_spi_mem_prepare(mem->spi, op, NULL, NULL);
++
++	return rpcif_manual_xfer(rpc);
++}
++
++static const struct spi_controller_mem_ops rpcif_spi_mem_ops = {
++	.supports_op	= rpcif_spi_mem_supports_op,
++	.exec_op	= rpcif_spi_mem_exec_op,
++	.dirmap_create	= rpcif_spi_mem_dirmap_create,
++	.dirmap_read	= rpcif_spi_mem_dirmap_read,
 +};
 +
-+/**
-+ * struct spi_mem_dirmap_desc - Direct mapping descriptor
-+ * @mem: the SPI memory device this direct mapping is attached to
-+ * @info: information passed at direct mapping creation time
-+ * @nodirmap: set to 1 if the SPI controller does not implement
-+ *	      ->mem_ops->dirmap_create() or when this function returned an
-+ *	      error. If @nodirmap is true, all spi_mem_dirmap_{read,write}()
-+ *	      calls will use spi_mem_exec_op() to access the memory. This is a
-+ *	      degraded mode that allows spi_mem drivers to use the same code
-+ *	      no matter whether the controller supports direct mapping or not
-+ * @priv: field pointing to controller specific data
-+ *
-+ * Common part of a direct mapping descriptor. This object is created by
-+ * spi_mem_dirmap_create() and controller implementation of ->create_dirmap()
-+ * can create/attach direct mapping resources to the descriptor in the ->priv
-+ * field.
-+ */
-+struct spi_mem_dirmap_desc {
-+	struct spi_mem *mem;
-+	struct spi_mem_dirmap_info info;
-+	unsigned int nodirmap;
-+	void *priv;
++static int rpcif_spi_probe(struct platform_device *pdev)
++{
++	struct device *parent = pdev->dev.parent;
++	struct spi_controller *ctlr;
++	struct rpcif *rpc;
++	int error;
++
++	ctlr = spi_alloc_master(&pdev->dev, sizeof(*rpc));
++	if (!ctlr)
++		return -ENOMEM;
++
++	rpc = spi_controller_get_devdata(ctlr);
++	rpcif_sw_init(rpc, parent);
++
++	platform_set_drvdata(pdev, ctlr);
++
++	ctlr->dev.of_node = parent->of_node;
++
++	rpcif_enable_rpm(rpc);
++
++	ctlr->num_chipselect = 1;
++	ctlr->mem_ops = &rpcif_spi_mem_ops;
++
++	ctlr->bits_per_word_mask = SPI_BPW_MASK(8);
++	ctlr->mode_bits = SPI_CPOL | SPI_CPHA | SPI_TX_QUAD | SPI_RX_QUAD;
++	ctlr->flags = SPI_CONTROLLER_HALF_DUPLEX;
++
++	rpcif_hw_init(rpc, false);
++
++	error = spi_register_controller(ctlr);
++	if (error) {
++		dev_err(&pdev->dev, "spi_register_controller failed\n");
++		goto err_put_ctlr;
++	}
++	return 0;
++
++err_put_ctlr:
++	rpcif_disable_rpm(rpc);
++	spi_controller_put(ctlr);
++
++	return error;
++}
++
++static int rpcif_spi_remove(struct platform_device *pdev)
++{
++	struct spi_controller *ctlr = platform_get_drvdata(pdev);
++	struct rpcif *rpc = spi_controller_get_devdata(ctlr);
++
++	spi_unregister_controller(ctlr);
++	rpcif_disable_rpm(rpc);
++
++	return 0;
++}
++
++#ifdef CONFIG_PM_SLEEP
++static int rpcif_spi_suspend(struct device *dev)
++{
++	struct spi_controller *ctlr = dev_get_drvdata(dev);
++
++	return spi_controller_suspend(ctlr);
++}
++
++static int rpcif_spi_resume(struct device *dev)
++{
++	struct spi_controller *ctlr = dev_get_drvdata(dev);
++
++	return spi_controller_resume(ctlr);
++}
++
++static SIMPLE_DEV_PM_OPS(rpcif_spi_pm_ops, rpcif_spi_suspend, rpcif_spi_resume);
++#define DEV_PM_OPS	(&rpcif_spi_pm_ops)
++#else
++#define DEV_PM_OPS	NULL
++#endif
++
++static struct platform_driver rpcif_spi_driver = {
++	.probe	= rpcif_spi_probe,
++	.remove	= rpcif_spi_remove,
++	.driver = {
++		.name	= "rpc-if-spi",
++		.pm	= DEV_PM_OPS,
++	},
 +};
++module_platform_driver(rpcif_spi_driver);
 +
- /**
-  * struct spi_mem - describes a SPI memory device
-  * @spi: the underlying SPI device
-@@ -179,10 +222,32 @@ static inline void *spi_mem_get_drvdata(struct spi_mem *mem)
-  *	      Note that if the implementation of this function allocates memory
-  *	      dynamically, then it should do so with devm_xxx(), as we don't
-  *	      have a ->free_name() function.
-+ * @dirmap_create: create a direct mapping descriptor that can later be used to
-+ *		   access the memory device. This method is optional
-+ * @dirmap_destroy: destroy a memory descriptor previous created by
-+ *		    ->dirmap_create()
-+ * @dirmap_read: read data from the memory device using the direct mapping
-+ *		 created by ->dirmap_create(). The function can return less
-+ *		 data than requested (for example when the request is crossing
-+ *		 the currently mapped area), and the caller of
-+ *		 spi_mem_dirmap_read() is responsible for calling it again in
-+ *		 this case.
-+ * @dirmap_write: write data to the memory device using the direct mapping
-+ *		  created by ->dirmap_create(). The function can return less
-+ *		  data than requested (for example when the request is crossing
-+ *		  the currently mapped area), and the caller of
-+ *		  spi_mem_dirmap_write() is responsible for calling it again in
-+ *		  this case.
-  *
-  * This interface should be implemented by SPI controllers providing an
-  * high-level interface to execute SPI memory operation, which is usually the
-  * case for QSPI controllers.
-+ *
-+ * Note on ->dirmap_{read,write}(): drivers should avoid accessing the direct
-+ * mapping from the CPU because doing that can stall the CPU waiting for the
-+ * SPI mem transaction to finish, and this will make real-time maintainers
-+ * unhappy and might make your system less reactive. Instead, drivers should
-+ * use DMA to access this direct mapping.
-  */
- struct spi_controller_mem_ops {
- 	int (*adjust_op_size)(struct spi_mem *mem, struct spi_mem_op *op);
-@@ -191,6 +256,12 @@ struct spi_controller_mem_ops {
- 	int (*exec_op)(struct spi_mem *mem,
- 		       const struct spi_mem_op *op);
- 	const char *(*get_name)(struct spi_mem *mem);
-+	int (*dirmap_create)(struct spi_mem_dirmap_desc *desc);
-+	void (*dirmap_destroy)(struct spi_mem_dirmap_desc *desc);
-+	ssize_t (*dirmap_read)(struct spi_mem_dirmap_desc *desc,
-+			       u64 offs, size_t len, void *buf);
-+	ssize_t (*dirmap_write)(struct spi_mem_dirmap_desc *desc,
-+				u64 offs, size_t len, const void *buf);
- };
- 
- /**
-@@ -262,6 +333,15 @@ int spi_mem_exec_op(struct spi_mem *mem,
- 
- const char *spi_mem_get_name(struct spi_mem *mem);
- 
-+struct spi_mem_dirmap_desc *
-+spi_mem_dirmap_create(struct spi_mem *mem,
-+		      const struct spi_mem_dirmap_info *info);
-+void spi_mem_dirmap_destroy(struct spi_mem_dirmap_desc *desc);
-+ssize_t spi_mem_dirmap_read(struct spi_mem_dirmap_desc *desc,
-+			    u64 offs, size_t len, void *buf);
-+ssize_t spi_mem_dirmap_write(struct spi_mem_dirmap_desc *desc,
-+			     u64 offs, size_t len, const void *buf);
-+
- int spi_mem_driver_register_with_owner(struct spi_mem_driver *drv,
- 				       struct module *owner);
- 
++MODULE_DESCRIPTION("Renesas RPC-IF SPI driver");
++MODULE_LICENSE("GPL v2");
 -- 
 2.17.1
 
 
---SntR81G4qBALBIcGkALd
+--gwW2dItwkonBpQsHt4Ar
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -425,13 +345,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#5822): https://lists.cip-project.org/g/cip-dev/message=
-/5822
-Mute This Topic: https://lists.cip-project.org/mt/78451547/4520388
+View/Reply Online (#5823): https://lists.cip-project.org/g/cip-dev/message=
+/5823
+Mute This Topic: https://lists.cip-project.org/mt/78451549/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---SntR81G4qBALBIcGkALd--
+--gwW2dItwkonBpQsHt4Ar--
