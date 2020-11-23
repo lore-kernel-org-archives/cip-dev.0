@@ -1,109 +1,109 @@
-Return-Path: <SRS0=MrTF=E5=lists.cip-project.org=bounce+64572+5835+4520388+8129055@kernel.org>
+Return-Path: <SRS0=q6hf=E5=lists.cip-project.org=bounce+64572+5836+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F08C5C2D0E4
-	for <cip-dev@archiver.kernel.org>; Mon, 23 Nov 2020 23:08:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B3F6C2D0E4
+	for <cip-dev@archiver.kernel.org>; Mon, 23 Nov 2020 23:12:38 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 1116C20691
-	for <cip-dev@archiver.kernel.org>; Mon, 23 Nov 2020 23:08:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 4F49420691
+	for <cip-dev@archiver.kernel.org>; Mon, 23 Nov 2020 23:12:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="OyMdVQzx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1116C20691
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="tdWDfNOT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F49420691
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5835+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id iMfvYY4521723x5e5X55mUIM; Mon, 23 Nov 2020 15:08:55 -0800
-X-Received: from JPN01-TY1-obe.outbound.protection.outlook.com (JPN01-TY1-obe.outbound.protection.outlook.com [40.107.140.91])
- by mx.groups.io with SMTP id smtpd.web09.44219.1606172934142295381
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5836+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id VY45YY4521723xEvvHeJkb1W; Mon, 23 Nov 2020 15:12:36 -0800
+X-Received: from JPN01-TY1-obe.outbound.protection.outlook.com (JPN01-TY1-obe.outbound.protection.outlook.com [40.107.140.101])
+ by mx.groups.io with SMTP id smtpd.web11.44383.1606173155901641027
  for <cip-dev@lists.cip-project.org>;
- Mon, 23 Nov 2020 15:08:54 -0800
+ Mon, 23 Nov 2020 15:12:36 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lY9wIh6WDxHt8YLKJqBoynQL36VlmVFDlWN2bKJxI9hUSmu1ycqEvfx6baKHIv/svPqfLCtdS8YO9iN5gcNVuQtvS8Ue3HnDTMDYYkh7M8RBKLuqJybxMKoYX+RJkCnU2C10ZhgPt69wo7r1bz9GOxUxVj8EAVVOZ3NSRVEeg3PJwqoMRjNmaPlc589XmedmtMv8zqeCwJyjize9FMNUCFidJwIt5jBPZmTUAnLjBHJIltA0aTdaY7DJU6MU98QzSwOpC+tj5frHHIa69SKp+t7qSBmEzNZwwhp/FR9P2UjEbJesckEGBQ81lhT+qzQ3jovkm8djyTiyJ22ZlXiZNA==
+ b=XdzsGbwyJMo830JcLt6VDeuV/qsM7ocBAY/tHbz6gBNe5ZDc/GZi0AhzMXuyj8WBLlvR+bjyDkfLcxQsPiafZfMr8J4K3ajlP6QxFL3tmwzaZutRRT34iLiasEer7IvXUTWPTgTf9fX6CVYBlyMo3AtO6Euurt0C0bxG+899+iqJl48+OHUPrzg7KFgNwU+IEjTnIVs8m6MONcoSSN/7bFbckJGEmWyqWhKSRMqchJGsNdlooJcq1DeT43gGuWXQXmKvZPh8w+q1kfUC3ioPj+/ejPO6CyZXflD/tl7OZBsY1fjoT3I4hOULOiRtaUH7WXfLAw9gTpdQqLMAbHoxwg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/4iYCC4SqR/ndYG6ItI04hE8SG724JOROIAlMyEIsi0=;
- b=bSMcHM1Q6Dwe2Y9KqtoLlJfHzyrgldTnDk5mOnk54vFLxrtEcZ1inTro1g0VVzX9Ci7NcL8pk3T6UChhZVEvTmdiBGiepHwwy0qonFpe+/r9+DIK1BYqaklJk8A+4f/UKkOu5EAtJC8E7FXhLUkLYPgu6LMBH2nd/PQusMpuQF8yVDYx+a3UwTqOi9GWckeRlConcW2iVu1lAgDBjfzweR7D00BLV1Nqrh20bZEuILl3UIVmXigUtDkuYFcBqBkoctVK1Iq5n6WPIES2hjh7CvKYvqP8RJRsWPUJxX0GWjKyav2aCFiGMqZgy7i0m27FcyhH92T705XJTn1AGmWEvg==
+ bh=vL/ZxzX0lJatEWP/SP910gcl2LY27jkrnRMTIotcZ9c=;
+ b=HXvqVvF7c8UFHU1C0H9DixmS07KZ6QhNdFXsQhovMVvgEBemrzIVqNx+oCNC53EPPihA50Ky+6ewc7CeAsS6ikLsV5QPiIBC4tiUZBFm6JKRdv2TQVLvvBJeiToy+Q1DsJkWvG+AdgkYfcDOnUNNQPXaRJM3J0r15HYPHG58AapxjpO7kEZdoD+eqg5auziK29lDcFVlV/K7VmkazK/novh9LX3owtwUNPzm/Qq1W49ACqYngARUVUoFichdrbEWmEjkh/7xrAQD1APJNGrVc0ebRBlx8/NwKO05Fk1zULZ/r09CTZXdfBsX316jYSqdxTQ4jsgn/WJKfmCcdXpxKw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 X-Received: from OSBPR01MB5048.jpnprd01.prod.outlook.com (2603:1096:604:38::10)
- by OSAPR01MB1905.jpnprd01.prod.outlook.com (2603:1096:603:15::14) with
+ by OSBPR01MB4343.jpnprd01.prod.outlook.com (2603:1096:604:72::17) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3589.22; Mon, 23 Nov
- 2020 23:08:49 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3589.20; Mon, 23 Nov
+ 2020 23:12:32 +0000
 X-Received: from OSBPR01MB5048.jpnprd01.prod.outlook.com
  ([fe80::18f:c7ea:e9e4:db70]) by OSBPR01MB5048.jpnprd01.prod.outlook.com
  ([fe80::18f:c7ea:e9e4:db70%3]) with mapi id 15.20.3589.025; Mon, 23 Nov 2020
- 23:08:49 +0000
+ 23:12:32 +0000
 From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Pavel Machek <pavel@denx.de>
 CC: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>, Nobuhiro
  Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, Biju Das
 	<biju.das.jz@bp.renesas.com>
-Subject: Re: [cip-dev] [PATCH 4.19.y-cip 6/7] spi: spi-mem: Add a new API to support direct mapping
-Thread-Topic: [PATCH 4.19.y-cip 6/7] spi: spi-mem: Add a new API to support
- direct mapping
-Thread-Index: AQHWwdFYqUdDcGS40Uu9ou5BP6xR1qnWVsaw
-Date: Mon, 23 Nov 2020 23:08:49 +0000
+Subject: Re: [cip-dev] [PATCH 4.19.y-cip 7/7] spi: add Renesas RPC-IF driver
+Thread-Topic: [PATCH 4.19.y-cip 7/7] spi: add Renesas RPC-IF driver
+Thread-Index: AQHWwdIvF2YMUwWDbECVRI9bRHBji6nWV6vw
+Date: Mon, 23 Nov 2020 23:12:32 +0000
 Message-ID: 
- <OSBPR01MB50488503FB81A06962ACEE04AAFC0@OSBPR01MB5048.jpnprd01.prod.outlook.com>
+ <OSBPR01MB504880810908024D5D691832AAFC0@OSBPR01MB5048.jpnprd01.prod.outlook.com>
 References: <20201123120354.26413-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20201123120354.26413-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20201123194626.GD5619@amd>
-In-Reply-To: <20201123194626.GD5619@amd>
+ <20201123120354.26413-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20201123195228.GE5619@amd>
+In-Reply-To: <20201123195228.GE5619@amd>
 Accept-Language: en-GB, en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [193.141.220.21]
 x-ms-publictraffictype: Email
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 9c2b32b9-297c-4af7-1d59-08d89004bce1
-x-ms-traffictypediagnostic: OSAPR01MB1905:
+x-ms-office365-filtering-correlation-id: 13d54226-e5bc-4cfd-a45a-08d8900541fc
+x-ms-traffictypediagnostic: OSBPR01MB4343:
 x-ms-exchange-transport-forked: True
 x-microsoft-antispam-prvs: 
- <OSAPR01MB1905B4385EFA6DE54CA9162CAAFC0@OSAPR01MB1905.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4714;
+ <OSBPR01MB4343CF7E7810782FC32C90FFAAFC0@OSBPR01MB4343.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam-message-info: 
- p7lZHxMz7T/eHq0PT99iaegKDBp9WurUbsbKLrNgDqznsEX1T4EfZTIDCoWbhEA7i3GaxWp2ymiYalFWJHZ+aAwf7VzMJiLGv2mOVHTK8WTJigzH27oi0NblCcHVLU0USS3U9ija9Uv2MJj/AGcQCoCRiyqHYsZQiKtIGI8vk3N2jE/tMfXNSD/WSslvJ0WYgRV5geQUvkETGOSX+lKW5ggoh97rdM344M7Vg33abTn6mPQyMTf/xXmIINdNL2Y26xlh8FcT8VZAYMAFADpxcdnitbLqfnyKwnLPVdsHvGEkwpdCLP8kmPuFkU1s2rb6HJTl4MVvCQwz3+fApNev/A==
+ XzT4Oe1WW/d37G1Z1zwc35szzLVvKLKC1np7GsPc0QuijoKubEigKS96N2BU/UL8H+zroiZO267+Q9c1uMHo+dCkqQRh+8bVRgKapl2tmKjHff/aUo2um+n2bdeBdnffRTXmAvXCqSL8wsiCCwQ9rPGdTCCWRGox+2ohzZhiPi9truyYkW1APf5kgjWhx8SA9XRBjiXXvnoaajn00pqQLNQqKYQwcs8yrWGU5d24dxDW3KLxKpPf0kDVslpddIgYQuMevoc4ySkh0YjCU8sismQBMMuL/u2wicNb+HSMxM5PbLzSt6ARF4swjZ9OFOTLgCetCD2L2k4ZX3u94L8H2q8Lngy2v5RDW0i+umF0PulI5wDceQou9S9e00cttowdOjXRj+CfYXdx7mZoxeOWiQ==
 x-ms-exchange-antispam-messagedata: 
- U4B2dmjwEuOOuCcN0zN2BFtxdC7xP70fZdN0F5LPs2WSGiuubGYdjd1XSjZKg5JO11pQyDD7dpm98iibt44w920apLoFsdrszs8u6bAxph7tu4Xpk8HHuigePNGuYhpWFQGxWk3RBKa1gg/yh+GUEv0QQxUuNqGDkm6GMlGfq9I6nbPuHRXnfbJy9f+bn98scBXQzkTY7E2CYg5tkLsrlKAeSNkqvMA3jpgxH1nGOCOkpt310nR1P8R9h8miVG1Nnz/WnB6q9XFgh6l5M3U7DBnO9iT1nfCqneQ4YPKqKeIFJDPVSUSeBAff1iBF1RbBsV72hqD0ELZqF1tePIpZMEvNPVpvbsa/8Z6+w9Q/iqit1J3Qs0kJYjw95pFLNnGis2oMUZZYAt+cwU+jLO0/i19YiE3a/GWNYOW291kw/YXS2musRCBFyx4XmrizQkH5/ZfcUoK3PUM+X1TFZDTedLpmHp+OLQdncB/iI8BkI04wHWD5B99tB+ZE3DsIxyFTszCJjMR4kIb2Fu7waExJDQ3wEU9a8pO0WSSW/EobfqSpT4omFKw3MVEhY8JxMBEkqNmhC4vGt3OeetASfVS38JavCMC73a0OJkx8RqU9bsL4CvXKEBnPem/2eH/uwyHy6yZgLu0/+8RzhKlmftJIwaFHuiz/3OenWZsxA7r0zpSjnoO6hv9VPlgLYjht7R7DzNvpgNNNgDQr4mbDAV19X/3YtjPhDum86xju4erdt7RaOmWYlNWpFt+YzVjidcJ8L+HjOXa3HM9qTosneXwbMg2c9WGwrvVfYCYvuBw+MAbHGwWBBrSgqZ+v2Kgk/3WqAdkq/7ezd0dfM8p3i6sG3EKiDrdDuVF3CwfaIkXszXPmkHLbkGI81ExU5s+8R5HC+CriZpJ+s2YgoGBzr1/DEw==
+ GYaIKphvxeAaMoMK5VlapVDBfyZEEvvHXJa36Ac86MIwRl5eYgh0Ljh2fser+7f0UIb5BaA/tDp+T47vvU4r4aDZAXDd3L02aFXvRIprc7E4OcnKIuzuB1U7eYOatQUmhvPG+Sj00WTF2xQtZu0WAaJcsJiHDs3s3U5FobBhY/4oGOd35JVxQyfhqVY1cO3k42W1DjnysOalZcIzplYUgZbHGqhbYp7qMtqqsMWpxHI6UUsAoRfJZTBIYelc9SN5FxDPCZB7abmWqTaDIqEFt5mV41ekvRC5mfXno1a4r3pXvr9gZ150miOBXzwA+fKhmmgmkHqqpkb2wZnlPRS/xX+MQJ/MhqCSR8OFj6uGAabNTMG9zru4eZsEyrmygZR4oAd6c3faGI5goB9cidWICbnOhO+4dHaDOgSj/qFuKBX1PS93mE9Z5VFKLqdRoAH6MAMneclmRNGk+JyJRhefY7Z754TUci1t3lVxzyAIRYbNp1RamkfiHrc9ofBzOTY/TD2yu6iYLrcJWobGkgiV5aLjfIV8HUqTm3syrDs3sCG8hlGV3IuF+NMo5BVwNHtiVyNouKF0QbsWqfeWaE3fO1atGsN8X62YeqHS4m3rk83E2ifYiwG0oq5H9ou6Mj2uEScsEbrx03qGIjQlhwqwXGLw5avtGLnsDbrJHaR1Fki62xICYszLqwY+j9NkCA9WtYN2MFOoLTeNdn/ROkpY3rVUL/u+uIXeV/wI/jKHh0e1upX34r/NHtndeK780Vrnco5OsWFPQEkDhHz1sXxsfsgHr6JPksjbp6jIueyuH6dFivdnzck05pFUuME31H5yxRUm2r9LKDseTCf+rUlwGjTsuMTqx136p1K3d+eIIfLdAOzK6gOSpqqJ4t2zvJohRmdK5LS03OxD172joQbHzg==
 MIME-Version: 1.0
 X-OriginatorOrg: bp.renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: OSBPR01MB5048.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9c2b32b9-297c-4af7-1d59-08d89004bce1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Nov 2020 23:08:49.4534
+X-MS-Exchange-CrossTenant-Network-Message-Id: 13d54226-e5bc-4cfd-a45a-08d8900541fc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Nov 2020 23:12:32.8378
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: j2DjPA82dKIKJkcp6xVh5twVgU6UNZO8uCAInQbpLsbxD4y0M1zwACH1xBhhqp7oWSHW+Hh3eDI9h8pSGdIm17TwUl3z/WCfPD/E7+FgHo2jmZOY9JGfg718DJLi9Hid
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB1905
+X-MS-Exchange-CrossTenant-userprincipalname: 6kVOs7oPvhK6YXP5ey6RytoIrhe8Cv9eT08E0piyG8Klv4OTvbfTuO1IFousXKXUj2kS1Bntn6hFiNI7eWvRwUAPrnbErbe2K5TiWwW6x53CCHoF+FMxcAdjBwo/vXrA
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB4343
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: wBnbekrL51ortA2mt7Dqqsw8x4520388AA=
-Content-Type: multipart/mixed; boundary="zyiTMMrGilgf1odqXZld"
+X-Gm-Message-State: cvM02AMcRugIZ8tZitknCmS2x4520388AA=
+Content-Type: multipart/mixed; boundary="jHDxidy2Uunh3FpbkHIa"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1606172935;
- bh=hdPMR3eE+qyk6uI4FCGX51oBrnn5r4hLxLySKCjJhps=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1606173156;
+ bh=L5obuO67j3t0QjeICTA46Psw1O67jTR9Bery9B7rbZQ=;
  h=CC:Content-Type:Date:From:Reply-To:Subject:To;
- b=OyMdVQzxa8uPjK9LdoO2gIqfVSruC0BXW5wAQLH3pzqsuA8Dl72ootSfi4A5+j/GzpO
- fFb76PgLIP+Gh0RfK80+n8RY7JoyPS3vCw8lnzavyvuohJtyuy2kHv9yYU25mQQKzBVmO
- WgjjrxEOg8hYAJNIiLnoUxtQbktOSvHdgrk=
+ b=tdWDfNOTCjEwtCHdrnJubm491KEbJkDGjbdkWV0YMTMh9odNIF6n36r10yQm2/A3YjI
+ Y/YYClwsTjAPF0MSjbm47CN2CXQ8C0WqV9HP+/TrcHeEnrxNVMLIlQseZI21/GjxaqfqM
+ m7I5IGaaHty3xWP/jq/A8Ou2JMZ7cssJth8=
 
---zyiTMMrGilgf1odqXZld
+--jHDxidy2Uunh3FpbkHIa
 Content-Language: en-US
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -114,88 +114,120 @@ Thank you for the review.
 
 > -----Original Message-----
 > From: Pavel Machek <pavel@denx.de>
-> Sent: 23 November 2020 19:46
+> Sent: 23 November 2020 19:52
 > To: Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > Cc: cip-dev@lists.cip-project.org; Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@=
 toshiba.co.jp>; Pavel Machek
 > <pavel@denx.de>; Biju Das <biju.das.jz@bp.renesas.com>
-> Subject: Re: [PATCH 4.19.y-cip 6/7] spi: spi-mem: Add a new API to suppor=
-t direct mapping
+> Subject: Re: [PATCH 4.19.y-cip 7/7] spi: add Renesas RPC-IF driver
 >=20
 > Hi!
 >=20
-> > commit aa167f3fed0c37e0e4c707d4331d827661f46644 upstream.
+> > commit eb8d6d464a27850498dced21a8450e85d4a02009 upstream.
 > >
-> > Most modern SPI controllers can directly map a SPI memory (or a portion
-> > of the SPI memory) in the CPU address space. Most of the time this
-> > brings significant performance improvements as it automates the whole
-> > process of sending SPI memory operations every time a new region is
-> > accessed.
+> > Add the SPI driver for the Renesas RPC-IF.  It's the "front end" driver
+> > using the "back end" APIs in the main driver to talk to the real hardwa=
+re.
+> > We only implement the 'spi-mem' interface -- there's no need to impleme=
+nt
+> > the usual SPI driver methods...
 > >
-> > This new API allows SPI memory drivers to create direct mappings and
-> > then use them to access the memory instead of using
-> > spi_mem_exec_op().
+> > Based on the original patch by Mason Yang <masonccyang@mxic.com.tw>.
+> >
+> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> > Link: https://lore.kernel.org/r/1ece0e6c-71af-f0f1-709e-571f4b0b4853@co=
+gentembedded.com
+> > Signed-off-by: Mark Brown <broonie@kernel.org>
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >  drivers/spi/Kconfig      |   6 ++
+> >  drivers/spi/Makefile     |   1 +
+> >  drivers/spi/spi-rpc-if.c | 216 +++++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 223 insertions(+)
+> >  create mode 100644 drivers/spi/spi-rpc-if.c
+> >
+> > diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+> > index 0a7fd56c1ed9..461315967f96 100644
+> > --- a/drivers/spi/Kconfig
+> > +++ b/drivers/spi/Kconfig
+> > @@ -514,6 +514,12 @@ config SPI_RB4XX
+> >  	help
+> >  	  SPI controller driver for the Mikrotik RB4xx series boards.
+> >
+> > +config SPI_RPCIF
+> > +	tristate "Renesas RPC-IF SPI driver"
+> > +	depends on RENESAS_RPCIF
+> > +	help
+> > +	  SPI driver for Renesas R-Car Gen3 RPC-IF.
 >=20
-> > + * Return: the amount of data read from the memory device or a negativ=
-e error
-> > + * code. Note that the returned size might be smaller than @len, and t=
-he caller
-> > + * is responsible for calling spi_mem_dirmap_read() again when that ha=
-ppens.
-> > + */
-> > +ssize_t spi_mem_dirmap_read(struct spi_mem_dirmap_desc *desc,
-> > +			    u64 offs, size_t len, void *buf)
-> > +{
-> > +	struct spi_controller *ctlr =3D desc->mem->spi->controller;
-> > +	ssize_t ret;
-> > +
-> > +	if (desc->info.op_tmpl.data.dir !=3D SPI_MEM_DATA_IN)
-> > +		return -EINVAL;
-> > +
-> > +	if (!len)
-> > +		return 0;
-> > +
-> > +	if (desc->nodirmap) {
-> > +		ret =3D spi_mem_no_dirmap_read(desc, offs, len, buf);
+> Few lines here explaining the acronyms etc. would be nice.
 >=20
-> I'd do return ... here.
->=20
-Agreed.
+Will do.
 
-> > +	} else if (ctlr->mem_ops && ctlr->mem_ops->dirmap_read) {
-> > +		ret =3D spi_mem_access_start(desc->mem);
-> > +		if (ret)
-> > +			return ret;
-> > +
-> > +		ret =3D ctlr->mem_ops->dirmap_read(desc, offs, len, buf);
-> > +
-> > +		spi_mem_access_end(desc->mem);
->=20
-> and here.
->=20
-Ditto.
-
-> > +	} else {
-> > +		ret =3D -ENOTSUPP;
+> > +	error =3D spi_register_controller(ctlr);
+> > +	if (error) {
+> > +		dev_err(&pdev->dev, "spi_register_controller failed\n");
+> > +		goto err_put_ctlr;
 > > +	}
+> > +	return 0;
+> > +
+> > +err_put_ctlr:
+> > +	rpcif_disable_rpm(rpc);
+> > +	spi_controller_put(ctlr);
+> > +
+> > +	return error;
+> > +}
 >=20
-> To help with if/else nesting. spi_mem_dirmap_write could use same
-> treatment.
+> With just one user of the error exit, I'd avoid the goto.
 >=20
-Agreed will fix that and squash the changes in current patch and post it as=
- part of v2.
+Agreed shall fix that.
+
+> > +#ifdef CONFIG_PM_SLEEP
+> > +static int rpcif_spi_suspend(struct device *dev)
+> > +{
+> > +	struct spi_controller *ctlr =3D dev_get_drvdata(dev);
+> > +
+> > +	return spi_controller_suspend(ctlr);
+> > +}
+> > +
+> > +static int rpcif_spi_resume(struct device *dev)
+> > +{
+> > +	struct spi_controller *ctlr =3D dev_get_drvdata(dev);
+> > +
+> > +	return spi_controller_resume(ctlr);
+> > +}
+> > +
+> > +static SIMPLE_DEV_PM_OPS(rpcif_spi_pm_ops, rpcif_spi_suspend, rpcif_sp=
+i_resume);
+> > +#define DEV_PM_OPS	(&rpcif_spi_pm_ops)
+> > +#else
+> > +#define DEV_PM_OPS	NULL
+> > +#endif
+> > +
+> > +static struct platform_driver rpcif_spi_driver =3D {
+> > +	.probe	=3D rpcif_spi_probe,
+> > +	.remove	=3D rpcif_spi_remove,
+> > +	.driver =3D {
+> > +		.name	=3D "rpc-if-spi",
+> > +		.pm	=3D DEV_PM_OPS,
+> > +	},
+> > +};
+>=20
+> Can you just add "__maybe_unused" annotation and avoid the ifdefs,
+> like atmel-quadspi.c does?
+>=20
+Agreed will replace that.
 
 Cheers,
 Prabhakar
 
 > Best regards,
 > 								Pavel
->=20
 > --
 > DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
 > HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---zyiTMMrGilgf1odqXZld
+--jHDxidy2Uunh3FpbkHIa
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -203,13 +235,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#5835): https://lists.cip-project.org/g/cip-dev/message=
-/5835
-Mute This Topic: https://lists.cip-project.org/mt/78451547/4520388
+View/Reply Online (#5836): https://lists.cip-project.org/g/cip-dev/message=
+/5836
+Mute This Topic: https://lists.cip-project.org/mt/78451549/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---zyiTMMrGilgf1odqXZld--
+--jHDxidy2Uunh3FpbkHIa--
