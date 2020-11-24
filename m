@@ -1,4 +1,4 @@
-Return-Path: <SRS0=4RgJ=E6=lists.cip-project.org=bounce+64572+5850+4520388+8129055@kernel.org>
+Return-Path: <SRS0=M4Vn=E6=lists.cip-project.org=bounce+64572+5851+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -8,30 +8,30 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	T_TVD_MIME_NO_HEADERS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11305C63798
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2415AC2D0E4
 	for <cip-dev@archiver.kernel.org>; Tue, 24 Nov 2020 17:41:52 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 114E6206C0
+	by mail.kernel.org (Postfix) with ESMTPS id 25CF8206F7
 	for <cip-dev@archiver.kernel.org>; Tue, 24 Nov 2020 17:41:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="inzg08cZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 114E6206C0
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="Uuu2i01G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25CF8206F7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5850+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id hzddYY4521723x1gEPDke5ax; Tue, 24 Nov 2020 09:41:50 -0800
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5851+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id coRPYY4521723xNIbd4gdobD; Tue, 24 Nov 2020 09:41:50 -0800
 X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web09.417.1606239265329471357
+ by mx.groups.io with SMTP id smtpd.web09.514.1606239640150771381
  for <cip-dev@lists.cip-project.org>;
- Tue, 24 Nov 2020 09:34:25 -0800
+ Tue, 24 Nov 2020 09:40:40 -0800
 X-IronPort-AV: E=Sophos;i="5.78,366,1599490800"; 
-   d="scan'208";a="63740785"
-X-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 25 Nov 2020 02:34:24 +0900
+   d="scan'208";a="63741033"
+X-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 25 Nov 2020 02:40:38 +0900
 X-Received: from localhost.localdomain (unknown [172.29.53.254])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 062DC40B67B8;
-	Wed, 25 Nov 2020 02:34:22 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 84C86400D0D1;
+	Wed, 25 Nov 2020 02:40:37 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -40,29 +40,29 @@ Cc: Chris Paterson <chris.paterson2@renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Subject: [cip-dev] [PATCH] dt-bindings: PCI: rcar: Add device tree support for r8a7742
-Date: Tue, 24 Nov 2020 17:34:21 +0000
-Message-Id: <20201124173421.14576-1-biju.das.jz@bp.renesas.com>
+Date: Tue, 24 Nov 2020 17:40:36 +0000
+Message-Id: <20201124174036.14934-1-biju.das.jz@bp.renesas.com>
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: cjREmE6KhfQbEVcLTafHbnGHx4520388AA=
-Content-Type: multipart/mixed; boundary="prKQIqYclxNTPRB8egrc"
+X-Gm-Message-State: zRvCLtgQIMsns65fNW5NKm0mx4520388AA=
+Content-Type: multipart/mixed; boundary="HhVsAFgHj1XeBF3Bg5Kw"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=lists.cip-project.org; q=dns/txt; s=20140610; t=1606239710;
- bh=Nh0wWzTTbBwveexMUWTKspj5riZtByIO1mrJ4TxPI5U=;
+ bh=cwEoVnaPCd6kGBBVx3nBbXPa+nB1iO7Cc8fN7lyRrfw=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=inzg08cZpd6vOtVEbeUA+XepOvmcrQc1uTeKI1wHP9a1hM0U+ZNxYLYfCWXzm9+v0aX
- +1QJZ+dtPQiGb9Uu6WEMnx7WcBdKavxrc0TtikteRHgplIu+JzMNAsKFtVyRdVHpktgbg
- kl+Am8jwixqmi3Cr87zGUOSMkc5wL9s0Jsw=
+ b=Uuu2i01GHV7sEyo3V3e99yhl4SpUKaT9Q1AoZzinZoAD+Njaz6qWB9oetvW2ABIJWfn
+ UOyCucf5KUL+vN9hUBP3VkWJYeMXd4vK/mxnDivBlbkaBgim6dI6UV3HqbDvlwZx9NkLr
+ lUMmjB5h+e5Vo8WcgLyLuXWAVz7NKyJE2DA=
 
---prKQIqYclxNTPRB8egrc
+--HhVsAFgHj1XeBF3Bg5Kw
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit	d16d538ff49145b153976bd8e124116d369db266 upstream.
+commit d16d538ff49145b153976bd8e124116d369db266 upstream.
 
 Add support for r8a7742. The Renesas RZ/G1H (R8A7742) PCIe controller
 is identical to the R-Car Gen2 family.
@@ -97,7 +97,7 @@ index bedfdc122543..8a3d8b5be515 100644
 2.17.1
 
 
---prKQIqYclxNTPRB8egrc
+--HhVsAFgHj1XeBF3Bg5Kw
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -105,8 +105,8 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#5850): https://lists.cip-project.org/g/cip-dev/message=
-/5850
+View/Reply Online (#5851): https://lists.cip-project.org/g/cip-dev/message=
+/5851
 Mute This Topic: https://lists.cip-project.org/mt/78482468/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
@@ -114,4 +114,4 @@ Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---prKQIqYclxNTPRB8egrc--
+--HhVsAFgHj1XeBF3Bg5Kw--
