@@ -1,125 +1,186 @@
-Return-Path: <SRS0=4ODG=E6=lists.cip-project.org=bounce+64572+5852+4520388+8129055@kernel.org>
+Return-Path: <SRS0=uQly=E6=lists.cip-project.org=bounce+64572+5854+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MIME_HEADER_CTYPE_ONLY,SPF_HELO_NONE,SPF_PASS,
+	T_TVD_MIME_NO_HEADERS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2EEAC2D0E4
-	for <cip-dev@archiver.kernel.org>; Tue, 24 Nov 2020 17:58:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F5EC56202
+	for <cip-dev@archiver.kernel.org>; Tue, 24 Nov 2020 17:59:25 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 6CFA720757
-	for <cip-dev@archiver.kernel.org>; Tue, 24 Nov 2020 17:58:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id CF69720757
+	for <cip-dev@archiver.kernel.org>; Tue, 24 Nov 2020 17:59:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="t1jkL0tg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CFA720757
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5852+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id 34oYYY4521723x0t7eHpFO8z; Tue, 24 Nov 2020 09:58:13 -0800
-X-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web10.780.1606240692472996678
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="pYdtI/WS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF69720757
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5854+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id ds9LYY4521723xGRBVArDpwm; Tue, 24 Nov 2020 09:59:24 -0800
+X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [])
+ by mx.groups.io with SMTP id smtpd.web12.807.1606240761140942962
  for <cip-dev@lists.cip-project.org>;
- Tue, 24 Nov 2020 09:58:13 -0800
-X-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 68DD21C0B9D; Tue, 24 Nov 2020 18:58:09 +0100 (CET)
-Date: Tue, 24 Nov 2020 18:58:08 +0100
-From: "Pavel Machek" <pavel@denx.de>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: cip-dev@lists.cip-project.org,
+ Tue, 24 Nov 2020 09:59:22 -0800
+X-IronPort-AV: E=Sophos;i="5.78,366,1599490800"; 
+   d="scan'208";a="63741942"
+X-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 25 Nov 2020 02:59:21 +0900
+X-Received: from localhost.localdomain (unknown [10.226.36.204])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id A8A5640BD413;
+	Wed, 25 Nov 2020 02:59:20 +0900 (JST)
+From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Pavel Machek <pavel@denx.de>,
-	Chris Paterson <chris.paterson2@renesas.com>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [cip-dev] [PATCH] dt-bindings: PCI: rcar: Add device tree support for r8a7742
-Message-ID: <20201124175808.GA2713@duo.ucw.cz>
-References: <20201124174036.14934-1-biju.das.jz@bp.renesas.com>
-MIME-Version: 1.0
-In-Reply-To: <20201124174036.14934-1-biju.das.jz@bp.renesas.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+	Pavel Machek <pavel@denx.de>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>
+Subject: [cip-dev] [PATCH v2 4.19.y-cip 1/7] dt-bindings: memory: document Renesas RPC-IF bindings
+Date: Tue, 24 Nov 2020 17:59:12 +0000
+Message-Id: <20201124175918.12029-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20201124175918.12029-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20201124175918.12029-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: Vb0l9Bg9vOQ5exHJZClo3hO2x4520388AA=
-Content-Type: multipart/mixed; boundary="XwCh3QY9IQseAXcBqlIy"
+X-Gm-Message-State: HnqWGr3NNlq4LrlqXdNamw3Ox4520388AA=
+Content-Type: multipart/mixed; boundary="lV4MEsQhDqft8RwrZUeR"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1606240693;
- bh=YJtOqiwewgfnUwzDTlxL/xcJ5krMIplg3rD247+eSAo=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1606240764;
+ bh=RlTmTwkzUNItDI5K4HJnx5/x/LswduBNQGQxH9c+q/8=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=t1jkL0tgwojEQT9djehdAfq8g/dL2ueN03LwOs5MPrwiEkbwSm18kg+yQ+oV7m0dG3F
- +eKtXn1QGG9XzlqLjnLAcZOYiPsWmsqdDHBJqnUDjeUSFUDLbHJpbACB6MvUo4bjo0dAV
- 05uTCtXZ32Ao4suPmLwMWfkcZ7JA/rUKCJQ=
+ b=pYdtI/WSg+YxvoXAWsNIY5bkYmUnoCQEMpNCM17bwo5aFkClX+DiwjI2IIvCHj/4Hzd
+ Z32MxODay/j+Yis46HH5eJHzIpBTQHIopkYwqkmFGhv5FwxAfj/iEi9QpSMt+8wembTHv
+ 0VdqcFlZoGdY2WZMF3TygYBAhF6dd0Vfngo=
 
---XwCh3QY9IQseAXcBqlIy
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="y0ulUmNC+osPPQO6"
-Content-Disposition: inline
+--lV4MEsQhDqft8RwrZUeR
 
---y0ulUmNC+osPPQO6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Hi!
+commit ab1c362061d92556bd96fd2c0b188f8e4223e3e3 upstream.
 
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->=20
-> commit d16d538ff49145b153976bd8e124116d369db266 upstream.
->=20
-> Add support for r8a7742. The Renesas RZ/G1H (R8A7742) PCIe controller
-> is identical to the R-Car Gen2 family.
+Renesas Reduced Pin Count Interface (RPC-IF) allows a SPI flash or
+HyperFlash connected to the SoC to be accessed via the external address
+space read mode or the manual mode.
+
+Document the device tree bindings for the Renesas RPC-IF found in the R-Car
+gen3 SoCs.
+
+Based on the original patch by Mason Yang <masonccyang@mxic.com.tw>.
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Link: https://lore.kernel.org/r/54a84c75-fa17-9976-d9a6-a69ef67c418b@cogentembedded.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ .../memory-controllers/renesas,rpc-if.yaml    | 88 +++++++++++++++++++
+ 1 file changed, 88 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml
+
+diff --git a/Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml b/Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml
+new file mode 100644
+index 000000000000..660005601a7f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml
+@@ -0,0 +1,88 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/memory-controllers/renesas,rpc-if.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas Reduced Pin Count Interface (RPC-IF)
++
++maintainers:
++  - Sergei Shtylyov <sergei.shtylyov@gmail.com>
++
++description: |
++  Renesas RPC-IF allows a SPI flash or HyperFlash connected to the SoC to
++  be accessed via the external address space read mode or the manual mode.
++
++  The flash chip itself should be represented by a subnode of the RPC-IF node.
++  The flash interface is selected based on the "compatible" property of this
++  subnode:
++  - if it contains "jedec,spi-nor", then SPI is used;
++  - if it contains "cfi-flash", then HyperFlash is used.
++
++allOf:
++  - $ref: "/schemas/spi/spi-controller.yaml#"
++
++properties:
++  compatible:
++    items:
++      - enum:
++        - renesas,r8a77970-rpc-if       # R-Car V3M
++        - renesas,r8a77980-rpc-if       # R-Car V3H
++        - renesas,r8a77995-rpc-if       # R-Car D3
++      - const: renesas,rcar-gen3-rpc-if # a generic R-Car gen3 device
++
++  reg:
++    items:
++      - description: RPC-IF registers
++      - description: direct mapping read mode area
++      - description: write buffer area
++
++  reg-names:
++    items:
++      - const: regs
++      - const: dirmap
++      - const: wbuf
++
++  clocks:
++    maxItems: 1
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++patternProperties:
++  "flash@[0-9a-f]+$":
++    type: object
++    properties:
++      compatible:
++        enum:
++          - cfi-flash
++          - jedec,spi-nor
++
++examples:
++  - |
++    #include <dt-bindings/clock/renesas-cpg-mssr.h>
++    #include <dt-bindings/power/r8a77995-sysc.h>
++
++    spi@ee200000 {
++      compatible = "renesas,r8a77995-rpc-if", "renesas,rcar-gen3-rpc-if";
++      reg = <0xee200000 0x200>,
++            <0x08000000 0x4000000>,
++            <0xee208000 0x100>;
++      reg-names = "regs", "dirmap", "wbuf";
++      clocks = <&cpg CPG_MOD 917>;
++      power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++      resets = <&cpg 917>;
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      flash@0 {
++        compatible = "jedec,spi-nor";
++        reg = <0>;
++        spi-max-frequency = <40000000>;
++        spi-tx-bus-width = <1>;
++        spi-rx-bus-width = <1>;
++      };
++    };
+-- 
+2.25.1
 
 
-Sure, we can apply this (I assume it is for 4.4)? But it will not
-really add any support, it just documents the binding... so I assume
-this should go into series with patches that actually change the dts
-(and probably tweak the drivers)?
-
-Best regards,
-								Pavel
-
-> diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt b/Documen=
-tation/devicetree/bindings/pci/rcar-pci.txt
-> index bedfdc122543..8a3d8b5be515 100644
-> --- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
-> +++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-> @@ -1,7 +1,8 @@
->  * Renesas R-Car PCIe interface
-> =20
->  Required properties:
-> -compatible: "renesas,pcie-r8a7743" for the R8A7743 SoC;
-> +compatible: "renesas,pcie-r8a7742" for the R8A7742 SoC;
-> +	    "renesas,pcie-r8a7743" for the R8A7743 SoC;
->  	    "renesas,pcie-r8a7779" for the R8A7779 SoC;
->  	    "renesas,pcie-r8a7790" for the R8A7790 SoC;
->  	    "renesas,pcie-r8a7791" for the R8A7791 SoC;
-> --=20
-> 2.17.1
->=20
-
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---y0ulUmNC+osPPQO6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCX71JsAAKCRAw5/Bqldv6
-8mHlAJ9xvz8w9GuB7UWX4E+5b3wQdOoFEACgg3i30OSTg2RJ35HUsAYdbc9uOxA=
-=KIPB
------END PGP SIGNATURE-----
-
---y0ulUmNC+osPPQO6--
-
---XwCh3QY9IQseAXcBqlIy
+--lV4MEsQhDqft8RwrZUeR
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -127,13 +188,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#5852): https://lists.cip-project.org/g/cip-dev/message=
-/5852
-Mute This Topic: https://lists.cip-project.org/mt/78482468/4520388
+View/Reply Online (#5854): https://lists.cip-project.org/g/cip-dev/message=
+/5854
+Mute This Topic: https://lists.cip-project.org/mt/78482876/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---XwCh3QY9IQseAXcBqlIy--
+--lV4MEsQhDqft8RwrZUeR--
