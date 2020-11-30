@@ -1,4 +1,4 @@
-Return-Path: <SRS0=Cy7u=FE=lists.cip-project.org=bounce+64572+5897+4520388+8129055@kernel.org>
+Return-Path: <SRS0=liWU=FE=lists.cip-project.org=bounce+64572+5898+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -8,38 +8,38 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	T_TVD_MIME_NO_HEADERS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 641DAC64E7B
-	for <cip-dev@archiver.kernel.org>; Mon, 30 Nov 2020 14:19:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88027C64E90
+	for <cip-dev@archiver.kernel.org>; Mon, 30 Nov 2020 14:19:32 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id BD9ED2084C
-	for <cip-dev@archiver.kernel.org>; Mon, 30 Nov 2020 14:19:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id ECA4D20855
+	for <cip-dev@archiver.kernel.org>; Mon, 30 Nov 2020 14:19:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="ExdxFjsC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD9ED2084C
+	dkim=pass (1024-bit key) header.d=lists.cip-project.org header.i=@lists.cip-project.org header.b="PJdUyzhs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECA4D20855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5897+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id ZEBkYY4521723x1ZQoF5eOrm; Mon, 30 Nov 2020 06:19:30 -0800
-X-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [])
- by mx.groups.io with SMTP id smtpd.web10.60324.1606745963854532164
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5898+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id dFrfYY4521723xGsa2QZeH1T; Mon, 30 Nov 2020 06:19:31 -0800
+X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web12.60464.1606745970729019415
  for <cip-dev@lists.cip-project.org>;
- Mon, 30 Nov 2020 06:19:29 -0800
+ Mon, 30 Nov 2020 06:19:31 -0800
 X-IronPort-AV: E=Sophos;i="5.78,381,1599490800"; 
-   d="scan'208";a="64149814"
+   d="scan'208";a="64366346"
 X-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 30 Nov 2020 23:19:28 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 30 Nov 2020 23:19:30 +0900
 X-Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id BD7E549708F6;
-	Mon, 30 Nov 2020 23:19:27 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 2E4FB49708F6;
+	Mon, 30 Nov 2020 23:19:28 +0900 (JST)
 From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [cip-dev] [PATCH 4.4.y-cip 07/11] ARM: dts: r8a7744: Add device node for PRR
-Date: Mon, 30 Nov 2020 14:19:12 +0000
-Message-Id: <20201130141916.8211-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [cip-dev] [PATCH 4.4.y-cip 08/11] soc: renesas: Identify RZ/G1H
+Date: Mon, 30 Nov 2020 14:19:13 +0000
+Message-Id: <20201130141916.8211-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
 In-Reply-To: <20201130141916.8211-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20201130141916.8211-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: Bulk
@@ -48,51 +48,76 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: NgOmYYsW5c9LfzUGbJoXSRg3x4520388AA=
-Content-Type: multipart/mixed; boundary="EnAr1OFPyzPdtl97O8K1"
+X-Gm-Message-State: FyT8TsIYSoCHvmopJG4W4Gl3x4520388AA=
+Content-Type: multipart/mixed; boundary="nVkb7HmIEegrcyC5cpKu"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1606745970;
- bh=Zwb+ThoCbNaCCdwY3f3HdE3X7qkPjG3piKyRLfZ8+GM=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1606745971;
+ bh=EN0qhg7fF4baiyWnAz0kS66wBbaJ3VqxwJG0JsvKd0k=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=ExdxFjsCGzmmtpDkh56hzEV8SwuPgOdH4fjBTsqKLFSsDiQ8kv4nrlnDnau7bm4Vcrq
- SWMiSEHC8g6xApy5qyfk/BlZtW+/qXduNh++gMM4T07zFtIB3YdLZvFXD7lh/rByPpZSj
- d0aAW+76dMMCHALhXbL1ot+VhzdWqETUKYc=
+ b=PJdUyzhsDc+ASsV2YI5wzQMTsEGPY+Dzm5OFK+QDoNDeeLGBq+Qj+KrDrjkX2mCZgv0
+ trUg9/8TN6yqUA9tC5bb6wVbQ867o538VGBIbzpTavYHAbpM7+4UEFekemEjQKjX2/9q/
+ +q0J+VF7gJSm9r34Nlp2I7Ith8/RrDQiLno=
 
---EnAr1OFPyzPdtl97O8K1
+--nVkb7HmIEegrcyC5cpKu
 
-Add a device node for the Product Register, which provides SoC product
-and revision information.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Changes are already present in upstream but the PRR node is part of
-initial SoC DTSI and cannot be individually backported hence this
-new commit.
+commit 8848e1b14231a40ed66229fb3ee98519b32f2ae7 upstream.
 
+Add support for identifying the RZ/G1H (r8a7742) SoC.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+[PL: manually applied the changes, enabled SOC_BUS config for RZ/G1N]
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7744.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/mach-shmobile/Kconfig    | 1 +
+ drivers/soc/renesas/renesas-soc.c | 8 ++++++++
+ 2 files changed, 9 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index 079f46f17049..312c9aae8a10 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -1526,6 +1526,11 @@
- 			};
- 		};
+diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
+index 8b84eb630dee..6812b3e19ba3 100644
+--- a/arch/arm/mach-shmobile/Kconfig
++++ b/arch/arm/mach-shmobile/Kconfig
+@@ -68,6 +68,7 @@ config ARCH_R8A7742
+ 	bool "RZ/G1H (R8A77420)"
+ 	select ARCH_RCAR_GEN2
+ 	select ARM_ERRATA_798181 if SMP
++	select SOC_BUS
  
-+		prr: chipid@ff000044 {
-+			compatible = "renesas,prr";
-+			reg = <0 0xff000044 0 4>;
-+		};
+ config ARCH_R8A7743
+ 	bool "RZ/G1M (R8A77430)"
+diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
+index 2cf62855cc45..eaa540bfc9bd 100644
+--- a/drivers/soc/renesas/renesas-soc.c
++++ b/drivers/soc/renesas/renesas-soc.c
+@@ -35,6 +35,11 @@ struct renesas_soc {
+ 	u8 id;
+ };
+ 
++static const struct renesas_soc soc_rz_g1h __initconst __maybe_unused = {
++	.family	= &fam_rzg,
++	.id	= 0x45,
++};
 +
- 		cmt0: timer@ffca0000 {
- 			compatible = "renesas,cmt-48-r8a7744",
- 				     "renesas,cmt-48-gen2";
+ static const struct renesas_soc soc_rz_g1m __initconst __maybe_unused = {
+ 	.family	= &fam_rzg,
+ 	.id	= 0x47,
+@@ -51,6 +56,9 @@ static const struct renesas_soc soc_rz_g1e __initconst __maybe_unused = {
+ };
+ 
+ static const struct of_device_id renesas_socs[] __initconst = {
++#ifdef CONFIG_ARCH_R8A7742
++	{ .compatible = "renesas,r8a7742",	.data = &soc_rz_g1h },
++#endif
+ #ifdef CONFIG_ARCH_R8A7743
+ 	{ .compatible = "renesas,r8a7743",	.data = &soc_rz_g1m },
+ #endif
 -- 
 2.17.1
 
 
---EnAr1OFPyzPdtl97O8K1
+--nVkb7HmIEegrcyC5cpKu
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -100,13 +125,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#5897): https://lists.cip-project.org/g/cip-dev/message=
-/5897
-Mute This Topic: https://lists.cip-project.org/mt/78608808/4520388
+View/Reply Online (#5898): https://lists.cip-project.org/g/cip-dev/message=
+/5898
+Mute This Topic: https://lists.cip-project.org/mt/78608809/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---EnAr1OFPyzPdtl97O8K1--
+--nVkb7HmIEegrcyC5cpKu--
