@@ -1,4 +1,4 @@
-Return-Path: <SRS0=b9j1=GI=lists.cip-project.org=bounce+64572+6017+4520388+8129055@kernel.org>
+Return-Path: <SRS0=5ALn=GI=lists.cip-project.org=bounce+64572+6019+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -7,112 +7,113 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,MIME_HEADER_CTYPE_ONLY,SPF_HELO_NONE,SPF_PASS,
 	T_TVD_MIME_NO_HEADERS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD194C433E6
-	for <cip-dev@archiver.kernel.org>; Tue,  5 Jan 2021 13:58:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C37C433E0
+	for <cip-dev@archiver.kernel.org>; Tue,  5 Jan 2021 14:17:39 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 6B1672073C
-	for <cip-dev@archiver.kernel.org>; Tue,  5 Jan 2021 13:58:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B1672073C
+	by mail.kernel.org (Postfix) with ESMTPS id F0B5722AAB
+	for <cip-dev@archiver.kernel.org>; Tue,  5 Jan 2021 14:17:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0B5722AAB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6017+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id hrRPYY4521723xBFbb3qJkla; Tue, 05 Jan 2021 05:58:23 -0800
-X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [])
- by mx.groups.io with SMTP id smtpd.web11.5338.1609855082309757812
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6019+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id 8FnOYY4521723xKYCtiyAOJO; Tue, 05 Jan 2021 06:17:38 -0800
+X-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [])
+ by mx.groups.io with SMTP id smtpd.web12.5744.1609856256841821527
  for <cip-dev@lists.cip-project.org>;
- Tue, 05 Jan 2021 05:58:22 -0800
+ Tue, 05 Jan 2021 06:17:38 -0800
 X-IronPort-AV: E=Sophos;i="5.78,477,1599490800"; 
-   d="scan'208";a="68085845"
-X-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 05 Jan 2021 22:58:22 +0900
+   d="scan'208";a="67869422"
+X-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 05 Jan 2021 23:17:37 +0900
 X-Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 39CD54254F72;
-	Tue,  5 Jan 2021 22:58:21 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id A4D53400A8BB;
+	Tue,  5 Jan 2021 23:17:36 +0900 (JST)
 From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [cip-dev] [PATCH v3 4.19.y-cip 17/17] spi: rpc-if: Fix use-after-free on unbind
-Date: Tue,  5 Jan 2021 13:57:57 +0000
-Message-Id: <20210105135757.11069-18-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20210105135757.11069-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20210105135757.11069-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [cip-dev] [PATCH 4.19.y-cip 1/3] clk: renesas: r8a774a1: Add RPC clocks
+Date: Tue,  5 Jan 2021 14:17:32 +0000
+Message-Id: <20210105141734.11528-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20210105141734.11528-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20210105141734.11528-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: NJ9H2i0AvsqN33orTZDW0RKkx4520388AA=
-Content-Type: multipart/mixed; boundary="g6WzdIpxaQqZ1ZEkssc7"
+X-Gm-Message-State: B5oSGp9cBtIxuhpRiwEEBI5ax4520388AA=
+Content-Type: multipart/mixed; boundary="P7Aq5fFraKu7C2KOdQT7"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1609855103;
- bh=NESS4xu6RwjQ7Xqx4B7Mq3Xvmixido0KgF8bdbSStnw=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1609856258;
+ bh=RHN8Or6vy4EkFdvS+sPiBxHhr3S28hzS109mDfT06IE=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=qZEDHpzl17SdNbVk4taeJwKNeJu1BppTtoMDQCg3H4YRvVADdXIWeaiTBDrawNyrhgk
- Bpwkqn1COeeKzVQpArfzqkjZ0DdZ5rf/+qLo5dE9xUc7MhhxURa74Nu/hwjp1ni3dElE5
- fo9DdxBQp3slIX9BUB8E/gUqg1bhqMF805A=
+ b=LuYzU/4f6RFXQzGtN1QjDrm8AmGtqQD7oBruOaNJwNayAf5r5xVGKATsgc8zN+lz3ne
+ 1bvKcEPYrFL/0Z3k/bCCe15bI3FhzqZvP9CIA+hAwmjsLyxJ3BFwgcuF2aQvcVYMpzcKc
+ jmbNZLnU4egT1MoOGbUl3ldu7kTc5OTubdo=
 
---g6WzdIpxaQqZ1ZEkssc7
+--P7Aq5fFraKu7C2KOdQT7
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-commit 393f981ca5f797b58b882d42b7621fb6e43c7f5b upstream.
+commit 13d2617bf224351e78141183ca51971df83a9dd5 upstream.
 
-rpcif_spi_remove() accesses the driver's private data after calling
-spi_unregister_controller() even though that function releases the last
-reference on the spi_controller and thereby frees the private data.
+Describe the RPCSRC internal clock and the RPC[D2] clocks derived from it,
+as well as the RPC-IF module clock, in the RZ/G2M (R8A774A1) CPG/MSSR
+driver.
 
-Fix by switching over to the new devm_spi_alloc_master() helper which
-keeps the private data accessible until the driver has unbound.
+Inspired by commit 94e3935b5756 ("clk: renesas: r8a77980: Add RPC clocks").
 
-Fixes: eb8d6d464a27 ("spi: add Renesas RPC-IF driver")
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Cc: <stable@vger.kernel.org> # v5.9+: 5e844cc37a5c: spi: Introduce device-managed SPI controller allocation
-Cc: <stable@vger.kernel.org> # v5.9+
-Cc: Sergei Shtylyov <s.shtylyov@omprussia.ru>
-Link: https://lore.kernel.org/r/c5da472c28021da2f6517441685cef033d40b140.1607286887.git.lukas@wunner.de
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Link: https://lore.kernel.org/r/20201016121709.8447-3-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/spi/spi-rpc-if.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ drivers/clk/renesas/r8a774a1-cpg-mssr.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/spi/spi-rpc-if.c b/drivers/spi/spi-rpc-if.c
-index ed3e548227f4..3579675485a5 100644
---- a/drivers/spi/spi-rpc-if.c
-+++ b/drivers/spi/spi-rpc-if.c
-@@ -134,7 +134,7 @@ static int rpcif_spi_probe(struct platform_device *pdev)
- 	struct rpcif *rpc;
- 	int error;
+diff --git a/drivers/clk/renesas/r8a774a1-cpg-mssr.c b/drivers/clk/renesas/r8a774a1-cpg-mssr.c
+index fd54b9f625da..4a43ebec7d5e 100644
+--- a/drivers/clk/renesas/r8a774a1-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a774a1-cpg-mssr.c
+@@ -41,6 +41,7 @@ enum clk_ids {
+ 	CLK_S2,
+ 	CLK_S3,
+ 	CLK_SDSRC,
++	CLK_RPCSRC,
+ 	CLK_RINT,
  
--	ctlr = spi_alloc_master(&pdev->dev, sizeof(*rpc));
-+	ctlr = devm_spi_alloc_master(&pdev->dev, sizeof(*rpc));
- 	if (!ctlr)
- 		return -ENOMEM;
+ 	/* Module Clocks */
+@@ -67,6 +68,12 @@ static const struct cpg_core_clk r8a774a1_core_clks[] __initconst = {
+ 	DEF_FIXED(".s2",        CLK_S2,            CLK_PLL1_DIV2,  4, 1),
+ 	DEF_FIXED(".s3",        CLK_S3,            CLK_PLL1_DIV2,  6, 1),
+ 	DEF_FIXED(".sdsrc",     CLK_SDSRC,         CLK_PLL1_DIV2,  2, 1),
++	DEF_BASE(".rpcsrc",     CLK_RPCSRC, CLK_TYPE_GEN3_RPCSRC, CLK_PLL1),
++
++	DEF_BASE("rpc",         R8A774A1_CLK_RPC, CLK_TYPE_GEN3_RPC,
++		 CLK_RPCSRC),
++	DEF_BASE("rpcd2",       R8A774A1_CLK_RPCD2, CLK_TYPE_GEN3_RPCD2,
++		 R8A774A1_CLK_RPC),
  
-@@ -159,13 +159,8 @@ static int rpcif_spi_probe(struct platform_device *pdev)
- 	error = spi_register_controller(ctlr);
- 	if (error) {
- 		dev_err(&pdev->dev, "spi_register_controller failed\n");
--		goto err_put_ctlr;
-+		rpcif_disable_rpm(rpc);
- 	}
--	return 0;
--
--err_put_ctlr:
--	rpcif_disable_rpm(rpc);
--	spi_controller_put(ctlr);
+ 	DEF_GEN3_OSC(".r",      CLK_RINT,          CLK_EXTAL,      32),
  
- 	return error;
- }
+@@ -200,6 +207,7 @@ static const struct mssr_mod_clk r8a774a1_mod_clks[] __initconst = {
+ 	DEF_MOD("can-fd",		 914,	R8A774A1_CLK_S3D2),
+ 	DEF_MOD("can-if1",		 915,	R8A774A1_CLK_S3D4),
+ 	DEF_MOD("can-if0",		 916,	R8A774A1_CLK_S3D4),
++	DEF_MOD("rpc-if",		 917,	R8A774A1_CLK_RPCD2),
+ 	DEF_MOD("i2c6",			 918,	R8A774A1_CLK_S0D6),
+ 	DEF_MOD("i2c5",			 919,	R8A774A1_CLK_S0D6),
+ 	DEF_MOD("i2c-dvfs",		 926,	R8A774A1_CLK_CP),
 -- 
 2.17.1
 
 
---g6WzdIpxaQqZ1ZEkssc7
+--P7Aq5fFraKu7C2KOdQT7
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -120,13 +121,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6017): https://lists.cip-project.org/g/cip-dev/message=
-/6017
-Mute This Topic: https://lists.cip-project.org/mt/79450084/4520388
+View/Reply Online (#6019): https://lists.cip-project.org/g/cip-dev/message=
+/6019
+Mute This Topic: https://lists.cip-project.org/mt/79450574/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---g6WzdIpxaQqZ1ZEkssc7--
+--P7Aq5fFraKu7C2KOdQT7--
