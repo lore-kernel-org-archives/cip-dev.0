@@ -1,317 +1,135 @@
-Return-Path: <SRS0=uzU2=GI=lists.cip-project.org=bounce+64572+5999+4520388+8129055@kernel.org>
+Return-Path: <SRS0=qmhy=GI=lists.cip-project.org=bounce+64572+6000+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,MIME_HEADER_CTYPE_ONLY,SPF_HELO_NONE,SPF_PASS,
+	T_TVD_MIME_NO_HEADERS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08227C433DB
-	for <cip-dev@archiver.kernel.org>; Tue,  5 Jan 2021 13:16:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62301C433DB
+	for <cip-dev@archiver.kernel.org>; Tue,  5 Jan 2021 13:58:04 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 3CF88229EF
-	for <cip-dev@archiver.kernel.org>; Tue,  5 Jan 2021 13:16:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CF88229EF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5999+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id TUdPYY4521723xKFYteRNIrg; Tue, 05 Jan 2021 05:16:33 -0800
-X-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
- by mx.groups.io with SMTP id smtpd.web09.4866.1609852568218800536
+	by mail.kernel.org (Postfix) with ESMTPS id AD6B32073C
+	for <cip-dev@archiver.kernel.org>; Tue,  5 Jan 2021 13:58:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD6B32073C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6000+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id St5wYY4521723x36PfOBlBq4; Tue, 05 Jan 2021 05:58:03 -0800
+X-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web09.5372.1609855081956264875
  for <cip-dev@lists.cip-project.org>;
- Tue, 05 Jan 2021 05:16:08 -0800
-X-Received: by mail-pf1-f180.google.com with SMTP id t8so18351101pfg.8
-        for <cip-dev@lists.cip-project.org>; Tue, 05 Jan 2021 05:16:08 -0800 (PST)
-X-Gm-Message-State: YBAIt6oQ2dyY2QAyAIGRzw2mx4520388AA=
-X-Google-Smtp-Source: ABdhPJzDEsr5mnWAJpZkR+7ifV4hvXoPe3+az2+Jt+0lymHrnKg4bvJE3QWLokuBy+kSxA2iMH6AiQ==
-X-Received: by 2002:a62:1dd5:0:b029:19d:fc87:5f45 with SMTP id d204-20020a621dd50000b029019dfc875f45mr70436387pfd.63.1609852567214;
-        Tue, 05 Jan 2021 05:16:07 -0800 (PST)
-X-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id d36sm63131691pgm.77.2021.01.05.05.16.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Jan 2021 05:16:06 -0800 (PST)
-Message-ID: <5ff46696.1c69fb81.b493e.c196@mx.google.com>
-Date: Tue, 05 Jan 2021 05:16:06 -0800 (PST)
-MIME-Version: 1.0
-X-Kernelci-Branch: linux-4.19.y-cip
-X-Kernelci-Tree: cip
-X-Kernelci-Kernel: v4.19.163-cip40-5-g95fea62f9f453
-X-Kernelci-Report-Type: test
-Subject: [cip-dev] cip/linux-4.19.y-cip baseline: 239 runs, 6 regressions (v4.19.163-cip40-5-g95fea62f9f453)
-To: cip-dev@lists.cip-project.org, kernel-build-reports@lists.linaro.org,
- kernelci-results@groups.io
-From: "kernelci.org bot" <bot@kernelci.org>
+ Tue, 05 Jan 2021 05:58:02 -0800
+X-IronPort-AV: E=Sophos;i="5.78,477,1599490800"; 
+   d="scan'208";a="67868536"
+X-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 05 Jan 2021 22:57:59 +0900
+X-Received: from localhost.localdomain (unknown [10.226.36.204])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id D63CD4254F69;
+	Tue,  5 Jan 2021 22:57:58 +0900 (JST)
+From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Pavel Machek <pavel@denx.de>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>
+Subject: [cip-dev] [PATCH v3 4.19.y-cip 00/17] Add Renesas RPC-IF driver
+Date: Tue,  5 Jan 2021 13:57:40 +0000
+Message-Id: <20210105135757.11069-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-Content-Type: multipart/mixed; boundary="QErmyuTgySXCw6OEJ3Nz"
+X-Gm-Message-State: ckpRUpy2b8KMuNbNhWWdme4Ox4520388AA=
+Content-Type: multipart/mixed; boundary="fUTqwavat66PgPK2yyog"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1609852593;
- bh=yfB5D87+rQFUNBYkUyjYBB+vynfi72qOmtXMdMiaRcs=;
- h=Content-Type:Date:From:Reply-To:Subject:To;
- b=fg+r4rW3pHkLuYB8OSmfcc5hXhJUp+9stafSNyUIBRVGUGN9Qi7EN9ZVFA59ySp1mwM
- DEr2Yrmokzkifhl5yJmTVoFN4nRRKerkESS4s9SvUYE0v7w0hcXb63+rWIi4ZZgCprqed
- scxxvawGHh4WwLv+t9N5Fq4z5u1yw753vdM=
-
---QErmyuTgySXCw6OEJ3Nz
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-
-cip/linux-4.19.y-cip baseline: 239 runs, 6 regressions (v4.19.163-cip40-5-g=
-95fea62f9f453)
-
-Regressions Summary
--------------------
-
-platform                   | arch  | lab           | compiler | defconfig  =
-                  | regressions
----------------------------+-------+---------------+----------+------------=
-------------------+------------
-meson-gxl-s905x-khadas-vim | arm64 | lab-baylibre  | gcc-8    | defconfig+C=
-ON...BIG_ENDIAN=3Dy | 1          =
-
-panda                      | arm   | lab-collabora | gcc-8    | omap2plus_d=
-efconfig          | 1          =
-
-qemu_arm-versatilepb       | arm   | lab-baylibre  | gcc-8    | versatile_d=
-efconfig          | 1          =
-
-qemu_arm-versatilepb       | arm   | lab-broonie   | gcc-8    | versatile_d=
-efconfig          | 1          =
-
-qemu_arm-versatilepb       | arm   | lab-cip       | gcc-8    | versatile_d=
-efconfig          | 1          =
-
-qemu_arm-versatilepb       | arm   | lab-collabora | gcc-8    | versatile_d=
-efconfig          | 1          =
-
-
-  Details:  https://kernelci.org/test/job/cip/branch/linux-4.19.y-cip/kerne=
-l/v4.19.163-cip40-5-g95fea62f9f453/plan/baseline/
-
-  Test:     baseline
-  Tree:     cip
-  Branch:   linux-4.19.y-cip
-  Describe: v4.19.163-cip40-5-g95fea62f9f453
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.g=
-it
-  SHA:      95fea62f9f4534c3b963acd44f03754d9fe0829a =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform                   | arch  | lab           | compiler | defconfig  =
-                  | regressions
----------------------------+-------+---------------+----------+------------=
-------------------+------------
-meson-gxl-s905x-khadas-vim | arm64 | lab-baylibre  | gcc-8    | defconfig+C=
-ON...BIG_ENDIAN=3Dy | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/5ff459cf6c343e6634c94cf5
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy
-  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.163=
--cip40-5-g95fea62f9f453/arm64/defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy/gcc-8/lab=
--baylibre/baseline-meson-gxl-s905x-khadas-vim.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.163=
--cip40-5-g95fea62f9f453/arm64/defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy/gcc-8/lab=
--baylibre/baseline-meson-gxl-s905x-khadas-vim.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-4-g97706c5d9567/arm64be/baseline/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/5ff459cf6c343e6634c94=
-cf6
-        failing since 23 days (last pass: v4.19.160-cip39-1-g00b5977d73363,=
- first fail: v4.19.163-cip40) =
-
- =
-
-
-
-platform                   | arch  | lab           | compiler | defconfig  =
-                  | regressions
----------------------------+-------+---------------+----------+------------=
-------------------+------------
-panda                      | arm   | lab-collabora | gcc-8    | omap2plus_d=
-efconfig          | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/5ff45a3527873bd33dc94cdc
-
-  Results:     4 PASS, 1 FAIL, 0 SKIP
-  Full config: omap2plus_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.163=
--cip40-5-g95fea62f9f453/arm/omap2plus_defconfig/gcc-8/lab-collabora/baselin=
-e-panda.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.163=
--cip40-5-g95fea62f9f453/arm/omap2plus_defconfig/gcc-8/lab-collabora/baselin=
-e-panda.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-4-g97706c5d9567/armel/baseline/rootfs.cpio.gz =
-
-
-
-  * baseline.dmesg.emerg: https://kernelci.org/test/case/id/5ff45a3527873bd=
-33dc94ce1
-        failing since 38 days (last pass: v4.19.160-cip39, first fail: v4.1=
-9.160-cip39-1-g00b5977d73363)
-        2 lines
-
-    2021-01-05 12:23:12.859000+00:00  kern  :emerg :  lock: emif_lock+0x0/0=
-xffffed34 [emif], .magic: 00000000, .owner: <none>/-1, .owner_cpu: 0
-    2021-01-05 12:23:12.873000+00:00  <8>[   22.870971] <LAVA_SIGNAL_TESTCA=
-SE TEST_CASE_ID=3Demerg RESULT=3Dfail UNITS=3Dlines MEASUREMENT=3D2>   =
-
- =
-
-
-
-platform                   | arch  | lab           | compiler | defconfig  =
-                  | regressions
----------------------------+-------+---------------+----------+------------=
-------------------+------------
-qemu_arm-versatilepb       | arm   | lab-baylibre  | gcc-8    | versatile_d=
-efconfig          | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/5ff4583923e753101cc94ccd
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: versatile_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.163=
--cip40-5-g95fea62f9f453/arm/versatile_defconfig/gcc-8/lab-baylibre/baseline=
--qemu_arm-versatilepb.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.163=
--cip40-5-g95fea62f9f453/arm/versatile_defconfig/gcc-8/lab-baylibre/baseline=
--qemu_arm-versatilepb.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-4-g97706c5d9567/armel/baseline/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/5ff4583923e753101cc94=
-cce
-        failing since 52 days (last pass: v4.19.152-cip37-37-g18852869b06b,=
- first fail: v4.19.157-cip38) =
-
- =
-
-
-
-platform                   | arch  | lab           | compiler | defconfig  =
-                  | regressions
----------------------------+-------+---------------+----------+------------=
-------------------+------------
-qemu_arm-versatilepb       | arm   | lab-broonie   | gcc-8    | versatile_d=
-efconfig          | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/5ff4584123e753101cc94cdc
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: versatile_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.163=
--cip40-5-g95fea62f9f453/arm/versatile_defconfig/gcc-8/lab-broonie/baseline-=
-qemu_arm-versatilepb.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.163=
--cip40-5-g95fea62f9f453/arm/versatile_defconfig/gcc-8/lab-broonie/baseline-=
-qemu_arm-versatilepb.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-4-g97706c5d9567/armel/baseline/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/5ff4584123e753101cc94=
-cdd
-        failing since 52 days (last pass: v4.19.152-cip37-37-g18852869b06b,=
- first fail: v4.19.157-cip38) =
-
- =
-
-
-
-platform                   | arch  | lab           | compiler | defconfig  =
-                  | regressions
----------------------------+-------+---------------+----------+------------=
-------------------+------------
-qemu_arm-versatilepb       | arm   | lab-cip       | gcc-8    | versatile_d=
-efconfig          | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/5ff4584223e753101cc94cdf
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: versatile_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.163=
--cip40-5-g95fea62f9f453/arm/versatile_defconfig/gcc-8/lab-cip/baseline-qemu=
-_arm-versatilepb.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.163=
--cip40-5-g95fea62f9f453/arm/versatile_defconfig/gcc-8/lab-cip/baseline-qemu=
-_arm-versatilepb.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-4-g97706c5d9567/armel/baseline/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/5ff4584223e753101cc94=
-ce0
-        failing since 52 days (last pass: v4.19.152-cip37-37-g18852869b06b,=
- first fail: v4.19.157-cip38) =
-
- =
-
-
-
-platform                   | arch  | lab           | compiler | defconfig  =
-                  | regressions
----------------------------+-------+---------------+----------+------------=
-------------------+------------
-qemu_arm-versatilepb       | arm   | lab-collabora | gcc-8    | versatile_d=
-efconfig          | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/5ff4584a0cc303e08bc94cbc
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: versatile_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.163=
--cip40-5-g95fea62f9f453/arm/versatile_defconfig/gcc-8/lab-collabora/baselin=
-e-qemu_arm-versatilepb.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.163=
--cip40-5-g95fea62f9f453/arm/versatile_defconfig/gcc-8/lab-collabora/baselin=
-e-qemu_arm-versatilepb.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-4-g97706c5d9567/armel/baseline/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/5ff4584a0cc303e08bc94=
-cbd
-        failing since 52 days (last pass: v4.19.152-cip37-37-g18852869b06b,=
- first fail: v4.19.157-cip38) =
-
- =20
-
---QErmyuTgySXCw6OEJ3Nz
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1609855083;
+ bh=DgykxBGyvRPCn0yaPE3vU5XRcaarsJSOxU/uwTh0RUc=;
+ h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
+ b=l6eC3YZwXWKP+3KJIC9rxKyALj7w8ffqrSyS2ICsFERhf7g4VlZzCN1xfWAcSuutkOp
+ 0jEYtXt8hY88784/CnyS/sUsoQOEHxa7hz20E0jTp5gRGOi1N7dkDS46eu91XsbaNERGU
+ nqG9uCHhlsSNckUDvk1Pd3sXghtPF8TX+KY=
+
+--fUTqwavat66PgPK2yyog
+
+Hi Nobuhiro, Pavel,
+
+This patch series adds SPI driver for the Renesas RPC-IF.
+Alongside relevant changes for spi-mem have been also backported.
+This enables accessing SPI flash chip connected to RPC-IF.
+
+The series includes just the driver changes as the DTS/i changes are
+currently being upstreamed [1]. The driver has been tested on RZ/G2{EM}
+with all the required dts/i changes [2].
+
+All the patches have been cherry picked from Linux 5.11-rc2.
+
+[1] https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=408139
+[2] https://github.com/prabhakarlad/cip/commits/master
+
+Cheers,
+Prabhakar
+
+Boris Brezillon (5):
+  spi: spi-mem: Add SPI_MEM_NO_DATA to the spi_mem_data_dir enum
+  spi: spi-mem: Split spi_mem_exec_op() code
+  spi: spi-mem: Add a new API to support direct mapping
+  spi: spi-mem: Fix spi_mem_dirmap_destroy() kerneldoc
+  spi: spi-mem: Fix a memory leak in spi_mem_dirmap_destroy()
+
+Lad Prabhakar (4):
+  memory: renesas-rpc-if: Return correct value to the caller of
+    rpcif_manual_xfer()
+  memory: renesas-rpc-if: Fix unbalanced pm_runtime_enable in
+    rpcif_{enable,disable}_rpm
+  memory: renesas-rpc-if: Fix a node reference leak in rpcif_probe()
+  memory: renesas-rpc-if: Make rpcif_enable/disable_rpm() as static
+    inline
+
+Lukas Wunner (1):
+  spi: rpc-if: Fix use-after-free on unbind
+
+Naga Sureshkumar Relli (1):
+  spi: spi-mem: export spi_mem_default_supports_op()
+
+Sergei Shtylyov (3):
+  dt-bindings: memory: document Renesas RPC-IF bindings
+  memory: add Renesas RPC-IF driver
+  spi: add Renesas RPC-IF driver
+
+Tudor Ambarus (1):
+  spi: spi-mem: Compute length only when needed
+
+YueHaibing (1):
+  spi: spi-mem: Fix passing zero to 'PTR_ERR' warning
+
+Zhang Qilong (1):
+  spi: spi-mem: fix reference leak in spi_mem_access_start
+
+ .../memory-controllers/renesas,rpc-if.yaml    |  88 +++
+ drivers/memory/Kconfig                        |   9 +
+ drivers/memory/Makefile                       |   1 +
+ drivers/memory/renesas-rpc-if.c               | 593 ++++++++++++++++++
+ drivers/spi/Kconfig                           |   6 +
+ drivers/spi/Makefile                          |   1 +
+ drivers/spi/spi-mem.c                         | 282 ++++++++-
+ drivers/spi/spi-rpc-if.c                      | 211 +++++++
+ include/linux/spi/spi-mem.h                   |  93 +++
+ include/memory/renesas-rpc-if.h               |  96 +++
+ 10 files changed, 1353 insertions(+), 27 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml
+ create mode 100644 drivers/memory/renesas-rpc-if.c
+ create mode 100644 drivers/spi/spi-rpc-if.c
+ create mode 100644 include/memory/renesas-rpc-if.h
+
+-- 
+2.17.1
+
+
+--fUTqwavat66PgPK2yyog
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -319,13 +137,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#5999): https://lists.cip-project.org/g/cip-dev/message=
-/5999
-Mute This Topic: https://lists.cip-project.org/mt/79449344/4520388
+View/Reply Online (#6000): https://lists.cip-project.org/g/cip-dev/message=
+/6000
+Mute This Topic: https://lists.cip-project.org/mt/79450058/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---QErmyuTgySXCw6OEJ3Nz--
+--fUTqwavat66PgPK2yyog--
