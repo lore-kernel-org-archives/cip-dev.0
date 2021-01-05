@@ -1,102 +1,106 @@
-Return-Path: <SRS0=Vupx=GH=lists.cip-project.org=bounce+64572+5996+4520388+8129055@kernel.org>
+Return-Path: <SRS0=8tAf=GI=lists.cip-project.org=bounce+64572+5997+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE589C433DB
-	for <cip-dev@archiver.kernel.org>; Mon,  4 Jan 2021 14:10:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 060E2C433E0
+	for <cip-dev@archiver.kernel.org>; Tue,  5 Jan 2021 10:26:41 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id CCEAB20770
-	for <cip-dev@archiver.kernel.org>; Mon,  4 Jan 2021 14:10:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org; dmarc=permerror header.from=codethink.co.uk
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5996+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id yrAEYY4521723xhrS4ZzjjZR; Mon, 04 Jan 2021 06:10:36 -0800
-X-Received: from imap2.colo.codethink.co.uk (imap2.colo.codethink.co.uk [78.40.148.184])
- by mx.groups.io with SMTP id smtpd.web12.14073.1609769435247280063
+	by mail.kernel.org (Postfix) with ESMTPS id EC3C82250E
+	for <cip-dev@archiver.kernel.org>; Tue,  5 Jan 2021 10:26:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC3C82250E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+5997+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id YhcGYY4521723x9qi5WvzpyM; Tue, 05 Jan 2021 02:26:39 -0800
+X-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web10.3407.1609842398215062004
  for <cip-dev@lists.cip-project.org>;
- Mon, 04 Jan 2021 06:10:35 -0800
-X-Received: from aelfric.plus.com ([80.229.143.166] helo=[172.20.10.33])
-	by imap2.colo.codethink.co.uk with esmtpsa  (Exim 4.92 #3 (Debian))
-	id 1kwQZ5-0006NW-EM
-	for <cip-dev@lists.cip-project.org> ; Mon, 04 Jan 2021 14:10:31 +0000
-To: cip-dev@lists.cip-project.org
-From: "Jonathan Sambrook" <jonathan.sambrook@codethink.co.uk>
-Subject: [cip-dev] GitLab Merge Requests not working
-Organization: Codethink.co.uk
-Message-ID: <0282a51a-682c-bb5e-4a68-e020ac0e76d5@codethink.co.uk>
-Date: Mon, 4 Jan 2021 14:10:30 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+ Tue, 05 Jan 2021 02:26:38 -0800
+X-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id ECDED1C0B78; Tue,  5 Jan 2021 11:26:24 +0100 (CET)
+Date: Tue, 5 Jan 2021 11:26:24 +0100
+From: "Pavel Machek" <pavel@denx.de>
+To: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Pavel Machek <pavel@denx.de>, Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [cip-dev] [PATCH 4.19.y-cip] dt-bindings: thermal: rcar-gen3-thermal: Add r8a774e1 support
+Message-ID: <20210105102624.GA26440@amd>
+References: <20210104102911.8533-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
+In-Reply-To: <20210104102911.8533-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: k47utNi27mqqvbyrIUtiDx6nx4520388AA=
-Content-Type: multipart/mixed; boundary="XJLwCSd1BeKK0c5iiXHy"
+X-Gm-Message-State: tSRh47fp76RQRJQOMH8qdhMUx4520388AA=
+Content-Type: multipart/mixed; boundary="upAEtZQOjr8QXtNUdGT0"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1609769436;
- bh=4Eb0jUfbJzlbn573zmElgK0dF2RicjOTCf3HFHYynqw=;
- h=Content-Type:Date:From:Reply-To:Subject:To;
- b=op3jUD5/e7EAHaDXyPznfkwiSjpglBKspuIhAe2RKZ7Kruvpu4bUcvpk0OSaJtH6Kqf
- NTLzitNQUdAcsKdEncOqQ70EMZ8v1e9KlfwZqb9RSzRf/xb9GYKIqvodPWN+4L0b2un95
- bJUTjqGOVUbLkgc7MwBMJBdN+60chIwcHUI=
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1609842399;
+ bh=MLyZiRvGc1u6Uiaw8CcL4Lj48gfx/VzRC+2ej1ufXNc=;
+ h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
+ b=eqh/KSXcQPJVXxuR2jA2wRTlOeyPlpHIkohXANj7b0rW8W65rZO2fjup0kMJJLwBEAE
+ TSBsia0pnhWrvxSrLs2XcX+47m9Z7vf1bXzCTLH7WOt4hGhRmvHZI1zF5X1YC27O5mFL4
+ MxYMbxGqdow27STxSJa/DoLNlxsarJSZgrc=
 
---XJLwCSd1BeKK0c5iiXHy
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+--upAEtZQOjr8QXtNUdGT0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="a8Wt8u1KmwUX3Y2C"
+Content-Disposition: inline
 
-Hi,
+--a8Wt8u1KmwUX3Y2C
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-When I try to submit a MR on
-https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec, I get:
+Hi!
 
-  500
+> commit adfe9285bed09264bf99689c4a6e932f0134cdb1 upstream.
+>=20
+> Document RZ/G2H (R8A774E1) SoC bindings.
 
-  Whoops, something went wrong on our end.
-	
-  Try refreshing the page, or going back and attempting the action again.
+I applied your recent patches, and pushed the result out:
 
-  Please contact your GitLab administrator if this problem persists.
+95fea62f9f4534c3b963acd44f03754d9fe0829a dt-bindings: thermal: rcar-gen3-th=
+ermal: Add r8a774e1 support
+848657b4ebe54338acc6d8f1d6c37bff0b5c55ff dt-bindings: PCI: rcar-pci-host: D=
+ocument r8a774e1 bindings
+2cbd0f424f601eab085460c14c202f39feda536c dt-bindings: PCI: rcar: Add device=
+ tree support for r8a774b1
+0936cc2da8b741881a3385567c5788f2667f9a9c dt-bindings: timer: renesas: tmu: =
+Document r8a774e1 bindings
+435ffed6c9186e8540bbf908601d94998027860f dt-bindings: pci: rcar-pci-ep: Doc=
+ument missing interrupts property
 
-This is not a transient issue - I previously tried on 24/12/2020.
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
-I've tried logging out and back in, and logging in afresh in a different browser.
+--a8Wt8u1KmwUX3Y2C
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-tpollard, patersonc, and wens have each confirmed this as a problem.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-  10:33:29 <tpollard> I cannot submit an MR either
-  10:33:43 <tpollard> (simple README change from the web gui)
+iEYEARECAAYFAl/0Ps8ACgkQMOfwapXb+vKxegCgw22cNHGHy0KtacnIvT5ip1Cc
+6lIAn2N9ObgTgwgbxdEIpGxmZw8ga7n6
+=W9dj
+-----END PGP SIGNATURE-----
 
-  10:36:58 <patersonc> Hi ebardie, I just tried to create an MR using your
-branch and also see the 500 issue. I've got god rights on the CIP project so I
-guess it must be a GitLab issue rather then a permissions thing
+--a8Wt8u1KmwUX3Y2C--
 
-Email from wens:
-
-> Doesn't work for me either.
-> Could you send a public email to the cip-dev mailing list to raise the issue?
-
-Who should I contact regarding this?
-
-Kind regards,
-Jonathan
-
--- 
-Jonathan Sambrook, Software Engineer        http://www.codethink.co.uk/
-  Codethink Ltd., Third Floor, Dale House, 35 Dale Street, Manchester
-   M1 2HF, United Kingdom   https://www.codethink.co.uk/privacy.html
-
---XJLwCSd1BeKK0c5iiXHy
+--upAEtZQOjr8QXtNUdGT0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -104,13 +108,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#5996): https://lists.cip-project.org/g/cip-dev/message=
-/5996
-Mute This Topic: https://lists.cip-project.org/mt/79424151/4520388
+View/Reply Online (#5997): https://lists.cip-project.org/g/cip-dev/message=
+/5997
+Mute This Topic: https://lists.cip-project.org/mt/79421300/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---XJLwCSd1BeKK0c5iiXHy--
+--upAEtZQOjr8QXtNUdGT0--
