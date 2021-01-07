@@ -1,135 +1,103 @@
-Return-Path: <SRS0=w2Jg=GK=lists.cip-project.org=bounce+64572+6052+4520388+8129055@kernel.org>
+Return-Path: <SRS0=Cco9=GK=lists.cip-project.org=bounce+64572+6053+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DATE_IN_PAST_06_12,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D36C433E0
-	for <cip-dev@archiver.kernel.org>; Thu,  7 Jan 2021 13:38:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40499C433E0
+	for <cip-dev@archiver.kernel.org>; Thu,  7 Jan 2021 15:48:02 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 618B82223E
-	for <cip-dev@archiver.kernel.org>; Thu,  7 Jan 2021 13:38:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 618B82223E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6052+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id Z4CxYY4521723xSjAcnGlPJ0; Thu, 07 Jan 2021 05:38:08 -0800
-X-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
- by mx.groups.io with SMTP id smtpd.web12.2569.1609983681875169920
+	by mail.kernel.org (Postfix) with ESMTPS id 7B77B23428
+	for <cip-dev@archiver.kernel.org>; Thu,  7 Jan 2021 15:48:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B77B23428
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6053+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id nvtlYY4521723x6PpLBTSjy0; Thu, 07 Jan 2021 07:48:00 -0800
+X-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web12.10167.1610034479641884128
  for <cip-dev@lists.cip-project.org>;
- Wed, 06 Jan 2021 17:41:21 -0800
-X-Received: by mail-pl1-f179.google.com with SMTP id g3so2582165plp.2
-        for <cip-dev@lists.cip-project.org>; Wed, 06 Jan 2021 17:41:21 -0800 (PST)
-X-Gm-Message-State: BXx4jYNm84lrBotwG042hcLcx4520388AA=
-X-Google-Smtp-Source: ABdhPJzlQ8LLbxNkprKHorYB/YH0NQx6Jcd1gCIwUf0o/cVlEQCYxjYvTFVCVLtSQneazoWh3ZpSPQ==
-X-Received: by 2002:a17:902:db84:b029:dc:2efb:659b with SMTP id m4-20020a170902db84b02900dc2efb659bmr6683266pld.83.1609983681113;
-        Wed, 06 Jan 2021 17:41:21 -0800 (PST)
-X-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id k16sm4048400pgg.87.2021.01.06.17.41.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Jan 2021 17:41:20 -0800 (PST)
-Message-ID: <5ff666c0.1c69fb81.c9cc1.a514@mx.google.com>
-Date: Wed, 06 Jan 2021 17:41:20 -0800 (PST)
+ Thu, 07 Jan 2021 07:48:00 -0800
+X-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 1DC521C0B81; Thu,  7 Jan 2021 16:47:55 +0100 (CET)
+Date: Thu, 7 Jan 2021 16:47:54 +0100
+From: "Pavel Machek" <pavel@denx.de>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: cip-dev@lists.cip-project.org, Pavel Machek <pavel@denx.de>,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	masashi.kudo@cybertrust.co.jp
+Subject: Re: [cip-dev] Cip-kernel-sec Updates for Week of 2021-01-07
+Message-ID: <20210107154754.GA9524@duo.ucw.cz>
+References: <CAGb2v65+1w18yz2R=GbxrFtq_RZO4afHry-DMgj83NGKsttBgQ@mail.gmail.com>
 MIME-Version: 1.0
-X-Kernelci-Branch: linux-4.19.y-cip
-X-Kernelci-Tree: cip
-X-Kernelci-Kernel: v4.19.163-cip40-34-g2f3a6d08a3bd
-X-Kernelci-Report-Type: test
-Subject: [cip-dev] cip/linux-4.19.y-cip ltp-ipc: 24 runs, 1 regressions (v4.19.163-cip40-34-g2f3a6d08a3bd)
-To: cip-dev@lists.cip-project.org, kernel-build-reports@lists.linaro.org,
- kernelci-results@groups.io
-From: "kernelci.org bot" <bot@kernelci.org>
+In-Reply-To: <CAGb2v65+1w18yz2R=GbxrFtq_RZO4afHry-DMgj83NGKsttBgQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-Content-Type: multipart/mixed; boundary="KRxed13e4ldw1RDRiPBv"
+X-Gm-Message-State: aVzxexF404DgfxB9BfJ6qi5qx4520388AA=
+Content-Type: multipart/mixed; boundary="zPodWVJiCNIMMo1WUOLX"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1610026688;
- bh=1uD+4kJAXZ6T2bY4yeSXWLUF1DsT9PkFnT+XDWfS6IQ=;
- h=Content-Type:Date:From:Reply-To:Subject:To;
- b=nlXCDX+owkPHI5bklO0vllhXr+udzcxq+1y8bhI1Z8CxQAWvlNVnht93DwfOvFDu8xM
- RwwJS3j2NYL+DtMH4uUgM0LrOgHofNKdl9HkLPRtIH7guIQCU5jfkofw5BId8SmUE2fpX
- kajgewsPkP25G2RroWeAAQv2vByDUsDKbMc=
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1610034480;
+ bh=EpogXRyaRF7EGycyIEzyeerlWfF+qmBxB2iiYwMjCfw=;
+ h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
+ b=aCMaxwC6Fj+C/EB6yI7AVomz63tYmbglhi7MKBbfYG6p56mC5V0nhV+ffE7IoPGuaxI
+ ZlPBb9vseMR27MFYTAZjhILuCyXKJt+9yQX0NljZDEQvZag8UMam8Fa89PluKUI2b8kb1
+ yHlO1aZn6/q8mrWp6w8ouLLgYZ98+xA3lxE=
 
---KRxed13e4ldw1RDRiPBv
-Content-Type: text/plain; charset="utf-8"
+--zPodWVJiCNIMMo1WUOLX
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="dDRMvlgZJXvWKvBx"
+Content-Disposition: inline
+
+--dDRMvlgZJXvWKvBx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-cip/linux-4.19.y-cip ltp-ipc: 24 runs, 1 regressions (v4.19.163-cip40-34-g2=
-f3a6d08a3bd)
+Hi!
 
-Regressions Summary
--------------------
+> Three new issues this week:
+>=20
+> - CVE-2020-36158 [mwifiex] - fixed in mainline; needs backport
 
-platform   | arch | lab           | compiler | defconfig          | regress=
-ions
------------+------+---------------+----------+--------------------+--------=
-----
-odroid-xu3 | arm  | lab-collabora | gcc-8    | multi_v7_defconfig | 1      =
-    =
+This afternoon backports of this one were queued to all branches
+relevant to us:
 
+v |2ee7362d6 5c455c o: 5.10| mwifiex: Fix possible buffer overflows in mwif=
+iex_cmd_802_11_ad_hoc_start
+v |69c37921f 5c455c o: 4.19| mwifiex: Fix possible buffer overflows in mwif=
+iex_cmd_802_11_ad_hoc_start
+a |3a1e2e3e4 5c455c .: 4.4| mwifiex: Fix possible buffer overflows in mwifi=
+ex_cmd_802_11_ad_hoc_start
 
-  Details:  https://kernelci.org/test/job/cip/branch/linux-4.19.y-cip/kerne=
-l/v4.19.163-cip40-34-g2f3a6d08a3bd/plan/ltp-ipc/
+=2E..so it seems this is going to be handled without our intervention.
 
-  Test:     ltp-ipc
-  Tree:     cip
-  Branch:   linux-4.19.y-cip
-  Describe: v4.19.163-cip40-34-g2f3a6d08a3bd
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.g=
-it
-  SHA:      2f3a6d08a3bdbf69ef164a95911e32e37b89c0d2
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
-  Test suite revisions:
-    ltp-tests
-      URL:  https://github.com/linux-test-project/ltp.git
-      SHA:  b7ca00a6faa75fee42cb63d40f709cbfe65ec378 =
+--dDRMvlgZJXvWKvBx
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCX/ctKgAKCRAw5/Bqldv6
+8hC0AKC+5lHTazlGnd8kCkR1iFA66zl5EACfe3HU8+MBSb/fAh0qzuDDMi+a+yQ=
+=Wvz4
+-----END PGP SIGNATURE-----
 
-Test Regressions
----------------- =
+--dDRMvlgZJXvWKvBx--
 
-
-
-platform   | arch | lab           | compiler | defconfig          | regress=
-ions
------------+------+---------------+----------+--------------------+--------=
-----
-odroid-xu3 | arm  | lab-collabora | gcc-8    | multi_v7_defconfig | 1      =
-    =
-
-
-  Details:     https://kernelci.org/test/plan/id/5ff65e9245d887cde4c94cd1
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.163=
--cip40-34-g2f3a6d08a3bd/arm/multi_v7_defconfig/gcc-8/lab-collabora/ltp-ipc-=
-odroid-xu3.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.163=
--cip40-34-g2f3a6d08a3bd/arm/multi_v7_defconfig/gcc-8/lab-collabora/ltp-ipc-=
-odroid-xu3.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster-ltp/=
-20201221.0/armhf/initrd.cpio.gz =
-
-
-
-  * ltp-ipc.login: https://kernelci.org/test/case/id/5ff65e9245d887cde4c94c=
-d2
-        new failure (last pass: v4.19.163-cip40-5-g95fea62f9f453) =
-
- =20
-
---KRxed13e4ldw1RDRiPBv
+--zPodWVJiCNIMMo1WUOLX
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -137,13 +105,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6052): https://lists.cip-project.org/g/cip-dev/message=
-/6052
-Mute This Topic: https://lists.cip-project.org/mt/79498598/4520388
+View/Reply Online (#6053): https://lists.cip-project.org/g/cip-dev/message=
+/6053
+Mute This Topic: https://lists.cip-project.org/mt/79494128/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---KRxed13e4ldw1RDRiPBv--
+--zPodWVJiCNIMMo1WUOLX--
