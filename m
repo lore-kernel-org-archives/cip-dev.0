@@ -1,4 +1,4 @@
-Return-Path: <SRS0=BYME=GY=lists.cip-project.org=bounce+64572+6132+4520388+8129055@kernel.org>
+Return-Path: <SRS0=YC2W=GY=lists.cip-project.org=bounce+64572+6133+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -7,41 +7,40 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BC7CC433E0
-	for <cip-dev@archiver.kernel.org>; Thu, 21 Jan 2021 15:31:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BB4EC433DB
+	for <cip-dev@archiver.kernel.org>; Thu, 21 Jan 2021 21:48:28 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id C16F123A1E
-	for <cip-dev@archiver.kernel.org>; Thu, 21 Jan 2021 15:31:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C16F123A1E
+	by mail.kernel.org (Postfix) with ESMTPS id 019C023A54
+	for <cip-dev@archiver.kernel.org>; Thu, 21 Jan 2021 21:48:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 019C023A54
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6132+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id sbg1YY4521723xcsLrI9xGR6; Thu, 21 Jan 2021 07:31:30 -0800
-X-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
- by mx.groups.io with SMTP id smtpd.web09.447.1611242572552318400
- for <cip-dev@lists.cip-project.org>;
- Thu, 21 Jan 2021 07:22:52 -0800
-X-Received: by mail-pj1-f53.google.com with SMTP id e6so1890634pjj.1
-        for <cip-dev@lists.cip-project.org>; Thu, 21 Jan 2021 07:22:52 -0800 (PST)
-X-Gm-Message-State: 9mNL0Wo0qQlhGmBtXbEFzbcSx4520388AA=
-X-Google-Smtp-Source: ABdhPJwYyArf38hRuYhoeWURFKiodG80YiBvG3beConcfoaMA4uviN+yKlf3DzXV/nWV2TIZdaAW6g==
-X-Received: by 2002:a17:902:a711:b029:da:f065:1315 with SMTP id w17-20020a170902a711b02900daf0651315mr220548plq.36.1611242571760;
-        Thu, 21 Jan 2021 07:22:51 -0800 (PST)
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6133+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id devrYY4521723xtbFjCOiqQC; Thu, 21 Jan 2021 13:48:27 -0800
+X-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+ by mx.groups.io with SMTP id smtpd.web10.266.1611265707040939834
+ for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
+ Thu, 21 Jan 2021 13:48:27 -0800
+X-Received: by mail-pl1-f172.google.com with SMTP id s15so2046450plr.9
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Thu, 21 Jan 2021 13:48:27 -0800 (PST)
+X-Gm-Message-State: PCIPgo36GVmsA0Bi4HpCTJinx4520388AA=
+X-Google-Smtp-Source: ABdhPJzQ6HtAnYiDtPsLMNVyq6L9lX+7XEl2LXgKoE1h3i+d5en87KG59VmJCitsLApOGlBa60yxlA==
+X-Received: by 2002:a17:90b:1c0d:: with SMTP id oc13mr1633416pjb.156.1611265705756;
+        Thu, 21 Jan 2021 13:48:25 -0800 (PST)
 X-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id j10sm6415060pjy.9.2021.01.21.07.22.50
+        by smtp.gmail.com with ESMTPSA id a141sm6564049pfa.189.2021.01.21.13.48.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Jan 2021 07:22:51 -0800 (PST)
-Message-ID: <60099c4b.1c69fb81.cd4cd.ea82@mx.google.com>
-Date: Thu, 21 Jan 2021 07:22:51 -0800 (PST)
+        Thu, 21 Jan 2021 13:48:25 -0800 (PST)
+Message-ID: <6009f6a9.1c69fb81.37be8.ff90@mx.google.com>
+Date: Thu, 21 Jan 2021 13:48:25 -0800 (PST)
 MIME-Version: 1.0
 X-Kernelci-Branch: linux-4.19.y-cip-rt
 X-Kernelci-Tree: cip
 X-Kernelci-Report-Type: test
 X-Kernelci-Kernel: v4.19.165-cip41-rt18
-Subject: [cip-dev] cip/linux-4.19.y-cip-rt baseline: 223 runs, 4 regressions (v4.19.165-cip41-rt18)
-To: cip-dev@lists.cip-project.org, kernel-build-reports@lists.linaro.org,
- kernelci-results@groups.io
+Subject: [cip-dev] cip/linux-4.19.y-cip-rt baseline: 240 runs, 4 regressions (v4.19.165-cip41-rt18) #kernelci
+To: Cipproject+Cip-Dev via Email Integration <cip-dev@lists.cip-project.org>
 From: "kernelci.org bot" <bot@kernelci.org>
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
@@ -49,20 +48,20 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-Content-Type: multipart/mixed; boundary="hBZBxKLxKTfRVeUVWf4V"
+Content-Type: multipart/mixed; boundary="nMC4PlZ38oqfUtjmbmHq"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1611243090;
- bh=jEpu31HxfOn5xMthOc/spTjr37BL4ISpNcge4ELZbl4=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1611265707;
+ bh=yKn2agCL4CcuCL99n8UVCkxlDlJi4aL5BkqGbnj8dQw=;
  h=Content-Type:Date:From:Reply-To:Subject:To;
- b=MM+SJtsv3j+QnqRJPFJX8Hls3Q5nfUomNOqdrwHvSduwXNiovlGxuvSDp39eJp4Te53
- /fA4LowqeflMWGPjfXaXXdGvKQdtKI8M8fu3QeCq2e/ODmTnZa9TNg8/l1rGnatENe6wV
- Z1reSkwjdvQPIivcJSKFW89u7XEY7S4s1mo=
+ b=sfGdB6IQeXTlB00P6+eElEaM1xz+j4MGSKmcVclmH+chBySkFezpLai3BjRyeY8sDRt
+ Nkwm3sRK0D+k2n/Coy1PKSYRsZoBV0aLfU8NI0azi0gYqrQCxw3JA2QbcC0ob4bLndcBm
+ J2j10VM++LiGHU9ERHqE3IXgfds/TXRkhec=
 
---hBZBxKLxKTfRVeUVWf4V
+--nMC4PlZ38oqfUtjmbmHq
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-cip/linux-4.19.y-cip-rt baseline: 223 runs, 4 regressions (v4.19.165-cip41-=
+cip/linux-4.19.y-cip-rt baseline: 240 runs, 4 regressions (v4.19.165-cip41-=
 rt18)
 
 Regressions Summary
@@ -233,7 +232,7 @@ a, first fail: v4.19.148-cip35-rt15) =
 
  =20
 
---hBZBxKLxKTfRVeUVWf4V
+--nMC4PlZ38oqfUtjmbmHq
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -241,13 +240,15 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6132): https://lists.cip-project.org/g/cip-dev/message=
-/6132
-Mute This Topic: https://lists.cip-project.org/mt/80006284/4520388
+View/Reply Online (#6133): https://lists.cip-project.org/g/cip-dev/message=
+/6133
+Mute This Topic: https://lists.cip-project.org/mt/80016139/4520388
+Mute #kernelci:https://lists.cip-project.org/g/cip-dev/mutehashtag/kernelc=
+i
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 98/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---hBZBxKLxKTfRVeUVWf4V--
+--nMC4PlZ38oqfUtjmbmHq--
