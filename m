@@ -1,102 +1,138 @@
-Return-Path: <SRS0=JvWd=HN=lists.cip-project.org=bounce+64572+6170+4520388+8129055@kernel.org>
+Return-Path: <SRS0=+Pjs=HN=lists.cip-project.org=bounce+64572+6171+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06DC5C433E0
-	for <cip-dev@archiver.kernel.org>; Thu, 11 Feb 2021 09:49:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 552DEC433E0
+	for <cip-dev@archiver.kernel.org>; Thu, 11 Feb 2021 11:39:10 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 2556664E00
-	for <cip-dev@archiver.kernel.org>; Thu, 11 Feb 2021 09:49:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2556664E00
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6170+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id BoE6YY4521723xPSKPJRsRsX; Thu, 11 Feb 2021 01:49:06 -0800
-X-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
- by mx.groups.io with SMTP id smtpd.web08.6314.1613036945467242094
+	by mail.kernel.org (Postfix) with ESMTPS id 853F764DB1
+	for <cip-dev@archiver.kernel.org>; Thu, 11 Feb 2021 11:39:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 853F764DB1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6171+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id NnNRYY4521723xUILd5qLrhX; Thu, 11 Feb 2021 03:39:08 -0800
+X-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web11.7270.1613043547783325110
  for <cip-dev@lists.cip-project.org>;
- Thu, 11 Feb 2021 01:49:05 -0800
-X-Received: by mail-lj1-f177.google.com with SMTP id s18so6603601ljg.7
-        for <cip-dev@lists.cip-project.org>; Thu, 11 Feb 2021 01:49:05 -0800 (PST)
-X-Gm-Message-State: OxAMIC1x2cKc91sro3mQfqB2x4520388AA=
-X-Google-Smtp-Source: ABdhPJyteqZeAQ8+hINlSmDBR9TAaUx/vTJEU7vxD6oOhhRZAKM2nfWxtW8c02iD9AAVBcl7bT6YUw==
-X-Received: by 2002:a2e:b710:: with SMTP id j16mr838604ljo.270.1613036943437;
-        Thu, 11 Feb 2021 01:49:03 -0800 (PST)
-X-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
-        by smtp.gmail.com with ESMTPSA id u25sm851810ljo.98.2021.02.11.01.49.03
-        for <cip-dev@lists.cip-project.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Feb 2021 01:49:03 -0800 (PST)
-X-Received: by mail-lj1-f172.google.com with SMTP id g21so53323ljl.3
-        for <cip-dev@lists.cip-project.org>; Thu, 11 Feb 2021 01:49:03 -0800 (PST)
-X-Received: by 2002:a2e:8998:: with SMTP id c24mr731081lji.74.1613036942947;
- Thu, 11 Feb 2021 01:49:02 -0800 (PST)
-MIME-Version: 1.0
-References: <CAGb2v64SEFQBXfGhC_WDP-2SyJbtAdzmsdZjbiygUhP9pE4a0g@mail.gmail.com>
-In-Reply-To: <CAGb2v64SEFQBXfGhC_WDP-2SyJbtAdzmsdZjbiygUhP9pE4a0g@mail.gmail.com>
-From: "Chen-Yu Tsai (Moxa)" <wens@csie.org>
-Date: Thu, 11 Feb 2021 17:48:50 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67Pwbpn6gTTfLzUrNQE2Ubph_LMGC_VZUNRb_BWrneAAg@mail.gmail.com>
-Message-ID: <CAGb2v67Pwbpn6gTTfLzUrNQE2Ubph_LMGC_VZUNRb_BWrneAAg@mail.gmail.com>
-Subject: Re: [cip-dev] Cip-kernel-sec Updates for Week of 2021-02-11
-To: cip-dev@lists.cip-project.org
-Cc: Pavel Machek <pavel@denx.de>, Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, 
+ Thu, 11 Feb 2021 03:39:08 -0800
+X-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 405211C0B8A; Thu, 11 Feb 2021 12:39:03 +0100 (CET)
+Date: Thu, 11 Feb 2021 12:39:02 +0100
+From: "Pavel Machek" <pavel@denx.de>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: cip-dev@lists.cip-project.org, Pavel Machek <pavel@denx.de>,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	masashi.kudo@cybertrust.co.jp
+Subject: Re: [cip-dev] Cip-kernel-sec Updates for Week of 2021-02-11
+Message-ID: <20210211113902.GA30740@amd>
+References: <CAGb2v64SEFQBXfGhC_WDP-2SyJbtAdzmsdZjbiygUhP9pE4a0g@mail.gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <CAGb2v64SEFQBXfGhC_WDP-2SyJbtAdzmsdZjbiygUhP9pE4a0g@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-Content-Type: multipart/mixed; boundary="AXT7FsOrz9IOyebRjE2o"
+X-Gm-Message-State: oDkR9lncmkP7lFGlCFO4Ays3x4520388AA=
+Content-Type: multipart/mixed; boundary="Kaa3KWDO1vXMg6Ln4joG"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1613036946;
- bh=1HRdUK2TEGxbjmRrtwtCg+IaIMNcn+HGjhi1Wchozl8=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1613043548;
+ bh=VndERxVbau5rnDgKhSyD/UC/dVRVEZsHChRRc5t9zMY=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=m1sQx6G/CcCeNC8cIRZz58Ib0Ef/D/Zz/dvyj+o1QZsrixtFRLR2ZyC5SW9q+SJ6cVj
- aLD5js08H7SapLQTDgOWhtKlhMMIQ7qjY5BbKIO/+GAgoF7vyCHtHzqJlreqvzXHXDK1K
- X5rizciXsc7OMPTZtQy4PuzxzDll2hWIEdw=
+ b=BCnxqjgCnDIaS/DBfML5qob7RQw1xuUXaB7DbFtqnToVk774sxopmlLEtUD0p/wOdiA
+ j5SweP8w5pi5MWLDpjGNkJawM+WJemnUk6PBRQUeTMiqe3l8jWmQosKE/UY/Nl3ogwWkx
+ P+WIoBq0OYdn3K9hnzgD+WT2wwMxlqnR+pE=
 
---AXT7FsOrz9IOyebRjE2o
-Content-Type: text/plain; charset="UTF-8"
+--Kaa3KWDO1vXMg6Ln4joG
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="oyUTqETQ0mS9luUI"
+Content-Disposition: inline
 
-On Thu, Feb 11, 2021 at 4:50 PM Chen-Yu Tsai <wens@csie.org> wrote:
->
-> Hi everyone,
->
+--oyUTqETQ0mS9luUI
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
 > Six new issues this week:
 > - CVE-2020-12362, CVE-2020-12363, CVE-2020-12364:
->   CVEs from Intel Advisory affecting Intel Graphics Driver. Details unknown
->
-> - CVE-2021-20194 [bpf heap overflow] - fixed for relevant kernels
-> - CVE-2021-20226 [io_uring UAF] - likely a duplicate of
-> CVE-2020-29534, already fixed
-> - CVE-2021-26708 [AF_VSOCK: local priv. escalation] - fixed for relevant kernels
->
-> Additionally, CVE-2021-3347 is fixed for 4.4 and 4.9.
-> I still need to match patches for 4.4 against 4.9, but it looks like
-> the fixes are there.
+>   CVEs from Intel Advisory affecting Intel Graphics Driver. Details
+> unknown
 
-Based on fixes for 4.9 reported by Debian, CVE-2021-3347 is now fixed for 4.4 by
-6510e4a2d04f33e4bfd221760faab23e55d8772b..46358277b2da868763517f79aa0ac25ce78c4f68
-inclusive.
+It seems there's more for the intel graphics, but it is not mentioned
+in our repository. OTOH trailer there that these are rather old
+issues, fixed in 5.5...
 
-Lee Jones just posted a few follow-up fixes for futexes for 4.9 [1]. I
-wonder if they
-would also be posted for 4.4.
+Best regards,
+								Pavel
+
+https://www.intel.com/content/www/us/en/security-center/advisory/intel-sa-0=
+0438.html
+
+CVEID: CVE-2020-0544
+
+Description: Insufficient control flow management in the kernel mode
+driver for some Intel(R) Graphics Drivers before version 15.36.39.5145
+may allow an authenticated user to potentially enable escalation of
+privilege via local access.
+
+CVSS Base Score: 8.8 High
+
+CVSS Vector: CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H
 
 
-Regards
-ChenYu
 
-[1] https://lore.kernel.org/stable/20210211092700.11772-1-lee.jones@linaro.org/
+CVEID: CVE-2020-0521
 
---AXT7FsOrz9IOyebRjE2o
+Description: Insufficient control flow management in some Intel(R)
+Graphics Drivers before version 15.45.32.5145 may allow an
+authenticated user to potentially enable escalation of privilege via
+local access.
+
+CVSS Base Score: 7.7 High
+
+CVSS Vector: CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:C/C:H/I:H/A:L
+
+=2E..
+
+Affected Products:
+Intel=AE Graphics Drivers for 3rd, 4th, 5th, 6th, 7th, 8th, 9th and 10th
+Generation Intel=AE Processors for Windows* 7, 8.1 and 10 before
+versions 15.33.51.5146, 15.36.39.5145, 15.40.46.5144, 15.45.32.5164,
+26.20.100.8141, 27.20.100.8587 and Intel=AE Graphics Drivers for Linux
+before Linux kernel version 5.5.
+
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--oyUTqETQ0mS9luUI
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAmAlF1UACgkQMOfwapXb+vICswCfZUkDo4OHhX9vFapArmWeeoVu
+woEAn0gYfyKFpiofn1M06cqelOLHDInn
+=GkWq
+-----END PGP SIGNATURE-----
+
+--oyUTqETQ0mS9luUI--
+
+--Kaa3KWDO1vXMg6Ln4joG
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -104,8 +140,8 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6170): https://lists.cip-project.org/g/cip-dev/message=
-/6170
+View/Reply Online (#6171): https://lists.cip-project.org/g/cip-dev/message=
+/6171
 Mute This Topic: https://lists.cip-project.org/mt/80553474/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
@@ -113,4 +149,4 @@ Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/7279483=
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---AXT7FsOrz9IOyebRjE2o--
+--Kaa3KWDO1vXMg6Ln4joG--
