@@ -1,273 +1,183 @@
-Return-Path: <SRS0=MDoX=IC=lists.cip-project.org=bounce+64572+6209+4520388+8129055@kernel.org>
+Return-Path: <SRS0=4Bxj=IC=lists.cip-project.org=bounce+64572+6210+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DATE_IN_PAST_12_24,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21EB7C433E0
-	for <cip-dev@archiver.kernel.org>; Thu,  4 Mar 2021 14:22:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA22DC433E6
+	for <cip-dev@archiver.kernel.org>; Thu,  4 Mar 2021 17:09:40 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 54EFB64F02
-	for <cip-dev@archiver.kernel.org>; Thu,  4 Mar 2021 14:21:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54EFB64F02
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=miraclelinux.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6209+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id UQhPYY4521723xSH2sWUBh5l; Thu, 04 Mar 2021 06:21:58 -0800
-X-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
- by mx.groups.io with SMTP id smtpd.web12.52.1614818059552960189
+	by mail.kernel.org (Postfix) with ESMTPS id 5933064F5F
+	for <cip-dev@archiver.kernel.org>; Thu,  4 Mar 2021 17:09:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5933064F5F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=siemens.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6210+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id AE41YY4521723xIJw32Jz9xp; Thu, 04 Mar 2021 09:09:38 -0800
+X-Received: from gecko.sbs.de (gecko.sbs.de [194.138.37.40])
+ by mx.groups.io with SMTP id smtpd.web08.1840.1614877777794279246
  for <cip-dev@lists.cip-project.org>;
- Wed, 03 Mar 2021 16:34:21 -0800
-X-Received: by mail-pj1-f54.google.com with SMTP id e9so5529755pjj.0
-        for <cip-dev@lists.cip-project.org>; Wed, 03 Mar 2021 16:34:19 -0800 (PST)
-X-Gm-Message-State: ibFuz4HnOfijknaiUQtezLIHx4520388AA=
-X-Google-Smtp-Source: ABdhPJzW+mvjlDbV/OWDlNzHzLQye3oyZsLIkId2peRm+CGvivM6ot2UGzOAyar5xp8X8XMUR4kMHpzWf2XINXX+ia8=
-X-Received: by 2002:a17:90a:c201:: with SMTP id e1mr1684645pjt.30.1614818058826;
- Wed, 03 Mar 2021 16:34:18 -0800 (PST)
+ Thu, 04 Mar 2021 09:09:38 -0800
+X-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
+	by gecko.sbs.de (8.15.2/8.15.2) with ESMTPS id 124H9Z7q011100
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+	for <cip-dev@lists.cip-project.org>; Thu, 4 Mar 2021 18:09:36 +0100
+X-Received: from md2dvrtc.fritz.box ([167.87.94.54])
+	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 124H9Y6k031858;
+	Thu, 4 Mar 2021 18:09:35 +0100
+From: "Quirin Gylstorff" <quirin.gylstorff@siemens.com>
+To: cip-dev@lists.cip-project.org, Jan.Kiszka@siemens.com
+Cc: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH 1/2] conf/machine: Add KERNEL_DEFCONFIG_VERSION to select defconfig path
+Date: Thu,  4 Mar 2021 18:09:33 +0100
+Message-Id: <20210304170934.7424-2-Quirin.Gylstorff@siemens.com>
+In-Reply-To: <20210304170934.7424-1-Quirin.Gylstorff@siemens.com>
+References: <20210304170934.7424-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
-References: <TY2PR01MB4972737CBAC08ADD098C39BDA09E9@TY2PR01MB4972.jpnprd01.prod.outlook.com>
- <CADPJy8U47sQxvLxBmAeL1xE5O7k9X1XpZFo5gS1eB5JD4q-oPQ@mail.gmail.com>
- <TY2PR01MB49727FFEB629F632BA4F3FEFA09C9@TY2PR01MB4972.jpnprd01.prod.outlook.com>
- <CADPJy8WCxn77esfumUcvgGdNLQdgK5UcHdstiVg70Rarr_8X4w@mail.gmail.com>
- <TY2PR01MB497230B3FA2ED24EA4D50650A0989@TY2PR01MB4972.jpnprd01.prod.outlook.com>
- <CACe6DC7Wkn61GzKmQg2-XZeaMR4eT2=pKigNf4RVkVbSvppbrg@mail.gmail.com>
-In-Reply-To: <CACe6DC7Wkn61GzKmQg2-XZeaMR4eT2=pKigNf4RVkVbSvppbrg@mail.gmail.com>
-From: Hiraku Toyooka <hiraku.toyooka@miraclelinux.com>
-Date: Thu, 4 Mar 2021 09:33:42 +0900
-Message-ID: <CADPJy8UTJ86ZRUShjNnCZ15Pw+nOOhbG0-yt5yTAkcZbckja-g@mail.gmail.com>
-Subject: Re: [cip-dev] [cip-members] [Reminder] Due date [26th Feburary]: Reference Platforms for 5.10
-To: Nobuhiro Iwamatsu <iwamatsu@gmail.com>
-Cc: cip-members@lists.cip-project.org, jan.kiszka@siemens.com, 
-	yoshihiro.okada@cybertrust.co.jp, cip-dev@lists.cip-project.org
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-Content-Type: multipart/mixed; boundary="z8oekFCIboBHZu9OvSWt"
+X-Gm-Message-State: k5O8trQ8hn5p3B1qLRffW0VTx4520388AA=
+Content-Type: multipart/mixed; boundary="EVMVHGftk3YWr4yP0OGv"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1614867718;
- bh=XO24UWkQBP2T9CngpWDO7Jyy4WeqonNF30QzUdmwO6Y=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1614877778;
+ bh=ok/Hj87IVwX5BdnxmSsT7tjVp/6JEzhg495+YhWo+Bg=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=tx9DyYYHMbips16fwC7WtgZJs/SxMBffjVyBgOrv0dssnVZGriEgQ7NuuqYyhb+ZiQ/
- JnuFy1DTEMBaEvY+2I1KJ6FHtgb8H27wwlH44LGZI1QWQKkxE+Z2sbdRvPYT3U4h3tnVQ
- VAVmhNs4//oIQ1vAz2c1UfkACOMiZvaGMRA=
+ b=ZB4699pZEEETdYd6xfq5JrSo8Pevotmpu6GLnizgQdqIjzAEOZ8fWqUhwoOIf6xQ5iK
+ jQmA7EmWwkh0igPHHjA4fu4gN/hiLzLTGMfanTekUQtZvwWrq98+OjgCwrwcryzgTqaD1
+ fxcuy1PMWL8iro8qb5EGG6XGrCs9P/ubclo=
 
---z8oekFCIboBHZu9OvSWt
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+--EVMVHGftk3YWr4yP0OGv
+Content-Transfer-Encoding: 8bit
 
-Kudo-san, Iwamatsu-san,
-(CC: cip-dev)
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-Thank you for letting me know that.
-I will send MR for this config.
+The repository cip-kernel-config[1] contains for each supported kernel
+version its own directory. Add the variable KERNEL_DEFCONFIG_VERSION
+to select the defconfig matching the kernel version.
 
-Best regards,
-Hiraku Toyooka
+Also add a version to select the rt configuration of [1].
 
-On Wed, Mar 3, 2021 at 7:50 PM Nobuhiro Iwamatsu <iwamatsu@gmail.com> wrot=
-e:
->
-> Hi,
->
-> 2021=E5=B9=B43=E6=9C=883=E6=97=A5(=E6=B0=B4) 16:37 masashi.kudo@cybertru=
-st.co.jp
-> <masashi.kudo@cybertrust.co.jp>:
-> >
-> > Hi, Toyooka-san,
-> >
-> > Thanks for your response.
-> >
-> > > > > > Also, regarding the corresponding config, please send your
-> > > > > > config to cip-dev so that Iwamatsu-san can submit it.
-> >
-> > I would appreciate it if you can send this to cip-dev in order to trac=
-k this request.
->
-> or please send MR via gitlab.
->
-> Best regards,
->   Nobuhiro
->
-> >
-> > Best regards,
-> > --
-> > M. Kudo
-> >
-> > > -----Original Message-----
-> > > From: Hiraku Toyooka <hiraku.toyooka@miraclelinux.com>
-> > > Sent: Wednesday, March 3, 2021 2:11 PM
-> > > To: =E5=B7=A5=E8=97=A4=E3=80=80=E9=9B=85=E5=8F=B8=EF=BC=88CTJ=E3=80=
-=80OSS=E4=BA=8B=E6=A5=AD=E6=8E=A8=E9=80=B2=E5=AE=A4=EF=BC=89 <masashi.kudo=
-@cybertrust.co.jp>
-> > > Cc: cip-members@lists.cip-project.org; jan.kiszka@siemens.com; =E5=
-=B2=A1=E7=94=B0=E3=80=80=E7=BE=A9=E5=BC=98
-> > > =EF=BC=88CTJ=E3=80=80OSS=E3=83=BBIoT=E4=BA=8B=E6=A5=AD=E9=83=A8=E3=
-=80=80IoT=E6=8A=80=E8=A1=93=E6=9C=AC=E9=83=A8=E3=80=80=E3=82=AF=E3=83=A9=
-=E3=82=A4=E3=82=A2=E3=83=B3=E3=83=88=E3=82=B5=E3=83=BC=E3=83=93=E3=82=B9=
-=E9=96=8B=E7=99=BA=E9=83=A8=EF=BC=89
-> > > <yoshihiro.okada@cybertrust.co.jp>
-> > > Subject: Re: [Reminder] Due date [26th Feburary]: Reference Platform=
-s for 5.10
-> > >
-> > > Hi Kudo-san,
-> > >
-> > > I'm sorry to have kept you waiting.
-> > > We prepared the zynqmp defconfig from Cybertrust.
-> > >
-> > > https://gist.github.com/hiraku-wfs/80f56520369c88b5889f69cfe4c5b614
-> > >
-> > > If I should make a merge request to the cip-kernel-config, please le=
-t me know.
-> > >
-> > > Best regards,
-> > > Hiraku Toyooka
-> > >
-> > > On Sat, Feb 27, 2021 at 6:19 PM <masashi.kudo@cybertrust.co.jp> wrot=
-e:
-> > > >
-> > > > Hi, Toyooka-san,
-> > > >
-> > > > Thanks very much!
-> > > >
-> > > > Best regards,
-> > > > --
-> > > > M. Kudo
-> > > >
-> > > > > -----Original Message-----
-> > > > > From: Hiraku Toyooka <hiraku.toyooka@miraclelinux.com>
-> > > > > Sent: Friday, February 26, 2021 10:43 PM
-> > > > > To: =E5=B7=A5=E8=97=A4=E3=80=80=E9=9B=85=E5=8F=B8=EF=BC=88CTJ=E3=
-=
-=80=80OSS=E4=BA=8B=E6=A5=AD=E6=8E=A8=E9=80=B2=E5=AE=A4=EF=BC=89 <masashi.k=
-udo@cybertrust.co.jp>
-> > > > > Cc: cip-members@lists.cip-project.org; jan.kiszka@siemens.com; =
-=E5=B2=A1=E7=94=B0=E3=80=80=E7=BE=A9
-> > > =E5=BC=98
-> > > > > =EF=BC=88CTJ=E3=80=80OSS=E3=83=BBIoT=E4=BA=8B=E6=A5=AD=E9=83=A8=
-=E3=80=80IoT=E6=8A=80=E8=A1=93=E6=9C=AC=E9=83=A8=E3=80=80=E3=82=AF=E3=83=
-=A9=E3=82=A4=E3=82=A2=E3=83=B3=E3=83=88=E3=82=B5=E3=83=BC=E3=83=93=E3=82=
-=B9=E9=96=8B=E7=99=BA=E9=83=A8=EF=BC=89
-> > > > > <yoshihiro.okada@cybertrust.co.jp>
-> > > > > Subject: Re: [Reminder] Due date [26th Feburary]: Reference
-> > > > > Platforms for 5.10
-> > > > >
-> > > > > Kudo-san,
-> > > > >
-> > > > > We'd like to propose zynqmp defconfig for zcu102. But I'm sorry,=
- we
-> > > > > need more time (within 1 week) to verify cybertrust's zynqmp def=
-config.
-> > > > >
-> > > > > By the way, in the current CIP's defconfig, we found some config=
-s
-> > > > > that seem to not exist in linux 5.10.
-> > > > >
-> > > > > https://gitlab.com/cip-project/cip-kernel/cip-kernel-config/-/bl=
-ob/m
-> > > > > aster/5.10
-> > > > > .y-cip/arm64/ctj_zynqmp_defconfig
-> > > > >
-> > > > > -CONFIG_SND_SOC_XILINX_DP=3Dy
-> > > > > -CONFIG_XILINX_DMA_ENGINES=3Dy
-> > > > > -CONFIG_XILINX_DPDMA=3Dy
-> > > > > -CONFIG_XILINX_FCLK=3Dy
-> > > > >
-> > > > > Best regards,
-> > > > > Hiraku Toyooka
-> > > > >
-> > > > > On Thu, Feb 25, 2021 at 11:12 AM <masashi.kudo@cybertrust.co.jp>=
- wrote:
-> > > > > >
-> > > > > > Hi, All,
-> > > > > >
-> > > > > > > Also, regarding the corresponding config, please send your
-> > > > > > > config to cip-dev so that Iwamatsu-san can submit it.
-> > > > > >
-> > > > > > Regarding 5.10 supported boards, the deadline is tomorrow.
-> > > > > > So far, I don't see any email traffics for configs in cip-dev
-> > > > > > except for
-> > > > > siemens_ipc227e.
-> > > > > > If no configs are proposed, the boards won't be supported.
-> > > > > > If you need more time, please let us know.
-> > > > > >
-> > > > > > Best regards,
-> > > > > > --
-> > > > > > M. Kudo
-> > > > > >
-> > > > > > > -----Original Message-----
-> > > > > > > From: =E5=B7=A5=E8=97=A4=E3=80=80=E9=9B=85=E5=8F=B8=EF=BC=88=
-CTJ=E3=80=80OSS=E4=BA=8B=E6=A5=AD=E6=8E=A8=E9=80=B2=E5=AE=A4=EF=BC=89
-> > > > > > > Sent: Thursday, January 28, 2021 6:45 PM
-> > > > > > > To: cip-members@lists.cip-project.org; Kiszka, Jan
-> > > > > > > <jan.kiszka@siemens.com>; Hiraku Toyooka
-> > > > > > > <hiraku.toyooka@miraclelinux.com>
-> > > > > > > Subject: Due date [26th Feburary]: Reference Platforms for 5=
-.10
-> > > > > > >
-> > > > > > > Hi, All,
-> > > > > > >
-> > > > > > > As was discussed at the last TSC call, I would like to surve=
-y cip-members'
-> > > > > > > intention about reference platforms for 5.10.
-> > > > > > >
-> > > > > > > I made a table as follows. Please fill in the corresponding
-> > > > > > > blank with 'Y' and with your name so that we can know who wa=
-nts it.
-> > > > > > >
-> > > > > > >
-> > > > >
-> > > https://docs.google.com/presentation/d/1wUQpFTuq96bwcMhU8kxA7oPQFyq1
-> > > > > > > Yn5LCBbPWvLKB9s/edit#slide=3Did.gb470c24647_0_16
-> > > > > > >
-> > > > > > > Also, regarding the corresponding config, please send your
-> > > > > > > config to cip-dev so that Iwamatsu-san can submit it.
-> > > > > > >
-> > > > > > > I would like to ask the above to be done by February 26th (F=
-ri).
-> > > > > > > The platforms which no one flags will be dropped from the 5.=
-10 support
-> > > list.
-> > > > > > > If it takes more than that, please feel free to let me know.
-> > > > > > >
-> > > > > > > Best regards,
-> > > > > > > --
-> > > > > > > M. Kudo
-> > > > > >
-> > > > >
-> > > > >
-> > > > > --
-> > > > > Hiraku Toyooka
-> > > > > Cybertrust Japan Co., Ltd.
-> > >
-> > >
-> > >
-> > > --
-> > > Hiraku Toyooka
-> > > Cybertrust Japan Co., Ltd.
-> >
-> >
-> >=20
-> >
-> >
->
->
-> --
-> Nobuhiro Iwamatsu
+[1]:https://gitlab.com/cip-project/cip-kernel/cip-kernel-config
+
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+ conf/machine/bbb.conf             | 5 +++++
+ conf/machine/hihope-rzg2m.conf    | 5 ++++-
+ conf/machine/iwg20m.conf          | 5 ++++-
+ conf/machine/qemu-amd64.conf      | 5 ++++-
+ conf/machine/simatic-ipc227e.conf | 5 ++++-
+ kas/opt/4.4.yml                   | 1 +
+ kas/opt/rt.yml                    | 1 +
+ 7 files changed, 23 insertions(+), 4 deletions(-)
+
+diff --git a/conf/machine/bbb.conf b/conf/machine/bbb.conf
+index a9b460e..2878ed1 100644
+--- a/conf/machine/bbb.conf
++++ b/conf/machine/bbb.conf
+@@ -11,6 +11,11 @@ DISTRO_ARCH = "armhf"
+ IMAGE_TYPE ?= "wic-img"
+ IMAGER_INSTALL += "u-boot-omap"
+ 
++# kernel defconfig
++USE_CIP_KERNEL_CONFIG = "1"
++KERNEL_DEFCONFIG_VERSION ?= "4.19.y-cip"
++KERNEL_DEFCONFIG = "cip-kernel-config/${KERNEL_DEFCONFIG_VERSION}/arm/cip_bbb_defconfig"
++
+ # On stretch, select U-Boot from buster which comes with distro-boot support
+ DISTRO_APT_SOURCES_append_cip-core-stretch = " conf/distro/debian-buster.list"
+ DISTRO_APT_PREFERENCES_cip-core-stretch += "conf/machine/preferences.bbb.conf"
+diff --git a/conf/machine/hihope-rzg2m.conf b/conf/machine/hihope-rzg2m.conf
+index a2ae03d..2a46b74 100644
+--- a/conf/machine/hihope-rzg2m.conf
++++ b/conf/machine/hihope-rzg2m.conf
+@@ -13,7 +13,10 @@ DISTRO_ARCH = "arm64"
+ 
+ IMAGE_TYPE ?= "wic-img"
+ 
+-KERNEL_DEFCONFIG = "cip-kernel-config/4.19.y-cip/arm64/renesas_defconfig"
++# kernel defconfig
++KERNEL_DEFCONFIG_VERSION ?= "4.19.y-cip"
++KERNEL_DEFCONFIG = "cip-kernel-config/${KERNEL_DEFCONFIG_VERSION}/arm64/renesas_defconfig"
+ USE_CIP_KERNEL_CONFIG = "1"
++
+ DTB_FILES = "r8a774a1-hihope-rzg2m-ex.dtb"
+ IMAGE_BOOT_FILES = "${KERNEL_IMAGE} ${DTB_FILES}"
+diff --git a/conf/machine/iwg20m.conf b/conf/machine/iwg20m.conf
+index 91bfd94..b5f9490 100644
+--- a/conf/machine/iwg20m.conf
++++ b/conf/machine/iwg20m.conf
+@@ -17,8 +17,11 @@ BAUDRATE_TTY = "115200"
+ # kernel version
+ PREFERRED_VERSION_linux-cip ?= "4.4.%"
+ PREFERRED_VERSION_linux-cip-rt ?= "4.4.%"
++
++# kernel defconfig
+ USE_CIP_KERNEL_CONFIG = "1"
+-KERNEL_DEFCONFIG = "cip-kernel-config/4.4.y-cip/arm/renesas_shmobile_defconfig"
++KERNEL_DEFCONFIG_VERSION ?= "4.4.y-cip"
++KERNEL_DEFCONFIG = "cip-kernel-config/${KERNEL_DEFCONFIG_VERSION}/arm/renesas_shmobile_defconfig"
+ 
+ # Boot partition files
+ DTB_FILES = "r8a7743-iwg20d-q7-dbcm-ca.dtb"
+diff --git a/conf/machine/qemu-amd64.conf b/conf/machine/qemu-amd64.conf
+index c90d957..d99d8b1 100644
+--- a/conf/machine/qemu-amd64.conf
++++ b/conf/machine/qemu-amd64.conf
+@@ -9,5 +9,8 @@
+ DISTRO_ARCH = "amd64"
+ 
+ IMAGE_TYPE ?= "ext4-img"
++
++# kernel defconfig
+ USE_CIP_KERNEL_CONFIG = "1"
+-KERNEL_DEFCONFIG = "cip-kernel-config/4.19.y-cip/x86/cip_qemu_defconfig"
++KERNEL_DEFCONFIG_VERSION ?= "4.19.y-cip"
++KERNEL_DEFCONFIG = "cip-kernel-config/${KERNEL_DEFCONFIG_VERSION}/x86/cip_qemu_defconfig"
+diff --git a/conf/machine/simatic-ipc227e.conf b/conf/machine/simatic-ipc227e.conf
+index 3c9638f..aacfc9d 100644
+--- a/conf/machine/simatic-ipc227e.conf
++++ b/conf/machine/simatic-ipc227e.conf
+@@ -10,5 +10,8 @@ DISTRO_ARCH = "amd64"
+ 
+ IMAGE_TYPE ?= "wic-img"
+ IMAGER_INSTALL += "${GRUB_BOOTLOADER_INSTALL}"
++
++# kernel defconfig
+ USE_CIP_KERNEL_CONFIG = "1"
+-KERNEL_DEFCONFIG = "cip-kernel-config/4.19.y-cip/x86/siemens_ipc227e_defconfig"
++KERNEL_DEFCONFIG_VERSION ?= "4.19.y-cip"
++KERNEL_DEFCONFIG = "cip-kernel-config/${KERNEL_DEFCONFIG_VERSION}/x86/siemens_ipc227e_defconfig"
+diff --git a/kas/opt/4.4.yml b/kas/opt/4.4.yml
+index 65a4775..a601be3 100644
+--- a/kas/opt/4.4.yml
++++ b/kas/opt/4.4.yml
+@@ -16,3 +16,4 @@ local_conf_header:
+   kernel-version: |
+     PREFERRED_VERSION_linux-cip = "4.4.%"
+     PREFERRED_VERSION_linux-cip-rt = "4.4.%"
++    KERNEL_DEFCONFIG_VERSION = "4.4.y-cip"
+diff --git a/kas/opt/rt.yml b/kas/opt/rt.yml
+index b8fe6bb..d6fcf78 100644
+--- a/kas/opt/rt.yml
++++ b/kas/opt/rt.yml
+@@ -15,3 +15,4 @@ header:
+ local_conf_header:
+   preempt-rt: |
+     KERNEL_NAME = "cip-rt"
++    KERNEL_DEFCONFIG_VERSION_append = "-rt"
+-- 
+2.20.1
 
 
-
---=20
-Hiraku Toyooka
-Cybertrust Japan Co., Ltd.
-
---z8oekFCIboBHZu9OvSWt
+--EVMVHGftk3YWr4yP0OGv
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -275,13 +185,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6209): https://lists.cip-project.org/g/cip-dev/message=
-/6209
-Mute This Topic: https://lists.cip-project.org/mt/81077460/4520388
+View/Reply Online (#6210): https://lists.cip-project.org/g/cip-dev/message=
+/6210
+Mute This Topic: https://lists.cip-project.org/mt/81081992/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/4520388=
 /727948398/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---z8oekFCIboBHZu9OvSWt--
+--EVMVHGftk3YWr4yP0OGv--
