@@ -1,42 +1,43 @@
-Return-Path: <SRS0=cQ/i=IH=lists.cip-project.org=bounce+64572+6236+4520388+8129055@kernel.org>
+Return-Path: <SRS0=eipP=IH=lists.cip-project.org=bounce+64572+6237+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,MIME_HEADER_CTYPE_ONLY,SPF_HELO_NONE,SPF_PASS,
-	T_TVD_MIME_NO_HEADERS autolearn=ham autolearn_force=no version=3.4.0
+	T_TVD_MIME_NO_HEADERS,UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB66C433DB
-	for <cip-dev@archiver.kernel.org>; Tue,  9 Mar 2021 16:37:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E652AC433E6
+	for <cip-dev@archiver.kernel.org>; Tue,  9 Mar 2021 16:37:28 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 408A464FF3
-	for <cip-dev@archiver.kernel.org>; Tue,  9 Mar 2021 16:37:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 408A464FF3
+	by mail.kernel.org (Postfix) with ESMTPS id A675764FF3
+	for <cip-dev@archiver.kernel.org>; Tue,  9 Mar 2021 16:37:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A675764FF3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6236+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id BUL4YY4521723x0NeFuss6dF; Tue, 09 Mar 2021 08:37:27 -0800
-X-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [])
- by mx.groups.io with SMTP id smtpd.web11.11727.1615307829143333394
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6237+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id 60nVYY4521723xf4eH34oKqV; Tue, 09 Mar 2021 08:37:28 -0800
+X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [])
+ by mx.groups.io with SMTP id smtpd.web11.11726.1615307822860198874
  for <cip-dev@lists.cip-project.org>;
- Tue, 09 Mar 2021 08:37:26 -0800
-X-IronPort-AV: E=Sophos;i="5.81,234,1610377200"; 
-   d="scan'208";a="74342245"
+ Tue, 09 Mar 2021 08:37:27 -0800
+X-IronPort-AV: E=Sophos;i="5.81,236,1610377200"; 
+   d="scan'208";a="74591025"
 X-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 10 Mar 2021 01:37:25 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 10 Mar 2021 01:37:27 +0900
 X-Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id E72CE40A2DC7;
-	Wed, 10 Mar 2021 01:37:24 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 4451440A2DC7;
+	Wed, 10 Mar 2021 01:37:26 +0900 (JST)
 From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [cip-dev] [PATCH 4.19.y-cip 20/40] media: i2c: imx219: take lock in imx219_enum_mbus_code/frame_size
-Date: Tue,  9 Mar 2021 16:36:36 +0000
-Message-Id: <20210309163656.20944-21-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [cip-dev] [PATCH 4.19.y-cip 21/40] arm64: dts: renesas: r8a774c0-cat874: Add support for AISTARVISION MIPI Adapter V2.1
+Date: Tue,  9 Mar 2021 16:36:37 +0000
+Message-Id: <20210309163656.20944-22-prabhakar.mahadev-lad.rj@bp.renesas.com>
 In-Reply-To: <20210309163656.20944-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20210309163656.20944-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: Bulk
@@ -45,125 +46,238 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: qG8n75aw7C6U56nwWVzz8woix4520388AA=
-Content-Type: multipart/mixed; boundary="nWdQXEYAnxHht3sk4Lg7"
+X-Gm-Message-State: AvdTwH3DTjTfJbLDcIeMo2Ilx4520388AA=
+Content-Type: multipart/mixed; boundary="bxIiybUfrRjMYd5OU9jm"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1615307847;
- bh=J4KtNE26HtTJ8zqyuH3ANcfpz8/phMuqMxzFea+2rMk=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1615307848;
+ bh=ATclpILJENGrH41JjbsUlWG7yrP/aGBC9FmVh5R0VWs=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=fTMBTbhUDYsLisselcwLLCa4pskYNXaGgEB6t0Ii/qIUeM/GAeoLv5Gm67qLxyevacZ
- Lnvv5+GyVdt9yECVO3OSzhGaidJoHu6+yKgtu1LRrwTtdAEHFKppANCTBiaoD0LGQAhex
- kzeg8f8ydB1dErB5PXKaf///PqTku1Sr4jk=
+ b=g9HBCCc3Bvl0J6PvhD+npRGq1BeDTeTAesnyEM0YUU8fqH3QWVcekNXrYQGfTkUAl/y
+ mr6DsH3yQ+5GhpaL+yFSItpvX6dg9Li8VcSWc69hQqe7ye1Edap0LDt/Pxduk+ChLUPzV
+ 9LzkE5ZTi/18LgawEnZCnDE/4+vo9QxvTgg=
 
---nWdQXEYAnxHht3sk4Lg7
+--bxIiybUfrRjMYd5OU9jm
 
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+commit 0e36587c0832af5df894f5e5fcc45fb5a05cea5b upstream.
 
-commit 81015221a269e0d9bf6dbc3fda099b09a876ebb7 upstream.
+This patch adds support for AISTARVISION MIPI Adapter V2.1 board connected
+to G2E board. Common file aistarvision-mipi-adapter-2.1.dtsi is created
+which have the camera endpoint nodes for imx219 and ov5645 so that this can
+be re-used with other G2x platforms.
 
-These two functions did not take the imx219->mutex lock, but
-imx219_get_format_code checks that a lock is taken, so it issues
-a warning:
+r8a774c0-ek874-mipi-2.1.dts file enables the required VIN/CSI nodes and by
+default ties ov5645 camera endpoint to CSI2.
 
-[    8.738717] WARNING: CPU: 2 PID: 60 at drivers/media/i2c/imx219.c:653 imx219_get_format_code+0xac/0xc0
-[    8.748113] Modules linked in:
-[    8.751214] CPU: 2 PID: 60 Comm: kworker/2:1 Tainted: G        W         5.8.0-rc1-arm64 #148
-[    8.759821] Hardware name: NVIDIA Jetson TX1 Developer Kit (DT)
-[    8.765806] Workqueue: events deferred_probe_work_func
-[    8.771003] pstate: 60000005 (nZCv daif -PAN -UAO BTYPE=--)
-[    8.776635] pc : imx219_get_format_code+0xac/0xc0
-[    8.781390] lr : imx219_get_format_code+0xa8/0xc0
-[    8.786143] sp : ffff800012a538f0
-[    8.789495] x29: ffff800012a538f0 x28: ffff800012838e90
-[    8.794867] x27: ffff0000f28c5800 x26: ffff800011161c68
-[    8.800237] x25: ffff0000f2a5a3f8 x24: 0000000000000018
-[    8.805605] x23: ffff0000f284ef18 x22: ffff0000f2a5a080
-[    8.810974] x21: ffff0000f284ff00 x20: ffff0000f2a5a080
-[    8.816343] x19: 000000000000300f x18: 00000000ffffffff
-[    8.821712] x17: ffff800011c77268 x16: 00000000000040d7
-[    8.827081] x15: 00000000000040d8 x14: 0000000000000000
-[    8.832451] x13: 00000000000040d4 x12: ffff800011d19300
-[    8.837819] x11: 00000000000208c0 x10: 0000000000000004
-[    8.843188] x9 : 000000003baa2ecd x8 : 000000008b3f9c73
-[    8.848558] x7 : 0000000000000008 x6 : 0000000000000034
-[    8.853929] x5 : 0000000000000000 x4 : 0000000000000001
-[    8.859297] x3 : ffff800010a2a8a8 x2 : ffff0000f84a8000
-[    8.864666] x1 : 0000000000000000 x0 : 0000000000000000
-[    8.870034] Call trace:
-[    8.872515]  imx219_get_format_code+0xac/0xc0
-[    8.876921]  imx219_enum_mbus_code+0x38/0x60
-[    8.881241]  call_enum_mbus_code+0x50/0x70
-[    8.885387]  tegra_vi_graph_notify_complete+0x290/0x5e8
-[    8.890670]  v4l2_async_notifier_try_complete.part.0+0x48/0x68
-[    8.896563]  v4l2_async_register_subdev+0x100/0x1c0
-[    8.901497]  v4l2_async_register_subdev_sensor_common+0x70/0xf0
-[    8.907477]  imx219_probe+0x590/0x728
-[    8.911184]  i2c_device_probe+0xe4/0x2b0
-[    8.915151]  really_probe+0xd8/0x330
-[    8.918768]  driver_probe_device+0x58/0xb8
-[    8.922909]  __device_attach_driver+0x84/0xc8
-[    8.927315]  bus_for_each_drv+0x78/0xc8
-[    8.931193]  __device_attach+0xe4/0x140
-[    8.935072]  device_initial_probe+0x14/0x20
-[    8.939301]  bus_probe_device+0x9c/0xa8
-[    8.943179]  deferred_probe_work_func+0x74/0xb0
-[    8.947759]  process_one_work+0x2c4/0x740
-[    8.951813]  worker_thread+0x4c/0x430
-[    8.955518]  kthread+0x158/0x178
-[    8.958786]  ret_from_fork+0x10/0x1c
-[    8.962401] irq event stamp: 63536
-[    8.965846] hardirqs last  enabled at (63535): [<ffff800010082398>] el1_irq+0xd8/0x180
-[    8.973846] hardirqs last disabled at (63536): [<ffff8000100a6484>] do_debug_exception+0x16c/0x258
-[    8.982895] softirqs last  enabled at (63534): [<ffff800010080d4c>] _stext+0x54c/0x594
-[    8.990896] softirqs last disabled at (63525): [<ffff8000100c8350>] irq_exit+0x100/0x138
-[    8.999066] ---[ end trace ebfbcd84b75ef921 ]---
-[    9.004354] ------------[ cut here ]------------
-
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Reviewed-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Link: https://lore.kernel.org/r/1587397794-11237-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[PL: manually applied changes to Makefile file]
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/media/i2c/imx219.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/Makefile          |  3 +-
+ .../aistarvision-mipi-adapter-2.1.dtsi        | 94 +++++++++++++++++++
+ .../dts/renesas/r8a774c0-ek874-mipi-2.1.dts   | 72 ++++++++++++++
+ 3 files changed, 168 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/aistarvision-mipi-adapter-2.1.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts
 
-diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-index 386717fb2b99..a2829c7012aa 100644
---- a/drivers/media/i2c/imx219.c
-+++ b/drivers/media/i2c/imx219.c
-@@ -811,7 +811,9 @@ static int imx219_enum_mbus_code(struct v4l2_subdev *sd,
- 	if (code->index >= (ARRAY_SIZE(codes) / 4))
- 		return -EINVAL;
- 
-+	mutex_lock(&imx219->mutex);
- 	code->code = imx219_get_format_code(imx219, codes[code->index * 4]);
-+	mutex_unlock(&imx219->mutex);
- 
- 	return 0;
- }
-@@ -821,11 +823,15 @@ static int imx219_enum_frame_size(struct v4l2_subdev *sd,
- 				  struct v4l2_subdev_frame_size_enum *fse)
- {
- 	struct imx219 *imx219 = to_imx219(sd);
-+	u32 code;
- 
- 	if (fse->index >= ARRAY_SIZE(supported_modes))
- 		return -EINVAL;
- 
--	if (fse->code != imx219_get_format_code(imx219, fse->code))
-+	mutex_lock(&imx219->mutex);
-+	code = imx219_get_format_code(imx219, fse->code);
-+	mutex_unlock(&imx219->mutex);
-+	if (fse->code != code)
- 		return -EINVAL;
- 
- 	fse->min_width = supported_modes[fse->index].width;
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index 16d63679f358..0783033209d9 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -12,7 +12,8 @@ dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n-ex.dtb \
+ dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n-ex-idk-1110wr.dtb \
+ 			       r8a774b1-hihope-rzg2n-rev2-ex-idk-1110wr.dtb
+ dtb-$(CONFIG_ARCH_R8A774C0) += r8a774c0-cat874.dtb r8a774c0-ek874.dtb \
+-			       r8a774c0-ek874-idk-2121wr.dtb
++			       r8a774c0-ek874-idk-2121wr.dtb \
++			       r8a774c0-ek874-mipi-2.1.dtb
+ dtb-$(CONFIG_ARCH_R8A774E1) += r8a774e1-hihope-rzg2h.dtb
+ dtb-$(CONFIG_ARCH_R8A774E1) += r8a774e1-hihope-rzg2h-ex.dtb
+ dtb-$(CONFIG_ARCH_R8A774E1) += r8a774e1-hihope-rzg2h-ex-idk-1110wr.dtb
+diff --git a/arch/arm64/boot/dts/renesas/aistarvision-mipi-adapter-2.1.dtsi b/arch/arm64/boot/dts/renesas/aistarvision-mipi-adapter-2.1.dtsi
+new file mode 100644
+index 000000000000..dac6ff49020f
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/aistarvision-mipi-adapter-2.1.dtsi
+@@ -0,0 +1,94 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the AISTARVISION MIPI Adapter V2.1
++ *
++ * Copyright (C) 2020 Renesas Electronics Corp.
++ */
++
++/ {
++	ov5645_vdddo_1v8: 1p8v {
++		compatible = "regulator-fixed";
++		regulator-name = "camera_vdddo";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-always-on;
++	};
++
++	ov5645_vdda_2v8: 2p8v {
++		compatible = "regulator-fixed";
++		regulator-name = "camera_vdda";
++		regulator-min-microvolt = <2800000>;
++		regulator-max-microvolt = <2800000>;
++		regulator-always-on;
++	};
++
++	ov5645_vddd_1v5: 1p5v {
++		compatible = "regulator-fixed";
++		regulator-name = "camera_vddd";
++		regulator-min-microvolt = <1500000>;
++		regulator-max-microvolt = <1500000>;
++		regulator-always-on;
++	};
++
++	imx219_vana_2v8: 2p8v {
++		compatible = "regulator-fixed";
++		regulator-name = "camera_vana";
++		regulator-min-microvolt = <2800000>;
++		regulator-max-microvolt = <2800000>;
++		regulator-always-on;
++	};
++
++	imx219_vdig_1v8: 1p8v {
++		compatible = "regulator-fixed";
++		regulator-name = "camera_vdig";
++		regulator-min-microvolt = <1500000>;
++		regulator-max-microvolt = <1500000>;
++		regulator-always-on;
++	};
++
++	imx219_vddl_1v2: 1p2v {
++		compatible = "regulator-fixed";
++		regulator-name = "camera_vddl";
++		regulator-min-microvolt = <1200000>;
++		regulator-max-microvolt = <1200000>;
++		regulator-always-on;
++	};
++
++	osc25250_clk: osc25250_clk {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <24000000>;
++	};
++};
++
++&MIPI_PARENT_I2C {
++	ov5645: ov5645@3c {
++		compatible = "ovti,ov5645";
++		reg = <0x3c>;
++		clock-names = "xclk";
++		clocks = <&osc25250_clk>;
++		clock-frequency = <24000000>;
++		vdddo-supply = <&ov5645_vdddo_1v8>;
++		vdda-supply = <&ov5645_vdda_2v8>;
++		vddd-supply = <&ov5645_vddd_1v5>;
++
++		port {
++			ov5645_ep: endpoint {
++			};
++		};
++	};
++
++	imx219: imx219@10 {
++		compatible = "sony,imx219";
++		reg = <0x10>;
++		clocks = <&osc25250_clk>;
++		VANA-supply = <&imx219_vana_2v8>;
++		VDIG-supply = <&imx219_vdig_1v8>;
++		VDDL-supply = <&imx219_vddl_1v2>;
++
++		port {
++			imx219_ep: endpoint {
++			};
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts b/arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts
+new file mode 100644
+index 000000000000..f0829e905506
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts
+@@ -0,0 +1,72 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the Silicon Linux RZ/G2E 96board platform (CAT874)
++ * connected with aistarvision-mipi-v2-adapter board
++ *
++ * Copyright (C) 2020 Renesas Electronics Corp.
++ */
++
++/dts-v1/;
++#include "r8a774c0-ek874.dts"
++#define MIPI_PARENT_I2C i2c3
++#include "aistarvision-mipi-adapter-2.1.dtsi"
++
++/ {
++	model = "Silicon Linux RZ/G2E evaluation kit EK874 (CAT874 + CAT875) with aistarvision-mipi-v2-adapter board";
++	compatible = "si-linux,cat875", "si-linux,cat874", "renesas,r8a774c0";
++};
++
++&i2c3 {
++	status = "okay";
++};
++
++&vin4 {
++	status = "okay";
++};
++
++&vin5 {
++	status = "okay";
++};
++
++&csi40 {
++	status = "okay";
++
++	ports {
++		port {
++			csi40_in: endpoint {
++				clock-lanes = <0>;
++				data-lanes = <1 2>;
++				remote-endpoint = <&ov5645_ep>;
++			};
++		};
++	};
++};
++
++&ov5645 {
++	enable-gpios = <&gpio5 5 GPIO_ACTIVE_HIGH>;
++	reset-gpios = <&gpio5 3 GPIO_ACTIVE_LOW>;
++
++	port {
++		ov5645_ep: endpoint {
++			clock-lanes = <0>;
++			data-lanes = <1 2>;
++			remote-endpoint = <&csi40_in>;
++		};
++	};
++};
++
++&imx219 {
++	port {
++		imx219_ep: endpoint {
++			clock-lanes = <0>;
++			data-lanes = <1 2>;
++			link-frequencies = /bits/ 64 <456000000>;
++			/* uncomment remote-endpoint property to tie imx219 to
++			 * CSI2 also make sure remote-endpoint for ov5645 camera
++			 * is commented and remote endpoint phandle in csi40_in
++			 * is imx219_ep
++			 */
++			/* remote-endpoint = <&csi40_in>; */
++		};
++	};
++};
 -- 
 2.17.1
 
 
---nWdQXEYAnxHht3sk4Lg7
+--bxIiybUfrRjMYd5OU9jm
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -171,13 +285,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6236): https://lists.cip-project.org/g/cip-dev/message=
-/6236
-Mute This Topic: https://lists.cip-project.org/mt/81205367/4520388
+View/Reply Online (#6237): https://lists.cip-project.org/g/cip-dev/message=
+/6237
+Mute This Topic: https://lists.cip-project.org/mt/81205369/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/4520388=
 /727948398/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---nWdQXEYAnxHht3sk4Lg7--
+--bxIiybUfrRjMYd5OU9jm--
