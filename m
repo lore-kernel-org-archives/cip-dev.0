@@ -1,4 +1,4 @@
-Return-Path: <SRS0=HEeh=II=lists.cip-project.org=bounce+64572+6266+4520388+8129055@kernel.org>
+Return-Path: <SRS0=V8lO=II=lists.cip-project.org=bounce+64572+6267+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -7,124 +7,124 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	PDS_BAD_THREAD_QP_64,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C20EEC433DB
-	for <cip-dev@archiver.kernel.org>; Wed, 10 Mar 2021 09:37:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33CD0C433DB
+	for <cip-dev@archiver.kernel.org>; Wed, 10 Mar 2021 09:37:59 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E162664FF3
-	for <cip-dev@archiver.kernel.org>; Wed, 10 Mar 2021 09:36:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E162664FF3
+	by mail.kernel.org (Postfix) with ESMTPS id 5D7AD64FF7
+	for <cip-dev@archiver.kernel.org>; Wed, 10 Mar 2021 09:37:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D7AD64FF7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6266+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id UTyYYY4521723xqVpHmxjIeC; Wed, 10 Mar 2021 01:36:59 -0800
-X-Received: from JPN01-TY1-obe.outbound.protection.outlook.com (JPN01-TY1-obe.outbound.protection.outlook.com [40.107.140.130])
- by mx.groups.io with SMTP id smtpd.web11.6663.1615369017419995688
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6267+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id NeVCYY4521723xJYWY0l4Zor; Wed, 10 Mar 2021 01:37:57 -0800
+X-Received: from JPN01-TY1-obe.outbound.protection.outlook.com (JPN01-TY1-obe.outbound.protection.outlook.com [40.107.140.119])
+ by mx.groups.io with SMTP id smtpd.web11.6671.1615369077015796759
  for <cip-dev@lists.cip-project.org>;
- Wed, 10 Mar 2021 01:36:58 -0800
+ Wed, 10 Mar 2021 01:37:57 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ko4WqED4BuE/CA7rW/YVktQofaFFNp7otU0Hps2VyoksRedZIXuxRHQQGmn/zG5qCo3uzxhlX1fdG3foJONiyTsvANOgsO8NZv56YrMPLOvvlVOcvxaH6cqPIouEOccrxh7nw41IcYyRygznLp6XDLv4AF9M/2SEITAML55ITZEHubAV4Qmec3fSUzqEFYEvZ6eDjbZtZV68nRss0yq0P3OnrzCCTHpCWoB4BPNI/+iq3yuKI3MNLFN5yXRMeHYa87DfOpAuaZSxm4L1gzXzouSR9ugUZi2XfL+M+PoxzbXdbbklho7EKu9omfMa8N5+vnUItVD5mqvUjlE2PyztMQ==
+ b=D86BUkHm+gyC486wkoYllD8guaEBJFUKnqmf1aFN3VA/p8UIqc8HlUWRabukzUKlPr2q8T6kcjfcW/Tc7rJHukQ2qVuL7mQIC23NhFzilyipH49lgpHfJ8FWdwA+xh6eXYfwloUvD/CSr3c9NkXOScW28t5EtTAp2ZI2hJzuN3UF1gg4kJDLfzZ9YL/3I5OOwksXr4diMcTMS19+n6LLYFw24Yxj/bQ4Q7IE7cmvjhIjxJYvwR7n97wBH8hI40bhvQcfQEK96d7wULAglPO47HvXbKBQvpCPI65j09hEH9Al4jFtgtqAn2NVtycn+Sxm1uxnldeTfJc6VV84bhGGcw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZNGWR4j1jTia4sTtKakBBeYYuKeCCcifPCe+P+sQwak=;
- b=VUi22jPT9h9Oy+O4ncP44n8R2PVZUvAOWqJkKoJlipEwOynQO6OIj+xNxANHiZ8nb5cv8CE7ZV0BBCYZ0YxEeZXLpVKa9kHc8FZhHPPAz8IpbTrMmf2Ticscs0ril+nVY2w1Bh4BGrjnZS+qftiyzQXNJCes6gJgnM4UunCAC+DWCPR2KeMHOhWevVwHwphycJQGvIl5ia8Iwjx8FUUrfLrUh7Ls/8ThSLU6itVaeSmKdNpx5OaEPrWfX+NJID9OXbSxr/IYEM6qEk2BEI2DHb6+rtJeXsysYslTAHllTiim4HOwRbScAF7lCE+SY/WiMmVWPh1ljUVO5lCae7PPrA==
+ bh=wnTi1wb4BfHeXNgVeOkqfwmZ4Gx8gYNonsGT/xc5S+8=;
+ b=NWDthADQNSR+7SfRmmeeaS6ouy9SqndfVOfgNg8AczWKiU1c6x3BRvwyw3O3Ib3igm32L8XAnwqEV0dg8f6WlNt0LGw5JmsXsNc6MXNqM0h/6XpzRzB4wegJBFPn1jwc99OL2USwD/k1oZtgy6RXzy2ssimARyPRWQ/VdRTOwH3ZIausYg+OwoPYwKQNoIYUvAQ2bWF4KUCXS1GnYNfMJY/Zp9kbMoNUbTTtLA+eMZfMEj+HqW2tn6u+EQcBzytGfal0XEIj0O4SLzzQh/asN3+GATPt8noBMGluVJtxu5mL0CXpnQ3bT8nPbnwhar4TSZ4NKbp+OUcwpxbC2v0fvg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 X-Received: from OSAPR01MB4867.jpnprd01.prod.outlook.com (2603:1096:604:6f::14)
- by OSBPR01MB3334.jpnprd01.prod.outlook.com (2603:1096:604:4a::17) with
+ by OS0PR01MB6161.jpnprd01.prod.outlook.com (2603:1096:604:b7::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.17; Wed, 10 Mar
- 2021 09:36:54 +0000
+ 2021 09:37:54 +0000
 X-Received: from OSAPR01MB4867.jpnprd01.prod.outlook.com
  ([fe80::24cf:baf6:7ab1:2ede]) by OSAPR01MB4867.jpnprd01.prod.outlook.com
  ([fe80::24cf:baf6:7ab1:2ede%4]) with mapi id 15.20.3890.038; Wed, 10 Mar 2021
- 09:36:54 +0000
+ 09:37:54 +0000
 From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Pavel Machek <pavel@denx.de>
 CC: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>, Nobuhiro
  Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, Biju Das
 	<biju.das.jz@bp.renesas.com>
-Subject: Re: [cip-dev] [PATCH 4.19.y-cip 13/40] media: i2c: Add driver for Sony IMX219 sensor
-Thread-Topic: [PATCH 4.19.y-cip 13/40] media: i2c: Add driver for Sony IMX219
- sensor
-Thread-Index: AQHXFSPscDJRSPeKnUKXJrfStjkqy6p870yw
-Date: Wed, 10 Mar 2021 09:36:54 +0000
+Subject: Re: [cip-dev] [PATCH 4.19.y-cip 21/40] arm64: dts: renesas: r8a774c0-cat874: Add support for AISTARVISION MIPI Adapter V2.1
+Thread-Topic: [PATCH 4.19.y-cip 21/40] arm64: dts: renesas: r8a774c0-cat874:
+ Add support for AISTARVISION MIPI Adapter V2.1
+Thread-Index: AQHXFSRItmwTZ9H/IkumVzYz+U1bGap8941w
+Date: Wed, 10 Mar 2021 09:37:54 +0000
 Message-ID: 
- <OSAPR01MB48672E161C93582BDF81A520AA919@OSAPR01MB4867.jpnprd01.prod.outlook.com>
+ <OSAPR01MB4867A795E20CF656CF3FFA6DAA919@OSAPR01MB4867.jpnprd01.prod.outlook.com>
 References: <20210309163656.20944-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20210309163656.20944-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20210309203635.GB7900@amd>
-In-Reply-To: <20210309203635.GB7900@amd>
+ <20210309163656.20944-22-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20210309203914.GA9574@amd>
+In-Reply-To: <20210309203914.GA9574@amd>
 Accept-Language: en-GB, en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [193.141.220.21]
 x-ms-publictraffictype: Email
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 324b0170-dc1e-480a-bd75-08d8e3a80a87
-x-ms-traffictypediagnostic: OSBPR01MB3334:
+x-ms-office365-filtering-correlation-id: d660b352-c72f-4255-8715-08d8e3a82e45
+x-ms-traffictypediagnostic: OS0PR01MB6161:
 x-ms-exchange-transport-forked: True
 x-microsoft-antispam-prvs: 
- <OSBPR01MB333424C86D6C1F2DD7971EA5AA919@OSBPR01MB3334.jpnprd01.prod.outlook.com>
+ <OS0PR01MB6161FA20605876918CF2121CAA919@OS0PR01MB6161.jpnprd01.prod.outlook.com>
 x-ms-oob-tlc-oobclassifiers: OLM:8273;
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam-message-info: 
- 03nD8IjRvXeDmsmH+eVC1ma1h8LpFjqke9vFt1vbLOvz1GxBOKx4WcPcpXmzrfEHVIYl9hxX5Deq0x7aHDiAPqbFkTS/n+TNZ7nSHi7AT4cHsbL7laq9OUtJ1ObqFe090efi5AIDd1AVzywXsLaC3MftDhPGeWwCNGfPPsFugXhrTQZqBJvQBb+CZIdhC8ExqW3WseBoj1gqOwFcQId8wBV57pAw1UK1s64S//rjUMwFsyoy7JjBsNQGeFeZFwGVBoXgxnN2K3Bk4mD4Z/OzvU87gZX2M2vT1jGXACRzSpvfRxQBNc8quctn8dDNwcpOH9MbHvulsDMWt2QwMX9O6+7bXIDoHcajgDQTicJxOEeRPazNna286nGKLDsBcXdBiXB9LnQqUYpVVNyLLnlBSvnkZM8lbQ1/ELn4iWOcLJA1BuoHMMAmeb72x5Muh+/VoqfqSPx/TFSmIhalL+DJb6qOKxoogHq8Cb5NN/wJfosqd/AI3kFJmJbH5dxXSDF5sDH02BQ9C/W059+eocuLf0gNPqFhHhRkBKpYKJ8yPAt5jRyPZ2+VMXfjuMTYBcFueujkHrmM06VJfTVJIKzfsHD4Ipe4ct8Y9I3enEWoD8E=
+ 4cSOd3YIKRpHWjacFiklaq1LvTT+gUGHobUWYCb8/BSOBuadYbKezjQf7GygVmN4vkuItlaVejUjp6BAegFoil9Hc+F8H1HNdWHIFRqnfv0D2Xo1N13mzS8NHNbp31cG9DNFxfMj8QQD3zyVGwfv3ZWkkESt3ouvMyHgHov4dvJ7IwFdUkfyv1uDzgx4FT69D/8UxD2Xtl6t4r4c/ldtI48wmKxuTTfs6Bpd64AqfeYogAuyvGGzPfO2Xlq+lHphtuaYugPpWFCmv8zcUQZ210Rje+kQ63KfMesMhOpor9nloRXK+HU343xDg9YRvWvwaBxlA5lVl5u5Szq98PyPz0VBRZNipSqNbGCqugRQB6OAMCKZgL79gYddCVnPx2lolE1XvYbTs0oWBF1yFERp+6YaEsrUy9o17/EN5kQrS2eJh0tE/LUgjqtDbvQbRjW9eag5HYDuJRZAimvaW267T+DASVJm4D0s1qbg2dSgln/LowF+kLMMl0Yc6fJu5CJt1gIBkjmTu2FkXpa23VJ3ew==
 x-ms-exchange-antispam-messagedata: 
- =?us-ascii?Q?MArl1OImARtwtkvMmOYMEKC1txpl7EUb26pp3ZiaeUy6lVwug0MxftKMcjKB?=
- =?us-ascii?Q?A0IKW+rQrXuq2CLf/1ZywJvVmWUGRsmhnC8LVWkZQzoM0J4UscgagQv3+hr6?=
- =?us-ascii?Q?D9KVOBuPSluMrXQOYVngeanFMS1IkcUE88c6OFTYc6YfjO5akCMgdkEGCr3X?=
- =?us-ascii?Q?ChTMdoNbuVtUH4v0oHBXESc0aK8Nyi5MKmCt+YgazQQW4L+8sVHoEcYD4hi9?=
- =?us-ascii?Q?VejvH6AqdpfGrSlfap3B/F5MSef4sqqMcKTrhsuCJ9ROvCE/7B1pjXWfCmIF?=
- =?us-ascii?Q?XvqYu2r4fIbkmKOVeK//PkiKhXYD/VYgRnBOO/v39XqrgMqSwtKHxRi51iXh?=
- =?us-ascii?Q?XcQoP+5ihiNXC247+LO2a1IXjgfUSEn9wdve7MoPcx1XSc4rzUlabaVVBJPu?=
- =?us-ascii?Q?Gjpkr2V99gy2LyQmwTFqfPnf5SQuEmlQAvE0rc5ILZ91EXFAeyOc59DtI1z4?=
- =?us-ascii?Q?W+q9pUPmX8EP4toM56+RhbeTRdkl/ubY3g86ucdjh1SeJDkXtAUbwZBtnHOr?=
- =?us-ascii?Q?lMqHtP2gOiZDFiVtD3lG670s25W+nho1y2tGgn/Vmz5zQT8N2eK2R21S3815?=
- =?us-ascii?Q?4PKKjjvnW3Y5RdmnUfemp1eiRt9HLyQUA2INqNm3lD5MB6xcM91OapUd8kNB?=
- =?us-ascii?Q?ufoVPZST3h1WNG1Q+shs4m2m5jW5Pgrto+eCei4QEs89emZKi0HGc8ZViSdi?=
- =?us-ascii?Q?QjOVZBozl5ZLduo685dydYKhuajjJq5SuCQy1wXUL28GFTTmCDXv1vKUlGbF?=
- =?us-ascii?Q?3l80d6LzS8m9xHSJaT0/hyA68pqT7XIV5LzUJuua0z3K6HbQBvvh1C/jtRw9?=
- =?us-ascii?Q?5rsBgzdTwXZARLggVNb96j0vJM4onF/WQ0Z/S3OMXXZ5CMb2xITDctEPBkCp?=
- =?us-ascii?Q?RL7QoPns9Lzx7dqpe5hap+sOghQvYfId9ivTuHAvEyXDM12hMIQ9/ALZV7YI?=
- =?us-ascii?Q?LDhXFtLBlgKPyuPOJyRJ9pWu4wT0xTo6kw4PAr4WZ6/J5//W/r7l85nGlASl?=
- =?us-ascii?Q?pfuePQ+bgFwb/tMPhRZr0Zzntu5jSE3MkZvzKDV0gVWM+2xRqbydD0yZOV3x?=
- =?us-ascii?Q?r31TD7Be24OuQE4PxZR+WEmuHT9aexyK1GdImuQmwG7zEPOzZAzUIzXvyw6C?=
- =?us-ascii?Q?8d+pOkkRtjzHqtk0fjpm0PYGBKVGpiZAZCi2icU24HJ3vC+9NZNaQemaE1d+?=
- =?us-ascii?Q?Ib6q/tl9Xku9PxUgjhHzCpvZsU/XZPzdK0DDNugk6MZex5spm/GHLAISO4Wl?=
- =?us-ascii?Q?aLhZuimmqKqdmmrfwhnvQ/V2wdKCg3aRD6ihA6doRKVixgGno7816v9yKnib?=
- =?us-ascii?Q?lCWdjQAf8aYnC2ZQqNYhE15h?=
+ =?us-ascii?Q?FixK6+8lHGylIrwlqgadkCXztuHjqMGmzKW01EDXHqno+jfdYVxQQa6vw5+Z?=
+ =?us-ascii?Q?/wKtAmOEyGE2zHciHsyvplylHaYRarPdj+r0sofZSYLN4Xd5Nee7YgUNLT3W?=
+ =?us-ascii?Q?9ISrd1wcJAWyCNM1yTohs91NMUVVv63v8X2FgARapdpvEJMjeHe4eEoV86gS?=
+ =?us-ascii?Q?fvMWR/F6dQ1JrTIBsZlzE37ImBjMzG5b9hyhTDg3GFqrr74/6H8pGq6fj3PH?=
+ =?us-ascii?Q?6D/BPRTxYBIFVDkxVJyFYycyy8rtgNTv/fCzS3kSiQ5IeReG2RkVBeF2AJvs?=
+ =?us-ascii?Q?gwnueBfcGEXnAiV52t4pBpvSl2n1lQCU++54RALGzvpnbRqGWR+Wsvn+Yt7X?=
+ =?us-ascii?Q?o6MsDDBH2HyExbXO5lPe7ybyFxHrsN+cIpoDYdvnr6a9NdFou38SdpogngPp?=
+ =?us-ascii?Q?mebtwstnWFAy4LSxAESG3gwvgpDLV07UMf4WtCFVKzCQoVCbnOcATwF06rOo?=
+ =?us-ascii?Q?mKr4VsnDecEV++eaOPl8leurhknmuBuTRd/qrmPvdRyG1hNIsPpwpk7Wg3v5?=
+ =?us-ascii?Q?biSZUhB0aKvxIidXZQvUW12ujf6lGGwaQZhsWmMv/RB3AbmD8M7jCj4/nKIv?=
+ =?us-ascii?Q?Kp5yPE1WOysU2hPxY7oW/5nDAfy0uNMiuSYiDxnsjrqDtVhJK6xX26YqxVrL?=
+ =?us-ascii?Q?98ltlPZCLxSamBgllkvhZwGHIQiwe2k+0Dqm+NPQXesJRtFUbLKQ5ySGtD/+?=
+ =?us-ascii?Q?akZA3QCuxTfInljq/hUp2jjTqVR9wuNcdiRtA6XsinPxYsYOp3YRmALrtEB/?=
+ =?us-ascii?Q?FZlBoOrpBoMWbOKkamdQEiBtV6njuqskPnfMUF/fDm4erPbAxhq3Kr6zEX6W?=
+ =?us-ascii?Q?kqO3VbOT18hRl8vaz6YGp++snAxnoBHd1RlsCCXHBvEnL/MdEZwYWh4C7m6w?=
+ =?us-ascii?Q?tObaFu1kRFe0oFOtLfYxOMTii9hl0InPB/3FJd190DiijaZVEKFVho3xcTUC?=
+ =?us-ascii?Q?lyPhgrSxFRDTMKiQAejSi55X9eG4FtTo2LkB4LBWqOxypuePYlPdIjZN5idV?=
+ =?us-ascii?Q?/aGgHtvhNCuWaehvQe9YRDeIIFtcd0SZoQ7q/jzZ8GuuaTTUjO5ghrkvgdo9?=
+ =?us-ascii?Q?Bce291XOGdHGTZfxbJLRmolcwFMOMTLskN/Xks8hvUqAorXLdllZB6qnAFPR?=
+ =?us-ascii?Q?/wIAtlMEgPkXIVwtYeSWoBcBaCYbMVrg3q0jNxD0Me/ikwixzyRyOgx0PpKJ?=
+ =?us-ascii?Q?JnBxkbffq+SDL4A3BLwprEmc0T4EgHH5m/nt1bmjmV0+RUgamui2Z1owpG+C?=
+ =?us-ascii?Q?LlzdJbLNye3DtibyynTVlZm25oYqe6+6aI8eY7KZ260Ewcywpjv/lM4D6MZR?=
+ =?us-ascii?Q?LEvJZ+qAMfC815NLoINIYFU4?=
 MIME-Version: 1.0
 X-OriginatorOrg: bp.renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: OSAPR01MB4867.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 324b0170-dc1e-480a-bd75-08d8e3a80a87
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Mar 2021 09:36:54.2314
+X-MS-Exchange-CrossTenant-Network-Message-Id: d660b352-c72f-4255-8715-08d8e3a82e45
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Mar 2021 09:37:54.2654
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: /t/8iN7S9p3gLaFuE5BSb3hWaJ3xZ5Yg5GkdW6lQj6ygZjqn24g2Y2f0wrdoq95Bpko65BcvCArsRTLVxaeHahvR4rlUdlCqFxMZJeXJox06UjQMHyQkR3TEc3zyqjxm
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB3334
+X-MS-Exchange-CrossTenant-userprincipalname: RyFXCFvZQeQuUw+k2Z1ZTRo62eXezC2R6FTrzikM4CFDV5ASZQSSnlXcod2QnTkz5l+ugDsj5CWkat7tRl4SYol0cxxwdb4u4Yf3fdOXgEqJmlesTXBxBFqjmcabNFbd
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS0PR01MB6161
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: 11UKgnOFluOyBKBhtI52zSS9x4520388AA=
-Content-Type: multipart/mixed; boundary="pUmd5VNOpSYzuAk0lmnt"
+X-Gm-Message-State: kp4GJckbV1opHmEMeNPuCP6Ax4520388AA=
+Content-Type: multipart/mixed; boundary="ZiDISxe54WuDq70xVm3W"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1615369019;
- bh=8APB7htEl/mFiiZ4/t05lpOc+kk30bL0WUyWfMQruoc=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1615369077;
+ bh=2be6QBzX1LLADlAn5TLW+CWhBMzTSbkkT1tM7trdTyA=;
  h=CC:Content-Type:Date:From:Reply-To:Subject:To;
- b=mpW5+vnbK+ha8V9r26WT5TCtuOpiD7oLxMh9oUGa5xVsZD2XXn4oGjzHgZcW1U4J3wa
- Ui1qfgNO0Xxd78aoHf/hcYBcv+F/Ye07esQ9RC68mD4AT/PDTjPlUIjSbWAdcHdqOrXqa
- EXw2FZ+aWUrf9Pt6Jv55xzcVv2JGs5tlxtQ=
+ b=fY0BTqRSC80AkE1DmrMt45SylBPKOT8QrtWfDqOfcpqedk7X8Z2nqtT8WWxODUoNDXJ
+ tu5XvHTnBUH3Stw4VoqL6masL8Scxn7wlfagjdgn4jDfdVxKxYGqxwHr6N0PI8Pds3cjn
+ b3NAv1wEjeB0AupUliOd6aPCV12wBz4lo9w=
 
---pUmd5VNOpSYzuAk0lmnt
+--ZiDISxe54WuDq70xVm3W
 Content-Language: en-US
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -135,222 +135,46 @@ Thank you for the review.
 
 > -----Original Message-----
 > From: Pavel Machek <pavel@denx.de>
-> Sent: 09 March 2021 20:37
+> Sent: 09 March 2021 20:39
 > To: Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > Cc: cip-dev@lists.cip-project.org; Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@=
 toshiba.co.jp>; Pavel Machek
 > <pavel@denx.de>; Biju Das <biju.das.jz@bp.renesas.com>
-> Subject: Re: [PATCH 4.19.y-cip 13/40] media: i2c: Add driver for Sony IMX=
-219 sensor
+> Subject: Re: [PATCH 4.19.y-cip 21/40] arm64: dts: renesas: r8a774c0-cat87=
+4: Add support for
+> AISTARVISION MIPI Adapter V2.1
 >=20
 > Hi!
 >=20
-> > +/* External clock frequency is 24.0M */
-> > +#define IMX219_XCLK_FREQ		24000000
+> > +		imx219_ep: endpoint {
+> > +			clock-lanes =3D <0>;
+> > +			data-lanes =3D <1 2>;
+> > +			link-frequencies =3D /bits/ 64 <456000000>;
+> > +			/* uncomment remote-endpoint property to tie imx219 to
+> > +			 * CSI2 also make sure remote-endpoint for ov5645 camera
+> > +			 * is commented and remote endpoint phandle in csi40_in
+> > +			 * is imx219_ep
+> > +			 */
 >=20
-> MHz?
+> This needs to be normal comment style, and it needs to contain
+> sentences. And it may be better to provide #ifdef for the alternate
+> configuration.
 >=20
-> > +/*Frame Length Line*/
->=20
-> Make this usual comment style.
->=20
-> > +/*
-> > + * Initialisation delay between XCLR low->high and the moment when the=
- sensor
-> > + * can start capture (i.e. can leave software stanby) must be not less=
- than:
-> > + *   t4 + max(t5, t6 + <time to initialize the sensor register over I2=
-C>)
-> > + * where
-> > + *   t4 is fixed, and is max 200uS,
-> > + *   t5 is fixed, and is 6000uS,
-> ...
-> > + * 1185 to 5333 uS, and is always less than t5.
-> ...
-> > + * For this reason this is always safe to wait (t4 + t5) =3D 6200 uS, =
-then
->=20
-> I believe this should be "us" or "usec".
->=20
-> > +	/*
-> > +	 * Mutex for serialized access:
-> > +	 * Protect sensor module set pad format and start/stop streaming safe=
-ly.
-> > +	 */
->=20
-> This is not really english.
->=20
-> > +/* Read registers up to 2 at a time */
-> > +static int imx219_read_reg(struct imx219 *imx219, u16 reg, u32 len, u3=
-2 *val)
-> > +{
->=20
-> > +	msgs[1].buf =3D &data_buf[4 - len];
-> > +
-> > +	ret =3D i2c_transfer(client->adapter, msgs, ARRAY_SIZE(msgs));
-> > +	if (ret !=3D ARRAY_SIZE(msgs))
-> > +		return -EIO;
-> > +
-> > +	*val =3D get_unaligned_be32(data_buf);
->=20
-> That's really interesting piece of code. len is in bytes, but return
-> value is in 32 bit values, magic with be32...
->=20
-> > +static int imx219_write_reg(struct imx219 *imx219, u16 reg, u32 len, u=
-32 val)
-> > +{
-> > +	struct i2c_client *client =3D v4l2_get_subdevdata(&imx219->sd);
-> > +	u8 buf[6];
-> > +
-> > +	if (len > 4)
-> > +		return -EINVAL;
-> > +
-> > +	put_unaligned_be16(reg, buf);
-> > +	put_unaligned_be32(val << (8 * (4 - len)), buf + 2);
->=20
-> Wow. When I thought above was interesting.... this is even more so.
->=20
->=20
-> > +static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
-> > +{
-> ...
-> > +	/*
-> > +	 * Applying V4L2 control value only happens
-> > +	 * when power is up for streaming
-> > +	 */
-> > +	if (pm_runtime_get_if_in_use(&client->dev) =3D=3D 0)
-> > +		return 0;
->=20
-> Is this usual for other cameras? Will not it cause problems to
-> applications doing autogain?
->=20
-Above check is to see if the camera is turned ON, so the application doing =
-autogain should be fine.
-
-> > +	switch (ctrl->id) {
-> ...
-> > +	case V4L2_CID_HFLIP:
-> > +	case V4L2_CID_VFLIP:
-> > +		ret =3D imx219_write_reg(imx219, IMX219_REG_ORIENTATION, 1,
-> > +				       imx219->hflip->val |
-> > +				       imx219->vflip->val << 1);
-> > +		break;
->=20
-> ctrl->val is unused in this case?
->=20
-Yes, for the H/V flip it depends on the format code set.
-
-> > +		break;
-> > +	default:
-> > +		dev_info(&client->dev,
-> > +			 "ctrl(id:0x%x,val:0x%x) is not handled\n",
-> > +			 ctrl->id, ctrl->val);
-> > +		ret =3D -EINVAL;
-> > +		break;
-> > +	}
->=20
-> Rate limit this as user can trigger these?
->=20
-Yes can be triggered.
-
-> > +static int imx219_set_stream(struct v4l2_subdev *sd, int enable)
-> > +{
-> > +	struct imx219 *imx219 =3D to_imx219(sd);
-> > +	struct i2c_client *client =3D v4l2_get_subdevdata(sd);
-> > +	int ret =3D 0;
-> > +
-> > +	mutex_lock(&imx219->mutex);
-> > +	if (imx219->streaming =3D=3D enable) {
-> > +		mutex_unlock(&imx219->mutex);
-> > +		return 0;
-> > +	}
-> > +
-> > +	if (enable) {
-> > +		ret =3D pm_runtime_get_sync(&client->dev);
-> > +		if (ret < 0) {
-> > +			pm_runtime_put_noidle(&client->dev);
-> > +			goto err_unlock;
-> > +		}
-> > +
-> > +		/*
-> > +		 * Apply default & customized values
-> > +		 * and then start streaming.
-> > +		 */
-> > +		ret =3D imx219_start_streaming(imx219);
-> > +		if (ret)
-> > +			goto err_rpm_put;
->=20
-> Is it correct/vital that one error path uses put_noidle() and second
-> uses plain put()?
->=20
-As per my reading https://patchwork.kernel.org/project/linux-omap/patch/201=
-80518173008.73291-2-tony@atomide.com/ its OK.
-
-> > +static int __maybe_unused imx219_resume(struct device *dev)
-> > +{
-> > +	struct i2c_client *client =3D to_i2c_client(dev);
-> > +	struct v4l2_subdev *sd =3D i2c_get_clientdata(client);
-> > +	struct imx219 *imx219 =3D to_imx219(sd);
-> > +	int ret;
-> > +
-> > +	if (imx219->streaming) {
-> > +		ret =3D imx219_start_streaming(imx219);
-> > +		if (ret)
-> > +			goto error;
-> > +	}
-> > +
-> > +	return 0;
-> > +
-> > +error:
-> > +	imx219_stop_streaming(imx219);
-> > +	imx219->streaming =3D 0;
->=20
-> This error path will leave driver in inconsistent state. hflip/vflip
-> controls will be locked and pm_runtime_put() is not executed.
->=20
-Good catch, this needs fixing in upstream.
-
-> > +static int imx219_check_hwcfg(struct device *dev)
-> > +{
-> > +	struct v4l2_fwnode_endpoint *ep_cfg;
-> > +	struct device_node *ep;
-> > +	int ret =3D -EINVAL;
-> > +
-> > +	ep =3D of_graph_get_next_endpoint(dev->of_node, NULL);
-> > +	if (!ep) {
-> > +		dev_err(dev, "missing endpoint node\n");
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	ep_cfg =3D v4l2_fwnode_endpoint_alloc_parse(of_fwnode_handle(ep));
-> > +	if (IS_ERR(ep_cfg)) {
-> > +		dev_err(dev, "could not parse endpoint\n");
-> > +		goto error_out;
-> > +	}
-> ...
-> > +error_out:
-> > +	v4l2_fwnode_endpoint_free(ep_cfg);
->=20
-> Is it correct to call endpoint_free on error pointer?
->=20
-Yes the core handles it.
-
-> > +MODULE_AUTHOR("Dave Stevenson <dave.stevenson@raspberrypi.com");
->=20
-> Missing ">" at end of address.
->=20
-Yep needs fixing as well.
+Agreed will fix that upstream.
 
 Cheers,
 Prabhakar
 
+> > +			/* remote-endpoint =3D <&csi40_in>; */
+>=20
 > Best regards,
-> 								Pavel
+> 							Pavel
+>=20
 > --
 > DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
 > HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---pUmd5VNOpSYzuAk0lmnt
+--ZiDISxe54WuDq70xVm3W
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -358,13 +182,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6266): https://lists.cip-project.org/g/cip-dev/message=
-/6266
-Mute This Topic: https://lists.cip-project.org/mt/81205356/4520388
+View/Reply Online (#6267): https://lists.cip-project.org/g/cip-dev/message=
+/6267
+Mute This Topic: https://lists.cip-project.org/mt/81205369/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/4520388=
 /727948398/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---pUmd5VNOpSYzuAk0lmnt--
+--ZiDISxe54WuDq70xVm3W--
