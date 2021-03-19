@@ -1,135 +1,155 @@
-Return-Path: <SRS0=3/1j=IR=lists.cip-project.org=bounce+64572+6302+4520388+8129055@kernel.org>
+Return-Path: <SRS0=7S2c=IR=lists.cip-project.org=bounce+64572+6303+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D5FFC433DB
-	for <cip-dev@archiver.kernel.org>; Fri, 19 Mar 2021 09:07:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13056C433E0
+	for <cip-dev@archiver.kernel.org>; Fri, 19 Mar 2021 11:25:09 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id A2C3264F42
-	for <cip-dev@archiver.kernel.org>; Fri, 19 Mar 2021 09:07:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2C3264F42
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=siemens.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6302+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id P5jTYY4521723xWveLcXCwxj; Fri, 19 Mar 2021 02:07:32 -0700
-X-Received: from lizzard.sbs.de (lizzard.sbs.de [194.138.37.39])
- by mx.groups.io with SMTP id smtpd.web12.3721.1616144851040983053
+	by mail.kernel.org (Postfix) with ESMTPS id 971F964ED6
+	for <cip-dev@archiver.kernel.org>; Fri, 19 Mar 2021 11:25:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 971F964ED6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6303+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id lEchYY4521723xs392qzTNhy; Fri, 19 Mar 2021 04:25:07 -0700
+X-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web09.4860.1616153105785130589
  for <cip-dev@lists.cip-project.org>;
- Fri, 19 Mar 2021 02:07:31 -0700
-X-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-	by lizzard.sbs.de (8.15.2/8.15.2) with ESMTPS id 12J97T6g005345
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-	for <cip-dev@lists.cip-project.org>; Fri, 19 Mar 2021 10:07:29 +0100
-X-Received: from [167.87.41.130] ([167.87.41.130])
-	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 12J8vS6B013629;
-	Fri, 19 Mar 2021 09:57:28 +0100
-Subject: Re: [cip-dev] [PATCH 1/1] Secureboot: Disable initramfs debug shell
-To: cip-dev@lists.cip-project.org, Michael Adler <michael.adler@siemens.com>
-References: <20210319072036.16091-1-michael.adler@siemens.com>
- <20210319072036.16091-2-michael.adler@siemens.com>
-From: "Jan Kiszka" <jan.kiszka@siemens.com>
-Message-ID: <9cb77dff-97da-0ada-37c0-5f10fd703425@siemens.com>
-Date: Fri, 19 Mar 2021 09:57:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+ Fri, 19 Mar 2021 04:25:06 -0700
+X-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 161391C0B7C; Fri, 19 Mar 2021 12:25:00 +0100 (CET)
+Date: Fri, 19 Mar 2021 12:24:59 +0100
+From: "Pavel Machek" <pavel@denx.de>
+To: cip-dev@lists.cip-project.org
+Cc: "cip-members@lists.cip-project.org" <cip-members@lists.cip-project.org>
+Subject: Re: [cip-dev] CIP LAVA maintenance
+Message-ID: <20210319112459.GA27349@amd>
+References: <166D61BDF351CC05.5206@lists.cip-project.org>
+ <OSBPR01MB2392E14F337E62A92502D5B1B7689@OSBPR01MB2392.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <20210319072036.16091-2-michael.adler@siemens.com>
+In-Reply-To: <OSBPR01MB2392E14F337E62A92502D5B1B7689@OSBPR01MB2392.jpnprd01.prod.outlook.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Precedence: Bulk
 List-Unsubscribe: <https://lists.cip-project.org/g/cip-dev/unsub>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: BTseC9vCkbmrmIfEorz7wlkcx4520388AA=
-Content-Type: multipart/mixed; boundary="uHcQF93qPgPCQxs8LlgL"
+X-Gm-Message-State: YC6eAPrhb1AOBvPGeyAzjiSqx4520388AA=
+Content-Type: multipart/mixed; boundary="VpsbptuGgafkDGdO3y3R"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1616144852;
- bh=w/Mgw6p1cICmPwAXVy/m7Dcq02vMANgs9GGhRKds134=;
- h=Content-Type:Date:From:Reply-To:Subject:To;
- b=W8IlANB0occTCMPC3yJnqKuSnBXjyMmdL6pvWYYgOar5yJIiNpVnQcD5fAxx/PD1igr
- mJKctNqQRqkk29B8gGPx2rYRMKwoXWOHk05OtfDA1Xzg3AD/MYMh5KxpjNohebUQeVHI9
- xbGPEZOiW9Rm6eepWV0pFB2GwN0KRBSJbXM=
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1616153107;
+ bh=Bx3vjDzSmqGgmevMdpubzQswhpg9PP5PZu2/553XNRY=;
+ h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
+ b=ICHtD+D5Hd2D3uTGZkxt8oc62y8RPT8WrxPnAsjkjw/+1ofYdlC4lTPYyygvGb6EKy/
+ TZyoN5NpKaaPbR5A4f7XMDat2K7nCfC8qUujwUUMfmJwdJ/TCe3Bp/0KJSuOWjQxEatkB
+ Crwm80c+kQL8J8Z92BwYVc2BcRRPBnRgvEA=
 
---uHcQF93qPgPCQxs8LlgL
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+--VpsbptuGgafkDGdO3y3R
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="9amGYk9869ThD9tj"
+Content-Disposition: inline
 
-On 19.03.21 08:20, Michael Adler wrote:
-> This closes a loophole introduced by the initramfs debug shell which is
-> enabled by default:
-> 
-> "The initramfs-tools package includes a debug shell in the initrds it
-> generates. If for example the initrd is unable to mount your root file
-> system, you will be dropped into this debug shell which has basic
-> commands available to help trace the problem and possibly fix it." [1]
-> 
-> [1] https://www.debian.org/releases/buster/amd64/release-notes/ch-upgrading.en.html#recovery-initrd
-> 
-> Signed-off-by: Michael Adler <michael.adler@siemens.com>
-> ---
->  wic/qemu-amd64-efibootguard-secureboot.wks | 2 ++
->  wic/qemu-amd64-efibootguard.wks            | 2 ++
->  wic/simatic-ipc227e-efibootguard.wks       | 2 ++
->  wic/swupdate-partition.inc                 | 2 --
->  4 files changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/wic/qemu-amd64-efibootguard-secureboot.wks b/wic/qemu-amd64-efibootguard-secureboot.wks
-> index 9ccf501..ff351db 100644
-> --- a/wic/qemu-amd64-efibootguard-secureboot.wks
-> +++ b/wic/qemu-amd64-efibootguard-secureboot.wks
-> @@ -7,3 +7,5 @@ part --source efibootguard-boot --ondisk sda --size 32M --extra-space 0 --overhe
->  part --source efibootguard-boot --ondisk sda --size 32M --extra-space 0 --overhead-factor 1 --label BOOT1 --align 1024 --part-type=0700 --sourceparams "revision=1,unified-kernel=y,signwith=/usr/bin/sign_secure_image.sh"
->  
->  include swupdate-partition.inc
-> +
-> +bootloader --ptable gpt --append="console=tty0 console=ttyS0,115200 rootwait earlyprintk panic=0"
-> diff --git a/wic/qemu-amd64-efibootguard.wks b/wic/qemu-amd64-efibootguard.wks
-> index a9a8446..6653068 100644
-> --- a/wic/qemu-amd64-efibootguard.wks
-> +++ b/wic/qemu-amd64-efibootguard.wks
-> @@ -2,3 +2,5 @@
->  # long-description: Disk image for qemu-amd64 with EFI Boot Guard and SWUpdate
->  include ebg-sysparts.inc
->  include swupdate-partition.inc
-> +
-> +bootloader --ptable gpt --append="console=tty0 console=ttyS0,115200 rootwait earlyprintk"
-> diff --git a/wic/simatic-ipc227e-efibootguard.wks b/wic/simatic-ipc227e-efibootguard.wks
-> index 74446d3..f6191bc 100644
-> --- a/wic/simatic-ipc227e-efibootguard.wks
-> +++ b/wic/simatic-ipc227e-efibootguard.wks
-> @@ -3,3 +3,5 @@
->  
->  include ebg-sysparts.inc
->  include swupdate-partition.inc
-> +
-> +bootloader --ptable gpt --append="console=tty0 console=ttyS0,115200 rootwait earlyprintk"
-> diff --git a/wic/swupdate-partition.inc b/wic/swupdate-partition.inc
-> index 15fbe80..7bec9d7 100644
-> --- a/wic/swupdate-partition.inc
-> +++ b/wic/swupdate-partition.inc
-> @@ -1,4 +1,2 @@
->  part --source rootfs --uuid "fedcba98-7654-3210-cafe-5e0710000001" --size 1000M   --extra-space 128M --overhead-factor 1 --label systema --align 1024 --fstype=ext4
->  part  --source rootfs --uuid "fedcba98-7654-3210-cafe-5e0710000002" --size 1000M   --extra-space 128M --overhead-factor 1 --label systemb --align 1024 --fstype=ext4
-> -
-> -bootloader --ptable gpt --append="console=tty0 console=ttyS0,115200 rootwait earlyprintk"
-> 
+--9amGYk9869ThD9tj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, applied.
+Hi!
 
-Jan
+> > The CIP LAVA infrastructure will be going down for maintenance very soo=
+n.
+> > Upgrade Gods permitting, it will all be back online later today.
+>=20
+> Sorry for the delayed notice. All of the labs are back online now.
 
--- 
-Siemens AG, T RDA IOT
-Corporate Competence Center Embedded Linux
+Thank you, Renesas boards appear to work.
 
---uHcQF93qPgPCQxs8LlgL
+But I still see random failures from
+test:x86_siemens_ipc227e_defconfig :
+
+Pipeline #273166880 has failed!
+
+Project: linux-cip (
+https://gitlab.com/cip-project/cip-kernel/linux-cip )
+Branch: ci/pavel/linux-test (
++https://gitlab.com/cip-project/cip-kernel/linux-cip/-/commits/ci/pavel/lin=
+ux-test
+)
+
+Commit: a58c985b (
++https://gitlab.com/cip-project/cip-kernel/linux-cip/-/commit/a58c985b03f0b=
+798625dc2890bb8b
++cf17caf5995 )
+Commit Message: arm64: dts: renesas: Add support for MIPI Adapt...
+Commit Author: Lad Prabhakar
+Committed by: Pavel Machek
+
+Pipeline #273166880 (
++https://gitlab.com/cip-project/cip-kernel/linux-cip/-/pipelines/273166880
+) triggered by
++Pavel Machek ( https://gitlab.com/pavelm )
+had 1 failed build.
+
+Job #1111610478 (
+https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/1111610478/raw
++)
+
+Stage: test
+Name: test:x86_siemens_ipc227e_defconfig
+
+Simple resubmit fixed it:
+
+Pipeline has been fixed and #273166880 has passed!
+
+Project: linux-cip (
+https://gitlab.com/cip-project/cip-kernel/linux-cip )
+Branch: ci/pavel/linux-test (
++https://gitlab.com/cip-project/cip-kernel/linux-cip/-/commits/ci/pavel/lin=
+ux-test
+)
+
+Commit: a58c985b (
++https://gitlab.com/cip-project/cip-kernel/linux-cip/-/commit/a58c985b03f0b=
+798625dc2890bb8b
++cf17caf5995 )
+Commit Message: arm64: dts: renesas: Add support for MIPI Adapt...
+Commit Author: Lad Prabhakar
+Committed by: Pavel Machek
+
+Pipeline #273166880 (
++https://gitlab.com/cip-project/cip-kernel/linux-cip/-/pipelines/273166880
+) triggered by
++Pavel Machek ( https://gitlab.com/pavelm )
+successfully completed 23 jobs in 2 stages.
+
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--9amGYk9869ThD9tj
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAmBUigsACgkQMOfwapXb+vKxRQCffpKJlNS3DqO7ahwCRb1ZMmuJ
+TzsAn3zxLK3t+2u+BGvfID7GxPMO+hyw
+=2ZBu
+-----END PGP SIGNATURE-----
+
+--9amGYk9869ThD9tj--
+
+--VpsbptuGgafkDGdO3y3R
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -137,13 +157,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6302): https://lists.cip-project.org/g/cip-dev/message=
-/6302
-Mute This Topic: https://lists.cip-project.org/mt/81450090/4520388
+View/Reply Online (#6303): https://lists.cip-project.org/g/cip-dev/message=
+/6303
+Mute This Topic: https://lists.cip-project.org/mt/81424532/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/4520388=
 /727948398/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---uHcQF93qPgPCQxs8LlgL--
+--VpsbptuGgafkDGdO3y3R--
