@@ -1,114 +1,44 @@
-Return-Path: <SRS0=XoQu=JT=lists.cip-project.org=bounce+64572+6384+4520388+8129055@kernel.org>
+Return-Path: <SRS0=/ZEk=JU=lists.cip-project.org=bounce+64572+6385+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,HTML_MESSAGE,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,NORMAL_HTTP_TO_IP,NUMERIC_HTTP_ADDR,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,WEIRD_PORT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 891B6C433ED
-	for <cip-dev@archiver.kernel.org>; Thu, 22 Apr 2021 08:29:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5E37C433B4
+	for <cip-dev@archiver.kernel.org>; Fri, 23 Apr 2021 08:49:46 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id C92C26141C
-	for <cip-dev@archiver.kernel.org>; Thu, 22 Apr 2021 08:29:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C92C26141C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=toshiba.co.jp
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6384+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id DwgTYY4521723xJxveSASBe1; Thu, 22 Apr 2021 01:29:47 -0700
-X-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.155])
- by mx.groups.io with SMTP id smtpd.web11.9495.1619080185348188271
+	by mail.kernel.org (Postfix) with ESMTPS id 7DEAD6141C
+	for <cip-dev@archiver.kernel.org>; Fri, 23 Apr 2021 08:49:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DEAD6141C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=miraclelinux.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6385+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id 50tmYY4521723x1mgbIJt3kx; Fri, 23 Apr 2021 01:49:43 -0700
+X-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+ by mx.groups.io with SMTP id smtpd.web10.7036.1619167781313663514
  for <cip-dev@lists.cip-project.org>;
- Thu, 22 Apr 2021 01:29:47 -0700
-X-Received: by mo-csw.securemx.jp (mx-mo-csw1516) id 13M8Tgmj011287; Thu, 22 Apr 2021 17:29:43 +0900
-X-Iguazu-Qid: 34trSOSPtroAEVOvoM
-X-Iguazu-QSIG: v=2; s=0; t=1619080182; q=34trSOSPtroAEVOvoM; m=y1CF/ZvyiJl+XRRgruBhHec1F9niyoEyCQzl62Gv6zY=
-X-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1510) id 13M8TfUA028198
-	(version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
-	Thu, 22 Apr 2021 17:29:42 +0900
-X-Received: from enc01.toshiba.co.jp (enc01.toshiba.co.jp [106.186.93.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by imx2-a.toshiba.co.jp (Postfix) with ESMTPS id D32B6100078
-	for <cip-dev@lists.cip-project.org>; Thu, 22 Apr 2021 17:29:41 +0900 (JST)
-X-Received: from hop001.toshiba.co.jp ([133.199.164.63])
-	by enc01.toshiba.co.jp  with ESMTP id 13M8TfuX003050
-	for <cip-dev@lists.cip-project.org>; Thu, 22 Apr 2021 17:29:41 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lveWLnrXbBfGBHcwFSeHhjur1ggY9VmTEN8Bkq7YuTR4xsAzDXGB8QcoPLi04NRkcyKZ4p5btuKMtTz5vr65r6KkLwAiBArk3uIlDvwuWcRcg98KvuSKfWNnvn0cJjgypZ7Ijk5FB/o4JlpbjXuSflDVTJc4c/i+BRlZQj1yDfxQKevKajpKboPIpSGTuVgpVIGSz1kngT8uljosQIrq8XIHVRne6aPengWoiiPEFDfmvN9NolETmZk/FCSV31G1d9NqYXZ1MQbsDdS3gCL3oHlawA7CXfd/ATABAiXwhDCbSOKW6mgK1SHwxKawp2jtH/Qv9Ha4SZUrVxjmiWt4xA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nzlN8Dl+qMnhbl8c6u3C/oq/pB1NeV7ApBR4SQMhrJ4=;
- b=TsQKKfL9FODxCE7zYy8YnskD7CWQKm68a83tgOIiFUuN/6OioIt70+eDTgpZ862rCHWel00JzQvOolHfLEoEWv2QHBuSMxAoyHCtrnd3J2l6kUOTtCe5Fm3myEWU2hJxD+gcKdI2SZgZtAbLPkfQAVmSQpqwHgvZQr5vPNAP8YNhygX7c0kIXrbvN29563M0+ja4tlTohD0D66yZgID5tJOOG0guVcXUTExac7xrIVTMiFn8dZO8JOrQEzj9Weg2OdONQhET1SLiEjIOxAJ2+xdit+j77apXmbNRFtfOq4/tGgL9YAP7V122k83UB3kBt4iCBH2oOmX768oByb1F7A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
- header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
-From: "Nobuhiro Iwamatsu" <nobuhiro1.iwamatsu@toshiba.co.jp>
-To: <cip-dev@lists.cip-project.org>
-Subject: Re: [cip-dev] CIP IRC weekly meeting today
-Thread-Topic: CIP IRC weekly meeting today
-Thread-Index: Adc3GkaN/pizAM5hTwGdytUf7xv80AANr0Uw
-Date: Thu, 22 Apr 2021 08:29:38 +0000
-X-TSB-HOP: ON
-Message-ID: <OSBPR01MB2983C420417747F937A4F82D92469@OSBPR01MB2983.jpnprd01.prod.outlook.com>
-References: <TY2PR01MB4972607E584418DD16E09CFCA0469@TY2PR01MB4972.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY2PR01MB4972607E584418DD16E09CFCA0469@TY2PR01MB4972.jpnprd01.prod.outlook.com>
-Accept-Language: ja-JP, en-US
-x-originating-ip: [103.91.184.2]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 74813717-4cbc-4829-0c6f-08d90568c4ea
-x-ms-traffictypediagnostic: OSAPR01MB5171:
-x-microsoft-antispam-prvs: <OSAPR01MB5171CCE75A35B5948F4E11CC92469@OSAPR01MB5171.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3826;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: og0f9cESVFt8DEAqzvk4YeK5nC/sUoRiszk/4hQq+lm1/KNmznwidLF+BEGy2MyGWCh9lGRtw3XNzX/lAt08sbg0gHAPmjzuEfXh/Yvklz/wEv4apDKdLFrqwZA5KCTneQ8WizevmxsmWQ4BpIjuLWD7fi+rkIKj54JKWzwqLPJX5fEdLT16dr39rS1q49RC7EZGg2egvxpir9OeB3oQ0VSBgd+E5+1DPVekqDgiQITIWzfaAWdXwzHDnpzGNA5jyznWxZEcsJKRvvHQBfUDK8q9KrPlaTjqIoIR0VcI5s1t45nzKTm2dDP75VQdqkxarUN68YKwoiscPse0Z9GRWyjWlvxp9oxx7rz+S21KGLL6c+TJP7DADvczJOsIDm7oHUKOB+y9ltIhAa1RnWHftghASme4MG7XHnHTWHZqVINVm/t8TGfty+BZpvlPAMKzIJbFFaZzaPfrxiwy/6oiUrlKvlDnmV5X4Ku59DIX/O0hdIQOWpYEJSoOBN5xrFDiTwjMzKlMMF/a25vpj/b/Md8HrRD+PlMbWIxJtxpf8/cZlSVogYsijqckUiuH3aI1ZQxRJ4X3mxYivB5GfilUu502NNR3Ee24dXVfBpaBuTR9CG/EfSALJ0F+1ikDVnPCMeqAANJzphnxwdYo2EBSlFVN216coTENKSWZJ005Nd6BB7nTkVTj6LqhAhMRWF7CWP49XBm6XlIJ+tL7GAGDZqkgulQ9UptCtDpf6a/QZ0o=
-x-ms-exchange-antispam-messagedata: =?utf-8?B?V2M2cktuS2hBNmFDWEZMcjdGTnVhLzNwZXVhSEtzUndrcmk4YklKZ2E0VlBE?=
- =?utf-8?B?Y0xSejRDUlN6Q1RndjlKei94bTdWZDFPSUxoK0ZOWkM3bE1XbithZ3cyckVn?=
- =?utf-8?B?cEFoOWVPNFFMZ1p4eUxQdjdBRGlIZ0NWL0lKSHZqL3VjRm5GZTl4S1dtc3ZV?=
- =?utf-8?B?UmpJSG5ZV0Y3TDNqcnJya0tKVDRkRjFoaGVSSzhEbURKSlZDdmxKbzQwSmV6?=
- =?utf-8?B?UzdGdFNFMDFtOUJuWk96UCtITFZLNFZBeHNCWS9hWlFGakxGdTlYSXVmS2NC?=
- =?utf-8?B?RUhSNDdUY3pOQ2VSTGxzdmkzL2NFU1NCOHBmWWtkYUYySzF6MEU0aDIzMTlr?=
- =?utf-8?B?NHQwMGNOSDFPeTFkVW1DQlhIUFhlaC9sNmZvRTZZUDA2cUE5SWl2L1A5RG1I?=
- =?utf-8?B?UTVSYi9ra205b3FqMmhNaXh4RXFiamVVeDZwWWhNVEpNK0VjNmdERmFYRWt5?=
- =?utf-8?B?dW9VNFpGUHhOZ29oOE1UMmNkU0hWUWxuRi9tU2E3Q0lWMWlwNkt3SkNIejd6?=
- =?utf-8?B?MEIvN1h6bnVXODdnMFBvbkduMXU5UkR5LzlZSytGUXlDc0VQY3FVL3NyK1dS?=
- =?utf-8?B?anpmcnBjZGZJaUVCNGNuaHVvSW1YVENaUGhOUmk3Y3B3K2RhZGh3MjZnME92?=
- =?utf-8?B?N1lnaHBKQ3lRdFJ5c04wNmlGZWVBSDlmNUVsdytyb1VUN3FZV1FpdnlaUnBZ?=
- =?utf-8?B?MXJxVEFnems0UlJqVFpqZlpkVGlQRkNCdGwyZDNEMGNBazlJY2U1RG5oNi95?=
- =?utf-8?B?WnRTcmFRdjBLaEg1cmRzZ0c4dXcyRENEYlFEWktPSzN2aEw3SkdLRGlEdXdS?=
- =?utf-8?B?clQ5SzRLK3pRaVlPSlh6dXJxM3F6aVFpVEhRUWtNdml4WmEyVFU3Vjg3SmJB?=
- =?utf-8?B?Ny84YllmWUN2a3lKdGEvWWgvZ3NqVzMwdjREeEtZcUhtTE5BQXkwMURTaVpX?=
- =?utf-8?B?RHovcFY5dTdUVzZiRHRtdHBWbmhnekloc0huZ0Y2eC9CQzJTN0w0d1lQcFlu?=
- =?utf-8?B?eUYzM3pKMC9mZURidHJnSUJNZTRKdGplbGlQQXpENktyaWc2czVNcW5heTNR?=
- =?utf-8?B?d3E0dHZucGp6VVVwV1UxT1RaR2YzM0Y4THZCK2hKSmFyRUpSVVRiRFN5bXpJ?=
- =?utf-8?B?ODB6YWM5Y29PL0R5UHZSYWYyZCt2Zkt3enJueExOTTRqdzczVlNRYUc4L3NU?=
- =?utf-8?B?dDlpMUcvMUFrZmJISWFHektVSTIyMHBGWnRqVUx4QWVjTW5QYmhHMlowYkRh?=
- =?utf-8?B?K1U2QVFxaWdqV2NwT2tPWjFCVlVsUlkxV0Ixc3lUUFZSYzRDd3lyTjhkMnJ4?=
- =?utf-8?B?OVVBSGd6S0dmNW5neWo1ZjRmMGtuSHJaUE1icjEwZnZiT3ErRjRNcjZnNGhV?=
- =?utf-8?B?QlRDTWlEMExtMmZ2ZmlESm1SUlpwN0dVbEovSXlCYkFMQkxkTFBVNXhvYkVV?=
- =?utf-8?B?cUtyMnlIMzVhTmxxWDl5WHBQQmlyNWZZQlZTdjZMTUt4cEhPZExuYSs2L3cr?=
- =?utf-8?B?UVZiUEpiOERZdSttSEo4bFlDYmdEZEtmZHRXanB1R2dtUGpyRnlSWk4xQnVm?=
- =?utf-8?B?Zlk1Vmgxa0dIQ084bTByaEhCaHd5Z0lMMXQzdWRIUkV4U0hWNHY2b2hVMGZr?=
- =?utf-8?B?Y1RFMU8zUnlvamVYamxlUjB2dDlDWDhUeHZ4VXNkbTd0RFVzSEpBeDVxODV4?=
- =?utf-8?B?aG96UVBNMFlrVU53TkFnTW42M2o3eUZkU3ZIOXgzNmtmVHRpcmFMbTI1WHZw?=
- =?utf-8?Q?aQDgF15ZgYLzpsqz+I=3D?=
-x-ms-exchange-transport-forked: True
+ Fri, 23 Apr 2021 01:49:43 -0700
+X-Received: by mail-ed1-f53.google.com with SMTP id z5so20095279edr.11
+        for <cip-dev@lists.cip-project.org>; Fri, 23 Apr 2021 01:49:41 -0700 (PDT)
+X-Gm-Message-State: Sg5WYqmrDnex8wJIDUfDHTCfx4520388AA=
+X-Google-Smtp-Source: ABdhPJz3NG844qJYreuxqKo5MxINt2EeTGBtKChYB6v2oYdv1tjTLyo/Tyz3SrZaWBPUE70Hvrp7F/GqilnD+BFtzu4=
+X-Received: by 2002:aa7:dd4d:: with SMTP id o13mr3227039edw.53.1619167779647;
+ Fri, 23 Apr 2021 01:49:39 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSBPR01MB2983.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 74813717-4cbc-4829-0c6f-08d90568c4ea
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Apr 2021 08:29:38.7486
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: RRprFFwVZDPB59Lp0O7ftcYxFg6Uj8w9ru/My0hwFRBu+Ww++XvXbsZPTjP+xv9UUG+j/9vzLr8HT2VEiqMD53TTs9m27I0O4o0nSTxoL1wdV5AjYx6BBkynaZs0QUUJ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB5171
-MSSCP.TransferMailToMossAgent: 103
-X-OriginatorOrg: toshiba.co.jp
+References: <CANgtXuP5wVfj7x_ef=oSV6S80zMnAG4JPa_N_W4hNUAE7qmHQA@mail.gmail.com>
+ <OSAPR01MB23856FC69ACA82D31DBE9519B74F9@OSAPR01MB2385.jpnprd01.prod.outlook.com>
+ <CANgtXuNS0S6G2sdYdxX4272kXfDp63MYXOeLFtSW3+kcrYQ0AQ@mail.gmail.com> <20210422073455.cygkkkglll4fuv24@toshiba.co.jp>
+In-Reply-To: <20210422073455.cygkkkglll4fuv24@toshiba.co.jp>
+From: "Alice Ferrazzi" <alice.ferrazzi@miraclelinux.com>
+Date: Fri, 23 Apr 2021 17:49:03 +0900
+Message-ID: <CANgtXuMOrBUXEHN5BBrSOt84JT++G5cpxeBvfhQZD1VCjpfSPA@mail.gmail.com>
+Subject: Re: [cip-dev] Kselftest implementation
+To: cip-dev@lists.cip-project.org
 Precedence: Bulk
 List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
 List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
@@ -117,60 +47,389 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: 5AzMFB6v0gzrDoLk8lhDprqex4520388AA=
-Content-Type: multipart/mixed; boundary="A4uyvbecYVhV3jFzfizr"
+Content-Type: multipart/mixed; boundary="7f8qMEcdYw2E1eAvyznn"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1619080187;
- bh=PvwpcHAbo/NKobXlJHsM2kRdHf0/53fzQ7wrWs2YSBg=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1619167783;
+ bh=tCCTehysJaHg7V69wkl6r/hvMe/MHhKPyHizz/BTbTs=;
  h=Content-Type:Date:From:Reply-To:Subject:To;
- b=wZgR2aakhieTNFkSUPlIK30IkMjra0l3BkbiNcsEnoLccUKjU9UrAnZUX54JpIKvBkp
- +0fB8dQberwgnQFF1QuWju+RPvzRKhfNx5FNTd9f0QwJj/suM53Iilv3uKunLGWRxSC8U
- Z7QzeIeUI/spznvMOk0arKMz6DEzaFpUFWw=
+ b=wkUySun4PXEZlhWJRA3C19PyNkVaCQ4gIpAYRWWMdwNJZmw0iAGcOKiIpJhZ3uQCrL3
+ u3kqvRqaEmqzkDXcj577wSfPsMrZCGSgXygZvzPWQZ+fHhprjNldV+P47FL7ScDq06VC+
+ gA4J4bfp0G+lb2G4VdADG0kLoYgp5z082pg=
 
---A4uyvbecYVhV3jFzfizr
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+--7f8qMEcdYw2E1eAvyznn
+Content-Type: multipart/alternative; boundary="0000000000005686a905c09fe067"
 
-SGksDQoNCkkgbWF5IG5vdCBiZSBhYmxlIHRvIGF0dGVuZCBiZWNhdXNlIEkgYW0gaW4gY29uZmxp
-Y3Qgd2l0aCBvdGhlcnMuIEkgYWRkIHRoZSB1cGRhdGVzIGJlbG93Lg0KDQo+IC0tLS0tT3JpZ2lu
-YWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IGNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnIFtt
-YWlsdG86Y2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmddIE9uIEJlaGFsZiBPZg0KPiBtYXNh
-c2hpLmt1ZG9AY3liZXJ0cnVzdC5jby5qcA0KPiBTZW50OiBUaHVyc2RheSwgQXByaWwgMjIsIDIw
-MjEgMTE6MDAgQU0NCj4gVG86IGNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnDQo+IFN1Ympl
-Y3Q6IFtjaXAtZGV2XSBDSVAgSVJDIHdlZWtseSBtZWV0aW5nIHRvZGF5DQo+IA0KPiBIaSBhbGws
-DQo+IA0KPiBLaW5kbHkgYmUgcmVtaW5kZWQgdG8gYXR0ZW5kIHRoZSB3ZWVrbHkgbWVldGluZyB0
-aHJvdWdoIElSQyB0byBkaXNjdXNzIHRlY2huaWNhbCB0b3BpY3Mgd2l0aCBDSVAga2VybmVsIHRv
-ZGF5Lg0KPiANCj4gKlBsZWFzZSBub3RlIHRoYXQgdGhlIElSQyBtZWV0aW5nIHdhcyByZXNjaGVk
-dWxlZCB0byBVVEMgKEdNVCkgMDk6MDAgc3RhcnRpbmcgZnJvbSB0aGUgZmlyc3Qgd2VlayBvZiBB
-cHIuIGFjY29yZGluZw0KPiB0byBUU0MgbWVldGluZyoNCj4gaHR0cHM6Ly93d3cudGltZWFuZGRh
-dGUuY29tL3dvcmxkY2xvY2svbWVldGluZ2RldGFpbHMuaHRtbD95ZWFyPTIwMjEmbW9udGg9NCZk
-YXk9MjImaG91cj05Jm1pbj0wJnNlYz0wJnAxPTIyNCZwMj0NCj4gMTc5JnAzPTEzNiZwND0zNyZw
-NT0yNDEmcDY9MjQ4DQo+IA0KPiBVU1dlc3QJVVNFYXN0CVVLCURFCVRXCUpQDQo+IDAyOjAwCTA1
-OjAwCTEwOjAwCTExOjAwCTE3OjAwCTE4OjAwDQo+IA0KPiBDaGFubmVsOg0KPiAqIGlyYzpjaGF0
-LmZyZWVub2RlLm5ldDo2NjY3L2NpcA0KPiANCj4gTGFzdCBtZWV0aW5nIG1pbnV0ZXM6DQo+IGh0
-dHBzOi8vaXJjbG9ncy5iYXNlcm9jay5vcmcvbWVldGluZ3MvY2lwLzIwMjEvMDQvY2lwLjIwMjEt
-MDQtMTUtMDkuMDAubG9nLmh0bWwNCj4gDQo+ICogQWN0aW9uIGl0ZW0NCj4gICAxLiBDb21iaW5l
-IHJvb3QgZmlsZXN5c3RlbSB3aXRoIGtzZWxmdGVzdCBiaW5hcnkgLSBpd2FtYXRzdQ0KDQpJdCBp
-cyBwcm9ncmVzc2luZyBsaXR0bGUgYnkgbGl0dGxlLiBUaGlzIGlzIGRpc2N1c3NlZCBvbiBNTCBh
-bmQgZ2l0bGFiLg0KU2ltcGxlIG9wZXJhdGlvbiBoYXMgYmVlbiB0ZXN0ZWQgYW5kIEkgaGF2ZSBj
-b25maXJtZWQgdGhhdCBpdCB3b3JrcyB3aXRoIFFFTVUuDQoNCj4gICAyLiBEbyBzb21lIGV4cGVy
-aW1lbnQgdG8gbG93ZXIgYnVyZGVucyBvbiBDSSAtIHBhdGVyc29uYw0KPiAgIDMuIE1vbml0b3Ig
-dGhlIHN0YXR1cyBvZiBDVkUtMjAyMS0zNDQ0IGFuZCBDVkUtMjAyMS0yMDI5MiAoMy8yNSkgLSBL
-ZXJuZWwgVGVhbQ0KPiAgIDQuIE1vbml0b3IgdGhlIHN0YXR1cyBvZiBDVkUtMjAyMS0yOTY1MCAo
-NC8xKSAtIEtlcm5lbCBUZWFtDQo+ICAgNS4gVXBkYXRlIFRlc3RpbmcgdGFibGUgYmVsb3cgd2l0
-aCA1LjEwIGluZm8gLSBwYXRlcnNvbmMNCj4gICAgICAgaHR0cHM6Ly93aWtpLmxpbnV4Zm91bmRh
-dGlvbi5vcmcvY2l2aWxpbmZyYXN0cnVjdHVyZXBsYXRmb3JtL2NpcHRlc3RpbmcvY2VudGFsaXNl
-ZHRlc3RpbmcvY2lvdmVydmlldw0KPiANCj4gKiBLZXJuZWwgbWFpbnRlbmFuY2UgdXBkYXRlcw0K
-DQpJIHJldmlld2VkIDQuOS4yNjcgYW5kIAk1LjEwLjMyLg0KDQo+ICogS2VybmVsIHRlc3RpbmcN
-Cj4gKiBDSVAgU2VjdXJpdHkNCj4gKiBBT0INCj4gICAxLiBOZXh0IElSQyBtZWV0aW5nDQo+IA0K
-PiBUaGUgbWVldGluZyB3aWxsIHRha2UgMzAgbWluLCBhbHRob3VnaCBpdCBjYW4gYmUgZXh0ZW5k
-ZWQgdG8gYW4gaG91ciBpZiBpdCBtYWtlcyBzZW5zZSBhbmQgdGhvc2UgaW52b2x2ZWQgaW4gdGhl
-IHRvcGljcw0KPiBjYW4gc3RheS4gT3RoZXJ3aXNlLCB0aGUgdG9waWMgd2lsbCBiZSB0YWtlbiBv
-ZmZsaW5lIG9yIGluIHRoZSBuZXh0IG1lZXRpbmcuDQo+IA0KPiBCZXN0IHJlZ2FyZHMsDQoNCkJl
-c3QgcmVnYXJkcywNCiAgTm9idWhpcm8NCg0K
+--0000000000005686a905c09fe067
+Content-Type: text/plain; charset="UTF-8"
 
---A4uyvbecYVhV3jFzfizr
+Hi,
+
+thanks for the review,
+
+
+On Thu, Apr 22, 2021 at 4:35 PM Nobuhiro Iwamatsu <
+nobuhiro1.iwamatsu@toshiba.co.jp> wrote:
+
+> Hi,
+>
+> Thanks for your work.
+>
+> On Thu, Apr 15, 2021 at 11:04:26AM +0900, Alice Ferrazzi wrote:
+> > Hello Chris,
+> >
+> > On Wed, Apr 14, 2021 at 7:27 AM Chris Paterson <
+> Chris.Paterson2@renesas.com>
+> > wrote:
+> >
+> > > Hello Alice,
+> > >
+> > > > From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org>
+> On
+> > > > Behalf Of Alice Ferrazzi via lists.cip-project.org
+> > > > Sent: 13 April 2021 18:30
+> > > >
+> > > > Hi everyone,
+> > > >
+> > > > I'm Alice Ferrazzi from Cybertrust Japan.
+> > > >
+> > > > I'm currently working on adding Kselftest to the current CIP CI
+> tests of
+> > > linux-
+> > > > cip Kernel
+> > >
+> > > Thank you for your work on this!
+> > >
+> > > >
+> > > > I made and tested kselftest on a testing instance of lava, currently
+> > > tested
+> > > > only on qemu x86_64
+> > >
+> > > If you'd like to test on a wider range of platforms then get in touch
+> and
+> > > we'll get you access to the CIP LAVA instance.
+> > >
+> >
+> > This would be nice!
+> >
+> >
+> > > > I implemented a simple skiplist in the kselftest envelope for
+> skipping
+> > > tests
+> > > > that are currently not working.
+> > > > The usage is similar to how spectre-meltdown-checker-test is
+> currently
+> > > > working.
+> > > >
+> > > > Raw log:
+> > > >
+> > > > http://140.211.166.173:10080/scheduler/job/329
+> > > > Results list:
+> > > > http://140.211.166.173:10080/results/329/1_kselftest
+> > >
+> > > It looks like a great start.
+> > >
+> > >
+> > Thanks
+> >
+> > >
+> > > >
+> > > > My idea is to start implementing kselftest tests for at least qemu
+> x86_64
+> > > > architecture and expand in the future to other architectures.
+> > > > As Iwamatsu-san pointed, we need also to create kselftest binary.
+> > > >
+> > > > I'm currently thinking of implementing kselftest binary creation
+> > > mechanism
+> > > > on linux-cip-ci kernel build script but I still didn't start to work
+> on
+> > > this yet.
+> > > >
+> > > > Kselftest test code:
+> > > >
+> > > > https://gitlab.com/alice.ferrazzi/cip-kselftest
+> > >
+> > >
+> > Is there any work we can leverage from the Linaro test-definitions repo?
+> > >
+> > >
+> https://github.com/Linaro/test-definitions/tree/master/automated/linux/kselftest
+> > >
+> > > That was the first thing I tried out but was not working correctly on
+> the
+> > cip rootfs enviroment
+>
+> As you write, cip rootfs lacks the software to run kselftest. Therefore,
+> it is necessary to make a separate flavor of rootfs.
+> There are also two types of cip rootfs, and we need to use either or
+> both for kernel testing.
+>
+
+
+ok.
+
+
+
+> >
+> >
+> > > KernelCI also recently implemented kselftest support if that's useful
+> at
+> > > all, this'll include the build side of things.
+> > >
+> https://github.com/kernelci/kernelci-core/tree/main/config/lava/kselftest
+> > >
+> > >
+> > I know about KernelCI effort for kselftest and I think to use a similar
+> > approach about the kselftest binary creation implementation.
+> >
+> > The code I wrote is based on Glava-tests that is part of GKernelCI.
+> > GKernelCI is the current Gentoo kernel CI system that is reporting and
+> > collaborating with KernelCI.
+> > https://github.com/GKernelCI/Glava-tests
+> > Using a different repository currently is helpful for self managing the
+> > skiplist, but it could be changed in the future.
+>
+>
+> I think this needs to be done first.
+> I also think there are several approaches to creating kselftest
+> binaries.
+>
+> - Continue to use a particular kernel version of ksefltests.
+> - Use CIP kernel kselftest.
+> - Use the latest kernel kselftest.
+>
+> I used to build an environment using the latter.
+>
+>
+> https://gitlab.com/cip-project/cip-kernel/linux-cip/-/tree/ci/iwamatsu/linux-cip-kselftest
+>
+> By the way, do you know which kernelci they are using?
+>
+
+KernelCI is using a docker container for building kselftest
+https://github.com/kernelci/kernelci-core/blob/26924e6b1a90833bcdf8eb28d038fa2fac19885f/config/docker/gcc-8_x86/Dockerfile
+
+KernelCI is building kselftest in production for at least linux-next and
+mainline any time a new revision is discovered on the branches. on
+staging.kernelci.org kselftest is built for each job.
+This was yesterday staging build with kselftest
+https://staging.kernelci.org/build/kernelci/branch/staging-mainline/kernel/staging-mainline-20210422.0/
+
+Currently I'm working on a similar implementation for CIP testing.
+
+Thanks,
+Alicef
+
+
+
+-- 
+======================================
+Cybertrust Japan Co.,Ltd.
+Alice Ferrazzi
+alice.ferrazzi@miraclelinux.com
+======================================
+
+--0000000000005686a905c09fe067
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div style=3D"font-size:small" class=3D"gmail_default"></d=
+iv><div dir=3D"ltr"><div class=3D"gmail_default" style=3D"font-size:small">=
+Hi,</div><div class=3D"gmail_default" style=3D"font-size:small"><br></div><=
+/div><div><div style=3D"font-size:small" class=3D"gmail_default">thanks for=
+ the review,</div><br></div><div><br></div><div class=3D"gmail_quote"><div =
+dir=3D"ltr" class=3D"gmail_attr">On Thu, Apr 22, 2021 at 4:35 PM Nobuhiro I=
+wamatsu &lt;<a href=3D"mailto:nobuhiro1.iwamatsu@toshiba.co.jp" target=3D"_=
+blank">nobuhiro1.iwamatsu@toshiba.co.jp</a>&gt; wrote:<br></div><blockquote=
+ class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px so=
+lid rgb(204,204,204);padding-left:1ex">Hi,<br>
+<br>
+Thanks for your work.<br>
+<br>
+On Thu, Apr 15, 2021 at 11:04:26AM +0900, Alice Ferrazzi wrote:<br>
+&gt; Hello Chris,<br>
+&gt; <br>
+&gt; On Wed, Apr 14, 2021 at 7:27 AM Chris Paterson &lt;<a href=3D"mailto:C=
+hris.Paterson2@renesas.com" target=3D"_blank">Chris.Paterson2@renesas.com</=
+a>&gt;<br>
+&gt; wrote:<br>
+&gt; <br>
+&gt; &gt; Hello Alice,<br>
+&gt; &gt;<br>
+&gt; &gt; &gt; From: <a href=3D"mailto:cip-dev@lists.cip-project.org" targe=
+t=3D"_blank">cip-dev@lists.cip-project.org</a> &lt;<a href=3D"mailto:cip-de=
+v@lists.cip-project.org" target=3D"_blank">cip-dev@lists.cip-project.org</a=
+>&gt; On<br>
+&gt; &gt; &gt; Behalf Of Alice Ferrazzi via <a href=3D"http://lists.cip-pro=
+ject.org" rel=3D"noreferrer" target=3D"_blank">lists.cip-project.org</a><br=
+>
+&gt; &gt; &gt; Sent: 13 April 2021 18:30<br>
+&gt; &gt; &gt;<br>
+&gt; &gt; &gt; Hi everyone,<br>
+&gt; &gt; &gt;<br>
+&gt; &gt; &gt; I&#39;m Alice Ferrazzi from Cybertrust Japan.<br>
+&gt; &gt; &gt;<br>
+&gt; &gt; &gt; I&#39;m currently working on adding Kselftest to the current=
+ CIP CI tests of<br>
+&gt; &gt; linux-<br>
+&gt; &gt; &gt; cip Kernel<br>
+&gt; &gt;<br>
+&gt; &gt; Thank you for your work on this!<br>
+&gt; &gt;<br>
+&gt; &gt; &gt;<br>
+&gt; &gt; &gt; I made and tested kselftest on a testing instance of lava, c=
+urrently<br>
+&gt; &gt; tested<br>
+&gt; &gt; &gt; only on qemu x86_64<br>
+&gt; &gt;<br>
+&gt; &gt; If you&#39;d like to test on a wider range of platforms then get =
+in touch and<br>
+&gt; &gt; we&#39;ll get you access to the CIP LAVA instance.<br>
+&gt; &gt;<br>
+&gt; <br>
+&gt; This would be nice!<br>
+&gt; <br>
+&gt; <br>
+&gt; &gt; &gt; I implemented a simple skiplist in the kselftest envelope fo=
+r skipping<br>
+&gt; &gt; tests<br>
+&gt; &gt; &gt; that are currently not working.<br>
+&gt; &gt; &gt; The usage is similar to how spectre-meltdown-checker-test is=
+ currently<br>
+&gt; &gt; &gt; working.<br>
+&gt; &gt; &gt;<br>
+&gt; &gt; &gt; Raw log:<br>
+&gt; &gt; &gt;<br>
+&gt; &gt; &gt; <a href=3D"http://140.211.166.173:10080/scheduler/job/329" r=
+el=3D"noreferrer" target=3D"_blank">http://140.211.166.173:10080/scheduler/=
+job/329</a><br>
+&gt; &gt; &gt; Results list:<br>
+&gt; &gt; &gt; <a href=3D"http://140.211.166.173:10080/results/329/1_kselft=
+est" rel=3D"noreferrer" target=3D"_blank">http://140.211.166.173:10080/resu=
+lts/329/1_kselftest</a><br>
+&gt; &gt;<br>
+&gt; &gt; It looks like a great start.<br>
+&gt; &gt;<br>
+&gt; &gt;<br>
+&gt; Thanks<br>
+&gt; <br>
+&gt; &gt;<br>
+&gt; &gt; &gt;<br>
+&gt; &gt; &gt; My idea is to start implementing kselftest tests for at leas=
+t qemu x86_64<br>
+&gt; &gt; &gt; architecture and expand in the future to other architectures=
+.<br>
+&gt; &gt; &gt; As Iwamatsu-san pointed, we need also to create kselftest bi=
+nary.<br>
+&gt; &gt; &gt;<br>
+&gt; &gt; &gt; I&#39;m currently thinking of implementing kselftest binary =
+creation<br>
+&gt; &gt; mechanism<br>
+&gt; &gt; &gt; on linux-cip-ci kernel build script but I still didn&#39;t s=
+tart to work on<br>
+&gt; &gt; this yet.<br>
+&gt; &gt; &gt;<br>
+&gt; &gt; &gt; Kselftest test code:<br>
+&gt; &gt; &gt;<br>
+&gt; &gt; &gt; <a href=3D"https://gitlab.com/alice.ferrazzi/cip-kselftest" =
+rel=3D"noreferrer" target=3D"_blank">https://gitlab.com/alice.ferrazzi/cip-=
+kselftest</a><br>
+&gt; &gt;<br>
+&gt; &gt;<br>
+&gt; Is there any work we can leverage from the Linaro test-definitions rep=
+o?<br>
+&gt; &gt;<br>
+&gt; &gt; <a href=3D"https://github.com/Linaro/test-definitions/tree/master=
+/automated/linux/kselftest" rel=3D"noreferrer" target=3D"_blank">https://gi=
+thub.com/Linaro/test-definitions/tree/master/automated/linux/kselftest</a><=
+br>
+&gt; &gt;<br>
+&gt; &gt; That was the first thing I tried out but was not working correctl=
+y on the<br>
+&gt; cip rootfs enviroment<br>
+<br>
+As you write, cip rootfs lacks the software to run kselftest. Therefore,<br=
+>
+it is necessary to make a separate flavor of rootfs.<br>
+There are also two types of cip rootfs, and we need to use either or<br>
+both for kernel testing.<br>
+=C2=A0</blockquote><div><br></div><div><div style=3D"font-size:small" class=
+=3D"gmail_default">ok.<br></div><br></div><div>=C2=A0</div><blockquote clas=
+s=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid r=
+gb(204,204,204);padding-left:1ex">
+&gt; <br>
+&gt; <br>
+&gt; &gt; KernelCI also recently implemented kselftest support if that&#39;=
+s useful at<br>
+&gt; &gt; all, this&#39;ll include the build side of things.<br>
+&gt; &gt; <a href=3D"https://github.com/kernelci/kernelci-core/tree/main/co=
+nfig/lava/kselftest" rel=3D"noreferrer" target=3D"_blank">https://github.co=
+m/kernelci/kernelci-core/tree/main/config/lava/kselftest</a><br>
+&gt; &gt;<br>
+&gt; &gt;<br>
+&gt; I know about KernelCI effort for kselftest and I think to use a simila=
+r<br>
+&gt; approach about the kselftest binary creation implementation.<br>
+&gt; <br>
+&gt; The code I wrote is based on Glava-tests that is part of GKernelCI.<br=
+>
+&gt; GKernelCI is the current Gentoo kernel CI system that is reporting and=
+<br>
+&gt; collaborating with KernelCI.<br>
+&gt; <a href=3D"https://github.com/GKernelCI/Glava-tests" rel=3D"noreferrer=
+" target=3D"_blank">https://github.com/GKernelCI/Glava-tests</a><br>
+&gt; Using a different repository currently is helpful for self managing th=
+e<br>
+&gt; skiplist, but it could be changed in the future.<br>
+<br>
+<br>
+I think this needs to be done first.<br>
+I also think there are several approaches to creating kselftest<br>
+binaries.<br>
+<br>
+- Continue to use a particular kernel version of ksefltests.<br>
+- Use CIP kernel kselftest.<br>
+- Use the latest kernel kselftest.<br>
+<br>
+I used to build an environment using the latter.<br>
+<br>
+<a href=3D"https://gitlab.com/cip-project/cip-kernel/linux-cip/-/tree/ci/iw=
+amatsu/linux-cip-kselftest" rel=3D"noreferrer" target=3D"_blank">https://gi=
+tlab.com/cip-project/cip-kernel/linux-cip/-/tree/ci/iwamatsu/linux-cip-ksel=
+ftest</a><br>
+<br>
+By the way, do you know which kernelci they are using?<br></blockquote><div=
+><br></div><div><div style=3D"font-size:small" class=3D"gmail_default">Kern=
+elCI is using a docker container for building kselftest <br><a href=3D"http=
+s://github.com/kernelci/kernelci-core/blob/26924e6b1a90833bcdf8eb28d038fa2f=
+ac19885f/config/docker/gcc-8_x86/Dockerfile" target=3D"_blank">https://gith=
+ub.com/kernelci/kernelci-core/blob/26924e6b1a90833bcdf8eb28d038fa2fac19885f=
+/config/docker/gcc-8_x86/Dockerfile</a><br></div><div style=3D"font-size:sm=
+all" class=3D"gmail_default"><br></div><div style=3D"font-size:small" class=
+=3D"gmail_default">KernelCI is building kselftest in production for at leas=
+t linux-next and mainline any time a new revision is discovered on the bran=
+ches. on <a href=3D"http://staging.kernelci.org" target=3D"_blank">staging.=
+kernelci.org</a> kselftest is built for each job.</div><div style=3D"font-s=
+ize:small" class=3D"gmail_default">This was yesterday staging build with ks=
+elftest<br><a href=3D"https://staging.kernelci.org/build/kernelci/branch/st=
+aging-mainline/kernel/staging-mainline-20210422.0/" target=3D"_blank"> http=
+s://staging.kernelci.org/build/kernelci/branch/staging-mainline/kernel/stag=
+ing-mainline-20210422.0/</a></div><div style=3D"font-size:small" class=3D"g=
+mail_default"><br></div><div style=3D"font-size:small" class=3D"gmail_defau=
+lt">Currently I&#39;m working on a similar implementation for CIP testing.<=
+/div></div><div><br></div><div><div style=3D"font-size:small" class=3D"gmai=
+l_default">Thanks,</div><div style=3D"font-size:small" class=3D"gmail_defau=
+lt">Alicef<br></div><br></div></div><br clear=3D"all"><br>-- <br><div dir=
+=3D"ltr"><div dir=3D"ltr"><div><div dir=3D"ltr"><div>=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D<br><span>Cybertrust Japan Co.,Ltd.</span><br>Alice Ferra=
+zzi<br><a href=3D"mailto:alice.ferrazzi@miraclelinux.com" target=3D"_blank"=
+>alice.ferrazzi@miraclelinux.com</a><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D<br></div></div></div></div></div></div>
+
+--0000000000005686a905c09fe067--
+
+--7f8qMEcdYw2E1eAvyznn
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -178,13 +437,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6384): https://lists.cip-project.org/g/cip-dev/message=
-/6384
-Mute This Topic: https://lists.cip-project.org/mt/82277082/4520388
+View/Reply Online (#6385): https://lists.cip-project.org/g/cip-dev/message=
+/6385
+Mute This Topic: https://lists.cip-project.org/mt/82071182/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/4520388=
 /727948398/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---A4uyvbecYVhV3jFzfizr--
+--7f8qMEcdYw2E1eAvyznn--
