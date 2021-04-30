@@ -1,42 +1,43 @@
-Return-Path: <SRS0=Di8/=J3=lists.cip-project.org=bounce+64572+6406+4520388+8129055@kernel.org>
+Return-Path: <SRS0=jxKN=J3=lists.cip-project.org=bounce+64572+6407+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E1BC433B4
-	for <cip-dev@archiver.kernel.org>; Fri, 30 Apr 2021 13:05:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CAC9C433ED
+	for <cip-dev@archiver.kernel.org>; Fri, 30 Apr 2021 13:19:02 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 97F9661477
-	for <cip-dev@archiver.kernel.org>; Fri, 30 Apr 2021 13:05:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97F9661477
+	by mail.kernel.org (Postfix) with ESMTPS id 873EE61419
+	for <cip-dev@archiver.kernel.org>; Fri, 30 Apr 2021 13:19:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 873EE61419
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=siemens.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6406+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id fW5EYY4521723xiQT7LuN8tY; Fri, 30 Apr 2021 06:05:15 -0700
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6407+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id zxyIYY4521723xq5RNZxCGqt; Fri, 30 Apr 2021 06:19:01 -0700
 X-Received: from gecko.sbs.de (gecko.sbs.de [194.138.37.40])
- by mx.groups.io with SMTP id smtpd.web11.11201.1619787914235384796
+ by mx.groups.io with SMTP id smtpd.web11.11391.1619788739851625176
  for <cip-dev@lists.cip-project.org>;
- Fri, 30 Apr 2021 06:05:14 -0700
+ Fri, 30 Apr 2021 06:19:00 -0700
 X-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-	by gecko.sbs.de (8.15.2/8.15.2) with ESMTPS id 13UD5CDN006432
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-	for <cip-dev@lists.cip-project.org>; Fri, 30 Apr 2021 15:05:12 +0200
+	by gecko.sbs.de (8.15.2/8.15.2) with ESMTPS id 13UDIwMd018476
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 30 Apr 2021 15:18:58 +0200
 X-Received: from md2dvrtc.fritz.box ([167.87.11.215])
-	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 13UD1YgO026955;
-	Fri, 30 Apr 2021 15:01:34 +0200
+	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 13UDFJqh007147;
+	Fri, 30 Apr 2021 15:15:20 +0200
 From: "Quirin Gylstorff" <quirin.gylstorff@siemens.com>
-To: jan.kiszka@siemens.com, cip-dev@lists.cip-project.org
+To: dinesh.kumar@toshiba-tsip.com, jan.kiszka@siemens.com,
+        cip-dev@lists.cip-project.org
 Cc: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-Subject: [cip-dev][isar-cip-core][PATCH v2] swupdate-config: add prefix to variables
-Date: Fri, 30 Apr 2021 15:01:34 +0200
-Message-Id: <20210430130134.22257-1-Quirin.Gylstorff@siemens.com>
-In-Reply-To: <20210430122020.13407-1-Quirin.Gylstorff@siemens.com>
-References: <20210430122020.13407-1-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH v2] README.secureboot: Corrections
+Date: Fri, 30 Apr 2021 15:15:19 +0200
+Message-Id: <20210430131519.23750-1-Quirin.Gylstorff@siemens.com>
+In-Reply-To: <20210430121957.13306-1-Quirin.Gylstorff@siemens.com>
+References: <20210430121957.13306-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
 Precedence: Bulk
 List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
@@ -46,118 +47,103 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: Fc8ixzCWqXdeSe07sL7cfJ2Cx4520388AA=
-Content-Type: multipart/mixed; boundary="XCRpHQ461JJlCZca4Uyl"
+X-Gm-Message-State: 7ssbDzTRPTWrxH4bJMjQfdY7x4520388AA=
+Content-Type: multipart/mixed; boundary="YdbOmY02dn0RHmvualt2"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1619787915;
- bh=qwjl/g4KqwYA8ICdTZMFgdeQ2QNdJ/bWVfEUYB9UELM=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1619788741;
+ bh=X4hwei/eP85h90sr4i74pPP/otMh4BSLFm6/hJjNqcE=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=HDoC52kyXLVgvuTKk8+N494IIxQmpdlsY4Th9ay41Ev8YRllZE1EgI1BnXJykc2Lg23
- hNupvhX+uMv7eX/BKv2Dc7mj/zJTxPFLuPmNeNSrqW+mCCDPUjDzwsjn2SChjNPXVe5Ag
- gYL2UtnG6w499JlqRMwTOLAVtuGaExTtCsc=
+ b=AOKC8ZfYSJ1uyebErdh67OZukf1SAwAnh3Pa2jXpsFuCtjirLz1Lz41FNoESu4Z3wL5
+ 1jq/HwZVdW1XFnAuA8iNxnlR8rcWWn9gJieM6Xxwjw/zqcA81DfF5b0KEwqXKXrHu33dB
+ 6J2+/cv6U2250UV+YRTSpMninqPSvEFOA9o=
 
---XCRpHQ461JJlCZca4Uyl
+--YdbOmY02dn0RHmvualt2
 Content-Transfer-Encoding: 8bit
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-The variables U_BOOT and BOOTLOADER are only used for swupdate.
-Add the prefix SWUPDATE to indicate the intended usage.
+- Add code block for key insertion for better visibility
+- Correct the template for user-generated keys
+- Add information where to store the keys
+
+Add build command for user generated keys
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
+
 Changes in V2:
- - fix typo in commit message
- - use variable in kas/opt/*.yml
+ - remove unnecessary new-lines
 
- classes/swupdate-config.bbclass      | 10 +++++-----
- kas/opt/ebg-secure-boot-snakeoil.yml |  2 +-
- kas/opt/ebg-swu.yml                  |  4 ++--
- kas/opt/qemu-swupdate.yml            |  2 +-
- 4 files changed, 9 insertions(+), 9 deletions(-)
+ doc/README.secureboot.md | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
-diff --git a/classes/swupdate-config.bbclass b/classes/swupdate-config.bbclass
-index 9909113..0c1067a 100644
---- a/classes/swupdate-config.bbclass
-+++ b/classes/swupdate-config.bbclass
-@@ -51,13 +51,13 @@ KFEATURE_u-boot[BUILD_DEB_DEPENDS] = "libubootenv-dev"
- KFEATURE_u-boot[DEBIAN_DEPENDS] = "${@ 'libubootenv0.1, u-boot-${MACHINE}-config' \
-                                           if d.getVar("USE_U_BOOT_CONFIG", True) == "true" \
-                                           else 'libubootenv0.1'}"
--KFEATURE_u-boot[DEPENDS] = "${U_BOOT} libubootenv"
-+KFEATURE_u-boot[DEPENDS] = "${SWUPDATE_U_BOOT} libubootenv"
- KFEATURE_u-boot[KCONFIG_SNIPPETS] = "file://swupdate_defconfig_u-boot.snippet"
+diff --git a/doc/README.secureboot.md b/doc/README.secureboot.md
+index 84131bb..0996edc 100644
+--- a/doc/README.secureboot.md
++++ b/doc/README.secureboot.md
+@@ -119,6 +119,7 @@ to the current directory. OVMF_VARS_4M.fd contains no keys can be instrumented f
+ scripts/start-efishell.sh secureboot-tools
+ ```
+ 4. Start the KeyTool.efi FS0:\KeyTool.efi and execute the the following steps:
++```
+           -> "Edit Keys"
+              -> "The Allowed Signatures Database (db)"
+                 -> "Add New Key"
+@@ -132,35 +133,44 @@ scripts/start-efishell.sh secureboot-tools
+                 -> "Replace Key(s)"
+                 -> Change/Confirm device
+                 -> Select "PK.auth" file
++```
+ 5. quit QEMU
  
- SWUPDATE_LUASCRIPT ?= "swupdate_handlers.lua"
+ ### Build image
  
- def get_bootloader_featureset(d):
--    bootloader = d.getVar("BOOTLOADER", True) or ""
-+    bootloader = d.getVar("SWUPDATE_BOOTLOADER", True) or ""
-     if bootloader == "efibootguard":
-         return "efibootguard"
-     if bootloader == "u-boot":
-@@ -68,11 +68,11 @@ SWUPDATE_KFEATURES ??= ""
- KFEATURES = "${SWUPDATE_KFEATURES}"
- KFEATURES += "${@get_bootloader_featureset(d)}"
+ Build the image with a signed efibootguard and unified kernel image
+ with the snakeoil keys by executing:
++
+ ```
+ kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:kas/opt/ebg-secure-boot-snakeoil.yml
+ ```
  
--# Astonishingly, as an anonymous python function, BOOTLOADER is always None
-+# Astonishingly, as an anonymous python function, SWUPDATE_BOOTLOADER is always None
- # one time before it gets set. So the following must be a task.
- python do_check_bootloader () {
--    bootloader = d.getVar("BOOTLOADER", True) or "None"
-+    bootloader = d.getVar("SWUPDATE_BOOTLOADER", True) or "None"
-     if not bootloader in ["efibootguard", "u-boot"]:
--        bb.warn("swupdate: BOOTLOADER set to incompatible value: " + bootloader)
-+        bb.warn("swupdate: SWUPDATE_BOOTLOADER set to incompatible value: " + bootloader)
- }
- addtask check_bootloader before do_fetch
-diff --git a/kas/opt/ebg-secure-boot-snakeoil.yml b/kas/opt/ebg-secure-boot-snakeoil.yml
-index 8a72084..c0ed1a2 100644
---- a/kas/opt/ebg-secure-boot-snakeoil.yml
-+++ b/kas/opt/ebg-secure-boot-snakeoil.yml
-@@ -20,7 +20,7 @@ local_conf_header:
-     # Add snakeoil and ovmf binaries for qemu
-     IMAGER_BUILD_DEPS += "ebg-secure-boot-snakeoil ovmf-binaries"
-     IMAGER_INSTALL += "ebg-secure-boot-snakeoil"
--    WKS_FILE = "${MACHINE}-${BOOTLOADER}-secureboot.wks"
-+    WKS_FILE = "${MACHINE}-efibootguard-secureboot.wks"
+-For user-generated keys, create a new option file. This option file could look like this:
++For user-generated keys, create a new option file in the repository. This option file could look like this:
+ ```
+ header:
+   version: 10
+   includes:
+-   - opt/ebg-swu.yml
+-   - opt/ebg-secure-boot-initramfs.yml
++   - kas/opt/ebg-swu.yml
++   - kas/opt/ebg-secure-boot-base.yml
  
-   ovmf: |
-     # snakeoil certs are only part of backports
-diff --git a/kas/opt/ebg-swu.yml b/kas/opt/ebg-swu.yml
-index aa3aed1..63dda09 100644
---- a/kas/opt/ebg-swu.yml
-+++ b/kas/opt/ebg-swu.yml
-@@ -15,7 +15,7 @@ header:
  local_conf_header:
-   swupdate: |
-     IMAGE_INSTALL_append = " swupdate efibootguard"
--    BOOTLOADER = "efibootguard"
-+    SWUPDATE_BOOTLOADER = "efibootguard"
+   secure-boot: |
+     IMAGER_BUILD_DEPS += "ebg-secure-boot-secrets"
+     IMAGER_INSTALL += "ebg-secure-boot-secrets"
+-  user-keys:
++  user-keys: |
+     SB_CERTDB = "democertdb"
+     SB_VERIFY_CERT = "demo.crt"
+     SB_KEY_NAME = "demo"
+ ```
  
-   efibootguard: |
-     WDOG_TIMEOUT = "0"
-@@ -23,4 +23,4 @@ local_conf_header:
+-Replace `demo` with the name of the user-generated certificates.
++Replace `demo` with the name of the user-generated certificates. The user-generated certificates
++need to stored in the folder `recipes-devtools/ebg-secure-boot-secrets/files`.
++
++Build the image with user-generated keys by executing the command:
++
++```
++kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:<path to the new option>.yml
++```
  
-   wic: |
-     IMAGE_TYPE = "wic-swu-img"
--    WKS_FILE ?= "${MACHINE}-${BOOTLOADER}.wks"
-+    WKS_FILE ?= "${MACHINE}-${SWUPDATE_BOOTLOADER}.wks"
-diff --git a/kas/opt/qemu-swupdate.yml b/kas/opt/qemu-swupdate.yml
-index 3f5fedf..daebd2c 100644
---- a/kas/opt/qemu-swupdate.yml
-+++ b/kas/opt/qemu-swupdate.yml
-@@ -16,4 +16,4 @@ header:
- local_conf_header:
-   qemu-wic: |
-     IMAGE_TYPE ?= "wic-swu-img"
--    WKS_FILE = "qemu-amd64-${BOOTLOADER}.wks"
-+    WKS_FILE = "qemu-amd64-${SWUPDATE_BOOTLOADER}.wks"
+ ### Start the image
+ 
 -- 
 2.20.1
 
 
---XCRpHQ461JJlCZca4Uyl
+--YdbOmY02dn0RHmvualt2
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -165,13 +151,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6406): https://lists.cip-project.org/g/cip-dev/message=
-/6406
-Mute This Topic: https://lists.cip-project.org/mt/82480672/4520388
+View/Reply Online (#6407): https://lists.cip-project.org/g/cip-dev/message=
+/6407
+Mute This Topic: https://lists.cip-project.org/mt/82480976/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/4520388=
 /727948398/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---XCRpHQ461JJlCZca4Uyl--
+--YdbOmY02dn0RHmvualt2--
