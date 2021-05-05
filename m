@@ -1,55 +1,48 @@
-Return-Path: <SRS0=2Oxv=KA=lists.cip-project.org=bounce+64572+6428+4520388+8129055@kernel.org>
+Return-Path: <SRS0=zIuQ=KA=lists.cip-project.org=bounce+64572+6429+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F9C8C433ED
-	for <cip-dev@archiver.kernel.org>; Wed,  5 May 2021 11:15:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 434ACC433ED
+	for <cip-dev@archiver.kernel.org>; Wed,  5 May 2021 16:47:24 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id AFF30613C7
-	for <cip-dev@archiver.kernel.org>; Wed,  5 May 2021 11:15:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFF30613C7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6428+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id WNNIYY4521723xK5sguYCWPX; Wed, 05 May 2021 04:15:27 -0700
-X-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
- by mx.groups.io with SMTP id smtpd.web08.6238.1620213324789766435
+	by mail.kernel.org (Postfix) with ESMTPS id 916B5613FC
+	for <cip-dev@archiver.kernel.org>; Wed,  5 May 2021 16:47:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 916B5613FC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=siemens.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6429+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id c0jrYY4521723xUXutmQdbCA; Wed, 05 May 2021 09:47:23 -0700
+X-Received: from gecko.sbs.de (gecko.sbs.de [194.138.37.40])
+ by mx.groups.io with SMTP id smtpd.web12.11269.1620233241830503949
  for <cip-dev@lists.cip-project.org>;
- Wed, 05 May 2021 04:15:25 -0700
-X-Received: by mail-lf1-f53.google.com with SMTP id j10so1969862lfb.12
-        for <cip-dev@lists.cip-project.org>; Wed, 05 May 2021 04:15:24 -0700 (PDT)
-X-Gm-Message-State: H1raKfCnKBjVUaMw2Udh3sgox4520388AA=
-X-Google-Smtp-Source: ABdhPJw37UYzhgRxbxK5hl+Qu4v1TBteUMmv0QS7T3GCPe+2PqZt6ZT7Qmwt8aw38jUIicmm4snSEA==
-X-Received: by 2002:a19:7405:: with SMTP id v5mr6497472lfe.455.1620213322513;
-        Wed, 05 May 2021 04:15:22 -0700 (PDT)
-X-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
-        by smtp.gmail.com with ESMTPSA id e8sm2015758ljk.7.2021.05.05.04.15.22
-        for <cip-dev@lists.cip-project.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 May 2021 04:15:22 -0700 (PDT)
-X-Received: by mail-lj1-f180.google.com with SMTP id w4so1917055ljw.9
-        for <cip-dev@lists.cip-project.org>; Wed, 05 May 2021 04:15:22 -0700 (PDT)
-X-Received: by 2002:a2e:8942:: with SMTP id b2mr9770921ljk.488.1620213322203;
- Wed, 05 May 2021 04:15:22 -0700 (PDT)
+ Wed, 05 May 2021 09:47:22 -0700
+X-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
+	by gecko.sbs.de (8.15.2/8.15.2) with ESMTPS id 145GlGpn005143
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 5 May 2021 18:47:16 +0200
+X-Received: from [167.87.95.120] ([167.87.95.120])
+	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 145GlFYO012054;
+	Wed, 5 May 2021 18:47:16 +0200
+Subject: Re: [cip-dev] [isar-cip-core][PATCH v2] README.secureboot: Corrections
+To: cip-dev@lists.cip-project.org,
+        Dinesh Kumar <dinesh.kumar@toshiba-tsip.com>,
+        Quirin Gylstorff <quirin.gylstorff@siemens.com>
+References: <20210430131519.23750-1-Quirin.Gylstorff@siemens.com>
+ <18306.1619791584153988370@lists.cip-project.org>
+From: "Jan Kiszka" <jan.kiszka@siemens.com>
+Message-ID: <9c3ef309-f2e8-0624-a118-d3e375d40559@siemens.com>
+Date: Wed, 5 May 2021 18:47:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.0
 MIME-Version: 1.0
-References: <CAGb2v65PfUtwZX8c+W2Yygk3XTOTxfXU0SoFUjXUAh2wYuHmyA@mail.gmail.com>
- <20210505083439.GC29521@amd>
-In-Reply-To: <20210505083439.GC29521@amd>
-Reply-To: cip-dev@lists.cip-project.org
-From: "Chen-Yu Tsai (Moxa)" <wens@csie.org>
-Date: Wed, 5 May 2021 19:15:10 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65-tTjXP72bFziWS_1LhHMg+0vfxLbRiiKux3=VXqg+WA@mail.gmail.com>
-Message-ID: <CAGb2v65-tTjXP72bFziWS_1LhHMg+0vfxLbRiiKux3=VXqg+WA@mail.gmail.com>
-Subject: Re: [cip-dev] Cip-kernel-sec Updates for Week of 2021-05-05
-To: Pavel Machek <pavel@denx.de>
-Cc: cip-dev@lists.cip-project.org, 
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, masashi.kudo@cybertrust.co.jp
+In-Reply-To: <18306.1619791584153988370@lists.cip-project.org>
+X-MIME-Autoconverted: from 8bit to quoted-printable by gecko.sbs.de id 145GlGpn005143
 Precedence: Bulk
 List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
 List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
@@ -57,66 +50,151 @@ List-Help: <mailto:cip-dev+help@lists.cip-project.org>
 Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
-Content-Type: multipart/mixed; boundary="oG4ianGfqUt9co4KDEHe"
+Reply-To: cip-dev@lists.cip-project.org
+X-Gm-Message-State: cXumSKhG4aXQ9C8V5fn2cfIJx4520388AA=
+Content-Type: multipart/mixed; boundary="ppnGf2GusZpFdha7I1wt"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1620213327;
- bh=jMDJZbqmIxZI8hJjkIz/2xMJ+sInUZhrunBrtc0qO1o=;
- h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=BZJuTOXswPhQm4Tttef7UG3l+EL7958mTs096jFNpW1nDBZmhzqfndC8ClZD2J8CiBW
- X1P4xjY0iKPMD20On4dlNZ/poAnEvB3jbsiy8D1sHKFV2yAPXX80wvWsVefDGgbPYjP5y
- WtlnCNo062mcA/M2PRx00aMJfoDzukTU1gQ=
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1620233243;
+ bh=OVQQGAUH3jwoPwU9fxJBBv0+3LvC0gPOGZMd/zRfaZQ=;
+ h=Content-Type:Date:From:Reply-To:Subject:To;
+ b=rulgPMCzOeXj86q9rlKHoHawvaK1bY7CcXgyskKxfeRlEWhKgof5we2LhynUzgRSDNe
+ lnBgs1UetZJX7yE4yWwd9GKwmhCV/xO+cy5GbAAwucWl7UZpjg0QlClKr4A1Hq20xKMru
+ 1itckKX0RYf/9dbkd3cC/D4i0Cs8cGKRYS8=
 
---oG4ianGfqUt9co4KDEHe
-Content-Type: text/plain; charset="UTF-8"
+--ppnGf2GusZpFdha7I1wt
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 5, 2021 at 4:34 PM Pavel Machek <pavel@denx.de> wrote:
->
-> Hi!
->
-> > - CVE-2021-31916 [md: dm_ioctl: out-of-bounds array access] - fixed
-> >   Likely needs backport to 4.9 and earlier.
->
-> Backport is trivial in this case.
->
-> > Additionally, one old CVE is now fixed:
-> > - CVE-2020-26541
->
-> This is UEFI secure boot, and it is more of "implement missing
-> blacklist functionality" than a bugfix.
->
-> If someone uses secure boot on UEFI, we may need to do this, but
-> perhaps noone is doing that.
+Dinesh, your citation settings are broken. When sending plaintext, as it
+is common on public lists, you need to set the mark "> " at the
+beginning of all cited line.
 
-No idea. All the servers I touched at work were still booting via
-legacy BIOS. Mind you that these were old servers. The latest machine
-we have, an AMD EPYC 7002, is UEFI only. I never looked at the
-settings though.
+On 30.04.21 16:06, Dinesh Kumar wrote:
+> On Fri, Apr 30, 2021 at 06:19 AM, Quirin Gylstorff wrote:
+>=20
+>     From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>=20
+>     - Add code block for key insertion for better visibility
+>     - Correct the template for user-generated keys
+>     - Add information where to store the keys
+>=20
+>     Add build command for user generated keys
+>=20
+>     Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>     ---
+>=20
+>     Changes in V2:
+>     - remove unnecessary new-lines
+>=20
+>     doc/README.secureboot.md | 20 +++++++++++++++-----
+>     1 file changed, 15 insertions(+), 5 deletions(-)
+>=20
+>     diff --git a/doc/README.secureboot.md b/doc/README.secureboot.md
+>     index 84131bb..0996edc 100644
+>     --- a/doc/README.secureboot.md
+>     +++ b/doc/README.secureboot.md
+>     @@ -119,6 +119,7 @@ to the current directory. OVMF_VARS_4M.fd
+>     contains no keys can be instrumented f
+>     scripts/start-efishell.sh secureboot-tools
+>     ```
+>     4. Start the KeyTool.efi FS0:\KeyTool.efi and execute the the
+>     following steps:
+>=20
+>     +```
+>=20
+> Do you want to mention=C2=A0qemu-system-x86_64 --version should be 5.2.=
+0 or
+> higher as default Debian buster has older version of qemu and this step
+> fails with older version.
+> Also these steps can't be executed remotely as it launches UI window fo=
+r
+> QEMU, so it should be done locally.
 
-ChenYu
+Feel free to send a patch (or MR if that is easier) that adjust things,
+Dinesh.
 
-> Best regards,
->                                                                 Pavel
->
-> diff --git a/drivers/md/dm-ioctl.c b/drivers/md/dm-ioctl.c
-> index eab3f7325e31..a6e6a852c9e8 100644
-> --- a/drivers/md/dm-ioctl.c
-> +++ b/drivers/md/dm-ioctl.c
-> @@ -524,7 +524,7 @@ static int list_devices(struct dm_ioctl *param, size_t param_size)
->          * Grab our output buffer.
->          */
->         nl = get_result_buffer(param, param_size, &len);
-> -       if (len < needed) {
-> +       if (len < needed || len < sizeof(nl->dev)) {
->                 param->flags |= DM_BUFFER_FULL_FLAG;
->                 goto out;
->         }
->
->                                                                 Pavel
-> --
-> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+>=20
+>     -> "Edit Keys"
+>     -> "The Allowed Signatures Database (db)"
+>     -> "Add New Key"
+>     @@ -132,35 +133,44 @@ scripts/start-efishell.sh secureboot-tools
+>     -> "Replace Key(s)"
+>     -> Change/Confirm device
+>     -> Select "PK.auth" file
+>     +```
+>     5. quit QEMU
+>=20
+>     ### Build image
+>=20
+>     Build the image with a signed efibootguard and unified kernel image
+>     with the snakeoil keys by executing:
+>     +
+>     ```
+>     kas-container build
+>     kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:kas/opt/eb=
+g-secure-boot-snakeoil.yml
+>     ```
+>=20
+>     -For user-generated keys, create a new option file. This option fil=
+e
+>     could look like this:
+>     +For user-generated keys, create a new option file in the
+>     repository. This option file could look like this:
+>     ```
+>     header:
+>     version: 10
+>     includes:
+>     - - opt/ebg-swu.yml
+>     - - opt/ebg-secure-boot-initramfs.yml
+>     + - kas/opt/ebg-swu.yml
+>     + - kas/opt/ebg-secure-boot-base.yml
+>=20
+>     local_conf_header:
+>     secure-boot: |
+>     IMAGER_BUILD_DEPS +=3D "ebg-secure-boot-secrets"
+>     IMAGER_INSTALL +=3D "ebg-secure-boot-secrets"
+>     - user-keys:
+>     + user-keys: |
+>     SB_CERTDB =3D "democertdb"
+>     SB_VERIFY_CERT =3D "demo.crt"
+>     SB_KEY_NAME =3D "demo"
+>     ```
+>=20
+>     -Replace `demo` with the name of the user-generated certificates.
+>     +Replace `demo` with the name of the user-generated certificates.
+>     The user-generated certificates
+>     +need to stored in the folder
+>     `recipes-devtools/ebg-secure-boot-secrets/files`.
+>     +
+>     +Build the image with user-generated keys by executing the command:
+>     +
+>     +```
+>     +kas-container build
+>     kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:<path to
+>     the new option>.yml
+>     +```
+>=20
+>     ### Start the image
+>=20
+> Where are you taking care of my below point? I don't see it yet
+>=20
+>     Keys and certs generated by scripts/generate_secure_boot_keys.sh ar=
+e
+>     not available to build command, so I have to move them in
+>     recipes-devtools/ebg-secure-boot-secrets/files/ folder to make it w=
+ork
+>=20
 
---oG4ianGfqUt9co4KDEHe
+Quirin?
+
+Jan
+
+--=20
+Siemens AG, T RDA IOT
+Corporate Competence Center Embedded Linux
+
+--ppnGf2GusZpFdha7I1wt
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -124,13 +202,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6428): https://lists.cip-project.org/g/cip-dev/message=
-/6428
-Mute This Topic: https://lists.cip-project.org/mt/82597445/4520388
+View/Reply Online (#6429): https://lists.cip-project.org/g/cip-dev/message=
+/6429
+Mute This Topic: https://lists.cip-project.org/mt/82480976/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/4520388=
 /727948398/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---oG4ianGfqUt9co4KDEHe--
+--ppnGf2GusZpFdha7I1wt--
