@@ -1,62 +1,115 @@
-Return-Path: <SRS0=vamQ=LB=lists.cip-project.org=bounce+64572+6498+4520388+8129055@kernel.org>
+Return-Path: <SRS0=IpSo=LD=lists.cip-project.org=bounce+64572+6499+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.8 required=3.0 tests=BAYES_00,DATE_IN_PAST_06_12,
-	DKIM_SIGNED,DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69BC1C47082
-	for <cip-dev@archiver.kernel.org>; Mon,  7 Jun 2021 11:45:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8DF7C48BCD
+	for <cip-dev@archiver.kernel.org>; Wed,  9 Jun 2021 23:58:52 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id D239F6105A
-	for <cip-dev@archiver.kernel.org>; Mon,  7 Jun 2021 11:45:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D239F6105A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmx.at
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6498+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id IHvcYY4521723xVfChm7JXON; Mon, 07 Jun 2021 04:45:10 -0700
-X-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
- by mx.groups.io with SMTP id smtpd.web11.31864.1623040297143356681
+	by mail.kernel.org (Postfix) with ESMTPS id CBE12613CB
+	for <cip-dev@archiver.kernel.org>; Wed,  9 Jun 2021 23:58:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBE12613CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cybertrust.co.jp
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6499+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id TXLiYY4521723xLx6l9ypKt9; Wed, 09 Jun 2021 16:58:51 -0700
+X-Received: from ss11.sbt-mailgate.jp (ss11.sbt-mailgate.jp [202.241.206.55])
+ by mx.groups.io with SMTP id smtpd.web10.3369.1623283128421615841
  for <cip-dev@lists.cip-project.org>;
- Sun, 06 Jun 2021 21:31:37 -0700
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-X-Received: from [178.190.128.91] ([178.190.128.91]) by web-mail.gmx.net
- (3c-app-gmx-bap15.server.lan [172.19.172.85]) (via HTTP); Mon, 7 Jun 2021
- 06:31:35 +0200
+ Wed, 09 Jun 2021 16:58:50 -0700
+X-Received: from mail.sbt-mailgate.jp (sagproxy-out11.sbt-mailgate.jp [10.16.47.41]) (envelope sender: <masashi.kudo@cybertrust.co.jp>)
+	(not using TLS) by ss11.sbt-mailgate.jp (Active!gate) with ESMTP id KI1M17351A;
+	Thu, 10 Jun 2021 08:53:12 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=PNT9sIvtiTom3rHvOcmPlYfhvvwzK/yfrERBAR72JKZonqFogdTNs9aXdnYk2iZUyfHqFNysS0qrZVbp6TowbZEKLXE0QSzVuXSv1Kiwkakd+GNzIxx851yVLxeA7wRixB48/y3KP4KqdgRMkj5NB2A3BY9hQQoMjFI659N5ZX0zI8VTXod2m+mvUZ7tHEwb3Uar8/CDfj668aYorgAdzk8Xn8L31lPGAoaxzaHUwXqyVjbfq8f7lCKBC8eTjBiRJ7HKMKaTzqKkXBlGuw8UlFGA76Q4zVZUnACgzrhY6BYHp+IQZtNF9VMEnLBR4vEXcVWwioHI3vs9EJj/7mIhbQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=walrWx4nETvvx3FU7CbPkxS5Goqa48RIaN5Nc1w00Pw=;
+ b=D2OV0IT7RT7063hEJh+Cr95tDIYRhTmyjqItZsXEdgPVtIoM/7BfVXRAo1Axhu/HuIaZMHLh0fF+gN8yyGR7ezy5dTEDY+gu1hReDE1FyZXNtMHv7/SsRoM/3mXNcxcIguGsA2RanKVAMgHSIeRLA/jFKoAQB9J8lWs55OvxV8JMkb5+jCyxT0bBlXDQ828umIcPd31cbLVPAthedpF8wmhnQS+P4lE4SOvEOb5ia4GO+/rfzxeDWVH55kGcHt7p7ZLXaTEBFwcVcGzEENghMJG5RFa/TNOcUP280lkJ9ZhNppFJbxQTCmN0UNc8gnmVkZQx64eHFFVEJnzicNbsSA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cybertrust.co.jp; dmarc=pass action=none
+ header.from=cybertrust.co.jp; dkim=pass header.d=cybertrust.co.jp; arc=none
+X-Received: from TY2PR01MB4972.jpnprd01.prod.outlook.com (2603:1096:404:11c::20)
+ by TYYPR01MB6748.jpnprd01.prod.outlook.com (2603:1096:400:cf::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4195.24; Wed, 9 Jun
+ 2021 23:53:10 +0000
+X-Received: from TY2PR01MB4972.jpnprd01.prod.outlook.com
+ ([fe80::4cee:d78:d8e9:8a0]) by TY2PR01MB4972.jpnprd01.prod.outlook.com
+ ([fe80::4cee:d78:d8e9:8a0%5]) with mapi id 15.20.4219.022; Wed, 9 Jun 2021
+ 23:53:10 +0000
+From: "masashi.kudo@cybertrust.co.jp" <masashi.kudo@cybertrust.co.jp>
+To: <cip-dev@lists.cip-project.org>
+Subject: [cip-dev] CIP IRC weekly meeting today (libera.chat)
+Thread-Topic: CIP IRC weekly meeting today (libera.chat)
+Thread-Index: AdddioHGJKjwY+RqREeDzyWvLrYGPA==
+Date: Thu, 10 Jun 2021 08:58:43 +0900
+Message-ID: 
+ <TY2PR01MB49721C32D2CAC601E0AEE2C2A0369@TY2PR01MB4972.jpnprd01.prod.outlook.com>
+Accept-Language: ja-JP, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [122.216.27.145]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: b83a0373-30c2-4034-0e1b-08d92ba1bc64
+x-ms-traffictypediagnostic: TYYPR01MB6748:
+x-microsoft-antispam-prvs: 
+ <TYYPR01MB67487BECC138FAE9FFCA4F15A0369@TYYPR01MB6748.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 
+ NKJXIzYzYE/mFO2p0SliG1qd1YcHQklBW+cKHuJ0aC3HkSklUAZv9JxUsBw33x+DEEaKl2eb01zwwbFRbYG6V026NhSL25mRyaqAhkq9TDCY0n2nsza22T1yiTtA4lXMIrrdy9m1LxAZuYT0HMekhkN2PNI1UmyQz1ZFfBJVHUMWzDluFpY+y5CHHCiQqUCnSjjNUzZ5WNn8oQqLTZ39HLQ4v5CSBhCvERXhAVyPX/gyA2UYlvvVez8b1qg9dGsb9nrTB/5l8Mek9evWuTtJb6EV9joXAYgryWgVvY4A0MgDCyJwTSsZ0J/mXRsiQ4mqejRHJIVSbxz90vk7134BQWYJd7PLi/qiGg9Xq9JC6hcXEbPJOn+Hv677EKugGM/Xl/Raq984elhAwN47sgVEkL0Co3ZbpnAqUGCnF0Av/KCfWcAThtft1r/cKfX76EV9bldKzt6bJ5HFLQXVsduc2lE92xMPXQdDvPkR6SRrq9Lx4rhDu4hEKO0+65RVTN4r7gRZzdTdNZScJmkeeIkrtQeUlLUdOL0D05bIjxltJwKdpWdDkAxrsPoDhN6B5E82x7269k8NeIjkFN4MNRRkzDui/Qxwfs1cV3JX/v32q7RQrlZnaOtYN2AU4uysWOx++eY0OcvnGpsZTyhuKUqhFCx+36gNU+qtVwLATIg3yA0+Q28gTzRwAKSH7uMIXWlebKKQt9lhJ9iRDR5q9nuD3SdAKt218ixhlV4g8757O7+h3aX6bFCMab/KZcuI9mrTXoJHZXHHVUMT5t70x4QPFwMaLoj9/A1oBi6qvQZkVHc4o4EnLqzUbOgOMutB8lXC
+x-ms-exchange-antispam-messagedata: 
+ =?iso-2022-jp?B?N1J4UXNHT01UTUhXZHVNc1VzaFg5QTVobDM1QWFHZDM5NUJaT2s0S2Z5?=
+ =?iso-2022-jp?B?aDRkNHVyRHRPVTBLL2pqQlZ2VHVocktmQ0hKcXR1bFVGQldXQU5CQnlO?=
+ =?iso-2022-jp?B?TG5aZ1lSL3BNRW5xNmhvbnZldUdXZU5QZDZsMnpRUW1YR2xUWjJGUTBh?=
+ =?iso-2022-jp?B?TjY2TVFXVEc5VzMvc2FFNE0reStDVzNhWDl5OTdvcFRkK0ZzRS9FdjRU?=
+ =?iso-2022-jp?B?WjFHNTlUdUhYMktmblFJRGd5ZTRUN0IyZjVDUmRWa2piQmpRREp4Qk9z?=
+ =?iso-2022-jp?B?Q3k0Z1RWelhUc1JvYVBVa01udGpQb2dCRVBHMERSeHB1WkMrRXJBQ2Z0?=
+ =?iso-2022-jp?B?aE91aUo5QUt2M0FMekZRQ2VlWDhXamRUU0ZibGFaK0ZCb0FZSWMxbFZO?=
+ =?iso-2022-jp?B?ejNUVnMyazJwdkFHY0hDc3JRZHpnOWZqdkxGbERrWHBvVlJjeS9DNzdM?=
+ =?iso-2022-jp?B?TE9wYmZGSDliSnhVOC9mVXFpbkxxWTVyemJmRnhTTXg0MUJ4UTM0V1Bq?=
+ =?iso-2022-jp?B?S1ZJQWw3eWp0a1F1SnZmVlhrSkNEV3FCREZvR01Cd3RwWTNBWWhncFQw?=
+ =?iso-2022-jp?B?V0o0NzV4dEJGRTVWdUdoaThDclZocGczeUtObExKWjlzV3NHZXJDakcz?=
+ =?iso-2022-jp?B?L2pSck5qa2dBYUlPWVFiSWZRTW94SDB2TzFqbzlnYWpCTFI1NWRRakhE?=
+ =?iso-2022-jp?B?czUzNzlVZUFFTXkyRUIxWE5jSkYxY0dWaCtraS9yMG9yTkhlS0tlc3Aw?=
+ =?iso-2022-jp?B?clBxeUlOMmNNVERlaXlRaGtNdUxnK2lXRUwrUjVsSnQrSUkvSG5UazlM?=
+ =?iso-2022-jp?B?eWR0d0ZITUJjZGRzOHg1OUdpVW81Skp5Mm9rcTZFdUlIVEdsQzdEZEVw?=
+ =?iso-2022-jp?B?Yll0SFUwZ3l6akJweWd4bm5wYzdXZ05xZnVxT3l1Mm90L3JIbitjZmxt?=
+ =?iso-2022-jp?B?RC9mMC92bWwvcWp4S05kNGJrRGFaU3lwTHdzdzkzVzZsT0NOaWU5MmxD?=
+ =?iso-2022-jp?B?elplWStzSGxtQm5sWUhTcTZmZWZrQ3c3elV5Z0VSL2wydzkyQm5mTk5s?=
+ =?iso-2022-jp?B?emlTaWRDeWE5dkJxS0JaM1haUkdCWk8xbTl4UzlzdnFqT0s1SFlURGMw?=
+ =?iso-2022-jp?B?VUErd1BMZzVmd285Yjk0YVdpNTZLRzRTY0ExQm1aUW1RREhJeXNWN3py?=
+ =?iso-2022-jp?B?TG95enZTUTFIaHhtdlZZZjZ6RGRUeFJmYlRzNUt3VzRzV0JQWGFubDlT?=
+ =?iso-2022-jp?B?b0hJdTNoT01meUE2UmRqbk1MSit1SHYzVEo0Z2pkOHBXK0xrdnJUc0hX?=
+ =?iso-2022-jp?B?cFl5a25nZWRYNDdEZ3FWd0xCYmF0Zk9YMElrRHdZQTdNNi8xWmt4YjNu?=
+ =?iso-2022-jp?B?aEhHTC8rLytoQ3AyR3dzcFVzNVVzOFAwL1k5b0RQWlY3UFptZVd1Z3N6?=
+ =?iso-2022-jp?B?R3BEd3g0UTlFWS9lNmUxV1hmUjRuT0pjUzAvaXZVN2RVUkEzZW0wZVRm?=
+ =?iso-2022-jp?B?R3NkVTc1UTV5R2ZJWFoyK1J5VUcyN0VTSmRjSit2Y1dXMGxucXdXcmU5?=
+ =?iso-2022-jp?B?Y2xsMTZIa0NvVml5VTlPdDljY05US1VUMVZqek52dStra0tneWs3OG5E?=
+ =?iso-2022-jp?B?RTltaHBhYktuZTBYY3FqWHFiSDB1Zk9KRGZnTTN3MWhJQ1NuVXl3S0ZD?=
+ =?iso-2022-jp?B?UWdJK0RZMklZSytCN3UvYUZoUk1qYTExamMyM0hLOWxUTnlFVzNrc3Fn?=
+ =?iso-2022-jp?B?YytuMndPemJ4K2N6WnJTK3IzZVFPcDBadHF4cGpkNVREclc1RG5FYk51?=
+ =?iso-2022-jp?B?eHIrdFlnQ1g2QUkvekkvM2tIT0VXTUJYUkhWdlhLYXUrekZjR2EzMUt4?=
+ =?iso-2022-jp?B?MGkzTGlTOUVGQ0pZT2N6UlZndWpobWRQNysxZTBVWitlTlk0ZlpML3hx?=
+x-ms-exchange-transport-forked: True
 MIME-Version: 1.0
-Message-ID: <trinity-5cb5bf59-3064-486c-8493-646cb4fbf0e1-1623040295084@3c-app-gmx-bap15>
-From: rainer.kloud@gmx.at
-To: cip-dev@lists.cip-project.org
-Subject: Re: [cip-dev] BUG: using smp_processor_id() in preemptible [00000000] code: TCPTSK/1809
-Date: Mon, 7 Jun 2021 06:31:35 +0200
-Importance: normal
-Sensitivity: Normal
-In-Reply-To: <20210606191433.GA18130@amd>
-References: <trinity-6c08d14f-96d0-4b01-b81c-dbc85783818e-1622901051584@3c-app-gmx-bs72>
- <20210606191433.GA18130@amd>
-X-UI-Message-Type: mail
-X-Priority: 3
-X-Provags-ID: V03:K1:IeZ1ucSceFvr5z1hsrYiTR18nBToKO7jYDBLrvw7M6skFPdeWWVXhs4BFHZ9Krzk6Scqf
- r8TvRl7hdooySW2zP5YQFbyIyy2fXo85PZMT8mW1/iSD2cP7tpZNWsd3UOpildtYyQZ9eSn31qf5
- uB/UbNTWsS1xYSXV9dwF4MNZLHfv4JVBzzQySZdwCbvBdpEQOYhmRKQuAYpNWMZSVBoNcHyDD3Hx
- RpihSQellkiE/YRRKxx/d7dQUtDKvDK663mIuO+v0L2ZBceceVcinLydcAIlR06ufRHm289sUz5k
- K8=
-X-UI-Out-Filterresults: notjunk:1;V03:K0:fvGOKMDLGnU=:dlMtUHeLqMyaVZ8eFGIPZQ
- i2RW9QzycfROspgvk0WaWEMIS5n4673FojYD9NZbmv/h1dZPm93i8FPp59rOG0p9jw/262Lc4
- 01HTEtB/OWWPzeOjOFzn/q9a5NBpE44c5Con6pe1goJ1/owdOVzVsViMXqMmhUqOIqj/avzZa
- aIDmyvO7IGJpBx9Y/oRWd5wKb491WZEM7u60FAyf03VQSWMmH6J9SozWBb4dYfeSiWxpSyb63
- T2XuYySs287hiNwv7XiNEeWj2WkhnZO/dFR92hSjpMufZotITZgzBqBMORisWyJUcTi99LaFB
- 7eKD3PUvvyZ5cKXmWmv2VbZJetpqQlCiOlkJSPDTu0AxLEaUEDOYjQfuWq/NqwQ+Q+RMpKucT
- f9zT/VhwAkkDZNaN29WJ+paEyU8YyCJridRJWFbttp4PoPvztE/WmoDvgJBspf9MY8UqtmYii
- JWesRt4VnZ8ZDoPM8UigQImrjEn8kE58umv2P8+U1cX8XbR66qxjI4+d09VQ6bJXVQ1xyZy3r
- GHCv26H+E6OOnT7KjPqmpy4Fx1fakvD8h2HC4YuDR2Gr06aT0K6YA8VynAl331Iy1W4+veBt1
- WglJpgiPcurInTbLQXV3eSKRjcDS5VOXJNPrimrJdey4lRRAZxlJSg2TnaKcDg6Ppl8gvacFK
- j6My/OQ7a+9KB+CTCoAkHS8fVlsjmhmgkM/JGOphdEeU7f25ObeOkFa3r1vx+QNh6HQefkZX9
- 2AZlTgE+G4CzxbLlLwynMzUDKvs6GGwjD4Q4FYVZGM8B7pl0XCg7qsH3QqQ19udjlVyTmlt+S
- sSa96oyHExzcYtRouZjp6ls9l+CjA==
+X-OriginatorOrg: cybertrust.co.jp
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY2PR01MB4972.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b83a0373-30c2-4034-0e1b-08d92ba1bc64
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jun 2021 23:53:09.9429
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72cc4624-32b4-4dab-b80a-8563e559bd82
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: HGQgbGCjv2S2iaONVR661Pay6i6XNiRaf1Nbe4Rhyt42qgnkstkTHEz3Cf4WqAym3u/pzesMPNeCq0wcogJgAT8BbMHIYhlXUp7+ks4ZAkA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB6748
 Precedence: Bulk
 List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
 List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
@@ -65,87 +118,68 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: dT1kdrgRPeP4t7giuHsfV0bQx4520388AA=
-Content-Type: multipart/mixed; boundary="skSlsODNy64ESaANZ9xD"
+X-Gm-Message-State: 7uhLhb0qfeH20cKhBw8sDIWLx4520388AA=
+Content-Type: multipart/mixed; boundary="U3HVxqcixV4mCLJdREH4"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1623066310;
- bh=xweHeOLg2hm8IdMsFPFSwHZvOozro7yrcF9i8KLvwLw=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1623283131;
+ bh=plN9VylepLRAjasfmmY0BMhrwA4OL+bgUChzQA95hyw=;
  h=Content-Type:Date:From:Reply-To:Subject:To;
- b=w8XfSrmycy7GnVgDN0cRtZS4n4T0wAyrtWkDzkiRwgXNpQhcx+EH2juUiyOzE/ov99q
- fHPo/fL5dcQEMvcc+qWuPWEZkatDxjZ62Ru9llyMRHtx1XWAm604Q2B4ccB2i9LTU84Ik
- 9V5gRFEDetYuSyuaYKl1cvVQ/MHTpsuh7ek=
+ b=roiCWFfmMRfIqz1kNQnADZm8WfZ7Z1xzAj09b+EvEz63KkTvi+ynyLIQ51u1x+Hy+Wk
+ oc/P0Nz5oNK1hiCsGcXoOWGuO8Irtjo8b8SFNB0/vrumJG6PgJGAr5b6brl8nR1AhFWn2
+ +6QCSXYsHIqG1XzTzJMOZ8rbPmNhybG+wl0=
 
---skSlsODNy64ESaANZ9xD
-Content-Type: text/plain; charset=UTF-8
+--U3HVxqcixV4mCLJdREH4
+Content-Language: ja-JP
+Content-Type: text/plain; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
 
-Hello Pavel,
-=C2=A0
-> I notice you are using -rt kernel=2E Do you actually need realtime
-> features?
+Hi all,
 
-Yes, I actually need the realtime feature=2E I have one task which
-needts to run periodically in realtime (every 10ms)=2E
+Kindly be reminded to attend the weekly meeting through IRC to discuss tech=
+nical topics with CIP kernel today.
 
-> Can you try to reproduce the problem on 4=2E19=2E193?
+Please note that we already moved from Freenode to libera.chat, and our cha=
+nnel is the following:
+	irc:irc.libera.chat:6667/cip
 
-This is only a problem with the realtime patch=2E The patch
-introduces migrate_enable which is part of the callstack:
+*Please note that the IRC meeting was rescheduled to UTC (GMT) 09:00 starti=
+ng from the first week of Apr. according to TSC meeting*
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=3D2021&mont=
+h=3D6&day=3D10&hour=3D9&min=3D0&sec=3D0&p1=3D224&p2=3D179&p3=3D136&p4=3D37&=
+p5=3D241&p6=3D248
 
-Jun  1 09:11:46 sicam kernel: [46802=2E944165] BUG: using smp_processor_id=
-() in preemptible [00000000] code: TCPTSK/1809
-Jun  1 09:11:46 sicam kernel: [46802=2E944210] caller is migrate_enable+0x=
-40/0x488
-Jun  1 09:11:46 sicam kernel: [46802=2E944221] CPU: 0 PID: 1809 Comm: TI4S=
-DTSK#135 Tainted: G        W         4=2E19=2E165-cip41-rt18 #1
-Jun  1 09:11:46 sicam kernel: [46802=2E944225] Hardware name: Altera SOCFP=
-GA
-Jun  1 09:11:46 sicam kernel: [46802=2E944252] [<c010e9d4>] (unwind_backtr=
-ace) from [<c010b9f4>] (show_stack+0x10/0x14)
-Jun  1 09:11:46 sicam kernel: [46802=2E944272] [<c010b9f4>] (show_stack) f=
-rom [<c062f854>] (dump_stack+0x94/0xa8)
-Jun  1 09:11:46 sicam kernel: [46802=2E944299] [<c062f854>] (dump_stack) f=
-rom [<c03a57ec>] (check_preemption_disabled+0x110/0x114)
-Jun  1 09:11:46 sicam kernel: [46802=2E944316] [<c03a57ec>] (check_preempt=
-ion_disabled) from [<c014163c>] (migrate_enable+0x40/0x488)
-Jun  1 09:11:46 sicam kernel: [46802=2E944338] [<c014163c>] (migrate_enabl=
-e) from [<c053ff0c>] (ip_finish_output2+0x21c/0x460)
-Jun  1 09:11:46 sicam kernel: [46802=2E944353] [<c053ff0c>] (ip_finish_out=
-put2) from [<c0542854>] (ip_output+0x140/0x184)
-Jun  1 09:11:46 sicam kernel: [46802=2E944364] [<c0542854>] (ip_output) fr=
-om [<c0542128>] (__ip_queue_xmit+0x134/0x40c)
-Jun  1 09:11:46 sicam kernel: [46802=2E944381] [<c0542128>] (__ip_queue_xm=
-it) from [<c055cf70>] (__tcp_transmit_skb+0x53c/0xb20)
-Jun  1 09:11:46 sicam kernel: [46802=2E944392] [<c055cf70>] (__tcp_transmi=
-t_skb) from [<c055e188>] (tcp_write_xmit+0x27c/0xfd0)
-Jun  1 09:11:46 sicam kernel: [46802=2E944403] [<c055e188>] (tcp_write_xmi=
-t) from [<c055ef10>] (__tcp_push_pending_frames+0x34/0xa8)
-Jun  1 09:11:46 sicam kernel: [46802=2E944413] [<c055ef10>] (__tcp_push_pe=
-nding_frames) from [<c054f5cc>] (tcp_sendmsg_locked+0x66c/0xc40)
-Jun  1 09:11:46 sicam kernel: [46802=2E944422] [<c054f5cc>] (tcp_sendmsg_l=
-ocked) from [<c054fbc8>] (tcp_sendmsg+0x28/0x3c)
-Jun  1 09:11:46 sicam kernel: [46802=2E944441] [<c054fbc8>] (tcp_sendmsg) =
-from [<c04cb3f4>] (sock_sendmsg+0x14/0x24)
-Jun  1 09:11:46 sicam kernel: [46802=2E944455] [<c04cb3f4>] (sock_sendmsg)=
- from [<c04cc6d0>] (__sys_sendto+0xc4/0x104)
-Jun  1 09:11:46 sicam kernel: [46802=2E944467] [<c04cc6d0>] (__sys_sendto)=
- from [<c04cc72c>] (sys_send+0x18/0x20)
-Jun  1 09:11:46 sicam kernel: [46802=2E944479] [<c04cc72c>] (sys_send) fro=
-m [<c0101000>] (ret_fast_syscall+0x0/0x5c)
-Jun  1 09:11:46 sicam kernel: [46802=2E944484] Exception stack(0xda337fa8 =
-to 0xda337ff0)
-Jun  1 09:11:46 sicam kernel: [46802=2E944493] 7fa0:                   001=
-c6f2c 00000001 00000037 0020ae40 00000006 00000000
-Jun  1 09:11:46 sicam kernel: [46802=2E944502] 7fc0: 001c6f2c 00000001 000=
-00001 00000121 001651c8 001ea378 ffff0000 00000006
-Jun  1 09:11:46 sicam kernel: [46802=2E944508] 7fe0: 00000000 b3efea18 000=
-00000 b6a2ff40
-
-Best Regards,
-Rainer
+USWest	USEast	UK	DE	TW	JP
+02:00	05:00	10:00	11:00	17:00	18:00
 
 
---skSlsODNy64ESaANZ9xD
+Last meeting minutes:
+https://irclogs.baserock.org/meetings/cip/2021/06/cip.2021-06-03-09.00.log.=
+html
+
+* Action item
+  1. Combine root filesystem with kselftest binary - iwamatsu=20
+  2. Do some experiment to lower burdens on CI - patersonc
+  3. Monitor the status of CVE-2021-3444 and CVE-2021-20292 (3/25) - Kernel=
+ Team
+  4. Update Testing table below with 5.10 info - patersonc
+https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptesting/cen=
+talisedtesting/cioverview
+
+
+* Kernel maintenance updates
+* Kernel testing
+* AOB
+
+The meeting will take 30 min, although it can be extended to an hour if it =
+makes sense and those involved in the topics can stay. Otherwise, the topic=
+ will be taken offline or in the next meeting.
+
+Best regards,
+--
+M. Kudo
+Cybertrust Japan Co., Ltd.
+
+--U3HVxqcixV4mCLJdREH4
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -153,13 +187,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6498): https://lists.cip-project.org/g/cip-dev/message=
-/6498
-Mute This Topic: https://lists.cip-project.org/mt/83330337/4520388
+View/Reply Online (#6499): https://lists.cip-project.org/g/cip-dev/message=
+/6499
+Mute This Topic: https://lists.cip-project.org/mt/83434074/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/4520388=
 /727948398/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---skSlsODNy64ESaANZ9xD--
+--U3HVxqcixV4mCLJdREH4--
