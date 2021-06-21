@@ -1,4 +1,4 @@
-Return-Path: <SRS0=OSf3=LP=lists.cip-project.org=bounce+64572+6548+4520388+8129055@kernel.org>
+Return-Path: <SRS0=8Fgf=LP=lists.cip-project.org=bounce+64572+6550+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,MIME_HEADER_CTYPE_ONLY,SPF_HELO_NONE,SPF_PASS,
 	T_TVD_MIME_NO_HEADERS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89757C49EA2
-	for <cip-dev@archiver.kernel.org>; Mon, 21 Jun 2021 17:09:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17151C49EA4
+	for <cip-dev@archiver.kernel.org>; Mon, 21 Jun 2021 17:09:35 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id EB7ED60E0B
-	for <cip-dev@archiver.kernel.org>; Mon, 21 Jun 2021 17:09:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB7ED60E0B
+	by mail.kernel.org (Postfix) with ESMTPS id AB5626054E
+	for <cip-dev@archiver.kernel.org>; Mon, 21 Jun 2021 17:09:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB5626054E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6548+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id aClSYY4521723x3OURFOOo6E; Mon, 21 Jun 2021 10:09:32 -0700
-X-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [])
- by mx.groups.io with SMTP id smtpd.web12.50344.1624295370433045949
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6550+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id DcKlYY4521723xja3rI7g1Kn; Mon, 21 Jun 2021 10:09:34 -0700
+X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [])
+ by mx.groups.io with SMTP id smtpd.web10.50307.1624295372909229575
  for <cip-dev@lists.cip-project.org>;
- Mon, 21 Jun 2021 10:09:31 -0700
+ Mon, 21 Jun 2021 10:09:33 -0700
 X-IronPort-AV: E=Sophos;i="5.83,289,1616425200"; 
-   d="scan'208";a="84957077"
+   d="scan'208";a="85077287"
 X-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 22 Jun 2021 02:09:30 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 22 Jun 2021 02:09:33 +0900
 X-Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id E9382400752D;
-	Tue, 22 Jun 2021 02:09:29 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 8821B400752D;
+	Tue, 22 Jun 2021 02:09:32 +0900 (JST)
 From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [cip-dev] [PATCH 5.10.y-cip 02/16] pinctrl: renesas: r8a77965: Add QSPI[01] pins, groups and functions
-Date: Mon, 21 Jun 2021 18:09:11 +0100
-Message-Id: <20210621170925.11328-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [cip-dev] [PATCH 5.10.y-cip 04/16] pinctrl: renesas: r8a7796: Add QSPI[01] pins, groups and functions
+Date: Mon, 21 Jun 2021 18:09:13 +0100
+Message-Id: <20210621170925.11328-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
 In-Reply-To: <20210621170925.11328-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20210621170925.11328-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: Bulk
@@ -47,36 +47,36 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: Ztch3YXBoOx0AzqytU3aTF20x4520388AA=
-Content-Type: multipart/mixed; boundary="F3l2VoCMRUhvfaE1Cyld"
+X-Gm-Message-State: e6NCmNHFT2SZJWoMs9lUC7Sfx4520388AA=
+Content-Type: multipart/mixed; boundary="0imTqK2RthL7CEzyGOs8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1624295372;
- bh=1evKGwj+0KQHN+TzUu+A//UpHrztUEgp0Fs8nDPXR2g=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1624295374;
+ bh=VC/l85OlA6C7nFMd3Y7rXMTPcH5qiF9s7KBTgAmaggY=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=iD3sNzgR5XOvuNwJB/ciWko1zPWOVgEL286PqJOMwCD6VYlt/W89cgZW18z2zLJx6xI
- xKEg2qgleu0Xmpnvgv9jhCKMvHMvx3d2YNBHJhqJBhvS8RRJm8CEkYx9r3bItb++GSe0q
- exlAlO3pB71WgYadiQxulWyrISXNbO5OxoM=
+ b=M1wqIt/2K5bRXTV6Sr1ZZuS8ilI2qe132xrdo8fTBJ7yyOvT+fOA93W6HZtDDAWtKsA
+ 0/lU+PupZ+J5PO/XSAzLfWRF6VNTrJqsDUGTJ6iTVcADZQxIiyQYKxnBMiOxeMD/vDw2R
+ 4iXGrsdHXqktwEuipRobo2a5epd72SJsWXA=
 
---F3l2VoCMRUhvfaE1Cyld
+--0imTqK2RthL7CEzyGOs8
 
-commit ffcd7f812dec2f1f27fe73b89c17a04ef6586325 upstream.
+commit 4356497e9eda8ec7dcd095b1ecd947ffe12917aa upstream.
 
 Add pins, groups and functions for QSPIO[01].
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20201119130926.25692-5-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://lore.kernel.org/r/20201119130926.25692-4-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/pinctrl/renesas/pfc-r8a77965.c | 75 +++++++++++++++++++++++++-
+ drivers/pinctrl/renesas/pfc-r8a7796.c | 75 ++++++++++++++++++++++++++-
  1 file changed, 73 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/pfc-r8a77965.c b/drivers/pinctrl/renesas/pfc-r8a77965.c
-index 38b7b844abe9..530efa70698c 100644
---- a/drivers/pinctrl/renesas/pfc-r8a77965.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a77965.c
-@@ -3408,6 +3408,57 @@ static const unsigned int pwm6_b_mux[] = {
+diff --git a/drivers/pinctrl/renesas/pfc-r8a7796.c b/drivers/pinctrl/renesas/pfc-r8a7796.c
+index 88e9c46003d9..6edac0b9ce73 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a7796.c
++++ b/drivers/pinctrl/renesas/pfc-r8a7796.c
+@@ -3257,6 +3257,57 @@ static const unsigned int pwm6_b_mux[] = {
  	PWM6_B_MARK,
  };
  
@@ -131,19 +131,19 @@ index 38b7b844abe9..530efa70698c 100644
 +	QSPI1_IO2_MARK, QSPI1_IO3_MARK,
 +};
 +
- /* - SATA --------------------------------------------------------------------*/
- static const unsigned int sata0_devslp_a_pins[] = {
- 	/* DEVSLP */
-@@ -4381,7 +4432,7 @@ static const unsigned int vin5_clk_mux[] = {
+ /* - SCIF0 ------------------------------------------------------------------ */
+ static const unsigned int scif0_data_pins[] = {
+ 	/* RX, TX */
+@@ -4134,7 +4185,7 @@ static const unsigned int vin5_clk_mux[] = {
  };
  
  static const struct {
--	struct sh_pfc_pin_group common[318];
-+	struct sh_pfc_pin_group common[324];
- #ifdef CONFIG_PINCTRL_PFC_R8A77965
+-	struct sh_pfc_pin_group common[316];
++	struct sh_pfc_pin_group common[322];
+ #if defined(CONFIG_PINCTRL_PFC_R8A77960) || defined(CONFIG_PINCTRL_PFC_R8A77961)
  	struct sh_pfc_pin_group automotive[30];
  #endif
-@@ -4586,6 +4637,12 @@ static const struct {
+@@ -4339,6 +4390,12 @@ static const struct {
  		SH_PFC_PIN_GROUP(pwm5_b),
  		SH_PFC_PIN_GROUP(pwm6_a),
  		SH_PFC_PIN_GROUP(pwm6_b),
@@ -153,10 +153,10 @@ index 38b7b844abe9..530efa70698c 100644
 +		SH_PFC_PIN_GROUP(qspi1_ctrl),
 +		SH_PFC_PIN_GROUP(qspi1_data2),
 +		SH_PFC_PIN_GROUP(qspi1_data4),
- 		SH_PFC_PIN_GROUP(sata0_devslp_a),
- 		SH_PFC_PIN_GROUP(sata0_devslp_b),
  		SH_PFC_PIN_GROUP(scif0_data),
-@@ -5078,6 +5135,18 @@ static const char * const pwm6_groups[] = {
+ 		SH_PFC_PIN_GROUP(scif0_clk),
+ 		SH_PFC_PIN_GROUP(scif0_ctrl),
+@@ -4829,6 +4886,18 @@ static const char * const pwm6_groups[] = {
  	"pwm6_b",
  };
  
@@ -172,32 +172,32 @@ index 38b7b844abe9..530efa70698c 100644
 +	"qspi1_data4",
 +};
 +
- static const char * const sata0_groups[] = {
- 	"sata0_devslp_a",
- 	"sata0_devslp_b",
-@@ -5257,7 +5326,7 @@ static const char * const vin5_groups[] = {
+ static const char * const scif0_groups[] = {
+ 	"scif0_data",
+ 	"scif0_clk",
+@@ -5004,7 +5073,7 @@ static const char * const vin5_groups[] = {
  };
  
  static const struct {
--	struct sh_pfc_function common[51];
-+	struct sh_pfc_function common[53];
- #ifdef CONFIG_PINCTRL_PFC_R8A77965
+-	struct sh_pfc_function common[50];
++	struct sh_pfc_function common[52];
+ #if defined(CONFIG_PINCTRL_PFC_R8A77960) || defined(CONFIG_PINCTRL_PFC_R8A77961)
  	struct sh_pfc_function automotive[4];
  #endif
-@@ -5294,6 +5363,8 @@ static const struct {
+@@ -5041,6 +5110,8 @@ static const struct {
  		SH_PFC_FUNCTION(pwm4),
  		SH_PFC_FUNCTION(pwm5),
  		SH_PFC_FUNCTION(pwm6),
 +		SH_PFC_FUNCTION(qspi0),
 +		SH_PFC_FUNCTION(qspi1),
- 		SH_PFC_FUNCTION(sata0),
  		SH_PFC_FUNCTION(scif0),
  		SH_PFC_FUNCTION(scif1),
+ 		SH_PFC_FUNCTION(scif2),
 -- 
 2.17.1
 
 
---F3l2VoCMRUhvfaE1Cyld
+--0imTqK2RthL7CEzyGOs8
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -205,13 +205,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6548): https://lists.cip-project.org/g/cip-dev/message=
-/6548
-Mute This Topic: https://lists.cip-project.org/mt/83693869/4520388
+View/Reply Online (#6550): https://lists.cip-project.org/g/cip-dev/message=
+/6550
+Mute This Topic: https://lists.cip-project.org/mt/83693871/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/4520388=
 /727948398/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---F3l2VoCMRUhvfaE1Cyld--
+--0imTqK2RthL7CEzyGOs8--
