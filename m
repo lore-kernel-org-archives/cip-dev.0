@@ -1,44 +1,45 @@
-Return-Path: <SRS0=u3n9=LP=lists.cip-project.org=bounce+64572+6562+4520388+8129055@kernel.org>
+Return-Path: <SRS0=Kr1z=LP=lists.cip-project.org=bounce+64572+6560+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MIME_HEADER_CTYPE_ONLY,SPF_HELO_NONE,SPF_PASS,
-	T_TVD_MIME_NO_HEADERS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 726C5C49EA4
-	for <cip-dev@archiver.kernel.org>; Mon, 21 Jun 2021 17:09:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B71DC48BC2
+	for <cip-dev@archiver.kernel.org>; Mon, 21 Jun 2021 17:09:53 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 4209E60FF2
-	for <cip-dev@archiver.kernel.org>; Mon, 21 Jun 2021 17:09:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4209E60FF2
+	by mail.kernel.org (Postfix) with ESMTPS id 2AAF260E0B
+	for <cip-dev@archiver.kernel.org>; Mon, 21 Jun 2021 17:09:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AAF260E0B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6562+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id RwU1YY4521723xBP8ylKeflZ; Mon, 21 Jun 2021 10:09:54 -0700
-X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.50319.1624295393354335105
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6560+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id VDfkYY4521723xD0Wfv0Ozxh; Mon, 21 Jun 2021 10:09:53 -0700
+X-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [])
+ by mx.groups.io with SMTP id smtpd.web10.50318.1624295388440408484
  for <cip-dev@lists.cip-project.org>;
- Mon, 21 Jun 2021 10:09:53 -0700
+ Mon, 21 Jun 2021 10:09:51 -0700
 X-IronPort-AV: E=Sophos;i="5.83,289,1616425200"; 
-   d="scan'208";a="85077305"
+   d="scan'208";a="84957107"
 X-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 22 Jun 2021 02:09:43 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 22 Jun 2021 02:09:47 +0900
 X-Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id F33994003EA5;
-	Tue, 22 Jun 2021 02:09:42 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id E98D6400C4D4;
+	Tue, 22 Jun 2021 02:09:46 +0900 (JST)
 From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [cip-dev] [PATCH 5.10.y-cip 12/16] spi: spi-mem: Fix passing zero to 'PTR_ERR' warning
-Date: Mon, 21 Jun 2021 18:09:21 +0100
-Message-Id: <20210621170925.11328-13-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [cip-dev] [PATCH 5.10.y-cip 15/16] dt-bindings: timer: renesas: tmu: Document r8a774e1 bindings
+Date: Mon, 21 Jun 2021 18:09:24 +0100
+Message-Id: <20210621170925.11328-16-prabhakar.mahadev-lad.rj@bp.renesas.com>
 In-Reply-To: <20210621170925.11328-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20210621170925.11328-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+MIME-Version: 1.0
 Precedence: Bulk
 List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
 List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
@@ -47,53 +48,54 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: 5641P8KoWHRwLIOf7sNqJLb4x4520388AA=
-Content-Type: multipart/mixed; boundary="Y9jpZM4BqVqdtTdgFYst"
+X-Gm-Message-State: twCgKlKL3Mwa48XG47zKXpmMx4520388AA=
+Content-Type: multipart/mixed; boundary="SRTdFPyMvznXpfrMwKvY"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1624295394;
- bh=M3suTp0lE6FSBBy9OGqk80eQCvDfNHhNW1MiypOgCf8=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1624295393;
+ bh=F8LBPGnyv10WvJqnAJ5SO2hbgL+F730zI3EDmhGk5cg=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=km2OeiEK5+doIWit1PS8lCCa7Ko1m64tg34ZAQRfMZTSwrFSLCURc1TJR7KqrjVgqws
- wQbQA+XIKK2tSLtygQF3h3hBWh1WFSQ+Nmg8YoT+QXabfeMSTnmixyZYC/L6hEJtaAALk
- QZVQ+2fqPuvC8O2NErx6A5ow4J2Vi36ttwg=
+ b=SMo27AAxhK2sJ7AD8cDy9Vz1+9cj/xuhnFV1qkrcWoMGDRElU/KcSkqFWa/xBH66eDR
+ PUIX+7wJNeaeNRBzA+QnF7/Tp5jFB9GmEMO/5dJ9eL90WbVV+/0okIwQmdIIiujUExU40
+ R1+IHuMDAEkLo5UFxmhs+GuUpPlOuSfmO4o=
 
---Y9jpZM4BqVqdtTdgFYst
+--SRTdFPyMvznXpfrMwKvY
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 
-commit a9c52d42814a44472fe1205775320ec20f556908 upstream.
+commit db08e6c0e2513d1341369ec6a4f1774ee20b290b upstream.
 
-Fix smatch warning:
+Document RZ/G2H (R8A774E1) SoC in the Renesas TMU bindings.
 
-drivers/spi/spi-mem.c:746 spi_mem_probe() warn: passing zero to 'PTR_ERR'
-
-Fixes: 5d27a9c8ea9e ("spi: spi-mem: Extend the SPI mem interface to set a custom memory name")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Link: https://lore.kernel.org/r/20201031033042.42892-1-yuehaibing@huawei.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Link: https://lore.kernel.org/r/20201110162014.3290109-2-geert+renesas@glider.be
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/spi/spi-mem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/timer/renesas,tmu.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/spi/spi-mem.c b/drivers/spi/spi-mem.c
-index 4682f49dc733..f3a3f196e628 100644
---- a/drivers/spi/spi-mem.c
-+++ b/drivers/spi/spi-mem.c
-@@ -744,7 +744,7 @@ static int spi_mem_probe(struct spi_device *spi)
- 		mem->name = dev_name(&spi->dev);
- 
- 	if (IS_ERR_OR_NULL(mem->name))
--		return PTR_ERR(mem->name);
-+		return PTR_ERR_OR_ZERO(mem->name);
- 
- 	spi_set_drvdata(spi, mem);
- 
+diff --git a/Documentation/devicetree/bindings/timer/renesas,tmu.txt b/Documentation/devicetree/bindings/timer/renesas,tmu.txt
+index 29159f4e65ab..a36cd61e74fb 100644
+--- a/Documentation/devicetree/bindings/timer/renesas,tmu.txt
++++ b/Documentation/devicetree/bindings/timer/renesas,tmu.txt
+@@ -13,6 +13,7 @@ Required Properties:
+     - "renesas,tmu-r8a774a1" for the r8a774A1 TMU
+     - "renesas,tmu-r8a774b1" for the r8a774B1 TMU
+     - "renesas,tmu-r8a774c0" for the r8a774C0 TMU
++    - "renesas,tmu-r8a774e1" for the r8a774E1 TMU
+     - "renesas,tmu-r8a7778" for the r8a7778 TMU
+     - "renesas,tmu-r8a7779" for the r8a7779 TMU
+     - "renesas,tmu-r8a77970" for the r8a77970 TMU
 -- 
 2.17.1
 
 
---Y9jpZM4BqVqdtTdgFYst
+--SRTdFPyMvznXpfrMwKvY
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -101,13 +103,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6562): https://lists.cip-project.org/g/cip-dev/message=
-/6562
-Mute This Topic: https://lists.cip-project.org/mt/83693894/4520388
+View/Reply Online (#6560): https://lists.cip-project.org/g/cip-dev/message=
+/6560
+Mute This Topic: https://lists.cip-project.org/mt/83693891/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/4520388=
 /727948398/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---Y9jpZM4BqVqdtTdgFYst--
+--SRTdFPyMvznXpfrMwKvY--
