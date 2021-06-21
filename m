@@ -1,4 +1,4 @@
-Return-Path: <SRS0=/wev=LP=lists.cip-project.org=bounce+64572+6553+4520388+8129055@kernel.org>
+Return-Path: <SRS0=4flj=LP=lists.cip-project.org=bounce+64572+6554+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,MIME_HEADER_CTYPE_ONLY,SPF_HELO_NONE,SPF_PASS,
 	T_TVD_MIME_NO_HEADERS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C993C48BC2
-	for <cip-dev@archiver.kernel.org>; Mon, 21 Jun 2021 17:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FE7EC49EA2
+	for <cip-dev@archiver.kernel.org>; Mon, 21 Jun 2021 17:09:49 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id F412D6054E
-	for <cip-dev@archiver.kernel.org>; Mon, 21 Jun 2021 17:09:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F412D6054E
+	by mail.kernel.org (Postfix) with ESMTPS id 60AE160E0B
+	for <cip-dev@archiver.kernel.org>; Mon, 21 Jun 2021 17:09:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60AE160E0B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6553+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id zdpEYY4521723xTdxagjziks; Mon, 21 Jun 2021 10:09:47 -0700
-X-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [])
- by mx.groups.io with SMTP id smtpd.web08.50425.1624295386102944213
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6554+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id bfQGYY4521723xKLjWhzGgj6; Mon, 21 Jun 2021 10:09:49 -0700
+X-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web10.50318.1624295388440408484
  for <cip-dev@lists.cip-project.org>;
- Mon, 21 Jun 2021 10:09:47 -0700
+ Mon, 21 Jun 2021 10:09:48 -0700
 X-IronPort-AV: E=Sophos;i="5.83,289,1616425200"; 
-   d="scan'208";a="85077301"
+   d="scan'208";a="84957087"
 X-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 22 Jun 2021 02:09:39 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 22 Jun 2021 02:09:37 +0900
 X-Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 17E2F400752D;
-	Tue, 22 Jun 2021 02:09:38 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7643F400754A;
+	Tue, 22 Jun 2021 02:09:36 +0900 (JST)
 From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [cip-dev] [PATCH 5.10.y-cip 09/16] clk: renesas: r8a774c0: Add RPC clocks
-Date: Mon, 21 Jun 2021 18:09:18 +0100
-Message-Id: <20210621170925.11328-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [cip-dev] [PATCH 5.10.y-cip 07/16] pinctrl: renesas: r8a77990: Optimize pinctrl image size for R8A774C0
+Date: Mon, 21 Jun 2021 18:09:16 +0100
+Message-Id: <20210621170925.11328-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
 In-Reply-To: <20210621170925.11328-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20210621170925.11328-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: Bulk
@@ -47,141 +47,126 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: zvqSXJFWLvZvClJSmReBshi2x4520388AA=
-Content-Type: multipart/mixed; boundary="krjjx7HhiR7OFsSZE0Cb"
+X-Gm-Message-State: TaE6USSUhbGJLP7Rf67S7ApNx4520388AA=
+Content-Type: multipart/mixed; boundary="QcJTscvTfk463nfziYZA"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1624295387;
- bh=MJbhCf4UA/GcVjU1c3nBxzOJnQ4/d9UIRVcZYYaXzoY=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1624295389;
+ bh=WatiK2XfeGwlVmMgvhMgkIbo4EVV81KCs52oe5qd9TI=;
  h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=HZW4Ie+r/ju7tmB+Juqa8J9/51G+56YEyjt/8uNjyQM0Ct8OlW1D/26ldY8HqkRTYW3
- QBQtoowfXvLa7VtMyCRFqFJBtMQ0dovZUWG6gXzvtpsDwq774AWfvyWoUDwH2oCfBk47t
- pfc0uARBmynO5RfeqsLeyblO3uAyhwHGPYA=
+ b=QewknI/TXUJpl7hBaOj+7VieJoaQRCdIA7oFyflve+zmkmKbMBwi6l192eTtWSvWZ5/
+ 763JNrbr9p/I377eboEUOaiwK6anepChqGLeMZWDa6qvI3hbRi6Egy4WASO2ZK+7KtN2A
+ 4/fW4YEV1Cbr75S9eNvp7eI1g8yRWF1Iwww=
 
---krjjx7HhiR7OFsSZE0Cb
+--QcJTscvTfk463nfziYZA
 
-commit 40745482eec81bea686cd1b38693191dc7e9ac66 upstream.
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Describe the RPCSRC internal clock and the RPC[D2] clocks derived from it,
-as well as the RPC-IF module clock, in the RZ/G2E (R8A774C0) CPG/MSSR
-driver.
+commit 03522a59a9e7e5f464735e907891cd235aa68b1d upstream.
 
-Add new clk type CLK_TYPE_GEN3_E3_RPCSRC to register rpcsrc as a fixed
-clock on R-Car Gen3 E3 (and also RZ/G2E which is identical to E3 SoC),
-parent and the divider is set based on the register value CPG_RPCCKCR[4:3]
-which has been set prior to booting the kernel.
+This driver supports both RZ/G2E and R-Car E3 SoCs.
+Optimize pinctrl image size for RZ/G2E, when support for R-Car E3
+(R8A77990) is not enabled.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20201116101002.5986-1-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Link: https://lore.kernel.org/r/20201019124258.4574-5-biju.das.jz@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/clk/renesas/r8a774c0-cpg-mssr.c |  9 ++++++++
- drivers/clk/renesas/rcar-gen3-cpg.c     | 28 +++++++++++++++++++++++++
- drivers/clk/renesas/rcar-gen3-cpg.h     |  5 +++++
- 3 files changed, 42 insertions(+)
+ drivers/pinctrl/renesas/pfc-r8a77990.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/clk/renesas/r8a774c0-cpg-mssr.c b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-index 9fc9fa9e531a..ed3a2cf0e0bb 100644
---- a/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-@@ -44,6 +44,7 @@ enum clk_ids {
- 	CLK_S2,
- 	CLK_S3,
- 	CLK_SDSRC,
-+	CLK_RPCSRC,
- 	CLK_RINT,
- 	CLK_OCO,
+diff --git a/drivers/pinctrl/renesas/pfc-r8a77990.c b/drivers/pinctrl/renesas/pfc-r8a77990.c
+index aed04a4c6116..6f9f7638703d 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a77990.c
++++ b/drivers/pinctrl/renesas/pfc-r8a77990.c
+@@ -1593,6 +1593,7 @@ static const unsigned int canfd1_data_mux[] = {
+ 	CANFD1_TX_MARK, CANFD1_RX_MARK,
+ };
  
-@@ -74,6 +75,13 @@ static const struct cpg_core_clk r8a774c0_core_clks[] __initconst = {
- 	DEF_FIXED(".s3",       CLK_S3,             CLK_PLL1,       6, 1),
- 	DEF_FIXED(".sdsrc",    CLK_SDSRC,          CLK_PLL1,       2, 1),
++#ifdef CONFIG_PINCTRL_PFC_R8A77990
+ /* - DRIF0 --------------------------------------------------------------- */
+ static const unsigned int drif0_ctrl_a_pins[] = {
+ 	/* CLK, SYNC */
+@@ -1785,6 +1786,7 @@ static const unsigned int drif3_data1_b_pins[] = {
+ static const unsigned int drif3_data1_b_mux[] = {
+ 	RIF3_D1_B_MARK,
+ };
++#endif /* CONFIG_PINCTRL_PFC_R8A77990 */
  
-+	DEF_FIXED_RPCSRC_E3(".rpcsrc", CLK_RPCSRC, CLK_PLL0, CLK_PLL1),
-+
-+	DEF_BASE("rpc",		R8A774C0_CLK_RPC, CLK_TYPE_GEN3_RPC,
-+		 CLK_RPCSRC),
-+	DEF_BASE("rpcd2",	R8A774C0_CLK_RPCD2, CLK_TYPE_GEN3_RPCD2,
-+		 R8A774C0_CLK_RPC),
-+
- 	DEF_DIV6_RO(".r",      CLK_RINT,           CLK_EXTAL, CPG_RCKCR, 32),
+ /* - DU --------------------------------------------------------------------- */
+ static const unsigned int du_rgb666_pins[] = {
+@@ -3761,7 +3763,9 @@ static const unsigned int vin5_clk_b_mux[] = {
  
- 	DEF_RATE(".oco",       CLK_OCO,            8 * 1000 * 1000),
-@@ -199,6 +207,7 @@ static const struct mssr_mod_clk r8a774c0_mod_clks[] __initconst = {
- 	DEF_MOD("can-fd",		 914,	R8A774C0_CLK_S3D2),
- 	DEF_MOD("can-if1",		 915,	R8A774C0_CLK_S3D4),
- 	DEF_MOD("can-if0",		 916,	R8A774C0_CLK_S3D4),
-+	DEF_MOD("rpc-if",		 917,	R8A774C0_CLK_RPCD2),
- 	DEF_MOD("i2c6",			 918,	R8A774C0_CLK_S3D2),
- 	DEF_MOD("i2c5",			 919,	R8A774C0_CLK_S3D2),
- 	DEF_MOD("i2c-dvfs",		 926,	R8A774C0_CLK_CP),
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 488f8b3980c5..20de135e28ed 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -696,6 +696,34 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 						  cpg_rpcsrc_div_table,
- 						  &cpg_lock);
+ static const struct {
+ 	struct sh_pfc_pin_group common[247];
++#ifdef CONFIG_PINCTRL_PFC_R8A77990
+ 	struct sh_pfc_pin_group automotive[21];
++#endif
+ } pinmux_groups = {
+ 	.common = {
+ 		SH_PFC_PIN_GROUP(audio_clk_a),
+@@ -4012,6 +4016,7 @@ static const struct {
+ 		SH_PFC_PIN_GROUP(vin5_clk_a),
+ 		SH_PFC_PIN_GROUP(vin5_clk_b),
+ 	},
++#ifdef CONFIG_PINCTRL_PFC_R8A77990
+ 	.automotive = {
+ 		SH_PFC_PIN_GROUP(drif0_ctrl_a),
+ 		SH_PFC_PIN_GROUP(drif0_data0_a),
+@@ -4035,6 +4040,7 @@ static const struct {
+ 		SH_PFC_PIN_GROUP(drif3_data0_b),
+ 		SH_PFC_PIN_GROUP(drif3_data1_b),
+ 	}
++#endif /* CONFIG_PINCTRL_PFC_R8A77990 */
+ };
  
-+	case CLK_TYPE_GEN3_E3_RPCSRC:
-+		/*
-+		 * Register RPCSRC as fixed factor clock based on the
-+		 * MD[4:1] pins and CPG_RPCCKCR[4:3] register value for
-+		 * which has been set prior to booting the kernel.
-+		 */
-+		value = (readl(base + CPG_RPCCKCR) & GENMASK(4, 3)) >> 3;
-+
-+		switch (value) {
-+		case 0:
-+			div = 5;
-+			break;
-+		case 1:
-+			div = 3;
-+			break;
-+		case 2:
-+			parent = clks[core->parent >> 16];
-+			if (IS_ERR(parent))
-+				return ERR_CAST(parent);
-+			div = core->div;
-+			break;
-+		case 3:
-+		default:
-+			div = 2;
-+			break;
-+		}
-+		break;
-+
- 	case CLK_TYPE_GEN3_RPC:
- 		return cpg_rpc_clk_register(core->name, base,
- 					    __clk_get_name(parent), notifiers);
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
-index c4ac80cac6a0..3d949c4a3244 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.h
-@@ -24,6 +24,7 @@ enum rcar_gen3_clk_types {
- 	CLK_TYPE_GEN3_OSC,	/* OSC EXTAL predivider and fixed divider */
- 	CLK_TYPE_GEN3_RCKSEL,	/* Select parent/divider using RCKCR.CKSEL */
- 	CLK_TYPE_GEN3_RPCSRC,
-+	CLK_TYPE_GEN3_E3_RPCSRC,
- 	CLK_TYPE_GEN3_RPC,
- 	CLK_TYPE_GEN3_RPCD2,
+ static const char * const audio_clk_groups[] = {
+@@ -4088,6 +4094,7 @@ static const char * const canfd1_groups[] = {
+ 	"canfd1_data",
+ };
  
-@@ -54,6 +55,10 @@ enum rcar_gen3_clk_types {
- #define DEF_GEN3_Z(_name, _id, _type, _parent, _div, _offset)	\
- 	DEF_BASE(_name, _id, _type, _parent, .div = _div, .offset = _offset)
++#ifdef CONFIG_PINCTRL_PFC_R8A77990
+ static const char * const drif0_groups[] = {
+ 	"drif0_ctrl_a",
+ 	"drif0_data0_a",
+@@ -4120,6 +4127,7 @@ static const char * const drif3_groups[] = {
+ 	"drif3_data0_b",
+ 	"drif3_data1_b",
+ };
++#endif /* CONFIG_PINCTRL_PFC_R8A77990 */
  
-+#define DEF_FIXED_RPCSRC_E3(_name, _id, _parent0, _parent1)	\
-+	DEF_BASE(_name, _id, CLK_TYPE_GEN3_E3_RPCSRC,	\
-+		 (_parent0) << 16 | (_parent1), .div = 8)
-+
- struct rcar_gen3_cpg_pll_config {
- 	u8 extal_div;
- 	u8 pll1_mult;
+ static const char * const du_groups[] = {
+ 	"du_rgb666",
+@@ -4460,7 +4468,9 @@ static const char * const vin5_groups[] = {
+ 
+ static const struct {
+ 	struct sh_pfc_function common[47];
++#ifdef CONFIG_PINCTRL_PFC_R8A77990
+ 	struct sh_pfc_function automotive[4];
++#endif
+ } pinmux_functions = {
+ 	.common = {
+ 		SH_PFC_FUNCTION(audio_clk),
+@@ -4511,12 +4521,14 @@ static const struct {
+ 		SH_PFC_FUNCTION(vin4),
+ 		SH_PFC_FUNCTION(vin5),
+ 	},
++#ifdef CONFIG_PINCTRL_PFC_R8A77990
+ 	.automotive = {
+ 		SH_PFC_FUNCTION(drif0),
+ 		SH_PFC_FUNCTION(drif1),
+ 		SH_PFC_FUNCTION(drif2),
+ 		SH_PFC_FUNCTION(drif3),
+ 	}
++#endif /* CONFIG_PINCTRL_PFC_R8A77990 */
+ };
+ 
+ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
 -- 
 2.17.1
 
 
---krjjx7HhiR7OFsSZE0Cb
+--QcJTscvTfk463nfziYZA
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -189,13 +174,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6553): https://lists.cip-project.org/g/cip-dev/message=
-/6553
-Mute This Topic: https://lists.cip-project.org/mt/83693881/4520388
+View/Reply Online (#6554): https://lists.cip-project.org/g/cip-dev/message=
+/6554
+Mute This Topic: https://lists.cip-project.org/mt/83693884/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/4520388=
 /727948398/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---krjjx7HhiR7OFsSZE0Cb--
+--QcJTscvTfk463nfziYZA--
