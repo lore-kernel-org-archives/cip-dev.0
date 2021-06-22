@@ -1,47 +1,105 @@
-Return-Path: <SRS0=oFwA=LQ=lists.cip-project.org=bounce+64572+6568+4520388+8129055@kernel.org>
+Return-Path: <SRS0=2frd=LQ=lists.cip-project.org=bounce+64572+6569+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36AD6C2B9F4
-	for <cip-dev@archiver.kernel.org>; Tue, 22 Jun 2021 07:23:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B02E5C2B9F4
+	for <cip-dev@archiver.kernel.org>; Tue, 22 Jun 2021 08:03:18 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id A181460FD8
-	for <cip-dev@archiver.kernel.org>; Tue, 22 Jun 2021 07:23:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A181460FD8
+	by mail.kernel.org (Postfix) with ESMTPS id 4AD2A61289
+	for <cip-dev@archiver.kernel.org>; Tue, 22 Jun 2021 08:03:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AD2A61289
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=siemens.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6568+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id aEsLYY4521723xh4oCwiQ8gI; Tue, 22 Jun 2021 00:23:01 -0700
-X-Received: from lizzard.sbs.de (lizzard.sbs.de [194.138.37.39])
- by mx.groups.io with SMTP id smtpd.web12.5485.1624346578794280256
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6569+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id K4RKYY4521723xU07AQHaY0i; Tue, 22 Jun 2021 01:03:17 -0700
+X-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (EUR05-DB8-obe.outbound.protection.outlook.com [40.107.20.74])
+ by mx.groups.io with SMTP id smtpd.web09.5776.1624348996593792208
  for <cip-dev@lists.cip-project.org>;
- Tue, 22 Jun 2021 00:23:00 -0700
-X-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-	by lizzard.sbs.de (8.15.2/8.15.2) with ESMTPS id 15M7MuBm029120
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-	for <cip-dev@lists.cip-project.org>; Tue, 22 Jun 2021 09:22:56 +0200
-X-Received: from [167.87.93.200] ([167.87.93.200])
-	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 15M7Mt5V023270;
-	Tue, 22 Jun 2021 09:22:55 +0200
-Subject: Re: [cip-dev][isar-cip-core][PATCH v2 1/1] swupdate: Add option to use swupdate-handler-roundrobin
-To: cip-dev@lists.cip-project.org,
-        Quirin Gylstorff <quirin.gylstorff@siemens.com>
-References: <e36534ba-4ea0-5751-ad5e-d8103deb6549@siemens.com>
- <20210618180836.3387-1-Quirin.Gylstorff@siemens.com>
- <20210618180836.3387-2-Quirin.Gylstorff@siemens.com>
-From: "Jan Kiszka" <jan.kiszka@siemens.com>
-Message-ID: <27867fa0-ea76-a917-12a1-35f7c647731a@siemens.com>
-Date: Tue, 22 Jun 2021 09:22:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.0
+ Tue, 22 Jun 2021 01:03:17 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gyDX2o3anQftAtcToM0sHZu1EE3tSm6/rTb0E1aaNYk6nS4B177y1wtuY20xWgfR6nSlfm+CZekDziJwCzfJEqpN8+YdoITm12rb6k9fLVW1muCw6vakcsrSkU20TnpvaeP5VJGIvey9uhrFzC1TzsKQXSt+QFvzTS+vQWYbJO/TCxRReQ69OZmmLY2gz6SSOR99nUtF5ljm3Dcvpo7eSWIX3mTH4FEZ/w5uV0wOZ+h8v8jASU/xuxEAMu+Joce8qCNbSnjI9Um8SvvAOuHHRMzu8VFTpgAqvRQCJvPYVpuRWqCFdOm/xxYuFNvUGd/6dzXvih/aErHWkCa1DR+pzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=t9lJcT6m/q32p4BDV47ZEBYKf/9PHlxzhDr8WfRiETA=;
+ b=BAPcEECOJ4KRGLftnL8l4Zmjle0cVjzXrbv51NvutoBt7A4zWgi0eo4l61JG2NrnsETtUIzuD2q8v2FTy61m46jxBBQX/whnmMuQPbTLFGcWkK14/kCcyVB+KX19B9qdZqn68vO7pnbSJWZYTQXwVBSVfxarOr9WJCOcyOq/nWDlwskU4itSwcLjVzBrIEyI//byWf8lG+f9b7GIgg2hmJCvSVJ1DBQ0V+Ly36xAI7dkLjNYRVPskDsgYtucwTUuALgfFJz/sYjVhtiJoPCZ7qqg27UQEf5FQ6hNFwdXDAOos+zTSgMf0fGWsB2vv6uCgERC1LsBqN3GrIIwgmFnWg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+X-Received: from AM0PR10MB2322.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:208:d7::22)
+ by AM0PR10MB2675.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:208:12d::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4242.18; Tue, 22 Jun
+ 2021 08:03:14 +0000
+X-Received: from AM0PR10MB2322.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8c7a:86c4:6a88:e7d6]) by AM0PR10MB2322.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8c7a:86c4:6a88:e7d6%7]) with mapi id 15.20.4242.023; Tue, 22 Jun 2021
+ 08:03:14 +0000
+Date: Tue, 22 Jun 2021 10:03:10 +0200
+From: "Michael Adler" <michael.adler@siemens.com>
+To: cip-dev@lists.cip-project.org
+CC: Chris.Paterson2@renesas.com
+Subject: Re: [cip-dev] Failing -stable-rc tests
+Message-ID: <20210622080310.hbb72zbb2du6qgrn@kratos.fritz.box>
+In-Reply-To: <20210621193629.GA22045@duo.ucw.cz>
+X-Originating-IP: [93.104.81.42]
+X-ClientProxiedBy: AM3PR05CA0092.eurprd05.prod.outlook.com
+ (2603:10a6:207:1::18) To AM0PR10MB2322.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:208:d7::22)
 MIME-Version: 1.0
-In-Reply-To: <20210618180836.3387-2-Quirin.Gylstorff@siemens.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-Received: from localhost (93.104.81.42) by AM3PR05CA0092.eurprd05.prod.outlook.com (2603:10a6:207:1::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4242.18 via Frontend Transport; Tue, 22 Jun 2021 08:03:13 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8eccd2e3-9a01-472c-d4ee-08d935542f47
+X-MS-TrafficTypeDiagnostic: AM0PR10MB2675:
+X-Microsoft-Antispam-PRVS: 
+	<AM0PR10MB26754EBEE7426D9FF6E6973CE8099@AM0PR10MB2675.EURPRD10.PROD.OUTLOOK.COM>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: 
+	gmKZeI3ipujRFXhgYEY2y/dDjAYpY+KwpBucPowNOysJaFklBhmU0YepCMqJiZWEo6l/92lIlnrC89E0ZrfuRy4mouu+SuT9GBEcswwTZgVyZHRSJ5fav3vDyEjBCl7Oxuyvdixdz36Vu11fkZfggNsFAqYL4ke82pPSbxhC2hjUrHC1MKGaYiP4o/nnHfcN6Aqv75uJcum8Eb/qwzzkhBhZfoc6oJs+G/uUB978vDmVAiGozbMXXBYjLaAVe9HsXQR+Skpqmbn0enllgMPhUQAmoscr5kAMbFhjesoLEDspo44A7jPmijv4YECYeav1DxtqS9ub/9gmAvmf+Oh87v/1EqbEhcrSwAZGbQgv50nvYkwAu0wLRc2PyQqKDEAC1LN+YmH8be4EP7/MI2SbDQw49cvkCKEWTA/kufA9za87Lq/06J45Zg5E/YpdkQTZGykUUx+90scTbTgwQI9jlmSJt6RiRA8vTsrfOHMGokMeqU1nqqYVEcdSVnCZxdZPGBoNX3D1uA6+kl4c+v3YJ43F3sTAQ35t6yytFB/wj5dnfaieZFiPZNlfVEXlQm9SAyKsrLwgRqFVHdKsPwsEL9iJMzyAWOU54ctssJu69tEReIsRwSwO3/6rVRhcuZqisqLMR2raRiEqFHuIsfzqyBQn4mkDBR+GDcG3tn4VtaiqMYxj+A/oWVLVQq8cFRpkq9tV1VRX3esDtlwGfKYipg==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?FmmPkM8fhxOe4PaxlvEqrYPAW0GRGV2Zg5RwbRjk3LK+j5zXGnxOjxo2Oosd?=
+ =?us-ascii?Q?bSKrJnJImhFj5WcP/ZXMnSCN8AtpXjzBd7G/+3Ep60ZKW7c2fZduOpW7vSsQ?=
+ =?us-ascii?Q?ruclFBLSvvorFw0qR4MV4MLuE/Jo/4DbIIAS9b/CXWAC0Uc2aFK7msot+rPK?=
+ =?us-ascii?Q?lHDw+I5lMllzwNBrxvMq6825wa1JNMPHczqN1nK+ikINP6v6fzYUoQXIc5jl?=
+ =?us-ascii?Q?szZKObkteDXM0gGobTOBOGRLXnLoeSzUSHp5/5ZAfZAm84tklcqpFfKMPjwt?=
+ =?us-ascii?Q?jgOTzUHPGAunP7CVNWPCqNkrdlLjv9HHnipWKfKo5B6OQlIDpsyany6CTcrI?=
+ =?us-ascii?Q?g8Dhc5HRfgUr5tGx2q4DsLeX06DGehctLbLdkZ4Hm3xjszA4PE2UKscjEodc?=
+ =?us-ascii?Q?S3OpXNZD/VBOEMMD31q98b+ITCc6BrHHJnM/N8H8dvPIKyVwmYZ9vctFzwx9?=
+ =?us-ascii?Q?IKiRzSnzaRegdzgEJbRsly4fOARhpkXHTtDLgjC/3z4pJhGjg49J2Oqz84c5?=
+ =?us-ascii?Q?eXkHYvgozD2GZJae6vK8DofMkLg/ov5YvMxgruXVoN4OWVR6CXAHCzM9LVcF?=
+ =?us-ascii?Q?rTOoeHf3ZVMJAjrvc+rzPmIWqyl8ZGxKiJ130CeLSPUcEDBs78eKDRR4IoFe?=
+ =?us-ascii?Q?H5vmhps59SuPc5KbZ86GJWV3rI/VsdbqHLj4QE+gVxY79m+UgQ1E1k+JkvWm?=
+ =?us-ascii?Q?TgNC+6yCQQrHb44XVKjQmwAU3nRNqirQyOiH4be4UoGPEhd3/DsjOlEtg9Xs?=
+ =?us-ascii?Q?uyC27HXgIKzXUfqbjSv/eBgynNLRNuz8uJ5E1UggBhPrgDhEAyy8oDfG1ND/?=
+ =?us-ascii?Q?jflh64rlq8N/kZ9DmWdCzloz2vwwMjpE8E1yV7LxCB/MvLC2SRd8rSGDkaCd?=
+ =?us-ascii?Q?v5pmmBb5qpL411wjlhub26yBeqVY03mXO+FgZX4C36UvcUSrEsQTDedaK4++?=
+ =?us-ascii?Q?sKPXwY0iAZKN9cFLVhKz6/hQBYrIxJmyR1g9ZTomdyjYQgFKRTCFF+r/yyDr?=
+ =?us-ascii?Q?fqsOKtOIoqzcNS4XVrf43l/HnBr7ZWyvWU8fLnu6Y0aCEOiEcZ5DdFZDUHB4?=
+ =?us-ascii?Q?BYm5GODFw0PWORH7AiCpYQFLX07XCL+7V9c+KSLwSzSa2/0KJlkb9ekMZYjo?=
+ =?us-ascii?Q?WbDzjhM2MQq9iHv5ItUu2sKonkplIGKbyukALhj8BMMvkBh65x+lW2GXuffO?=
+ =?us-ascii?Q?J6S1yR125OzE9D7RqPsg4WWD7i2t/oqjZWXMtGk4WY53T+iuJriyn3FqWY4J?=
+ =?us-ascii?Q?E70bkCnsde/DDDswwwUjbekjhP3FIQtwuXCQo8TaoZXE+vqt2mj7wo0eY+Kz?=
+ =?us-ascii?Q?yeYEWZtd2AklrmJ0d92AtqF8?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8eccd2e3-9a01-472c-d4ee-08d935542f47
+X-MS-Exchange-CrossTenant-AuthSource: AM0PR10MB2322.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jun 2021 08:03:14.2873
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Wq99cD//GCySqUSkdOjkLuqSW2bZCCYOoVoQlt/BmMvoQ3EzmqIg4pw+bkrq26DHRoWTGcMBV1oPYIL/VEfyLC3WPZ0ygkebQoywj0dMe5E=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR10MB2675
 Precedence: Bulk
 List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
 List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
@@ -50,723 +108,63 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: fGx2uAjU6VzCGtxzOnnsqRF5x4520388AA=
-Content-Type: multipart/mixed; boundary="EUbv5a5UHXZWF9sUjX5D"
+X-Gm-Message-State: zn7HPVtUrLsMWxBZuRn9QoXPx4520388AA=
+Content-Type: multipart/mixed; boundary="QRYicw3unR1dmEDxfdKT"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1624346581;
- bh=SUjPl7rSuHRWbAJCM/k4aIp2FS9sHd2AP6XbD3R3DRw=;
- h=Content-Type:Date:From:Reply-To:Subject:To;
- b=sE4esF3mTgFgF6Lj61QDtu26EBar+//OTN/7+Rxna9cpJSoJ5yK+BJo69/xbJd547Iu
- 1qBhmbYS38MEI4DrGMTeDJOyTypT3sSEZe1Zm972btplSduBykkYDCGtU6sQlCqd3OLX8
- DPNspgBb7D4MR/n/iebFkyHHtR47P7bVubQ=
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1624348997;
+ bh=owKBsIkPpHvFZGHRetT9XsDRQ2HruKyuLJC1XHCz/B8=;
+ h=CC:Content-Type:Date:From:Reply-To:Subject:To;
+ b=i8GRwRdqDSubcAhii/OXHc56KPZ9qQhIwI30I298mn0vvgpGHGWNPm4NbAa0mzCg2Ui
+ RgmWRPkJxBsfQ24fq4fnjEn2Fi6MKOJMXvkjVIGoxIdBYzLIR/zMyOQxaxT7hF7fGfRa8
+ vWyMBtTdwTH9l1Yrdcy+yvz2Q0jGPlfFQHw=
 
---EUbv5a5UHXZWF9sUjX5D
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+--QRYicw3unR1dmEDxfdKT
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 18.06.21 20:08, Quirin Gylstorff wrote:
-> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> 
-> The new SWUpdate round-robin handler is available under[1].
-> Add the Option `SWUPDATE_HANDLER_BOOT_HANDLER_CONFIG` to
-> set the source of the swupdate-handler-roundrobin configuration.
-> 
-> If another Lua handler should be used,  set the variable
-> `SWUPDATE_USE_ROUND_ROBIN_HANDLER_REPO` to `0`. Add the alternative
-> handler to the repository and use the variable
-> `SWUPDATE_LUASCRIPT` to add the handler to the build.
-> 
-> [1]: https://gitlab.com/cip-project/cip-sw-updates/swupdate-handler-roundrobin
-> 
-> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> ---
->  classes/swupdate-config.bbclass               |  14 +-
->  kas/opt/ebg-secure-boot-base.yml              |   1 +
->  .../files/secure-boot/sw-description.tmpl     |  14 +-
->  recipes-core/images/files/sw-description.tmpl |  21 +-
->  .../swupdate.handler.efibootguard.ini         |  16 +
->  .../files/swupdate.handler.efibootguard.ini   |  26 +
->  .../swupdate/files/swupdate_handlers.lua      | 453 ------------------
->  recipes-core/swupdate/swupdate.bb             |  13 +-
->  8 files changed, 90 insertions(+), 468 deletions(-)
->  create mode 100644 recipes-core/swupdate/files/secureboot/swupdate.handler.efibootguard.ini
->  create mode 100644 recipes-core/swupdate/files/swupdate.handler.efibootguard.ini
->  delete mode 100644 recipes-core/swupdate/files/swupdate_handlers.lua
-> 
-> diff --git a/classes/swupdate-config.bbclass b/classes/swupdate-config.bbclass
-> index f67ca4f..dfa3579 100644
-> --- a/classes/swupdate-config.bbclass
-> +++ b/classes/swupdate-config.bbclass
-> @@ -17,14 +17,22 @@ BUILD_DEB_DEPENDS = " \
->      zlib1g-dev, debhelper, libconfig-dev, libarchive-dev, \
->      python-sphinx:native, dh-systemd, libsystemd-dev, libssl-dev, pkg-config"
->  
-> +SRC_URI += " ${@ 'git://gitlab.com/cip-project/cip-sw-updates/swupdate-handler-roundrobin.git;protocol=https;destsuffix=swupdate-handler-roundrobin;name=swupdate-handler-roundrobin;nobranch=1' \
-> +    if d.getVar('SWUPDATE_USE_ROUND_ROBIN_HANDLER_REPO') == '1' else '' \
-> +    }"
-> +SRCREV_swupdate-handler-roundrobin ?= "6f561f136fdbe51d2e9066b934dfcb06b94c6624"
-> +
-> +SWUPDATE_USE_ROUND_ROBIN_HANDLER_REPO ?= "1"
-> +SWUPDATE_LUASCRIPT ?= "swupdate-handler-roundrobin/swupdate_handlers_roundrobin.lua"
-> +
->  KFEATURE_lua = ""
->  KFEATURE_lua[BUILD_DEB_DEPENDS] = "liblua5.3-dev"
->  KFEATURE_lua[KCONFIG_SNIPPETS] = "file://swupdate_defconfig_lua.snippet"
->  
->  KFEATURE_luahandler = ""
->  KFEATURE_luahandler[KCONFIG_SNIPPETS] = "file://swupdate_defconfig_luahandler.snippet"
-> -KFEATURE_luahandler[SRC_URI] = "file://${SWUPDATE_LUASCRIPT}"
-> -
-> +KFEATURE_luahandler[SRC_URI] = "${@ 'file://${SWUPDATE_LUASCRIPT}' \
-> +                                  if d.getVar('SWUPDATE_USE_ROUND_ROBIN_HANDLER_REPO') == '0' else '' }"
->  KFEATURE_DEPS = ""
->  KFEATURE_DEPS[luahandler] = "lua"
->  
-> @@ -59,8 +67,6 @@ KFEATURE_u-boot[DEPENDS] = "${@ 'libubootenv u-boot-${MACHINE}-config' \
->                                            else 'libubootenv'}"
->  KFEATURE_u-boot[KCONFIG_SNIPPETS] = "file://swupdate_defconfig_u-boot.snippet"
->  
-> -SWUPDATE_LUASCRIPT ?= "swupdate_handlers.lua"
-> -
->  def get_bootloader_featureset(d):
->      bootloader = d.getVar("SWUPDATE_BOOTLOADER", True) or ""
->      if bootloader == "efibootguard":
-> diff --git a/kas/opt/ebg-secure-boot-base.yml b/kas/opt/ebg-secure-boot-base.yml
-> index 35fb42e..8182bd8 100644
-> --- a/kas/opt/ebg-secure-boot-base.yml
-> +++ b/kas/opt/ebg-secure-boot-base.yml
-> @@ -18,3 +18,4 @@ local_conf_header:
->    initramfs: |
->      IMAGE_INSTALL += "initramfs-abrootfs-secureboot"
->      SWU_DESCRIPTION = "secureboot"
-> +    SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG = "secureboot/swupdate.handler.${SWUPDATE_BOOTLOADER}.ini"
-> diff --git a/recipes-core/images/files/secure-boot/sw-description.tmpl b/recipes-core/images/files/secure-boot/sw-description.tmpl
-> index bce97d0..34a58a3 100644
-> --- a/recipes-core/images/files/secure-boot/sw-description.tmpl
-> +++ b/recipes-core/images/files/secure-boot/sw-description.tmpl
-> @@ -14,16 +14,22 @@ software =
->      name = "secure boot update"
->      images: ({
->              filename = "${ROOTFS_PARTITION_NAME}";
-> -            device = "fedcba98-7654-3210-cafe-5e0710000001,fedcba98-7654-3210-cafe-5e0710000002";
-> +            device = "sda4,sda5";
->              type = "roundrobin";
-> -            compressed = "true";
-> +            compressed = "zlib";
->              filesystem = "ext4";
-> +            properties: {
-> +                        subtype = "image";
-> +            };
->      });
->      files: ({
->              filename = "linux.signed.efi";
->              path = "linux.signed.efi";
-> -            type = "kernelfile";
-> -            device = "sda2,sda3";
-> +            type = "roundrobin";
-> +            device = "sda4->sda2,sda5->sda3";
->              filesystem = "vfat";
-> +            properties: {
-> +                        subtype = "kernel";
-> +            };
->      })
->  }
-> diff --git a/recipes-core/images/files/sw-description.tmpl b/recipes-core/images/files/sw-description.tmpl
-> index bb34088..3309271 100644
-> --- a/recipes-core/images/files/sw-description.tmpl
-> +++ b/recipes-core/images/files/sw-description.tmpl
-> @@ -16,21 +16,30 @@ software =
->              filename = "${ROOTFS_PARTITION_NAME}";
->              device = "fedcba98-7654-3210-cafe-5e0710000001,fedcba98-7654-3210-cafe-5e0710000002";
->              type = "roundrobin";
-> -            compressed = "true";
-> +            compressed = "zlib";
->              filesystem = "ext4";
-> +            properties: {
-> +                        subtype = "image";
-> +            };
->      });
->      files: ({
->              filename = "${KERNEL_IMAGE}";
->              path = "vmlinuz";
-> -            type = "kernelfile";
-> -            device = "sda2,sda3";
-> +            type = "roundrobin";
-> +            device = "fedcba98-7654-3210-cafe-5e0710000001->sda2,fedcba98-7654-3210-cafe-5e0710000002->sda3";
->              filesystem = "vfat";
-> +            properties: {
-> +                        subtype = "kernel";
-> +            };
->      },
->      {
->              filename = "${INITRD_IMAGE}";
-> -            path = "initrd.img";
-> -            type = "kernelfile";
-> -            device = "sda2,sda3";
-> +            path = "${INITRD_IMAGE}";
-> +            type = "roundrobin";
-> +            device = "fedcba98-7654-3210-cafe-5e0710000001->sda2,fedcba98-7654-3210-cafe-5e0710000002->sda3";
->              filesystem = "vfat";
-> +            properties: {
-> +                        subtype = "initrd";
-> +            };
->      });
->  }
-> diff --git a/recipes-core/swupdate/files/secureboot/swupdate.handler.efibootguard.ini b/recipes-core/swupdate/files/secureboot/swupdate.handler.efibootguard.ini
-> new file mode 100644
-> index 0000000..4a109b7
-> --- /dev/null
-> +++ b/recipes-core/swupdate/files/secureboot/swupdate.handler.efibootguard.ini
-> @@ -0,0 +1,16 @@
-> +[image]
-> +chainhandler=raw
-> +
-> +[image.selector]
-> +method=getroot_rr
-> +key=root
-> +
-> +[kernel]
-> +chainhandler=rawfile
-> +
-> +[kernel.selector]
-> +method=getroot_rrmap
-> +key=root
-> +
-> +[kernel.bootenv]
-> +kernelfile=C:BOOT${rrindex}:linux.signed.efi
-> diff --git a/recipes-core/swupdate/files/swupdate.handler.efibootguard.ini b/recipes-core/swupdate/files/swupdate.handler.efibootguard.ini
-> new file mode 100644
-> index 0000000..3aee76c
-> --- /dev/null
-> +++ b/recipes-core/swupdate/files/swupdate.handler.efibootguard.ini
-> @@ -0,0 +1,26 @@
-> +[image]
-> +chainhandler=raw
-> +
-> +[image.selector]
-> +method=cmdline_rr
-> +key=root
-> +
-> +[image.bootenv]
-> +kernelparams=root=PARTUUID=${rrtarget} ${cmdline_root}
-> +
-> +[kernel]
-> +chainhandler=rawfile
-> +
-> +[kernel.selector]
-> +method=cmdline_rrmap
-> +key=root
-> +
-> +[kernel.bootenv]
-> +kernelfile=C:BOOT${rrindex}:vmlinuz
-> +
-> +[initrd]
-> +chainhandler=rawfile
-> +
-> +[initrd.selector]
-> +method=cmdline_rrmap
-> +key=root
-> diff --git a/recipes-core/swupdate/files/swupdate_handlers.lua b/recipes-core/swupdate/files/swupdate_handlers.lua
-> deleted file mode 100644
-> index f2ecc54..0000000
-> --- a/recipes-core/swupdate/files/swupdate_handlers.lua
-> +++ /dev/null
-> @@ -1,453 +0,0 @@
-> ---[[
-> -
-> -    Round-robin Image and File Handler.
-> -
-> -    Copyright (C) 2019, Siemens AG
-> -
-> -    Author: Christian Storm <christian.storm@siemens.com>
-> -
-> -    SPDX-License-Identifier: GPL-2.0-or-later
-> -
-> -    An `sw-description` file using these handlers may look like:
-> -        software =
-> -        {
-> -            version = "0.1.0";
-> -            images: ({
-> -                filename = "rootfs.ext4";
-> -                device = "sda4,sda5";
-> -                type = "roundrobin";
-> -                compressed = false;
-> -            });
-> -            files: ({
-> -                filename = "vmlinuz";
-> -                path = "vmlinuz";
-> -                type = "kernelfile";
-> -                device = "sda2,sda3";
-> -                filesystem = "vfat";
-> -            },
-> -            {
-> -                filename = "initrd.img";
-> -                path = "initrd.img";
-> -                type = "kernelfile";
-> -                device = "sda2,sda3";
-> -                filesystem = "vfat";
-> -            });
-> -        }
-> -
-> -    The semantics is as follows: Instead of having a fixed target device,
-> -    the 'roundrobin' image handler calculates the target device by parsing
-> -    /proc/cmdline, matching the root=<device> kernel parameter against its
-> -    'device' attribute's list of devices, and sets the actual target
-> -    device to the next 'device' attribute list entry in a round-robin
-> -    manner. The actual flashing is done via chain-calling another handler,
-> -    defaulting to the "raw" handler.
-> -
-> -    The 'kernelfile' file handler reuses the 'roundrobin' handler's target
-> -    device calculation by reading the actual target device from the same
-> -    index into its 'device' attribute's list of devices. The actual placing
-> -    of files into this partition is done via chain-calling another handler,
-> -    defaulting to the "rawfile" handler.
-> -
-> -    In the above example, if /dev/sda4 is currently booted according to
-> -    /proc/cmdline, /dev/sda5 will be flashed and the vmlinuz and initrd.img
-> -    files will be placed on /dev/sda3. If /dev/sda5 is booted, /dev/sda4
-> -    will be flashed and the vmlinuz and initrd.img files are placed on
-> -    /dev/sda2.
-> -    In addition to "classical" device nodes as in this example, partition
-> -    UUIDs as reported, e.g., by `blkid -s PARTUUID` are also supported.
-> -    UBI volumes are supported as well by specifying a CSV list of
-> -    ubi<number>:<label> items.
-> -
-> -    Configuration is done via an INI-style configuration file located at
-> -    /etc/swupdate.handler.ini or via compiled-in configuration (by
-> -    embedding the Lua handler script into the SWUpdate binary via using
-> -    CONFIG_EMBEDDED_LUA_HANDLER), the latter having precedence over the
-> -    former. See the example configuration below.
-> -    If uncommenting this example block, it will take precedence over any
-> -    /etc/swupdate.handler.ini configuration file.
-> -
-> -    The chain-called handlers can either be specified in the configuration,
-> -    i.e., a static run-time setting, or via the 'chainhandler' property of
-> -    an 'image' or 'file' section in the sw-description, with the latter
-> -    taking precedence over the former, e.g.,
-> -        ...
-> -        images: ({
-> -                filename = "rootfs.ext4";
-> -                device = "sda4,sda5";
-> -                type = "roundrobin";
-> -                properties: {
-> -                    chainhandler = "myraw";
-> -                };
-> -            });
-> -        ...
-> -    Such a sw-description fragment will chain-call the imaginary "myraw"
-> -    handler regardless of what's been configured in the compiled-in or the
-> -    configuration file.
-> -    When chain-calling the "rdiff_image" handler, its 'rdiffbase' property
-> -    is subject to round-robin as well, i.e., the 'rdiffbase' property is
-> -    expected to be a CSV list as for the 'device' property, and the actual
-> -    'rdiffbase' property value is calculated following the same round-robin
-> -    calculation mechanism stated above prior to chain-calling the actual
-> -    "rdiff_image" handler, e.g.,
-> -        images: ({
-> -                filename = "rootfs.ext4";
-> -                type = "roundrobin";
-> -                device = "sda4,sda5";
-> -                properties: {
-> -                    chainhandler = "rdiff_image";
-> -                    rdiffbase="sda1,sda2";
-> -                };
-> -            });
-> -    will set the 'rdiffbase' property to /dev/sda2 (/dev/sda1) if /dev/sda4
-> -    (/dev/sda5) is the currently booted root file system according to
-> -    /proc/cmdline parsing.
-> -
-> -]]
-> -
-> -
-> -local configuration = [[
-> -[bootloader]
-> -# Required: bootloader name, uboot and ebg currently supported.
-> -name=ebg
-> -# Required: bootloader-specific key-value pairs, e.g., for ebg:
-> -kernelname=linux.signed.efi
-> -# For relying on FAT labels, prefix bootlabels with 'L:', e.g., L:BOOT0.
-> -# For using custom labels, i.e., relying on the contents of an EFILABEL
-> -# file within the partition, prefix it with 'C:', e.g., C:BOOT0.
-> -bootlabel={ "C:BOOT0:", "C:BOOT1:" }
-> -
-> -# Optional: handler to chain-call for the 'roundrobin' handler,
-> -# defaulting to 'raw'
-> -[roundrobin]
-> -chainhandler=raw
-> -
-> -# Optional: handler to chain-call for the 'kernelfile' handler,
-> -# defaulting to 'rawfile'
-> -[kernelfile]
-> -chainhandler=rawfile
-> -]]
-> -
-> --- Default configuration file, tried if no compiled-in config is available.
-> -local cfgfile = "/etc/swupdate.handler.ini"
-> -
-> --- Table holding the configuration.
-> -local config = {}
-> -
-> --- Mandatory configuration [section] and keys
-> -local BOOTLOADERCFG = {
-> -    ebg   = {
-> -        bootloader = {"name", "bootlabel", "kernelname"}
-> -    },
-> -    -- TODO fill with mandatory U-Boot configuration
-> -    uboot = {
-> -        bootloader = {"name"}
-> -    }
-> -}
-> -
-> --- enum-alikes to make code more readable
-> -local BOOTLOADER = { EBG = "ebg", UBOOT = "uboot" }
-> -local PARTTYPE   = { UUID = 1, PLAIN = 2, UBI = 3 }
-> -
-> --- Target table describing the target device the image is to be/has been flashed to.
-> -local rrtarget = {
-> -    size = function(self)
-> -        local _size = 0
-> -        for index in pairs(self) do _size = _size + 1 end
-> -        return _size - 1
-> -    end
-> -}
-> -
-> --- Helper function parsing CSV fields of a struct img_type such as
-> --- the "device" fields or the "rdiffbase" property.
-> -local get_device_list = function(device_node_csv_list)
-> -    local device_list = {}
-> -    for item in device_node_csv_list:gmatch("([^,]+)") do
-> -        local device_node = item:gsub("/dev/", "")
-> -        device_list[#device_list+1] = device_node
-> -        device_list[device_node] = #device_list
-> -    end
-> -    return device_list
-> -end
-> -
-> --- Helper function to determine device node location.
-> -local get_device_path = function(device_node)
-> -    if device_node:match("ubi%d+:%S+") then
-> -        return 0, device_node, PARTTYPE.UBI
-> -    end
-> -    local device_path = string.format("/dev/disk/by-partuuid/%s", device_node)
-> -    local file = io.open(device_path, "rb" )
-> -    if file then
-> -        file:close()
-> -        return 0, device_path, PARTTYPE.UUID
-> -    end
-> -    device_path = string.format("/dev/%s", device_node)
-> -    file = io.open(device_path, "rb" )
-> -    if file then
-> -        file:close()
-> -        return 0, device_path, PARTTYPE.PLAIN
-> -    end
-> -    swupdate.error(string.format("Cannot access target device node /dev/{,disk/by-partuuid}/%s", device_node))
-> -    return 1, nil, nil
-> -end
-> -
-> --- Helper function parsing the INI-style configuration.
-> -local get_config = function()
-> -    -- Return configuration right away if it's already parsed.
-> -    if config ~= nil and #config > 0 then
-> -        return config
-> -    end
-> -
-> -    -- Get configuration INI-style string.
-> -    if not configuration then
-> -        swupdate.trace(string.format("No compiled-in config found, trying %s", cfgfile))
-> -        local file = io.open(cfgfile, "r" )
-> -        if not file then
-> -            swupdate.error(string.format("Cannot open config file %s", cfgfile))
-> -            return nil
-> -        end
-> -        configuration = file:read("*a")
-> -        file:close()
-> -    end
-> -    if configuration:sub(-1) ~= "\n" then
-> -        configuration=configuration.."\n"
-> -    end
-> -
-> -    -- Parse INI-style contents into config table.
-> -    local sec, key, value
-> -    for line in configuration:gmatch("(.-)\n") do
-> -        if line:match("^%[([%w%p]+)%][%s]*") then
-> -            sec = line:match("^%[([%w%p]+)%][%s]*")
-> -            config[sec] = {}
-> -        elseif sec then
-> -            key, value = line:match("^([%w%p]-)=(.*)$")
-> -            if key and value then
-> -                if tonumber(value)  then value = tonumber(value) end
-> -                if value == "true"  then value = true            end
-> -                if value == "false" then value = false           end
-> -                if value:sub(1,1) == "{" then
-> -                    local _value = {}
-> -                    for _key, _ in value:gmatch("\"(%S+)\"") do
-> -                        table.insert(_value, _key)
-> -                    end
-> -                    value = _value
-> -                end
-> -                config[sec][key] = value
-> -            else
-> -                if not line:match("^$") and not line:match("^#") then
-> -                    swupdate.warn(string.format("Syntax error, skipping '%s'", line))
-> -                end
-> -            end
-> -        else
-> -            swupdate.error(string.format("Syntax error. no [section] encountered."))
-> -            return nil
-> -        end
-> -    end
-> -
-> -    -- Check config table for mandatory key existence.
-> -    if config["bootloader"] == nil or config["bootloader"]["name"] == nil then
-> -        swupdate.error(string.format("Syntax error. no [bootloader] encountered or name= missing therein."))
-> -        return nil
-> -    end
-> -    local bcfg = BOOTLOADERCFG[config.bootloader.name]
-> -    if not bcfg then
-> -        swupdate.error(string.format("Bootloader unsupported, name=uboot|ebg missing in [bootloader]?."))
-> -        return nil
-> -    end
-> -    for sec, _ in pairs(bcfg) do
-> -        for _, key in pairs(bcfg[sec]) do
-> -            if config[sec] == nil or config[sec][key] == nil then
-> -                swupdate.error(string.format("Mandatory config key %s= in [%s] not found.", key, sec))
-> -            end
-> -        end
-> -    end
-> -
-> -    return config
-> -end
-> -
-> --- Round-robin image handler for updating the root partition.
-> -function handler_roundrobin(image)
-> -    -- Read configuration.
-> -    if not get_config() then
-> -        swupdate.error("Cannot read configuration.")
-> -        return 1
-> -    end
-> -
-> -    -- Check if we can chain-call the handler.
-> -    local chained_handler = "raw"
-> -    if image.properties ~= nil and image.properties["chainhandler"] ~= nil then
-> -        chained_handler = image.properties["chainhandler"]
-> -    elseif config["roundrobin"] ~= nil and config["roundrobin"]["chainhandler"] ~= nil then
-> -        chained_handler = config["roundrobin"]["chainhandler"]
-> -    end
-> -    if not swupdate.handler[chained_handler] then
-> -        swupdate.error(string.format("'%s' handler not available in SWUpdate distribution.", chained_handler))
-> -        return 1
-> -    end
-> -
-> -    -- Get device list for round-robin.
-> -    local devices = get_device_list(image.device)
-> -    if #devices < 2 then
-> -        swupdate.error("Specify at least 2 devices in the device= property for 'roundrobin'.")
-> -        return 1
-> -    end
-> -
-> -    -- Check that rrtarget is unset, else a reboot may be pending.
-> -    if rrtarget:size() > 0 then
-> -        swupdate.warn("The 'roundrobin' handler has been run. Is a reboot pending?")
-> -    end
-> -
-> -    -- Determine current root device.
-> -    local file = io.open("/proc/cmdline", "r")
-> -    if not file then
-> -        swupdate.error("Cannot open /proc/cmdline.")
-> -        return 1
-> -    end
-> -    local cmdline = file:read("*l")
-> -    file:close()
-> -
-> -    local rootparam, rootdevice
-> -    for item in cmdline:gmatch("%S+") do
-> -        rootparam, rootdevice = item:match("(root=[%u=]*[/dev/]*(%S+))")
-> -        if rootparam and rootdevice then break end
-> -    end
-> -    if not rootdevice then
-> -        -- Use findmnt to get the rootdev
-> -      rootdevice = io.popen('findmnt -nl / -o PARTUUID'):read("*l")
-> -      if not rootdevice then
-> -        swupdate.error("Cannot determine current root device.")
-> -        return 1
-> -      end
-> -    end
-> -    swupdate.info(string.format("Current root device is: %s", rootdevice))
-> -
-> -    if not devices[rootdevice] then
-> -        swupdate.error(string.format("Current root device '%s' is not in round-robin root devices list: %s", rootdevice, image.device:gsub("/dev/", "")))
-> -        return 1
-> -    end
-> -
-> -    -- Perform round-robin calculation for target.
-> -    local err
-> -    rrtarget.index = devices[rootdevice] % #devices + 1
-> -    rrtarget.device_node = devices[rrtarget.index]
-> -    err, rrtarget.device_path, rrtarget.parttype = get_device_path(devices[rrtarget.index])
-> -    if err ~= 0 then
-> -        return 1
-> -    end
-> -    swupdate.info(string.format("Using '%s' as 'roundrobin' target via '%s' handler.", rrtarget.device_path, chained_handler))
-> -
-> -    -- If the chain-called handler is rdiff_image, adapt the rdiffbase property
-> -    if chained_handler == "rdiff_image" then
-> -        if image.properties ~= nil and image.properties["rdiffbase"] ~= nil then
-> -            local rdiffbase_devices = get_device_list(image.properties["rdiffbase"])
-> -            if #rdiffbase_devices < 2 then
-> -                swupdate.error("Specify at least 2 devices in the rdiffbase= property for 'roundrobin'.")
-> -                return 1
-> -            end
-> -            err, image.propierties["rdiffbase"], _ = get_device_path(rdiffbase_devices[rrtarget.index])
-> -            if err ~= 0 then
-> -                return 1
-> -            end
-> -            swupdate.info(string.format("Using device %s as rdiffbase.", image.properties["rdiffbase"]))
-> -        else
-> -            swupdate.error("Property 'rdiffbase' is missing in sw-description.")
-> -            return 1
-> -        end
-> -    end
-> -
-> -    -- Actually flash the partition.
-> -    local msg
-> -    image.type = chained_handler
-> -    image.device = rrtarget.device_path
-> -    err, msg = swupdate.call_handler(chained_handler, image)
-> -    if err ~= 0 then
-> -        swupdate.error(string.format("Error chain-calling '%s' handler: %s", chained_handler, (msg or "")))
-> -        return 1
-> -    end
-> -
-> -    if config.bootloader.name == BOOTLOADER.EBG then
-> -      if rootparam then
-> -        local value = cmdline:gsub(
-> -            rootparam:gsub("%-", "%%-"),
-> -            string.format("root=%s%s",
-> -                (rrtarget.parttype == PARTTYPE.PLAIN and "") or (rrtarget.parttype == PARTTYPE.UBI and "") or "PARTUUID=",
-> -                 rrtarget.parttype == PARTTYPE.PLAIN and rrtarget.device_path or devices[rrtarget.index]
-> -            )
-> -        )
-> -        swupdate.info(string.format("Setting EFI Bootguard environment: kernelparams=%s", value))
-> -        swupdate.set_bootenv("kernelparams", value)
-> -      end
-> -    elseif config.bootloader.name == BOOTLOADER.UBOOT then
-> -        -- Update U-Boot environment.
-> -        swupdate.info(string.format("Setting U-Boot environment"))
-> -        local value = rrtarget.index
-> -        swupdate.set_bootenv("swupdpart", value);
-> -    end
-> -
-> -    return 0
-> -end
-> -
-> --- File handler for updating kernel files.
-> -function handler_kernelfile(image)
-> -    -- Check if we can chain-call the handler.
-> -    local chained_handler = "rawfile"
-> -    if image.properties ~= nil and image.properties["chainhandler"] ~= nil then
-> -        chained_handler = image.properties["chainhandler"]
-> -    elseif config["kernelfile"] ~= nil and config["kernelfile"]["chainhandler"] ~= nil then
-> -        chained_handler = config["kernelfile"]["chainhandler"]
-> -    end
-> -    if not swupdate.handler[chained_handler] then
-> -        swupdate.error(string.format("'%s' handler not available in SWUpdate distribution."), chained_handler)
-> -        return 1
-> -    end
-> -
-> -    -- Check that rrtarget is set, else the 'roundrobin' handler hasn't been run.
-> -    if rrtarget:size() == 0 then
-> -        swupdate.error("The 'roundrobin' handler hasn't been run.")
-> -        swupdate.info("Place 'roundrobin' above 'kernelfile' in sw-description.")
-> -        return 1
-> -    end
-> -
-> -    -- Get device list for round-robin.
-> -    local devices = get_device_list(image.device)
-> -    if #devices < 2 then
-> -        swupdate.error("Specify at least 2 devices in the device= property for 'kernelfile'.")
-> -        return 1
-> -    end
-> -    if rrtarget.index > #devices then
-> -        swupdate.error("Cannot map kernel partition to root partition.")
-> -        return 1
-> -    end
-> -
-> -    -- Perform round-robin indexing for target.
-> -    local err
-> -    err, image.device, _ = get_device_path(devices[rrtarget.index])
-> -    if err ~= 0 then
-> -        return 1
-> -    end
-> -    swupdate.info(string.format("Using '%s' as 'kernelfile' target via '%s' handler.", image.device, chained_handler))
-> -
-> -    -- Actually copy the 'kernelfile' files.
-> -    local msg
-> -    image.type = chained_handler
-> -    err, msg = swupdate.call_handler(chained_handler, image)
-> -    if err ~= 0 then
-> -        swupdate.error(string.format("Error chain-calling '%s' handler: %s", chained_handler, (msg or "")))
-> -        return 1
-> -    end
-> -
-> -    if config.bootloader.name == BOOTLOADER.EBG then
-> -        -- Update EFI Boot Guard environment: kernelfile
-> -        local value = string.format("%s%s", config.bootloader.bootlabel[rrtarget.index], config.bootloader.kernelname)
-> -        swupdate.info(string.format("Setting EFI Bootguard environment: kernelfile=%s", value))
-> -        swupdate.set_bootenv("kernelfile", value)
-> -    elseif config.bootloader.name == BOOTLOADER.UBOOT then
-> -        -- Update U-Boot environment.
-> -        swupdate.info(string.format("Setting U-Boot environment"))
-> -        -- TODO
-> -    end
-> -
-> -    return 0
-> -end
-> -
-> -swupdate.register_handler("roundrobin", handler_roundrobin, swupdate.HANDLER_MASK.IMAGE_HANDLER)
-> -swupdate.register_handler("kernelfile", handler_kernelfile, swupdate.HANDLER_MASK.FILE_HANDLER)
-> diff --git a/recipes-core/swupdate/swupdate.bb b/recipes-core/swupdate/swupdate.bb
-> index 75eaf8d..4984a63 100644
-> --- a/recipes-core/swupdate/swupdate.bb
-> +++ b/recipes-core/swupdate/swupdate.bb
-> @@ -29,6 +29,8 @@ DEBIAN_DEPENDS = "${shlibs:Depends}, ${misc:Depends}"
->  inherit dpkg
->  inherit swupdate-config
->  
-> +SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG ?= "swupdate.handler.${SWUPDATE_BOOTLOADER}.ini"
-> +SRC_URI += "file://${SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG}"
->  KFEATURES += "luahandler"
->  
->  S = "${WORKDIR}/git"
-> @@ -46,5 +48,14 @@ do_prepare_build() {
->          echo "configs/${DEFCONFIG}" >> ${S}/.gitignore
->      fi
->      # luahandler
-> -    install -m 0644 ${WORKDIR}/${SWUPDATE_LUASCRIPT} ${S}
-> +    if [ -e ${WORKDIR}/${SWUPDATE_LUASCRIPT} ]; then
-> +        install -m 0644 ${WORKDIR}/${SWUPDATE_LUASCRIPT} ${S}/swupdate_handlers.lua
-> +    fi
-> +    if [ -e ${WORKDIR}/swupdate.handler.${SWUPDATE_BOOTLOADER}.ini ]; then
-> +       install -m 0644 ${WORKDIR}/swupdate.handler.${SWUPDATE_BOOTLOADER}.ini ${S}/swupdate.handler.ini
-> +       echo "swupdate.handler.ini etc/" >> ${S}/debian/swupdate.install
-> +    elif [ -e ${WORKDIR}/${SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG} ]; then
-> +       install -m 0644 ${WORKDIR}/${SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG} ${S}/swupdate.handler.ini
-> +       echo "swupdate.handler.ini etc/" >> ${S}/debian/swupdate.install
-> +    fi
->  }
-> 
-> 
+Hi Pavel,
 
-Thanks, applied to next.
+> This is one of the common failures:
+>=20
+> https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/jobs/1364=
+210937
 
-Jan
+I suspect this is a network issue on the runner node:
 
--- 
-Siemens AG, T RDA IOT
-Corporate Competence Center Embedded Linux
+- upload to AWS S3 failed
+- upload to the Gitlab storage failed too
 
---EUbv5a5UHXZWF9sUjX5D
+I'm wondering if this is just a temporary issue (which goes away after wait=
+ing for a couple of minutes) of if the
+network is permanently down on our (ephermal) runner node.
+
+I suggest adding some retry error handling logic to `/opt/submit_tests.sh`:=
+ if the upload to AWS S3 fails, perform some
+network health checks, in particular ping/curl  some other site like google=
+.com, and try the upload again for a few minutes.
+
+I have also upgraded our runners to v14 (although I don't think that will h=
+elp in this case).
+
+Kind Regards,
+  Michael
+
+--=20
+Michael Adler
+
+Siemens AG
+T RDA IOT SES-DE
+Otto-Hahn-Ring 6
+81739 M=FCnchen, Deutschland
+
+Siemens Aktiengesellschaft: Vorsitzender des Aufsichtsrats: Jim Hagemann Sn=
+abe; Vorstand: Roland Busch, Vorsitzender; Klaus Helmrich, Cedrik Neike, Ma=
+tthias Rebellius, Ralf P. Thomas, Judith Wiese; Sitz der Gesellschaft: Berl=
+in und M=FCnchen, Deutschland; Registergericht: Berlin-Charlottenburg, HRB =
+12300, M=FCnchen, HRB 6684; WEEE-Reg.-Nr. DE 23691322
+
+--QRYicw3unR1dmEDxfdKT
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -774,13 +172,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6568): https://lists.cip-project.org/g/cip-dev/message=
-/6568
-Mute This Topic: https://lists.cip-project.org/mt/83634484/4520388
+View/Reply Online (#6569): https://lists.cip-project.org/g/cip-dev/message=
+/6569
+Mute This Topic: https://lists.cip-project.org/mt/83697468/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/4520388=
 /727948398/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---EUbv5a5UHXZWF9sUjX5D--
+--QRYicw3unR1dmEDxfdKT--
