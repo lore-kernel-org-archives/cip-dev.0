@@ -1,42 +1,119 @@
-Return-Path: <SRS0=j6up=LQ=lists.cip-project.org=bounce+64572+6573+4520388+8129055@kernel.org>
+Return-Path: <SRS0=SRj6=LQ=lists.cip-project.org=bounce+64572+6574+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1,WEIRD_QUOTING autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,PDS_BAD_THREAD_QP_64,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,WEIRD_QUOTING autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4B5BC2B9F4
-	for <cip-dev@archiver.kernel.org>; Tue, 22 Jun 2021 12:47:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 610FEC2B9F4
+	for <cip-dev@archiver.kernel.org>; Tue, 22 Jun 2021 13:26:32 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 17AA96109E
-	for <cip-dev@archiver.kernel.org>; Tue, 22 Jun 2021 12:47:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17AA96109E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6573+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id alpaYY4521723xCCEgpa5Ng3; Tue, 22 Jun 2021 05:47:11 -0700
-X-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web12.8386.1624366030261056595
+	by mail.kernel.org (Postfix) with ESMTPS id 920696128C
+	for <cip-dev@archiver.kernel.org>; Tue, 22 Jun 2021 13:26:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 920696128C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6574+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id ApB7YY4521723x3zlP5ikGpv; Tue, 22 Jun 2021 06:26:31 -0700
+X-Received: from APC01-SG2-obe.outbound.protection.outlook.com (APC01-SG2-obe.outbound.protection.outlook.com [40.107.131.133])
+ by mx.groups.io with SMTP id smtpd.web11.9021.1624368388709542765
  for <cip-dev@lists.cip-project.org>;
- Tue, 22 Jun 2021 05:47:10 -0700
-X-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id E17CF1C0B76; Tue, 22 Jun 2021 14:47:07 +0200 (CEST)
-Date: Tue, 22 Jun 2021 14:47:07 +0200
-From: "Pavel Machek" <pavel@denx.de>
-To: Chris Paterson <Chris.Paterson2@renesas.com>
-Cc: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	Pavel Machek <pavel@denx.de>,
-	"nobuhiro1.iwamatsu@toshiba.co.jp" <nobuhiro1.iwamatsu@toshiba.co.jp>
+ Tue, 22 Jun 2021 06:26:30 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LH4QS6wLvCSkFfURxSEsERYNVTH4FCdvawEqVQBDeHNNqaaN5S1klqvA/+AfVJYwyEwwiFuGLLCSSz3gjS7hnhJt4GbJhGXgeIicz773FWtFszZHlGM7Gs0E3qdmLb1XR1B8o8ZLNwApyGmHE9zCyu2Es8aN5NQgiMosq+fSPyaogwYM/coEj8znLwOhZhZVD3r9W21oGzcjdWi+ouKmJoVCiAWNclfzlyRoWeLOKRTS/e7BzXiCeCdoojqi5mc64t+eZbs70ZNMMhwdGxpjRikh0VnnOcPfTsVvDJNO40MpEUqXoH2gymvaAuXKB2ytxHwpySWAis+rWGj4PhSCtw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zoJR82r3s96lKUWhKA9yza1mfMPb76i5HwbepWmJRM0=;
+ b=TOr6+VjtOV4AH4YJ4JyMzEfUNRjxJMWNVXbNQDRIbhcWHrUc5x6qdpSAwDOQxiw9mCYtZbMr2K2xd9Zv83zViTn7Nt0khPtX5ypBwouGIDqPkqOhONjB9+fFbsmUfMeH/Yi2RtosFhI8iEqNv42YVZ86wLXH90h6tuZ75jgJbUMmYCv6GFijc/jmwzSWFi44GyhZjRhp3Cs2sy5uiZwxkB6FPeNAw51wCjQsUJSh/AVREfDu/d8nAj/TuG/UCsGHuJm8cnvAGi3e+ZXi0aw4HsUDybVFrT6ydJSwt3RMrCbipTUevBYHuIHubX99Tim2rCExZCM6ENIQUkfa/oWMqA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+X-Received: from TYYPR01MB7024.jpnprd01.prod.outlook.com (2603:1096:400:dc::9)
+ by TY2PR01MB2875.jpnprd01.prod.outlook.com (2603:1096:404:6b::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4264.18; Tue, 22 Jun
+ 2021 13:26:23 +0000
+X-Received: from TYYPR01MB7024.jpnprd01.prod.outlook.com
+ ([fe80::8578:3ec9:5573:4743]) by TYYPR01MB7024.jpnprd01.prod.outlook.com
+ ([fe80::8578:3ec9:5573:4743%4]) with mapi id 15.20.4242.023; Tue, 22 Jun 2021
+ 13:26:23 +0000
+From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>, Chris
+ Paterson <Chris.Paterson2@renesas.com>
+CC: Pavel Machek <pavel@denx.de>, "nobuhiro1.iwamatsu@toshiba.co.jp"
+	<nobuhiro1.iwamatsu@toshiba.co.jp>
 Subject: Re: [cip-dev] Patches that need porting from 4.19 to 5.10-cip tree
-Message-ID: <20210622124707.GA26028@duo.ucw.cz>
+Thread-Topic: [cip-dev] Patches that need porting from 4.19 to 5.10-cip tree
+Thread-Index: AQHXV5c7Mj+lj1z6r0S0d8odNHfcz6sf9JKAgAAlqoCAAARYcA==
+Date: Tue, 22 Jun 2021 13:26:22 +0000
+Message-ID: 
+ <TYYPR01MB702424774EEFB3D603EF99C5AA099@TYYPR01MB7024.jpnprd01.prod.outlook.com>
 References: <20210602100440.GA27003@duo.ucw.cz>
  <OSZPR01MB6877A74A6479B7870A3211F0B7099@OSZPR01MB6877.jpnprd01.prod.outlook.com>
+ <20210622124707.GA26028@duo.ucw.cz>
+In-Reply-To: <20210622124707.GA26028@duo.ucw.cz>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [193.141.219.24]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 6c662e7c-df68-4b5a-d1eb-08d935815440
+x-ms-traffictypediagnostic: TY2PR01MB2875:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: 
+ <TY2PR01MB2875E603D56D5277AE4FFABFAA099@TY2PR01MB2875.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6430;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 
+ Mpw9SOHHWMEoGyI5kbpblqmW3ZH5SnDqbXNLOm4aa4fmwwut1f+wUH+gSjp+6TiN3C7CMWdSRhX/u6DZexK0n8dZfy2eJ7h0F8EUlXcOvVbFHa2Ep1O01HgCVO4D7pD7EQMode4j1pLS0d7TH/zId4xzgv0wsCSgPmaIcqBpqEXHRXleiLCBYoId4oiaIimiE5ol5MYRNhVrbpH748ViKIEnXD8VAL6l/rLuYGHG6i1rqv8hkTc5vneMdjYFrSiGkOq70BkHatv2YBquna/YongTGjvndEFL7/PkXPDRpKVuKAZqDPIoMq/Af+E0JzevoHPuS1WEabB9/2prmovVqC7Rf8De7AhhhAJnTawuzdccDslTnfY0TjD2GJzVo/KfoByXhuQsSsOafKYo/JqH4Ee4i0QNmpr7MoZDOOWiyvFSlutVro56SRRzjmOcwG96VPfjHhHX9WH0TKpYfLyGEy5FRWS3J7kItTuxkxvcHwiXZ5RayYVan3DTIpyi5xB980i3hShnvnt2GTdAnley4BmvyWE0lLYZ50S6ntPWoeiMam5/9Rn+sn742uQMuc+Q6C2n56YSyGvUtY7XifkJncFAxNs90k/gVfn9u+m+42b9IR8eyZTbfBVn7Z7siSqG9QgkQSMKEWU/yRp0rZ2So1i0GwD2ZcO2GYkdgZhazH3VvglGmhiKQtcQmOLBUqIcYDEq0PpfZcoPSOhnkty+NOAPq0+HjGzogYuj60Aw+DpAypyjzH9mddHoM/BYkwDx7Y5LfTOF7jCYuhaSaU3zKA==
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?utf-8?B?SmR5MVVBNytxcnZWWGRNTW9hd0NqRUJhZ1pRNWkyMG1GK2E4cC9XNTFaSFFU?=
+ =?utf-8?B?R29CVHNFWDRkN1NZbE5ZNkJscU0vZkpjenM0ZkdYVlRRNWt1d25tS2VuV0I5?=
+ =?utf-8?B?bjVwbHRRYVpQWWNhamlBNm84NnJyQlYwdjRzR0VUTS9VaHZoWEJxMFBlYzhi?=
+ =?utf-8?B?bXEydEFQYkkvbGdWV2huenlvaTJxcVE1MGxGUml5OTJOOEJTdGJqT2Y1OC9x?=
+ =?utf-8?B?SytxWUVGVkxBN2orRXdsMUEzeVUwOUxWSlo0ajV2L0JEM1h3ZytpanRIU0F5?=
+ =?utf-8?B?WU54WWE4K3BkbWljNjBvRFQrK2swOXpHTVl0VUtTbkxILzAzZ3ZmUlVHMEZ5?=
+ =?utf-8?B?N3dIRFJGTk5NVFJGdEthanE3SEtYS21aNHRaV0l1TzgxbGw2SlhZS25lOWJt?=
+ =?utf-8?B?aUZUbHlteUp1Y1R1RGYyTnpDZlNSU01JdDZlSGVDYWlzQ0JqM1RPRnlBMXRF?=
+ =?utf-8?B?NHQxZUJUMnhrdmFMdGFURnVDQy9OTndNekRYZ0lJZ2NnaEZ1OHNTYzNQb0k1?=
+ =?utf-8?B?ZmlkYWdmZGc2ZjdINi9COUt2cFJMSWVxRkc4VFUxbmpkSGlXK3NJNzVTYzlo?=
+ =?utf-8?B?SjlNbmlkOEFmZW9DSEZkK3I5SDRVSE1MazJ2UTdnY09pUzZrTGhLOUI1a2o5?=
+ =?utf-8?B?OU1xaXp1VlFHckEydlFUWFNZR3lBQ2pQT0tVU3dhZk9hVmNSbmxjdzFUMm1R?=
+ =?utf-8?B?bHdkMVRhYmVUNURqRUdMaERtY0VZUW5wVzVYdHc4UGxsbnFhRGVTZUxYOVpE?=
+ =?utf-8?B?WXlqa0dvQlM1d1F4NStQNUJMaDkyMmhSU1h3cHBTcHpuMG1HdG1OWFlzR1VJ?=
+ =?utf-8?B?NXlsVTl6V2JMSWlHM29YcEplTTJHOWVBdUFET2gydGttWVNJTGtZTjY1NFht?=
+ =?utf-8?B?cW1tVU1jSElXMFovb0l6YjAvMFNkQjNrZUxmQzJ0VjY5ZGpCc3U5b0JoQkVx?=
+ =?utf-8?B?QzYwbE8wWStMbkhuR2s5ekNOUlc1NmFaUW9WWnp0bk4wWWxuSDdrWVhlM0pG?=
+ =?utf-8?B?WUM3d3dsUWZnSTdONUM3L3ZXRktMSFhXS0NlMEJna3FoeElyUHJyUDIvcnBS?=
+ =?utf-8?B?TzBaeEplend0VXVEaFlya2loRUgvbVhLK3hmaGo1Z1MwbjBnRGR3bUhDdFI4?=
+ =?utf-8?B?MUxYaFRzZHNubEdpZ3U1MmlFbHJjODJyUjluSVdKek1hVEY2STdzN0NwbUVn?=
+ =?utf-8?B?OHZXbjJlbDJaWHh0WEJJbEJzaVVkNlJVQ1dmdFdJRVhBSTl1bWtJbVEwMXRJ?=
+ =?utf-8?B?Y1BHZWE5YVJYN21zZjNpU2pSMG5PUUMzbnpmSGc5d2JseDJyUmgxTW1TL3hv?=
+ =?utf-8?B?ckRIWDZEallDRmhkV28wRjk1WnFXL0ovRU1LWFFINTB0TldnS1BXL3NGS21a?=
+ =?utf-8?B?QUNveFZXb3pETlp3VXY5UnNqSVBaVWJxeTdRc01SRTk1RmUvWDFKK2h1UHBE?=
+ =?utf-8?B?RG1CdmNEalZDU3hHemsxTmdjekJpVVJrT3psYkdXaEtNb0VvU0FOL1ZseUl1?=
+ =?utf-8?B?b1NhMU5RNUk4OXluMkM5UG1ibllBVmhGYWpNbFJXQlZFOTJySUZveHc3ZmpN?=
+ =?utf-8?B?TXlHVGcyMG1ad3p5NWxVUFZBYmJLbkN0WVVsRmpNWWhDSjYvdTZndU1yblBP?=
+ =?utf-8?B?YXU0QVpSNU5uYlFiMXVNdHFEVEI3bzM2ejdCa2hOYnMvYTdTZG9jTm1ienBa?=
+ =?utf-8?B?ekpDRGRJYUdCMmNtWHJHTW1DRmtNWDc1WFFnbU50VFdibG1sNWlWZHVHZUtS?=
+ =?utf-8?Q?Lcx/ARmfOvX3gQvCLrVdRfqK+MF04NFfGQ+4ilm?=
 MIME-Version: 1.0
-In-Reply-To: <OSZPR01MB6877A74A6479B7870A3211F0B7099@OSZPR01MB6877.jpnprd01.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYYPR01MB7024.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c662e7c-df68-4b5a-d1eb-08d935815440
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jun 2021 13:26:22.7296
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 9sSJVh11xAqxxcWGTFUu0yYbhryO71h4OyLsioUi07ksiScKMNIpF1V744p3NEHCK2d3n/coL7BRjnrL8YE0c2YZ1CdQxldApr+NL4Vrz8ai6zaRN+M9rmsv0rdFxdhU
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB2875
 Precedence: Bulk
 List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
 List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
@@ -45,139 +122,126 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: 4Kn6PJtxl8eWI26X5731ACO9x4520388AA=
-Content-Type: multipart/mixed; boundary="CaQhRdOCZwYvj6JYDQt7"
+X-Gm-Message-State: Ww9bstEbq09Ukauuj7OgTa0ix4520388AA=
+Content-Type: multipart/mixed; boundary="3ypoKb61LeelWx570NFd"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1624366031;
- bh=WAyMMzEAhkkTxYye7FQIDTXj+Z4DRaSiKPgzrbJxK58=;
- h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=roFgvQ2TLfixKGQZBTP17fZv5oUjuHP/X5FbBxhySCC554kDklorMhun5SWbseKpXgv
- onh5XRbO2++lj1XOvgyGWz33d3y7lIuGY5naeuYkLwLKHsRis1wiuLQoaEZspCjRSa7TI
- 5sct0X9QSGIUuPu1B2x6jY9ePt0/+PLVOD0=
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1624368391;
+ bh=yZqx4X1rYxQV+4i2dW+vYXMNqUW1crLeoCUaC153/Po=;
+ h=CC:Content-Type:Date:From:Reply-To:Subject:To;
+ b=i/kLBkRlNH5sVH13oQNxtMwfnWgmKLDcuMYgdUCEDPk8+EgEPETgRCmU+uwEB0/PhsS
+ 2BZGNN2YtvwEOUKG3Z7r4jLGyIf/M718Xb47Fx4AGQg8u57MpoV73GVTICiYkpkxmy0Hl
+ LoKucUS9bGlT7Fkn0cTo/MKfq8NlPHtbEYA=
 
---CaQhRdOCZwYvj6JYDQt7
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
-Content-Disposition: inline
+--3ypoKb61LeelWx570NFd
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
---cNdxnHkX5QqsyA0e
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+SGkgUGF2ZWwsDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogY2lwLWRl
+dkBsaXN0cy5jaXAtcHJvamVjdC5vcmcgPGNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnPiBP
+biBCZWhhbGYgT2YgUGF2ZWwgTWFjaGVrIHZpYQ0KPiBsaXN0cy5jaXAtcHJvamVjdC5vcmcNCj4g
+U2VudDogMjIgSnVuZSAyMDIxIDEzOjQ3DQo+IFRvOiBDaHJpcyBQYXRlcnNvbiA8Q2hyaXMuUGF0
+ZXJzb24yQHJlbmVzYXMuY29tPg0KPiBDYzogY2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmc7
+IFBhdmVsIE1hY2hlayA8cGF2ZWxAZGVueC5kZT47IG5vYnVoaXJvMS5pd2FtYXRzdUB0b3NoaWJh
+LmNvLmpwDQo+IFN1YmplY3Q6IFJlOiBbY2lwLWRldl0gUGF0Y2hlcyB0aGF0IG5lZWQgcG9ydGlu
+ZyBmcm9tIDQuMTkgdG8gNS4xMC1jaXAgdHJlZQ0KPiANCj4gSGkhDQo+IA0KPiA+ID4gSGVyZSBp
+cyB0aGUgbGlzdCBvZiBwYXRjaGVzIHRoYXQgYXJlIGluIDQuMTktY2lwIGJ1dCBub3QgeWV0IGlu
+DQo+ID4gPiA1LjEwLi4uIGFjY29yZGluZyB0byBteSBzY3JpcHRpbmcuDQo+ID4NCj4gPiBQcmFi
+aGFrYXIgaGFzIHJldmlld2VkIHlvdXIgbGlzdCBhbmQgaGFzIHN1Ym1pdHRlZCBhbGwgb2YgdGhl
+IHJlbGV2YW50IHBhdGNoZXMgaW4gaGlzICJSZW5lc2FzIFJaL0cyDQo+IHN5bmMgcGF0Y2hlcyBm
+cm9tIDQuMTktY2lwIHRvIDUuMTAtY2lwIiBzZXJpZXMgWzBdLg0KPiA+DQo+IA0KPiBUaGFua3Mg
+YSBsb3QgZm9yIGRvaW5nIHRoaXMgKGFuZCBzb3JyeSBmb3IgYWxsIHRoZSBmYWxzZSBwb3NpdGl2
+ZXMgZnJvbSB0aGUgc2NyaXB0KS4NCj4gDQo+IEkgd2VudCB0aHJvdWdoIHRoZSBsaXN0IGZvciBl
+bnRyaWVzIHdoZXJlIGV4aXN0aW5nIGNvbW1pdCB3YXMgbm90IGlkZW50aWZpZWQsIGFuZCB0aGlz
+IGlzIHRoZSByZXN1bHQ6DQo+IA0KPiBJdCBsb29rcyB0aGVyZSdzIGEgdmVyeSBsaXR0bGUgd29y
+ayB0byBkbzogd2UgbmVlZCB0byBwdWxsIDUuMTAuMTggaW50byBvdXIgdHJlZSBhbmQgdGhlcmUg
+YXJlIDQNCj4gcGF0Y2hlcyBtYXJrZWQgYXMgIm5vdCByZXF1aXJlZCIgd2UgbmVlZCB0byBzb21l
+aG93IGRlYWwgd2l0aC4NCj4gDQo+IEdpdmVuIHRoYXQgd2UgaGF2ZSB0aGVtIGluIDQuMTkgKGFu
+ZCB0aGV5IGFkZCBoYXJkd2FyZSBzdXBwb3J0IGFuZCBhcmUgbm90IHJlYWxseSBpbnZhc2l2ZSks
+IGNvdWxkIEkNCj4gYXNrIGZvciB0aGVpciA1LjEwIHBvcnRzPyBUaGF0IHNob3VsZCBiZSBsZWFz
+dCBzdXJwcmlzaW5nLiAoSWYgdGhleSBhcmUgbm90IHJlcXVpcmVkIGluIDQuMTkgdGhlcmUsIHdl
+DQo+IHdlIGNvdWxkIGRyb3AgdGhlbSBmcm9tIHRoZXJlLCB0b28uKQ0KPiANCj4gLCwsMjMsMTQw
+IDQ5NzUzYzZlMjdlZDM1MjIzY2RhYjkzOWMzNGZmMWQ4NWYyMDA3NjUgbW1jOiByZW5lc2FzX3Nk
+aGlfaW50ZXJuYWxfZG1hYzogQWRkIHI4YTc3NGUxDQo+IHN1cHBvcnQsTm90IHJlcXVpcmVkDQo+
+DQp3cnQgYWJvdmUgcGF0Y2ggdGhlIHdheSBvZiBoYW5kbGluZyB0aGUgZG1hYyBkaWZmZXJzIGJl
+dHdlZW4gNC4xOS1jaXAgYW5kIDUuMTAtY2lwLiBUaGlzIHdhcyBjaGFuZ2VkIGluIGNvbW1pdCBb
+MV0gYW5kIGlzIGFscmVhZHkgcGFydCBvZiA1LjEwLWNpcCBhcyByZXN1bHQgd2UgZG9u4oCZdCBu
+ZWVkIHRoaXMgcGF0Y2ggaW4gNS4xMC1jaXAuDQoNCj4gLCwsMTAzLDgyNyA2NDExMzI3MjIwMTU1
+OTU3OTNmNTZmZTMxNzY1NjM2ZGRmN2E2OTk5IGFybTY0OiBBZGQgUmVuZXNhcyBSOEE3NzRDMCBz
+dXBwb3J0LE5vdCByZXF1aXJlZA0KPiAsLCwxMDQsODI4IGI2ZGRlYmIyY2M3OTNlZjJmZGEwODFm
+ZDJlZjI0MzljMTU4Y2FhYzQgYXJtNjQ6IEFkZCBSZW5lc2FzIFI4QTc3NEExIHN1cHBvcnQsTm90
+IHJlcXVpcmVkDQo+DQp3cnQgYWJvdmUgdHdvIHBhdGNoZXMsIGNvbmZpZyBzeW1ib2xzIGZvciB0
+aGUgYWJvdmUgdHdvIFNvQydzIGFyZSBhbHJlYWR5IHByZXNlbnQgaW4gNS4xMC1jaXAsIHRoZXkg
+YXJlIHByZXNlbnQgaW4gZGlmZmVyZW50IGxvY2F0aW9ucyBjb21wYXJlZCB0byA0LjE5LWNpcCBh
+bmQgNS4xMC1jaXAuIFRoaXMgd2FzIGNoYW5nZWQgaW4gY29tbWl0IFsyXSBoZW5jZSB3ZSBkb27i
+gJl0IHJlcXVpcmUgdGhlIGFib3ZlIHR3byBwYXRjaGVzIGluIDUuMTAtY2lwDQoNCj4gLCwsMTA3
+LDgzMSA3NmI4ZTg1Mzk0OGJmYWZmMDgzYWZiM2RkOTg1ZWIxOWYzYWFiMzBiIGR0LWJpbmRpbmdz
+OiBhcm06IEZpeCBSWi9HMkUgcGFydCBudW1iZXIsTm90DQo+IHJlcXVpcmVkDQo+IA0KQmluZGlu
+ZyBkb2MgaGFzIGJlZW4gY29udmVydGVkIHRvIHlhbWwgZmlsZSBpbiA1LjEwLWNpcC4gVGhpcyBo
+YXMgYmVlbiBjaGFuZ2VkIGluIGNvbW1pdCBbM10gYW5kIGlzIGFscmVhZHkgcGFydCBvZiA1LjEw
+LWNpcCB3aXRoIGNvcnJlY3RlZCBwYXJ0IG51bWJlciBmb3IgUlovRzJFIFNvQy4NCg0KWzFdIGh0
+dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2NpcC9saW51eC1j
+aXAuZ2l0L2NvbW1pdC9kcml2ZXJzL21tYy9ob3N0L3JlbmVzYXNfc2RoaV9pbnRlcm5hbF9kbWFj
+LmM/aD1saW51eC01LjEwLnktY2lwJmlkPWEwZmIzZmM4YWYwMTQzNmRmNDVjYzUwMWM0MWYyODAw
+MjVjMWRmZTgNClsyXSBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVs
+L2dpdC9jaXAvbGludXgtY2lwLmdpdC9jb21taXQvZHJpdmVycy9zb2MvcmVuZXNhcy9LY29uZmln
+P2g9bGludXgtNS4xMC55LWNpcCZpZD1mYTQzOTQ4ZjY3MzZiNzRjNTg0MGVjMGIwMjhkMzY2MmNh
+ZjBmNTU4DQpbM10gaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9n
+aXQvY2lwL2xpbnV4LWNpcC5naXQvY29tbWl0L0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
+aW5ncy9hcm0vcmVuZXNhcy55YW1sP2g9bGludXgtNS4xMC55LWNpcCZpZD0xMjc0OTM1MDU2N2M4
+MTlkOGEzNWE0MDU3NDMzMTNiZDg2OWM5NWMwDQoNCkNoZWVycywNClByYWJoYWthcg0KDQo+IEJl
+c3QgcmVnYXJkcywNCj4gCQkJCQkJCQlQYXZlbA0KPiANCj4gDQo+ICogUGF0Y2hlcyB0aGF0IG5l
+ZWQgcG9ydGluZyBmcm9tIDQuMTktY2lwIChzZWNvbmQgcGFzcykNCj4gDQo+ICoqIFdlIGRvbid0
+IG5lZWQgdG8gZG8gYW55dGhpbmcsIGFzIHByb2JsZW0gaXMgYWxyZWFkeSBzb2x2ZWQgaW4gNS4x
+MCBpbiBkaWZmZXJlbnQgd2F5DQo+IA0KPiAsLCwzMSw2MzIgMzdjN2U3NmE3NWEwZDU5MDZkNzky
+NjI4ZTQ3NDc2MDdhOTYzYmEyNCBhcm02NDogZHRzOiByZW5lc2FzOiByOGE3NzRjMDogc29ydCBz
+dWJub2RlcyBvZiB0aGUNCj4gc29jIG5vZGUsQWxyZWFkeSBzb3J0ZWQgaW4gNS4xMA0KPiANCj4g
+KiogV2UgZG9uJ3QgbmVlZCB0byBkbyBhbnl0aGluZywgcGF0Y2ggaXMgYWxyZWFkeSBpbiA1LjEw
+DQo+IA0KPiAoc2NyaXB0IGRpZCBub3QgcmVjb2duaXplIHVwc3RyZWFtIHRhZykNCj4gDQo+ICws
+LDkxLCI4MTUgN2NhY2NkYTg5MzljMzgxZmMzMTZmNDUwZGFhOTMwN2QyMjdhNGE2NyBBUk06IGR0
+czogc29jZnBnYTogUmVuYW1lDQo+IHNvY2ZwZ2FfY3ljbG9uZTVfZGUwX3tzb2NraXQsIG5hbm9f
+c29jfSIsRG9u4oCZdCBjYXJlDQo+ICwsLDMwLDYyNyAwY2NiOTM5NTM4MTA2NjAyNjZmNzA5NWUw
+NTQxYzZkYjE5OTIwNjQyIHN0YWdpbmc6IG01NzYyMS1tbWM6IGRlbGV0ZSBkcml2ZXIgZnJvbSB0
+aGUNCj4gdHJlZS4sRG9u4oCZdCBjYXJlDQo+IA0KPiAqKiBXZSBkb24ndCBuZWVkIHRvIGRvIGFu
+eXRoaW5nLCBwYXRjaCBpcyBhbHJlYWR5IGluIDUuMTAtc3RhYmxlDQo+IA0KPiAsLCwxMTksODQz
+IGZjMWUzZjVkMWQ3Zjc3YmU5MWY4NWQ3ZDRjZTk0ZWJmZTNkOGQyODQga3ZtOiBjaGVjayB0bGJz
+X2RpcnR5IGRpcmVjdGx5LERvbuKAmXQgY2FyZSBpbg0KPiA1LjEwLjcNCj4gLCwsMTIwLDg0NCAy
+YzY4YmIzM2RhZDlmM2NhYjE3MWJiNjRlMTc2NmJjNWE3ZTliN2U4IHNjc2k6IHFsYTJ4eHg6IEZp
+eCBjcmFzaCBkdXJpbmcgZHJpdmVyIGxvYWQgb24gYmlnDQo+IGVuZGlhbiBtYWNoaW5lcyxEb27i
+gJl0IGNhcmUgaW4gNS4xMC40DQo+IA0KPiAqKiBQYXRjaCBzZXJpZXMgaXMgYWxyZWFkeSBpbiA1
+LjEwLjE4LCB3ZSBuZWVkIHRvIHB1bGwgaXQgdG8gLWNpcA0KPiANCj4gLCwsMTIxLDg0NSA5OGYx
+NmUxNzFlMjg0OWRiYTc2ZTJlMDM0NmU5MTQ0NTJjMDMwZGM1IHhlbi1ibGtiYWNrOiBmaXggZXJy
+b3IgaGFuZGxpbmcgaW4NCj4geGVuX2Jsa2JrX21hcCgpLERvbuKAmXQgY2FyZQ0KPiB1cHN0cmVh
+bTogODcxOTk3YmM5ZTQyM2YwNWM3ZGE3YzkxNzhlNjJkZGU1ZGYyYTdmOA0KPiAsLCwxMjIsIjg0
+NiBmODRjMDBmYmQyN2IwNDNmYTQyYTU2ZWFhYTE0ZTI5Mzg3N2JjNjliIHhlbi1zY3NpYmFjazog
+ZG9uJ3QgIiJoYW5kbGUiIiBlcnJvciBieQ0KPiBCVUcoKSIsRG9u4oCZdCBjYXJlDQo+IHVwc3Ry
+ZWFtOiA3Yzc3NDc0YjJkMjIxNzZkMmJmYjU5MmVjNzRlMGYyY2I3MTM1MmM5DQo+ICwsLDEyMywi
+ODQ3IDcxN2ZhYTc3NmNhMjE2MzExOTIzOWVhNThiYjc4YzRkNzMyZDhhNGYgeGVuLW5ldGJhY2s6
+IGRvbid0ICIiaGFuZGxlIiIgZXJyb3IgYnkNCj4gQlVHKCkiLERvbuKAmXQgY2FyZSBjb21taXQg
+MzE5NGExNzQ2ZThhYWJlODYwNzVmZDNjNWU3Y2YxZjQ2MzJkN2YxNiB1cHN0cmVhbS4NCj4gLCws
+MTI0LCI4NDggYTAxYjQ5YTliZjkxYTcyM2Y1NDExMzljMDYzYzFmZjY4MWFjNTM2YSB4ZW4tYmxr
+YmFjazogZG9uJ3QgIiJoYW5kbGUiIiBlcnJvciBieQ0KPiBCVUcoKSIsRG9u4oCZdCBjYXJlIGNv
+bW1pdCA1YTI2NDI4NWVkMWNkMzJlMjZkOWRlNGYzYzhjNjg1NWU0NjdmZDYzIHVwc3RyZWFtLg0K
+PiAsLCwxMjUsODQ5IDI3MWEzOTg0ZjczYzQ4NWY0YzFiNzk2YTYxY2M1YmQzOTk0YTA0NjMgeGVu
+L2FybTogZG9uJ3QgaWdub3JlIHJldHVybiBlcnJvcnMgZnJvbQ0KPiBzZXRfcGh5c190b19tYWNo
+aW5lLERvbuKAmXQgY2FyZSBjb21taXQgMzZiZjFkZmI4YjI2NmUwODlhZmE5YjdiOTg0MjE3ZjE3
+MDI3YmYzNSB1cHN0cmVhbS4NCj4gLCwsMTI2LDg1MCBlMDdmMDZmNmJiZWVkNWJmNDdmZWQ3OWFj
+NmE1N2VjNjJiMzMzMDRhIFhlbi9nbnRkZXY6IGNvcnJlY3QgZXJyb3IgY2hlY2tpbmcgaW4NCj4g
+Z250ZGV2X21hcF9ncmFudF9wYWdlcygpLERvbuKAmXQgY2FyZSBjb21taXQgZWJlZTBlYWIwODU5
+NGIyYmQ1ZGI3MTYyODhhNGYxYWU1OTM2ZTliYyB1cHN0cmVhbS4NCj4gDQo+ICoqIEludmVzdGln
+YXRlOg0KPiANCj4gLCwsMjMsMTQwIDQ5NzUzYzZlMjdlZDM1MjIzY2RhYjkzOWMzNGZmMWQ4NWYy
+MDA3NjUgbW1jOiByZW5lc2FzX3NkaGlfaW50ZXJuYWxfZG1hYzogQWRkIHI4YTc3NGUxDQo+IHN1
+cHBvcnQsTm90IHJlcXVpcmVkDQo+ICwsLDEwMyw4MjcgNjQxMTMyNzIyMDE1NTk1NzkzZjU2ZmUz
+MTc2NTYzNmRkZjdhNjk5OSBhcm02NDogQWRkIFJlbmVzYXMgUjhBNzc0QzAgc3VwcG9ydCxOb3Qg
+cmVxdWlyZWQNCj4gLCwsMTA0LDgyOCBiNmRkZWJiMmNjNzkzZWYyZmRhMDgxZmQyZWYyNDM5YzE1
+OGNhYWM0IGFybTY0OiBBZGQgUmVuZXNhcyBSOEE3NzRBMSBzdXBwb3J0LE5vdCByZXF1aXJlZA0K
+PiAsLCwxMDcsODMxIDc2YjhlODUzOTQ4YmZhZmYwODNhZmIzZGQ5ODVlYjE5ZjNhYWIzMGIgZHQt
+YmluZGluZ3M6IGFybTogRml4IFJaL0cyRSBwYXJ0IG51bWJlcixOb3QNCj4gcmVxdWlyZWQNCj4g
+DQo+IC0tDQo+IERFTlggU29mdHdhcmUgRW5naW5lZXJpbmcgR21iSCwgICAgICBNYW5hZ2luZyBE
+aXJlY3RvcjogV29sZmdhbmcgRGVuaw0KPiBIUkIgMTY1MjM1IE11bmljaCwgT2ZmaWNlOiBLaXJj
+aGVuc3RyLjUsIEQtODIxOTQgR3JvZWJlbnplbGwsIEdlcm1hbnkNCg==
 
-Hi!
-
-> > Here is the list of patches that are in 4.19-cip but not yet in
-> > 5.10... according to my scripting.
->=20
-> Prabhakar has reviewed your list and has submitted all of the relevant pa=
-tches in his "Renesas RZ/G2 sync patches from 4.19-cip to 5.10-cip" series =
-[0].
->
-
-Thanks a lot for doing this (and sorry for all the false positives
-=66rom the script).
-
-I went through the list for entries where existing commit was not
-identified, and this is the result:
-
-It looks there's a very little work to do: we need to pull 5.10.18
-into our tree and there are 4 patches marked as "not required" we need
-to somehow deal with.
-
-Given that we have them in 4.19 (and they add hardware support and are
-not really invasive), could I ask for their 5.10 ports? That should be
-least surprising. (If they are not required in 4.19 there, we we could
-drop them from there, too.)
-
-,,,23,140 49753c6e27ed35223cdab939c34ff1d85f200765 mmc: renesas_sdhi_intern=
-al_dmac: Add r8a774e1 support,Not required
-,,,103,827 641132722015595793f56fe31765636ddf7a6999 arm64: Add Renesas R8A7=
-74C0 support,Not required=20
-,,,104,828 b6ddebb2cc793ef2fda081fd2ef2439c158caac4 arm64: Add Renesas R8A7=
-74A1 support,Not required=20
-,,,107,831 76b8e853948bfaff083afb3dd985eb19f3aab30b dt-bindings: arm: Fix R=
-Z/G2E part number,Not required=20
-
-Best regards,
-								Pavel
-
-
-* Patches that need porting from 4.19-cip (second pass)
-
-** We don't need to do anything, as problem is already solved in 5.10 in di=
-fferent way
-
-,,,31,632 37c7e76a75a0d5906d792628e4747607a963ba24 arm64: dts: renesas: r8a=
-774c0: sort subnodes of the soc node,Already sorted in 5.10
-
-** We don't need to do anything, patch is already in 5.10
-
-(script did not recognize upstream tag)
-
-,,,91,"815 7caccda8939c381fc316f450daa9307d227a4a67 ARM: dts: socfpga: Rena=
-me socfpga_cyclone5_de0_{sockit, nano_soc}",Don=E2=80=99t care
-,,,30,627 0ccb93953810660266f7095e0541c6db19920642 staging: m57621-mmc: del=
-ete driver from the tree.,Don=E2=80=99t care
-
-** We don't need to do anything, patch is already in 5.10-stable
-
-,,,119,843 fc1e3f5d1d7f77be91f85d7d4ce94ebfe3d8d284 kvm: check tlbs_dirty d=
-irectly,Don=E2=80=99t care
-in 5.10.7
-,,,120,844 2c68bb33dad9f3cab171bb64e1766bc5a7e9b7e8 scsi: qla2xxx: Fix cras=
-h during driver load on big endian machines,Don=E2=80=99t care
-in 5.10.4
-
-** Patch series is already in 5.10.18, we need to pull it to -cip
-
-,,,121,845 98f16e171e2849dba76e2e0346e914452c030dc5 xen-blkback: fix error =
-handling in xen_blkbk_map(),Don=E2=80=99t care
-upstream: 871997bc9e423f05c7da7c9178e62dde5df2a7f8
-,,,122,"846 f84c00fbd27b043fa42a56eaaa14e293877bc69b xen-scsiback: don't ""=
-handle"" error by BUG()",Don=E2=80=99t care
-upstream: 7c77474b2d22176d2bfb592ec74e0f2cb71352c9
-,,,123,"847 717faa776ca2163119239ea58bb78c4d732d8a4f xen-netback: don't ""h=
-andle"" error by BUG()",Don=E2=80=99t care
-commit 3194a1746e8aabe86075fd3c5e7cf1f4632d7f16 upstream.
-,,,124,"848 a01b49a9bf91a723f541139c063c1ff681ac536a xen-blkback: don't ""h=
-andle"" error by BUG()",Don=E2=80=99t care
-commit 5a264285ed1cd32e26d9de4f3c8c6855e467fd63 upstream.
-,,,125,849 271a3984f73c485f4c1b796a61cc5bd3994a0463 xen/arm: don't ignore r=
-eturn errors from set_phys_to_machine,Don=E2=80=99t care
-commit 36bf1dfb8b266e089afa9b7b984217f17027bf35 upstream.
-,,,126,850 e07f06f6bbeed5bf47fed79ac6a57ec62b33304a Xen/gntdev: correct err=
-or checking in gntdev_map_grant_pages(),Don=E2=80=99t care
-commit ebee0eab08594b2bd5db716288a4f1ae5936e9bc upstream.
-
-** Investigate:
-
-,,,23,140 49753c6e27ed35223cdab939c34ff1d85f200765 mmc: renesas_sdhi_intern=
-al_dmac: Add r8a774e1 support,Not required
-,,,103,827 641132722015595793f56fe31765636ddf7a6999 arm64: Add Renesas R8A7=
-74C0 support,Not required=20
-,,,104,828 b6ddebb2cc793ef2fda081fd2ef2439c158caac4 arm64: Add Renesas R8A7=
-74A1 support,Not required=20
-,,,107,831 76b8e853948bfaff083afb3dd985eb19f3aab30b dt-bindings: arm: Fix R=
-Z/G2E part number,Not required=20
-
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---cNdxnHkX5QqsyA0e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYNHbywAKCRAw5/Bqldv6
-8pisAJ9lRyBwyVk2FIY54aj8BSvF/5wNRQCfQiz1tmTKxSjSYHTGji6C0viWdxI=
-=tnwh
------END PGP SIGNATURE-----
-
---cNdxnHkX5QqsyA0e--
-
---CaQhRdOCZwYvj6JYDQt7
+--3ypoKb61LeelWx570NFd
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -185,8 +249,8 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6573): https://lists.cip-project.org/g/cip-dev/message=
-/6573
+View/Reply Online (#6574): https://lists.cip-project.org/g/cip-dev/message=
+/6574
 Mute This Topic: https://lists.cip-project.org/mt/83254843/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/4520388=
@@ -194,4 +258,4 @@ Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/4520388=
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---CaQhRdOCZwYvj6JYDQt7--
+--3ypoKb61LeelWx570NFd--
