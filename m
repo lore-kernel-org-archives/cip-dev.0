@@ -1,35 +1,40 @@
-Return-Path: <SRS0=4GqE=LV=lists.cip-project.org=bounce+64572+6586+4520388+8129055@kernel.org>
+Return-Path: <SRS0=FaRX=LW=lists.cip-project.org=bounce+64572+6587+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F9C5C48BC2
-	for <cip-dev@archiver.kernel.org>; Sun, 27 Jun 2021 08:44:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E4A3C49EAB
+	for <cip-dev@archiver.kernel.org>; Mon, 28 Jun 2021 07:53:18 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 0968161AC0
-	for <cip-dev@archiver.kernel.org>; Sun, 27 Jun 2021 08:44:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0968161AC0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6586+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id MhOxYY4521723xcLRm7Ne5Wh; Sun, 27 Jun 2021 01:44:36 -0700
-X-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web08.3084.1624783475451877439
+	by mail.kernel.org (Postfix) with ESMTPS id 6D44F61990
+	for <cip-dev@archiver.kernel.org>; Mon, 28 Jun 2021 07:53:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D44F61990
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=miraclelinux.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6587+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id veyYYY4521723xXHP8TtVDde; Mon, 28 Jun 2021 00:53:16 -0700
+X-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+ by mx.groups.io with SMTP id smtpd.web10.8221.1624866794665244241
  for <cip-dev@lists.cip-project.org>;
- Sun, 27 Jun 2021 01:44:36 -0700
-X-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 4C52F1C0B76; Sun, 27 Jun 2021 10:44:33 +0200 (CEST)
-Date: Sun, 27 Jun 2021 10:44:32 +0200
-From: "Pavel Machek" <pavel@denx.de>
-To: cip-dev@lists.cip-project.org
-Subject: [cip-dev] New security issues
-Message-ID: <20210627084432.GA26658@duo.ucw.cz>
+ Mon, 28 Jun 2021 00:53:16 -0700
+X-Received: by mail-ot1-f41.google.com with SMTP id 7-20020a9d0d070000b0290439abcef697so17865279oti.2
+        for <cip-dev@lists.cip-project.org>; Mon, 28 Jun 2021 00:53:14 -0700 (PDT)
+X-Gm-Message-State: 1ppVaEUHIKc3Glik4UYJ2dsJx4520388AA=
+X-Google-Smtp-Source: ABdhPJwZJuzAZzbDzFfyhqV2/qCzaHPM15RU9JSZfn/QpXqhqkzu/B/w2gLYOwwvz/PlHn8nNcLpkDtUUbUFJ1Td7zg=
+X-Received: by 2002:a05:6830:40b4:: with SMTP id x52mr19462188ott.117.1624866793747;
+ Mon, 28 Jun 2021 00:53:13 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mutt/1.10.1 (2018-07-13)
+From: =?UTF-8?B?5biC5bed5q2j576O?= <masami.ichikawa@miraclelinux.com>
+Date: Mon, 28 Jun 2021 16:52:38 +0900
+Message-ID: <CAODzB9pWQDn9QZfJXOTdFk4ko_exC+FxVhr4vxf_YK0yzQ8PWQ@mail.gmail.com>
+Subject: [cip-dev] cannot push to cip-kernel-sec repository
+To: cip-dev@lists.cip-project.org, nobuhiro1.iwamatsu@toshiba.co.jp
+Cc: masashi.kudo@cybertrust.co.jp
 Precedence: Bulk
 List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
 List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
@@ -38,66 +43,48 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: JJPTvbXDLULUMolkecrgDFjKx4520388AA=
-Content-Type: multipart/mixed; boundary="6wg2Y0MnJHX6DIGcVLLr"
+Content-Type: multipart/mixed; boundary="QY5bi4xB89pr2g7WM5FY"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1624783476;
- bh=ct2PbeQrKen8VZ8RfJHtW5nIGu9sqhbrgt+kOWn5YaU=;
- h=Content-Type:Date:From:Reply-To:Subject:To;
- b=NJVXLQDoK84owooW2bDUx7C4prwXR+toOgDndC54c2Ju9UPD6+h5pr+Xc42L6UQAWnN
- yp4EdR5EULuQPr6UmLhO01CCSFl0mvDf93qyk3yz6MsoQ6e7RTOvp3E8E1jvIxsBitc/8
- zpEoE4CiqkDT/tRfzv2YgAZxx/m9mBwfoEo=
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1624866796;
+ bh=jLQDHsv2jZOS7bu9Js2rUXiSsOJ8BAnYZoaMo7omkKU=;
+ h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
+ b=hFpQmV/304Rsvl9vkd/LM1kUZHfVGpxTB+31bcfqYgO/h9cw066kDey1jIFvVJjRBaW
+ SVPwpOi7rAXN4PRLfjnR92BDtkRGuOSCdbskEMkRzUB18vug9QgiyIkWRz3tvqK9mbXYI
+ DGk3oVGV+3NWbR++KLdo/xzSaVwntCfQ6fs=
 
---6wg2Y0MnJHX6DIGcVLLr
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="pWyiEgJYm5f9v55/"
-Content-Disposition: inline
+--QY5bi4xB89pr2g7WM5FY
+Content-Type: text/plain; charset="UTF-8"
 
---pWyiEgJYm5f9v55/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi, Iwamatsu-san
 
-Hi!
+When I push commit to the cip-kernel-sec repository,  I get the following error.
 
-My notes are below. On IRC, I wrongly assumed that "CAN BCM" refers to
-some kind of driver. Unfortunately, it is generic code, and it is used
-by some of our configs. This is in early stages, it is not even fixed
-in Linus' tree at the moment AFAICS.
+masami@debian:~/cip/cip-kernel-sec$ git push -u origin master
+Enumerating objects: 1557, done.
+Counting objects: 100% (1557/1557), done.
+Delta compression using up to 2 threads
+Compressing objects: 100% (811/811), done.
+Writing objects: 100% (811/811), 186.14 KiB | 6.89 MiB/s, done.
+Total 811 (delta 742), reused 0 (delta 0)
+remote: Resolving deltas: 100% (742/742), completed with 741 local objects.
+remote: GitLab: You are not allowed to push code to protected branches
+on this project.
+To gitlab.com:cip-project/cip-kernel/cip-kernel-sec.git
+ ! [remote rejected] master -> master (pre-receive hook declined)
 
-Best regards,
-							Pavel
+It looks like I don't have permission to push the master branch.
+Would you mind giving me permission to push, please?
 
-* 2021-06-23
+Regards,
 
-CVE-2021-33624 -- speculative execution on BPF. Fun.
+-- 
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
 
-CVE-2021-3609 -- CAN BCM local priviledge
-escalation. net/can/bcm.c. local to root. Fun!
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
 
-CVE-2021-3612 -- drivers/input/joydev.c .
-
-* 2021-06-24
-
-CVE-2021-3600 -- More eBPF  issues. 4.19+, hopefully.
-
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---pWyiEgJYm5f9v55/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYNg6cAAKCRAw5/Bqldv6
-8ulTAJ9Zp+mhpPkiwtv8AHfIXcefPBpnTACfQGFvWPfdNVLDR+Qc5Ko9fpFD1Do=
-=Mydc
------END PGP SIGNATURE-----
-
---pWyiEgJYm5f9v55/--
-
---6wg2Y0MnJHX6DIGcVLLr
+--QY5bi4xB89pr2g7WM5FY
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -105,13 +92,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6586): https://lists.cip-project.org/g/cip-dev/message=
-/6586
-Mute This Topic: https://lists.cip-project.org/mt/83820048/4520388
+View/Reply Online (#6587): https://lists.cip-project.org/g/cip-dev/message=
+/6587
+Mute This Topic: https://lists.cip-project.org/mt/83840144/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/4520388=
 /727948398/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---6wg2Y0MnJHX6DIGcVLLr--
+--QY5bi4xB89pr2g7WM5FY--
