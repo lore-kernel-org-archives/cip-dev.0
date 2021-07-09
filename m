@@ -1,45 +1,47 @@
-Return-Path: <SRS0=XADa=MA=lists.cip-project.org=bounce+64572+6610+4520388+8129055@kernel.org>
+Return-Path: <SRS0=D769=MB=lists.cip-project.org=bounce+64572+6611+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D17C07E96
-	for <cip-dev@archiver.kernel.org>; Thu,  8 Jul 2021 08:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42B94C07E99
+	for <cip-dev@archiver.kernel.org>; Fri,  9 Jul 2021 04:11:18 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id D1F1361C84
-	for <cip-dev@archiver.kernel.org>; Thu,  8 Jul 2021 08:54:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1F1361C84
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=siemens.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6610+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id 0pKdYY4521723xqxEzoRcas6; Thu, 08 Jul 2021 01:54:04 -0700
-X-Received: from gecko.sbs.de (gecko.sbs.de [194.138.37.40])
- by mx.groups.io with SMTP id smtpd.web08.9334.1625734443303687165
- for <cip-dev@lists.cip-project.org>;
- Thu, 08 Jul 2021 01:54:03 -0700
-X-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-	by gecko.sbs.de (8.15.2/8.15.2) with ESMTPS id 1688s1xG000886
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-	for <cip-dev@lists.cip-project.org>; Thu, 8 Jul 2021 10:54:01 +0200
-X-Received: from [167.87.42.31] ([167.87.42.31])
-	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 1688s0Hi021526;
-	Thu, 8 Jul 2021 10:54:00 +0200
-Subject: Re: [cip-dev][isar-cip-core][PATCH] initramfs-config: Remove dependency to patch
-To: "Q. Gylstorff" <Quirin.Gylstorff@siemens.com>,
-        cip-dev@lists.cip-project.org
-References: <20210708083229.2259-1-Quirin.Gylstorff@siemens.com>
-From: "Jan Kiszka" <jan.kiszka@siemens.com>
-Message-ID: <5487c7c7-d5e1-38a4-6408-305ade5d6a06@siemens.com>
-Date: Thu, 8 Jul 2021 10:54:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+	by mail.kernel.org (Postfix) with ESMTPS id 9CA936138C
+	for <cip-dev@archiver.kernel.org>; Fri,  9 Jul 2021 04:11:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CA936138C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6611+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id L5JVYY4521723xNQAVqBiZoY; Thu, 08 Jul 2021 21:11:17 -0700
+X-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+ by mx.groups.io with SMTP id smtpd.web10.6735.1625803876535820505
+ for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
+ Thu, 08 Jul 2021 21:11:16 -0700
+X-Received: by mail-pl1-f170.google.com with SMTP id p4so98503plo.11
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Thu, 08 Jul 2021 21:11:16 -0700 (PDT)
+X-Gm-Message-State: uEb26oZ0UH740Ux2EFnGFMPQx4520388AA=
+X-Google-Smtp-Source: ABdhPJyy1UaBv/jl71Kew+m9jcmP0dF2RTzfKxcF5rtJbSBzx6Tf8hWxw/QNhq1ibYJgmtGDvWNImQ==
+X-Received: by 2002:a17:902:fe10:b029:127:6549:fe98 with SMTP id g16-20020a170902fe10b02901276549fe98mr28900267plj.25.1625803875443;
+        Thu, 08 Jul 2021 21:11:15 -0700 (PDT)
+X-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id w6sm5373610pgh.56.2021.07.08.21.11.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Jul 2021 21:11:14 -0700 (PDT)
+Message-ID: <60e7cc62.1c69fb81.96aba.1a8b@mx.google.com>
+Date: Thu, 08 Jul 2021 21:11:14 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210708083229.2259-1-Quirin.Gylstorff@siemens.com>
+X-Kernelci-Kernel: v4.4.274-cip59
+X-Kernelci-Report-Type: build
+X-Kernelci-Tree: cip
+X-Kernelci-Branch: linux-4.4.y-cip
+Subject: [cip-dev] cip/linux-4.4.y-cip build: 117 builds: 0 failed, 117 passed, 11 warnings (v4.4.274-cip59) #kernelci
+To: Cipproject+Cip-Dev via Email Integration <cip-dev@lists.cip-project.org>
+From: "kernelci.org bot" <bot@kernelci.org>
 Precedence: Bulk
 List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
 List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
@@ -48,333 +50,703 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: lUdlSVNuGO60tNXFul3rON9gx4520388AA=
-Content-Type: multipart/mixed; boundary="fca12MxztuXZlufTpoVs"
+Content-Type: multipart/mixed; boundary="UB0IFJdRWiAIRZ8jFx0e"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1625734444;
- bh=BMGDkJdaw3ZC/pnf/4HsSWD6c5tASvoHC5u8n6EAoSE=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1625803877;
+ bh=qRfBGOzhN78P+AzAvC6b9dFVm4DwCrP4r5MQMVha6bg=;
  h=Content-Type:Date:From:Reply-To:Subject:To;
- b=VEjXVm8jA+MSAacOm+O9TSGVRsnB6B1CxDWWqE3siuNxlS1jd3G9tn28xuHvouU8stS
- VPcYwMIntQVtMPeIm1PbNLWjegEA8I+Jdp6dLEDi3KEXcEV1oavpeqFhyCMntYTSfSAWh
- dsFsybwxQOvCgPZENifec8YTnYutcn8BrW4=
+ b=Vp9iJz/VLJiYFw7pRmuj1MEMOfRpHJlxzHkUQpx7gcghBsPruJPPhSESf+A1DXX4ewf
+ CNQ9mcbNPkNKQUYUiVoQW7HjCXqsCYPRa9HWyljBEmq1/PI/Kj4TaOKTCVCIgQwFahdOO
+ MPxBRo4P8K9BNwCU8IQ7ISwPC1loFmIEFWA=
 
---fca12MxztuXZlufTpoVs
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+--UB0IFJdRWiAIRZ8jFx0e
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08.07.21 10:32, Q. Gylstorff wrote:
-> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> 
-> The solution proposed by the patch[1] is not longer necessary.
-> Remove the patch and rework initramfs-config.
-> 
-> [1]: isar-patches/v7-0001-meta-support-Generate-a-custom-initramfs.patch
-> 
-> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> ---
->  ...-support-Generate-a-custom-initramfs.patch | 207 ------------------
->  kas-cip.yml                                   |   4 -
->  .../initramfs-config/files/postinst           |   6 +
->  .../initramfs-config/files/postinst.ext       |   3 -
->  .../initramfs-abrootfs-secureboot_0.1.bb      |   9 +-
->  5 files changed, 9 insertions(+), 220 deletions(-)
->  delete mode 100644 isar-patches/v7-0001-meta-support-Generate-a-custom-initramfs.patch
->  create mode 100644 recipes-support/initramfs-config/files/postinst
->  delete mode 100644 recipes-support/initramfs-config/files/postinst.ext
-> 
-> diff --git a/isar-patches/v7-0001-meta-support-Generate-a-custom-initramfs.patch b/isar-patches/v7-0001-meta-support-Generate-a-custom-initramfs.patch
-> deleted file mode 100644
-> index f8fb28e..0000000
-> --- a/isar-patches/v7-0001-meta-support-Generate-a-custom-initramfs.patch
-> +++ /dev/null
-> @@ -1,207 +0,0 @@
-> -From 7c85e2e363fd39e60bf5041d02e14e8bd62c1a68 Mon Sep 17 00:00:00 2001
-> -From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> -Date: Tue, 24 Mar 2020 17:58:08 +0100
-> -Subject: [PATCH v7 1/3] meta/support: Generate a custom initramfs
-> -
-> -This package sets the Parameters for mkinitramfs/update-intramfs
-> -before it regenerates the initrd.img of debian with a modified version.
-> -
-> -Use cases are the remove unnecessary kernel modules to reduce the
-> -size of the initrd by using the parameters:
-> -```
-> -INITRAMFS_MODULES = "list"
-> -INITRAMFS_MODULE_LIST += "ext4"
-> -```
-> -
-> -Set the boot root during the initrd generation by setting `INITRAMFS_ROOT`.
-> -
-> -see also man pages of mkinitramfs and initramfs.conf.
-> -
-> -Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> ----
-> - .../initramfs-config/initramfs-config_0.1.bb  |  6 +++
-> - .../initramfs-config/files/control.tmpl       | 12 +++++
-> - .../initramfs-config/files/postinst.tmpl      | 50 +++++++++++++++++++
-> - .../initramfs-config/files/postrm.tmpl        | 41 +++++++++++++++
-> - .../initramfs-config/initramfs-config.inc     | 32 ++++++++++++
-> - 5 files changed, 141 insertions(+)
-> - create mode 100644 meta-isar/recipes-support/initramfs-config/initramfs-config_0.1.bb
-> - create mode 100644 meta/recipes-support/initramfs-config/files/control.tmpl
-> - create mode 100644 meta/recipes-support/initramfs-config/files/postinst.tmpl
-> - create mode 100644 meta/recipes-support/initramfs-config/files/postrm.tmpl
-> - create mode 100644 meta/recipes-support/initramfs-config/initramfs-config.inc
-> -
-> -diff --git a/meta-isar/recipes-support/initramfs-config/initramfs-config_0.1.bb b/meta-isar/recipes-support/initramfs-config/initramfs-config_0.1.bb
-> -new file mode 100644
-> -index 0000000..c951e8a
-> ---- /dev/null
-> -+++ b/meta-isar/recipes-support/initramfs-config/initramfs-config_0.1.bb
-> -@@ -0,0 +1,6 @@
-> -+#
-> -+# Copyright (C) Siemens AG, 2020
-> -+#
-> -+# SPDX-License-Identifier: MIT
-> -+
-> -+require recipes-support/initramfs-config/initramfs-config.inc
-> -diff --git a/meta/recipes-support/initramfs-config/files/control.tmpl b/meta/recipes-support/initramfs-config/files/control.tmpl
-> -new file mode 100644
-> -index 0000000..66984eb
-> ---- /dev/null
-> -+++ b/meta/recipes-support/initramfs-config/files/control.tmpl
-> -@@ -0,0 +1,12 @@
-> -+Source: ${PN}
-> -+Section: misc
-> -+Priority: optional
-> -+Standards-Version: 3.9.6
-> -+Maintainer: isar-users <isar-users@googlegroups.com>
-> -+Build-Depends: debhelper (>= 9)
-> -+
-> -+
-> -+Package: ${PN}
-> -+Architecture: any
-> -+Depends: ${shlibs:Depends}, ${misc:Depends}, initramfs-tools-core, ${DEBIAN_DEPENDS}
-> -+Description: Configuration files for a custom initramfs
-> -diff --git a/meta/recipes-support/initramfs-config/files/postinst.tmpl b/meta/recipes-support/initramfs-config/files/postinst.tmpl
-> -new file mode 100644
-> -index 0000000..e523906
-> ---- /dev/null
-> -+++ b/meta/recipes-support/initramfs-config/files/postinst.tmpl
-> -@@ -0,0 +1,50 @@
-> -+#!/bin/sh
-> -+# postinst script for initramfs-config
-> -+#
-> -+# see: dh_installdeb(1)
-> -+
-> -+set -e
-> -+
-> -+case "$1" in
-> -+    configure)
-> -+        INITRAMFS_CONF=/etc/initramfs-tools/initramfs.conf
-> -+        if [ -f ${INITRAMFS_CONF} ]; then
-> -+            sed -i -E 's/(^MODULES=).*/\1${INITRAMFS_MODULES}/' ${INITRAMFS_CONF}
-> -+            sed -i -E 's/(^BUSYBOX=).*/\1${INITRAMFS_BUSYBOX}/' ${INITRAMFS_CONF}
-> -+            sed -i -E 's/(^COMPRESS=).*/\1${INITRAMFS_COMPRESS}/' ${INITRAMFS_CONF}
-> -+            sed -i -E 's/(^KEYMAP=).*/\1${INITRAMFS_KEYMAP}/' ${INITRAMFS_CONF}
-> -+            sed -i -E 's/(^DEVICE=).*/\1${INITRAMFS_NET_DEVICE}/' ${INITRAMFS_CONF}
-> -+            sed -i -E 's/(^NFSROOT=).*/\1${INITRAMFS_NFSROOT}/' ${INITRAMFS_CONF}
-> -+            sed -i -E 's/(^RUNSIZE=).*/\1${INITRAMFS_RUNSIZE}/' ${INITRAMFS_CONF}
-> -+            if grep -Fxq "ROOT=" "${INITRAMFS_CONF}"; then
-> -+                sed -i -E 's/(^ROOT=).*/\1${INITRAMFS_ROOT}/' ${INITRAMFS_CONF}
-> -+            else
-> -+                sed -i -E "\$aROOT=${INITRAMFS_ROOT}" ${INITRAMFS_CONF}
-> -+            fi
-> -+        fi
-> -+
-> -+        MODULES_LIST_FILE=/etc/initramfs-tools/modules
-> -+        if [ -f ${MODULES_LIST_FILE} ]; then
-> -+            for modname in ${INITRAMFS_MODULE_LIST}; do
-> -+                if ! grep -Fxq "$modname" "${MODULES_LIST_FILE}"; then
-> -+                    echo "$modname" >> "${MODULES_LIST_FILE}"
-> -+                fi
-> -+            done
-> -+        fi
-> -+
-> -+        update-initramfs -v -u
-> -+
-> -+    ;;
-> -+    abort-upgrade|abort-remove|abort-deconfigure)
-> -+    ;;
-> -+
-> -+    *)
-> -+        echo "postinst called with unknown argument \`$1'" >&2
-> -+        exit 1
-> -+        ;;
-> -+esac
-> -+# dh_installdeb will replace this with shell code automatically
-> -+# generated by other debhelper scripts.
-> -+#DEBHELPER#
-> -+
-> -+exit 0
-> -diff --git a/meta/recipes-support/initramfs-config/files/postrm.tmpl b/meta/recipes-support/initramfs-config/files/postrm.tmpl
-> -new file mode 100644
-> -index 0000000..115d9b6
-> ---- /dev/null
-> -+++ b/meta/recipes-support/initramfs-config/files/postrm.tmpl
-> -@@ -0,0 +1,41 @@
-> -+#!/bin/sh
-> -+# postrm script for initramfs-config
-> -+#
-> -+# see: dh_installdeb(1)
-> -+
-> -+set -e
-> -+
-> -+case "$1" in
-> -+    purge|remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
-> -+        # back to the debian defaults
-> -+        INITRAMFS_CONF=/etc/initramfs-tools/initramfs.conf
-> -+        sed -i -E 's/(^MODULES=).*/\1most/' ${INITRAMFS_CONF}
-> -+        sed -i -E 's/(^BUSYBOX=).*/\1auto/' ${INITRAMFS_CONF}
-> -+        sed -i -E 's/(^COMPRESS=).*/\1gzip/' ${INITRAMFS_CONF}
-> -+        sed -i -E 's/(^KEYMAP=).*/\1n/' ${INITRAMFS_CONF}
-> -+        sed -i -E 's/(^DEVICE=).*/\1/' ${INITRAMFS_CONF}
-> -+        sed -i -E 's/(^NFSROOT=).*/\1auto/' ${INITRAMFS_CONF}
-> -+        sed -i -E 's/(^RUNSIZE=).*/\110%/' ${INITRAMFS_CONF}
-> -+        sed -i -E 's/(^ROOT=).*//' ${INITRAMFS_CONF}
-> -+
-> -+        # remove the added modules
-> -+        MODULES_LIST_FILE=/etc/initramfs-tools/modules
-> -+        for modname in ${INITRAMFS_MODULE_LIST}; do
-> -+            sed -i -E 's/$modname//'
-> -+        done
-> -+
-> -+        update-initramfs -v -u
-> -+    ;;
-> -+
-> -+    *)
-> -+        echo "postrm called with unknown argument \`$1'" >&2
-> -+        exit 1
-> -+        ;;
-> -+esac
-> -+
-> -+# dh_installdeb will replace this with shell code automatically
-> -+# generated by other debhelper scripts.
-> -+
-> -+#DEBHELPER#
-> -+
-> -+exit 0
-> -diff --git a/meta/recipes-support/initramfs-config/initramfs-config.inc b/meta/recipes-support/initramfs-config/initramfs-config.inc
-> -new file mode 100644
-> -index 0000000..16049a9
-> ---- /dev/null
-> -+++ b/meta/recipes-support/initramfs-config/initramfs-config.inc
-> -@@ -0,0 +1,32 @@
-> -+# This software is a part of ISAR.
-> -+# Copyright (C) 2020 Siemens AG
-> -+#
-> -+# SPDX-License-Identifier: MIT
-> -+inherit dpkg-raw
-> -+inherit template
-> -+DESCRIPTION = "Recipe to set the initramfs configuration and generate a new ramfs"
-> -+
-> -+FILESEXTRAPATHS_prepend := "${FILE_DIRNAME}/files:"
-> -+
-> -+SRC_URI = "file://postinst.tmpl \
-> -+           file://postrm.tmpl \
-> -+           file://control.tmpl \
-> -+          "
-> -+
-> -+INITRAMFS_MODULES ?= "most"
-> -+INITRAMFS_BUSYBOX ?= "auto"
-> -+INITRAMFS_COMPRESS ?= "gzip"
-> -+INITRAMFS_KEYMAP ?= "n"
-> -+INITRAMFS_NET_DEVICE ?= ""
-> -+INITRAMFS_NFSROOT ?= "auto"
-> -+INITRAMFS_RUNSIZE ?= "10%"
-> -+INITRAMFS_ROOT ?= ""
-> -+INITRAMFS_MODULE_LIST ?= ""
-> -+CREATE_NEW_INITRAMFS ?= "n"
-> -+KERNEL_PACKAGE = "${@ ("linux-image-" + d.getVar("KERNEL_NAME", True)) if d.getVar("KERNEL_NAME", True) else ""}"
-> -+DEBIAN_DEPENDS += ", ${KERNEL_PACKAGE}"
-> -+TEMPLATE_FILES = "postinst.tmpl control.tmpl postrm.tmpl"
-> -+TEMPLATE_VARS += "INITRAMFS_MODULES INITRAMFS_BUSYBOX INITRAMFS_COMPRESS \
-> -+                  INITRAMFS_KEYMAP INITRAMFS_NET_DEVICE INITRAMFS_NFSROOT \
-> -+                  INITRAMFS_RUNSIZE INITRAMFS_ROOT INITRAMFS_MODULE_LIST \
-> -+                  CREATE_NEW_INITRAMFS DEBIAN_DEPENDS PN"
-> --- 
-> -2.20.1
-> -
-> diff --git a/kas-cip.yml b/kas-cip.yml
-> index 8fb9004..8522957 100644
-> --- a/kas-cip.yml
-> +++ b/kas-cip.yml
-> @@ -25,10 +25,6 @@ repos:
->      refspec: 03124cca669f50b682336a0bdf4ede5a4238e144
->      layers:
->        meta:
-> -    patches:
-> -      02-initramfs:
-> -        path: isar-patches/v7-0001-meta-support-Generate-a-custom-initramfs.patch
-> -        repo: cip-core
->  
->  bblayers_conf_header:
->    standard: |
-> diff --git a/recipes-support/initramfs-config/files/postinst b/recipes-support/initramfs-config/files/postinst
-> new file mode 100644
-> index 0000000..2d4256d
-> --- /dev/null
-> +++ b/recipes-support/initramfs-config/files/postinst
-> @@ -0,0 +1,6 @@
-> +#!/bin/sh
-> +
-> +# patch local script
-> +patch -s -p0 /usr/share/initramfs-tools/scripts/local /usr/share/secureboot/secure-boot-debian-local.patch
-> +
-> +update-initramfs -v -u
-> diff --git a/recipes-support/initramfs-config/files/postinst.ext b/recipes-support/initramfs-config/files/postinst.ext
-> deleted file mode 100644
-> index cdafa74..0000000
-> --- a/recipes-support/initramfs-config/files/postinst.ext
-> +++ /dev/null
-> @@ -1,3 +0,0 @@
-> -if [ -d /usr/share/secureboot ]; then
-> -    patch -s -p0 /usr/share/initramfs-tools/scripts/local /usr/share/secureboot/secure-boot-debian-local.patch
-> -fi
-> diff --git a/recipes-support/initramfs-config/initramfs-abrootfs-secureboot_0.1.bb b/recipes-support/initramfs-config/initramfs-abrootfs-secureboot_0.1.bb
-> index f84f76f..4b257fa 100644
-> --- a/recipes-support/initramfs-config/initramfs-abrootfs-secureboot_0.1.bb
-> +++ b/recipes-support/initramfs-config/initramfs-abrootfs-secureboot_0.1.bb
-> @@ -8,24 +8,21 @@
->  #
->  # SPDX-License-Identifier: MIT
->  
-> -require recipes-support/initramfs-config/initramfs-config.inc
-> +
-> +inherit dpkg-raw
->  
->  DEBIAN_DEPENDS += ", busybox, patch"
->  
-> -SRC_URI += "file://postinst.ext \
-> +SRC_URI += "file://postinst \
->              file://initramfs.lsblk.hook \
->              file://initramfs.image_uuid.hook \
->              file://secure-boot-debian-local-patch"
->  
-> -INITRAMFS_BUSYBOX = "y"
-> -
->  do_install() {
->      # add patch for local to /usr/share/secure boot
->      TARGET=${D}/usr/share/secureboot
->      install -m 0755 -d ${TARGET}
->      install -m 0644 ${WORKDIR}/secure-boot-debian-local-patch ${TARGET}/secure-boot-debian-local.patch
-> -    # patch postinst
-> -    sed -i -e '/configure)/r ${WORKDIR}/postinst.ext' ${WORKDIR}/postinst
->  
->      # add hooks for secure boot
->      HOOKS=${D}/etc/initramfs-tools/hooks
-> 
+cip/linux-4.4.y-cip build: 117 builds: 0 failed, 117 passed, 11 warnings (v=
+4.4.274-cip59)
 
-Thanks, applied to next.
+Full Build Summary: https://kernelci.org/build/cip/branch/linux-4.4.y-cip/k=
+ernel/v4.4.274-cip59/
 
-Jan
+Tree: cip
+Branch: linux-4.4.y-cip
+Git Describe: v4.4.274-cip59
+Git Commit: c55ad377e5140d299ac5f6e436642e9734534748
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+Built: 3 unique architectures
 
--- 
-Siemens AG, T RDA IOT
-Corporate Competence Center Embedded Linux
+Warnings Detected:
 
---fca12MxztuXZlufTpoVs
+arm:
+    allmodconfig (gcc-8): 5 warnings
+    clps711x_defconfig (gcc-8): 1 warning
+    davinci_all_defconfig (gcc-8): 1 warning
+    lpc32xx_defconfig (gcc-8): 1 warning
+    multi_v7_defconfig+CONFIG_SMP=3Dn (gcc-8): 1 warning
+    mxs_defconfig (gcc-8): 1 warning
+    omap2plus_defconfig (gcc-8): 1 warning
+
+i386:
+
+x86_64:
+
+
+Warnings summary:
+
+    2    drivers/cpufreq/ti-cpufreq.c:250:24: warning: passing argument 1 o=
+f =E2=80=98PTR_ERR_OR_ZERO=E2=80=99 makes pointer from integer without a ca=
+st [-Wint-conversion]
+    1    include/linux/cpumask.h:565:26: warning: passing argument 2 of =E2=
+=80=98dev_pm_opp_set_sharing_cpus=E2=80=99 discards =E2=80=98const=E2=80=99=
+ qualifier from pointer target type [-Wdiscarded-qualifiers]
+    1    drivers/scsi/nsp32.c:609:57: warning: bitwise comparison always ev=
+aluates to false [-Wtautological-compare]
+    1    drivers/scsi/nsp32.c:609:27: warning: bitwise comparison always ev=
+aluates to false [-Wtautological-compare]
+    1    arch/arm/mach-mxs/mach-mxs.c:285:26: warning: duplicate =E2=80=98c=
+onst=E2=80=99 declaration specifier [-Wduplicate-decl-specifier]
+    1    arch/arm/mach-lpc32xx/phy3250.c:215:36: warning: duplicate =E2=80=
+=98const=E2=80=99 declaration specifier [-Wduplicate-decl-specifier]
+    1    arch/arm/mach-davinci/da8xx-dt.c:23:34: warning: duplicate =E2=80=
+=98const=E2=80=99 declaration specifier [-Wduplicate-decl-specifier]
+    1    arch/arm/mach-clps711x/board-autcpu12.c:163:26: warning: duplicate=
+ =E2=80=98const=E2=80=99 declaration specifier [-Wduplicate-decl-specifier]
+    1    /tmp/ccxQTWjv.s:18225: Warning: using r15 results in unpredictable=
+ behaviour
+    1    /tmp/ccxQTWjv.s:18153: Warning: using r15 results in unpredictable=
+ behaviour
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+
+Detailed per-defconfig build reports:
+
+---------------------------------------------------------------------------=
+-----
+acs5k_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+acs5k_tiny_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+allmodconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 5 warnings, 0 section m=
+ismatches
+
+Warnings:
+    drivers/cpufreq/ti-cpufreq.c:250:24: warning: passing argument 1 of =E2=
+=80=98PTR_ERR_OR_ZERO=E2=80=99 makes pointer from integer without a cast [-=
+Wint-conversion]
+    /tmp/ccxQTWjv.s:18153: Warning: using r15 results in unpredictable beha=
+viour
+    /tmp/ccxQTWjv.s:18225: Warning: using r15 results in unpredictable beha=
+viour
+    drivers/scsi/nsp32.c:609:27: warning: bitwise comparison always evaluat=
+es to false [-Wtautological-compare]
+    drivers/scsi/nsp32.c:609:57: warning: bitwise comparison always evaluat=
+es to false [-Wtautological-compare]
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
+smatches
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (i386, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---------------------------------------------------------------------------=
+-----
+am200epdkit_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+assabet_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+at91_dt_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+axm55xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+badge4_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+bcm2835_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+bcm_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
+mismatches
+
+---------------------------------------------------------------------------=
+-----
+cerfcube_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+clps711x_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
+ion mismatches
+
+Warnings:
+    arch/arm/mach-clps711x/board-autcpu12.c:163:26: warning: duplicate =E2=
+=80=98const=E2=80=99 declaration specifier [-Wduplicate-decl-specifier]
+
+---------------------------------------------------------------------------=
+-----
+cm_x2xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+cm_x300_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+colibri_pxa270_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings,=
+ 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+colibri_pxa300_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings,=
+ 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+collie_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+corgi_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+davinci_all_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 s=
+ection mismatches
+
+Warnings:
+    arch/arm/mach-davinci/da8xx-dt.c:23:34: warning: duplicate =E2=80=98con=
+st=E2=80=99 declaration specifier [-Wduplicate-decl-specifier]
+
+---------------------------------------------------------------------------=
+-----
+dove_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+ebsa110_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+efm32_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+em_x270_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+ep93xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+eseries_pxa_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+exynos_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+ezx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
+mismatches
+
+---------------------------------------------------------------------------=
+-----
+footbridge_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+h3600_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+h5000_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+hackkit_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+hisi_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+i386_defconfig (i386, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+imote2_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+imx_v4_v5_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+imx_v6_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+integrator_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+iop13xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+iop32x_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+iop33x_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+ixp4xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+jornada720_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+keystone_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+ks8695_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+lart_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+lpc18xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+lpc32xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 secti=
+on mismatches
+
+Warnings:
+    arch/arm/mach-lpc32xx/phy3250.c:215:36: warning: duplicate =E2=80=98con=
+st=E2=80=99 declaration specifier [-Wduplicate-decl-specifier]
+
+---------------------------------------------------------------------------=
+-----
+lpd270_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+lubbock_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+magician_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+mainstone_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+mini2440_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+mmp2_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v5_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy (arm, gcc-8) =E2=80=94 PASS, 0=
+ errors, 0 warnings, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy (arm, gcc-8) =E2=80=
+=94 PASS, 0 errors, 0 warnings, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig+CONFIG_SMP=3Dn (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 =
+warning, 0 section mismatches
+
+Warnings:
+    include/linux/cpumask.h:565:26: warning: passing argument 2 of =E2=80=
+=98dev_pm_opp_set_sharing_cpus=E2=80=99 discards =E2=80=98const=E2=80=99 qu=
+alifier from pointer target type [-Wdiscarded-qualifiers]
+
+---------------------------------------------------------------------------=
+-----
+mv78xx0_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+mvebu_v5_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+mvebu_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+mxs_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section m=
+ismatches
+
+Warnings:
+    arch/arm/mach-mxs/mach-mxs.c:285:26: warning: duplicate =E2=80=98const=
+=E2=80=99 declaration specifier [-Wduplicate-decl-specifier]
+
+---------------------------------------------------------------------------=
+-----
+netwinder_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+netx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+nhk8815_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+nuc910_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+nuc950_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+nuc960_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+omap1_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+omap2plus_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sec=
+tion mismatches
+
+Warnings:
+    drivers/cpufreq/ti-cpufreq.c:250:24: warning: passing argument 1 of =E2=
+=80=98PTR_ERR_OR_ZERO=E2=80=99 makes pointer from integer without a cast [-=
+Wint-conversion]
+
+---------------------------------------------------------------------------=
+-----
+orion5x_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+palmz72_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+pcm027_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+pleb_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+prima2_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+pxa168_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+pxa255-idp_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+pxa3xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+pxa910_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+qcom_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+raumfeld_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+realview-smp_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
+ section mismatches
+
+---------------------------------------------------------------------------=
+-----
+realview_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+rpc_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
+mismatches
+
+---------------------------------------------------------------------------=
+-----
+s3c2410_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+s3c6400_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+s5pv210_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+sama5_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+shannon_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+shmobile_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+simpad_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+socfpga_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+spear13xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+spear3xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+spear6xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+spitz_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+stm32_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+sunxi_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+tct_hammer_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+tegra_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+trizeps4_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+u300_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+u8500_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+versatile_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+vexpress_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+vf610m4_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+viper_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+vt8500_v6_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
+ section mismatches
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig+x86-chromebook (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0=
+ warnings, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+xcep_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+zeus_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+zx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---
+For more info write to <info@kernelci.org>
+
+--UB0IFJdRWiAIRZ8jFx0e
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -382,13 +754,15 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6610): https://lists.cip-project.org/g/cip-dev/message=
-/6610
-Mute This Topic: https://lists.cip-project.org/mt/84063674/4520388
+View/Reply Online (#6611): https://lists.cip-project.org/g/cip-dev/message=
+/6611
+Mute This Topic: https://lists.cip-project.org/mt/84084830/4520388
+Mute #kernelci:https://lists.cip-project.org/g/cip-dev/mutehashtag/kernelc=
+i
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/4520388=
 /727948398/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---fca12MxztuXZlufTpoVs--
+--UB0IFJdRWiAIRZ8jFx0e--
