@@ -1,38 +1,115 @@
-Return-Path: <SRS0=orKS=MH=lists.cip-project.org=bounce+64572+6621+4520388+8129055@kernel.org>
+Return-Path: <SRS0=mLzr=MH=lists.cip-project.org=bounce+64572+6622+4520388+8129055@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,HTML_MESSAGE,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3EF9C12002
-	for <cip-dev@archiver.kernel.org>; Thu, 15 Jul 2021 01:01:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88490C12002
+	for <cip-dev@archiver.kernel.org>; Thu, 15 Jul 2021 02:34:54 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 20BD1613CC
-	for <cip-dev@archiver.kernel.org>; Thu, 15 Jul 2021 01:01:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20BD1613CC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=miraclelinux.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6621+4520388+8129055@lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id h4sSYY4521723xPsxMTwBsR3; Wed, 14 Jul 2021 18:01:26 -0700
-X-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
- by mx.groups.io with SMTP id smtpd.web08.1918.1626310884144603996
+	by mail.kernel.org (Postfix) with ESMTPS id BE589610CB
+	for <cip-dev@archiver.kernel.org>; Thu, 15 Jul 2021 02:34:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE589610CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cybertrust.co.jp
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=bounce+64572+6622+4520388+8129055@lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id 7Ge6YY4521723xhot2iW3hfg; Wed, 14 Jul 2021 19:34:53 -0700
+X-Received: from ss11.sbt-mailgate.jp (ss11.sbt-mailgate.jp [202.241.206.53])
+ by mx.groups.io with SMTP id smtpd.web09.2862.1626316490478992303
  for <cip-dev@lists.cip-project.org>;
- Wed, 14 Jul 2021 18:01:25 -0700
-X-Received: by mail-ot1-f50.google.com with SMTP id 42-20020a9d012d0000b02904b98d90c82cso4456516otu.5
-        for <cip-dev@lists.cip-project.org>; Wed, 14 Jul 2021 18:01:24 -0700 (PDT)
-X-Gm-Message-State: Ovhg7wbV6PWurVCDarCBEErSx4520388AA=
-X-Google-Smtp-Source: ABdhPJyWyELCoPs7r15ggoKqRBCn4fdrleQsPuoB959wjFiD5NSfzfnqNq0XbweIQLz1Sm+Lvir48s7vuPsf2VG/BvM=
-X-Received: by 2002:a9d:12ce:: with SMTP id g72mr752753otg.179.1626310882965;
- Wed, 14 Jul 2021 18:01:22 -0700 (PDT)
+ Wed, 14 Jul 2021 19:34:52 -0700
+X-Received: from mail.sbt-mailgate.jp (sagproxy-out12.sbt-mailgate.jp [10.16.47.42]) (envelope sender: <masashi.kudo@cybertrust.co.jp>)
+	(not using TLS) by ss11.sbt-mailgate.jp (Active!gate) with ESMTP id PLcq00300A;
+	Thu, 15 Jul 2021 11:28:42 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IK32CeDo6jK1jcqW3/0tvkvLZoIt2oBT6s9rKm+O6RuQKff6drnLFVRQjW4nvqQB+hiO8KPWWrzevPF0W8VrZavXGht7Qj9rzgF9hIWKW5M7ABo8QOwXYsU6I7N9jtHGQLFzufXpzVuspTVOHK1rLs+QT5yXdcsS7ea4Ur16gR/XWKNMqeOb/GGqdrRUNV+t+ksfcE6LE+d3kZYlM7nd/HTGgQYxsqMLe3zZS08gvZPYDm5z4M6sHjZY3qmihJsUqXgm8L8mIug3mcJh5XHwWUs7tuUIc9R+qNmGChQT/7NpEbFVMCjgQxzmh1nuEKg61aIShDA/fyHeAstaihZ4Yg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OXrb3FndDBnLofR/VAAByKKr6Mp/svKQ9g9uvKV0sZs=;
+ b=JJB7mpYUf8S1WpMCvKJpIcmxRWDlPgWpFdGavOlV10ggjxCbGwMFsK8LsDhzk7uu42HJZShOBcT7SDH9tu3+B5HBHja9UKDJcaRKbFSkpuoW1Y6wU6PSIrb3tMx/6wKSH3zYhkU1yZ4vUERfPf6OSW001Pyfs3PC+Pn/5jJV1APb1VDz2I+6/CV73Jks9TG3BMzpr+/JrlonYpZn79lAEgr1Vc1kRCYocBiFb1R4CKWxAp164li5ayyYdzReIjRju4ND7gDl5GxawDumCKIo2cYRQbBUpm78nHP+L8PYeXWLfQqF9tca6imdaE1Gnol0FM4OtZcDUS5tOcbKSYOPYA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cybertrust.co.jp; dmarc=pass action=none
+ header.from=cybertrust.co.jp; dkim=pass header.d=cybertrust.co.jp; arc=none
+X-Received: from TY2PR01MB4972.jpnprd01.prod.outlook.com (2603:1096:404:11c::20)
+ by TYCPR01MB5853.jpnprd01.prod.outlook.com (2603:1096:400:b::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.21; Thu, 15 Jul
+ 2021 02:28:32 +0000
+X-Received: from TY2PR01MB4972.jpnprd01.prod.outlook.com
+ ([fe80::f937:86f8:a385:7913]) by TY2PR01MB4972.jpnprd01.prod.outlook.com
+ ([fe80::f937:86f8:a385:7913%4]) with mapi id 15.20.4331.023; Thu, 15 Jul 2021
+ 02:28:32 +0000
+From: "masashi.kudo@cybertrust.co.jp" <masashi.kudo@cybertrust.co.jp>
+To: <cip-dev@lists.cip-project.org>
+Subject: [cip-dev] CIP IRC weekly meeting today on libera.chat
+Thread-Topic: CIP IRC weekly meeting today on libera.chat
+Thread-Index: Add5IQribyGyIPQWS6WDd4dBoRnLoQ==
+Date: Thu, 15 Jul 2021 11:34:46 +0900
+Message-ID: 
+ <TY2PR01MB4972D0C6047430EB9C93E2B1A0129@TY2PR01MB4972.jpnprd01.prod.outlook.com>
+Accept-Language: ja-JP, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 192c9b6d-6007-49a5-a6a9-08d947383d36
+x-ms-traffictypediagnostic: TYCPR01MB5853:
+x-microsoft-antispam-prvs: 
+ <TYCPR01MB585379FEEA52512C6BCB0360A0129@TYCPR01MB5853.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 
+ almmJMaDL5XnLhYCvgvP93u63CdoTxe2cY3W0qphLvWyeQncAaVD7A53jd8gQ6OHuIIutxBbc/ioL6LZBq4Pk4Inb1FhLdt62FzgG6KEnBDFgz7sPxUC97ewRFZQ7bcdgKnHWXY9s2uJvDoSECQ0ItBITET/t3EzTS+RiE43BFmb8GRBFzJuIycTuf64LeCj6Z5v8AFgZ+oaIbRGB4vz1D2lNuZKchw3ArQ8SwL/d78zpw1W0hDHNCfNyZnEST5K1e+vHJt7BooRGYxRdOlezUa3nsLEZ6zz2UhSAmcvtiLiEm198rcUacWoNYOMXdgfvdl6YCON+eoZmYfVk+T/GfCZ/5G+RWAEdHzgjY5ZqN4xW6A/7A2ONbJOlpnB9uqBXPSi5FLqHWqVqQsirw53MZ073U6i/t3ZXdctTzXyG9ITwqaQuhtBojxh3A2zdPTBMzuN88mmDcsOWEeYCrrPRoz5HOaZK1CDyDTzHh9/7TYaLA14zSv+o2ZiJiyeIjjzI4rQQv0TgCKZdmdYrD4FrPN32QbfcD+2JVhb0b4OHv+IpM8YoFyP41IeLE8oWwWz0m3vvzZHGv3GHc15DQFQdDnzI2liP2AtvKdN6j3lv3GUgiKdsqbE3J0UAscAxe43IQ6krlfheGYLP4tzC/Y5eO1edTVNuvIjKGofvCGVwnoIOOoLuRke4JmC5STvnCMlSQE5fPc61rXrCDoR+J6Vsjfjw7Ms43XcwXaJajBy7LZxM01qKaRXIKvqY0TQTuSb7PuGJ8ddE6JiwD9zFyd7GGWaXCjz8wnoqRsJEP4/VoRdRTdb/EQ/ZsLuXewFadHS+xy/BiVcn+643qnVWD0YSgWnSCt+FyRtm41irktCf3A=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?dTdzQ25yNTFyeml3SWJ5aXdublQ3LzBkM2oreU05STVKQ05keU1FNG1m?=
+ =?iso-2022-jp?B?U3haeDRPblNtbkFrNm9sTjErd29kR0V1QmhVa3UvdG1RTUxyU1dFZXd1?=
+ =?iso-2022-jp?B?TlNZWVFLT1NRVmNaNWY0YTZRajRta0NtcmVOR0F2dC9Gc29VS1ZRd292?=
+ =?iso-2022-jp?B?Vk5BY1poSGVwWjc4STNDNjYwTm5BZXA5Zlg0WmlkKzhacnF1YXBhUzN0?=
+ =?iso-2022-jp?B?T3FxRlprSGhLbzNtUGZYN1F3RVFWUGt5UDZmZHoyTy8rd0l1WGE5YTVB?=
+ =?iso-2022-jp?B?cCs4WmdTVnBNT0N2Y1QyeFgxYVNpVlM2UWtNdDh3RGlsVTB1MUZmeXVW?=
+ =?iso-2022-jp?B?MTFwbFNwclhpVHdKSG9rem12UUpMNGtBaXk4V0dudHl5eEtUQzlSSm5Q?=
+ =?iso-2022-jp?B?cUxuUGlDL1Q2NEJkWEVFQk9QTHI4YStPdnBnZHp2a21MY2o1c1JhL1k3?=
+ =?iso-2022-jp?B?WWdpUjFBWU51ZHNCNlVSLzFxNEhrT0NwTjVCaFpZdjJwNkhxRG1kL0tW?=
+ =?iso-2022-jp?B?N1U2dll4aWFnQmNHYnF6YnVydWJMNVpkYVl5dkRIRkU3akRBWEhUWjhn?=
+ =?iso-2022-jp?B?cERnZjA2MVBjWE5tL3FnSkZGbGRhSWhJOUNic2FSdzJjVjhIbkV1a3Zq?=
+ =?iso-2022-jp?B?bSszNWYreVdhdk9TbHVsV2IvQW5DeHo1dVJRZFVJTlNHb3VrTHIzZm44?=
+ =?iso-2022-jp?B?QkNNZm0vZTZER2tiR1MwMEVUQ0NCcG84eWVRMTJWRTU3RXNOcFpoNXRQ?=
+ =?iso-2022-jp?B?YVk1Y2p1d0FXcktGVEJsN04vNmVCdXVya3Z4K0lqekdybks5aHprUXNt?=
+ =?iso-2022-jp?B?YzFNZkRxc0kyK05FZnJ0aHJhK1k5emkrSm9ZVXR6T0V6Y3ZFSXo0K3pP?=
+ =?iso-2022-jp?B?MjJvbVA1a1lNMExpcGZ5YXhieG5Ob3Q0OTVwVjYzajlqTldyQnphS3E2?=
+ =?iso-2022-jp?B?WUw1RlBoY0x4aGJoemZpYllXMmF1YWJoSUVYSnFSNzRFY0NzbXpaT3Bh?=
+ =?iso-2022-jp?B?TytHSGEvUW8rdWkzNEVHZWkraUtCZzd2MldRUlJwL3pCSDQ2amhEY1U3?=
+ =?iso-2022-jp?B?SUV5TUhycFhLT2lTRVBsdVBuK09FYjI2R3hmQlV4R2t2c2FwQkZOSFRu?=
+ =?iso-2022-jp?B?ZW02SDRlUUZCZDNIa0tOZzBNQi9nQlFMVEhXdmZjYjBibUJVRENIaW5p?=
+ =?iso-2022-jp?B?L0hpM0pZdXd1OW4yOVg2TnhYSk9laXl2Zkg4SmNVcVFVQTVVQlpxQ3pK?=
+ =?iso-2022-jp?B?cVBFUnM4aGEwbTQ5N1Q5ZUdnNHZEeThpcC9NeGxVZHQvNEtzeGxrc3M1?=
+ =?iso-2022-jp?B?NXJPaTNjcUpLSThJbitvUzVLVXBzelVOaXdOQWxpUUl2RUVnVlhUUlZn?=
+ =?iso-2022-jp?B?ZEs2YXlZb1VGTGQ3VjlVdVlWL0NBMEcwZUIrdGZWT1hkSUFFRGpZZzk3?=
+ =?iso-2022-jp?B?RnIxYnl5R253OWhzcERoSEpEcGowUXhIS2dNZUZyZDhkTEs2bVFQZ2JC?=
+ =?iso-2022-jp?B?bnJySS9QTFVJNW5oQ01PMDB3ZnpJemVSRUYwTlB0UVVCQ0x1QlFubzUv?=
+ =?iso-2022-jp?B?Undhb24yVFlMUkQ4cFRObEtiQlZZclBtRzBleTBrMGJDM3lNb3lwcWE1?=
+ =?iso-2022-jp?B?YXNkbkZDTmpvUVhybFZDUHF5bkFvbVpwZ1FzcnVBS1lxSDNUamhCUUVm?=
+ =?iso-2022-jp?B?ek5qUzJHWjYyanIzR2oxdWNjbU42MDUvVnFyYlZCYS94L3JRSGw1QnBR?=
+ =?iso-2022-jp?B?UldVSnhkaDZzeXFEN2RGcm9sQVJDNUlWY1ppSHRzTmlwd0JCaVBsSExp?=
+ =?iso-2022-jp?B?N200TEVvWkc1dmJCT25DNHk4dkI1TjVMVjZCZ1ZtMDhKSWgyNGZkYlhL?=
+ =?iso-2022-jp?B?bGNKbFdUMHh0OGhEbWNKZFlMR2JjaG1oRlRGdXNjRHBVZU9udkNFTEti?=
+x-ms-exchange-transport-forked: True
 MIME-Version: 1.0
-From: =?UTF-8?B?5biC5bed5q2j576O?= <masami.ichikawa@miraclelinux.com>
-Date: Thu, 15 Jul 2021 10:00:47 +0900
-Message-ID: <CAODzB9rgNngZ9GMZgJYGNr-+ruYxhYSr7q4dXCKgrO89PAAfWA@mail.gmail.com>
-Subject: [cip-dev] New CVE entries this week
-To: cip-dev <cip-dev@lists.cip-project.org>
+X-OriginatorOrg: cybertrust.co.jp
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY2PR01MB4972.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 192c9b6d-6007-49a5-a6a9-08d947383d36
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jul 2021 02:28:31.9758
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72cc4624-32b4-4dab-b80a-8563e559bd82
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: FbzoIiglSrL8xsllq6FlncOlxRDO6zwb33wsrYD58uzzneqYD47ARReYt0nugZoM3URhtSi4Rz0pN69Ba3aa5r4h+dx99x5VNuAsEuJlE/U=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB5853
 Precedence: Bulk
 List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
 List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
@@ -41,146 +118,219 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-Content-Type: multipart/mixed; boundary="Wrd3zNsFaBBwiD84WXVU"
+X-Gm-Message-State: DmVTH9TUPsalbXlVtkOSsmTex4520388AA=
+Content-Type: multipart/mixed; boundary="tq9y7lCMICa7KkDg2cGW"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1626310886;
- bh=145NVaFGjBs6Ec9EChu0PPl21r7o2eTvzhduhtz/Bh4=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1626316493;
+ bh=CASp+gQTPHeKZg6mTBRSq8c4WxP5jftXHQANDj0K8mI=;
  h=Content-Type:Date:From:Reply-To:Subject:To;
- b=cxqEiim7g8FKaovM8sWRqtrTTfAyx7Up2q4jgwUx7YDsMBIAsKf7tGFsUrlgNx4t6ms
- U61KS9p8QhbtIh1Oz89idPjRUtcncl4PUXfYISMgA0gfR5WitoM85ymjiFKsA37m6s7Jc
- n/rv/9u/IwyvybioJLVFPHEFi6pfGIhScg8=
+ b=fRBErpbTX4EJGdT5QtI+QVUz3EHCstY4QmR+J+NR71NKpTbkQGPXzmT4faM0NABLJmu
+ ZHnQgENBQMEONGrZOSemf7io8D/v0T9eWQxfuD+KQ0bOIRGIljIQPe2pKHqiMW6RbDxse
+ 300Rw3ysKAgGo4hMbcwmqX0d4UYBcK3gx24=
 
---Wrd3zNsFaBBwiD84WXVU
-Content-Type: text/plain; charset="UTF-8"
+--tq9y7lCMICa7KkDg2cGW
+Content-Language: ja-JP
+Content-Type: multipart/alternative;
+	boundary="_000_TY2PR01MB4972D0C6047430EB9C93E2B1A0129TY2PR01MB4972jpnp_"
 
-Hi !
+--_000_TY2PR01MB4972D0C6047430EB9C93E2B1A0129TY2PR01MB4972jpnp_
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 
-It's this week's CVE report.
+Hi all,
 
-CVE Summary
+Kindly be reminded to attend the weekly meeting through IRC to discuss tech=
+nical topics with CIP kernel today.
 
-There is one new CVE.
+Please note that we already moved from Freenode to libera.chat, and our cha=
+nnel is the following:
+              irc:irc.libera.chat:6667/cip
 
-CVE-2021-22555: Affects all CIP kernels
+*Please note that the IRC meeting was rescheduled to UTC (GMT) 09:00 starti=
+ng from the first week of Apr. according to TSC meeting*
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=3D2021&mont=
+h=3D7&day=3D15&hour=3D9&min=3D0&sec=3D0&p1=3D224&p2=3D179&p3=3D136&p4=3D37&=
+p5=3D241&p6=3D248
 
-There is two updated CVEs
-
-CVE-2021-34693: CIP kernel 4.19, 4.19-rt, 4.4 are fixed
-CVE-2021-35039: CIP kernel 4.19 and 4.4 are fixed
-
-From last week CVEs
-
-CVE-2020-28097: CIP kernels are fixed
-CVE-2021-29256: it seems not fixed in mainline yet
-CVE-2021-31615: it seems not fixed in mainline yet
-CVE-2021-35039: CIP kernel 4.4 and 4.4-rt aren't affected. 4.19 is fixed
-
-* New CVEs detail
-
-- 2021/07/12
-
-CVE-2021-22555 -- Heap Out-Of-Bounds Write in xt_compat_target_from_user
-
-The compat IPT_SO_SET_REPLACE/IP6T_SO_SET_REPLACE setsockopt
-implementation in the netfilter subsystem in the Linux kernel allows
-local users to gain privileges or cause a denial of service (heap
-memory corruption) via user namespace.
-
-This vulnerability affects from v2.6.19-rc1 to v5.11.
-
-Fixed status.
-cip/4.19: [12ec80252edefff00809d473a47e5f89c7485499]
-cip/4.19-rt: [12ec80252edefff00809d473a47e5f89c7485499]
-cip/4.4: [b0d98b2193a38ef93c92e5e1953d134d0f426531]
-cip/4.4-rt: not fixed yet
-cip/5.10: not fixed yet
-
-* Updated CVEs detail
-
-CVE-2021-34693 -- can: bcm: fix infoleak in struct bcm_msg_head
-
-Fixed status
-
-cip/4.19: [8899857d7e450805e6410de5004126491f197146]
-cip/4.19-rt: not fixed yet
-cip/4.4: [f638caa211e7a121a5596986d29ebbdaf9156398]
-cip/4.4-rt: not fixed yet
-cip/5.10: not fixed yet
-
-CVE-2021-35039 -- module: limit enabling module.sig_enforce
-
-Fixed status
-
-cip/4.19: [ff660863628fb144badcb3395cde7821c82c13a6]
-cip/4.19-rt: not fixed yet
-cip/4.4: not affected
-cip/4.4-rt: not affected
-cip/5.10: not fixed yet
-
-* From last week CVE report
-
-CVE-2020-28097 -- vgacon_scrolldelta out-of-bounds read
-
-This vulnerability affects before v5.9-rc6, so v5.10 kernel doesn't affect.
-
-Fixed status
-
-cip/4.19: [f5fa64c8daf7b97280865c73903edc0a3eea819e]
-cip/4.19-rt: [f5fa64c8daf7b97280865c73903edc0a3eea819e]
-cip/4.4: [5f76b4c6ac297ce836abe17f495123f45bfc4fb3]
-cip/4.4-rt: [5f76b4c6ac297ce836abe17f495123f45bfc4fb3]
-cip/5.10: not affected
-
-Since CONFIG_VGACON_SOFT_SCROLLBACK option has been removed by this
-CVE fix, we can remove this option from these configs in
-cip-kernel-config repo.
-
-- 4.19.y-cip/x86/cip_qemu_defconfig
-- 4.19.y-cip/x86/plathome_obsvx2.config
-- 4.19.y-cip-rt/x86/siemens_i386-rt.config
-- 4.4.y-cip/x86/cip_qemu_defconfig
+USWest USEast  UK         DE         TW        JP
+02:00     05:00     10:00     11:00     17:00     18:00
 
 
-CVE-2021-29256.yml -- Mali GPU Kernel Driver elevates CPU RO pages to writable
+Last meeting minutes:
+https://irclogs.baserock.org/meetings/cip/2021/07/cip.2021-07-08-09.00.log.=
+html
 
-According to the
-https://developer.arm.com/support/arm-security-updates/mali-gpu-kernel-driver
-, it said "This issue is fixed in Bifrost and Valhall GPU Kernel
-Driver r30p0. It will be fixed in future Midgard release. Users are
-recommended to upgrade if they are impacted by this issue." so it
-seems that CVE hasn't been fixed yet.
+* Action item
+  1. Combine root filesystem with kselftest binary - iwamatsu & alicef
+  2. Do some experiment to lower burdens on CI - patersonc
+  3. Update Testing table below with 5.10 info - patersonc
+https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptesting/cen=
+talisedtesting/cioverview
 
-CVE-2021-31615 -- InjectaBLE: Injecting malicious traffic into
-established Bluetooth Low Energy connections
 
-According to the
-https://developer.arm.com/support/arm-security-updates/mali-gpu-kernel-driver
-, it said "This issue is fixed in Bifrost and Valhall GPU Kernel
-Driver r30p0. It will be fixed in future Midgard release. Users are
-recommended to upgrade if they are impacted by this issue." so it
-seems that CVE hasn't been fixed yet.
+* Kernel maintenance updates
+* Kernel testing
+* AOB
+1. 5.10/5.10-rt kernel configs
 
-CVE-2021-35039 -- Without CONFIG_MODULE_SIG, verification that a
-kernel module is signed, for loading via init_module, does not occur
-for a module.sig_enforce=1 command-line argument.
+The meeting will take 30 min, although it can be extended to an hour if it =
+makes sense and those involved in the topics can stay. Otherwise, the topic=
+ will be taken offline or in the next meeting.
 
-Fixed status
-
-cip/4.19: [ff660863628fb144badcb3395cde7821c82c13a6]
-cip/linux-4.4: not affected
-cip/linux-4.4-rt: not affected
-cip/5.10: not fixed yet
-
-Regards,
-
--- 
-Masami Ichikawa
+Best regards,
+--
+M. Kudo
 Cybertrust Japan Co., Ltd.
 
-Email :masami.ichikawa@cybertrust.co.jp
-          :masami.ichikawa@miraclelinux.com
+--_000_TY2PR01MB4972D0C6047430EB9C93E2B1A0129TY2PR01MB4972jpnp_
+Content-Type: text/html; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 
---Wrd3zNsFaBBwiD84WXVU
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
+osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
+//www.w3.org/TR/REC-html40">
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
+jp">
+<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
+<style><!--
+/* Font Definitions */
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:=1B$B^b%4%7%C%/=1B(B;
+	panose-1:2 11 4 0 0 0 0 0 0 0;}
+@font-face
+	{font-family:"\@=1B$B^b%4%7%C%/=1B(B";
+	panose-1:2 11 4 0 0 0 0 0 0 0;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0mm;
+	text-align:justify;
+	text-justify:inter-ideograph;
+	font-size:10.5pt;
+	font-family:=1B$B^b%4%7%C%/=1B(B;}
+span.17
+	{mso-style-type:personal-compose;
+	font-family:=1B$B^b%4%7%C%/=1B(B;
+	color:windowtext;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	font-family:=1B$B^b%4%7%C%/=1B(B;}
+/* Page Definitions */
+@page WordSection1
+	{size:612.0pt 792.0pt;
+	margin:99.25pt 30.0mm 30.0mm 30.0mm;}
+div.WordSection1
+	{page:WordSection1;}
+--></style><!--[if gte mso 9]><xml>
+<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026">
+<v:textbox inset=3D"5.85pt,.7pt,5.85pt,.7pt" />
+</o:shapedefaults></xml><![endif]--><!--[if gte mso 9]><xml>
+<o:shapelayout v:ext=3D"edit">
+<o:idmap v:ext=3D"edit" data=3D"1" />
+</o:shapelayout></xml><![endif]-->
+</head>
+<body lang=3D"JA" link=3D"#0563C1" vlink=3D"#954F72" style=3D"word-wrap:bre=
+ak-word;text-justify-trim:punctuation">
+<div class=3D"WordSection1">
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt">Hi a=
+ll,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt"><o:p=
+>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt">Kind=
+ly be reminded to attend the weekly meeting through IRC to discuss technica=
+l topics with CIP kernel today.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt"><o:p=
+>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt">Plea=
+se note that we already moved from Freenode to libera.chat, and our channel=
+ is the following:<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt">&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; =
+irc:irc.libera.chat:6667/cip<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt"><o:p=
+>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt">*Ple=
+ase note that the IRC meeting was rescheduled to UTC (GMT) 09:00 starting f=
+rom the first week of Apr. according to TSC meeting*<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt">http=
+s://www.timeanddate.com/worldclock/meetingdetails.html?year=3D2021&amp;mont=
+h=3D7&amp;day=3D15&amp;hour=3D9&amp;min=3D0&amp;sec=3D0&amp;p1=3D224&amp;p2=
+=3D179&amp;p3=3D136&amp;p4=3D37&amp;p5=3D241&amp;p6=3D248<o:p></o:p></span>=
+</p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt"><o:p=
+>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt">USWe=
+st USEast&nbsp; UK&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DE&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; TW&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp; JP<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt">02:0=
+0&nbsp;&nbsp;&nbsp;&nbsp; 05:00&nbsp;&nbsp;&nbsp;&nbsp; 10:00&nbsp;&nbsp;&n=
+bsp;&nbsp; 11:00&nbsp;&nbsp;&nbsp;&nbsp; 17:00&nbsp;&nbsp;&nbsp;&nbsp; 18:0=
+0<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt"><o:p=
+>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt"><o:p=
+>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt">Last=
+ meeting minutes:<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt">http=
+s://irclogs.baserock.org/meetings/cip/2021/07/cip.2021-07-08-09.00.log.html=
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt"><o:p=
+>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt">* Ac=
+tion item<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt">&nbs=
+p; 1. Combine root filesystem with kselftest binary - iwamatsu &amp; alicef=
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt">&nbs=
+p; 2. Do some experiment to lower burdens on CI - patersonc<o:p></o:p></spa=
+n></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt">&nbs=
+p; 3. Update Testing table below with 5.10 info - patersonc<o:p></o:p></spa=
+n></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt">http=
+s://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptesting/centali=
+sedtesting/cioverview<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt"><o:p=
+>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt"><o:p=
+>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt">* Ke=
+rnel maintenance updates<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt">* Ke=
+rnel testing<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt">* AO=
+B<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt">1. 5=
+.10/5.10-rt kernel configs<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt"><o:p=
+>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt">The =
+meeting will take 30 min, although it can be extended to an hour if it make=
+s sense and those involved in the topics can stay. Otherwise, the topic wil=
+l be taken offline or in the next meeting.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt"><o:p=
+>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt">Best=
+ regards,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt">--<o=
+:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt">M. K=
+udo<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:11.0pt">Cybe=
+rtrust Japan Co., Ltd.<o:p></o:p></span></p>
+</div>
+</body>
+</html>
+
+--_000_TY2PR01MB4972D0C6047430EB9C93E2B1A0129TY2PR01MB4972jpnp_--
+
+--tq9y7lCMICa7KkDg2cGW
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -188,13 +338,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6621): https://lists.cip-project.org/g/cip-dev/message=
-/6621
-Mute This Topic: https://lists.cip-project.org/mt/84216032/4520388
+View/Reply Online (#6622): https://lists.cip-project.org/g/cip-dev/message=
+/6622
+Mute This Topic: https://lists.cip-project.org/mt/84217417/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129055/4520388=
 /727948398/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---Wrd3zNsFaBBwiD84WXVU--
+--tq9y7lCMICa7KkDg2cGW--
