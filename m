@@ -1,110 +1,116 @@
-Return-Path: <SRS0=z6pP=MZ=lists.cip-project.org=bounce+64572+6646+4520388+10495289@kernel.org>
+Return-Path: <SRS0=vq8W=M2=lists.cip-project.org=bounce+64572+6647+4520388+10495289@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53E83C432BE
-	for <cip-dev@archiver.kernel.org>; Mon,  2 Aug 2021 20:59:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53023C4338F
+	for <cip-dev@archiver.kernel.org>; Tue,  3 Aug 2021 04:30:54 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id D0EA460F58
-	for <cip-dev@archiver.kernel.org>; Mon,  2 Aug 2021 20:59:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org D0EA460F58
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	by mail.kernel.org (Postfix) with ESMTPS id D8FE861037
+	for <cip-dev@archiver.kernel.org>; Tue,  3 Aug 2021 04:30:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org D8FE861037
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=toshiba.co.jp
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id 8SveYY4521723xnlqsu8zyIL; Mon, 02 Aug 2021 13:59:36 -0700
-X-Received: from JPN01-OS2-obe.outbound.protection.outlook.com (JPN01-OS2-obe.outbound.protection.outlook.com [40.107.141.102])
- by mx.groups.io with SMTP id smtpd.web11.566.1627937970127223646
+X-Received: by 127.0.0.2 with SMTP id UNk4YY4521723xv0y6OeTiw7; Mon, 02 Aug 2021 21:30:53 -0700
+X-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.157])
+ by mx.groups.io with SMTP id smtpd.web08.970.1627965050780119824
  for <cip-dev@lists.cip-project.org>;
- Mon, 02 Aug 2021 13:59:35 -0700
+ Mon, 02 Aug 2021 21:30:52 -0700
+X-Received: by mo-csw.securemx.jp (mx-mo-csw1115) id 1734UcBd005736; Tue, 3 Aug 2021 13:30:39 +0900
+X-Iguazu-Qid: 2wHI1WtxBykAuxXmCr
+X-Iguazu-QSIG: v=2; s=0; t=1627965038; q=2wHI1WtxBykAuxXmCr; m=TT4g5I9fMRdJ0K6fx+q1DAhH6PmlxkfemXteda01rAI=
+X-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1111) id 1734UbhQ007802
+	(version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
+	Tue, 3 Aug 2021 13:30:37 +0900
+X-Received: from enc01.toshiba.co.jp (enc01.toshiba.co.jp [106.186.93.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by imx2-a.toshiba.co.jp (Postfix) with ESMTPS id 2D1DD1000E4;
+	Tue,  3 Aug 2021 13:30:37 +0900 (JST)
+X-Received: from hop001.toshiba.co.jp ([133.199.164.63])
+	by enc01.toshiba.co.jp  with ESMTP id 1734Ua4F025237;
+	Tue, 3 Aug 2021 13:30:36 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=M4K8cBetEx4e0LRd0s2zIMAysnnhK5m+LPcqU6VH12ma7v0tBfaXKxx+8kipcNLiGWtLFTnvn2NPajDjfKTcd9oio4hIJc56/Z6oftX1UaR2ZBq7eBXIPUPnymsKFVOCXYAHeLY0HHAOW1ZZ6BrfBf51HP657uPXtf1gmQpAaEQ42S482SJRnkqR0uwooR9llHnC1wKC4Xw+1msU8ATVkdBQoYUsqX3tO49rUCyos8eMgb5r80fSOIEj6Q3KT4e0M1qRUqn7jx+48+gEblkPy9n5C7rvYP5DnWfrqzDgJv+Mcil0V2bjQErN1FPem83dPVqAlUZpkBTg9AqVAU2RLw==
+ b=nuT/kpel9n/DgMsneffGg5sTvZbP+T1/jXN0HuLHqTCA6zgZLxKACDUCfl6dExC+dTIT/tfYI3pcJdb5ENp5YOnzQNt2VW1LcEisJJbshJHDMYyItQ5p//QG9lwMS3lVPydz8sqDiEEikNK+PErXs/tHRvnPsEIPJdmpckzmxxyJRvLtyRoXbECk4L1HdghT/M2CiL4OmuXLswIourYsN/j8xw5oLLe7Hc8jx9BCnkvBLnKn5pH4qM4KvWRcRM6RJxsc68dzPRL+XrPPiUUN49uvOA2AnZEPaoxXJc58hO1OjPDeyk0ky4LxOjS322zy6a42cpqFz6BM9wroXBuhKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3hxa8+a97LuGt0bsdmHQpQqAWrLi2so2N5fs8rMbMl4=;
- b=EaDD25fBtW4p4EaMUuxMKzbVMyjNQouUmr9yTfqeSYybwYWe+D0FYGAknqdE5X47L/HNmOKpt00YilWiR+ZFLNLwfTttZWE9hBWori9gWvx0C2nKmBKJOVTb6g0rdI/hRkTongOfi+YuiJvvAjXPdeMe8sWF1phFeeuEWibEKAq+6eIGcIkl8HLb+fJNqeCrmHH0sq3mjwodL+hruaAWfpol8sh/avZoktgBL1Ti1OQpo3bNXzjATShWwqU9asnuwvm6aqZPfuwIC9eBlx7pO12U8QXHl9okU09iHKa8SAyFaCQuUdifraKZea7K+CSTfWW0Iz6BnhbhvY3xT30DHQ==
+ bh=lZEAOgGHM95EQJoyuUs3eDlRAtoc4PdgzH9aeIN1ks0=;
+ b=bewswhSgFK691IlFDb35sN+NlXsGqU9XIohLoufZYKIckBnpfm2jQ8/TXAAF6Ix3HUIJ2bwKcYUbmR8yQS3G9Lekcp8RmTZUqRKro+Vqilc5kLTkjmfx6NYv1gzZiSoVSaDlKPQ6IlDjSssyZiv7AMHFTHpCbcsKra3JGBzITd9VZR2BgUML2mQIcScM3l0kF+t3gkjMzvbkEAZYWh8oYLdoxKipy/PD0I1xVbe5Su/gXCd4X3VqGGCsc0npW/PPfCVRLvnX/RLE4u3uXrUHBqlol6f2PYMBRmRNvPS4bO8PO5TZG9u2UEx3zGimn7aYS1Ne7JU7zTeKjB76+qUHYg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-X-Received: from OSZPR01MB6877.jpnprd01.prod.outlook.com (2603:1096:604:13d::6)
- by OSBPR01MB4088.jpnprd01.prod.outlook.com (2603:1096:604:40::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4373.18; Mon, 2 Aug
- 2021 20:59:26 +0000
-X-Received: from OSZPR01MB6877.jpnprd01.prod.outlook.com
- ([fe80::4ced:b063:48d5:4a2b]) by OSZPR01MB6877.jpnprd01.prod.outlook.com
- ([fe80::4ced:b063:48d5:4a2b%8]) with mapi id 15.20.4373.026; Mon, 2 Aug 2021
- 20:59:26 +0000
-From: "Chris Paterson" <chris.paterson2@renesas.com>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	"cip-members@lists.cip-project.org" <cip-members@lists.cip-project.org>
-CC: "alice.ferrazzi@miraclelinux.com" <alice.ferrazzi@miraclelinux.com>
-Subject: [cip-dev] FW: [kernelci-members] KernelCI Hackfest #2 - Sept 6-10 2021
-Thread-Topic: [kernelci-members] KernelCI Hackfest #2 - Sept 6-10 2021
-Thread-Index: AQHXh3zW9rSeX/k4oEq4EIVv1f2AsatgsaGg
-Date: Mon, 2 Aug 2021 20:59:25 +0000
-Message-ID: 
- <OSZPR01MB6877A873F8EEFA24CC8D7331B7EF9@OSZPR01MB6877.jpnprd01.prod.outlook.com>
-References: <74f7b4cf-926f-d8bd-19c2-375cfe7a12b2@collabora.com>
-In-Reply-To: <74f7b4cf-926f-d8bd-19c2-375cfe7a12b2@collabora.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
+ smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
+ header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
+From: "Nobuhiro Iwamatsu" <nobuhiro1.iwamatsu@toshiba.co.jp>
+To: <cip-dev@lists.cip-project.org>
+CC: <pavel@denx.de>, <Chris.Paterson2@renesas.com>,
+        <masashi.kudo@cybertrust.co.jp>, <masami.ichikawa@cybertrust.co.jp>
+Subject: [cip-dev] [ANNOUNCE] Release v4.4.277-cip60
+Thread-Topic: [ANNOUNCE] Release v4.4.277-cip60
+Thread-Index: AdeIH7TdD5rscGiqR6qJSo767eFa/A==
+Date: Tue, 3 Aug 2021 04:30:34 +0000
+X-TSB-HOP: ON
+Message-ID: <TYAPR01MB62521F8D2A41BC0B6DEEDE3F92F09@TYAPR01MB6252.jpnprd01.prod.outlook.com>
+Accept-Language: ja-JP, en-US
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 69234c7e-8729-4771-dd29-08d955f86983
-x-ms-traffictypediagnostic: OSBPR01MB4088:
-x-microsoft-antispam-prvs: 
- <OSBPR01MB4088DC8EC69992769FF5AB0AB7EF9@OSBPR01MB4088.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-ms-office365-filtering-correlation-id: ac16ca7b-03d7-4408-ecf7-08d956376fb5
+x-ms-traffictypediagnostic: TYAPR01MB6314:
+x-microsoft-antispam-prvs: <TYAPR01MB6314E3C50A23DFA7BE1E736792F09@TYAPR01MB6314.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3513;
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam-message-info: 
- 7pIFplxYUgUwjwkGWxQUQvZdt19mgPtrB4UDPgMaXdjeWEabKnlCCxIWmRRa149mtZxy/SI06s13KInK6RzvL1M9CLCs4wxS06WD+glmBY+WGNvukFVsU044uOZkrZTNlvodrGjzWeCsTlUGE1a9Z+aXV2KHnb2YSUk10pIIx9IvclTLoJVlhcySmyC2AoWkPZmzDQFOejVeeiNh6goPAXx6fLHiRU+eZFwFMauDmiubQBuzA5Co81Usb4Z7QvHP/W41Bbc7ALiLK/vFhtuJF9f1LyfeRlmKOgV/hDS5T2zeIwHt7E7YP8khoJ6GaIHQBepjRG4+b4CCWdSN8r76YkFFlk5RLQkkdjVnk2zbsdNcp6f6HQ4eBC3pz/7VlJMW2iYCpaDS5nMEfZ8Q5RqbjKVReviex9iDiWmGKbv94chDE7ukNfXEj++jZVNQwcE0TKOnUNEGVBF8QQrSn2oMTx5dSQ3YBXmpYTemAPoeCLrmQj93v8Wj3VbuDV1hyqvtgD1cOkt3Myqi67KQciAK+TtqwpNh0XDDwHTn4uWKCL7w2lDcJWfOdBoZx/wrEBwb28fMufSgFvifSEK7kPSW30Y4hgJqu3zsHuOLQuuUTKrSGRnkO8n75U88/xaFBmOnlrQ4KI/K+G/XM7BTWHQF+odMO2ma2mjY9uAqKoOyGENbDHYZ85sdM3ZDObxr+nKYXB4irqzlOadV2LP8u+ffGWA+ZSHq7peiXLaQ/JU2sIF/bvkFexmzbRLsMOxYo6sgNPPIr8P0Ovrd2Rd8IT4mNCw1OfpDx0lSWFddY/Nba7R78HRkdt9DQIbFzI8pTHcaoilOxOF+Xt8wB9+vDeB+xiyUI4FEVKJR5jmmsBEt7Jw=
+x-microsoft-antispam-message-info: 3UM6suu8e17VpxKLUoZgYds5tZhXYCvz+VcRDo6EODRqsbwKp6PsxoGCsq3W8qHY9CrBm+H5M/9Njsn0sr14H4BfI+X6YsBlrqfe5loLLSu88sPaxnnHU6XGrfBachNvLiXWaHGEQRMJsRqKg0knM46syVH3wpzIzonhatI2UdrY6pJT+hVwuqvpHcWxqey+lsPq6RBBAK8lAxlTyAltKyjcYBsj8VVwgNrI6gqPWRjQLe4vlnazSdyPTgkn19vNRbx1YiCGoN2nck3OPagbNlkkfVSXq0VSKvGIOMp5yyk/Uq3012K+1WW9L0Z8AqqmU7Z6tkEHwjZR3emg+rEsEjlcz9MuHVZYdaAeDCamGafhcI8xNM+x+pzfggv3npsLJxq4AY7pJFbRD35qLYRvcQM3Bjg8w+lcy45FVq4oRxtvbUcWPLqbSo6WXwTCOJ9MDw2ktg1L/1W/8owAWRaDmbBPrdoOc18P0XHwrFEgWDO/hFJwqDqXMXGRH+58Oj+is6UarB2OUIJoQIVMvHDCnFYOSCsTEsNiGMHf8dYHOn45Ybgyv6INPDPJDiWydid0hpvgxC6omvPCF96dKaPbDJWEEYQxUFRd0drrKKtD7zxwUD3yKg8tq8lR1hVtsEEC+PS3tqMpDjO7061UI6Be6xmj0JAvNGRTuAFtnDAY/aCi7eV9zW2tw1bSDNa8og0toByAb5cL2cB4Nt8RpxJ3B3sROyiI7iHwaytnBvqLywSh8Yx71QF05SUF5sMiK8Qfx72GNvemNVptE8q3DfKd3qHzfrpEUQOVugTGGMdS3gM=
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?Windows-1252?Q?FMBZua0WpR1hiTNcwC072zQ5YuWzt48CBSmrh/W4IfEo/RoGVGXQXE7V?=
- =?Windows-1252?Q?X9rsEWH74nQcPj/JCtXaVSWeMpLy5hgGVG3Zk3xWnjlDxjl4vAqJ+rko?=
- =?Windows-1252?Q?JLsarFb/ldBGc78DOlrIWGM9hcJCD7cgfgFWS3vCLFeI2txcbL6XHudt?=
- =?Windows-1252?Q?0UUOFpmd8S67MOnbRXcQP9+zAA1gT8r0C4K0NlxOYMljhtBg9WT4Jk9f?=
- =?Windows-1252?Q?bHR7oyEhcPlwD5Q9Hcvcz6qHzDa3kAWjSfBstX1/EvUdi+75pf5VhLJT?=
- =?Windows-1252?Q?G8bd+sEjWStGq4C+sY80xIGvr9g4SHYRa4WQnRxty9L0w1DBH6VxPgzF?=
- =?Windows-1252?Q?n7NwszzZYjjFTWZx13Rw1SKuBqcWLRhdjH6ey7c0cGpkWpzTLkPUvLC8?=
- =?Windows-1252?Q?QfvtFz8XOw283HMB209W1aO/MvBmiTCatFTc3smqzR+No5F/CVv6snhV?=
- =?Windows-1252?Q?PEJgaFA/gT0uZInDRPVSpfdKoHN/O3eGDcSOZcLnxo0rP3eeqBPlxk9Y?=
- =?Windows-1252?Q?SZY+Kb2Mcznns+JUR4F3v8x38yHHBI4r4TKy5X4OZi1Gii76G28DL5QH?=
- =?Windows-1252?Q?oNCBaZj1FwOsKhSGbtIF78fBR5qtqZUl+5KZwPf3+/oPD2YR1vQ11d39?=
- =?Windows-1252?Q?IS2HaQ2iPcWrRHxMnF7aIrZNv9B7qqEiU4yAQSp5zwHIKaoAukiXl/gU?=
- =?Windows-1252?Q?SaomWcC3bmyTRlQOFDSgKFpyLj3bNBRYrhSVGBYCSpHjk/hEkn2nxo0b?=
- =?Windows-1252?Q?Vt1DfW/aIL0O2izPlXwFqLR5s4gcv4c8WgbcwLhFlqMZ93jsF6Ym5M09?=
- =?Windows-1252?Q?nk+PCXYb6e6VfMKM/zkKphOsqE3pc/oc6WG/LYhx2UvzBg7/y/BxXspC?=
- =?Windows-1252?Q?Cs7PyPxWfrSwEKtIUvbYeorWu3Q71vHdfPwc/TJAuWYLAJFrssehZYZA?=
- =?Windows-1252?Q?lFv3do1WOQesli2zFyGPuN0XfBS82MqsEYLBQblyWfwANSMnSJpkXRY2?=
- =?Windows-1252?Q?SIyLrpzVctI04KwLKG3pNGoHe/8uG8R4BbXki9pGMPfTmCJsgQw9UqNI?=
- =?Windows-1252?Q?MxAOq6zbiAsGo02n2U8kNZn+CZqoheA6/PAuDztg5vhW9edAzVNyFYca?=
- =?Windows-1252?Q?tyhAkvOaDJAx6RnOlHReRMqQh6sdTNY7jaaqyjFx4FKc8N5m0JdJebIM?=
- =?Windows-1252?Q?VaXMw0y8abb7nwdSXsE9C+RrRqMpiKtUaqT/FEOjDLNChdsZ+AY0fsfr?=
- =?Windows-1252?Q?Wkk0fkHQnsbAMxGMxulZO1H2hWHLJ2HzmpQyT21wrH5L6ILj/5gjv4Eo?=
- =?Windows-1252?Q?iyRK5b1/wd0kLnuFuX1QSSfm/9KMFKb71Lx2izfBquK6Heny2P7yiG/S?=
- =?Windows-1252?Q?oEF1w/efCLWz090f23hZwg+5al44tN0oAI/1FHKBlh0IPkXdoGODVeac?=
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?TGRtYy9tdTdOSXByWXRlR005c2Z3dmV5RkN6K2VhWitIVFdqZUJzZFRmTlpI?=
+ =?utf-8?B?ZTJJM0xpc0szSHJNcXhoVUdEVVIyYk1odTdMbWkxbXZDZURDMFc5b2toMUEx?=
+ =?utf-8?B?UVdzdTRNSmI4dzdCT0lMd3NPRWhPTGtxdGZzZ093NE1rcDBNNXNsREVWTjh2?=
+ =?utf-8?B?dm1XMXJ2OGdMbm5CMzV2RW91a3NqWVE5RWdtdXBVejA0Ym5DM24vemEwYkRX?=
+ =?utf-8?B?ekdxeGY1QUZLQ3dqZkZlRGNCendpcm5jQlkwaWpzR0ZHVUpMcm8ybVFBV0wy?=
+ =?utf-8?B?aTNWTzU5cWwzNWp6RDNrNWt5SXZiTHM4a1pwaGpCZzJ6c2JZRytwdjBLUmsv?=
+ =?utf-8?B?WmF2Wi85V0dnT0lWSk9FSjRoUEJMNUh2SlRnOHQrM1VxYkVuclpXMUVUY05i?=
+ =?utf-8?B?WkZXR2h3T0dRbHhZMXRualJYSFZtWnhpQ2ZEMnBhcWtva0dHNUNYcVdaU205?=
+ =?utf-8?B?MXIrZWZHVTlNdHl2ajNsRWFXb1Jhb3VjenR5NDQzczNFSVVoclJwMmVURXZZ?=
+ =?utf-8?B?UDhkaEUzbGEwUkcwZkw2VnFOa29rWmkzZmR1WUZqeUZQV2Y4TXJIMkxDM2Vz?=
+ =?utf-8?B?aG5wMkRsaXFFSGx2YjJDRGFNanBHdllOcWhmV3hyZXRudE16RytDYlRGK3E4?=
+ =?utf-8?B?WjQ2c3FONG80UmtOL3FwMGhUNGdOVTVVUE1DZ2w1aXhoZm5ZUXJRLzFYS2dh?=
+ =?utf-8?B?NGhjSWVpRDBpUXdpU2pLRzNXcjhaZUd5S2FDWFBWLzZJYkY0RHNta2I1ekhw?=
+ =?utf-8?B?UUNRZS9odytlNGhlRzRQS21CZU0xSUd2MUgvUmNsLzJTUU1TVFUvSElOVWNX?=
+ =?utf-8?B?ZDNxc3hCOEVxR0lzY0lmejkwcnpNSFRnNXRCdjZQa3UvUDQxRHkvT1ZEcWpX?=
+ =?utf-8?B?a2JBdDVxRS92WkFVcTc3T2ZETG9CZ21yM3NFUjQ5VnhrK1dPcUhZSTNadjNu?=
+ =?utf-8?B?ZVJ3bnVTd0l3anZEdjBHeWpDb0R3MkdoYVdVbDQ2MXNVNkhwMnM5SGNYM3Rm?=
+ =?utf-8?B?STIyY2xTUUhHZjNTcmxLSXk5bHZxaUVabVdpWmF6bnlYdHZDckRISTdsTjRq?=
+ =?utf-8?B?MkVhbW5Qd3E1eTJBVS9rYjltZ2ZBQmhTNnlJc1dtaXcwaU1MVDcyV2dNekd3?=
+ =?utf-8?B?SmZGU1RjZzQ1Y2JLbUc0K2JFY2E1eDJMSEZuNE9TelQ4M2xiNVBxVmcvQUkv?=
+ =?utf-8?B?L2puSEl5NFFTSFJ4amxjWlRqdDNmOGVCWi9tSHlZTjltQ1krUUNlZElRazdV?=
+ =?utf-8?B?SVoxNTNMWVpZQW9TSkw0a29teVBLTFQxT24yQ0pnUWRQMExDZC9ITjFBTnJt?=
+ =?utf-8?B?c0VUMEYyVSsvY1h6WE9zVHBYRTZZQ1IrWnlpK25qZkc0ZFErc3Z6WW92RWpW?=
+ =?utf-8?B?V3VwSG5scGdDd0hxdWdqOGVYNjJ2Nk9zVjAzTklSQmRIZFNJY1A4NTh0RERS?=
+ =?utf-8?B?K3N1RWlQYVpsQ0JvZ3RwNmlYZnVGWmJIcERnVmpJTzAwbGhZV2ZwOHg1aU1E?=
+ =?utf-8?B?TkJBTnBjMEwyamwwSjNRSGNnb3UrWGtEOW9lWUtuK1JlUHBlQkxYZUU1Wmpr?=
+ =?utf-8?B?WlloMGJrUjM1Sk5uTXhJQU9lNDJuUGZxTzBmUUdyeW1waG9ieXJpZGNkQVpU?=
+ =?utf-8?B?NlpHWEZQaWNndG4yQjFJMTdLNUZ3UlJNK2lNVzJxd2g2cUJNeExKU2Q5Q1pZ?=
+ =?utf-8?B?ZzdKU3ZBNFpWbnh5RWw4UTFhbjNtL2NXd0owTHhNQ0haQ3NtWjF0QWpwSVJY?=
+ =?utf-8?Q?pLnAkLLQWHS8XVJfd8=3D?=
 x-ms-exchange-transport-forked: True
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB6877.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 69234c7e-8729-4771-dd29-08d955f86983
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Aug 2021 20:59:25.7467
+X-MS-Exchange-CrossTenant-AuthSource: TYAPR01MB6252.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac16ca7b-03d7-4408-ecf7-08d956376fb5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Aug 2021 04:30:34.6272
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: iQEtNYdR1xG74/5buEWISn6lgecAiwu/ZtrCIcuXxoD8dhKfEW9IwVI2AXtXiC5BiFdF9tDzFpnnnhggRAvMAvKWiTbaR+lqJ3P6KsUTOmE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB4088
+X-MS-Exchange-CrossTenant-userprincipalname: OzCOh5YVhci5BzWfGh6zdkBpJ8X69bNbdWz0Tx5OQN5Y/4h4OAWY/eoYaeLi8ha30C9LfzmQuzfvek6soyM2aSynFHYAZ2in8oPLn9WI/wMGHiad25z2uQOwjEupLwNg
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB6314
+MSSCP.TransferMailToMossAgent: 103
+X-OriginatorOrg: toshiba.co.jp
 Precedence: Bulk
 List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
 List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
@@ -113,98 +119,37 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: uOwqkf8Z1tdWx9FFUoCalceix4520388AA=
-Content-Type: multipart/mixed; boundary="xH7byBzj6wg6Z4vRgj7S"
+X-Gm-Message-State: Paqq5nlk8LJFJlyscp7LVckKx4520388AA=
+Content-Type: multipart/mixed; boundary="V0TLO4GXx3v1JtsO4aMF"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1627937976;
- bh=ifPMOMQB6MN0tg/P+nYmWF+Ui3OF7vkXnFMoyrpcWSU=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1627965053;
+ bh=lAmIUjYDIvhYaky79I0/WfcjqCyjitk/j+W48dMoTkw=;
  h=CC:Content-Type:Date:From:Reply-To:Subject:To;
- b=iq+Bt1u7xSjKkYArCw4rJQ4fbgvepvN+SDpRhbwzBWs+yXFya89SsrPykdUdI+FJyPc
- 1H3oXj+CSDATeZtAjIGhBr+pZhRIDJVyZ+SKJ1p2p3YRXRQlDCnX+pJoCYUZN8pljrgJo
- U3ffnbDPaQCAVbC8Cd0952jAQ3KtCLpnV4c=
+ b=AJmMhY6h5YNcv7tpCdx4CFQyrNn1gjaGwydaJvGFzNjEkxeWqJ3yLEiJqXc2YOXGHy/
+ 4SCVBEu2hEQCHc0aLM1WWhERYrZAAcSYpaHOMry2H0mVGQaMsIHHMp6af4Y+of8fU1vPw
+ KUw28PNFpAO19gZae911l5DBAMOAxeQTulY=
 
---xH7byBzj6wg6Z4vRgj7S
-Content-Language: en-US
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
+--V0TLO4GXx3v1JtsO4aMF
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-Hello all,
-
-The KernelCI project has announced it's second hackfest in September.
-The first one was pretty successful in getting some new features added to K=
-ernelCI, and the hope is the same will happen next time as well.
-
-One hope from Alice and I is that we can get some CIP members involved to t=
-ry and advance KernelCI + CIP integration/collaboration.
-If you have any time available during the hackfest and would like to get in=
-volved, please let me and/or Guillaume know.
-
-Kind regards, Chris
-
-
------Original Message-----
-From: kernelci-members@groups.io <kernelci-members@groups.io> On Behalf Of =
-Guillaume Tucker via groups.io
-Sent: 02 August 2021 10:00
-To: kernelci@groups.io
-Cc: kernelci-members <kernelci-members@groups.io>; automated-testing@lists.=
-yoctoproject.org; Collabora Kernel ML <kernel@collabora.com>; linux-kernel@=
-vger.kernel.org; Jesse Barnes <jsbarnes@google.com>; Summer Wang <wangsumme=
-r@google.com>; linux-kselftest@vger.kernel.org; workflows@vger.kernel.org; =
-kunit-dev@googlegroups.com; clang-built-linux <clang-built-linux@googlegrou=
-ps.com>
-Subject: [kernelci-members] KernelCI Hackfest #2 - Sept 6-10 2021
-
-The first KernelCI hackfest[1] early June was successful in getting
-a number of kernel developers to work alongside the core KernelCI
-team.  Test coverage was increased in particular with kselftest,
-LTP, KUnit and a new test suite for libcamera.  We're now improving
-documentation and tooling to make it easier for anyone to get
-started.  Find out more about KernelCI on https://kernelci.org/.
-
-The second hackfest is scheduled for the 6th-10th September.  It
-should be a good opportunity to start discussing and working on
-upstream kernel testing topics ahead of the Linux Plumbers
-Conference[2].
-
-Here's the project board where anyone can already add some ideas:
-
-https://github.com/orgs/kernelci/projects/5
-
-There is no registration system, but please reply to this email or
-send a message on IRC (#kernelci libera.chat) or kernelci.slack.com
-if you would like to take part so you'll get email updates and
-invitations to the meetings and open hours sessions online.  You
-may just drop in and out at any point during the hackfest as you
-see fit.
-
-The hackfest features:
-
-* Daily open hours online using Big Blue Button to discuss things
-  and get support from the KernelCI team
-
-* KernelCI team members available across most time zones to provide
-  quick feedback
-
-* A curated list of topics and a project board to help set
-  objectives and coordinate efforts between all contributors
+SGksDQoNCkNJUCBrZXJuZWwgdGVhbSBoYXMgcmVsZWFzZWQgTGludXgga2VybmVsIHY0LjQuMjc3
+LWNpcDYwLg0KVGhlIDQuNC55IHRyZWUgd2FzIHNjaGVkdWxlZCB0byBiZSByZWxlYXNlZCBuZXh0
+IHdlZWssIGJ1dCB3ZSBoYXZlDQpyZXNjaGVkdWxlZCBpdCBmb3IgdGhlIHJlbGVhc2Ugb2YgdGhl
+IENJUC1SVCB0cmVlLg0KDQpUaGUgbGludXgtNC40LnktY2lwIHRyZWUgaGFzIGJlZW4gdXBkYXRl
+ZCBiYXNlIHZlcnNpb24gZnJvbSB2NC40LjI3NA0KdG8gdjQuNC4yNzcuIE5vIENJUC1zcGVjaWZp
+YyBwYXRjaGVzIGhhdmUgYmVlbiBhZGRlZCB0byB0aGlzIHZlcnNpb24uDQoNCllvdSBjYW4gZ2V0
+IHRoaXMgcmVsZWFzZSB2aWEgdGhlIGdpdCB0cmVlIGF0Og0KDQogIHY0LjQuMjc3LWNpcDYwOg0K
+ICAgIHJlcG9zaXRvcnk6DQogICAgICBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGlu
+dXgva2VybmVsL2dpdC9jaXAvbGludXgtY2lwLmdpdA0KICAgIGJyYW5jaDoNCiAgICAgIGxpbnV4
+LTQuNC55LWNpcA0KICAgIGNvbW1pdCBoYXNoOg0KICAgICAgNjAxMmQyYzMyZWZhNzBhNTQ4ZDZl
+NTliNzYzYzM5YmIwZDM4ZjJlMA0KICAgIGFkZGVkIGNvbW1pdHM6DQogICAgICBDSVA6IEJ1bXAg
+dmVyc2lvbiBzdWZmaXggdG8gLWNpcDYwIGFmdGVyIG1lcmdlIGZyb20gc3RhYmxlDQoNCkJlc3Qg
+cmVnYXJkcywNCiAgTm9idWhpcm8NCg0KLS0gDQpOb2J1aGlybyBJd2FtYXRzdQ0K
 
 
-As always, KernelCI is at the service of the kernel community so
-please share any feedback you may have to help shape this upcoming
-hackfest in the best possible way.
-
-Thanks,
-Guillaume
-
-
-[1] https://foundation.kernelci.org/blog/2021/06/24/the-first-ever-kernelci=
--hackfest/
-[2] https://www.linuxplumbersconf.org/event/11/page/104-accepted-microconfe=
-rences#cont-test
-
-
---xH7byBzj6wg6Z4vRgj7S
+--V0TLO4GXx3v1JtsO4aMF
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -212,13 +157,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6646): https://lists.cip-project.org/g/cip-dev/message=
-/6646
-Mute This Topic: https://lists.cip-project.org/mt/84623431/4520388
+View/Reply Online (#6647): https://lists.cip-project.org/g/cip-dev/message=
+/6647
+Mute This Topic: https://lists.cip-project.org/mt/84632315/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/10495289/452038=
 8/727948398/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---xH7byBzj6wg6Z4vRgj7S--
+--V0TLO4GXx3v1JtsO4aMF--
