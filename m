@@ -1,40 +1,43 @@
-Return-Path: <SRS0=ShlL=ND=lists.cip-project.org=bounce+64572+6676+4520388+10495289@kernel.org>
+Return-Path: <SRS0=62Q9=ND=lists.cip-project.org=bounce+64572+6677+4520388+10495289@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DB5FC4338F
-	for <cip-dev@archiver.kernel.org>; Thu, 12 Aug 2021 09:52:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C8DFC4338F
+	for <cip-dev@archiver.kernel.org>; Thu, 12 Aug 2021 11:13:50 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 68DBB60FBF
-	for <cip-dev@archiver.kernel.org>; Thu, 12 Aug 2021 09:52:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 68DBB60FBF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTPS id A3F0B6103A
+	for <cip-dev@archiver.kernel.org>; Thu, 12 Aug 2021 11:13:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org A3F0B6103A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=miraclelinux.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id NuxbYY4521723xrSO0bVrDB9; Thu, 12 Aug 2021 02:52:08 -0700
-X-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web08.20113.1628761926974384709
+X-Received: by 127.0.0.2 with SMTP id XcylYY4521723xOIDvsAmDX0; Thu, 12 Aug 2021 04:13:49 -0700
+X-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+ by mx.groups.io with SMTP id smtpd.web10.20619.1628766827076047104
  for <cip-dev@lists.cip-project.org>;
- Thu, 12 Aug 2021 02:52:08 -0700
-X-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id E72241C0B76; Thu, 12 Aug 2021 11:52:01 +0200 (CEST)
-Date: Thu, 12 Aug 2021 11:52:01 +0200
-From: "Pavel Machek" <pavel@denx.de>
-To: cip-dev@lists.cip-project.org
-Subject: xilinx_emaclite CVE -- was Re: [cip-dev] New CVE entries this week
-Message-ID: <20210812095201.GA32674@duo.ucw.cz>
-References: <CAODzB9q2GjB-rsuq-Ro43yZvVKHY-joQKiXWYx_iqowfwexVCA@mail.gmail.com>
- <20210812054337.GA26920@duo.ucw.cz>
- <CAODzB9p0uk5rg9ctkoXyD7VJVAzVQxqqdWwQmOhZYK=7UyShXw@mail.gmail.com>
+ Thu, 12 Aug 2021 04:13:48 -0700
+X-Received: by mail-ot1-f54.google.com with SMTP id r19-20020a0568301353b029050aa53c3801so7285931otq.2
+        for <cip-dev@lists.cip-project.org>; Thu, 12 Aug 2021 04:13:46 -0700 (PDT)
+X-Gm-Message-State: PpE3gHPkKEqMnIqnuLhw7EOBx4520388AA=
+X-Google-Smtp-Source: ABdhPJz/Dcggzy30Ty6S5j8xiic52DOVWU6F42wCsJf+fbqCcOgpImSgsFKuAq0vxkvBpmjbp4imuQljE/t+5CeRL/c=
+X-Received: by 2002:a05:6830:b8b:: with SMTP id a11mr3023364otv.179.1628766825718;
+ Thu, 12 Aug 2021 04:13:45 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAODzB9p0uk5rg9ctkoXyD7VJVAzVQxqqdWwQmOhZYK=7UyShXw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CAODzB9q2GjB-rsuq-Ro43yZvVKHY-joQKiXWYx_iqowfwexVCA@mail.gmail.com>
+ <20210812054337.GA26920@duo.ucw.cz> <CAODzB9p0uk5rg9ctkoXyD7VJVAzVQxqqdWwQmOhZYK=7UyShXw@mail.gmail.com>
+ <20210812095201.GA32674@duo.ucw.cz>
+In-Reply-To: <20210812095201.GA32674@duo.ucw.cz>
+From: =?UTF-8?B?5biC5bed5q2j576O?= <masami.ichikawa@miraclelinux.com>
+Date: Thu, 12 Aug 2021 20:13:09 +0900
+Message-ID: <CAODzB9rSPEm7N-PStqq=oe4qQ4owB_bvkCPnvQ=2Se2SmS1KJQ@mail.gmail.com>
+Subject: Re: xilinx_emaclite CVE -- was Re: [cip-dev] New CVE entries this week
+To: cip-dev <cip-dev@lists.cip-project.org>
 Precedence: Bulk
 List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
 List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
@@ -43,102 +46,99 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: dhWqVac5CdXiXhQehlhUpWuzx4520388AA=
-Content-Type: multipart/mixed; boundary="4h9ABWZSX4TejiAr8w7n"
+Content-Type: multipart/mixed; boundary="iibPEQgQ1kbrGh9eoPFC"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1628761928;
- bh=ZbilqP2VD94b0AxfZB8jwLlVsVZFDMmgihQmmZ/j9fI=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1628766829;
+ bh=RZjtCABS3x0J4bnCjhdPv6mYr1adP2ALQfVwfNx84Fw=;
  h=Content-Type:Date:From:Reply-To:Subject:To;
- b=fDKazDqh68gwCx0xnNYCUuI+/K2D0WeygENKleH8aP0F8YNqhgXt/SAIj6TbeqEIrVb
- sXgxRtTKzttSTVvSjhX/xI9z2gqTnZA0pJQcqXHoU7bH9rGFAo9EFt4p9jVDSqHtEd0NP
- KEDdyEy/Um6NJXFWp42/BRhmSYEsJAMltLE=
+ b=JwKPunHFq7DoonNy869xXOobr5pI/h54vF8TGfXqI5UwIs4BthCXNYs2aRi5L1VWGvu
+ hZrXHlXgq2EigUBT06Jo/DC1JNedHHvpbfpMMDP2YNfv1e8oIkJAgsc+msCKvqHMyz85S
+ q5cLxETqH1pK25kgKCCsyjMPKwiJAJm/Bws=
 
---4h9ABWZSX4TejiAr8w7n
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
-Content-Disposition: inline
+--iibPEQgQ1kbrGh9eoPFC
+Content-Type: text/plain; charset="UTF-8"
 
---cNdxnHkX5QqsyA0e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi !
 
-Hi!
-
-> > > * CVE detail
+On Thu, Aug 12, 2021 at 6:52 PM Pavel Machek <pavel@denx.de> wrote:
+>
+> Hi!
+>
+> > > > * CVE detail
+> > > >
+> > > > New CVEs
 > > >
-> > > New CVEs
+> > > > CVE-2021-38205: net: xilinx_emaclite: Do not print real IOMEM pointer
+> > > >
+> > > > xemaclite_of_probe() in drivers/net/ethernet/xilinx/xilinx_emaclite.c
+> > > > leaks kernel memory layout.
+> > > >
+> > > > Fixed status
+> > > >
+> > > > mainline: [d0d62baa7f505bd4c59cd169692ff07ec49dde37]
+> > > > stable/5.13: [8722275b41d5127048e1422a8a1b6370b4878533]
+> > >
+> > > This affects our kernels (I looked at 5.10.57 and 4.4.277). On one
+> > > hand we could ask for backport, on the other... I'm not sure it is
+> > > serious enough to warrant any action.
+> > >
 > >
-> > > CVE-2021-38205: net: xilinx_emaclite: Do not print real IOMEM pointer
-> > >
-> > > xemaclite_of_probe() in drivers/net/ethernet/xilinx/xilinx_emaclite.c
-> > > leaks kernel memory layout.
-> > >
-> > > Fixed status
-> > >
-> > > mainline: [d0d62baa7f505bd4c59cd169692ff07ec49dde37]
-> > > stable/5.13: [8722275b41d5127048e1422a8a1b6370b4878533]
-> >
-> > This affects our kernels (I looked at 5.10.57 and 4.4.277). On one
-> > hand we could ask for backport, on the other... I'm not sure it is
-> > serious enough to warrant any action.
-> >
->=20
-> I think this vulnerability seems to be low priority because an
-> attacker needs another vulnerability to abuse this vulnerability.
-> However, it would be nice to backport the patch too.
+> > I think this vulnerability seems to be low priority because an
+> > attacker needs another vulnerability to abuse this vulnerability.
+> > However, it would be nice to backport the patch too.
+>
+> So I tried to apply the patch to 4.4, but it rejects, because types
+> changed in the meantime.
+>
+> In particular eccd5403814b4e762e270ef0464bb86fb217b1bf and
+> 18af77c50fede5b3fc22aa9f0a9b255a5c5285c9 change the printk.
+>
+> It seems we are actually using the driver in one of the configs:
+>
+> ./4.4.y-cip/arm/toshiba_zynq.sources:drivers/net/ethernet/xilinx/xilinx_emaclite.c
+>
+> Patch for 4.4 should look like this:
+>
+> diff --git a/drivers/net/ethernet/xilinx/xilinx_emaclite.c b/drivers/net/ethernet/xilinx/xilinx_emaclite.c
+> index 909a008f9927..26cd42bfef0c 100644
+> --- a/drivers/net/ethernet/xilinx/xilinx_emaclite.c
+> +++ b/drivers/net/ethernet/xilinx/xilinx_emaclite.c
+> @@ -1180,9 +1180,8 @@ static int xemaclite_of_probe(struct platform_device *ofdev)
+>         }
+>
+>         dev_info(dev,
+> -                "Xilinx EmacLite at 0x%08X mapped to 0x%08X, irq=%d\n",
+> -                (unsigned int __force)ndev->mem_start,
+> -                (unsigned int __force)lp->base_addr, ndev->irq);
+> +                "Xilinx EmacLite at 0x%08X mapped to 0x%p, irq=%d\n",
+> +                (unsigned int __force)ndev->mem_start, lp->base_addr, ndev->irq);
+>         return 0;
+>
+>  error:
+>
 
-So I tried to apply the patch to 4.4, but it rejects, because types
-changed in the meantime.
+Thank you for your work!
+This patch looks good to me.
 
-In particular eccd5403814b4e762e270ef0464bb86fb217b1bf and
-18af77c50fede5b3fc22aa9f0a9b255a5c5285c9 change the printk.
+> Best regards,
+>                                                                 Pavel
+> --
+> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+>
+> 
+>
 
-It seems we are actually using the driver in one of the configs:
+Regarads,
 
-=2E/4.4.y-cip/arm/toshiba_zynq.sources:drivers/net/ethernet/xilinx/xilinx_e=
-maclite.c
+-- 
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
 
-Patch for 4.4 should look like this:
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
 
-diff --git a/drivers/net/ethernet/xilinx/xilinx_emaclite.c b/drivers/net/et=
-hernet/xilinx/xilinx_emaclite.c
-index 909a008f9927..26cd42bfef0c 100644
---- a/drivers/net/ethernet/xilinx/xilinx_emaclite.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_emaclite.c
-@@ -1180,9 +1180,8 @@ static int xemaclite_of_probe(struct platform_device =
-*ofdev)
- 	}
-=20
- 	dev_info(dev,
--		 "Xilinx EmacLite at 0x%08X mapped to 0x%08X, irq=3D%d\n",
--		 (unsigned int __force)ndev->mem_start,
--		 (unsigned int __force)lp->base_addr, ndev->irq);
-+		 "Xilinx EmacLite at 0x%08X mapped to 0x%p, irq=3D%d\n",
-+		 (unsigned int __force)ndev->mem_start, lp->base_addr, ndev->irq);
- 	return 0;
-=20
- error:
-
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---cNdxnHkX5QqsyA0e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYRTvQQAKCRAw5/Bqldv6
-8sDlAKCehGUNyS2fecdrSGc+6lOYWsXJYgCgpDqM8u83dlhOimGnLENPqvnaf04=
-=1dlC
------END PGP SIGNATURE-----
-
---cNdxnHkX5QqsyA0e--
-
---4h9ABWZSX4TejiAr8w7n
+--iibPEQgQ1kbrGh9eoPFC
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -146,8 +146,8 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6676): https://lists.cip-project.org/g/cip-dev/message/=
-6676
+View/Reply Online (#6677): https://lists.cip-project.org/g/cip-dev/message/=
+6677
 Mute This Topic: https://lists.cip-project.org/mt/84836349/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/10495289/4520388=
@@ -155,4 +155,4 @@ Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/10495289/4520388=
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---4h9ABWZSX4TejiAr8w7n--
+--iibPEQgQ1kbrGh9eoPFC--
