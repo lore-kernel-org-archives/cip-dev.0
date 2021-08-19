@@ -1,120 +1,38 @@
-Return-Path: <SRS0=NiqM=NK=lists.cip-project.org=bounce+64572+6693+4520388+10495289@kernel.org>
+Return-Path: <SRS0=tYGM=NK=lists.cip-project.org=bounce+64572+6694+4520388+10495289@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9855C4338F
-	for <cip-dev@archiver.kernel.org>; Thu, 19 Aug 2021 00:00:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56CCCC4338F
+	for <cip-dev@archiver.kernel.org>; Thu, 19 Aug 2021 00:13:09 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id F08B361051
-	for <cip-dev@archiver.kernel.org>; Thu, 19 Aug 2021 00:00:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org F08B361051
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cybertrust.co.jp
+	by mail.kernel.org (Postfix) with ESMTPS id 8292A610A5
+	for <cip-dev@archiver.kernel.org>; Thu, 19 Aug 2021 00:13:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 8292A610A5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=miraclelinux.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id SGYBYY4521723x8nXdbZV5UR; Wed, 18 Aug 2021 17:00:29 -0700
-X-Received: from ss11.sbt-mailgate.jp (ss11.sbt-mailgate.jp [202.241.206.54])
- by mx.groups.io with SMTP id smtpd.web10.63261.1629331226034372692
+X-Received: by 127.0.0.2 with SMTP id KJfsYY4521723xxQsMNciPyZ; Wed, 18 Aug 2021 17:13:08 -0700
+X-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+ by mx.groups.io with SMTP id smtpd.web11.62674.1629331985702820933
  for <cip-dev@lists.cip-project.org>;
- Wed, 18 Aug 2021 17:00:28 -0700
-X-Received: from mail.sbt-mailgate.jp (sagproxy-out11.sbt-mailgate.jp [10.16.47.41]) (envelope sender: <masashi.kudo@cybertrust.co.jp>)
-	(not using TLS) by ss11.sbt-mailgate.jp (Active!gate) with ESMTP id TI3S10284A;
-	Thu, 19 Aug 2021 08:55:18 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ck5pMCGVu66iBsZe6Vfjp5XozXdMZIzQW0HApaEHumDAPZbYzjHkexdXrTXPAFKf0gDQFXJMVKC+1GzyrqaSzQB7wEcrs5yiXE197aYEZ7EBUjmKaAIKWcZlnwHf80saKM5wF0W0Jqb5UUfnqZcFwXIVlyXPSGXi3gxeryAWvrfPLmfng/UDYs9TuqJIvJZLGFf3soLVCCnqc2WZKnWeVnUcnQlmsFTtYBnwZdZU9SE/C/ZQJToutEsbycxzrtvPGIA5+x1EyQfAF4GlZ/BKQVFzLUJNoOLK0zvyBHHzax95I0OZNH+GQHa2SNQnYtJQz/3OnghczPVJG8D2MTkblQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HqbOKaPU2rddw8p9qtgaBOZOMOepl9An830d0iYiTGY=;
- b=L3NEQSw1xwiYNcWOKAjqwhOAqpVsf9d1WRpR/qYwrNUJjoNyNiabD1eADwSj97cgJ/41hSMjuW1O/kPl1MnB60dhhCK9V/PqkzHJAhu9b0KnuIuDnJ6FOW2oIzB/IcWLskSvP259u3F0SqltNKnUXfrgLuQA9iWwfebpn6x6OwKKCa7CNBJEaBENT6RV/8BrVAS19TxM6+8smsxEYrWRrCRgO8hqTpKakBB8WGLB69O4FDIHPGUEGOg2kgEyqGEufDhtvHMgkq1H8HsCWVF0iwlCCfIf9DV5AIP3YZhzPYPm+NknkgBwhdGzlCmOfmW4xd7A4xORv2pZLqTJTwr0OQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cybertrust.co.jp; dmarc=pass action=none
- header.from=cybertrust.co.jp; dkim=pass header.d=cybertrust.co.jp; arc=none
-X-Received: from TY2PR01MB4972.jpnprd01.prod.outlook.com (2603:1096:404:11c::20)
- by TYYPR01MB6827.jpnprd01.prod.outlook.com (2603:1096:400:d2::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4415.16; Wed, 18 Aug
- 2021 23:55:17 +0000
-X-Received: from TY2PR01MB4972.jpnprd01.prod.outlook.com
- ([fe80::f937:86f8:a385:7913]) by TY2PR01MB4972.jpnprd01.prod.outlook.com
- ([fe80::f937:86f8:a385:7913%4]) with mapi id 15.20.4415.024; Wed, 18 Aug 2021
- 23:55:17 +0000
-From: "masashi.kudo@cybertrust.co.jp" <masashi.kudo@cybertrust.co.jp>
-To: <cip-dev@lists.cip-project.org>
-Subject: Re: [cip-dev] IRC meeting start time
-Thread-Topic: [cip-dev] IRC meeting start time
-Thread-Index: AdeT/i+rsaYf7nfrSTWhfzAPz18jAQAYQGYAAAtK3pA=
-Date: Thu, 19 Aug 2021 09:00:21 +0900
-Message-ID: 
- <TY2PR01MB49723F3E06DDBA50E8D96924A0FF9@TY2PR01MB4972.jpnprd01.prod.outlook.com>
-References: 
- <TY2PR01MB49724B0C88AF035E898804DEA0FF9@TY2PR01MB4972.jpnprd01.prod.outlook.com>
- <20210818183100.GA839@duo.ucw.cz>
-In-Reply-To: <20210818183100.GA839@duo.ucw.cz>
-Accept-Language: ja-JP, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a489751c-f317-48fc-ac54-08d962a3a174
-x-ms-traffictypediagnostic: TYYPR01MB6827:
-x-microsoft-antispam-prvs: 
- <TYYPR01MB68272186468CD97CCCF7BD15A0FF9@TYYPR01MB6827.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6430;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam-message-info: 
- EEqKkmWecXOHurrFuKF5lJPGT6I9CbDaDXcCKW22M/zLx1UDpHGfVRXIQ3kAZwkXEhAxQ+9SQAFmJdK1Xicp9oJy1UhDAwfyqieKpPkAQ0fP398Dr4LCT6B/rf7NXJ3g8QNO+efTJezIoeZgMhzhJs5DJK84Ex9aK3zivfZlapehSpgbtiuOQBcfDxER1VwUdVRyomFMRieAEt7DzdqDbNUB1iZygMI1nXH7DrDxg9cdtChSFNYTdabyeIB4s8Jrbx/aqRWCgVP90Gb2/7Kn39XCOQUU4oxIl7MkTrWv518x9SFIQ64jjDhNY0/b72dM6N7KRTNkqhcL6adLgDx+FjbaJF0C3LT8e4fK0qIXH/fB4TECGp42zhbmwLABXaYHpAp3pdQYW1BPzAhVzznfKXXAHvN5iW7aPPDsbxD2m9Dw3b6YD+cIPKvHenr9bBOQaMDvArNgqC0nq1wQ3yZvAyQrIRLSBZtRAyfTA7Msnw4Gsl4kLmXwl6BnJkwQ0mGAMWoJDYsmnwptmNpi8re6MWjowDb6wmbYCTGV23kTKthmYuZqPKzstKUyNmGHSWjMqZhIrJRjPhUPHjfen5RnSsEGWY6Yv39kSJeVkJ+3e2YYnlFpnVgeB/tFQklrY+lTU62pe8hKzo5OiVzQwPsdM3P7kq9RYJ8LEcPasddc8UXFNgRsMN+/GGKGrv2gZ/+kbWRlRFYbEdFj+XTsZut+8ZYyCk92bJCx9OURaOLedHkdxe6n/nRby02a+zaY0Aow
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?UHF5blh4ektYOFZPV1J3Znc4VEZzb3hseWIvdmRrRGR2YlJ0VWFTUmpw?=
- =?iso-2022-jp?B?SUdSVGp6dk9BbWNOTUYrMk4yek5tNVJJY0tSV2pqSFQwSUVOblpqaVpt?=
- =?iso-2022-jp?B?YWZQTzdUTC9jQ0tIVG16WXg0cld4S2Ftd20xdUc4QStIQWlLS1hMTVRy?=
- =?iso-2022-jp?B?K1JtZGF2Y0xueG9Ib2tXM1Q5T1ByQUVqVnNXTGJGdjJvQW85Myt6S3l1?=
- =?iso-2022-jp?B?cDZFY3pFYk1jN1NGWCt1WlFtNDFtZElJKzFxYmN0UWgvaENTMnZwa1ZD?=
- =?iso-2022-jp?B?K2U2SlRkVlpnSjdvOGovUVFTRndha0lkU0ZGVEhnOG5OakRKOXZvMFFG?=
- =?iso-2022-jp?B?YzlpVHhrRnNnbHVYR2JKaVAxTUltQ1lsK1R1TVRJSHNaWXk1SHUydmRP?=
- =?iso-2022-jp?B?WkhFd1ZJdzF5K1FKZjlQZVdaditiRjNlb1lYeHB4RDhVN1VDT21YNTY1?=
- =?iso-2022-jp?B?Y1ZRSlhncEZENTVYaVRlWWdieTJ3RnkxZFlDaXVGcEdXS25zTkYyb0lV?=
- =?iso-2022-jp?B?bFh4dWRBNHBlMERnWEhXWFdkdXI3bVBjWFUzUGpJOENycnRqOXZpVXpL?=
- =?iso-2022-jp?B?dlhLT2NEM09VTmdvTS9VVHgwRG9PdEpnUGs1QStIZm1TL1BKK3VMWUpK?=
- =?iso-2022-jp?B?NFByRDNaMWxEb1I2QmJPak8yd3VzYTY0dUV0LytIamdOV0VPbmp2Y0J0?=
- =?iso-2022-jp?B?TnJydUdaQkpSL3A3ZTUwUVAxT1NYQ3VhOGVuZVpXTkpPUWVTU29IUUdT?=
- =?iso-2022-jp?B?eUEwZmxPYmxWRjFFbEw5ejlFNVFpU3QrRXg2L1ZIUS95dVh5WHk1Ulkw?=
- =?iso-2022-jp?B?WVpZNnVSVG81UFBUeDc5Q2MxdVFUYUxCUnlsZVAwS0MrTW9Ed3Yrd01r?=
- =?iso-2022-jp?B?V2lLUHdubjkzZFNQUUZCUkkySWFQUjgxMXFLZjdEbCtVZWlRYkdJWG1i?=
- =?iso-2022-jp?B?M1V4UWRDU25jNWVhT3FNaDNvQUJQNmdGVTU3U3d1VXYrN3FGQVUwZTkr?=
- =?iso-2022-jp?B?QjRYRnVYQWsxdjRqRFJKcGxzd08wMlI5SHlSczdMMVlodUt0Skx2L3dM?=
- =?iso-2022-jp?B?bmVpVkllT2xjZDRkV2tlcVExbFFXK1piT2hGaFVLK1hKTnZjMmxKQWFP?=
- =?iso-2022-jp?B?MmNVMHhsc3VoVkNQUzBhSXpaU3NsWFE1cnFtRjN6TkFEQlhjUkFTQU1t?=
- =?iso-2022-jp?B?Y2VHZGNDbnozRW1nVEkvQXZxSExiczQrZjRTZksyNmYxdnFEaTIzZlBo?=
- =?iso-2022-jp?B?WEVMY01zQTlNTHJJM2Z4SkR4UGs0SHJDZTI0c21ZR3ZWTlpObDRDTFpy?=
- =?iso-2022-jp?B?ekdQLzJrb3NKeU0yUVF4anRHNkdzVURwSlh1UHdyeHViOUppWTFUZnM0?=
- =?iso-2022-jp?B?MU1uRm51clpSMzd1M2ZmdUVrWGxPaDJxWWtrVXJNMjJCZDJ1amNnZFhC?=
- =?iso-2022-jp?B?amJKaFJkY1gvZ1VGQ1grTlZ2Sm1yYjZqNHN1N0VnRkZkYUxycGJOdU5E?=
- =?iso-2022-jp?B?OXVmR2hIUXhITjNYdU4xVlg1dHcvbTRvYVFlMDZnL1JOYTNNbStnT1JR?=
- =?iso-2022-jp?B?bjFGMEdlS1NKSEJBY2g5bjZQaTY5VGtPMEV1M2Rld3pBUjA5dGZlaWxU?=
- =?iso-2022-jp?B?bTFXWXgxRDg5cVh3WU05aW5NT2JPY0FoNWVCWmlrQjdvamhtTGdzcW93?=
- =?iso-2022-jp?B?czBiQ04xampJNVpRNGtDd0ZkUFZHZzB6QTREem1EODJ6aEZBSTdxRUlN?=
- =?iso-2022-jp?B?azVYeExJN1VWY3k1K2lHQUFLTlZ5cE1leGpEWDY1aWo3Rmt4ZTB5S3FD?=
- =?iso-2022-jp?B?L0VEVncyWnd1ZHYvQStkL05Xb3VxU1dIMy81S2ZsR0lNd1l6SUlIOTBO?=
- =?iso-2022-jp?B?Y2pOWHVmdVhiVmE5bE10dllncWNWZ3lFOFlRLzRmREowTE9ZbUdQaGVF?=
-x-ms-exchange-transport-forked: True
+ Wed, 18 Aug 2021 17:13:07 -0700
+X-Received: by mail-ot1-f46.google.com with SMTP id x10-20020a056830408a00b004f26cead745so6417152ott.10
+        for <cip-dev@lists.cip-project.org>; Wed, 18 Aug 2021 17:13:05 -0700 (PDT)
+X-Gm-Message-State: XotRLRRUTmM6IidlANvZVYjDx4520388AA=
+X-Google-Smtp-Source: ABdhPJxk221sTiFeNagSjJqK0szxYEoHRG1LSSSpLO+OI7RmqOM54kyEhNBJOPGIyFpncDwJl8U1CMdV/rlUTbBpKe8=
+X-Received: by 2002:a05:6830:b8b:: with SMTP id a11mr9385727otv.179.1629331984567;
+ Wed, 18 Aug 2021 17:13:04 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: cybertrust.co.jp
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY2PR01MB4972.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a489751c-f317-48fc-ac54-08d962a3a174
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Aug 2021 23:55:17.7025
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72cc4624-32b4-4dab-b80a-8563e559bd82
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zKQhjsZJxsdg0w0hfi4kpCBtF5aokZhKgoD6/i9JyFyb0yO/RSCT0jE7pQxi+Anez+7ZvL+9X0XAZwqOH80Yt7G7kOA1I3Q/yVEYXjz41JE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB6827
+From: =?UTF-8?B?5biC5bed5q2j576O?= <masami.ichikawa@miraclelinux.com>
+Date: Thu, 19 Aug 2021 09:12:28 +0900
+Message-ID: <CAODzB9ra5A_NkvqgPMhXc8PR17gaC+R3FU4mfA-_scKGo1Mspw@mail.gmail.com>
+Subject: [cip-dev] New CVE entries this week
+To: cip-dev <cip-dev@lists.cip-project.org>
 Precedence: Bulk
 List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
 List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
@@ -123,57 +41,169 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: vg8gqkJo4ln5FG71cB9cps54x4520388AA=
-Content-Type: multipart/mixed; boundary="523M5AhnpqinoJDGvO5k"
+Content-Type: multipart/mixed; boundary="bdpbjWKMnLAHiNtKK7jw"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1629331229;
- bh=yDt4FKy7kzYxt0tZ/enCkSPzv+0VH8bDcOhuAwl6SLU=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1629331988;
+ bh=NHjhP8PrAqLUNqPKIHHRLX5TgpcURYxXLovwT9yfCPU=;
  h=Content-Type:Date:From:Reply-To:Subject:To;
- b=vQ6js5Xb/GcUZv0T8J9T47NN7KEFY0vHAHGDkhxNwTNV4ITFwdFxuWrCwM9AFGHgXxp
- Rv7++XpQ11XKmuUGQVq28LZXdNB9M8hdV2IW0/ghadh7gBg+LYY1uf8kb6MFHaI1myRYB
- iJIXXP94qRsKSs0Or92v5So/kguECfYw5Bw=
+ b=JmIOORnp7EU83sscgI3WIS3l4Q1HJE1jqNxPHORKYajbIZmnnqiZQwZwzNzkMlJldKu
+ CZKG5Mv8KyYFGendl2d66dkYYWab8t2SLDbGzButFKeFa/1HSXREljRYnx+kyL+UMnytj
+ OkKyUZtTgQaPU1ZCL+LFH9NN+t2jyUpzJSk=
 
---523M5AhnpqinoJDGvO5k
-Content-Language: ja-JP
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+--bdpbjWKMnLAHiNtKK7jw
+Content-Type: text/plain; charset="UTF-8"
 
-Hi, Pavel-san,
+Hi !
 
-I thought time shift was agreed at the TSC.
-Sorry if there are any miscommunications.
---
-M. Kudo
+It's this week's CVE report.
 
------Original Message-----
-From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On Beha=
-lf Of Pavel Machek
-Sent: Thursday, August 19, 2021 3:31 AM
-To: cip-dev@lists.cip-project.org
-Subject: Re: [cip-dev] IRC meeting start time
+* CVE short summary
 
-Hi!
+** New CVEs
 
-> We will change start time of IRC meetings held every Thursday.=20
-> We will start the meeting at UTC 13:00. That is:
->   - Summer Time: USWest 06:00, USEast 09:00, UK 14:00, DE 15:00, TW 21:00=
-, JP 22:00
->   - Winter Time: USWest 05:00, USEast 08:00, UK 13:00, DE 14:00, TW=20
-> 21:00, JP 22:00
->=20
-> This change is effective starting tomorrow.
+CVE-2021-3653: mainline, 5.10, 5.13, 5.4 are fixed.
 
-I was at TSC Zoom meeting but did not realize consequences. I have scheduli=
-ng conflict this week, so I'll most likely not make it.
+CVE-2021-3656: mainline, 5.10, 5.13, 5.4 are fixed. 4.4 is not affected.
 
-Best regards,
-								Pavel
+** Updated CVEs
 
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+CVE-2021-33624: mainline, 4.19, 5.10, 5,12, 5.4 are fixed. 4.4 is not
+affected by this vulnerability.
 
---523M5AhnpqinoJDGvO5k
+CVE-2021-38198: mainline, 4.19, 5.10, 5.4 are fixed. 4.4 affects this
+vulnerability.
+
+CVE-2021-38205: mainline and stable kernels are fixed.
+
+** Tracking CVEs
+
+CVE-2021-31615: there is no fixed information as of 2021/08/12
+
+CVE-2021-3640: there is no fixed information as of 2021/08/12
+
+
+* CVE detail
+
+New CVEs
+
+CVE-2021-3653: KVM: nSVM: avoid picking up unsupported bits from L2 in int_ctl
+
+CVE-2021-3653 and CVE-2021-3656 are vulnerable when nested kvm is enabled.
+
+Patch for 4.19 is backported by
+https://lore.kernel.org/stable/20210816140240.11399-2-pbonzini@redhat.com/
+but not applyed yet.
+
+Fixed status
+
+mainline: [0f923e07124df069ba68d8bb12324398f4b6b709]
+stable/5.10: [c0883f693187c646c0972d73e525523f9486c2e3]
+stable/5.13: [a0949ee63cf95408870a564ccad163018b1a9e6b]
+stable/5.4: [7c1c96ffb658fbfe66c5ebed6bcb5909837bc267]
+
+CVE-2021-3656: KVM: nSVM: always intercept VMLOAD/VMSAVE when nested
+
+This vulnerability has been introduced since 4.13-rc1 so that 4.4
+kernel is not affected.
+CVE-2021-3653 and CVE-2021-3656 are vulnerable when nested kvm is enabled.
+
+Patch for 4.19 is backported by
+https://lore.kernel.org/stable/20210816140240.11399-9-pbonzini@redhat.com/
+but not applyed yet.
+
+Fixed status
+
+mainline: [c7dfa4009965a9b2d7b329ee970eb8da0d32f0bc]
+stable/5.10: [3dc5666baf2a135f250e4101d41d5959ac2c2e1f]
+stable/5.13: [639a033fd765ed473dfee27028df5ccbe1038a2e]
+stable/5.4: [a17f2f2c89494c0974529579f3552ecbd1bc2d52]
+
+Updated CVEs
+
+CVE-2021-33624: Linux kernel BPF protection against speculative
+execution attacks can be bypassed to read arbitrary kernel memory
+
+The main patch 9183671af6dbf60a1219371d4ed73e23f43b49db fixes commit
+b2157399cc9898260d6031c5bfe45fe137c1fbe7 which has been merged since
+4.15-rc8 so 4.4 aren't affected this vulnerability.
+
+Fixed status
+
+mainline: [d203b0fd863a2261e5d00b97f3d060c4c2a6db71,
+fe9a5ca7e370e613a9a75a13008a3845ea759d6e,
+    9183671af6dbf60a1219371d4ed73e23f43b49db,
+973377ffe8148180b2651825b92ae91988141b05]
+stable/4.19: [0abc8c9754c953f5cd0ac7488c668ca8d53ffc90,
+c510c1845f7b54214b4117272e0d87dff8732af6,
+    9df311b2e743642c5427ecf563c5050ceb355d1d,
+c15b387769446c37a892f958b169744dabf7ff23]
+stable/5.10: [e9d271731d21647f8f9e9a261582cf47b868589a,
+8c82c52d1de931532200b447df8b4fc92129cfd9,
+    5fc6ed1831ca5a30fb0ceefd5e33c7c689e7627b]
+stable/5.12: [408a4956acde24413f3c684912b1d3e404bed8e2,
+68a1936e1812653b68c5b68e698d88fb35018835,
+    4a99047ed51c98a09a537fe2c12420d815dfe296,
+e5e2010ac3e27efa1e6e830b250f491da82d51b4]
+stable/5.4: [283d742988f6b304f32110f39e189a00d4e52b92,
+d2f790327f83b457db357e7c66f942bc00d43462,
+    fd568de5806f8859190e6305a1792ba8cb20de61,
+a0f66ddf05c2050e1b7f53256bd9c25c2bb3022b]
+
+CVE-2021-38198: KVM: X86: MMU: Use the correct inherited permissions
+to get shadow page
+
+This vulnerability has been introduced since 2.6.20-rc4 so 4.4 affects
+this CVE but patch didn't apply to 4.4
+(https://lore.kernel.org/stable/162358450944186@kroah.com/). 4.19 also
+failed to apply this patch but backport patch has been merged
+recently(https://lore.kernel.org/stable/20210812174140.2370680-1-ovidiu.panait@windriver.com/).
+
+
+Fixed status
+
+mainline: [b1bd5cba3306691c771d558e94baa73e8b0b96b7]
+stable/4.19: [4c07e70141eebd3db64297515a427deea4822957]
+stable/5.10: [6b6ff4d1f349cb35a7c7d2057819af1b14f80437]
+stable/5.4: [d28adaabbbf4a6949d0f6f71daca6744979174e2]
+
+CVE-2021-38205: net: xilinx_emaclite: Do not print real IOMEM pointer
+
+We talked about this CVE at previous weekly CVE report. Thank your for
+Pavel to backport the patch.
+
+Fixed status
+
+mainline: [d0d62baa7f505bd4c59cd169692ff07ec49dde37]
+stable/4.14: [1994eacac7af52da86e4b0cb6ae61621bef7393f]
+stable/4.19: [9322401477a6d1f9de8f18e5d6eb43a68e0b113a]
+stable/4.4: [3d4ba14fc5ffbe5712055af09a5c0cbab93c0f44]
+stable/4.9: [ffdc1e312e2074875147c1df90764a9bae56f11f]
+stable/5.10: [25cff25ec60690247db8138cd1af8b867df2c489]
+stable/5.13: [8722275b41d5127048e1422a8a1b6370b4878533]
+stable/5.4: [38b8485b72cbe4521fd2e0b8770e3d78f9b89e60]
+
+Currently tracking CVEs
+
+CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
+Bluetooth Core Specifications 4.0 through 5.2
+
+There is no fixed information as of 2021/08/19.
+
+CVE-2021-3640: UAF in sco_send_frame function
+
+There is no fixed information as of 2021/08/19.
+
+Regards,
+
+
+-- 
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
+
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
+
+--bdpbjWKMnLAHiNtKK7jw
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -181,13 +211,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6693): https://lists.cip-project.org/g/cip-dev/message/=
-6693
-Mute This Topic: https://lists.cip-project.org/mt/84967414/4520388
+View/Reply Online (#6694): https://lists.cip-project.org/g/cip-dev/message/=
+6694
+Mute This Topic: https://lists.cip-project.org/mt/84986288/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/10495289/4520388=
 /727948398/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---523M5AhnpqinoJDGvO5k--
+--bdpbjWKMnLAHiNtKK7jw--
