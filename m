@@ -1,39 +1,41 @@
-Return-Path: <SRS0=NWme=NR=lists.cip-project.org=bounce+64572+6707+4520388+10495289@kernel.org>
+Return-Path: <SRS0=Nd+3=NR=lists.cip-project.org=bounce+64572+6708+4520388+10495289@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F2A2C432BE
-	for <cip-dev@archiver.kernel.org>; Thu, 26 Aug 2021 11:51:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 084CEC4320E
+	for <cip-dev@archiver.kernel.org>; Thu, 26 Aug 2021 12:44:35 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 40CA16102A
-	for <cip-dev@archiver.kernel.org>; Thu, 26 Aug 2021 11:51:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 40CA16102A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTPS id 551146109E
+	for <cip-dev@archiver.kernel.org>; Thu, 26 Aug 2021 12:44:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 551146109E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=miraclelinux.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id sZxrYY4521723x3kzdy5KrYy; Thu, 26 Aug 2021 04:51:32 -0700
-X-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web12.29385.1629978690997558276
+X-Received: by 127.0.0.2 with SMTP id IdxsYY4521723xBF3WBAj3un; Thu, 26 Aug 2021 05:44:34 -0700
+X-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+ by mx.groups.io with SMTP id smtpd.web09.29631.1629981870977614884
  for <cip-dev@lists.cip-project.org>;
- Thu, 26 Aug 2021 04:51:32 -0700
-X-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 658601C0B7A; Thu, 26 Aug 2021 13:51:27 +0200 (CEST)
-Date: Thu, 26 Aug 2021 13:51:27 +0200
-From: "Pavel Machek" <pavel@denx.de>
-To: cip-dev@lists.cip-project.org
-Subject: Re: [cip-dev] New CVE entries this week
-Message-ID: <20210826115127.GA15147@duo.ucw.cz>
-References: <CAODzB9qV4uxi2EHoPbK8D_mW6cO-Ni2x+tVUMAUYzKGK7y+COw@mail.gmail.com>
- <169ED2F66B4753DB.9667@lists.cip-project.org>
+ Thu, 26 Aug 2021 05:44:33 -0700
+X-Received: by mail-oo1-f52.google.com with SMTP id z3-20020a4a98430000b029025f4693434bso886531ooi.3
+        for <cip-dev@lists.cip-project.org>; Thu, 26 Aug 2021 05:44:30 -0700 (PDT)
+X-Gm-Message-State: 7iaRZYM9Dt4A1dT8ZWU1u7DLx4520388AA=
+X-Google-Smtp-Source: ABdhPJwCxsOTGaywyw39NrzBe0QaF8SXfvpnseFrTr7vZLbaKZGdk5d30RkLZxp7BT3rM+6aP2e28pLbOVpHgClINqo=
+X-Received: by 2002:a4a:a552:: with SMTP id s18mr2949620oom.1.1629981869920;
+ Thu, 26 Aug 2021 05:44:29 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <169ED2F66B4753DB.9667@lists.cip-project.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CAODzB9qV4uxi2EHoPbK8D_mW6cO-Ni2x+tVUMAUYzKGK7y+COw@mail.gmail.com>
+ <169ED2F66B4753DB.9667@lists.cip-project.org> <20210826115127.GA15147@duo.ucw.cz>
+In-Reply-To: <20210826115127.GA15147@duo.ucw.cz>
+From: "Masami Ichikawa" <masami.ichikawa@miraclelinux.com>
+Date: Thu, 26 Aug 2021 21:43:54 +0900
+Message-ID: <CAODzB9o9FD7MdERqkkMf67K+4EUUyVXok2NXEk9Y6YTajtj_tw@mail.gmail.com>
+Subject: Re: [cip-dev] New CVE entries this week
+To: cip-dev <cip-dev@lists.cip-project.org>
 Precedence: Bulk
 List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
 List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
@@ -42,72 +44,74 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: o9KmgLQ6Zy95hsf2PFDgg3BBx4520388AA=
-Content-Type: multipart/mixed; boundary="ucabDYmKJExqwP9tojrD"
+Content-Type: multipart/mixed; boundary="6kvTvrrO1dVQpRiHDhER"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1629978692;
- bh=9bVdugEQRQhtQjIGJ0gvREqrC3HqHcOyrBu49jAUqH8=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1629981874;
+ bh=rygA6uEmPXdvorh7XO3hQXsQsOIMubnpHGib69vYlsM=;
  h=Content-Type:Date:From:Reply-To:Subject:To;
- b=TwU3Fa8xxIVmgw6gbp/JT0rKYngQDINZvi+JfJnpEuxNBj+wjGg2lcalhYh9owD6cbw
- wVPFpftc+F2F4OCd54Mj6YehmcYFYuSTqTmVru/B8YW6agaUQLfUB5/8FHUdWnOduadhs
- 7tR1XKYvr0QKfHq5kIT+t5GVWQGdo3w9hHQ=
+ b=gw9pqqypNUxXqB81ih70ZJ+YNjtaTmFflZNe0TcupqQDhD0DuqaLV+Jsos9se8EgUUv
+ HaH54ViE0eVWk4tsfF2xHggPZIwo1c7vIrfyWU2/HZjygcRJI+UDB774NcEASSXfaRXFr
+ H/scNSJXdchk4ugdHhoWcB2gbaOIFhgnM1s=
 
---ucabDYmKJExqwP9tojrD
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="xHFwDpU9dbj6ez1V"
-Content-Disposition: inline
+--6kvTvrrO1dVQpRiHDhER
+Content-Type: text/plain; charset="UTF-8"
 
---xHFwDpU9dbj6ez1V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi !
 
-Hi!
+On Thu, Aug 26, 2021 at 8:51 PM Pavel Machek <pavel@denx.de> wrote:
+>
+> Hi!
+>
+> > > CVE-2021-3600: eBPF 32-bit source register truncation on div/mod
+> > >
+> > > The vulnerability has been introduced since 4.15-rc9. 4.4 is not
+> > > affected. 4.19 is not fixed yet as of 2021/08/26.
+> > >
+> > > mainline: [e88b2c6e5a4d9ce30d75391e4d950da74bb2bd90]
+> > > stable/5.10: [1d16cc210fabd0a7ebf52d3025f81c2bde054a90]
+> > > stable/5.4: [78e2f71b89b22222583f74803d14f3d90cdf9d12]
+> >
+> > I took a look into this. Apparently 4.14 and 4.19 is affected. (
+> > https://seclists.org/oss-sec/2021/q2/228 )
+> >
+> > Due to BPF 32-bit subregister requirements (see bpf_design_QA.rst)
+> > top 32 bits should be always zero when the 32 bit registers are in
+> > use. So it could be possible to use BPF_JMP instead of BPF_JMP32.
+>
+> Hmm, no; that is what original code did and what is known not to work
+> for reasons I don't fully understand.
+>
+> Anyway, I asked on the lists, and according to Thadeu Lima de Souza
+> Cascardo Ubuntu did some work on it and is likely to do some more.
+>
 
-> > CVE-2021-3600: eBPF 32-bit source register truncation on div/mod
-> >=20
-> > The vulnerability has been introduced since 4.15-rc9. 4.4 is not
-> > affected. 4.19 is not fixed yet as of 2021/08/26.
-> >=20
-> > mainline: [e88b2c6e5a4d9ce30d75391e4d950da74bb2bd90]
-> > stable/5.10: [1d16cc210fabd0a7ebf52d3025f81c2bde054a90]
-> > stable/5.4: [78e2f71b89b22222583f74803d14f3d90cdf9d12]
->=20
-> I took a look into this. Apparently 4.14 and 4.19 is affected. (
-> https://seclists.org/oss-sec/2021/q2/228 )
->=20
-> Due to BPF 32-bit subregister requirements (see bpf_design_QA.rst)
-> top 32 bits should be always zero when the 32 bit registers are in
-> use. So it could be possible to use BPF_JMP instead of BPF_JMP32.
+Thank you for asking.
 
-Hmm, no; that is what original code did and what is known not to work
-for reasons I don't fully understand.
+> Oh, and we may want watch CVE-2021-3444, it is apparently related and
+> not yet fixed in 4.19.
+>
 
-Anyway, I asked on the lists, and according to Thadeu Lima de Souza
-Cascardo Ubuntu did some work on it and is likely to do some more.
+I see. We keep track of it.
 
-Oh, and we may want watch CVE-2021-3444, it is apparently related and
-not yet fixed in 4.19.
+> Best regards,
+>                                                                 Pavel
+> --
+> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+>
+> 
+>
 
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Regards,
 
---xHFwDpU9dbj6ez1V
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
 
------BEGIN PGP SIGNATURE-----
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYSeAPwAKCRAw5/Bqldv6
-8g6gAJ99nRzKr61zQCd5l7kdJpDvTlRIxQCfTnt2hjTYgVNLNILo4Oif5f3lBVc=
-=Ahgt
------END PGP SIGNATURE-----
-
---xHFwDpU9dbj6ez1V--
-
---ucabDYmKJExqwP9tojrD
+--6kvTvrrO1dVQpRiHDhER
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -115,8 +119,8 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6707): https://lists.cip-project.org/g/cip-dev/message/=
-6707
+View/Reply Online (#6708): https://lists.cip-project.org/g/cip-dev/message/=
+6708
 Mute This Topic: https://lists.cip-project.org/mt/85151460/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/10495289/4520388=
@@ -124,4 +128,4 @@ Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/10495289/4520388=
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---ucabDYmKJExqwP9tojrD--
+--6kvTvrrO1dVQpRiHDhER--
