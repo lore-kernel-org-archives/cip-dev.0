@@ -1,4 +1,4 @@
-Return-Path: <SRS0=IT2s=NW=lists.cip-project.org=bounce+64572+6711+4520388+10495289@kernel.org>
+Return-Path: <SRS0=LUd6=NW=lists.cip-project.org=bounce+64572+6712+4520388+10495289@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98267C432BE
-	for <cip-dev@archiver.kernel.org>; Tue, 31 Aug 2021 03:22:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE798C4320E
+	for <cip-dev@archiver.kernel.org>; Tue, 31 Aug 2021 03:22:09 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 0676B60E90
-	for <cip-dev@archiver.kernel.org>; Tue, 31 Aug 2021 03:22:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 0676B60E90
+	by mail.kernel.org (Postfix) with ESMTPS id 3E84060E90
+	for <cip-dev@archiver.kernel.org>; Tue, 31 Aug 2021 03:22:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 3E84060E90
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id rZ54YY4521723xg8umXaup7o; Mon, 30 Aug 2021 20:22:07 -0700
-X-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
- by mx.groups.io with SMTP id smtpd.web12.766.1630380127160491938
+X-Received: by 127.0.0.2 with SMTP id cKBvYY4521723x1OcDFHr3Ak; Mon, 30 Aug 2021 20:22:08 -0700
+X-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+ by mx.groups.io with SMTP id smtpd.web11.719.1630380128487283988
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Mon, 30 Aug 2021 20:22:07 -0700
-X-Received: by mail-pj1-f45.google.com with SMTP id d5so5061855pjx.2
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Mon, 30 Aug 2021 20:22:07 -0700 (PDT)
-X-Gm-Message-State: bMIPRbuVCY6o7LtXXnoyc6Asx4520388AA=
-X-Google-Smtp-Source: ABdhPJzWvanM7JifEWERumCvTmeUK8SaonH0UpOR+AUhQUAGxVjRbyvkHLlkp80IYL0+TMh2OuZb4w==
-X-Received: by 2002:a17:90a:5583:: with SMTP id c3mr2580115pji.133.1630380126476;
-        Mon, 30 Aug 2021 20:22:06 -0700 (PDT)
+ Mon, 30 Aug 2021 20:22:08 -0700
+X-Received: by mail-pl1-f170.google.com with SMTP id bg1so4478695plb.13
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Mon, 30 Aug 2021 20:22:08 -0700 (PDT)
+X-Gm-Message-State: 320ADHBDgzHTrBc8H5cOWQM0x4520388AA=
+X-Google-Smtp-Source: ABdhPJyvvIO2G1+YyXDGD7H9Mhug+zzMnBOPsi2HDigCjSk1lljL3peWV2SJprTDTIVZzkh0wwmtPw==
+X-Received: by 2002:a17:90b:1d02:: with SMTP id on2mr2587617pjb.21.1630380127929;
+        Mon, 30 Aug 2021 20:22:07 -0700 (PDT)
 X-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id 141sm18907935pgf.46.2021.08.30.20.22.05
+        by smtp.gmail.com with ESMTPSA id q12sm16164461pfj.153.2021.08.30.20.22.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Aug 2021 20:22:06 -0700 (PDT)
-Message-ID: <612da05e.1c69fb81.adb41.1def@mx.google.com>
-Date: Mon, 30 Aug 2021 20:22:06 -0700 (PDT)
+        Mon, 30 Aug 2021 20:22:07 -0700 (PDT)
+Message-ID: <612da05f.1c69fb81.ec0c0.9fe0@mx.google.com>
+Date: Mon, 30 Aug 2021 20:22:07 -0700 (PDT)
 MIME-Version: 1.0
 X-Kernelci-Branch: linux-4.19.y-cip
 X-Kernelci-Kernel: v4.19.205-cip56
 X-Kernelci-Report-Type: test
 X-Kernelci-Tree: cip
-Subject: [cip-dev] cip/linux-4.19.y-cip baseline-nfs: 42 runs, 1 regressions (v4.19.205-cip56) #kernelci
+Subject: [cip-dev] cip/linux-4.19.y-cip baseline: 319 runs, 3 regressions (v4.19.205-cip56) #kernelci
 To: Cipproject+Cip-Dev via Email Integration <cip-dev@lists.cip-project.org>
 From: "kernelci.org bot" <bot@kernelci.org>
 Precedence: Bulk
@@ -50,36 +50,42 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-Content-Type: multipart/mixed; boundary="iY5sG05fNvLcOZx3f4Hp"
+Content-Type: multipart/mixed; boundary="sYrKlllOHGWg2t39dZjO"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1630380127;
- bh=/NQgvzJ+wHb5xxSIN5VbaTq2nUQ0Go4sdZj0Fb1RXGY=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1630380128;
+ bh=PNBMS2tdrLxMkpvYAGEsZkr7VhXHDQfAusNMiE7xILY=;
  h=Content-Type:Date:From:Reply-To:Subject:To;
- b=DiNxWTCM2q4jYZCJEhbh28SHHY1h8+K8JbefZkoWCfuvmwT6a41tk5Ojd+RjQKbmREx
- 3ActqiROyTINZNwmThbYyNpvl4/au/MUwOoDQNGtPOYtMP2FUX0NWnyPtMGtAgbRJnCMo
- hVxg7EjEY08CTHOSbjY6ZwJe0iS1fyt5nw4=
+ b=fJyh1jb6K4wl4Vt3ApqJeoeQEUGnU8iuFJAgi269pfB6s+vHsndf12Brkmw/LFtll36
+ RNYNjYad/WKLkzFReNExAukn9ipXTayw3DS4IDJu/CMBeMV11NTohnHm8Ogr6ttNaPzHB
+ XVKTIiJ/H/mbI4LNvY07tXu1QeAEcl5Q7ws=
 
---iY5sG05fNvLcOZx3f4Hp
+--sYrKlllOHGWg2t39dZjO
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-cip/linux-4.19.y-cip baseline-nfs: 42 runs, 1 regressions (v4.19.205-cip56)
+cip/linux-4.19.y-cip baseline: 319 runs, 3 regressions (v4.19.205-cip56)
 
 Regressions Summary
 -------------------
 
-platform   | arch | lab             | compiler | defconfig          | regre=
-ssions
------------+------+-----------------+----------+--------------------+------=
-------
-dove-cubox | arm  | lab-pengutronix | gcc-8    | multi_v7_defconfig | 1    =
-      =
+platform             | arch | lab          | compiler | defconfig          =
+ | regressions
+---------------------+------+--------------+----------+--------------------=
+-+------------
+qemu_arm-versatilepb | arm  | lab-baylibre | gcc-8    | versatile_defconfig=
+ | 1          =
+
+qemu_arm-versatilepb | arm  | lab-broonie  | gcc-8    | versatile_defconfig=
+ | 1          =
+
+qemu_arm-versatilepb | arm  | lab-cip      | gcc-8    | versatile_defconfig=
+ | 1          =
 
 
   Details:  https://kernelci.org/test/job/cip/branch/linux-4.19.y-cip/kerne=
-l/v4.19.205-cip56/plan/baseline-nfs/
+l/v4.19.205-cip56/plan/baseline/
 
-  Test:     baseline-nfs
+  Test:     baseline
   Tree:     cip
   Branch:   linux-4.19.y-cip
   Describe: v4.19.205-cip56
@@ -94,38 +100,104 @@ Test Regressions
 
 
 
-platform   | arch | lab             | compiler | defconfig          | regre=
-ssions
------------+------+-----------------+----------+--------------------+------=
-------
-dove-cubox | arm  | lab-pengutronix | gcc-8    | multi_v7_defconfig | 1    =
-      =
+platform             | arch | lab          | compiler | defconfig          =
+ | regressions
+---------------------+------+--------------+----------+--------------------=
+-+------------
+qemu_arm-versatilepb | arm  | lab-baylibre | gcc-8    | versatile_defconfig=
+ | 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/612d91bb905996aa128e2c8c
+  Details:     https://kernelci.org/test/plan/id/612d8ea3b86a70ad1c8e2ca5
 
   Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig
+  Full config: versatile_defconfig
   Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
   Plain log:   https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.205=
--cip56/arm/multi_v7_defconfig/gcc-8/lab-pengutronix/baseline-nfs-dove-cubox=
-.txt
+-cip56/arm/versatile_defconfig/gcc-8/lab-baylibre/baseline-qemu_arm-versati=
+lepb.txt
   HTML log:    https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.205=
--cip56/arm/multi_v7_defconfig/gcc-8/lab-pengutronix/baseline-nfs-dove-cubox=
-.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster/2021=
-0730.6/armhf/initrd.cpio.gz =
+-cip56/arm/versatile_defconfig/gcc-8/lab-baylibre/baseline-qemu_arm-versati=
+lepb.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05-6-g8983f3b738df/armel/baseline/rootfs.cpio.gz =
 
 
 
-  * baseline-nfs.login: https://kernelci.org/test/case/id/612d91bb905996aa1=
-28e2c8d
-        failing since 127 days (last pass: v4.19.186-cip47-1-g4c2cb7ba796b,=
- first fail: v4.19.188-cip48) =
+  * baseline.login: https://kernelci.org/test/case/id/612d8ea3b86a70ad1c8e2=
+ca6
+        failing since 290 days (last pass: v4.19.152-cip37-37-g18852869b06b=
+, first fail: v4.19.157-cip38) =
+
+ =
+
+
+
+platform             | arch | lab          | compiler | defconfig          =
+ | regressions
+---------------------+------+--------------+----------+--------------------=
+-+------------
+qemu_arm-versatilepb | arm  | lab-broonie  | gcc-8    | versatile_defconfig=
+ | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/612d8f796095f64edd8e2c86
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: versatile_defconfig
+  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.205=
+-cip56/arm/versatile_defconfig/gcc-8/lab-broonie/baseline-qemu_arm-versatil=
+epb.txt
+  HTML log:    https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.205=
+-cip56/arm/versatile_defconfig/gcc-8/lab-broonie/baseline-qemu_arm-versatil=
+epb.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05-6-g8983f3b738df/armel/baseline/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/612d8f796095f64edd8e2=
+c87
+        failing since 290 days (last pass: v4.19.152-cip37-37-g18852869b06b=
+, first fail: v4.19.157-cip38) =
+
+ =
+
+
+
+platform             | arch | lab          | compiler | defconfig          =
+ | regressions
+---------------------+------+--------------+----------+--------------------=
+-+------------
+qemu_arm-versatilepb | arm  | lab-cip      | gcc-8    | versatile_defconfig=
+ | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/612d8e83b44cb7d5a18e2c9b
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: versatile_defconfig
+  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.205=
+-cip56/arm/versatile_defconfig/gcc-8/lab-cip/baseline-qemu_arm-versatilepb.=
+txt
+  HTML log:    https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.205=
+-cip56/arm/versatile_defconfig/gcc-8/lab-cip/baseline-qemu_arm-versatilepb.=
+html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05-6-g8983f3b738df/armel/baseline/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/612d8e83b44cb7d5a18e2=
+c9c
+        failing since 290 days (last pass: v4.19.152-cip37-37-g18852869b06b=
+, first fail: v4.19.157-cip38) =
 
  =20
 
---iY5sG05fNvLcOZx3f4Hp
+--sYrKlllOHGWg2t39dZjO
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -133,9 +205,9 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6711): https://lists.cip-project.org/g/cip-dev/message/=
-6711
-Mute This Topic: https://lists.cip-project.org/mt/85268758/4520388
+View/Reply Online (#6712): https://lists.cip-project.org/g/cip-dev/message/=
+6712
+Mute This Topic: https://lists.cip-project.org/mt/85268762/4520388
 Mute #kernelci:https://lists.cip-project.org/g/cip-dev/mutehashtag/kernelci
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/10495289/4520388=
@@ -143,4 +215,4 @@ Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/10495289/4520388=
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---iY5sG05fNvLcOZx3f4Hp--
+--sYrKlllOHGWg2t39dZjO--
