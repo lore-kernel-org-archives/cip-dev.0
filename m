@@ -1,116 +1,47 @@
-Return-Path: <SRS0=CHW1=NT=lists.cip-project.org=bounce+64572+6709+4520388+10495289@kernel.org>
+Return-Path: <SRS0=Wdiz=NW=lists.cip-project.org=bounce+64572+6710+4520388+10495289@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61CE1C432BE
-	for <cip-dev@archiver.kernel.org>; Sat, 28 Aug 2021 01:19:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68D73C432BE
+	for <cip-dev@archiver.kernel.org>; Tue, 31 Aug 2021 02:53:47 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id C735A60F35
-	for <cip-dev@archiver.kernel.org>; Sat, 28 Aug 2021 01:19:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org C735A60F35
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=toshiba.co.jp
+	by mail.kernel.org (Postfix) with ESMTPS id C81AA60FE8
+	for <cip-dev@archiver.kernel.org>; Tue, 31 Aug 2021 02:53:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org C81AA60FE8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id 7bDZYY4521723xy2L7JJfizP; Fri, 27 Aug 2021 18:19:02 -0700
-X-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.157])
- by mx.groups.io with SMTP id smtpd.web10.1555.1630113538724225898
- for <cip-dev@lists.cip-project.org>;
- Fri, 27 Aug 2021 18:19:00 -0700
-X-Received: by mo-csw.securemx.jp (mx-mo-csw1115) id 17S1If0t005278; Sat, 28 Aug 2021 10:18:42 +0900
-X-Iguazu-Qid: 2wHHhCFII7oRGaNrzU
-X-Iguazu-QSIG: v=2; s=0; t=1630113521; q=2wHHhCFII7oRGaNrzU; m=D5CSahbWX5kp4vxlgikH+4Yl5hQ0e27JVzLJS1cUUhk=
-X-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1110) id 17S1IeXA027696
-	(version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
-	Sat, 28 Aug 2021 10:18:40 +0900
-X-Received: from enc01.toshiba.co.jp (enc01.toshiba.co.jp [106.186.93.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by imx2-a.toshiba.co.jp (Postfix) with ESMTPS id 2D70F10014D;
-	Sat, 28 Aug 2021 10:18:40 +0900 (JST)
-X-Received: from hop001.toshiba.co.jp ([133.199.164.63])
-	by enc01.toshiba.co.jp  with ESMTP id 17S1Id5C004942;
-	Sat, 28 Aug 2021 10:18:39 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Jxyxv236iwCvZuNEb5WW202k673fmZuQ9zQOZFXjVe5wC6k7nHrBPSCnJM5fA/dHO8rQBg9ylh2jLxwEnZFsi/3LJoCeOqjKalH6Sfi3nsR8ITMrY6c5kknVBG5Fh7FS4rKG6xVrDDPHcXcKMk5+c/fziiKg206n/Wh+UCQqvpYr+YeSe5RL/xxk4QeJ5ybdALd5sDF0vaolTMeGDEI/mYRy0oMmBYPDHYlVIbcWSICI9eP7UFxbj+4tYj7DpNfpHVPpCtsC8yh2OkpK9Ig5lYJCm782LKgJwbp76+zEYcE2OcoQS/h93O1Acn5IlR8Q0j1nMfXxBrNoLO8gZZifZw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h6xbIi4wmDl3INoU4rIca4LXJPqpQnO03FioCG4UEKg=;
- b=Z1DK1OshAC3fRTh4PxhCzVpgu4yKxlIN6f6YksfSmXQKxHOdnfw8iQcFT4O77nOzQF1nJX9l2mbSYPxjUoRK87i1Eypri3lUqiBNjCbwATLIKCOECu83CknFlZMuA384GqR+sTmoo42prdQvbR3MkKMM+z+a+W2D8LWRlW45yGD8u0fAOY37kvKf8n5wlF5jlCLLog2lGymFki9BPn1gFtrvzLrDe0eaEYikfwfFRvzxtnbwwHUSeZQ/RsuCd5gRI02Q58crpO01EOcHNpIcJXsUGhMC+1xjIjr4c3XN6YPHsygAzlaG6/+pknzx9rLtRdoGy7hHYwkAibJh8dj5lg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
- header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
-From: "Nobuhiro Iwamatsu" <nobuhiro1.iwamatsu@toshiba.co.jp>
-To: <cip-dev@lists.cip-project.org>
-CC: <masashi.kudo@cybertrust.co.jp>, <masami.ichikawa@cybertrust.co.jp>,
-        <pavel@denx.de>, <Chris.Paterson2@renesas.com>
-Subject: [cip-dev] [ANNOUNCE] Release v4.19.205-cip56
-Thread-Topic: [ANNOUNCE] Release v4.19.205-cip56
-Thread-Index: Adebqnld+FiRKG+9RZG42kott4k/Ag==
-Date: Sat, 28 Aug 2021 01:18:37 +0000
-X-TSB-HOP: ON
-Message-ID: <TYAPR01MB62524DF3E7738764DE57BAA092C99@TYAPR01MB6252.jpnprd01.prod.outlook.com>
-Accept-Language: ja-JP, en-US
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c5d5ce4a-de4d-489b-b2b1-08d969c1c38e
-x-ms-traffictypediagnostic: TY2PR01MB2602:
-x-microsoft-antispam-prvs: <TY2PR01MB2602D33362653E29A0D714C092C99@TY2PR01MB2602.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:393;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam-message-info: bmRfklg6b5aRB6/wHDMUWQiK5hZdahV1lCU6WyFMKRPtYdeiEIhXNxUrGEHMcbrLZN9UYUth7yJAwZtAa2jIZk0lKluompUdxQcOH7QCUBfVnBYZJy1YPljhRAn7HTJeZ8OGscx7uDIOTvkX0KF7ByvobcbX48R8vC+17sFEfOWvOYgdFZl1fuTANGvW/rM/sy3Tl5pVPuaR8QR+cKzVygGLjoc8e+IJwKQvFUEt4GNzJ4GO4aEfoN/I/9eQNI/ASraQczqFX33T2EjORxMyGY3Gskrr6XBYGfA9UzE6x/FD2Ncm8jnEop9OKE4jPe7VV1o9XLMBE/hqK9nvVfJgo6OIFLCR6FFEUhW4uAv9u23no17T2ubzOKjCoJb+sQoM5ZXWTdKCCgIEDehrjs/2gQkJznRReAqjKQ7xxt5+vEhZ7kXqF/WGWPm+3mUT34JLn2oWYy0AA7lhovi9UZ2jPKhs4M52sJVv0zKCR9uxhfZrhuiJn611PuLPFlSfCmTXNoMOFskb49RDiFMfhiaEn3kj2H3DZQncfA05HYsOPsD7n2Wy6xHS44j4d5jA0OFkI1chREwp+ovOVSHtm9H/kN0DOxYGOxkvGeYUCFz8aG5o3j77Tj+mwJvKC/YLNKMY7O+dkzP7ixOxtga27AtI7TiLqSbt795USLdog351T/iYvc0OQpNPsaVgY+z97vG9KwMGmiNnxKT5XfT5PfuVXhsT8MTeCRHtxugE+sBWvTuwgFqBcJpBH0Scc90ZS/DDjr4D2zkLIJDgXveXVBmpxIjDIkOj0+WphLtw3jGIZDg=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?YUk0bktzbGF1c3E3dHdCMDlNNzIyVDhuWXlwZTNsSG5HNHpSRHVIQy9Fb29Q?=
- =?utf-8?B?Qml3eEtxc0JsZjV4R1B1YXc2eENYek1OdHdpTG8xbFVXd2JaeEVXdlJZK2dw?=
- =?utf-8?B?REQwcENSYm9DN0FkSzJ1UTZKcm1Xb3BPbGxHWmJ4c2JKZFlJcVdHSEE2Y1Ir?=
- =?utf-8?B?QmJKMk1nbXJqdzdIS1FHM21LMDBZZ3U3U0E1LzRzSm9GTW50Y1JFQXFGUnNx?=
- =?utf-8?B?a2plY2I3RTdaL3prYW1odGpDTGhUNmk2Z0orMG5Yays5REp4MG5pK1BDTlBu?=
- =?utf-8?B?S091bTNKRjQwQzZuSUp4SHd4YzVESU9UaVhIU0RTY25SZWhRSUNDV3pTaDBu?=
- =?utf-8?B?QzVLM2MybTFDOUI4VGR1S0dLY0dMV2grbEc3a3YwZUJXZWtPVUx6My9GR1Nv?=
- =?utf-8?B?eTVrWmZ1RnBYRERrbGZzT01TSytQZ1NiYkVmcnEyaThEWERXU3R4OHFGN1Nj?=
- =?utf-8?B?VVp6YWQxSVQwdld0c3dyNEZCcnczd08vQnpPb2JuN0w4UXlnbWkrTzZPZ2hU?=
- =?utf-8?B?aFpFQjArMG9VZWpWL1ZNV2R4ell2ZUdqQ1ljTkpCRlc1ZnBaMjBHYW90NUdj?=
- =?utf-8?B?Y1F0U2pxSW1WWWVVR3E2YXNoNkVScGx2VHlSNElIRjhvdzdlSG82ampkMTFX?=
- =?utf-8?B?YzEvMlVEOEFGQ3NtZkQ1akRlMlcyUEl2Y0dHOTRTNEVycXllVjdPckhnR2Rx?=
- =?utf-8?B?djRZV3pROUJRVWR5bU16c1RWb01YbW4wdUdTSzNndldPN3BLSXFZR3ZDR3hn?=
- =?utf-8?B?c1RBd2c3UjZWMXM2RFloVFE3ZEM4SFZ6U3JrNTJrWmF6ek42YWlhZGM4dGc4?=
- =?utf-8?B?dDJ0a1pLckJNTitPQ3pVL1lZcEFxYlc4QzBFS09temtmd3d0MldJcjFTU3Nq?=
- =?utf-8?B?U3ZKQm1YL3czaStQWlZIbFNraUk1akFROXhWN1Z4TGVTWWg2VFRxZWtONDh4?=
- =?utf-8?B?djAzd3JVNncvRVNKS0NkcUxKaEQ5WmhyQXlDOWNUS0VsR3p6TU5vY3Raa2Ja?=
- =?utf-8?B?RzdLZm5FKy9yUEZxem9oeE93S0lUSEZSUlB3RHJHbHF2WVJtMnovamxyS0ty?=
- =?utf-8?B?L2ZxY0VXRmJmSlZsd0ZIOTZWcUFWVERUYWxBdnhFTXlGUzFWRW11bUlFOTYx?=
- =?utf-8?B?R3NFVVRGQ2xxUWFzcmcxYjFrVDhSVFB2ZE5RMnd0SFJnL3BKbXF3dGV3d09Q?=
- =?utf-8?B?YWpsd29peGlYZWJ4Zlh1cURkb2VnckNlLy9ZVzZCWW5RR1VzZjUwU3hUNUxw?=
- =?utf-8?B?SkpjWmRoUkNBUWRVR2dlcVJyRHpIOTh5MWdOQkJJNHd4NytPUHlkOURsSGt6?=
- =?utf-8?B?OXh0dmZtcHZMSjJkaDI5V1lOUExxY20yNmJzUzc0WkJlZGhQd2krYXBGeWNQ?=
- =?utf-8?B?V3hqL0RjUHpKMm1mS2laazJTTm1iWk1BVUZhTnFEZ0d4aEVnSEZ5NHE0Sk5N?=
- =?utf-8?B?M2pZVkR0U0VIS2w5NGxMYnhRTXpEWTd6bEcrWE5zTXpIOGY3NmRVek5LMmRI?=
- =?utf-8?B?cmlXQVU4NHpSRE9Xd0cxdVdNV1dGZjEvc3ZteVp0VGxhY0VXN0RlbFlBSjVE?=
- =?utf-8?B?UjUxTk1GMjVEVGE0NnZ6a0xKbzZxSlY3U1VxNXBrZ1BLVVBvS1FyWXRDWTBi?=
- =?utf-8?B?RTVOb2lGeGFHV1cwSFh0U2I1aVcxeXkxenBjcWY3VHBmNVozc3hFeXd5MlAv?=
- =?utf-8?B?NXRTNFVQWGRsVFI3TVlSNFhJc1VPS0Q2WkVIR3BFVmg1bGhWUENxSG5YaG1J?=
- =?utf-8?Q?4oPIwoKz2qSESaDEAtrcXN+PjTReDVjJyo2dmWd?=
-x-ms-exchange-transport-forked: True
+X-Received: by 127.0.0.2 with SMTP id jCcQYY4521723xMu21kBc0y8; Mon, 30 Aug 2021 19:53:46 -0700
+X-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+ by mx.groups.io with SMTP id smtpd.web09.481.1630378426046168980
+ for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
+ Mon, 30 Aug 2021 19:53:46 -0700
+X-Received: by mail-pj1-f50.google.com with SMTP id d3-20020a17090ae28300b0019629c96f25so1346777pjz.2
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Mon, 30 Aug 2021 19:53:46 -0700 (PDT)
+X-Gm-Message-State: 6V1hyTiMqCJ3XQvmVxR1A2jZx4520388AA=
+X-Google-Smtp-Source: ABdhPJzbfEP+B/L3bVogBpmYc/rQkAPFYh9a7nPSF0eXNZ//3pNbziWWdD8zKl0wDgzzmoNoLg/1UQ==
+X-Received: by 2002:a17:902:c643:b0:138:b603:f940 with SMTP id s3-20020a170902c64300b00138b603f940mr2482532pls.71.1630378424664;
+        Mon, 30 Aug 2021 19:53:44 -0700 (PDT)
+X-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id y140sm8184219pfc.139.2021.08.30.19.53.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Aug 2021 19:53:44 -0700 (PDT)
+Message-ID: <612d99b8.1c69fb81.fc451.38a2@mx.google.com>
+Date: Mon, 30 Aug 2021 19:53:44 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYAPR01MB6252.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c5d5ce4a-de4d-489b-b2b1-08d969c1c38e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Aug 2021 01:18:37.8566
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Pvmgc8NBQ69+k86jpqOKmjOhqwZTH3gwXVCHLZQ0K1Oyl30vbk/lfv0qJgNWlV7YTBEuZ+MOkGXPj8uFvjh0FWH9xXYr+8f9kXHR4Oqh10DVYDgSjrp2Ie34BD/PGHEG
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB2602
-X-OriginatorOrg: toshiba.co.jp
-MSSCP.TransferMailToMossAgent: 103
+X-Kernelci-Branch: linux-4.19.y-cip
+X-Kernelci-Kernel: v4.19.205-cip56
+X-Kernelci-Report-Type: build
+X-Kernelci-Tree: cip
+Subject: [cip-dev] cip/linux-4.19.y-cip build: 114 builds: 0 failed, 114 passed, 31 warnings (v4.19.205-cip56) #kernelci
+To: Cipproject+Cip-Dev via Email Integration <cip-dev@lists.cip-project.org>
+From: "kernelci.org bot" <bot@kernelci.org>
 Precedence: Bulk
 List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
 List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
@@ -119,37 +50,783 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: iOmMzgqe0wKdAYoiXCbdv3c8x4520388AA=
-Content-Type: multipart/mixed; boundary="47ffnFlXSOOLtzOREYpl"
+Content-Type: multipart/mixed; boundary="TXGMfbxSO8BsJrqTzshj"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1630113542;
- bh=PVCgOxo/d/1/vBFgPAs4WTzZaKbg92ozcKAfn/G0SZU=;
- h=CC:Content-Type:Date:From:Reply-To:Subject:To;
- b=efKU0/pfU+iMx0ZyiFw0VS9dByhO184AHDw9baIxsthzQe8nkFytPgYL4Ctm0mQWTxm
- K32klWbF0oZJOEyWh99WsBDfiRAHe1UTSMDgbnzFZx3XEe1VzOUSKkFEm//oSkjSIiPye
- qQ0qIP6u0R4uDKIwbBXkw0ibYYmv8yuiPHM=
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1630378426;
+ bh=ey4v2b16Twfl666ad31T3gT4DxvfYzEeMLHIu7jnQ3Q=;
+ h=Content-Type:Date:From:Reply-To:Subject:To;
+ b=W7HzHJJM1q1CUU3wGCQrwwVwY06DqLpF5AeCjWzrpkFmjjIWPR6YHPmkvmUOX0cfJbr
+ MlrEORXBXfoLIwzITHIfWsjlue5X5K2LNdYVRgAMy30Bxvs/0kjx/z9jw09eSnhloU96S
+ oXKHiH6PoPRmIb6zjawHiNX6AWkssBk3m5U=
 
---47ffnFlXSOOLtzOREYpl
-Content-Language: ja-JP
+--TXGMfbxSO8BsJrqTzshj
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: quoted-printable
 
-SGksDQoNCkNJUCBrZXJuZWwgdGVhbSBoYXMgcmVsZWFzZWQgTGludXgga2VybmVsIHY0LjE5LjIw
-NS1jaXA1Ni4NClRoZSBsaW51eC00LjE5LnktY2lwIHRyZWUgaGFzIGJlZW4gdXBkYXRlZCBiYXNl
-IHZlcnNpb24gZnJvbSB2NC4xOS4yMDQNCnRvIHY0LjE5LjIwNS4NCg0KWW91IGNhbiBnZXQgdGhp
-cyByZWxlYXNlIHZpYSB0aGUgZ2l0IHRyZWUgYXQ6DQoNCiAgdjQuMTkuMjA1LWNpcDU2Og0KICAg
-IHJlcG9zaXRvcnk6DQogICAgICBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgv
-a2VybmVsL2dpdC9jaXAvbGludXgtY2lwLmdpdA0KICAgIGJyYW5jaDoNCiAgICAgIGxpbnV4LTQu
-MTkueS1jaXANCiAgICBjb21taXQgaGFzaDoNCiAgICAgIGFkMTllMTMzYWViY2VjNTU4MDY2ZWEz
-MzhmODk2ZWMwYjczMzgyNTQNCiAgICBGaXhlZCBDVkVzOg0KICAgICAgQ1ZFLTIwMjEtMzY1Mzog
-S1ZNOiBuU1ZNOiBhdm9pZCBwaWNraW5nIHVwIHVuc3VwcG9ydGVkIGJpdHMgZnJvbSBMMiBpbiBp
-bnRfY3RsDQogICAgICBDVkUtMjAyMS0zNjU2OiBLVk06IG5TVk06IGFsd2F5cyBpbnRlcmNlcHQg
-Vk1MT0FEL1ZNU0FWRSB3aGVuIG5lc3RlZA0KICAgICAgQ1ZFLTIwMjAtMzcwMjogTm9uZQ0KICAg
-IGFkZGVkIGNvbW1pdHM6DQogICAgICBDSVA6IEJ1bXAgdmVyc2lvbiBzdWZmaXggdG8gLWNpcDU2
-IGFmdGVyIG1lcmdlIGZyb20gc3RhYmxlDQoNCkJlc3QgcmVnYXJkcywNCiAgIE5vYnVoaXJvDQo=
+cip/linux-4.19.y-cip build: 114 builds: 0 failed, 114 passed, 31 warnings (=
+v4.19.205-cip56)
+
+Full Build Summary: https://kernelci.org/build/cip/branch/linux-4.19.y-cip/=
+kernel/v4.19.205-cip56/
+
+Tree: cip
+Branch: linux-4.19.y-cip
+Git Describe: v4.19.205-cip56
+Git Commit: ad19e133aebcec558066ea338f896ec0b7338254
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+Built: 3 unique architectures
+
+Warnings Detected:
+
+arm64:
+
+arm:
+    allmodconfig (gcc-8): 2 warnings
+    am200epdkit_defconfig (gcc-8): 1 warning
+    colibri_pxa300_defconfig (gcc-8): 1 warning
+    corgi_defconfig (gcc-8): 1 warning
+    efm32_defconfig (gcc-8): 1 warning
+    eseries_pxa_defconfig (gcc-8): 1 warning
+    h5000_defconfig (gcc-8): 1 warning
+    integrator_defconfig (gcc-8): 1 warning
+    lpc32xx_defconfig (gcc-8): 1 warning
+    lpd270_defconfig (gcc-8): 1 warning
+    magician_defconfig (gcc-8): 1 warning
+    mainstone_defconfig (gcc-8): 1 warning
+    multi_v4t_defconfig (gcc-8): 1 warning
+    palmz72_defconfig (gcc-8): 1 warning
+    pcm027_defconfig (gcc-8): 1 warning
+    prima2_defconfig (gcc-8): 1 warning
+    pxa168_defconfig (gcc-8): 1 warning
+    pxa255-idp_defconfig (gcc-8): 1 warning
+    pxa3xx_defconfig (gcc-8): 1 warning
+    pxa910_defconfig (gcc-8): 1 warning
+    raumfeld_defconfig (gcc-8): 1 warning
+    s3c6400_defconfig (gcc-8): 1 warning
+    s5pv210_defconfig (gcc-8): 1 warning
+    spitz_defconfig (gcc-8): 1 warning
+    stm32_defconfig (gcc-8): 1 warning
+    tango4_defconfig (gcc-8): 1 warning
+    tct_hammer_defconfig (gcc-8): 1 warning
+    viper_defconfig (gcc-8): 1 warning
+    vt8500_v6_v7_defconfig (gcc-8): 1 warning
+    zeus_defconfig (gcc-8): 1 warning
+
+x86_64:
 
 
---47ffnFlXSOOLtzOREYpl
+Warnings summary:
+
+    29   drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 de=
+fined but not used [-Wunused-variable]
+    1    /tmp/ccSMp14H.s:18196: Warning: using r15 results in unpredictable=
+ behaviour
+    1    /tmp/ccSMp14H.s:18124: Warning: using r15 results in unpredictable=
+ behaviour
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+
+Detailed per-defconfig build reports:
+
+---------------------------------------------------------------------------=
+-----
+acs5k_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+acs5k_tiny_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+allmodconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 2 warnings, 0 section m=
+ismatches
+
+Warnings:
+    /tmp/ccSMp14H.s:18124: Warning: using r15 results in unpredictable beha=
+viour
+    /tmp/ccSMp14H.s:18196: Warning: using r15 results in unpredictable beha=
+viour
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+am200epdkit_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 s=
+ection mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+aspeed_g4_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+aspeed_g5_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+at91_dt_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+axm55xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+badge4_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+bcm2835_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+cerfcube_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+cm_x300_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+colibri_pxa270_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings,=
+ 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+colibri_pxa300_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, =
+0 section mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+collie_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+corgi_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section=
+ mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+davinci_all_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
+smatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy (arm64, gcc-8) =E2=80=94 PASS, 0 errors=
+, 0 warnings, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig+CONFIG_RANDOMIZE_BASE=3Dy (arm64, gcc-8) =E2=80=94 PASS, 0 errors=
+, 0 warnings, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig+crypto (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig+ima (arm64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+dove_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+ebsa110_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+efm32_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section=
+ mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+em_x270_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+ep93xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+eseries_pxa_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 s=
+ection mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+exynos_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+footbridge_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+gemini_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+h3600_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+h5000_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section=
+ mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+hackkit_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+hisi_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+imote2_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+imx_v4_v5_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+imx_v6_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+integrator_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 se=
+ction mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+iop13xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+iop32x_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+iop33x_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+ixp4xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+jornada720_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+keystone_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+ks8695_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+lpc18xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+lpc32xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 secti=
+on mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+lpd270_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
+n mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+magician_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
+ion mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+mainstone_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sec=
+tion mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+mini2440_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+mmp2_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+moxart_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+mps2_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v4t_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sec=
+tion mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+multi_v5_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy (arm, gcc-8) =E2=80=
+=94 PASS, 0 errors, 0 warnings, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig+CONFIG_SMP=3Dn (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 =
+warnings, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig+crypto (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings=
+, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig+ima (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
+ section mismatches
+
+---------------------------------------------------------------------------=
+-----
+mvebu_v5_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+mxs_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
+mismatches
+
+---------------------------------------------------------------------------=
+-----
+netwinder_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+netx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+nhk8815_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+nuc910_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+nuc950_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+nuc960_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+omap1_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+omap2plus_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+orion5x_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+oxnas_v6_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+palmz72_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 secti=
+on mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+pcm027_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
+n mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+pleb_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+prima2_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
+n mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+pxa168_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
+n mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+pxa255-idp_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 se=
+ction mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+pxa3xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
+n mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+pxa910_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
+n mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+pxa_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
+mismatches
+
+---------------------------------------------------------------------------=
+-----
+qcom_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+raumfeld_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
+ion mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+realview_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+rpc_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
+mismatches
+
+---------------------------------------------------------------------------=
+-----
+s3c6400_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 secti=
+on mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+s5pv210_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 secti=
+on mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+sama5_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+simpad_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+socfpga_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+spear13xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+spear3xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+spear6xx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+spitz_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section=
+ mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+stm32_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section=
+ mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+sunxi_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+tango4_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
+n mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+tct_hammer_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 se=
+ction mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+trizeps4_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+u300_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+versatile_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+vexpress_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+viper_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section=
+ mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+vt8500_v6_v7_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 =
+section mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig+crypto (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warning=
+s, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig+ima (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, =
+0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig+x86-chromebook (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0=
+ warnings, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig+x86_kvm_guest (x86_64, gcc-8) =E2=80=94 PASS, 0 errors, 0 =
+warnings, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+zeus_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 1 warning, 0 section =
+mismatches
+
+Warnings:
+    drivers/clk/clk.c:49:27: warning: =E2=80=98orphan_list=E2=80=99 defined=
+ but not used [-Wunused-variable]
+
+---------------------------------------------------------------------------=
+-----
+zx_defconfig (arm, gcc-8) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---
+For more info write to <info@kernelci.org>
+
+--TXGMfbxSO8BsJrqTzshj
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -157,13 +834,14 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6709): https://lists.cip-project.org/g/cip-dev/message/=
-6709
-Mute This Topic: https://lists.cip-project.org/mt/85200740/4520388
+View/Reply Online (#6710): https://lists.cip-project.org/g/cip-dev/message/=
+6710
+Mute This Topic: https://lists.cip-project.org/mt/85268356/4520388
+Mute #kernelci:https://lists.cip-project.org/g/cip-dev/mutehashtag/kernelci
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/10495289/4520388=
 /727948398/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---47ffnFlXSOOLtzOREYpl--
+--TXGMfbxSO8BsJrqTzshj--
