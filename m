@@ -1,109 +1,39 @@
-Return-Path: <SRS0=itbX=NY=lists.cip-project.org=bounce+64572+6718+4520388+10495289@kernel.org>
+Return-Path: <SRS0=rxVM=N7=lists.cip-project.org=bounce+64572+6719+4520388+10495289@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_RED autolearn=ham
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73339C433F5
-	for <cip-dev@archiver.kernel.org>; Thu,  2 Sep 2021 20:59:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34FF8C433F5
+	for <cip-dev@archiver.kernel.org>; Thu,  9 Sep 2021 02:40:39 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id C07F060249
-	for <cip-dev@archiver.kernel.org>; Thu,  2 Sep 2021 20:59:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org C07F060249
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	by mail.kernel.org (Postfix) with ESMTPS id D6EFE6113C
+	for <cip-dev@archiver.kernel.org>; Thu,  9 Sep 2021 02:40:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org D6EFE6113C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=miraclelinux.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id EIZhYY4521723xKiKNtqRmCA; Thu, 02 Sep 2021 13:59:18 -0700
-X-Received: from JPN01-OS2-obe.outbound.protection.outlook.com (JPN01-OS2-obe.outbound.protection.outlook.com [40.107.141.121])
- by mx.groups.io with SMTP id smtpd.web09.3030.1630616356028707628
+X-Received: by 127.0.0.2 with SMTP id 1wHeYY4521723xYMkM0F4qbG; Wed, 08 Sep 2021 19:40:37 -0700
+X-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+ by mx.groups.io with SMTP id smtpd.web12.2311.1631155235276449626
  for <cip-dev@lists.cip-project.org>;
- Thu, 02 Sep 2021 13:59:17 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HbdA4BEsfyKhP2CNgfRMQw5vKMVDc37SXj6ijn7twwmEfZpv/AMdhemo5L75KAl0ltBC5pVPQeM3bcW+KEeU96exnlmJdAZGV6iW0QmpPaJeXbjPnoS1BEvBA5DX5RlxDh/N3eh8AI4YcooeYHjA+QzY3bnh6sDLf06GYtofaLtKgUdA1ogpe4PIobbz/kplfKvELV0llhY7DRzsJbSvBeCPEx6P9cuctmTC/eokquQbBssdjw2oSFns7siWNbfLigVFHBeqzmj/AuT1Nto8uNy31CO7Qiy3WHDyvRFXOUQKKIna+eLDfUQlztf38VLt1hFANHAeC0i8y1SOApm03g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gi+K2XQxrsDhb13dsmHwbTDshsr6c4klPHemDLWT8Gw=;
- b=WTvg5EeVMTR7uJnqDYdpmXZxo9vgZ/cz+4r+diYMmkGOzMjaTuyL6IE4ntURbF+L9Jezqjuw023OA3X/CDp8cIWvcdhr1yAaHx04TZSMEZfK5/hXGp5xiXKizkQD3e/hKeZAkoT0zFEWhq2DVSH6SIpB0ivOckvqUpsV3e7Jk2QC1BjHUbGJO3NgEJSxii4/TPc7cUbtL8gRmPwA/ewQJ1FAT1UrLd96BjfMm5e6MD/e/8g6OXHapUvwitKWBouppjj7zttNphNvQ5fmFrLxhIeDwMGlpLvwFwrSEq7YXkl62kFnSvk5FAF8U3rFiAwzEuCtkFL5ATFg2eVDXZ804g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-X-Received: from OSZPR01MB6877.jpnprd01.prod.outlook.com (2603:1096:604:13d::6)
- by OS0PR01MB6482.jpnprd01.prod.outlook.com (2603:1096:604:e7::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4457.23; Thu, 2 Sep
- 2021 20:59:12 +0000
-X-Received: from OSZPR01MB6877.jpnprd01.prod.outlook.com
- ([fe80::3c89:5065:e852:bbdf]) by OSZPR01MB6877.jpnprd01.prod.outlook.com
- ([fe80::3c89:5065:e852:bbdf%6]) with mapi id 15.20.4457.026; Thu, 2 Sep 2021
- 20:59:12 +0000
-From: "Chris Paterson" <chris.paterson2@renesas.com>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-Subject: [cip-dev] FW: KernelCI Hackfest #2 - Sept 6-10 2021
-Thread-Topic: KernelCI Hackfest #2 - Sept 6-10 2021
-Thread-Index: AQHXoDhgvswo8FC6pEG8qQrAoRngOauROYDg
-Date: Thu, 2 Sep 2021 20:59:12 +0000
-Message-ID: 
- <OSZPR01MB6877C09B5E6A2846A5D0C4F6B7CE9@OSZPR01MB6877.jpnprd01.prod.outlook.com>
-References: <169771B791E5E075.25031@groups.io>
- <259a2ea9-63da-b5df-3496-676c2b76700b@collabora.com>
-In-Reply-To: <259a2ea9-63da-b5df-3496-676c2b76700b@collabora.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 8c9f181b-25a8-411b-7fbc-08d96e548439
-x-ms-traffictypediagnostic: OS0PR01MB6482:
-x-microsoft-antispam-prvs: 
- <OS0PR01MB6482EDC8121ACB3888DB2742B7CE9@OS0PR01MB6482.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam-message-info: 
- aUwxyFXXBQTG7HAJXmiiuG73G6zWgIMjAFrdMaXLrK8vveP/sPoE6YHynPq8DwT7Mme+SnrS8uPT0aFxieV0/6jZkyGtI/rZjuGZQJhU6yysTZ8WdKX6n1cfmRwtrmTstfOJ2LzvuKl8kTxZIlVXd402BPHnAnTNnk9xAzugDXdZxhIBRfYicvKoLLWlI4CRjif+6FWfw9Rzf4lyGpbwbSZUWExvcK4XaDY/cV/4P/oGBgnXySDCS+mCYFw3BWDNSsfjmBwf/DnND0gUrEWwYQEfsTo/4vQtuIdoOSEXIDiu5kvg/guu3LwvMJYMoBNLN4chfYAl3/0unsrZdbtUoX4jsdzmu+h3hDaziojtyqCt/qUcpb/fVm4vz9b2E/HgWlS+oFTH2Mg6gZMYxJweqia51KnXrY9vleFd25f4V2WYc5druY9PRVW4ulEddyKgf+ZRd99joCaLWNChtb4Rg8wgJdtI0gnOeKCYkkgN1YWNCZveFqh6zE27VWFSOj+eQ1lpMdFT/K/lm0PY1Zh2gEVv/bGojsJzhqasZnSMZFIgBUy+VKDt4k2tU0wp6KXotR7dm9P5G+YBasXDJ3cGgNxcCScpdszotSwag+DFRGdZRwIQiggOShhtVoaMagts8yVbSDdM0bFxUI2SgDHdcsIvTAFN0B5MjTdDCNz8AQFQrTnDNpAwAKR91oDzB+bSDGJGNZbPO1cXItngHsh2vtO7Cd0AoW6WZt5r1nFbCW1S4/UO98djf26XDDJuhdWxBskMAvF9LzAaFAkPsAeFOZXc15mVD4apFap8hfSObyNHAR1gkS/J9KqEr/1L7ztrhkEfWdNrJ3lw8UGByA/c0g==
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?Windows-1252?Q?jgV4KKWkNEMSG9vacS3SHK+dPvbW+rdPbUGdBtgXtQmvQP7CgAQs6CKB?=
- =?Windows-1252?Q?7vDUVi6h8Fg/kl5MVAJFm8n1INVea8WfIx704qxf6Hz4yAieCTiuykBi?=
- =?Windows-1252?Q?rwI3yhYVz+yJXPHtkOUPZAaI3hPdPi99ZemFtXaeeW2gB0bgW3h8gx4A?=
- =?Windows-1252?Q?LCyJqQx8S4Scoxx4ySOEcN41rbYsFxx3/Mg22ykrNQ+6QL4DVbWSTPkT?=
- =?Windows-1252?Q?1Famfogvpd7tXRfXU4BnwMEYqh7IzHq8NaM1yTqlZ/OIpp0nDvjZqS1E?=
- =?Windows-1252?Q?z0+PUW2e2v7ygowP+1Kl7zs5gxglK+4FvC1SJaxu8FBphW4wdUjGzcr2?=
- =?Windows-1252?Q?7+s/dxlY4vmRHr7HdHUR/PyFoNWGUBMGlKo5Rmb75Gekq58TbqWg6Q8/?=
- =?Windows-1252?Q?RtuswQTLQb4gTat1QKaGuaUz8LOzWaLnSHpeaCGOQXwonh6n630J/uzA?=
- =?Windows-1252?Q?OPnw2qxWqpqoNClUrklUs81ax2Io4iult0zuYQLr7s/bBRQVIM4qbpfE?=
- =?Windows-1252?Q?g0rya0vODzrizSf7ef6Z+zU1i7uqtt5vvLOdAeBiVV03NBwWaTWjGGDb?=
- =?Windows-1252?Q?RwJ7YjCG4KXaKnnVl3rjRQW2HfQoQ5AW5XAFnGrMXZy0WpnIvQAqTZQG?=
- =?Windows-1252?Q?adL584k5EV2wN2PjlXv/VEvbFHRwvAG2nabSnopFIzz9oe97RgVTae5b?=
- =?Windows-1252?Q?66xTZZQa30ujrc9DRDwmITpZTcNWPraLU6JpzmIIMioJiSHhCCTwl1Ux?=
- =?Windows-1252?Q?wJ/p94yQ1U0wf94v4HOMhdRz7fKrFKpjh+1JjkfjuKcE+y/8Bsu2N4GX?=
- =?Windows-1252?Q?r8SlmwberIP0dJhbkeAAjjUVfXIF1wWl6bTVRk+mYTgO65JKQK9/hRnO?=
- =?Windows-1252?Q?Bs870CWqzXcVhTLlSDOg5J9MvKI0m3R/bvh10ov+inZ50kWdOKARBEdb?=
- =?Windows-1252?Q?vXHBinazJb5A/4r1yYmLyoOeA5D3T+K6gDMD+wMhA3kD0Q48OPT9OkCG?=
- =?Windows-1252?Q?M+vkE4u4rn4Lpasvw68VKpxd3EGyIphM6UdjymKY4etPUa5wmwlVSkgN?=
- =?Windows-1252?Q?ZnQVluv/C6i51ZPZmTvth0WqXxCK/pUvoITvU/x/5u3CjSv7q1b9pEjQ?=
- =?Windows-1252?Q?llm0+VsN17crUvNm5uYJIlZ9rilmjCYrS6t2zW/ptABBU2GVQUPrBjxC?=
- =?Windows-1252?Q?7BYxvXoH3rsnaErZXQDqTPNzQDXUtdtyUR11wgeDPKrBxFVD8zjMsSGz?=
- =?Windows-1252?Q?CJMWXJTZ0wSfzx+bfcnY+QxQYqfO0bSeXeNaoMZz90xhN+2myYx5ituS?=
- =?Windows-1252?Q?vONGb+C3bIgaDFBaFh8ahkv2f7ZgITahiQb0oeYNVvhziDjnCf5xN6t9?=
- =?Windows-1252?Q?y1VzGo1Y36j90UpbHrLvtatj6AEXjWLpDlW2Ma4JkG0Jx09LOwX2gLdj?=
-x-ms-exchange-transport-forked: True
+ Wed, 08 Sep 2021 19:40:36 -0700
+X-Received: by mail-oi1-f171.google.com with SMTP id r26so690627oij.2
+        for <cip-dev@lists.cip-project.org>; Wed, 08 Sep 2021 19:40:35 -0700 (PDT)
+X-Gm-Message-State: Xu1AwuaXAvPJPgCQdpSJ4X9Bx4520388AA=
+X-Google-Smtp-Source: ABdhPJwi/BMSXD4mq98FHFAuLN2TpRJYyAlmKZuPRW82uVSVryJ62Ro15g+pf8OCfOdYjMfeQJaEZJdJL5unfbr2row=
+X-Received: by 2002:a54:4182:: with SMTP id 2mr458970oiy.66.1631155233975;
+ Wed, 08 Sep 2021 19:40:33 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB6877.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8c9f181b-25a8-411b-7fbc-08d96e548439
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2021 20:59:12.2721
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: yt6xlpOJyMBCmQbHd7Eh6Bb4nIoYFxjb59dicG5Zet7aHyhHpxxGI7NQY6Bm0eoRDlbr9Y+BWKSSZVe+O+VFsrzSSUFvNyDc+xd3QGgfJZQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS0PR01MB6482
+From: "Masami Ichikawa" <masami.ichikawa@miraclelinux.com>
+Date: Thu, 9 Sep 2021 11:39:58 +0900
+Message-ID: <CAODzB9oqUztiFZjcd0=dSBJ-bDjfdZ4eW8R69=m0fuZmKOb0qg@mail.gmail.com>
+Subject: [cip-dev] New CVE entry this week
+To: cip-dev <cip-dev@lists.cip-project.org>
 Precedence: Bulk
 List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
 List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
@@ -112,160 +42,267 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: Y8lpFnNS6W64LFBpiiIXkc8Gx4520388AA=
-Content-Type: multipart/mixed; boundary="l9KgkelsRpsOl4UfX0x3"
+Content-Type: multipart/mixed; boundary="MBLQIAy2n4PXIrwn7SN7"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1630616358;
- bh=UPC8octUEJcpjab0bqD3q8baAdwwrZJ1C+j3kAInVps=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1631155237;
+ bh=u+Tak5nFZCuHdL3G2jJlbzbPnwN1cCr7usRk9uE+lS4=;
  h=Content-Type:Date:From:Reply-To:Subject:To;
- b=NJb5zzAv72PWFkw3uvTk4qiWFF5DU3J1A9vMV+yUSKnAbGWRSbE6EGsHgrG4sa0z5pz
- evRB7cNLDHlJiU2KCdG7moMrYv7DcyLKAc6MSi01lcZVFXtIwThlCwLjlOKXaSTkXMZnE
- pfPxHQDRkKO+HgJygbz+kx5XqZYh6RALA2Q=
+ b=DVlwMFqG9kqUaWba94jsD8sMB1vHlu4UZ43XaUsGnk6axEPZk/Q8yEKxNpJHxt+hErr
+ lTuNYNe943d6DF2EO/qqYxI+Evv5yImcAcqWPZNAZPoXVpPfqtIDT5B8HiQx4xz4gj36t
+ AMg6Xn7T1pUylz3YXZ2Gx0tpucBN/kmqC1c=
 
---l9KgkelsRpsOl4UfX0x3
-Content-Language: en-US
-Content-Type: text/plain; charset="Windows-1252"
+--MBLQIAy2n4PXIrwn7SN7
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-FYI
+Hi !
 
-Link to original message without annoying safelinks: https://lore.kernel.or=
-g/lkml/259a2ea9-63da-b5df-3496-676c2b76700b@collabora.com/
+It's this week's CVE report.
 
-Kind regards, Chris
+This week reported 3 new CVEs. These CVEs have been fixed in mainline
+and some stable kernels.
 
------Original Message-----
-From: kernelci@groups.io <kernelci@groups.io> On Behalf Of Guillaume Tucker=
- via groups.io
-Sent: 02 September 2021 21:23
-To: kernelci@groups.io
-Cc: kernelci-members <kernelci-members@groups.io>; automated-testing@lists.=
-yoctoproject.org; Collabora Kernel ML <kernel@collabora.com>; linux-kernel@=
-vger.kernel.org; Jesse Barnes <jsbarnes@google.com>; Summer Wang <wangsumme=
-r@google.com>; linux-kselftest@vger.kernel.org; workflows@vger.kernel.org; =
-kunit-dev@googlegroups.com; clang-built-linux <clang-built-linux@googlegrou=
-ps.com>
-Subject: Re: KernelCI Hackfest #2 - Sept 6-10 2021
+* New CVEs
 
-On 02/08/2021 10:00, Guillaume Tucker wrote:
-> The first KernelCI hackfest[1] early June was successful in getting
-> a number of kernel developers to work alongside the core KernelCI
-> team.  Test coverage was increased in particular with kselftest,
-> LTP, KUnit and a new test suite for libcamera.  We're now improving
-> documentation and tooling to make it easier for anyone to get
-> started.  Find out more about KernelCI on https://jpn01.safelinks.protect=
-ion.outlook.com/?url=3Dhttps%3A%2F%2Fkernelci.org%2F&amp;data=3D04%7C01%7Cc=
-hris.paterson2%40renesas.com%7C40b772cad9334f95da9b08d96e4f817e%7C53d82571d=
-a1947e49cb4625a166a4a2a%7C0%7C0%7C637662110028350236%7CUnknown%7CTWFpbGZsb3=
-d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C1000=
-&amp;sdata=3DiIHFXGomNuCK3P0HrOhisyVXHrdtecW8wKCxl5pR20M%3D&amp;reserved=3D=
-0.
->=20
-> The second hackfest is scheduled for the 6th-10th September.  It
-> should be a good opportunity to start discussing and working on
-> upstream kernel testing topics ahead of the Linux Plumbers
-> Conference[2].
+CVE-2021-3715: kernel: use-after-free in route4_change() in
+net/sched/cls_route.c
 
-Please find below some extra information for the KernelCI
-Hackfest which is taking place next week.  We're expecting at
-least some contributors from the Civil Infrastructure Platform
-project, the Google Chrome OS kernel team, Collabora kernel
-developers and a few more from the wider Linux kernel community.
+This vulnerability was introduced in 3.18-rc1 and fixed in 5.6.
+Therefore 5.6 or later kernels aren't affect this vulnerability.
 
-If you need any direct support, please reply to this email or ask
-on kernelci.slack.com or IRC #kernelci (libera.chat).
+Fixed status
 
+cip/4.19: [ea3d6652c240978736a91b9e85fde9fee9359be4]
+cip/4.19-rt: [ea3d6652c240978736a91b9e85fde9fee9359be4]
+cip/4.4: [7518af6464b47a0d775173570c3d25f699da2a5e]
+cip/4.4-rt: [7518af6464b47a0d775173570c3d25f699da2a5e]
+mainline: [ef299cc3fa1a9e1288665a9fdc8bff55629fd359]
+stable/4.14: [f0c92f59cf528bc1b872f2ca91b01e128a2af3e6]
+stable/4.19: [ea3d6652c240978736a91b9e85fde9fee9359be4]
+stable/4.4: [7518af6464b47a0d775173570c3d25f699da2a5e]
+stable/4.9: [97a8e7afaee8fc4f08662cf8e4f495b87874aa91]
+stable/5.4: [ff28c6195814bdbd4038b08d39e40f8d65d2025e]
 
-> Here's the project board where anyone can already add some ideas:
->=20
->   https://jpn01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fgit=
-hub.com%2Forgs%2Fkernelci%2Fprojects%2F5&amp;data=3D04%7C01%7Cchris.paterso=
-n2%40renesas.com%7C40b772cad9334f95da9b08d96e4f817e%7C53d82571da1947e49cb46=
-25a166a4a2a%7C0%7C0%7C637662110028350236%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC=
-4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C1000&amp;sdata=
-=3DcaRm3FAsB7Dbgr9eQrFvPIOG0NIVJgg%2BUOh5Jxh%2F5Dg%3D&amp;reserved=3D0
+CVE-2021-3759: memcg: charge semaphores and sem_undo objects
 
-In order to add an issue to the workboard, please first create
-one in a KernelCI GitHub repository such as kernelci-core:
+This causes DoS attack. Patch was merged into mainline this week.
 
-  https://jpn01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fgithu=
-b.com%2Fkernelci%2Fkernelci-core%2Fissues&amp;data=3D04%7C01%7Cchris.paters=
-on2%40renesas.com%7C40b772cad9334f95da9b08d96e4f817e%7C53d82571da1947e49cb4=
-625a166a4a2a%7C0%7C0%7C637662110028350236%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiM=
-C4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C1000&amp;sdata=
-=3DtbQmPdA4sJrRLpDSp3ExMS9ZiEVYgk%2BoPdylxe7zCNU%3D&amp;reserved=3D0
+for 4.19, it needs modify or apply following patches to apply commit
+18319498fdd4.
 
-Each contributor to the hackfest should be added to the
-KernelCI "hackers" team, which has permission to edit the
-workboard.  If you aren't part of this team yet, please ask and
-you'll be invited.
+4a2ae92993be24ba727faa733e99d7980d389ec0: ipc/sem.c: replace
+kvmalloc/memset with kvzalloc and use struct_size
+bc8136a543aa839a848b49af5e101ac6de5f6b27: ipc: use kmalloc for
+msg_queue and shmid_kernel
+fc37a3b8b4388e73e8e3525556d9f1feeb232bb9: ipc sem: use kvmalloc for
+sem_undo allocation
 
-Note: Having a GitHub account is not mandatory for taking part in
-the hackfest.  It's mainly there to facilitate coordination, even
-though it is required in order to contribute to the KernelCI
-GitHub repositories.  Contributions as part of the hackfest may
-also be in the kernel tree such as improvements to kselftest,
-KUnit or bug fixes, or other test suites such as LTP etc.
+for 4.4, need to modify the patch.
 
+Fixed status
 
-> The hackfest features:
->=20
-> * Daily open hours online using Big Blue Button to discuss things
->   and get support from the KernelCI team
->=20
-> * KernelCI team members available across most time zones to provide
->   quick feedback
->=20
-> * A curated list of topics and a project board to help set
->   objectives and coordinate efforts between all contributors
+mainline: [18319498fdd4cdf8c1c2c48cd432863b1f915d6f]
 
-Please see the table below with the proposed daily open hours to
-accommodate most time zones:
+CVE-2021-40490: A race condition was discovered in
+ext4_write_inline_data_end in fs/ext4/inline.c in the ext4 subsystem
+in the Linux kernel through 5.13.13.
 
-Region        Zone    Time 1       Time 2
-East Asia     GMT+10  17:00-19:00  03:00-05:00
-Europe        GMT+2   09:00-11:00  19:00-21:00
-              UTC     07:00-09:00  17:00-19:00
-West America  GMT-7   00:00-02:00  10:00-12:00
+Commit a54c4613dac1 fixes f19d5870cbf72d4cb2a8e1f749dff97af99b071e
+which has been merged into 3.8-rc1.
+
+Fixed status
+
+mainline: [a54c4613dac1500b40e4ab55199f7c51f028e848]
+stable/5.10: [09a379549620f122de3aa4e65df9329976e4cdf5]
+stable/5.13: [c764e8fa4491da66780fcb30a0d43bfd3fccd12c]
+stable/5.14: [f8ea208b3fbbc0546d71b47e8abaf98b0961dec1]
+
+* Updated CVEs
+
+CVE-2021-3542: media: firewire: firedtv-avc: fix a buffer overflow in
+avc_ca_pmt()
+
+Patch has been sent to linux-media list
+(https://lore.kernel.org/linux-media/20210816072721.GA10534@kili/).
+btw, no cip member enables DVB_FIREDTV.
+
+Fixed status
+
+Not fixed in mainline yet.
+
+CVE-2021-3640: UAF in sco_send_frame function
+
+According to the SUSE
+bugzilla(https://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetoot=
+h-next.git/commit/?id=3D99c23da0eed4fd20cae8243f2b51e10e66aa0951
+), patch has been merged into bluetooth-next tree as of 2021/09/03.
+
+Fixed status
+
+Not fixed in mainline yet.
 
 
-They will be held as a Big Blue Button virtual conference with
-the same URL as the last hackfest.  It's not being shared
-publicly to avoid any potential abuse, so please ask if you don't
-have it already.
+CVE-2021-3739: btrfs: fix NULL pointer dereference when deleting
+device by invalid id
 
-On Monday, the focus should be put on getting started and
-reviewing the backlog on the hackfest workboard to distribute
-things among people or help new contributors find topics suitable
-for them.  Open hours are otherwise opportunities to get more
-direct support from the KernelCI team or discuss any topic.
+This vulnerability is not affected before 4.20-rc1.
 
-See you there!
+Fixed status
 
-Best wishes,
-Guillaume
-
-> [1] https://jpn01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Ff=
-oundation.kernelci.org%2Fblog%2F2021%2F06%2F24%2Fthe-first-ever-kernelci-ha=
-ckfest%2F&amp;data=3D04%7C01%7Cchris.paterson2%40renesas.com%7C40b772cad933=
-4f95da9b08d96e4f817e%7C53d82571da1947e49cb4625a166a4a2a%7C0%7C0%7C637662110=
-028350236%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBT=
-iI6Ik1haWwiLCJXVCI6Mn0%3D%7C1000&amp;sdata=3DOVrrOfoO%2B2nR9RKQpw30D54Dq%2F=
-1Ucyof9fC9sPwbcLI%3D&amp;reserved=3D0
-> [2] https://jpn01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fw=
-ww.linuxplumbersconf.org%2Fevent%2F11%2Fpage%2F104-accepted-microconference=
-s%23cont-test&amp;data=3D04%7C01%7Cchris.paterson2%40renesas.com%7C40b772ca=
-d9334f95da9b08d96e4f817e%7C53d82571da1947e49cb4625a166a4a2a%7C0%7C0%7C63766=
-2110028350236%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiL=
-CJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C1000&amp;sdata=3D%2F3TpKlnnvfOnK6laB1pwXsJH=
-L6lycG4wMg03Ar%2BIYJ0%3D&amp;reserved=3D0
+mainline: [e4571b8c5e9ffa1e85c0c671995bd4dcc5c75091]
+stable/5.10: [c43add24dffdbac269d5610465ced70cfc1bad9e]
+stable/5.13: [301aabe0239f227818622096be7e180fcdbedf80]
+stable/5.14: [734dabfb6918d399024063c9db9093a83f804ce5]
+stable/5.4: [d7f7eca72ecc08f0bb6897fda2290293fca63068]
 
 
+CVE-2021-3753: vt_kdsetmode: extend console locking
+
+A out-of-bounds caused by the race of KDSETMODE in VT.
+
+Fixed status
+
+mainline: [2287a51ba822384834dafc1c798453375d1107c7]
+stable/4.14: [3f488313d96fc6512a4a0fe3ed56cce92cbeec94]
+stable/4.19: [0776c1a20babb4ad0b7ce7f2f4e0806a97663187]
+stable/4.4: [01da584f08cbb1e04f22796cc49b10d570cd5ec1]
+stable/4.9: [755a2f40dda2d6b2e3b8624cb052e68947ee4d1f]
+stable/5.10: [60d69cb4e60de0067e5d8aecacd86dfe92a5384a]
+stable/5.13: [a5dfcf3d8ecc549f8dc324ab6caf9dd14de87986]
+stable/5.14: [acf3c7b4fae092e7f5c170bc8a0fe2ead9b2a320]
+stable/5.4: [f4418015201bdca0cd4e28b363d88096206e4ad0]
 
 
+CVE-2021-3743: out-of-bound Read in qrtr_endpoint_post in net/qrtr/qrtr.c
 
+The Qualcomm's IPC router protocol(qrtr) has been introduced since
+4.15-rc1 so before 4.15 kernels aren't affected.
 
---l9KgkelsRpsOl4UfX0x3
+Fixed status
+
+mainline: [7e78c597c3ebfd0cb329aa09a838734147e4f117]
+stable/4.19: [ce7d8be2eaa4cab3032e256d154d1c33843d2367]
+stable/5.10: [ad41706c771a038e9a334fa55216abd69b32bfdf]
+stable/5.13: [d6060df9b53ab8098c954aac9acbacef6915e42a]
+stable/5.4: [a6b049aeefa880a8bd7b1ae3a8804bda1e8b077e]
+
+CVE-2021-38198: KVM: X86: MMU: Use the correct inherited permissions
+to get shadow page
+
+4.14 has been fixed this week.
+
+mainline: [b1bd5cba3306691c771d558e94baa73e8b0b96b7]
+stable/4.14: [cea9e8ee3b8059bd2b36d68f1f428d165e5d13ce]
+stable/4.19: [4c07e70141eebd3db64297515a427deea4822957]
+stable/5.10: [6b6ff4d1f349cb35a7c7d2057819af1b14f80437]
+stable/5.4: [d28adaabbbf4a6949d0f6f71daca6744979174e2]
+
+CVE-2021-3444: bpf: Fix truncation handling for mod32 dst reg wrt zero
+
+The vulnerability has been introduced since 4.15-rc9. 4.4 is not affected.
+4.19 has been fixed in this week.
+
+Fixed status
+
+mainline: [9b00f1b78809309163dda2d044d9e94a3c0248a3]
+stable/4.19: [39f74b7c81cca139c05757d9c8f9d1e35fbbf56b]
+stable/5.10: [3320bae8c115863b6f17993c2b7970f7f419da57]
+stable/5.11: [55c262ea5d0f754648cd25aa73de081adaab07d9]
+stable/5.4: [185c2266c1df80bec001c987d64cae2d9cd13816]
+
+CVE-2021-3600: eBPF 32-bit source register truncation on div/mod
+
+The vulnerability has been introduced since 4.15-rc9. 4.4 is not affected.
+4.19 has been fixed in this week.We have been tracking this
+vulnerability since Aug to watch 4.19 to be fixed, and now it is
+finally fixed.
+
+Fixed status
+
+mainline: [e88b2c6e5a4d9ce30d75391e4d950da74bb2bd90]
+stable/4.19: [1d16cc210fabd0a7ebf52d3025f81c2bde054a90]
+stable/5.10: [1d16cc210fabd0a7ebf52d3025f81c2bde054a90]
+stable/5.4: [78e2f71b89b22222583f74803d14f3d90cdf9d12]
+
+CVE-2021-3655: missing size validations on inbound SCTP packets
+
+cip/4.4, cip/4.19, cip/4.4-rt, cip/4.19-rt, stable/4.14, and
+stable/5.4 have been fixed this week.
+
+Fixed status
+
+  mainline: [0c5dc070ff3d6246d22ddd931f23a6266249e3db,
+50619dbf8db77e98d821d615af4f634d08e22698,
+    b6ffe7671b24689c09faa5675dd58f93758a97ae,
+ef6c8d6ccf0c1dccdda092ebe8782777cd7803c9]
+  stable/4.19: [c7a03ebace4f9cd40d9cd9dd5fb2af558025583c,
+dd16e38e1531258d332b0fc7c247367f60c6c381]
+  cip/4.19: [c7a03ebace4f9cd40d9cd9dd5fb2af558025583c,
+dd16e38e1531258d332b0fc7c247367f60c6c381]
+  cip/4.19-rt: [c7a03ebace4f9cd40d9cd9dd5fb2af558025583c,
+dd16e38e1531258d332b0fc7c247367f60c6c381]
+  stable/4.4: [48cd035cad5b5fad0648aa8294c4223bedb166dd]
+  cip/4.4: [48cd035cad5b5fad0648aa8294c4223bedb166dd]
+  cip/4.4-rt: [48cd035cad5b5fad0648aa8294c4223bedb166dd]
+  stable/4.9: [c7da1d1ed43a6c2bece0d287e2415adf2868697e]
+  stable/5.10: [d4dbef7046e24669278eba4455e9e8053ead6ba0,
+6ef81a5c0e22233e13c748e813c54d3bf0145782]
+  stable/4.14: [f01bfaea62d14938ff2fbeaf67f0afec2ec64ab9,
+d890768c1ed6688ca5cd54ee37a69d90ea8c422f]
+  stable/5.4: [03a5e454614dc095a70d88c85ac45ba799c79971,
+a01745edc1c95ff53e261c493f15bb43b1338003]
+
+Currently tracking CVEs
+
+CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
+Bluetooth Core Specifications 4.0 through 5.2
+
+There is no fix information.
+
+CVE-2021-3640: UAF in sco_send_frame function
+
+There is no fix information.
+
+CVE-2020-26555: BR/EDR pin code pairing broken
+
+There is no fix information
+
+CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
+
+No fix information.
+
+CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
+Provisioning Leads to MITM
+
+No fix information.
+
+CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
+
+No fix information.
+
+CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
+
+No fix information.
+
+Other topics.
+
+About cve.mitre.org
+
+CVE Website Transitioning to New Web Address =E2=80=93 =E2=80=9CCVE.ORG=E2=
+=80=9D
+https://cve.mitre.org/news/archives/2021/news.html#September022021_CVE_Webs=
+ite_Transitioning_to_New_Web_Address_-_CVE.ORG
+
+Regards,
+
+--=20
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
+
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
+
+--MBLQIAy2n4PXIrwn7SN7
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -273,13 +310,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6718): https://lists.cip-project.org/g/cip-dev/message/=
-6718
-Mute This Topic: https://lists.cip-project.org/mt/85338103/4520388
+View/Reply Online (#6719): https://lists.cip-project.org/g/cip-dev/message/=
+6719
+Mute This Topic: https://lists.cip-project.org/mt/85476557/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/10495289/4520388=
 /727948398/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---l9KgkelsRpsOl4UfX0x3--
+--MBLQIAy2n4PXIrwn7SN7--
