@@ -1,4 +1,4 @@
-Return-Path: <SRS0=TEPw=N7=lists.cip-project.org=bounce+64572+6720+4520388+10495289@kernel.org>
+Return-Path: <SRS0=fncx=N7=lists.cip-project.org=bounce+64572+6721+4520388+10495289@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -7,32 +7,36 @@ X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31847C433EF
-	for <cip-dev@archiver.kernel.org>; Thu,  9 Sep 2021 07:08:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB640C433EF
+	for <cip-dev@archiver.kernel.org>; Thu,  9 Sep 2021 07:14:16 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 61E1060E94
-	for <cip-dev@archiver.kernel.org>; Thu,  9 Sep 2021 07:08:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 61E1060E94
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTPS id 6FD0260F13
+	for <cip-dev@archiver.kernel.org>; Thu,  9 Sep 2021 07:14:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 6FD0260F13
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=siemens.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id NAshYY4521723xJEOnrIKTY3; Thu, 09 Sep 2021 00:08:41 -0700
-X-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web11.4101.1631169719877820676
+X-Received: by 127.0.0.2 with SMTP id 6qCZYY4521723xR01nafiwSq; Thu, 09 Sep 2021 00:14:16 -0700
+X-Received: from david.siemens.de (david.siemens.de [192.35.17.14])
+ by mx.groups.io with SMTP id smtpd.web10.4107.1631170055674195449
  for <cip-dev@lists.cip-project.org>;
- Wed, 08 Sep 2021 23:42:01 -0700
-X-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 25FE21C0B76; Thu,  9 Sep 2021 08:41:54 +0200 (CEST)
-Date: Thu, 9 Sep 2021 08:41:49 +0200
-From: "Pavel Machek" <pavel@denx.de>
-To: cip-dev@lists.cip-project.org
-Subject: Re: [cip-dev] New CVE entry this week
-Message-ID: <20210909064148.GA5892@amd>
-References: <CAODzB9oqUztiFZjcd0=dSBJ-bDjfdZ4eW8R69=m0fuZmKOb0qg@mail.gmail.com>
+ Wed, 08 Sep 2021 23:47:36 -0700
+X-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
+	by david.siemens.de (8.15.2/8.15.2) with ESMTPS id 1896lWem002806
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+	for <cip-dev@lists.cip-project.org>; Thu, 9 Sep 2021 08:47:33 +0200
+X-Received: from [167.87.244.119] ([167.87.244.119])
+	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 1896lWfU008427
+	for <cip-dev@lists.cip-project.org>; Thu, 9 Sep 2021 08:47:32 +0200
+From: "Jan Kiszka" <jan.kiszka@siemens.com>
+Subject: [cip-dev] CIP IRC weekly meeting today on libera.chat
+To: cip-dev <cip-dev@lists.cip-project.org>
+Message-ID: <3f482ab5-6b7e-f847-ab75-b075954bec9b@siemens.com>
+Date: Thu, 9 Sep 2021 08:47:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <CAODzB9oqUztiFZjcd0=dSBJ-bDjfdZ4eW8R69=m0fuZmKOb0qg@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
 Precedence: Bulk
 List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
 List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
@@ -41,76 +45,56 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: tk7sRQ33dm84uiwxp3pW0ccwx4520388AA=
-Content-Type: multipart/mixed; boundary="kr6vpELyaCnN4DJQwGtW"
+X-Gm-Message-State: hevWdZwwTJzJhE2QrsiisE59x4520388AA=
+Content-Type: multipart/mixed; boundary="3tznZtvwIizqfUVR12cr"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1631171321;
- bh=bwtf3FH71341n7NYUdp7l+xjV111bBGHrl2gXbmboOk=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1631171656;
+ bh=WiySrAwSTletcav08j3te7wYRFRgdx6GuS9wVy/sfuQ=;
  h=Content-Type:Date:From:Reply-To:Subject:To;
- b=Xh3LOHOr1DlDiQSpVESSJS3p8h0YW0mJvXlxfwo56B7w5iWQPWP7mhMhsNAtmOtxE54
- 8YFW8QKjyFcGOIX+BL2vin5ysivOOCcfhzM7nHyLCKl1/ECU3S5zZ5SMH3mlbF4PavaOp
- 33kYk8EwvXrzQOhIyDjJVdaU3/qSsBWWvsU=
+ b=S7N1OT894K3yw6OBNW7G3J95fhdvz3eLtG6J8oQtmNqR/bO59Ofp/sRkjfAO/c9wepp
+ xx+MHtE64+kEM8xtagbgOkrWbAIqrONCzTJqzWHuIDjXv8RFyhueElero9uFWHvD/U0oT
+ azn0MwOE4XcmiS2nO/qPJC32UbAFjJrN1fE=
 
---kr6vpELyaCnN4DJQwGtW
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="rwEMma7ioTxnRzrJ"
-Content-Disposition: inline
+--3tznZtvwIizqfUVR12cr
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 
---rwEMma7ioTxnRzrJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi!
+Kindly be reminded to attend the weekly meeting through IRC to discuss
+technical topics with CIP kernel today.
 
-> CVE-2021-3759: memcg: charge semaphores and sem_undo objects
->=20
-> This causes DoS attack. Patch was merged into mainline this week.
->=20
-> for 4.19, it needs modify or apply following patches to apply commit
-> 18319498fdd4.
+Please note that we moved from Freenode to libera.chat. Our channel is
+the following:
 
-I don't think we need to care about this one. Embedded systems don't
-usually run untrusted code...
+    irc:irc.libera.chat:6667/cip
 
-> CVE-2021-40490: A race condition was discovered in
-> ext4_write_inline_data_end in fs/ext4/inline.c in the ext4 subsystem
-> in the Linux kernel through 5.13.13.
+Furthermore note that the IRC meeting is now scheduled to UTC (GMT) 13:00:
 
-This is already queued to 4.4 and 4.19; we can simply wait.
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2021&month=9&day=9&hour=13&min=0&sec=0&p1=224&p2=179&p3=136&p4=37&p5=241&p6=248
 
-> CVE-2021-38198: KVM: X86: MMU: Use the correct inherited permissions
-> to get shadow page
->=20
-> 4.14 has been fixed this week.
->=20
-> mainline: [b1bd5cba3306691c771d558e94baa73e8b0b96b7]
-> stable/4.14: [cea9e8ee3b8059bd2b36d68f1f428d165e5d13ce]
+USWest    USEast    UK        DE        TW        JP
+06:00     09:00     14:00     15:00     21:00     22:00
 
-KVM. Tricky code and not exactly focus on CIP code. But perhaps
-someone fixes it for us :-).
+Last meeting minutes:
 
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+https://irclogs.baserock.org/meetings/cip/2021/09/cip.2021-09-02-13.00.log.html
 
---rwEMma7ioTxnRzrJ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+* Action item
+  1. Combine root filesystem with kselftest binary - iwamatsu & alicef
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+* Kernel maintenance updates
+* Kernel testing
+* AOB
 
-iEYEARECAAYFAmE5rKwACgkQMOfwapXb+vLKSQCeOf9oitgYLwA0kDSOWT7ewITV
-ak4AnRhrnlDig20tjn2JKj96ZQGgE6oH
-=W+ht
------END PGP SIGNATURE-----
+Jan
 
---rwEMma7ioTxnRzrJ--
+-- 
+Siemens AG, T RDA IOT
+Corporate Competence Center Embedded Linux
 
---kr6vpELyaCnN4DJQwGtW
+--3tznZtvwIizqfUVR12cr
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -118,13 +102,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6720): https://lists.cip-project.org/g/cip-dev/message/=
-6720
-Mute This Topic: https://lists.cip-project.org/mt/85476557/4520388
+View/Reply Online (#6721): https://lists.cip-project.org/g/cip-dev/message/=
+6721
+Mute This Topic: https://lists.cip-project.org/mt/85478916/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/10495289/4520388=
 /727948398/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---kr6vpELyaCnN4DJQwGtW--
+--3tznZtvwIizqfUVR12cr--
