@@ -1,4 +1,4 @@
-Return-Path: <SRS0=JYer=OG=lists.cip-project.org=bounce+64572+6742+4520388+10495289@kernel.org>
+Return-Path: <SRS0=QDwY=OM=lists.cip-project.org=bounce+64572+6743+4520388+10495289@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -6,101 +6,108 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27459C433F5
-	for <cip-dev@archiver.kernel.org>; Thu, 16 Sep 2021 12:05:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93148C433EF
+	for <cip-dev@archiver.kernel.org>; Wed, 22 Sep 2021 20:47:46 +0000 (UTC)
 Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 8839660E52
-	for <cip-dev@archiver.kernel.org>; Thu, 16 Sep 2021 12:05:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 8839660E52
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	by mail.kernel.org (Postfix) with ESMTPS id C50A56103C
+	for <cip-dev@archiver.kernel.org>; Wed, 22 Sep 2021 20:47:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org C50A56103C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=toshiba.co.jp
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id KPw2YY4521723xM1qdmJxFOA; Thu, 16 Sep 2021 05:05:10 -0700
-X-Received: from JPN01-OS2-obe.outbound.protection.outlook.com (JPN01-OS2-obe.outbound.protection.outlook.com [40.107.141.103])
- by mx.groups.io with SMTP id smtpd.web11.8.1631793901122484409
+X-Received: by 127.0.0.2 with SMTP id oQoEYY4521723x7BQAMYyXuw; Wed, 22 Sep 2021 13:47:45 -0700
+X-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.154])
+ by mx.groups.io with SMTP id smtpd.web10.844.1632343663960216818
  for <cip-dev@lists.cip-project.org>;
- Thu, 16 Sep 2021 05:05:02 -0700
+ Wed, 22 Sep 2021 13:47:44 -0700
+X-Received: by mo-csw.securemx.jp (mx-mo-csw1515) id 18MKle82010897; Thu, 23 Sep 2021 05:47:40 +0900
+X-Iguazu-Qid: 34ts0AfxiJlZJ7S8A4
+X-Iguazu-QSIG: v=2; s=0; t=1632343660; q=34ts0AfxiJlZJ7S8A4; m=HQ491JvfUlYJqNSYHAfzbvLWS3mBUDY3rfg2bP/D7p8=
+X-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1511) id 18MKldt5038751
+	(version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 23 Sep 2021 05:47:39 +0900
+X-Received: from enc01.toshiba.co.jp (enc01.toshiba.co.jp [106.186.93.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by imx2-a.toshiba.co.jp (Postfix) with ESMTPS id 617B9100109
+	for <cip-dev@lists.cip-project.org>; Thu, 23 Sep 2021 05:47:39 +0900 (JST)
+X-Received: from hop001.toshiba.co.jp ([133.199.164.63])
+	by enc01.toshiba.co.jp  with ESMTP id 18MKldAw012492
+	for <cip-dev@lists.cip-project.org>; Thu, 23 Sep 2021 05:47:39 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KyGLhp1dwOsCUubnLHiNIyydXwDcMlkY+p5tJbxQGmTAWHlcfR123juALQdHlfop1vAkO8xRpef9JyQ00IMyy6LTjIOw+9WE8NVZ9wCWEMYdM+b6NYfbjyZzwKjo8uRitZQvwCjc4OBqBu/m9qn/leRah48+mQL2bDgApgssBW+FI37um5r6fAiqz/H8ReI4j5/y8jf7wPe9x71XdvW7mbiOx7KKVumRcU7F2obmArMEsHsD7fJM+zEo6qRwqCrXHjw+4YlKNXVwPyXOtl0LFnqCCLZZpBaXYPBl64qKcXh2gBilYP7AA9UBTLz7oeT1BBN6yKEah5QITedfMEaDHA==
+ b=Pz9ljlpm8mRbP8HOHeiF7PpMUg7K8E5AOvWffvdMKYCKD28EAVo0NE0yduE13h1dI2OGq05ARvFqeV7pYxZ4lTSwzz5jQcWiGC0B9cMjaILG6EWByyNyYvgY4ndiaOlZhj3PhxfBC20ohYR05W9Bs9cE/lfn09pbHM7NtNa4+AHlB/z90imWiuPpDyJAUBp0R+D3JtF26rKRwtWOP19cyxheb4zmo3aikfvMH9dNkGDuR0F2QORo9N6MfOkhR/r3KGgj9YAHasHfksgq0g9nftMI148lnXMtLWsw5mVjOGZvPQxi95Fth8V707Q+oIHDaOsmfvkufdZ90KBacEc+LA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
- bh=PV4SIKhzaBCMn57doGvrbZjlnPMMG82/u+mASu2qV7w=;
- b=TJosYOYLqvne28vsL6OA3ZaziDt3Ks336TtiJG4h6JomdvP7AeQ7Xthjf7ssTquz5V3S//39yNRTlY69dY/0OAsAVUISkP8l4UPkdegUS8t43HI84BL9f8Hbph8J5TWdSHaoPUX6fGk/cLxS7O6lZ7cBtQ3H3Kp+cBT2u/mvPt1hIL2I0gYr36GuJUPa4QHecq0Eu6zKErcLWiedcw6lB7+7H8+9USmaAyaaqAPw+B2wYRHe905VicFIYg3scL49N6TvwKYx10g44xF6xqXAIJ55RK1vJyKQVJStmGnEkwkoFfD0UQtHJ1u71TAEbKaEuOQ0XXkwutJg5vBroJ3Xkg==
+ bh=+0XwHPm/oW9kUNKhMD4XkdWnobQ0+OIBN8IdHFeQUkI=;
+ b=Nifk79Zq8xhE6Tiv1QcoSroNzOk0QfhNyx+Xl/VA/m+YbnUQqAW/7wO3S28jV1QJo8LjOvMMLkJMrNi8ifhwKWEMkwzxoTg6HJTY7sBfS1Sev1e3dbuMIqPsRXhPVrHFTbVlOsl3bs6KbIRA58PM+g74/gAQCH8ZVTMbkqIah/EH4RvmXTOFRIK7cv1OwEIWh0dDs6o8YbZm3+bAFd8zE+hr5R6vJWgYLsztTPUDCwwkYqxvYkM77ps0sVqtu4QajlmU87aPlAltYCEDSYvE4owMo+v/crQBqOkk7z/XQphjkdrM/o38uLTy2C6zeuGKhaD0ih/9mSXwW/QXeSXaNQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-X-Received: from OSZPR01MB6877.jpnprd01.prod.outlook.com (2603:1096:604:13d::6)
- by OS0PR01MB5585.jpnprd01.prod.outlook.com (2603:1096:604:bd::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4523.15; Thu, 16 Sep
- 2021 12:04:58 +0000
-X-Received: from OSZPR01MB6877.jpnprd01.prod.outlook.com
- ([fe80::3c89:5065:e852:bbdf]) by OSZPR01MB6877.jpnprd01.prod.outlook.com
- ([fe80::3c89:5065:e852:bbdf%7]) with mapi id 15.20.4523.016; Thu, 16 Sep 2021
- 12:04:58 +0000
-From: "Chris Paterson" <chris.paterson2@renesas.com>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-Subject: Re: [cip-dev] CIP IRC weekly meeting today on libera.chat
+ smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
+ header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
+From: "Nobuhiro Iwamatsu" <nobuhiro1.iwamatsu@toshiba.co.jp>
+To: <cip-dev@lists.cip-project.org>
+Subject: [cip-dev] CIP IRC weekly meeting today on libera.chat (2021/09/23)
 Thread-Topic: [cip-dev] CIP IRC weekly meeting today on libera.chat
-Thread-Index: AQHXqsGp1JN8DLqKXEae7CGB6w+Kd6umjvpA
-Date: Thu, 16 Sep 2021 12:04:58 +0000
-Message-ID: 
- <OSZPR01MB687795BB6B19A8DF08020566B7DC9@OSZPR01MB6877.jpnprd01.prod.outlook.com>
-References: <9b032547-c6df-a419-fedf-75e5ec8a93a8@siemens.com>
-In-Reply-To: <9b032547-c6df-a419-fedf-75e5ec8a93a8@siemens.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
+ (2021/09/23)
+Thread-Index: Adev8tV8uwOkgAQpRtCVYgB884iwXQ==
+Date: Wed, 22 Sep 2021 20:47:37 +0000
+X-TSB-HOP: ON
+Message-ID: <TYAPR01MB6252C9E6D9BDABA80B072E4092A29@TYAPR01MB6252.jpnprd01.prod.outlook.com>
+Accept-Language: ja-JP, en-US
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 2f44c2d9-2ce2-4ff0-a294-08d9790a3463
-x-ms-traffictypediagnostic: OS0PR01MB5585:
-x-microsoft-antispam-prvs: 
- <OS0PR01MB5585B334E5457AA5FA4AB3FBB7DC9@OS0PR01MB5585.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-ms-office365-filtering-correlation-id: 2a6a036a-4364-4a5e-7cf0-08d97e0a3625
+x-ms-traffictypediagnostic: TYCPR01MB7009:
+x-microsoft-antispam-prvs: <TYCPR01MB7009AD68FC27847737C2BADE92A29@TYCPR01MB7009.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam-message-info: 
- 1NUjiSOTRuAJP/9/WHlku/eQGabKBIhIAYcLwsz49L64/z04boaqxzYp+nIyzJCwnvBrF46KqYoiUN67CEmnuYuDtZkELl7mwzBYvWaEfJe/FoHC5AC0/IlcSiTMZ47xCOPevrfHMwZwcWJgYQ3eG0pdxy8DklICdCQBgsRz9UJ35cIUMDNks57RpmWoj08NPafr7AnFljMghcKtuNiFQIMS5Gr+0PKfcmsmkxbyEbjtQVhmft1FVdEpCyfAvKO+aoDpMBa94ScjF8bADBbnHpxTA2iubaMaRg3b8yyKkNUEaQtvyH1J4sfctvPBIHJ5937+XJSzzwvEypDWnq3Ydr2gXC7UuiE+4FJnwnrjm/efP4OBjzR/AhiHfh3CfnA/Q/sLh0YwKQwgq661N0OJOCETYxfySSY6Xqh6cctUk73Bt9q9DQpWTvjAKOGhlkYpJPRnsaViwvdR26yoayIXshCMtplczCROCfs87mWilWEx5zCIP5bDLXVgmZTN98Vxr5HkkFqu9LJoWzoInLKJ4pqoVFzikZaHPmXsSJ7WU8OZ3ROCJaJ0B0zZiLrSU/7dVkDs5sQm8ktV00yLLbc5TLAYxjY4N2AdoilDwmw5Vf3gnzQTxrlDAALptK/xxyWZy8pGtWpB8t/cUT6UtMi++Z+lc0VGmY2JEYiEBQS4AwpnAMRuHQxvEaexikKVXwaBrOCRItl0Z4n0wwrkVug4U2tsbbhEr0gHq8M242QQ4G0PDRG+gMtiAxRuZSYoR1syECm0ibeQR2NkWv7XLwMKXvn9KNI+dPfgUlAnEHyEFbj69AyOuiq1oRD8LR5scWHvYYbxNr+CZd17CdEzWoBN0g==
+x-microsoft-antispam-message-info: 8EwNwVhjgK3f/EoMQzLyX2zpqJ+eFmyzxWEtL+C560UYgl3kl8jJiM0B3zlM4gQSEfjxiWgIdl630FVsh+BVpeyajqmxhhaosaU1odEwh/kiaVV94ltb+T837IsT0WG+Gc8jH43CQ345LseOCgKHW23F14hyI/f+zeprpEUPrPer2t1/oM3GQbjotxFDLvYMHvPIfsQwDXe717zLouli0B4MuIkaj6MwuxE3u9UhWCTbcp2cOLjBaUSrCtmACcaZ2kf7Wp5n0dKczXAFqvC1X7M/smLCVZD3PRzILNkZesEQ2K4vrdTzGUMcqvgrMyYJceyyTFm++9fzqOMRKHI0sXrSYUwqma+/TeIQh+rqm5K44GMQE3FNk+6beEVgp2vIlOrnfqFoiTv4YXV2UAVnI+CCHPjrpvnylzstTc108PZhs0w4gMXQs3BzM1K01/eOE0N9SovkUlp5r2sj4sJTdxl5/bnNXiZ0VrQwrBDwMZWdEc4Im4U0szlaGxmcs5UEMlLpXXWFu3FPb9sFAotxbHeW7jTWtWUQyISESKQCG4MpLH4wqVaz2FJ0z3YiUcKpl70qzcRCyBX25SqFEI8rTGDNEqt29AKt7XgPnRXA5fMn7qgMxJWoyHuavTEnOxsqQw2IvhmwWvLoPwXsIxLzCFuhE6opo8bl7hDN/FFD5BUwG+fdHH3w5sISBXSqKnOQTIHhq8TfdIb9umS4nyBY1G+zgbIi7nYhaSX1UBzQedvuHGRFGDO+eYCmR80F244NK8UXpKIbx0Tkz8NVavw67Y9n8ZAWlyHbe4GFwY4AlzQ=
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?Windows-1252?Q?OQY6oPpQeX4AOrbHpbUs0K1S6KWZ23ld4pkX3rhtoEdoD8rn90RrerUe?=
- =?Windows-1252?Q?Kdg5TgRbbqF2KY270SgDgR2qrwIemT/VWd5iFBfYwpQP9jJNXGdEIYOE?=
- =?Windows-1252?Q?52MktNgp3UInMrnc4xGzuBEMOiiPx2+xtu33i89Dzw23j2/we2ypNz1E?=
- =?Windows-1252?Q?lYbferTQjvLDzcU4goTcaH+xCWlasl9nRIZpNHu9ZPJRcTZk71Cjy/tz?=
- =?Windows-1252?Q?xX2+3whnuvFyYfiIVIQMTmoZmGdXw7GuqGSgQY98nH6aR1ku6NQ8ylpa?=
- =?Windows-1252?Q?jcqcmT/6uSG17lqHZ8MQ6f79y1e+uKq/9EPLd+eluaTDVkBseAe3bRd4?=
- =?Windows-1252?Q?C87R7OvVjpKjqv+2Xng3Zpq9hIZMCwRpQ5kVG3fr3hGiS8woGwXHcZbE?=
- =?Windows-1252?Q?LmRqEoqcS3IjK56YuXJ3+uXT9uA7amQJeu2Rv5gOdyS8LTdFOXjpK4B2?=
- =?Windows-1252?Q?rKtM1MVMQpD8ShdD/IuWdXMrGGiWelUXXlFm2PApotb0T6VF+5iL52Ox?=
- =?Windows-1252?Q?Ms8y/yvYfdvJapZ2H5r9veTqVvZMqVnHQtoCvF97syIzSBvSIfohB9+Z?=
- =?Windows-1252?Q?oHv05WXjNLC8Z/X4VtQKy8r3sEXdOiqTXyWRQxHdA9eyE5nRy02r+vw6?=
- =?Windows-1252?Q?LVVbQHA6sphtCTW+f7CFUaSMaz+0Zsgta7iGO1c2jUKI9iTjKgQ8vkjs?=
- =?Windows-1252?Q?Ro7SWMKrCJnaMZ63SzUX41hlm8/uGyxNZLetAdO5qnQHBV+RpznZsM0r?=
- =?Windows-1252?Q?e4DbQjlE40XoSMv45UDP5UYjxmUlyRxPFDWCWmovcf/hEc5sNCGcWIb+?=
- =?Windows-1252?Q?ONXrFVwRiQ5I9BmZLmO6NPSXdWYavnt8N4fRcENuz7yDQY6Hg3nqxAXl?=
- =?Windows-1252?Q?Pca2Vyc8j0jJnY3ZG/2evlJbvxNWeUxgoSMkuWKBHVOQGVTjChVtiH5y?=
- =?Windows-1252?Q?oLJId2OM6H4BBA5B9TCbg5amBVaKseUuxmfmKTm9kC1kSBZT2jd9O4c/?=
- =?Windows-1252?Q?LDOQ6XpeL+RnLyOvCl3TpRlKfoPHhD1wJ+usZ6/fbL11K+RKeNW8xoVW?=
- =?Windows-1252?Q?CES2PX6frQG+v/7Yjuf+cQvuFIsu1mFr+4u9oS3OtHcpf9tSufod9dpN?=
- =?Windows-1252?Q?a85cneF2NQ3NYHViq4ZGMP1TSs5Q72Jc4iPXjjPGudMeT6V2sNomaASc?=
- =?Windows-1252?Q?7gcj3bnCZy7/KiKBbaIE9RkYOnFeRukO2A7wyZGMQHZPgAKrdfeVYBMc?=
- =?Windows-1252?Q?buCgpIVvFijhqURe+HvhrNk6U4NgUinAmLpwK7pafuyLmuKaaMwQ28It?=
- =?Windows-1252?Q?KP9CrTQHclnai0hs79f5aRzOWf+NVB7XPvBuPFGcrEHGaz8edVOSU08+?=
- =?Windows-1252?Q?xs3GSfrrXaOjg81K5S7ihjk0lbqxfsaft6Xsf9NnGi8ZHhr1IGCJQTnb?=
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?a0tjeEIra09tSHpOdXJJLzhaVCs4bnUzZXZsOS9YL1k3elVWV0xha2IrVTRy?=
+ =?utf-8?B?UzJDYWpyK01Zc0RxWWsyTW5RQTlnbFZCbGZxakk4RzRjdnBQcXFQNW1OWE9G?=
+ =?utf-8?B?UmRiazVQKzFNNUc2SnlweUNRNXpQcW9ReEVsL1dhUmxTVThEcWJZbzVzenhR?=
+ =?utf-8?B?czgvN0hSL0RZQ3VZakJkVUFaU3FIZkVQZjVHUnMxYk8zVkxtNDl3YzVodmI1?=
+ =?utf-8?B?QUlJbXhQVUFmTmh5d3hmbS9oSjFKV3JBWjZUTkFILzc4c2RHTWtVblBQYXdR?=
+ =?utf-8?B?TVdDaTJIalArdm9mYjFwNVBSMVM4M2ZYUi84SElyeHJJTnY4bVBLaXkzcHdv?=
+ =?utf-8?B?T3hvTFR5RC9JWE9RUDA4cFY4c0FpTWpPZ1J1a3lFSjNxRFlHNElVeVNDWHpw?=
+ =?utf-8?B?NW1JRFBSUkZVR1NJVC9pQUhjMUlpakF0c05ReUliZTRaOWxOU01FM2V6SHIw?=
+ =?utf-8?B?aS9aNWRTbXVNREV1bFplUWlqV0tFVnBJYm9BcGIzWnJjT3o5dWo2U2FQWGRL?=
+ =?utf-8?B?eE1TaVp4L0lIOVBieTNJdExGVEx1dGVCTGZ2b0xLSUlod0tKYXJDMFB3dUhS?=
+ =?utf-8?B?a21xZlNQRXR0Zml4cnFZaXAyN2IrZmR4Mm5id3prSXlVdjVjSzdZWGMycFI1?=
+ =?utf-8?B?Y0EyaDF6ZzVPdnBjd2tpZy9NMS9HNUZmUGwwdWVmSkhZa2lzUFdMZ2dTcy9C?=
+ =?utf-8?B?M2JoSGJsVWZnd3ZxU0pmYmxlTlFmMUpqYnR2L1phMEVXbEdIZkxVRmtvdnla?=
+ =?utf-8?B?Nkg1RENXU1Jwc0FOQUJFNndmUnhhRVovSWNvMFBsOGFpSERBb1hCSldieiti?=
+ =?utf-8?B?R3hWZmZOcHkxY2dCcXAxTWU5ZjVUZ3Ixa1lQZHJhRGdjTnpveXF1bGpCY2JB?=
+ =?utf-8?B?MlpGUldxRDF3WHpyWWhSOWY4YnhwRUVwRFFnQnhMQm9KKzRSWjVNVTRJbkhn?=
+ =?utf-8?B?TzIrbk5OeUdFRk4yWEsrSkk2Q1NodzZQNE93c1Znd0FSNmxyaWZjL1h0K3Bn?=
+ =?utf-8?B?NHNhNGhVek9rUE52UWdLQS85TGFsWm1NNVQ2WHovZUJzUGpYMTd6REhqbnlh?=
+ =?utf-8?B?RDlEbE9adWY4eU9ZNGdqY0hVaTg0dDVUNFRRWFc3RGRtKzFLdERKeG0zaUNX?=
+ =?utf-8?B?R1d6Y1dTVDFMeEZCR1VPa2JPd3h2U3hKS0lkdGxvWkllYzJvUGFXMDludXVa?=
+ =?utf-8?B?VERsbldkUEFSMXduNE5PRFdhUzJyd28xc0Q1S2FJQXBia0FNODBhZmRJVjUw?=
+ =?utf-8?B?cHplZlhUMnVoRmZ4L0h1bUQzZVJkRW5GQlJVZWkzYU5Za1lnT1hRaVVhN3U2?=
+ =?utf-8?B?dVgzekM4Nno4SDlNRldUUVZZbjNLTThLRFVQeDE4a0I2amwzeG1KU0wxMWR5?=
+ =?utf-8?B?QUk3SVZUclh0b0t3dnJnYWxQWkUzUTdhWUl1L1N2d2V4ZjRnb2JKVUM0VUhX?=
+ =?utf-8?B?Z2VpWmZNY0ZGdmhoSjZHL3g5aksrQXoveVgvZ0pHdGVyeDMzbDBNaFdPRU1p?=
+ =?utf-8?B?S3Y4RENaWHJJelErQ3A2R0NHQ2ozYU92TWtTMDZRYUxTR3krTEJuUFFpdWRZ?=
+ =?utf-8?B?MXZFR0YrRTJkenNEekd5Q2kySUNKSzVpekwwZGNNRDFEMEQvUTFiWE5NYkVB?=
+ =?utf-8?B?c3lDUG1CM3NmOXVGandGWEZEeFhscVh5SG1lanVyYzArYnhkSXRDNjlvek55?=
+ =?utf-8?B?Wm9qak9XWGNidU4vY2JKWTM3eUZ0a3B2UmlmWW9Rc2xOTDAvM2VZaEpORVdv?=
+ =?utf-8?Q?5TEx7tBSSk1haF6oTN5Sq4/HpT5DTBmqpR33WJk?=
 x-ms-exchange-transport-forked: True
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB6877.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2f44c2d9-2ce2-4ff0-a294-08d9790a3463
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Sep 2021 12:04:58.4139
+X-MS-Exchange-CrossTenant-AuthSource: TYAPR01MB6252.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2a6a036a-4364-4a5e-7cf0-08d97e0a3625
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Sep 2021 20:47:37.1700
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Ub3PNfcst5r/XL8SXpU7kN2wgDAlL65usQAlXtqPR37wp55r4OKS4igLTrU7c9XTIDFAAgmjg6VTAnJBG84QBdtaGX4d3AQ+BMo0pJnF37A=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS0PR01MB5585
+X-MS-Exchange-CrossTenant-userprincipalname: kYvvI79L2BVH/usjdWgdjmZFU0ZMTQW9HnGntpFr1CrBKGdVt7Xn5wuw+CvGEdrXv+Zh1HCG0yRrl5CgRdRXiT0YtN+qs8uMld/y0Aog4OF1CoSUrrWU4zYF9KNfflGk
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB7009
+MSSCP.TransferMailToMossAgent: 103
+X-OriginatorOrg: toshiba.co.jp
 Precedence: Bulk
 List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
 List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
@@ -109,92 +116,41 @@ Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
 Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
 Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: ttPCPnuGTRwjwmrDUKgQTJ8xx4520388AA=
-Content-Type: multipart/mixed; boundary="swMWpoiAHiELzKNUuca6"
+X-Gm-Message-State: XiadxtFk0MgcdPlCImsn8NMhx4520388AA=
+Content-Type: multipart/mixed; boundary="SA3YUZVfnaiP8zdZW0WA"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1631793910;
- bh=557ylpt5vyH77Yg/grr/3WoByU059hiT2a1qQVRJqno=;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1632343665;
+ bh=aVA94hYY2TRKhIj9SrYZ8aMhJihyJoXyPVwgNFenO8E=;
  h=Content-Type:Date:From:Reply-To:Subject:To;
- b=TXltCNPZx47fBvA2zcWXQ++quYShY7605NUd5NetO4/cPUuwgxlSnNj4NKgleL7kJcG
- 4ZdGutitG3mfTDplbrKiEP6uCBaUBDLcXQTG3aZwP/6aDj6sv+U+ijmi3CbhBFKMed+0d
- ARSCYQu2ZqFlwbDXFiBJyywidNKgTgAOsrs=
+ b=DdFb/OqS2SGBPdntj6im3NrEARdyCZQKOkX3Lhx7jElCUH/KKCKN9re4pCdj+lUo3q9
+ QNAJjOzd6ZtLau7V73C1JlezLlHUhHTIt9sOE8lVUAZV77zgrtLYr9JFC0mOn08Dz6y8P
+ LkTh+WO3mCAoqPZuNYGQiH6ULSolAcVaCKU=
 
---swMWpoiAHiELzKNUuca6
-Content-Language: en-US
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
+--SA3YUZVfnaiP8zdZW0WA
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-Hello Jan, all,
-
-> From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On
-> Behalf Of Jan Kiszka via lists.cip-project.org
-> Sent: 16 September 2021 07:11
->=20
-> Hi all,
->=20
-> Kindly be reminded to attend the weekly meeting through IRC to discuss
-> technical topics with CIP kernel today.
-
-There is a chance that I may not make it today. Just in case I've added som=
-e notes below.
-
->=20
-> Please note that we moved from Freenode to libera.chat. Our channel is
-> the following:
->=20
->     irc:irc.libera.chat:6667/cip
->=20
-> Furthermore note that the IRC meeting is now scheduled to UTC (GMT)
-> 13:00:
->=20
-> https://jpn01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fwww
-> .timeanddate.com%2Fworldclock%2Fmeetingdetails.html%3Fyear%3D2021%
-> 26month%3D9%26day%3D16%26hour%3D13%26min%3D0%26sec%3D0%26p
-> 1%3D224%26p2%3D179%26p3%3D136%26p4%3D37%26p5%3D241%26p6%3D
-> 248&amp;data=3D04%7C01%7Cchris.paterson2%40renesas.com%7C7f495232a8
-> 5c44b56ea208d978d8ca45%7C53d82571da1947e49cb4625a166a4a2a%7C0%7C
-> 0%7C637673694777997101%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLj
-> AwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C1000&amp;
-> sdata=3DjITtPWySL7jFizH7hwZkcwtG90KbqftA70TEkBYMCEc%3D&amp;reserve
-> d=3D0
->=20
-> USWest    USEast    UK        DE        TW        JP
-> 06:00     09:00     14:00     15:00     21:00     22:00
->=20
-> Last meeting minutes:
->=20
-> https://jpn01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Firclo=
-g
-> s.baserock.org%2Fmeetings%2Fcip%2F2021%2F09%2Fcip.2021-09-09-
-> 13.02.log.txt&amp;data=3D04%7C01%7Cchris.paterson2%40renesas.com%7C7f
-> 495232a85c44b56ea208d978d8ca45%7C53d82571da1947e49cb4625a166a4a2a
-> %7C0%7C0%7C637673694777997101%7CUnknown%7CTWFpbGZsb3d8eyJWIj
-> oiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C1
-> 000&amp;sdata=3DzkeyEhzTKsDWpLFE59PjV9AjBn15GHu%2Fujcy0YxpfeE%3D
-> &amp;reserved=3D0
->=20
-> * Action item
->   1. Combine root filesystem with kselftest binary - iwamatsu & alicef
->   2. Document new LAVA domains in wiki - patersonc
-No updates.
-
->=20
-> * Kernel maintenance updates
-> * Kernel testing
-I don't have much to update since the TSC on Tuesday.
-
-Kind regards, Chris
-
-> * AOB
->=20
-> Jan
->=20
-> --
-> Siemens AG, T RDA IOT
-> Corporate Competence Center Embedded Linux
+SGkgYWxsLA0KDQpLaW5kbHkgYmUgcmVtaW5kZWQgdG8gYXR0ZW5kIHRoZSB3ZWVrbHkgbWVldGlu
+ZyB0aHJvdWdoIElSQyB0byBkaXNjdXNzDQp0ZWNobmljYWwgdG9waWNzIHdpdGggQ0lQIGtlcm5l
+bCB0b2RheS4NCg0KUGxlYXNlIG5vdGUgdGhhdCB3ZSBtb3ZlZCBmcm9tIEZyZWVub2RlIHRvIGxp
+YmVyYS5jaGF0LiBPdXIgY2hhbm5lbCBpcw0KdGhlIGZvbGxvd2luZzoNCg0KICAgIGlyYzppcmMu
+bGliZXJhLmNoYXQ6NjY2Ny9jaXANCg0KRnVydGhlcm1vcmUgbm90ZSB0aGF0IHRoZSBJUkMgbWVl
+dGluZyBpcyBub3cgc2NoZWR1bGVkIHRvIFVUQyAoR01UKSAxMzowMDoNCg0KaHR0cHM6Ly93d3cu
+dGltZWFuZGRhdGUuY29tL3dvcmxkY2xvY2svbWVldGluZ2RldGFpbHMuaHRtbD95ZWFyPTIwMjEm
+bW9udGg9OSZkYXk9MTYmaG91cj0xMyZtaW49MCZzZWM9MCZwMT0yMjQmcDI9MTc5JnAzPTEzNiZw
+ND0zNyZwNT0yNDEmcDY9MjQ4DQoNClVTV2VzdCAgICBVU0Vhc3QgICAgVUsgICAgICAgIERFICAg
+ICAgICBUVyAgICAgICAgSlANCjA2OjAwICAgICAwOTowMCAgICAgMTQ6MDAgICAgIDE1OjAwICAg
+ICAyMTowMCAgICAgMjI6MDANCg0KTGFzdCBtZWV0aW5nIG1pbnV0ZXM6DQoNCmh0dHBzOi8vaXJj
+bG9ncy5iYXNlcm9jay5vcmcvbWVldGluZ3MvY2lwLzIwMjEvMDkvY2lwLjIwMjEtMDktMTYtMTMu
+MDEudHh0DQoNCiogQWN0aW9uIGl0ZW0NCiAgMS4gQ29tYmluZSByb290IGZpbGVzeXN0ZW0gd2l0
+aCBrc2VsZnRlc3QgYmluYXJ5IC0gaXdhbWF0c3UgJiBhbGljZWYNCiAgMi4gRG9jdW1lbnQgbmV3
+IExBVkEgZG9tYWlucyBpbiB3aWtpIC0gcGF0ZXJzb25jDQoNCiogS2VybmVsIG1haW50ZW5hbmNl
+IHVwZGF0ZXMNCiogS2VybmVsIHRlc3RpbmcNCiogQU9CDQoNCkJlc3QgcmVnYXJkcywNCiAgTm9i
+dWhpcm8NCg==
 
 
---swMWpoiAHiELzKNUuca6
+--SA3YUZVfnaiP8zdZW0WA
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -202,13 +158,13 @@ Content-Disposition: inline
 
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 Links: You receive all messages sent to this group.
-View/Reply Online (#6742): https://lists.cip-project.org/g/cip-dev/message/=
-6742
-Mute This Topic: https://lists.cip-project.org/mt/85645942/4520388
+View/Reply Online (#6743): https://lists.cip-project.org/g/cip-dev/message/=
+6743
+Mute This Topic: https://lists.cip-project.org/mt/85799944/4520388
 Group Owner: cip-dev+owner@lists.cip-project.org
 Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/10495289/4520388=
 /727948398/xyzzy [cip-dev@archiver.kernel.org]
 -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 
 
---swMWpoiAHiELzKNUuca6--
+--SA3YUZVfnaiP8zdZW0WA--
