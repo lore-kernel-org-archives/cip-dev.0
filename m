@@ -1,231 +1,143 @@
-Return-Path: <SRS0=tWdu=ON=lists.cip-project.org=bounce+64572+6744+4520388+10495289@kernel.org>
+Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
-Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E667C433EF
-	for <cip-dev@archiver.kernel.org>; Thu, 23 Sep 2021 01:52:56 +0000 (UTC)
-Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id BF93561050
-	for <cip-dev@archiver.kernel.org>; Thu, 23 Sep 2021 01:52:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org BF93561050
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=miraclelinux.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id 70jMYY4521723x0eFWscoYaj; Wed, 22 Sep 2021 18:52:55 -0700
-X-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
- by mx.groups.io with SMTP id smtpd.web10.2352.1632361973771748443
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AF6AC433F5
+	for <webhook@archiver.kernel.org>; Sat, 25 Sep 2021 08:17:53 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.154])
+ by mx.groups.io with SMTP id smtpd.web08.4736.1632557871362582907
  for <cip-dev@lists.cip-project.org>;
- Wed, 22 Sep 2021 18:52:54 -0700
-X-Received: by mail-oi1-f181.google.com with SMTP id o66so7391229oib.11
-        for <cip-dev@lists.cip-project.org>; Wed, 22 Sep 2021 18:52:53 -0700 (PDT)
-X-Gm-Message-State: Ncy2SiWouCHjPhr2PYuk8vnnx4520388AA=
-X-Google-Smtp-Source: ABdhPJwGtm1GBrwWVJIAbBk1eZVZ9VM1CkNTdS/H2Z8Muvuv2E0Eowu0xB0iGQ2+biNb1wR7j022pU6tx9x5/xkVFdU=
-X-Received: by 2002:a05:6808:545:: with SMTP id i5mr1863649oig.66.1632361972733;
- Wed, 22 Sep 2021 18:52:52 -0700 (PDT)
-MIME-Version: 1.0
-From: "Masami Ichikawa" <masami.ichikawa@miraclelinux.com>
-Date: Thu, 23 Sep 2021 10:52:17 +0900
-Message-ID: <CAODzB9pPj1HnfS6RrZyPNqFs7TeN3UTH_YC6Kx91gSVdSYostQ@mail.gmail.com>
-Subject: [cip-dev] New CVE entry this week
-To: cip-dev <cip-dev@lists.cip-project.org>
-Precedence: Bulk
-List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
-List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
-List-Help: <mailto:cip-dev+help@lists.cip-project.org>
-Sender: cip-dev@lists.cip-project.org
-List-Id: <cip-dev.lists.cip-project.org>
-Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
-Reply-To: cip-dev@lists.cip-project.org
-Content-Type: multipart/mixed; boundary="0IsqFU4ErlTn5blrOorG"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1632361975;
- bh=Gee1ltlVFN6d3GJqoU24Va0boLSj1NeREXly/QXT8d0=;
- h=Content-Type:Date:From:Reply-To:Subject:To;
- b=kFsbRT/QNMyInPV3Cc1Z/Y9fe8msNvnLEvCIBkeK/YDf4V+hp27oIjfX1n6QoGeP4Jp
- BqDEnsEgRphYPvSRCSHIvbbG6tQdXgvhP78ek8pqyVONRX4qiTEh2EKpoKaXiTDO4NvkN
- OMuEZH4E/VtWxIah9GYhYimibfxESr4NgE8=
-
---0IsqFU4ErlTn5blrOorG
-Content-Type: text/plain; charset="UTF-8"
-
-Hi !
-
-It's this week's CVE report.
-
-This week reported 2 new CVEs.
-
-* New CVEs
-
-CVE-2021-41073: io_uring: ensure symmetry in handling iter types in
-loop_rw_iter()
-
-CVSS v3 score is not provided.
-
-This CVE is affected from 5.10-rc1 to 5.15-rc2. All stable kernels are fixed.
-
-Fixed status
-
-mainline: [16c8d2df7ec0eed31b7d3b61cb13206a7fb930cc]
-stable/5.10: [ce8f81b76d3bef7b9fe6c8f84d029ab898b19469]
-stable/5.14: [71e32edd2210d0304e93ac110814b5a4b3a81dc0]
-
-CVE-2021-3773: lack of port sanity checking in natd and netfilter
-leads to exploit of OpenVPN clients
-
-CVSS v3 score is not provided.
-
-The details of the vulnerability has been published on
-https://breakpointingbad.com/2021/09/08/Port-Shadows-via-Network-Alchemy.html
-.
-
-Fixed status
-
-Not fixed yet.
-
-* Updated CVEs
-
-CVE-2020-16119:  net: dccp: fix structure use-after-free
-
-stable kernels have been fixed this week. All stable kernels are fixed.
-
-Fixed status
-
-mainline: [d9ea761fdd197351890418acd462c51f241014a7]
-stable/4.14: [a1bb3c064bf5f2d8c3e9368a9152b1224a9dd64a]
-stable/4.19: [dfec82f3e5b8bd93ab65b7417a64886ec8c42f14]
-stable/4.4: [1969452d411a73a3125c326c6db0c8433f31dfd5]
-stable/4.9: [40ea36ffa7207456c3f155bbab76754d3f37ce04]
-stable/5.10: [6c3cb65d561e76fd0398026c023e587fec70e188]
-stable/5.14: [51f7b364a2d120cea956b2bb5ccaad29bbf8abce]
-stable/5.4: [5ab04a4ffed02f66e8e6310ba8261a43d1572343]
-
-CVE-2020-3702: Specifically timed and handcrafted traffic can cause
-internal errors in a WLAN device that lead to improper layer 2 Wi-Fi
-encryption with a consequent possibility of information disclosure
-over the air for a discrete set of traffic
-
-stable kernel 4.4 and 4.9 have been fixed this week. This
-vulnerability has been fixed since 5.12-rc1-dontuse.
-All stable kernels are fixed.
-
-Fixed status
-
-mainline: [56c5485c9e444c2e85e11694b6c44f1338fc20fd,
-73488cb2fa3bb1ef9f6cf0d757f76958bd4deaca,
-    d2d3e36498dd8e0c83ea99861fac5cf9e8671226,
-144cd24dbc36650a51f7fe3bf1424a1432f1f480,
-    ca2848022c12789685d3fab3227df02b863f9696]
-stable/4.14: [2cbb22fd4b4fb4d0822d185bf5bd6d027107bfda,
-20e7de09cbdb76a38f28fb71709fae347123ddb7,
-    995586a56748c532850870523d3a9080492b3433,
-f4d4f4473129e9ee55b8562250adc53217bad529,
-    61b014a8f8de02bedc56f76620170437f5638588]
-stable/4.19: [dd5815f023b89c9a28325d8a2a5f0779b57b7190,
-d2fd9d34210f34cd0ff5b33fa94e9fcc2a513cea,
-    fb924bfcecc90ca63ca76b5a10f192bd0e1bb35d,
-7c5a966edd3c6eec4a9bdf698c1f27712d1781f0,
-    08c613a2cb06c68ef4e7733e052af067b21e5dbb]
-stable/4.4: [4d6b4335838fd89419212e1e486c415ec36fb610,
-5d97f20dc21f3f4b14105590f729e513b0c4921d,
-    85d371eb7259c2e6aecd0b77c3f8c193c9593624,
-1c8e25862a00a539803fa60eb7a907143688b178,
-    3fd07178fbf012db0b38488ea2e0069412250dd2]
-stable/4.9: [ea3f7df20fc8e0b82ec0e065b0b0d38e55fd7775,
-74adc24d162e67d8862edaf701de620f36f98215,
-    d7d4c3c60342deba706fd76ef09d8af68b9a64d8,
-13c51682b07a5db4d9efb514e700407c6da22ff9,
-    7afed8faf42d8358a165ba554891085e10b1f7a0]
-stable/5.10: [8f05076983ddeaae1165457b6aa4eca9fe0e5498,
-6566c207e5767deb37d283ed9f77b98439a1de4e,
-    2925a8385ec746bf09c11dcadb9af13c26091a4d,
-609c0cfd07f0ae6c444e064a59b46c5f3090b705,
-    e2036bc3fc7daa03c15fda27e1818192da817cea]
-stable/5.4: [0c049ce432b37a51a0da005314ac32e5d9324ccf,
-add283e2517a90468ce223465e0f4360128bb650,
-    b7d593705eb4f0655a70f0207f573fb1edb80bda,
-c6feaf806da6a0deecc2fe41adb3443cdecba347,
-    23f77ad13f8176314b7c51f71b9ac7c5c6d10b7b]
-
-CVE-2021-40490: ext4: fix race writing to an inline_data file while
-its xattrs are changing
-
-4.4, 4.9, 4.14, and 4.19 kernels have been fixed this week. All stable
-kernels are fixed.
-
-Fixed status
-
-mainline: [a54c4613dac1500b40e4ab55199f7c51f028e848]
-stable/4.14: [9569234645f102025aaf0fc83d3dcbf1b8cbf2dc]
-stable/4.19: [c481607ba522e31e6ed01efefc19cc1d0e0a46fa]
-stable/4.4: [69d82df68fbc5e368820123200d7b88f6c058350]
-stable/4.9: [7067b09fe587cbd47544a3047a40c64e4d636fff]
-stable/5.10: [09a379549620f122de3aa4e65df9329976e4cdf5]
-stable/5.13: [c764e8fa4491da66780fcb30a0d43bfd3fccd12c]
-stable/5.14: [f8ea208b3fbbc0546d71b47e8abaf98b0961dec1]
-stable/5.4: [9b3849ba667af99ee99a7853a021a7786851b9fd]
-
-Currently tracking CVEs
-
-CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
-Bluetooth Core Specifications 4.0 through 5.2
-
-There is no fix information.
-
-CVE-2021-3640: UAF in sco_send_frame function
-
-There is no fix information.
-
-CVE-2020-26555: BR/EDR pin code pairing broken
-
-No fix information
-
-CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
-
-No fix information.
-
-CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
-Provisioning Leads to MITM
-
-No fix information.
-
-CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
-
-No fix information.
-
-CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
-
-No fix information.
-
-
-Regards,
-
--- 
-Masami Ichikawa
-Cybertrust Japan Co., Ltd.
-
-Email :masami.ichikawa@cybertrust.co.jp
-          :masami.ichikawa@miraclelinux.com
-
---0IsqFU4ErlTn5blrOorG
+ Sat, 25 Sep 2021 01:17:52 -0700
+Authentication-Results: mx.groups.io;
+ dkim=missing;
+ spf=pass (domain: toshiba.co.jp, ip: 210.130.202.154, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
+Received: by mo-csw.securemx.jp (mx-mo-csw1515) id 18P8HWfO027182;
+ Sat, 25 Sep 2021 17:17:32 +0900
+X-Iguazu-Qid: 34trwupu9LuLQndrou
+X-Iguazu-QSIG: v=2; s=0; t=1632557851; q=34trwupu9LuLQndrou;
+ m=IUWNrgX2Xs2guTOF8rM9vV+8vFx5IHSC0YMj2iDzBX8=
+Received: from imx12-a.toshiba.co.jp (imx12-a.toshiba.co.jp [61.202.160.135])
+	by relay.securemx.jp (mx-mr1513) id 18P8HTSs006805
+	(version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
+	Sat, 25 Sep 2021 17:17:29 +0900
+Received: from enc02.toshiba.co.jp (enc02.toshiba.co.jp [61.202.160.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by imx12-a.toshiba.co.jp (Postfix) with ESMTPS id 73EA8100111;
+	Sat, 25 Sep 2021 17:17:29 +0900 (JST)
+Received: from hop101.toshiba.co.jp ([133.199.85.107])
+	by enc02.toshiba.co.jp  with ESMTP id 18P8HThI019876;
+	Sat, 25 Sep 2021 17:17:29 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RZSTX6zSq5X++BJCoylORG2liIzLEHbUu64FQqoCszZng0ndlb0JHdzXxT/jPJd+paNgL6/XYoISDkaw3wSXGhVEMtcLtywNpS/yZ06N9gqiMewnJaDWsIh0/9ykPiZZptR607sy90MaKTvyQxGYJZl5LSa2J1OKkI41oRaELnIlnwrOGzQ+zGote/vabk3B2BvK3Df95HQDO59o41PLXX48vRsSyINbiWOdmLTHvWzwQ80MzLuKUS4M+WGylZ3XtO9ON3maAFlWfZUJnxK/fMrtGSIg4aGADWageYhfDan1OTRe1YJ06HjdauYnM3QSoYp85og8jDch+M+zmfZ+xA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
+ bh=oGgzmSlDMVpD7dCMM6BrS10+LSGO+ey+qbBPP1inxQk=;
+ b=SPv6J6TSZBeehJfCfgb/8D5mQGnghO2CLraiSr3jSJ1z9OlOmelk5LlBcGzyGAfNxzBxmu3unaxisReWt7LdTiyeTaH0yC6HW7FixHJZmNv7AvjDEjvMMX5gMsUjssLLfmdE6Bc0Y6QgeGaN61f5inF8LNfsN5SvdA8ta+mylB9c4vvQAAL/9vxTebRyYhrl7TCNb/HPtD0yukZz5CdSyjLteUuH90cWszp3VzBaBC8gS381nXYrb7ta9YR3LmLT9DP63ffzl3jm5O5x5T+H7bPiyEEgrgXDCaoGrpaPwnjF5vKTe38ncfN78++9ORzs6xcw/igw7YfXf2HdeNflZg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
+ header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
+From: <nobuhiro1.iwamatsu@toshiba.co.jp>
+To: <cip-dev@lists.cip-project.org>
+CC: <pavel@denx.de>, <jan.kiszka@siemens.com>, <Chris.Paterson2@renesas.com>,
+        <uli@fpond.eu>, <masami.ichikawa@cybertrust.co.jp>
+Subject: [ANNOUNCE] Release v4.19.207-cip58
+Thread-Topic: [ANNOUNCE] Release v4.19.207-cip58
+Thread-Index: Adex5YvyLIIG84k6QVuX6btUwajbiQ==
+Date: Sat, 25 Sep 2021 08:17:25 +0000
+X-TSB-HOP: ON
+Message-ID: 
+ <TYAPR01MB62525F9F3D7F891FED79EE5192A59@TYAPR01MB6252.jpnprd01.prod.outlook.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+authentication-results: lists.cip-project.org; dkim=none (message not signed)
+ header.d=none;lists.cip-project.org; dmarc=none action=none
+ header.from=toshiba.co.jp;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: c21e519a-0945-4082-c4dd-08d97ffce879
+x-ms-traffictypediagnostic: TYAPR01MB5355:
+x-microsoft-antispam-prvs: 
+ <TYAPR01MB535585EBA4E2F05912EEF8B792A59@TYAPR01MB5355.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:327;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ K9H4BvV0XhUt8JM3qpblWO41+4E9JeFuI27dVZX6n++EZ6p7Y00SyMsc4jktcIQP4gPCLy0ZWb6dTwcxmZQhhx8SxVDd3SLv4RdfbhzbTEYr8n8Uu/5T2lyDbRMP9MPGXp/i3RMBOINVU7+oC1jmRnz2eWCZaMmWd7Ynmzfj5gNZVuhaeinsyz/Jw77xa86QKgqZktJZNy2zx5yZzuAI4TGwWfweCY0wg+MqGn/KIyUtRqBisGgarP31fzSXtnvi2L4AClwYIvOEjCDB9h7cClQmXx4CkHA+KjiTQIOLm68cFCUDkICGx7/EKl5C3G7SF/btbNLh6bJ8L+BfcpfwVkXB7c2/NBzSWgaonSDhuFesWFJloAT/0FcvYjRWU/MNuq4Ste4OMci9IYRksObc9s4sMbnG1DiAk0LV9SEUA9AVP/l4qdDaGBsqLyreC/csygKM4DQR79D2lZwZozhhtXhKh/kPc5E+dm4T78MRsN2r0t2wicczbUCmAhjWO4kaZY+A28ctrt6T9UvzSWJOX5qdrbCkt6Kv2OYIce+GzXnHB9vGoLThg3zrMAtzNk3UFGFrKxoIkk4uGRy4eusECqX3sp1mXlmYpwJE0yEbo0C+/JabrHuoJjAndSugt/Y9o4rcQPnAV12KN1Nr2vSwqbgNeMHjxJsUNaTM7+iHrE0CBSo4QVLkbHGtJHTjtgs/6pGMY6YRdtMsdm6TwJbtMgjwpLMFDQyAOmmuPknsPHeHf7n/3z6g7yr84jtRJ8nm9dCH8LL5gr+wOuTki9UhXbmE2EMd02Jg8kYHyoLgtcs=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYAPR01MB6252.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(6916009)(4744005)(316002)(71200400001)(38100700002)(4326008)(54906003)(2906002)(122000001)(33656002)(7696005)(86362001)(5660300002)(9686003)(8676002)(26005)(52536014)(38070700005)(6506007)(8936002)(186003)(66476007)(83380400001)(66556008)(66446008)(64756008)(508600001)(966005)(66946007)(76116006)(55016002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?utf-8?B?ZEZiRTQ1bXVqVmpsa0Q1TWowZXVsK3luUmY0UmhZOW1TYjhDRnFzbDZYSUwz?=
+ =?utf-8?B?OWRjbXF1TUE5amdrT1pvN2VMSEhaL05ZcGFxVnI1VURSUUxUR2ltUWgyRHAr?=
+ =?utf-8?B?UlpaSnJzVzJzT1p5QmN0aUxDM1l2V2NndTlabm5DM0wyZHM5bldub3d4aWRk?=
+ =?utf-8?B?bmVVcFJwaXA1eWRVem1RRGhUWnQwUC8yMGcxNW1Dbi9kLzZJcGg4WCtkM3k5?=
+ =?utf-8?B?VFBiZzJCdWdjUzBweHVuSjNIdU5idkpHN1lMNnJrVFJyVXQ4dURjRXlpejBo?=
+ =?utf-8?B?dXRFK29WZzlvV0N5MEJhdnZZbERPcXkyUGk3d2lvbmhsMjROSmJkd2tKUER1?=
+ =?utf-8?B?bjhGNHZob2pLT21tN0dqNHp2SUZjSFZVQXFBSUFCU1hmWEtQNm9IbDBxT0tt?=
+ =?utf-8?B?L3U5bzJqZkFVTmNBUHVVei9oaTE3WkZsKzN3R1VvM2hMbzNsYjEzcTVSNHJU?=
+ =?utf-8?B?eW5JcDZleHp0SXFtUHVOU0hFejVhS2JMWGJrdUo5SlF6d0dtZC82RDJ6ZkM4?=
+ =?utf-8?B?Ky9ZVVNIa1NjRXdyZm56UDNadVZna212UFJzRWxma056WG5PYmhaOXZKeFNp?=
+ =?utf-8?B?NGFFSE5LRWJwbHFHdkJ2U1NFNEhoV0N1ZDQ3eGtGamE1ZUZsYWpvTDVxaENK?=
+ =?utf-8?B?SHdoZmVaY1ZaSndDeGNsYmtMUForVDZTc3NTMWpNbjA0R2lWcVBGN3ZGV0dk?=
+ =?utf-8?B?Z2pqQmo5VEZsWmt1MWJsbHh6aURQc2lEazBGVzJEUDE4N20xSUdJZUVRS2pI?=
+ =?utf-8?B?bGRVSzhncTAyT0FIUzhJVFZTRDJxZzNoWDR4VlB5OUU1UFZZQUVVNTZTSzZJ?=
+ =?utf-8?B?NS9Ga1kwa3BKWEhuNFZiMk1LR25BeUR6YVZJQjFySU9aeFhWNEJ4c3hJZVZX?=
+ =?utf-8?B?SHphNFpaTWtHSVZRVUhnS0c0NkIraHNVR1ZEcmtUWGQ2ckhWRldVdlJuZitT?=
+ =?utf-8?B?Umw0UzZYMWMrSld1TEpTZUMxNHZ2UXFXUmN6c1VYVUJwdU9Pc3dhT2xMZU93?=
+ =?utf-8?B?TFNNLzZhc2lYd1Z6Ym93ODdXMVhFdXNPWGNQZDE5R2V2bVFjREI4K1ExVEt5?=
+ =?utf-8?B?U1UvZFpjUnVicmEwL2JpK2tVcGVjUXBCK3FDNkRETitIenRTRSthdmJrU3o3?=
+ =?utf-8?B?U0RoOCt3dlhPZHRTY3JxY3RVRVZFNDlTU0JIbHU3WnlLRTdoeW1Kd0dDK1BP?=
+ =?utf-8?B?VVRYR0pkS1l4QkVEVVNsd3h0WlRTazlqUlU2UVByTDlwNUMxUExDNjI1T09Y?=
+ =?utf-8?B?ZlJLTnM4R1RYWUszVEtETXROYWlnWG51UHowTjJFajNpdTMvaTdZWmQzTHE4?=
+ =?utf-8?B?VGhBK3RyL2dKZ3hjeTBvMlJRVkhVNlU2OXRpYmYzRmFINEFWUFpZYzhrTXR1?=
+ =?utf-8?B?Rzd6eE1RSGdESXFsSW1KQUVRTks1bG9Wd3hEU2xRbDV5Q2h0bnZEQ1pHMUZs?=
+ =?utf-8?B?VVdMWWJ5cWUyQVhocnJmdCt2N1FhMTRFRUVyRmZQUGJyVUxEWWpLTlFRdWsr?=
+ =?utf-8?B?MEEyL1Avb2xKM04zZUpUQjlYSk90WWtXa0ZFdXF2NU84S2IyazRDZGJMM1BS?=
+ =?utf-8?B?U0V2a2cxNVdzOVBGWTYrVCtTMmlCa2x0UjR1QThzNmtPaVN1eExmTFExN0RN?=
+ =?utf-8?B?cDVORHlkUDZUYnJlcGloVmpSRVV1WndsTHFBOHVaOGtSanl0aWFCT1VJUGkx?=
+ =?utf-8?B?RzdSK2IrU1diZHAyT3hiYUhPSlVIV2RhdUVrT1ZWSVdQWlFGYkFvNnVZMW1V?=
+ =?utf-8?Q?P+WM+7z30Gf4Jhtj2UJtz+kFBCLiZDZjeiyHyPR?=
+x-ms-exchange-transport-forked: True
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYAPR01MB6252.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 
+ c21e519a-0945-4082-c4dd-08d97ffce879
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Sep 2021 08:17:25.7868
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 
+ 3mVBXBs/9f4mh32z8xsKo1BpuiwoY+7b9gnCrUVUaSdI1nCjRd8MLspEXtHzoxsVAupb96H61dpqV430hWHTpgmhkh1wa4j5yEAh10gftr92TeQ6SpiC15e60QTqa6Uz
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB5355
+MSSCP.TransferMailToMossAgent: 103
+X-OriginatorOrg: toshiba.co.jp
+List-Id: <cip-dev.lists.cip-project.org>
+X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
+ aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
+ <cip-dev@lists.cip-project.org>; Sat, 25 Sep 2021 08:17:53 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6745
+
+W0FOTk9VTkNFXSBSZWxlYXNlIHY0LjE5LjIwNy1jaXA1OA0KDQpIaSBhbGwsDQoNCkNJUCBrZXJu
+ZWwgdGVhbSBoYXMgcmVsZWFzZWQgTGludXgga2VybmVsIHY0LjE5LjIwNy1jaXA1OC4NClRoZSBs
+aW51eC00LjE5LnktY2lwIHRyZWUgaGFzIGJlZW4gdXBkYXRlZCBmcm9tIHY0LjE5LjIwNiB0byB2
+NC4xOS4yMDcuDQpUaGUgcmVsZWFzZSBpbmZvcm1hdGlvbiBpcyBzaG93biBiZWxvdy4NCg0KICB2
+NC4xOS4yMDctY2lwNTg6DQogICAgcmVwb3NpdG9yeToNCiAgICAgIGh0dHBzOi8vZ2l0Lmtlcm5l
+bC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2NpcC9saW51eC1jaXAuZ2l0DQogICAgYnJh
+bmNoOg0KICAgICAgbGludXgtNC4xOS55LWNpcA0KICAgIGNvbW1pdCBoYXNoOg0KICAgICAgYzM3
+MzdmNTYzNzE3OTczOGE3ZTg5OTM1OWE0OTBlMzQ5ZWU3NWQ4Mg0KICAgIEZpeGVkIENWRXM6DQog
+ICAgICBDVkUtMjAyMS0zNDU1NjogYnBmOiBJbnRyb2R1Y2UgQlBGIG5vc3BlYyBpbnN0cnVjdGlv
+biBmb3LjgIBtaXRpZ2F0aW5nIFNwZWN0cmUgdjQNCiAgICAgIENWRS0yMDIxLTM1NDc3OiBicGY6
+IEludHJvZHVjZSBCUEYgbm9zcGVjIGluc3RydWN0aW9uIGZvcuOAgG1pdGlnYXRpbmcgU3BlY3Ry
+ZSB2NA0KICAgICAgQ1ZFLTIwMjAtMTYxMTk6IGRjY3A6IGRvbid0IGR1cGxpY2F0ZSBjY2lkIHdo
+ZW4gY2xvbmluZyBkY2NwIHNvY2sNCiAgICAgIENWRS0yMDIxLTQwNDkwOiBleHQ0OiBmaXggcmFj
+ZSB3cml0aW5nIHRvIGFuIGlubGluZV9kYXRhIGZpbGXjgIB3aGlsZSBpdHMgeGF0dHJzIGFyZSBj
+aGFuZ2luZw0KICAgIGFkZGVkIGNvbW1pdHM6DQogICAgICBDSVA6IEJ1bXAgdmVyc2lvbiBzdWZm
+aXggdG8gLWNpcDU4IGFmdGVyIG1lcmdlIGZyb20gc3RhYmxlDQoNCkJlc3QgcmVnYXJkcywNCiAg
+IE5vYnVoaXJvDQo=
 
 
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-Links: You receive all messages sent to this group.
-View/Reply Online (#6744): https://lists.cip-project.org/g/cip-dev/message/=
-6744
-Mute This Topic: https://lists.cip-project.org/mt/85805475/4520388
-Group Owner: cip-dev+owner@lists.cip-project.org
-Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/10495289/4520388=
-/727948398/xyzzy [cip-dev@archiver.kernel.org]
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-
-
---0IsqFU4ErlTn5blrOorG--
