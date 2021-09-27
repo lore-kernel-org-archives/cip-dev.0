@@ -1,117 +1,89 @@
-Return-Path: <SRS0=Qva8=OR=lists.cip-project.org=bounce+64572+6752+4520388+10495289@kernel.org>
+Return-Path: <uli@fpond.eu>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C310C433EF
-	for <cip-dev@archiver.kernel.org>; Mon, 27 Sep 2021 10:17:37 +0000 (UTC)
-Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 9820760F6C
-	for <cip-dev@archiver.kernel.org>; Mon, 27 Sep 2021 10:17:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 9820760F6C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id VcZuYY4521723xDhsE8uROp9; Mon, 27 Sep 2021 03:17:36 -0700
-X-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web10.29204.1632737854766208098
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A125C433EF
+	for <webhook@archiver.kernel.org>; Mon, 27 Sep 2021 10:44:06 +0000 (UTC)
+Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de
+ [85.215.255.22])
+ by mx.groups.io with SMTP id smtpd.web08.29636.1632739434435040140
  for <cip-dev@lists.cip-project.org>;
- Mon, 27 Sep 2021 03:17:35 -0700
-X-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id D015B1C0B7A; Mon, 27 Sep 2021 12:17:29 +0200 (CEST)
-Date: Mon, 27 Sep 2021 12:17:28 +0200
-From: "Pavel Machek" <pavel@denx.de>
-To: cip-dev@lists.cip-project.org
-Cc: uli@fpond.eu
+ Mon, 27 Sep 2021 03:44:04 -0700
+Authentication-Results: mx.groups.io;
+ dkim=fail reason="no key for verify" header.i=@fpond.eu
+ header.s=strato-dkim-0002 header.b=kFgz95gh;
+ spf=none, err=permanent DNS error (domain: fpond.eu, ip: 85.215.255.22,
+ mailfrom: uli@fpond.eu)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1632739431;
+    s=strato-dkim-0002; d=fpond.eu;
+    h=Subject:References:In-Reply-To:Message-ID:To:From:Date:Cc:Date:From:
+    Subject:Sender;
+    bh=hgix3NThBAZqUwOoPEyVwxXuRojbHc+ZCp6Bvdlmfno=;
+    b=kFgz95ghQtwJ90v22W8tW4QC2CH9KKkPltXpq18h66ZoWUx1D5EGS26WHBPl2tCKcD
+    qM9ejL1hImkeWV4kvNaENVfqzl0TToW0Gmashl7jlx1FXkYOSA1lsvZKJgneVAA4thO9
+    6b6fXnoc2B3aKLNYb9Mv+96WdKAvlCnmT8lXqCpDboD+x3U7WuNPukuUlsvCLuKl/AKl
+    xtAnc1xWBFK80RHmlRqBiaoAQTkWfSK3pE55UxpAOBZKwwulQwzrqP9JiaZcRJrqA+Ad
+    +qZtn/fKqSdYZRBjyzn4TQTJvtATdU1U7iXkOqBiXhADXIrATceylBne09by0CA44hNO
+    j/UQ==
+Authentication-Results: strato.com;
+    dkim=none
+X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvv3qxio1R8fGl/w2B+Io="
+X-RZG-CLASS-ID: mo00
+Received: from oxapp02-03.back.ox.d0m.de
+    by smtp-ox.front (RZmta 47.33.8 AUTH)
+    with ESMTPSA id c00f85x8RAhpYWo
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve
+ X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+	(Client did not present a certificate);
+    Mon, 27 Sep 2021 12:43:51 +0200 (CEST)
+Date: Mon, 27 Sep 2021 12:43:51 +0200 (CEST)
+From: Ulrich Hecht <uli@fpond.eu>
+To: cip-dev@lists.cip-project.org, Pavel Machek <pavel@denx.de>
+Message-ID: <1532955493.576116.1632739431463@webmail.strato.com>
+In-Reply-To: <20210927100950.GA11971@amd>
+References: <20210927100950.GA11971@amd>
 Subject: Re: [cip-dev] Coordinating stable reviews
-Message-ID: <20210927101728.GB11971@amd>
-References: <16A8A6032C9B7813.26412@lists.cip-project.org>
 MIME-Version: 1.0
-In-Reply-To: <16A8A6032C9B7813.26412@lists.cip-project.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-Precedence: Bulk
-List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
-List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
-List-Help: <mailto:cip-dev+help@lists.cip-project.org>
-Sender: cip-dev@lists.cip-project.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v7.10.5-Rev24
+X-Originating-Client: open-xchange-appsuite
 List-Id: <cip-dev.lists.cip-project.org>
-Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
-Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: sJCjmboa1A7HIpE393qfBCGcx4520388AA=
-Content-Type: multipart/mixed; boundary="2ZwSwzLY2yzfWDSXJ139"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1632737856;
- bh=bwj5Nlvd7+gLAn3C8kHQqKK0ZPTE5YjJtsvE/RhOSXQ=;
- h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
- b=vswb5c9YE8f8c06w3ZaoU3mzMO1xbQy6GR682QHm+FSBG80i5K7Im/GAS+DhNMDlmbR
- THPj4uHga3ZvF/I7pGEkQ+ETeBr85/VvFjBgVY1rVwktuIIHQX2ST6zUtONQfrbLsSxgQ
- vEkSDGFzvMhwbwK3QiE8rTTbqgZqhDXKmKY=
-Message-ID: <20210927101728.iRtCBSNHkIeC7xljzISh7Vcxy0o0T6ZNYji9S5uFKtQ@z>
+X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
+ aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
+ <cip-dev@lists.cip-project.org>; Mon, 27 Sep 2021 10:44:06 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6753
 
---2ZwSwzLY2yzfWDSXJ139
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="xgyAXRrhYN0wYx8y"
-Content-Disposition: inline
 
---xgyAXRrhYN0wYx8y
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
+> On 09/27/2021 12:09 PM Pavel Machek <pavel@denx.de> wrote:
+> Unfortunately, we don't have good system for coordinating reviews in
+> -rc phase.
+> 
+> There's a script (commit.py) that produces one-line-per-patch output
+> suitable for review. One possibility would be to have shared place
+> somewhere reviewers could tag "I'm working on these patches".
+> 
+> I don't believe lts-commit-list.git repository is suitable for that;
+> format suitable for review is different from what we have in
+> lts-commit-list, and there is going to be multiple updates per day in
+> busy periods.
+> 
 > We don't really need commit messages for this. Actually, we don't
 > really need to keep history, either. It would be good if system could
 > be controlled from command line for easy scripting.
->=20
+> 
 > Any ideas what kind of service could be used for this?
 
-I guess I should mention alternate possibilities. We could try to
-somehow "hash" the commits... Perhaps I'd review all the patches where
-upstream sha begins with 0-6. But patches in -stable often come in
-series that depend on each other, and it would be good if single
-person reviewed them.
+gitlab comes to mind. IIUC, wiki pages are part of the project, but
+contained in a separate git repository.
 
-We could also split based on first character of subject, or on
-subsystem patch touches. I guess that would have other disadvantages
-like uneven distribution of work when big ammount of btrfs fixes hits
-the -stable.
+The output of commit.py is practically markdown already; just add a
+table header and some extra "|"'s, and you're good.
 
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+There will be a history, but I think that can be safely ignored.
 
---xgyAXRrhYN0wYx8y
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+CU
+Uli
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAmFRmjgACgkQMOfwapXb+vIHYACdFtvruKiKg/Mz7PcHXhiuC/Ik
-mQAAn1rdG4RtRio9uBNiW79vdbe2h4ha
-=3dgf
------END PGP SIGNATURE-----
-
---xgyAXRrhYN0wYx8y--
-
---2ZwSwzLY2yzfWDSXJ139
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-Links: You receive all messages sent to this group.
-View/Reply Online (#6752): https://lists.cip-project.org/g/cip-dev/message/=
-6752
-Mute This Topic: https://lists.cip-project.org/mt/85896746/4520388
-Group Owner: cip-dev+owner@lists.cip-project.org
-Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/10495289/4520388=
-/727948398/xyzzy [cip-dev@archiver.kernel.org]
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-
-
---2ZwSwzLY2yzfWDSXJ139--
