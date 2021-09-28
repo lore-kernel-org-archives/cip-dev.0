@@ -1,19 +1,22 @@
-Return-Path: <chris.paterson2@renesas.com>
+Return-Path: <SRS0=8vho=OS=lists.cip-project.org=bounce+64572+6754+4520388+10495289@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD611C433EF
-	for <webhook@archiver.kernel.org>; Tue, 28 Sep 2021 10:08:16 +0000 (UTC)
-Received: from JPN01-TY1-obe.outbound.protection.outlook.com
- (JPN01-TY1-obe.outbound.protection.outlook.com [40.107.140.129])
+Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D07DDC433F5
+	for <cip-dev@archiver.kernel.org>; Tue, 28 Sep 2021 10:08:16 +0000 (UTC)
+Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by mail.kernel.org (Postfix) with ESMTPS id 5B2F6610A2
+	for <cip-dev@archiver.kernel.org>; Tue, 28 Sep 2021 10:08:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 5B2F6610A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id 8LUFYY4521723xrHKcTjcIY5; Tue, 28 Sep 2021 03:08:16 -0700
+X-Received: from JPN01-TY1-obe.outbound.protection.outlook.com (JPN01-TY1-obe.outbound.protection.outlook.com [40.107.140.129])
  by mx.groups.io with SMTP id smtpd.web10.11908.1632823694304181515
  for <cip-dev@lists.cip-project.org>;
  Tue, 28 Sep 2021 03:08:15 -0700
-Authentication-Results: mx.groups.io;
- dkim=pass header.i=@renesasgroup.onmicrosoft.com
- header.s=selector2-renesasgroup-onmicrosoft-com header.b=IAuVkKWY;
- spf=pass (domain: renesas.com, ip: 40.107.140.129,
- mailfrom: chris.paterson2@renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
  b=V16ziJmkFgRel+Y1nus4AThohK2buozkbG98okQ0dDRgekyLTcHT/toiYaBxOo3xymUHwMcKKZqk6fYkSnhWo9YSpXTc3nodxtEsoMCmAX6YVTqwuZDSULIBi3zgtXvNl9cMnR/2OT/wC7ut1qI4w3Mp76FwaTK4AU3jRG4Yan/RMx2CSU7mjHKduE55my7VgxoeV5t7FU95iAJfBLphVdVFymDfWK/M7mBp3k5vV2p0KgkMfvEOsg+aHro50wyuTs8bx52z7L5kyVyoGD1vsVpfnoaFgMKCdFYda/HTqqMKwrmHEv2PqaMMfqh4z2fohgD4PfC1nFXJVLtGQf+udw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
@@ -23,38 +26,29 @@ ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
  dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kniacGt8ZSIyRVVqKRdJjbiouUTrl/8OAuFoUZnO2Bo=;
- b=IAuVkKWYC9dvysBFWQ0+Q8dU566FncQQq0/7c74g4iuCw2lVaB9c+otEhBSWQIoAoX8OTmgdJ8qTuNlQOCQ0ADY5DjjNMFSbb8P4LygXgMLI+rN/VCLwFYY913LCF9+ziUM9ZCP9kqyAoKZAWsChiQD0gn2M2tOh4ENbwb9msHs=
-Received: from OSZPR01MB6877.jpnprd01.prod.outlook.com (2603:1096:604:13d::6)
+X-Received: from OSZPR01MB6877.jpnprd01.prod.outlook.com (2603:1096:604:13d::6)
  by OSAPR01MB3969.jpnprd01.prod.outlook.com (2603:1096:604:5e::19) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4544.15; Tue, 28 Sep
  2021 10:08:11 +0000
-Received: from OSZPR01MB6877.jpnprd01.prod.outlook.com
+X-Received: from OSZPR01MB6877.jpnprd01.prod.outlook.com
  ([fe80::6496:6d28:639a:158e]) by OSZPR01MB6877.jpnprd01.prod.outlook.com
  ([fe80::6496:6d28:639a:158e%9]) with mapi id 15.20.4544.022; Tue, 28 Sep 2021
  10:08:11 +0000
-From: Chris Paterson <Chris.Paterson2@renesas.com>
+From: "Chris Paterson" <chris.paterson2@renesas.com>
 To: Pavel Machek <pavel@denx.de>, "Bhola, Bikram" <Bikram_Bhola@mentor.com>
 CC: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>, Jan
  Kiszka <jan.kiszka@siemens.com>
-Subject: RE: Prompt timeouts on ipc227e board -- randomness related?
+Subject: Re: [cip-dev] Prompt timeouts on ipc227e board -- randomness related?
 Thread-Topic: Prompt timeouts on ipc227e board -- randomness related?
 Thread-Index: AQHXskjVa8mpvXuxmkSBmLL4hUsxqau5PKug
 Date: Tue, 28 Sep 2021 10:08:11 +0000
-Message-ID: 
- <OSZPR01MB6877A8787F60CB9D584474CAB7A89@OSZPR01MB6877.jpnprd01.prod.outlook.com>
+Message-ID: <OSZPR01MB6877A8787F60CB9D584474CAB7A89@OSZPR01MB6877.jpnprd01.prod.outlook.com>
 References: <20210925200625.GA19637@duo.ucw.cz>
 In-Reply-To: <20210925200625.GA19637@duo.ucw.cz>
 Accept-Language: en-GB, en-US
-Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-authentication-results: denx.de; dkim=none (message not signed)
- header.d=none;denx.de; dmarc=none action=none header.from=renesas.com;
 x-ms-publictraffictype: Email
 x-ms-office365-filtering-correlation-id: 36297b11-0264-4c88-5173-08d98267e0eb
 x-ms-traffictypediagnostic: OSAPR01MB3969:
@@ -63,11 +57,8 @@ x-microsoft-antispam-prvs:
 x-ms-oob-tlc-oobclassifiers: OLM:8273;
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
 x-microsoft-antispam-message-info: 
  7LEGMt6/28sbEhSIjAJ4LzWurYYd3HWO5JrNOvW3uOgSSaiBwLz7XeKg/ie5Wu9t1LYPnmfGvSRUPZ4KKgryfUDe9dWItQlMKi3+iKwaE1Z/33rEnaJdZDa59c7Dp3t61vyyzT5q7FL1jHz4KBMX6lBMXYWZdQOECuKBnCGeFVW7SOUy3QFeQRdYjcvJ1AVQyMfyVIZLqJo3VMu5p3+j9Xdx57iB/WP4gQtY0LmGuQ5707RsdbKAQGzF6bPqTcUDsr9TUMeC3vUmfMwfU+U1E0NZz/i2wyeUx5aPEPxR6IqpkoD0hsDB8Ke7KqdwMYJ9qZA8fm82D3lWlh8+lP357FOpL0WGTl+yVO5QQmlxZaEYwPU8U2u/bq1dGjlj0N5GGUwvs9WfO34kuH2w8mGSqMQq2RjSDqD7rQ2AwaSk5eVB1sjcw1ZWEbe6qoaMbo47Xj9ZgC8bG3qWZtffFIzJ19417Wod8HgWI62E5cU4J5rAlrzczZeQrMFtEzfvrduiz0WMvl/11o5IraNCmxVzl84ZdWh/hQBdq3w0mgEx5Z3SGW02MTQryBh66OIPrJkQki78hpv//7us/dSOMwPQ/d00ar3WlUJzxMNJU2i9MKSw9SpzUicOBDS3P78JVPpWARYkNBrkldimQGMLkp3TYpF9elBcZli1MxT3cPPEjk8P3OvmC7G3EDTaJLRp+OGUbbSkUhei1J4YzypcYNVyFHY6dQwm9pqkn4Z8n15s+/N/a/a/svPqVKVWSCtKFRDAeRsaD8GYxIqu5lMUchKVkyRtsh+XAW4FcZbMQu524ww=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB6877.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(66476007)(83380400001)(76116006)(186003)(8676002)(2906002)(66946007)(26005)(8936002)(54906003)(4326008)(966005)(110136005)(508600001)(38070700005)(86362001)(33656002)(66556008)(64756008)(66446008)(38100700002)(122000001)(9686003)(55016002)(5660300002)(52536014)(316002)(7696005)(6506007)(71200400001);DIR:OUT;SFP:1102;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
  =?utf-8?B?dERvOHBXMk04WUdFNlhVMVk2NmZuOFVkbk1HMk9jQklQaWZKQlBmWitsd2pE?=
@@ -101,27 +92,41 @@ x-ms-exchange-antispam-messagedata-0:
  =?utf-8?B?MVRiVnpuSW5HbWphdE5iU3VGdWhLd0JyOTlrb05rMlVlcFZ1ZWlEVloxSWhF?=
  =?utf-8?Q?AxQMHDyykUaNP23TL0=3D?=
 x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 X-OriginatorOrg: renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB6877.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 
- 36297b11-0264-4c88-5173-08d98267e0eb
+X-MS-Exchange-CrossTenant-Network-Message-Id: 36297b11-0264-4c88-5173-08d98267e0eb
 X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Sep 2021 10:08:11.5281
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 
- F8U4h7HDT+4VTn7X661QBkGbPl1n7ATJ1NgG3+w82aonmmzCCVmRDio+ZTlpk8usaxg5qE08hcEsmHri2/0Pj+6e5AEAr692rpYZYX17tlU=
+X-MS-Exchange-CrossTenant-userprincipalname: F8U4h7HDT+4VTn7X661QBkGbPl1n7ATJ1NgG3+w82aonmmzCCVmRDio+ZTlpk8usaxg5qE08hcEsmHri2/0Pj+6e5AEAr692rpYZYX17tlU=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB3969
+Precedence: Bulk
+List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
+List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
+List-Help: <mailto:cip-dev+help@lists.cip-project.org>
+Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
- aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 28 Sep 2021 10:08:16 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6754
+Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
+Reply-To: cip-dev@lists.cip-project.org
+X-Gm-Message-State: UDRtUJrZWppeHYjBeFgjSc7sx4520388AA=
+Content-Type: multipart/mixed; boundary="u1YxH77B58kPEznTtqa1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1632823696;
+ bh=t+pJP9HkP1xjlEl0aSK/MgG+oMUwAqSMiBTQkWnoZ4g=;
+ h=CC:Content-Type:Date:From:Reply-To:Subject:To;
+ b=a9iohtzvElG0oavfLmVIdnaByFVWOAgUyr+vxb6jFFZYJtD82VpQubKkEnR/q5LtPr7
+ A0DEi5IDp9p7g8HN2Don7nsC8tVExg+CdrZoP8MXAgaogDuJ5W9nHTPYrG+n1l7uphSCB
+ 65gPpgcLU2qy1+RmCR9ZWGCcJzM925Owoz8=
+Message-ID: <20210928100811.ZN-lCGPuLz6UZzvEAm36MqCUyDtyoGDNO-tR512PZ3I@z>
+
+--u1YxH77B58kPEznTtqa1
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
 SGVsbG8gUGF2ZWwsDQoNCj4gRnJvbTogUGF2ZWwgTWFjaGVrIDxwYXZlbEBkZW54LmRlPg0KPiBT
 ZW50OiAyNSBTZXB0ZW1iZXIgMjAyMSAyMTowNg0KPiANCj4gSGkhDQo+IA0KPiBJdCBpcyBub3Qg
@@ -161,3 +166,21 @@ LQ0KPiBERU5YIFNvZnR3YXJlIEVuZ2luZWVyaW5nIEdtYkgsICAgICAgTWFuYWdpbmcgRGlyZWN0
 b3I6IFdvbGZnYW5nIERlbmsNCj4gSFJCIDE2NTIzNSBNdW5pY2gsIE9mZmljZTogS2lyY2hlbnN0
 ci41LCBELTgyMTk0IEdyb2ViZW56ZWxsLCBHZXJtYW55DQo=
 
+--u1YxH77B58kPEznTtqa1
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+Links: You receive all messages sent to this group.
+View/Reply Online (#6754): https://lists.cip-project.org/g/cip-dev/message/=
+6754
+Mute This Topic: https://lists.cip-project.org/mt/85867572/4520388
+Group Owner: cip-dev+owner@lists.cip-project.org
+Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/10495289/4520388=
+/727948398/xyzzy [cip-dev@archiver.kernel.org]
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+
+
+--u1YxH77B58kPEznTtqa1--
