@@ -1,23 +1,24 @@
-Return-Path: <hiraku.toyooka@cybertrust.co.jp>
+Return-Path: <SRS0=Cx9M=OU=lists.cip-project.org=bounce+64572+6766+4520388+10495289@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3079EC433F5
-	for <webhook@archiver.kernel.org>; Thu, 30 Sep 2021 16:13:27 +0000 (UTC)
-Received: from ss11.sbt-mailgate.jp (ss11.sbt-mailgate.jp [202.241.206.53])
+Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51038C433EF
+	for <cip-dev@archiver.kernel.org>; Thu, 30 Sep 2021 16:13:28 +0000 (UTC)
+Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by mail.kernel.org (Postfix) with ESMTPS id 95B57613A9
+	for <cip-dev@archiver.kernel.org>; Thu, 30 Sep 2021 16:13:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 95B57613A9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cybertrust.co.jp
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id sN9SYY4521723xpGbzKH2loc; Thu, 30 Sep 2021 09:13:27 -0700
+X-Received: from ss11.sbt-mailgate.jp (ss11.sbt-mailgate.jp [202.241.206.53])
  by mx.groups.io with SMTP id smtpd.web08.14767.1633018405575401858
  for <cip-dev@lists.cip-project.org>;
  Thu, 30 Sep 2021 09:13:26 -0700
-Authentication-Results: mx.groups.io;
- dkim=missing;
- spf=permerror,
- err=parse error for token &{10 18 _spf.sbt-mailgate.jp}: limit exceeded
- (domain: cybertrust.co.jp, ip: 202.241.206.53,
- mailfrom: hiraku.toyooka@cybertrust.co.jp)
-Received: from mail.sbt-mailgate.jp (sagproxy-out12.sbt-mailgate.jp
- [10.16.47.42]) (envelope sender: <hiraku.toyooka@cybertrust.co.jp>)
-	(not using TLS) by ss11.sbt-mailgate.jp (Active!gate) with ESMTP id
- BBIT30580A;
+X-Received: from mail.sbt-mailgate.jp (sagproxy-out12.sbt-mailgate.jp [10.16.47.42]) (envelope sender: <hiraku.toyooka@cybertrust.co.jp>)
+	(not using TLS) by ss11.sbt-mailgate.jp (Active!gate) with ESMTP id BBIT30580A;
 	Fri,  1 Oct 2021 01:08:19 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
  b=LG1RSq97HT+p689cXnmmpOajzbikz46wVR6nw5WLRFqYLQaG41dtbhsRngsvh4SW3nK9Oft7G1shvZUbK2tVx2LrgH/Z2ljdieudzxMkSNrZHjVBMpOdxpEWCKGTe7gBhtOUrJVluROvVdtj8asxFoD5OzMiNgb3wZ0SxlU+G78DiPoBV1B9QVYyVDSJzjx7Ab3BI81rQay4iaLSkPR59WF3WehvoxBYlsH9qTH7zq7lBLXfnKXb5ndqJsPyX7Dln1gSyxJcA810l4g4Kx/K/8QnFgXUbzoSS5Su2XTkwWFub4NK1F+K/H5PmStYPzOXBx7M+GQvKYYja8apEeTFeQ==
@@ -28,48 +29,34 @@ ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=cybertrust.co.jp; dmarc=pass action=none
  header.from=cybertrust.co.jp; dkim=pass header.d=cybertrust.co.jp; arc=none
-Authentication-Results: siemens.com; dkim=none (message not signed)
- header.d=none;siemens.com; dmarc=none action=none
- header.from=cybertrust.co.jp;
-Received: from OSYPR01MB5333.jpnprd01.prod.outlook.com (2603:1096:604:84::16)
+X-Received: from OSYPR01MB5333.jpnprd01.prod.outlook.com (2603:1096:604:84::16)
  by OSBPR01MB3973.jpnprd01.prod.outlook.com (2603:1096:604:4a::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4544.19; Thu, 30 Sep
  2021 16:08:05 +0000
-Received: from OSYPR01MB5333.jpnprd01.prod.outlook.com
+X-Received: from OSYPR01MB5333.jpnprd01.prod.outlook.com
  ([fe80::d5dd:d52f:613d:22fb]) by OSYPR01MB5333.jpnprd01.prod.outlook.com
  ([fe80::d5dd:d52f:613d:22fb%7]) with mapi id 15.20.4544.022; Thu, 30 Sep 2021
  16:08:05 +0000
-X-Gm-Message-State: AOAM533z7nqXyXsim5zWx8C7n6Jmc33E6nczOkLJpT+hpOv0wWkwLfOl
-	iy0wU6QCNkTYnD7ZUrvm0LiWoh8KO2BObDIf3AO+jw==
-X-Google-Smtp-Source: 
- ABdhPJxF8SW70AdMV+efYUUYzhAA0iZU3xOMviB3ZdEp7c3KL/8uDuqA4IZvFXq2evd54cL+uX/WvDTUGJoZ2waJZXM=
+X-Gm-Message-State: sE2oIRKeVKNgUOFXBI034enXx4520388AA=
+X-Google-Smtp-Source: ABdhPJxF8SW70AdMV+efYUUYzhAA0iZU3xOMviB3ZdEp7c3KL/8uDuqA4IZvFXq2evd54cL+uX/WvDTUGJoZ2waJZXM=
 X-Received: by 2002:a7b:c001:: with SMTP id c1mr39104wmb.182.1633018076768;
  Thu, 30 Sep 2021 09:07:56 -0700 (PDT)
 References: <20210929185624.GA12171@duo.ucw.cz>
 In-Reply-To: <20210929185624.GA12171@duo.ucw.cz>
-From: Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>
+From: "Hiraku Toyooka" <hiraku.toyooka@cybertrust.co.jp>
 Date: Fri,  1 Oct 2021 01:13:21 +0900
-X-Gmail-Original-Message-ID: 
- <CADPJy8XVnAVAcfgxYQtEvCkAC3jN4Pt_PmQ2xUSxN8Z1CjrU=w@mail.gmail.com>
-Message-ID: 
- <CADPJy8XVnAVAcfgxYQtEvCkAC3jN4Pt_PmQ2xUSxN8Z1CjrU=w@mail.gmail.com>
+X-Gmail-Original-Message-ID: <CADPJy8XVnAVAcfgxYQtEvCkAC3jN4Pt_PmQ2xUSxN8Z1CjrU=w@mail.gmail.com>
+Message-ID: <CADPJy8XVnAVAcfgxYQtEvCkAC3jN4Pt_PmQ2xUSxN8Z1CjrU=w@mail.gmail.com>
 Subject: Re: [cip-dev] Quality of wireless drivers (rtl8821ae, ath10k, wl18xx)
 To: cip-dev@lists.cip-project.org
 Cc: jan.kiszka@siemens.com, yasin.demirci@siemens.com
-Content-Type: text/plain; charset="UTF-8"
 X-ClientProxiedBy: AM0P190CA0006.EURP190.PROD.OUTLOOK.COM
  (2603:10a6:208:190::16) To OSYPR01MB5333.jpnprd01.prod.outlook.com
  (2603:1096:604:84::16)
 MIME-Version: 1.0
-Received: from mail-wm1-f51.google.com (209.85.128.51) by
- AM0P190CA0006.EURP190.PROD.OUTLOOK.COM (2603:10a6:208:190::16) with Microsoft
- SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.14 via Frontend
- Transport; Thu, 30 Sep 2021 16:08:05 +0000
-Received: by mail-wm1-f51.google.com with SMTP id
- f78-20020a1c1f51000000b0030cdb3d6079so4724474wmf.3        ;
- Thu, 30 Sep 2021 09:08:05 -0700 (PDT)
+X-Received: from mail-wm1-f51.google.com (209.85.128.51) by AM0P190CA0006.EURP190.PROD.OUTLOOK.COM (2603:10a6:208:190::16) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.14 via Frontend Transport; Thu, 30 Sep 2021 16:08:05 +0000
+X-Received: by mail-wm1-f51.google.com with SMTP id f78-20020a1c1f51000000b0030cdb3d6079so4724474wmf.3        ; Thu, 30 Sep 2021 09:08:05 -0700 (PDT)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-Correlation-Id: 4b0e391b-9162-4de5-041f-08d9842c7ca3
 X-MS-TrafficTypeDiagnostic: OSBPR01MB3973:
@@ -78,11 +65,8 @@ X-Microsoft-Antispam-PRVS:
 X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
 	itmO4vm5LkazS3TCTqmjnI1rLO9Mz84cBamARf7P0y8FAVc+6BiL8fmBFyTVUoniDht+ccLJMFsmarMLkTjXiB163E8/v4X0h3yDre3x6L6pr2cPvYJn4twD7MICaj1l2O0XuXE6wQLB7Xfjx3vfTeDjy6eVABGzPaTA8rBGeFuGTIt0B+p8hallciqgF8WaLG1NUcfvsKEOqh57F70EnkeKblEvkrCmGxPzogpTwrlG3keg6zLAfUhnKnkgP58dwprlqDRyaKmx8d9pms7+g+Z7Pw74B/G82xbCg8jq0l5mBQlNAR4TRwfOTjrJoJL+gKH5DPK238arzTxEdA8RRllJ9sqTVDJpX4uokZ0gw36bSfeP0o0QnLnBaYAuwL3SZxIHXjjlmM841V0emfwjtsEdIuyjd+gRluFtyu+rR7wKmcyRBPLGdqONPX5rPw2C5mbU1RivQsXVapa0Cwa+Izj4mKq+7aAVPFcnWIRHeqH/XOhp77i7PKBq5GK+0C7ScoX8/Oc8UEhTC/ESuso4+ITItFRuI9i/XWIiySnNMSWAwE+vCijXG3D2vKDZnCaQBVECBzP4avvt5EpNq5Buc+kckTJ2VN+p0f0669XTBoF7ZCKBfhhzHPh69LCpmyMlPBnA5NObfDJG4RlgwC0jxM3yvn1MoOtP9zzJRUUCGCRqzB7VdneLdjX1XzbVnwTpqx/KszMOfiLE7E7Wg9b+Sg==
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSYPR01MB5333.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(26005)(8936002)(316002)(55236004)(44832011)(86362001)(8676002)(42186006)(53546011)(34206002)(2906002)(9686003)(66946007)(66556008)(66476007)(4326008)(508600001)(186003)(6666004)(38350700002)(38100700002)(5660300002)(55446002)(52116002);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
 	=?utf-8?B?cTdGMlo0UktRNURlcWNYT0Nyb0t5cEk1QmQ3aktnYjZzOFZqYUdYZ1JkN0Z4?=
@@ -116,8 +100,7 @@ X-MS-Exchange-AntiSpam-MessageData-0:
  =?utf-8?B?YUttWHhiSysyL3QyTjU3WEZzOGNxVHlFckRhOFlwOFdaMGFOcW1FaC9DaW1F?=
  =?utf-8?Q?2hZa1oTLK6Bg1xLXhvNXGhjNP5b7/4V40QRzwZX?=
 X-OriginatorOrg: cybertrust.co.jp
-X-MS-Exchange-CrossTenant-Network-Message-Id: 
- 4b0e391b-9162-4de5-041f-08d9842c7ca3
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4b0e391b-9162-4de5-041f-08d9842c7ca3
 X-MS-Exchange-CrossTenant-AuthSource: OSYPR01MB5333.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2021 16:08:05.5336
@@ -125,14 +108,28 @@ X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2021 16:08:05.5336
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 72cc4624-32b4-4dab-b80a-8563e559bd82
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 
- boBkIlmNQfpD9fzGu4tZHISdCreqTcxT33pSWIf26C7k3RVdH474LeKtbQqdk/fO5Yq4iGzzzEUNRKdnzF7jnXEYdoa2qnbQYYmW8frBuvs=
+X-MS-Exchange-CrossTenant-UserPrincipalName: boBkIlmNQfpD9fzGu4tZHISdCreqTcxT33pSWIf26C7k3RVdH474LeKtbQqdk/fO5Yq4iGzzzEUNRKdnzF7jnXEYdoa2qnbQYYmW8frBuvs=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB3973
+Precedence: Bulk
+List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
+List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
+List-Help: <mailto:cip-dev+help@lists.cip-project.org>
+Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
- aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 30 Sep 2021 16:13:27 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6766
+Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
+Reply-To: cip-dev@lists.cip-project.org
+Content-Type: multipart/mixed; boundary="cgQJioom1VUXNRbTeMKS"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1633018407;
+ bh=2mxdAaXhObCSG+c62pqE8Whs7IkHurwPdOC9OpaINe0=;
+ h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
+ b=rgurqhwbA4YcWQoU/7BzCDjXsBjwBMNToNhUYoTW13GJKpE86GCMvxzD02+VCvEh2zd
+ Avk8J32aU1QjtoY3lpQOSeKuWLfOv+7IBQ7EyMhaTTA1QB++krfpXYP+ks7njU///GyJ5
+ cvdBoixG0/N8rwo0SsQUJxVrjM4xMLaJuEY=
+Message-ID: <20210930161321.1sHFVunTFQDJp0FiOfws32oHUJNEuZWR7tcjA4Y-oJU@z>
+
+--cgQJioom1VUXNRbTeMKS
+Content-Type: text/plain; charset="UTF-8"
 
 Hi!
 
@@ -179,3 +176,21 @@ Best regards,
 Hiraku Toyooka
 Cybertrust Japan Co., Ltd.
 
+--cgQJioom1VUXNRbTeMKS
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+Links: You receive all messages sent to this group.
+View/Reply Online (#6766): https://lists.cip-project.org/g/cip-dev/message/=
+6766
+Mute This Topic: https://lists.cip-project.org/mt/85956701/4520388
+Group Owner: cip-dev+owner@lists.cip-project.org
+Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/10495289/4520388=
+/727948398/xyzzy [cip-dev@archiver.kernel.org]
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+
+
+--cgQJioom1VUXNRbTeMKS--
