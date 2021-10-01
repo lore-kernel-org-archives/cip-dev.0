@@ -1,34 +1,54 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <SRS0=yzFM=OV=lists.cip-project.org=bounce+64572+6768+4520388+10495289@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48D4EC433F5
-	for <webhook@archiver.kernel.org>; Fri,  1 Oct 2021 12:41:48 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25FBBC433FE
+	for <cip-dev@archiver.kernel.org>; Fri,  1 Oct 2021 12:41:49 +0000 (UTC)
+Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by mail.kernel.org (Postfix) with ESMTPS id 610BC6187D
+	for <cip-dev@archiver.kernel.org>; Fri,  1 Oct 2021 12:41:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 610BC6187D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id m9eCYY4521723xmRwOIfzBH1; Fri, 01 Oct 2021 05:41:48 -0700
+X-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
  by mx.groups.io with SMTP id smtpd.web12.7254.1633092105515666459
  for <cip-dev@lists.cip-project.org>;
  Fri, 01 Oct 2021 05:41:47 -0700
-Authentication-Results: mx.groups.io;
- dkim=missing;
- spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+X-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
 	id BF0071C0B80; Fri,  1 Oct 2021 14:41:41 +0200 (CEST)
 Date: Fri, 1 Oct 2021 14:41:41 +0200
-From: Pavel Machek <pavel@denx.de>
+From: "Pavel Machek" <pavel@denx.de>
 To: nobuhiro1.iwamatsu@toshiba.co.jp, cip-dev@lists.cip-project.org
-Subject: Could we get 4.4.285-cip release? ([ANNOUNCE] 4.4.285-rt226 (fwd))
+Subject: [cip-dev] Could we get 4.4.285-cip release? ([ANNOUNCE] 4.4.285-rt226 (fwd))
 Message-ID: <20211001124141.GA23287@duo.ucw.cz>
 MIME-Version: 1.0
+User-Agent: Mutt/1.10.1 (2018-07-13)
+Precedence: Bulk
+List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
+List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
+List-Help: <mailto:cip-dev+help@lists.cip-project.org>
+Sender: cip-dev@lists.cip-project.org
+List-Id: <cip-dev.lists.cip-project.org>
+Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
+Reply-To: cip-dev@lists.cip-project.org
+X-Gm-Message-State: MPmRpsz69mshMJ0M0pf9tqlBx4520388AA=
+Content-Type: multipart/mixed; boundary="tp3dikXy2cNwi98y6VE2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1633092108;
+ bh=U+0CEYDFbQ32zXEgop/op5/IIsPgOs6ZeNbsSsY6Mzw=;
+ h=Content-Type:Date:From:Reply-To:Subject:To;
+ b=vcXKf7qwYns69AJiOZugm/fiIdk8q0aR9ZmnqX8zV1lJgcN2jQcd52ljQGzECv3k0mN
+ 0SJ9z2S+uiVMOfvRmCEQILSP290JYd0vEDofK+7RsysZ8yxTP2QtfRlxqKmPPetjyEVVL
+ vFMt18/cs5GQMBFzdW9OZQESacZQWEJc3rk=
+Message-ID: <20211001124141.mc6c3Fk77qCeSm-hmB3rllt-cZosEmk1BHT9SPbJMD8@z>
+
+--tp3dikXy2cNwi98y6VE2
 Content-Type: multipart/signed; micalg=pgp-sha1;
 	protocol="application/pgp-signature"; boundary="mYCpIKhGyMATD0i+"
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
-List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
- aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 01 Oct 2021 12:41:48 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6768
-
 
 --mYCpIKhGyMATD0i+
 Content-Type: text/plain; charset=utf-8
@@ -737,3 +757,21 @@ iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYVcCBQAKCRAw5/Bqldv6
 
 --mYCpIKhGyMATD0i+--
 
+--tp3dikXy2cNwi98y6VE2
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+Links: You receive all messages sent to this group.
+View/Reply Online (#6768): https://lists.cip-project.org/g/cip-dev/message/=
+6768
+Mute This Topic: https://lists.cip-project.org/mt/85998312/4520388
+Group Owner: cip-dev+owner@lists.cip-project.org
+Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/10495289/4520388=
+/727948398/xyzzy [cip-dev@archiver.kernel.org]
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+
+
+--tp3dikXy2cNwi98y6VE2--
