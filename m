@@ -1,108 +1,80 @@
-Return-Path: <SRS0=04A2=OY=lists.cip-project.org=bounce+64572+6776+4520388+10495289@kernel.org>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA5FC43217
-	for <cip-dev@archiver.kernel.org>; Mon,  4 Oct 2021 13:40:06 +0000 (UTC)
-Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 8DCBA611F2
-	for <cip-dev@archiver.kernel.org>; Mon,  4 Oct 2021 13:40:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 8DCBA611F2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id nAPFYY4521723x0KVpcZxIDo; Mon, 04 Oct 2021 06:40:05 -0700
-X-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web08.9437.1633354803557079464
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F837C433FE
+	for <webhook@archiver.kernel.org>; Mon,  4 Oct 2021 13:44:41 +0000 (UTC)
+Received: from lizzard.sbs.de (lizzard.sbs.de [194.138.37.39])
+ by mx.groups.io with SMTP id smtpd.web12.9507.1633355079911581361
  for <cip-dev@lists.cip-project.org>;
- Mon, 04 Oct 2021 06:40:04 -0700
-X-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 2B4A21C0B76; Mon,  4 Oct 2021 15:39:49 +0200 (CEST)
-Date: Mon, 4 Oct 2021 15:39:46 +0200
-From: "Pavel Machek" <pavel@denx.de>
-To: jan.kiszka@siemens.com, cip-dev@lists.cip-project.org,
-	Chris.Paterson2@renesas.com
-Subject: [cip-dev] [ANNOUNCE] v4.4.285-cip63-rt36 (-rt226)
-Message-ID: <20211004133946.GA2724@duo.ucw.cz>
+ Mon, 04 Oct 2021 06:44:40 -0700
+Authentication-Results: mx.groups.io;
+ dkim=missing;
+ spf=pass (domain: siemens.com, ip: 194.138.37.39, mailfrom: jan.kiszka@siemens.com)
+Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
+	by lizzard.sbs.de (8.15.2/8.15.2) with ESMTPS id 194DiaPa028909
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 4 Oct 2021 15:44:37 +0200
+Received: from [167.87.3.213] ([167.87.3.213])
+	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 194Diaco010822;
+	Mon, 4 Oct 2021 15:44:36 +0200
+Subject: Re: [PATCH v2] kas/opt/swupdate: Change assignment of IMAGE_TYPE and
+ WKS_FILE
+To: "Q. Gylstorff" <Quirin.Gylstorff@siemens.com>,
+        cip-dev@lists.cip-project.org, dinesh.kumar@toshiba-tsip.com
+References: <be00776f-c1c5-9c84-c904-2d8e17cc298d@siemens.com>
+ <20211004132713.1827767-1-Quirin.Gylstorff@siemens.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Message-ID: <dedb4f99-d18f-de18-53c9-170f2fea471e@siemens.com>
+Date: Mon, 4 Oct 2021 15:44:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-User-Agent: Mutt/1.10.1 (2018-07-13)
-Precedence: Bulk
-List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
-List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
-List-Help: <mailto:cip-dev+help@lists.cip-project.org>
-Sender: cip-dev@lists.cip-project.org
+In-Reply-To: <20211004132713.1827767-1-Quirin.Gylstorff@siemens.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 List-Id: <cip-dev.lists.cip-project.org>
-Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
-Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: KVO7xtgYdZf8trUxcF0HrfTbx4520388AA=
-Content-Type: multipart/mixed; boundary="NnhhwlyG8DZHVBfIGslE"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1633354805;
- bh=MBegrbnHi+uAaNCOrFKlsGgt9xgFMyM+2+n+S0Jspb8=;
- h=Content-Type:Date:From:Reply-To:Subject:To;
- b=AQB25ndXDgXUcton77VI7fgGcYSzW1gAdaSFqkU5VGx92C0nDdr9ATRcQfQ/iC6sCCq
- 6S6VHF5P0N1uD8L7r/TMO3LZu9WeCep4xkzThnt9yvdJ8etJ0UDs3c8LGkwUFcEXE0d6X
- 614lsxyCKNzynlTLSeudCcf5uyHE181V/1s=
-Message-ID: <20211004133946.yICdyviL801hkVleL8EhG_escN38bLcQ84b4tGb1FXE@z>
+X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
+ aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
+ <cip-dev@lists.cip-project.org>; Mon, 04 Oct 2021 13:44:41 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6777
 
---NnhhwlyG8DZHVBfIGslE
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/04w6evG8XlLl3ft"
-Content-Disposition: inline
+On 04.10.21 15:27, Q. Gylstorff wrote:
+> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+> 
+> Replace the default assignment to ensure the generation of the
+> swu file. As stated in [1]: If multiple `?=` assignments are used
+> the first of those assignments ends up getting used.
+> 
+> This fixes [2].
+> 
+> [1]: https://docs.yoctoproject.org/bitbake/bitbake-user-manual/bitbake-user-manual-metadata.html#setting-a-default-value
+> [2]: https://gitlab.com/cip-project/cip-core/isar-cip-core/-/issues/14
+> 
+> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+> ---
+>  kas/opt/swupdate.yml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kas/opt/swupdate.yml b/kas/opt/swupdate.yml
+> index 7d86ad5..bd0f6e4 100644
+> --- a/kas/opt/swupdate.yml
+> +++ b/kas/opt/swupdate.yml
+> @@ -19,5 +19,5 @@ local_conf_header:
+>      IMAGE_INSTALL_append = " swupdate"
+>  
+>    wic-swu: |
+> -    IMAGE_TYPE ?= "wic-swu-img"
+> +    IMAGE_TYPE = "wic-swu-img"
+>      WKS_FILE ?= "${MACHINE}-${SWUPDATE_BOOTLOADER}.wks"
+> 
 
---/04w6evG8XlLl3ft
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks, replaced v1 with this in next.
 
-Hi!
+Jan
 
-New realtime trees should be available at kernel.org.
+-- 
+Siemens AG, T RDA IOT
+Corporate Competence Center Embedded Linux
 
-Trees are available at
-
-https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=3D=
-linux-4.4.y-cip-rt
-https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=3D=
-linux-4.4.y-cip-rt-rebase
-
-And their content should be identical.
-
-Best regards,
-                                                                Pavel
-
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---/04w6evG8XlLl3ft
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYVsEIgAKCRAw5/Bqldv6
-8rPSAJ9WnRzUbXQdqqZgIvAYvDdJw0FIAACfeT6/SszAdcN7JdgpmetCdmMFzyo=
-=KY5x
------END PGP SIGNATURE-----
-
---/04w6evG8XlLl3ft--
-
---NnhhwlyG8DZHVBfIGslE
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-Links: You receive all messages sent to this group.
-View/Reply Online (#6776): https://lists.cip-project.org/g/cip-dev/message/=
-6776
-Mute This Topic: https://lists.cip-project.org/mt/86066546/4520388
-Group Owner: cip-dev+owner@lists.cip-project.org
-Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/10495289/4520388=
-/727948398/xyzzy [cip-dev@archiver.kernel.org]
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-
-
---NnhhwlyG8DZHVBfIGslE--
