@@ -1,43 +1,63 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <SRS0=6zC1=OZ=lists.cip-project.org=bounce+64572+6784+4520388+10495289@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90A73C433EF
-	for <webhook@archiver.kernel.org>; Tue,  5 Oct 2021 13:06:01 +0000 (UTC)
-Received: from david.siemens.de (david.siemens.de [192.35.17.14])
+Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC84CC433F5
+	for <cip-dev@archiver.kernel.org>; Tue,  5 Oct 2021 13:08:24 +0000 (UTC)
+Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by mail.kernel.org (Postfix) with ESMTPS id 4F42261354
+	for <cip-dev@archiver.kernel.org>; Tue,  5 Oct 2021 13:08:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 4F42261354
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=siemens.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id 4N0SYY4521723xW6bVIrUPR2; Tue, 05 Oct 2021 06:08:24 -0700
+X-Received: from david.siemens.de (david.siemens.de [192.35.17.14])
  by mx.groups.io with SMTP id smtpd.web11.21.1633439159878238899
  for <cip-dev@lists.cip-project.org>;
  Tue, 05 Oct 2021 06:06:00 -0700
-Authentication-Results: mx.groups.io;
- dkim=missing;
- spf=pass (domain: siemens.com, ip: 192.35.17.14, mailfrom: jan.kiszka@siemens.com)
-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
+X-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
 	by david.siemens.de (8.15.2/8.15.2) with ESMTPS id 195D5uPh010591
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Tue, 5 Oct 2021 15:05:57 +0200
-Received: from [167.87.39.245] ([167.87.39.245])
+X-Received: from [167.87.39.245] ([167.87.39.245])
 	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 195D5uMH002385;
 	Tue, 5 Oct 2021 15:05:56 +0200
-Subject: Re: [cip-dev] [isar-cip-dev] [PATCH] Uprevision cip-kernels to latest
- one
+Subject: Re: [cip-dev] [isar-cip-dev] [PATCH] Uprevision cip-kernels to latest one
 To: cip-dev@lists.cip-project.org
 Cc: Srinuvasan A <srinuvasan_a@mentor.com>
 References: <20211005064703.B-_uDfQwwzE6k0feU9U2_E4YZ8onL3WNkUYUyjPUhXs@z>
-From: Jan Kiszka <jan.kiszka@siemens.com>
+From: "Jan Kiszka" <jan.kiszka@siemens.com>
 Message-ID: <c2435647-ce3a-38aa-2285-28232a7eb8e7@siemens.com>
 Date: Tue, 5 Oct 2021 15:05:56 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.13.0
 MIME-Version: 1.0
 In-Reply-To: <20211005064703.B-_uDfQwwzE6k0feU9U2_E4YZ8onL3WNkUYUyjPUhXs@z>
+Precedence: Bulk
+List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
+List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
+List-Help: <mailto:cip-dev+help@lists.cip-project.org>
+Sender: cip-dev@lists.cip-project.org
+List-Id: <cip-dev.lists.cip-project.org>
+Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
+Reply-To: cip-dev@lists.cip-project.org
+X-Gm-Message-State: cdqRqOjQbZYWC7MdOjiOWR8Tx4520388AA=
+Content-Type: multipart/mixed; boundary="afzLEyAUjLRX66oIZWzn"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1633439304;
+ bh=syk4Jm0byqOYSREvKB2T7EBuo/qFAddGJFhLqKbkxbY=;
+ h=Cc:Content-Type:Date:From:Reply-To:Subject:To;
+ b=HT6IVQ6AES/SU5OOLdqxX00A+NIsKW2PJNE25eCVqjNwY2LfZk6NxUfQjNQBCuiZP/k
+ D0SEdAC7RI1HFOxLAOs+FXpnVo/6inXfrAEqRZem3y8jVmQQDRwNyEFxF23eHni9eNK1E
+ 1mo/TSfxTE0PmD45lGeqUsitKYM+piuPopI=
+Message-ID: <20211005130556.rqR2t1hmQ6JiXvWPBi3nltiidFoOGjPRbqf3CJY76JM@z>
+
+--afzLEyAUjLRX66oIZWzn
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
- aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 05 Oct 2021 13:06:01 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6784
 
 On 05.10.21 08:47, Srinuvasan A wrote:
 > From: Srinuvasan A <srinuvasan_a@mentor.com>
@@ -119,3 +139,21 @@ Jan
 Siemens AG, T RDA IOT
 Corporate Competence Center Embedded Linux
 
+--afzLEyAUjLRX66oIZWzn
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+Links: You receive all messages sent to this group.
+View/Reply Online (#6784): https://lists.cip-project.org/g/cip-dev/message/=
+6784
+Mute This Topic: https://lists.cip-project.org/mt/86087678/4520388
+Group Owner: cip-dev+owner@lists.cip-project.org
+Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/10495289/4520388=
+/727948398/xyzzy [cip-dev@archiver.kernel.org]
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+
+
+--afzLEyAUjLRX66oIZWzn--
