@@ -1,121 +1,136 @@
-Return-Path: <SRS0=TYKz=OZ=lists.cip-project.org=bounce+64572+6788+4520388+10495289@kernel.org>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 227D5C4167B
-	for <cip-dev@archiver.kernel.org>; Tue,  5 Oct 2021 14:13:52 +0000 (UTC)
-Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 96D4E611F2
-	for <cip-dev@archiver.kernel.org>; Tue,  5 Oct 2021 14:13:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 96D4E611F2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=siemens.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id NLEYYY4521723xDPLz7tLA11; Tue, 05 Oct 2021 07:13:50 -0700
-X-Received: from goliath.siemens.de (goliath.siemens.de [192.35.17.28])
- by mx.groups.io with SMTP id smtpd.web09.985.1633443229738818309
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7873C43219
+	for <webhook@archiver.kernel.org>; Tue,  5 Oct 2021 14:13:51 +0000 (UTC)
+Received: from gecko.sbs.de (gecko.sbs.de [194.138.37.40])
+ by mx.groups.io with SMTP id smtpd.web09.984.1633443229704685303
  for <cip-dev@lists.cip-project.org>;
  Tue, 05 Oct 2021 07:13:50 -0700
-X-Received: from mail1.sbs.de (mail1.sbs.de [192.129.41.35])
-	by goliath.siemens.de (8.15.2/8.15.2) with ESMTPS id 195EDlVE031990
+Authentication-Results: mx.groups.io;
+ dkim=missing;
+ spf=pass (domain: siemens.com, ip: 194.138.37.40, mailfrom: quirin.gylstorff@siemens.com)
+Received: from mail1.sbs.de (mail1.sbs.de [192.129.41.35])
+	by gecko.sbs.de (8.15.2/8.15.2) with ESMTPS id 195EDkbT023567
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
 	for <cip-dev@lists.cip-project.org>; Tue, 5 Oct 2021 16:13:47 +0200
-X-Received: from md2dvrtc.fritz.box ([167.87.1.239])
-	by mail1.sbs.de (8.15.2/8.15.2) with ESMTP id 195EDkBq022271;
-	Tue, 5 Oct 2021 16:13:47 +0200
-From: "Quirin Gylstorff" <quirin.gylstorff@siemens.com>
+Received: from md2dvrtc.fritz.box ([167.87.1.239])
+	by mail1.sbs.de (8.15.2/8.15.2) with ESMTP id 195EDkBn022271;
+	Tue, 5 Oct 2021 16:13:46 +0200
+From: "Q. Gylstorff" <Quirin.Gylstorff@siemens.com>
 To: jan.kiszka@siemens.com, cip-dev@lists.cip-project.org
-Subject: [cip-dev][isar-cip-core][PATCH 3/4] swupdate-handler: Use same lua version as swupdate-debian-gbp
-Date: Tue,  5 Oct 2021 16:13:45 +0200
-Message-ID: <20211005141346.2682677-4-Quirin.Gylstorff@siemens.com>
-In-Reply-To: <20211005141346.2682677-1-Quirin.Gylstorff@siemens.com>
-References: <20211005141346.2682677-1-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH 0/4] Use SWUpdate from
+ salsa.debian.org
+Date: Tue,  5 Oct 2021 16:13:42 +0200
+Message-Id: <20211005141346.2682677-1-Quirin.Gylstorff@siemens.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Precedence: Bulk
-List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
-List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
-List-Help: <mailto:cip-dev+help@lists.cip-project.org>
-Sender: cip-dev@lists.cip-project.org
-List-Id: <cip-dev.lists.cip-project.org>
-Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
-Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: NgmQvoONCJsPBXkhltp5SyuLx4520388AA=
-Content-Type: multipart/mixed; boundary="BPz8m5zKvRxV2GHddtLS"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1633443230;
- bh=w+ZY01L5w9OsAPIxtj1XmK5EroA9YfBtYjbLThzxzVM=;
- h=Content-Type:Date:From:Reply-To:Subject:To;
- b=qngWQFeEcjBF/fxeiAlL6NLth7igJop4W8ZRa3J8t+3oNwMJF4YrwZkDjqkwyHWGdxL
- LV+7RlmofVcijLY0QNTZwjcvZ16YDlA+9NPyXrYe25AxCv7GWLupLwkUUZFJ1p8j8E+fG
- NnpyPuL2Pyb7zSd44PsX8hTsxxVHYQOK4/c=
-Message-ID: <20211005141345.CWj8R_26ESFMlPFan-3RIgNbDph-xpKIWaGUhIuUltA@z>
-
---BPz8m5zKvRxV2GHddtLS
 Content-Transfer-Encoding: 8bit
+List-Id: <cip-dev.lists.cip-project.org>
+X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
+ aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
+ <cip-dev@lists.cip-project.org>; Tue, 05 Oct 2021 14:13:51 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6786
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
----
- .../swupdate-handlers/swupdate-handlers_0.1.bb        | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+This patch series uses the source from sala.debian.org for the build of SWUpdate.
 
-diff --git a/recipes-core/swupdate-handlers/swupdate-handlers_0.1.bb b/recipes-core/swupdate-handlers/swupdate-handlers_0.1.bb
-index b6cb30d..b96a6af 100644
---- a/recipes-core/swupdate-handlers/swupdate-handlers_0.1.bb
-+++ b/recipes-core/swupdate-handlers/swupdate-handlers_0.1.bb
-@@ -10,26 +10,25 @@
- 
- inherit dpkg-raw
- 
--DEPENDS = "swupdate"
--DEBIAN_DEPENDS = "swupdate"
--
- SRC_URI += " ${@ 'git://gitlab.com/cip-project/cip-sw-updates/swupdate-handler-roundrobin.git;protocol=https;destsuffix=swupdate-handler-roundrobin;name=swupdate-handler-roundrobin;nobranch=1' \
-     if d.getVar('SWUPDATE_USE_ROUND_ROBIN_HANDLER_REPO') == '1' else '' \
-     }"
- SRCREV_swupdate-handler-roundrobin ?= "6f561f136fdbe51d2e9066b934dfcb06b94c6624"
- 
- SWUPDATE_USE_ROUND_ROBIN_HANDLER_REPO ?= "1"
--SWUPDATE_LUASCRIPT ?= "swupdate-handler-roundrobin/swupdate_handlers_roundrobin.lua"
-+SWUPDATE_LUASCRIPT ?= "${@ 'swupdate-handler-roundrobin/swupdate_handlers_roundrobin.lua' \
-+                           if d.getVar('SWUPDATE_USE_ROUND_ROBIN_HANDLER_REPO') == '1' else '' }"
- 
- 
- SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG ?= "swupdate.handler.${SWUPDATE_BOOTLOADER}.ini"
- SRC_URI += "${@('file://' + d.getVar('SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG')) if d.getVar('SWUPDATE_BOOTLOADER') else ''}"
- 
-+# lua version 5.2 is currently hard coded in swupdate @ debian salsa
- do_install[cleandirs] = "${D}/etc \
--                         ${D}/usr/share/lua/5.3"
-+                         ${D}/usr/share/lua/5.2"
- do_install() {
-     if [ -e ${WORKDIR}/${SWUPDATE_LUASCRIPT} ]; then
--        install -m 0644 ${WORKDIR}/${SWUPDATE_LUASCRIPT} ${D}/usr/share/lua/5.3/swupdate_handlers.lua
-+        install -m 0644 ${WORKDIR}/${SWUPDATE_LUASCRIPT} ${D}/usr/share/lua/5.2/swupdate_handlers.lua
-     fi
-     if [ -e ${WORKDIR}/${SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG} ]; then
-        install -m 0644 ${WORKDIR}/${SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG} ${D}/etc/swupdate.handler.ini
+The build is patched to contain most of the previous build option from swupdate-config.bbclass.
+
+The recipes support Debian Buster and Debian Bullseye.
+
+Quirin Gylstorff (4):
+  swupdate: Move handler to own recipe
+  swupdate: Use dpkg-gbp build with salsa
+  swupdate-handler: Use same lua version as swupdate-debian-gbp
+  swupdate: remove version 2021.04+isar-git
+
+ classes/kconfig-snippets.bbclass              | 90 -------------------
+ classes/swupdate-config.bbclass               | 89 ------------------
+ kas/opt/swupdate.yml                          |  1 +
+ .../swupdate.handler.efibootguard.ini         |  0
+ .../files/swupdate.handler.efibootguard.ini   |  0
+ .../swupdate-handlers_0.1.bb                  | 36 ++++++++
+ ...dd-option-to-build-with-efibootguard.patch | 39 ++++++++
+ .../0002-debian-rules-Add-CONFIG_MTD.patch    | 27 ++++++
+ ...-debian-config-Make-signing-optional.patch | 40 +++++++++
+ ...onfig-Make-image-encryption-optional.patch | 40 +++++++++
+ ...ules-Add-Embedded-Lua-handler-option.patch | 30 +++++++
+ ...es-Add-option-to-disable-fs-creation.patch | 47 ++++++++++
+ ...ules-Add-option-to-disable-webserver.patch | 42 +++++++++
+ ...Make-CONFIG_HW_COMPATIBILTY-optional.patch | 40 +++++++++
+ ...ules-Add-Embedded-Lua-handler-option.patch | 30 +++++++
+ ...prepare-build-for-isar-debian-buster.patch | 72 +++++++++++++++
+ .../swupdate/files/debian/changelog.tmpl      |  6 --
+ recipes-core/swupdate/files/debian/compat     |  1 -
+ .../swupdate/files/debian/control.tmpl        | 15 ----
+ recipes-core/swupdate/files/debian/copyright  | 36 --------
+ recipes-core/swupdate/files/debian/rules.tmpl | 31 -------
+ .../swupdate/files/debian/swupdate.examples   |  2 -
+ .../swupdate/files/debian/swupdate.install    |  2 -
+ .../swupdate/files/debian/swupdate.manpages   |  5 --
+ .../swupdate/files/debian/swupdate.tmpfile    |  2 -
+ recipes-core/swupdate/files/debian/watch      | 12 ---
+ recipes-core/swupdate/files/postinst          |  2 -
+ recipes-core/swupdate/files/swupdate.cfg      |  6 --
+ .../swupdate/files/swupdate.service.example   | 11 ---
+ .../swupdate/files/swupdate.socket.example    | 11 ---
+ .../swupdate/files/swupdate.socket.tmpl       | 13 ---
+ .../swupdate/files/swupdate_defconfig         | 83 -----------------
+ .../swupdate_defconfig_efibootguard.snippet   |  3 -
+ .../files/swupdate_defconfig_lua.snippet      |  2 -
+ .../swupdate_defconfig_luahandler.snippet     |  4 -
+ .../files/swupdate_defconfig_mtd.snippet      |  1 -
+ .../files/swupdate_defconfig_u-boot.snippet   |  3 -
+ .../files/swupdate_defconfig_ubi.snippet      |  6 --
+ recipes-core/swupdate/swupdate.bb             | 61 -------------
+ recipes-core/swupdate/swupdate.inc            | 54 +++++++++++
+ .../swupdate/swupdate_2021.04-1+debian-gbp.bb | 47 ++++++++++
+ 41 files changed, 545 insertions(+), 497 deletions(-)
+ delete mode 100644 classes/kconfig-snippets.bbclass
+ delete mode 100644 classes/swupdate-config.bbclass
+ rename recipes-core/{swupdate => swupdate-handlers}/files/secureboot/swupdate.handler.efibootguard.ini (100%)
+ rename recipes-core/{swupdate => swupdate-handlers}/files/swupdate.handler.efibootguard.ini (100%)
+ create mode 100644 recipes-core/swupdate-handlers/swupdate-handlers_0.1.bb
+ create mode 100644 recipes-core/swupdate/files/0001-debian-Add-option-to-build-with-efibootguard.patch
+ create mode 100644 recipes-core/swupdate/files/0002-debian-rules-Add-CONFIG_MTD.patch
+ create mode 100644 recipes-core/swupdate/files/0003-debian-config-Make-signing-optional.patch
+ create mode 100644 recipes-core/swupdate/files/0004-debian-config-Make-image-encryption-optional.patch
+ create mode 100644 recipes-core/swupdate/files/0005-debian-rules-Add-Embedded-Lua-handler-option.patch
+ create mode 100644 recipes-core/swupdate/files/0005-debian-rules-Add-option-to-disable-fs-creation.patch
+ create mode 100644 recipes-core/swupdate/files/0006-debian-rules-Add-option-to-disable-webserver.patch
+ create mode 100644 recipes-core/swupdate/files/0007-debian-Make-CONFIG_HW_COMPATIBILTY-optional.patch
+ create mode 100644 recipes-core/swupdate/files/0008-debian-rules-Add-Embedded-Lua-handler-option.patch
+ create mode 100644 recipes-core/swupdate/files/0009-debian-prepare-build-for-isar-debian-buster.patch
+ delete mode 100644 recipes-core/swupdate/files/debian/changelog.tmpl
+ delete mode 100644 recipes-core/swupdate/files/debian/compat
+ delete mode 100644 recipes-core/swupdate/files/debian/control.tmpl
+ delete mode 100644 recipes-core/swupdate/files/debian/copyright
+ delete mode 100755 recipes-core/swupdate/files/debian/rules.tmpl
+ delete mode 100644 recipes-core/swupdate/files/debian/swupdate.examples
+ delete mode 100644 recipes-core/swupdate/files/debian/swupdate.install
+ delete mode 100644 recipes-core/swupdate/files/debian/swupdate.manpages
+ delete mode 100644 recipes-core/swupdate/files/debian/swupdate.tmpfile
+ delete mode 100644 recipes-core/swupdate/files/debian/watch
+ delete mode 100644 recipes-core/swupdate/files/postinst
+ delete mode 100644 recipes-core/swupdate/files/swupdate.cfg
+ delete mode 100644 recipes-core/swupdate/files/swupdate.service.example
+ delete mode 100644 recipes-core/swupdate/files/swupdate.socket.example
+ delete mode 100644 recipes-core/swupdate/files/swupdate.socket.tmpl
+ delete mode 100644 recipes-core/swupdate/files/swupdate_defconfig
+ delete mode 100644 recipes-core/swupdate/files/swupdate_defconfig_efibootguard.snippet
+ delete mode 100644 recipes-core/swupdate/files/swupdate_defconfig_lua.snippet
+ delete mode 100644 recipes-core/swupdate/files/swupdate_defconfig_luahandler.snippet
+ delete mode 100644 recipes-core/swupdate/files/swupdate_defconfig_mtd.snippet
+ delete mode 100644 recipes-core/swupdate/files/swupdate_defconfig_u-boot.snippet
+ delete mode 100644 recipes-core/swupdate/files/swupdate_defconfig_ubi.snippet
+ delete mode 100644 recipes-core/swupdate/swupdate.bb
+ create mode 100644 recipes-core/swupdate/swupdate.inc
+ create mode 100644 recipes-core/swupdate/swupdate_2021.04-1+debian-gbp.bb
+
 -- 
 2.30.2
 
 
---BPz8m5zKvRxV2GHddtLS
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-Links: You receive all messages sent to this group.
-View/Reply Online (#6788): https://lists.cip-project.org/g/cip-dev/message/=
-6788
-Mute This Topic: https://lists.cip-project.org/mt/86094387/4520388
-Group Owner: cip-dev+owner@lists.cip-project.org
-Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/10495289/4520388=
-/727948398/xyzzy [cip-dev@archiver.kernel.org]
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-
-
---BPz8m5zKvRxV2GHddtLS--
