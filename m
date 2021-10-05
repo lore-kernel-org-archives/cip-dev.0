@@ -1,49 +1,67 @@
-Return-Path: <srinuvasan_a@mentor.com>
+Return-Path: <SRS0=yZwu=OZ=lists.cip-project.org=bounce+64572+6783+4520388+10495289@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C07FC433F5
-	for <webhook@archiver.kernel.org>; Tue,  5 Oct 2021 06:47:38 +0000 (UTC)
-Received: from esa3.mentor.iphmx.com (esa3.mentor.iphmx.com [68.232.137.180])
+Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61160C433EF
+	for <cip-dev@archiver.kernel.org>; Tue,  5 Oct 2021 06:47:39 +0000 (UTC)
+Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by mail.kernel.org (Postfix) with ESMTPS id B542661381
+	for <cip-dev@archiver.kernel.org>; Tue,  5 Oct 2021 06:47:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org B542661381
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id SHtuYY4521723xo47ul4wc8q; Mon, 04 Oct 2021 23:47:38 -0700
+X-Received: from esa3.mentor.iphmx.com (esa3.mentor.iphmx.com [68.232.137.180])
  by mx.groups.io with SMTP id smtpd.web12.22031.1633416457398517605
  for <cip-dev@lists.cip-project.org>;
  Mon, 04 Oct 2021 23:47:37 -0700
-Authentication-Results: mx.groups.io;
- dkim=missing;
- spf=pass (domain: mentor.com, ip: 68.232.137.180, mailfrom: srinuvasan_a@mentor.com)
-IronPort-SDR: 
- 2N5u3xeHcXXk0pAdhV+7HcnYZQkdDh637QCY+mxxL7FRFkWpaeHkNRsB/Dab+C0zccNjXx5P6l
+IronPort-SDR: 2N5u3xeHcXXk0pAdhV+7HcnYZQkdDh637QCY+mxxL7FRFkWpaeHkNRsB/Dab+C0zccNjXx5P6l
  g7WEzLmlI8KsnRZrRHPKvtBoRXvoX0F4lH39/a7OBwFQ7+QwFWiOwbzaYtEFWL/snMD0Snm7bZ
  +e47ld0f6Gfcgxl8+6jEbZEyK5EZZZAcrVavdVMz3z3bXd6eEeDBfVgsaJgOOLfF0LWo9Ls+bB
  dHkIEqyeftyPuoeNp7PQuWEAt9utBZgXQi10zgwTpsyWLshF/x2zZAhVWns7WGuIHmaneM8n5h
  aFvdrdHHPUmBTvlkp03tb2BU
-X-IronPort-AV: E=Sophos;i="5.85,347,1624348800";
+X-IronPort-AV: E=Sophos;i="5.85,347,1624348800"; 
    d="scan'208";a="66651386"
-Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
+X-Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
   by esa3.mentor.iphmx.com with ESMTP; 04 Oct 2021 22:47:35 -0800
-IronPort-SDR: 
- LLkByXEY59c5CMlml69w9RWTzqLjjoldACmoFazyEMwBsqfhHq+WtExn6AXso4BaUZNfaG64qu
+IronPort-SDR: LLkByXEY59c5CMlml69w9RWTzqLjjoldACmoFazyEMwBsqfhHq+WtExn6AXso4BaUZNfaG64qu
  BQB8v7cFA5HM+CKzK7k8x7YJCJBb5I6fd7QstKffHNYGW/3lPpGjAL1YPawQcBgfmOlTxWX196
  VoC1Pm6FdjvAD7YFUSZIYy9mKuucoQmTjXzi220HFBP6/egtbGDwe5n/e1DRTFVQxtXhobCxAY
  YHMAu5f8JOPfbF2QJFeABZd1RF8hfalyU9jkgi9HdWdIyBaJ/mse51D86Z8/BI7P+B6kyUSIFE
  4Io=
-From: Srinuvasan A <Srinuvasan_A@mentor.com>
+From: "Srinuvasan A" <srinuvasan_a@mentor.com>
 To: <cip-dev@lists.cip-project.org>
 CC: Srinuvasan A <srinuvasan_a@mentor.com>
-Subject: [isar-cip-dev] [PATCH] Uprevision cip-kernels to latest one
+Subject: [cip-dev] [isar-cip-dev] [PATCH] Uprevision cip-kernels to latest one
 Date: Tue, 5 Oct 2021 12:17:03 +0530
 Message-ID: <20211005064703.1202931-1-Srinuvasan_A@mentor.com>
-X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 X-ClientProxiedBy: SVR-ORW-MBX-07.mgc.mentorg.com (147.34.90.207) To
  svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201)
+Precedence: Bulk
+List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
+List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
+List-Help: <mailto:cip-dev+help@lists.cip-project.org>
+Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
- aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 05 Oct 2021 06:47:38 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6783
+Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
+Reply-To: cip-dev@lists.cip-project.org
+X-Gm-Message-State: Sto1j2liiZKD4Z2tNHauWZiHx4520388AA=
+Content-Type: multipart/mixed; boundary="BBODWLtQyhtJxWylWZRE"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1633416458;
+ bh=VtgmHCZwVraZy+nvcsfscdalc9i7DIev21eZAJn9xlg=;
+ h=CC:Content-Type:Date:From:Reply-To:Subject:To;
+ b=kXPV6K5+I0xxNNcHI4JCqpPWajNJrOYzIXNKb1fYyIBPx+Qmk1J0pr99U1yG7pmJu82
+ U+owTwtEPRCVEogciMEJ9ikM/ChXGsRB+UYKVZqhQFFL9Bk3ZjDkj9A+4XsZ/+K24eR3K
+ nXHhK+qkuc1tepXv8+CFWC998N4QDjsJBQs=
+Message-ID: <20211005064703.B-_uDfQwwzE6k0feU9U2_E4YZ8onL3WNkUYUyjPUhXs@z>
+
+--BBODWLtQyhtJxWylWZRE
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
 From: Srinuvasan A <srinuvasan_a@mentor.com>
 
@@ -117,3 +135,21 @@ index e883794..bcb754d 100644
 2.25.1
 
 
+--BBODWLtQyhtJxWylWZRE
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+Links: You receive all messages sent to this group.
+View/Reply Online (#6783): https://lists.cip-project.org/g/cip-dev/message/=
+6783
+Mute This Topic: https://lists.cip-project.org/mt/86087678/4520388
+Group Owner: cip-dev+owner@lists.cip-project.org
+Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/10495289/4520388=
+/727948398/xyzzy [cip-dev@archiver.kernel.org]
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+
+
+--BBODWLtQyhtJxWylWZRE--
