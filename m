@@ -1,42 +1,60 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <SRS0=Qs8G=PB=lists.cip-project.org=bounce+64572+6816+4520388+10495289@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD970C43219
-	for <webhook@archiver.kernel.org>; Wed, 13 Oct 2021 13:40:58 +0000 (UTC)
-Received: from lizzard.sbs.de (lizzard.sbs.de [194.138.37.39])
+Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05A89C4167D
+	for <cip-dev@archiver.kernel.org>; Wed, 13 Oct 2021 13:40:59 +0000 (UTC)
+Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by mail.kernel.org (Postfix) with ESMTPS id BC07A6109E
+	for <cip-dev@archiver.kernel.org>; Wed, 13 Oct 2021 13:40:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org BC07A6109E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=siemens.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id YoVgYY4521723xB85JFSqfaM; Wed, 13 Oct 2021 06:40:58 -0700
+X-Received: from lizzard.sbs.de (lizzard.sbs.de [194.138.37.39])
  by mx.groups.io with SMTP id smtpd.web10.8382.1634132457059686578
  for <cip-dev@lists.cip-project.org>;
  Wed, 13 Oct 2021 06:40:57 -0700
-Authentication-Results: mx.groups.io;
- dkim=missing;
- spf=pass (domain: siemens.com, ip: 194.138.37.39, mailfrom: quirin.gylstorff@siemens.com)
-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
+X-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
 	by lizzard.sbs.de (8.15.2/8.15.2) with ESMTPS id 19DDesXk026255
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
 	for <cip-dev@lists.cip-project.org>; Wed, 13 Oct 2021 15:40:54 +0200
-Received: from md2dvrtc.ad001.siemens.net ([139.25.0.14])
+X-Received: from md2dvrtc.ad001.siemens.net ([139.25.0.14])
 	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 19DDerfK007799;
 	Wed, 13 Oct 2021 15:40:54 +0200
-From: "Q. Gylstorff" <Quirin.Gylstorff@siemens.com>
+From: "Quirin Gylstorff" <quirin.gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
-Subject: [cip-dev][isar-cip-core][PATCH v2 2/4] swupdate: Use dpkg-gbp build
- with salsa
+Subject: [cip-dev][isar-cip-core][PATCH v2 2/4] swupdate: Use dpkg-gbp build with salsa
 Date: Wed, 13 Oct 2021 15:40:51 +0200
-Message-Id: <20211013134053.1400723-3-Quirin.Gylstorff@siemens.com>
-X-Mailer: git-send-email 2.30.2
+Message-ID: <20211013134053.1400723-3-Quirin.Gylstorff@siemens.com>
 In-Reply-To: <20211013134053.1400723-1-Quirin.Gylstorff@siemens.com>
 References: <20211013134053.1400723-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
+X-MIME-Autoconverted: from 8bit to quoted-printable by lizzard.sbs.de id 19DDesXk026255
+Precedence: Bulk
+List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
+List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
+List-Help: <mailto:cip-dev+help@lists.cip-project.org>
+Sender: cip-dev@lists.cip-project.org
+List-Id: <cip-dev.lists.cip-project.org>
+Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
+Reply-To: cip-dev@lists.cip-project.org
+X-Gm-Message-State: LMaW3zYWHoFRfgubEmc7YdWDx4520388AA=
+Content-Type: multipart/mixed; boundary="vRwfkrPz18hUnmR8wExS"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1634132458;
+ bh=KbbNLW4Fb3aLbQYjJsJmomNwm3Xxc2GOGlxAjhPLqGQ=;
+ h=Content-Type:Date:From:Reply-To:Subject:To;
+ b=NrsRmm7zrn4JfWhX6+huy8Mw8ne7TEGjxInZpXHPhdKApza1tkz0klTc/onX2wtB7RG
+ R+aKk86cNB85rmlAN/f+n3rV1WXcffoP0SKx0CWOcUIGcytZJ+0vxHBrE2yAE/pfOWqFX
+ Xn2mCXJp7/R5jXeOBWcpWZILGvcbkKWFQK0=
+Message-ID: <20211013134051.q1m750az9MqvwpEkoVwPMH5xdYRu6QO8sF8cCqfOxXg@z>
+
+--vRwfkrPz18hUnmR8wExS
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-MIME-Autoconverted: from 8bit to quoted-printable by lizzard.sbs.de id
- 19DDesXk026255
-List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
- aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 13 Oct 2021 13:40:58 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6816
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
@@ -757,3 +775,21 @@ t other
 2.30.2
 
 
+--vRwfkrPz18hUnmR8wExS
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+Links: You receive all messages sent to this group.
+View/Reply Online (#6816): https://lists.cip-project.org/g/cip-dev/message/=
+6816
+Mute This Topic: https://lists.cip-project.org/mt/86287952/4520388
+Group Owner: cip-dev+owner@lists.cip-project.org
+Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/10495289/4520388=
+/727948398/xyzzy [cip-dev@archiver.kernel.org]
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+
+
+--vRwfkrPz18hUnmR8wExS--
