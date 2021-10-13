@@ -1,62 +1,54 @@
-Return-Path: <masami.ichikawa@miraclelinux.com>
+Return-Path: <SRS0=6SS/=PB=lists.cip-project.org=bounce+64572+6822+4520388+10495289@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE55C433F5
-	for <webhook@archiver.kernel.org>; Wed, 13 Oct 2021 23:55:15 +0000 (UTC)
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com
- [209.85.167.180])
+Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CC13C433EF
+	for <cip-dev@archiver.kernel.org>; Wed, 13 Oct 2021 23:55:16 +0000 (UTC)
+Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by mail.kernel.org (Postfix) with ESMTPS id 9B2B860E96
+	for <cip-dev@archiver.kernel.org>; Wed, 13 Oct 2021 23:55:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 9B2B860E96
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=miraclelinux.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id SgggYY4521723xSb8t5rOlz4; Wed, 13 Oct 2021 16:55:15 -0700
+X-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
  by mx.groups.io with SMTP id smtpd.web12.2597.1634169312719603885
  for <cip-dev@lists.cip-project.org>;
  Wed, 13 Oct 2021 16:55:14 -0700
-Authentication-Results: mx.groups.io;
- dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112
- header.b=VCFLXX3a;
- spf=pass (domain: miraclelinux.com, ip: 209.85.167.180,
- mailfrom: masami.ichikawa@miraclelinux.com)
-Received: by mail-oi1-f180.google.com with SMTP id n63so6111541oif.7
-        for <cip-dev@lists.cip-project.org>;
- Wed, 13 Oct 2021 16:55:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=QeLKxx9j3ZbsAsvFsAMernrnGfpr27wKvo4Ickv3btE=;
-        b=VCFLXX3ao0hKxrqdfPeKLaANAle2ukHUGLPmQRy70z/slGvZmmF8JJ9f1OFh/UubIS
-         G1ZD5y5H8XOUnKa1IgDRLeaxOqJcyZlUY/bp+6sP5zAN6JkjlbQffydXA9rPRLs6Z2M1
-         3ig/7D+PtTOplC2diBdxU1oCHH1hXX576fL1rziVOU7N0PSjpbnr7SAlKWwrhc19+H97
-         w8kBaOBTmZ8RPX0Gv7ExaS9kY1tDEaCTZwNeQIuePx73YuEIngFMa9HJxSZQvFMjNesc
-         ZlE3jx5ouhqWESYoTRO5BmxnoJcdJs6RPBOVW/uAQDWoywiCQkR6F5kmvi7hH8E3OmY7
-         7CZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=QeLKxx9j3ZbsAsvFsAMernrnGfpr27wKvo4Ickv3btE=;
-        b=rpWraMcqAb++W/cAnIPjttfu9zyNXPrKTaIOXr1nYUtdwGBZyKqncWkOiyjUHM89k7
-         aAdJdba37PU7q2vsfKE0j5fiS3xk4wEKgr2A0NxpqE7Hy58ycvRva6Ms6dSPa+JXLa5Y
-         wTrExPmXx/TGBebje+oUbHlRDtG2KB0Wy5x6IckA62skX65f6pSglfXPhAU1sidhmZBH
-         yPHkgw1Y5w+kSw6hyk3qN73uoN66AD9vZG942qsYrs4c+M16lhVnKDN9yHyf5RxBLMyG
-         175Poom7fWNhKP5uEDJiR5qfkbY9pYp68YKmYEyHMCVVAQq+j1CxpZu6RH2s4a0OWxTe
-         r5HA==
-X-Gm-Message-State: AOAM532+m9aySTHciqzQAoX9P/JNj0LRPqg4Zd18N2LA/ooZ2sbpOxOR
-	mXkilveB/gKN3dLLcq9tjOf/SzwXLj/icqx5y6FT9R7VgQZisQ==
-X-Google-Smtp-Source: 
- ABdhPJwInD5MV8NAzRKon7cZPsQilB6V9hEl1bFelFZtGDTqTHvm/wYhw1ocZg243ndwIbckpTynQ/n/FgO1I3wFgtU=
-X-Received: by 2002:a05:6808:22a3:: with SMTP id
- bo35mr1715261oib.66.1634169311637;
+X-Received: by mail-oi1-f180.google.com with SMTP id n63so6111541oif.7
+        for <cip-dev@lists.cip-project.org>; Wed, 13 Oct 2021 16:55:12 -0700 (PDT)
+X-Gm-Message-State: c1n1wq0pZLO6NAbjE6qOOBwKx4520388AA=
+X-Google-Smtp-Source: ABdhPJwInD5MV8NAzRKon7cZPsQilB6V9hEl1bFelFZtGDTqTHvm/wYhw1ocZg243ndwIbckpTynQ/n/FgO1I3wFgtU=
+X-Received: by 2002:a05:6808:22a3:: with SMTP id bo35mr1715261oib.66.1634169311637;
  Wed, 13 Oct 2021 16:55:11 -0700 (PDT)
 MIME-Version: 1.0
-From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+From: "Masami Ichikawa" <masami.ichikawa@miraclelinux.com>
 Date: Thu, 14 Oct 2021 08:54:35 +0900
-Message-ID: 
- <CAODzB9qOyXSQ=P0x1CrPEC1=mCW3PUN4_Zx9hp0ZPpZWbM1WUw@mail.gmail.com>
-Subject: New CVE entry this week
+Message-ID: <CAODzB9qOyXSQ=P0x1CrPEC1=mCW3PUN4_Zx9hp0ZPpZWbM1WUw@mail.gmail.com>
+Subject: [cip-dev] New CVE entry this week
 To: cip-dev <cip-dev@lists.cip-project.org>
-Content-Type: text/plain; charset="UTF-8"
+Precedence: Bulk
+List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
+List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
+List-Help: <mailto:cip-dev+help@lists.cip-project.org>
+Sender: cip-dev@lists.cip-project.org
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
- aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 13 Oct 2021 23:55:15 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6822
+Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
+Reply-To: cip-dev@lists.cip-project.org
+Content-Type: multipart/mixed; boundary="okXst5fJKWpA9WmYWvZd"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1634169315;
+ bh=zG84oFy8K1zW5lUw7PfNk5rV0oUWQ/6qomRb1zOcJ4w=;
+ h=Content-Type:Date:From:Reply-To:Subject:To;
+ b=bbYWaYRD6FueGTtXlZ26D1ta13N4q778WBgBb6mT2DUXwal7W0SeFK40eVffwSd6nkf
+ XSMHnDDuPqPKy/RJXa85PG2yOhj4JfL0mctMWrg2tiflfwI1UTHm2g71y6q12GGQieg8G
+ 2Jt+W+r/3rXGhZMJirhM+8Gyg/TPKH9EV1c=
+Message-ID: <20211013235435.0le9gVdNpARU6iqPcSCKYy0u5rUG302EVgde5ZHby4U@z>
+
+--okXst5fJKWpA9WmYWvZd
+Content-Type: text/plain; charset="UTF-8"
 
 Hi !
 
@@ -241,3 +233,21 @@ Cybertrust Japan Co., Ltd.
 Email :masami.ichikawa@cybertrust.co.jp
           :masami.ichikawa@miraclelinux.com
 
+--okXst5fJKWpA9WmYWvZd
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+Links: You receive all messages sent to this group.
+View/Reply Online (#6822): https://lists.cip-project.org/g/cip-dev/message/=
+6822
+Mute This Topic: https://lists.cip-project.org/mt/86301612/4520388
+Group Owner: cip-dev+owner@lists.cip-project.org
+Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/10495289/4520388=
+/727948398/xyzzy [cip-dev@archiver.kernel.org]
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+
+
+--okXst5fJKWpA9WmYWvZd--
