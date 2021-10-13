@@ -1,191 +1,243 @@
-Return-Path: <SRS0=n8U2=PB=lists.cip-project.org=bounce+64572+6821+4520388+10495289@kernel.org>
+Return-Path: <masami.ichikawa@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C43C433FE
-	for <cip-dev@archiver.kernel.org>; Wed, 13 Oct 2021 14:20:15 +0000 (UTC)
-Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 79CC7610C8
-	for <cip-dev@archiver.kernel.org>; Wed, 13 Oct 2021 14:20:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 79CC7610C8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=siemens.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.cip-project.org
-X-Received: by 127.0.0.2 with SMTP id nYmbYY4521723x7JIZDCzgyJ; Wed, 13 Oct 2021 07:20:14 -0700
-X-Received: from lizzard.sbs.de (lizzard.sbs.de [194.138.37.39])
- by mx.groups.io with SMTP id smtpd.web09.8738.1634134812808645518
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE55C433F5
+	for <webhook@archiver.kernel.org>; Wed, 13 Oct 2021 23:55:15 +0000 (UTC)
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com
+ [209.85.167.180])
+ by mx.groups.io with SMTP id smtpd.web12.2597.1634169312719603885
  for <cip-dev@lists.cip-project.org>;
- Wed, 13 Oct 2021 07:20:13 -0700
-X-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-	by lizzard.sbs.de (8.15.2/8.15.2) with ESMTPS id 19DEKA2s016794
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-	for <cip-dev@lists.cip-project.org>; Wed, 13 Oct 2021 16:20:10 +0200
-X-Received: from [167.87.2.42] ([167.87.2.42])
-	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 19DEK9eP009480;
-	Wed, 13 Oct 2021 16:20:09 +0200
-Subject: Re: [cip-dev][isar-cip-core][PATCH v2 0/4] Use SWUpdate from salsa.debian.org
-To: "Q. Gylstorff" <Quirin.Gylstorff@siemens.com>,
-        cip-dev@lists.cip-project.org
-References: <20211013134053.1400723-1-Quirin.Gylstorff@siemens.com>
-From: "Jan Kiszka" <jan.kiszka@siemens.com>
-Message-ID: <aa0147d5-8c15-3909-7394-0a4a118b2dce@siemens.com>
-Date: Wed, 13 Oct 2021 16:20:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+ Wed, 13 Oct 2021 16:55:14 -0700
+Authentication-Results: mx.groups.io;
+ dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112
+ header.b=VCFLXX3a;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.167.180,
+ mailfrom: masami.ichikawa@miraclelinux.com)
+Received: by mail-oi1-f180.google.com with SMTP id n63so6111541oif.7
+        for <cip-dev@lists.cip-project.org>;
+ Wed, 13 Oct 2021 16:55:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=QeLKxx9j3ZbsAsvFsAMernrnGfpr27wKvo4Ickv3btE=;
+        b=VCFLXX3ao0hKxrqdfPeKLaANAle2ukHUGLPmQRy70z/slGvZmmF8JJ9f1OFh/UubIS
+         G1ZD5y5H8XOUnKa1IgDRLeaxOqJcyZlUY/bp+6sP5zAN6JkjlbQffydXA9rPRLs6Z2M1
+         3ig/7D+PtTOplC2diBdxU1oCHH1hXX576fL1rziVOU7N0PSjpbnr7SAlKWwrhc19+H97
+         w8kBaOBTmZ8RPX0Gv7ExaS9kY1tDEaCTZwNeQIuePx73YuEIngFMa9HJxSZQvFMjNesc
+         ZlE3jx5ouhqWESYoTRO5BmxnoJcdJs6RPBOVW/uAQDWoywiCQkR6F5kmvi7hH8E3OmY7
+         7CZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=QeLKxx9j3ZbsAsvFsAMernrnGfpr27wKvo4Ickv3btE=;
+        b=rpWraMcqAb++W/cAnIPjttfu9zyNXPrKTaIOXr1nYUtdwGBZyKqncWkOiyjUHM89k7
+         aAdJdba37PU7q2vsfKE0j5fiS3xk4wEKgr2A0NxpqE7Hy58ycvRva6Ms6dSPa+JXLa5Y
+         wTrExPmXx/TGBebje+oUbHlRDtG2KB0Wy5x6IckA62skX65f6pSglfXPhAU1sidhmZBH
+         yPHkgw1Y5w+kSw6hyk3qN73uoN66AD9vZG942qsYrs4c+M16lhVnKDN9yHyf5RxBLMyG
+         175Poom7fWNhKP5uEDJiR5qfkbY9pYp68YKmYEyHMCVVAQq+j1CxpZu6RH2s4a0OWxTe
+         r5HA==
+X-Gm-Message-State: AOAM532+m9aySTHciqzQAoX9P/JNj0LRPqg4Zd18N2LA/ooZ2sbpOxOR
+	mXkilveB/gKN3dLLcq9tjOf/SzwXLj/icqx5y6FT9R7VgQZisQ==
+X-Google-Smtp-Source: 
+ ABdhPJwInD5MV8NAzRKon7cZPsQilB6V9hEl1bFelFZtGDTqTHvm/wYhw1ocZg243ndwIbckpTynQ/n/FgO1I3wFgtU=
+X-Received: by 2002:a05:6808:22a3:: with SMTP id
+ bo35mr1715261oib.66.1634169311637;
+ Wed, 13 Oct 2021 16:55:11 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20211013134053.1400723-1-Quirin.Gylstorff@siemens.com>
-Precedence: Bulk
-List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
-List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
-List-Help: <mailto:cip-dev+help@lists.cip-project.org>
-Sender: cip-dev@lists.cip-project.org
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Thu, 14 Oct 2021 08:54:35 +0900
+Message-ID: 
+ <CAODzB9qOyXSQ=P0x1CrPEC1=mCW3PUN4_Zx9hp0ZPpZWbM1WUw@mail.gmail.com>
+Subject: New CVE entry this week
+To: cip-dev <cip-dev@lists.cip-project.org>
+Content-Type: text/plain; charset="UTF-8"
 List-Id: <cip-dev.lists.cip-project.org>
-Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
-Reply-To: cip-dev@lists.cip-project.org
-X-Gm-Message-State: dZbzFRwYkje2k3JFtWch1zHqx4520388AA=
-Content-Type: multipart/mixed; boundary="M2LA6z6L9tjrJ2VaeXbR"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=lists.cip-project.org; q=dns/txt; s=20140610; t=1634134814;
- bh=xXIhacOZRWIcRfc+e3CDMkKBkkTm/r/FGSgz2eIMJVY=;
- h=Content-Type:Date:From:Reply-To:Subject:To;
- b=rp+Zs5ba2kMweBrkZ5iAdqFyXJd22XQ1oc+ZTywPOZ8Reb/f6rSpalAQWcgs6B2y0WB
- jRXUcDAodCJAbAIsCszU6jLStirEniNEBAgNJPm3gQsS/2RtsbnTx1fSEjQJLy7VtasRi
- u0SGKbwVxZ/luNV1Pa4ZV/FrH/Af2+MpNDY=
-Message-ID: <20211013142009.xHR5FskZP9aAV7Xend6AJgvneylBFefikpTxCtnFMrY@z>
+X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
+ aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
+ <cip-dev@lists.cip-project.org>; Wed, 13 Oct 2021 23:55:15 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6822
 
---M2LA6z6L9tjrJ2VaeXbR
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Hi !
 
-On 13.10.21 15:40, Q. Gylstorff wrote:
-> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> 
-> This patch series uses the source from sala.debian.org for the build of SWUpdate.
-> 
-> The build is patched to contain most of the previous build option from swupdate-config.bbclass.
-> 
-> The recipes support Debian Buster and Debian Bullseye.
-> 
-> Changes V2:
->  - Correct spacing and end of file
->  - rename recipe swupdate-handlers to swupdate-handler-roundrobin
->  - extend comment in recipe swupdate
-> 
-> Quirin Gylstorff (4):
->   swupdate: Move handler to own recipe
->   swupdate: Use dpkg-gbp build with salsa
->   swupdate-handler: Use same lua version as swupdate-debian-gbp
->   swupdate: remove version 2021.04+isar-git
-> 
->  classes/kconfig-snippets.bbclass              | 90 -------------------
->  classes/swupdate-config.bbclass               | 89 ------------------
->  kas/opt/swupdate.yml                          |  1 +
->  .../swupdate.handler.efibootguard.ini         |  0
->  .../files/swupdate.handler.efibootguard.ini   |  0
->  .../swupdate-handler-roundrobin_0.1.bb        | 33 +++++++
->  ...dd-option-to-build-with-efibootguard.patch | 39 ++++++++
->  .../0002-debian-rules-Add-CONFIG_MTD.patch    | 27 ++++++
->  ...-debian-config-Make-signing-optional.patch | 40 +++++++++
->  ...onfig-Make-image-encryption-optional.patch | 40 +++++++++
->  ...ules-Add-Embedded-Lua-handler-option.patch | 30 +++++++
->  ...es-Add-option-to-disable-fs-creation.patch | 47 ++++++++++
->  ...ules-Add-option-to-disable-webserver.patch | 42 +++++++++
->  ...Make-CONFIG_HW_COMPATIBILTY-optional.patch | 40 +++++++++
->  ...ules-Add-Embedded-Lua-handler-option.patch | 30 +++++++
->  ...prepare-build-for-isar-debian-buster.patch | 72 +++++++++++++++
->  .../swupdate/files/debian/changelog.tmpl      |  6 --
->  recipes-core/swupdate/files/debian/compat     |  1 -
->  .../swupdate/files/debian/control.tmpl        | 15 ----
->  recipes-core/swupdate/files/debian/copyright  | 36 --------
->  recipes-core/swupdate/files/debian/rules.tmpl | 31 -------
->  .../swupdate/files/debian/swupdate.examples   |  2 -
->  .../swupdate/files/debian/swupdate.install    |  2 -
->  .../swupdate/files/debian/swupdate.manpages   |  5 --
->  .../swupdate/files/debian/swupdate.tmpfile    |  2 -
->  recipes-core/swupdate/files/debian/watch      | 12 ---
->  recipes-core/swupdate/files/postinst          |  2 -
->  recipes-core/swupdate/files/swupdate.cfg      |  6 --
->  .../swupdate/files/swupdate.service.example   | 11 ---
->  .../swupdate/files/swupdate.socket.example    | 11 ---
->  .../swupdate/files/swupdate.socket.tmpl       | 13 ---
->  .../swupdate/files/swupdate_defconfig         | 83 -----------------
->  .../swupdate_defconfig_efibootguard.snippet   |  3 -
->  .../files/swupdate_defconfig_lua.snippet      |  2 -
->  .../swupdate_defconfig_luahandler.snippet     |  4 -
->  .../files/swupdate_defconfig_mtd.snippet      |  1 -
->  .../files/swupdate_defconfig_u-boot.snippet   |  3 -
->  .../files/swupdate_defconfig_ubi.snippet      |  6 --
->  recipes-core/swupdate/swupdate.bb             | 61 -------------
->  recipes-core/swupdate/swupdate.inc            | 53 +++++++++++
->  .../swupdate/swupdate_2021.04-1+debian-gbp.bb | 48 ++++++++++
->  41 files changed, 542 insertions(+), 497 deletions(-)
->  delete mode 100644 classes/kconfig-snippets.bbclass
->  delete mode 100644 classes/swupdate-config.bbclass
->  rename recipes-core/{swupdate => swupdate-handler-roundrobin}/files/secureboot/swupdate.handler.efibootguard.ini (100%)
->  rename recipes-core/{swupdate => swupdate-handler-roundrobin}/files/swupdate.handler.efibootguard.ini (100%)
->  create mode 100644 recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb
->  create mode 100644 recipes-core/swupdate/files/0001-debian-Add-option-to-build-with-efibootguard.patch
->  create mode 100644 recipes-core/swupdate/files/0002-debian-rules-Add-CONFIG_MTD.patch
->  create mode 100644 recipes-core/swupdate/files/0003-debian-config-Make-signing-optional.patch
->  create mode 100644 recipes-core/swupdate/files/0004-debian-config-Make-image-encryption-optional.patch
->  create mode 100644 recipes-core/swupdate/files/0005-debian-rules-Add-Embedded-Lua-handler-option.patch
->  create mode 100644 recipes-core/swupdate/files/0005-debian-rules-Add-option-to-disable-fs-creation.patch
->  create mode 100644 recipes-core/swupdate/files/0006-debian-rules-Add-option-to-disable-webserver.patch
->  create mode 100644 recipes-core/swupdate/files/0007-debian-Make-CONFIG_HW_COMPATIBILTY-optional.patch
->  create mode 100644 recipes-core/swupdate/files/0008-debian-rules-Add-Embedded-Lua-handler-option.patch
->  create mode 100644 recipes-core/swupdate/files/0009-debian-prepare-build-for-isar-debian-buster.patch
->  delete mode 100644 recipes-core/swupdate/files/debian/changelog.tmpl
->  delete mode 100644 recipes-core/swupdate/files/debian/compat
->  delete mode 100644 recipes-core/swupdate/files/debian/control.tmpl
->  delete mode 100644 recipes-core/swupdate/files/debian/copyright
->  delete mode 100755 recipes-core/swupdate/files/debian/rules.tmpl
->  delete mode 100644 recipes-core/swupdate/files/debian/swupdate.examples
->  delete mode 100644 recipes-core/swupdate/files/debian/swupdate.install
->  delete mode 100644 recipes-core/swupdate/files/debian/swupdate.manpages
->  delete mode 100644 recipes-core/swupdate/files/debian/swupdate.tmpfile
->  delete mode 100644 recipes-core/swupdate/files/debian/watch
->  delete mode 100644 recipes-core/swupdate/files/postinst
->  delete mode 100644 recipes-core/swupdate/files/swupdate.cfg
->  delete mode 100644 recipes-core/swupdate/files/swupdate.service.example
->  delete mode 100644 recipes-core/swupdate/files/swupdate.socket.example
->  delete mode 100644 recipes-core/swupdate/files/swupdate.socket.tmpl
->  delete mode 100644 recipes-core/swupdate/files/swupdate_defconfig
->  delete mode 100644 recipes-core/swupdate/files/swupdate_defconfig_efibootguard.snippet
->  delete mode 100644 recipes-core/swupdate/files/swupdate_defconfig_lua.snippet
->  delete mode 100644 recipes-core/swupdate/files/swupdate_defconfig_luahandler.snippet
->  delete mode 100644 recipes-core/swupdate/files/swupdate_defconfig_mtd.snippet
->  delete mode 100644 recipes-core/swupdate/files/swupdate_defconfig_u-boot.snippet
->  delete mode 100644 recipes-core/swupdate/files/swupdate_defconfig_ubi.snippet
->  delete mode 100644 recipes-core/swupdate/swupdate.bb
->  create mode 100644 recipes-core/swupdate/swupdate.inc
->  create mode 100644 recipes-core/swupdate/swupdate_2021.04-1+debian-gbp.bb
-> 
+It's this week's CVE report.
 
-Thanks, applied.
+This week reported 4 new CVEs.
 
-Jan
+* New CVEs
 
+CVE-2021-0935: bug is in ipv6 and l2tp code.
+
+This CVE addresses two commits, one in the ipv6 stack and the other in l2tp.
+There is two introduced commits one is 85cb73f ("net: ipv6: reset
+daddr and dport in sk if connect() fails") was merged in 4.12 and the
+other commit 3557baa ("[L2TP]: PPP over L2TP driver core") was merged
+in 2.6.23-rc1.
+
+Fixed commits have been merged since 4.16-rc7 so 4.16 or later kernels
+don't affect this vulnerability.
+
+Commit 2f987a76("net: ipv6: keep sk status consistent after datagram
+connect failure") fixes 85cb73f and commit b954f940("l2tp: fix races
+with ipv4-mapped ipv6 addresses") fixes commit 3557baa.
+
+To apply patches to 4.4, it needs to fix conflicts.
+
+CVSS v3 score is not provided.
+
+Fixed status
+
+mainline: [2f987a76a97773beafbc615b9c4d8fe79129a7f4,
+b954f94023dcc61388c8384f0f14eb8e42c863c5]
+stable/4.14: [a8f02befc87d6f1a882c9b14a31bcfa1fbd3d430,
+b0850604cc5dac60754cc2fcdf7d2ca97a68a4dc]
+stable/4.19: [2f987a76a97773beafbc615b9c4d8fe79129a7f4,
+b954f94023dcc61388c8384f0f14eb8e42c863c5]
+stable/4.4: not fixed yet
+stable/4.9: [c49f30b2979bfc8701620e598558f29a48e07234,
+535ef684ec6079bccc2037c76bc607d29dca05dc]
+stable/5.10: [2f987a76a97773beafbc615b9c4d8fe79129a7f4,
+b954f94023dcc61388c8384f0f14eb8e42c863c5]
+stable/5.4: [2f987a76a97773beafbc615b9c4d8fe79129a7f4,
+b954f94023dcc61388c8384f0f14eb8e42c863c5]
+
+CVE-2021-0937: netfilter: x_tables: fix compat match/target pad
+out-of-bound write
+
+This vulnerability was introduced since 4.6.19-rc1 and fixed in
+5.12-rc8. All stable kernels are already fixed.
+
+CVSS v3 score is not provided.
+
+Fixed status
+
+mainline: [b29c457a6511435960115c0f548c4360d5f4801d]
+stable/4.14: [522a0191944e3db9c30ade5fa6b6ec0d7c42f40d]
+stable/4.19: [12ec80252edefff00809d473a47e5f89c7485499]
+stable/4.4: [b0d98b2193a38ef93c92e5e1953d134d0f426531]
+stable/4.9: [0c58c9f9c5c5326320bbe0429a0f45fc1b92024b]
+stable/5.10: [1f3b9000cb44318b0de40a0f495a5a708cd9be6e]
+stable/5.4: [cc59b872f2e1995b8cc819b9445c1198bfe83b2d]
+
+
+CVE-2021-0938: compiler.h: fix barrier_data() on clang
+
+This bug was introduced in 4.19-rc1 and fixed in 5.10-rc4. so all
+stable kernels are fixed.
+If kernel was built from clang, this bug will be affected.
+
+CVSS v3 score is not provided.
+
+Fixed status
+
+mainline: [3347acc6fcd4ee71ad18a9ff9d9dac176b517329]
+stable/4.14: not affect
+stable/4.19: [b207caff4176e3a6ba273243da2db2e595e4aad2]
+stable/4.4: not affect
+stable/4.9: not affect
+stable/5.10: not affect
+stable/5.4: [c2c5dc84ac51da90cadcb12554c69bdd5ac7aeeb]
+
+CVE-2021-0941: bpf: Remove MTU check in __bpf_skb_max_len
+
+CVSS v3 score is not provided.
+
+This bug is fixed in v5.12-rc1-dontuse. The kernel 4.4 doesn't contain
+__bpf_skb_max_len() so 4.4 may not affect this vulnerability. The
+__bpf_skb_max_len() was introduced since 4.13-rc1 commit
+2be7e212("bpf: add bpf_skb_adjust_room helper
+").
+
+Fixed status.
+
+mainline: [6306c1189e77a513bf02720450bb43bd4ba5d8ae]
+stable/4.14: [64cf6c3156a5cbd9c29f54370b801b336d2f7894]
+stable/4.19: [8c1a77ae15ce70a72f26f4bb83c50f769011220c]
+stable/4.4: not affect
+stable/4.9: [1636af9e8a8840f5696ad2c01130832411986af4]
+stable/5.10: [fd38d4e6757b6b99f60314f67f44a286f0ab7fc0]
+stable/5.4: [42c83e3bca434d9f63c58f9cbf2881e635679fee]
+
+* Updated CVEs
+
+CVE-2021-3744: crypto: ccp - fix resource leaks in ccp_run_aes_gcm_cmd()
+CVE-2021-3764: DoS in ccp_run_aes_gcm_cmd() function
+
+CVE-2021-3744 and CVE-2021-3764 are fixed by commit 505d9dcb("crypto:
+ccp - fix resource leaks in ccp_run_aes_gcm_cmd()
+"). Both vulnerabilities were in ccp_run_aes_gcm_cmd() which has been
+introduced since 4.12-rc1. Therefore before 4.12 kernels aren't
+affected this vulnerability.
+
+Fixed status
+
+mainline: [505d9dcb0f7ddf9d075e729523a33d38642ae680]
+stable/4.14: [3707e37b3fcef4d5e9a81b9c2c48ba7248051c2a]
+stable/4.19: [710be7c42d2f724869e5b18b21998ceddaffc4a9]
+stable/4.4: not affect
+stable/4.9: not affect
+stable/5.10: [17ccc64e4fa5d3673528474bfeda814d95dc600a]
+stable/5.14: [e450c422aa233e9f80515f2ee9164e33f158a472]
+stable/5.4: [24f3d2609114f1e1f6b487b511ce5fa36f21e0ae]
+
+CVE-2021-41864: bpf: Fix integer overflow in prealloc_elems_and_freelist()
+
+This bug was introduced in 4.6-rc1 so that 4.4 isn't affected this bug.
+4.19, 5.10, 5.14, and 5.4 have been fixed this week.
+Patch to 4.14 can be applied by git am without any modification. Patch
+to 4.9 can be applied by 3-way merge.
+
+Fixed status
+
+mainline: [30e29a9a2bc6a4888335a6ede968b75cd329657a]
+stable/4.14: not fixed yet
+stable/4.19: [078cdd572408176a3900a6eb5a403db0da22f8e0]
+stable/4.4: not affect
+stable/4.14: not fixed yet
+stable/5.10: [064faa8e8a9b50f5010c5aa5740e06d477677a89]
+stable/5.14: [3a1ac1e368bedae2777d9a7cfdc65df4859f7e71]
+stable/5.4: [b14f28126c51533bb329379f65de5b0dd689b13a]
+
+Currently tracking CVEs
+
+CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
+Bluetooth Core Specifications 4.0 through 5.2
+
+There is no fix information.
+
+CVE-2021-3640: UAF in sco_send_frame function
+
+Fixed in bluetooth-next tree.
+
+https://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.git/commit/net/bluetooth/sco.c?id=99c23da0eed4fd20cae8243f2b51e10e66aa0951
+
+CVE-2020-26555: BR/EDR pin code pairing broken
+
+No fix information
+
+CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
+
+No fix information.
+
+CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
+Provisioning Leads to MITM
+
+No fix information.
+
+CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
+
+No fix information.
+
+CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
+
+No fix information.
+
+
+Regards,
 -- 
-Siemens AG, T RDA IOT
-Corporate Competence Center Embedded Linux
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
 
---M2LA6z6L9tjrJ2VaeXbR
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
 
-
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-Links: You receive all messages sent to this group.
-View/Reply Online (#6821): https://lists.cip-project.org/g/cip-dev/message/=
-6821
-Mute This Topic: https://lists.cip-project.org/mt/86287950/4520388
-Group Owner: cip-dev+owner@lists.cip-project.org
-Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/10495289/4520388=
-/727948398/xyzzy [cip-dev@archiver.kernel.org]
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-
-
---M2LA6z6L9tjrJ2VaeXbR--
