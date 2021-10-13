@@ -2,139 +2,163 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D57ECC433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6232C433FE
 	for <webhook@archiver.kernel.org>; Wed, 13 Oct 2021 13:40:57 +0000 (UTC)
-Received: from david.siemens.de (david.siemens.de [192.35.17.14])
- by mx.groups.io with SMTP id smtpd.web08.8306.1634132456644155882
+Received: from gecko.sbs.de (gecko.sbs.de [194.138.37.40])
+ by mx.groups.io with SMTP id smtpd.web10.8381.1634132456510087465
  for <cip-dev@lists.cip-project.org>;
  Wed, 13 Oct 2021 06:40:57 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=pass (domain: siemens.com, ip: 192.35.17.14, mailfrom: quirin.gylstorff@siemens.com)
+ spf=pass (domain: siemens.com, ip: 194.138.37.40, mailfrom: quirin.gylstorff@siemens.com)
 Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-	by david.siemens.de (8.15.2/8.15.2) with ESMTPS id 19DDesPq024977
+	by gecko.sbs.de (8.15.2/8.15.2) with ESMTPS id 19DDesYs004542
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
 	for <cip-dev@lists.cip-project.org>; Wed, 13 Oct 2021 15:40:54 +0200
 Received: from md2dvrtc.ad001.siemens.net ([139.25.0.14])
-	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 19DDerfI007799;
-	Wed, 13 Oct 2021 15:40:53 +0200
+	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 19DDerfJ007799;
+	Wed, 13 Oct 2021 15:40:54 +0200
 From: "Q. Gylstorff" <Quirin.Gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
-Subject: [cip-dev][isar-cip-core][PATCH v2 0/4] Use SWUpdate from
- salsa.debian.org
-Date: Wed, 13 Oct 2021 15:40:49 +0200
-Message-Id: <20211013134053.1400723-1-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH v2 1/4] swupdate: Move handler to own
+ recipe
+Date: Wed, 13 Oct 2021 15:40:50 +0200
+Message-Id: <20211013134053.1400723-2-Quirin.Gylstorff@siemens.com>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20211013134053.1400723-1-Quirin.Gylstorff@siemens.com>
+References: <20211013134053.1400723-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 13 Oct 2021 13:40:57 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6814
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6813
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-This patch series uses the source from sala.debian.org for the build of SWUpdate.
+Split the SWUpdate lua handler into a seperate recipe in
+preparation for using the Debian provided SWUpdate package.
 
-The build is patched to contain most of the previous build option from swupdate-config.bbclass.
-
-The recipes support Debian Buster and Debian Bullseye.
-
-Changes V2:
- - Correct spacing and end of file
- - rename recipe swupdate-handlers to swupdate-handler-roundrobin
- - extend comment in recipe swupdate
-
-Quirin Gylstorff (4):
-  swupdate: Move handler to own recipe
-  swupdate: Use dpkg-gbp build with salsa
-  swupdate-handler: Use same lua version as swupdate-debian-gbp
-  swupdate: remove version 2021.04+isar-git
-
- classes/kconfig-snippets.bbclass              | 90 -------------------
- classes/swupdate-config.bbclass               | 89 ------------------
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+ classes/swupdate-config.bbclass               |  8 -----
  kas/opt/swupdate.yml                          |  1 +
  .../swupdate.handler.efibootguard.ini         |  0
  .../files/swupdate.handler.efibootguard.ini   |  0
- .../swupdate-handler-roundrobin_0.1.bb        | 33 +++++++
- ...dd-option-to-build-with-efibootguard.patch | 39 ++++++++
- .../0002-debian-rules-Add-CONFIG_MTD.patch    | 27 ++++++
- ...-debian-config-Make-signing-optional.patch | 40 +++++++++
- ...onfig-Make-image-encryption-optional.patch | 40 +++++++++
- ...ules-Add-Embedded-Lua-handler-option.patch | 30 +++++++
- ...es-Add-option-to-disable-fs-creation.patch | 47 ++++++++++
- ...ules-Add-option-to-disable-webserver.patch | 42 +++++++++
- ...Make-CONFIG_HW_COMPATIBILTY-optional.patch | 40 +++++++++
- ...ules-Add-Embedded-Lua-handler-option.patch | 30 +++++++
- ...prepare-build-for-isar-debian-buster.patch | 72 +++++++++++++++
- .../swupdate/files/debian/changelog.tmpl      |  6 --
- recipes-core/swupdate/files/debian/compat     |  1 -
- .../swupdate/files/debian/control.tmpl        | 15 ----
- recipes-core/swupdate/files/debian/copyright  | 36 --------
- recipes-core/swupdate/files/debian/rules.tmpl | 31 -------
- .../swupdate/files/debian/swupdate.examples   |  2 -
- .../swupdate/files/debian/swupdate.install    |  2 -
- .../swupdate/files/debian/swupdate.manpages   |  5 --
- .../swupdate/files/debian/swupdate.tmpfile    |  2 -
- recipes-core/swupdate/files/debian/watch      | 12 ---
- recipes-core/swupdate/files/postinst          |  2 -
- recipes-core/swupdate/files/swupdate.cfg      |  6 --
- .../swupdate/files/swupdate.service.example   | 11 ---
- .../swupdate/files/swupdate.socket.example    | 11 ---
- .../swupdate/files/swupdate.socket.tmpl       | 13 ---
- .../swupdate/files/swupdate_defconfig         | 83 -----------------
- .../swupdate_defconfig_efibootguard.snippet   |  3 -
- .../files/swupdate_defconfig_lua.snippet      |  2 -
- .../swupdate_defconfig_luahandler.snippet     |  4 -
- .../files/swupdate_defconfig_mtd.snippet      |  1 -
- .../files/swupdate_defconfig_u-boot.snippet   |  3 -
- .../files/swupdate_defconfig_ubi.snippet      |  6 --
- recipes-core/swupdate/swupdate.bb             | 61 -------------
- recipes-core/swupdate/swupdate.inc            | 53 +++++++++++
- .../swupdate/swupdate_2021.04-1+debian-gbp.bb | 48 ++++++++++
- 41 files changed, 542 insertions(+), 497 deletions(-)
- delete mode 100644 classes/kconfig-snippets.bbclass
- delete mode 100644 classes/swupdate-config.bbclass
+ .../swupdate-handler-roundrobin_0.1.bb        | 32 +++++++++++++++++++
+ recipes-core/swupdate/swupdate.bb             | 13 --------
+ 6 files changed, 33 insertions(+), 21 deletions(-)
  rename recipes-core/{swupdate => swupdate-handler-roundrobin}/files/secureboot/swupdate.handler.efibootguard.ini (100%)
  rename recipes-core/{swupdate => swupdate-handler-roundrobin}/files/swupdate.handler.efibootguard.ini (100%)
  create mode 100644 recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb
- create mode 100644 recipes-core/swupdate/files/0001-debian-Add-option-to-build-with-efibootguard.patch
- create mode 100644 recipes-core/swupdate/files/0002-debian-rules-Add-CONFIG_MTD.patch
- create mode 100644 recipes-core/swupdate/files/0003-debian-config-Make-signing-optional.patch
- create mode 100644 recipes-core/swupdate/files/0004-debian-config-Make-image-encryption-optional.patch
- create mode 100644 recipes-core/swupdate/files/0005-debian-rules-Add-Embedded-Lua-handler-option.patch
- create mode 100644 recipes-core/swupdate/files/0005-debian-rules-Add-option-to-disable-fs-creation.patch
- create mode 100644 recipes-core/swupdate/files/0006-debian-rules-Add-option-to-disable-webserver.patch
- create mode 100644 recipes-core/swupdate/files/0007-debian-Make-CONFIG_HW_COMPATIBILTY-optional.patch
- create mode 100644 recipes-core/swupdate/files/0008-debian-rules-Add-Embedded-Lua-handler-option.patch
- create mode 100644 recipes-core/swupdate/files/0009-debian-prepare-build-for-isar-debian-buster.patch
- delete mode 100644 recipes-core/swupdate/files/debian/changelog.tmpl
- delete mode 100644 recipes-core/swupdate/files/debian/compat
- delete mode 100644 recipes-core/swupdate/files/debian/control.tmpl
- delete mode 100644 recipes-core/swupdate/files/debian/copyright
- delete mode 100755 recipes-core/swupdate/files/debian/rules.tmpl
- delete mode 100644 recipes-core/swupdate/files/debian/swupdate.examples
- delete mode 100644 recipes-core/swupdate/files/debian/swupdate.install
- delete mode 100644 recipes-core/swupdate/files/debian/swupdate.manpages
- delete mode 100644 recipes-core/swupdate/files/debian/swupdate.tmpfile
- delete mode 100644 recipes-core/swupdate/files/debian/watch
- delete mode 100644 recipes-core/swupdate/files/postinst
- delete mode 100644 recipes-core/swupdate/files/swupdate.cfg
- delete mode 100644 recipes-core/swupdate/files/swupdate.service.example
- delete mode 100644 recipes-core/swupdate/files/swupdate.socket.example
- delete mode 100644 recipes-core/swupdate/files/swupdate.socket.tmpl
- delete mode 100644 recipes-core/swupdate/files/swupdate_defconfig
- delete mode 100644 recipes-core/swupdate/files/swupdate_defconfig_efibootguard.snippet
- delete mode 100644 recipes-core/swupdate/files/swupdate_defconfig_lua.snippet
- delete mode 100644 recipes-core/swupdate/files/swupdate_defconfig_luahandler.snippet
- delete mode 100644 recipes-core/swupdate/files/swupdate_defconfig_mtd.snippet
- delete mode 100644 recipes-core/swupdate/files/swupdate_defconfig_u-boot.snippet
- delete mode 100644 recipes-core/swupdate/files/swupdate_defconfig_ubi.snippet
- delete mode 100644 recipes-core/swupdate/swupdate.bb
- create mode 100644 recipes-core/swupdate/swupdate.inc
- create mode 100644 recipes-core/swupdate/swupdate_2021.04-1+debian-gbp.bb
 
+diff --git a/classes/swupdate-config.bbclass b/classes/swupdate-config.bbclass
+index e4879c7..1d57ce1 100644
+--- a/classes/swupdate-config.bbclass
++++ b/classes/swupdate-config.bbclass
+@@ -17,14 +17,6 @@ BUILD_DEB_DEPENDS = " \
+     zlib1g-dev, debhelper, libconfig-dev, libarchive-dev, \
+     python-sphinx:native, dh-systemd, libsystemd-dev, libssl-dev, pkg-config"
+ 
+-SRC_URI += " ${@ 'git://gitlab.com/cip-project/cip-sw-updates/swupdate-handler-roundrobin.git;protocol=https;destsuffix=swupdate-handler-roundrobin;name=swupdate-handler-roundrobin;nobranch=1' \
+-    if d.getVar('SWUPDATE_USE_ROUND_ROBIN_HANDLER_REPO') == '1' else '' \
+-    }"
+-SRCREV_swupdate-handler-roundrobin ?= "6f561f136fdbe51d2e9066b934dfcb06b94c6624"
+-
+-SWUPDATE_USE_ROUND_ROBIN_HANDLER_REPO ?= "1"
+-SWUPDATE_LUASCRIPT ?= "swupdate-handler-roundrobin/swupdate_handlers_roundrobin.lua"
+-
+ KFEATURE_lua = ""
+ KFEATURE_lua[BUILD_DEB_DEPENDS] = "liblua5.3-dev"
+ KFEATURE_lua[KCONFIG_SNIPPETS] = "file://swupdate_defconfig_lua.snippet"
+diff --git a/kas/opt/swupdate.yml b/kas/opt/swupdate.yml
+index bd0f6e4..974eacb 100644
+--- a/kas/opt/swupdate.yml
++++ b/kas/opt/swupdate.yml
+@@ -17,6 +17,7 @@ header:
+ local_conf_header:
+   swupdate: |
+     IMAGE_INSTALL_append = " swupdate"
++    IMAGE_INSTALL_append = " swupdate-handler-roundrobin"
+ 
+   wic-swu: |
+     IMAGE_TYPE = "wic-swu-img"
+diff --git a/recipes-core/swupdate/files/secureboot/swupdate.handler.efibootguard.ini b/recipes-core/swupdate-handler-roundrobin/files/secureboot/swupdate.handler.efibootguard.ini
+similarity index 100%
+rename from recipes-core/swupdate/files/secureboot/swupdate.handler.efibootguard.ini
+rename to recipes-core/swupdate-handler-roundrobin/files/secureboot/swupdate.handler.efibootguard.ini
+diff --git a/recipes-core/swupdate/files/swupdate.handler.efibootguard.ini b/recipes-core/swupdate-handler-roundrobin/files/swupdate.handler.efibootguard.ini
+similarity index 100%
+rename from recipes-core/swupdate/files/swupdate.handler.efibootguard.ini
+rename to recipes-core/swupdate-handler-roundrobin/files/swupdate.handler.efibootguard.ini
+diff --git a/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb b/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb
+new file mode 100644
+index 0000000..b9ccec2
+--- /dev/null
++++ b/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb
+@@ -0,0 +1,32 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2021
++#
++# Authors:
++#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++
++inherit dpkg-raw
++
++PROVIDES = "swupdate-handlers"
++
++SRC_URI += "git://gitlab.com/cip-project/cip-sw-updates/swupdate-handler-roundrobin.git;protocol=https;destsuffix=swupdate-handler-roundrobin;name=swupdate-handler-roundrobin;nobranch=1"
++SRCREV_swupdate-handler-roundrobin ?= "ba4c5ae8e664a9624335753cb152e6e264b3f518"
++
++SWUPDATE_LUASCRIPT = "swupdate-handler-roundrobin/swupdate_handlers_roundrobin.lua"
++
++SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG ?= "swupdate.handler.${SWUPDATE_BOOTLOADER}.ini"
++SRC_URI += "${@('file://' + d.getVar('SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG')) if d.getVar('SWUPDATE_BOOTLOADER') else ''}"
++
++do_install[cleandirs] = "${D}/etc \
++                         ${D}/usr/share/lua/5.3"
++do_install() {
++    if [ -e ${WORKDIR}/${SWUPDATE_LUASCRIPT} ]; then
++        install -m 0644 ${WORKDIR}/${SWUPDATE_LUASCRIPT} ${D}/usr/share/lua/5.3/swupdate_handlers.lua
++    fi
++    if [ -e ${WORKDIR}/${SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG} ]; then
++       install -m 0644 ${WORKDIR}/${SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG} ${D}/etc/swupdate.handler.ini
++    fi
++}
+diff --git a/recipes-core/swupdate/swupdate.bb b/recipes-core/swupdate/swupdate.bb
+index 8bef9ab..a29a797 100644
+--- a/recipes-core/swupdate/swupdate.bb
++++ b/recipes-core/swupdate/swupdate.bb
+@@ -29,8 +29,6 @@ DEBIAN_DEPENDS = "${shlibs:Depends}, ${misc:Depends}"
+ inherit dpkg
+ inherit swupdate-config
+ 
+-SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG ?= "swupdate.handler.${SWUPDATE_BOOTLOADER}.ini"
+-SRC_URI += "${@('file://' + d.getVar('SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG')) if d.getVar('SWUPDATE_BOOTLOADER') else ''}"
+ KFEATURES += "luahandler"
+ 
+ S = "${WORKDIR}/git"
+@@ -47,15 +45,4 @@ do_prepare_build() {
+     if ! grep -q "configs/${DEFCONFIG}" ${S}/.gitignore; then
+         echo "configs/${DEFCONFIG}" >> ${S}/.gitignore
+     fi
+-    # luahandler
+-    if [ -e ${WORKDIR}/${SWUPDATE_LUASCRIPT} ]; then
+-        install -m 0644 ${WORKDIR}/${SWUPDATE_LUASCRIPT} ${S}/swupdate_handlers.lua
+-    fi
+-    if [ -e ${WORKDIR}/swupdate.handler.${SWUPDATE_BOOTLOADER}.ini ]; then
+-       install -m 0644 ${WORKDIR}/swupdate.handler.${SWUPDATE_BOOTLOADER}.ini ${S}/swupdate.handler.ini
+-       echo "swupdate.handler.ini etc/" >> ${S}/debian/swupdate.install
+-    elif [ -e ${WORKDIR}/${SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG} ]; then
+-       install -m 0644 ${WORKDIR}/${SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG} ${S}/swupdate.handler.ini
+-       echo "swupdate.handler.ini etc/" >> ${S}/debian/swupdate.install
+-    fi
+ }
 -- 
 2.30.2
 
