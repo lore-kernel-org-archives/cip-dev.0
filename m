@@ -1,38 +1,56 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <SRS0=HSEd=PC=lists.cip-project.org=bounce+64572+6824+4520388+10495289@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB9BC433F5
-	for <webhook@archiver.kernel.org>; Thu, 14 Oct 2021 06:55:57 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E283C433EF
+	for <cip-dev@archiver.kernel.org>; Thu, 14 Oct 2021 06:55:59 +0000 (UTC)
+Received: from mail02.groups.io (mail02.groups.io [66.175.222.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by mail.kernel.org (Postfix) with ESMTPS id 0C54C60D07
+	for <cip-dev@archiver.kernel.org>; Thu, 14 Oct 2021 06:55:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 0C54C60D07
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.cip-project.org
+X-Received: by 127.0.0.2 with SMTP id PoxdYY4521723xgCmqIawhNh; Wed, 13 Oct 2021 23:55:57 -0700
+X-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
  by mx.groups.io with SMTP id smtpd.web08.5963.1634194555546868426
  for <cip-dev@lists.cip-project.org>;
  Wed, 13 Oct 2021 23:55:56 -0700
-Authentication-Results: mx.groups.io;
- dkim=missing;
- spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+X-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
 	id 9E04B1C0BB1; Thu, 14 Oct 2021 08:55:46 +0200 (CEST)
 Date: Thu, 14 Oct 2021 08:55:45 +0200
-From: Pavel Machek <pavel@denx.de>
+From: "Pavel Machek" <pavel@denx.de>
 To: cip-dev@lists.cip-project.org
 Subject: Re: [cip-dev] New CVE entry this week
 Message-ID: <20211014065545.GA18251@amd>
-References: 
- <CAODzB9qOyXSQ=P0x1CrPEC1=mCW3PUN4_Zx9hp0ZPpZWbM1WUw@mail.gmail.com>
+References: <CAODzB9qOyXSQ=P0x1CrPEC1=mCW3PUN4_Zx9hp0ZPpZWbM1WUw@mail.gmail.com>
 MIME-Version: 1.0
+In-Reply-To: <CAODzB9qOyXSQ=P0x1CrPEC1=mCW3PUN4_Zx9hp0ZPpZWbM1WUw@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+Precedence: Bulk
+List-Unsubscribe: <mailto:cip-dev+unsubscribe@lists.cip-project.org>
+List-Subscribe: <mailto:cip-dev+subscribe@lists.cip-project.org>
+List-Help: <mailto:cip-dev+help@lists.cip-project.org>
+Sender: cip-dev@lists.cip-project.org
+List-Id: <cip-dev.lists.cip-project.org>
+Mailing-List: list cip-dev@lists.cip-project.org; contact cip-dev+owner@lists.cip-project.org
+Reply-To: cip-dev@lists.cip-project.org
+X-Gm-Message-State: eXT2VKYnn2KSytz1eQBLILPKx4520388AA=
+Content-Type: multipart/mixed; boundary="YShkSQ9FKV9Adv4XKJDE"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=lists.cip-project.org; q=dns/txt; s=20140610; t=1634194557;
+ bh=LosbxbFr2sbOfLv7MLvlQ+t79EzGOqNNHYjzBFcQsL8=;
+ h=Content-Type:Date:From:Reply-To:Subject:To;
+ b=oxfeRlIDPZ3ymyCEly1sVAtH/YexvqKgCSqPWPQeQXy0iRk0OqOtOUaXgkuEkYbI7Xa
+ txnaQCNX1UppQV/oSrsv/OCBkt12m+p725cHULf3J6xcQfI/ie/VvlyBl30y30Ret8XF/
+ va3gg+FVVh9pq/sMpCC3B44HYPKNt2DYI68=
+Message-ID: <20211014065545.8UBwMqPyAuqvT0-ttQaz_eMS75wWm-r2eAOcUTbug3s@z>
+
+--YShkSQ9FKV9Adv4XKJDE
 Content-Type: multipart/signed; micalg=pgp-sha1;
 	protocol="application/pgp-signature"; boundary="Q68bSM7Ycu6FN28Q"
 Content-Disposition: inline
-In-Reply-To: 
- <CAODzB9qOyXSQ=P0x1CrPEC1=mCW3PUN4_Zx9hp0ZPpZWbM1WUw@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
- aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 14 Oct 2021 06:55:57 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6824
-
 
 --Q68bSM7Ycu6FN28Q
 Content-Type: text/plain; charset=us-ascii
@@ -92,3 +110,21 @@ qqAAnjjiMkADfz2fItH9gdGOG+F8tGPv
 
 --Q68bSM7Ycu6FN28Q--
 
+--YShkSQ9FKV9Adv4XKJDE
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+Links: You receive all messages sent to this group.
+View/Reply Online (#6824): https://lists.cip-project.org/g/cip-dev/message/=
+6824
+Mute This Topic: https://lists.cip-project.org/mt/86301612/4520388
+Group Owner: cip-dev+owner@lists.cip-project.org
+Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/10495289/4520388=
+/727948398/xyzzy [cip-dev@archiver.kernel.org]
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+
+
+--YShkSQ9FKV9Adv4XKJDE--
