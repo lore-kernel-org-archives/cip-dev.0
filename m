@@ -1,94 +1,74 @@
-Return-Path: <Vijaikumar_Kanagarajan@mentor.com>
+Return-Path: <srinuvasan_a@mentor.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FAB6C433EF
-	for <webhook@archiver.kernel.org>; Mon,  8 Nov 2021 09:33:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0921AC433F5
+	for <webhook@archiver.kernel.org>; Mon,  8 Nov 2021 10:49:33 +0000 (UTC)
 Received: from esa3.mentor.iphmx.com (esa3.mentor.iphmx.com [68.232.137.180])
- by mx.groups.io with SMTP id smtpd.web08.42769.1636364001609998947
+ by mx.groups.io with SMTP id smtpd.web09.43352.1636368571829036649
  for <cip-dev@lists.cip-project.org>;
- Mon, 08 Nov 2021 01:33:21 -0800
+ Mon, 08 Nov 2021 02:49:32 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=pass (domain: mentor.com, ip: 68.232.137.180, mailfrom: vijaikumar_kanagarajan@mentor.com)
+ spf=pass (domain: mentor.com, ip: 68.232.137.180, mailfrom: srinuvasan_a@mentor.com)
 IronPort-SDR: 
- ORwzCnyRddeCBmkCbGWj9l3w4JEATPMeFxksQ+wsrWb/bLrSGi/iFHa058ka/P/fclXzbaSdEG
- ZLkvqPcHtmvC+KqCKCofeAIBgd9M/mytO3ONYMDlpIkjkZ9mzYryANZhu03pxRk/p6OodMTmyb
- k4gj/l4anIt+l2/bR0QsFqV8sSfHrNL4e7epA7CpD4QKJv/Y1uIGNcw1RL6FyxPWWwjhayuBn4
- qWEqlnw826lvCXLDz/AqdPvnKL0QQz5BAyaA7TZeOenCx1lH+6+CHQRHT9XwoQTOotdpvJ9JSd
- Lku9m4jULnSOfddWvx37sMP0
+ 5qvs3c2xwTXKp8zBlHF2HDxngOwZKwSAidSAvc0QcdOfnSPXeERToPWSCN17E+3CLCVYu1Gbzp
+ BpHH3lZ2AHPamLt/TupOzzjU24ag4G4+50oL0teY5RvRNMI047Hbll49hLFmVfFaJ0K6raC5on
+ ZaVGIq+mvNw4yD78pxKjw0U6OGsCBUsfl5JHPXwPPoIgYxEcyxKUfazmgBzI8lDycn3UfTYkh4
+ A8Um4+URcorbYmsZBNca8BMAcZAvKvIuuXo2I0rZvy+Whs6yp9SSQb7/aRmYJ5WvGL3y34iCa9
+ xA5doFb1CZ6FX61Go9qjs5cP
 X-IronPort-AV: E=Sophos;i="5.87,218,1631606400";
-   d="scan'208";a="68020319"
-Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
-  by esa3.mentor.iphmx.com with ESMTP; 08 Nov 2021 01:33:20 -0800
+   d="scan'208";a="68024318"
+Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
+  by esa3.mentor.iphmx.com with ESMTP; 08 Nov 2021 02:49:30 -0800
 IronPort-SDR: 
- ZN1+Ti1WWzARntFGATLP9SrqphisgschS/CI2rqhcmZTS1YBd+pwn5bZy0pYZC0+OfzRCPOTti
- eB11HrD0atvGwY93/Pe+1wYUb7poFfStc7PZrqhM/9MnHn4SDCfAVpx98wmctVRc9Mj5ztPHt0
- BVDslBsouRcBDFeT1a2vv8SUIpTLsygC21aAtdDUyinjkZd8oRJPmhhfr4pfMsC8hNe03ZcxMw
- d89TMny//D8FwQV+y5A3pyrOt60WBed3ELBPIKs7gwqHX+6DZgbqB3UxOxgqx854hH2QfiD+0X
- ldw=
-From: Vijai Kumar K <Vijaikumar_Kanagarajan@mentor.com>
+ 7x7TebAC5cQinw95IqJL4gsiYpzwMkdT4IS5zWhEO0qcW78wz7jPagHrVQSRpKbFXDu10P/W4F
+ cJkVP9gT4R2YrQfvIz7a5/sT89yJbEEgd4MOAN/H9HtWNepSPALWEfcxB3MypqcB9cRct45DTJ
+ FfU5Qs2hgwAXg4Zc/W4P7AGt6BQ6Wdy3BWMcJ7qzIOsRJvMbGZvNUYt2/gWORmP7BzjojZVQP4
+ xmWdLfnCn/gXxBLAoudELEFlSsg3EG7hCjC50vA4b/ywbeymlLI6y8+fp3yUe41dyqftk7H6MR
+ fQ4=
+From: Srinuvasan A <Srinuvasan_A@mentor.com>
 To: <cip-dev@lists.cip-project.org>
-CC: Vijai Kumar K <Vijaikumar_Kanagarajan@mentor.com>
-Subject: [isar-cip-core][PATCH] swupdate: Remove superflous patch
-Date: Mon, 8 Nov 2021 15:02:59 +0530
-Message-ID: <20211108093259.3309527-1-Vijaikumar_Kanagarajan@mentor.com>
+CC: Srinuvasan A <srinuvasan_a@mentor.com>
+Subject: [isar-cip-core] [PATCH] Kconfig: correct the name of image format
+Date: Mon, 8 Nov 2021 16:19:05 +0530
+Message-ID: <20211108104905.2745110-1-Srinuvasan_A@mentor.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: svr-orw-mbx-08.mgc.mentorg.com (147.34.90.208) To
+X-ClientProxiedBy: svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201) To
  svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201)
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 08 Nov 2021 09:33:22 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6863
+ <cip-dev@lists.cip-project.org>; Mon, 08 Nov 2021 10:49:33 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6864
 
-Same as 0008-debian-rules-Add-Embedded-Lua-handler-option.patch.
+From: Srinuvasan A <srinuvasan_a@mentor.com>
 
-Signed-off-by: Vijai Kumar K <Vijaikumar_Kanagarajan@mentor.com>
+Update the exact image format name in kconfig menu.
+
+Signed-off-by: Srinuvasan A <srinuvasan_a@mentor.com>
 ---
- ...ules-Add-Embedded-Lua-handler-option.patch | 30 -------------------
- 1 file changed, 30 deletions(-)
- delete mode 100644 recipes-core/swupdate/files/0005-debian-rules-Add-Embedded-Lua-handler-option.patch
+ Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/recipes-core/swupdate/files/0005-debian-rules-Add-Embedded-Lua-handler-option.patch b/recipes-core/swupdate/files/0005-debian-rules-Add-Embedded-Lua-handler-option.patch
-deleted file mode 100644
-index 84665cd..0000000
---- a/recipes-core/swupdate/files/0005-debian-rules-Add-Embedded-Lua-handler-option.patch
-+++ /dev/null
-@@ -1,30 +0,0 @@
--From 0200687ad67d6e5a0e9bbdf2e8c86e3f8e717c5e Mon Sep 17 00:00:00 2001
--From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
--Date: Wed, 29 Sep 2021 11:32:41 +0200
--Subject: [PATCH 5/6] debian/rules: Add Embedded Lua handler option
--
--Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-----
-- debian/rules | 5 +++++
-- 1 file changed, 5 insertions(+)
--
--diff --git a/debian/rules b/debian/rules
--index 69fd790..9ace348 100755
----- a/debian/rules
--+++ b/debian/rules
--@@ -52,7 +52,12 @@ ifneq (,$(LUA_VERSION))
-- 	echo CONFIG_LUAPKG=\"lua$(LUA_VERSION)\" >> configs/debian_defconfig
-- 	echo CONFIG_LUASCRIPTHANDLER=y           >> configs/debian_defconfig
-- 	echo CONFIG_HANDLER_IN_LUA=y             >> configs/debian_defconfig
--+ifneq (,$(filter pkg.swupdate.embeddedlua,$(DEB_BUILD_PROFILES)))
--+	echo CONFIG_EMBEDDED_LUA_HANDLER=y                              >> configs/debian_defconfig
--+	echo CONFIG_EMBEDDED_LUA_HANDLER_SOURCE=\"/usr/share/lua/$(LUA_VERSION)/swupdate_handlers.lua\" >> configs/debian_defconfig
-- endif
--+endif
--+
-- 	echo CONFIG_EXTRA_CFLAGS=\"$(CFLAGS) $(CPPFLAGS)\" >> configs/debian_defconfig
-- 	echo CONFIG_EXTRA_LDFLAGS=\"$(LDFLAGS)\"           >> configs/debian_defconfig
-- 	echo CONFIG_EXTRA_LDLIBS=\"$(LDLIBS)\"             >> configs/debian_defconfig
---- 
--2.30.2
--
+diff --git a/Kconfig b/Kconfig
+index 13c3315..8421f1b 100644
+--- a/Kconfig
++++ b/Kconfig
+@@ -110,8 +110,8 @@ endchoice
+ 
+ config KAS_INCLUDE_IMAGE_FORMAT
+ 	string
+-	default "kas/opt/targz.yml" if IMAGE_ARTIFACTS && (TARGET_QEMU_AMD64 || TARGET_QEMU_ARM64 || TARGET_QEMU_ARM)
+-	default "kas/opt/wic-targz.yml" if IMAGE_ARTIFACTS && !(TARGET_QEMU_AMD64 || TARGET_QEMU_ARM64 || TARGET_QEMU_ARM)
++	default "kas/opt/targz-img.yml" if IMAGE_ARTIFACTS && (TARGET_QEMU_AMD64 || TARGET_QEMU_ARM64 || TARGET_QEMU_ARM)
++	default "kas/opt/wic-targz-img.yml" if IMAGE_ARTIFACTS && !(TARGET_QEMU_AMD64 || TARGET_QEMU_ARM64 || TARGET_QEMU_ARM)
+ 
+ config IMAGE_SECURITY
+ 	bool "Security extensions"
 -- 
 2.25.1
 
