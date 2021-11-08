@@ -1,75 +1,72 @@
-Return-Path: <srinuvasan_a@mentor.com>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0921AC433F5
-	for <webhook@archiver.kernel.org>; Mon,  8 Nov 2021 10:49:33 +0000 (UTC)
-Received: from esa3.mentor.iphmx.com (esa3.mentor.iphmx.com [68.232.137.180])
- by mx.groups.io with SMTP id smtpd.web09.43352.1636368571829036649
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEC3AC433FE
+	for <webhook@archiver.kernel.org>; Mon,  8 Nov 2021 13:43:40 +0000 (UTC)
+Received: from lizzard.sbs.de (lizzard.sbs.de [194.138.37.39])
+ by mx.groups.io with SMTP id smtpd.web12.44743.1636379019405308855
  for <cip-dev@lists.cip-project.org>;
- Mon, 08 Nov 2021 02:49:32 -0800
+ Mon, 08 Nov 2021 05:43:40 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=pass (domain: mentor.com, ip: 68.232.137.180, mailfrom: srinuvasan_a@mentor.com)
-IronPort-SDR: 
- 5qvs3c2xwTXKp8zBlHF2HDxngOwZKwSAidSAvc0QcdOfnSPXeERToPWSCN17E+3CLCVYu1Gbzp
- BpHH3lZ2AHPamLt/TupOzzjU24ag4G4+50oL0teY5RvRNMI047Hbll49hLFmVfFaJ0K6raC5on
- ZaVGIq+mvNw4yD78pxKjw0U6OGsCBUsfl5JHPXwPPoIgYxEcyxKUfazmgBzI8lDycn3UfTYkh4
- A8Um4+URcorbYmsZBNca8BMAcZAvKvIuuXo2I0rZvy+Whs6yp9SSQb7/aRmYJ5WvGL3y34iCa9
- xA5doFb1CZ6FX61Go9qjs5cP
-X-IronPort-AV: E=Sophos;i="5.87,218,1631606400";
-   d="scan'208";a="68024318"
-Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
-  by esa3.mentor.iphmx.com with ESMTP; 08 Nov 2021 02:49:30 -0800
-IronPort-SDR: 
- 7x7TebAC5cQinw95IqJL4gsiYpzwMkdT4IS5zWhEO0qcW78wz7jPagHrVQSRpKbFXDu10P/W4F
- cJkVP9gT4R2YrQfvIz7a5/sT89yJbEEgd4MOAN/H9HtWNepSPALWEfcxB3MypqcB9cRct45DTJ
- FfU5Qs2hgwAXg4Zc/W4P7AGt6BQ6Wdy3BWMcJ7qzIOsRJvMbGZvNUYt2/gWORmP7BzjojZVQP4
- xmWdLfnCn/gXxBLAoudELEFlSsg3EG7hCjC50vA4b/ywbeymlLI6y8+fp3yUe41dyqftk7H6MR
- fQ4=
-From: Srinuvasan A <Srinuvasan_A@mentor.com>
-To: <cip-dev@lists.cip-project.org>
-CC: Srinuvasan A <srinuvasan_a@mentor.com>
-Subject: [isar-cip-core] [PATCH] Kconfig: correct the name of image format
-Date: Mon, 8 Nov 2021 16:19:05 +0530
-Message-ID: <20211108104905.2745110-1-Srinuvasan_A@mentor.com>
-X-Mailer: git-send-email 2.25.1
+ spf=pass (domain: siemens.com, ip: 194.138.37.39, mailfrom: quirin.gylstorff@siemens.com)
+Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
+	by lizzard.sbs.de (8.15.2/8.15.2) with ESMTPS id 1A8DhaMx021722
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+	for <cip-dev@lists.cip-project.org>; Mon, 8 Nov 2021 14:43:37 +0100
+Received: from md2dvrtc.fritz.box ([139.22.43.76])
+	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 1A8Dhalv009197;
+	Mon, 8 Nov 2021 14:43:36 +0100
+From: "Q. Gylstorff" <Quirin.Gylstorff@siemens.com>
+To: jan.kiszka@siemens.com, cip-dev@lists.cip-project.org
+Subject: [cip-dev][isar-cip-core][PATCH] swupdate: add cross and nocheck to
+ build profile
+Date: Mon,  8 Nov 2021 14:43:36 +0100
+Message-Id: <20211108134336.1865475-1-Quirin.Gylstorff@siemens.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201) To
- svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201)
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 08 Nov 2021 10:49:33 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6864
+ <cip-dev@lists.cip-project.org>; Mon, 08 Nov 2021 13:43:40 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6865
 
-From: Srinuvasan A <srinuvasan_a@mentor.com>
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-Update the exact image format name in kconfig menu.
+During cross compiling for arm the builds fails during test
+build with the following message:
 
-Signed-off-by: Srinuvasan A <srinuvasan_a@mentor.com>
+```
+strip -N main -o /home/builder/swupdate/git/core/built-in.o.tmp /home/builder/swupdate/git/core/built-in.o
+strip: Unable to recognise the format of the input file `/home/builder/swupdate/git/core/built-in.o'
+make[3]: *** [/home/builder/swupdate/git/test/Makefile:71: test/test_json.lnk] Error 1
+m
+```
+
+Add cross and nocheck to SWUPDATE_BUILD_PROFILES to avoid
+the build error.
+
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ recipes-core/swupdate/swupdate_2021.04-1+debian-gbp.bb | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Kconfig b/Kconfig
-index 13c3315..8421f1b 100644
---- a/Kconfig
-+++ b/Kconfig
-@@ -110,8 +110,8 @@ endchoice
+diff --git a/recipes-core/swupdate/swupdate_2021.04-1+debian-gbp.bb b/recipes-core/swupdate/swupdate_2021.04-1+debian-gbp.bb
+index e62230f..7a0fb9b 100644
+--- a/recipes-core/swupdate/swupdate_2021.04-1+debian-gbp.bb
++++ b/recipes-core/swupdate/swupdate_2021.04-1+debian-gbp.bb
+@@ -28,6 +28,8 @@ SRC_URI += "file://0001-debian-Add-option-to-build-with-efibootguard.patch \
+ # deactivate signing and encryption for simple a/b rootfs update
+ SWUPDATE_BUILD_PROFILES += "pkg.swupdate.nosigning pkg.swupdate.noencryption"
  
- config KAS_INCLUDE_IMAGE_FORMAT
- 	string
--	default "kas/opt/targz.yml" if IMAGE_ARTIFACTS && (TARGET_QEMU_AMD64 || TARGET_QEMU_ARM64 || TARGET_QEMU_ARM)
--	default "kas/opt/wic-targz.yml" if IMAGE_ARTIFACTS && !(TARGET_QEMU_AMD64 || TARGET_QEMU_ARM64 || TARGET_QEMU_ARM)
-+	default "kas/opt/targz-img.yml" if IMAGE_ARTIFACTS && (TARGET_QEMU_AMD64 || TARGET_QEMU_ARM64 || TARGET_QEMU_ARM)
-+	default "kas/opt/wic-targz-img.yml" if IMAGE_ARTIFACTS && !(TARGET_QEMU_AMD64 || TARGET_QEMU_ARM64 || TARGET_QEMU_ARM)
- 
- config IMAGE_SECURITY
- 	bool "Security extensions"
++# add cross build and deactivate testing for arm based builds
++SWUPDATE_BUILD_PROFILES += "cross nocheck"
+ # If the luahandler shall be embedded into the swupdate binary
+ # include the following lines.
+ # DEPENDS += "swupdate-handlers"
 -- 
-2.25.1
+2.30.2
 
 
