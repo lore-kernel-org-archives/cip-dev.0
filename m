@@ -1,82 +1,95 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <Vijaikumar_Kanagarajan@mentor.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C5D9C433EF
-	for <webhook@archiver.kernel.org>; Thu,  4 Nov 2021 19:36:47 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web08.2651.1636054605961551616
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FAB6C433EF
+	for <webhook@archiver.kernel.org>; Mon,  8 Nov 2021 09:33:22 +0000 (UTC)
+Received: from esa3.mentor.iphmx.com (esa3.mentor.iphmx.com [68.232.137.180])
+ by mx.groups.io with SMTP id smtpd.web08.42769.1636364001609998947
  for <cip-dev@lists.cip-project.org>;
- Thu, 04 Nov 2021 12:36:46 -0700
+ Mon, 08 Nov 2021 01:33:21 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 1DC351C0B79; Thu,  4 Nov 2021 20:36:42 +0100 (CET)
-Date: Thu, 4 Nov 2021 20:36:40 +0100
-From: Pavel Machek <pavel@denx.de>
-To: cip-dev@lists.cip-project.org
-Subject: Re: [cip-dev] CIP IRC weekly meeting today on libera.chat
-Message-ID: <20211104193640.GA20123@duo.ucw.cz>
-References: <bcb40073-1e47-6df6-1d4e-fcea620e25e7@siemens.com>
+ spf=pass (domain: mentor.com, ip: 68.232.137.180, mailfrom: vijaikumar_kanagarajan@mentor.com)
+IronPort-SDR: 
+ ORwzCnyRddeCBmkCbGWj9l3w4JEATPMeFxksQ+wsrWb/bLrSGi/iFHa058ka/P/fclXzbaSdEG
+ ZLkvqPcHtmvC+KqCKCofeAIBgd9M/mytO3ONYMDlpIkjkZ9mzYryANZhu03pxRk/p6OodMTmyb
+ k4gj/l4anIt+l2/bR0QsFqV8sSfHrNL4e7epA7CpD4QKJv/Y1uIGNcw1RL6FyxPWWwjhayuBn4
+ qWEqlnw826lvCXLDz/AqdPvnKL0QQz5BAyaA7TZeOenCx1lH+6+CHQRHT9XwoQTOotdpvJ9JSd
+ Lku9m4jULnSOfddWvx37sMP0
+X-IronPort-AV: E=Sophos;i="5.87,218,1631606400";
+   d="scan'208";a="68020319"
+Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
+  by esa3.mentor.iphmx.com with ESMTP; 08 Nov 2021 01:33:20 -0800
+IronPort-SDR: 
+ ZN1+Ti1WWzARntFGATLP9SrqphisgschS/CI2rqhcmZTS1YBd+pwn5bZy0pYZC0+OfzRCPOTti
+ eB11HrD0atvGwY93/Pe+1wYUb7poFfStc7PZrqhM/9MnHn4SDCfAVpx98wmctVRc9Mj5ztPHt0
+ BVDslBsouRcBDFeT1a2vv8SUIpTLsygC21aAtdDUyinjkZd8oRJPmhhfr4pfMsC8hNe03ZcxMw
+ d89TMny//D8FwQV+y5A3pyrOt60WBed3ELBPIKs7gwqHX+6DZgbqB3UxOxgqx854hH2QfiD+0X
+ ldw=
+From: Vijai Kumar K <Vijaikumar_Kanagarajan@mentor.com>
+To: <cip-dev@lists.cip-project.org>
+CC: Vijai Kumar K <Vijaikumar_Kanagarajan@mentor.com>
+Subject: [isar-cip-core][PATCH] swupdate: Remove superflous patch
+Date: Mon, 8 Nov 2021 15:02:59 +0530
+Message-ID: <20211108093259.3309527-1-Vijaikumar_Kanagarajan@mentor.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="nFreZHaLTZJo0R7j"
-Content-Disposition: inline
-In-Reply-To: <bcb40073-1e47-6df6-1d4e-fcea620e25e7@siemens.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: svr-orw-mbx-08.mgc.mentorg.com (147.34.90.208) To
+ svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201)
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 04 Nov 2021 19:36:47 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6862
+ <cip-dev@lists.cip-project.org>; Mon, 08 Nov 2021 09:33:22 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6863
 
+Same as 0008-debian-rules-Add-Embedded-Lua-handler-option.patch.
 
---nFreZHaLTZJo0R7j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Vijai Kumar K <Vijaikumar_Kanagarajan@mentor.com>
+---
+ ...ules-Add-Embedded-Lua-handler-option.patch | 30 -------------------
+ 1 file changed, 30 deletions(-)
+ delete mode 100644 recipes-core/swupdate/files/0005-debian-rules-Add-Embedded-Lua-handler-option.patch
 
-Hi!
+diff --git a/recipes-core/swupdate/files/0005-debian-rules-Add-Embedded-Lua-handler-option.patch b/recipes-core/swupdate/files/0005-debian-rules-Add-Embedded-Lua-handler-option.patch
+deleted file mode 100644
+index 84665cd..0000000
+--- a/recipes-core/swupdate/files/0005-debian-rules-Add-Embedded-Lua-handler-option.patch
++++ /dev/null
+@@ -1,30 +0,0 @@
+-From 0200687ad67d6e5a0e9bbdf2e8c86e3f8e717c5e Mon Sep 17 00:00:00 2001
+-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+-Date: Wed, 29 Sep 2021 11:32:41 +0200
+-Subject: [PATCH 5/6] debian/rules: Add Embedded Lua handler option
+-
+-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+----
+- debian/rules | 5 +++++
+- 1 file changed, 5 insertions(+)
+-
+-diff --git a/debian/rules b/debian/rules
+-index 69fd790..9ace348 100755
+---- a/debian/rules
+-+++ b/debian/rules
+-@@ -52,7 +52,12 @@ ifneq (,$(LUA_VERSION))
+- 	echo CONFIG_LUAPKG=\"lua$(LUA_VERSION)\" >> configs/debian_defconfig
+- 	echo CONFIG_LUASCRIPTHANDLER=y           >> configs/debian_defconfig
+- 	echo CONFIG_HANDLER_IN_LUA=y             >> configs/debian_defconfig
+-+ifneq (,$(filter pkg.swupdate.embeddedlua,$(DEB_BUILD_PROFILES)))
+-+	echo CONFIG_EMBEDDED_LUA_HANDLER=y                              >> configs/debian_defconfig
+-+	echo CONFIG_EMBEDDED_LUA_HANDLER_SOURCE=\"/usr/share/lua/$(LUA_VERSION)/swupdate_handlers.lua\" >> configs/debian_defconfig
+- endif
+-+endif
+-+
+- 	echo CONFIG_EXTRA_CFLAGS=\"$(CFLAGS) $(CPPFLAGS)\" >> configs/debian_defconfig
+- 	echo CONFIG_EXTRA_LDFLAGS=\"$(LDFLAGS)\"           >> configs/debian_defconfig
+- 	echo CONFIG_EXTRA_LDLIBS=\"$(LDLIBS)\"             >> configs/debian_defconfig
+--- 
+-2.30.2
+-
+-- 
+2.25.1
 
-> Kindly be reminded to attend the weekly meeting through IRC to discuss
-> technical topics with CIP kernel today.
->=20
-> Please note that we moved from Freenode to libera.chat. Our channel is
-> the following:
->=20
->     irc:irc.libera.chat:6667/cip
->=20
-> Furthermore note that the IRC meeting is now scheduled to UTC (GMT)=20
-> 13:00:
->=20
-> https://www.timeanddate.com/worldclock/meetingdetails.html?year=3D2021&mo=
-nth=3D11&day=3D4&hour=3D13&min=3D0&sec=3D0&p1=3D224&p2=3D179&p3=3D136&p4=3D=
-37&p5=3D241&p6=3D248
->=20
-> USWest    USEast    UK        DE        TW        JP
-> 06:00     09:00     13:00     14:00     21:00     22:00
->=20
-> (NOTE: Winter time shift in Europe!)
-
-I'm sorry. Warning was clear, but I did not open the email... I was
-reviewing patches for 5.10.77.
-
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---nFreZHaLTZJo0R7j
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYYQ2SAAKCRAw5/Bqldv6
-8nXHAKCW4FXcavWNP7wqeoSyzPfVEgJshwCfcQlOdG0Un6g+0Sz4FZcAwJaaEu0=
-=mypQ
------END PGP SIGNATURE-----
-
---nFreZHaLTZJo0R7j--
 
