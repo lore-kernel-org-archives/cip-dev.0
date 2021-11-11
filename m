@@ -1,204 +1,166 @@
-Return-Path: <masami.ichikawa@miraclelinux.com>
+Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3376C433EF
-	for <webhook@archiver.kernel.org>; Wed, 10 Nov 2021 23:53:13 +0000 (UTC)
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com
- [209.85.210.48])
- by mx.groups.io with SMTP id smtpd.web10.3669.1636588390699285665
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE8AAC433EF
+	for <webhook@archiver.kernel.org>; Thu, 11 Nov 2021 06:30:12 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.156])
+ by mx.groups.io with SMTP id smtpd.web11.7164.1636612210915832768
  for <cip-dev@lists.cip-project.org>;
- Wed, 10 Nov 2021 15:53:12 -0800
+ Wed, 10 Nov 2021 22:30:12 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112
- header.b=XJZxdf2M;
- spf=pass (domain: miraclelinux.com, ip: 209.85.210.48,
- mailfrom: masami.ichikawa@miraclelinux.com)
-Received: by mail-ot1-f48.google.com with SMTP id
- l7-20020a0568302b0700b0055ae988dcc8so6331067otv.12
-        for <cip-dev@lists.cip-project.org>;
- Wed, 10 Nov 2021 15:53:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=BQYmft/5zQ/dRA0I/KiLn8Yntw6CmBwxxOhSTj1b0nQ=;
-        b=XJZxdf2MbxviteV5NDKDuR4vwtQgd5MyuCLD5RTr/yqNOjMVwUi296v3w3BCV6kTOG
-         2UOS94KU/g3eTWMMSSxaYF27xKmfDVbrgZU6sz/PofbXL9qPtxBSDUxvG62BeHwRptUd
-         Q6DPi6rdIKPaSDERMEVLvVwJHYkDZdV3G9UJo/JBvYQPR5uzsspvXDaP/cYFYrB4E9Om
-         lLr6W0kOtjkMECSpT3CCh3JJOO7vIbhuKvpy7iIIy/uBfNbvvAlq/nLx+QsBxgwbuTLU
-         G7/1T1lWVbIZuEbufu5q+iNw4k8IFq+alcs0YblhUtP7lMr4aV72l20vx8yclGb7v8tO
-         6zwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=BQYmft/5zQ/dRA0I/KiLn8Yntw6CmBwxxOhSTj1b0nQ=;
-        b=x/lNbxhnLd/jHG7nO7mCvxrWoolvORKrcWruiewYfmVIRsch+mO2hujFCeQWhfyIVm
-         IY1Nmb6lKA75BKnBzHNukHrlsnKb0LIMazdUD/uIH/1k618wRzUCZPhY91WtxVuF6+Xa
-         c5QhT2KFBCM/0gWQ2JrmiV40Az3IFUqsx23xdQhkvf5pqAFckyQTHd3n7BiJfpYpTiT4
-         VqqfMB0oInvZ/AI5EJ1cnUWIfqXsOOVjlL7HpDjCdU/YPhgNO5v+DgTzxlcjLRLj1yqn
-         hbeBR2yd6lpVAxjC7VbtI5qBGi4SHX3ZI8T5cB2ylu0fg8o3yoTXdqYl0J/F96EVMrFS
-         PIgg==
-X-Gm-Message-State: AOAM531mdVjBpW1j/WIuXRgw6q8Ww0XCx1YZD4HW65FCJm7GihXQ/TVP
-	ZojGQ1I+W0aDs2A9YLLnCjdqxaX9q5pslI+NIuC/kKC2nkcJRQ==
-X-Google-Smtp-Source: 
- ABdhPJyJ1iKO2iImTEINbp0bJl4d+1VWwdLY1fj3yQJPpAg1or+xkMZbYz3NnWSw7GJltz0Hsee8kjmCOq/nklyd41A=
-X-Received: by 2002:a9d:4a8d:: with SMTP id i13mr2587633otf.180.1636588389559;
- Wed, 10 Nov 2021 15:53:09 -0800 (PST)
-MIME-Version: 1.0
-From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Date: Thu, 11 Nov 2021 08:52:33 +0900
+ dkim=missing;
+ spf=pass (domain: toshiba.co.jp, ip: 210.130.202.156, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
+Received: by mo-csw.securemx.jp (mx-mo-csw1114) id 1AB6TopP018128;
+ Thu, 11 Nov 2021 15:29:50 +0900
+X-Iguazu-Qid: 2wGrZzhrwsvgOlYYZU
+X-Iguazu-QSIG: v=2; s=0; t=1636612190; q=2wGrZzhrwsvgOlYYZU;
+ m=b0e+qilOc7Uc6WXT00pfiubk5tR7pjDCcld6YjX5UrY=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1113) id 1AB6TkMF018210
+	(version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 11 Nov 2021 15:29:46 +0900
+Received: from enc01.toshiba.co.jp (enc01.toshiba.co.jp [106.186.93.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by imx2-a.toshiba.co.jp (Postfix) with ESMTPS id 3AF56100126;
+	Thu, 11 Nov 2021 15:29:46 +0900 (JST)
+Received: from hop001.toshiba.co.jp ([133.199.164.63])
+	by enc01.toshiba.co.jp  with ESMTP id 1AB6Tjgg026481;
+	Thu, 11 Nov 2021 15:29:45 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bRD4aDO6qMXws8WsQfu35jbmZmIyZY4IR92pMJDrs5Pu8WHEtvo/WHrJZLOX8zxygjzjNzOFBcfn3YIf+bezybdmQgKxSBZTVvH2M4Iw1Sppj/IFVm80lyv6mapPVD26H1iI+rfNUf82lTANUCY86L42yZfb5ZUtgtZUXnKcYh3chuyiUB/no//PgipFsSFp+oLuxPTeM/kRJe5BUElBTskdPtkrBRJpMNaQJC1JAy09fKEuQ1nTQMDpiWUZUhPCL0dFmCmsVPbyCQaHBH6mSfxqu2/TB46nTe2zEiKdgA8poOSM/nyX4/Slpfhrut91umCjDBWeuel4j7n+JdkaQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/a+gO258YEZTDV9maOAAOi5Jxg3OHaeh44N2TqcCR30=;
+ b=mB/2HYcXwp7jvmPwZ2MDC18m+e0Gt6bCY0p1eRtLhMN2vLc3wHAKxbUnjtKdWKQm0YDTpmZfMn/3ni+p9vsQEsF+e7EhJsS/6FW38MLvcoMWmEwHTSIDA3daeJ8axD54gHJyuXOl7ighvfuix1991tD+j+mN2HC3QqDjmkJrsv0jICcR2BLi3CGl9zAKsQNf6n+DLeFtbZxSTAa704iimTxDKptHqgc1et97zG6XgNbGT2eq57LgAOTJcd140mF/032BXaY6u9k1DiMa0sIh2GrLYvTf8f5zvx0yX83f7+AYKzjFB3BIDCx2WY1H4wh+DwrvRtocgbhwHOxqQ6/3zg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
+ header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
+From: <nobuhiro1.iwamatsu@toshiba.co.jp>
+To: <pavel@denx.de>, <cip-dev@lists.cip-project.org>
+CC: <uli@fpond.eu>, <jan.kiszka@siemens.com>,
+        <masami.ichikawa@cybertrust.co.jp>
+Subject: New kernel patches review management
+Thread-Topic: New kernel patches review management
+Thread-Index: AQHX1sVKDSpG8mo8q0i20IN6K0w3Lw==
+Date: Thu, 11 Nov 2021 06:29:42 +0000
+X-TSB-HOP: ON
 Message-ID: 
- <CAODzB9okpxqQ9ezVD0ua8wKqCjo=j1zw0pU18v7gmE=r1KGOQg@mail.gmail.com>
-Subject: New CVE entries in this week
-To: cip-dev <cip-dev@lists.cip-project.org>
-Content-Type: text/plain; charset="UTF-8"
+ <TYAPR01MB6252AE15ABA567A3301A9F4992949@TYAPR01MB6252.jpnprd01.prod.outlook.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+suggested_attachment_session_id: 8849e6d4-559c-c934-f2c8-dabb9f9b0bca
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 2e2deb7a-cf0b-452a-0df0-08d9a4dca5c2
+x-ms-traffictypediagnostic: TYCPR01MB7057:
+x-microsoft-antispam-prvs: 
+ <TYCPR01MB705779562F0E31F887CA599492949@TYCPR01MB7057.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ DylSFjQgu2FHZJ+2HUhFHhejvH/gNAobrS0PgmCZI/geeCqHAS95R+UFajXt5uc+6HK1Ny9ZGR+PgHtEc/XtvqWPaXLEux/X+xSNl/42S77Jm0wnOLHu6veUluO+lDKKAxDVkeoTe/D6yJjqNubmu1udQB2aFn1VPQpNzQkcjIHYQLTZGPkC6IOGualAfJz01VLCBgwx6PzJKqfMI3pPAFEf/fyYPA3Giv+MEmzc8jV2ZtJJ65EeqwNDql8tFQwKBRIRny7UmNtiP/0aaFZrB2iyTTkGJET1MmwbH8BkEurML1UljcSLYWuioJXVEfo19pnv7cuo/cagzm+5SLKcxNDWMqoQSyiyYxnp9c1Im4Q0HL3yKjEFcgXVjgrpUfrcZwGR07TeIXc5DmAFOcZ1IzCJbZXf3c8L5sV/+QWrRvOA35Jd+qmm/Bzxmjt/s1E8luJ2URUoVsu+v1OiAHhQvB+h9U3VYkGE2UoxIu9P6l+fivVx2gHpe9gKWlr0mWV737PQJyF4n0kHVPK1j99yrpyXvW5YM2ar12mux6ZrfgcBUCmfExXVA7dA7rRBlyi8hLR9fLfp8DPYTdEDp1eCznb5fjaOCFuOuYdZcOyi+LuigbztNlyK+HW1r1k7kPsyIg+S0fUcrW2Gxsg4ZPqS/dAb2kKbJzx4R3YcZ+zoXzcTba9QnxqvRB95X8lGLLyy3gT4egNWx5WVefU8OJJPGznzevCZHrcKcX2l7OOrzwAJiLRaTAt67lTcoKk0cviRSAUncnllUFAJNiKwWkU5jSuoJtNkDnSMW/JMcg7/v1MeZZIT1vY9Jb7+sobX6LThGke9xLMY2l1z3m88kyK+4g==
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYAPR01MB6252.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(38070700005)(186003)(4744005)(966005)(66946007)(52536014)(71200400001)(86362001)(26005)(508600001)(76116006)(9686003)(2906002)(33656002)(7696005)(66446008)(64756008)(66476007)(4326008)(8936002)(6506007)(316002)(66556008)(110136005)(38100700002)(8676002)(83380400001)(5660300002)(55016002)(54906003)(122000001)(66574015)(55236004);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?dS9aWDExc0VDNVNaLzFRUDl6WHZiczlRdlFZdWFCWmp5aEFkQW9jU1Bi?=
+ =?iso-2022-jp?B?QXRkZUpYTjFpV0IxL1U3NFpldHNUb0pFTWJocDdhRzFiZy9qdTZRY0Jh?=
+ =?iso-2022-jp?B?cnNuUGRTdUZ0d2ZXR1hFdlA3UTluVVhkNUFGdWFXRUVEYU5pMnhDL0Ru?=
+ =?iso-2022-jp?B?d2JMNUEwTGdCUEVoVHBxZUFiaHlzUHNNaHdDNC94MG5OOHBhTTFTWFd1?=
+ =?iso-2022-jp?B?M0dRa2dHekdORDdsNmd6b3A1YVJPbThjVGFzY0NKM3ZPLzY2dmdoVGt4?=
+ =?iso-2022-jp?B?NlJGTDVLMzVZOW5NNmwyK3htY09uK2lDTGdaZ25NZlBYNENMemFYazBy?=
+ =?iso-2022-jp?B?Rm1uU2JWbjdxYVpLNXVHdllkS25YblNkNGZCQlBheHBNb2NoZW12MjV5?=
+ =?iso-2022-jp?B?LzNWZXNCdSs5eG02YkQ0K2xxbGFLRDlHcWg4bi9MakxSMzE1S2p1SE83?=
+ =?iso-2022-jp?B?cGM5K3ZsN1Axem1md0c2NS81bTNPZm42UTB0ZTBIN1BTcy9TYlA0UFlL?=
+ =?iso-2022-jp?B?Tk5CV2o0MWhuY012VHZGcDZ4MENTVEJWTXRCbjFYN2ppcnFSaHZ5Z0ZE?=
+ =?iso-2022-jp?B?L2wvQzRqdFdyNDIyMmJORGYxcXhEZ1grYnJnVTQ5S1dWOXppdlhjS21P?=
+ =?iso-2022-jp?B?UU1oc2pVOUhmYk5BSXBVVU42SHN0NkQwVkUvN3U3MmJQdXJXT3Y4V0p3?=
+ =?iso-2022-jp?B?ZmlRUTY1TnovVzdpUVM5UnNQeHdtcFpCZS9jczZrbnpnWDVmeDRoRGpl?=
+ =?iso-2022-jp?B?Qkl5bU1mMmRwTmNOVVNZanEya3JyUFhyUU9ZczV0VUY2REtsREsrVXpU?=
+ =?iso-2022-jp?B?ZjRDMHNsZU9lQllXQUJWY3puSVJwODNDOTRGdWJaekNMRkdZdy9LdWZp?=
+ =?iso-2022-jp?B?SzVPLzdpTUlLMkhNcitMWWVGdXlVTU1GV0w3MW1XUi85TUsycHorSWZD?=
+ =?iso-2022-jp?B?cVRvN053dm5CWjgxUTZFVDF1bGxjd1VCR2hkcjNLaDN2Ly9zS3FrMHFt?=
+ =?iso-2022-jp?B?dklpMC9WZS8wdjh6QkkvbkNkS0RrSUw5UCs0WW13NFRIMEtpV2pETWVs?=
+ =?iso-2022-jp?B?TG5ZWUJGNDFNNGREaUlpdVdoQ0d0bEwzWWxnNm51aGVKTXFHOGdUM0xU?=
+ =?iso-2022-jp?B?b1BkU2lBaDZ6VzcyQ3BTS2NxSUE1cVQycFo3T2RBdWVXdUZHWmpJMWV5?=
+ =?iso-2022-jp?B?Q2d2aDRycUlJK0ZFTXk3MFJSaHNZczBZUW9XcVFFbHE0UlNoc0FqWEVT?=
+ =?iso-2022-jp?B?RFYzTWZ5eHpBTXk1L2lFQ1FML1NXMzZmMWMzeXdpZzFiRzU0a01vdVlK?=
+ =?iso-2022-jp?B?L1hORTZKWXRpU0QrNmVNcGZUc2hOV1ZmZGxUOWtGMEpjVXJzYjlvRWd5?=
+ =?iso-2022-jp?B?bjZBRmg3aTc5TFd4Yk1CMTV1UzNNQVZybGVMWEF4UXowOG14OHNYbVM3?=
+ =?iso-2022-jp?B?REpCTVkyU3JobmRPclRZL1BhM28zWCtQZkhpVDhkRXdNc1Nrbi8rLzlr?=
+ =?iso-2022-jp?B?Sk1sUFpQRU91clREbDRBNDFKNmcrN3JXQzhEZUFqVHdTS09IOVVwQi9M?=
+ =?iso-2022-jp?B?TmJGMHMraWVoZ2hvQnhaUmZXK0Fqa3ptc1EyVHpnKzU0SStERWRKb3Rs?=
+ =?iso-2022-jp?B?OTFIMHgzRnRBZExhYXJBVWliNVVWSDBQaTJvMmFFQXVLMGoxZlc2Zkww?=
+ =?iso-2022-jp?B?ZmVQaXNsemFZVzlRbkwrSitSak9yaGx2akVXV0lGRmppZWxyRXd2MUhi?=
+ =?iso-2022-jp?B?amFIY2lTL0g1LzlhbDJPQlFZUFRmWWxYUkVZdm9GM094c0tCUy9IaW1J?=
+ =?iso-2022-jp?B?dThWRWtoRll3QVRpRUphN3V2bE0wRHpqUmJlNEZaRVZRT0dkNng0QmQv?=
+ =?iso-2022-jp?B?NW1kM2RSOVlTWnNlcTBCc3YzTTZuV0hIVkZFc3lQUmdCWHd0N2ozUWxC?=
+ =?iso-2022-jp?B?NHVHVEpJY0FGanFhWnovV0djS3d1M1lrUnVjRGVvNktrV3JMYzhYcEJq?=
+ =?iso-2022-jp?B?NWN3T2ovSTVBVHdtQVBvQlpwK1k3bXlFbDNlRnViSHVHRzNVWnFZeXB2?=
+ =?iso-2022-jp?B?NTJaRlV4bFEwby92eHVPZUtpTHo4d3pCR3I3NWw1aVVqQ0kwdkZUc05L?=
+ =?iso-2022-jp?B?T3JtWkdnQndNRXM1L2JLc1JUUWI2Z0N0V3pxSDNtNzM2Z1FYcXJnR0Ez?=
+ =?iso-2022-jp?B?aTBOR1RDckJ4SGtWNC92TEJ4WDJiSkFkb3p5Uk9FSUowUUt2WGRjMzY0?=
+ =?iso-2022-jp?B?SWJmOWxGZkg3UG9tOG5Eb0p3T29SVENCdll4bWh1VzJqOVZuRlFLQkh4?=
+ =?iso-2022-jp?B?S0hpWEZJdDFNRHJTZlNETWVCOFg5SGdacGtCM2tTeHBLOENGNGFaRFhF?=
+ =?iso-2022-jp?B?MnlnN0dhOHFvQUhhcEIrNDFKV0JDcmIwM1ZybVNtSndzOWk2c2ZnNmlj?=
+ =?iso-2022-jp?B?c2FueWl4amR0Z3NYS253b3pNeEJPUE8rVW5uRC9QMWtTUFVwanlFRmxH?=
+ =?iso-2022-jp?B?NlByNHg1?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYAPR01MB6252.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 
+ 2e2deb7a-cf0b-452a-0df0-08d9a4dca5c2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Nov 2021 06:29:42.9219
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 
+ 5N3Ri+F0o/qYK/0w4nsylE85OaXu+xtywAqUKNCNiosNBrJV54VtPBj6jen9BBHGN4ih1ppiIG0JSU5YaSsXNa623tOTFj5gVfjJzR5SLuJ60lcrQzDBbxHvat4DT8nf
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB7057
+MSSCP.TransferMailToMossAgent: 103
+X-OriginatorOrg: toshiba.co.jp
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 10 Nov 2021 23:53:13 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6872
+ <cip-dev@lists.cip-project.org>; Thu, 11 Nov 2021 06:30:12 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6873
 
-Hi !
+Hi,=0A=
+=0A=
+I considered using the gitlab wiki to switch the current patch review=0A=
+management to another.=0A=
+=0A=
+The gitlab wiki can be used as a regular git repository and can be=0A=
+viewed from his browser by writing its contents in markdown.=0A=
+=0A=
+  e.g. git clone git@gitlab.com:cip-project/cip-kernel/linux-cip.wiki.git=
+=0A=
+=0A=
+It can be created using the API on the project wiki[0]. Since=0A=
+namespaces are available, we can also create hierarchies such as=0A=
+5.10.y/v5.10.77 [1].=0A=
+The wiki page is first filled with the commit ID, then the CIP kernel=0A=
+developer writes the name after the commit they plan to review.=0A=
+=0A=
+The commit content of [1] is an example, so please let me know if you=0A=
+have any opinions about the format and others.=0A=
+=0A=
+Best regards,=0A=
+  Nobuhiro=0A=
+=0A=
+[0]: https://gitlab.com/-/snippets/2200569=0A=
+[1]: https://gitlab.com/cip-project/cip-kernel/linux-cip/-/wikis/5.10.y/v5.=
+10.77=
 
-It's this week's CVE report.
-
-This week reported 4 new CVEs.
-
-* New CVEs
-
-CVE-2021-0920: af_unix: fix garbage collect vs MSG_PEEK
-
-CVSS v3 score is not provided.
-
-Mainline and stable kernels are already fixed.
-
-Fixed status
-
-mainline: [cbcf01128d0a92e131bd09f1688fe032480b65ca]
-stable/4.14: [af3e2b87b36100c28feb71da52c57293c4540690]
-stable/4.19: [1dabafa9f61118b1377fde424d9a94bf8dbf2813]
-stable/4.4: [72247f34d90e25c1493436e45e193e8306082b19]
-stable/4.9: [a805a7bd94644207d762d9c287078fecfcf52b3e]
-stable/5.10: [93c5951e0ce137e994237c19cd75a7caa1f80543]
-stable/5.4: [85abe0d47fe65391ed41f78a66b5eff73987c086]
-
-CVE-2021-0929: staging: ion: move buffer kmap from begin/end_cpu_access()
-
-CVSS v3 score is not provided.
-
-ION is a memory manager which is used by Android. This CVE may affect
-4.4, 4.19, and 5.10 however according to the cip-kernel-config, no cip
-member enabled ION. The ION driver has been removed since 5.11.
-
-Fixed status
-
-mainline: [3e9e0c5c764704218c0960ffdb139de075afaadf]
-
-CVE-2021-3736: uninitialized kernel stack may lead to information disclosure
-
-According to the Red Hat
-bugzilla(https://bugzilla.redhat.com/show_bug.cgi?id=1995570), there
-is a memory leak problem in samples/vfio-mdev/mbochs.c. This
-vulnerability is in a sample code. Also no cip member enabled
-CONFIG_SAMPLE_VFIO_MDEV_MBOCHS. Bugzilla comment #6 pointed commit
-de5494af4815a4c9328536c72741229b7de88e7f ("vfio/mbochs: Fix missing
-error unwind of mbochs_used_mbytes
-") as a fix commit but not confirmed yet. If commit de5494af4815a is
-the fix, this vulnerability was introduced since 5.14-rc1.
-
-Fixed status
-
-Not fixed.
-
-CVE-2021-43389: isdn: cpai: check ctr->cnr to avoid array index out of bound
-
-CVSS v3 score is "5.5 MEDIUM".
-
-The array index out of bound bug in the drivers/isdn/capi/kcapi.c.
-This bug has been fixed in mainline and stable kernels. No cip member
-use CAPI.
-
-Fixed status
-
-mainline: [1f3e2e97c003f80c4b087092b225c8787ff91e4d]
-stable/4.14: [9b6b2db77bc3121fe435f1d4b56e34de443bec75]
-stable/4.19: [7d91adc0ccb060ce564103315189466eb822cc6a]
-stable/4.4: [e8b8de17e164c9f1b7777f1c6f99d05539000036]
-stable/4.9: [24219a977bfe3d658687e45615c70998acdbac5a]
-stable/5.10: [7f221ccbee4ec662e2292d490a43ce6c314c4594]
-stable/5.14: [cc20226e218a2375d50dd9ac14fb4121b43375ff]
-stable/5.4: [285e9210b1fab96a11c0be3ed5cea9dd48b6ac54]
-
-
-* Updated CVEs
-
-CVE-2021-42739: media: firewire: firedtv-avc: fix a buffer overflow in
-avc_ca_pmt()
-
-4.19 and 5.X kernels have been fixed in this week. However, appliying
-patch to 4.4 and 4.9 are failed.
-According to the cip-kernel-config repo, no CIP member uses firewire driver.
-
-Fixed status
-
-mainline: [35d2969ea3c7d32aee78066b1f3cf61a0d935a4e]
-stable/4.19: [53ec9dab4eb0a8140fc85760fb50effb526fe219]
-stable/5.10: [d7fc85f6104259541ec136199d3bf7c8a736613d]
-stable/5.14: [02a476ca886dc8155025fe99cbbad4121d029fa7]
-stable/5.15: [cb667140875a3b1db92e4c50b4617a7cbf84659b]
-stable/5.4: [2461f38384d50dd966e1db44fe165b1896f5df5a]
-
-CVE-2021-3892: memory leak in fib6_rule_suppress could result in DoS
-
-According to the SUSE bugzilla
-(https://bugzilla.suse.com/show_bug.cgi?id=1192261#c1), this CVE is
-duplicate of CVE-2019-18198.
-If so, this CVE is already fixed.
-
-CVE-2021-3640: UAF in sco_send_frame function
-
-Fixed commit is 99c23da0eed4fd20cae8243f2b51e10e66aa0951 ("Bluetooth:
-sco: Fix lock_sock() blockage by memcpy_from_msg()"). Backport patches
-for 4.19, 5.4, 5.10, 5.14, and 5.15 have been sent to stable mailing
-list on Nov 9. This fix can be applied to 4.4 by git-am without error.
-
-mainline: [99c23da0eed4fd20cae8243f2b51e10e66aa0951]
-
-Currently tracking CVEs
-
-CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
-Bluetooth Core Specifications 4.0 through 5.2
-
-There is no fix information.
-
-CVE-2020-26555: BR/EDR pin code pairing broken
-
-No fix information
-
-CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
-
-No fix information.
-
-CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
-Provisioning Leads to MITM
-
-No fix information.
-
-CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
-
-No fix information.
-
-CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
-
-No fix information.
-
-
-Regards,
-
--- 
-Masami Ichikawa
-Cybertrust Japan Co., Ltd.
-
-Email :masami.ichikawa@cybertrust.co.jp
-          :masami.ichikawa@miraclelinux.com
 
