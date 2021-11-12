@@ -2,28 +2,28 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE3CC4167B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C24BC433F5
 	for <webhook@archiver.kernel.org>; Fri, 12 Nov 2021 11:50:25 +0000 (UTC)
-Received: from thoth.sbs.de (thoth.sbs.de [192.35.17.2])
- by mx.groups.io with SMTP id smtpd.web12.14460.1636717821616974626
+Received: from lizzard.sbs.de (lizzard.sbs.de [194.138.37.39])
+ by mx.groups.io with SMTP id smtpd.web09.14721.1636717823604269922
  for <cip-dev@lists.cip-project.org>;
- Fri, 12 Nov 2021 03:50:22 -0800
+ Fri, 12 Nov 2021 03:50:24 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=pass (domain: siemens.com, ip: 192.35.17.2, mailfrom: quirin.gylstorff@siemens.com)
+ spf=pass (domain: siemens.com, ip: 194.138.37.39, mailfrom: quirin.gylstorff@siemens.com)
 Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-	by thoth.sbs.de (8.15.2/8.15.2) with ESMTPS id 1ACBoIbF004111
+	by lizzard.sbs.de (8.15.2/8.15.2) with ESMTPS id 1ACBoJeS028340
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
 	for <cip-dev@lists.cip-project.org>; Fri, 12 Nov 2021 12:50:19 +0100
 Received: from md2dvrtc.fritz.box ([167.87.35.150])
-	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 1ACBoHAi023845;
-	Fri, 12 Nov 2021 12:50:18 +0100
+	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 1ACBoHAm023845;
+	Fri, 12 Nov 2021 12:50:19 +0100
 From: "Q. Gylstorff" <Quirin.Gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
-Subject: [cip-dev][isar-cip-core][RFC 2/8] Add classes for dm-verity based
- rootfs
-Date: Fri, 12 Nov 2021 12:50:11 +0100
-Message-Id: <20211112115017.401779-4-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][RFC 6/8] Create systemd mount units for a
+ etc overlay
+Date: Fri, 12 Nov 2021 12:50:15 +0100
+Message-Id: <20211112115017.401779-8-Quirin.Gylstorff@siemens.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211112115017.401779-1-Quirin.Gylstorff@siemens.com>
 References: <20211112115017.401779-1-Quirin.Gylstorff@siemens.com>
@@ -33,125 +33,153 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 12 Nov 2021 11:50:25 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6884
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6887
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-Add a bbclass to add dm-verity to a existing root file system
-partition. As we need the output of `veritysetup` to generate
-the initrd. Therefore do_verity_image must be called before wic
-generates the final disk image.
+As /etc is read-only and needs to be accessed by the initrd
+move the user defined settings to a overlay in /var/local/etc.
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- classes/verity-img.bbclass     | 73 ++++++++++++++++++++++++++++++++++
- classes/wic-verity-img.bbclass | 17 ++++++++
- 2 files changed, 90 insertions(+)
- create mode 100644 classes/verity-img.bbclass
- create mode 100644 classes/wic-verity-img.bbclass
+ .../etc-overlay-fs/etc-overlay-fs_0.1.bb         | 16 ++++++++++++++++
+ .../etc-overlay-fs/files/etc-hostname.service    | 14 ++++++++++++++
+ .../etc-overlay-fs/files/etc-sysusers.service    | 14 ++++++++++++++
+ recipes-core/etc-overlay-fs/files/etc.mount      | 13 +++++++++++++
+ .../files/overlay-parse-etc.service              | 12 ++++++++++++
+ recipes-core/etc-overlay-fs/files/postinst       |  6 ++++++
+ recipes-core/images/cip-core-image-read-only.bb  |  1 +
+ 7 files changed, 76 insertions(+)
+ create mode 100644 recipes-core/etc-overlay-fs/etc-overlay-fs_0.1.bb
+ create mode 100644 recipes-core/etc-overlay-fs/files/etc-hostname.service
+ create mode 100644 recipes-core/etc-overlay-fs/files/etc-sysusers.service
+ create mode 100644 recipes-core/etc-overlay-fs/files/etc.mount
+ create mode 100644 recipes-core/etc-overlay-fs/files/overlay-parse-etc.service
+ create mode 100755 recipes-core/etc-overlay-fs/files/postinst
 
-diff --git a/classes/verity-img.bbclass b/classes/verity-img.bbclass
+diff --git a/recipes-core/etc-overlay-fs/etc-overlay-fs_0.1.bb b/recipes-core/etc-overlay-fs/etc-overlay-fs_0.1.bb
 new file mode 100644
-index 0000000..82159b3
+index 0000000..f1c8349
 --- /dev/null
-+++ b/classes/verity-img.bbclass
-@@ -0,0 +1,73 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2021
-+#
-+# Authors:
-+#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+IMAGER_INSTALL += "cryptsetup"
++++ b/recipes-core/etc-overlay-fs/etc-overlay-fs_0.1.bb
+@@ -0,0 +1,16 @@
++inherit dpkg-raw
 +
-+VERITY_IMAGE_TYPE ?= "squashfs"
-+VERITY_IMAGE ?= "${IMAGE_FULLNAME}.${VERITY_IMAGE_TYPE}.img"
-+VERITY_OUTPUT_IMAGE ?= "${IMAGE_FULLNAME}.${VERITY_IMAGE_TYPE}.verity.img"
-+VERITY_IMAGE_METADATA = "${VERITY_OUTPUT_IMAGE}.metadata"
-+VERITY_HASH_BLOCK_SIZE ?= "1024"
-+VERITY_DATA_BLOCK_SIZE ?= "1024"
++SRC_URI = "file://postinst \
++           file://etc.mount \
++           file://overlay-parse-etc.service \
++           file://etc-hostname.service \
++           file://etc-sysusers.service"
 +
-+create_verity_env_file() {
-+
-+    local ENV="${DEPLOY_DIR_IMAGE}/${IMAGE_FULLNAME}.verity.${VERITY_IMAGE_TYPE}.env"
-+    rm -f $ENV
-+
-+    local input="${WORKDIR}/${VERITY_IMAGE_METADATA}"
-+    # remove header from verity meta data
-+    sed -i '/VERITY header information for/d' $input
-+    IFS=":"
-+    while read KEY VAL; do
-+        printf '%s=%s\n' \
-+            "$(echo "$KEY" | tr '[:lower:]' '[:upper:]' | sed 's/ /_/g')" \
-+            "$(echo "$VAL" | tr -d ' \t')" >> $ENV
-+    done < $input
++do_install[cleandirs]+="${D}/lib/systemd/system ${D}/var/local/etc ${D}/var/local/.atomic"
++do_install() {
++    TARGET=${D}/lib/systemd/system
++    install -m 0644 ${WORKDIR}/etc.mount ${TARGET}/etc.mount
++    install -m 0644 ${WORKDIR}/overlay-parse-etc.service  ${TARGET}/overlay-parse-etc.service
++    install -m 0644 ${WORKDIR}/etc-hostname.service ${TARGET}/etc-hostname.service
++    install -m 0644 ${WORKDIR}/etc-sysusers.service ${TARGET}/etc-sysusers.service
 +}
-+
-+verity_setup() {
-+    rm -f ${DEPLOY_DIR_IMAGE}/${VERITY_OUTPUT_IMAGE}
-+    rm -f ${WORKDIR}/${VERITY_IMAGE_METADATA}
-+
-+    cp -a ${DEPLOY_DIR_IMAGE}/${VERITY_IMAGE} ${DEPLOY_DIR_IMAGE}/${VERITY_OUTPUT_IMAGE}
-+
-+    image_do_mounts
-+    sudo chroot "${BUILDCHROOT_DIR}" /sbin/veritysetup format \
-+        --hash-block-size "${VERITY_HASH_BLOCK_SIZE}"  \
-+        --data-block-size "${VERITY_DATA_BLOCK_SIZE}"  \
-+        --data-blocks "${VERITY_DATA_BLOCKS}" \
-+        --hash-offset "${VERITY_INPUT_IMAGE_SIZE}" \
-+        "${PP_DEPLOY}/${VERITY_OUTPUT_IMAGE}" \
-+        "${PP_DEPLOY}/${VERITY_OUTPUT_IMAGE}" \
-+        >"${WORKDIR}/${VERITY_IMAGE_METADATA}"
-+
-+    echo "Hash offset:    	${VERITY_INPUT_IMAGE_SIZE}" \
-+        >>"${WORKDIR}/${VERITY_IMAGE_METADATA}"
-+}
-+
-+do_verity_image[cleandirs] = "${WORKDIR}/verity"
-+python do_verity_image() {
-+    import os
-+
-+    image_file = os.path.join(
-+        d.getVar("DEPLOY_DIR_IMAGE"),
-+        d.getVar("VERITY_IMAGE")
-+    )
-+    data_block_size = int(d.getVar("VERITY_DATA_BLOCK_SIZE"))
-+    size = os.stat(image_file).st_size
-+    assert size % data_block_size == 0, f"image is not well-sized!"
-+    d.setVar("VERITY_INPUT_IMAGE_SIZE", str(size))
-+    d.setVar("VERITY_DATA_BLOCKS", str(size // data_block_size))
-+
-+    bb.build.exec_func('verity_setup', d)
-+    bb.build.exec_func('create_verity_env_file', d)
-+}
-+addtask verity_image before do_image after do_image_tools
-diff --git a/classes/wic-verity-img.bbclass b/classes/wic-verity-img.bbclass
+diff --git a/recipes-core/etc-overlay-fs/files/etc-hostname.service b/recipes-core/etc-overlay-fs/files/etc-hostname.service
 new file mode 100644
-index 0000000..e185cf8
+index 0000000..2306b9f
 --- /dev/null
-+++ b/classes/wic-verity-img.bbclass
-@@ -0,0 +1,17 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2021
-+#
-+# Authors:
-+#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+#
++++ b/recipes-core/etc-overlay-fs/files/etc-hostname.service
+@@ -0,0 +1,14 @@
++[Unit]
++Description=set hostname /etc overlay-aware
++Before=network-pre.target
++Wants=network-pre.target
++Requires=etc.mount
++After=etc.mount
 +
-+inherit squashfs-img
-+inherit verity-img
-+inherit wic-img
++[Service]
++Type=oneshot
++RemainAfterExit=yes
++ExecStart=/bin/hostname --boot --file /etc/hostname
 +
-+addtask verity_image after do_squashfs_image
-+addtask do_wic_image after do_verity_image
++[Install]
++WantedBy=basic.target
+diff --git a/recipes-core/etc-overlay-fs/files/etc-sysusers.service b/recipes-core/etc-overlay-fs/files/etc-sysusers.service
+new file mode 100644
+index 0000000..6caf6b0
+--- /dev/null
++++ b/recipes-core/etc-overlay-fs/files/etc-sysusers.service
+@@ -0,0 +1,14 @@
++[Unit]
++Description=make systemd-sysusers /etc overlay aware
++Before=network-pre.target
++Wants=network-pre.target
++Requires=etc.mount
++After=etc.mount
++
++[Service]
++Type=oneshot
++RemainAfterExit=yes
++ExecStart=/usr/bin/systemd-sysusers
++
++[Install]
++WantedBy=basic.target
+diff --git a/recipes-core/etc-overlay-fs/files/etc.mount b/recipes-core/etc-overlay-fs/files/etc.mount
+new file mode 100644
+index 0000000..f0ae3c5
+--- /dev/null
++++ b/recipes-core/etc-overlay-fs/files/etc.mount
+@@ -0,0 +1,13 @@
++[Unit]
++Description=Overlay-mount /etc
++Requires=var.mount
++After=var.mount
++
++[Mount]
++What=overlay
++Where=/etc
++Type=overlay
++Options=noauto,x-systemd.automount,lowerdir=/etc,upperdir=/var/local/etc,workdir=/var/local/.atomic
++
++[Install]
++WantedBy=local-fs.target
+diff --git a/recipes-core/etc-overlay-fs/files/overlay-parse-etc.service b/recipes-core/etc-overlay-fs/files/overlay-parse-etc.service
+new file mode 100644
+index 0000000..062bb40
+--- /dev/null
++++ b/recipes-core/etc-overlay-fs/files/overlay-parse-etc.service
+@@ -0,0 +1,12 @@
++[Unit]
++Description=Reload Configuration from the etc overlay
++Requires=etc.mount
++After=etc.mount
++
++[Service]
++Type=oneshot
++RemainAfterExit=yes
++ExecStartPre=!/bin/systemctl daemon-reload
++ExecStart=!/bin/systemctl --no-block isolate multi-user.target
++[Install]
++WantedBy=local-fs.target
+diff --git a/recipes-core/etc-overlay-fs/files/postinst b/recipes-core/etc-overlay-fs/files/postinst
+new file mode 100755
+index 0000000..35641af
+--- /dev/null
++++ b/recipes-core/etc-overlay-fs/files/postinst
+@@ -0,0 +1,6 @@
++#!/bin/sh
++
++deb-systemd-helper enable etc.mount  || true
++deb-systemd-helper enable overlay-parse-etc.service || true
++deb-systemd-helper enable etc-hostname.service || true
++deb-systemd-helper enable etc-sysusers.service || true
+diff --git a/recipes-core/images/cip-core-image-read-only.bb b/recipes-core/images/cip-core-image-read-only.bb
+index 24ace3c..6e2a40a 100644
+--- a/recipes-core/images/cip-core-image-read-only.bb
++++ b/recipes-core/images/cip-core-image-read-only.bb
+@@ -6,6 +6,7 @@ do_wic_image[depends] += "${INITRAMFS_RECIPE}:do_build"
+ 
+ SQUASHFS_EXCLUDE_DIRS += "home var"
+ 
++IMAGE_INSTALL += "etc-overlay-fs"
+ IMAGE_INSTALL += "tmp-fs"
+ IMAGE_INSTALL_remove += "initramfs-abrootfs-secureboot"
+ 
 -- 
 2.30.2
 
