@@ -2,121 +2,159 @@ Return-Path: <alice.ferrazzi@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3FE3C433F5
-	for <webhook@archiver.kernel.org>; Mon, 15 Nov 2021 16:20:19 +0000 (UTC)
-Received: from mail-pf1-f194.google.com (mail-pf1-f194.google.com
- [209.85.210.194])
- by mx.groups.io with SMTP id smtpd.web10.24548.1636993217068061067
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1702C433EF
+	for <webhook@archiver.kernel.org>; Mon, 15 Nov 2021 16:20:20 +0000 (UTC)
+Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com
+ [209.85.210.195])
+ by mx.groups.io with SMTP id smtpd.web11.24490.1636993219056954099
  for <cip-dev@lists.cip-project.org>;
- Mon, 15 Nov 2021 08:20:18 -0800
+ Mon, 15 Nov 2021 08:20:19 -0800
 Authentication-Results: mx.groups.io;
  dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112
- header.b=sh2mQ58f;
- spf=pass (domain: miraclelinux.com, ip: 209.85.210.194,
+ header.b=UMgmQ2yt;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.210.195,
  mailfrom: alice.ferrazzi@miraclelinux.com)
-Received: by mail-pf1-f194.google.com with SMTP id z6so15489207pfe.7
+Received: by mail-pf1-f195.google.com with SMTP id 8so3555452pfo.4
         for <cip-dev@lists.cip-project.org>;
- Mon, 15 Nov 2021 08:20:16 -0800 (PST)
+ Mon, 15 Nov 2021 08:20:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=HGmm5BjB0pWaI9BVDN3B8MYGxq0MR6yVroIW9jNCR7k=;
-        b=sh2mQ58fJQHUB2iyPe5hfHWrILi4BArU59LEUNfEC+TiMFwSoNfhQQLg4hcMA7uTFv
-         MUG6hbx4fvsybzhHo77MJHDyAXBWmUpo5iT0NejahUNlOaUXDJ6WbxpWpJE1PMf7qsAs
-         bTTODlNJf1sNi+YMv7Fq4qAeVArTGdkQZN2D8XNUpwCzT6ptHou3KhhhWMcWUnCwFpR9
-         PH6oHkiMPjtXDSRy72jz7cKTMlvFvsnqu7dULRwlc7z8eGzZhp2YsIGm4wnzxnHBvbUa
-         pxHFm/348glv5eAaM0/jCbxOvqp0ltVSUwsGlb0utDVIn/uTXSmjZC3F7bcI9uc52H91
-         f0eQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=KkKoPRta3CjjLEn/Kh7baUS+JKV3w0vLt+gcKcz31MY=;
+        b=UMgmQ2yt1cEKG9an59gGspDtVvHZ+OZqkkB64P++BEnE44FMJsW9QtXToKPXIQCvT6
+         403K6tyl5hb9NEXulQmgXLaTJLkwTGG3nWt4em4RFPZpF6501+Rpfm7zjHso2ibqaKlL
+         f+77NMGQX+FuZ43WJ0CEI/Mw1d7ElhSPkB+H/crX96RHShvwOyVxmPNc5E3dZy6Xm4rg
+         KXv91z4700k/bQcB5930JM+nZVs0CaVyae0oVag3ZNkn2u+87yIUwWpQnR8tia0hL6vK
+         ul5gk0FyXVCSkoOoQNLuxqlkOJVA+dz79ud74fyDV4q65v9d75QINj/T78VsAXirsa8D
+         L8Dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=HGmm5BjB0pWaI9BVDN3B8MYGxq0MR6yVroIW9jNCR7k=;
-        b=MQdPJ4t9r66PdNmb8rrL2UwuNb5iU8dGoWOcxjJ8NNpL8lbwRBz+RlTs9LM+Nu82uD
-         AKcgfvSwUlnJKSSqMVjmHD5Cbnjn7qJ4q1QI63foM4hkueQJViw87z4JSHWDydw85vbf
-         aVFi4H2dAA3N9rNrxcZX5MJ2v+imgI2LuQcnPsccsVHneQnU8krCZNJXyxUB1vMGCSOC
-         vyaIlF2265kq+JLf0FqR0rNaujJnE2KPEaByxnKoZraQz3rngWW356cn7eBbNE0xJoir
-         3nuGBgT2Gy0BQsriz+i1WZSq++X6+HqK84Sclw2cRo0C+ODxUUg5Ik+qmKnl9FH9hvAe
-         XpnQ==
-X-Gm-Message-State: AOAM530QYoCW2hcfbQ5YjCGQ398orxigs55ZU06JfJnxOOfC18Xa7gue
-	tHqk0b91ww2ujBzBL/jZA9uO785hmVCKEU4=
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=KkKoPRta3CjjLEn/Kh7baUS+JKV3w0vLt+gcKcz31MY=;
+        b=hTbhNDFhmjsZReaVcga7l/GLHJsDfuSZDmu0ASMX/C9SGO+BrGVJAKtoCTNehB2NxH
+         Tz248Akb5wHf7dIH4gTVoNl9ZaLjE0evTLzSs3oC/UdwDBgUEqEhZERm5Fs5xhBcbG6K
+         moUY0yeMrnpjJrgPO8drQRzN99ZKj4bI9rswj2qY+W6bvaTO4vucVtunrEkt+nsEz/B0
+         WIpuD6rOs7afQmNLVCvlExVOmdufo+a/wPwXg8UDQSMvxSkn8jcdlsPHNyq4eHr0LDCq
+         GdQd5lNJ+0w0746ozRUdtg2pLl5vRNxsf82f+/24zAfnW1Rlv5JvDPdCntWHnytds7cx
+         g9pg==
+X-Gm-Message-State: AOAM530dicdh2OCTHSQhUTUVzBbd6BHG4f7ZU+IDHyIF5Oxtk/8U6X1H
+	HnEyxjH+NIT43MVLWBBgl/vizfjXE1cAlZo=
 X-Google-Smtp-Source: 
- ABdhPJxaqm+yha9pYbHhNgP63VbXUFsGK+vOBl7jleFib22hHM2rrUNdGFcSJTM++43MR5J6aaisZw==
-X-Received: by 2002:aa7:87c5:0:b0:4a0:25d0:d88c with SMTP id
- i5-20020aa787c5000000b004a025d0d88cmr33963488pfo.43.1636993215497;
-        Mon, 15 Nov 2021 08:20:15 -0800 (PST)
+ ABdhPJzFhD6m0/kPbO2d+1Thn/LAWtgVWcF/dFbxGT2LZNdD8JJxEiNljihQ6OhqJc0O5Rbger5W1A==
+X-Received: by 2002:a05:6a00:1411:b0:4a0:3472:e438 with SMTP id
+ l17-20020a056a00141100b004a03472e438mr34009235pfu.68.1636993218659;
+        Mon, 15 Nov 2021 08:20:18 -0800 (PST)
 Received: from alicef-pc.nkano1.kt.home.ne.jp (27-139-229-132.rev.home.ne.jp.
  [27.139.229.132])
         by smtp.gmail.com with ESMTPSA id
- h186sm13850289pfg.64.2021.11.15.08.20.13
+ h186sm13850289pfg.64.2021.11.15.08.20.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Nov 2021 08:20:14 -0800 (PST)
+        Mon, 15 Nov 2021 08:20:18 -0800 (PST)
 From: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
 To: cip-dev@lists.cip-project.org
 Cc: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
-Subject: [isar-cip-core][PATCH 00/11] cip-core-image-kernelci
-Date: Tue, 16 Nov 2021 01:17:13 +0900
-Message-Id: <20211115161724.19516-1-alice.ferrazzi@miraclelinux.com>
+Subject: [isar-cip-core][PATCH 01/11] Deploy tarballs and initrd to kernelci
+Date: Tue, 16 Nov 2021 01:17:14 +0900
+Message-Id: <20211115161724.19516-2-alice.ferrazzi@miraclelinux.com>
 X-Mailer: git-send-email 2.33.1
+In-Reply-To: <20211115161724.19516-1-alice.ferrazzi@miraclelinux.com>
+References: <20211115161724.19516-1-alice.ferrazzi@miraclelinux.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 15 Nov 2021 16:20:19 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6903
+ <cip-dev@lists.cip-project.org>; Mon, 15 Nov 2021 16:20:20 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6904
 
-This patch series add a new image with settings for 
-KernelCI.
+Create script for deploy images to KernelCI file server using
+KernelCI api
 
-This new image is called cip-core-image-kernelci and is 
-based on isar-cip-core general image.
-The cip-core-image-kernelci images are built by GitlabCI
-and uploaded to KernelCI production fileserver.
-https://storage.kernelci.org/images/rootfs/cip/
-
-These patches are already integrated in the
-isar-cip-core:alicef/kernelci_image repository branch and
-are generating the images that are currently 
-used by KernelCI.
-
-cip-core-image-kernelci as been tested and are
-already used in KernelCI production with good results.
-https://linux.kernelci.org/test/job/stable-rc/branch/queue%2F5.14/kernel/v5.14.17-9-g9f7eecaa70b3/plan/baseline-cip-nfs/
-
-Alice Ferrazzi (11):
-  Deploy tarballs and initrd to kernelci
-  Rename initrd with the gz suffix
-  Add latest folder to the storage fileserver
-  Create kernelci build step
-  Ignore extension argument when not set
-  Enable KernelCI build step also for arm and arm64
-  Create cip-core-image-kernelci
-  Remove root password
-  Set the profile for KernelCI
-  dmesg.sh is needed for KernelCI
-  Upload to KernelCI production
-
- .gitlab-ci.yml                                | 40 +++++++++-
- kas/opt/kernelci.yml                          | 16 ++++
- .../images/cip-core-image-kernelci.bb         | 16 ++++
- .../files/99-silent-printk.conf               |  1 +
- .../kernelci-customizations/files/dmesg.sh    | 23 ++++++
- .../kernelci-customizations/files/ethernet    | 23 ++++++
- .../kernelci-customizations/files/postinst    | 34 +++++++++
- .../kernelci-customizations.bb                | 38 ++++++++++
- scripts/deploy-kernelci.py                    | 76 +++++++++++++++++++
- 9 files changed, 266 insertions(+), 1 deletion(-)
- create mode 100644 kas/opt/kernelci.yml
- create mode 100644 recipes-core/images/cip-core-image-kernelci.bb
- create mode 100644 recipes-core/kernelci-customizations/files/99-silent-printk.conf
- create mode 100644 recipes-core/kernelci-customizations/files/dmesg.sh
- create mode 100644 recipes-core/kernelci-customizations/files/ethernet
- create mode 100644 recipes-core/kernelci-customizations/files/postinst
- create mode 100644 recipes-core/kernelci-customizations/kernelci-customizations.bb
+Signed-off-by: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
+---
+ .gitlab-ci.yml             |  4 +++-
+ scripts/deploy-kernelci.py | 48 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 51 insertions(+), 1 deletion(-)
  create mode 100755 scripts/deploy-kernelci.py
 
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+index 5becd37..dd7d9cc 100644
+--- a/.gitlab-ci.yml
++++ b/.gitlab-ci.yml
+@@ -9,6 +9,7 @@ variables:
+   targz: disable
+   dtb: none
+   deploy: enable
++  deploy_kernelci: enable
+ 
+ stages:
+   - build
+@@ -37,7 +38,8 @@ default:
+     - if [ "${release}" = "bullseye" ]; then base_yaml="${base_yaml}:kas/opt/bullseye.yml"; fi;
+     - echo "Building ${base_yaml}"
+     - kas build ${base_yaml}
+-    - if [ "${deploy}" = "enable" ]; then scripts/deploy-cip-core.sh ${release} ${target} ${extention} ${dtb}; fi
++    - if [ "${deploy}" = "enable" ]; then scripts/deploy-cip-core.sh ${release} ${target} ${extention} ${dtb}; fi;
++    - if [ "${deploy_kernelci}" = "enable" ]; then scripts/deploy-kernelci.py ${release} ${target} ${extention} ${dtb}; fi
+ 
+ # base image
+ build:simatic-ipc227e-base:
+diff --git a/scripts/deploy-kernelci.py b/scripts/deploy-kernelci.py
+new file mode 100755
+index 0000000..931504c
+--- /dev/null
++++ b/scripts/deploy-kernelci.py
+@@ -0,0 +1,48 @@
++#!/usr/bin/env python3
++# -*- coding: utf-8 -*-
++
++import subprocess
++import requests
++import os
++import sys
++import time
++from urllib.parse import urljoin
++
++cdate=time.strftime("%Y%m%d")
++api="https://api.staging.kernelci.org/upload"
++token=os.getenv("KERNELCI_TOKEN")
++
++release=sys.argv[1]
++target=sys.argv[2]
++extension=sys.argv[3]
++
++rootfs_filename="cip-core-image-"+extension+"-cip-core-"+release+"-"+target+".tar.gz"
++initrd_filename="cip-core-image-"+extension+"-cip-core-"+release+"-"+target+"-initrd.img"
++input_dir="build/tmp/deploy/images/"+target
++upload_path="/images/rootfs/cip/"+cdate+"/"+target+"/"
++rootfs=input_dir+"/"+rootfs_filename
++initrd=input_dir+"/"+initrd_filename
++
++print("build directory contents:")
++print(os.listdir(input_dir))
++
++def upload_file(api, token, path, input_file, input_filename):
++    headers = {
++        'Authorization': token,
++    }
++    data = {
++        'path': path,
++    }
++    files = {
++        'file': (input_filename, open(input_file, 'rb').read()),
++    }
++    url = urljoin(api, 'upload')
++    resp = requests.post(url, headers=headers, data=data, files=files)
++    resp.raise_for_status()
++
++if os.path.exists(rootfs) and os.path.exists(initrd):
++    print("uploading rootfs to KernelCI")
++    upload_file(api, token, upload_path, rootfs, rootfs_filename)
++    print("uploading initrd to KernelCI")
++    upload_file(api, token, upload_path, initrd, initrd_filename)
++    print("uploaded to: https://storage.staging.kernelci.org"+upload_path)
 -- 
 2.33.1
 
