@@ -2,64 +2,61 @@ Return-Path: <alice.ferrazzi@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7343C433F5
-	for <webhook@archiver.kernel.org>; Mon, 15 Nov 2021 16:20:24 +0000 (UTC)
-Received: from mail-pj1-f68.google.com (mail-pj1-f68.google.com
- [209.85.216.68])
- by mx.groups.io with SMTP id smtpd.web12.24746.1636993223447334007
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C38ACC433FE
+	for <webhook@archiver.kernel.org>; Mon, 15 Nov 2021 16:20:26 +0000 (UTC)
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com
+ [209.85.215.178])
+ by mx.groups.io with SMTP id smtpd.web10.24555.1636993225666436328
  for <cip-dev@lists.cip-project.org>;
- Mon, 15 Nov 2021 08:20:24 -0800
+ Mon, 15 Nov 2021 08:20:26 -0800
 Authentication-Results: mx.groups.io;
  dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112
- header.b=5b0oGJZx;
- spf=pass (domain: miraclelinux.com, ip: 209.85.216.68,
+ header.b=UXKFPjZL;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.215.178,
  mailfrom: alice.ferrazzi@miraclelinux.com)
-Received: by mail-pj1-f68.google.com with SMTP id
- gb13-20020a17090b060d00b001a674e2c4a8so245176pjb.4
+Received: by mail-pg1-f178.google.com with SMTP id n23so14949547pgh.8
         for <cip-dev@lists.cip-project.org>;
- Mon, 15 Nov 2021 08:20:23 -0800 (PST)
+ Mon, 15 Nov 2021 08:20:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=y3vwrzovosFv17eIiHM/BH7UUdoVlOvjSOw9eXLjzdA=;
-        b=5b0oGJZxCY78r1j2cfxZ6zvtebFh53dlUTNLsuO2TAs1/JQa4kwQFb3lHng+1a0pnE
-         zUdN3NhlkkNtlzU5jierGiNc9GybKNmBRsKP/EMxONVDHcoDdml1uSCiN0j0oS8egwyv
-         RSDz0qRgZQYy/8YNXCup1B8XgB+zhIptXlREbGUd8SdkW8agRpTegX9Bru0adXb6yryr
-         6UfAJBz1ub5iXQ+iic8CK+jcgYrc0sAL533zUZmFHpuEKgtc3XxchzsX7Pr1TzKhjQFg
-         zjtlBmZrMCBnXDQ8hfaqmMvZE9s8DJ383xvpHiVwa8dfCidN6yVmWIapeHjTCCKPmO2c
-         6fHQ==
+        bh=qjdOy9CS5ZWuEy65mhqt65d+1lsNNmAofS+vEMcdyK8=;
+        b=UXKFPjZLZDlm/0iFkiXWxjeUc74c1RCVfUFQw1/vmkbhPlKuDqHxfnDYvm2uHZVo+w
+         F6wrO0k+UZmf55m1sHr89ZV98yZoVxswqiRHBaptXSJQBPxEFW9n4ooFbJDXfca4YzCr
+         wsuTx4Hqear2Ng19XRAcrtyGhwWZCiv711HXRk+o9p3tSwcOgRUF8OvxYN2Vn/0foicu
+         ARso0YbsX7rEB5nMYKBkT02ENnasz+QhimUfsG0/k3GCEXPvnGtjLv2WSrTATV6yQjz2
+         xgrfCDqQZP7OgyasSQVU3EptPlQYF5X6CEobrMsmddyRenkSpLpCtHE/MOaD0t3CUUTR
+         MGfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=y3vwrzovosFv17eIiHM/BH7UUdoVlOvjSOw9eXLjzdA=;
-        b=ASCWpTQIeQgt+qD57TfPl6/+BBu7dmg915CznD50rJBF/85x6wfLo55SjCGcCYFiGa
-         nCWL49necFsc+N0nmxHDlYMFGJV1vvyFAbLg9coyyk1nd1ol8mQ5egw+4wJqH0z7Xidu
-         ofzf1uvhUdaopIIIrf6M5Q1ZlpDrnZONLTJvdfjrTEqPgbQUMZ19VOYQbPCCa57RARZN
-         HOPfYh4j4+t2O9VKU+L3DLm5tai3E4NLCSBiEP23Z8zEamRvJmDUC5FHiUOiUwojqRx0
-         9KkmTchM6dr+5W8d+5/zVQXWva0tcYzTlLfssPgHtSKpdDua8O7LWI8jkMDHOGtK5eo/
-         bpOA==
-X-Gm-Message-State: AOAM532z/mzjTGkavmmIKF+XijQ7AtoyV94zF2UHEa7sWm9qYGinzpMs
-	OGznGn1TjxMKVUOjRsJU1rewcUaVlxGS6CM=
+        bh=qjdOy9CS5ZWuEy65mhqt65d+1lsNNmAofS+vEMcdyK8=;
+        b=HsVK+KuvZEBIJpnJn9mFlRAaII8bOwmnvDW/57r3w5eRAhtk/GHJMm4GpLCPOi5Yw8
+         RUxUV0Dah4YBIXQa1Tz1SVhfb1t/2sR/0l0i7j6mbKvmtzb8Ik3n9ns/VQN59nES8afU
+         Zfx7r0we1lt6VrQE8gXb6ktSWmBK/9FTMGumzWMWcRsIebvPJ87bohPnsSHVROW93a4M
+         kW2p6LRXdk5otlJXXYNOqBFlAnIO1K8v71GFObYpwELz7tLTl+ceRu9+JkbHKTcon848
+         SCvMXLRpgkL5uAd0MK8DsFrIPanV0hXDL1Fvecq1fsI9KltECzGezL5mQo3hmJ/7s/64
+         O8dQ==
+X-Gm-Message-State: AOAM531qA/PPgC0uXZ+fwg+i7mb81SGkULU7jNkJr0us7hf5PUEIcZc7
+	+nDENCYgDl8XNPGojf2z3gt4lfjnd1WFucA=
 X-Google-Smtp-Source: 
- ABdhPJyufONINA/WzwZAJShAcPuJhFkKEqVOZtU2II3F8L830B9tpE/d3qmVUrco1dBf+UPaeG6qFw==
-X-Received: by 2002:a17:902:e88f:b0:141:f982:777 with SMTP id
- w15-20020a170902e88f00b00141f9820777mr37441953plg.68.1636993222929;
-        Mon, 15 Nov 2021 08:20:22 -0800 (PST)
+ ABdhPJy0msmPqRhuSpsy1P0STkee7UGgisCr/NfmG7FxK4+GSlcIpR5TYLMqmaw0JfQ3NMpzkUn72A==
+X-Received: by 2002:a63:8749:: with SMTP id i70mr42976pge.158.1636993224988;
+        Mon, 15 Nov 2021 08:20:24 -0800 (PST)
 Received: from alicef-pc.nkano1.kt.home.ne.jp (27-139-229-132.rev.home.ne.jp.
  [27.139.229.132])
         by smtp.gmail.com with ESMTPSA id
- h186sm13850289pfg.64.2021.11.15.08.20.21
+ h186sm13850289pfg.64.2021.11.15.08.20.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Nov 2021 08:20:22 -0800 (PST)
+        Mon, 15 Nov 2021 08:20:24 -0800 (PST)
 From: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
 To: cip-dev@lists.cip-project.org
 Cc: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
-Subject: [isar-cip-core][PATCH 03/11] Add latest folder to the storage
- fileserver
-Date: Tue, 16 Nov 2021 01:17:16 +0900
-Message-Id: <20211115161724.19516-4-alice.ferrazzi@miraclelinux.com>
+Subject: [isar-cip-core][PATCH 04/11] Create kernelci build step
+Date: Tue, 16 Nov 2021 01:17:17 +0900
+Message-Id: <20211115161724.19516-5-alice.ferrazzi@miraclelinux.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211115161724.19516-1-alice.ferrazzi@miraclelinux.com>
 References: <20211115161724.19516-1-alice.ferrazzi@miraclelinux.com>
@@ -68,40 +65,57 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 15 Nov 2021 16:20:24 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6906
+ <cip-dev@lists.cip-project.org>; Mon, 15 Nov 2021 16:20:26 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6907
 
-Creating a latest folder useful if we want to test the latest
-image.
+By default disable KernelCI upload and enable it only when 
+needed for KernelCI image build.
 
 Signed-off-by: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
 ---
- scripts/deploy-kernelci.py | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ .gitlab-ci.yml | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/scripts/deploy-kernelci.py b/scripts/deploy-kernelci.py
-index c2341a6..88c09d7 100755
---- a/scripts/deploy-kernelci.py
-+++ b/scripts/deploy-kernelci.py
-@@ -24,6 +24,7 @@ initrd_gz_filename="cip-core-image-"+extension+"-cip-core-"+release+"-"+target+"
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+index dd7d9cc..5f0463e 100644
+--- a/.gitlab-ci.yml
++++ b/.gitlab-ci.yml
+@@ -9,7 +9,7 @@ variables:
+   targz: disable
+   dtb: none
+   deploy: enable
+-  deploy_kernelci: enable
++  kernelci: disable
  
- input_dir="build/tmp/deploy/images/"+target
- upload_path="/images/rootfs/cip/"+cdate+"/"+target+"/"
-+upload_path_latest="/images/rootfs/cip/latest/"+target+"/"
- rootfs=input_dir+"/"+rootfs_filename
- initrd=input_dir+"/"+initrd_filename
+ stages:
+   - build
+@@ -39,7 +39,7 @@ default:
+     - echo "Building ${base_yaml}"
+     - kas build ${base_yaml}
+     - if [ "${deploy}" = "enable" ]; then scripts/deploy-cip-core.sh ${release} ${target} ${extention} ${dtb}; fi;
+-    - if [ "${deploy_kernelci}" = "enable" ]; then scripts/deploy-kernelci.py ${release} ${target} ${extention} ${dtb}; fi
++    - if [ "${kernelci}" = "enable" ]; then scripts/deploy-kernelci.py ${release} ${target} ${extention} ${dtb}; fi
  
-@@ -50,3 +51,10 @@ if os.path.exists(rootfs) and os.path.exists(initrd):
-     print("uploading initrd to KernelCI")
-     upload_file(api, token, upload_path, initrd, initrd_gz_filename)
-     print("uploaded to: https://storage.staging.kernelci.org"+upload_path)
+ # base image
+ build:simatic-ipc227e-base:
+@@ -79,6 +79,17 @@ build:qemu-amd64-base:
+     wic_targz: disable
+     targz: enable
+ 
++build:qemu-amd64-base-kernelci:
++  extends:
++    - .build_base
++  variables:
++    target: qemu-amd64
++    use_rt: disable
++    wic_targz: disable
++    targz: enable
++    deploy: disable
++    kernelci: enable
 +
-+    # Upload latest
-+    print("uploading rootfs to KernelCI CIP latest")
-+    upload_file(api, token, upload_path_latest, rootfs, rootfs_filename)
-+    print("uploading initrd to KernelCI CIP latest")
-+    upload_file(api, token, upload_path_latest, initrd, initrd_gz_filename)
-+    print("uploaded to: https://storage.staging.kernelci.org"+upload_path_latest)
+ build:qemu-arm64-base:
+   extends:
+     - .build_base
 -- 
 2.33.1
 
