@@ -1,97 +1,123 @@
-Return-Path: <venkata.pyla@toshiba-tsip.com>
+Return-Path: <alice.ferrazzi@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6545C433F5
-	for <webhook@archiver.kernel.org>; Mon, 15 Nov 2021 16:16:23 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.154])
- by mx.groups.io with SMTP id smtpd.web09.24679.1636992981767194135
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3FE3C433F5
+	for <webhook@archiver.kernel.org>; Mon, 15 Nov 2021 16:20:19 +0000 (UTC)
+Received: from mail-pf1-f194.google.com (mail-pf1-f194.google.com
+ [209.85.210.194])
+ by mx.groups.io with SMTP id smtpd.web10.24548.1636993217068061067
  for <cip-dev@lists.cip-project.org>;
- Mon, 15 Nov 2021 08:16:23 -0800
+ Mon, 15 Nov 2021 08:20:18 -0800
 Authentication-Results: mx.groups.io;
- dkim=missing;
- spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.154,
- mailfrom: venkata.pyla@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1515) id 1AFGGHor013054;
- Tue, 16 Nov 2021 01:16:17 +0900
-X-Iguazu-Qid: 34tKOM77SxLipHhol1
-X-Iguazu-QSIG: v=2; s=0; t=1636992977; q=34tKOM77SxLipHhol1;
- m=t6DiGzzLEBULTEaJHtt4MEOAlTl7jYLim18T7eUmKX8=
-Received: from imx12-a.toshiba.co.jp (imx12-a.toshiba.co.jp [61.202.160.135])
-	by relay.securemx.jp (mx-mr1513) id 1AFGGGF3028977
-	(version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
-	Tue, 16 Nov 2021 01:16:16 +0900
-Received: from enc02.toshiba.co.jp (enc02.toshiba.co.jp [61.202.160.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by imx12-a.toshiba.co.jp (Postfix) with ESMTPS id D86711000B5
-	for <cip-dev@lists.cip-project.org>; Tue, 16 Nov 2021 01:15:37 +0900 (JST)
-Received: from hop101.toshiba.co.jp ([133.199.85.107])
-	by enc02.toshiba.co.jp  with ESMTP id 1AFGFb6D025265
-	for <cip-dev@lists.cip-project.org>; Tue, 16 Nov 2021 01:15:37 +0900
-From: venkata.pyla@toshiba-tsip.com
-To: jan.kiszka@siemens.com, cip-dev@lists.cip-project.org
-Cc: venkata pyla <venkata.pyla@toshiba-tsip.com>
-Subject: [PATCH] cip-core-image-security: remove unnecessary dependency
- package names
-Date: Mon, 15 Nov 2021 21:45:54 +0530
-X-TSB-HOP: ON
-Message-Id: <20211115161554.24270-1-venkata.pyla@toshiba-tsip.com>
-X-Mailer: git-send-email 2.20.1
+ dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112
+ header.b=sh2mQ58f;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.210.194,
+ mailfrom: alice.ferrazzi@miraclelinux.com)
+Received: by mail-pf1-f194.google.com with SMTP id z6so15489207pfe.7
+        for <cip-dev@lists.cip-project.org>;
+ Mon, 15 Nov 2021 08:20:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HGmm5BjB0pWaI9BVDN3B8MYGxq0MR6yVroIW9jNCR7k=;
+        b=sh2mQ58fJQHUB2iyPe5hfHWrILi4BArU59LEUNfEC+TiMFwSoNfhQQLg4hcMA7uTFv
+         MUG6hbx4fvsybzhHo77MJHDyAXBWmUpo5iT0NejahUNlOaUXDJ6WbxpWpJE1PMf7qsAs
+         bTTODlNJf1sNi+YMv7Fq4qAeVArTGdkQZN2D8XNUpwCzT6ptHou3KhhhWMcWUnCwFpR9
+         PH6oHkiMPjtXDSRy72jz7cKTMlvFvsnqu7dULRwlc7z8eGzZhp2YsIGm4wnzxnHBvbUa
+         pxHFm/348glv5eAaM0/jCbxOvqp0ltVSUwsGlb0utDVIn/uTXSmjZC3F7bcI9uc52H91
+         f0eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HGmm5BjB0pWaI9BVDN3B8MYGxq0MR6yVroIW9jNCR7k=;
+        b=MQdPJ4t9r66PdNmb8rrL2UwuNb5iU8dGoWOcxjJ8NNpL8lbwRBz+RlTs9LM+Nu82uD
+         AKcgfvSwUlnJKSSqMVjmHD5Cbnjn7qJ4q1QI63foM4hkueQJViw87z4JSHWDydw85vbf
+         aVFi4H2dAA3N9rNrxcZX5MJ2v+imgI2LuQcnPsccsVHneQnU8krCZNJXyxUB1vMGCSOC
+         vyaIlF2265kq+JLf0FqR0rNaujJnE2KPEaByxnKoZraQz3rngWW356cn7eBbNE0xJoir
+         3nuGBgT2Gy0BQsriz+i1WZSq++X6+HqK84Sclw2cRo0C+ODxUUg5Ik+qmKnl9FH9hvAe
+         XpnQ==
+X-Gm-Message-State: AOAM530QYoCW2hcfbQ5YjCGQ398orxigs55ZU06JfJnxOOfC18Xa7gue
+	tHqk0b91ww2ujBzBL/jZA9uO785hmVCKEU4=
+X-Google-Smtp-Source: 
+ ABdhPJxaqm+yha9pYbHhNgP63VbXUFsGK+vOBl7jleFib22hHM2rrUNdGFcSJTM++43MR5J6aaisZw==
+X-Received: by 2002:aa7:87c5:0:b0:4a0:25d0:d88c with SMTP id
+ i5-20020aa787c5000000b004a025d0d88cmr33963488pfo.43.1636993215497;
+        Mon, 15 Nov 2021 08:20:15 -0800 (PST)
+Received: from alicef-pc.nkano1.kt.home.ne.jp (27-139-229-132.rev.home.ne.jp.
+ [27.139.229.132])
+        by smtp.gmail.com with ESMTPSA id
+ h186sm13850289pfg.64.2021.11.15.08.20.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Nov 2021 08:20:14 -0800 (PST)
+From: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
+To: cip-dev@lists.cip-project.org
+Cc: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
+Subject: [isar-cip-core][PATCH 00/11] cip-core-image-kernelci
+Date: Tue, 16 Nov 2021 01:17:13 +0900
+Message-Id: <20211115161724.19516-1-alice.ferrazzi@miraclelinux.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 15 Nov 2021 16:15:35.0934 (UTC)
- FILETIME=[05B4B1E0:01D7DA3C]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 15 Nov 2021 16:16:23 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6902
+ <cip-dev@lists.cip-project.org>; Mon, 15 Nov 2021 16:20:19 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6903
 
-From: venkata pyla <venkata.pyla@toshiba-tsip.com>
+This patch series add a new image with settings for 
+KernelCI.
 
-It is not necessary to mention dependency package names when parent
-package is present, the dependency packages will automatically
-install by isar framework.
+This new image is called cip-core-image-kernelci and is 
+based on isar-cip-core general image.
+The cip-core-image-kernelci images are built by GitlabCI
+and uploaded to KernelCI production fileserver.
+https://storage.kernelci.org/images/rootfs/cip/
 
-so removing the dependency packages which are not necessary.
+These patches are already integrated in the
+isar-cip-core:alicef/kernelci_image repository branch and
+are generating the images that are currently 
+used by KernelCI.
 
-Signed-off-by: venkata pyla <venkata.pyla@toshiba-tsip.com>
----
- recipes-core/images/cip-core-image-security.bb | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+cip-core-image-kernelci as been tested and are
+already used in KernelCI production with good results.
+https://linux.kernelci.org/test/job/stable-rc/branch/queue%2F5.14/kernel/v5.14.17-9-g9f7eecaa70b3/plan/baseline-cip-nfs/
 
-diff --git a/recipes-core/images/cip-core-image-security.bb b/recipes-core/images/cip-core-image-security.bb
-index 61ddc39..6c41b00 100644
---- a/recipes-core/images/cip-core-image-security.bb
-+++ b/recipes-core/images/cip-core-image-security.bb
-@@ -17,12 +17,12 @@ IMAGE_INSTALL += "security-customizations"
- 
- # Debian packages that provide security features
- IMAGE_PREINSTALL += " \
--	openssl libssl1.1 \
-+	openssl \
- 	fail2ban \
- 	openssh-server openssh-sftp-server openssh-client \
- 	syslog-ng-core syslog-ng-mod-journal \
--	aide aide-common \
--	libnftables0 nftables \
-+	aide \
-+	nftables \
- 	libpam-pkcs11 \
- 	chrony \
- 	tpm2-tools \
-@@ -30,7 +30,7 @@ IMAGE_PREINSTALL += " \
- 	libtss2-esys0 libtss2-udev \
- 	libpam-cracklib \
- 	acl \
--	libauparse0 audispd-plugins auditd \
-+	audispd-plugins auditd \
- 	uuid-runtime \
- 	sudo \
- "
+Alice Ferrazzi (11):
+  Deploy tarballs and initrd to kernelci
+  Rename initrd with the gz suffix
+  Add latest folder to the storage fileserver
+  Create kernelci build step
+  Ignore extension argument when not set
+  Enable KernelCI build step also for arm and arm64
+  Create cip-core-image-kernelci
+  Remove root password
+  Set the profile for KernelCI
+  dmesg.sh is needed for KernelCI
+  Upload to KernelCI production
+
+ .gitlab-ci.yml                                | 40 +++++++++-
+ kas/opt/kernelci.yml                          | 16 ++++
+ .../images/cip-core-image-kernelci.bb         | 16 ++++
+ .../files/99-silent-printk.conf               |  1 +
+ .../kernelci-customizations/files/dmesg.sh    | 23 ++++++
+ .../kernelci-customizations/files/ethernet    | 23 ++++++
+ .../kernelci-customizations/files/postinst    | 34 +++++++++
+ .../kernelci-customizations.bb                | 38 ++++++++++
+ scripts/deploy-kernelci.py                    | 76 +++++++++++++++++++
+ 9 files changed, 266 insertions(+), 1 deletion(-)
+ create mode 100644 kas/opt/kernelci.yml
+ create mode 100644 recipes-core/images/cip-core-image-kernelci.bb
+ create mode 100644 recipes-core/kernelci-customizations/files/99-silent-printk.conf
+ create mode 100644 recipes-core/kernelci-customizations/files/dmesg.sh
+ create mode 100644 recipes-core/kernelci-customizations/files/ethernet
+ create mode 100644 recipes-core/kernelci-customizations/files/postinst
+ create mode 100644 recipes-core/kernelci-customizations/kernelci-customizations.bb
+ create mode 100755 scripts/deploy-kernelci.py
+
 -- 
-2.20.1
-
+2.33.1
 
 
