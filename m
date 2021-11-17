@@ -1,309 +1,139 @@
-Return-Path: <christian.storm@siemens.com>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77966C433EF
-	for <webhook@archiver.kernel.org>; Wed, 17 Nov 2021 12:31:45 +0000 (UTC)
-Received: from david.siemens.de (david.siemens.de [192.35.17.14])
- by mx.groups.io with SMTP id smtpd.web08.6463.1637152304022426692
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C03EC433F5
+	for <webhook@archiver.kernel.org>; Wed, 17 Nov 2021 18:09:22 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web09.10974.1637172560483033828
  for <cip-dev@lists.cip-project.org>;
- Wed, 17 Nov 2021 04:31:44 -0800
+ Wed, 17 Nov 2021 10:09:21 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=pass (domain: siemens.com, ip: 192.35.17.14, mailfrom: christian.storm@siemens.com)
-Received: from mail1.siemens.de (mail1.siemens.de [139.23.33.14])
-	by david.siemens.de (8.15.2/8.15.2) with ESMTPS id 1AHCVgup019669
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-	for <cip-dev@lists.cip-project.org>; Wed, 17 Nov 2021 13:31:42 +0100
-Received: from localhost ([139.22.32.60])
-	by mail1.siemens.de (8.15.2/8.15.2) with ESMTPS id 1AHCVfRL009744
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO)
-	for <cip-dev@lists.cip-project.org>; Wed, 17 Nov 2021 13:31:41 +0100
-Date: Wed, 17 Nov 2021 13:33:47 +0100
-From: Christian Storm <christian.storm@siemens.com>
-To: cip-dev@lists.cip-project.org
-Subject: Re: [cip-dev][isar-cip-core]RFC v2 4/9] Create a initrd with support
- for dm-verity
-Message-ID: <20211117123347.x6ficeg2bksjujz6@MD1ZFJVC.ad001.siemens.net>
-Mail-Followup-To: cip-dev@lists.cip-project.org
+ spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id DCAD01C0B76; Wed, 17 Nov 2021 19:09:09 +0100 (CET)
+Date: Wed, 17 Nov 2021 19:09:08 +0100
+From: Pavel Machek <pavel@denx.de>
+To: nobuhiro1.iwamatsu@toshiba.co.jp
+Cc: pavel@denx.de, cip-dev@lists.cip-project.org, uli@fpond.eu,
+	jan.kiszka@siemens.com, masami.ichikawa@cybertrust.co.jp
+Subject: Re: New kernel patches review management
+Message-ID: <20211117180908.GB32434@amd>
+References: 
+ <TYAPR01MB6252AE15ABA567A3301A9F4992949@TYAPR01MB6252.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="xo44VMWPx7vlQ2+2"
 Content-Disposition: inline
-In-Reply-To: <20211116112752.1521211-5-Quirin.Gylstorff@siemens.com>
-Content-Transfer-Encoding: quoted-printable
-X-MIME-Autoconverted: from 8bit to quoted-printable by david.siemens.de id
- 1AHCVgup019669
+In-Reply-To: 
+ <TYAPR01MB6252AE15ABA567A3301A9F4992949@TYAPR01MB6252.jpnprd01.prod.outlook.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 17 Nov 2021 12:31:45 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6946
+ <cip-dev@lists.cip-project.org>; Wed, 17 Nov 2021 18:09:22 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6947
 
 
-> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+--xo44VMWPx7vlQ2+2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+> I considered using the gitlab wiki to switch the current patch review
+> management to another.
 >=20
-> Adapt the initrd to open a dm-verity partition with a fixed
-> root hash.
+> The gitlab wiki can be used as a regular git repository and can be
+> viewed from his browser by writing its contents in markdown.
 >=20
-> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> ---
->  .../cip-core-initramfs/cip-core-initramfs.bb  | 16 +++++
->  .../files/verity.conf-hook                    |  1 +
->  .../initramfs-verity-hook/files/verity.hook   | 23 +++++++
->  .../files/verity.script.tmpl                  | 68 +++++++++++++++++++
->  .../initramfs-verity-hook_0.1.bb              | 51 ++++++++++++++
->  5 files changed, 159 insertions(+)
->  create mode 100644 recipes-initramfs/cip-core-initramfs/cip-core-initr=
-amfs.bb
->  create mode 100644 recipes-initramfs/initramfs-verity-hook/files/verit=
-y.conf-hook
->  create mode 100644 recipes-initramfs/initramfs-verity-hook/files/verit=
-y.hook
->  create mode 100644 recipes-initramfs/initramfs-verity-hook/files/verit=
-y.script.tmpl
->  create mode 100644 recipes-initramfs/initramfs-verity-hook/initramfs-v=
-erity-hook_0.1.bb
->=20
-> diff --git a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb=
- b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
-> new file mode 100644
-> index 0000000..825fb9f
-> --- /dev/null
-> +++ b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
-> @@ -0,0 +1,16 @@
-> +#
-> +# CIP Core, generic profile
-> +#
-> +# Copyright (c) Siemens AG, 2021
-> +#
-> +# Authors:
-> +#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> +#
-> +# SPDX-License-Identifier: MIT
-> +#
-> +
-> +inherit initramfs
-> +
-> +INITRAMFS_INSTALL +=3D " \
-> +    initramfs-verity-hook \
-> +    "
-> diff --git a/recipes-initramfs/initramfs-verity-hook/files/verity.conf-=
-hook b/recipes-initramfs/initramfs-verity-hook/files/verity.conf-hook
-> new file mode 100644
-> index 0000000..9b61fb8
-> --- /dev/null
-> +++ b/recipes-initramfs/initramfs-verity-hook/files/verity.conf-hook
-> @@ -0,0 +1 @@
-> +BUSYBOX=3Dy
-> diff --git a/recipes-initramfs/initramfs-verity-hook/files/verity.hook =
-b/recipes-initramfs/initramfs-verity-hook/files/verity.hook
-> new file mode 100644
-> index 0000000..5eada8a
-> --- /dev/null
-> +++ b/recipes-initramfs/initramfs-verity-hook/files/verity.hook
-> @@ -0,0 +1,23 @@
-> +#!/bin/sh
-> +PREREQ=3D""
-> +prereqs()
-> +{
-> +    echo "$PREREQ"
-> +}
-> +case $1 in
-> +prereqs)
-> +    prereqs
-> +    exit 0
-> +    ;;
-> +esac
-> +
-> +. /usr/share/initramfs-tools/hook-functions
-> +# Begin real processing below this line
-> +
-> +manual_add_modules dm_mod
-> +manual_add_modules dm_verity
-> +
-> +copy_exec /sbin/veritysetup
-> +copy_exec /sbin/dmsetup
-> +copy_file library /lib/cryptsetup/functions /lib/cryptsetup/functions
-> +copy_file library /usr/share/verity-env/verity.env /usr/share/verity-e=
-nv/verity.env
-> diff --git a/recipes-initramfs/initramfs-verity-hook/files/verity.scrip=
-t.tmpl b/recipes-initramfs/initramfs-verity-hook/files/verity.script.tmpl
-> new file mode 100644
-> index 0000000..c4f3dc4
-> --- /dev/null
-> +++ b/recipes-initramfs/initramfs-verity-hook/files/verity.script.tmpl
-> @@ -0,0 +1,68 @@
-> +#!/bin/sh
-> +prereqs()
-> +{
-> +    # Make sure that this script is run last in local-top
-> +    local req
-> +    for req in "${0%/*}"/*; do
-> +        script=3D"${req##*/}"
-> +        if [ "$script" !=3D "${0##*/}" ] && [ "$script" !=3D "cryptroo=
-t" ]; then
+>   e.g. git clone git@gitlab.com:cip-project/cip-kernel/linux-cip.wiki.git
 
-Hm, so you explicitly enumerate all scripts except for cryptroot so that
-you run (hopefully right?) thereafter.
-Isn't it sufficient to make cryptroot dependent on this?
-Looks too verbose and complicated...
+This looks good.
 
+> It can be created using the API on the project wiki[0]. Since
+> namespaces are available, we can also create hierarchies such as
+> 5.10.y/v5.10.77 [1].
+> The wiki page is first filled with the commit ID, then the CIP kernel
+> developer writes the name after the commit they plan to review.
 
-> +            printf '%s\n' "$script"
-> +        fi
-> +    done
-> +}
-> +case $1 in
-> +prereqs)
-> +    prereqs
-> +    exit 0
-> +    ;;
-> +esac
-> +
-> +. /scripts/functions
-> +. /lib/cryptsetup/functions
-> +. /usr/share/verity-env/verity.env
-> +# Even if this script fails horribly, make sure there won't be a chanc=
-e the
-> +# current $ROOT will be attempted.  As this device most likely contain=
-s a
-> +# perfectly valid filesystem, it would be mounted successfully, leadin=
-g to a
-> +# broken trust chain.
-> +echo "ROOT=3D/dev/null" >/conf/param.conf
-> +wait_for_udev 10
+I believe this is too simple. We should include patch titles, so that
+it is easier to review whole series. I also believe we should include
+related patches from 4.19/4.4, so that they are reviewed together with
+corresponding 5.10 change.
 
-Why this hard timeout? Shouldn't this be configurable so to match to
-different setups of hardware?
+I'm currently using this format, and scripts to generate it are
+already in the repository. Could we use that for review management,
+too?
+                            v-- patch title
+                      v-- stable tree version
+                   v-- "o" means we are building it in some
+		       configuration, " " means likely not relevant to us
+            v-- stable commit id, not quite reliable
+  v-- upstream commit id
+ |50d50ca00 88c42f  : 5.10| perf bpf: Add missing free to bpf_event__print_=
+bpf_prog_info()
+ |51444729b 8ac9df o: 5.10| llc: fix out-of-bound array index in llc_sk_dev=
+_hash()
+ |df8fa74a0 8ac9df o: 4.19| llc: fix out-of-bound array index in llc_sk_dev=
+_hash()
+ |bf70e4f7d 8ac9df o: 4.4| llc: fix out-of-bound array index in llc_sk_dev_=
+hash()
+ |3dd3e81ad 9fec40 .: 5.10| nfc: pn533: Fix double free when pn533_fill_fra=
+gment_skbs() fails
+ |b5cb963e8 9fec40 .: 4.19| nfc: pn533: Fix double free when pn533_fill_fra=
+gment_skbs() fails
+ |21e4958e2 9fec40 .: 4.4| nfc: pn533: Fix double free when pn533_fill_frag=
+ment_skbs() fails
+ |2a126e22e c7c386 o: 5.10| arm64: pgtable: make __pte_to_phys/__phys_to_pt=
+e_val inline functions
+ |f9ee3718b c7c386 o: 4.19| arm64: pgtable: make __pte_to_phys/__phys_to_pt=
+e_val inline functions
+ |78570c445 b8b831 .: 5.10| bpf, sockmap: Remove unhash handler for BPF soc=
+kmap usage
+ |dbe525054 e0dc3b o: 5.10| bpf: sockmap, strparser, and tls are reusing qd=
+isc_skb_cb and colliding
+ |c45dfa514 1c360c .: 5.10| gve: Fix off by one in gve_tx_timeout()
+ |3737feeca 10a6de o: 5.10| seq_file: fix passing wrong private data
+ |614a5f5c0 6dc254 .: 5.10| net/sched: sch_taprio: fix undefined behavior i=
+n ktime_mono_to_any
+ |25381c855 e140c7 .: 5.10| net: hns3: fix kernel crash when unload VF whil=
+e it is being reset
+ |14ec321cf 688db0 .: 5.10| net: hns3: allow configure ETS bandwidth of all=
+ TCs
+ |379d4165f f64ab8 o: 5.10| net: stmmac: allow a tc-taprio base-time of zero
+ |3772974cc c7cd82 o: 5.10| vsock: prevent unnecessary refcnt inc for nonbl=
+ocking connect
+ |69eb06075 c7cd82 o: 4.19| vsock: prevent unnecessary refcnt inc for nonbl=
+ocking connect
+ |5a54ee129 c7cd82 o: 4.4| vsock: prevent unnecessary refcnt inc for nonblo=
+cking connect
+ |6ecbca5bf e5d5aa .: 5.10| net/smc: fix sk_refcnt underflow on linkdown an=
+d fallback
+ |38bf1ce3e 4ca110 o: 5.10| cxgb4: fix eeprom len when diagnostics not impl=
+emented
+ |41a958b00 4ca110 o: 4.19| cxgb4: fix eeprom len when diagnostics not impl=
+emented
 
-
-> +case "$ROOT" in
-> +    PART*)
-> +        # root was given as PARTUUID=3D or PARTLABEL=3D. Use blkid to =
-find the matching
-> +        # partition
-> +        ROOT=3D$(blkid --list-one --output device --match-token "$ROOT=
-")
-> +        ;;
-> +    "")
-> +        # No Root device was given. Use veritysetup verify to search m=
-atching roots
-> +        partitions=3D$(blkid -o device)
-> +        for part in $partitions; do
-> +            if [ "$(blkid -p ${part} --match-types novfat -s USAGE -o =
-value)" =3D "filesystem" ]; then
-> +                if veritysetup verify \
-> +                   "$part" "$part" "${ROOT_HASH}" \
-> +                   --hash-offset "${HASH_OFFSET}";then
-> +                    ROOT=3D"$part"
-> +                    break
-> +                fi
-> +            fi
-> +        done
-> +        ;;
-> +esac
-> +set -- "$ROOT" verityroot
-> +if ! veritysetup open \
-> +     ${VERITY_BEHAVIOR_ON_CORRUPTION} \
-> +     --data-block-size "${DATA_BLOCK_SIZE}" \
-> +     --hash-block-size "${HASH_BLOCK_SIZE}" \
-> +     --data-blocks "${DATA_BLOCKS}" \
-> +     --hash-offset "${HASH_OFFSET}" \
-> +     --salt "${SALT}" \
-> +     "$1" "$2" "$1" "${ROOT_HASH}"; then
-> +    panic "Can't open verity rootfs!"
-
-The above comment's gist may also help here in case you run into this
-output on a machine.
-
-
-> +fi
-> +
-> +wait_for_udev 10
-
-Same as above.
-
-
-> +
-> +if ! ROOT=3D"$(dm_blkdevname verityroot)"; then
-> +    panic "Can't find the verity root device!"
-> +fi
-> +
-> +echo "ROOT=3D${ROOT}" >/conf/param.conf
-> diff --git a/recipes-initramfs/initramfs-verity-hook/initramfs-verity-h=
-ook_0.1.bb b/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hoo=
-k_0.1.bb
-> new file mode 100644
-> index 0000000..a7fbf5a
-> --- /dev/null
-> +++ b/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.1=
-.bb
-> @@ -0,0 +1,51 @@
-> +#
-> +# CIP Core, generic profile
-> +#
-> +# Copyright (c) Siemens AG, 2021
-> +#
-> +# Authors:
-> +#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> +#
-> +# SPDX-License-Identifier: MIT
-> +#
-> +
-> +inherit dpkg-raw
-> +
-> +SRC_URI +=3D " \
-> +    file://verity.conf-hook \
-> +    file://verity.hook \
-> +    file://verity.script.tmpl \
-> +    "
-> +
-> +VERITY_BEHAVIOR_ON_CORRUPTION ?=3D "--restart-on-corruption"
-> +
-> +TEMPLATE_FILES =3D "verity.script.tmpl"
-> +TEMPLATE_VARS +=3D "VERITY_BEHAVIOR_ON_CORRUPTION"
-> +
-> +DEBIAN_DEPENDS =3D "initramfs-tools, cryptsetup"
-> +
-> +VERITY_IMAGE_RECIPE ?=3D "cip-core-image-read-only"
-> +
-> +VERITY_ENV_FILE =3D "${DEPLOY_DIR_IMAGE}/${VERITY_IMAGE_RECIPE}-${DIST=
-RO}-${MACHINE}.verity.env"
-> +
-> +do_install[depends] +=3D "${VERITY_IMAGE_RECIPE}:do_verity_image"
-> +do_install[cleandirs] +=3D " \
-> +    ${D}/usr/share/initramfs-tools/hooks \
-> +    ${D}/usr/share/verity-env \
-> +    ${D}/usr/share/initramfs-tools/scripts/local-top \
-> +    ${D}/usr/share/initramfs-tools/conf-hooks.d"
-> +
-> +do_install() {
-> +    # Insert the veritysetup commandline into the script
-> +    if [ -f "${VERITY_ENV_FILE}" ]; then
-> +        install -m 0600 "${VERITY_ENV_FILE}" "${D}/usr/share/verity-en=
-v/verity.env"
-> +    else
-> +        bberror "Did not find ${VERITY_ENV_FILE}. initramfs will not b=
-e build correctly!"
-> +    fi
-> +    install -m 0755 "${WORKDIR}/verity.script" \
-> +        "${D}/usr/share/initramfs-tools/scripts/local-top/verity"
-> +    install -m 0755 "${WORKDIR}/verity.hook" \
-> +        "${D}/usr/share/initramfs-tools/hooks/verity"
-> +}
-> +
-> +addtask do_install after do_transform_template
-> --=20
-> 2.30.2
->=20
-
-
-
-Kind regards,
-   Christian
-
+Best regards,
+								Pavel
 --=20
-Dr. Christian Storm
-Siemens AG, Technology, T RDA IOT SES-DE
-Otto-Hahn-Ring 6, 81739 M=FCnchen, Germany
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--xo44VMWPx7vlQ2+2
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAmGVRUQACgkQMOfwapXb+vLjXACfbIqa9HiNqlxEYsGP6ygMGz/X
+2+wAnRlXmdpOn7bp+EoRWoYfWmx6Q2YD
+=FqrL
+-----END PGP SIGNATURE-----
+
+--xo44VMWPx7vlQ2+2--
 
