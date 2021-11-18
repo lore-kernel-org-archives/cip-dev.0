@@ -1,272 +1,344 @@
-Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46CF7C433EF
-	for <webhook@archiver.kernel.org>; Thu, 18 Nov 2021 08:24:06 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.154])
- by mx.groups.io with SMTP id smtpd.web11.2953.1637223843391964852
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B9FFC433EF
+	for <webhook@archiver.kernel.org>; Thu, 18 Nov 2021 18:10:36 +0000 (UTC)
+Received: from goliath.siemens.de (goliath.siemens.de [192.35.17.28])
+ by mx.groups.io with SMTP id smtpd.web10.5431.1637259034508597691
  for <cip-dev@lists.cip-project.org>;
- Thu, 18 Nov 2021 00:24:05 -0800
+ Thu, 18 Nov 2021 10:10:35 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=pass (domain: toshiba.co.jp, ip: 210.130.202.154, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
-Received: by mo-csw.securemx.jp (mx-mo-csw1515) id 1AI8NmAt025877;
- Thu, 18 Nov 2021 17:23:48 +0900
-X-Iguazu-Qid: 34tMdwO15ZShReD5d7
-X-Iguazu-QSIG: v=2; s=0; t=1637223828; q=34tMdwO15ZShReD5d7;
- m=+w1cFhRSWOVy4qWRYZB+AOwL9ePt836ivTP3SzIjD/I=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1510) id 1AI8Nj9k037034
-	(version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
-	Thu, 18 Nov 2021 17:23:45 +0900
-Received: from enc01.toshiba.co.jp (enc01.toshiba.co.jp [106.186.93.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by imx2-a.toshiba.co.jp (Postfix) with ESMTPS id 8C9C61000E5;
-	Thu, 18 Nov 2021 17:23:45 +0900 (JST)
-Received: from hop001.toshiba.co.jp ([133.199.164.63])
-	by enc01.toshiba.co.jp  with ESMTP id 1AI8NjqL001788;
-	Thu, 18 Nov 2021 17:23:45 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QKjPjtvzAtZJbP0CDuvpe5CNnc0tZ9Pmw+EMGbPTOmdBcSn4nowN6QyxuvQyL3AxmboEYqAyZed0AMKz11kHymuyu8ekwt02aHxt4+YyHOwR9/QADrDBK3wYzHEjkBxQJFvebc7PrdKf29ew9qh5so/o5hz+M2AomkcssxvWGNuW+UDuqptjC4xZCn6iG57FOmQ7PinukJMdwUIMgWvmgp687NiAOGKHjeZimMF7L+3htmpUx14SewTr6gpBh5xJQCSziQuNOhGFJb2xrjYc2RDgh2BiOpkxtq98LrWeD/UAAbgzYRLsiqZBIQT1PHM8zwsMAVi4XOkUE6N5cKRiuw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=90ZhcgXIYwTBDVMT7oB5w9OJk7BuwNqf24DvCeaevlg=;
- b=DsicOl8XdjTD7fX6JW9TEb97/uBegSKrbpLpoWkI2lkozFOWkIEp6v/Nnc7GfcDpiPeAJelGoBc11sqk8BGvZ+Iq4UiYvN7DvqvnBkD6Tfd1DDKlu2dBGOlZCX0VTAr6qjpknJsDl/4eVxDKtIB9rqVymBydfsdFhvyFTFUO5d8LHvBGMRcLrdH7dxQQVjI5AYuSj4hNn1TiyP5wDNspvI0ZUig7E1YgBneRgqhNNVIJawFrU6YJkR6/SmRTqOPDHCeg3OqjscEvJxoXs3bnVcB0L6pSVpaDZcVhpGK/DhK3yCc9l6WNfgXmu0FyHekRLigoc1OQ3wnDtC+F48Nn3g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
- header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
-From: <nobuhiro1.iwamatsu@toshiba.co.jp>
-To: <pavel@denx.de>
-CC: <cip-dev@lists.cip-project.org>, <uli@fpond.eu>, <jan.kiszka@siemens.com>,
-        <masami.ichikawa@cybertrust.co.jp>
-Subject: Re: New kernel patches review management
-Thread-Topic: New kernel patches review management
-Thread-Index: AQHX3FSPZaUWyDRVyke/toByXw6FtQ==
-Date: Thu, 18 Nov 2021 08:23:43 +0000
-X-TSB-HOP: ON
-Message-ID: 
- <TYAPR01MB6252D5AF86A5D0C550CF7295929B9@TYAPR01MB6252.jpnprd01.prod.outlook.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-suggested_attachment_session_id: 1c7872f7-c6ff-a640-6c08-635b39b7b871
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b2e6fc15-6aaf-4fbe-6836-08d9aa6cbbc5
-x-ms-traffictypediagnostic: TYAPR01MB2990:
-x-microsoft-antispam-prvs: 
- <TYAPR01MB29909039F71DC3ED6E665D48929B9@TYAPR01MB2990.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2887;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- KU97HF5ZwPKBZc+T7eH/ttjqu117NmaOUQPkx0j7TEhV/0PP0RzlQ4zVTIp44PJwpJfx06rypm7QYDUraUittd0G7l3pTrMmYNyicOIF7gxw1kRjsI9stDboRL1ebSBfBKfffNGEw8KHQ/cb3lnURjSH0cUtdTKrUZ8SSYfcOSzUmZ64kn5R4K0tmmgqzY7dbzagxDw/V2//nCgtmtfayB/CsWON5zH/umc1d6t2lsMBYuL2s4QSCicpaAt6hUnWDPrMoae7vl8XxMLc1eIomsHOQXKJxM+JSNND/CfA8oynM+61471D3M45f1JHBcZfZFzIPA+baiakRpQ5tRlGS7YtQHjcxZgPbF8Ht2143drjFoHNvvZuGDfT9kiSI0cMRTEkhmpNR5WDCgxBopFJ3CFmWsQaSc9mtaydnQhYrEWzOL3cj04qGpg1cb/w3Npzc7UEFZr2kJjDgjL9xjsw0ueGFIcpEqW+M4+W/Ae1HoXfLYZ0v1RhcoyZgRNvMrYf14tRAQ2mlx1rud9kg3Fv0EFEE31UL8IZrn3I3TRPrpUP0ebIGtuZVfG1KZRC3YnajJqjc4MTavHJpKA62+FNvECREfdahj9CjYJzxwIzKxdzI32IQApNNzrTeCSbk04MFY3lFicE6hV7v9C0zOTKsU39EK2rQKBSIuIQjj9fH4+5YVD0TV2yfsP5K6ovoLiXA42qxoJ6QPyjUW6FCRydjQ==
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYAPR01MB6252.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(7696005)(6916009)(26005)(8676002)(86362001)(76116006)(66574015)(4326008)(66946007)(54906003)(5660300002)(8936002)(66476007)(33656002)(508600001)(66556008)(71200400001)(66446008)(64756008)(316002)(9686003)(186003)(55016002)(122000001)(38100700002)(52536014)(2906002)(83380400001)(6506007)(38070700005);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?UlNLL2lTU3ZPKy95RWl4S21uakwzRm1oNzRhMnl0SDgwckFvTmplcEo5ZDl1?=
- =?utf-8?B?dWo0Z0pET1V1ZGEzMWozQ05ObDJhMTRhd0syenp5K3NIc2RhNG4rNVlCRVpF?=
- =?utf-8?B?WEpLcSt2R1I3V2dPMGQvZnAvN1FhQWpWSGZEbmxEWkdva0U0dkNjL0NVUGZS?=
- =?utf-8?B?L3lFbjkvN2lYT2NITXIrZlJrdW9LZFAvZElERTI4b1lwWFFJWTloWWdIbnBy?=
- =?utf-8?B?bmhRenBITDFxa085TDJBaE5BNGhJTzQ0UzQ0TVQ2ZUtabG1vR2NYRVVoczNT?=
- =?utf-8?B?QVJ3Y1pLdm5NYktQTC9DZU96TFFHdEkwaWdJQnc0RkZhM0hyVnpFcGIvQ0l4?=
- =?utf-8?B?Y2ZIZ3QrRitoVzRJRGZMcXlKYXp5NW9kQ0x1WHAyZ3IwQ3cxTDZoMDNDazlM?=
- =?utf-8?B?SEhYU2o2VHNRMk53WStrRjZrUkkzSGZFMUppWHF6NzZtZW9GY3dLeklCQyt4?=
- =?utf-8?B?a1h2QTJUMDQzMTVxSko3THVmMENQaXlTMzVtanAwajY2b2Jpdm1NVTBFbzRs?=
- =?utf-8?B?emRNK1NONHBaRXVhT09iTXlPaFJyYjRuSHhaOFpXeDQzTVRCY1VxeEE3M3VM?=
- =?utf-8?B?Q2tlUjhGRFkyRVhBcDgvcEMwTU1oVFMrU0dadGpCYmtERlFmYlhwdXhpY0Nk?=
- =?utf-8?B?NG9ESW1IOGZMMEdHeXJSSUZIcmRVWE5TSEt5R1Q3VHplM1hsaG9QWE1HVEhP?=
- =?utf-8?B?bGxORVUrejdnbGNGTkdobzUvUlI5TTNrRElMMzhGbE54STlrT0pjNjdITkYx?=
- =?utf-8?B?Vm5ZaWJVL01QZWk4aDZYUkRSaWlrOVdaTEFSdmVJY21HWjZhWm9ZNTluekxk?=
- =?utf-8?B?U1hNRE54QWJxd2lMaU15ckNnSXYxUjJ2T0xSaTBUVzRxZkU2TExST3Btb3Ri?=
- =?utf-8?B?UjVxZE1UU0g3OUxyUng5aTJVSnJzc0J4eW9Bb0VnbHJwTHdUNG5wbTdSNC9v?=
- =?utf-8?B?MzFhM0RhRWRnRGlmWkxyVDRNSThRSUJScjBCbzFPOFJ3cSsvcnBWVXFodnMr?=
- =?utf-8?B?eGwreGprLythY3RUK1h3MXQ5NTUwMzBaVk1sdDVEVVltNkFYR1JtNGEzbE1K?=
- =?utf-8?B?RjF5TzV1UCtyZlN3anpBRzVuNkRRUFd5QXhKcVh0VDMyVFZYU0hJamZwVXBv?=
- =?utf-8?B?cW54MFQ0dHRzK3pxZmxxcElMWi85b1A5WTZhZVpNclVha3h6VzR3K2thTVl1?=
- =?utf-8?B?RXhVeTlURVhlOG0weG1hbXZpeTFMTktqTkg3Zkd5ODh3bnE4ZUFFcytNYWFz?=
- =?utf-8?B?Rk1XdEFnOVlIOWxyVlp2dGVQYjZ4Mmgxd3NaeUpTWlhwdjhjMDZ1R2V0ZnNx?=
- =?utf-8?B?anhoeE55UmRKS1ZpZm5lSTRmVEgzM3cyVjJlWis4bDc2ZHpDMzI4NFlXTjNi?=
- =?utf-8?B?YlByRnlTZ0k4SDhKS1kxcEYzZTMrOEVzY3B6NjE3WXRISzJQK0JWUGtwY1Zx?=
- =?utf-8?B?VE5xM1IwVE1KZllnOGVFNTNBbnlFQVQweDdQZGxWaUtuUDlhcjZIMkxQeGJC?=
- =?utf-8?B?djdlUG93VmZUWDdLQjFXNDJJdHBnOVQwNGk2NlNiQVJJZHVVdEVaeHFVM1Fm?=
- =?utf-8?B?dE96c2M3ODEzWGlSYS9YaFI2QmRKWnJVVXpjV3ErSzVlU0dCdUVzSzY3T24r?=
- =?utf-8?B?RGNmTzBHUkl0d1BnUEFsUUFjUzBHWGswR29oK3hnVk43alRXSHVvckRTMmlM?=
- =?utf-8?B?UE9qSnZSb3gvakVxQTVaVnUyK0VnbzFTbU82aVBFeDVSWFZLQStjN2JNd2g5?=
- =?utf-8?B?ait6RFkyaG4yV2tyV2RvQ0FMUi8zVlRPUE5mOU1qOWpueDF3MjhRSUtCbUly?=
- =?utf-8?B?a0wxVnZ4SGROVktLVGhTMzRPQWc4bkcvc2RRTjFqV0ZPRVZBVG1ZZHh5TTVi?=
- =?utf-8?B?ZDdYYUp1RDdSRDFLSlRCZFRmK2M0NUhqb1EzSEhKOW9OYjJOb3lvbGkzRloy?=
- =?utf-8?B?cmpEdUxwcEdmVG1USW9kcDA4UlpjOXM0eVIwbEllRDJrVHlCK05Lc2pmQ2h5?=
- =?utf-8?B?dWIyMEFFRnh3ZHRibTkyaXhiV2FEdVQ0S3VXMTRGSU5PYm1yQ3ozTVJnRjNW?=
- =?utf-8?B?TWVBbnVtMy9vSGZKNWo5VXVhbnRaR1FXNy9tZExQOTJnNXlNbUhKQjl1SVFm?=
- =?utf-8?B?MURtWnNiajRBdHEyU1hqT2o1cytRMkVLVmV0RjRBajUvU1ZEdXNjZGc3SlM3?=
- =?utf-8?B?dTlnN1BCWk8zVTdTSW1sektvVzFNVjJ5OFMxVldZZkdqTlR0MW1XS1dLb3JS?=
- =?utf-8?B?Y2xGa0hpUThkcWI4WFdSdTh6RjQ5UkU0U0svbEdRTUNCWll0RTdYTEpUUkdw?=
- =?utf-8?Q?VuG6hgE0aNJzDhr1WD?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ spf=pass (domain: siemens.com, ip: 192.35.17.28, mailfrom: quirin.gylstorff@siemens.com)
+Received: from mail1.sbs.de (mail1.sbs.de [192.129.41.35])
+	by goliath.siemens.de (8.15.2/8.15.2) with ESMTPS id 1AIIAVfU020940
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+	for <cip-dev@lists.cip-project.org>; Thu, 18 Nov 2021 19:10:31 +0100
+Received: from [139.22.45.143] ([139.22.45.143])
+	by mail1.sbs.de (8.15.2/8.15.2) with ESMTP id 1AIIAUmq027568
+	for <cip-dev@lists.cip-project.org>; Thu, 18 Nov 2021 19:10:31 +0100
+To: cip-dev@lists.cip-project.org
+References: <20211117121815.efuw3n7pyehisw75@MD1ZFJVC.ad001.siemens.net>
+From: Gylstorff Quirin <quirin.gylstorff@siemens.com>
+Organization: Siemens
+Subject: Re: [cip-dev][isar-cip-core]RFC v2 5/9] Create an read-only rootfs
+ with dm-verity
+Message-ID: <18128c5f-d4ea-7f8f-e1a3-77390afa6a86@siemens.com>
+Date: Thu, 18 Nov 2021 19:10:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYAPR01MB6252.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 
- b2e6fc15-6aaf-4fbe-6836-08d9aa6cbbc5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Nov 2021 08:23:43.2495
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 
- f3ogS4PPKsMYPk+PwHPVVBSO+WQvkvk7avM8NAb0mcU1wKIKiq+8G5OTNcekAoVy1rLoFO8MQyVpecgdiYnm1NlV0FhgQdZBcDsm6ePCm2BmVC2EJRFLCK1qUk9IdXw6
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB2990
-X-OriginatorOrg: toshiba.co.jp
-MSSCP.TransferMailToMossAgent: 103
+In-Reply-To: <20211117121815.efuw3n7pyehisw75@MD1ZFJVC.ad001.siemens.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 18 Nov 2021 08:24:06 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6952
+ <cip-dev@lists.cip-project.org>; Thu, 18 Nov 2021 18:10:36 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6953
 
-SGkgUGF2ZWwsCgo+ID4gSXQgY2FuIGJlIGNyZWF0ZWQgdXNpbmcgdGhlIEFQSSBvbiB0aGUgcHJv
-amVjdCB3aWtpWzBdLiBTaW5jZQo+ID4gbmFtZXNwYWNlcyBhcmUgYXZhaWxhYmxlLCB3ZSBjYW4g
-YWxzbyBjcmVhdGUgaGllcmFyY2hpZXMgc3VjaCBhcwo+ID4gNS4xMC55L3Y1LjEwLjc3IFsxXS4K
-PiA+IFRoZSB3aWtpIHBhZ2UgaXMgZmlyc3QgZmlsbGVkIHdpdGggdGhlIGNvbW1pdCBJRCwgdGhl
-biB0aGUgQ0lQIGtlcm5lbAo+ID4gZGV2ZWxvcGVyIHdyaXRlcyB0aGUgbmFtZSBhZnRlciB0aGUg
-Y29tbWl0IHRoZXkgcGxhbiB0byByZXZpZXcuCj4gCj4gSSBiZWxpZXZlIHRoaXMgaXMgdG9vIHNp
-bXBsZS4gV2Ugc2hvdWxkIGluY2x1ZGUgcGF0Y2ggdGl0bGVzLCBzbyB0aGF0Cj4gaXQgaXMgZWFz
-aWVyIHRvIHJldmlldyB3aG9sZSBzZXJpZXMuIEkgYWxzbyBiZWxpZXZlIHdlIHNob3VsZCBpbmNs
-dWRlCj4gcmVsYXRlZCBwYXRjaGVzIGZyb20gNC4xOS80LjQsIHNvIHRoYXQgdGhleSBhcmUgcmV2
-aWV3ZWQgdG9nZXRoZXIgd2l0aAo+IGNvcnJlc3BvbmRpbmcgNS4xMCBjaGFuZ2UuCgpBZ3JlZS4g
-SSBoYXZlIGEgcXVlc3Rpb24uCldoYXQgYXJlIHRoZSB0cmlnZ2VycyBmb3IgY3JlYXRpbmcgcGFn
-ZXMgZm9yIG1hbmFnZW1lbnQ/ClBlcmhhcHMgSSB0aGluayBlYWNoIExUUyB2ZXJzaW9uIGFuZCBS
-QyByZWxlYXNlIHdpbGwgYmUgdGhlIHRyaWdnZXIuIEFuZCBhIHBhZ2Ugd2lsbCBiZSBjcmVhdGVk
-IGZvciBlYWNoIHRyaWdnZXIuCkFuZCB3ZSB3aWxsIG1haW5seSByZXZpZXcgdGhlIGxpc3QgY3Jl
-YXRlZCBvbiA1LjEwLnkuIFdlIHdpbGwgYWxzbyByZXZpZXcgcGF0Y2hlcyB0aGF0IGFyZSBvbmx5
-IGluY2x1ZGVkIGluIDQuNC55IGFuZCA0LjE5LnkuCklzIHRoaXMgdW5kZXJzdGFuZGluZyBjb3Jy
-ZWN0PwoKPiAKPiBJJ20gY3VycmVudGx5IHVzaW5nIHRoaXMgZm9ybWF0LCBhbmQgc2NyaXB0cyB0
-byBnZW5lcmF0ZSBpdCBhcmUKPiBhbHJlYWR5IGluIHRoZSByZXBvc2l0b3J5LiBDb3VsZCB3ZSB1
-c2UgdGhhdCBmb3IgcmV2aWV3IG1hbmFnZW1lbnQsCj4gdG9vPwo+IMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB2LS0gcGF0Y2ggdGl0bGUKPiDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdi0tIHN0YWJsZSB0cmVl
-IHZlcnNpb24KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdi0tICJvIiBt
-ZWFucyB3ZSBhcmUgYnVpbGRpbmcgaXQgaW4gc29tZQo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgIGNvbmZpZ3VyYXRpb24sICIgIiBtZWFucyBsaWtlbHkgbm90
-IHJlbGV2YW50IHRvIHVzCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB2LS0gc3RhYmxlIGNvbW1p
-dCBpZCwgbm90IHF1aXRlIHJlbGlhYmxlCj4gwqAgdi0tIHVwc3RyZWFtIGNvbW1pdCBpZAo+IMKg
-fDUwZDUwY2EwMCA4OGM0MmbCoCA6IDUuMTB8IHBlcmYgYnBmOiBBZGQgbWlzc2luZyBmcmVlIHRv
-IGJwZl9ldmVudF9fcHJpbnRfYnBmX3Byb2dfaW5mbygpCj4gwqB8NTE0NDQ3MjliIDhhYzlkZiBv
-OiA1LjEwfCBsbGM6IGZpeCBvdXQtb2YtYm91bmQgYXJyYXkgaW5kZXggaW4gbGxjX3NrX2Rldl9o
-YXNoKCkKPiDCoHxkZjhmYTc0YTAgOGFjOWRmIG86IDQuMTl8IGxsYzogZml4IG91dC1vZi1ib3Vu
-ZCBhcnJheSBpbmRleCBpbiBsbGNfc2tfZGV2X2hhc2goKQo+IMKgfGJmNzBlNGY3ZCA4YWM5ZGYg
-bzogNC40fCBsbGM6IGZpeCBvdXQtb2YtYm91bmQgYXJyYXkgaW5kZXggaW4gbGxjX3NrX2Rldl9o
-YXNoKCkKPiDCoHwzZGQzZTgxYWQgOWZlYzQwIC46IDUuMTB8IG5mYzogcG41MzM6IEZpeCBkb3Vi
-bGUgZnJlZSB3aGVuIHBuNTMzX2ZpbGxfZnJhZ21lbnRfc2ticygpIGZhaWxzCj4gwqB8YjVjYjk2
-M2U4IDlmZWM0MCAuOiA0LjE5fCBuZmM6IHBuNTMzOiBGaXggZG91YmxlIGZyZWUgd2hlbiBwbjUz
-M19maWxsX2ZyYWdtZW50X3NrYnMoKSBmYWlscwo+IMKgfDIxZTQ5NThlMiA5ZmVjNDAgLjogNC40
-fCBuZmM6IHBuNTMzOiBGaXggZG91YmxlIGZyZWUgd2hlbiBwbjUzM19maWxsX2ZyYWdtZW50X3Nr
-YnMoKSBmYWlscwo+IMKgfDJhMTI2ZTIyZSBjN2MzODYgbzogNS4xMHwgYXJtNjQ6IHBndGFibGU6
-IG1ha2UgX19wdGVfdG9fcGh5cy9fX3BoeXNfdG9fcHRlX3ZhbCBpbmxpbmUgZnVuY3Rpb25zCj4g
-wqB8ZjllZTM3MThiIGM3YzM4NiBvOiA0LjE5fCBhcm02NDogcGd0YWJsZTogbWFrZSBfX3B0ZV90
-b19waHlzL19fcGh5c190b19wdGVfdmFsIGlubGluZSBmdW5jdGlvbnMKPiDCoHw3ODU3MGM0NDUg
-YjhiODMxIC46IDUuMTB8IGJwZiwgc29ja21hcDogUmVtb3ZlIHVuaGFzaCBoYW5kbGVyIGZvciBC
-UEYgc29ja21hcCB1c2FnZQo+IMKgfGRiZTUyNTA1NCBlMGRjM2IgbzogNS4xMHwgYnBmOiBzb2Nr
-bWFwLCBzdHJwYXJzZXIsIGFuZCB0bHMgYXJlIHJldXNpbmcgcWRpc2Nfc2tiX2NiIGFuZCBjb2xs
-aWRpbmcKPiDCoHxjNDVkZmE1MTQgMWMzNjBjIC46IDUuMTB8IGd2ZTogRml4IG9mZiBieSBvbmUg
-aW4gZ3ZlX3R4X3RpbWVvdXQoKQo+IMKgfDM3MzdmZWVjYSAxMGE2ZGUgbzogNS4xMHwgc2VxX2Zp
-bGU6IGZpeCBwYXNzaW5nIHdyb25nIHByaXZhdGUgZGF0YQo+IMKgfDYxNGE1ZjVjMCA2ZGMyNTQg
-LjogNS4xMHwgbmV0L3NjaGVkOiBzY2hfdGFwcmlvOiBmaXggdW5kZWZpbmVkIGJlaGF2aW9yIGlu
-IGt0aW1lX21vbm9fdG9fYW55Cj4gwqB8MjUzODFjODU1IGUxNDBjNyAuOiA1LjEwfCBuZXQ6IGhu
-czM6IGZpeCBrZXJuZWwgY3Jhc2ggd2hlbiB1bmxvYWQgVkYgd2hpbGUgaXQgaXMgYmVpbmcgcmVz
-ZXQKPiDCoHwxNGVjMzIxY2YgNjg4ZGIwIC46IDUuMTB8IG5ldDogaG5zMzogYWxsb3cgY29uZmln
-dXJlIEVUUyBiYW5kd2lkdGggb2YgYWxsIFRDcwo+IMKgfDM3OWQ0MTY1ZiBmNjRhYjggbzogNS4x
-MHwgbmV0OiBzdG1tYWM6IGFsbG93IGEgdGMtdGFwcmlvIGJhc2UtdGltZSBvZiB6ZXJvCj4gwqB8
-Mzc3Mjk3NGNjIGM3Y2Q4MiBvOiA1LjEwfCB2c29jazogcHJldmVudCB1bm5lY2Vzc2FyeSByZWZj
-bnQgaW5jIGZvciBub25ibG9ja2luZyBjb25uZWN0Cj4gwqB8NjllYjA2MDc1IGM3Y2Q4MiBvOiA0
-LjE5fCB2c29jazogcHJldmVudCB1bm5lY2Vzc2FyeSByZWZjbnQgaW5jIGZvciBub25ibG9ja2lu
-ZyBjb25uZWN0Cj4gwqB8NWE1NGVlMTI5IGM3Y2Q4MiBvOiA0LjR8IHZzb2NrOiBwcmV2ZW50IHVu
-bmVjZXNzYXJ5IHJlZmNudCBpbmMgZm9yIG5vbmJsb2NraW5nIGNvbm5lY3QKPiDCoHw2ZWNiY2E1
-YmYgZTVkNWFhIC46IDUuMTB8IG5ldC9zbWM6IGZpeCBza19yZWZjbnQgdW5kZXJmbG93IG9uIGxp
-bmtkb3duIGFuZCBmYWxsYmFjawo+IMKgfDM4YmYxY2UzZSA0Y2ExMTAgbzogNS4xMHwgY3hnYjQ6
-IGZpeCBlZXByb20gbGVuIHdoZW4gZGlhZ25vc3RpY3Mgbm90IGltcGxlbWVudGVkCj4gwqB8NDFh
-OTU4YjAwIDRjYTExMCBvOiA0LjE5fCBjeGdiNDogZml4IGVlcHJvbSBsZW4gd2hlbiBkaWFnbm9z
-dGljcyBub3QgaW1wbGVtZW50ZWQKClllcywgSSBoYWQgdGhhdCBpZGVhIHRvby4KCkJlc3QgcmVn
-YXJkcywKICBOb2J1aGlybwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-CuW3ruWHuuS6ujogUGF2ZWwgTWFjaGVrCumAgeS/oTogMjAyMSAxMSDmnIggMTgg5pelICjmnKjm
-m5zml6UpIDM6MDkK5a6b5YWIOiBpd2FtYXRzdSBub2J1aGlybyjlsqnmnb4g5L+h5rSLIOKWoe+8
-s++8t++8o+KXr++8oe+8o++8tCkKQ2M6IHBhdmVsQGRlbnguZGU7IGNpcC1kZXZAbGlzdHMuY2lw
-LXByb2plY3Qub3JnOyB1bGlAZnBvbmQuZXU7IGphbi5raXN6a2FAc2llbWVucy5jb207IG1hc2Ft
-aS5pY2hpa2F3YUBjeWJlcnRydXN0LmNvLmpwCuS7tuWQjTogUmU6IE5ldyBrZXJuZWwgcGF0Y2hl
-cyByZXZpZXcgbWFuYWdlbWVudAoKCkhpIQoKPiBJIGNvbnNpZGVyZWQgdXNpbmcgdGhlIGdpdGxh
-YiB3aWtpIHRvIHN3aXRjaCB0aGUgY3VycmVudCBwYXRjaCByZXZpZXcKPiBtYW5hZ2VtZW50IHRv
-IGFub3RoZXIuCj4gCj4gVGhlIGdpdGxhYiB3aWtpIGNhbiBiZSB1c2VkIGFzIGEgcmVndWxhciBn
-aXQgcmVwb3NpdG9yeSBhbmQgY2FuIGJlCj4gdmlld2VkIGZyb20gaGlzIGJyb3dzZXIgYnkgd3Jp
-dGluZyBpdHMgY29udGVudHMgaW4gbWFya2Rvd24uCj4gCj7CoMKgIGUuZy4gZ2l0IGNsb25lIGdp
-dEBnaXRsYWIuY29tOmNpcC1wcm9qZWN0L2NpcC1rZXJuZWwvbGludXgtY2lwLndpa2kuZ2l0CgpU
-aGlzIGxvb2tzIGdvb2QuCgo+IEl0IGNhbiBiZSBjcmVhdGVkIHVzaW5nIHRoZSBBUEkgb24gdGhl
-IHByb2plY3Qgd2lraVswXS4gU2luY2UKPiBuYW1lc3BhY2VzIGFyZSBhdmFpbGFibGUsIHdlIGNh
-biBhbHNvIGNyZWF0ZSBoaWVyYXJjaGllcyBzdWNoIGFzCj4gNS4xMC55L3Y1LjEwLjc3IFsxXS4K
-PiBUaGUgd2lraSBwYWdlIGlzIGZpcnN0IGZpbGxlZCB3aXRoIHRoZSBjb21taXQgSUQsIHRoZW4g
-dGhlIENJUCBrZXJuZWwKPiBkZXZlbG9wZXIgd3JpdGVzIHRoZSBuYW1lIGFmdGVyIHRoZSBjb21t
-aXQgdGhleSBwbGFuIHRvIHJldmlldy4KCkkgYmVsaWV2ZSB0aGlzIGlzIHRvbyBzaW1wbGUuIFdl
-IHNob3VsZCBpbmNsdWRlIHBhdGNoIHRpdGxlcywgc28gdGhhdAppdCBpcyBlYXNpZXIgdG8gcmV2
-aWV3IHdob2xlIHNlcmllcy4gSSBhbHNvIGJlbGlldmUgd2Ugc2hvdWxkIGluY2x1ZGUKcmVsYXRl
-ZCBwYXRjaGVzIGZyb20gNC4xOS80LjQsIHNvIHRoYXQgdGhleSBhcmUgcmV2aWV3ZWQgdG9nZXRo
-ZXIgd2l0aApjb3JyZXNwb25kaW5nIDUuMTAgY2hhbmdlLgoKSSdtIGN1cnJlbnRseSB1c2luZyB0
-aGlzIGZvcm1hdCwgYW5kIHNjcmlwdHMgdG8gZ2VuZXJhdGUgaXQgYXJlCmFscmVhZHkgaW4gdGhl
-IHJlcG9zaXRvcnkuIENvdWxkIHdlIHVzZSB0aGF0IGZvciByZXZpZXcgbWFuYWdlbWVudCwKdG9v
-PwrCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
-di0tIHBhdGNoIHRpdGxlCsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oCB2LS0gc3RhYmxlIHRyZWUgdmVyc2lvbgrCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqAgdi0tICJvIiBtZWFucyB3ZSBhcmUgYnVpbGRpbmcgaXQgaW4gc29tZQrCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBjb25maWd1cmF0aW9uLCAiICIgbWVh
-bnMgbGlrZWx5IG5vdCByZWxldmFudCB0byB1cwrCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHYtLSBz
-dGFibGUgY29tbWl0IGlkLCBub3QgcXVpdGUgcmVsaWFibGUKwqAgdi0tIHVwc3RyZWFtIGNvbW1p
-dCBpZArCoHw1MGQ1MGNhMDAgODhjNDJmwqAgOiA1LjEwfCBwZXJmIGJwZjogQWRkIG1pc3Npbmcg
-ZnJlZSB0byBicGZfZXZlbnRfX3ByaW50X2JwZl9wcm9nX2luZm8oKQrCoHw1MTQ0NDcyOWIgOGFj
-OWRmIG86IDUuMTB8IGxsYzogZml4IG91dC1vZi1ib3VuZCBhcnJheSBpbmRleCBpbiBsbGNfc2tf
-ZGV2X2hhc2goKQrCoHxkZjhmYTc0YTAgOGFjOWRmIG86IDQuMTl8IGxsYzogZml4IG91dC1vZi1i
-b3VuZCBhcnJheSBpbmRleCBpbiBsbGNfc2tfZGV2X2hhc2goKQrCoHxiZjcwZTRmN2QgOGFjOWRm
-IG86IDQuNHwgbGxjOiBmaXggb3V0LW9mLWJvdW5kIGFycmF5IGluZGV4IGluIGxsY19za19kZXZf
-aGFzaCgpCsKgfDNkZDNlODFhZCA5ZmVjNDAgLjogNS4xMHwgbmZjOiBwbjUzMzogRml4IGRvdWJs
-ZSBmcmVlIHdoZW4gcG41MzNfZmlsbF9mcmFnbWVudF9za2JzKCkgZmFpbHMKwqB8YjVjYjk2M2U4
-IDlmZWM0MCAuOiA0LjE5fCBuZmM6IHBuNTMzOiBGaXggZG91YmxlIGZyZWUgd2hlbiBwbjUzM19m
-aWxsX2ZyYWdtZW50X3NrYnMoKSBmYWlscwrCoHwyMWU0OTU4ZTIgOWZlYzQwIC46IDQuNHwgbmZj
-OiBwbjUzMzogRml4IGRvdWJsZSBmcmVlIHdoZW4gcG41MzNfZmlsbF9mcmFnbWVudF9za2JzKCkg
-ZmFpbHMKwqB8MmExMjZlMjJlIGM3YzM4NiBvOiA1LjEwfCBhcm02NDogcGd0YWJsZTogbWFrZSBf
-X3B0ZV90b19waHlzL19fcGh5c190b19wdGVfdmFsIGlubGluZSBmdW5jdGlvbnMKwqB8ZjllZTM3
-MThiIGM3YzM4NiBvOiA0LjE5fCBhcm02NDogcGd0YWJsZTogbWFrZSBfX3B0ZV90b19waHlzL19f
-cGh5c190b19wdGVfdmFsIGlubGluZSBmdW5jdGlvbnMKwqB8Nzg1NzBjNDQ1IGI4YjgzMSAuOiA1
-LjEwfCBicGYsIHNvY2ttYXA6IFJlbW92ZSB1bmhhc2ggaGFuZGxlciBmb3IgQlBGIHNvY2ttYXAg
-dXNhZ2UKwqB8ZGJlNTI1MDU0IGUwZGMzYiBvOiA1LjEwfCBicGY6IHNvY2ttYXAsIHN0cnBhcnNl
-ciwgYW5kIHRscyBhcmUgcmV1c2luZyBxZGlzY19za2JfY2IgYW5kIGNvbGxpZGluZwrCoHxjNDVk
-ZmE1MTQgMWMzNjBjIC46IDUuMTB8IGd2ZTogRml4IG9mZiBieSBvbmUgaW4gZ3ZlX3R4X3RpbWVv
-dXQoKQrCoHwzNzM3ZmVlY2EgMTBhNmRlIG86IDUuMTB8IHNlcV9maWxlOiBmaXggcGFzc2luZyB3
-cm9uZyBwcml2YXRlIGRhdGEKwqB8NjE0YTVmNWMwIDZkYzI1NCAuOiA1LjEwfCBuZXQvc2NoZWQ6
-IHNjaF90YXByaW86IGZpeCB1bmRlZmluZWQgYmVoYXZpb3IgaW4ga3RpbWVfbW9ub190b19hbnkK
-wqB8MjUzODFjODU1IGUxNDBjNyAuOiA1LjEwfCBuZXQ6IGhuczM6IGZpeCBrZXJuZWwgY3Jhc2gg
-d2hlbiB1bmxvYWQgVkYgd2hpbGUgaXQgaXMgYmVpbmcgcmVzZXQKwqB8MTRlYzMyMWNmIDY4OGRi
-MCAuOiA1LjEwfCBuZXQ6IGhuczM6IGFsbG93IGNvbmZpZ3VyZSBFVFMgYmFuZHdpZHRoIG9mIGFs
-bCBUQ3MKwqB8Mzc5ZDQxNjVmIGY2NGFiOCBvOiA1LjEwfCBuZXQ6IHN0bW1hYzogYWxsb3cgYSB0
-Yy10YXByaW8gYmFzZS10aW1lIG9mIHplcm8KwqB8Mzc3Mjk3NGNjIGM3Y2Q4MiBvOiA1LjEwfCB2
-c29jazogcHJldmVudCB1bm5lY2Vzc2FyeSByZWZjbnQgaW5jIGZvciBub25ibG9ja2luZyBjb25u
-ZWN0CsKgfDY5ZWIwNjA3NSBjN2NkODIgbzogNC4xOXwgdnNvY2s6IHByZXZlbnQgdW5uZWNlc3Nh
-cnkgcmVmY250IGluYyBmb3Igbm9uYmxvY2tpbmcgY29ubmVjdArCoHw1YTU0ZWUxMjkgYzdjZDgy
-IG86IDQuNHwgdnNvY2s6IHByZXZlbnQgdW5uZWNlc3NhcnkgcmVmY250IGluYyBmb3Igbm9uYmxv
-Y2tpbmcgY29ubmVjdArCoHw2ZWNiY2E1YmYgZTVkNWFhIC46IDUuMTB8IG5ldC9zbWM6IGZpeCBz
-a19yZWZjbnQgdW5kZXJmbG93IG9uIGxpbmtkb3duIGFuZCBmYWxsYmFjawrCoHwzOGJmMWNlM2Ug
-NGNhMTEwIG86IDUuMTB8IGN4Z2I0OiBmaXggZWVwcm9tIGxlbiB3aGVuIGRpYWdub3N0aWNzIG5v
-dCBpbXBsZW1lbnRlZArCoHw0MWE5NThiMDAgNGNhMTEwIG86IDQuMTl8IGN4Z2I0OiBmaXggZWVw
-cm9tIGxlbiB3aGVuIGRpYWdub3N0aWNzIG5vdCBpbXBsZW1lbnRlZAoKQmVzdCByZWdhcmRzLArC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqAgUGF2ZWwKLS0gCkRFTlggU29mdHdhcmUgRW5naW5lZXJpbmcgR21iSCzCoMKg
-wqDCoMKgIE1hbmFnaW5nIERpcmVjdG9yOiBXb2xmZ2FuZyBEZW5rCkhSQiAxNjUyMzUgTXVuaWNo
-LCBPZmZpY2U6IEtpcmNoZW5zdHIuNSwgRC04MjE5NCBHcm9lYmVuemVsbCwgR2VybWFueQoKCg==
+
+
+On 11/17/21 1:18 PM, Christian Storm via lists.cip-project.org wrote:
+>> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>>
+>> This root file system supports SWUpdate and secure boot.
+>> We need a writable /tmp and /var for a boot without error messages.
+>>
+>> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>> ---
+>>   Kconfig                                       |  3 +-
+>>   classes/secure-swupdate-img.bbclass           | 32 +++++++++++++++++++
+>>   kas/opt/ebg-secure-boot-base.yml              |  2 ++
+>>   kas/opt/ebg-secure-boot-snakeoil.yml          | 13 +++++++-
+>>   kas/opt/ebg-snakeoil-swu.yml                  | 16 ----------
+>>   .../images/cip-core-image-read-only.bb        | 20 ++++++++++++
+>>   recipes-core/tmp-fs/files/postinst            |  3 ++
+>>   recipes-core/tmp-fs/files/tmp.mount           | 11 +++++++
+>>   recipes-core/tmp-fs/tmp-fs_0.1.bb             |  9 ++++++
+>>   wic/qemu-amd64-efibootguard-secureboot.wks    | 11 -------
+>>   wic/qemu-amd64-efibootguard-secureboot.wks.in | 13 ++++++++
+>>   11 files changed, 103 insertions(+), 30 deletions(-)
+>>   create mode 100644 classes/secure-swupdate-img.bbclass
+>>   delete mode 100644 kas/opt/ebg-snakeoil-swu.yml
+>>   create mode 100644 recipes-core/images/cip-core-image-read-only.bb
+>>   create mode 100755 recipes-core/tmp-fs/files/postinst
+>>   create mode 100644 recipes-core/tmp-fs/files/tmp.mount
+>>   create mode 100644 recipes-core/tmp-fs/tmp-fs_0.1.bb
+>>   delete mode 100644 wic/qemu-amd64-efibootguard-secureboot.wks
+>>   create mode 100644 wic/qemu-amd64-efibootguard-secureboot.wks.in
+>>
+>> diff --git a/Kconfig b/Kconfig
+>> index 8421f1b..e97cb03 100644
+>> --- a/Kconfig
+>> +++ b/Kconfig
+>> @@ -141,7 +141,6 @@ config IMAGE_SECURE_BOOT
+>>   config KAS_INCLUDE_SWUPDATE_SECBOOT
+>>   	string
+>>   	default "kas/opt/ebg-swu.yml" if IMAGE_SWUPDATE && !IMAGE_SECURE_BOOT
+>> -	default "kas/opt/ebg-secure-boot-snakeoil.yml" if !IMAGE_SWUPDATE && IMAGE_SECURE_BOOT
+>> -	default "kas/opt/ebg-snakeoil-swu.yml" if IMAGE_SWUPDATE && IMAGE_SECURE_BOOT
+>> +	default "kas/opt/ebg-secure-boot-snakeoil.yml" if IMAGE_SECURE_BOOT
+>>   
+>>   endif
+>> diff --git a/classes/secure-swupdate-img.bbclass b/classes/secure-swupdate-img.bbclass
+>> new file mode 100644
+>> index 0000000..431939b
+>> --- /dev/null
+>> +++ b/classes/secure-swupdate-img.bbclass
+>> @@ -0,0 +1,32 @@
+>> +#
+>> +# CIP Core, generic profile
+>> +#
+>> +# Copyright (c) Siemens AG, 2021
+>> +#
+>> +# Authors:
+>> +#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>> +
+>> +SECURE_IMAGE_FSTYPE ?= "squashfs"
+>> +
+>> +inherit ${SECURE_IMAGE_FSTYPE}-img
+>> +
+>> +VERITY_IMAGE_TYPE = "${SECURE_IMAGE_FSTYPE}"
+>> +
+>> +INITRAMFS_RECIPE ?= "cip-core-initramfs"
+>> +do_wic_image[depends] += "${INITRAMFS_RECIPE}:do_build"
+>> +INITRD_IMAGE = "${INITRAMFS_RECIPE}-${DISTRO}-${MACHINE}.initrd.img"
+>> +
+>> +inherit verity-img
+>> +inherit wic-img
+>> +inherit extract-partition
+>> +inherit swupdate-img
+>> +
+>> +SOURCE_IMAGE_FILE = "${WIC_IMAGE_FILE}"
+>> +
+>> +addtask do_verity_image after do_${SECURE_IMAGE_FSTYPE}_image
+>> +addtask do_wic_image after do_verity_image
+>> +addtask do_extract_partition after do_wic_image
+>> +addtask do_swupdate_image after do_extract_partition
+>> diff --git a/kas/opt/ebg-secure-boot-base.yml b/kas/opt/ebg-secure-boot-base.yml
+>> index 8f769b6..acb4de0 100644
+>> --- a/kas/opt/ebg-secure-boot-base.yml
+>> +++ b/kas/opt/ebg-secure-boot-base.yml
+>> @@ -19,3 +19,5 @@ local_conf_header:
+>>       IMAGE_INSTALL += "initramfs-abrootfs-secureboot"
+>>       SWU_DESCRIPTION = "secureboot"
+>>       SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG = "secureboot/swupdate.handler.${SWUPDATE_BOOTLOADER}.ini"
+>> +  kernel: |
+>> +    SECURE_BOOT_KERNEL = "1"
+>> diff --git a/kas/opt/ebg-secure-boot-snakeoil.yml b/kas/opt/ebg-secure-boot-snakeoil.yml
+>> index 2f45bde..4a9185c 100644
+>> --- a/kas/opt/ebg-secure-boot-snakeoil.yml
+>> +++ b/kas/opt/ebg-secure-boot-snakeoil.yml
+>> @@ -14,13 +14,24 @@ header:
+>>     includes:
+>>      - kas/opt/ebg-secure-boot-base.yml
+>>   
+>> +target: cip-core-image-read-only
+>>   
+>>   local_conf_header:
+>> +  swupdate: |
+>> +    IMAGE_INSTALL_append = " swupdate"
+>> +    IMAGE_INSTALL_append = " swupdate-handler-roundrobin"
+>> +
+>> +  verity-img: |
+>> +    SECURE_BOOT_KERNEL = "1"
+>> +    SECURE_IMAGE_FSTYPE = "squashfs"
+>> +    VERITY_IMAGE_RECIPE = "cip-core-image-read-only"
+>> +    IMAGE_TYPE = "secure-swupdate-img"
+>> +    WKS_FILE = "${MACHINE}-efibootguard-secureboot.wks.in"
+>> +
+>>     secure-boot: |
+>>       # Add snakeoil and ovmf binaries for qemu
+>>       IMAGER_BUILD_DEPS += "ebg-secure-boot-snakeoil ovmf-binaries"
+>>       IMAGER_INSTALL += "ebg-secure-boot-snakeoil"
+>> -    WKS_FILE = "${MACHINE}-efibootguard-secureboot.wks"
+>>   
+>>     ovmf: |
+>>       # snakeoil certs are only part of backports
+>> diff --git a/kas/opt/ebg-snakeoil-swu.yml b/kas/opt/ebg-snakeoil-swu.yml
+>> deleted file mode 100644
+>> index 2f15c0e..0000000
+>> --- a/kas/opt/ebg-snakeoil-swu.yml
+>> +++ /dev/null
+>> @@ -1,16 +0,0 @@
+>> -#
+>> -# CIP Core, generic profile
+>> -#
+>> -# Copyright (c) Siemens AG, 2021
+>> -#
+>> -# Authors:
+>> -#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>> -#
+>> -# SPDX-License-Identifier: MIT
+>> -#
+>> -
+>> -header:
+>> -  version: 10
+>> -  includes:
+>> -   - kas/opt/ebg-secure-boot-snakeoil.yml
+>> -   - kas/opt/swupdate.yml
+>> diff --git a/recipes-core/images/cip-core-image-read-only.bb b/recipes-core/images/cip-core-image-read-only.bb
+>> new file mode 100644
+>> index 0000000..7ef2dc2
+>> --- /dev/null
+>> +++ b/recipes-core/images/cip-core-image-read-only.bb
+>> @@ -0,0 +1,20 @@
+>> +require cip-core-image.bb
+>> +
+>> +SQUASHFS_EXCLUDE_DIRS += "home var"
+>> +
+>> +IMAGE_INSTALL += "tmp-fs"
+>> +IMAGE_INSTALL_remove += "initramfs-abrootfs-secureboot"
+>> +
+>> +image_configure_fstab() {
+>> +    sudo tee '${IMAGE_ROOTFS}/etc/fstab' << EOF
+>> +# Begin /etc/fstab
+>> +/dev/root	/		auto		defaults,ro			0	0
+>> +LABEL=var	/var		auto		defaults			0	0
+>> +proc		/proc		proc		nosuid,noexec,nodev		0	0
+>> +sysfs		/sys		sysfs		nosuid,noexec,nodev		0	0
+>> +devpts		/dev/pts	devpts		gid=5,mode=620			0	0
+>> +tmpfs		/run		tmpfs		nodev,nosuid,size=500M,mode=755	0	0
+>> +devtmpfs	/dev		devtmpfs	mode=0755,nosuid		0	0
+>> +# End /etc/fstab
+>> +EOF
+>> +}
+>> diff --git a/recipes-core/tmp-fs/files/postinst b/recipes-core/tmp-fs/files/postinst
+>> new file mode 100755
+>> index 0000000..07017fd
+>> --- /dev/null
+>> +++ b/recipes-core/tmp-fs/files/postinst
+>> @@ -0,0 +1,3 @@
+>> +#!/bin/sh
+>> +
+>> +deb-systemd-helper enable tmp.mount  || true
+>> diff --git a/recipes-core/tmp-fs/files/tmp.mount b/recipes-core/tmp-fs/files/tmp.mount
+>> new file mode 100644
+>> index 0000000..7a31ed6
+>> --- /dev/null
+>> +++ b/recipes-core/tmp-fs/files/tmp.mount
+>> @@ -0,0 +1,11 @@
+>> +[Unit]
+>> +Description=Create /tmp
+>> +
+>> +[Mount]
+>> +What=tmpfs
+>> +Where=/tmp
+>> +Type=tmpfs
+>> +Options=nodev,nosuid,size=500M,mode=755
+> 
+> Hm, shouldn't size be configurable?
+
+I will make it configurable in the next version.
+> 
+> 
+>> +
+>> +[Install]
+>> +WantedBy=local-fs.target
+> 
+> Is this the right point in time? Isn't /tmp needed before this?
+
+
+According my testing and [1] if /tmp is mount a in /etc/fstab. systemd 
+mounts before the local-fs.target.
+
+In the cip-core-image /tmp is not need before this as the /tmp of the 
+initrd is used.
+
+The systemd log looks like this
+```
+[  OK  ] Started Remount Root and Kernel File Systems.
+          Starting Create Static Device Nodes in /dev...
+[  OK  ] Started Create Static Device Nodes in /dev.
+          Starting udev Kernel Device Manager...
+[  OK  ] Reached target Local File Systems (Pre).
+          Mounting Create /tmp...
+[  OK  ] Mounted Create /tmp.
+[  OK  ] Started Journal Service.
+
+```
+
+[1]: https://www.freedesktop.org/software/systemd/man/systemd.special.html
+> 
+> 
+>> diff --git a/recipes-core/tmp-fs/tmp-fs_0.1.bb b/recipes-core/tmp-fs/tmp-fs_0.1.bb
+>> new file mode 100644
+>> index 0000000..4e0c467
+>> --- /dev/null
+>> +++ b/recipes-core/tmp-fs/tmp-fs_0.1.bb
+>> @@ -0,0 +1,9 @@
+>> +inherit dpkg-raw
+>> +
+>> +SRC_URI = "file://postinst \
+>> +           file://tmp.mount"
+>> +
+>> +do_install[cleandirs]+="${D}/lib/systemd/system"
+>> +do_install() {
+>> +    install -m 0644 ${WORKDIR}/tmp.mount ${D}/lib/systemd/system/tmp.mount
+>> +}
+>> diff --git a/wic/qemu-amd64-efibootguard-secureboot.wks b/wic/qemu-amd64-efibootguard-secureboot.wks
+>> deleted file mode 100644
+>> index ff351db..0000000
+>> --- a/wic/qemu-amd64-efibootguard-secureboot.wks
+>> +++ /dev/null
+>> @@ -1,11 +0,0 @@
+>> -# short-description: Qemu-amd64 with Efibootguard and SWUpdate
+>> -# long-description: Disk image for qemu-amd64 with EFI Boot Guard and SWUpdate
+>> -include ebg-signed-bootloader.inc
+>> -
+>> -# EFI Boot Guard environment/config partitions plus Kernel files
+>> -part --source efibootguard-boot --ondisk sda --size 32M --extra-space 0 --overhead-factor 1 --label BOOT0 --align 1024 --part-type=0700 --sourceparams "revision=2,unified-kernel=y,signwith=/usr/bin/sign_secure_image.sh"
+>> -part --source efibootguard-boot --ondisk sda --size 32M --extra-space 0 --overhead-factor 1 --label BOOT1 --align 1024 --part-type=0700 --sourceparams "revision=1,unified-kernel=y,signwith=/usr/bin/sign_secure_image.sh"
+>> -
+>> -include swupdate-partition.inc
+>> -
+>> -bootloader --ptable gpt --append="console=tty0 console=ttyS0,115200 rootwait earlyprintk panic=0"
+>> diff --git a/wic/qemu-amd64-efibootguard-secureboot.wks.in b/wic/qemu-amd64-efibootguard-secureboot.wks.in
+>> new file mode 100644
+>> index 0000000..c4ea0c8
+>> --- /dev/null
+>> +++ b/wic/qemu-amd64-efibootguard-secureboot.wks.in
+>> @@ -0,0 +1,13 @@
+>> +# EFI partition containing efibootguard bootloader binary
+>> +part --source efibootguard-efi  --ondisk sda --size 16M --extra-space 0 --overhead-factor 1 --label efi   --align 1024 --part-type=EF00 --active --sourceparams "signwith=/usr/bin/sign_secure_image.sh"
+>> +
+>> +# EFI Boot Guard environment/config partitions plus Kernel files
+>> +part --source efibootguard-boot --ondisk sda --size 32M --extra-space 0 --overhead-factor 1 --label BOOT0 --align 1024 --part-type=0700 --sourceparams "revision=2,unified-kernel=y,signwith=/usr/bin/sign_secure_image.sh"
+>> +part --source efibootguard-boot --ondisk sda --size 32M --extra-space 0 --overhead-factor 1 --label BOOT1 --align 1024 --part-type=0700 --sourceparams "revision=1,unified-kernel=y,signwith=/usr/bin/sign_secure_image.sh"
+>> +
+>> +part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${VERITY_IMAGE_TYPE}.verity.img" --ondisk sda --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
+>> +part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${VERITY_IMAGE_TYPE}.verity.img" --ondisk sda --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
+>> +
+>> +part /var --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var --ondisk sda --fstype=ext4 --label var --align 1024  --size 2G
+>> +
+>> +bootloader --ptable gpt --append="console=tty0 console=ttyS0,115200 rootwait rw earlyprintk"
+>> -- 
+>> 2.30.2
+>>
+> 
+> 
+> 
+> Kind regards,
+>     Christian
+> 
+> 
+> 
+> -=-=-=-=-=-=-=-=-=-=-=-
+> Links: You receive all messages sent to this group.
+> View/Reply Online (#6945): https://lists.cip-project.org/g/cip-dev/message/6945
+> Mute This Topic: https://lists.cip-project.org/mt/87092664/1753640
+> Group Owner: cip-dev+owner@lists.cip-project.org
+> Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129121/1753640/1405269326/xyzzy [quirin.gylstorff@siemens.com]
+> -=-=-=-=-=-=-=-=-=-=-=-
+> 
+
+
+
 
 
