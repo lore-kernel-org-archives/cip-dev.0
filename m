@@ -1,124 +1,67 @@
-Return-Path: <masami.ichikawa@miraclelinux.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02DEAC433F5
-	for <webhook@archiver.kernel.org>; Thu, 18 Nov 2021 04:58:09 +0000 (UTC)
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com
- [209.85.210.46])
- by mx.groups.io with SMTP id smtpd.web12.1601.1637211487007973013
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63664C433F5
+	for <webhook@archiver.kernel.org>; Thu, 18 Nov 2021 07:31:26 +0000 (UTC)
+Received: from goliath.siemens.de (goliath.siemens.de [192.35.17.28])
+ by mx.groups.io with SMTP id smtpd.web09.2577.1637220683450568701
  for <cip-dev@lists.cip-project.org>;
- Wed, 17 Nov 2021 20:58:08 -0800
+ Wed, 17 Nov 2021 23:31:24 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112
- header.b=FUg9ejNl;
- spf=pass (domain: miraclelinux.com, ip: 209.85.210.46,
- mailfrom: masami.ichikawa@miraclelinux.com)
-Received: by mail-ot1-f46.google.com with SMTP id
- u18-20020a9d7212000000b00560cb1dc10bso8802650otj.11
-        for <cip-dev@lists.cip-project.org>;
- Wed, 17 Nov 2021 20:58:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=Daa/nZLRHlF/ogmVrXKhVPSLr6yVUCt0SAJj8uXC7ho=;
-        b=FUg9ejNlHQ9KXE87JJlPq51QmIHJnByAN4DOSxSXDrePX5waz87MyqphDR5L+Q1gyA
-         Y7C62hOS4dck9rNRlSchP2PGxfthD+frXnk9mXrrjw4yXH4rdWpJiyYVV3HWRNz7JtA2
-         zm/JUQqTwMmPzy6WZi5/s8LsGvUcfcHGifPgx6+lKX/E3YDXjgRuMYpm3A++hC6DYzR4
-         yynraaQ/GNvxPinmgnV8ptEAWwiA2YleYlmeeUtlFqizO75yd95QBlgmI3YNFMdWGRT9
-         QKgedwskPcNRk7dRHQXFqxk0S5HYGWrBD3UZH0C9lBVAxYT8BPQUBXXy+kCPwHDlmMBX
-         B0dQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=Daa/nZLRHlF/ogmVrXKhVPSLr6yVUCt0SAJj8uXC7ho=;
-        b=t6PA1qDZIKRVipOUxZZZUbDOOhBNpj4zZDwlOztSXcNRWIapMYak1LSghdC/iH8sCh
-         qNE4OR1hbyJO7oaTr0Gep5vGg6dZw83/WPJ4yH3EID1bKq+ltGJt47Z0URkvRb85m67F
-         8aDSWeQ3yNUPCwCOPDfA6YpCXdsT6WT5A59RXiVncNrhTEe4aYs+NpaZvv4b622IpnC5
-         Ma8RhE2zre1wlNa4Ifg8rUfo+Icykcga14hBqmQpQ+QYI9hT5NIoIgtSakhhhG0K2MYt
-         3SE3OSdDG/AJ4BIHN4Kco8uFbriuQ99WTmNgTN9liNLo1xw4B3Bqy78rmGFAYNJp7pKs
-         wRFw==
-X-Gm-Message-State: AOAM530tO+pU60PBaLs21RI6iR5Eaw6VJUBst+tmVPfSeojGdL0khtC7
-	z8CrrtJx0Av7/Qp/VSKFT2U+Qo5EzqMy1ZkjLTY/WvWVmnWExQ==
-X-Google-Smtp-Source: 
- ABdhPJy2RS1aRUo4ZVb2wux3/uyZ3VLN08idv4e9x7zcFAqgLoSGVWcpPxH6EckPzCFnsByS2trNj+D7K4f/97mYPvQ=
-X-Received: by 2002:a9d:4a8d:: with SMTP id
- i13mr19403436otf.180.1637211486005;
- Wed, 17 Nov 2021 20:58:06 -0800 (PST)
-MIME-Version: 1.0
-From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Date: Thu, 18 Nov 2021 13:57:30 +0900
-Message-ID: 
- <CAODzB9oWEo6D48YUEckgv7Q9QfQdvNMjmuUkTS8SKFHagDi8Kw@mail.gmail.com>
-Subject: FYI: meta-spdxscanner with meta-debian/deby
+ dkim=missing;
+ spf=pass (domain: siemens.com, ip: 192.35.17.28, mailfrom: jan.kiszka@siemens.com)
+Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
+	by goliath.siemens.de (8.15.2/8.15.2) with ESMTPS id 1AI7VKRV029743
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+	for <cip-dev@lists.cip-project.org>; Thu, 18 Nov 2021 08:31:20 +0100
+Received: from [167.87.1.34] ([167.87.1.34])
+	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 1AI7VJkg031371
+	for <cip-dev@lists.cip-project.org>; Thu, 18 Nov 2021 08:31:20 +0100
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Subject: [cip-dev] CIP IRC weekly meeting today on libera.chat
 To: cip-dev <cip-dev@lists.cip-project.org>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <d9dda469-b51d-422c-dec7-123a207bd718@siemens.com>
+Date: Thu, 18 Nov 2021 08:31:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 18 Nov 2021 04:58:09 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6949
+ <cip-dev@lists.cip-project.org>; Thu, 18 Nov 2021 07:31:26 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6950
 
-Hello !
+Hi all,
 
-I modified meta-spdxscanner warrior branch[1] to work with meta-debian.
-I tested meta-debian and deby(cip-core/deby). I could build without
-errors building core-image-minimal with do_spdx task on both
-deby-tiny(DISTRO=deby-tine) and deby(DISTRO=deby) distributions. The
-do_spdx task seems working.
+Kindly be reminded to attend the weekly meeting through IRC to discuss
+technical topics with CIP kernel today.
 
-From output of spdx files, I can see following lines.
+Please note that we moved from Freenode to libera.chat. Our channel is
+the following:
 
-openssl
+    irc:irc.libera.chat:6667/cip
 
-##File
+Furthermore note that the IRC meeting is now scheduled to UTC (GMT) 13:00:
 
-FileName: spdx_temp/openssl-1.1.1d/include/openssl/x509_vfy.h
-SPDXID: SPDXRef-item195247
-FileChecksum: SHA1: 5dca1c0a935f3f075642539d399e7c6969ff1214
-FileChecksum: MD5: 99fd343f8b3970195c79684291fb6fc9
-LicenseConcluded: NOASSERTION
-LicenseInfoInFile: LicenseRef-UnclassifiedLicense
-FileCopyrightText: <text> Copyright 1995-2019 The OpenSSL Project
-Authors. All Rights Reserved. </text>
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2021&month=11&day=11&hour=13&min=0&sec=0&p1=224&p2=179&p3=136&p4=37&p5=241&p6=248
 
-coreutils
+USWest    USEast    UK        DE        TW        JP
+06:00     09:00     13:00     14:00     21:00     22:00
 
-##File
+Last meeting minutes:
 
-FileName: spdx_temp/coreutils-8.30/src/expand-common.c
-SPDXID: SPDXRef-item396438
-FileChecksum: SHA1: a11068900b49e7c1732f096ca21ccd1343375eeb
-FileChecksum: MD5: 4a6529ea8806170c9be8169a29360fd8
-LicenseConcluded: NOASSERTION
-LicenseInfoInFile: GPL-3.0+
-FileCopyrightText: <text> Copyright (C) 1989-2018 Free Software
-Foundation, Inc. </text>
+https://irclogs.baserock.org/meetings/cip/2021/11/cip.2021-11-11-13.01.log.html
 
+* Action item
+  1. Combine root filesystem with kselftest binary - iwamatsu & alicef
+  2. Look into S3 artifact upload issues - patersonc
+* Kernel maintenance updates
+* Kernel testing
+* AOB
 
-I use following tools and version/revision for fossology related tools.
-
-* fossology
-
-Docker image tag 3.3.0[2].
-
-* fossdriver
-
-master branch commit 18410187b0a90654510f34dd783b456c53e681dd [3].
-
-unfortunately, I'm not sure how to add fossdriver to kas docker
-container, so I didn't use docker to build image.
-
-1: https://github.com/masami256/meta-spdxscanner/tree/warrior-metadebian
-2: https://hub.docker.com/layers/fossology/fossology/3.3.0/images/sha256-b596124b47a29d24d2fdd63f7ba19b9fc27ce67f090e7ee527b02c07c66b54ee?context=explore
-3: https://github.com/fossology/fossdriver/tree/18410187b0a90654510f34dd783b456c53e681dd
-
-Regards,
-
--- 
-Masami Ichikawa
-Cybertrust Japan Co., Ltd.
-
-Email :masami.ichikawa@cybertrust.co.jp
-          :masami.ichikawa@miraclelinux.com
+Jan
 
