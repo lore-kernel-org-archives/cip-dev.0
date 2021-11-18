@@ -1,139 +1,183 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <masami.ichikawa@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C03EC433F5
-	for <webhook@archiver.kernel.org>; Wed, 17 Nov 2021 18:09:22 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web09.10974.1637172560483033828
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3476C433F5
+	for <webhook@archiver.kernel.org>; Thu, 18 Nov 2021 00:06:35 +0000 (UTC)
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com
+ [209.85.210.46])
+ by mx.groups.io with SMTP id smtpd.web11.893.1637193992880674167
  for <cip-dev@lists.cip-project.org>;
- Wed, 17 Nov 2021 10:09:21 -0800
+ Wed, 17 Nov 2021 16:06:35 -0800
 Authentication-Results: mx.groups.io;
- dkim=missing;
- spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id DCAD01C0B76; Wed, 17 Nov 2021 19:09:09 +0100 (CET)
-Date: Wed, 17 Nov 2021 19:09:08 +0100
-From: Pavel Machek <pavel@denx.de>
-To: nobuhiro1.iwamatsu@toshiba.co.jp
-Cc: pavel@denx.de, cip-dev@lists.cip-project.org, uli@fpond.eu,
-	jan.kiszka@siemens.com, masami.ichikawa@cybertrust.co.jp
-Subject: Re: New kernel patches review management
-Message-ID: <20211117180908.GB32434@amd>
-References: 
- <TYAPR01MB6252AE15ABA567A3301A9F4992949@TYAPR01MB6252.jpnprd01.prod.outlook.com>
+ dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112
+ header.b=0f2ZC9Tc;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.210.46,
+ mailfrom: masami.ichikawa@miraclelinux.com)
+Received: by mail-ot1-f46.google.com with SMTP id
+ u18-20020a9d7212000000b00560cb1dc10bso7698621otj.11
+        for <cip-dev@lists.cip-project.org>;
+ Wed, 17 Nov 2021 16:06:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=Mar4w8Nbiz9i4XspT/KvBuyoX1HTMNToidUGgcJB8Qk=;
+        b=0f2ZC9Tcc0to9YF9CtxZsAOuOtJRdh4iHtg1uezNridcONPzg6kkCo/DEISTBWc78b
+         x8iXL9fIjPn5NZ0nKVbIPcspeck36jLzcjnvwJ5JHyQc7pr+UOK2uL3onWHPrjE0VPVW
+         tBM2jHfQlJwq8h1fu2OHxmrxYGkz7mfzHZYvbFCHlSffiIx/XK/TRKmQ7EvNGlnrjzDj
+         fhdA+y8+QSvRP4/9QRfnm+WyM44Q5rPjQ4Zt9lXIUZ9xbG/msc11B+ZRVQ8ZCNSvpTb7
+         EhNfGWkLxcu0pasGbFN0cZUv7yKdHD0kehBZ1Dl9fnWgYUawZu8UBjtRo1HrS6+yb60w
+         W3rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=Mar4w8Nbiz9i4XspT/KvBuyoX1HTMNToidUGgcJB8Qk=;
+        b=4PdKhAEEDe8ayiOcNaCdbZNHRY0wwVJHCzfS/ScCNIAGpiLypq7O0df6ekk0oVUx6+
+         XEt9CqwjbC7pA6i4cw/D8TxWI+aQI/TCA+oF79Fb1+x0kBJYTcKtyYKQvrUqTIjUHCXo
+         61mv03L8w1UIsLIUnOZc/9V+iJWpd9ftxRccfC7CBOC3psBzo9J3GCfNSz0OjAU14IrL
+         QAiUXM/xSclDc0foObJ58AhAnnO4Lh/VTKupcjAKiCR0GTyL9Jm5D2cvIB7uFvcz99qF
+         voAppzwYHscELDWmxdIYuzxHA5ys+G2IzVkx1ZRK/ctPfS2wU+ZBSDI3RFvdQm+fNEeT
+         EESw==
+X-Gm-Message-State: AOAM533s0kU5rzbdi5y6NkVcqVj5meBaSUhanSJkUyPsSXdP9uXD7lO7
+	X2q2NE75s4wDYYhn2GJpH4LkVwJ9ABzw6WyEgSVn6DzyOrqHAg==
+X-Google-Smtp-Source: 
+ ABdhPJz425mpq1fyKelKAunQ2ujt5uIOh0uRows36UlbFudAIAkIEVMF99ZByElbCofcPjjCUyTDw6ZY173j84KNs0c=
+X-Received: by 2002:a9d:4a8d:: with SMTP id
+ i13mr18005899otf.180.1637193991959;
+ Wed, 17 Nov 2021 16:06:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="xo44VMWPx7vlQ2+2"
-Content-Disposition: inline
-In-Reply-To: 
- <TYAPR01MB6252AE15ABA567A3301A9F4992949@TYAPR01MB6252.jpnprd01.prod.outlook.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Thu, 18 Nov 2021 09:05:56 +0900
+Message-ID: 
+ <CAODzB9rpX2mcJ85o3w+PcuUWdRcPiujsFwJbrZwCJmo5fv_=+g@mail.gmail.com>
+Subject: New CVE entries in this week
+To: cip-dev <cip-dev@lists.cip-project.org>
+Content-Type: text/plain; charset="UTF-8"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 17 Nov 2021 18:09:22 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6947
+ <cip-dev@lists.cip-project.org>; Thu, 18 Nov 2021 00:06:35 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6948
+
+Hi !
+
+It's this week's CVE report.
+
+This week reported two new CVEs. They have not been fixed in the mainline yet.
+
+* New CVEs
+
+CVE-2021-43975: atlantic: Fix OOB read and write in hw_atl_utils_fw_rpc_wait
+
+CVSS v3 score is not provided.
+
+OOB read/write bug in aQuantia device driver code. Patch was merged
+into the netdev tree on Nov 15.
+
+Fixed status
+
+Not fixed in the mainline yet.
+
+CVE-2021-43976: mwifiex_usb: Fix skb_over_panic in mwifiex_usb_recv
+
+CVSS v3 score is not provided.
+
+Bug is in the Marvell WiFi-Ex driver code. Patch is being in reviewed
+on the linux-wireless list
+(https://patchwork.kernel.org/project/linux-wireless/patch/YX4CqjfRcTa6bVL+@Zekuns-MBP-16.fios-router.home/).
+
+Fixed status
+
+Not yet.
+
+* Updated CVEs
+
+CVE-2021-37159: net: hso: do not call unregister if not registered
+
+4.4 and 4.9 have been fixed. All stable kernels are fixed.
+
+Fixed status
+
+mainline: [a6ecfb39ba9d7316057cea823b196b734f6b18ca]
+stable/4.14: [4c0db9c4b3701c29f47bac0721e2f7d2b15d8edb]
+stable/4.19: [f6cf22a1ef49f8e131f99c3f5fd80ab6b23a2d21]
+stable/4.4: [cbefdf724282e6a948885f379dc92ab841c2fee0]
+stable/4.9: [88b912e02d75bacbb957d817db70e6a54ea3a21c]
+stable/5.10: [115e4f5b64ae8d9dd933167cafe2070aaac45849]
+stable/5.13: [eeaa4b8d1e2e6f10362673d283a97dccc7275afa]
+stable/5.4: [fe57d53dd91d7823f1ceef5ea8e9458a4aeb47fa]
 
 
---xo44VMWPx7vlQ2+2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+CVE-2021-42739: media: firewire: firedtv-avc: fix a buffer overflow in
+avc_ca_pmt()
 
-Hi!
+stable/4.14 has been fixed.
 
-> I considered using the gitlab wiki to switch the current patch review
-> management to another.
->=20
-> The gitlab wiki can be used as a regular git repository and can be
-> viewed from his browser by writing its contents in markdown.
->=20
->   e.g. git clone git@gitlab.com:cip-project/cip-kernel/linux-cip.wiki.git
+Fixed status
 
-This looks good.
+stable/4.14: [8d6c05da808f8351db844b69a9d6ce7f295214bb]
+stable/4.19: [53ec9dab4eb0a8140fc85760fb50effb526fe219]
+stable/5.10: [d7fc85f6104259541ec136199d3bf7c8a736613d]
+stable/5.14: [02a476ca886dc8155025fe99cbbad4121d029fa7]
+stable/5.15: [cb667140875a3b1db92e4c50b4617a7cbf84659b]
+stable/5.4: [2461f38384d50dd966e1db44fe165b1896f5df5a]
 
-> It can be created using the API on the project wiki[0]. Since
-> namespaces are available, we can also create hierarchies such as
-> 5.10.y/v5.10.77 [1].
-> The wiki page is first filled with the commit ID, then the CIP kernel
-> developer writes the name after the commit they plan to review.
+CVE-2020-27820: use-after-free in nouveau kernel module
 
-I believe this is too simple. We should include patch titles, so that
-it is easier to review whole series. I also believe we should include
-related patches from 4.19/4.4, so that they are reviewed together with
-corresponding 5.10 change.
+Fixed status
 
-I'm currently using this format, and scripts to generate it are
-already in the repository. Could we use that for review management,
-too?
-                            v-- patch title
-                      v-- stable tree version
-                   v-- "o" means we are building it in some
-		       configuration, " " means likely not relevant to us
-            v-- stable commit id, not quite reliable
-  v-- upstream commit id
- |50d50ca00 88c42f  : 5.10| perf bpf: Add missing free to bpf_event__print_=
-bpf_prog_info()
- |51444729b 8ac9df o: 5.10| llc: fix out-of-bound array index in llc_sk_dev=
-_hash()
- |df8fa74a0 8ac9df o: 4.19| llc: fix out-of-bound array index in llc_sk_dev=
-_hash()
- |bf70e4f7d 8ac9df o: 4.4| llc: fix out-of-bound array index in llc_sk_dev_=
-hash()
- |3dd3e81ad 9fec40 .: 5.10| nfc: pn533: Fix double free when pn533_fill_fra=
-gment_skbs() fails
- |b5cb963e8 9fec40 .: 4.19| nfc: pn533: Fix double free when pn533_fill_fra=
-gment_skbs() fails
- |21e4958e2 9fec40 .: 4.4| nfc: pn533: Fix double free when pn533_fill_frag=
-ment_skbs() fails
- |2a126e22e c7c386 o: 5.10| arm64: pgtable: make __pte_to_phys/__phys_to_pt=
-e_val inline functions
- |f9ee3718b c7c386 o: 4.19| arm64: pgtable: make __pte_to_phys/__phys_to_pt=
-e_val inline functions
- |78570c445 b8b831 .: 5.10| bpf, sockmap: Remove unhash handler for BPF soc=
-kmap usage
- |dbe525054 e0dc3b o: 5.10| bpf: sockmap, strparser, and tls are reusing qd=
-isc_skb_cb and colliding
- |c45dfa514 1c360c .: 5.10| gve: Fix off by one in gve_tx_timeout()
- |3737feeca 10a6de o: 5.10| seq_file: fix passing wrong private data
- |614a5f5c0 6dc254 .: 5.10| net/sched: sch_taprio: fix undefined behavior i=
-n ktime_mono_to_any
- |25381c855 e140c7 .: 5.10| net: hns3: fix kernel crash when unload VF whil=
-e it is being reset
- |14ec321cf 688db0 .: 5.10| net: hns3: allow configure ETS bandwidth of all=
- TCs
- |379d4165f f64ab8 o: 5.10| net: stmmac: allow a tc-taprio base-time of zero
- |3772974cc c7cd82 o: 5.10| vsock: prevent unnecessary refcnt inc for nonbl=
-ocking connect
- |69eb06075 c7cd82 o: 4.19| vsock: prevent unnecessary refcnt inc for nonbl=
-ocking connect
- |5a54ee129 c7cd82 o: 4.4| vsock: prevent unnecessary refcnt inc for nonblo=
-cking connect
- |6ecbca5bf e5d5aa .: 5.10| net/smc: fix sk_refcnt underflow on linkdown an=
-d fallback
- |38bf1ce3e 4ca110 o: 5.10| cxgb4: fix eeprom len when diagnostics not impl=
-emented
- |41a958b00 4ca110 o: 4.19| cxgb4: fix eeprom len when diagnostics not impl=
-emented
+Patches were merged in 5.16-rc1.
 
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+mainline: [aff2299e0d81b26304ccc6a1ec0170e437f38efc,
+abae9164a421bc4a41a3769f01ebcd1f9d955e0e,
+  f55aaf63bde0d0336c3823bb3713bd4a464abbcf]
 
---xo44VMWPx7vlQ2+2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+CVE-2021-3640: UAF in sco_send_frame function
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Patch was merged in 5.16-rc1. Patch for 4.4, 4.9, 4.14, 4.19, and 5.10
+are in the stable-rc tree.
 
-iEYEARECAAYFAmGVRUQACgkQMOfwapXb+vLjXACfbIqa9HiNqlxEYsGP6ygMGz/X
-2+wAnRlXmdpOn7bp+EoRWoYfWmx6Q2YD
-=FqrL
------END PGP SIGNATURE-----
+Fixed status
 
---xo44VMWPx7vlQ2+2--
+mainline: [99c23da0eed4fd20cae8243f2b51e10e66aa0951]
+stable/5.14: [2c2b295af72e4e30d17556375e100ae65ac0b896]
+stable/5.4: [d416020f1a9cc5f903ae66649b2c56d9ad5256ab]
+
+Currently tracking CVEs
+
+CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
+Bluetooth Core Specifications 4.0 through 5.2
+
+There is no fix information.
+
+CVE-2020-26555: BR/EDR pin code pairing broken
+
+No fix information
+
+CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
+
+No fix information.
+
+CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
+Provisioning Leads to MITM
+
+No fix information.
+
+CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
+
+No fix information.
+
+CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
+
+No fix information.
+
+
+Regards,
+
+-- 
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
+
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
 
