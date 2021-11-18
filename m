@@ -2,322 +2,211 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B9FFC433EF
-	for <webhook@archiver.kernel.org>; Thu, 18 Nov 2021 18:10:36 +0000 (UTC)
-Received: from goliath.siemens.de (goliath.siemens.de [192.35.17.28])
- by mx.groups.io with SMTP id smtpd.web10.5431.1637259034508597691
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30000C433EF
+	for <webhook@archiver.kernel.org>; Thu, 18 Nov 2021 18:12:46 +0000 (UTC)
+Received: from david.siemens.de (david.siemens.de [192.35.17.14])
+ by mx.groups.io with SMTP id smtpd.web08.5531.1637259165259321460
  for <cip-dev@lists.cip-project.org>;
- Thu, 18 Nov 2021 10:10:35 -0800
+ Thu, 18 Nov 2021 10:12:45 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=pass (domain: siemens.com, ip: 192.35.17.28, mailfrom: quirin.gylstorff@siemens.com)
+ spf=pass (domain: siemens.com, ip: 192.35.17.14, mailfrom: quirin.gylstorff@siemens.com)
 Received: from mail1.sbs.de (mail1.sbs.de [192.129.41.35])
-	by goliath.siemens.de (8.15.2/8.15.2) with ESMTPS id 1AIIAVfU020940
+	by david.siemens.de (8.15.2/8.15.2) with ESMTPS id 1AIICgkf013937
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-	for <cip-dev@lists.cip-project.org>; Thu, 18 Nov 2021 19:10:31 +0100
+	for <cip-dev@lists.cip-project.org>; Thu, 18 Nov 2021 19:12:42 +0100
 Received: from [139.22.45.143] ([139.22.45.143])
-	by mail1.sbs.de (8.15.2/8.15.2) with ESMTP id 1AIIAUmq027568
-	for <cip-dev@lists.cip-project.org>; Thu, 18 Nov 2021 19:10:31 +0100
+	by mail1.sbs.de (8.15.2/8.15.2) with ESMTP id 1AIICgtI014323
+	for <cip-dev@lists.cip-project.org>; Thu, 18 Nov 2021 19:12:42 +0100
+Subject: Re: [cip-dev][isar-cip-core]RFC v2 6/9] Create systemd mount units
+ for a etc overlay
 To: cip-dev@lists.cip-project.org
-References: <20211117121815.efuw3n7pyehisw75@MD1ZFJVC.ad001.siemens.net>
+References: <20211117121131.as2eyks3q76x75sq@MD1ZFJVC.ad001.siemens.net>
 From: Gylstorff Quirin <quirin.gylstorff@siemens.com>
 Organization: Siemens
-Subject: Re: [cip-dev][isar-cip-core]RFC v2 5/9] Create an read-only rootfs
- with dm-verity
-Message-ID: <18128c5f-d4ea-7f8f-e1a3-77390afa6a86@siemens.com>
-Date: Thu, 18 Nov 2021 19:10:30 +0100
+Message-ID: <fcfd6bd1-12b0-cb73-e416-19d4d0e0a6f1@siemens.com>
+Date: Thu, 18 Nov 2021 19:12:42 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <20211117121815.efuw3n7pyehisw75@MD1ZFJVC.ad001.siemens.net>
+In-Reply-To: <20211117121131.as2eyks3q76x75sq@MD1ZFJVC.ad001.siemens.net>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 18 Nov 2021 18:10:36 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6953
+ <cip-dev@lists.cip-project.org>; Thu, 18 Nov 2021 18:12:46 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6954
 
 
 
-On 11/17/21 1:18 PM, Christian Storm via lists.cip-project.org wrote:
+On 11/17/21 1:11 PM, Christian Storm via lists.cip-project.org wrote:
 >> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 >>
->> This root file system supports SWUpdate and secure boot.
->> We need a writable /tmp and /var for a boot without error messages.
+>> As /etc is read-only and needs to be accessed by the initrd
+>> move the user defined settings to a overlay in /var/local/etc.
 >>
 >> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 >> ---
->>   Kconfig                                       |  3 +-
->>   classes/secure-swupdate-img.bbclass           | 32 +++++++++++++++++++
->>   kas/opt/ebg-secure-boot-base.yml              |  2 ++
->>   kas/opt/ebg-secure-boot-snakeoil.yml          | 13 +++++++-
->>   kas/opt/ebg-snakeoil-swu.yml                  | 16 ----------
->>   .../images/cip-core-image-read-only.bb        | 20 ++++++++++++
->>   recipes-core/tmp-fs/files/postinst            |  3 ++
->>   recipes-core/tmp-fs/files/tmp.mount           | 11 +++++++
->>   recipes-core/tmp-fs/tmp-fs_0.1.bb             |  9 ++++++
->>   wic/qemu-amd64-efibootguard-secureboot.wks    | 11 -------
->>   wic/qemu-amd64-efibootguard-secureboot.wks.in | 13 ++++++++
->>   11 files changed, 103 insertions(+), 30 deletions(-)
->>   create mode 100644 classes/secure-swupdate-img.bbclass
->>   delete mode 100644 kas/opt/ebg-snakeoil-swu.yml
->>   create mode 100644 recipes-core/images/cip-core-image-read-only.bb
->>   create mode 100755 recipes-core/tmp-fs/files/postinst
->>   create mode 100644 recipes-core/tmp-fs/files/tmp.mount
->>   create mode 100644 recipes-core/tmp-fs/tmp-fs_0.1.bb
->>   delete mode 100644 wic/qemu-amd64-efibootguard-secureboot.wks
->>   create mode 100644 wic/qemu-amd64-efibootguard-secureboot.wks.in
+>>   .../etc-overlay-fs/etc-overlay-fs_0.1.bb         | 16 ++++++++++++++++
+>>   .../etc-overlay-fs/files/etc-hostname.service    | 14 ++++++++++++++
+>>   .../etc-overlay-fs/files/etc-sysusers.service    | 14 ++++++++++++++
+>>   recipes-core/etc-overlay-fs/files/etc.mount      | 13 +++++++++++++
+>>   .../files/overlay-parse-etc.service              | 12 ++++++++++++
+>>   recipes-core/etc-overlay-fs/files/postinst       |  6 ++++++
+>>   recipes-core/images/cip-core-image-read-only.bb  |  1 +
+>>   7 files changed, 76 insertions(+)
+>>   create mode 100644 recipes-core/etc-overlay-fs/etc-overlay-fs_0.1.bb
+>>   create mode 100644 recipes-core/etc-overlay-fs/files/etc-hostname.service
+>>   create mode 100644 recipes-core/etc-overlay-fs/files/etc-sysusers.service
+>>   create mode 100644 recipes-core/etc-overlay-fs/files/etc.mount
+>>   create mode 100644 recipes-core/etc-overlay-fs/files/overlay-parse-etc.service
+>>   create mode 100755 recipes-core/etc-overlay-fs/files/postinst
 >>
->> diff --git a/Kconfig b/Kconfig
->> index 8421f1b..e97cb03 100644
->> --- a/Kconfig
->> +++ b/Kconfig
->> @@ -141,7 +141,6 @@ config IMAGE_SECURE_BOOT
->>   config KAS_INCLUDE_SWUPDATE_SECBOOT
->>   	string
->>   	default "kas/opt/ebg-swu.yml" if IMAGE_SWUPDATE && !IMAGE_SECURE_BOOT
->> -	default "kas/opt/ebg-secure-boot-snakeoil.yml" if !IMAGE_SWUPDATE && IMAGE_SECURE_BOOT
->> -	default "kas/opt/ebg-snakeoil-swu.yml" if IMAGE_SWUPDATE && IMAGE_SECURE_BOOT
->> +	default "kas/opt/ebg-secure-boot-snakeoil.yml" if IMAGE_SECURE_BOOT
->>   
->>   endif
->> diff --git a/classes/secure-swupdate-img.bbclass b/classes/secure-swupdate-img.bbclass
+>> diff --git a/recipes-core/etc-overlay-fs/etc-overlay-fs_0.1.bb b/recipes-core/etc-overlay-fs/etc-overlay-fs_0.1.bb
 >> new file mode 100644
->> index 0000000..431939b
+>> index 0000000..f1c8349
 >> --- /dev/null
->> +++ b/classes/secure-swupdate-img.bbclass
->> @@ -0,0 +1,32 @@
->> +#
->> +# CIP Core, generic profile
->> +#
->> +# Copyright (c) Siemens AG, 2021
->> +#
->> +# Authors:
->> +#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
->> +#
->> +# SPDX-License-Identifier: MIT
->> +#
->> +
->> +SECURE_IMAGE_FSTYPE ?= "squashfs"
->> +
->> +inherit ${SECURE_IMAGE_FSTYPE}-img
->> +
->> +VERITY_IMAGE_TYPE = "${SECURE_IMAGE_FSTYPE}"
->> +
->> +INITRAMFS_RECIPE ?= "cip-core-initramfs"
->> +do_wic_image[depends] += "${INITRAMFS_RECIPE}:do_build"
->> +INITRD_IMAGE = "${INITRAMFS_RECIPE}-${DISTRO}-${MACHINE}.initrd.img"
->> +
->> +inherit verity-img
->> +inherit wic-img
->> +inherit extract-partition
->> +inherit swupdate-img
->> +
->> +SOURCE_IMAGE_FILE = "${WIC_IMAGE_FILE}"
->> +
->> +addtask do_verity_image after do_${SECURE_IMAGE_FSTYPE}_image
->> +addtask do_wic_image after do_verity_image
->> +addtask do_extract_partition after do_wic_image
->> +addtask do_swupdate_image after do_extract_partition
->> diff --git a/kas/opt/ebg-secure-boot-base.yml b/kas/opt/ebg-secure-boot-base.yml
->> index 8f769b6..acb4de0 100644
->> --- a/kas/opt/ebg-secure-boot-base.yml
->> +++ b/kas/opt/ebg-secure-boot-base.yml
->> @@ -19,3 +19,5 @@ local_conf_header:
->>       IMAGE_INSTALL += "initramfs-abrootfs-secureboot"
->>       SWU_DESCRIPTION = "secureboot"
->>       SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG = "secureboot/swupdate.handler.${SWUPDATE_BOOTLOADER}.ini"
->> +  kernel: |
->> +    SECURE_BOOT_KERNEL = "1"
->> diff --git a/kas/opt/ebg-secure-boot-snakeoil.yml b/kas/opt/ebg-secure-boot-snakeoil.yml
->> index 2f45bde..4a9185c 100644
->> --- a/kas/opt/ebg-secure-boot-snakeoil.yml
->> +++ b/kas/opt/ebg-secure-boot-snakeoil.yml
->> @@ -14,13 +14,24 @@ header:
->>     includes:
->>      - kas/opt/ebg-secure-boot-base.yml
->>   
->> +target: cip-core-image-read-only
->>   
->>   local_conf_header:
->> +  swupdate: |
->> +    IMAGE_INSTALL_append = " swupdate"
->> +    IMAGE_INSTALL_append = " swupdate-handler-roundrobin"
->> +
->> +  verity-img: |
->> +    SECURE_BOOT_KERNEL = "1"
->> +    SECURE_IMAGE_FSTYPE = "squashfs"
->> +    VERITY_IMAGE_RECIPE = "cip-core-image-read-only"
->> +    IMAGE_TYPE = "secure-swupdate-img"
->> +    WKS_FILE = "${MACHINE}-efibootguard-secureboot.wks.in"
->> +
->>     secure-boot: |
->>       # Add snakeoil and ovmf binaries for qemu
->>       IMAGER_BUILD_DEPS += "ebg-secure-boot-snakeoil ovmf-binaries"
->>       IMAGER_INSTALL += "ebg-secure-boot-snakeoil"
->> -    WKS_FILE = "${MACHINE}-efibootguard-secureboot.wks"
->>   
->>     ovmf: |
->>       # snakeoil certs are only part of backports
->> diff --git a/kas/opt/ebg-snakeoil-swu.yml b/kas/opt/ebg-snakeoil-swu.yml
->> deleted file mode 100644
->> index 2f15c0e..0000000
->> --- a/kas/opt/ebg-snakeoil-swu.yml
->> +++ /dev/null
->> @@ -1,16 +0,0 @@
->> -#
->> -# CIP Core, generic profile
->> -#
->> -# Copyright (c) Siemens AG, 2021
->> -#
->> -# Authors:
->> -#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
->> -#
->> -# SPDX-License-Identifier: MIT
->> -#
->> -
->> -header:
->> -  version: 10
->> -  includes:
->> -   - kas/opt/ebg-secure-boot-snakeoil.yml
->> -   - kas/opt/swupdate.yml
->> diff --git a/recipes-core/images/cip-core-image-read-only.bb b/recipes-core/images/cip-core-image-read-only.bb
->> new file mode 100644
->> index 0000000..7ef2dc2
->> --- /dev/null
->> +++ b/recipes-core/images/cip-core-image-read-only.bb
->> @@ -0,0 +1,20 @@
->> +require cip-core-image.bb
->> +
->> +SQUASHFS_EXCLUDE_DIRS += "home var"
->> +
->> +IMAGE_INSTALL += "tmp-fs"
->> +IMAGE_INSTALL_remove += "initramfs-abrootfs-secureboot"
->> +
->> +image_configure_fstab() {
->> +    sudo tee '${IMAGE_ROOTFS}/etc/fstab' << EOF
->> +# Begin /etc/fstab
->> +/dev/root	/		auto		defaults,ro			0	0
->> +LABEL=var	/var		auto		defaults			0	0
->> +proc		/proc		proc		nosuid,noexec,nodev		0	0
->> +sysfs		/sys		sysfs		nosuid,noexec,nodev		0	0
->> +devpts		/dev/pts	devpts		gid=5,mode=620			0	0
->> +tmpfs		/run		tmpfs		nodev,nosuid,size=500M,mode=755	0	0
->> +devtmpfs	/dev		devtmpfs	mode=0755,nosuid		0	0
->> +# End /etc/fstab
->> +EOF
->> +}
->> diff --git a/recipes-core/tmp-fs/files/postinst b/recipes-core/tmp-fs/files/postinst
->> new file mode 100755
->> index 0000000..07017fd
->> --- /dev/null
->> +++ b/recipes-core/tmp-fs/files/postinst
->> @@ -0,0 +1,3 @@
->> +#!/bin/sh
->> +
->> +deb-systemd-helper enable tmp.mount  || true
->> diff --git a/recipes-core/tmp-fs/files/tmp.mount b/recipes-core/tmp-fs/files/tmp.mount
->> new file mode 100644
->> index 0000000..7a31ed6
->> --- /dev/null
->> +++ b/recipes-core/tmp-fs/files/tmp.mount
->> @@ -0,0 +1,11 @@
->> +[Unit]
->> +Description=Create /tmp
->> +
->> +[Mount]
->> +What=tmpfs
->> +Where=/tmp
->> +Type=tmpfs
->> +Options=nodev,nosuid,size=500M,mode=755
-> 
-> Hm, shouldn't size be configurable?
-
-I will make it configurable in the next version.
-> 
-> 
->> +
->> +[Install]
->> +WantedBy=local-fs.target
-> 
-> Is this the right point in time? Isn't /tmp needed before this?
-
-
-According my testing and [1] if /tmp is mount a in /etc/fstab. systemd 
-mounts before the local-fs.target.
-
-In the cip-core-image /tmp is not need before this as the /tmp of the 
-initrd is used.
-
-The systemd log looks like this
-```
-[  OK  ] Started Remount Root and Kernel File Systems.
-          Starting Create Static Device Nodes in /dev...
-[  OK  ] Started Create Static Device Nodes in /dev.
-          Starting udev Kernel Device Manager...
-[  OK  ] Reached target Local File Systems (Pre).
-          Mounting Create /tmp...
-[  OK  ] Mounted Create /tmp.
-[  OK  ] Started Journal Service.
-
-```
-
-[1]: https://www.freedesktop.org/software/systemd/man/systemd.special.html
-> 
-> 
->> diff --git a/recipes-core/tmp-fs/tmp-fs_0.1.bb b/recipes-core/tmp-fs/tmp-fs_0.1.bb
->> new file mode 100644
->> index 0000000..4e0c467
->> --- /dev/null
->> +++ b/recipes-core/tmp-fs/tmp-fs_0.1.bb
->> @@ -0,0 +1,9 @@
+>> +++ b/recipes-core/etc-overlay-fs/etc-overlay-fs_0.1.bb
+>> @@ -0,0 +1,16 @@
 >> +inherit dpkg-raw
 >> +
 >> +SRC_URI = "file://postinst \
->> +           file://tmp.mount"
+>> +           file://etc.mount \
+>> +           file://overlay-parse-etc.service \
+>> +           file://etc-hostname.service \
+>> +           file://etc-sysusers.service"
 >> +
->> +do_install[cleandirs]+="${D}/lib/systemd/system"
+>> +do_install[cleandirs]+="${D}/lib/systemd/system ${D}/var/local/etc ${D}/var/local/.atomic"
 >> +do_install() {
->> +    install -m 0644 ${WORKDIR}/tmp.mount ${D}/lib/systemd/system/tmp.mount
+>> +    TARGET=${D}/lib/systemd/system
+>> +    install -m 0644 ${WORKDIR}/etc.mount ${TARGET}/etc.mount
+>> +    install -m 0644 ${WORKDIR}/overlay-parse-etc.service  ${TARGET}/overlay-parse-etc.service
+>> +    install -m 0644 ${WORKDIR}/etc-hostname.service ${TARGET}/etc-hostname.service
+>> +    install -m 0644 ${WORKDIR}/etc-sysusers.service ${TARGET}/etc-sysusers.service
 >> +}
->> diff --git a/wic/qemu-amd64-efibootguard-secureboot.wks b/wic/qemu-amd64-efibootguard-secureboot.wks
->> deleted file mode 100644
->> index ff351db..0000000
->> --- a/wic/qemu-amd64-efibootguard-secureboot.wks
->> +++ /dev/null
->> @@ -1,11 +0,0 @@
->> -# short-description: Qemu-amd64 with Efibootguard and SWUpdate
->> -# long-description: Disk image for qemu-amd64 with EFI Boot Guard and SWUpdate
->> -include ebg-signed-bootloader.inc
->> -
->> -# EFI Boot Guard environment/config partitions plus Kernel files
->> -part --source efibootguard-boot --ondisk sda --size 32M --extra-space 0 --overhead-factor 1 --label BOOT0 --align 1024 --part-type=0700 --sourceparams "revision=2,unified-kernel=y,signwith=/usr/bin/sign_secure_image.sh"
->> -part --source efibootguard-boot --ondisk sda --size 32M --extra-space 0 --overhead-factor 1 --label BOOT1 --align 1024 --part-type=0700 --sourceparams "revision=1,unified-kernel=y,signwith=/usr/bin/sign_secure_image.sh"
->> -
->> -include swupdate-partition.inc
->> -
->> -bootloader --ptable gpt --append="console=tty0 console=ttyS0,115200 rootwait earlyprintk panic=0"
->> diff --git a/wic/qemu-amd64-efibootguard-secureboot.wks.in b/wic/qemu-amd64-efibootguard-secureboot.wks.in
+>> diff --git a/recipes-core/etc-overlay-fs/files/etc-hostname.service b/recipes-core/etc-overlay-fs/files/etc-hostname.service
 >> new file mode 100644
->> index 0000000..c4ea0c8
+>> index 0000000..2306b9f
 >> --- /dev/null
->> +++ b/wic/qemu-amd64-efibootguard-secureboot.wks.in
+>> +++ b/recipes-core/etc-overlay-fs/files/etc-hostname.service
+>> @@ -0,0 +1,14 @@
+>> +[Unit]
+>> +Description=set hostname /etc overlay-aware
+>> +Before=network-pre.target
+>> +Wants=network-pre.target
+>> +Requires=etc.mount
+>> +After=etc.mount
+>> +
+>> +[Service]
+>> +Type=oneshot
+>> +RemainAfterExit=yes
+>> +ExecStart=/bin/hostname --boot --file /etc/hostname
+>> +
+>> +[Install]
+>> +WantedBy=basic.target
+>> diff --git a/recipes-core/etc-overlay-fs/files/etc-sysusers.service b/recipes-core/etc-overlay-fs/files/etc-sysusers.service
+>> new file mode 100644
+>> index 0000000..6caf6b0
+>> --- /dev/null
+>> +++ b/recipes-core/etc-overlay-fs/files/etc-sysusers.service
+>> @@ -0,0 +1,14 @@
+>> +[Unit]
+>> +Description=make systemd-sysusers /etc overlay aware
+>> +Before=network-pre.target
+>> +Wants=network-pre.target
+>> +Requires=etc.mount
+>> +After=etc.mount
+>> +
+>> +[Service]
+>> +Type=oneshot
+>> +RemainAfterExit=yes
+>> +ExecStart=/usr/bin/systemd-sysusers
+>> +
+>> +[Install]
+>> +WantedBy=basic.target
+> 
+> Hm, why do you replace/create those services instead of augmenting the
+> current default ones via conf.d'lets?
+> Why is this one here dependent on network?
+> Why does this differ that much from upstream service files, see, e.g.,
+> https://github.com/systemd/systemd/blob/main/units/systemd-sysusers.service
+> 
+
+You right thats the better solution. Will test it and add it in a v3.
+
+
+> 
+>> diff --git a/recipes-core/etc-overlay-fs/files/etc.mount b/recipes-core/etc-overlay-fs/files/etc.mount
+>> new file mode 100644
+>> index 0000000..f0ae3c5
+>> --- /dev/null
+>> +++ b/recipes-core/etc-overlay-fs/files/etc.mount
 >> @@ -0,0 +1,13 @@
->> +# EFI partition containing efibootguard bootloader binary
->> +part --source efibootguard-efi  --ondisk sda --size 16M --extra-space 0 --overhead-factor 1 --label efi   --align 1024 --part-type=EF00 --active --sourceparams "signwith=/usr/bin/sign_secure_image.sh"
+>> +[Unit]
+>> +Description=Overlay-mount /etc
+>> +Requires=var.mount
+>> +After=var.mount
 >> +
->> +# EFI Boot Guard environment/config partitions plus Kernel files
->> +part --source efibootguard-boot --ondisk sda --size 32M --extra-space 0 --overhead-factor 1 --label BOOT0 --align 1024 --part-type=0700 --sourceparams "revision=2,unified-kernel=y,signwith=/usr/bin/sign_secure_image.sh"
->> +part --source efibootguard-boot --ondisk sda --size 32M --extra-space 0 --overhead-factor 1 --label BOOT1 --align 1024 --part-type=0700 --sourceparams "revision=1,unified-kernel=y,signwith=/usr/bin/sign_secure_image.sh"
+>> +[Mount]
+>> +What=overlay
+>> +Where=/etc
+>> +Type=overlay
+>> +Options=noauto,x-systemd.automount,lowerdir=/etc,upperdir=/var/local/etc,workdir=/var/local/.atomic
 >> +
->> +part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${VERITY_IMAGE_TYPE}.verity.img" --ondisk sda --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
->> +part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${VERITY_IMAGE_TYPE}.verity.img" --ondisk sda --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
+>> +[Install]
+>> +WantedBy=local-fs.target
+>> diff --git a/recipes-core/etc-overlay-fs/files/overlay-parse-etc.service b/recipes-core/etc-overlay-fs/files/overlay-parse-etc.service
+>> new file mode 100644
+>> index 0000000..062bb40
+>> --- /dev/null
+>> +++ b/recipes-core/etc-overlay-fs/files/overlay-parse-etc.service
+>> @@ -0,0 +1,12 @@
+>> +[Unit]
+>> +Description=Reload Configuration from the etc overlay
+>> +Requires=etc.mount
+>> +After=etc.mount
 >> +
->> +part /var --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var --ondisk sda --fstype=ext4 --label var --align 1024  --size 2G
+>> +[Service]
+>> +Type=oneshot
+>> +RemainAfterExit=yes
+>> +ExecStartPre=!/bin/systemctl daemon-reload
+>> +ExecStart=!/bin/systemctl --no-block isolate multi-user.target
+> 
+> Wow, this is a big cannon, why do you need this? Isn't there another way?
+
+After testing in the current cip-core-image i don't need it.
+
+Quirin
+> 
+> 
+>> +[Install]
+>> +WantedBy=local-fs.target
+>> diff --git a/recipes-core/etc-overlay-fs/files/postinst b/recipes-core/etc-overlay-fs/files/postinst
+>> new file mode 100755
+>> index 0000000..35641af
+>> --- /dev/null
+>> +++ b/recipes-core/etc-overlay-fs/files/postinst
+>> @@ -0,0 +1,6 @@
+>> +#!/bin/sh
 >> +
->> +bootloader --ptable gpt --append="console=tty0 console=ttyS0,115200 rootwait rw earlyprintk"
+>> +deb-systemd-helper enable etc.mount  || true
+>> +deb-systemd-helper enable overlay-parse-etc.service || true
+>> +deb-systemd-helper enable etc-hostname.service || true
+>> +deb-systemd-helper enable etc-sysusers.service || true
+>> diff --git a/recipes-core/images/cip-core-image-read-only.bb b/recipes-core/images/cip-core-image-read-only.bb
+>> index 7ef2dc2..ceb6ac4 100644
+>> --- a/recipes-core/images/cip-core-image-read-only.bb
+>> +++ b/recipes-core/images/cip-core-image-read-only.bb
+>> @@ -2,6 +2,7 @@ require cip-core-image.bb
+>>   
+>>   SQUASHFS_EXCLUDE_DIRS += "home var"
+>>   
+>> +IMAGE_INSTALL += "etc-overlay-fs"
+>>   IMAGE_INSTALL += "tmp-fs"
+>>   IMAGE_INSTALL_remove += "initramfs-abrootfs-secureboot"
+>>   
 >> -- 
 >> 2.30.2
 >>
@@ -331,14 +220,10 @@ The systemd log looks like this
 > 
 > -=-=-=-=-=-=-=-=-=-=-=-
 > Links: You receive all messages sent to this group.
-> View/Reply Online (#6945): https://lists.cip-project.org/g/cip-dev/message/6945
-> Mute This Topic: https://lists.cip-project.org/mt/87092664/1753640
+> View/Reply Online (#6944): https://lists.cip-project.org/g/cip-dev/message/6944
+> Mute This Topic: https://lists.cip-project.org/mt/87092661/1753640
 > Group Owner: cip-dev+owner@lists.cip-project.org
 > Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129121/1753640/1405269326/xyzzy [quirin.gylstorff@siemens.com]
 > -=-=-=-=-=-=-=-=-=-=-=-
 > 
-
-
-
-
 
