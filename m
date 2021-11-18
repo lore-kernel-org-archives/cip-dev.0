@@ -2,175 +2,116 @@ Return-Path: <masami.ichikawa@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3476C433F5
-	for <webhook@archiver.kernel.org>; Thu, 18 Nov 2021 00:06:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02DEAC433F5
+	for <webhook@archiver.kernel.org>; Thu, 18 Nov 2021 04:58:09 +0000 (UTC)
 Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com
  [209.85.210.46])
- by mx.groups.io with SMTP id smtpd.web11.893.1637193992880674167
+ by mx.groups.io with SMTP id smtpd.web12.1601.1637211487007973013
  for <cip-dev@lists.cip-project.org>;
- Wed, 17 Nov 2021 16:06:35 -0800
+ Wed, 17 Nov 2021 20:58:08 -0800
 Authentication-Results: mx.groups.io;
  dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112
- header.b=0f2ZC9Tc;
+ header.b=FUg9ejNl;
  spf=pass (domain: miraclelinux.com, ip: 209.85.210.46,
  mailfrom: masami.ichikawa@miraclelinux.com)
 Received: by mail-ot1-f46.google.com with SMTP id
- u18-20020a9d7212000000b00560cb1dc10bso7698621otj.11
+ u18-20020a9d7212000000b00560cb1dc10bso8802650otj.11
         for <cip-dev@lists.cip-project.org>;
- Wed, 17 Nov 2021 16:06:32 -0800 (PST)
+ Wed, 17 Nov 2021 20:58:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:from:date:message-id:subject:to;
-        bh=Mar4w8Nbiz9i4XspT/KvBuyoX1HTMNToidUGgcJB8Qk=;
-        b=0f2ZC9Tcc0to9YF9CtxZsAOuOtJRdh4iHtg1uezNridcONPzg6kkCo/DEISTBWc78b
-         x8iXL9fIjPn5NZ0nKVbIPcspeck36jLzcjnvwJ5JHyQc7pr+UOK2uL3onWHPrjE0VPVW
-         tBM2jHfQlJwq8h1fu2OHxmrxYGkz7mfzHZYvbFCHlSffiIx/XK/TRKmQ7EvNGlnrjzDj
-         fhdA+y8+QSvRP4/9QRfnm+WyM44Q5rPjQ4Zt9lXIUZ9xbG/msc11B+ZRVQ8ZCNSvpTb7
-         EhNfGWkLxcu0pasGbFN0cZUv7yKdHD0kehBZ1Dl9fnWgYUawZu8UBjtRo1HrS6+yb60w
-         W3rw==
+        bh=Daa/nZLRHlF/ogmVrXKhVPSLr6yVUCt0SAJj8uXC7ho=;
+        b=FUg9ejNlHQ9KXE87JJlPq51QmIHJnByAN4DOSxSXDrePX5waz87MyqphDR5L+Q1gyA
+         Y7C62hOS4dck9rNRlSchP2PGxfthD+frXnk9mXrrjw4yXH4rdWpJiyYVV3HWRNz7JtA2
+         zm/JUQqTwMmPzy6WZi5/s8LsGvUcfcHGifPgx6+lKX/E3YDXjgRuMYpm3A++hC6DYzR4
+         yynraaQ/GNvxPinmgnV8ptEAWwiA2YleYlmeeUtlFqizO75yd95QBlgmI3YNFMdWGRT9
+         QKgedwskPcNRk7dRHQXFqxk0S5HYGWrBD3UZH0C9lBVAxYT8BPQUBXXy+kCPwHDlmMBX
+         B0dQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=Mar4w8Nbiz9i4XspT/KvBuyoX1HTMNToidUGgcJB8Qk=;
-        b=4PdKhAEEDe8ayiOcNaCdbZNHRY0wwVJHCzfS/ScCNIAGpiLypq7O0df6ekk0oVUx6+
-         XEt9CqwjbC7pA6i4cw/D8TxWI+aQI/TCA+oF79Fb1+x0kBJYTcKtyYKQvrUqTIjUHCXo
-         61mv03L8w1UIsLIUnOZc/9V+iJWpd9ftxRccfC7CBOC3psBzo9J3GCfNSz0OjAU14IrL
-         QAiUXM/xSclDc0foObJ58AhAnnO4Lh/VTKupcjAKiCR0GTyL9Jm5D2cvIB7uFvcz99qF
-         voAppzwYHscELDWmxdIYuzxHA5ys+G2IzVkx1ZRK/ctPfS2wU+ZBSDI3RFvdQm+fNEeT
-         EESw==
-X-Gm-Message-State: AOAM533s0kU5rzbdi5y6NkVcqVj5meBaSUhanSJkUyPsSXdP9uXD7lO7
-	X2q2NE75s4wDYYhn2GJpH4LkVwJ9ABzw6WyEgSVn6DzyOrqHAg==
+        bh=Daa/nZLRHlF/ogmVrXKhVPSLr6yVUCt0SAJj8uXC7ho=;
+        b=t6PA1qDZIKRVipOUxZZZUbDOOhBNpj4zZDwlOztSXcNRWIapMYak1LSghdC/iH8sCh
+         qNE4OR1hbyJO7oaTr0Gep5vGg6dZw83/WPJ4yH3EID1bKq+ltGJt47Z0URkvRb85m67F
+         8aDSWeQ3yNUPCwCOPDfA6YpCXdsT6WT5A59RXiVncNrhTEe4aYs+NpaZvv4b622IpnC5
+         Ma8RhE2zre1wlNa4Ifg8rUfo+Icykcga14hBqmQpQ+QYI9hT5NIoIgtSakhhhG0K2MYt
+         3SE3OSdDG/AJ4BIHN4Kco8uFbriuQ99WTmNgTN9liNLo1xw4B3Bqy78rmGFAYNJp7pKs
+         wRFw==
+X-Gm-Message-State: AOAM530tO+pU60PBaLs21RI6iR5Eaw6VJUBst+tmVPfSeojGdL0khtC7
+	z8CrrtJx0Av7/Qp/VSKFT2U+Qo5EzqMy1ZkjLTY/WvWVmnWExQ==
 X-Google-Smtp-Source: 
- ABdhPJz425mpq1fyKelKAunQ2ujt5uIOh0uRows36UlbFudAIAkIEVMF99ZByElbCofcPjjCUyTDw6ZY173j84KNs0c=
+ ABdhPJy2RS1aRUo4ZVb2wux3/uyZ3VLN08idv4e9x7zcFAqgLoSGVWcpPxH6EckPzCFnsByS2trNj+D7K4f/97mYPvQ=
 X-Received: by 2002:a9d:4a8d:: with SMTP id
- i13mr18005899otf.180.1637193991959;
- Wed, 17 Nov 2021 16:06:31 -0800 (PST)
+ i13mr19403436otf.180.1637211486005;
+ Wed, 17 Nov 2021 20:58:06 -0800 (PST)
 MIME-Version: 1.0
 From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Date: Thu, 18 Nov 2021 09:05:56 +0900
+Date: Thu, 18 Nov 2021 13:57:30 +0900
 Message-ID: 
- <CAODzB9rpX2mcJ85o3w+PcuUWdRcPiujsFwJbrZwCJmo5fv_=+g@mail.gmail.com>
-Subject: New CVE entries in this week
+ <CAODzB9oWEo6D48YUEckgv7Q9QfQdvNMjmuUkTS8SKFHagDi8Kw@mail.gmail.com>
+Subject: FYI: meta-spdxscanner with meta-debian/deby
 To: cip-dev <cip-dev@lists.cip-project.org>
 Content-Type: text/plain; charset="UTF-8"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 18 Nov 2021 00:06:35 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6948
+ <cip-dev@lists.cip-project.org>; Thu, 18 Nov 2021 04:58:09 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6949
 
-Hi !
+Hello !
 
-It's this week's CVE report.
+I modified meta-spdxscanner warrior branch[1] to work with meta-debian.
+I tested meta-debian and deby(cip-core/deby). I could build without
+errors building core-image-minimal with do_spdx task on both
+deby-tiny(DISTRO=deby-tine) and deby(DISTRO=deby) distributions. The
+do_spdx task seems working.
 
-This week reported two new CVEs. They have not been fixed in the mainline yet.
+From output of spdx files, I can see following lines.
 
-* New CVEs
+openssl
 
-CVE-2021-43975: atlantic: Fix OOB read and write in hw_atl_utils_fw_rpc_wait
+##File
 
-CVSS v3 score is not provided.
+FileName: spdx_temp/openssl-1.1.1d/include/openssl/x509_vfy.h
+SPDXID: SPDXRef-item195247
+FileChecksum: SHA1: 5dca1c0a935f3f075642539d399e7c6969ff1214
+FileChecksum: MD5: 99fd343f8b3970195c79684291fb6fc9
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: LicenseRef-UnclassifiedLicense
+FileCopyrightText: <text> Copyright 1995-2019 The OpenSSL Project
+Authors. All Rights Reserved. </text>
 
-OOB read/write bug in aQuantia device driver code. Patch was merged
-into the netdev tree on Nov 15.
+coreutils
 
-Fixed status
+##File
 
-Not fixed in the mainline yet.
-
-CVE-2021-43976: mwifiex_usb: Fix skb_over_panic in mwifiex_usb_recv
-
-CVSS v3 score is not provided.
-
-Bug is in the Marvell WiFi-Ex driver code. Patch is being in reviewed
-on the linux-wireless list
-(https://patchwork.kernel.org/project/linux-wireless/patch/YX4CqjfRcTa6bVL+@Zekuns-MBP-16.fios-router.home/).
-
-Fixed status
-
-Not yet.
-
-* Updated CVEs
-
-CVE-2021-37159: net: hso: do not call unregister if not registered
-
-4.4 and 4.9 have been fixed. All stable kernels are fixed.
-
-Fixed status
-
-mainline: [a6ecfb39ba9d7316057cea823b196b734f6b18ca]
-stable/4.14: [4c0db9c4b3701c29f47bac0721e2f7d2b15d8edb]
-stable/4.19: [f6cf22a1ef49f8e131f99c3f5fd80ab6b23a2d21]
-stable/4.4: [cbefdf724282e6a948885f379dc92ab841c2fee0]
-stable/4.9: [88b912e02d75bacbb957d817db70e6a54ea3a21c]
-stable/5.10: [115e4f5b64ae8d9dd933167cafe2070aaac45849]
-stable/5.13: [eeaa4b8d1e2e6f10362673d283a97dccc7275afa]
-stable/5.4: [fe57d53dd91d7823f1ceef5ea8e9458a4aeb47fa]
+FileName: spdx_temp/coreutils-8.30/src/expand-common.c
+SPDXID: SPDXRef-item396438
+FileChecksum: SHA1: a11068900b49e7c1732f096ca21ccd1343375eeb
+FileChecksum: MD5: 4a6529ea8806170c9be8169a29360fd8
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0+
+FileCopyrightText: <text> Copyright (C) 1989-2018 Free Software
+Foundation, Inc. </text>
 
 
-CVE-2021-42739: media: firewire: firedtv-avc: fix a buffer overflow in
-avc_ca_pmt()
+I use following tools and version/revision for fossology related tools.
 
-stable/4.14 has been fixed.
+* fossology
 
-Fixed status
+Docker image tag 3.3.0[2].
 
-stable/4.14: [8d6c05da808f8351db844b69a9d6ce7f295214bb]
-stable/4.19: [53ec9dab4eb0a8140fc85760fb50effb526fe219]
-stable/5.10: [d7fc85f6104259541ec136199d3bf7c8a736613d]
-stable/5.14: [02a476ca886dc8155025fe99cbbad4121d029fa7]
-stable/5.15: [cb667140875a3b1db92e4c50b4617a7cbf84659b]
-stable/5.4: [2461f38384d50dd966e1db44fe165b1896f5df5a]
+* fossdriver
 
-CVE-2020-27820: use-after-free in nouveau kernel module
+master branch commit 18410187b0a90654510f34dd783b456c53e681dd [3].
 
-Fixed status
+unfortunately, I'm not sure how to add fossdriver to kas docker
+container, so I didn't use docker to build image.
 
-Patches were merged in 5.16-rc1.
-
-mainline: [aff2299e0d81b26304ccc6a1ec0170e437f38efc,
-abae9164a421bc4a41a3769f01ebcd1f9d955e0e,
-  f55aaf63bde0d0336c3823bb3713bd4a464abbcf]
-
-CVE-2021-3640: UAF in sco_send_frame function
-
-Patch was merged in 5.16-rc1. Patch for 4.4, 4.9, 4.14, 4.19, and 5.10
-are in the stable-rc tree.
-
-Fixed status
-
-mainline: [99c23da0eed4fd20cae8243f2b51e10e66aa0951]
-stable/5.14: [2c2b295af72e4e30d17556375e100ae65ac0b896]
-stable/5.4: [d416020f1a9cc5f903ae66649b2c56d9ad5256ab]
-
-Currently tracking CVEs
-
-CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
-Bluetooth Core Specifications 4.0 through 5.2
-
-There is no fix information.
-
-CVE-2020-26555: BR/EDR pin code pairing broken
-
-No fix information
-
-CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
-
-No fix information.
-
-CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
-Provisioning Leads to MITM
-
-No fix information.
-
-CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
-
-No fix information.
-
-CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
-
-No fix information.
-
+1: https://github.com/masami256/meta-spdxscanner/tree/warrior-metadebian
+2: https://hub.docker.com/layers/fossology/fossology/3.3.0/images/sha256-b596124b47a29d24d2fdd63f7ba19b9fc27ce67f090e7ee527b02c07c66b54ee?context=explore
+3: https://github.com/fossology/fossdriver/tree/18410187b0a90654510f34dd783b456c53e681dd
 
 Regards,
 
