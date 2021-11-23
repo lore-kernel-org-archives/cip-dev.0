@@ -1,207 +1,268 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CDDBC433EF
-	for <webhook@archiver.kernel.org>; Tue, 23 Nov 2021 06:29:03 +0000 (UTC)
-Received: from goliath.siemens.de (goliath.siemens.de [192.35.17.28])
- by mx.groups.io with SMTP id smtpd.web10.8030.1637648941709635383
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28E07C433F5
+	for <webhook@archiver.kernel.org>; Tue, 23 Nov 2021 11:50:27 +0000 (UTC)
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com
+ (JPN01-OS0-obe.outbound.protection.outlook.com [40.107.113.107])
+ by mx.groups.io with SMTP id smtpd.web12.10239.1637668225231367777
  for <cip-dev@lists.cip-project.org>;
- Mon, 22 Nov 2021 22:29:02 -0800
+ Tue, 23 Nov 2021 03:50:26 -0800
 Authentication-Results: mx.groups.io;
- dkim=missing;
- spf=pass (domain: siemens.com, ip: 192.35.17.28, mailfrom: jan.kiszka@siemens.com)
-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-	by goliath.siemens.de (8.15.2/8.15.2) with ESMTPS id 1AN6SrZx002882
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 23 Nov 2021 07:28:53 +0100
-Received: from [167.87.0.79] ([167.87.0.79])
-	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 1AN6SoGZ023552;
-	Tue, 23 Nov 2021 07:28:51 +0100
-Subject: Re: [cip-dev][isar-cip-core][RFC PATCH] customizations: Add FW and
+ dkim=pass header.i=@renesasgroup.onmicrosoft.com
+ header.s=selector2-renesasgroup-onmicrosoft-com header.b=goAEf5Fp;
+ spf=pass (domain: bp.renesas.com, ip: 40.107.113.107,
+ mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=icYEFjw4ltxZ8SJiLBDRF3+Lq9dZHG/tJ6qL7DZC/qoxGiVFa++ExuZmvtHMFJpQfOesG22iOhaaTSucKBkr2glw4Xa8zotcb6bf0p0s8miTfUiHT16cFtzatmBmJ9y2G9Wrz5mcKPe3blSYgahcr3MiQOXVxgO3HqHduOqhcpnWgsTnMFVwJbnowRQHM/FUi2pNoJCkLAlNIsQ7+YjHDfbwj2LiOHy3PHP1kfSqh6gNlr06aXaH1VEMti/t55EdkK02gVPB2QFHooEmGj/cMELybb9sxBCvnf9/O5+azAXi7/CHqDsS0I7MTBS5ovbN4KW/sVVppUumWlELm8z6CA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YGFIqVzMC56F/Xfaby25p+qzDD/OVVPG7OfTUkONhW0=;
+ b=Zm5PonOXMx02gQ2zxCbLOHxukGTKc6F8munLzpqIhqpKN0d6TRjEYw4JxJ369caHB00FOcVyAq3r8EljkQMed/Z3CIuNK/6Q6rTPuoDoR40VkAWyJe3YsWt7LU+RUobJVgacikQ8sGT3EPYhgfh5TpvMYOPJ3P0SL4zrgfUK9hXAM8JOGClCvA/2RRFPAjQ0AWgODpNAOBqilYUrcstitbdnR2gUv+LE1P2vEYnPI8/EVJn7cARsMjgdrpkOL3jXlmTr2GD3g8v8VtUTzf9tROgPaU+DIn/tON91ryrS9fm4yjlo+vNOtbG9Wrs6BIXhnrbVTq6JTGOKuSvAK7HL+w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YGFIqVzMC56F/Xfaby25p+qzDD/OVVPG7OfTUkONhW0=;
+ b=goAEf5FpWEnvFvCtte+CFZi1vaX/g8Ns9VToUxGNJcx58PZ9lr3DlZnffeUrNHvXXuTMkOJ3V1Zasc7y5zGdWsmHAUbZ/r4OkWb+HSZSPi297w2M0fStEB18us53dTYaNCCvgElHWHFOwcapF+SdMViqJjQxKsKi98dtIl+HbhA=
+Received: from OSZPR01MB7019.jpnprd01.prod.outlook.com (2603:1096:604:13c::8)
+ by OSAPR01MB4674.jpnprd01.prod.outlook.com (2603:1096:604:67::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.22; Tue, 23 Nov
+ 2021 11:50:20 +0000
+Received: from OSZPR01MB7019.jpnprd01.prod.outlook.com
+ ([fe80::1d3d:8c79:ad2c:62ae]) by OSZPR01MB7019.jpnprd01.prod.outlook.com
+ ([fe80::1d3d:8c79:ad2c:62ae%8]) with mapi id 15.20.4713.026; Tue, 23 Nov 2021
+ 11:50:20 +0000
+From: Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Jan Kiszka <jan.kiszka@siemens.com>, "cip-dev@lists.cip-project.org"
+	<cip-dev@lists.cip-project.org>, Nobuhiro Iwamatsu
+	<nobuhiro1.iwamatsu@toshiba.co.jp>, Pavel Machek <pavel@denx.de>
+Subject: RE: [cip-dev][isar-cip-core][RFC PATCH] customizations: Add FW and
  tools required for wifi testing
-To: Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Pavel Machek <pavel@denx.de>
+Thread-Topic: [cip-dev][isar-cip-core][RFC PATCH] customizations: Add FW and
+ tools required for wifi testing
+Thread-Index: AQHX35P3jazBx1Bj2EKODlz0WRDgIawPzOIAgADatwCAAFkaUA==
+Date: Tue, 23 Nov 2021 11:50:19 +0000
+Message-ID: 
+ <OSZPR01MB70197871380F64C43F4694CEAA609@OSZPR01MB7019.jpnprd01.prod.outlook.com>
 References: <20211122111940.12250-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
  <eb289805-9e98-7d2d-8e6d-1786087d0ac3@siemens.com>
  <OSZPR01MB7019EA632E0BDCC0F4251C9FAA9F9@OSZPR01MB7019.jpnprd01.prod.outlook.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Message-ID: <676467b7-74fd-c95f-08e5-aa1794073e17@siemens.com>
-Date: Tue, 23 Nov 2021 07:28:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
-MIME-Version: 1.0
-In-Reply-To: 
- <OSZPR01MB7019EA632E0BDCC0F4251C9FAA9F9@OSZPR01MB7019.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
+ <676467b7-74fd-c95f-08e5-aa1794073e17@siemens.com>
+In-Reply-To: <676467b7-74fd-c95f-08e5-aa1794073e17@siemens.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-MIME-Autoconverted: from 8bit to quoted-printable by goliath.siemens.de id
- 1AN6SrZx002882
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 0784ac0c-028e-44b5-ebaf-08d9ae776cda
+x-ms-traffictypediagnostic: OSAPR01MB4674:
+x-microsoft-antispam-prvs: 
+ <OSAPR01MB4674B1E582EC772870845E47AA609@OSAPR01MB4674.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ fkf1ppIwmQ0hv/LUzAX9AAUmSBo+pXngCec/ahX+8qxY6ItOvheQytAub2taXElHuUOH7VDa1qkhawNbSfEDLcrGIMrJAQlpXJAvu3RDLttpGv8pUw9IP/5YKOPfkuneVKprsC491QoLEg7u0o3HchssVw5iW7A3Q7MfkUed5IMUwo1dbWRv/Wnw092JJt3D88uM8cqnesQ11xCCPbR/SNkNxFh35TCJCwu1ZqyPqKRL8qBIhmf4b1hAP9bC8oRUAkPM9IDArV0136XnSyMZZ0MVGjzrM4mkK46lxjobknctAlT3ajpMSIOsiC0c56A4vRPoZhWj3rtFfK9HG1BTwp4jvHL+mHj117VXvxQEvn3++tZC7eP61SMGvNPRITIPAzjxk4FqE05a1GQt9a4XaMttda1ga27Fo+r5omeIP/cjFaPrPpikDE4HB2U8KkzaHd13aCOamp+7Oe9CVdWWDYe/YkDu8ZSgGstx771CcfjOA8NpiqjosjRGF1guWTBV/IiG6hMqYSeoh3Nj8TBkoa1u4A4NmpgkRXccHVYC2tld5jearbjzOKCsd9949/Ztet2JmJTa1ZQUtWsUj1fvmXmhy5/cL8cgsGPu19fvASHCIAoieThClMSLoN2z8Qz5tVppmZljmImONXIShZSNJNfKsZUvzxy9BTGyjBNDSM4ODJvIFxymnY5Cx88jTsqcYDGUCzHI9BOQrAX2875suLdqA7WW8tx3rb3Dt6Z1XGIajsn8Dkn/H0OkTgz5980UA+7DNAxTsK8KTZQLOUE9LvCDj1Ea1j/WTPbIX1ul0Hg=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB7019.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(19627235002)(45080400002)(5660300002)(71200400001)(66446008)(7696005)(38100700002)(66946007)(122000001)(53546011)(26005)(83380400001)(966005)(9686003)(33656002)(64756008)(66556008)(8676002)(6506007)(2906002)(76116006)(186003)(508600001)(52536014)(38070700005)(66476007)(86362001)(55016003)(316002)(8936002)(110136005);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?utf-8?B?NXpiUHNjRloySXlTbDBvMnQ5cUNSRktFaTF1NU83a1JGb3VIeERFOHRlc050?=
+ =?utf-8?B?alVzV3JYZmI5bmExMGFkaGhqMld3TTVGMHF6SmF4cXNtVHIvTENacFpHZ0w3?=
+ =?utf-8?B?eU1aUy90Q3Y3L0UxM3dnakhGNTMwYUt3TG8xem55cEdBVGwwSzg3ZHpFN1ZX?=
+ =?utf-8?B?NGJXenB0aG4wQzhSM21xL2R5b1dUOUIvZzFGa2VxRGg4TEhjTmhaUll0dDBs?=
+ =?utf-8?B?UktYbjIzMXcyYzlmNXA1akZKb2R2SUZDZmZLWEVmL2pRRzd3MkwwSzgxL0ph?=
+ =?utf-8?B?SjZTdlpLaWozWENZNDl0QU1ORkk0M1Q0aFBNYkVVTWVYTG5YK2VKeTlYdTVp?=
+ =?utf-8?B?Y0RUZStWSm5BcmVLM01ZWDk0VThQcUZFVFpDQ1hwdDJKNFNBSlhWcHhUb1U0?=
+ =?utf-8?B?Smo4NVlVQVJUc2JueWQxalFkWFJIaTFaQmJlYkp5RlhqcVdKOHZGeFZrbVBi?=
+ =?utf-8?B?R2FZYU1hSzRXYStIK3dhRHRuVmlFNE1wVFNSd2tJem01aG1Ga3NoejdLV1Ex?=
+ =?utf-8?B?cWR3ZjRTZ0gyZTZDcVJOdmU0cWUwTTVZY0cxMTgycDMxUVN2aW92UzlEY0JI?=
+ =?utf-8?B?Rk1nRE1mWnFVSlJ6QVVLdi8yZElFZ2hDSGJwZXRxR2ZRZldBNng4NTVWSGFm?=
+ =?utf-8?B?QjM2T0s0UTIzUlk2dnVDa2ZvTVRTRVJlVmRvWlkrVWVvY3ZwdnBzeTl4MVFO?=
+ =?utf-8?B?bmpNeDhSMHFkcFVlSzNmYVc4bUhwNEZ6SVY3VjlOcEtycWF6TG9VdmRFZm5U?=
+ =?utf-8?B?eElGbUFnUVJlT2VrOVZyTVA5ZDA0SmxoZEJGc3h2d2l0eVlnRXhSV243NUQy?=
+ =?utf-8?B?bEppRHMvelNjZU5Ycm4rd29wWlJWRUFSSUZjSFBYMS84VnZpbDlrYjhySUZz?=
+ =?utf-8?B?WUt1OE4xbTZjKzRqcXhkcUI5OUcycmpNaWFxTWpYS0MrdCtnSzNYWlVUMThl?=
+ =?utf-8?B?TUlNcVh0ZTc4WERURDhVaExTcmc4SDZPOGdqU01kbE9TY1Jhc3RMb3E5NUZy?=
+ =?utf-8?B?TzZpL092SHN2bUs1TDZYM1E5eVY4MEJqdTl3WTlJMDBaM2t3eW1URTlWa0FC?=
+ =?utf-8?B?UjdRZHJIWk5yOGpLb3hPTEY2bDZQdCtxcDJ6cEdOWVJFcW9Gb01UaVNLYnQz?=
+ =?utf-8?B?RkQxc0h2UkdIL0VaZ2JiajQzL0dkdjVCMzNCRDRJSFpjaFpxUFJXb2lEb1Vm?=
+ =?utf-8?B?Qlg2N3BsNXpmSHpsM1p0MEJQUVk2aHBORGFmZFp4Vm44MllmOHJWZXF4K1Q3?=
+ =?utf-8?B?Q0pERFlLbVRWMDBpTUtLT3AyQ0J3b0NlZThPcmIzZFdwTUhFZzhsNTgwTTJy?=
+ =?utf-8?B?blRQbnVscFlPbDVxbWFGMVVBSEY0dURNVmF6QnFXZGJQcVdVZTlXbFhCdzlP?=
+ =?utf-8?B?NnRkQXJrL0NoVlcraVdRenUxOXlWeVhkQXdDQ2U1dnZvMzUxYzM4ZVE1WVJW?=
+ =?utf-8?B?Qk93dEtxNDB3aGlONDF5emdHYUttbUdLenBDSlpJZlVBZm1OdStZRlVhcFNh?=
+ =?utf-8?B?eWtwUXdweVJ2OThLNytEN3lKZ2hWc1ZBazNERWZSTmhiUDdLRHVicmNSMllU?=
+ =?utf-8?B?VHpPQ0FIRHZrL29pcmV2UElvNFRjVVc2MXVBcnBieHRYTG5hUjA2TzJOVGtm?=
+ =?utf-8?B?eGUyNE9JOXBxVWZKLzBycE5OeU0rS3RZM3htM2Z2U000citLUzZDaElxU2NR?=
+ =?utf-8?B?SWNYSm40L3piQ0RDdUhDMmtoWTlHcVpXZFU1cEJOa1VvZlh5K1F6bmNZaVo2?=
+ =?utf-8?B?NjJadUpBTWg5MGIxc2R6VDZjME9scEZ3TGkrZ0ltRDZzR0NHK0dUVTZ6a3hL?=
+ =?utf-8?B?ejdNa2dBemtRYWpFWk5XdjllME5xM2RPZDhLamFIZkR1ZWtCNXNWWGdidHp1?=
+ =?utf-8?B?TXBQaUtwTGRDSUR1c0ovS2hMd0U0S3VjMEQ1WmUvNGl2RkR2OUp6b1p5RzJk?=
+ =?utf-8?B?dGNVakl4aHd2bW10M2xHOENTbHJJclh0Z3hHZ09RQzdYUU1vWGNSWEpSOTBx?=
+ =?utf-8?B?SDNwRnAxZnFDMXFvQTRPNjhYZHFodU90MXZIZVp5UGdZRE4xUmZ0TW13aDhQ?=
+ =?utf-8?B?ek5WYjlveTRXUVAwdEptRGdadDc1RTNkV3JBSkdYQVEzOWdwaGpoR0tHanF3?=
+ =?utf-8?B?aWlybXRNM2psUGlOaGxwMnZxRi9pNlV2VWdJMTczUjY2dFdlc29DSU11bTFa?=
+ =?utf-8?B?Y0hvZmJYbTdmY09QQU1XNExuSk8zbXE2LzZVcDNTQUFjdjZJdGtnV1E2SFo5?=
+ =?utf-8?B?ZSt4ci9xeU1qWmxPRHNxSVBpQmRWZm50dklYMmhBcWY1QUNGSDlJY1RBcXVu?=
+ =?utf-8?B?RHJ3KzhaZmkrTTZ4SXo1TmZGWE5IdTk1WEhvc2svUTVvN3RJNkVpQT09?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB7019.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 
+ 0784ac0c-028e-44b5-ebaf-08d9ae776cda
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Nov 2021 11:50:19.8332
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 
+ D/lgkIQVnYtNPk8do99KrYaAaj74+n9q+8j7lkD8671yD4LB/K+taQrspr47NifyAshOU/wk37ylFyFOdZdb346YQg1p35nSoziK9d7YjltCU6pVx95chXhR0ked0NVl
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB4674
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 23 Nov 2021 06:29:03 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6965
+ <cip-dev@lists.cip-project.org>; Tue, 23 Nov 2021 11:50:27 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6966
 
-On 22.11.21 18:37, Prabhakar Mahadev Lad wrote:
-> Hi Jan,
->=20
-> Thank you for the quick response.
->=20
->> -----Original Message-----
->> From: Jan Kiszka <jan.kiszka@siemens.com>
->> Sent: 22 November 2021 11:28
->> To: Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>; c=
-ip-dev@lists.cip-project.org;
->> Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>; Pavel Machek <pa=
-vel@denx.de>
->> Subject: Re: [cip-dev][isar-cip-core][RFC PATCH] customizations: Add F=
-W and tools required for wifi
->> testing
->>
->> On 22.11.21 12:19, Lad Prabhakar wrote:
->>> Add firmware and tools required for testing wifin on hihope-rzg2m.
->>>
->>> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
->
->>> ---
->>> Hi All,
->>>
->>> Sending an RFC as I am not sure if this is the right place to add
->>> this. I wanted to add the debian package depends in machine.conf file
->>> but didnt find any variables.
->>
->> IMAGE_INSTALL_append would work there, see eg.
->> https://github.com/siemens/jailhouse-
->> images%2Fblob%2Fmaster%2Fconf%2Fmachine%2Frpi4.conf&amp;data=3D04%7C01=
-%7Cprabhakar.mahadev-
->> lad.rj%40bp.renesas.com%7Cae2601f49f5b4725b1ab08d9adab1943%7C53d82571d=
-a1947e49cb4625a166a4a2a%7C0%7C0%
->> 7C637731772644808211%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQI=
-joiV2luMzIiLCJBTiI6Ik1haWwiLCJXV
->> CI6Mn0%3D%7C3000&amp;sdata=3Dmqp0wknGyxKyY82YvgHJXl72aTu4DWSuUOHcaZPo8=
-xA%3D&amp;reserved=3D0.
->>
-> Adding IMAGE_INSTALL/IMAGE_PREINSTALL machine.conf didn=E2=80=99t help =
-for me, I was seeing below issues:
->=20
-> | ERROR: Nothing PROVIDES 'wireless-regdb' (but /repo/recipes-core/imag=
-es/cip-core-image.bb DEPENDS on or otherwise requires it)
-> | ERROR: Required build target 'cip-core-image' has no buildable provid=
-ers.
-> | Missing or unbuildable dependency chain was: ['cip-core-image', 'wire=
-less-regdb']
->=20
-> | ERROR: Nothing PROVIDES 'wireless-tools' (but /repo/recipes-core/imag=
-es/cip-core-image.bb DEPENDS on or otherwise requires it)
-> | ERROR: Required build target 'cip-core-image' has no buildable provid=
-ers.
-> | Missing or unbuildable dependency chain was: ['cip-core-image', 'wire=
-less-tools']
->=20
-> | ERROR: Nothing PROVIDES 'firmware-ti-connectivity' (but /repo/recipes=
--core/images/cip-core-image.bb DEPENDS on or otherwise requires it)
-> | ERROR: Required build target 'cip-core-image' has no buildable provid=
-ers.
-> | Missing or unbuildable dependency chain was: ['cip-core-image', 'firm=
-ware-ti-connectivity']
->=20
-> | ERROR: Nothing PROVIDES 'iw' (but /repo/recipes-core/images/cip-core-=
-image.bb DEPENDS on or otherwise requires it)
-> | ERROR: Required build target 'cip-core-image' has no buildable provid=
-ers.
-> | Missing or unbuildable dependency chain was: ['cip-core-image', 'iw']
->=20
-> As above didn=E2=80=99t work and customizations.bb is the only place we=
-re I was able to grep for DEBIAN_DEPENDS variable I went this approach =F0=
-=9F=98=89.
-> (Note also adding DEBIAN_DEPENDS in machine.conf didn=E2=80=99t work.)
->=20
-> Is there something which I am missing that would make it work with IMAG=
-E_INSTALL_append variable?=20
->=20
-
-DEBIAN_DEPENDS is the wrong variable to touch at global configuration
-level. As in the references example, you need to extend the
-IMAGE_PREINSTALL (for Debian packages; IMAGE_INSTALL would be for
-self-built ones):
-
-diff --git a/conf/machine/hihope-rzg2m.conf b/conf/machine/hihope-rzg2m.c=
-onf
-index a2ae03d..4c611ae 100644
---- a/conf/machine/hihope-rzg2m.conf
-+++ b/conf/machine/hihope-rzg2m.conf
-@@ -17,3 +17,5 @@ KERNEL_DEFCONFIG =3D "cip-kernel-config/4.19.y-cip/arm6=
-4/renesas_defconfig"
- USE_CIP_KERNEL_CONFIG =3D "1"
- DTB_FILES =3D "r8a774a1-hihope-rzg2m-ex.dtb"
- IMAGE_BOOT_FILES =3D "${KERNEL_IMAGE} ${DTB_FILES}"
-+
-+IMAGE_PREINSTALL_append =3D " firmware-ti-connectivity"
-
->=20
->> Whether we want to "hard-code" the installation wireless firmware in t=
-he machine conf here is a
->> different question. Maybe customizations is not that a bad place.
->>
-> If adding IMAGE_INSTALL_append works in machine.conf, will go with this=
- approach, as that would not disturb other platform builds.
->=20
-
-You would still have to add/request the generic wireless tools
-somewhere. For that, you either need to touch the customization package
-(DEBIAN_DEPENDS) or directly expand the IMAGE_PREINSTALL list in
-cip-core-image.bb. How about this pattern?
-
-diff --git a/conf/machine/hihope-rzg2m.conf b/conf/machine/hihope-rzg2m.c=
-onf
-index a2ae03d..4f4ee81 100644
---- a/conf/machine/hihope-rzg2m.conf
-+++ b/conf/machine/hihope-rzg2m.conf
-@@ -17,3 +17,6 @@ KERNEL_DEFCONFIG =3D "cip-kernel-config/4.19.y-cip/arm6=
-4/renesas_defconfig"
- USE_CIP_KERNEL_CONFIG =3D "1"
- DTB_FILES =3D "r8a774a1-hihope-rzg2m-ex.dtb"
- IMAGE_BOOT_FILES =3D "${KERNEL_IMAGE} ${DTB_FILES}"
-+
-+WIRELESS_FIRMWARE_PACKAGE =3D "firmware-ti-connectivity"
-+INSTALL_WIRELESS_TOOLS ?=3D "1"
-diff --git a/recipes-core/customizations/customizations.bb b/recipes-core=
-/customizations/customizations.bb
-index 932b11c..1c2a125 100644
---- a/recipes-core/customizations/customizations.bb
-+++ b/recipes-core/customizations/customizations.bb
-@@ -18,10 +18,15 @@ SRC_URI =3D " \
-     file://ethernet \
-     file://99-silent-printk.conf"
-=20
-+WIRELESS_FIRMWARE_PACKAGE ?=3D ""
-+INSTALL_WIRELESS_TOOLS ??=3D "0"
-+
- DEPENDS +=3D "sshd-regen-keys"
-=20
- DEBIAN_DEPENDS =3D " \
--    ifupdown, isc-dhcp-client, net-tools, iputils-ping, ssh, sshd-regen-=
-keys"
-+    ifupdown, isc-dhcp-client, net-tools, iputils-ping, ssh, sshd-regen-=
-keys, \
-+    ${@('iw, wireless-regdb, wireless-tools, ' + d.getVar('WIRELESS_FIRM=
-WARE_PACKAGE')) \
-+        if d.getVar('INSTALL_WIRELESS_TOOLS') =3D=3D '1' else ''}"
-=20
- do_install() {
- 	install -v -d ${D}/etc/network/interfaces.d
-
-Avoids enforcing wireless installation when using the machine conf, only=20
-when using our customization package, something that downstream layers=20
-usually don't do.
-
-Jan
-
---=20
-Siemens AG, T RDA IOT
-Corporate Competence Center Embedded Linux
+SGkgSmFuLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEphbiBLaXN6
+a2EgPGphbi5raXN6a2FAc2llbWVucy5jb20+DQo+IFNlbnQ6IDIzIE5vdmVtYmVyIDIwMjEgMDY6
+MjkNCj4gVG86IFByYWJoYWthciBNYWhhZGV2IExhZCA8cHJhYmhha2FyLm1haGFkZXYtbGFkLnJq
+QGJwLnJlbmVzYXMuY29tPjsgY2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmc7DQo+IE5vYnVo
+aXJvIEl3YW1hdHN1IDxub2J1aGlybzEuaXdhbWF0c3VAdG9zaGliYS5jby5qcD47IFBhdmVsIE1h
+Y2hlayA8cGF2ZWxAZGVueC5kZT4NCj4gU3ViamVjdDogUmU6IFtjaXAtZGV2XVtpc2FyLWNpcC1j
+b3JlXVtSRkMgUEFUQ0hdIGN1c3RvbWl6YXRpb25zOiBBZGQgRlcgYW5kIHRvb2xzIHJlcXVpcmVk
+IGZvciB3aWZpDQo+IHRlc3RpbmcNCj4gDQo+IE9uIDIyLjExLjIxIDE4OjM3LCBQcmFiaGFrYXIg
+TWFoYWRldiBMYWQgd3JvdGU6DQo+ID4gSGkgSmFuLA0KPiA+DQo+ID4gVGhhbmsgeW91IGZvciB0
+aGUgcXVpY2sgcmVzcG9uc2UuDQo+ID4NCj4gPj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0N
+Cj4gPj4gRnJvbTogSmFuIEtpc3prYSA8amFuLmtpc3prYUBzaWVtZW5zLmNvbT4NCj4gPj4gU2Vu
+dDogMjIgTm92ZW1iZXIgMjAyMSAxMToyOA0KPiA+PiBUbzogUHJhYmhha2FyIE1haGFkZXYgTGFk
+IDxwcmFiaGFrYXIubWFoYWRldi1sYWQucmpAYnAucmVuZXNhcy5jb20+Ow0KPiA+PiBjaXAtZGV2
+QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZzsgTm9idWhpcm8gSXdhbWF0c3UNCj4gPj4gPG5vYnVoaXJv
+MS5pd2FtYXRzdUB0b3NoaWJhLmNvLmpwPjsgUGF2ZWwgTWFjaGVrIDxwYXZlbEBkZW54LmRlPg0K
+PiA+PiBTdWJqZWN0OiBSZTogW2NpcC1kZXZdW2lzYXItY2lwLWNvcmVdW1JGQyBQQVRDSF0gY3Vz
+dG9taXphdGlvbnM6IEFkZA0KPiA+PiBGVyBhbmQgdG9vbHMgcmVxdWlyZWQgZm9yIHdpZmkgdGVz
+dGluZw0KPiA+Pg0KPiA+PiBPbiAyMi4xMS4yMSAxMjoxOSwgTGFkIFByYWJoYWthciB3cm90ZToN
+Cj4gPj4+IEFkZCBmaXJtd2FyZSBhbmQgdG9vbHMgcmVxdWlyZWQgZm9yIHRlc3Rpbmcgd2lmaW4g
+b24gaGlob3BlLXJ6ZzJtLg0KPiA+Pj4NCj4gPj4+IFNpZ25lZC1vZmYtYnk6IExhZCBQcmFiaGFr
+YXINCj4gPj4+IDxwcmFiaGFrYXIubWFoYWRldi1sYWQucmpAYnAucmVuZXNhcy5jb20+DQo+ID4+
+PiAtLS0NCj4gPj4+IEhpIEFsbCwNCj4gPj4+DQo+ID4+PiBTZW5kaW5nIGFuIFJGQyBhcyBJIGFt
+IG5vdCBzdXJlIGlmIHRoaXMgaXMgdGhlIHJpZ2h0IHBsYWNlIHRvIGFkZA0KPiA+Pj4gdGhpcy4g
+SSB3YW50ZWQgdG8gYWRkIHRoZSBkZWJpYW4gcGFja2FnZSBkZXBlbmRzIGluIG1hY2hpbmUuY29u
+Zg0KPiA+Pj4gZmlsZSBidXQgZGlkbnQgZmluZCBhbnkgdmFyaWFibGVzLg0KPiA+Pg0KPiA+PiBJ
+TUFHRV9JTlNUQUxMX2FwcGVuZCB3b3VsZCB3b3JrIHRoZXJlLCBzZWUgZWcuDQo+ID4+IGh0dHBz
+Oi8vanBuMDEuc2FmZWxpbmtzLnByb3RlY3Rpb24ub3V0bG9vay5jb20vP3VybD1odHRwcyUzQSUy
+RiUyRmdpdA0KPiA+PiBodWIuY29tJTJGc2llbWVucyUyRmphaWxob3VzZS0mYW1wO2RhdGE9MDQl
+N0MwMSU3Q3ByYWJoYWthci5tYWhhZGV2LWwNCj4gPj4gYWQucmolNDBicC5yZW5lc2FzLmNvbSU3
+Q2M4YmZiZGE1YWNjMTRmZTg2ZGU1MDhkOWFlNGE4N2E3JTdDNTNkODI1NzFkDQo+ID4+IGExOTQ3
+ZTQ5Y2I0NjI1YTE2NmE0YTJhJTdDMCU3QzAlN0M2Mzc3MzI0NTczOTQ1OTc0MDElN0NVbmtub3du
+JTdDVFdGcA0KPiA+PiBiR1pzYjNkOGV5SldJam9pTUM0d0xqQXdNREFpTENKUUlqb2lWMmx1TXpJ
+aUxDSkJUaUk2SWsxaGFXd2lMQ0pYVkNJNk0NCj4gPj4gbjAlM0QlN0MzMDAwJmFtcDtzZGF0YT1C
+Z2JUbm1aYWlrRjI4a002OURIREpIUU8lMkIxekxYOXRSRnJzZ0ZPVVZ6dEklDQo+ID4+IDNEJmFt
+cDtyZXNlcnZlZD0wDQo+ID4+IGltYWdlcyUyRmJsb2IlMkZtYXN0ZXIlMkZjb25mJTJGbWFjaGlu
+ZSUyRnJwaTQuY29uZiZhbXA7ZGF0YT0wNCU3QzAxJQ0KPiA+PiA3Q3ByYWJoYWthci5tYWhhZGV2
+LQ0KPiA+PiBsYWQucmolNDBicC5yZW5lc2FzLmNvbSU3Q2FlMjYwMWY0OWY1YjQ3MjViMWFiMDhk
+OWFkYWIxOTQzJTdDNTNkODI1NzENCj4gPj4gZGExOTQ3ZTQ5Y2I0NjI1YTE2NmE0YTJhJTdDMCU3
+QzAlDQo+ID4+IDdDNjM3NzMxNzcyNjQ0ODA4MjExJTdDVW5rbm93biU3Q1RXRnBiR1pzYjNkOGV5
+SldJam9pTUM0d0xqQXdNREFpTENKUQ0KPiA+PiBJam9pVjJsdU16SWlMQ0pCVGlJNklrMWhhV3dp
+TENKWFYNCj4gPj4gQ0k2TW4wJTNEJTdDMzAwMCZhbXA7c2RhdGE9bXFwMHdrbkd5eEt5WTgyWXZn
+SEpYbDcyYVR1NERXU3VVT0hjYVpQbzh4QSUzRCZhbXA7cmVzZXJ2ZWQ9MC4NCj4gPj4NCj4gPiBB
+ZGRpbmcgSU1BR0VfSU5TVEFMTC9JTUFHRV9QUkVJTlNUQUxMIG1hY2hpbmUuY29uZiBkaWRu4oCZ
+dCBoZWxwIGZvciBtZSwgSSB3YXMgc2VlaW5nIGJlbG93IGlzc3VlczoNCj4gPg0KPiA+IHwgRVJS
+T1I6IE5vdGhpbmcgUFJPVklERVMgJ3dpcmVsZXNzLXJlZ2RiJyAoYnV0DQo+ID4gfCAvcmVwby9y
+ZWNpcGVzLWNvcmUvaW1hZ2VzL2NpcC1jb3JlLWltYWdlLmJiIERFUEVORFMgb24gb3Igb3RoZXJ3
+aXNlDQo+ID4gfCByZXF1aXJlcyBpdCkNCj4gPiB8IEVSUk9SOiBSZXF1aXJlZCBidWlsZCB0YXJn
+ZXQgJ2NpcC1jb3JlLWltYWdlJyBoYXMgbm8gYnVpbGRhYmxlIHByb3ZpZGVycy4NCj4gPiB8IE1p
+c3Npbmcgb3IgdW5idWlsZGFibGUgZGVwZW5kZW5jeSBjaGFpbiB3YXM6IFsnY2lwLWNvcmUtaW1h
+Z2UnLA0KPiA+IHwgJ3dpcmVsZXNzLXJlZ2RiJ10NCj4gPg0KPiA+IHwgRVJST1I6IE5vdGhpbmcg
+UFJPVklERVMgJ3dpcmVsZXNzLXRvb2xzJyAoYnV0DQo+ID4gfCAvcmVwby9yZWNpcGVzLWNvcmUv
+aW1hZ2VzL2NpcC1jb3JlLWltYWdlLmJiIERFUEVORFMgb24gb3Igb3RoZXJ3aXNlDQo+ID4gfCBy
+ZXF1aXJlcyBpdCkNCj4gPiB8IEVSUk9SOiBSZXF1aXJlZCBidWlsZCB0YXJnZXQgJ2NpcC1jb3Jl
+LWltYWdlJyBoYXMgbm8gYnVpbGRhYmxlIHByb3ZpZGVycy4NCj4gPiB8IE1pc3Npbmcgb3IgdW5i
+dWlsZGFibGUgZGVwZW5kZW5jeSBjaGFpbiB3YXM6IFsnY2lwLWNvcmUtaW1hZ2UnLA0KPiA+IHwg
+J3dpcmVsZXNzLXRvb2xzJ10NCj4gPg0KPiA+IHwgRVJST1I6IE5vdGhpbmcgUFJPVklERVMgJ2Zp
+cm13YXJlLXRpLWNvbm5lY3Rpdml0eScgKGJ1dA0KPiA+IHwgL3JlcG8vcmVjaXBlcy1jb3JlL2lt
+YWdlcy9jaXAtY29yZS1pbWFnZS5iYiBERVBFTkRTIG9uIG9yIG90aGVyd2lzZQ0KPiA+IHwgcmVx
+dWlyZXMgaXQpDQo+ID4gfCBFUlJPUjogUmVxdWlyZWQgYnVpbGQgdGFyZ2V0ICdjaXAtY29yZS1p
+bWFnZScgaGFzIG5vIGJ1aWxkYWJsZSBwcm92aWRlcnMuDQo+ID4gfCBNaXNzaW5nIG9yIHVuYnVp
+bGRhYmxlIGRlcGVuZGVuY3kgY2hhaW4gd2FzOiBbJ2NpcC1jb3JlLWltYWdlJywNCj4gPiB8ICdm
+aXJtd2FyZS10aS1jb25uZWN0aXZpdHknXQ0KPiA+DQo+ID4gfCBFUlJPUjogTm90aGluZyBQUk9W
+SURFUyAnaXcnIChidXQNCj4gPiB8IC9yZXBvL3JlY2lwZXMtY29yZS9pbWFnZXMvY2lwLWNvcmUt
+aW1hZ2UuYmIgREVQRU5EUyBvbiBvciBvdGhlcndpc2UNCj4gPiB8IHJlcXVpcmVzIGl0KQ0KPiA+
+IHwgRVJST1I6IFJlcXVpcmVkIGJ1aWxkIHRhcmdldCAnY2lwLWNvcmUtaW1hZ2UnIGhhcyBubyBi
+dWlsZGFibGUgcHJvdmlkZXJzLg0KPiA+IHwgTWlzc2luZyBvciB1bmJ1aWxkYWJsZSBkZXBlbmRl
+bmN5IGNoYWluIHdhczogWydjaXAtY29yZS1pbWFnZScsDQo+ID4gfCAnaXcnXQ0KPiA+DQo+ID4g
+QXMgYWJvdmUgZGlkbuKAmXQgd29yayBhbmQgY3VzdG9taXphdGlvbnMuYmIgaXMgdGhlIG9ubHkg
+cGxhY2Ugd2VyZSBJIHdhcyBhYmxlIHRvIGdyZXAgZm9yDQo+IERFQklBTl9ERVBFTkRTIHZhcmlh
+YmxlIEkgd2VudCB0aGlzIGFwcHJvYWNoIPCfmIkuDQo+ID4gKE5vdGUgYWxzbyBhZGRpbmcgREVC
+SUFOX0RFUEVORFMgaW4gbWFjaGluZS5jb25mIGRpZG7igJl0IHdvcmsuKQ0KPiA+DQo+ID4gSXMg
+dGhlcmUgc29tZXRoaW5nIHdoaWNoIEkgYW0gbWlzc2luZyB0aGF0IHdvdWxkIG1ha2UgaXQgd29y
+ayB3aXRoIElNQUdFX0lOU1RBTExfYXBwZW5kIHZhcmlhYmxlPw0KPiA+DQo+IA0KPiBERUJJQU5f
+REVQRU5EUyBpcyB0aGUgd3JvbmcgdmFyaWFibGUgdG8gdG91Y2ggYXQgZ2xvYmFsIGNvbmZpZ3Vy
+YXRpb24gbGV2ZWwuIEFzIGluIHRoZSByZWZlcmVuY2VzDQo+IGV4YW1wbGUsIHlvdSBuZWVkIHRv
+IGV4dGVuZCB0aGUgSU1BR0VfUFJFSU5TVEFMTCAoZm9yIERlYmlhbiBwYWNrYWdlczsgSU1BR0Vf
+SU5TVEFMTCB3b3VsZCBiZSBmb3INCj4gc2VsZi1idWlsdCBvbmVzKToNCj4gDQpBaGEgSSBtaXNz
+ZWQgdGhhdCwgdGhhbmtzIGZvciB0aGUgcG9pbnRlci4NCg0KPiBkaWZmIC0tZ2l0IGEvY29uZi9t
+YWNoaW5lL2hpaG9wZS1yemcybS5jb25mIGIvY29uZi9tYWNoaW5lL2hpaG9wZS1yemcybS5jb25m
+IGluZGV4IGEyYWUwM2QuLjRjNjExYWUNCj4gMTAwNjQ0DQo+IC0tLSBhL2NvbmYvbWFjaGluZS9o
+aWhvcGUtcnpnMm0uY29uZg0KPiArKysgYi9jb25mL21hY2hpbmUvaGlob3BlLXJ6ZzJtLmNvbmYN
+Cj4gQEAgLTE3LDMgKzE3LDUgQEAgS0VSTkVMX0RFRkNPTkZJRyA9ICJjaXAta2VybmVsLWNvbmZp
+Zy80LjE5LnktY2lwL2FybTY0L3JlbmVzYXNfZGVmY29uZmlnIg0KPiAgVVNFX0NJUF9LRVJORUxf
+Q09ORklHID0gIjEiDQo+ICBEVEJfRklMRVMgPSAicjhhNzc0YTEtaGlob3BlLXJ6ZzJtLWV4LmR0
+YiINCj4gIElNQUdFX0JPT1RfRklMRVMgPSAiJHtLRVJORUxfSU1BR0V9ICR7RFRCX0ZJTEVTfSIN
+Cj4gKw0KPiArSU1BR0VfUFJFSU5TVEFMTF9hcHBlbmQgPSAiIGZpcm13YXJlLXRpLWNvbm5lY3Rp
+dml0eSINCj4gDQo+ID4NCj4gPj4gV2hldGhlciB3ZSB3YW50IHRvICJoYXJkLWNvZGUiIHRoZSBp
+bnN0YWxsYXRpb24gd2lyZWxlc3MgZmlybXdhcmUgaW4NCj4gPj4gdGhlIG1hY2hpbmUgY29uZiBo
+ZXJlIGlzIGEgZGlmZmVyZW50IHF1ZXN0aW9uLiBNYXliZSBjdXN0b21pemF0aW9ucyBpcyBub3Qg
+dGhhdCBhIGJhZCBwbGFjZS4NCj4gPj4NCj4gPiBJZiBhZGRpbmcgSU1BR0VfSU5TVEFMTF9hcHBl
+bmQgd29ya3MgaW4gbWFjaGluZS5jb25mLCB3aWxsIGdvIHdpdGggdGhpcyBhcHByb2FjaCwgYXMg
+dGhhdCB3b3VsZCBub3QNCj4gZGlzdHVyYiBvdGhlciBwbGF0Zm9ybSBidWlsZHMuDQo+ID4NCj4g
+DQo+IFlvdSB3b3VsZCBzdGlsbCBoYXZlIHRvIGFkZC9yZXF1ZXN0IHRoZSBnZW5lcmljIHdpcmVs
+ZXNzIHRvb2xzIHNvbWV3aGVyZS4gRm9yIHRoYXQsIHlvdSBlaXRoZXIgbmVlZCB0bw0KPiB0b3Vj
+aCB0aGUgY3VzdG9taXphdGlvbiBwYWNrYWdlDQo+IChERUJJQU5fREVQRU5EUykgb3IgZGlyZWN0
+bHkgZXhwYW5kIHRoZSBJTUFHRV9QUkVJTlNUQUxMIGxpc3QgaW4gY2lwLWNvcmUtaW1hZ2UuYmIu
+IEhvdyBhYm91dCB0aGlzDQo+IHBhdHRlcm4/DQo+IA0KKzENCg0KPiBkaWZmIC0tZ2l0IGEvY29u
+Zi9tYWNoaW5lL2hpaG9wZS1yemcybS5jb25mIGIvY29uZi9tYWNoaW5lL2hpaG9wZS1yemcybS5j
+b25mIGluZGV4IGEyYWUwM2QuLjRmNGVlODENCj4gMTAwNjQ0DQo+IC0tLSBhL2NvbmYvbWFjaGlu
+ZS9oaWhvcGUtcnpnMm0uY29uZg0KPiArKysgYi9jb25mL21hY2hpbmUvaGlob3BlLXJ6ZzJtLmNv
+bmYNCj4gQEAgLTE3LDMgKzE3LDYgQEAgS0VSTkVMX0RFRkNPTkZJRyA9ICJjaXAta2VybmVsLWNv
+bmZpZy80LjE5LnktY2lwL2FybTY0L3JlbmVzYXNfZGVmY29uZmlnIg0KPiAgVVNFX0NJUF9LRVJO
+RUxfQ09ORklHID0gIjEiDQo+ICBEVEJfRklMRVMgPSAicjhhNzc0YTEtaGlob3BlLXJ6ZzJtLWV4
+LmR0YiINCj4gIElNQUdFX0JPT1RfRklMRVMgPSAiJHtLRVJORUxfSU1BR0V9ICR7RFRCX0ZJTEVT
+fSINCj4gKw0KPiArV0lSRUxFU1NfRklSTVdBUkVfUEFDS0FHRSA9ICJmaXJtd2FyZS10aS1jb25u
+ZWN0aXZpdHkiDQo+ICtJTlNUQUxMX1dJUkVMRVNTX1RPT0xTID89ICIxIg0KPiBkaWZmIC0tZ2l0
+IGEvcmVjaXBlcy1jb3JlL2N1c3RvbWl6YXRpb25zL2N1c3RvbWl6YXRpb25zLmJiIGIvcmVjaXBl
+cy0NCj4gY29yZS9jdXN0b21pemF0aW9ucy9jdXN0b21pemF0aW9ucy5iYg0KPiBpbmRleCA5MzJi
+MTFjLi4xYzJhMTI1IDEwMDY0NA0KPiAtLS0gYS9yZWNpcGVzLWNvcmUvY3VzdG9taXphdGlvbnMv
+Y3VzdG9taXphdGlvbnMuYmINCj4gKysrIGIvcmVjaXBlcy1jb3JlL2N1c3RvbWl6YXRpb25zL2N1
+c3RvbWl6YXRpb25zLmJiDQo+IEBAIC0xOCwxMCArMTgsMTUgQEAgU1JDX1VSSSA9ICIgXA0KPiAg
+ICAgIGZpbGU6Ly9ldGhlcm5ldCBcDQo+ICAgICAgZmlsZTovLzk5LXNpbGVudC1wcmludGsuY29u
+ZiINCj4gDQo+ICtXSVJFTEVTU19GSVJNV0FSRV9QQUNLQUdFID89ICIiDQo+ICtJTlNUQUxMX1dJ
+UkVMRVNTX1RPT0xTID8/PSAiMCINCj4gKw0KPiAgREVQRU5EUyArPSAic3NoZC1yZWdlbi1rZXlz
+Ig0KPiANCj4gIERFQklBTl9ERVBFTkRTID0gIiBcDQo+IC0gICAgaWZ1cGRvd24sIGlzYy1kaGNw
+LWNsaWVudCwgbmV0LXRvb2xzLCBpcHV0aWxzLXBpbmcsIHNzaCwgc3NoZC1yZWdlbi1rZXlzIg0K
+PiArICAgIGlmdXBkb3duLCBpc2MtZGhjcC1jbGllbnQsIG5ldC10b29scywgaXB1dGlscy1waW5n
+LCBzc2gsIHNzaGQtcmVnZW4ta2V5cywgXA0KPiArICAgICR7QCgnaXcsIHdpcmVsZXNzLXJlZ2Ri
+LCB3aXJlbGVzcy10b29scywgJyArIGQuZ2V0VmFyKCdXSVJFTEVTU19GSVJNV0FSRV9QQUNLQUdF
+JykpIFwNCj4gKyAgICAgICAgaWYgZC5nZXRWYXIoJ0lOU1RBTExfV0lSRUxFU1NfVE9PTFMnKSA9
+PSAnMScgZWxzZSAnJ30iDQo+IA0KPiAgZG9faW5zdGFsbCgpIHsNCj4gIAlpbnN0YWxsIC12IC1k
+ICR7RH0vZXRjL25ldHdvcmsvaW50ZXJmYWNlcy5kDQo+IA0KPiBBdm9pZHMgZW5mb3JjaW5nIHdp
+cmVsZXNzIGluc3RhbGxhdGlvbiB3aGVuIHVzaW5nIHRoZSBtYWNoaW5lIGNvbmYsIG9ubHkgd2hl
+biB1c2luZyBvdXIgY3VzdG9taXphdGlvbg0KPiBwYWNrYWdlLCBzb21ldGhpbmcgdGhhdCBkb3du
+c3RyZWFtIGxheWVycyB1c3VhbGx5IGRvbid0IGRvLg0KPiANCkFncmVlZCwgd2lsbCBmb2xsb3cg
+dGhlIHNhbWUuDQoNCkNoZWVycywNClByYWJoYWthcg0KDQo+IEphbg0KPiANCj4gLS0NCj4gU2ll
+bWVucyBBRywgVCBSREEgSU9UDQo+IENvcnBvcmF0ZSBDb21wZXRlbmNlIENlbnRlciBFbWJlZGRl
+ZCBMaW51eA0K
 
