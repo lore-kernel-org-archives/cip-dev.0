@@ -2,29 +2,29 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E45D8C433FE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8580C433F5
 	for <webhook@archiver.kernel.org>; Tue, 23 Nov 2021 14:57:52 +0000 (UTC)
 Received: from gecko.sbs.de (gecko.sbs.de [194.138.37.40])
- by mx.groups.io with SMTP id smtpd.web12.12316.1637679471706702457
+ by mx.groups.io with SMTP id smtpd.web11.12062.1637679471715237834
  for <cip-dev@lists.cip-project.org>;
  Tue, 23 Nov 2021 06:57:52 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing;
  spf=pass (domain: siemens.com, ip: 194.138.37.40, mailfrom: quirin.gylstorff@siemens.com)
 Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-	by gecko.sbs.de (8.15.2/8.15.2) with ESMTPS id 1ANEvnHr032588
+	by gecko.sbs.de (8.15.2/8.15.2) with ESMTPS id 1ANEvoA5032593
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-	for <cip-dev@lists.cip-project.org>; Tue, 23 Nov 2021 15:57:49 +0100
+	for <cip-dev@lists.cip-project.org>; Tue, 23 Nov 2021 15:57:50 +0100
 Received: from md2dvrtc.fritz.box ([167.87.35.152])
-	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 1ANEvlcx005894;
+	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 1ANEvld1005894;
 	Tue, 23 Nov 2021 15:57:49 +0100
 From: "Q. Gylstorff" <Quirin.Gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com,
         christian.storm@siemens.com
-Subject: [cip-dev][isar-cip-core][RFC v3 4/9] Create a initrd with support for
- dm-verity
-Date: Tue, 23 Nov 2021 15:57:42 +0100
-Message-Id: <20211123145747.101549-5-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][RFC v3 6/9] Create systemd mount units for a
+ etc overlay
+Date: Tue, 23 Nov 2021 15:57:44 +0100
+Message-Id: <20211123145747.101549-7-Quirin.Gylstorff@siemens.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211123145747.101549-1-Quirin.Gylstorff@siemens.com>
 References: <20211123145747.101549-1-Quirin.Gylstorff@siemens.com>
@@ -34,33 +34,39 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 23 Nov 2021 14:57:52 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6973
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6975
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-Adapt the initrd to open a dm-verity partition with a fixed
-root hash.
+As /etc is read-only and needs to be accessed by the initrd
+move the user defined settings to a overlay in /var/local/etc.
+
+As systemd sets the hostname directly on start reread the /etc/hostname
+after mounting the overlay.
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- .../cip-core-initramfs/cip-core-initramfs.bb  | 16 +++++
- .../files/verity.conf-hook                    |  1 +
- .../initramfs-verity-hook/files/verity.hook   | 23 +++++++
- .../files/verity.script.tmpl                  | 68 +++++++++++++++++++
- .../initramfs-verity-hook_0.1.bb              | 51 ++++++++++++++
- 5 files changed, 159 insertions(+)
- create mode 100644 recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
- create mode 100644 recipes-initramfs/initramfs-verity-hook/files/verity.conf-hook
- create mode 100644 recipes-initramfs/initramfs-verity-hook/files/verity.hook
- create mode 100644 recipes-initramfs/initramfs-verity-hook/files/verity.script.tmpl
- create mode 100644 recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.1.bb
+ .../etc-overlay-fs/etc-overlay-fs_0.1.bb      | 32 +++++++++++++++++++
+ .../etc-overlay-fs/files/etc-hostname.service | 14 ++++++++
+ .../files/etc-sshd-regen-keys.conf            |  7 ++++
+ .../etc-overlay-fs/files/etc-sysusers.conf    |  4 +++
+ recipes-core/etc-overlay-fs/files/etc.mount   | 13 ++++++++
+ recipes-core/etc-overlay-fs/files/postinst    |  4 +++
+ .../images/cip-core-image-read-only.bb        |  1 +
+ 7 files changed, 75 insertions(+)
+ create mode 100644 recipes-core/etc-overlay-fs/etc-overlay-fs_0.1.bb
+ create mode 100644 recipes-core/etc-overlay-fs/files/etc-hostname.service
+ create mode 100644 recipes-core/etc-overlay-fs/files/etc-sshd-regen-keys.conf
+ create mode 100644 recipes-core/etc-overlay-fs/files/etc-sysusers.conf
+ create mode 100644 recipes-core/etc-overlay-fs/files/etc.mount
+ create mode 100755 recipes-core/etc-overlay-fs/files/postinst
 
-diff --git a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
+diff --git a/recipes-core/etc-overlay-fs/etc-overlay-fs_0.1.bb b/recipes-core/etc-overlay-fs/etc-overlay-fs_0.1.bb
 new file mode 100644
-index 0000000..825fb9f
+index 0000000..4e2b80b
 --- /dev/null
-+++ b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
-@@ -0,0 +1,16 @@
++++ b/recipes-core/etc-overlay-fs/etc-overlay-fs_0.1.bb
+@@ -0,0 +1,32 @@
 +#
 +# CIP Core, generic profile
 +#
@@ -70,180 +76,113 @@ index 0000000..825fb9f
 +#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
 +#
 +# SPDX-License-Identifier: MIT
-+#
-+
-+inherit initramfs
-+
-+INITRAMFS_INSTALL += " \
-+    initramfs-verity-hook \
-+    "
-diff --git a/recipes-initramfs/initramfs-verity-hook/files/verity.conf-hook b/recipes-initramfs/initramfs-verity-hook/files/verity.conf-hook
-new file mode 100644
-index 0000000..9b61fb8
---- /dev/null
-+++ b/recipes-initramfs/initramfs-verity-hook/files/verity.conf-hook
-@@ -0,0 +1 @@
-+BUSYBOX=y
-diff --git a/recipes-initramfs/initramfs-verity-hook/files/verity.hook b/recipes-initramfs/initramfs-verity-hook/files/verity.hook
-new file mode 100644
-index 0000000..5eada8a
---- /dev/null
-+++ b/recipes-initramfs/initramfs-verity-hook/files/verity.hook
-@@ -0,0 +1,23 @@
-+#!/bin/sh
-+PREREQ=""
-+prereqs()
-+{
-+    echo "$PREREQ"
-+}
-+case $1 in
-+prereqs)
-+    prereqs
-+    exit 0
-+    ;;
-+esac
-+
-+. /usr/share/initramfs-tools/hook-functions
-+# Begin real processing below this line
-+
-+manual_add_modules dm_mod
-+manual_add_modules dm_verity
-+
-+copy_exec /sbin/veritysetup
-+copy_exec /sbin/dmsetup
-+copy_file library /lib/cryptsetup/functions /lib/cryptsetup/functions
-+copy_file library /usr/share/verity-env/verity.env /usr/share/verity-env/verity.env
-diff --git a/recipes-initramfs/initramfs-verity-hook/files/verity.script.tmpl b/recipes-initramfs/initramfs-verity-hook/files/verity.script.tmpl
-new file mode 100644
-index 0000000..c4f3dc4
---- /dev/null
-+++ b/recipes-initramfs/initramfs-verity-hook/files/verity.script.tmpl
-@@ -0,0 +1,68 @@
-+#!/bin/sh
-+prereqs()
-+{
-+    # Make sure that this script is run last in local-top
-+    local req
-+    for req in "${0%/*}"/*; do
-+        script="${req##*/}"
-+        if [ "$script" != "${0##*/}" ] && [ "$script" != "cryptroot" ]; then
-+            printf '%s\n' "$script"
-+        fi
-+    done
-+}
-+case $1 in
-+prereqs)
-+    prereqs
-+    exit 0
-+    ;;
-+esac
-+
-+. /scripts/functions
-+. /lib/cryptsetup/functions
-+. /usr/share/verity-env/verity.env
-+# Even if this script fails horribly, make sure there won't be a chance the
-+# current $ROOT will be attempted.  As this device most likely contains a
-+# perfectly valid filesystem, it would be mounted successfully, leading to a
-+# broken trust chain.
-+echo "ROOT=/dev/null" >/conf/param.conf
-+wait_for_udev 10
-+case "$ROOT" in
-+    PART*)
-+        # root was given as PARTUUID= or PARTLABEL=. Use blkid to find the matching
-+        # partition
-+        ROOT=$(blkid --list-one --output device --match-token "$ROOT")
-+        ;;
-+    "")
-+        # No Root device was given. Use veritysetup verify to search matching roots
-+        partitions=$(blkid -o device)
-+        for part in $partitions; do
-+            if [ "$(blkid -p ${part} --match-types novfat -s USAGE -o value)" = "filesystem" ]; then
-+                if veritysetup verify \
-+                   "$part" "$part" "${ROOT_HASH}" \
-+                   --hash-offset "${HASH_OFFSET}";then
-+                    ROOT="$part"
-+                    break
-+                fi
-+            fi
-+        done
-+        ;;
-+esac
-+set -- "$ROOT" verityroot
-+if ! veritysetup open \
-+     ${VERITY_BEHAVIOR_ON_CORRUPTION} \
-+     --data-block-size "${DATA_BLOCK_SIZE}" \
-+     --hash-block-size "${HASH_BLOCK_SIZE}" \
-+     --data-blocks "${DATA_BLOCKS}" \
-+     --hash-offset "${HASH_OFFSET}" \
-+     --salt "${SALT}" \
-+     "$1" "$2" "$1" "${ROOT_HASH}"; then
-+    panic "Can't open verity rootfs!"
-+fi
-+
-+wait_for_udev 10
-+
-+if ! ROOT="$(dm_blkdevname verityroot)"; then
-+    panic "Can't find the verity root device!"
-+fi
-+
-+echo "ROOT=${ROOT}" >/conf/param.conf
-diff --git a/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.1.bb b/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.1.bb
-new file mode 100644
-index 0000000..a7fbf5a
---- /dev/null
-+++ b/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.1.bb
-@@ -0,0 +1,51 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2021
-+#
-+# Authors:
-+#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+#
 +
 +inherit dpkg-raw
 +
-+SRC_URI += " \
-+    file://verity.conf-hook \
-+    file://verity.hook \
-+    file://verity.script.tmpl \
-+    "
++SRC_URI = "file://postinst \
++           file://etc.mount \
++           file://etc-hostname.service \
++           file://etc-sshd-regen-keys.conf \
++           file://etc-sysusers.conf"
 +
-+VERITY_BEHAVIOR_ON_CORRUPTION ?= "--restart-on-corruption"
-+
-+TEMPLATE_FILES = "verity.script.tmpl"
-+TEMPLATE_VARS += "VERITY_BEHAVIOR_ON_CORRUPTION"
-+
-+DEBIAN_DEPENDS = "initramfs-tools, cryptsetup"
-+
-+VERITY_IMAGE_RECIPE ?= "cip-core-image-read-only"
-+
-+VERITY_ENV_FILE = "${DEPLOY_DIR_IMAGE}/${VERITY_IMAGE_RECIPE}-${DISTRO}-${MACHINE}.verity.env"
-+
-+do_install[depends] += "${VERITY_IMAGE_RECIPE}:do_verity_image"
-+do_install[cleandirs] += " \
-+    ${D}/usr/share/initramfs-tools/hooks \
-+    ${D}/usr/share/verity-env \
-+    ${D}/usr/share/initramfs-tools/scripts/local-top \
-+    ${D}/usr/share/initramfs-tools/conf-hooks.d"
-+
++do_install[cleandirs]+="${D}/usr/lib/systemd/system \
++                        ${D}/usr/lib/systemd/system/local-fs.target.wants \
++                        ${D}/usr/lib/systemd/system/systemd-sysusers.service.d \
++                        ${D}/usr/lib/systemd/system/sshd-regen-keys.service.d \
++                        ${D}/var/local/etc \
++                        ${D}/var/local/.atomic \
++                        "
 +do_install() {
-+    # Insert the veritysetup commandline into the script
-+    if [ -f "${VERITY_ENV_FILE}" ]; then
-+        install -m 0600 "${VERITY_ENV_FILE}" "${D}/usr/share/verity-env/verity.env"
-+    else
-+        bberror "Did not find ${VERITY_ENV_FILE}. initramfs will not be build correctly!"
-+    fi
-+    install -m 0755 "${WORKDIR}/verity.script" \
-+        "${D}/usr/share/initramfs-tools/scripts/local-top/verity"
-+    install -m 0755 "${WORKDIR}/verity.hook" \
-+        "${D}/usr/share/initramfs-tools/hooks/verity"
++    TARGET=${D}/usr/lib/systemd/system
++    install -m 0644 ${WORKDIR}/etc.mount ${TARGET}/etc.mount
++    install -m 0644 ${WORKDIR}/etc-hostname.service ${TARGET}/etc-hostname.service
++    install -m 0644 ${WORKDIR}/etc-sshd-regen-keys.conf ${D}/usr/lib/systemd/system/sshd-regen-keys.service.d/etc-sshd-regen-keys.conf
++    install -m 0644 ${WORKDIR}/etc-sysusers.conf ${D}/usr/lib/systemd/system/systemd-sysusers.service.d/etc-sysusers.service
 +}
+diff --git a/recipes-core/etc-overlay-fs/files/etc-hostname.service b/recipes-core/etc-overlay-fs/files/etc-hostname.service
+new file mode 100644
+index 0000000..2306b9f
+--- /dev/null
++++ b/recipes-core/etc-overlay-fs/files/etc-hostname.service
+@@ -0,0 +1,14 @@
++[Unit]
++Description=set hostname /etc overlay-aware
++Before=network-pre.target
++Wants=network-pre.target
++Requires=etc.mount
++After=etc.mount
 +
-+addtask do_install after do_transform_template
++[Service]
++Type=oneshot
++RemainAfterExit=yes
++ExecStart=/bin/hostname --boot --file /etc/hostname
++
++[Install]
++WantedBy=basic.target
+diff --git a/recipes-core/etc-overlay-fs/files/etc-sshd-regen-keys.conf b/recipes-core/etc-overlay-fs/files/etc-sshd-regen-keys.conf
+new file mode 100644
+index 0000000..014b5a6
+--- /dev/null
++++ b/recipes-core/etc-overlay-fs/files/etc-sshd-regen-keys.conf
+@@ -0,0 +1,7 @@
++[Unit]
++# set hostname /etc overlay-aware
++Before=network-pre.target
++Wants=network-pre.target
++Requires=etc.mount
++After=etc.mount
++
+diff --git a/recipes-core/etc-overlay-fs/files/etc-sysusers.conf b/recipes-core/etc-overlay-fs/files/etc-sysusers.conf
+new file mode 100644
+index 0000000..ad45d7f
+--- /dev/null
++++ b/recipes-core/etc-overlay-fs/files/etc-sysusers.conf
+@@ -0,0 +1,4 @@
++[Unit]
++# make systemd-sysusers /etc overlay aware
++Requires=etc.mount
++After=etc.mount
+diff --git a/recipes-core/etc-overlay-fs/files/etc.mount b/recipes-core/etc-overlay-fs/files/etc.mount
+new file mode 100644
+index 0000000..f0ae3c5
+--- /dev/null
++++ b/recipes-core/etc-overlay-fs/files/etc.mount
+@@ -0,0 +1,13 @@
++[Unit]
++Description=Overlay-mount /etc
++Requires=var.mount
++After=var.mount
++
++[Mount]
++What=overlay
++Where=/etc
++Type=overlay
++Options=noauto,x-systemd.automount,lowerdir=/etc,upperdir=/var/local/etc,workdir=/var/local/.atomic
++
++[Install]
++WantedBy=local-fs.target
+diff --git a/recipes-core/etc-overlay-fs/files/postinst b/recipes-core/etc-overlay-fs/files/postinst
+new file mode 100755
+index 0000000..e436b53
+--- /dev/null
++++ b/recipes-core/etc-overlay-fs/files/postinst
+@@ -0,0 +1,4 @@
++#!/bin/sh
++
++deb-systemd-helper enable etc.mount  || true
++deb-systemd-helper enable etc-hostname.service || true
+diff --git a/recipes-core/images/cip-core-image-read-only.bb b/recipes-core/images/cip-core-image-read-only.bb
+index 7ef2dc2..ceb6ac4 100644
+--- a/recipes-core/images/cip-core-image-read-only.bb
++++ b/recipes-core/images/cip-core-image-read-only.bb
+@@ -2,6 +2,7 @@ require cip-core-image.bb
+ 
+ SQUASHFS_EXCLUDE_DIRS += "home var"
+ 
++IMAGE_INSTALL += "etc-overlay-fs"
+ IMAGE_INSTALL += "tmp-fs"
+ IMAGE_INSTALL_remove += "initramfs-abrootfs-secureboot"
+ 
 -- 
 2.30.2
 
