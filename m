@@ -2,50 +2,76 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 833D3C433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0D98C433FE
 	for <webhook@archiver.kernel.org>; Wed, 24 Nov 2021 11:12:25 +0000 (UTC)
 Received: from goliath.siemens.de (goliath.siemens.de [192.35.17.28])
- by mx.groups.io with SMTP id smtpd.web09.4851.1637752344472728820
+ by mx.groups.io with SMTP id smtpd.web11.4895.1637752344472975077
  for <cip-dev@lists.cip-project.org>;
  Wed, 24 Nov 2021 03:12:25 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing;
  spf=pass (domain: siemens.com, ip: 192.35.17.28, mailfrom: quirin.gylstorff@siemens.com)
 Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-	by goliath.siemens.de (8.15.2/8.15.2) with ESMTPS id 1AOBCLtK007245
+	by goliath.siemens.de (8.15.2/8.15.2) with ESMTPS id 1AOBCMZd007266
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
 	for <cip-dev@lists.cip-project.org>; Wed, 24 Nov 2021 12:12:22 +0100
 Received: from md2dvrtc.fritz.box ([139.22.38.174])
-	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 1AOBCLdv009575;
-	Wed, 24 Nov 2021 12:12:21 +0100
+	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 1AOBCLe0009575;
+	Wed, 24 Nov 2021 12:12:22 +0100
 From: "Q. Gylstorff" <Quirin.Gylstorff@siemens.com>
 To: jan.kiszka@siemens.com, cip-dev@lists.cip-project.org
-Subject: [cip-dev][isar-cip-core][PATCH 0/3] start-qemu.sh: Add some ease of
- use functionality
-Date: Wed, 24 Nov 2021 12:12:18 +0100
-Message-Id: <20211124111221.300917-1-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH 3/3] start-qemu.sh: Simplify qemu call
+Date: Wed, 24 Nov 2021 12:12:21 +0100
+Message-Id: <20211124111221.300917-4-Quirin.Gylstorff@siemens.com>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20211124111221.300917-1-Quirin.Gylstorff@siemens.com>
+References: <20211124111221.300917-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 24 Nov 2021 11:12:25 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6987
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6988
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-Fix booting of secure-boot image
-Parse .config.yaml for ease of use and reduced commandline clutter
+Move qemu call out of if clause to avoid code duplications and
+use the same behavior for secure boot and non secure boot images.
 
-Quirin Gylstorff (3):
-  start-qemu.sh: set bootindex for SECURE_BOOT
-  start-qemu.sh: parse .config.yaml for ease of use
-  start-qemu.sh: Simplify qemu call
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+ start-qemu.sh | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
- start-qemu.sh | 33 ++++++++++++++++++++++++---------
- 1 file changed, 24 insertions(+), 9 deletions(-)
-
+diff --git a/start-qemu.sh b/start-qemu.sh
+index 21b303a..4817790 100755
+--- a/start-qemu.sh
++++ b/start-qemu.sh
+@@ -120,18 +120,16 @@ if [ -n "${SECURE_BOOT}" ]; then
+ 		BOOT_FILES="-drive if=pflash,format=raw,unit=0,readonly=on,file=${ovmf_code} \
+ 			-drive if=pflash,format=raw,file=${ovmf_vars} \
+ 			-drive file=${IMAGE_PREFIX}.wic.img,discard=unmap,if=none,id=disk,format=raw"
+-		${QEMU_PATH}${QEMU} \
+-			-m 1G -serial mon:stdio -netdev user,id=net \
+-			${BOOT_FILES} ${QEMU_EXTRA_ARGS} "$@"
+ else
+ 		IMAGE_FILE=$(ls ${IMAGE_PREFIX}.ext4.img)
+ 
+ 		KERNEL_FILE=$(ls ${IMAGE_PREFIX}-vmlinu* | tail -1)
+ 		INITRD_FILE=$(ls ${IMAGE_PREFIX}-initrd.img* | tail -1)
+ 
+-		${QEMU_PATH}${QEMU} \
+-			-m 1G -serial mon:stdio -netdev user,id=net \
+-			-drive file=${IMAGE_FILE},discard=unmap,if=none,id=disk,format=raw \
++		BOOT_FILES="-drive file=${IMAGE_FILE},discard=unmap,if=none,id=disk,format=raw \
+ 			-kernel ${KERNEL_FILE} -append "${KERNEL_CMDLINE}" \
+-			-initrd ${INITRD_FILE} ${QEMU_EXTRA_ARGS} "$@"
++			-initrd ${INITRD_FILE}"
+ fi
++${QEMU_PATH}${QEMU} \
++			-m 1G -serial mon:stdio -netdev user,id=net \
++			${BOOT_FILES} ${QEMU_EXTRA_ARGS} "$@"
 -- 
 2.30.2
 
