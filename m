@@ -1,75 +1,70 @@
-Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55104C433FE
-	for <webhook@archiver.kernel.org>; Tue, 23 Nov 2021 18:25:11 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com
- [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web11.15285.1637691788508399837
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A76D2C433F5
+	for <webhook@archiver.kernel.org>; Wed, 24 Nov 2021 06:20:00 +0000 (UTC)
+Received: from gecko.sbs.de (gecko.sbs.de [194.138.37.40])
+ by mx.groups.io with SMTP id smtpd.web08.2672.1637734799478057723
  for <cip-dev@lists.cip-project.org>;
- Tue, 23 Nov 2021 10:23:08 -0800
+ Tue, 23 Nov 2021 22:20:00 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=pass (domain: bp.renesas.com, ip: 210.160.252.171,
- mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-IronPort-AV: E=Sophos;i="5.87,258,1631545200";
-   d="scan'208";a="101167954"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 24 Nov 2021 03:23:06 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 4F1794000911;
-	Wed, 24 Nov 2021 03:23:05 +0900 (JST)
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: cip-dev@lists.cip-project.org,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Pavel Machek <pavel@denx.de>,
-	Jan Kiszka <jan.kiszka@siemens.com>
-Subject: [cip-dev][isar-cip-core][RESEND PATCH 1/2] customizations: Add
- support to include tools and Firmware required for WiFi testing
-Date: Tue, 23 Nov 2021 18:23:01 +0000
-Message-Id: <20211123182302.8976-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20211123182302.8976-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ spf=pass (domain: siemens.com, ip: 194.138.37.40, mailfrom: jan.kiszka@siemens.com)
+Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
+	by gecko.sbs.de (8.15.2/8.15.2) with ESMTPS id 1AO6JmK6002555
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 24 Nov 2021 07:19:49 +0100
+Received: from [167.87.0.79] ([167.87.0.79])
+	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 1AO6Jkan025079;
+	Wed, 24 Nov 2021 07:19:47 +0100
+Subject: Re: [cip-dev][isar-cip-core][RESEND PATCH 0/2] Add support to test
+ WiFi on RZ/G2M
+To: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        cip-dev@lists.cip-project.org,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        Pavel Machek <pavel@denx.de>
 References: <20211123182302.8976-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Message-ID: <7e64827e-0778-c74c-73e9-207e21a35b37@siemens.com>
+Date: Wed, 24 Nov 2021 07:19:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
+MIME-Version: 1.0
+In-Reply-To: <20211123182302.8976-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 23 Nov 2021 18:25:11 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6981
+ <cip-dev@lists.cip-project.org>; Wed, 24 Nov 2021 06:20:00 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/6984
 
-Include iw tools, wireless-regdb (to include regulatory database) and any
-additional firmware pointed by WIRELESS_FIRMWARE_PACKAGE variable only if
-INSTALL_WIRELESS_TOOLS is set to "1".
+On 23.11.21 19:23, Lad Prabhakar wrote:
+> Hi All,
+> 
+> This patch series adds support to install required tools and firmware
+> for testing WiFi on HiHope RZ/G2M platform.
+> 
+> Cheers,
+> Prabhakar
+> 
+> Lad Prabhakar (2):
+>   customizations: Add support to include tools and Firmware required for
+>     WiFi testing
+>   conf: hihope-rzg2m: Enable tools and firmware for testing WiFi
+> 
+>  conf/machine/hihope-rzg2m.conf                | 3 +++
+>  recipes-core/customizations/customizations.bb | 7 ++++++-
+>  2 files changed, 9 insertions(+), 1 deletion(-)
+> 
 
-Suggested-by: Jan Kiszka <jan.kiszka@siemens.com>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- recipes-core/customizations/customizations.bb | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+thanks, applied.
 
-diff --git a/recipes-core/customizations/customizations.bb b/recipes-core/customizations/customizations.bb
-index 932b11c..d302b4a 100644
---- a/recipes-core/customizations/customizations.bb
-+++ b/recipes-core/customizations/customizations.bb
-@@ -18,10 +18,15 @@ SRC_URI = " \
-     file://ethernet \
-     file://99-silent-printk.conf"
- 
-+WIRELESS_FIRMWARE_PACKAGE ?= ""
-+INSTALL_WIRELESS_TOOLS ??= "0"
-+
- DEPENDS += "sshd-regen-keys"
- 
- DEBIAN_DEPENDS = " \
--    ifupdown, isc-dhcp-client, net-tools, iputils-ping, ssh, sshd-regen-keys"
-+    ifupdown, isc-dhcp-client, net-tools, iputils-ping, ssh, sshd-regen-keys \
-+    ${@(', iw, wireless-regdb, ' + d.getVar('WIRELESS_FIRMWARE_PACKAGE')) \
-+	if d.getVar('INSTALL_WIRELESS_TOOLS') == '1' else ''}"
- 
- do_install() {
- 	install -v -d ${D}/etc/network/interfaces.d
+Jan
+
 -- 
-2.17.1
-
+Siemens AG, T RDA IOT
+Corporate Competence Center Embedded Linux
 
