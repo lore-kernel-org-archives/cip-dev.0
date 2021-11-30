@@ -2,28 +2,28 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5415C4167B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9632EC4321E
 	for <webhook@archiver.kernel.org>; Tue, 30 Nov 2021 09:31:01 +0000 (UTC)
 Received: from thoth.sbs.de (thoth.sbs.de [192.35.17.2])
- by mx.groups.io with SMTP id smtpd.web10.74459.1638264659559575323
+ by mx.groups.io with SMTP id smtpd.web09.74285.1638264659588046545
  for <cip-dev@lists.cip-project.org>;
  Tue, 30 Nov 2021 01:31:00 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing;
  spf=pass (domain: siemens.com, ip: 192.35.17.2, mailfrom: quirin.gylstorff@siemens.com)
 Received: from mail1.sbs.de (mail1.sbs.de [192.129.41.35])
-	by thoth.sbs.de (8.15.2/8.15.2) with ESMTPS id 1AU9UvEX003918
+	by thoth.sbs.de (8.15.2/8.15.2) with ESMTPS id 1AU9UvJD003934
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-	for <cip-dev@lists.cip-project.org>; Tue, 30 Nov 2021 10:30:57 +0100
+	for <cip-dev@lists.cip-project.org>; Tue, 30 Nov 2021 10:30:58 +0100
 Received: from md2dvrtc.fritz.box ([167.87.34.248])
-	by mail1.sbs.de (8.15.2/8.15.2) with ESMTP id 1AU9UuEi020034;
-	Tue, 30 Nov 2021 10:30:56 +0100
+	by mail1.sbs.de (8.15.2/8.15.2) with ESMTP id 1AU9UuEm020034;
+	Tue, 30 Nov 2021 10:30:57 +0100
 From: "Q. Gylstorff" <Quirin.Gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
-Subject: [cip-dev][isar-cip-core][PATCH 1/9] Add new class to create a
- squashfs based root file system
-Date: Tue, 30 Nov 2021 10:30:48 +0100
-Message-Id: <20211130093056.324717-2-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH 5/9] Create an read-only rootfs with
+ dm-verity
+Date: Tue, 30 Nov 2021 10:30:52 +0100
+Message-Id: <20211130093056.324717-6-Quirin.Gylstorff@siemens.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211130093056.324717-1-Quirin.Gylstorff@siemens.com>
 References: <20211130093056.324717-1-Quirin.Gylstorff@siemens.com>
@@ -33,24 +33,91 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 30 Nov 2021 09:31:01 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7031
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7032
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-This file system is read only and use a reduced image size.
+This root file system supports SWUpdate and secure boot.
+We need a writable /tmp and /var for a boot without error messages.
+
+The mount  point for /tmp is created during the systemd target
+local-fs according to [1].
+
+Before `Remount Root and Kernel File Systems.` the tmp of the initrd
+is used.
+
+[1]: https://www.freedesktop.org/software/systemd/man/systemd.special.html
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- classes/squashfs-img.bbclass | 41 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
- create mode 100644 classes/squashfs-img.bbclass
+ .gitlab-ci.yml                                | 11 -------
+ Kconfig                                       |  4 +--
+ classes/secure-swupdate-img.bbclass           | 32 +++++++++++++++++++
+ kas/opt/ebg-secure-boot-snakeoil.yml          | 12 ++++++-
+ kas/opt/ebg-snakeoil-swu.yml                  | 16 ----------
+ .../images/cip-core-image-read-only.bb        | 20 ++++++++++++
+ recipes-core/tmp-fs/files/postinst            |  3 ++
+ recipes-core/tmp-fs/files/tmp.mount.tmpl      | 11 +++++++
+ recipes-core/tmp-fs/tmp-fs_0.1.bb             | 26 +++++++++++++++
+ start-qemu.sh                                 |  4 +++
+ wic/qemu-amd64-efibootguard-secureboot.wks    | 11 -------
+ wic/qemu-amd64-efibootguard-secureboot.wks.in | 13 ++++++++
+ 12 files changed, 122 insertions(+), 41 deletions(-)
+ create mode 100644 classes/secure-swupdate-img.bbclass
+ delete mode 100644 kas/opt/ebg-snakeoil-swu.yml
+ create mode 100644 recipes-core/images/cip-core-image-read-only.bb
+ create mode 100755 recipes-core/tmp-fs/files/postinst
+ create mode 100644 recipes-core/tmp-fs/files/tmp.mount.tmpl
+ create mode 100644 recipes-core/tmp-fs/tmp-fs_0.1.bb
+ delete mode 100644 wic/qemu-amd64-efibootguard-secureboot.wks
+ create mode 100644 wic/qemu-amd64-efibootguard-secureboot.wks.in
 
-diff --git a/classes/squashfs-img.bbclass b/classes/squashfs-img.bbclass
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+index 5becd37..d407f0f 100644
+--- a/.gitlab-ci.yml
++++ b/.gitlab-ci.yml
+@@ -179,17 +179,6 @@ build:qemu-amd64-swupdate:
+     targz: disable
+     deploy: disable
+ 
+-build:qemu-amd64-secure-boot-swu:
+-  extends:
+-    - .build_base
+-  variables:
+-    target: qemu-amd64
+-    extention: ebg-snakeoil-swu
+-    use_rt: disable
+-    wic_targz: disable
+-    targz: disable
+-    deploy: disable
+-
+ # bullseye images
+ build:simatic-ipc227e-bullseye:
+   extends:
+diff --git a/Kconfig b/Kconfig
+index 3b882d6..e5ce257 100644
+--- a/Kconfig
++++ b/Kconfig
+@@ -136,11 +136,11 @@ config IMAGE_SWUPDATE
+ config IMAGE_SECURE_BOOT
+ 	bool "Secure boot support"
+ 	depends on TARGET_QEMU_AMD64
++	select IMAGE_SWUPDATE
+ 
+ config KAS_INCLUDE_SWUPDATE_SECBOOT
+ 	string
+ 	default "kas/opt/ebg-swu.yml" if IMAGE_SWUPDATE && !IMAGE_SECURE_BOOT
+-	default "kas/opt/ebg-secure-boot-snakeoil.yml" if !IMAGE_SWUPDATE && IMAGE_SECURE_BOOT
+-	default "kas/opt/ebg-snakeoil-swu.yml" if IMAGE_SWUPDATE && IMAGE_SECURE_BOOT
++	default "kas/opt/ebg-secure-boot-snakeoil.yml" if IMAGE_SECURE_BOOT
+ 
+ endif
+diff --git a/classes/secure-swupdate-img.bbclass b/classes/secure-swupdate-img.bbclass
 new file mode 100644
-index 0000000..0fcfca5
+index 0000000..431939b
 --- /dev/null
-+++ b/classes/squashfs-img.bbclass
-@@ -0,0 +1,41 @@
++++ b/classes/secure-swupdate-img.bbclass
+@@ -0,0 +1,32 @@
 +#
 +# CIP Core, generic profile
 +#
@@ -62,36 +129,220 @@ index 0000000..0fcfca5
 +# SPDX-License-Identifier: MIT
 +#
 +
-+SQUASHFS_IMAGE_FILE = "${IMAGE_FULLNAME}.squashfs.img"
++SECURE_IMAGE_FSTYPE ?= "squashfs"
 +
-+IMAGER_INSTALL += "squashfs-tools"
++inherit ${SECURE_IMAGE_FSTYPE}-img
 +
-+SQUASHFS_EXCLUDE_DIRS ?= ""
-+SQUASHFS_CONTENT ?= "${PP_ROOTFS}"
-+SQUASHFS_CREATION_ARGS ?= " "
-+# Generate squashfs filesystem image
-+python __anonymous() {
-+    exclude_directories = (d.getVar('SQUASHFS_EXCLUDE_DIRS') or "").split()
-+    if len(exclude_directories) == 0:
-+        return
-+    # use wildcard to exclude only content of the the directory
-+    # this allows to use the directory as a mount point
-+    args = " -wildcards"
-+    for dir in exclude_directories:
-+        args += " -e {dir}/* ".format(dir=dir)
-+    d.appendVar('SQUASHFS_CREATION_ARGS', args)
++VERITY_IMAGE_TYPE = "${SECURE_IMAGE_FSTYPE}"
++
++INITRAMFS_RECIPE ?= "cip-core-initramfs"
++do_wic_image[depends] += "${INITRAMFS_RECIPE}:do_build"
++INITRD_IMAGE = "${INITRAMFS_RECIPE}-${DISTRO}-${MACHINE}.initrd.img"
++
++inherit verity-img
++inherit wic-img
++inherit extract-partition
++inherit swupdate-img
++
++SOURCE_IMAGE_FILE = "${WIC_IMAGE_FILE}"
++
++addtask do_verity_image after do_${SECURE_IMAGE_FSTYPE}_image
++addtask do_wic_image after do_verity_image
++addtask do_extract_partition after do_wic_image
++addtask do_swupdate_image after do_extract_partition
+diff --git a/kas/opt/ebg-secure-boot-snakeoil.yml b/kas/opt/ebg-secure-boot-snakeoil.yml
+index 2f45bde..1cfbacc 100644
+--- a/kas/opt/ebg-secure-boot-snakeoil.yml
++++ b/kas/opt/ebg-secure-boot-snakeoil.yml
+@@ -14,13 +14,23 @@ header:
+   includes:
+    - kas/opt/ebg-secure-boot-base.yml
+ 
++target: cip-core-image-read-only
+ 
+ local_conf_header:
++  swupdate: |
++    IMAGE_INSTALL_append = " swupdate"
++    IMAGE_INSTALL_append = " swupdate-handler-roundrobin"
++
++  verity-img: |
++    SECURE_IMAGE_FSTYPE = "squashfs"
++    VERITY_IMAGE_RECIPE = "cip-core-image-read-only"
++    IMAGE_TYPE = "secure-swupdate-img"
++    WKS_FILE = "${MACHINE}-efibootguard-secureboot.wks.in"
++
+   secure-boot: |
+     # Add snakeoil and ovmf binaries for qemu
+     IMAGER_BUILD_DEPS += "ebg-secure-boot-snakeoil ovmf-binaries"
+     IMAGER_INSTALL += "ebg-secure-boot-snakeoil"
+-    WKS_FILE = "${MACHINE}-efibootguard-secureboot.wks"
+ 
+   ovmf: |
+     # snakeoil certs are only part of backports
+diff --git a/kas/opt/ebg-snakeoil-swu.yml b/kas/opt/ebg-snakeoil-swu.yml
+deleted file mode 100644
+index 2f15c0e..0000000
+--- a/kas/opt/ebg-snakeoil-swu.yml
++++ /dev/null
+@@ -1,16 +0,0 @@
+-#
+-# CIP Core, generic profile
+-#
+-# Copyright (c) Siemens AG, 2021
+-#
+-# Authors:
+-#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+-#
+-# SPDX-License-Identifier: MIT
+-#
+-
+-header:
+-  version: 10
+-  includes:
+-   - kas/opt/ebg-secure-boot-snakeoil.yml
+-   - kas/opt/swupdate.yml
+diff --git a/recipes-core/images/cip-core-image-read-only.bb b/recipes-core/images/cip-core-image-read-only.bb
+new file mode 100644
+index 0000000..7ef2dc2
+--- /dev/null
++++ b/recipes-core/images/cip-core-image-read-only.bb
+@@ -0,0 +1,20 @@
++require cip-core-image.bb
++
++SQUASHFS_EXCLUDE_DIRS += "home var"
++
++IMAGE_INSTALL += "tmp-fs"
++IMAGE_INSTALL_remove += "initramfs-abrootfs-secureboot"
++
++image_configure_fstab() {
++    sudo tee '${IMAGE_ROOTFS}/etc/fstab' << EOF
++# Begin /etc/fstab
++/dev/root	/		auto		defaults,ro			0	0
++LABEL=var	/var		auto		defaults			0	0
++proc		/proc		proc		nosuid,noexec,nodev		0	0
++sysfs		/sys		sysfs		nosuid,noexec,nodev		0	0
++devpts		/dev/pts	devpts		gid=5,mode=620			0	0
++tmpfs		/run		tmpfs		nodev,nosuid,size=500M,mode=755	0	0
++devtmpfs	/dev		devtmpfs	mode=0755,nosuid		0	0
++# End /etc/fstab
++EOF
 +}
+diff --git a/recipes-core/tmp-fs/files/postinst b/recipes-core/tmp-fs/files/postinst
+new file mode 100755
+index 0000000..07017fd
+--- /dev/null
++++ b/recipes-core/tmp-fs/files/postinst
+@@ -0,0 +1,3 @@
++#!/bin/sh
 +
-+do_squashfs_image() {
-+    rm -f '${DEPLOY_DIR_IMAGE}/${SQUASHFS_IMAGE_FILE}'
++deb-systemd-helper enable tmp.mount  || true
+diff --git a/recipes-core/tmp-fs/files/tmp.mount.tmpl b/recipes-core/tmp-fs/files/tmp.mount.tmpl
+new file mode 100644
+index 0000000..fcb2f3e
+--- /dev/null
++++ b/recipes-core/tmp-fs/files/tmp.mount.tmpl
+@@ -0,0 +1,11 @@
++[Unit]
++Description=Create /tmp
 +
-+    image_do_mounts
++[Mount]
++What=tmpfs
++Where=/tmp
++Type=tmpfs
++Options=${TMP_OPTIONS}
 +
-+    sudo chroot "${BUILDCHROOT_DIR}" /bin/mksquashfs  \
-+        "${SQUASHFS_CONTENT}" "${PP_DEPLOY}/${SQUASHFS_IMAGE_FILE}" \
-+        ${SQUASHFS_CREATION_ARGS}
++[Install]
++WantedBy=local-fs.target
+diff --git a/recipes-core/tmp-fs/tmp-fs_0.1.bb b/recipes-core/tmp-fs/tmp-fs_0.1.bb
+new file mode 100644
+index 0000000..3ec20c7
+--- /dev/null
++++ b/recipes-core/tmp-fs/tmp-fs_0.1.bb
+@@ -0,0 +1,26 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2021
++#
++# Authors:
++#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++
++inherit dpkg-raw
++
++SRC_URI = "file://postinst \
++           file://tmp.mount.tmpl"
++
++TMP_FS_SIZE ?= "500M"
++TMP_FS_MODE ?= "755"
++TMP_FS_OPTIONS = "nodev,nosuid,size=${TMP_SIZE},mode=${TMP_MODE}"
++
++TEMPLATE_FILES = "tmp.mount.tmpl"
++TEMPLATE_VARS += "TMP_FS_OPTIONS"
++
++do_install[cleandirs]+="${D}/lib/systemd/system"
++do_install() {
++    install -m 0644 ${WORKDIR}/tmp.mount ${D}/lib/systemd/system/tmp.mount
 +}
-+addtask do_squashfs_image before do_image after do_image_tools do_excl_directories
+diff --git a/start-qemu.sh b/start-qemu.sh
+index a92e9f4..c700974 100755
+--- a/start-qemu.sh
++++ b/start-qemu.sh
+@@ -42,6 +42,9 @@ if [ -z "${TARGET_IMAGE}" ];then
+ 	TARGET_IMAGE="cip-core-image"
+ 	if grep -s -q "IMAGE_SECURITY: true" .config.yaml; then
+ 		TARGET_IMAGE="cip-core-image-security"
++    fi
++	if [ -n "${SECURE_BOOT}" ]; then
++		TARGET_IMAGE="cip-core-image-read-only"
+ 	fi
+ fi
+ 
+@@ -55,6 +58,7 @@ case "$1" in
+ 			-machine q35,accel=kvm:tcg \
+ 			-device virtio-net-pci,netdev=net"
+ 		if [ -n "${SECURE_BOOT}" ]; then
++            # set bootindex=0 to boot disk instead of EFI-shell
+ 			QEMU_EXTRA_ARGS=" \
+ 			${QEMU_EXTRA_ARGS} -device ide-hd,drive=disk,bootindex=0"
+ 		else
+diff --git a/wic/qemu-amd64-efibootguard-secureboot.wks b/wic/qemu-amd64-efibootguard-secureboot.wks
+deleted file mode 100644
+index ff351db..0000000
+--- a/wic/qemu-amd64-efibootguard-secureboot.wks
++++ /dev/null
+@@ -1,11 +0,0 @@
+-# short-description: Qemu-amd64 with Efibootguard and SWUpdate
+-# long-description: Disk image for qemu-amd64 with EFI Boot Guard and SWUpdate
+-include ebg-signed-bootloader.inc
+-
+-# EFI Boot Guard environment/config partitions plus Kernel files
+-part --source efibootguard-boot --ondisk sda --size 32M --extra-space 0 --overhead-factor 1 --label BOOT0 --align 1024 --part-type=0700 --sourceparams "revision=2,unified-kernel=y,signwith=/usr/bin/sign_secure_image.sh"
+-part --source efibootguard-boot --ondisk sda --size 32M --extra-space 0 --overhead-factor 1 --label BOOT1 --align 1024 --part-type=0700 --sourceparams "revision=1,unified-kernel=y,signwith=/usr/bin/sign_secure_image.sh"
+-
+-include swupdate-partition.inc
+-
+-bootloader --ptable gpt --append="console=tty0 console=ttyS0,115200 rootwait earlyprintk panic=0"
+diff --git a/wic/qemu-amd64-efibootguard-secureboot.wks.in b/wic/qemu-amd64-efibootguard-secureboot.wks.in
+new file mode 100644
+index 0000000..c4ea0c8
+--- /dev/null
++++ b/wic/qemu-amd64-efibootguard-secureboot.wks.in
+@@ -0,0 +1,13 @@
++# EFI partition containing efibootguard bootloader binary
++part --source efibootguard-efi  --ondisk sda --size 16M --extra-space 0 --overhead-factor 1 --label efi   --align 1024 --part-type=EF00 --active --sourceparams "signwith=/usr/bin/sign_secure_image.sh"
++
++# EFI Boot Guard environment/config partitions plus Kernel files
++part --source efibootguard-boot --ondisk sda --size 32M --extra-space 0 --overhead-factor 1 --label BOOT0 --align 1024 --part-type=0700 --sourceparams "revision=2,unified-kernel=y,signwith=/usr/bin/sign_secure_image.sh"
++part --source efibootguard-boot --ondisk sda --size 32M --extra-space 0 --overhead-factor 1 --label BOOT1 --align 1024 --part-type=0700 --sourceparams "revision=1,unified-kernel=y,signwith=/usr/bin/sign_secure_image.sh"
++
++part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${VERITY_IMAGE_TYPE}.verity.img" --ondisk sda --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
++part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${VERITY_IMAGE_TYPE}.verity.img" --ondisk sda --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
++
++part /var --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var --ondisk sda --fstype=ext4 --label var --align 1024  --size 2G
++
++bootloader --ptable gpt --append="console=tty0 console=ttyS0,115200 rootwait rw earlyprintk"
 -- 
 2.30.2
 
