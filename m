@@ -1,258 +1,141 @@
-Return-Path: <masami.ichikawa@miraclelinux.com>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E55FC433F5
-	for <webhook@archiver.kernel.org>; Fri, 26 Nov 2021 13:39:59 +0000 (UTC)
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com
- [209.85.210.47])
- by mx.groups.io with SMTP id smtpd.web12.23965.1637933996197690741
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 528D3C433F5
+	for <webhook@archiver.kernel.org>; Tue, 30 Nov 2021 08:33:19 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web09.73895.1638261197889592999
  for <cip-dev@lists.cip-project.org>;
- Fri, 26 Nov 2021 05:39:57 -0800
+ Tue, 30 Nov 2021 00:33:18 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112
- header.b=eYLre6K4;
- spf=pass (domain: miraclelinux.com, ip: 209.85.210.47,
- mailfrom: masami.ichikawa@miraclelinux.com)
-Received: by mail-ot1-f47.google.com with SMTP id
- n104-20020a9d2071000000b005799790cf0bso14025885ota.5
-        for <cip-dev@lists.cip-project.org>;
- Fri, 26 Nov 2021 05:39:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=crKCpYKeJSywnbzAUsjQPKjsqVsS89x+MJxHZ/RkpYY=;
-        b=eYLre6K4VeA0WK9r0GDYYMuUGb7/dzwg4d96JsVBukiY6+KGV/7YV4pPslLlVZsEPT
-         SLhMX9pXfaxtPkznORvXVQ5rxyQpO9x14r/brQgLN5+Ur5Ch03S8qrpfYgBLweXmXSIm
-         d96raszCYuMwdBM1FKpQc043+LTlfUkyBwtNEThBCIt0wsvYLdVbtVSgFVK2EqoEGQ7d
-         bPlPfWa5XZ5McLnuVBTTdMHDkZ39RwPYEOsZTVh7ZGa9UzOrRqth/GBubCRVkJZwguX5
-         v3vXt8lOUS308NEyJF1UP3AUs9NFKA6Z+ypDjdz0WzJnGM2jC5e32XtaM/oNODaCJcUa
-         qPQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=crKCpYKeJSywnbzAUsjQPKjsqVsS89x+MJxHZ/RkpYY=;
-        b=B0KIq76JmifX7nu2S0Q/6YLHBG5G8VMTZvL5Wr/ey2Ne+kcyPZ6C3nxOq2lvVQcHNh
-         r1qymi8HGkRs/BEsqFx3yA17UTePJAlrW+mMsPycV9bchzZ9A+R8E76HD5ViXnPMKwKz
-         Dx/WSc3hKXfZn2WmWe4Z+jlRNkdWjXNuLpn6kuzOopQmAJNe5t9uYcbW01s6b+1O7pBq
-         VDWXx+SwFpCp+c4Cj8iVE5IOt7wH3ASOH1HXfz83wvzLt9Gxib/6Gr2R6NXlUvbc8JnY
-         bSWdB6oK94nkdnmuocGc5Yuiv2XnqZVffW10RarnZ1B1SvqyB9SFL96Fme+Ofp7abH1q
-         ya2Q==
-X-Gm-Message-State: AOAM530N5wZSAlJCZJLZOCxIHI5y9LOpZGpFfs/JGfm1sIeSOJUmzL8h
-	zCrRVImw/Jq2PESgKOzlbJ0rPRvAWAT+G8DozN2fZ0TS1kk8oQ==
-X-Google-Smtp-Source: 
- ABdhPJzMwsOaTX4+Y9U4qTdBucYg/La3TUeIjbTkav/JfZA3t+ouJuyw2U8ipOisvcEWnyrCPNImQj2/FG+IWfKcfWM=
-X-Received: by 2002:a9d:5ccc:: with SMTP id r12mr28294541oti.67.1637933995055;
- Fri, 26 Nov 2021 05:39:55 -0800 (PST)
+ dkim=missing;
+ spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id CAA711C0B76; Tue, 30 Nov 2021 09:33:08 +0100 (CET)
+Date: Tue, 30 Nov 2021 09:33:05 +0100
+From: Pavel Machek <pavel@denx.de>
+To: cip-dev@lists.cip-project.org, bot@kernelci.org,
+	Chris.Paterson2@renesas.com, alice.ferrazzi@miraclelinux.com
+Subject: Re: [cip-dev] cip/linux-4.19.y-cip baseline-nfs: 12 runs, 1
+ regressions (v4.19.217-cip62) #kernelci
+Message-ID: <20211130083305.GA2355@amd>
+References: <61a58f0d.1c69fb81.10029.4ed2@mx.google.com>
 MIME-Version: 1.0
-References: 
- <CAODzB9qEJUBAGggEaTmc27Lr0opreM8wv5D_HStKT6UH=+a_UA@mail.gmail.com>
- <16BABF37827ACD8B.14741@lists.cip-project.org> <20211125095339.GC3327@amd>
- <CAODzB9r4uBS5bBKGbZBPST6V7OppONToGqdB8HxhJD8Kh3Nruw@mail.gmail.com>
- <20211126100255.GA13434@duo.ucw.cz>
-In-Reply-To: <20211126100255.GA13434@duo.ucw.cz>
-From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Date: Fri, 26 Nov 2021 22:39:19 +0900
-Message-ID: 
- <CAODzB9otUzAUQUSfFNfT4cR95JdXz2fmCiG+0d_J_c=hvKpQbg@mail.gmail.com>
-Subject: Re: CVE-2021-3640: UAF in sco_send_frame function was Re: [cip-dev]
- New CVE entries in this week
-To: cip-dev@lists.cip-project.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="tKW2IUtsqtDRztdT"
+Content-Disposition: inline
+In-Reply-To: <61a58f0d.1c69fb81.10029.4ed2@mx.google.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 26 Nov 2021 13:39:59 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7022
+ <cip-dev@lists.cip-project.org>; Tue, 30 Nov 2021 08:33:19 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7026
 
-Hi !
 
-On Fri, Nov 26, 2021 at 7:03 PM Pavel Machek <pavel@denx.de> wrote:
->
-> Hi!
-> > > > Interesting.
-> > > >
-> > > > commit 99c23da0eed4fd20cae8243f2b51e10e66aa0951
-> > > > Author: Takashi Iwai <tiwai@suse.de>
-> > > >
-> > > > Says:
-> > > >
-> > > >     This should be the last piece for fixing CVE-2021-3640 after a few
-> > > >     already queued fixes.
-> > > >
-> > > > Which means more than 99c23da0eed is needed to fix this one,
-> > > > unfortunately it does not give us good way to identify what commits
-> > > > are needed.
-> > >
-> > > Aha, but we have required information in
-> > > cip-kernel-sec/issues/CVE-2021-3640.yml. It lists patches that should
-> > > be fixing this.
-> > >
-> > > Some searching in the trees reveals that one of those patches is buggy
-> > > itself, and additionaly 49d8a5606428ca0962d09050a5af81461ff90fbb is
-> > > needed.
-> > >
-> > > The patches fixing this are:
-> > >
-> > > ~  stable/5.10: [4dfba42604f08a505f1a1efc69ec5207ea6243de,
-> > >                 f2f856b65ac4b77049c76c0e89ecd3a177e9fcd1,
-> > >                 98d44b7be6f1bcfd4f824c5f8bc2b742f890879f,
-> > >                 c20d8c197454068da758a83e09d93683f520d681,
-> > >                 a1073aad497d0d071a71f61b721966a176d50c08]
-> > >
-> > > But we still miss backport of 27c24fda62b6 ("Bluetooth: switch to
-> > > lock_sock in SCO") to 5.10, which has its own prerequisites
-> > > according to the changelog. AFAICT those prerequisites are
-> > > 734bc5ff783115aa3164f4e9dd5967ae78e0a8ab and
-> > > ba316be1b6a00db7126ed9a39f9bee434a508043, and both are in 5.10.
-> > >
-> > > I'm not sure how to express this in yml cleanly. I came with this:
-> > >
-> > > diff --git a/issues/CVE-2021-3640.yml b/issues/CVE-2021-3640.yml
-> > > index fb52d5a..d386093 100644
-> > > --- a/issues/CVE-2021-3640.yml
-> > > +++ b/issues/CVE-2021-3640.yml
-> > > @@ -23,9 +23,23 @@ comments:
-> > >      there is no fixed information as of 2021/07/26.
-> > >      Fixed in bluetooth-next tree. commit 99c23da0eed4fd20cae8243f2b51e10e66aa0951.
-> > >    ubuntu/sbeattie: Possibly addressed by Desmond Cheong Zhi Xi's patchset.
-> > > +  pavel: We are one patch away from fixing this 5.10, 27c24fda62b6 is needed.
-> > >  fixed-by:
-> > > -  mainline: [99c23da0eed4fd20cae8243f2b51e10e66aa0951]
-> > > -  stable/5.10: [4dfba42604f08a505f1a1efc69ec5207ea6243de]
-> > > +  mainline: [99c23da0eed4fd20cae8243f2b51e10e66aa0951,
-> > > +            e04480920d1eec9c061841399aa6f35b6f987d8b,
-> > > +            734bc5ff783115aa3164f4e9dd5967ae78e0a8ab,
-> > > +            49d8a5606428ca0962d09050a5af81461ff90fbb,
-> > > +            ba316be1b6a00db7126ed9a39f9bee434a508043,
-> > > +            27c24fda62b601d6f9ca5e992502578c4310876f,
-> > > +            734bc5ff783115aa3164f4e9dd5967ae78e0a8ab,
-> > > +            ba316be1b6a00db7126ed9a39f9bee434a508043]
-> > > +  stable/5.10: [4dfba42604f08a505f1a1efc69ec5207ea6243de,
-> > > +               f2f856b65ac4b77049c76c0e89ecd3a177e9fcd1,
-> > > +               98d44b7be6f1bcfd4f824c5f8bc2b742f890879f,
-> > > +               c20d8c197454068da758a83e09d93683f520d681,
-> > > +               a1073aad497d0d071a71f61b721966a176d50c08,
-> > > +               98d44b7be6f1bcfd4f824c5f8bc2b742f890879f,
-> > > +               a1073aad497d0d071a71f61b721966a176d50c08]
-> > >    stable/5.14: [2c2b295af72e4e30d17556375e100ae65ac0b896]
-> > >    stable/5.15: [b990c219c4c9d4993ef65ea9db73d9497e70f697]
-> > >    stable/5.4: [d416020f1a9cc5f903ae66649b2c56d9ad5256ab]
-> > >
-> >
-> > Thank you for your analysis result ! I applied it.
-> >
-> > I checked 27c24fda62b601d6f9ca5e992502578c4310876f is able to apply
-> > cleanly to stable/5.10 tree or not.  Unfortunately it need to fix
-> > conflicts. git-am shows following two errors.
->
-> As far as I can tell, logic is quite simple there and the patch would
-> look like this. Whether the final result works and closes the security
-> hole is different question.
->
+--tKW2IUtsqtDRztdT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thank you for the patch !
-Yes, applying code and works properly is different question. however,
-your patch is LGTM.
+Hi!
 
-> Best regards,
->                                                                 Pavel
-> commit e077740ddfa22385d53700898ea325068ca4cc6b
-> Author: Pavel Machek <pavel@ucw.cz>
-> Date:   Thu Nov 25 14:14:04 2021 +0100
->
->     Cherry pick 27c24fda62b6 ("Bluetooth: switch to lock_sock in SCO") to
->     close CVE-2021-3640.
->
-> diff --git a/net/bluetooth/sco.c b/net/bluetooth/sco.c
-> index 2f2b8ddc4dd5..cf165b0d15f2 100644
-> --- a/net/bluetooth/sco.c
-> +++ b/net/bluetooth/sco.c
-> @@ -93,10 +93,10 @@ static void sco_sock_timeout(struct work_struct *work)
->
->         BT_DBG("sock %p state %d", sk, sk->sk_state);
->
-> -       bh_lock_sock(sk);
-> +       lock_sock(sk);
->         sk->sk_err = ETIMEDOUT;
->         sk->sk_state_change(sk);
-> -       bh_unlock_sock(sk);
-> +       release_sock(sk);
->
->         sock_put(sk);
->  }
-> @@ -193,10 +193,10 @@ static void sco_conn_del(struct hci_conn *hcon, int err)
->
->         if (sk) {
->                 sock_hold(sk);
-> -               bh_lock_sock(sk);
-> +               lock_sock(sk);
->                 sco_sock_clear_timer(sk);
->                 sco_chan_del(sk, err);
-> -               bh_unlock_sock(sk);
-> +               release_sock(sk);
->                 sock_put(sk);
->         }
->
-> @@ -1108,10 +1108,10 @@ static void sco_conn_ready(struct sco_conn *conn)
->
->         if (sk) {
->                 sco_sock_clear_timer(sk);
-> -               bh_lock_sock(sk);
-> +               lock_sock(sk);
->                 sk->sk_state = BT_CONNECTED;
->                 sk->sk_state_change(sk);
-> -               bh_unlock_sock(sk);
-> +               release_sock(sk);
->         } else {
->                 sco_conn_lock(conn);
->
-> @@ -1126,12 +1126,12 @@ static void sco_conn_ready(struct sco_conn *conn)
->                         return;
->                 }
->
-> -               bh_lock_sock(parent);
-> +               lock_sock(parent);
->
->                 sk = sco_sock_alloc(sock_net(parent), NULL,
->                                     BTPROTO_SCO, GFP_ATOMIC, 0);
->                 if (!sk) {
-> -                       bh_unlock_sock(parent);
-> +                       release_sock(parent);
->                         sco_conn_unlock(conn);
->                         return;
->                 }
-> @@ -1152,7 +1152,7 @@ static void sco_conn_ready(struct sco_conn *conn)
->                 /* Wake up parent */
->                 parent->sk_data_ready(parent);
->
-> -               bh_unlock_sock(parent);
-> +               release_sock(parent);
->
->                 sco_conn_unlock(conn);
->         }
->
->
-> --
-> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
->
-> -=-=-=-=-=-=-=-=-=-=-=-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#7021): https://lists.cip-project.org/g/cip-dev/message/7021
-> Mute This Topic: https://lists.cip-project.org/mt/87299556/4520416
-> Group Owner: cip-dev+owner@lists.cip-project.org
-> Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129101/4520416/1465703922/xyzzy [masami.ichikawa@miraclelinux.com]
-> -=-=-=-=-=-=-=-=-=-=-=-
->
+So... I tried to understand this report, and still could not.
 
-Regards,
+First problem is actually in the From: line. By placing bot there, it
+is not clear who is responsible for this, and if someone reads replies
+to the bot address.
 
--- 
-Masami Ichikawa
-Cybertrust Japan Co., Ltd.
+I feel posts to mailing lists should be signed by human responsible
+for them.
 
-Email :masami.ichikawa@cybertrust.co.jp
-          :masami.ichikawa@miraclelinux.com
+Then we have:
+
+> cip/linux-4.19.y-cip baseline-nfs: 12 runs, 1 regressions (v4.19.217-cip6=
+2)
+
+Ok, so we may have an regression. That means it worked before and it
+does not work now. I'd expect two versions "worked in v4.19.123-cip12,
+now broken in v4.19.217-cip62", but we only have one.
+
+> Regressions Summary
+> -------------------
+>=20
+> platform         | arch  | lab           | compiler | defconfig | regress=
+ions
+> -----------------+-------+---------------+----------+-----------+--------=
+----
+> rk3399-gru-kevin | arm64 | lab-collabora | gcc-10   | defconfig | 1      =
+   =20
+
+>   URL:      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip=
+=2Egit
+>   SHA:      dc62e26e3be875a7324b85b8274c13a335e610dd
+
+Still no note when it worked last.
+
+>   HTML log:    https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.2=
+17-cip62/arm64/defconfig/gcc-10/lab-collabora/baseline-nfs-rk3399-gru-kevin=
+=2Ehtml
+
+Ok, so we have bootlog from a machine, that's quite unhappy. Part of
+it are kernel problems, but we see missing firmware, too. In the end,
+it looks like it has no usable network card, so it can not do NFS
+boot... and panics.
+
+It is hard to tell config problem vs. kernel bug without knowing more
+about machine configuration. Best seeing previous successful runs...
+
+Is there human here who believes this is a problem in -cip kernel that
+is worth solving, and is willing to answer questions and test patches?
+
+Best regards,
+
+								Pavel
+
+02:27:34.443815  <4>[    1.401574] cacheinfo: Unable to detect cache
+hierarchy for CPU 0
+02:27:34.452441  <6>[    1.413496] loop: module loaded
+02:27:34.464113  <4>[    1.421343] rockchip-spi ff1d0000.spi: Failed
+to request TX DMA channel
+02:27:34.471531  <4>[    1.429063] rockchip-spi ff1d0000.spi: Failed
+to request RX DMA channel
+02:27:34.487460  <6>[    1.446867] m25p80 spi0.0: gd25lq64c (8192
+Kbytes)
+02:27:34.501792  <4>[    1.459399] rockchip-spi ff1e0000.spi: Failed
+to request TX DMA channel
+=2E..
+02:27:48.313465  <6>[   15.264576] atmel_mxt_ts 3-004b: Family: 164
+Variant: 14 Firmware V2.3.AA Objects: 40
+02:27:48.362782  <4>[   15.318381] atmel_mxt_ts 3-004b: Direct
+firmware load for maxtouch.cfg failed with error -2
+02:27:48.535527  <4>[   15.377455] atmel_mxt_ts 5-004a: Direct
+firmware load for maxtouch.cfg failed with error -2
+02:27:48.827088  ipconfig: no devices to configure
+02:27:48.831012  ipconfig: no devices to configure
+02:27:48.926132  <4>[   15.866511] platform regulatory.0: Direct
+firmware load for regulatory.db failed with error -2
+02:27:48.931359  <6>[   15.879008] pci 0000:00:00.0: PCI bridge to
+[bus 01]
+02:27:48.938653  <6>[   15.879016] pci 0000:00:00.0:   bridge window
+[mem 0xfa000000-0xfa1fffff]
+
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--tKW2IUtsqtDRztdT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAmGl4cEACgkQMOfwapXb+vIDIwCfTo0Hp4z+ztHcjJ/PLVM3RUW5
+zXcAn3GGM/WAV7wwlPzs7+k0GFXJI1l3
+=8Otl
+-----END PGP SIGNATURE-----
+
+--tKW2IUtsqtDRztdT--
 
