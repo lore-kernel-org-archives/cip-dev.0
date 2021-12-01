@@ -1,80 +1,163 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2178C433EF
-	for <webhook@archiver.kernel.org>; Wed,  1 Dec 2021 09:12:00 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web08.89472.1638349918567306276
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4397C433EF
+	for <webhook@archiver.kernel.org>; Wed,  1 Dec 2021 11:54:22 +0000 (UTC)
+Received: from gecko.sbs.de (gecko.sbs.de [194.138.37.40])
+ by mx.groups.io with SMTP id smtpd.web11.90402.1638359661318568613
  for <cip-dev@lists.cip-project.org>;
- Wed, 01 Dec 2021 01:11:59 -0800
+ Wed, 01 Dec 2021 03:54:22 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id E5DBE1C0BA8; Wed,  1 Dec 2021 10:11:54 +0100 (CET)
-Date: Wed, 1 Dec 2021 10:11:53 +0100
-From: Pavel Machek <pavel@denx.de>
-To: Chris Paterson <Chris.Paterson2@renesas.com>
-Cc: Pavel Machek <pavel@denx.de>,
-	"cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	"bot@kernelci.org" <bot@kernelci.org>,
-	"alice.ferrazzi@miraclelinux.com" <alice.ferrazzi@miraclelinux.com>,
-	"kernelci@groups.io" <kernelci@groups.io>
-Subject: Re: [cip-dev] cip/linux-4.19.y-cip baseline-nfs: 12 runs, 1
- regressions (v4.19.217-cip62) #kernelci
-Message-ID: <20211201091153.GB23274@amd>
-References: <61a58f0d.1c69fb81.10029.4ed2@mx.google.com>
- <20211130083305.GA2355@amd>
- <OSZPR01MB687760A42FAC36D478192D11B7679@OSZPR01MB6877.jpnprd01.prod.outlook.com>
+ spf=pass (domain: siemens.com, ip: 194.138.37.40, mailfrom: jan.kiszka@siemens.com)
+Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
+	by gecko.sbs.de (8.15.2/8.15.2) with ESMTPS id 1B1BsIcZ015274
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+	for <cip-dev@lists.cip-project.org>; Wed, 1 Dec 2021 12:54:19 +0100
+Received: from [139.25.68.37] ([139.25.68.37])
+	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 1B1BsIpF030143;
+	Wed, 1 Dec 2021 12:54:18 +0100
+Subject: Re: [cip-dev][isar-cip-core][RESEND PATCH 0/9] Read-only root file
+ system with dm-verity
+To: "Q. Gylstorff" <Quirin.Gylstorff@siemens.com>,
+        cip-dev@lists.cip-project.org
+References: <20211130114726.351921-1-Quirin.Gylstorff@siemens.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Message-ID: <f488d79d-b493-e950-9926-ab1d44055d02@siemens.com>
+Date: Wed, 1 Dec 2021 12:54:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="CdrF4e02JqNVZeln"
-Content-Disposition: inline
-In-Reply-To: 
- <OSZPR01MB687760A42FAC36D478192D11B7679@OSZPR01MB6877.jpnprd01.prod.outlook.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20211130114726.351921-1-Quirin.Gylstorff@siemens.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 01 Dec 2021 09:12:00 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7051
+ <cip-dev@lists.cip-project.org>; Wed, 01 Dec 2021 11:54:22 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7052
 
+On 30.11.21 12:47, Q. Gylstorff wrote:
+> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+> 
+> *This patch series adds support for a read-only squashfs based root filesystem
+> wit SWUpdate support and secureboot.
+> 
+> The build is somewhat complex as we need the output of dm-verity to generate
+> the initramfs. The build is split in the following steps
+> 1. Build the root file system
+> 2. Generate a squashfs image - this can also be replace by another image format(e.g. ext4)
+> 3. Build from the image the dm-verity partition and add it to the end of the image
+> 4. Add the resulting verity environment to the initrd
+> 5. Build the signed efi tool chain.
+> 
+> This series needs SWUpdate 2021.11. The necessary changes are currently backported.
+> 
+> Changes in RFC V2:
+>  - rebase onto orgin/next
+>  - adapt Kconfig to new ebg-secure-boot-snakeoil.yml by deleting unnecessary options
+>  - Cleanup to support different file-systems for verity-img
+>    - tested with ext4 and squashfs
+>  - simplified kernel patching
+>    - prepend not necessary
+>    - added flag to enable/disable
+>  - whitespaces for readability
+>  - integrated into ebg-secure-boot-snakeoil
+>  - make behavior on corruption configurable during build time.
+>    - default is restart on corruption
+>  - add ISAR patch for correct permissions
+> 
+> Changes in RFC V3:
+>  - Configurable size of /tmp
+>  - remove unnecessary overlay-parse-etc.service
+>  - convert etc-sysusers to drop in configuration of systemd-sysusers.service
+>  - extend commit messages
+> 
+> Changes in Patch:
+>  - rebased onto origin/next 2550c34a03ae3c035a1593585f2d8e545c83140d
+>  - initrd verity warning message
+>  - Kconfig: secure-boot element selects also swupdate
+>             as the secureboot kas option contains swupdate
+>  - fixed ci build
+> 
+> Quirin Gylstorff (9):
+>   Add new class to create a squashfs based root file system
+>   Add verity-img.bbclass for dm-verity based rootfs
+>   linux-cip-common: Increase revision kernel config
+>   Create a initrd with support for dm-verity
+>   Create an read-only rootfs with dm-verity
+>   Create systemd mount units for a etc overlay
+>   Mount writable home partition
+>   kas: Patch isar for correct permissions in var and home
+>   swupdate: Backport patches from SWUpdate Master
+> 
+>  .gitlab-ci.yml                                |  11 -
+>  Kconfig                                       |   4 +-
+>  classes/secure-swupdate-img.bbclass           |  32 +++
+>  classes/squashfs-img.bbclass                  |  41 ++++
+>  classes/verity-img.bbclass                    |  73 +++++++
+>  kas-cip.yml                                   |   4 +
+>  kas/opt/ebg-secure-boot-snakeoil.yml          |  12 +-
+>  ...when-splitting-rootfs-folders-across.patch |  35 ++++
+>  .../etc-overlay-fs/etc-overlay-fs_0.1.bb      |  32 +++
+>  .../etc-overlay-fs/files/etc-hostname.service |  14 ++
+>  .../files/etc-sshd-regen-keys.conf            |   7 +
+>  .../etc-overlay-fs/files/etc-sysusers.conf    |   4 +
+>  recipes-core/etc-overlay-fs/files/etc.mount   |  13 ++
+>  recipes-core/etc-overlay-fs/files/postinst    |   4 +
+>  recipes-core/home-fs/files/home.mount         |  12 ++
+>  recipes-core/home-fs/files/postinst           |   3 +
+>  recipes-core/home-fs/home-fs_0.1.bb           |  20 ++
+>  .../images/cip-core-image-read-only.bb        |  22 ++
+>  ...an-patches-add-patches-for-dm-verity.patch | 191 ++++++++++++++++++
+>  .../swupdate/swupdate_2021.04-1+debian-gbp.bb |   5 +
+>  recipes-core/tmp-fs/files/postinst            |   3 +
+>  recipes-core/tmp-fs/files/tmp.mount.tmpl      |  11 +
+>  recipes-core/tmp-fs/tmp-fs_0.1.bb             |  26 +++
+>  .../cip-core-initramfs/cip-core-initramfs.bb  |  10 +-
+>  .../files/verity.conf-hook                    |   1 +
+>  .../initramfs-verity-hook/files/verity.hook   |  23 +++
+>  .../files/verity.script.tmpl                  |  70 +++++++
+>  .../initramfs-verity-hook_0.1.bb              |  51 +++++
+>  recipes-kernel/linux/linux-cip-common.inc     |   2 +-
+>  start-qemu.sh                                 |   4 +
+>  wic/qemu-amd64-efibootguard-secureboot.wks    |  11 -
+>  wic/qemu-amd64-efibootguard-secureboot.wks.in |  15 ++
+>  32 files changed, 735 insertions(+), 31 deletions(-)
+>  create mode 100644 classes/secure-swupdate-img.bbclass
+>  create mode 100644 classes/squashfs-img.bbclass
+>  create mode 100644 classes/verity-img.bbclass
+>  create mode 100644 patches/isar/0001-Fix-permissions-when-splitting-rootfs-folders-across.patch
+>  create mode 100644 recipes-core/etc-overlay-fs/etc-overlay-fs_0.1.bb
+>  create mode 100644 recipes-core/etc-overlay-fs/files/etc-hostname.service
+>  create mode 100644 recipes-core/etc-overlay-fs/files/etc-sshd-regen-keys.conf
+>  create mode 100644 recipes-core/etc-overlay-fs/files/etc-sysusers.conf
+>  create mode 100644 recipes-core/etc-overlay-fs/files/etc.mount
+>  create mode 100755 recipes-core/etc-overlay-fs/files/postinst
+>  create mode 100644 recipes-core/home-fs/files/home.mount
+>  create mode 100755 recipes-core/home-fs/files/postinst
+>  create mode 100644 recipes-core/home-fs/home-fs_0.1.bb
+>  create mode 100644 recipes-core/images/cip-core-image-read-only.bb
+>  create mode 100644 recipes-core/swupdate/files/0001-debian-patches-add-patches-for-dm-verity.patch
+>  create mode 100755 recipes-core/tmp-fs/files/postinst
+>  create mode 100644 recipes-core/tmp-fs/files/tmp.mount.tmpl
+>  create mode 100644 recipes-core/tmp-fs/tmp-fs_0.1.bb
+>  rename kas/opt/ebg-snakeoil-swu.yml => recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb (61%)
+>  create mode 100644 recipes-initramfs/initramfs-verity-hook/files/verity.conf-hook
+>  create mode 100644 recipes-initramfs/initramfs-verity-hook/files/verity.hook
+>  create mode 100644 recipes-initramfs/initramfs-verity-hook/files/verity.script.tmpl
+>  create mode 100644 recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.1.bb
+>  delete mode 100644 wic/qemu-amd64-efibootguard-secureboot.wks
+>  create mode 100644 wic/qemu-amd64-efibootguard-secureboot.wks.in
+> 
 
---CdrF4e02JqNVZeln
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks, applied to next.
 
-Hi!
+Jan
 
-On Tue 2021-11-30 10:22:14, Chris Paterson wrote:
-> +kernelci ML as they will appreciate the feedback.
-
-Thank you, but it looks like they are rejecting the email :-(.
-
-<kernelci@groups.io>: host lb01.groups.io[45.79.81.153] said: 500 This
-message
-    has been flagged as spam. (in reply to end of DATA command)
-
-
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---CdrF4e02JqNVZeln
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAmGnPFgACgkQMOfwapXb+vLz3wCguECyDGgX8zQ5Vzpcw8dGNL3v
-iuMAn1R04CLiFkFL2YQ2IqUg2M8SFgNC
-=qMLm
------END PGP SIGNATURE-----
-
---CdrF4e02JqNVZeln--
+-- 
+Siemens AG, T RDA IOT
+Corporate Competence Center Embedded Linux
 
