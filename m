@@ -1,138 +1,171 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <alice.ferrazzi@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24AE0C433EF
-	for <webhook@archiver.kernel.org>; Thu,  2 Dec 2021 07:29:53 +0000 (UTC)
-Received: from EUR02-AM5-obe.outbound.protection.outlook.com
- (EUR02-AM5-obe.outbound.protection.outlook.com [40.107.0.85])
- by mx.groups.io with SMTP id smtpd.web11.5385.1638430192084155800
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 976B9C433F5
+	for <webhook@archiver.kernel.org>; Thu,  2 Dec 2021 12:25:06 +0000 (UTC)
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com
+ [209.85.208.47])
+ by mx.groups.io with SMTP id smtpd.web12.7632.1638447904614473147
  for <cip-dev@lists.cip-project.org>;
- Wed, 01 Dec 2021 23:29:52 -0800
+ Thu, 02 Dec 2021 04:25:06 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=EGE2nvwf;
- spf=pass (domain: siemens.com, ip: 40.107.0.85,
- mailfrom: jan.kiszka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dGGJIQHTS2tw8GPy+RfmZvp4HtA5YSrnTRVeyveMarnbl4RMGo2N89FLmD2gLgys99iuqYxcTy9XigcKndp+xsqt6gYq0sEp8QMy2XrtWIb4Zcz7mQt2it8ETj3+K9NMu3P9/+2l4pVoXo2+RHT8ga8vNXASTAS8zyabPHSVpWqsqXYKMv7WmzcWROm9M/uQ64e9gAa46PIO+vOw2iLG9SJs4yklHP1VdEM4a8IajeP7+KfDuyI+wbGpGaPOhLIX8iKlKhrmF4HTNX0BqPaBRkXSjBEF8fMN5bMdxv8g52PTO16zyDn5RM5jxlOE83oFXZSThtNJIEG/4hHJSulaBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=z5Z1RLQuSixIwRLoAbc6EVe2xx8VhOEjaw18Uo4JPlw=;
- b=UYGnbnmtoyYTYKMcjxcDRGIl1uxK3S9jlLtSAepAOKYvecl3MHsWjvq9DHepojWXaouHhMhhz4cOhzdkp/cNAYXwzgSE80Qc0oYd5KjZ7Fs9UVUkxMk6eQ3dyIHaFWiqqd6NWtzuaCUUmFMeT7rFbu5vxFgdpirAajAbK5EhnyAHLGddSSLGnGOYHUlTRtV4RjKnmpMpb+RiyK40FIp7yTXdaDPzAMjJ23lConHoqoGzO8h5AlqABmCwiE0U30AuQ1EF+XEa1oeIH6adCIWyQ0GBDdnBbaynRB4nj/pqN2UP/8jX2pc2bMRaliqzhhw8nZRVgalgOgBwFOc7G4BFxQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.70) smtp.rcpttodomain=lists.cip-project.org
- smtp.mailfrom=siemens.com; dmarc=pass (p=none sp=none pct=100) action=none
- header.from=siemens.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=z5Z1RLQuSixIwRLoAbc6EVe2xx8VhOEjaw18Uo4JPlw=;
- b=EGE2nvwfcRsVV3IjzzVLv7BdtOuUkyEmZ5yxLNnfJZE+OB/K5nvB54ckBgKQysIynGViDrbblKE8sQ1eYAlw26sITLRc4ndcbvM8YlkuZCaVrfgZi0afJOOeCzVMpEmWv4k7a4DnFXbVR/jYnDyV0Xvn92Y1iL/hr3jcvkSRXu3jCHGTl//bNCplA6oeQ1+D5LHXP5cYQvnXN6qNgj8kVFvUO83CF0bSJilcTuNBpYpJ+BGkcqDURNaUc3NuSDbgmbqAWiGa9Y8uwou9gc/FuMWCsawkMcWF4CF+KmEvi8GUVOLVYgYKm691lpiW2zujRePnPX67pdwFPIsrlcCCvQ==
-Received: from AM6PR0202CA0040.eurprd02.prod.outlook.com
- (2603:10a6:20b:3a::17) by AM0PR10MB3154.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:208:182::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.14; Thu, 2 Dec
- 2021 07:29:49 +0000
-Received: from HE1EUR01FT046.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:20b:3a:cafe::84) by AM6PR0202CA0040.outlook.office365.com
- (2603:10a6:20b:3a::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4734.23 via Frontend
- Transport; Thu, 2 Dec 2021 07:29:49 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.70)
- smtp.mailfrom=siemens.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=siemens.com;
-Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.70 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.70; helo=hybrid.siemens.com;
-Received: from hybrid.siemens.com (194.138.21.70) by
- HE1EUR01FT046.mail.protection.outlook.com (10.152.0.250) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.4755.13 via Frontend Transport; Thu, 2 Dec 2021 07:29:48 +0000
-Received: from DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) by
- DEMCHDC9SJA.ad011.siemens.net (194.138.21.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Thu, 2 Dec 2021 08:29:47 +0100
-Received: from [167.87.0.139] (167.87.0.139) by DEMCHDC8A0A.ad011.siemens.net
- (139.25.226.106) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.17; Thu, 2 Dec
- 2021 08:29:46 +0100
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: [cip-dev] CIP IRC weekly meeting today on libera.chat
-To: cip-dev <cip-dev@lists.cip-project.org>
-Message-ID: <47b34fd6-fcdb-21dd-640d-a1acc203a768@siemens.com>
-Date: Thu, 2 Dec 2021 08:29:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+ dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112
+ header.b=5HNJXQfY;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.208.47,
+ mailfrom: alice.ferrazzi@miraclelinux.com)
+Received: by mail-ed1-f47.google.com with SMTP id x6so114929412edr.5
+        for <cip-dev@lists.cip-project.org>;
+ Thu, 02 Dec 2021 04:25:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=W+ZVtCOQkVlDI/QwQPM3d++dbmRueFztlWxAJ0xBX+4=;
+        b=5HNJXQfYDSjJsMvj76YqZADmKaD327gsmdRsVlbH1SSggpE2akARN9L37Xzi/GIQND
+         vh6iyUwIwdUh9D8nTMGkDIZG0gOaifQcAmLXwIFqiplUN/+gGAMwDA2WC1YQR2TQxbXT
+         8qFeGHfFQmRC7LYi1L+KylotvnfQ4rPJN2+/d8dJVLWu4ZVsC5giQxzEtElAewnLDB38
+         By2ETK9dAhSOURf+QpItAD5Oxue3aF9ZsIzU9uR46DKuvURJxZzwiOAKLjMRuOvW9p0N
+         jJZrr7gieDGJNPbKbnUjkGJiwk4EvR5p7Zh7EHAezbwEidE99mKtZMlc5pODX3BdoVR5
+         FFcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=W+ZVtCOQkVlDI/QwQPM3d++dbmRueFztlWxAJ0xBX+4=;
+        b=eoJYaZg0fQOR0cBf0GtGUMExRv2ykAIQsLmx1QslMlWJVYppibNsfOkgApCA5e1ON1
+         huwZixOcWzR07/kwio+2IuLGDpF2XYbJO4AXSiYDMC5d7Ej6wErnXb+yJthu/vZ3s1PG
+         Itp9K9XMtPwXJFxuKWKR9yxRXg7ZFDrMcbfWBMoO55WPUdN0tfUG3Bg74NGWvyfwJzsk
+         xKErYF/qtu1PtcWzG9TGih3wSdLohT1B4A9M7BCHKkdqcy0UrY9NybNkJER0D9fpW+FM
+         +h4ryj269KXsdEZs+UVhKxffr9xNvsaF8aX2TST1qs2G2xKwQeXIV1OLllCBW3OwBOnU
+         qbyQ==
+X-Gm-Message-State: AOAM5320yUGaw1hsP6zG2E/GsoSlTTxxRTxQPawsfBmHePzW4Y0Hq1wf
+	wcKLDDl9dx+PQpWgSrTsq5PlCy9IabLF0ti/o4Te
+X-Google-Smtp-Source: 
+ ABdhPJypky/neKUTtZ7B45Wa/syHcWY6Pihl8Rp0gYYeIfwYXDkmEeuSCapBUJ/jjBhVDxRjS81dtSr4S1pMyXY6zUw=
+X-Received: by 2002:a17:906:fb17:: with SMTP id
+ lz23mr14976038ejb.149.1638447902491;
+ Thu, 02 Dec 2021 04:25:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.87.0.139]
-X-ClientProxiedBy: DEMCHDC89XA.ad011.siemens.net (139.25.226.103) To
- DEMCHDC8A0A.ad011.siemens.net (139.25.226.106)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 94a1919e-b1ca-40a2-e871-08d9b5658580
-X-MS-TrafficTypeDiagnostic: AM0PR10MB3154:
-X-Microsoft-Antispam-PRVS: 
-	<AM0PR10MB315473517DC1C8AFAD0E9E7195699@AM0PR10MB3154.EURPRD10.PROD.OUTLOOK.COM>
-X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	IINHgapUO1qA8bOTlaPI1LgJZrIRB65M3T50VWIablgR6lfltBxr7TfktZXU5NpQspMMwuZ0+QcPynGI9PR4lq4CN/JroVtLdrI9QYg0EJ8s1Tm4U4Q0OYZ41rSJlphzrAnz1lVaHEhRDVj7x2EZGAbAlDn0EDNEXZgqSJlwBamFfBiwQDP+Jcn2kVRsOLe0CyUHV6rJryfWXpdTEzX5gi6gzu7P10bPSqadDq+hd8683VcTN7pYgcIHK51/Fdie57OUPyp/+iVZMyuPs76RNU5m6lFpV3Xp4WozIiqswVwG2qCw9Pftgn7c6ETnzJ0la1un6M9asnXVO+efecoFk7YYb9KWI3GqJ3MjAuM3bR9B2UlbMcykidrDrC57MxWy/Xd8SGfyU2/QynuZ/FzSYRPv7GK2HtaHnsM6/jqc6mudo5EnQyC+GXY8x4D4zdmGwfu52p7IkmmDz15xr1EmrLI7v/UnsPssE7FNAhzavonoAj4c3CgVGox4UVOnlyx6g29VkTZUKop9hDA/pOprcaS0ACUxaHGue/FyDPe1rdX814FASSnhG2tjYX4obZJUBx/CeXYfSiU/ehQ+BusPH+8eHZqgpy9mB7rB7BFYLAS5T/FmA0KapJ/YM2WTIf2XCTZekCAF6h3B2u4htUX23nPIaRjGi6dn6x7sGNt2E+y6Cas2IIuo32xv5Rqd12s4Y1nMPw7HNEUY9l0zbhMXXaWS1Hwdz07H+3cq97GBVr3q+gYjQowXkXSC/j0dKw5XAvpNSEMQhDw1GhHStLSePciI8pa6yK0LEIvDT5G2HYiJmPtSdQEH238iP15/N7fcPwH2qfGIXI1VTqQQwLvYdAJpc1WnmIpAn84H3bxNzDdf2IikFqEubB6j8JMYtp1nxBTdcyUYxes3xGzBclYo7A==
-X-Forefront-Antispam-Report: 
-	CIP:194.138.21.70;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:hybrid.siemens.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(40470700001)(16576012)(4001150100001)(2906002)(316002)(5660300002)(186003)(31686004)(86362001)(26005)(16526019)(36756003)(8936002)(47076005)(36860700001)(44832011)(82310400004)(508600001)(70206006)(70586007)(8676002)(31696002)(7636003)(956004)(6706004)(2616005)(83380400001)(6916009)(356005)(7596003)(4744005)(40460700001)(966005)(336012)(82960400001)(3940600001)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2021 07:29:48.4939
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 
- 94a1919e-b1ca-40a2-e871-08d9b5658580
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
- TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.70];Helo=[hybrid.siemens.com]
-X-MS-Exchange-CrossTenant-AuthSource: 
-	HE1EUR01FT046.eop-EUR01.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR10MB3154
+References: <61a58f0e.1c69fb81.ac5ac.8c21@mx.google.com>
+ <20211130084137.GB2355@amd>
+In-Reply-To: <20211130084137.GB2355@amd>
+From: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
+Date: Thu, 2 Dec 2021 21:22:12 +0900
+Message-ID: 
+ <CANgtXuPkArhGMO1-WuA971CJn4qKrs+6qpufk5_us0D5TSHLPw@mail.gmail.com>
+Subject: Re: [cip-dev] cip/linux-4.19.y-cip baseline: 121 runs, 1 regressions
+ (v4.19.217-cip62) #kernelci
+To: Pavel Machek <pavel@denx.de>
+Cc: cip-dev@lists.cip-project.org, bot@kernelci.org,
+	Chris.Paterson2@renesas.com
+Content-Type: text/plain; charset="UTF-8"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 02 Dec 2021 07:29:53 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7058
+ <cip-dev@lists.cip-project.org>; Thu, 02 Dec 2021 12:25:06 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7059
 
-Hi all,
+On Tue, Nov 30, 2021 at 5:41 PM Pavel Machek <pavel@denx.de> wrote:
+>
+> Hi!
+>
+> > platform | arch | lab           | compiler | defconfig           | regressions
+> > ---------+------+---------------+----------+---------------------+------------
+> > panda    | arm  | lab-collabora | gcc-10   | omap2plus_defconfig | 1
+> >
+> >   Details:     https://kernelci.org/test/plan/id/61a587a0ab3b0079bd18f6d7
+> >
+> >   Results:     5 PASS, 1 FAIL, 0 SKIP
+> >   Full config: omap2plus_defconfig
+> >   Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 20210110)
+> >   Plain log:   https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.217-cip62/arm/omap2plus_defconfig/gcc-10/lab-collabora/baseline-panda.txt
+> >   HTML log:
+> > https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.217-cip62/arm/omap2plus_defconfig/gcc-10/lab-collabora/baseline-panda.html
+>
+> So this has enough information to tell me that we have a kernel
+> problem there, good:
+>
+> 02:08:17.792502  <6>[   18.847320] omap-mailbox 4a0f4000.mailbox: omap
+> mailbox rev 0x400
+> 02:08:17.800596  <0>[   18.857543] BUG: spinlock bad magic on CPU#0,
+> udevd/110
+> 02:08:17.808843  <6>[   18.857788] emif 4c000000.emif: emif_probe:
+> device configured with addr = (ptrval) and IRQ26
+> 02:08:17.818753  <0>[   18.863311]  lock: emif_lock+0x0/0xffffecfc
+> [emif], .magic: dead4ead, .owner: <none>/-1, .owner_cpu: -1
+> 02:08:17.825277  <4>[   18.877502] CPU: 0 PID: 110 Comm: udevd Not
+> tainted 4.19.217-cip62 #1
+> 02:08:17.831655  <4>[   18.888275] Hardware name: Generic OMAP4
+> (Flattened Device Tree)
+> 02:08:17.839660  <4>[   18.894195] [<c01123bc>] (unwind_backtrace)
+> from [<c010cc28>] (show_stack+0x10/0x14)
+> 02:08:17.847570  <4>[   18.900482] [<c010cc28>] (show_stack) from
+> [<c0949dd4>] (dump_stack+0xe0/0x114)
+> 02:08:17.855211  <4>[   18.905761] [<c0949dd4>] (dump_stack) from
+> [<c01a9168>] (do_raw_spin_lock+0xbc/0x124)
+>
+> Unfortunately, not enough information to debug the problem, I'm
+> afraid. Questions to start debugging this would be:
+>
+> a) is the problem deterministic?
+>
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss
-technical topics with CIP kernel today.
+as the testing board are actually different is unclear.
+The board and results can be seen here:
+https://linux.kernelci.org/test/plan/id/61a587a0ab3b0079bd18f6d7/
 
-Please note that we moved from Freenode to libera.chat. Our channel is
-the following:
+the output log is here:
+https://storage.kernelci.org/cip/linux-4.19.y-cip/v4.19.217-cip62/arm/omap2plus_defconfig/gcc-10/lab-collabora/baseline-panda.html
+working board example log is here (works for 4.19.216-cip61 but using
+a board on baylibre that could be different from the board on
+collabora):
+https://storage.kernelci.org/cip/linux-4.19.y-cip/v4.19.216-cip61/arm/omap2plus_defconfig/gcc-10/lab-baylibre/baseline-panda.html
+looks like there is also a passed test on lab-baylibre for the panda
+board with the same kernel:
+https://storage.kernelci.org/cip/linux-4.19.y-cip/v4.19.217-cip62/arm/omap2plus_defconfig/gcc-10/lab-baylibre/baseline-panda.html
 
-    irc:irc.libera.chat:6667/cip
+The job json file for replicate the job on a lava lab with panda board
+can be found here:
+https://lava.collabora.co.uk/scheduler/job/5113437/definition
 
-Furthermore note that the IRC meeting is now scheduled to UTC (GMT) 13:00:
 
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2021&month=12&day=2&hour=13&min=0&sec=0&p1=224&p2=179&p3=136&p4=37&p5=241&p6=248
+> b) is the problem present in v4.19.217 ?
+>
 
-USWest    USEast    UK        DE        TW        JP
-06:00     09:00     13:00     14:00     21:00     22:00
+here is the diff with 4.19.217 stable
+https://www.diffchecker.com/JjmXiP7b
 
-Last meeting minutes:
+> c) what were the last -stable and -cip kernels that worked?
+>
 
-https://irclogs.baserock.org/meetings/cip/2021/11/cip.2021-11-25-13.00.log.html
+if you click on the link on the details or the link here under:
+https://linux.kernelci.org/test/case/id/61a587a0ab3b0079bd18f6dd/
+is wrote:
+New regression, last pass: v4.19.216-cip61
 
-* Action item
-  1. Combine root filesystem with kselftest binary (finishings) - iwamatsu & alicef
-  2. Look into S3 artifact upload issues - patersonc
-  3. Perform initial comparison of KernelCI results 5.10 LTS vs. CIP - iwamatsu & alicef
-  4. Propose tweet on KernelCI-CIP collaboration progress - alicef
-* Kernel maintenance updates
-* Kernel testing
-* AOB
+This is the one that passed:
+https://linux.kernelci.org/test/plan/id/618f6407f33d0dd1e633595d/
 
-Jan
+
+- About bisecting the kernel.
+We are currently in the process of activating CIP to the list of
+automated bisected kernel
+for getting more information on this and future problems.
+The following issue is the request to KernelCI for adding CIP to the
+automated bisected kernel list.
+https://github.com/kernelci/kernelci-core/issues/922
+
+
+
+Thanks,
+Alice
+
+
+--
+======================================
+Cybertrust Japan Co.,Ltd.
+Alice Ferrazzi
+alice.ferrazzi@miraclelinux.com
+======================================
 
