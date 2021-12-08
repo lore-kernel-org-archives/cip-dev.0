@@ -2,91 +2,94 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 599E3C433EF
-	for <webhook@archiver.kernel.org>; Wed,  8 Dec 2021 11:28:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4CA6C433F5
+	for <webhook@archiver.kernel.org>; Wed,  8 Dec 2021 16:09:40 +0000 (UTC)
 Received: from goliath.siemens.de (goliath.siemens.de [192.35.17.28])
- by mx.groups.io with SMTP id smtpd.web09.11098.1638962911705361769
+ by mx.groups.io with SMTP id smtpd.web12.15080.1638979778929199393
  for <cip-dev@lists.cip-project.org>;
- Wed, 08 Dec 2021 03:28:32 -0800
+ Wed, 08 Dec 2021 08:09:39 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing;
  spf=pass (domain: siemens.com, ip: 192.35.17.28, mailfrom: quirin.gylstorff@siemens.com)
-Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
-	by goliath.siemens.de (8.15.2/8.15.2) with ESMTPS id 1B8BSStf028601
+Received: from mail1.sbs.de (mail1.sbs.de [192.129.41.35])
+	by goliath.siemens.de (8.15.2/8.15.2) with ESMTPS id 1B8G9aYc031057
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-	for <cip-dev@lists.cip-project.org>; Wed, 8 Dec 2021 12:28:29 +0100
+	for <cip-dev@lists.cip-project.org>; Wed, 8 Dec 2021 17:09:36 +0100
 Received: from md2dvrtc.fritz.box ([167.87.33.37])
-	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 1B8BSSre014869;
-	Wed, 8 Dec 2021 12:28:28 +0100
+	by mail1.sbs.de (8.15.2/8.15.2) with ESMTP id 1B8G9ZPG024230;
+	Wed, 8 Dec 2021 17:09:35 +0100
 From: "Q. Gylstorff" <Quirin.Gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
-Subject: [cip-dev][isar-cip-core][PATCH] sw-description: Use Labels for Boot
- partitions
-Date: Wed,  8 Dec 2021 12:28:27 +0100
-Message-Id: <20211208112827.3121367-1-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH] start-qemu.sh: Add option to start a
+ wic.img
+Date: Wed,  8 Dec 2021 17:09:35 +0100
+Message-Id: <20211208160935.157897-1-Quirin.Gylstorff@siemens.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 08 Dec 2021 11:28:33 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7074
+ <cip-dev@lists.cip-project.org>; Wed, 08 Dec 2021 16:09:40 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7075
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-This allows an update process independent from boot order or
-file systems, e.g. if a usb stick is plug in.
+To test image created for swupdate the resulting wic image needs
+to be boot by qemu.
 
-As SWUpdate returns only the device identifier in case of device mapper
-mount point the `sw-description` for secure boot
-still use device identifiers.
+Also fix indentation.
 
-This also fixes [1].
+This fixes issue [18]:
 
-[1]: https://gitlab.com/cip-project/cip-core/isar-cip-core/-/issues/16
+[18]: https://gitlab.com/cip-project/cip-core/isar-cip-core/-/issues/18
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- recipes-core/images/files/secure-boot/sw-description.tmpl | 2 +-
- recipes-core/images/files/sw-description.tmpl             | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ start-qemu.sh | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/recipes-core/images/files/secure-boot/sw-description.tmpl b/recipes-core/images/files/secure-boot/sw-description.tmpl
-index 34a58a3..f8e5375 100644
---- a/recipes-core/images/files/secure-boot/sw-description.tmpl
-+++ b/recipes-core/images/files/secure-boot/sw-description.tmpl
-@@ -26,7 +26,7 @@ software =
-             filename = "linux.signed.efi";
-             path = "linux.signed.efi";
-             type = "roundrobin";
--            device = "sda4->sda2,sda5->sda3";
-+            device = "sda4->BOOT0,sda5->BOOT1";
-             filesystem = "vfat";
-             properties: {
-                         subtype = "kernel";
-diff --git a/recipes-core/images/files/sw-description.tmpl b/recipes-core/images/files/sw-description.tmpl
-index 3309271..c44c2a8 100644
---- a/recipes-core/images/files/sw-description.tmpl
-+++ b/recipes-core/images/files/sw-description.tmpl
-@@ -26,7 +26,7 @@ software =
-             filename = "${KERNEL_IMAGE}";
-             path = "vmlinuz";
-             type = "roundrobin";
--            device = "fedcba98-7654-3210-cafe-5e0710000001->sda2,fedcba98-7654-3210-cafe-5e0710000002->sda3";
-+            device = "fedcba98-7654-3210-cafe-5e0710000001->BOOT0,fedcba98-7654-3210-cafe-5e0710000002->BOOT1";
-             filesystem = "vfat";
-             properties: {
-                         subtype = "kernel";
-@@ -36,7 +36,7 @@ software =
-             filename = "${INITRD_IMAGE}";
-             path = "${INITRD_IMAGE}";
-             type = "roundrobin";
--            device = "fedcba98-7654-3210-cafe-5e0710000001->sda2,fedcba98-7654-3210-cafe-5e0710000002->sda3";
-+            device = "fedcba98-7654-3210-cafe-5e0710000001->BOOT0,fedcba98-7654-3210-cafe-5e0710000002->BOOT1";
-             filesystem = "vfat";
-             properties: {
-                         subtype = "initrd";
+diff --git a/start-qemu.sh b/start-qemu.sh
+index c700974..4ab3861 100755
+--- a/start-qemu.sh
++++ b/start-qemu.sh
+@@ -22,6 +22,8 @@ usage()
+ 
+ if grep -s -q "IMAGE_SECURE_BOOT: true" .config.yaml; then
+ 	SECURE_BOOT="true"
++elif grep -s -q "IMAGE_SWUPDATE: true" .config.yaml; then
++	SWUPDATE_BOOT="true"
+ fi
+ 
+ if [ -n "${QEMU_PATH}" ]; then
+@@ -42,7 +44,7 @@ if [ -z "${TARGET_IMAGE}" ];then
+ 	TARGET_IMAGE="cip-core-image"
+ 	if grep -s -q "IMAGE_SECURITY: true" .config.yaml; then
+ 		TARGET_IMAGE="cip-core-image-security"
+-    fi
++	fi
+ 	if [ -n "${SECURE_BOOT}" ]; then
+ 		TARGET_IMAGE="cip-core-image-read-only"
+ 	fi
+@@ -58,7 +60,7 @@ case "$1" in
+ 			-machine q35,accel=kvm:tcg \
+ 			-device virtio-net-pci,netdev=net"
+ 		if [ -n "${SECURE_BOOT}" ]; then
+-            # set bootindex=0 to boot disk instead of EFI-shell
++			# set bootindex=0 to boot disk instead of EFI-shell
+ 			QEMU_EXTRA_ARGS=" \
+ 			${QEMU_EXTRA_ARGS} -device ide-hd,drive=disk,bootindex=0"
+ 		else
+@@ -127,6 +129,9 @@ if [ -n "${SECURE_BOOT}" ]; then
+ 		BOOT_FILES="-drive if=pflash,format=raw,unit=0,readonly=on,file=${ovmf_code} \
+ 			-drive if=pflash,format=raw,file=${ovmf_vars} \
+ 			-drive file=${IMAGE_PREFIX}.wic.img,discard=unmap,if=none,id=disk,format=raw"
++elif [ -n "${SWUPDATE_BOOT}" ]; then
++		BOOT_FILES="-drive file=${IMAGE_PREFIX}.wic.img,discard=unmap,if=none,id=disk,format=raw \
++			-bios OVMF.fd "
+ else
+ 		IMAGE_FILE=$(ls ${IMAGE_PREFIX}.ext4.img)
+ 
 -- 
 2.30.2
 
