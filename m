@@ -1,72 +1,93 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6A5FC433F5
-	for <webhook@archiver.kernel.org>; Wed,  8 Dec 2021 10:30:51 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web10.10541.1638959449574885332
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 599E3C433EF
+	for <webhook@archiver.kernel.org>; Wed,  8 Dec 2021 11:28:33 +0000 (UTC)
+Received: from goliath.siemens.de (goliath.siemens.de [192.35.17.28])
+ by mx.groups.io with SMTP id smtpd.web09.11098.1638962911705361769
  for <cip-dev@lists.cip-project.org>;
- Wed, 08 Dec 2021 02:30:50 -0800
+ Wed, 08 Dec 2021 03:28:32 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id D62C81C0B87; Wed,  8 Dec 2021 11:30:39 +0100 (CET)
-Date: Wed, 8 Dec 2021 11:30:38 +0100
-From: Pavel Machek <pavel@denx.de>
-To: jan.kiszka@siemens.com, cip-dev@lists.cip-project.org,
-	Chris.Paterson2@renesas.com
-Subject: [ANNOUNCE] 5.10.83-cip1-rt1 (-rt58)
-Message-ID: <20211208103038.GA25504@amd>
+ spf=pass (domain: siemens.com, ip: 192.35.17.28, mailfrom: quirin.gylstorff@siemens.com)
+Received: from mail2.sbs.de (mail2.sbs.de [192.129.41.66])
+	by goliath.siemens.de (8.15.2/8.15.2) with ESMTPS id 1B8BSStf028601
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+	for <cip-dev@lists.cip-project.org>; Wed, 8 Dec 2021 12:28:29 +0100
+Received: from md2dvrtc.fritz.box ([167.87.33.37])
+	by mail2.sbs.de (8.15.2/8.15.2) with ESMTP id 1B8BSSre014869;
+	Wed, 8 Dec 2021 12:28:28 +0100
+From: "Q. Gylstorff" <Quirin.Gylstorff@siemens.com>
+To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
+Subject: [cip-dev][isar-cip-core][PATCH] sw-description: Use Labels for Boot
+ partitions
+Date: Wed,  8 Dec 2021 12:28:27 +0100
+Message-Id: <20211208112827.3121367-1-Quirin.Gylstorff@siemens.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="T4sUOijqQbZv57TR"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 08 Dec 2021 10:30:51 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7073
+ <cip-dev@lists.cip-project.org>; Wed, 08 Dec 2021 11:28:33 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7074
 
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
---T4sUOijqQbZv57TR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This allows an update process independent from boot order or
+file systems, e.g. if a usb stick is plug in.
 
-Hi!
+As SWUpdate returns only the device identifier in case of device mapper
+mount point the `sw-description` for secure boot
+still use device identifiers.
 
-There is first release of 5.10-cip-rt kernel available at kernel.org.
+This also fixes [1].
 
-Trees are available at
+[1]: https://gitlab.com/cip-project/cip-core/isar-cip-core/-/issues/16
 
-https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=3D=
-linux-5.10.y-cip-rt
-https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=3D=
-linux-5.10.y-cip-rt-rebase
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+ recipes-core/images/files/secure-boot/sw-description.tmpl | 2 +-
+ recipes-core/images/files/sw-description.tmpl             | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-And their content should be identical.
+diff --git a/recipes-core/images/files/secure-boot/sw-description.tmpl b/recipes-core/images/files/secure-boot/sw-description.tmpl
+index 34a58a3..f8e5375 100644
+--- a/recipes-core/images/files/secure-boot/sw-description.tmpl
++++ b/recipes-core/images/files/secure-boot/sw-description.tmpl
+@@ -26,7 +26,7 @@ software =
+             filename = "linux.signed.efi";
+             path = "linux.signed.efi";
+             type = "roundrobin";
+-            device = "sda4->sda2,sda5->sda3";
++            device = "sda4->BOOT0,sda5->BOOT1";
+             filesystem = "vfat";
+             properties: {
+                         subtype = "kernel";
+diff --git a/recipes-core/images/files/sw-description.tmpl b/recipes-core/images/files/sw-description.tmpl
+index 3309271..c44c2a8 100644
+--- a/recipes-core/images/files/sw-description.tmpl
++++ b/recipes-core/images/files/sw-description.tmpl
+@@ -26,7 +26,7 @@ software =
+             filename = "${KERNEL_IMAGE}";
+             path = "vmlinuz";
+             type = "roundrobin";
+-            device = "fedcba98-7654-3210-cafe-5e0710000001->sda2,fedcba98-7654-3210-cafe-5e0710000002->sda3";
++            device = "fedcba98-7654-3210-cafe-5e0710000001->BOOT0,fedcba98-7654-3210-cafe-5e0710000002->BOOT1";
+             filesystem = "vfat";
+             properties: {
+                         subtype = "kernel";
+@@ -36,7 +36,7 @@ software =
+             filename = "${INITRD_IMAGE}";
+             path = "${INITRD_IMAGE}";
+             type = "roundrobin";
+-            device = "fedcba98-7654-3210-cafe-5e0710000001->sda2,fedcba98-7654-3210-cafe-5e0710000002->sda3";
++            device = "fedcba98-7654-3210-cafe-5e0710000001->BOOT0,fedcba98-7654-3210-cafe-5e0710000002->BOOT1";
+             filesystem = "vfat";
+             properties: {
+                         subtype = "initrd";
+-- 
+2.30.2
 
-Best regards,
-                                                                Pavel
-							=09
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---T4sUOijqQbZv57TR
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEUEARECAAYFAmGwiU4ACgkQMOfwapXb+vKWuwCSAnJxwJT0XcxPGzZYBgVK2szG
-EQCgn/WmKbsV0R5LViI9XV8VH00bEXk=
-=9AX7
------END PGP SIGNATURE-----
-
---T4sUOijqQbZv57TR--
 
