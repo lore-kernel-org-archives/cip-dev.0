@@ -1,167 +1,277 @@
-Return-Path: <chris.paterson2@renesas.com>
+Return-Path: <masami.ichikawa@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F010C433F5
-	for <webhook@archiver.kernel.org>; Wed, 15 Dec 2021 10:34:59 +0000 (UTC)
-Received: from JPN01-OS0-obe.outbound.protection.outlook.com
- (JPN01-OS0-obe.outbound.protection.outlook.com [40.107.113.136])
- by mx.groups.io with SMTP id smtpd.web08.38872.1639564495955363802
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C671AC433F5
+	for <webhook@archiver.kernel.org>; Thu, 16 Dec 2021 01:44:44 +0000 (UTC)
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com
+ [209.85.161.45])
+ by mx.groups.io with SMTP id smtpd.web10.3397.1639612232015238342
  for <cip-dev@lists.cip-project.org>;
- Wed, 15 Dec 2021 02:34:57 -0800
+ Wed, 15 Dec 2021 15:50:33 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@renesas.com header.s=selector1 header.b=e4JljlAa;
- spf=pass (domain: renesas.com, ip: 40.107.113.136,
- mailfrom: chris.paterson2@renesas.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=iwDzR+nY63hnmzrXKWjrvozTzvfyRWkOIhYwsICcwlPSRiJN9h7u5bX7kV7jTNgTyYai2hVHl/RyofHvDLp5uetJzkOSxDHNgZiL7+qDFRP7+oMW0jJqz+cHKrK9By3GgJY4OOXIwH5Cexl1T1H81uTu0HN9u/7R4FjvpRYSUmsmn1/b6Kzx1Qr7bRxKtQhyCfMnZ5JNL8RE7YFX5uOrl4bTIMEsWZybFs17I1gI2/HclMRmOSfiYO444A3sjwkFJYFB6biRDcmaXLg6nbCAbLXMg1DvB0FLZ4jspTIOrKd4sSuHsTPaCvhhjf1KNuhP8kRCRaRu1hzYlFgfRyaPhA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=giIgIpoXfAtbeb4kBLP1axlLNDPa1LpBNX+6F+x0d3A=;
- b=jxfK7GF9CCXsbEtE4PC/0QFq6wR+GQFgKWv5+8hfI0nzZGlM9Sena1GCRFel0OagzWasfZA1OeYA5s8/+M/vj1waY16zLI2ztuDOhtLaZFBgJ7ANjOmnPi1Lj7nkSGVWz+9EpW/mdzbEqhhSAFWLBcHgOPUX3atEC16RsiIrc+PIN8c9/MzxUUO/Nyt/xIU2WwgSkeaFPt6y9KHb5MsG64r0t/75ldb2thovVDqJsnWS/iDxQGdG+8CD5sg+ApPu+7abb/jim90TtNrxYse6JM4jk4BupOMLeBHIgmhWZ0zC1o4nCXve8eM5qllBh3B1zis6p05mBaUgNr/194e0kw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=giIgIpoXfAtbeb4kBLP1axlLNDPa1LpBNX+6F+x0d3A=;
- b=e4JljlAaCWDha5IZ9eId+bEDya8gnVIcCT1300Lz+QOslb0aA36GZoRzKoWNLHVkQ0ZOcjbTi9Lcvo86Qh658vvryPV2QWwnvWIJO9RZ84qrS7SRnZ7rGBzsC6dsfNmcZEcXLiS1jLnM5CwW+v1zmgO7P+xCeXKW0w85Uw2hdN0=
-Received: from OSZPR01MB6877.jpnprd01.prod.outlook.com (2603:1096:604:13d::6)
- by OS0PR01MB5876.jpnprd01.prod.outlook.com (2603:1096:604:bd::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4778.13; Wed, 15 Dec
- 2021 10:34:52 +0000
-Received: from OSZPR01MB6877.jpnprd01.prod.outlook.com
- ([fe80::94f4:a951:a861:bd5b]) by OSZPR01MB6877.jpnprd01.prod.outlook.com
- ([fe80::94f4:a951:a861:bd5b%5]) with mapi id 15.20.4778.018; Wed, 15 Dec 2021
- 10:34:52 +0000
-From: Chris Paterson <Chris.Paterson2@renesas.com>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>, Prabhakar
- Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-CC: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, Pavel Machek
-	<pavel@denx.de>, Biju Das <biju.das.jz@bp.renesas.com>
-Subject: RE: [cip-dev] [PATCH 5.10.y-cip 0/7] Add binding and SoC
- identification for Renesas RZ/G2L SoC and Renesas RZ/G2L SMARC EVK
-Thread-Topic: [cip-dev] [PATCH 5.10.y-cip 0/7] Add binding and SoC
- identification for Renesas RZ/G2L SoC and Renesas RZ/G2L SMARC EVK
-Thread-Index: AQHX8U0yXDMWkTY9nkegXZHak/5YsqwzVAKAgAABXpA=
-Date: Wed, 15 Dec 2021 10:34:52 +0000
-Message-ID: 
- <OSZPR01MB6877AA575BACD21ED96F9B53B7769@OSZPR01MB6877.jpnprd01.prod.outlook.com>
-References: <20211215004612.13289-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20211215100537.GA18047@amd>
-In-Reply-To: <20211215100537.GA18047@amd>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a519a4e0-52cf-4eb1-6574-08d9bfb68740
-x-ms-traffictypediagnostic: OS0PR01MB5876:EE_
-x-microsoft-antispam-prvs: 
- <OS0PR01MB5876ACF9648ED24D384420B8B7769@OS0PR01MB5876.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- L/A6SVAhC2Mu2Ym07np+1R3ZcmmmqNNyispWwmiHUUAq02LSLuA1GxsmJj+PiPjVxtbQIii3aYv/PcqFv6D2ZIK9nunNqYe7OV2wMGeOGg7KKq5ejxc7e2LT95XBX8tVIDkNFYdjATWZpRwMSZ49Qx7fVG8099WNis1z7HT2oNE37+r9Iht0D6kqGTE7f6hRoJYkBKCWlnS1wBnF7las1HilexwdiIwWC9so/sZ789ZpHMf5+1qnZlHedBIgznEfyzV1LS+Jw82vmpim9Be1e0CZKcBs+WgIinqreaCzX6aPSGmql28Ox5DrZPHbaLDc+UKsQdabuTZ0zDMhyYyupACLRpe2eHpPeivQeZ4KBaRYBjC3wUW3lc2fXlaaRyreCMsfavmtCkRDJRM3tLFWnpl+ll5quh3ptmZjrfKCSZYzJ+fVibiDtJDHRt3mmT6kjF9CtTaqa0cK/zjeI3UhK90blCbP6QVl4UyIa5y8zi0dXHN4VpQHg7LFWlL12WNfWOULBINbsSGGbGCNGRho+v4r1gfbIbzf6G9jc8SI6td7y/vdN/Zxp0cPxcputQxB1SasUDb5a9xgADzlirazFSoGgnzOLleDx0FUC9p25ma94fP53uWd+wr6NCFsnh542OnF0NpfxiXANd/Z3h+OCC/mRlmcWiasvC6zggbpbpmjttBnScqcNSJYthASXW3cx4Ql7OC9D1ull7R8ucpDOw==
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB6877.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(66446008)(76116006)(54906003)(26005)(55016003)(316002)(52536014)(66946007)(122000001)(186003)(66476007)(8676002)(9686003)(66556008)(64756008)(4326008)(110136005)(508600001)(33656002)(38100700002)(7696005)(5660300002)(86362001)(8936002)(71200400001)(38070700005)(2906002)(6506007)(107886003);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?Windows-1252?Q?ip+j6aS1+7K1LNaPMBBAGggscYBzz//tJX1yM3fS1wo/PRRyw+zXAb8g?=
- =?Windows-1252?Q?bx/IZU9CGv/6hKR2Def6XpPdsVIUK9903aD4KcDXfE6kcL72zBVrGRpZ?=
- =?Windows-1252?Q?UkTUGF3m6l6Re1h9K4wMeT/rWRYi0i/8sBZJaYCoQv6dKGOjnlPTQr3k?=
- =?Windows-1252?Q?iwMIlDzws7v43bMaSGt5Ruap/3G2D4g00VvfK5SHqfhQcYAweKv7JUGn?=
- =?Windows-1252?Q?jDSHO1xg8HjSOnyNfUdpivw8NmwGFqdC8hzITDUTw04T8quUuw7HF4My?=
- =?Windows-1252?Q?rpW3jhR0QOwBmFvc3ILjksyf9KoxLEeB1lXRpS+mE3s0Emb56HDtDUkx?=
- =?Windows-1252?Q?OCu6ptZHIO1rnHp/l+1dKqLM8xHVQr3GGgBl6OuJ7nw/QCxAA2xLxJ50?=
- =?Windows-1252?Q?bZN2VsmgC70WXhzBM26m9NUE9qa3R9+KvQQ8iqXHpVV9BdQ234yh1714?=
- =?Windows-1252?Q?5x//TXWXOImI9IYHpKjmtn+okWkC2I0NktrmpgFh7EwAvP7u6GYIfFfo?=
- =?Windows-1252?Q?Fm8l1amZyFg9DHcXe+OH/wlys4cVVxPGUgsSRsVDqW62wsgh4gAiNPEj?=
- =?Windows-1252?Q?jik0c5Vanzj8T/MpAQPXapIMMecZXEztDgyjUvX4YZXReI3+6wrPPhiJ?=
- =?Windows-1252?Q?RFJXLSvKyMdLvjyCEQUbRmLdMhzgiaklB6GNhVmrrjWRMRFahlpJnorJ?=
- =?Windows-1252?Q?sVKJz5343k69IBuVpv5PObOQKs37arrTszvbvY2Jiq++hY9qTMHOIm+V?=
- =?Windows-1252?Q?l4NDNe/T3I7X/JQLJw7rlFHP98knDoA5er4vI2zhxPZtG5KV3zY1mB2l?=
- =?Windows-1252?Q?1a+LiulBtvH5eXTIpGWTc7oK5sEEG4v3CeBIuQ2XIsOxDWCepKL/VkGJ?=
- =?Windows-1252?Q?2R9lPt4POSCc56LTX5pzHfx4sLNIhNNjObsTvpj7NK/ukUOgZ8A1U0eX?=
- =?Windows-1252?Q?gPIXbhyRstShjvSZgKDGuFNQ/+bGWU2R7qdZfGCZrIWVT/AriITTMAAp?=
- =?Windows-1252?Q?PLrioaZukU9ovPV2/OHvFZ9j2bb/dZPftOECY5yKzqqnuxS8tjzNuCVx?=
- =?Windows-1252?Q?vPo+MLNMoDTL+ZFYxb0O1MscnbGzzw7UMVgt6RmfxW1iQ3kKXfoiCrRq?=
- =?Windows-1252?Q?OOAqCrGe0Vbqd0smPcrtOKkZJKJIr8rdUtybnJG+njWtqh/CRl51oh8Y?=
- =?Windows-1252?Q?bsLsT/o1LnNAzPWmvf4GQPGTOLE1wRD/t4/v/NpPFKZ8Ue9qqPiLVln2?=
- =?Windows-1252?Q?Sg2k8pOxpsrYD1QjqMLx+9H53tZy020TRUpBYyyDIzQVGGjHQeDsNjI9?=
- =?Windows-1252?Q?Ea7+v0SQpxBp+jry/MIXjZpBxaVDnxlKkxb3hRBAS1HhoNXGxeapOqRQ?=
- =?Windows-1252?Q?pAU2a/g/MXYnOCHS8IfHZeFc+gP7R0Tr6W68WNFxXV17WRiWVH1/EQbp?=
- =?Windows-1252?Q?WjHAafFAbx6hhMCY2E8JfWIEvHxynApzkF8MBKjRio4PAZBPOjVbI+2L?=
- =?Windows-1252?Q?69KM8PmWyhl2XIwG7GEGVUD+84IoK7Td57tIEc93hlSt2fQe6YWkmatS?=
- =?Windows-1252?Q?Cboi4/rdaPtAa9IhM06d7BFyXoCZuFbaPj9rJeu6mtaeEC3PTEHfCUFd?=
- =?Windows-1252?Q?/2hU/vtde86P0/XPLrutiek9GOkOIksawOYlndQYG8KEkCc3wyK2dFwr?=
- =?Windows-1252?Q?5nxPwgIdj6zWyBeQlEWbggq6XzUqusN5sgBU12fed25SFCYi8TQ2cgL0?=
- =?Windows-1252?Q?5Ds36kYCmh8393lI96Jb9MfEfy96xsJ9X2UXEEIwMHuimjPLIOYmqGCX?=
- =?Windows-1252?Q?MblRPg=3D=3D?=
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
+ dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112
+ header.b=Qw0GDPA+;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.161.45,
+ mailfrom: masami.ichikawa@miraclelinux.com)
+Received: by mail-oo1-f45.google.com with SMTP id
+ w15-20020a4a9d0f000000b002c5cfa80e84so6398827ooj.5
+        for <cip-dev@lists.cip-project.org>;
+ Wed, 15 Dec 2021 15:50:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=3Bx+heVhRPJPUfMbQwqQybNxFiytcORjfIHeolPdWLE=;
+        b=Qw0GDPA+8sYv+eSN8Ou5ybLePz8NznZ06W4p7ASxuWQIFokRvwscOGTg2TY/6Gpzb4
+         Yhzj+PnFCNcBHqJjv56kY5AppU0W5r7n2UUAQGC4EO6wBoOD/uncLyGcL7SrBXCOrisA
+         3q1vrfc4OdzxFpIbnVHhFXYx0t3fTameBwsnGh9hScC89Zddhse6CBQU3gTQBFuMaz8C
+         TIuk/R5FXVeEtnc/nRr8/KwuO7wgWwr+sKxGBf5o/ErMJCE52l/lmfKSkfH/tHjjALwd
+         6B8JcmIev+IouwTfhtzIao0G4NKfQJSyfq48clvpno5bIbcleTgA7khgMDoyxb5SAf47
+         yRXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=3Bx+heVhRPJPUfMbQwqQybNxFiytcORjfIHeolPdWLE=;
+        b=H+uSZgErwSpfRwhxG92dCEpZRgoVPsO1WvSaZIBwn7Mu3tupBFHHjMUjZkBKsim75v
+         o2oubjRhvjKUxZYZdfrc4SKbmQQEiuDJVpKKi+IeeEMJVHeN4HHe8UbuCzbm3CmewaFS
+         ZDmqdgKCld9JPFXJnZm+fH4uNQCj+ZaUc7kP+MoSRq1QhFgU/kg1D/IvitZV5TDh5aSz
+         4uN4l0g+QgCW4odwcuff9WtqTdjMs5ycq14QnoSi8/ft6c9cKUZHHdcOqcp20UIDAUVI
+         hQtkbIsAkX8tWVVx7TN/K43VZMY6wa2ANGOHpCSghHhoHSSKWNXhV6+LSgrQEtV8VMSp
+         kr4w==
+X-Gm-Message-State: AOAM531tF3MRT0AgVgtoVQzQCMQnlInHsEB65lG07JynpOk6tcGOI77P
+	naevKXz2v/9Dglq9G9vVtmOlTKJpr7mWOTp9z4VzFWVGPr7uxg==
+X-Google-Smtp-Source: 
+ ABdhPJwcDVRYb+s1Plbd0txAGXy9qIIs3rCZoEUlfKTkOVV6GoRD26pe9QYxFi2LBcrvakB7o+rhRPYP+6kFSBLArIo=
+X-Received: by 2002:a4a:e1a9:: with SMTP id 9mr9305880ooy.41.1639612230938;
+ Wed, 15 Dec 2021 15:50:30 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB6877.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 
- a519a4e0-52cf-4eb1-6574-08d9bfb68740
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Dec 2021 10:34:52.2482
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 
- X1vFGoYNuHosN8DjDAaDPJUNLVwLSBGY2X/4pD9Qmn6PZMekZRvfyUe7PFFcBvpQjYGom2hU8WNXqgiolMkoX0YIl1r8ULNOHtlcrETSktk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS0PR01MB5876
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Thu, 16 Dec 2021 08:49:55 +0900
+Message-ID: 
+ <CAODzB9rdc7X0n9nEi9JKzQmjuVbreaosKpHcn7YYpyGPSWkPQg@mail.gmail.com>
+Subject: New CVE entries in this week
+To: cip-dev <cip-dev@lists.cip-project.org>
+Content-Type: text/plain; charset="UTF-8"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 15 Dec 2021 10:34:59 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7110
+ <cip-dev@lists.cip-project.org>; Thu, 16 Dec 2021 01:44:44 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7111
 
-Hello Pavel,
+Hi !
 
-> From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On
-> Behalf Of Pavel Machek via lists.cip-project.org
-> Sent: 15 December 2021 10:06
->=20
-> Hi!
->=20
-> > This patch series adds initial support for Renesas RZ/G2L SoC [0] and
-> > Renesas RZ/G2L SMARC EVK [1].
-> >
-> > The RZ/G2L microprocessor includes a Cortex-A55 (1.2 GHz) CPU, 16-bit
-> > DDR3L/DDR4 interface, 3D graphics engine with Arm Mali-G31 and video
-> codec
-> > (H.264). It also has many interfaces such as camera input, display outp=
-ut,
-> > USB 2.0, and Gbit-Ether, making it ideal for applications such as
-> > entry-class industrial human-machine interfaces (HMIs) and embedded
-> devices
-> > with video capabilities.
->=20
-> I have reviewed patches and they look okay to me. I'll proceed with
-> testing.
->=20
-> Do we have suitable board in the test lab / is there plan to add one?
+It's this week's CVE report.
 
-We don't have any boards in the CIP labs yet, but there is a plan to add so=
-me.
+This week reported ten new CVEs and two of them aren't fixed in the
+mainline yet.
 
-Kind regards, Chris
+* New CVEs
 
->=20
-> Best regards,
-> 								Pavel
-> --
-> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+CVE-2021-0961: In quota_proc_write of xt_quota2.c, there is a possible
+way to read kernel memory due to uninitialized data
+
+CVSS v3 score is not provided
+
+This bug is fixed in Android kernel. There is three commits to fix this bug.
+
+https://android.googlesource.com/kernel/common/+/e113eb454e92
+https://android.googlesource.com/kernel/common/+/60a4c35570d9
+https://android.googlesource.com/kernel/common/+/4b05a506bda0
+
+These commit modified net/netfilter/xt_quota2.c which is Android
+specific source. So this CVE is Android specific bug. The mainline and
+stable kernels aren't affected.
+
+Fixed status
+
+The mainline and stable kernels aren't affected.
+
+CVE-2021-39648: usb: gadget: configfs: Fix use-after-free issue with udc_name
+
+CVSS v3 score is not provided
+
+4.4 kernel gadget_dev_desc_UDC_show() is bit different from later
+kernel versions. However, it looks 4.4 also has same issue.
+
+Fixed status
+
+mainline: [64e6bbfff52db4bf6785fab9cffab850b2de6870]
+stable/4.14: [6766064c794afeacc29b21fc09ea4dbe3cae1af3]
+stable/4.19: [83b74059fdf1c4fa6ed261725e6f301552ad23f7]
+stable/4.9: [225330e682fa9aaa152287b49dea1ce50fbe0a92]
+stable/5.10: [a4b202cba3ab1a7a8b1ca92603931fba5e2032c3]
+stable/5.4: [bcffe2de9dde74174805d5f56a990353e33b8072]
+
+CVE-2021-39656: configfs: fix a use-after-free in __configfs_open_file
+
+Bug introduced commit b0841ee was merged in 5.3-rc8. This commit isn't
+backported to 4.4 so 4.4 isn't affected.
+
+Fixed status
+
+mainline: [14fbbc8297728e880070f7b077b3301a8c698ef9]
+stable/4.14: [4769013f841ed35bdce3b11b64349d0c166ee0a2]
+stable/4.19: [9123463620132ada85caf5dc664b168f480b0cc4]
+stable/4.9: [6f5c47f0faed69f2e78e733fb18261854979e79f]
+stable/5.10: [109720342efd6ace3d2e8f34a25ea65036bb1d3b]
+stable/5.4: [73aa6f93e1e980f392b3da4fee830b0e0a4a40ff]
+
+CVE-2021-39657: scsi: ufs: Correct the LUN used in
+eh_device_reset_handler() callback
+
+CVSS v3 score is not provided
+
+Bug was fixed in 5.11-rc4. so mainline and stable kernels are already fixed.
+
+Fixed status
+
+mainline: [35fc4cd34426c242ab015ef280853b7bff101f48]
+stable/4.14: [30f2a89f9481f851bc68e51a1e7114392b052231]
+stable/4.19: [b397fcae2207963747c6f947ef4d06575553eaef]
+stable/4.4: [a4cdbf4805bfed8f39e6b25f113588064d9a6ac5]
+stable/4.9: [7bbac19e604b2443c93f01c3259734d53f776dbf]
+stable/5.10: [2536194bb3b099cc9a9037009b86e7ccfb81461c]
+stable/5.4: [97853a7eae80a695a18ce432524eaa7432199a41]
+
+CVE-2021-4090: kernel: Overflow of bmval[bmlen-1] in
+nfsd4_decode_bitmap function
+
+CVSS v3 score is not provided
+
+OOB write bug in nsfd. This bug was introduced by commit d1c263a
+("NFSD: Replace READ* macros in nfsd4_decode_fattr()
+") since 5.11-rc1 and fixed in 5.16-rc2. Before 5.11 kernels aren't
+affected this issue.
+
+Fixed status
+
+mainline: [c0019b7db1d7ac62c711cda6b357a659d46428fe]
+stable/5.15: [10c22d9519f3f5939de61a1500aa3a926b778d3a]
+
+CVE-2021-4093: KVM: SVM: out-of-bounds read/write in sev_es_string_io
+
+CVSS v3 score is not provided
+
+OOB read/write bug in AMD SVM mode. This bug was introduced by commit
+7ed9abf ("KVM: SVM: Support string IO operations for an SEV-ES guest")
+which is merged since 5.11-rc1. Before 5.11 kernels aren't affected
+this issue.
+
+Fixed status
+
+mainline: [95e16b4792b0429f1933872f743410f00e590c55]
+
+CVE-2021-4095: KVM: NULL pointer dereference in kvm_dirty_ring_get()
+in virt/kvm/dirty_ring.c
+
+CVSS v3 score is not provided
+
+This issues was introduced by commit 629b534 ("KVM: x86/xen: update
+wallclock region") which is merged in 5.12-rc1-dontuse. Before
+5.12-rc1-dontuse kernels aren't affectd this issue.
+Patch is being reviewed.
+
+Fixed status
+
+Not fixed yet.
+
+CVE-2021-3864: descendant's dumpable setting with certain SUID binaries
+
+CVSS v3 score is not provided
+
+This bug is able to write coredump file anyware. However, abusing this
+bug, such as arbitrary code execution is required some program. The
+PoC(https://www.openwall.com/lists/oss-security/2021/10/20/2).
+There is two mitigation techniques are suggested. So, users follow
+these mitigation technique is recommended.
+
+Fixed status
+
+Not fixed yet.
+
+CVE-2021-4083: fget: check that the fd still exists after getting a ref to it
+
+CVSS v3 score is not provided
+
+UAF bug in fs/file.c it causes system crash, priviledge escalation.
+The mainline and all stable kernels are aready fixed.
+
+Fixed status
+
+mainline: [054aa8d439b9185d4f5eb9a90282d1ce74772969]
+stable/4.14: [98548c3a9882a1ea993a103be7c1b499f3b88202]
+stable/4.19: [8bf31f9d9395b71af3ed33166a057cd3ec0c59da]
+stable/4.4: [8afa4ef999191477506b396fae518338b8996fec]
+stable/4.9: [a043f5a600052dc93bc3d7a6a2c1592b6ee77482]
+stable/5.10: [4baba6ba56eb91a735a027f783cc4b9276b48d5b]
+stable/5.15: [6fe4eadd54da3040cf6f6579ae157ae1395dc0f8]
+stable/5.4: [03d4462ba3bc8f830d9807e3c3fde54fad06e2e2]
+
+CVE-2021-39685: Linux Kernel USB Gadget buffer overflow
+
+CVSS v3 score is not provided
+
+Buffer overflow bug in USB gadget devices. An attacker can read and/or
+write up to 65k of kernel memory.
+It already fixed in mainline and all stable kernels.
+
+Fixed status
+
+mainline: [153a2d7e3350cc89d406ba2d35be8793a64c2038,
+86ebbc11bb3f60908a51f3e41a17e3f477c2eaa3]
+stable/4.14: [e7c8afee149134b438df153b09af7fd928a8bc24,
+d8cd524ae4ec788011a14be17503fc224f260fe3]
+stable/4.19: [13e45e7a262dd96e8161823314679543048709b9,
+32de5efd483db68f12233fbf63743a2d92f20ae4]
+stable/4.4: [93cd7100fe471c5f76fb942358de4ed70dbcaf35,
+af21211c327c4703c7681fa7286c4d660682e413]
+stable/4.9: [d2ca6859ea96c6d4c6ad3d6873a308a004882419,
+e4de8ca013f06ad4a0bf40420a291c23990e4131]
+stable/5.10: [7193ad3e50e596ac2192531c58ba83b9e6d2444b,
+e4de8ca013f06ad4a0bf40420a291c23990e4131]
+stable/5.15: [36dfdf11af49d3c009c711fb16f5c6e7a274505d,
+6eea4ace62fa6414432692ee44f0c0a3d541d97a]
+stable/5.4: [fd6de5a0cd42fc43810bd74ad129d98ab962ec6b,
+9978777c5409d6c856cac1adf5930e3c84f057be]
+
+* Updated CVEs
+
+no updated CVEs.
+
+Currently tracking CVEs
+
+CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
+Bluetooth Core Specifications 4.0 through 5.2
+
+There is no fix information.
+
+CVE-2020-26555: BR/EDR pin code pairing broken
+
+No fix information
+
+CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
+
+No fix information.
+
+CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
+Provisioning Leads to MITM
+
+No fix information.
+
+CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
+
+No fix information.
+
+CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
+
+No fix information.
+
+
+Regards,
+-- 
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
+
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
 
