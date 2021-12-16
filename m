@@ -2,144 +2,222 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEB57C4332F
-	for <webhook@archiver.kernel.org>; Thu, 16 Dec 2021 12:55:18 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com
- [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web08.10105.1639659291122281966
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB0DC433F5
+	for <webhook@archiver.kernel.org>; Thu, 16 Dec 2021 12:55:20 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com
+ [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web12.10135.1639659320030414022
  for <cip-dev@lists.cip-project.org>;
- Thu, 16 Dec 2021 04:55:18 -0800
+ Thu, 16 Dec 2021 04:55:20 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=pass (domain: bp.renesas.com, ip: 210.160.252.171,
+ spf=pass (domain: bp.renesas.com, ip: 210.160.252.172,
  mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.88,211,1635174000";
-   d="scan'208";a="103722255"
+   d="scan'208";a="104171981"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 16 Dec 2021 21:55:17 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 16 Dec 2021 21:55:19 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id E8DD540121CF;
-	Thu, 16 Dec 2021 21:55:16 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 4272B40121CF;
+	Thu, 16 Dec 2021 21:55:18 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 22/24] clk: renesas: rzg2l: Add support to handle
- MUX clocks
-Date: Thu, 16 Dec 2021 12:54:44 +0000
-Message-Id: <20211216125446.15451-23-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 23/24] clk: renesas: rzg2l: Add support to handle
+ coupled clocks
+Date: Thu, 16 Dec 2021 12:54:45 +0000
+Message-Id: <20211216125446.15451-24-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20211216125446.15451-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20211216125446.15451-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 16 Dec 2021 12:55:18 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7145
+ <cip-dev@lists.cip-project.org>; Thu, 16 Dec 2021 12:55:20 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7146
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-commit 7c5a2561737d88b55764034b27f897498e90a319 upstream.
+commit 32897e6fff196a5de4981030466ae391dfe56c7b upstream.
 
-Add support to handle mux clocks in order to select a clock source
-from multiple sources.
+The AXI and CHI clocks use the same register bit for controlling clock
+output. Add a new clock type for coupled clocks, which sets the
+CPG_CLKON_ETH.CLK[01]_ON bit when at least one clock is enabled, and
+clears the bit only when both clocks are disabled.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://lore.kernel.org/r/20210922155145.28156-2-biju.das.jz@bp.renesas.com
+Link: https://lore.kernel.org/r/20210922155145.28156-4-biju.das.jz@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/clk/renesas/rzg2l-cpg.c | 23 +++++++++++++++++++++++
- drivers/clk/renesas/rzg2l-cpg.h | 12 ++++++++++++
- 2 files changed, 35 insertions(+)
+ drivers/clk/renesas/rzg2l-cpg.c | 71 +++++++++++++++++++++++++++++++++
+ drivers/clk/renesas/rzg2l-cpg.h | 11 ++++-
+ 2 files changed, 81 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 3b3b2c3347f3..597efc2504eb 100644
+index 597efc2504eb..834a7a73de33 100644
 --- a/drivers/clk/renesas/rzg2l-cpg.c
 +++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -130,6 +130,26 @@ rzg2l_cpg_div_clk_register(const struct cpg_core_clk *core,
- 	return clk_hw->clk;
+@@ -333,13 +333,17 @@ rzg2l_cpg_register_core_clk(const struct cpg_core_clk *core,
+  * @hw: handle between common and hardware-specific interfaces
+  * @off: register offset
+  * @bit: ON/MON bit
++ * @enabled: soft state of the clock, if it is coupled with another clock
+  * @priv: CPG/MSTP private data
++ * @sibling: pointer to the other coupled clock
+  */
+ struct mstp_clock {
+ 	struct clk_hw hw;
+ 	u16 off;
+ 	u8 bit;
++	bool enabled;
+ 	struct rzg2l_cpg_priv *priv;
++	struct mstp_clock *sibling;
+ };
+ 
+ #define to_mod_clock(_hw) container_of(_hw, struct mstp_clock, hw)
+@@ -392,11 +396,41 @@ static int rzg2l_mod_clock_endisable(struct clk_hw *hw, bool enable)
+ 
+ static int rzg2l_mod_clock_enable(struct clk_hw *hw)
+ {
++	struct mstp_clock *clock = to_mod_clock(hw);
++
++	if (clock->sibling) {
++		struct rzg2l_cpg_priv *priv = clock->priv;
++		unsigned long flags;
++		bool enabled;
++
++		spin_lock_irqsave(&priv->rmw_lock, flags);
++		enabled = clock->sibling->enabled;
++		clock->enabled = true;
++		spin_unlock_irqrestore(&priv->rmw_lock, flags);
++		if (enabled)
++			return 0;
++	}
++
+ 	return rzg2l_mod_clock_endisable(hw, true);
  }
  
-+static struct clk * __init
-+rzg2l_cpg_mux_clk_register(const struct cpg_core_clk *core,
-+			   void __iomem *base,
-+			   struct rzg2l_cpg_priv *priv)
+ static void rzg2l_mod_clock_disable(struct clk_hw *hw)
+ {
++	struct mstp_clock *clock = to_mod_clock(hw);
++
++	if (clock->sibling) {
++		struct rzg2l_cpg_priv *priv = clock->priv;
++		unsigned long flags;
++		bool enabled;
++
++		spin_lock_irqsave(&priv->rmw_lock, flags);
++		enabled = clock->sibling->enabled;
++		clock->enabled = false;
++		spin_unlock_irqrestore(&priv->rmw_lock, flags);
++		if (enabled)
++			return;
++	}
++
+ 	rzg2l_mod_clock_endisable(hw, false);
+ }
+ 
+@@ -412,6 +446,9 @@ static int rzg2l_mod_clock_is_enabled(struct clk_hw *hw)
+ 		return 1;
+ 	}
+ 
++	if (clock->sibling)
++		return clock->enabled;
++
+ 	value = readl(priv->base + CLK_MON_R(clock->off));
+ 
+ 	return !(value & bitmask);
+@@ -423,6 +460,28 @@ static const struct clk_ops rzg2l_mod_clock_ops = {
+ 	.is_enabled = rzg2l_mod_clock_is_enabled,
+ };
+ 
++static struct mstp_clock
++*rzg2l_mod_clock__get_sibling(struct mstp_clock *clock,
++			      struct rzg2l_cpg_priv *priv)
 +{
-+	const struct clk_hw *clk_hw;
++	struct clk_hw *hw;
++	unsigned int i;
 +
-+	clk_hw = devm_clk_hw_register_mux(priv->dev, core->name,
-+					  core->parent_names, core->num_parents,
-+					  core->flag,
-+					  base + GET_REG_OFFSET(core->conf),
-+					  GET_SHIFT(core->conf),
-+					  GET_WIDTH(core->conf),
-+					  core->mux_flags, &priv->rmw_lock);
-+	if (IS_ERR(clk_hw))
-+		return ERR_CAST(clk_hw);
++	for (i = 0; i < priv->num_mod_clks; i++) {
++		struct mstp_clock *clk;
 +
-+	return clk_hw->clk;
++		if (priv->clks[priv->num_core_clks + i] == ERR_PTR(-ENOENT))
++			continue;
++
++		hw = __clk_get_hw(priv->clks[priv->num_core_clks + i]);
++		clk = to_mod_clock(hw);
++		if (clock->off == clk->off && clock->bit == clk->bit)
++			return clk;
++	}
++
++	return NULL;
 +}
 +
- struct pll_clk {
- 	struct clk_hw hw;
- 	unsigned int conf;
-@@ -288,6 +308,9 @@ rzg2l_cpg_register_core_clk(const struct cpg_core_clk *core,
- 		clk = rzg2l_cpg_div_clk_register(core, priv->clks,
- 						 priv->base, priv);
- 		break;
-+	case CLK_TYPE_MUX:
-+		clk = rzg2l_cpg_mux_clk_register(core, priv->base, priv);
-+		break;
- 	default:
- 		goto fail;
- 	}
+ static void __init
+ rzg2l_cpg_register_mod_clk(const struct rzg2l_mod_clk *mod,
+ 			   const struct rzg2l_cpg_info *info,
+@@ -484,6 +543,18 @@ rzg2l_cpg_register_mod_clk(const struct rzg2l_mod_clk *mod,
+ 
+ 	dev_dbg(dev, "Module clock %pC at %lu Hz\n", clk, clk_get_rate(clk));
+ 	priv->clks[id] = clk;
++
++	if (mod->is_coupled) {
++		struct mstp_clock *sibling;
++
++		clock->enabled = rzg2l_mod_clock_is_enabled(&clock->hw);
++		sibling = rzg2l_mod_clock__get_sibling(clock, priv);
++		if (sibling) {
++			clock->sibling = sibling;
++			sibling->sibling = clock;
++		}
++	}
++
+ 	return;
+ 
+ fail:
 diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
-index 63695280ce8b..f538ffa3371c 100644
+index f538ffa3371c..ebf716bb913e 100644
 --- a/drivers/clk/renesas/rzg2l-cpg.h
 +++ b/drivers/clk/renesas/rzg2l-cpg.h
-@@ -24,6 +24,9 @@
- #define DIVPL3A		DDIV_PACK(CPG_PL3A_DDIV, 0, 3)
- #define DIVPL3B		DDIV_PACK(CPG_PL3A_DDIV, 4, 3)
+@@ -90,6 +90,7 @@ enum clk_types {
+  * @parent: id of parent clock
+  * @off: register offset
+  * @bit: ON/MON bit
++ * @is_coupled: flag to indicate coupled clock
+  */
+ struct rzg2l_mod_clk {
+ 	const char *name;
+@@ -97,17 +98,25 @@ struct rzg2l_mod_clk {
+ 	unsigned int parent;
+ 	u16 off;
+ 	u8 bit;
++	bool is_coupled;
+ };
  
-+#define SEL_PLL_PACK(offset, bitpos, size) \
-+		(((offset) << 20) | ((bitpos) << 12) | ((size) << 8))
+-#define DEF_MOD(_name, _id, _parent, _off, _bit)	\
++#define DEF_MOD_BASE(_name, _id, _parent, _off, _bit, _is_coupled)	\
+ 	{ \
+ 		.name = _name, \
+ 		.id = MOD_CLK_BASE + (_id), \
+ 		.parent = (_parent), \
+ 		.off = (_off), \
+ 		.bit = (_bit), \
++		.is_coupled = (_is_coupled), \
+ 	}
+ 
++#define DEF_MOD(_name, _id, _parent, _off, _bit)	\
++	DEF_MOD_BASE(_name, _id, _parent, _off, _bit, false)
++
++#define DEF_COUPLED(_name, _id, _parent, _off, _bit)	\
++	DEF_MOD_BASE(_name, _id, _parent, _off, _bit, true)
 +
  /**
-  * Definitions of CPG Core Clocks
+  * struct rzg2l_reset - Reset definitions
   *
-@@ -43,6 +46,7 @@ struct cpg_core_clk {
- 	const struct clk_div_table *dtable;
- 	const char * const *parent_names;
- 	int flag;
-+	int mux_flags;
- 	int num_parents;
- };
- 
-@@ -54,6 +58,9 @@ enum clk_types {
- 
- 	/* Clock with divider */
- 	CLK_TYPE_DIV,
-+
-+	/* Clock with clock source selector */
-+	CLK_TYPE_MUX,
- };
- 
- #define DEF_TYPE(_name, _id, _type...) \
-@@ -69,6 +76,11 @@ enum clk_types {
- #define DEF_DIV(_name, _id, _parent, _conf, _dtable, _flag) \
- 	DEF_TYPE(_name, _id, CLK_TYPE_DIV, .conf = _conf, \
- 		 .parent = _parent, .dtable = _dtable, .flag = _flag)
-+#define DEF_MUX(_name, _id, _conf, _parent_names, _num_parents, _flag, \
-+		_mux_flags) \
-+	DEF_TYPE(_name, _id, CLK_TYPE_MUX, .conf = _conf, \
-+		 .parent_names = _parent_names, .num_parents = _num_parents, \
-+		 .flag = _flag, .mux_flags = _mux_flags)
- 
- /**
-  * struct rzg2l_mod_clk - Module Clocks definitions
 -- 
 2.17.1
 
