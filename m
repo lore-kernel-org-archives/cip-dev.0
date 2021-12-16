@@ -2,132 +2,78 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C55ECC433F5
-	for <webhook@archiver.kernel.org>; Thu, 16 Dec 2021 12:55:05 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com
- [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web10.10189.1639659298966442092
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6338C433EF
+	for <webhook@archiver.kernel.org>; Thu, 16 Dec 2021 12:55:06 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com
+ [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web08.10105.1639659291122281966
  for <cip-dev@lists.cip-project.org>;
- Thu, 16 Dec 2021 04:55:05 -0800
+ Thu, 16 Dec 2021 04:55:06 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=pass (domain: bp.renesas.com, ip: 210.160.252.172,
+ spf=pass (domain: bp.renesas.com, ip: 210.160.252.171,
  mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.88,211,1635174000";
-   d="scan'208";a="104171948"
+   d="scan'208";a="103722226"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 16 Dec 2021 21:55:04 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 16 Dec 2021 21:55:06 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id D15F04012261;
-	Thu, 16 Dec 2021 21:55:03 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 281844012258;
+	Thu, 16 Dec 2021 21:55:04 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 12/24] arm64: dts: renesas: Add initial device tree
- for RZ/G2L SMARC EVK
-Date: Thu, 16 Dec 2021 12:54:34 +0000
-Message-Id: <20211216125446.15451-13-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 13/24] arm64: dts: renesas: r9a07g044: Add SYSC
+ node
+Date: Thu, 16 Dec 2021 12:54:35 +0000
+Message-Id: <20211216125446.15451-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20211216125446.15451-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20211216125446.15451-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 16 Dec 2021 12:55:05 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7135
+ <cip-dev@lists.cip-project.org>; Thu, 16 Dec 2021 12:55:06 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7136
 
-commit 690ea5d394eb370973ffcb9ecda6a1855fe87d01 upstream.
+commit 42bbd003910906229cb1dc0eaa812d9cc59e4c77 upstream.
 
-Add basic support for RZ/G2L SMARC EVK (based on R9A07G044L2):
-- memory
-- External input clock
-- SCIF
+Add SYSC node to RZ/G2L (R9A07G044) SoC .dtsi.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20210609153230.6967-12-prabhakar.mahadev-lad.rj@bp.renesas.com
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+Link: https://lore.kernel.org/r/20210609163717.3083-4-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/Makefile          |  2 ++
- .../boot/dts/renesas/r9a07g044l2-smarc.dts    | 21 +++++++++++++++
- arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi  | 27 +++++++++++++++++++
- 3 files changed, 50 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r9a07g044l2-smarc.dts
- create mode 100644 arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index dffefe030a76..8a5bc12a6d8d 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -56,3 +56,5 @@ dtb-$(CONFIG_ARCH_R8A77990) += r8a77990-ebisu.dtb
- dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+index 6a103a62eccb..734c8adeceba 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+@@ -99,6 +99,18 @@
+ 			#power-domain-cells = <0>;
+ 		};
  
- dtb-$(CONFIG_ARCH_R8A779A0) += r8a779a0-falcon.dtb
++		sysc: system-controller@11020000 {
++			compatible = "renesas,r9a07g044-sysc";
++			reg = <0 0x11020000 0 0x10000>;
++			interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "lpm_int", "ca55stbydone_int",
++					  "cm33stbyr_int", "ca55_deny";
++			status = "disabled";
++		};
 +
-+dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044l2-smarc.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g044l2-smarc.dts b/arch/arm64/boot/dts/renesas/r9a07g044l2-smarc.dts
-new file mode 100644
-index 000000000000..d3f72ec62f03
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r9a07g044l2-smarc.dts
-@@ -0,0 +1,21 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/*
-+ * Device Tree Source for the RZ/G2L SMARC EVK board
-+ *
-+ * Copyright (C) 2021 Renesas Electronics Corp.
-+ */
-+
-+/dts-v1/;
-+#include "r9a07g044l2.dtsi"
-+#include "rzg2l-smarc.dtsi"
-+
-+/ {
-+	model = "Renesas SMARC EVK based on r9a07g044l2";
-+	compatible = "renesas,smarc-evk", "renesas,r9a07g044l2", "renesas,r9a07g044";
-+
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0x0 0x48000000 0x0 0x78000000>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
-new file mode 100644
-index 000000000000..adcd4f50519e
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
-@@ -0,0 +1,27 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/*
-+ * Device Tree Source for the RZ/G2L SMARC EVK common parts
-+ *
-+ * Copyright (C) 2021 Renesas Electronics Corp.
-+ */
-+
-+#include <dt-bindings/gpio/gpio.h>
-+
-+/ {
-+	aliases {
-+		serial0 = &scif0;
-+	};
-+
-+	chosen {
-+		bootargs = "ignore_loglevel";
-+		stdout-path = "serial0:115200n8";
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <24000000>;
-+};
-+
-+&scif0 {
-+	status = "okay";
-+};
+ 		gic: interrupt-controller@11900000 {
+ 			compatible = "arm,gic-v3";
+ 			#interrupt-cells = <3>;
 -- 
 2.17.1
 
