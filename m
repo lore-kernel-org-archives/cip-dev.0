@@ -2,81 +2,130 @@ Return-Path: <Vijaikumar_Kanagarajan@mentor.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 205F9C433F5
-	for <webhook@archiver.kernel.org>; Thu, 16 Dec 2021 16:49:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33504C433F5
+	for <webhook@archiver.kernel.org>; Thu, 16 Dec 2021 16:53:40 +0000 (UTC)
 Received: from esa2.mentor.iphmx.com (esa2.mentor.iphmx.com [68.232.141.98])
- by mx.groups.io with SMTP id smtpd.web11.12924.1639673343522200205
+ by mx.groups.io with SMTP id smtpd.web08.13051.1639673619434239301
  for <cip-dev@lists.cip-project.org>;
- Thu, 16 Dec 2021 08:49:03 -0800
+ Thu, 16 Dec 2021 08:53:39 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing;
  spf=pass (domain: mentor.com, ip: 68.232.141.98, mailfrom: vijaikumar_kanagarajan@mentor.com)
 IronPort-SDR: 
- pUC4hLCth6jbP57/4GQ/oiFcdptmC+iAG790uUg8RUQOL029ufKRLuIflHFh/hTFuo5ZDQgF+x
- 3OVHo8vkiVzhxOHVZqR4mLFH627cfFtt+bBrqyvuQd0o2Y9LoaSyqdJlolQNHhhbdqaqzE+6Qg
- W0hi1pLsZx5xOQNPbyYYvGKJb3ey3mu2C5+koBmnAvwGh97x3Zro+JhqOtPI6T5fF66hzzzkCU
- /EEAIWUtWUZfZlEBPA/7EzSBFYWB1AbOjojlvnkL9wcq1KWXVsMgBkjKG7dmAR8FlbZVpRR8aP
- RVzNGD7BVooP681y+i4s5I/h
+ WHL4ck3B+iyotbfLnjtnyG6Lv6mXrf4ReYB4K0Ft5Tu6WkOXKzVkX4XoSpfeYsSLEdh1icqYDH
+ nMr0cdUcgd1SEoiLE7xXNOjdxuvpeVhXGhinNeB+2xyAECUOkqHu/u6OQT7Xq7Q5kW2jec07pq
+ rFRaUKlLcaKpj1qDlPI9B2tBzS9ndhDA2st+JDMt4Q3n21PXnCCr0Z75Lp/VtzzSb463x52WQq
+ SmwJP50C3338T7ufoHSu5XWb3zddcOMeBxlJS48nLNrVXwM050cvYP0eOISfxcZayhwoXnhTSW
+ x4au3yuFFCCaATuFsc2N/+jb
 X-IronPort-AV: E=Sophos;i="5.88,211,1635235200";
-   d="scan'208";a="69788477"
+   d="scan'208";a="69788863"
 Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
-  by esa2.mentor.iphmx.com with ESMTP; 16 Dec 2021 08:49:03 -0800
+  by esa2.mentor.iphmx.com with ESMTP; 16 Dec 2021 08:53:39 -0800
 IronPort-SDR: 
- aAx1MESYV0hwcf/1JqJH1RAUoYi6WZLtMJRWgp4vgRBMwDVc+SJgfXLBOiZjPlyuNjDjAXAjxf
- eteBeSMKO+Om1K9A30cZ14c47onOpDOJ8r28IdgiTjoi76xkDFEYgg70YoFONwKDNOoKh7CXoQ
- 4fQYo522Dr74iCfF0Qpngo/XH2ijfrjlsJ8QXjyGn3Cw4Wav6MI8T81fwCDE2XMAdc/5IA2e9T
- CM7EesTxhsFtPxCEgEL6EGQpnarL4gnGluUiSeaJJHrUKLFJPJVHXYUenHni9zVKoMdSDXePBU
- oyk=
-From: Vijai Kumar K <Vijaikumar_Kanagarajan@mentor.com>
-To: <cip-dev@lists.cip-project.org>, <jan.kiszka@siemens.com>
-CC: Vijai Kumar K <Vijaikumar_Kanagarajan@mentor.com>
-Subject: [PATCH v3] swupdate: Add nodoc for buster and bullseye
-Date: Thu, 16 Dec 2021 22:18:42 +0530
-Message-ID: <20211216164842.3403906-1-Vijaikumar_Kanagarajan@mentor.com>
-X-Mailer: git-send-email 2.25.1
+ +ncoJM4Xg2DwUKNPC2kQH5X5GorSLHy8HT96OXlazePfM9htC2Q8gus4O03PKSehrNNUzgOslz
+ wd42/MPTmReNwUl2pKEcijFIFRDtl6+sQqKJG0oeHkoxWEMHOWSsC4U2gmaSPhswIuSQ1Ml4Bs
+ FBQ8MamK3Y8+FnvgO7qAqtQjrH1AUZXdeukLNlZqUsFC3dNMKNMU+6jQn0T8p8HujUGrRrVDhL
+ PzKkaI/M4HDku18S4SvHH2HDXNiis4rFClqjLaR0u+DBnG3vpr53fDAeOOCyhaAYz9MU7Jxe/M
+ JhA=
+From: "Kanagarajan, Vijaikumar" <Vijaikumar_Kanagarajan@mentor.com>
+To: Jan Kiszka <jan.kiszka@siemens.com>, "cip-dev@lists.cip-project.org"
+	<cip-dev@lists.cip-project.org>, Quirin Gylstorff
+	<quirin.gylstorff@siemens.com>
+Subject: RE: [isar-cip-core][PATCH v2 2/2] swupdate: Drop conditional includes
+ for buster
+Thread-Topic: [isar-cip-core][PATCH v2 2/2] swupdate: Drop conditional
+ includes for buster
+Thread-Index: AQHX8oH1DIJsgZtsbE2CkS51ZplTUaw1pYWA//+FpJCAAKEigP//emvggAAOfSA=
+Date: Thu, 16 Dec 2021 16:53:35 +0000
+Message-ID: <adc44e31cc064ae1955fd8e0122b1797@svr-orw-mbx-01.mgc.mentorg.com>
+References: <20211216133617.3403412-1-Vijaikumar_Kanagarajan@mentor.com>
+ <20211216133617.3403412-3-Vijaikumar_Kanagarajan@mentor.com>
+ <2ce1cbe9-8950-f136-d7a5-b97b455e8105@siemens.com>
+ <518bb7da0c0a4e70912e3dcbcdcad06b@svr-orw-mbx-01.mgc.mentorg.com>
+ <07bc3081-88ae-ef1b-cef4-4d00c0ae0703@siemens.com>
+ <7bc6c248e2d645a69139888e0d42c09f@svr-orw-mbx-01.mgc.mentorg.com>
+In-Reply-To: <7bc6c248e2d645a69139888e0d42c09f@svr-orw-mbx-01.mgc.mentorg.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [147.34.91.1]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: svr-orw-mbx-08.mgc.mentorg.com (147.34.90.208) To
- svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201)
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 16 Dec 2021 16:49:05 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7165
+ <cip-dev@lists.cip-project.org>; Thu, 16 Dec 2021 16:53:40 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7166
 
-Including documentation makes the build fail in buster and bullseye.
-Remove it.
-
-Signed-off-by: Vijai Kumar K <Vijaikumar_Kanagarajan@mentor.com>
----
- recipes-core/swupdate/swupdate_2021.04-1+debian-gbp.bb | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/recipes-core/swupdate/swupdate_2021.04-1+debian-gbp.bb b/recipes-core/swupdate/swupdate_2021.04-1+debian-gbp.bb
-index a4d67fe..e25ee4c 100644
---- a/recipes-core/swupdate/swupdate_2021.04-1+debian-gbp.bb
-+++ b/recipes-core/swupdate/swupdate_2021.04-1+debian-gbp.bb
-@@ -44,12 +44,14 @@ SWUPDATE_BUILD_PROFILES += "cross nocheck"
- # modify for debian buster build
- SRC_URI_append_buster = " file://0009-debian-prepare-build-for-isar-debian-buster.patch"
- 
--# disable documentation due to missing packages in debian buster
-+# disable documentation due to missing packages
-+SWUPDATE_BUILD_PROFILES_append = " nodoc "
-+
- # disable create filesystem due to missing symbols in debian buster
- # disable webserver due to missing symbols in debian buster
--SWUPDATE_BUILD_PROFILES_append_buster = " nodoc \
--                                          pkg.swupdate.nocreatefs \
--                                          pkg.swupdate.nowebserver "
-+SWUPDATE_BUILD_PROFILES_append_buster = " \
-+                                   pkg.swupdate.nocreatefs \
-+                                   pkg.swupdate.nowebserver "
- # In debian buster the git-compression defaults to gz and does not detect other
- # compression formats.
- GBP_EXTRA_OPTIONS += "--git-compression=xz"
--- 
-2.25.1
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogS2FuYWdhcmFqYW4sIFZp
+amFpa3VtYXINCj4gU2VudDogMTYgRGVjZW1iZXIgMjAyMSAyMTozMA0KPiBUbzogJ0phbiBLaXN6
+a2EnIDxqYW4ua2lzemthQHNpZW1lbnMuY29tPjsgY2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5v
+cmc7DQo+IFF1aXJpbiBHeWxzdG9yZmYgPHF1aXJpbi5neWxzdG9yZmZAc2llbWVucy5jb20+DQo+
+IFN1YmplY3Q6IFJFOiBbaXNhci1jaXAtY29yZV1bUEFUQ0ggdjIgMi8yXSBzd3VwZGF0ZTogRHJv
+cCBjb25kaXRpb25hbA0KPiBpbmNsdWRlcyBmb3IgYnVzdGVyDQo+IA0KPiANCj4gDQo+ID4gLS0t
+LS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPiBGcm9tOiBKYW4gS2lzemthIDxqYW4ua2lzemth
+QHNpZW1lbnMuY29tPg0KPiA+IFNlbnQ6IDE2IERlY2VtYmVyIDIwMjEgMjE6MjcNCj4gPiBUbzog
+S2FuYWdhcmFqYW4sIFZpamFpa3VtYXIgPFZpamFpa3VtYXJfS2FuYWdhcmFqYW5AbWVudG9yLmNv
+bT47IGNpcC0NCj4gPiBkZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnOyBRdWlyaW4gR3lsc3RvcmZm
+DQo+ID4gPHF1aXJpbi5neWxzdG9yZmZAc2llbWVucy5jb20+DQo+ID4gU3ViamVjdDogUmU6IFtp
+c2FyLWNpcC1jb3JlXVtQQVRDSCB2MiAyLzJdIHN3dXBkYXRlOiBEcm9wIGNvbmRpdGlvbmFsDQo+
+ID4gaW5jbHVkZXMgZm9yIGJ1c3Rlcg0KPiA+DQo+ID4gT24gMTYuMTIuMjEgMTU6MjMsIEthbmFn
+YXJhamFuLCBWaWphaWt1bWFyIHdyb3RlOg0KPiA+ID4NCj4gPiA+DQo+ID4gPj4gLS0tLS1Pcmln
+aW5hbCBNZXNzYWdlLS0tLS0NCj4gPiA+PiBGcm9tOiBKYW4gS2lzemthIDxqYW4ua2lzemthQHNp
+ZW1lbnMuY29tPg0KPiA+ID4+IFNlbnQ6IDE2IERlY2VtYmVyIDIwMjEgMTk6MDkNCj4gPiA+PiBU
+bzogS2FuYWdhcmFqYW4sIFZpamFpa3VtYXIgPFZpamFpa3VtYXJfS2FuYWdhcmFqYW5AbWVudG9y
+LmNvbT47DQo+ID4gY2lwLQ0KPiA+ID4+IGRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmcNCj4gPiA+
+PiBTdWJqZWN0OiBSZTogW2lzYXItY2lwLWNvcmVdW1BBVENIIHYyIDIvMl0gc3d1cGRhdGU6IERy
+b3ANCj4gPiA+PiBjb25kaXRpb25hbCBpbmNsdWRlcyBmb3IgYnVzdGVyDQo+ID4gPj4NCj4gPiA+
+PiBPbiAxNi4xMi4yMSAxNDozNiwgVmlqYWkgS3VtYXIgSyB3cm90ZToNCj4gPiA+Pj4gU3RyZXRj
+aCBpbiBub3cgZHJvcHBlZC4gVGhlIGNvbmRpdGlvbmFsIGluY2x1ZGVzIGZvciBidXN0ZXIgaXMg
+bm93DQo+ID4gPj4+IG5vdCBuZWVkZWQuIFRob3NlIGluY2x1ZGVzIGFyZSBhcHBsaWNhYmxlIHRv
+IGJ1c3RlciBhcyB3ZWxsIGFzIGJ1bGxzZXllLg0KPiA+ID4+Pg0KPiA+ID4+PiBTaWduZWQtb2Zm
+LWJ5OiBWaWphaSBLdW1hciBLIDxWaWphaWt1bWFyX0thbmFnYXJhamFuQG1lbnRvci5jb20+DQo+
+ID4gPj4+IC0tLQ0KPiA+ID4+PiAgLi4uL3N3dXBkYXRlL3N3dXBkYXRlXzIwMjEuMDQtMStkZWJp
+YW4tZ2JwLmJiICAgICAgICB8IDEyICsrKysrKy0tLS0tDQo+IC0NCj4gPiA+Pj4gIDEgZmlsZSBj
+aGFuZ2VkLCA2IGluc2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0pDQo+ID4gPj4+DQo+ID4gPj4+
+IGRpZmYgLS1naXQNCj4gPiA+Pj4gYS9yZWNpcGVzLWNvcmUvc3d1cGRhdGUvc3d1cGRhdGVfMjAy
+MS4wNC0xK2RlYmlhbi1nYnAuYmINCj4gPiA+Pj4gYi9yZWNpcGVzLWNvcmUvc3d1cGRhdGUvc3d1
+cGRhdGVfMjAyMS4wNC0xK2RlYmlhbi1nYnAuYmINCj4gPiA+Pj4gaW5kZXggYTRkNjdmZS4uNTFh
+YWNmZSAxMDA2NDQNCj4gPiA+Pj4gLS0tIGEvcmVjaXBlcy1jb3JlL3N3dXBkYXRlL3N3dXBkYXRl
+XzIwMjEuMDQtMStkZWJpYW4tZ2JwLmJiDQo+ID4gPj4+ICsrKyBiL3JlY2lwZXMtY29yZS9zd3Vw
+ZGF0ZS9zd3VwZGF0ZV8yMDIxLjA0LTErZGViaWFuLWdicC5iYg0KPiA+ID4+PiBAQCAtNDQsMTIg
+KzQ0LDEyIEBAIFNXVVBEQVRFX0JVSUxEX1BST0ZJTEVTICs9ICJjcm9zcw0KPiBub2NoZWNrIg0K
+PiA+ID4+PiAgIyBtb2RpZnkgZm9yIGRlYmlhbiBidXN0ZXIgYnVpbGQNCj4gPiA+Pj4gIFNSQ19V
+UklfYXBwZW5kX2J1c3RlciA9ICINCj4gPiA+Pj4gZmlsZTovLzAwMDktZGViaWFuLXByZXBhcmUt
+YnVpbGQtZm9yLWlzYXItDQo+ID4gPj4gZGViaWFuLWJ1c3Rlci5wYXRjaCINCj4gPiA+Pj4NCj4g
+PiA+Pj4gLSMgZGlzYWJsZSBkb2N1bWVudGF0aW9uIGR1ZSB0byBtaXNzaW5nIHBhY2thZ2VzIGlu
+IGRlYmlhbiBidXN0ZXINCj4gPiA+Pj4gLSMgZGlzYWJsZSBjcmVhdGUgZmlsZXN5c3RlbSBkdWUg
+dG8gbWlzc2luZyBzeW1ib2xzIGluIGRlYmlhbg0KPiA+ID4+PiBidXN0ZXIgLSMgZGlzYWJsZSB3
+ZWJzZXJ2ZXIgZHVlIHRvIG1pc3Npbmcgc3ltYm9scyBpbiBkZWJpYW4NCj4gPiA+Pj4gYnVzdGVy
+IC1TV1VQREFURV9CVUlMRF9QUk9GSUxFU19hcHBlbmRfYnVzdGVyID0gIiBub2RvYyBcDQo+ID4g
+Pj4+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwa2cuc3d1cGRh
+dGUubm9jcmVhdGVmcyBcDQo+ID4gPj4+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICBwa2cuc3d1cGRhdGUubm93ZWJzZXJ2ZXIgIg0KPiA+ID4+PiArIyBkaXNhYmxl
+IGRvY3VtZW50YXRpb24gZHVlIHRvIG1pc3NpbmcgcGFja2FnZXMgIyBkaXNhYmxlIGNyZWF0ZQ0K
+PiA+ID4+PiArZmlsZXN5c3RlbSBkdWUgdG8gbWlzc2luZyBzeW1ib2xzICMgZGlzYWJsZSB3ZWJz
+ZXJ2ZXIgZHVlIHRvDQo+ID4gPj4+ICttaXNzaW5nIHN5bWJvbHMgU1dVUERBVEVfQlVJTERfUFJP
+RklMRVNfYXBwZW5kID0gIiBub2RvYyBcDQo+ID4gPj4+ICsgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIHBrZy5zd3VwZGF0ZS5ub2NyZWF0ZWZzIFwNCj4gPiA+Pj4gKyAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgcGtnLnN3dXBkYXRlLm5vd2Vic2VydmVyICINCj4g
+PiA+Pj4gICMgSW4gZGViaWFuIGJ1c3RlciB0aGUgZ2l0LWNvbXByZXNzaW9uIGRlZmF1bHRzIHRv
+IGd6IGFuZCBkb2VzDQo+ID4gPj4+IG5vdCBkZXRlY3Qgb3RoZXIgICMgY29tcHJlc3Npb24gZm9y
+bWF0cy4NCj4gPiA+Pj4gIEdCUF9FWFRSQV9PUFRJT05TICs9ICItLWdpdC1jb21wcmVzc2lvbj14
+eiINCj4gPiA+Pj4NCj4gPiA+Pg0KPiA+ID4+IFNvIHRoZXNlIHRoaW5ncyB3ZXJlIGFjdHVhbGx5
+IGJyb2tlbiBmb3IgYnVsbHNleWUgc28gZmFyPw0KPiA+ID4NCj4gPiA+IFllcy4gQXRsZWFzdCwg
+dGhlIG5vZG9jIGlzIG5lZWRlZCBiZWNhdXNlIG9mIHNwaGlueCBkZXBlbmRlbmN5IGlzc3VlDQo+
+ID4gPiBpbg0KPiA+IGJ1bGxzZXllLg0KPiA+ID4NCj4gPg0KPiA+IFF1aXJpbiBqdXN0IHRvbGQg
+bWUgdGhhdCBvbmx5IG5vZG9jIGlzIG5lZWRlZCBmb3IgYWxsLg0KPiA+DQo+ID4gRHJvcHBpbmcg
+dGhpcyBwYXRjaCBhZ2FpbiAoa2VlcGluZyAxLzIgdGhvdWdoKS4gUGxlYXNlIHNlbmQgYSB2MyB3
+aGljaA0KPiA+IGRvZXMgdGhhdCwgaWUuIGFkZHMgYSBfYnVsbHNleWUgcHJvZmlsZSBhbmQga2Vl
+cHMgdGhlIGV4aXN0aW5nIGJ1c3RlciBvbmUuDQo+IA0KPiBPay4gV2lsbCByZXNlbmQgdjMgb2Yg
+dGhpcyBwYXJ0aWN1bGFyIHBhdGNoLg0KDQpWMyBvZiB0aGlzIHBhdGNoIGF2YWlsYWJsZSBoZXJl
+LiBodHRwczovL2xpc3RzLmNpcC1wcm9qZWN0Lm9yZy9nL2NpcC1kZXYvbWVzc2FnZS83MTY1DQoN
+ClRoYW5rcywNClZpamFpIEt1bWFyIEsNCg0KPiANCj4gVGhhbmtzLA0KPiBWaWphaSBLdW1hciBL
+DQo+IA0KPiA+DQo+ID4gSmFuDQo+ID4NCj4gPiAtLQ0KPiA+IFNpZW1lbnMgQUcsIFQgUkRBIElP
+VA0KPiA+IENvcnBvcmF0ZSBDb21wZXRlbmNlIENlbnRlciBFbWJlZGRlZCBMaW51eA0K
 
