@@ -2,143 +2,144 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB3BBC433F5
-	for <webhook@archiver.kernel.org>; Thu, 16 Dec 2021 12:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEB57C4332F
+	for <webhook@archiver.kernel.org>; Thu, 16 Dec 2021 12:55:18 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com
  [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.web08.10105.1639659291122281966
  for <cip-dev@lists.cip-project.org>;
- Thu, 16 Dec 2021 04:55:17 -0800
+ Thu, 16 Dec 2021 04:55:18 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing;
  spf=pass (domain: bp.renesas.com, ip: 210.160.252.171,
  mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.88,211,1635174000";
-   d="scan'208";a="103722251"
+   d="scan'208";a="103722255"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 16 Dec 2021 21:55:16 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 16 Dec 2021 21:55:17 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 9FB3A4010737;
-	Thu, 16 Dec 2021 21:55:15 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id E8DD540121CF;
+	Thu, 16 Dec 2021 21:55:16 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 21/24] clk: mux: provide devm_clk_hw_register_mux()
-Date: Thu, 16 Dec 2021 12:54:43 +0000
-Message-Id: <20211216125446.15451-22-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 22/24] clk: renesas: rzg2l: Add support to handle
+ MUX clocks
+Date: Thu, 16 Dec 2021 12:54:44 +0000
+Message-Id: <20211216125446.15451-23-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20211216125446.15451-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20211216125446.15451-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 16 Dec 2021 12:55:17 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7144
+ <cip-dev@lists.cip-project.org>; Thu, 16 Dec 2021 12:55:18 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7145
 
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-commit b3084079c1779645222d5ea4e9da88d38026cae8 upstream.
+commit 7c5a2561737d88b55764034b27f897498e90a319 upstream.
 
-Add devm_clk_hw_register_mux() - devres-managed version of
-clk_hw_register_mux().
+Add support to handle mux clocks in order to select a clock source
+from multiple sources.
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Reviewed-by: Abhinav Kumar <abhinavk@codeaurora.org>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Link: https://lore.kernel.org/r/20210331105735.3690009-2-dmitry.baryshkov@linaro.org
-Signed-off-by: Rob Clark <robdclark@chromium.org>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Link: https://lore.kernel.org/r/20210922155145.28156-2-biju.das.jz@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/clk/clk-mux.c        | 35 +++++++++++++++++++++++++++++++++++
- include/linux/clk-provider.h | 13 +++++++++++++
- 2 files changed, 48 insertions(+)
+ drivers/clk/renesas/rzg2l-cpg.c | 23 +++++++++++++++++++++++
+ drivers/clk/renesas/rzg2l-cpg.h | 12 ++++++++++++
+ 2 files changed, 35 insertions(+)
 
-diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
-index e54e79714818..20582aae7a35 100644
---- a/drivers/clk/clk-mux.c
-+++ b/drivers/clk/clk-mux.c
-@@ -8,6 +8,7 @@
-  */
- 
- #include <linux/clk-provider.h>
-+#include <linux/device.h>
- #include <linux/module.h>
- #include <linux/slab.h>
- #include <linux/io.h>
-@@ -206,6 +207,40 @@ struct clk_hw *__clk_hw_register_mux(struct device *dev, struct device_node *np,
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index 3b3b2c3347f3..597efc2504eb 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -130,6 +130,26 @@ rzg2l_cpg_div_clk_register(const struct cpg_core_clk *core,
+ 	return clk_hw->clk;
  }
- EXPORT_SYMBOL_GPL(__clk_hw_register_mux);
  
-+static void devm_clk_hw_release_mux(struct device *dev, void *res)
++static struct clk * __init
++rzg2l_cpg_mux_clk_register(const struct cpg_core_clk *core,
++			   void __iomem *base,
++			   struct rzg2l_cpg_priv *priv)
 +{
-+	clk_hw_unregister_mux(*(struct clk_hw **)res);
++	const struct clk_hw *clk_hw;
++
++	clk_hw = devm_clk_hw_register_mux(priv->dev, core->name,
++					  core->parent_names, core->num_parents,
++					  core->flag,
++					  base + GET_REG_OFFSET(core->conf),
++					  GET_SHIFT(core->conf),
++					  GET_WIDTH(core->conf),
++					  core->mux_flags, &priv->rmw_lock);
++	if (IS_ERR(clk_hw))
++		return ERR_CAST(clk_hw);
++
++	return clk_hw->clk;
 +}
 +
-+struct clk_hw *__devm_clk_hw_register_mux(struct device *dev, struct device_node *np,
-+		const char *name, u8 num_parents,
-+		const char * const *parent_names,
-+		const struct clk_hw **parent_hws,
-+		const struct clk_parent_data *parent_data,
-+		unsigned long flags, void __iomem *reg, u8 shift, u32 mask,
-+		u8 clk_mux_flags, u32 *table, spinlock_t *lock)
-+{
-+	struct clk_hw **ptr, *hw;
-+
-+	ptr = devres_alloc(devm_clk_hw_release_mux, sizeof(*ptr), GFP_KERNEL);
-+	if (!ptr)
-+		return ERR_PTR(-ENOMEM);
-+
-+	hw = __clk_hw_register_mux(dev, np, name, num_parents, parent_names, parent_hws,
-+				       parent_data, flags, reg, shift, mask,
-+				       clk_mux_flags, table, lock);
-+
-+	if (!IS_ERR(hw)) {
-+		*ptr = hw;
-+		devres_add(dev, ptr);
-+	} else {
-+		devres_free(ptr);
-+	}
-+
-+	return hw;
-+}
-+EXPORT_SYMBOL_GPL(__devm_clk_hw_register_mux);
-+
- struct clk *clk_register_mux_table(struct device *dev, const char *name,
- 		const char * const *parent_names, u8 num_parents,
- 		unsigned long flags, void __iomem *reg, u8 shift, u32 mask,
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 03a5de5f99f4..dab50fbca954 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -841,6 +841,13 @@ struct clk_hw *__clk_hw_register_mux(struct device *dev, struct device_node *np,
- 		const struct clk_parent_data *parent_data,
- 		unsigned long flags, void __iomem *reg, u8 shift, u32 mask,
- 		u8 clk_mux_flags, u32 *table, spinlock_t *lock);
-+struct clk_hw *__devm_clk_hw_register_mux(struct device *dev, struct device_node *np,
-+		const char *name, u8 num_parents,
-+		const char * const *parent_names,
-+		const struct clk_hw **parent_hws,
-+		const struct clk_parent_data *parent_data,
-+		unsigned long flags, void __iomem *reg, u8 shift, u32 mask,
-+		u8 clk_mux_flags, u32 *table, spinlock_t *lock);
- struct clk *clk_register_mux_table(struct device *dev, const char *name,
- 		const char * const *parent_names, u8 num_parents,
- 		unsigned long flags, void __iomem *reg, u8 shift, u32 mask,
-@@ -875,6 +882,12 @@ struct clk *clk_register_mux_table(struct device *dev, const char *name,
- 	__clk_hw_register_mux((dev), NULL, (name), (num_parents), NULL, NULL, \
- 			      (parent_data), (flags), (reg), (shift),	      \
- 			      BIT((width)) - 1, (clk_mux_flags), NULL, (lock))
-+#define devm_clk_hw_register_mux(dev, name, parent_names, num_parents, flags, reg, \
-+			    shift, width, clk_mux_flags, lock)		      \
-+	__devm_clk_hw_register_mux((dev), NULL, (name), (num_parents),	      \
-+			      (parent_names), NULL, NULL, (flags), (reg),     \
-+			      (shift), BIT((width)) - 1, (clk_mux_flags),     \
-+			      NULL, (lock))
+ struct pll_clk {
+ 	struct clk_hw hw;
+ 	unsigned int conf;
+@@ -288,6 +308,9 @@ rzg2l_cpg_register_core_clk(const struct cpg_core_clk *core,
+ 		clk = rzg2l_cpg_div_clk_register(core, priv->clks,
+ 						 priv->base, priv);
+ 		break;
++	case CLK_TYPE_MUX:
++		clk = rzg2l_cpg_mux_clk_register(core, priv->base, priv);
++		break;
+ 	default:
+ 		goto fail;
+ 	}
+diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
+index 63695280ce8b..f538ffa3371c 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.h
++++ b/drivers/clk/renesas/rzg2l-cpg.h
+@@ -24,6 +24,9 @@
+ #define DIVPL3A		DDIV_PACK(CPG_PL3A_DDIV, 0, 3)
+ #define DIVPL3B		DDIV_PACK(CPG_PL3A_DDIV, 4, 3)
  
- int clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int flags,
- 			 unsigned int val);
++#define SEL_PLL_PACK(offset, bitpos, size) \
++		(((offset) << 20) | ((bitpos) << 12) | ((size) << 8))
++
+ /**
+  * Definitions of CPG Core Clocks
+  *
+@@ -43,6 +46,7 @@ struct cpg_core_clk {
+ 	const struct clk_div_table *dtable;
+ 	const char * const *parent_names;
+ 	int flag;
++	int mux_flags;
+ 	int num_parents;
+ };
+ 
+@@ -54,6 +58,9 @@ enum clk_types {
+ 
+ 	/* Clock with divider */
+ 	CLK_TYPE_DIV,
++
++	/* Clock with clock source selector */
++	CLK_TYPE_MUX,
+ };
+ 
+ #define DEF_TYPE(_name, _id, _type...) \
+@@ -69,6 +76,11 @@ enum clk_types {
+ #define DEF_DIV(_name, _id, _parent, _conf, _dtable, _flag) \
+ 	DEF_TYPE(_name, _id, CLK_TYPE_DIV, .conf = _conf, \
+ 		 .parent = _parent, .dtable = _dtable, .flag = _flag)
++#define DEF_MUX(_name, _id, _conf, _parent_names, _num_parents, _flag, \
++		_mux_flags) \
++	DEF_TYPE(_name, _id, CLK_TYPE_MUX, .conf = _conf, \
++		 .parent_names = _parent_names, .num_parents = _num_parents, \
++		 .flag = _flag, .mux_flags = _mux_flags)
+ 
+ /**
+  * struct rzg2l_mod_clk - Module Clocks definitions
 -- 
 2.17.1
 
