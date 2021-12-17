@@ -1,207 +1,151 @@
-Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90616C433EF
-	for <webhook@archiver.kernel.org>; Thu, 16 Dec 2021 20:47:02 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.157])
- by mx.groups.io with SMTP id smtpd.web12.7.1639687620520125960
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A153C433F5
+	for <webhook@archiver.kernel.org>; Fri, 17 Dec 2021 07:03:19 +0000 (UTC)
+Received: from EUR04-VI1-obe.outbound.protection.outlook.com
+ (EUR04-VI1-obe.outbound.protection.outlook.com [40.107.8.53])
+ by mx.groups.io with SMTP id smtpd.web11.3473.1639724597808264642
  for <cip-dev@lists.cip-project.org>;
- Thu, 16 Dec 2021 12:47:02 -0800
+ Thu, 16 Dec 2021 23:03:18 -0800
 Authentication-Results: mx.groups.io;
- dkim=missing;
- spf=pass (domain: toshiba.co.jp, ip: 210.130.202.157, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
-Received: by mo-csw.securemx.jp (mx-mo-csw1115) id 1BGKkona025078;
- Fri, 17 Dec 2021 05:46:50 +0900
-X-Iguazu-Qid: 2wHHIL40Q0TkzCVms4
-X-Iguazu-QSIG: v=2; s=0; t=1639687609; q=2wHHIL40Q0TkzCVms4;
- m=/9Ad/2LAW3IJW/O8l/pFBG9sf14YANQ7PMD5AMDDlrM=
-Received: from imx12-a.toshiba.co.jp (imx12-a.toshiba.co.jp [61.202.160.135])
-	by relay.securemx.jp (mx-mr1110) id 1BGKklkI026333
-	(version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
-	Fri, 17 Dec 2021 05:46:48 +0900
-Received: from enc02.toshiba.co.jp (enc02.toshiba.co.jp [61.202.160.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by imx12-a.toshiba.co.jp (Postfix) with ESMTPS id D087C100459;
-	Fri, 17 Dec 2021 05:46:47 +0900 (JST)
-Received: from hop101.toshiba.co.jp ([133.199.85.107])
-	by enc02.toshiba.co.jp  with ESMTP id 1BGKklJB029192;
-	Fri, 17 Dec 2021 05:46:47 +0900
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=RBRiD9Wa;
+ spf=pass (domain: siemens.com, ip: 40.107.8.53,
+ mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BaWZMPZmSdKDFCy6GSW4EIGpJucdbpoADBanHM/1Ea5bFSET+Yv7Mh4jx8SS8qvc5sxkgTPzv6QD1p5PULzaSz2y8qxhzwXgVDt6z00IG7x6c0zcDV7H8GXhVpW3m2Za4TqgyIPnkX/Biku9yvMF+WdidYpaWBmge1xBBnEzTmLhvNOpgivuOKKhM2lugVOOuAfGNqr4q2wzDfeqh0D3nfW7fx56aYgDFTW7EvFM25hTBJDNkLLSWQUyVxswrohd9kgp9bN6Hq7H0CbMKWTyKxcAk/7ulMohQenhs8W35037nS+qaSEnEy8r03MRNgezKUJemEgxavJXA9QMEoDbrA==
+ b=nTMGxXbCEF8wgBEZoQwGdBse45lYCaVChWIm6Z5FqguKbfkFlOHZ/eBMYjQbEHTuiM5sLk7YwuNNaQXethhXNlBhs0Wmcm7b6W0cYvSI7jkMy/l/5cH3XH1rQPuQii2oanwbABqEHx1G3Pvm7FOjvs2A7muXr6ooBkWZPc8kx22fPjDrVtrGxPKFxFhqokASO7kg41D5oZ5ccMjvBB7Fg7w9zr/yf/ZLYn7AFVQAFsbcgHJSfLNx9PMF4t9W1giZhRqkzKXgOwbO9YVDf6iveD4qdBLmhJuaeLBPs3j6ITy5PYwTAwmanaR3PIzSm9TizKxnizp63dWXR4FKgwuXWQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GoaqFCKYx5IkgNJo50ovQTZbIu7CtLlNjBLKJtXxAZU=;
- b=ZiEXFruYWJ6wfSgkSzP1yX2S0qwMazpkAWVIySSoUJGlxteZHPZbjfJ3GXF2VLVStNfk+paYrV9yY6A/sIiBmOK74qx5WD/1uJ+hY8ZCV6tWEBs1Vg2tL7Cga0JM9LmgPxD2jmYPbC7DcRhgpyLvfOZewL8IALzVb9NHyJSt7nBCgBHWoCefRBetEf6LFrykjqzFfiWFu4LaO2X0w9FiZYOHfSBxycRhatnWECzfY1NMjhcvC4SPoyzrnjidSHuURrPiRPQkm/zeE97L5zBo5fDRK7PWTmpLHsW0C+L3ip0unsVCLxxq6x+kUCX30G3QIXCnBH9Pw3Q1va/sgmqtcg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
- header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
-From: <nobuhiro1.iwamatsu@toshiba.co.jp>
-To: <Chris.Paterson2@renesas.com>, <cip-dev@lists.cip-project.org>,
-        <prabhakar.mahadev-lad.rj@bp.renesas.com>
-CC: <pavel@denx.de>, <biju.das.jz@bp.renesas.com>
-Subject: Re: [cip-dev] [PATCH 5.10.y-cip 0/7] Add binding and SoC
- identification for Renesas RZ/G2L SoC and Renesas RZ/G2L SMARC EVK
-Thread-Topic: [cip-dev] [PATCH 5.10.y-cip 0/7] Add binding and SoC
- identification for Renesas RZ/G2L SoC and Renesas RZ/G2L SMARC EVK
-Thread-Index: AQHX8U08XT1uNy8MwUSTHJk1/2W6AawzVAKAgAAILACAAOotR4AAnHSAgAC2Pt8=
-Date: Thu, 16 Dec 2021 20:46:44 +0000
-X-TSB-HOP: ON
-Message-ID: 
- <TYAPR01MB6252332467837CD4ED9101BA92779@TYAPR01MB6252.jpnprd01.prod.outlook.com>
-References: <20211215004612.13289-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20211215100537.GA18047@amd>
- <OSZPR01MB6877AA575BACD21ED96F9B53B7769@OSZPR01MB6877.jpnprd01.prod.outlook.com>
- <TYAPR01MB625203ABE988E764E38A8C5592779@TYAPR01MB6252.jpnprd01.prod.outlook.com>
- <OSZPR01MB68774C867A33E8AB5B82EBC9B7779@OSZPR01MB6877.jpnprd01.prod.outlook.com>
-In-Reply-To: 
- <OSZPR01MB68774C867A33E8AB5B82EBC9B7779@OSZPR01MB6877.jpnprd01.prod.outlook.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-suggested_attachment_session_id: 4e8d8ce0-b832-c545-c631-d67cdd5cc262
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 6a879f31-40d8-4a2a-33ca-08d9c0d52b91
-x-ms-traffictypediagnostic: TY2PR01MB3595:EE_
-x-microsoft-antispam-prvs: 
- <TY2PR01MB35952AE3C9D1C8180C3E785D92779@TY2PR01MB3595.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- fJAktTnsWlWthQRApntTAYvrd9Kcq322b6T4axTN5IqnlNTp1NDaMrv0T7B0Kszqkns3zOHFzo5WSkbO6hmw8S4hVRm0kNkiF1x3nFhiWanlrQafmQo+8Omv1nUaDG/ylYNJNUvaYGv3+3fm+doCExSUnkf9+qSBA0QM6U5uIZ3i1azmtiOrVbl8wE6PWZQZ/j4PHpNljoYj4yLdVYspUPebkJwPZj+wnVhbds8eL06qRYlPiD4HSMdZygeVgvzvIqW8hmhtFSZR7o8mykSc2YQrQqpoMDI92XJhs3TdJUgmP9UYiSNEsOr0iugEMSTh2hHeAXMYyWj/U4h55N8ROFTg43wetcVTeZXX3GmujaTNjwMZMM2AJ57M9cY4n/dlbXhsoiVTkhUdfygS77CSRc9Y2yZkS47VakWBdemtAVG5UMh4F/0nBECL1fjMOKnEig+RxIrBwvXw5g/ZLMhj6N3IvuGdTDUSMWUMekf3+oqYB47BEb0TsYQbnYxcsU+KY1kEfxPkBPmJni6CVhf8ziPn2lHQLubyyhQfG6Lhlkh6ZQrE/mbEDTJzyrnHciDzurnrMQVGblEJwM2MxmGOejBCd0A++vB/pDfH9uH3Ye4ryhHqdxQ4+z8WbiBqxsN0HJFenxQ9qGwwmkz5mW20/x8zUmrbk5SrxoNMlLMU+P+L2Ckf5KxHB9vs6QBxOSYXNnKX2ThZToj+hjurmNLsYw==
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYAPR01MB6252.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(122000001)(38100700002)(55016003)(38070700005)(66446008)(9686003)(508600001)(4326008)(55236004)(33656002)(86362001)(52536014)(8676002)(71200400001)(186003)(64756008)(76116006)(26005)(66556008)(66946007)(66476007)(54906003)(5660300002)(110136005)(316002)(8936002)(6506007)(7696005)(2906002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?UURQUUVKTHQxSE8yTExPUTFGa0pJNHRoY2pkNVBNNS9rOCtZWjVBWjBI?=
- =?iso-2022-jp?B?V3BXTXVVa0ZVYm9hVnRMQ1hZM3hjeXBTWmYyMS9CK1FIK05tNTczV0hN?=
- =?iso-2022-jp?B?aTFyWDZTSW12TXJUcWZoQTJYbzJDZ2E2bWNRMURURWk5QnJRemM4QnpD?=
- =?iso-2022-jp?B?V3hTdFF0aVNsNFN5QkVkU2Z3STIvZ1FSWWlEeUpqVmFUMjJwVFhzT0tq?=
- =?iso-2022-jp?B?UnFpTVFETDlKTFByNFE1djVDWUVvQVdzVkdrdy9DMVo5Q2ZrYzF4KzFi?=
- =?iso-2022-jp?B?WjV4Uyt6a1p1SEZzY0VUWFgwNzFLdVJIRloweEpGMDBnSG5BMWNvc0w4?=
- =?iso-2022-jp?B?M2FsTG9CUU8vSmV6NFRMMmZOSjlLY0ptdGJNbU0zVGNpM25Ra0FHZ3N3?=
- =?iso-2022-jp?B?THg4QUlaZCt0c3BnT3YycFBxK1JSRVYyMk4yMzFFVDBQMHhaU1N4eVh3?=
- =?iso-2022-jp?B?VXJJTmRpK05lU2JEcWNoeVlhN0JTbDBNb3l2Qk5ENzZadWl1RWRMWTFw?=
- =?iso-2022-jp?B?WVNCaGk5eFArTFRWbjJxQ0Fwc0k1aWtPYVRHdlkra3paZGdZNG11a1ox?=
- =?iso-2022-jp?B?NXNGdXZRMFZKRG1Xc3d4M1kzcUl6YTBSeEgxYUNDQmFTYkRVdVNqK3J0?=
- =?iso-2022-jp?B?NEZHY1BSZUJoak44VVYwQ0U3MGNFVmJXa1lkVEdQTlhWa0hsWVpjOTJh?=
- =?iso-2022-jp?B?eDBIbjgxUnBwVExGeVFJUDhEUDFVVzczc011TmdhekVGenNPbXNMV0JE?=
- =?iso-2022-jp?B?OG14V1hibnI5S0lwSGdvWHRKRlRwQXVia2NUcDQrL0JLNVByeU1HNmxP?=
- =?iso-2022-jp?B?V0ltZDFldVA2ei9OL2Z2dE1rZHdrQURaM2p2MmtsYWVSdm55UW9xdVlu?=
- =?iso-2022-jp?B?VUp2cW9NQmlabVRTOXF4OEdYeXpxQjMrVjArVmhGcnFEczJ1bS9NQ1c4?=
- =?iso-2022-jp?B?bzhleGEyQXA2dXZNRThlMlZMOTRCM0d1WWhxSVZ0M3M2YTBrTGVpL0RD?=
- =?iso-2022-jp?B?NW5Oamsvc3E2L3BUQkVCc3l4Z1IxREdFSzBhVUdIV0U1SURhSEwvMGh6?=
- =?iso-2022-jp?B?dzg0MnE1S09FZ29hNlI5eEg3bFRTelVocCtPK2RWUjJMa0tjOUpPdUlB?=
- =?iso-2022-jp?B?WTdvZDFlN3BsUWpDZ0Q5QWxrWVJ1SW9ha1Q1NERRc0ZJZTdyVndPQWp0?=
- =?iso-2022-jp?B?T09samJ4dkRIcy8rNjVQd0xVeFBTTllsY1hRb3JRTnhaeXpvbVJkaTJl?=
- =?iso-2022-jp?B?cDdtaUJtc1Q1a2ZiLy9XanRzOENEYWlCTzhyMXh3Smx4SW1HUXE5UStI?=
- =?iso-2022-jp?B?Z2d3citEbTRmeFJweUpsUjQ4TGZuSVFtVFV5cXF6T21yZDkvWWptZmZ3?=
- =?iso-2022-jp?B?Rm5aZDdjRHQ4ajhxM0dNSytJRndiVitnQXJ0d3dya1J6aTFVQ2F6dFlI?=
- =?iso-2022-jp?B?bkhyNFBQdUFkd05GYTJacElhNlowTHNwV0pValJmZzFWUTNOSXhJNTdt?=
- =?iso-2022-jp?B?WWJBK3pQdTEwUU14YTFpNW5oWmIzSGhtTXZEWWdGSWh6U0RRcER3T3J2?=
- =?iso-2022-jp?B?THRhTGsxS0VxSHhob3F2Zm1MazNMZ3VGUE4zUktvZzNEdEpVK0srNUhG?=
- =?iso-2022-jp?B?QUQwTDAweU9ET05FU05nOHNkVWlQQmV3bEg3MXRFVFR0OU0wQ0ZiVmNa?=
- =?iso-2022-jp?B?KytSWk4zV01taU9zOW5JV3hUdzVNM1pqZ2FOYzlrS25ZNGV5MHo5dDQw?=
- =?iso-2022-jp?B?THdEZ1NuYi9BcythS01qL0dhR0xQZnlYOEZwblhsL0F4N3VtVVkzeVdj?=
- =?iso-2022-jp?B?cStLUnhCajNQUkZOMHVGQ2UzRURmNjZiM2hFck9ZSDhzbGo3Qkd6L21i?=
- =?iso-2022-jp?B?eDE1MnNDZ01oWXl5KzRCS1V3MnoyWjdxalZTRUpGOHdRMGswaGJwbS83?=
- =?iso-2022-jp?B?RVU3S0xoU3AvN3R3M1Q2Rm50WHF0T3BtYk84STY0RHBQMnZ2NURzakhT?=
- =?iso-2022-jp?B?cmp5MExuQ2txUTc3THkvd3owTkZQV3dXWUFMbVJMR3d3M1NRckNLQmJs?=
- =?iso-2022-jp?B?UWdSR1BRRlk2VmNueEhpZ0pad0xQYUo5RVNPbEFKQjYyZjFacHRVT0VT?=
- =?iso-2022-jp?B?cTVIRXdIUDY4N1pVWkZtWmVESzZWTVN3TGFhaHdoelVFOEg5Qm5GNDA0?=
- =?iso-2022-jp?B?MFJLdGhYc0JxKzlxTU9vL3Yxalc1L2hmMXdBdFR1NEZtZnUvd014SW9j?=
- =?iso-2022-jp?B?eXV2ZHF5bW9RcnpXdzkzUkYyczJZdFAxUUJkaGJtVXBlUlZUbDg3RkJr?=
- =?iso-2022-jp?B?WEVET1IyN3BvYW45QlNKWVR0OTdkVGhncnIrbjJPenpjbFNvVnlpVnJY?=
- =?iso-2022-jp?B?Vm9iZFpBQWdzRWg2WmJnM1ljZmRLYzNyRVkyR3ZPMVlMNy9RRmd4a2Zj?=
- =?iso-2022-jp?B?REE0U3FPdmEyN0tzUmhFQ2M0ZXMyWkJ5Rkw2bHJYYlFVTEd1cXRzSWFJ?=
- =?iso-2022-jp?B?aE5vRVZM?=
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+ bh=/QM6w7m9va53mnSD5hyNu6yP4bK3qpK+V64hNFzCscs=;
+ b=CdXkaHvVfZtTDBhk4yYiCuFqNlV6GlGELxV4yuxqKVfxg87NVROqDgz49NvYXvcvGC7SeTFNQ5D7vsP7hbh7Tb2xbtbRcOXWmjJ4aJp/Zr15sQGsPp6/52s5VNOKLdBWETJSTuspYEODfPB1ErZzDRhDp/PlWfoNBg+aN0C+2Gu68ER0Ul7yOP+yh+Z5eLnayqS/jClYUtW6dSztpDJHxqasYn37S87MiNU77dvUOd4r+AeckNHt6CQMgtyfFfqaX4n8wUr9LKeLzW+VHc4KluZwAlEJwltWA6AG7cYko8HbevWaHykbwZ4JSVEfktynCo85qVO8yA6FEgTIfsylQA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 194.138.21.71) smtp.rcpttodomain=lists.cip-project.org
+ smtp.mailfrom=siemens.com; dmarc=pass (p=none sp=none pct=100) action=none
+ header.from=siemens.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/QM6w7m9va53mnSD5hyNu6yP4bK3qpK+V64hNFzCscs=;
+ b=RBRiD9WaHDSA6GLD/H7jwHH9B8jyuHJZjlBRbtm04Tccb/hwdPS8KXHOeTkosc/XwlcxYscaCaaMQNmP8jhed2a4Nc6iZ/YfbwofyGSWNjF5NLDkl0DcP0DZwGqO6k0lGQjNsYQcJ7dBrQ/LZLcEC8lF2qqJ8526J+qIS8Pnu6W4FUDaHcC83PdBCYZTzq15xxmWjyWURUQCP+8AHLw+/kVXrCO+duoBYeEsMuiZcVgxkWPrghyYbtI4ui3H8qAq9CjceTCZPrP9XVfdGhKQREeDtBMrr1nLH3E9GXchi2y7EBtNvPMpeXbqkFPca9bnTFeBQbwmgyaAuD/h8jOR2A==
+Received: from AS9PR06CA0246.eurprd06.prod.outlook.com (2603:10a6:20b:45f::12)
+ by AM8PR10MB4660.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:368::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4801.14; Fri, 17 Dec
+ 2021 07:03:15 +0000
+Received: from VE1EUR01FT059.eop-EUR01.prod.protection.outlook.com
+ (2603:10a6:20b:45f:cafe::2) by AS9PR06CA0246.outlook.office365.com
+ (2603:10a6:20b:45f::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4801.14 via Frontend
+ Transport; Fri, 17 Dec 2021 07:03:14 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.71)
+ smtp.mailfrom=siemens.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=siemens.com;
+Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
+ 194.138.21.71 as permitted sender) receiver=protection.outlook.com;
+ client-ip=194.138.21.71; helo=hybrid.siemens.com;
+Received: from hybrid.siemens.com (194.138.21.71) by
+ VE1EUR01FT059.mail.protection.outlook.com (10.152.3.127) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.4801.14 via Frontend Transport; Fri, 17 Dec 2021 07:03:14 +0000
+Received: from DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) by
+ DEMCHDC9SKA.ad011.siemens.net (194.138.21.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.17; Fri, 17 Dec 2021 08:02:48 +0100
+Received: from [167.87.72.12] (167.87.72.12) by DEMCHDC8A0A.ad011.siemens.net
+ (139.25.226.106) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.17; Fri, 17 Dec
+ 2021 08:02:48 +0100
+Subject: Re: [PATCH v3] swupdate: Add nodoc for buster and bullseye
+To: Vijai Kumar K <Vijaikumar_Kanagarajan@mentor.com>,
+	<cip-dev@lists.cip-project.org>
+References: <20211216164842.3403906-1-Vijaikumar_Kanagarajan@mentor.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Message-ID: <48b4432a-171a-7bec-d6cf-b1e86b21d53b@siemens.com>
+Date: Fri, 17 Dec 2021 08:02:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYAPR01MB6252.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 
- 6a879f31-40d8-4a2a-33ca-08d9c0d52b91
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Dec 2021 20:46:44.0514
+In-Reply-To: <20211216164842.3403906-1-Vijaikumar_Kanagarajan@mentor.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.87.72.12]
+X-ClientProxiedBy: DEMCHDC89YA.ad011.siemens.net (139.25.226.104) To
+ DEMCHDC8A0A.ad011.siemens.net (139.25.226.106)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 942b4b4b-bd27-4210-9934-08d9c12b4b9a
+X-MS-TrafficTypeDiagnostic: AM8PR10MB4660:EE_
+X-Microsoft-Antispam-PRVS: 
+	<AM8PR10MB4660181AB66B6EE2689838B395789@AM8PR10MB4660.EURPRD10.PROD.OUTLOOK.COM>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	jlay+YDC/C+f2WqFI3m7HkXEvpUv+xG4qPP3y5rbH2bwF5Oez2ALZ+mITx5Jd9IQjuyFjKd3Zs4jpu7RhZbNcaPAwOueBrSeKwyjUgLb/E7V9ztJEO63iwRzw4Ho+UfkXbcWPu586RPpyydmPdNAJM+jUmbdZGt+7TpY858RMeYirmNJnxAbjEeVNKfpCg2TT9eamuDYjqMLgPTWdzf3n0oGa5HBj65rcOzPZojJfcfFnJN+KiI2ty0C1e7XYlRs/Y4qdNtFU0gZMeNvA8g5YH/7Mrd4b+LHry5siBZE4NB4/DC1dzNS6B1NLt7JSMZ78yqQAJKKfQQ4zf0xOOZrp7oqIseZGYMHPWoPscQudBxMPh9tTBb3uljbgF9SUia0H3SsoZ6a6AsKzK6GLORe0GOWelng2nM2+dmfR78zAB31PgRNE4OGqhdS95ZdMMHimCoyP/le0UerHE27Gh3mAqGMSor2JMpc8WQmZang9pk1SV6E7Xc+qfXrwgv25RoJwd1AcDq4w880vQe3LwrHnJ1U6azN7kDHjlRDDp9Oo+AXnnIYfPk30sUUdxbTXe9R5ARtQsPVJfYQBcRsI2a8FXQTZxghtLf8RLs/17FI5IvvPnKBpmVFIbw5iDuSwRLE4tAgMBnqNXrDWJS2vcUnVSd0gYV7lRhyU/snlD2tzcKBGIEHRuUHq8u60flT+o24fpaWLwsj0VFZ3Kd36tB/Sh7lTet2govBRQ8xTQ9F/jKSMW35B9Qqu6CVLMGJiuYN2BRrkOLPLAaj2Dm2NIL8DOHxVgAwSKLN3akca5cuWiQmrZKGLgg/4sAuasJ2ahFfZV1kg38LavGv0qnZTh+01zPOTlx4hQe5MfVMRVDeR+E=
+X-Forefront-Antispam-Report: 
+	CIP:194.138.21.71;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(40470700001)(70206006)(70586007)(40460700001)(6706004)(508600001)(86362001)(356005)(16526019)(83380400001)(186003)(26005)(82310400004)(2906002)(53546011)(47076005)(31696002)(956004)(2616005)(31686004)(16576012)(336012)(81166007)(82960400001)(8676002)(316002)(5660300002)(44832011)(8936002)(36756003)(36860700001)(110136005)(3940600001)(43740500002)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2021 07:03:14.2844
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 
- zoQVcbjbQAwiXFyGA7mNiTv+swJ1eFeYTdbdNFJPCIhju4UR4kFoaUipVE4dZ/mIx8es2GJDezhJMIBQ0T3z7+IB6OvZSF/7lgPd+JKhRHCSRK2O6hG4EDyanc4Y7ySS
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB3595
-MSSCP.TransferMailToMossAgent: 103
-X-OriginatorOrg: toshiba.co.jp
+X-MS-Exchange-CrossTenant-Network-Message-Id: 
+ 942b4b4b-bd27-4210-9934-08d9c12b4b9a
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
+ TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.71];Helo=[hybrid.siemens.com]
+X-MS-Exchange-CrossTenant-AuthSource: 
+	VE1EUR01FT059.eop-EUR01.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR10MB4660
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 16 Dec 2021 20:47:02 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7167
+ <cip-dev@lists.cip-project.org>; Fri, 17 Dec 2021 07:03:19 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7168
 
-Hi Chris,=0A=
-=0A=
-> We are planning to propose it as a CIP reference board and we plan to add=
- some hardware to the CIP's LAVA infrastructure.=0A=
-> If the board is not accepted as a CIP reference board, we would still lik=
-e to add support for it in the CIP Kernel as we have done for other non-ref=
-erence boards such as the iWave RZ/G1E, HiHope RZ/G2H boards etc.=0A=
-=0A=
-I see. Thanks for the explanation.=0A=
-=0A=
-Best regards,=0A=
-  Nobuhiro=0A=
-________________________________________=0A=
-=1B$B:9=3DP?M=1B(B: Chris Paterson <Chris.Paterson2@renesas.com>=0A=
-=1B$BAw?.F|;~=1B(B: 2021=1B$BG/=1B(B12=1B$B7n=1B(B16=1B$BF|=1B(B 18:52=0A=
-=1B$B08@h=1B(B: iwamatsu nobuhiro(=1B$B4d>>=1B(B =1B$B?.MN=1B(B =1B$B""#S#W=
-#C"~#A#C#T=1B(B); cip-dev@lists.cip-project.org; Prabhakar Mahadev Lad=0A=
-CC: pavel@denx.de; Biju Das=0A=
-=1B$B7oL>=1B(B: RE: [cip-dev] [PATCH 5.10.y-cip 0/7] Add binding and SoC id=
-entification for Renesas RZ/G2L SoC and Renesas RZ/G2L SMARC EVK=0A=
-=0A=
-Hello,=0A=
-=0A=
-> From: nobuhiro1.iwamatsu@toshiba.co.jp=0A=
-> <nobuhiro1.iwamatsu@toshiba.co.jp>=0A=
-> Sent: 16 December 2021 00:40=0A=
->=0A=
-> Hi all,=0A=
->=0A=
-> >> I have reviewed patches and they look okay to me. I'll proceed with=0A=
-> >> testing.=0A=
-> >>=0A=
-> >> Do we have suitable board in the test lab / is there plan to add one?=
-=0A=
-> >=0A=
-> > We don't have any boards in the CIP labs yet, but there is a plan to ad=
-d=0A=
-> some.=0A=
->=0A=
-> I think I need to add the board to LAB first. Of course, source code revi=
-ews=0A=
-> and=0A=
-> build tests are possible.=0A=
-> And If my understand is correctoly, I think this is a new board that is n=
-ot on=0A=
-> the=0A=
-> reference board list. I don't think this has been discussed at TSC.=0A=
-> I think it needs to be on the agenda at TSC, whether it's a reference boa=
-rd for=0A=
-> the 5.10-cip kernel.=0A=
-=0A=
-We are planning to propose it as a CIP reference board and we plan to add s=
-ome hardware to the CIP's LAVA infrastructure.=0A=
-If the board is not accepted as a CIP reference board, we would still like =
-to add support for it in the CIP Kernel as we have done for other non-refer=
-ence boards such as the iWave RZ/G1E, HiHope RZ/G2H boards etc.=0A=
-=0A=
-Kind regards, Chris=0A=
+On 16.12.21 17:48, Vijai Kumar K wrote:
+> Including documentation makes the build fail in buster and bullseye.
+> Remove it.
+> 
+> Signed-off-by: Vijai Kumar K <Vijaikumar_Kanagarajan@mentor.com>
+> ---
+>  recipes-core/swupdate/swupdate_2021.04-1+debian-gbp.bb | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/recipes-core/swupdate/swupdate_2021.04-1+debian-gbp.bb b/recipes-core/swupdate/swupdate_2021.04-1+debian-gbp.bb
+> index a4d67fe..e25ee4c 100644
+> --- a/recipes-core/swupdate/swupdate_2021.04-1+debian-gbp.bb
+> +++ b/recipes-core/swupdate/swupdate_2021.04-1+debian-gbp.bb
+> @@ -44,12 +44,14 @@ SWUPDATE_BUILD_PROFILES += "cross nocheck"
+>  # modify for debian buster build
+>  SRC_URI_append_buster = " file://0009-debian-prepare-build-for-isar-debian-buster.patch"
+>  
+> -# disable documentation due to missing packages in debian buster
+> +# disable documentation due to missing packages
+> +SWUPDATE_BUILD_PROFILES_append = " nodoc "
+> +
+>  # disable create filesystem due to missing symbols in debian buster
+>  # disable webserver due to missing symbols in debian buster
+> -SWUPDATE_BUILD_PROFILES_append_buster = " nodoc \
+> -                                          pkg.swupdate.nocreatefs \
+> -                                          pkg.swupdate.nowebserver "
+> +SWUPDATE_BUILD_PROFILES_append_buster = " \
+> +                                   pkg.swupdate.nocreatefs \
+> +                                   pkg.swupdate.nowebserver "
+>  # In debian buster the git-compression defaults to gz and does not detect other
+>  # compression formats.
+>  GBP_EXTRA_OPTIONS += "--git-compression=xz"
+> 
 
+Thanks, applied.
+
+Jan
+
+-- 
+Siemens AG, T RDA IOT
+Corporate Competence Center Embedded Linux
 
