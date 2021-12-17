@@ -2,215 +2,145 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E4A3C433EF
-	for <webhook@archiver.kernel.org>; Fri, 17 Dec 2021 15:17:52 +0000 (UTC)
-Received: from EUR04-DB3-obe.outbound.protection.outlook.com
- (EUR04-DB3-obe.outbound.protection.outlook.com [40.107.6.84])
- by mx.groups.io with SMTP id smtpd.web09.7381.1639754270682144329
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED76C433F5
+	for <webhook@archiver.kernel.org>; Fri, 17 Dec 2021 15:18:13 +0000 (UTC)
+Received: from EUR01-VE1-obe.outbound.protection.outlook.com
+ (EUR01-VE1-obe.outbound.protection.outlook.com [40.107.14.74])
+ by mx.groups.io with SMTP id smtpd.web08.7359.1639754291519092396
  for <cip-dev@lists.cip-project.org>;
- Fri, 17 Dec 2021 07:17:51 -0800
+ Fri, 17 Dec 2021 07:18:12 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=TdulztgR;
- spf=pass (domain: siemens.com, ip: 40.107.6.84,
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=WWl0PfgW;
+ spf=pass (domain: siemens.com, ip: 40.107.14.74,
  mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eOHHR1a/56fm3mJnRfHPA30+aQUWz57qCRKgYSXD1gg7JIu0g01DziQe3znEbjPHefwjEzpZU9ZaOrDYdY2PVrcMLRLA6fjRwLjlvalgIm90YOviHobZBlj0sOrJS+QHEecZBceEKjirCM/6r9uMeZ4TL6cLOI/cPMgq2L4bpHdWN5KL0ZE1+JlKwHVGL5YOrwcwbGs4Lvl8fR79vRjEKyaBLfth6Muv5YrV7Rnlc9bJLt9r5/oypzeNeoyuQwtJIuDVB5Lag5favgithWQQWoM9GR9CS6aez56T1Oi8hs7suvyODKsBjnPhHg0UzL8kKgnET3FKjQs1SfyRecsXXg==
+ b=aLz/DH+psVLQunGOgLa+SsFh+DFZe82vsOMjMYaHtsmEaXGNB6RA5wXlyPwN3XO4nryVPH8SclbL0t7pE6jwc7c2vkw0Wz4Yx3/dW6h4hJjYwwUkfQurdI4xXuYbiaRHEfssAfdZCmuT7Ywu8rwV7capEHmCN/p0ddSxz7jGIGDIx+B1gHyujpn3NrK8JjXLnqfMKdZkejbiBAl2SPuKW+suEmAEdjm1rW4d9LZMiOQyYv51hKgpVjFRn/y0yCKcWMcg6KB5ZeRWI8oXhqHSD3Hm3WRigoGfGrPVhmK9A2xQ6hzEW1hxwzjRnDLsSz5e3XX4TwzfctIIdJGnFjS1rw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SzCegkgsUoPRrYtrEAXUb2IG8QG71ZxwonuynDZnRzI=;
- b=cSL67UlMYqkmiBVlryJo/wJWDbFlQoLUjqTGdaGxLarxXOMviz6pA9MaMPEyosDfGrQZufS/BTOq1neisPfqS/xGMxAzatqj6hBFPBgpEr8Zq7PGGdFf5CCPp9gPV18r+uKNZ1e2ALXkWoJC8HV2YBJHz22n5SpqytDn1odirfxCheDzMm63WUzhIlWgo1EnAKeHaLVxbkCubTu0p5lVBrsLZ+v2TECXmsPAcjCVqhdhjSCbpio0BYbZySqFZCkXXhthUEOmIiAcCNTTJ/nrHB+J4mjlhSTdteXw+Mquj2goU+LgmeoOWahDfC6/VCB8fNbmMQe6ziroQDuxEQ6ZGA==
+ bh=aqz7c+emX9+3LVeRQZEKfritx+2sqb0tRqB8U12t4P8=;
+ b=oGjcgEQD2lk8RjaLOhNka8eIsSVL6B7k0YakPqnDH8b2C0xih1WHtMt5Da8629hgIo5boSeGTqLpMX/N5hZjVkdXgVTZKyPJ87EKeZ58B42o4NKhhb8s8H8WuaPIyxZhp6GefDFZpy+J3KFdBdhaBYhsz77qExmhctWGm1YD7NIKuaz84leGSuTLjXcwl/69F/SNNsN7Xl7iwlKo70RNh7h/JN1aIuP1xUWgh7e0Vq9h3FI12ClWsAGLTXYx7jpQCXzuLGfguhE+G9hun64A3oDprM5/5N+R9i6hfVtHIWM2erdqmqSmBz7YOjyx9bR4OCG2TJVDdBmzuPLiURjJIQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.70) smtp.rcpttodomain=lists.cip-project.org
+ 194.138.21.73) smtp.rcpttodomain=lists.cip-project.org
  smtp.mailfrom=siemens.com; dmarc=pass (p=none sp=none pct=100) action=none
  header.from=siemens.com; dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SzCegkgsUoPRrYtrEAXUb2IG8QG71ZxwonuynDZnRzI=;
- b=TdulztgRvfFbOkzos7x/4+ZsdpTm8DFPUIKSnraoTPo166gDETENB/lOfMITEaARUjU0H1QzOGcI1/Rzfd/xTwjBf5tcqY70qtM+f47w6FfzbCHH1C5oYSQmkYvvFetRR8ch9yl+iM/0/nn0RI49wkbsCifQJCVR76jfPpi3x9mb/YIDhvQ4rVzhKa6bfFe0mKEQ7Kfb0lZ3jeGA7/eVi129E4MQgPb0IGcSomOeFOPH4cR5H69wkmN29hW8mdSr+0ZJClygCLLb4K1QSTKTnXPsAdhvQlGRDZOTplc+9OjNafkzDQ19MDIh7g1W0hUn+FRvgtDQOAbtWkw/RbwmLw==
-Received: from AM5PR0201CA0013.eurprd02.prod.outlook.com
- (2603:10a6:203:3d::23) by AM8PR10MB4628.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:362::15) with Microsoft SMTP Server (version=TLS1_2,
+ bh=aqz7c+emX9+3LVeRQZEKfritx+2sqb0tRqB8U12t4P8=;
+ b=WWl0PfgWtu/3OU81trXFic1EPPvtV9oTGkIHDXNJkxQRcDsZb5BJ2qnEMwHnvo4JtBR4aR/RL2zEXwJ7eBOd2xZ1qEA2SFVC8g8ZQhQJIaMxKK/VoSGk42ilJ9GnICVBRPs+yWlUhGHroXomRIx3xPRSN48PN/Q7XU4QHSxThOKddsDp/kdbayQJwjuCX4FbLtzsDXOUN3nTy8dd24+oI/o2z/pFDYGExX6feTStyYrzjWnNJgvJ+wrHK6sZSP3SOlWCI9TgBewFlDIppzXV5oqQv6EYg772kwRMUN8O6fcROUGD2HPtzsPqOPRCydCR4IvL+Lk07qUb9PBfukImOg==
+Received: from AM6PR08CA0019.eurprd08.prod.outlook.com (2603:10a6:20b:b2::31)
+ by PAXPR10MB5278.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:28f::9) with
+ Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4801.14; Fri, 17 Dec
- 2021 15:17:48 +0000
-Received: from VE1EUR01FT036.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:203:3d:cafe::cf) by AM5PR0201CA0013.outlook.office365.com
- (2603:10a6:203:3d::23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4801.14 via Frontend
- Transport; Fri, 17 Dec 2021 15:17:48 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.70)
+ 2021 15:18:08 +0000
+Received: from VE1EUR01FT003.eop-EUR01.prod.protection.outlook.com
+ (2603:10a6:20b:b2:cafe::fa) by AM6PR08CA0019.outlook.office365.com
+ (2603:10a6:20b:b2::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4801.15 via Frontend
+ Transport; Fri, 17 Dec 2021 15:18:08 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.73)
  smtp.mailfrom=siemens.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=siemens.com;
 Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.70 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.70; helo=hybrid.siemens.com;
-Received: from hybrid.siemens.com (194.138.21.70) by
- VE1EUR01FT036.mail.protection.outlook.com (10.152.3.31) with Microsoft SMTP
+ 194.138.21.73 as permitted sender) receiver=protection.outlook.com;
+ client-ip=194.138.21.73; helo=hybrid.siemens.com;
+Received: from hybrid.siemens.com (194.138.21.73) by
+ VE1EUR01FT003.mail.protection.outlook.com (10.152.2.118) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.4801.14 via Frontend Transport; Fri, 17 Dec 2021 15:17:47 +0000
+ 15.20.4801.14 via Frontend Transport; Fri, 17 Dec 2021 15:18:07 +0000
 Received: from DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) by
- DEMCHDC9SJA.ad011.siemens.net (194.138.21.70) with Microsoft SMTP Server
+ DEMCHDC9SNA.ad011.siemens.net (194.138.21.73) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Fri, 17 Dec 2021 16:17:45 +0100
+ 15.1.2375.17; Fri, 17 Dec 2021 16:18:06 +0100
 Received: from [167.87.72.12] (167.87.72.12) by DEMCHDC8A0A.ad011.siemens.net
  (139.25.226.106) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.17; Fri, 17 Dec
- 2021 16:17:45 +0100
-Subject: Re: [cip-dev][isar-cip-core][PATCH v2] Make read-only rootfs a inc
- file
+ 2021 16:18:05 +0100
+Subject: Re: [cip-dev][isar-cip-core][PATCH] kas/opt/ebg-secure-boot-*: Make
+ Backports for OVMF version depended
 To: "Q. Gylstorff" <Quirin.Gylstorff@siemens.com>,
-	<cip-dev@lists.cip-project.org>
-References: <20211217150510.1351713-1-Quirin.Gylstorff@siemens.com>
+	<cip-dev@lists.cip-project.org>, <srinuvasan.a@siemens.com>
+References: <20211217151139.1353130-1-Quirin.Gylstorff@siemens.com>
 From: Jan Kiszka <jan.kiszka@siemens.com>
-Message-ID: <bd82abd0-0306-fec3-e143-efd0f4f1ebbe@siemens.com>
-Date: Fri, 17 Dec 2021 16:17:44 +0100
+Message-ID: <eb168c38-8977-ca0e-e565-c19976c6b4d9@siemens.com>
+Date: Fri, 17 Dec 2021 16:18:04 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <20211217150510.1351713-1-Quirin.Gylstorff@siemens.com>
+In-Reply-To: <20211217151139.1353130-1-Quirin.Gylstorff@siemens.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [167.87.72.12]
-X-ClientProxiedBy: DEMCHDC89YA.ad011.siemens.net (139.25.226.104) To
+X-ClientProxiedBy: DEMCHDC89XA.ad011.siemens.net (139.25.226.103) To
  DEMCHDC8A0A.ad011.siemens.net (139.25.226.106)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f658308d-d89e-4e90-cdde-08d9c1706234
-X-MS-TrafficTypeDiagnostic: AM8PR10MB4628:EE_
+X-MS-Office365-Filtering-Correlation-Id: 379afdd0-78ad-4ea2-5f09-08d9c1706e38
+X-MS-TrafficTypeDiagnostic: PAXPR10MB5278:EE_
 X-Microsoft-Antispam-PRVS: 
-	<AM8PR10MB4628FE3462AADDCB653E889895789@AM8PR10MB4628.EURPRD10.PROD.OUTLOOK.COM>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
+	<PAXPR10MB5278EB3DEBE9EC68AAD1C44195789@PAXPR10MB5278.EURPRD10.PROD.OUTLOOK.COM>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	2wJKQXv4K3aLNTfuXWlOXim0EEcBETFHt/8d2VMREy5m9A0i4wU6CgUTiHHbbbYlH6gwU+fz7EeFnKncyEArGRd57Nt2sK4lGGPgKwapuF4decYHHyTMciBCfTcB1H8mg0vhdn7rAyJBQihqvu5Vu7jLg2uCADf3MasaKtEHfq2aOm+oetSHqJkM93+IxzVknjX62Kr9nDRdFn6zN7GHEXmnbNBz7ECGlZlWT8zWYjX7TZbmnikOA6/dFIqPzZnzG+PlKeVSYBOhL2gVGyQDGrZvCoBnNSgT/1uDTsTo1JEgZspK9Gx8cp2dpBrxWo12H75qBoZBSdL09cXtH2e7ekZiDb3cTTWdPEzKAZSiZqo3gVhuBVKu3oBYsHFJiffIMzrFjI8VKnv8Ag3SvAnw6la0T54e3bIgK8HWX8pKiZJwrfOPJ8z9HNV9ytP7jXtuXGqSB7/A+ZeBJ/312n3YSeQeTgOrHC+4e/KnfveCITmlgKM+uzWdkOmbxOahpXvT6faIQyspmAqqGPyYbUQ4Gog2CLq6YWmus17tBdAg/DOUU6fwDTX/tNA5ACR3i9LbJWeb7LHHV2El1QonLZQzXhikU5HjrCbMLV4psbP2Dy5LxAzD6xBgQxn4MJHJe4+J8RzV9NOSIB+GuQULkiciMxcDTUDjzSLBhMkoxibQ1vYPqHcCKhdoitqkAvG9A+kFZEAukMpS5dbT7I5/SgOPofKYrgphRLGwHX9eLq3h3IOoIVCJ32lfRFWV0qcdb9Qg26qnFpRZb9bnZJhWPiAGmfdgPlFuRIHONpL97j29LPNbePYQdh2o2tTcWYsHJOcXtnwggvtKy31+qKzBlmlFJQ==
+	OC9f3lnRN4cNoqU6cr21hUaM88sQCSeZsZpR8uD5sf5NDlsEysJ7+Yx93DYXzFG7vK1cBhI8KYUM1QEcONzaJ+PkdG1O6KB56c9b2cg/Nl8EjQ+MYf99onLj/mm05pMbS1eJIFwpXpcc5zD1M4AtUR3mcd7tbctmUu868W83YmNERd1zDKGyp+5alNz9w0JgsoqoGnlDVvX7pHO7wV3hOLxdLIcVQ6DvjSdW/3fi5uhBlk2eUv2LxKXXiqyrIyuBu3jIPgxsl5a+68AS2N/5BMM6D36j/P6ruLycwuO4p5TVB+klGgKzg/e1rjgco2KM10Ns9NFPdLEXmEOE7aijOUnDnNHBdPZzJyKRgsKS1D2aXufpda1lPLv9FapnsB0FF8xws3w4L8nnetg6i+g1aAzstWZ3RzyaZzu6JdxqlHJuPbPBkXo7edq+0jZCfEfmu1RLvPQJt6I53Z8KOzCd+9vvlgpa+EEFpo5ZMp68tU7Cm2wpHxK3/TPDQHNd9XXSzcrTknW91NmNxEMr/DcjeWm07ghqU4VoM8UO4E4BjJZFp3BGLi30uSiicN/2ou5CtgHwO41uR+uZ8iLhG1sBoMXHYQrNdjQdDViwa7gKNbT7VsBMUSRqxKSe7qw3MjOx6sGsj0K1YabPKLrOygGw1FbVI7X0crLd0zM9J6ZCcWR32UQi12XFOPRO20/ERLBdAxOQRK2EbX6yI4eIuUOKKFtnYiCF0PCDVClrSGHNAJu1VAaLDXNLzLEHiIb7dyvwj/Il55x+cAJPHtHz5x0stX/Ydwjwgi/JfGrF8KJDJRkokVFspHjH+9yOqi2rgptfStPBETiLlSjfZo29yQPiUnQH3CFnRfyNabVcwbbbbIs=
 X-Forefront-Antispam-Report: 
-	CIP:194.138.21.70;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:hybrid.siemens.com;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(40470700001)(16526019)(7596003)(5660300002)(7636003)(186003)(110136005)(82960400001)(16576012)(70586007)(70206006)(31686004)(44832011)(8676002)(6706004)(36756003)(956004)(2616005)(31696002)(53546011)(26005)(47076005)(2906002)(356005)(86362001)(336012)(83380400001)(498600001)(36860700001)(8936002)(40460700001)(82310400004)(3940600001)(43740500002);DIR:OUT;SFP:1101;
+	CIP:194.138.21.73;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(40470700001)(44832011)(47076005)(31686004)(26005)(82960400001)(2906002)(316002)(82310400004)(83380400001)(81166007)(956004)(336012)(86362001)(53546011)(40460700001)(2616005)(36756003)(110136005)(16526019)(70206006)(36860700001)(70586007)(6636002)(508600001)(356005)(6706004)(8936002)(16576012)(31696002)(5660300002)(186003)(8676002)(3940600001)(43740500002)(36900700001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2021 15:17:47.7136
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2021 15:18:07.8787
  (UTC)
 X-MS-Exchange-CrossTenant-Network-Message-Id: 
- f658308d-d89e-4e90-cdde-08d9c1706234
+ 379afdd0-78ad-4ea2-5f09-08d9c1706e38
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
- TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.70];Helo=[hybrid.siemens.com]
+ TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.73];Helo=[hybrid.siemens.com]
 X-MS-Exchange-CrossTenant-AuthSource: 
-	VE1EUR01FT036.eop-EUR01.prod.protection.outlook.com
+	VE1EUR01FT003.eop-EUR01.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR10MB4628
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR10MB5278
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 17 Dec 2021 15:17:52 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7187
+ <cip-dev@lists.cip-project.org>; Fri, 17 Dec 2021 15:18:13 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7188
 
-On 17.12.21 16:05, Q. Gylstorff wrote:
+On 17.12.21 16:11, Q. Gylstorff wrote:
 > From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 > 
-> This allows downstream recipes to include the kas option
-> and use the include as base without recreating some parts
-> of the recipes.
+> For Debian Buster we need to backport a new version of the OVMF package
+> with contains the necessary option for secureboot with qemu.
 > 
 > Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 > ---
->  kas/opt/ebg-secure-boot-snakeoil.yml                  |  4 ++--
->  recipes-core/images/cip-core-image.bb                 |  3 ++-
->  .../{cip-core-image-read-only.bb => read-only.inc}    | 11 ++++++++++-
->  .../initramfs-verity-hook_0.1.bb                      |  2 +-
->  start-qemu.sh                                         |  3 ---
->  5 files changed, 15 insertions(+), 8 deletions(-)
->  rename recipes-core/images/{cip-core-image-read-only.bb => read-only.inc} (78%)
+> 
+> Changes since RFC:
+>  - move back to ebg-secure-boot-snakeoil.yml
+> 
+>  kas/opt/ebg-secure-boot-snakeoil.yml | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 > 
 > diff --git a/kas/opt/ebg-secure-boot-snakeoil.yml b/kas/opt/ebg-secure-boot-snakeoil.yml
-> index 1cfbacc..9f3eae9 100644
+> index 9f3eae9..5aa5eff 100644
 > --- a/kas/opt/ebg-secure-boot-snakeoil.yml
 > +++ b/kas/opt/ebg-secure-boot-snakeoil.yml
-> @@ -14,16 +14,16 @@ header:
->    includes:
->     - kas/opt/ebg-secure-boot-base.yml
+> @@ -33,6 +33,7 @@ local_conf_header:
+>      IMAGER_INSTALL += "ebg-secure-boot-snakeoil"
 >  
-> -target: cip-core-image-read-only
->  
->  local_conf_header:
-> +  image-options: |
-> +    CIP_IMAGE_OPTIONS_append = " read-only.inc"
->    swupdate: |
->      IMAGE_INSTALL_append = " swupdate"
->      IMAGE_INSTALL_append = " swupdate-handler-roundrobin"
->  
->    verity-img: |
->      SECURE_IMAGE_FSTYPE = "squashfs"
-> -    VERITY_IMAGE_RECIPE = "cip-core-image-read-only"
->      IMAGE_TYPE = "secure-swupdate-img"
->      WKS_FILE = "${MACHINE}-efibootguard-secureboot.wks.in"
->  
-> diff --git a/recipes-core/images/cip-core-image.bb b/recipes-core/images/cip-core-image.bb
-> index 2cecde3..9bf21ff 100644
-> --- a/recipes-core/images/cip-core-image.bb
-> +++ b/recipes-core/images/cip-core-image.bb
-> @@ -18,4 +18,5 @@ IMAGE_INSTALL += "customizations"
->  
->  # for swupdate
->  SWU_DESCRIPTION ??= "swupdate"
-> -include ${SWU_DESCRIPTION}.inc
-> +CIP_IMAGE_OPTIONS ?= "${SWU_DESCRIPTION}.inc"
-> +include ${CIP_IMAGE_OPTIONS}
-> diff --git a/recipes-core/images/cip-core-image-read-only.bb b/recipes-core/images/read-only.inc
-> similarity index 78%
-> rename from recipes-core/images/cip-core-image-read-only.bb
-> rename to recipes-core/images/read-only.inc
-> index 79cd6bf..604caa0 100644
-> --- a/recipes-core/images/cip-core-image-read-only.bb
-> +++ b/recipes-core/images/read-only.inc
-> @@ -1,4 +1,13 @@
-> -require cip-core-image.bb
-> +#
-> +# CIP Core, generic profile
-> +#
-> +# Copyright (c) Siemens AG, 2021
-> +#
-> +# Authors:
-> +#  Quirin Gylstorff <Quriin.Gylstorff@siemens.com>
-> +#
-> +# SPDX-License-Identifier: MIT
-> +#
->  
->  SQUASHFS_EXCLUDE_DIRS += "home var"
->  
-> diff --git a/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.1.bb b/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.1.bb
-> index a7fbf5a..f0d2d68 100644
-> --- a/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.1.bb
-> +++ b/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.1.bb
-> @@ -24,7 +24,7 @@ TEMPLATE_VARS += "VERITY_BEHAVIOR_ON_CORRUPTION"
->  
->  DEBIAN_DEPENDS = "initramfs-tools, cryptsetup"
->  
-> -VERITY_IMAGE_RECIPE ?= "cip-core-image-read-only"
-> +VERITY_IMAGE_RECIPE ?= "cip-core-image"
->  
->  VERITY_ENV_FILE = "${DEPLOY_DIR_IMAGE}/${VERITY_IMAGE_RECIPE}-${DISTRO}-${MACHINE}.verity.env"
->  
-> diff --git a/start-qemu.sh b/start-qemu.sh
-> index 4ab3861..24df490 100755
-> --- a/start-qemu.sh
-> +++ b/start-qemu.sh
-> @@ -45,9 +45,6 @@ if [ -z "${TARGET_IMAGE}" ];then
->  	if grep -s -q "IMAGE_SECURITY: true" .config.yaml; then
->  		TARGET_IMAGE="cip-core-image-security"
->  	fi
-> -	if [ -n "${SECURE_BOOT}" ]; then
-> -		TARGET_IMAGE="cip-core-image-read-only"
-> -	fi
->  fi
->  
->  case "$1" in
+>    ovmf: |
+> -    # snakeoil certs are only part of backports
+> -    DISTRO_APT_SOURCES_append = " conf/distro/debian-buster-backports.list"
+> -    DISTRO_APT_PREFERENCES_append = " conf/distro/preferences.ovmf-snakeoil.conf"
+> +    # snakeoil certs are only part of backports, for Debian 11 and later the are not necessary
+> +    OVERRIDES_append = ":${BASE_DISTRO_CODENAME}"
+> +    DISTRO_APT_SOURCES_append_buster = " conf/distro/debian-buster-backports.list"
+> +    DISTRO_APT_PREFERENCES_append_buster = " conf/distro/preferences.ovmf-snakeoil.conf"
 > 
 
-Thanks, taken to next in favor of v1.
+Thanks, applied to next.
 
 Jan
 
