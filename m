@@ -2,78 +2,106 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8775FC433FE
-	for <webhook@archiver.kernel.org>; Mon, 20 Dec 2021 13:32:04 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com
- [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web12.5175.1640007108515707926
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A02AC433EF
+	for <webhook@archiver.kernel.org>; Mon, 20 Dec 2021 13:32:07 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com
+ [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web10.5236.1640007107229541697
  for <cip-dev@lists.cip-project.org>;
- Mon, 20 Dec 2021 05:32:03 -0800
+ Mon, 20 Dec 2021 05:32:06 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=pass (domain: bp.renesas.com, ip: 210.160.252.171,
+ spf=pass (domain: bp.renesas.com, ip: 210.160.252.172,
  mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.88,220,1635174000";
-   d="scan'208";a="104110987"
+   d="scan'208";a="104578490"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 20 Dec 2021 22:32:03 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 20 Dec 2021 22:32:05 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 6C7DE4005E10;
-	Mon, 20 Dec 2021 22:32:02 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 08FA24005E10;
+	Mon, 20 Dec 2021 22:32:04 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 17/22] dmaengine: sh: Fix unused initialization of
- pointer lmdesc
-Date: Mon, 20 Dec 2021 13:31:34 +0000
-Message-Id: <20211220133139.21624-18-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 19/22] dmaengine: sh: rz-dmac: Add DMA clock
+ handling
+Date: Mon, 20 Dec 2021 13:31:36 +0000
+Message-Id: <20211220133139.21624-20-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20211220133139.21624-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20211220133139.21624-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 20 Dec 2021 13:32:04 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7214
+ <cip-dev@lists.cip-project.org>; Mon, 20 Dec 2021 13:32:07 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7216
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-commit 1e008336b9f590eb749ac96ccef4ea0301f79619 upstream.
+commit 161596fd776a54df922158175ed844804a861c37 upstream.
 
-Pointer lmdesc is being inintialized with a value that is never read,
-it is later being re-assigned a new value. Fix this by initializing
-it with the latter value.
+Currently, DMA clocks are turned on by the bootloader.
+This patch adds support for DMA clock handling so that
+the driver manages the DMA clocks.
 
-Addresses-Coverity: ("Unused value")
-Fixes: 550c591a89a1 ("dmaengine: sh: Add DMAC driver for RZ/G2L SoC")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Link: https://lore.kernel.org/r/20210829152811.529766-1-colin.king@canonical.com
+Fixes: 5000d37042a6 ("dmaengine: sh: Add DMAC driver for RZ/G2L SoC")
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20210923102451.11403-1-biju.das.jz@bp.renesas.com
 Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/dma/sh/rz-dmac.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/dma/sh/rz-dmac.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
 diff --git a/drivers/dma/sh/rz-dmac.c b/drivers/dma/sh/rz-dmac.c
-index 11986a8d22fc..3d1c239de306 100644
+index f9f30cbeccbe..d9f2cfef878e 100644
 --- a/drivers/dma/sh/rz-dmac.c
 +++ b/drivers/dma/sh/rz-dmac.c
-@@ -308,12 +308,10 @@ static void rz_dmac_prepare_desc_for_memcpy(struct rz_dmac_chan *channel)
- {
- 	struct dma_chan *chan = &channel->vc.chan;
- 	struct rz_dmac *dmac = to_rz_dmac(chan->device);
--	struct rz_lmdesc *lmdesc = channel->lmdesc.base;
-+	struct rz_lmdesc *lmdesc = channel->lmdesc.tail;
- 	struct rz_dmac_desc *d = channel->desc;
- 	u32 chcfg = CHCFG_MEM_COPY;
+@@ -18,6 +18,7 @@
+ #include <linux/of_dma.h>
+ #include <linux/of_platform.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
  
--	lmdesc = channel->lmdesc.tail;
--
- 	/* prepare descriptor */
- 	lmdesc->sa = d->src;
- 	lmdesc->da = d->dest;
+@@ -872,6 +873,13 @@ static int rz_dmac_probe(struct platform_device *pdev)
+ 	/* Initialize the channels. */
+ 	INIT_LIST_HEAD(&dmac->engine.channels);
+ 
++	pm_runtime_enable(&pdev->dev);
++	ret = pm_runtime_resume_and_get(&pdev->dev);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "pm_runtime_resume_and_get failed\n");
++		goto err_pm_disable;
++	}
++
+ 	for (i = 0; i < dmac->n_channels; i++) {
+ 		ret = rz_dmac_chan_probe(dmac, &dmac->channels[i], i);
+ 		if (ret < 0)
+@@ -925,6 +933,10 @@ static int rz_dmac_probe(struct platform_device *pdev)
+ 				  channel->lmdesc.base_dma);
+ 	}
+ 
++	pm_runtime_put(&pdev->dev);
++err_pm_disable:
++	pm_runtime_disable(&pdev->dev);
++
+ 	return ret;
+ }
+ 
+@@ -943,6 +955,8 @@ static int rz_dmac_remove(struct platform_device *pdev)
+ 	}
+ 	of_dma_controller_free(pdev->dev.of_node);
+ 	dma_async_device_unregister(&dmac->engine);
++	pm_runtime_put(&pdev->dev);
++	pm_runtime_disable(&pdev->dev);
+ 
+ 	return 0;
+ }
 -- 
 2.17.1
 
