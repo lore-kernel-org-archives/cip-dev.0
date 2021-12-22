@@ -2,307 +2,524 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9463BC433F5
-	for <webhook@archiver.kernel.org>; Wed, 22 Dec 2021 13:50:13 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com
- [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web09.19377.1640181005005583785
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 940E9C433EF
+	for <webhook@archiver.kernel.org>; Wed, 22 Dec 2021 13:50:14 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com
+ [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web10.19266.1640181011226087906
  for <cip-dev@lists.cip-project.org>;
- Wed, 22 Dec 2021 05:50:12 -0800
+ Wed, 22 Dec 2021 05:50:14 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=pass (domain: bp.renesas.com, ip: 210.160.252.171,
+ spf=pass (domain: bp.renesas.com, ip: 210.160.252.172,
  mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.88,226,1635174000";
-   d="scan'208";a="104366647"
+   d="scan'208";a="104842253"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 22 Dec 2021 22:50:12 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 22 Dec 2021 22:50:13 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 07959430FFE7;
-	Wed, 22 Dec 2021 22:50:10 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 54741430FFEC;
+	Wed, 22 Dec 2021 22:50:12 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 14/21] dt-bindings: can: rcar_canfd: Convert to
- json-schema
-Date: Wed, 22 Dec 2021 13:49:44 +0000
-Message-Id: <20211222134951.19432-15-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 15/21] can: rcar_canfd: Add support for RZ/G2L
+ family
+Date: Wed, 22 Dec 2021 13:49:45 +0000
+Message-Id: <20211222134951.19432-16-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20211222134951.19432-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20211222134951.19432-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 22 Dec 2021 13:50:13 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7248
+ <cip-dev@lists.cip-project.org>; Wed, 22 Dec 2021 13:50:14 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7249
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+commit 76e9353a80e9e9ff65b362a6dd8545d84427ec30 upstream.
 
-commit 8a5e7d19c8c747e3e7bfa0283a54742b103afcb5 upstream.
+CANFD block on RZ/G2L SoC is almost identical to one found on
+R-Car Gen3 SoC's. On RZ/G2L SoC interrupt sources for each channel
+are split into different sources and the IP doesn't divide (1/2)
+CANFD clock within the IP.
 
-Convert the Renesas R-Car CAN FD Controller Device Tree binding
-documentation to json-schema.
+This patch adds compatible string for RZ/G2L family and splits
+the irq handlers to accommodate both RZ/G2L and R-Car Gen3 SoC's.
 
-Document missing properties.
-The CANFD clock needs to be configured for the maximum frequency on
-R-Car V3M and V3H, too.
-Update the example to match reality.
-
-Link: https://lore.kernel.org/r/905134c87f72e2d8e37c309e0ce28ecd7d4f3992.1620323639.git.geert+renesas@glider.be
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
+Link: https://lore.kernel.org/r/20210727133022.634-3-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+[mkl: fixed typo: recieve -> receive, thanks Geert]
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- .../bindings/net/can/rcar_canfd.txt           | 107 ---------------
- .../bindings/net/can/renesas,rcar-canfd.yaml  | 122 ++++++++++++++++++
- 2 files changed, 122 insertions(+), 107 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/net/can/rcar_canfd.txt
- create mode 100644 Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
+ drivers/net/can/rcar/rcar_canfd.c | 338 +++++++++++++++++++++++-------
+ 1 file changed, 265 insertions(+), 73 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/can/rcar_canfd.txt b/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-deleted file mode 100644
-index 248c4ed97a0a..000000000000
---- a/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-+++ /dev/null
-@@ -1,107 +0,0 @@
--Renesas R-Car CAN FD controller Device Tree Bindings
------------------------------------------------------
+diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
+index de59dd6aad29..0b0ceae0d844 100644
+--- a/drivers/net/can/rcar/rcar_canfd.c
++++ b/drivers/net/can/rcar/rcar_canfd.c
+@@ -37,9 +37,15 @@
+ #include <linux/bitmap.h>
+ #include <linux/bitops.h>
+ #include <linux/iopoll.h>
++#include <linux/reset.h>
+ 
+ #define RCANFD_DRV_NAME			"rcar_canfd"
+ 
++enum rcanfd_chip_id {
++	RENESAS_RCAR_GEN3 = 0,
++	RENESAS_RZG2L,
++};
++
+ /* Global register bits */
+ 
+ /* RSCFDnCFDGRMCFG */
+@@ -513,6 +519,9 @@ struct rcar_canfd_global {
+ 	enum rcar_canfd_fcanclk fcan;	/* CANFD or Ext clock */
+ 	unsigned long channels_mask;	/* Enabled channels mask */
+ 	bool fdmode;			/* CAN FD or Classical CAN only mode */
++	struct reset_control *rstc1;
++	struct reset_control *rstc2;
++	enum rcanfd_chip_id chip_id;
+ };
+ 
+ /* CAN FD mode nominal rate constants */
+@@ -1070,38 +1079,70 @@ static void rcar_canfd_tx_done(struct net_device *ndev)
+ 	can_led_event(ndev, CAN_LED_EVENT_TX);
+ }
+ 
++static void rcar_canfd_handle_global_err(struct rcar_canfd_global *gpriv, u32 ch)
++{
++	struct rcar_canfd_channel *priv = gpriv->ch[ch];
++	struct net_device *ndev = priv->ndev;
++	u32 gerfl;
++
++	/* Handle global error interrupts */
++	gerfl = rcar_canfd_read(priv->base, RCANFD_GERFL);
++	if (unlikely(RCANFD_GERFL_ERR(gpriv, gerfl)))
++		rcar_canfd_global_error(ndev);
++}
++
++static irqreturn_t rcar_canfd_global_err_interrupt(int irq, void *dev_id)
++{
++	struct rcar_canfd_global *gpriv = dev_id;
++	u32 ch;
++
++	for_each_set_bit(ch, &gpriv->channels_mask, RCANFD_NUM_CHANNELS)
++		rcar_canfd_handle_global_err(gpriv, ch);
++
++	return IRQ_HANDLED;
++}
++
++static void rcar_canfd_handle_global_receive(struct rcar_canfd_global *gpriv, u32 ch)
++{
++	struct rcar_canfd_channel *priv = gpriv->ch[ch];
++	u32 ridx = ch + RCANFD_RFFIFO_IDX;
++	u32 sts;
++
++	/* Handle Rx interrupts */
++	sts = rcar_canfd_read(priv->base, RCANFD_RFSTS(ridx));
++	if (likely(sts & RCANFD_RFSTS_RFIF)) {
++		if (napi_schedule_prep(&priv->napi)) {
++			/* Disable Rx FIFO interrupts */
++			rcar_canfd_clear_bit(priv->base,
++					     RCANFD_RFCC(ridx),
++					     RCANFD_RFCC_RFIE);
++			__napi_schedule(&priv->napi);
++		}
++	}
++}
++
++static irqreturn_t rcar_canfd_global_receive_fifo_interrupt(int irq, void *dev_id)
++{
++	struct rcar_canfd_global *gpriv = dev_id;
++	u32 ch;
++
++	for_each_set_bit(ch, &gpriv->channels_mask, RCANFD_NUM_CHANNELS)
++		rcar_canfd_handle_global_receive(gpriv, ch);
++
++	return IRQ_HANDLED;
++}
++
+ static irqreturn_t rcar_canfd_global_interrupt(int irq, void *dev_id)
+ {
+ 	struct rcar_canfd_global *gpriv = dev_id;
+-	struct net_device *ndev;
+-	struct rcar_canfd_channel *priv;
+-	u32 sts, gerfl;
+-	u32 ch, ridx;
++	u32 ch;
+ 
+ 	/* Global error interrupts still indicate a condition specific
+ 	 * to a channel. RxFIFO interrupt is a global interrupt.
+ 	 */
+ 	for_each_set_bit(ch, &gpriv->channels_mask, RCANFD_NUM_CHANNELS) {
+-		priv = gpriv->ch[ch];
+-		ndev = priv->ndev;
+-		ridx = ch + RCANFD_RFFIFO_IDX;
 -
--Required properties:
--- compatible: Must contain one or more of the following:
--  - "renesas,rcar-gen3-canfd" for R-Car Gen3 and RZ/G2 compatible controllers.
--  - "renesas,r8a774a1-canfd" for R8A774A1 (RZ/G2M) compatible controller.
--  - "renesas,r8a774b1-canfd" for R8A774B1 (RZ/G2N) compatible controller.
--  - "renesas,r8a774c0-canfd" for R8A774C0 (RZ/G2E) compatible controller.
--  - "renesas,r8a774e1-canfd" for R8A774E1 (RZ/G2H) compatible controller.
--  - "renesas,r8a7795-canfd" for R8A7795 (R-Car H3) compatible controller.
--  - "renesas,r8a7796-canfd" for R8A7796 (R-Car M3-W) compatible controller.
--  - "renesas,r8a77965-canfd" for R8A77965 (R-Car M3-N) compatible controller.
--  - "renesas,r8a77970-canfd" for R8A77970 (R-Car V3M) compatible controller.
--  - "renesas,r8a77980-canfd" for R8A77980 (R-Car V3H) compatible controller.
--  - "renesas,r8a77990-canfd" for R8A77990 (R-Car E3) compatible controller.
--  - "renesas,r8a77995-canfd" for R8A77995 (R-Car D3) compatible controller.
+-		/* Global error interrupts */
+-		gerfl = rcar_canfd_read(priv->base, RCANFD_GERFL);
+-		if (unlikely(RCANFD_GERFL_ERR(gpriv, gerfl)))
+-			rcar_canfd_global_error(ndev);
 -
--  When compatible with the generic version, nodes must list the
--  SoC-specific version corresponding to the platform first, followed by the
--  family-specific and/or generic versions.
+-		/* Handle Rx interrupts */
+-		sts = rcar_canfd_read(priv->base, RCANFD_RFSTS(ridx));
+-		if (likely(sts & RCANFD_RFSTS_RFIF)) {
+-			if (napi_schedule_prep(&priv->napi)) {
+-				/* Disable Rx FIFO interrupts */
+-				rcar_canfd_clear_bit(priv->base,
+-						     RCANFD_RFCC(ridx),
+-						     RCANFD_RFCC_RFIE);
+-				__napi_schedule(&priv->napi);
+-			}
+-		}
++		rcar_canfd_handle_global_err(gpriv, ch);
++		rcar_canfd_handle_global_receive(gpriv, ch);
+ 	}
+ 	return IRQ_HANDLED;
+ }
+@@ -1139,38 +1180,73 @@ static void rcar_canfd_state_change(struct net_device *ndev,
+ 	}
+ }
+ 
+-static irqreturn_t rcar_canfd_channel_interrupt(int irq, void *dev_id)
++static void rcar_canfd_handle_channel_tx(struct rcar_canfd_global *gpriv, u32 ch)
++{
++	struct rcar_canfd_channel *priv = priv = gpriv->ch[ch];
++	struct net_device *ndev = priv->ndev;
++	u32 sts;
++
++	/* Handle Tx interrupts */
++	sts = rcar_canfd_read(priv->base,
++			      RCANFD_CFSTS(ch, RCANFD_CFFIFO_IDX));
++	if (likely(sts & RCANFD_CFSTS_CFTXIF))
++		rcar_canfd_tx_done(ndev);
++}
++
++static irqreturn_t rcar_canfd_channel_tx_interrupt(int irq, void *dev_id)
+ {
+ 	struct rcar_canfd_global *gpriv = dev_id;
+-	struct net_device *ndev;
+-	struct rcar_canfd_channel *priv;
+-	u32 sts, ch, cerfl;
++	u32 ch;
++
++	for_each_set_bit(ch, &gpriv->channels_mask, RCANFD_NUM_CHANNELS)
++		rcar_canfd_handle_channel_tx(gpriv, ch);
++
++	return IRQ_HANDLED;
++}
++
++static void rcar_canfd_handle_channel_err(struct rcar_canfd_global *gpriv, u32 ch)
++{
++	struct rcar_canfd_channel *priv = gpriv->ch[ch];
++	struct net_device *ndev = priv->ndev;
+ 	u16 txerr, rxerr;
++	u32 sts, cerfl;
++
++	/* Handle channel error interrupts */
++	cerfl = rcar_canfd_read(priv->base, RCANFD_CERFL(ch));
++	sts = rcar_canfd_read(priv->base, RCANFD_CSTS(ch));
++	txerr = RCANFD_CSTS_TECCNT(sts);
++	rxerr = RCANFD_CSTS_RECCNT(sts);
++	if (unlikely(RCANFD_CERFL_ERR(cerfl)))
++		rcar_canfd_error(ndev, cerfl, txerr, rxerr);
++
++	/* Handle state change to lower states */
++	if (unlikely(priv->can.state != CAN_STATE_ERROR_ACTIVE &&
++		     priv->can.state != CAN_STATE_BUS_OFF))
++		rcar_canfd_state_change(ndev, txerr, rxerr);
++}
++
++static irqreturn_t rcar_canfd_channel_err_interrupt(int irq, void *dev_id)
++{
++	struct rcar_canfd_global *gpriv = dev_id;
++	u32 ch;
++
++	for_each_set_bit(ch, &gpriv->channels_mask, RCANFD_NUM_CHANNELS)
++		rcar_canfd_handle_channel_err(gpriv, ch);
++
++	return IRQ_HANDLED;
++}
++
++static irqreturn_t rcar_canfd_channel_interrupt(int irq, void *dev_id)
++{
++	struct rcar_canfd_global *gpriv = dev_id;
++	u32 ch;
+ 
+ 	/* Common FIFO is a per channel resource */
+ 	for_each_set_bit(ch, &gpriv->channels_mask, RCANFD_NUM_CHANNELS) {
+-		priv = gpriv->ch[ch];
+-		ndev = priv->ndev;
 -
--- reg: physical base address and size of the R-Car CAN FD register map.
--- interrupts: interrupt specifiers for the Channel & Global interrupts
--- clocks: phandles and clock specifiers for 3 clock inputs.
--- clock-names: 3 clock input name strings: "fck", "canfd", "can_clk".
--- pinctrl-0: pin control group to be used for this controller.
--- pinctrl-names: must be "default".
+-		/* Channel error interrupts */
+-		cerfl = rcar_canfd_read(priv->base, RCANFD_CERFL(ch));
+-		sts = rcar_canfd_read(priv->base, RCANFD_CSTS(ch));
+-		txerr = RCANFD_CSTS_TECCNT(sts);
+-		rxerr = RCANFD_CSTS_RECCNT(sts);
+-		if (unlikely(RCANFD_CERFL_ERR(cerfl)))
+-			rcar_canfd_error(ndev, cerfl, txerr, rxerr);
 -
--Required child nodes:
--The controller supports two channels and each is represented as a child node.
--The name of the child nodes are "channel0" and "channel1" respectively. Each
--child node supports the "status" property only, which is used to
--enable/disable the respective channel.
+-		/* Handle state change to lower states */
+-		if (unlikely((priv->can.state != CAN_STATE_ERROR_ACTIVE) &&
+-			     (priv->can.state != CAN_STATE_BUS_OFF)))
+-			rcar_canfd_state_change(ndev, txerr, rxerr);
 -
--Required properties for R8A774A1, R8A774B1, R8A774C0, R8A774E1, R8A7795,
--R8A7796, R8A77965, R8A77990, and R8A77995:
--In the denoted SoCs, canfd clock is a div6 clock and can be used by both CAN
--and CAN FD controller at the same time. It needs to be scaled to maximum
--frequency if any of these controllers use it. This is done using the below
--properties:
--
--- assigned-clocks: phandle of canfd clock.
--- assigned-clock-rates: maximum frequency of this clock.
--
--Optional property:
--The controller can operate in either CAN FD only mode (default) or
--Classical CAN only mode. The mode is global to both the channels. In order to
--enable the later, define the following optional property.
-- - renesas,no-can-fd: puts the controller in Classical CAN only mode.
--
--Example
---------
--
--SoC common .dtsi file:
--
--		canfd: can@e66c0000 {
--			compatible = "renesas,r8a7795-canfd",
--				     "renesas,rcar-gen3-canfd";
--			reg = <0 0xe66c0000 0 0x8000>;
--			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
--				   <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 914>,
--			       <&cpg CPG_CORE R8A7795_CLK_CANFD>,
--			       <&can_clk>;
--			clock-names = "fck", "canfd", "can_clk";
--			assigned-clocks = <&cpg CPG_CORE R8A7795_CLK_CANFD>;
--			assigned-clock-rates = <40000000>;
--			power-domains = <&cpg>;
--			status = "disabled";
--
--			channel0 {
--				status = "disabled";
--			};
--
--			channel1 {
--				status = "disabled";
--			};
--		};
--
--Board specific .dts file:
--
--E.g. below enables Channel 1 alone in the board in Classical CAN only mode.
--
--&canfd {
--	pinctrl-0 = <&canfd1_pins>;
--	pinctrl-names = "default";
--	renesas,no-can-fd;
--	status = "okay";
--
--	channel1 {
--		status = "okay";
--	};
--};
--
--E.g. below enables Channel 0 alone in the board using External clock
--as fCAN clock.
--
--&canfd {
--	pinctrl-0 = <&canfd0_pins>, <&can_clk_pins>;
--	pinctrl-names = "default";
--	status = "okay";
--
--	channel0 {
--		status = "okay";
--	};
--};
-diff --git a/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml b/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
-new file mode 100644
-index 000000000000..0b33ba9ccb47
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
-@@ -0,0 +1,122 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/can/renesas,rcar-canfd.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+-		/* Handle Tx interrupts */
+-		sts = rcar_canfd_read(priv->base,
+-				      RCANFD_CFSTS(ch, RCANFD_CFFIFO_IDX));
+-		if (likely(sts & RCANFD_CFSTS_CFTXIF))
+-			rcar_canfd_tx_done(ndev);
++		rcar_canfd_handle_channel_err(gpriv, ch);
++		rcar_canfd_handle_channel_tx(gpriv, ch);
+ 	}
 +
-+title: Renesas R-Car CAN FD Controller
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -1577,6 +1653,53 @@ static int rcar_canfd_channel_probe(struct rcar_canfd_global *gpriv, u32 ch,
+ 	priv->can.clock.freq = fcan_freq;
+ 	dev_info(&pdev->dev, "can_clk rate is %u\n", priv->can.clock.freq);
+ 
++	if (gpriv->chip_id == RENESAS_RZG2L) {
++		char *irq_name;
++		int err_irq;
++		int tx_irq;
 +
-+maintainers:
-+  - Fabrizio Castro <fabrizio.castro.jz@renesas.com>
++		err_irq = platform_get_irq_byname(pdev, ch == 0 ? "ch0_err" : "ch1_err");
++		if (err_irq < 0) {
++			err = err_irq;
++			goto fail;
++		}
 +
-+allOf:
-+  - $ref: can-controller.yaml#
++		tx_irq = platform_get_irq_byname(pdev, ch == 0 ? "ch0_trx" : "ch1_trx");
++		if (tx_irq < 0) {
++			err = tx_irq;
++			goto fail;
++		}
 +
-+properties:
-+  compatible:
-+    oneOf:
-+      - items:
-+          - enum:
-+              - renesas,r8a774a1-canfd     # RZ/G2M
-+              - renesas,r8a774b1-canfd     # RZ/G2N
-+              - renesas,r8a774c0-canfd     # RZ/G2E
-+              - renesas,r8a774e1-canfd     # RZ/G2H
-+              - renesas,r8a7795-canfd      # R-Car H3
-+              - renesas,r8a7796-canfd      # R-Car M3-W
-+              - renesas,r8a77965-canfd     # R-Car M3-N
-+              - renesas,r8a77970-canfd     # R-Car V3M
-+              - renesas,r8a77980-canfd     # R-Car V3H
-+              - renesas,r8a77990-canfd     # R-Car E3
-+              - renesas,r8a77995-canfd     # R-Car D3
-+          - const: renesas,rcar-gen3-canfd # R-Car Gen3 and RZ/G2
++		irq_name = devm_kasprintf(&pdev->dev, GFP_KERNEL,
++					  "canfd.ch%d_err", ch);
++		if (!irq_name) {
++			err = -ENOMEM;
++			goto fail;
++		}
++		err = devm_request_irq(&pdev->dev, err_irq,
++				       rcar_canfd_channel_err_interrupt, 0,
++				       irq_name, gpriv);
++		if (err) {
++			dev_err(&pdev->dev, "devm_request_irq CH Err(%d) failed, error %d\n",
++				err_irq, err);
++			goto fail;
++		}
++		irq_name = devm_kasprintf(&pdev->dev, GFP_KERNEL,
++					  "canfd.ch%d_trx", ch);
++		if (!irq_name) {
++			err = -ENOMEM;
++			goto fail;
++		}
++		err = devm_request_irq(&pdev->dev, tx_irq,
++				       rcar_canfd_channel_tx_interrupt, 0,
++				       irq_name, gpriv);
++		if (err) {
++			dev_err(&pdev->dev, "devm_request_irq Tx (%d) failed, error %d\n",
++				tx_irq, err);
++			goto fail;
++		}
++	}
 +
-+  reg:
-+    maxItems: 1
+ 	if (gpriv->fdmode) {
+ 		priv->can.bittiming_const = &rcar_canfd_nom_bittiming_const;
+ 		priv->can.data_bittiming_const =
+@@ -1636,7 +1759,11 @@ static int rcar_canfd_probe(struct platform_device *pdev)
+ 	struct device_node *of_child;
+ 	unsigned long channels_mask = 0;
+ 	int err, ch_irq, g_irq;
++	int g_err_irq, g_recc_irq;
+ 	bool fdmode = true;			/* CAN FD only mode - default */
++	enum rcanfd_chip_id chip_id;
 +
-+  interrupts:
-+    items:
-+      - description: Channel interrupt
-+      - description: Global interrupt
++	chip_id = (uintptr_t)of_device_get_match_data(&pdev->dev);
+ 
+ 	if (of_property_read_bool(pdev->dev.of_node, "renesas,no-can-fd"))
+ 		fdmode = false;			/* Classical CAN only mode */
+@@ -1649,16 +1776,30 @@ static int rcar_canfd_probe(struct platform_device *pdev)
+ 	if (of_child && of_device_is_available(of_child))
+ 		channels_mask |= BIT(1);	/* Channel 1 */
+ 
+-	ch_irq = platform_get_irq(pdev, 0);
+-	if (ch_irq < 0) {
+-		err = ch_irq;
+-		goto fail_dev;
+-	}
++	if (chip_id == RENESAS_RCAR_GEN3) {
++		ch_irq = platform_get_irq_byname_optional(pdev, "ch_int");
++		if (ch_irq < 0) {
++			/* For backward compatibility get irq by index */
++			ch_irq = platform_get_irq(pdev, 0);
++			if (ch_irq < 0)
++				return ch_irq;
++		}
+ 
+-	g_irq = platform_get_irq(pdev, 1);
+-	if (g_irq < 0) {
+-		err = g_irq;
+-		goto fail_dev;
++		g_irq = platform_get_irq_byname_optional(pdev, "g_int");
++		if (g_irq < 0) {
++			/* For backward compatibility get irq by index */
++			g_irq = platform_get_irq(pdev, 1);
++			if (g_irq < 0)
++				return g_irq;
++		}
++	} else {
++		g_err_irq = platform_get_irq_byname(pdev, "g_err");
++		if (g_err_irq < 0)
++			return g_err_irq;
 +
-+  clocks:
-+    maxItems: 3
++		g_recc_irq = platform_get_irq_byname(pdev, "g_recc");
++		if (g_recc_irq < 0)
++			return g_recc_irq;
+ 	}
+ 
+ 	/* Global controller context */
+@@ -1670,6 +1811,19 @@ static int rcar_canfd_probe(struct platform_device *pdev)
+ 	gpriv->pdev = pdev;
+ 	gpriv->channels_mask = channels_mask;
+ 	gpriv->fdmode = fdmode;
++	gpriv->chip_id = chip_id;
 +
-+  clock-names:
-+    items:
-+      - const: fck
-+      - const: canfd
-+      - const: can_clk
++	if (gpriv->chip_id == RENESAS_RZG2L) {
++		gpriv->rstc1 = devm_reset_control_get_exclusive(&pdev->dev, "rstp_n");
++		if (IS_ERR(gpriv->rstc1))
++			return dev_err_probe(&pdev->dev, PTR_ERR(gpriv->rstc1),
++					     "failed to get rstp_n\n");
 +
-+  power-domains:
-+    maxItems: 1
++		gpriv->rstc2 = devm_reset_control_get_exclusive(&pdev->dev, "rstc_n");
++		if (IS_ERR(gpriv->rstc2))
++			return dev_err_probe(&pdev->dev, PTR_ERR(gpriv->rstc2),
++					     "failed to get rstc_n\n");
++	}
+ 
+ 	/* Peripheral clock */
+ 	gpriv->clkp = devm_clk_get(&pdev->dev, "fck");
+@@ -1699,7 +1853,7 @@ static int rcar_canfd_probe(struct platform_device *pdev)
+ 	}
+ 	fcan_freq = clk_get_rate(gpriv->can_clk);
+ 
+-	if (gpriv->fcan == RCANFD_CANFDCLK)
++	if (gpriv->fcan == RCANFD_CANFDCLK && gpriv->chip_id == RENESAS_RCAR_GEN3)
+ 		/* CANFD clock is further divided by (1/2) within the IP */
+ 		fcan_freq /= 2;
+ 
+@@ -1711,20 +1865,51 @@ static int rcar_canfd_probe(struct platform_device *pdev)
+ 	gpriv->base = addr;
+ 
+ 	/* Request IRQ that's common for both channels */
+-	err = devm_request_irq(&pdev->dev, ch_irq,
+-			       rcar_canfd_channel_interrupt, 0,
+-			       "canfd.chn", gpriv);
+-	if (err) {
+-		dev_err(&pdev->dev, "devm_request_irq(%d) failed, error %d\n",
+-			ch_irq, err);
+-		goto fail_dev;
++	if (gpriv->chip_id == RENESAS_RCAR_GEN3) {
++		err = devm_request_irq(&pdev->dev, ch_irq,
++				       rcar_canfd_channel_interrupt, 0,
++				       "canfd.ch_int", gpriv);
++		if (err) {
++			dev_err(&pdev->dev, "devm_request_irq(%d) failed, error %d\n",
++				ch_irq, err);
++			goto fail_dev;
++		}
 +
-+  resets:
-+    maxItems: 1
++		err = devm_request_irq(&pdev->dev, g_irq,
++				       rcar_canfd_global_interrupt, 0,
++				       "canfd.g_int", gpriv);
++		if (err) {
++			dev_err(&pdev->dev, "devm_request_irq(%d) failed, error %d\n",
++				g_irq, err);
++			goto fail_dev;
++		}
++	} else {
++		err = devm_request_irq(&pdev->dev, g_recc_irq,
++				       rcar_canfd_global_receive_fifo_interrupt, 0,
++				       "canfd.g_recc", gpriv);
 +
-+  renesas,no-can-fd:
-+    $ref: /schemas/types.yaml#/definitions/flag
-+    description:
-+      The controller can operate in either CAN FD only mode (default) or
-+      Classical CAN only mode.  The mode is global to both the channels.
-+      Specify this property to put the controller in Classical CAN only mode.
++		if (err) {
++			dev_err(&pdev->dev, "devm_request_irq(%d) failed, error %d\n",
++				g_recc_irq, err);
++			goto fail_dev;
++		}
 +
-+  assigned-clocks:
-+    description:
-+      Reference to the CANFD clock.  The CANFD clock is a div6 clock and can be
-+      used by both CAN (if present) and CAN FD controllers at the same time.
-+      It needs to be scaled to maximum frequency if any of these controllers
-+      use it.
++		err = devm_request_irq(&pdev->dev, g_err_irq,
++				       rcar_canfd_global_err_interrupt, 0,
++				       "canfd.g_err", gpriv);
++		if (err) {
++			dev_err(&pdev->dev, "devm_request_irq(%d) failed, error %d\n",
++				g_err_irq, err);
++			goto fail_dev;
++		}
+ 	}
+-	err = devm_request_irq(&pdev->dev, g_irq,
+-			       rcar_canfd_global_interrupt, 0,
+-			       "canfd.gbl", gpriv);
 +
-+  assigned-clock-rates:
-+    description: Maximum frequency of the CANFD clock.
++	err = reset_control_reset(gpriv->rstc1);
++	if (err)
++		goto fail_dev;
++	err = reset_control_reset(gpriv->rstc2);
+ 	if (err) {
+-		dev_err(&pdev->dev, "devm_request_irq(%d) failed, error %d\n",
+-			g_irq, err);
++		reset_control_assert(gpriv->rstc1);
+ 		goto fail_dev;
+ 	}
+ 
+@@ -1733,7 +1918,7 @@ static int rcar_canfd_probe(struct platform_device *pdev)
+ 	if (err) {
+ 		dev_err(&pdev->dev,
+ 			"failed to enable peripheral clock, error %d\n", err);
+-		goto fail_dev;
++		goto fail_reset;
+ 	}
+ 
+ 	err = rcar_canfd_reset_controller(gpriv);
+@@ -1790,6 +1975,9 @@ static int rcar_canfd_probe(struct platform_device *pdev)
+ 	rcar_canfd_disable_global_interrupts(gpriv);
+ fail_clk:
+ 	clk_disable_unprepare(gpriv->clkp);
++fail_reset:
++	reset_control_assert(gpriv->rstc1);
++	reset_control_assert(gpriv->rstc2);
+ fail_dev:
+ 	return err;
+ }
+@@ -1810,6 +1998,9 @@ static int rcar_canfd_remove(struct platform_device *pdev)
+ 	/* Enter global sleep mode */
+ 	rcar_canfd_set_bit(gpriv->base, RCANFD_GCTR, RCANFD_GCTR_GSLPR);
+ 	clk_disable_unprepare(gpriv->clkp);
++	reset_control_assert(gpriv->rstc1);
++	reset_control_assert(gpriv->rstc2);
 +
-+patternProperties:
-+  "^channel[01]$":
-+    type: object
-+    description:
-+      The controller supports two channels and each is represented as a child
-+      node.  Each child node supports the "status" property only, which
-+      is used to enable/disable the respective channel.
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+  - power-domains
-+  - resets
-+  - assigned-clocks
-+  - assigned-clock-rates
-+  - channel0
-+  - channel1
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/r8a7795-cpg-mssr.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/power/r8a7795-sysc.h>
-+
-+    canfd: can@e66c0000 {
-+            compatible = "renesas,r8a7795-canfd",
-+                         "renesas,rcar-gen3-canfd";
-+            reg = <0xe66c0000 0x8000>;
-+            interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
-+            clocks = <&cpg CPG_MOD 914>,
-+                     <&cpg CPG_CORE R8A7795_CLK_CANFD>,
-+                     <&can_clk>;
-+            clock-names = "fck", "canfd", "can_clk";
-+            assigned-clocks = <&cpg CPG_CORE R8A7795_CLK_CANFD>;
-+            assigned-clock-rates = <40000000>;
-+            power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+            resets = <&cpg 914>;
-+
-+            channel0 {
-+            };
-+
-+            channel1 {
-+            };
-+    };
+ 	return 0;
+ }
+ 
+@@ -1827,7 +2018,8 @@ static SIMPLE_DEV_PM_OPS(rcar_canfd_pm_ops, rcar_canfd_suspend,
+ 			 rcar_canfd_resume);
+ 
+ static const struct of_device_id rcar_canfd_of_table[] = {
+-	{ .compatible = "renesas,rcar-gen3-canfd" },
++	{ .compatible = "renesas,rcar-gen3-canfd", .data = (void *)RENESAS_RCAR_GEN3 },
++	{ .compatible = "renesas,rzg2l-canfd", .data = (void *)RENESAS_RZG2L },
+ 	{ }
+ };
+ 
 -- 
 2.17.1
 
