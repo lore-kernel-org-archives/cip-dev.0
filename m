@@ -2,104 +2,197 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0F45C433FE
-	for <webhook@archiver.kernel.org>; Wed, 29 Dec 2021 10:15:44 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com
- [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web09.49296.1640772936778058884
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6C32C4332F
+	for <webhook@archiver.kernel.org>; Wed, 29 Dec 2021 10:15:46 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com
+ [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web12.49376.1640772940300083487
  for <cip-dev@lists.cip-project.org>;
- Wed, 29 Dec 2021 02:15:43 -0800
+ Wed, 29 Dec 2021 02:15:45 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=pass (domain: bp.renesas.com, ip: 210.160.252.172,
+ spf=pass (domain: bp.renesas.com, ip: 210.160.252.171,
  mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.88,244,1635174000";
-   d="scan'208";a="105602450"
+   d="scan'208";a="105094678"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 29 Dec 2021 19:15:43 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 29 Dec 2021 19:15:44 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 617FD423D01C;
-	Wed, 29 Dec 2021 19:15:42 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id AA782423CEBB;
+	Wed, 29 Dec 2021 19:15:43 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 08/31] ASoC: sh: rz-ssi: Improve error handling in
- rz_ssi_dma_request function
-Date: Wed, 29 Dec 2021 10:15:07 +0000
-Message-Id: <20211229101530.22783-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 09/31] dt-bindings: iio: adc: Add binding
+ documentation for Renesas RZ/G2L A/D converter
+Date: Wed, 29 Dec 2021 10:15:08 +0000
+Message-Id: <20211229101530.22783-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20211229101530.22783-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20211229101530.22783-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 29 Dec 2021 10:15:44 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7285
+ <cip-dev@lists.cip-project.org>; Wed, 29 Dec 2021 10:15:46 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7286
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+commit 08080963162740abdd8a35f6c3aad0e744f71627 upstream.
 
-commit 4b14f17912052a6963580dfba04781cfe6ccba02 upstream.
+Add binding documentation for Renesas RZ/G2L A/D converter block.
 
-dma_request_chan() returns error pointer in case of failures, but
-the rz_ssi_dma_request() checked for NULL pointer instead.
-
-This patch fixes the issue by checking for ERR_PTR() instead of
-NULL and sets the DMA pointers to NULL in error case so that ssi
-can fallback to PIO mode.
-
-Fixes: 26ac471c5354 ("ASoC: sh: rz-ssi: Add SSI DMAC support")
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://lore.kernel.org/r/20210818101450.15948-1-biju.das.jz@bp.renesas.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Link: https://lore.kernel.org/r/20210804202118.25745-2-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- sound/soc/sh/rz-ssi.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ .../bindings/iio/adc/renesas,rzg2l-adc.yaml   | 134 ++++++++++++++++++
+ 1 file changed, 134 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml
 
-diff --git a/sound/soc/sh/rz-ssi.c b/sound/soc/sh/rz-ssi.c
-index 341815476244..89c7e5e4cbf6 100644
---- a/sound/soc/sh/rz-ssi.c
-+++ b/sound/soc/sh/rz-ssi.c
-@@ -185,7 +185,7 @@ rz_ssi_stream_get(struct rz_ssi_priv *ssi, struct snd_pcm_substream *substream)
- 
- static inline bool rz_ssi_is_dma_enabled(struct rz_ssi_priv *ssi)
- {
--	return (ssi->playback.dma_ch || ssi->capture.dma_ch);
-+	return (ssi->playback.dma_ch && (ssi->dma_rt || ssi->capture.dma_ch));
- }
- 
- static int rz_ssi_stream_is_valid(struct rz_ssi_priv *ssi,
-@@ -676,15 +676,26 @@ static void rz_ssi_release_dma_channels(struct rz_ssi_priv *ssi)
- static int rz_ssi_dma_request(struct rz_ssi_priv *ssi, struct device *dev)
- {
- 	ssi->playback.dma_ch = dma_request_chan(dev, "tx");
-+	if (IS_ERR(ssi->playback.dma_ch))
-+		ssi->playback.dma_ch = NULL;
+diff --git a/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml b/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml
+new file mode 100644
+index 000000000000..c80201d6a716
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml
+@@ -0,0 +1,134 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/iio/adc/renesas,rzg2l-adc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- 	ssi->capture.dma_ch = dma_request_chan(dev, "rx");
-+	if (IS_ERR(ssi->capture.dma_ch))
-+		ssi->capture.dma_ch = NULL;
++title: Renesas RZ/G2L ADC
 +
- 	if (!ssi->playback.dma_ch && !ssi->capture.dma_ch) {
- 		ssi->playback.dma_ch = dma_request_chan(dev, "rt");
--		if (!ssi->playback.dma_ch)
-+		if (IS_ERR(ssi->playback.dma_ch)) {
-+			ssi->playback.dma_ch = NULL;
- 			goto no_dma;
-+		}
- 
- 		ssi->dma_rt = true;
- 	}
- 
-+	if (!rz_ssi_is_dma_enabled(ssi))
-+		goto no_dma;
++maintainers:
++  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 +
- 	if (ssi->playback.dma_ch &&
- 	    (rz_ssi_dma_slave_config(ssi, ssi->playback.dma_ch, true) < 0))
- 		goto no_dma;
++description: |
++  A/D Converter block is a successive approximation analog-to-digital converter
++  with a 12-bit accuracy. Up to eight analog input channels can be selected.
++  Conversions can be performed in single or repeat mode. Result of the ADC is
++  stored in a 32-bit data register corresponding to each channel.
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - renesas,r9a07g044-adc   # RZ/G2{L,LC}
++      - const: renesas,rzg2l-adc
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: converter clock
++      - description: peripheral clock
++
++  clock-names:
++    items:
++      - const: adclk
++      - const: pclk
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    maxItems: 2
++
++  reset-names:
++    items:
++      - const: presetn
++      - const: adrst-n
++
++  '#address-cells':
++    const: 1
++
++  '#size-cells':
++    const: 0
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++  - power-domains
++  - resets
++  - reset-names
++
++patternProperties:
++  "^channel@[0-7]$":
++    $ref: "adc.yaml"
++    type: object
++    description: |
++      Represents the external channels which are connected to the ADC.
++
++    properties:
++      reg:
++        description: |
++          The channel number. It can have up to 8 channels numbered from 0 to 7.
++        items:
++          - minimum: 0
++            maximum: 7
++
++    required:
++      - reg
++
++    additionalProperties: false
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/r9a07g044-cpg.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    adc: adc@10059000 {
++      compatible = "renesas,r9a07g044-adc", "renesas,rzg2l-adc";
++      reg = <0x10059000 0x400>;
++      interrupts = <GIC_SPI 347 IRQ_TYPE_EDGE_RISING>;
++      clocks = <&cpg CPG_MOD R9A07G044_ADC_ADCLK>,
++               <&cpg CPG_MOD R9A07G044_ADC_PCLK>;
++      clock-names = "adclk", "pclk";
++      power-domains = <&cpg>;
++      resets = <&cpg R9A07G044_ADC_PRESETN>,
++               <&cpg R9A07G044_ADC_ADRST_N>;
++      reset-names = "presetn", "adrst-n";
++
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      channel@0 {
++        reg = <0>;
++      };
++      channel@1 {
++        reg = <1>;
++      };
++      channel@2 {
++        reg = <2>;
++      };
++      channel@3 {
++        reg = <3>;
++      };
++      channel@4 {
++        reg = <4>;
++      };
++      channel@5 {
++        reg = <5>;
++      };
++      channel@6 {
++        reg = <6>;
++      };
++      channel@7 {
++        reg = <7>;
++      };
++    };
 -- 
 2.17.1
 
