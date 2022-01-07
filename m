@@ -2,43 +2,43 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3B94C433EF
-	for <webhook@archiver.kernel.org>; Fri,  7 Jan 2022 11:18:45 +0000 (UTC)
-Received: from EUR04-VI1-obe.outbound.protection.outlook.com
- (EUR04-VI1-obe.outbound.protection.outlook.com [40.107.8.79])
- by mx.groups.io with SMTP id smtpd.web09.5335.1641554324768724311
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8057C433EF
+	for <webhook@archiver.kernel.org>; Fri,  7 Jan 2022 11:32:51 +0000 (UTC)
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com
+ (EUR04-DB3-obe.outbound.protection.outlook.com [40.107.6.77])
+ by mx.groups.io with SMTP id smtpd.web08.5356.1641555169875895724
  for <cip-dev@lists.cip-project.org>;
- Fri, 07 Jan 2022 03:18:45 -0800
+ Fri, 07 Jan 2022 03:32:50 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=H2yyfDjs;
- spf=pass (domain: siemens.com, ip: 40.107.8.79,
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=vtB3305q;
+ spf=pass (domain: siemens.com, ip: 40.107.6.77,
  mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Rq/UH+QW6ViNfgDk77GV7IevtxMBgZr9kO9tUPnfypLv7v0V/YcnK78wDeCG8dl2Cr5C0ZUq9gO2WCT47Pb8la0h7ZAdnZp2xsZBaDn1MCiTm1YGekI9itAXGRIVHk5GIrZ1MA+puWXuHS+3K4mP/yO/XpusUtJCGXjjj4jgDUvDxPXeVFLMGdMBhq+7XCU3d1F0rDbGx06D0Dpy1JZI6DuneMqJ7OLS+ePBr8hcctLVNHC8zjSpzdhbnH7/Q7hY3yUGjGZNFmMZAOvu3S4z781/r8LQyAHyhhcNh+5p8ZlAQxmSHUIG7fGbJ1x9Pm6eOryl/0G7lFV2OrvoFXeX1A==
+ b=oB960DUvBaslt5EbUO3b3EX2I77vcM1qE7fqZsHa6vCkbt39PdcqmgUGxpj8tnPa6SJW0VOQQTe4xZQqd0V6Q9/nMAXRvy9PNdObJHV9molNsAfNOgcHvxlMGga3qZ87n1AQH3iFQdjKyP1ahmd3SJOOBQh/XFCqhCwBvARbdXqt1oGFnL5Y1QUiaz1pSRvzCTi+DGyOPPRd532GVndxdMUbwLMvu21rlq5uMoius88/w/X6977WSTTqbdkogSY3JkMcXeCHK4Nvcy2mk5x5ciiciKsokU1TfNmYa/rB4oaV+WsNt+k2clCG/LZFHP+7mifqIHpMMLBa4ajVch+xrg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=B3PatTehAv7K/KlvfBC6GPZJOf5J+9qunkWSPF1G7xY=;
- b=j/lHsknJrWLeiUqNMXRQ6wh5g5zaP/7IzUzI1SIzLIztHXkov1ZneR9KpIfBkmcOA1oCcpua0IpG+F91vsjDRQK8HMsaWqWasMVlHLrSOYGc6nzPCpSlvz8lPEYzskFoFxfZ24LoBlwr2naCBMAwxpkZ1hrh+JkICS6enQgbPfd7CQyYtYwvADmMPAPUyEF44pVgin8NpibfI6ARpzry3jBe2yB11AICNCeeDEfRVViWuQgeVOtyz04jqfVGaXEDms7NWaRyfbDM1iaO7pFKNN2jVWaT/+aHynhnmbiZTEvNPUpWHaj75XAqqST43mV6LtK9Nk7awfqjoumHc1MJuw==
+ bh=PitL5pyDpVV8FpGgz6a6ltTLYXhpWTgfOFJT1ee1uZw=;
+ b=cj9SHsByXXuiZCyGLPyk622XQrTzg0y4fPvuCkzbWg1369jwC1J6T6h92vGXhHAYX1lkuVItOmOq1K2J7VUMVAkEiUir6kD1dVRnloaumWJJmkTg25A/b8nDD05zHnXr2gFt3EV7fQdqc4FiRZU1pYgB0XcOA1rhLgvO54pPkyZbhWTbzm4UEwA8bcfnky/NUaqtyrboAJPtRRvBUJxsN7q1eHDXs4/cDRohAqaCXabiX/XnlJHmIx01UCYG/k4s5KHttHJHdY86vmvi1gbRHOz/aIjaog7aS0BnaqGYW5PgTHjmjWSyOK6lVI4N2oqoXQRZUSWBljBCCuHDmde0yg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.73) smtp.rcpttodomain=miraclelinux.com smtp.mailfrom=siemens.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=siemens.com;
- dkim=none (message not signed); arc=none
+ 194.138.21.73) smtp.rcpttodomain=lists.cip-project.org
+ smtp.mailfrom=siemens.com; dmarc=pass (p=none sp=none pct=100) action=none
+ header.from=siemens.com; dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=B3PatTehAv7K/KlvfBC6GPZJOf5J+9qunkWSPF1G7xY=;
- b=H2yyfDjsMrGkh2LaA3ES/NNyh3TN31nUHqkl3DynGr6VvLE2OI1Pc6Ae4tbXyosgMVm84i63y6x+MHXycV8VmgIFT1T2KpR3LCoHwbzeSINzvby1HVuOVqbc0Mevw4l5m0z+R2HAkii3h9z6VTb9DblGbenUQTi/qdGIiHlcNcSVlPWmeFM145jQzdfMx+dzCnU91z7fhDMZy1lsY263wY8Bz9EMrClmGvziU0p3HuCEWVpIhz6wELisP0hbQnuG61JQHVCgA9euDZ66Mf/m08TuQGHpbE4szhdtaBXVlHOD5iOqVZeGv1J590+apRlgTB5wbhV6UMcJFSvM57f0ZQ==
-Received: from OL1P279CA0007.NORP279.PROD.OUTLOOK.COM (2603:10a6:e10:12::12)
- by AM7PR10MB3779.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:178::13) with
+ bh=PitL5pyDpVV8FpGgz6a6ltTLYXhpWTgfOFJT1ee1uZw=;
+ b=vtB3305qxhmTC95oftgniBCcRCzP7yUz+x8Bk0P4B9xjH85POF3kzsnCEO21SphS6PvWbXwl479X9xGUKvfQi7NBiyX7bwJP7Is27m2Pft0YSwktKs2mZNxdA4KhOb6Y0qrjUXrE9ZiyHebX3v7XcrDb9ANpAByO2+uIyYfNIdc4yK6nMZPF7FvaHJKlQAxr+CPH+QAQ8ul7VbJVRKolaOZXPL2v/CwZBCO/WHu6pQj0hbBKkQm1eYCB7Z4XwfVftCyW7I6Ua79rByUR+bVkJKM4lrAyr2aguD6m/Bx9CKe5AM8DYpmyHsE7EksPly8+CzZ+Yj8nxDiUhaFi5bs5NA==
+Received: from AM6PR02CA0009.eurprd02.prod.outlook.com (2603:10a6:20b:6e::22)
+ by AM7PR10MB3239.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:10b::10) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4867.7; Fri, 7 Jan
- 2022 11:18:42 +0000
-Received: from HE1EUR01FT038.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:e10:12:cafe::fb) by OL1P279CA0007.outlook.office365.com
- (2603:10a6:e10:12::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4867.9 via Frontend
- Transport; Fri, 7 Jan 2022 11:18:41 +0000
+ 2022 11:32:46 +0000
+Received: from VE1EUR01FT064.eop-EUR01.prod.protection.outlook.com
+ (2603:10a6:20b:6e:cafe::9) by AM6PR02CA0009.outlook.office365.com
+ (2603:10a6:20b:6e::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4867.7 via Frontend
+ Transport; Fri, 7 Jan 2022 11:32:46 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.73)
  smtp.mailfrom=siemens.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=siemens.com;
@@ -46,158 +46,95 @@ Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
  194.138.21.73 as permitted sender) receiver=protection.outlook.com;
  client-ip=194.138.21.73; helo=hybrid.siemens.com;
 Received: from hybrid.siemens.com (194.138.21.73) by
- HE1EUR01FT038.mail.protection.outlook.com (10.152.1.93) with Microsoft SMTP
+ VE1EUR01FT064.mail.protection.outlook.com (10.152.3.34) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.4867.7 via Frontend Transport; Fri, 7 Jan 2022 11:18:41 +0000
+ 15.20.4867.7 via Frontend Transport; Fri, 7 Jan 2022 11:32:46 +0000
 Received: from DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) by
  DEMCHDC9SNA.ad011.siemens.net (194.138.21.73) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Fri, 7 Jan 2022 12:18:41 +0100
+ 15.1.2375.17; Fri, 7 Jan 2022 12:32:45 +0100
 Received: from [167.87.0.113] (167.87.0.113) by DEMCHDC8A0A.ad011.siemens.net
  (139.25.226.106) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.17; Fri, 7 Jan
- 2022 12:18:40 +0100
-Message-ID: <1a4f08d4-9a1e-5441-0a02-735618294e8f@siemens.com>
-Date: Fri, 7 Jan 2022 12:18:40 +0100
+ 2022 12:32:45 +0100
+Message-ID: <b5989cfc-6d12-348e-1bf1-7033937832c1@siemens.com>
+Date: Fri, 7 Jan 2022 12:32:44 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.4.0
-Subject: Re: [isar-cip-core][PATCH 4/4] enable cip-core-image-kernelci
-Content-Language: en-US
-To: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
-CC: <cip-dev@lists.cip-project.org>
-References: <20220106111614.218823-1-alice.ferrazzi@miraclelinux.com>
- <20220106111614.218823-5-alice.ferrazzi@miraclelinux.com>
- <c8e9fcb9-eded-90fb-98cc-f766a7a9fbf3@siemens.com>
- <CANgtXuMOv+rJYyEMC0CgZsap0YETmAt30S5ia5x6+W+ppKKRoQ@mail.gmail.com>
- <65c523ba-cfaa-877c-e36c-1f0a6eec4602@siemens.com>
- <CANgtXuNUWt4ez6O5pgeJid3avitUq=fiOnVQk_+opA+Q-aTf+A@mail.gmail.com>
 From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: 
- <CANgtXuNUWt4ez6O5pgeJid3avitUq=fiOnVQk_+opA+Q-aTf+A@mail.gmail.com>
+Subject: [isar-cip-core][PATCH] ci: Drop trailing semicolons from script
+Content-Language: en-US
+To: cip-dev <cip-dev@lists.cip-project.org>
+CC: "alice.ferrazzi@miraclelinux.com" <alice.ferrazzi@miraclelinux.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [167.87.0.113]
-X-ClientProxiedBy: DEMCHDC89XA.ad011.siemens.net (139.25.226.103) To
+X-ClientProxiedBy: DEMCHDC89YA.ad011.siemens.net (139.25.226.104) To
  DEMCHDC8A0A.ad011.siemens.net (139.25.226.106)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b653d8f2-9716-428e-a062-08d9d1cf75f7
-X-MS-TrafficTypeDiagnostic: AM7PR10MB3779:EE_
+X-MS-Office365-Filtering-Correlation-Id: cec38de2-ac39-4269-e58c-08d9d1d16d3a
+X-MS-TrafficTypeDiagnostic: AM7PR10MB3239:EE_
 X-Microsoft-Antispam-PRVS: 
-	<AM7PR10MB3779024748DAAE3DA3177A02954D9@AM7PR10MB3779.EURPRD10.PROD.OUTLOOK.COM>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2733;
+	<AM7PR10MB32390BB540760303479E3DEC954D9@AM7PR10MB3239.EURPRD10.PROD.OUTLOOK.COM>
+X-MS-Oob-TLC-OOBClassifiers: OLM:346;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?VktLTmM3d2VGcEwxWkFQeFRYbFRON0FTd3ZVS2kxM3JWR05Ub2ZLWkF0SkdD?=
- =?utf-8?B?SCtzTlhIcG4zVEhkSlhJVkhzL2NuNUhEYy9tOGo1MWdpWlFTOUxCM1FneSth?=
- =?utf-8?B?dGd6S1FEVlpTcnVHZDRoTUtPNWo1akRpcDhjNFVCUlVBVkpsODNDMWl3ZG9y?=
- =?utf-8?B?M2YvM1hVeGpsc21lTDVkTDlXVC9OVnlWSVdjTWdLc0tUSTUrVDV0SWFJZlRF?=
- =?utf-8?B?elJSVHR2Mm5nRTlPdnVBaDNQSlN1dDJzUDJkazN1OXBVaTJKM0NjVzZuTkE4?=
- =?utf-8?B?Wms2Um8vYWRIVTZBS3FjRXVxNlcwT1JzMVk5Slh5cUtoWFVLT1B6alhtU281?=
- =?utf-8?B?U1hvQlFpVjd6SUpzdzRJek9lemVxQXdmNFFPSE54MmQ3SHJ6STZML0dtOFR5?=
- =?utf-8?B?V002N0VLN05oTnY4QXIxNlo3NVpVeW92VXVPbGZ5WDlLQTVpUzRHKzdycm9s?=
- =?utf-8?B?TG1qT1YrcklPd2pjUlg4cGxVcGYyN0haZUVnaTFSc2loWEhMZ1Q1NEl4SjBu?=
- =?utf-8?B?ak95U0RXV2NiYm5JWVBiem85bXFIKzZ3YUtLZ3gxSUFBTis4QktDK0h6LzRL?=
- =?utf-8?B?bUg1SWU2eEduMHFoUGU2Y0ZLMllrVE1FOEFhY0VYZDNkbVdVWll3ZTMwcWM5?=
- =?utf-8?B?eFNKdFBkdGtJMmRvQ0M0Njc4RGJnTStneGxWZlgxcDBSMHMybDNMeExmYzZP?=
- =?utf-8?B?U3IydzZOTHhjVXc3RmJhU1IwTllJTE9vdnFaeGc1MWhKNG5ncU82VWJ5YlRU?=
- =?utf-8?B?cWZ3OVhuMWk2L0ZMQnZOOWV2ODNjS0h6M2ZQVWU3V1dEMlA2RzNEc3dSQitO?=
- =?utf-8?B?Y0laYlY5UlZBcTA2ZnJ0eFFrdzlHdVhORE1LbVNoNkxHQ01vaGg3dnllNW9J?=
- =?utf-8?B?RENuRTMzenNGTFo4cllzSzY3S1FENHVYaFpjOERWOW1XcEcrdGVyMmc2bDFk?=
- =?utf-8?B?Q0hXOHJha21rYjg3U1NvY1RmU2dnMkxGOVVxWGlHTERuNkZHUW53YVUva2Jj?=
- =?utf-8?B?bXZFajM5MTEraFlnQjhtVkhVVm90YVprd21vbTIwQ0ZMVHhGdGl6UUtjMEk5?=
- =?utf-8?B?cUduVW5WVStYSVRCMC93bkhmSjB1QmpXODdSYXBlcmdhTmNrUkI0UHJMWFFF?=
- =?utf-8?B?ZUZ2b0g2YlBSZi9MOHdnay94d0NwQzdJVDNaanFPM3d6N2xxMEVvZjFLd0Vk?=
- =?utf-8?B?VnBTVVhueHVZQ0g4T1p3SjZ4cHNLcU5lTnNlQklORlp6WWJranBJRC90Sk5G?=
- =?utf-8?B?MW56NlJyclJpcm5JYTNpMlJHem0ycGRMS3lmOXBkNjhCSm5vRzNXS2NxYzNO?=
- =?utf-8?Q?ditd6PE/3jD5I=3D?=
+	gYIPetBkuN/XVtUYrBLlX/C2UT/E57XyrIT7YoR8lUfEXQgWZbKi6SNFk/0jr/GYQeXveHuc28O8hAKZYdED2pTpfDDfqN2RHG2P7WCincW6/WnLNHghzYTHyPsXmPpaNCLkBkar3B04G8PtlTR2494lEedOaQamnOw/Q2s4fNiKYhr4DJGwWLK0LQjTJrsGqjhaE9NGn+2ro7JNmDxeXU4EAXJX36Nlyl2xRa0pVU0wy3qj0vb8dLW0UBC1HpeZN7rfE+NA7MiMo2d501BwYZ+KHk1ifX+Evr0PfqSDGuKLCujs92IMJzWNwNXbEBpO5c2OGVDIYtjnnYIcdubGG4h/HPINTA4WvNWhnkNTvEkKbGqzAaqhsKzXV7YSSiuW9Ldk7R+L+KK0ZXHGqQO6SfOuWn09jkjSQjpJzpAnb0cAXFU0Tkiriqtudv7KanIVJt+EiCXwFCz2BytjxU1r30GaSnYZzQWizjku55n1Ejp663y4zP6cba2R1IFTWr9GXJlXYKtAKvR/6a40q7ufr7Pz1z4ZCGvbiUjUWLl6wPLrDik8JEm1Bf2ggTBI8kn6JLu+3Lbqu9muT26p2m31+uRsutBAEtIT7R48WA/Z1oxP5Knt289lT8xgkD4Zr040IuFQzsQBGVHoZUKKgfcCnYUzxoVTcCpz0p5kiqQredymyvcFazQfTPs74J137P12llBW2bIj9GZDG8DRn4HBhBjglBGa0Kux3Id53iiWJTby3JO2TKJh6EE7bF+ubnfZ7CDWy+EYrax8lN+ul1ryXkBZNJN8TB6MRJehHeb1ejWmCRGTpwUf3GGiZLgEfBNRsN185gKBR7iFJP+yVwiOiwtj9JQVTWIJaM0PDuDfu9M=
 X-Forefront-Antispam-Report: 
-	CIP:194.138.21.73;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(4636009)(46966006)(40470700002)(36840700001)(53546011)(316002)(2616005)(4326008)(36756003)(31686004)(83380400001)(2906002)(86362001)(16576012)(70586007)(40460700001)(5660300002)(70206006)(356005)(81166007)(82310400004)(966005)(47076005)(16526019)(6706004)(186003)(36860700001)(508600001)(82960400001)(336012)(8936002)(31696002)(956004)(8676002)(26005)(6916009)(44832011)(3940600001)(43740500002)(36900700001);DIR:OUT;SFP:1101;
+	CIP:194.138.21.73;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(40470700002)(956004)(2616005)(508600001)(26005)(36860700001)(336012)(31686004)(186003)(16526019)(70586007)(44832011)(70206006)(2906002)(47076005)(83380400001)(86362001)(40460700001)(31696002)(4326008)(82310400004)(8936002)(16576012)(8676002)(82960400001)(356005)(81166007)(316002)(5660300002)(36756003)(6706004)(6916009)(3940600001)(36900700001)(43740500002);DIR:OUT;SFP:1101;
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jan 2022 11:18:41.6452
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jan 2022 11:32:46.0043
  (UTC)
 X-MS-Exchange-CrossTenant-Network-Message-Id: 
- b653d8f2-9716-428e-a062-08d9d1cf75f7
+ cec38de2-ac39-4269-e58c-08d9d1d16d3a
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
  TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.73];Helo=[hybrid.siemens.com]
 X-MS-Exchange-CrossTenant-AuthSource: 
-	HE1EUR01FT038.eop-EUR01.prod.protection.outlook.com
+	VE1EUR01FT064.eop-EUR01.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR10MB3779
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR10MB3239
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 07 Jan 2022 11:18:45 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7345
+ <cip-dev@lists.cip-project.org>; Fri, 07 Jan 2022 11:32:51 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7346
 
-On 07.01.22 11:23, Alice Ferrazzi wrote:
-> On Fri, Jan 7, 2022 at 7:07 PM Jan Kiszka <jan.kiszka@siemens.com> wrote:
->>
->> On 07.01.22 11:02, Alice Ferrazzi wrote:
->>> On Thu, Jan 6, 2022 at 11:12 PM Jan Kiszka <jan.kiszka@siemens.com> wrote:
->>>>
->>>> On 06.01.22 12:16, Alice Ferrazzi wrote:
->>>>> enable CIP core image KernelCI to be built with gitlab pipeline
->>>>> and uploaded to the KernelCI storage using KernelCI API.
->>>>> enable cip-core-image-kernelci to be built for amd64, arm and arm64.
->>>>>
->>>>> Signed-off-by: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
->>>>> ---
->>>>>  .gitlab-ci.yml | 40 +++++++++++++++++++++++++++++++++++++++-
->>>>>  1 file changed, 39 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
->>>>> index e7db8c1..784343b 100644
->>>>> --- a/.gitlab-ci.yml
->>>>> +++ b/.gitlab-ci.yml
->>>>> @@ -9,6 +9,7 @@ variables:
->>>>>    targz: disable
->>>>>    dtb: none
->>>>>    deploy: enable
->>>>> +  deploy_kernelci: disable
->>>>>
->>>>>  stages:
->>>>>    - build
->>>>> @@ -37,7 +38,8 @@ default:
->>>>>      - if [ "${release}" = "bullseye" ]; then base_yaml="${base_yaml}:kas/opt/bullseye.yml"; fi;
->>>>>      - echo "Building ${base_yaml}"
->>>>>      - kas build ${base_yaml}
->>>>> -    - if [ "${deploy}" = "enable" ]; then scripts/deploy-cip-core.sh ${release} ${target} ${extension} ${dtb} ${CI_COMMIT_REF_SLUG}; fi
->>>>> +    - if [ "${deploy}" = "enable" ]; then scripts/deploy-cip-core.sh ${release} ${target} ${extension} ${dtb} ${CI_COMMIT_REF_SLUG}; fi;
->>>>> +    - if [ "${deploy_kernelci}" = "enable" ]; then scripts/deploy-kernelci.py ${release} ${target} ${extension} ${dtb}; fi
->>>>
->>>> Does gitlab-ci forces us to add that closing ; to the last-but-one
->>>> command? If so, better add it to the new from the beginning.
->>>>
->>>
->>> I'm just following the syntax that is already there.
->>> The gitlab-ci.yml file syntax preceding my commit is also doing same
->>> thing of adding that closing ; to the last-but-one command.
->>> You can check it here
->>> https://gitlab.com/cip-project/cip-core/isar-cip-core/-/blob/master/.gitlab-ci.yml#L40
->>>
->>
->> Then, if the closing semicolon is needed, add it to the new line as well
->> to avoid having to touch that when adding the next one.
-> 
-> sorry I'm not understanding what you want me to do.
-> The closing semicolon is needed to the last-but-one command.
-> Adding it to the last command break the script.
-> 
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-Are you really sure about the closing semicolon?
+Not needed.
 
-https://gitlab.com/jan-kiszka/ci-test/-/jobs/1951623081
-https://gitlab.com/jan-kiszka/ci-test/-/blob/semicolon/.gitlab-ci.yml
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
+ .gitlab-ci.yml | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Jan
-
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+index e7db8c1..e9cbc60 100644
+--- a/.gitlab-ci.yml
++++ b/.gitlab-ci.yml
+@@ -30,11 +30,11 @@ default:
+     base_yaml: "kas-cip.yml:kas/board/${target}.yml"
+   script:
+     - sudo rm -rf build/tmp
+-    - if [ "${use_rt}" = "enable" ]; then base_yaml="${base_yaml}:kas/opt/rt.yml"; fi;
+-    - if [ "${extension}" != "base" ]; then base_yaml="${base_yaml}:kas/opt/${extension}.yml"; fi;
+-    - if [ "${wic_targz}" = "enable" ]; then base_yaml="${base_yaml}:kas/opt/wic-targz-img.yml"; fi;
+-    - if [ "${targz}" = "enable" ]; then base_yaml="${base_yaml}:kas/opt/targz-img.yml"; fi;
+-    - if [ "${release}" = "bullseye" ]; then base_yaml="${base_yaml}:kas/opt/bullseye.yml"; fi;
++    - if [ "${use_rt}" = "enable" ]; then base_yaml="${base_yaml}:kas/opt/rt.yml"; fi
++    - if [ "${extension}" != "base" ]; then base_yaml="${base_yaml}:kas/opt/${extension}.yml"; fi
++    - if [ "${wic_targz}" = "enable" ]; then base_yaml="${base_yaml}:kas/opt/wic-targz-img.yml"; fi
++    - if [ "${targz}" = "enable" ]; then base_yaml="${base_yaml}:kas/opt/targz-img.yml"; fi
++    - if [ "${release}" = "bullseye" ]; then base_yaml="${base_yaml}:kas/opt/bullseye.yml"; fi
+     - echo "Building ${base_yaml}"
+     - kas build ${base_yaml}
+     - if [ "${deploy}" = "enable" ]; then scripts/deploy-cip-core.sh ${release} ${target} ${extension} ${dtb} ${CI_COMMIT_REF_SLUG}; fi
 -- 
-Siemens AG, Technology
-Competence Center Embedded Linux
+2.31.1
 
