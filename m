@@ -1,187 +1,278 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <alice.ferrazzi@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53492C433F5
-	for <webhook@archiver.kernel.org>; Fri,  7 Jan 2022 10:11:03 +0000 (UTC)
-Received: from EUR03-VE1-obe.outbound.protection.outlook.com
- (EUR03-VE1-obe.outbound.protection.outlook.com [40.107.5.49])
- by mx.groups.io with SMTP id smtpd.web12.4742.1641550261555805525
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADF4CC433EF
+	for <webhook@archiver.kernel.org>; Fri,  7 Jan 2022 10:17:39 +0000 (UTC)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com
+ [209.85.208.46])
+ by mx.groups.io with SMTP id smtpd.web08.4772.1641550657683162554
  for <cip-dev@lists.cip-project.org>;
- Fri, 07 Jan 2022 02:11:02 -0800
+ Fri, 07 Jan 2022 02:17:39 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=k7bDHImV;
- spf=pass (domain: siemens.com, ip: 40.107.5.49,
- mailfrom: jan.kiszka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lCDLonSqrafz/SotnyfdYTIf8Gmk5g0qit7/9OtLoY6eEGC52fEZn01o35RgtnnKXRGFyt3bRRLYh6RvmzwrA+d0gmBDIcslkQWkfMnrpD62LLcPMny4wrDcnkrVRZO9ag0rggibEo2r7zANx61H63XD0XdKpsTRL10YYAOoRMFHoVt9jWbZhHAPptYqHsm22CAxEJgRsLf52pSWNegoSwcwiI4hTd3ixcxiU/TZdtRxg3xUyudJw90eV5XzDYta8CRu5/pa4DEALGGR9YAfGco6yh5aQs9uONWBjKa595LgKjdNIDLFBQnJEk9O1Pg2Rck+hGXoni5jbzktQnULUA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=abwV6icvXP71MH/llFx3GPKQVtQoS6Z6lDSSteyBL3c=;
- b=PrsT/YGHBJVa2K3//o2p5ugVjub6hd0TR5GKFhKBUGee7N4qHGafmRLk19Ii+RsEC4uHQrGck3lNj3cUS2MYz2Z9T09jenDXFMrcZ+JtJdAaAZteqrhaWIjaZNNp2nHmVQ+ReM4dZ5w4wQJb5rOMfxiVtrZ8nR6MQuFmEbEk1LDUVrQNc9p/phGbw8MBWTFjODjW/DEiGRxzHkWnqnrNHWTYsl2dVKEyB6e7xqb3AqMgcYpwA2+vNWAiDrB+pudvTlwOvl0qc2Xj0un3NdHZ7AAiOB+wXO1w7C5LSwvzUppi9RwXry3bxteqvUEN81ecrjeX/cLN7r6wN/qFtfXM/w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.71) smtp.rcpttodomain=miraclelinux.com smtp.mailfrom=siemens.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=siemens.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=abwV6icvXP71MH/llFx3GPKQVtQoS6Z6lDSSteyBL3c=;
- b=k7bDHImVEfAnLEoXxiJg3uTTTisRxZsZn4BB4FqGAB9bAAfCADJUF+4EcBmunfuzuSIdcQbCGppjGKpdoDpVM6G9LP2Mrpu7GxnDI/mUk+PycGmL3R16sLFK5xTGe+lUc+qASpBXL0ny+K9gMAA9Nw6Bven4PMnDRXwDHaNr/YXzayB6ILFvK0Cu2auTkBaCYvOiZNQAlMUl6Qc+8URrPJPXyILJmuUokfgnz62RNyasiqCO+Q5N7O5DeGYtuKhCJHGpEULmZRjqULrkwAYon41FxalTuS8qmr624oqb+A0dGfkffogHRfjQfK0/yXiNBe/XJTjDc/U46QITiTQMpQ==
-Received: from AS9PR06CA0266.eurprd06.prod.outlook.com (2603:10a6:20b:45f::15)
- by PAXPR10MB4889.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:201::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4867.9; Fri, 7 Jan
- 2022 10:10:58 +0000
-Received: from VE1EUR01FT034.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:20b:45f:cafe::61) by AS9PR06CA0266.outlook.office365.com
- (2603:10a6:20b:45f::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4867.7 via Frontend
- Transport; Fri, 7 Jan 2022 10:10:58 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.71)
- smtp.mailfrom=siemens.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=siemens.com;
-Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.71 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.71; helo=hybrid.siemens.com;
-Received: from hybrid.siemens.com (194.138.21.71) by
- VE1EUR01FT034.mail.protection.outlook.com (10.152.2.235) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.4867.7 via Frontend Transport; Fri, 7 Jan 2022 10:10:58 +0000
-Received: from DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) by
- DEMCHDC9SKA.ad011.siemens.net (194.138.21.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Fri, 7 Jan 2022 11:10:57 +0100
-Received: from [167.87.0.113] (167.87.0.113) by DEMCHDC8A0A.ad011.siemens.net
- (139.25.226.106) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.17; Fri, 7 Jan
- 2022 11:10:57 +0100
-Message-ID: <b0bd23e7-2ad9-69c7-41a7-bed2b3db7009@siemens.com>
-Date: Fri, 7 Jan 2022 11:10:56 +0100
+ dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112
+ header.b=uj2c3RzK;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.208.46,
+ mailfrom: alice.ferrazzi@miraclelinux.com)
+Received: by mail-ed1-f46.google.com with SMTP id m21so20476059edc.0
+        for <cip-dev@lists.cip-project.org>;
+ Fri, 07 Jan 2022 02:17:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=m9AfkXB3z8idMNk+rraOzrKzrmPKeIFxQ/VtsvyceFk=;
+        b=uj2c3RzKZ5JIAMW6KnaoJFfWpPmxtSEYyjyAIYNnbbP7XSw1T64a0aWPnBTwqWlmud
+         1YmsqJ78yyi1mLL9puMb+ehwYngaOB42HEDeGjLRcXvuvoCQrmKLQXNKeXlV66INDLDR
+         ptbbYSp5eMEaUKuVDe62/ti4IaCvtz4KFVDn1A6XxBZJYLKDWNK1A9x3BHwCvE/fbaX3
+         C7NgPSosnyteP9QdAxv3mLWOgk1VCvURJEfLZJp/oVmReUDTMcZYmh+apNxlt5fva4uc
+         akg5MQ2J5gUBtXUKAbh6MiExWNGw/YWScT0WB+/0LBzDinLrEmpPPAdjkg92VgL0B5zj
+         7LNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=m9AfkXB3z8idMNk+rraOzrKzrmPKeIFxQ/VtsvyceFk=;
+        b=QiG7g0UNHQNKmpiM+xOP/nygj6Rk2DSIXeRpzCnVx2oMxHdA3SkI7kD0rwOHeNCoEq
+         ecS9QUyWgJZDt9z3l/yqF4u0lHtUu2IrF1FzN4AbzB6P/IW7rfRPMDSbKFpnyJuDlRDc
+         /9OE6AWrvoBluPDx50ttt5hs9qJJ9/A43isvOU31rF6ZgCtv1HuSeVkdEJymdrIZD9+1
+         mZcl/ClCOYnxYRKOkMklofluA97DvanLMOM/miawKZIja6WC2xhMXFKzG9t4ZGTJaA7N
+         zsaxIlB4M1Nixa6kS/a9rN/BUsV8q8nW6eBvb3QgJ/d1AVnOYYsWGLheug9oQAEu/uXv
+         5Sug==
+X-Gm-Message-State: AOAM533gRIAvtwPXIT7m1i+Gfzjn1paRlkOOaa5nK0q+DNZEo0wmYMfk
+	yv4u/LdDbbbBkX1aBAGrrIZyQBwL9ihl3lhBMxJw
+X-Google-Smtp-Source: 
+ ABdhPJybX4vuFNZjZbO+VQaizqbV3pZ8mEVIvs8g7Q0a6G+SU9FMck24//sHSuVsvMxPXEkCBZNrUEjqG5jJIQh5a1g=
+X-Received: by 2002:a05:6402:354b:: with SMTP id
+ f11mr60642209edd.342.1641550656073;
+ Fri, 07 Jan 2022 02:17:36 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
-Subject: Re: [isar-cip-core][PATCH 0/4] Add cip-core-image-kernelci building
- and uploading system
-Content-Language: en-US
-To: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
-CC: <cip-dev@lists.cip-project.org>
 References: <20220106111614.218823-1-alice.ferrazzi@miraclelinux.com>
- <5f7b82d7-cda1-192c-9a09-e229fb1c3339@siemens.com>
- <CANgtXuNVEsC3pa2Tzz6a7i65uJap+Ga7yGSobC9UZZbwYds5cw@mail.gmail.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: 
- <CANgtXuNVEsC3pa2Tzz6a7i65uJap+Ga7yGSobC9UZZbwYds5cw@mail.gmail.com>
+ <20220106111614.218823-2-alice.ferrazzi@miraclelinux.com>
+ <e4a55c2b-64dd-6281-c9d9-bf568a6fb732@siemens.com>
+In-Reply-To: <e4a55c2b-64dd-6281-c9d9-bf568a6fb732@siemens.com>
+From: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
+Date: Fri, 7 Jan 2022 19:16:59 +0900
+Message-ID: 
+ <CANgtXuOj--ce1t=z4jaPMwo1DVT+RSXJXjSSdvwKEaeT5cUSjA@mail.gmail.com>
+Subject: Re: [isar-cip-core][PATCH 1/4] Add cip-core-image-kernelci
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: cip-dev@lists.cip-project.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.87.0.113]
-X-ClientProxiedBy: DEMCHDC8A1A.ad011.siemens.net (139.25.226.107) To
- DEMCHDC8A0A.ad011.siemens.net (139.25.226.106)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 886307a9-0e7c-4282-c6dd-08d9d1c5fff0
-X-MS-TrafficTypeDiagnostic: PAXPR10MB4889:EE_
-X-Microsoft-Antispam-PRVS: 
-	<PAXPR10MB4889057D5583F0566012890F954D9@PAXPR10MB4889.EURPRD10.PROD.OUTLOOK.COM>
-X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	oxrIlCfLF2PcAGaG5X8uRXGqPc4Z1Bhpqwkurz9T4NmM0HW6EVsJSGZATQ3T6w3eYgJynctUhCanuP5p3aOhd5tjNXVz5+R2uosq9dfM47ec/1GwAqabf8gtnkFlvCB5ZMJOqlVTk5z8NMqL7mHGM6OQzEunPquaiylcxaAk/m5fuy8LaU6E0CORsSp1fJ2LTelvlhdA4GPoCxf04+YlljoPC4moN92lz29UaRyY4U6z18JoWp5aVEDhh9yRbr16jV+tYnYsiw7R3pmS0fnvFF432SV6zFCuFMafr8PENAxLa7233VKcc10lgnoC5lwFUS1lumoTCj9JatwUPU+NN04FOmBIjypvm/shCk2quExLD77sC++XALpf0O0kL8lBZP0rr67TXSTdlftJS/uVi69SmQRW1mW4uzkNcZgZIwZOT6xI/d+Takz1ReYSvmUp10HqBTELpkQjacnrAD1paAxozYnuRCqWzzYVqr2laqN7WVEd/KUe8Wee+9wYBwc/g0+OGoEQdM4pAUT3I6fq1qGAuYORrup4XgeZ3bKLjHfNp8d4EwqHJF+v1ntVbeGLN5QOAGfo5J0EDSYnhrVcjZxytB9/XEOLWdHonoI9VXDOS6G0VbtYAfATc9985y0v6yXAHt1XMQkH12rq55MPTo0U8G2XVlnJhXKqD8QAlOcO3DkHLgvyIm+tMhbXY/RoT9PTi9ad1UAt719ZDl5dcJrlMTadTfNgVcPbUXisW1GEuYVaCgLY9mN6j5QshUGpB9+ln3Rorns2tlqOCJPhM1uFg4rma1pf/CqSDQEMFzRz1YyjTbwhelNbXUsq7ueXFsrwMqyu1T4hK07DrW+GvJJWLL8uPDjqTOClqP2K0nPCpEQIpffNRNrZC6O1A4EUZJVwFl8NWSY1g4Gd/01z1M2wfkFvgSem17j2S0z7n0SvDq/rt+xHYc9G1OXDjNr9
-X-Forefront-Antispam-Report: 
-	CIP:194.138.21.71;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(40470700002)(40460700001)(4326008)(8936002)(81166007)(6706004)(83380400001)(16576012)(5660300002)(31696002)(70206006)(6916009)(356005)(70586007)(36860700001)(316002)(47076005)(2906002)(53546011)(82310400004)(508600001)(186003)(44832011)(2616005)(31686004)(82960400001)(956004)(86362001)(8676002)(36756003)(966005)(336012)(26005)(16526019)(3940600001)(43740500002)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jan 2022 10:10:58.1742
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 
- 886307a9-0e7c-4282-c6dd-08d9d1c5fff0
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
- TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.71];Helo=[hybrid.siemens.com]
-X-MS-Exchange-CrossTenant-AuthSource: 
-	VE1EUR01FT034.eop-EUR01.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR10MB4889
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 07 Jan 2022 10:11:03 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7340
+ <cip-dev@lists.cip-project.org>; Fri, 07 Jan 2022 10:17:39 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7341
 
-On 07.01.22 10:57, Alice Ferrazzi wrote:
-> On Thu, Jan 6, 2022 at 11:18 PM Jan Kiszka <jan.kiszka@siemens.com> wrote:
->>
->> On 06.01.22 12:16, Alice Ferrazzi wrote:
->>> This patch series add a new image with settings for
->>> KernelCI.
->>>
->>> This new image is called cip-core-image-kernelci and is
->>> based on isar-cip-core general image with some changes
->>> needed for make it work with KernelCI and taken from
->>> KernelCI image base settings.
->>> The cip-core-image-kernelci images are built by GitlabCI
->>> and uploaded to KernelCI production fileserver.
->>> https://storage.kernelci.org/images/rootfs/cip/
->>>
->>> These patches are already integrated in the
->>> isar-cip-core:alicef/kernelci_master_refactor repository branch
->>> and are generating the images that are currently
->>> used by KernelCI.
->>>
->>> cip-core-image-kernelci as been tested and are
->>> already used in KernelCI production with good results.
->>> https://linux.kernelci.org/test/job/stable-rc/branch/queue%2F5.14/kernel/v5.14.17-9-g9f7eecaa70b3/plan/baseline-cip-nfs/
->>>
->>
->> Thanks a lot for enabling this!
->>
->> One meta-question: How does this image relate to what happens to a
->> standard image when adding kas/opt/test.yml? Does
->> kas/opt/kernelci.yml:kas/opt/test.yml make sense? Or should the former
->> actually include the latter?
-> 
-> Currently it doesn't make too much sense to add such testing packages.
-> CIP kernel image testing is done using ad-hoc images with a KernelCI
-> built version of the
-> testing packages for having a common base and better compare results
-> with other kernels.
-> cip-core-image-kernelci is currently tested as booting image with
-> dmesg checks for each kernel (but still using specific KernelCI
-> configurations and scripts).
-> We are currently trying to implement the iec-security test as user
-> space test that will use cip-core-image-kernelci,
-> I sent a pull request for implementing the user space test
-> iec-security but is still in progress.
-> Because KernelCI testings and test environments differs from CIP
-> gitlab pipeline test environment,
-> we have to use a different file and merging both would currently make
-> such different environments unstable.
-> 
-> I hope that this answer your question.
+On Thu, Jan 6, 2022 at 11:01 PM Jan Kiszka <jan.kiszka@siemens.com> wrote:
+>
+> On 06.01.22 12:16, Alice Ferrazzi wrote:
+> > This image is currently used by KernelCI production for testing purpose.
+> > The purpose of this image is that KernelCI need to be able to autologin
+> > without password and to detect the login shell using special characters.
+> > Currently added are the default settings used by KernelCI images.
+> >
+> > Signed-off-by: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
+> > ---
+> >  kas/opt/kernelci.yml                          | 16 +++++++++
+> >  .../images/cip-core-image-kernelci.bb         | 16 +++++++++
+> >  .../files/99-silent-printk.conf               |  1 +
+> >  .../kernelci-customizations/files/ethernet    | 23 +++++++++++++
+> >  .../kernelci-customizations/files/postinst    | 34 +++++++++++++++++++
+> >  .../kernelci-customizations.bb                | 34 +++++++++++++++++++
+> >  6 files changed, 124 insertions(+)
+> >  create mode 100644 kas/opt/kernelci.yml
+> >  create mode 100644 recipes-core/images/cip-core-image-kernelci.bb
+> >  create mode 100644 recipes-core/kernelci-customizations/files/99-silent-printk.conf
+> >  create mode 100644 recipes-core/kernelci-customizations/files/ethernet
+> >  create mode 100644 recipes-core/kernelci-customizations/files/postinst
+> >  create mode 100644 recipes-core/kernelci-customizations/kernelci-customizations.bb
+> >
+> > diff --git a/kas/opt/kernelci.yml b/kas/opt/kernelci.yml
+> > new file mode 100644
+> > index 0000000..9c67864
+> > --- /dev/null
+> > +++ b/kas/opt/kernelci.yml
+> > @@ -0,0 +1,16 @@
+> > +#
+> > +# CIP Core, generic profile
+> > +#
+> > +# Copyright (c) Toshiba Corporation, 2020
+> > +# Copyright (c) Cybertrust Japan Co., Ltd., 2021
+> > +#
+> > +# Authors:
+> > +#  Venkata Pyla <venkata.pyla@toshiba-tsip.com>
+> > +#  Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
+> > +#
+> > +# SPDX-License-Identifier: MIT
+> > +#
+> > +header:
+> > +  version: 10
+> > +
+> > +target: cip-core-image-kernelci
+> > diff --git a/recipes-core/images/cip-core-image-kernelci.bb b/recipes-core/images/cip-core-image-kernelci.bb
+> > new file mode 100644
+> > index 0000000..479c14c
+> > --- /dev/null
+> > +++ b/recipes-core/images/cip-core-image-kernelci.bb
+> > @@ -0,0 +1,16 @@
+> > +#
+> > +# A reference image for KernelCI
+> > +#
+> > +# Copyright (c) Cybertrust Japan Co., Ltd., 2021
+> > +#
+> > +# Authors:
+> > +#  Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
+> > +#
+> > +# SPDX-License-Identifier: MIT
+> > +#
+> > +
+> > +inherit image
+> > +
+> > +DESCRIPTION = "CIP Core image for KernelCI"
+> > +
+> > +IMAGE_INSTALL += "kernelci-customizations"
+> > diff --git a/recipes-core/kernelci-customizations/files/99-silent-printk.conf b/recipes-core/kernelci-customizations/files/99-silent-printk.conf
+> > new file mode 100644
+> > index 0000000..ad24d3a
+> > --- /dev/null
+> > +++ b/recipes-core/kernelci-customizations/files/99-silent-printk.conf
+> > @@ -0,0 +1 @@
+> > +kernel.printk = 3 4 1 3
+> > diff --git a/recipes-core/kernelci-customizations/files/ethernet b/recipes-core/kernelci-customizations/files/ethernet
+> > new file mode 100644
+> > index 0000000..fa47d1a
+> > --- /dev/null
+> > +++ b/recipes-core/kernelci-customizations/files/ethernet
+> > @@ -0,0 +1,23 @@
+> > +#
+> > +# CIP Core, generic profile
+> > +#
+> > +# Copyright (c) Siemens AG, 2019
+> > +#
+> > +# Authors:
+> > +#  Jan Kiszka <jan.kiszka@siemens.com>
+> > +#
+> > +# SPDX-License-Identifier: MIT
+> > +#
+> > +
+> > +allow-hotplug eth0
+> > +allow-hotplug enp0s2
+> > +allow-hotplug enp2s0
+> > +
+> > +# used on BBB
+> > +iface eth0 inet dhcp
+> > +
+> > +# used on qemu-amd64
+> > +iface enp0s2 inet dhcp
+> > +
+> > +# used on simatic-ipc227e
+> > +iface enp2s0 inet dhcp
+> > diff --git a/recipes-core/kernelci-customizations/files/postinst b/recipes-core/kernelci-customizations/files/postinst
+> > new file mode 100644
+> > index 0000000..7ae30e8
+> > --- /dev/null
+> > +++ b/recipes-core/kernelci-customizations/files/postinst
+> > @@ -0,0 +1,34 @@
+> > +#!/bin/sh
+> > +#
+> > +# CIP Core, generic profile
+> > +#
+> > +# Copyright (c) Siemens AG, 2019
+> > +# Copyright (c) Cybertrust Japan Co., Ltd., 2021
+> > +#
+> > +# Authors:
+> > +#  Jan Kiszka <jan.kiszka@siemens.com>
+> > +#  Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
+> > +#
+> > +# SPDX-License-Identifier: MIT
+> > +#
+> > +
+> > +echo "CIP Core Demo & Test Image" > /etc/issue
+> > +
+> > +# permit root login without password
+> > +echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
+> > +echo "PermitEmptyPasswords yes" >> /etc/ssh/sshd_config
+> > +passwd root -d
+> > +
+> > +# serial getty service for autologin
+> > +mkdir -p /etc/systemd/system/serial-getty@.service.d/
+> > +echo "[Service]" > /etc/systemd/system/serial-getty@.service.d/override.conf
+> > +echo "ExecStart=" >> /etc/systemd/system/serial-getty@.service.d/override.conf
+> > +echo "ExecStart=-/sbin/agetty --autologin root --keep-baud 115200,38400,9600 %I $TERM" >> /etc/systemd/system/serial-getty@.service.d/override.conf
+> > +
+> > +# set the profile for KernelCI
+> > +echo "PS1='\$(pwd) # '" > /root/.profile
+> > +echo "cd /" >> /root/.profile
+> > +
+> > +HOSTNAME=demo
+> > +echo "$HOSTNAME" > /etc/hostname
+> > +echo "127.0.0.1 $HOSTNAME" >> /etc/hosts
+> > diff --git a/recipes-core/kernelci-customizations/kernelci-customizations.bb b/recipes-core/kernelci-customizations/kernelci-customizations.bb
+> > new file mode 100644
+> > index 0000000..dca0891
+> > --- /dev/null
+> > +++ b/recipes-core/kernelci-customizations/kernelci-customizations.bb
+> > @@ -0,0 +1,34 @@
+> > +#
+> > +# CIP Core, generic profile
+> > +#
+> > +# Copyright (c) Siemens AG, 2019
+> > +# Copyright (c) Cybertrust Japan Co., Ltd., 2021
+> > +#
+> > +# Authors:
+> > +#  Jan Kiszka <jan.kiszka@siemens.com>
+> > +#  Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
+> > +#
+> > +# SPDX-License-Identifier: MIT
+> > +#
+> > +
+> > +inherit dpkg-raw
+> > +
+> > +DESCRIPTION = "CIP Core image demo & customizations"
+> > +
+> > +SRC_URI = " \
+> > +    file://postinst \
+> > +    file://ethernet \
+> > +    file://99-silent-printk.conf"
+> > +
+> > +DEPENDS += "sshd-regen-keys"
+> > +
+> > +DEBIAN_DEPENDS = " \
+> > +    ifupdown, isc-dhcp-client, net-tools, iputils-ping, ssh, sshd-regen-keys"
+> > +
+> > +do_install() {
+> > +  install -v -d ${D}/etc/network/interfaces.d
+> > +  install -v -m 644 ${WORKDIR}/ethernet ${D}/etc/network/interfaces.d/
+> > +
+> > +  install -v -d ${D}/etc/sysctl.d
+> > +  install -v -m 644 ${WORKDIR}/99-silent-printk.conf ${D}/etc/sysctl.d/
+> > +}
+>
+> This is duplicating the default customization package, IIUC, for the
+> purpose of adding further things. And you already miss some things due
+> to this (WIRELESS_FIRMWARE_PACKAGE, INSTALL_WIRELESS_TOOLS).
+>
+> How about installing both and carrying in kernelci-customization only
+> the delta? Or at least reuse artifacts from customizations package, e.g.
+> via symlinks?
 
-Ok, we just need to keep an eye on target configs and options that deal
-with "testing" so that things are consistent and intuitive.
+KernelCI enviroment and gitlab-ci eviroment are mostly different.
+Changes on the symlink could possibly broke the KernelCI testing
+image or the gitlab-ci image.
+KernelCI working workflow is to have different files and porting changes
+manually so that we can be sure it doesn't create problems and revert
+on necessity.
 
-> 
->> These things you may ask yourself when try to add the image also to our
->> Kconfig menu ("kas-container menu"). That would be nice to have for a v3
->> as well, but more important is sorting out the option relationships.
-> 
-> cip-core-image-kernelci are build using gitlab pipeline and there is
-> currently no benefit to have such
-> images manual build.
-> 
 
-So, the case that a test fails on kernel CI and someone want to
-reproduce the image that triggered this does not exist? One would rather
-build a regular image for the target then?
-
-Jan
+Thanks,
+Alicef
 
 -- 
-Siemens AG, Technology
-Competence Center Embedded Linux
+======================================
+Cybertrust Japan Co.,Ltd.
+Alice Ferrazzi
+alice.ferrazzi@miraclelinux.com
+======================================
 
