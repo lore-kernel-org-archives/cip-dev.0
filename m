@@ -2,161 +2,182 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 345E0C433F5
-	for <webhook@archiver.kernel.org>; Fri,  7 Jan 2022 10:07:54 +0000 (UTC)
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com
- (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.67])
- by mx.groups.io with SMTP id smtpd.web11.4654.1641550072417866940
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53492C433F5
+	for <webhook@archiver.kernel.org>; Fri,  7 Jan 2022 10:11:03 +0000 (UTC)
+Received: from EUR03-VE1-obe.outbound.protection.outlook.com
+ (EUR03-VE1-obe.outbound.protection.outlook.com [40.107.5.49])
+ by mx.groups.io with SMTP id smtpd.web12.4742.1641550261555805525
  for <cip-dev@lists.cip-project.org>;
- Fri, 07 Jan 2022 02:07:53 -0800
+ Fri, 07 Jan 2022 02:11:02 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=iACVBarB;
- spf=pass (domain: siemens.com, ip: 40.107.21.67,
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=k7bDHImV;
+ spf=pass (domain: siemens.com, ip: 40.107.5.49,
  mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lNF8AbZHuo7UrxD8dRLR2zkbPvLSokcYsXDe3+ocotI+HSoS/PmVznZabCkYCBsJxlUKA/ePBkMIHZ71VBsPDuJUc+jcImP2GSqf3x2IP92+4zKTrn66tckBc1q/84CFkoVxYLo1LbXYcr3TPf0qhVJtXD0LWQAFq8pHGYSy1cWmwD2y+Sxe+jDzuioZ9UUBVmnWv2fK0qYOGKfyAdueuIogwytBerr47rvKBVKSDXpdGwocExIYeD3FFuOcD1185PFB7Q/kC6ggijoV00hNTug8gcFfsF5mSF3QmayGj3JifaOZTYYWvoEVNcVq6+7vjpTPIa532zsB/KCXX6cJnA==
+ b=lCDLonSqrafz/SotnyfdYTIf8Gmk5g0qit7/9OtLoY6eEGC52fEZn01o35RgtnnKXRGFyt3bRRLYh6RvmzwrA+d0gmBDIcslkQWkfMnrpD62LLcPMny4wrDcnkrVRZO9ag0rggibEo2r7zANx61H63XD0XdKpsTRL10YYAOoRMFHoVt9jWbZhHAPptYqHsm22CAxEJgRsLf52pSWNegoSwcwiI4hTd3ixcxiU/TZdtRxg3xUyudJw90eV5XzDYta8CRu5/pa4DEALGGR9YAfGco6yh5aQs9uONWBjKa595LgKjdNIDLFBQnJEk9O1Pg2Rck+hGXoni5jbzktQnULUA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=O9/58e0E3JPLOdPvJO5IfnQT8wbeCzxriX2sDYaKpIs=;
- b=NkFbuuzLDlIcZK1EMSClyquLBX1NeWk6VLr6xHnWmmKouzDgETLzirenYNRhEoVixSXvYjE3Cb55Oep8z+cjQE2Ffpw/1yHeE4uHbwKi68Dc/EUcjG+mGQxFGZWSk08QTc5cVEDM6Q1ep2W1MQa5KMBoUlm5SdTipkg64daBi9z/di7X1cI3Tc0Sc3oZ9kuDZ3hAfh1dt0HsVeMO84ggPwEfeYcC+oytOwY6VKiuHKpQOExuQJWtkYYdvrpmFhUoVcw2tr9BWu65/33ie71B3U335uiRsWgevlqlQl9YvDbIaI+hL9e33Fu7w33k+WaywvSzFB4/XqT+Cz2YisMdwQ==
+ bh=abwV6icvXP71MH/llFx3GPKQVtQoS6Z6lDSSteyBL3c=;
+ b=PrsT/YGHBJVa2K3//o2p5ugVjub6hd0TR5GKFhKBUGee7N4qHGafmRLk19Ii+RsEC4uHQrGck3lNj3cUS2MYz2Z9T09jenDXFMrcZ+JtJdAaAZteqrhaWIjaZNNp2nHmVQ+ReM4dZ5w4wQJb5rOMfxiVtrZ8nR6MQuFmEbEk1LDUVrQNc9p/phGbw8MBWTFjODjW/DEiGRxzHkWnqnrNHWTYsl2dVKEyB6e7xqb3AqMgcYpwA2+vNWAiDrB+pudvTlwOvl0qc2Xj0un3NdHZ7AAiOB+wXO1w7C5LSwvzUppi9RwXry3bxteqvUEN81ecrjeX/cLN7r6wN/qFtfXM/w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.72) smtp.rcpttodomain=miraclelinux.com smtp.mailfrom=siemens.com;
+ 194.138.21.71) smtp.rcpttodomain=miraclelinux.com smtp.mailfrom=siemens.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=siemens.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O9/58e0E3JPLOdPvJO5IfnQT8wbeCzxriX2sDYaKpIs=;
- b=iACVBarB1AHi4Gn644Q4yKnoAVaoWg/N4sWviPCwkL74aK2LnHQS2pu+W5RJ+qYIpjjuFcuge9NfD8NxH1LDHjVtyHjgGK1DnSZc5ISiw7GNCfgTpkoYu9ZGULsDjFQusDFTik/dHtbV+AmH4UczvHlOTB2cM2zXeVm0VDIb5HWSxWbF5NWpyDv7cMsUF4Hd48sjBItzZ20yJfRXZTm+ac817khjce/70DTFhR+x/lqsYCgVvZz3haPO6PNKx1PDFd9D0J3BrRPmooAQdplrBdzD+TQbNmzlVr/+udaYP3gFdGbI5k+y4WAsprHie3sC4VKcHF/7eEa0ffMuRXTPdg==
-Received: from DB6PR1001CA0040.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:4:55::26)
- by DB9PR10MB4410.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:226::5) with
+ bh=abwV6icvXP71MH/llFx3GPKQVtQoS6Z6lDSSteyBL3c=;
+ b=k7bDHImVEfAnLEoXxiJg3uTTTisRxZsZn4BB4FqGAB9bAAfCADJUF+4EcBmunfuzuSIdcQbCGppjGKpdoDpVM6G9LP2Mrpu7GxnDI/mUk+PycGmL3R16sLFK5xTGe+lUc+qASpBXL0ny+K9gMAA9Nw6Bven4PMnDRXwDHaNr/YXzayB6ILFvK0Cu2auTkBaCYvOiZNQAlMUl6Qc+8URrPJPXyILJmuUokfgnz62RNyasiqCO+Q5N7O5DeGYtuKhCJHGpEULmZRjqULrkwAYon41FxalTuS8qmr624oqb+A0dGfkffogHRfjQfK0/yXiNBe/XJTjDc/U46QITiTQMpQ==
+Received: from AS9PR06CA0266.eurprd06.prod.outlook.com (2603:10a6:20b:45f::15)
+ by PAXPR10MB4889.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:201::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4867.9; Fri, 7 Jan
- 2022 10:07:49 +0000
-Received: from DB5EUR01FT007.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:4:55:cafe::23) by DB6PR1001CA0040.outlook.office365.com
- (2603:10a6:4:55::26) with Microsoft SMTP Server (version=TLS1_2,
+ 2022 10:10:58 +0000
+Received: from VE1EUR01FT034.eop-EUR01.prod.protection.outlook.com
+ (2603:10a6:20b:45f:cafe::61) by AS9PR06CA0266.outlook.office365.com
+ (2603:10a6:20b:45f::15) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4867.7 via Frontend
- Transport; Fri, 7 Jan 2022 10:07:49 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.72)
+ Transport; Fri, 7 Jan 2022 10:10:58 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.71)
  smtp.mailfrom=siemens.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=siemens.com;
 Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.72 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.72; helo=hybrid.siemens.com;
-Received: from hybrid.siemens.com (194.138.21.72) by
- DB5EUR01FT007.mail.protection.outlook.com (10.152.4.107) with Microsoft SMTP
+ 194.138.21.71 as permitted sender) receiver=protection.outlook.com;
+ client-ip=194.138.21.71; helo=hybrid.siemens.com;
+Received: from hybrid.siemens.com (194.138.21.71) by
+ VE1EUR01FT034.mail.protection.outlook.com (10.152.2.235) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.4867.9 via Frontend Transport; Fri, 7 Jan 2022 10:07:49 +0000
+ 15.20.4867.7 via Frontend Transport; Fri, 7 Jan 2022 10:10:58 +0000
 Received: from DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) by
- DEMCHDC9SMA.ad011.siemens.net (194.138.21.72) with Microsoft SMTP Server
+ DEMCHDC9SKA.ad011.siemens.net (194.138.21.71) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Fri, 7 Jan 2022 11:07:48 +0100
+ 15.1.2375.17; Fri, 7 Jan 2022 11:10:57 +0100
 Received: from [167.87.0.113] (167.87.0.113) by DEMCHDC8A0A.ad011.siemens.net
  (139.25.226.106) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.17; Fri, 7 Jan
- 2022 11:07:48 +0100
-Message-ID: <65c523ba-cfaa-877c-e36c-1f0a6eec4602@siemens.com>
-Date: Fri, 7 Jan 2022 11:07:47 +0100
+ 2022 11:10:57 +0100
+Message-ID: <b0bd23e7-2ad9-69c7-41a7-bed2b3db7009@siemens.com>
+Date: Fri, 7 Jan 2022 11:10:56 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.4.0
-Subject: Re: [isar-cip-core][PATCH 4/4] enable cip-core-image-kernelci
+Subject: Re: [isar-cip-core][PATCH 0/4] Add cip-core-image-kernelci building
+ and uploading system
 Content-Language: en-US
 To: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
 CC: <cip-dev@lists.cip-project.org>
 References: <20220106111614.218823-1-alice.ferrazzi@miraclelinux.com>
- <20220106111614.218823-5-alice.ferrazzi@miraclelinux.com>
- <c8e9fcb9-eded-90fb-98cc-f766a7a9fbf3@siemens.com>
- <CANgtXuMOv+rJYyEMC0CgZsap0YETmAt30S5ia5x6+W+ppKKRoQ@mail.gmail.com>
+ <5f7b82d7-cda1-192c-9a09-e229fb1c3339@siemens.com>
+ <CANgtXuNVEsC3pa2Tzz6a7i65uJap+Ga7yGSobC9UZZbwYds5cw@mail.gmail.com>
 From: Jan Kiszka <jan.kiszka@siemens.com>
 In-Reply-To: 
- <CANgtXuMOv+rJYyEMC0CgZsap0YETmAt30S5ia5x6+W+ppKKRoQ@mail.gmail.com>
+ <CANgtXuNVEsC3pa2Tzz6a7i65uJap+Ga7yGSobC9UZZbwYds5cw@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [167.87.0.113]
-X-ClientProxiedBy: DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) To
+X-ClientProxiedBy: DEMCHDC8A1A.ad011.siemens.net (139.25.226.107) To
  DEMCHDC8A0A.ad011.siemens.net (139.25.226.106)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 25b19aa7-8537-44e9-0a1e-08d9d1c58f50
-X-MS-TrafficTypeDiagnostic: DB9PR10MB4410:EE_
+X-MS-Office365-Filtering-Correlation-Id: 886307a9-0e7c-4282-c6dd-08d9d1c5fff0
+X-MS-TrafficTypeDiagnostic: PAXPR10MB4889:EE_
 X-Microsoft-Antispam-PRVS: 
-	<DB9PR10MB4410309D46E71551A53CA0F2954D9@DB9PR10MB4410.EURPRD10.PROD.OUTLOOK.COM>
-X-MS-Oob-TLC-OOBClassifiers: OLM:3383;
+	<PAXPR10MB4889057D5583F0566012890F954D9@PAXPR10MB4889.EURPRD10.PROD.OUTLOOK.COM>
+X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	6msXsFXihOfXAYIMTWP4iJLi+06KeEbScfD1G2zBb08ND38M8YYYYBtH6VJLwe9m9mdWtYUqiH5ksqnAOgx7Fwe7dFBK37L+cOfqoM+AbJg1cDOA86PiIwc7nIZOSDuwDYdGUb2QnRoKwPoCrGq24bds4f2qpKRrnBPyIV6ZcUc6E7VjqZMZKlU2iz2yrifuIQBMSoYtO5lx3t1t9OtHw7VH1CEg4UsLf7ap8Pk7J0d13o1Whrs1zt2hT2gCWgBGg4ISrEuQidDY1P/FpLRXboSV7gzZDjYVsnbccjDLCt3Vu/lEf420MIV9B8UCwVPe3wBCw3YjOMAcSuMk78L8C7kdw1jrREENVt9meq24DsuICls+NIg0tcypCiMirILKG/7D+0kcZ0RzGHRhyS0LcBTTEwZAQcG2lnRXjsmirEqBbwUsoQDQWt72qRvRG9Vnoqp6pM1bvAmcyuZQLTY5pFMX9SidNnuhSqaKYWhga+UWFQ/xO1nvB5MhJGncHwa8utN1GtiWrV41Wiy59w/kREnvdFI253wZ6sl9XxQIzMO1BiCQeVJ1qk9QPZDPluArbun1hFXEEepfZ3i0pvEr13Vj9TnGOh859YMyBXF2sAIcC/B6uamhSX7U/iAzsq/dozLsCrG5OWn1UIgsNcl9WIov4W4LcNkvrXmQxCJe5W1Jfg0203j8M4c3msClMFfapJ90J2hHMGKef3trixmaDkc8Hw2+9LZlRm3Z+BSY70YzugSxwXMZa6WlhlenOwCuOLl7N/96cIpPTxvt35gFO1TRgmvfWM4T+aCCbUwmGiPieDb+fG+pfJpi+mCLd4LT++h6qGR4OpDP7L4rg+NfuhubAm7vDrA6r8adH64zSskei+58RWhaA0eS4HgwYhl2eFnSxVIcOubaVRfHW86F+8THXpa7kEXJgfJs500usITLcZPLCgY0myNJRImTSyy/
+	oxrIlCfLF2PcAGaG5X8uRXGqPc4Z1Bhpqwkurz9T4NmM0HW6EVsJSGZATQ3T6w3eYgJynctUhCanuP5p3aOhd5tjNXVz5+R2uosq9dfM47ec/1GwAqabf8gtnkFlvCB5ZMJOqlVTk5z8NMqL7mHGM6OQzEunPquaiylcxaAk/m5fuy8LaU6E0CORsSp1fJ2LTelvlhdA4GPoCxf04+YlljoPC4moN92lz29UaRyY4U6z18JoWp5aVEDhh9yRbr16jV+tYnYsiw7R3pmS0fnvFF432SV6zFCuFMafr8PENAxLa7233VKcc10lgnoC5lwFUS1lumoTCj9JatwUPU+NN04FOmBIjypvm/shCk2quExLD77sC++XALpf0O0kL8lBZP0rr67TXSTdlftJS/uVi69SmQRW1mW4uzkNcZgZIwZOT6xI/d+Takz1ReYSvmUp10HqBTELpkQjacnrAD1paAxozYnuRCqWzzYVqr2laqN7WVEd/KUe8Wee+9wYBwc/g0+OGoEQdM4pAUT3I6fq1qGAuYORrup4XgeZ3bKLjHfNp8d4EwqHJF+v1ntVbeGLN5QOAGfo5J0EDSYnhrVcjZxytB9/XEOLWdHonoI9VXDOS6G0VbtYAfATc9985y0v6yXAHt1XMQkH12rq55MPTo0U8G2XVlnJhXKqD8QAlOcO3DkHLgvyIm+tMhbXY/RoT9PTi9ad1UAt719ZDl5dcJrlMTadTfNgVcPbUXisW1GEuYVaCgLY9mN6j5QshUGpB9+ln3Rorns2tlqOCJPhM1uFg4rma1pf/CqSDQEMFzRz1YyjTbwhelNbXUsq7ueXFsrwMqyu1T4hK07DrW+GvJJWLL8uPDjqTOClqP2K0nPCpEQIpffNRNrZC6O1A4EUZJVwFl8NWSY1g4Gd/01z1M2wfkFvgSem17j2S0z7n0SvDq/rt+xHYc9G1OXDjNr9
 X-Forefront-Antispam-Report: 
-	CIP:194.138.21.72;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(4636009)(36840700001)(40470700002)(46966006)(8676002)(508600001)(31686004)(8936002)(36756003)(53546011)(2906002)(6706004)(6916009)(44832011)(16526019)(186003)(36860700001)(966005)(2616005)(956004)(70586007)(4326008)(70206006)(40460700001)(5660300002)(82310400004)(316002)(82960400001)(86362001)(26005)(47076005)(336012)(16576012)(31696002)(81166007)(356005)(83380400001)(3940600001)(43740500002)(36900700001);DIR:OUT;SFP:1101;
+	CIP:194.138.21.71;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(40470700002)(40460700001)(4326008)(8936002)(81166007)(6706004)(83380400001)(16576012)(5660300002)(31696002)(70206006)(6916009)(356005)(70586007)(36860700001)(316002)(47076005)(2906002)(53546011)(82310400004)(508600001)(186003)(44832011)(2616005)(31686004)(82960400001)(956004)(86362001)(8676002)(36756003)(966005)(336012)(26005)(16526019)(3940600001)(43740500002)(36900700001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jan 2022 10:07:49.1992
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jan 2022 10:10:58.1742
  (UTC)
 X-MS-Exchange-CrossTenant-Network-Message-Id: 
- 25b19aa7-8537-44e9-0a1e-08d9d1c58f50
+ 886307a9-0e7c-4282-c6dd-08d9d1c5fff0
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
- TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.72];Helo=[hybrid.siemens.com]
+ TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.71];Helo=[hybrid.siemens.com]
 X-MS-Exchange-CrossTenant-AuthSource: 
-	DB5EUR01FT007.eop-EUR01.prod.protection.outlook.com
+	VE1EUR01FT034.eop-EUR01.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR10MB4410
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR10MB4889
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 07 Jan 2022 10:07:54 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7339
+ <cip-dev@lists.cip-project.org>; Fri, 07 Jan 2022 10:11:03 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7340
 
-On 07.01.22 11:02, Alice Ferrazzi wrote:
-> On Thu, Jan 6, 2022 at 11:12 PM Jan Kiszka <jan.kiszka@siemens.com> wrote:
+On 07.01.22 10:57, Alice Ferrazzi wrote:
+> On Thu, Jan 6, 2022 at 11:18 PM Jan Kiszka <jan.kiszka@siemens.com> wrote:
 >>
 >> On 06.01.22 12:16, Alice Ferrazzi wrote:
->>> enable CIP core image KernelCI to be built with gitlab pipeline
->>> and uploaded to the KernelCI storage using KernelCI API.
->>> enable cip-core-image-kernelci to be built for amd64, arm and arm64.
+>>> This patch series add a new image with settings for
+>>> KernelCI.
 >>>
->>> Signed-off-by: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
->>> ---
->>>  .gitlab-ci.yml | 40 +++++++++++++++++++++++++++++++++++++++-
->>>  1 file changed, 39 insertions(+), 1 deletion(-)
+>>> This new image is called cip-core-image-kernelci and is
+>>> based on isar-cip-core general image with some changes
+>>> needed for make it work with KernelCI and taken from
+>>> KernelCI image base settings.
+>>> The cip-core-image-kernelci images are built by GitlabCI
+>>> and uploaded to KernelCI production fileserver.
+>>> https://storage.kernelci.org/images/rootfs/cip/
 >>>
->>> diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
->>> index e7db8c1..784343b 100644
->>> --- a/.gitlab-ci.yml
->>> +++ b/.gitlab-ci.yml
->>> @@ -9,6 +9,7 @@ variables:
->>>    targz: disable
->>>    dtb: none
->>>    deploy: enable
->>> +  deploy_kernelci: disable
+>>> These patches are already integrated in the
+>>> isar-cip-core:alicef/kernelci_master_refactor repository branch
+>>> and are generating the images that are currently
+>>> used by KernelCI.
 >>>
->>>  stages:
->>>    - build
->>> @@ -37,7 +38,8 @@ default:
->>>      - if [ "${release}" = "bullseye" ]; then base_yaml="${base_yaml}:kas/opt/bullseye.yml"; fi;
->>>      - echo "Building ${base_yaml}"
->>>      - kas build ${base_yaml}
->>> -    - if [ "${deploy}" = "enable" ]; then scripts/deploy-cip-core.sh ${release} ${target} ${extension} ${dtb} ${CI_COMMIT_REF_SLUG}; fi
->>> +    - if [ "${deploy}" = "enable" ]; then scripts/deploy-cip-core.sh ${release} ${target} ${extension} ${dtb} ${CI_COMMIT_REF_SLUG}; fi;
->>> +    - if [ "${deploy_kernelci}" = "enable" ]; then scripts/deploy-kernelci.py ${release} ${target} ${extension} ${dtb}; fi
+>>> cip-core-image-kernelci as been tested and are
+>>> already used in KernelCI production with good results.
+>>> https://linux.kernelci.org/test/job/stable-rc/branch/queue%2F5.14/kernel/v5.14.17-9-g9f7eecaa70b3/plan/baseline-cip-nfs/
+>>>
 >>
->> Does gitlab-ci forces us to add that closing ; to the last-but-one
->> command? If so, better add it to the new from the beginning.
+>> Thanks a lot for enabling this!
 >>
+>> One meta-question: How does this image relate to what happens to a
+>> standard image when adding kas/opt/test.yml? Does
+>> kas/opt/kernelci.yml:kas/opt/test.yml make sense? Or should the former
+>> actually include the latter?
 > 
-> I'm just following the syntax that is already there.
-> The gitlab-ci.yml file syntax preceding my commit is also doing same
-> thing of adding that closing ; to the last-but-one command.
-> You can check it here
-> https://gitlab.com/cip-project/cip-core/isar-cip-core/-/blob/master/.gitlab-ci.yml#L40
+> Currently it doesn't make too much sense to add such testing packages.
+> CIP kernel image testing is done using ad-hoc images with a KernelCI
+> built version of the
+> testing packages for having a common base and better compare results
+> with other kernels.
+> cip-core-image-kernelci is currently tested as booting image with
+> dmesg checks for each kernel (but still using specific KernelCI
+> configurations and scripts).
+> We are currently trying to implement the iec-security test as user
+> space test that will use cip-core-image-kernelci,
+> I sent a pull request for implementing the user space test
+> iec-security but is still in progress.
+> Because KernelCI testings and test environments differs from CIP
+> gitlab pipeline test environment,
+> we have to use a different file and merging both would currently make
+> such different environments unstable.
+> 
+> I hope that this answer your question.
+
+Ok, we just need to keep an eye on target configs and options that deal
+with "testing" so that things are consistent and intuitive.
+
+> 
+>> These things you may ask yourself when try to add the image also to our
+>> Kconfig menu ("kas-container menu"). That would be nice to have for a v3
+>> as well, but more important is sorting out the option relationships.
+> 
+> cip-core-image-kernelci are build using gitlab pipeline and there is
+> currently no benefit to have such
+> images manual build.
 > 
 
-Then, if the closing semicolon is needed, add it to the new line as well
-to avoid having to touch that when adding the next one.
+So, the case that a test fails on kernel CI and someone want to
+reproduce the image that triggered this does not exist? One would rather
+build a regular image for the target then?
 
 Jan
 
