@@ -2,210 +2,101 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05940C433EF
-	for <webhook@archiver.kernel.org>; Mon, 10 Jan 2022 12:24:24 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com
- [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web09.30873.1641817453955248146
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B509C433FE
+	for <webhook@archiver.kernel.org>; Mon, 10 Jan 2022 12:24:26 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com
+ [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web08.30713.1641817451428133826
  for <cip-dev@lists.cip-project.org>;
- Mon, 10 Jan 2022 04:24:23 -0800
+ Mon, 10 Jan 2022 04:24:25 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=pass (domain: bp.renesas.com, ip: 210.160.252.172,
+ spf=pass (domain: bp.renesas.com, ip: 210.160.252.171,
  mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.88,276,1635174000";
-   d="scan'208";a="106554265"
+   d="scan'208";a="106011212"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 10 Jan 2022 21:24:22 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 10 Jan 2022 21:24:25 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9301A42AC9FF;
-	Mon, 10 Jan 2022 21:24:21 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 2FD0242ACA04;
+	Mon, 10 Jan 2022 21:24:24 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 38/61] ravb: Exclude gPTP feature support for
- RZ/G2L
-Date: Mon, 10 Jan 2022 12:23:08 +0000
-Message-Id: <20220110122331.24114-39-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 40/61] ravb: Add magic_pkt to struct ravb_hw_info
+Date: Mon, 10 Jan 2022 12:23:10 +0000
+Message-Id: <20220110122331.24114-41-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220110122331.24114-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20220110122331.24114-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 10 Jan 2022 12:24:24 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7403
+ <cip-dev@lists.cip-project.org>; Mon, 10 Jan 2022 12:24:26 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7405
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-commit 7e09a052dc4e30ce07fd7b3aa58a7d993f73a9d7 upstream.
+commit ebd5df063ce4a98553875e5b75eb8c0ab0584936 upstream.
 
-R-Car supports gPTP feature whereas RZ/G2L does not support it.
-This patch excludes gtp feature support for RZ/G2L.
+E-MAC on R-Car supports magic packet detection, whereas RZ/G2L
+does not support this feature. Add magic_pkt to struct ravb_hw_info
+and enable this feature only for R-Car.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/net/ethernet/renesas/ravb_main.c | 85 ++++++++++++++----------
- 1 file changed, 49 insertions(+), 36 deletions(-)
+ drivers/net/ethernet/renesas/ravb.h      | 1 +
+ drivers/net/ethernet/renesas/ravb_main.c | 5 ++++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
+index 1772f0fe3cb5..ea8f7b8f37de 100644
+--- a/drivers/net/ethernet/renesas/ravb.h
++++ b/drivers/net/ethernet/renesas/ravb.h
+@@ -1007,6 +1007,7 @@ struct ravb_hw_info {
+ 	unsigned gptp:1;		/* AVB-DMAC has gPTP support */
+ 	unsigned ccc_gac:1;		/* AVB-DMAC has gPTP support active in config mode */
+ 	unsigned nc_queue:1;		/* AVB-DMAC has NC queue */
++	unsigned magic_pkt:1;		/* E-MAC supports magic packet detection */
+ };
+ 
+ struct ravb_private {
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 97b32094beeb..05c8f0acb484 100644
+index 7ee3cd39c86e..5d21cfd236f3 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1401,6 +1401,7 @@ static int ravb_get_ts_info(struct net_device *ndev,
- 			    struct ethtool_ts_info *info)
- {
- 	struct ravb_private *priv = netdev_priv(ndev);
-+	const struct ravb_hw_info *hw_info = priv->info;
- 
- 	info->so_timestamping =
- 		SOF_TIMESTAMPING_TX_SOFTWARE |
-@@ -1414,7 +1415,8 @@ static int ravb_get_ts_info(struct net_device *ndev,
- 		(1 << HWTSTAMP_FILTER_NONE) |
- 		(1 << HWTSTAMP_FILTER_PTP_V2_L2_EVENT) |
- 		(1 << HWTSTAMP_FILTER_ALL);
--	info->phc_index = ptp_clock_index(priv->ptp.clock);
-+	if (hw_info->gptp || hw_info->ccc_gac)
-+		info->phc_index = ptp_clock_index(priv->ptp.clock);
- 
- 	return 0;
- }
-@@ -1638,6 +1640,7 @@ static void ravb_tx_timeout_work(struct work_struct *work)
- static netdev_tx_t ravb_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+@@ -1434,8 +1434,9 @@ static void ravb_get_wol(struct net_device *ndev, struct ethtool_wolinfo *wol)
+ static int ravb_set_wol(struct net_device *ndev, struct ethtool_wolinfo *wol)
  {
  	struct ravb_private *priv = netdev_priv(ndev);
 +	const struct ravb_hw_info *info = priv->info;
- 	unsigned int num_tx_desc = priv->num_tx_desc;
- 	u16 q = skb_get_queue_mapping(skb);
- 	struct ravb_tstamp_skb *ts_skb;
-@@ -1714,28 +1717,30 @@ static netdev_tx_t ravb_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- 	desc->dptr = cpu_to_le32(dma_addr);
  
- 	/* TX timestamp required */
--	if (q == RAVB_NC) {
--		ts_skb = kmalloc(sizeof(*ts_skb), GFP_ATOMIC);
--		if (!ts_skb) {
--			if (num_tx_desc > 1) {
--				desc--;
--				dma_unmap_single(ndev->dev.parent, dma_addr,
--						 len, DMA_TO_DEVICE);
-+	if (info->gptp || info->ccc_gac) {
-+		if (q == RAVB_NC) {
-+			ts_skb = kmalloc(sizeof(*ts_skb), GFP_ATOMIC);
-+			if (!ts_skb) {
-+				if (num_tx_desc > 1) {
-+					desc--;
-+					dma_unmap_single(ndev->dev.parent, dma_addr,
-+							 len, DMA_TO_DEVICE);
-+				}
-+				goto unmap;
- 			}
--			goto unmap;
-+			ts_skb->skb = skb_get(skb);
-+			ts_skb->tag = priv->ts_skb_tag++;
-+			priv->ts_skb_tag &= 0x3ff;
-+			list_add_tail(&ts_skb->list, &priv->ts_skb_list);
-+
-+			/* TAG and timestamp required flag */
-+			skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
-+			desc->tagh_tsr = (ts_skb->tag >> 4) | TX_TSR;
-+			desc->ds_tagl |= cpu_to_le16(ts_skb->tag << 12);
- 		}
--		ts_skb->skb = skb_get(skb);
--		ts_skb->tag = priv->ts_skb_tag++;
--		priv->ts_skb_tag &= 0x3ff;
--		list_add_tail(&ts_skb->list, &priv->ts_skb_list);
+-	if (wol->wolopts & ~WAKE_MAGIC)
++	if (!info->magic_pkt || (wol->wolopts & ~WAKE_MAGIC))
+ 		return -EOPNOTSUPP;
  
--		/* TAG and timestamp required flag */
--		skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
--		desc->tagh_tsr = (ts_skb->tag >> 4) | TX_TSR;
--		desc->ds_tagl |= cpu_to_le16(ts_skb->tag << 12);
-+		skb_tx_timestamp(skb);
- 	}
--
--	skb_tx_timestamp(skb);
- 	/* Descriptor type must be set after all the above writes */
- 	dma_wmb();
- 	if (num_tx_desc > 1) {
-@@ -1856,10 +1861,12 @@ static int ravb_close(struct net_device *ndev)
- 			   "device will be stopped after h/w processes are done.\n");
+ 	priv->wol_enabled = !!(wol->wolopts & WAKE_MAGIC);
+@@ -2134,6 +2135,7 @@ static const struct ravb_hw_info ravb_gen3_hw_info = {
+ 	.multi_irqs = 1,
+ 	.ccc_gac = 1,
+ 	.nc_queue = 1,
++	.magic_pkt = 1,
+ };
  
- 	/* Clear the timestamp list */
--	list_for_each_entry_safe(ts_skb, ts_skb2, &priv->ts_skb_list, list) {
--		list_del(&ts_skb->list);
--		kfree_skb(ts_skb->skb);
--		kfree(ts_skb);
-+	if (info->gptp || info->ccc_gac) {
-+		list_for_each_entry_safe(ts_skb, ts_skb2, &priv->ts_skb_list, list) {
-+			list_del(&ts_skb->list);
-+			kfree_skb(ts_skb->skb);
-+			kfree(ts_skb);
-+		}
- 	}
+ static const struct ravb_hw_info ravb_gen2_hw_info = {
+@@ -2155,6 +2157,7 @@ static const struct ravb_hw_info ravb_gen2_hw_info = {
+ 	.aligned_tx = 1,
+ 	.gptp = 1,
+ 	.nc_queue = 1,
++	.magic_pkt = 1,
+ };
  
- 	/* PHY disconnect */
-@@ -2205,9 +2212,11 @@ static void ravb_set_config_mode(struct net_device *ndev)
- 		ravb_modify(ndev, CCC, CCC_OPC, CCC_OPC_CONFIG);
- 		/* Set CSEL value */
- 		ravb_modify(ndev, CCC, CCC_CSEL, CCC_CSEL_HPB);
--	} else {
-+	} else if (info->ccc_gac) {
- 		ravb_modify(ndev, CCC, CCC_OPC, CCC_OPC_CONFIG |
- 			    CCC_GAC | CCC_CSEL_HPB);
-+	} else {
-+		ravb_modify(ndev, CCC, CCC_OPC, CCC_OPC_CONFIG);
- 	}
- }
- 
-@@ -2393,13 +2402,15 @@ static int ravb_probe(struct platform_device *pdev)
- 	/* Set AVB config mode */
- 	ravb_set_config_mode(ndev);
- 
--	/* Set GTI value */
--	error = ravb_set_gti(ndev);
--	if (error)
--		goto out_disable_refclk;
-+	if (info->gptp || info->ccc_gac) {
-+		/* Set GTI value */
-+		error = ravb_set_gti(ndev);
-+		if (error)
-+			goto out_disable_refclk;
- 
--	/* Request GTI loading */
--	ravb_modify(ndev, GCCR, GCCR_LTI, GCCR_LTI);
-+		/* Request GTI loading */
-+		ravb_modify(ndev, GCCR, GCCR_LTI, GCCR_LTI);
-+	}
- 
- 	if (info->internal_delay) {
- 		ravb_parse_delay_mode(np, ndev);
-@@ -2600,13 +2611,15 @@ static int __maybe_unused ravb_resume(struct device *dev)
- 	/* Set AVB config mode */
- 	ravb_set_config_mode(ndev);
- 
--	/* Set GTI value */
--	ret = ravb_set_gti(ndev);
--	if (ret)
--		return ret;
-+	if (info->gptp || info->ccc_gac) {
-+		/* Set GTI value */
-+		ret = ravb_set_gti(ndev);
-+		if (ret)
-+			return ret;
- 
--	/* Request GTI loading */
--	ravb_modify(ndev, GCCR, GCCR_LTI, GCCR_LTI);
-+		/* Request GTI loading */
-+		ravb_modify(ndev, GCCR, GCCR_LTI, GCCR_LTI);
-+	}
- 
- 	if (info->internal_delay)
- 		ravb_set_delay_mode(ndev);
+ static const struct ravb_hw_info gbeth_hw_info = {
 -- 
 2.17.1
 
