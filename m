@@ -2,55 +2,50 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F330EC433F5
-	for <webhook@archiver.kernel.org>; Mon, 10 Jan 2022 12:23:54 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com
- [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web11.31021.1641817424386543755
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EED2BC433F5
+	for <webhook@archiver.kernel.org>; Mon, 10 Jan 2022 12:23:56 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com
+ [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web09.30861.1641817416053116503
  for <cip-dev@lists.cip-project.org>;
- Mon, 10 Jan 2022 04:23:54 -0800
+ Mon, 10 Jan 2022 04:23:55 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=pass (domain: bp.renesas.com, ip: 210.160.252.171,
+ spf=pass (domain: bp.renesas.com, ip: 210.160.252.172,
  mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.88,276,1635174000";
-   d="scan'208";a="106011142"
+   d="scan'208";a="106554194"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 10 Jan 2022 21:23:54 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 10 Jan 2022 21:23:55 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 2A7F841E4D1E;
-	Mon, 10 Jan 2022 21:23:52 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 6FB3F420C2EE;
+	Mon, 10 Jan 2022 21:23:54 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 16/61] ravb: Add net_features and net_hw_features
- to struct ravb_hw_info
-Date: Mon, 10 Jan 2022 12:22:46 +0000
-Message-Id: <20220110122331.24114-17-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 17/61] ravb: Add internal delay hw feature to
+ struct ravb_hw_info
+Date: Mon, 10 Jan 2022 12:22:47 +0000
+Message-Id: <20220110122331.24114-18-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220110122331.24114-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20220110122331.24114-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 10 Jan 2022 12:23:54 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7381
+ <cip-dev@lists.cip-project.org>; Mon, 10 Jan 2022 12:23:56 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7382
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-commit 8912ed25daf6fc811c71ac30794822c824017c0f upstream.
+commit 8bc4caa0abafd83e25df2a3b1b03480aab071ee1 upstream.
 
-On R-Car the checksum calculation on RX frames is done by the E-MAC
-module, whereas on RZ/G2L it is done by the TOE.
-
-TOE calculates the checksum of received frames from E-MAC and outputs it to
-DMAC. TOE also calculates the checksum of transmission frames from DMAC and
-outputs it E-MAC.
-
-Add net_features and net_hw_features to struct ravb_hw_info, to support
-subsequent SoCs without any code changes in the ravb_probe function.
+R-Car Gen3 supports TX and RX clock internal delay modes, whereas R-Car
+Gen2 and RZ/G2L do not support it.
+Add an internal_delay hw feature bit to struct ravb_hw_info to enable this
+only for R-Car Gen3.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -59,64 +54,62 @@ Reviewed-by: Sergei Shtylyov <sergei.shtylyov@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/net/ethernet/renesas/ravb.h      |  2 ++
- drivers/net/ethernet/renesas/ravb_main.c | 12 ++++++++----
- 2 files changed, 10 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/renesas/ravb.h      | 3 +++
+ drivers/net/ethernet/renesas/ravb_main.c | 6 ++++--
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-index dccf64fcbe1f..0d0c27ad4e3b 100644
+index 0d0c27ad4e3b..9aee46e23105 100644
 --- a/drivers/net/ethernet/renesas/ravb.h
 +++ b/drivers/net/ethernet/renesas/ravb.h
-@@ -992,6 +992,8 @@ enum ravb_chip_id {
- struct ravb_hw_info {
- 	const char (*gstrings_stats)[ETH_GSTRING_LEN];
- 	size_t gstrings_size;
-+	netdev_features_t net_hw_features;
-+	netdev_features_t net_features;
- 	enum ravb_chip_id chip_id;
+@@ -998,6 +998,9 @@ struct ravb_hw_info {
  	int stats_len;
  	size_t max_rx_len;
+ 	unsigned aligned_tx: 1;
++
++	/* hardware features */
++	unsigned internal_delay:1;	/* AVB-DMAC has internal delays */
+ };
+ 
+ struct ravb_private {
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 8bfdc5b1d1f4..f2e6dc7b5551 100644
+index f2e6dc7b5551..838badff3c19 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1929,6 +1929,8 @@ static int ravb_mdio_release(struct ravb_private *priv)
- static const struct ravb_hw_info ravb_gen3_hw_info = {
- 	.gstrings_stats = ravb_gstrings_stats,
- 	.gstrings_size = sizeof(ravb_gstrings_stats),
-+	.net_hw_features = NETIF_F_RXCSUM,
-+	.net_features = NETIF_F_RXCSUM,
+@@ -1934,6 +1934,7 @@ static const struct ravb_hw_info ravb_gen3_hw_info = {
  	.chip_id = RCAR_GEN3,
  	.stats_len = ARRAY_SIZE(ravb_gstrings_stats),
  	.max_rx_len = RX_BUF_SZ + RAVB_ALIGN - 1,
-@@ -1937,6 +1939,8 @@ static const struct ravb_hw_info ravb_gen3_hw_info = {
++	.internal_delay = 1,
+ };
+ 
  static const struct ravb_hw_info ravb_gen2_hw_info = {
- 	.gstrings_stats = ravb_gstrings_stats,
- 	.gstrings_size = sizeof(ravb_gstrings_stats),
-+	.net_hw_features = NETIF_F_RXCSUM,
-+	.net_features = NETIF_F_RXCSUM,
- 	.chip_id = RCAR_GEN2,
- 	.stats_len = ARRAY_SIZE(ravb_gstrings_stats),
- 	.max_rx_len = RX_BUF_SZ + RAVB_ALIGN - 1,
-@@ -2060,14 +2064,14 @@ static int ravb_probe(struct platform_device *pdev)
- 	if (!ndev)
- 		return -ENOMEM;
+@@ -2173,7 +2174,7 @@ static int ravb_probe(struct platform_device *pdev)
+ 	/* Request GTI loading */
+ 	ravb_modify(ndev, GCCR, GCCR_LTI, GCCR_LTI);
  
--	ndev->features = NETIF_F_RXCSUM;
--	ndev->hw_features = NETIF_F_RXCSUM;
-+	info = of_device_get_match_data(&pdev->dev);
-+
-+	ndev->features = info->net_features;
-+	ndev->hw_features = info->net_hw_features;
+-	if (priv->chip_id != RCAR_GEN2) {
++	if (info->internal_delay) {
+ 		ravb_parse_delay_mode(np, ndev);
+ 		ravb_set_delay_mode(ndev);
+ 	}
+@@ -2346,6 +2347,7 @@ static int __maybe_unused ravb_resume(struct device *dev)
+ {
+ 	struct net_device *ndev = dev_get_drvdata(dev);
+ 	struct ravb_private *priv = netdev_priv(ndev);
++	const struct ravb_hw_info *info = priv->info;
+ 	int ret = 0;
  
- 	pm_runtime_enable(&pdev->dev);
- 	pm_runtime_get_sync(&pdev->dev);
+ 	/* If WoL is enabled set reset mode to rearm the WoL logic */
+@@ -2368,7 +2370,7 @@ static int __maybe_unused ravb_resume(struct device *dev)
+ 	/* Request GTI loading */
+ 	ravb_modify(ndev, GCCR, GCCR_LTI, GCCR_LTI);
  
--	info = of_device_get_match_data(&pdev->dev);
--
- 	if (info->chip_id == RCAR_GEN3)
- 		irq = platform_get_irq_byname(pdev, "ch22");
- 	else
+-	if (priv->chip_id != RCAR_GEN2)
++	if (info->internal_delay)
+ 		ravb_set_delay_mode(ndev);
+ 
+ 	/* Restore descriptor base address table */
 -- 
 2.17.1
 
