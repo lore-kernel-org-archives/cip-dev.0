@@ -1,96 +1,101 @@
-Return-Path: <alice.ferrazzi@miraclelinux.com>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A657BC433F5
-	for <webhook@archiver.kernel.org>; Thu, 20 Jan 2022 05:35:06 +0000 (UTC)
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com
- [209.85.208.52])
- by mx.groups.io with SMTP id smtpd.web12.7982.1642656904066064498
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54609C433F5
+	for <webhook@archiver.kernel.org>; Thu, 20 Jan 2022 09:45:54 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web11.9626.1642671952576719631
  for <cip-dev@lists.cip-project.org>;
- Wed, 19 Jan 2022 21:35:05 -0800
+ Thu, 20 Jan 2022 01:45:53 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112
- header.b=GZCLHAgV;
- spf=pass (domain: miraclelinux.com, ip: 209.85.208.52,
- mailfrom: alice.ferrazzi@miraclelinux.com)
-Received: by mail-ed1-f52.google.com with SMTP id c24so21379940edy.4
-        for <cip-dev@lists.cip-project.org>;
- Wed, 19 Jan 2022 21:35:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=WM0uA3PNegu9wlExML8sDartHeHf0bX3ky9SgRK9bAE=;
-        b=GZCLHAgV/gXOFmTvLb00gcAZrXv9scMXKAu9eslJK8sDR1ka0Iszk2xyijUs6DeDM5
-         imTXMe6xu3frXFwDxZj3rwpawwjgiT+p0IvBUFGDaovYX8ehIiEUFMtfUgo7PrrXJAer
-         ypXAbe7PytGxIuiFT5h6XZDRyxRPQeYL7s3NW7YUBtI2Y1dohZaq/GDv9MhNooY86n9m
-         dP+vwu0HMwF9tr8uiKkt7L4c0RPOEOiZeXeyUkCyPTvw53JOoaynBBM5vfykd5RR10Dc
-         diwsi0h7JDHb9TevA3rldRn/c0RK0AWTjN4s0Fj+0t7VWUPg3lqPukrfnDAINZKj+hEa
-         SbNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=WM0uA3PNegu9wlExML8sDartHeHf0bX3ky9SgRK9bAE=;
-        b=uG0enbp6XCh4vmsXITRf7XUyOOUBpDVfNUEfvDewBCEh23po+Dmo0n/Ac32PcKKJ4W
-         KhA2BJ0ZkEywtnXjOKbt8Fmd/sljA7NSuzQrP50eQCwh+5WX9Lji5cKIkQZp9wrWlBPu
-         lezJ6iAPPlcw557xKd681Y1/zw6GCLp2tAJsWnK2jP9dvGLrRPsc9wl2MUmYl1h2+GLd
-         6IDWqajQr5qPfttCy9qfwRxH+wlY6i4yPRpnyjmml63RdnkHvNeUNN/WOm6T1RnRdG0u
-         JRmOydSkfWDqKdraQsVERP+YFVCiesRghPvcK4Al0Bsklg36uMf7dqp3q/PwpThf+5Hs
-         1Leg==
-X-Gm-Message-State: AOAM5335JlL+Xh63kof852bd45MXovkgFxprbgXrX6YvW4L94NPftzPg
-	iZEkJbV/PMStnxMGOFdagp0MWFFQhNUO/dupnbNf2d/F8Ifm
-X-Google-Smtp-Source: 
- ABdhPJypQW/ENH6CnXjayO8ojJS9oqAetAIZsDpJghrmxijHtsiZKL2EjCEbasDPD0uK/kXSnPGIPpDTmjslhuSiG1Y=
-X-Received: by 2002:a17:907:6da0:: with SMTP id
- sb32mr28764281ejc.455.1642656902145;
- Wed, 19 Jan 2022 21:35:02 -0800 (PST)
-MIME-Version: 1.0
-From: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
-Date: Thu, 20 Jan 2022 14:34:26 +0900
-Message-ID: 
- <CANgtXuNta+nXNdsgb-Q+a1RL1uqyb=pO4=JHKiwsCx07EE27-Q@mail.gmail.com>
-Subject: [cip-dev] CIP IRC weekly meeting today on libera.chat
+ dkim=missing;
+ spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id F2A711C0B9D; Thu, 20 Jan 2022 10:45:48 +0100 (CET)
+Date: Thu, 20 Jan 2022 10:45:47 +0100
+From: Pavel Machek <pavel@denx.de>
 To: cip-dev@lists.cip-project.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [cip-dev] New CVE in this week
+Message-ID: <20220120094547.GA12647@amd>
+References: 
+ <CAODzB9pRmJELdQHUS50MgS=9O+LSy9Z9B7cOQuqq+H2fJB+ghQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="EVF5PPMfhYS0aIcm"
+Content-Disposition: inline
+In-Reply-To: 
+ <CAODzB9pRmJELdQHUS50MgS=9O+LSy9Z9B7cOQuqq+H2fJB+ghQ@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 20 Jan 2022 05:35:06 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7470
+ <cip-dev@lists.cip-project.org>; Thu, 20 Jan 2022 09:45:54 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7471
 
-Hi all,
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss
-technical topics with CIP kernel today. Our channel is the following:
+--EVF5PPMfhYS0aIcm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-     irc:irc.libera.chat:6667/cip
+Hi!
 
-The IRC meeting is scheduled to UTC (GMT) 13:00:
+> CVE-2022-0185: vfs: fs_context: fix up param length parsing in
+> legacy_parse_param
+> mainline: [722d94847de29310e8aa03fcbdb41fc92c521756]
 
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2022&month=1&day=20&hour=13&min=0&sec=0&p1=224&p2=179&p3=136&p4=37&p5=241&p6=248
+This one is queued up for 5.10.93. We likely don't need to do anything
+here.
 
-USWest    USEast    UK        DE        TW        JP
-06:00     09:00     13:00     14:00     21:00     22:00
+> CVE-2021-4095: 'KVM: NULL pointer dereference in kvm_dirty_ring_get()
+> in virt/kvm/dirty_ring.c'
+>=20
+> This issue was fixed in the mainline this week. It introduced at
+> commit 629b534 ("KVM: x86/xen: update wallclock region") which was
+> merged in 5.12-rc1-dontuse.
 
-Last meeting minutes:
-https://irclogs.baserock.org/meetings/cip/2022/01/cip.2022-01-13-13.00.log.html
+As it does not affect "our" kernels, we don't need to do anything. Good.
 
-* Action items
-   1. Provide v3 of kernelci patches for isar-cip-core - alicef
-   2. Clarify with KernelCI whether CIP maintainers can get accounts -
-patersonc alicef
-   3. Meetbot situation - patersonc alicef
-* Kernel maintenance updates
-* Kernel testing
-* AOB
+> CVE-2021-4197: cgroup: Use open-time creds and namespace for migration
+> perm checks
+>=20
+> Commit 1756d79 ("cgroup: Use open-time credentials for process
+> migraton perm checks") failed to apply to 4.4, 4.9, 4.14, 4.19,
+> 5.4,and 5.10. This commit fixes 187fe84 ("cgroup: require write perm
+> on common ancestor when moving processes on the default hierarchy")
+> which was merged in 4.2-rc1.
 
-Thanks,
-Alicef
+This one looks relatively simple.
 
--- 
-======================================
-Cybertrust Japan Co.,Ltd.
-Alice Ferrazzi
-alice.ferrazzi@miraclelinux.com
-======================================
+> Commit 0d2b595 ("cgroup: Allocate cgroup_file_ctx for
+> kernfs_open_file->priv") failed to apply to 4.14, 4.19, 5.4, and 5.10.
+>=20
+> Commit e574576 ("cgroup: Use open-time cgroup namespace for process
+> migration perm checks") was failed to apply to 4.14, 4.19, 5.4, and
+> 5.10. This commit fixes 5136f63 ("cgroup: implement "nsdelegate" mount
+> option") which was merged in 4.13-rc1.
+
+Unfortunatley these two are more complicated.
+
+Best regards,
+								Pavel
+
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--EVF5PPMfhYS0aIcm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAmHpL0sACgkQMOfwapXb+vLBkQCgkLzGIRLmcMKh0/YK7atHW6dj
+BR8Anj4vvgsdCFoX1desM1Nrmz3tOq9e
+=5K7+
+-----END PGP SIGNATURE-----
+
+--EVF5PPMfhYS0aIcm--
 
