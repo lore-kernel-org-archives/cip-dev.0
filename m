@@ -1,193 +1,225 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A5D0C433EF
-	for <webhook@archiver.kernel.org>; Mon, 24 Jan 2022 14:01:09 +0000 (UTC)
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com
- (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.78])
- by mx.groups.io with SMTP id smtpd.web10.3897.1643032867465986930
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE33C433EF
+	for <webhook@archiver.kernel.org>; Mon, 24 Jan 2022 15:37:58 +0000 (UTC)
+Received: from mta-64-227.siemens.flowmailer.net
+ (mta-64-227.siemens.flowmailer.net [185.136.64.227])
+ by mx.groups.io with SMTP id smtpd.web08.5219.1643038676775635626
  for <cip-dev@lists.cip-project.org>;
- Mon, 24 Jan 2022 06:01:08 -0800
+ Mon, 24 Jan 2022 07:37:57 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=hbk2N/yn;
- spf=pass (domain: siemens.com, ip: 40.107.21.78,
- mailfrom: jan.kiszka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=I+I4Z/aYguca2jZH9PWeWPkJvpRbnF1lTVklf6/+ZZ8BruzIq6JLO5iJK+yKMnf1xWpYuKlmw2WGi9MDB0HJ23fxBSMO4Xydhwg0Bp/AHybeJoOOgIxVXu3Zc9adKfZQkWUhLOe0Q+97REyRgw83sGMkNRUMoiH7/uydBXutXEhUOIAQZreZHPbAcle9o1C37R+4qHb9CC4ki4LCWQyKCf5VsaMgWDf3OZh0/06sfz6F5vjztRZhr11gsv3kocCRsDpW++Z0I4+hNOR7lGV7U9MKFScEt17nexuGNf3kBoXEZUs1RA5pyNiUR6NBgBeqwYfaj/IPpI8R+5PiptGY/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/JcXrOJ5C0vhAKdEKCI04EqhTH9sEmzCYWPXRU8iBOU=;
- b=lWkB1/J+AYz1rAQGPv7MX5lOvc96YeLuRSSZw3uvdXAVUNZ5QaHx28+KvRo1UF47sNPQBKwO95QL5OIs0C9Loi0etyGt+r0/Hr76X62A/2GlYByL2rCIiz6Z6h6t65nEHFEwnnuoqNLAveDfMXwHrs+hiieOVA23QHjOW+PPNYkhMEHaCcTxMWMRXOSz0a5yX08Qk0y9SOfADTCbM5estYuvKMa0DRTZUBxdiAZdOyg0juDc2caCQ408twlgoj4GeRpL9mXNHYGA1ym98SJDN6hoEOvjfO3QxR9T3RpK6Jy19PCJ9J8D8+EVI9BhJOrc5QfygODpTS+Td7+3l7LoOg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.73) smtp.rcpttodomain=lists.cip-project.org
- smtp.mailfrom=siemens.com; dmarc=pass (p=none sp=none pct=100) action=none
- header.from=siemens.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/JcXrOJ5C0vhAKdEKCI04EqhTH9sEmzCYWPXRU8iBOU=;
- b=hbk2N/yntp/BEQPcFzG2bsLOdlyll0+9qmBoGfZgE1anOz8c9k0rcyRbSe5WMoS9WCbyYXCnw+nWHboYL9PQoe9uLJR+7YB0S6bX6PMEofL7lG0YUsCtVR6yHHXtdOZV/BIIsUVqKMTpafgkwlPkyxvzVBUoYzUwwraJbbJ5AFwZLApdumAIdjdCkmV5niEi0Gwr7xb5oiUcDzF3d3a143fWhNxb6YC7xrFanmjmri1KpITA2xiUQpkCLycrdrTJclczndEjP8H7wc2CeKWIezFvENI4eUHor02SqPY8UMROtyDnW8yxbwbknvE4wybTIq1FyRwLXOWhF0rD2G/3pQ==
-Received: from AM6PR10CA0084.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:209:8c::25)
- by VE1PR10MB3791.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:169::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4909.7; Mon, 24 Jan
- 2022 14:01:04 +0000
-Received: from VE1EUR01FT058.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:209:8c:cafe::e5) by AM6PR10CA0084.outlook.office365.com
- (2603:10a6:209:8c::25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4909.7 via Frontend
- Transport; Mon, 24 Jan 2022 14:01:04 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.73)
- smtp.mailfrom=siemens.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=siemens.com;
-Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.73 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.73; helo=hybrid.siemens.com;
-Received: from hybrid.siemens.com (194.138.21.73) by
- VE1EUR01FT058.mail.protection.outlook.com (10.152.3.136) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.4909.7 via Frontend Transport; Mon, 24 Jan 2022 14:01:04 +0000
-Received: from DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) by
- DEMCHDC9SNA.ad011.siemens.net (194.138.21.73) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Mon, 24 Jan 2022 15:01:03 +0100
-Received: from [167.87.32.56] (167.87.32.56) by DEMCHDC8A0A.ad011.siemens.net
- (139.25.226.106) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.17; Mon, 24 Jan
- 2022 15:01:02 +0100
-Message-ID: <0b30e976-3a36-21a5-821a-9f0138d911ae@siemens.com>
-Date: Mon, 24 Jan 2022 15:01:02 +0100
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1
+ header.b=ECPs+0i4;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227,
+ mailfrom: fm-51332-20220124153750c26d14f404b619ace0-ldalnm@rts-flowmailer.siemens.com)
+Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id
+ 20220124153750c26d14f404b619ace0
+        for <cip-dev@lists.cip-project.org>;
+        Mon, 24 Jan 2022 16:37:54 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=Quirin.Gylstorff@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+ bh=cucWoscdXKH7/E4cWN/sPaDoYaTr1gtduTICQiynOIM=;
+ b=ECPs+0i4LeW/4/F4TOr62GvECOqRxBPTixvyhtWWgFrQv7HB2r/4ceKgCPu6Q44gAQi8rB
+ r73U47gvRhKXZUJg0RlMxolOIiPh/NHLLWWW3pq/JI/hckQbzMr53mlvB7OCYXVPbSZCgh1a
+ 8SY7JlckaTYc2meJN2nU2cB9rTfzA=;
+From: Quirin.Gylstorff@siemens.com
+To: cip-dev@lists.cip-project.org,
+	Jan.Kiszka@siemens.com
+Subject: [cip-dev][isar-cip-core][PATCH] Update ISAR
+Date: Mon, 24 Jan 2022 16:37:48 +0100
+Message-Id: <20220124153748.646550-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [cip-dev] 4.4.X-stable and 4.4.X-rt maintainance ends in less
- than two weeks
-Content-Language: en-US
-To: <cip-dev@lists.cip-project.org>
-References: <20220119141210.GA2310@duo.ucw.cz>
- <CAODzB9r+R2hKi2_Au17JLMG4us4W7jrzQhBXVdSBXm_ub+CDhg@mail.gmail.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: 
- <CAODzB9r+R2hKi2_Au17JLMG4us4W7jrzQhBXVdSBXm_ub+CDhg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.87.32.56]
-X-ClientProxiedBy: DEMCHDC89XA.ad011.siemens.net (139.25.226.103) To
- DEMCHDC8A0A.ad011.siemens.net (139.25.226.106)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 22a8000f-a529-4034-c4f4-08d9df41f5ea
-X-MS-TrafficTypeDiagnostic: VE1PR10MB3791:EE_
-X-Microsoft-Antispam-PRVS: 
-	<VE1PR10MB37913112681A2FBD5C6ADA8B955E9@VE1PR10MB3791.EURPRD10.PROD.OUTLOOK.COM>
-X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?MUg4ZjBORi9yZ3I1U3BKT2JEN3JNTU5DN0twVmJiaURaanU4NkQyMk1kUzVO?=
- =?utf-8?B?SUFzZ0JHYjZheUh5dCs1WFQ5T2tFVFBLbXkwaGxIb2xwT0VuRTYyeUtsRXRR?=
- =?utf-8?B?RHpXenk5UXVXYjZKaU54dFBrQmdpSFNSYW4wdmdvclIwcHZERWF3TjB0bHQr?=
- =?utf-8?B?dGd6dXhvK2NOK2FsMzI2dVRPNFNmc2QyY3ovUy8xaDRjMHFVeDJCUGt2WFN5?=
- =?utf-8?B?Y0swQjRGc0ovRnJvMHRKK29TRjdMa2lXdTJkZ3h4ckVGQ3NBbmhRMFlkMUd0?=
- =?utf-8?B?UkhQWWNMZXhBWXV2UWlZajduNjhRS1BiVjluRkhuNlZOSEVNa0I4Rk12STg4?=
- =?utf-8?B?RXltano3RndzSnhUaUNZbUtVVDBSVFJIVndaOC9qRW5STGhEaWpINVJqSXBO?=
- =?utf-8?B?SlBpaDFOVXRqN2hQbG50Mlkra3pRL3FnaVFmODNtcysxUTF0R2lyaVJCRkc0?=
- =?utf-8?B?ZDdSeUN1SmM2blk2RGRnbUwwRjV4VENhQ1BtNUorVjErRUorek9OK09BNjB4?=
- =?utf-8?B?M3Y5Si9TU2cyajhyQU56VkNJL3NOS2pXTFA5cEFXNmlVTmtHaG1ScHpNbjRG?=
- =?utf-8?B?SG1pUUxuMGowNy8xYUpUbHViS2FoQmlEcCtpRFRMWG1Ba2xFejZibnMzSWhy?=
- =?utf-8?B?Z2hROHNxdEVTdUZ5Rmo3SWg0eDBqZXR6YWF4MlRoLzVQdTdrWnp6VEk1V1dr?=
- =?utf-8?B?cHZBekNmMEo5NTZmRWl3VzZzbTVVSm9NN29ndzJuempJYkFOd1gxTE9yWGxN?=
- =?utf-8?B?WXdLbWVkOG0weDhpQTUyZmpyZ090SzBpUUx2YTVzYlN2cG85NURzVFZYdlZi?=
- =?utf-8?B?TVd0VEhlTE1YV0xCRzlDWmhqa0RtajFSdGVGU3F0NEVTU2l4T1NIVUJ1RWc4?=
- =?utf-8?B?em5nUllobmxBUTE2aGk2S1pGWUVmWVRnWTVXaGVtZ1FGakt3RzZQSkoyOXI2?=
- =?utf-8?B?azF0b0M4MWZxUmE4U01Ta3dNWW9ETk9KNWdkeVhVRmpJVlc5SGwxZGNodFNQ?=
- =?utf-8?B?SjFDb1V2ZDE4TG4yTmViRCtIeTdSWG9WdzVhdjRjUlpSQWs1dTEyMW55dTVs?=
- =?utf-8?B?RnVURWtvVDZSTjRqenc1d1ExbzhGU0R4ZTRIcFdlNFZnVzJVR05SQTNwc2tJ?=
- =?utf-8?B?ZDBhS2dJcWpQemQ1K3BkaUk5S0c5NFhPMHpSWk9jVFJKWGxsL2xqaElQL0c3?=
- =?utf-8?B?QjE1WEthS3NndVd2OFFoYkhpS0pXUmdXMUlYWEkxR2dzWkR4V0YyR3ZZcG5X?=
- =?utf-8?B?NWdkNkJFaUp0OGNBbnNNbG4zTFJjV2Q0M0RFdCt1YjBQSlluMXpVcUFReTJQ?=
- =?utf-8?Q?oTbMl82btgdII=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:194.138.21.73;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(40470700004)(31686004)(86362001)(70206006)(70586007)(44832011)(31696002)(40460700003)(47076005)(16576012)(81166007)(36756003)(83380400001)(8936002)(5660300002)(6706004)(6916009)(356005)(82960400001)(26005)(2906002)(53546011)(8676002)(16526019)(956004)(186003)(966005)(508600001)(316002)(82310400004)(2616005)(36860700001)(336012)(3940600001)(43740500002)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jan 2022 14:01:04.0778
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 
- 22a8000f-a529-4034-c4f4-08d9df41f5ea
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
- TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.73];Helo=[hybrid.siemens.com]
-X-MS-Exchange-CrossTenant-AuthSource: 
-	VE1EUR01FT058.eop-EUR01.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR10MB3791
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 24 Jan 2022 14:01:09 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7477
+ <cip-dev@lists.cip-project.org>; Mon, 24 Jan 2022 15:37:58 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7479
 
-On 20.01.22 03:26, Masami Ichikawa wrote:
-> On Wed, Jan 19, 2022 at 11:12 PM Pavel Machek <pavel@denx.de> wrote:
->>
->> Hi!
->>
->> It looks like stable 4.4.X maintainence ends real soon now:
->> https://www.kernel.org/category/releases.html . I talked to Greg and
->> it seems like plan is to end it at the beggining of month, rather than
->> end.
->>
-> 
-> Thank you for asking the actual EOL date.
-> 
->> That means we'll be on our own maintaining -cip and -cip-rt versions.
->>
->> To review our 4.4 branch:
->>
->> git log --pretty=oneline linux-4.4.y-cip-rebase
->>
->> We have 757 patches on top of 4.4.216, and there are some 14000
->> patches between 4.4 and 4.4.216. Going forward, most new patches will
->> come from upstream.
->>
->> We do some compile testing, but we only run run-time tests on two
->> targets:
->> https://gitlab.com/cip-project/cip-kernel/linux-cip/-/pipelines/448669210
->> .
->>
->> Given that most of work we'll be doing will be maintaining -stable
->> patches, anyway, I believe it would make sense to step up as official
->> maintainers of 4.4.X-stable and 4.4.X-rt series. We'll need to do the
->> work, anyway, keeping -stable and -cip split will not result in much
->> overhead for us, and this way we'll get a lot of visibility for the
->> project, and hopefully a lot of additional testing.
->>
->> Any thoughts?
->>
-> 
-> I agree. The split -stable and -cip work sounds reasonable.
-> I think it would be helpful, if AUTOSEL system continues to pick
-> patches for 4.4 series.
-> 
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-I do agree that, if we need to integrate patches anyway, providing them 
-as a prolonged LTS should not be extra effort. But what will and can 
-people expect from that?
+Update ISAR to commit 33b5aa65fa3f28987525799d0731fb4e7050207d and fix warnings.
 
-The original LTS kernels conceptually covers everything that is 
-code-wise included. Our CIP kernels do not. While it might be still ok 
-to fix trivial build issues or even runtime problems for things CIP does 
-not cover in the configs when they only occasionally occur, we will not 
-be able to commit on doing that all the time - resources are limited, 
-and the focus needs to be on CIP-defined setups.
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+ conf/machine/bbb.conf                | 2 +-
+ conf/machine/hihope-rzg2m.conf       | 2 +-
+ conf/machine/iwg20m.conf             | 2 +-
+ conf/machine/qemu-amd64.conf         | 2 +-
+ conf/machine/qemu-arm.conf           | 2 +-
+ conf/machine/qemu-arm64.conf         | 2 +-
+ conf/machine/simatic-ipc227e.conf    | 2 +-
+ kas-cip.yml                          | 2 +-
+ kas/opt/ebg-secure-boot-snakeoil.yml | 2 +-
+ kas/opt/efibootguard.yml             | 2 +-
+ kas/opt/swupdate.yml                 | 2 +-
+ kas/opt/targz-img.yml                | 2 +-
+ kas/opt/wic-targz-img.yml            | 2 +-
+ 13 files changed, 13 insertions(+), 13 deletions(-)
 
-Jan
-
+diff --git a/conf/machine/bbb.conf b/conf/machine/bbb.conf
+index 6d8facb..81e624e 100644
+--- a/conf/machine/bbb.conf
++++ b/conf/machine/bbb.conf
+@@ -8,7 +8,7 @@
+ 
+ DISTRO_ARCH = "armhf"
+ 
+-IMAGE_TYPE ?= "wic-img"
++IMAGE_FSTYPES ?= "wic-img"
+ IMAGER_INSTALL += "u-boot-omap"
+ 
+ IMAGE_INSTALL += "u-boot-script"
+diff --git a/conf/machine/hihope-rzg2m.conf b/conf/machine/hihope-rzg2m.conf
+index 18a86d4..bc80ddd 100644
+--- a/conf/machine/hihope-rzg2m.conf
++++ b/conf/machine/hihope-rzg2m.conf
+@@ -11,7 +11,7 @@
+ 
+ DISTRO_ARCH = "arm64"
+ 
+-IMAGE_TYPE ?= "wic-img"
++IMAGE_FSTYPES ?= "wic-img"
+ 
+ KERNEL_DEFCONFIG = "cip-kernel-config/${KERNEL_DEFCONFIG_VERSION}/arm64/renesas_defconfig"
+ USE_CIP_KERNEL_CONFIG = "1"
+diff --git a/conf/machine/iwg20m.conf b/conf/machine/iwg20m.conf
+index 91bfd94..a26f7fe 100644
+--- a/conf/machine/iwg20m.conf
++++ b/conf/machine/iwg20m.conf
+@@ -8,7 +8,7 @@
+ DISTRO_ARCH = "armhf"
+ 
+ # see wic/iwg20m.wks
+-IMAGE_TYPE ?= "wic-img"
++IMAGE_FSTYPES ?= "wic-img"
+ 
+ # sets serial login getty
+ MACHINE_SERIAL = "ttySC0"
+diff --git a/conf/machine/qemu-amd64.conf b/conf/machine/qemu-amd64.conf
+index d9605ca..a60f818 100644
+--- a/conf/machine/qemu-amd64.conf
++++ b/conf/machine/qemu-amd64.conf
+@@ -8,6 +8,6 @@
+ 
+ DISTRO_ARCH = "amd64"
+ 
+-IMAGE_TYPE ?= "ext4-img"
++IMAGE_FSTYPES ?= "ext4-img"
+ USE_CIP_KERNEL_CONFIG = "1"
+ KERNEL_DEFCONFIG = "cip-kernel-config/${KERNEL_DEFCONFIG_VERSION}/x86/cip_qemu_defconfig"
+diff --git a/conf/machine/qemu-arm.conf b/conf/machine/qemu-arm.conf
+index e439d49..aca6d7d 100644
+--- a/conf/machine/qemu-arm.conf
++++ b/conf/machine/qemu-arm.conf
+@@ -9,6 +9,6 @@
+ 
+ DISTRO_ARCH = "armhf"
+ 
+-IMAGE_TYPE ?= "ext4-img"
++IMAGE_FSTYPES ?= "ext4-img"
+ USE_CIP_KERNEL_CONFIG = "1"
+ KERNEL_DEFCONFIG ?= "cip-kernel-config/${KERNEL_DEFCONFIG_VERSION}/arm/qemu_arm_defconfig"
+diff --git a/conf/machine/qemu-arm64.conf b/conf/machine/qemu-arm64.conf
+index f2a301b..0d21262 100644
+--- a/conf/machine/qemu-arm64.conf
++++ b/conf/machine/qemu-arm64.conf
+@@ -8,6 +8,6 @@
+ 
+ DISTRO_ARCH = "arm64"
+ 
+-IMAGE_TYPE ?= "ext4-img"
++IMAGE_FSTYPES ?= "ext4-img"
+ USE_CIP_KERNEL_CONFIG = "1"
+ KERNEL_DEFCONFIG ?= "cip-kernel-config/${KERNEL_DEFCONFIG_VERSION}/arm64/qemu_arm64_defconfig"
+diff --git a/conf/machine/simatic-ipc227e.conf b/conf/machine/simatic-ipc227e.conf
+index 552a0b0..50d1f8a 100644
+--- a/conf/machine/simatic-ipc227e.conf
++++ b/conf/machine/simatic-ipc227e.conf
+@@ -8,7 +8,7 @@
+ 
+ DISTRO_ARCH = "amd64"
+ 
+-IMAGE_TYPE ?= "wic-img"
++IMAGE_FSTYPES ?= "wic-img"
+ IMAGER_INSTALL += "${GRUB_BOOTLOADER_INSTALL}"
+ USE_CIP_KERNEL_CONFIG = "1"
+ KERNEL_DEFCONFIG = "cip-kernel-config/${KERNEL_DEFCONFIG_VERSION}/x86/siemens_ipc227e_defconfig"
+diff --git a/kas-cip.yml b/kas-cip.yml
+index 8226954..9c8ac9f 100644
+--- a/kas-cip.yml
++++ b/kas-cip.yml
+@@ -22,7 +22,7 @@ repos:
+ 
+   isar:
+     url: https://github.com/ilbers/isar.git
+-    refspec: ceb7e21154fc4862f704bb5c7739e87a26db6eb3
++    refspec: 33b5aa65fa3f28987525799d0731fb4e7050207d
+     layers:
+       meta:
+     patches:
+diff --git a/kas/opt/ebg-secure-boot-snakeoil.yml b/kas/opt/ebg-secure-boot-snakeoil.yml
+index 5aa5eff..1f4d668 100644
+--- a/kas/opt/ebg-secure-boot-snakeoil.yml
++++ b/kas/opt/ebg-secure-boot-snakeoil.yml
+@@ -24,7 +24,7 @@ local_conf_header:
+ 
+   verity-img: |
+     SECURE_IMAGE_FSTYPE = "squashfs"
+-    IMAGE_TYPE = "secure-swupdate-img"
++    IMAGE_FSTYPES = "secure-swupdate-img"
+     WKS_FILE = "${MACHINE}-efibootguard-secureboot.wks.in"
+ 
+   secure-boot: |
+diff --git a/kas/opt/efibootguard.yml b/kas/opt/efibootguard.yml
+index 580c315..75d4ab1 100644
+--- a/kas/opt/efibootguard.yml
++++ b/kas/opt/efibootguard.yml
+@@ -23,6 +23,6 @@ local_conf_header:
+   efibootguard-wic: |
+     WDOG_TIMEOUT ?= "60"
+     WICVARS += "WDOG_TIMEOUT KERNEL_IMAGE INITRD_IMAGE"
+-    IMAGE_TYPE ?= "wic-img"
++    IMAGE_FSTYPES ?= "wic-img"
+     WKS_FILE ?= "${MACHINE}-${SWUPDATE_BOOTLOADER}.wks"
+ 
+diff --git a/kas/opt/swupdate.yml b/kas/opt/swupdate.yml
+index 974eacb..a8b903f 100644
+--- a/kas/opt/swupdate.yml
++++ b/kas/opt/swupdate.yml
+@@ -20,5 +20,5 @@ local_conf_header:
+     IMAGE_INSTALL_append = " swupdate-handler-roundrobin"
+ 
+   wic-swu: |
+-    IMAGE_TYPE = "wic-swu-img"
++    IMAGE_FSTYPES = "wic-swu-img"
+     WKS_FILE ?= "${MACHINE}-${SWUPDATE_BOOTLOADER}.wks"
+diff --git a/kas/opt/targz-img.yml b/kas/opt/targz-img.yml
+index bdb5231..d555a8a 100644
+--- a/kas/opt/targz-img.yml
++++ b/kas/opt/targz-img.yml
+@@ -14,4 +14,4 @@ header:
+ 
+ local_conf_header:
+   image-type: |
+-    IMAGE_TYPE = "targz-img"
++    IMAGE_FSTYPES = "targz-img"
+diff --git a/kas/opt/wic-targz-img.yml b/kas/opt/wic-targz-img.yml
+index 7e9081f..2e83760 100644
+--- a/kas/opt/wic-targz-img.yml
++++ b/kas/opt/wic-targz-img.yml
+@@ -17,4 +17,4 @@ header:
+ 
+ local_conf_header:
+   image-type: |
+-    IMAGE_TYPE = "wic-targz-img"
++    IMAGE_FSTYPES = "wic-targz-img"
 -- 
-Siemens AG, Technology
-Competence Center Embedded Linux
+2.34.1
+
 
