@@ -1,225 +1,127 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <chris.paterson2@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE33C433EF
-	for <webhook@archiver.kernel.org>; Mon, 24 Jan 2022 15:37:58 +0000 (UTC)
-Received: from mta-64-227.siemens.flowmailer.net
- (mta-64-227.siemens.flowmailer.net [185.136.64.227])
- by mx.groups.io with SMTP id smtpd.web08.5219.1643038676775635626
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B22CC433EF
+	for <webhook@archiver.kernel.org>; Tue, 25 Jan 2022 14:08:33 +0000 (UTC)
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com
+ (JPN01-OS0-obe.outbound.protection.outlook.com [40.107.113.138])
+ by mx.groups.io with SMTP id smtpd.web12.7492.1643119711293761241
  for <cip-dev@lists.cip-project.org>;
- Mon, 24 Jan 2022 07:37:57 -0800
+ Tue, 25 Jan 2022 06:08:32 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1
- header.b=ECPs+0i4;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227,
- mailfrom: fm-51332-20220124153750c26d14f404b619ace0-ldalnm@rts-flowmailer.siemens.com)
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id
- 20220124153750c26d14f404b619ace0
-        for <cip-dev@lists.cip-project.org>;
-        Mon, 24 Jan 2022 16:37:54 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
- bh=cucWoscdXKH7/E4cWN/sPaDoYaTr1gtduTICQiynOIM=;
- b=ECPs+0i4LeW/4/F4TOr62GvECOqRxBPTixvyhtWWgFrQv7HB2r/4ceKgCPu6Q44gAQi8rB
- r73U47gvRhKXZUJg0RlMxolOIiPh/NHLLWWW3pq/JI/hckQbzMr53mlvB7OCYXVPbSZCgh1a
- 8SY7JlckaTYc2meJN2nU2cB9rTfzA=;
-From: Quirin.Gylstorff@siemens.com
-To: cip-dev@lists.cip-project.org,
-	Jan.Kiszka@siemens.com
-Subject: [cip-dev][isar-cip-core][PATCH] Update ISAR
-Date: Mon, 24 Jan 2022 16:37:48 +0100
-Message-Id: <20220124153748.646550-1-Quirin.Gylstorff@siemens.com>
+ dkim=pass header.i=@renesas.com header.s=selector1 header.b=VmWUbDkj;
+ spf=pass (domain: renesas.com, ip: 40.107.113.138,
+ mailfrom: chris.paterson2@renesas.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dQNpNEZnC0BRgDf0PCfsTltUaMgYUqfFed+KWgXvngRYMu5WhWGlt9vw3bf8a6zmemCRNjibkr6BHrYBRbKP4b9E+pHamdOC5NWw+Es51i86509vtOLNGZPaRslSKofY/mOucJZag+chHyypAzu2tY5RWqL2oPgV3uONNzq8IP/dCyMXdoelWUwQ7ulArWx5CzyLXEfAtgqic4jY3juHRuZ9goV5OKERa7bm2Wiga8iop089CVSRuI5MK9ri2sXCpfKZEQJCN1iNWDaUjqvnes7dZR5/dCG99PcAICiYGIicwq9JxxUPzGRIUPnREIqTsL34eJgEorLxKk8Rx84l5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bebanph6HGPtUtL6X67AjHypbA1qJL7sc991onV+VaQ=;
+ b=a7J7UEUdPvMB8KA4TMQQJLWD6dBgxZKV9pkYNqZ7hjKU/ASRJwOa+3rZdTVmXthH1zCVuNCNwjK8tYTglNFONh/byVhx+E3QDyWZbljbDCK6gOP8YJEdTN3ZA9TNxpHMhaKyuYjQIma34etGjOoCkheW60exW7knWpOy3tHJ/Gcq8xvV9y8yACQgLzssItSfVTFZNtHzbpGAEp7ZMLFqFiVQ33RVxL7NxWWx9zPi3x5RvIgMHIlhvORdugZV+dLCQk+qmfq8Ffl49NV0A+SqtIpOSN7iiylkKQrqRCnqWfb14FNgOB60Yq1qmK6EXk1KwgGKmy+CrbnaFheONe4xhg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bebanph6HGPtUtL6X67AjHypbA1qJL7sc991onV+VaQ=;
+ b=VmWUbDkjA/J4nHPcX8yme6TPYQf1frA7/OfLig655nGJAJkn9qKvb1NDBEk562C5KQg92wITPornT1pFzn6ldxjil+Gq2up9HGeEAUkAzFC9Ec8CDsjlKmzSt4ngVQgG66akresXzDdCeruAZNdU+NCiDEofFay+MBlL4DHN2J8=
+Received: from TYCPR01MB6868.jpnprd01.prod.outlook.com (2603:1096:400:b7::5)
+ by TYCPR01MB8535.jpnprd01.prod.outlook.com (2603:1096:400:13a::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4909.12; Tue, 25 Jan
+ 2022 14:08:27 +0000
+Received: from TYCPR01MB6868.jpnprd01.prod.outlook.com
+ ([fe80::943b:38ac:d793:9ac5]) by TYCPR01MB6868.jpnprd01.prod.outlook.com
+ ([fe80::943b:38ac:d793:9ac5%7]) with mapi id 15.20.4930.015; Tue, 25 Jan 2022
+ 14:08:27 +0000
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
+Subject: Scheduled down time for lab-cip-renesas
+Thread-Topic: Scheduled down time for lab-cip-renesas
+Thread-Index: AdgR9OTm4Y4p/rw8R2GFjY7htxfdxg==
+Date: Tue, 25 Jan 2022 14:08:27 +0000
+Message-ID: 
+ <TYCPR01MB6868D9F5EAEB6BC529547A87B75F9@TYCPR01MB6868.jpnprd01.prod.outlook.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 8a560627-1461-44ab-0834-08d9e00c288d
+x-ms-traffictypediagnostic: TYCPR01MB8535:EE_
+x-microsoft-antispam-prvs: 
+ <TYCPR01MB85352F08AF15C64A11BC0EECB75F9@TYCPR01MB8535.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3826;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ wLCLfuiN7p0AIxlVWehS04pVK71+/Z1U5BYoQooy5GoX+dGgyb2y7kjiWvaDMH877FYE1OQ7zo9pNrrdcv6ByMQ1uI7ctPXDQITsvT3r9hzQw8Xjf6PqBlsMubc+2ub+NCHWPBhv8XSKVKCthgejPRQEWDCRJQLBKekuj4i3lcq7QV5RjgOiX1HqxXjK+bfHOBoXFITVu1Qpn5qxWNj85w0sOYLGcYZ967jbKU9uXK3qb8gDAAa8ncKEZZhskUgeruKLilIC2qZzkvP4llS01/1z639FEkyjmKSQzq7nw2W8MRZ8rcrkRPDpHyOReo6EKdnXdkMFBnBiMlRrpe0h1Tg9xNzhk7e1p50sEYViYxSj7EtXiZ/5LKb2Rk5QCW97mOy+JVkHZ9yjzyiuPbLD9d9/XAcl7PaeJrm/VdpfdvSbROFYtOSugdA/C1wBkZ3tpko4gLXUHTW9zCJ5D4xRMpG3PBZYIhphQ6hgpq7oHOrHSxaa0nVrqdolWTW1PvDQYcqrBYbgNb61Iw+TGgDmAzZ/QW/RvmNUdb9TOhWXfg7Z9xjwqDnRw0kL2AbvuGGyEkgPZtx4av5OQ8zGdi1Jyu411SsSNHwIqNR4qGiyfNixFGwjYkUjEQUF6XyPSeXrBP1Z7PhlSyUDPlq4TRO86gNYmjfnvGavcAHpEzNUf/RkZ1dq8O9hJZNiGgoaAagHlQt3OBX74cV8XftviV2DIw==
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB6868.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(508600001)(26005)(66476007)(33656002)(5660300002)(76116006)(9686003)(52536014)(71200400001)(86362001)(6916009)(2906002)(66946007)(38070700005)(66556008)(64756008)(316002)(6506007)(122000001)(66446008)(7696005)(38100700002)(8676002)(186003)(558084003)(8936002)(55016003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-8859-1?Q?l5gkN8TkmHRk59GA4wHVUyI3iwK6xzSSiXPReWvjq6D5j31P2HdAo2DSjH?=
+ =?iso-8859-1?Q?iCUQK2wqtrTZ3zZJ2rF/4GUJW0M+f1zZdekKv/XhuLd6BTaLs+Hwd0gXlv?=
+ =?iso-8859-1?Q?T4OzP8eHxxYQ7Z55/WJrLHgo1ulRgjDVidKbYDbjGprm1BJYpLH4Iz3FaH?=
+ =?iso-8859-1?Q?ouqCb38QrR3Ohz8kA4ThFnijJFqY2xRZsjZhofTfBilXmI7+EDb0tEvVpc?=
+ =?iso-8859-1?Q?J/QLe3ZBIaIWv/sYLHSg3skE32ITIXFTdhTC/nwob3wchnCOg9VZqps0oF?=
+ =?iso-8859-1?Q?vwUz/eJ22xWjU6g2PoZoWDiLYW99hglddJbXF87F37qsBR+Jt7nbGewNeK?=
+ =?iso-8859-1?Q?+4ogRAGm75G1xD4tTI/nyx20Zhdkv9DGNB67F+MC9VGHrGPxEPJPSVFfcI?=
+ =?iso-8859-1?Q?R9E5b8MlKV1Yw8PDjHKp7QB/DUUzVwtCPQuq3cCQ+RVrKcwEpCSPWP+v0y?=
+ =?iso-8859-1?Q?Rq9p8k7rf6POlv2BawfFa7fv5TaOpgeBtTfYzC+DH0ucbqIpuMCULX9NAW?=
+ =?iso-8859-1?Q?jim7CrG9Yd/yJ1Bc13vnHKtcTUrebSDjbVMJiL9tufac21A2oqflK15odC?=
+ =?iso-8859-1?Q?Y5MeihUlF6+QKZn39avB77E5KNRzUFpR3XH7L6DM9LiPu60J3oE1vMIhYF?=
+ =?iso-8859-1?Q?wsQRD3hzOLS9NffNQr8fnuhcDuadfFvfYGbaElXFKfBWj93k9Q6vEFdf8k?=
+ =?iso-8859-1?Q?PiN1+GkdU6GlV8LbUYSpePjn0/660b/5GXwlNy+H9DGga8kLXrzs//gS2X?=
+ =?iso-8859-1?Q?k5AsFYokEY5lFVLsNQffRmL5SOGSA4svSCfvgwPJvcfklIzI/gRx9I1r1c?=
+ =?iso-8859-1?Q?bAp1YmAGzwoQTfPbOq5Z9FpU3jtUbGL6p0gAXFmKTVT7uk3xB9s/7FAuFC?=
+ =?iso-8859-1?Q?hAA51zid8NdkiigsruVUiSzvYFirVVgPskJ3LN777dTNpH8PJDU7b7wPo4?=
+ =?iso-8859-1?Q?n18SajUxidx+tyISX9Uv/QZsg00yOiY5cwOi+jcDOXJHCMcmarpRryZu0z?=
+ =?iso-8859-1?Q?J8+eJzHcuLYErX6HoxAC6yiauWG0xYf4G5tXGVsdd36uIW1K86fpkkhHrP?=
+ =?iso-8859-1?Q?o/ZxWOoBwsLf/+5jbwGxz/VyVw3fRYeCiy4xE9A5gSwnyeXAMSPgCzkwJ+?=
+ =?iso-8859-1?Q?sRgLfaL+wjLEKHyPCaN1f2bi8XKIdhEy3mIdhCZ1mLg/OCIJIeyKo/wqeR?=
+ =?iso-8859-1?Q?+wYDaaX/vzFoUIR/uCY9gFEBTQI48TnHmtoctHEkAKChG/cXc9hnr5GjvQ?=
+ =?iso-8859-1?Q?eYip+6eiLcRS0dd7t+wLcYLrE2+9dCpWmSEukGhFhKkPySLQb92adWTWay?=
+ =?iso-8859-1?Q?x9Nwzm29luFOcXOsUpnijT5ngDCcMJTpNxO+FC4/59JSJ7eLrVX9t6g/rH?=
+ =?iso-8859-1?Q?Kxry3Bz7rnbvZqxH0qp2mEQNZ03o+zUk3uCKCuTebBWk6wsNxx9AvDGzUt?=
+ =?iso-8859-1?Q?BC0AfVQGq9b3IOKanjzV+tPun7RPhMqrIpHEFQ9vGEz3AByWmjskMPYq5d?=
+ =?iso-8859-1?Q?i+7iDz61J7e44QeCw3z8sQJUW7HQCCx1fkIyVCQlh8IDUW4/FUiBhGlr2A?=
+ =?iso-8859-1?Q?BbUcGmdU4WbmteLmUbH9tuwwFdJ8AgjgBuK1Bm0r7Ivz2ZorWExQm1iPoQ?=
+ =?iso-8859-1?Q?hn0IFu+bwTmZHrlndJjqQ1HPihqx7428BMEl9fCeO8Lua84365ZZydx5Og?=
+ =?iso-8859-1?Q?24lhhEbU8pgqoFZ+4uBMQT/i2N/nouHMgiE+jRd0jwQZuWUaqkUOQQ5I9c?=
+ =?iso-8859-1?Q?jtQw=3D=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-51332:519-21489:flowmailer
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB6868.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 
+ 8a560627-1461-44ab-0834-08d9e00c288d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jan 2022 14:08:27.3415
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 
+ b0Hx26sdA+htNmvbLTcOETkennqFiG2v3uq6dla+NDOPjPn8vcIWY9WIiciHhaq+Y0xL0CWU34Mrm3S0Be952D8hu/KvpWCLyYY33AgmMLo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB8535
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 24 Jan 2022 15:37:58 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7479
+ <cip-dev@lists.cip-project.org>; Tue, 25 Jan 2022 14:08:33 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7480
 
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+Hello all,
 
-Update ISAR to commit 33b5aa65fa3f28987525799d0731fb4e7050207d and fix warnings.
+Just a quick note to say that lab-cip-renesas will be offline tomorrow (Wed=
+ 26th) for a couple of hours, starting from about 1130 UTC.
 
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
----
- conf/machine/bbb.conf                | 2 +-
- conf/machine/hihope-rzg2m.conf       | 2 +-
- conf/machine/iwg20m.conf             | 2 +-
- conf/machine/qemu-amd64.conf         | 2 +-
- conf/machine/qemu-arm.conf           | 2 +-
- conf/machine/qemu-arm64.conf         | 2 +-
- conf/machine/simatic-ipc227e.conf    | 2 +-
- kas-cip.yml                          | 2 +-
- kas/opt/ebg-secure-boot-snakeoil.yml | 2 +-
- kas/opt/efibootguard.yml             | 2 +-
- kas/opt/swupdate.yml                 | 2 +-
- kas/opt/targz-img.yml                | 2 +-
- kas/opt/wic-targz-img.yml            | 2 +-
- 13 files changed, 13 insertions(+), 13 deletions(-)
-
-diff --git a/conf/machine/bbb.conf b/conf/machine/bbb.conf
-index 6d8facb..81e624e 100644
---- a/conf/machine/bbb.conf
-+++ b/conf/machine/bbb.conf
-@@ -8,7 +8,7 @@
- 
- DISTRO_ARCH = "armhf"
- 
--IMAGE_TYPE ?= "wic-img"
-+IMAGE_FSTYPES ?= "wic-img"
- IMAGER_INSTALL += "u-boot-omap"
- 
- IMAGE_INSTALL += "u-boot-script"
-diff --git a/conf/machine/hihope-rzg2m.conf b/conf/machine/hihope-rzg2m.conf
-index 18a86d4..bc80ddd 100644
---- a/conf/machine/hihope-rzg2m.conf
-+++ b/conf/machine/hihope-rzg2m.conf
-@@ -11,7 +11,7 @@
- 
- DISTRO_ARCH = "arm64"
- 
--IMAGE_TYPE ?= "wic-img"
-+IMAGE_FSTYPES ?= "wic-img"
- 
- KERNEL_DEFCONFIG = "cip-kernel-config/${KERNEL_DEFCONFIG_VERSION}/arm64/renesas_defconfig"
- USE_CIP_KERNEL_CONFIG = "1"
-diff --git a/conf/machine/iwg20m.conf b/conf/machine/iwg20m.conf
-index 91bfd94..a26f7fe 100644
---- a/conf/machine/iwg20m.conf
-+++ b/conf/machine/iwg20m.conf
-@@ -8,7 +8,7 @@
- DISTRO_ARCH = "armhf"
- 
- # see wic/iwg20m.wks
--IMAGE_TYPE ?= "wic-img"
-+IMAGE_FSTYPES ?= "wic-img"
- 
- # sets serial login getty
- MACHINE_SERIAL = "ttySC0"
-diff --git a/conf/machine/qemu-amd64.conf b/conf/machine/qemu-amd64.conf
-index d9605ca..a60f818 100644
---- a/conf/machine/qemu-amd64.conf
-+++ b/conf/machine/qemu-amd64.conf
-@@ -8,6 +8,6 @@
- 
- DISTRO_ARCH = "amd64"
- 
--IMAGE_TYPE ?= "ext4-img"
-+IMAGE_FSTYPES ?= "ext4-img"
- USE_CIP_KERNEL_CONFIG = "1"
- KERNEL_DEFCONFIG = "cip-kernel-config/${KERNEL_DEFCONFIG_VERSION}/x86/cip_qemu_defconfig"
-diff --git a/conf/machine/qemu-arm.conf b/conf/machine/qemu-arm.conf
-index e439d49..aca6d7d 100644
---- a/conf/machine/qemu-arm.conf
-+++ b/conf/machine/qemu-arm.conf
-@@ -9,6 +9,6 @@
- 
- DISTRO_ARCH = "armhf"
- 
--IMAGE_TYPE ?= "ext4-img"
-+IMAGE_FSTYPES ?= "ext4-img"
- USE_CIP_KERNEL_CONFIG = "1"
- KERNEL_DEFCONFIG ?= "cip-kernel-config/${KERNEL_DEFCONFIG_VERSION}/arm/qemu_arm_defconfig"
-diff --git a/conf/machine/qemu-arm64.conf b/conf/machine/qemu-arm64.conf
-index f2a301b..0d21262 100644
---- a/conf/machine/qemu-arm64.conf
-+++ b/conf/machine/qemu-arm64.conf
-@@ -8,6 +8,6 @@
- 
- DISTRO_ARCH = "arm64"
- 
--IMAGE_TYPE ?= "ext4-img"
-+IMAGE_FSTYPES ?= "ext4-img"
- USE_CIP_KERNEL_CONFIG = "1"
- KERNEL_DEFCONFIG ?= "cip-kernel-config/${KERNEL_DEFCONFIG_VERSION}/arm64/qemu_arm64_defconfig"
-diff --git a/conf/machine/simatic-ipc227e.conf b/conf/machine/simatic-ipc227e.conf
-index 552a0b0..50d1f8a 100644
---- a/conf/machine/simatic-ipc227e.conf
-+++ b/conf/machine/simatic-ipc227e.conf
-@@ -8,7 +8,7 @@
- 
- DISTRO_ARCH = "amd64"
- 
--IMAGE_TYPE ?= "wic-img"
-+IMAGE_FSTYPES ?= "wic-img"
- IMAGER_INSTALL += "${GRUB_BOOTLOADER_INSTALL}"
- USE_CIP_KERNEL_CONFIG = "1"
- KERNEL_DEFCONFIG = "cip-kernel-config/${KERNEL_DEFCONFIG_VERSION}/x86/siemens_ipc227e_defconfig"
-diff --git a/kas-cip.yml b/kas-cip.yml
-index 8226954..9c8ac9f 100644
---- a/kas-cip.yml
-+++ b/kas-cip.yml
-@@ -22,7 +22,7 @@ repos:
- 
-   isar:
-     url: https://github.com/ilbers/isar.git
--    refspec: ceb7e21154fc4862f704bb5c7739e87a26db6eb3
-+    refspec: 33b5aa65fa3f28987525799d0731fb4e7050207d
-     layers:
-       meta:
-     patches:
-diff --git a/kas/opt/ebg-secure-boot-snakeoil.yml b/kas/opt/ebg-secure-boot-snakeoil.yml
-index 5aa5eff..1f4d668 100644
---- a/kas/opt/ebg-secure-boot-snakeoil.yml
-+++ b/kas/opt/ebg-secure-boot-snakeoil.yml
-@@ -24,7 +24,7 @@ local_conf_header:
- 
-   verity-img: |
-     SECURE_IMAGE_FSTYPE = "squashfs"
--    IMAGE_TYPE = "secure-swupdate-img"
-+    IMAGE_FSTYPES = "secure-swupdate-img"
-     WKS_FILE = "${MACHINE}-efibootguard-secureboot.wks.in"
- 
-   secure-boot: |
-diff --git a/kas/opt/efibootguard.yml b/kas/opt/efibootguard.yml
-index 580c315..75d4ab1 100644
---- a/kas/opt/efibootguard.yml
-+++ b/kas/opt/efibootguard.yml
-@@ -23,6 +23,6 @@ local_conf_header:
-   efibootguard-wic: |
-     WDOG_TIMEOUT ?= "60"
-     WICVARS += "WDOG_TIMEOUT KERNEL_IMAGE INITRD_IMAGE"
--    IMAGE_TYPE ?= "wic-img"
-+    IMAGE_FSTYPES ?= "wic-img"
-     WKS_FILE ?= "${MACHINE}-${SWUPDATE_BOOTLOADER}.wks"
- 
-diff --git a/kas/opt/swupdate.yml b/kas/opt/swupdate.yml
-index 974eacb..a8b903f 100644
---- a/kas/opt/swupdate.yml
-+++ b/kas/opt/swupdate.yml
-@@ -20,5 +20,5 @@ local_conf_header:
-     IMAGE_INSTALL_append = " swupdate-handler-roundrobin"
- 
-   wic-swu: |
--    IMAGE_TYPE = "wic-swu-img"
-+    IMAGE_FSTYPES = "wic-swu-img"
-     WKS_FILE ?= "${MACHINE}-${SWUPDATE_BOOTLOADER}.wks"
-diff --git a/kas/opt/targz-img.yml b/kas/opt/targz-img.yml
-index bdb5231..d555a8a 100644
---- a/kas/opt/targz-img.yml
-+++ b/kas/opt/targz-img.yml
-@@ -14,4 +14,4 @@ header:
- 
- local_conf_header:
-   image-type: |
--    IMAGE_TYPE = "targz-img"
-+    IMAGE_FSTYPES = "targz-img"
-diff --git a/kas/opt/wic-targz-img.yml b/kas/opt/wic-targz-img.yml
-index 7e9081f..2e83760 100644
---- a/kas/opt/wic-targz-img.yml
-+++ b/kas/opt/wic-targz-img.yml
-@@ -17,4 +17,4 @@ header:
- 
- local_conf_header:
-   image-type: |
--    IMAGE_TYPE = "wic-targz-img"
-+    IMAGE_FSTYPES = "wic-targz-img"
--- 
-2.34.1
+Kind regards, Chris
 
 
