@@ -2,235 +2,395 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4320EC433EF
-	for <webhook@archiver.kernel.org>; Thu, 27 Jan 2022 15:55:46 +0000 (UTC)
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com
- (EUR05-DB8-obe.outbound.protection.outlook.com [40.107.20.79])
- by mx.groups.io with SMTP id smtpd.web12.120.1643298944811486392
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EE02C433F5
+	for <webhook@archiver.kernel.org>; Thu, 27 Jan 2022 15:58:02 +0000 (UTC)
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com
+ (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.81])
+ by mx.groups.io with SMTP id smtpd.web10.149.1643299080484795580
  for <cip-dev@lists.cip-project.org>;
- Thu, 27 Jan 2022 07:55:45 -0800
+ Thu, 27 Jan 2022 07:58:01 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=Xf82uQ9E;
- spf=pass (domain: siemens.com, ip: 40.107.20.79,
+ dkim=fail reason="body hash did not verify" header.i=@siemens.com
+ header.s=selector2 header.b=Pau9ykxv;
+ spf=pass (domain: siemens.com, ip: 40.107.21.81,
  mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oCO64KiKJjZoh5NqMl1r+BQduDB1JAdShqJKTZzA0ONMrdUsW10wpks4wE6oKZn0Iw/RWPmCT1Z9wvLXwJFZm2DFhvpmqHheZfAO5GQzx09Go72NH+MFqjSpkGpTawDXY/mEW4riZr9mCRN73Px57Gx4c9aKODPvbjztztrrXmy8RNEkuTkEjUSRodMv3WcpDx34N7lXXGPLoHDqqZglQQzOtlaFWk1D1lqEnxZbXesHUVdvLnnGsdzTyP7bT1yLsW7we/O87fZHN9yWUTiWGToS9W6YeSs7h1HxX0y/3MOIaGRMEBAoVq+8XHDvdDLm1iuBqHRgmqMqwqIcIhdcyA==
+ b=IGGrFqPIagWJOOxgpqAwjK+S0CEC2NvK/RWQ+s1XHKXpp8cOJH1nwS9ffgBwneYl3w6rpfINvdZ1wiT1zea5K4u0BegpKFnr+ZTuwNtrkHNk/ewKdKcckT/qiNRhvB5aDYOjnugW8GFjPEqK+FrXmoMmlR/iJVSXKho8nOpNjf0SNtTHb+Lru/UcjOqhMY3wF485B2Ixh2lx/o8e1KQ/g17JsqcBHolxFw8QbCdVUsFgASyHx4Xlos8cLQCl8KDqPElalG69Rcjw0ilJa1Pju4vMaMqT3WLCwEdIhW9PQ2wZpA6YNFyzBqCEU/Y0N8zWI986OzG9qntCf6KtUlHtlQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eBpJHhxmjfyQThG5QnmY10AukQITep1aQeoKPJyXmKg=;
- b=AyuKjDt58LYd5+adE7RZuyd+Ldvq6B8F8z5TfPuGlZbdWnl4SzkFCZZwSKmJPVIty1C3hydGG8pIYDTMzgmDT+KfbRtzqdn8uE5Xq931XP2UH4R1CO1rBF3DxtuIxCQx4CwYPmjzhPgJmk9wpbaillubH435mMvWubyw8k2iwPP13K9ziXd8RiWV/bToKEu+CBGQB1b2Vy0yKf1NT+Dpy69PJzedjF1RaEzE2vajolIsdbLi+haQmrxoS6A0s5Q/oVeccE/sOvNnv3VB6Yq7sOv+aUexJIn/zuSSlIeP8CBDeAtPBA1fqBKraFAIKzYMIjgGQc0KKt12Y0ZPEm+1fg==
+ bh=zSfzBYDr4chgujK7FYmSPqg1/8ZXsDTw7u3oUaGGrNw=;
+ b=mJXKjgv5P+V0hLJVm8fuedLHDTHIzoID42dDMYpSiWwvYaQ7zXG8/j+P9S2tWvXF5ohQuKW/WtRT4m25zAcoB7jxSAsbiBq2MdjI/HcR/KLvFMFN/VetPrImLEPciTvaY5kwocR38ORIsMkGLfssY8ijNkBoYqIWIw0E/779dfpfwDgK7nFhVO2f41rmZuCqqAhO7iWQfnw5c0BjeuiMbql6ztILpXKTZMwMK0zHmKDIViNHIn/qftM12QaoszJUtwwJNGxVvVaFfiHZwIJjlQjAqi/Bky749zYSb8tOCRmc5/uBCxIMUJnNpV+gj94L2wos+u/AB1x28wNnH1Sl+A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.73) smtp.rcpttodomain=toshiba-tsip.com smtp.mailfrom=siemens.com;
+ 194.138.21.71) smtp.rcpttodomain=toshiba-tsip.com smtp.mailfrom=siemens.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=siemens.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eBpJHhxmjfyQThG5QnmY10AukQITep1aQeoKPJyXmKg=;
- b=Xf82uQ9E8UimFh8nxb4QPjcVh2zugUyjdTr4wdvvyNqZ9N1NP69rDu2rWjYK/VhE+dyJf1zOBq26QKYmc6FDzTTteLb4XrEbLhNFdx/HOjNDoRtWEQi42HwR+s64/xkUtoVmXh+JfMiwlbH4XgjoiCL47TnqdTTfZ/2hQ/TEL/SyHN6D9YzKPgOTxIVVjBdI4R4YSkWXMRyE0Ew8MJKFgo2o1+rh1++Y1ZbiP4z/1yP0bi6Ir+eD8fBqiuFkDxEy0YgXeFAwfwOLwcwCENYTVldBZ3cAHhHGZCNk/u2EsJ6lpYb3N5YVWqB7SnTT+WhrO0onwFIB+KQwzsHNk129sg==
-Received: from DB6PR07CA0163.eurprd07.prod.outlook.com (2603:10a6:6:43::17) by
- VE1PR10MB3917.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:162::23) with
+ bh=zSfzBYDr4chgujK7FYmSPqg1/8ZXsDTw7u3oUaGGrNw=;
+ b=Pau9ykxvdolnalDeAmwkrsyN5gvVMezq/wjaUlgOVP6SkpNrzAgV5lBYBO8fwURPjfTK4oB/dC5sRZsCy5TulqjOPAB7sSPZ2EkoeIrmj9nqWxIwH20DraCILX7y9RVHG/yqo0ebGsCc2U1W97QFSX2iic8wGJR1cElUUGv6DiswD3BIFK3Yjx2ojNskozWusYxOmRjt+CQpT6PNBffCfprQpan92wphIbwgcdkNEbZO9PxYe3ixIrRO5JC3Qq/5LLAwONPvQ/b69qLL2lj0PkRZyP736WgRdsuaz/lc2Toe3VonRN2zdBpH6ftgSC2uDT4DVi4edpS3DppG+LDRXA==
+Received: from DU2PR04CA0042.eurprd04.prod.outlook.com (2603:10a6:10:234::17)
+ by PAXPR10MB5207.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:283::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4930.15; Thu, 27 Jan
- 2022 15:55:42 +0000
-Received: from DB5EUR01FT054.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:6:43:cafe::36) by DB6PR07CA0163.outlook.office365.com
- (2603:10a6:6:43::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4951.5 via Frontend
- Transport; Thu, 27 Jan 2022 15:55:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.73)
+ 2022 15:57:57 +0000
+Received: from DB5EUR01FT040.eop-EUR01.prod.protection.outlook.com
+ (2603:10a6:10:234:cafe::29) by DU2PR04CA0042.outlook.office365.com
+ (2603:10a6:10:234::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4930.15 via Frontend
+ Transport; Thu, 27 Jan 2022 15:57:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.71)
  smtp.mailfrom=siemens.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=siemens.com;
 Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.73 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.73; helo=hybrid.siemens.com;
-Received: from hybrid.siemens.com (194.138.21.73) by
- DB5EUR01FT054.mail.protection.outlook.com (10.152.5.133) with Microsoft SMTP
+ 194.138.21.71 as permitted sender) receiver=protection.outlook.com;
+ client-ip=194.138.21.71; helo=hybrid.siemens.com;
+Received: from hybrid.siemens.com (194.138.21.71) by
+ DB5EUR01FT040.mail.protection.outlook.com (10.152.5.25) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.4930.15 via Frontend Transport; Thu, 27 Jan 2022 15:55:41 +0000
+ 15.20.4930.15 via Frontend Transport; Thu, 27 Jan 2022 15:57:56 +0000
 Received: from DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) by
- DEMCHDC9SNA.ad011.siemens.net (194.138.21.73) with Microsoft SMTP Server
+ DEMCHDC9SKA.ad011.siemens.net (194.138.21.71) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.18; Thu, 27 Jan 2022 16:55:40 +0100
+ 15.1.2375.18; Thu, 27 Jan 2022 16:57:56 +0100
 Received: from [167.87.73.11] (167.87.73.11) by DEMCHDC8A0A.ad011.siemens.net
  (139.25.226.106) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.17; Thu, 27 Jan
- 2022 16:55:40 +0100
-Message-ID: <52fae1ea-25fc-e692-2b51-e503681d2efb@siemens.com>
-Date: Thu, 27 Jan 2022 16:55:39 +0100
+ 2022 16:57:55 +0100
+Message-ID: <f31866fc-ed51-2ddf-6f25-74d05e410f1a@siemens.com>
+Date: Thu, 27 Jan 2022 16:57:54 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-Subject: Re: [isar-cip-core] swupdate: add recipe to cause kernel panic during
- system boot
+Subject: Re: [isar-cip-core] README.swupdate.md: add readme file with steps to
+ verify swupdate
 Content-Language: en-US
 To: <Shivanand.Kunijadar@toshiba-tsip.com>, <cip-dev@lists.cip-project.org>,
 	<quirin.gylstorff@siemens.com>
 CC: <dinesh.kumar@toshiba-tsip.com>
-References: <20220127142042.6692-1-Shivanand.Kunijadar@toshiba-tsip.com>
+References: <20220127142627.6812-1-Shivanand.Kunijadar@toshiba-tsip.com>
 From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <20220127142042.6692-1-Shivanand.Kunijadar@toshiba-tsip.com>
+In-Reply-To: <20220127142627.6812-1-Shivanand.Kunijadar@toshiba-tsip.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 X-Originating-IP: [167.87.73.11]
 X-ClientProxiedBy: DEMCHDC89YA.ad011.siemens.net (139.25.226.104) To
  DEMCHDC8A0A.ad011.siemens.net (139.25.226.106)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: e13d85a4-b48d-48e6-5ce3-08d9e1ad784b
-X-MS-TrafficTypeDiagnostic: VE1PR10MB3917:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8c19c449-c4ba-4a18-8a68-08d9e1adc8fc
+X-MS-TrafficTypeDiagnostic: PAXPR10MB5207:EE_
 X-Microsoft-Antispam-PRVS: 
-	<VE1PR10MB3917B5EC847799FE5F948A5395219@VE1PR10MB3917.EURPRD10.PROD.OUTLOOK.COM>
-X-MS-Oob-TLC-OOBClassifiers: OLM:5797;
+	<PAXPR10MB5207DF71441F3F889FE922D695219@PAXPR10MB5207.EURPRD10.PROD.OUTLOOK.COM>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	Lu17xxLEBXgz38tOc1RSWPll2Ki5MhCdh0XWKYkQ+H1sTkPf3mdwR5nS7c7nn9Vs6ShIVQg0+8vNWAyR0erSdrbaMF/U7BgytaMqjzFHspzjReQtFKP8tbTTAyzjA44TNKZ+Qjyr+bHJjv0PiWyzeyVf3dXdhYSSPFLAm+zM3WQnFA3GYctoHF0YgAVyMDBXPccGsVdfIhKZGSmrQAmv+GI2MMyAgaN2a4en6eFStZKkeW4emtDoezrrMFR9qymR2GvrKHa+uS1SEMWb+OhRhMAJnyBxOmwh+XMWpk7U/WWUUs3hfVt+WdOlFmoRm1nrc9Qx4KWHpXljlCJ3MheQo4IMUG2TBLMmFtFM3pDo6Nz5OVS+7SWCJglRUND1sMSOaLVBAmh3OyaamjdwbaM9FYBQaa10vYaP5DXCiAiysxnTWVd0zkX+gawWM/oZ9n89mWPoIXnMALjqV9NUunEA+ElyC9yoIOycK04+gd49Zi6BcaEvquT0NKKpy34yi3wztrLhRBAYMzClOEIhKPGk8qKXJvnd7T2OCF47B1GK8I5h+asRW8zVvv4mtiWVtY8La4gVSM1FIdcwnF+8AidtO9LbcJH3rvRYThTV3XXPNfLknIVn3IS86ps203kWriu0WF8uURT05+pivUMbQGHMgCBBfBHx5ai0YCIJph2mwawrE9QApgSoHRs0af8JDKNxXSvvOyiSvyzTDAcP/TTWWGOQVrxKKpTLPtkhD/5UboE7hRQ6azeKgTIbXc/fszIwcbWQAVM4816tJ31O2FZOsQ==
+	NgGPMHSujyUXinoQQ69MwJz0zOJ6VPzhiyljFTvsklHbokVD/r0PlCC9QanZYO/E6KYLXot8XI5JZEtQSfXfMuF54iW+tm3z1a7217ZfjIFpUkF2UFXokqah+9BpU4KADQBL/iFQ/crl3W5rH/3traaKi1E/vWwGyopRFA/S7RUlvkzbSKtxl43e7cnLLJH0iWUzMEsMjMWgMLKc+SF/9ObNNc0USb8XePcZakcXKb3TuFhR45c6AUNFfgT5GdfB0Su1BnGime7aWhe/9wwhq+gCNy5VPKHoqWRFDPd12Zlx4SYlp2gZnXvxvgkVY79+kp7Em/ouYEJTaLlgmQ+a+GH64zgG1uZe8k3pIsUWVPMTjfCzTAowwSchcjA4nGCMuf2/C/hMeUTOez6wBNzO0nb6yeaPg+QF6iAi5M0gQF9e81lDIqPb58VEoALgxxsJTzf25ewKE9dpILgDS8NdTQPqwPHNYFLAxOy3KaBub82kB6bqPNeuaxYc6J2P8pd++cnvUL59WegnflePjLhMKojKJi+FS7Hr25ELIsWQB2MXxUro3AgWlrwt52kER+cXYZfaaU6uirdioJMfK7MiaGiu8k0emneS8wVMgBlDO81t1syJtNvFQt2MRdo2GhLlXuTAandz3kaWpeIJkM7rPKjBSD1L5Bb5CnsjrvaSzHUrqRgc4zu7J3CzFlr9gg4fdjuDOFYOwwkkfcblGQ4NlaY86ETKW4JlMraxIUNNPtQEky7eZuUyTl78xkQAhVEHeiVenEpHB4eVJ4670n6G0f7sXeUWYAjGCQYbgSV46KsZTT3rgF+h5km7J7yN6uJpYXPiOBgSWpBmK/8m15vlAfBEw9/bKY1Peqc0YFUbU8JwxvDgqAowO0tazLbRplxpOYxTePfXAz8ygPaOUsVbIw==
 X-Forefront-Antispam-Report: 
-	CIP:194.138.21.73;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(46966006)(40470700004)(6636002)(6706004)(8676002)(36756003)(110136005)(31696002)(5660300002)(8936002)(70586007)(70206006)(82310400004)(81166007)(4326008)(16576012)(316002)(82960400001)(356005)(956004)(86362001)(31686004)(36860700001)(336012)(16526019)(508600001)(2616005)(26005)(186003)(44832011)(47076005)(53546011)(2906002)(83380400001)(40460700003)(3940600001)(36900700001)(43740500002)(20210929001);DIR:OUT;SFP:1101;
+	CIP:194.138.21.71;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(40470700004)(46966006)(966005)(70206006)(86362001)(5660300002)(15650500001)(82960400001)(8936002)(70586007)(16576012)(110136005)(508600001)(31686004)(6636002)(6706004)(316002)(4326008)(31696002)(44832011)(2906002)(2616005)(336012)(956004)(8676002)(53546011)(40460700003)(186003)(47076005)(16526019)(36756003)(36860700001)(26005)(83380400001)(81166007)(356005)(82310400004)(3940600001)(43740500002)(36900700001)(20210929001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jan 2022 15:55:41.2651
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jan 2022 15:57:56.6440
  (UTC)
 X-MS-Exchange-CrossTenant-Network-Message-Id: 
- e13d85a4-b48d-48e6-5ce3-08d9e1ad784b
+ 8c19c449-c4ba-4a18-8a68-08d9e1adc8fc
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
- TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.73];Helo=[hybrid.siemens.com]
+ TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.71];Helo=[hybrid.siemens.com]
 X-MS-Exchange-CrossTenant-AuthSource: 
-	DB5EUR01FT054.eop-EUR01.prod.protection.outlook.com
+	DB5EUR01FT040.eop-EUR01.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR10MB3917
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR10MB5207
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 27 Jan 2022 15:55:46 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7506
+ <cip-dev@lists.cip-project.org>; Thu, 27 Jan 2022 15:58:02 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7507
 
-On 27.01.22 15:20, Shivanand.Kunijadar@toshiba-tsip.com wrote:
+On 27.01.22 15:26, Shivanand.Kunijadar@toshiba-tsip.com wrote:
 > From: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
-> 
+>=20
 > Cc: dinesh.kumar@toshiba-tsip.com,
 >      kazuhiro3.hayashi@toshiba.co.jp,
 >      akihiro27.suzuki@toshiba.co.jp
-> 
-> This recipe adds necessary scripts to cause kernel panic during system
-> boot, these scripts are required to test swupdate rollback feature.
+>=20
+> Added readme file with necessary steps to verify swupdate feature along
+> with swupdate rollback.
+>=20
 
-Valuable piece in the puzzle! I would just use a different name than 
-"swupdate-rollback". Effectively, this creates a broken boot, not only 
-for swupdate, no? Then call it accordingly.
-
-The fact that a broken boot will trigger a rollback under swupdate is a 
-consequence, but not directly related to these changes.
-
-> 
-> Signed-off-by: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
-> ---
->   kas/opt/swupdate-rollback.yml                 | 19 +++++++++++++
->   .../files/sysrq-panic.service                 | 10 +++++++
->   .../swupdate-rollback/files/sysrq-panic.sh    |  4 +++
->   .../swupdate-rollback/swupdate-rollback.bb    | 27 +++++++++++++++++++
->   4 files changed, 60 insertions(+)
->   create mode 100644 kas/opt/swupdate-rollback.yml
->   create mode 100644 recipes-core/swupdate-rollback/files/sysrq-panic.service
->   create mode 100644 recipes-core/swupdate-rollback/files/sysrq-panic.sh
->   create mode 100644 recipes-core/swupdate-rollback/swupdate-rollback.bb
-> 
-> diff --git a/kas/opt/swupdate-rollback.yml b/kas/opt/swupdate-rollback.yml
-> new file mode 100644
-> index 0000000..a3b0e28
-> --- /dev/null
-> +++ b/kas/opt/swupdate-rollback.yml
-> @@ -0,0 +1,19 @@
-> +#
-> +# CIP Core, generic profile
-> +#
-> +# Copyright (c) Toshiba Corporation, 2022
-> +#
-> +# Authors:
-> +#  Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
-> +#
-> +# SPDX-License-Identifier: MIT
-> +#
-> +# This kas file adds necessary scripts to cause kernel panic during system boot
-> +# which are required to test swupdate rollback feature
-> +
-> +header:
-> +  version: 10
-> +
-> +local_conf_header:
-> +  swupdate: |
-> +    IMAGE_INSTALL_append = " swupdate-rollback"
-> diff --git a/recipes-core/swupdate-rollback/files/sysrq-panic.service b/recipes-core/swupdate-rollback/files/sysrq-panic.service
-> new file mode 100644
-> index 0000000..ae868f9
-> --- /dev/null
-> +++ b/recipes-core/swupdate-rollback/files/sysrq-panic.service
-> @@ -0,0 +1,10 @@
-> +[Unit]
-> +Description=sysrq panic
-> +
-> +[Service]
-> +Type=oneshot
-> +ExecStart=/root/sysrq-panic.sh
-> +
-> +[Install]
-> +WantedBy=default.target
-> +
-> diff --git a/recipes-core/swupdate-rollback/files/sysrq-panic.sh b/recipes-core/swupdate-rollback/files/sysrq-panic.sh
-> new file mode 100644
-> index 0000000..a3c1bb7
-> --- /dev/null
-> +++ b/recipes-core/swupdate-rollback/files/sysrq-panic.sh
-> @@ -0,0 +1,4 @@
-> +#!/bin/sh
-> +
-> +echo c > /proc/sysrq-trigger
-
-Why not doing that directly in the service file (/bin/sh -c "...")?
+Logically, this depends on "swupdate: add recipe to cause kernel panic=20
+during system boot", thus "Patch 2/2", right?
 
 Jan
 
-> +
-> diff --git a/recipes-core/swupdate-rollback/swupdate-rollback.bb b/recipes-core/swupdate-rollback/swupdate-rollback.bb
+> Signed-off-by: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
+> ---
+>   doc/README.swupdate.md | 208 +++++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 208 insertions(+)
+>   create mode 100644 doc/README.swupdate.md
+>=20
+> diff --git a/doc/README.swupdate.md b/doc/README.swupdate.md
 > new file mode 100644
-> index 0000000..5c93bb5
+> index 0000000..41b5f87
 > --- /dev/null
-> +++ b/recipes-core/swupdate-rollback/swupdate-rollback.bb
-> @@ -0,0 +1,27 @@
-> +#
-> +# CIP Core, generic profile
-> +#
-> +# Copyright (c) Toshiba Corporation, 2022
-> +#
-> +# Authors:
-> +#  Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
-> +#
-> +# SPDX-License-Identifier: MIT
-> +#
+> +++ b/doc/README.swupdate.md
+> @@ -0,0 +1,208 @@
 > +
-> +inherit dpkg-raw
+> +Clone the isar-cip-core repository
+> +```
+> +host$ git clone https://gitlab.com/cip-project/cip-core/isar-cip-core.gi=
+t
+> +```
 > +
-> +DESCRIPTION = "Script and service files to cause kernel panic"
+> +Install `kas-container` from the [kas project](https://github.com/siemen=
+s/kas):
 > +
-> +SRC_URI = " \
-> +    file://sysrq-panic.sh \
-> +    file://sysrq-panic.service"
+> +```
+> +host$ wget https://raw.githubusercontent.com/siemens/kas/2.6.2/kas-conta=
+iner
+> +host$ chmod a+x kas-container
+> +```
 > +
-> +do_install() {
-> +	install -v -d ${D}/root
-> +	install -v -m 0755 ${WORKDIR}/sysrq-panic.sh ${D}/root/
-> +	install -v -d ${D}/lib/systemd/system
-> +	install -v -m 0644 ${WORKDIR}/sysrq-panic.service ${D}/lib/systemd/system/
-> +	install -v -d ${D}/etc/systemd/system/default.target.wants
-> +	ln -s /lib/systemd/system/sysrq-panic.service ${D}/etc/systemd/system/default.target.wants/
-> +}
+> +Build the image for swupdate
+> +
+> +```
+> +host$ ./kas-container --isar build kas-cip.yml:kas/board/qemu-amd64.yml:=
+kas/opt/ebg-swu.yml
+> +```
+> +- save the generated swu build/tmp/deploy/images/qemu-amd64/cip-core-ima=
+ge-cip-core-buster-qemu-amd64.swu in a separate folder (ex: tmp)
+> +- modify the image for example add a new version to the image by adding =
+PV=3D2.0.0 to cip-core-image.bb
+> +- rebuild the image using above command and start the new target
+> +```
+> +host$ SWUPDATE_BOOT=3Dy ./start-qemu.sh amd64
+> +```
+> +
+> +Copy `cip-core-image-cip-core-buster-qemu-amd64.swu` file from `tmp` fol=
+der to the running system
+> +
+> +```
+> +root@demo:~# scp <host-user>@<host-ip>:<path-to-swu-file>/tmp/cip-core-i=
+mage-cip-core-buster-qemu-amd64.swu .
+> +```
+> +
+> +Check which partition is booted, e.g. with lsblk:
+> +
+> +```
+> +root@demo:~# lsblk
+> +NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+> +sda      8:0    0    2G  0 disk
+> +=E2=94=9C=E2=94=80sda1   8:1    0 16.4M  0 part
+> +=E2=94=9C=E2=94=80sda2   8:2    0   32M  0 part
+> +=E2=94=9C=E2=94=80sda3   8:3    0   32M  0 part
+> +=E2=94=9C=E2=94=80sda4   8:4    0 1000M  0 part /
+> +=E2=94=94=E2=94=80sda5   8:5    0 1000M  0 part
+> +```
+> +
+> +Apply swupdate and reboot
+> +```
+> +root@demo:~# swupdate -i cip-core-image-cip-core-buster-qemu-amd64.swu
+> +root@demo:~# reboot
+> +```
+> +Check which partition is booted, e.g. with lsblk and the rootfs should h=
+ave changed
+> +```
+> +root@demo:~# lsblk
+> +NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+> +sda      8:0    0    2G  0 disk
+> +=E2=94=9C=E2=94=80sda1   8:1    0 16.4M  0 part
+> +=E2=94=9C=E2=94=80sda2   8:2    0   32M  0 part
+> +=E2=94=9C=E2=94=80sda3   8:3    0   32M  0 part
+> +=E2=94=9C=E2=94=80sda4   8:4    0 1000M  0 part
+> +=E2=94=94=E2=94=80sda5   8:5    0 1000M  0 part /
+> +```
+> +
+> +Check bootloader ustate after swupdate
+> +```
+> +root@demo:~# bg_printenv
+> +----------------------------
+> +Config Partition #0 Values:
+> +in_progress:      no
+> +revision:         2
+> +kernel:           C:BOOT0:cip-core-image-cip-core-buster-qemu-amd64-vmli=
+nuz
+> +kernelargs:       console=3Dtty0 console=3DttyS0,115200 rootwait earlypr=
+intk root=3DPARTUUID=3Dfedcba98-7654-3210-cafe-5e0710000001 rw initrd=3Dcip=
+-core-image-cip-core-buster-qemu-amd64-initrd.img
+> +watchdog timeout: 60 seconds
+> +ustate:           0 (OK)
+> +
+> +user variables:
+> +
+> +----------------------------
+> + Config Partition #1 Values:
+> +in_progress:      no
+> +revision:         3
+> +kernel:           C:BOOT1:vmlinuz
+> +kernelargs:       root=3DPARTUUID=3Dfedcba98-7654-3210-cafe-5e0710000002=
+ console=3Dtty0 console=3DttyS0,115200 rootwait earlyprintk rw initrd=3Dcip=
+-core-image-cip-core-buster-qemu-amd64-initrd.img
+> +watchdog timeout: 60 seconds
+> +ustate:           2 (TESTING)
+> +```
+> +
+> +if Partition #1 usate is 2 (TESTING) then execute below command to confi=
+rm swupdate and the command will set ustate to "OK"
+> +```
+> +root@demo:~# bg_setenv -c
+> +```
+> +
+> +# swupdate rollback example
+> +
+> +Build the image for swupdate with service which causes kernel panic duri=
+ng system boot using below command.
+> +
+> +```
+> +host$ ./kas-container --isar build kas-cip.yml:kas/board/qemu-amd64.yml:=
+kas/opt/ebg-swu.yml:kas/opt/swupdate-rollback.yml
+> +```
+> +- save the generated swu build/tmp/deploy/images/qemu-amd64/cip-core-ima=
+ge-cip-core-buster-qemu-amd64.swu in a separate folder (ex: tmp)
+> +- build the image again without `swupdate-rollback.yml` recipe using bel=
+ow command
+> +```
+> +host$ ./kas-container --isar build kas-cip.yml:kas/board/qemu-amd64.yml:=
+kas/opt/ebg-swu.yml
+> +```
+> +
+> +Start the target on QEMU
+> +```
+> +host$ SWUPDATE_BOOT=3Dy ./start-qemu.sh amd64
+> +```
+> +
+> +Copy `cip-core-image-cip-core-buster-qemu-amd64.swu` file from `tmp` fol=
+der to the running system
+> +
+> +```
+> +root@demo:~# scp <host-user>@<host-ip>:<path-to-swu-file>/tmp/cip-core-i=
+mage-cip-core-buster-qemu-amd64.swu .
+> +```
+> +
+> +Check which partition is booted, e.g. with lsblk:
+> +
+> +```
+> +root@demo:~# lsblk
+> +NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+> +sda      8:0    0    2G  0 disk
+> +=E2=94=9C=E2=94=80sda1   8:1    0 16.4M  0 part
+> +=E2=94=9C=E2=94=80sda2   8:2    0   32M  0 part
+> +=E2=94=9C=E2=94=80sda3   8:3    0   32M  0 part
+> +=E2=94=9C=E2=94=80sda4   8:4    0 1000M  0 part /
+> +=E2=94=94=E2=94=80sda5   8:5    0 1000M  0 part
+> +```
+> +
+> +Check bootloader ustate before swupdate and should be as below
+> +```
+> +root@demo:~# bg_printenv
+> +----------------------------
+> +Config Partition #0 Values:
+> +in_progress:      no
+> +revision:         2
+> +kernel:           C:BOOT0:cip-core-image-cip-core-buster-qemu-amd64-vmli=
+nuz
+> +kernelargs:       console=3Dtty0 console=3DttyS0,115200 rootwait earlypr=
+intk root=3DPARTUUID=3Dfedcba98-7654-3210-cafe-5e0710000001 rw initrd=3Dcip=
+-core-image-cip-core-buster-qemu-amd64-initrd.img
+> +watchdog timeout: 60 seconds
+> +ustate:           0 (OK)
+> +
+> +user variables:
+> +----------------------------
+> +Config Partition #1 Values:
+> +in_progress:      no
+> +revision:         1
+> +kernel:           C:BOOT1:cip-core-image-cip-core-buster-qemu-amd64-vmli=
+nuz
+> +kernelargs:       console=3Dtty0 console=3DttyS0,115200 rootwait earlypr=
+intk root=3DPARTUUID=3Dfedcba98-7654-3210-cafe-5e0710000002 rw initrd=3Dcip=
+-core-image-cip-core-buster-qemu-amd64-initrd.img
+> +watchdog timeout: 60 seconds
+> +ustate:           0 (OK)
+> +```
+> +
+> +Apply swupdate as below
+> +```
+> +root@demo:~# swupdate -i cip-core-image-cip-core-buster-qemu-amd64.swu
+> +```
+> +
+> +check bootloader ustate after swupdate. if the swupdate is successful th=
+en **revision number** should increase to **3** and status should be change=
+d to **INSTALLED** for Partition #1.
+> +```
+> +root@demo:~# bg_printenv
+> +----------------------------
+> +Config Partition #0 Values:
+> +in_progress:      no
+> +revision:         2
+> +kernel:           C:BOOT0:cip-core-image-cip-core-buster-qemu-amd64-vmli=
+nuz
+> +kernelargs:       console=3Dtty0 console=3DttyS0,115200 rootwait earlypr=
+intk root=3DPARTUUID=3Dfedcba98-7654-3210-cafe-5e0710000001 rw initrd=3Dcip=
+-core-image-cip-core-buster-qemu-amd64-initrd.img
+> +watchdog timeout: 60 seconds
+> +ustate:           0 (OK)
+> +
+> +user variables:
+> +----------------------------
+> +Config Partition #1 Values:
+> +in_progress:      no
+> +revision:         3
+> +kernel:           C:BOOT1:vmlinuz
+> +kernelargs:       root=3DPARTUUID=3Dfedcba98-7654-3210-cafe-5e0710000002=
+ console=3Dtty0 console=3DttyS0,115200 rootwait earlyprintk rw initrd=3Dcip=
+-core-image-cip-core-buster-qemu-amd64-initrd.img
+> +watchdog timeout: 60 seconds
+> +ustate:           1 (INSTALLED)
+> +```
+> +
+> +Execute reboot command
+> +- reboot command should cause kernel panic error.
+> +- watchdog timer should expire and restart the qemu. bootloader should s=
+elect previous partition to boot.
+> +```
+> +root@demo:~# reboot
+> +```
+> +
+> +Once the system is restarted, check the bootloader ustate
+> +- if update is failed then **revision number** should reduce to **0** an=
+d status should change to **FAILED** for Partition #1.
+> +```
+> +root@demo:~# bg_printenv
+> +----------------------------
+> + Config Partition #0 Values:
+> +in_progress:      no
+> +revision:         2
+> +kernel:           C:BOOT0:cip-core-image-cip-core-buster-qemu-amd64-vmli=
+nuz
+> +kernelargs:       console=3Dtty0 console=3DttyS0,115200 rootwait earlypr=
+intk root=3DPARTUUID=3Dfedcba98-7654-3210-cafe-5e0710000001 rw initrd=3Dcip=
+-core-image-cip-corg
+> +watchdog timeout: 60 seconds
+> +ustate:           0 (OK)
+> +
+> +user variables:
+> +----------------------------
+> + Config Partition #1 Values:
+> +in_progress:      no
+> +revision:         0
+> +kernel:           C:BOOT1:vmlinuz
+> +kernelargs:       root=3DPARTUUID=3Dfedcba98-7654-3210-cafe-5e0710000002=
+ console=3Dtty0 console=3DttyS0,115200 rootwait earlyprintk rw initrd=3Dcip=
+-core-image-cip-corg
+> +watchdog timeout: 60 seconds
+> +ustate:           3 (FAILED)
+> +```
 
 
--- 
+--=20
 Siemens AG, Technology
 Competence Center Embedded Linux
 
