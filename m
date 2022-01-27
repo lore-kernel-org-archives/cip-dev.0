@@ -2,395 +2,148 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EE02C433F5
-	for <webhook@archiver.kernel.org>; Thu, 27 Jan 2022 15:58:02 +0000 (UTC)
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com
- (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.81])
- by mx.groups.io with SMTP id smtpd.web10.149.1643299080484795580
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD019C433F5
+	for <webhook@archiver.kernel.org>; Thu, 27 Jan 2022 17:12:59 +0000 (UTC)
+Received: from EUR03-DB5-obe.outbound.protection.outlook.com
+ (EUR03-DB5-obe.outbound.protection.outlook.com [40.107.4.68])
+ by mx.groups.io with SMTP id smtpd.web11.675.1643303578560988612
  for <cip-dev@lists.cip-project.org>;
- Thu, 27 Jan 2022 07:58:01 -0800
+ Thu, 27 Jan 2022 09:12:59 -0800
 Authentication-Results: mx.groups.io;
  dkim=fail reason="body hash did not verify" header.i=@siemens.com
- header.s=selector2 header.b=Pau9ykxv;
- spf=pass (domain: siemens.com, ip: 40.107.21.81,
+ header.s=selector2 header.b=tLHq5Rz7;
+ spf=pass (domain: siemens.com, ip: 40.107.4.68,
  mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IGGrFqPIagWJOOxgpqAwjK+S0CEC2NvK/RWQ+s1XHKXpp8cOJH1nwS9ffgBwneYl3w6rpfINvdZ1wiT1zea5K4u0BegpKFnr+ZTuwNtrkHNk/ewKdKcckT/qiNRhvB5aDYOjnugW8GFjPEqK+FrXmoMmlR/iJVSXKho8nOpNjf0SNtTHb+Lru/UcjOqhMY3wF485B2Ixh2lx/o8e1KQ/g17JsqcBHolxFw8QbCdVUsFgASyHx4Xlos8cLQCl8KDqPElalG69Rcjw0ilJa1Pju4vMaMqT3WLCwEdIhW9PQ2wZpA6YNFyzBqCEU/Y0N8zWI986OzG9qntCf6KtUlHtlQ==
+ b=fl6MvucljXU1Xohk0aX+SvmIA2Vix1CSLz//RHEq2UkxwxkR5bHa3aIBB5w0sKqUQnspBeAsWJWJQouEjn9aTC5i354QX1Dw9YTNl6ditj5JVVLlhc+dlMX3W8LKsDHFdL2gFpnFKoVdidpQlwEmdlGB3l9jQvpnOdzSZwEl/M78SYhS2P+b9mztBgsTEKxZvh+2o5rSLdSHuSC5eYK1YTzCUNOC2dIztHYQ63Xqsg1/FD35szfTupkPBPkUV14nOaOKehhcme4bC0ALOhgQR3N1ENDMIV/9zyB07fIS2KhI2tAdxQk8uzJT9TSCtDHshek6C1jZrQAVyG3YHe2bQg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zSfzBYDr4chgujK7FYmSPqg1/8ZXsDTw7u3oUaGGrNw=;
- b=mJXKjgv5P+V0hLJVm8fuedLHDTHIzoID42dDMYpSiWwvYaQ7zXG8/j+P9S2tWvXF5ohQuKW/WtRT4m25zAcoB7jxSAsbiBq2MdjI/HcR/KLvFMFN/VetPrImLEPciTvaY5kwocR38ORIsMkGLfssY8ijNkBoYqIWIw0E/779dfpfwDgK7nFhVO2f41rmZuCqqAhO7iWQfnw5c0BjeuiMbql6ztILpXKTZMwMK0zHmKDIViNHIn/qftM12QaoszJUtwwJNGxVvVaFfiHZwIJjlQjAqi/Bky749zYSb8tOCRmc5/uBCxIMUJnNpV+gj94L2wos+u/AB1x28wNnH1Sl+A==
+ bh=ya7tBf5o0bA4v9mNzEwjJeFN6ZCxKzTXsuukbP7aXYA=;
+ b=PqW+Kxm91xt5PjEo4GhfnruL4Xw/L/MHZieOdo8BqPq95uEEVdiIthhm6iOyUSfCfjTqgLypuYTCUBqRRyc064Jbso3nop+ceYBOq43v+MsIqZzgxYzyJPYS2W2wnX87eQAo/mXoS3gYJUd8fvA2lU9V7bQpL+quWVeJ30w8kPaihTf2NXlx1FUUBDLvxVC92L36HaZWt+V8cDkRLFAcjAZ7uW6eno5mrCg4/nLxZRcj/1XathWcr7IGWUikbFApTpXeuOKjckKgnltX7Z+3fNBZqm7p6gyR0DsWYJbCDhVC8a9wkCWQw/gTRa6ouF2cnsVsm2tcgdt9i9+qTCyMGA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.71) smtp.rcpttodomain=toshiba-tsip.com smtp.mailfrom=siemens.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=siemens.com;
- dkim=none (message not signed); arc=none
+ 194.138.21.70) smtp.rcpttodomain=lists.cip-project.org
+ smtp.mailfrom=siemens.com; dmarc=pass (p=none sp=none pct=100) action=none
+ header.from=siemens.com; dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zSfzBYDr4chgujK7FYmSPqg1/8ZXsDTw7u3oUaGGrNw=;
- b=Pau9ykxvdolnalDeAmwkrsyN5gvVMezq/wjaUlgOVP6SkpNrzAgV5lBYBO8fwURPjfTK4oB/dC5sRZsCy5TulqjOPAB7sSPZ2EkoeIrmj9nqWxIwH20DraCILX7y9RVHG/yqo0ebGsCc2U1W97QFSX2iic8wGJR1cElUUGv6DiswD3BIFK3Yjx2ojNskozWusYxOmRjt+CQpT6PNBffCfprQpan92wphIbwgcdkNEbZO9PxYe3ixIrRO5JC3Qq/5LLAwONPvQ/b69qLL2lj0PkRZyP736WgRdsuaz/lc2Toe3VonRN2zdBpH6ftgSC2uDT4DVi4edpS3DppG+LDRXA==
-Received: from DU2PR04CA0042.eurprd04.prod.outlook.com (2603:10a6:10:234::17)
- by PAXPR10MB5207.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:283::17) with
+ bh=ya7tBf5o0bA4v9mNzEwjJeFN6ZCxKzTXsuukbP7aXYA=;
+ b=tLHq5Rz7kUYIDq4EfH3JVGmkUi9xnVaaB3xFKsGW8nt//29l7aEHoag0d908W0hXtcZest+OVS+kmN6UWXuB0+4AzMqIpjuINgSNanPXj0trehTKQIThA8L2oan30yWJxAvTiJretpiuPLJGSNkOu5O5N7CYGV4wyUohttYnG2gdQDOcZUvWceb2f9Go37HjJPFxebHdqwAsp/2HuAZaH+IiQ/SHTQKkcrMgks/ZmXlVgG1xTo1bxTsovl5X3t8mC0ciXzPm46mpVy3oCm3OMXsJbpROqyIXkoqogcdp8XAGRxEQ+zpwAoxj1r/hDqe+xh7kzRUn9xFlDJ4TUtXkQw==
+Received: from DB7PR05CA0001.eurprd05.prod.outlook.com (2603:10a6:10:36::14)
+ by AS8PR10MB4965.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:400::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4930.15; Thu, 27 Jan
- 2022 15:57:57 +0000
-Received: from DB5EUR01FT040.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:10:234:cafe::29) by DU2PR04CA0042.outlook.office365.com
- (2603:10a6:10:234::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4909.17; Thu, 27 Jan
+ 2022 17:12:56 +0000
+Received: from DB5EUR01FT004.eop-EUR01.prod.protection.outlook.com
+ (2603:10a6:10:36:cafe::a4) by DB7PR05CA0001.outlook.office365.com
+ (2603:10a6:10:36::14) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4930.15 via Frontend
- Transport; Thu, 27 Jan 2022 15:57:57 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.71)
+ Transport; Thu, 27 Jan 2022 17:12:56 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.70)
  smtp.mailfrom=siemens.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=siemens.com;
 Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.71 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.71; helo=hybrid.siemens.com;
-Received: from hybrid.siemens.com (194.138.21.71) by
- DB5EUR01FT040.mail.protection.outlook.com (10.152.5.25) with Microsoft SMTP
+ 194.138.21.70 as permitted sender) receiver=protection.outlook.com;
+ client-ip=194.138.21.70; helo=hybrid.siemens.com;
+Received: from hybrid.siemens.com (194.138.21.70) by
+ DB5EUR01FT004.mail.protection.outlook.com (10.152.4.112) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.4930.15 via Frontend Transport; Thu, 27 Jan 2022 15:57:56 +0000
+ 15.20.4930.15 via Frontend Transport; Thu, 27 Jan 2022 17:12:55 +0000
 Received: from DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) by
- DEMCHDC9SKA.ad011.siemens.net (194.138.21.71) with Microsoft SMTP Server
+ DEMCHDC9SJA.ad011.siemens.net (194.138.21.70) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.18; Thu, 27 Jan 2022 16:57:56 +0100
-Received: from [167.87.73.11] (167.87.73.11) by DEMCHDC8A0A.ad011.siemens.net
- (139.25.226.106) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.17; Thu, 27 Jan
- 2022 16:57:55 +0100
-Message-ID: <f31866fc-ed51-2ddf-6f25-74d05e410f1a@siemens.com>
-Date: Thu, 27 Jan 2022 16:57:54 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [isar-cip-core] README.swupdate.md: add readme file with steps to
- verify swupdate
-Content-Language: en-US
-To: <Shivanand.Kunijadar@toshiba-tsip.com>, <cip-dev@lists.cip-project.org>,
-	<quirin.gylstorff@siemens.com>
-CC: <dinesh.kumar@toshiba-tsip.com>
-References: <20220127142627.6812-1-Shivanand.Kunijadar@toshiba-tsip.com>
+ 15.1.2375.18; Thu, 27 Jan 2022 18:12:55 +0100
+Received: from md1q0hnc.ad001.siemens.net (167.87.73.11) by
+ DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.17; Thu, 27 Jan 2022 18:12:54 +0100
 From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <20220127142627.6812-1-Shivanand.Kunijadar@toshiba-tsip.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To: <cip-dev@lists.cip-project.org>
+CC: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
+Subject: [isar-cip-core][PATCH v3 0/6] Add cip-core-image-kernelci building
+ and uploading system
+Date: Thu, 27 Jan 2022 18:12:37 +0100
+Message-ID: <cover.1643303563.git.jan.kiszka@siemens.com>
+X-Mailer: git-send-email 2.31.1
+MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 X-Originating-IP: [167.87.73.11]
-X-ClientProxiedBy: DEMCHDC89YA.ad011.siemens.net (139.25.226.104) To
+X-ClientProxiedBy: DEMCHDC8A1A.ad011.siemens.net (139.25.226.107) To
  DEMCHDC8A0A.ad011.siemens.net (139.25.226.106)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 8c19c449-c4ba-4a18-8a68-08d9e1adc8fc
-X-MS-TrafficTypeDiagnostic: PAXPR10MB5207:EE_
+X-MS-Office365-Filtering-Correlation-Id: 32cf9f91-5661-4b90-71ab-08d9e1b8428b
+X-MS-TrafficTypeDiagnostic: AS8PR10MB4965:EE_
 X-Microsoft-Antispam-PRVS: 
-	<PAXPR10MB5207DF71441F3F889FE922D695219@PAXPR10MB5207.EURPRD10.PROD.OUTLOOK.COM>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
+	<AS8PR10MB496553910F23EE6E3D20C0EB95219@AS8PR10MB4965.EURPRD10.PROD.OUTLOOK.COM>
+X-MS-Oob-TLC-OOBClassifiers: OLM:3631;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	NgGPMHSujyUXinoQQ69MwJz0zOJ6VPzhiyljFTvsklHbokVD/r0PlCC9QanZYO/E6KYLXot8XI5JZEtQSfXfMuF54iW+tm3z1a7217ZfjIFpUkF2UFXokqah+9BpU4KADQBL/iFQ/crl3W5rH/3traaKi1E/vWwGyopRFA/S7RUlvkzbSKtxl43e7cnLLJH0iWUzMEsMjMWgMLKc+SF/9ObNNc0USb8XePcZakcXKb3TuFhR45c6AUNFfgT5GdfB0Su1BnGime7aWhe/9wwhq+gCNy5VPKHoqWRFDPd12Zlx4SYlp2gZnXvxvgkVY79+kp7Em/ouYEJTaLlgmQ+a+GH64zgG1uZe8k3pIsUWVPMTjfCzTAowwSchcjA4nGCMuf2/C/hMeUTOez6wBNzO0nb6yeaPg+QF6iAi5M0gQF9e81lDIqPb58VEoALgxxsJTzf25ewKE9dpILgDS8NdTQPqwPHNYFLAxOy3KaBub82kB6bqPNeuaxYc6J2P8pd++cnvUL59WegnflePjLhMKojKJi+FS7Hr25ELIsWQB2MXxUro3AgWlrwt52kER+cXYZfaaU6uirdioJMfK7MiaGiu8k0emneS8wVMgBlDO81t1syJtNvFQt2MRdo2GhLlXuTAandz3kaWpeIJkM7rPKjBSD1L5Bb5CnsjrvaSzHUrqRgc4zu7J3CzFlr9gg4fdjuDOFYOwwkkfcblGQ4NlaY86ETKW4JlMraxIUNNPtQEky7eZuUyTl78xkQAhVEHeiVenEpHB4eVJ4670n6G0f7sXeUWYAjGCQYbgSV46KsZTT3rgF+h5km7J7yN6uJpYXPiOBgSWpBmK/8m15vlAfBEw9/bKY1Peqc0YFUbU8JwxvDgqAowO0tazLbRplxpOYxTePfXAz8ygPaOUsVbIw==
+	pDok8IAlPgP72MJJ9XqGPgetLZ5NqSsj+fnxCOF2SDikHBrPXjAcuhPCjshC1rXWzj6i0L77sT2VXTcCCAc/jaQ3/LmbHKpDsOtqVmG6VQKTYM1I3ESwdzHcpK2laHwoFWGg6K/j0ozYEIwv2H9lsephPSFtmuhDx5bfq12BVM85FE9i+jgpwlxtY9Xen3K+N7l5RaVkDLwb6XPj/h8Qy5q/GNR6MoOwt7Vt0Eb1orZjJobf01iRi9Wem31ZMznUlKxqizHstLDgk2FXKIJY/BBeepckhLxzpMvcmQLVZLsfQayYx5BsalENDCJmn7Jomzs1oEV9Ky8U0wiaAZYoe9atud7WPpwi0BT0WnwOHLRVjoiesjmzT4q/LoVEkrrYrvCFK1f0BXw/lH2gHI7pCP9Y9EDOQDJnajesYUwpHyyCeuchx6zQ8kGrmO2nopOXEYDNK7CW9lbBk8/jGb1RGEzP3cTU4ptPDg+jXudn4rnLuPyV8ZnfTug7OItbId/Cbbox277EqCN9psOKSOGeKncefUzZNI/7ooppvBH1n1F09ZwQ8UpfaCW9w884uvk3Kx0g9DvrqYg8jZcZOeyzod30dq2UwSGp19dby4IeAZg5iqNxvm+rikbYdRa+oJVJaT2/Gha7Uy7BL2wxAt6S14Ld7Vp19H2m/nK+hQxEfJWnF2GXv7YJ59CAYv9SMb+dY+jqMYWBp6DUTIxp8ZdcjKkGwhEFS/zFqRpJARJxKnxzsuivny63eR1rvR8JuEo7B800SZu7Jtwev0RUmGgZ1g==
 X-Forefront-Antispam-Report: 
-	CIP:194.138.21.71;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(40470700004)(46966006)(966005)(70206006)(86362001)(5660300002)(15650500001)(82960400001)(8936002)(70586007)(16576012)(110136005)(508600001)(31686004)(6636002)(6706004)(316002)(4326008)(31696002)(44832011)(2906002)(2616005)(336012)(956004)(8676002)(53546011)(40460700003)(186003)(47076005)(16526019)(36756003)(36860700001)(26005)(83380400001)(81166007)(356005)(82310400004)(3940600001)(43740500002)(36900700001)(20210929001);DIR:OUT;SFP:1101;
+	CIP:194.138.21.70;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:hybrid.siemens.com;CAT:NONE;SFS:(4636009)(40470700004)(46966006)(36840700001)(8676002)(70586007)(26005)(356005)(5660300002)(44832011)(82310400004)(186003)(6916009)(40460700003)(2616005)(956004)(4326008)(47076005)(8936002)(70206006)(508600001)(7596003)(7636003)(336012)(36756003)(83380400001)(6666004)(36860700001)(16526019)(86362001)(82960400001)(316002)(2906002);DIR:OUT;SFP:1101;
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jan 2022 15:57:56.6440
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jan 2022 17:12:55.5521
  (UTC)
 X-MS-Exchange-CrossTenant-Network-Message-Id: 
- 8c19c449-c4ba-4a18-8a68-08d9e1adc8fc
+ 32cf9f91-5661-4b90-71ab-08d9e1b8428b
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
- TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.71];Helo=[hybrid.siemens.com]
+ TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.70];Helo=[hybrid.siemens.com]
 X-MS-Exchange-CrossTenant-AuthSource: 
-	DB5EUR01FT040.eop-EUR01.prod.protection.outlook.com
+	DB5EUR01FT004.eop-EUR01.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR10MB5207
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB4965
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 27 Jan 2022 15:58:02 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7507
+ <cip-dev@lists.cip-project.org>; Thu, 27 Jan 2022 17:12:59 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7508
 
-On 27.01.22 15:26, Shivanand.Kunijadar@toshiba-tsip.com wrote:
-> From: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
->=20
-> Cc: dinesh.kumar@toshiba-tsip.com,
->      kazuhiro3.hayashi@toshiba.co.jp,
->      akihiro27.suzuki@toshiba.co.jp
->=20
-> Added readme file with necessary steps to verify swupdate feature along
-> with swupdate rollback.
->=20
-
-Logically, this depends on "swupdate: add recipe to cause kernel panic=20
-during system boot", thus "Patch 2/2", right?
+Changes in this version
+ - added missing dmesg.sh installation
+ - consolidated customizations recipes
 
 Jan
 
-> Signed-off-by: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
-> ---
->   doc/README.swupdate.md | 208 +++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 208 insertions(+)
->   create mode 100644 doc/README.swupdate.md
->=20
-> diff --git a/doc/README.swupdate.md b/doc/README.swupdate.md
-> new file mode 100644
-> index 0000000..41b5f87
-> --- /dev/null
-> +++ b/doc/README.swupdate.md
-> @@ -0,0 +1,208 @@
-> +
-> +Clone the isar-cip-core repository
-> +```
-> +host$ git clone https://gitlab.com/cip-project/cip-core/isar-cip-core.gi=
-t
-> +```
-> +
-> +Install `kas-container` from the [kas project](https://github.com/siemen=
-s/kas):
-> +
-> +```
-> +host$ wget https://raw.githubusercontent.com/siemens/kas/2.6.2/kas-conta=
-iner
-> +host$ chmod a+x kas-container
-> +```
-> +
-> +Build the image for swupdate
-> +
-> +```
-> +host$ ./kas-container --isar build kas-cip.yml:kas/board/qemu-amd64.yml:=
-kas/opt/ebg-swu.yml
-> +```
-> +- save the generated swu build/tmp/deploy/images/qemu-amd64/cip-core-ima=
-ge-cip-core-buster-qemu-amd64.swu in a separate folder (ex: tmp)
-> +- modify the image for example add a new version to the image by adding =
-PV=3D2.0.0 to cip-core-image.bb
-> +- rebuild the image using above command and start the new target
-> +```
-> +host$ SWUPDATE_BOOT=3Dy ./start-qemu.sh amd64
-> +```
-> +
-> +Copy `cip-core-image-cip-core-buster-qemu-amd64.swu` file from `tmp` fol=
-der to the running system
-> +
-> +```
-> +root@demo:~# scp <host-user>@<host-ip>:<path-to-swu-file>/tmp/cip-core-i=
-mage-cip-core-buster-qemu-amd64.swu .
-> +```
-> +
-> +Check which partition is booted, e.g. with lsblk:
-> +
-> +```
-> +root@demo:~# lsblk
-> +NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-> +sda      8:0    0    2G  0 disk
-> +=E2=94=9C=E2=94=80sda1   8:1    0 16.4M  0 part
-> +=E2=94=9C=E2=94=80sda2   8:2    0   32M  0 part
-> +=E2=94=9C=E2=94=80sda3   8:3    0   32M  0 part
-> +=E2=94=9C=E2=94=80sda4   8:4    0 1000M  0 part /
-> +=E2=94=94=E2=94=80sda5   8:5    0 1000M  0 part
-> +```
-> +
-> +Apply swupdate and reboot
-> +```
-> +root@demo:~# swupdate -i cip-core-image-cip-core-buster-qemu-amd64.swu
-> +root@demo:~# reboot
-> +```
-> +Check which partition is booted, e.g. with lsblk and the rootfs should h=
-ave changed
-> +```
-> +root@demo:~# lsblk
-> +NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-> +sda      8:0    0    2G  0 disk
-> +=E2=94=9C=E2=94=80sda1   8:1    0 16.4M  0 part
-> +=E2=94=9C=E2=94=80sda2   8:2    0   32M  0 part
-> +=E2=94=9C=E2=94=80sda3   8:3    0   32M  0 part
-> +=E2=94=9C=E2=94=80sda4   8:4    0 1000M  0 part
-> +=E2=94=94=E2=94=80sda5   8:5    0 1000M  0 part /
-> +```
-> +
-> +Check bootloader ustate after swupdate
-> +```
-> +root@demo:~# bg_printenv
-> +----------------------------
-> +Config Partition #0 Values:
-> +in_progress:      no
-> +revision:         2
-> +kernel:           C:BOOT0:cip-core-image-cip-core-buster-qemu-amd64-vmli=
-nuz
-> +kernelargs:       console=3Dtty0 console=3DttyS0,115200 rootwait earlypr=
-intk root=3DPARTUUID=3Dfedcba98-7654-3210-cafe-5e0710000001 rw initrd=3Dcip=
--core-image-cip-core-buster-qemu-amd64-initrd.img
-> +watchdog timeout: 60 seconds
-> +ustate:           0 (OK)
-> +
-> +user variables:
-> +
-> +----------------------------
-> + Config Partition #1 Values:
-> +in_progress:      no
-> +revision:         3
-> +kernel:           C:BOOT1:vmlinuz
-> +kernelargs:       root=3DPARTUUID=3Dfedcba98-7654-3210-cafe-5e0710000002=
- console=3Dtty0 console=3DttyS0,115200 rootwait earlyprintk rw initrd=3Dcip=
--core-image-cip-core-buster-qemu-amd64-initrd.img
-> +watchdog timeout: 60 seconds
-> +ustate:           2 (TESTING)
-> +```
-> +
-> +if Partition #1 usate is 2 (TESTING) then execute below command to confi=
-rm swupdate and the command will set ustate to "OK"
-> +```
-> +root@demo:~# bg_setenv -c
-> +```
-> +
-> +# swupdate rollback example
-> +
-> +Build the image for swupdate with service which causes kernel panic duri=
-ng system boot using below command.
-> +
-> +```
-> +host$ ./kas-container --isar build kas-cip.yml:kas/board/qemu-amd64.yml:=
-kas/opt/ebg-swu.yml:kas/opt/swupdate-rollback.yml
-> +```
-> +- save the generated swu build/tmp/deploy/images/qemu-amd64/cip-core-ima=
-ge-cip-core-buster-qemu-amd64.swu in a separate folder (ex: tmp)
-> +- build the image again without `swupdate-rollback.yml` recipe using bel=
-ow command
-> +```
-> +host$ ./kas-container --isar build kas-cip.yml:kas/board/qemu-amd64.yml:=
-kas/opt/ebg-swu.yml
-> +```
-> +
-> +Start the target on QEMU
-> +```
-> +host$ SWUPDATE_BOOT=3Dy ./start-qemu.sh amd64
-> +```
-> +
-> +Copy `cip-core-image-cip-core-buster-qemu-amd64.swu` file from `tmp` fol=
-der to the running system
-> +
-> +```
-> +root@demo:~# scp <host-user>@<host-ip>:<path-to-swu-file>/tmp/cip-core-i=
-mage-cip-core-buster-qemu-amd64.swu .
-> +```
-> +
-> +Check which partition is booted, e.g. with lsblk:
-> +
-> +```
-> +root@demo:~# lsblk
-> +NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-> +sda      8:0    0    2G  0 disk
-> +=E2=94=9C=E2=94=80sda1   8:1    0 16.4M  0 part
-> +=E2=94=9C=E2=94=80sda2   8:2    0   32M  0 part
-> +=E2=94=9C=E2=94=80sda3   8:3    0   32M  0 part
-> +=E2=94=9C=E2=94=80sda4   8:4    0 1000M  0 part /
-> +=E2=94=94=E2=94=80sda5   8:5    0 1000M  0 part
-> +```
-> +
-> +Check bootloader ustate before swupdate and should be as below
-> +```
-> +root@demo:~# bg_printenv
-> +----------------------------
-> +Config Partition #0 Values:
-> +in_progress:      no
-> +revision:         2
-> +kernel:           C:BOOT0:cip-core-image-cip-core-buster-qemu-amd64-vmli=
-nuz
-> +kernelargs:       console=3Dtty0 console=3DttyS0,115200 rootwait earlypr=
-intk root=3DPARTUUID=3Dfedcba98-7654-3210-cafe-5e0710000001 rw initrd=3Dcip=
--core-image-cip-core-buster-qemu-amd64-initrd.img
-> +watchdog timeout: 60 seconds
-> +ustate:           0 (OK)
-> +
-> +user variables:
-> +----------------------------
-> +Config Partition #1 Values:
-> +in_progress:      no
-> +revision:         1
-> +kernel:           C:BOOT1:cip-core-image-cip-core-buster-qemu-amd64-vmli=
-nuz
-> +kernelargs:       console=3Dtty0 console=3DttyS0,115200 rootwait earlypr=
-intk root=3DPARTUUID=3Dfedcba98-7654-3210-cafe-5e0710000002 rw initrd=3Dcip=
--core-image-cip-core-buster-qemu-amd64-initrd.img
-> +watchdog timeout: 60 seconds
-> +ustate:           0 (OK)
-> +```
-> +
-> +Apply swupdate as below
-> +```
-> +root@demo:~# swupdate -i cip-core-image-cip-core-buster-qemu-amd64.swu
-> +```
-> +
-> +check bootloader ustate after swupdate. if the swupdate is successful th=
-en **revision number** should increase to **3** and status should be change=
-d to **INSTALLED** for Partition #1.
-> +```
-> +root@demo:~# bg_printenv
-> +----------------------------
-> +Config Partition #0 Values:
-> +in_progress:      no
-> +revision:         2
-> +kernel:           C:BOOT0:cip-core-image-cip-core-buster-qemu-amd64-vmli=
-nuz
-> +kernelargs:       console=3Dtty0 console=3DttyS0,115200 rootwait earlypr=
-intk root=3DPARTUUID=3Dfedcba98-7654-3210-cafe-5e0710000001 rw initrd=3Dcip=
--core-image-cip-core-buster-qemu-amd64-initrd.img
-> +watchdog timeout: 60 seconds
-> +ustate:           0 (OK)
-> +
-> +user variables:
-> +----------------------------
-> +Config Partition #1 Values:
-> +in_progress:      no
-> +revision:         3
-> +kernel:           C:BOOT1:vmlinuz
-> +kernelargs:       root=3DPARTUUID=3Dfedcba98-7654-3210-cafe-5e0710000002=
- console=3Dtty0 console=3DttyS0,115200 rootwait earlyprintk rw initrd=3Dcip=
--core-image-cip-core-buster-qemu-amd64-initrd.img
-> +watchdog timeout: 60 seconds
-> +ustate:           1 (INSTALLED)
-> +```
-> +
-> +Execute reboot command
-> +- reboot command should cause kernel panic error.
-> +- watchdog timer should expire and restart the qemu. bootloader should s=
-elect previous partition to boot.
-> +```
-> +root@demo:~# reboot
-> +```
-> +
-> +Once the system is restarted, check the bootloader ustate
-> +- if update is failed then **revision number** should reduce to **0** an=
-d status should change to **FAILED** for Partition #1.
-> +```
-> +root@demo:~# bg_printenv
-> +----------------------------
-> + Config Partition #0 Values:
-> +in_progress:      no
-> +revision:         2
-> +kernel:           C:BOOT0:cip-core-image-cip-core-buster-qemu-amd64-vmli=
-nuz
-> +kernelargs:       console=3Dtty0 console=3DttyS0,115200 rootwait earlypr=
-intk root=3DPARTUUID=3Dfedcba98-7654-3210-cafe-5e0710000001 rw initrd=3Dcip=
--core-image-cip-corg
-> +watchdog timeout: 60 seconds
-> +ustate:           0 (OK)
-> +
-> +user variables:
-> +----------------------------
-> + Config Partition #1 Values:
-> +in_progress:      no
-> +revision:         0
-> +kernel:           C:BOOT1:vmlinuz
-> +kernelargs:       root=3DPARTUUID=3Dfedcba98-7654-3210-cafe-5e0710000002=
- console=3Dtty0 console=3DttyS0,115200 rootwait earlyprintk rw initrd=3Dcip=
--core-image-cip-corg
-> +watchdog timeout: 60 seconds
-> +ustate:           3 (FAILED)
-> +```
 
+CC: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
+
+Alice Ferrazzi (4):
+  Add cip-core-image-kernelci
+  Add dmesg filter needed for lava test result
+  Add script deploy-kernelci.py for upload the cip-core-image-kernelci
+  enable cip-core-image-kernelci
+
+Jan Kiszka (2):
+  customizations: Factor out a common.inc
+  kernelci-customizations: Reuse common customizations
+
+ .gitlab-ci.yml                                | 38 +++++++++++++
+ kas/opt/kernelci.yml                          | 16 ++++++
+ .../{customizations.bb =3D> common.inc}         |  4 +-
+ recipes-core/customizations/customizations.bb | 27 +--------
+ .../images/cip-core-image-kernelci.bb         | 16 ++++++
+ .../kernelci-customizations/files/dmesg.sh    | 23 ++++++++
+ .../kernelci-customizations/files/postinst    | 34 ++++++++++++
+ .../kernelci-customizations.bb                | 23 ++++++++
+ scripts/deploy-kernelci.py                    | 55 +++++++++++++++++++
+ 9 files changed, 209 insertions(+), 27 deletions(-)
+ create mode 100644 kas/opt/kernelci.yml
+ copy recipes-core/customizations/{customizations.bb =3D> common.inc} (90%)
+ create mode 100644 recipes-core/images/cip-core-image-kernelci.bb
+ create mode 100644 recipes-core/kernelci-customizations/files/dmesg.sh
+ create mode 100644 recipes-core/kernelci-customizations/files/postinst
+ create mode 100644 recipes-core/kernelci-customizations/kernelci-customiza=
+tions.bb
+ create mode 100755 scripts/deploy-kernelci.py
 
 --=20
-Siemens AG, Technology
-Competence Center Embedded Linux
+2.31.1
+
 
