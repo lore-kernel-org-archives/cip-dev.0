@@ -2,56 +2,56 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C69E5C433EF
-	for <webhook@archiver.kernel.org>; Thu, 27 Jan 2022 17:13:00 +0000 (UTC)
-Received: from EUR03-VE1-obe.outbound.protection.outlook.com
- (EUR03-VE1-obe.outbound.protection.outlook.com [40.107.5.53])
- by mx.groups.io with SMTP id smtpd.web10.675.1643303579427979472
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 061DCC4332F
+	for <webhook@archiver.kernel.org>; Thu, 27 Jan 2022 17:13:01 +0000 (UTC)
+Received: from EUR01-DB5-obe.outbound.protection.outlook.com
+ (EUR01-DB5-obe.outbound.protection.outlook.com [40.107.15.84])
+ by mx.groups.io with SMTP id smtpd.web08.655.1643303579508093796
  for <cip-dev@lists.cip-project.org>;
  Thu, 27 Jan 2022 09:13:00 -0800
 Authentication-Results: mx.groups.io;
  dkim=fail reason="body hash did not verify" header.i=@siemens.com
- header.s=selector2 header.b=Nf3CLqIu;
- spf=pass (domain: siemens.com, ip: 40.107.5.53,
+ header.s=selector2 header.b=wdJnU6MS;
+ spf=pass (domain: siemens.com, ip: 40.107.15.84,
  mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SLvEn/sAVrETlfDmXmgbaYar4lwoVNi1/ZzA3YOokkFckDt91WJ6waA1NYt7wbWqh23tiaC2TzGKv5AiqYPxKIkRUn9cgSiJYZ6ZlssT2k9sPkyjbu/VuGuUlF/S4cE5WTAPtgBviAG15cKKO9str4sO6yhJPOjdjTmws2AQO+HO75i7T8fm8PE6xD+Dj7VCqamK/T8mPO6PvWQCY8FEwOClZE7F0W2Z6BilppZG2bctI9m/wqMb2vtHgAXdsCfBFXMDVs+DpLqbqBQY+XhOmIEhlCFxQRrufQIt7s1+20ccZpBS1vhnPG2HkhmiaZXXwK0Mzsl9AhwKT/p9UjthVQ==
+ b=SaPnBMc189OmrjHOM9LP0HwnGzOn1V3Y0vNySsrJarU7fVcjijfAa91ZPLTWxP8ojRW1u6rVum3CBfbVPWfHuqM9Yvj4Z99w6kwA1+xUSaC5gRQAOA6P5ezwuxkg1EuK9ucsj50RbqnJR3kxYV4BFN1JXZZmTt9fiWMH3+nASDUpM0KF7uQvi6lRqi+35FeleImwZJi6XXZ1HSVdIve4bv3TczS1a9xisPaZvgXxIMb5OtOa9wRpt1e9Tn9E8LBi5u8kgSFacwra3ax0np8FUnngVfAx0HRh0OUcctKFKK+OXiYQX9CgUM3dys+trUXWVTm/zg24KGgd9J1ECZ51Ig==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TmtYgXvjJr4lbJ9x3x23MucHOTCemPPbjVpr1BkEfOc=;
- b=V42GNT3RlW8B4+PfFbvTXHLvGgmU0hvrJ2xc6SiXPt135YfkjLXLYcar46xX7ADwilllnTWmBIqrylIncchj6LQr0qjAzACCTvSoZfPpKFlPEv1KapB1MIqs+KyxYpPz2Kd9yTZEnYnm1NADZl5RKxXYHwvJiIvKib62x/KF/FvLWSRDoujgqEQrS0HBT2KNtLQb8BNnmHVvDzDJ54pSLdZ+Q0x0y8S8T1iy/6SFerW3ZXrMgS/IoVzCwpmguE1wRBQQrRYS5U5S4onEFIQWbEbyJaDUomrIGYZ7SksWpiiXuThJetFUL5dw5w4WtUJzNlisohXK0U+6U6uu84llCQ==
+ bh=YfsJobPRUyF+gqmZpHPjqeKeAWAoaO43xGqni93UkQU=;
+ b=XMFuhvVdKIBSikhCJnTva49OjXG6D4EFdfbiujuKNTykILGBU+19nqXlqLT2t2tlxpfw5PqTAYSD3rfkv+RhsGKH8THlbm03NsXDPW+gXb2c3s5LlgBFnRYzUWG6PjIjAFfcRd52d4rS2B84ExQDJRnJOTZqDoYzFTmtXBJPCD964X9gtDlPkGdQT5wGIkJ4Anou2OKuZNHYv4kbHsV7rIAIsH+2Ys6uVgevfYcGGU2LEaIuEmQjxeKWOfrAGMx9Y6cum5L27Zjza6V6qOHyTQsYJ/eiL+ldE9/Z0ufvC9LbZejNVhC8QG/p2ZekdBInj1NDKVSAcRrknoiJG58jvg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.72) smtp.rcpttodomain=lists.cip-project.org
+ 194.138.21.71) smtp.rcpttodomain=lists.cip-project.org
  smtp.mailfrom=siemens.com; dmarc=pass (p=none sp=none pct=100) action=none
  header.from=siemens.com; dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TmtYgXvjJr4lbJ9x3x23MucHOTCemPPbjVpr1BkEfOc=;
- b=Nf3CLqIugTV0ecndJ2UoS7OtpeqZx+jRcn4iYwj8q061norkeLUedK6Dt9UHLCvCuc8alGcPjftzXQ9Edsk4jyyqDSzQ+mTqW0oxzVHW11K5GQVuomgYW9XjUIorYYts6g5UmT1o4dCZfajYXZ9KNeaCV5ut5O7lN1t4Wc4Ip9ORJr5zbioyhP2sLmzPu9uWpNDu59OP5gQ3tXuoZffFdq3ld2enqe5hxlWSjqrQ0/6jtCWS2JW8WglK4YOQGoXz8mtbET1SlEGEMGZkSyXo0sQNEh1pY/h5Me9n9+5/Je2Widtt52HmJi8TSJ+T5zHbyLqzXpHt78x+BzepU8zC8g==
-Received: from DU2PR04CA0273.eurprd04.prod.outlook.com (2603:10a6:10:28c::8)
- by DB9PR10MB4877.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:2c5::7) with
+ bh=YfsJobPRUyF+gqmZpHPjqeKeAWAoaO43xGqni93UkQU=;
+ b=wdJnU6MSEaxbhjoNmG1ozU5u4y8dfwOwJr6iNQJLxTdJGdk4Qe7OuWRw+aaH52LwgyUTIaieJttDcBh0W/U/0p5O6xUaIjk5xC86ImL17c/+bxk5l0yfjVKkvneI6Ksj+wynh80ATPc0b5hNVXUjM1jimkJOehT5leTOvCo3wJXqfzBBw80snadFTCq+V7DDSu7E/O5tgBCnr/KE0vG5VgZCbDuFMBL3NCDObrMg4FZIDd1sdCMVhleCqA2L0maQJy+cQwaV1uJ9lzKDVByLuJcfs2aXK7EqF3c+dx3mJMzk4EMPQ3FTYhgobrZMJo/BYQMhSGX1yhP8npQhLEsBUw==
+Received: from SV0P279CA0035.NORP279.PROD.OUTLOOK.COM (2603:10a6:f10:12::22)
+ by AM9PR10MB5082.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:435::23) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4930.15; Thu, 27 Jan
- 2022 17:12:56 +0000
-Received: from DB5EUR01FT037.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:10:28c:cafe::2d) by DU2PR04CA0273.outlook.office365.com
- (2603:10a6:10:28c::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4930.17 via Frontend
- Transport; Thu, 27 Jan 2022 17:12:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.72)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4930.17; Thu, 27 Jan
+ 2022 17:12:57 +0000
+Received: from HE1EUR01FT022.eop-EUR01.prod.protection.outlook.com
+ (2603:10a6:f10:12:cafe::64) by SV0P279CA0035.outlook.office365.com
+ (2603:10a6:f10:12::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4930.15 via Frontend
+ Transport; Thu, 27 Jan 2022 17:12:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.71)
  smtp.mailfrom=siemens.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=siemens.com;
 Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.72 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.72; helo=hybrid.siemens.com;
-Received: from hybrid.siemens.com (194.138.21.72) by
- DB5EUR01FT037.mail.protection.outlook.com (10.152.4.212) with Microsoft SMTP
+ 194.138.21.71 as permitted sender) receiver=protection.outlook.com;
+ client-ip=194.138.21.71; helo=hybrid.siemens.com;
+Received: from hybrid.siemens.com (194.138.21.71) by
+ HE1EUR01FT022.mail.protection.outlook.com (10.152.0.165) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
  15.20.4930.15 via Frontend Transport; Thu, 27 Jan 2022 17:12:56 +0000
 Received: from DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) by
- DEMCHDC9SMA.ad011.siemens.net (194.138.21.72) with Microsoft SMTP Server
+ DEMCHDC9SKA.ad011.siemens.net (194.138.21.71) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
  15.1.2375.18; Thu, 27 Jan 2022 18:12:55 +0100
 Received: from md1q0hnc.ad001.siemens.net (167.87.73.11) by
@@ -61,11 +61,11 @@ Received: from md1q0hnc.ad001.siemens.net (167.87.73.11) by
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: <cip-dev@lists.cip-project.org>
 CC: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
-Subject: [isar-cip-core][PATCH v3 2/6] Add dmesg filter needed for lava test
- result
-Date: Thu, 27 Jan 2022 18:12:39 +0100
+Subject: [isar-cip-core][PATCH v3 3/6] Add script deploy-kernelci.py for
+ upload the cip-core-image-kernelci
+Date: Thu, 27 Jan 2022 18:12:40 +0100
 Message-ID: 
- <ba98e2dc304e8bb7d8abe1510c6e04bcc4ae3962.1643303563.git.jan.kiszka@siemens.com>
+ <b9f11b364d7a658ccfd11313afdce13d19f6da7d.1643303563.git.jan.kiszka@siemens.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <cover.1643303563.git.jan.kiszka@siemens.com>
 References: <cover.1643303563.git.jan.kiszka@siemens.com>
@@ -77,103 +77,119 @@ X-ClientProxiedBy: DEMCHDC8A1A.ad011.siemens.net (139.25.226.107) To
  DEMCHDC8A0A.ad011.siemens.net (139.25.226.106)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: dc6903a4-6c0a-4f65-9510-08d9e1b842e4
-X-MS-TrafficTypeDiagnostic: DB9PR10MB4877:EE_
+X-MS-Office365-Filtering-Correlation-Id: effc0a1f-5e03-49c2-3826-08d9e1b84319
+X-MS-TrafficTypeDiagnostic: AM9PR10MB5082:EE_
 X-Microsoft-Antispam-PRVS: 
-	<DB9PR10MB48770A77DB3BD7C88865832995219@DB9PR10MB4877.EURPRD10.PROD.OUTLOOK.COM>
-X-MS-Oob-TLC-OOBClassifiers: OLM:4502;
+	<AM9PR10MB5082BBAC6588EACCE08ED61995219@AM9PR10MB5082.EURPRD10.PROD.OUTLOOK.COM>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	kdnzhZbTevv7X6KPzI47iuzBMhDrG1uMrdiWUaW6qt4yksBGVAximtxu9VIJYk63C44zicXyoS3O5QdL8Fs3litQj+CF1Pu30AI8sfyUDbNK3Tgb8O/2ueYe/30TMPBkwSt3NRUiVr/7IL67u/uTMz6Zc8jR6wm4ulIAkC15WzbzSEejrJVEIRp6EnmA+eOMJLwSNQEs47PfmETYcm74Nc0lB4vTuUt2yVieLsuaF5H3vOOUgerLBdqt+9yifnZjMbP/Y8gqK0nABKLsqSK3eclojh+1NNSv3McpQNhSuMExlwo7rzEkxRT8tTNDwoE/pRICA0NDUWz9vkcL6X0Ti8PIH5Ubh7MAjmNo6Nfcv/yFyPJ9tI5pAgTOKnG940T00FsXNF0pAJLuNRsLwASp0AZwO1r+Yf67bHmpdleIUi59Am2+8YbqLpd0uOVnvs5hySBw/5mmRoTbyZ33Jw8KwVvjkcn3MCo1dF2mbLaXl1VDtmwbV4i1FS1RPZy2oGFMb1umPBZLAvVdssYWf/Gs1olZK0WTdhYTSNAFVhnIWhI8HihRVeV2oevehzjRFwhblEmEiHTN7BVuhRWdT/wwW25+f1dzOZ6WXKo2EteNAGzxhYLYDQV0K06A9pSMqiNfmbVYZIgrtTtqKn6v4EIEcHeswHf7E6ps148OgJS99pT+iZE2rBDp6ZLLG4TM0/dx4Kh2zYuzBAPVfEqSdKQfwg==
+	ApZtGF6A6RIXcOfadEYQWef9v39beiJ/MUd2n8mQLpouzEeCbPiGgzNpVOGR4NIuFys6jisRzP/s/okan2Kz6QpQM7p25zja0YCE+YJzogMjC8QyhutIH682/4OFgwD1JUtCBzTLqvfdseH3AfIqmgEIymaG2dViKsa+xNaaftb5lGNqtsl4/3hSId3rqeS/x35lC8bJM0tKivuZFdDUHP0LPk58QS1sdYaNV+sk27dAoJI/MQHXbhZ7swVbCAUKPUhc0R47iQ/WITEOEDFi/CBmxbh4cC3C80WJfa8MYQX6cR7FqtyPkg0K4MTLQghsIUxMgkwS9IBu4i9wukBMcf66GWgbX7Lf9c9pkGCR6S1enwb+Jpr0bqi41/9U6ynuR2wlQopDgRfABD55bsPrOFo2KDcjYXG+S7+kyv7r3YV9Ghq65xuR7U7utCZ2PORsrhv9lmYRDYV4GmeXP3sFkV65mB2R9ODoKv8bxvwSmZ9z0uacb3nLlEqXm66+MtLYidp62YXWjNBsjPh6P+BX+SjGZbjWls0FHQwbsS640VQk4G/UCm1yGIjTCf7ZWcILEogueICLBtr/WxA8+xiMVxjUr19Xe0GG1/uLHBgTVE+2pHRkBGLMtnr3OC9OrBKyJGDUp/4jp63A7bj7y+CTjqyaTdiXH3q2/F9IX1JN/Bh24hgg0MA786C+qBG7KBQf4GJ2cdBA+Pjh4YYqaY4CyQqx7vh3WpDMV0hZvW6JP+WhyxsHij1uaZ8zL5w9L7TSod1gwUrEze4bN7IRwFx0f9aKqsUQ4NSTSWPn+jCOw9k=
 X-Forefront-Antispam-Report: 
-	CIP:194.138.21.72;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(46966006)(40470700004)(336012)(356005)(81166007)(36756003)(36860700001)(40460700003)(47076005)(5660300002)(44832011)(2906002)(508600001)(83380400001)(82960400001)(16526019)(86362001)(6916009)(70586007)(70206006)(4326008)(6666004)(8676002)(8936002)(82310400004)(2616005)(186003)(26005)(956004)(316002)(36900700001)(20210929001);DIR:OUT;SFP:1101;
+	CIP:194.138.21.71;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230001)(4636009)(40470700004)(36840700001)(46966006)(6666004)(186003)(2906002)(508600001)(966005)(336012)(2616005)(956004)(44832011)(8936002)(8676002)(4326008)(16526019)(47076005)(83380400001)(36756003)(86362001)(26005)(40460700003)(316002)(6916009)(82960400001)(70206006)(82310400004)(70586007)(36860700001)(5660300002)(356005)(81166007)(36900700001)(20210929001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jan 2022 17:12:56.1363
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jan 2022 17:12:56.4656
  (UTC)
 X-MS-Exchange-CrossTenant-Network-Message-Id: 
- dc6903a4-6c0a-4f65-9510-08d9e1b842e4
+ effc0a1f-5e03-49c2-3826-08d9e1b84319
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
- TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.72];Helo=[hybrid.siemens.com]
+ TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.71];Helo=[hybrid.siemens.com]
 X-MS-Exchange-CrossTenant-AuthSource: 
-	DB5EUR01FT037.eop-EUR01.prod.protection.outlook.com
+	HE1EUR01FT022.eop-EUR01.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR10MB4877
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR10MB5082
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 27 Jan 2022 17:13:00 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7511
+ <cip-dev@lists.cip-project.org>; Thu, 27 Jan 2022 17:13:01 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7509
 
 From: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
 
-KernelCI is using a dmesg filter script for checking dmesg
-logs result with lava.
-Adding the script to the cip-core-image-kernelci.
+The cip-core-image-kernelci need to be uploaded to the KernelCI
+production storage for been used by KernelCI.
+This script use the KernelCI API for uploading the
+cip-core-image-kernelci to the production storage.
+The images are uploaded in the following link:
+https://storage.kernelci.org/images/rootfs/cip/
 
 Signed-off-by: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
-[Jan: restore actual installation]
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
- .../kernelci-customizations/files/dmesg.sh    | 23 +++++++++++++++++++
- .../kernelci-customizations.bb                |  4 ++++
- 2 files changed, 27 insertions(+)
- create mode 100644 recipes-core/kernelci-customizations/files/dmesg.sh
+ scripts/deploy-kernelci.py | 55 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
+ create mode 100755 scripts/deploy-kernelci.py
 
-diff --git a/recipes-core/kernelci-customizations/files/dmesg.sh b/recipes-=
-core/kernelci-customizations/files/dmesg.sh
-new file mode 100644
-index 0000000..3b096e1
+diff --git a/scripts/deploy-kernelci.py b/scripts/deploy-kernelci.py
+new file mode 100755
+index 0000000..5a8adca
 --- /dev/null
-+++ b/recipes-core/kernelci-customizations/files/dmesg.sh
-@@ -0,0 +1,23 @@
-+#!/bin/sh
++++ b/scripts/deploy-kernelci.py
+@@ -0,0 +1,55 @@
++#!/usr/bin/env python3
++# -*- coding: utf-8 -*-
 +
-+set -e
++import subprocess
++import requests
++import os
++import sys
++import time
++from urllib.parse import urljoin
 +
-+if [ "$KERNELCI_LAVA" =3D "y" ]; then
-+    alias test-result=3D'lava-test-case'
-+else
-+    alias test-result=3D'echo'
-+fi
++cdate=3Dtime.strftime("%Y%m%d")
++api=3D"https://api.kernelci.org/upload"
++token=3Dos.getenv("KERNELCI_TOKEN")
 +
-+for level in crit alert emerg; do
-+    dmesg --level=3D$level --notime -x -k > dmesg.$level
-+    test -s dmesg.$level && res=3Dfail || res=3Dpass
-+    count=3D$(cat dmesg.$level | wc -l)
-+    cat dmesg.$level
-+    test-result \
-+        $level \
-+        --result $res \
-+        --measurement $count \
-+        --units lines
-+done
++release=3Dsys.argv[1]
++target=3Dsys.argv[2]
++extension=3Dsys.argv[3]
 +
-+exit 0
-diff --git a/recipes-core/kernelci-customizations/kernelci-customizations.b=
-b b/recipes-core/kernelci-customizations/kernelci-customizations.bb
-index dca0891..df4257c 100644
---- a/recipes-core/kernelci-customizations/kernelci-customizations.bb
-+++ b/recipes-core/kernelci-customizations/kernelci-customizations.bb
-@@ -18,6 +18,7 @@ DESCRIPTION =3D "CIP Core image demo & customizations"
- SRC_URI =3D " \
-     file://postinst \
-     file://ethernet \
-+    file://dmesg.sh \
-     file://99-silent-printk.conf"
-=20
- DEPENDS +=3D "sshd-regen-keys"
-@@ -31,4 +32,7 @@ do_install() {
-=20
-   install -v -d ${D}/etc/sysctl.d
-   install -v -m 644 ${WORKDIR}/99-silent-printk.conf ${D}/etc/sysctl.d/
++rootfs_filename=3D"cip-core-image-kernelci-cip-core-"+release+"-"+target+"=
+.tar.gz"
++initrd_filename=3D"cip-core-image-kernelci-cip-core-"+release+"-"+target+"=
+-initrd.img"
++initrd_gz_filename=3D"cip-core-image-kernelci-cip-core-"+release+"-"+targe=
+t+"-initrd.img.gz"
 +
-+  install -v -d ${D}/opt/kernelci
-+  install -v -m 744 ${WORKDIR}/dmesg.sh ${D}/opt/kernelci/
- }
++input_dir=3D"build/tmp/deploy/images/"+target
++upload_path=3D"/images/rootfs/cip/"+cdate+"/"+target+"/"
++upload_path_latest=3D"/images/rootfs/cip/latest/"+target+"/"
++rootfs=3Dinput_dir+"/"+rootfs_filename
++initrd=3Dinput_dir+"/"+initrd_filename
++
++def upload_file(api, token, path, input_file, input_filename):
++    headers =3D {
++        'Authorization': token,
++    }
++    data =3D {
++        'path': path,
++    }
++    files =3D {
++        'file': (input_filename, open(input_file, 'rb').read()),
++    }
++    url =3D urljoin(api, 'upload')
++    resp =3D requests.post(url, headers=3Dheaders, data=3Ddata, files=3Dfi=
+les)
++    resp.raise_for_status()
++
++if os.path.exists(rootfs) and os.path.exists(initrd):
++    print("uploading rootfs to KernelCI")
++    upload_file(api, token, upload_path, rootfs, rootfs_filename)
++    print("uploading initrd to KernelCI")
++    upload_file(api, token, upload_path, initrd, initrd_gz_filename)
++    print("uploaded to: https://storage.kernelci.org"+upload_path)
++
++    # Upload latest
++    print("uploading rootfs to KernelCI CIP latest")
++    upload_file(api, token, upload_path_latest, rootfs, rootfs_filename)
++    print("uploading initrd to KernelCI CIP latest")
++    upload_file(api, token, upload_path_latest, initrd, initrd_gz_filename=
+)
++    print("uploaded to: https://storage.kernelci.org"+upload_path_latest)
 --=20
 2.31.1
 
