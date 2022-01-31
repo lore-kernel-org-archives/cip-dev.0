@@ -2,159 +2,255 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14F39C433F5
-	for <webhook@archiver.kernel.org>; Mon, 31 Jan 2022 12:19:15 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com
- [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web08.31121.1643631553460782281
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9D8BC433EF
+	for <webhook@archiver.kernel.org>; Mon, 31 Jan 2022 12:19:16 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com
+ [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web12.31205.1643631550808452343
  for <cip-dev@lists.cip-project.org>;
- Mon, 31 Jan 2022 04:19:13 -0800
+ Mon, 31 Jan 2022 04:19:15 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=pass (domain: bp.renesas.com, ip: 210.160.252.171,
+ spf=pass (domain: bp.renesas.com, ip: 210.160.252.172,
  mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.88,330,1635174000";
-   d="scan'208";a="108231893"
+   d="scan'208";a="108906290"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 31 Jan 2022 21:19:12 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 31 Jan 2022 21:19:15 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id A47B94347FE1;
-	Mon, 31 Jan 2022 21:19:11 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3FC574347FE1;
+	Mon, 31 Jan 2022 21:19:14 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 05/27] pinctrl: renesas: rzg2l: Add helper
- functions to read/write pin config
-Date: Mon, 31 Jan 2022 12:18:41 +0000
-Message-Id: <20220131121903.8620-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 07/27] pinctrl: renesas: rzg2l: Rename PIN_CFG_*
+ macros to match HW manual
+Date: Mon, 31 Jan 2022 12:18:43 +0000
+Message-Id: <20220131121903.8620-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220131121903.8620-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20220131121903.8620-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 31 Jan 2022 12:19:15 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7526
+ <cip-dev@lists.cip-project.org>; Mon, 31 Jan 2022 12:19:16 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7528
 
-commit d1189991c823b50990291c8157b56fb141c47155 upstream.
+commit 22972a2d5bc4bae3db9521580cea8971c96204bc upstream.
 
-Add helper functions to read/read modify write pin config.
-
-Switch to use helper functions for pins supporting PIN_CONFIG_INPUT_ENABLE
-capabilities.
+Rename the below macros to match the HW manual (Rev.1.00):
+PIN_CFG_IOLH_SD0 -> PIN_CFG_IO_VMC_SD0
+PIN_CFG_IOLH_SD1 -> PIN_CFG_IO_VMC_SD1
+PIN_CFG_IOLH_QSPI -> PIN_CFG_IO_VMC_QSPI
+PIN_CFG_IOLH_ETH0 -> PIN_CFG_IO_VMC_ETH0
+PIN_CFG_IOLH_ETH1 -> PIN_CFG_IO_VMC_ETH1
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20211110224622.16022-4-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://lore.kernel.org/r/20211110224622.16022-6-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 61 +++++++++++++++----------
- 1 file changed, 37 insertions(+), 24 deletions(-)
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 122 ++++++++++++------------
+ 1 file changed, 61 insertions(+), 61 deletions(-)
 
 diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index be9af717a497..4465402367f9 100644
+index a5c4bfb59692..5ebb9034b572 100644
 --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
 +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -424,6 +424,39 @@ static int rzg2l_dt_node_to_map(struct pinctrl_dev *pctldev,
- 	return ret;
- }
- 
-+static u32 rzg2l_read_pin_config(struct rzg2l_pinctrl *pctrl, u32 offset,
-+				 u8 bit, u32 mask)
-+{
-+	void __iomem *addr = pctrl->base + offset;
-+
-+	/* handle _L/_H for 32-bit register read/write */
-+	if (bit >= 4) {
-+		bit -= 4;
-+		addr += 4;
-+	}
-+
-+	return (readl(addr) >> (bit * 8)) & mask;
-+}
-+
-+static void rzg2l_rmw_pin_config(struct rzg2l_pinctrl *pctrl, u32 offset,
-+				 u8 bit, u32 mask, u32 val)
-+{
-+	void __iomem *addr = pctrl->base + offset;
-+	unsigned long flags;
-+	u32 reg;
-+
-+	/* handle _L/_H for 32-bit register read/write */
-+	if (bit >= 4) {
-+		bit -= 4;
-+		addr += 4;
-+	}
-+
-+	spin_lock_irqsave(&pctrl->lock, flags);
-+	reg = readl(addr) & ~(mask << (bit * 8));
-+	writel(reg | (val << (bit * 8)), addr);
-+	spin_unlock_irqrestore(&pctrl->lock, flags);
-+}
-+
- static int rzg2l_pinctrl_pinconf_get(struct pinctrl_dev *pctldev,
- 				     unsigned int _pin,
- 				     unsigned long *config)
-@@ -432,8 +465,8 @@ static int rzg2l_pinctrl_pinconf_get(struct pinctrl_dev *pctldev,
- 	enum pin_config_param param = pinconf_to_config_param(*config);
- 	const struct pinctrl_pin_desc *pin = &pctrl->desc.pins[_pin];
- 	unsigned int *pin_data = pin->drv_data;
--	u32 port_offset = 0, reg;
- 	unsigned int arg = 0;
-+	u32 port_offset = 0;
- 	unsigned long flags;
- 	void __iomem *addr;
- 	u32 cfg = 0;
-@@ -452,17 +485,7 @@ static int rzg2l_pinctrl_pinconf_get(struct pinctrl_dev *pctldev,
- 	case PIN_CONFIG_INPUT_ENABLE:
- 		if (!(cfg & PIN_CFG_IEN))
- 			return -EINVAL;
--		spin_lock_irqsave(&pctrl->lock, flags);
--		/* handle _L/_H for 32-bit register read/write */
--		addr = pctrl->base + IEN(port_offset);
--		if (bit >= 4) {
--			bit -= 4;
--			addr += 4;
--		}
--
--		reg = readl(addr) & (IEN_MASK << (bit * 8));
--		arg = (reg >> (bit * 8)) & 0x1;
--		spin_unlock_irqrestore(&pctrl->lock, flags);
-+		arg = rzg2l_read_pin_config(pctrl, IEN(port_offset), bit, IEN_MASK);
- 		break;
- 
+@@ -39,11 +39,11 @@
+ #define PIN_CFG_SR			BIT(1)
+ #define PIN_CFG_IEN			BIT(2)
+ #define PIN_CFG_PUPD			BIT(3)
+-#define PIN_CFG_IOLH_SD0		BIT(4)
+-#define PIN_CFG_IOLH_SD1		BIT(5)
+-#define PIN_CFG_IOLH_QSPI		BIT(6)
+-#define PIN_CFG_IOLH_ETH0		BIT(7)
+-#define PIN_CFG_IOLH_ETH1		BIT(8)
++#define PIN_CFG_IO_VMC_SD0		BIT(4)
++#define PIN_CFG_IO_VMC_SD1		BIT(5)
++#define PIN_CFG_IO_VMC_QSPI		BIT(6)
++#define PIN_CFG_IO_VMC_ETH0		BIT(7)
++#define PIN_CFG_IO_VMC_ETH1		BIT(8)
+ #define PIN_CFG_FILONOFF		BIT(9)
+ #define PIN_CFG_FILNUM			BIT(10)
+ #define PIN_CFG_FILCLKSEL		BIT(11)
+@@ -516,11 +516,11 @@ static int rzg2l_pinctrl_pinconf_get(struct pinctrl_dev *pctldev,
  	case PIN_CONFIG_POWER_SOURCE: {
-@@ -502,7 +525,7 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
- 	const struct pinctrl_pin_desc *pin = &pctrl->desc.pins[_pin];
- 	unsigned int *pin_data = pin->drv_data;
- 	enum pin_config_param param;
--	u32 port_offset = 0, reg;
-+	u32 port_offset = 0;
- 	unsigned long flags;
- 	void __iomem *addr;
- 	unsigned int i;
-@@ -528,17 +551,7 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
- 			if (!(cfg & PIN_CFG_IEN))
+ 		u32 pwr_reg = 0x0;
+ 
+-		if (cfg & PIN_CFG_IOLH_SD0)
++		if (cfg & PIN_CFG_IO_VMC_SD0)
+ 			pwr_reg = SD_CH(0);
+-		else if (cfg & PIN_CFG_IOLH_SD1)
++		else if (cfg & PIN_CFG_IO_VMC_SD1)
+ 			pwr_reg = SD_CH(1);
+-		else if (cfg & PIN_CFG_IOLH_QSPI)
++		else if (cfg & PIN_CFG_IO_VMC_QSPI)
+ 			pwr_reg = QSPI;
+ 		else
+ 			return -EINVAL;
+@@ -594,11 +594,11 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
+ 			if (mV != 1800 && mV != 3300)
  				return -EINVAL;
  
--			/* handle _L/_H for 32-bit register read/write */
--			addr = pctrl->base + IEN(port_offset);
--			if (bit >= 4) {
--				bit -= 4;
--				addr += 4;
--			}
--
--			spin_lock_irqsave(&pctrl->lock, flags);
--			reg = readl(addr) & ~(IEN_MASK << (bit * 8));
--			writel(reg | (arg << (bit * 8)), addr);
--			spin_unlock_irqrestore(&pctrl->lock, flags);
-+			rzg2l_rmw_pin_config(pctrl, IEN(port_offset), bit, IEN_MASK, !!arg);
- 			break;
- 		}
- 
+-			if (cfg & PIN_CFG_IOLH_SD0)
++			if (cfg & PIN_CFG_IO_VMC_SD0)
+ 				pwr_reg = SD_CH(0);
+-			else if (cfg & PIN_CFG_IOLH_SD1)
++			else if (cfg & PIN_CFG_IO_VMC_SD1)
+ 				pwr_reg = SD_CH(1);
+-			else if (cfg & PIN_CFG_IOLH_QSPI)
++			else if (cfg & PIN_CFG_IO_VMC_QSPI)
+ 				pwr_reg = QSPI;
+ 			else
+ 				return -EINVAL;
+@@ -900,24 +900,24 @@ static const u32 rzg2l_gpio_configs[] = {
+ 	RZG2L_GPIO_PORT_PACK(3, 0x21, RZG2L_MPXED_PIN_FUNCS),
+ 	RZG2L_GPIO_PORT_PACK(2, 0x22, RZG2L_MPXED_PIN_FUNCS),
+ 	RZG2L_GPIO_PORT_PACK(2, 0x23, RZG2L_MPXED_PIN_FUNCS),
+-	RZG2L_GPIO_PORT_PACK(3, 0x24, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IOLH_ETH0)),
+-	RZG2L_GPIO_PORT_PACK(2, 0x25, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IOLH_ETH0)),
+-	RZG2L_GPIO_PORT_PACK(2, 0x26, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IOLH_ETH0)),
+-	RZG2L_GPIO_PORT_PACK(2, 0x27, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IOLH_ETH0)),
+-	RZG2L_GPIO_PORT_PACK(2, 0x28, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IOLH_ETH0)),
+-	RZG2L_GPIO_PORT_PACK(2, 0x29, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IOLH_ETH0)),
+-	RZG2L_GPIO_PORT_PACK(2, 0x2a, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IOLH_ETH0)),
+-	RZG2L_GPIO_PORT_PACK(2, 0x2b, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IOLH_ETH0)),
+-	RZG2L_GPIO_PORT_PACK(2, 0x2c, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IOLH_ETH0)),
+-	RZG2L_GPIO_PORT_PACK(2, 0x2d, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IOLH_ETH1)),
+-	RZG2L_GPIO_PORT_PACK(2, 0x2e, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IOLH_ETH1)),
+-	RZG2L_GPIO_PORT_PACK(2, 0x2f, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IOLH_ETH1)),
+-	RZG2L_GPIO_PORT_PACK(2, 0x30, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IOLH_ETH1)),
+-	RZG2L_GPIO_PORT_PACK(2, 0x31, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IOLH_ETH1)),
+-	RZG2L_GPIO_PORT_PACK(2, 0x32, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IOLH_ETH1)),
+-	RZG2L_GPIO_PORT_PACK(2, 0x33, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IOLH_ETH1)),
+-	RZG2L_GPIO_PORT_PACK(2, 0x34, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IOLH_ETH1)),
+-	RZG2L_GPIO_PORT_PACK(3, 0x35, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IOLH_ETH1)),
++	RZG2L_GPIO_PORT_PACK(3, 0x24, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ETH0)),
++	RZG2L_GPIO_PORT_PACK(2, 0x25, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ETH0)),
++	RZG2L_GPIO_PORT_PACK(2, 0x26, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ETH0)),
++	RZG2L_GPIO_PORT_PACK(2, 0x27, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ETH0)),
++	RZG2L_GPIO_PORT_PACK(2, 0x28, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ETH0)),
++	RZG2L_GPIO_PORT_PACK(2, 0x29, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ETH0)),
++	RZG2L_GPIO_PORT_PACK(2, 0x2a, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ETH0)),
++	RZG2L_GPIO_PORT_PACK(2, 0x2b, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ETH0)),
++	RZG2L_GPIO_PORT_PACK(2, 0x2c, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ETH0)),
++	RZG2L_GPIO_PORT_PACK(2, 0x2d, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ETH1)),
++	RZG2L_GPIO_PORT_PACK(2, 0x2e, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ETH1)),
++	RZG2L_GPIO_PORT_PACK(2, 0x2f, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ETH1)),
++	RZG2L_GPIO_PORT_PACK(2, 0x30, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ETH1)),
++	RZG2L_GPIO_PORT_PACK(2, 0x31, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ETH1)),
++	RZG2L_GPIO_PORT_PACK(2, 0x32, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ETH1)),
++	RZG2L_GPIO_PORT_PACK(2, 0x33, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ETH1)),
++	RZG2L_GPIO_PORT_PACK(2, 0x34, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ETH1)),
++	RZG2L_GPIO_PORT_PACK(3, 0x35, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ETH1)),
+ 	RZG2L_GPIO_PORT_PACK(2, 0x36, RZG2L_MPXED_PIN_FUNCS),
+ 	RZG2L_GPIO_PORT_PACK(3, 0x37, RZG2L_MPXED_PIN_FUNCS),
+ 	RZG2L_GPIO_PORT_PACK(3, 0x38, RZG2L_MPXED_PIN_FUNCS),
+@@ -941,68 +941,68 @@ static  struct rzg2l_dedicated_configs rzg2l_dedicated_pins[] = {
+ 	{ "AUDIO_CLK1", RZG2L_SINGLE_PIN_PACK(0x4, 0, PIN_CFG_IEN) },
+ 	{ "AUDIO_CLK2", RZG2L_SINGLE_PIN_PACK(0x4, 1, PIN_CFG_IEN) },
+ 	{ "SD0_CLK", RZG2L_SINGLE_PIN_PACK(0x6, 0,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IOLH_SD0)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_SD0)) },
+ 	{ "SD0_CMD", RZG2L_SINGLE_PIN_PACK(0x6, 1,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IOLH_SD0)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD0)) },
+ 	{ "SD0_RST#", RZG2L_SINGLE_PIN_PACK(0x6, 2,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IOLH_SD0)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_SD0)) },
+ 	{ "SD0_DATA0", RZG2L_SINGLE_PIN_PACK(0x7, 0,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IOLH_SD0)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD0)) },
+ 	{ "SD0_DATA1", RZG2L_SINGLE_PIN_PACK(0x7, 1,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IOLH_SD0)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD0)) },
+ 	{ "SD0_DATA2", RZG2L_SINGLE_PIN_PACK(0x7, 2,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IOLH_SD0)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD0)) },
+ 	{ "SD0_DATA3", RZG2L_SINGLE_PIN_PACK(0x7, 3,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IOLH_SD0)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD0)) },
+ 	{ "SD0_DATA4", RZG2L_SINGLE_PIN_PACK(0x7, 4,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IOLH_SD0)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD0)) },
+ 	{ "SD0_DATA5", RZG2L_SINGLE_PIN_PACK(0x7, 5,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IOLH_SD0)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD0)) },
+ 	{ "SD0_DATA6", RZG2L_SINGLE_PIN_PACK(0x7, 6,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IOLH_SD0)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD0)) },
+ 	{ "SD0_DATA7", RZG2L_SINGLE_PIN_PACK(0x7, 7,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IOLH_SD0)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD0)) },
+ 	{ "SD1_CLK", RZG2L_SINGLE_PIN_PACK(0x8, 0,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IOLH_SD1))},
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_SD1))},
+ 	{ "SD1_CMD", RZG2L_SINGLE_PIN_PACK(0x8, 1,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IOLH_SD1)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD1)) },
+ 	{ "SD1_DATA0", RZG2L_SINGLE_PIN_PACK(0x9, 0,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IOLH_SD1)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD1)) },
+ 	{ "SD1_DATA1", RZG2L_SINGLE_PIN_PACK(0x9, 1,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IOLH_SD1)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD1)) },
+ 	{ "SD1_DATA2", RZG2L_SINGLE_PIN_PACK(0x9, 2,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IOLH_SD1)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD1)) },
+ 	{ "SD1_DATA3", RZG2L_SINGLE_PIN_PACK(0x9, 3,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IOLH_SD1)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD1)) },
+ 	{ "QSPI0_SPCLK", RZG2L_SINGLE_PIN_PACK(0xa, 0,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IOLH_QSPI)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
+ 	{ "QSPI0_IO0", RZG2L_SINGLE_PIN_PACK(0xa, 1,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IOLH_QSPI)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
+ 	{ "QSPI0_IO1", RZG2L_SINGLE_PIN_PACK(0xa, 2,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IOLH_QSPI)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
+ 	{ "QSPI0_IO2", RZG2L_SINGLE_PIN_PACK(0xa, 3,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IOLH_QSPI)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
+ 	{ "QSPI0_IO3", RZG2L_SINGLE_PIN_PACK(0xa, 4,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IOLH_QSPI)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
+ 	{ "QSPI0_SSL", RZG2L_SINGLE_PIN_PACK(0xa, 5,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IOLH_QSPI)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
+ 	{ "QSPI1_SPCLK", RZG2L_SINGLE_PIN_PACK(0xb, 0,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IOLH_QSPI)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
+ 	{ "QSPI1_IO0", RZG2L_SINGLE_PIN_PACK(0xb, 1,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IOLH_QSPI)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
+ 	{ "QSPI1_IO1", RZG2L_SINGLE_PIN_PACK(0xb, 2,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IOLH_QSPI)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
+ 	{ "QSPI1_IO2", RZG2L_SINGLE_PIN_PACK(0xb, 3,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IOLH_QSPI)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
+ 	{ "QSPI1_IO3", RZG2L_SINGLE_PIN_PACK(0xb, 4,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR  | PIN_CFG_IOLH_QSPI)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR  | PIN_CFG_IO_VMC_QSPI)) },
+ 	{ "QSPI1_SSL", RZG2L_SINGLE_PIN_PACK(0xb, 5,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IOLH_QSPI)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
+ 	{ "QSPI_RESET#", RZG2L_SINGLE_PIN_PACK(0xc, 0,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IOLH_QSPI)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
+ 	{ "QSPI_WP#", RZG2L_SINGLE_PIN_PACK(0xc, 1,
+-	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IOLH_QSPI)) },
+-	{ "QSPI_INT#", RZG2L_SINGLE_PIN_PACK(0xc, 2, (PIN_CFG_SR | PIN_CFG_IOLH_QSPI)) },
++	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
++	{ "QSPI_INT#", RZG2L_SINGLE_PIN_PACK(0xc, 2, (PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
+ 	{ "WDTOVF_PERROUT#", RZG2L_SINGLE_PIN_PACK(0xd, 0, (PIN_CFG_IOLH | PIN_CFG_SR)) },
+ 	{ "RIIC0_SDA", RZG2L_SINGLE_PIN_PACK(0xe, 0, PIN_CFG_IEN) },
+ 	{ "RIIC0_SCL", RZG2L_SINGLE_PIN_PACK(0xe, 1, PIN_CFG_IEN) },
 -- 
 2.17.1
 
