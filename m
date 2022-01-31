@@ -2,153 +2,138 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA075C433FE
-	for <webhook@archiver.kernel.org>; Mon, 31 Jan 2022 12:19:36 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com
- [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.31578.1643631568680544584
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD057C433F5
+	for <webhook@archiver.kernel.org>; Mon, 31 Jan 2022 12:19:38 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com
+ [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web12.31207.1643631563602998327
  for <cip-dev@lists.cip-project.org>;
- Mon, 31 Jan 2022 04:19:36 -0800
+ Mon, 31 Jan 2022 04:19:37 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=pass (domain: bp.renesas.com, ip: 210.160.252.171,
+ spf=pass (domain: bp.renesas.com, ip: 210.160.252.172,
  mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.88,330,1635174000";
-   d="scan'208";a="108231936"
+   d="scan'208";a="108906323"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 31 Jan 2022 21:19:35 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 31 Jan 2022 21:19:37 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id EEDCD4347FEA;
-	Mon, 31 Jan 2022 21:19:34 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 453E34347FEA;
+	Mon, 31 Jan 2022 21:19:36 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 23/27] serial: sh-sci: Add support to
- deassert/assert reset line
-Date: Mon, 31 Jan 2022 12:18:59 +0000
-Message-Id: <20220131121903.8620-24-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 24/27] arm64: dts: renesas: r9a07g044: Add
+ SCIF[1-4] nodes
+Date: Mon, 31 Jan 2022 12:19:00 +0000
+Message-Id: <20220131121903.8620-25-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220131121903.8620-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20220131121903.8620-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 31 Jan 2022 12:19:36 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7544
+ <cip-dev@lists.cip-project.org>; Mon, 31 Jan 2022 12:19:38 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7545
 
-commit 862f72187a41008df2cce3f8e97f57070cbc7060 upstream.
+commit 68f8eb19c18a377181622e58c1fd2ca0f5c0d15d upstream.
 
-On RZ/G2L SoC we need to explicitly deassert the reset line
-for the device to work, use this opportunity to deassert/assert
-reset line in sh-sci driver.
+Add SCIF[1-4] nodes to r9a07g044 (RZ/G2L) SoC DTSI.
 
-This patch adds support to read the "resets" property (if available)
-from DT and perform deassert/assert when required.
-
-Also, propagate the error to the caller of sci_parse_dt() instead of
-returning NULL in case of failure.
-
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://lore.kernel.org/r/20211110232920.19198-4-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+Link: https://lore.kernel.org/r/20211103195600.23964-2-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/tty/serial/sh-sci.c | 39 ++++++++++++++++++++++++++++++-------
- 1 file changed, 32 insertions(+), 7 deletions(-)
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi | 72 ++++++++++++++++++++++
+ 1 file changed, 72 insertions(+)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index c3fd49480ad3..517aff5f76da 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -37,6 +37,7 @@
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-+#include <linux/reset.h>
- #include <linux/scatterlist.h>
- #include <linux/serial.h>
- #include <linux/serial_sci.h>
-@@ -3235,23 +3236,47 @@ static const struct of_device_id of_sci_match[] = {
- };
- MODULE_DEVICE_TABLE(of, of_sci_match);
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+index 2e443f6805bd..52a475c298f0 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+@@ -96,6 +96,78 @@
+ 			status = "disabled";
+ 		};
  
-+static void sci_reset_control_assert(void *data)
-+{
-+	reset_control_assert(data);
-+}
++		scif1: serial@1004bc00 {
++			compatible = "renesas,scif-r9a07g044";
++			reg = <0 0x1004bc00 0 0x400>;
++			interrupts = <GIC_SPI 385 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 387 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 388 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 386 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 389 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 389 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "eri", "rxi", "txi",
++					  "bri", "dri", "tei";
++			clocks = <&cpg CPG_MOD R9A07G044_SCIF1_CLK_PCK>;
++			clock-names = "fck";
++			power-domains = <&cpg>;
++			resets = <&cpg R9A07G044_SCIF1_RST_SYSTEM_N>;
++			status = "disabled";
++		};
 +
- static struct plat_sci_port *sci_parse_dt(struct platform_device *pdev,
- 					  unsigned int *dev_id)
- {
- 	struct device_node *np = pdev->dev.of_node;
-+	struct reset_control *rstc;
- 	struct plat_sci_port *p;
- 	struct sci_port *sp;
- 	const void *data;
--	int id;
-+	int id, ret;
- 
- 	if (!IS_ENABLED(CONFIG_OF) || !np)
--		return NULL;
-+		return ERR_PTR(-EINVAL);
- 
- 	data = of_device_get_match_data(&pdev->dev);
- 
-+	rstc = devm_reset_control_get_optional_exclusive(&pdev->dev, NULL);
-+	if (IS_ERR(rstc))
-+		return ERR_PTR(dev_err_probe(&pdev->dev, PTR_ERR(rstc),
-+					     "failed to get reset ctrl\n"));
++		scif2: serial@1004c000 {
++			compatible = "renesas,scif-r9a07g044";
++			reg = <0 0x1004c000 0 0x400>;
++			interrupts = <GIC_SPI 390 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 392 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 393 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 391 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 394 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 394 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "eri", "rxi", "txi",
++					  "bri", "dri", "tei";
++			clocks = <&cpg CPG_MOD R9A07G044_SCIF2_CLK_PCK>;
++			clock-names = "fck";
++			power-domains = <&cpg>;
++			resets = <&cpg R9A07G044_SCIF2_RST_SYSTEM_N>;
++			status = "disabled";
++		};
 +
-+	ret = reset_control_deassert(rstc);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to deassert reset %d\n", ret);
-+		return ERR_PTR(ret);
-+	}
++		scif3: serial@1004c400 {
++			compatible = "renesas,scif-r9a07g044";
++			reg = <0 0x1004c400 0 0x400>;
++			interrupts = <GIC_SPI 395 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 397 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 398 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 396 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 399 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 399 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "eri", "rxi", "txi",
++					  "bri", "dri", "tei";
++			clocks = <&cpg CPG_MOD R9A07G044_SCIF3_CLK_PCK>;
++			clock-names = "fck";
++			power-domains = <&cpg>;
++			resets = <&cpg R9A07G044_SCIF3_RST_SYSTEM_N>;
++			status = "disabled";
++		};
 +
-+	ret = devm_add_action_or_reset(&pdev->dev, sci_reset_control_assert, rstc);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to register assert devm action, %d\n",
-+			ret);
-+		return ERR_PTR(ret);
-+	}
++		scif4: serial@1004c800 {
++			compatible = "renesas,scif-r9a07g044";
++			reg = <0 0x1004c800 0 0x400>;
++			interrupts = <GIC_SPI 400 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 402 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 403 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 401 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 404 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 404 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "eri", "rxi", "txi",
++					  "bri", "dri", "tei";
++			clocks = <&cpg CPG_MOD R9A07G044_SCIF4_CLK_PCK>;
++			clock-names = "fck";
++			power-domains = <&cpg>;
++			resets = <&cpg R9A07G044_SCIF4_RST_SYSTEM_N>;
++			status = "disabled";
++		};
 +
- 	p = devm_kzalloc(&pdev->dev, sizeof(struct plat_sci_port), GFP_KERNEL);
- 	if (!p)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	/* Get the line number from the aliases node. */
- 	id = of_alias_get_id(np, "serial");
-@@ -3259,11 +3284,11 @@ static struct plat_sci_port *sci_parse_dt(struct platform_device *pdev,
- 		id = ffz(sci_ports_in_use);
- 	if (id < 0) {
- 		dev_err(&pdev->dev, "failed to get alias id (%d)\n", id);
--		return NULL;
-+		return ERR_PTR(-EINVAL);
- 	}
- 	if (id >= ARRAY_SIZE(sci_ports)) {
- 		dev_err(&pdev->dev, "serial%d out of range\n", id);
--		return NULL;
-+		return ERR_PTR(-EINVAL);
- 	}
- 
- 	sp = &sci_ports[id];
-@@ -3350,8 +3375,8 @@ static int sci_probe(struct platform_device *dev)
- 
- 	if (dev->dev.of_node) {
- 		p = sci_parse_dt(dev, &dev_id);
--		if (p == NULL)
--			return -EINVAL;
-+		if (IS_ERR(p))
-+			return PTR_ERR(p);
- 	} else {
- 		p = dev->dev.platform_data;
- 		if (p == NULL) {
+ 		canfd: can@10050000 {
+ 			compatible = "renesas,r9a07g044-canfd", "renesas,rzg2l-canfd";
+ 			reg = <0 0x10050000 0 0x8000>;
 -- 
 2.17.1
 
