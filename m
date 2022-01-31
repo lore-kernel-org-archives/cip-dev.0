@@ -2,156 +2,83 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB16BC433FE
-	for <webhook@archiver.kernel.org>; Mon, 31 Jan 2022 12:19:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA029C433F5
+	for <webhook@archiver.kernel.org>; Mon, 31 Jan 2022 12:19:30 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com
  [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.web10.31578.1643631568680544584
  for <cip-dev@lists.cip-project.org>;
- Mon, 31 Jan 2022 04:19:28 -0800
+ Mon, 31 Jan 2022 04:19:29 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing;
  spf=pass (domain: bp.renesas.com, ip: 210.160.252.171,
  mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.88,330,1635174000";
-   d="scan'208";a="108231919"
+   d="scan'208";a="108231923"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 31 Jan 2022 21:19:28 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 31 Jan 2022 21:19:29 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 305ED4347FE1;
-	Mon, 31 Jan 2022 21:19:27 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 790F74347FCA;
+	Mon, 31 Jan 2022 21:19:28 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 17/27] clk: renesas: r9a07g044: Add clock and reset
- entries for SPI Multi I/O Bus Controller
-Date: Mon, 31 Jan 2022 12:18:53 +0000
-Message-Id: <20220131121903.8620-18-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 18/27] arm64: dts: renesas: r9a07g044: Add SPI
+ Multi I/O Bus controller node
+Date: Mon, 31 Jan 2022 12:18:54 +0000
+Message-Id: <20220131121903.8620-19-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220131121903.8620-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20220131121903.8620-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 31 Jan 2022 12:19:29 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7538
+ <cip-dev@lists.cip-project.org>; Mon, 31 Jan 2022 12:19:30 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7539
 
-commit f294a0ea9d12a658ff326bbe0d64137659bc2fc9 upstream.
+commit 9223cb663e9f3f1031f5ef9c6e398447e40338f6 upstream.
 
-Add clock and reset entries for SPI Multi I/O Bus Controller.
+Add SPI Multi I/O Bus controller node to R9A07G044 (RZ/G2L) SoC DTSI.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20210928130132.15022-1-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://lore.kernel.org/r/20210928155852.32569-1-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a07g044-cpg.c | 18 ++++++++++++++++++
- drivers/clk/renesas/rzg2l-cpg.h     |  3 +++
- 2 files changed, 21 insertions(+)
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
-index 3c518b56c5a6..1e331cdb13a5 100644
---- a/drivers/clk/renesas/r9a07g044-cpg.c
-+++ b/drivers/clk/renesas/r9a07g044-cpg.c
-@@ -29,10 +29,14 @@ enum clk_ids {
- 	CLK_PLL2_DIV16,
- 	CLK_PLL2_DIV20,
- 	CLK_PLL3,
-+	CLK_PLL3_400,
-+	CLK_PLL3_533,
- 	CLK_PLL3_DIV2,
- 	CLK_PLL3_DIV2_4,
- 	CLK_PLL3_DIV2_4_2,
- 	CLK_PLL3_DIV4,
-+	CLK_SEL_PLL3_3,
-+	CLK_DIV_PLL3_C,
- 	CLK_PLL4,
- 	CLK_PLL5,
- 	CLK_PLL5_FOUT3,
-@@ -56,6 +60,7 @@ static const struct clk_div_table dtable_1_32[] = {
- };
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+index a88d84b95034..2e443f6805bd 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+@@ -260,6 +260,23 @@
+ 			};
+ 		};
  
- /* Mux clock tables */
-+static const char * const sel_pll3_3[] = { ".pll3_533", ".pll3_400" };
- static const char * const sel_pll6_2[]	= { ".pll6_250", ".pll5_250" };
- 
- static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
-@@ -68,6 +73,8 @@ static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
- 	DEF_SAMPLL(".pll1", CLK_PLL1, CLK_EXTAL, PLL146_CONF(0)),
- 	DEF_FIXED(".pll2", CLK_PLL2, CLK_EXTAL, 133, 2),
- 	DEF_FIXED(".pll3", CLK_PLL3, CLK_EXTAL, 133, 2),
-+	DEF_FIXED(".pll3_400", CLK_PLL3_400, CLK_PLL3, 1, 4),
-+	DEF_FIXED(".pll3_533", CLK_PLL3_533, CLK_PLL3, 1, 3),
- 
- 	DEF_FIXED(".pll5", CLK_PLL5, CLK_EXTAL, 125, 1),
- 	DEF_FIXED(".pll5_fout3", CLK_PLL5_FOUT3, CLK_PLL5, 1, 6),
-@@ -82,6 +89,10 @@ static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
- 	DEF_FIXED(".pll3_div2_4", CLK_PLL3_DIV2_4, CLK_PLL3_DIV2, 1, 4),
- 	DEF_FIXED(".pll3_div2_4_2", CLK_PLL3_DIV2_4_2, CLK_PLL3_DIV2_4, 1, 2),
- 	DEF_FIXED(".pll3_div4", CLK_PLL3_DIV4, CLK_PLL3, 1, 4),
-+	DEF_MUX(".sel_pll3_3", CLK_SEL_PLL3_3, SEL_PLL3_3,
-+		sel_pll3_3, ARRAY_SIZE(sel_pll3_3), 0, CLK_MUX_READ_ONLY),
-+	DEF_DIV("divpl3c", CLK_DIV_PLL3_C, CLK_SEL_PLL3_3,
-+		DIVPL3C, dtable_1_32, CLK_DIVIDER_HIWORD_MASK),
- 
- 	DEF_FIXED(".pll5_250", CLK_PLL5_250, CLK_PLL5_FOUT3, 1, 2),
- 	DEF_FIXED(".pll6_250", CLK_PLL6_250, CLK_PLL6, 1, 2),
-@@ -101,6 +112,8 @@ static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
- 	DEF_FIXED("ZT", R9A07G044_CLK_ZT, CLK_PLL3_DIV2_4_2, 1, 1),
- 	DEF_MUX("HP", R9A07G044_CLK_HP, SEL_PLL6_2,
- 		sel_pll6_2, ARRAY_SIZE(sel_pll6_2), 0, CLK_MUX_HIWORD_MASK),
-+	DEF_FIXED("SPI0", R9A07G044_CLK_SPI0, CLK_DIV_PLL3_C, 1, 2),
-+	DEF_FIXED("SPI1", R9A07G044_CLK_SPI1, CLK_DIV_PLL3_C, 1, 4),
- };
- 
- static struct rzg2l_mod_clk r9a07g044_mod_clks[] = {
-@@ -114,6 +127,10 @@ static struct rzg2l_mod_clk r9a07g044_mod_clks[] = {
- 				0x52c, 0),
- 	DEF_MOD("dmac_pclk",	R9A07G044_DMAC_PCLK, CLK_P1_DIV2,
- 				0x52c, 1),
-+	DEF_MOD("spi_clk2",	R9A07G044_SPI_CLK2, R9A07G044_CLK_SPI1,
-+				0x550, 0),
-+	DEF_MOD("spi_clk",	R9A07G044_SPI_CLK, R9A07G044_CLK_SPI0,
-+				0x550, 1),
- 	DEF_MOD("ssi0_pclk",	R9A07G044_SSI0_PCLK2, R9A07G044_CLK_P0,
- 				0x570, 0),
- 	DEF_MOD("ssi0_sfr",	R9A07G044_SSI0_PCLK_SFR, R9A07G044_CLK_P0,
-@@ -182,6 +199,7 @@ static struct rzg2l_reset r9a07g044_resets[] = {
- 	DEF_RST(R9A07G044_IA55_RESETN, 0x818, 0),
- 	DEF_RST(R9A07G044_DMAC_ARESETN, 0x82c, 0),
- 	DEF_RST(R9A07G044_DMAC_RST_ASYNC, 0x82c, 1),
-+	DEF_RST(R9A07G044_SPI_RST, 0x850, 0),
- 	DEF_RST(R9A07G044_SSI0_RST_M2_REG, 0x870, 0),
- 	DEF_RST(R9A07G044_SSI1_RST_M2_REG, 0x870, 1),
- 	DEF_RST(R9A07G044_SSI2_RST_M2_REG, 0x870, 2),
-diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
-index 191c403aa52f..dc5b65a4029e 100644
---- a/drivers/clk/renesas/rzg2l-cpg.h
-+++ b/drivers/clk/renesas/rzg2l-cpg.h
-@@ -11,6 +11,7 @@
- 
- #define CPG_PL2_DDIV		(0x204)
- #define CPG_PL3A_DDIV		(0x208)
-+#define CPG_PL3_SSEL		(0x408)
- #define CPG_PL6_ETH_SSEL	(0x418)
- 
- /* n = 0/1/2 for PLL1/4/6 */
-@@ -24,10 +25,12 @@
- #define DIVPL2A		DDIV_PACK(CPG_PL2_DDIV, 0, 3)
- #define DIVPL3A		DDIV_PACK(CPG_PL3A_DDIV, 0, 3)
- #define DIVPL3B		DDIV_PACK(CPG_PL3A_DDIV, 4, 3)
-+#define DIVPL3C		DDIV_PACK(CPG_PL3A_DDIV, 8, 3)
- 
- #define SEL_PLL_PACK(offset, bitpos, size) \
- 		(((offset) << 20) | ((bitpos) << 12) | ((size) << 8))
- 
-+#define SEL_PLL3_3	SEL_PLL_PACK(CPG_PL3_SSEL, 8, 1)
- #define SEL_PLL6_2	SEL_PLL_PACK(CPG_PL6_ETH_SSEL, 0, 1)
- 
- /**
++		sbc: spi@10060000 {
++			compatible = "renesas,r9a07g044-rpc-if",
++				     "renesas,rzg2l-rpc-if";
++			reg = <0 0x10060000 0 0x10000>,
++			      <0 0x20000000 0 0x10000000>,
++			      <0 0x10070000 0 0x10000>;
++			reg-names = "regs", "dirmap", "wbuf";
++			interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD R9A07G044_SPI_CLK2>,
++				 <&cpg CPG_MOD R9A07G044_SPI_CLK>;
++			resets = <&cpg R9A07G044_SPI_RST>;
++			power-domains = <&cpg>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		cpg: clock-controller@11010000 {
+ 			compatible = "renesas,r9a07g044-cpg";
+ 			reg = <0 0x11010000 0 0x10000>;
 -- 
 2.17.1
 
