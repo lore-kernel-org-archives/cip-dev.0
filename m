@@ -2,310 +2,137 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C7DDC433F5
-	for <webhook@archiver.kernel.org>; Mon, 31 Jan 2022 12:19:18 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com
- [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web12.31205.1643631550808452343
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3F86C433FE
+	for <webhook@archiver.kernel.org>; Mon, 31 Jan 2022 12:19:19 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com
+ [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web12.31206.1643631558306709663
  for <cip-dev@lists.cip-project.org>;
- Mon, 31 Jan 2022 04:19:17 -0800
+ Mon, 31 Jan 2022 04:19:19 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=pass (domain: bp.renesas.com, ip: 210.160.252.172,
+ spf=pass (domain: bp.renesas.com, ip: 210.160.252.171,
  mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.88,330,1635174000";
-   d="scan'208";a="108906294"
+   d="scan'208";a="108231905"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 31 Jan 2022 21:19:16 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 31 Jan 2022 21:19:19 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 894354347FCA;
-	Mon, 31 Jan 2022 21:19:15 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 2604A4347FCA;
+	Mon, 31 Jan 2022 21:19:17 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 08/27] pinctrl: renesas: rzg2l: Add support to
- get/set drive-strength and output-impedance-ohms
-Date: Mon, 31 Jan 2022 12:18:44 +0000
-Message-Id: <20220131121903.8620-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 10/27] dt-bindings: memory: renesas,rpc-if: Add
+ support for the R9A07G044
+Date: Mon, 31 Jan 2022 12:18:46 +0000
+Message-Id: <20220131121903.8620-11-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220131121903.8620-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20220131121903.8620-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 31 Jan 2022 12:19:18 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7529
+ <cip-dev@lists.cip-project.org>; Mon, 31 Jan 2022 12:19:19 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7531
 
-commit adb613f84a9e3638dfcc85975c7d58a4e80eef02 upstream.
+commit c271aa1f73515bcb35f977f30825832d41a2f504 upstream.
 
-RZ/G2L supports two groups of pins Group-A and Group-B. For Group-A
-pins drive-strength can be configured and for Group-B output-impedance
-can be configured.
+SPI Multi I/O Bus Controller on RZ/G2L SoC is almost identical to
+the RPC-IF interface found on R-Car Gen3 SoC's.
 
-This patch splits PIN_CFG_IOLH macro to PIN_CFG_IOLH_A/B and adds
-support to get/set drive-strength and output-impedance-ohms for the
-supported pins.
+This patch adds a new compatible string to identify the RZ/G2L family
+so that the timing values on RZ/G2L can be adjusted.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20211110224622.16022-7-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20211025205631.21151-2-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+[PL: Manually applied the changes.]
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 161 +++++++++++++++++-------
- 1 file changed, 113 insertions(+), 48 deletions(-)
+ .../memory-controllers/renesas,rpc-if.yaml    | 43 ++++++++++++++-----
+ 1 file changed, 33 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index 5ebb9034b572..ccee9c9e2e22 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -35,20 +35,21 @@
- #define MUX_FUNC(pinconf)	(((pinconf) & MUX_FUNC_MASK) >> MUX_FUNC_OFFS)
+diff --git a/Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml b/Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml
+index ebc1052a5e9b..e733b01abe13 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml
++++ b/Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml
+@@ -24,12 +24,18 @@ allOf:
  
- /* PIN capabilities */
--#define PIN_CFG_IOLH			BIT(0)
--#define PIN_CFG_SR			BIT(1)
--#define PIN_CFG_IEN			BIT(2)
--#define PIN_CFG_PUPD			BIT(3)
--#define PIN_CFG_IO_VMC_SD0		BIT(4)
--#define PIN_CFG_IO_VMC_SD1		BIT(5)
--#define PIN_CFG_IO_VMC_QSPI		BIT(6)
--#define PIN_CFG_IO_VMC_ETH0		BIT(7)
--#define PIN_CFG_IO_VMC_ETH1		BIT(8)
--#define PIN_CFG_FILONOFF		BIT(9)
--#define PIN_CFG_FILNUM			BIT(10)
--#define PIN_CFG_FILCLKSEL		BIT(11)
+ properties:
+   compatible:
+-    items:
+-      - enum:
+-          - renesas,r8a77970-rpc-if       # R-Car V3M
+-          - renesas,r8a77980-rpc-if       # R-Car V3H
+-          - renesas,r8a77995-rpc-if       # R-Car D3
+-      - const: renesas,rcar-gen3-rpc-if   # a generic R-Car gen3 device
++    oneOf:
++      - items:
++          - enum:
++              - renesas,r8a77970-rpc-if       # R-Car V3M
++              - renesas,r8a77980-rpc-if       # R-Car V3H
++              - renesas,r8a77995-rpc-if       # R-Car D3
++          - const: renesas,rcar-gen3-rpc-if   # a generic R-Car gen3 or RZ/G2{E,H,M,N} device
++
++      - items:
++          - enum:
++              - renesas,r9a07g044-rpc-if      # RZ/G2{L,LC}
++          - const: renesas,rzg2l-rpc-if       # RZ/G2L family
+ 
+   reg:
+     items:
+@@ -43,8 +49,7 @@ properties:
+       - const: dirmap
+       - const: wbuf
+ 
+-  clocks:
+-    maxItems: 1
++  clocks: true
+ 
+   power-domains:
+     maxItems: 1
+@@ -62,8 +67,6 @@ patternProperties:
+             - cfi-flash
+             - jedec,spi-nor
+ 
+-unevaluatedProperties: false
 -
--#define RZG2L_MPXED_PIN_FUNCS		(PIN_CFG_IOLH | \
-+#define PIN_CFG_IOLH_A			BIT(0)
-+#define PIN_CFG_IOLH_B			BIT(1)
-+#define PIN_CFG_SR			BIT(2)
-+#define PIN_CFG_IEN			BIT(3)
-+#define PIN_CFG_PUPD			BIT(4)
-+#define PIN_CFG_IO_VMC_SD0		BIT(5)
-+#define PIN_CFG_IO_VMC_SD1		BIT(6)
-+#define PIN_CFG_IO_VMC_QSPI		BIT(7)
-+#define PIN_CFG_IO_VMC_ETH0		BIT(8)
-+#define PIN_CFG_IO_VMC_ETH1		BIT(9)
-+#define PIN_CFG_FILONOFF		BIT(10)
-+#define PIN_CFG_FILNUM			BIT(11)
-+#define PIN_CFG_FILCLKSEL		BIT(12)
-+
-+#define RZG2L_MPXED_PIN_FUNCS		(PIN_CFG_IOLH_A | \
- 					 PIN_CFG_SR | \
- 					 PIN_CFG_PUPD | \
- 					 PIN_CFG_FILONOFF | \
-@@ -86,6 +87,7 @@
- #define PMC(n)			(0x0200 + 0x10 + (n))
- #define PFC(n)			(0x0400 + 0x40 + (n) * 4)
- #define PIN(n)			(0x0800 + 0x10 + (n))
-+#define IOLH(n)			(0x1000 + (n) * 8)
- #define IEN(n)			(0x1800 + (n) * 8)
- #define PWPR			(0x3014)
- #define SD_CH(n)		(0x3000 + (n) * 4)
-@@ -101,6 +103,7 @@
- #define PVDD_MASK		0x01
- #define PFC_MASK		0x07
- #define IEN_MASK		0x01
-+#define IOLH_MASK		0x03
+ required:
+   - compatible
+   - reg
+@@ -74,6 +77,26 @@ required:
+   - '#address-cells'
+   - '#size-cells'
  
- #define PM_INPUT		0x1
- #define PM_OUTPUT		0x2
-@@ -138,6 +141,9 @@ struct rzg2l_pinctrl {
- 	spinlock_t			lock;
- };
- 
-+static const unsigned int iolh_groupa_mA[] = { 2, 4, 8, 12 };
-+static const unsigned int iolh_groupb_oi[] = { 100, 66, 50, 33 };
++if:
++  properties:
++    compatible:
++      contains:
++        enum:
++          - renesas,rzg2l-rpc-if
++then:
++  properties:
++    clocks:
++      items:
++        - description: SPI Multi IO Register access clock (SPI_CLK2)
++        - description: SPI Multi IO Main clock (SPI_CLK).
 +
- static void rzg2l_pinctrl_set_pfc_mode(struct rzg2l_pinctrl *pctrl,
- 				       u8 port, u8 pin, u8 func)
- {
-@@ -532,6 +538,28 @@ static int rzg2l_pinctrl_pinconf_get(struct pinctrl_dev *pctldev,
- 		break;
- 	}
- 
-+	case PIN_CONFIG_DRIVE_STRENGTH: {
-+		unsigned int index;
++else:
++  properties:
++    clocks:
++      maxItems: 1
 +
-+		if (!(cfg & PIN_CFG_IOLH_A))
-+			return -EINVAL;
++unevaluatedProperties: false
 +
-+		index = rzg2l_read_pin_config(pctrl, IOLH(port_offset), bit, IOLH_MASK);
-+		arg = iolh_groupa_mA[index];
-+		break;
-+	}
-+
-+	case PIN_CONFIG_OUTPUT_IMPEDANCE_OHMS: {
-+		unsigned int index;
-+
-+		if (!(cfg & PIN_CFG_IOLH_B))
-+			return -EINVAL;
-+
-+		index = rzg2l_read_pin_config(pctrl, IOLH(port_offset), bit, IOLH_MASK);
-+		arg = iolh_groupb_oi[index];
-+		break;
-+	}
-+
- 	default:
- 		return -ENOTSUPP;
- 	}
-@@ -609,6 +637,43 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
- 			spin_unlock_irqrestore(&pctrl->lock, flags);
- 			break;
- 		}
-+
-+		case PIN_CONFIG_DRIVE_STRENGTH: {
-+			unsigned int arg = pinconf_to_config_argument(_configs[i]);
-+			unsigned int index;
-+
-+			if (!(cfg & PIN_CFG_IOLH_A))
-+				return -EINVAL;
-+
-+			for (index = 0; index < ARRAY_SIZE(iolh_groupa_mA); index++) {
-+				if (arg == iolh_groupa_mA[index])
-+					break;
-+			}
-+			if (index >= ARRAY_SIZE(iolh_groupa_mA))
-+				return -EINVAL;
-+
-+			rzg2l_rmw_pin_config(pctrl, IOLH(port_offset), bit, IOLH_MASK, index);
-+			break;
-+		}
-+
-+		case PIN_CONFIG_OUTPUT_IMPEDANCE_OHMS: {
-+			unsigned int arg = pinconf_to_config_argument(_configs[i]);
-+			unsigned int index;
-+
-+			if (!(cfg & PIN_CFG_IOLH_B))
-+				return -EINVAL;
-+
-+			for (index = 0; index < ARRAY_SIZE(iolh_groupb_oi); index++) {
-+				if (arg == iolh_groupb_oi[index])
-+					break;
-+			}
-+			if (index >= ARRAY_SIZE(iolh_groupb_oi))
-+				return -EINVAL;
-+
-+			rzg2l_rmw_pin_config(pctrl, IOLH(port_offset), bit, IOLH_MASK, index);
-+			break;
-+		}
-+
- 		default:
- 			return -EOPNOTSUPP;
- 		}
-@@ -935,75 +1000,75 @@ static  struct rzg2l_dedicated_configs rzg2l_dedicated_pins[] = {
- 	{ "NMI", RZG2L_SINGLE_PIN_PACK(0x1, 0,
- 	 (PIN_CFG_FILONOFF | PIN_CFG_FILNUM | PIN_CFG_FILCLKSEL)) },
- 	{ "TMS/SWDIO", RZG2L_SINGLE_PIN_PACK(0x2, 0,
--	 (PIN_CFG_SR | PIN_CFG_IOLH | PIN_CFG_IEN)) },
-+	 (PIN_CFG_SR | PIN_CFG_IOLH_A | PIN_CFG_IEN)) },
- 	{ "TDO", RZG2L_SINGLE_PIN_PACK(0x3, 0,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN)) },
-+	 (PIN_CFG_IOLH_A | PIN_CFG_SR | PIN_CFG_IEN)) },
- 	{ "AUDIO_CLK1", RZG2L_SINGLE_PIN_PACK(0x4, 0, PIN_CFG_IEN) },
- 	{ "AUDIO_CLK2", RZG2L_SINGLE_PIN_PACK(0x4, 1, PIN_CFG_IEN) },
- 	{ "SD0_CLK", RZG2L_SINGLE_PIN_PACK(0x6, 0,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_SD0)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IO_VMC_SD0)) },
- 	{ "SD0_CMD", RZG2L_SINGLE_PIN_PACK(0x6, 1,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD0)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD0)) },
- 	{ "SD0_RST#", RZG2L_SINGLE_PIN_PACK(0x6, 2,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_SD0)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IO_VMC_SD0)) },
- 	{ "SD0_DATA0", RZG2L_SINGLE_PIN_PACK(0x7, 0,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD0)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD0)) },
- 	{ "SD0_DATA1", RZG2L_SINGLE_PIN_PACK(0x7, 1,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD0)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD0)) },
- 	{ "SD0_DATA2", RZG2L_SINGLE_PIN_PACK(0x7, 2,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD0)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD0)) },
- 	{ "SD0_DATA3", RZG2L_SINGLE_PIN_PACK(0x7, 3,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD0)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD0)) },
- 	{ "SD0_DATA4", RZG2L_SINGLE_PIN_PACK(0x7, 4,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD0)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD0)) },
- 	{ "SD0_DATA5", RZG2L_SINGLE_PIN_PACK(0x7, 5,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD0)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD0)) },
- 	{ "SD0_DATA6", RZG2L_SINGLE_PIN_PACK(0x7, 6,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD0)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD0)) },
- 	{ "SD0_DATA7", RZG2L_SINGLE_PIN_PACK(0x7, 7,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD0)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD0)) },
- 	{ "SD1_CLK", RZG2L_SINGLE_PIN_PACK(0x8, 0,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_SD1))},
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IO_VMC_SD1)) },
- 	{ "SD1_CMD", RZG2L_SINGLE_PIN_PACK(0x8, 1,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD1)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD1)) },
- 	{ "SD1_DATA0", RZG2L_SINGLE_PIN_PACK(0x9, 0,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD1)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD1)) },
- 	{ "SD1_DATA1", RZG2L_SINGLE_PIN_PACK(0x9, 1,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD1)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD1)) },
- 	{ "SD1_DATA2", RZG2L_SINGLE_PIN_PACK(0x9, 2,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD1)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD1)) },
- 	{ "SD1_DATA3", RZG2L_SINGLE_PIN_PACK(0x9, 3,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD1)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IEN | PIN_CFG_IO_VMC_SD1)) },
- 	{ "QSPI0_SPCLK", RZG2L_SINGLE_PIN_PACK(0xa, 0,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
- 	{ "QSPI0_IO0", RZG2L_SINGLE_PIN_PACK(0xa, 1,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
- 	{ "QSPI0_IO1", RZG2L_SINGLE_PIN_PACK(0xa, 2,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
- 	{ "QSPI0_IO2", RZG2L_SINGLE_PIN_PACK(0xa, 3,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
- 	{ "QSPI0_IO3", RZG2L_SINGLE_PIN_PACK(0xa, 4,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
- 	{ "QSPI0_SSL", RZG2L_SINGLE_PIN_PACK(0xa, 5,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
- 	{ "QSPI1_SPCLK", RZG2L_SINGLE_PIN_PACK(0xb, 0,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
- 	{ "QSPI1_IO0", RZG2L_SINGLE_PIN_PACK(0xb, 1,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
- 	{ "QSPI1_IO1", RZG2L_SINGLE_PIN_PACK(0xb, 2,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
- 	{ "QSPI1_IO2", RZG2L_SINGLE_PIN_PACK(0xb, 3,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
- 	{ "QSPI1_IO3", RZG2L_SINGLE_PIN_PACK(0xb, 4,
--	 (PIN_CFG_IOLH | PIN_CFG_SR  | PIN_CFG_IO_VMC_QSPI)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR  | PIN_CFG_IO_VMC_QSPI)) },
- 	{ "QSPI1_SSL", RZG2L_SINGLE_PIN_PACK(0xb, 5,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
- 	{ "QSPI_RESET#", RZG2L_SINGLE_PIN_PACK(0xc, 0,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
- 	{ "QSPI_WP#", RZG2L_SINGLE_PIN_PACK(0xc, 1,
--	 (PIN_CFG_IOLH | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
-+	 (PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
- 	{ "QSPI_INT#", RZG2L_SINGLE_PIN_PACK(0xc, 2, (PIN_CFG_SR | PIN_CFG_IO_VMC_QSPI)) },
--	{ "WDTOVF_PERROUT#", RZG2L_SINGLE_PIN_PACK(0xd, 0, (PIN_CFG_IOLH | PIN_CFG_SR)) },
-+	{ "WDTOVF_PERROUT#", RZG2L_SINGLE_PIN_PACK(0xd, 0, (PIN_CFG_IOLH_A | PIN_CFG_SR)) },
- 	{ "RIIC0_SDA", RZG2L_SINGLE_PIN_PACK(0xe, 0, PIN_CFG_IEN) },
- 	{ "RIIC0_SCL", RZG2L_SINGLE_PIN_PACK(0xe, 1, PIN_CFG_IEN) },
- 	{ "RIIC1_SDA", RZG2L_SINGLE_PIN_PACK(0xe, 2, PIN_CFG_IEN) },
+ examples:
+   - |
+     #include <dt-bindings/clock/renesas-cpg-mssr.h>
 -- 
 2.17.1
 
