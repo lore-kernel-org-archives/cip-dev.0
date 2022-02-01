@@ -2,60 +2,80 @@ Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03686C433F5
-	for <webhook@archiver.kernel.org>; Tue,  1 Feb 2022 18:58:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9DA1C433F5
+	for <webhook@archiver.kernel.org>; Tue,  1 Feb 2022 21:33:00 +0000 (UTC)
 Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web09.53259.1643741900555807657
+ by mx.groups.io with SMTP id smtpd.web11.55435.1643751179212374087
  for <cip-dev@lists.cip-project.org>;
- Tue, 01 Feb 2022 10:58:21 -0800
+ Tue, 01 Feb 2022 13:33:00 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing;
  spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 6AD681C0B82; Tue,  1 Feb 2022 19:58:15 +0100 (CET)
-Date: Tue, 1 Feb 2022 19:58:14 +0100
+	id 090D51C0B82; Tue,  1 Feb 2022 22:32:55 +0100 (CET)
+Date: Tue, 1 Feb 2022 22:32:54 +0100
 From: Pavel Machek <pavel@denx.de>
-To: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc: cip-dev@lists.cip-project.org,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Pavel Machek <pavel@denx.de>, Biju Das <biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH 5.10.y-cip 00/27] Add RPCIF, SCI{F1} support to Renesas
- RZ/G2L SoC
-Message-ID: <20220201185814.GA23162@duo.ucw.cz>
-References: <20220131121903.8620-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: jan.kiszka@siemens.com, cip-dev@lists.cip-project.org
+Subject: 4.4.302 is going to be last 4.4 release
+Message-ID: <20220201213254.GA3001@duo.ucw.cz>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="bp/iNruPH9dso1Pn"
+	protocol="application/pgp-signature"; boundary="SLDf9lqlvOQaIe6s"
 Content-Disposition: inline
-In-Reply-To: <20220131121903.8620-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 01 Feb 2022 18:58:21 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7561
+ <cip-dev@lists.cip-project.org>; Tue, 01 Feb 2022 21:33:00 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7562
 
 
---bp/iNruPH9dso1Pn
+--SLDf9lqlvOQaIe6s
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> This patch series add support for the below:
-> * Adds a generic property "output-impedance-ohms"
-> * Pinctrl driver update to support set/get drive-strength and
->   output-impedance-ohms
-> * Driver fixes and updates for RPC-IF
-> * Support to SPI Multi I/O Bus controller (RPC-IF) for RZ/G2L
-> * Support to SCI for RZ/G2L SoC
-> * DTS updates for RZ/G2L SMARC
->=20
-> All the patches have been cherry-picked from Linux v5.17-rc2.
+Greg says:
 
-Testing did not uncover any kernel problems. I have applied the
-patches and pushed the tree.
+# Message-Id: <20220201180822.148370751@linuxfoundation.org>
+# Subject: [PATCH 4.4 00/25] 4.4.302-rc1 review
+# ...
+# NOTE!  This is the proposed LAST 4.4.y kernel release to happen under
+# the rules of the normal stable kernel releases.  After this one, it will
+# be marked End-Of-Life as it has been 6 years and you really should know
+# better by now and have moved to a newer kernel tree.  After this one, no
+# more security fixes will be backported and you will end up with an
+# insecure system over time.
+# ...
+# Responses should be made by Thu, 03 Feb 2022 18:08:10 +0000.
+# Anything received after that time might be too late.
+
+(He sometimes releases kernels before the deadline).
+
+We may want to make any announcements now or just after 4.4.302 is
+released... so I guess we should start working on suitable wording.
+
+Something like:
+
+CIP project is committed to maintain 4.4.x kernel till January of 2027
+[1]. We are maintaining -cip branch [2], that is stable kernel with about
+1000 of patches to support our reference hardware [3] and -cip-rt
+branch, with is merge of -rt and -cip trees.
+
+If you for some reason need 4.4.x with bug and security fixes, and are
+running similar hardware to our reference hardware (x86-64 and armv7),
+-cip tree may be good base for that work. Testing of the -cip tree is
+welcome, as is joining the CIP project.
+
+[1] https://wiki.linuxfoundation.org/civilinfrastructureplatform/start
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?=
+h=3Dlinux-4.4.y-cip-rt
+[3] https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptesting=
+/cipreferencehardware
+
+?
 
 Best regards,
 								Pavel
@@ -63,15 +83,15 @@ Best regards,
 DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---bp/iNruPH9dso1Pn
+--SLDf9lqlvOQaIe6s
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYfmCxgAKCRAw5/Bqldv6
-8mLlAKCVDoBxv7l4cp7kTK/Qez2mBjNTYgCfe+lvFH/RCJKWnnw9ONXJQdnJGfA=
-=h3Gi
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYfmnBgAKCRAw5/Bqldv6
+8oXPAKCSYT47wJzSQ//3/t/75PCTpQ+m7gCfShNALVOoLYrqCqSEbuSaC+g9xSM=
+=OKWE
 -----END PGP SIGNATURE-----
 
---bp/iNruPH9dso1Pn--
+--SLDf9lqlvOQaIe6s--
 
