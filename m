@@ -1,276 +1,160 @@
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
- by mx.groups.io with SMTP id smtpd.web11.8127.1643889468387582181
- for <cip-dev@lists.cip-project.org>;
- Thu, 03 Feb 2022 03:57:49 -0800
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+ by mx.groups.io with SMTP id smtpd.web10.58552.1643766112622435016
+ for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
+ Tue, 01 Feb 2022 17:41:52 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=quirin.gylstorff@siemens.com header.s=fm1 header.b=BeLPPYpE;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-51332-20220203115743a11c7fdd632ca09209-ajmdyo@rts-flowmailer.siemens.com)
-Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20220203115743a11c7fdd632ca09209
-        for <cip-dev@lists.cip-project.org>;
-        Thu, 03 Feb 2022 12:57:45 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=quirin.gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=dGHoWf7DdsbvCWCMSguYQyHWkQyplst5ZFHqs5swx7g=;
- b=BeLPPYpE7pi/IftVHuLD+r1qYnwj5OqnZhA3NYKBVc1/6HXoTqKMc2OKERDSQAY5UTKrtj
- RpHZqeW3xBN0Nubw5bCvSKXkHHUNQ9rdWp8ALoZC8GxiiKY7sRwgx2xLfsuKhUWf6uiF+fYz
- mOH3axQqtu4f6vyb4gME0Z/kAzL8A=;
-Message-ID: <f80fdf3d-816f-2497-0bd3-89e5355977fc@siemens.com>
-Date: Thu, 3 Feb 2022 12:57:42 +0100
+ dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=BIWjmqvx;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.216.54, mailfrom: bot@kernelci.org)
+Received: by mail-pj1-f54.google.com with SMTP id cq9-20020a17090af98900b001b8262fe2d5so1020140pjb.0
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Tue, 01 Feb 2022 17:41:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=+gzmsiSN7dnu5lo7dEPpfnVmvua7k6d9dmJ10eZ0zhg=;
+        b=BIWjmqvxO5l1SKJgmo+X7FB8TsmBrhendkWaiplX6zPwO4+W1M2BOKZwRQ+PeypGYj
+         moM8nZE7V8dNVeyEG8Lb6XoZxBlEWOWURPdXPxUIC5Cs3kfsCYMohfi5AwYYSBpqE29/
+         wM8wPdtyMnOb/40Nb/R4TLAfv8dV9JYKx/QG0jzLQVF5PZT7LtFyluQEywlyJlbtFgCl
+         w71AV87if8hMBRiJqdHCU1sg0Hr9ocyAnBu2cpw8OV+kWNu5/euIlAlv8yKS+5VfnMKP
+         qVt6/h1zdS/vh4hTkI4If3AdcLmOEE1mhS66xCI0MdmTVgOwlqIV9guVeB8tgossmtJ2
+         be8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=+gzmsiSN7dnu5lo7dEPpfnVmvua7k6d9dmJ10eZ0zhg=;
+        b=Kbr/rXHneZJqkesSSMazj2Dh9Sw+CYJKoCrY/qsv9rDk4KZVqFtz8nD/0Wkv/TPxR6
+         s0WhipgREECwfzAMsR2bcG/RNuCgHIEFOyJnQ0Wa+hsM6COicN1B5sOozFR+ao8l0Lnw
+         qct9X5vSAWNG1H33SqCdj0kUMHrMKw+CCYiK3aay5j5bMtwz3WaaRwoEGuHvu40fi1wX
+         bOk2to+8EoBTF+EMS/m1B73SBwg4JmzPVdYWzYXbfDI10199waLyWdUwOqbVKD0FN8Ob
+         fgqIMkdtI4vFVIy5qgSkztyIhvkChPnJLyBKmUK/IkyySdR0p0K3aEMRnB5fPscs5rOp
+         3U1A==
+X-Gm-Message-State: AOAM533Kr1Z0JaAj+kQRfcWFLi3s0Evkp+SuKSzwZqn9TqiRki/NSfbB
+	AhWjrsGqSjjmHngYtNTWeRaLDZUm9kVOFE7h
+X-Google-Smtp-Source: ABdhPJy2SM2AABCsymjd8FffizRXtFdZRnVyPCfM2Qr0KkVz9jX47ntuDu9BpFlMD9fbB7uwnHF++w==
+X-Received: by 2002:a17:902:e810:: with SMTP id u16mr28178836plg.98.1643766111957;
+        Tue, 01 Feb 2022 17:41:51 -0800 (PST)
+Return-Path: <bot@kernelci.org>
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id k12sm23889095pfc.107.2022.02.01.17.41.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Feb 2022 17:41:51 -0800 (PST)
+Message-ID: <61f9e15f.1c69fb81.876ca.f37d@mx.google.com>
+Date: Tue, 01 Feb 2022 17:41:51 -0800 (PST)
 MIME-Version: 1.0
-To: Shivanand.Kunijadar@toshiba-tsip.com, cip-dev@lists.cip-project.org,
- jan.kiszka@siemens.com
-Cc: dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp,
- akihiro27.suzuki@toshiba.co.jp
-References: <52fae1ea-25fc-e692-2b51-e503681d2efb@siemens.com>
- <20220201153502.14230-3-Shivanand.Kunijadar@toshiba-tsip.com>
-From: "Quirin Gylstorff" <quirin.gylstorff@siemens.com>
-Organization: Siemens
-Subject: Re: [isar-cip-core v2 2/2] README.swupdate.md: add readme file with steps to verify swupdate
-In-Reply-To: <20220201153502.14230-3-Shivanand.Kunijadar@toshiba-tsip.com>
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-51332:519-21489:flowmailer
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="utf-8"; format="flowed"
+X-Kernelci-Kernel: v5.10.83-cip1-178-g2cf1d12aab81
+X-Kernelci-Tree: cip
+X-Kernelci-Report-Type: test
+X-Kernelci-Branch: linux-5.10.y-cip
+Subject: cip/linux-5.10.y-cip baseline: 129 runs, 2 regressions (v5.10.83-cip1-178-g2cf1d12aab81) #kernelci
+To: Cipproject+Cip-Dev via Email Integration <cip-dev@lists.cip-project.org>
+From: "kernelci.org bot" <bot@kernelci.org>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
 List-Id: <cip-dev.lists.cip-project.org>
 
-Hi,
+cip/linux-5.10.y-cip baseline: 129 runs, 2 regressions (v5.10.83-cip1-178-g=
+2cf1d12aab81)
 
-On 2/1/22 16:35, Shivanand.Kunijadar@toshiba-tsip.com wrote:
-> From: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
-> 
-> Prepare readme file with necessary steps to verify swupdate feature
-> with rollback functionality.
-> 
-> Signed-off-by: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
-> ---
->   doc/README.swupdate.md | 208 +++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 208 insertions(+)
->   create mode 100644 doc/README.swupdate.md
-> 
-> diff --git a/doc/README.swupdate.md b/doc/README.swupdate.md
-> new file mode 100644
-> index 0000000..56bc77c
-> --- /dev/null
-> +++ b/doc/README.swupdate.md
-> @@ -0,0 +1,208 @@
-> +
-> +Clone the isar-cip-core repository
-> +```
-> +host$ git clone https://gitlab.com/cip-project/cip-core/isar-cip-core.git
-> +```
-> +
-> +Install `kas-container` from the [kas project](https://github.com/siemens/kas):
-> +
-> +```
-> +host$ wget https://raw.githubusercontent.com/siemens/kas/2.6.2/kas-container
-> +host$ chmod a+x kas-container
-> +```
-> +
-> +Build the image for swupdate
-> +
-> +```
-> +host$ ./kas-container --isar build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml
+Regressions Summary
+-------------------
 
-Would it be better to use ./kas-container menu?
+platform                 | arch | lab          | compiler | defconfig      =
+    | regressions
+-------------------------+------+--------------+----------+----------------=
+----+------------
+imx6q-var-dt6customboard | arm  | lab-baylibre | gcc-10   | multi_v7_defcon=
+fig | 2          =
 
-> +```
-> +- save the generated swu build/tmp/deploy/images/qemu-amd64/cip-core-image-cip-core-buster-qemu-amd64.swu in a separate folder (ex: tmp)
-> +- modify the image for example add a new version to the image by adding PV=2.0.0 to cip-core-image.bb
-> +- rebuild the image using above command and start the new target
-> +```
-> +host$ SWUPDATE_BOOT=y ./start-qemu.sh amd64
-> +```
-> +
-> +Copy `cip-core-image-cip-core-buster-qemu-amd64.swu` file from `tmp` folder to the running system
-> +
-> +```
-> +root@demo:~# scp <host-user>@<host-ip>:<path-to-swu-file>/tmp/cip-core-image-cip-core-buster-qemu-amd64.swu .
-> +```
 
-According to https://wiki.qemu.org/Documentation/Networking the default 
-host ip should be 10.0.2.2.
-> +
-> +Check which partition is booted, e.g. with lsblk:
-> +
-> +```
-> +root@demo:~# lsblk
-> +NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-> +sda      8:0    0    2G  0 disk
-> +├─sda1   8:1    0 16.4M  0 part
-> +├─sda2   8:2    0   32M  0 part
-> +├─sda3   8:3    0   32M  0 part
-> +├─sda4   8:4    0 1000M  0 part /
-> +└─sda5   8:5    0 1000M  0 part
-> +```
-> +
-> +Apply swupdate and reboot
-> +```
-> +root@demo:~# swupdate -i cip-core-image-cip-core-buster-qemu-amd64.swu
-> +root@demo:~# reboot
-> +```
-> +Check which partition is booted, e.g. with lsblk and the rootfs should have changed
-> +```
-> +root@demo:~# lsblk
-> +NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-> +sda      8:0    0    2G  0 disk
-> +├─sda1   8:1    0 16.4M  0 part
-> +├─sda2   8:2    0   32M  0 part
-> +├─sda3   8:3    0   32M  0 part
-> +├─sda4   8:4    0 1000M  0 part
-> +└─sda5   8:5    0 1000M  0 part /
-> +```
-> +
-> +Check bootloader ustate after swupdate
-> +```
-> +root@demo:~# bg_printenv
-> +----------------------------
-> +Config Partition #0 Values:
-> +in_progress:      no
-> +revision:         2
-> +kernel:           C:BOOT0:cip-core-image-cip-core-buster-qemu-amd64-vmlinuz
-> +kernelargs:       console=tty0 console=ttyS0,115200 rootwait earlyprintk root=PARTUUID=fedcba98-7654-3210-cafe-5e0710000001 rw initrd=cip-core-image-cip-core-buster-qemu-amd64-initrd.img
-> +watchdog timeout: 60 seconds
-> +ustate:           0 (OK)
-> +
-> +user variables:
-> +
-> +----------------------------
-> + Config Partition #1 Values:
-> +in_progress:      no
-> +revision:         3
-> +kernel:           C:BOOT1:vmlinuz
-> +kernelargs:       root=PARTUUID=fedcba98-7654-3210-cafe-5e0710000002 console=tty0 console=ttyS0,115200 rootwait earlyprintk rw initrd=cip-core-image-cip-core-buster-qemu-amd64-initrd.img
-> +watchdog timeout: 60 seconds
-> +ustate:           2 (TESTING)
-> +```
-> +
-> +if Partition #1 usate is 2 (TESTING) then execute below command to confirm swupdate and the command will set ustate to "OK"
-> +```
-> +root@demo:~# bg_setenv -c
-> +```
-> +
-> +# swupdate rollback example
-> +
-> +Build the image for swupdate with service which causes kernel panic during system boot using below command.
-> +
-> +```
-> +host$ ./kas-container --isar build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:kas/opt/kernel-panic.yml
-> +```
-> +- save the generated swu build/tmp/deploy/images/qemu-amd64/cip-core-image-cip-core-buster-qemu-amd64.swu in a separate folder (ex: tmp)
-> +- build the image again without `kernel-panic.yml` recipe using below command
-> +```
-> +host$ ./kas-container --isar build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml
-> +```
-> +
-> +Start the target on QEMU
-> +```
-> +host$ SWUPDATE_BOOT=y ./start-qemu.sh amd64
-> +```
-> +
-> +Copy `cip-core-image-cip-core-buster-qemu-amd64.swu` file from `tmp` folder to the running system
-> +
-> +```
-> +root@demo:~# scp <host-user>@<host-ip>:<path-to-swu-file>/tmp/cip-core-image-cip-core-buster-qemu-amd64.swu .
-> +```
-> +
-> +Check which partition is booted, e.g. with lsblk:
-> +
-> +```
-> +root@demo:~# lsblk
-> +NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-> +sda      8:0    0    2G  0 disk
-> +├─sda1   8:1    0 16.4M  0 part
-> +├─sda2   8:2    0   32M  0 part
-> +├─sda3   8:3    0   32M  0 part
-> +├─sda4   8:4    0 1000M  0 part /
-> +└─sda5   8:5    0 1000M  0 part
-> +```
-> +
-> +Check bootloader ustate before swupdate and should be as below
-> +```
-> +root@demo:~# bg_printenv
-> +----------------------------
-> +Config Partition #0 Values:
-> +in_progress:      no
-> +revision:         2
-> +kernel:           C:BOOT0:cip-core-image-cip-core-buster-qemu-amd64-vmlinuz
-> +kernelargs:       console=tty0 console=ttyS0,115200 rootwait earlyprintk root=PARTUUID=fedcba98-7654-3210-cafe-5e0710000001 rw initrd=cip-core-image-cip-core-buster-qemu-amd64-initrd.img
-> +watchdog timeout: 60 seconds
-> +ustate:           0 (OK)
-> +
-> +user variables:
-> +----------------------------
-> +Config Partition #1 Values:
-> +in_progress:      no
-> +revision:         1
-> +kernel:           C:BOOT1:cip-core-image-cip-core-buster-qemu-amd64-vmlinuz
-> +kernelargs:       console=tty0 console=ttyS0,115200 rootwait earlyprintk root=PARTUUID=fedcba98-7654-3210-cafe-5e0710000002 rw initrd=cip-core-image-cip-core-buster-qemu-amd64-initrd.img
-> +watchdog timeout: 60 seconds
-> +ustate:           0 (OK > +```
-> +
-> +Apply swupdate as below
-> +```
-> +root@demo:~# swupdate -i cip-core-image-cip-core-buster-qemu-amd64.swu
-> +```
-> +
-> +check bootloader ustate after swupdate. if the swupdate is successful then **revision number** should increase to **3** and status should be changed to **INSTALLED** for Partition #1.
-> +```
-> +root@demo:~# bg_printenv
-> +----------------------------
-> +Config Partition #0 Values:
-> +in_progress:      no
-> +revision:         2
-> +kernel:           C:BOOT0:cip-core-image-cip-core-buster-qemu-amd64-vmlinuz
-> +kernelargs:       console=tty0 console=ttyS0,115200 rootwait earlyprintk root=PARTUUID=fedcba98-7654-3210-cafe-5e0710000001 rw initrd=cip-core-image-cip-core-buster-qemu-amd64-initrd.img
-> +watchdog timeout: 60 seconds
-> +ustate:           0 (OK)
-> +
-> +user variables:
-> +----------------------------
-> +Config Partition #1 Values:
-> +in_progress:      no
-> +revision:         3
-> +kernel:           C:BOOT1:vmlinuz
-> +kernelargs:       root=PARTUUID=fedcba98-7654-3210-cafe-5e0710000002 console=tty0 console=ttyS0,115200 rootwait earlyprintk rw initrd=cip-core-image-cip-core-buster-qemu-amd64-initrd.img
-> +watchdog timeout: 60 seconds
-> +ustate:           1 (INSTALLED)
-> +```
-> +
-> +Execute reboot command
-> +- reboot command should cause kernel panic error.
-> +- watchdog timer should expire and restart the qemu. bootloader should select previous partition to boot.
-> +```
-> +root@demo:~# reboot
-> +```
-> +
-> +Once the system is restarted, check the bootloader ustate
-> +- if update is failed then **revision number** should reduce to **0** and status should change to **FAILED** for Partition #1.
-> +```
-> +root@demo:~# bg_printenv
-> +----------------------------
-> + Config Partition #0 Values:
-> +in_progress:      no
-> +revision:         2
-> +kernel:           C:BOOT0:cip-core-image-cip-core-buster-qemu-amd64-vmlinuz
-> +kernelargs:       console=tty0 console=ttyS0,115200 rootwait earlyprintk root=PARTUUID=fedcba98-7654-3210-cafe-5e0710000001 rw initrd=cip-core-image-cip-corg
-> +watchdog timeout: 60 seconds
-> +ustate:           0 (OK)
-> +
-> +user variables:
-> +----------------------------
-> + Config Partition #1 Values:
-> +in_progress:      no
-> +revision:         0
-> +kernel:           C:BOOT1:vmlinuz
-> +kernelargs:       root=PARTUUID=fedcba98-7654-3210-cafe-5e0710000002 console=tty0 console=ttyS0,115200 rootwait earlyprintk rw initrd=cip-core-image-cip-corg
-> +watchdog timeout: 60 seconds
-> +ustate:           3 (FAILED)
-> +```
+  Details:  https://kernelci.org/test/job/cip/branch/linux-5.10.y-cip/kerne=
+l/v5.10.83-cip1-178-g2cf1d12aab81/plan/baseline/
 
-Quirin
+  Test:     baseline
+  Tree:     cip
+  Branch:   linux-5.10.y-cip
+  Describe: v5.10.83-cip1-178-g2cf1d12aab81
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.g=
+it
+  SHA:      2cf1d12aab81945a16019888de695cb923db5225 =
 
+
+
+Test Regressions
+---------------- =
+
+
+
+platform                 | arch | lab          | compiler | defconfig      =
+    | regressions
+-------------------------+------+--------------+----------+----------------=
+----+------------
+imx6q-var-dt6customboard | arm  | lab-baylibre | gcc-10   | multi_v7_defcon=
+fig | 2          =
+
+
+  Details:     https://kernelci.org/test/plan/id/61f9d65c9cdd86ce275d6f27
+
+  Results:     4 PASS, 2 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.83-=
+cip1-178-g2cf1d12aab81/arm/multi_v7_defconfig/gcc-10/lab-baylibre/baseline-=
+imx6q-var-dt6customboard.txt
+  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.83-=
+cip1-178-g2cf1d12aab81/arm/multi_v7_defconfig/gcc-10/lab-baylibre/baseline-=
+imx6q-var-dt6customboard.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20220121.0/armel/rootfs.cpio.gz =
+
+
+
+  * baseline.dmesg.alert: https://kernelci.org/test/case/id/61f9d65c9cdd86c=
+e275d6f2e
+        new failure (last pass: v5.10.83-cip1-151-ga4163710a1dc)
+        4 lines
+
+    2022-02-02T00:54:35.795933  kern  :alert : 8<--- cut here ---
+    2022-02-02T00:54:35.827053  kern  :alert : Unable to handle kernel NULL=
+ pointer dereference at virtual address 0000004c
+    2022-02-02T00:54:35.828239  kern  :alert : pgd =3D (ptrval)<8>[   39.45=
+0731] <LAVA_SIGNAL_TESTCASE TEST_CASE_ID=3Dalert RESULT=3Dfail UNITS=3Dline=
+s MEASUREMENT=3D4>
+    2022-02-02T00:54:35.828510  =
+
+    2022-02-02T00:54:35.828748  kern  :alert : [0000004c] *pgd=3D491b4831   =
+
+
+  * baseline.dmesg.emerg: https://kernelci.org/test/case/id/61f9d65c9cdd86c=
+e275d6f2f
+        new failure (last pass: v5.10.83-cip1-151-ga4163710a1dc)
+        53 lines
+
+    2022-02-02T00:54:35.843912  kern  :emerg : Internal error: Oops: 17 [#1=
+] SMP ARM
+    2022-02-02T00:54:35.885831  kern  :emerg : Process udevd (pid: 130, sta=
+ck limit =3D 0x(ptrval))
+    2022-02-02T00:54:35.886351  kern  :emerg : Stack: (0xc397bcd8 to 0xc397=
+c000)
+    2022-02-02T00:54:35.886599  kern  :emerg : bcc0:                       =
+                                c0f00590 c09ddbbc
+    2022-02-02T00:54:35.886833  kern  :emerg : bce0: c39fcdb0 c39fcdb4 c39f=
+cc00 c09e369c c397a000 c1445d0c 0000000c c0c5ce69
+    2022-02-02T00:54:35.887317  kern  :emerg : bd00: c19c7a10 c3a64d00 c200=
+1d80 ef86cc80 c09f0e24 c1445d0c 0000000c c3268d40
+    2022-02-02T00:54:35.887791  kern  :emerg : bd20: c19c7a10 c0c5ce69 0000=
+0001 c3a6bdc0 c3075d80 c39fcc00 c39fcc14 c1445d0c
+    2022-02-02T00:54:35.929222  kern  :emerg : bd40: 0000000c c3268d40 c19c=
+7a10 c09f0df8 c1443a30 00000000 c39fcc00 fffffdfb
+    2022-02-02T00:54:35.929491  kern  :emerg : bd60: bf026000 c22d8c10 0000=
+0120 c09c6df0 c39fcc00 bf022120 c2329f40 c3966d08
+    2022-02-02T00:54:35.929971  kern  :emerg : bd80: c3af08c0 c19c7a2c 0000=
+0120 c0a237c8 c3a6b3c0 c3a6b3c0 c2232c00 c3af08c0 =
+
+    ... (34 line(s) more)  =
+
+ =20
 
