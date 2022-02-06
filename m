@@ -2,146 +2,181 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94E6AC433F5
-	for <webhook@archiver.kernel.org>; Fri,  4 Feb 2022 06:51:46 +0000 (UTC)
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com
- (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.41])
- by mx.groups.io with SMTP id smtpd.web10.6156.1643957505459836301
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9C85C433F5
+	for <webhook@archiver.kernel.org>; Sun,  6 Feb 2022 18:47:49 +0000 (UTC)
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com
+ (EUR04-DB3-obe.outbound.protection.outlook.com [40.107.6.86])
+ by mx.groups.io with SMTP id smtpd.web11.12061.1644173267711835827
  for <cip-dev@lists.cip-project.org>;
- Thu, 03 Feb 2022 22:51:46 -0800
+ Sun, 06 Feb 2022 10:47:48 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=OdFolB80;
- spf=pass (domain: siemens.com, ip: 40.107.21.41,
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=dxw/nEOf;
+ spf=pass (domain: siemens.com, ip: 40.107.6.86,
  mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fiREA3VNK/IqVhmN/O2xIqlgYaxbeIkZr+1BltJuaGWcOPY+MckF3BtFHOGUJ/BK6ZxpiuguPsCidehRyOWRDbiMB/3aD83kSSJcaBWdoyID4QoSJwKAZc7RhpO3lpytCWhaNHGlRitD9Ek1lUmdMrgeWxc6rLF/2b540b8lMxkPSAQT/KiEVvNWdpTrok0mP27EMf7fBE9qzrGszBWVGL579vCRIs8hR2YB5S7h2kkexkkDkr+LbrL2VAxE3/jwi2qjQHexVaKH7OVv7puVZX+z17v/09k+sEBzrKum2KVKz4trg7d2tJEGoLFZouKNMi6q/WfOOq5kufGwWAeRNg==
+ b=FHmVde+Ju15OM+XOWFTnwdYMv0YJFL0KGaSSNtzHMb06QPHUDzXj4Oj6FEAoZdbaoZ5xkhQzZuTabn4PLNaYoJwxE6S8suNhjKeW1ev0O9jO7faHm/3lvK/BDBuPazh8rNNwUciW13jfRScOpQBBc1ckR9Dro3IcZIEQy8lzMewQTxq8wxYRUzaZJoSxaHCl/UlLbOlJwJGHej+o+d7wRwzNErW9w7vkmF5UCdO79xa9zlgansH3nMThdVlmfAnd/zc4N2eja3W6K6275NimIgoEFA+Ee9NojroEVHPIdqaQDWvIvOwFDe0bYdZrRtaC/7ECDDAtOj2VnpP+0qJWqA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UeXPfqp8niC1Tj1sYsrzI7NXkVftCYyhVBGQ391Krxo=;
- b=Ygt+l+drzs+QjhJt8tFTGvHZW/jeVy2qjETJ8OfKR7aK/EeElacg2I7RNWYf4cQ8vVSoPIEn54MfW0dIWv51EwMPRjSfqgHUbzXpGq3cwZXblBBUo609yAa1S9IFm5xaFn2O1b9ISkguATV3yj7k3H0OAbbSMCXNW/sHxcjD13a303GiblL3nV/bXNMiHg3fIEwkWtw7FPp4tcgMgZMSAbfCq5Rsym8Dv1/6EnFFUonBt5O1V+R5O/j5P1MaLMV7anDWwciLb6BgmRqBS81XFP07zufAP8oGFk9tVDLROKm4vXlVU16dS/Ps4o8Aj3ud/UOtgtV5I/Oc5MOSl7FR6w==
+ bh=r2bOEb83zBOJu897jq+HE+CoF1+8f537JvxconCA8V0=;
+ b=k/bMqLNJwgBL+NS3HLyuYYgCJV61VI8APdSvZsjHIEAPfmcF5dmC3MXl8BM97D2ARSwxbaQprwgO4EMgDjwyUYYEMq0pJYI22TGGH82fqfTQi9igbX8pQiSomZqnxQ48kOeMikxkvwsl4uErMcTMVbjsAcB151OLi2op0lktv6pU9L7m9zMNFne53sWjzsnw7P0UfDADyGP+WpN1o9leDxnxE08RAq7WSmjkzURR2Ut7QYsb3+FUhoHwfW0CPdkL9ptnXaDdTnf1x9Ee3QmO1zMhVb4ih7NA15J8ZrBsIOdT4zoRsTcd1kCEl9iB6h7AAqx8/cyrAXrtZ9QJZ3iIrw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.73) smtp.rcpttodomain=mentor.com smtp.mailfrom=siemens.com;
+ 194.138.21.70) smtp.rcpttodomain=toshiba.co.jp smtp.mailfrom=siemens.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=siemens.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UeXPfqp8niC1Tj1sYsrzI7NXkVftCYyhVBGQ391Krxo=;
- b=OdFolB80vdczReENh9G2jLpwB0YeDjo/pAAFCVtLWsYP7wuEO+zo5vwBWEGbAzqcS0hWFc26xwQBOiQzJFMkANymcLpejUmxlfTpp5/MNDqWzwsGFUHZ/Y2NAFKTV6ZENlz1K+eQ9ajPGTs21uTxCF7BxNbUfKvK9Hu0EtkkzYLfINdrK/BdzvuOE0b5bJLiVcYZxSLuwT1WEGBKXlWlb0Swg2To7PEdD3i2PMnMkZ5D1nKrwBVs4B1I6w3sU3XxTjM/4zGAsgNdWR7C3FXIQlMgCRjdr84ta60XrTtjyxkOG8JbKEy8E3rw6PFLPUesBbuAvD06yhh5AWDHHgLO4Q==
-Received: from DB8PR03CA0023.eurprd03.prod.outlook.com (2603:10a6:10:be::36)
- by DBAPR10MB4219.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:1b4::17) with
+ bh=r2bOEb83zBOJu897jq+HE+CoF1+8f537JvxconCA8V0=;
+ b=dxw/nEOfestlnxuXD7bur39qkBnDISebgOcMRMOurtkOuKndrqBNbwg200UzsXVc8UwndU5X71v/84YOWExV+lUWn8xG8/mmek2NlU9qi4MqRwf0s+cV2rLiNU10TpajV7sIzpCRSSTdl8ePVA5CiU5TluozmaFS51eYK9YfcRVn7Mdl834RQBr3uU7iI858xdJpITiGaAQJNLw9+qilm7bcGrl606c0WuxiZD8H31SCmAEiTTbVx6Y31hM12DydRDmafIFKalH8fQHNUuaRiGIAkMewMDv7xNf3CDpqmAwiTlPAvUNdbacWYFGlmntrXO6DoMP1/RIG+eGmEb/4PA==
+Received: from DB6PR0301CA0023.eurprd03.prod.outlook.com (2603:10a6:4:3e::33)
+ by DB9PR10MB4761.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:23d::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4951.12; Fri, 4 Feb
- 2022 06:51:42 +0000
-Received: from DB5EUR01FT030.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:10:be:cafe::16) by DB8PR03CA0023.outlook.office365.com
- (2603:10a6:10:be::36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4951.17 via Frontend
- Transport; Fri, 4 Feb 2022 06:51:42 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.73)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4951.12; Sun, 6 Feb
+ 2022 18:47:44 +0000
+Received: from DB5EUR01FT046.eop-EUR01.prod.protection.outlook.com
+ (2603:10a6:4:3e:cafe::2b) by DB6PR0301CA0023.outlook.office365.com
+ (2603:10a6:4:3e::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4951.18 via Frontend
+ Transport; Sun, 6 Feb 2022 18:47:44 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.70)
  smtp.mailfrom=siemens.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=siemens.com;
 Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.73 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.73; helo=hybrid.siemens.com;
-Received: from hybrid.siemens.com (194.138.21.73) by
- DB5EUR01FT030.mail.protection.outlook.com (10.152.4.254) with Microsoft SMTP
+ 194.138.21.70 as permitted sender) receiver=protection.outlook.com;
+ client-ip=194.138.21.70; helo=hybrid.siemens.com;
+Received: from hybrid.siemens.com (194.138.21.70) by
+ DB5EUR01FT046.mail.protection.outlook.com (10.152.5.231) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.4951.12 via Frontend Transport; Fri, 4 Feb 2022 06:51:42 +0000
+ 15.20.4951.12 via Frontend Transport; Sun, 6 Feb 2022 18:47:43 +0000
 Received: from DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) by
- DEMCHDC9SNA.ad011.siemens.net (194.138.21.73) with Microsoft SMTP Server
+ DEMCHDC9SJA.ad011.siemens.net (194.138.21.70) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.18; Fri, 4 Feb 2022 07:51:41 +0100
-Received: from [167.87.72.47] (167.87.72.47) by DEMCHDC8A0A.ad011.siemens.net
- (139.25.226.106) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.18; Fri, 4 Feb
- 2022 07:51:41 +0100
-Message-ID: <ffb17cc2-257b-fc1b-0583-372caf19a854@siemens.com>
-Date: Fri, 4 Feb 2022 07:51:40 +0100
+ 15.1.2375.18; Sun, 6 Feb 2022 19:47:43 +0100
+Received: from [139.22.137.203] (139.22.137.203) by
+ DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.18; Sun, 6 Feb 2022 19:47:42 +0100
+Message-ID: <1ac8ef07-4bba-71ef-83da-524c1a717be0@siemens.com>
+Date: Sun, 6 Feb 2022 19:47:42 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-Subject: Re: [isar-cip-dev][PATCH] Uprevision the cip-kernel-config to latest
- one
+Subject: Re: [cip-dev] 4.4.302 is going to be last 4.4 release
 Content-Language: en-US
-To: Srinuvasan A <Srinuvasan_A@mentor.com>, <cip-dev@lists.cip-project.org>
-References: <20220204054018.629071-1-Srinuvasan_A@mentor.com>
+To: <nobuhiro1.iwamatsu@toshiba.co.jp>, <cip-dev@lists.cip-project.org>,
+	"Pavel Machek" <pavel@denx.de>
+References: <20220201213254.GA3001@duo.ucw.cz>
+ <TYAPR01MB625279122E073EFF486368C392289@TYAPR01MB6252.jpnprd01.prod.outlook.com>
 From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <20220204054018.629071-1-Srinuvasan_A@mentor.com>
+In-Reply-To: 
+ <TYAPR01MB625279122E073EFF486368C392289@TYAPR01MB6252.jpnprd01.prod.outlook.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.87.72.47]
-X-ClientProxiedBy: DEMCHDC89YA.ad011.siemens.net (139.25.226.104) To
+X-Originating-IP: [139.22.137.203]
+X-ClientProxiedBy: DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) To
  DEMCHDC8A0A.ad011.siemens.net (139.25.226.106)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 05ecae4c-bd95-4c6e-005a-08d9e7aacd2a
-X-MS-TrafficTypeDiagnostic: DBAPR10MB4219:EE_
+X-MS-Office365-Filtering-Correlation-Id: e6233c3d-6cc2-4ba5-ad24-08d9e9a12928
+X-MS-TrafficTypeDiagnostic: DB9PR10MB4761:EE_
 X-Microsoft-Antispam-PRVS: 
-	<DBAPR10MB4219CCAA1FEB86D8D3E2715B95299@DBAPR10MB4219.EURPRD10.PROD.OUTLOOK.COM>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1360;
+	<DB9PR10MB476185CB9C3D53242041BC5A952B9@DB9PR10MB4761.EURPRD10.PROD.OUTLOOK.COM>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	Bk+gcNTC1uR9CblY8f0MOwU4zytKKDXPlXygg+eh56YLS+hj5GkJln5LHDpWuPNERPi5FArNwe7HIm9UNtlH6gwK89LE71DyilCTkOBhWCvgH0HA3cr8RQ8SdBzSSV+qTYiqK4Tbtt+NDv7p5mx5FZvEQh/GGkEs59Lew/40I7qLeSpi8xsw242R4nmNK7nbUC8372RYOrM+JleNU0cXEhf/U4hKr4YoVKss9f7OYYiNHzAj2C4d+9StVLCRQo1dVwUv23XjamdEuwlVnnDW/PbBqaWQrMA3ZjqWkLRUuuyFrl6Zm+NOvlu3U4rUiHP4tpt4z2IQnW62PxhBvT4qhxCzq8vlq9MRCKnKG/YcUGL6MGFK8MaVaovpF+1SNRMn7Rmj58n/dg6znSef3Gwf+etipP0zZmNcbZjH9Kc1YDgLK2Vp25xAmEEFXh7GQf9gCOBkZLAYfubXo8aV6wGQUTcniiOYTcWxF0WeFhh8685twJgeJ4GulyEFWzqqKj+uXV/vSipErOyMxqIaZo8DIYeMw7cNDwMxF2gcmT1/RWE0+HfUpBwddBZmr3tdqRBmlIeLIhBMjzb7MloZiWzvnmBXVRl3csoPuPbtws+yRzNzNwoUOsZ1TZC5mMxG0DCOowfCaAKsj+diUwL7Ovhle/FmWrJvIrSxj815Lq8KgsZ68+viUb1Aha3VCPNBp4TcW1+fOP+uHS7XzJO03l1HCwVgc2Pwf3YmABaLoeJyamI9I9NdUp3b/CjDaDWqRjxQ9guM3k5bxGBsu19WlfufEw==
+	e+mNakvMEbEo/aiT/Oe++8U356bKDankz+LSpOjDLA2x38pQf2dTbSqz/u75Ea4ALEEmw/Fov8CGZZ8t+mjIelOhhqDVIA698B1/HbnXffVugrBCcLr/8GFDQBhPwKPpz+GO/IDPMy2sKLMoWIijV5vM9fe52urhANEeQtWUXR0ffoHOCFLARk0g3dKd2VkL6iehHD/zkovpDJJWomyP/RXz9Z/4Nf9twB9lzWFqZm+ebbTzRHPxUXBpu1Y6QUl+v6NeZiPNkd0banb928XxQePWa4gtbAL766Hg1UK3bdWRTLLl+HW9xmcjSi1IkKuubgwPwQC3dJ7kn12MCktHdmoZxJ8N/Ptf4g928XHpP/pC0L98II96up5jUZwQFFsTZJ3Dxna0ROXs/aTfZCJp+d5zuIgFPgl2PS2eUnkMs2kYC0bYuFIuJmrVMVyYHz8ojHlKTSBbYzyvJ0+RNPgXmS1THbv+0/wa1d0nAAOUwtR9mA/B6A6dlv14c3u4zBxbKl8fyVsWgzZO+tq4SJxUH4izKqDKvrVzHwE2BwLAFh2/p0JdBkRScpHwwH0birBqJWjKi86uT763gcN0u65RBe0SrLcEe3mq/VE03rfK+OoA6WB1UTtq9264+9Q1mwcEaXXsdobCtEQLFkqqdYKQrpnqABLiKsvO8ExnHfriN37x8wrXIWZNr2atN/5cGi7qY7ZcOnWskZVSUafWNNWCGRRWd0zMpI0+08cH9FhbYTcx2/Dp/uVcvRwyVGIfG+Ajbw2qxTDg+4qtaOufrILt1ezxWf4u97bzvd5+o2J0f2w+yHapcrSEH2nPJ6YlXXb0fBFgsGNu5wYWLqMQWBX5Vmk0asi7mOXHuMyDrUyysLg=
 X-Forefront-Antispam-Report: 
-	CIP:194.138.21.73;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230001)(4636009)(40470700004)(36840700001)(46966006)(40460700003)(53546011)(5660300002)(26005)(186003)(956004)(2906002)(2616005)(44832011)(6706004)(110136005)(83380400001)(36756003)(36860700001)(47076005)(508600001)(31686004)(82960400001)(70206006)(70586007)(356005)(316002)(16576012)(81166007)(82310400004)(86362001)(336012)(31696002)(8676002)(8936002)(16526019)(3940600001)(43740500002)(36900700001);DIR:OUT;SFP:1101;
+	CIP:194.138.21.70;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(46966006)(40470700004)(2906002)(316002)(82310400004)(6706004)(966005)(81166007)(82960400001)(40460700003)(16576012)(110136005)(86362001)(44832011)(5660300002)(356005)(31696002)(956004)(31686004)(36756003)(8676002)(8936002)(70586007)(70206006)(53546011)(83380400001)(36860700001)(26005)(186003)(2616005)(16526019)(336012)(47076005)(508600001)(3940600001)(36900700001)(43740500002);DIR:OUT;SFP:1101;
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Feb 2022 06:51:42.1393
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Feb 2022 18:47:43.8392
  (UTC)
 X-MS-Exchange-CrossTenant-Network-Message-Id: 
- 05ecae4c-bd95-4c6e-005a-08d9e7aacd2a
+ e6233c3d-6cc2-4ba5-ad24-08d9e9a12928
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
- TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.73];Helo=[hybrid.siemens.com]
+ TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.70];Helo=[hybrid.siemens.com]
 X-MS-Exchange-CrossTenant-AuthSource: 
-	DB5EUR01FT030.eop-EUR01.prod.protection.outlook.com
+	DB5EUR01FT046.eop-EUR01.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR10MB4219
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR10MB4761
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 04 Feb 2022 06:51:46 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7575
+ <cip-dev@lists.cip-project.org>; Sun, 06 Feb 2022 18:47:49 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7576
 
-On 04.02.22 06:40, Srinuvasan A wrote:
-> From: Srinuvasan A <srinuvasan_a@mentor.com>
+On 03.02.22 08:13, nobuhiro1.iwamatsu@toshiba.co.jp wrote:
+> Hi Pavel,
+>> -----Original Message-----
+>> From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On
+>> Behalf Of Pavel Machek
+>> Sent: Wednesday, February 2, 2022 6:33 AM
+>> To: jan.kiszka@siemens.com; cip-dev@lists.cip-project.org
+>> Subject: [cip-dev] 4.4.302 is going to be last 4.4 release
+>>
+>> Hi!
+>>
+>> Greg says:
+>>
+>> # Message-Id: <20220201180822.148370751@linuxfoundation.org>
+>> # Subject: [PATCH 4.4 00/25] 4.4.302-rc1 review # ...
+>> # NOTE!  This is the proposed LAST 4.4.y kernel release to happen under # the
+>> rules of the normal stable kernel releases.  After this one, it will # be marked
+>> End-Of-Life as it has been 6 years and you really should know # better by now
+>> and have moved to a newer kernel tree.  After this one, no # more security fixes
+>> will be backported and you will end up with an # insecure system over time.
+>> # ...
+>> # Responses should be made by Thu, 03 Feb 2022 18:08:10 +0000.
+>> # Anything received after that time might be too late.
+>>
+>> (He sometimes releases kernels before the deadline).
+>>
+>> We may want to make any announcements now or just after 4.4.302 is
+>> released... so I guess we should start working on suitable wording.
+>>
+>> Something like:
+>>
+>> CIP project is committed to maintain 4.4.x kernel till January of 2027 [1]. We are
+>> maintaining -cip branch [2], that is stable kernel with about
+>> 1000 of patches to support our reference hardware [3] and -cip-rt branch, with
+>> is merge of -rt and -cip trees.
+>>
+>> If you for some reason need 4.4.x with bug and security fixes, and are running
+>> similar hardware to our reference hardware (x86-64 and armv7), -cip tree may
+>> be good base for that work. Testing of the -cip tree is welcome, as is joining the
+>> CIP project.
+>>
+>> [1] https://wiki.linuxfoundation.org/civilinfrastructureplatform/start
+>> [2]
+>> https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linu
+>> x-4.4.y-cip-rt
+>> [3]
+>> https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptesting/ciprefe
+>> rencehardware
 > 
-> Uprevision the cip-kernel-config to latest one.
-> 
-> Signed-off-by: Srinuvasan A <srinuvasan_a@mentor.com>
-> ---
->  recipes-kernel/linux/linux-cip-common.inc | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/recipes-kernel/linux/linux-cip-common.inc b/recipes-kernel/linux/linux-cip-common.inc
-> index 8fa8988..84515c2 100644
-> --- a/recipes-kernel/linux/linux-cip-common.inc
-> +++ b/recipes-kernel/linux/linux-cip-common.inc
-> @@ -1,7 +1,7 @@
->  #
->  # CIP Core, generic profile
->  #
-> -# Copyright (c) Siemens AG, 2019
-> +# Copyright (c) Siemens AG, 2022
->  #
->  # Authors:
->  #  Jan Kiszka <jan.kiszka@siemens.com>
-> @@ -25,6 +25,6 @@ SRC_URI_append = " ${@ "git://gitlab.com/cip-project/cip-kernel/cip-kernel-confi
->  
->  SRC_URI_append_bbb = "file://${KERNEL_DEFCONFIG}"
->  
-> -SRCREV_cip-kernel-config ?= "4f80764b80a81f9590e927fb202f358465b322a6"
-> +SRCREV_cip-kernel-config ?= "3f527304fdadd163e20b7a5a9cfabaca7506c716"
->  
->  S = "${WORKDIR}/linux-cip-v${PV}"
+> Thank you for taking up the issue. I think the content is fine.
 
-Thanks applied.
+Looks good to me as well.
+
+Given that 4.4 is now history and Greg even mentioned CIP in his
+discontinuation message [1] but said that we would only "consider" to
+continue: Let's follow up on his post, only referring to the regular
+linux-4.4.y-cip for now. Who of you two could do that?
+
+> BTW, do you have any future information about the RT kernel team?
+> We may also need to check the RT patch.
+> If you don't have the information, I'll ask the RT team about this.
+> 
+
+Why should 4.4-rt continue if its former upstream retired?
 
 Jan
+
+[1] https://lkml.org/lkml/2022/2/3/91
 
 -- 
 Siemens AG, Technology
