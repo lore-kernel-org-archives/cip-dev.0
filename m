@@ -1,209 +1,213 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <venkata.pyla@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34633C433EF
-	for <webhook@archiver.kernel.org>; Mon, 14 Feb 2022 16:25:04 +0000 (UTC)
-Received: from mta-64-227.siemens.flowmailer.net
- (mta-64-227.siemens.flowmailer.net [185.136.64.227])
- by mx.groups.io with SMTP id smtpd.web12.36367.1644855902964503410
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4948AC433F5
+	for <webhook@archiver.kernel.org>; Mon, 14 Feb 2022 19:35:31 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.155])
+ by mx.groups.io with SMTP id smtpd.web08.39515.1644867328810546531
  for <cip-dev@lists.cip-project.org>;
- Mon, 14 Feb 2022 08:25:03 -0800
+ Mon, 14 Feb 2022 11:35:30 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1
- header.b=XWbhFUn1;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227,
- mailfrom: fm-51332-202202141624590665daf2bb29ae1e54-qm2ql0@rts-flowmailer.siemens.com)
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id
- 202202141624590665daf2bb29ae1e54
-        for <cip-dev@lists.cip-project.org>;
-        Mon, 14 Feb 2022 17:25:00 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
- bh=VyJNCtRPta8E72XGzvG/2mNsR9rMvdC4Df1uR965Ha8=;
- b=XWbhFUn1q0R4V4gRkQPv4diDwv03wLY48KHdGeqgQCUaCrD/InYWW0LA3WqAVNi13yKjEK
- JxtDx+V5/YOnma858Ccpdokrwqij7nFPXC3rd5rI+BOGyJrCvwimiCkjCkY3FL4DL16pOgAK
- bHATNY4ptYqYlO3/ppp7SNRvJmI+Q=;
-From: Quirin.Gylstorff@siemens.com
-To: cip-dev@lists.cip-project.org,
-	ubely@ilbers.de
-Subject: [cip-dev][isar-cip-core][PATCH] efibootguard: Do not copy the efi
- binaries directly into DEPLOY_DIR
-Date: Mon, 14 Feb 2022 17:24:58 +0100
-Message-Id: <20220214162458.636845-1-Quirin.Gylstorff@siemens.com>
+ dkim=missing;
+ spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.155,
+ mailfrom: venkata.pyla@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1516) id 21EJZORp007578;
+ Tue, 15 Feb 2022 04:35:24 +0900
+X-Iguazu-Qid: 34tIXlwsceywkIqvOC
+X-Iguazu-QSIG: v=2; s=0; t=1644867323; q=34tIXlwsceywkIqvOC;
+ m=pjAN8Y1UuWsnA4Lfcvq4ca+/0n019KYpO9LdBNWrVLM=
+Received: from imx12-a.toshiba.co.jp (imx12-a.toshiba.co.jp [61.202.160.135])
+	by relay.securemx.jp (mx-mr1510) id 21EJZMk5013597
+	(version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
+	Tue, 15 Feb 2022 04:35:23 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=C7qr8hzR7mkNg8PLa3yQo/dz9aqhK9b+zEJR3ktNZNgp1KgKQTQWVpU+0jda3qXNdBpEUBE+xq9+sgyFKjPmh/zeDNKerrCRq/OyaJru6bcvrUhjIcEL4kxjAdwK5bSXCrsFknD+Y5dc+7mHZSbxRFP3eHZvaNWIoOlfdVIjuysL5TYFj6AafvQIXBGYFIl7P1Crdl5YV91FlqowsQLUuMI7W84KD5v2TaGZGgx0jMWIkVQcsUOe2DHKU1gz3TOx8ew/hHCocjTeMN8ZqAwpxW7LDpD9K0USJ60Ax1DQXcCpmbQsU+QU/C74EnkpE+8IY3IsXnx+C6H+WE9RycbHJw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yk3Ip6TAO+eJkVt+Q2LxZ168YMe2inmMQwE4bAlmaTM=;
+ b=Liod9uDS7pg0yae4Zhf31vDqVArQDzh+lUnaiy1cgjl7GqeTIVkf9BCXYdVOcgPFgfa1f7MVYnER6+GOSi+DnHEhTlL7i6iqWIQPCXwNmAp+st9N3+IWp+9iY41g6pwiHPvspYNh6zoXj0tRaAR4SwUL/Hv5mwCyp9Cau6KACo2nCRPxlZgbyEEtsIpFHqgKfYOcOe6Oz/1cI0hGaiNm8OKvtRok2atfoLZqJ7AaknPVJSPX13wBZTeHNknqV9Syi1k0T9Jo8hvn5IHSlhfDyPA33DDhG+Oe34Ed9t4AJE1hQT4PHiZrGUwDJ9NAgaoasa6tp/q4Nondr/c2nG6syw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+From: <Venkata.Pyla@toshiba-tsip.com>
+To: <cip-dev@lists.cip-project.org>
+CC: <henning.schild@siemens.com>, <jan.kiszka@siemens.com>,
+        <dinesh.kumar@toshiba-tsip.com>, <kazuhiro3.hayashi@toshiba.co.jp>,
+        <isar-users@googlegroups.com>
+Subject: RE: Is it safe to remove debconf cache files in isar system
+Thread-Topic: Is it safe to remove debconf cache files in isar system
+Thread-Index: Adfxn0ixO1l46sfHSPSUw0MzjTnehAwKE9/g
+Date: Mon, 14 Feb 2022 19:35:19 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <OSYPR01MB55422F9AABFB4B49B632AFC5A4339@OSYPR01MB5542.jpnprd01.prod.outlook.com>
+References: 
+ <OSYPR01MB554254B35D37230B04195ED4A4779@OSYPR01MB5542.jpnprd01.prod.outlook.com>
+In-Reply-To: 
+ <OSYPR01MB554254B35D37230B04195ED4A4779@OSYPR01MB5542.jpnprd01.prod.outlook.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 9df2be70-5b01-444d-7211-08d9eff122c2
+x-ms-traffictypediagnostic: OS3PR01MB9591:EE_
+x-microsoft-antispam-prvs: 
+ <OS3PR01MB9591D52214041A849AFAC5B5A4339@OS3PR01MB9591.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ X4CTv/mEC9wamW/bGzKuLEJfA/xIo+d8DOeFrgJxVwh1clfk2qEvl6IIzY3nHMvTaJHKwsTuPouisxmgmCrrFKPjVZVim1FaBy/34nf/H6swf5181Glv/h40b8ABSTzbrxk+cUGMgTVHqHKZ7Zvm+Wv48ZblXHfZZ+Bg6oqnBXKnsYp6nNUVyii3LW3OjK8Kf1JstlCyUQRXFWtQ3YIVJWWKKd7UmYSmkxUDbbYfU2q1xwGWQ+d1klZpIIEuM/DBrAQvA22nqinXYkxP6jxOzHZlQZ5BMcE0dxD/JzhbYIaSeTX9WUek6EjhSfFCvFNMdVHbWAxvr8KFnrF/knXoo76oCyocwoSEXRAOpR1Ogy1E0dv62LxcsLG95awhjtw/FY4K7eAxv7j6+5MSa8hzSMwQDAnDmgIh07DqhfGmTOWYkF3ELbEBDVgRzwWI902mM7RvzlGxe0nEMHIC0sZkzb6EvgEPzVVKLhxURUY+HCkBRSpzQZx1crS8UgL/aIPXoxyEqs6Mu6/1kFVJ1VKLQ4JIzTHZB0+P9x7zdZvPpg9ivn1Q9rnFu8iIBQNRre5TlA2tZ8kAg4bTzxYeoHtR2vW1+7DELLOXJq4bqtDcj4OE2s3JNHmQ7Gsc/cKT9JIFCelanhGxYY2GrP9mFe7yWT1Xwa8YOgVqWUa7CgQaKExwWETBKzpAbkJh2W2wLKaJl5Wtq7VN4ymHMGT4wmswDA==
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSYPR01MB5542.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(316002)(6916009)(54906003)(64756008)(86362001)(7696005)(6506007)(66946007)(66476007)(66556008)(4326008)(38070700005)(8676002)(66446008)(76116006)(85182001)(5660300002)(8936002)(52536014)(508600001)(83380400001)(122000001)(55016003)(2906002)(71200400001)(26005)(186003)(9686003)(38100700002)(33656002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?SmxOYThENHlGd2JnWncvOWRRVWRlRUJXWG1zN1V3UjhWdi8rWExWOWhQ?=
+ =?iso-2022-jp?B?T2lBdEt1Wk8yWllHOWtZSnRqaEJKUmtpR29JWWFTZG0xOWRCOWo1YlZs?=
+ =?iso-2022-jp?B?KzF1Rmt1SXpJeVdFaS9zaTZCMkFVWkc5T3RqY1pTZk82dytTVThVMzVw?=
+ =?iso-2022-jp?B?WTU2eEZsa2M3TTFaNnNhdmRMb1gwTVNMd0hzSEIzQ3A2RFIxVmFrU0FJ?=
+ =?iso-2022-jp?B?VnBra3dVTFlBa2lRU3lwblVMR3MvcWtXSFl2Q0h4Q0d1aHl5M0lKMVBh?=
+ =?iso-2022-jp?B?WW5xY1l6MUtaNmxJcWxFeFJIRmZLN002L0tYRTRBdUFBUVc5d0h2LzRv?=
+ =?iso-2022-jp?B?cGljSjhmZ2ZvVW1scWttTEtXaGJQWjV3b3FwK0VDYm1NcHNjMVZqT29B?=
+ =?iso-2022-jp?B?akdBMkNHT0M3VyszbGZUbUROcEE2cjZ4QTRwSU5JMkJCcGJET0ZCZjVq?=
+ =?iso-2022-jp?B?b0IwMGk3ZWo0T05wZjZNQkJmR2VXREw3NGFybnRWVDBTMVFKWDRqUHJB?=
+ =?iso-2022-jp?B?dkppYVpTTmVTUmpQOWJuTkZlMFBpY056ai9WUE9xcHV2OTJJTk1KTXZ2?=
+ =?iso-2022-jp?B?OXVHWVRjUzAwZHFHT0lHNGdWTFRFYjJCNFR6eXZpR2tPa3pUdmc1S3or?=
+ =?iso-2022-jp?B?T0NwUkQ2TzFYVWZCZWJOL3IwN2lpM3d0NTJpcjM3aFRWWU1vSmZBa25w?=
+ =?iso-2022-jp?B?K1NwckJPc2FhNFpJYWhHOVIrR1MvZ3pjbER1MWhPS3RDTENFSm9IL2RI?=
+ =?iso-2022-jp?B?UkZmQnZ2V2YvOEdqOHVESHNDSjJXOG1mbE00Vk1OdURnUFA4R29XSEh4?=
+ =?iso-2022-jp?B?K2x0dVErcjdacVFyWTRsekx1dkNiYWszU1NyQWJJZ1VGYkhGUTlKWXQ0?=
+ =?iso-2022-jp?B?NmFHa0FTSnl5WDY2MSt2bkI0UWMwc0hhR2lsYUpHZ2lzeE9GNWdKNXdw?=
+ =?iso-2022-jp?B?Mm5rN3BRMlpWdENVdXY4WU8wNENNSXJlZHlTZVhheVhmdC9zRWMrWC90?=
+ =?iso-2022-jp?B?QSttc1cyWXpidEFlNkt5Y2N0Uk5rdTdVU3BnUU5oejBRcmlSRnNZUUp3?=
+ =?iso-2022-jp?B?Tjg3RFFuZHNvL09EdXd6bUViK0F5T0V4Q0N1T3dpTTZiRHhaMERtenkz?=
+ =?iso-2022-jp?B?ci9nblAyZmJQcDI2OUw4QUpjdlhoTmNnZDIxS3dienUzdURwVUJuU3RJ?=
+ =?iso-2022-jp?B?aWFlR09YL1ZYV0VZYXNOdlRrbDhXakdQTmNJK3BZN3lYa3I0am9QTmRp?=
+ =?iso-2022-jp?B?UFBLYUd3NkdQL2hHOG5FYjA2a0JYWml1L25CQjZxWnY5NkFKcEI1VHcr?=
+ =?iso-2022-jp?B?a0xRbnRjY3RKT29DVkhVU053MlZTT0RoRG1lME12di8vVWt2YVd3UDFB?=
+ =?iso-2022-jp?B?RGMrREpOaUZybEFSY2thNkhlbUlpdHkwM3FhSXU3YjBGZDJORlIyUWFh?=
+ =?iso-2022-jp?B?ZzJNYm1FM08zMXdhTzAwZU1KdWJJMzVxTlBSZW5VV2tHckJFK1VnN0Ju?=
+ =?iso-2022-jp?B?SW9WdmVJUFpxdlEzMGgvdFhiYjA4UjhZVVNMdkcvMXdlNEZXR2tSQWRu?=
+ =?iso-2022-jp?B?eG1NOVJycEErN0tROWdiU3lnMlUwS1BYYWVPZG9TUnBBRmQrVnhJN0pn?=
+ =?iso-2022-jp?B?dlFlOXZSenZEcmRYM2pzRTcvbThKM1hiOEZSakNOUmM3QkdtU0V0d3Vj?=
+ =?iso-2022-jp?B?TStJalZSek54NXNwcm03L3RhL1EwaTFUY01IVUZBZzZMSFJCNFVkcFJC?=
+ =?iso-2022-jp?B?SUZkN01NWkRocDdSS0JVWDhHUE02VGNJc0g0Rm9JYkpkdE9TaGFaVmxn?=
+ =?iso-2022-jp?B?WXF4c1ZpWUcxK2tyUU5GSWhKWmxIcmkvYXZXakZYSkViMnRyRFRXRUNR?=
+ =?iso-2022-jp?B?TGt6amwwd2I2ck01RkhCRFlhYkVzeC9UYm1RcEhqMjBRZE4zcno0aVR2?=
+ =?iso-2022-jp?B?K2Jad2ZPMnpIRFZGQVRRNnRLWFoxK3ZyK1pZSUpIbHpRS090dy9aaStD?=
+ =?iso-2022-jp?B?WW94U0ZiS0x2N0lKaVNVWTdmYVZoRzVLNURQQmxvSGFkY2dibmJqSXEr?=
+ =?iso-2022-jp?B?b3R3UXNUeVV4U01aM1h0TlMxTzRkdWpHamdtYm1HU0RyWDdjc1RzWWhT?=
+ =?iso-2022-jp?B?MCtUcnlNRGhwaEE0Nk1HQXhlMVJMdFZkL1BHcGhzRjNUdGh5U0pxSGhx?=
+ =?iso-2022-jp?B?YWxPd1BKWUFqOGtMeS9OZHBuNlpXdldhTm9SNW45SSt3V3dIZHNzUDN5?=
+ =?iso-2022-jp?B?OFJaTk9mdDhYenFzRmUxbHlSa0xlRnV6TW4wbk5rMFpTbTl5U0EyQnlM?=
+ =?iso-2022-jp?B?a21xdnlMM1VEeThTeG84R3dkUFBTaFU3OE5BMDVyUlllT3p0OHVNUXY0?=
+ =?iso-2022-jp?B?NkkveW85OXRDMDQ2bGovdk1NcjFaUHM2TEk5UkxRcXlTdTV5SE80YzFx?=
+ =?iso-2022-jp?B?cXNuZ1JnPT0=?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-51332:519-21489:flowmailer
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OSYPR01MB5542.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 
+ 9df2be70-5b01-444d-7211-08d9eff122c2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Feb 2022 19:35:19.8336
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 
+ /gBKdPKehxhJwzeRmwKNPd/krcnBYMj/EJArgq+UEg2QSDdEaD87eum7le2IWRFeFQkQrW+T3un5Ul2Cz3DEI1HA1y9fGPWkND00Q/n+rpg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB9591
+X-OriginatorOrg: toshiba-tsip.com
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 14 Feb 2022 16:25:04 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7598
+ <cip-dev@lists.cip-project.org>; Mon, 14 Feb 2022 19:35:31 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7599
 
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+Hi,
 
-This allows a rebuild with sstate after `build/tmp` was removed.
+Resending this question in cip-dev mailing list
 
-This patch makes efibootguardx64.efi binary to be included in .deb package.
+Thanks,
+Venkata.
 
-Also bg_setenv and efibootguardx64.efi are now used from the wic build change root.
-
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
----
- kas/opt/efibootguard.yml                      |  1 +
- .../efibootguard/efibootguard_0.9-git+isar.bb |  5 -----
- .../files/debian/efibootguard.install         |  1 +
- .../files/debian/efibootguard.links           |  1 +
- .../wic/plugins/source/efibootguard-boot.py   |  3 +--
- .../wic/plugins/source/efibootguard-efi.py    | 22 ++++++++++---------
- wic/ebg-signed-bootloader.inc                 |  2 +-
- wic/ebg-sysparts.inc                          |  2 +-
- wic/qemu-amd64-efibootguard-secureboot.wks.in |  2 +-
- 9 files changed, 19 insertions(+), 20 deletions(-)
- create mode 100644 recipes-bsp/efibootguard/files/debian/efibootguard.links
-
-diff --git a/kas/opt/efibootguard.yml b/kas/opt/efibootguard.yml
-index 75d4ab1..f5f9169 100644
---- a/kas/opt/efibootguard.yml
-+++ b/kas/opt/efibootguard.yml
-@@ -21,6 +21,7 @@ local_conf_header:
-     SWUPDATE_BOOTLOADER = "efibootguard"
- 
-   efibootguard-wic: |
-+    WIC_IMAGER_INSTALL_append = " efibootguard"
-     WDOG_TIMEOUT ?= "60"
-     WICVARS += "WDOG_TIMEOUT KERNEL_IMAGE INITRD_IMAGE"
-     IMAGE_FSTYPES ?= "wic-img"
-diff --git a/recipes-bsp/efibootguard/efibootguard_0.9-git+isar.bb b/recipes-bsp/efibootguard/efibootguard_0.9-git+isar.bb
-index 2817e5b..171d8d4 100644
---- a/recipes-bsp/efibootguard/efibootguard_0.9-git+isar.bb
-+++ b/recipes-bsp/efibootguard/efibootguard_0.9-git+isar.bb
-@@ -39,8 +39,3 @@ do_prepare_build() {
-     deb_add_changelog
- }
- 
--dpkg_runbuild_append() {
--    install -m 0755 -d ${DEPLOY_DIR_IMAGE}
--    install -m 0755 ${S}/efibootguardx64.efi ${DEPLOY_DIR_IMAGE}/bootx64.efi
--    install -m 0755 ${S}/bg_setenv ${DEPLOY_DIR_IMAGE}/bg_setenv
--}
-diff --git a/recipes-bsp/efibootguard/files/debian/efibootguard.install b/recipes-bsp/efibootguard/files/debian/efibootguard.install
-index 8a8d9d3..0239953 100644
---- a/recipes-bsp/efibootguard/files/debian/efibootguard.install
-+++ b/recipes-bsp/efibootguard/files/debian/efibootguard.install
-@@ -1,2 +1,3 @@
- bg_setenv usr/bin
- bg_printenv usr/bin
-+efibootguardx64.efi usr/share/efibootguard
-diff --git a/recipes-bsp/efibootguard/files/debian/efibootguard.links b/recipes-bsp/efibootguard/files/debian/efibootguard.links
-new file mode 100644
-index 0000000..97bab21
---- /dev/null
-+++ b/recipes-bsp/efibootguard/files/debian/efibootguard.links
-@@ -0,0 +1 @@
-+usr/share/efibootguard/efibootguardx64.efi usr/share/efibootguard/bootx64.efi
-diff --git a/scripts/lib/wic/plugins/source/efibootguard-boot.py b/scripts/lib/wic/plugins/source/efibootguard-boot.py
-index 882729a..05cef4e 100644
---- a/scripts/lib/wic/plugins/source/efibootguard-boot.py
-+++ b/scripts/lib/wic/plugins/source/efibootguard-boot.py
-@@ -111,9 +111,8 @@ class EfibootguardBootPlugin(SourcePlugin):
- 
-         cwd = os.getcwd()
-         os.chdir(part_rootfs_dir)
--        config_cmd = '%s/bg_setenv -f . -k "C:%s:%s" %s -r %s -w %s' \
-+        config_cmd = '/usr/bin/bg_setenv -f . -k "C:%s:%s" %s -r %s -w %s' \
-             % (
--                deploy_dir,
-                 part.label.upper(),
-                 boot_image,
-                 '-a "%s"' % cmdline if cmdline else "",
-diff --git a/scripts/lib/wic/plugins/source/efibootguard-efi.py b/scripts/lib/wic/plugins/source/efibootguard-efi.py
-index 9eb2353..613a350 100644
---- a/scripts/lib/wic/plugins/source/efibootguard-efi.py
-+++ b/scripts/lib/wic/plugins/source/efibootguard-efi.py
-@@ -53,9 +53,9 @@ class EfibootguardEFIPlugin(SourcePlugin):
-         """
-         deploy_dir = get_bitbake_var("DEPLOY_DIR_IMAGE")
-         creator.deploy_dir = deploy_dir
--        bootloader_files = source_params.get("bootloader")
-+        bootloader_files = source_params.get("files")
-         if not bootloader_files:
--            bootloader_files = "bootx64.efi"
-+            bootloader_files = "{}/bootx64.efi".format(deploy_dir)
-         bootloader_files = bootloader_files.split(' ')
-         part_rootfs_dir = "%s/disk/%s.%s" % (cr_workdir,
-                                              part.label,
-@@ -63,18 +63,19 @@ class EfibootguardEFIPlugin(SourcePlugin):
-         create_dir_cmd = "install -d %s/EFI/BOOT" % part_rootfs_dir
-         exec_cmd(create_dir_cmd)
- 
--        for bootloader in bootloader_files:
--            signed_bootloader = cls._sign_file(bootloader,
--                                               "{}/{}".format(deploy_dir,
--                                                              bootloader
--                                                              ),
-+        for bootloader_path in bootloader_files:
-+            name = os.path.basename(bootloader_path)
-+            signed_bootloader = cls._sign_file(name,
-+                                               bootloader_path,
-                                                cr_workdir,
-                                                source_params)
-+            msger.debug("Copy %s to %s",
-+                        signed_bootloader, part_rootfs_dir)
-             # important the bootloader in deploy_dir is no longer signed
-             cp_cmd = "cp %s/%s %s/EFI/BOOT/%s" % (cr_workdir,
--                                                signed_bootloader,
--                                                part_rootfs_dir,
--                                                bootloader)
-+                                                  signed_bootloader,
-+                                                  part_rootfs_dir,
-+                                                  name)
-             exec_cmd(cp_cmd, True)
-         du_cmd = "du --apparent-size -ks %s" % part_rootfs_dir
-         blocks = int(exec_cmd(du_cmd).split()[0])
-@@ -113,6 +114,7 @@ class EfibootguardEFIPlugin(SourcePlugin):
-     def _sign_file(cls, name, signee, cr_workdir, source_params):
-         sign_script = source_params.get("signwith")
-         if sign_script and os.path.exists(sign_script):
-+            msger.debug("Sign %s to %s", name, cr_workdir)
-             work_name = name.replace(".efi", ".signed.efi")
-             sign_cmd = "{sign_script} {signee} \
-             {cr_workdir}/{work_name}".format(sign_script=sign_script,
-diff --git a/wic/ebg-signed-bootloader.inc b/wic/ebg-signed-bootloader.inc
-index 667e014..2fd5c0e 100644
---- a/wic/ebg-signed-bootloader.inc
-+++ b/wic/ebg-signed-bootloader.inc
-@@ -1,2 +1,2 @@
- # EFI partition containing efibootguard bootloader binary
--part --source efibootguard-efi  --ondisk sda --size 16M --extra-space 0 --overhead-factor 1 --label efi   --align 1024 --part-type=EF00 --active --sourceparams "signwith=/usr/bin/sign_secure_image.sh"
-+part --source efibootguard-efi  --ondisk sda --size 16M --extra-space 0 --overhead-factor 1 --label efi   --align 1024 --part-type=EF00 --active --sourceparams "files=/usr/share/efibootguard/bootx64.efi,signwith=/usr/bin/sign_secure_image.sh"
-diff --git a/wic/ebg-sysparts.inc b/wic/ebg-sysparts.inc
-index dea99e8..18c8508 100644
---- a/wic/ebg-sysparts.inc
-+++ b/wic/ebg-sysparts.inc
-@@ -1,7 +1,7 @@
- # default partition layout EFI Boot Guard usage
- 
- # EFI partition containing efibootguard bootloader binary
--part --source efibootguard-efi  --ondisk sda --size 16M --extra-space 0 --overhead-factor 1 --label efi   --align 1024 --part-type=EF00 --active
-+part --source efibootguard-efi  --ondisk sda --size 16M --extra-space 0 --overhead-factor 1 --label efi   --align 1024 --part-type=EF00 --active --sourceparams "files=/usr/share/efibootguard/bootx64.efi"
- 
- # EFI Boot Guard environment/config partitions plus Kernel files
- part --source efibootguard-boot --ondisk sda --size 32M --extra-space 0 --overhead-factor 1 --label BOOT0 --align 1024 --part-type=0700 --sourceparams "revision=2,root=PARTUUID:fedcba98-7654-3210-cafe-5e0710000001"
-diff --git a/wic/qemu-amd64-efibootguard-secureboot.wks.in b/wic/qemu-amd64-efibootguard-secureboot.wks.in
-index 81fd4fe..72a6f8c 100644
---- a/wic/qemu-amd64-efibootguard-secureboot.wks.in
-+++ b/wic/qemu-amd64-efibootguard-secureboot.wks.in
-@@ -1,5 +1,5 @@
- # EFI partition containing efibootguard bootloader binary
--part --source efibootguard-efi  --ondisk sda --size 16M --extra-space 0 --overhead-factor 1 --label efi   --align 1024 --part-type=EF00 --active --sourceparams "signwith=/usr/bin/sign_secure_image.sh"
-+include ebg-signed-bootloader.inc
- 
- # EFI Boot Guard environment/config partitions plus Kernel files
- part --source efibootguard-boot --ondisk sda --size 32M --extra-space 0 --overhead-factor 1 --label BOOT0 --align 1024 --part-type=0700 --sourceparams "revision=2,unified-kernel=y,signwith=/usr/bin/sign_secure_image.sh"
--- 
-2.34.1
+>-----Original Message-----
+>From: pyla venkata(=1B$B#T#S#I#P=1B(B)
+>Sent: 16 December 2021 13:17
+>To: isar-users@googlegroups.com
+>Cc: henning.schild@siemens.com; Jan Kiszka <jan.kiszka@siemens.com>; dines=
+h
+>kumar(=1B$B#T#S#I#P=1B(B) <dinesh.kumar@toshiba-tsip.com>; hayashi kazuhir=
+o(=1B$BNS=1B(B =1B$BOB9(=1B(B
+>=1B$B""#S#W#C"~#A#C#T=1B(B) <kazuhiro3.hayashi@toshiba.co.jp>
+>Subject: Is it safe to remove debconf cache files in isar system
+>
+>Hi,
+>
+>I am working to fix some reproducible build failures in isar system, as pa=
+rt of
+>this I wanted to know some ideas to fix it.
+>
+>I am checking the reproducible failures as below:
+> $ cd isar
+> $ . isar-init-build-env build1 && bitbake mc:qemuamd64-buster-tgz:isar-im=
+age-
+>base
+> $ . isar-init-build-env build2 && bitbake mc:qemuamd64-buster-tgz:isar-im=
+age-
+>base
+> $ mkdir -p rootfs1 rootfs2
+> $ tar -xzvf ./build1/tmp/deploy/images/qemuamd64/isar-image-base-debian-
+>buster-qemuamd64.tar.gz -C ./rootfs1/  $ tar -xzvf
+>./build2/tmp/deploy/images/qemuamd64/isar-image-base-debian-buster-
+>qemuamd64.tar.gz -C ./rootfs2/  $ rsync -nrclv ./rootfs1/ ./rootfs2/ >
+>difference.txt
+>
+>Below is one reproducible problem I picked:
+>In debconf db file the contents were different after two subsequent builds=
+,
+>
+>Part of the debconf db file where the difference is found
+>(/var/cache/debconf/config.dat)
+>Build1:
+>Name: ucf/changeprompt
+>Template: ucf/changeprompt
+>Value: keep_current
+>Owners: ucf
+>Variables:
+> BASENAME =3D locale.nopurge
+> FILE =3D /etc/locale.nopurge
+> NEW =3D /etc/locale.nopurge.29308
+>
+>Build2:
+>Name: ucf/changeprompt
+>Template: ucf/changeprompt
+>Value: keep_current
+>Owners: ucf
+>Variables:
+> BASENAME =3D locale.nopurge
+> FILE =3D /etc/locale.nopurge
+> NEW =3D /etc/locale.nopurge.19132
+>
+>The probable solution I am thinking of is:
+>1. remove the debconf cache files (rm -f /var/cache/debconf/*)
+>2. Fix the debconf in such a way it generates same package configuration o=
+n every build
+>
+>The first solution is easy, but I am worried if those package configuratio=
+n files
+>maybe required in future when the package is updating The second solution
+>would need more investigation at debconf package side.
+>
+>Any ideas or suggestion would be very grateful.
+>
+>Thanks,
+>Venkata.
 
 
