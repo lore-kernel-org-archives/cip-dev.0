@@ -2,36 +2,36 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59175C433EF
-	for <webhook@archiver.kernel.org>; Mon, 14 Feb 2022 12:22:46 +0000 (UTC)
-Received: from mta-64-227.siemens.flowmailer.net
- (mta-64-227.siemens.flowmailer.net [185.136.64.227])
- by mx.groups.io with SMTP id smtpd.web09.33242.1644841363921152428
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 792F7C433EF
+	for <webhook@archiver.kernel.org>; Mon, 14 Feb 2022 12:28:11 +0000 (UTC)
+Received: from mta-64-226.siemens.flowmailer.net
+ (mta-64-226.siemens.flowmailer.net [185.136.64.226])
+ by mx.groups.io with SMTP id smtpd.web10.33053.1644841689880179462
  for <cip-dev@lists.cip-project.org>;
- Mon, 14 Feb 2022 04:22:45 -0800
+ Mon, 14 Feb 2022 04:28:10 -0800
 Authentication-Results: mx.groups.io;
  dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1
- header.b=AjijT5EK;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227,
- mailfrom: fm-51332-20220214122240dc886306f5acc8ab1a-psedqe@rts-flowmailer.siemens.com)
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id
- 20220214122240dc886306f5acc8ab1a
+ header.b=DkpSKZKJ;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226,
+ mailfrom: fm-51332-20220214122806f1d1395e1c57205414-hvhfaj@rts-flowmailer.siemens.com)
+Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id
+ 20220214122806f1d1395e1c57205414
         for <cip-dev@lists.cip-project.org>;
-        Mon, 14 Feb 2022 13:22:41 +0100
+        Mon, 14 Feb 2022 13:28:07 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
- bh=nS0UFj6Fyb962kiKvh+x2omdGINokVH1ZFtdhYAH3pM=;
- b=AjijT5EK/lBXVKHtGMnm+Y/Lmtzeh+gDbPyJOcNcnAaz/JcNM7PyEyrgYKY6xCp+GQzdYS
- wUzDmKEJu8a+Ei0oJFdBFKw+pM2MqyRygkEFpuHAf0KrZ75np0HuvVb9AxLHr9u5cHZFaCab
- QJZCdIYqDLaXZkE1UWDXt4x6HW/iU=;
+ bh=lAUXubyuwKyF1lhf1AUv9kMGYe6ai9rWqihl03aWdM0=;
+ b=DkpSKZKJbY/X3q0ledr9F3Bjr/xHl9DmGTXprWqmOVaGdFpre4WQnoq5CAj9HRueBYeqNr
+ izo4MxJvJuao6n0a9KjTw0gpheVC2h7yxJR2Z+BZq06luO2lm8MxbKJjy0Y86vRQFpDml7e5
+ bqMHemIzR94IOnbcC/7s3d4KxEAks=;
 From: Quirin.Gylstorff@siemens.com
-To: jan.kiszka@siemens.com,
-	cip-dev@lists.cip-project.org
-Subject: [cip-dev][isar-cip-core][PATCH] swupdate: Add option to disable
+To: cip-dev@lists.cip-project.org,
+	jan.kiszka@siemens.com
+Subject: [cip-dev][isar-cip-core][PATCH v2] swupdate: Add option to disable
  CONFIG_HASH_VERIFY
-Date: Mon, 14 Feb 2022 13:22:39 +0100
-Message-Id: <20220214122239.262332-1-Quirin.Gylstorff@siemens.com>
+Date: Mon, 14 Feb 2022 13:28:05 +0100
+Message-Id: <20220214122805.262651-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
@@ -39,13 +39,21 @@ Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 14 Feb 2022 12:22:46 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7595
+ <cip-dev@lists.cip-project.org>; Mon, 14 Feb 2022 12:28:11 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7596
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
+This patch activate CONFIG_HASH_VERITY to ensure the integrity of the
+swu binary. To ensure simple example builds the option can be disabled
+by with the debian build profile `pkg.swupdate.nohashverify`.
+
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
+
+Changes V2:
+ - add missing patch description
+
  ...onfig-Make-image-encryption-optional.patch |  2 +-
  .../0002-debian-rules-Add-CONFIG_MTD.patch    |  2 +-
  ...es-Add-option-to-disable-fs-creation.patch |  2 +-
