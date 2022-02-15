@@ -1,87 +1,99 @@
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
- by mx.groups.io with SMTP id smtpd.web12.21821.1647222087516156193
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+ by mx.groups.io with SMTP id smtpd.web08.3539.1644884272920964480
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Sun, 13 Mar 2022 18:41:27 -0700
+ Mon, 14 Feb 2022 16:17:53 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=QVM9Mw+3;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.215.178, mailfrom: bot@kernelci.org)
-Received: by mail-pg1-f178.google.com with SMTP id t14so12466513pgr.3
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Sun, 13 Mar 2022 18:41:27 -0700 (PDT)
+ dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=N9mIB3Xe;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.177, mailfrom: bot@kernelci.org)
+Received: by mail-pl1-f177.google.com with SMTP id z17so11781292plb.9
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Mon, 14 Feb 2022 16:17:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=N4S4DiR3r22QHoLApsZwQiVe55zFHqMJR2Zb5b8Wpxg=;
-        b=QVM9Mw+35bqmJYjzwK+S0xV9Tz/yAEuOWElvipjG5kyWkx1CrTIyZgZarrbYvi9tnz
-         rgtEE9ToCAlwBQTjXrwL8kFQzWJ4mytWHtdp8bGg/vHa8xfrNQJnRZiLrE7hGRH2b5Xz
-         dsCapC4dgiYtoW/ZVV/9N6RLxjODxspO5617cDo8aRMAvJktXbdV4XtRNoLaTuZsbe+S
-         cy8OvtrbP9SslwGS8r7ezjSoehuyKYvi2LMd/yZMYyC3bx7h2aCyWLRiIcfAbiltUNpu
-         HcAiIIW37WihrJjlMyZzYuzyoH/LnAyNE8V1FxvcjnOLxOH2l7salBVfwzabmgIBiQ93
-         M7gg==
+        bh=aNYT2iFKXLvxh2MCmym6dAZ1FYBKfslYLg65b8In0ms=;
+        b=N9mIB3Xev+0LupCJNM1TR/kSEbvJ2B4bjifioRQi2FMhj3DwcF0K81tC4JNxZ/ZYUX
+         NbSk9r33HdwRnzoNR20YoSD4ubCkTRDDKDdSPkxPwOuNY0W/smJUFKxP90gtr6zkg3AR
+         xHJaDq3A7du2YX6yD/dT8uVPKAfne8UWCjQSjvtM20DtUDbMkI5gAwAYaGWS/v8GBXBg
+         s4MU1h5Md7Wyv4KGoFTx+/t/qInKInw2XMrs4T4uGSJtQabe+/NXsTTxucNYufm/tzrw
+         FJAdkkbhfST5LtY/DEL3EB8TnTLm/oumVg+JaP3tjsB74aHh8EIy4ICmOvUeRXNoHiJc
+         8eXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=N4S4DiR3r22QHoLApsZwQiVe55zFHqMJR2Zb5b8Wpxg=;
-        b=qmIK/jUcDEiTruYWz1zM3U0fkeVrOQos6qNkJcDUmCFBTNGAsCaNcmQxh+jg2pd1u8
-         yyEiz/iFCagnQnCMogiYmJTx7hG4H3GPGOgLnDjgnSSFcsgYBTU7zrAbsRIRD3C5bnLM
-         +DL1zVZIyXcsBHGNqK4yiimu0Bxp9urKBRQ1Nny3/Y9RD1SF6OoBJQw4QFteDMDpuQCG
-         calBVj2GiyXscuXDqzZ2VGUx7knLpFI78wdnsm9M1/1Ap5HmI4eA2+1timgoKSxCN50+
-         ZrGMTemk2AO4rGCdZuhFbSKFW+gfBzO6D53nJBwB9NZRUX50kdGvpE3VZtHQsTuhhagN
-         znNw==
-X-Gm-Message-State: AOAM531cJwXRTuTyoV4CVbF06pK1r6wNuE4LTZk3FaYz6LzCNGDqxbSU
-	FITJW+O3VFrrhgwnVCHw7b1+eSPgQHgsrk0TuzY=
-X-Google-Smtp-Source: ABdhPJzLyr/25ujKSKbTdzeWeMHT9cLe8tv0tEobR8TRb+KNiC1Zx57Xggksz9VqTkn+V6FOHSSKmA==
-X-Received: by 2002:a63:d1e:0:b0:372:c1cd:9e16 with SMTP id c30-20020a630d1e000000b00372c1cd9e16mr17930502pgl.421.1647222086678;
-        Sun, 13 Mar 2022 18:41:26 -0700 (PDT)
+        bh=aNYT2iFKXLvxh2MCmym6dAZ1FYBKfslYLg65b8In0ms=;
+        b=vaSFGyrA3YleQSGD7ecy/HpLYFVgAR5wUzo2d/sjUH8+GY4oT7r2D3JrDlcyPF05+m
+         vFIlpVfNiBaCm+4EtsaUR4H7qZ6jlbodsG23olADBFl4Bk2CBJ/X8nCZ20A2NNkMTXe1
+         sldQiMaesr57SHY0s5ZFgt/ti93jajRebUhjStauLog17aHVbNcI/Sh+1satNZa/lPwQ
+         VQcL3DduqIRHx3PE6TtdTQHNkxJGgVn2GAJeFSUTm2tTOHRgYwVHRARm+klwAqkR0OEx
+         UhLO6TqJkbELbNXWqBv9IVoDlCG9nIeMr/UyqUsjovn+a7STBhz1Dt4Uk+Szq8DhBJmL
+         WCXg==
+X-Gm-Message-State: AOAM531IsRG2bGBZlFBHtbwP55yf98tGM0ZhW3txy2r3roThz9z46/6N
+	uW9fjxfMzrrxHEx63LlOJlCbVBEqatLUOUFt
+X-Google-Smtp-Source: ABdhPJyJey8sJEL7xB1uQeuhUTHKYCo0NujNcXewGEHbC/23lPJlX8mAIFkElfwU4KrlAQ34nNGAzg==
+X-Received: by 2002:a17:90a:1987:: with SMTP id 7mr1334602pji.215.1644884271972;
+        Mon, 14 Feb 2022 16:17:51 -0800 (PST)
 Return-Path: <bot@kernelci.org>
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id l9-20020a655609000000b0037589f4337dsm14883230pgs.78.2022.03.13.18.41.26
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
+        by smtp.gmail.com with ESMTPSA id z13sm38561673pfj.23.2022.02.14.16.17.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Mar 2022 18:41:26 -0700 (PDT)
-Message-ID: <622e9d46.1c69fb81.54284.67ef@mx.google.com>
-Date: Sun, 13 Mar 2022 18:41:26 -0700 (PDT)
+        Mon, 14 Feb 2022 16:17:51 -0800 (PST)
+Message-ID: <620af12f.1c69fb81.73451.f75f@mx.google.com>
+Date: Mon, 14 Feb 2022 16:17:51 -0800 (PST)
 MIME-Version: 1.0
 X-Kernelci-Report-Type: test
-X-Kernelci-Tree: cip-gitlab
-X-Kernelci-Branch: ci/iwamatsu/linux-5.10.y-cip-rc
-X-Kernelci-Kernel: v5.10.100-cip2-484-gede5006fb276
-Subject: cip-gitlab/ci/iwamatsu/linux-5.10.y-cip-rc baseline: 95 runs, 2 regressions (v5.10.100-cip2-484-gede5006fb276) #kernelci
+X-Kernelci-Tree: cip
+X-Kernelci-Branch: linux-4.4.y-cip-rt
+X-Kernelci-Kernel: v4.4.302-cip68-rt38
+Subject: cip/linux-4.4.y-cip-rt baseline: 72 runs, 6 regressions (v4.4.302-cip68-rt38) #kernelci
 To: Cipproject+Cip-Dev via Email Integration <cip-dev@lists.cip-project.org>
 From: "kernelci.org bot" <bot@kernelci.org>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="us-ascii"
 List-Id: <cip-dev.lists.cip-project.org>
 
-cip-gitlab/ci/iwamatsu/linux-5.10.y-cip-rc baseline: 95 runs, 2 regressions=
- (v5.10.100-cip2-484-gede5006fb276)
+cip/linux-4.4.y-cip-rt baseline: 72 runs, 6 regressions (v4.4.302-cip68-rt3=
+8)
 
 Regressions Summary
 -------------------
 
-platform                     | arch  | lab           | compiler | defconfig=
-                  | regressions
------------------------------+-------+---------------+----------+----------=
-------------------+------------
-meson-g12b-a311d-khadas-vim3 | arm64 | lab-baylibre  | gcc-10   | defconfig=
-                  | 1          =
+platform              | arch  | lab          | compiler | defconfig | regre=
+ssions
+----------------------+-------+--------------+----------+-----------+------=
+------
+qemu_arm64-virt-gicv2 | arm64 | lab-baylibre | gcc-10   | defconfig | 1    =
+      =
 
-rk3399-gru-kevin             | arm64 | lab-collabora | gcc-10   | defconfig=
-+arm64-chromebook | 1          =
+qemu_arm64-virt-gicv2 | arm64 | lab-broonie  | gcc-10   | defconfig | 1    =
+      =
+
+qemu_arm64-virt-gicv2 | arm64 | lab-cip      | gcc-10   | defconfig | 1    =
+      =
+
+qemu_arm64-virt-gicv3 | arm64 | lab-baylibre | gcc-10   | defconfig | 1    =
+      =
+
+qemu_arm64-virt-gicv3 | arm64 | lab-broonie  | gcc-10   | defconfig | 1    =
+      =
+
+qemu_arm64-virt-gicv3 | arm64 | lab-cip      | gcc-10   | defconfig | 1    =
+      =
 
 
-  Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fiwamatsu%2=
-Flinux-5.10.y-cip-rc/kernel/v5.10.100-cip2-484-gede5006fb276/plan/baseline/
+  Details:  https://kernelci.org/test/job/cip/branch/linux-4.4.y-cip-rt/ker=
+nel/v4.4.302-cip68-rt38/plan/baseline/
 
   Test:     baseline
-  Tree:     cip-gitlab
-  Branch:   ci/iwamatsu/linux-5.10.y-cip-rc
-  Describe: v5.10.100-cip2-484-gede5006fb276
-  URL:      https://gitlab.com/cip-project/cip-kernel/linux-cip.git
-  SHA:      ede5006fb276670a43bd44dd184690177cf47408 =
+  Tree:     cip
+  Branch:   linux-4.4.y-cip-rt
+  Describe: v4.4.302-cip68-rt38
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.g=
+it
+  SHA:      94973269ae47d381c543768dad86bdffcd61479d =
 
 
 
@@ -90,70 +102,199 @@ Test Regressions
 
 
 
-platform                     | arch  | lab           | compiler | defconfig=
-                  | regressions
------------------------------+-------+---------------+----------+----------=
-------------------+------------
-meson-g12b-a311d-khadas-vim3 | arm64 | lab-baylibre  | gcc-10   | defconfig=
-                  | 1          =
+platform              | arch  | lab          | compiler | defconfig | regre=
+ssions
+----------------------+-------+--------------+----------+-----------+------=
+------
+qemu_arm64-virt-gicv2 | arm64 | lab-baylibre | gcc-10   | defconfig | 1    =
+      =
 
 
-  Details:     https://kernelci.org/test/plan/id/622e945430ec5f6ba4c62977
+  Details:     https://kernelci.org/test/plan/id/620ae078bf84d61279c629a5
 
   Results:     0 PASS, 1 FAIL, 0 SKIP
   Full config: defconfig
   Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
 110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
-.10.y-cip-rc/v5.10.100-cip2-484-gede5006fb276/arm64/defconfig/gcc-10/lab-ba=
-ylibre/baseline-meson-g12b-a311d-khadas-vim3.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
-.10.y-cip-rc/v5.10.100-cip2-484-gede5006fb276/arm64/defconfig/gcc-10/lab-ba=
-ylibre/baseline-meson-g12b-a311d-khadas-vim3.html
+  Plain log:   https://storage.kernelci.org//cip/linux-4.4.y-cip-rt/v4.4.30=
+2-cip68-rt38/arm64/defconfig/gcc-10/lab-baylibre/baseline-qemu_arm64-virt-g=
+icv2.txt
+  HTML log:    https://storage.kernelci.org//cip/linux-4.4.y-cip-rt/v4.4.30=
+2-cip68-rt38/arm64/defconfig/gcc-10/lab-baylibre/baseline-qemu_arm64-virt-g=
+icv2.html
   Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220228.1/arm64/rootfs.cpio.gz =
+t-baseline/20220211.1/arm64/rootfs.cpio.gz =
 
 
 
-  * baseline.login: https://kernelci.org/test/case/id/622e945430ec5f6ba4c62=
-978
-        new failure (last pass: v5.10.100-cip2-425-g0a0d92194f39) =
+  * baseline.login: https://kernelci.org/test/case/id/620ae078bf84d61279c62=
+9a6
+        new failure (last pass: v4.4.296-cip67-rt37) =
 
  =
 
 
 
-platform                     | arch  | lab           | compiler | defconfig=
-                  | regressions
------------------------------+-------+---------------+----------+----------=
-------------------+------------
-rk3399-gru-kevin             | arm64 | lab-collabora | gcc-10   | defconfig=
-+arm64-chromebook | 1          =
+platform              | arch  | lab          | compiler | defconfig | regre=
+ssions
+----------------------+-------+--------------+----------+-----------+------=
+------
+qemu_arm64-virt-gicv2 | arm64 | lab-broonie  | gcc-10   | defconfig | 1    =
+      =
 
 
-  Details:     https://kernelci.org/test/plan/id/622e8ea3a03e183361c6298c
+  Details:     https://kernelci.org/test/plan/id/620ae03cd76175826ec62972
 
-  Results:     90 PASS, 2 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
   Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
 110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
-.10.y-cip-rc/v5.10.100-cip2-484-gede5006fb276/arm64/defconfig+arm64-chromeb=
-ook/gcc-10/lab-collabora/baseline-rk3399-gru-kevin.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
-.10.y-cip-rc/v5.10.100-cip2-484-gede5006fb276/arm64/defconfig+arm64-chromeb=
-ook/gcc-10/lab-collabora/baseline-rk3399-gru-kevin.html
+  Plain log:   https://storage.kernelci.org//cip/linux-4.4.y-cip-rt/v4.4.30=
+2-cip68-rt38/arm64/defconfig/gcc-10/lab-broonie/baseline-qemu_arm64-virt-gi=
+cv2.txt
+  HTML log:    https://storage.kernelci.org//cip/linux-4.4.y-cip-rt/v4.4.30=
+2-cip68-rt38/arm64/defconfig/gcc-10/lab-broonie/baseline-qemu_arm64-virt-gi=
+cv2.html
   Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220228.1/arm64/rootfs.cpio.gz =
+t-baseline/20220211.1/arm64/rootfs.cpio.gz =
 
 
 
-  * baseline.bootrr.rockchip-i2s1-probed: https://kernelci.org/test/case/id=
-/622e8ea3a03e183361c629b2
-        failing since 4 days (last pass: v5.10.100-cip2-319-gcbff87047566, =
-first fail: v5.10.100-cip2-425-g0a0d92194f39)
+  * baseline.login: https://kernelci.org/test/case/id/620ae03cd76175826ec62=
+973
+        new failure (last pass: v4.4.296-cip67-rt37) =
 
-    2022-03-14T00:38:47.808166  /lava-5873066/1/../bin/lava-test-case   =
+ =
+
+
+
+platform              | arch  | lab          | compiler | defconfig | regre=
+ssions
+----------------------+-------+--------------+----------+-----------+------=
+------
+qemu_arm64-virt-gicv2 | arm64 | lab-cip      | gcc-10   | defconfig | 1    =
+      =
+
+
+  Details:     https://kernelci.org/test/plan/id/620ae34e0801b19a07c62997
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip/linux-4.4.y-cip-rt/v4.4.30=
+2-cip68-rt38/arm64/defconfig/gcc-10/lab-cip/baseline-qemu_arm64-virt-gicv2.=
+txt
+  HTML log:    https://storage.kernelci.org//cip/linux-4.4.y-cip-rt/v4.4.30=
+2-cip68-rt38/arm64/defconfig/gcc-10/lab-cip/baseline-qemu_arm64-virt-gicv2.=
+html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20220211.1/arm64/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/620ae34e0801b19a07c62=
+998
+        new failure (last pass: v4.4.296-cip67-rt37) =
+
+ =
+
+
+
+platform              | arch  | lab          | compiler | defconfig | regre=
+ssions
+----------------------+-------+--------------+----------+-----------+------=
+------
+qemu_arm64-virt-gicv3 | arm64 | lab-baylibre | gcc-10   | defconfig | 1    =
+      =
+
+
+  Details:     https://kernelci.org/test/plan/id/620ae03cf2b63242f6c6296f
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip/linux-4.4.y-cip-rt/v4.4.30=
+2-cip68-rt38/arm64/defconfig/gcc-10/lab-baylibre/baseline-qemu_arm64-virt-g=
+icv3.txt
+  HTML log:    https://storage.kernelci.org//cip/linux-4.4.y-cip-rt/v4.4.30=
+2-cip68-rt38/arm64/defconfig/gcc-10/lab-baylibre/baseline-qemu_arm64-virt-g=
+icv3.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20220211.1/arm64/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/620ae03cf2b63242f6c62=
+970
+        new failure (last pass: v4.4.296-cip67-rt37) =
+
+ =
+
+
+
+platform              | arch  | lab          | compiler | defconfig | regre=
+ssions
+----------------------+-------+--------------+----------+-----------+------=
+------
+qemu_arm64-virt-gicv3 | arm64 | lab-broonie  | gcc-10   | defconfig | 1    =
+      =
+
+
+  Details:     https://kernelci.org/test/plan/id/620ae03afc5d1148f2c62977
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip/linux-4.4.y-cip-rt/v4.4.30=
+2-cip68-rt38/arm64/defconfig/gcc-10/lab-broonie/baseline-qemu_arm64-virt-gi=
+cv3.txt
+  HTML log:    https://storage.kernelci.org//cip/linux-4.4.y-cip-rt/v4.4.30=
+2-cip68-rt38/arm64/defconfig/gcc-10/lab-broonie/baseline-qemu_arm64-virt-gi=
+cv3.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20220211.1/arm64/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/620ae03afc5d1148f2c62=
+978
+        new failure (last pass: v4.4.296-cip67-rt37) =
+
+ =
+
+
+
+platform              | arch  | lab          | compiler | defconfig | regre=
+ssions
+----------------------+-------+--------------+----------+-----------+------=
+------
+qemu_arm64-virt-gicv3 | arm64 | lab-cip      | gcc-10   | defconfig | 1    =
+      =
+
+
+  Details:     https://kernelci.org/test/plan/id/620ae2d6b65c5446ccc62971
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip/linux-4.4.y-cip-rt/v4.4.30=
+2-cip68-rt38/arm64/defconfig/gcc-10/lab-cip/baseline-qemu_arm64-virt-gicv3.=
+txt
+  HTML log:    https://storage.kernelci.org//cip/linux-4.4.y-cip-rt/v4.4.30=
+2-cip68-rt38/arm64/defconfig/gcc-10/lab-cip/baseline-qemu_arm64-virt-gicv3.=
+html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20220211.1/arm64/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/620ae2d6b65c5446ccc62=
+972
+        new failure (last pass: v4.4.296-cip67-rt37) =
 
  =20
 
