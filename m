@@ -2,287 +2,334 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2531C4332F
-	for <webhook@archiver.kernel.org>; Tue, 15 Feb 2022 09:04:05 +0000 (UTC)
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com
- (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.51])
- by mx.groups.io with SMTP id smtpd.web09.7405.1644915843056951315
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BC63C433F5
+	for <webhook@archiver.kernel.org>; Tue, 15 Feb 2022 09:37:17 +0000 (UTC)
+Received: from EUR03-AM5-obe.outbound.protection.outlook.com
+ (EUR03-AM5-obe.outbound.protection.outlook.com [40.107.3.89])
+ by mx.groups.io with SMTP id smtpd.web09.7611.1644917834966923596
  for <cip-dev@lists.cip-project.org>;
- Tue, 15 Feb 2022 01:04:04 -0800
+ Tue, 15 Feb 2022 01:37:16 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=tTx+IRi+;
- spf=pass (domain: siemens.com, ip: 40.107.21.51,
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=tGcNpPDg;
+ spf=pass (domain: siemens.com, ip: 40.107.3.89,
  mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UpFtdEsozZJ3w8tnJ2+iugUAd0ZVDucMivljxSxGH+6wvb+1TLRSyEoJmjOf2HTBbrNY03hkZBRPvR2dOC6yd2P2aYr1MO/32aKvVyJKIalmfkDUr5V3JRA7qY3vwKo2LnX5gSN0R9gdLDhKZ/y1554hzzcJebST8pg8SOVrsiADW5p7cSn32znYOLY69exAINfAgDYCTbnnkA66DV0TtX2tf0lL8KzM3d6jYpxjyZ5QpQfI7vSseiB8Ucgk4itqX0xEcXvkWpe00LIKaSlalcihLtlMqr9uBRLj5XGR66E/vlYfwirJkBBnfLYQjWUTQ/Nzf6TeUSsZidaLWYvDUg==
+ b=AEzuQrMS/zUv9gE7UndxIppYf/YZcqVI9MdzW32J/+kQT2Wh5oK/xsaZ9wgjY9S+Xq42TRprasU/MqSftF70trnOqX545OyBv619FJ+6TRvvLQ0Ns9bnJUSpaEgW9VQIEue+W/vZHcmXdTGXhhd9O7Bm2AdAH5FZsGMx6bmRmTHg5ryO86xEyNDFvixB/7/38D8ckdNhP//eqkyBFVJfM9YawT3ykRsg0lmZvjIZlFiCl4oLxsZPWkP8LWepPasqd13X/mmDCxRXGM4rVOyW5PFcIFiBDmhl3cdK8USO77T/Ty1VeHr+is6rs2ywrT87ZKYtZrDoZ9mk//45jSGoTQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=akFdqwjI71J/tjWUVJhdb+8r1UYV0njrRHCfNmGZCwI=;
- b=bec8QBFwiRMkYsTneomdgFvifd2TIaHk2noRTkx//SfqtvnANNuyX9DPAhjTSrubjax0O/I79IGE0uvOnVD1hvZDZRlelbi3V4G0Phzcz0qYfAIbN6AZ//QFjVjGz/c5XAIqE+AP3VXqYGk9PYmofLlGjR2rSmGOeOvtPLMIJHtn3SONDpPqbzJggG08NzEpFl/Lcxy8qJqiCdGEZTQML30uh5qtr617rvVbjlxRBU8lmlMkHd+ORYvZDumg/uq4wYJlcIWPyZ4V/UlCXoclvgPECcvFK8wsTQe7NItgsRASBal6QOtQZBDg60hMrxawROy53bFl14QVRRo+MjgvSw==
+ bh=y/b7vYbPZ2krYY6orrl7XnE0BzNvjk9dSx9dJ1ChJKU=;
+ b=cVfNfRQGfW55k2CrikTnH9eJibymdiEJf6VJTSmAgl/0c7TRypr6+WNaW+dd0+SLx9W05xhwLFC3btJti6e22JJVxLnrnWqTLin80s6o8Ej7T47TcsRivZlGIO9b9HM/hGUf7Jdx+VGxY87BMOgfYyKaKG+fuX8hgBbTjvQbXDlkLmLkkagu3tB2rd3U78zZZABLwa8gn0PLPZekNKutshYF38oA2J30BUCQPh5SH2MpcZOOjCh4ZaXZ0KEoN87OQ0/cy8VRLLRqjFepRxLpglrGeluKCktlP5HMIaisKjxFAdeQtPH22f2e8qmdRgKuKEgohysLwRXr5kswjXlVBQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.73) smtp.rcpttodomain=lists.cip-project.org
+ 194.138.21.70) smtp.rcpttodomain=lists.cip-project.org
  smtp.mailfrom=siemens.com; dmarc=pass (p=none sp=none pct=100) action=none
  header.from=siemens.com; dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=akFdqwjI71J/tjWUVJhdb+8r1UYV0njrRHCfNmGZCwI=;
- b=tTx+IRi+u58sClXtxPldHYnN5BJpwLGWftMeBkNKxB7ot0/cpUq6W0t2GsSjZOBuwz2MiFf5nVqEjol3a5nDmhTe3p4RFbYJKx8eLVXaPiOVyLCC0qOe7zl+B5UL5WJIInA0qf+kYyLCGXyMm0aEGxgMMwjmsjgrU1Xxs9lr4a1IyKUmuOpW+XBlW0VulXdWR9bPZsjIHNEOZNVqThosFKaAd6M5O+p+gUhy3RZEIJgohrcgby/DfejphFQtFyc2Xg96bdOaN8lvIELse6bfzX1kA/jfe4UTBxGx9o5ET5y6xLMyPhVZgVXf8gagIFSUkx5ExkRndeci3mz5k2aJUA==
-Received: from AM5PR1001CA0072.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:206:15::49) by AM9PR10MB4989.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:41e::19) with Microsoft SMTP Server (version=TLS1_2,
+ bh=y/b7vYbPZ2krYY6orrl7XnE0BzNvjk9dSx9dJ1ChJKU=;
+ b=tGcNpPDg5b7kCE+QIXGL6ZQdOMq7kWUEMhqVQ/q59FASQ12OhUDX8gGB0TRWVAAFTRjMK1fUijvv+0Uc0Tg+d7gl9GpsBX36FRIv3mWamlCwNFCP5ycweT062T88ixvNpNnx7Cbe3GJrcb8UujudI5yRUJKMAU8Q6v3/o6gEoNeNHL2J4dmGZ9/LUAA9D/dkHsqdrpT0gX7PoPCwcHSU7XGsST8To3F4SeoTE/F5p+ZFN3GZWbL8WwrjGMzG7yJro2Ws55lBkiq/39M+TbJYS/lYY+/BKWKymrhESLJiiYCfqgnTUkcwUz3s+28a4J3wceqJDVFkRIGIlKmdvuCzEg==
+Received: from AS9PR05CA0008.eurprd05.prod.outlook.com (2603:10a6:20b:488::28)
+ by DB9PR10MB4538.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:222::21) with
+ Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4995.14; Tue, 15 Feb
- 2022 09:03:59 +0000
-Received: from VE1EUR01FT059.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:206:15:cafe::68) by AM5PR1001CA0072.outlook.office365.com
- (2603:10a6:206:15::49) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4995.14 via Frontend
- Transport; Tue, 15 Feb 2022 09:03:59 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.73)
+ 2022 09:37:11 +0000
+Received: from VE1EUR01FT020.eop-EUR01.prod.protection.outlook.com
+ (2603:10a6:20b:488:cafe::94) by AS9PR05CA0008.outlook.office365.com
+ (2603:10a6:20b:488::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4975.19 via Frontend
+ Transport; Tue, 15 Feb 2022 09:37:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.70)
  smtp.mailfrom=siemens.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=siemens.com;
 Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.73 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.73; helo=hybrid.siemens.com;
-Received: from hybrid.siemens.com (194.138.21.73) by
- VE1EUR01FT059.mail.protection.outlook.com (10.152.3.127) with Microsoft SMTP
+ 194.138.21.70 as permitted sender) receiver=protection.outlook.com;
+ client-ip=194.138.21.70; helo=hybrid.siemens.com;
+Received: from hybrid.siemens.com (194.138.21.70) by
+ VE1EUR01FT020.mail.protection.outlook.com (10.152.2.234) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.4975.11 via Frontend Transport; Tue, 15 Feb 2022 09:03:58 +0000
+ 15.20.4975.11 via Frontend Transport; Tue, 15 Feb 2022 09:37:10 +0000
 Received: from DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) by
- DEMCHDC9SNA.ad011.siemens.net (194.138.21.73) with Microsoft SMTP Server
+ DEMCHDC9SJA.ad011.siemens.net (194.138.21.70) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.18; Tue, 15 Feb 2022 10:03:58 +0100
+ 15.1.2375.18; Tue, 15 Feb 2022 10:37:09 +0100
 Received: from [167.87.0.44] (167.87.0.44) by DEMCHDC8A0A.ad011.siemens.net
  (139.25.226.106) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.18; Tue, 15 Feb
- 2022 10:03:58 +0100
-Message-ID: <7373c515-9a68-5595-69e3-3c755dca02d1@siemens.com>
-Date: Tue, 15 Feb 2022 10:03:54 +0100
+ 2022 10:37:09 +0100
+Message-ID: <2a427486-b758-c8a8-d7b2-7c53d82255e0@siemens.com>
+Date: Tue, 15 Feb 2022 10:37:09 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-Subject: Re: [cip-dev][isar-cip-core][PATCH] efibootguard: Do not copy the efi
- binaries directly into DEPLOY_DIR
+Subject: Re: [cip-dev][isar-cip-core][PATCH v2] swupdate: Add option to
+ disable CONFIG_HASH_VERIFY
 Content-Language: en-US
-To: <Quirin.Gylstorff@siemens.com>, <cip-dev@lists.cip-project.org>,
-	<ubely@ilbers.de>
-References: <20220214162458.636845-1-Quirin.Gylstorff@siemens.com>
+To: <Quirin.Gylstorff@siemens.com>, <cip-dev@lists.cip-project.org>
+References: <20220214122805.262651-1-Quirin.Gylstorff@siemens.com>
 From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <20220214162458.636845-1-Quirin.Gylstorff@siemens.com>
+In-Reply-To: <20220214122805.262651-1-Quirin.Gylstorff@siemens.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [167.87.0.44]
-X-ClientProxiedBy: DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) To
+X-ClientProxiedBy: DEMCHDC8A1A.ad011.siemens.net (139.25.226.107) To
  DEMCHDC8A0A.ad011.siemens.net (139.25.226.106)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 307c5117-98ae-4814-b497-08d9f0621a57
-X-MS-TrafficTypeDiagnostic: AM9PR10MB4989:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6184c680-cbd1-4810-48d1-08d9f066bd73
+X-MS-TrafficTypeDiagnostic: DB9PR10MB4538:EE_
 X-Microsoft-Antispam-PRVS: 
-	<AM9PR10MB4989DA27B95FD5E7B503954595349@AM9PR10MB4989.EURPRD10.PROD.OUTLOOK.COM>
-X-MS-Oob-TLC-OOBClassifiers: OLM:4125;
+	<DB9PR10MB45389F16E8861EE25D51FB6595349@DB9PR10MB4538.EURPRD10.PROD.OUTLOOK.COM>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	DS8vsgUWI52vxAX6aPMFt/BsM9W3h2RQ+lv994dY0fzHSbPWML1z4DoZNEM8kHnZbRDZHInRq2dRvLW/gPkR9CulrWdxcXMZwtMxIT1nqLaZyZlr0MhPs4/QkMBJWHr8Gr5Q0yI4Gksrushd/NgRN+lGIj/wX9dtxXgtON3dQmzrUUWI+rwF/p0yjntsI/yKK93ZCamS9aF4fOliUcuoVSJuHm5a50v0FJepBaEjz2wrJZmuW4owN6NUp3JFI/pWinf6bRU/oWd1Q0N0T/61+8S5oA2rbwdH9ulpEkXRgtzVrxMQFqG6VGIpKERI3v/Pt7tVP5l3dFbkIC+bg3qlAtPTbf8kQ7ch9jsiwiEWqm8c3raDm++vFh6XrtTNjv5GzfaizXQrJGgVknhxEHppsZZdHQtgrUydCqxlz256pIeprBk5rw34md3HBXz17cPZ1D1LdfqZSUqnTk0Y2S2WGKlTGRe5KhZrd6PfAWNoo0Z9cGCp7pWEyes0MByc8Gb6vnmwDSpwdOGgjBMtnjDcPoG0ycftJ4ypmuiXmSjCJ2CyWPCo+cg6dDztKJq8T7RbLOrio5bABQf8Syo2Q7CqhBYsFLMHtMPh5ctq3wilO9y2+TsWc7zeUOKAr1ni2+mpOk9xbcWpBjhY2ZzsDjj4gmPBIvhs+kbKKWnfIrzEfQjXhefl6UEi6Ilg7c0Rwv+pp/fN87BsfhTnLJjgI6Z+qUNMSxnI1ajgpFVJVsRsRF29Y9HCkv6WL6AMKS9MHln5BJ8eCbiRZy7upFOlEOuC+Q==
+	rzoRQ45pAj2rCB4UcH+nFPgqpVgVLK7mROhkDQ+ZvQFw9xMs8fReihzDMGl/VlsKD6NJkbXjnJvAATfUA6oHK7fZM1EepgTHXn2DbY1kN09MghKHNYg/gT63tnh74yhSfir7T23jsC+uHj16Nn/FG3w1FaoyZWOdktPGjGUlzd0O6YcSqU5pQhGnJA29uVCZCxYdAlKHkPmA5/YCqdJpg/2rwew9ghX+f0tjrJCHZGyn2GpsqQNxz5NlTY7GmHkNeXAc8v1sresk9pik78UcJGwP7zW+/G1/UfgEsC5SvCOb4+nwJf9HuQ611SovyaQdlp01dom7qsWGYoXFr1Le38npp4OTKBsOi7L/wqpgy/6Kotc06896VcR99gtoreLMUFfOnsHsHJct9J429NYiIYAlEToDJrFFPXAAAEDkVeU00byYY00+fAEv+05oZhpV94S9AbttIhLnj3mfxMNi0f3KvVyLtHOIK5iMduWwmbyYNPuIWJeUA5H0DHE5gkiGwCvAXenJnrENdOK7HYAazQa7W3a0HlMieSDh3mIiesLpeQyPGGPpTmzUWgPewcFx+fCCWb1tsUjL5RWgg93C/SibBvelR9dOwKqY7Aymbd0cdePOREsTM7SWrXsaeAuaovZnWnUOR7glABUYDFK8CiLydKJN/oUEqYnsf/AoFp+2+2rt2L62EeQYPT7kPyuZ/p3JlFXLo2iQ+wIRvgmh2qM2e1Nmv/ec1COpKQZFHt8=
 X-Forefront-Antispam-Report: 
-	CIP:194.138.21.73;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230001)(4636009)(46966006)(36840700001)(40470700004)(508600001)(16526019)(8936002)(44832011)(53546011)(5660300002)(8676002)(86362001)(70206006)(70586007)(6666004)(26005)(186003)(336012)(2616005)(40460700003)(31696002)(2906002)(82310400004)(956004)(356005)(47076005)(82960400001)(36860700001)(81166007)(83380400001)(110136005)(31686004)(316002)(6706004)(36756003)(16576012)(3940600001)(36900700001)(43740500002);DIR:OUT;SFP:1101;
+	CIP:194.138.21.70;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:hybrid.siemens.com;CAT:NONE;SFS:(13230001)(4636009)(46966006)(36840700001)(40470700004)(86362001)(6706004)(40460700003)(110136005)(508600001)(31696002)(7596003)(8936002)(8676002)(70586007)(70206006)(36860700001)(31686004)(356005)(36756003)(82960400001)(47076005)(5660300002)(7636003)(53546011)(44832011)(336012)(16526019)(30864003)(19627235002)(186003)(26005)(2616005)(82310400004)(956004)(83380400001)(316002)(16576012)(2906002)(3940600001)(43740500002);DIR:OUT;SFP:1101;
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Feb 2022 09:03:58.8583
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Feb 2022 09:37:10.4790
  (UTC)
 X-MS-Exchange-CrossTenant-Network-Message-Id: 
- 307c5117-98ae-4814-b497-08d9f0621a57
+ 6184c680-cbd1-4810-48d1-08d9f066bd73
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
- TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.73];Helo=[hybrid.siemens.com]
+ TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.70];Helo=[hybrid.siemens.com]
 X-MS-Exchange-CrossTenant-AuthSource: 
-	VE1EUR01FT059.eop-EUR01.prod.protection.outlook.com
+	VE1EUR01FT020.eop-EUR01.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR10MB4989
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR10MB4538
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 15 Feb 2022 09:04:05 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7607
+ <cip-dev@lists.cip-project.org>; Tue, 15 Feb 2022 09:37:17 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7608
 
-On 14.02.22 17:24, Quirin.Gylstorff@siemens.com wrote:
+On 14.02.22 13:28, Quirin.Gylstorff@siemens.com wrote:
 > From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 > 
-> This allows a rebuild with sstate after `build/tmp` was removed.
-> 
-> This patch makes efibootguardx64.efi binary to be included in .deb package.
-> 
-> Also bg_setenv and efibootguardx64.efi are now used from the wic build change root.
+> This patch activate CONFIG_HASH_VERITY to ensure the integrity of the
+> swu binary. To ensure simple example builds the option can be disabled
+> by with the debian build profile `pkg.swupdate.nohashverify`.
 > 
 > Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 > ---
->  kas/opt/efibootguard.yml                      |  1 +
->  .../efibootguard/efibootguard_0.9-git+isar.bb |  5 -----
->  .../files/debian/efibootguard.install         |  1 +
->  .../files/debian/efibootguard.links           |  1 +
->  .../wic/plugins/source/efibootguard-boot.py   |  3 +--
->  .../wic/plugins/source/efibootguard-efi.py    | 22 ++++++++++---------
->  wic/ebg-signed-bootloader.inc                 |  2 +-
->  wic/ebg-sysparts.inc                          |  2 +-
->  wic/qemu-amd64-efibootguard-secureboot.wks.in |  2 +-
->  9 files changed, 19 insertions(+), 20 deletions(-)
->  create mode 100644 recipes-bsp/efibootguard/files/debian/efibootguard.links
 > 
-> diff --git a/kas/opt/efibootguard.yml b/kas/opt/efibootguard.yml
-> index 75d4ab1..f5f9169 100644
-> --- a/kas/opt/efibootguard.yml
-> +++ b/kas/opt/efibootguard.yml
-> @@ -21,6 +21,7 @@ local_conf_header:
->      SWUPDATE_BOOTLOADER = "efibootguard"
->  
->    efibootguard-wic: |
-> +    WIC_IMAGER_INSTALL_append = " efibootguard"
->      WDOG_TIMEOUT ?= "60"
->      WICVARS += "WDOG_TIMEOUT KERNEL_IMAGE INITRD_IMAGE"
->      IMAGE_FSTYPES ?= "wic-img"
-> diff --git a/recipes-bsp/efibootguard/efibootguard_0.9-git+isar.bb b/recipes-bsp/efibootguard/efibootguard_0.9-git+isar.bb
-> index 2817e5b..171d8d4 100644
-> --- a/recipes-bsp/efibootguard/efibootguard_0.9-git+isar.bb
-> +++ b/recipes-bsp/efibootguard/efibootguard_0.9-git+isar.bb
-> @@ -39,8 +39,3 @@ do_prepare_build() {
->      deb_add_changelog
->  }
->  
-> -dpkg_runbuild_append() {
-> -    install -m 0755 -d ${DEPLOY_DIR_IMAGE}
-> -    install -m 0755 ${S}/efibootguardx64.efi ${DEPLOY_DIR_IMAGE}/bootx64.efi
-> -    install -m 0755 ${S}/bg_setenv ${DEPLOY_DIR_IMAGE}/bg_setenv
-> -}
-> diff --git a/recipes-bsp/efibootguard/files/debian/efibootguard.install b/recipes-bsp/efibootguard/files/debian/efibootguard.install
-> index 8a8d9d3..0239953 100644
-> --- a/recipes-bsp/efibootguard/files/debian/efibootguard.install
-> +++ b/recipes-bsp/efibootguard/files/debian/efibootguard.install
-> @@ -1,2 +1,3 @@
->  bg_setenv usr/bin
->  bg_printenv usr/bin
-> +efibootguardx64.efi usr/share/efibootguard
-> diff --git a/recipes-bsp/efibootguard/files/debian/efibootguard.links b/recipes-bsp/efibootguard/files/debian/efibootguard.links
-> new file mode 100644
-> index 0000000..97bab21
-> --- /dev/null
-> +++ b/recipes-bsp/efibootguard/files/debian/efibootguard.links
-> @@ -0,0 +1 @@
-> +usr/share/efibootguard/efibootguardx64.efi usr/share/efibootguard/bootx64.efi
-> diff --git a/scripts/lib/wic/plugins/source/efibootguard-boot.py b/scripts/lib/wic/plugins/source/efibootguard-boot.py
-> index 882729a..05cef4e 100644
-> --- a/scripts/lib/wic/plugins/source/efibootguard-boot.py
-> +++ b/scripts/lib/wic/plugins/source/efibootguard-boot.py
-> @@ -111,9 +111,8 @@ class EfibootguardBootPlugin(SourcePlugin):
->  
->          cwd = os.getcwd()
->          os.chdir(part_rootfs_dir)
-> -        config_cmd = '%s/bg_setenv -f . -k "C:%s:%s" %s -r %s -w %s' \
-> +        config_cmd = '/usr/bin/bg_setenv -f . -k "C:%s:%s" %s -r %s -w %s' \
->              % (
-> -                deploy_dir,
->                  part.label.upper(),
->                  boot_image,
->                  '-a "%s"' % cmdline if cmdline else "",
-> diff --git a/scripts/lib/wic/plugins/source/efibootguard-efi.py b/scripts/lib/wic/plugins/source/efibootguard-efi.py
-> index 9eb2353..613a350 100644
-> --- a/scripts/lib/wic/plugins/source/efibootguard-efi.py
-> +++ b/scripts/lib/wic/plugins/source/efibootguard-efi.py
-> @@ -53,9 +53,9 @@ class EfibootguardEFIPlugin(SourcePlugin):
->          """
->          deploy_dir = get_bitbake_var("DEPLOY_DIR_IMAGE")
->          creator.deploy_dir = deploy_dir
-> -        bootloader_files = source_params.get("bootloader")
-> +        bootloader_files = source_params.get("files")
->          if not bootloader_files:
-> -            bootloader_files = "bootx64.efi"
-> +            bootloader_files = "{}/bootx64.efi".format(deploy_dir)
-
-DEPLOY_DIR is no longer used now.
-
-Also, why do we need a parameter here? It's about the Isar way of
-installing the Isar-built EBG binary. All we need is to probe the target
-architecture. IIRC, we already run over that arch, thus can derive the
-right bootXXX.efi name from that.
-
->          bootloader_files = bootloader_files.split(' ')
->          part_rootfs_dir = "%s/disk/%s.%s" % (cr_workdir,
->                                               part.label,
-> @@ -63,18 +63,19 @@ class EfibootguardEFIPlugin(SourcePlugin):
->          create_dir_cmd = "install -d %s/EFI/BOOT" % part_rootfs_dir
->          exec_cmd(create_dir_cmd)
->  
-> -        for bootloader in bootloader_files:
-> -            signed_bootloader = cls._sign_file(bootloader,
-> -                                               "{}/{}".format(deploy_dir,
-> -                                                              bootloader
-> -                                                              ),
-> +        for bootloader_path in bootloader_files:
-> +            name = os.path.basename(bootloader_path)
-> +            signed_bootloader = cls._sign_file(name,
-> +                                               bootloader_path,
->                                                 cr_workdir,
->                                                 source_params)
-> +            msger.debug("Copy %s to %s",
-> +                        signed_bootloader, part_rootfs_dir)
->              # important the bootloader in deploy_dir is no longer signed
->              cp_cmd = "cp %s/%s %s/EFI/BOOT/%s" % (cr_workdir,
-> -                                                signed_bootloader,
-> -                                                part_rootfs_dir,
-> -                                                bootloader)
-> +                                                  signed_bootloader,
-> +                                                  part_rootfs_dir,
-> +                                                  name)
->              exec_cmd(cp_cmd, True)
->          du_cmd = "du --apparent-size -ks %s" % part_rootfs_dir
->          blocks = int(exec_cmd(du_cmd).split()[0])
-> @@ -113,6 +114,7 @@ class EfibootguardEFIPlugin(SourcePlugin):
->      def _sign_file(cls, name, signee, cr_workdir, source_params):
->          sign_script = source_params.get("signwith")
->          if sign_script and os.path.exists(sign_script):
-> +            msger.debug("Sign %s to %s", name, cr_workdir)
-
-Intentional addition or debug left-over?
-
->              work_name = name.replace(".efi", ".signed.efi")
->              sign_cmd = "{sign_script} {signee} \
->              {cr_workdir}/{work_name}".format(sign_script=sign_script,
-> diff --git a/wic/ebg-signed-bootloader.inc b/wic/ebg-signed-bootloader.inc
-> index 667e014..2fd5c0e 100644
-> --- a/wic/ebg-signed-bootloader.inc
-> +++ b/wic/ebg-signed-bootloader.inc
-> @@ -1,2 +1,2 @@
->  # EFI partition containing efibootguard bootloader binary
-> -part --source efibootguard-efi  --ondisk sda --size 16M --extra-space 0 --overhead-factor 1 --label efi   --align 1024 --part-type=EF00 --active --sourceparams "signwith=/usr/bin/sign_secure_image.sh"
-> +part --source efibootguard-efi  --ondisk sda --size 16M --extra-space 0 --overhead-factor 1 --label efi   --align 1024 --part-type=EF00 --active --sourceparams "files=/usr/share/efibootguard/bootx64.efi,signwith=/usr/bin/sign_secure_image.sh"
-> diff --git a/wic/ebg-sysparts.inc b/wic/ebg-sysparts.inc
-> index dea99e8..18c8508 100644
-> --- a/wic/ebg-sysparts.inc
-> +++ b/wic/ebg-sysparts.inc
+> Changes V2:
+>  - add missing patch description
+> 
+>  ...onfig-Make-image-encryption-optional.patch |  2 +-
+>  .../0002-debian-rules-Add-CONFIG_MTD.patch    |  2 +-
+>  ...es-Add-option-to-disable-fs-creation.patch |  2 +-
+>  ...ules-Add-option-to-disable-webserver.patch |  2 +-
+>  ...Make-CONFIG_HW_COMPATIBILTY-optional.patch |  2 +-
+>  ...ules-Add-Embedded-Lua-handler-option.patch |  2 +-
+>  ...SWUpdate-USB-service-and-Udev-rules.patch} |  8 ++---
+>  ...option-to-disable-CONFIG_HASH_VERIFY.patch | 29 +++++++++++++++++++
+>  ...repare-build-for-isar-debian-buster.patch} |  6 ++--
+>  .../swupdate/swupdate_2021.11-1+debian-gbp.bb |  5 ++--
+>  10 files changed, 45 insertions(+), 15 deletions(-)
+>  rename recipes-core/swupdate/files/{0008-debian-Remove-SWUpdate-USB-service-and-Udev-rules.patch => 0007-debian-Remove-SWUpdate-USB-service-and-Udev-rules.patch} (89%)
+>  create mode 100644 recipes-core/swupdate/files/0008-Add-Profile-option-to-disable-CONFIG_HASH_VERIFY.patch
+>  rename recipes-core/swupdate/files/{0007-debian-prepare-build-for-isar-debian-buster.patch => 0009-debian-prepare-build-for-isar-debian-buster.patch} (94%)
+> 
+> diff --git a/recipes-core/swupdate/files/0001-debian-config-Make-image-encryption-optional.patch b/recipes-core/swupdate/files/0001-debian-config-Make-image-encryption-optional.patch
+> index 8b186e0..c501e42 100644
+> --- a/recipes-core/swupdate/files/0001-debian-config-Make-image-encryption-optional.patch
+> +++ b/recipes-core/swupdate/files/0001-debian-config-Make-image-encryption-optional.patch
 > @@ -1,7 +1,7 @@
->  # default partition layout EFI Boot Guard usage
+>  From 20bb45563fe8f3ec95ef22d715d1add014156543 Mon Sep 17 00:00:00 2001
+>  From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>  Date: Wed, 29 Sep 2021 15:28:21 +0200
+> -Subject: [PATCH 1/8] debian/config: Make image encryption optional
+> +Subject: [PATCH 1/9] debian/config: Make image encryption optional
 >  
->  # EFI partition containing efibootguard bootloader binary
-> -part --source efibootguard-efi  --ondisk sda --size 16M --extra-space 0 --overhead-factor 1 --label efi   --align 1024 --part-type=EF00 --active
-> +part --source efibootguard-efi  --ondisk sda --size 16M --extra-space 0 --overhead-factor 1 --label efi   --align 1024 --part-type=EF00 --active --sourceparams "files=/usr/share/efibootguard/bootx64.efi"
+>  This can be use to ease the setup with SWUpdate.
 >  
->  # EFI Boot Guard environment/config partitions plus Kernel files
->  part --source efibootguard-boot --ondisk sda --size 32M --extra-space 0 --overhead-factor 1 --label BOOT0 --align 1024 --part-type=0700 --sourceparams "revision=2,root=PARTUUID:fedcba98-7654-3210-cafe-5e0710000001"
-> diff --git a/wic/qemu-amd64-efibootguard-secureboot.wks.in b/wic/qemu-amd64-efibootguard-secureboot.wks.in
-> index 81fd4fe..72a6f8c 100644
-> --- a/wic/qemu-amd64-efibootguard-secureboot.wks.in
-> +++ b/wic/qemu-amd64-efibootguard-secureboot.wks.in
-> @@ -1,5 +1,5 @@
->  # EFI partition containing efibootguard bootloader binary
-> -part --source efibootguard-efi  --ondisk sda --size 16M --extra-space 0 --overhead-factor 1 --label efi   --align 1024 --part-type=EF00 --active --sourceparams "signwith=/usr/bin/sign_secure_image.sh"
-> +include ebg-signed-bootloader.inc
+> diff --git a/recipes-core/swupdate/files/0002-debian-rules-Add-CONFIG_MTD.patch b/recipes-core/swupdate/files/0002-debian-rules-Add-CONFIG_MTD.patch
+> index eb5067d..50cf805 100644
+> --- a/recipes-core/swupdate/files/0002-debian-rules-Add-CONFIG_MTD.patch
+> +++ b/recipes-core/swupdate/files/0002-debian-rules-Add-CONFIG_MTD.patch
+> @@ -1,7 +1,7 @@
+>  From 1d52fe25e72f9e33525bca7efa5efe901cb32c65 Mon Sep 17 00:00:00 2001
+>  From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>  Date: Wed, 29 Sep 2021 11:29:57 +0200
+> -Subject: [PATCH 2/8] debian/rules: Add CONFIG_MTD
+> +Subject: [PATCH 2/9] debian/rules: Add CONFIG_MTD
 >  
->  # EFI Boot Guard environment/config partitions plus Kernel files
->  part --source efibootguard-boot --ondisk sda --size 32M --extra-space 0 --overhead-factor 1 --label BOOT0 --align 1024 --part-type=0700 --sourceparams "revision=2,unified-kernel=y,signwith=/usr/bin/sign_secure_image.sh"
+>  if pkg.swupdate.bpo is set CONFIG_MTD is disable but not enabled.
+>  
+> diff --git a/recipes-core/swupdate/files/0003-debian-rules-Add-option-to-disable-fs-creation.patch b/recipes-core/swupdate/files/0003-debian-rules-Add-option-to-disable-fs-creation.patch
+> index 3671709..c5815cb 100644
+> --- a/recipes-core/swupdate/files/0003-debian-rules-Add-option-to-disable-fs-creation.patch
+> +++ b/recipes-core/swupdate/files/0003-debian-rules-Add-option-to-disable-fs-creation.patch
+> @@ -1,7 +1,7 @@
+>  From 8b6f01b6126933723963497d0db0c256e5251c5b Mon Sep 17 00:00:00 2001
+>  From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>  Date: Mon, 4 Oct 2021 17:15:56 +0200
+> -Subject: [PATCH 3/8] debian/rules: Add option to disable fs creation
+> +Subject: [PATCH 3/9] debian/rules: Add option to disable fs creation
+>  
+>  Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>  ---
+> diff --git a/recipes-core/swupdate/files/0004-debian-rules-Add-option-to-disable-webserver.patch b/recipes-core/swupdate/files/0004-debian-rules-Add-option-to-disable-webserver.patch
+> index 8fbb722..4a9076d 100644
+> --- a/recipes-core/swupdate/files/0004-debian-rules-Add-option-to-disable-webserver.patch
+> +++ b/recipes-core/swupdate/files/0004-debian-rules-Add-option-to-disable-webserver.patch
+> @@ -1,7 +1,7 @@
+>  From c1f46ecb2ac3aed3a711dec767321afa92b600d8 Mon Sep 17 00:00:00 2001
+>  From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>  Date: Mon, 4 Oct 2021 17:27:11 +0200
+> -Subject: [PATCH 4/8] debian/rules: Add option to disable webserver
+> +Subject: [PATCH 4/9] debian/rules: Add option to disable webserver
+>  
+>  Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>  ---
+> diff --git a/recipes-core/swupdate/files/0005-debian-Make-CONFIG_HW_COMPATIBILTY-optional.patch b/recipes-core/swupdate/files/0005-debian-Make-CONFIG_HW_COMPATIBILTY-optional.patch
+> index 96443f2..87eba2c 100644
+> --- a/recipes-core/swupdate/files/0005-debian-Make-CONFIG_HW_COMPATIBILTY-optional.patch
+> +++ b/recipes-core/swupdate/files/0005-debian-Make-CONFIG_HW_COMPATIBILTY-optional.patch
+> @@ -1,7 +1,7 @@
+>  From ccc6f5d04aba0f1270f7d6b6de298b2084ad3bfd Mon Sep 17 00:00:00 2001
+>  From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>  Date: Tue, 5 Oct 2021 10:56:25 +0200
+> -Subject: [PATCH 5/8] debian: Make CONFIG_HW_COMPATIBILTY optional
+> +Subject: [PATCH 5/9] debian: Make CONFIG_HW_COMPATIBILTY optional
+>  
+>  Add option for qemu.
+>  
+> diff --git a/recipes-core/swupdate/files/0006-debian-rules-Add-Embedded-Lua-handler-option.patch b/recipes-core/swupdate/files/0006-debian-rules-Add-Embedded-Lua-handler-option.patch
+> index 324f079..5d7543b 100644
+> --- a/recipes-core/swupdate/files/0006-debian-rules-Add-Embedded-Lua-handler-option.patch
+> +++ b/recipes-core/swupdate/files/0006-debian-rules-Add-Embedded-Lua-handler-option.patch
+> @@ -1,7 +1,7 @@
+>  From 7107052e6aa1a35a2900070797ac013d49814f0b Mon Sep 17 00:00:00 2001
+>  From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>  Date: Wed, 29 Sep 2021 11:32:41 +0200
+> -Subject: [PATCH 6/8] debian/rules: Add Embedded Lua handler option
+> +Subject: [PATCH 6/9] debian/rules: Add Embedded Lua handler option
+>  
+>  Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>  ---
+> diff --git a/recipes-core/swupdate/files/0008-debian-Remove-SWUpdate-USB-service-and-Udev-rules.patch b/recipes-core/swupdate/files/0007-debian-Remove-SWUpdate-USB-service-and-Udev-rules.patch
+> similarity index 89%
+> rename from recipes-core/swupdate/files/0008-debian-Remove-SWUpdate-USB-service-and-Udev-rules.patch
+> rename to recipes-core/swupdate/files/0007-debian-Remove-SWUpdate-USB-service-and-Udev-rules.patch
+> index 3cce24b..2779d8b 100644
+> --- a/recipes-core/swupdate/files/0008-debian-Remove-SWUpdate-USB-service-and-Udev-rules.patch
+> +++ b/recipes-core/swupdate/files/0007-debian-Remove-SWUpdate-USB-service-and-Udev-rules.patch
+> @@ -1,7 +1,7 @@
+> -From 93b9a179119394395c72e62e59a73d29e9bba735 Mon Sep 17 00:00:00 2001
+> +From 625db939a1dec7d1aa6fbcb01c2c4cbd699bfe7b Mon Sep 17 00:00:00 2001
+>  From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>  Date: Mon, 7 Feb 2022 09:28:39 +0100
+> -Subject: [PATCH 8/8] debian: Remove SWUpdate USB service and Udev rules
+> +Subject: [PATCH 7/9] debian: Remove SWUpdate USB service and Udev rules
+>  
+>  The current implementation will install an abitrary SWUpdate binary
+>  from a plug-in USB stick. This is a major security risk for devices
+> @@ -19,10 +19,10 @@ Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>   delete mode 100644 debian/swupdate.udev
+>  
+>  diff --git a/debian/rules b/debian/rules
+> -index e1c4a921..84ed55d4 100755
+> +index 12eb0ba5..76fce010 100755
+>  --- a/debian/rules
+>  +++ b/debian/rules
+> -@@ -103,7 +103,6 @@ override_dh_auto_install:
+> +@@ -101,7 +101,6 @@ override_dh_auto_install:
+>   override_dh_installsystemd:
+>   	dh_installsystemd --no-start
+>   	dh_installsystemd --name=swupdate-progress
+> diff --git a/recipes-core/swupdate/files/0008-Add-Profile-option-to-disable-CONFIG_HASH_VERIFY.patch b/recipes-core/swupdate/files/0008-Add-Profile-option-to-disable-CONFIG_HASH_VERIFY.patch
+> new file mode 100644
+> index 0000000..a7c5ee7
+> --- /dev/null
+> +++ b/recipes-core/swupdate/files/0008-Add-Profile-option-to-disable-CONFIG_HASH_VERIFY.patch
+> @@ -0,0 +1,29 @@
+> +From cddd3472aad2d8e48d557705b82ffcc0c7d14a02 Mon Sep 17 00:00:00 2001
+> +From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+> +Date: Mon, 14 Feb 2022 12:27:43 +0100
+> +Subject: [PATCH 8/9] Add Profile option to disable CONFIG_HASH_VERIFY
+> +
+> +This change also enables CONFIG_HASH_VERIFY by default.
+> +
+> +Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+> +---
+> + debian/rules | 3 +++
+> + 1 file changed, 3 insertions(+)
+> +
+> +diff --git a/debian/rules b/debian/rules
+> +index 76fce010..4dc9e170 100755
+> +--- a/debian/rules
+> ++++ b/debian/rules
+> +@@ -42,6 +42,9 @@ endif
+> + ifneq (,$(filter pkg.swupdate.hwcompatibility,$(DEB_BUILD_PROFILES)))
+> + 	echo CONFIG_HW_COMPATIBILITY=y                   >> configs/debian_defconfig
+> + endif
+> ++ifeq (,$(filter pkg.swupdate.nohashverify,$(DEB_BUILD_PROFILES)))
+> ++	echo CONFIG_HASH_VERIFY=y                   >> configs/debian_defconfig
+> ++endif
+> + ifeq (,$(filter pkg.swupdate.nowebserver,$(DEB_BUILD_PROFILES)))
+> + 	echo CONFIG_WEBSERVER=y   >> configs/debian_defconfig
+> + 	echo CONFIG_MONGOOSESSL=y >> configs/debian_defconfig
+> +-- 
+> +2.34.1
+> +
+> diff --git a/recipes-core/swupdate/files/0007-debian-prepare-build-for-isar-debian-buster.patch b/recipes-core/swupdate/files/0009-debian-prepare-build-for-isar-debian-buster.patch
+> similarity index 94%
+> rename from recipes-core/swupdate/files/0007-debian-prepare-build-for-isar-debian-buster.patch
+> rename to recipes-core/swupdate/files/0009-debian-prepare-build-for-isar-debian-buster.patch
+> index 0b08f25..8afef74 100644
+> --- a/recipes-core/swupdate/files/0007-debian-prepare-build-for-isar-debian-buster.patch
+> +++ b/recipes-core/swupdate/files/0009-debian-prepare-build-for-isar-debian-buster.patch
+> @@ -1,7 +1,7 @@
+> -From 123190b2aa72818186ba12a04d793ff7d4244828 Mon Sep 17 00:00:00 2001
+> +From 5dda7f815dafdfbd1b187ccc912eca38e9aee7bb Mon Sep 17 00:00:00 2001
+>  From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>  Date: Wed, 29 Sep 2021 16:17:03 +0200
+> -Subject: [PATCH 7/8] debian: prepare build for isar debian buster
+> +Subject: [PATCH 9/9] debian: prepare build for isar debian buster
+>  
+>  Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>  ---
+> @@ -47,7 +47,7 @@ index 192c4a2a..9318fa12 100644
+>                  libebgenv-dev <pkg.swupdate.efibootguard> | efibootguard-dev <pkg.swupdate.efibootguard>,
+>                  libcmocka-dev,
+>  diff --git a/debian/rules b/debian/rules
+> -index 12eb0ba5..e1c4a921 100755
+> +index 4dc9e170..370ca3d8 100755
+>  --- a/debian/rules
+>  +++ b/debian/rules
+>  @@ -19,13 +19,15 @@ endif
+> diff --git a/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb b/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb
+> index 2995d71..699dad3 100644
+> --- a/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb
+> +++ b/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb
+> @@ -22,7 +22,8 @@ SRC_URI += "file://0001-debian-config-Make-image-encryption-optional.patch \
+>              file://0004-debian-rules-Add-option-to-disable-webserver.patch \
+>              file://0005-debian-Make-CONFIG_HW_COMPATIBILTY-optional.patch \
+>              file://0006-debian-rules-Add-Embedded-Lua-handler-option.patch \
+> -            file://0008-debian-Remove-SWUpdate-USB-service-and-Udev-rules.patch"
+> +            file://0007-debian-Remove-SWUpdate-USB-service-and-Udev-rules.patch \
+> +            file://0008-Add-Profile-option-to-disable-CONFIG_HASH_VERIFY.patch"
+>  
+>  # end patching for dm-verity based images
+>  
+> @@ -38,7 +39,7 @@ SWUPDATE_BUILD_PROFILES += "cross nocheck"
+>  # SWUPDATE_BUILD_PROFILES += "pkg.swupdate.embeddedlua"
+>  
+>  # modify for debian buster build
+> -SRC_URI_append_buster = " file://0007-debian-prepare-build-for-isar-debian-buster.patch"
+> +SRC_URI_append_buster = " file://0009-debian-prepare-build-for-isar-debian-buster.patch"
+>  
+>  # disable documentation due to missing packages
+>  SWUPDATE_BUILD_PROFILES_append = " nodoc "
 
-Nice cleanup, but I suspect we can clean even more :)
+Thanks, applied. I suspect you already sent the embedded patch to Debian
+as well, right?
 
 Jan
 
