@@ -1,225 +1,327 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <masami.ichikawa@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C73C433F5
-	for <webhook@archiver.kernel.org>; Wed, 16 Feb 2022 16:16:57 +0000 (UTC)
-Received: from EUR03-DB5-obe.outbound.protection.outlook.com
- (EUR03-DB5-obe.outbound.protection.outlook.com [40.107.4.71])
- by mx.groups.io with SMTP id smtpd.web08.1147.1645028216389908366
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD0BDC433EF
+	for <webhook@archiver.kernel.org>; Thu, 17 Feb 2022 00:10:01 +0000 (UTC)
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com
+ [209.85.210.47])
+ by mx.groups.io with SMTP id smtpd.web12.1377.1645056600200660592
  for <cip-dev@lists.cip-project.org>;
- Wed, 16 Feb 2022 08:16:57 -0800
+ Wed, 16 Feb 2022 16:10:01 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=kfpVawep;
- spf=pass (domain: siemens.com, ip: 40.107.4.71,
- mailfrom: jan.kiszka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=K6Dn1stsQQ52bqrahz5zfg2gjFzM26nyNjdNY7vZOzbknNz2nanTEnE93WEvsVghjYu/UNk6yjF5CgQBXWhB1HKlpfrq+fsxTi2TYx+GL2yWyYMSOU7Thkl0pti2BjaBHqrSPT4pj8IH7laa7G5PqwQs1n9muSG9RWnawJP1mqLndgAcQoVXF6ElX2Ukg7lVHl5qoSdJgAgLhqoYsvq4Wnsk+Vg85UYY9QtoswKd7ukppac7ysH1IqzgiwHvlbl1OsfqX2NMGwuIer7DRc/sEb1vPu6lShMCDVGHxFkP/iqaErly3Tw5gJco7b/oNJFQPbDxEOOd2vwwFUN7mI/nyA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fDWlWlQ1M1/mhAPqxePoFgrvr0bx+bAzGqXnOj59HzE=;
- b=IIZj+ZKI6gzK7znuWcHtZS5Ie/GCFwVCSr5HUQ1XUy5GCsUb6gCtOrI8QyAF8Pb2qOZzMT7hMb9TjleQMIj7o84AlrYmlm1B635aNujKA0JsVH8qdEEGG6iHl3GNa8Kl2iPYo+Xw1pk+PDXjdeLMZsKI+SzQ5q5M9lSHm+/mNm841Fo4XqINyS5lgWHayelpCdH6DDlxl7SaMyGWu4UzEzLIfewJasqRjWdlfyH4FVFu1Sw34zUYoiAjY/CwfTuKwx/bK3NB3PnVXKl3ELKqgI0qePEQXCC9yd6l2NWabEaladbbF7YOsiDUA9epovro3ea0tW6C2COw7EGyxpdX7w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.70) smtp.rcpttodomain=lists.cip-project.org
- smtp.mailfrom=siemens.com; dmarc=pass (p=none sp=none pct=100) action=none
- header.from=siemens.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fDWlWlQ1M1/mhAPqxePoFgrvr0bx+bAzGqXnOj59HzE=;
- b=kfpVawepuqJRbeDMCbCEEtVy8HuOg6iDB5orlc3x2YlgCewdkbhd3rFJ/oU1yVuJHo8bC42LZQZoIx3nxlat9eC+dNcYD99eF3RjJ8gL6y9IlcwxTcGq0a9c+dlOE9HxJDurZMFYJSkN6vW8f3sIuNd0LvQcQFop+IctlOd6ybHv0lLv57ovtsPQFSKO6cIKIjCUWKYSjLjUpRTr6DzlPVoEFG2OazblrTKAlU3V/Ud2BesCz+6JY+LMrJfQD2H1uGDSwSc4CRSAwn6cCp6DaldeAnm23yrfbgsP/FdbXOOcvdGaScRWW9W/H2cP3j6gbnDsBctEnfNDYtMGRoDTwQ==
-Received: from DB8PR09CA0013.eurprd09.prod.outlook.com (2603:10a6:10:a0::26)
- by AM6PR10MB2887.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:e4::26) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4975.18; Wed, 16 Feb
- 2022 16:16:53 +0000
-Received: from DB5EUR01FT009.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:10:a0:cafe::e) by DB8PR09CA0013.outlook.office365.com
- (2603:10a6:10:a0::26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4995.14 via Frontend
- Transport; Wed, 16 Feb 2022 16:16:52 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.70)
- smtp.mailfrom=siemens.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=siemens.com;
-Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.70 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.70; helo=hybrid.siemens.com;
-Received: from hybrid.siemens.com (194.138.21.70) by
- DB5EUR01FT009.mail.protection.outlook.com (10.152.4.124) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.4975.11 via Frontend Transport; Wed, 16 Feb 2022 16:16:52 +0000
-Received: from DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) by
- DEMCHDC9SJA.ad011.siemens.net (194.138.21.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.18; Wed, 16 Feb 2022 17:16:52 +0100
-Received: from [139.22.138.23] (139.22.138.23) by
- DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.18; Wed, 16 Feb 2022 17:16:51 +0100
-Message-ID: <dade869b-8f70-7b4b-418d-00fedf32bbdd@siemens.com>
-Date: Wed, 16 Feb 2022 17:16:51 +0100
+ dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112
+ header.b=ALByQBfC;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.210.47,
+ mailfrom: masami.ichikawa@miraclelinux.com)
+Received: by mail-ot1-f47.google.com with SMTP id
+ g6-20020a9d6486000000b005acf9a0b644so2562499otl.12
+        for <cip-dev@lists.cip-project.org>;
+ Wed, 16 Feb 2022 16:10:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=XAd0e3gkqTh6iRqSxXvaDFxDaQosLEudBBttPJez5Q0=;
+        b=ALByQBfCQ+hbbZsvHDOUQRy9Ok0oE7eCEmbR9S0IbU1oCw6GgJ+EKwJlvbbCZw56zC
+         vAWvLzjZxtRc4xhnVt7P8TFfQBAfZD0SnxBWnWwS5Tot/Dq66f76a09cZJ7C8vEundjP
+         /4AKaAa/QmR2m/jvRugwQA81fuVqGo6vjrkbqaA6BKgJf9CgM+IOJyp3fmUj7NaoNbsj
+         I+kN0ZiVf0nGhcj4AN0UkXuha1Cq1KHU/bbp8ZWgyVDNJjXLfo19SSvROEsTZzyNPMnk
+         Qc3FjjJWtvtEKgKIHUvUDsv/bz4YW0W6PQ6ZYSrBNsUJw58Ji4b+L9aq4xSy9i3ZSKhx
+         61tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=XAd0e3gkqTh6iRqSxXvaDFxDaQosLEudBBttPJez5Q0=;
+        b=ELE2M5AEpEs/ZLm22sm0UGaN3dWQhjuo4fZ6Vwj1B4vyIfDlejCWRtxocJOgMyR4gv
+         pmDUT3zg7Oved6m4WtSv0mcz85SM2IiaubeaG0LjlXGepEmIaCPXBcKMqHOWfXeh3Lgf
+         lx/z0dYpyhCLU2tW9p+2Sx2UiDb8h+/ekYyRdundH4aCUHxgwDq+V5VzSvTOoJP3REsK
+         xIyWb/+12HRHXIF6Gt0q8jetcTBsA2vKEEMdc7m3Ap3U5kAI4Dp9vTx2RnUSLmoI+oFE
+         RWk5ayI6zcZM010ENxiYOlrIN/A2YCULmucb0W9mPccNyGVYdshWfjk2zKkRySg/5JTV
+         U5bw==
+X-Gm-Message-State: AOAM530/kkEPgJ4WafS7jYKTa25lHSp+WYSn1fEoQWfCaCjjVWV/gMKp
+	TkPjD0Aq6B52RDFPLOe+vAcLyG23FtKEH8aflaouXTQ+uAQqpw==
+X-Google-Smtp-Source: 
+ ABdhPJwylYzhNmy52d+dq428erFBBB6tO5l5zWrTMqCemMDJiXfk3z8VuvbnxJLa/UJ+cNd3/IryagltcjYvyPASSqI=
+X-Received: by 2002:a9d:ec2:0:b0:592:badf:cd7c with SMTP id
+ 60-20020a9d0ec2000000b00592badfcd7cmr132543otj.67.1645056599023; Wed, 16 Feb
+ 2022 16:09:59 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [cip-dev][isar-cip-dev][PATCH v2 1/1] Update ISAR to next
-Content-Language: en-US
-To: "Q. Gylstorff" <Quirin.Gylstorff@siemens.com>,
-	<cip-dev@lists.cip-project.org>
-References: <20220216160359.3517492-1-Quirin.Gylstorff@siemens.com>
- <20220216160359.3517492-2-Quirin.Gylstorff@siemens.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <20220216160359.3517492-2-Quirin.Gylstorff@siemens.com>
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Thu, 17 Feb 2022 09:09:23 +0900
+Message-ID: 
+ <CAODzB9q+vbdYe_OOuyo2+DOQQsm3x-9M7zxpEd=-R9aV9JKqZQ@mail.gmail.com>
+Subject: New CVE entries this week
+To: cip-dev <cip-dev@lists.cip-project.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [139.22.138.23]
-X-ClientProxiedBy: DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) To
- DEMCHDC8A0A.ad011.siemens.net (139.25.226.106)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f54ddf2d-cf23-44af-f8f1-08d9f167be5c
-X-MS-TrafficTypeDiagnostic: AM6PR10MB2887:EE_
-X-Microsoft-Antispam-PRVS: 
-	<AM6PR10MB2887B0B62EC53EDFB2EABA6A95359@AM6PR10MB2887.EURPRD10.PROD.OUTLOOK.COM>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2582;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	SXRMbMsLCpdCcJLLAofq4d5L5KqzULQq1QrKut6pneNYe82rMgcMjA598yAbM8vdIT8io5ZBvN5YNL2LHE6uBPiyzaHypXYXf9eQoNnxLk1bqCYuAqb8ZpNr/KkRpS7xcC8y1lwRntKz0BP5C0bKyBV8XBpOmWM6EoMO7eheAQw1ejE0YoDYTzEmhB5A0qc1Q8ZV09s5nvMfRhMOPuIu4TqINr4Ot+C5hrSsD5R+r5syWR7FwabZYYd76jAz4Vr3LCvX3bOJ18LoW28daLJ0rvJE2KexmubYsukUTQ+D+vLzksflK5Z2MoelvcC0A7S7MbTie/SDKwtSV5xwpawqy4h3u7xaKAe9MWGqGRcQFSkAuDTWgx7iL6aMur7V1J+RmyIFntxbbTOvYF9QhLF/I+jVnPpAiRx47sLvey/jZDfklAN9MrbnFhBT3VUyjoScy2hy6AcFHcoYHP76Z0sdQButWQOfuGRnRW5LsVEqvoyUV5MJhUcJAxqhx2xQmBCzCJi7mhkUi79Ea/ZdC1ZLG2rkWY5z6PJs5lcMOYi5druCyVH3E1U7aYXW6NKFcphSI5KxbqtJSaCzdvkJqMr+CH15mGMywiC2YUKYNH/bJgRlcq5fLGpwj8vvS7d0Y/p5O7G0KBVbi0VI0dCClSGxlS8R/q3l9i7MtpXcy9aMx5IPrE+w3yVDyQ5EVQasupCsVjjCbXhQ5HDtSgrWhKUIePtQq/jNzE21jrrJOUFPnA68vRAR6Xx+MZ9gu8fD0FTrSIm9vXQPGb5i9ZuxUmfZl00bwwzQFeu51mzoYb3SEdrHfw1ju/DwmByHcVErGIGScB+hlDqiUVBieqBVNzpDOIm4ugF27qmhkTTTA0NR578=
-X-Forefront-Antispam-Report: 
-	CIP:194.138.21.70;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:hybrid.siemens.com;CAT:NONE;SFS:(13230001)(4636009)(40470700004)(36840700001)(46966006)(40460700003)(498600001)(16526019)(83380400001)(47076005)(15650500001)(16576012)(31686004)(110136005)(6706004)(966005)(2616005)(70586007)(336012)(36860700001)(956004)(70206006)(186003)(44832011)(53546011)(5660300002)(26005)(7636003)(8936002)(2906002)(31696002)(8676002)(36756003)(82310400004)(356005)(86362001)(82960400001)(7596003)(3940600001)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Feb 2022 16:16:52.6544
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 
- f54ddf2d-cf23-44af-f8f1-08d9f167be5c
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
- TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.70];Helo=[hybrid.siemens.com]
-X-MS-Exchange-CrossTenant-AuthSource: 
-	DB5EUR01FT009.eop-EUR01.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR10MB2887
+Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 16 Feb 2022 16:16:57 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7626
+ <cip-dev@lists.cip-project.org>; Thu, 17 Feb 2022 00:10:01 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7627
 
-On 16.02.22 17:03, Q. Gylstorff wrote:
-> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> 
-> refspec is now cf3f18a649ff42726677a58b224b9bb58ea4ba46
-> 
-> This adds Debian build profile support
-> 
-> The option 'nodoc' is no longer necessary
-> as the build dependencies of SWUpdate were fixed with [1].
+Hi !
 
-"
-This adds Debian build profile support and requires to update the
-SWUpdate recipe to use this.
+It's this week's CVE report.
 
-Along this update, we can drop the build profile 'nodoc' which is no
-longer necessary as the build dependencies of SWUpdate were fixed with
-https://salsa.debian.org/debian/swupdate/-/commit/d666b84435e1b1abebc6070252872ed390ac4df8
-"
+This week reported 9 new CVEs.
 
-> 
-> [1]: https://salsa.debian.org/debian/swupdate/-/commit/d666b84435e1b1abebc6070252872ed390ac4df8
-> 
-> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> ---
->  kas-cip.yml                                          |  2 +-
->  recipes-core/swupdate/swupdate.inc                   | 12 ++----------
->  .../swupdate/swupdate_2021.11-1+debian-gbp.bb        | 11 ++++-------
->  3 files changed, 7 insertions(+), 18 deletions(-)
-> 
-> diff --git a/kas-cip.yml b/kas-cip.yml
-> index 9c8ac9f..fce176b 100644
-> --- a/kas-cip.yml
-> +++ b/kas-cip.yml
-> @@ -22,7 +22,7 @@ repos:
->  
->    isar:
->      url: https://github.com/ilbers/isar.git
-> -    refspec: 33b5aa65fa3f28987525799d0731fb4e7050207d
-> +    refspec: cf3f18a649ff42726677a58b224b9bb58ea4ba46
->      layers:
->        meta:
->      patches:
-> diff --git a/recipes-core/swupdate/swupdate.inc b/recipes-core/swupdate/swupdate.inc
-> index 7812ae7..f2d478d 100644
-> --- a/recipes-core/swupdate/swupdate.inc
-> +++ b/recipes-core/swupdate/swupdate.inc
-> @@ -23,7 +23,7 @@ def get_bootloader_build_profile(d):
->          return "pkg.swupdate.uboot"
->      return ""
->  
-> -SWUPDATE_BUILD_PROFILES += "${@get_bootloader_build_profile(d)}"
-> +DEB_BUILD_PROFILES += "${@get_bootloader_build_profile(d)}"
->  
->  def get_bootloader_dependencies(d):
->      bootloader = d.getVar("SWUPDATE_BOOTLOADER") or ""
-> @@ -37,15 +37,7 @@ def get_bootloader_dependencies(d):
->      return ""
->  
->  DEPENDS += "${@get_bootloader_dependencies(d)}"
-> -DEPENDS += "${@bb.utils.contains('SWUPDATE_BUILD_PROFILES', 'mtd', 'mtd-utils', '', d)}"
-> -
-> -do_install_builddeps_prepend() {
-> -    export DEB_BUILD_PROFILES="${SWUPDATE_BUILD_PROFILES}"
-> -}
-> -
-> -dpkg_runbuild_prepend() {
-> -    export DEB_BUILD_PROFILES="${SWUPDATE_BUILD_PROFILES}"
-> -}
-> +DEPENDS += "${@bb.utils.contains('DEB_BUILD_PROFILES', 'mtd', 'mtd-utils', '', d)}"
->  
->  python do_check_bootloader () {
->      bootloader = d.getVar("SWUPDATE_BOOTLOADER") or "None"
-> diff --git a/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb b/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb
-> index 699dad3..bf060b4 100644
-> --- a/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb
-> +++ b/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb
-> @@ -28,25 +28,22 @@ SRC_URI += "file://0001-debian-config-Make-image-encryption-optional.patch \
->  # end patching for dm-verity based images
->  
->  # deactivate signing and encryption for simple a/b rootfs update
-> -SWUPDATE_BUILD_PROFILES += "pkg.swupdate.nosigning pkg.swupdate.noencryption"
-> +DEB_BUILD_PROFILES += "pkg.swupdate.nosigning pkg.swupdate.noencryption"
->  
->  # add cross build and deactivate testing for arm based builds
-> -SWUPDATE_BUILD_PROFILES += "cross nocheck"
-> +DEB_BUILD_PROFILES += "cross nocheck"
->  # If the luahandler shall be embedded into the swupdate binary
->  # include the following lines.
->  # DEPENDS += "swupdate-handlers"
->  # GBP_DEPENDS += "swupdate-handlers"
-> -# SWUPDATE_BUILD_PROFILES += "pkg.swupdate.embeddedlua"
-> +# DEB_BUILD_PROFILES += "pkg.swupdate.embeddedlua"
->  
->  # modify for debian buster build
->  SRC_URI_append_buster = " file://0009-debian-prepare-build-for-isar-debian-buster.patch"
->  
-> -# disable documentation due to missing packages
-> -SWUPDATE_BUILD_PROFILES_append = " nodoc "
-> -
->  # disable create filesystem due to missing symbols in debian buster
->  # disable webserver due to missing symbols in debian buster
-> -SWUPDATE_BUILD_PROFILES_append_buster = " \
-> +DEB_BUILD_PROFILES_append_buster = " \
->                                     pkg.swupdate.nocreatefs \
->                                     pkg.swupdate.nowebserver "
->  # In debian buster the git-compression defaults to gz and does not detect other
+* New CVEs
 
-Thanks, applied with the above commit message adjustment
+CVE-2021-44879: f2fs: fix to do sanity check on inode type during
+garbage collection
 
-Jan
+CVSS v3 score is not provided
 
--- 
-Siemens AG, Technology
-Competence Center Embedded Linux
+In gc_data_segment in fs/f2fs/gc.c in the Linux kernel before 5.16.3,
+special files are not considered, leading to a move_data_page NULL
+pointer dereference.
+
+The gc_data_segment() in the 4.4 kernel does a different check from
+other kernels so that patch cannot be applied.
+
+Fixed status
+
+mainline: [9056d6489f5a41cfbb67f719d2c0ce61ead72d9f]
+stable/5.15: [0ddbdc0b7f0cec3815ac05a30b2c2f6457be3050]
+stable/5.16: [d667b9f61df7bdfcb59dd1406fd2392c358f0008]
+
+CVE-2022-0435: tipc: improve size validations for received domain records
+
+CVSS v3 score is not provided
+
+This issue was introduced by commit 35c55c9 ("tipc: add neighbor
+monitoring framework") which was merged in 4.8-rc1. It was fixed in
+5.17-rc4. The 4.4 kernel isn't affected.
+
+Fixed status
+
+mainline: [9aa422ad326634b76309e8ff342c246800621216]
+stable/4.14: [fde4ddeadd099bf9fbb9ccbee8e1b5c20d530a2d]
+stable/4.19: [f1af11edd08dd8376f7a84487cbb0ea8203e3a1d]
+stable/4.9: [175db196e45d6f0e6047eccd09c8ba55465eb131]
+stable/5.10: [3c7e5943553594f68bbc070683db6bb6f6e9e78e]
+stable/5.15: [1f1788616157b0222b0c2153828b475d95e374a7]
+stable/5.16: [59ff7514f8c56f166aadca49bcecfa028e0ad50f]
+stable/5.4: [d692e3406e052dbf9f6d9da0cba36cb763272529]
+
+CVE-2022-0516: KVM: s390: Return error on SIDA memop on normal guest
+
+CVSS v3 score is not provided
+
+This issue is s390 architecture specific. It was introduced at commit
+19e12277("KVM: S390: protvirt: Introduce instruction data area bounce
+buffer") which was merged in 5.7-rc1. All kernels were already fixed.
+
+Fixed status
+
+mainline: [2c212e1baedcd782b2535a3f86bc491977677c0e]
+stable/5.10: [b62267b8b06e9b8bb429ae8f962ee431e6535d60]
+stable/5.15: [14f880ea779e11a6c162f122c1199e3578e6e3f3]
+stable/5.16: [8c68c50109c22502b647f4e86ec74400c7a3f6e0]
+
+CVE-2022-24958: drivers/usb/gadget/legacy/inode.c mishandles dev->buf relea=
+se
+
+CVSS v3 score is not provided
+
+The drivers/usb/gadget/legacy/inode.c in the Linux kernel through
+5.16.8 mishandles dev->buf release. This bug will cause an UAF.
+
+for 4.4, commit 501e38a("usb: gadget: clear related members when goto
+fail") has merge conflict, but it is easy to fix.
+
+Fixed status
+
+mainline: [89f3594d0de58e8a57d92d497dea9fee3d4b9cda,
+501e38a5531efbd77d5c73c0ba838a889bfc1d74]
+
+CVE-2022-24959: yam: fix a memory leak in yam_siocdevprivate()
+
+CVSS v3 score is not provided
+
+An issue was discovered in the Linux kernel before 5.16.5. There is a
+memory leak in yam_siocdevprivate in drivers/net/hamradio/yam.c.
+
+This bug was introduced by commit 0781168("yam: fix a missing-check
+bug") that was introduced at 4.19-rc7.
+Stable 4.9 and 4.4 kernels were not affected.
+
+Fixed status
+
+mainline: [29eb31542787e1019208a2e1047bb7c76c069536]
+stable/4.14: [4bbdfb71d2898a9d6e777a948a7484903a4ad2c3]
+stable/4.19: [4bd197ce18329e3725fe3af5bd27daa4256d3ac7]
+stable/5.10: [729e54636b3ebefb77796702a5b1f1ed5586895e]
+stable/5.15: [0690c3943ed0fa76654e600eca38cde6a13c87ac]
+stable/5.16: [deb0f02d08276d87212c1f19d9d919b13dc4c033]
+stable/5.4: [7afc09c8915b0735203ebcb8d766d7db37b794c0]
+
+CVE-2021-33061: Insufficient control flow management for the Intel(R)
+82599 Ethernet Controllers and Adapters may allow an authenticated
+user to potentially enable denial of service via local access.
+
+CVSS v3 score is 5.5 MEDIUM
+
+This bug let DoS attack. It was fixed and released at 2021/10/05.
+
+Fixed status
+
+Fixed in Intel=C2=AE 82599 Ethernet Series Controllers and associated
+Adapters Kernel-mode Driver versions to 5.13.4 or higher.
+
+CVE-2021-33096: Improper isolation of shared resources in network on
+chip for the Intel(R) 82599 Ethernet Controllers and Adapters may
+allow an authenticated user to potentially enable denial of service
+via local access.
+
+CVSS v3 score is 5.5 MEDIUM
+
+This bug let DoS attack.Intel recommended that "Consult the
+Direct-Assignment Networking Fault Isolation in a Data Center
+Environment Prescriptive Guidance Addressing INTEL-SA-00571
+Application Note. " in their Security Advisory(INTEL-SA-00571), so
+that there is no patches for CVE-2021-33096.
+
+Fixed status
+
+Security Advisory INTEL-SA-00571 gives recommendations.
+
+CVE-2021-45402: The check_alu_op() allows local users to obtain
+potentially sensitive address information because it mishandles mov32
+instruction.
+
+CVSS v3 score is not provided
+
+This bug was introduced by commit 3f50f13("bpf: Verifier, do explicit
+ALU32 bounds tracking") which was merged at 5.7-rc1, so that before
+5.7-rc1 kernels are not affected by this issue. It was fixed in
+5.16-rc6 in the mainline and backported to stable kernels.
+
+Fixed status
+
+mainline: [3cf2b61eb06765e27fec6799292d9fb46d0b7e60,
+e572ff80f05c33cd0cb4860f864f5c9c044280b6]
+stable/5.10: [e2aad0b5f2cbf71a31d00ce7bb4dee948adff5a9,
+279e0bf80d95184666c9d41361b1625c045d1dcb]
+stable/5.15: [f77d7a35d4913e4ab27abb36016fbfc1e882a654,
+dbda060d50abbe91ca76010078742ca53264bfa6]
+
+CVE-2022-0617: Null pointer dereference can be triggered when write to
+an ICB inode
+
+CVSS v3 score is not provided
+
+Null pointer dereference bug was bound in the UDF file system.
+The mainline, stable kernels, and cip/4.4 kernel are already fixed.
+
+Fixed status
+
+cip/4.4: [0f28e1a57baf48a583093e350ea2bd3e4c09b8ea,
+f25e032aa6e5cb2a22879759e4b08e4cd1c84e95]
+mainline: [7fc3b7c2981bbd1047916ade327beccb90994eee,
+ea8569194b43f0f01f0a84c689388542c7254a1f]
+stable/4.14: [a312cbdb9045a52e5c1fec4ac7b86895f508dc76,
+3fdf975173dc5acbd6e25b451bcbd558ba9d839a]
+stable/4.19: [a23a59717f9f01a49394488f515550f9382fbada,
+3740d41e7363374182a42f1621e06d5029c837d5]
+stable/4.9: [f24454e42b5a58267928b0de53b0dd9b43e4dd46,
+de10d14ce3aacba73c835cb979a85ef9683c193f]
+stable/5.10: [de7cc8bcca90a9d77c915ee1d922dbd670c47d84,
+0a3cfd258923aee63e7f144f134d42e205421848]
+stable/5.15: [cbf96c58e28b1fece9630102781a93ff32c347f7,
+2ea17d25be51ed8ea9fa59a66c9152d3c5ba0c7a]
+stable/5.16: [620e8243cf5389e706c1c8f66ffacb3c84308a9e,
+8baf0dbef73e1d1ad41f5db77bf20234fb7a7773]
+stable/5.4: [31136e5467f381cf18e2cfd467207dda7678c7a2,
+86bcc670d3000095bdb70342cf4d3fb6f3fc0a1a]
+
+* Updated CVEs
+
+CVE-2021-3894: sctp: local DoS: unprivileged user can cause BUG()
+
+A local unprivileged user can cause local DoS by sctp subsystem. This
+issue was introduced by commit cc16f00 (" sctp: add support for
+generating stream reconf ssn reset request chunk") which was merged at
+4.11-rc1. It was fixed in 5.15-rc6.
+
+Fixed status
+
+mainline: [a2d859e3fc97e79d907761550dbc03ff1b36479c]
+stable/4.19: [c57fdeff69b152185fafabd37e6bfecfce51efda]
+stable/5.10: [d84a69ac410f6228873d05d35120f6bdddab7fc3]
+
+CVE-2022-0487: Use after free in moxart_remove
+
+UAF bug was found in moxart_remove() in drivers/mmc/host/moxart-mmc.c.
+All stable kernels were fixed this week.
+
+Apply patch bd2db32 ("moxart: fix potential use-after-free on remove
+path") to 4.4 needs to a bit modify code. However, it seems no CIP
+member enables CONFIG_MMC_MOXART.
+
+Fixed status
+
+mainline: [bd2db32e7c3e35bd4d9b8bbff689434a50893546]
+stable/4.14: [e6f580d0b3349646d4ee1ce0057eb273e8fb7e2e]
+stable/4.19: [9c25d5ff1856b91bd4365e813f566cb59aaa9552]
+stable/4.9: [f5dc193167591e88797262ec78515a0cbe79ff5f]
+stable/5.10: [be93028d306dac9f5b59ebebd9ec7abcfc69c156]
+stable/5.15: [af0e6c49438b1596e4be8a267d218a0c88a42323]
+stable/5.16: [7f901d53f120d1921f84f7b9b118e87e94b403c5]
+stable/5.4: [3a0a7ec5574b510b067cfc734b8bdb6564b31d4e]
+
+CVE-2022-0492: cgroup-v1: Require capabilities to set release_agent
+
+There was a bug in cgroups v1 release_agent feature to escalate
+privilege and bypass namespace isolation.
+4.X series were fixed this week.
+
+Fixed status
+
+mainline: [24f6008564183aa120d07c03d9289519c2fe02af]
+stable/4.14: [b391bb3554dd6e04b7a8ede975dbd3342526a045]
+stable/4.19: [939f8b491887c27585933ea7dc5ad4123de58ff3]
+stable/4.9: [7e33a0ad792f04bad920c7197bda8cc2ea08d304]
+stable/5.10: [1fc3444cda9a78c65b769e3fa93455e09ff7a0d3]
+stable/5.15: [4b1c32bfaa02255a5df602b41587174004996477]
+stable/5.16: [9c9dbb954e618e3d9110f13cc02c5db1fb73ea5d]
+
+Currently tracking CVEs
+
+CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
+Bluetooth Core Specifications 4.0 through 5.2
+
+There is no fix information.
+
+CVE-2020-26555: BR/EDR pin code pairing broken
+
+No fix information
+
+CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
+
+No fix information.
+
+CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
+Provisioning Leads to MITM
+
+No fix information.
+
+CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
+
+No fix information.
+
+CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
+
+No fix information.
+
+Regards,
+--=20
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
+
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
 
