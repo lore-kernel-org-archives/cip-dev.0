@@ -1,273 +1,217 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <chris.paterson2@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21443C433EF
-	for <webhook@archiver.kernel.org>; Fri, 18 Feb 2022 16:15:43 +0000 (UTC)
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com
- (EUR05-DB8-obe.outbound.protection.outlook.com [40.107.20.57])
- by mx.groups.io with SMTP id smtpd.web09.12913.1645200941563190881
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3202C433EF
+	for <webhook@archiver.kernel.org>; Tue, 22 Feb 2022 11:51:29 +0000 (UTC)
+Received: from JPN01-TYC-obe.outbound.protection.outlook.com
+ (JPN01-TYC-obe.outbound.protection.outlook.com [40.107.114.131])
+ by mx.groups.io with SMTP id smtpd.web09.11860.1645530678628898085
  for <cip-dev@lists.cip-project.org>;
- Fri, 18 Feb 2022 08:15:42 -0800
+ Tue, 22 Feb 2022 03:51:20 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=iWI2Iz6Z;
- spf=pass (domain: siemens.com, ip: 40.107.20.57,
- mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@renesas.com header.s=selector1 header.b=FXvphw33;
+ spf=pass (domain: renesas.com, ip: 40.107.114.131,
+ mailfrom: chris.paterson2@renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RsE8BCInZ1AqHpwcZx0ob0hCZh6jKVwJsZXkT5cY1OsPqi8njDh15vICSktxTRRV/x+Hle2upNJ8za68mHwsy08gpDFaTmWnDOgcPBMRLixHzMHjX1r20VcMfe2u5QyZthfCYO5J1vyqA9dxuRWEczjnA4qBDKERAU53bSlgnN+Ivuuw1Uk9Bx6VpKz7oA0v2yUOfMD0KjpCPVxHAfKEbRhGl4mq2vAPbwnoCsKKr61JBk5/XrZz27cJi/4FlNuWY7dEL2pNDWeX90Y+YVo3YCIxdgNkS3R0vASXtyyQbBKba2Qsc4Kvn1X0WSz2lfGtqizNTTiBRfxWbol4AVzNtw==
+ b=LKsNhsSbqkgK5jhtXEjCRpS5Vq7nZiUvkhY4Ym4Pn4zfwf/t4S2dqdbtvPGs3rKP6lncn2qiR9L9N8vMsPgiuEVrT0NpYsCdeb1w07D3uBT+sojMpneMXf+SHvsAdLPMLxWyGrV3dX8ZxabjAWngfbm6IG0lVjRPcoIkDPItO185ocjtfVNGhk+tYWBIlqt1QqMGKfKGyHe4Pn5R1e/6QOUBniRsTFOhCq11Fr54/JKcssSFkHoGEC7Kr5xQapWMmcyvvGT3KLIYTw/lbafCoqKePdNJ24ReoVG7VrTzUmmH5StpfLeC4Lg7H3DMKd5h1iiuU7jIhdHFR7j+DA7plw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iKVpYIz1BN9yk+qXs/00AKLHZD7cFvRwQ/b5GWMPlE4=;
- b=Zo1WQBXwO+vGcbZgjIUuPhB6r6mKGKlp3FRCA/e5xGznrJ6Ap/o21PDZVKRroa7l/pKHqI8yy629teMkig0rdQD2IfjkUXLzr7vQBrZQ54L3tHz8SRrzGVLkBMCNL0tEKw2qRRqjYDOCPM9H19K0MGTB0Hv59fRijtJq3zgKB6z7mpCrXd2/Eywea5uhi5f5QjOgfKgESyLF5XWT9XRqsFoPO1DHocQ8967GrM38hUne+Kdw7c+xP+DigWrLCkir0nFQUSYsn6Wnm7OFu7WTKnRx3xQZufFR+wDzYF0+LDLhkPQ1rV6wauiVbcfc42XxysJkLUeIq2Qu/ZXlZ7Pt7g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.72) smtp.rcpttodomain=lists.cip-project.org
- smtp.mailfrom=siemens.com; dmarc=pass (p=none sp=none pct=100) action=none
- header.from=siemens.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
+ bh=Al/t5pgyh+R5+hPZ3eKs7OF/ssJo5CmIA7viV74XV9E=;
+ b=SkgDu7UFcrchN6Ki9h9coTqcaAKXLRn6JEudToY4choj0aiNSkBcm1aD24bz6wSXomDOY4dZzS7xpV5In/th1q0UtEsmwGiD830Kddz5XV5lg0I5kVP1vMKje6L50Kfp2cO83OcLFzStFy/4gzC8H7EafK6K6h+8O286lLL+vsAiNhlnfdxHe/+K7RZirrY0ZKZj1IJk9W27QicwSKfRg0dmtJYMIQWQY9hlc1GxCPQHgALkcIJ8QRgXFst0+2M7XBI5+KCgZI3A9mg33Zasm0fIM4GPf2AzPXKTyYvm/vANDkTwsMMCicPNLn4DaRoJhHTcU6z8W0+X4xHCY1bFPw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iKVpYIz1BN9yk+qXs/00AKLHZD7cFvRwQ/b5GWMPlE4=;
- b=iWI2Iz6ZYKMPbuAauIhJkohCm8NNpc5CXwDxl6EMyVnrI4hJLDrBfWyn7ARXuSgN8QgHTPqDpv/vKsKk+9Q5X4QAaoAYdeEERHvdsLS4mF2SF3IsXZnsq7RBwpU7FqBMGEl+UItAOFh1Sj/4tG35PyZafTPgjR8HnjG/1AL/ssbpEKMst47tuXSu4sYw0XG/7IzMrrkNJA1o4KhoCuKUiQb+16YlHGY2OpDznl4cnvOwNjH8szGUOqSxSGHOHA8Q0hSKmQW1wo6PvAEm6UGIg/cihTA52/4zM9qJDJOz+SVdQKukfvoWBD2rOwguu+WXI/vTmIr9mtQ3Qe4BvFCGeA==
-Received: from DU2PR04CA0178.eurprd04.prod.outlook.com (2603:10a6:10:2b0::33)
- by AS8PR10MB4613.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:2e6::18) with
+ bh=Al/t5pgyh+R5+hPZ3eKs7OF/ssJo5CmIA7viV74XV9E=;
+ b=FXvphw33kzdwKiibjAQjApoz/jbUXuNGwY5e+LUUywnamtOhGDs6PJdQMyXWt/KahOnXF7iqoDra76cc9LILEja+IdQvCzUqAuw4G5aDhRyHVNiLQxHZ6rswdK456oI3oXNC1N5iQQ4/qiJx3zhlCB1sRqFYIOJ2T6hi5EiUlIw=
+Received: from OSZPR01MB6877.jpnprd01.prod.outlook.com (2603:1096:604:130::9)
+ by OSBPR01MB3573.jpnprd01.prod.outlook.com (2603:1096:604:40::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4975.18; Fri, 18 Feb
- 2022 16:15:36 +0000
-Received: from DB5EUR01FT043.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:10:2b0:cafe::38) by DU2PR04CA0178.outlook.office365.com
- (2603:10a6:10:2b0::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4995.22 via Frontend
- Transport; Fri, 18 Feb 2022 16:15:36 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.72)
- smtp.mailfrom=siemens.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=siemens.com;
-Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.72 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.72; helo=hybrid.siemens.com;
-Received: from hybrid.siemens.com (194.138.21.72) by
- DB5EUR01FT043.mail.protection.outlook.com (10.152.5.103) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.4995.15 via Frontend Transport; Fri, 18 Feb 2022 16:15:35 +0000
-Received: from DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) by
- DEMCHDC9SMA.ad011.siemens.net (194.138.21.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.18; Fri, 18 Feb 2022 17:15:35 +0100
-Received: from [167.87.0.165] (167.87.0.165) by DEMCHDC8A0A.ad011.siemens.net
- (139.25.226.106) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.18; Fri, 18 Feb
- 2022 17:15:35 +0100
-Message-ID: <17559118-fa0f-59b3-c761-76851bd6c28f@siemens.com>
-Date: Fri, 18 Feb 2022 17:15:34 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [cip-dev][isar-cip-core][PATCH v3] efibootguard: Do not copy the
- efi binaries directly into DEPLOY_DIR
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4995.15; Tue, 22 Feb
+ 2022 11:51:14 +0000
+Received: from OSZPR01MB6877.jpnprd01.prod.outlook.com
+ ([fe80::684c:45d9:bd7c:c002]) by OSZPR01MB6877.jpnprd01.prod.outlook.com
+ ([fe80::684c:45d9:bd7c:c002%7]) with mapi id 15.20.4995.027; Tue, 22 Feb 2022
+ 11:51:14 +0000
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>, Pavel
+ Machek <pavel@denx.de>
+Subject: RE: [cip-dev] kernelci results for my test branch
+Thread-Topic: [cip-dev] kernelci results for my test branch
+Thread-Index: AQHYIx/hPNjPQ4fOBk+dHdB2tB2f36yWC/6wgAlyf/A=
+Date: Tue, 22 Feb 2022 11:51:14 +0000
+Message-ID: 
+ <OSZPR01MB68776D6335D91FA42B1F39C4B73B9@OSZPR01MB6877.jpnprd01.prod.outlook.com>
+References: <20220216102758.GA313@amd>
+ <16D4412F23B43F90.9986@lists.cip-project.org>
+In-Reply-To: <16D4412F23B43F90.9986@lists.cip-project.org>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-To: "Q. Gylstorff" <Quirin.Gylstorff@siemens.com>,
-	<cip-dev@lists.cip-project.org>
-References: <20220218152842.1031311-1-Quirin.Gylstorff@siemens.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <20220218152842.1031311-1-Quirin.Gylstorff@siemens.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.87.0.165]
-X-ClientProxiedBy: DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) To
- DEMCHDC8A0A.ad011.siemens.net (139.25.226.106)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ae94984d-a52e-4ada-67a0-08d9f2f9e555
-X-MS-TrafficTypeDiagnostic: AS8PR10MB4613:EE_
-X-Microsoft-Antispam-PRVS: 
-	<AS8PR10MB46138CB40D950B697BB83D7195379@AS8PR10MB4613.EURPRD10.PROD.OUTLOOK.COM>
-X-MS-Oob-TLC-OOBClassifiers: OLM:220;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	czyKl/9XvTZL9f5IG1V+rfjWgBnLXuBhtmNGhHG8A7vvjZWM6JhDdRO25Veci2LwUTV3sITG8jwFUGHSXNsb0FfxySrDmoR4J7TbwpqhtVHIps6xLjFnQWUFKjd1RTEJSA/DdbsuppZgXw3E8t2L6sQQ2KvLCTIuSHDpK5xTUZHBTUYy98cbfRDXBFHIv2+XY4NdcaveVG289Q6hHSYzNeTtKASeM1lPkw9OblW5lOVT8PAX7RFxkNOZpjtqqxCGgkqbEvlajWJOV9bUDQWZFG1x2mtW0EfoDN3wxAtg0+hifbkgREc20XnS2O/DY0Q3J/8ZYcGiMCNvAFstdkScpGRaq2CRRt+2Oob0esAJlrHTAmQr/CEyTCOZsKvF5hQv/zgpTGEwT3S+S+5Zxvu3kIXP3kkEnkh5tYwHrCEesMEyW44GnMfWTj5hZuULSnrl9RkDmSo/sIO00xo4oiRqxQZ7L+dvd+YtyvYzQrzDe0/EHuMGTnu8maW6XKm+GUQWKJZmLJTH6u7iZMSgDuamXpqoBlIizE2zYvYYXCKCJLHxUGM9SsQ82DAsnW96cgCWrdaY6LwvFjEiu2nF23uGnppq1tA9TykkmLNyeRZkmk83ex+eikCo4hZsb+ARU0SR9a0542PIAHm27AxT+1gVNcy4eqlE4LTJgCIt8DLGVRNXvuy6TFuni/4Dehxi7OJDY/+WBQBDYpoXPNND4rhgcZdXKum4c9tEEH5tRAPD28PEpgMokfQBMAblYYBbHzh+NsFbELfapv4kWk28eU5AGg==
-X-Forefront-Antispam-Report: 
-	CIP:194.138.21.72;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(46966006)(40470700004)(26005)(5660300002)(186003)(53546011)(81166007)(86362001)(82960400001)(82310400004)(36756003)(356005)(44832011)(8676002)(2906002)(8936002)(31696002)(83380400001)(16526019)(40460700003)(47076005)(316002)(956004)(336012)(36860700001)(2616005)(508600001)(70586007)(70206006)(31686004)(16576012)(110136005)(6706004)(3940600001)(36900700001)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2022 16:15:35.7212
- (UTC)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 38ed2292-046e-49ff-ace5-08d9f5f9a0f8
+x-ms-traffictypediagnostic: OSBPR01MB3573:EE_
+x-microsoft-antispam-prvs: 
+ <OSBPR01MB357357982152A9E773FB0B88B73B9@OSBPR01MB3573.jpnprd01.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ 5Wrgsu1LqYrY671JYz/iBfH+vBz3q3LnbNJmyCh4NgCwPz8PA0UHacElRC49xCF7AeyIHA+xT0DUDO8U4ieklqPeQEQr9Rd18qbx9koqh2AT97UXVma18WDtYdYWLzIC3wuwu5qqOJmlHbEdWuP4xs2hiflgQa0ESB24d9em6V8PAjKT9TlYk8LyDVvBYIMgWZIrVSpRAQnSzzJoNzkRmSAem5t10D96+XUcQK/YZrKL9Sk6bZO5UdbZftjqy+bXETLucvtuiHL+xCIBw2sE3/5/IhzqMAbNAI+UFiF+BRUjwOImfGZgGzwcNnu4gNUavasrzwAW27cIKet0Y6/X5YNCUIRyllhL5gV5p+aQ6RYhLPDIXqVgin3FZ/thdkwrQz6lJmrdl4cSiBTFD/l5MZTTeZMCvjiUwVZXIFdhHscO5VWibvJplUdU4CMuYW0TBBgIrsxviPjLV8omtacJELNjBTsaPsgY8f8dHnFLczQ4aOX0RpOyR4QeXHYFITMCmYwOOhGWN7vg9bmbeCU5dWMf+EyoTir0KS4iNr9xJ6BNCIlJIr+TI69MsuPFjNdI+TOlBNmjZwJdumGE8FJr4iuAjF7ZxkLdbBbIY3K7hN8JxORjzrKLgmA2YVleh2V73cxS8C74Fjw24KBvU0+vgHoC3HdICezvOSFUGwEx7HE0latlg3xXXWS6QC8QTFyDCWaapSMGESLkJM6gNrPJV76ztFvlvWsFaRXEzEuml/OWVHE8z2j3G5u7CPJhznHBJDnLqrzBwF0zZ7BTllhk9+5ko7K3SG8csj+HA49pNN7p55hc2Gl513pLSb3YIEEwWdhWXzUmYezSECh4dha3mA==
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB6877.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(55016003)(2906002)(38100700002)(86362001)(38070700005)(122000001)(6506007)(110136005)(186003)(7696005)(66476007)(66446008)(508600001)(966005)(45080400002)(9686003)(76116006)(64756008)(66556008)(5660300002)(33656002)(8676002)(26005)(52536014)(8936002)(316002)(83380400001)(66946007)(71200400001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?Windows-1252?Q?11xLIrFFtJzCLtuHjYLnCFYeriAE8rbHszG60tOuxrc5WBv8Wd+y8QhG?=
+ =?Windows-1252?Q?TzO1/JEjxU0K1r2vhevdFW/8maPhQWr08vnn5y4K1I8LLLHquyzBI+fk?=
+ =?Windows-1252?Q?jEa/92R9SnNvyACY3+q59m1/xiLjwfQkGoaf8rjwsDFMveTJxehQSkFH?=
+ =?Windows-1252?Q?W7O7T+LXAKjWb1pcHV/2fggzIgsh6yizOjtVdtkD8Y7JqG1nPL8UfMhE?=
+ =?Windows-1252?Q?vtBLW6IMnenlfkp4a49kqEFSYk56y31TQgXVbnaNIu5LFRYa0JQJ8JkE?=
+ =?Windows-1252?Q?6x9K80QrZkSLKQ0IfusKfZ5JStj7CyXA0hkj8/mY6GN8h3OugAtnU2b/?=
+ =?Windows-1252?Q?Hr8RIIGnggX4i1aVpykQMvgLbTp7vRrQc8pqryzVZiMNxEiUJgG2lMdp?=
+ =?Windows-1252?Q?UBHOZeUVdndUqLNKA5+66F88V0BXOmC8wK+H4VS+cUNq+hzRab6YHOhs?=
+ =?Windows-1252?Q?N3fehz0Tml/MWoe7FRNIZzZDrA5MLVDkVZ74EVu0dLiXU4ViYyAdMo9C?=
+ =?Windows-1252?Q?6MB5Z3f2awyk9vD4ksvxupvC77Hq537QTCCfgtjLfYAJegR7VwUQHx2p?=
+ =?Windows-1252?Q?rSiaOFZHFVbdNxldYi+qWMbs8HkSRa3r266JEFb7J8FZ3UKHX+OE7FHh?=
+ =?Windows-1252?Q?mz1rtCRbHZEiA8H/HNdaV8m6V0c1HWwKzzwbeJ8e4nyABm7uHh0S7fO+?=
+ =?Windows-1252?Q?1M6m9JlvkDLxdgsGGaMJo5laCdLwO66SXai2Dsb8ilTqTsDKVvZ2OYU9?=
+ =?Windows-1252?Q?W14oPu6Rjl9XXoqI8gSDTTpjdcZZ0QkIkFAtrCCs0XnNPqOeKzhVgcZd?=
+ =?Windows-1252?Q?6ZLaAROHk3lw3gPpY7dDjngTCj57gnVDSCYdL6mKo4oGYT13f5Z8AiE5?=
+ =?Windows-1252?Q?nN+QuDoPjizKWAFz0YlblgHPmq1yK1j83WlgbwHwMGlBdPDHAscecZ8S?=
+ =?Windows-1252?Q?mz6gvJDijGCnnFUJK7xF0xqdN8fJoc5TZj+7fsitBl1tzZG9Y/XuB683?=
+ =?Windows-1252?Q?Y5qQac1U9CLtC8Opb35baMJNH/1FzLMWBBSh4+9n5a+V9+ImwWL6EMbS?=
+ =?Windows-1252?Q?/5aMsUDRYEfq8fs/PdP81xbL4QsBqGR9/BfkC//J46+wl7VwJni/R85I?=
+ =?Windows-1252?Q?n7SjBYoIOFo364WCsrjENBdg7EjAme65W7+Ho0Le86iYAe1ym82EziCu?=
+ =?Windows-1252?Q?JRjRSYk4opcni87vCo3O6udRfYPUeHospBZrleTr5Blg5/plYGxPMA1J?=
+ =?Windows-1252?Q?TftzEsv1ch/7Po9gLtVH+IlVmS8fc6MMv4BwZOGxScfOFP9n5vRSxjDB?=
+ =?Windows-1252?Q?7xmbfqNmCu4yrRPUWczQGOzEtc8FNbOeKAf2/ETPpDVzVqJTDXDaT7iM?=
+ =?Windows-1252?Q?zHLuszok84ggHVTh7n69EhH/f1v60+PDL7tTODiYnA8J1Kq44vHVVpi2?=
+ =?Windows-1252?Q?8DeyErpNBOH3RO/rzSFHrbQ3N+jTu/8l397dXrjejBVNzT59QSqYWtNg?=
+ =?Windows-1252?Q?zJIPUTxW1euuh/70L7P4E+8DkYs+uiBm1GmY1S/qG3NCxsjq1D9Ttmxd?=
+ =?Windows-1252?Q?SdwGSPZuKTQpXQNFIQejtFryMMeHoEkAkx7cbT9qml0lurhlsvvy7G86?=
+ =?Windows-1252?Q?LK8ZLpRGQ+5gl+AsaFT6QEj8VLSHLP3I+LM7RF1QkBItjfdwy9W0fXB+?=
+ =?Windows-1252?Q?CykCOIYaA1YWqQGwaWc7w/3/ItCxi5aSsPJJ6zFI5B7/z89D8XY1o37j?=
+ =?Windows-1252?Q?sDYuD0isT7t+RFdOoS6Edc4OONEODZIlsVu/bGWbwuVPY1fFACA52u76?=
+ =?Windows-1252?Q?5ppnow=3D=3D?=
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB6877.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-Network-Message-Id: 
- ae94984d-a52e-4ada-67a0-08d9f2f9e555
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
- TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.72];Helo=[hybrid.siemens.com]
-X-MS-Exchange-CrossTenant-AuthSource: 
-	DB5EUR01FT043.eop-EUR01.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB4613
+ 38ed2292-046e-49ff-ace5-08d9f5f9a0f8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Feb 2022 11:51:14.5325
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 
+ fQkVXPV30JsN7Di4isRPBi6N1KClFsojwDrb5BNbVn2DnycvT2iyGw+d8/4n9kNTr1pzbwEkkOTzWgiZnzD3T3ktTcg3IQkaKFn7+365LlI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB3573
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 18 Feb 2022 16:15:43 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7633
+ <cip-dev@lists.cip-project.org>; Tue, 22 Feb 2022 11:51:29 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7634
 
-On 18.02.22 16:28, Q. Gylstorff wrote:
-> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> 
-> This patch prepares isar-cip-core to integrate the ISAR features
-> sstate and the upcoming sbuild feature. The features introduce the
-> following changes: 
->  - Sbuild doesn't easily allow the extraction of build results
->  - sstate doesn't populate the DEPLOY_DIR from packages in case of a rebuild.
-> 
-> 
-> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> ---
-> Changes v2:
->  - use distro_arch to determine binary name
->  - remove additional debug message
->  - remove deploydir
-> 
-> Changes v3:
->  - add dictionary to map between DISTRO_ARCH and efi architecture idenitifer
->  - remove handling of source_param `files`
->  - reword commit message
-> 
->  kas/opt/efibootguard.yml                      |  1 +
->  .../efibootguard/efibootguard_0.9-git+isar.bb |  5 ---
->  .../files/debian/efibootguard.install         |  1 +
->  .../files/debian/efibootguard.links           |  1 +
->  .../wic/plugins/source/efibootguard-boot.py   |  3 +-
->  .../wic/plugins/source/efibootguard-efi.py    | 39 ++++++++++---------
->  wic/qemu-amd64-efibootguard-secureboot.wks.in |  2 +-
->  7 files changed, 25 insertions(+), 27 deletions(-)
->  create mode 100644 recipes-bsp/efibootguard/files/debian/efibootguard.links
-> 
-> diff --git a/kas/opt/efibootguard.yml b/kas/opt/efibootguard.yml
-> index 75d4ab1..f5f9169 100644
-> --- a/kas/opt/efibootguard.yml
-> +++ b/kas/opt/efibootguard.yml
-> @@ -21,6 +21,7 @@ local_conf_header:
->      SWUPDATE_BOOTLOADER = "efibootguard"
->  
->    efibootguard-wic: |
-> +    WIC_IMAGER_INSTALL_append = " efibootguard"
->      WDOG_TIMEOUT ?= "60"
->      WICVARS += "WDOG_TIMEOUT KERNEL_IMAGE INITRD_IMAGE"
->      IMAGE_FSTYPES ?= "wic-img"
-> diff --git a/recipes-bsp/efibootguard/efibootguard_0.9-git+isar.bb b/recipes-bsp/efibootguard/efibootguard_0.9-git+isar.bb
-> index 2817e5b..171d8d4 100644
-> --- a/recipes-bsp/efibootguard/efibootguard_0.9-git+isar.bb
-> +++ b/recipes-bsp/efibootguard/efibootguard_0.9-git+isar.bb
-> @@ -39,8 +39,3 @@ do_prepare_build() {
->      deb_add_changelog
->  }
->  
-> -dpkg_runbuild_append() {
-> -    install -m 0755 -d ${DEPLOY_DIR_IMAGE}
-> -    install -m 0755 ${S}/efibootguardx64.efi ${DEPLOY_DIR_IMAGE}/bootx64.efi
-> -    install -m 0755 ${S}/bg_setenv ${DEPLOY_DIR_IMAGE}/bg_setenv
-> -}
-> diff --git a/recipes-bsp/efibootguard/files/debian/efibootguard.install b/recipes-bsp/efibootguard/files/debian/efibootguard.install
-> index 8a8d9d3..0239953 100644
-> --- a/recipes-bsp/efibootguard/files/debian/efibootguard.install
-> +++ b/recipes-bsp/efibootguard/files/debian/efibootguard.install
-> @@ -1,2 +1,3 @@
->  bg_setenv usr/bin
->  bg_printenv usr/bin
-> +efibootguardx64.efi usr/share/efibootguard
-> diff --git a/recipes-bsp/efibootguard/files/debian/efibootguard.links b/recipes-bsp/efibootguard/files/debian/efibootguard.links
-> new file mode 100644
-> index 0000000..97bab21
-> --- /dev/null
-> +++ b/recipes-bsp/efibootguard/files/debian/efibootguard.links
-> @@ -0,0 +1 @@
-> +usr/share/efibootguard/efibootguardx64.efi usr/share/efibootguard/bootx64.efi
-> diff --git a/scripts/lib/wic/plugins/source/efibootguard-boot.py b/scripts/lib/wic/plugins/source/efibootguard-boot.py
-> index 882729a..05cef4e 100644
-> --- a/scripts/lib/wic/plugins/source/efibootguard-boot.py
-> +++ b/scripts/lib/wic/plugins/source/efibootguard-boot.py
-> @@ -111,9 +111,8 @@ class EfibootguardBootPlugin(SourcePlugin):
->  
->          cwd = os.getcwd()
->          os.chdir(part_rootfs_dir)
-> -        config_cmd = '%s/bg_setenv -f . -k "C:%s:%s" %s -r %s -w %s' \
-> +        config_cmd = '/usr/bin/bg_setenv -f . -k "C:%s:%s" %s -r %s -w %s' \
->              % (
-> -                deploy_dir,
->                  part.label.upper(),
->                  boot_image,
->                  '-a "%s"' % cmdline if cmdline else "",
-> diff --git a/scripts/lib/wic/plugins/source/efibootguard-efi.py b/scripts/lib/wic/plugins/source/efibootguard-efi.py
-> index 9eb2353..858fcbf 100644
-> --- a/scripts/lib/wic/plugins/source/efibootguard-efi.py
-> +++ b/scripts/lib/wic/plugins/source/efibootguard-efi.py
-> @@ -51,31 +51,32 @@ class EfibootguardEFIPlugin(SourcePlugin):
->          populate an EFI boot partition containing the EFI Boot Guard
->          bootloader binary.
->          """
-> -        deploy_dir = get_bitbake_var("DEPLOY_DIR_IMAGE")
-> -        creator.deploy_dir = deploy_dir
-> -        bootloader_files = source_params.get("bootloader")
-> -        if not bootloader_files:
-> -            bootloader_files = "bootx64.efi"
-> -        bootloader_files = bootloader_files.split(' ')
-> +        # we need to map the distro_arch to uefi values
-> +        distro_to_efi_arch = {
-> +            "amd64": "x64",
-> +            "arm64": "aarch64",
-> +            "i386": "ia32"
-> +        }
-> +
-> +        distro_arch = get_bitbake_var("DISTRO_ARCH")
-> +        bootloader = "/usr/share/efibootguard/boot{}.efi".format(
-> +            distro_to_efi_arch[distro_arch])
->          part_rootfs_dir = "%s/disk/%s.%s" % (cr_workdir,
->                                               part.label,
->                                               part.lineno)
->          create_dir_cmd = "install -d %s/EFI/BOOT" % part_rootfs_dir
->          exec_cmd(create_dir_cmd)
->  
-> -        for bootloader in bootloader_files:
-> -            signed_bootloader = cls._sign_file(bootloader,
-> -                                               "{}/{}".format(deploy_dir,
-> -                                                              bootloader
-> -                                                              ),
-> -                                               cr_workdir,
-> -                                               source_params)
-> -            # important the bootloader in deploy_dir is no longer signed
-> -            cp_cmd = "cp %s/%s %s/EFI/BOOT/%s" % (cr_workdir,
-> -                                                signed_bootloader,
-> -                                                part_rootfs_dir,
-> -                                                bootloader)
-> -            exec_cmd(cp_cmd, True)
-> +        name = os.path.basename(bootloader)
-> +        signed_bootloader = cls._sign_file(name,
-> +                                           bootloader,
-> +                                           cr_workdir,
-> +                                           source_params)
-> +        cp_cmd = "cp %s/%s %s/EFI/BOOT/%s" % (cr_workdir,
-> +                                              signed_bootloader,
-> +                                              part_rootfs_dir,
-> +                                              name)
-> +        exec_cmd(cp_cmd, True)
->          du_cmd = "du --apparent-size -ks %s" % part_rootfs_dir
->          blocks = int(exec_cmd(du_cmd).split()[0])
->  
-> diff --git a/wic/qemu-amd64-efibootguard-secureboot.wks.in b/wic/qemu-amd64-efibootguard-secureboot.wks.in
-> index 81fd4fe..72a6f8c 100644
-> --- a/wic/qemu-amd64-efibootguard-secureboot.wks.in
-> +++ b/wic/qemu-amd64-efibootguard-secureboot.wks.in
-> @@ -1,5 +1,5 @@
->  # EFI partition containing efibootguard bootloader binary
-> -part --source efibootguard-efi  --ondisk sda --size 16M --extra-space 0 --overhead-factor 1 --label efi   --align 1024 --part-type=EF00 --active --sourceparams "signwith=/usr/bin/sign_secure_image.sh"
-> +include ebg-signed-bootloader.inc
->  
->  # EFI Boot Guard environment/config partitions plus Kernel files
->  part --source efibootguard-boot --ondisk sda --size 32M --extra-space 0 --overhead-factor 1 --label BOOT0 --align 1024 --part-type=0700 --sourceparams "revision=2,unified-kernel=y,signwith=/usr/bin/sign_secure_image.sh"
+Hello Pavel,
 
-Thanks, applied.
+> From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On
+> Behalf Of Chris Paterson via lists.cip-project.org
+> Sent: 16 February 2022 11:37
+>=20
+> Hello Pavel,
+>=20
+> > From: Pavel Machek <pavel@denx.de>
+> > Sent: 16 February 2022 10:28
+> >
+> > Hi!
+> >
+> > I pushed a test commit to ci/pavel/linux-test. This is not first
+> > commit in the 14 days. Where can I get the results? I don't see them
+> > at
+> https://jpn01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Flinux=
+.
+> kernelci.org%2Ftest%2F&amp;data=3D04%7C01%7Cchris.paterson2%40renesas
+> .com%7C29f25fd8350e44b7985208d9f140b579%7C53d82571da1947e49cb4625
+> a166a4a2a%7C0%7C0%7C637806082492358598%7CUnknown%7CTWFpbGZsb
+> 3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0
+> %3D%7C3000&amp;sdata=3DA0tBhHHB5bJYDkK4SY4PPdvnm2En8yVTANVPFXY
+> U8Mo%3D&amp;reserved=3D0  .
 
-Jan
+You can now see KernelCI test results from our RC branches etc. here:
+https://linux.kernelci.org/job/cip-gitlab/
 
--- 
-Siemens AG, Technology
-Competence Center Embedded Linux
+Kind regards, Chris
+
+
+>=20
+> FYI the best place to check out results from CIP trees is
+> https://jpn01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fkerne
+> lci.ciplatform.org%2F&amp;data=3D04%7C01%7Cchris.paterson2%40renesas.co
+> m%7C29f25fd8350e44b7985208d9f140b579%7C53d82571da1947e49cb4625a1
+> 66a4a2a%7C0%7C0%7C637806082492358598%7CUnknown%7CTWFpbGZsb3d
+> 8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%
+> 3D%7C3000&amp;sdata=3DLkX3e%2B9BVTIOIzqvUwhx3RNwXJ3YDW1D3JnMKZ
+> KNjTs%3D&amp;reserved=3D0.
+> (which redirects to CIP specific results from kernelci.org)
+>=20
+> >
+> > pavel@amd:~/cip/4$ ./testhash
+> > 2fe7e363b1b121239e91f0d69511cf354db03386
+> >
+> https://jpn01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fgitla=
+b
+> .com%2Fcip-project%2Fcip-kernel%2Flinux-
+> cip%2Ftree%2Fci%2Fpavel%2Flinux-
+> test&amp;data=3D04%7C01%7Cchris.paterson2%40renesas.com%7C29f25fd835
+> 0e44b7985208d9f140b579%7C53d82571da1947e49cb4625a166a4a2a%7C0%7C
+> 0%7C637806082492358598%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLj
+> AwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&amp;
+> sdata=3DmImLWmq1FhsVe1mxcqsDnCAWNGMUAnZtT%2FyjU6fPYVg%3D&am
+> p;reserved=3D0
+> > Counting objects: 112, done.
+> > Delta compression using up to 2 threads.
+> > Compressing objects: 100% (104/104), done.
+> > Writing objects: 100% (112/112), 17.44 KiB | 0 bytes/s, done.
+> > Total 112 (delta 95), reused 8 (delta 8)
+> > remote: Resolving deltas: 100% (95/95), completed with 48 local
+> > objects.
+> > To gitlab.com:cip-project/cip-kernel/linux-cip.git
+>=20
+> KernelCI is currently monitoring branches on
+> https://jpn01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fgit.k=
+e
+> rnel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Fcip%2Flinux-
+> cip.git%2F&amp;data=3D04%7C01%7Cchris.paterson2%40renesas.com%7C29f2
+> 5fd8350e44b7985208d9f140b579%7C53d82571da1947e49cb4625a166a4a2a%7
+> C0%7C0%7C637806082492358598%7CUnknown%7CTWFpbGZsb3d8eyJWIjoi
+> MC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C300
+> 0&amp;sdata=3Dhu9tmDvy%2FtyyugEhWm46oQZl%2B9C2%2Frg5ycqqEAQEc64
+> %3D&amp;reserved=3D0.
+> Do you want me to add support to monitor the GitLab mirror as well/instea=
+d
+> for your/the RC branches?
+>=20
+> Kind regards, Chris
+>=20
+> >  + 94973269ae47d...2fe7e363b1b12
+> >  2fe7e363b1b121239e91f0d69511cf354db03386 -> ci/pavel/linux-test
+> >  (forced update)
+> >  pavel@amd:~/cip/4$
+> >
+> > Best regards,
+> > 								Pavel
+> >
+> > --
+> > DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+> > HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
