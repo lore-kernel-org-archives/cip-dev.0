@@ -1,85 +1,83 @@
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
- by mx.groups.io with SMTP id smtpd.web12.19245.1647204820721035186
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+ by mx.groups.io with SMTP id smtpd.web12.3558.1645590187395026990
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Sun, 13 Mar 2022 13:53:40 -0700
+ Tue, 22 Feb 2022 20:23:07 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=3QkEnYVw;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.216.44, mailfrom: bot@kernelci.org)
-Received: by mail-pj1-f44.google.com with SMTP id v1-20020a17090a088100b001bf25f97c6eso12506683pjc.0
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Sun, 13 Mar 2022 13:53:40 -0700 (PDT)
+ dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=uMoV1o0m;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.216.50, mailfrom: bot@kernelci.org)
+Received: by mail-pj1-f50.google.com with SMTP id om7so1550250pjb.5
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Tue, 22 Feb 2022 20:23:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=E1APzL1Mmn3nTdO6U5ECzKLm3AiKdc55jrQfVwTL6EI=;
-        b=3QkEnYVwpqqxs+uPBXcDGXdi3LF63fIE6vmfmXDYdjdsgVAr9QA7PrE8YruaypJxgE
-         JffAIkIPrtzhQzjp+TGVv9Rb+VXvoNmPtTbk/SIk7Q8BMPhB2dbCrEi9LyiAjj91yLOo
-         +SFCvko5nWXV+/7MEn9KH9JpqToP7SMOw2QY5oaMpQrOZitmirCFnFxFoGqMte+iPiA1
-         glhU6iZc17ufdm5sDCYMyRDT1LYIBB9AbEMDMfimAFQYxuI5X7DFbbddQGBn7ncuRCYk
-         5Hekm0/p2a1BB0SF395zU1xQmQ8eJyBB7Dzqn+RZyLMBi0P64bE62Zy96yx9777i1zsF
-         wC/A==
+        bh=VIUAHpOTdOAYXiyi70r1Y/OI4hf4ZvtDw2f7LPNqKyE=;
+        b=uMoV1o0m0t4VyidHMb6I9nWgdoEAy6k47tX9ItXNfudSaagDTSGEpiF5mPvzGduFXt
+         /cgaBJOc6BME6CLFLbE8CzHvlPNkeQN56SOiI2aksamZtS9mtwwj57yYa0HL7sbYE5Dj
+         kZXcPL2QMQ1vcJCYTvNTo2Obs+DkGAJaOC2x0m9pOMTwg00mwi0AzPQnz7ygtBLcxA7B
+         wcgM49yPvqlxilFlUMCSO4L3iXnjZgfS5x71y252Nuu82eFX00GtvxOdebWRAy3m6hfd
+         0EHBWffYde9psHloFDJ5oh7G/mvtgDZyAMO920Rqlrgqz6TGFYfWR0MFMdifblkVoWn0
+         iMKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=E1APzL1Mmn3nTdO6U5ECzKLm3AiKdc55jrQfVwTL6EI=;
-        b=truBKbQb8JDmuVeRv74t2Qd/J5j3bSwiEEbyXYUDDt5ov5qsY3IUXfeZly8ZJhGzsa
-         YyX6UIqBlpYEQJ2IxmnIklC1j5yQj/L04TJVGo8FpweMApzdZzc8+17kkeG0wxZ+pOTD
-         fEuhoxdCp1gh+yW8g9xA0Ax2vh7jIOMU9OVPYWYpcjHeQf13ZbvMFoCNAT5sERiI8LNk
-         7hkxUFUJ1MYlY+4zpUzR64X3OzB1NVlpF6CpxrHOnL5mOEnLaRiMvqmnSpuvGRLU1Ol4
-         ja+Rc31lyndvdco/flqsZM5JbY969ATfTbk/3kC9szD6RJbLd1owyh0vMCoDSGZxDHWY
-         to0A==
-X-Gm-Message-State: AOAM533O5s6YNDR190e87x3zVQGn2xLQzuo9kN+K3PF11WOU0WK+QsK1
-	hk/g+ksmC9zUZT7hAJkMzQvs/TPZrgY8RMMoAbA=
-X-Google-Smtp-Source: ABdhPJzKltDtdTts8QUVJvZE8gP3N3jixf5ONmiOYDxKvSYVVHTyD2yp+Gzctw4uFDbNFV326kDiZA==
-X-Received: by 2002:a17:903:2447:b0:151:f899:9d9d with SMTP id l7-20020a170903244700b00151f8999d9dmr21068702pls.28.1647204819925;
-        Sun, 13 Mar 2022 13:53:39 -0700 (PDT)
+        bh=VIUAHpOTdOAYXiyi70r1Y/OI4hf4ZvtDw2f7LPNqKyE=;
+        b=4sT9rVzL3CBJeGANBEImT88lZ+qvhIXOWI4MRX2GLGwpy3MUh86FSRjLS54vYJh/rp
+         JefWwM9hLaeihk1FWp+B52pWNKBgnMvjf6v2HJg8wcPXtUUOGIzRk1i5pQ+BlRHf7rZf
+         tYhLFiJBYTBs6XTHFOEU7Vxe2VSHK3iVKuIINI64QB2NxcPqIjznnbasZhj70C4YF3Z6
+         4tUWp1fsFS2x000Db0vY5W5tVGy68pShx9C0zvnJAMhfHnTkeRuyzQ9YkggxmMq2u8L0
+         tlnMNfO3rvbEFhCJSK7O+WyQ87tDXANomHEzn0Q2+L5Iv4N2dGTmUT2i6UnvClIagkBq
+         1fbA==
+X-Gm-Message-State: AOAM5325v/2AGJ9a0XMWvkK6YvfDLDdvtgc8zORQRubYvNQfDQ/dJBsv
+	vr6yfRmDe1BzYgK7dDqmwMyMoO29+DgUsZYa
+X-Google-Smtp-Source: ABdhPJxbcUCc9ft1MU71Lw7sZM0qbKA+WGg4MuiBgfPwfsSuGojFnRBYheYWTMBAunqNi44Y2Lcqqw==
+X-Received: by 2002:a17:90a:9503:b0:1bc:7783:4513 with SMTP id t3-20020a17090a950300b001bc77834513mr5831783pjo.74.1645590186629;
+        Tue, 22 Feb 2022 20:23:06 -0800 (PST)
 Return-Path: <bot@kernelci.org>
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id l9-20020a655609000000b0037589f4337dsm14549767pgs.78.2022.03.13.13.53.39
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
+        by smtp.gmail.com with ESMTPSA id 10sm3069546pgn.0.2022.02.22.20.23.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Mar 2022 13:53:39 -0700 (PDT)
-Message-ID: <622e59d3.1c69fb81.54284.52e9@mx.google.com>
-Date: Sun, 13 Mar 2022 13:53:39 -0700 (PDT)
+        Tue, 22 Feb 2022 20:23:06 -0800 (PST)
+Message-ID: <6215b6aa.1c69fb81.c5d16.79b8@mx.google.com>
+Date: Tue, 22 Feb 2022 20:23:06 -0800 (PST)
 MIME-Version: 1.0
 X-Kernelci-Report-Type: test
-X-Kernelci-Tree: cip-gitlab
-X-Kernelci-Branch: ci/iwamatsu/linux-4.19.y-cip-rc
-X-Kernelci-Kernel: v4.19.231-cip68-123-g92e3e7f3d4df
-Subject: cip-gitlab/ci/iwamatsu/linux-4.19.y-cip-rc baseline-nfs: 12 runs, 1 regressions (v4.19.231-cip68-123-g92e3e7f3d4df) #kernelci
+X-Kernelci-Tree: cip
+X-Kernelci-Branch: linux-5.10.y-cip
+X-Kernelci-Kernel: v5.10.100-cip2
+Subject: cip/linux-5.10.y-cip baseline: 64 runs, 2 regressions (v5.10.100-cip2) #kernelci
 To: Cipproject+Cip-Dev via Email Integration <cip-dev@lists.cip-project.org>
 From: "kernelci.org bot" <bot@kernelci.org>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="us-ascii"
 List-Id: <cip-dev.lists.cip-project.org>
 
-cip-gitlab/ci/iwamatsu/linux-4.19.y-cip-rc baseline-nfs: 12 runs, 1 regress=
-ions (v4.19.231-cip68-123-g92e3e7f3d4df)
+cip/linux-5.10.y-cip baseline: 64 runs, 2 regressions (v5.10.100-cip2)
 
 Regressions Summary
 -------------------
 
-platform         | arch  | lab           | compiler | defconfig            =
-      | regressions
------------------+-------+---------------+----------+----------------------=
-------+------------
-rk3399-gru-kevin | arm64 | lab-collabora | gcc-10   | defconfig+arm64-chrom=
-ebook | 1          =
+platform                 | arch | lab          | compiler | defconfig      =
+    | regressions
+-------------------------+------+--------------+----------+----------------=
+----+------------
+imx6q-var-dt6customboard | arm  | lab-baylibre | gcc-10   | multi_v7_defcon=
+fig | 2          =
 
 
-  Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fiwamatsu%2=
-Flinux-4.19.y-cip-rc/kernel/v4.19.231-cip68-123-g92e3e7f3d4df/plan/baseline=
--nfs/
+  Details:  https://kernelci.org/test/job/cip/branch/linux-5.10.y-cip/kerne=
+l/v5.10.100-cip2/plan/baseline/
 
-  Test:     baseline-nfs
-  Tree:     cip-gitlab
-  Branch:   ci/iwamatsu/linux-4.19.y-cip-rc
-  Describe: v4.19.231-cip68-123-g92e3e7f3d4df
-  URL:      https://gitlab.com/cip-project/cip-kernel/linux-cip.git
-  SHA:      92e3e7f3d4dfeddc69231ba7a1a4f6b0bbece2e6 =
+  Test:     baseline
+  Tree:     cip
+  Branch:   linux-5.10.y-cip
+  Describe: v5.10.100-cip2
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.g=
+it
+  SHA:      cacf08e29f7abd0acd44dd086650d57fb159d76e =
 
 
 
@@ -88,38 +86,63 @@ Test Regressions
 
 
 
-platform         | arch  | lab           | compiler | defconfig            =
-      | regressions
------------------+-------+---------------+----------+----------------------=
-------+------------
-rk3399-gru-kevin | arm64 | lab-collabora | gcc-10   | defconfig+arm64-chrom=
-ebook | 1          =
+platform                 | arch | lab          | compiler | defconfig      =
+    | regressions
+-------------------------+------+--------------+----------+----------------=
+----+------------
+imx6q-var-dt6customboard | arm  | lab-baylibre | gcc-10   | multi_v7_defcon=
+fig | 2          =
 
 
-  Details:     https://kernelci.org/test/plan/id/622e4d7762fc2fe421c6296e
+  Details:     https://kernelci.org/test/plan/id/6215a91c08e491e39ec62995
 
-  Results:     82 PASS, 6 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-4=
-.19.y-cip-rc/v4.19.231-cip68-123-g92e3e7f3d4df/arm64/defconfig+arm64-chrome=
-book/gcc-10/lab-collabora/baseline-nfs-rk3399-gru-kevin.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-4=
-.19.y-cip-rc/v4.19.231-cip68-123-g92e3e7f3d4df/arm64/defconfig+arm64-chrome=
-book/gcc-10/lab-collabora/baseline-nfs-rk3399-gru-kevin.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
-220228.1/arm64/initrd.cpio.gz =
+  Results:     4 PASS, 2 FAIL, 1 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.100=
+-cip2/arm/multi_v7_defconfig/gcc-10/lab-baylibre/baseline-imx6q-var-dt6cust=
+omboard.txt
+  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.100=
+-cip2/arm/multi_v7_defconfig/gcc-10/lab-baylibre/baseline-imx6q-var-dt6cust=
+omboard.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20220218.1/armel/rootfs.cpio.gz =
 
 
 
-  * baseline-nfs.bootrr.rockchip-i2s1-probed: https://kernelci.org/test/cas=
-e/id/622e4d7762fc2fe421c62994
-        new failure (last pass: v4.19.229-cip67-111-g5c3c0b39cf3b)
+  * baseline.dmesg.alert: https://kernelci.org/test/case/id/6215a91c08e491e=
+39ec62999
+        failing since 21 days (last pass: v5.10.83-cip1-151-ga4163710a1dc, =
+first fail: v5.10.83-cip1-178-g2cf1d12aab81)
+        4 lines
 
-    2022-03-13T20:00:36.772424  <8>[   37.616344] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Drockchip-i2s0-probed RESULT=3Dpass>
-    2022-03-13T20:00:37.797686  /lava-5872198/1/../bin/lava-test-case   =
+    2022-02-23T03:24:52.676373  kern  :alert : 8<--- cut here ---
+    2022-02-23T03:24:52.707284  kern  :alert : Unhandled fault: alignment e=
+xception (0x001) at 0xcec60217
+    2022-02-23T03:24:52.707806  kern  :alert : pgd =3D (ptrval)
+    2022-02-23T03:24:52.708694  kern  :alert : [<8>[   44.966713] <LAVA_SIG=
+NAL_TESTCASE TEST_CASE_ID=3Dalert RESULT=3Dfail UNITS=3Dlines MEASUREMENT=
+=3D4>
+    2022-02-23T03:24:52.708961  cec60217] *pgd=3D1ec1141e(bad)   =
+
+
+  * baseline.dmesg.emerg: https://kernelci.org/test/case/id/6215a91c08e491e=
+39ec6299a
+        failing since 21 days (last pass: v5.10.83-cip1-151-ga4163710a1dc, =
+first fail: v5.10.83-cip1-178-g2cf1d12aab81)
+        26 lines
+
+    2022-02-23T03:24:52.760572  kern  :emerg : Internal error: : 1 [#1] SMP=
+ ARM
+    2022-02-23T03:24:52.761083  kern  :emerg : Process kworker/1:5 (pid: 95=
+, stack limit =3D 0x(ptrval))
+    2022-02-23T03:24:52.761328  kern  :emerg : Stack: (0xc36d5eb0 to<8>[   =
+45.013689] <LAVA_SIGNAL_TESTCASE TEST_CASE_ID=3Demerg RESULT=3Dfail UNITS=
+=3Dlines MEASUREMENT=3D26>
+    2022-02-23T03:24:52.761558   0xc36d6000)
+    2022-02-23T03:24:52.761775  kern  :emerg : 5ea0<8>[   45.024991] <LAVA_=
+SIGNAL_ENDRUN 0_dmesg 1609005_1.5.2.4.1>   =
 
  =20
 
