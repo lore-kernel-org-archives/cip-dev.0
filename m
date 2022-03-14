@@ -1,129 +1,167 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <chris.paterson2@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84AD7C433F5
-	for <webhook@archiver.kernel.org>; Mon, 14 Mar 2022 19:02:51 +0000 (UTC)
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com
- (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.72])
- by mx.groups.io with SMTP id smtpd.web08.744.1647284570221726843
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C087EC433EF
+	for <webhook@archiver.kernel.org>; Mon, 14 Mar 2022 21:30:56 +0000 (UTC)
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com
+ (JPN01-OS0-obe.outbound.protection.outlook.com [40.107.113.120])
+ by mx.groups.io with SMTP id smtpd.web08.2549.1647293454329005100
  for <cip-dev@lists.cip-project.org>;
- Mon, 14 Mar 2022 12:02:51 -0700
+ Mon, 14 Mar 2022 14:30:55 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=LHesjujq;
- spf=pass (domain: siemens.com, ip: 40.107.21.72,
- mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@renesas.com header.s=selector1 header.b=FkvmUMWj;
+ spf=pass (domain: renesas.com, ip: 40.107.113.120,
+ mailfrom: chris.paterson2@renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Elf6bwXSzBTGo8N7aDncBotdX2dlOGSlBzKvTecGJd8UkAJrPczSpyfWoN4XTrxX1lpPf7LQ56y7jAIYqiWYapshhU4nvCHim52w8v7TnRxdBdRSO6n+yHRKIPv4LDIPSBOaE3yGUDTSUoUfqp4DZQVwyi6XycTxwLNpMpkGM32+q+aTBeHryABUcm280Xd7OgfCF6NvdzVE62YCMZVIV4QJg9gsfM6TZNacBeizWLCg0uleSHzRcCbLPy1OWIQqX3EAMCXV59xbESR1XVfYYcdEaxXr50+UdX33wTAqYbejWeCcrqjcMC52Rx5T/2h/b55abp0PYGyqA0M8m2PaNA==
+ b=Ncs1yz2BRQ1jkibDbXOPUmP53vt/ms0++F7lpHaHHHD+/EUFG+hvSC079RTYzn256yxpC2WfmVwKCabCloU+7DErJgFQkQ0mJmBx6/86mO05vZQXor2LJjf/CVV+EQEwpniI+cq8Bzg5/Y7gnzBI0H5F9695xQXmfX80muHeynBDgjvAOrrSn4997R3OoSwe8b556XHuUqAu01q4KpxV+ho1r3+ePVdoedfssCE0n2FycRwIgc0+U3f+VqJJB1YqbRfktL6S4/2w4051RHHcFyR6iyGmaW1sq205UuZ7xep/FRftfUSaF0ED3nBJfknFZD9XWq+uOVJ77IiwJALaHw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mXRRWKaFNenesU3xMYRM+uf/3FLxSMKEAKYt3gy4JJc=;
- b=cT5dXyFIZjI4dQB5rRpaq+CJnRlEnC13KfiMO1fyZyDQ6frrwp9f9MofnmD/PVwiNDFRTeWEtbD2aDPgI+bmftVXVHjf2gc8+8wrHuij0WJ8sfYqRoW7ItKUmMciLApnkq4CuGISsSl4r/eEM7lxS3emw3QJ3yADLTuveUD6HqthwFyN9X/gnuCY3gF5kqdcwXDwU0JZdLoqmf4lRGeCZ8Sfc1ZHsvvhwB0RhCJCYivcLUCDDBn+UCc1aFSU0QTHv4s6eGmuXdETsBVo/0zQrAsyNvyUCNvaSu3Dm7ZCRI5509NC3oiukOvroKaVOYwMCOwSo/Blhu0wPp32tUwigQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.70) smtp.rcpttodomain=lists.cip-project.org
- smtp.mailfrom=siemens.com; dmarc=pass (p=none sp=none pct=100) action=none
- header.from=siemens.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
+ bh=8B+AKSi6iJ8VZH/BiRMOt2kQ8weP/+4gBobv2FRgL4I=;
+ b=TtEZEkq8gN+oj0bxMQtZucHloHbDUQ7e3Ln5xdNg/fLKAhh102mbFbqdox/fniEaDJodn3NCim825P6Twg1Uq1yRsJQX+UImCfR7aSbnmhNcP1AEVWlJsnLki78JVW3b+UBwXgcXb2mtQoYk8CjZs/YPkuNFhZIOFxpAivE6daVh3fQlTnykuQdvjbiButf2T9Jc8YugDxf9/KA9GpYXetM7ll6vto8+rOUsKgNgf3U7OC3rIafCFkfmAwXnhgpbxN/ojoI4XozzfYPQBna3YbxkQqIy4GKoD+lYKgxDAyJN/dOzUzfJY0Unuv6YIbIJJZGy9O/dEm48pjdwXVds/A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mXRRWKaFNenesU3xMYRM+uf/3FLxSMKEAKYt3gy4JJc=;
- b=LHesjujqpq8aGZ85qYEQaAQkQWfgEpVcUf/Wmzmh10h+8jrZLhBXx3J/phqML/ghaxkxfZlch/zcP+npSdmty6627MvZFa2eZA6NkQeytlku9BQgrN1G/oM+9wt7VqA9fEu6EMhOz9YbWSdkF5kcJUvUg8eu6GHxxp03Yqo9rUyTyOETjPii1OOPw9Qnfirp4bTAUOG8soheWH9df+KdK9D5UDmUjw6tGL3O8SdWw4uaFH7TAmRdJc7Mw3Jjxguq+lOFKrFCJX/E6v7SBfbi+isSxJryhAdkRSSUNOc6JzqlZIAkNJwMf9/8ENv//xayrw0s79e5tgkbP/TtxNPm+A==
-Received: from DB6PR0501CA0020.eurprd05.prod.outlook.com (2603:10a6:4:8f::30)
- by VI1PR10MB1886.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:803:38::12) with
+ bh=8B+AKSi6iJ8VZH/BiRMOt2kQ8weP/+4gBobv2FRgL4I=;
+ b=FkvmUMWjUTtMaJjGkzs+62XfdzensWpVdqq5Uab/XNrxNcyY9PwY62IL7ImvNh1gsM5ZKDkVwvVUIbbYe8pgixkzDdoOfPdNIhV1hRc92sgtttDDylszUpvmOum8K0Mq5u2ypmB6jftsenJOdcFAa1OPmtP5lPCAsrOWEYgwr3A=
+Received: from OSZPR01MB6877.jpnprd01.prod.outlook.com (2603:1096:604:130::9)
+ by OSAPR01MB7493.jpnprd01.prod.outlook.com (2603:1096:604:143::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5061.22; Mon, 14 Mar
- 2022 19:02:45 +0000
-Received: from DB5EUR01FT053.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:4:8f:cafe::56) by DB6PR0501CA0020.outlook.office365.com
- (2603:10a6:4:8f::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5061.28 via Frontend
- Transport; Mon, 14 Mar 2022 19:02:44 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.70)
- smtp.mailfrom=siemens.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=siemens.com;
-Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.70 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.70; helo=hybrid.siemens.com;
-Received: from hybrid.siemens.com (194.138.21.70) by
- DB5EUR01FT053.mail.protection.outlook.com (10.152.5.159) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5061.22 via Frontend Transport; Mon, 14 Mar 2022 19:02:44 +0000
-Received: from DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) by
- DEMCHDC9SJA.ad011.siemens.net (194.138.21.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.18; Mon, 14 Mar 2022 20:02:44 +0100
-Received: from [167.87.72.30] (167.87.72.30) by DEMCHDC8A0A.ad011.siemens.net
- (139.25.226.106) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.18; Mon, 14 Mar
- 2022 20:02:43 +0100
-Message-ID: <c11aa369-ca60-5e22-6a40-22e44a33c345@siemens.com>
-Date: Mon, 14 Mar 2022 20:02:43 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: [isar-cip-core][PATCH] linux-cip: Update to 5.10.104-cip3-rt3
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5061.24; Mon, 14 Mar
+ 2022 21:30:50 +0000
+Received: from OSZPR01MB6877.jpnprd01.prod.outlook.com
+ ([fe80::f4c0:b88d:ffb5:bbff]) by OSZPR01MB6877.jpnprd01.prod.outlook.com
+ ([fe80::f4c0:b88d:ffb5:bbff%8]) with mapi id 15.20.5061.028; Mon, 14 Mar 2022
+ 21:30:50 +0000
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: Pavel Machek <pavel@denx.de>, "cip-dev@lists.cip-project.org"
+	<cip-dev@lists.cip-project.org>
+Subject: RE: Boot error on altera board
+Thread-Topic: Boot error on altera board
+Thread-Index: AQHYN8rmGpFYo8bYBUu345QyBB8JWKy/ZYOQ
+Date: Mon, 14 Mar 2022 21:30:50 +0000
+Message-ID: 
+ <OSZPR01MB68774B63F705CD38DD349325B70F9@OSZPR01MB6877.jpnprd01.prod.outlook.com>
+References: <20220314174233.GA990@duo.ucw.cz>
+In-Reply-To: <20220314174233.GA990@duo.ucw.cz>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-To: cip-dev <cip-dev@lists.cip-project.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.87.72.30]
-X-ClientProxiedBy: DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) To
- DEMCHDC8A0A.ad011.siemens.net (139.25.226.106)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ae43d1c6-21ac-4db7-5ea4-08da05ed38ea
-X-MS-TrafficTypeDiagnostic: VI1PR10MB1886:EE_
-X-Microsoft-Antispam-PRVS: 
-	<VI1PR10MB18862A12F8217868C35ECC1D950F9@VI1PR10MB1886.EURPRD10.PROD.OUTLOOK.COM>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	Y9eay7gxBm4/ApekL0XpcazrehAVhxlMUGBOgxoQHSkQNGjdy3pPNHt6P3FRss/3D1HHKAba2UR4hZdjuxhm7aFPvQrvM3UTat0VTXrrakEmIWUQ7C7taWKvB4CiXZRBM0A9mC0fL64dq/SBLqBmXYbzAV3x4WK4p8K/vfzTnYixDYHYCGFrjAVxApLQdK8agei+2BUgWx61nlIB5YCpt7CYT/8gK7Vz9uP6FapIsrAX/aW7qwsl29KnAr8+1iP4gf9K0gXDUsK+CD/zjKzG/RY2ZCKq1lFxk0GGn+enjpDf0B/H+vsdqhaT0EdGhbv42Df9MgPG1JfmDzxi7zPhu8B9SQwCn17ENhct/8M228reXavwgSjs8D+I+2vlEYohk3IHaqi1xMRAZWjJY91MV7zHfE93eqH1LxpjnRzsMmjefPPiMa3rJmjGUwBMG7T6bExRoGatdtpJiJ4mt9t8dr+xwwQmRFXFvvC5SEfrPxQejRy2s5fMvFxh8TckkzPMuziCtNdgZFo4U+wg4tM8CNGFMzPUMNzWrLgVMz1zv1ZLwd7E1oiHwqToauI2HAGOf8jcfUadnrQLHZgkbcuYy4Flh1V30UPOuf4bnOdVibgyABP5hj8iCm9sYofSZTbDmAn7tm8DAI4+v9QiReyduwQFvzuT46oucZYe5d+a4qwZ8EYKLm/3VNIuDYMs01qyVkRqr4arlddOlwRAPJkezHeaqXUnxXj3tbotVteTmGftSZu/bwAT51zo8sNA0De5
-X-Forefront-Antispam-Report: 
-	CIP:194.138.21.70;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:hybrid.siemens.com;CAT:NONE;SFS:(13230001)(4636009)(46966006)(36840700001)(40470700004)(16576012)(83380400001)(2906002)(316002)(6916009)(6706004)(47076005)(31696002)(86362001)(26005)(36860700001)(31686004)(8936002)(336012)(186003)(2616005)(44832011)(40460700003)(16526019)(36756003)(956004)(5660300002)(7596003)(70586007)(356005)(8676002)(82310400004)(508600001)(82960400001)(70206006)(7636003)(3940600001)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Mar 2022 19:02:44.5837
- (UTC)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 99946dc7-8d12-41b3-4ef8-08da0601e953
+x-ms-traffictypediagnostic: OSAPR01MB7493:EE_
+x-microsoft-antispam-prvs: 
+ <OSAPR01MB74936AA42773EDF7C5AD3EF1B70F9@OSAPR01MB7493.jpnprd01.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ O1H9iZ6mdUGd2OXVPISu3+t64ohv3/lFObasAtDDtKFcSTV3wr7nej3YnNb/Ywq7G8EXOgwiEAegl14jS+rBI5OsQxMLroVPw6aSbOQl8IJ2UjoWqqEvRWq0j3QSKmJIDV55a6ES8JSPxAPWZDOW7bH82q9J61m5yn7juLazJfm8X7K3ME4MXhwMBt9SxAGCtDJW7ZTp03RnPddS+kQPrpX9ijYBcmsr2fOVJxAItMdKagnXQgVaCX5ETwFK4H93JQ/xLnP4q9HrsNcnXMb8x8OhJnAoOVOQEYLXX0ACPEVlnlsh/VG3quVqlpBVMXq5018EHVK8l8QegE3G+7sav5Eub0TaEDNq8acd57cEDw9BYuauXQC09LrqeGcIxoVhKHSc8r+NT1e4kzjOthTnskxTA13BosxEKIJIRufrmpCFwkXFfLEkoIxqlSP4Pdp2YHdoLvvKN4VJhIbvYTLroY/ZZAlOQmZTF9/1uU2Y0AM03v4vNaQ1HNS2vNPivJjflUQm79HzV1pWAan6v3YGQmBhfF4fWYrB3HjaLdinW2akYZjVh51M5gBU9dqRRGj0D21L4o6FoaH39md3a3xJwA1CpasEAENeIXZnyRoBbqINSl8FcF74iB5Hnd4YxYlIMVc5dys9thEPgEj0Kpt65Sm6diJNdbqCSqussb1XiOmwdUzX85ZtF2slRkgv8kyWpECp1Uxj+Nknxx/ioNj4sv4DEhARiiEx6KYiNn0XFUp+5L0Lw1rOs2Cth6huT+JWE0Jm2Vjd0gxdMmyZN0He72DR1LkRoZS/qZgGqgCEbyx/luPReW/oZK6PB4a7ahKgF8gBjoi3DFHMW76fd6RFRw==
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB6877.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(316002)(9686003)(8676002)(2906002)(76116006)(110136005)(66946007)(66556008)(66476007)(66446008)(64756008)(55016003)(71200400001)(6506007)(33656002)(966005)(7696005)(5660300002)(8936002)(52536014)(508600001)(26005)(38070700005)(186003)(83380400001)(86362001)(38100700002)(122000001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?Windows-1252?Q?cwg++b9w3VcYQswyno4DBLZKC28Qs78NLl/syp0so9QyGuNUoRQCMrwK?=
+ =?Windows-1252?Q?RGy5ous7LWtJgJfVKpGcNxO3v8DzJtUqb1Lsifs8E6XZe3ddA42psBcL?=
+ =?Windows-1252?Q?Deoygg6YZtmunMSwk5cm+cODkIl41Aq9eBDV/z8E7P2lzdikumSoGbtg?=
+ =?Windows-1252?Q?sAxnwXEGhUF/fIDekwEkSGTW1i2rSseERw/B/5E5I9xkLLmu3EA31Zrt?=
+ =?Windows-1252?Q?2bFiBhUxGKNC5grdfXqmH3hQY4wRN5viNkeYcycXMsu23RghgHLiOhzH?=
+ =?Windows-1252?Q?nPjpNkmnJQGxYzlQFyHyJyebkS/JpLYxAjL7XyHq4so5DDZeugnvj2g4?=
+ =?Windows-1252?Q?H3yt8vN/c0eE82WG1Eqyb78PIBiVcpGjSNjPNb6pDOpzNuUC6HJZq7aF?=
+ =?Windows-1252?Q?am208qzCAltbL+Sd3xJHziMAQitPIOm2RjvWdZoxwOqU1Tm8drwSPEbv?=
+ =?Windows-1252?Q?cBqBYJiI7lRfCYCT6/hdpbxYUjf0uxXI4HEsJvVjbVl35VVKU2GM8dp6?=
+ =?Windows-1252?Q?1uSnp0M9z5nHQpDGgUjS010LTnAvG5FEhttLfb+ncqeBYm8Ei95/mAB1?=
+ =?Windows-1252?Q?/QeiXyi5kCmk5ioBhQPEvBUIk5XbJRj9vdPFvRclx3+XqeamOl0IhXff?=
+ =?Windows-1252?Q?QmegzekRJZLDgqJAu5I3KMaztmGVAiNbra8qUkBhq5i+RYpIs8XYufu/?=
+ =?Windows-1252?Q?sUvdulc00QCB1AIXRMEkv3QV3U8Z4CvsI3Slh9iEbDmQTe1j43yrEWw5?=
+ =?Windows-1252?Q?T5WYyK4nWZaFApzyeu2+ddwgU+qbBM6/NFMl9qD+sQs037xU1TY3Apds?=
+ =?Windows-1252?Q?vAvwzjbpwaIh1qRXlH3vMtW8GP0bzJsvMhD9fmD7IHIlyFTgHD4y0KNj?=
+ =?Windows-1252?Q?+TcNTfWsdH3GiZR27FrIyzb7FG2PUGL33DGPcLnjQPAy551FbfquZSUt?=
+ =?Windows-1252?Q?ZsVLK9VCm2e0TMs1asY+JBhwpSIxpTQPoG494OnARysvdRW0KpeTxdX8?=
+ =?Windows-1252?Q?m5RFdHgLojF0/64seh4r1nG07xELBdAf76Tb0tFp56tKLzjyjO5rZ8Xs?=
+ =?Windows-1252?Q?UmOFeQvjWDE9FxDmubXYUpo63/jr+7LE3g660j8H8BLv23o0oskrgK/a?=
+ =?Windows-1252?Q?nOe1qJA/fOBEaIztc7ncQCajLY+9e0ksGuXVLc315cnd4GSoktN0Rx17?=
+ =?Windows-1252?Q?N2ShJl18x6EKBseRVtbn/BShG7dvY5HKpLmo2ocHK+vdaxXrfO28N5/y?=
+ =?Windows-1252?Q?MuLaGf9OtJVEy3OiCd4+YILfOZ+16q77wsNQjRMwI6lCc7I6W7cXsRkJ?=
+ =?Windows-1252?Q?byMjSobcnyPTvV+Qsjeo33VJKMiKsrHvXItFOfe7DQGxDvgsH8MjWN3u?=
+ =?Windows-1252?Q?ILdlA5Vma7S644zOQ7RcloCqS46xjk+GU9awZWg15NWVzllOXgFOt7xF?=
+ =?Windows-1252?Q?tB1m6vvJcme0Jo6qOr41KElbr5+6Z49zEhRBHsrqKicaMv7UqwKK204s?=
+ =?Windows-1252?Q?VMc52bSA3M5VmXcUZeNO96K0YBK+uiTUZ0zhhKxqCWxBd53ATcMhQOMy?=
+ =?Windows-1252?Q?HbkdTwn9kxOiuZlxrZBiIwprqR6kIxplq9Fweg=3D=3D?=
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB6877.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-Network-Message-Id: 
- ae43d1c6-21ac-4db7-5ea4-08da05ed38ea
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
- TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.70];Helo=[hybrid.siemens.com]
-X-MS-Exchange-CrossTenant-AuthSource: 
-	DB5EUR01FT053.eop-EUR01.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB1886
+ 99946dc7-8d12-41b3-4ef8-08da0601e953
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Mar 2022 21:30:50.5162
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 
+ 6vGg6YkzZwW7lwLI3ew20Q0KVT1702XhrT8Qu16moLaiTfEBD9gdl2/oFzfe9XBlzSmsSXuIdgWKahy6BljV5GFem5kxV2UO/XJTPO6PhHw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB7493
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 14 Mar 2022 19:02:51 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7723
+ <cip-dev@lists.cip-project.org>; Mon, 14 Mar 2022 21:30:56 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7724
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+Hello Pavel,
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
- ...t_5.10.100-cip2-rt2.bb => linux-cip-rt_5.10.104-cip3-rt3.bb} | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
- rename recipes-kernel/linux/{linux-cip-rt_5.10.100-cip2-rt2.bb => linux-cip-rt_5.10.104-cip3-rt3.bb} (72%)
+> From: Pavel Machek <pavel@denx.de>
+> Sent: 14 March 2022 17:43
+>=20
+> Hi!
+>=20
+> I got dhcp error on Altera board:
+>=20
+> dhcp
+> =3D> dhcp
+> bootloader-commands: Wait for prompt ['=3D>', 'Resetting CPU', 'Must RESE=
+T
+> board to recover', 'TIMEOUT', 'Retry count exceeded', 'Retry time exceede=
+d;
+> starting again', 'ERROR: The remote end did not respond in time.', 'File =
+not
+> found', 'Bad Linux ARM64 Image magic!', 'Wrong Ramdisk Image Format',
+> 'Ramdisk image is corrupt or invalid', 'ERROR: Failed to allocate', 'TFTP=
+ error:
+> trying to overwrite reserved memory'] (timeout 00:05:02)
+> dhcp
+> ethernet@ff702000 Waiting for PHY auto negotiation to complete.........
+> TIMEOUT !
+> Could not initialize PHY ethernet@ff702000
+> matched a bootloader error message: 'TIMEOUT' (3)
+> end: 2.4.3 bootloader-commands (duration 00:00:12) [common]
+> ...
+> InfrastructureError: The Infrastructure is not working
+> correctly. Please report this error to LAVA admins
+>=20
+> https://lava.ciplatform.org/scheduler/job/647916
+>=20
+> This was second attempt to run the test, let me try to re-run it.
 
-diff --git a/recipes-kernel/linux/linux-cip-rt_5.10.100-cip2-rt2.bb b/recipes-kernel/linux/linux-cip-rt_5.10.104-cip3-rt3.bb
-similarity index 72%
-rename from recipes-kernel/linux/linux-cip-rt_5.10.100-cip2-rt2.bb
-rename to recipes-kernel/linux/linux-cip-rt_5.10.104-cip3-rt3.bb
-index 96c4d07..7d00418 100644
---- a/recipes-kernel/linux/linux-cip-rt_5.10.100-cip2-rt2.bb
-+++ b/recipes-kernel/linux/linux-cip-rt_5.10.104-cip3-rt3.bb
-@@ -13,4 +13,4 @@ require linux-cip-rt-common.inc
- 
- KERNEL_DEFCONFIG_VERSION ?= "5.10.y-cip"
- 
--SRC_URI[sha256sum] = "e642fc604b611dc6f3e8382447fb2bc4047d129a14cba3996d34b85e07ae9d3a"
-+SRC_URI[sha256sum] = "5455a0270bc098c82ee6a9b759db9fe1fb4f43a5fa9c8275bf129dbe2c38c91c"
--- 
-2.34.1
+Perhaps it was a random networking error at the lab in question.
+Looking at https://lava.ciplatform.org/scheduler/device_type/de0-nano-soc m=
+ost tests seem to be going through now.
+
+Kind regards, Chris=20
+
+>=20
+> Best regards,
+> 								Pavel
+> --
+> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
