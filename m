@@ -1,81 +1,77 @@
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
- by mx.groups.io with SMTP id smtpd.web10.5050.1647305469294362670
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+ by mx.groups.io with SMTP id smtpd.web09.4898.1647305467953186287
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Mon, 14 Mar 2022 17:51:09 -0700
+ Mon, 14 Mar 2022 17:51:08 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=LTAA2sot;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.210.172, mailfrom: bot@kernelci.org)
-Received: by mail-pf1-f172.google.com with SMTP id p8so16927179pfh.8
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Mon, 14 Mar 2022 17:51:09 -0700 (PDT)
+ dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=0xEAMV/b;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.177, mailfrom: bot@kernelci.org)
+Received: by mail-pl1-f177.google.com with SMTP id q13so14935542plk.12
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Mon, 14 Mar 2022 17:51:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=ygqfPUs3u80kGBbFqv/0/0uOrfgm8MqoQAgaZYCsgiw=;
-        b=LTAA2sotXga6ZrbX5JJEFL0VD6dac76zRLCk+TE4Tu+rr1+W2aMdIpjSRcRZBBXJ7x
-         waE8Ivj2l/aXSjxuQrihjyL5HgwGXLK38AaQjIRW6YBlkHITUrXH05cD2YDEL1UhRIk7
-         x9GvZwMRO99fylUV2PtpX2GzsJhJbWLBq7CTEYNCgauDiIHBWRANd3Ol1uCRt3z60FLh
-         c8vyNcO8afsstAj/yUxoKwPC4Po3x9nSoODOhbGINgCSMlUASzoC/yHwqj3lgRglxpGU
-         S9noxfZIzgVDBVvdciDGNX4dED0qrM/v1oqYHpiMLly7vDvETS3PRjmyeiPTfOcMJvUp
-         b/hQ==
+        bh=FmrZX0GoUzXATbO7/3JrKSbequJGa0y9pIUSN3/UKec=;
+        b=0xEAMV/bThefnKFL1dqhL/MIHlsc066BcPWwfKZDPRYfawSHSB01CM9JTRW0Qgi6mj
+         irY4k+OlaAIPIuD39tSogMakSr6xcU2clS+jN6syUDlEKf+hJ1GzmRvYmZgAfobc06pK
+         +hsvJdT1KtbQAHuILxN8rNCr2r7Mh+UAzcfS3uv/OUBLLfoIcIZg38UAWjpS/6l1/MkX
+         +8EsJies9n3tyRjgqPpZa6qc7UeflnUwf829wFiNORc5BNlv2aYc7qh5o3KEZto1W8R9
+         RuZzd1HiVfnkrmLPwRnz1889kkQVCiZyQkYOLPQOrqA57sYUoiWIxbcJXe4xF+1/wlcW
+         T03g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=ygqfPUs3u80kGBbFqv/0/0uOrfgm8MqoQAgaZYCsgiw=;
-        b=115XMWH78ATICkAnewASvvYscaloOwahsWpmhSqVJ6TxQkKNgQWV9mhonTZrIRhLX5
-         JMWIaQTlxxmS2KcYSNRT6gUQaqe8IxSFx9oE8vv+aln0RrAgXx39UpDd90sVzobMm4Qw
-         Xk9SPkGNIwPZ+bLbxQWx0r31aTP00LBn9j4SM6fg3+kqrBDQ4IubvIule7BNtmFw5Xy8
-         ID+81+qH2V8mRNJqkktWI/e/sqjH1wXnt/AS7bi8ezKbOhBY2YMjDKnC1qALm7m5C2Rc
-         wbb18U2JWWxR2/HPezNuJjYfvbpyqihxV5R0ChxhlppTEJ3MVhkfKz5UIckkf3XJwXC8
-         sa5w==
-X-Gm-Message-State: AOAM533lsNEiDtoPxKPFXb9TCOpnYCIU0vz7ag7TPxbeVOOq2wqQmTHQ
-	lNfbMZjsnmwvSuLEBPoO2rd+XSQZaRrb2ITxnw8=
-X-Google-Smtp-Source: ABdhPJzphr2wq3Ba3lVi6lBoz6qQrCgfpNXqhJVdMw4FkjzDGtBqTgnAN3+HDfFScrET44eIFQtG2w==
-X-Received: by 2002:a63:235b:0:b0:380:5d91:6cc with SMTP id u27-20020a63235b000000b003805d9106ccmr22101841pgm.183.1647305467624;
+        bh=FmrZX0GoUzXATbO7/3JrKSbequJGa0y9pIUSN3/UKec=;
+        b=SJJDE26BeTVRiobygW3yV/dF+khIYXmzFR+qiqXO2UHG3ZytxRShtz/FLjgLLKGuQj
+         63Vd0kE4/sJAyzd+kMeO2e2u9Mqf3S4Px4tM68TqFe6ecsN8E9jDRX1evLuLcxjNJrG0
+         qanEzdTK744qKsn9qOITVkzxtNfv44p6nsvJWLH9GedG302MCSUaixGVeXl6OXFU+4B3
+         xhQxU72+L8WirUcD8PcVnDVxjS1dseOEU0FLS/KQmZ2QE1q5FQ67RwU8CxlG3WZh18s+
+         B7sa60VXIYigS8c7WANSoHilHa0WojnQDWy0h3RkA8oLXSC6oxkGlNTTcz1+hBKoEdpk
+         4y/g==
+X-Gm-Message-State: AOAM5322DtIcmSmJwOwFRXNiTnQO1IcIQjqI15Q7VCb4Tyu2ewurERHu
+	AFBnU+eldXO009nU2Ppt5Nq7L5L9CBGIdiDawaY=
+X-Google-Smtp-Source: ABdhPJzzJEYCFTvfoQFtuoE998SVDvollKW6hcShoaxXAXaoHAhrFNaxW6MeYNKqyFKEH/D5D/BZGw==
+X-Received: by 2002:a17:903:244b:b0:151:d869:3b1f with SMTP id l11-20020a170903244b00b00151d8693b1fmr26264542pls.155.1647305467209;
         Mon, 14 Mar 2022 17:51:07 -0700 (PDT)
 Return-Path: <bot@kernelci.org>
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id q15-20020a63504f000000b0037425262293sm17918086pgl.43.2022.03.14.17.51.07
+        by smtp.gmail.com with ESMTPSA id c22-20020a17090abf1600b001bf4b374d1dsm667229pjs.47.2022.03.14.17.51.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Mar 2022 17:51:07 -0700 (PDT)
-Message-ID: <622fe2fb.1c69fb81.73824.e69c@mx.google.com>
-Date: Mon, 14 Mar 2022 17:51:07 -0700 (PDT)
+        Mon, 14 Mar 2022 17:51:06 -0700 (PDT)
+Message-ID: <622fe2fa.1c69fb81.3ec3.2bf1@mx.google.com>
+Date: Mon, 14 Mar 2022 17:51:06 -0700 (PDT)
 MIME-Version: 1.0
 X-Kernelci-Report-Type: test
 X-Kernelci-Tree: cip
 X-Kernelci-Branch: linux-5.10.y-cip-rt
 X-Kernelci-Kernel: v5.10.104-cip3-rt3
-Subject: cip/linux-5.10.y-cip-rt ltp-timers: 7 runs, 4 regressions (v5.10.104-cip3-rt3) #kernelci
+Subject: cip/linux-5.10.y-cip-rt ltp-mm: 5 runs, 1 regressions (v5.10.104-cip3-rt3) #kernelci
 To: Cipproject+Cip-Dev via Email Integration <cip-dev@lists.cip-project.org>
 From: "kernelci.org bot" <bot@kernelci.org>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="us-ascii"
 List-Id: <cip-dev.lists.cip-project.org>
 
-cip/linux-5.10.y-cip-rt ltp-timers: 7 runs, 4 regressions (v5.10.104-cip3-r=
-t3)
+cip/linux-5.10.y-cip-rt ltp-mm: 5 runs, 1 regressions (v5.10.104-cip3-rt3)
 
 Regressions Summary
 -------------------
 
-platform                 | arch  | lab           | compiler | defconfig    =
-              | regressions
--------------------------+-------+---------------+----------+--------------=
---------------+------------
-r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip       | gcc-10   | defconfig+arm=
-64-chromebook | 2          =
-
-rk3399-gru-kevin         | arm64 | lab-collabora | gcc-10   | defconfig+arm=
-64-chromebook | 2          =
+platform                  | arch   | lab           | compiler | defconfig  =
+                  | regressions
+--------------------------+--------+---------------+----------+------------=
+------------------+------------
+hp-x360-12b-n4000-octopus | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
+on...6-chromebook | 1          =
 
 
   Details:  https://kernelci.org/test/job/cip/branch/linux-5.10.y-cip-rt/ke=
-rnel/v5.10.104-cip3-rt3/plan/ltp-timers/
+rnel/v5.10.104-cip3-rt3/plan/ltp-mm/
 
-  Test:     ltp-timers
+  Test:     ltp-mm
   Tree:     cip
   Branch:   linux-5.10.y-cip-rt
   Describe: v5.10.104-cip3-rt3
@@ -95,79 +91,32 @@ Test Regressions
 
 
 
-platform                 | arch  | lab           | compiler | defconfig    =
-              | regressions
--------------------------+-------+---------------+----------+--------------=
---------------+------------
-r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip       | gcc-10   | defconfig+arm=
-64-chromebook | 2          =
+platform                  | arch   | lab           | compiler | defconfig  =
+                  | regressions
+--------------------------+--------+---------------+----------+------------=
+------------------+------------
+hp-x360-12b-n4000-octopus | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
+on...6-chromebook | 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/622fdfbcbcda248560c62999
+  Details:     https://kernelci.org/test/plan/id/622fdb271082530cdec62968
 
-  Results:     32 PASS, 4 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-chromebook
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
   Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip-rt/v5.10.=
-104-cip3-rt3/arm64/defconfig+arm64-chromebook/gcc-10/lab-cip/ltp-timers-r8a=
-774a1-hihope-rzg2m-ex.txt
+104-cip3-rt3/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-collabora/lt=
+p-mm-hp-x360-12b-n4000-octopus.txt
   HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip-rt/v5.10.=
-104-cip3-rt3/arm64/defconfig+arm64-chromebook/gcc-10/lab-cip/ltp-timers-r8a=
-774a1-hihope-rzg2m-ex.html
+104-cip3-rt3/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-collabora/lt=
+p-mm-hp-x360-12b-n4000-octopus.html
   Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20220228.1/arm64/initrd.cpio.gz =
+p/20220228.1/amd64/initrd.cpio.gz =
 
 
 
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/622fdfbcbcd=
-a248560c629a4
-        failing since 18 days (last pass: v5.10.83-cip1-rt1, first fail: v5=
-.10.100-cip2-rt2) =
-
-
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/622fdfbcbcd=
-a248560c629a4
-        failing since 18 days (last pass: v5.10.83-cip1-rt1, first fail: v5=
-.10.100-cip2-rt2) =
-
- =
-
-
-
-platform                 | arch  | lab           | compiler | defconfig    =
-              | regressions
--------------------------+-------+---------------+----------+--------------=
---------------+------------
-rk3399-gru-kevin         | arm64 | lab-collabora | gcc-10   | defconfig+arm=
-64-chromebook | 2          =
-
-
-  Details:     https://kernelci.org/test/plan/id/622fcfa0926733a2eec62968
-
-  Results:     32 PASS, 4 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip-rt/v5.10.=
-104-cip3-rt3/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/ltp-time=
-rs-rk3399-gru-kevin.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip-rt/v5.10.=
-104-cip3-rt3/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/ltp-time=
-rs-rk3399-gru-kevin.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20220228.1/arm64/initrd.cpio.gz =
-
-
-
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/622fcfa0926=
-733a2eec6296d
-        new failure (last pass: v5.10.100-cip2-rt2) =
-
-
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/622fcfa0926=
-733a2eec6296d
-        new failure (last pass: v5.10.100-cip2-rt2) =
+  * ltp-mm.login: https://kernelci.org/test/case/id/622fdb271082530cdec62969
+        new failure (last pass: v5.10.83-cip1-rt1) =
 
  =20
 
