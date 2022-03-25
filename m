@@ -1,81 +1,77 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <srinuvasan_a@mentor.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6272C433F5
-	for <webhook@archiver.kernel.org>; Thu, 24 Mar 2022 19:05:42 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web11.15251.1648148741114748253
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28BE9C433F5
+	for <webhook@archiver.kernel.org>; Fri, 25 Mar 2022 08:34:31 +0000 (UTC)
+Received: from esa4.mentor.iphmx.com (esa4.mentor.iphmx.com [68.232.137.252])
+ by mx.groups.io with SMTP id smtpd.web12.2856.1648197269674757719
  for <cip-dev@lists.cip-project.org>;
- Thu, 24 Mar 2022 12:05:42 -0700
+ Fri, 25 Mar 2022 01:34:29 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id DA8771C0B87; Thu, 24 Mar 2022 20:05:35 +0100 (CET)
-Date: Thu, 24 Mar 2022 20:05:35 +0100
-From: Pavel Machek <pavel@denx.de>
-To: nobuhiro1.iwamatsu@toshiba.co.jp
-Cc: pavel@denx.de, cip-dev@lists.cip-project.org
-Subject: Re: Doing 4.4-cip release
-Message-ID: <20220324190535.GA6144@duo.ucw.cz>
-References: <20220321083518.GA18233@amd>
- <TYAPR01MB62522189BBBBAE46DEA125DD92199@TYAPR01MB6252.jpnprd01.prod.outlook.com>
+ spf=pass (domain: mentor.com, ip: 68.232.137.252, mailfrom: srinuvasan_a@mentor.com)
+X-IronPort-AV: E=Sophos;i="5.90,209,1643702400";
+   d="scan'208";a="73584237"
+Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
+  by esa4.mentor.iphmx.com with ESMTP; 25 Mar 2022 00:34:29 -0800
+IronPort-SDR: 
+ HV9Rt5eeJeRsVlgcnUHlN0DdoaApiGLyWlAyn6VZ9U6fZ8wO+tN23Obe2Nk7CPbr2MbtU8a6qs
+ 2rHV643MX1VVW9/g6OZHrvI84qZXh3rF091bHsO9FT9dbIXjYIVOUchiJbNuAp/qshAMa0tTPI
+ +lgvbitH+k26JOYN54YEes/taplEDLEjLR+2/XtXU55ddVDme4FrNX/of1tsq14nr1PH/WQ6aP
+ RZ5/ONm5g/kr67aH+5v8uJVmGw9kZW/uqByXqWJSBBp5f4iNNAZvFyUyvm8z6Y9ju898gkcfaN
+ ZHc=
+From: Srinuvasan A <Srinuvasan_A@mentor.com>
+To: <cip-dev@lists.cip-project.org>
+CC: <jan.kiszka@siemens.com>, Srinuvasan A <srinuvasan_a@mentor.com>
+Subject: [cip-dev][isar-cip-core][PATCH] python3-shtab: add export to the
+ DEB_BUILD_PROFILES
+Date: Fri, 25 Mar 2022 14:04:08 +0530
+Message-ID: <20220325083408.4080473-1-Srinuvasan_A@mentor.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="pf9I7BMVVzbSWLtt"
-Content-Disposition: inline
-In-Reply-To: 
- <TYAPR01MB62522189BBBBAE46DEA125DD92199@TYAPR01MB6252.jpnprd01.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: svr-orw-mbx-13.mgc.mentorg.com (147.34.90.213) To
+ svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201)
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 24 Mar 2022 19:05:42 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7821
+ <cip-dev@lists.cip-project.org>; Fri, 25 Mar 2022 08:34:31 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7822
 
+From: Srinuvasan A <srinuvasan_a@mentor.com>
 
---pf9I7BMVVzbSWLtt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+When we build this recipes in downstream layer the DEB_BUILD_PROFILES not
+able to find by rule file hence it is not set the required build
+profiles.
 
-Hi!
+Here we disable the tests `PYBUILD_DISABLE=test`, but due to this
+unavailability of DEB_BUILD_PROFILES in rule file it is building along
+with the test hence it's getting failed like "Not able to import module
+pytest"
 
-> > linux-4.4.y-cip tree should be up-to-date with changes from 4.9.305 and=
- older.
-> >=20
-> > I believe it may be good time to do 4.4.x release; last release of 4.4.=
-y-cip was at
-> > Feb 14, and 4.9.306 contains speculation fixes that are rather intrusiv=
-e... so it
-> > may be good time to test that we did a good job on the easy changes.=09
->=20
-> I see.
-> BTW, linux-4.4.y-st tree, do you have any idea to have a git tag? When me=
-rging into cip tree,
-> I think the tags make it easier to manage. For example, create a tag the =
-string contained in
-> localversion-st file.
+Exported this one to access from rule file.
 
-Good idea. I pushed the tag, v4.4-st5 . (I plan to keep the tag in
-sync with 4.9: 4.9.30X should correspond to v4.4-stX).
+Signed-off-by: Srinuvasan A <srinuvasan_a@mentor.com>
+---
+ recipes-python/shtab/python3-shtab_1.4.2.bb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+diff --git a/recipes-python/shtab/python3-shtab_1.4.2.bb b/recipes-python/shtab/python3-shtab_1.4.2.bb
+index ce83d6b..554afd3 100644
+--- a/recipes-python/shtab/python3-shtab_1.4.2.bb
++++ b/recipes-python/shtab/python3-shtab_1.4.2.bb
+@@ -27,7 +27,7 @@ DEBIAN_BUILD_DEPENDS = " \
+     python3-setuptools-scm:native, \
+     "
+ 
+-DEB_BUILD_PROFILES = "nocheck"
++export DEB_BUILD_PROFILES = "nocheck"
+ 
+ do_prepare_build[cleandirs] += "${S}/debian"
+ do_prepare_build() {
+-- 
+2.25.1
 
---pf9I7BMVVzbSWLtt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYjzA/wAKCRAw5/Bqldv6
-8glsAJsGbOHrDlX83MdPwxzeY9MiTOUhXgCgoY7q7cjz822clPbBk9xeYsfJchE=
-=sQq2
------END PGP SIGNATURE-----
-
---pf9I7BMVVzbSWLtt--
 
