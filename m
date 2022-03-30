@@ -1,26 +1,26 @@
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web09.2209.1648666508225964836
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web11.2184.1648666500371105066
  for <cip-dev@lists.cip-project.org>;
- Wed, 30 Mar 2022 11:55:08 -0700
+ Wed, 30 Mar 2022 11:55:06 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+ dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.90,223,1643641200"; 
-   d="scan'208";a="116211087"
+   d="scan'208";a="115208905"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 31 Mar 2022 03:55:07 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 31 Mar 2022 03:55:06 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id A9F6D40D5446;
-	Thu, 31 Mar 2022 03:55:06 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 623E040D4D0B;
+	Thu, 31 Mar 2022 03:55:05 +0900 (JST)
 From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 08/39] mmc: renesas_sdhi: don't hardcode SDIF values
-Date: Wed, 30 Mar 2022 19:54:23 +0100
-Message-Id: <20220330185454.10887-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 07/39] mmc: renesas_sdhi: improve HOST_MODE usage
+Date: Wed, 30 Mar 2022 19:54:22 +0100
+Message-Id: <20220330185454.10887-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220330185454.10887-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20220330185454.10887-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -31,71 +31,90 @@ List-Id: <cip-dev.lists.cip-project.org>
 
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit 0e08a411585214360938022ca3f50a9f1cd91753 upstream.
+commit 4533c3eb893d8d6881f792a855fa5e11d5ddf0c2 upstream.
 
-Use a macro to name the hardcoded values. Also, move the SDIF register
-definition into the SDHI driver because this is an SDHI extension.
+HOST_MODE should have a CTL_ prefix, too. This makes the code more
+readable because we immediately know what it is. Also, remove the
+hardcoded values with something readable, too.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>
 Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Link: https://lore.kernel.org/r/20201111100244.15823-3-wsa+renesas@sang-eng=
+Link: https://lore.kernel.org/r/20201111100244.15823-2-wsa+renesas@sang-eng=
 ineering.com
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/mmc/host/renesas_sdhi_core.c | 7 +++++--
- drivers/mmc/host/tmio_mmc.h          | 1 -
- 2 files changed, 5 insertions(+), 3 deletions(-)
+ drivers/mmc/host/renesas_sdhi_core.c | 24 ++++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesa=
 s_sdhi_core.c
-index 0d46896176c6..c061c68c41d1 100644
+index eb33bbf368e5..0d46896176c6 100644
 --- a/drivers/mmc/host/renesas_sdhi_core.c
 +++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -49,6 +49,9 @@
- #define HOST_MODE_GEN3_32BIT	(HOST_MODE_GEN3_WMODE | HOST_MODE_GEN3_BUSWID=
-TH)
- #define HOST_MODE_GEN3_64BIT	0
+@@ -39,7 +39,15 @@
+ #include "renesas_sdhi.h"
+ #include "tmio_mmc.h"
 =20
-+#define CTL_SDIF_MODE	0xe6
-+#define SDIF_MODE_HS400		BIT(0)
+-#define HOST_MODE		0xe4
++#define CTL_HOST_MODE	0xe4
++#define HOST_MODE_GEN2_SDR50_WMODE	BIT(0)
++#define HOST_MODE_GEN2_SDR104_WMODE	BIT(0)
++#define HOST_MODE_GEN3_WMODE		BIT(0)
++#define HOST_MODE_GEN3_BUSWIDTH		BIT(8)
 +
++#define HOST_MODE_GEN3_16BIT	HOST_MODE_GEN3_WMODE
++#define HOST_MODE_GEN3_32BIT	(HOST_MODE_GEN3_WMODE | HOST_MODE_GEN3_BUSWID=
+TH)
++#define HOST_MODE_GEN3_64BIT	0
+=20
  #define SDHI_VER_GEN2_SDR50	0x490c
  #define SDHI_VER_RZ_A1		0x820b
- /* very old datasheets said 0x490c for SDR104, too. They are wrong! */
-@@ -381,7 +384,7 @@ static void renesas_sdhi_hs400_complete(struct mmc_host=
- *mmc)
- 		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+@@ -60,26 +68,26 @@ static void renesas_sdhi_sdbuf_width(struct tmio_mmc_ho=
+st *host, int width)
+ 	 */
+ 	switch (sd_ctrl_read16(host, CTL_VERSION)) {
+ 	case SDHI_VER_GEN2_SDR50:
+-		val =3D (width =3D=3D 32) ? 0x0001 : 0x0000;
++		val =3D (width =3D=3D 32) ? HOST_MODE_GEN2_SDR50_WMODE : 0;
+ 		break;
+ 	case SDHI_VER_GEN2_SDR104:
+-		val =3D (width =3D=3D 32) ? 0x0000 : 0x0001;
++		val =3D (width =3D=3D 32) ? 0 : HOST_MODE_GEN2_SDR104_WMODE;
+ 		break;
+ 	case SDHI_VER_GEN3_SD:
+ 	case SDHI_VER_GEN3_SDMMC:
+ 		if (width =3D=3D 64)
+-			val =3D 0x0000;
++			val =3D HOST_MODE_GEN3_64BIT;
+ 		else if (width =3D=3D 32)
+-			val =3D 0x0101;
++			val =3D HOST_MODE_GEN3_32BIT;
+ 		else
+-			val =3D 0x0001;
++			val =3D HOST_MODE_GEN3_16BIT;
+ 		break;
+ 	default:
+ 		/* nothing to do */
+ 		return;
+ 	}
 =20
- 	/* Set HS400 mode */
--	sd_ctrl_write16(host, CTL_SDIF_MODE, 0x0001 |
-+	sd_ctrl_write16(host, CTL_SDIF_MODE, SDIF_MODE_HS400 |
- 			sd_ctrl_read16(host, CTL_SDIF_MODE));
+-	sd_ctrl_write16(host, HOST_MODE, val);
++	sd_ctrl_write16(host, CTL_HOST_MODE, val);
+ }
 =20
- 	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_DT2FF,
-@@ -529,7 +532,7 @@ static void renesas_sdhi_reset_hs400_mode(struct tmio_m=
-mc_host *host,
- 			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
-=20
- 	/* Reset HS400 mode */
--	sd_ctrl_write16(host, CTL_SDIF_MODE, ~0x0001 &
-+	sd_ctrl_write16(host, CTL_SDIF_MODE, ~SDIF_MODE_HS400 &
- 			sd_ctrl_read16(host, CTL_SDIF_MODE));
-=20
- 	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_DT2FF, priv->scc_tappos);
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index 9546e542619c..7ff41185896a 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -42,7 +42,6 @@
- #define CTL_DMA_ENABLE 0xd8
- #define CTL_RESET_SD 0xe0
- #define CTL_VERSION 0xe2
--#define CTL_SDIF_MODE 0xe6
-=20
- /* Definitions for values the CTL_STOP_INTERNAL_ACTION register can take */
- #define TMIO_STOP_STP		BIT(0)
+ static int renesas_sdhi_clk_enable(struct tmio_mmc_host *host)
+@@ -800,7 +808,7 @@ static int renesas_sdhi_write16_hook(struct tmio_mmc_ho=
+st *host, int addr)
+ 	case CTL_SD_MEM_CARD_OPT:
+ 	case CTL_TRANSACTION_CTL:
+ 	case CTL_DMA_ENABLE:
+-	case HOST_MODE:
++	case CTL_HOST_MODE:
+ 		if (host->pdata->flags & TMIO_MMC_HAVE_CBSY)
+ 			bit =3D TMIO_STAT_CMD_BUSY;
+ 		fallthrough;
 --=20
 2.17.1
 
