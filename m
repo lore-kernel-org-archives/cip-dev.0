@@ -2,158 +2,114 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC118C433F5
-	for <webhook@archiver.kernel.org>; Wed, 30 Mar 2022 18:55:11 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com
- [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web09.2209.1648666508225964836
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A53B1C433EF
+	for <webhook@archiver.kernel.org>; Wed, 30 Mar 2022 18:55:12 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com
+ [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web11.2184.1648666500371105066
  for <cip-dev@lists.cip-project.org>;
- Wed, 30 Mar 2022 11:55:10 -0700
+ Wed, 30 Mar 2022 11:55:12 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=pass (domain: bp.renesas.com, ip: 210.160.252.172,
+ spf=pass (domain: bp.renesas.com, ip: 210.160.252.171,
  mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.90,223,1643641200";
-   d="scan'208";a="116211091"
+   d="scan'208";a="115208914"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 31 Mar 2022 03:55:10 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 31 Mar 2022 03:55:11 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 437EC40D4D0B;
-	Thu, 31 Mar 2022 03:55:09 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8A6FB40D4D0B;
+	Thu, 31 Mar 2022 03:55:10 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 10/39] mmc: tmio: set max_busy_timeout
-Date: Wed, 30 Mar 2022 19:54:25 +0100
-Message-Id: <20220330185454.10887-11-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 11/39] mmc: tmio: add hook for custom busy_wait
+ calculation
+Date: Wed, 30 Mar 2022 19:54:26 +0100
+Message-Id: <20220330185454.10887-12-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220330185454.10887-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20220330185454.10887-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 30 Mar 2022 18:55:11 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7861
+ <cip-dev@lists.cip-project.org>; Wed, 30 Mar 2022 18:55:12 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7862
 
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit 30ae3e13caeaa47884c222ebf5711ce27ed25f19 upstream.
+commit 58959f89dd3d8cc8bedcd2d665496603098b29a2 upstream.
 
-Set max_busy_timeouts for variants known to support the TOPxx bits in
-the SD_OPTION register. The timeout mechanism was running in the
-background but not yet properly handled in the driver. So, let the MMC
-core know when to not use R1B to avoid unhandled timeouts.
-
-My datasheets for older variants (tmio_mmc.c) suggest that they support
-it, too. However, actual bit descriptions are lacking, so I chose an
-opt-in approach.
+Newer SDHI variants can 'wait while busy' longer than the generic TMIO.
+Provide a hook to get the maximum cycle count to wait for. If the hook
+is not populated, fall back to a generic version which works well with
+all older TMIO/SDHI variants.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Link: https://lore.kernel.org/r/20201125213001.15003-2-wsa+renesas@sang-engineering.com
+Link: https://lore.kernel.org/r/20201125213001.15003-3-wsa+renesas@sang-engineering.com
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/mmc/host/renesas_sdhi_core.c |  3 +++
- drivers/mmc/host/tmio_mmc.h          |  2 ++
- drivers/mmc/host/tmio_mmc_core.c     | 15 +++++++++++++++
- drivers/mmc/host/uniphier-sd.c       |  1 +
- include/linux/mfd/tmio.h             |  7 ++++++-
- 5 files changed, 27 insertions(+), 1 deletion(-)
+ drivers/mmc/host/tmio_mmc.h      |  1 +
+ drivers/mmc/host/tmio_mmc_core.c | 17 ++++++++++++-----
+ 2 files changed, 13 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 751e21243ebf..980c50b9226e 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -1046,6 +1046,9 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 	/* All SDHI have SDIO status bits which must be 1 */
- 	mmc_data->flags |= TMIO_MMC_SDIO_STATUS_SETBITS;
- 
-+	/* All SDHI support HW busy detection */
-+	mmc_data->flags |= TMIO_MMC_USE_BUSY_TIMEOUT;
-+
- 	dev_pm_domain_start(&pdev->dev);
- 
- 	ret = renesas_sdhi_clk_enable(host);
 diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index 7ff41185896a..819198af17f4 100644
+index 819198af17f4..f60559bc413a 100644
 --- a/drivers/mmc/host/tmio_mmc.h
 +++ b/drivers/mmc/host/tmio_mmc.h
-@@ -80,6 +80,8 @@
- #define	CLK_CTL_SCLKEN		BIT(8)
+@@ -181,6 +181,7 @@ struct tmio_mmc_host {
+ 	void (*reset)(struct tmio_mmc_host *host);
+ 	bool (*check_retune)(struct tmio_mmc_host *host);
+ 	void (*fixup_request)(struct tmio_mmc_host *host, struct mmc_request *mrq);
++	unsigned int (*get_timeout_cycles)(struct tmio_mmc_host *host);
  
- /* Definitions for values the CTL_SD_MEM_CARD_OPT register can take */
-+#define CARD_OPT_TOP_MASK	0xf0
-+#define CARD_OPT_TOP_SHIFT	4
- #define CARD_OPT_WIDTH8		BIT(13)
- #define CARD_OPT_WIDTH		BIT(15)
- 
+ 	void (*prepare_hs400_tuning)(struct tmio_mmc_host *host);
+ 	void (*hs400_downgrade)(struct tmio_mmc_host *host);
 diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index ac4e7874a3f1..a896595cf575 100644
+index a896595cf575..85dc5b9f4e60 100644
 --- a/drivers/mmc/host/tmio_mmc_core.c
 +++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -885,6 +885,18 @@ static void tmio_mmc_set_bus_width(struct tmio_mmc_host *host,
+@@ -885,16 +885,20 @@ static void tmio_mmc_set_bus_width(struct tmio_mmc_host *host,
  	sd_ctrl_write16(host, CTL_SD_MEM_CARD_OPT, reg);
  }
  
-+static void tmio_mmc_max_busy_timeout(struct tmio_mmc_host *host)
-+{
-+	u16 val = sd_ctrl_read16(host, CTL_SD_MEM_CARD_OPT);
-+	unsigned int clk_rate = host->mmc->actual_clock ?: host->mmc->f_max;
-+	unsigned int cycles;
-+
-+	val = (val & CARD_OPT_TOP_MASK) >> CARD_OPT_TOP_SHIFT;
-+	cycles = 1 << (13 + val);
-+
-+	host->mmc->max_busy_timeout = cycles / (clk_rate / MSEC_PER_SEC);
+-static void tmio_mmc_max_busy_timeout(struct tmio_mmc_host *host)
++static unsigned int tmio_mmc_get_timeout_cycles(struct tmio_mmc_host *host)
+ {
+ 	u16 val = sd_ctrl_read16(host, CTL_SD_MEM_CARD_OPT);
+-	unsigned int clk_rate = host->mmc->actual_clock ?: host->mmc->f_max;
+-	unsigned int cycles;
+ 
+ 	val = (val & CARD_OPT_TOP_MASK) >> CARD_OPT_TOP_SHIFT;
+-	cycles = 1 << (13 + val);
++	return 1 << (13 + val);
 +}
 +
++static void tmio_mmc_max_busy_timeout(struct tmio_mmc_host *host)
++{
++	unsigned int clk_rate = host->mmc->actual_clock ?: host->mmc->f_max;
+ 
+-	host->mmc->max_busy_timeout = cycles / (clk_rate / MSEC_PER_SEC);
++	host->mmc->max_busy_timeout = host->get_timeout_cycles(host) /
++				      (clk_rate / MSEC_PER_SEC);
+ }
+ 
  /* Set MMC clock / power.
-  * Note: This controller uses a simple divider scheme therefore it cannot
-  * run a MMC card at full speed (20MHz). The max clock is 24MHz on SD, but as
-@@ -943,6 +955,9 @@ static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
- 		break;
- 	}
+@@ -1114,6 +1118,9 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
+ 	if (!(pdata->flags & TMIO_MMC_HAS_IDLE_WAIT))
+ 		_host->write16_hook = NULL;
  
-+	if (host->pdata->flags & TMIO_MMC_USE_BUSY_TIMEOUT)
-+		tmio_mmc_max_busy_timeout(host);
++	if (pdata->flags & TMIO_MMC_USE_BUSY_TIMEOUT && !_host->get_timeout_cycles)
++		_host->get_timeout_cycles = tmio_mmc_get_timeout_cycles;
 +
- 	/* Let things settle. delay taken from winCE driver */
- 	usleep_range(140, 200);
- 	if (PTR_ERR(host->mrq) == -EINTR)
-diff --git a/drivers/mmc/host/uniphier-sd.c b/drivers/mmc/host/uniphier-sd.c
-index 196e94bf37f0..73d5bebd0f33 100644
---- a/drivers/mmc/host/uniphier-sd.c
-+++ b/drivers/mmc/host/uniphier-sd.c
-@@ -586,6 +586,7 @@ static int uniphier_sd_probe(struct platform_device *pdev)
+ 	_host->set_pwr = pdata->set_pwr;
  
- 	tmio_data = &priv->tmio_data;
- 	tmio_data->flags |= TMIO_MMC_32BIT_DATA_PORT;
-+	tmio_data->flags |= TMIO_MMC_USE_BUSY_TIMEOUT;
- 
- 	host = tmio_mmc_host_alloc(pdev, tmio_data);
- 	if (IS_ERR(host))
-diff --git a/include/linux/mfd/tmio.h b/include/linux/mfd/tmio.h
-index 8ba042430d8e..27264fe4b3b9 100644
---- a/include/linux/mfd/tmio.h
-+++ b/include/linux/mfd/tmio.h
-@@ -55,7 +55,12 @@
-  */
- #define TMIO_MMC_HAS_IDLE_WAIT		BIT(4)
- 
--/* BIT(5) is unused */
-+/*
-+ * Use the busy timeout feature. Probably all TMIO versions support it. Yet,
-+ * we don't have documentation for old variants, so we enable only known good
-+ * variants with this flag. Can be removed once all variants are known good.
-+ */
-+#define TMIO_MMC_USE_BUSY_TIMEOUT	BIT(5)
- 
- /*
-  * Some controllers have CMD12 automatically
+ 	ret = tmio_mmc_init_ocr(_host);
 -- 
 2.17.1
 
