@@ -2,99 +2,92 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A96D3C433EF
-	for <webhook@archiver.kernel.org>; Wed, 30 Mar 2022 18:55:30 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com
- [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web11.2184.1648666500371105066
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB412C433EF
+	for <webhook@archiver.kernel.org>; Wed, 30 Mar 2022 18:55:36 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com
+ [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web11.2197.1648666535480144023
  for <cip-dev@lists.cip-project.org>;
- Wed, 30 Mar 2022 11:55:30 -0700
+ Wed, 30 Mar 2022 11:55:35 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=pass (domain: bp.renesas.com, ip: 210.160.252.171,
+ spf=pass (domain: bp.renesas.com, ip: 210.160.252.172,
  mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.90,223,1643641200";
-   d="scan'208";a="115208944"
+   d="scan'208";a="116211132"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 31 Mar 2022 03:55:29 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 31 Mar 2022 03:55:33 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id A7C9D40D4D0B;
-	Thu, 31 Mar 2022 03:55:28 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id E1C9640D4D0B;
+	Thu, 31 Mar 2022 03:55:32 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 25/39] mmc: tmio: reinit card irqs in reset routine
-Date: Wed, 30 Mar 2022 19:54:40 +0100
-Message-Id: <20220330185454.10887-26-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 28/39] clk: renesas: rzg2l: Check return value of
+ pm_genpd_init()
+Date: Wed, 30 Mar 2022 19:54:43 +0100
+Message-Id: <20220330185454.10887-29-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220330185454.10887-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20220330185454.10887-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 30 Mar 2022 18:55:30 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7876
+ <cip-dev@lists.cip-project.org>; Wed, 30 Mar 2022 18:55:36 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7879
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+commit 27527a3d3b162e4512798c058c0e8a216c721187 upstream.
 
-commit e315b1f3a170f368da5618f8a598e68880302ed1 upstream.
+Make sure we check the return value of pm_genpd_init() which might fail.
+Also add a devres action to remove the power-domain in-case the probe
+callback fails further down in the code flow.
 
-Refactor the code so that card detect irqs are always reenabled after a
-reset. This avoids doing it manually all over the code or forgetting to
-do this in the future.
-
-Reported-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-[wsa: added a comment when 'native_hotplug' has to be set]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Link: https://lore.kernel.org/r/20211103122646.64422-1-wsa+renesas@sang-engineering.com
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Fixes: ef3c613ccd68a ("clk: renesas: Add CPG core wrapper for RZ/G2L SoC")
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Link: https://lore.kernel.org/r/20211117115101.28281-2-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/mmc/host/tmio_mmc_core.c | 15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
+ drivers/clk/renesas/rzg2l-cpg.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 690094b0b6a8..79f237d754bd 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -958,14 +958,8 @@ static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
- 	case MMC_POWER_OFF:
- 		tmio_mmc_power_off(host);
- 		/* For R-Car Gen2+, we need to reset SDHI specific SCC */
--		if (host->pdata->flags & TMIO_MMC_MIN_RCAR2) {
--			host->reset(host);
--
--			if (host->native_hotplug)
--				tmio_mmc_enable_mmc_irqs(host,
--						TMIO_STAT_CARD_REMOVE |
--						TMIO_STAT_CARD_INSERT);
--		}
-+		if (host->pdata->flags & TMIO_MMC_MIN_RCAR2)
-+			tmio_mmc_reset(host);
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index a77cb47b75e7..1b1555deb20b 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -851,10 +851,16 @@ static void rzg2l_cpg_detach_dev(struct generic_pm_domain *unused, struct device
+ 		pm_clk_destroy(dev);
+ }
  
- 		host->set_clock(host, 0);
- 		break;
-@@ -1173,6 +1167,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
- 	if (mmc_can_gpio_cd(mmc))
- 		_host->ops.get_cd = mmc_gpio_get_cd;
++static void rzg2l_cpg_genpd_remove(void *data)
++{
++	pm_genpd_remove(data);
++}
++
+ static int __init rzg2l_cpg_add_clk_domain(struct device *dev)
+ {
+ 	struct device_node *np = dev->of_node;
+ 	struct generic_pm_domain *genpd;
++	int ret;
  
-+	/* must be set before tmio_mmc_reset() */
- 	_host->native_hotplug = !(mmc_can_gpio_cd(mmc) ||
- 				  mmc->caps & MMC_CAP_NEEDS_POLL ||
- 				  !mmc_card_is_removable(mmc));
-@@ -1302,10 +1297,6 @@ int tmio_mmc_host_runtime_resume(struct device *dev)
- 	if (host->clk_cache)
- 		host->set_clock(host, host->clk_cache);
+ 	genpd = devm_kzalloc(dev, sizeof(*genpd), GFP_KERNEL);
+ 	if (!genpd)
+@@ -865,7 +871,13 @@ static int __init rzg2l_cpg_add_clk_domain(struct device *dev)
+ 		       GENPD_FLAG_ACTIVE_WAKEUP;
+ 	genpd->attach_dev = rzg2l_cpg_attach_dev;
+ 	genpd->detach_dev = rzg2l_cpg_detach_dev;
+-	pm_genpd_init(genpd, &pm_domain_always_on_gov, false);
++	ret = pm_genpd_init(genpd, &pm_domain_always_on_gov, false);
++	if (ret)
++		return ret;
++
++	ret = devm_add_action_or_reset(dev, rzg2l_cpg_genpd_remove, genpd);
++	if (ret)
++		return ret;
  
--	if (host->native_hotplug)
--		tmio_mmc_enable_mmc_irqs(host,
--				TMIO_STAT_CARD_REMOVE | TMIO_STAT_CARD_INSERT);
--
- 	tmio_mmc_enable_dma(host, true);
- 
+ 	of_genpd_add_provider_simple(np, genpd);
  	return 0;
 -- 
 2.17.1
