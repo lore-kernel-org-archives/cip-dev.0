@@ -2,33 +2,33 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D52A3C64EC0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9108C64EBF
 	for <webhook@archiver.kernel.org>; Mon,  4 Apr 2022 18:46:48 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com
  [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web08.3452.1648842186562425330
+ by mx.groups.io with SMTP id smtpd.web09.3568.1648842202850727941
  for <cip-dev@lists.cip-project.org>;
- Fri, 01 Apr 2022 12:43:10 -0700
+ Fri, 01 Apr 2022 12:43:23 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
  spf=pass (domain: bp.renesas.com, ip: 210.160.252.171,
  mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.90,228,1643641200";
-   d="scan'208";a="115453849"
+   d="scan'208";a="115453870"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 02 Apr 2022 04:43:10 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 02 Apr 2022 04:43:22 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 02AC04011436;
-	Sat,  2 Apr 2022 04:43:08 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 6F52040061B8;
+	Sat,  2 Apr 2022 04:43:20 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [RESEND PATCH 5.10.y-cip 20/40] mmc: tmio: restore bus width when
- resetting
-Date: Fri,  1 Apr 2022 20:42:14 +0100
-Message-Id: <20220401194234.14057-21-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [RESEND PATCH 5.10.y-cip 26/40] mmc: tmio: reinit card irqs in reset
+ routine
+Date: Fri,  1 Apr 2022 20:42:20 +0100
+Message-Id: <20220401194234.14057-27-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220401194234.14057-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20220401194234.14057-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -36,84 +36,67 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 04 Apr 2022 18:46:48 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7931
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7937
 
-From: Takeshi Saito <takeshi.saito.xv@renesas.com>
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-commit 0a446288aa9f28ab00a31b8b51fdb005953f9f99 upstream.
+commit e315b1f3a170f368da5618f8a598e68880302ed1 upstream.
 
-Resetting the IP core will lose the bus width information and not all
-code paths recover it. So, make sure the latest bus width gets restored
-in the reset routine. For that, tmio_mmc_set_bus_width() is moved, but
-not modified.
+Refactor the code so that card detect irqs are always reenabled after a
+reset. This avoids doing it manually all over the code or forgetting to
+do this in the future.
 
-Signed-off-by: Takeshi Saito <takeshi.saito.xv@renesas.com>
-[wsa: reworded commit message]
+Reported-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+[wsa: added a comment when 'native_hotplug' has to be set]
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Link: https://lore.kernel.org/r/20210316085717.7276-2-wsa+renesas@sang-engineering.com
+Link: https://lore.kernel.org/r/20211103122646.64422-1-wsa+renesas@sang-engineering.com
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/mmc/host/tmio_mmc_core.c | 32 +++++++++++++++++---------------
- 1 file changed, 17 insertions(+), 15 deletions(-)
+ drivers/mmc/host/tmio_mmc_core.c | 15 +++------------
+ 1 file changed, 3 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 0c752b4348de..ee9dc175e444 100644
+index 690094b0b6a8..79f237d754bd 100644
 --- a/drivers/mmc/host/tmio_mmc_core.c
 +++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -164,6 +164,21 @@ static void tmio_mmc_enable_sdio_irq(struct mmc_host *mmc, int enable)
- 	}
- }
- 
-+static void tmio_mmc_set_bus_width(struct tmio_mmc_host *host,
-+				   unsigned char bus_width)
-+{
-+	u16 reg = sd_ctrl_read16(host, CTL_SD_MEM_CARD_OPT)
-+				& ~(CARD_OPT_WIDTH | CARD_OPT_WIDTH8);
-+
-+	/* reg now applies to MMC_BUS_WIDTH_4 */
-+	if (bus_width == MMC_BUS_WIDTH_1)
-+		reg |= CARD_OPT_WIDTH;
-+	else if (bus_width == MMC_BUS_WIDTH_8)
-+		reg |= CARD_OPT_WIDTH8;
-+
-+	sd_ctrl_write16(host, CTL_SD_MEM_CARD_OPT, reg);
-+}
-+
- static void tmio_mmc_reset(struct tmio_mmc_host *host)
- {
- 	/* FIXME - should we set stop clock reg here */
-@@ -177,6 +192,8 @@ static void tmio_mmc_reset(struct tmio_mmc_host *host)
- 	if (host->reset)
- 		host->reset(host);
- 
-+	tmio_mmc_set_bus_width(host, host->mmc->ios.bus_width);
-+
- 	if (host->pdata->flags & TMIO_MMC_SDIO_IRQ) {
- 		sd_ctrl_write16(host, CTL_SDIO_IRQ_MASK, host->sdio_irq_mask);
- 		sd_ctrl_write16(host, CTL_TRANSACTION_CTL, 0x0001);
-@@ -872,21 +889,6 @@ static void tmio_mmc_power_off(struct tmio_mmc_host *host)
- 		host->set_pwr(host->pdev, 0);
- }
- 
--static void tmio_mmc_set_bus_width(struct tmio_mmc_host *host,
--				   unsigned char bus_width)
--{
--	u16 reg = sd_ctrl_read16(host, CTL_SD_MEM_CARD_OPT)
--				& ~(CARD_OPT_WIDTH | CARD_OPT_WIDTH8);
+@@ -958,14 +958,8 @@ static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ 	case MMC_POWER_OFF:
+ 		tmio_mmc_power_off(host);
+ 		/* For R-Car Gen2+, we need to reset SDHI specific SCC */
+-		if (host->pdata->flags & TMIO_MMC_MIN_RCAR2) {
+-			host->reset(host);
 -
--	/* reg now applies to MMC_BUS_WIDTH_4 */
--	if (bus_width == MMC_BUS_WIDTH_1)
--		reg |= CARD_OPT_WIDTH;
--	else if (bus_width == MMC_BUS_WIDTH_8)
--		reg |= CARD_OPT_WIDTH8;
+-			if (host->native_hotplug)
+-				tmio_mmc_enable_mmc_irqs(host,
+-						TMIO_STAT_CARD_REMOVE |
+-						TMIO_STAT_CARD_INSERT);
+-		}
++		if (host->pdata->flags & TMIO_MMC_MIN_RCAR2)
++			tmio_mmc_reset(host);
+ 
+ 		host->set_clock(host, 0);
+ 		break;
+@@ -1173,6 +1167,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
+ 	if (mmc_can_gpio_cd(mmc))
+ 		_host->ops.get_cd = mmc_gpio_get_cd;
+ 
++	/* must be set before tmio_mmc_reset() */
+ 	_host->native_hotplug = !(mmc_can_gpio_cd(mmc) ||
+ 				  mmc->caps & MMC_CAP_NEEDS_POLL ||
+ 				  !mmc_card_is_removable(mmc));
+@@ -1302,10 +1297,6 @@ int tmio_mmc_host_runtime_resume(struct device *dev)
+ 	if (host->clk_cache)
+ 		host->set_clock(host, host->clk_cache);
+ 
+-	if (host->native_hotplug)
+-		tmio_mmc_enable_mmc_irqs(host,
+-				TMIO_STAT_CARD_REMOVE | TMIO_STAT_CARD_INSERT);
 -
--	sd_ctrl_write16(host, CTL_SD_MEM_CARD_OPT, reg);
--}
--
- static unsigned int tmio_mmc_get_timeout_cycles(struct tmio_mmc_host *host)
- {
- 	u16 val = sd_ctrl_read16(host, CTL_SD_MEM_CARD_OPT);
+ 	tmio_mmc_enable_dma(host, true);
+ 
+ 	return 0;
 -- 
 2.17.1
 
