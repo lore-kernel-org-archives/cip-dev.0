@@ -2,33 +2,33 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35F7AC64EC7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56DF2C64ECC
 	for <webhook@archiver.kernel.org>; Mon,  4 Apr 2022 18:46:49 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com
  [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web08.3452.1648842186562425330
+ by mx.groups.io with SMTP id smtpd.web09.3568.1648842202850727941
  for <cip-dev@lists.cip-project.org>;
- Fri, 01 Apr 2022 12:43:14 -0700
+ Fri, 01 Apr 2022 12:43:39 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
  spf=pass (domain: bp.renesas.com, ip: 210.160.252.171,
  mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.90,228,1643641200";
-   d="scan'208";a="115453858"
+   d="scan'208";a="115453886"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 02 Apr 2022 04:43:13 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 02 Apr 2022 04:43:39 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 1A68B4011436;
-	Sat,  2 Apr 2022 04:43:11 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0878C40061B8;
+	Sat,  2 Apr 2022 04:43:37 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [RESEND PATCH 5.10.y-cip 22/40] mmc: renesas_sdhi: do hard reset if
- possible
-Date: Fri,  1 Apr 2022 20:42:16 +0100
-Message-Id: <20220401194234.14057-23-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [RESEND PATCH 5.10.y-cip 36/40] dt-bindings: mmc: renesas,sdhi: Add
+ optional SDnH clock
+Date: Fri,  1 Apr 2022 20:42:30 +0100
+Message-Id: <20220401194234.14057-37-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220401194234.14057-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20220401194234.14057-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -36,105 +36,73 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 04 Apr 2022 18:46:49 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7933
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7947
 
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit b4d86f37eacb724690d0d300576b82806bc743d5 upstream.
+commit e051025efac3929ca7e3e2f2c8860d3447366ebc upstream.
 
-All recent SDHI instances can be reset via the reset controller. If one
-is found, use it instead of the open coded reset. This is to get a
-future-proof sane reset state.
+This only applies to R-Car Gen2 and later generations, so we need to
+distinguish.
 
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Link: https://lore.kernel.org/r/20210317091622.31890-4-wsa+renesas@sang-engineering.com
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+Link: https://lore.kernel.org/r/20211115160600.4455-1-wsa+renesas@sang-engineering.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/mmc/host/Kconfig             |  1 +
- drivers/mmc/host/renesas_sdhi.h      |  2 ++
- drivers/mmc/host/renesas_sdhi_core.c | 17 ++++++++++++++++-
- 3 files changed, 19 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/mmc/renesas,sdhi.yaml | 38 ++++++++++++++-----
+ 1 file changed, 29 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 30ff42fd173e..3538f9e9bce9 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -711,6 +711,7 @@ config MMC_SDHI
- 	tristate "Renesas SDHI SD/SDIO controller support"
- 	depends on SUPERH || ARCH_RENESAS || COMPILE_TEST
- 	select MMC_TMIO_CORE
-+	select RESET_CONTROLLER if ARCH_RENESAS
- 	help
- 	  This provides support for the SDHI SD/SDIO controller found in
- 	  Renesas SuperH, ARM and ARM64 based SoCs
-diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
-index cb962c7883dc..53eded81a53e 100644
---- a/drivers/mmc/host/renesas_sdhi.h
-+++ b/drivers/mmc/host/renesas_sdhi.h
-@@ -70,6 +70,8 @@ struct renesas_sdhi {
- 	DECLARE_BITMAP(smpcmp, BITS_PER_LONG);
- 	unsigned int tap_num;
- 	unsigned int tap_set;
-+
-+	struct reset_control *rstc;
- };
+diff --git a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+index 77b1bb907497..c20ee9e5b8e8 100644
+--- a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
++++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+@@ -128,15 +128,35 @@ allOf:
+         - clock-names
+         - resets
+     else:
+-      properties:
+-        clocks:
+-          minItems: 1
+-          maxItems: 2
+-        clock-names:
+-          minItems: 1
+-          items:
+-            - const: core
+-            - const: cd
++      if:
++        properties:
++          compatible:
++            contains:
++              enum:
++                - renesas,rcar-gen2-sdhi
++                - renesas,rcar-gen3-sdhi
++      then:
++        properties:
++          clocks:
++            minItems: 1
++            maxItems: 3
++          clock-names:
++            minItems: 1
++            uniqueItems: true
++            items:
++              - const: core
++              - enum: [ clkh, cd ]
++              - const: cd
++      else:
++        properties:
++          clocks:
++            minItems: 1
++            maxItems: 2
++          clock-names:
++            minItems: 1
++            items:
++              - const: core
++              - const: cd
  
- #define host_to_priv(host) \
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index eaf6071ab3cc..1783a0a6ee56 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -20,6 +20,7 @@
- 
- #include <linux/clk.h>
- #include <linux/delay.h>
-+#include <linux/iopoll.h>
- #include <linux/kernel.h>
- #include <linux/mfd/tmio.h>
- #include <linux/mmc/host.h>
-@@ -32,6 +33,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_domain.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/reset.h>
- #include <linux/sh_dma.h>
- #include <linux/slab.h>
- #include <linux/sys_soc.h>
-@@ -572,10 +574,19 @@ static void renesas_sdhi_scc_reset(struct tmio_mmc_host *host, struct renesas_sd
- static void renesas_sdhi_reset(struct tmio_mmc_host *host)
- {
- 	struct renesas_sdhi *priv = host_to_priv(host);
-+	int ret;
- 	u16 val;
- 
--	if (priv->scc_ctl)
-+	if (priv->rstc) {
-+		reset_control_reset(priv->rstc);
-+		/* Unknown why but without polling reset status, it will hang */
-+		read_poll_timeout(reset_control_status, ret, ret == 0, 1, 100,
-+				  false, priv->rstc);
-+		priv->needs_adjust_hs400 = false;
-+		renesas_sdhi_set_clock(host, host->clk_cache);
-+	} else if (priv->scc_ctl) {
- 		renesas_sdhi_scc_reset(host, priv);
-+	}
- 
- 	sd_ctrl_write32_as_16_and_16(host, CTL_IRQ_MASK, TMIO_MASK_ALL_RCAR2);
- 
-@@ -1086,6 +1097,10 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 	if (ret)
- 		goto efree;
- 
-+	priv->rstc = devm_reset_control_get_optional_exclusive(&pdev->dev, NULL);
-+	if (IS_ERR(priv->rstc))
-+		return PTR_ERR(priv->rstc);
-+
- 	ver = sd_ctrl_read16(host, CTL_VERSION);
- 	/* GEN2_SDR104 is first known SDHI to use 32bit block count */
- 	if (ver < SDHI_VER_GEN2_SDR104 && mmc_data->max_blk_count > U16_MAX)
+   - if:
+       properties:
 -- 
 2.17.1
 
