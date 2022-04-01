@@ -2,33 +2,33 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B156C64ED3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06F0FC64EC3
 	for <webhook@archiver.kernel.org>; Mon,  4 Apr 2022 18:46:49 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com
  [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web12.3615.1648842199155839517
  for <cip-dev@lists.cip-project.org>;
- Fri, 01 Apr 2022 12:43:45 -0700
+ Fri, 01 Apr 2022 12:43:41 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
  spf=pass (domain: bp.renesas.com, ip: 210.160.252.172,
  mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.90,228,1643641200";
-   d="scan'208";a="116465406"
+   d="scan'208";a="116465399"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 02 Apr 2022 04:43:45 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 02 Apr 2022 04:43:40 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 396984011436;
-	Sat,  2 Apr 2022 04:43:44 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 85EF240061B8;
+	Sat,  2 Apr 2022 04:43:39 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [RESEND PATCH 5.10.y-cip 40/40] arm64: dts: renesas: rzg2l-smarc:
- Enable microSD on SMARC platform
-Date: Fri,  1 Apr 2022 20:42:34 +0100
-Message-Id: <20220401194234.14057-41-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [RESEND PATCH 5.10.y-cip 37/40] dt-bindings: mmc: renesas,sdhi:
+ Rename RZ/G2L clocks
+Date: Fri,  1 Apr 2022 20:42:31 +0100
+Message-Id: <20220401194234.14057-38-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220401194234.14057-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20220401194234.14057-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -36,111 +36,60 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 04 Apr 2022 18:46:49 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7951
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7948
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-commit 34cdc0edfe8f6d660e3c4c47d10f5506d08f09e1 upstream.
+commit 217c7d1840b5377543eff84fe28409d0bd4d3433 upstream.
 
-This patch enables microSD card slot connected to SDHI1 on RZ/G2L SMARC
-platform.
+Rename the below RZ/G2L clocks to match with the clock names used in
+R-Car Gen2 and later generations.
+
+ imclk->core
+ clk_hs->clkh
+ imclk2->cd
+
+This changes will avoid using fallback for RZ/G2L high speed clock,
+if "clkh" is not used in device tree and also the code changes in
+driver related to this clocks.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20211010142520.21976-3-biju.das.jz@bp.renesas.com
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+Link: https://lore.kernel.org/r/20211122103905.14439-2-biju.das.jz@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[PL: Manually applied the changes]
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi | 62 ++++++++++++++++++++
- 1 file changed, 62 insertions(+)
+ .../devicetree/bindings/mmc/renesas,sdhi.yaml          | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
-index 70aca5d0306d..0cd7da8af1d4 100644
---- a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
-@@ -31,6 +31,16 @@
- 		regulator-min-microvolt = <5000000>;
- 		regulator-max-microvolt = <5000000>;
- 	};
-+
-+	vccq_sdhi1: regulator-vccq-sdhi1 {
-+		compatible = "regulator-gpio";
-+		regulator-name = "SDHI1 VccQ";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpios = <&pinctrl RZG2L_GPIO(39, 1) GPIO_ACTIVE_HIGH>;
-+		gpios-states = <1>;
-+		states = <3300000 1>, <1800000 0>;
-+	};
- };
- 
- &canfd {
-@@ -149,6 +159,45 @@
- 			 <RZG2L_PORT_PINMUX(48, 4, 1)>; /* RTS# */
- 	};
- 
-+	sd1-pwr-en-hog {
-+		gpio-hog;
-+		gpios = <RZG2L_GPIO(39, 2) GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "sd1_pwr_en";
-+	};
-+
-+	sdhi1_pins: sd1 {
-+		sd1_data {
-+			pins = "SD1_DATA0", "SD1_DATA1", "SD1_DATA2", "SD1_DATA3";
-+			power-source = <3300>;
-+		};
-+
-+		sd1_ctrl {
-+			pins = "SD1_CLK", "SD1_CMD";
-+			power-source = <3300>;
-+		};
-+
-+		sd1_mux {
-+			pinmux = <RZG2L_PORT_PINMUX(19, 0, 1)>; /* SD1_CD */
-+		};
-+	};
-+
-+	sdhi1_pins_uhs: sd1_uhs {
-+		sd1_data_uhs {
-+			pins = "SD1_DATA0", "SD1_DATA1", "SD1_DATA2", "SD1_DATA3";
-+			power-source = <1800>;
-+		};
-+
-+		sd1_ctrl_uhs {
-+			pins = "SD1_CLK", "SD1_CMD";
-+			power-source = <1800>;
-+		};
-+
-+		sd1_mux_uhs {
-+			pinmux = <RZG2L_PORT_PINMUX(19, 0, 1)>; /* SD1_CD */
-+		};
-+	};
-+
- 	usb0_pins: usb0 {
- 		pinmux = <RZG2L_PORT_PINMUX(4, 0, 1)>, /* VBUS */
- 			 <RZG2L_PORT_PINMUX(5, 0, 1)>, /* OVC */
-@@ -184,6 +233,19 @@
- };
- #endif
- 
-+&sdhi1 {
-+	pinctrl-0 = <&sdhi1_pins>;
-+	pinctrl-1 = <&sdhi1_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
-+
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&vccq_sdhi1>;
-+	bus-width = <4>;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
-+	status = "okay";
-+};
-+
- &usb2_phy0 {
- 	pinctrl-0 = <&usb0_pins>;
- 	pinctrl-names = "default";
+diff --git a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+index c20ee9e5b8e8..3aeff9036628 100644
+--- a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
++++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+@@ -112,17 +112,17 @@ allOf:
+         clocks:
+           items:
+             - description: IMCLK, SDHI channel main clock1.
++            - description: CLK_HS, SDHI channel High speed clock which operates
++                           4 times that of SDHI channel main clock1.
+             - description: IMCLK2, SDHI channel main clock2. When this clock is
+                            turned off, external SD card detection cannot be
+                            detected.
+-            - description: CLK_HS, SDHI channel High speed clock which operates
+-                           4 times that of SDHI channel main clock1.
+             - description: ACLK, SDHI channel bus clock.
+         clock-names:
+           items:
+-            - const: imclk
+-            - const: imclk2
+-            - const: clk_hs
++            - const: core
++            - const: clkh
++            - const: cd
+             - const: aclk
+       required:
+         - clock-names
 -- 
 2.17.1
 
