@@ -3,244 +3,108 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web12.3615.1648842199155839517
  for <cip-dev@lists.cip-project.org>;
- Fri, 01 Apr 2022 12:43:24 -0700
+ Fri, 01 Apr 2022 12:43:19 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.90,228,1643641200"; 
-   d="scan'208";a="116465382"
+   d="scan'208";a="116465374"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 02 Apr 2022 04:43:23 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 02 Apr 2022 04:43:17 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7DF1240061B8;
-	Sat,  2 Apr 2022 04:43:22 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id B863A401143F;
+	Sat,  2 Apr 2022 04:43:15 +0900 (JST)
 From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [RESEND PATCH 5.10.y-cip 27/40] clk: renesas: rzg2l: Add SDHI clk mux support
-Date: Fri,  1 Apr 2022 20:42:21 +0100
-Message-Id: <20220401194234.14057-28-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [RESEND PATCH 5.10.y-cip 24/40] mmc: tmio: always restore irq register
+Date: Fri,  1 Apr 2022 20:42:18 +0100
+Message-Id: <20220401194234.14057-25-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220401194234.14057-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20220401194234.14057-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 List-Id: <cip-dev.lists.cip-project.org>
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit eaff33646f4cb6a541d01013b0a222f03f6dfac3 upstream.
+commit 0751d56ef1f25c4206626dff99445db34dedf437 upstream.
 
-Add SDHI clk mux support to select SDHI clock from different clock
-sources.
+Currently, only SDHI on R-Car Gen2+ reinitializes the irq register
+during reset but it should be done on all instances. We can move it from
+the SDHI driver to the TMIO core, because we now have the
+'sd_irq_mask_all' variable which carries the proper value to use. That
+also means we can remove the initialization from tmio_mmc_probe()
+because it calls tmio_mmc_reset(), too. We only move that
+tmio_mmc_reset() call there a little to ensure 'sd_irq_mask_all' is
+properly set.
 
-As per HW manual, direct clock switching from 533MHz to 400MHz and
-vice versa is not recommended. So added support for handling this
-in mux.
-
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://lore.kernel.org/r/20211007111434.8665-2-biju.das.jz@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Link: https://lore.kernel.org/r/20210413083137.11171-1-wsa+renesas@sang-eng=
+ineering.com
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/clk/renesas/rzg2l-cpg.c | 118 ++++++++++++++++++++++++++++++++
- drivers/clk/renesas/rzg2l-cpg.h |  12 ++++
- 2 files changed, 130 insertions(+)
+ drivers/mmc/host/renesas_sdhi_core.c |  2 --
+ drivers/mmc/host/tmio_mmc_core.c     | 11 ++++++-----
+ 2 files changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 1501547a11a3..4021f6cabda4 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -17,6 +17,7 @@
- #include <linux/delay.h>
- #include <linux/device.h>
- #include <linux/init.h>
-+#include <linux/iopoll.h>
- #include <linux/mod_devicetable.h>
- #include <linux/module.h>
- #include <linux/of_address.h>
-@@ -55,6 +56,14 @@
- #define GET_REG_SAMPLL_CLK1(val)	((val >> 22) & 0xfff)
- #define GET_REG_SAMPLL_CLK2(val)	((val >> 12) & 0xfff)
- 
-+struct sd_hw_data {
-+	struct clk_hw hw;
-+	u32 conf;
-+	struct rzg2l_cpg_priv *priv;
-+};
-+
-+#define to_sd_hw_data(_hw)	container_of(_hw, struct sd_hw_data, hw)
-+
- /**
-  * struct rzg2l_cpg_priv - Clock Pulse Generator Private Data
-  *
-@@ -150,6 +159,112 @@ rzg2l_cpg_mux_clk_register(const struct cpg_core_clk *core,
- 	return clk_hw->clk;
- }
- 
-+static int rzg2l_cpg_sd_clk_mux_determine_rate(struct clk_hw *hw,
-+					       struct clk_rate_request *req)
-+{
-+	return clk_mux_determine_rate_flags(hw, req, 0);
-+}
-+
-+static int rzg2l_cpg_sd_clk_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct sd_hw_data *hwdata = to_sd_hw_data(hw);
-+	struct rzg2l_cpg_priv *priv = hwdata->priv;
-+	u32 off = GET_REG_OFFSET(hwdata->conf);
-+	u32 shift = GET_SHIFT(hwdata->conf);
-+	const u32 clk_src_266 = 2;
-+	u32 bitmask;
-+
-+	/*
-+	 * As per the HW manual, we should not directly switch from 533 MHz to
-+	 * 400 MHz and vice versa. To change the setting from 2’b01 (533 MHz)
-+	 * to 2’b10 (400 MHz) or vice versa, Switch to 2’b11 (266 MHz) first,
-+	 * and then switch to the target setting (2’b01 (533 MHz) or 2’b10
-+	 * (400 MHz)).
-+	 * Setting a value of '0' to the SEL_SDHI0_SET or SEL_SDHI1_SET clock
-+	 * switching register is prohibited.
-+	 * The clock mux has 3 input clocks(533 MHz, 400 MHz, and 266 MHz), and
-+	 * the index to value mapping is done by adding 1 to the index.
-+	 */
-+	bitmask = (GENMASK(GET_WIDTH(hwdata->conf) - 1, 0) << shift) << 16;
-+	if (index != clk_src_266) {
-+		u32 msk, val;
-+		int ret;
-+
-+		writel(bitmask | ((clk_src_266 + 1) << shift), priv->base + off);
-+
-+		msk = off ? CPG_CLKSTATUS_SELSDHI1_STS : CPG_CLKSTATUS_SELSDHI0_STS;
-+
-+		ret = readl_poll_timeout(priv->base + CPG_CLKSTATUS, val,
-+					 !(val & msk), 100,
-+					 CPG_SDHI_CLK_SWITCH_STATUS_TIMEOUT_US);
-+		if (ret) {
-+			dev_err(priv->dev, "failed to switch clk source\n");
-+			return ret;
-+		}
-+	}
-+
-+	writel(bitmask | ((index + 1) << shift), priv->base + off);
-+
-+	return 0;
-+}
-+
-+static u8 rzg2l_cpg_sd_clk_mux_get_parent(struct clk_hw *hw)
-+{
-+	struct sd_hw_data *hwdata = to_sd_hw_data(hw);
-+	struct rzg2l_cpg_priv *priv = hwdata->priv;
-+	u32 val = readl(priv->base + GET_REG_OFFSET(hwdata->conf));
-+
-+	val >>= GET_SHIFT(hwdata->conf);
-+	val &= GENMASK(GET_WIDTH(hwdata->conf) - 1, 0);
-+	if (val) {
-+		val--;
-+	} else {
-+		/* Prohibited clk source, change it to 533 MHz(reset value) */
-+		rzg2l_cpg_sd_clk_mux_set_parent(hw, 0);
-+	}
-+
-+	return val;
-+}
-+
-+static const struct clk_ops rzg2l_cpg_sd_clk_mux_ops = {
-+	.determine_rate = rzg2l_cpg_sd_clk_mux_determine_rate,
-+	.set_parent	= rzg2l_cpg_sd_clk_mux_set_parent,
-+	.get_parent	= rzg2l_cpg_sd_clk_mux_get_parent,
-+};
-+
-+static struct clk * __init
-+rzg2l_cpg_sd_mux_clk_register(const struct cpg_core_clk *core,
-+			      void __iomem *base,
-+			      struct rzg2l_cpg_priv *priv)
-+{
-+	struct sd_hw_data *clk_hw_data;
-+	struct clk_init_data init;
-+	struct clk_hw *clk_hw;
-+	int ret;
-+
-+	clk_hw_data = devm_kzalloc(priv->dev, sizeof(*clk_hw_data), GFP_KERNEL);
-+	if (!clk_hw_data)
-+		return ERR_PTR(-ENOMEM);
-+
-+	clk_hw_data->priv = priv;
-+	clk_hw_data->conf = core->conf;
-+
-+	init.name = GET_SHIFT(core->conf) ? "sd1" : "sd0";
-+	init.ops = &rzg2l_cpg_sd_clk_mux_ops;
-+	init.flags = 0;
-+	init.num_parents = core->num_parents;
-+	init.parent_names = core->parent_names;
-+
-+	clk_hw = &clk_hw_data->hw;
-+	clk_hw->init = &init;
-+
-+	ret = devm_clk_hw_register(priv->dev, clk_hw);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return clk_hw->clk;
-+}
-+
- struct pll_clk {
- 	struct clk_hw hw;
- 	unsigned int conf;
-@@ -311,6 +426,9 @@ rzg2l_cpg_register_core_clk(const struct cpg_core_clk *core,
- 	case CLK_TYPE_MUX:
- 		clk = rzg2l_cpg_mux_clk_register(core, priv->base, priv);
- 		break;
-+	case CLK_TYPE_SD_MUX:
-+		clk = rzg2l_cpg_sd_mux_clk_register(core, priv->base, priv);
-+		break;
- 	default:
- 		goto fail;
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesa=
+s_sdhi_core.c
+index 1783a0a6ee56..8a9d74474768 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -588,8 +588,6 @@ static void renesas_sdhi_reset(struct tmio_mmc_host *ho=
+st)
+ 		renesas_sdhi_scc_reset(host, priv);
  	}
-diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
-index dc5b65a4029e..952fca98ba71 100644
---- a/drivers/clk/renesas/rzg2l-cpg.h
-+++ b/drivers/clk/renesas/rzg2l-cpg.h
-@@ -11,9 +11,15 @@
- 
- #define CPG_PL2_DDIV		(0x204)
- #define CPG_PL3A_DDIV		(0x208)
-+#define CPG_CLKSTATUS		(0x280)
- #define CPG_PL3_SSEL		(0x408)
- #define CPG_PL6_ETH_SSEL	(0x418)
- 
-+#define CPG_CLKSTATUS_SELSDHI0_STS	BIT(28)
-+#define CPG_CLKSTATUS_SELSDHI1_STS	BIT(29)
+=20
+-	sd_ctrl_write32_as_16_and_16(host, CTL_IRQ_MASK, TMIO_MASK_ALL_RCAR2);
+-
+ 	if (sd_ctrl_read16(host, CTL_VERSION) >=3D SDHI_VER_GEN3_SD) {
+ 		val =3D sd_ctrl_read16(host, CTL_SD_MEM_CARD_OPT);
+ 		val |=3D CARD_OPT_EXTOP;
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_c=
+ore.c
+index 59372de733b2..bb5eb478b6cf 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -192,6 +192,9 @@ static void tmio_mmc_reset(struct tmio_mmc_host *host)
+ 	if (host->reset)
+ 		host->reset(host);
+=20
++	sd_ctrl_write32_as_16_and_16(host, CTL_IRQ_MASK, host->sdcard_irq_mask_al=
+l);
++	host->sdcard_irq_mask =3D host->sdcard_irq_mask_all;
 +
-+#define CPG_SDHI_CLK_SWITCH_STATUS_TIMEOUT_US	20000
+ 	tmio_mmc_set_bus_width(host, host->mmc->ios.bus_width);
+=20
+ 	if (host->pdata->flags & TMIO_MMC_SDIO_IRQ) {
+@@ -1183,13 +1186,11 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
+ 	if (pdata->flags & TMIO_MMC_SDIO_IRQ)
+ 		_host->sdio_irq_mask =3D TMIO_SDIO_MASK_ALL;
+=20
+-	_host->set_clock(_host, 0);
+-	tmio_mmc_reset(_host);
+-
+-	_host->sdcard_irq_mask =3D sd_ctrl_read16_and_16_as_32(_host, CTL_IRQ_MAS=
+K);
+ 	if (!_host->sdcard_irq_mask_all)
+ 		_host->sdcard_irq_mask_all =3D TMIO_MASK_ALL;
+-	tmio_mmc_disable_mmc_irqs(_host, _host->sdcard_irq_mask_all);
 +
- /* n = 0/1/2 for PLL1/4/6 */
- #define CPG_SAMPLL_CLK1(n)	(0x04 + (16 * n))
- #define CPG_SAMPLL_CLK2(n)	(0x08 + (16 * n))
-@@ -67,6 +73,9 @@ enum clk_types {
- 
- 	/* Clock with clock source selector */
- 	CLK_TYPE_MUX,
-+
-+	/* Clock with SD clock source selector */
-+	CLK_TYPE_SD_MUX,
- };
- 
- #define DEF_TYPE(_name, _id, _type...) \
-@@ -87,6 +96,9 @@ enum clk_types {
- 	DEF_TYPE(_name, _id, CLK_TYPE_MUX, .conf = _conf, \
- 		 .parent_names = _parent_names, .num_parents = _num_parents, \
- 		 .flag = _flag, .mux_flags = _mux_flags)
-+#define DEF_SD_MUX(_name, _id, _conf, _parent_names, _num_parents) \
-+	DEF_TYPE(_name, _id, CLK_TYPE_SD_MUX, .conf = _conf, \
-+		 .parent_names = _parent_names, .num_parents = _num_parents)
- 
- /**
-  * struct rzg2l_mod_clk - Module Clocks definitions
--- 
++	_host->set_clock(_host, 0);
++	tmio_mmc_reset(_host);
+=20
+ 	if (_host->native_hotplug)
+ 		tmio_mmc_enable_mmc_irqs(_host,
+--=20
 2.17.1
 
 
