@@ -1,77 +1,75 @@
-Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18CFDC47088
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A7C4C3A5A7
 	for <webhook@archiver.kernel.org>; Mon,  4 Apr 2022 18:46:42 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com
- [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web11.34415.1649075760888079755
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web12.4909.1648848795226657068
  for <cip-dev@lists.cip-project.org>;
- Mon, 04 Apr 2022 05:36:17 -0700
+ Fri, 01 Apr 2022 14:33:16 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=pass (domain: bp.renesas.com, ip: 210.160.252.172,
- mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-IronPort-AV: E=Sophos;i="5.90,234,1643641200";
-   d="scan'208";a="116695170"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 04 Apr 2022 21:36:16 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id AD2D94285538;
-	Mon,  4 Apr 2022 21:36:15 +0900 (JST)
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: cip-dev@lists.cip-project.org,
+ spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id A68AF1C0B79; Fri,  1 Apr 2022 23:33:09 +0200 (CEST)
+Date: Fri, 1 Apr 2022 23:33:09 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Pavel Machek <pavel@denx.de>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 16/29] clocksource/drivers/renesas,ostm: Make
- RENESAS_OSTM symbol visible
-Date: Mon,  4 Apr 2022 13:35:40 +0100
-Message-Id: <20220404123553.25851-17-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220404123553.25851-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20220404123553.25851-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	Pavel Machek <pavel@denx.de>, Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [RESEND PATCH 5.10.y-cip 00/40] Add SD/eMMC support for Renesas
+ RZ/G2L SoC
+Message-ID: <20220401213309.GA7846@duo.ucw.cz>
+References: <20220401194234.14057-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="liOOAslEiF7prFVr"
+Content-Disposition: inline
+In-Reply-To: <20220401194234.14057-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 04 Apr 2022 18:46:42 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7979
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7952
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
 
-commit a2807f657976b943bf0eb81d026398d28aa89863 upstream.
+--liOOAslEiF7prFVr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-As RZ/G2L uses the ARM Architected Timer as system timer, enabling
-the OSTM is not mandatory.
+Hi!
 
-Make RENESAS_OSTM symbol visible, so that user can enable it
-when needed.
+> This patch series adds support for SD/eMMC on Renesas RZ/G2L SoC and
+> enables this interfaces on Renesas RZ/G2L SMARC EVK.
+>=20
+> All the patches have been cherry picked from v5.17 release.
+>=20
+> Resending as I had missed a patch (0001) earlier, reset of the patches
+> havent been changed. And also for some reason patches didnt make into
+> patchwork.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20211112184413.4391-5-biju.das.jz@bp.renesas.com
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/clocksource/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Testing was successful and the review only uncovered small details, so
+I applied and pushed the series. Thanks!
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index a0c6e88bebe0..d528313185e8 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -531,7 +531,8 @@ config SH_TIMER_MTU2
- 	  This hardware comes with 16-bit timer registers.
- 
- config RENESAS_OSTM
--	bool "Renesas OSTM timer driver" if COMPILE_TEST
-+	bool "Renesas OSTM timer driver"
-+	depends on ARCH_RENESAS || COMPILE_TEST
- 	select CLKSRC_MMIO
- 	select TIMER_OF
- 	help
--- 
-2.17.1
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
+--liOOAslEiF7prFVr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYkdvlQAKCRAw5/Bqldv6
+8r85AJ9HRwnRJmMEQ7RQMRbKg0iv4acI7gCggTZZucrGd08DXtpdtzd/mHEErQI=
+=r+qj
+-----END PGP SIGNATURE-----
+
+--liOOAslEiF7prFVr--
 
