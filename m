@@ -2,33 +2,32 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48867C41535
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F8DC64E7E
 	for <webhook@archiver.kernel.org>; Mon,  4 Apr 2022 18:46:48 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com
- [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web12.3615.1648842199155839517
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com
+ [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web08.3452.1648842186562425330
  for <cip-dev@lists.cip-project.org>;
- Fri, 01 Apr 2022 12:43:27 -0700
+ Fri, 01 Apr 2022 12:43:06 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=pass (domain: bp.renesas.com, ip: 210.160.252.172,
+ spf=pass (domain: bp.renesas.com, ip: 210.160.252.171,
  mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.90,228,1643641200";
-   d="scan'208";a="116465385"
+   d="scan'208";a="115453841"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 02 Apr 2022 04:43:26 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 02 Apr 2022 04:43:05 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id CEEC640061B8;
-	Sat,  2 Apr 2022 04:43:25 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 5EB7540061B8;
+	Sat,  2 Apr 2022 04:43:04 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [RESEND PATCH 5.10.y-cip 29/40] clk: renesas: rzg2l: Check return
- value of pm_genpd_init()
-Date: Fri,  1 Apr 2022 20:42:23 +0100
-Message-Id: <20220401194234.14057-30-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [RESEND PATCH 5.10.y-cip 17/40] mmc: tmio: support custom irq masks
+Date: Fri,  1 Apr 2022 20:42:11 +0100
+Message-Id: <20220401194234.14057-18-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220401194234.14057-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20220401194234.14057-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -36,59 +35,72 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 04 Apr 2022 18:46:48 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7940
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/7928
 
-commit 27527a3d3b162e4512798c058c0e8a216c721187 upstream.
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Make sure we check the return value of pm_genpd_init() which might fail.
-Also add a devres action to remove the power-domain in-case the probe
-callback fails further down in the code flow.
+commit 0d856c4c68c639f96cb12c26aaeb906353b9a76e upstream.
 
-Fixes: ef3c613ccd68a ("clk: renesas: Add CPG core wrapper for RZ/G2L SoC")
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://lore.kernel.org/r/20211117115101.28281-2-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+SDHI Gen2+ has a different value for TMIO_MASK_ALL, so add a member to
+support that. If the member is not used, the previous default value is
+applied.
+
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Link: https://lore.kernel.org/r/20210223100830.25125-2-wsa+renesas@sang-engineering.com
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/clk/renesas/rzg2l-cpg.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/mmc/host/tmio_mmc.h      | 1 +
+ drivers/mmc/host/tmio_mmc_core.c | 8 +++++---
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index a77cb47b75e7..1b1555deb20b 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -851,10 +851,16 @@ static void rzg2l_cpg_detach_dev(struct generic_pm_domain *unused, struct device
- 		pm_clk_destroy(dev);
- }
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index 2d1db9396d4a..7d5201d6a006 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -164,6 +164,7 @@ struct tmio_mmc_host {
+ 	u32			sdio_irq_mask;
+ 	unsigned int		clk_cache;
+ 	u32			sdcard_irq_setbit_mask;
++	u32			sdcard_irq_mask_all;
  
-+static void rzg2l_cpg_genpd_remove(void *data)
-+{
-+	pm_genpd_remove(data);
-+}
-+
- static int __init rzg2l_cpg_add_clk_domain(struct device *dev)
+ 	spinlock_t		lock;		/* protect host private data */
+ 	unsigned long		last_req_ts;
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 92d1ed07cebe..48083acdb077 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -1182,7 +1182,9 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
+ 	tmio_mmc_reset(_host);
+ 
+ 	_host->sdcard_irq_mask = sd_ctrl_read16_and_16_as_32(_host, CTL_IRQ_MASK);
+-	tmio_mmc_disable_mmc_irqs(_host, TMIO_MASK_ALL);
++	if (!_host->sdcard_irq_mask_all)
++		_host->sdcard_irq_mask_all = TMIO_MASK_ALL;
++	tmio_mmc_disable_mmc_irqs(_host, _host->sdcard_irq_mask_all);
+ 
+ 	if (_host->native_hotplug)
+ 		tmio_mmc_enable_mmc_irqs(_host,
+@@ -1236,7 +1238,7 @@ void tmio_mmc_host_remove(struct tmio_mmc_host *host)
+ 	cancel_work_sync(&host->done);
+ 	cancel_delayed_work_sync(&host->delayed_reset_work);
+ 	tmio_mmc_release_dma(host);
+-	tmio_mmc_disable_mmc_irqs(host, TMIO_MASK_ALL);
++	tmio_mmc_disable_mmc_irqs(host, host->sdcard_irq_mask_all);
+ 
+ 	if (host->native_hotplug)
+ 		pm_runtime_put_noidle(&pdev->dev);
+@@ -1266,7 +1268,7 @@ int tmio_mmc_host_runtime_suspend(struct device *dev)
  {
- 	struct device_node *np = dev->of_node;
- 	struct generic_pm_domain *genpd;
-+	int ret;
+ 	struct tmio_mmc_host *host = dev_get_drvdata(dev);
  
- 	genpd = devm_kzalloc(dev, sizeof(*genpd), GFP_KERNEL);
- 	if (!genpd)
-@@ -865,7 +871,13 @@ static int __init rzg2l_cpg_add_clk_domain(struct device *dev)
- 		       GENPD_FLAG_ACTIVE_WAKEUP;
- 	genpd->attach_dev = rzg2l_cpg_attach_dev;
- 	genpd->detach_dev = rzg2l_cpg_detach_dev;
--	pm_genpd_init(genpd, &pm_domain_always_on_gov, false);
-+	ret = pm_genpd_init(genpd, &pm_domain_always_on_gov, false);
-+	if (ret)
-+		return ret;
-+
-+	ret = devm_add_action_or_reset(dev, rzg2l_cpg_genpd_remove, genpd);
-+	if (ret)
-+		return ret;
+-	tmio_mmc_disable_mmc_irqs(host, TMIO_MASK_ALL);
++	tmio_mmc_disable_mmc_irqs(host, host->sdcard_irq_mask_all);
  
- 	of_genpd_add_provider_simple(np, genpd);
- 	return 0;
+ 	if (host->clk_cache)
+ 		host->set_clock(host, 0);
 -- 
 2.17.1
 
