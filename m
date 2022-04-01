@@ -1,92 +1,87 @@
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web12.3615.1648842199155839517
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web09.3568.1648842202850727941
  for <cip-dev@lists.cip-project.org>;
- Fri, 01 Apr 2022 12:43:34 -0700
+ Fri, 01 Apr 2022 12:43:25 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+ dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.90,228,1643641200"; 
-   d="scan'208";a="116465393"
+   d="scan'208";a="115453873"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 02 Apr 2022 04:43:33 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 02 Apr 2022 04:43:25 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 14BC64011436;
-	Sat,  2 Apr 2022 04:43:31 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 47D4340061B8;
+	Sat,  2 Apr 2022 04:43:24 +0900 (JST)
 From: "Lad Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [RESEND PATCH 5.10.y-cip 33/40] dt-bindings: Drop redundant minItems/maxItems
-Date: Fri,  1 Apr 2022 20:42:27 +0100
-Message-Id: <20220401194234.14057-34-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [RESEND PATCH 5.10.y-cip 28/40] clk: renesas: rzg2l: Add missing kerneldoc for resets
+Date: Fri,  1 Apr 2022 20:42:22 +0100
+Message-Id: <20220401194234.14057-29-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220401194234.14057-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20220401194234.14057-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset="ibm852"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 List-Id: <cip-dev.lists.cip-project.org>
 
-RnJvbTogUm9iIEhlcnJpbmcgPHJvYmhAa2VybmVsLm9yZz4KCmNvbW1pdCA5NzJkNmE3ZGNlYzNh
-ZDMyMjY2NjEwMzRjNWQ4Y2IyZDMwNTg1MTU3IHVwc3RyZWFtLgoKSWYgYSBwcm9wZXJ0eSBoYXMg
-YW4gJ2l0ZW1zJyBsaXN0LCB0aGVuIGEgJ21pbkl0ZW1zJyBvciAnbWF4SXRlbXMnIHdpdGggdGhl
-CnNhbWUgc2l6ZSBhcyB0aGUgbGlzdCBpcyByZWR1bmRhbnQgYW5kIGNhbiBiZSBkcm9wcGVkLiBO
-b3RlIHRoYXQgaXMgRFQKc2NoZW1hIHNwZWNpZmljIGJlaGF2aW9yIGFuZCBub3Qgc3RhbmRhcmQg
-anNvbi1zY2hlbWEgYmVoYXZpb3IuIFRoZSB0b29saW5nCndpbGwgZml4dXAgdGhlIGZpbmFsIHNj
-aGVtYSBhZGRpbmcgYW55IHVuc3BlY2lmaWVkIG1pbkl0ZW1zL21heEl0ZW1zLgoKVGhpcyBjb25k
-aXRpb24gaXMgcGFydGlhbGx5IGNoZWNrZWQgd2l0aCB0aGUgbWV0YS1zY2hlbWEgYWxyZWFkeSwg
-YnV0Cm9ubHkgaWYgYm90aCAnbWluSXRlbXMnIGFuZCAnbWF4SXRlbXMnIGFyZSBlcXVhbCB0byB0
-aGUgJ2l0ZW1zJyBsZW5ndGguCkFuIGltcHJvdmVkIG1ldGEtc2NoZW1hIGlzIHBlbmRpbmcuCgpD
-YzogSmVucyBBeGJvZSA8YXhib2VAa2VybmVsLmRrPgpDYzogU3RlcGhlbiBCb3lkIDxzYm95ZEBr
-ZXJuZWwub3JnPgpDYzogSGVyYmVydCBYdSA8aGVyYmVydEBnb25kb3IuYXBhbmEub3JnLmF1PgpD
-YzogIkRhdmlkIFMuIE1pbGxlciIgPGRhdmVtQGRhdmVtbG9mdC5uZXQ+CkNjOiBEYXZpZCBBaXJs
-aWUgPGFpcmxpZWRAbGludXguaWU+CkNjOiBEYW5pZWwgVmV0dGVyIDxkYW5pZWxAZmZ3bGwuY2g+
-CkNjOiBCYXJ0b3N6IEdvbGFzemV3c2tpIDxiZ29sYXN6ZXdza2lAYmF5bGlicmUuY29tPgpDYzog
-S2FtYWwgRGFzdSA8a2Rhc3Uua2RldkBnbWFpbC5jb20+CkNjOiBMYXJzLVBldGVyIENsYXVzZW4g
-PGxhcnNAbWV0YWZvby5kZT4KQ2M6IFRob21hcyBHbGVpeG5lciA8dGdseEBsaW51dHJvbml4LmRl
-PgpDYzogTWFyYyBaeW5naWVyIDxtYXpAa2VybmVsLm9yZz4KQ2M6IEpvZXJnIFJvZWRlbCA8am9y
-b0A4Ynl0ZXMub3JnPgpDYzogTWF1cm8gQ2FydmFsaG8gQ2hlaGFiIDxtY2hlaGFiQGtlcm5lbC5v
-cmc+CkNjOiBLcnp5c3p0b2YgS296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGNhbm9uaWNh
-bC5jb20+CkNjOiBKYWt1YiBLaWNpbnNraSA8a3ViYUBrZXJuZWwub3JnPgpDYzogV29sZmdhbmcg
-R3JhbmRlZ2dlciA8d2dAZ3JhbmRlZ2dlci5jb20+CkNjOiBBbmRyZXcgTHVubiA8YW5kcmV3QGx1
-bm4uY2g+CkNjOiBWaXZpZW4gRGlkZWxvdCA8dml2aWVuLmRpZGVsb3RAZ21haWwuY29tPgpDYzog
-VmxhZGltaXIgT2x0ZWFuIDxvbHRlYW52QGdtYWlsLmNvbT4KQ2M6IEJqb3JuIEhlbGdhYXMgPGJo
-ZWxnYWFzQGdvb2dsZS5jb20+CkNjOiBLaXNob24gVmlqYXkgQWJyYWhhbSBJIDxraXNob25AdGku
-Y29tPgpDYzogTGludXMgV2FsbGVpaiA8bGludXMud2FsbGVpakBsaW5hcm8ub3JnPgpDYzogIlV3
-ZSBLbGVpbmUtS8O2bmlnIiA8dS5rbGVpbmUta29lbmlnQHBlbmd1dHJvbml4LmRlPgpDYzogTGVl
-IEpvbmVzIDxsZWUuam9uZXNAbGluYXJvLm9yZz4KQ2M6IE9oYWQgQmVuLUNvaGVuIDxvaGFkQHdp
-emVyeS5jb20+CkNjOiBNYXRoaWV1IFBvaXJpZXIgPG1hdGhpZXUucG9pcmllckBsaW5hcm8ub3Jn
-PgpDYzogUGF1bCBXYWxtc2xleSA8cGF1bC53YWxtc2xleUBzaWZpdmUuY29tPgpDYzogUGFsbWVy
-IERhYmJlbHQgPHBhbG1lckBkYWJiZWx0LmNvbT4KQ2M6IEFsYmVydCBPdSA8YW91QGVlY3MuYmVy
-a2VsZXkuZWR1PgpDYzogQWxlc3NhbmRybyBadW1tbyA8YS56dW1tb0B0b3dlcnRlY2guaXQ+CkNj
-OiBBbGV4YW5kcmUgQmVsbG9uaSA8YWxleGFuZHJlLmJlbGxvbmlAYm9vdGxpbi5jb20+CkNjOiBa
-aGFuZyBSdWkgPHJ1aS56aGFuZ0BpbnRlbC5jb20+CkNjOiBEYW5pZWwgTGV6Y2FubyA8ZGFuaWVs
-LmxlemNhbm9AbGluYXJvLm9yZz4KQ2M6IFdpbSBWYW4gU2Vicm9lY2sgPHdpbUBsaW51eC13YXRj
-aGRvZy5vcmc+CkNjOiBHdWVudGVyIFJvZWNrIDxsaW51eEByb2Vjay11cy5uZXQ+ClNpZ25lZC1v
-ZmYtYnk6IFJvYiBIZXJyaW5nIDxyb2JoQGtlcm5lbC5vcmc+CkFja2VkLWJ5OiBNYXJjIEtsZWlu
-ZS1CdWRkZSA8bWtsQHBlbmd1dHJvbml4LmRlPgpBY2tlZC1ieTogVWxmIEhhbnNzb24gPHVsZi5o
-YW5zc29uQGxpbmFyby5vcmc+ICMgZm9yIE1NQwpBY2tlZC1ieTogSmFzc2kgQnJhciA8amFzc2lz
-aW5naGJyYXJAZ21haWwuY29tPgpBY2tlZC1CeTogVmlub2QgS291bCA8dmtvdWxAa2VybmVsLm9y
-Zz4KUmV2aWV3ZWQtYnk6IEdyZWcgS3JvYWgtSGFydG1hbiA8Z3JlZ2toQGxpbnV4Zm91bmRhdGlv
-bi5vcmc+ClJldmlld2VkLWJ5OiBBcm5hdWQgUG91bGlxdWVuIDxhcm5hdWQucG91bGlxdWVuQHN0
-LmNvbT4KQWNrZWQtYnk6IE1hcmsgQnJvd24gPGJyb29uaWVAa2VybmVsLm9yZz4KQWNrZWQtYnk6
-IFBoaWxpcHAgWmFiZWwgPHAuemFiZWxAcGVuZ3V0cm9uaXguZGU+CkFja2VkLWJ5OiBXb2xmcmFt
-IFNhbmcgPHdzYUBrZXJuZWwub3JnPiAjIGZvciBJMkMKQWNrZWQtYnk6IEpvbmF0aGFuIENhbWVy
-b24gPEpvbmF0aGFuLkNhbWVyb25AaHVhd2VpLmNvbT4KTGluazogaHR0cHM6Ly9sb3JlLmtlcm5l
-bC5vcmcvci8yMDIxMDYxNTE5MTU0My4xMDQzNDE0LTEtcm9iaEBrZXJuZWwub3JnCltQTDogT25s
-eSBhcHBsaWVzIGNoYW5nZXMgdG8gcmVuZXNhcyxzZGhpLnlhbWxdClNpZ25lZC1vZmYtYnk6IExh
-ZCBQcmFiaGFrYXIgPHByYWJoYWthci5tYWhhZGV2LWxhZC5yakBicC5yZW5lc2FzLmNvbT4KLS0t
-CiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbW1jL3JlbmVzYXMsc2RoaS55YW1s
-IHwgMiAtLQogMSBmaWxlIGNoYW5nZWQsIDIgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvRG9j
-dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21tYy9yZW5lc2FzLHNkaGkueWFtbCBiL0Rv
-Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tbWMvcmVuZXNhcyxzZGhpLnlhbWwKaW5k
-ZXggNmMxMzcwM2IzMWRiLi4yMWFmYWY5ZTc2NzYgMTAwNjQ0Ci0tLSBhL0RvY3VtZW50YXRpb24v
-ZGV2aWNldHJlZS9iaW5kaW5ncy9tbWMvcmVuZXNhcyxzZGhpLnlhbWwKKysrIGIvRG9jdW1lbnRh
-dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21tYy9yZW5lc2FzLHNkaGkueWFtbApAQCAtNzQsNyAr
-NzQsNiBAQCBwcm9wZXJ0aWVzOgogCiAgIGNsb2NrLW5hbWVzOgogICAgIG1pbkl0ZW1zOiAxCi0g
-ICAgbWF4SXRlbXM6IDIKICAgICBpdGVtczoKICAgICAgIC0gY29uc3Q6IGNvcmUKICAgICAgIC0g
-Y29uc3Q6IGNkCkBAIC0xMDYsNyArMTA1LDYgQEAgcHJvcGVydGllczoKIAogICBwaW5jdHJsLW5h
-bWVzOgogICAgIG1pbkl0ZW1zOiAxCi0gICAgbWF4SXRlbXM6IDIKICAgICBpdGVtczoKICAgICAg
-IC0gY29uc3Q6IGRlZmF1bHQKICAgICAgIC0gY29uc3Q6IHN0YXRlX3VocwotLSAKMi4xNy4xCgoK
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+
+commit 099ee03271208c880aa33b8833edfacd5010a89a upstream.
+
+make W=3D1:
+
+    drivers/clk/renesas/rzg2l-cpg.c:95: warning: Function parameter or memb=
+er 'num_resets' not described in 'rzg2l_cpg_priv'
+
+Add the missing kerneldoc for fields in struct rzg2l_cpg_priv and struct
+rzg2l_cpg_info related to Module Resets.
+
+Fixes: c3e67ad6f5a2c698 ("dt-bindings: clock: r9a07g044-cpg: Update clock/r=
+eset definitions")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>
+Link: https://lore.kernel.org/r/39c2c5fd4232b6620a4a56dba4e2b0d61476ee36.16=
+34646869.git.geert+renesas@glider.be
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/clk/renesas/rzg2l-cpg.c | 1 +
+ drivers/clk/renesas/rzg2l-cpg.h | 3 +++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cp=
+g.c
+index 4021f6cabda4..a77cb47b75e7 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -74,6 +74,7 @@ struct sd_hw_data {
+  * @clks: Array containing all Core and Module Clocks
+  * @num_core_clks: Number of Core Clocks in clks[]
+  * @num_mod_clks: Number of Module Clocks in clks[]
++ * @num_resets: Number of Module Resets in info->resets[]
+  * @last_dt_core_clk: ID of the last Core Clock exported to DT
+  * @notifiers: Notifier chain to save/restore clock state for system resume
+  * @info: Pointer to platform data
+diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cp=
+g.h
+index 952fca98ba71..da41bd2a7e74 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.h
++++ b/drivers/clk/renesas/rzg2l-cpg.h
+@@ -164,6 +164,9 @@ struct rzg2l_reset {
+  * @num_mod_clks: Number of entries in mod_clks[]
+  * @num_hw_mod_clks: Number of Module Clocks supported by the hardware
+  *
++ * @resets: Array of Module Reset definitions
++ * @num_resets: Number of entries in resets[]
++ *
+  * @crit_mod_clks: Array with Module Clock IDs of critical clocks that
+  *                 should not be disabled without a knowledgeable driver
+  * @num_crit_mod_clks: Number of entries in crit_mod_clks[]
+--=20
+2.17.1
+
+
