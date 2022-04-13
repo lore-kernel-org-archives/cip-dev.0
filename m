@@ -1,527 +1,339 @@
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
- by mx.groups.io with SMTP id smtpd.web08.7616.1649863202946340542
- for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Wed, 13 Apr 2022 08:20:03 -0700
+Received: from mta-64-227.flowmailer.net (mta-64-227.flowmailer.net [185.136.64.227])
+ by mx.groups.io with SMTP id smtpd.web11.3438.1649834200604021533
+ for <cip-dev@lists.cip-project.org>;
+ Wed, 13 Apr 2022 00:16:44 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=U54D0ccw;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.216.47, mailfrom: bot@kernelci.org)
-Received: by mail-pj1-f47.google.com with SMTP id md20-20020a17090b23d400b001cb70ef790dso6559095pjb.5
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Wed, 13 Apr 2022 08:20:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=Ss0kvzBTJF309v6KUBYjsEb/pbqyA39dzgonfrvRjfw=;
-        b=U54D0ccwZdOyA7CSTItJxUlvxT44sGTJxjI+vd4OXH6p8ZwpZlQIbThW4aNOk0LPp5
-         GEmB4Eh0L2b0hmB5zCLnBgGiIchBCwfYcfrXif++g7bgCb/ARKUKYemH2ZJhZvz3O4Le
-         bB3wQL9B0m1WCa7gKfDvxyfjcReLO3CDAsRhZtqySmicfWWNtUwi+JCWa7Wa8j/7nPCb
-         xnm2hlzolY0F50lrWKv6lusm7fpPja/8Kr4CS8YVLgbTFOr0WeLJsKST1DRfbiVLyjmZ
-         rVd71xCJ5e5XLKL+/DF6opyFbbDcaZ8zsqjPf0wRS3ZQ9deEI6i2t8Vq9TrdM683ivC6
-         HThg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=Ss0kvzBTJF309v6KUBYjsEb/pbqyA39dzgonfrvRjfw=;
-        b=fzEYo0TIUHSo1bfF74Wt5Q8iy1rcMGvcuFbuR/+nKtptxUgPK8k8sOdjZAZOqg8db6
-         5lOoPFNr2VWcz69B3gRunhPzWh4nRheVjE1BrOGYVUBN4jaiqvtuTzVzN5Rnbt+9Ry5G
-         bNqDwZ5vmzqGdeXVwhk+V74PePOmBBcsGwB5Rgq1r3R97tb737OTUP98WCrtkV9AryxF
-         akVwGtrFU+M93beohMyjfKPV6HrEqXdk4dEDAGc+37dtkaennVxMDd0NQHxq7eeztoNa
-         q+RANGX5k6CPs1BU29+ry+LI03NcOjZz8NlLBa+Epyde++h4IlhG/rAQNxw3GjZ+wIQz
-         d4HA==
-X-Gm-Message-State: AOAM533QOTILDduzMWgCaQHz1dtQzMiuZEONKElA2qCOZ9NiqFHfq1MM
-	a79sH7pyJKRaI2Gb69nKHZFK7xbDf7M3ZHAR
-X-Google-Smtp-Source: ABdhPJy7pyYeNM21bjicgYiEtPTzr3EWlFcgKuhfiTG5aZoBtt2092j60+D1MrdaNQbKSwWsXtMmOw==
-X-Received: by 2002:a17:90b:1b12:b0:1cd:5d4d:955f with SMTP id nu18-20020a17090b1b1200b001cd5d4d955fmr2532062pjb.175.1649863201844;
-        Wed, 13 Apr 2022 08:20:01 -0700 (PDT)
-Return-Path: <bot@kernelci.org>
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id mq6-20020a17090b380600b001c6357f146csm4050482pjb.12.2022.04.13.08.20.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Apr 2022 08:20:01 -0700 (PDT)
-Message-ID: <6256ea21.1c69fb81.f05b7.a1ae@mx.google.com>
-Date: Wed, 13 Apr 2022 08:20:01 -0700 (PDT)
+ dkim=pass header.i=jan.kiszka@siemens.com header.s=fm1 header.b=AyODwE+a;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-294854-202204130716431385b12f32016f4265-1lusyr@rts-flowmailer.siemens.com)
+Received: by mta-64-227.flowmailer.net with ESMTPSA id 202204130716431385b12f32016f4265
+        for <cip-dev@lists.cip-project.org>;
+        Wed, 13 Apr 2022 09:16:43 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=jan.kiszka@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
+ bh=le2mND6VwDa7A+MTMyLG91h9BqQ8xoQ28ymoQVEaaco=;
+ b=AyODwE+aVl+ozARE0eW3C4k/ulzEjZL0JXo8dWG4N4NCgi+riTnblcKFtNDY/+qtfxsvXc
+ jVEZMSIrbbYtMKztuqYX9lLTVieoFgWyb5/qyfWDcsoRD0JjPQemXcBkxoRGn1VDMkyquYBQ
+ jfFKlIoA+g9NUh8du9fIj4gl2+oDA=;
+From: "Jan Kiszka" <jan.kiszka@siemens.com>
+To: cip-dev@lists.cip-project.org
+Cc: Quirin Gylstorff <quirin.gylstorff@siemens.com>,
+	Christian Storm <christian.storm@siemens.com>
+Subject: [isar-cip-core][PATCH 18/19] doc: Update README.swupdate
+Date: Wed, 13 Apr 2022 09:16:35 +0200
+Message-Id: <09173a76dd97f3b97ec34a10531eb4354f6d3b03.1649834193.git.jan.kiszka@siemens.com>
+In-Reply-To: <cover.1649834193.git.jan.kiszka@siemens.com>
+References: <cover.1649834193.git.jan.kiszka@siemens.com>
 MIME-Version: 1.0
-X-Kernelci-Tree: cip
-X-Kernelci-Branch: linux-4.19.y-cip
-X-Kernelci-Kernel: v4.19.237-cip71
-X-Kernelci-Report-Type: build
-Subject: cip/linux-4.19.y-cip build: 77 builds: 1 failed, 76 passed, 2 errors, 12 warnings (v4.19.237-cip71) #kernelci
-To: Cipproject+Cip-Dev via Email Integration <cip-dev@lists.cip-project.org>
-From: "kernelci.org bot" <bot@kernelci.org>
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-294854:519-21489:flowmailer
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 
-cip/linux-4.19.y-cip build: 77 builds: 1 failed, 76 passed, 2 errors, 12 wa=
-rnings (v4.19.237-cip71)
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-Full Build Summary: https://kernelci.org/build/cip/branch/linux-4.19.y-cip/=
-kernel/v4.19.237-cip71/
+Reflect the changes on the non-secure SWUpdate procedure in the
+documentation and streamline it a bit. Also switch to host-originated
+scp to transfer the swu image to avoid the need for sshd on the host.
 
-Tree: cip
-Branch: linux-4.19.y-cip
-Git Describe: v4.19.237-cip71
-Git Commit: 281476f1d7ee9f59c39dc78e7adb7238cfa54bd0
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-Built: 3 unique architectures
-
-Build Failure Detected:
-
-arm:
-    rpc_defconfig: (gcc-10) FAIL
-
-Errors and Warnings Detected:
-
-arm64:
-    defconfig (gcc-10): 3 warnings
-    defconfig+arm64-chromebook (gcc-10): 3 warnings
-
-arm:
-    rpc_defconfig (gcc-10): 2 errors
-
-x86_64:
-    allnoconfig (gcc-10): 3 warnings
-    x86_64_defconfig+x86-chromebook (gcc-10): 3 warnings
-
-Errors summary:
-
-    1    arm-linux-gnueabihf-gcc: error: unrecognized -march target: armv3
-    1    arm-linux-gnueabihf-gcc: error: missing argument to =E2=80=98-marc=
-h=3D=E2=80=99
-
-Warnings summary:
-
-    6    aarch64-linux-gnu-ld: warning: -z norelro ignored
-    2    ld: warning: creating DT_TEXTREL in a PIE
-    2    ld: arch/x86/boot/compressed/head_64.o: warning: relocation in rea=
-d-only section `.head.text'
-    2    arch/x86/entry/entry_64.S:1738: Warning: no instruction mnemonic s=
-uffix given and no register operands; using default for `sysret'
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-
-Detailed per-defconfig build reports:
-
----------------------------------------------------------------------------=
------
-acs5k_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-acs5k_tiny_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-allnoconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 3 warnings, 0 sectio=
-n mismatches
-
-Warnings:
-    arch/x86/entry/entry_64.S:1738: Warning: no instruction mnemonic suffix=
- given and no register operands; using default for `sysret'
-    ld: arch/x86/boot/compressed/head_64.o: warning: relocation in read-onl=
-y section `.head.text'
-    ld: warning: creating DT_TEXTREL in a PIE
-
----------------------------------------------------------------------------=
------
-am200epdkit_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
- section mismatches
-
----------------------------------------------------------------------------=
------
-assabet_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-at91_dt_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-axm55xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-bcm2835_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-cerfcube_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-colibri_pxa270_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings=
-, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-colibri_pxa300_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings=
-, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-collie_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-davinci_all_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
- section mismatches
-
----------------------------------------------------------------------------=
------
-defconfig (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 3 warnings, 0 section m=
-ismatches
-
-Warnings:
-    aarch64-linux-gnu-ld: warning: -z norelro ignored
-    aarch64-linux-gnu-ld: warning: -z norelro ignored
-    aarch64-linux-gnu-ld: warning: -z norelro ignored
-
----------------------------------------------------------------------------=
------
-defconfig+arm64-chromebook (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 3 warn=
-ings, 0 section mismatches
-
-Warnings:
-    aarch64-linux-gnu-ld: warning: -z norelro ignored
-    aarch64-linux-gnu-ld: warning: -z norelro ignored
-    aarch64-linux-gnu-ld: warning: -z norelro ignored
-
----------------------------------------------------------------------------=
------
-dove_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-ebsa110_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-efm32_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-em_x270_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-ep93xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-eseries_pxa_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
- section mismatches
-
----------------------------------------------------------------------------=
------
-exynos_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-footbridge_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-h3600_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-h5000_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-hisi_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-imx_v6_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-integrator_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-iop13xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-jornada720_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-keystone_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-lart_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-lpc18xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-lubbock_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-magician_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-mainstone_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-mini2440_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-mmp2_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-multi_v4t_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-multi_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-mvebu_v5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-mvebu_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-mxs_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
- mismatches
-
----------------------------------------------------------------------------=
------
-netwinder_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-netx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-nhk8815_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-nuc910_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-oxnas_v6_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-pcm027_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-pleb_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-prima2_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-pxa168_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-pxa255-idp_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-pxa3xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-pxa_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
- mismatches
-
----------------------------------------------------------------------------=
------
-qcom_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-realview_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-rpc_defconfig (arm, gcc-10) =E2=80=94 FAIL, 2 errors, 0 warnings, 0 section=
- mismatches
-
-Errors:
-    arm-linux-gnueabihf-gcc: error: unrecognized -march target: armv3
-    arm-linux-gnueabihf-gcc: error: missing argument to =E2=80=98-march=3D=
-=E2=80=99
-
----------------------------------------------------------------------------=
------
-s3c2410_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-s3c6400_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-s5pv210_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-sama5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-shannon_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-spear6xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-stm32_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-sunxi_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-tango4_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-tegra_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-u300_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-u8500_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-vexpress_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-vf610m4_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-viper_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-x86_64_defconfig+x86-chromebook (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, =
-3 warnings, 0 section mismatches
-
-Warnings:
-    arch/x86/entry/entry_64.S:1738: Warning: no instruction mnemonic suffix=
- given and no register operands; using default for `sysret'
-    ld: arch/x86/boot/compressed/head_64.o: warning: relocation in read-onl=
-y section `.head.text'
-    ld: warning: creating DT_TEXTREL in a PIE
-
----------------------------------------------------------------------------=
------
-xcep_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-zeus_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-zx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
-mismatches
-
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
-For more info write to <info@kernelci.org>
+ doc/README.swupdate.md | 166 ++++++++++++++++++++++-------------------
+ 1 file changed, 90 insertions(+), 76 deletions(-)
+
+diff --git a/doc/README.swupdate.md b/doc/README.swupdate.md
+index 05768da..e28db24 100644
+--- a/doc/README.swupdate.md
++++ b/doc/README.swupdate.md
+@@ -1,31 +1,38 @@
++# SWUpdate support for the CIP core image
+ 
+-Clone the isar-cip-core repository
++This document describes how to build and test the SWUpdate pre-integration for
++isar-cip-core, targeting a QEMU x86 virtual machine.
++
++Start with cloning the isar-cip-core repository:
+ ```
+ host$ git clone https://gitlab.com/cip-project/cip-core/isar-cip-core.git
+ ```
+ 
+-Build the CIP Core image
++# Building and testing the CIP Core image
+ 
+ Set up `kas-container` as described in the [top-level README](../README.md).
+-Then build the image:
++Then build the image which will later serve as update package:
+ ```
+ host$ ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml
+ ```
+-- save the generated swu build/tmp/deploy/images/qemu-amd64/cip-core-image-cip-core-buster-qemu-amd64.swu in a separate folder (ex: tmp)
+-- modify the image for example add a new version to the image by adding PV=2.0.0 to cip-core-image.bb
+-- rebuild the image using above command and start the new target
++Save the generated swu `build/tmp/deploy/images/qemu-amd64/cip-core-image-cip-core-buster-qemu-amd64.swu` into a separate folder (ex: /tmp).
++
++Next, rebuild the image, switching to the RT kernel as modification:
+ ```
+-host$ SWUPDATE_BOOT=y ./start-qemu.sh amd64
++host$ ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:kas/opt/rt.yml
+ ```
+ 
+-Copy `cip-core-image-cip-core-buster-qemu-amd64.swu` file from `tmp` folder to the running system
++Now start the image which will contain the RT kernel:
++```
++host$ SWUPDATE_BOOT=y ./start-qemu.sh amd64
++```
+ 
++Copy `cip-core-image-cip-core-buster-qemu-amd64.swu` file from `tmp` folder into the running system:
+ ```
+-root@demo:~# scp <host-user>@10.0.2.2:<path-to-swu-file>/tmp/cip-core-image-cip-core-buster-qemu-amd64.swu .
++host$ scp -P 22222 /tmp/cip-core-image-cip-core-buster-qemu-amd64.swu root@localhost:
+ ```
+ 
+ Check which partition is booted, e.g. with lsblk:
+-
+ ```
+ root@demo:~# lsblk
+ NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+@@ -37,11 +44,22 @@ sda      8:0    0    2G  0 disk
+ └─sda5   8:5    0 1000M  0 part
+ ```
+ 
+-Apply swupdate and reboot
++Also check that you are running the RT kernel:
++```
++root@demo:~# uname -a
++Linux demo 4.19.233-cip69-rt24 #1 SMP PREEMPT RT Tue Apr 12 09:23:51 UTC 2022 x86_64 GNU/Linux
++root@demo:~# ls /lib/modules
++4.19.233-cip69-rt24
++root@demo:~# cat /sys/kernel/realtime
++1
++```
++
++Now apply swupdate and reboot
+ ```
+ root@demo:~# swupdate -i cip-core-image-cip-core-buster-qemu-amd64.swu
+ root@demo:~# reboot
+ ```
++
+ Check which partition is booted, e.g. with lsblk and the rootfs should have changed
+ ```
+ root@demo:~# lsblk
+@@ -54,150 +72,146 @@ sda      8:0    0    2G  0 disk
+ └─sda5   8:5    0 1000M  0 part /
+ ```
+ 
++Check the active kernel:
++```
++root@demo:~# uname -a
++Linux demo 4.19.235-cip70 #1 SMP Tue Apr 12 09:08:39 UTC 2022 x86_64 GNU/Linux
++root@demo:~# ls /lib/modules
++4.19.235-cip70
++```
++
+ Check bootloader ustate after swupdate
+ ```
+ root@demo:~# bg_printenv
++
+ ----------------------------
+-Config Partition #0 Values:
++ Config Partition #0 Values:
+ in_progress:      no
+ revision:         2
+-kernel:           C:BOOT0:cip-core-image-cip-core-buster-qemu-amd64-vmlinuz
+-kernelargs:       console=tty0 console=ttyS0,115200 rootwait earlyprintk root=PARTUUID=fedcba98-7654-3210-cafe-5e0710000001 rw initrd=cip-core-image-cip-core-buster-qemu-amd64-initrd.img
++kernel:           C:BOOT0:linux.efi
++kernelargs:       console=tty0 console=ttyS0,115200 rootwait earlyprintk
+ watchdog timeout: 60 seconds
+ ustate:           0 (OK)
+ 
+ user variables:
+ 
++
++
+ ----------------------------
+  Config Partition #1 Values:
+ in_progress:      no
+ revision:         3
+-kernel:           C:BOOT1:vmlinuz
+-kernelargs:       root=PARTUUID=fedcba98-7654-3210-cafe-5e0710000002 console=tty0 console=ttyS0,115200 rootwait earlyprintk rw initrd=cip-core-image-cip-core-buster-qemu-amd64-initrd.img
++kernel:           C:BOOT1:linux.efi
++kernelargs:       console=tty0 console=ttyS0,115200 rootwait earlyprintk
+ watchdog timeout: 60 seconds
+ ustate:           2 (TESTING)
++
++user variables:
++
++
+ ```
+ 
+-if Partition #1 usate is 2 (TESTING) then execute below command to confirm swupdate and the command will set ustate to "OK"
++If Partition #1 ustate is 2 (TESTING) then execute below command to confirm swupdate and the command will set ustate to "OK".
+ ```
+ root@demo:~# bg_setenv -c
+ ```
+ 
+-# swupdate rollback example
++## SWUpdate rollback example
+ 
+-Build the image for swupdate with service which causes kernel panic during system boot using below command.
++Build the image for swupdate with a service which causes kernel panic during system boot using below command:
+ 
+ ```
+ host$ ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:kas/opt/kernel-panic.yml
+ ```
+-- save the generated swu build/tmp/deploy/images/qemu-amd64/cip-core-image-cip-core-buster-qemu-amd64.swu in a separate folder (ex: tmp)
+-- build the image again without `kernel-panic.yml` recipe using below command
++Save the generated swu `build/tmp/deploy/images/qemu-amd64/cip-core-image-cip-core-buster-qemu-amd64.swu` in a separate folder.
++Then build the image without `kernel-panic.yml` recipe using below command:
+ ```
+ host$ ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml
+ ```
+ 
+-Start the target on QEMU
++Start the target on QEMU:
+ ```
+ host$ SWUPDATE_BOOT=y ./start-qemu.sh amd64
+ ```
+ 
+-Copy `cip-core-image-cip-core-buster-qemu-amd64.swu` file from `tmp` folder to the running system
+-
++Copy `cip-core-image-cip-core-buster-qemu-amd64.swu` file from `tmp` folder into the running system:
+ ```
+-root@demo:~# scp <host-user>@10.0.2.2:<path-to-swu-file>/tmp/cip-core-image-cip-core-buster-qemu-amd64.swu .
++host$ scp -P 22222 /tmp/cip-core-image-cip-core-buster-qemu-amd64.swu root@localhost:
+ ```
+ 
+-Check which partition is booted, e.g. with lsblk:
+-
++Apply swupdate as below:
+ ```
+-root@demo:~# lsblk
+-NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+-sda      8:0    0    2G  0 disk
+-├─sda1   8:1    0 16.4M  0 part
+-├─sda2   8:2    0   32M  0 part
+-├─sda3   8:3    0   32M  0 part
+-├─sda4   8:4    0 1000M  0 part /
+-└─sda5   8:5    0 1000M  0 part
++root@demo:~# swupdate -i cip-core-image-cip-core-buster-qemu-amd64.swu
+ ```
+ 
+-Check bootloader ustate before swupdate and should be as below
++Check bootloader ustate after swupdate. If the swupdate is successful then **revision number** should be **3** and status should be changed to **INSTALLED** for Partition #1.
+ ```
+ root@demo:~# bg_printenv
++
+ ----------------------------
+-Config Partition #0 Values:
++ Config Partition #0 Values:
+ in_progress:      no
+ revision:         2
+-kernel:           C:BOOT0:cip-core-image-cip-core-buster-qemu-amd64-vmlinuz
+-kernelargs:       console=tty0 console=ttyS0,115200 rootwait earlyprintk root=PARTUUID=fedcba98-7654-3210-cafe-5e0710000001 rw initrd=cip-core-image-cip-core-buster-qemu-amd64-initrd.img
++kernel:           C:BOOT0:linux.efi
++kernelargs:       console=tty0 console=ttyS0,115200 rootwait earlyprintk
+ watchdog timeout: 60 seconds
+ ustate:           0 (OK)
+ 
+ user variables:
+-----------------------------
+-Config Partition #1 Values:
+-in_progress:      no
+-revision:         1
+-kernel:           C:BOOT1:cip-core-image-cip-core-buster-qemu-amd64-vmlinuz
+-kernelargs:       console=tty0 console=ttyS0,115200 rootwait earlyprintk root=PARTUUID=fedcba98-7654-3210-cafe-5e0710000002 rw initrd=cip-core-image-cip-core-buster-qemu-amd64-initrd.img
+-watchdog timeout: 60 seconds
+-ustate:           0 (OK)
+-```
+ 
+-Apply swupdate as below
+-```
+-root@demo:~# swupdate -i cip-core-image-cip-core-buster-qemu-amd64.swu
+-```
+ 
+-check bootloader ustate after swupdate. if the swupdate is successful then **revision number** should increase to **3** and status should be changed to **INSTALLED** for Partition #1.
+-```
+-root@demo:~# bg_printenv
+-----------------------------
+-Config Partition #0 Values:
+-in_progress:      no
+-revision:         2
+-kernel:           C:BOOT0:cip-core-image-cip-core-buster-qemu-amd64-vmlinuz
+-kernelargs:       console=tty0 console=ttyS0,115200 rootwait earlyprintk root=PARTUUID=fedcba98-7654-3210-cafe-5e0710000001 rw initrd=cip-core-image-cip-core-buster-qemu-amd64-initrd.img
+-watchdog timeout: 60 seconds
+-ustate:           0 (OK)
+ 
+-user variables:
+ ----------------------------
+-Config Partition #1 Values:
++ Config Partition #1 Values:
+ in_progress:      no
+ revision:         3
+-kernel:           C:BOOT1:vmlinuz
+-kernelargs:       root=PARTUUID=fedcba98-7654-3210-cafe-5e0710000002 console=tty0 console=ttyS0,115200 rootwait earlyprintk rw initrd=cip-core-image-cip-core-buster-qemu-amd64-initrd.img
++kernel:           C:BOOT1:linux.efi
++kernelargs:       console=tty0 console=ttyS0,115200 rootwait earlyprintk
+ watchdog timeout: 60 seconds
+ ustate:           1 (INSTALLED)
++
++user variables:
++
++
+ ```
+ 
+-Execute reboot command
+-- reboot command should cause kernel panic error.
+-- watchdog timer should expire and restart the qemu. bootloader should select previous partition to boot.
++Execute the reboot command.
+ ```
+ root@demo:~# reboot
+ ```
+ 
+-Once the system is restarted, check the bootloader ustate
+-- if update is failed then **revision number** should reduce to **0** and status should change to **FAILED** for Partition #1.
++The new kernel should cause a kernel panic error.
++The watchdog timer should expire and restart the VM (it will take 2 minutes due to an issue in.
++The bootloader will then select the previous, working partition and boot from it.
++
++Once the system is restarted, check the bootloader ustate.
++If update is failed then **revision number** should be reduced to **0** and status should have changed to **FAILED** for Partition #1.
+ ```
+ root@demo:~# bg_printenv
++
+ ----------------------------
+  Config Partition #0 Values:
+ in_progress:      no
+ revision:         2
+-kernel:           C:BOOT0:cip-core-image-cip-core-buster-qemu-amd64-vmlinuz
+-kernelargs:       console=tty0 console=ttyS0,115200 rootwait earlyprintk root=PARTUUID=fedcba98-7654-3210-cafe-5e0710000001 rw initrd=cip-core-image-cip-corg
++kernel:           C:BOOT0:linux.efi
++kernelargs:       console=tty0 console=ttyS0,115200 rootwait earlyprintk
+ watchdog timeout: 60 seconds
+ ustate:           0 (OK)
+ 
+ user variables:
++
++
++
+ ----------------------------
+  Config Partition #1 Values:
+ in_progress:      no
+ revision:         0
+-kernel:           C:BOOT1:vmlinuz
+-kernelargs:       root=PARTUUID=fedcba98-7654-3210-cafe-5e0710000002 console=tty0 console=ttyS0,115200 rootwait earlyprintk rw initrd=cip-core-image-cip-corg
++kernel:           C:BOOT1:linux.efi
++kernelargs:       console=tty0 console=ttyS0,115200 rootwait earlyprintk
+ watchdog timeout: 60 seconds
+ ustate:           3 (FAILED)
++
++user variables:
++
++
+ ```
+-- 
+2.34.1
+
 
