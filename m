@@ -1,155 +1,97 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DF3DC48BCD
-	for <webhook@archiver.kernel.org>; Wed, 13 Apr 2022 15:48:08 +0000 (UTC)
-Received: from mta-64-227.flowmailer.net (mta-64-227.flowmailer.net
- [185.136.64.227])
- by mx.groups.io with SMTP id smtpd.web09.6457.1649858062045545442
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E998C388F3
+	for <webhook@archiver.kernel.org>; Thu, 14 Apr 2022 16:03:53 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web11.3664.1649881985188112662
  for <cip-dev@lists.cip-project.org>;
- Wed, 13 Apr 2022 06:54:23 -0700
+ Wed, 13 Apr 2022 13:33:06 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=quirin.gylstorff@siemens.com header.s=fm1
- header.b=NcfVbzpG;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227,
- mailfrom: fm-51332-20220413135417b0e3b35a99ea583876-9inna_@rts-flowmailer.siemens.com)
-Received: by mta-64-227.flowmailer.net with ESMTPSA id
- 20220413135417b0e3b35a99ea583876
-        for <cip-dev@lists.cip-project.org>;
-        Wed, 13 Apr 2022 15:54:18 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=quirin.gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=mmT0+ngA7lTGXBEEWG+jYORBQN1PjV2paRabBh9HaOE=;
- b=NcfVbzpGYFWJh2MdDRV67GrRQ5GYpQgzkYR+HyL9J6LjYhHY4dhpKoDeovmNzqdu90T9tl
- emlMikOSZwMkB2CXb2T4/PefefDc/fILvoqRO0mW/+3O8vUGBEjG/9Zr+8UH8BftZj1GWPFL
- A17GOhi6sp8DVjesk6Cl3aqnlYuMc=;
-Message-ID: <f7b6752a-521e-b1dc-a366-acdde99862b9@siemens.com>
-Date: Wed, 13 Apr 2022 15:54:16 +0200
+ dkim=missing;
+ spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 7B1E01C0B8B; Wed, 13 Apr 2022 22:33:00 +0200 (CEST)
+Date: Wed, 13 Apr 2022 22:32:59 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Pavel Machek <pavel@denx.de>, cip-dev@lists.cip-project.org
+Subject: Re: [cip-dev] CIP IRC weekly meeting today on libera.chat
+Message-ID: <20220413203259.GA3826@duo.ucw.cz>
+References: <76860af5-c727-1ca9-a572-ef505ed51aaa@siemens.com>
+ <20220407090607.GA20233@duo.ucw.cz>
+ <54e32f3a-cc78-2e6f-2414-9ee2e2791243@siemens.com>
 MIME-Version: 1.0
-Subject: Re: [isar-cip-core][PATCH 00/19] SWUpdate & EFI Boot Guard
- refactorings
-Content-Language: en-US
-To: Jan Kiszka <jan.kiszka@siemens.com>, cip-dev@lists.cip-project.org
-Cc: Christian Storm <christian.storm@siemens.com>
-References: <cover.1649834193.git.jan.kiszka@siemens.com>
-From: Gylstorff Quirin <quirin.gylstorff@siemens.com>
-Organization: Siemens
-In-Reply-To: <cover.1649834193.git.jan.kiszka@siemens.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-51332:519-21489:flowmailer
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="3MwIy2ne0vdjdPXF"
+Content-Disposition: inline
+In-Reply-To: <54e32f3a-cc78-2e6f-2414-9ee2e2791243@siemens.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 13 Apr 2022 15:48:08 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8073
+ <cip-dev@lists.cip-project.org>; Thu, 14 Apr 2022 16:03:53 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8083
 
 
+--3MwIy2ne0vdjdPXF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 4/13/22 09:16, Jan Kiszka wrote:
-> Several refactorings, simplifications and fixes of the SWUpdate and EFI
-> Boot Guard integration. This primarily aims at the unification of both
-> variants.
-> 
-> For that, this switches to unified kernel images also in the non-secure
-> mode. This allows to share configuration files between both as well.
-> 
-> Furthermore, the device selection in sw-description is abstracted from
-> the concrete medium, making it easier for downstream to place images on
-> either internal or external media without adjusting device paths.
-> 
-> Finally, the watchdog support in QEMU is fixed and enabled so that we
-> can run update and failure sequences completely.
-> 
-> Jan
+Hi!
 
-I tested it once and it looks good to me.
+> >> Last meeting minutes:
+> >> https://ircbot.wl.linuxfoundation.org/meetings/cip/2022/03/cip.2022-03=
+-17-13.00.log.html
+> > ...
+> >> IMPORTANT NOTE: I'm unfortunately not able to run the meeting myself=
+=20
+> >> today due to an appointment conflict (damn DST...). Could someone else=
+=20
+> >> from the kernel team take over again? Thanks in advance.
+> >=20
+> > After DST shift, 13 UTC is not really great time for me, either. 12
+> > UTC would be better, 9 or 10 UTC would be even better. I don't propose
+> > shifting today's meeting, but should we talk about shift?
+> >=20
+>=20
+> Forgot to follow up on this:
+>=20
+> Are there any concerns among our participants to move this by one hour
+> earlier?
 
-Quirin
+Not from me.
 
-> 
-> Jan Kiszka (19):
->    start-qemu.sh: Add ssh access to guest from localhost
->    swupdate: Simplify secure-swupdate-img class
->    swupdate: Drop no longer used SOURCE_IMAGE_FILE
->    swupdate: Rename secure-swupdate-img class
->    Drop initramfs-abrootfs-secureboot references
->    Rename initramfs-abrootfs-secureboot to initramfs-abrootfs-hook
->    swupdate: Switch to unified kernel image by default
->    swupdate: Drop PN from TEMPLATE_VARS
->    efibootguard: Avoid rename linux.efi when signing it
->    Unify configuration of secure vs. non-secure SWUpdate
->    cip-core-image: Do not include swupdate.inc unless it is used
->    cip-core-image: Make image-uuid an image option
->    swupdate: Add patch to fix EBG bootloader_env_get
->    swupdate: Switch to bootenv_rrmap+kernelfile for device selection
->    customizations: Enable systemd watchdog
->    linux-cip: Update cip-kernel-config
->    start-qemu.sh: Ensure that iTCO watchdog timeout triggers reset
->    doc: Update README.swupdate
->    doc: README.secureboot polishing
-> 
->   ...img.bbclass => secure-wic-swu-img.bbclass} |   6 +-
->   classes/wic-swu-img.bbclass                   |   2 -
->   doc/README.secureboot.md                      |  16 +-
->   doc/README.swupdate.md                        | 166 ++++++++++--------
->   kas/opt/ebg-secure-boot-base.yml              |  21 ---
->   kas/opt/ebg-secure-boot-snakeoil.yml          |  10 +-
->   kas/opt/ebg-swu.yml                           |   7 +
->   kas/opt/swupdate.yml                          |   3 +
->   recipes-core/customizations/common.inc        |   6 +-
->   .../customizations/files/99-watchdog.conf     |   3 +
->   recipes-core/images/cip-core-image.bb         |   6 +-
->   .../files/secure-boot/sw-description.tmpl     |  35 ----
->   recipes-core/images/files/sw-description.tmpl |  20 +--
->   recipes-core/images/image-uuid.inc            |  12 ++
->   recipes-core/images/read-only.inc             |   1 -
->   recipes-core/images/secureboot.inc            |  21 ---
->   recipes-core/images/swupdate.inc              |   4 +-
->   .../swupdate.handler.efibootguard.ini         |  16 --
->   .../files/swupdate.handler.efibootguard.ini   |  20 +--
->   ...onfig-Make-image-encryption-optional.patch |   8 +-
->   .../0002-debian-rules-Add-CONFIG_MTD.patch    |   6 +-
->   ...es-Add-option-to-disable-fs-creation.patch |   8 +-
->   ...ules-Add-option-to-disable-webserver.patch |   8 +-
->   ...Make-CONFIG_HW_COMPATIBILTY-optional.patch |   8 +-
->   ...ules-Add-Embedded-Lua-handler-option.patch |   6 +-
->   ...-SWUpdate-USB-service-and-Udev-rules.patch |  10 +-
->   ...option-to-disable-CONFIG_HASH_VERIFY.patch |   6 +-
->   ...ch-to-fix-bootloader_env_get-for-EBG.patch |  66 +++++++
->   ...repare-build-for-isar-debian-buster.patch} |  10 +-
->   .../swupdate/swupdate_2021.11-1+debian-gbp.bb |   5 +-
->   .../files/debian-local-patch                  |   0
->   .../files/initramfs.image_uuid.hook           |   0
->   .../files/initramfs.lsblk.hook                |   0
->   .../initramfs-abrootfs-hook}/files/postinst   |   2 +-
->   .../initramfs-abrootfs-hook_0.1.bb            |   8 +-
->   recipes-kernel/linux/linux-cip-common.inc     |   2 +-
->   .../wic/plugins/source/efibootguard-boot.py   |  30 ++--
->   start-qemu.sh                                 |   3 +-
->   wic/ebg-sysparts.inc                          |   4 +-
->   wic/qemu-amd64-efibootguard-secureboot.wks.in |   4 +-
->   40 files changed, 277 insertions(+), 292 deletions(-)
->   rename classes/{secure-swupdate-img.bbclass => secure-wic-swu-img.bbclass} (82%)
->   delete mode 100644 kas/opt/ebg-secure-boot-base.yml
->   create mode 100644 recipes-core/customizations/files/99-watchdog.conf
->   delete mode 100644 recipes-core/images/files/secure-boot/sw-description.tmpl
->   create mode 100644 recipes-core/images/image-uuid.inc
->   delete mode 100644 recipes-core/images/secureboot.inc
->   delete mode 100644 recipes-core/swupdate-handler-roundrobin/files/secureboot/swupdate.handler.efibootguard.ini
->   create mode 100644 recipes-core/swupdate/files/0009-debian-Add-patch-to-fix-bootloader_env_get-for-EBG.patch
->   rename recipes-core/swupdate/files/{0009-debian-prepare-build-for-isar-debian-buster.patch => 0010-debian-prepare-build-for-isar-debian-buster.patch} (92%)
->   rename recipes-support/initramfs-config/files/secure-boot-debian-local-patch => recipes-initramfs/initramfs-abrootfs-hook/files/debian-local-patch (100%)
->   rename {recipes-support/initramfs-config => recipes-initramfs/initramfs-abrootfs-hook}/files/initramfs.image_uuid.hook (100%)
->   rename {recipes-support/initramfs-config => recipes-initramfs/initramfs-abrootfs-hook}/files/initramfs.lsblk.hook (100%)
->   rename {recipes-support/initramfs-config => recipes-initramfs/initramfs-abrootfs-hook}/files/postinst (73%)
->   rename recipes-support/initramfs-config/initramfs-abrootfs-secureboot_0.1.bb => recipes-initramfs/initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.1.bb (74%)
-> 
+> If no, the next logical question would then be:
+>=20
+> Stick with one hour earlier, or will this cause conflicts again on the
+> end of DST in Autumn?
 
+My preferences are:
 
+best/1: permanently one hour earlier.
 
+2: one hour earlier at least during DST.
 
+3: current time.
+
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--3MwIy2ne0vdjdPXF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYlczewAKCRAw5/Bqldv6
+8tRoAKCLlYsjmV2gtCEAI8W7xuVeF25ADwCfctmopK3zZmi3uMmp7DYbdxZSpO0=
+=4g9F
+-----END PGP SIGNATURE-----
+
+--3MwIy2ne0vdjdPXF--
 
