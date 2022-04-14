@@ -1,340 +1,123 @@
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.7891.1657807478414387684
- for <cip-dev@lists.cip-project.org>;
- Thu, 14 Jul 2022 07:04:43 -0700
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+ by mx.groups.io with SMTP id smtpd.web12.6700.1649901147933517071
+ for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
+ Wed, 13 Apr 2022 18:52:28 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
-X-IronPort-AV: E=Sophos;i="5.92,271,1650898800"; 
-   d="scan'208";a="126170496"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 14 Jul 2022 23:04:42 +0900
-Received: from localhost.localdomain (unknown [10.226.92.147])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id A677A441C336;
-	Thu, 14 Jul 2022 23:04:40 +0900 (JST)
-From: "Biju Das" <biju.das.jz@bp.renesas.com>
-To: Pavel Machek <pavel@denx.de>
-Cc: nobuhiro1.iwamatsu@toshiba.co.jp,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	cip-dev@lists.cip-project.org
-Subject: [PATCH [5.10.y-cip] 03/13] thermal/drivers: Add TSU driver for RZ/G2L
-Date: Thu, 14 Jul 2022 15:04:22 +0100
-Message-Id: <20220714140432.2210982-4-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220714140432.2210982-1-biju.das.jz@bp.renesas.com>
-References: <20220714140432.2210982-1-biju.das.jz@bp.renesas.com>
+ dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=RRBAJyFS;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.172, mailfrom: bot@kernelci.org)
+Received: by mail-pl1-f172.google.com with SMTP id j8so3452744pll.11
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Wed, 13 Apr 2022 18:52:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=1OmUTY+HaS1o3NKPhjOyXhfLYRVLfbQk77yLmUu6elU=;
+        b=RRBAJyFST5RClAl46ULbS/jRF1jSEwWpZWedX8WZUrFXwKbUIEWsCX8KK0YyEBThfE
+         NHppUvo57Fe06ErjRgC8uI60K2B3gzJWk1mUB16Ig8RSrpcVshE0HW2aAh4Yfa1rlXpn
+         qTEYH4eSOmQWy5Yf5JmuYBHNRU1lDpaL5N+BH+BScnQrur4riEztaIalKUlEUN1jyHx5
+         ts3f714v9SJaMS+49eMFeVrUR+s8wqhyJ9s6XD4NZLnTcL+I7WCXMmAtCugozTp6pUPa
+         bhOcJPv6HfonTq40QsTVEVl9a0ydZOkv+UeJJU3sfkXStDjux1CE5M9PxPbRVJqCtY/7
+         +DDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=1OmUTY+HaS1o3NKPhjOyXhfLYRVLfbQk77yLmUu6elU=;
+        b=mwOu6PQXPUdvnIbgsnWeCr7YP1KkzoTlz63GqIVbg1Bk5XyQIAJNQ1xVAtBZDjTVLL
+         PDbBpPREVSzfOLlLGcGkfKGy1MJP+FpieIZwQ7hj3ks8gRQoSUxEee2IwZCEA/110hCk
+         cVJ5dnFl9KGTdEMFcobnRFXN3iMdY4JQBlvOiKLEusqObxDvzxTyHITOsj3b2/36sNCH
+         oMXJ2QzaROFFexKZw4gXNbbxepCX+/shS8xvm6/6CNI/OqkhV8JVJps1bbdoxiZc7nA8
+         fdxqqGlGn7NJ3euHoYXU5HgNpiEKYlWqGUT8BEsyXpCnbzWvMeGbL7hnyZ3u+pHNteDe
+         L6yg==
+X-Gm-Message-State: AOAM533KhR7DdGTiHzxTYEZFrUPIf2T2J9XiTty+Uu/4ndRPnCBXydOe
+	yNLhLIrMFrg2wD/ztFl7r+agvGhl4WfGGUZo
+X-Google-Smtp-Source: ABdhPJyvgzuYvWcYmOLn/OiTYHMxcJRySKcdankT+1bwkAZDUzZ5BZEXGUpAagKzWiaEQpM2nQPmiQ==
+X-Received: by 2002:a17:90a:a509:b0:1ca:c48e:a795 with SMTP id a9-20020a17090aa50900b001cac48ea795mr1711564pjq.165.1649901147132;
+        Wed, 13 Apr 2022 18:52:27 -0700 (PDT)
+Return-Path: <bot@kernelci.org>
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id i11-20020a654d0b000000b0039d82c3e68csm354904pgt.55.2022.04.13.18.52.26
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Apr 2022 18:52:26 -0700 (PDT)
+Message-ID: <62577e5a.1c69fb81.2510f.173e@mx.google.com>
+Date: Wed, 13 Apr 2022 18:52:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="utf-8"
+X-Kernelci-Tree: cip-gitlab
+X-Kernelci-Branch: ci/iwamatsu/linux-5.10.y-cip-rc
+X-Kernelci-Kernel: v5.10.109-cip5-770-g2801336f0f208
+X-Kernelci-Report-Type: test
+Subject: cip-gitlab/ci/iwamatsu/linux-5.10.y-cip-rc kselftest-seccomp: 4 runs, 1 regressions (v5.10.109-cip5-770-g2801336f0f208) #kernelci
+To: Cipproject+Cip-Dev via Email Integration <cip-dev@lists.cip-project.org>
+From: "kernelci.org bot" <bot@kernelci.org>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
 List-Id: <cip-dev.lists.cip-project.org>
 
-commit 673c68bd48390dad01f7d17670de3e33b60860ac upstream.
+cip-gitlab/ci/iwamatsu/linux-5.10.y-cip-rc kselftest-seccomp: 4 runs, 1 reg=
+ressions (v5.10.109-cip5-770-g2801336f0f208)
 
-The RZ/G2L SoC incorporates a thermal sensor unit (TSU) that measures the
-temperature inside the LSI.
+Regressions Summary
+-------------------
 
-The thermal sensor in this unit measures temperatures in the range from
-−40 degree Celsius to 125 degree Celsius with an accuracy of ±3°C. The
-TSU repeats measurement at 20 microseconds intervals and automatically
-updates the results of measurement.
+platform                  | arch   | lab           | compiler | defconfig  =
+                  | regressions
+--------------------------+--------+---------------+----------+------------=
+------------------+------------
+asus-C433TA-AJ0005-rammus | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
+on...ok+kselftest | 1          =
 
-The TSU has no interrupts as well as no external pins.
 
-This patch adds Thermal Sensor Unit(TSU) driver for RZ/G2L SoC.
+  Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fiwamatsu%2=
+Flinux-5.10.y-cip-rc/kernel/v5.10.109-cip5-770-g2801336f0f208/plan/kselftes=
+t-seccomp/
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://lore.kernel.org/r/20211130155757.17837-3-biju.das.jz@bp.renesas.com
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/thermal/Kconfig         |   9 ++
- drivers/thermal/Makefile        |   1 +
- drivers/thermal/rzg2l_thermal.c | 240 ++++++++++++++++++++++++++++++++
- 3 files changed, 250 insertions(+)
- create mode 100644 drivers/thermal/rzg2l_thermal.c
+  Test:     kselftest-seccomp
+  Tree:     cip-gitlab
+  Branch:   ci/iwamatsu/linux-5.10.y-cip-rc
+  Describe: v5.10.109-cip5-770-g2801336f0f208
+  URL:      https://gitlab.com/cip-project/cip-kernel/linux-cip.git
+  SHA:      2801336f0f2089b0d935efe67d93eccaa85e4bec =
 
-diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-index 7edc8dc6bbab..e51c8cc989d8 100644
---- a/drivers/thermal/Kconfig
-+++ b/drivers/thermal/Kconfig
-@@ -354,6 +354,15 @@ config RCAR_GEN3_THERMAL
- 	  Enable this to plug the R-Car Gen3 or RZ/G2 thermal sensor driver into
- 	  the Linux thermal framework.
- 
-+config RZG2L_THERMAL
-+	tristate "Renesas RZ/G2L thermal driver"
-+	depends on ARCH_RENESAS || COMPILE_TEST
-+	depends on HAS_IOMEM
-+	depends on OF
-+	help
-+	  Enable this to plug the RZ/G2L thermal sensor driver into the Linux
-+	  thermal framework.
-+
- config KIRKWOOD_THERMAL
- 	tristate "Temperature sensor on Marvell Kirkwood SoCs"
- 	depends on MACH_KIRKWOOD || COMPILE_TEST
-diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
-index b64dd50a6629..b71f9b88b567 100644
---- a/drivers/thermal/Makefile
-+++ b/drivers/thermal/Makefile
-@@ -37,6 +37,7 @@ obj-$(CONFIG_SUN8I_THERMAL)     += sun8i_thermal.o
- obj-$(CONFIG_ROCKCHIP_THERMAL)	+= rockchip_thermal.o
- obj-$(CONFIG_RCAR_THERMAL)	+= rcar_thermal.o
- obj-$(CONFIG_RCAR_GEN3_THERMAL)	+= rcar_gen3_thermal.o
-+obj-$(CONFIG_RZG2L_THERMAL)	+= rzg2l_thermal.o
- obj-$(CONFIG_KIRKWOOD_THERMAL)  += kirkwood_thermal.o
- obj-y				+= samsung/
- obj-$(CONFIG_DOVE_THERMAL)  	+= dove_thermal.o
-diff --git a/drivers/thermal/rzg2l_thermal.c b/drivers/thermal/rzg2l_thermal.c
-new file mode 100644
-index 000000000000..d47d4a30cd6c
---- /dev/null
-+++ b/drivers/thermal/rzg2l_thermal.c
-@@ -0,0 +1,240 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Renesas RZ/G2L TSU Thermal Sensor Driver
-+ *
-+ * Copyright (C) 2021 Renesas Electronics Corporation
-+ */
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/iopoll.h>
-+#include <linux/math.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/reset.h>
-+#include <linux/thermal.h>
-+#include <linux/units.h>
-+
-+#include "thermal_hwmon.h"
-+
-+#define CTEMP_MASK	0xFFF
-+
-+/* default calibration values, if FUSE values are missing */
-+#define SW_CALIB0_VAL	3148
-+#define SW_CALIB1_VAL	503
-+
-+/* Register offsets */
-+#define TSU_SM		0x00
-+#define TSU_ST		0x04
-+#define TSU_SAD		0x0C
-+#define TSU_SS		0x10
-+
-+#define OTPTSUTRIM_REG(n)	(0x18 + ((n) * 0x4))
-+
-+/* Sensor Mode Register(TSU_SM) */
-+#define TSU_SM_EN_TS		BIT(0)
-+#define TSU_SM_ADC_EN_TS	BIT(1)
-+#define TSU_SM_NORMAL_MODE	(TSU_SM_EN_TS | TSU_SM_ADC_EN_TS)
-+
-+/* TSU_ST bits */
-+#define TSU_ST_START		BIT(0)
-+
-+#define TSU_SS_CONV_RUNNING	BIT(0)
-+
-+#define TS_CODE_AVE_SCALE(x)	((x) * 1000000)
-+#define MCELSIUS(temp)		((temp) * MILLIDEGREE_PER_DEGREE)
-+#define TS_CODE_CAP_TIMES	8	/* Capture  times */
-+
-+#define RZG2L_THERMAL_GRAN	500	/* milli Celsius */
-+#define RZG2L_TSU_SS_TIMEOUT_US	1000
-+
-+#define CURVATURE_CORRECTION_CONST	13
-+
-+struct rzg2l_thermal_priv {
-+	struct device *dev;
-+	void __iomem *base;
-+	struct thermal_zone_device *zone;
-+	struct reset_control *rstc;
-+	u32 calib0, calib1;
-+};
-+
-+static inline u32 rzg2l_thermal_read(struct rzg2l_thermal_priv *priv, u32 reg)
-+{
-+	return ioread32(priv->base + reg);
-+}
-+
-+static inline void rzg2l_thermal_write(struct rzg2l_thermal_priv *priv, u32 reg,
-+				       u32 data)
-+{
-+	iowrite32(data, priv->base + reg);
-+}
-+
-+static int rzg2l_thermal_get_temp(void *devdata, int *temp)
-+{
-+	struct rzg2l_thermal_priv *priv = devdata;
-+	u32 result = 0, dsensor, ts_code_ave;
-+	int val, i;
-+
-+	for (i = 0; i < TS_CODE_CAP_TIMES ; i++) {
-+		/* TSU repeats measurement at 20 microseconds intervals and
-+		 * automatically updates the results of measurement. As per
-+		 * the HW manual for measuring temperature we need to read 8
-+		 * values consecutively and then take the average.
-+		 * ts_code_ave = (ts_code[0] + ⋯ + ts_code[7]) / 8
-+		 */
-+		result += rzg2l_thermal_read(priv, TSU_SAD) & CTEMP_MASK;
-+		usleep_range(20, 30);
-+	}
-+
-+	ts_code_ave = result / TS_CODE_CAP_TIMES;
-+
-+	/* Calculate actual sensor value by applying curvature correction formula
-+	 * dsensor = ts_code_ave / (1 + ts_code_ave * 0.000013). Here we are doing
-+	 * integer calculation by scaling all the values by 1000000.
-+	 */
-+	dsensor = TS_CODE_AVE_SCALE(ts_code_ave) /
-+		(TS_CODE_AVE_SCALE(1) + (ts_code_ave * CURVATURE_CORRECTION_CONST));
-+
-+	/* The temperature Tj is calculated by the formula
-+	 * Tj = (dsensor − calib1) * 165/ (calib0 − calib1) − 40
-+	 * where calib0 and calib1 are the caliberation values.
-+	 */
-+	val = ((dsensor - priv->calib1) * (MCELSIUS(165) /
-+		(priv->calib0 - priv->calib1))) - MCELSIUS(40);
-+
-+	*temp = roundup(val, RZG2L_THERMAL_GRAN);
-+
-+	return 0;
-+}
-+
-+static const struct thermal_zone_of_device_ops rzg2l_tz_of_ops = {
-+	.get_temp = rzg2l_thermal_get_temp,
-+};
-+
-+static int rzg2l_thermal_init(struct rzg2l_thermal_priv *priv)
-+{
-+	u32 reg_val;
-+
-+	rzg2l_thermal_write(priv, TSU_SM, TSU_SM_NORMAL_MODE);
-+	rzg2l_thermal_write(priv, TSU_ST, 0);
-+
-+	/* Before setting the START bit, TSU should be in normal operating
-+	 * mode. As per the HW manual, it will take 60 µs to place the TSU
-+	 * into normal operating mode.
-+	 */
-+	usleep_range(60, 80);
-+
-+	reg_val = rzg2l_thermal_read(priv, TSU_ST);
-+	reg_val |= TSU_ST_START;
-+	rzg2l_thermal_write(priv, TSU_ST, reg_val);
-+
-+	return readl_poll_timeout(priv->base + TSU_SS, reg_val,
-+				  reg_val == TSU_SS_CONV_RUNNING, 50,
-+				  RZG2L_TSU_SS_TIMEOUT_US);
-+}
-+
-+static void rzg2l_thermal_reset_assert_pm_disable_put(struct platform_device *pdev)
-+{
-+	struct rzg2l_thermal_priv *priv = dev_get_drvdata(&pdev->dev);
-+
-+	pm_runtime_put(&pdev->dev);
-+	pm_runtime_disable(&pdev->dev);
-+	reset_control_assert(priv->rstc);
-+}
-+
-+static int rzg2l_thermal_remove(struct platform_device *pdev)
-+{
-+	struct rzg2l_thermal_priv *priv = dev_get_drvdata(&pdev->dev);
-+
-+	thermal_remove_hwmon_sysfs(priv->zone);
-+	rzg2l_thermal_reset_assert_pm_disable_put(pdev);
-+
-+	return 0;
-+}
-+
-+static int rzg2l_thermal_probe(struct platform_device *pdev)
-+{
-+	struct thermal_zone_device *zone;
-+	struct rzg2l_thermal_priv *priv;
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(priv->base))
-+		return PTR_ERR(priv->base);
-+
-+	priv->dev = dev;
-+	priv->rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
-+	if (IS_ERR(priv->rstc))
-+		return dev_err_probe(dev, PTR_ERR(priv->rstc),
-+				     "failed to get cpg reset");
-+
-+	reset_control_deassert(priv->rstc);
-+
-+	pm_runtime_enable(dev);
-+	pm_runtime_get_sync(dev);
-+
-+	priv->calib0 = rzg2l_thermal_read(priv, OTPTSUTRIM_REG(0));
-+	if (!priv->calib0)
-+		priv->calib0 = SW_CALIB0_VAL;
-+
-+	priv->calib1 = rzg2l_thermal_read(priv, OTPTSUTRIM_REG(1));
-+	if (!priv->calib1)
-+		priv->calib1 = SW_CALIB1_VAL;
-+
-+	platform_set_drvdata(pdev, priv);
-+	ret = rzg2l_thermal_init(priv);
-+	if (ret) {
-+		dev_err(dev, "Failed to start TSU");
-+		goto err;
-+	}
-+
-+	zone = devm_thermal_zone_of_sensor_register(dev, 0, priv,
-+						    &rzg2l_tz_of_ops);
-+	if (IS_ERR(zone)) {
-+		dev_err(dev, "Can't register thermal zone");
-+		ret = PTR_ERR(zone);
-+		goto err;
-+	}
-+
-+	priv->zone = zone;
-+	priv->zone->tzp->no_hwmon = false;
-+	ret = thermal_add_hwmon_sysfs(priv->zone);
-+	if (ret)
-+		goto err;
-+
-+	dev_dbg(dev, "TSU probed with %s caliberation values",
-+		rzg2l_thermal_read(priv, OTPTSUTRIM_REG(0)) ?  "hw" : "sw");
-+
-+	return 0;
-+
-+err:
-+	rzg2l_thermal_reset_assert_pm_disable_put(pdev);
-+	return ret;
-+}
-+
-+static const struct of_device_id rzg2l_thermal_dt_ids[] = {
-+	{ .compatible = "renesas,rzg2l-tsu", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, rzg2l_thermal_dt_ids);
-+
-+static struct platform_driver rzg2l_thermal_driver = {
-+	.driver = {
-+		.name = "rzg2l_thermal",
-+		.of_match_table = rzg2l_thermal_dt_ids,
-+	},
-+	.probe = rzg2l_thermal_probe,
-+	.remove = rzg2l_thermal_remove,
-+};
-+module_platform_driver(rzg2l_thermal_driver);
-+
-+MODULE_DESCRIPTION("Renesas RZ/G2L TSU Thermal Sensor Driver");
-+MODULE_AUTHOR("Biju Das <biju.das.jz@bp.renesas.com>");
-+MODULE_LICENSE("GPL v2");
--- 
-2.25.1
 
+
+Test Regressions
+---------------- =
+
+
+
+platform                  | arch   | lab           | compiler | defconfig  =
+                  | regressions
+--------------------------+--------+---------------+----------+------------=
+------------------+------------
+asus-C433TA-AJ0005-rammus | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
+on...ok+kselftest | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6257690ea131bf3616ae06b2
+
+  Results:     83 PASS, 4 FAIL, 8 SKIP
+  Full config: x86_64_defconfig+x86-chromebook+kselftest
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
+.10.y-cip-rc/v5.10.109-cip5-770-g2801336f0f208/x86_64/x86_64_defconfig+x86-=
+chromebook+kselftest/gcc-10/lab-collabora/kselftest-seccomp-asus-C433TA-AJ0=
+005-rammus.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
+.10.y-cip-rc/v5.10.109-cip5-770-g2801336f0f208/x86_64/x86_64_defconfig+x86-=
+chromebook+kselftest/gcc-10/lab-collabora/kselftest-seccomp-asus-C433TA-AJ0=
+005-rammus.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ks=
+elftest/20220401.0/amd64/initrd.cpio.gz =
+
+
+
+  * kselftest-seccomp.seccomp_seccomp_bpf_TSYNC_siblings_fail_prctl: https:=
+//kernelci.org/test/case/id/6257690ea131bf3616ae06b9
+        failing since 41 days (last pass: v5.10.83-cip1-1540-g9fb82e7fedf9,=
+ first fail: v5.10.100-cip2-319-gcbff87047566) =
+
+ =20
 
