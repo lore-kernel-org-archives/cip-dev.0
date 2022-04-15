@@ -2,202 +2,180 @@ Return-Path: <hiraku.toyooka@cybertrust.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BA1FC64E93
-	for <webhook@archiver.kernel.org>; Mon, 18 Apr 2022 14:26:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41531C65C15
+	for <webhook@archiver.kernel.org>; Mon, 18 Apr 2022 14:26:03 +0000 (UTC)
 Received: from ss11.sbt-mailgate.jp (ss11.sbt-mailgate.jp [202.241.206.52])
- by mx.groups.io with SMTP id smtpd.web08.36840.1650264180794937848
+ by mx.groups.io with SMTP id smtpd.web12.5153.1650012710214589372
  for <cip-dev@lists.cip-project.org>;
- Sun, 17 Apr 2022 23:43:01 -0700
+ Fri, 15 Apr 2022 01:51:50 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
  spf=permerror,
  err=parse error for token &{10 18 spf.haihaimail.jp}: limit exceeded (domain:
  cybertrust.co.jp, ip: 202.241.206.52,
  mailfrom: hiraku.toyooka@cybertrust.co.jp)
-Received: from mail.sbt-mailgate.jp (sagproxy-out11.sbt-mailgate.jp
- [10.16.47.41]) (envelope sender: <hiraku.toyooka@cybertrust.co.jp>)
+Received: from mail.sbt-mailgate.jp (sagproxy-out12.sbt-mailgate.jp
+ [10.16.47.42]) (envelope sender: <hiraku.toyooka@cybertrust.co.jp>)
 	(not using TLS) by ss11.sbt-mailgate.jp (Active!gate) with ESMTP id
- SPlL13713A;
-	Mon, 18 Apr 2022 15:37:11 +0900
+ PRuD27565A;
+	Fri, 15 Apr 2022 17:46:03 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=J+A6Q5+e4VcyvWKgKVqd3inbEgEwaXXLGTKFlI2LayRMxUadtOERnuAF7nBfKy3IMA1d5D0zJbvQxkjk3DscN4EPcX7frb/LZSOXiTFF1pvyZCd/LmGlNKwyAavG4VwT7YwQMhNVDrVXvpiV88SPquN4A/mkXi89H/kYJ8wordeZnUhDNZBJIIBKJc20Yj7EzTcG565FMkTXn+xOcbilQomL3ctH3pl4wfCzhA84q8YLbenlCFwMYk8cFaC3E5+g0fseBmCsBC9Rr5Cw3BLsr/eBO0FbBvp0sxjRHgNxnBGb1r45ojOYB/aIkA5Y0CbAXTlP4xa+LBH1YTzyc7Q/bA==
+ b=LUzgGggmMGszidi/kCJGUZOh1dKtyeX4smmrQrru0aGdxbA7V+piSmOqH2gME0hPt1mcRAU5c14/KTbjUOONFTm5dmYBvMIYYF1veRjvG5n08JDjp//KwPxx0xnzroeW+bHtDg02VHSV9kSgIhh0HFu/FIroJscn1EqfUVvpSC0m6x90wBsg5unt1R+GeKXiHDpIYZxeca6l+sEdxZJlxtFZ2qhXED5ypi7H6T3GTqfA46Ev6d6q9o77ddlUjhbl2S8ZsulGiTzkBM9bjcicbvc1iqVN7Xv8r+ph6Q4IlJuVpRE+6oC69qaMjdRX1ZKcyola9hdjVfP8IVAEpm5fpw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BOWT5MB9ufC6BgLSKt5RQ1dnVL0Vkj5RPQNmrsqvK+k=;
- b=WiWTqGcnuV3ht7NnlUQu/nvhtutONR5iCsMmrEHFgf8UGpYjb1Gnqcb94kOIsVd4knPcvUScZVHpiAb8ykqy9INpmGFYCoSoi/nN7D39QkTPpMT+bSkz0wXpwEUDeFvIdAeDxFJ5uYfPDzlt5Wx2/9mxDraBF3b2NC2QGfLg7rtMOKqJ1QvrrAvYaAtAnV768iDPK3T3fLc1KqboTHzfApPA07xIM53KiTw6qHOiq7LoKBOsto4m5C2Pxto8BZ8AwCYEhMMHysPnRtg3V6aV01AHitWXmq9VoJ1oVpWEHK4ROGjz9Q7UXoVEaQSTkPClCOhm9E1SkGcUiHEn5TeoKQ==
+ bh=ZSec1v+i5h7m6SQpS5xwy4BF5TXFjTsWaHf7IzZWf7c=;
+ b=ltuKc7mmSlikmVaROni+rlQZ8AjPU2VcW4oQf4OuZUNI0mYp4YX6tprsqZmevrHiwdLOBesiJyRrzD+Sj/jrndp0ZMZEmZdLblEgCXm/F0dBHygF35qm7x9IUhdAQKxbcXHXwjEssPope85kn7M9VzVQMovaUJA7aegds37TYn+1Jfai3zzZ3YRgsdl4XnC/uisWK9SPBapUuuMIoLydzaQsO5hf4f+u362Vlw0Q4QXGeNVwDQu6cAaBp2f0zi5H/ZPkxTZSAncVGiICiJDjUvOpnhcFS1sjW6AbtOe/xsk3eJcUKnKggG1XOsHBcbQP8E/1se8jdas7N5y/NXz3Mw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=cybertrust.co.jp; dmarc=pass action=none
  header.from=cybertrust.co.jp; dkim=pass header.d=cybertrust.co.jp; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=cybertrust.co.jp;
-Received: from TYBPR01MB5344.jpnprd01.prod.outlook.com
- (2603:1096:404:802f::14) by OSAPR01MB2867.jpnprd01.prod.outlook.com
- (2603:1096:603:3b::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5164.18; Mon, 18 Apr
- 2022 06:36:52 +0000
-Received: from TYBPR01MB5344.jpnprd01.prod.outlook.com
- ([fe80::a4ad:2477:4906:1590]) by TYBPR01MB5344.jpnprd01.prod.outlook.com
- ([fe80::a4ad:2477:4906:1590%4]) with mapi id 15.20.5164.025; Mon, 18 Apr 2022
- 06:36:52 +0000
-X-Gm-Message-State: AOAM530+SSIAlXoH4CXdCC1bol++5KKvG90wWgKXIaQxHIiZEeWeCSEw
-	ivJSEOF6OCf7ezq/UeuhEYEsrmAO4Iwpy6mHzNUxdw==
+Received: from OSYPR01MB5333.jpnprd01.prod.outlook.com (2603:1096:604:84::16)
+ by TYWPR01MB9373.jpnprd01.prod.outlook.com (2603:1096:400:1a4::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5123.31; Fri, 15 Apr
+ 2022 08:45:59 +0000
+Received: from OSYPR01MB5333.jpnprd01.prod.outlook.com
+ ([fe80::b01c:8ec5:cad4:e722]) by OSYPR01MB5333.jpnprd01.prod.outlook.com
+ ([fe80::b01c:8ec5:cad4:e722%3]) with mapi id 15.20.5164.020; Fri, 15 Apr 2022
+ 08:45:58 +0000
+X-Gm-Message-State: AOAM531/RIGjK0pAssuBeqDSJ4zV8TZGrY9FO33fz/fdyShBRptcqYp8
+	GgY8PkFN/QK/g+0cRxXPSCCJ1fh/rRzxi56bL5r4EA==
 X-Google-Smtp-Source: 
- ABdhPJz3tAJvDQG/FPbeMCQnUsx/WGc82/KmNKz+HlVDLAOyWtOSf7STANBzvKHIbVrX+i3OpP4itobXiTN12F30yYI=
-X-Received: by 2002:a05:600c:1e89:b0:390:ba57:81c6 with SMTP id
- be9-20020a05600c1e8900b00390ba5781c6mr9970427wmb.29.1650263803011; Sun, 17
- Apr 2022 23:36:43 -0700 (PDT)
+ ABdhPJyAYXVPuNK8FTy0gU0hPXbzseOIR4oxw3iIwWLx/mrnqMeSTKyME0cqKEQhS4PEkjqHBHctMbIsSoxQjul83HI=
+X-Received: by 2002:adf:e541:0:b0:207:adb8:aab2 with SMTP id
+ z1-20020adfe541000000b00207adb8aab2mr4744188wrm.67.1650012348721; Fri, 15 Apr
+ 2022 01:45:48 -0700 (PDT)
 References: <20220414165618.GA8670@duo.ucw.cz>
- <16E605D19AAD240C.11564@lists.cip-project.org>
-In-Reply-To: <16E605D19AAD240C.11564@lists.cip-project.org>
+In-Reply-To: <20220414165618.GA8670@duo.ucw.cz>
 From: Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>
-Date: Mon, 18 Apr 2022 15:42:56 +0900
+Date: Fri, 15 Apr 2022 17:51:45 +0900
 X-Gmail-Original-Message-ID: 
- <CADPJy8XD849gBoiQO7tMmqVG9P2c+M3+ENqC+-=OyKMntJ+hpw@mail.gmail.com>
+ <CADPJy8W6DsFyjSHOPhg+jWkLLXkQg7o-98=ZpVFOmCt_q0dbXQ@mail.gmail.com>
 Message-ID: 
- <CADPJy8XD849gBoiQO7tMmqVG9P2c+M3+ENqC+-=OyKMntJ+hpw@mail.gmail.com>
+ <CADPJy8W6DsFyjSHOPhg+jWkLLXkQg7o-98=ZpVFOmCt_q0dbXQ@mail.gmail.com>
 Subject: Re: [cip-dev] zynqmp board has problems with 4.19 testing
-To: chris.paterson2@renesas.com, Sarath_PT@mentor.com,
-	Manish_Kumar2@mentor.com, hws@denx.de
-Cc: pavel@denx.de, cip-dev@lists.cip-project.org
+To: pavel@denx.de
+Cc: chris.paterson2@renesas.com, cip-dev@lists.cip-project.org
 Content-Type: text/plain; charset="UTF-8"
-X-ClientProxiedBy: AM0PR03CA0104.eurprd03.prod.outlook.com
- (2603:10a6:208:69::45) To TYBPR01MB5344.jpnprd01.prod.outlook.com
- (2603:1096:404:802f::14)
+X-ClientProxiedBy: AM0PR02CA0132.eurprd02.prod.outlook.com
+ (2603:10a6:20b:28c::29) To OSYPR01MB5333.jpnprd01.prod.outlook.com
+ (2603:1096:604:84::16)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: d107d09f-c9d3-4129-2102-08da2105d220
-X-MS-TrafficTypeDiagnostic: OSAPR01MB2867:EE_
+X-MS-Office365-Filtering-Correlation-Id: 05cfd326-9002-4b10-279e-08da1ebc5cc0
+X-MS-TrafficTypeDiagnostic: TYWPR01MB9373:EE_
 X-Microsoft-Antispam-PRVS: 
-	<OSAPR01MB28670EF130045525586620FFBDF39@OSAPR01MB2867.jpnprd01.prod.outlook.com>
+	<TYWPR01MB93732CA8E074C4BE882BBE4CBDEE9@TYWPR01MB9373.jpnprd01.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	kmgeE4aeLb6uGXWUVYRsY+VSU9CwRoAhZdWywqp20bYlmwFPmF6V4hfUi5TtkFrNzO8kkFG5u2c/9N5IuvSd+lIISAwmeiFVtM7/h/+BALBeiJF4KGE7xJoqSKzza01a36EvBokBEx10bBuHmSdGekDG/DKg3IFwox5AitYgHxWN615wdtOZ5SJcq8fftePmwMtsuCgqRiRbmEhOet0LtCz3oVI0avLmvg+LKUnZodcm8cKmPxyc+HhQMHRf2HSHGz1TmXqQZJNqwrZoHuiXeKyY9jMSWeFDz2eASsjNHXhLFdaNc9oDkn3tDqWiE2ZLuZpUPLOtdwiokTf/y1/dCx7otJEeNVULnBEe+vZwmdBBl+0eXWzp9DzvWrBkOtQ9p5FCplY3tQgIVVUEXDuJ+HfHkA7Y2jtS71xut7vpWQfwVjY6RFDuyWiEdexgiTLjXdM9Rn5Y/pG3p8OHkcgvUEOhS6cZIU2NqH1VmHv4n6AbIlFUJXQ6bNszEVzPXS5yZJowdX37cOD86MKXb5cnmW1HPE+xaRu0GcaTu68tqTngxBchrgxZTbpIR2uNE9AtKPPzxa3j7k/K+js1Ut8R6qhivVk9+8Ir9sFPqKCaH0cyGTro6gZ6cvF34ombegvK5DmUeUoKfI+zwfqDLL/mrF3capBDCV+NsUms0gxXaR0KdgH9wp9USKcCHo2y+WyRMaTR76w747N0EDW2ybL9YQJK7WHEryBodBNccyP0KQSfAccspN2B8WhEI0eA+n7TWvkN0hLV0WlX++xCZjrkVLurvRu31u4uUgIB6T4sN0s=
+	IstAI3P7+L86UXwMcz5bbE1EJEOKWNHEMJ0UZ5DQUhuXbVe3pC97ve4ZTyHf+TvhxJiV9dPQOsNM9XFDfuaDKI8t1vA96+sZk9e7zchLwKuvCvzQZZA/Lkv+O0gOmWzpvdRT35EI26+2I5xJoQsIyCTjBjEhAvJ5ErnZ+OCT/1OhVGplSmXIB14tvVuW8vK5evQosw1kD91IYAus5x1KxvY4KC0+OdTsJMTZMu4weikeFzij3Z89X7RwrCTn9JV4NNOc/beDNpwcpYuxknIwI2vUeJYGjJCHAAKgHItP5eQj+rOUEfrpsUhc08qCInC11XVLeGwstBJ2E+njocVR1zRCdGUdlTSPv/Xj2wzkutpGmYJwOX/liRE/LyqnyUiKlDz31J58t0VQBrObn3pg71UTEsbMJyXXP+DeF8yWJEryE3486OLTEGjdHn1mK3yiXwgei2OLzD/NRUKDHCDwdjW/zY923fkbNP7YIhIrBkYqpyH682FooeoAfsxv3nbs2taRrmuoFzkpsOemSksTZpMlrwzmOWMDq59E9IG8B4nBlZCIr5VS8fnnKhKhhgCfl9to7AGmuabWTEjTF57B97P08GNSMtNMsgaaivK4Fwf87GtAPhUgiGd9bVp3YUedYBResW16EqwJSg/vXV4Ho4CbVeQ+hrWh/eTwvz93d3kSTtct8OOMtyq89L8fRPrEx76kRe2tMnaR0Xfht5IogZyAsWgt9Cm0kHbOu4mHcAGlXJYW7OweEtCUOOFppfXnu4yKmOQIH6tKMD/AkuxuV+nJAbc4f0PbqpebqP5apw8=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYBPR01MB5344.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(5660300002)(508600001)(86362001)(6506007)(4326008)(8676002)(66946007)(66476007)(66556008)(6486002)(966005)(8936002)(82960400001)(52116002)(55446002)(9686003)(83380400001)(6666004)(2906002)(186003)(55236004)(26005)(44832011)(6512007)(316002)(53546011)(38350700002)(38100700002)(107886003);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSYPR01MB5333.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(83380400001)(53546011)(55446002)(6666004)(26005)(52116002)(86362001)(55236004)(38350700002)(9686003)(316002)(966005)(38100700002)(66476007)(34206002)(5660300002)(508600001)(4326008)(8936002)(66556008)(66946007)(8676002)(6486002)(6506007)(44832011)(2906002)(6512007)(82960400001)(186003);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?T1ROK3IxTzBObXJFdTdBUVNpZVRmQ0UxSlQybDdvNmdnbUh2RGg5WCtldU91?=
- =?utf-8?B?MXRNYURzTHl2Z0pYRkFGb3IyUzBXUUhMYXR4T1UvRzU1emg4S2p0RDBRQTFp?=
- =?utf-8?B?bFY0MGZQQUEyTXhOUkpjUGJXM3ZESWgxTElqa2JHV2UyL1o4V1RmNE9FdnZq?=
- =?utf-8?B?OE40eE1nNFNQeEZzVUI1bUpGQTk0Q3h0VVI0TGthNkJrVXVNSHVCbWRMUnJR?=
- =?utf-8?B?U1lsbFVTT21aUUNXR3NLQlZhT1NzMnVpWGgvN1FBYTdaRlkva2RqeU5WYm81?=
- =?utf-8?B?b3NNNmdqU3pFTDFlSkJPUTZsMUQ0ekVkZFVybnJRd2J3bm9uaDlaS0Zzbmhw?=
- =?utf-8?B?UGRhbXMxcUNQcVpqanhlbGUyZDIzTUdvelZ2alE5WGVBZUNlVVRCTmdUVHpO?=
- =?utf-8?B?REtQUk1WeDdsMmY0alVSWWhVWGNmRmdoZjE3WFJhWHlGN0hRem1zMTF4WmlV?=
- =?utf-8?B?K1NqaHlFUmRnMWllYWpTKzQ3TUhndEFubk1yZXlEVTd2eS9yVFpRdFh2OG0x?=
- =?utf-8?B?ZlBjdjlDVldxVzlXZElqU0lmci95ODZBQ3BYeG43OG9PemV1SUlyc0xyalhl?=
- =?utf-8?B?ZTJrVXpEZGt2ZkF6NnZldy9sdDdGUWRLaW1PSjFTSnlVL0dQd0pzQ0VvRnlL?=
- =?utf-8?B?a2JXaGZJQmNtUUFrM2Q3bjlncUFUWVI3WTRCSnNnQjRKT0ZJbE1jcW1XMVZP?=
- =?utf-8?B?WENmbjVTcDF5KzZEZVBWa3EwU1BGeFFaL0YwSXliRWxBbGpJeFNBWUw2RkFR?=
- =?utf-8?B?aXcxQzBuelVibzlWODloMmZhQlhSQUV0VUtWWHNnVWlkckppbVkxeHZzKzFQ?=
- =?utf-8?B?NXFrc0VRK1hJLzBZa0ZJK0EweFB0QmZHc3paNHFrUWtBbmc4cHpRYmxCTFh1?=
- =?utf-8?B?WkVUV3haOEpqaFl0TVp4V2dxR3d6enBVa240R1c3RGs2Y1ErZHQ5Uyt4U21H?=
- =?utf-8?B?UFU3TlJJc2JjUHMyVnhKYU9hNXhuU1Y0Tm5yZWQwdTkrMUptdldUb1BmaXhy?=
- =?utf-8?B?Ukp0Y2RNVDA3YzVMMDBtcHJ6RGxuTGxKN1d4Uy8zbDlnUGF0T1NSL0RCR2Ry?=
- =?utf-8?B?aUIrOVVMNVBrRVZ5V0R0VXVWN2IwdzRvYi82dzJMV1NCWG1kb09ZNXF1cWQx?=
- =?utf-8?B?WXhVQzZEQmlxY0dDSytHTU0yUEgrTmVDMXZqWDhLeFExMU9mOFUvSHVmRXVO?=
- =?utf-8?B?VXVPV0d0K0Rvb0VYdGtuOWZYWnZlRXdvQXFHNWNxSDVGdWY2U2pjZ01ncWMv?=
- =?utf-8?B?QlJnSTIvMksxRDdsSUFZS21HSHFnRG5UU3hXbFdBNUdXQmwwMit5Y0dheDgy?=
- =?utf-8?B?UEwyUWIwWmNhSDNRajdwbkRFSEtYV1M3amQvOStwSEl4ODFFU1ZvdW13dlJk?=
- =?utf-8?B?V2ozZE9ML093QWl4UDl2dmovaUlidTV6SnRZM3NzZ1pTZVZIMGN5SzZQVUQ4?=
- =?utf-8?B?Y3dRcFRRN0NvMFRJU3VvdzVMNHoybjRubS9VdGhpQjl6d3I4aFgxakFsQk53?=
- =?utf-8?B?OXcxUy9YOVBQcFVhNU91QUF3UXRtU0tac044aEU3U3pVTVNPME9mQ0kwU3pX?=
- =?utf-8?B?WXZxN1hVYUhMaXRJS3BSNHdXVWZEQTlXcmxkTDNWMVhIajlDaTUxQjdIWHdh?=
- =?utf-8?B?WFpMWXRqRTNhcjdsZ3JxTzNLMHluTG4vOStxRU1udktES0l1Q1RROGJUQmhD?=
- =?utf-8?B?VWFQUTdiZTExT0FWaFNoNW9VUzFhWkNQM1p3MXBNaHcveElJUXFCdVllT2U2?=
- =?utf-8?B?RnI0Ky9wSStpdmticDk3RUpOZW1xNmVpdmFJNUIwYWc2TWZpUFpueWcrN1pq?=
- =?utf-8?B?N3lWTTVuRjZPbWNuTWdQckx2ZFB1MGQ0RjJIVE14UnJOZG9GekpXZ0dmKzAv?=
- =?utf-8?B?dEZWTFpSM2I5Z3N2VEJxZlRUSzhhbk11blNUdktjbjg4eTdpNklPenRDTzdB?=
- =?utf-8?B?YkQ5Q0ZPSUZyMEpKR3Q3MWt5SXBkMEZEMEZjam1Ea2VVNnQzVnlybk9pN1BL?=
- =?utf-8?B?ajR1TlMxblVDRHAxbFFpOEgxMks2Tk9rdGpjZW9XbHVkZDlVUXhScGNSNVhQ?=
- =?utf-8?B?ck5yeUlRMHhhZUt4TnFLWVlzaStkQm8vbFBjc0xvNTloM0NvdW1QNkw3ZHJN?=
- =?utf-8?B?MUFydE9SMU8wby9LREFxMXZMRkhSZ0hVUks0cmUzd2FFbjZPaW9sMk9ZOEsy?=
- =?utf-8?B?VXZVYzlQWXpUdG9rTmlGZDlzdkdENU42S2Qwbkp4MDhSdE5RM1doREl6Mnll?=
- =?utf-8?B?M0pzQjNLMWVlQkl6NXJEb3ZINXF0dXRrRDl2bjVHTVR0WVZFOUtIZmczUFkz?=
- =?utf-8?B?ZC93VU4zRzZzYzBzVWxWQmx6ZzNzWGpMQm1wanZKSUN0d0R0cXFuRVNUODBQ?=
- =?utf-8?Q?4Vcai2HGJhyIk6IETUpd4OkQsAPY2vbRx9Mtd?=
+	=?utf-8?B?eVB4Tmd4S0RnZ3RpWDZvMVNqYThNOGRKVE5xQmlHUElxMERzVG5zMGpSMWFH?=
+ =?utf-8?B?MWo0ZGJHUTlCQW9ZRzBEVmVMSkRzaWpqZlljbnMwaE5XdDVSOVBHbnBGNm9x?=
+ =?utf-8?B?MEpGZ2orLzcyL1B2TFJLNmFpVkptY05CRkVJU21hczVlNEd5V1d6ZlNKcGtG?=
+ =?utf-8?B?aE14Z1l3ekVYdUZKdVRHT0ZyZDBreHVvUEd0Z3VpREF6VXhUVWFhQ0YrL2Jt?=
+ =?utf-8?B?Mnk3ay80K3NZOEpQaWpaN0s2ZXBJQ3l6RG50c0h0UHJYMDVzWERiTlBBc0g4?=
+ =?utf-8?B?R2JCOFgwUWdJYXlLYUFFSExVSlNrRGs3K2QxcnFMMGZkejRBd3JKY2R6WG9t?=
+ =?utf-8?B?VU4wOWRjd0xjeWUwdFNmSnQ0NXZoemNnWVpZd1B0RStHSStLTmRYSnlyM3hv?=
+ =?utf-8?B?a0kwQUdGMUM5eXo0eXlxaTZzdlVsWlN1MEhCa3NQZ0dmZjNHc0NIaVdpc1Za?=
+ =?utf-8?B?Y3E4dXRIOC9ZZHFJWWdWMWRYOC9WWUw5QW5OakpGYmxoR2hRZVBHdEFaNUUw?=
+ =?utf-8?B?STVrMDJLaXpseUNud2IzaG5NR2V0by9KYUxINE1oNm9aVnFvYjRMaEtONGEv?=
+ =?utf-8?B?NUc2b2xCUFRMZW5RcHRQVWc1c1dEamdESnd1UmR4ODRnbnVuMFJ1N055V0lS?=
+ =?utf-8?B?R2c3bkducTJLU0Z3MFRJdFI1c243YVFVK2k3RVIzZkNJNEgyT0pwUGI0T2U2?=
+ =?utf-8?B?M3V6d0U0Tkh4Yll3VnBoTlppY3BEOG5Obm9sUFI3MnF0QlJsWE82UFF1bi9M?=
+ =?utf-8?B?Y0tkazhXR1ZCaWJTUytVUnRUUVcyM2NRQnE3Yjk4SlVKUUtlb3F3M1VsS3Fq?=
+ =?utf-8?B?K2dVYWJyZThNSEFUUmM5eGI4bXdyR0M1dzRBTmtKS0x1TTBuR1F5UkRMYzF2?=
+ =?utf-8?B?cm53aUhwQnRFMTA2bzN4eEUvbkxWdGg5eFJmMlBmUDhBalpzSmFBMjE5WlZw?=
+ =?utf-8?B?R3JXS09Ga0tZdE5PdGtaaXp1R3MwQTJHRjU3QXA3ZXdyb0RqbVZnT1FJWkox?=
+ =?utf-8?B?ZlpGWlhaNW8xTUZXN3JUKzVoZkN5ZzFpRWRjalJ5aXRmV0xjNGJzdUU5RDNQ?=
+ =?utf-8?B?bCtxaFI4Qk96bUxjRDl5dnVUNVMxbUQ5MGhkZ2RiQnZnTEZMZ0IwdnRjRVVE?=
+ =?utf-8?B?ZStjNUxOZGJ0WTBXWXZKeUpsaFZINlV4ZlErbW55Q0ZOVnZWUitIdU9kZy9Z?=
+ =?utf-8?B?Q2JBSWhRK0JyVS9CVzBEVGJUZ01WdnFvTWEzN3JHWEVGdG1rcjM4dm5sZlN4?=
+ =?utf-8?B?eUJOUndzNjdTWmRZRXZrTlp5R1dBYjhLbFQwVG9HN2p1Zmx3SjlaNnNYUUs2?=
+ =?utf-8?B?Qlp4M1ZCb2dkdGU1MHUyZ0FlbWQyMklvYzU5K3N3SzNsd1B3OW5LK2V4UnFy?=
+ =?utf-8?B?RHp1WjJTYXRoOWNGZGZpOUhwNnN5cFZqRHRYTGplZDZJWnBDZmJhZjhSNS9u?=
+ =?utf-8?B?d0JIaXlJS2h4YVQ1MkIrVXpQOVV1QnNxUmRZdzFoL3BoaEthWjBtWWlNMkEv?=
+ =?utf-8?B?U3N4empBeE51b0s4Qk05N09udGZjaExJWUhRZ2tYdzdscTROVUlRTGZYd2d1?=
+ =?utf-8?B?eTlsWmg2Wm90QnYvWHNqa0JmQXBLU2lWRmNkMW05L3JaanF6c1NSL1BxTHFS?=
+ =?utf-8?B?aEdILy9YOFdxUldFWktrZDF3UEo3bjd2K2FPMEdTdG8rVWI2cHNYUlArTWVk?=
+ =?utf-8?B?dU5hQVFrMXI1RVRhUG5oZXBzK0JyNEtnTEhNMHhwOUUvNk1EVnR4dzhtRE41?=
+ =?utf-8?B?MW1wazUwV1lZK3NaeTYwNzVjYnFwQ0J0dEQwSWw5RTByajQ2VnRJbEQ5Y3h4?=
+ =?utf-8?B?Vkx5dFRkSDB4QUxqWmd3UGxmMmpsQ0RXbEo4S2ltV1BIRFcxbXhUYVcrR2dU?=
+ =?utf-8?B?RDZNRXIvcnNFdjJlQWlWalYzYVYvTHhVWmhRVVNXdmI4SmdOUGpuemcrcGtD?=
+ =?utf-8?B?SWo2V1RyNlFoblNuZk53Z1dEU1MrSmxtZVBud1JrZzRWMlhQcmNsaHFQNGlE?=
+ =?utf-8?B?Z2o2a1djL1ROSnhMaDRwd0x0NFFXNld4QkdLcTVOVEs1SDgybDlCTXl4M3Uz?=
+ =?utf-8?B?NjZ4SW9uRnNhWHhLeDA3SnJQWHlEZ2c5a1VRWTIvanVXZnBOM0tuMHlObVBQ?=
+ =?utf-8?B?WFdncUVZTEE4LzgyOTRlTFhBeEtRVWI3TGtZY3M1L2VZQUNqamZMdVlLSERB?=
+ =?utf-8?B?OVF0TFBya0t0VERqVFpEQjhVVHRPdUVPWjNKeFBzRzhWNXRpVm1KR1RrMVl5?=
+ =?utf-8?B?ZWxHWTVQWlBDaVF2VUdnT0tqTjFaN3p1SW9NSVdiMlYxVXVhb0krWEQvbStH?=
+ =?utf-8?B?U05BUkNkWE9MNTlMNmt1L0UyMmZ1elFtSnVZc2pETU5pN2hDNEpSaUxVLzBk?=
+ =?utf-8?Q?5K2eCcnu2AKRbMgkjGjKoTtK5860Z06+vPdkt?=
 X-OriginatorOrg: cybertrust.co.jp
 X-MS-Exchange-CrossTenant-Network-Message-Id: 
- d107d09f-c9d3-4129-2102-08da2105d220
-X-MS-Exchange-CrossTenant-AuthSource: TYBPR01MB5344.jpnprd01.prod.outlook.com
+ 05cfd326-9002-4b10-279e-08da1ebc5cc0
+X-MS-Exchange-CrossTenant-AuthSource: OSYPR01MB5333.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Apr 2022 06:36:52.3355
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Apr 2022 08:45:58.8721
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 72cc4624-32b4-4dab-b80a-8563e559bd82
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
 X-MS-Exchange-CrossTenant-UserPrincipalName: 
- WP6VpZNv7u/qT6TB/+I/LMBl87dbVRDXmOLHc+c1gv2ULnrxtPvoM/z0S46Bx74y5crFZUyBHMFtQ9/4k79pNqFISMCivDTk1+ZHb4GyXaA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB2867
+ xBKD9Ehl1sboWAlxDLmkdnj2Q7HlthlC1q/WmpYiAbvlZEA9sJtjw4QEnlCSl0se9K/wg9LURrAEg0MEmMNNWYz81HlWg5XrdWZO0YdxGaQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB9373
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 18 Apr 2022 14:26:01 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8104
+ <cip-dev@lists.cip-project.org>; Mon, 18 Apr 2022 14:26:03 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8099
 
-Hi Chris, (and lab maintainers)
+Hi Pavel,
 
-I noticed that the labs other than lab-cip-cybertrust are offline now.
-I think lab reboots will be needed.
-https://lava.ciplatform.org/scheduler/allworkers
+I'm sorry for the inconvenience. The lab-cip-cybertrust was offline
+with an internal error.
+The lab is now online and running the submitted jobs in sequence.
 
 Best regards,
 Hiraku Toyooka
 
-On Fri, Apr 15, 2022 at 5:52 PM Hiraku Toyooka
-<hiraku.toyooka@cybertrust.co.jp> wrote:
+On Fri, Apr 15, 2022 at 1:56 AM Pavel Machek <pavel@denx.de> wrote:
 >
-> Hi Pavel,
+> Hi!
 >
-> I'm sorry for the inconvenience. The lab-cip-cybertrust was offline
-> with an internal error.
-> The lab is now online and running the submitted jobs in sequence.
+> It seems that zynqmp has problems:
+>
+> https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/jobs/2336993733
+>
+> Job #663506: Submitted
+> 67Health: Unknown
+> 68Device Type: zynqmp-zcu102
+> 69Device: None
+> 70Test: smc
+> 71URL: https://lava.ciplatform.org/scheduler/job/663506
+> 72
+> 74ERROR: Job failed: execution took longer than 2h0m0s seconds
+>
+> https://lava.ciplatform.org/scheduler/job/663506
+> Invalid job definition:
+> extra keys not allowed @
+> data['actions[2]']['test']['definition']['definitions'][0]['timeout']
 >
 > Best regards,
-> Hiraku Toyooka
->
-> On Fri, Apr 15, 2022 at 1:56 AM Pavel Machek <pavel@denx.de> wrote:
-> >
-> > Hi!
-> >
-> > It seems that zynqmp has problems:
-> >
-> > https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/jobs/2336993733
-> >
-> > Job #663506: Submitted
-> > 67Health: Unknown
-> > 68Device Type: zynqmp-zcu102
-> > 69Device: None
-> > 70Test: smc
-> > 71URL: https://lava.ciplatform.org/scheduler/job/663506
-> > 72
-> > 74ERROR: Job failed: execution took longer than 2h0m0s seconds
-> >
-> > https://lava.ciplatform.org/scheduler/job/663506
-> > Invalid job definition:
-> > extra keys not allowed @
-> > data['actions[2]']['test']['definition']['definitions'][0]['timeout']
-> >
-> > Best regards,
-> >                                                                 Pavel
-> > --
-> > DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-> > HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-> >
-> >
-> >
->
->
+>                                                                 Pavel
 > --
-> Hiraku Toyooka
-> Cybertrust Japan Co., Ltd.
+> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 >
 > -=-=-=-=-=-=-=-=-=-=-=-
 > Links: You receive all messages sent to this group.
-> View/Reply Online (#8099): https://lists.cip-project.org/g/cip-dev/message/8099
+> View/Reply Online (#8097): https://lists.cip-project.org/g/cip-dev/message/8097
 > Mute This Topic: https://lists.cip-project.org/mt/90469122/1050894
 > Group Owner: cip-dev+owner@lists.cip-project.org
 > Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129075/1050894/1100095814/xyzzy [hiraku.toyooka@cybertrust.co.jp]
