@@ -2,32 +2,33 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A24EC64EBF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73A6EC64EC5
 	for <webhook@archiver.kernel.org>; Thu, 21 Apr 2022 16:46:10 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com
  [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.13624.1650490471262261243
+ by mx.groups.io with SMTP id smtpd.web12.13678.1650490484812669482
  for <cip-dev@lists.cip-project.org>;
- Wed, 20 Apr 2022 14:34:31 -0700
+ Wed, 20 Apr 2022 14:34:45 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
  spf=pass (domain: bp.renesas.com, ip: 210.160.252.171,
  mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.90,276,1643641200";
-   d="scan'208";a="117482571"
+   d="scan'208";a="117482584"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 21 Apr 2022 06:34:29 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 21 Apr 2022 06:34:43 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 653CD41088FF;
-	Thu, 21 Apr 2022 06:34:28 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 173C04108B69;
+	Thu, 21 Apr 2022 06:34:41 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 01/24] ASoC: dt-bindings: Document RZ/G2L bindings
-Date: Wed, 20 Apr 2022 22:34:01 +0100
-Message-Id: <20220420213424.27837-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 08/24] ASoC: sh: rz-ssi: Improve error handling in
+ rz_ssi_dma_request function
+Date: Wed, 20 Apr 2022 22:34:08 +0100
+Message-Id: <20220420213424.27837-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220420213424.27837-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20220420213424.27837-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -35,116 +36,70 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 21 Apr 2022 16:46:10 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8123
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8130
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-commit 2b761f476f3a6e0a212c8c88e7855f66edb177e0 upstream.
+commit 4b14f17912052a6963580dfba04781cfe6ccba02 upstream.
 
-Document RZ/G2L ASoC serial sound interface bindings.
+dma_request_chan() returns error pointer in case of failures, but
+the rz_ssi_dma_request() checked for NULL pointer instead.
 
+This patch fixes the issue by checking for ERR_PTR() instead of
+NULL and sets the DMA pointers to NULL in error case so that ssi
+can fallback to PIO mode.
+
+Fixes: 26ac471c5354 ("ASoC: sh: rz-ssi: Add SSI DMAC support")
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Link: https://lore.kernel.org/r/20210719134040.7964-2-biju.das.jz@bp.renesas.com
+Link: https://lore.kernel.org/r/20210818101450.15948-1-biju.das.jz@bp.renesas.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- .../bindings/sound/renesas,rz-ssi.yaml        | 85 +++++++++++++++++++
- 1 file changed, 85 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml
+ sound/soc/sh/rz-ssi.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml b/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml
-new file mode 100644
-index 000000000000..891f381ee5b8
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml
-@@ -0,0 +1,85 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/renesas,rz-ssi.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/sound/soc/sh/rz-ssi.c b/sound/soc/sh/rz-ssi.c
+index 341815476244..89c7e5e4cbf6 100644
+--- a/sound/soc/sh/rz-ssi.c
++++ b/sound/soc/sh/rz-ssi.c
+@@ -185,7 +185,7 @@ rz_ssi_stream_get(struct rz_ssi_priv *ssi, struct snd_pcm_substream *substream)
+ 
+ static inline bool rz_ssi_is_dma_enabled(struct rz_ssi_priv *ssi)
+ {
+-	return (ssi->playback.dma_ch || ssi->capture.dma_ch);
++	return (ssi->playback.dma_ch && (ssi->dma_rt || ssi->capture.dma_ch));
+ }
+ 
+ static int rz_ssi_stream_is_valid(struct rz_ssi_priv *ssi,
+@@ -676,15 +676,26 @@ static void rz_ssi_release_dma_channels(struct rz_ssi_priv *ssi)
+ static int rz_ssi_dma_request(struct rz_ssi_priv *ssi, struct device *dev)
+ {
+ 	ssi->playback.dma_ch = dma_request_chan(dev, "tx");
++	if (IS_ERR(ssi->playback.dma_ch))
++		ssi->playback.dma_ch = NULL;
 +
-+title: Renesas RZ/G2L ASoC Sound Serial Interface (SSIF-2)
+ 	ssi->capture.dma_ch = dma_request_chan(dev, "rx");
++	if (IS_ERR(ssi->capture.dma_ch))
++		ssi->capture.dma_ch = NULL;
 +
-+maintainers:
-+  - Biju Das <biju.das.jz@bp.renesas.com>
+ 	if (!ssi->playback.dma_ch && !ssi->capture.dma_ch) {
+ 		ssi->playback.dma_ch = dma_request_chan(dev, "rt");
+-		if (!ssi->playback.dma_ch)
++		if (IS_ERR(ssi->playback.dma_ch)) {
++			ssi->playback.dma_ch = NULL;
+ 			goto no_dma;
++		}
+ 
+ 		ssi->dma_rt = true;
+ 	}
+ 
++	if (!rz_ssi_is_dma_enabled(ssi))
++		goto no_dma;
 +
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - renesas,r9a07g044-ssi  # RZ/G2{L,LC}
-+      - const: renesas,rz-ssi
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 4
-+
-+  interrupt-names:
-+    items:
-+      - const: int_req
-+      - const: dma_rx
-+      - const: dma_tx
-+      - const: dma_rt
-+
-+  clocks:
-+    maxItems: 4
-+
-+  clock-names:
-+    items:
-+      - const: ssi
-+      - const: ssi_sfr
-+      - const: audio_clk1
-+      - const: audio_clk2
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 1
-+
-+  '#sound-dai-cells':
-+    const: 0
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - interrupt-names
-+  - clocks
-+  - clock-names
-+  - resets
-+  - '#sound-dai-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/clock/r9a07g044-cpg.h>
-+
-+    ssi0: ssi@10049c00 {
-+        compatible = "renesas,r9a07g044-ssi",
-+                     "renesas,rz-ssi";
-+            reg = <0x10049c00 0x400>;
-+            interrupts = <GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 327 IRQ_TYPE_EDGE_RISING>,
-+                         <GIC_SPI 328 IRQ_TYPE_EDGE_RISING>,
-+                         <GIC_SPI 329 IRQ_TYPE_EDGE_RISING>;
-+            interrupt-names = "int_req", "dma_rx", "dma_tx", "dma_rt";
-+            clocks = <&cpg CPG_MOD R9A07G044_SSI0_PCLK2>,
-+                     <&cpg CPG_MOD R9A07G044_SSI0_PCLK_SFR>,
-+                     <&audio_clk1>,
-+                     <&audio_clk2>;
-+            clock-names = "ssi", "ssi_sfr", "audio_clk1", "audio_clk2";
-+            power-domains = <&cpg>;
-+            resets = <&cpg R9A07G044_SSI0_RST_M2_REG>;
-+            #sound-dai-cells = <0>;
-+    };
+ 	if (ssi->playback.dma_ch &&
+ 	    (rz_ssi_dma_slave_config(ssi, ssi->playback.dma_ch, true) < 0))
+ 		goto no_dma;
 -- 
 2.17.1
 
