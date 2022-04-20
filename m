@@ -2,33 +2,33 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73A6EC64EC5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F6D0C64EC4
 	for <webhook@archiver.kernel.org>; Thu, 21 Apr 2022 16:46:10 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com
  [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web12.13678.1650490484812669482
+ by mx.groups.io with SMTP id smtpd.web12.13676.1650490481389619530
  for <cip-dev@lists.cip-project.org>;
- Wed, 20 Apr 2022 14:34:45 -0700
+ Wed, 20 Apr 2022 14:34:42 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
  spf=pass (domain: bp.renesas.com, ip: 210.160.252.171,
  mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.90,276,1643641200";
-   d="scan'208";a="117482584"
+   d="scan'208";a="117482581"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 21 Apr 2022 06:34:43 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 21 Apr 2022 06:34:41 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 173C04108B69;
-	Thu, 21 Apr 2022 06:34:41 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 25ED14108B99;
+	Thu, 21 Apr 2022 06:34:39 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 08/24] ASoC: sh: rz-ssi: Improve error handling in
- rz_ssi_dma_request function
-Date: Wed, 20 Apr 2022 22:34:08 +0100
-Message-Id: <20220420213424.27837-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 07/24] ASoC: sh: rz-ssi: Fix wrong operator used
+ issue
+Date: Wed, 20 Apr 2022 22:34:07 +0100
+Message-Id: <20220420213424.27837-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220420213424.27837-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20220420213424.27837-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -36,70 +36,37 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 21 Apr 2022 16:46:10 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8130
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8129
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-commit 4b14f17912052a6963580dfba04781cfe6ccba02 upstream.
+commit 1b5d1d3a2f77250707225509cadc17997bab4353 upstream.
 
-dma_request_chan() returns error pointer in case of failures, but
-the rz_ssi_dma_request() checked for NULL pointer instead.
+Fix wrong operator used issue reported by Coverity by replacing |
+operator with & operator.
 
-This patch fixes the issue by checking for ERR_PTR() instead of
-NULL and sets the DMA pointers to NULL in error case so that ssi
-can fallback to PIO mode.
-
-Fixes: 26ac471c5354 ("ASoC: sh: rz-ssi: Add SSI DMAC support")
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://lore.kernel.org/r/20210818101450.15948-1-biju.das.jz@bp.renesas.com
+Reported-by: Colin Ian King <colin.king@canonical.com>
+Link: https://lore.kernel.org/r/20210816182336.29959-1-biju.das.jz@bp.renesas.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- sound/soc/sh/rz-ssi.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ sound/soc/sh/rz-ssi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/sound/soc/sh/rz-ssi.c b/sound/soc/sh/rz-ssi.c
-index 341815476244..89c7e5e4cbf6 100644
+index d96c1bea047c..341815476244 100644
 --- a/sound/soc/sh/rz-ssi.c
 +++ b/sound/soc/sh/rz-ssi.c
-@@ -185,7 +185,7 @@ rz_ssi_stream_get(struct rz_ssi_priv *ssi, struct snd_pcm_substream *substream)
- 
- static inline bool rz_ssi_is_dma_enabled(struct rz_ssi_priv *ssi)
- {
--	return (ssi->playback.dma_ch || ssi->capture.dma_ch);
-+	return (ssi->playback.dma_ch && (ssi->dma_rt || ssi->capture.dma_ch));
- }
- 
- static int rz_ssi_stream_is_valid(struct rz_ssi_priv *ssi,
-@@ -676,15 +676,26 @@ static void rz_ssi_release_dma_channels(struct rz_ssi_priv *ssi)
- static int rz_ssi_dma_request(struct rz_ssi_priv *ssi, struct device *dev)
- {
- 	ssi->playback.dma_ch = dma_request_chan(dev, "tx");
-+	if (IS_ERR(ssi->playback.dma_ch))
-+		ssi->playback.dma_ch = NULL;
-+
- 	ssi->capture.dma_ch = dma_request_chan(dev, "rx");
-+	if (IS_ERR(ssi->capture.dma_ch))
-+		ssi->capture.dma_ch = NULL;
-+
- 	if (!ssi->playback.dma_ch && !ssi->capture.dma_ch) {
- 		ssi->playback.dma_ch = dma_request_chan(dev, "rt");
--		if (!ssi->playback.dma_ch)
-+		if (IS_ERR(ssi->playback.dma_ch)) {
-+			ssi->playback.dma_ch = NULL;
- 			goto no_dma;
-+		}
- 
- 		ssi->dma_rt = true;
+@@ -368,7 +368,7 @@ static int rz_ssi_stop(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
+ 	/* Wait for idle */
+ 	timeout = 100;
+ 	while (--timeout) {
+-		if (rz_ssi_reg_readl(ssi, SSISR) | SSISR_IIRQ)
++		if (rz_ssi_reg_readl(ssi, SSISR) & SSISR_IIRQ)
+ 			break;
+ 		udelay(1);
  	}
- 
-+	if (!rz_ssi_is_dma_enabled(ssi))
-+		goto no_dma;
-+
- 	if (ssi->playback.dma_ch &&
- 	    (rz_ssi_dma_slave_config(ssi, ssi->playback.dma_ch, true) < 0))
- 		goto no_dma;
 -- 
 2.17.1
 
