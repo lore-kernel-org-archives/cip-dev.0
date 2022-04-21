@@ -1,200 +1,158 @@
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
- by mx.groups.io with SMTP id smtpd.web11.21597.1650549030279935744
- for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Thu, 21 Apr 2022 06:50:30 -0700
+Received: from JPN01-TYC-obe.outbound.protection.outlook.com (JPN01-TYC-obe.outbound.protection.outlook.com [40.107.114.128])
+ by mx.groups.io with SMTP id smtpd.web08.20142.1650539937027919278
+ for <cip-dev@lists.cip-project.org>;
+ Thu, 21 Apr 2022 04:18:57 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=1xt6tkUY;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.215.176, mailfrom: bot@kernelci.org)
-Received: by mail-pg1-f176.google.com with SMTP id g3so4063058pgg.3
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Thu, 21 Apr 2022 06:50:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=YrKTeIJOj8LzQEAiurfEjY1yMiLtBw5RUuA/AIZeIHg=;
-        b=1xt6tkUYKJfMUl+LzgnCAin3t8LVmEG0VjnnyhxuEBuFrYgDSBFFO41NV41aUEUpNh
-         hnt2ip5rJ57HzYtvzWgT02ZpD/vjwRRhbX1AGnl4HGgz0aG+CIXOxu8lfuAG4VELeP0/
-         xYFA1x9nFrQVO1Dugz17yS4oUwdsEvXfjOVBqyXCidmmPFWGyJ4ozz57jIWDH5RyltzR
-         LHxvxEn++AK9JxYJYgX5RDy3iy3lvjDrhexEqgg3XmnJdIiDO6PpwPtc7Cby+pEaUyZP
-         tdBL8gy5EzcjiGA6sPLu8A0EK0phsyn/Z65kfGxfzFSx+DtRV870BPTVDJLmMxYZe0mh
-         kRrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=YrKTeIJOj8LzQEAiurfEjY1yMiLtBw5RUuA/AIZeIHg=;
-        b=X0hR7dA5iIZsgkon6bTsDn4+blRO3Y3ZXaeVtlqFL4Y4YHgRK6mPwZG2sAuvEz+RjF
-         G1c5QePYpap4qwve0uyedV04m9adj69leCbATCzXkRHE0fctztCdeYj4urjjLOzARok3
-         4R316eERx+2IHKTmCrruxyc14OQPXKUZsWSLtdp8vAtSSicJdlssRp9zq7H0jb9Zkr7x
-         QZh17y/wOUSAL4TjKA6igVqj6QTv0GtphyrB5BbA6SmzvY508NNfzR19+Gm3YSmiRSX8
-         T8jjjwLWeAkjUbnAcHd4Xc8kxk+IO7+TebqdUAAUxRLBsOJjtnRX3nhY0Iq2Imq2b1fy
-         e/uw==
-X-Gm-Message-State: AOAM533KFmGsOUWp/ngyWY9QJSyzaR8f/bFsr+l7crhqUwMxMIZQr+v6
-	UfFdUYJl+kkxhF+Yg54dFZrPXGxqqE5bt4h8hVw=
-X-Google-Smtp-Source: ABdhPJxWKlc2BdXmtB1ePKW64UrUqNQQXX54jKhIH8lSYILIMRKcSbSXxbi2e2ruNQ7pOrZOk61XFg==
-X-Received: by 2002:a65:5b4b:0:b0:3a3:d8fb:6926 with SMTP id y11-20020a655b4b000000b003a3d8fb6926mr23623407pgr.76.1650549029391;
-        Thu, 21 Apr 2022 06:50:29 -0700 (PDT)
-Return-Path: <bot@kernelci.org>
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id 189-20020a6217c6000000b0050aca6473e0sm6411314pfx.192.2022.04.21.06.50.28
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Apr 2022 06:50:28 -0700 (PDT)
-Message-ID: <62616124.1c69fb81.24eb3.f374@mx.google.com>
-Date: Thu, 21 Apr 2022 06:50:28 -0700 (PDT)
+ dkim=pass header.i=@bp.renesas.com header.s=selector1 header.b=Vz9r+/oy;
+ spf=pass (domain: bp.renesas.com, ip: 40.107.114.128, mailfrom: biju.das.jz@bp.renesas.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DaiJqJckZUvKo5XBnPX8hWcM2B+rubtx+vdbMebzEob9s8enlr4fC+7FfiRzUWUNxTkCvTHzm+nffrC+aYtwcDQiIHEmXhAAphZ/0vSnEOgy38CA1mDV7ci4+i3CT2/zMNuI1sAJ0UjPiNTCARuDc34BsnPV0xBrJMwMyvLP5w/1QMP2I+piQ2bZbk/lAP4wofkbTJJyUQKSrhftKCDECtl7fMnLAiJI7OUvWKLkPiwCzf3x44mAvFO+m/LJbOGhZf3OasWB/6NyT5WDDDq/UPV/JEJ25kAmhH05BQuieXVbuN7WS42SBz/sCkd6hZUFfQOoXISXOXE+X1RrolTSJA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6v5hkt8nyXxltek9X6RCl6eMkgyy724N7c0s73eCHEc=;
+ b=j90oSfO4AR8zouBeMmOl9HEdzTB26VUyoAiUod3VCiausVleCDROIva2eD+LhHpBvtDSGcAqdjJcnX4MjoeozXFkNeB7CVz5CTvSHK6nghEqIdqfxH9mFEfUCE/eZHleBhzq8a8/oAt+KyESE56usXroawgnLxfzxjfo6sfcoiQa26drHEyo/3o6R8jAKgf60cEpv4Tj7KXEPkDmVZU1F/zFxIHKd3ULzcatAXW66UgxoV3YOlPPiJpBmOEEjTw3CtK0CHN487nc98721s5amsqhGbAbw7NT3uswjv3UoJ2NV3vfA1T3FK37c7WAbQyavkvVftT6u7aT6jxwvaeeZg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6v5hkt8nyXxltek9X6RCl6eMkgyy724N7c0s73eCHEc=;
+ b=Vz9r+/oyUI8XvwYpTEpogxWUWTPHlaJpbo0628XHFJYFix+piLbhfBSp+KVkBmAcn/GC+FF6gQVnim6qCYmHFGZjZg49uHxGgTREKgyW9Uc70F5dxCZMJUiDiehjxYYIHZaX+yhx+udkp9moBHHeSxGScJkDBRFd+UvRZptoAFE=
+Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
+ by TYAPR01MB2637.jpnprd01.prod.outlook.com (2603:1096:404:8a::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5164.20; Thu, 21 Apr
+ 2022 11:18:52 +0000
+Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
+ ([fe80::b129:a6f3:c39e:98db]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
+ ([fe80::b129:a6f3:c39e:98db%4]) with mapi id 15.20.5186.014; Thu, 21 Apr 2022
+ 11:18:52 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Pavel Machek <pavel@denx.de>, Prabhakar Mahadev Lad
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>
+CC: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>, Nobuhiro
+ Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Subject: Re: [PATCH 5.10.y-cip 21/24] arm64: dts: renesas: rzg2l-smarc: Enable audio
+Thread-Topic: [PATCH 5.10.y-cip 21/24] arm64: dts: renesas: rzg2l-smarc:
+ Enable audio
+Thread-Index: AQHYVXEfGOZuM6obdUSDGcSG/jU2gKz6OBFA
+Date: Thu, 21 Apr 2022 11:18:52 +0000
+Message-ID: 
+ <OS0PR01MB59225070F09D70B65B40531F86F49@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+References: <20220420213424.27837-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20220420213424.27837-22-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20220421111530.GB9759@amd>
+In-Reply-To: <20220421111530.GB9759@amd>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 22e95acb-4af6-480c-b9a2-08da2388b779
+x-ms-traffictypediagnostic: TYAPR01MB2637:EE_
+x-microsoft-antispam-prvs: 
+ <TYAPR01MB263796ACD9AC5443F3504D5B86F49@TYAPR01MB2637.jpnprd01.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ ynfat2f6G6j3rIkemqZm7USrmDSbOV5dlFAfHPRiaW76lYqwxwuD6fJ0SOEbFvXmBfaqDQkZ22/6A+17c/toWg0rKAZh1RlIGGC/F7TB5mlO+O/lbq4H1NK1ioOEaFrbu1PLCxj8KbHLQTZH3X+qncmOUpuPJrTMk6HgC8oYHH6vlkQCH8c/IPi7605gNP6Gs9jJGySqz3tcIitsdmpc04nmZa0g0LUNBXp67FdNMpwyOx5n5t557a/BIkGThdp8rO+TK1MfLYRQlOO3vmXYoZSySoqWYnvu9yJu01i7oRyJGWZ+7IVn5S6Dha2CfMtO9qkMkcJrGq5qwvFfygIXWBDV513m+ge1gyG4EihszTIxdT7ZC/XpV+ujlaNrGy0ChQatVxbCYCMrgMtnXRtDrUYOYF7XtmF34MQDVKuPQwRK0y0Kb0tzy0VMX03wqDedBwMOO3t/FWcRgqDERpnjIFBhYWHGMdDWOHXQZCNtSgKFuLnViaNLRlLnbcuHMhjxxwdDlPXvMhAlkvSRf4psyhsvmdaYZs9wjak/D5YLJyJadG3ZevcoQw7UDpyYbEbEd/a7m2eqITKFZZH91FqCt4MDk8ja84q4eG2nq41qumPHXXfxNp2iYGE3uuMLfMMHu5p0J/DbdLO+BPvG/V5o79vazfl9p6J3tgb1k+x9ZlW20IZf3fWbNgIdJQ2W9Cw4EkhD+CUVF05aQ5P5RU5Q9A==
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(6636002)(54906003)(53546011)(110136005)(316002)(186003)(122000001)(71200400001)(83380400001)(6506007)(26005)(66946007)(86362001)(38070700005)(52536014)(38100700002)(66556008)(8936002)(7696005)(66476007)(2906002)(64756008)(5660300002)(66446008)(4326008)(55016003)(508600001)(76116006)(8676002)(33656002)(9686003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?us-ascii?Q?AgOvZHlqcVg7LcFS0hTWdLoFGjgSCqBIudJ98O2+2VHpO9AL/BN9k0CulCtn?=
+ =?us-ascii?Q?Z6RYoy9fpNfi/2nl8L2vdp+TnRUJhzOeu4c1q7kvre2xrSqwkM9Z9xKU6g4G?=
+ =?us-ascii?Q?CVpiiD0S7fmKLJfGcgiN9QzMEF+ICwS+90AR+4+sPeXkveAZk4zFRjPCur4o?=
+ =?us-ascii?Q?6Vk5xMvVETxqhORklF4rlSg+oqJeRAPcLJ23Y+OozbjvTOCbXjarIe+Tn2tK?=
+ =?us-ascii?Q?ecBC21Y4B9qsZqg6Dd79xaWsdpUeYNxOTtPaYQ+y0hPHpcDIZ5RbE9avsHiJ?=
+ =?us-ascii?Q?mheTxAooxoRl7nM4c2FOylHmgldf3jCclwDCWfVX28evq4f2XnCAHu+jKNvR?=
+ =?us-ascii?Q?iXrX5asDRdpfvszvgzpmW67zWNFikAVm4jbfO7jFjRlEkC2f8eMExJDwgo+b?=
+ =?us-ascii?Q?CagWxsTPl3b1711htsc3PR+WP63HPVZQKugr/MINkl9OGjUiV75Auz2J652o?=
+ =?us-ascii?Q?QhvmPEkhhucFQslR7mUWcF/vPQtGUjSsYtF3HOeIQTg5Yx1dDMKmGfbcVU4F?=
+ =?us-ascii?Q?oJS9hOJZ8C2cSfO++clzv3g+/gRdLtj8h2EPIYhDrmLrAYsFXJpOkpeb+Nm+?=
+ =?us-ascii?Q?+68LUxdQjbMZ/V7QMv4DvB/9GSGA/pfvaFmSNU856rGJRwQkmE2vBXq89jf9?=
+ =?us-ascii?Q?iMLiy7PaE2neJE7FdjO1N2qlTqDjf6d+De9OIms4LQCCRB5sy0jk4iFSVKqd?=
+ =?us-ascii?Q?OJw8fy3dkqaKUlviKbQ9TBdj9wO4WptN9sQjC4/EDYPYA7vI2aCnzKoWPH2v?=
+ =?us-ascii?Q?S3KLhdXL5aP8n3lkH+2H8q3y8v5bRs8IZnIuA9cdMNa8Pko9hE6C/UyFQfsQ?=
+ =?us-ascii?Q?KnVkZw9fZOr9vihdX3kZqpKBmW8ApHrnDjTQh5s7SlP4b4xCBaQ/xbvz/fP5?=
+ =?us-ascii?Q?2c2V6n5S/x+pyhydwBCZpj8UJ7ESZJOGhME3pzWtLJhJPP2GZYk+StNqvym6?=
+ =?us-ascii?Q?D0tou8P1P13oAmR7sgeA2KZCWskDWmQn9Z1dj6MzhRxmlrWpHIenU6pEo16G?=
+ =?us-ascii?Q?giGGRqbmrQ1+C1KikqalVgLigC5bB5b9r0l83dGW4xqe4Arfigpvv4p7/VM8?=
+ =?us-ascii?Q?SeajAbD2uAUv9XXzDafxQjeVmI3qsBuX9PRa2ir2rcrxXTuNdNlnO+lOt7hR?=
+ =?us-ascii?Q?tnGD1Q9Hg+hTMROcO2Uf7bBIoCALKZEqOe9OLm3vA+Gf1AL+NNzQCr6awh8T?=
+ =?us-ascii?Q?+nEAcFe/2uMafw013Tw9q5I3Jzrvr+u2lnN2zdJ5E8cnWhbYQZ5YiHJ51Iu6?=
+ =?us-ascii?Q?DU/S33H0BlUhlowd/Ekr2ckV5Xkof45bdETeTNRdXtEKnwEw4Y4FneAoI9BT?=
+ =?us-ascii?Q?LxRom9dT4uKdMcmjvWjX1y8ybzJrcdN8/zRJwtw9MAfL91+1XDx48GCC5xEz?=
+ =?us-ascii?Q?FjnIsEMZ7LewRmKTPa1mvwyU++WQpaeL06fw8sVw26Ma3KgckgVsIG12xnvB?=
+ =?us-ascii?Q?rBekCE01bpBaFoc9lj+6zy2BPQuvxmoBW6z4Hvk05lEE0/lI5aNSEGTPfqcH?=
+ =?us-ascii?Q?3v39lPGB94iJI7M4RQl1WXuisn7qBdOpDCM1FPOSlkBFLnsiq9MV8dgmbYuA?=
+ =?us-ascii?Q?qsqokhiUia6bWNN/6/denVsgcsaVcU/9erwU/CouDCFW/v4NqwAQGNPa/bkL?=
+ =?us-ascii?Q?k3UqHuzaaWBXjJucD6B+gvLA3zz+Olye37rkxcegshcmn7sTUlYKU7o1nlLu?=
+ =?us-ascii?Q?AZAFC5sYcQGdW4GiVRdhSRAjkecRDJCooRkwuzIGGgq+NyywVgJIFpxUZd+R?=
+ =?us-ascii?Q?0wczS1lkO0K0qa1g4zZA4rrtT1V8wwE=3D?=
 MIME-Version: 1.0
-X-Kernelci-Kernel: v5.10.109-cip5-24-g4e205e4287c50
-X-Kernelci-Report-Type: test
-X-Kernelci-Tree: cip-gitlab
-X-Kernelci-Branch: ci/iwamatsu/linux-5.10.y-cip-rc
-Subject: cip-gitlab/ci/iwamatsu/linux-5.10.y-cip-rc ltp-pty: 4 runs, 3 regressions (v5.10.109-cip5-24-g4e205e4287c50) #kernelci
-To: Cipproject+Cip-Dev via Email Integration <cip-dev@lists.cip-project.org>
-From: "kernelci.org bot" <bot@kernelci.org>
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 22e95acb-4af6-480c-b9a2-08da2388b779
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Apr 2022 11:18:52.6453
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: XFZ3gRJTIc5ASdrk92iqyFV0o9EqKokFkOLJErne9q8PmH6XDDmhQhzZvSBU9Lby/fwOIL+S5POGU8RzKAfcPEWtM645p4EpTnzvs2ATx4g=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB2637
+Content-Language: en-US
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 
-cip-gitlab/ci/iwamatsu/linux-5.10.y-cip-rc ltp-pty: 4 runs, 3 regressions (=
-v5.10.109-cip5-24-g4e205e4287c50)
+It should be fine, as 1 is for multiple for 44.1 and another for 48.
 
-Regressions Summary
--------------------
+Cheers,
+Biju
 
-platform                 | arch  | lab           | compiler | defconfig    =
-              | regressions
--------------------------+-------+---------------+----------+--------------=
---------------+------------
-r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip       | gcc-10   | defconfig    =
-              | 1          =
-
-r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip       | gcc-10   | defconfig+arm=
-64-chromebook | 1          =
-
-rk3399-gru-kevin         | arm64 | lab-collabora | gcc-10   | defconfig+arm=
-64-chromebook | 1          =
-
-
-  Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fiwamatsu%2=
-Flinux-5.10.y-cip-rc/kernel/v5.10.109-cip5-24-g4e205e4287c50/plan/ltp-pty/
-
-  Test:     ltp-pty
-  Tree:     cip-gitlab
-  Branch:   ci/iwamatsu/linux-5.10.y-cip-rc
-  Describe: v5.10.109-cip5-24-g4e205e4287c50
-  URL:      https://gitlab.com/cip-project/cip-kernel/linux-cip.git
-  SHA:      4e205e4287c50edfe5c1d4c9775b0670bf9bafb4
-
-  Test suite revisions:
-    ltp-tests
-      URL:  https://github.com/linux-test-project/ltp.git
-      SHA:  91fd818dbff1aa3bcefae3747f83e1dd5c1586dd =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform                 | arch  | lab           | compiler | defconfig    =
-              | regressions
--------------------------+-------+---------------+----------+--------------=
---------------+------------
-r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip       | gcc-10   | defconfig    =
-              | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/62612120df7a2038f8ff9459
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
-.10.y-cip-rc/v5.10.109-cip5-24-g4e205e4287c50/arm64/defconfig/gcc-10/lab-ci=
-p/ltp-pty-r8a774a1-hihope-rzg2m-ex.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
-.10.y-cip-rc/v5.10.109-cip5-24-g4e205e4287c50/arm64/defconfig/gcc-10/lab-ci=
-p/ltp-pty-r8a774a1-hihope-rzg2m-ex.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20220411.0/arm64/initrd.cpio.gz =
-
-
-
-  * ltp-pty.login: https://kernelci.org/test/case/id/62612120df7a2038f8ff94=
-5a
-        failing since 30 days (last pass: v5.10.104-cip3-132-g46c091c34fabb=
-, first fail: v5.10.104-cip3-155-g4f07dbd2df49e) =
-
- =
-
-
-
-platform                 | arch  | lab           | compiler | defconfig    =
-              | regressions
--------------------------+-------+---------------+----------+--------------=
---------------+------------
-r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip       | gcc-10   | defconfig+arm=
-64-chromebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/62612aa31ae2aaf5c2ff946c
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
-.10.y-cip-rc/v5.10.109-cip5-24-g4e205e4287c50/arm64/defconfig+arm64-chromeb=
-ook/gcc-10/lab-cip/ltp-pty-r8a774a1-hihope-rzg2m-ex.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
-.10.y-cip-rc/v5.10.109-cip5-24-g4e205e4287c50/arm64/defconfig+arm64-chromeb=
-ook/gcc-10/lab-cip/ltp-pty-r8a774a1-hihope-rzg2m-ex.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20220411.0/arm64/initrd.cpio.gz =
-
-
-
-  * ltp-pty.login: https://kernelci.org/test/case/id/62612aa31ae2aaf5c2ff94=
-6d
-        failing since 30 days (last pass: v5.10.100-cip2-484-gede5006fb276,=
- first fail: v5.10.104-cip3-155-g4f07dbd2df49e) =
-
- =
-
-
-
-platform                 | arch  | lab           | compiler | defconfig    =
-              | regressions
--------------------------+-------+---------------+----------+--------------=
---------------+------------
-rk3399-gru-kevin         | arm64 | lab-collabora | gcc-10   | defconfig+arm=
-64-chromebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/626106e22602fb8ede8f7827
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
-.10.y-cip-rc/v5.10.109-cip5-24-g4e205e4287c50/arm64/defconfig+arm64-chromeb=
-ook/gcc-10/lab-collabora/ltp-pty-rk3399-gru-kevin.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
-.10.y-cip-rc/v5.10.109-cip5-24-g4e205e4287c50/arm64/defconfig+arm64-chromeb=
-ook/gcc-10/lab-collabora/ltp-pty-rk3399-gru-kevin.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20220411.0/arm64/initrd.cpio.gz =
-
-
-
-  * ltp-pty.login: https://kernelci.org/test/case/id/626106e22602fb8ede8f78=
-28
-        failing since 30 days (last pass: v5.10.100-cip2-484-gede5006fb276,=
- first fail: v5.10.104-cip3-155-g4f07dbd2df49e) =
-
- =20
+> -----Original Message-----
+> From: Pavel Machek <pavel@denx.de>
+> Sent: 21 April 2022 12:16
+> To: Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Cc: cip-dev@lists.cip-project.org; Nobuhiro Iwamatsu
+> <nobuhiro1.iwamatsu@toshiba.co.jp>; Pavel Machek <pavel@denx.de>; Biju Da=
+s
+> <biju.das.jz@bp.renesas.com>
+> Subject: Re: [PATCH 5.10.y-cip 21/24] arm64: dts: renesas: rzg2l-smarc:
+> Enable audio
+>=20
+> Hi!
+>=20
+> I just want to make sure: There are two frequencies, close to each other
+> but not same. Is that okay?
+>=20
+> Best regards,
+> 								Pavel
+>=20
+>=20
+> > diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
+> > b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
+> > index 549cee1733c7..4bffd6b4c837 100644
+> > --- a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
+>=20
+> > +&audio_clk1{
+> > +	clock-frequency =3D <11289600>;
+> > +};
+> > +
+> > +&audio_clk2{
+> > +	clock-frequency =3D <12288000>;
+> > +};
+>=20
+> --
+> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
