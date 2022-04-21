@@ -2,392 +2,394 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0974C8303C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD6DFC83038
 	for <webhook@archiver.kernel.org>; Thu, 21 Apr 2022 16:46:12 +0000 (UTC)
-Received: from EUR04-HE1-obe.outbound.protection.outlook.com
- (EUR04-HE1-obe.outbound.protection.outlook.com [40.107.7.47])
- by mx.groups.io with SMTP id smtpd.web12.21550.1650548333652646794
+Received: from mta-64-227.siemens.flowmailer.net
+ (mta-64-227.siemens.flowmailer.net [185.136.64.227])
+ by mx.groups.io with SMTP id smtpd.web09.20362.1650541967244335778
  for <cip-dev@lists.cip-project.org>;
- Thu, 21 Apr 2022 06:38:54 -0700
+ Thu, 21 Apr 2022 04:52:48 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="body hash did not verify" header.i=@siemens.com
- header.s=selector2 header.b=jvOXc6aL;
- spf=pass (domain: siemens.com, ip: 40.107.7.47,
- mailfrom: jan.kiszka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Z1y4lEU1qV3ZBEmRH8ggb+OUJE90WasUFEccToyB9aBQZfKOO33jtdEzegu9HmWx1r4T7hgmZK4qiW2OSrkxuFoCIfDdQlEH6t15c1YbXVnXca5BKzz4YCk11amhWWS1Ek5KDWqgv0BU1WzDFMzAPzQD5uxktVw4FzdflbuU9PyMYmSYR962Ezj+6afBkolg5c/C9gPS57qDmp5ua7kfElWf+UEr0Luk2GNRUFHdvVeZnaJCyBRUlpeHXad3ktEfXD7daC7ZaT5jTjDRMkP4yFbr8JqDPUapFcnT5nUfzVQr6UiMrBmE6GKPQfGADzPMt9zOKBUYJ6CSdGiveLMStQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=I/7u77xKQyVomcX+R+hHVB2igJORK65mtTYEXXCidM8=;
- b=edcxFcvatrw7t/+DtlZZJcFoUx3Q/zs7Pp8PeEkJDMq7CZorX4h2LC4MpJ+X7k1F1wuXqsf093V/Bns5QgFOw37A2fogNw1M2dF2ikIBIkZW3Rv2C1t1eZJOMYXr0tsaRMf/DJo77Rdx6g/XdjF57o0A3debcpom1lEJwisi/YtX6ll2QZKKFfXgbv9ZqigeqcQsNpY6nKkf36wFpdgNM4PW6K+lwWvLyByjilDjU5Opc3wh+fqHP88XhJvRRB4/122Tp4cBn1/uHr8i4g+K3Res2aoB7nc+V/KtP731r1hFjcWhMza1LdrR/KzqpYV0IxxtgbSpC/M3BTI5piIn0w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.73) smtp.rcpttodomain=lists.cip-project.org
- smtp.mailfrom=siemens.com; dmarc=pass (p=none sp=none pct=100) action=none
- header.from=siemens.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=I/7u77xKQyVomcX+R+hHVB2igJORK65mtTYEXXCidM8=;
- b=jvOXc6aL0GGoQzLQlrnuY8L7rhqHUMdfxm9/dJbl5euISK3RWWHJps9uK1+4QddNGtR+CBdJvCgYCsj96w9lQ1JEfgQ8ITJJ2jGgFjSEUxzi35a5sdjjnZciFpbvb1uB8VtAmzJmeMdBbzS+BCVYK5/Pv3iwfBt/Q2zsXnXmDwk5SrH6NqpA2C4AyudUtUJXXHsiOhU8OiBIXgk8lhAPLx3YqBf5JOjPpVndkR2Pcm2/XztQQxAfD39G4NMPeJVxv0wkrsqin/9sKA27kcVYEDIzLEuca5q0sXV05G6/HZVQWvVWPqKCgjUWmMJ1FwY7KI6qMHX5Wwl8gIDq3nPsKw==
-Received: from DB6PR0202CA0042.eurprd02.prod.outlook.com (2603:10a6:4:a5::28)
- by DB9PR10MB5552.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:30b::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5164.25; Thu, 21 Apr
- 2022 13:38:50 +0000
-Received: from DB5EUR01FT106.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:4:a5:cafe::77) by DB6PR0202CA0042.outlook.office365.com
- (2603:10a6:4:a5::28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5186.15 via Frontend
- Transport; Thu, 21 Apr 2022 13:38:50 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.73)
- smtp.mailfrom=siemens.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=siemens.com;
-Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.73 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.73; helo=hybrid.siemens.com;
-Received: from hybrid.siemens.com (194.138.21.73) by
- DB5EUR01FT106.mail.protection.outlook.com (10.152.4.178) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5186.14 via Frontend Transport; Thu, 21 Apr 2022 13:38:49 +0000
-Received: from DEMCHDC89XA.ad011.siemens.net (139.25.226.103) by
- DEMCHDC9SNA.ad011.siemens.net (194.138.21.73) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Thu, 21 Apr 2022 15:38:49 +0200
-Received: from [167.87.32.12] (167.87.32.12) by DEMCHDC89XA.ad011.siemens.net
- (139.25.226.103) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Thu, 21 Apr
- 2022 15:38:48 +0200
-Message-ID: <70653967-0126-d85a-3a8e-a3c3525146e7@siemens.com>
-Date: Thu, 21 Apr 2022 15:38:48 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [isar-cip-core][PATCH 3/3] Convert /etc overlay from systemd
- mount unit to initramfs hook
-Content-Language: en-US
-To: Gylstorff Quirin <quirin.gylstorff@siemens.com>,
-	<cip-dev@lists.cip-project.org>
-CC: Christian Storm <christian.storm@siemens.com>
-References: <cover.1650541963.git.jan.kiszka@siemens.com>
- <6700d82b66bcf4939e729a01b612353b458919b0.1650541963.git.jan.kiszka@siemens.com>
- <28c26f61-2ae8-df3a-004f-21ea842439a7@siemens.com>
+ dkim=pass header.i=jan.kiszka@siemens.com header.s=fm1 header.b=iSafTU/R;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227,
+ mailfrom: fm-294854-202204211152446c668f63a32dbc524e-su4bik@rts-flowmailer.siemens.com)
+Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id
+ 202204211152446c668f63a32dbc524e
+        for <cip-dev@lists.cip-project.org>;
+        Thu, 21 Apr 2022 13:52:45 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=jan.kiszka@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
+ bh=NUeWZNryqmdwf4JgxFJamFq7BAe3/eTF5c7BpHhVDIk=;
+ b=iSafTU/Rks0aSjY6B+4kP/nGoH4HsSLQ0x+r9fdMV95BmaeNPzimopZDAL3cZ4HUIlJxAf
+ w5KZp06p3VxwH/RqoKQNN/R7Og0+u6iYl2wDpyQGOAMYUVXhW4QZbOdKUOLssZ6n0dzG80oV
+ H2WpRc2uIWw+OYbLPiwQ8pc7QXjjA=;
 From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <28c26f61-2ae8-df3a-004f-21ea842439a7@siemens.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Originating-IP: [167.87.32.12]
-X-ClientProxiedBy: DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) To
- DEMCHDC89XA.ad011.siemens.net (139.25.226.103)
-X-TM-AS-Product-Ver: SMEX-14.0.0.3080-8.6.1018-26680.007
-X-TM-AS-Result: No-10--14.704700-8.000000
-X-TMASE-MatchedRID: MWBePzxHDOw5QaOxwNGfvo9bHfxDWoibnZzvVk+DChslPLVu9PurrfIK
-	8gK4rjpyyB3Vn0eT/ZLTqAoW2PGHdEBm79YwY9dNQG62Sn3aGkwpw3g/d9ksDb+a7Hw+x9qZy73
-	3NwuklsK2ZO4LLn5VSvEqCMNk4PLqaBishwIABxD08pD3L2/Xj3iXGrukUFRRTvKpZzlxUs9C3i
-	RApcRQCkXtykZ+aGOtgtpdYIvYnir55VbxwR5f88jvnZ1JUTphTsc3oPKh4goZSewgzb/T8w/o5
-	bNHEsCTWAuSz3ewb207fUAhHHRznTCM053QqFPDg6dF34V0O2gnF14bW3vLZo61Z+HJnvsOLozI
-	+rhNYbm2zFWqrVN4BZIu8BCNfKQKQY9ube1qTn5ftuJwrFEhTbew1twePJJB3QfwsVk0UbtuRXh
-	7bFKB7uJ3o+UdLxfpE9L6gxn7Y+Ki5qLMlbD6JI9FNcwXIcSdHIV02d1rpG8=
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--14.704700-8.000000
-X-TMASE-Version: SMEX-14.0.0.3080-8.6.1018-26680.007
-X-TM-SNTS-SMTP: 
- 3048C52C786C2E601380EF1C6945523E1CCE4F6DFF1B2FBE8404A9BEF7340C8E2000:8
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 6d498ee8-dab0-4377-a611-08da239c448b
-X-MS-TrafficTypeDiagnostic: DB9PR10MB5552:EE_
-X-Microsoft-Antispam-PRVS: 
-	<DB9PR10MB5552C8B3347D9F55EB4E39F295F49@DB9PR10MB5552.EURPRD10.PROD.OUTLOOK.COM>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	oHioGL8cDF/l5hquW9zJ83W7bIOcxdl/o/lsuP7pdCpdrmb7N8U+ypaLtCQiGcBdgmPvp4P+nph56Faw+eHi5NGxz1AI4veBVA3Ni/Vc4OsvjhvWiCEnNiOYeGyFz8fHqWui7WKX65sxJ2sNp9R+SP61PD6CH1cOhmTruTDVERp6rfC8BvjC7mLQzj2ZC2ugus3l/0bu5OdFraqwU5i93NmsD3QhqL2O4h/nLEygM+c5U5NJmz2bHTbtZcBOxON1CiACUt5FaAXSA2LpNCncqs7QPo/rXbF6Vf++FbO28uYOUY+C+XosyY5+9CLwzLdpFEDpcRroaok4YrF38uCkKKcytwX9GzhBe4b1BVZPBJCIXK+VWpn59YZDeYU9JprK6FiSPIL6KqCIRA9XgM6+m+SzpnY+XfaT6IK91lKUwxnLUh9VVbVRHeeIknmqn7NiAWaYuUsWA6yLA1U9p0fQSk8QD3YfL/b9xIN2A2oRIU4bLFHwXJ974yR4yeR1CcnbJeKwMSbNe/WBX4kBat319hZlVoaonzFlWKUgHHPgGYXvH0SFZT4cDNgrc1w9tf2LyD2v1AEmGQQsCPS4eFyRyvFeiWrZO6JM1rjKzXn51+13BTIgSCpwZ+VeJ/JPohW282hKGc9T61voXIfrYq6R4CwyMHrCKv+UgrIkcT+2+fVFuZbyKSbB86AU5jKWAMhI104gk0Egm3VrTYaP4khVrLSX3cLeqPEFoOOVhFigcTixGvZMFdo2BfXHmUeZTqyc6dmIuiiXYpoSGex3kj/Hwd6ubH/nWlOkdt5by0NOclbfq0kBygRvL4MKHRyYrZUG
-X-Forefront-Antispam-Report: 
-	CIP:194.138.21.73;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(46966006)(40470700004)(508600001)(8676002)(16576012)(36860700001)(53546011)(31696002)(6706004)(86362001)(8936002)(4326008)(82960400001)(40460700003)(356005)(16526019)(70586007)(44832011)(70206006)(31686004)(110136005)(26005)(36756003)(956004)(47076005)(186003)(2616005)(2906002)(82310400005)(316002)(336012)(81166007)(83380400001)(5660300002)(107886003)(3940600001)(43740500002)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Apr 2022 13:38:49.7594
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 
- 6d498ee8-dab0-4377-a611-08da239c448b
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
- TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.73];Helo=[hybrid.siemens.com]
-X-MS-Exchange-CrossTenant-AuthSource: 
-	DB5EUR01FT106.eop-EUR01.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR10MB5552
+To: cip-dev@lists.cip-project.org
+Cc: Quirin Gylstorff <quirin.gylstorff@siemens.com>,
+	Christian Storm <christian.storm@siemens.com>
+Subject: [isar-cip-core][PATCH 2/3] initramfs-abrootfs-hook: Convert to an
+ initramfs-class recipe
+Date: Thu, 21 Apr 2022 13:52:42 +0200
+Message-Id: 
+ <bec2642fc52c2cb38eade4569b88315dfa5dade6.1650541963.git.jan.kiszka@siemens.com>
+In-Reply-To: <cover.1650541963.git.jan.kiszka@siemens.com>
+References: <cover.1650541963.git.jan.kiszka@siemens.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-294854:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 21 Apr 2022 16:46:12 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8170
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8166
 
-On 21.04.22 15:18, Gylstorff Quirin wrote:
->=20
->=20
-> On 4/21/22 13:52, Jan Kiszka wrote:
->> From: Jan Kiszka <jan.kiszka@siemens.com>
->>
->> As systemd is not well prepared for read-only rootfs, specifically /wrt
->> machine-id management and anything that depends on it, it's best to
->> mount the /etc overlay already in the initramfs. This implies that also
->> /var is mounted at that level. We still keep the fstab setup done by
->> wic-swu-img class so that systemd will recognize the rootfs as read-only
->> and not try to remount it rw which will only fail with underlying
->> squashfs.
->>
->> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
->> ---
->> =C2=A0 classes/wic-swu-img.bbclass=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
-=C2=A0 2 --
->> =C2=A0 .../etc-overlay-fs/etc-overlay-fs_0.1.bb=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 | 32 -------------------
->> =C2=A0 .../etc-overlay-fs/files/etc-hostname.service | 14 --------
->> =C2=A0 .../files/etc-sshd-regen-keys.conf=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 6 ----
->> =C2=A0 .../etc-overlay-fs/files/etc-sysusers.conf=C2=A0=C2=A0=C2=A0 |=C2=
-=A0 4 ---
->> =C2=A0 recipes-core/etc-overlay-fs/files/etc.mount=C2=A0=C2=A0 | 13 ----=
-----
->> =C2=A0 recipes-core/etc-overlay-fs/files/postinst=C2=A0=C2=A0=C2=A0 |=C2=
-=A0 4 ---
->> =C2=A0 .../cip-core-initramfs/cip-core-initramfs.bb=C2=A0 |=C2=A0 4 +++
->> =C2=A0 .../files/etc-overlay.script=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 24 +++=
-+++++++++++
->> =C2=A0 .../initramfs-etc-overlay-hook_0.1.bb=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 | 27 ++++++++++++++++
->> =C2=A0 10 files changed, 55 insertions(+), 75 deletions(-)
->> =C2=A0 delete mode 100644 recipes-core/etc-overlay-fs/etc-overlay-fs_0.1=
-.bb
->> =C2=A0 delete mode 100644
->> recipes-core/etc-overlay-fs/files/etc-hostname.service
->> =C2=A0 delete mode 100644
->> recipes-core/etc-overlay-fs/files/etc-sshd-regen-keys.conf
->> =C2=A0 delete mode 100644 recipes-core/etc-overlay-fs/files/etc-sysusers=
-.conf
->> =C2=A0 delete mode 100644 recipes-core/etc-overlay-fs/files/etc.mount
->> =C2=A0 delete mode 100755 recipes-core/etc-overlay-fs/files/postinst
->> =C2=A0 create mode 100644
->> recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.script
->> =C2=A0 create mode 100644
->> recipes-initramfs/initramfs-etc-overlay-hook/initramfs-etc-overlay-hook_=
-0.1.bb
->>
->>
->> diff --git a/classes/wic-swu-img.bbclass b/classes/wic-swu-img.bbclass
->> index b93a96a..41b2164 100644
->> --- a/classes/wic-swu-img.bbclass
->> +++ b/classes/wic-swu-img.bbclass
->> @@ -15,8 +15,6 @@ inherit squashfs-img
->> =C2=A0 inherit wic-img
->> =C2=A0 inherit swupdate-img
->> =C2=A0 -IMAGE_INSTALL +=3D "etc-overlay-fs"
->> -
->> =C2=A0 INITRAMFS_RECIPE ?=3D "cip-core-initramfs"
->> =C2=A0 INITRD_IMAGE =3D "${INITRAMFS_RECIPE}-${DISTRO}-${MACHINE}.initrd=
-.img"
->> =C2=A0 diff --git a/recipes-core/etc-overlay-fs/etc-overlay-fs_0.1.bb
->> b/recipes-core/etc-overlay-fs/etc-overlay-fs_0.1.bb
->> deleted file mode 100644
->> index 4e2b80b..0000000
->> --- a/recipes-core/etc-overlay-fs/etc-overlay-fs_0.1.bb
->> +++ /dev/null
->> @@ -1,32 +0,0 @@
->> -#
->> -# CIP Core, generic profile
->> -#
->> -# Copyright (c) Siemens AG, 2021
->> -#
->> -# Authors:
->> -#=C2=A0 Quirin Gylstorff <quirin.gylstorff@siemens.com>
->> -#
->> -# SPDX-License-Identifier: MIT
->> -
->> -inherit dpkg-raw
->> -
->> -SRC_URI =3D "file://postinst \
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 file://etc=
-.mount \
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 file://etc=
--hostname.service \
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 file://etc=
--sshd-regen-keys.conf \
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 file://etc=
--sysusers.conf"
->> -
->> -do_install[cleandirs]+=3D"${D}/usr/lib/systemd/system \
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
->> ${D}/usr/lib/systemd/system/local-fs.target.wants \
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
->> ${D}/usr/lib/systemd/system/systemd-sysusers.service.d \
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
->> ${D}/usr/lib/systemd/system/sshd-regen-keys.service.d \
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ${D}/=
-var/local/etc \
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ${D}/=
-var/local/.atomic \
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "
->> -do_install() {
->> -=C2=A0=C2=A0=C2=A0 TARGET=3D${D}/usr/lib/systemd/system
->> -=C2=A0=C2=A0=C2=A0 install -m 0644 ${WORKDIR}/etc.mount ${TARGET}/etc.m=
-ount
->> -=C2=A0=C2=A0=C2=A0 install -m 0644 ${WORKDIR}/etc-hostname.service
->> ${TARGET}/etc-hostname.service
->> -=C2=A0=C2=A0=C2=A0 install -m 0644 ${WORKDIR}/etc-sshd-regen-keys.conf
->> ${D}/usr/lib/systemd/system/sshd-regen-keys.service.d/etc-sshd-regen-key=
-s.conf
->>
->> -=C2=A0=C2=A0=C2=A0 install -m 0644 ${WORKDIR}/etc-sysusers.conf
->> ${D}/usr/lib/systemd/system/systemd-sysusers.service.d/etc-sysusers.serv=
-ice
->>
->> -}
->> diff --git a/recipes-core/etc-overlay-fs/files/etc-hostname.service
->> b/recipes-core/etc-overlay-fs/files/etc-hostname.service
->> deleted file mode 100644
->> index 2306b9f..0000000
->> --- a/recipes-core/etc-overlay-fs/files/etc-hostname.service
->> +++ /dev/null
->> @@ -1,14 +0,0 @@
->> -[Unit]
->> -Description=3Dset hostname /etc overlay-aware
->> -Before=3Dnetwork-pre.target
->> -Wants=3Dnetwork-pre.target
->> -Requires=3Detc.mount
->> -After=3Detc.mount
->> -
->> -[Service]
->> -Type=3Doneshot
->> -RemainAfterExit=3Dyes
->> -ExecStart=3D/bin/hostname --boot --file /etc/hostname
->> -
->> -[Install]
->> -WantedBy=3Dbasic.target
->> diff --git
->> a/recipes-core/etc-overlay-fs/files/etc-sshd-regen-keys.conf
->> b/recipes-core/etc-overlay-fs/files/etc-sshd-regen-keys.conf
->> deleted file mode 100644
->> index b386c12..0000000
->> --- a/recipes-core/etc-overlay-fs/files/etc-sshd-regen-keys.conf
->> +++ /dev/null
->> @@ -1,6 +0,0 @@
->> -[Unit]
->> -# set hostname /etc overlay-aware
->> -Before=3Dnetwork-pre.target
->> -Wants=3Dnetwork-pre.target
->> -Requires=3Detc.mount
->> -After=3Detc.mount
->> diff --git a/recipes-core/etc-overlay-fs/files/etc-sysusers.conf
->> b/recipes-core/etc-overlay-fs/files/etc-sysusers.conf
->> deleted file mode 100644
->> index ad45d7f..0000000
->> --- a/recipes-core/etc-overlay-fs/files/etc-sysusers.conf
->> +++ /dev/null
->> @@ -1,4 +0,0 @@
->> -[Unit]
->> -# make systemd-sysusers /etc overlay aware
->> -Requires=3Detc.mount
->> -After=3Detc.mount
->> diff --git a/recipes-core/etc-overlay-fs/files/etc.mount
->> b/recipes-core/etc-overlay-fs/files/etc.mount
->> deleted file mode 100644
->> index f0ae3c5..0000000
->> --- a/recipes-core/etc-overlay-fs/files/etc.mount
->> +++ /dev/null
->> @@ -1,13 +0,0 @@
->> -[Unit]
->> -Description=3DOverlay-mount /etc
->> -Requires=3Dvar.mount
->> -After=3Dvar.mount
->> -
->> -[Mount]
->> -What=3Doverlay
->> -Where=3D/etc
->> -Type=3Doverlay
->> -Options=3Dnoauto,x-systemd.automount,lowerdir=3D/etc,upperdir=3D/var/lo=
-cal/etc,workdir=3D/var/local/.atomic
->>
->> -
->> -[Install]
->> -WantedBy=3Dlocal-fs.target
->> diff --git a/recipes-core/etc-overlay-fs/files/postinst
->> b/recipes-core/etc-overlay-fs/files/postinst
->> deleted file mode 100755
->> index e436b53..0000000
->> --- a/recipes-core/etc-overlay-fs/files/postinst
->> +++ /dev/null
->> @@ -1,4 +0,0 @@
->> -#!/bin/sh
->> -
->> -deb-systemd-helper enable etc.mount=C2=A0 || true
->> -deb-systemd-helper enable etc-hostname.service || true
->> diff --git
->> a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
->> b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
->> index 649daa2..9e0ee26 100644
->> --- a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
->> +++ b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
->> @@ -10,3 +10,7 @@
->> =C2=A0 #
->> =C2=A0 =C2=A0 inherit initramfs
->> +
->> +INITRAMFS_INSTALL +=3D " \
->> +=C2=A0=C2=A0=C2=A0 initramfs-etc-overlay-hook \
->> +=C2=A0=C2=A0=C2=A0 "
->> diff --git
->> a/recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.script =
-b/recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.script
->>
->> new file mode 100644
->> index 0000000..08271cd
->> --- /dev/null
->> +++
->> b/recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.script
->> @@ -0,0 +1,24 @@
->> +#!/bin/sh
->> +
->> +PREREQ=3D""
->> +
->> +prereqs()
->> +{
->> +=C2=A0=C2=A0=C2=A0 echo "$PREREQ"
->> +}
->> +
->> +case $1 in
->> +# get pre-requisites
->> +prereqs)
->> +=C2=A0=C2=A0=C2=A0 prereqs
->> +=C2=A0=C2=A0=C2=A0 exit 0
->> +=C2=A0=C2=A0=C2=A0 ;;
->> +esac
->> +
->> +. /scripts/functions
->> + > +mount -t $(get_fstype /dev/disk/by-label/var) /dev/disk/by-label/va=
-r=20
-> ${rootmnt}/var
->=20
-> should there be a check for existence for /dev/disk/by-label/var?
->=20
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-mount will fail - and we likely want to panic in that case, true. Will
-write a v2 for that.
+This unifies the pattern we generate initramfs images for non-secure and
+secure SWUpdate images. Besides cleaning up the related abrootfs
+selection hook, the unification is a precondition for adding another
+initramfs recipe later that will be shared between both image types
 
-Thanks,
-Jan
+The pattern followed in the new initramfs-abrootfs-hook script is now
+similar to initramfs-verity-hook: a local-top hook is used, rather than
+a patch for Debian's local script. This hook looks for the matching
+rootfs by read-only mounting candidates, comparing the contained UUID
+against the one stored in the initramfs, unmounting again, and then
+setting the ROOT variable on match.
 
---=20
-Siemens AG, Technology
-Competence Center Embedded Linux
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
+ classes/image_uuid.bbclass                    |  6 +-
+ classes/secure-wic-swu-img.bbclass            |  4 --
+ classes/wic-swu-img.bbclass                   |  6 ++
+ kas/opt/ebg-secure-boot-snakeoil.yml          |  1 +
+ kas/opt/ebg-swu.yml                           |  2 +-
+ .../cip-core-initramfs/cip-core-initramfs.bb  |  4 --
+ .../{initramfs.lsblk.hook => abrootfs.hook}   | 11 +---
+ .../files/abrootfs.script                     | 66 +++++++++++++++++++
+ .../files/initramfs.image_uuid.hook           | 33 ----------
+ .../initramfs-abrootfs-hook/files/postinst    |  6 --
+ .../initramfs-abrootfs-hook_0.1.bb            | 41 +++++++-----
+ 11 files changed, 104 insertions(+), 76 deletions(-)
+ rename recipes-initramfs/initramfs-abrootfs-hook/files/{initramfs.lsblk.hook => abrootfs.hook} (62%)
+ create mode 100644 recipes-initramfs/initramfs-abrootfs-hook/files/abrootfs.script
+ delete mode 100644 recipes-initramfs/initramfs-abrootfs-hook/files/initramfs.image_uuid.hook
+ delete mode 100644 recipes-initramfs/initramfs-abrootfs-hook/files/postinst
+
+diff --git a/classes/image_uuid.bbclass b/classes/image_uuid.bbclass
+index 2813ed9..7294eb3 100644
+--- a/classes/image_uuid.bbclass
++++ b/classes/image_uuid.bbclass
+@@ -1,10 +1,11 @@
+ #
+ # CIP Core, generic profile
+ #
+-# Copyright (c) Siemens AG, 2020
++# Copyright (c) Siemens AG, 2020-2022
+ #
+ # Authors:
+ #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
++#  Jan Kiszka <jan.kiszka@siemens.com>
+ #
+ # SPDX-License-Identifier: MIT
+ #
+@@ -27,7 +28,6 @@ do_generate_image_uuid() {
+         sudo tee -a '${IMAGE_ROOTFS}/etc/os-release'
+     image_do_mounts
+ 
+-    # update initramfs to add uuid
+-    sudo chroot '${IMAGE_ROOTFS}' update-initramfs -u
++    echo "TARGET_IMAGE_UUID=\"${IMAGE_UUID}\"" > "${DEPLOY_DIR_IMAGE}/${IMAGE_FULLNAME}.uuid.env"
+ }
+ addtask generate_image_uuid before do_copy_boot_files after do_rootfs_install
+diff --git a/classes/secure-wic-swu-img.bbclass b/classes/secure-wic-swu-img.bbclass
+index 85342fe..5e8e48a 100644
+--- a/classes/secure-wic-swu-img.bbclass
++++ b/classes/secure-wic-swu-img.bbclass
+@@ -9,10 +9,6 @@
+ # SPDX-License-Identifier: MIT
+ #
+ 
+-INITRAMFS_RECIPE ?= "cip-core-initramfs"
+-do_wic_image[depends] += "${INITRAMFS_RECIPE}:do_build"
+-INITRD_IMAGE = "${INITRAMFS_RECIPE}-${DISTRO}-${MACHINE}.initrd.img"
+-
+ inherit verity-img
+ inherit wic-swu-img
+ 
+diff --git a/classes/wic-swu-img.bbclass b/classes/wic-swu-img.bbclass
+index 231b249..b93a96a 100644
+--- a/classes/wic-swu-img.bbclass
++++ b/classes/wic-swu-img.bbclass
+@@ -16,6 +16,12 @@ inherit wic-img
+ inherit swupdate-img
+ 
+ IMAGE_INSTALL += "etc-overlay-fs"
++
++INITRAMFS_RECIPE ?= "cip-core-initramfs"
++INITRD_IMAGE = "${INITRAMFS_RECIPE}-${DISTRO}-${MACHINE}.initrd.img"
++
++do_wic_image[depends] += "${INITRAMFS_RECIPE}:do_build"
++
+ IMAGE_INSTALL += "home-fs"
+ IMAGE_INSTALL += "tmp-fs"
+ 
+diff --git a/kas/opt/ebg-secure-boot-snakeoil.yml b/kas/opt/ebg-secure-boot-snakeoil.yml
+index 14a5d6a..b329f41 100644
+--- a/kas/opt/ebg-secure-boot-snakeoil.yml
++++ b/kas/opt/ebg-secure-boot-snakeoil.yml
+@@ -25,6 +25,7 @@ local_conf_header:
+   secure-boot-image: |
+     IMAGE_FSTYPES = "secure-wic-swu-img"
+     WKS_FILE = "${MACHINE}-efibootguard-secureboot.wks.in"
++    INITRAMFS_INSTALL_append = " initramfs-verity-hook"
+ 
+   secure-boot: |
+     # Add snakeoil binaries for qemu
+diff --git a/kas/opt/ebg-swu.yml b/kas/opt/ebg-swu.yml
+index d811929..5e4e771 100644
+--- a/kas/opt/ebg-swu.yml
++++ b/kas/opt/ebg-swu.yml
+@@ -17,7 +17,7 @@ header:
+ 
+ local_conf_header:
+   initramfs: |
+-    IMAGE_INSTALL += "initramfs-abrootfs-hook"
++    INITRAMFS_INSTALL_append = " initramfs-abrootfs-hook"
+ 
+   image-option-uuid: |
+     CIP_IMAGE_OPTIONS_append = " image-uuid.inc"
+diff --git a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
+index 825fb9f..649daa2 100644
+--- a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
++++ b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
+@@ -10,7 +10,3 @@
+ #
+ 
+ inherit initramfs
+-
+-INITRAMFS_INSTALL += " \
+-    initramfs-verity-hook \
+-    "
+diff --git a/recipes-initramfs/initramfs-abrootfs-hook/files/initramfs.lsblk.hook b/recipes-initramfs/initramfs-abrootfs-hook/files/abrootfs.hook
+similarity index 62%
+rename from recipes-initramfs/initramfs-abrootfs-hook/files/initramfs.lsblk.hook
+rename to recipes-initramfs/initramfs-abrootfs-hook/files/abrootfs.hook
+index cf32404..bacbc2e 100644
+--- a/recipes-initramfs/initramfs-abrootfs-hook/files/initramfs.lsblk.hook
++++ b/recipes-initramfs/initramfs-abrootfs-hook/files/abrootfs.hook
+@@ -1,9 +1,8 @@
+-# This software is a part of ISAR.
+-# Copyright (C) Siemens AG, 2020
++#!/bin/sh
++# Copyright (C) Siemens AG, 2020-2022
+ #
+ # SPDX-License-Identifier: MIT
+ 
+-#!/bin/sh
+ PREREQ=""
+ 
+ prereqs()
+@@ -21,9 +20,5 @@ esac
+ . /usr/share/initramfs-tools/scripts/functions
+ . /usr/share/initramfs-tools/hook-functions
+ 
+-if [ ! -x /usr/bin/lsblk ]; then
+-	echo "Warning: couldn't find /usr/bin/lsblk!"
+-	exit 0
+-fi
+-
+ copy_exec /usr/bin/lsblk
++copy_file library /usr/share/abrootfs/image-uuid.env /usr/share/abrootfs/image-uuid.env
+diff --git a/recipes-initramfs/initramfs-abrootfs-hook/files/abrootfs.script b/recipes-initramfs/initramfs-abrootfs-hook/files/abrootfs.script
+new file mode 100644
+index 0000000..b61fe30
+--- /dev/null
++++ b/recipes-initramfs/initramfs-abrootfs-hook/files/abrootfs.script
+@@ -0,0 +1,66 @@
++#!/bin/sh
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2020-2022
++#
++# Authors:
++#  Jan Kiszka <jan.kiszka@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++
++prereqs()
++{
++    # Make sure that this script is run last in local-top
++    local req
++    for req in "${0%/*}"/*; do
++        script="${req##*/}"
++        if [ "$script" != "${0##*/}" ]; then
++            printf '%s\n' "$script"
++        fi
++    done
++}
++case $1 in
++prereqs)
++    prereqs
++    exit 0
++    ;;
++esac
++
++. /scripts/functions
++. /usr/share/abrootfs/image-uuid.env
++
++# Even if this script fails horribly, make sure there won't be a chance the
++# current $ROOT will be attempted.  As this device most likely contains a
++# perfectly valid filesystem, it would be mounted successfully, leading to a
++# broken boot.
++echo "ROOT=/dev/null" >/conf/param.conf
++wait_for_udev 10
++case "$ROOT" in
++    PART*)
++        # root was given as PARTUUID= or PARTLABEL=. Use blkid to find the matching
++        # partition
++        ROOT=$(blkid --list-one --output device --match-token "$ROOT")
++        ;;
++    "")
++        # No Root device was given. Use find the matching IMAGE_UUID
++        partitions=$(blkid -o device)
++        for part in $partitions; do
++            if [ "$(blkid -p ${part} --match-types novfat -s USAGE -o value)" = "filesystem" ]; then
++                mount -o ro -t $(get_fstype $part) $part ${rootmnt}
++                . ${rootmnt}/etc/os-release
++                umount ${rootmnt}
++                if [ "${IMAGE_UUID}" = "${TARGET_IMAGE_UUID}" ]; then
++                    ROOT="$part"
++                    break
++                fi
++            fi
++        done
++        ;;
++esac
++
++if [ -z "${ROOT}" ]; then
++    panic "Can't find the root device with matching UUID!"
++fi
++
++echo "ROOT=${ROOT}" >/conf/param.conf
+diff --git a/recipes-initramfs/initramfs-abrootfs-hook/files/initramfs.image_uuid.hook b/recipes-initramfs/initramfs-abrootfs-hook/files/initramfs.image_uuid.hook
+deleted file mode 100644
+index 910ce84..0000000
+--- a/recipes-initramfs/initramfs-abrootfs-hook/files/initramfs.image_uuid.hook
++++ /dev/null
+@@ -1,33 +0,0 @@
+-# This software is a part of ISAR.
+-# Copyright (C) Siemens AG, 2020
+-#
+-# SPDX-License-Identifier: MIT
+-
+-#!/bin/sh
+-set -x
+-PREREQ=""
+-
+-prereqs()
+-{
+-     echo "$PREREQ"
+-}
+-
+-case $1 in
+-prereqs)
+-     prereqs
+-     exit 0
+-     ;;
+-esac
+-
+-. /usr/share/initramfs-tools/scripts/functions
+-. /usr/share/initramfs-tools/hook-functions
+-
+-if [ ! -e /etc/os-release ]; then
+-	echo "Warning: couldn't find /etc/os-release!"
+-	exit 0
+-fi
+-
+-IMAGE_UUID=$(sed -n 's/^IMAGE_UUID="\(.*\)"/\1/p' /etc/os-release)
+-echo "${IMAGE_UUID}" > "${DESTDIR}/conf/image_uuid"
+-
+-exit 0
+\ No newline at end of file
+diff --git a/recipes-initramfs/initramfs-abrootfs-hook/files/postinst b/recipes-initramfs/initramfs-abrootfs-hook/files/postinst
+deleted file mode 100644
+index e065524..0000000
+--- a/recipes-initramfs/initramfs-abrootfs-hook/files/postinst
++++ /dev/null
+@@ -1,6 +0,0 @@
+-#!/bin/sh
+-
+-# patch local script
+-patch -s -p0 /usr/share/initramfs-tools/scripts/local /usr/share/initramfs-abrootfs-hook/debian-local.patch
+-
+-update-initramfs -v -u
+diff --git a/recipes-initramfs/initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.1.bb b/recipes-initramfs/initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.1.bb
+index 9c1776a..1693e85 100644
+--- a/recipes-initramfs/initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.1.bb
++++ b/recipes-initramfs/initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.1.bb
+@@ -1,33 +1,40 @@
+ #
+ # CIP Core, generic profile
+ #
+-# Copyright (c) Siemens AG, 2020
++# Copyright (c) Siemens AG, 2020-2022
+ #
+ # Authors:
+ #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
++#  Jan Kiszka <jan.kiszka@siemens.com>
+ #
+ # SPDX-License-Identifier: MIT
+ 
+ 
+ inherit dpkg-raw
+ 
+-DEBIAN_DEPENDS += ", busybox, patch"
++DEBIAN_DEPENDS = "initramfs-tools"
+ 
+-SRC_URI += "file://postinst \
+-            file://initramfs.lsblk.hook \
+-            file://initramfs.image_uuid.hook \
+-            file://debian-local-patch"
++SRC_URI += "file://abrootfs.hook \
++            file://abrootfs.script"
++
++ABROOTFS_IMAGE_RECIPE ?= "cip-core-image"
++
++IMAGE_UUID_ENV_FILE = "${DEPLOY_DIR_IMAGE}/${ABROOTFS_IMAGE_RECIPE}-${DISTRO}-${MACHINE}.uuid.env"
++
++do_install[depends] += "${ABROOTFS_IMAGE_RECIPE}:do_generate_image_uuid"
++do_install[cleandirs] += " \
++    ${D}/usr/share/initramfs-tools/hooks \
++    ${D}/usr/share/abrootfs \
++    ${D}/usr/share/initramfs-tools/scripts/local-top"
+ 
+ do_install() {
+-    # add patch for local to /usr/share/initramfs-abrootfs-hook
+-    TARGET=${D}/usr/share/initramfs-abrootfs-hook
+-    install -m 0755 -d ${TARGET}
+-    install -m 0644 ${WORKDIR}/debian-local-patch ${TARGET}/debian-local.patch
+-
+-    # add hooks for secure boot
+-    HOOKS=${D}/etc/initramfs-tools/hooks
+-    install -m 0755 -d ${HOOKS}
+-    install -m 0740 ${WORKDIR}/initramfs.lsblk.hook ${HOOKS}/lsblk.hook
+-    install -m 0740 ${WORKDIR}/initramfs.image_uuid.hook ${HOOKS}/image_uuid.hook
++    if [ -f "${IMAGE_UUID_ENV_FILE}" ]; then
++        install -m 0600 "${IMAGE_UUID_ENV_FILE}" "${D}/usr/share/abrootfs/image-uuid.env"
++    else
++        bberror "Did not find ${IMAGE_UUID_ENV_FILE}. initramfs will not be build correctly!"
++    fi
++    install -m 0755 "${WORKDIR}/abrootfs.script" \
++        "${D}/usr/share/initramfs-tools/scripts/local-top/abrootfs"
++    install -m 0755 "${WORKDIR}/abrootfs.hook" \
++        "${D}/usr/share/initramfs-tools/hooks/abrootfs"
+ }
+-addtask do_install after do_transform_template
+-- 
+2.34.1
+
 
