@@ -1,89 +1,103 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A664DC83036
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C57B2C83039
 	for <webhook@archiver.kernel.org>; Thu, 21 Apr 2022 16:46:12 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web08.20123.1650539849088464129
+Received: from mta-65-225.siemens.flowmailer.net
+ (mta-65-225.siemens.flowmailer.net [185.136.65.225])
+ by mx.groups.io with SMTP id smtpd.web10.20272.1650541967604504930
  for <cip-dev@lists.cip-project.org>;
- Thu, 21 Apr 2022 04:17:29 -0700
+ Thu, 21 Apr 2022 04:52:48 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing;
- spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id C681E1C0B8B; Thu, 21 Apr 2022 13:17:25 +0200 (CEST)
-Date: Thu, 21 Apr 2022 13:17:25 +0200
-From: Pavel Machek <pavel@denx.de>
-To: nobuhiro1.iwamatsu@toshiba.co.jp
-Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, cip-dev@lists.cip-project.org,
-	pavel@denx.de, biju.das.jz@bp.renesas.com
-Subject: Re: [PATCH 5.10.y-cip 00/24] Add sound support to Renesas RZ/G2L SoC
-Message-ID: <20220421111725.GC9759@amd>
-References: <20220420213424.27837-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <TYWPR01MB9420C80542707FC4B160E5E992F49@TYWPR01MB9420.jpnprd01.prod.outlook.com>
+ dkim=pass header.i=jan.kiszka@siemens.com header.s=fm1 header.b=iy6NUEDt;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225,
+ mailfrom: fm-294854-2022042111524457a765168c6f35807e-m_1kf2@rts-flowmailer.siemens.com)
+Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id
+ 2022042111524457a765168c6f35807e
+        for <cip-dev@lists.cip-project.org>;
+        Thu, 21 Apr 2022 13:52:44 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=jan.kiszka@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=aUEJ8DmeZdSwDeD48ifTYltP/tLEUCbHWu2IxtsLAgk=;
+ b=iy6NUEDt0DQutWLn6tlGgDpZ7oI1dH/jCDeePpjN2Q+WDVDNdWDwzRNv7Db82PCjb0+f9W
+ NxhX9LqlMOTwUUz2JgpTT2y30Q/sqkk+pBARmnZbSSu7TL6u/ysCY8e6+kB8Te6WrZ0Rd7kI
+ KOeB3ei1lXEAmFDNWMTWUatfUnUMg=;
+From: Jan Kiszka <jan.kiszka@siemens.com>
+To: cip-dev@lists.cip-project.org
+Cc: Quirin Gylstorff <quirin.gylstorff@siemens.com>,
+	Christian Storm <christian.storm@siemens.com>
+Subject: [isar-cip-core][PATCH 0/3] Fix read-only rootfs setup /wrt etc
+ overlay
+Date: Thu, 21 Apr 2022 13:52:40 +0200
+Message-Id: <cover.1650541963.git.jan.kiszka@siemens.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="lCAWRPmW1mITcIfM"
-Content-Disposition: inline
-In-Reply-To: 
- <TYWPR01MB9420C80542707FC4B160E5E992F49@TYWPR01MB9420.jpnprd01.prod.outlook.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-294854:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 21 Apr 2022 16:46:12 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8162
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8168
 
+This addresses the problem of current read-only rootfs + /etc overlay as
+used for the SWUpdate setups.
 
---lCAWRPmW1mITcIfM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Due to ordering issues in systemd startup between machine-id handling
+vs. making /etc writable via the overlay, various things are broken down
+the line, e.g. journal reporting. Reading [1], it appeared to be best to
+move the overlay mounting into the initramfs. And this implementation
+proves this to be right: simpler and working smoothly.
 
-Hi!
+As a by-product, this also unifies the initramfs-abrootfs-hook, and
+makes it simpler as well.
 
-> > This patch series adds sound support to Renesas RZ/G2L SoC and enables =
-SSI
-> > and codec on Renesas RZ/G2L SMARC EVK.
-> >=20
-> > All the patches have been cherry picked from v5.18-rc3.
-> >=20
-> > Sound support patches were already sent earlier as part of bulk series =
-[0], but
-> > due to some review comments the patches were rejected, now that the dri=
-ver is
-> > fixed upstream, re-sending the series with all the fixes.
-> >=20
-> > [0] https://patchwork.kernel.org/project/cip-dev/cover/
-> > 20211229101530.22783-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
->=20
-> Looks good to me.=20
-> I am testing on https://gitlab.com/cip-project/cip-kernel/linux-cip/-/pip=
-elines/521117833.
-> I can merge it if there are no other comments and test is successful.
->=20
+Jan
 
-Aside from minor comments I sent, series looks good to me. I'm okay
-with series being merged.
+[1] https://www.spinics.net/lists/systemd-devel/msg05670.html
 
-Thanks and best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Jan Kiszka (3):
+  wic: Align kernel command line of qemu-amd64-efibootguard*
+  initramfs-abrootfs-hook: Convert to an initramfs-class recipe
+  Convert /etc overlay from systemd mount unit to initramfs hook
 
---lCAWRPmW1mITcIfM
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+ classes/image_uuid.bbclass                    |  6 +-
+ classes/secure-wic-swu-img.bbclass            |  4 --
+ classes/wic-swu-img.bbclass                   |  6 +-
+ kas/opt/ebg-secure-boot-snakeoil.yml          |  1 +
+ kas/opt/ebg-swu.yml                           |  2 +-
+ .../etc-overlay-fs/etc-overlay-fs_0.1.bb      | 32 ---------
+ .../etc-overlay-fs/files/etc-hostname.service | 14 ----
+ .../files/etc-sshd-regen-keys.conf            |  6 --
+ .../etc-overlay-fs/files/etc-sysusers.conf    |  4 --
+ recipes-core/etc-overlay-fs/files/etc.mount   | 13 ----
+ recipes-core/etc-overlay-fs/files/postinst    |  4 --
+ .../cip-core-initramfs/cip-core-initramfs.bb  |  2 +-
+ .../{initramfs.lsblk.hook => abrootfs.hook}   | 11 +---
+ .../files/abrootfs.script                     | 66 +++++++++++++++++++
+ .../files/initramfs.image_uuid.hook           | 33 ----------
+ .../initramfs-abrootfs-hook/files/postinst    |  6 --
+ .../initramfs-abrootfs-hook_0.1.bb            | 41 +++++++-----
+ .../files/etc-overlay.script                  | 24 +++++++
+ .../initramfs-etc-overlay-hook_0.1.bb         | 27 ++++++++
+ wic/qemu-amd64-efibootguard-secureboot.wks.in |  2 +-
+ 20 files changed, 156 insertions(+), 148 deletions(-)
+ delete mode 100644 recipes-core/etc-overlay-fs/etc-overlay-fs_0.1.bb
+ delete mode 100644 recipes-core/etc-overlay-fs/files/etc-hostname.service
+ delete mode 100644 recipes-core/etc-overlay-fs/files/etc-sshd-regen-keys.conf
+ delete mode 100644 recipes-core/etc-overlay-fs/files/etc-sysusers.conf
+ delete mode 100644 recipes-core/etc-overlay-fs/files/etc.mount
+ delete mode 100755 recipes-core/etc-overlay-fs/files/postinst
+ rename recipes-initramfs/initramfs-abrootfs-hook/files/{initramfs.lsblk.hook => abrootfs.hook} (62%)
+ create mode 100644 recipes-initramfs/initramfs-abrootfs-hook/files/abrootfs.script
+ delete mode 100644 recipes-initramfs/initramfs-abrootfs-hook/files/initramfs.image_uuid.hook
+ delete mode 100644 recipes-initramfs/initramfs-abrootfs-hook/files/postinst
+ create mode 100644 recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.script
+ create mode 100644 recipes-initramfs/initramfs-etc-overlay-hook/initramfs-etc-overlay-hook_0.1.bb
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+-- 
+2.34.1
 
-iEYEARECAAYFAmJhPUQACgkQMOfwapXb+vJCBQCePkt3JRsC5mPv9rr2G+IOds5r
-AAMAoL3bTXOyLx0sYugazZCus2PFcpfK
-=/xUj
------END PGP SIGNATURE-----
-
---lCAWRPmW1mITcIfM--
 
