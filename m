@@ -1,134 +1,162 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <chris.paterson2@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4902DC352B6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 613D5C388F3
 	for <webhook@archiver.kernel.org>; Fri, 22 Apr 2022 16:52:00 +0000 (UTC)
-Received: from EUR03-DBA-obe.outbound.protection.outlook.com
- (EUR03-DBA-obe.outbound.protection.outlook.com [40.107.104.52])
- by mx.groups.io with SMTP id smtpd.web08.5056.1650606486012438468
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com
+ (JPN01-OS0-obe.outbound.protection.outlook.com [40.107.113.131])
+ by mx.groups.io with SMTP id smtpd.web12.5646.1650611017972641375
  for <cip-dev@lists.cip-project.org>;
- Thu, 21 Apr 2022 22:48:07 -0700
+ Fri, 22 Apr 2022 00:03:39 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=Yp410EIi;
- spf=pass (domain: siemens.com, ip: 40.107.104.52,
- mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@renesas.com header.s=selector1 header.b=QN45aVu5;
+ spf=pass (domain: renesas.com, ip: 40.107.113.131,
+ mailfrom: chris.paterson2@renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IgZisexkxuo9DTuarV035vDnl5Y8pWgZeKkz2Wao5HRsdW0aDowV+Rq7afsZ+YwqbW4j9nS233OuKl/bksxMJC8NaYJ6m5wjY2yTMf8Fhs1Fo2/CUVe3OBFikiGBC5yu47ThDdh+NweNMeRa0G5xGLho025S1eEbqgYwVrVV0CG5iaC2VnkY2f4HJiPuB28JUzb0qSla40/gl+h5ugUMFdqTfO2R5WoybXf6ZNWSeIgEXlSIUmglclysmfSAtqEmJaRl9Db7P43ZrnD8kX3upgLmS2xIKDKlRAacB+c10mQ18D4GFvWvqy6+uekGPKE6nNfkPos5RrgjjsCjkWUD2A==
+ b=g6sfKc/EeqBVoOqjy96B9DfyepCeJTv8xa+hq6U8ON+Oy5ZG5Vajp+rv6vj4UiOE67VUzUgrNq/lqTmWrl9xDHg77l8bD/97d0HX9rbC7FOf/ylRcqkZfFsBI6XAf+MJmKtQAPrSORqKJNI0HW7VszBuKEuZzFFYxmFz+3/rQlX7vM2z+wegzGtHu4wlR9/NTC1dIr3CVqqlPcR9iEDDTYzxe+U/iOFJl0Tc/G8VgEq8pw3lidztRa7KNFXrZX0J1Q73Y/AfvPIeKbXf64UNPBUti7pltUzLe1gWxckJGU6B85rMJ/namr9Do3Ny9bBrXyzFxhOOhhJf7LMrHWvgzQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qeAdLqBUKhEAmx6+ndMdKVidXe2lV3gGeUvIHzTwcIM=;
- b=NCpQ3B5M9379DV7Clr4BcyRk2jWDny39bhCsZeKwMrjx4258CAsldGer5pw3XSoPHnh1s9Hy1oT+aovLbqhVF/MiTKDH++9nlj8TrTm6JhhyH+GTb95ZHBszYi0EXDbT6FhvZzSkH5QtfMzIcLEldD4x+6uCbXBt5Hz6CyBzWyBDEmSSgqB1IQMmSWpFryybviO/c+1vC6tFUzAxZrMqyf1KBgeWEBcAlA9WFXErZOYgsGu1s1eLLAJ0mKon5zBz0j0cA893TVBUrl3JlUhvel3bUeRVO+txrbxVs/MGDEMDjSQYp7BfXaWNIiwf/8KnwCMQAZEez1CE+0mPDmWAGw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.70) smtp.rcpttodomain=renesas.com smtp.mailfrom=siemens.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=siemens.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
+ bh=NKYv44mdRo5MklW9BE+Trh9B+xGv/Z/Jo/NDvw2tBXg=;
+ b=A/xpedtqyJQLWElEEVPBkhkJSBmaRBv+NpslaRL2sje0x+m/1i3N3Gg5kNDK4oq9IOv9di7UYLrdGRWMcEfLtiF5KpfLJPDx0ywQvdV1rWLWj9Kcnyz7BrGq7lNiYqdOveJMqXMppGd5gENpioTGNlIKSyZBvw3Y22PaYk6N8m5x8bWbDCbRBlVjKlZhj9MLKzTwKetYp7dF4vSUhwE67/dkb42vqsiu/p9oilE9Y1b3JoShgAhbdbfDU6QTxawoTqjhiTfGxFE+99fodHO+sAH4lasq3dcB5wtb9G3hDMASbQR8ilgEP1OvR4+TEQR5cA82N3WCxxYJ93F+zL9zmQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qeAdLqBUKhEAmx6+ndMdKVidXe2lV3gGeUvIHzTwcIM=;
- b=Yp410EIiUyG7JwDsNUIRg1PXYAxsO92fDr//jYLx5QXE47FZR+0NFxZPsSUg0Y7393lOImD1tv11soOl52atxA0XZP86RrRDvtjZQtm7IJjWIoXu4dRPjqukAYd2dDYAslqA5XsV9iq74Zl4L8jPFARYzv87RjRaaYPEu48Yjn8vOBBIehCuaeoOaNqVTmqTAaSUI0wgtlKVUR7VU1auWcJnHJ+f3wWcfw+NU2nmms4/datlGw2NalA67GVvCObJAwTub0Obo42aH7Sqw54go9sVQVTNoBgb4YQftuZaiCfTG0HkNB8HZpMjXFaVUVGEc8ra95yL4OdxfadU/Eryfg==
-Received: from AS9PR06CA0402.eurprd06.prod.outlook.com (2603:10a6:20b:461::20)
- by HE1PR1001MB1020.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:3:75::14) with
+ bh=NKYv44mdRo5MklW9BE+Trh9B+xGv/Z/Jo/NDvw2tBXg=;
+ b=QN45aVu589QIU/u6NTgv35TbfXw7yzxoBzoCqYLHUKAlkkwqtNV8W78ipCZSg/UUKPh/zoZCzQXs3jlt1aN9Xh2PqoKud5Ea80PuS4fpgas5v8DqkLNiHI29CWanh6w9TSw/xqDqazXX0WLHN/qa3nXhImK7H6etw7vxa66N1Mc=
+Received: from OSZPR01MB8124.jpnprd01.prod.outlook.com (2603:1096:604:164::6)
+ by OSBPR01MB3013.jpnprd01.prod.outlook.com (2603:1096:604:20::13) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5186.15; Fri, 22 Apr
- 2022 05:48:03 +0000
-Received: from VE1EUR01FT015.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:20b:461:cafe::79) by AS9PR06CA0402.outlook.office365.com
- (2603:10a6:20b:461::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5186.15 via Frontend
- Transport; Fri, 22 Apr 2022 05:48:02 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.70)
- smtp.mailfrom=siemens.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=siemens.com;
-Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.70 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.70; helo=hybrid.siemens.com;
-Received: from hybrid.siemens.com (194.138.21.70) by
- VE1EUR01FT015.mail.protection.outlook.com (10.152.2.237) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5186.14 via Frontend Transport; Fri, 22 Apr 2022 05:48:02 +0000
-Received: from DEMCHDC89XA.ad011.siemens.net (139.25.226.103) by
- DEMCHDC9SJA.ad011.siemens.net (194.138.21.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Fri, 22 Apr 2022 07:48:02 +0200
-Received: from [139.22.137.211] (139.22.137.211) by
- DEMCHDC89XA.ad011.siemens.net (139.25.226.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Fri, 22 Apr 2022 07:48:01 +0200
-Message-ID: <962465f6-8d5f-93d6-1a51-51658c80e167@siemens.com>
-Date: Fri, 22 Apr 2022 07:48:00 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-X-Mozilla-News-Host: news://lore.kernel.org:119
-Content-Language: en-US
-To: Chris Paterson <Chris.Paterson2@renesas.com>
+ 2022 07:03:32 +0000
+Received: from OSZPR01MB8124.jpnprd01.prod.outlook.com
+ ([fe80::cc79:534f:2195:e5e8]) by OSZPR01MB8124.jpnprd01.prod.outlook.com
+ ([fe80::cc79:534f:2195:e5e8%3]) with mapi id 15.20.5186.015; Fri, 22 Apr 2022
+ 07:03:32 +0000
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: Jan Kiszka <jan.kiszka@siemens.com>
 CC: cip-dev <cip-dev@lists.cip-project.org>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: gitlab quotas and linux-stable-rc
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [139.22.137.211]
-X-ClientProxiedBy: DEMCHDC89XA.ad011.siemens.net (139.25.226.103) To
- DEMCHDC89XA.ad011.siemens.net (139.25.226.103)
-X-TM-AS-Product-Ver: SMEX-14.0.0.3080-8.6.1018-26680.007
-X-TM-AS-Result: No-10--9.163900-8.000000
-X-TMASE-MatchedRID: QgO3wnaYEb53WKlfFhapwv0y/zCScxLti4F4IRlS0JInTBdLg83j/1tX
-	gpRlmDcoS1xpm8wQIbLnO0Xw669hMDnpSV66h8LNXceIjcCAYPl3GG3gHRhx115hVZTm4dD8DKv
-	LdahoIESbKItl61J/ycnjLTA/UDoAA6QGdvwfwZaX6AMUixGku2rz/G/ZSbVq+gtHj7OwNO0PXZ
-	PurZ0hS9edcd4L1CKrS7q3Bp/4+zFRBHA05COsQkDhRYyz/Oi2
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--9.163900-8.000000
-X-TMASE-Version: SMEX-14.0.0.3080-8.6.1018-26680.007
-X-TM-SNTS-SMTP: 
- C98B8D9B4608EE24DE867F048CE227E32E7FE617FE2F2E9CFC8F7D05DF4E97662000:8
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 4e3e1a10-a74a-4151-72a9-08da2423aa60
-X-MS-TrafficTypeDiagnostic: HE1PR1001MB1020:EE_
-X-Microsoft-Antispam-PRVS: 
-	<HE1PR1001MB102084ED84FE6444F85704B295F79@HE1PR1001MB1020.EURPRD10.PROD.OUTLOOK.COM>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	tbVspc3ijuf0esy4/yvXrsSqssyahxcjUWOJ5D0leKXmlXhwMvvjEVivGYtvMj8AfCZ0gcy3b2VqXM9Mk4cEGqrjRO0a15WGXhlZelJlwO5tO3gS2iGahkNokDp2wNWp2EoqOCWWwU/D1b7OWXjX7V7YS9g0axsHCz1VkytF+D5kkKvJMOWCy0ZA3wAAqRI/vyX4qNopkzCzYvJ7kAaDEQjNq2XKq+KdOd6bZAg+qsaVw/1wuQdJa6g4SKWzCwsZSJ2hID4TnTH/RJ424nBbv+BRkD4XWHvQ2zgHT/hpM7qCID9MIfz+It/U8M8wqQoo63uPR+rPDqmjAK4QWMH164xDRxyW4+tRn61BvpZTjey90c0oiUDdSi13IWBI2NTMEO9ZAkWstI61q0eDESUt3Pd6eL+dRYDU/WQ97xGSVP0S7nbpHLK/fyV7CrndU5y6NxzPcNHWoYJBWSTqZlpH5vAXTidg7tIYYtmHmifGSNLTvjSYqB7MDkpnUtnSKQuVkba02ahs6TAf9w6DLwku82VFeNMaRc+C3cw7g/c08McSXa9GjdjTJmmUECfpNLvTteTV/qFhnwViy8I5ZyE+rkP7M0e1SBoRanpfoi/621fhyfcg0IbTA1gehacQcNhsssBqwZSLt2RVyS06GjGHUVXA0f6ZhOiBUpf/+tiKoqCRZ6+RRrZOJahsaDlyh4p2OmObLhJTbssFAU2zznF/lu6UeOG/htD0L6mhqGNMvT0aDDAaoJTgaDzapSwWc1A880NYKzZlP7Vz7AjpXEXQMDcN2j+6ck9RfKeLqkiVy5WENcc84B/eRGaNIiTPr+VN+MDxv7siJlN9b9WFUcs2Iw==
-X-Forefront-Antispam-Report: 
-	CIP:194.138.21.70;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:hybrid.siemens.com;CAT:NONE;SFS:(13230001)(4636009)(46966006)(40470700004)(36840700001)(36756003)(5660300002)(40460700003)(558084003)(2616005)(16526019)(47076005)(186003)(336012)(44832011)(15650500001)(356005)(7636003)(7596003)(966005)(8936002)(16576012)(70206006)(31696002)(70586007)(6916009)(6706004)(86362001)(316002)(82310400005)(26005)(956004)(83380400001)(36860700001)(31686004)(508600001)(82960400001)(4326008)(2906002)(8676002)(3940600001)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2022 05:48:02.6624
- (UTC)
+Subject: RE: gitlab quotas and linux-stable-rc
+Thread-Topic: gitlab quotas and linux-stable-rc
+Thread-Index: AQHYVgyL/OhSLn7ag0uW1WUx9AvXeaz7gZ6A
+Date: Fri, 22 Apr 2022 07:03:32 +0000
+Message-ID: 
+ <OSZPR01MB812492601D8BE4113AF1EE8FB7F79@OSZPR01MB8124.jpnprd01.prod.outlook.com>
+References: <962465f6-8d5f-93d6-1a51-51658c80e167@siemens.com>
+In-Reply-To: <962465f6-8d5f-93d6-1a51-51658c80e167@siemens.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 012dc169-0426-47d9-4632-08da242e3683
+x-ms-traffictypediagnostic: OSBPR01MB3013:EE_
+x-microsoft-antispam-prvs: 
+ <OSBPR01MB3013F606F8F0D4AD3251ABF9B7F79@OSBPR01MB3013.jpnprd01.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ rQTSnEyM/0KPwindcdq89s0YWw22mX/uArJE5wKIVl0iSmV/c5zV7KNrK/FRsOlQIUutLpB5sIozYJMElvvGK5mmt4UEd3/9r2NkPOSpEXP1SpQfEe65nYayazkscpDXIOcMR9BnjB5E0ndOsxFooTUB2RzssGvyi7X3Tz/xkUhbITDAaArS6YPoodluhpMt+geroTCc7H7MntM4iAPq1RToXQsoF39lS3jljgsK77JtmHUiXpNo3qEotyWKrelEw9SJhTuqosJv07SQZbvkuqqm7fpakiHVuSvy8AMDSqeWUe2oNtk7rPcHQZ7y+fcduIRWtIhXTq5f+Wo1geKNRrPI1WgmYky1paF+rGLR4kIHU6qjLigbp34BCx9EZqW2QLa3Q+v/3mv68J9xZTycw6YPeAkqqY5S0EYJVybUfFu9CJara6H80mzSiAtMKMmSN+TcgFwb1ZMgly0NqVOG3dgw19GEqxeP0FW1804JVmU5EWU4Pro4oCaPOik8k5sj6adYjqxSSC7hOoff7TSvLqM7YcG4PGdeXW1mcIjkf8XASKPpB7PR9pT5hfbk3YiZrCpoBM/let0UlhG130KhdPuCBfHE+73qGHKhgW0F8tMYpnvcOa4SeNhEOAaDloHkPjI5J7p4BNXXklh1OfeI2WG9WuFOLn1cpb7Fp5EEaVxNkai/OFbV4HLwdOOBTlvbxqCkBQeCN+0EjFkkztqV93V0sQ146IsZ2aXqqRJNUnVFYLm/P1+4x/Gm4ggWrIKh0TJVEL3kAEi5Qgqj3JqRt8gA+2/7WEMZxDLCkEdOt0Q=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB8124.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(76116006)(55016003)(186003)(64756008)(66476007)(66946007)(9686003)(26005)(83380400001)(6506007)(7696005)(122000001)(66446008)(66556008)(4326008)(8676002)(6916009)(33656002)(38100700002)(38070700005)(86362001)(2906002)(52536014)(15650500001)(71200400001)(316002)(45080400002)(4744005)(8936002)(5660300002)(508600001)(966005);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?Windows-1252?Q?dJAMN8FqzApRhRsA2PEEC0Hff6awFR8Jx7b4tqHl81wY+lmrJHNg/FEn?=
+ =?Windows-1252?Q?nIoZSyANFLYuHYmumQDJ54RMcsJp+24CRh76RaH7vHw8Jbz0HIaw3tgb?=
+ =?Windows-1252?Q?v6DfnJwS74wV7YLjkPkZfONpob6gcs8ZIGFjy8zTCVVvKN92yTIYK6XT?=
+ =?Windows-1252?Q?llTqs/kjVWi3irrf7g5ctwGODClrjsTj5GZ5VAg3Y6nCTsJgan6TgtXh?=
+ =?Windows-1252?Q?4pNLQFTZU9wY2nR+ek43l426Gw29uYjUwzi/PkuGt0v9ZHYZuxVGWFZE?=
+ =?Windows-1252?Q?wlVzVCJCGwd8aEwR2tYNHjA5rSSXf5V/kWCUkxG+/A9qbVHN3ejipQVy?=
+ =?Windows-1252?Q?Xm1MPtiAh85xM4Ho8DQqsjQzyvBIqbizF/NCv/kUmWUgL2A5uVlF3zx6?=
+ =?Windows-1252?Q?DGWLXTdVoVFw2usDBC4LFIy+yRqSqHAjoGibndmmWij+/WGk/2aCNbvX?=
+ =?Windows-1252?Q?/LvDKqqx/OEfUkrZVA/vxgHiMQ1jm5D9ybBdGpTfNQ137zp2/8DqeczR?=
+ =?Windows-1252?Q?Itjh+zXgOlQ8GdgiSAXtgHtgGafzc6XAaxL690TeJwL9Vue9P8gAy0PP?=
+ =?Windows-1252?Q?xjlr/AeuSVL/d+x6gpOtHXf7kdvwaoQFA+42J7vuU5T8jrM+rmYk3jj+?=
+ =?Windows-1252?Q?izjkCN/gIK0IRWzoj1mbKiaKuC89qIPrJuXAKI8unAo7tUtZHyW3qKSl?=
+ =?Windows-1252?Q?VbFqzk8GMxbku1sBg2DNNR5Ol3z5Pld3tb7WAJR/3mfhW7gL0ozDdsGh?=
+ =?Windows-1252?Q?iAsH3jmPmKNhYJmDyvUV6ig/A5aJYdJlqXIkHHXOZqo/9n43jt7iSd+H?=
+ =?Windows-1252?Q?c1DmzDtMMg8qmHqPCa5OTqXvzwrqztSgYEcGMNrrztoMgeHe2p6K2kz6?=
+ =?Windows-1252?Q?1BNCpgG9Tr2rOqiLbUSfci89l/CJrpBoBV63lMMs3hiv6GOXZlu/Nwar?=
+ =?Windows-1252?Q?lzymK3v+gKfN+z2ByO2w4y03QKWiCMHU51CpgIkmHLLq1t4onm2DHhAN?=
+ =?Windows-1252?Q?KK6dgDZJBk7E0pQV4jrTzv3u/VUN72H2gJpMcmlv7Z7AgK1pmqKUG4Kb?=
+ =?Windows-1252?Q?walrtr6zm+Cj7JoqOYVuESYSzR3sys8LuJoXjx6hSYO97JGpEF+7CVJc?=
+ =?Windows-1252?Q?XlbQWc5G1nteiDGzIBKIi0Mxd1P9DgS0pO3+3F9Y+f7kbqNMgzl7tef6?=
+ =?Windows-1252?Q?btqRiZs6WVJC+NbidEbHG1n775VKmB4jpI5byPf3bRyh/0bZmWxAjrdq?=
+ =?Windows-1252?Q?XRVMP+f79REJMt18lGrcf6GBg8zoH3M1SrdC9RHXWLn6HkM3Q3iljUZp?=
+ =?Windows-1252?Q?WsFTe2OjMY8J12lxfvEINNLukWAj58o5rehtYRVQz8NcWyUHkEBp2wpo?=
+ =?Windows-1252?Q?8iWCEmV4Ex2WLDx4VCTFDVtON23BvGiA9rQuB0JbMqsOZaNFdpu5k0Y7?=
+ =?Windows-1252?Q?ImXZDLqfK7+v/i0AlI/XrtN4RR+r7joX5k+WZnMuF4499juG7FPGPAiL?=
+ =?Windows-1252?Q?ig4BQie4W/xn352ykUBOHjZ47h6EdsHr6RX6qoFgoaZqaIBLA0ht3Nlm?=
+ =?Windows-1252?Q?JD89xsSw7zKP+LcOr73zWgPk89x721B2qWYSNfwLxqP/UsolBUCNRsJ1?=
+ =?Windows-1252?Q?oecM089pMTTal2RyN+XTmVdXHuLq+H+waS02P+Mi6Q6x8r5wiCyx1oZ9?=
+ =?Windows-1252?Q?0NWuyd3IndT4QR7idQ6LQnf+kH4/7jNlw1qS3gWopzhJCee4zfCwrQ/M?=
+ =?Windows-1252?Q?gtfn1x6BpS3YYd1sthcoqGLvpgH821NLejucG7vpKte1CbkHiAv7+Knj?=
+ =?Windows-1252?Q?/tG199TcvTPiv2swCUUa38OIZcuuTYp/tdhVaKPAt+SMuOIgWD6uYr6e?=
+ =?Windows-1252?Q?klNN5O3qikeIW8pgxxFWDNSALfmjWkrO1Xk=3D?=
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB8124.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-Network-Message-Id: 
- 4e3e1a10-a74a-4151-72a9-08da2423aa60
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
- TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.70];Helo=[hybrid.siemens.com]
-X-MS-Exchange-CrossTenant-AuthSource: 
-	VE1EUR01FT015.eop-EUR01.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR1001MB1020
+ 012dc169-0426-47d9-4632-08da242e3683
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Apr 2022 07:03:32.7545
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 
+ E25p42GSbyJKZSmKhVDGvGGNn0CWzr1gxpuBfBfj9Nfc/VpOg7NMvwOnqv6UXjXCUlVDog13vavVG25OJ2jF1eXrMn2NN5k1J8L65k4Zm6c=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB3013
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 22 Apr 2022 16:52:00 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8173
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8174
 
-Hi Chris,
+Hello Jan,
 
-seems gitlab still tracks linux-stable-rc:
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+> Sent: 22 April 2022 06:48
+>=20
+> Hi Chris,
+>=20
+> seems gitlab still tracks linux-stable-rc:
+>=20
+> https://jpn01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fgitla=
+b
+> .com%2Fgroups%2Fcip-project%2F-%2Fusage_quotas%23storage-quota-
+> tab&amp;data=3D05%7C01%7CChris.Paterson2%40renesas.com%7Cd08c7667fb
+> c54e6fcb5808da2423acad%7C53d82571da1947e49cb4625a166a4a2a%7C0%7C
+> 0%7C637862032882240086%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLj
+> AwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%
+> 7C%7C&amp;sdata=3DhAUL8ukZD1FaklEH7oIwfX2IONMZQANmfcrDObU%2Br
+> ww%3D&amp;reserved=3D0
+>=20
+> Should we simply delete this project, not just the repo? What is left in
+> that project? I don't see anything.
 
-https://gitlab.com/groups/cip-project/-/usage_quotas#storage-quota-tab
+To be honest I thought I had already deleted the project.
+I've tried again today and it seems to have gone.
 
-Should we simply delete this project, not just the repo? What is left in
-that project? I don't see anything.
+Hopefully GitLab's storage calculations will catch up soon.
 
-Jan
+Thank you for reporting.
 
--- 
-Siemens AG, Technology
-Competence Center Embedded Linux
+Chris
+
+>=20
+> Jan
+>=20
+> --
+> Siemens AG, Technology
+> Competence Center Embedded Linux
 
