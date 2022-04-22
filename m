@@ -2,394 +2,148 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7729CC47087
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE076C4708D
 	for <webhook@archiver.kernel.org>; Fri, 22 Apr 2022 16:52:00 +0000 (UTC)
-Received: from mta-65-227.siemens.flowmailer.net
- (mta-65-227.siemens.flowmailer.net [185.136.65.227])
- by mx.groups.io with SMTP id smtpd.web08.5727.1650613664369178685
+Received: from EUR01-HE1-obe.outbound.protection.outlook.com
+ (EUR01-HE1-obe.outbound.protection.outlook.com [40.107.13.44])
+ by mx.groups.io with SMTP id smtpd.web12.8216.1650631997028713278
  for <cip-dev@lists.cip-project.org>;
- Fri, 22 Apr 2022 00:47:45 -0700
+ Fri, 22 Apr 2022 05:53:17 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=jan.kiszka@siemens.com header.s=fm1 header.b=XUmyIdqw;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227,
- mailfrom: fm-294854-20220422074741762b5dae214d9a313e-mduvxz@rts-flowmailer.siemens.com)
-Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id
- 20220422074741762b5dae214d9a313e
-        for <cip-dev@lists.cip-project.org>;
-        Fri, 22 Apr 2022 09:47:41 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=jan.kiszka@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=NUeWZNryqmdwf4JgxFJamFq7BAe3/eTF5c7BpHhVDIk=;
- b=XUmyIdqw9K1Yke2ynQ2TYnzN8Yp4lrC9oYUMwimgkv4OfNJjRb99P8YY2H/FcXoKg5jdle
- mhX9FIBUvxYZMt2MWw/clj7vjvzK5hoMU0erWr7b95E41+2OveAe5gJ75xjU81Z8/6i9WXZH
- h34qFhtY5DXK/d4IICAegyEHJxtxI=;
-From: Jan Kiszka <jan.kiszka@siemens.com>
-To: cip-dev@lists.cip-project.org
-Cc: Quirin Gylstorff <quirin.gylstorff@siemens.com>,
-	Christian Storm <christian.storm@siemens.com>
-Subject: [isar-cip-core][PATCH v2 2/6] initramfs-abrootfs-hook: Convert to an
- initramfs-class recipe
-Date: Fri, 22 Apr 2022 09:47:34 +0200
-Message-Id: 
- <bec2642fc52c2cb38eade4569b88315dfa5dade6.1650613658.git.jan.kiszka@siemens.com>
-In-Reply-To: <cover.1650613658.git.jan.kiszka@siemens.com>
-References: <cover.1650613658.git.jan.kiszka@siemens.com>
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=DFC4XLxI;
+ spf=pass (domain: siemens.com, ip: 40.107.13.44,
+ mailfrom: jan.kiszka@siemens.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=P1vxUVeGSwuChZtEI+mzdWVpdaB8O/NTE9TTshMcPXZtIHP+T9dh8PQl2Yl348UaRuywxGk1eplgWIFQyPGCW3EJ4rpu7Ei+kIIy7ev75UpqcP3lxEPSOd5dJbFzixMHw5BpSfNATzkJW1FPDSOZoK09IKNdIEtgUsypvRGwJV/5yBJ+52kEp4LdkPBa6fIYNHkhjIWLGjpGsW7JzJPpBLeZzFpFTOd8dCbV931OD8FcLDZfO/IHkFBudQ+Fnvk+EMF5eBTE1EL20m5rEtkLt89s0Nm3kFAVmyJ+k5bkRywNEskuKU/S6zyKO1qr6ekSv/ScUCbnQ5peykHILlFH1g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UCFYLzs5y59a+n2sfHi/Kx+5I/jBGRck0DqDuFSuu8w=;
+ b=XAKt/wGEykaGlV5x26hirGyWVFAfPKGf9g7eqecWLcQ00rm3l32Q8yabsvalYtQ2tAl2fcn3tKeRKTYe8NYz9PQH9rRCi97Q4dFk5c9gT6wBJvV0tACeStS7BEOSpyysehQb6pXemECdUTXlVhdKPuETqMdBzUajtU4+Ey9UHF4gxcTu+fZJ8DasGB11R+B11mafnmRCqd7RPl2xQ+iiZszP8pYRgJiCcPpeygzjwyjC+ARbjiQ2tIDtbPxzSHwYvxkTqU6QPUoL4gx5HpR7f3SkHZCezrKWzjGwBIBbIW5IaQzCmAovtvzta1gRJbgzm6Cjz68DtsMRvpx92Rl3AA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 194.138.21.72) smtp.rcpttodomain=lists.cip-project.org
+ smtp.mailfrom=siemens.com; dmarc=pass (p=none sp=none pct=100) action=none
+ header.from=siemens.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UCFYLzs5y59a+n2sfHi/Kx+5I/jBGRck0DqDuFSuu8w=;
+ b=DFC4XLxIDEbGnZFfpvcoA4Jllxv62p3BkzE1W4ulTjbF8Qt21p9ebjFhU2pOM1Lyovlt/oKAFfWUmRR2QZOwI8s/IaaesbVjpfN+7pfMqCHOWS5YCTfv5FvsUMlOQ7Xt0+mANmnykk1Rv5nY/8rCz/Bfp+nI33KffH39v+HCDOnNYfJSA5GLRiAvPL1IMdXa9Ywzdmxe4EwhYx81DdZD64aedEkh0aHzrUN69XbWNn0+h46Kxq7dlBKatD1IpI8daWt1/fNL/hSEMY2jI1cJvzSVzZ0N+hkMy0KO3Zy20z9x/1fyB4Cs1WX9dZd2ajQFIoQnB+q7elxaHlqfaPpuow==
+Received: from DB6P192CA0011.EURP192.PROD.OUTLOOK.COM (2603:10a6:4:b8::21) by
+ AM0PR10MB2132.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:208:d6::12) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5186.14; Fri, 22 Apr 2022 12:53:13 +0000
+Received: from DB5EUR01FT055.eop-EUR01.prod.protection.outlook.com
+ (2603:10a6:4:b8:cafe::86) by DB6P192CA0011.outlook.office365.com
+ (2603:10a6:4:b8::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5186.14 via Frontend
+ Transport; Fri, 22 Apr 2022 12:53:13 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.72)
+ smtp.mailfrom=siemens.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=siemens.com;
+Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
+ 194.138.21.72 as permitted sender) receiver=protection.outlook.com;
+ client-ip=194.138.21.72; helo=hybrid.siemens.com;
+Received: from hybrid.siemens.com (194.138.21.72) by
+ DB5EUR01FT055.mail.protection.outlook.com (10.152.5.250) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.5186.14 via Frontend Transport; Fri, 22 Apr 2022 12:53:13 +0000
+Received: from DEMCHDC89XA.ad011.siemens.net (139.25.226.103) by
+ DEMCHDC9SMA.ad011.siemens.net (194.138.21.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Fri, 22 Apr 2022 14:53:12 +0200
+Received: from [139.22.137.211] (139.22.137.211) by
+ DEMCHDC89XA.ad011.siemens.net (139.25.226.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Fri, 22 Apr 2022 14:53:12 +0200
+Message-ID: <c80083d1-b4d5-7e7e-a6da-f5dfb3892dd6@siemens.com>
+Date: Fri, 22 Apr 2022 14:53:11 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-294854:519-21489:flowmailer
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [isar-cip-core][PATCH v2 4/6] customizations: Relocate /root
+ under /home
+Content-Language: en-US
+To: Gylstorff Quirin <quirin.gylstorff@siemens.com>,
+	<cip-dev@lists.cip-project.org>
+CC: Christian Storm <christian.storm@siemens.com>
+References: <cover.1650613658.git.jan.kiszka@siemens.com>
+ <c378b09452d1507e0f7c5de1c3d6543f2027b06e.1650613658.git.jan.kiszka@siemens.com>
+ <f2eb1b22-0110-274e-9599-62d22b9ec133@siemens.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+In-Reply-To: <f2eb1b22-0110-274e-9599-62d22b9ec133@siemens.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [139.22.137.211]
+X-ClientProxiedBy: DEMCHDC89XA.ad011.siemens.net (139.25.226.103) To
+ DEMCHDC89XA.ad011.siemens.net (139.25.226.103)
+X-TM-AS-Product-Ver: SMEX-14.0.0.3080-8.6.1018-26680.007
+X-TM-AS-Result: No-10--10.659400-8.000000
+X-TMASE-MatchedRID: zzMRqZEINU45QaOxwNGfvo9bHfxDWoibPIeX4ggjD6QsisyWO3dp27vG
+	YJkNeu61MYkmNIO7+hbmonZJqUP6wPXmS36YYdHyPEI3LQs5pOufQIQHBVsNazO9YdEjFZfC+Kg
+	iyLtJrSDQEElETurAJQu8AoAyfG3RK+fbv4M7+TC1M6vEQZCbhnDWCEZXvYIHngIgpj8eDcC063
+	Wh9WVqgmWCfbzydb0g3n8eBZjGmUzkwjHXXC/4IzsAVzN+Ov/sL53WvUf8ISqX+3qXuM+CF/JCh
+	uj78D7ysg5O3Ij0kn0zLZ5WaIfY+w==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--10.659400-8.000000
+X-TMASE-Version: SMEX-14.0.0.3080-8.6.1018-26680.007
+X-TM-SNTS-SMTP: 
+ 6E5DC570E2F0F9A84D851EF36C18CD8111AD54B147368CAAAC504BF08341A9E72000:8
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 04a05747-bfeb-4f73-12df-08da245f0fcb
+X-MS-TrafficTypeDiagnostic: AM0PR10MB2132:EE_
+X-Microsoft-Antispam-PRVS: 
+	<AM0PR10MB2132FD8E0766B181AABFA4CB95F79@AM0PR10MB2132.EURPRD10.PROD.OUTLOOK.COM>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	FR6BK9aoWlMqGo+vPpcjnVav0YkyBK+3kps0d+j4KyYWwaNnwtua/dMHGJI+gIvlY3uJTdSzNMCmHEIUqz/wlT2JhsIkxGG/+n2m2P7L3GcxE9KlXiMFrS3Dkg16Gwm/m/DaTSdQLQbYl+CcRP/b2684Nxq8wRPViBjaECB0YnHm1BRuhxa1C1Osjo1iw6jqemhMcT8RZNdQeGhvdv65ZllLSg2rf8Q44jJu2VBnJiCh9yagvW/0D7gspP+ntFllh4id3UGzrR9lFH9XrkFv9pn3259Yjw256PNBhk0DZHaoE/8rDKvGdp8vKFZDbwEdrrbMaaVgXV8ThDeeY0oilX5xFM7rTo1TuPzeH/86KcJn2RHiusdGm6FOFKCFeGc7aYjjO+MHk0OZvfCPqnmsJvksnyhu/pjpgBbi7FJaZ+v5NzapAW/tN/RWQMr4J5buc3ujdsdUBHghPuQs9ySc76gPjsG4opzgBIYyhWK2WjwabtJsDqgCPIRrltN2mAHdVusvDkkLuNLylAly4j3sMl+BZwVQX1s2Z82kHm+spVIuLUkOLSi36CRcZTMttIEBE7EAqt92HqyczptnD6lPFRGYGOBXEjTwc+DI70nkQ6szDBW/Nvzqf6xRF6GTYK5nZbNql+d+rT9+UkfloHbsS6dQM0exu9t20C77m182+5NymelNrN6oDBphnueRz2aXWJcl2P4tCCHToG4aIuT+mRp82w1btLm3C3oRVbEFPSW6ij6BtOcfhueMZc9aliU7oHARI1661+l/ZKcK6XgC6GEA50PLUvfJjN55GoiRkbhusfJUZwj7rv8kfqIrQBNYYVlo1weQdRt8g9FRjcgQqWqJNWMB5Ru6oSlBpoIAT2o=
+X-Forefront-Antispam-Report: 
+	CIP:194.138.21.72;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230001)(4636009)(46966006)(36840700001)(40470700004)(26005)(956004)(2616005)(16526019)(336012)(47076005)(508600001)(107886003)(186003)(82960400001)(4326008)(966005)(53546011)(2906002)(36860700001)(83380400001)(356005)(82310400005)(81166007)(31686004)(70586007)(70206006)(8676002)(44832011)(4744005)(86362001)(110136005)(316002)(31696002)(16576012)(8936002)(40460700003)(5660300002)(36756003)(6706004)(3940600001)(43740500002)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2022 12:53:13.1181
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 
+ 04a05747-bfeb-4f73-12df-08da245f0fcb
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
+ TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.72];Helo=[hybrid.siemens.com]
+X-MS-Exchange-CrossTenant-AuthSource: 
+	DB5EUR01FT055.eop-EUR01.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR10MB2132
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 22 Apr 2022 16:52:00 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8178
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8185
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+On 22.04.22 14:22, Gylstorff Quirin wrote:
+> 
+> 
+> On 4/22/22 09:47, Jan Kiszka wrote:
+>> From: Jan Kiszka <jan.kiszka@siemens.com>
+>>
+>> This is needed for read-only rootfs setups. We could also update the
+>> account settings, but establishing a link comes with less surprises.
+>>
+> 
+> What happens if the /home mount fails? Does the system fall back to / ?
+> 
+> This should be the behavior according to [1].
+> 
+> [1]: https://refspecs.linuxfoundation.org/FHS_3.0/fhs/ch03s14.html
 
-This unifies the pattern we generate initramfs images for non-secure and
-secure SWUpdate images. Besides cleaning up the related abrootfs
-selection hook, the unification is a precondition for adding another
-initramfs recipe later that will be shared between both image types
+Jup, managed to stress this during testing by first misspelling the link
+as "/homr/root".
 
-The pattern followed in the new initramfs-abrootfs-hook script is now
-similar to initramfs-verity-hook: a local-top hook is used, rather than
-a patch for Debian's local script. This hook looks for the matching
-rootfs by read-only mounting candidates, comparing the contained UUID
-against the one stored in the initramfs, unmounting again, and then
-setting the ROOT variable on match.
+Jan
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
- classes/image_uuid.bbclass                    |  6 +-
- classes/secure-wic-swu-img.bbclass            |  4 --
- classes/wic-swu-img.bbclass                   |  6 ++
- kas/opt/ebg-secure-boot-snakeoil.yml          |  1 +
- kas/opt/ebg-swu.yml                           |  2 +-
- .../cip-core-initramfs/cip-core-initramfs.bb  |  4 --
- .../{initramfs.lsblk.hook => abrootfs.hook}   | 11 +---
- .../files/abrootfs.script                     | 66 +++++++++++++++++++
- .../files/initramfs.image_uuid.hook           | 33 ----------
- .../initramfs-abrootfs-hook/files/postinst    |  6 --
- .../initramfs-abrootfs-hook_0.1.bb            | 41 +++++++-----
- 11 files changed, 104 insertions(+), 76 deletions(-)
- rename recipes-initramfs/initramfs-abrootfs-hook/files/{initramfs.lsblk.hook => abrootfs.hook} (62%)
- create mode 100644 recipes-initramfs/initramfs-abrootfs-hook/files/abrootfs.script
- delete mode 100644 recipes-initramfs/initramfs-abrootfs-hook/files/initramfs.image_uuid.hook
- delete mode 100644 recipes-initramfs/initramfs-abrootfs-hook/files/postinst
-
-diff --git a/classes/image_uuid.bbclass b/classes/image_uuid.bbclass
-index 2813ed9..7294eb3 100644
---- a/classes/image_uuid.bbclass
-+++ b/classes/image_uuid.bbclass
-@@ -1,10 +1,11 @@
- #
- # CIP Core, generic profile
- #
--# Copyright (c) Siemens AG, 2020
-+# Copyright (c) Siemens AG, 2020-2022
- #
- # Authors:
- #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#  Jan Kiszka <jan.kiszka@siemens.com>
- #
- # SPDX-License-Identifier: MIT
- #
-@@ -27,7 +28,6 @@ do_generate_image_uuid() {
-         sudo tee -a '${IMAGE_ROOTFS}/etc/os-release'
-     image_do_mounts
- 
--    # update initramfs to add uuid
--    sudo chroot '${IMAGE_ROOTFS}' update-initramfs -u
-+    echo "TARGET_IMAGE_UUID=\"${IMAGE_UUID}\"" > "${DEPLOY_DIR_IMAGE}/${IMAGE_FULLNAME}.uuid.env"
- }
- addtask generate_image_uuid before do_copy_boot_files after do_rootfs_install
-diff --git a/classes/secure-wic-swu-img.bbclass b/classes/secure-wic-swu-img.bbclass
-index 85342fe..5e8e48a 100644
---- a/classes/secure-wic-swu-img.bbclass
-+++ b/classes/secure-wic-swu-img.bbclass
-@@ -9,10 +9,6 @@
- # SPDX-License-Identifier: MIT
- #
- 
--INITRAMFS_RECIPE ?= "cip-core-initramfs"
--do_wic_image[depends] += "${INITRAMFS_RECIPE}:do_build"
--INITRD_IMAGE = "${INITRAMFS_RECIPE}-${DISTRO}-${MACHINE}.initrd.img"
--
- inherit verity-img
- inherit wic-swu-img
- 
-diff --git a/classes/wic-swu-img.bbclass b/classes/wic-swu-img.bbclass
-index 231b249..b93a96a 100644
---- a/classes/wic-swu-img.bbclass
-+++ b/classes/wic-swu-img.bbclass
-@@ -16,6 +16,12 @@ inherit wic-img
- inherit swupdate-img
- 
- IMAGE_INSTALL += "etc-overlay-fs"
-+
-+INITRAMFS_RECIPE ?= "cip-core-initramfs"
-+INITRD_IMAGE = "${INITRAMFS_RECIPE}-${DISTRO}-${MACHINE}.initrd.img"
-+
-+do_wic_image[depends] += "${INITRAMFS_RECIPE}:do_build"
-+
- IMAGE_INSTALL += "home-fs"
- IMAGE_INSTALL += "tmp-fs"
- 
-diff --git a/kas/opt/ebg-secure-boot-snakeoil.yml b/kas/opt/ebg-secure-boot-snakeoil.yml
-index 14a5d6a..b329f41 100644
---- a/kas/opt/ebg-secure-boot-snakeoil.yml
-+++ b/kas/opt/ebg-secure-boot-snakeoil.yml
-@@ -25,6 +25,7 @@ local_conf_header:
-   secure-boot-image: |
-     IMAGE_FSTYPES = "secure-wic-swu-img"
-     WKS_FILE = "${MACHINE}-efibootguard-secureboot.wks.in"
-+    INITRAMFS_INSTALL_append = " initramfs-verity-hook"
- 
-   secure-boot: |
-     # Add snakeoil binaries for qemu
-diff --git a/kas/opt/ebg-swu.yml b/kas/opt/ebg-swu.yml
-index d811929..5e4e771 100644
---- a/kas/opt/ebg-swu.yml
-+++ b/kas/opt/ebg-swu.yml
-@@ -17,7 +17,7 @@ header:
- 
- local_conf_header:
-   initramfs: |
--    IMAGE_INSTALL += "initramfs-abrootfs-hook"
-+    INITRAMFS_INSTALL_append = " initramfs-abrootfs-hook"
- 
-   image-option-uuid: |
-     CIP_IMAGE_OPTIONS_append = " image-uuid.inc"
-diff --git a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
-index 825fb9f..649daa2 100644
---- a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
-+++ b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
-@@ -10,7 +10,3 @@
- #
- 
- inherit initramfs
--
--INITRAMFS_INSTALL += " \
--    initramfs-verity-hook \
--    "
-diff --git a/recipes-initramfs/initramfs-abrootfs-hook/files/initramfs.lsblk.hook b/recipes-initramfs/initramfs-abrootfs-hook/files/abrootfs.hook
-similarity index 62%
-rename from recipes-initramfs/initramfs-abrootfs-hook/files/initramfs.lsblk.hook
-rename to recipes-initramfs/initramfs-abrootfs-hook/files/abrootfs.hook
-index cf32404..bacbc2e 100644
---- a/recipes-initramfs/initramfs-abrootfs-hook/files/initramfs.lsblk.hook
-+++ b/recipes-initramfs/initramfs-abrootfs-hook/files/abrootfs.hook
-@@ -1,9 +1,8 @@
--# This software is a part of ISAR.
--# Copyright (C) Siemens AG, 2020
-+#!/bin/sh
-+# Copyright (C) Siemens AG, 2020-2022
- #
- # SPDX-License-Identifier: MIT
- 
--#!/bin/sh
- PREREQ=""
- 
- prereqs()
-@@ -21,9 +20,5 @@ esac
- . /usr/share/initramfs-tools/scripts/functions
- . /usr/share/initramfs-tools/hook-functions
- 
--if [ ! -x /usr/bin/lsblk ]; then
--	echo "Warning: couldn't find /usr/bin/lsblk!"
--	exit 0
--fi
--
- copy_exec /usr/bin/lsblk
-+copy_file library /usr/share/abrootfs/image-uuid.env /usr/share/abrootfs/image-uuid.env
-diff --git a/recipes-initramfs/initramfs-abrootfs-hook/files/abrootfs.script b/recipes-initramfs/initramfs-abrootfs-hook/files/abrootfs.script
-new file mode 100644
-index 0000000..b61fe30
---- /dev/null
-+++ b/recipes-initramfs/initramfs-abrootfs-hook/files/abrootfs.script
-@@ -0,0 +1,66 @@
-+#!/bin/sh
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2020-2022
-+#
-+# Authors:
-+#  Jan Kiszka <jan.kiszka@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+
-+prereqs()
-+{
-+    # Make sure that this script is run last in local-top
-+    local req
-+    for req in "${0%/*}"/*; do
-+        script="${req##*/}"
-+        if [ "$script" != "${0##*/}" ]; then
-+            printf '%s\n' "$script"
-+        fi
-+    done
-+}
-+case $1 in
-+prereqs)
-+    prereqs
-+    exit 0
-+    ;;
-+esac
-+
-+. /scripts/functions
-+. /usr/share/abrootfs/image-uuid.env
-+
-+# Even if this script fails horribly, make sure there won't be a chance the
-+# current $ROOT will be attempted.  As this device most likely contains a
-+# perfectly valid filesystem, it would be mounted successfully, leading to a
-+# broken boot.
-+echo "ROOT=/dev/null" >/conf/param.conf
-+wait_for_udev 10
-+case "$ROOT" in
-+    PART*)
-+        # root was given as PARTUUID= or PARTLABEL=. Use blkid to find the matching
-+        # partition
-+        ROOT=$(blkid --list-one --output device --match-token "$ROOT")
-+        ;;
-+    "")
-+        # No Root device was given. Use find the matching IMAGE_UUID
-+        partitions=$(blkid -o device)
-+        for part in $partitions; do
-+            if [ "$(blkid -p ${part} --match-types novfat -s USAGE -o value)" = "filesystem" ]; then
-+                mount -o ro -t $(get_fstype $part) $part ${rootmnt}
-+                . ${rootmnt}/etc/os-release
-+                umount ${rootmnt}
-+                if [ "${IMAGE_UUID}" = "${TARGET_IMAGE_UUID}" ]; then
-+                    ROOT="$part"
-+                    break
-+                fi
-+            fi
-+        done
-+        ;;
-+esac
-+
-+if [ -z "${ROOT}" ]; then
-+    panic "Can't find the root device with matching UUID!"
-+fi
-+
-+echo "ROOT=${ROOT}" >/conf/param.conf
-diff --git a/recipes-initramfs/initramfs-abrootfs-hook/files/initramfs.image_uuid.hook b/recipes-initramfs/initramfs-abrootfs-hook/files/initramfs.image_uuid.hook
-deleted file mode 100644
-index 910ce84..0000000
---- a/recipes-initramfs/initramfs-abrootfs-hook/files/initramfs.image_uuid.hook
-+++ /dev/null
-@@ -1,33 +0,0 @@
--# This software is a part of ISAR.
--# Copyright (C) Siemens AG, 2020
--#
--# SPDX-License-Identifier: MIT
--
--#!/bin/sh
--set -x
--PREREQ=""
--
--prereqs()
--{
--     echo "$PREREQ"
--}
--
--case $1 in
--prereqs)
--     prereqs
--     exit 0
--     ;;
--esac
--
--. /usr/share/initramfs-tools/scripts/functions
--. /usr/share/initramfs-tools/hook-functions
--
--if [ ! -e /etc/os-release ]; then
--	echo "Warning: couldn't find /etc/os-release!"
--	exit 0
--fi
--
--IMAGE_UUID=$(sed -n 's/^IMAGE_UUID="\(.*\)"/\1/p' /etc/os-release)
--echo "${IMAGE_UUID}" > "${DESTDIR}/conf/image_uuid"
--
--exit 0
-\ No newline at end of file
-diff --git a/recipes-initramfs/initramfs-abrootfs-hook/files/postinst b/recipes-initramfs/initramfs-abrootfs-hook/files/postinst
-deleted file mode 100644
-index e065524..0000000
---- a/recipes-initramfs/initramfs-abrootfs-hook/files/postinst
-+++ /dev/null
-@@ -1,6 +0,0 @@
--#!/bin/sh
--
--# patch local script
--patch -s -p0 /usr/share/initramfs-tools/scripts/local /usr/share/initramfs-abrootfs-hook/debian-local.patch
--
--update-initramfs -v -u
-diff --git a/recipes-initramfs/initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.1.bb b/recipes-initramfs/initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.1.bb
-index 9c1776a..1693e85 100644
---- a/recipes-initramfs/initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.1.bb
-+++ b/recipes-initramfs/initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.1.bb
-@@ -1,33 +1,40 @@
- #
- # CIP Core, generic profile
- #
--# Copyright (c) Siemens AG, 2020
-+# Copyright (c) Siemens AG, 2020-2022
- #
- # Authors:
- #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#  Jan Kiszka <jan.kiszka@siemens.com>
- #
- # SPDX-License-Identifier: MIT
- 
- 
- inherit dpkg-raw
- 
--DEBIAN_DEPENDS += ", busybox, patch"
-+DEBIAN_DEPENDS = "initramfs-tools"
- 
--SRC_URI += "file://postinst \
--            file://initramfs.lsblk.hook \
--            file://initramfs.image_uuid.hook \
--            file://debian-local-patch"
-+SRC_URI += "file://abrootfs.hook \
-+            file://abrootfs.script"
-+
-+ABROOTFS_IMAGE_RECIPE ?= "cip-core-image"
-+
-+IMAGE_UUID_ENV_FILE = "${DEPLOY_DIR_IMAGE}/${ABROOTFS_IMAGE_RECIPE}-${DISTRO}-${MACHINE}.uuid.env"
-+
-+do_install[depends] += "${ABROOTFS_IMAGE_RECIPE}:do_generate_image_uuid"
-+do_install[cleandirs] += " \
-+    ${D}/usr/share/initramfs-tools/hooks \
-+    ${D}/usr/share/abrootfs \
-+    ${D}/usr/share/initramfs-tools/scripts/local-top"
- 
- do_install() {
--    # add patch for local to /usr/share/initramfs-abrootfs-hook
--    TARGET=${D}/usr/share/initramfs-abrootfs-hook
--    install -m 0755 -d ${TARGET}
--    install -m 0644 ${WORKDIR}/debian-local-patch ${TARGET}/debian-local.patch
--
--    # add hooks for secure boot
--    HOOKS=${D}/etc/initramfs-tools/hooks
--    install -m 0755 -d ${HOOKS}
--    install -m 0740 ${WORKDIR}/initramfs.lsblk.hook ${HOOKS}/lsblk.hook
--    install -m 0740 ${WORKDIR}/initramfs.image_uuid.hook ${HOOKS}/image_uuid.hook
-+    if [ -f "${IMAGE_UUID_ENV_FILE}" ]; then
-+        install -m 0600 "${IMAGE_UUID_ENV_FILE}" "${D}/usr/share/abrootfs/image-uuid.env"
-+    else
-+        bberror "Did not find ${IMAGE_UUID_ENV_FILE}. initramfs will not be build correctly!"
-+    fi
-+    install -m 0755 "${WORKDIR}/abrootfs.script" \
-+        "${D}/usr/share/initramfs-tools/scripts/local-top/abrootfs"
-+    install -m 0755 "${WORKDIR}/abrootfs.hook" \
-+        "${D}/usr/share/initramfs-tools/hooks/abrootfs"
- }
--addtask do_install after do_transform_template
 -- 
-2.34.1
-
+Siemens AG, Technology
+Competence Center Embedded Linux
 
