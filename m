@@ -1,290 +1,153 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <kazuhiro3.hayashi@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA3AC636F9
-	for <webhook@archiver.kernel.org>; Mon, 25 Apr 2022 19:26:14 +0000 (UTC)
-Received: from mta-64-227.siemens.flowmailer.net
- (mta-64-227.siemens.flowmailer.net [185.136.64.227])
- by mx.groups.io with SMTP id smtpd.web11.28123.1650887392348908841
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2105EC433F5
+	for <webhook@archiver.kernel.org>; Tue, 26 Apr 2022 07:12:23 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.153])
+ by mx.groups.io with SMTP id smtpd.web08.3306.1650957136287970269
  for <cip-dev@lists.cip-project.org>;
- Mon, 25 Apr 2022 04:49:52 -0700
+ Tue, 26 Apr 2022 00:12:17 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=jan.kiszka@siemens.com header.s=fm1 header.b=igNgxRCj;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227,
- mailfrom: fm-294854-2022042511494987e4e88bcdcf2cb3b9-the4em@rts-flowmailer.siemens.com)
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id
- 2022042511494987e4e88bcdcf2cb3b9
-        for <cip-dev@lists.cip-project.org>;
-        Mon, 25 Apr 2022 13:49:49 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=jan.kiszka@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=prrO3P9fOqPcQ/MJWwCmsP5QUJG+TaH872VpKoSs6P8=;
- b=igNgxRCjAA7LLJm2ey4vh2LLKsLHL3q29AEYKQh4vnPHLXWx3WkHb3GebWOe762R88NoEZ
- P4sMJpzpbPPhZU+Ey0Su8iWzyu/QZ7IsWzirI8LEyG5RE1dFadDZczjMkOJ8uakJmGJzWcj+
- 2RJU8QVczod2IMur8a0RSNxCwE7mg=;
-From: Jan Kiszka <jan.kiszka@siemens.com>
-To: cip-dev@lists.cip-project.org
-Cc: Quirin Gylstorff <quirin.gylstorff@siemens.com>,
-	Christian Storm <christian.storm@siemens.com>
-Subject: [isar-cip-core][PATCH v3 4/7] Convert /etc overlay from systemd mount
- unit to initramfs hook
-Date: Mon, 25 Apr 2022 13:49:41 +0200
-Message-Id: 
- <cad0c5922f8731e3d41e8fde64eb3846b8da2bf5.1650887383.git.jan.kiszka@siemens.com>
-In-Reply-To: <cover.1650887383.git.jan.kiszka@siemens.com>
-References: <cover.1650887383.git.jan.kiszka@siemens.com>
+ dkim=missing;
+ spf=pass (domain: toshiba.co.jp, ip: 210.130.202.153, mailfrom: kazuhiro3.hayashi@toshiba.co.jp)
+Received: by mo-csw.securemx.jp (mx-mo-csw1514) id 23Q7CDvr029502;
+ Tue, 26 Apr 2022 16:12:13 +0900
+X-Iguazu-Qid: 34trMBIs3ZSf9zbl20
+X-Iguazu-QSIG: v=2; s=0; t=1650957133; q=34trMBIs3ZSf9zbl20;
+ m=6/vos3Q8Jk4ODqTHIvC0qtCbU2Q6XhgO7kfMBJWtv9g=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1512) id 23Q7CBip008910
+	(version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
+	Tue, 26 Apr 2022 16:12:12 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cXAUvS9CfhY3AmHNpUsDMb5qFsb/FtUb6xZ5JSbtrZl8Vj2e1t5THNeaIXwhBZew1ynQ/Ud/VjW87M0w5+4mKqNV4kPKsS5wtTikqIxM6hELcfmpmDjWuKwdMm7v1cYsm5acaOKnmjzthjVR+Y+y5nc0m9/c5+MpLkW18sfI7SCX9F4xqAyDR9vOlBR5QA3P33dfAAXzopYlZ+wXlJsY7ZnO3eJa433RwBUkJWlB0gcN2ANRNSbBhy4JVXbzIRZb8EEVCo74IgVoMAeNoXzy/r2K7WhW5r3QG71w4uSJ5JUtdJQvrYrBfTeWztymvUsRC+76CL2Y5aquttNiOVNTQw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UyBnxdChmEx63cOV4FPUNzV6eG+Hbvax19lqHUNA800=;
+ b=F+6roGSvdQptHLOsjdxGAwEK8GyyIrQ2Hq+IbFOjAnkb66PwR8RoMIc4xrC22OmU985VZLbZ815A57jq9konWMzLMPcaFmspUhju60EBx5m0gR49qJHlg42kdW/ZCHwop42ld1sNu22wC6QLYYdQ8Nf1aKyUth0XRQMSPKK0uUpGckD7PEeZ0oH0nzV0M4rfsodecj1lV/Rdw7ukGZXCCIdAZBeA4mE1p4Rdqs79PI+STss1u/Dj8xWl98hi4S1wnyHDHa5jxznrEV0O8bEJRqMNlWyp/e/cVb3h9bENFsqJz3rsMkGyiBDnv/AH0UlxE/94zQykJWLA31SkqU9r+A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
+ header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
+From: <kazuhiro3.hayashi@toshiba.co.jp>
+To: <Chris.Paterson2@renesas.com>
+CC: <cip-dev@lists.cip-project.org>
+Subject: Create a shared project to manage LAVA scripts
+Thread-Topic: Create a shared project to manage LAVA scripts
+Thread-Index: AdhZOpT5o5bNwUdBQVSwy46M9SETfA==
+Date: Tue, 26 Apr 2022 07:12:08 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <TYCPR01MB8423B96790F7441B249C7844E1FB9@TYCPR01MB8423.jpnprd01.prod.outlook.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 0eef4999-73b4-42d3-f9ec-08da2754137c
+x-ms-traffictypediagnostic: OSAPR01MB3892:EE_
+x-microsoft-antispam-prvs: 
+ <OSAPR01MB3892A7A4BB9BC449EA398564E1FB9@OSAPR01MB3892.jpnprd01.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ wmwQXbJEUt0oalUAnu7XomApMC1Uug39cBRuEoAPHO0OcBwgeeiV69tPBHo+ywmgUuPBkxUhglcSd96N7fBkJvoKTgSZD+0aqJ/6ql42o+m+Uoe1JrYny74eWymGowslOpP8g13JOecRsCoQH34j+ESjIEU7e2uR7qMDJvCFfleS14aYgd7s7mozfiw4nvTHf6fW62vml+bWFeHMaLpx/RIxpow8U2gNpFgZbK+qu99ZPkQaR8rO+wfXDo3F5Mii4NjEyjXMfEFrr9ynUsxi3dGLmXLr3nUPK1hJHtV5JdOdIXezsc7X1bPI4u0blEkpSWP5fuGuX6JIp7qdFseXexnCdxtk0UBnH9YBMFQFLjcScELVwfIL7n+kKuyBJ/QdF7yuVNS5tQ+wIHLutfaBHhauVNYnwxpx9wVx/+ZlMWASQb8pd/XLc0t5/zlsU6NHyHssGHI3bE2pF1e9zvZxqJDa1ikup/lukftQ/16/tgA4pYKde+Tr/hog6lAxVMa+bVyfb+Pn7lN4HEO6IPL2dIs01wAS2OaHCHAbt1ksYR2utErg/meE1HTU7N9nsSjXYmQoj37ODzFYKQr4UjtqWzrX+KwFC8TUYpDSrtULX54c5nZ4Jxve2wLxxZ6x5EGdWerLS2suKa4Fk70IxhtzO0iiie0QcbHLjHWe83XFsxpxUOZxjmz1kmLmQkZ0PRMkmxjZ3oBhPglWmP5/Tp0s/6/xKFGn58aB7UtOB5Pq7Wh8MHVrTF+oME7F9InWNaw1A7FrS0cx26jMgIIc7o22Agy7sNmR8Vn075jWwzh+jJOhh9zBo9tAR0XcStMIgBMyeguS3a2J/zEhteRoRJIQpQ==
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB8423.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(6916009)(9686003)(38070700005)(5660300002)(55016003)(55236004)(38100700002)(33656002)(66446008)(4326008)(316002)(71200400001)(4744005)(83380400001)(2906002)(6506007)(7696005)(26005)(86362001)(186003)(122000001)(508600001)(8936002)(52536014)(966005)(66946007)(8676002)(76116006)(64756008)(66476007)(66556008);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?Y05MUlpVN2lZQ21PUWh6VzdLNXk3aDRleWVORTRCc0VQaFZRajhib0k1?=
+ =?iso-2022-jp?B?dWVIckdjalNaY0VUMUJBNzVtSkdQR3o2V3JUdFBWelhOaWQ3SW9EclNF?=
+ =?iso-2022-jp?B?SUhnMU42dEgwYTR0dEx5elNlMVdtYnQzWTkvWk01Z2ZjcHArcXpMa1RP?=
+ =?iso-2022-jp?B?VlkxQVo0OUIzL0FqMEJSbDdxdmRlU0tpMllWbmFVMDAvWnArdHBjWFNi?=
+ =?iso-2022-jp?B?Tmo3WHJoS2tBVjVPcnNYYkRtMjVDZkZzZHl2V1lWcDQxR2dXNFE4anNh?=
+ =?iso-2022-jp?B?dUVWemQ5NE9FVys1aWhOM1FqSnhCaG0zR04zUzZLNDRKYno4ODdvWTN2?=
+ =?iso-2022-jp?B?MXdOUU0yUk0vN0o2S0htQTNCZnNCeE1kdFRpb3k3cm9LZ3U0WEttU2tp?=
+ =?iso-2022-jp?B?Z21ybVQ3UGo5SEtkZGVXbEU3ZHU3NVZ5OHlneTBHeVEwakw2MThVdm1v?=
+ =?iso-2022-jp?B?UzhuK0pTay9xUktVZURadUVKOC9aVy9SZTJnVHhURnZXRnphaklPbEZu?=
+ =?iso-2022-jp?B?V0h3RklGSWgzMlc1dTZIWFRlcjl6RDRMVzh5ek84VitwZUdQL05Sc0xY?=
+ =?iso-2022-jp?B?MS80NXY1ZEhUTnMxcXdOZHlnNWdveGxOZkp2b09YSHo0UTU0K29QNklj?=
+ =?iso-2022-jp?B?eTlBbmtndGUveVFrelR4UHZEdEtUOWt3OWRSQ3dPRFE2MHE5WERqbSt3?=
+ =?iso-2022-jp?B?TnlEcXdrWm9zZEJHSXBXRzYxYndGaHVMcWkrQ0tpOG50RXV4dEJqYXRy?=
+ =?iso-2022-jp?B?T0k3UTVlRFNPZWFVVnNOVStQSWt4R0JSWmRBbjh0L0MxeFlPVlp3S3FS?=
+ =?iso-2022-jp?B?eDZObjIyWXR5d3hkaHlIb0JaTzFwN1FBZzh6K3FaQlI5R3ZaazdCcFVJ?=
+ =?iso-2022-jp?B?SGk4ZnUza2dSbTRDbXhuUVdyQ010VG9ncDBwZFphRXhNMVZLb3IwZ2I2?=
+ =?iso-2022-jp?B?Z0hzN1BUZFd2RFNYM3NwemJWcm5ESG8xRDkwaHRER3dQVkJVUEtjSU50?=
+ =?iso-2022-jp?B?R2Z0OGY3V0R5eHZkd0cvK3VHMUFaZ1lQNXM4aDAxYmtlTWx5NlFucy8w?=
+ =?iso-2022-jp?B?Y2tzcVNzc3QvbnJsNHYvZEIvYjhJMG9XV0IvNjlVNzYrcTlNK2RYeVpQ?=
+ =?iso-2022-jp?B?ckJTcEZVMHEwNE1iYmwxSVdxblBPa253UUxVcjFwT3RIRCtQYmwrVzls?=
+ =?iso-2022-jp?B?andDdDJ2K2FmdUFNSitqRmhNRkdITGxPeTJQQ0dET1JFNVJDcEQrbmtW?=
+ =?iso-2022-jp?B?engxUFIzb2duem5kQmZKck1iR3ZOU0ZaMUJGYThpampQM2hkMG9hWHR3?=
+ =?iso-2022-jp?B?Y1hhZzlaNWdZeUs3V09MWVdDOTFrNzJVR1E5dXgzQjlibUZySW9lbTFx?=
+ =?iso-2022-jp?B?N3pUdG9JVVpJS0tZRm5lQkFNcExhNlpzNGxQWlpIcnpNRlV1czVIRWUv?=
+ =?iso-2022-jp?B?ampTRGRsSGtQNFhkNi9FRXR2SlVpbWlHYTBZUXM4RDQvckF4aUxBVzNW?=
+ =?iso-2022-jp?B?R1Y2SmhUMzh4R0JKMUVjWGUvKzl5NXIveGJFOGJzOUVhU2hPa0NWNitR?=
+ =?iso-2022-jp?B?d1dSM1pScUJISFJnaW42UFZoM2o3Zml0bmNCUUEvZVVycGJEWnZOVE5P?=
+ =?iso-2022-jp?B?L0ZzRFF0em1QY1pvT1kyVFBYeXR3QWlsRklSTXE1ZmlqS3lUcjMxdzhi?=
+ =?iso-2022-jp?B?N0swM1E5VFF3UEJyRldsRWRmdGdkZUNYT1ZsSWhsMG9nV1hZNXhmd0lo?=
+ =?iso-2022-jp?B?L0s5aUE5RFpGNisvNGVVMUREVHlrN2tHMGpGTFZMczYvL1VOTnVTSUZE?=
+ =?iso-2022-jp?B?UVdMVjUwMHlJeVMrZ0pHVXR1VlArR21UOUdxWHZaZFMyQ1ZUeTVmWENG?=
+ =?iso-2022-jp?B?cVhIUUU0di9RYklVeXhHdGh6ZmFCeGYwYmkzb2pQYkd0QkhHWEE1UDVL?=
+ =?iso-2022-jp?B?SlBmUFNjUlM3NTBWNTJ0eUlFT1A4QVlTdkVsTzVDYVcyNHdwR0FBbjhk?=
+ =?iso-2022-jp?B?YUNXeEExVXVKTGl3NzViNE9rQWk5dVpUWVZiNGp3Y3oxTC9NVVdIV1pQ?=
+ =?iso-2022-jp?B?SHVkS0MyUzlXTVg1ajFFekpvUkhTQnk1OThnd01aZ1pMN2RST0pWeE5q?=
+ =?iso-2022-jp?B?c3c5UVlpUHFvK09YODE1cXhTc3pQakROZlo1UHRkSlVkeGREV1dsdHFB?=
+ =?iso-2022-jp?B?RzN1ZUtlckVnaTRNMTlURS8ydEhXQjY3ZVZvS0JuUVFheTNaOUNWdi96?=
+ =?iso-2022-jp?B?NW1NZEpVUHBSZEk2eDU3VGhxdG5pYmdnNHAxakxKSWd1QUtMZmhDSXFB?=
+ =?iso-2022-jp?B?cTBvaGRkejdVeDMyQUhDMTM0RG9WelFOem1MS1UyZDFJbllNdzZZWUgw?=
+ =?iso-2022-jp?B?eEp2ejBRRWNVMGI5ei9vQ0gwZ0oya1E0U3poUytndEw0K3cvcEpmQWNN?=
+ =?iso-2022-jp?B?Zzk3c0JGYlNnTzlGUmpqQ1VnZlZUZ1NXZFBURnRPekZjY3ozM2hSTUg3?=
+ =?iso-2022-jp?B?S2V1R29pdHI2SjQ5UFlwblRsRUdIbUQ3T3FpQnF6QXNXb09SWGlJMFBh?=
+ =?iso-2022-jp?B?Sm5TNTMwUT0=?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-294854:519-21489:flowmailer
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB8423.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 
+ 0eef4999-73b4-42d3-f9ec-08da2754137c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Apr 2022 07:12:08.3727
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 
+ DR2N1sadg64JVQq4T8hZJIcyRWB/oIxWnErhMaMUJUROMvHaMymLsStvkGo1JTFKWf20b1qr80tHMvRRCFFjxxFnK1SRzCyyGzrASixQZ8s=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB3892
+X-OriginatorOrg: toshiba.co.jp
+MSSCP.TransferMailToMossAgent: 103
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 25 Apr 2022 19:26:14 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8201
+ <cip-dev@lists.cip-project.org>; Tue, 26 Apr 2022 07:12:23 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8218
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+Hello Chris,
 
-As systemd is not well prepared for read-only rootfs, specifically /wrt
-machine-id management and anything that depends on it, it's best to
-mount the /etc overlay already in the initramfs. This implies that also
-/var is mounted at that level. We still keep the fstab setup done by
-wic-swu-img class so that systemd will recognize the rootfs as read-only
-and not try to remount it rw which will only fail with underlying
-squashfs.
+As I created the issue in deby[0], there are duplicated several scripts / d=
+ata
+to handle LAVA jobs in multiple CIP projects.
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
- classes/wic-swu-img.bbclass                   |  2 --
- .../etc-overlay-fs/etc-overlay-fs_0.1.bb      | 32 -----------------
- .../etc-overlay-fs/files/etc-hostname.service | 14 --------
- .../files/etc-sshd-regen-keys.conf            |  6 ----
- .../etc-overlay-fs/files/etc-sysusers.conf    |  4 ---
- recipes-core/etc-overlay-fs/files/etc.mount   | 13 -------
- recipes-core/etc-overlay-fs/files/postinst    |  4 ---
- .../cip-core-initramfs/cip-core-initramfs.bb  |  4 +++
- .../files/etc-overlay.script                  | 34 +++++++++++++++++++
- .../initramfs-etc-overlay-hook_0.1.bb         | 27 +++++++++++++++
- 10 files changed, 65 insertions(+), 75 deletions(-)
- delete mode 100644 recipes-core/etc-overlay-fs/etc-overlay-fs_0.1.bb
- delete mode 100644 recipes-core/etc-overlay-fs/files/etc-hostname.service
- delete mode 100644 recipes-core/etc-overlay-fs/files/etc-sshd-regen-keys.conf
- delete mode 100644 recipes-core/etc-overlay-fs/files/etc-sysusers.conf
- delete mode 100644 recipes-core/etc-overlay-fs/files/etc.mount
- delete mode 100755 recipes-core/etc-overlay-fs/files/postinst
- create mode 100644 recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.script
- create mode 100644 recipes-initramfs/initramfs-etc-overlay-hook/initramfs-etc-overlay-hook_0.1.bb
+Examples:
+https://gitlab.com/cip-project/cip-testing/linux-cip-ci/-/blob/master/submi=
+t_tests.sh
+https://gitlab.com/cip-project/cip-core/deby/-/tree/cip-core-buster/lava
 
-diff --git a/classes/wic-swu-img.bbclass b/classes/wic-swu-img.bbclass
-index b93a96a..41b2164 100644
---- a/classes/wic-swu-img.bbclass
-+++ b/classes/wic-swu-img.bbclass
-@@ -15,8 +15,6 @@ inherit squashfs-img
- inherit wic-img
- inherit swupdate-img
- 
--IMAGE_INSTALL += "etc-overlay-fs"
--
- INITRAMFS_RECIPE ?= "cip-core-initramfs"
- INITRD_IMAGE = "${INITRAMFS_RECIPE}-${DISTRO}-${MACHINE}.initrd.img"
- 
-diff --git a/recipes-core/etc-overlay-fs/etc-overlay-fs_0.1.bb b/recipes-core/etc-overlay-fs/etc-overlay-fs_0.1.bb
-deleted file mode 100644
-index 4e2b80b..0000000
---- a/recipes-core/etc-overlay-fs/etc-overlay-fs_0.1.bb
-+++ /dev/null
-@@ -1,32 +0,0 @@
--#
--# CIP Core, generic profile
--#
--# Copyright (c) Siemens AG, 2021
--#
--# Authors:
--#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
--#
--# SPDX-License-Identifier: MIT
--
--inherit dpkg-raw
--
--SRC_URI = "file://postinst \
--           file://etc.mount \
--           file://etc-hostname.service \
--           file://etc-sshd-regen-keys.conf \
--           file://etc-sysusers.conf"
--
--do_install[cleandirs]+="${D}/usr/lib/systemd/system \
--                        ${D}/usr/lib/systemd/system/local-fs.target.wants \
--                        ${D}/usr/lib/systemd/system/systemd-sysusers.service.d \
--                        ${D}/usr/lib/systemd/system/sshd-regen-keys.service.d \
--                        ${D}/var/local/etc \
--                        ${D}/var/local/.atomic \
--                        "
--do_install() {
--    TARGET=${D}/usr/lib/systemd/system
--    install -m 0644 ${WORKDIR}/etc.mount ${TARGET}/etc.mount
--    install -m 0644 ${WORKDIR}/etc-hostname.service ${TARGET}/etc-hostname.service
--    install -m 0644 ${WORKDIR}/etc-sshd-regen-keys.conf ${D}/usr/lib/systemd/system/sshd-regen-keys.service.d/etc-sshd-regen-keys.conf
--    install -m 0644 ${WORKDIR}/etc-sysusers.conf ${D}/usr/lib/systemd/system/systemd-sysusers.service.d/etc-sysusers.service
--}
-diff --git a/recipes-core/etc-overlay-fs/files/etc-hostname.service b/recipes-core/etc-overlay-fs/files/etc-hostname.service
-deleted file mode 100644
-index 2306b9f..0000000
---- a/recipes-core/etc-overlay-fs/files/etc-hostname.service
-+++ /dev/null
-@@ -1,14 +0,0 @@
--[Unit]
--Description=set hostname /etc overlay-aware
--Before=network-pre.target
--Wants=network-pre.target
--Requires=etc.mount
--After=etc.mount
--
--[Service]
--Type=oneshot
--RemainAfterExit=yes
--ExecStart=/bin/hostname --boot --file /etc/hostname
--
--[Install]
--WantedBy=basic.target
-diff --git a/recipes-core/etc-overlay-fs/files/etc-sshd-regen-keys.conf b/recipes-core/etc-overlay-fs/files/etc-sshd-regen-keys.conf
-deleted file mode 100644
-index b386c12..0000000
---- a/recipes-core/etc-overlay-fs/files/etc-sshd-regen-keys.conf
-+++ /dev/null
-@@ -1,6 +0,0 @@
--[Unit]
--# set hostname /etc overlay-aware
--Before=network-pre.target
--Wants=network-pre.target
--Requires=etc.mount
--After=etc.mount
-diff --git a/recipes-core/etc-overlay-fs/files/etc-sysusers.conf b/recipes-core/etc-overlay-fs/files/etc-sysusers.conf
-deleted file mode 100644
-index ad45d7f..0000000
---- a/recipes-core/etc-overlay-fs/files/etc-sysusers.conf
-+++ /dev/null
-@@ -1,4 +0,0 @@
--[Unit]
--# make systemd-sysusers /etc overlay aware
--Requires=etc.mount
--After=etc.mount
-diff --git a/recipes-core/etc-overlay-fs/files/etc.mount b/recipes-core/etc-overlay-fs/files/etc.mount
-deleted file mode 100644
-index f0ae3c5..0000000
---- a/recipes-core/etc-overlay-fs/files/etc.mount
-+++ /dev/null
-@@ -1,13 +0,0 @@
--[Unit]
--Description=Overlay-mount /etc
--Requires=var.mount
--After=var.mount
--
--[Mount]
--What=overlay
--Where=/etc
--Type=overlay
--Options=noauto,x-systemd.automount,lowerdir=/etc,upperdir=/var/local/etc,workdir=/var/local/.atomic
--
--[Install]
--WantedBy=local-fs.target
-diff --git a/recipes-core/etc-overlay-fs/files/postinst b/recipes-core/etc-overlay-fs/files/postinst
-deleted file mode 100755
-index e436b53..0000000
---- a/recipes-core/etc-overlay-fs/files/postinst
-+++ /dev/null
-@@ -1,4 +0,0 @@
--#!/bin/sh
--
--deb-systemd-helper enable etc.mount  || true
--deb-systemd-helper enable etc-hostname.service || true
-diff --git a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
-index 649daa2..9e0ee26 100644
---- a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
-+++ b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
-@@ -10,3 +10,7 @@
- #
- 
- inherit initramfs
-+
-+INITRAMFS_INSTALL += " \
-+    initramfs-etc-overlay-hook \
-+    "
-diff --git a/recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.script b/recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.script
-new file mode 100644
-index 0000000..a9a3663
---- /dev/null
-+++ b/recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.script
-@@ -0,0 +1,34 @@
-+#!/bin/sh
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2022
-+#
-+# Authors:
-+#  Jan Kiszka <jan.kiszka@siemens.com>
-+#
-+
-+PREREQ=""
-+
-+prereqs()
-+{
-+	echo "$PREREQ"
-+}
-+
-+case $1 in
-+# get pre-requisites
-+prereqs)
-+	prereqs
-+	exit 0
-+	;;
-+esac
-+
-+. /scripts/functions
-+
-+if ! mount -t $(get_fstype /dev/disk/by-label/var) /dev/disk/by-label/var ${rootmnt}/var; then
-+	panic "Can't mount /var partition - overlay will not work!"
-+fi
-+
-+mkdir -p ${rootmnt}/var/local/etc
-+mkdir -p ${rootmnt}/var/local/.atomic
-+mount -t overlay -o lowerdir=${rootmnt}/etc,upperdir=${rootmnt}/var/local/etc,workdir=${rootmnt}/var/local/.atomic overlay ${rootmnt}/etc
-diff --git a/recipes-initramfs/initramfs-etc-overlay-hook/initramfs-etc-overlay-hook_0.1.bb b/recipes-initramfs/initramfs-etc-overlay-hook/initramfs-etc-overlay-hook_0.1.bb
-new file mode 100644
-index 0000000..19e9261
---- /dev/null
-+++ b/recipes-initramfs/initramfs-etc-overlay-hook/initramfs-etc-overlay-hook_0.1.bb
-@@ -0,0 +1,27 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2022
-+#
-+# Authors:
-+#  Jan Kiszka <jan.kiszka@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+
-+inherit dpkg-raw
-+
-+SRC_URI += " \
-+    file://etc-overlay.script \
-+    "
-+
-+DEBIAN_DEPENDS = "initramfs-tools"
-+
-+do_install[cleandirs] += " \
-+    ${D}/usr/share/initramfs-tools/hooks \
-+    ${D}/usr/share/initramfs-tools/scripts/local-bottom"
-+
-+do_install() {
-+    install -m 0755 "${WORKDIR}/etc-overlay.script" \
-+        "${D}/usr/share/initramfs-tools/scripts/local-bottom/etc-overlay"
-+}
--- 
-2.34.1
+We are plannning to create a new CIP project that includes common scripts
+to handle such LAVA jobs.
+The new project can be registered as a git submodule in other projects
+(like linux-cip-ci, deby) that depend on the common scripts.
+
+Do you think this change is reasonable / feasible?
+If you have any other opinions or concerns, please let me konw.
+
+[0] https://gitlab.com/cip-project/cip-core/deby/-/issues/16
+
+Best regards,
+Kazu
 
 
