@@ -1,86 +1,82 @@
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
- by mx.groups.io with SMTP id smtpd.web11.4743.1651194111220829914
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+ by mx.groups.io with SMTP id smtpd.web12.12030.1651158889075887849
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Thu, 28 Apr 2022 18:01:51 -0700
+ Thu, 28 Apr 2022 08:14:49 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=z/7TG+i+;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.215.176, mailfrom: bot@kernelci.org)
-Received: by mail-pg1-f176.google.com with SMTP id g3so5344981pgg.3
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Thu, 28 Apr 2022 18:01:51 -0700 (PDT)
+ dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=MZ+qQCPf;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.210.177, mailfrom: bot@kernelci.org)
+Received: by mail-pf1-f177.google.com with SMTP id y14so4495095pfe.10
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Thu, 28 Apr 2022 08:14:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=fgqoIjuyfKRKSwtzuQib56D3cxR6zAzD2RABXSuNDuk=;
-        b=z/7TG+i++dceuLXh3aRx5NIH3F7YnbC00SiMS+EsUiK7ylckXbgCflezuHCf/T+khY
-         rQ+02OaBS5Pc6P9hvA1XT3lQrFVjm0qP8xLU4Rm9biowIsC5lfVRX5PVGJUi+M7j8Nu2
-         5y2XZR2i71IK+9uqRg2puSpS70GRPo34htZaTUQUYu2y84zDD6185a4aIrApxnaPgX8T
-         2L/ptFfQurZGOt61iNJs6OXOlb1qNGFLW6ZhJFjYr4EGlDCch5WSydyupAJ2ryjjwcNV
-         ThoBtPQOk/7EYx6LS3XIefRYnmHpFNx1GKGSDh76gObMbrYksxGINFncWr7fJ4v9OkIO
-         LbFQ==
+        bh=rDHIzeSnV6WDbTAjdyudjOkWFDfoffeu/7lHAAHnDUI=;
+        b=MZ+qQCPfN9blP3kzsGcmANWTR/TOmvXQXeZMR89jCSGrfM8qfJRxjqRPZfC9LEZXfE
+         6zDOM1biCxLe9DVIY1bb6t+cwC7YFizVKeVs5c7PoGh4jj2iAU9EQl7SiUAeliA4/uD4
+         SGE+NbEVXgpKWqaYhxlvHql32HPqqM1fJt0XR79ltVZmXEB3LSJ17uZ4KvCD92OdM+Zh
+         ex0AFJHO4LlDfWbDVEdQURBVPOU9LhrGET4GmKiRoJDZwUPsvWxGEPfJi+1QtW9Vggxb
+         LZzLEvKzxiiyn60KM6QVttU8wqdTdmz4YAhUODbH3kpUn0tTAub5ZjK1RgV8Qf+z5NEU
+         Pupw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=fgqoIjuyfKRKSwtzuQib56D3cxR6zAzD2RABXSuNDuk=;
-        b=adpewpd+weP5zU9nMl5P4yVTKTDmgseId19tz45aff90cQGK7Us07D7jQfHEeJJGb2
-         Us/Qp5crcE8eG+PQEunl7FdLlO6JycTkXVEmneWlIXEe3gKGKTtk9HDpPoZP8dPpSkzv
-         wa0ZzRy/DISH4L3LYEbVOgD+zQwzJ/j89o/tbAqzxTn3LBaRpjGM1wFzJEOlaA3bO8SU
-         HXji5tmJ3AvQmayR/aVEc63II9v4KuUlzjntOR4ICkPMRtCfEAqazU+szzWCeDcNTiP7
-         /HW9U2GbFN55vL95TTuzwdCkw2XL5T2ynN60mSdGddfbak8iLac1r0CeTV8ibIzPiX3l
-         q7qQ==
-X-Gm-Message-State: AOAM531zWYh7X+AjevawLAPZey3QyJ4zwwoPPvSIChCFiu4rARtdPqr/
-	kTZXBgrckyAWLldQLsJRLehk0486d4pzbm5meW0=
-X-Google-Smtp-Source: ABdhPJzOkx45+sMObEdd24DipgJZyK5bHwsX7uWEQjkDKHvTdCrL8VbWmv5xo6/lCw7lytMIcX9KGg==
-X-Received: by 2002:a63:d44c:0:b0:380:8c48:e040 with SMTP id i12-20020a63d44c000000b003808c48e040mr31086008pgj.14.1651194109557;
-        Thu, 28 Apr 2022 18:01:49 -0700 (PDT)
+        bh=rDHIzeSnV6WDbTAjdyudjOkWFDfoffeu/7lHAAHnDUI=;
+        b=ad29yAyuZWuMzwu+50IGrGBNq+zwa16t7SfcDP38IZwxMQ0zHBzp7IR5udtbLz68Cb
+         jOnOoiZrnumP9/puE1/yFgmfHuEcULoMNi0De3/7MlSSj7oB/ciRTJfRev4odyrXntnT
+         pCU2PV7xv84rlgpyLCtYT3mRjGlJyCViuFjpYO577itSdlx0HmaWWl7Dp4as6xpQQWSu
+         FJZ/n7TiHpFJGljNuxzVB2FkXQsgKA4XhRrqDCdrLJUfFax6aagJSOvIL0BErjXHfHWp
+         u9hZQqH5ka2qm6Nq6IrkAJnT6AY8DpWYZKUxkoAnARfwqj5vcScleO2I4gKib+udAX66
+         fpyg==
+X-Gm-Message-State: AOAM531IlfenNCla5hcpAYgb4KZD2IKP3H/kzw5AeIMe7gnE6PBNjtGP
+	FhhUZO7ERLonc+griuw3MQAGFxqu+1oKBVrQI1Y=
+X-Google-Smtp-Source: ABdhPJwfF5VykIKp6BfmsPb6RGShcfhmqjPMmNRWYXH4IujRdOK+MKycURHHjt7hunyi0z3rCw+l4w==
+X-Received: by 2002:a63:6a82:0:b0:3bc:321e:6d54 with SMTP id f124-20020a636a82000000b003bc321e6d54mr8409699pgc.232.1651158887321;
+        Thu, 28 Apr 2022 08:14:47 -0700 (PDT)
 Return-Path: <bot@kernelci.org>
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id r4-20020a63a544000000b003c14af505fbsm3954009pgu.19.2022.04.28.18.01.49
+        by smtp.gmail.com with ESMTPSA id h14-20020a17090a3d0e00b001dbce368a9dsm2970034pjc.5.2022.04.28.08.14.46
         for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Apr 2022 18:01:49 -0700 (PDT)
-Message-ID: <626b38fd.1c69fb81.3b73f.a23c@mx.google.com>
-Date: Thu, 28 Apr 2022 18:01:49 -0700 (PDT)
+        Thu, 28 Apr 2022 08:14:46 -0700 (PDT)
+Message-ID: <626aaf66.1c69fb81.b700b.7664@mx.google.com>
+Date: Thu, 28 Apr 2022 08:14:46 -0700 (PDT)
 MIME-Version: 1.0
-X-Kernelci-Kernel: v4.19.239-cip72-1-g009b7940a6ca
+X-Kernelci-Kernel: v4.19.233-569-g7bd6bc7afc5f6
 X-Kernelci-Report-Type: build
 X-Kernelci-Tree: cip-gitlab
 X-Kernelci-Branch: ci/iwamatsu/linux-4.19.y-cip-rc
-Subject: cip-gitlab/ci/iwamatsu/linux-4.19.y-cip-rc build: 197 builds: 197 failed, 0 passed, 2 errors, 29 warnings (v4.19.239-cip72-1-g009b7940a6ca) #kernelci
+Subject: cip-gitlab/ci/iwamatsu/linux-4.19.y-cip-rc build: 164 builds: 164 failed, 0 passed, 2 errors, 24 warnings (v4.19.233-569-g7bd6bc7afc5f6) #kernelci
 To: Cipproject+Cip-Dev via Email Integration <cip-dev@lists.cip-project.org>
 From: "kernelci.org bot" <bot@kernelci.org>
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 
-cip-gitlab/ci/iwamatsu/linux-4.19.y-cip-rc build: 197 builds: 197 failed, 0=
- passed, 2 errors, 29 warnings (v4.19.239-cip72-1-g009b7940a6ca)
+cip-gitlab/ci/iwamatsu/linux-4.19.y-cip-rc build: 164 builds: 164 failed, 0=
+ passed, 2 errors, 24 warnings (v4.19.233-569-g7bd6bc7afc5f6)
 
 Full Build Summary: https://kernelci.org/build/cip-gitlab/branch/ci%2Fiwama=
-tsu%2Flinux-4.19.y-cip-rc/kernel/v4.19.239-cip72-1-g009b7940a6ca/
+tsu%2Flinux-4.19.y-cip-rc/kernel/v4.19.233-569-g7bd6bc7afc5f6/
 
 Tree: cip-gitlab
 Branch: ci/iwamatsu/linux-4.19.y-cip-rc
-Git Describe: v4.19.239-cip72-1-g009b7940a6ca
-Git Commit: 009b7940a6ca52f2b39099c2c4d10bab337829b5
+Git Describe: v4.19.233-569-g7bd6bc7afc5f6
+Git Commit: 7bd6bc7afc5f633db8e5e8d62e424b4545fd7089
 Git URL: https://gitlab.com/cip-project/cip-kernel/linux-cip.git
 Built: 7 unique architectures
 
 Build Failures Detected:
 
 arc:
-    allnoconfig: (gcc-10) FAIL
     axs103_defconfig: (gcc-10) FAIL
     axs103_smp_defconfig: (gcc-10) FAIL
     haps_hs_defconfig: (gcc-10) FAIL
-    haps_hs_smp_defconfig: (gcc-10) FAIL
     hsdk_defconfig: (gcc-10) FAIL
     nsim_hs_defconfig: (gcc-10) FAIL
-    nsim_hs_smp_defconfig: (gcc-10) FAIL
-    nsimosci_hs_defconfig: (gcc-10) FAIL
     nsimosci_hs_smp_defconfig: (gcc-10) FAIL
     tinyconfig: (gcc-10) FAIL
     vdk_hs38_defconfig: (gcc-10) FAIL
@@ -88,6 +84,7 @@ arc:
 
 arm64:
     defconfig: (gcc-10) FAIL
+    defconfig+arm64-chromebook: (gcc-10) FAIL
 
 arm:
     acs5k_defconfig: (gcc-10) FAIL
@@ -108,38 +105,28 @@ arm:
     collie_defconfig: (gcc-10) FAIL
     corgi_defconfig: (gcc-10) FAIL
     davinci_all_defconfig: (gcc-10) FAIL
-    dove_defconfig: (gcc-10) FAIL
     ebsa110_defconfig: (gcc-10) FAIL
     efm32_defconfig: (gcc-10) FAIL
-    em_x270_defconfig: (gcc-10) FAIL
-    ep93xx_defconfig: (gcc-10) FAIL
     eseries_pxa_defconfig: (gcc-10) FAIL
     exynos_defconfig: (gcc-10) FAIL
     ezx_defconfig: (gcc-10) FAIL
     footbridge_defconfig: (gcc-10) FAIL
-    gemini_defconfig: (gcc-10) FAIL
     h3600_defconfig: (gcc-10) FAIL
     h5000_defconfig: (gcc-10) FAIL
-    hackkit_defconfig: (gcc-10) FAIL
     hisi_defconfig: (gcc-10) FAIL
     imote2_defconfig: (gcc-10) FAIL
     imx_v4_v5_defconfig: (gcc-10) FAIL
     imx_v6_v7_defconfig: (gcc-10) FAIL
     integrator_defconfig: (gcc-10) FAIL
-    iop13xx_defconfig: (gcc-10) FAIL
     iop32x_defconfig: (gcc-10) FAIL
     iop33x_defconfig: (gcc-10) FAIL
     ixp4xx_defconfig: (gcc-10) FAIL
-    jornada720_defconfig: (gcc-10) FAIL
     keystone_defconfig: (gcc-10) FAIL
-    ks8695_defconfig: (gcc-10) FAIL
     lart_defconfig: (gcc-10) FAIL
     lpc18xx_defconfig: (gcc-10) FAIL
-    lpc32xx_defconfig: (gcc-10) FAIL
     lpd270_defconfig: (gcc-10) FAIL
     lubbock_defconfig: (gcc-10) FAIL
     magician_defconfig: (gcc-10) FAIL
-    mainstone_defconfig: (gcc-10) FAIL
     mini2440_defconfig: (gcc-10) FAIL
     mmp2_defconfig: (gcc-10) FAIL
     moxart_defconfig: (gcc-10) FAIL
@@ -148,12 +135,9 @@ arm:
     multi_v5_defconfig: (gcc-10) FAIL
     multi_v7_defconfig: (gcc-10) FAIL
     mvebu_v5_defconfig: (gcc-10) FAIL
-    mvebu_v7_defconfig: (gcc-10) FAIL
-    mxs_defconfig: (gcc-10) FAIL
     neponset_defconfig: (gcc-10) FAIL
     netwinder_defconfig: (gcc-10) FAIL
     netx_defconfig: (gcc-10) FAIL
-    nhk8815_defconfig: (gcc-10) FAIL
     nuc910_defconfig: (gcc-10) FAIL
     nuc950_defconfig: (gcc-10) FAIL
     nuc960_defconfig: (gcc-10) FAIL
@@ -162,8 +146,6 @@ arm:
     orion5x_defconfig: (gcc-10) FAIL
     oxnas_v6_defconfig: (gcc-10) FAIL
     palmz72_defconfig: (gcc-10) FAIL
-    pcm027_defconfig: (gcc-10) FAIL
-    pleb_defconfig: (gcc-10) FAIL
     prima2_defconfig: (gcc-10) FAIL
     pxa168_defconfig: (gcc-10) FAIL
     pxa255-idp_defconfig: (gcc-10) FAIL
@@ -173,20 +155,17 @@ arm:
     qcom_defconfig: (gcc-10) FAIL
     raumfeld_defconfig: (gcc-10) FAIL
     realview_defconfig: (gcc-10) FAIL
-    rpc_defconfig: (gcc-10) FAIL
     s3c2410_defconfig: (gcc-10) FAIL
     s3c6400_defconfig: (gcc-10) FAIL
     s5pv210_defconfig: (gcc-10) FAIL
     sama5_defconfig: (gcc-10) FAIL
     shannon_defconfig: (gcc-10) FAIL
     shmobile_defconfig: (gcc-10) FAIL
-    simpad_defconfig: (gcc-10) FAIL
     socfpga_defconfig: (gcc-10) FAIL
     spear13xx_defconfig: (gcc-10) FAIL
     spear3xx_defconfig: (gcc-10) FAIL
     spear6xx_defconfig: (gcc-10) FAIL
     spitz_defconfig: (gcc-10) FAIL
-    stm32_defconfig: (gcc-10) FAIL
     sunxi_defconfig: (gcc-10) FAIL
     tango4_defconfig: (gcc-10) FAIL
     tct_hammer_defconfig: (gcc-10) FAIL
@@ -194,14 +173,11 @@ arm:
     trizeps4_defconfig: (gcc-10) FAIL
     u300_defconfig: (gcc-10) FAIL
     u8500_defconfig: (gcc-10) FAIL
-    versatile_defconfig: (gcc-10) FAIL
     vexpress_defconfig: (gcc-10) FAIL
     vf610m4_defconfig: (gcc-10) FAIL
     viper_defconfig: (gcc-10) FAIL
     vt8500_v6_v7_defconfig: (gcc-10) FAIL
     xcep_defconfig: (gcc-10) FAIL
-    zeus_defconfig: (gcc-10) FAIL
-    zx_defconfig: (gcc-10) FAIL
 
 i386:
     allnoconfig: (gcc-10) FAIL
@@ -220,7 +196,6 @@ mips:
     bmips_stb_defconfig: (gcc-10) FAIL
     capcella_defconfig: (gcc-10) FAIL
     cavium_octeon_defconfig: (gcc-10) FAIL
-    ci20_defconfig: (gcc-10) FAIL
     cobalt_defconfig: (gcc-10) FAIL
     db1xxx_defconfig: (gcc-10) FAIL
     decstation_defconfig: (gcc-10) FAIL
@@ -235,15 +210,11 @@ mips:
     jazz_defconfig: (gcc-10) FAIL
     jmr3927_defconfig: (gcc-10) FAIL
     lasat_defconfig: (gcc-10) FAIL
-    lemote2f_defconfig: (gcc-10) FAIL
     loongson1b_defconfig: (gcc-10) FAIL
     loongson1c_defconfig: (gcc-10) FAIL
     loongson3_defconfig: (gcc-10) FAIL
-    malta_defconfig: (gcc-10) FAIL
     malta_kvm_defconfig: (gcc-10) FAIL
-    malta_kvm_guest_defconfig: (gcc-10) FAIL
     malta_qemu_32r6_defconfig: (gcc-10) FAIL
-    maltaaprp_defconfig: (gcc-10) FAIL
     maltasmvp_defconfig: (gcc-10) FAIL
     maltasmvp_eva_defconfig: (gcc-10) FAIL
     maltaup_defconfig: (gcc-10) FAIL
@@ -252,9 +223,7 @@ mips:
     mips_paravirt_defconfig: (gcc-10) FAIL
     mpc30x_defconfig: (gcc-10) FAIL
     msp71xx_defconfig: (gcc-10) FAIL
-    mtx1_defconfig: (gcc-10) FAIL
     nlm_xlp_defconfig: (gcc-10) FAIL
-    nlm_xlr_defconfig: (gcc-10) FAIL
     omega2p_defconfig: (gcc-10) FAIL
     pic32mzda_defconfig: (gcc-10) FAIL
     pistachio_defconfig: (gcc-10) FAIL
@@ -273,8 +242,6 @@ mips:
 
 riscv:
     allnoconfig: (gcc-10) FAIL
-    defconfig: (gcc-10) FAIL
-    tinyconfig: (gcc-10) FAIL
 
 x86_64:
     allnoconfig: (gcc-10) FAIL
@@ -287,11 +254,11 @@ Errors and Warnings Detected:
 arc:
 
 arm64:
-    defconfig (gcc-10): 3 warnings
+    defconfig (gcc-10): 1 error, 1 warning
+    defconfig+arm64-chromebook (gcc-10): 1 error, 1 warning
 
 arm:
     omap1_defconfig (gcc-10): 1 warning
-    rpc_defconfig (gcc-10): 2 errors
 
 i386:
     allnoconfig (gcc-10): 2 warnings
@@ -299,10 +266,8 @@ i386:
     tinyconfig (gcc-10): 2 warnings
 
 mips:
-    lemote2f_defconfig (gcc-10): 1 warning
     loongson3_defconfig (gcc-10): 1 warning
     malta_qemu_32r6_defconfig (gcc-10): 1 warning
-    mtx1_defconfig (gcc-10): 3 warnings
     nlm_xlp_defconfig (gcc-10): 1 warning
 
 riscv:
@@ -315,9 +280,9 @@ x86_64:
 
 Errors summary:
 
-    1    arm-linux-gnueabihf-gcc: error: unrecognized -march target: armv3
-    1    arm-linux-gnueabihf-gcc: error: missing argument to =E2=80=98-marc=
-h=3D=E2=80=99
+    2    drivers/vfio/vfio_iommu_type1.c:355:8: error: implicit declaration=
+ of function =E2=80=98follow_pte=E2=80=99; did you mean =E2=80=98follow_pag=
+e=E2=80=99? [-Werror=3Dimplicit-function-declaration]
 
 Warnings summary:
 
@@ -328,16 +293,12 @@ d-only section `.head.text'
 uffix given and no register operands; using default for `sysret'
     3    ld: arch/x86/boot/compressed/head_32.o: warning: relocation in rea=
 d-only section `.head.text'
-    3    aarch64-linux-gnu-ld: warning: -z norelro ignored
-    2    sound/pci/echoaudio/echoaudio_dsp.c:647:9: warning: iteration 1073=
-741824 invokes undefined behavior [-Waggressive-loop-optimizations]
-    2    net/core/rtnetlink.c:3199:1: warning: the frame size of 1328 bytes=
- is larger than 1024 bytes [-Wframe-larger-than=3D]
+    2    cc1: some warnings being treated as errors
     1    {standard input}:132: Warning: macro instruction expanded into mul=
 tiple instructions
-    1    sound/pci/echoaudio/echoaudio_dsp.c:658:9: warning: iteration 1073=
-741824 invokes undefined behavior [-Waggressive-loop-optimizations]
     1    net/core/rtnetlink.c:3199:1: warning: the frame size of 1344 bytes=
+ is larger than 1024 bytes [-Wframe-larger-than=3D]
+    1    net/core/rtnetlink.c:3199:1: warning: the frame size of 1328 bytes=
  is larger than 1024 bytes [-Wframe-larger-than=3D]
     1    drivers/gpio/gpio-omap.c:1233:34: warning: array =E2=80=98omap_gpi=
 o_match=E2=80=99 assumed to have one element
@@ -366,11 +327,6 @@ section mismatches
 
 ---------------------------------------------------------------------------=
 -----
-allnoconfig (arc, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 section m=
-ismatches
-
----------------------------------------------------------------------------=
------
 allnoconfig (i386, gcc-10) =E2=80=94 FAIL, 0 errors, 2 warnings, 0 section =
 mismatches
 
@@ -378,6 +334,11 @@ Warnings:
     ld: arch/x86/boot/compressed/head_32.o: warning: relocation in read-onl=
 y section `.head.text'
     ld: warning: creating DT_TEXTREL in a PIE
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (riscv, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 section=
+ mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -390,11 +351,6 @@ Warnings:
     ld: arch/x86/boot/compressed/head_64.o: warning: relocation in read-onl=
 y section `.head.text'
     ld: warning: creating DT_TEXTREL in a PIE
-
----------------------------------------------------------------------------=
------
-allnoconfig (riscv, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 section=
- mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -503,11 +459,6 @@ ction mismatches
 
 ---------------------------------------------------------------------------=
 -----
-ci20_defconfig (mips, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
 cm_x2xx_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 sec=
 tion mismatches
 
@@ -558,23 +509,29 @@ decstation_defconfig (mips, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0=
 
 ---------------------------------------------------------------------------=
 -----
-defconfig (riscv, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 section m=
-ismatches
+defconfig (arm64, gcc-10) =E2=80=94 FAIL, 1 error, 1 warning, 0 section mis=
+matches
 
----------------------------------------------------------------------------=
------
-defconfig (arm64, gcc-10) =E2=80=94 FAIL, 0 errors, 3 warnings, 0 section m=
-ismatches
+Errors:
+    drivers/vfio/vfio_iommu_type1.c:355:8: error: implicit declaration of f=
+unction =E2=80=98follow_pte=E2=80=99; did you mean =E2=80=98follow_page=E2=
+=80=99? [-Werror=3Dimplicit-function-declaration]
 
 Warnings:
-    aarch64-linux-gnu-ld: warning: -z norelro ignored
-    aarch64-linux-gnu-ld: warning: -z norelro ignored
-    aarch64-linux-gnu-ld: warning: -z norelro ignored
+    cc1: some warnings being treated as errors
 
 ---------------------------------------------------------------------------=
 -----
-dove_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 sectio=
-n mismatches
+defconfig+arm64-chromebook (arm64, gcc-10) =E2=80=94 FAIL, 1 error, 1 warni=
+ng, 0 section mismatches
+
+Errors:
+    drivers/vfio/vfio_iommu_type1.c:355:8: error: implicit declaration of f=
+unction =E2=80=98follow_pte=E2=80=99; did you mean =E2=80=98follow_page=E2=
+=80=99? [-Werror=3Dimplicit-function-declaration]
+
+Warnings:
+    cc1: some warnings being treated as errors
 
 ---------------------------------------------------------------------------=
 -----
@@ -590,16 +547,6 @@ tion mismatches
 -----
 efm32_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 secti=
 on mismatches
-
----------------------------------------------------------------------------=
------
-em_x270_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-ep93xx_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 sect=
-ion mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -633,11 +580,6 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
-gemini_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
 gpr_defconfig (mips, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 sectio=
 n mismatches
 
@@ -653,18 +595,8 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
-hackkit_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
 haps_hs_defconfig (arc, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 sec=
 tion mismatches
-
----------------------------------------------------------------------------=
------
-haps_hs_smp_defconfig (arc, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0=
- section mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -705,11 +637,6 @@ ection mismatches
 -----
 integrator_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 =
 section mismatches
-
----------------------------------------------------------------------------=
------
-iop13xx_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 sec=
-tion mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -758,18 +685,8 @@ ction mismatches
 
 ---------------------------------------------------------------------------=
 -----
-jornada720_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
 keystone_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 se=
 ction mismatches
-
----------------------------------------------------------------------------=
------
-ks8695_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 sect=
-ion mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -780,15 +697,6 @@ n mismatches
 -----
 lasat_defconfig (mips, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 sect=
 ion mismatches
-
----------------------------------------------------------------------------=
------
-lemote2f_defconfig (mips, gcc-10) =E2=80=94 FAIL, 0 errors, 1 warning, 0 se=
-ction mismatches
-
-Warnings:
-    net/core/rtnetlink.c:3199:1: warning: the frame size of 1328 bytes is l=
-arger than 1024 bytes [-Wframe-larger-than=3D]
 
 ---------------------------------------------------------------------------=
 -----
@@ -816,11 +724,6 @@ tion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-lpc32xx_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
 lpd270_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 sect=
 ion mismatches
 
@@ -836,23 +739,8 @@ ction mismatches
 
 ---------------------------------------------------------------------------=
 -----
-mainstone_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-malta_defconfig (mips, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
 malta_kvm_defconfig (mips, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 =
 section mismatches
-
----------------------------------------------------------------------------=
------
-malta_kvm_guest_defconfig (mips, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnin=
-gs, 0 section mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -862,11 +750,6 @@ g, 0 section mismatches
 Warnings:
     {standard input}:132: Warning: macro instruction expanded into multiple=
  instructions
-
----------------------------------------------------------------------------=
------
-maltaaprp_defconfig (mips, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 =
-section mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -930,19 +813,6 @@ ction mismatches
 
 ---------------------------------------------------------------------------=
 -----
-mtx1_defconfig (mips, gcc-10) =E2=80=94 FAIL, 0 errors, 3 warnings, 0 secti=
-on mismatches
-
-Warnings:
-    sound/pci/echoaudio/echoaudio_dsp.c:647:9: warning: iteration 107374182=
-4 invokes undefined behavior [-Waggressive-loop-optimizations]
-    sound/pci/echoaudio/echoaudio_dsp.c:658:9: warning: iteration 107374182=
-4 invokes undefined behavior [-Waggressive-loop-optimizations]
-    sound/pci/echoaudio/echoaudio_dsp.c:647:9: warning: iteration 107374182=
-4 invokes undefined behavior [-Waggressive-loop-optimizations]
-
----------------------------------------------------------------------------=
------
 multi_v4t_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 s=
 ection mismatches
 
@@ -963,16 +833,6 @@ ction mismatches
 
 ---------------------------------------------------------------------------=
 -----
-mvebu_v7_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-mxs_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 section=
- mismatches
-
----------------------------------------------------------------------------=
------
 neponset_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 se=
 ction mismatches
 
@@ -988,11 +848,6 @@ n mismatches
 
 ---------------------------------------------------------------------------=
 -----
-nhk8815_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
 nlm_xlp_defconfig (mips, gcc-10) =E2=80=94 FAIL, 0 errors, 1 warning, 0 sec=
 tion mismatches
 
@@ -1002,23 +857,8 @@ arger than 1024 bytes [-Wframe-larger-than=3D]
 
 ---------------------------------------------------------------------------=
 -----
-nlm_xlr_defconfig (mips, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
 nsim_hs_defconfig (arc, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 sec=
 tion mismatches
-
----------------------------------------------------------------------------=
------
-nsim_hs_smp_defconfig (arc, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0=
- section mismatches
-
----------------------------------------------------------------------------=
------
-nsimosci_hs_defconfig (arc, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0=
- section mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -1076,11 +916,6 @@ tion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-pcm027_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
 pic32mzda_defconfig (mips, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 =
 section mismatches
 
@@ -1088,11 +923,6 @@ section mismatches
 -----
 pistachio_defconfig (mips, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 =
 section mismatches
-
----------------------------------------------------------------------------=
------
-pleb_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 sectio=
-n mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -1166,16 +996,6 @@ ion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-rpc_defconfig (arm, gcc-10) =E2=80=94 FAIL, 2 errors, 0 warnings, 0 section=
- mismatches
-
-Errors:
-    arm-linux-gnueabihf-gcc: error: unrecognized -march target: armv3
-    arm-linux-gnueabihf-gcc: error: missing argument to =E2=80=98-march=3D=
-=E2=80=99
-
----------------------------------------------------------------------------=
------
 rt305x_defconfig (mips, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 sec=
 tion mismatches
 
@@ -1216,11 +1036,6 @@ ction mismatches
 
 ---------------------------------------------------------------------------=
 -----
-simpad_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
 socfpga_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 sec=
 tion mismatches
 
@@ -1242,11 +1057,6 @@ ction mismatches
 ---------------------------------------------------------------------------=
 -----
 spitz_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-stm32_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 secti=
 on mismatches
 
 ---------------------------------------------------------------------------=
@@ -1283,11 +1093,6 @@ section mismatches
 -----
 tegra_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 secti=
 on mismatches
-
----------------------------------------------------------------------------=
------
-tinyconfig (riscv, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 section =
-mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -1340,11 +1145,6 @@ ction mismatches
 -----
 vdk_hs38_smp_defconfig (arc, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, =
 0 section mismatches
-
----------------------------------------------------------------------------=
------
-versatile_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 s=
-ection mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -1404,16 +1204,6 @@ y section `.head.text'
 -----
 xcep_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 sectio=
 n mismatches
-
----------------------------------------------------------------------------=
------
-zeus_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-zx_defconfig (arm, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 section =
-mismatches
 
 ---
 For more info write to <info@kernelci.org>
