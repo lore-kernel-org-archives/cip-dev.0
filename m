@@ -1,134 +1,145 @@
-Return-Path: <masami256@gmail.com>
+Return-Path: <iwamatsu@nigauri.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AECFC433F5
-	for <webhook@archiver.kernel.org>; Thu, 28 Apr 2022 23:57:52 +0000 (UTC)
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com
- [209.85.208.181])
- by mx.groups.io with SMTP id smtpd.web12.4206.1651190270959630891
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CF2BC433EF
+	for <webhook@archiver.kernel.org>; Fri, 29 Apr 2022 06:07:55 +0000 (UTC)
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com
+ [209.85.217.46])
+ by mx.groups.io with SMTP id smtpd.web09.6978.1651212473438731544
  for <cip-dev@lists.cip-project.org>;
- Thu, 28 Apr 2022 16:57:51 -0700
+ Thu, 28 Apr 2022 23:07:53 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20210112 header.b=aJg/TdX/;
- spf=pass (domain: gmail.com, ip: 209.85.208.181,
- mailfrom: masami256@gmail.com)
-Received: by mail-lj1-f181.google.com with SMTP id bn33so8649316ljb.6
+ dkim=pass header.i=@nigauri-org.20210112.gappssmtp.com header.s=20210112
+ header.b=PuMjRaPd;
+ spf=none, err=permanent DNS error (domain: nigauri.org, ip: 209.85.217.46,
+ mailfrom: iwamatsu@nigauri.org)
+Received: by mail-vs1-f46.google.com with SMTP id i186so6612104vsc.9
         for <cip-dev@lists.cip-project.org>;
- Thu, 28 Apr 2022 16:57:50 -0700 (PDT)
+ Thu, 28 Apr 2022 23:07:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=nigauri-org.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TBOXZGRkO1TOCypx9I9ynEaSyp1wJnm6hEmW+vSIWvA=;
-        b=aJg/TdX/Vfg8CpmkOvE2Zspcr7MHSkkZbUH9a/c6e2Sg2SJENNtZQCyqepTZFEgF/W
-         gwXyj9JN+E91ffOH94WXGeDL2Zxv/b5VKjXQIyh7T23xNqsdq6TF4sXUIzcvukIa33c6
-         8LH2f6Qu8f8tXteC5+RaeF8YnLvfNC6KrUKftS89UsaeE7KHY4RO1yVYJzMcBgH6VhI/
-         MXJ720PYnVRH1HL4EJPGib0NJT5CP4tWZt0O5o+zS2Zx73ZdmpRi3xd+YL5y0K87oKCK
-         X+4yS2vvYsrU7gXS/0Af25XD3tDBpoqUc9xPih201ICGOQUhVf1RgWQYRTKzxibcTPfj
-         E20A==
+         :cc:content-transfer-encoding;
+        bh=+JzvPJq6BRH71cejZfHR0nPYM68Ank6PMSiPXBSwRT4=;
+        b=PuMjRaPd8STQ004TiCxTAogYmNbAaK0B8pzBn6DoP3a2Kk4KuinIJZlhZRDBOFRII8
+         r5Hh9cQBsHe4ZHdGZgeiKFB1Y6BNNh2y5lW+3SalY1Hn5pxreLmv6FADTzK9nU6dZl1W
+         X4+eIuexFAPGwMq8PsOAYKAySrSJPq+tfc506iLZRCiPh327btt/hHxWWCXcrDwPah26
+         5vZmPst6bY7KDXGfjwsuX+cWWPukv7CSaGHZWzERHrEx76HBkdwaxqhOTr+2AKbuaWPr
+         xA57DaU4s6zXudaClWJfdmga7T8H/oFMWv0ih2g/imtKjUcRLOV60BU0qODsdJhRHPCN
+         nSOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TBOXZGRkO1TOCypx9I9ynEaSyp1wJnm6hEmW+vSIWvA=;
-        b=weqTE21cgjXbw6rfMEG7W05wtSSlwPjHKq8pTA0/Z5e9/6UHVPd7bwBqRl7oAY+2Vq
-         KaDP3xpu/HIESVs3Q9V14/gKrT86xsL3ulMmfN01K1FQPu6mLlBAfM6CbDUPb+U6TyM9
-         Wl4XvNj8iFYTmAKmbBFDYpF7w6O5zXupUppwxt3KXZAnx2GPXgMkOyn9Z0lRdYc6PUbL
-         Fimqye+NGatfFR93i5ioWEdrPYzqb6ieI3kIln3/xscvUoQGRExr1Ar06f6WU1yJGjFU
-         DU3tFwSCnMwhAR2mjdYynxX64m0EjgHsYU0KYIVttuGvL7aTWNlUNGN6Mua7Y9NBO857
-         Nkvw==
-X-Gm-Message-State: AOAM531YGSi7WmTfTz+V6q+AixLmHjcoW/gxK44oP3T/VJ9AFWRmnLAl
-	zP5V1cxICkzQOKWMI2pbvBdo8bQpjGq9ppnzGdYeTGxI/Dc=
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=+JzvPJq6BRH71cejZfHR0nPYM68Ank6PMSiPXBSwRT4=;
+        b=PIb4yMVE8gHYIWLls3HyeEweJMyOKgEIXjoLFCgxUguUB+RFgCpVlFXomFROmy4819
+         l7Lh8xFylRZvFx/jM02Z/OSo9g0xD/MbVYY+h4sKPhHB18DxgW0w46HQKM9IJNjNILdG
+         QKoAm3AW3oMfmfhZEtJ3uvcjN85eYWhiM/NVYCYX1dooowYr8w0m9nm6C9WjN3IMDjqb
+         zVafFBimmvZ0yU/y3AmOe8613G3daP0qEGJj0udrFYqOujnFviXradIAz+qMvWUmua8Q
+         rvMQpZtI3xeHMUjAQV3g8qiYBidSXm4GNw9aFq9x7oabVpb5ZnuZCQKQbf/CI3+g7zMf
+         jDrw==
+X-Gm-Message-State: AOAM532yjJ+vSJf/PPWWfiYTVUOt9QTeNITBMk9XdvaQ2zvIQxLTPMPa
+	y3AmD3BzDo1R6FNMvs8fg9GY50sHL0VGkkC4iaP0UYg0WrGnwFg=
 X-Google-Smtp-Source: 
- ABdhPJz4NEkuza1eE1OlpKGft1Ge2ZUjp0HQYFlD3WjbYKLoWoqkmr0LP2TXYD/zkqcaw1rqQvnYjnI0NfQ9zEfi1Fo=
-X-Received: by 2002:a2e:a28d:0:b0:247:dce8:cecd with SMTP id
- k13-20020a2ea28d000000b00247dce8cecdmr22849561lja.415.1651190268910; Thu, 28
- Apr 2022 16:57:48 -0700 (PDT)
+ ABdhPJxION2SYMHAI5Phjr2t94KGN7uN4K/+hnntnIr5mHESTS76GTkl5piwkRvgmlMoqwolGnFhexgFQfgWjpUzax0=
+X-Received: by 2002:a67:fc8e:0:b0:32c:e442:3634 with SMTP id
+ x14-20020a67fc8e000000b0032ce4423634mr5737214vsp.5.1651212472186; Thu, 28 Apr
+ 2022 23:07:52 -0700 (PDT)
 MIME-Version: 1.0
 References: <16EA1EC5D11818E9.15794@lists.cip-project.org>
  <20220428173525.GA32556@duo.ucw.cz>
-In-Reply-To: <20220428173525.GA32556@duo.ucw.cz>
-From: Masami Ichikawa <masami256@gmail.com>
-Date: Fri, 29 Apr 2022 08:57:37 +0900
-Message-ID: 
  <CACOXgS8EVEsHWe-548a3zQuYrTrXJp8EjcTJyr91L=2mTHLyZw@mail.gmail.com>
+In-Reply-To: 
+ <CACOXgS8EVEsHWe-548a3zQuYrTrXJp8EjcTJyr91L=2mTHLyZw@mail.gmail.com>
+From: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
+Date: Fri, 29 Apr 2022 15:07:26 +0900
+Message-ID: 
+ <CABMQnVKzp7B+EF+9vFPLbT0qjfYk8-=_UgFVk6afq3AOO+vPWA@mail.gmail.com>
 Subject: Re: [cip-dev] 4.19 oopses on socfpga
 To: cip-dev@lists.cip-project.org
-Cc: Chris.Paterson2@renesas.com, alice.ferrazzi@miraclelinux.com,
-	nobuhiro1.iwamatsu@toshiba.co.jp
+Cc: Chris Paterson <Chris.Paterson2@renesas.com>,
+ alice.ferrazzi@miraclelinux.com,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 28 Apr 2022 23:57:52 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8229
+ <cip-dev@lists.cip-project.org>; Fri, 29 Apr 2022 06:07:55 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8231
 
-Hello.
+Hi,
 
-On Fri, Apr 29, 2022 at 2:35 AM Pavel Machek <pavel@denx.de> wrote:
+2022=E5=B9=B44=E6=9C=8829=E6=97=A5(=E9=87=91) 8:57 Masami Ichikawa <masami2=
+56@gmail.com>:
 >
-> Hi!
+> Hello.
 >
->
-> > There's oops during boot on socfpga:
+> On Fri, Apr 29, 2022 at 2:35 AM Pavel Machek <pavel@denx.de> wrote:
 > >
-> > 4.19.240-cip72-00010-g0ffbb4b1066 -- https://lava.ciplatform.org/scheduler/job/669893
-> > 4.19.240-rc1-g5e5c9d690926 -- https://lava.ciplatform.org/scheduler/job/669259
+> > Hi!
 > >
-> > This commit may be relevant:
 > >
-> > commit e2423aa174e6c3e9805e96db778245ba73cdd88c
-> >     net: ethernet: stmmac: fix altr_tse_pcs function when using a fixed-link
-> >     [ Upstream commit a6aaa00324240967272b451bfa772547bd576ee6 ]
+> > > There's oops during boot on socfpga:
+> > >
+> > > 4.19.240-cip72-00010-g0ffbb4b1066 -- https://lava.ciplatform.org/sche=
+duler/job/669893
+> > > 4.19.240-rc1-g5e5c9d690926 -- https://lava.ciplatform.org/scheduler/j=
+ob/669259
+> > >
+> > > This commit may be relevant:
+> > >
+> > > commit e2423aa174e6c3e9805e96db778245ba73cdd88c
+> > >     net: ethernet: stmmac: fix altr_tse_pcs function when using a fix=
+ed-link
+> > >     [ Upstream commit a6aaa00324240967272b451bfa772547bd576ee6 ]
+> > >
+> > > Let me investigate a bit more.
 > >
-> > Let me investigate a bit more.
+> > I tried to do some testing, but it fails on two targets:
+> >
+> > https://gitlab.com/cip-project/cip-kernel/linux-cip/-/pipelines/5222115=
+01
+> >
+> > And failed test says:
+> >
+> > https://lava.ciplatform.org/scheduler/job/670508
+> >
+> > ob error: Invalid job data: ["Resource unavailable at
+> > 'https://s3.eu-central-1.amazonaws.com/download2.cip-project.org/cip-te=
+sting/linux-cip/zImage_siemens_de0-nano-soc_defconfig_4.19.239_e5e741fbf/ar=
+m/siemens_de0-nano-soc_defconfig/dtb/socfpga_cyclone5_de0_nano_soc.dtb'
+> > (404)"]
+> >
+> > which sounds like a test problem, not kernel problem.
+> >
+> > Any ideas?
+> >
 >
-> I tried to do some testing, but it fails on two targets:
+> It looks like the pipeline 522211501's build job didn't build
+> socfpga_cyclone5_de0_nano_soc.dtb.
+> https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/2364180684#L24=
+17
 >
-> https://gitlab.com/cip-project/cip-kernel/linux-cip/-/pipelines/522211501
->
-> And failed test says:
->
-> https://lava.ciplatform.org/scheduler/job/670508
->
-> ob error: Invalid job data: ["Resource unavailable at
-> 'https://s3.eu-central-1.amazonaws.com/download2.cip-project.org/cip-testing/linux-cip/zImage_siemens_de0-nano-soc_defconfig_4.19.239_e5e741fbf/arm/siemens_de0-nano-soc_defconfig/dtb/socfpga_cyclone5_de0_nano_soc.dtb'
-> (404)"]
->
-> which sounds like a test problem, not kernel problem.
->
-> Any ideas?
->
-
-It looks like the pipeline 522211501's build job didn't build
-socfpga_cyclone5_de0_nano_soc.dtb.
-https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/2364180684#L2417
-
-An old build job(pipeline #523704627 . kernel 4.19.239-cip72) builds
-the dtb file.
-https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/2371451342#L2907
-
-> Best regards,
->                                                                 Pavel
-> --
-> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
->
-> -=-=-=-=-=-=-=-=-=-=-=-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#8228): https://lists.cip-project.org/g/cip-dev/message/8228
-> Mute This Topic: https://lists.cip-project.org/mt/90758298/6028936
-> Group Owner: cip-dev+owner@lists.cip-project.org
-> Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/10394996/6028936/1199334894/xyzzy [masami256@gmail.com]
-> -=-=-=-=-=-=-=-=-=-=-=-
+> An old build job(pipeline #523704627 . kernel 4.19.239-cip72) builds
+> the dtb file.
+> https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/2371451342#L29=
+07
 >
 
-Regards,
--- 
-/**
-* Masami Ichikawa
-* personal: masami256@gmail.com
-* fedora project: masami@fedoraproject.org
-*/
+This is the backport patch is imported into the CIP kernel.
+    https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/commi=
+t/?h=3Dlinux-4.19.y-cip&id=3D64729dc0be4847961550cdcca4ddc66adf556aaa
+
+I was revert E2423AA174E6 with a CIP kernel and confirmed. I think
+this is the cause.
+    https://gitlab.com/cip-project/cip-kernel/linux-cip/-/commit/009b7940a6=
+ca52f2b39099c2c4d10bab337829b5
+    https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/2392927535
+
+I will check the board supported by LTS.
+
+Best regards,
+  Nobuhiro
 
