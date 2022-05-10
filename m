@@ -1,71 +1,72 @@
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
- by mx.groups.io with SMTP id smtpd.web12.8689.1652183272537815349
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+ by mx.groups.io with SMTP id smtpd.web10.8464.1652181595565990138
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Tue, 10 May 2022 04:47:52 -0700
+ Tue, 10 May 2022 04:19:55 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=jxgLzi3z;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.210.176, mailfrom: bot@kernelci.org)
-Received: by mail-pf1-f176.google.com with SMTP id c14so14732004pfn.2
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Tue, 10 May 2022 04:47:52 -0700 (PDT)
+ dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=RIcc2egB;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.215.180, mailfrom: bot@kernelci.org)
+Received: by mail-pg1-f180.google.com with SMTP id g184so11883367pgc.1
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Tue, 10 May 2022 04:19:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=IhKH2KV+klBOX8Y2JMAm1l2SRcInV4cZKPLKkesQCV0=;
-        b=jxgLzi3zSjXPQFvuMBpQMYXabX71hbguz2FyZE8DPC01pJz2Cs+B8vtk4nNg6Wgji0
-         2vJKuc/kWMpt1gYh+4k9SKepLxp+2F9dBISOQh3gnMo2XZeA8i1YyRJk6G+yAL6CMyia
-         aJdqMU3DCoGXht7oR/I0/VmVuWTFbw5cqleBcUXXRtujR32erv9+KN/uZiobLAZPx0c4
-         7nwDCv2UZZHGnmRT2Sen1QEutNt/2DPJN2wxT1UE5DyVDP7HkfSD6cpBmZR1Cp07nDfX
-         A5b+QkNEkeBe+EbwB6nt4vZNrVS1KSmYqxqmSrV/xlZ87hAXtCsxa277UIMyhYjp6CX/
-         xIRQ==
+        bh=QA8nc4iMM0h74gmRjc1XKDiWUG46bT8No4/v9TKlK7A=;
+        b=RIcc2egBWe197iwPcELJoDuMHb3otvJTOSGeLCiqwunTD02LbxPHOVSvWaSnf6zPQk
+         3+9hzgJ2FQWA9HMKxfM9uaSywbWeeUF/8CQ00qUpe3y52MSksIyfW0dkXsAKU7dMdt6N
+         nSG9pmx+Wp44VmNfLYrLRIxwNXzDR5CILK75t0Apwy5ppLdjb+y74C6rawnTmFUKMiCd
+         VAUAftvZRSQ8njKOw6x/PNsYVUEaG4C1NQ1KN0my4m5vo04NxUboqx9a94XkSLklOf2e
+         PSbz6PMb+jegNHtiJqUkpIbacUkGiiEGtmjSSN3kFEoHcQ2PBRTNcHuvrvuB0Bd3/aZd
+         2P6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=IhKH2KV+klBOX8Y2JMAm1l2SRcInV4cZKPLKkesQCV0=;
-        b=nDeqN9vsxZUpYWEkMaQuJ+dTsQJM9DqJobaHnPV3MuFCFGgP6F7XVF707oM6xqj94M
-         BAEPxZtiMxDMvjL9ESwk0Zze4sn8Id/6M4FNGViDNjAIUWD6FpfBntgy6ejQGUdpQm15
-         Ko3BLrySwOZFobgiqdAvLtc44lbyhrAWyrngIiJUPzLM3cNMtO7Ba2pEq5T8ApG/tBZl
-         x8VmJygpmYZhujY194reQ6QD85cBAVKLKy66hklBFxnuj+FuXwxqAE3XiLRgHKsCpLDO
-         WMmufGx/gqa/kJZu1a3Ir0jQFuKBKh+nGAjVPmDQ84g8TMbodGvv7SZfx8SYRTLChgD3
-         U49Q==
-X-Gm-Message-State: AOAM530laPBU6DW3TOcWy4QJ1T1qPtXjmsT/AO9TpEjl43pRMw6iATka
-	zkTMfTW04h+WmtaEKCpFjuqtoZNWCgfVd8XbR5g=
-X-Google-Smtp-Source: ABdhPJzHvErNZq4ZC6FekJ8Gp2Q3nVHeP6ix2B7gsaES9ZSwkIzmWmFcsCiikfO153/9ce1z3jukOQ==
-X-Received: by 2002:a63:5522:0:b0:3c5:e4be:5a49 with SMTP id j34-20020a635522000000b003c5e4be5a49mr16517709pgb.26.1652183271096;
-        Tue, 10 May 2022 04:47:51 -0700 (PDT)
+        bh=QA8nc4iMM0h74gmRjc1XKDiWUG46bT8No4/v9TKlK7A=;
+        b=ogSZw7JzUVqyg6O7zxwaOZGsX0mt8KjRBraJ3kdnIfQ0pw8EYIzY3OfSyTYTBHV1uK
+         OmpXaOh2xWjQBWbWCLRZZjUdvfkFDybkLYvgOjBqjJqN8YBtbCm21bn2Hmo7nhGX63j8
+         4S1fQQEkCUEtbSvD3brV6xhVW7ParKy6kLx+QKgJvtLdT/U4jeDrvmeluLOGO7H65fN3
+         QA8FLgYU7hRnzAfIq9DrKOkkspm+dqxh3ArT+Ja7twKD2zQ2RNqx2dOr5bpc/SrrH9wA
+         2fjgq4pN9hyZi4G9yGq6GrnZJJr/HUZFW5SW0ZWB+HX/nxEsqINUl7pk9epKJpqwxy9r
+         s2JQ==
+X-Gm-Message-State: AOAM5336EEMkY1/QY0mjQvWmadTUpJVGak/9Uh8Rig3jQHUYqKm0x2Z6
+	KZ6rNbeZJ393woNSfEGDrUvRseeDf8A0xnMs6nI=
+X-Google-Smtp-Source: ABdhPJz38ug/2AsxLW+9+nmr+mD1NQWDcBZi58WNKscIcI1t7IkFWJXVCmb5CwB4WuaslVQ8x6ofWg==
+X-Received: by 2002:a63:2103:0:b0:3d5:dff1:30e1 with SMTP id h3-20020a632103000000b003d5dff130e1mr2832567pgh.376.1652181594079;
+        Tue, 10 May 2022 04:19:54 -0700 (PDT)
 Return-Path: <bot@kernelci.org>
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id t5-20020a1709028c8500b0015e8d4eb266sm1768307plo.176.2022.05.10.04.47.50
+        by smtp.gmail.com with ESMTPSA id h70-20020a638349000000b003c68eddba62sm4545346pge.89.2022.05.10.04.19.53
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 May 2022 04:47:50 -0700 (PDT)
-Message-ID: <627a50e6.1c69fb81.b8da4.4363@mx.google.com>
-Date: Tue, 10 May 2022 04:47:50 -0700 (PDT)
+        Tue, 10 May 2022 04:19:53 -0700 (PDT)
+Message-ID: <627a4a59.1c69fb81.13505.a69d@mx.google.com>
+Date: Tue, 10 May 2022 04:19:53 -0700 (PDT)
 MIME-Version: 1.0
 X-Kernelci-Report-Type: build
-X-Kernelci-Tree: cip
-X-Kernelci-Branch: linux-5.10.y-cip-rt
-X-Kernelci-Kernel: v5.10.109-cip5-rt4
-Subject: cip/linux-5.10.y-cip-rt build: 188 builds: 3 failed, 185 passed, 4 errors, 11 warnings (v5.10.109-cip5-rt4) #kernelci
+X-Kernelci-Tree: cip-gitlab
+X-Kernelci-Branch: ci/pavel/linux-test
+X-Kernelci-Kernel: v5.10.109-cip5-384-g722204542e8a
+Subject: cip-gitlab/ci/pavel/linux-test build: 185 builds: 3 failed, 182 passed, 4 errors, 10 warnings (v5.10.109-cip5-384-g722204542e8a) #kernelci
 To: Cipproject+Cip-Dev via Email Integration <cip-dev@lists.cip-project.org>
 From: "kernelci.org bot" <bot@kernelci.org>
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 
-cip/linux-5.10.y-cip-rt build: 188 builds: 3 failed, 185 passed, 4 errors, =
-11 warnings (v5.10.109-cip5-rt4)
+cip-gitlab/ci/pavel/linux-test build: 185 builds: 3 failed, 182 passed, 4 e=
+rrors, 10 warnings (v5.10.109-cip5-384-g722204542e8a)
 
-Full Build Summary: https://kernelci.org/build/cip/branch/linux-5.10.y-cip-=
-rt/kernel/v5.10.109-cip5-rt4/
+Full Build Summary: https://kernelci.org/build/cip-gitlab/branch/ci%2Fpavel=
+%2Flinux-test/kernel/v5.10.109-cip5-384-g722204542e8a/
 
-Tree: cip
-Branch: linux-5.10.y-cip-rt
-Git Describe: v5.10.109-cip5-rt4
-Git Commit: b41186882eaf0137277045da13ea649577c42c11
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+Tree: cip-gitlab
+Branch: ci/pavel/linux-test
+Git Describe: v5.10.109-cip5-384-g722204542e8a
+Git Commit: 722204542e8a1bb3bd684e6acee24ca8daeced2f
+Git URL: https://gitlab.com/cip-project/cip-kernel/linux-cip.git
 Built: 7 unique architectures
 
 Build Failures Detected:
@@ -90,7 +91,6 @@ i386:
 
 mips:
     32r2el_defconfig (gcc-10): 1 warning
-    32r2el_defconfig+preempt_rt (gcc-10): 1 warning
     decstation_64_defconfig (gcc-10): 1 warning
     decstation_defconfig (gcc-10): 1 warning
     decstation_r4k_defconfig (gcc-10): 1 warning
@@ -112,8 +112,6 @@ Warnings summary:
 
     3    kernel/rcu/tasks.h:707:13: warning: =E2=80=98show_rcu_tasks_rude_g=
 p_kthread=E2=80=99 defined but not used [-Wunused-function]
-    2    WARNING: modpost: Symbol info of vmlinux is missing. Unresolved sy=
-mbol check will be entirely skipped.
     2    <stdin>:830:2: warning: #warning syscall fstat64 not implemented [=
 -Wcpp]
     2    <stdin>:1127:2: warning: #warning syscall fstatat64 not implemente=
@@ -121,6 +119,8 @@ d [-Wcpp]
     1    net/mac80211/mlme.c:4343:1: warning: the frame size of 1040 bytes =
 is larger than 1024 bytes [-Wframe-larger-than=3D]
     1    drivers/block/paride/bpck.c:32: warning: "PC" redefined
+    1    WARNING: modpost: Symbol info of vmlinux is missing. Unresolved sy=
+mbol check will be entirely skipped.
 
 Section mismatches summary:
 
@@ -146,6 +146,9 @@ t.text:memblock_is_map_memory()
 erence from the function __arm_ioremap_pfn_caller() to the function .memini=
 t.text:memblock_is_map_memory()
     1    WARNING: modpost: vmlinux.o(.text+0xcbac): Section mismatch in ref=
+erence from the function __arm_ioremap_pfn_caller() to the function .memini=
+t.text:memblock_is_map_memory()
+    1    WARNING: modpost: vmlinux.o(.text+0xcb00): Section mismatch in ref=
 erence from the function __arm_ioremap_pfn_caller() to the function .memini=
 t.text:memblock_is_map_memory()
     1    WARNING: modpost: vmlinux.o(.text+0xc944): Section mismatch in ref=
@@ -179,22 +182,18 @@ check will be entirely skipped.
 
 ---------------------------------------------------------------------------=
 -----
-32r2el_defconfig+preempt_rt (mips, gcc-10) =E2=80=94 PASS, 0 errors, 1 warn=
-ing, 0 section mismatches
-
-Warnings:
-    WARNING: modpost: Symbol info of vmlinux is missing. Unresolved symbol =
-check will be entirely skipped.
-
----------------------------------------------------------------------------=
------
-allnoconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
-mismatches
+allnoconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
 
 ---------------------------------------------------------------------------=
 -----
 allnoconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
 ismatches
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
+mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -285,6 +284,11 @@ ction mismatches
 -----
 bigsur_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
 tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+bmips_be_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -405,43 +409,13 @@ ismatches
 
 ---------------------------------------------------------------------------=
 -----
-defconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
-mismatches
-
----------------------------------------------------------------------------=
------
-defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mis=
-matches
-
----------------------------------------------------------------------------=
------
 defconfig (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
 ismatches
 
 ---------------------------------------------------------------------------=
 -----
-defconfig+preempt_rt (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings,=
- 0 section mismatches
-
----------------------------------------------------------------------------=
------
-defconfig+preempt_rt (riscv, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, =
-0 section mismatches
-
----------------------------------------------------------------------------=
------
-defconfig+preempt_rt (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-defconfig+preempt_rt (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, =
-0 section mismatches
-
----------------------------------------------------------------------------=
------
-defconfig+x86-chromebook (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warni=
-ngs, 0 section mismatches
+defconfig+arm64-chromebook (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warn=
+ings, 0 section mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -550,11 +524,6 @@ haps_hs_smp_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
 
 ---------------------------------------------------------------------------=
 -----
-haps_hs_smp_defconfig+preempt_rt (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 =
-warnings, 0 section mismatches
-
----------------------------------------------------------------------------=
------
 hisi_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
 n mismatches
 
@@ -567,11 +536,6 @@ n mismatches
 -----
 i386_defconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
 on mismatches
-
----------------------------------------------------------------------------=
------
-i386_defconfig+preempt_rt (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnin=
-gs, 0 section mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -632,6 +596,16 @@ on mismatches
 -----
 jmr3927_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
 ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+jornada720_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+Section mismatches:
+    WARNING: modpost: vmlinux.o(.text+0xcb00): Section mismatch in referenc=
+e from the function __arm_ioremap_pfn_caller() to the function .meminit.tex=
+t:memblock_is_map_memory()
 
 ---------------------------------------------------------------------------=
 -----
@@ -719,6 +693,11 @@ gs, 0 section mismatches
 
 ---------------------------------------------------------------------------=
 -----
+malta_qemu_32r6_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnin=
+gs, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
 maltaaprp_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
 section mismatches
 
@@ -791,11 +770,6 @@ ction mismatches
 -----
 multi_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
 ction mismatches
-
----------------------------------------------------------------------------=
------
-multi_v7_defconfig+preempt_rt (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 war=
-nings, 0 section mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -1128,6 +1102,21 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
+tinyconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
+smatches
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---------------------------------------------------------------------------=
+-----
 trizeps4_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
 ction mismatches
 
@@ -1188,13 +1177,13 @@ ction mismatches
 
 ---------------------------------------------------------------------------=
 -----
-x86_64_defconfig+preempt_rt (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 wa=
-rnings, 0 section mismatches
+x86_64_defconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
 
 ---------------------------------------------------------------------------=
 -----
-x86_64_defconfig+x86-chromebook+preempt_rt (x86_64, gcc-10) =E2=80=94 PASS,=
- 0 errors, 0 warnings, 0 section mismatches
+x86_64_defconfig+x86-chromebook (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, =
+0 warnings, 0 section mismatches
 
 ---------------------------------------------------------------------------=
 -----
