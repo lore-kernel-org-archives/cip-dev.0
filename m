@@ -1,163 +1,181 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8A1BC433EF
-	for <webhook@archiver.kernel.org>; Tue, 24 May 2022 15:07:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF9C8C433EF
+	for <webhook@archiver.kernel.org>; Tue, 24 May 2022 15:23:37 +0000 (UTC)
 Received: from EUR05-AM6-obe.outbound.protection.outlook.com
  (EUR05-AM6-obe.outbound.protection.outlook.com [40.107.22.87])
- by mx.groups.io with SMTP id smtpd.web08.10608.1653404832085717934
+ by mx.groups.io with SMTP id smtpd.web09.10696.1653405814561292028
  for <cip-dev@lists.cip-project.org>;
- Tue, 24 May 2022 08:07:13 -0700
+ Tue, 24 May 2022 08:23:35 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=K5FKOA1l;
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=oMPyfu8k;
  spf=pass (domain: siemens.com, ip: 40.107.22.87,
- mailfrom: jan.kiszka@siemens.com)
+ mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZKzLUBcLQBV2s4gxZE1zaAXjdtw+kPcW8C/4fgQFLXVgSvvD8qjAEcS6sVYNFqMG8uFEE9ZorUJHH1zH7PP8GOWwLkB3KdEIjmtury4MOcI78Kx+02AxUsq5Qx1d6wBjGmC0nLeb1ravPK4JjCPX2jM9Bpcf5vf2H9pOhKWLLUIrq08+FDDxrxphMq7/Kb8QJvA77kB3hRs1ELTymI0EDcx5ZKUPjv2Js3BfNCfd4vAb2u72PrTAKSunN201GIo1Gb5P/Gwcl11AE6BIqqoa9NJlbe5oG5nbhYHggiPFm9h/sx6/49VidG9JdQY68tdKt5lWearNxpDhFLK6OD+aaw==
+ b=IxkaWRGwtl5WRJe0Gb0xjLSj1HMIkOLwGgthKB8RrE/M4iTulnM9b6UGOf+26KttrpIm6pwp1SQx8vUFLOb/IPd5FKxfgEQwuVxa+HkTVzevpt162SdUh7aMWQR12M5aHY7Z96xmUFK1OjQmqEDpojhdXQPRMQK5rFdWEUYpK244wGYY3S4iPpAYi2C0ng3iRezsNFomSiEDTgTXhQ9Z7nDxeWlFQ1H1bdIRRF28541BmL9d0jNJr6aLWmsShHQ6z2Tz3k2w2HdsKtdr9cUAMRrvD5ir/GmmheEMzFmgyPkopmBcAw34DjVrzzKgaetRQGZXax/bkKL8ppJNEL5HJQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QGORNb2tSqOfZHHzJy9mVGOawXlONzXLEU+n53b+4EQ=;
- b=Ju2qGkvt+FUyVYa99OQTIPjhWxP2LFYhDupAaTjI5C3bnejQXDHQhcVvbzH82TvnjKQ7MkcmuAJWeGjfA2o8p+sFGReWJsFnzObGebrZEC8lQtYVdDI49rCk5q1db9qrTNbAEe16i+GbtYALKMJq0As5ouxiWf04x5CCYe1tbFo/Ho873k5PJIezTUUt4o0hH2WxNj8U8gftJYe9H6aSUJV35mOEgpu3UIZlDKGwkFhT79cjCFtklKQyQBTWCAD6GK+GM8Op0Ko/6/5k9wYHrsWwUbj4grRc/I8tR5XM+p7FKj5jVYV1iZCEmr83MlmVrAvHGr4vsvp4xHKiKyM0/w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.73) smtp.rcpttodomain=lists.cip-project.org
- smtp.mailfrom=siemens.com; dmarc=pass (p=none sp=none pct=100) action=none
- header.from=siemens.com; dkim=none (message not signed); arc=none
+ bh=2KNI42/o15FvpdTztav05y4+xFUs+5TGekaX5QoI2BQ=;
+ b=HZZVUe578e1tMnQetVZz5oAIoB+yNREtEdVmLiJwy+X47R7xBogsiN0FyyHuUDyM5WYFrxuI6BE+1In3Mkbe5KofzzuYNt0j65EZuTHu4ypQ2NK/lS3ClBY0b5eofVD+tPbJeQngyegX6usQA1xUXwJGwJpbKCP+Tp3bsKe43/uJTqQD/k9jZZMUTFqSU1WltQbqhpsVXq1BVWMyTYlxSIh7Da3b9wsEqn70cFPX/am1YYqID4bfgSbiZ5HmxZONJ+VhNk7XydcDGYe1f0vAipW3/NJsiC5P5YaU2AbXuqoaAU1dR8cdj2ZB9OGWlhlOUJqBzaKhprKGOUTWb3Yzig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QGORNb2tSqOfZHHzJy9mVGOawXlONzXLEU+n53b+4EQ=;
- b=K5FKOA1lYsbhnAlhyt6Ey4ZDYWZdkGvSl6e/mp4v8hnfqkLDjFe9uCesqnu1afLeflgDFq+y/d51iNd6STb0upuQ/UACzoXkvTOh1YNC4+7TRTF5pBtsf3rmwwcvEELLXQVxbxcIEP6Y4s+XgBCxSqcIrKaCv3TSYiYJIGOqcTrGMW+Y1S/q8m8CXvNpqxqk2MK2jfrXjBeDW+8BHkHOrLXw1I7RFBtmU5dtK2XAvmkeDolt10Ng8bY/GNsxv4rvW2Ydk/RFwqFwcFblU8W6N1AxoXTI8SgIa2lvn0g7O4AIGMmt09nPHRC7qoy0OC1WLDXDDux3GXlBbwki7lfobQ==
-Received: from AS9PR05CA0043.eurprd05.prod.outlook.com (2603:10a6:20b:489::27)
- by AM5PR10MB1698.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:206:1c::26) with
+ bh=2KNI42/o15FvpdTztav05y4+xFUs+5TGekaX5QoI2BQ=;
+ b=oMPyfu8kCtFaIsbRXY65a7QeZc1R4gO6ZinMldickLmjWDqvjA7CEbNLyxcGGY6EHP7iCWWyHiVNAzO+ezkLWCey0S62iqj+2bqHGreFmedDYCfKkBs4OFn1DUWTHvdxBed1RlBQvBuXc4Sx9dMcMSh6RygAsp7jvFzkbHtC8XtJxDjg0DPYegKmdSuucvAETZZUY8oq5muzN+gXDnRk5hNOUn3DlDUahqdEEvEvjD76YCnvA1tns9KC5WFM93fzaWZfcYAt3OfyAahI3DPd1exzaQRnxmd4TDd/gkq53ogKd+vkfaMgYG7ysvrRfPftXKokS5wGQE4mPQ4k+NpYOg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:1f9::22)
+ by DB9PR10MB6004.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:39f::15) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5273.13; Tue, 24 May
- 2022 15:07:08 +0000
-Received: from VE1EUR01FT040.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:20b:489:cafe::2c) by AS9PR05CA0043.outlook.office365.com
- (2603:10a6:20b:489::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5273.22 via Frontend
- Transport; Tue, 24 May 2022 15:07:08 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.73)
- smtp.mailfrom=siemens.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=siemens.com;
-Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.73 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.73; helo=hybrid.siemens.com; pr=C
-Received: from hybrid.siemens.com (194.138.21.73) by
- VE1EUR01FT040.mail.protection.outlook.com (10.152.3.46) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5273.14 via Frontend Transport; Tue, 24 May 2022 15:07:08 +0000
-Received: from DEMCHDC89XA.ad011.siemens.net (139.25.226.103) by
- DEMCHDC9SNA.ad011.siemens.net (194.138.21.73) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.9; Tue, 24 May 2022 17:07:07 +0200
-Received: from [139.25.68.37] (139.25.68.37) by DEMCHDC89XA.ad011.siemens.net
- (139.25.226.103) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2375.24; Tue, 24 May
- 2022 17:07:07 +0200
-Message-ID: <8827c44a-366e-59b3-8062-d2d4b1dd47af@siemens.com>
-Date: Tue, 24 May 2022 17:07:07 +0200
-MIME-Version: 1.0
+ 2022 15:23:31 +0000
+Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::209c:88cc:b026:ed1e]) by AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::209c:88cc:b026:ed1e%2]) with mapi id 15.20.5273.023; Tue, 24 May 2022
+ 15:23:31 +0000
+Message-ID: <17b20d92-af97-5598-8733-f9c625414394@siemens.com>
+Date: Tue, 24 May 2022 17:23:19 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.0
+Content-Language: en-US
+To: Jan Kiszka <jan.kiszka@siemens.com>, cip-dev@lists.cip-project.org
+References: <20220524145757.1704927-1-Quirin.Gylstorff@siemens.com>
+ <8827c44a-366e-59b3-8062-d2d4b1dd47af@siemens.com>
+From: Gylstorff Quirin <quirin.gylstorff@siemens.com>
+Organization: Siemens
 Subject: Re: [cip-dev][isar-cip-core][PATCH] efibootguard-efi: Use correct
  search path for the efibinary
-Content-Language: en-US
-To: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>,
-	<cip-dev@lists.cip-project.org>
-References: <20220524145757.1704927-1-Quirin.Gylstorff@siemens.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <20220524145757.1704927-1-Quirin.Gylstorff@siemens.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <8827c44a-366e-59b3-8062-d2d4b1dd47af@siemens.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [139.25.68.37]
-X-ClientProxiedBy: DEMCHDC89XA.ad011.siemens.net (139.25.226.103) To
- DEMCHDC89XA.ad011.siemens.net (139.25.226.103)
-X-TM-AS-Product-Ver: SMEX-14.0.0.3080-8.6.1018-26680.007
-X-TM-AS-Result: No-10--15.994000-8.000000
-X-TMASE-MatchedRID: /RB2PwB13wM5QaOxwNGfvo9bHfxDWoibx1/NuoFDMxRwsULORIYX4ylj
-	52CeQMtqO6FzZl3Z4YMEVgRlP8d0ToOiFnLlLKM9PdRKVxuI5P9iWV0DQ85LUrNE9DxPih7lxEk
-	sT8U2vYPDQeGGV/t6W3Awi8qlmI2oApQjIaYhHq10ekkMxskO8ZXvqupO0P3ML8y5bOx03xnLQx
-	8PUawjW5soi2XrUn/JyeMtMD9QOgADpAZ2/B/Blrew1twePJJB3QfwsVk0UbtuRXh7bFKB7rJmL
-	kqMDqmMXB9HeuPchyRq7xY1OU7enLx4VXIfnMFcHIV02d1rpG8=
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--15.994000-8.000000
-X-TMASE-Version: SMEX-14.0.0.3080-8.6.1018-26680.007
-X-TM-SNTS-SMTP: 
- C174FBAC80A3EF595E70D5BB766D34EB9361747B72F323768D12E6F552A865B52000:8
-X-EOPAttributedMessage: 0
+X-ClientProxiedBy: AS8PR04CA0064.eurprd04.prod.outlook.com
+ (2603:10a6:20b:313::9) To AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:1f9::22)
+MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 27881829-ad0a-4c25-da5b-08da3d971261
-X-MS-TrafficTypeDiagnostic: AM5PR10MB1698:EE_
+X-MS-Office365-Filtering-Correlation-Id: c27d3f05-cec6-470b-5f4e-08da3d995c35
+X-MS-TrafficTypeDiagnostic: DB9PR10MB6004:EE_
+X-LD-Processed: 38ae3bcd-9579-4fd4-adda-b42e1495d55a,ExtAddr
 X-Microsoft-Antispam-PRVS: 
-	<AM5PR10MB16988372A37D385633A88F2F95D79@AM5PR10MB1698.EURPRD10.PROD.OUTLOOK.COM>
+	<DB9PR10MB60049BBD8A444F10F8DAB1F081D79@DB9PR10MB6004.EURPRD10.PROD.OUTLOOK.COM>
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	En8YRkJVBF24ccYRaqAh3VLgqvKyNA5gjBGoq2+39vq8HqEIjVJGe1Kkrhsg7L4vQAlaizY146k8q2JYpykQdazQLROTWr9mZKVoM2d6L2hbwHJoUuo+5lZMr9UNGX/1ggKz7UlrUb6z38L4HTOtqVXUSwVvi8nHNvnjhft0bCVmasiXgr5qTI6Zcs7P+ciTCLPRcUgP3YbN5TiUXJq0zqgWb3aPDsYOOtg7UOrdjH+s4BWN3DhCiSVP4DMawj1V2U/RMfxkv8r2EGThUZvFcmJSdgKng+ChYRIu5x99wx6ha9+u5VGzOgYoqNkQbDh3yVm3iq8LrX88dFXuMjebw8kNnbWVponxzu4dwE4u3kHmj4vJ/z/6ihFnswej/v/njSyYdCn03XDfPO3KhqGIMWCqRlEZi1k0irYFZ8JoHh66iINBsEMTd2aPki2UaDHSr/zXoCswLHPQagu6Lvfkibmx1NMcgG1dUcnMWQ6c3U3qZ81ik0BngOOGMUGWzYdF743RHXsKlRgYg8TeWJHSBd4ziIiNknhL23vjCpJ6GuNsvhEfDi5k5U72pQXX9Cc9P3p2ReXEvOsHkiMLfMUQ2W9yHnUNX1SG4XpaDDgla8RCs8Fgan0KCCF9jZZKDhBrvQuELTXtZVPYs6dbhBXRDq75Ge10xcv5lxBYMjouBZSluUCudKwSDwoBtygi6qXk3Lfu9+YT/F904T02enbtj7rvPFhYTQ60EqmZe7H6YlgsAwOeM4cQfg5VPGJNU7Mvq8cWuyj6g9RjnsL5mjj4ZQ==
+	/kk/5x2o151yPN+50YK9ip3kT9fhRpxrXgsSOfNJ42s11B7pMBvjnWH3pp0AQzE92x3STbdBkhcdlgX5wWqK46ageSqqNBIFEJd3jB8+9ZXUIfUN5QjcXr7+Z7VdvbxcUGZcsFkve1elrwa6U2dhjgvfYKzq/f2xE9vehqFQgtsElFMvqPykt61o8Gt6N5R2RGuW7164YRLNAiMs2rKrHTWzhau9BkGX/+R3DDSwZ6n31YL4wccAMDq7XO3bU5tSbLXJUnyxj31p5eyozNJI/Z8oWseYB1ATZq7m5MPJXYgtZpf2/ISYMGIwoLv6cgzZn7XWgrg2Wc7WNngoIRyxlX+5fxOPj80GyQTVIGFs26R0ypykpqtd+r0WAnJ62asxnTzS3zlJxL1CZbf/7POhmvgmvlddo+KIYOVc/MqM77uLyyQpXY4WVPIuZF+doboYdB3BDUoQbHGCV6IuNIXzhndqv4IZNSSZ1r2lgXsDZkuVWrFiOVNWApyckxzApjLnWHBtaHGmU1DRVIjUfvQ8rgLAQUJ3UORAc5PI20rrWxGI27gPyZkbIrJazJyPGTnPULVVSLeOB+Kja4UrbJsbIDn4rl2Z054NQdF7EbgfadjWWHpBEcLGcLj3qFsHg7lRd6NUJ/Kb42JkyP8PS0cDBIavAA1kuPxsFjcFQrsv66xbM73shLLiemlobjuTx9Dw1PWI57gHQvrNprAyETMHDWzjME8yq3aODirPHu22liw=
 X-Forefront-Antispam-Report: 
-	CIP:194.138.21.73;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230001)(4636009)(46966006)(36840700001)(40470700004)(356005)(8676002)(36756003)(8936002)(5660300002)(82960400001)(31686004)(81166007)(110136005)(44832011)(40460700003)(16576012)(83380400001)(336012)(6706004)(2616005)(956004)(47076005)(36860700001)(31696002)(82310400005)(316002)(53546011)(508600001)(186003)(70206006)(70586007)(16526019)(26005)(86362001)(2906002)(3940600001)(36900700001)(43740500002);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(6506007)(6512007)(6486002)(66946007)(36756003)(66476007)(66556008)(38100700002)(53546011)(2616005)(186003)(6666004)(83380400001)(5660300002)(508600001)(8936002)(36916002)(82960400001)(2906002)(31696002)(316002)(8676002)(31686004)(86362001)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?a0lSaC9nZVFUMExHR1VNMnZBc3FHOXVXSFM3QUFISllVcnUyczhuSktiaUJU?=
+ =?utf-8?B?U2IyMHZld2MwYlJhMU02djFqVGVrK3hGbnQ3bEl5Y1VjNnlPUTF3N29WK1hE?=
+ =?utf-8?B?WnV2OE1VMkc5bkRxYS94VkpWdGRxdkVaZ2tmcGExTXlaOWFjdmo3WVZ5K0pS?=
+ =?utf-8?B?TC9rZ2hJMStMMW9JcjVKRXRqTmdBZFVvYVR3RVBxbVJpWkdsUDIrN2VyY0dZ?=
+ =?utf-8?B?UnVveGFVU3dFUTZFMzM4WDEyRDZ2U0MwUFM1TGhWekI4RW1SUGJNeUk0d2E4?=
+ =?utf-8?B?aU1ZRzNpZlQvNDZEUGdGTW9CWURrV01QeTFkQXltOXIySnlTQnZaNDUvMFZs?=
+ =?utf-8?B?enA2ZzdwS05nN0VZeEk4cS9IcHd0aWc5YjRHVThkOTAveDFKTDJyYTRjRW5L?=
+ =?utf-8?B?RUxPMmkrbXFSVTVRRXEveGVKS2pMNFlLZGg0a1ZyTFhXUVRObXI4YVE4TmxJ?=
+ =?utf-8?B?STQvMEJBUXFaUDExTTNhOXZQbk1BN0V1Vkg2NjVZVUlyQVdUUXJYSXk4dXBn?=
+ =?utf-8?B?c2xZNExpWTZWVCthVnpjcjlvdVZicDEzRTY3V2VWYU9JelFGRG5RWmdJMzR0?=
+ =?utf-8?B?bVRJd01MN0RTdTlIWU9taVpMYUQyRHdJcisvSGZUTElTaHZ4WklJWnVxL0RR?=
+ =?utf-8?B?OHFyL3FFWUdhOVREYWZXNnB3aWlBblNYamt2YlZkdTlDMjZwaS9MK0RqK2JW?=
+ =?utf-8?B?NkNibFZJV3IrSEJpUVh4aHFsTUczSmRUT2tES3cvSUdyT1N3VVJKbEZObFZs?=
+ =?utf-8?B?TTk0WTFUOTIxTUNKWlE3enQ3NG4xeGJiUDExOU9GUithR3VkL3FGVnA0RGlx?=
+ =?utf-8?B?KzI4ejRwRUtUNG1LVUZhTlFnZWlQTllqdkJIVFc0aXBNYVhETVFjWVBZUkl6?=
+ =?utf-8?B?MmczVEVGLzBmRS9xWFNOYTNGUWZlNkQxYlN1UWtOUy9iQThacnN3ZmNSTm9U?=
+ =?utf-8?B?dU5KclBTd1hVR1JWMktjZXVnNFpTaWRhVi9iRG1ySU1maFVaUVU1THVIL2ZJ?=
+ =?utf-8?B?R3BoK2RWZUV3eFMxdytqMmVhamN3YVM3V2ZhN0dob0J5UzYrZXc0eHZwbit1?=
+ =?utf-8?B?SnFmNHhZMGJidTdrd2RYV0NXOEp6Y0YxSHJ6UlE4U1VDUTdRcXgvSG1DSmFS?=
+ =?utf-8?B?UVd3NG1MUk9EKzdtTWxIUmNRRzFiVWV4YW9nWjFRb3pyc0dXaDBvMmZhMFha?=
+ =?utf-8?B?elVRL2Z1TG52SExRY285V0tzRU9SZFJzZkljNEFabjlEb1JZeTM0bGswM05I?=
+ =?utf-8?B?clJwMmorR3FuT1RhcDZ2dTFXUWpMUkpWTllLc09uMVNndVZMc2JRUWlEQ3dK?=
+ =?utf-8?B?ZzFMZ1NqWmc1MjljLzNJYnNIQTZaMjlpRlBDdVdNbk5aVkpDQzhhcUdvMEhp?=
+ =?utf-8?B?ZHBaaXJ5TXJuQTBFRE0xZWFLdkc2VllTU3Y0MU85V2hoZTFXZ2F1ZXYxekdn?=
+ =?utf-8?B?N2xGYlE0Q3BOOU41Ylp4cVRqL05qZTIrWndFLzUxSkxvWXNwRWV2aGUzUXF4?=
+ =?utf-8?B?ekdpbTYyMWVUb2JaekdjZFpyNkk2L0g3d3FmclI5NUc5VWZ5WlhxRFVvT3pY?=
+ =?utf-8?B?MVJ2ZlR2M2ZsdXk5RjJXRlJ5VHduRHNJeS9GdnBrRTR3SGhnQjMxTldsSm15?=
+ =?utf-8?B?bHpuU2tKMUdtWGJWZnpWMnJYZy9YejcrNmc5MFo0N0YwN1dMQjArcEpNMUhY?=
+ =?utf-8?B?M0pzcjRvVHloSTM1dHF5RXpJeXJ1blhqZzZIMGNUVkpPT2pRcDZOV2w5NUYz?=
+ =?utf-8?B?QkIzNlpGOHY1MmhRelZKWXFoNEVFMzV5NHVGU0RJUFBYRzBNZVB5L2I1RXNN?=
+ =?utf-8?B?YlMxSWpqZElKcnZrK2tRZ2UzM1JIYmVxMThwOWRERkZhaU9IaDUzQ1pjYWpx?=
+ =?utf-8?B?bEllZFEwN3ZSdXBPM3k1WjE1MVZFbThvUDRHcEUvY21wQSt3TzkzU05pQnc5?=
+ =?utf-8?B?ckF3YTRhWm9ta0JFR3N0YWJsOHdVaWVORU42WE5rSEZTOCt1dEU4d0JVcFhr?=
+ =?utf-8?B?Ly9nZHFUaUhib3NnelF4M1BuQ3RscHBGdkpVTTQzQlByTUpuMU1mQzF6cEFi?=
+ =?utf-8?B?OGRoZlZCQUd1VWIyUjlXSFRBL2ZXWmVrRDZBQ2xjZm13RGQyK2MrbG11RkhZ?=
+ =?utf-8?B?dW1tcXBOTmdqb0RQaGhpQnRiRDM2dDNhNkhaUklDTUdIZUdRc3puYkZVOU11?=
+ =?utf-8?B?TVhlbzZTZkVSQUVaa2haOTYxc0V6WnJGb3NqL0dzRHNUTkNjeDNXMkZMSVFU?=
+ =?utf-8?B?L21JVzJtQUxySUtzaUZWd2g2aE16N2t1R1NYWENoOG8xVW44aHJ6REV0VHRy?=
+ =?utf-8?B?T1BlV3FDVjJWRDR0RjkybjgrOGkwY0JnMjBVMVZPVEI4N1FjYzhuNjdwSkds?=
+ =?utf-8?Q?0C5iFA4aNHmz3Y0rGKbs5TZFqUrU+rQQOO7eoXoIe91Ff?=
+X-MS-Exchange-AntiSpam-MessageData-1: cWQwimwie8TnTKDzT/NNRtG+/z+JrwLYIy8=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 May 2022 15:07:08.3636
- (UTC)
 X-MS-Exchange-CrossTenant-Network-Message-Id: 
- 27881829-ad0a-4c25-da5b-08da3d971261
+ c27d3f05-cec6-470b-5f4e-08da3d995c35
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 May 2022 15:23:31.3576
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
- TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.73];Helo=[hybrid.siemens.com]
-X-MS-Exchange-CrossTenant-AuthSource: 
-	VE1EUR01FT040.eop-EUR01.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR10MB1698
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 
+ tvnNsN80jdtRS6H+EmTUlCoxxFvkubn+hr/5ObREe+qYj0WuUOzf7gss3kJCNzdgZdTbt38yXKjELUIlOEzEL3EQ2PHZLEOUPfpCZ0ke6fU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR10MB6004
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 24 May 2022 15:07:17 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8430
+ <cip-dev@lists.cip-project.org>; Tue, 24 May 2022 15:23:37 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8431
 
-On 24.05.22 16:57, Quirin Gylstorff wrote:
-> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+
+
+On 5/24/22 17:07, Jan Kiszka wrote:
+> On 24.05.22 16:57, Quirin Gylstorff wrote:
+>> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>>
+>> This fixes the build error:
+>> ```
+>> ERROR: _exec_cmd: cp /usr/share/efibootguard/efibootguardx64.efi /tmp/tmp.1Y4utA1zC2/sentron-product-sentron-sentron.wic/tmp.wic.ampnawp6/bootx64.efi returned '1' instead of 0
+>> output: cp: cannot stat '/usr/share/efibootguard/efibootguardx64.efi': No such file or directory
+>> ```
+>>
+>> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>> ---
+>>   scripts/lib/wic/plugins/source/efibootguard-efi.py | 6 ++++--
+>>   1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/scripts/lib/wic/plugins/source/efibootguard-efi.py b/scripts/lib/wic/plugins/source/efibootguard-efi.py
+>> index e1411cb..a01e484 100644
+>> --- a/scripts/lib/wic/plugins/source/efibootguard-efi.py
+>> +++ b/scripts/lib/wic/plugins/source/efibootguard-efi.py
+>> @@ -59,8 +59,10 @@ class EfibootguardEFIPlugin(SourcePlugin):
+>>           }
+>>   
+>>           distro_arch = get_bitbake_var("DISTRO_ARCH")
+>> -        bootloader = "/usr/share/efibootguard/efibootguard{}.efi".format(
+>> -            distro_to_efi_arch[distro_arch])
+>> +        rootfs_path = rootfs_dir.get('ROOTFS_DIR')
+>> +        bootloader = "{rootfs_path}/usr/share/efibootguard/efibootguard{efiarch}.efi".format(
+>> +            rootfs_path=rootfs_path,
+>> +            efiarch=distro_to_efi_arch[distro_arch])
+>>           part_rootfs_dir = "%s/disk/%s.%s" % (cr_workdir,
+>>                                                part.label,
+>>                                                part.lineno)
 > 
-> This fixes the build error:
-> ```
-> ERROR: _exec_cmd: cp /usr/share/efibootguard/efibootguardx64.efi /tmp/tmp.1Y4utA1zC2/sentron-product-sentron-sentron.wic/tmp.wic.ampnawp6/bootx64.efi returned '1' instead of 0
-> output: cp: cannot stat '/usr/share/efibootguard/efibootguardx64.efi': No such file or directory
-> ```
+> Makes sense in first sight - but why did it work so far? Or did I miss
+> to test one of the two cases (signed/unsigned)? Did you test both?
 > 
-> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> ---
->  scripts/lib/wic/plugins/source/efibootguard-efi.py | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+> Jan
 > 
-> diff --git a/scripts/lib/wic/plugins/source/efibootguard-efi.py b/scripts/lib/wic/plugins/source/efibootguard-efi.py
-> index e1411cb..a01e484 100644
-> --- a/scripts/lib/wic/plugins/source/efibootguard-efi.py
-> +++ b/scripts/lib/wic/plugins/source/efibootguard-efi.py
-> @@ -59,8 +59,10 @@ class EfibootguardEFIPlugin(SourcePlugin):
->          }
->  
->          distro_arch = get_bitbake_var("DISTRO_ARCH")
-> -        bootloader = "/usr/share/efibootguard/efibootguard{}.efi".format(
-> -            distro_to_efi_arch[distro_arch])
-> +        rootfs_path = rootfs_dir.get('ROOTFS_DIR')
-> +        bootloader = "{rootfs_path}/usr/share/efibootguard/efibootguard{efiarch}.efi".format(
-> +            rootfs_path=rootfs_path,
-> +            efiarch=distro_to_efi_arch[distro_arch])
->          part_rootfs_dir = "%s/disk/%s.%s" % (cr_workdir,
->                                               part.label,
->                                               part.lineno)
+I am still try to find the reason why it work in isar-cip-core. The 
+error occured in a downstream project.
 
-Makes sense in first sight - but why did it work so far? Or did I miss
-to test one of the two cases (signed/unsigned)? Did you test both?
+Quirin
 
-Jan
-
--- 
-Siemens AG, Technology
-Competence Center Embedded Linux
 
