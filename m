@@ -2,142 +2,190 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C8E0C433F5
-	for <webhook@archiver.kernel.org>; Thu, 26 May 2022 07:12:41 +0000 (UTC)
-Received: from EUR02-AM5-obe.outbound.protection.outlook.com
- (EUR02-AM5-obe.outbound.protection.outlook.com [40.107.0.55])
- by mx.groups.io with SMTP id smtpd.web10.17006.1653549159625823433
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75177C433F5
+	for <webhook@archiver.kernel.org>; Thu, 26 May 2022 07:13:51 +0000 (UTC)
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com
+ (EUR05-AM6-obe.outbound.protection.outlook.com [40.107.22.47])
+ by mx.groups.io with SMTP id smtpd.web12.16871.1653549220361917258
  for <cip-dev@lists.cip-project.org>;
- Thu, 26 May 2022 00:12:40 -0700
+ Thu, 26 May 2022 00:13:41 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=Lsdz7iMr;
- spf=pass (domain: siemens.com, ip: 40.107.0.55,
+ dkim=fail reason="body hash did not verify" header.i=@siemens.com
+ header.s=selector2 header.b=OKwVl9Gl;
+ spf=pass (domain: siemens.com, ip: 40.107.22.47,
  mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oIb+g8xRx//M2QVNFoJUq162o2A4lRqUly8ueqrhaw1F7I2xcNgiGa/4Je2ztLuesH+RUh4KJm5H9EHcO4YjMr3luQzMLtNfkyKWCdytfkKDgB7CzGaKXWWo95B8TVPWiT5F7JFz2YgG1cuHq83kDBWo1EssTAFU4DJ94IGnJPZ/YlHwtBqnzoEnvT19GYKE+4UQfdVTAs8eS9vqwguosGkQ/8MvGAF29Dziog847eJWpZf6jG7wso41tJhBVimPOgvzUwfa09lRbckprNSkFvcrpDU2DkSMeW6Suqzu300O1AMqxJ5Z+MxM3v2CD2QK7j4xPKwV+oY9ryfpsQM58A==
+ b=evsilvCDtkixa5Cha79/5ZQsyS3Lv34Lru9fTOD3ShWdXgY12w/oiOSQcTqZ7uclR9aVezv4aIObQ3d9JXSonSjZY1rSBUIunDIxQ1cu+AQ+wecAWFbXOSNDVI1O/Iz6pX2LAa83rGNWncQ5OYl8ZvBR21b4nwGd/5S1FKHTsIcJPyKCDHRJF9A4wu7Ar5dw7BMDO4SA1g0CiRNQry/wtn7sG+eko5GlpZ368kgXJKm5N9OfFVxBTHFHKl/36xsuRy7E0S/Ymc+zwMNVgORdWrNbggqRi8zM/yvNWjC/2VLZW6KPwt4bl8i4UDiJEOoAdysyi9CGtEt/5ITC/x8YSg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MPMDaHTwPkpM5AsPGmiBCUFAZNyEOHs1hATSmfYW1f0=;
- b=Or6HV2ccvob3BWg8jmn6GMNl8Tfe7Pj8AJW/aFid4FHdVYaUdChf4S73u7kL9UFzVEdJNo89HlInjREjdVY3gJr5THPBbWmZciZTOV12PquTRTzYCvpEBdDUYyqifZqXZ9mH+WzeLgnRxnK2kDzI0UyI/o1i4fG01kHsLT2spaNG5YOVo90qYp1GYIVwLU6j78nITGyN5VjElX7gNEJ7M/tz6YlJ7gGWE5Hzpr2Zen7dAzD2RKW4wFK2ujqkafU581EkrN/Ndbj73PoH5GIbuADDPM+eFh2FW3OzSXXVRe1DFYR0XprFJu+oDB1TBdiM3Bpf5kH/d48ClgexT6/cIg==
+ bh=DiXx1YIHtWlxxsWOKCQYyIeXVeblDImThWlin7jY8g8=;
+ b=HHu+UuAP1rpeXVGW2iGKqNOdNkZKgnBO7jr++KxOldNL0FgPMDm0UcRiHXh7FhgLCI6M+CCp84ZAjrXTvgDB2ugpuEXWA4rPUeGmZ0U+JHrs0ugDj4HG4fuf1EqsGJ4T3SOKf3qpBF+WOugAAAfANmuxSagjS8LwjkpUyVux7AyVoFDXOG8tcZR03WfaK6XFo6m2SummIsz6i9rI1qcs7kEM/TXkVgZNcuzTNLnaFw6puMmo3lDGILK2+DY9bzb/qO7j1PrXAkIY/LxhvHIiYBuzCSaKbkLJjRg9FV0EejSq0XQo0dnV5vDUM7Q6CcwIp3DJc+XOtUeRXtMQJB7ppQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.72) smtp.rcpttodomain=lists.cip-project.org
- smtp.mailfrom=siemens.com; dmarc=pass (p=none sp=none pct=100) action=none
- header.from=siemens.com; dkim=none (message not signed); arc=none
+ 194.138.21.70) smtp.rcpttodomain=essensium.com smtp.mailfrom=siemens.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=siemens.com;
+ dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MPMDaHTwPkpM5AsPGmiBCUFAZNyEOHs1hATSmfYW1f0=;
- b=Lsdz7iMrjQ5sVy27nq98gKqeb2uwgep4Nm7N/gKzswjsQyUXiVFztCMqMhNojGcJRicjU0BR+aM7pheyrkOe0G0g+3UpNFmRmY0bSTW7vPlZDAw/bDZHeC3IoNRS85pNZ46908OPXLrA8uCc1GDOg8vmuXaZcgnTimVBxmUxPjY1Oq8gxFzUk6P/RkgE8mDWGOiEjVliHEJ95/C9YNWdsuBWW9gVonOP0lIrhJfqxqvinpH1prmuOXHE4f18S21Co6+Ixm4dXjDrkcfLS/zxLpsLGUQmGZrpXnAaXDmeE+DE+N9Y30UZAMdEkCussO68YdEKdc7sK0YsvwLmggdhOw==
-Received: from DB6P195CA0021.EURP195.PROD.OUTLOOK.COM (2603:10a6:4:cb::31) by
- GVXPR10MB6005.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:1::16) with Microsoft
+ bh=DiXx1YIHtWlxxsWOKCQYyIeXVeblDImThWlin7jY8g8=;
+ b=OKwVl9GlmN50yLrKtrmj3b+8OsFjxDsgX1CeYXu3+AbTHN9yEK0tQKYRaGidm239PPKSAL9UxR9cR7iLwn/WiweHHzSS55xYEj0/unkXX/3hrKlafkBjjvEn/hOTvRNd1ywFh6rx2CPoWX6+YRFEZgedytq2HarDQe/5beAbePk7lYPiu1AqZSxz8R4XwYOygOLAUwhs/ciCVHrcZjgDlEmUoJx3L2RMvJp1NYlF3TaMlYvSerN3UbImABEBJk8SsFGTa4X41YyfxhCp7xsg5Kj1zyH5v7KzqIg5ca/ZyzmOkaHhqvVs+m2hL2vKAXI1OSWqyciUGRCVO0YSDel63A==
+Received: from DB6PR07CA0088.eurprd07.prod.outlook.com (2603:10a6:6:2b::26) by
+ AM0PR10MB1970.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:208:41::28) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5273.15; Thu, 26 May 2022 07:12:36 +0000
-Received: from DB5EUR01FT085.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:4:cb:cafe::b0) by DB6P195CA0021.outlook.office365.com
- (2603:10a6:4:cb::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5293.13 via Frontend
- Transport; Thu, 26 May 2022 07:12:36 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.72)
+ 15.20.5273.17; Thu, 26 May 2022 07:13:37 +0000
+Received: from DB5EUR01FT031.eop-EUR01.prod.protection.outlook.com
+ (2603:10a6:6:2b:cafe::16) by DB6PR07CA0088.outlook.office365.com
+ (2603:10a6:6:2b::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5314.6 via Frontend
+ Transport; Thu, 26 May 2022 07:13:37 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.70)
  smtp.mailfrom=siemens.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=siemens.com;
 Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.72 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.72; helo=hybrid.siemens.com; pr=C
-Received: from hybrid.siemens.com (194.138.21.72) by
- DB5EUR01FT085.mail.protection.outlook.com (10.152.5.9) with Microsoft SMTP
+ 194.138.21.70 as permitted sender) receiver=protection.outlook.com;
+ client-ip=194.138.21.70; helo=hybrid.siemens.com; pr=C
+Received: from hybrid.siemens.com (194.138.21.70) by
+ DB5EUR01FT031.mail.protection.outlook.com (10.152.4.253) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5293.13 via Frontend Transport; Thu, 26 May 2022 07:12:35 +0000
+ 15.20.5293.13 via Frontend Transport; Thu, 26 May 2022 07:13:37 +0000
 Received: from DEMCHDC89XA.ad011.siemens.net (139.25.226.103) by
- DEMCHDC9SMA.ad011.siemens.net (194.138.21.72) with Microsoft SMTP Server
+ DEMCHDC9SJA.ad011.siemens.net (194.138.21.70) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.9; Thu, 26 May 2022 09:12:10 +0200
+ 15.1.2507.9; Thu, 26 May 2022 09:13:36 +0200
 Received: from [139.22.142.41] (139.22.142.41) by
  DEMCHDC89XA.ad011.siemens.net (139.25.226.103) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2375.24; Thu, 26 May 2022 09:12:10 +0200
-Message-ID: <2552c0cc-11f3-1dfb-3528-b16cd845ee4c@siemens.com>
-Date: Thu, 26 May 2022 09:12:09 +0200
+ 15.1.2375.24; Thu, 26 May 2022 09:13:35 +0200
+Message-ID: <6b67164c-22d6-9d68-f5bb-3d8e66bbff2a@siemens.com>
+Date: Thu, 26 May 2022 09:13:35 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.0
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: CIP IRC weekly meeting today on libera.chat
-To: <cip-dev@lists.cip-project.org>
+Subject: Re: [isar-cip-core][PATCH] Update README.swupdate.md for bullseye &
+ 5.10
 Content-Language: en-US
+To: Hannah Kiekens <hannah.kiekens@essensium.com>
+CC: <cip-dev@lists.cip-project.org>
+References: <20220525092017.445653-1-hannah.kiekens@essensium.com>
+ <bb00ccb7-8098-942e-e7d5-d7edbd35ca4f@siemens.com>
+ <CAP07BnkUBJ85TbiWy_QLfD2pQUgp-ExoExgHT3vQw+bPw+6Uvw@mail.gmail.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+In-Reply-To: 
+ <CAP07BnkUBJ85TbiWy_QLfD2pQUgp-ExoExgHT3vQw+bPw+6Uvw@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 X-Originating-IP: [139.22.142.41]
 X-ClientProxiedBy: DEMCHDC89XA.ad011.siemens.net (139.25.226.103) To
  DEMCHDC89XA.ad011.siemens.net (139.25.226.103)
 X-TM-AS-Product-Ver: SMEX-14.0.0.3080-8.6.1018-26680.007
-X-TM-AS-Result: No-10--18.616500-8.000000
-X-TMASE-MatchedRID: EhMq+2gclHtUexHo4vWu8JBmg1zv+iLiePOjK4lyDHhlyUAXnYRaSF+B
-	oH4JnCIGZ++q5oZWwp8oqL1chlV2xfbjZLhs5ua57qEZpoAUsFTispvMxPAIBU6PG3UB9o6G9pL
-	nYtQ99xJLpCLN4NR43oc/Zw06wyFfWExFuTDNuJXwgTN5hsYOwKDRSBS1ZYGL+L2GsArAgto23H
-	KB4DzLVlrpE34WGjdPo8WMkQWv6iUD0yuKrQIMCCAtDqHg/4Qm0C1sQRfQzEHEQdG7H66TyOk/y
-	0w7JiZo
+X-TM-AS-Result: No-10--17.190400-8.000000
+X-TMASE-MatchedRID: U4jXvEiKZBXdDS6etHbe2zsq+vTl5WEz5i83OgDg/A3x5KZMlKYS/QRs
+	BMbTTgAPpOwZN4tKaauzUq0RHquLprk+TRtvZ0rpsbkn7RfbWLbTyr0pKxS1V1mAgNbfIZXLiFh
+	r30/WaYwZSz1vvG+0mgl+HyAcPie7Be8VV754OWfeSx/+SkrflFLj6g9IGWlsiVJZi91I9JgA+J
+	Hhu0IR5rwxqSK0GSPRNNQfTKhqNLWL73aFvRPMW4mlzyMidQUrhpt7HQV8JDnM0ihsfYPMYUy2Q
+	elP2Gj6WGzy6KaAc0LmonZJqUP6wIhNfnfp+MasVcDsTduokkNHoAcTtWUyasYv//yaWh0DrXku
+	ON8pnlHTVzstKV4FISlA/rS07QvhTyRBZrC33sFria9+VRT8L4yQ2d7Gd2Q7hL9NX2TqmkBMkOX
+	0UoduuTE1bv/J9SbfhzgLHqCMyqgr59u/gzv5MLUzq8RBkJuGcNYIRle9ggd2jSf4k8Vwmn0tCK
+	dnhB581B0Hk1Q1KyLUZxEAlFPo846HM5rqDwqtQMeY0ErPlL8lp2M/AC6vH8/YNozH6bYPM+u3R
+	3NL0ZpBDSSW9TZgfQ==
 X-TM-AS-User-Approved-Sender: No
 X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--18.616500-8.000000
+X-TMASE-Result: 10--17.190400-8.000000
 X-TMASE-Version: SMEX-14.0.0.3080-8.6.1018-26680.007
 X-TM-SNTS-SMTP: 
- BF52C1E7380A1DF046EC424D634563FF4D913B1D3A0F70EBE376AD2DD369D9452000:8
+ E232C55C79F48DDF7DAE422B5066A3A7D0040FB80AA2D766F4A2BFB8092C795B2000:8
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 0d0a5670-5f5f-407b-6a1e-08da3ee71bd0
-X-MS-TrafficTypeDiagnostic: GVXPR10MB6005:EE_
+X-MS-Office365-Filtering-Correlation-Id: a470c7f2-79ef-4121-e126-08da3ee740c2
+X-MS-TrafficTypeDiagnostic: AM0PR10MB1970:EE_
 X-Microsoft-Antispam-PRVS: 
-	<GVXPR10MB6005E553C569F3594F099D9F95D99@GVXPR10MB6005.EURPRD10.PROD.OUTLOOK.COM>
+	<AM0PR10MB1970EB8FF6A78C9FB50DDE6A95D99@AM0PR10MB1970.EURPRD10.PROD.OUTLOOK.COM>
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	TjMHY96eDBj4LtN7ojb3Vf8eWWSf0mCniauIIJfUtvdiBENCrMy3sC5tQI/hftQOjNWsf4ZkWus5q8ytwUGP5TJjfHDJQyUB76XjCvTMSRIjz+ooBbn3P6lGak4JuwuW5qEzULJlKD66ZWV1eAzM6STTC8BwkSpU5odJiqw42bpHawfzSRgfrOwRZo1p7nb9vmKZcoW/D9BQLwV9hPQo/+lHca4yCgmTk8uvedS5MUWwH+tuvB6YHa4BwsvG1/fI6Hek/QUGKK26hnidpk/J5vpsEQurOqJvzPp/jZdsD/fh7onKPNgv+PCbRvbqvmUUnRq8QsVP70TyaTVtrKW9wCiiNVHrY0XeR6Cfr1L7KgLxEj1ximOHBZCs2kEgrer9xJWb30Ka9zkrNXX93951ybB8mwYv9FYsJgUFxUR1DQL1YlPfO3vX3e9USWEzTyw0J56+cjX7AUM9qShz+Qu3zxrOgiVbrm2Vk2LIo4P4wXe2vZWOrk+xgafsDGXyYEQ1kmaJWs2RLKDLU0jlva3PCVFHK1fuUvL4pu0+MbxzC5liZI7Q53y+U9jdMLOQSMFz52ixKB8aD6yjImesilkenSCKAn05MlVYshXYia60aBV3H1O6WGyjWRDgD+j6BQd0cKjZhDDJpkxNmhLCLzYHHRD1h6VYkN9bb6TM8S5e7eZt1VqT+USQJok9jXlBULCK+cDRkJABQIRgx+ZOaBbTVtI5dPihc5iudyPPeUVnlsVO0NZJ2sEgK7QZTxumk4DcUoxBVLbdKe6l3D5R+Korc6oWMkACmcGKXyvuxSiXdvyN4Sgwac19QM7hja6BK1Ts9YTAxRjxX6KUU1zQi2n42yK8iDgkVKFVZuajBgZ6iBk=
+	2/MDdeHRu8y1jSd7552xO7sLbD38OEvMoA5VjpVWRoxx0HzVY1ub/Ty9vRcipzagiOmjMmzappoXB8Rie0ct8lPJV9jTIunay+eGgZj6SzSUSDJ+W6OE96dE0r9hIiwymsjDUsLV9V8p6Uz2YW0mL3WOKvPWmmCDT1Xh0UCfRntX0QcHBbD5XroYHEE3aDy3N8ZrMlZbfQP+WlOVZdXAtXsBhb+KSbNX6FCeajmSxQACR2hfEN4G1EF9JfS/Spj7YD9KNhvtSJZmOh/F627Qc+Xo+9m581QHYvTEUG1OfLQ/v2BdGj3w2Z+6sqJFQDfYwPgwl+TuQ9guoW/1fi6RELFhP541wIaSW7rjgnrKQeiVnSkW3r/gzVr1OrHFkSXUD5cvrycqxbovwdYf8lumJt4z+cnafiMKAiI2gx6Sy7H3wVVKaMcaqoAuxkAbnxOd28qk3wDfvF/x2cYv2nXr1zZWfmV8DVnSzLJn48y3VYHdg3NkUGbORcbpSqlABJj7whArRDFYd58ABb4JHddg6uL/3luIK3C5cgDL/v5vEWRdOsYn7IgIzrJLl9QA7wgvvXcqycZJDLMU99wtR16VwfRwxEe/Q/ohQ0jehSTlWMlUsWuP/QbKDqVTdeOjhB4jmeoyoxHSARiXyz2ZyIrWEf03z7tGh3njY0U2t10feswvgnLx1f6etx31PTUA3BR9eOzO/2Klm5qnd5uFk/GspVZ7HTK1P11DaPIOaKIs0yZq/zApy6QAi8AU290VX7hOWAOhTQJjxhHtSa+CcEOFL4pNFjkG5+iaMgWRBDsClnkG7DwH2KAbFxBwHU5dgvEgk10r/1CsoSjVvd8/d6TiqA==
 X-Forefront-Antispam-Report: 
-	CIP:194.138.21.72;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230001)(4636009)(40470700004)(46966006)(36840700001)(36756003)(16526019)(70206006)(26005)(966005)(2616005)(70586007)(956004)(31686004)(83380400001)(36860700001)(8676002)(186003)(336012)(47076005)(508600001)(5660300002)(2906002)(81166007)(356005)(316002)(16576012)(6706004)(82310400005)(44832011)(31696002)(6916009)(40460700003)(4744005)(86362001)(82960400001)(8936002)(3940600001)(36900700001)(43740500002);DIR:OUT;SFP:1101;
+	CIP:194.138.21.70;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:hybrid.siemens.com;CAT:NONE;SFS:(13230001)(4636009)(40470700004)(36840700001)(46966006)(16576012)(6916009)(82960400001)(40460700003)(316002)(6706004)(356005)(8676002)(4326008)(2616005)(31696002)(956004)(16526019)(86362001)(70586007)(70206006)(186003)(36860700001)(966005)(82310400005)(8936002)(26005)(508600001)(7636003)(7596003)(53546011)(31686004)(44832011)(36756003)(2906002)(5660300002)(47076005)(336012)(3940600001)(43740500002);DIR:OUT;SFP:1101;
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 May 2022 07:12:35.0732
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 May 2022 07:13:37.0446
  (UTC)
 X-MS-Exchange-CrossTenant-Network-Message-Id: 
- 0d0a5670-5f5f-407b-6a1e-08da3ee71bd0
+ a470c7f2-79ef-4121-e126-08da3ee740c2
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
- TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.72];Helo=[hybrid.siemens.com]
+ TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.70];Helo=[hybrid.siemens.com]
 X-MS-Exchange-CrossTenant-AuthSource: 
-	DB5EUR01FT085.eop-EUR01.prod.protection.outlook.com
+	DB5EUR01FT031.eop-EUR01.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR10MB6005
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR10MB1970
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 26 May 2022 07:12:41 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8441
+ <cip-dev@lists.cip-project.org>; Thu, 26 May 2022 07:13:51 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8442
 
-Hi all,
+On 25.05.22 19:34, Hannah Kiekens wrote:
+> On Wed, May 25, 2022 at 1:41 PM Jan Kiszka <jan.kiszka@siemens.com
+> <mailto:jan.kiszka@siemens.com>> wrote:
+>=20
+>     Hehe, someone actually read AND tried the manual :). Thanks for carin=
+g!
+>=20
+>     Would be good to list some reasoning for switching to bullseye here.
+>     Buster should still work, "just" not with 4.19 anymore.
+>=20
+>     In fact, we should think about making bullseye default in kas-cip.yml=
+.
+>=20
+>=20
+> There is no real reason why I am switching to bullseye.
+> This combination worked great, what it was before did not
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss
-technical topics with CIP kernel today. Our channel is the following:
+Right, and that is likely only because the current combination chooses
+kernel 4.19 which is no longer working since 05dd963a.
 
-    irc:irc.libera.chat:6667/cip
+> This patch is currently doing the rounds at our site for evaluating/demo
+> isar-cip-core, I needed a working, easy to follow guide for regular
+> techies.=C2=A0 I am not sure if the technical details matter in this case
+> =C2=A0
 
-The IRC meeting is scheduled to UTC (GMT) 12:00:
+For that particular purpose, it does not. However, we should try to
+structure the document in a way that it can be easier maintained or is
+less likely to out-date where possible.
 
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2022&month=5&day=26&hour=12&min=0&sec=0&p1=224&p2=179&p3=136&p4=37&p5=241&p6=248
+>=20
+>     5.10 becomes default when selecting bullseye, so you could drop that
+>     option.
+>=20
+>     It's probably also worth noting that some of the build configuration
+>     issues are "resolved" now via "kas-container menu" and its dependency
+>     encoding. But it is still clearer to describe the actual configuratio=
+n
+>     the way it's done here.
+>=20
+>=20
+> Sorry, it's not entirely clear if you want me to modify this patch or not=
+.
 
-USWest    USEast    UK        DE        TW        JP
-05:00     08:00     13:00     14:00     20:00     21:00
+Was kind of thinking out loudly. Let's make it more concert now:
 
-Last meeting minutes:
-https://ircbot.wl.linuxfoundation.org/meetings/cip/2022/05/cip.2022-05-19-12.00.log.html
+- describe the requirements, here kernel >=3D 5.10
+- suggest to use "kas-container menu", besides providing a concrete
+  call of "kas-container build ..."
 
-* Action items
-  1. Resolve/filter irrelevant failures of KernelCI for 4.4-cip - patersonc & alicefm
-* Kernel maintenance updates
-* Kernel testing
-* AOB
+Meanwhile, I've created a patch to switch defaults to bullseye [1].
 
+Thanks,
 Jan
 
+[1]
+https://lore.kernel.org/cip-dev/9c68811b-c8df-6f80-d314-b379b131ab8c@siemen=
+s.com/T/#u
+
+--=20
+Siemens AG, Technology
+Competence Center Embedded Linux
 
