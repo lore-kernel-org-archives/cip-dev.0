@@ -2,35 +2,35 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D04F8C43334
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4439CCA478
 	for <webhook@archiver.kernel.org>; Thu,  2 Jun 2022 16:17:53 +0000 (UTC)
-Received: from mta-65-227.siemens.flowmailer.net
- (mta-65-227.siemens.flowmailer.net [185.136.65.227])
- by mx.groups.io with SMTP id smtpd.web10.1102.1654186666062101044
+Received: from mta-64-227.siemens.flowmailer.net
+ (mta-64-227.siemens.flowmailer.net [185.136.64.227])
+ by mx.groups.io with SMTP id smtpd.web10.1101.1654186665915218632
  for <cip-dev@lists.cip-project.org>;
- Thu, 02 Jun 2022 09:17:47 -0700
+ Thu, 02 Jun 2022 09:17:46 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=jan.kiszka@siemens.com header.s=fm1 header.b=epXdwrcX;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227,
- mailfrom: fm-294854-20220602161742281501f9214fb7cc9a-2sp8dr@rts-flowmailer.siemens.com)
-Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id
- 20220602161742281501f9214fb7cc9a
+ dkim=pass header.i=jan.kiszka@siemens.com header.s=fm1 header.b=hIdQIe/n;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227,
+ mailfrom: fm-294854-20220602161742f168a21892cbd26395-lkg0jm@rts-flowmailer.siemens.com)
+Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id
+ 20220602161742f168a21892cbd26395
         for <cip-dev@lists.cip-project.org>;
         Thu, 02 Jun 2022 18:17:42 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=jan.kiszka@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=IucXdK3RQuaIbTbMS8cRnJCmj6Q6E7ARUHXVarl+t8c=;
- b=epXdwrcXqYcR9dD+jNw3hWT4K2Abf/PJLCK4mK2fNdYCggMHFlYRn3ez0KaZi/RwNk37Tu
- AD8iYU6X3EjWmaoNo+6FavsHsrCVAS7XDhZ4brhUZA7UqNz9jCJB48BeJRt8NWQNrFoGQlfv
- qycGGP+DvwtkC2L11eFzQWlPUiWmk=;
+ bh=2ifexCO22k4GEvY2KDFSrAZX4024YUpE36YbJbPVUAU=;
+ b=hIdQIe/n0iOkzeXtXJeIlz0odJXVLrj5h+dej9nuV3D0xuIuQGgURVwC0AuHi0CU7RDGyT
+ CEmMu/tqCfx9mVOq5kn2L8gPPHe0djfy5mDs4Ad/mCaoyAfd1/LVqXDjuP4UZI0fsBTGAI3A
+ LTk2INiQ31c8nfijQ5idchoNWTv48=;
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org
-Subject: [isar-cip-core][PATCH 2/2] initramfs-verity-hook: Account for slower
- storage devices
-Date: Thu,  2 Jun 2022 18:17:41 +0200
+Subject: [isar-cip-core][PATCH 1/2] initramfs-abrootfs-hook: Account for
+ slower storage devices
+Date: Thu,  2 Jun 2022 18:17:40 +0200
 Message-Id: 
- <27f88e9abfcbe9746bb9c202544105de8538ff5d.1654186661.git.jan.kiszka@siemens.com>
+ <590cdfb4e4c4f66354e144875c28390122be66ea.1654186661.git.jan.kiszka@siemens.com>
 In-Reply-To: <cover.1654186661.git.jan.kiszka@siemens.com>
 References: <cover.1654186661.git.jan.kiszka@siemens.com>
 MIME-Version: 1.0
@@ -41,58 +41,39 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 02 Jun 2022 16:17:53 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8480
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8479
 
 From: Jan Kiszka <jan.kiszka@siemens.com>
 
-Same story as for abrootfs-hook, same solution pattern, just different
-implementation of find_root_via_image_uuid.
+Add a retry loop to account for storage devices that do not show up
+immediately. Specifically USB can fall under this.
+
+The logic is split along the classic PARTUUID/PARTLABEL case and the
+more complex image UUID matching. To avoid continously mounting/
+checking/unmounting the same partitions partitions, we keep track of the
+already checked ones and only test those that are newly discovered.
 
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
- .../files/verity.script.tmpl                  | 109 ++++++++++++++----
- 1 file changed, 88 insertions(+), 21 deletions(-)
+ .../files/abrootfs.script                     | 86 +++++++++++++++----
+ 1 file changed, 71 insertions(+), 15 deletions(-)
 
-diff --git a/recipes-initramfs/initramfs-verity-hook/files/verity.script.tmpl b/recipes-initramfs/initramfs-verity-hook/files/verity.script.tmpl
-index da37711..8865b0f 100644
---- a/recipes-initramfs/initramfs-verity-hook/files/verity.script.tmpl
-+++ b/recipes-initramfs/initramfs-verity-hook/files/verity.script.tmpl
-@@ -1,4 +1,15 @@
- #!/bin/sh
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2021-2022
-+#
-+# Authors:
-+#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#  Jan Kiszka <jan.kiszka@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+
- prereqs()
- {
-     # Make sure that this script is run last in local-top
-@@ -22,42 +33,98 @@ esac
+diff --git a/recipes-initramfs/initramfs-abrootfs-hook/files/abrootfs.script b/recipes-initramfs/initramfs-abrootfs-hook/files/abrootfs.script
+index b61fe30..23bbfe7 100644
+--- a/recipes-initramfs/initramfs-abrootfs-hook/files/abrootfs.script
++++ b/recipes-initramfs/initramfs-abrootfs-hook/files/abrootfs.script
+@@ -30,37 +30,93 @@ esac
  . /scripts/functions
- . /lib/cryptsetup/functions
- . /usr/share/verity-env/verity.env
-+
+ . /usr/share/abrootfs/image-uuid.env
+ 
 +find_root_via_image_uuid()
 +{
-+    for part in ${partitions}; do
-+        if [ "$(blkid -p ${part} --match-types novfat -s USAGE -o value)" = "filesystem" ]; then
-+            verity_uuid=$(
-+                veritysetup dump "${part}" --hash-offset "${HASH_OFFSET}" | \
-+                    while IFS=":" read key value; do
-+                        if [ "${key}" = "UUID" ]; then
-+                            # this pattern must use a real tab
-+                            echo "${value##*	}"
-+                            break
-+                        fi
-+                    done
-+                )
-+            if [ "${UUID}" = "${verity_uuid}" ]; then
++    for part in $partitions; do
++        if [ "$(blkid -p "${part}" --match-types novfat -s USAGE -o value)" = "filesystem" ]; then
++            mount -o ro -t "$(get_fstype "${part}")" "${part}" "${rootmnt}"
++            . "${rootmnt}/etc/os-release"
++            umount "${rootmnt}"
++            if [ "${IMAGE_UUID}" = "${TARGET_IMAGE_UUID}" ]; then
 +                found_root="${part}"
 +                break
 +            fi
@@ -103,7 +84,7 @@ index da37711..8865b0f 100644
  # Even if this script fails horribly, make sure there won't be a chance the
  # current $ROOT will be attempted.  As this device most likely contains a
  # perfectly valid filesystem, it would be mounted successfully, leading to a
- # broken trust chain.
+ # broken boot.
  echo "ROOT=/dev/null" >/conf/param.conf
  wait_for_udev 10
 +
@@ -134,22 +115,16 @@ index da37711..8865b0f 100644
 +        fi
          ;;
      "")
-         # No Root device was given. Use veritysetup verify to search matching roots
+-        # No Root device was given. Use find the matching IMAGE_UUID
 -        partitions=$(blkid -o device)
--        for part in ${partitions}; do
+-        for part in $partitions; do
 -            if [ "$(blkid -p ${part} --match-types novfat -s USAGE -o value)" = "filesystem" ]; then
--                verity_uuid=$(
--                    veritysetup dump "${part}" --hash-offset "${HASH_OFFSET}" | \
--                        while IFS=":" read key value; do
--                            if [ "${key}" = "UUID" ]; then
--                                # this pattern must use a real tab
--                                echo "${value##*	}"
--                                break
--                            fi
--                        done
--                    )
--                if [ "${UUID}" = "${verity_uuid}" ]; then
--                    ROOT="${part}"
+-                mount -o ro -t $(get_fstype $part) $part ${rootmnt}
+-                . ${rootmnt}/etc/os-release
+-                umount ${rootmnt}
+-                if [ "${IMAGE_UUID}" = "${TARGET_IMAGE_UUID}" ]; then
+-                    ROOT="$part"
++        # No Root device was given. Search for the matching IMAGE_UUID
 +        partitions="$(blkid -o device)"
 +        find_root_via_image_uuid
 +        if [ -z "${found_root}" ]; then
@@ -188,11 +163,14 @@ index da37711..8865b0f 100644
 +        fi
          ;;
  esac
--set -- "$ROOT" verityroot
-+set -- "${found_root}" verityroot
- if ! veritysetup open \
-      ${VERITY_BEHAVIOR_ON_CORRUPTION} \
-      --data-block-size "${DATA_BLOCK_SIZE}" \
+ 
+-if [ -z "${ROOT}" ]; then
++if [ -z "${found_root}" ]; then
+     panic "Can't find the root device with matching UUID!"
+ fi
+ 
++ROOT="${found_root}"
+ echo "ROOT=${ROOT}" >/conf/param.conf
 -- 
 2.35.3
 
