@@ -2,40 +2,39 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B68DC433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC00CCA483
 	for <webhook@archiver.kernel.org>; Tue,  7 Jun 2022 10:08:20 +0000 (UTC)
 Received: from mta-65-225.siemens.flowmailer.net
  (mta-65-225.siemens.flowmailer.net [185.136.65.225])
- by mx.groups.io with SMTP id smtpd.web12.10623.1654596491769100680
+ by mx.groups.io with SMTP id smtpd.web08.10867.1654596491767881543
  for <cip-dev@lists.cip-project.org>;
  Tue, 07 Jun 2022 03:08:12 -0700
 Authentication-Results: mx.groups.io;
  dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1
- header.b=Jo1FHFja;
+ header.b=LqS2bvIp;
  spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225,
- mailfrom: fm-51332-202206071008092d2e8071a551d9df6e-em2qyd@rts-flowmailer.siemens.com)
+ mailfrom: fm-51332-20220607100807713ebd7a00be4b8511-jbhzef@rts-flowmailer.siemens.com)
 Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id
- 202206071008092d2e8071a551d9df6e
+ 20220607100807713ebd7a00be4b8511
         for <cip-dev@lists.cip-project.org>;
         Tue, 07 Jun 2022 12:08:09 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=y6QfgOT1/yP4Ri9wCkZMHVjJ18ULvfxJD+R+ktml88k=;
- b=Jo1FHFjaXP7wy5GCdRdnE97M1kP9RZ6GXsORV4hMmqbOvuA8w/IsuN4MAdgQ+SX+WejHjK
- j57Wn68J1QZ61V2or5JZpJ9Dyd/w6ohsR8LN5zJ9golrjs+BkI51sVm0ruEjmZb8mVZgF70O
- 9pDyd494vh/M7H+jARwqPHfsZTolI=;
+ bh=VPEqPvFLRwEzZraJ+V9RLP2b+4qroFJu1g71zSsklWQ=;
+ b=LqS2bvIpxVDSrangTrNm2r16X7XZhp0ezWVNZh28avgQfhtziBP7fQVaiLkv8wKwCPxm9I
+ B1uVbkJ9MhQYO5QF4qD1xHKBLnCVM9AMlXmhOxVJcNLTXzrIY+w0ScD/f3Wy64r8HYaPUgxk
+ vIBAvTkBtmOcS/PIaSnDebytaIe88=;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org,
 	jan.kiszka@siemens.com,
 	adriaan.schmidt@siemens.com
-Subject: [cip-dev][isar-cip-core][RFC v2 4/4] scripts/deploy-cip-core: Adapt
- to new image names
-Date: Tue,  7 Jun 2022 12:08:06 +0200
-Message-Id: <20220607100806.133889-5-Quirin.Gylstorff@siemens.com>
-In-Reply-To: <20220607100806.133889-1-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][RFC v2 0/4] Adapt isar-cip-core to ISAR
+ IMAGE_CMD_*
+Date: Tue,  7 Jun 2022 12:08:02 +0200
+Message-Id: <20220607100806.133889-1-Quirin.Gylstorff@siemens.com>
+In-Reply-To: <20220603115618.985568-1-Quirin.Gylstorff@siemens.com>
 References: <20220603115618.985568-1-Quirin.Gylstorff@siemens.com>
- <20220607100806.133889-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
@@ -44,38 +43,101 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 07 Jun 2022 10:08:20 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8506
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8504
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-The identifier img was delete from the image name.
+This series adapt isar-cip-core to the IMAGE_CMD_* introduced in
+ISAR commit [1]. See also ISAR API changelog[2].
 
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
----
- scripts/deploy-cip-core.sh | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+This new feature remove the *.img from all wic images.
 
-diff --git a/scripts/deploy-cip-core.sh b/scripts/deploy-cip-core.sh
-index cf8f45d..203ab1d 100755
---- a/scripts/deploy-cip-core.sh
-+++ b/scripts/deploy-cip-core.sh
-@@ -28,12 +28,12 @@ fi
- BASE_PATH=build/tmp/deploy/images/$TARGET/$BASE_FILENAME
- S3_TARGET=s3://download2.cip-project.org/cip-core/$REF/$TARGET/
- 
--if [ -f $BASE_PATH.wic.img ] ; then
--	echo "Compressing $BASE_FILENAME.wic.img..."
--	xz -9 -k $BASE_PATH.wic.img
-+if [ -f $BASE_PATH.wic ] ; then
-+	echo "Compressing $BASE_FILENAME.wic..."
-+	xz -9 -k $BASE_PATH.wic
- 
- 	echo "Uploading artifacts..."
--	aws s3 cp --no-progress --acl public-read $BASE_PATH.wic.img.xz ${S3_TARGET}
-+	aws s3 cp --no-progress --acl public-read $BASE_PATH.wic.xz ${S3_TARGET}
- fi
- 
- if [ -f $BASE_PATH.tar.gz ]; then
+Also as new naming convention image recipes no longer end with `-img`.
+
+The image types wic-swu-img and secure-wic-swu-img were removed.
+Rename `squashfs-img` to squashfs according new naming scheme.
+
+To use squashfs include:
+
+    IMAGE_CLASSES += "squashfs"
+    IMAGE_TYPEDEP_wic += "squashfs"
+
+
+To create a verity based image to following line need to be added
+to the local.conf or similar configuration:
+
+    IMAGE_CLASSES += "verity"
+
+The modifications for a read-only root file system are now part
+of a bbclass which can be include directly into the image
+recipe.
+
+The modifications to generate a SWUpdate update package are
+also no longer part of the image build process and in a seperate
+bbclass. This class needs to be included in the image recipe.
+
+Please check/test the interface changes for swupdate and read-only root
+file system.
+
+I tested qemu-amd64/qemu-arm64 with swupdate and secure boot.
+
+Quirin
+
+[1]: https://github.com/ilbers/isar/commit/f792fd0deed1ae1d9deb3ee28b1a1add96ecdf14
+[2]: https://github.com/ilbers/isar/blob/next/RECIPE-API-CHANGELOG.md#changes-to-image-types
+
+Changes in v2:
+ - update ISAR to commit 1000df8e98b9a5849a7897698039687fd0cdd7d3 to avoid
+   double gz compression for tar images. This also allows to drop the patch
+   "0001-Fix-permissions-when-splitting-rootfs-folders-across.patch"
+ - fix image option `kas/opt/wic-targz-img.yml` for ci build 
+ - fix whitespace errors
+ - used compressed rootfs in sw-description
+
+
+
+Quirin Gylstorff (4):
+  ISAR update
+  start-qemu.sh: adapt to new image names
+  Adapt swupdate and verity to use new IMAGE_CMD_*
+  scripts/deploy-cip-core: Adapt to new image names
+
+ ...u-img.bbclass => read-only-rootfs.bbclass} | 11 +---
+ classes/secure-wic-swu-img.bbclass            | 15 ------
+ ...{squashfs-img.bbclass => squashfs.bbclass} | 15 ++----
+ ...{swupdate-img.bbclass => swupdate.bbclass} |  8 +--
+ .../{verity-img.bbclass => verity.bbclass}    | 50 +++++++++----------
+ classes/wic-targz-img.bbclass                 | 15 ------
+ conf/machine/bbb.conf                         |  2 +-
+ conf/machine/hihope-rzg2m.conf                |  2 +-
+ conf/machine/iwg20m.conf                      |  2 +-
+ conf/machine/qemu-amd64.conf                  |  2 +-
+ conf/machine/qemu-arm.conf                    |  2 +-
+ conf/machine/qemu-arm64.conf                  |  2 +-
+ conf/machine/simatic-ipc227e.conf             |  2 +-
+ kas-cip.yml                                   |  6 +--
+ kas/opt/ebg-secure-boot-snakeoil.yml          |  3 +-
+ kas/opt/efibootguard.yml                      |  2 +-
+ kas/opt/swupdate.yml                          |  4 +-
+ kas/opt/targz-img.yml                         |  2 +-
+ kas/opt/wic-targz-img.yml                     |  2 +-
+ ...when-splitting-rootfs-folders-across.patch | 35 -------------
+ recipes-core/images/swupdate.inc              |  7 ++-
+ .../initramfs-verity-hook_0.1.bb              |  2 +-
+ scripts/deploy-cip-core.sh                    |  8 +--
+ start-qemu.sh                                 |  8 +--
+ wic/qemu-amd64-efibootguard-secureboot.wks.in |  4 +-
+ wic/qemu-arm64-efibootguard-secureboot.wks.in |  4 +-
+ wic/x86-efibootguard.wks.in                   |  4 +-
+ 27 files changed, 71 insertions(+), 148 deletions(-)
+ rename classes/{wic-swu-img.bbclass => read-only-rootfs.bbclass} (75%)
+ delete mode 100644 classes/secure-wic-swu-img.bbclass
+ rename classes/{squashfs-img.bbclass => squashfs.bbclass} (66%)
+ rename classes/{swupdate-img.bbclass => swupdate.bbclass} (92%)
+ rename classes/{verity-img.bbclass => verity.bbclass} (78%)
+ delete mode 100644 classes/wic-targz-img.bbclass
+ delete mode 100644 patches/isar/0001-Fix-permissions-when-splitting-rootfs-folders-across.patch
+
 -- 
 2.35.1
 
