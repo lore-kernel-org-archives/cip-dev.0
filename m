@@ -2,39 +2,40 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 353ECCCA47C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37AFECCA47B
 	for <webhook@archiver.kernel.org>; Fri, 10 Jun 2022 11:33:09 +0000 (UTC)
 Received: from mta-64-228.siemens.flowmailer.net
  (mta-64-228.siemens.flowmailer.net [185.136.64.228])
- by mx.groups.io with SMTP id smtpd.web08.25978.1654860786261650316
+ by mx.groups.io with SMTP id smtpd.web10.25993.1654860786486094049
  for <cip-dev@lists.cip-project.org>;
  Fri, 10 Jun 2022 04:33:07 -0700
 Authentication-Results: mx.groups.io;
  dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1
- header.b=AoV8hiE2;
+ header.b=LKwXRwwZ;
  spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.228,
- mailfrom: fm-51332-202206101133031d1e0fbf65158c1e44-hjobdx@rts-flowmailer.siemens.com)
+ mailfrom: fm-51332-20220610113304402682e3eb56dde6fd-dcph2_@rts-flowmailer.siemens.com)
 Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id
- 202206101133031d1e0fbf65158c1e44
+ 20220610113304402682e3eb56dde6fd
         for <cip-dev@lists.cip-project.org>;
-        Fri, 10 Jun 2022 13:33:03 +0200
+        Fri, 10 Jun 2022 13:33:04 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=rgXplQpLLcvFQSxq5m1bfDiyO6KvbPfsk5PpKr7MykI=;
- b=AoV8hiE2Al2M0vwWN1rQSVF3unNFr+nrfSEi61P5amYtch8swTR1DcFUJGfOeomZGh1dW/
- 3/ef2VbgI0bfcvrEr8xrTg2e1UjWRhmvMkYe/WMZ4Wp6EoQE9pdFg5lWtbO2yCP8Ug9oWILA
- ghPtxqdwKNy6I/Lf23e155ddfxX9s=;
+ bh=KR9JOSCv3Xs+ax9oqqhJkVNo0l6+niN9fMwZpBt4wBg=;
+ b=LKwXRwwZyRW5eA8VRB/FLEtefQ67JdX51KOo8z1y5nYv7b1865Rtlwt68jt3GZaTwAHfMY
+ MwKjPZWrQZ/Tn53LShGVyKTF5OeJtU1hDZtxvIR1zmK7HP7aANTdUkSs1gIwdLB3mMAbgdE0
+ UQE8AnTnMdAGsvu0l4kNqQnxrD+7M=;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org,
 	jan.kiszka@siemens.com,
 	adriaan.schmidt@siemens.com
-Subject: [cip-dev][isar-cip-core][RFC v3 0/5] Adapt isar-cip-core to ISAR
- IMAGE_CMD_*
-Date: Fri, 10 Jun 2022 13:32:57 +0200
-Message-Id: <20220610113302.1225351-1-Quirin.Gylstorff@siemens.com>
-In-Reply-To: <20220607100806.133889-1-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][RFC v3 4/5] Adapt swupdate and verity to use
+ new IMAGE_CMD_*
+Date: Fri, 10 Jun 2022 13:33:01 +0200
+Message-Id: <20220610113302.1225351-5-Quirin.Gylstorff@siemens.com>
+In-Reply-To: <20220610113302.1225351-1-Quirin.Gylstorff@siemens.com>
 References: <20220607100806.133889-1-Quirin.Gylstorff@siemens.com>
+ <20220610113302.1225351-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
@@ -43,16 +44,9 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 10 Jun 2022 11:33:09 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8529
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8532
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-
-This series adapt isar-cip-core to the IMAGE_CMD_* introduced in
-ISAR commit [1]. See also ISAR API changelog[2].
-
-This new feature remove the *.img from all wic images.
-
-Also as new naming convention image recipes no longer end with `-img`.
 
 The image types wic-swu-img and secure-wic-swu-img were removed.
 Rename `squashfs-img` to squashfs according new naming scheme.
@@ -62,12 +56,6 @@ To use squashfs include:
     IMAGE_CLASSES += "squashfs"
     IMAGE_TYPEDEP_wic += "squashfs"
 
-
-To create a verity based image to following line need to be added
-to the local.conf or similar configuration:
-
-    IMAGE_CLASSES += "verity"
-
 The modifications for a read-only root file system are now part
 of a bbclass which can be include directly into the image
 recipe.
@@ -76,75 +64,347 @@ The modifications to generate a SWUpdate update package are
 also no longer part of the image build process and in a seperate
 bbclass. This class needs to be included in the image recipe.
 
-Please check/test the interface changes for swupdate and read-only root
-file system.
+To create a verity based image to following line need to be added
+to the local.conf or similar configuration:
 
-I tested qemu-amd64/qemu-arm64 with swupdate and secure boot.
+    IMAGE_CLASSES += "verity"
 
-Quirin
-
-[1]: https://github.com/ilbers/isar/commit/f792fd0deed1ae1d9deb3ee28b1a1add96ecdf14
-[2]: https://github.com/ilbers/isar/blob/next/RECIPE-API-CHANGELOG.md#changes-to-image-types
-
-Changes in v2:
- - update ISAR to commit 1000df8e98b9a5849a7897698039687fd0cdd7d3 to avoid
-   double gz compression for tar images. This also allows to drop the patch
-   "0001-Fix-permissions-when-splitting-rootfs-folders-across.patch"
- - fix image option `kas/opt/wic-targz-img.yml` for ci build 
- - fix whitespace errors
- - used compressed rootfs in sw-description
-
-Changes in v3:
- - adapt build of u-boot-qemu-arm64
- - fix qemu-arm64 swupdate build, adapt wic/qemu-arm64-efibootguard.wks.in to new image names
-
-Quirin Gylstorff (5):
-  ISAR update
-  u-boot-qemu-arm64: Adapt to 'Do not use shell environment'
-  start-qemu.sh: adapt to new image names
-  Adapt swupdate and verity to use new IMAGE_CMD_*
-  scripts/deploy-cip-core: Adapt to new image names
-
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
  ...u-img.bbclass => read-only-rootfs.bbclass} | 11 +---
  classes/secure-wic-swu-img.bbclass            | 15 ------
  ...{squashfs-img.bbclass => squashfs.bbclass} | 15 ++----
  ...{swupdate-img.bbclass => swupdate.bbclass} |  8 +--
  .../{verity-img.bbclass => verity.bbclass}    | 50 +++++++++----------
- classes/wic-targz-img.bbclass                 | 15 ------
- conf/machine/bbb.conf                         |  2 +-
- conf/machine/hihope-rzg2m.conf                |  2 +-
- conf/machine/iwg20m.conf                      |  2 +-
- conf/machine/qemu-amd64.conf                  |  2 +-
- conf/machine/qemu-arm.conf                    |  2 +-
- conf/machine/qemu-arm64.conf                  |  2 +-
- conf/machine/simatic-ipc227e.conf             |  2 +-
- kas-cip.yml                                   |  6 +--
  kas/opt/ebg-secure-boot-snakeoil.yml          |  3 +-
- kas/opt/efibootguard.yml                      |  2 +-
- kas/opt/swupdate.yml                          |  4 +-
- kas/opt/targz-img.yml                         |  2 +-
- kas/opt/wic-targz-img.yml                     |  2 +-
- ...when-splitting-rootfs-folders-across.patch | 35 -------------
- .../u-boot/files/{rules => rules.tmpl}        |  2 +-
- .../u-boot/u-boot-qemu-arm64_2022.04.bb       |  6 +--
+ kas/opt/swupdate.yml                          |  2 +
  recipes-core/images/swupdate.inc              |  7 ++-
  .../initramfs-verity-hook_0.1.bb              |  2 +-
- scripts/deploy-cip-core.sh                    |  8 +--
- start-qemu.sh                                 |  8 +--
  wic/qemu-amd64-efibootguard-secureboot.wks.in |  4 +-
  wic/qemu-arm64-efibootguard-secureboot.wks.in |  4 +-
  wic/qemu-arm64-efibootguard.wks.in            |  4 +-
  wic/x86-efibootguard.wks.in                   |  4 +-
- 30 files changed, 75 insertions(+), 156 deletions(-)
+ 13 files changed, 53 insertions(+), 76 deletions(-)
  rename classes/{wic-swu-img.bbclass => read-only-rootfs.bbclass} (75%)
  delete mode 100644 classes/secure-wic-swu-img.bbclass
  rename classes/{squashfs-img.bbclass => squashfs.bbclass} (66%)
  rename classes/{swupdate-img.bbclass => swupdate.bbclass} (92%)
  rename classes/{verity-img.bbclass => verity.bbclass} (78%)
- delete mode 100644 classes/wic-targz-img.bbclass
- delete mode 100644 patches/isar/0001-Fix-permissions-when-splitting-rootfs-folders-across.patch
- rename recipes-bsp/u-boot/files/{rules => rules.tmpl} (96%)
 
+diff --git a/classes/wic-swu-img.bbclass b/classes/read-only-rootfs.bbclass
+similarity index 75%
+rename from classes/wic-swu-img.bbclass
+rename to classes/read-only-rootfs.bbclass
+index 41b2164..6f91f66 100644
+--- a/classes/wic-swu-img.bbclass
++++ b/classes/read-only-rootfs.bbclass
+@@ -9,16 +9,10 @@
+ # SPDX-License-Identifier: MIT
+ #
+ 
+-SQUASHFS_EXCLUDE_DIRS += "home var"
+-
+-inherit squashfs-img
+-inherit wic-img
+-inherit swupdate-img
+-
+ INITRAMFS_RECIPE ?= "cip-core-initramfs"
+ INITRD_IMAGE = "${INITRAMFS_RECIPE}-${DISTRO}-${MACHINE}.initrd.img"
+ 
+-do_wic_image[depends] += "${INITRAMFS_RECIPE}:do_build"
++do_image_wic[depends] += "${INITRAMFS_RECIPE}:do_build"
+ 
+ IMAGE_INSTALL += "home-fs"
+ IMAGE_INSTALL += "tmp-fs"
+@@ -37,6 +31,3 @@ devtmpfs	/dev		devtmpfs	mode=0755,nosuid		0	0
+ EOF
+ }
+ 
+-addtask do_wic_image after do_squashfs_image
+-
+-addtask do_swupdate_image after do_wic_image
+diff --git a/classes/secure-wic-swu-img.bbclass b/classes/secure-wic-swu-img.bbclass
+deleted file mode 100644
+index 5e8e48a..0000000
+--- a/classes/secure-wic-swu-img.bbclass
++++ /dev/null
+@@ -1,15 +0,0 @@
+-#
+-# CIP Core, generic profile
+-#
+-# Copyright (c) Siemens AG, 2021-2022
+-#
+-# Authors:
+-#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+-#
+-# SPDX-License-Identifier: MIT
+-#
+-
+-inherit verity-img
+-inherit wic-swu-img
+-
+-addtask do_wic_image after do_verity_image
+diff --git a/classes/squashfs-img.bbclass b/classes/squashfs.bbclass
+similarity index 66%
+rename from classes/squashfs-img.bbclass
+rename to classes/squashfs.bbclass
+index c22d7d6..376ddfe 100644
+--- a/classes/squashfs-img.bbclass
++++ b/classes/squashfs.bbclass
+@@ -9,9 +9,7 @@
+ # SPDX-License-Identifier: MIT
+ #
+ 
+-SQUASHFS_IMAGE_FILE = "${IMAGE_FULLNAME}.squashfs.img"
+-
+-IMAGER_INSTALL += "squashfs-tools"
++IMAGER_INSTALL_squashfs += "squashfs-tools"
+ 
+ SQUASHFS_EXCLUDE_DIRS ?= ""
+ SQUASHFS_CONTENT ?= "${PP_ROOTFS}"
+@@ -29,14 +27,11 @@ python __anonymous() {
+     d.appendVar('SQUASHFS_CREATION_ARGS', args)
+ }
+ 
+-do_squashfs_image[dirs] = "${DEPLOY_DIR_IMAGE}"
+-do_squashfs_image() {
++IMAGE_CMD_squashfs[depends] = "${PN}:do_transform_template"
++IMAGE_CMD_squashfs() {
+     rm -f '${DEPLOY_DIR_IMAGE}/${SQUASHFS_IMAGE_FILE}'
+ 
+-    image_do_mounts
+-
+-    sudo chroot "${BUILDCHROOT_DIR}" /bin/mksquashfs  \
+-        "${SQUASHFS_CONTENT}" "${PP_DEPLOY}/${SQUASHFS_IMAGE_FILE}" \
++    ${SUDO_CHROOT} /bin/mksquashfs \
++        '${SQUASHFS_CONTENT}' '${IMAGE_FILE_CHROOT}' \
+         ${SQUASHFS_CREATION_ARGS}
+ }
+-addtask do_squashfs_image before do_image after do_image_tools do_excl_directories
+diff --git a/classes/swupdate-img.bbclass b/classes/swupdate.bbclass
+similarity index 92%
+rename from classes/swupdate-img.bbclass
+rename to classes/swupdate.bbclass
+index 1437c07..c3fc303 100644
+--- a/classes/swupdate-img.bbclass
++++ b/classes/swupdate.bbclass
+@@ -18,9 +18,9 @@ SWU_SIGNATURE_TYPE ?= "rsa"
+ 
+ IMAGER_INSTALL += "${@'openssl' if bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}"
+ 
+-do_swupdate_image[stamp-extra-info] = "${DISTRO}-${MACHINE}"
+-do_swupdate_image[cleandirs] += "${WORKDIR}/swu"
+-do_swupdate_image() {
++do_swupdate_binary[stamp-extra-info] = "${DISTRO}-${MACHINE}"
++do_swupdate_binary[cleandirs] += "${WORKDIR}/swu"
++do_swupdate_binary() {
+     rm -f '${SWU_IMAGE_FILE}'
+     cp '${WORKDIR}/${SWU_DESCRIPTION_FILE}' '${WORKDIR}/swu/${SWU_DESCRIPTION_FILE}'
+ 
+@@ -91,4 +91,4 @@ do_swupdate_image() {
+     cd -
+ }
+ 
+-addtask swupdate_image before do_build after do_copy_boot_files do_install_imager_deps do_transform_template
++addtask swupdate_binary before do_build after do_deploy do_copy_boot_files do_install_imager_deps do_transform_template
+diff --git a/classes/verity-img.bbclass b/classes/verity.bbclass
+similarity index 78%
+rename from classes/verity-img.bbclass
+rename to classes/verity.bbclass
+index b7d7f08..0f154fb 100644
+--- a/classes/verity-img.bbclass
++++ b/classes/verity.bbclass
+@@ -11,10 +11,14 @@
+ 
+ VERITY_IMAGE_TYPE ?= "squashfs"
+ 
+-inherit ${VERITY_IMAGE_TYPE}-img
++inherit ${VERITY_IMAGE_TYPE}
+ 
+-VERITY_INPUT_IMAGE ?= "${IMAGE_FULLNAME}.${VERITY_IMAGE_TYPE}.img"
+-VERITY_OUTPUT_IMAGE ?= "${IMAGE_FULLNAME}.${VERITY_IMAGE_TYPE}.verity.img"
++IMAGE_TYPEDEP_verity = "${VERITY_IMAGE_TYPE}"
++IMAGE_TYPEDEP_wic += "verity"
++IMAGER_INSTALL_verity += "cryptsetup"
++
++VERITY_INPUT_IMAGE ?= "${IMAGE_FULLNAME}.${VERITY_IMAGE_TYPE}"
++VERITY_OUTPUT_IMAGE ?= "${IMAGE_FULLNAME}.verity"
+ VERITY_IMAGE_METADATA = "${VERITY_OUTPUT_IMAGE}.metadata"
+ VERITY_HASH_BLOCK_SIZE ?= "1024"
+ VERITY_DATA_BLOCK_SIZE ?= "1024"
+@@ -37,14 +41,28 @@ create_verity_env_file() {
+     done < $input
+ }
+ 
+-verity_setup() {
++python calculate_verity_data_blocks() {
++    import os
++
++    image_file = os.path.join(
++        d.getVar("DEPLOY_DIR_IMAGE"),
++        d.getVar("VERITY_INPUT_IMAGE")
++    )
++    data_block_size = int(d.getVar("VERITY_DATA_BLOCK_SIZE"))
++    size = os.stat(image_file).st_size
++    assert size % data_block_size == 0, f"image is not well-sized!"
++    d.setVar("VERITY_INPUT_IMAGE_SIZE", str(size))
++    d.setVar("VERITY_DATA_BLOCKS", str(size // data_block_size))
++}
++do_image_verity[cleandirs] = "${WORKDIR}/verity"
++do_image_verity[prefuncs] = "calculate_verity_data_blocks"
++IMAGE_CMD_verity() {
+     rm -f ${DEPLOY_DIR_IMAGE}/${VERITY_OUTPUT_IMAGE}
+     rm -f ${WORKDIR}/${VERITY_IMAGE_METADATA}
+ 
+     cp -a ${DEPLOY_DIR_IMAGE}/${VERITY_INPUT_IMAGE} ${DEPLOY_DIR_IMAGE}/${VERITY_OUTPUT_IMAGE}
+ 
+-    image_do_mounts
+-    sudo chroot "${BUILDCHROOT_DIR}" /sbin/veritysetup format \
++    ${SUDO_CHROOT} /sbin/veritysetup format \
+         --hash-block-size "${VERITY_HASH_BLOCK_SIZE}"  \
+         --data-block-size "${VERITY_DATA_BLOCK_SIZE}"  \
+         --data-blocks "${VERITY_DATA_BLOCKS}" \
+@@ -55,23 +73,5 @@ verity_setup() {
+ 
+     echo "Hash offset:    	${VERITY_INPUT_IMAGE_SIZE}" \
+         >>"${WORKDIR}/${VERITY_IMAGE_METADATA}"
++    create_verity_env_file
+ }
+-
+-do_verity_image[cleandirs] = "${WORKDIR}/verity"
+-python do_verity_image() {
+-    import os
+-
+-    image_file = os.path.join(
+-        d.getVar("DEPLOY_DIR_IMAGE"),
+-        d.getVar("VERITY_INPUT_IMAGE")
+-    )
+-    data_block_size = int(d.getVar("VERITY_DATA_BLOCK_SIZE"))
+-    size = os.stat(image_file).st_size
+-    assert size % data_block_size == 0, f"image is not well-sized!"
+-    d.setVar("VERITY_INPUT_IMAGE_SIZE", str(size))
+-    d.setVar("VERITY_DATA_BLOCKS", str(size // data_block_size))
+-
+-    bb.build.exec_func('verity_setup', d)
+-    bb.build.exec_func('create_verity_env_file', d)
+-}
+-addtask verity_image before do_image after do_${VERITY_IMAGE_TYPE}_image
+diff --git a/kas/opt/ebg-secure-boot-snakeoil.yml b/kas/opt/ebg-secure-boot-snakeoil.yml
+index 3f2a794..2822cef 100644
+--- a/kas/opt/ebg-secure-boot-snakeoil.yml
++++ b/kas/opt/ebg-secure-boot-snakeoil.yml
+@@ -23,7 +23,8 @@ local_conf_header:
+     IMAGE_INSTALL_append = " swupdate-handler-roundrobin"
+ 
+   secure-boot-image: |
+-    IMAGE_FSTYPES = "secure-wic-swu-img"
++    IMAGE_CLASSES += "verity"
++    IMAGE_FSTYPES = "wic"
+     WKS_FILE = "${MACHINE}-efibootguard-secureboot.wks.in"
+     INITRAMFS_INSTALL_append = " initramfs-verity-hook"
+ 
+diff --git a/kas/opt/swupdate.yml b/kas/opt/swupdate.yml
+index 72429c6..c2bd15c 100644
+--- a/kas/opt/swupdate.yml
++++ b/kas/opt/swupdate.yml
+@@ -23,5 +23,7 @@ local_conf_header:
+     CIP_IMAGE_OPTIONS_append = " swupdate.inc"
+ 
+   wic-swu: |
++    IMAGE_CLASSES += "squashfs"
++    IMAGE_TYPEDEP_wic += "squashfs"
+     IMAGE_FSTYPES = "wic"
+     WKS_FILE ?= "${MACHINE}-${SWUPDATE_BOOTLOADER}.wks.in"
+diff --git a/recipes-core/images/swupdate.inc b/recipes-core/images/swupdate.inc
+index 64887df..e0252df 100644
+--- a/recipes-core/images/swupdate.inc
++++ b/recipes-core/images/swupdate.inc
+@@ -9,9 +9,12 @@
+ # SPDX-License-Identifier: MIT
+ #
+ 
+-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
++inherit swupdate
++inherit read-only-rootfs
++
++ROOTFS_PARTITION_NAME = "${IMAGE_FULLNAME}.wic.p4.gz"
+ 
+-ROOTFS_PARTITION_NAME = "${IMAGE_FULLNAME}.wic.img.p4.gz"
++FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+ 
+ SRC_URI += "file://sw-description.tmpl"
+ TEMPLATE_FILES += "sw-description.tmpl"
+diff --git a/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.1.bb b/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.1.bb
+index f0d2d68..60ee8da 100644
+--- a/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.1.bb
++++ b/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.1.bb
+@@ -28,7 +28,7 @@ VERITY_IMAGE_RECIPE ?= "cip-core-image"
+ 
+ VERITY_ENV_FILE = "${DEPLOY_DIR_IMAGE}/${VERITY_IMAGE_RECIPE}-${DISTRO}-${MACHINE}.verity.env"
+ 
+-do_install[depends] += "${VERITY_IMAGE_RECIPE}:do_verity_image"
++do_install[depends] += "${VERITY_IMAGE_RECIPE}:do_image_verity"
+ do_install[cleandirs] += " \
+     ${D}/usr/share/initramfs-tools/hooks \
+     ${D}/usr/share/verity-env \
+diff --git a/wic/qemu-amd64-efibootguard-secureboot.wks.in b/wic/qemu-amd64-efibootguard-secureboot.wks.in
+index e097eac..0e298bc 100644
+--- a/wic/qemu-amd64-efibootguard-secureboot.wks.in
++++ b/wic/qemu-amd64-efibootguard-secureboot.wks.in
+@@ -1,7 +1,7 @@
+ include ebg-signed-sysparts.inc
+ 
+-part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${VERITY_IMAGE_TYPE}.verity.img" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
+-part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${VERITY_IMAGE_TYPE}.verity.img" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
++part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
++part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
+ 
+ # home and var are extra partitions
+ part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024 --size 1G
+diff --git a/wic/qemu-arm64-efibootguard-secureboot.wks.in b/wic/qemu-arm64-efibootguard-secureboot.wks.in
+index b3bbed4..3b8dadd 100644
+--- a/wic/qemu-arm64-efibootguard-secureboot.wks.in
++++ b/wic/qemu-arm64-efibootguard-secureboot.wks.in
+@@ -1,7 +1,7 @@
+ include ebg-signed-sysparts.inc
+ 
+-part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${VERITY_IMAGE_TYPE}.verity.img" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
+-part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${VERITY_IMAGE_TYPE}.verity.img" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
++part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
++part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
+ 
+ # home and var are extra partitions
+ part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024 --size 1G
+diff --git a/wic/qemu-arm64-efibootguard.wks.in b/wic/qemu-arm64-efibootguard.wks.in
+index a153205..9ff03e1 100644
+--- a/wic/qemu-arm64-efibootguard.wks.in
++++ b/wic/qemu-arm64-efibootguard.wks.in
+@@ -3,8 +3,8 @@
+ 
+ include ebg-sysparts.inc
+ 
+-part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs.img" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
+-part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs.img" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
++part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
++part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
+ 
+ # home and var are extra partitions
+ part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G
+diff --git a/wic/x86-efibootguard.wks.in b/wic/x86-efibootguard.wks.in
+index f60ebcf..c71253d 100644
+--- a/wic/x86-efibootguard.wks.in
++++ b/wic/x86-efibootguard.wks.in
+@@ -3,8 +3,8 @@
+ 
+ include ebg-sysparts.inc
+ 
+-part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs.img" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
+-part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs.img" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
++part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
++part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
+ 
+ # home and var are extra partitions
+ part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G
 -- 
 2.35.1
 
