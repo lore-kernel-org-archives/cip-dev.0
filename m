@@ -1,152 +1,155 @@
-Return-Path: <florian.bezdeka@siemens.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D2C2C433EF
-	for <webhook@archiver.kernel.org>; Fri, 17 Jun 2022 14:17:31 +0000 (UTC)
-Received: from EUR01-DB5-obe.outbound.protection.outlook.com
- (EUR01-DB5-obe.outbound.protection.outlook.com [40.107.15.49])
- by mx.groups.io with SMTP id smtpd.web08.30590.1655475446351808647
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37795C43334
+	for <webhook@archiver.kernel.org>; Fri, 17 Jun 2022 15:03:01 +0000 (UTC)
+Received: from EUR02-VE1-obe.outbound.protection.outlook.com
+ (EUR02-VE1-obe.outbound.protection.outlook.com [40.107.2.87])
+ by mx.groups.io with SMTP id smtpd.web10.31452.1655478177811775043
  for <cip-dev@lists.cip-project.org>;
- Fri, 17 Jun 2022 07:17:27 -0700
+ Fri, 17 Jun 2022 08:02:58 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=t4Myuvqi;
- spf=pass (domain: siemens.com, ip: 40.107.15.49,
- mailfrom: florian.bezdeka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=DFJqPZFC;
+ spf=pass (domain: siemens.com, ip: 40.107.2.87,
+ mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fwJTHuayDans+xds//23cYc6hom0Ejgne9SfKseAJ9yh4ZrqlVhtQdGwwTDy7AhRe5La1Pef61FeKZHIvfqwQQCn8zNbWXz7Oc61F+yojBlCQ5WuW9KugnFv/YmEbJTmKIbeIdw+9nqoUMbde+P5wrD1FvvmsfcBIqMDdh7XX5JKKsXkBt8dhHpvB6mhByMZyFdSEeMsCebd3Ka15IoIEdL1CY6U6q1Vyz+A/VuicSyIoipzJuaxQSFqgjWQh7Y/sjhQZuaRDDMoSZ0FUXEZGgR582ZlLVBA9onOPpSUT9FdurHr/KO3W+ixxL96JyYkJ/6tFdpvJa/hipABxA6+CQ==
+ b=c7of2Gohje0tNBXEzjGPEioak5deIMNgr/ETQJckVOxTPkaaO0ytZKOKQa+ncN61NRHgMKtaGeqidTGpu8AJuwPWHP3BqZllNAkw/JbcesniUhaXx2zDuIFCyKuGcU6IPcPnubOSKp1uKlN6hoyh6CKtUXjG21ZxmmIyDkmxMoGUWMs7OTa+QYRbRWk4PqAxFAjKuSC0hLjwaUooZjb4AD2+q48Lx+1i6aP/NkPL1pqiKmHy99pyyHgP3lfThBN3JodnGU8oDeuOy/eSF+p75PU+neMtk1D+vONXzScCYPQEtBmVQrGcymTn//GzS03mMuV48nvXnZZmOdIVAiVPpQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/9Lm6CqjLeFCW3SPe+GrrndtWngwM1Qi3cef+9wlYb8=;
- b=h27HnmF8hmsCrZ+Ijx2r021mcrbXs2QNePBLDRUE490vXMM3EC7sf5dWHJZe9IemUgdjLqsCW6vMgRZ88h66hvX18r6t5vhCmM3H6JzfjoG80v7a9uOKnfySgFa3gbq2/XorHwm5qVTsZN0TmX2pVWZw+a72n5p7//ZgX78oC0De/zt7fABfeBoS0Ye1jxXsPoEycvS/ardU42Vf6qch6yz1G690c9qcWxz7wgDKVIdcdeyZ5EJLsRgGJgFrY92ijRuELJfiBQcykhzfyFjG1wDMjIPpkyK4ADhlAHlvOkZpzNyAV0MA6GSplONxpC2JyONFXWh+WtK/Zf76Qnqwgg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
+ bh=b7Ny+brUs411DJWBT29Yf5VFH/nOj0B2DSQza48ISUI=;
+ b=Vyb7q2jt8OtyLN/XcFBNvvc2++CwbYTuUdkNLdiywtQoZ2gLCiW5+Wcgcg1caPB16Qcqtf3r89oMnGwJ8waq1KOGKMF8VPD8eDTHbTVCBD58zBJ553HEUDc7sMPpHqGrLQnrZSQZXY3TfdKxDkNF3wBGWJ8bzy+/pRXwqFC4UsYRWK+tH1XNPxTrYtt+C/A3efv2xdnCH45n3QD9OKlBQ4G5k6vKI3t2MbZbgk3yxpdzzECfM6l8b95qds7VtTWoTZiIH1VgrILK398yJxd654zm865Zcl2w9YT7ZP2FPLjBTg/D/qtVCYiDvg+wr2y9/lmSgZjI7My/yGwM6XiQyw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 194.138.21.71) smtp.rcpttodomain=toshiba-tsip.com smtp.mailfrom=siemens.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=siemens.com;
+ dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/9Lm6CqjLeFCW3SPe+GrrndtWngwM1Qi3cef+9wlYb8=;
- b=t4MyuvqilaTfqLmJdoM62Vww3zh6PzAJJTjCHE+zO71xKjGtO6DrtEQ82YlVZolg87M8PCLAutncFdurAV47Y95LszluyJzky2t8Lk13FyTCWqwFBcrahFI4dsyjQdPHEHWSpP5f8t19+rj8lOZkdf2nBZEyEa82Ew4sLn0m/oLpV82qOAKoH5szx2IBYvvp3GyRkkMTObvFl2J5BV+QuILvCAa+up5WFcEqFXYILvJfq6KHQi6Bk5vwiE/i+HS7x/O3suB6ngCvvPAOu1J52fAFunmGk4gtFNT8nrV6uXyNOvQh0sr7tsFYYFEi+DSmLqXo8LnU4fcGDA/Yb1jQxQ==
-Received: from PAXPR10MB5712.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:248::14)
- by VI1PR10MB3118.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:803:eb::15) with
+ bh=b7Ny+brUs411DJWBT29Yf5VFH/nOj0B2DSQza48ISUI=;
+ b=DFJqPZFCpGwlqlWr+Rw4eO4zyDADT9sM0TqEA1Dr/TQ8/G8Wz4nhiku3uxcAclcl20IRM02IEvPJD/2huMmAkeJ21+UlhMDZ6fqrtAk+IeFOjUvaQweNzYYrAQtchACgq+uLPLlF3R3J/wgJnjRw0WOSKhhzEFNlX2nq2Ld1kJRzcU46MKg5/dq4sktEzUNjNsGiOafb1/8Qq/DFjTgs2rPOgdo0SUJ8/6U5fNaP5pI/H72hx93Xu3GlepOsxeokAu1to28vZhNMrVib80rTeIl1vJbr+LbrHmPv69fbFPo6lgY3NGfgpYVCWC3iF2ekmvsuqNAshuXUE8S4r4EOkw==
+Received: from DB9PR05CA0021.eurprd05.prod.outlook.com (2603:10a6:10:1da::26)
+ by AM6PR10MB2614.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:aa::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5353.15; Fri, 17 Jun
- 2022 14:17:23 +0000
-Received: from PAXPR10MB5712.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::6d73:ef73:6807:c6dd]) by PAXPR10MB5712.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::6d73:ef73:6807:c6dd%3]) with mapi id 15.20.5353.016; Fri, 17 Jun 2022
- 14:17:23 +0000
-From: "Bezdeka, Florian" <florian.bezdeka@siemens.com>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-CC: "Gylstorff, Quirin" <quirin.gylstorff@siemens.com>,
-	"jan.kiszka@siemens.com" <jan.kiszka@siemens.com>
-Subject: Re: [cip-dev] [isar-cip-core][PATCH] swupdate: Limit SRC_URI addition
- to the supported efibootguard case
-Thread-Topic: [cip-dev] [isar-cip-core][PATCH] swupdate: Limit SRC_URI
- addition to the supported efibootguard case
-Thread-Index: AQHYglSVisSUGdeG8U+ws38sNri/ea1TpUIA
-Date: Fri, 17 Jun 2022 14:17:23 +0000
-Message-ID: <956a1a70a5819042632fcbc470958de4ab342c63.camel@siemens.com>
-References: <16F96DF9E5B6CC23.22184@lists.cip-project.org>
-In-Reply-To: <16F96DF9E5B6CC23.22184@lists.cip-project.org>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.42.4 (3.42.4-2.fc35) 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 17356e42-e20b-4d28-9872-08da506c18ea
-x-ms-traffictypediagnostic: VI1PR10MB3118:EE_
-x-ld-processed: 38ae3bcd-9579-4fd4-adda-b42e1495d55a,ExtAddr
-x-microsoft-antispam-prvs: 
- <VI1PR10MB31180D3AF268477A7E8B137FF6AF9@VI1PR10MB3118.EURPRD10.PROD.OUTLOOK.COM>
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- bsLD1QkvqsZkSYqCWABsWlM5K/yh+qHoKx8hZ64NqzaEgL7Ov51rAsXfQS99UFF8XiFPnFZSygYWIndK6qI80lpfQUi5kMxqCr03wRKSfVjPE0JDiH05bbAqE9M10YWIrqhWL0MBgEhCSdKgCLQW86/m+e9KZxjAv9P1f75UIVFd7SZhqlrrA005bgG4DB93801HG6BKApLlWtgFgiT4ixeViCffi1jya3X/etxAiUjcy3t3y27GVPeg/PsVo6J1fFSfhj5BFUeYRxhZdBKn6B05Bgk2kkvTDGf32DRnOYaptfliwYJt/LQwoWBe/V0bd53MSTmCna4ZbFbDqCir1Tf/HUb5bHCnxjRKWzmDOOvlakc7FnxBV60t2R+dA7pzRjhEQTXQRmhAU6OGth2QTfQ/PahCWO3o/x0wOrNAvx+RTigTb0/3jmXv1pgutCh27jg6ALaAxtpiSdJvr0u1ZJ18w1GUz3gqEnYNpB0ljtdO58eWc1TjgqctwIzpMRIgazUMXrYzUC346eNp8wRLIIsZtJ2jRgJ750yPblAJ5iT1hH4AUG/VOKegO3SAmKE+CeVYgoUTQIRoN8MOuuSAYsMwaYZfWAp1McpUB8C6ywAcbWI56LXtjH4RhxOWKV1L5Z2EgmSdqD7WcIhGTV+Qb6i1XHy8oLlmoen5ruvdXiUCE0YMVzI6uCEBYR/g97pHVNpvwhPu9AX3H2uFT8lA0w==
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR10MB5712.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230016)(4636009)(366004)(186003)(2616005)(66946007)(6506007)(6916009)(6486002)(107886003)(6512007)(5660300002)(36756003)(2906002)(4744005)(4326008)(76116006)(66556008)(64756008)(498600001)(8936002)(86362001)(71200400001)(122000001)(66476007)(8676002)(38070700005)(66446008)(91956017)(82960400001)(38100700002)(54906003)(83380400001)(316002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 2
-x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?Q0dtenlNOHQwVUJIU2RWZ1lVUUFYMm1QSnhweCtjWkttZGR3aFR0SENyeDhh?=
- =?utf-8?B?Z1RKemQrdnFMUXFzakZaYytOc3BRRUs0VzNQdEtZR2RobXQvVGN6ZUNpZFE1?=
- =?utf-8?B?UTVBbG5HUmxWb2VvWmdxbzdMRW1EUE9OUEJ0Z1gzOHVOTXhCMWNTUkZpUjJQ?=
- =?utf-8?B?K2RjbTV1eGxicmtydUY5QmVGM2VkazUybzBpZW9HRndrTWpBckZnVVNIVkFQ?=
- =?utf-8?B?QVRLdXE3bXBpOHVudnJVaS95VGRSYkZ2MFkrOU9DWjFwQ3hacFRaZ3RzanI3?=
- =?utf-8?B?d2dhTE9NMWxVWXpVSUJPSkkrYmZmemsrdFluZVBFYS9GQTA2L1ZuVURuZmxH?=
- =?utf-8?B?UU1qR2NCV2pTZ0R3R0UzZVBPSHB4OUdMWVR0NVMxSTR2U0ZSMG05RDFBVVBI?=
- =?utf-8?B?UDlhVm0xRXNJMkRuTDhYbXRpaUFsVzAyM2lwMHR6ZkJrOW9Od1JEK0RrUnQv?=
- =?utf-8?B?NXUyWjJ2cUtsZnNKQnNLVVkxQlUxVm1qRVEwai9OYUt2Skp6dWpJb2xoWFI4?=
- =?utf-8?B?Z1E0TVczOEJjVUlMM0w0U0J3eWZqbXhpY1l3a2RzVXBoYzg4WDRKVko4N08x?=
- =?utf-8?B?SUxVNzVlSnFzZDBxOGtzUDkzZUY2S05OQ2ptZkRIZlJJUnQyUWZYU1p2Mysw?=
- =?utf-8?B?MmNkaFd5OSs2Q2ZZem1uc0JMSHpZNW13bFNiaVdmQUcweHhuWGFFRTczYUVL?=
- =?utf-8?B?REVmZjVtaUhGOTZZNEQ0Wmt1dXl2N3djMVNWR3VUWG9KemNaN1drU2pGR1Ba?=
- =?utf-8?B?aWthbldDWEV2d1pSMkZ6anFnN3J6QjVRUVF3Q01FaWpNUWIxMnJxYjQ0OXVx?=
- =?utf-8?B?ejByWGExaDFqcHgvTFRpNHg1V0MzazVzNDFmZFdxNlVQdU1nRS93Q3NBVEg4?=
- =?utf-8?B?L3lNWmFOb2lqWnJUYXhqY0Y2S2JibTJpeFNxR1p2Qmd3TG9EVnhzTFdkUDI5?=
- =?utf-8?B?S2VlUHhoUG1zSnRUUXIxMTlIeHZqSEhNUTJRYml5U3E3WHdXclpYTW4ranA5?=
- =?utf-8?B?YjZPUE1SN1RtNytxQ0ZCSzZtYUhzWHEzZTFKdW5JZ29GdlhoaFZ6U2I3MVFM?=
- =?utf-8?B?T3NzQWlwTTMycEM1S2h1MkcvS3ptWjJab1c2cDFCSVBZeTM0N3ZRa0JwUWdH?=
- =?utf-8?B?Vm5JTlJZS3QrY0kyVHlnVXJBRDZwUU5wbWx2SXRBSzJXNmR0WlZxdTR6ejVW?=
- =?utf-8?B?TU9KWTNkNmFpMkpSYXNxRjdUR2hwNWxVcS9jaWlhYVRCcERpbHd2UVJ1czVz?=
- =?utf-8?B?a05tOTBZbVZ0OTVSTjhBM2Nka0szNmE5dlRCQ01zb3Y4NE1mM0VJY3F6Q1Vm?=
- =?utf-8?B?QWFQc2JreXRoc3dQSll3L2dtS0duSDUwM1h6b0lWLzNXWWt4bU1tNDM5L2Fa?=
- =?utf-8?B?TGFCNjFGSktMUGlzZWZ6Wms4V0J3cklVL0VQWjhPYytQUTh4aHl5SjRKK0R6?=
- =?utf-8?B?OU0rOHpjMjRhV2x0QTI2S3c0RklWQW1YbHZlWkd5ZnhEajkzL0djRUloR0J2?=
- =?utf-8?B?dTBxK3R4VDZ5ZHFkTllSenZndng0Z1ZJaUpJNUR2Nlc5azYxNk1qTEJxYjZl?=
- =?utf-8?B?Q2ltbDJLMFViYzY0eENtcEZzaENPZGRYaGVxTExwN3dGU2lacHpuakhCR1dU?=
- =?utf-8?B?eXQ1c0pKbDZsa0d6N1FkekVFWUpqRjBSTmRtV1F0SVFtTTVMY2VqUXJvWGtk?=
- =?utf-8?B?MlhkSWE5SGF0U1RIb0gwUmxRYjRJcUlvRVBkSGtTVmZvVDFLNHpYMmJWV3c5?=
- =?utf-8?B?QnB3ZVRQZmN6QVVKNmZ2YjBOMFQwRUFmQjQ0YmR3Tm8xVjdaSFlOZmdraUJM?=
- =?utf-8?B?Vk1STld2aWZnLzgvU0NWRGo0YWRUbWdFNHphOVhvTWk4Q3Q3LzFYQmFoKzNI?=
- =?utf-8?B?eW9VVXNtdWlaL0RQR1Q1WDRBMnlhR3Z1ejJYTFhaUTRUY2JtY1pWYzhpbWh2?=
- =?utf-8?B?RFV5MS9CU1hGODBMeGFHdVdCNlRnVEJoQWRPQXBYcWlnYlptbTh4Wmo1SDln?=
- =?utf-8?B?dzlTOTBFUDZ6ZUxhZVJFUWxmRVIxNkpNb1FsTnpHVDVkSmZFb3FjRjhhZXdW?=
- =?utf-8?B?czhRMlB1SEZPNEN5clBFZFNLdzFNQnFzZDBEd29YRHNvdkxmWTFzelhYSUtS?=
- =?utf-8?B?MkYwV3pTTFJwK05UYVFtQ2lzT1NqK3pMemhaWGpCeVpFbXdybU1zUjdXOGNY?=
- =?utf-8?B?R0ZOazc2Q2NjZCt4dldNWm1BRHoyaFl0WVNYaGV5UDF5bUNNcURmYXREVVBH?=
- =?utf-8?B?dFBwOFAyQUpwRnU3b3NRdWZMd0xtUXJ2dVhhODJLQjJqUmRzdFhSeURLbjdX?=
- =?utf-8?B?czNHU3Q0M0VVR2VGOU5LcXJHRlFESGNuc1FobnFJOXJSVGR5OWhYOWRrcDJQ?=
- =?utf-8?Q?WUADcwYF49n+nGQvH6uFJdLq4exGySiOOl04zHQ424f6t?=
-x-ms-exchange-antispam-messagedata-1: 
- 2uwaO2D/GvDAxgn3uvL80Pkwf17l7Dmbbk0KDiXmUGSxfViIDt+SsMYC
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <79328DC3DD6B904B899599C4DC21EC42@EURPRD10.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+ 2022 15:02:54 +0000
+Received: from DB5EUR01FT023.eop-EUR01.prod.protection.outlook.com
+ (2603:10a6:10:1da:cafe::e7) by DB9PR05CA0021.outlook.office365.com
+ (2603:10a6:10:1da::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5353.16 via Frontend
+ Transport; Fri, 17 Jun 2022 15:02:54 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.71)
+ smtp.mailfrom=siemens.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=siemens.com;
+Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
+ 194.138.21.71 as permitted sender) receiver=protection.outlook.com;
+ client-ip=194.138.21.71; helo=hybrid.siemens.com; pr=C
+Received: from hybrid.siemens.com (194.138.21.71) by
+ DB5EUR01FT023.mail.protection.outlook.com (10.152.4.233) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5353.14 via Frontend Transport; Fri, 17 Jun 2022 15:02:53 +0000
+Received: from DEMCHDC89XA.ad011.siemens.net (139.25.226.103) by
+ DEMCHDC9SKA.ad011.siemens.net (194.138.21.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.9; Fri, 17 Jun 2022 17:02:53 +0200
+Received: from [167.87.35.216] (167.87.35.216) by
+ DEMCHDC89XA.ad011.siemens.net (139.25.226.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.9; Fri, 17 Jun 2022 17:02:52 +0200
+Message-ID: <36fc490e-dd45-2922-e7cb-6adb5f675877@siemens.com>
+Date: Fri, 17 Jun 2022 17:02:51 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [isar-cip-core]
+ cip-core-image-security.bb:libpm-google-authenticator debian package
+Content-Language: en-US
+To: <Shreyas.Karmahe@toshiba-tsip.com>, <cip-dev@lists.cip-project.org>
+CC: <dinesh.kumar@toshiba-tsip.com>, <venkata.pyla@toshiba-tsip.com>,
+	<kazuhiro3.hayashi@toshiba.co.jp>
+References: <20220617144440.1846381-1-Shreyas.Karmahe@toshiba-tsip.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+In-Reply-To: <20220617144440.1846381-1-Shreyas.Karmahe@toshiba-tsip.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.87.35.216]
+X-ClientProxiedBy: DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) To
+ DEMCHDC89XA.ad011.siemens.net (139.25.226.103)
+X-TM-AS-Product-Ver: SMEX-14.0.0.3080-8.6.1018-26680.007
+X-TM-AS-Result: No-10--18.917200-8.000000
+X-TMASE-MatchedRID: Am/bhnZHfiMwrKi3eh3JIsb9CgEQmMW5Pg9yfk4YC0awWQIt56582zim
+	0TkqdUteXcwgKc3gFlkWFZo+2Qlj9EHz5VM62tSTZIK/vRWIBgtiWV0DQ85LUqXZvcUfKhsohVD
+	nkfzD7uZk2Y4pEw4KnjK2ieu8M5yxQsutS+v7Ac9wSiDz1DbrnZXvqupO0P3ML8y5bOx03xnLQx
+	8PUawjW5soi2XrUn/JyeMtMD9QOgChMIDkR/KfwI2j49Ftap9EOwBXM346/+wo0HIEc7e/mo6qE
+	A//3As0DlnTLub63KiP7pPTMaD243usHkf35QjX
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--18.917200-8.000000
+X-TMASE-Version: SMEX-14.0.0.3080-8.6.1018-26680.007
+X-TM-SNTS-SMTP: 
+ 9B628AA258E39DBE5C7A5C57CF3C3F59736E0F88A68344ACEE17295DADDA81AF2000:8
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 31d05110-81ca-46a4-5434-08da5072745a
+X-MS-TrafficTypeDiagnostic: AM6PR10MB2614:EE_
+X-Microsoft-Antispam-PRVS: 
+	<AM6PR10MB26145DB21091E8D36E10614C95AF9@AM6PR10MB2614.EURPRD10.PROD.OUTLOOK.COM>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	N5Ud2bod49q9Z6AGgv16EXad953pOXiilR8UYyCujYopkSAuo8q5wP7dwlxDkwP3q6hKa+HFnYLwaDOwVEfrHy2eN3m/KitYcVV/+pVv3t4gf6ZHvbwgogJq5boSh5VigU8PXC8dW7EGmI0vNnu/ZlzOwFZi/E/GOeFT+396y13XD2aApLFMnYLBvK02adDqU+2j2IvGrTcBre9Fi6ex5N074VDY41Iv8ZiS8USqhRieJ44yX400WUrhcmu9VlmY6pjdlVlYpmec9qaqAqgpxtWIzLq9KlsPobqNdYVGTqG9Uw2P8Xs7K5gAIcD4y7ICEK0EzsBRasAOIu3emLp3xnjn03YIPsbQO2/H+oJiLtwYfeaaK4tWTctp6HCZBkGG73lipgSYejTS/207iWc+kxw2W+RF2YQ/p60SLW5OJ+j+WTCfYGus84vIRWgDuZ5LVp/dLnub8FJpva2hYQy2qvGtDlXh9ljpohSJX+J6YWf5iKn/ZbRyoemGSehb/O6qRh5+HE6WQUuWTRU09CDftzryK7e4t3M5zahjCsbki/IvoUAelepRRxAJXjLHTVXyBwcJmp79DjyzJC8OwlE032mWJIAWTa4v4YreDx9Meqkkb433i1VyphgirM+y3fXW/YCav0s1ALQPB6blFr3Z0YXf/RsAW/avk/Wr0fNj4Numd8OlxtdznlBAFAaSnyaeCuDQ2eH5Yn2LRxmPtDLPP/kqGbQ/DlhKSvuFrkmkz1qlOZ1qQEcWnK3simByH+ad79te8K9XJ1XRMkhOCJpGDQ==
+X-Forefront-Antispam-Report: 
+	CIP:194.138.21.71;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230016)(4636009)(46966006)(36840700001)(40470700004)(4326008)(4744005)(44832011)(2906002)(36860700001)(40460700003)(336012)(15650500001)(70206006)(54906003)(82310400005)(16576012)(6706004)(53546011)(26005)(508600001)(31686004)(83380400001)(36756003)(2616005)(70586007)(31696002)(86362001)(110136005)(8936002)(8676002)(186003)(16526019)(82960400001)(5660300002)(47076005)(81166007)(956004)(356005)(316002)(3940600001)(43740500002)(36900700001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR10MB5712.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 
- 17356e42-e20b-4d28-9872-08da506c18ea
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jun 2022 14:17:23.0751
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2022 15:02:53.4135
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 
- meybPK8u9k6thIUenIGN49fzivXlvF278ZX/wvV+2WGftgz76Qj7mhfZOPNrAn9Mpqe8IuoMDF5E8NKKMocTQyh/XHPeCFToqxibqlPF0Vk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB3118
+X-MS-Exchange-CrossTenant-Network-Message-Id: 
+ 31d05110-81ca-46a4-5434-08da5072745a
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
+ TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.71];Helo=[hybrid.siemens.com]
+X-MS-Exchange-CrossTenant-AuthSource: 
+	DB5EUR01FT023.eop-EUR01.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR10MB2614
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 17 Jun 2022 14:17:31 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8577
+ <cip-dev@lists.cip-project.org>; Fri, 17 Jun 2022 15:03:01 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8578
 
-T24gRnJpLCAyMDIyLTA2LTE3IGF0IDE2OjE0ICswMjAwLCBmbG9yaWFuLmJlemRla2FAc2llbWVu
-cy5jb20gdmlhDQpsaXN0cy5jaXAtcHJvamVjdC5vcmcgd3JvdGU6DQo+IFRoZSBmb2xsb3dpbmcg
-YnVpbGQgd2FybmluZyB3YXMgb2JzZXJ2ZWQgd2hlbiBTV1VQREFURV9CT09UTE9BREVSIHdhcw0K
-PiBzZXQgdG8gc29tZXRoaW5nIGRpZmZlcmVudCBmcm9tICJlZmlib290Z3VhcmQiIGluIGRvd25z
-dHJlYW0gbGF5ZXJzOg0KPiANCj4gV0FSTklORzoNCj4gL3dvcmsvY2lwLWNvcmUvcmVjaXBlcy1j
-b3JlL3N3dXBkYXRlLWhhbmRsZXItcm91bmRyb2Jpbi9zd3VwZGF0ZS1oYW5kbGVyLXJvdW5kcm9i
-aW5fMC4xLmJiOg0KPiBVbmFibGUgdG8gZ2V0IGNoZWNrc3VtIGZvciBzd3VwZGF0ZS1oYW5kbGVy
-LXJvdW5kcm9iaW4gU1JDX1VSSSBlbnRyeQ0KPiBzd3VwZGF0ZS5oYW5kbGVyLnUtYm9vdC5pbmk6
-IGZpbGUgY291bGQgbm90IGJlIGZvdW5kDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBGbG9yaWFuIEJl
-emRla2EgPGZsb3JpYW4uYmV6ZGVrYUBzaWVtZW5zLmNvbT4NCj4gLS0tDQoNClBsZWFzZSBpZ25v
-cmUgdGhpcyBvbmUuIFNlZW1zIEkgcG9zdGVkIHRoZSB3cm9uZyB2ZXJzaW9uIG9mIHRoYXQNCnBh
-dGNoLi4uIHYyIHNob3VsZCBmb2xsb3cgc29vbi4NCg==
+On 17.06.22 16:44, Shreyas.Karmahe@toshiba-tsip.com wrote:
+> From: Shreyas Karmahe <Shreyas.Karmahe@toshiba-tsip.com>
+> 
+> Added libpm-google-authenticator for MFA authetication for remote and local session
+> 
+> Signed-off-by: Shreyas Karmahe <Shreyas.Karmahe@toshiba-tsip.com>
+> ---
+>  recipes-core/images/cip-core-image-security.bb | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/recipes-core/images/cip-core-image-security.bb b/recipes-core/images/cip-core-image-security.bb
+> index 3ea544a..e56d279 100644
+> --- a/recipes-core/images/cip-core-image-security.bb
+> +++ b/recipes-core/images/cip-core-image-security.bb
+> @@ -32,6 +32,7 @@ IMAGE_PREINSTALL += " \
+>  	audispd-plugins auditd \
+>  	uuid-runtime \
+>  	sudo \
+> +	libpam-google-authenticator \
+>  "
+>  
+>  OVERRIDES_append = ":${BASE_DISTRO_CODENAME}"
+
+Is that thing configuration-free? Or will the customization recipe need
+some tuning as well?
+
+Jan
+
+-- 
+Siemens AG, Technology
+Competence Center Embedded Linux
 
