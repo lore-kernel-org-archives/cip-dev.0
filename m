@@ -1,146 +1,207 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 091BFCCA47F
-	for <webhook@archiver.kernel.org>; Thu, 23 Jun 2022 07:01:57 +0000 (UTC)
-Received: from EUR01-HE1-obe.outbound.protection.outlook.com
- (EUR01-HE1-obe.outbound.protection.outlook.com [40.107.13.52])
- by mx.groups.io with SMTP id smtpd.web12.4493.1655967714846299292
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3336FCCA47C
+	for <webhook@archiver.kernel.org>; Thu, 23 Jun 2022 18:13:36 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web08.397.1656008009962463688
  for <cip-dev@lists.cip-project.org>;
- Thu, 23 Jun 2022 00:01:55 -0700
+ Thu, 23 Jun 2022 11:13:30 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=iM2Vj6o3;
- spf=pass (domain: siemens.com, ip: 40.107.13.52,
- mailfrom: jan.kiszka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=V1nc+wO6vQgc6JqR0mPrRgpKxTAqK2ZOvXgO0TKhB28gDjmdUxOAUnacPJRkuLm0EYwd5I75lVZHYUhYecCfb44x/tPm9qYjycckKFQ15cH1WuHD4jBIH7DSfkxZaxs7hY8339jH0e4zmHBNOnEaiqd2BmQd1XQXg8QXhIbWHYQQHUIhMqbBttO1J0Gt5KYjK29jc34qzGmf+nix3/AueBXtVNqa+ANE6Ij9BZpKm7IrjD83W4wAuvBMvdI+xgF8BOtxMcJlQsZXYRRQWjAqqC13NruWI+uxEzv+UrxsUk7InXEZWC1cJTQFVP64ynIohlivOKVBJey5xm628XSq5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/5UUNDY54gP9jg4om9qSRLRyTDnyE6/gn1P0d5Xz7V4=;
- b=NuwWDjZmby3stnzRF3i+hpY7iQHxenLutrcQTh6U6f5Qd+P27D+/Pcin6nIHyQS1j2xSTLgKK2Vb53V0t/OvWSFRBrjuhV3vTgc7KIXqHDWL2nS3R98ff5tmHC8zhnYXoag8zdK6de7/iBQnpp0BiCWFtc3F++wN/mRO9wrOVyJDR0x77MZU41Uk6qtp7vTWOcUr1dJi14I3leOU9JZgNicbA/ZQEeiUbZCXx7FzRGDWmmQnP1eTv/JkgEifUubk+hRiaVP/iGCwSpgcpVuxKLrAj0kfZTpip74lL0nA7DztkaF5ESsTjbSjdAUvMUhBFFOe2j8uqzOCJYHL+i7dnQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.72) smtp.rcpttodomain=lists.cip-project.org
- smtp.mailfrom=siemens.com; dmarc=pass (p=none sp=none pct=100) action=none
- header.from=siemens.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/5UUNDY54gP9jg4om9qSRLRyTDnyE6/gn1P0d5Xz7V4=;
- b=iM2Vj6o3DmS830ffirjiODC8ak7SXuUoy0XOg1yL3iBGsyYedGTDfbbT+I/m0TLhr1TRkne6I9U3o0UTIXJ37bm75a7AImR0lEjM0iXBpMWGlZj9cYhI1BctI04w2Ey4a+fHpL4/YTBzg1SLJe7WoJv2HqVcmXVIFxz3tN88/qvNp/yNenjPimQ2sX/M/pg30fZQdDs4GxCWMGBKC63YAg6+v/UJqrSzwoBRgvI2lPNBbCH6I1Zy90ZoJLOC0g4wXJ8Xkn07OK7ffQuDYu3sbH632QYOSxMAADlHquRKMEWPOr3IOE0ZP+mL70tEX5wNJQ2PpooKeJudbw56xy9AfQ==
-Received: from DB6PR0601CA0006.eurprd06.prod.outlook.com (2603:10a6:4:7b::16)
- by PAXPR10MB4897.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:1d8::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5373.15; Thu, 23 Jun
- 2022 07:01:51 +0000
-Received: from DB5EUR01FT067.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:4:7b:cafe::dc) by DB6PR0601CA0006.outlook.office365.com
- (2603:10a6:4:7b::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5373.16 via Frontend
- Transport; Thu, 23 Jun 2022 07:01:51 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.72)
- smtp.mailfrom=siemens.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=siemens.com;
-Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.72 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.72; helo=hybrid.siemens.com; pr=C
-Received: from hybrid.siemens.com (194.138.21.72) by
- DB5EUR01FT067.mail.protection.outlook.com (10.152.5.198) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5373.15 via Frontend Transport; Thu, 23 Jun 2022 07:01:50 +0000
-Received: from DEMCHDC89XA.ad011.siemens.net (139.25.226.103) by
- DEMCHDC9SMA.ad011.siemens.net (194.138.21.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.9; Thu, 23 Jun 2022 09:01:42 +0200
-Received: from [167.87.6.167] (167.87.6.167) by DEMCHDC89XA.ad011.siemens.net
- (139.25.226.103) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.9; Thu, 23 Jun
- 2022 09:01:41 +0200
-Message-ID: <f555a982-6a8f-241a-e724-43b594426b6c@siemens.com>
-Date: Thu, 23 Jun 2022 09:01:39 +0200
+ dkim=missing;
+ spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id B7A2A1C0C05; Thu, 23 Jun 2022 20:13:26 +0200 (CEST)
+Date: Thu, 23 Jun 2022 20:13:25 +0200
+From: Pavel Machek <pavel@denx.de>
+To: alice.ferrazzi@miraclelinux.com, cip-dev@lists.cip-project.org
+Subject: KernelCI reports
+Message-ID: <20220623181325.GA747@amd>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: CIP IRC weekly meeting today on libera.chat
-To: <cip-dev@lists.cip-project.org>
-Content-Language: en-US
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.87.6.167]
-X-ClientProxiedBy: DEMCHDC89XA.ad011.siemens.net (139.25.226.103) To
- DEMCHDC89XA.ad011.siemens.net (139.25.226.103)
-X-TM-AS-Product-Ver: SMEX-14.0.0.3080-8.6.1018-26680.007
-X-TM-AS-Result: No-10--18.680600-8.000000
-X-TMASE-MatchedRID: 10+ctCQpgSxUexHo4vWu8JBmg1zv+iLiePOjK4lyDHhlyUAXnYRaSF+B
-	oH4JnCIGZ++q5oZWwp8oqL1chlV2xfbjZLhs5ua57qEZpoAUsFTispvMxPAIBU6PG3UB9o6G9pL
-	nYtQ99xJLpCLN4NR43oc/Zw06wyFfWExFuTDNuJXwgTN5hsYOwKDRSBS1ZYGL+L2GsArAgtrrXu
-	yaLdFR2N9zZd3pUn7KDjzqIHW5M3lGW+hnAtX4inZm/Y3MNbKgYWo9dIuk10AkgXPI5D5JuEk8h
-	agIbaGmmyiLZetSf8nJ4y0wP1A6APkvV+z371TK5MIx11wv+COQZS2ujCtcuA==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--18.680600-8.000000
-X-TMASE-Version: SMEX-14.0.0.3080-8.6.1018-26680.007
-X-TM-SNTS-SMTP: 
- 9C90EF287AFAB7A0C035A05F21CD3C009020DFD2076A8036377B1A1742C4A2C82000:8
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 7c7a79b4-03bf-4449-d433-08da54e63f34
-X-MS-TrafficTypeDiagnostic: PAXPR10MB4897:EE_
-X-Microsoft-Antispam-PRVS: 
-	<PAXPR10MB48978BB05696511378D4FE9795B59@PAXPR10MB4897.EURPRD10.PROD.OUTLOOK.COM>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	TTRVKyUrN/Qv/cKXbkGbRhxhcDqric8RSGKJLk+bNYWpo92sEaIjxeaaUE3sNFiCw9sCseYlGZizdLg5k08Va2z+yal2WjAWU+vxu3IOTKnwGrbYH2eLdv04S6SfCZMgpOpxxEvh/b1cIJp11KeQk5zt4ktmTQGnrevI0CO4jrzIgdK7BkE6t0PVzdo9Qydm5i+RtO2F7F2OqbwNG4MWtxONI713wZFN8+pAx4wuQv8EfiARQHM5NpOV5MMiNkjqd3aE/IzDiNIuP68AcqVS1+GOaj3MdAO8VEft8nu7zNRoi66hAcocuME+pg3jyIddi7c+XocKgPFyI19Gm7+eWijOxQjy+8ni9yQdSMLiLQpvztk1SGbeJAuOEfpEx+Pexa29KgolZ5uHtBMlmj9bDWI+kL5nUzz5UszTNLW48OMSdC8+O/xe12BbSo/p6IsxxYGCd/XZZJbL0EcusdkpvxfiQ/3UflcdK67u/+i2zX3z6/zkFC5zI6w9+Dw8xJvbLYfKqpuZGm76TvYmrfu45w6iT4TW/8Y1xOi5dqFmXbg04f8W1b48D2HL6hMbKLP+z78RORW4zaPRrpMxqkgeHgSUAGJWHh/kVS28D8TEnc/93z7nWaQ57rkJ3L93gDbZZgbAj3jU9zYbxHNuEC2Fv6M+KlAL+iG0qCyaONRkpmTIpqkeOE+XbMwnfr6f6GaVySV0VBnuU5tPd3QpNllrFndtRVsWfJ+A3k+MWozCU2csvFjoiSX5noh6ng4R3+dqzXr4lArSeUIqHeU4bcWfjPDS+1zvLRFlooLw5ER4RW5EqDnAVo4UyYlWBmPttXJOxbnkmzh+mDBIJDFqHqOztjdffikPSAwvS44lVjnjymuCVplmFqkPHFIQNK0LuufY
-X-Forefront-Antispam-Report: 
-	CIP:194.138.21.72;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230016)(4636009)(136003)(346002)(396003)(39860400002)(376002)(40470700004)(36840700001)(46966006)(2906002)(40460700003)(26005)(31696002)(966005)(478600001)(86362001)(8936002)(82310400005)(5660300002)(4744005)(2616005)(41300700001)(956004)(47076005)(336012)(44832011)(83380400001)(16526019)(186003)(356005)(36860700001)(82960400001)(82740400003)(36756003)(70586007)(40480700001)(6916009)(16576012)(81166007)(6706004)(316002)(8676002)(70206006)(31686004)(3940600001)(43740500002)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jun 2022 07:01:50.4896
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 
- 7c7a79b4-03bf-4449-d433-08da54e63f34
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
- TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.72];Helo=[hybrid.siemens.com]
-X-MS-Exchange-CrossTenant-AuthSource: 
-	DB5EUR01FT067.eop-EUR01.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR10MB4897
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="45Z9DzgjV8m4Oswq"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 23 Jun 2022 07:01:57 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8585
+ <cip-dev@lists.cip-project.org>; Thu, 23 Jun 2022 18:13:36 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8586
 
-Hi all,
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss
-technical topics with CIP kernel today. Our channel is the following:
+--45Z9DzgjV8m4Oswq
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-    irc:irc.libera.chat:6667/cip
+Hi!
 
-The IRC meeting is scheduled to UTC (GMT) 12:00:
+First... what I am currently using for testing: gitlab; I simply watch
+for green ticks there. It takes ~15 minutes to get results. Red cross
+in compile stage is pretty sure sign of build error. Red cross in
+testing means I need to look at the results, but it is pretty easy to
+see "network timeout" or "board unavailable" problems, and mostly I
+can just hit retry and get the green tick.
 
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2022&month=6&day=23&hour=12&min=0&sec=0&p1=224&p2=179&p3=136&p4=37&p5=241&p6=248
+What wories me about gitlab is that we have single board for 4.4-st,
+and just two for 4.4-cip.
 
-USWest    USEast    UK        DE        TW        JP
-05:00     08:00     13:00     14:00     20:00     21:00
+Now, kernelci.
 
-Last meeting minutes:
-https://ircbot.wl.linuxfoundation.org/meetings/cip/2022/06/cip.2022-06-09-12.00.log.html
+https://ircbot.wl.linuxfoundation.org/meetings/cip/2022/06/cip.2022-06-23-1=
+2.01.html
 
-* Action items
-  1. Resolve/filter irrelevant failures of KernelCI for 4.4-cip - patersonc & alicefm
-  2. Check cip devices on kernelci old pull request - patersonc
-  3. Update https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptesting/cipreferencehardware - iwamatsu-san
-* Kernel maintenance updates
-* Kernel testing
-* AOB
+I got this link in the irc meeting:
 
-Jan
+https://linux.kernelci.org/job/cip/
 
+Lets start with build results.
+
+linux-5.10.y-cip      v5.10.121-cip9 bd24696dd7ad23517733728da675a00cd30739=
+16 169 7 3
+
+I click on "3" and get build error summary:
+
+Errors Summary
+2      arm-linux-gnueabihf-gcc: error: unrecognized -march target: armv3m
+2	arm-linux-gnueabihf-gcc: error: missing argument to =E2=80=98-march=3D=E2=
+=80=99
+
+=2E..but those are not kernel problems, that's buildsystem incompatible
+with config or something like that. Nothing for me to solve.
+
+Let me go through more:
+
+linux-4.19.y-cip	v4.19.246-cip75 38ce181ac6ca9f3decdd389cbfd0a38fecdb28c7  =
+111 8 1
+linux-4.19.y-cip	v4.19.245-cip74 0be9d6774be9b192bcea6fddada917ae3d22f22e  =
+106 7 1
+linux-4.19.y-cip-rt	v4.19.245-cip74-rt25 c80ee3077a4ce344cf1cffa23af767c9fd=
+75d52c  181 16 6
+linux-4.4.y-cip	v4.4.302-cip69-296-g52de9431d314 52de9431d314a28c4aa66d8f81=
+144c9958c11168 164 18 5
+linux-5.10.y-cip-rt	v5.10.109-cip5-rt4 b41186882eaf0137277045da13ea649577c4=
+2c11 177 8 3
+linux-5.10.y-cip	v5.10.112-cip6 c8f6747dcd02a8f87731c324f4bc37bd120a8982 18=
+0 7 3
+linux-4.19.y-cip	v4.19.239-cip72 fdf770b2db8080de95dcf74cc7547319034a4a56 0=
+ 0 120
+
+That's 19 errors total + outlier of v4.19.239-cip72 with 120
+errors. None of the 19 errors is real. KernelCI needs to fix their
+configs/build environment.
+
+120 errors are reported at https://linux.kernelci.org/build/cip/branch/linu=
+x-4.19.y-cip/kernel/v4.19.239-cip72/ . Wow. Except that I don't see that ma=
+ny errors there. I see lines such as
+
+cm_x2xx_defconfig =E2=80=90 arm =E2=80=90 gcc-10  0 warnings 0 errors. When=
+ I click for details I get "No test results found".
+
+https://linux.kernelci.org/build/id/6266a495d40dfd0dacff948c/
+
+Nothing for me to debug, either, agreed? So lets look at test results.
+
+Branch	Kernel Commit Build Status	Test Results	Date
+linux-5.10.y-cip      v5.10.121-cip9	bd24696dd7ad23517733728da675a00cd30739=
+16 169 7 3  2457 256 21 2022-06-12
+
+21 failures.
+
+If I click that, I can see that most regressions (11) are at baseline
+test plan. The machine that looks relevant to us is
+qemu_arm64-virt-gicv2 defconfig+arm64-chromebook --
+
+https://linux.kernelci.org/test/job/cip/branch/linux-5.10.y-cip/kernel/v5.1=
+0.121-cip9/plan/baseline/
+
+New regression, last pass: v5.10.112-cip6
+
+I get to
+https://linux.kernelci.org/test/case/id/62a333452713980006a39c13/
+which looks quite useful, it lists successful run and failed run,
+v5.10.121-cip9 fails while v5.10.112-cip6 works.
+
+Eventually I get to https://storage.kernelci.org/cip/linux-5.10.y-cip/v5.10=
+=2E121-cip9/arm64/defconfig+arm64-chromebook/gcc-10/lab-baylibre/baseline-q=
+emu_arm64-virt-gicv2.html .
+
+And sorry, no I don't see anything I could debug there. Did the docker
+fail to start? Hmm. Lets compare it with the older results.
+
+https://storage.kernelci.org/cip/linux-5.10.y-cip/v5.10.112-cip6/arm64/defc=
+onfig+arm64-chromebook/gcc-10/lab-baylibre/baseline-qemu_arm64-virt-gicv2.h=
+tml . Aha, 404. No comparison possible.=20
+
+Lets try one more.
+
+rk3399-gru-kevin defconfig+arm64-chromebook =E2=80=90 arm64 =E2=80=90 gcc-10
+
+https://linux.kernelci.org/test/plan/id/62a337700aadba677da39bdd/
+
+It gets me to:
+
+https://storage.kernelci.org/cip/linux-5.10.y-cip/v5.10.121-cip9/arm64/defc=
+onfig+arm64-chromebook/gcc-10/lab-collabora/baseline-rk3399-gru-kevin.html
+
+I see some errors... Like missing firmware (not a kernel problem). At
+the end there's "tpm-chip-is-online: fail" . Is that what I should be debug=
+ging?
+
+ 1368 12:21:39.212881  /usr/bin/tpm2_getcap
+  1369 12:21:39.251829  ERROR:sys:src/tss2-sys/api/Tss2_Sys_Execute.c:114:T=
+ss2_Sys_ExecuteFinish() Unsupported device. The device is a TPM 1.2
+   1370 12:21:39.261387  ERROR:esys:src/tss2-esys/api/Esys_GetCapability.c:=
+307:Esys_GetCapability_Finish() Received a non-TPM Error
+    1371 12:21:39.272254  ERROR:esys:src/tss2-esys/api/Esys_GetCapability.c=
+:107:Esys_GetCapability() Esys Finish ErrorCode (0x00080001)
+     1372 12:21:39.281854  ERROR: Esys_GetCapability(0x80001) - sys:Catch a=
+ll for all errors not otherwise specified
+      1373 12:21:39.285316  ERROR: Unable to run tpm2_getcap
+
+Userland seems to say that it does not support this device. I guess I could=
+ compare it with older boot?
+
+https://storage.kernelci.org/cip/linux-5.10.y-cip/v5.10.83-cip1-178-g2cf1d1=
+2aab81/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/baseline-rk339=
+9-gru-kevin.html
+
+Aha, no, could not, 404.
+
+Now, let's go through Jan's
+example. https://linux.kernelci.org/build/id/61fbabe0cb6f27a6ce5d6f03/logs/?
+=2E Again, errors look like missconfigured build system, with
+
+arm-linux-gnueabihf-gcc: error: unrecognized -march target: armv3
+arm-linux-gnueabihf-gcc: error: missing argument to =E2=80=98-march=3D=E2=
+=80=99
+
+Full log https://storage.kernelci.org/stable-rc/linux-4.4.y/v4.4.302/arm/rp=
+c_defconfig/gcc-10/logs gives 404.
+
+I spent quite some time trying to click around to find an error I
+could debug. I could not find one. All of above looks like kernelCI
+configuration problems. Can they be fixed and/or filtered out?
+
+Thanks and best regards,
+								Pavel
+
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--45Z9DzgjV8m4Oswq
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAmK0rUQACgkQMOfwapXb+vKGswCgpVPVQpZPNEVixTgd1lsFFFHn
+LTkAn3gYfJtfWV0+KEp2phOjMAAU48F7
+=LZXE
+-----END PGP SIGNATURE-----
+
+--45Z9DzgjV8m4Oswq--
 
