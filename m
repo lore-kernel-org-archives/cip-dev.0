@@ -1,219 +1,144 @@
-Return-Path: <webhook@kernel.org>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8E1AC43334
-	for <webhook@archiver.kernel.org>; Thu,  7 Jul 2022 07:07:52 +0000 (UTC)
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com
- [209.85.210.170])
- by mx.groups.io with SMTP id smtpd.web11.2777.1657177663923458507
- for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Thu, 07 Jul 2022 00:07:44 -0700
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32593C43334
+	for <webhook@archiver.kernel.org>; Thu,  7 Jul 2022 07:41:23 +0000 (UTC)
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com
+ (EUR05-DB8-obe.outbound.protection.outlook.com [40.107.20.79])
+ by mx.groups.io with SMTP id smtpd.web09.2961.1657179680730146123
+ for <cip-dev@lists.cip-project.org>;
+ Thu, 07 Jul 2022 00:41:21 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112
- header.b=0ya7bVQv;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.210.170,
- mailfrom: bot@kernelci.org)
-Received: by mail-pf1-f170.google.com with SMTP id x184so4208416pfx.2
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Thu, 07 Jul 2022 00:07:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=SUIyy2Pv3H3GEA/VfctZ/4c9x0nK7yLvPdI8wMlidnA=;
-        b=0ya7bVQv6KRtlfhxmSrpft5QfnXWZHKNwpCDbIcL5krFF0M2iz0QZBJNaYYI36ZcUG
-         UzrNfLg0kta/qb+cYaXv+DpSWU/NzVn2/ozGIZ74JmjnfCmTYsVpTKYJVFkrDfX7BeAS
-         fwYq3nUyNk3Rvavsgewp/+sOQlj4P1LlkeYithkT1Imw7rPG/PU/NDhZeraP0/Ov62jG
-         UuJt9AMPZ7HeCbAjzhuZU0q4l/Lsw4v3u3+JYIhfmQ/Q+ux3X/b18VFnHbJZsYoi4XAi
-         EYQOW9FWdp+N6v4CHeJcqMaVQxZ8EZ/5FUzWd9/H6Lo/O29FiF2S1OVn6TDzGCk8Anbw
-         90HQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=SUIyy2Pv3H3GEA/VfctZ/4c9x0nK7yLvPdI8wMlidnA=;
-        b=stAPJkPiH15c3RbsAHJ5zGBJBKhmXGN+uqqtLLZY8cC+K1StsuHUh++pmpq3qtd244
-         Z85np7GYkYjbL/q8gF9kmcRggYe2ggCAuOXbLTD9x7QUUs4lni1CrbU3Iiq6ds1w1c7j
-         Y55mLVXYzfT40ik4rgsut6xArHeDDg8f5Dbrq7m6mSV6m32X1BRpwmAuDhL/McfFTALM
-         xko6EfzDoQL3hwQaNGPHV0eC4CiUT3DHL+MrM8q9iyQ+ynLAevkuT7jBt06pq08DHaGH
-         Q47lre5SKs6lgIimRS1nU7DJcOdfoo2c8GmLTHU+8ISuNO3xHTY2YGepd0WE+CoGpZuF
-         eECQ==
-X-Gm-Message-State: AJIora8W0pZHsWU3FSfwtU6PudHeJkquHzYCgxDt/lIhKYsCO9sQNcln
-	1Re3yyW1sGBEeeeqaPjn8DaspX6m2SLhCs9O
-X-Google-Smtp-Source: 
- AGRyM1tA369x+mqPMkfvg9GR12SGuOq5Pb94XmvAK3yvJfL8Z4jCSAGc1S2nYzoabN6/y7ag3yZaDQ==
-X-Received: by 2002:a63:2a8f:0:b0:412:5278:b90 with SMTP id
- q137-20020a632a8f000000b0041252780b90mr15696169pgq.363.1657177663186;
-        Thu, 07 Jul 2022 00:07:43 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id
- 84-20020a621757000000b00524e8e48156sm26905654pfx.142.2022.07.07.00.07.42
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Jul 2022 00:07:42 -0700 (PDT)
-Message-ID: <62c6863e.1c69fb81.7e9ad.6d75@mx.google.com>
-Date: Thu, 07 Jul 2022 00:07:42 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=vCExIEGA;
+ spf=pass (domain: siemens.com, ip: 40.107.20.79,
+ mailfrom: jan.kiszka@siemens.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=R9QPEUlbfUCUIY+6nLNV2ibBxI5jgLK0gePg9HAQhQoeIf5bWcP4Ruqw2wcU4AnSc9PLOyR2gv54PMiNhPqvWG+pb2Ch7X6kLH7wjieL/h9BFeretBRMgV7qU9LNe1DH2ldGcVzKCnTQVLftFjsL63j14mlHzVl/WGVeWk3vwZWAeddCHuozQheErt1+Y4EQBFfPcyZlp3tI1F6zUDQbRSEoVzP//5x6/qtga4i1V7ngpnaK13pg8zNkI+zcFWz9NkxSKJMdMn7DAEmdeNMMplhtofYjmhZWOUwLDSAPUGXZ7g4MT3EosdFGoFz1wYR7vvwhGtARR317T+D0/bw5PQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Fl9+SPqySfbS3CvWPx9fH97fHGKIkJss8e0HBXnhXJ4=;
+ b=IrHG7M9aSKM+nzUyxDdu4t13z9ihqTQVm9x1kwCgTQgiZZ4KUDwjyOn4P62ceuGh+NmIifrwDMkPfuNC/iMy0ObkCmGJWH8jJ5g3qZizRGrDh1RkLnki73+wWyrX+EywiFvEwWLKS0cy2OWnf8mzRxcCZSqNOSV4eY+IbPJnsFOY8/9QsApW/zdB6FMVoYTxhNlN0V1UhmndHiCSfMyHzTEWcsl/tpkzt8VbShxv0OYq2e+ExsRRTlab9eBJ+JgsdoHo+T8lD72h/+bhPLWQlrHryO6DqS+nGkOggrd3ykNPjeHDaBnbZg8jd12yDCIgGLlIqJtTz9eO5MglTLkA4g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 194.138.21.72) smtp.rcpttodomain=lists.cip-project.org
+ smtp.mailfrom=siemens.com; dmarc=pass (p=none sp=none pct=100) action=none
+ header.from=siemens.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Fl9+SPqySfbS3CvWPx9fH97fHGKIkJss8e0HBXnhXJ4=;
+ b=vCExIEGAh0sZlbEZm65Iy2jyURVf+aa/MlG/jeSBG3HsCAS1KTbFvvXRpMspUlzqsn/97HJAfi5upj+Qtv4b6RL9Bi+eLdY3rAkHgwZwuXzGQpCb1uQxSdiSf1gWrdZb0W59X0/UnWtC7KNqcTpiv8HhJ+CIV6z7VcVNVGSr6bD1wL0Mm9TC0kwbE/2XeL8mhZFGxZdSC4cTY3s9RW+idz+wvxlOm1ViQDKsXQdpoRFGZEQetWaIriINpaEeRzwwslgBltUy+S65pxzF35fE5Erjc0Av/s/kvluTfgTvhxWpUmHuLy4CCcmBcFk+wdNyENMT2yPu1nSqGl6XcZfGSQ==
+Received: from OS6P279CA0037.NORP279.PROD.OUTLOOK.COM (2603:10a6:e10:32::8) by
+ DB7PR10MB2412.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:4f::18) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5395.18; Thu, 7 Jul 2022 07:41:18 +0000
+Received: from HE1EUR01FT102.eop-EUR01.prod.protection.outlook.com
+ (2603:10a6:e10:32:cafe::d6) by OS6P279CA0037.outlook.office365.com
+ (2603:10a6:e10:32::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.16 via Frontend
+ Transport; Thu, 7 Jul 2022 07:41:17 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.72)
+ smtp.mailfrom=siemens.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=siemens.com;
+Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
+ 194.138.21.72 as permitted sender) receiver=protection.outlook.com;
+ client-ip=194.138.21.72; helo=hybrid.siemens.com; pr=C
+Received: from hybrid.siemens.com (194.138.21.72) by
+ HE1EUR01FT102.mail.protection.outlook.com (10.152.1.64) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5417.16 via Frontend Transport; Thu, 7 Jul 2022 07:41:16 +0000
+Received: from DEMCHDC89XA.ad011.siemens.net (139.25.226.103) by
+ DEMCHDC9SMA.ad011.siemens.net (194.138.21.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.9; Thu, 7 Jul 2022 09:40:41 +0200
+Received: from [139.22.133.252] (139.22.133.252) by
+ DEMCHDC89XA.ad011.siemens.net (139.25.226.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.9; Thu, 7 Jul 2022 09:40:41 +0200
+Message-ID: <121837a9-39ee-6c26-6ed5-fcd56b18bc2e@siemens.com>
+Date: Thu, 7 Jul 2022 09:40:39 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: test
-X-Kernelci-Kernel: v5.10.126-cip11-116-gef362fbbff528
-X-Kernelci-Branch: ci/iwamatsu/linux-5.10.y-cip-rc
-X-Kernelci-Tree: cip-gitlab
-Subject: cip-gitlab/ci/iwamatsu/linux-5.10.y-cip-rc smc: 10 runs,
- 4 regressions (v5.10.126-cip11-116-gef362fbbff528)
-To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
-From: "kernelci.org bot" <bot@kernelci.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Subject: CIP IRC weekly meeting today on libera.chat
+To: <cip-dev@lists.cip-project.org>
+Content-Language: en-US
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [139.22.133.252]
+X-ClientProxiedBy: DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) To
+ DEMCHDC89XA.ad011.siemens.net (139.25.226.103)
+X-TM-AS-Product-Ver: SMEX-14.0.0.3080-8.6.1018-26680.007
+X-TM-AS-Result: No-10--18.801600-8.000000
+X-TMASE-MatchedRID: 10+ctCQpgSxUexHo4vWu8JBmg1zv+iLiePOjK4lyDHhlyUAXnYRaSF+B
+	oH4JnCIGZ++q5oZWwp8oqL1chlV2xfbjZLhs5ua57qEZpoAUsFTispvMxPAIBU6PG3UB9o6G9pL
+	nYtQ99xJLpCLN4NR43oc/Zw06wyFfWExFuTDNuJXwgTN5hsYOwKDRSBS1ZYGL+L2GsArAgtp1Nv
+	bGpMw/nt9zZd3pUn7KDjzqIHW5M3lGW+hnAtX4inZm/Y3MNbKgYWo9dIuk10AkgXPI5D5JuLqoF
+	akaELIgn6yJSmANM6ajxYyRBa/qJQPTK4qtAgwIPcCXjNqUmkW8QIu4z6HhEH7cGd19dSFd
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--18.801600-8.000000
+X-TMASE-Version: SMEX-14.0.0.3080-8.6.1018-26680.007
+X-TM-SNTS-SMTP: 
+ A5A6147F0973FEC6BBCCD80C7F381EB1635C5A0CD0D310E4FD78D9A5835B1DED2000:8
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: b060b7dd-2ef7-466b-bdb3-08da5fec1371
+X-MS-TrafficTypeDiagnostic: DB7PR10MB2412:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	4WE6awkQCjlHmqtUoDJq7SYIQyUnbuTSPUr0GMYrpVMjfJkgGT6AQbO4e9h22Wu47JGhyT8yRNNtrMOFsGfQdtS00zb/6J/WA7dhgIkGua54GiDbXtVKddPnXKP4RSWDTN48Ec6xbAJgu3MtGpeORuTgJG6dTxVgyOOSKuQGQ0uPSmS5VpgFgzED1ABpL5G+6ENQwKqBI2djWBkHJIS4QMC5vmeKEolljfrKyu3x4ya5zCZCRPQnw9vP9Bm1dCGg4z5/onMyzwGwt0/jD9qz5LL/p/rQ1jEe+DmxKJdhk46y8/eachaQ+evRFcAc6XareD/PwI5RFgkKawm6TGtbpBrTXg1fVxcrF2/7M5L3h3U0QbMHvc7OEojz/h9WZIPfSjNeISbSgMw3/LlgWr0JlFPGRnIPTcdOUawl9NAeEDDjE05onk6X5vqmh44dyH7skAd0CASs289TaevEOcURWcWWPp79M3okqWGtzrxcX4VPJEJyrdm9Eo9qY0E3QsKW4AHSfRJmQLlBXTi/Ahg1Qgcg4j9jkRTRSqByr3ZLCHlaLVTGQfmi59ASEWNUNsQVaav5DyO0TAE9Q2C+bhLKjEASQFi9d/g4mnhyMuQjCGjaNuUGZl7RWhTpzu9eJCYJOWdZZyTPGSN9gNOfKHdlmggFdYKYUn5cf3Jz3OGNa6MwYyg9f7AzJRlFK0VQiZ+A2H3nb1tvwq/IAW9uTQqVC2U35BaNi80GUA0pris2flyrNRlJgazCIweGtoUUOgFNyZeZFmTu/mz4Cr2BbKWW6a9+2J3WyU5slpcOZJhl3SGBCYB3ffyqfjVka++a/hqpdyFFT1FhRai+sJSPlMBRILJQJ3wS6ROdJu187aUL7Z5pOnJ2GXy0apD0STdf+jSdyaav5NGA3RtSR3alCEhyGam3RpjoY0jZGI9Dh0fQ66BSN81AM9hOJk0em70WzcKv
+X-Forefront-Antispam-Report: 
+	CIP:194.138.21.72;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230016)(4636009)(376002)(39860400002)(396003)(346002)(136003)(36840700001)(40470700004)(46966006)(40460700003)(31686004)(36860700001)(83380400001)(16576012)(6706004)(41300700001)(36756003)(4744005)(44832011)(8936002)(86362001)(6916009)(5660300002)(82310400005)(2906002)(40480700001)(31696002)(47076005)(356005)(82740400003)(186003)(70206006)(70586007)(8676002)(16526019)(478600001)(966005)(316002)(82960400001)(81166007)(26005)(2616005)(336012)(956004)(3940600001)(43740500002)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2022 07:41:16.8707
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 
+ b060b7dd-2ef7-466b-bdb3-08da5fec1371
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
+ TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.72];Helo=[hybrid.siemens.com]
+X-MS-Exchange-CrossTenant-AuthSource: 
+	HE1EUR01FT102.eop-EUR01.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR10MB2412
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 07 Jul 2022 07:07:52 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8713
+ <cip-dev@lists.cip-project.org>; Thu, 07 Jul 2022 07:41:23 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8714
 
-cip-gitlab/ci/iwamatsu/linux-5.10.y-cip-rc smc: 10 runs, 4 regressions (v5.=
-10.126-cip11-116-gef362fbbff528)
+Hi all,
 
-Regressions Summary
--------------------
+Kindly be reminded to attend the weekly meeting through IRC to discuss
+technical topics with CIP kernel today. Our channel is the following:
 
-platform                     | arch   | lab           | compiler | defconfi=
-g                    | regressions
------------------------------+--------+---------------+----------+---------=
----------------------+------------
-hp-x360-12b-c...4020-octopus | x86_64 | lab-collabora | gcc-10   | x86_64_d=
-efcon...6-chromebook | 2          =
+    irc:irc.libera.chat:6667/cip
 
-qemu_arm64-virt-gicv3        | arm64  | lab-broonie   | gcc-10   | defconfi=
-g                    | 1          =
+The IRC meeting is scheduled to UTC (GMT) 12:00:
 
-qemu_arm64-virt-gicv3        | arm64  | lab-broonie   | gcc-10   | defconfi=
-g+arm64-chromebook   | 1          =
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2022&month=7&day=7&hour=12&min=0&sec=0&p1=224&p2=179&p3=136&p4=37&p5=241&p6=248
 
+USWest    USEast    UK        DE        TW        JP
+05:00     08:00     13:00     14:00     20:00     21:00
 
-  Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fiwamatsu%2=
-Flinux-5.10.y-cip-rc/kernel/v5.10.126-cip11-116-gef362fbbff528/plan/smc/
+Last meeting minutes:
+https://ircbot.wl.linuxfoundation.org/meetings/cip/2022/06/cip.2022-06-30-12.01.log.html
 
-  Test:     smc
-  Tree:     cip-gitlab
-  Branch:   ci/iwamatsu/linux-5.10.y-cip-rc
-  Describe: v5.10.126-cip11-116-gef362fbbff528
-  URL:      https://gitlab.com/cip-project/cip-kernel/linux-cip.git
-  SHA:      ef362fbbff528b6dc0695b488cfc8cde20b404e4 =
+* Action items
+  1. Resolve/ignore failures of KernelCI on 4.4-cip - alicefm
+  2. Check cip devices on kernelci old pull request - patersonc
+  3. Update https://wiki.linuxfoundation.org/civilinfrastructureplatform/ciptesting/cipreferencehardware - iwamatsu-san
+* Kernel maintenance updates
+  - status 4.4 releases
+* Kernel testing
+* AOB
+  - first thoughts about next cip-kernel
 
-
-
-Test Regressions
----------------- =
-
-
-
-platform                     | arch   | lab           | compiler | defconfi=
-g                    | regressions
------------------------------+--------+---------------+----------+---------=
----------------------+------------
-hp-x360-12b-c...4020-octopus | x86_64 | lab-collabora | gcc-10   | x86_64_d=
-efcon...6-chromebook | 2          =
-
-
-  Details:     https://kernelci.org/test/plan/id/62c676b82970b4186aa39c08
-
-  Results:     14 PASS, 2 FAIL, 0 SKIP
-  Full config: x86_64_defconfig+x86-chromebook
-  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
-.10.y-cip-rc/v5.10.126-cip11-116-gef362fbbff528/x86_64/x86_64_defconfig+x86=
--chromebook/gcc-10/lab-collabora/smc-hp-x360-12b-ca0010nr-n4020-octopus.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
-.10.y-cip-rc/v5.10.126-cip11-116-gef362fbbff528/x86_64/x86_64_defconfig+x86=
--chromebook/gcc-10/lab-collabora/smc-hp-x360-12b-ca0010nr-n4020-octopus.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220624.0/x86/rootfs.cpio.gz =
-
-
-
-  * smc.CVE-2018-3639: https://kernelci.org/test/case/id/62c676b82970b4186a=
-a39c14
-        failing since 2 days (last pass: v5.10.121-cip9-287-ge9094c8446fc, =
-first fail: v5.10.125-cip10-119-g603acbe1aceb)
-
-    2022-07-07T06:01:04.964721  <8>[   10.204828] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3DCVE-2018-3639 RESULT=3Dfail>   =
-
-
-  * smc.CVE-2018-3640: https://kernelci.org/test/case/id/62c676b82970b4186a=
-a39c15
-        failing since 2 days (last pass: v5.10.121-cip9-287-ge9094c8446fc, =
-first fail: v5.10.125-cip10-119-g603acbe1aceb)
-
-    2022-07-07T06:01:04.946634  <8>[   10.186780] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3DCVE-2018-3640 RESULT=3Dfail>   =
-
- =
-
-
-
-platform                     | arch   | lab           | compiler | defconfi=
-g                    | regressions
------------------------------+--------+---------------+----------+---------=
----------------------+------------
-qemu_arm64-virt-gicv3        | arm64  | lab-broonie   | gcc-10   | defconfi=
-g                    | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/62c6787672b1398e74a39bcd
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
-.10.y-cip-rc/v5.10.126-cip11-116-gef362fbbff528/arm64/defconfig/gcc-10/lab-=
-broonie/smc-qemu_arm64-virt-gicv3.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
-.10.y-cip-rc/v5.10.126-cip11-116-gef362fbbff528/arm64/defconfig/gcc-10/lab-=
-broonie/smc-qemu_arm64-virt-gicv3.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220624.0/arm64/rootfs.cpio.gz =
-
-
-
-  * smc.login: https://kernelci.org/test/case/id/62c6787672b1398e74a39bce
-        failing since 58 days (last pass: v5.10.112-cip6-88-gf3397cadb2dd6,=
- first fail: v5.10.112-cip6-218-g8253434cd56a) =
-
- =
-
-
-
-platform                     | arch   | lab           | compiler | defconfi=
-g                    | regressions
------------------------------+--------+---------------+----------+---------=
----------------------+------------
-qemu_arm64-virt-gicv3        | arm64  | lab-broonie   | gcc-10   | defconfi=
-g+arm64-chromebook   | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/62c678b26472939f5ca39bd2
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
-.10.y-cip-rc/v5.10.126-cip11-116-gef362fbbff528/arm64/defconfig+arm64-chrom=
-ebook/gcc-10/lab-broonie/smc-qemu_arm64-virt-gicv3.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
-.10.y-cip-rc/v5.10.126-cip11-116-gef362fbbff528/arm64/defconfig+arm64-chrom=
-ebook/gcc-10/lab-broonie/smc-qemu_arm64-virt-gicv3.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220624.0/arm64/rootfs.cpio.gz =
-
-
-
-  * smc.login: https://kernelci.org/test/case/id/62c678b26472939f5ca39bd3
-        failing since 55 days (last pass: v5.10.112-cip6-88-gf3397cadb2dd6,=
- first fail: v5.10.112-cip6-289-g2969e096d186) =
-
- =20
+Jan
 
