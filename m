@@ -1,324 +1,198 @@
-Return-Path: <alice.ferrazzi@miraclelinux.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57D91C43334
-	for <webhook@archiver.kernel.org>; Thu, 14 Jul 2022 10:46:11 +0000 (UTC)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com
- [209.85.208.50])
- by mx.groups.io with SMTP id smtpd.web11.6173.1657795560731670105
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C80C43334
+	for <webhook@archiver.kernel.org>; Thu, 14 Jul 2022 12:00:31 +0000 (UTC)
+Received: from EUR01-HE1-obe.outbound.protection.outlook.com
+ (EUR01-HE1-obe.outbound.protection.outlook.com [40.107.13.43])
+ by mx.groups.io with SMTP id smtpd.web09.6647.1657800028513394029
  for <cip-dev@lists.cip-project.org>;
- Thu, 14 Jul 2022 03:46:01 -0700
+ Thu, 14 Jul 2022 05:00:29 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112
- header.b=xc8Gli4z;
- spf=pass (domain: miraclelinux.com, ip: 209.85.208.50,
- mailfrom: alice.ferrazzi@miraclelinux.com)
-Received: by mail-ed1-f50.google.com with SMTP id w12so1826301edd.13
-        for <cip-dev@lists.cip-project.org>;
- Thu, 14 Jul 2022 03:46:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=TBr2PPAKtHrd9m0JG12iFBQWnxwjdJYNvsuab6Z6SDQ=;
-        b=xc8Gli4zTjPfFSiuwQnnCC/TYKEdJkHqufhIW4G80sVAvb2H41Ulh6W+AT47rQTQEF
-         QPByWA544Vs8Ggf8WX3CARE4ldnJCdnjEO1x3/2AGbc0hRwPvwTDGrreZ8S9FfLQ7v1s
-         aRJTVpzjRZW9q40Mqvx/PPPk4hCw0qj/86kWVUJwieVSlMamXiUykB2aYAstFYz6yctb
-         YLGkgS/571SsrPaVTDdOqWDxw55vW/Gf6z40KszKLN623+X1Wrl7xHAOlPD3FK6l1Mi4
-         8LAfWFh1o2yEOiiNovvQNTHQ98Qi4+XjSeAPHpppg4pavV4Y1X1sZ8KMEGP6/ORQ/nfa
-         Is8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=TBr2PPAKtHrd9m0JG12iFBQWnxwjdJYNvsuab6Z6SDQ=;
-        b=vnWFjzC5Ts0eskzSnMGHC4IrO3ycFesWItxprxomuaD+9l7UblGPHV2wv4WCtBfL5x
-         Ha8zRqRAq3hv97sHzPNmK/PKw2zfrMjL98vmk0F9TmKmHJ2r7WGPv+s0qVx/RY+TKRiO
-         BzPKAF44WW7+C2zFz4GjkIcSoqThHBxKkIFxkLIoC5igA82AfInlqWVf7YuHCYG2yu7m
-         wsE4UxyZ1ZE5fax6OD1zT33ueCN5EWR4Cer5piitcegaKX3P6L5U/h0wxPoLMK/wdBlB
-         xT8pdhRgbW3HtMIXoOVDegnppxljz7ToT0COGsy7yg23VDeED7m7sYU088ihtzq1d3MK
-         aEGA==
-X-Gm-Message-State: AJIora+avLuAEC5WDyhg13mnUnDskAz5NP5S7/Y6M7FtQ+8SRUoD6tUs
-	NudSe2SVNFNIVSHlMvwjWHgTg7a2rpMw3JHGNlFh
-X-Google-Smtp-Source: 
- AGRyM1uq4Rg0swJ983+JbJTuW4juKTFXiAJ6QlFVAeUmGoLaTjbAQqBtn6GgvH8Dk7zdglUJ/OX0npTvMyqs5hMY0es=
-X-Received: by 2002:a05:6402:782:b0:43a:7387:39df with SMTP id
- d2-20020a056402078200b0043a738739dfmr11769318edy.251.1657795559017; Thu, 14
- Jul 2022 03:45:59 -0700 (PDT)
+ dkim=fail reason="body hash did not verify" header.i=@siemens.com
+ header.s=selector2 header.b=dQtyhzaJ;
+ spf=pass (domain: siemens.com, ip: 40.107.13.43,
+ mailfrom: jan.kiszka@siemens.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iRXngpidGkXcW6TxsTd6gnKpQGK8cDi7x0WqSX17yx1T7aDu9YV2btgTWqypdBLrSFLstAvNZU1MjfAfhl6UA9afcb+qeL9KD1jEo3IJBWfxOA99YZaNzVG1AlSlmAy0Y/aEM+HH3bFYjmSrCbVmqCUobdh2ZAmOLQ9bLQhs9g3pew1wUsE3C/PMI4oyYCG5QAK/pVUF/Bl5BC/SuaqlGASYRQukhSk5E+loU/13VH9mjMqR7e3eQBIlftGSwlTPoJ2H6bgM/aitnAAwn5FQ1ozuOUvbQ5Js9I1yTR8CAwFWQh2R5QONan7fcdtUjtUgH8EPcs3TNOGY+kpMqRB0PA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NPlf2N6/Ywn5RcmkJBKUvEJgO12SAIY3zychmYbTf2s=;
+ b=Lm8nNmXQ6HcnVCQEhdLrgvoN7UgzOjmzE+NI6xVhj6wjaxe+HczM0k6x9+5ACxcDlj5WvTDY5CgeH0zCkQawAydbFq31FtkmImM39YwKesZuowmjimlHK3zS8s6Yzn+BJySnJ6f3C0JFJU+ylTg4c/rr5DGP0peh7luxnDhPLW3UscpypcyIc4gtMrCQExw3bGMNcKAQAhJFBLuOqTKcnybSh5XRc/kYrSgEcwKWiwVdTNE8JKuhUOu70vwkXf3JNjNe0Kzt++dEM/rTXv5N6GMXzMJdKMRt91LxXufshyozZDAvRbmoKrzRsx05DHHAzkCDEj+koIZbmIVLw+GtWg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 194.138.21.73) smtp.rcpttodomain=toshiba-tsip.com smtp.mailfrom=siemens.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=siemens.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NPlf2N6/Ywn5RcmkJBKUvEJgO12SAIY3zychmYbTf2s=;
+ b=dQtyhzaJTCYKeeZYqnsRLDIFhNb8wFZakyhMiOrWjS9C7pBSL9TpGp3sXL56bGtDRVRCKkc2mbUVoKBsq/rudfztpSKsFgXJKFuSu3nDu+SFGQ5yt692j2jvEHgtwNjOGwm/DSkygcUe5gJ+XyfkRNdjW9YfkjkRdiD+GfP2t6kaTlygCkuCHiuO+G9DeJ+unL8qHTCAzh9wEJ41+8ZwCzjkhE9WjfKkPVyu1TM0r4dKWxYj2Rx0RtfnSiZb0mkci4sswaFdKp5b4ffrKJxhTSTelKfMjFz3HcC9zs2ZrJ5ld5akXdLOoKPxYbfTCvakZlBnfguwVV81qcurzJHvbg==
+Received: from AM6P193CA0040.EURP193.PROD.OUTLOOK.COM (2603:10a6:209:8e::17)
+ by AM9PR10MB4354.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:266::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.15; Thu, 14 Jul
+ 2022 12:00:25 +0000
+Received: from VE1EUR01FT085.eop-EUR01.prod.protection.outlook.com
+ (2603:10a6:209:8e:cafe::23) by AM6P193CA0040.outlook.office365.com
+ (2603:10a6:209:8e::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5438.13 via Frontend
+ Transport; Thu, 14 Jul 2022 12:00:25 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.73)
+ smtp.mailfrom=siemens.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=siemens.com;
+Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
+ 194.138.21.73 as permitted sender) receiver=protection.outlook.com;
+ client-ip=194.138.21.73; helo=hybrid.siemens.com; pr=C
+Received: from hybrid.siemens.com (194.138.21.73) by
+ VE1EUR01FT085.mail.protection.outlook.com (10.152.3.12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5438.12 via Frontend Transport; Thu, 14 Jul 2022 12:00:24 +0000
+Received: from DEMCHDC89XA.ad011.siemens.net (139.25.226.103) by
+ DEMCHDC9SNA.ad011.siemens.net (194.138.21.73) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.9; Thu, 14 Jul 2022 14:00:24 +0200
+Received: from [139.23.76.214] (139.23.76.214) by
+ DEMCHDC89XA.ad011.siemens.net (139.25.226.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.9; Thu, 14 Jul 2022 14:00:23 +0200
+Message-ID: <37dfc275-9ce2-3793-da13-b35c6d89583b@siemens.com>
+Date: Thu, 14 Jul 2022 14:00:23 +0200
 MIME-Version: 1.0
-References: <20220623181325.GA747@amd>
- <CANgtXuMGGqgBDqA=UCSnY6pd892Xppq+yb47if6Ek+0b90s0DA@mail.gmail.com>
- <55dec7b9bbacfc1e30524e8c5f2fa6a31447b2aa.camel@siemens.com>
- <CANgtXuNbpnPE9RJqr2kwMBuEnDq1wEaR8mCCG_hetORhCMvGqw@mail.gmail.com>
- <58751ddf9a708c00697d79d03c61f7fc49a64124.camel@siemens.com>
-In-Reply-To: <58751ddf9a708c00697d79d03c61f7fc49a64124.camel@siemens.com>
-From: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
-Date: Thu, 14 Jul 2022 19:45:22 +0900
-Message-ID: 
- <CANgtXuNv_2wPDNWURk5n8k0KhCKezB6JFK0x6iUCZnfTazCLrw@mail.gmail.com>
-Subject: Re: [cip-dev] KernelCI reports
-To: "Bezdeka, Florian" <florian.bezdeka@siemens.com>
-Cc: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
- "pavel@denx.de" <pavel@denx.de>,
-	"chris.paterson2@renesas.com" <chris.paterson2@renesas.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [isar-cip-core v3]
+ recipes-core/images/cip-core-image-security.bb:Add
+ libpam-google-authenticator Package
+Content-Language: en-US
+To: <Shreyas.Karmahe@toshiba-tsip.com>, <cip-dev@lists.cip-project.org>
+CC: <dinesh.kumar@toshiba-tsip.com>, <Venkata.Pyla@toshiba-tsip.com>,
+	<kazuhiro3.hayashi@toshiba.co.jp>
+References: <20220711102903.4088463-1-Shreyas.Karmahe@toshiba-tsip.com>
+ <cd7d2ff6-d79f-01b1-e970-1b289587468e@siemens.com>
+ <OSZPR01MB8877233D21690844A101A660DC869@OSZPR01MB8877.jpnprd01.prod.outlook.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+In-Reply-To: 
+ <OSZPR01MB8877233D21690844A101A660DC869@OSZPR01MB8877.jpnprd01.prod.outlook.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Originating-IP: [139.23.76.214]
+X-ClientProxiedBy: DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) To
+ DEMCHDC89XA.ad011.siemens.net (139.25.226.103)
+X-TM-AS-Product-Ver: SMEX-14.0.0.3080-8.6.1018-26680.007
+X-TM-AS-Result: No-10--19.476900-8.000000
+X-TMASE-MatchedRID: MWBePzxHDOzdDS6etHbe2x8Qq+M7nEvg/k5m7D0YTS/x5KZMlKYS/bAG
+	3NFI6r+gw6juv/EevUC/xEsc++5TTvGwUUhZtzr+y0V2ETiGoWPq2K4lBTHyk167ppG3mtjJ0Nn
+	UUVMlTKaAI7Mvq/sL5xfFnxnR7LTzxwNT0rsbEf29ulegjmbzeNnPeICoIKyxzNY33yIEF4a/5C
+	DVP/Qsfn4XCDNABbvAPXWoMDYf5ey3LN8D1qTt895q9HOrHDfe1cQa/EJbtzY/ApMPW/xhXkyQ5
+	fRSh265CKA+xsnnO6OygaZY7yrHzne0/oZSDBt7EXkELOd0dmpoQCiiF6Qe+m5eAiqrqZDK9FT7
+	09M8dJin7m/OxjmYo/D+6IQMRxU5585VzGMOFzABi3kqJOK62QtuKBGekqUpIG4YlbCDECsWefv
+	Mt+drgg==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--19.476900-8.000000
+X-TMASE-Version: SMEX-14.0.0.3080-8.6.1018-26680.007
+X-TM-SNTS-SMTP: 
+ ED9AA072F7BDE598F53EE5A732D89579F99AD1CFB68B8B8499956CC37A6D1E0B2000:8
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: f94afb37-f0cb-450c-8efa-08da65906f7c
+X-MS-TrafficTypeDiagnostic: AM9PR10MB4354:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	lcqLoNclLBi92dNrNgTeQsVimzcOH1ITiDUIBSt8PqWYxnXgsZ+HWr+LwUXb8UqMuwnP/CJ26p7YbIZzXo4pHkivynk7b4896Nn2BeVVTfvg15NZSTmOwG9GyAe0uOQQVEWTVx08O50VShdopwPyHEbXuWHFM5DFI9roplbSeR5Goi3H/vozWuqVHu4zz3+NCbq4hy+iHvqCBhOOTs+THiXAiI1QIyIbB/tLDhMqk0A/qTdx5czbcbtNQPQyhDfaHg2KELKBfciHDBDT+6tRaGVB9BAyFDm+GX1QQl0/eELJAfzWkTNlVyQ6EQgZMtoDoMnjOFqdhW6A685FEQ1FXH7Fzk6oxrjhwQs/uBHLgW3/jegyT0luH3p74A0OFy0erHZk+GV0kKEaJRO01TeQjlZeSLRLgU9wHIzty6U/Dl0n7Ucn7aOGAunC0eZrr4aqPXO84vweDPHzv77zW6ecWq/GGRcBocqpuCJCBns+r//I2xQw0HJ4r65WfgKYTBNYNCeVMkX61uEd//ERQLJgcVmk7eTlpBQGyx+gAyvafiAXgEcFWZ6QMWFwot2tEqdhgBM11EBb0QPEEXLk9OixZt+kuXnfjT83DoSMEZU2aCQaSprMOm9U8cT8EmoVVffNKs2eZq/fRm7nWTujiROw/0nCSUQobLiFtKDsdXFxRk8Y3F4CpW+JD11YesD3pJgyZdwCdXCH0MUM+LyGcrOgEVUGRqc8gHfydFq1vgOclhM6dum7g6DeMwwinxHZ8MWgNMa384wTSS/x3J4wARyXVPiJTAn4Mo9kkHrcKfAYHS/glbTOA1eaFOPKDTyqn/Ofu1OocuUYHLh7xzJu5K0aNJXcZaxWSDmh9JZgU7otX04+HJ+VDyMmijy1Smd98swxDFAYZlNsRM6zkjGshljrhlfww/kwb4/kAzHA/KHr670=
+X-Forefront-Antispam-Report: 
+	CIP:194.138.21.73;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230016)(4636009)(136003)(396003)(346002)(39860400002)(376002)(46966006)(36840700001)(40470700004)(70586007)(16526019)(82960400001)(2616005)(47076005)(6706004)(186003)(956004)(26005)(356005)(81166007)(53546011)(70206006)(336012)(40460700003)(40480700001)(86362001)(82740400003)(31696002)(8676002)(44832011)(36860700001)(478600001)(31686004)(82310400005)(8936002)(15650500001)(110136005)(41300700001)(316002)(83380400001)(36756003)(2906002)(4326008)(54906003)(16576012)(5660300002)(3940600001)(43740500002)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jul 2022 12:00:24.6007
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 
+ f94afb37-f0cb-450c-8efa-08da65906f7c
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
+ TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.73];Helo=[hybrid.siemens.com]
+X-MS-Exchange-CrossTenant-AuthSource: 
+	VE1EUR01FT085.eop-EUR01.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR10MB4354
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 14 Jul 2022 10:46:11 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8759
+ <cip-dev@lists.cip-project.org>; Thu, 14 Jul 2022 12:00:31 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8760
 
-hello Florian,
+On 12.07.22 10:19, Shreyas.Karmahe@toshiba-tsip.com wrote:
+> Hi Jan-San,
+>=20
+> Is there any new patch required to add libpam-google-authenticator Packag=
+e in cip-core-image-security.bb file with v3 version=20
+> Or is there anything else need to be addressed along with package ?
 
-On Thu, Jul 14, 2022 at 7:27 PM Bezdeka, Florian
-<florian.bezdeka@siemens.com> wrote:
->
-> On Thu, 2022-07-14 at 19:17 +0900, Alice Ferrazzi wrote:
-> > On Thu, Jul 14, 2022 at 6:45 PM florian.bezdeka@siemens.com
-> > <florian.bezdeka@siemens.com> wrote:
-> > >
-> > > On Thu, 2022-07-14 at 18:20 +0900, Alice Ferrazzi via lists.cip-
-> > > project.org wrote:
-> > > > Hi Pavel,
-> > > >
-> > > > On Fri, Jun 24, 2022 at 3:13 AM Pavel Machek <pavel@denx.de> wrote:
-> > > > >
-> > > > > Hi!
-> > > > >
-> > > > > First... what I am currently using for testing: gitlab; I simply =
-watch
-> > > > > for green ticks there. It takes ~15 minutes to get results. Red c=
-ross
-> > > > > in compile stage is pretty sure sign of build error. Red cross in
-> > > > > testing means I need to look at the results, but it is pretty eas=
-y to
-> > > > > see "network timeout" or "board unavailable" problems, and mostly=
- I
-> > > > > can just hit retry and get the green tick.
-> > > > >
-> > > > > What wories me about gitlab is that we have single board for 4.4-=
-st,
-> > > > > and just two for 4.4-cip.
-> > > > >
-> > > > > Now, kernelci.
-> > > > >
-> > > > > https://ircbot.wl.linuxfoundation.org/meetings/cip/2022/06/cip.20=
-22-06-23-12.01.html
-> > > > >
-> > > > > I got this link in the irc meeting:
-> > > > >
-> > > > > https://linux.kernelci.org/job/cip/
-> > > > >
-> > > > > Lets start with build results.
-> > > > >
-> > > > > linux-5.10.y-cip      v5.10.121-cip9 bd24696dd7ad23517733728da675=
-a00cd3073916 169 7 3
-> > > > >
-> > > > > I click on "3" and get build error summary:
-> > > > >
-> > > > > Errors Summary
-> > > > > 2      arm-linux-gnueabihf-gcc: error: unrecognized -march target=
-: armv3m
-> > > > > 2       arm-linux-gnueabihf-gcc: error: missing argument to =E2=
-=80=98-march=3D=E2=80=99
-> > > > >
-> > > > > ...but those are not kernel problems, that's buildsystem incompat=
-ible
-> > > > > with config or something like that. Nothing for me to solve.
-> > > > >
-> > > > > Let me go through more:
-> > > > >
-> > > > > linux-4.19.y-cip        v4.19.246-cip75 38ce181ac6ca9f3decdd389cb=
-fd0a38fecdb28c7  111 8 1
-> > > > > linux-4.19.y-cip        v4.19.245-cip74 0be9d6774be9b192bcea6fdda=
-da917ae3d22f22e  106 7 1
-> > > > > linux-4.19.y-cip-rt     v4.19.245-cip74-rt25 c80ee3077a4ce344cf1c=
-ffa23af767c9fd75d52c  181 16 6
-> > > > > linux-4.4.y-cip v4.4.302-cip69-296-g52de9431d314 52de9431d314a28c=
-4aa66d8f81144c9958c11168 164 18 5
-> > > > > linux-5.10.y-cip-rt     v5.10.109-cip5-rt4 b41186882eaf0137277045=
-da13ea649577c42c11 177 8 3
-> > > > > linux-5.10.y-cip        v5.10.112-cip6 c8f6747dcd02a8f87731c324f4=
-bc37bd120a8982 180 7 3
-> > > > > linux-4.19.y-cip        v4.19.239-cip72 fdf770b2db8080de95dcf74cc=
-7547319034a4a56 0 0 120
-> > > > >
-> > > > > That's 19 errors total + outlier of v4.19.239-cip72 with 120
-> > > > > errors. None of the 19 errors is real. KernelCI needs to fix thei=
-r
-> > > > > configs/build environment.
-> > > > >
-> > > > > 120 errors are reported at https://linux.kernelci.org/build/cip/b=
-ranch/linux-4.19.y-cip/kernel/v4.19.239-cip72/ . Wow. Except that I don't s=
-ee that many errors there. I see lines such as
-> > > > >
-> > > > > cm_x2xx_defconfig =E2=80=90 arm =E2=80=90 gcc-10  0 warnings 0 er=
-rors. When I click for details I get "No test results found".
-> > > > >
-> > > > > https://linux.kernelci.org/build/id/6266a495d40dfd0dacff948c/
-> > > > >
-> > > > > Nothing for me to debug, either, agreed? So lets look at test res=
-ults.
-> > > > >
-> > > > > Branch  Kernel Commit Build Status      Test Results    Date
-> > > > > linux-5.10.y-cip      v5.10.121-cip9    bd24696dd7ad23517733728da=
-675a00cd3073916 169 7 3  2457 256 21 2022-06-12
-> > > > >
-> > > > > 21 failures.
-> > > > >
-> > > > > If I click that, I can see that most regressions (11) are at base=
-line
-> > > > > test plan. The machine that looks relevant to us is
-> > > > > qemu_arm64-virt-gicv2 defconfig+arm64-chromebook --
-> > > > >
-> > > > > https://linux.kernelci.org/test/job/cip/branch/linux-5.10.y-cip/k=
-ernel/v5.10.121-cip9/plan/baseline/
-> > > > >
-> > > > > New regression, last pass: v5.10.112-cip6
-> > > > >
-> > > > > I get to
-> > > > > https://linux.kernelci.org/test/case/id/62a333452713980006a39c13/
-> > > > > which looks quite useful, it lists successful run and failed run,
-> > > > > v5.10.121-cip9 fails while v5.10.112-cip6 works.
-> > > >
-> > > > Yes, checking for regressions is quite useful.
-> > > >
-> > > > >
-> > > > > Eventually I get to https://storage.kernelci.org/cip/linux-5.10.y=
--cip/v5.10.121-cip9/arm64/defconfig+arm64-chromebook/gcc-10/lab-baylibre/ba=
-seline-qemu_arm64-virt-gicv2.html .
-> > > > >
-> > > > > And sorry, no I don't see anything I could debug there. Did the d=
-ocker
-> > > > > fail to start? Hmm. Lets compare it with the older results.
-> > > > >
-> > > > > https://storage.kernelci.org/cip/linux-5.10.y-cip/v5.10.112-cip6/=
-arm64/defconfig+arm64-chromebook/gcc-10/lab-baylibre/baseline-qemu_arm64-vi=
-rt-gicv2.html . Aha, 404. No comparison possible.
-> > > >
-> > > > The garbage collector removes everything that's older than 28 days.
-> > > >
-> > > > >
-> > > > > Lets try one more.
-> > > > >
-> > > > > rk3399-gru-kevin defconfig+arm64-chromebook =E2=80=90 arm64 =E2=
-=80=90 gcc-10
-> > > > >
-> > > > > https://linux.kernelci.org/test/plan/id/62a337700aadba677da39bdd/
-> > > > >
-> > > > > It gets me to:
-> > > > >
-> > > > > https://storage.kernelci.org/cip/linux-5.10.y-cip/v5.10.121-cip9/=
-arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/baseline-rk3399-gru-k=
-evin.html
-> > > > >
-> > > > > I see some errors... Like missing firmware (not a kernel problem)=
-. At
-> > > > > the end there's "tpm-chip-is-online: fail" . Is that what I shoul=
-d be debugging?
-> > > > >
-> > > > >  1368 12:21:39.212881  /usr/bin/tpm2_getcap
-> > > > >   1369 12:21:39.251829  ERROR:sys:src/tss2-sys/api/Tss2_Sys_Execu=
-te.c:114:Tss2_Sys_ExecuteFinish() Unsupported device. The device is a TPM 1=
-.2
-> > > > >    1370 12:21:39.261387  ERROR:esys:src/tss2-esys/api/Esys_GetCap=
-ability.c:307:Esys_GetCapability_Finish() Received a non-TPM Error
-> > > > >     1371 12:21:39.272254  ERROR:esys:src/tss2-esys/api/Esys_GetCa=
-pability.c:107:Esys_GetCapability() Esys Finish ErrorCode (0x00080001)
-> > > > >      1372 12:21:39.281854  ERROR: Esys_GetCapability(0x80001) - s=
-ys:Catch all for all errors not otherwise specified
-> > > > >       1373 12:21:39.285316  ERROR: Unable to run tpm2_getcap
-> > > > >
-> > > > > Userland seems to say that it does not support this device. I gue=
-ss I could compare it with older boot?
-> > > > >
-> > > > > https://storage.kernelci.org/cip/linux-5.10.y-cip/v5.10.83-cip1-1=
-78-g2cf1d12aab81/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/base=
-line-rk3399-gru-kevin.html
-> > > > >
-> > > > > Aha, no, could not, 404.
-> > > >
-> > > > same here, the garbage collector removes everything that's older th=
-an 28 days.
-> > > >
-> > > > >
-> > > > > Now, let's go through Jan's
-> > > > > example. https://linux.kernelci.org/build/id/61fbabe0cb6f27a6ce5d=
-6f03/logs/?
-> > > > > . Again, errors look like missconfigured build system, with
-> > > > >
-> > > > > arm-linux-gnueabihf-gcc: error: unrecognized -march target: armv3
-> > > > > arm-linux-gnueabihf-gcc: error: missing argument to =E2=80=98-mar=
-ch=3D=E2=80=99
-> > > > >
-> > > > > Full log https://storage.kernelci.org/stable-rc/linux-4.4.y/v4.4.=
-302/arm/rpc_defconfig/gcc-10/logs gives 404.
-> > > >
-> > > > same here, the garbage collector removes everything that's older th=
-an 28 days.
-> > > >
-> > > > >
-> > > > > I spent quite some time trying to click around to find an error I
-> > > > > could debug. I could not find one. All of above looks like kernel=
-CI
-> > > > > configuration problems. Can they be fixed and/or filtered out?
-> > > > >
-> > > >
-> > > > If you can write which configurations you want to filter out (becau=
-se
-> > > > they are not needed for CIP)
-> > > > to KernelCI, KernelCI could blocklist such configurations.
-> > > >
-> > > > for reference: https://github.com/kernelci/kernelci-core/issues/105=
-3#issuecomment-1050679725
-> > >
-> > > Jan asked me to check the kernelci related issues you summarized here
-> > > related to the 4.4-cip branch. I tried to find the latest 4.4 test
-> > > report that failed. Can someone point me there?
-> > >
-> > > With some guidance from Alice it should be possible for me to come up
-> > > with a exclude/blocklist to bring 4.4 back to a "green" state.
-> > > Afterwards we would have to sort out all the problems (decoupled from
-> > > Pavel's testing)
-> > >
-> >
-> > Hello Florian
-> >
-> > Latest build 4.4 cip is here
-> > https://linux.kernelci.org/test/job/cip/branch/linux-4.4.y-cip/kernel/v=
-4.4.302-cip69-296-g52de9431d314/
-> > is a really old build as the latest 4.4 cip tag is v4.4.302-cip69
-> > tagged on date 2022-04-04 13:18:30 +0900
-> > Unfortunately as I previously said KernelCI garbage collector removes
-> > everything that's older than 28 days.
-> > You can find CIP builds here: https://linux.kernelci.org/job/cip/
->
-> Thanks a lot Alice!
->
-> Any chance for me to trigger a re-build?
->
+As I wrote below: This patch is technically no longer needed because
+security-customizations pulls it in now as dependency. If you still like
+to have the package explicitly (and now rudundantly) listed in
+cip-core-image-security.bb, please provide the reasoning with the patch.
 
-I'm trying to triggering CIP_4.4 again it should appear in
-https://staging.kernelci.org/job/
-but Pavel have is own repository for triggering re-builds
-"""
-tree: cip-gitlab
-branch: 'ci/pavel/linux-test'
-variants: *cip_variants
-cip_pavel-test:
-"""
+Jan
 
-Thanks,
-Alicef
+> Kindly clarify my queries
+>=20
+> Kind Regards,
+> Shreyas
+>=20
+> -----Original Message-----
+> From: Jan Kiszka <jan.kiszka@siemens.com>=20
+> Sent: Monday, July 11, 2022 4:29 PM
+> To: karmahe shreyas(=EF=BC=B4=EF=BC=B3=EF=BC=A9=EF=BC=B0 TMIEC ODG Portin=
+g) <Shreyas.Karmahe@toshiba-tsip.com>; cip-dev@lists.cip-project.org
+> Cc: dinesh kumar(=EF=BC=B4=EF=BC=B3=EF=BC=A9=EF=BC=B0 TMIEC ODG Porting) =
+<dinesh.kumar@toshiba-tsip.com>; pyla venkata(=EF=BC=B4=EF=BC=B3=EF=BC=A9=
+=EF=BC=B0 TMIEC ODG Porting) <Venkata.Pyla@toshiba-tsip.com>; hayashi kazuh=
+iro(=E6=9E=97 =E5=92=8C=E5=AE=8F =E2=96=A1=EF=BC=B3=EF=BC=B7=EF=BC=A3=E2=97=
+=AF=EF=BC=A1=EF=BC=A3=EF=BC=B4) <kazuhiro3.hayashi@toshiba.co.jp>
+> Subject: Re: [isar-cip-core v3] recipes-core/images/cip-core-image-securi=
+ty.bb:Add libpam-google-authenticator Package
+>=20
+> On 11.07.22 12:29, Shreyas.Karmahe@toshiba-tsip.com wrote:
+>> From: Shreyas Karmahe <Shreyas.Karmahe@toshiba-tsip.com>
+>>
+>> Add libpam-google-authenticator to enable Multi-factor authentication.
+>>
+>> Signed-off-by: Shreyas Karmahe <Shreyas.Karmahe@toshiba-tsip.com>
+>> ---
+>>  recipes-core/images/cip-core-image-security.bb | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/recipes-core/images/cip-core-image-security.bb=20
+>> b/recipes-core/images/cip-core-image-security.bb
+>> index 6060978..24b1f46 100644
+>> --- a/recipes-core/images/cip-core-image-security.bb
+>> +++ b/recipes-core/images/cip-core-image-security.bb
+>> @@ -33,6 +33,7 @@ IMAGE_PREINSTALL +=3D " \
+>>  	uuid-runtime \
+>>  	sudo \
+>>  	aide-common \
+>> +	libpam-google-authenticator \
+>>  "
+>> =20
+>>  OVERRIDES_append =3D ":${BASE_DISTRO_CODENAME}"
+>=20
+> With v3 of "recipes-core/security-customizations/files/postinst:Add
+> configuration for MFA" (non-optimal naming BTW, will adjust), this patch =
+is now obsolete.
+>=20
+> Jan
+>=20
+> --
+> Siemens AG, Technology
+> Competence Center Embedded Linux
 
 --=20
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Cybertrust Japan Co.,Ltd.
-Alice Ferrazzi
-alice.ferrazzi@miraclelinux.com
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Siemens AG, Technology
+Competence Center Embedded Linux
 
