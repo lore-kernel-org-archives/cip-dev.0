@@ -1,290 +1,324 @@
-Return-Path: <florian.bezdeka@siemens.com>
+Return-Path: <alice.ferrazzi@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F357C43334
-	for <webhook@archiver.kernel.org>; Thu, 14 Jul 2022 10:28:01 +0000 (UTC)
-Received: from EUR01-DB5-obe.outbound.protection.outlook.com
- (EUR01-DB5-obe.outbound.protection.outlook.com [40.107.15.70])
- by mx.groups.io with SMTP id smtpd.web08.5936.1657794471215966269
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57D91C43334
+	for <webhook@archiver.kernel.org>; Thu, 14 Jul 2022 10:46:11 +0000 (UTC)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com
+ [209.85.208.50])
+ by mx.groups.io with SMTP id smtpd.web11.6173.1657795560731670105
  for <cip-dev@lists.cip-project.org>;
- Thu, 14 Jul 2022 03:27:51 -0700
+ Thu, 14 Jul 2022 03:46:01 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=Qzf3ZzPS;
- spf=pass (domain: siemens.com, ip: 40.107.15.70,
- mailfrom: florian.bezdeka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=A4wyH/KhFOkbuKabfevI/nDO9LYOXtEXcunz1ECI9cw7pmctG/LkkS7x25ikWx8x+/RyLhI6A6HtoVk0e9GFU69105lNyLI+YEL6AqnBBc1TGoK7Yz7+c2Gl5jnQ48TA+BxxDWpJtElkXB3pCgSK+Yn7zY7gqmFaH7Ud0Unw3qhwY0jrolMj/z2kL0Kr4vLG68x55BZ3K8PNJaxVzgfWUu6oMX5qkMphM86wkWIHKf75N4DUDMsXCiHlc0GAdzNMTJhZ4IoVuB7JvfC2gRHvAjuAwdUmDHBalbH1zrQgaClKYFptLTkY/8XgArJLcCy48BiMi0T2O8dVRER0SbMt6w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xgo8mhEJHYnt09LH4sZ4T2Qsg3b4/pRn/cegr4FYkRA=;
- b=mXoYcATwug85AuD5+Yi5nevpiIptFZKOkfZit0ScJ2dvOPgXpodDCBGG5z6RRH8RlLxKgIi4s5aDJi/7PcRC5/3NA1KEk0sD6Mgu8HRGbNqWPmgjFcYT9CPRtXkIbL8IYQtPJY7qtzHEeln9airinD1W12A12wsAMBJ2UMPtz6Bo/0uT/ryfg6loZyKHmopPNreKtYVg2c5r7Y7bIPWZ2VS6ZUokDRZ2+AJ3/pRj6NlVomcpm5nRsjNUkz6omC/V3X59tZUWdYjer2RXsqn4O6fznCwdCT5Dv4ok7WgFyOER6mqF575qmXFrWKL2WfSApLk66xI0uvoVQGjl9JAcqQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xgo8mhEJHYnt09LH4sZ4T2Qsg3b4/pRn/cegr4FYkRA=;
- b=Qzf3ZzPSLiw6ANJuBcwEXfSrw9VpUt8vxB6cOaDycSxRmzoRDPZt3CPIN5dXMwho6mdBsBfWEQ3Rej34czBMOtVie4f5p6h0F3TdhK/TYEKdc5w/o2U9mee2isOhI567hCms+J7sTWNQ+He4DXBsFwIvYp65u1DJ5/d1dmh37NtTxDyScCj3qXMny2GkIOkRzI6V7B/ykCSKALwcOvNbTMNctVOHYMUH4yUEjRYbmb4ofCgqmHhRCvaqidy3ywLuPUL5ZDDmDtxysjeEfXudlbnS8Yf1S8OyHe5GnhtM4yjGq0l/qlOAnLJ8td0dFGnhlbVI/3OAIwRl69/T1sXTPw==
-Received: from PAXPR10MB5712.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:248::14)
- by AM4PR1001MB1427.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:200:9a::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5438.12; Thu, 14 Jul
- 2022 10:27:47 +0000
-Received: from PAXPR10MB5712.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::60da:af7f:27c8:5644]) by PAXPR10MB5712.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::60da:af7f:27c8:5644%3]) with mapi id 15.20.5417.026; Thu, 14 Jul 2022
- 10:27:47 +0000
-From: "Bezdeka, Florian" <florian.bezdeka@siemens.com>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	"alice.ferrazzi@miraclelinux.com" <alice.ferrazzi@miraclelinux.com>
-CC: "pavel@denx.de" <pavel@denx.de>, "chris.paterson2@renesas.com"
-	<chris.paterson2@renesas.com>
-Subject: Re: [cip-dev] KernelCI reports
-Thread-Topic: [cip-dev] KernelCI reports
-Thread-Index: AQHYhyz1N6VzLFJuaU6r9dwy8J1O8q19t5sAgAAHBACAAAj3gIAAAsiA
-Date: Thu, 14 Jul 2022 10:27:47 +0000
-Message-ID: <58751ddf9a708c00697d79d03c61f7fc49a64124.camel@siemens.com>
-References: <20220623181325.GA747@amd>
-	 <CANgtXuMGGqgBDqA=UCSnY6pd892Xppq+yb47if6Ek+0b90s0DA@mail.gmail.com>
-	 <55dec7b9bbacfc1e30524e8c5f2fa6a31447b2aa.camel@siemens.com>
-	 <CANgtXuNbpnPE9RJqr2kwMBuEnDq1wEaR8mCCG_hetORhCMvGqw@mail.gmail.com>
-In-Reply-To: 
- <CANgtXuNbpnPE9RJqr2kwMBuEnDq1wEaR8mCCG_hetORhCMvGqw@mail.gmail.com>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.44.3 (3.44.3-1.fc36) 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 236f3933-7c20-4a0b-5f77-08da65837f56
-x-ms-traffictypediagnostic: AM4PR1001MB1427:EE_
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- 14f2bkLuqZK9uvOIijOY9Xz8kXUY0qVD3PsNzH/mxKI0vdnsJe0RhoLFc4bmmo2+WtPbDKeZoNvtObU41Z77YwxFAMEHbM8L+LbqlS9yVNvwJMDONL2GeKb8bH/EQ7qGHtNHOcFYG+vOePjHDsol2vFtV7gosDvYkd3ZXzazvJUVpXsvUYxqrER5Ml4iNNNYXm7d0YKHXyJICRksyo3z0ebwuxGV2hvG2wGWJ/VUwGGWsgArtf7QFQlpjuZSbnArEt1ptCXeQ63e2kr4rwsTHRa0etx6WpiZFkoA55l+9of53rh89ZcYcUuNj1I+hUK+JSN3yJH+7XqYCWmOCKuBGgfGasr3PaoyGelMLyvhJGEkTeTqxMpN3AVedGcogbQcCXCQs/e0iDuO8gMMp9YdXUS/P08NxtI/UsAOr64WWxSFK1NAQKRmvPySL0ylxT4B8CpchF5GVES/cu0MW2uSo/ZD0hb/XkcgZdBQrQWyQA7DkAdk/qladZf4MDoCgTSbwjHn64+xgX4ghX2hA/lmBxpTe0cgto+QCrsYXV0W/sHplRJ7iO8/ujrIuc8efyuXFdHdCKW1Wvd8uz2Hq01agx+JZV+zDCdYIvE8zPCW/rmYLVQRMJ76opT6eoCzwwGMhR7hIqO5DWw1gUNA0kYzwZeXzSojtzL5g6KE4/9BCYBJNNvvmVEdf5EFIBxlzLEF4wwEO4KLFlxbO6zcEFSjBD9r6CMMxiLVx9i8XcW17Xzoay0zqd/SXrzmb9eXXk87qEdwKrR6ZBsmzpQirbn1ezmStoDOeG87ezsFMxWvxsPtU0Bk8h3b/k0z634gHCCin2+xilfr3qYlGOMncQHxYg==
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR10MB5712.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230016)(4636009)(39860400002)(396003)(366004)(136003)(346002)(376002)(122000001)(316002)(36756003)(86362001)(110136005)(54906003)(38100700002)(2906002)(6512007)(6486002)(966005)(478600001)(53546011)(2616005)(8676002)(4326008)(66476007)(6506007)(5660300002)(83380400001)(66446008)(71200400001)(82960400001)(8936002)(64756008)(76116006)(66946007)(66556008)(91956017)(41300700001)(38070700005)(186003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?aWcyNzVrYmZxaUcxeHNVclBUOEJveGIyNk5YRG9BbUQ1bWNtbUROY3QzbVhU?=
- =?utf-8?B?d2JqWHhUOHF0MVJMRDhySHZxRHBmNWwyZ05GQmhsdzhsUjZxOEVGclpMd00v?=
- =?utf-8?B?NXBXL21VR2ZyZi9BenoxNGcvZ2JoMGZCNjZQY0dnZzBqMUVlZTZPK0U3TmdS?=
- =?utf-8?B?T0kydExTR3JiSms0U1duYzdBOVVLWTJNdkcrSlpYM095ZEg1RzkzQ2Y4a3Fp?=
- =?utf-8?B?eDRzeEVUQUovWDZNeUFYQldRUHV5b3MydXVRZ1l1eHRzSjEyeEVVZGFxWHFr?=
- =?utf-8?B?THR1K2ExRzFGTE5HV0FyZTY0QXJUbTJUb0pRUWg0bFBDR3RTK2ptUWtYZjBZ?=
- =?utf-8?B?RFJTc1ZQNTBWdXN6ZUJTV09UNFhSaFEvekJTa3NUNUM3RG92UEVZd3RueXpO?=
- =?utf-8?B?OGFEc2ZYSExsY2lEU0pUUDYyT2hNOUJ1c0VwSWloSHZqdkt6NFROMldDNHFG?=
- =?utf-8?B?enZrZDJqc0x4c0wvTlRTcmFPSU9tMDhzNE9odndHeVFiWkRWNWxqYUlML3Y4?=
- =?utf-8?B?VnZLNzZIQXRLSkVGMm9nMlp2bGxhREdGQTVTcjlNK25yNU5wZmlzV294aVBa?=
- =?utf-8?B?NkpmdFBSSXBqVW1WSGNtNkx1M0dLTFNMZ2JHaVJiQ1JZbmFLSXNNMk5xdTJE?=
- =?utf-8?B?SzJITjc2M1AreERyUDZRQnhaaU5lQjc0V1N0WThCcGRLTzJmd216cGQrNnRJ?=
- =?utf-8?B?Q2p1R3RDTG04YmdVSFFFYnNCQWM1ZERpQTA0NmE4VVB6a0NTOUxpZ0EvWDRL?=
- =?utf-8?B?WS9Bb2NOcE5oWDNPejFPTE10NEg3QXFFOEhjUUZnWGRsWU14cmwrVkEvbzd1?=
- =?utf-8?B?NlUra2huUVg5Sm82RllvcU9yWUlCVlc3cWQ2SXlRVnlnZjUrQmI0OHlZeEg1?=
- =?utf-8?B?NnJId0lweUdPenQzc0kwdXdRbDFDVERGZzlRVjIrZHlDL1FTMWNuK1hoSDFM?=
- =?utf-8?B?eldFQVRjdFQxZ2xoOG1rNkNOTWZoWFFMQlZoc3ZrMkRManJqNnZyM1NSc0Vl?=
- =?utf-8?B?QWxScVJYellxVW5ZSzJ3ZXdzUEQ3YTZYV2tvUlJzeUhiVEVEMkpYd1NVWWFI?=
- =?utf-8?B?VDg1TkxtQTFCVDllUmVIeHE2bTVFTlkzTDVjRnVRSHFvdXBzaU13K3U5WjR6?=
- =?utf-8?B?NUFLK0VEQjljRVRBU0lGTTBpTnJ1WE9rMVdKMW81MVZISkVCeEVZei9ZNFhk?=
- =?utf-8?B?dXlMMVVwSFJYYkFRUnNML2puWHJSMnRITHpFNytEMEIvS3ZFUmNSL0cwR2Nk?=
- =?utf-8?B?ZENLOGlWalBsSGFncnF4bFFVcmhEUnhiZkM0ZWlPMGorazJDYm9lTi9jK3Mx?=
- =?utf-8?B?eDhPYnJja1NidDlab2RTdWFZZHhiQjVBdGpyZEVLdG10SGg0VWFKWXJQWXE2?=
- =?utf-8?B?SUE4THk1Y013SDhLRzdNUGE1UlRzYm9uUTZjS0JlTXQ0QlBFZy9JTkdBWTI0?=
- =?utf-8?B?bkJNUG5pWXNKMVlHWndnM1Uxam5SWkxCckFqeEM1V2x0S29WbFgzNU5FSjNB?=
- =?utf-8?B?cXRLNGxEWStpSUFoL01sRStEZFlBK0R1MVR5TmNzdVJQSFc1cXh0YUhCQWJs?=
- =?utf-8?B?a0llRVZtY1QzNU9LQVhLWjJRVTlxVGk1OE5wMVA5T09UVXNqN2VveXJjV3Vi?=
- =?utf-8?B?eVZuMGR6c3JRdFE0UlJzMHFCQjc2MXhTeURwWFJZWWNSd2pXS01OTzEzdWgv?=
- =?utf-8?B?OGJvZlU1WE0rNmp3cEs4OTczSXJWZWRjZDFuUndtdkNHa3g4Ym1Xa1MzVWt5?=
- =?utf-8?B?RGFPUmZVdkY5aTgrdlUxcm93OWR0bTNXaEorT3BwSktuT3BFNXU2SURoMHJo?=
- =?utf-8?B?ejUwNk5pdmY3Q2FYdlAzWCtUakJxK2dENEhIbG9FM0NBNnlCakFSQm54S0dH?=
- =?utf-8?B?T01qVTArdEJRK250NklxVmFINW53eTFrS3kwZkNSd2kvcXB1d2psWW9mL29x?=
- =?utf-8?B?SkRkbnhjeWlGMWUySU5ucTkvaU9jMTNydG5qMHFDTHhvcUFlc0JsbDB6bThG?=
- =?utf-8?B?TmR1bTJsaXJYTzBqNHJnS2l5NW10T2NHRUJPUktOdVZIMkQ5QXBTOFBncXlO?=
- =?utf-8?B?bzVxeWRpbURyd2xieFBUdkdldHZTdEo5YWRkaVNqTlFYWkdkd0RmUy9MUVRS?=
- =?utf-8?B?U041TVB4bXpzaGxQK3dxY3krSmEyUkhwa2J1aW1odXl6LzZmSDB6MjlrdGUx?=
- =?utf-8?B?di9lVjJhbldDaEtIaVdFNDNtbU5oZTlXVmgwRzlCamlTR21lT01DNkROSE5v?=
- =?utf-8?B?bFNCL3pIbzBsWGFtSzNwc2lxa1pnPT0=?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B11B5448C6483840A61F56F69C45E246@EURPRD10.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+ dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112
+ header.b=xc8Gli4z;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.208.50,
+ mailfrom: alice.ferrazzi@miraclelinux.com)
+Received: by mail-ed1-f50.google.com with SMTP id w12so1826301edd.13
+        for <cip-dev@lists.cip-project.org>;
+ Thu, 14 Jul 2022 03:46:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=TBr2PPAKtHrd9m0JG12iFBQWnxwjdJYNvsuab6Z6SDQ=;
+        b=xc8Gli4zTjPfFSiuwQnnCC/TYKEdJkHqufhIW4G80sVAvb2H41Ulh6W+AT47rQTQEF
+         QPByWA544Vs8Ggf8WX3CARE4ldnJCdnjEO1x3/2AGbc0hRwPvwTDGrreZ8S9FfLQ7v1s
+         aRJTVpzjRZW9q40Mqvx/PPPk4hCw0qj/86kWVUJwieVSlMamXiUykB2aYAstFYz6yctb
+         YLGkgS/571SsrPaVTDdOqWDxw55vW/Gf6z40KszKLN623+X1Wrl7xHAOlPD3FK6l1Mi4
+         8LAfWFh1o2yEOiiNovvQNTHQ98Qi4+XjSeAPHpppg4pavV4Y1X1sZ8KMEGP6/ORQ/nfa
+         Is8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=TBr2PPAKtHrd9m0JG12iFBQWnxwjdJYNvsuab6Z6SDQ=;
+        b=vnWFjzC5Ts0eskzSnMGHC4IrO3ycFesWItxprxomuaD+9l7UblGPHV2wv4WCtBfL5x
+         Ha8zRqRAq3hv97sHzPNmK/PKw2zfrMjL98vmk0F9TmKmHJ2r7WGPv+s0qVx/RY+TKRiO
+         BzPKAF44WW7+C2zFz4GjkIcSoqThHBxKkIFxkLIoC5igA82AfInlqWVf7YuHCYG2yu7m
+         wsE4UxyZ1ZE5fax6OD1zT33ueCN5EWR4Cer5piitcegaKX3P6L5U/h0wxPoLMK/wdBlB
+         xT8pdhRgbW3HtMIXoOVDegnppxljz7ToT0COGsy7yg23VDeED7m7sYU088ihtzq1d3MK
+         aEGA==
+X-Gm-Message-State: AJIora+avLuAEC5WDyhg13mnUnDskAz5NP5S7/Y6M7FtQ+8SRUoD6tUs
+	NudSe2SVNFNIVSHlMvwjWHgTg7a2rpMw3JHGNlFh
+X-Google-Smtp-Source: 
+ AGRyM1uq4Rg0swJ983+JbJTuW4juKTFXiAJ6QlFVAeUmGoLaTjbAQqBtn6GgvH8Dk7zdglUJ/OX0npTvMyqs5hMY0es=
+X-Received: by 2002:a05:6402:782:b0:43a:7387:39df with SMTP id
+ d2-20020a056402078200b0043a738739dfmr11769318edy.251.1657795559017; Thu, 14
+ Jul 2022 03:45:59 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR10MB5712.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 
- 236f3933-7c20-4a0b-5f77-08da65837f56
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jul 2022 10:27:47.7677
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 
- 7iAqY8V38JqeVnfKOiKv0FgxJOHbzyEbX8y+964SjaKqurRbnUn2qy3mTAI2I4HerQJAORb6b7gm1/f6vzTG+obcLeJm4uRblyZfI2xDcFY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR1001MB1427
+References: <20220623181325.GA747@amd>
+ <CANgtXuMGGqgBDqA=UCSnY6pd892Xppq+yb47if6Ek+0b90s0DA@mail.gmail.com>
+ <55dec7b9bbacfc1e30524e8c5f2fa6a31447b2aa.camel@siemens.com>
+ <CANgtXuNbpnPE9RJqr2kwMBuEnDq1wEaR8mCCG_hetORhCMvGqw@mail.gmail.com>
+ <58751ddf9a708c00697d79d03c61f7fc49a64124.camel@siemens.com>
+In-Reply-To: <58751ddf9a708c00697d79d03c61f7fc49a64124.camel@siemens.com>
+From: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
+Date: Thu, 14 Jul 2022 19:45:22 +0900
+Message-ID: 
+ <CANgtXuNv_2wPDNWURk5n8k0KhCKezB6JFK0x6iUCZnfTazCLrw@mail.gmail.com>
+Subject: Re: [cip-dev] KernelCI reports
+To: "Bezdeka, Florian" <florian.bezdeka@siemens.com>
+Cc: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+ "pavel@denx.de" <pavel@denx.de>,
+	"chris.paterson2@renesas.com" <chris.paterson2@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 14 Jul 2022 10:28:01 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8758
+ <cip-dev@lists.cip-project.org>; Thu, 14 Jul 2022 10:46:11 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8759
 
-T24gVGh1LCAyMDIyLTA3LTE0IGF0IDE5OjE3ICswOTAwLCBBbGljZSBGZXJyYXp6aSB3cm90ZToN
-Cj4gT24gVGh1LCBKdWwgMTQsIDIwMjIgYXQgNjo0NSBQTSBmbG9yaWFuLmJlemRla2FAc2llbWVu
-cy5jb20NCj4gPGZsb3JpYW4uYmV6ZGVrYUBzaWVtZW5zLmNvbT4gd3JvdGU6DQo+ID4gDQo+ID4g
-T24gVGh1LCAyMDIyLTA3LTE0IGF0IDE4OjIwICswOTAwLCBBbGljZSBGZXJyYXp6aSB2aWEgbGlz
-dHMuY2lwLQ0KPiA+IHByb2plY3Qub3JnIHdyb3RlOg0KPiA+ID4gSGkgUGF2ZWwsDQo+ID4gPiAN
-Cj4gPiA+IE9uIEZyaSwgSnVuIDI0LCAyMDIyIGF0IDM6MTMgQU0gUGF2ZWwgTWFjaGVrIDxwYXZl
-bEBkZW54LmRlPiB3cm90ZToNCj4gPiA+ID4gDQo+ID4gPiA+IEhpIQ0KPiA+ID4gPiANCj4gPiA+
-ID4gRmlyc3QuLi4gd2hhdCBJIGFtIGN1cnJlbnRseSB1c2luZyBmb3IgdGVzdGluZzogZ2l0bGFi
-OyBJIHNpbXBseSB3YXRjaA0KPiA+ID4gPiBmb3IgZ3JlZW4gdGlja3MgdGhlcmUuIEl0IHRha2Vz
-IH4xNSBtaW51dGVzIHRvIGdldCByZXN1bHRzLiBSZWQgY3Jvc3MNCj4gPiA+ID4gaW4gY29tcGls
-ZSBzdGFnZSBpcyBwcmV0dHkgc3VyZSBzaWduIG9mIGJ1aWxkIGVycm9yLiBSZWQgY3Jvc3MgaW4N
-Cj4gPiA+ID4gdGVzdGluZyBtZWFucyBJIG5lZWQgdG8gbG9vayBhdCB0aGUgcmVzdWx0cywgYnV0
-IGl0IGlzIHByZXR0eSBlYXN5IHRvDQo+ID4gPiA+IHNlZSAibmV0d29yayB0aW1lb3V0IiBvciAi
-Ym9hcmQgdW5hdmFpbGFibGUiIHByb2JsZW1zLCBhbmQgbW9zdGx5IEkNCj4gPiA+ID4gY2FuIGp1
-c3QgaGl0IHJldHJ5IGFuZCBnZXQgdGhlIGdyZWVuIHRpY2suDQo+ID4gPiA+IA0KPiA+ID4gPiBX
-aGF0IHdvcmllcyBtZSBhYm91dCBnaXRsYWIgaXMgdGhhdCB3ZSBoYXZlIHNpbmdsZSBib2FyZCBm
-b3IgNC40LXN0LA0KPiA+ID4gPiBhbmQganVzdCB0d28gZm9yIDQuNC1jaXAuDQo+ID4gPiA+IA0K
-PiA+ID4gPiBOb3csIGtlcm5lbGNpLg0KPiA+ID4gPiANCj4gPiA+ID4gaHR0cHM6Ly9pcmNib3Qu
-d2wubGludXhmb3VuZGF0aW9uLm9yZy9tZWV0aW5ncy9jaXAvMjAyMi8wNi9jaXAuMjAyMi0wNi0y
-My0xMi4wMS5odG1sDQo+ID4gPiA+IA0KPiA+ID4gPiBJIGdvdCB0aGlzIGxpbmsgaW4gdGhlIGly
-YyBtZWV0aW5nOg0KPiA+ID4gPiANCj4gPiA+ID4gaHR0cHM6Ly9saW51eC5rZXJuZWxjaS5vcmcv
-am9iL2NpcC8NCj4gPiA+ID4gDQo+ID4gPiA+IExldHMgc3RhcnQgd2l0aCBidWlsZCByZXN1bHRz
-Lg0KPiA+ID4gPiANCj4gPiA+ID4gbGludXgtNS4xMC55LWNpcCAgICAgIHY1LjEwLjEyMS1jaXA5
-IGJkMjQ2OTZkZDdhZDIzNTE3NzMzNzI4ZGE2NzVhMDBjZDMwNzM5MTYgMTY5IDcgMw0KPiA+ID4g
-PiANCj4gPiA+ID4gSSBjbGljayBvbiAiMyIgYW5kIGdldCBidWlsZCBlcnJvciBzdW1tYXJ5Og0K
-PiA+ID4gPiANCj4gPiA+ID4gRXJyb3JzIFN1bW1hcnkNCj4gPiA+ID4gMiAgICAgIGFybS1saW51
-eC1nbnVlYWJpaGYtZ2NjOiBlcnJvcjogdW5yZWNvZ25pemVkIC1tYXJjaCB0YXJnZXQ6IGFybXYz
-bQ0KPiA+ID4gPiAyICAgICAgIGFybS1saW51eC1nbnVlYWJpaGYtZ2NjOiBlcnJvcjogbWlzc2lu
-ZyBhcmd1bWVudCB0byDigJgtbWFyY2g94oCZDQo+ID4gPiA+IA0KPiA+ID4gPiAuLi5idXQgdGhv
-c2UgYXJlIG5vdCBrZXJuZWwgcHJvYmxlbXMsIHRoYXQncyBidWlsZHN5c3RlbSBpbmNvbXBhdGli
-bGUNCj4gPiA+ID4gd2l0aCBjb25maWcgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4gTm90aGluZyBm
-b3IgbWUgdG8gc29sdmUuDQo+ID4gPiA+IA0KPiA+ID4gPiBMZXQgbWUgZ28gdGhyb3VnaCBtb3Jl
-Og0KPiA+ID4gPiANCj4gPiA+ID4gbGludXgtNC4xOS55LWNpcCAgICAgICAgdjQuMTkuMjQ2LWNp
-cDc1IDM4Y2UxODFhYzZjYTlmM2RlY2RkMzg5Y2JmZDBhMzhmZWNkYjI4YzcgIDExMSA4IDENCj4g
-PiA+ID4gbGludXgtNC4xOS55LWNpcCAgICAgICAgdjQuMTkuMjQ1LWNpcDc0IDBiZTlkNjc3NGJl
-OWIxOTJiY2VhNmZkZGFkYTkxN2FlM2QyMmYyMmUgIDEwNiA3IDENCj4gPiA+ID4gbGludXgtNC4x
-OS55LWNpcC1ydCAgICAgdjQuMTkuMjQ1LWNpcDc0LXJ0MjUgYzgwZWUzMDc3YTRjZTM0NGNmMWNm
-ZmEyM2FmNzY3YzlmZDc1ZDUyYyAgMTgxIDE2IDYNCj4gPiA+ID4gbGludXgtNC40LnktY2lwIHY0
-LjQuMzAyLWNpcDY5LTI5Ni1nNTJkZTk0MzFkMzE0IDUyZGU5NDMxZDMxNGEyOGM0YWE2NmQ4Zjgx
-MTQ0Yzk5NThjMTExNjggMTY0IDE4IDUNCj4gPiA+ID4gbGludXgtNS4xMC55LWNpcC1ydCAgICAg
-djUuMTAuMTA5LWNpcDUtcnQ0IGI0MTE4Njg4MmVhZjAxMzcyNzcwNDVkYTEzZWE2NDk1NzdjNDJj
-MTEgMTc3IDggMw0KPiA+ID4gPiBsaW51eC01LjEwLnktY2lwICAgICAgICB2NS4xMC4xMTItY2lw
-NiBjOGY2NzQ3ZGNkMDJhOGY4NzczMWMzMjRmNGJjMzdiZDEyMGE4OTgyIDE4MCA3IDMNCj4gPiA+
-ID4gbGludXgtNC4xOS55LWNpcCAgICAgICAgdjQuMTkuMjM5LWNpcDcyIGZkZjc3MGIyZGI4MDgw
-ZGU5NWRjZjc0Y2M3NTQ3MzE5MDM0YTRhNTYgMCAwIDEyMA0KPiA+ID4gPiANCj4gPiA+ID4gVGhh
-dCdzIDE5IGVycm9ycyB0b3RhbCArIG91dGxpZXIgb2YgdjQuMTkuMjM5LWNpcDcyIHdpdGggMTIw
-DQo+ID4gPiA+IGVycm9ycy4gTm9uZSBvZiB0aGUgMTkgZXJyb3JzIGlzIHJlYWwuIEtlcm5lbENJ
-IG5lZWRzIHRvIGZpeCB0aGVpcg0KPiA+ID4gPiBjb25maWdzL2J1aWxkIGVudmlyb25tZW50Lg0K
-PiA+ID4gPiANCj4gPiA+ID4gMTIwIGVycm9ycyBhcmUgcmVwb3J0ZWQgYXQgaHR0cHM6Ly9saW51
-eC5rZXJuZWxjaS5vcmcvYnVpbGQvY2lwL2JyYW5jaC9saW51eC00LjE5LnktY2lwL2tlcm5lbC92
-NC4xOS4yMzktY2lwNzIvIC4gV293LiBFeGNlcHQgdGhhdCBJIGRvbid0IHNlZSB0aGF0IG1hbnkg
-ZXJyb3JzIHRoZXJlLiBJIHNlZSBsaW5lcyBzdWNoIGFzDQo+ID4gPiA+IA0KPiA+ID4gPiBjbV94
-Mnh4X2RlZmNvbmZpZyDigJAgYXJtIOKAkCBnY2MtMTAgIDAgd2FybmluZ3MgMCBlcnJvcnMuIFdo
-ZW4gSSBjbGljayBmb3IgZGV0YWlscyBJIGdldCAiTm8gdGVzdCByZXN1bHRzIGZvdW5kIi4NCj4g
-PiA+ID4gDQo+ID4gPiA+IGh0dHBzOi8vbGludXgua2VybmVsY2kub3JnL2J1aWxkL2lkLzYyNjZh
-NDk1ZDQwZGZkMGRhY2ZmOTQ4Yy8NCj4gPiA+ID4gDQo+ID4gPiA+IE5vdGhpbmcgZm9yIG1lIHRv
-IGRlYnVnLCBlaXRoZXIsIGFncmVlZD8gU28gbGV0cyBsb29rIGF0IHRlc3QgcmVzdWx0cy4NCj4g
-PiA+ID4gDQo+ID4gPiA+IEJyYW5jaCAgS2VybmVsIENvbW1pdCBCdWlsZCBTdGF0dXMgICAgICBU
-ZXN0IFJlc3VsdHMgICAgRGF0ZQ0KPiA+ID4gPiBsaW51eC01LjEwLnktY2lwICAgICAgdjUuMTAu
-MTIxLWNpcDkgICAgYmQyNDY5NmRkN2FkMjM1MTc3MzM3MjhkYTY3NWEwMGNkMzA3MzkxNiAxNjkg
-NyAzICAyNDU3IDI1NiAyMSAyMDIyLTA2LTEyDQo+ID4gPiA+IA0KPiA+ID4gPiAyMSBmYWlsdXJl
-cy4NCj4gPiA+ID4gDQo+ID4gPiA+IElmIEkgY2xpY2sgdGhhdCwgSSBjYW4gc2VlIHRoYXQgbW9z
-dCByZWdyZXNzaW9ucyAoMTEpIGFyZSBhdCBiYXNlbGluZQ0KPiA+ID4gPiB0ZXN0IHBsYW4uIFRo
-ZSBtYWNoaW5lIHRoYXQgbG9va3MgcmVsZXZhbnQgdG8gdXMgaXMNCj4gPiA+ID4gcWVtdV9hcm02
-NC12aXJ0LWdpY3YyIGRlZmNvbmZpZythcm02NC1jaHJvbWVib29rIC0tDQo+ID4gPiA+IA0KPiA+
-ID4gPiBodHRwczovL2xpbnV4Lmtlcm5lbGNpLm9yZy90ZXN0L2pvYi9jaXAvYnJhbmNoL2xpbnV4
-LTUuMTAueS1jaXAva2VybmVsL3Y1LjEwLjEyMS1jaXA5L3BsYW4vYmFzZWxpbmUvDQo+ID4gPiA+
-IA0KPiA+ID4gPiBOZXcgcmVncmVzc2lvbiwgbGFzdCBwYXNzOiB2NS4xMC4xMTItY2lwNg0KPiA+
-ID4gPiANCj4gPiA+ID4gSSBnZXQgdG8NCj4gPiA+ID4gaHR0cHM6Ly9saW51eC5rZXJuZWxjaS5v
-cmcvdGVzdC9jYXNlL2lkLzYyYTMzMzQ1MjcxMzk4MDAwNmEzOWMxMy8NCj4gPiA+ID4gd2hpY2gg
-bG9va3MgcXVpdGUgdXNlZnVsLCBpdCBsaXN0cyBzdWNjZXNzZnVsIHJ1biBhbmQgZmFpbGVkIHJ1
-biwNCj4gPiA+ID4gdjUuMTAuMTIxLWNpcDkgZmFpbHMgd2hpbGUgdjUuMTAuMTEyLWNpcDYgd29y
-a3MuDQo+ID4gPiANCj4gPiA+IFllcywgY2hlY2tpbmcgZm9yIHJlZ3Jlc3Npb25zIGlzIHF1aXRl
-IHVzZWZ1bC4NCj4gPiA+IA0KPiA+ID4gPiANCj4gPiA+ID4gRXZlbnR1YWxseSBJIGdldCB0byBo
-dHRwczovL3N0b3JhZ2Uua2VybmVsY2kub3JnL2NpcC9saW51eC01LjEwLnktY2lwL3Y1LjEwLjEy
-MS1jaXA5L2FybTY0L2RlZmNvbmZpZythcm02NC1jaHJvbWVib29rL2djYy0xMC9sYWItYmF5bGli
-cmUvYmFzZWxpbmUtcWVtdV9hcm02NC12aXJ0LWdpY3YyLmh0bWwgLg0KPiA+ID4gPiANCj4gPiA+
-ID4gQW5kIHNvcnJ5LCBubyBJIGRvbid0IHNlZSBhbnl0aGluZyBJIGNvdWxkIGRlYnVnIHRoZXJl
-LiBEaWQgdGhlIGRvY2tlcg0KPiA+ID4gPiBmYWlsIHRvIHN0YXJ0PyBIbW0uIExldHMgY29tcGFy
-ZSBpdCB3aXRoIHRoZSBvbGRlciByZXN1bHRzLg0KPiA+ID4gPiANCj4gPiA+ID4gaHR0cHM6Ly9z
-dG9yYWdlLmtlcm5lbGNpLm9yZy9jaXAvbGludXgtNS4xMC55LWNpcC92NS4xMC4xMTItY2lwNi9h
-cm02NC9kZWZjb25maWcrYXJtNjQtY2hyb21lYm9vay9nY2MtMTAvbGFiLWJheWxpYnJlL2Jhc2Vs
-aW5lLXFlbXVfYXJtNjQtdmlydC1naWN2Mi5odG1sIC4gQWhhLCA0MDQuIE5vIGNvbXBhcmlzb24g
-cG9zc2libGUuDQo+ID4gPiANCj4gPiA+IFRoZSBnYXJiYWdlIGNvbGxlY3RvciByZW1vdmVzIGV2
-ZXJ5dGhpbmcgdGhhdCdzIG9sZGVyIHRoYW4gMjggZGF5cy4NCj4gPiA+IA0KPiA+ID4gPiANCj4g
-PiA+ID4gTGV0cyB0cnkgb25lIG1vcmUuDQo+ID4gPiA+IA0KPiA+ID4gPiByazMzOTktZ3J1LWtl
-dmluIGRlZmNvbmZpZythcm02NC1jaHJvbWVib29rIOKAkCBhcm02NCDigJAgZ2NjLTEwDQo+ID4g
-PiA+IA0KPiA+ID4gPiBodHRwczovL2xpbnV4Lmtlcm5lbGNpLm9yZy90ZXN0L3BsYW4vaWQvNjJh
-MzM3NzAwYWFkYmE2NzdkYTM5YmRkLw0KPiA+ID4gPiANCj4gPiA+ID4gSXQgZ2V0cyBtZSB0bzoN
-Cj4gPiA+ID4gDQo+ID4gPiA+IGh0dHBzOi8vc3RvcmFnZS5rZXJuZWxjaS5vcmcvY2lwL2xpbnV4
-LTUuMTAueS1jaXAvdjUuMTAuMTIxLWNpcDkvYXJtNjQvZGVmY29uZmlnK2FybTY0LWNocm9tZWJv
-b2svZ2NjLTEwL2xhYi1jb2xsYWJvcmEvYmFzZWxpbmUtcmszMzk5LWdydS1rZXZpbi5odG1sDQo+
-ID4gPiA+IA0KPiA+ID4gPiBJIHNlZSBzb21lIGVycm9ycy4uLiBMaWtlIG1pc3NpbmcgZmlybXdh
-cmUgKG5vdCBhIGtlcm5lbCBwcm9ibGVtKS4gQXQNCj4gPiA+ID4gdGhlIGVuZCB0aGVyZSdzICJ0
-cG0tY2hpcC1pcy1vbmxpbmU6IGZhaWwiIC4gSXMgdGhhdCB3aGF0IEkgc2hvdWxkIGJlIGRlYnVn
-Z2luZz8NCj4gPiA+ID4gDQo+ID4gPiA+ICAxMzY4IDEyOjIxOjM5LjIxMjg4MSAgL3Vzci9iaW4v
-dHBtMl9nZXRjYXANCj4gPiA+ID4gICAxMzY5IDEyOjIxOjM5LjI1MTgyOSAgRVJST1I6c3lzOnNy
-Yy90c3MyLXN5cy9hcGkvVHNzMl9TeXNfRXhlY3V0ZS5jOjExNDpUc3MyX1N5c19FeGVjdXRlRmlu
-aXNoKCkgVW5zdXBwb3J0ZWQgZGV2aWNlLiBUaGUgZGV2aWNlIGlzIGEgVFBNIDEuMg0KPiA+ID4g
-PiAgICAxMzcwIDEyOjIxOjM5LjI2MTM4NyAgRVJST1I6ZXN5czpzcmMvdHNzMi1lc3lzL2FwaS9F
-c3lzX0dldENhcGFiaWxpdHkuYzozMDc6RXN5c19HZXRDYXBhYmlsaXR5X0ZpbmlzaCgpIFJlY2Vp
-dmVkIGEgbm9uLVRQTSBFcnJvcg0KPiA+ID4gPiAgICAgMTM3MSAxMjoyMTozOS4yNzIyNTQgIEVS
-Uk9SOmVzeXM6c3JjL3RzczItZXN5cy9hcGkvRXN5c19HZXRDYXBhYmlsaXR5LmM6MTA3OkVzeXNf
-R2V0Q2FwYWJpbGl0eSgpIEVzeXMgRmluaXNoIEVycm9yQ29kZSAoMHgwMDA4MDAwMSkNCj4gPiA+
-ID4gICAgICAxMzcyIDEyOjIxOjM5LjI4MTg1NCAgRVJST1I6IEVzeXNfR2V0Q2FwYWJpbGl0eSgw
-eDgwMDAxKSAtIHN5czpDYXRjaCBhbGwgZm9yIGFsbCBlcnJvcnMgbm90IG90aGVyd2lzZSBzcGVj
-aWZpZWQNCj4gPiA+ID4gICAgICAgMTM3MyAxMjoyMTozOS4yODUzMTYgIEVSUk9SOiBVbmFibGUg
-dG8gcnVuIHRwbTJfZ2V0Y2FwDQo+ID4gPiA+IA0KPiA+ID4gPiBVc2VybGFuZCBzZWVtcyB0byBz
-YXkgdGhhdCBpdCBkb2VzIG5vdCBzdXBwb3J0IHRoaXMgZGV2aWNlLiBJIGd1ZXNzIEkgY291bGQg
-Y29tcGFyZSBpdCB3aXRoIG9sZGVyIGJvb3Q/DQo+ID4gPiA+IA0KPiA+ID4gPiBodHRwczovL3N0
-b3JhZ2Uua2VybmVsY2kub3JnL2NpcC9saW51eC01LjEwLnktY2lwL3Y1LjEwLjgzLWNpcDEtMTc4
-LWcyY2YxZDEyYWFiODEvYXJtNjQvZGVmY29uZmlnK2FybTY0LWNocm9tZWJvb2svZ2NjLTEwL2xh
-Yi1jb2xsYWJvcmEvYmFzZWxpbmUtcmszMzk5LWdydS1rZXZpbi5odG1sDQo+ID4gPiA+IA0KPiA+
-ID4gPiBBaGEsIG5vLCBjb3VsZCBub3QsIDQwNC4NCj4gPiA+IA0KPiA+ID4gc2FtZSBoZXJlLCB0
-aGUgZ2FyYmFnZSBjb2xsZWN0b3IgcmVtb3ZlcyBldmVyeXRoaW5nIHRoYXQncyBvbGRlciB0aGFu
-IDI4IGRheXMuDQo+ID4gPiANCj4gPiA+ID4gDQo+ID4gPiA+IE5vdywgbGV0J3MgZ28gdGhyb3Vn
-aCBKYW4ncw0KPiA+ID4gPiBleGFtcGxlLiBodHRwczovL2xpbnV4Lmtlcm5lbGNpLm9yZy9idWls
-ZC9pZC82MWZiYWJlMGNiNmYyN2E2Y2U1ZDZmMDMvbG9ncy8/DQo+ID4gPiA+IC4gQWdhaW4sIGVy
-cm9ycyBsb29rIGxpa2UgbWlzc2NvbmZpZ3VyZWQgYnVpbGQgc3lzdGVtLCB3aXRoDQo+ID4gPiA+
-IA0KPiA+ID4gPiBhcm0tbGludXgtZ251ZWFiaWhmLWdjYzogZXJyb3I6IHVucmVjb2duaXplZCAt
-bWFyY2ggdGFyZ2V0OiBhcm12Mw0KPiA+ID4gPiBhcm0tbGludXgtZ251ZWFiaWhmLWdjYzogZXJy
-b3I6IG1pc3NpbmcgYXJndW1lbnQgdG8g4oCYLW1hcmNoPeKAmQ0KPiA+ID4gPiANCj4gPiA+ID4g
-RnVsbCBsb2cgaHR0cHM6Ly9zdG9yYWdlLmtlcm5lbGNpLm9yZy9zdGFibGUtcmMvbGludXgtNC40
-LnkvdjQuNC4zMDIvYXJtL3JwY19kZWZjb25maWcvZ2NjLTEwL2xvZ3MgZ2l2ZXMgNDA0Lg0KPiA+
-ID4gDQo+ID4gPiBzYW1lIGhlcmUsIHRoZSBnYXJiYWdlIGNvbGxlY3RvciByZW1vdmVzIGV2ZXJ5
-dGhpbmcgdGhhdCdzIG9sZGVyIHRoYW4gMjggZGF5cy4NCj4gPiA+IA0KPiA+ID4gPiANCj4gPiA+
-ID4gSSBzcGVudCBxdWl0ZSBzb21lIHRpbWUgdHJ5aW5nIHRvIGNsaWNrIGFyb3VuZCB0byBmaW5k
-IGFuIGVycm9yIEkNCj4gPiA+ID4gY291bGQgZGVidWcuIEkgY291bGQgbm90IGZpbmQgb25lLiBB
-bGwgb2YgYWJvdmUgbG9va3MgbGlrZSBrZXJuZWxDSQ0KPiA+ID4gPiBjb25maWd1cmF0aW9uIHBy
-b2JsZW1zLiBDYW4gdGhleSBiZSBmaXhlZCBhbmQvb3IgZmlsdGVyZWQgb3V0Pw0KPiA+ID4gPiAN
-Cj4gPiA+IA0KPiA+ID4gSWYgeW91IGNhbiB3cml0ZSB3aGljaCBjb25maWd1cmF0aW9ucyB5b3Ug
-d2FudCB0byBmaWx0ZXIgb3V0IChiZWNhdXNlDQo+ID4gPiB0aGV5IGFyZSBub3QgbmVlZGVkIGZv
-ciBDSVApDQo+ID4gPiB0byBLZXJuZWxDSSwgS2VybmVsQ0kgY291bGQgYmxvY2tsaXN0IHN1Y2gg
-Y29uZmlndXJhdGlvbnMuDQo+ID4gPiANCj4gPiA+IGZvciByZWZlcmVuY2U6IGh0dHBzOi8vZ2l0
-aHViLmNvbS9rZXJuZWxjaS9rZXJuZWxjaS1jb3JlL2lzc3Vlcy8xMDUzI2lzc3VlY29tbWVudC0x
-MDUwNjc5NzI1DQo+ID4gDQo+ID4gSmFuIGFza2VkIG1lIHRvIGNoZWNrIHRoZSBrZXJuZWxjaSBy
-ZWxhdGVkIGlzc3VlcyB5b3Ugc3VtbWFyaXplZCBoZXJlDQo+ID4gcmVsYXRlZCB0byB0aGUgNC40
-LWNpcCBicmFuY2guIEkgdHJpZWQgdG8gZmluZCB0aGUgbGF0ZXN0IDQuNCB0ZXN0DQo+ID4gcmVw
-b3J0IHRoYXQgZmFpbGVkLiBDYW4gc29tZW9uZSBwb2ludCBtZSB0aGVyZT8NCj4gPiANCj4gPiBX
-aXRoIHNvbWUgZ3VpZGFuY2UgZnJvbSBBbGljZSBpdCBzaG91bGQgYmUgcG9zc2libGUgZm9yIG1l
-IHRvIGNvbWUgdXANCj4gPiB3aXRoIGEgZXhjbHVkZS9ibG9ja2xpc3QgdG8gYnJpbmcgNC40IGJh
-Y2sgdG8gYSAiZ3JlZW4iIHN0YXRlLg0KPiA+IEFmdGVyd2FyZHMgd2Ugd291bGQgaGF2ZSB0byBz
-b3J0IG91dCBhbGwgdGhlIHByb2JsZW1zIChkZWNvdXBsZWQgZnJvbQ0KPiA+IFBhdmVsJ3MgdGVz
-dGluZykNCj4gPiANCj4gDQo+IEhlbGxvIEZsb3JpYW4NCj4gDQo+IExhdGVzdCBidWlsZCA0LjQg
-Y2lwIGlzIGhlcmUNCj4gaHR0cHM6Ly9saW51eC5rZXJuZWxjaS5vcmcvdGVzdC9qb2IvY2lwL2Jy
-YW5jaC9saW51eC00LjQueS1jaXAva2VybmVsL3Y0LjQuMzAyLWNpcDY5LTI5Ni1nNTJkZTk0MzFk
-MzE0Lw0KPiBpcyBhIHJlYWxseSBvbGQgYnVpbGQgYXMgdGhlIGxhdGVzdCA0LjQgY2lwIHRhZyBp
-cyB2NC40LjMwMi1jaXA2OQ0KPiB0YWdnZWQgb24gZGF0ZSAyMDIyLTA0LTA0IDEzOjE4OjMwICsw
-OTAwDQo+IFVuZm9ydHVuYXRlbHkgYXMgSSBwcmV2aW91c2x5IHNhaWQgS2VybmVsQ0kgZ2FyYmFn
-ZSBjb2xsZWN0b3IgcmVtb3Zlcw0KPiBldmVyeXRoaW5nIHRoYXQncyBvbGRlciB0aGFuIDI4IGRh
-eXMuDQo+IFlvdSBjYW4gZmluZCBDSVAgYnVpbGRzIGhlcmU6IGh0dHBzOi8vbGludXgua2VybmVs
-Y2kub3JnL2pvYi9jaXAvDQoNClRoYW5rcyBhIGxvdCBBbGljZSENCg0KQW55IGNoYW5jZSBmb3Ig
-bWUgdG8gdHJpZ2dlciBhIHJlLWJ1aWxkPyANCg0KPiANCj4gVGhhbmtzLA0KPiBBbGljZWYNCj4g
-DQo+IA0KDQo=
+hello Florian,
+
+On Thu, Jul 14, 2022 at 7:27 PM Bezdeka, Florian
+<florian.bezdeka@siemens.com> wrote:
+>
+> On Thu, 2022-07-14 at 19:17 +0900, Alice Ferrazzi wrote:
+> > On Thu, Jul 14, 2022 at 6:45 PM florian.bezdeka@siemens.com
+> > <florian.bezdeka@siemens.com> wrote:
+> > >
+> > > On Thu, 2022-07-14 at 18:20 +0900, Alice Ferrazzi via lists.cip-
+> > > project.org wrote:
+> > > > Hi Pavel,
+> > > >
+> > > > On Fri, Jun 24, 2022 at 3:13 AM Pavel Machek <pavel@denx.de> wrote:
+> > > > >
+> > > > > Hi!
+> > > > >
+> > > > > First... what I am currently using for testing: gitlab; I simply =
+watch
+> > > > > for green ticks there. It takes ~15 minutes to get results. Red c=
+ross
+> > > > > in compile stage is pretty sure sign of build error. Red cross in
+> > > > > testing means I need to look at the results, but it is pretty eas=
+y to
+> > > > > see "network timeout" or "board unavailable" problems, and mostly=
+ I
+> > > > > can just hit retry and get the green tick.
+> > > > >
+> > > > > What wories me about gitlab is that we have single board for 4.4-=
+st,
+> > > > > and just two for 4.4-cip.
+> > > > >
+> > > > > Now, kernelci.
+> > > > >
+> > > > > https://ircbot.wl.linuxfoundation.org/meetings/cip/2022/06/cip.20=
+22-06-23-12.01.html
+> > > > >
+> > > > > I got this link in the irc meeting:
+> > > > >
+> > > > > https://linux.kernelci.org/job/cip/
+> > > > >
+> > > > > Lets start with build results.
+> > > > >
+> > > > > linux-5.10.y-cip      v5.10.121-cip9 bd24696dd7ad23517733728da675=
+a00cd3073916 169 7 3
+> > > > >
+> > > > > I click on "3" and get build error summary:
+> > > > >
+> > > > > Errors Summary
+> > > > > 2      arm-linux-gnueabihf-gcc: error: unrecognized -march target=
+: armv3m
+> > > > > 2       arm-linux-gnueabihf-gcc: error: missing argument to =E2=
+=80=98-march=3D=E2=80=99
+> > > > >
+> > > > > ...but those are not kernel problems, that's buildsystem incompat=
+ible
+> > > > > with config or something like that. Nothing for me to solve.
+> > > > >
+> > > > > Let me go through more:
+> > > > >
+> > > > > linux-4.19.y-cip        v4.19.246-cip75 38ce181ac6ca9f3decdd389cb=
+fd0a38fecdb28c7  111 8 1
+> > > > > linux-4.19.y-cip        v4.19.245-cip74 0be9d6774be9b192bcea6fdda=
+da917ae3d22f22e  106 7 1
+> > > > > linux-4.19.y-cip-rt     v4.19.245-cip74-rt25 c80ee3077a4ce344cf1c=
+ffa23af767c9fd75d52c  181 16 6
+> > > > > linux-4.4.y-cip v4.4.302-cip69-296-g52de9431d314 52de9431d314a28c=
+4aa66d8f81144c9958c11168 164 18 5
+> > > > > linux-5.10.y-cip-rt     v5.10.109-cip5-rt4 b41186882eaf0137277045=
+da13ea649577c42c11 177 8 3
+> > > > > linux-5.10.y-cip        v5.10.112-cip6 c8f6747dcd02a8f87731c324f4=
+bc37bd120a8982 180 7 3
+> > > > > linux-4.19.y-cip        v4.19.239-cip72 fdf770b2db8080de95dcf74cc=
+7547319034a4a56 0 0 120
+> > > > >
+> > > > > That's 19 errors total + outlier of v4.19.239-cip72 with 120
+> > > > > errors. None of the 19 errors is real. KernelCI needs to fix thei=
+r
+> > > > > configs/build environment.
+> > > > >
+> > > > > 120 errors are reported at https://linux.kernelci.org/build/cip/b=
+ranch/linux-4.19.y-cip/kernel/v4.19.239-cip72/ . Wow. Except that I don't s=
+ee that many errors there. I see lines such as
+> > > > >
+> > > > > cm_x2xx_defconfig =E2=80=90 arm =E2=80=90 gcc-10  0 warnings 0 er=
+rors. When I click for details I get "No test results found".
+> > > > >
+> > > > > https://linux.kernelci.org/build/id/6266a495d40dfd0dacff948c/
+> > > > >
+> > > > > Nothing for me to debug, either, agreed? So lets look at test res=
+ults.
+> > > > >
+> > > > > Branch  Kernel Commit Build Status      Test Results    Date
+> > > > > linux-5.10.y-cip      v5.10.121-cip9    bd24696dd7ad23517733728da=
+675a00cd3073916 169 7 3  2457 256 21 2022-06-12
+> > > > >
+> > > > > 21 failures.
+> > > > >
+> > > > > If I click that, I can see that most regressions (11) are at base=
+line
+> > > > > test plan. The machine that looks relevant to us is
+> > > > > qemu_arm64-virt-gicv2 defconfig+arm64-chromebook --
+> > > > >
+> > > > > https://linux.kernelci.org/test/job/cip/branch/linux-5.10.y-cip/k=
+ernel/v5.10.121-cip9/plan/baseline/
+> > > > >
+> > > > > New regression, last pass: v5.10.112-cip6
+> > > > >
+> > > > > I get to
+> > > > > https://linux.kernelci.org/test/case/id/62a333452713980006a39c13/
+> > > > > which looks quite useful, it lists successful run and failed run,
+> > > > > v5.10.121-cip9 fails while v5.10.112-cip6 works.
+> > > >
+> > > > Yes, checking for regressions is quite useful.
+> > > >
+> > > > >
+> > > > > Eventually I get to https://storage.kernelci.org/cip/linux-5.10.y=
+-cip/v5.10.121-cip9/arm64/defconfig+arm64-chromebook/gcc-10/lab-baylibre/ba=
+seline-qemu_arm64-virt-gicv2.html .
+> > > > >
+> > > > > And sorry, no I don't see anything I could debug there. Did the d=
+ocker
+> > > > > fail to start? Hmm. Lets compare it with the older results.
+> > > > >
+> > > > > https://storage.kernelci.org/cip/linux-5.10.y-cip/v5.10.112-cip6/=
+arm64/defconfig+arm64-chromebook/gcc-10/lab-baylibre/baseline-qemu_arm64-vi=
+rt-gicv2.html . Aha, 404. No comparison possible.
+> > > >
+> > > > The garbage collector removes everything that's older than 28 days.
+> > > >
+> > > > >
+> > > > > Lets try one more.
+> > > > >
+> > > > > rk3399-gru-kevin defconfig+arm64-chromebook =E2=80=90 arm64 =E2=
+=80=90 gcc-10
+> > > > >
+> > > > > https://linux.kernelci.org/test/plan/id/62a337700aadba677da39bdd/
+> > > > >
+> > > > > It gets me to:
+> > > > >
+> > > > > https://storage.kernelci.org/cip/linux-5.10.y-cip/v5.10.121-cip9/=
+arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/baseline-rk3399-gru-k=
+evin.html
+> > > > >
+> > > > > I see some errors... Like missing firmware (not a kernel problem)=
+. At
+> > > > > the end there's "tpm-chip-is-online: fail" . Is that what I shoul=
+d be debugging?
+> > > > >
+> > > > >  1368 12:21:39.212881  /usr/bin/tpm2_getcap
+> > > > >   1369 12:21:39.251829  ERROR:sys:src/tss2-sys/api/Tss2_Sys_Execu=
+te.c:114:Tss2_Sys_ExecuteFinish() Unsupported device. The device is a TPM 1=
+.2
+> > > > >    1370 12:21:39.261387  ERROR:esys:src/tss2-esys/api/Esys_GetCap=
+ability.c:307:Esys_GetCapability_Finish() Received a non-TPM Error
+> > > > >     1371 12:21:39.272254  ERROR:esys:src/tss2-esys/api/Esys_GetCa=
+pability.c:107:Esys_GetCapability() Esys Finish ErrorCode (0x00080001)
+> > > > >      1372 12:21:39.281854  ERROR: Esys_GetCapability(0x80001) - s=
+ys:Catch all for all errors not otherwise specified
+> > > > >       1373 12:21:39.285316  ERROR: Unable to run tpm2_getcap
+> > > > >
+> > > > > Userland seems to say that it does not support this device. I gue=
+ss I could compare it with older boot?
+> > > > >
+> > > > > https://storage.kernelci.org/cip/linux-5.10.y-cip/v5.10.83-cip1-1=
+78-g2cf1d12aab81/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/base=
+line-rk3399-gru-kevin.html
+> > > > >
+> > > > > Aha, no, could not, 404.
+> > > >
+> > > > same here, the garbage collector removes everything that's older th=
+an 28 days.
+> > > >
+> > > > >
+> > > > > Now, let's go through Jan's
+> > > > > example. https://linux.kernelci.org/build/id/61fbabe0cb6f27a6ce5d=
+6f03/logs/?
+> > > > > . Again, errors look like missconfigured build system, with
+> > > > >
+> > > > > arm-linux-gnueabihf-gcc: error: unrecognized -march target: armv3
+> > > > > arm-linux-gnueabihf-gcc: error: missing argument to =E2=80=98-mar=
+ch=3D=E2=80=99
+> > > > >
+> > > > > Full log https://storage.kernelci.org/stable-rc/linux-4.4.y/v4.4.=
+302/arm/rpc_defconfig/gcc-10/logs gives 404.
+> > > >
+> > > > same here, the garbage collector removes everything that's older th=
+an 28 days.
+> > > >
+> > > > >
+> > > > > I spent quite some time trying to click around to find an error I
+> > > > > could debug. I could not find one. All of above looks like kernel=
+CI
+> > > > > configuration problems. Can they be fixed and/or filtered out?
+> > > > >
+> > > >
+> > > > If you can write which configurations you want to filter out (becau=
+se
+> > > > they are not needed for CIP)
+> > > > to KernelCI, KernelCI could blocklist such configurations.
+> > > >
+> > > > for reference: https://github.com/kernelci/kernelci-core/issues/105=
+3#issuecomment-1050679725
+> > >
+> > > Jan asked me to check the kernelci related issues you summarized here
+> > > related to the 4.4-cip branch. I tried to find the latest 4.4 test
+> > > report that failed. Can someone point me there?
+> > >
+> > > With some guidance from Alice it should be possible for me to come up
+> > > with a exclude/blocklist to bring 4.4 back to a "green" state.
+> > > Afterwards we would have to sort out all the problems (decoupled from
+> > > Pavel's testing)
+> > >
+> >
+> > Hello Florian
+> >
+> > Latest build 4.4 cip is here
+> > https://linux.kernelci.org/test/job/cip/branch/linux-4.4.y-cip/kernel/v=
+4.4.302-cip69-296-g52de9431d314/
+> > is a really old build as the latest 4.4 cip tag is v4.4.302-cip69
+> > tagged on date 2022-04-04 13:18:30 +0900
+> > Unfortunately as I previously said KernelCI garbage collector removes
+> > everything that's older than 28 days.
+> > You can find CIP builds here: https://linux.kernelci.org/job/cip/
+>
+> Thanks a lot Alice!
+>
+> Any chance for me to trigger a re-build?
+>
+
+I'm trying to triggering CIP_4.4 again it should appear in
+https://staging.kernelci.org/job/
+but Pavel have is own repository for triggering re-builds
+"""
+tree: cip-gitlab
+branch: 'ci/pavel/linux-test'
+variants: *cip_variants
+cip_pavel-test:
+"""
+
+Thanks,
+Alicef
+
+--=20
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Cybertrust Japan Co.,Ltd.
+Alice Ferrazzi
+alice.ferrazzi@miraclelinux.com
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
