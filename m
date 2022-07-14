@@ -2,34 +2,34 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D2BEC433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 563FCC43334
 	for <webhook@archiver.kernel.org>; Thu, 14 Jul 2022 14:04:52 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com
  [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web08.7947.1657807485091615821
  for <cip-dev@lists.cip-project.org>;
- Thu, 14 Jul 2022 07:04:49 -0700
+ Thu, 14 Jul 2022 07:04:45 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
  spf=pass (domain: bp.renesas.com, ip: 210.160.252.172,
  mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.92,271,1650898800";
-   d="scan'208";a="127854069"
+   d="scan'208";a="127854062"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 14 Jul 2022 23:04:49 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 14 Jul 2022 23:04:44 +0900
 Received: from localhost.localdomain (unknown [10.226.92.147])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 6783C441C33C;
-	Thu, 14 Jul 2022 23:04:47 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id E468B441C33C;
+	Thu, 14 Jul 2022 23:04:42 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: Pavel Machek <pavel@denx.de>
 Cc: nobuhiro1.iwamatsu@toshiba.co.jp,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH [5.10.y-cip] 06/13] arm64: defconfig: Enable additional
- support for Renesas platforms
-Date: Thu, 14 Jul 2022 15:04:25 +0100
-Message-Id: <20220714140432.2210982-7-biju.das.jz@bp.renesas.com>
+Subject: [PATCH [5.10.y-cip] 04/13] thermal/drivers/rz2gl: Add error check for
+ reset_control_deassert()
+Date: Thu, 14 Jul 2022 15:04:23 +0100
+Message-Id: <20220714140432.2210982-5-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220714140432.2210982-1-biju.das.jz@bp.renesas.com>
 References: <20220714140432.2210982-1-biju.das.jz@bp.renesas.com>
@@ -39,65 +39,48 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 14 Jul 2022 14:04:52 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8776
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8774
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+commit 8ee1c0f6526ce942b7595951c7bb0165010051c2 upstream.
 
-commit 2e8a3335472461927e57d1741ccf1791ff416075 upstream.
+If reset_control_deassert() fails, then we won't be able to access
+the device registers. Therefore check the return code of
+reset_control_deassert() and bail out in case of error.
 
-Increase build and test coverage by enabling support for more hardware
-present on Renesas SoCs and boards:
-  - Renesas RSPI, RZ/G2L thermal, RZ/G2L WDT watchdog, and OSTM timer,
-    as used on the RZ/G2L SMARC EVK board,
-  - R-Car Image Signal Processor (ISP) and Display Unit embedded MIPI
-    DSI encoder on R-Car V3U, as used on the Falcon board.
+While at it replace the parameter "&pdev->dev" -> "dev" in
+devm_reset_control_get_exclusive().
 
-All of the above are modular, except for thermal, watchdog, and timer.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/c9800d67f91a90d418a3ce44c59109ae0a87b2d8.1643373223.git.geert+renesas@glider.be
+Suggested-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-[biju: Removed R-Car V3U configs]
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Link: https://lore.kernel.org/r/20211208164010.4130-1-biju.das.jz@bp.renesas.com
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- arch/arm64/configs/defconfig | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/thermal/rzg2l_thermal.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 7575dbd6f57c..58a79a3e1cd0 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -465,6 +465,7 @@ CONFIG_SPI_ORION=y
- CONFIG_SPI_PL022=y
- CONFIG_SPI_ROCKCHIP=y
- CONFIG_SPI_RPCIF=m
-+CONFIG_SPI_RSPI=m
- CONFIG_SPI_QCOM_QSPI=m
- CONFIG_SPI_QUP=y
- CONFIG_SPI_QCOM_GENI=m
-@@ -540,6 +541,7 @@ CONFIG_IMX8MM_THERMAL=m
- CONFIG_ROCKCHIP_THERMAL=m
- CONFIG_RCAR_THERMAL=y
- CONFIG_RCAR_GEN3_THERMAL=y
-+CONFIG_RZG2L_THERMAL=y
- CONFIG_ARMADA_THERMAL=y
- CONFIG_BCM2711_THERMAL=m
- CONFIG_BCM2835_THERMAL=m
-@@ -563,6 +565,7 @@ CONFIG_QCOM_WDT=m
- CONFIG_MESON_GXBB_WATCHDOG=m
- CONFIG_MESON_WATCHDOG=m
- CONFIG_RENESAS_WDT=y
-+CONFIG_RENESAS_RZG2LWDT=y
- CONFIG_UNIPHIER_WATCHDOG=y
- CONFIG_BCM2835_WDT=y
- CONFIG_MFD_ALTERA_SYSMGR=y
-@@ -909,6 +912,7 @@ CONFIG_SM_GPUCC_8250=y
- CONFIG_QCOM_HFPLL=y
- CONFIG_HWSPINLOCK=y
- CONFIG_HWSPINLOCK_QCOM=y
-+CONFIG_RENESAS_OSTM=y
- CONFIG_ARM_MHU=y
- CONFIG_IMX_MBOX=y
- CONFIG_PLATFORM_MHU=y
+diff --git a/drivers/thermal/rzg2l_thermal.c b/drivers/thermal/rzg2l_thermal.c
+index d47d4a30cd6c..7a9cdc1f37ca 100644
+--- a/drivers/thermal/rzg2l_thermal.c
++++ b/drivers/thermal/rzg2l_thermal.c
+@@ -170,12 +170,14 @@ static int rzg2l_thermal_probe(struct platform_device *pdev)
+ 		return PTR_ERR(priv->base);
+ 
+ 	priv->dev = dev;
+-	priv->rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
++	priv->rstc = devm_reset_control_get_exclusive(dev, NULL);
+ 	if (IS_ERR(priv->rstc))
+ 		return dev_err_probe(dev, PTR_ERR(priv->rstc),
+ 				     "failed to get cpg reset");
+ 
+-	reset_control_deassert(priv->rstc);
++	ret = reset_control_deassert(priv->rstc);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to deassert");
+ 
+ 	pm_runtime_enable(dev);
+ 	pm_runtime_get_sync(dev);
 -- 
 2.25.1
 
