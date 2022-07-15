@@ -2,24 +2,24 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21D3DCCA482
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B650CCA47C
 	for <webhook@archiver.kernel.org>; Fri, 15 Jul 2022 07:39:44 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com
  [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web10.3828.1657870760365428455
  for <cip-dev@lists.cip-project.org>;
- Fri, 15 Jul 2022 00:39:38 -0700
+ Fri, 15 Jul 2022 00:39:43 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
  spf=pass (domain: bp.renesas.com, ip: 210.160.252.172,
  mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.92,273,1650898800";
-   d="scan'208";a="127957747"
+   d="scan'208";a="127957757"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 15 Jul 2022 16:39:37 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 15 Jul 2022 16:39:42 +0900
 Received: from localhost.localdomain (unknown [10.226.92.160])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 86661421BCAC;
-	Fri, 15 Jul 2022 16:39:35 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8B152421BCAF;
+	Fri, 15 Jul 2022 16:39:40 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -27,10 +27,10 @@ To: cip-dev@lists.cip-project.org,
 Cc: Chris Paterson <chris.paterson2@renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH RESEND 5.10.y-cip 07/13] watchdog: rzg2l_wdt: Fix 32bit
- overflow issue
-Date: Fri, 15 Jul 2022 08:39:10 +0100
-Message-Id: <20220715073916.2321319-8-biju.das.jz@bp.renesas.com>
+Subject: [PATCH RESEND 5.10.y-cip 09/13] watchdog: rzg2l_wdt: Fix 'BUG:
+ Invalid wait context'
+Date: Fri, 15 Jul 2022 08:39:12 +0100
+Message-Id: <20220715073916.2321319-10-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220715073916.2321319-1-biju.das.jz@bp.renesas.com>
 References: <20220715073916.2321319-1-biju.das.jz@bp.renesas.com>
@@ -40,45 +40,132 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 15 Jul 2022 07:39:44 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8818
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8820
 
-commit ea2949df22a533cdf75e4583c00b1ce94cd5a83b upstream.
+commit e4cf89596c1f1e33309556699f910ced4abbaf44 upstream.
 
-The value of timer_cycle_us can be 0 due to 32bit overflow.
-For eg:- If we assign the counter value "0xfff" for computing
-maxval.
+This patch fixes the issue 'BUG: Invalid wait context' during restart()
+callback by using clk_prepare_enable() instead of pm_runtime_get_sync()
+for turning on the clocks during restart.
 
-This patch fixes this issue by appending ULL to 1024, so that
-it is promoted to 64bit.
+This issue is noticed when testing with renesas_defconfig.
 
-This patch also fixes the warning message, 'watchdog: Invalid min and
-max timeout values, resetting to 0!'.
+[   42.213802] reboot: Restarting system
+[   42.217860]
+[   42.219364] =============================
+[   42.223368] [ BUG: Invalid wait context ]
+[   42.227372] 5.17.0-rc5-arm64-renesas-00002-g10393723e35e #522 Not tainted
+[   42.234153] -----------------------------
+[   42.238155] systemd-shutdow/1 is trying to lock:
+[   42.242766] ffff00000a650828 (&genpd->mlock){+.+.}-{3:3}, at: genpd_lock_mtx+0x14/0x20
+[   42.250709] other info that might help us debug this:
+[   42.255753] context-{4:4}
+[   42.258368] 2 locks held by systemd-shutdow/1:
+[   42.262806]  #0: ffff80000944e1c8 (system_transition_mutex#2){+.+.}-{3:3}, at: __do_sys_reboot+0xd0/0x250
+[   42.272388]  #1: ffff8000094c4e40 (rcu_read_lock){....}-{1:2}, at: atomic_notifier_call_chain+0x0/0x150
+[   42.281795] stack backtrace:
+[   42.284672] CPU: 0 PID: 1 Comm: systemd-shutdow Not tainted 5.17.0-rc5-arm64-renesas-00002-g10393723e35e #522
+[   42.294577] Hardware name: Renesas SMARC EVK based on r9a07g044c2 (DT)
+[   42.301096] Call trace:
+[   42.303538]  dump_backtrace+0xcc/0xd8
+[   42.307203]  show_stack+0x14/0x30
+[   42.310517]  dump_stack_lvl+0x88/0xb0
+[   42.314180]  dump_stack+0x14/0x2c
+[   42.317492]  __lock_acquire+0x1b24/0x1b50
+[   42.321502]  lock_acquire+0x120/0x3a8
+[   42.325162]  __mutex_lock+0x84/0x8f8
+[   42.328737]  mutex_lock_nested+0x30/0x58
+[   42.332658]  genpd_lock_mtx+0x14/0x20
+[   42.336319]  genpd_runtime_resume+0xc4/0x228
+[   42.340587]  __rpm_callback+0x44/0x170
+[   42.344337]  rpm_callback+0x64/0x70
+[   42.347824]  rpm_resume+0x4e0/0x6b8
+[   42.351310]  __pm_runtime_resume+0x50/0x78
+[   42.355404]  rzg2l_wdt_restart+0x28/0x68
+[   42.359329]  watchdog_restart_notifier+0x1c/0x30
+[   42.363943]  atomic_notifier_call_chain+0x94/0x150
+[   42.368732]  do_kernel_restart+0x24/0x30
+[   42.372652]  machine_restart+0x44/0x70
+[   42.376399]  kernel_restart+0x3c/0x60
+[   42.380058]  __do_sys_reboot+0x228/0x250
+[   42.383977]  __arm64_sys_reboot+0x20/0x28
+[   42.387983]  invoke_syscall+0x40/0xf8
 
 Fixes: 2cbc5cd0b55fa2 ("watchdog: Add Watchdog Timer driver for RZ/G2L")
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20220225175320.11041-2-biju.das.jz@bp.renesas.com
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lore.kernel.org/r/20220225175320.11041-4-biju.das.jz@bp.renesas.com
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/watchdog/rzg2l_wdt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/watchdog/rzg2l_wdt.c | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/watchdog/rzg2l_wdt.c b/drivers/watchdog/rzg2l_wdt.c
-index 6b426df34fd6..96f2a018ab62 100644
+index 0fc73b8a9567..48dfe6e5e64f 100644
 --- a/drivers/watchdog/rzg2l_wdt.c
 +++ b/drivers/watchdog/rzg2l_wdt.c
-@@ -53,7 +53,7 @@ static void rzg2l_wdt_wait_delay(struct rzg2l_wdt_priv *priv)
+@@ -43,6 +43,8 @@ struct rzg2l_wdt_priv {
+ 	struct reset_control *rstc;
+ 	unsigned long osc_clk_rate;
+ 	unsigned long delay;
++	struct clk *pclk;
++	struct clk *osc_clk;
+ };
  
- static u32 rzg2l_wdt_get_cycle_usec(unsigned long cycle, u32 wdttime)
- {
--	u64 timer_cycle_us = 1024 * 1024 * (wdttime + 1) * MICRO;
-+	u64 timer_cycle_us = 1024 * 1024ULL * (wdttime + 1) * MICRO;
+ static void rzg2l_wdt_wait_delay(struct rzg2l_wdt_priv *priv)
+@@ -118,7 +120,9 @@ static int rzg2l_wdt_restart(struct watchdog_device *wdev,
  
- 	return div64_ul(timer_cycle_us, cycle);
- }
+ 	/* Reset the module before we modify any register */
+ 	reset_control_reset(priv->rstc);
+-	pm_runtime_get_sync(wdev->parent);
++
++	clk_prepare_enable(priv->pclk);
++	clk_prepare_enable(priv->osc_clk);
+ 
+ 	/* smallest counter value to reboot soon */
+ 	rzg2l_wdt_write(priv, WDTSET_COUNTER_VAL(1), WDTSET);
+@@ -165,7 +169,6 @@ static int rzg2l_wdt_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct rzg2l_wdt_priv *priv;
+ 	unsigned long pclk_rate;
+-	struct clk *wdt_clk;
+ 	int ret;
+ 
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+@@ -177,22 +180,20 @@ static int rzg2l_wdt_probe(struct platform_device *pdev)
+ 		return PTR_ERR(priv->base);
+ 
+ 	/* Get watchdog main clock */
+-	wdt_clk = clk_get(&pdev->dev, "oscclk");
+-	if (IS_ERR(wdt_clk))
+-		return dev_err_probe(&pdev->dev, PTR_ERR(wdt_clk), "no oscclk");
++	priv->osc_clk = devm_clk_get(&pdev->dev, "oscclk");
++	if (IS_ERR(priv->osc_clk))
++		return dev_err_probe(&pdev->dev, PTR_ERR(priv->osc_clk), "no oscclk");
+ 
+-	priv->osc_clk_rate = clk_get_rate(wdt_clk);
+-	clk_put(wdt_clk);
++	priv->osc_clk_rate = clk_get_rate(priv->osc_clk);
+ 	if (!priv->osc_clk_rate)
+ 		return dev_err_probe(&pdev->dev, -EINVAL, "oscclk rate is 0");
+ 
+ 	/* Get Peripheral clock */
+-	wdt_clk = clk_get(&pdev->dev, "pclk");
+-	if (IS_ERR(wdt_clk))
+-		return dev_err_probe(&pdev->dev, PTR_ERR(wdt_clk), "no pclk");
++	priv->pclk = devm_clk_get(&pdev->dev, "pclk");
++	if (IS_ERR(priv->pclk))
++		return dev_err_probe(&pdev->dev, PTR_ERR(priv->pclk), "no pclk");
+ 
+-	pclk_rate = clk_get_rate(wdt_clk);
+-	clk_put(wdt_clk);
++	pclk_rate = clk_get_rate(priv->pclk);
+ 	if (!pclk_rate)
+ 		return dev_err_probe(&pdev->dev, -EINVAL, "pclk rate is 0");
+ 
 -- 
 2.25.1
 
