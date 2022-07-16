@@ -1,173 +1,107 @@
-Return-Path: <webhook@kernel.org>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C15D3C43334
-	for <webhook@archiver.kernel.org>; Fri, 15 Jul 2022 12:51:15 +0000 (UTC)
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com
- [209.85.210.171])
- by mx.groups.io with SMTP id smtpd.web12.5968.1657889473928165809
- for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Fri, 15 Jul 2022 05:51:14 -0700
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B4DC43334
+	for <webhook@archiver.kernel.org>; Sat, 16 Jul 2022 09:08:47 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web11.3728.1657962525684203976
+ for <cip-dev@lists.cip-project.org>;
+ Sat, 16 Jul 2022 02:08:46 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112
- header.b=Ua9CYDsC;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.210.171,
- mailfrom: bot@kernelci.org)
-Received: by mail-pf1-f171.google.com with SMTP id y9so4566760pff.12
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Fri, 15 Jul 2022 05:51:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=uWj3vrm+eRyU+g0XmL2PHbD6cckx0vjPtjwr7TGyC04=;
-        b=Ua9CYDsCkmY3L/d2kA3Q9fSWjPWjD7EOT9wwVXdKPKOp3RsrgX3XddEzovmDGRXhh9
-         4UcL+0OQEVSALnw3+sOBAN9G3Qu2LSUes9OWyoHVdDRErmJ61KzILRLB9OWucEeE4bqI
-         ghp7HwoDKn8/NzdCWNoNuuWLI8OOt25w0ibx20KNF/w5ijzYlGjdWzdsHgh9hMr0rgFk
-         Fji/cHoc73Yu6jOhFzNmkBaeBp/pQlxTz+QsqllQULriXqy3/Z6vFhcLrEEtpwxvL4Fl
-         Og3GZRVpDx/cwcdYUmsczV5OwdI9Dw3XIFDaO4Gf93gTqPfPLgOlbvIvVIn3maUS9YAY
-         pRQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=uWj3vrm+eRyU+g0XmL2PHbD6cckx0vjPtjwr7TGyC04=;
-        b=q4kE5UgH2NN342GNwWdynNxJaXLf2HrLjMJ8CWGYSrlySSos7E6ynd/MrMby1p/Hio
-         qJvJ/YMI5beaeML3zGdO1qTyUTKaOWKgg4wms+nGiwCmeOpue48pqetmjWyVkOR0aPLE
-         VS8rOUC1L2/k6HGffoKPdONYeo2e3tAseM6/C9JhxcnvTxm0w3UeWAYYUfYVmevbQxxA
-         5DlUobl1VtrTppck3Fdo1rhCeLraG+oOb+reHAme5r6zauub1dplis0HYKaA8+1IbdAQ
-         NWjxrqbbGt7Bvy97pyfNwKrlCu0pj+hh6eOsLT7+OYb5Dh7YCw9409p7YLGvUYDwppHY
-         typA==
-X-Gm-Message-State: AJIora/nRpnHNlEkjfeyBJkaNJORXlVIoA+nIjreg4rtfLon6ZGcTM7Z
-	/hWRX3QpIV87NRUgoXo8yUibEgfIhgQFRG9f
-X-Google-Smtp-Source: 
- AGRyM1t9S352s2Mk/xkL0kc4yqv9E72/UAuvfE0iobzKqa/4OLAgIcfD2mHbYPEhjGXNKEFQhTbOnA==
-X-Received: by 2002:a63:ae03:0:b0:408:b78c:e284 with SMTP id
- q3-20020a63ae03000000b00408b78ce284mr12054627pgf.401.1657889473078;
-        Fri, 15 Jul 2022 05:51:13 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id
- y9-20020a17090a600900b001f07ce88696sm3396732pji.49.2022.07.15.05.51.12
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Jul 2022 05:51:12 -0700 (PDT)
-Message-ID: <62d162c0.1c69fb81.f9d04.53dc@mx.google.com>
-Date: Fri, 15 Jul 2022 05:51:12 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+ dkim=missing;
+ spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id DDFAA1C0001; Sat, 16 Jul 2022 11:08:42 +0200 (CEST)
+Date: Sat, 16 Jul 2022 11:08:39 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Pavel Machek <pavel@denx.de>,
+	Chris Paterson <chris.paterson2@renesas.com>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH RESEND 5.10.y-cip 01/13] kernel.h: split out mathematical
+ helpers
+Message-ID: <20220716090839.GA5658@duo.ucw.cz>
+References: <20220715073916.2321319-1-biju.das.jz@bp.renesas.com>
+ <20220715073916.2321319-2-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: test
-X-Kernelci-Kernel: v5.10.129-cip12-59-ge5b19636ca9c4
-X-Kernelci-Branch: ci/iwamatsu/linux-5.10.y-cip-rc
-X-Kernelci-Tree: cip-gitlab
-Subject: cip-gitlab/ci/iwamatsu/linux-5.10.y-cip-rc kselftest-futex: 3 runs,
- 2 regressions (v5.10.129-cip12-59-ge5b19636ca9c4)
-To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
-From: "kernelci.org bot" <bot@kernelci.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="jRHKVT23PllUwdXP"
+Content-Disposition: inline
+In-Reply-To: <20220715073916.2321319-2-biju.das.jz@bp.renesas.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 15 Jul 2022 12:51:15 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8831
-
-cip-gitlab/ci/iwamatsu/linux-5.10.y-cip-rc kselftest-futex: 3 runs, 2 regre=
-ssions (v5.10.129-cip12-59-ge5b19636ca9c4)
-
-Regressions Summary
--------------------
-
-platform                     | arch  | lab          | compiler | defconfig =
-| regressions
------------------------------+-------+--------------+----------+-----------=
-+------------
-meson-gxl-s905x-libretech-cc | arm64 | lab-baylibre | gcc-10   | defconfig =
-| 1          =
-
-r8a774a1-hihope-rzg2m-ex     | arm64 | lab-cip      | gcc-10   | defconfig =
-| 1          =
+ <cip-dev@lists.cip-project.org>; Sat, 16 Jul 2022 09:08:47 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8835
 
 
-  Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fiwamatsu%2=
-Flinux-5.10.y-cip-rc/kernel/v5.10.129-cip12-59-ge5b19636ca9c4/plan/kselftes=
-t-futex/
+--jRHKVT23PllUwdXP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  Test:     kselftest-futex
-  Tree:     cip-gitlab
-  Branch:   ci/iwamatsu/linux-5.10.y-cip-rc
-  Describe: v5.10.129-cip12-59-ge5b19636ca9c4
-  URL:      https://gitlab.com/cip-project/cip-kernel/linux-cip.git
-  SHA:      e5b19636ca9c43e262a365d756d491479adb3884 =
+Hi!
 
+> From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>=20
+> commit aa6159ab99a9ab5df835b4750b66cf132a5aa292 upstream
+>=20
+> kernel.h is being used as a dump for all kinds of stuff for a long time.
+> Here is the attempt to start cleaning it up by splitting out
+> mathematical helpers.
+>=20
+> At the same time convert users in header and lib folder to use new
+> header.  Though for time being include new header back to kernel.h to
+> avoid twisted indirected includes for existing users.
 
+This is rather intrusive for two lines which we really need, and may
+cause rejects in future.
 
-Test Regressions
----------------- =
+I'd suggest identifying the defines needed by the driver, and just
+adding those. kernel.h would be acceptable. Or you can add math.h with
+just defines needed, but please avoid code movement.
 
+Best regards,
+								Pavel
 
-
-platform                     | arch  | lab          | compiler | defconfig =
-| regressions
------------------------------+-------+--------------+----------+-----------=
-+------------
-meson-gxl-s905x-libretech-cc | arm64 | lab-baylibre | gcc-10   | defconfig =
-| 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/62d1523f325257abcea39bf0
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
-.10.y-cip-rc/v5.10.129-cip12-59-ge5b19636ca9c4/arm64/defconfig/gcc-10/lab-b=
-aylibre/kselftest-futex-meson-gxl-s905x-libretech-cc.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
-.10.y-cip-rc/v5.10.129-cip12-59-ge5b19636ca9c4/arm64/defconfig/gcc-10/lab-b=
-aylibre/kselftest-futex-meson-gxl-s905x-libretech-cc.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ks=
-elftest/20220708.0/arm64/initrd.cpio.gz =
+> ---
+>  fs/nfs/callback_proc.c        |   5 +
+>  include/linux/bitops.h        |  11 ++-
+>  include/linux/dcache.h        |   1 +
+>  include/linux/iommu-helper.h  |   4 +-
+>  include/linux/kernel.h        | 173 +--------------------------------
+>  include/linux/math.h          | 177 ++++++++++++++++++++++++++++++++++
+>  include/linux/rcu_node_tree.h |   2 +
+>  include/linux/units.h         |   2 +-
+>  lib/errname.c                 |   1 +
+>  lib/errseq.c                  |   1 +
+>  lib/find_bit.c                |   3 +-
+>  lib/math/div64.c              |   4 +-
+>  lib/math/int_pow.c            |   2 +-
+>  lib/math/int_sqrt.c           |   3 +-
+>  lib/math/reciprocal_div.c     |   9 +-
+>  15 files changed, 215 insertions(+), 183 deletions(-)
+>  create mode 100644 include/linux/math.h
 
 
 
-  * kselftest-futex.login: https://kernelci.org/test/case/id/62d1523f325257=
-abcea39bf1
-        failing since 12 days (last pass: v5.10.121-cip9-287-ge9094c8446fc,=
- first fail: v5.10.125-cip10-118-gb03e159be974) =
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
- =
+--jRHKVT23PllUwdXP
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYtKAFwAKCRAw5/Bqldv6
+8m4eAJ9xKkgh4OGJ4aG+yZl1GOx6/nTmhQCgqi/zeXg0+E7zMCqMNAaDh/XOXt0=
+=uv6F
+-----END PGP SIGNATURE-----
 
-platform                     | arch  | lab          | compiler | defconfig =
-| regressions
------------------------------+-------+--------------+----------+-----------=
-+------------
-r8a774a1-hihope-rzg2m-ex     | arm64 | lab-cip      | gcc-10   | defconfig =
-| 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/62d154b6254cdb8373a39bd6
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
-.10.y-cip-rc/v5.10.129-cip12-59-ge5b19636ca9c4/arm64/defconfig/gcc-10/lab-c=
-ip/kselftest-futex-r8a774a1-hihope-rzg2m-ex.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
-.10.y-cip-rc/v5.10.129-cip12-59-ge5b19636ca9c4/arm64/defconfig/gcc-10/lab-c=
-ip/kselftest-futex-r8a774a1-hihope-rzg2m-ex.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ks=
-elftest/20220708.0/arm64/initrd.cpio.gz =
-
-
-
-  * kselftest-futex.login: https://kernelci.org/test/case/id/62d154b6254cdb=
-8373a39bd7
-        new failure (last pass: v5.10.126-cip11-116-gef362fbbff528) =
-
- =20
+--jRHKVT23PllUwdXP--
 
