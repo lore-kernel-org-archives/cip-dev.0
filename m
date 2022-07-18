@@ -2,34 +2,33 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23F27C433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2573FCCA481
 	for <webhook@archiver.kernel.org>; Mon, 18 Jul 2022 09:24:51 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com
  [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web08.25202.1658136274779570356
  for <cip-dev@lists.cip-project.org>;
- Mon, 18 Jul 2022 02:24:42 -0700
+ Mon, 18 Jul 2022 02:24:49 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
  spf=pass (domain: bp.renesas.com, ip: 210.160.252.172,
  mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.92,280,1650898800";
-   d="scan'208";a="128219431"
+   d="scan'208";a="128219441"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 18 Jul 2022 18:24:41 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 18 Jul 2022 18:24:48 +0900
 Received: from biju-VirtualBox.ree.adwin.renesas.com (unknown [10.226.36.116])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 56F344007548;
-	Mon, 18 Jul 2022 18:24:39 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id E8C5E4007548;
+	Mon, 18 Jul 2022 18:24:46 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: Pavel Machek <pavel@denx.de>
 Cc: nobuhiro1.iwamatsu@toshiba.co.jp,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH v2 5.10.y-cip 04/12] thermal/drivers/rz2gl: Fix OTP
- Calibration Register values
-Date: Mon, 18 Jul 2022 10:24:22 +0100
-Message-Id: <20220718092430.382889-5-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 5.10.y-cip 07/12] watchdog: rzg2l_wdt: Fix Runtime PM usage
+Date: Mon, 18 Jul 2022 10:24:25 +0100
+Message-Id: <20220718092430.382889-8-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220718092430.382889-1-biju.das.jz@bp.renesas.com>
 References: <20220718092430.382889-1-biju.das.jz@bp.renesas.com>
@@ -39,56 +38,78 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 18 Jul 2022 09:24:51 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8850
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8853
 
-commit 2d37f5c90bdc659b329dac7cf6d165a4bbf34cb6 upstream.
+commit 95abafe76297fa057de6c3486ef844bd446bdf18 upstream.
 
-As per the latest RZ/G2L Hardware User's Manual (Rev.1.10 Apr, 2022),
-the bit 31 of TSU OTP Calibration Register(OTPTSUTRIM) indicates
-whether bit [11:0] of OTPTSUTRIM is valid or invalid.
+Both rzg2l_wdt_probe() and rzg2l_wdt_start() calls pm_runtime_get() which
+results in a usage counter imbalance. This patch fixes this issue by
+removing pm_runtime_get() call from probe.
 
-This patch updates the code to reflect this change.
-
+Fixes: 2cbc5cd0b55fa2 ("watchdog: Add Watchdog Timer driver for RZ/G2L")
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20220428093346.7552-1-biju.das.jz@bp.renesas.com
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lore.kernel.org/r/20220225175320.11041-3-biju.das.jz@bp.renesas.com
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/thermal/rzg2l_thermal.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/watchdog/rzg2l_wdt.c | 16 ++--------------
+ 1 file changed, 2 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/thermal/rzg2l_thermal.c b/drivers/thermal/rzg2l_thermal.c
-index a4c22123ad81..3e0e2e4fe27d 100644
---- a/drivers/thermal/rzg2l_thermal.c
-+++ b/drivers/thermal/rzg2l_thermal.c
-@@ -32,6 +32,8 @@
- #define TSU_SS		0x10
+diff --git a/drivers/watchdog/rzg2l_wdt.c b/drivers/watchdog/rzg2l_wdt.c
+index 96f2a018ab62..0fc73b8a9567 100644
+--- a/drivers/watchdog/rzg2l_wdt.c
++++ b/drivers/watchdog/rzg2l_wdt.c
+@@ -151,12 +151,11 @@ static const struct watchdog_ops rzg2l_wdt_ops = {
+ 	.restart = rzg2l_wdt_restart,
+ };
  
- #define OTPTSUTRIM_REG(n)	(0x18 + ((n) * 0x4))
-+#define OTPTSUTRIM_EN_MASK	BIT(31)
-+#define OTPTSUTRIM_MASK		GENMASK(11, 0)
+-static void rzg2l_wdt_reset_assert_pm_disable_put(void *data)
++static void rzg2l_wdt_reset_assert_pm_disable(void *data)
+ {
+ 	struct watchdog_device *wdev = data;
+ 	struct rzg2l_wdt_priv *priv = watchdog_get_drvdata(wdev);
  
- /* Sensor Mode Register(TSU_SM) */
- #define TSU_SM_EN_TS		BIT(0)
-@@ -183,11 +185,15 @@ static int rzg2l_thermal_probe(struct platform_device *pdev)
- 	pm_runtime_get_sync(dev);
+-	pm_runtime_put(wdev->parent);
+ 	pm_runtime_disable(wdev->parent);
+ 	reset_control_assert(priv->rstc);
+ }
+@@ -206,11 +205,6 @@ static int rzg2l_wdt_probe(struct platform_device *pdev)
  
- 	priv->calib0 = rzg2l_thermal_read(priv, OTPTSUTRIM_REG(0));
--	if (!priv->calib0)
-+	if (priv->calib0 & OTPTSUTRIM_EN_MASK)
-+		priv->calib0 &= OTPTSUTRIM_MASK;
-+	else
- 		priv->calib0 = SW_CALIB0_VAL;
+ 	reset_control_deassert(priv->rstc);
+ 	pm_runtime_enable(&pdev->dev);
+-	ret = pm_runtime_resume_and_get(&pdev->dev);
+-	if (ret < 0) {
+-		dev_err(dev, "pm_runtime_resume_and_get failed ret=%pe", ERR_PTR(ret));
+-		goto out_pm_get;
+-	}
  
- 	priv->calib1 = rzg2l_thermal_read(priv, OTPTSUTRIM_REG(1));
--	if (!priv->calib1)
-+	if (priv->calib1 & OTPTSUTRIM_EN_MASK)
-+		priv->calib1 &= OTPTSUTRIM_MASK;
-+	else
- 		priv->calib1 = SW_CALIB1_VAL;
+ 	priv->wdev.info = &rzg2l_wdt_ident;
+ 	priv->wdev.ops = &rzg2l_wdt_ops;
+@@ -222,7 +216,7 @@ static int rzg2l_wdt_probe(struct platform_device *pdev)
  
- 	platform_set_drvdata(pdev, priv);
+ 	watchdog_set_drvdata(&priv->wdev, priv);
+ 	ret = devm_add_action_or_reset(&pdev->dev,
+-				       rzg2l_wdt_reset_assert_pm_disable_put,
++				       rzg2l_wdt_reset_assert_pm_disable,
+ 				       &priv->wdev);
+ 	if (ret < 0)
+ 		return ret;
+@@ -235,12 +229,6 @@ static int rzg2l_wdt_probe(struct platform_device *pdev)
+ 		dev_warn(dev, "Specified timeout invalid, using default");
+ 
+ 	return devm_watchdog_register_device(&pdev->dev, &priv->wdev);
+-
+-out_pm_get:
+-	pm_runtime_disable(dev);
+-	reset_control_assert(priv->rstc);
+-
+-	return ret;
+ }
+ 
+ static const struct of_device_id rzg2l_wdt_ids[] = {
 -- 
 2.25.1
 
