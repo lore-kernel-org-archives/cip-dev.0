@@ -2,34 +2,34 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E612CCA486
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E5DCCCA481
 	for <webhook@archiver.kernel.org>; Mon, 18 Jul 2022 09:25:01 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com
  [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web08.25202.1658136274779570356
  for <cip-dev@lists.cip-project.org>;
- Mon, 18 Jul 2022 02:24:55 -0700
+ Mon, 18 Jul 2022 02:24:53 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
  spf=pass (domain: bp.renesas.com, ip: 210.160.252.172,
  mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.92,280,1650898800";
-   d="scan'208";a="128219451"
+   d="scan'208";a="128219447"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 18 Jul 2022 18:24:55 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 18 Jul 2022 18:24:52 +0900
 Received: from biju-VirtualBox.ree.adwin.renesas.com (unknown [10.226.36.116])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7D58F4007548;
-	Mon, 18 Jul 2022 18:24:53 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 520A24007548;
+	Mon, 18 Jul 2022 18:24:51 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: Pavel Machek <pavel@denx.de>
 Cc: nobuhiro1.iwamatsu@toshiba.co.jp,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH v2 5.10.y-cip 10/12] watchdog: rzg2l_wdt: Add error check for
- reset_control_deassert
-Date: Mon, 18 Jul 2022 10:24:28 +0100
-Message-Id: <20220718092430.382889-11-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 5.10.y-cip 09/12] watchdog: rzg2l_wdt: Fix reset control
+ imbalance
+Date: Mon, 18 Jul 2022 10:24:27 +0100
+Message-Id: <20220718092430.382889-10-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220718092430.382889-1-biju.das.jz@bp.renesas.com>
 References: <20220718092430.382889-1-biju.das.jz@bp.renesas.com>
@@ -39,41 +39,52 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 18 Jul 2022 09:25:01 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8856
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8855
 
-commit baf1aace9ad15401f08e048a7f1fdec79821bc61 upstream.
+commit 33d04d0fdba9fae18c7d58364643d2c606a43dba upstream.
 
-If reset_control_deassert() fails, then we won't be able to
-access the device registers. Therefore check the return code of
-reset_control_deassert() and bailout in case of error.
+Both rzg2l_wdt_probe() and rzg2l_wdt_start() calls reset_control_
+deassert() which results in a reset control imbalance.
 
+This patch fixes reset control imbalance by removing reset_control_
+deassert() from rzg2l_wdt_start() and replaces reset_control_assert with
+reset_control_reset in rzg2l_wdt_stop() as watchdog module can be stopped
+only by a module reset. This change will allow us to restart WDT after
+stop() by configuring WDT timeout and enable registers.
+
+Fixes: 2cbc5cd0b55fa2 ("watchdog: Add Watchdog Timer driver for RZ/G2L")
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Link: https://lore.kernel.org/r/20220225175320.11041-6-biju.das.jz@bp.renesas.com
+Link: https://lore.kernel.org/r/20220225175320.11041-5-biju.das.jz@bp.renesas.com
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/watchdog/rzg2l_wdt.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/watchdog/rzg2l_wdt.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/drivers/watchdog/rzg2l_wdt.c b/drivers/watchdog/rzg2l_wdt.c
-index 88274704b260..73b667ed3e99 100644
+index 48dfe6e5e64f..88274704b260 100644
 --- a/drivers/watchdog/rzg2l_wdt.c
 +++ b/drivers/watchdog/rzg2l_wdt.c
-@@ -203,7 +203,10 @@ static int rzg2l_wdt_probe(struct platform_device *pdev)
- 		return dev_err_probe(&pdev->dev, PTR_ERR(priv->rstc),
- 				     "failed to get cpg reset");
+@@ -88,7 +88,6 @@ static int rzg2l_wdt_start(struct watchdog_device *wdev)
+ {
+ 	struct rzg2l_wdt_priv *priv = watchdog_get_drvdata(wdev);
  
 -	reset_control_deassert(priv->rstc);
-+	ret = reset_control_deassert(priv->rstc);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to deassert");
-+
- 	pm_runtime_enable(&pdev->dev);
+ 	pm_runtime_get_sync(wdev->parent);
  
- 	priv->wdev.info = &rzg2l_wdt_ident;
+ 	/* Initialize time out */
+@@ -108,7 +107,7 @@ static int rzg2l_wdt_stop(struct watchdog_device *wdev)
+ 	struct rzg2l_wdt_priv *priv = watchdog_get_drvdata(wdev);
+ 
+ 	pm_runtime_put(wdev->parent);
+-	reset_control_assert(priv->rstc);
++	reset_control_reset(priv->rstc);
+ 
+ 	return 0;
+ }
 -- 
 2.25.1
 
