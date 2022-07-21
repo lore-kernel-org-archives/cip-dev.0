@@ -2,59 +2,58 @@ Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB7E7C3F2D4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B75ECCCA48D
 	for <webhook@archiver.kernel.org>; Thu, 21 Jul 2022 10:54:04 +0000 (UTC)
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com
- [209.85.216.47])
- by mx.groups.io with SMTP id smtpd.web09.4944.1658400839726176006
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com
+ [209.85.214.172])
+ by mx.groups.io with SMTP id smtpd.web09.4942.1658400836891819913
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Thu, 21 Jul 2022 03:53:59 -0700
+ Thu, 21 Jul 2022 03:53:57 -0700
 Authentication-Results: mx.groups.io;
  dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112
- header.b=BlHkfH5U;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.216.47,
+ header.b=x/LiLmAg;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.172,
  mailfrom: bot@kernelci.org)
-Received: by mail-pj1-f47.google.com with SMTP id
- l14-20020a17090a72ce00b001f20ed3c55dso1093076pjk.5
+Received: by mail-pl1-f172.google.com with SMTP id z3so1471253plb.1
         for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Thu, 21 Jul 2022 03:53:59 -0700 (PDT)
+ Thu, 21 Jul 2022 03:53:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=k0T5vcLTYn3cOR6N4YOyWotjJ6taPPXWV+wAABtlMkc=;
-        b=BlHkfH5ULBIEsnSldjwCgi8SHm4ZuPbJOxM+rQZwFznoWCjH/P5nvudwhSI4WALVKk
-         lWKt66IKuZ8AKiowhIZYAglNWFgFmwkqofwbI0xLDy5Ag6zZLEuYwursyvjNJ4+jfzbl
-         /5cLWRJd1Pk4kalVryk1n/MG9KliXEPvm9SYCt5boElOtcx210UVUbYcf36jRcXDg0f4
-         anecs74PSBsIDvRmACPulz0vSpT+5cm+luzdNNO9o+9CdHGplMT5N5bA439IQtz2NxxH
-         hnUsJJpA0rvIk5fX6DcNZv9/gNfq2napIMc7feLk2MsIAVLy932GFOTt/MrPR1CAxdfm
-         cHAw==
+        bh=n0Gt8pBlwzcUA1PfRtk/zBrs465p1kf7h2QeRrFTe3U=;
+        b=x/LiLmAg0FT5YgK+lopUyRm9gOs5OW8z+WMkfRDB/nSAceTydvXHHt9UCqmCi12Xsj
+         k+WK6nxCcKYyWVnu0R9dFcU7JfRZMrrOOCMOGKaUqPKUpG4PL/FWCT5ZuekPwQvDtgS6
+         WuihOyaBx1zgGuIYTbAtDbCMzoyeEGjghhngHhWPr5eB4ao7cHSJqB1r+WpBWkFJqfZS
+         PMOOARoADkwr9d/tkZteLtbtrr1bxqrW6xV1VhjDJCDigMMd5dQXe4DdwIrBjeSwT6Q/
+         3oTfG4ega0lapCaE/1MvqmRGUUR3e+w02Ik7/f9ts+FFh4hoiQSKIW3R78rCcrj/n7pE
+         4mrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=k0T5vcLTYn3cOR6N4YOyWotjJ6taPPXWV+wAABtlMkc=;
-        b=syB/IzXX1pETrNsBMxajooKNf/pqppJIO0GdUrqJV/09BUC80kN0NH2vnYxCWKTcjr
-         YQJQg+HFiWCJ7N9kLqH+MGzVR0c1qhPa0Mew/uJQMJ2LkE5AyQik9MpXJ0m5qVsWLas3
-         MmgGxJk1hcKYNsVAECc/Mf6R7Rtz1HHLjNOMHyz9T0wQgVEw5tu/G1+Bist6AJBhkPAr
-         aBxdrs5ZQYQhJyNmSDFED72/VxnayMPvWGqYhOZOx4+qGlA6aLhVNTNbqurVilojrEAx
-         uIn0rh72IsLg+PGWY0O7/Dqx4VZtHUhJjvZ9WL887grBANINi59tXr4PEfQKvmeTMTJA
-         8HLA==
-X-Gm-Message-State: AJIora+YNYua6XqeF9wQxYtLPAVql7JRlgNyTvkMBeY71OR5Fj7lAdDL
-	6On+cRpTZsiE/iSdkbaMUZduyV/fuhUl9Ylj/TU=
+        bh=n0Gt8pBlwzcUA1PfRtk/zBrs465p1kf7h2QeRrFTe3U=;
+        b=cYDYj60dRNkPH4XB54h+V5RlKgO9qKHxh+/DbEmaRovtKITjW3ArTZLLAnlxkX5bNZ
+         gtrKJRlRzIp+gq9o2Z0SOdXQeIEPnI7/Oe5r1uQv40d7+t7r1iQ2gNk8X9mAcEt+/cy9
+         EX2gJoyUkUyPMO0N1nxH0tjkgSAgrpT7luKg4jX5HdbktSfvCLyUVKQeQFtuTUCAio+3
+         vl+yn+6x/ObnRUzag3oMx+MfQKu3it+p1nHDO0kC30HvHv615dHThC1J1okV/v7dk0o+
+         f4H7ILccV3tJmxA4uW5v74vtTL753FbUFKOeKStWievghaihY6QkgX8JEAVoNeujhvzz
+         mBhg==
+X-Gm-Message-State: AJIora/ZZS8b0m9hPxExqXUJFVz+8h+jAilHAmSL5EikRIbTcOILvGuB
+	bxs2JiiUQgygzrmldE3hvjX0ExsAJbI4PXaZYGA=
 X-Google-Smtp-Source: 
- AGRyM1vGSm7pxhX32y9XVOjSojoA1s8+hF16edqoULsNixxeROMoh6eJz0qCNu/hAf9nYr3FGaiBkA==
-X-Received: by 2002:a17:902:ab53:b0:16b:ecde:3dfc with SMTP id
- ij19-20020a170902ab5300b0016becde3dfcmr42787757plb.131.1658400839054;
-        Thu, 21 Jul 2022 03:53:59 -0700 (PDT)
+ AGRyM1vApz/x1MN6GBpjhpoUaKiNsR0pEQwMOgolEQwbLk98JccWvn78LCTBAxMt/jQJhBZyDpyjeA==
+X-Received: by 2002:a17:90b:1c0b:b0:1f0:23df:5406 with SMTP id
+ oc11-20020a17090b1c0b00b001f023df5406mr10818094pjb.157.1658400836231;
+        Thu, 21 Jul 2022 03:53:56 -0700 (PDT)
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
         by smtp.gmail.com with ESMTPSA id
- i127-20020a62c185000000b0052af2e8bba3sm1407505pfg.37.2022.07.21.03.53.57
+ p4-20020a634204000000b0041239bf9be8sm1251981pga.1.2022.07.21.03.53.55
         for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Jul 2022 03:53:58 -0700 (PDT)
-Message-ID: <62d93046.1c69fb81.b0df0.24ce@mx.google.com>
-Date: Thu, 21 Jul 2022 03:53:58 -0700 (PDT)
+        Thu, 21 Jul 2022 03:53:55 -0700 (PDT)
+Message-ID: <62d93043.1c69fb81.31dc0.1c8b@mx.google.com>
+Date: Thu, 21 Jul 2022 03:53:55 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -62,7 +61,7 @@ X-Kernelci-Tree: cip-gitlab
 X-Kernelci-Branch: ci/iwamatsu/linux-5.10.y-cip-rc
 X-Kernelci-Report-Type: test
 X-Kernelci-Kernel: v5.10.129-cip12-12-ge4e007863cc76
-Subject: cip-gitlab/ci/iwamatsu/linux-5.10.y-cip-rc ltp-pty: 6 runs,
+Subject: cip-gitlab/ci/iwamatsu/linux-5.10.y-cip-rc kselftest-futex: 8 runs,
  1 regressions (v5.10.129-cip12-12-ge4e007863cc76)
 To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
 From: "kernelci.org bot" <bot@kernelci.org>
@@ -70,10 +69,10 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 21 Jul 2022 10:54:04 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8878
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8872
 
-cip-gitlab/ci/iwamatsu/linux-5.10.y-cip-rc ltp-pty: 6 runs, 1 regressions (=
-v5.10.129-cip12-12-ge4e007863cc76)
+cip-gitlab/ci/iwamatsu/linux-5.10.y-cip-rc kselftest-futex: 8 runs, 1 regre=
+ssions (v5.10.129-cip12-12-ge4e007863cc76)
 
 Regressions Summary
 -------------------
@@ -87,19 +86,15 @@ omebook | 1          =
 
 
   Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fiwamatsu%2=
-Flinux-5.10.y-cip-rc/kernel/v5.10.129-cip12-12-ge4e007863cc76/plan/ltp-pty/
+Flinux-5.10.y-cip-rc/kernel/v5.10.129-cip12-12-ge4e007863cc76/plan/kselftes=
+t-futex/
 
-  Test:     ltp-pty
+  Test:     kselftest-futex
   Tree:     cip-gitlab
   Branch:   ci/iwamatsu/linux-5.10.y-cip-rc
   Describe: v5.10.129-cip12-12-ge4e007863cc76
   URL:      https://gitlab.com/cip-project/cip-kernel/linux-cip.git
-  SHA:      e4e007863cc767efd75ca69c0b98e5daab0c20ff
-
-  Test suite revisions:
-    ltp-tests
-      URL:  https://github.com/linux-test-project/ltp.git
-      SHA:  bda92ad659a52d38ac810099f69adff626b064c6 =
+  SHA:      e4e007863cc767efd75ca69c0b98e5daab0c20ff =
 
 
 
@@ -116,7 +111,7 @@ r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip | gcc-10   | defconfig+arm64-chr=
 omebook | 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/62d92428829327238cdaf08c
+  Details:     https://kernelci.org/test/plan/id/62d92798852a5a4f06daf090
 
   Results:     0 PASS, 1 FAIL, 0 SKIP
   Full config: defconfig+arm64-chromebook
@@ -124,17 +119,17 @@ omebook | 1          =
 110)
   Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
 .10.y-cip-rc/v5.10.129-cip12-12-ge4e007863cc76/arm64/defconfig+arm64-chrome=
-book/gcc-10/lab-cip/ltp-pty-r8a774a1-hihope-rzg2m-ex.txt
+book/gcc-10/lab-cip/kselftest-futex-r8a774a1-hihope-rzg2m-ex.txt
   HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
 .10.y-cip-rc/v5.10.129-cip12-12-ge4e007863cc76/arm64/defconfig+arm64-chrome=
-book/gcc-10/lab-cip/ltp-pty-r8a774a1-hihope-rzg2m-ex.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20220716.0/arm64/initrd.cpio.gz =
+book/gcc-10/lab-cip/kselftest-futex-r8a774a1-hihope-rzg2m-ex.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ks=
+elftest/20220716.0/arm64/initrd.cpio.gz =
 
 
 
-  * ltp-pty.login: https://kernelci.org/test/case/id/62d92428829327238cdaf0=
-8d
+  * kselftest-futex.login: https://kernelci.org/test/case/id/62d92798852a5a=
+4f06daf091
         new failure (last pass: v5.10.126-cip11-116-gef362fbbff528) =
 
  =20
