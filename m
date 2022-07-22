@@ -2,58 +2,58 @@ Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6BE0CCA473
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A870CC433EF
 	for <webhook@archiver.kernel.org>; Fri, 22 Jul 2022 17:44:17 +0000 (UTC)
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com
- [209.85.215.182])
- by mx.groups.io with SMTP id smtpd.web12.10676.1658511850597364410
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com
+ [209.85.210.176])
+ by mx.groups.io with SMTP id smtpd.web12.10677.1658511851245498512
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Fri, 22 Jul 2022 10:44:10 -0700
+ Fri, 22 Jul 2022 10:44:11 -0700
 Authentication-Results: mx.groups.io;
  dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112
- header.b=SzMEG91Q;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.215.182,
+ header.b=5f8+0Duk;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.210.176,
  mailfrom: bot@kernelci.org)
-Received: by mail-pg1-f182.google.com with SMTP id 72so5029267pge.0
+Received: by mail-pf1-f176.google.com with SMTP id w185so5052889pfb.4
         for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Fri, 22 Jul 2022 10:44:10 -0700 (PDT)
+ Fri, 22 Jul 2022 10:44:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=m0BLRNlzr1kPhLp5k6sxnEAkZgOMUWhbkSIF4pZN7EE=;
-        b=SzMEG91Qtf2fiUQ4MTTv3EFU+NmuHXBohjGxHR9oNgRdUOPmpOvv4OjMUXT1ZtZ31j
-         oZqkb9nufLV7Yt1yFq9ppNQG60kLqszKwRxbaiX4NqAo4o85/Rvblk6SOo/+Ky3EP7fj
-         ExKg11AIRNFpd4x4n8SBCndX4tXH/AOYnFsEZYIubgdG0eFY1zF9nByYC+ijWiej0zaD
-         i8jD+PWQT9d8XZBELSOZ6ru+NCYzioqxH8RK6fTpTBdT7AY1DNs10G2ume8TitdxUZYe
-         tV4slUm2khCe7jOO1e4oT5VocziQNewv+nvZ/0BGU9V5acgUpAqincpPilEwobIABFA3
-         AWkw==
+        bh=GvcUIgG4bs0SLo5xqx/nhraKHnKpemP1Xtd9mzTm+PQ=;
+        b=5f8+0DukcdiYGa1omubD6aQfcApuoLNO9vTUi9cNq4S1ddXbOGVh+9CetpN6SxHOgS
+         Rj+WXTGCuXkwKSS3TQ/15Mq3jcICi1T135hH6ly4oUCsi8Nb6/2Zjg+NNsp3iifW7E1L
+         PG8Jpm+lpmbA+9N5PxGc+lrhKuI8uzc1t7GQXRMxVlIJ1vefttj+cXtuVxHa9ESw50n6
+         7kGx6UWYBn5kmZTBdIWLjQBU4z/4bFhiGaENHE8hVCtwp4Ilrcv7y491nk6lzLYt8xCl
+         +/LN54hRehqkIAJ/PBxkGZR0G/3YYtRX4PZ4lKirW0pLG72o5GYqDiZg/8w37BmFEt7o
+         thuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=m0BLRNlzr1kPhLp5k6sxnEAkZgOMUWhbkSIF4pZN7EE=;
-        b=0dOuID4vuW1xAEazoej2X7vGH48npGfjZiKe9KNgGXcZN8tPHXwxw7AFRmxRp4qSS5
-         yJRwp18dTnUIxFpxQTlS9eXCjNmMrJYC0M7vU/URV6kUwTick4pnwEDMZgpwDednnk7k
-         ESRQDCqhIaT+MTf7amPAyFLKBqDQdURECOJchn7woR76jdz7hPbexBthhQG+bQ8ZBQID
-         9JvyrwS9UIk/+HQk/A/603Of23UVAbwdc6Wq3zkU7/ISW3S2K7nDsOB8XjhVgXp+R8uZ
-         Wx9M9dSryjO/yXnJ/wBQyjtP+9vbTS6h/4HxaIOeAAiVO0yA9omg3kb+hxa4ZbU1bDcH
-         bXEQ==
-X-Gm-Message-State: AJIora+VLLW6fN2hSAZ1hgwl/LL4+BFUQhLTl1hezCB7c30kjJl183GL
-	5+R7aljDqlS2rce/UfRNODlXG1IhlmWrjpF2
+        bh=GvcUIgG4bs0SLo5xqx/nhraKHnKpemP1Xtd9mzTm+PQ=;
+        b=t5IxOhBBdm2Piyjh1V43cqI4x8GUa4Dhae3kXprc78hqLWSuLsjZR9/Df6TPB06MZQ
+         XFd0aKv9h6PZ7eE2J2LliJlcTJ3wHYwN2rC5315DvdXtrm57jN64S7mhPAKv/RSnCV9p
+         CncDDdvQEKDvldBSzHa7eVvO8qiNJsncUzPKsdNtC8RZcuuVSx9WeoF+yVbhutl9JQzH
+         kAHNqUxV2enKOb+86eWMmoqPyE1TWa+FeFwPhr1ljmMw7/j3LG5A6dKfbJk9X7tSn2c8
+         IkOYy7Gs6t40ThiLUYTQKrCab/5Ua2AzcAKOk2/XmfSpy323kZ7hIEkql4RxX2kvkSaN
+         INdw==
+X-Gm-Message-State: AJIora8+MkmrDIRSOFeWpG1bWhJs4/uNSiwf4NE/VOGr1rdwcWF4CXl/
+	8dEnfsyTtlrB/J7AWtoPYe3phFr6a0PgADhG
 X-Google-Smtp-Source: 
- AGRyM1v7whHfmA0htHjO/qRio6DMLbvUIPZpcxMfH2pfGVO6sAymRDsTJ6Hrgv45M4gz6XB9VK7uxQ==
-X-Received: by 2002:a63:d34d:0:b0:412:6c20:2899 with SMTP id
- u13-20020a63d34d000000b004126c202899mr737750pgi.602.1658511849800;
-        Fri, 22 Jul 2022 10:44:09 -0700 (PDT)
+ AGRyM1tIZzHTE+NiHJ/Rz6SRD4gSEFjlLTpCf9tP2qmQ3SkYUgSsvHd5/0fNmfA8vccU3cBDKfmbvA==
+X-Received: by 2002:a62:1509:0:b0:528:98a1:1f7e with SMTP id
+ 9-20020a621509000000b0052898a11f7emr969396pfv.11.1658511850320;
+        Fri, 22 Jul 2022 10:44:10 -0700 (PDT)
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
         by smtp.gmail.com with ESMTPSA id
- b13-20020aa7950d000000b00528c3ad8e09sm4142410pfp.66.2022.07.22.10.44.09
+ r2-20020aa79ec2000000b0052ba82df682sm4216489pfq.102.2022.07.22.10.44.09
         for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Jul 2022 10:44:09 -0700 (PDT)
-Message-ID: <62dae1e9.1c69fb81.5f925.6bcb@mx.google.com>
-Date: Fri, 22 Jul 2022 10:44:09 -0700 (PDT)
+        Fri, 22 Jul 2022 10:44:10 -0700 (PDT)
+Message-ID: <62dae1ea.1c69fb81.12b8f.68ab@mx.google.com>
+Date: Fri, 22 Jul 2022 10:44:10 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -61,41 +61,47 @@ X-Kernelci-Tree: cip-gitlab
 X-Kernelci-Branch: ci/iwamatsu/linux-4.19.y-cip-rc
 X-Kernelci-Report-Type: test
 X-Kernelci-Kernel: v4.19.251-cip77-82-g10c370b53152
-Subject: cip-gitlab/ci/iwamatsu/linux-4.19.y-cip-rc baseline-cip-nfs: 8 runs,
- 3 regressions (v4.19.251-cip77-82-g10c370b53152)
+Subject: cip-gitlab/ci/iwamatsu/linux-4.19.y-cip-rc baseline-nfs: 49 runs,
+ 5 regressions (v4.19.251-cip77-82-g10c370b53152)
 To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
 From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 22 Jul 2022 17:44:17 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8882
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8883
 
-cip-gitlab/ci/iwamatsu/linux-4.19.y-cip-rc baseline-cip-nfs: 8 runs, 3 regr=
-essions (v4.19.251-cip77-82-g10c370b53152)
+cip-gitlab/ci/iwamatsu/linux-4.19.y-cip-rc baseline-nfs: 49 runs, 5 regress=
+ions (v4.19.251-cip77-82-g10c370b53152)
 
 Regressions Summary
 -------------------
 
-platform                 | arch  | lab     | compiler | defconfig          =
-        | regressions
--------------------------+-------+---------+----------+--------------------=
---------+------------
-beaglebone-black         | arm   | lab-cip | gcc-10   | omap2plus_defconfig=
-        | 1          =
+platform                     | arch  | lab           | compiler | defconfig=
+                  | regressions
+-----------------------------+-------+---------------+----------+----------=
+------------------+------------
+meson-gxl-s905x-libretech-cc | arm64 | lab-baylibre  | gcc-10   | defconfig=
+                  | 1          =
 
-r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip | gcc-10   | defconfig          =
-        | 1          =
+meson-gxl-s905x-libretech-cc | arm64 | lab-broonie   | gcc-10   | defconfig=
+                  | 1          =
 
-r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip | gcc-10   | defconfig+arm64-chr=
-omebook | 1          =
+r8a774a1-hihope-rzg2m-ex     | arm64 | lab-cip       | gcc-10   | defconfig=
+                  | 1          =
+
+r8a774a1-hihope-rzg2m-ex     | arm64 | lab-cip       | gcc-10   | defconfig=
++arm64-chromebook | 1          =
+
+rk3399-gru-kevin             | arm64 | lab-collabora | gcc-10   | defconfig=
++arm64-chromebook | 1          =
 
 
   Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fiwamatsu%2=
 Flinux-4.19.y-cip-rc/kernel/v4.19.251-cip77-82-g10c370b53152/plan/baseline-=
-cip-nfs/
+nfs/
 
-  Test:     baseline-cip-nfs
+  Test:     baseline-nfs
   Tree:     cip-gitlab
   Branch:   ci/iwamatsu/linux-4.19.y-cip-rc
   Describe: v4.19.251-cip77-82-g10c370b53152
@@ -109,48 +115,81 @@ Test Regressions
 
 
 
-platform                 | arch  | lab     | compiler | defconfig          =
-        | regressions
--------------------------+-------+---------+----------+--------------------=
---------+------------
-beaglebone-black         | arm   | lab-cip | gcc-10   | omap2plus_defconfig=
-        | 1          =
+platform                     | arch  | lab           | compiler | defconfig=
+                  | regressions
+-----------------------------+-------+---------------+----------+----------=
+------------------+------------
+meson-gxl-s905x-libretech-cc | arm64 | lab-baylibre  | gcc-10   | defconfig=
+                  | 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/62da5645f0d302c253daf064
+  Details:     https://kernelci.org/test/plan/id/62da53bae883615b87daf071
 
   Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: omap2plus_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
   Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-4=
-.19.y-cip-rc/v4.19.251-cip77-82-g10c370b53152/arm/omap2plus_defconfig/gcc-1=
-0/lab-cip/baseline-cip-nfs-beaglebone-black.txt
+.19.y-cip-rc/v4.19.251-cip77-82-g10c370b53152/arm64/defconfig/gcc-10/lab-ba=
+ylibre/baseline-nfs-meson-gxl-s905x-libretech-cc.txt
   HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-4=
-.19.y-cip-rc/v4.19.251-cip77-82-g10c370b53152/arm/omap2plus_defconfig/gcc-1=
-0/lab-cip/baseline-cip-nfs-beaglebone-black.html
-  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20211105/qemu=
--arm/cip-core-image-kernelci-cip-core-buster-qemu-arm-initrd.img.gz =
+.19.y-cip-rc/v4.19.251-cip77-82-g10c370b53152/arm64/defconfig/gcc-10/lab-ba=
+ylibre/baseline-nfs-meson-gxl-s905x-libretech-cc.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220716.0/arm64/initrd.cpio.gz =
 
 
 
-  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/62da5645f0d30=
-2c253daf065
+  * baseline-nfs.login: https://kernelci.org/test/case/id/62da53bbe883615b8=
+7daf072
         new failure (last pass: v4.19.249-cip76-57-gef3cc1b9e556) =
 
  =
 
 
 
-platform                 | arch  | lab     | compiler | defconfig          =
-        | regressions
--------------------------+-------+---------+----------+--------------------=
---------+------------
-r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip | gcc-10   | defconfig          =
-        | 1          =
+platform                     | arch  | lab           | compiler | defconfig=
+                  | regressions
+-----------------------------+-------+---------------+----------+----------=
+------------------+------------
+meson-gxl-s905x-libretech-cc | arm64 | lab-broonie   | gcc-10   | defconfig=
+                  | 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/62da5d25f8a2059ba0daf05a
+  Details:     https://kernelci.org/test/plan/id/62da551e78377bbc20daf064
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-4=
+.19.y-cip-rc/v4.19.251-cip77-82-g10c370b53152/arm64/defconfig/gcc-10/lab-br=
+oonie/baseline-nfs-meson-gxl-s905x-libretech-cc.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-4=
+.19.y-cip-rc/v4.19.251-cip77-82-g10c370b53152/arm64/defconfig/gcc-10/lab-br=
+oonie/baseline-nfs-meson-gxl-s905x-libretech-cc.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220716.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/62da551e78377bbc2=
+0daf065
+        new failure (last pass: v4.19.249-cip76-57-gef3cc1b9e556) =
+
+ =
+
+
+
+platform                     | arch  | lab           | compiler | defconfig=
+                  | regressions
+-----------------------------+-------+---------------+----------+----------=
+------------------+------------
+r8a774a1-hihope-rzg2m-ex     | arm64 | lab-cip       | gcc-10   | defconfig=
+                  | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/62da5a55df4c368c03daf05e
 
   Results:     0 PASS, 1 FAIL, 0 SKIP
   Full config: defconfig
@@ -158,32 +197,32 @@ r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip | gcc-10   | defconfig          =
 110)
   Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-4=
 .19.y-cip-rc/v4.19.251-cip77-82-g10c370b53152/arm64/defconfig/gcc-10/lab-ci=
-p/baseline-cip-nfs-r8a774a1-hihope-rzg2m-ex.txt
+p/baseline-nfs-r8a774a1-hihope-rzg2m-ex.txt
   HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-4=
 .19.y-cip-rc/v4.19.251-cip77-82-g10c370b53152/arm64/defconfig/gcc-10/lab-ci=
-p/baseline-cip-nfs-r8a774a1-hihope-rzg2m-ex.html
-  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20211105/qemu=
--arm64/cip-core-image-kernelci-cip-core-buster-qemu-arm64-initrd.img.gz =
+p/baseline-nfs-r8a774a1-hihope-rzg2m-ex.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220716.0/arm64/initrd.cpio.gz =
 
 
 
-  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/62da5d25f8a20=
-59ba0daf05b
+  * baseline-nfs.login: https://kernelci.org/test/case/id/62da5a55df4c368c0=
+3daf05f
         new failure (last pass: v4.19.249-cip76-57-gef3cc1b9e556) =
 
  =
 
 
 
-platform                 | arch  | lab     | compiler | defconfig          =
-        | regressions
--------------------------+-------+---------+----------+--------------------=
---------+------------
-r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip | gcc-10   | defconfig+arm64-chr=
-omebook | 1          =
+platform                     | arch  | lab           | compiler | defconfig=
+                  | regressions
+-----------------------------+-------+---------------+----------+----------=
+------------------+------------
+r8a774a1-hihope-rzg2m-ex     | arm64 | lab-cip       | gcc-10   | defconfig=
++arm64-chromebook | 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/62da5f199d5fd98a59daf05f
+  Details:     https://kernelci.org/test/plan/id/62da64419c1ee7853ddaf057
 
   Results:     0 PASS, 1 FAIL, 0 SKIP
   Full config: defconfig+arm64-chromebook
@@ -191,17 +230,50 @@ omebook | 1          =
 110)
   Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-4=
 .19.y-cip-rc/v4.19.251-cip77-82-g10c370b53152/arm64/defconfig+arm64-chromeb=
-ook/gcc-10/lab-cip/baseline-cip-nfs-r8a774a1-hihope-rzg2m-ex.txt
+ook/gcc-10/lab-cip/baseline-nfs-r8a774a1-hihope-rzg2m-ex.txt
   HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-4=
 .19.y-cip-rc/v4.19.251-cip77-82-g10c370b53152/arm64/defconfig+arm64-chromeb=
-ook/gcc-10/lab-cip/baseline-cip-nfs-r8a774a1-hihope-rzg2m-ex.html
-  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20211105/qemu=
--arm64/cip-core-image-kernelci-cip-core-buster-qemu-arm64-initrd.img.gz =
+ook/gcc-10/lab-cip/baseline-nfs-r8a774a1-hihope-rzg2m-ex.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220716.0/arm64/initrd.cpio.gz =
 
 
 
-  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/62da5f199d5fd=
-98a59daf060
+  * baseline-nfs.login: https://kernelci.org/test/case/id/62da64419c1ee7853=
+ddaf058
+        new failure (last pass: v4.19.249-cip76-57-gef3cc1b9e556) =
+
+ =
+
+
+
+platform                     | arch  | lab           | compiler | defconfig=
+                  | regressions
+-----------------------------+-------+---------------+----------+----------=
+------------------+------------
+rk3399-gru-kevin             | arm64 | lab-collabora | gcc-10   | defconfig=
++arm64-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/62da5b0da160089858daf059
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+arm64-chromebook
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-4=
+.19.y-cip-rc/v4.19.251-cip77-82-g10c370b53152/arm64/defconfig+arm64-chromeb=
+ook/gcc-10/lab-collabora/baseline-nfs-rk3399-gru-kevin.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-4=
+.19.y-cip-rc/v4.19.251-cip77-82-g10c370b53152/arm64/defconfig+arm64-chromeb=
+ook/gcc-10/lab-collabora/baseline-nfs-rk3399-gru-kevin.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220716.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/62da5b0da16008985=
+8daf05a
         new failure (last pass: v4.19.249-cip76-57-gef3cc1b9e556) =
 
  =20
