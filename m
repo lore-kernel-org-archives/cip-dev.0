@@ -2,59 +2,58 @@ Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE942C19F21
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3BD3C19F29
 	for <webhook@archiver.kernel.org>; Thu, 28 Jul 2022 10:10:26 +0000 (UTC)
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com
- [209.85.216.54])
- by mx.groups.io with SMTP id smtpd.web09.30883.1659003020722221786
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com
+ [209.85.215.171])
+ by mx.groups.io with SMTP id smtpd.web09.30885.1659003022604234875
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Thu, 28 Jul 2022 03:10:20 -0700
+ Thu, 28 Jul 2022 03:10:22 -0700
 Authentication-Results: mx.groups.io;
  dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112
- header.b=A1K227/Z;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.216.54,
+ header.b=AqtbwiLy;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.215.171,
  mailfrom: bot@kernelci.org)
-Received: by mail-pj1-f54.google.com with SMTP id
- o5-20020a17090a3d4500b001ef76490983so1677331pjf.2
+Received: by mail-pg1-f171.google.com with SMTP id 12so1189087pga.1
         for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Thu, 28 Jul 2022 03:10:20 -0700 (PDT)
+ Thu, 28 Jul 2022 03:10:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=5rbX2TJp/D42CotFSNaKHakrYU5KK3OtKRZ/D1oC5ug=;
-        b=A1K227/ZTdt13I+INA0djVrxFL9OfvgPSR0A+G/eiZ7Bb76thhRsz1lrFF8f6HVmmA
-         p+upiq1pZmOlaePJyWBQha8ConhOetMppSRfpx9JiSlOKebTl7hPhjl/3N8yO4nzIBbv
-         cJAmCiG8rvuLk8pklpLP4MAtLAaLLk/pbFwLY+8tePnxG0P7Fv4TK53sAnONra7QSEqc
-         I5kQofahHeT/XZvkGTrto0aX7LUNH9j0ocuzF4T7T6Nk76cWiRdzoDn+S6HQit266Cpv
-         zGoIKp6lDRLkqeskRRzS22qFj/gI2LN+JruT/jzQ+cshL2Imz9kvsqWd4FTTOMLT3YPQ
-         62Bw==
+        bh=TiEe2PUtlcznitF4SLL3e4RkmIZ8zlgCaz83Fc2C9FE=;
+        b=AqtbwiLy3qIX78x0shdK8Pi+4OdJnbsYYIQI+kPkI0rurYL9M/4kKWYjAmuGoFZpnZ
+         sV/t6SsL6owclZiyc2HGbBpmUpQvlHjlIuyK061NiB01+MtCeD6Fvrd9hhWzVQxy1F7f
+         fEIUhPYfeL2jYgL3ULKw7jciNLiBL9N7IbHPh6WhikaJCa1PM9ah0mlcNGuKADQ3iXqD
+         XUqNdWbMm7jNRwOtlxj7AUF6B2+ZvphW/1jTSMBZzE8mfUzCf8Z5BUqv8GOpm11vxZjR
+         yA7ztEd4Mtq8fNNjJGaQPMA9eNvDYkdpS0qFbIEmMlLMcwdKtLDNTIdjuhQIUV/3CVeD
+         lfug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=5rbX2TJp/D42CotFSNaKHakrYU5KK3OtKRZ/D1oC5ug=;
-        b=MiuqmyjxEJwF+yz4Q+68a7/W9sAk4LLvkia96kHKf8ds6mjtFrwEjxT1ZIpfT/oJXu
-         LKTc6wBi6cKiGn/BUUAIGPvmwhz0DRwWukI1nErj+zufk+1mz4ZrR6DSCwIBrJ3Vd5HF
-         A1I2NXOX5mqlvn03/I0jxPpoanzjWdNoeGu06knNeuvcwJ3WJ5mvA5S3Dyhcx2SpEJgr
-         uYBVRGEmVtVcVLjRFcUJJ0HCEIObIZVLrNIBu6miUyDjEC09All09JfftyK1P2GIhRgn
-         xcOHkjnpb5hGUEkKXmcu9EOr8KHuwfCULfENsaAwtuH8QQLcK9euxPVxA/7b/2krq8IU
-         e7tQ==
-X-Gm-Message-State: AJIora8As4UmjGBitDOXsDBpcPnczY+DfDbyBsJt+2yu9v0G3NVXWWGq
-	HVMGIx1O1B+eupytolVXcKfmbMhSqR6XjDAXu6U=
+        bh=TiEe2PUtlcznitF4SLL3e4RkmIZ8zlgCaz83Fc2C9FE=;
+        b=COPFBIn7wGZWmkyIP/GazqoL0gkC27BY6S2v0zuFDP10yzt7ZT2FxljoTCD9rrpGss
+         icfacmjQiEEMEpC77nvn4zfU8YIgIJz0NXVpRpHnlZGQjflZ+I1k8OktsCRh8IaI5iJY
+         eVNf5f+1Udo4CaJE80Ww9OyJqZ3eyMi4xO40fSq5WLV3Ld//O63GuCl6DPMI27Gq0pIu
+         8cTv2zEM0arfiC3iSqNw9L5IwSLzqB+lgJl/9TE65DH3Ki9MG9cplnUeE0tkhb2/hRbF
+         tupuLH2oWhdYJynRXJJ83BdV3Rzdz3qtWdQwR7xOEIk+VcG/tzjadaDE1S/Wj7UhXY3f
+         L0lg==
+X-Gm-Message-State: AJIora+BZd6u4YAc0nFF7ydHFOvRk55wdKHbgvMZI8RCPpI+LDhBUk7+
+	PgyPXQ+RdhG90gh+1Kfuut5tkG7ethhyL5Ov1rQ=
 X-Google-Smtp-Source: 
- AGRyM1slBHsQHkpkF4s8G6wTZfHGlMavENGpOLcy+C6PXklCxIz3vB2nNfmY5wR69qcIsfN10BKkDg==
-X-Received: by 2002:a17:90a:62ca:b0:1f2:ef43:72a1 with SMTP id
- k10-20020a17090a62ca00b001f2ef4372a1mr9357444pjs.217.1659003019487;
-        Thu, 28 Jul 2022 03:10:19 -0700 (PDT)
+ AGRyM1uIBHwsqWXvm5hQEOceygEvmJBMTXpuyZS41Thv2roo+UyH5rdpKwE7kgx99qoobiNUQwjtIw==
+X-Received: by 2002:a62:e10d:0:b0:52a:b77e:8bd3 with SMTP id
+ q13-20020a62e10d000000b0052ab77e8bd3mr26703387pfh.66.1659003021477;
+        Thu, 28 Jul 2022 03:10:21 -0700 (PDT)
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
         by smtp.gmail.com with ESMTPSA id
- t2-20020a17090a4e4200b001f22647cb56sm3406398pjl.27.2022.07.28.03.10.17
+ l15-20020a17090aec0f00b001f216407204sm595312pjy.36.2022.07.28.03.10.19
         for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Jul 2022 03:10:18 -0700 (PDT)
-Message-ID: <62e2608a.170a0220.f9edd.5653@mx.google.com>
-Date: Thu, 28 Jul 2022 03:10:18 -0700 (PDT)
+        Thu, 28 Jul 2022 03:10:21 -0700 (PDT)
+Message-ID: <62e2608d.170a0220.2aa74.0b6e@mx.google.com>
+Date: Thu, 28 Jul 2022 03:10:21 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -62,18 +61,18 @@ X-Kernelci-Tree: cip-gitlab
 X-Kernelci-Branch: ci/pavel/linux-test
 X-Kernelci-Report-Type: test
 X-Kernelci-Kernel: v4.4-st5-585-gc99f2b257bde
-Subject: cip-gitlab/ci/pavel/linux-test baseline-cip-nfs: 4 runs,
- 4 regressions (v4.4-st5-585-gc99f2b257bde)
+Subject: cip-gitlab/ci/pavel/linux-test baseline-nfs: 26 runs,
+ 11 regressions (v4.4-st5-585-gc99f2b257bde)
 To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
 From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 28 Jul 2022 10:10:26 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8959
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8961
 
-cip-gitlab/ci/pavel/linux-test baseline-cip-nfs: 4 runs, 4 regressions (v4.=
-4-st5-585-gc99f2b257bde)
+cip-gitlab/ci/pavel/linux-test baseline-nfs: 26 runs, 11 regressions (v4.4-=
+st5-585-gc99f2b257bde)
 
 Regressions Summary
 -------------------
@@ -82,8 +81,17 @@ platform                     | arch   | lab           | compiler | defconfi=
 g                    | regressions
 -----------------------------+--------+---------------+----------+---------=
 ---------------------+------------
-beaglebone-black             | arm    | lab-broonie   | gcc-10   | multi_v7=
-_defconfig           | 1          =
+asus-C433TA-AJ0005-rammus    | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 1          =
+
+asus-C436FA-Flip-hatch       | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 1          =
+
+asus-C523NA-A20057-coral     | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 1          =
+
+asus-cx9400-volteer          | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 1          =
 
 beaglebone-black             | arm    | lab-cip       | gcc-10   | multi_v7=
 _defconfig           | 1          =
@@ -94,11 +102,23 @@ efcon...6-chromebook | 1          =
 hp-x360-12b-c...4020-octopus | x86_64 | lab-collabora | gcc-10   | x86_64_d=
 efcon...6-chromebook | 1          =
 
+hp-x360-14-G1-sona           | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 1          =
+
+juno-uboot                   | arm64  | lab-broonie   | gcc-10   | defconfi=
+g                    | 1          =
+
+rk3288-veyron-jaq            | arm    | lab-collabora | gcc-10   | multi_v7=
+_defconfig           | 1          =
+
+sun4i-a10-olinuxino-lime     | arm    | lab-baylibre  | gcc-10   | sunxi_de=
+fconfig              | 1          =
+
 
   Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fpavel%2Fli=
-nux-test/kernel/v4.4-st5-585-gc99f2b257bde/plan/baseline-cip-nfs/
+nux-test/kernel/v4.4-st5-585-gc99f2b257bde/plan/baseline-nfs/
 
-  Test:     baseline-cip-nfs
+  Test:     baseline-nfs
   Tree:     cip-gitlab
   Branch:   ci/pavel/linux-test
   Describe: v4.4-st5-585-gc99f2b257bde
@@ -116,31 +136,129 @@ platform                     | arch   | lab           | compiler | defconfi=
 g                    | regressions
 -----------------------------+--------+---------------+----------+---------=
 ---------------------+------------
-beaglebone-black             | arm    | lab-broonie   | gcc-10   | multi_v7=
-_defconfig           | 1          =
+asus-C433TA-AJ0005-rammus    | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/62e0b25643d1bb1072daf074
+  Details:     https://kernelci.org/test/plan/id/62e0b0b4ac1cc65984daf06a
 
   Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
+  Full config: x86_64_defconfig+x86-chromebook
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
   Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v4.4-st5-585-gc99f2b257bde/arm/multi_v7_defconfig/gcc-10/lab-broonie/basel=
-ine-cip-nfs-beaglebone-black.txt
+/v4.4-st5-585-gc99f2b257bde/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/l=
+ab-collabora/baseline-nfs-asus-C433TA-AJ0005-rammus.txt
   HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v4.4-st5-585-gc99f2b257bde/arm/multi_v7_defconfig/gcc-10/lab-broonie/basel=
-ine-cip-nfs-beaglebone-black.html
-  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20211105/qemu=
--arm/cip-core-image-kernelci-cip-core-buster-qemu-arm-initrd.img.gz =
+/v4.4-st5-585-gc99f2b257bde/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/l=
+ab-collabora/baseline-nfs-asus-C433TA-AJ0005-rammus.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220718.0/amd64/initrd.cpio.gz =
 
 
 
-  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/62e0b25643d1b=
-b1072daf075
-        failing since 76 days (last pass: v5.10.109-cip5-384-g722204542e8a,=
- first fail: v4.4-st5-260-gb0fe64f485ff) =
+  * baseline-nfs.login: https://kernelci.org/test/case/id/62e0b0b4ac1cc6598=
+4daf06b
+        failing since 0 day (last pass: v5.10.129-cip12-36-g21d9d56f4de5a, =
+first fail: v4.4-st5-586-geb97410e0086c) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+asus-C436FA-Flip-hatch       | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/62e0b1b6d14a67a1c2daf098
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-chromebook
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st5-585-gc99f2b257bde/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/l=
+ab-collabora/baseline-nfs-asus-C436FA-Flip-hatch.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st5-585-gc99f2b257bde/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/l=
+ab-collabora/baseline-nfs-asus-C436FA-Flip-hatch.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220718.0/amd64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/62e0b1b6d14a67a1c=
+2daf099
+        failing since 0 day (last pass: v5.10.129-cip12-36-g21d9d56f4de5a, =
+first fail: v4.4-st5-586-geb97410e0086c) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+asus-C523NA-A20057-coral     | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/62e0b17f5bba492157daf05d
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-chromebook
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st5-585-gc99f2b257bde/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/l=
+ab-collabora/baseline-nfs-asus-C523NA-A20057-coral.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st5-585-gc99f2b257bde/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/l=
+ab-collabora/baseline-nfs-asus-C523NA-A20057-coral.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220718.0/amd64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/62e0b17f5bba49215=
+7daf05e
+        failing since 0 day (last pass: v5.10.129-cip12-36-g21d9d56f4de5a, =
+first fail: v4.4-st5-586-geb97410e0086c) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+asus-cx9400-volteer          | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/62e0b1c7b27451e36cdaf056
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-chromebook
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st5-585-gc99f2b257bde/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/l=
+ab-collabora/baseline-nfs-asus-cx9400-volteer.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st5-585-gc99f2b257bde/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/l=
+ab-collabora/baseline-nfs-asus-cx9400-volteer.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220718.0/amd64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/62e0b1c7b27451e36=
+cdaf057
+        failing since 0 day (last pass: v5.10.129-cip12-36-g21d9d56f4de5a, =
+first fail: v4.4-st5-586-geb97410e0086c) =
 
  =
 
@@ -154,44 +272,43 @@ beaglebone-black             | arm    | lab-cip       | gcc-10   | multi_v7=
 _defconfig           | 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/62e0b6112eb9b911dcdaf066
+  Details:     https://kernelci.org/test/plan/id/62e0b5aeee47496d50daf057
 
-  Results:     3 PASS, 1 FAIL, 0 SKIP
+  Results:     3 PASS, 1 FAIL, 1 SKIP
   Full config: multi_v7_defconfig
   Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
 10110)
   Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
 /v4.4-st5-585-gc99f2b257bde/arm/multi_v7_defconfig/gcc-10/lab-cip/baseline-=
-cip-nfs-beaglebone-black.txt
+nfs-beaglebone-black.txt
   HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
 /v4.4-st5-585-gc99f2b257bde/arm/multi_v7_defconfig/gcc-10/lab-cip/baseline-=
-cip-nfs-beaglebone-black.html
-  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20211105/qemu=
--arm/cip-core-image-kernelci-cip-core-buster-qemu-arm-initrd.img.gz =
+nfs-beaglebone-black.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220718.0/armhf/initrd.cpio.gz =
 
 
 
-  * baseline-cip-nfs.dmesg.crit: https://kernelci.org/test/case/id/62e0b611=
-2eb9b911dcdaf069
+  * baseline-nfs.dmesg.crit: https://kernelci.org/test/case/id/62e0b5aeee47=
+496d50daf05c
         failing since 0 day (last pass: v5.10.129-cip12-36-g21d9d56f4de5a, =
 first fail: v4.4-st5-586-geb97410e0086c)
         1 lines
 
-    2022-07-27T03:50:17.495994  / # =
+    2022-07-27T03:48:48.248244  / # =
 
-    2022-07-27T03:50:17.502867  =
+    2022-07-27T03:48:48.250529  =
 
-    2022-07-27T03:50:22.530568  / # export NFS_ROOTFS=3D'/var/lib/lava/disp=
-atcher/tmp/716784/extract-nfsrootfs-crnll4d3'
-    2022-07-27T03:50:22.541542  export NFS_ROOTFS=3D'/var/lib/lava/dispatch=
-er/tmp/716784/extract-nfsrootfs-</lib/lava/dispatcher/tmp/716784/extract-nf=
-srootfs-c                         rnll4d3'
-    2022-07-27T03:50:24.598452  / # export NFS_SERVER_IP=3D'172.16.3.3'
-    2022-07-27T03:50:24.609330  export NFS_SERVER_IP=3D'172.16.3.3'
-    2022-07-27T03:50:24.723698  / # #
-    2022-07-27T03:50:24.730330  #
-    2022-07-27T03:50:24.845279  / # export SHELL=3D/bin/sh
-    2022-07-27T03:50:24.851841  export SHELL=3D/bin/sh =
+    2022-07-27T03:48:53.260035  / # export NFS_ROOTFS=3D'/var/lib/lava/disp=
+atcher/tmp/716783/extract-nfsrootfs-va054nc8'
+    2022-07-27T03:48:53.270727  export NFS_ROOTFS=3D'/var/lib/lava/dispatch=
+er/tmp/716783/extract-nfsrootfs-va054nc8'
+    2022-07-27T03:48:55.437197  / # export NFS_SERVER_IP=3D'192.168.11.5'
+    2022-07-27T03:48:55.447835  export NFS_SERVER_IP=3D'192.168.11.5'
+    2022-07-27T03:48:55.551165  / # #
+    2022-07-27T03:48:55.553489  #
+    2022-07-27T03:48:55.656664  / # export SHELL=3D/bin/sh
+    2022-07-27T03:48:55.659012  export SHELL=3D/bin/sh =
 
     ... (13 line(s) more)  =
 
@@ -207,24 +324,24 @@ hp-11A-G6-EE-grunt           | x86_64 | lab-collabora | gcc-10   | x86_64_d=
 efcon...6-chromebook | 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/62e0b782df106222eddaf056
+  Details:     https://kernelci.org/test/plan/id/62e0b135bb46d10172daf086
 
   Results:     0 PASS, 1 FAIL, 0 SKIP
   Full config: x86_64_defconfig+x86-chromebook
   Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
   Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
 /v4.4-st5-585-gc99f2b257bde/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/l=
-ab-collabora/baseline-cip-nfs-hp-11A-G6-EE-grunt.txt
+ab-collabora/baseline-nfs-hp-11A-G6-EE-grunt.txt
   HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
 /v4.4-st5-585-gc99f2b257bde/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/l=
-ab-collabora/baseline-cip-nfs-hp-11A-G6-EE-grunt.html
-  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20211105/qemu=
--amd64/cip-core-image-kernelci-cip-core-buster-qemu-amd64-initrd.img.gz =
+ab-collabora/baseline-nfs-hp-11A-G6-EE-grunt.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220718.0/amd64/initrd.cpio.gz =
 
 
 
-  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/62e0b782df106=
-222eddaf057
+  * baseline-nfs.login: https://kernelci.org/test/case/id/62e0b135bb46d1017=
+2daf087
         failing since 0 day (last pass: v5.10.129-cip12-36-g21d9d56f4de5a, =
 first fail: v4.4-st5-586-geb97410e0086c) =
 
@@ -240,26 +357,160 @@ hp-x360-12b-c...4020-octopus | x86_64 | lab-collabora | gcc-10   | x86_64_d=
 efcon...6-chromebook | 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/62e0b48c8fd25dce30daf07d
+  Details:     https://kernelci.org/test/plan/id/62e0b30beabb58f740daf058
 
   Results:     0 PASS, 1 FAIL, 0 SKIP
   Full config: x86_64_defconfig+x86-chromebook
   Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
   Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
 /v4.4-st5-585-gc99f2b257bde/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/l=
-ab-collabora/baseline-cip-nfs-hp-x360-12b-ca0010nr-n4020-octopus.txt
+ab-collabora/baseline-nfs-hp-x360-12b-ca0010nr-n4020-octopus.txt
   HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
 /v4.4-st5-585-gc99f2b257bde/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/l=
-ab-collabora/baseline-cip-nfs-hp-x360-12b-ca0010nr-n4020-octopus.html
-  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20211105/qemu=
--amd64/cip-core-image-kernelci-cip-core-buster-qemu-amd64-initrd.img.gz =
+ab-collabora/baseline-nfs-hp-x360-12b-ca0010nr-n4020-octopus.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220718.0/amd64/initrd.cpio.gz =
 
 
 
-  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/62e0b48c8fd25=
-dce30daf07e
+  * baseline-nfs.login: https://kernelci.org/test/case/id/62e0b30beabb58f74=
+0daf059
         failing since 0 day (last pass: v5.10.129-cip12-36-g21d9d56f4de5a, =
 first fail: v4.4-st5-586-geb97410e0086c) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+hp-x360-14-G1-sona           | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/62e0b78ac79b59e730daf058
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-chromebook
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st5-585-gc99f2b257bde/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/l=
+ab-collabora/baseline-nfs-hp-x360-14-G1-sona.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st5-585-gc99f2b257bde/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/l=
+ab-collabora/baseline-nfs-hp-x360-14-G1-sona.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220718.0/amd64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/62e0b78ac79b59e73=
+0daf059
+        failing since 0 day (last pass: v5.10.129-cip12-36-g21d9d56f4de5a, =
+first fail: v4.4-st5-586-geb97410e0086c) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+juno-uboot                   | arm64  | lab-broonie   | gcc-10   | defconfi=
+g                    | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/62e0b1f7d3501f0966daf07d
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st5-585-gc99f2b257bde/arm64/defconfig/gcc-10/lab-broonie/baseline-nfs=
+-juno-uboot.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st5-585-gc99f2b257bde/arm64/defconfig/gcc-10/lab-broonie/baseline-nfs=
+-juno-uboot.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220718.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/62e0b1f7d3501f096=
+6daf07e
+        failing since 0 day (last pass: v5.10.129-cip12-36-g21d9d56f4de5a, =
+first fail: v4.4-st5-586-geb97410e0086c) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+rk3288-veyron-jaq            | arm    | lab-collabora | gcc-10   | multi_v7=
+_defconfig           | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/62e0d89875eb55cf6edaf05d
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st5-585-gc99f2b257bde/arm/multi_v7_defconfig/gcc-10/lab-collabora/bas=
+eline-nfs-rk3288-veyron-jaq.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st5-585-gc99f2b257bde/arm/multi_v7_defconfig/gcc-10/lab-collabora/bas=
+eline-nfs-rk3288-veyron-jaq.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220718.0/armhf/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/62e0d89875eb55cf6=
+edaf05e
+        failing since 0 day (last pass: v5.10.129-cip12-36-g21d9d56f4de5a, =
+first fail: v4.4-st5-586-geb97410e0086c) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+sun4i-a10-olinuxino-lime     | arm    | lab-baylibre  | gcc-10   | sunxi_de=
+fconfig              | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/62e119e9ff6e556754daf056
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: sunxi_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st5-585-gc99f2b257bde/arm/sunxi_defconfig/gcc-10/lab-baylibre/baselin=
+e-nfs-sun4i-a10-olinuxino-lime.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st5-585-gc99f2b257bde/arm/sunxi_defconfig/gcc-10/lab-baylibre/baselin=
+e-nfs-sun4i-a10-olinuxino-lime.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220718.0/armhf/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/62e119e9ff6e55675=
+4daf057
+        new failure (last pass: v4.4-st5-586-geb97410e0086c) =
 
  =20
 
