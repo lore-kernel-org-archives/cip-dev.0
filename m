@@ -1,154 +1,243 @@
-Return-Path: <chris.paterson2@renesas.com>
+Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8D8EC04A68
-	for <webhook@archiver.kernel.org>; Thu, 28 Jul 2022 10:20:16 +0000 (UTC)
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com
- (JPN01-TYC-obe.outbound.protection.outlook.com [40.107.114.97])
- by mx.groups.io with SMTP id smtpd.web09.30951.1659003609962908757
- for <cip-dev@lists.cip-project.org>;
- Thu, 28 Jul 2022 03:20:11 -0700
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8C2EC04A68
+	for <webhook@archiver.kernel.org>; Thu, 28 Jul 2022 10:40:26 +0000 (UTC)
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com
+ [209.85.216.54])
+ by mx.groups.io with SMTP id smtpd.web10.30884.1659004820237374769
+ for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
+ Thu, 28 Jul 2022 03:40:20 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@renesas.com header.s=selector1 header.b=OS1B5uSj;
- spf=pass (domain: renesas.com, ip: 40.107.114.97,
- mailfrom: chris.paterson2@renesas.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CVoxu0CRYVytWCdD6d/aBav+d7O355PzlOtp0KkaT96wpIs3Fqhx0SRwtCJoN5PN3Uc4lYRMt3tWyvlxSZdLqdohnpNUHWk5FNWS35MUEd2fpwsTbPw0GO+3LMLi0e5SIPmhQxrXM9Bfzd45rirMlJvL+WRuh5PXPm2mvObSby4ZLJ2fLzPgNHVSU86NkX+niC8CaLuH6my6Lk3hWQ4OhuE9/Ulz+PQ5Ws6ZiyBfbagDqzrIyPj4uuKZeur4otLK93l72ezzjqh/lPaJi9KcyXZJM4m/w3d8J0GObCDFPHQRHyCyRnId7BcJOIAj49TIwFv8/nPIganBFgTaEe2wZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Tp6QlZ8lEWmUXwEkm+3KdE4YohmI0WHAZdGbKVMfK6g=;
- b=LxiJYA0dtz2GZzT72IDL2kLzsNHSduPXEtqPpR9B4XCWbLiAHC+EQbbzgnuGz+Bzsb1g4E8ccbIobtvn25oql6OaVQHpQ69z/kf9DqqQBZIP79BR91BQf6PmN9oHGythJLBGjI5w936m1WLImI5AyDjM6McH7Yi+i1RsCc9T37J/Q+Nzbm6q0pqYWjNhOeAyLsPl1RYEnQQ6aFy7fUHzFlYn0uwpIaQ3mGxJ4nLSOh/Qbox69Wgkgh5RJU5yMF0/VTvYXDdCw8VRsf+EJSv+KtShzzMVZkgg8RY0Lzw8v2ppCOqhEhzjFF7HiBrjbKgDHdykZ9RB4u/q0ignCdlzpQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Tp6QlZ8lEWmUXwEkm+3KdE4YohmI0WHAZdGbKVMfK6g=;
- b=OS1B5uSjgzgNdqIFltqy7SE3+DAGlOUYBWzRajAjfbTO0jK/aEIj5phhSLsZO8VqiRKaOcJIpY0Z5byyd8Bj8QgjxbGvgYR8f5RTGmetnzJjtdg8irMRB3V/85C5xYZPv2CmG+KDVxh3SpmG6oxKLBdhiIugCIOd0CwKuieZx0E=
-Received: from OSZPR01MB8124.jpnprd01.prod.outlook.com (2603:1096:604:164::6)
- by TYYPR01MB10481.jpnprd01.prod.outlook.com (2603:1096:400:2f6::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5458.19; Thu, 28 Jul
- 2022 10:20:06 +0000
-Received: from OSZPR01MB8124.jpnprd01.prod.outlook.com
- ([fe80::b5df:34c4:52ae:80ab]) by OSZPR01MB8124.jpnprd01.prod.outlook.com
- ([fe80::b5df:34c4:52ae:80ab%3]) with mapi id 15.20.5482.006; Thu, 28 Jul 2022
- 10:20:06 +0000
-From: Chris Paterson <Chris.Paterson2@renesas.com>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-Subject: RE: [cip-dev] CIP IRC weekly meeting today on libera.chat
-Thread-Topic: [cip-dev] CIP IRC weekly meeting today on libera.chat
-Thread-Index: AQHYolE/h07+Vf/vEkqjl/hlmuXq8a2TkeBw
-Date: Thu, 28 Jul 2022 10:20:06 +0000
-Message-ID: 
- <OSZPR01MB812409CBA20183220B5DCCF4B7969@OSZPR01MB8124.jpnprd01.prod.outlook.com>
-References: <fd0af4c9-2576-b998-9f13-c5c4b9aa6402@siemens.com>
-In-Reply-To: <fd0af4c9-2576-b998-9f13-c5c4b9aa6402@siemens.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 322d6226-720f-4490-4fff-08da7082be08
-x-ms-traffictypediagnostic: TYYPR01MB10481:EE_
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- mHvYqvBGu+U9vdwirmV7qdPxJ9+4HIcBI6DHT5c0AYTKHpV6AZhxzOfIiZaL9Q0ejg5tjYM7Y/Qb3UZ2rfwSl1d11ZNB8CWV3IRIobhiRRFKxRBXhOPmA3N5JjWP5+PvCxkPM4iKDuSQQyzRpuf9Ji5sZcDXDfwJ8fDxzgMgz7N8kepZLdE3NZfB67DEALnzB0rIF/2zZc6M4vBNnalbE0E6q2wC8IqxvIyQAsNEx5FTHpSf9Jx5Pm2AL4qFGQ8rcdWOxbojPK4uEnfY9kRuhqJTVprAUHvoh1X+u3jxjdHXbuWL/Cgp6xJWI7ie9AhxOAP7lHS9e8YB+VqD3zSgIv3/HdzHfVePG3M/d+PCt9SfvYCvP32xBlCv3/h9y+ki2HevX0L+p5VOVQ8+JrihcQELf0hlyfrSHN8n1HrBVrMkXxJ00m0e6bowC+y1Ym/ce+ahuuK+7fIcrnPhYU3D9IEFvAGBfIhekwmHp9zZeZJlHlx93dyVp+Se7K64xyYfygwhR8S68mVsJ3Ib3cbSJz6Pyu6NpMAe5/zk0ozqc+sETx0NcjMtRfKsu0fL1TVbeNnXLCQwmymuCxSpgCVM4nmSUDccMphwrntq5YlSR8xJD/IbHl4oGyFiZqLqjIShciLxigCP6dJnccNoWF6PGkx5xBOwAPrn4A51GDt8462VOBO+GXyMMXdg3t9qSlWRIC6JlvokgVImUGvlZod5Hvd0ghN8KLSnuJVDC6mntuiRQdaqnnSd0+FJyqWyegLkVUjRNaA/TCJWse4tCKBZedmfUBic6WKxxqfmQHe9q2nMceFu+NSX0S8DdwDYcuu1
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB8124.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(346002)(396003)(366004)(136003)(376002)(39860400002)(83380400001)(9686003)(33656002)(2906002)(186003)(122000001)(66476007)(38100700002)(8936002)(26005)(4744005)(76116006)(316002)(8676002)(5660300002)(38070700005)(71200400001)(52536014)(64756008)(478600001)(66446008)(41300700001)(66556008)(6506007)(86362001)(7696005)(55016003)(66946007)(6916009);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?Windows-1252?Q?fO/zmhs/PYT5eSDY7bKpUjXA1Gmm/XA1CvjkZQ+nU6aqoiTuK8FgriAV?=
- =?Windows-1252?Q?YbhjJuJ4imCfl9/kblRVlI1ImMFkjxt5TstNsOLuw6VbyWAlCVUhVYSm?=
- =?Windows-1252?Q?U927cW0pytURgI2FtxfJ/bo21m4dpe/3H660rnr1kZAn0oLEa/oNS7iX?=
- =?Windows-1252?Q?J98NC8gc8nFa7jy6vQb3DdJzqwTBVfD+ICOr9mzL1OnzFsR/6bfAF9cl?=
- =?Windows-1252?Q?r/ARDsGrp1RkOB98EdGSpVCAgtUErCdldvmb6OX/0MZgB/QnE6yIsQf4?=
- =?Windows-1252?Q?hdjN00E2PZVj0/z7kMRC2skFEYk0PahCIM4S0Lq07kub10uNmHbFf2W4?=
- =?Windows-1252?Q?2EdRd0qNZxUuvd+D+rb9E7pJ0sIr3/F8KcAnu0IWwrXtZmI2AvA5L3Oy?=
- =?Windows-1252?Q?ofgaaybQavHxPGPCjvMoRCItL9DUIN0wh89pmqdc9nQxRvothvtcYWjU?=
- =?Windows-1252?Q?VCVpDrs9uFSxKTUu+H5ryGZoxtEyZMpMpwOmyIzjNbVLtfkR8uudPbWz?=
- =?Windows-1252?Q?jAkWpK0Ei5SsPsgw/FkpbVY/6eSOtS/qktbKtSA5YIiQu25Ju3BeNrQH?=
- =?Windows-1252?Q?7ReM1hVjP4xVapHn8j7uLGUkMZX00NhQoIRWK1zS9j2GgoGurONsf2x8?=
- =?Windows-1252?Q?Kl4w5dhYyzEtETJzoIA+Eca2/xGfAHxPmA3KraJXYOiUuayojE9F/iLk?=
- =?Windows-1252?Q?TbaG0VD3q363xlUifpp2ZMae5or+SP0bBqou0QQNc5CMBx8Q4Aiv0XQy?=
- =?Windows-1252?Q?UXrA4Bm+kaGy4/8P35iR9hrr8jURis2lpfcdPZ0nCKnmB/Q3CIV7kK9h?=
- =?Windows-1252?Q?1jJMgl90LqIiGsAtdivLBuezjwNsi43tDE8wwndfmX9r6Vwc17Mie29E?=
- =?Windows-1252?Q?ePSVgrELKwLk+uBL8u9o+pARyVyEQ2qSq3amRV5CUDTMkc4X1YwyqiBB?=
- =?Windows-1252?Q?Zi9Gd/UVJDwFPDfWAFWIvogO78WVbQMAW2F5ESFBqPKpIj1/38CK/kNA?=
- =?Windows-1252?Q?nuZKuKReSb78TRgaKzwJ66gjHpNPDdPtWpbZkIdZLOJgZEoSJUxQLor1?=
- =?Windows-1252?Q?3icJcWtqWH6gpKjjFwGwOpFkpYlCthvLIFTmVU/wsw0mmeF2Nd06alNe?=
- =?Windows-1252?Q?KoMbpxWYjwrMxLy1SFnFwrNXhE+3zepNopv61EoO0aaqgv6NF3vp0JD7?=
- =?Windows-1252?Q?j6vhNxdJC5GIIOTqiXrgVpMTaegJqI2nOtDYRdsiVR+C6H6qeaRnzXpL?=
- =?Windows-1252?Q?22/aOHqcDLTRHF6YFhTX8UX+vzaWCctS0Gh+bWmiw1kbe0rJ6ZosXnmL?=
- =?Windows-1252?Q?ZefS6g7Y7OJnHVHUwvbQlFC0s2oNZu18mVI0BvsYiBaPLx//GYZHlP/9?=
- =?Windows-1252?Q?7mqF7UAdipt0NKk+DREHD8kR6jREp6SE4MLrK3eBEuwm2rFP16OyeIZY?=
- =?Windows-1252?Q?iF7AiDhzwLDYSE1coVgZfgo4oLzgbLflbMf3C6g18XV+YIp/+1asFxjm?=
- =?Windows-1252?Q?dLBs0dEH5dX/v5zdpZdY7jdAz8LWVYmnH7KYpwjEc9VIhGS3daH1tUba?=
- =?Windows-1252?Q?aDo7nl4G4ZLWuB0LNtaZ0o9tKkvPtvRstDcGm8nciwhOlx4ms6eD4aYV?=
- =?Windows-1252?Q?1kTUUakLz7UuMTHru7AbruW5JY4VuOSSpwlL7YWVNu/TIl/1we6ETBX7?=
- =?Windows-1252?Q?53K0GWnO68FZ7Wr9Zf0qLBexB9Wvxubgt91ibPuler9GUUaR+NxCaA?=
- =?Windows-1252?Q?=3D=3D?=
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
+ dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112
+ header.b=Zfb3xr6x;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.216.54,
+ mailfrom: bot@kernelci.org)
+Received: by mail-pj1-f54.google.com with SMTP id ha11so1650381pjb.2
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
+ Thu, 28 Jul 2022 03:40:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=44nRPr+9ZrhOUTdWGk6cZkVHBAbgionlR0x16DYwJXo=;
+        b=Zfb3xr6xtUeBPlcgthiFog+/HNB7yrwBLp4nosB9X2ybBv+hRq5+O8HDPObNMhzURW
+         kQXSo0r4wc3xSr2Ao0TSVSHprEWh1epgi2eDfze44LvAbMseEJ6Emv3PzBtYWPuI/rvw
+         azNN29MCVqr3zdZlA7XzI2NVLIxUECWZ93ahSHjWdV5SovM8bPHuLwmzKAP5V5VKDg+R
+         xJdnlhp2i+wu5lJhLx345fLtVRGb/zxD/Cp8wukpXnqsI+nMz3vz7htWxzFmesLaL3Jj
+         YFBWmUrJc1HA7hZNDS2vRgi3wSOy+TnJNh0EDNNpO0hx2PfxS1YcUXYViO5GHpFtnxq9
+         thlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=44nRPr+9ZrhOUTdWGk6cZkVHBAbgionlR0x16DYwJXo=;
+        b=drvemBIlShami5aPrqDKiE1Wy1PGkra9bjZY3y5qXpwkBsgo79RtleD4tjUkk2unT3
+         BqzyLYBfkVugqQ/AnstrnRAqtA49vtdk+qESWa6/7723hpDpQK4Do13d+QFUgKvOqxGZ
+         ZhyYzMCg06apWUHuNl77TueaJUxNQ75u/jqWnAirsfA2zlwNSYWXZ4jFBe7mpnNPmIm2
+         7r0okzWqR9yKEp770Rg7TaAtZiIWnOodkwfdN0G1xrtm5v3zm42qvYHdk+sN3cxrIbKW
+         7HuHnRuGiTdP9HZb1s6Nzqlm0gpjlNoZT+S+JWjfAXgN5wUZuoGGrcWkTitApB787u6t
+         5acg==
+X-Gm-Message-State: AJIora/DLK6dC2XXGZufLLlVmHkmlxJ2UGUeObUOlSsHcY1gw2IAmQ/o
+	OvKMPsD68xbAhx7caie2ymRTIyGJv2TCU7y4/xM=
+X-Google-Smtp-Source: 
+ AGRyM1uOE9ApQzWp0IaSywzRiG7rvRn6B9hM7aAoGg+5XlrtEvdhEmd8A9+T1i54vaFSVhQQW2dAfA==
+X-Received: by 2002:a17:902:f652:b0:156:701b:9a2a with SMTP id
+ m18-20020a170902f65200b00156701b9a2amr26191699plg.14.1659004819263;
+        Thu, 28 Jul 2022 03:40:19 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id
+ g18-20020aa796b2000000b0052ab5a740aesm346754pfk.162.2022.07.28.03.40.18
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Jul 2022 03:40:18 -0700 (PDT)
+Message-ID: <62e26792.a70a0220.a2b0.0663@mx.google.com>
+Date: Thu, 28 Jul 2022 03:40:18 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB8124.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 
- 322d6226-720f-4490-4fff-08da7082be08
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jul 2022 10:20:06.2309
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 
- J4BtVv7WbzC/XoxLdTuWJJMm82eU/+ZNjjha+F3n21VZI+o8JsICc0MWTDjZ6fjstqbomGW71Y8u6wfmjovD+b+CBCv/woST2cCx3j+IQC8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB10481
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Tree: cip-gitlab
+X-Kernelci-Branch: ci/pavel/linux-test
+X-Kernelci-Report-Type: test
+X-Kernelci-Kernel: v4.4-st5-585-gc99f2b257bde
+Subject: cip-gitlab/ci/pavel/linux-test kselftest-filesystems: 7 runs,
+ 4 regressions (v4.4-st5-585-gc99f2b257bde)
+To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
+From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 28 Jul 2022 10:20:16 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8962
+ <cip-dev@lists.cip-project.org>; Thu, 28 Jul 2022 10:40:26 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8963
 
-Hello Jan, all,
+cip-gitlab/ci/pavel/linux-test kselftest-filesystems: 7 runs, 4 regressions=
+ (v4.4-st5-585-gc99f2b257bde)
 
-> From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On
-> Behalf Of Jan Kiszka via lists.cip-project.org
-> Sent: 28 July 2022 08:11
->=20
-> Hi all,
->=20
-> Kindly be reminded to attend the weekly meeting through IRC to discuss
-> technical topics with CIP kernel today. Our channel is the following:
+Regressions Summary
+-------------------
 
-Please accept my apologies for the meeting today.
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+asus-C436FA-Flip-hatch       | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 1          =
 
-[...]
+asus-C523NA-A20057-coral     | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 1          =
 
->=20
-> * Action items
->   1. Resolve/ignore failures of KernelCI on 4.4-cip - alicefm
->   2. Check cip devices on kernelci old pull request - patersonc
+hp-11A-G6-EE-grunt           | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 1          =
 
-No updates.
+hp-x360-12b-c...4020-octopus | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 1          =
 
-> * Kernel maintenance updates
-> * Kernel testing
 
-All LAVA labs/boards are online again.
-I'm not sure what happened last week, but I've been away since today, hence=
- not addressing the issues sooner.
+  Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fpavel%2Fli=
+nux-test/kernel/v4.4-st5-585-gc99f2b257bde/plan/kselftest-filesystems/
 
-Kind regards, Chris
+  Test:     kselftest-filesystems
+  Tree:     cip-gitlab
+  Branch:   ci/pavel/linux-test
+  Describe: v4.4-st5-585-gc99f2b257bde
+  URL:      https://gitlab.com/cip-project/cip-kernel/linux-cip.git
+  SHA:      c99f2b257bde3cd60a833056aab624ad5fab3812 =
 
-> * AOB
->=20
-> Jan
+
+
+Test Regressions
+---------------- =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+asus-C436FA-Flip-hatch       | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/62e0b31eeabb58f740daf062
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-chromebook
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st5-585-gc99f2b257bde/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/l=
+ab-collabora/kselftest-filesystems-asus-C436FA-Flip-hatch.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st5-585-gc99f2b257bde/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/l=
+ab-collabora/kselftest-filesystems-asus-C436FA-Flip-hatch.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ks=
+elftest/20220718.0/amd64/initrd.cpio.gz =
+
+
+
+  * kselftest-filesystems.login: https://kernelci.org/test/case/id/62e0b31e=
+eabb58f740daf063
+        failing since 0 day (last pass: v5.10.129-cip12-36-g21d9d56f4de5a, =
+first fail: v4.4-st5-586-geb97410e0086c) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+asus-C523NA-A20057-coral     | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/62e0b17b5bba492157daf057
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-chromebook
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st5-585-gc99f2b257bde/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/l=
+ab-collabora/kselftest-filesystems-asus-C523NA-A20057-coral.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st5-585-gc99f2b257bde/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/l=
+ab-collabora/kselftest-filesystems-asus-C523NA-A20057-coral.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ks=
+elftest/20220718.0/amd64/initrd.cpio.gz =
+
+
+
+  * kselftest-filesystems.login: https://kernelci.org/test/case/id/62e0b17b=
+5bba492157daf058
+        failing since 0 day (last pass: v5.10.129-cip12-36-g21d9d56f4de5a, =
+first fail: v4.4-st5-586-geb97410e0086c) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+hp-11A-G6-EE-grunt           | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/62e0b14e0fd9fd6aa7daf069
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-chromebook
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st5-585-gc99f2b257bde/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/l=
+ab-collabora/kselftest-filesystems-hp-11A-G6-EE-grunt.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st5-585-gc99f2b257bde/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/l=
+ab-collabora/kselftest-filesystems-hp-11A-G6-EE-grunt.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ks=
+elftest/20220718.0/amd64/initrd.cpio.gz =
+
+
+
+  * kselftest-filesystems.login: https://kernelci.org/test/case/id/62e0b14e=
+0fd9fd6aa7daf06a
+        failing since 0 day (last pass: v5.10.129-cip12-36-g21d9d56f4de5a, =
+first fail: v4.4-st5-586-geb97410e0086c) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+hp-x360-12b-c...4020-octopus | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/62e0b23c43d1bb1072daf059
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-chromebook
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st5-585-gc99f2b257bde/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/l=
+ab-collabora/kselftest-filesystems-hp-x360-12b-ca0010nr-n4020-octopus.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st5-585-gc99f2b257bde/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/l=
+ab-collabora/kselftest-filesystems-hp-x360-12b-ca0010nr-n4020-octopus.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ks=
+elftest/20220718.0/amd64/initrd.cpio.gz =
+
+
+
+  * kselftest-filesystems.login: https://kernelci.org/test/case/id/62e0b23c=
+43d1bb1072daf05a
+        failing since 0 day (last pass: v5.10.129-cip12-36-g21d9d56f4de5a, =
+first fail: v4.4-st5-586-geb97410e0086c) =
+
+ =20
 
