@@ -2,35 +2,38 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB80C3F6B0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC5F0C00144
 	for <webhook@archiver.kernel.org>; Fri, 29 Jul 2022 08:39:42 +0000 (UTC)
-Received: from mta-65-226.siemens.flowmailer.net
- (mta-65-226.siemens.flowmailer.net [185.136.65.226])
- by mx.groups.io with SMTP id smtpd.web10.5746.1659083975510836927
+Received: from mta-64-225.siemens.flowmailer.net
+ (mta-64-225.siemens.flowmailer.net [185.136.64.225])
+ by mx.groups.io with SMTP id smtpd.web12.5719.1659083977163017164
  for <cip-dev@lists.cip-project.org>;
- Fri, 29 Jul 2022 01:39:36 -0700
+ Fri, 29 Jul 2022 01:39:38 -0700
 Authentication-Results: mx.groups.io;
  dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm2
- header.b=MVPvMF4q;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226,
- mailfrom: fm-51332-202207290839322bc5e7a6f08886d2ab-sknfcb@rts-flowmailer.siemens.com)
-Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id
- 202207290839322bc5e7a6f08886d2ab
+ header.b=YZH5XEAW;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.225,
+ mailfrom: fm-51332-20220729083934e642c49c99bcf0ef00-ldsu6k@rts-flowmailer.siemens.com)
+Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id
+ 20220729083934e642c49c99bcf0ef00
         for <cip-dev@lists.cip-project.org>;
-        Fri, 29 Jul 2022 10:39:33 +0200
+        Fri, 29 Jul 2022 10:39:34 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
- bh=i7kJSrwGf7LPUwN4HmiwScWiBSwkMaATpp/wEurQoJc=;
- b=MVPvMF4qvkktRWDoa/M2nALeFHlK0QQOJvt0FbIro9tRyeXpRYeur0O3JUuFwnCKODBZc8
- ZLbPndz9UgS2NSa68qoMfMKPIMTS2kr1d6/Gi8mJUIyUp0yWh3VbfJXLbDgHI01dHkn9r9Ah
- p7g3JVLnp5nrqo2QkYRxqwhSe0mw0=;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
+ bh=fFRHowR/mQQzSPUOqCdazTP8CHvjVyl6i3XvkzcfEC0=;
+ b=YZH5XEAW0eE3GQH3EfvgmAw0OoLttjy1IUbakDolQmjkXhVLMl2VyK2rWaZoadhV5Zzihc
+ JjQWimvTUh8YfmSwCEuNHn7mCJqjhyGKXOe8dbl/cczxZPqp5/krNvCsAdnqrxcyJuhTlA8i
+ THap1OrEj1nKBseJ2dixRI1zwZiV8=;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
 To: jan.kiszka@siemens.com,
 	cip-dev@lists.cip-project.org
-Subject: [cip-dev][isar-cip-core][PATCH 0/4] Add support for ISAR with sbuild
-Date: Fri, 29 Jul 2022 10:39:27 +0200
-Message-Id: <20220729083931.419731-1-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH 2/4] scripts/deploy-cip-core.sh: Use
+ dtb from deploy dir
+Date: Fri, 29 Jul 2022 10:39:29 +0200
+Message-Id: <20220729083931.419731-3-Quirin.Gylstorff@siemens.com>
+In-Reply-To: <20220729083931.419731-1-Quirin.Gylstorff@siemens.com>
+References: <20220729083931.419731-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
@@ -39,31 +42,77 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 29 Jul 2022 08:39:42 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8971
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8975
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-This patch series integrates ISAR with the Sbuild feature.
+This fixes the build errors after sbuild migration as the build
+artifacts are no longer available after the build.
 
-Quirin Gylstorff (4):
-  Update ISAR for sbuild integration
-  scripts/deploy-cip-core.sh: Use dtb from deploy dir
-  recipes-devtools/ovmf-binaries: Adapt to sbuild environment
-  kas-cip: Add patch for linux-cip with CONFIG_MODULES=n
+This adds the DTB file for the beagle bone black to the deploy
+dir to fix the CI pipeline after using sbuild.
 
- .gitlab-ci.yml                                |  6 ++--
- conf/machine/bbb.conf                         |  1 +
- ...ernel-Check-if-CONFIG_MODULES-is-set.patch | 33 +++++++++++++++++++
- kas-cip.yml                                   |  6 +++-
- .../ovmf-binaries/files/control.tmpl          | 11 -------
- recipes-devtools/ovmf-binaries/files/rules    | 17 ++++++++++
- .../ovmf-binaries/ovmf-binaries_0.1.bb        | 18 ++++++----
- scripts/deploy-cip-core.sh                    |  2 +-
- 8 files changed, 71 insertions(+), 23 deletions(-)
- create mode 100644 isar-patches/0001-recipes-kernel-Check-if-CONFIG_MODULES-is-set.patch
- delete mode 100644 recipes-devtools/ovmf-binaries/files/control.tmpl
- create mode 100644 recipes-devtools/ovmf-binaries/files/rules
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+ .gitlab-ci.yml             | 6 +++---
+ conf/machine/bbb.conf      | 1 +
+ scripts/deploy-cip-core.sh | 2 +-
+ 3 files changed, 5 insertions(+), 4 deletions(-)
 
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+index 3d39d1f..41af3e9 100644
+--- a/.gitlab-ci.yml
++++ b/.gitlab-ci.yml
+@@ -68,7 +68,7 @@ build:hihope-rzg2m-base:
+     - .build_base
+   variables:
+     target: hihope-rzg2m
+-    dtb: renesas/r8a774a1-hihope-rzg2m-ex.dtb
++    dtb: r8a774a1-hihope-rzg2m-ex.dtb
+ 
+ build:qemu-amd64-base:
+   extends:
+@@ -166,7 +166,7 @@ build:hihope-rzg2m-test:
+   variables:
+     target: hihope-rzg2m
+     extension: test
+-    dtb: renesas/r8a774a1-hihope-rzg2m-ex.dtb
++    dtb: r8a774a1-hihope-rzg2m-ex.dtb
+ 
+ build:qemu-amd64-test:
+   extends:
+@@ -271,7 +271,7 @@ build:hihope-rzg2m-buster:
+     - .build_base
+   variables:
+     target: hihope-rzg2m
+-    dtb: renesas/r8a774a1-hihope-rzg2m-ex.dtb
++    dtb: r8a774a1-hihope-rzg2m-ex.dtb
+     release: buster
+ 
+ build:qemu-amd64-secure-boot-buster:
+diff --git a/conf/machine/bbb.conf b/conf/machine/bbb.conf
+index b592f4d..ea87ed8 100644
+--- a/conf/machine/bbb.conf
++++ b/conf/machine/bbb.conf
+@@ -7,6 +7,7 @@
+ #
+ 
+ DISTRO_ARCH = "armhf"
++DTB_FILES = "am335x-boneblack.dtb"
+ 
+ IMAGE_FSTYPES ?= "wic"
+ IMAGER_INSTALL += "u-boot-omap"
+diff --git a/scripts/deploy-cip-core.sh b/scripts/deploy-cip-core.sh
+index 203ab1d..01aa494 100755
+--- a/scripts/deploy-cip-core.sh
++++ b/scripts/deploy-cip-core.sh
+@@ -50,5 +50,5 @@ aws s3 cp --no-progress --acl public-read $KERNEL_IMAGE ${S3_TARGET}
+ aws s3 cp --no-progress --acl public-read $BASE_PATH-initrd.img ${S3_TARGET}
+ 
+ if [ "$DTB" != "none" ]; then
+-	aws s3 cp --no-progress --acl public-read build/tmp/work/cip-core-*/linux-cip*/*/linux-cip-*/debian/linux-image-cip*/usr/lib/linux-image-*/$DTB ${S3_TARGET}
++	aws s3 cp --no-progress --acl public-read build/tmp/deploy/images/*/$DTB ${S3_TARGET}
+ fi
 -- 
 2.35.1
 
