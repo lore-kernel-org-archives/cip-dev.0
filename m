@@ -2,34 +2,34 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0149C48BE4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFD23C19F2C
 	for <webhook@archiver.kernel.org>; Tue,  2 Aug 2022 11:09:01 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com
- [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web11.4832.1659438534534175527
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com
+ [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web10.4769.1659438536866126129
  for <cip-dev@lists.cip-project.org>;
- Tue, 02 Aug 2022 04:09:00 -0700
+ Tue, 02 Aug 2022 04:08:58 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=pass (domain: bp.renesas.com, ip: 210.160.252.172,
+ spf=pass (domain: bp.renesas.com, ip: 210.160.252.171,
  mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.93,210,1654527600";
-   d="scan'208";a="130054304"
+   d="scan'208";a="128236710"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 02 Aug 2022 20:08:59 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 02 Aug 2022 20:08:57 +0900
 Received: from localhost.localdomain (unknown [10.226.92.246])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 3C1834004934;
-	Tue,  2 Aug 2022 20:08:57 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id F14D8400E8FF;
+	Tue,  2 Aug 2022 20:08:55 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: Pavel Machek <pavel@denx.de>
 Cc: nobuhiro1.iwamatsu@toshiba.co.jp,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 03/24] arm64: dts: renesas: rzg2lc-smarc-som:
- Enable eMMC on SMARC platform
-Date: Tue,  2 Aug 2022 12:08:29 +0100
-Message-Id: <20220802110850.1496057-4-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 02/24] arm64: dts: renesas: Add initial device tree
+ for RZ/G2LC SMARC EVK
+Date: Tue,  2 Aug 2022 12:08:28 +0100
+Message-Id: <20220802110850.1496057-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220802110850.1496057-1-biju.das.jz@bp.renesas.com>
 References: <20220802110850.1496057-1-biju.das.jz@bp.renesas.com>
@@ -39,200 +39,279 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 02 Aug 2022 11:09:01 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/8999
 
-commit 7ca0ce6478c6803c9f86e7366f5634de9c096207 upstream.
+commit ce0c63b6a5ef86208d1008ce6c42a7a7180aaf75 upstream.
 
-RZ/G2LC SoM has both 64 GB eMMC and microSD connected to SDHI0.
+Add basic support for the RZ/G2LC SMARC EVK (based on R9A07G044C2):
+- memory
+- External input clock
+- SCIF
+- GbEthernet
+- Audio Clock
 
-Both these interfaces are mutually exclusive and the SD0 device
-selection is based on the XOR between GPIO_SD0_DEV_SEL and SW1[2]
-switch position.
-
-This patch sets GPIO_SD0_DEV_SEL to high in DT. Use the below switch
-setting logic for device selection between eMMC and microSD slot
-connected to SDHI0.
-
-Set SW1[2] to position OFF for selecting eMMC
-Set SW1[2] to position ON for selecting microSD
-
-This patch enables eMMC on RZ/G2LC SMARC platform by default.
+It shares the same carrier board with RZ/G2L, but the pin mapping is
+different.  Disable the device nodes which are not tested and delete the
+corresponding pinctrl definitions.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://lore.kernel.org/r/20220117075130.6198-1-biju.das.jz@bp.renesas.com
+Link: https://lore.kernel.org/r/20211216114305.5842-4-biju.das.jz@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- .../boot/dts/renesas/rzg2lc-smarc-som.dtsi    | 142 ++++++++++++++++++
- 1 file changed, 142 insertions(+)
+ arch/arm64/boot/dts/renesas/Makefile          |   1 +
+ .../boot/dts/renesas/r9a07g044c2-smarc.dts    | 114 ++++++++++++++++++
+ .../dts/renesas/rzg2lc-smarc-pinfunction.dtsi |  25 ++++
+ .../boot/dts/renesas/rzg2lc-smarc-som.dtsi    |  76 ++++++++++++
+ 4 files changed, 216 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/rzg2lc-smarc-som.dtsi
 
-diff --git a/arch/arm64/boot/dts/renesas/rzg2lc-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg2lc-smarc-som.dtsi
-index e1d7a3a689c6..6ebda3724f2c 100644
---- a/arch/arm64/boot/dts/renesas/rzg2lc-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg2lc-smarc-som.dtsi
-@@ -8,6 +8,16 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index 8a5bc12a6d8d..962a66332236 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -57,4 +57,5 @@ dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
  
-+/* SW1[2] should be at OFF position to enable 64 GB eMMC */
-+#define EMMC	1
-+
+ dtb-$(CONFIG_ARCH_R8A779A0) += r8a779a0-falcon.dtb
+ 
++dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044c2-smarc.dtb
+ dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044l2-smarc.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts b/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts
+new file mode 100644
+index 000000000000..728a2275ea8d
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts
+@@ -0,0 +1,114 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +/*
-+ * To enable uSD card on CN3,
-+ * SW1[2] should be at ON position.
-+ * Disable eMMC by setting "#define EMMC	0" above.
++ * Device Tree Source for the RZ/G2LC SMARC EVK board
++ *
++ * Copyright (C) 2021 Renesas Electronics Corp.
 + */
-+#define SDHI	(!EMMC)
 +
- / {
- 	aliases {
- 		ethernet0 = &eth0;
-@@ -22,6 +32,36 @@ memory@48000000 {
- 		/* first 128MB is reserved for secure area. */
- 		reg = <0x0 0x48000000 0x0 0x38000000>;
- 	};
++/dts-v1/;
++#include "r9a07g044c2.dtsi"
++#include "rzg2lc-smarc-som.dtsi"
++#include "rzg2lc-smarc-pinfunction.dtsi"
++#include "rzg2l-smarc.dtsi"
 +
-+	reg_1p8v: regulator0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-1.8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
++/ {
++	model = "Renesas SMARC EVK based on r9a07g044c2";
++	compatible = "renesas,smarc-evk", "renesas,r9a07g044c2", "renesas,r9a07g044";
++
++};
++
++&canfd {
++	/delete-property/ pinctrl-0;
++	/delete-property/ pinctrl-names;
++	status = "disabled";
++};
++
++&ehci0 {
++	/delete-property/ pinctrl-0;
++	/delete-property/ pinctrl-names;
++	status = "disabled";
++};
++
++&ehci1 {
++	/delete-property/ pinctrl-0;
++	/delete-property/ pinctrl-names;
++	status = "disabled";
++};
++
++&hsusb {
++	/delete-property/ pinctrl-0;
++	/delete-property/ pinctrl-names;
++	status = "disabled";
++};
++
++&i2c0 {
++	/delete-property/ pinctrl-0;
++	/delete-property/ pinctrl-names;
++	status = "disabled";
++};
++
++&i2c1 {
++	/delete-property/ pinctrl-0;
++	/delete-property/ pinctrl-names;
++	status = "disabled";
++};
++
++&i2c3 {
++	/delete-property/ pinctrl-0;
++	/delete-property/ pinctrl-names;
++	status = "disabled";
++};
++
++&ohci0 {
++	/delete-property/ pinctrl-0;
++	/delete-property/ pinctrl-names;
++	status = "disabled";
++};
++
++&ohci1 {
++	/delete-property/ pinctrl-0;
++	/delete-property/ pinctrl-names;
++	status = "disabled";
++};
++
++&phyrst {
++	status = "disabled";
++};
++
++&scif2 {
++	/delete-property/ pinctrl-0;
++	/delete-property/ pinctrl-names;
++	status = "disabled";
++};
++
++&sdhi1 {
++	/delete-property/ pinctrl-0;
++	/delete-property/ pinctrl-1;
++	/delete-property/ pinctrl-names;
++	/delete-property/ vmmc-supply;
++	status = "disabled";
++};
++
++&spi1 {
++	/delete-property/ pinctrl-0;
++	/delete-property/ pinctrl-names;
++	status = "disabled";
++};
++
++&ssi0 {
++	/delete-property/ pinctrl-0;
++	/delete-property/ pinctrl-names;
++	status = "disabled";
++};
++
++&usb2_phy0 {
++	/delete-property/ pinctrl-0;
++	/delete-property/ pinctrl-names;
++	status = "disabled";
++};
++
++&usb2_phy1 {
++	/delete-property/ pinctrl-0;
++	/delete-property/ pinctrl-names;
++	status = "disabled";
++};
+diff --git a/arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi b/arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi
+new file mode 100644
+index 000000000000..5333a1f9a0e7
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi
+@@ -0,0 +1,25 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++/*
++ * Device Tree Source for the RZ/G2LC SMARC pincontrol parts
++ *
++ * Copyright (C) 2021 Renesas Electronics Corp.
++ */
++
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
++
++&pinctrl {
++	pinctrl-0 = <&sound_clk_pins>;
++	pinctrl-names = "default";
++
++	scif0_pins: scif0 {
++		pinmux = <RZG2L_PORT_PINMUX(38, 0, 1)>,	/* TxD */
++			 <RZG2L_PORT_PINMUX(38, 1, 1)>;	/* RxD */
 +	};
 +
-+	reg_3p3v: regulator1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	vccq_sdhi0: regulator-vccq-sdhi0 {
-+		compatible = "regulator-gpio";
-+
-+		regulator-name = "SDHI0 VccQ";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		states = <3300000 1>, <1800000 0>;
-+		regulator-boot-on;
-+		gpios = <&pinctrl RZG2L_GPIO(39, 0) GPIO_ACTIVE_HIGH>;
-+		regulator-always-on;
-+	};
- };
- 
- &eth0 {
-@@ -72,5 +112,107 @@ eth0_pins: eth0 {
- 			 <RZG2L_PORT_PINMUX(26, 0, 1)>, /* ET0_RXD2 */
- 			 <RZG2L_PORT_PINMUX(26, 1, 1)>; /* ET0_RXD3 */
- 	};
-+
-+	gpio-sd0-pwr-en-hog {
-+		gpio-hog;
-+		gpios = <RZG2L_GPIO(18, 1) GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "gpio_sd0_pwr_en";
-+	};
-+
-+	/*
-+	 * SD0 device selection is XOR between GPIO_SD0_DEV_SEL and SW1[2]
-+	 * The below switch logic can be used to select the device between
-+	 * eMMC and microSD, after setting GPIO_SD0_DEV_SEL to high in DT.
-+	 * SW1[2] should be at OFF position to enable 64 GB eMMC
-+	 * SW1[2] should be at position ON to enable uSD card CN3
-+	 */
-+	gpio-sd0-dev-sel-hog {
-+		gpio-hog;
-+		gpios = <RZG2L_GPIO(40, 2) GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "gpio_sd0_dev_sel";
-+	};
-+
-+	sdhi0_emmc_pins: sd0emmc {
-+		sd0_emmc_data {
-+			pins = "SD0_DATA0", "SD0_DATA1", "SD0_DATA2", "SD0_DATA3",
-+			       "SD0_DATA4", "SD0_DATA5", "SD0_DATA6", "SD0_DATA7";
-+			power-source = <1800>;
-+		};
-+
-+		sd0_emmc_ctrl {
-+			pins = "SD0_CLK", "SD0_CMD";
-+			power-source = <1800>;
-+		};
-+
-+		sd0_emmc_rst {
-+			pins = "SD0_RST#";
-+			power-source = <1800>;
-+		};
-+	};
-+
-+	sdhi0_pins: sd0 {
-+		sd0_data {
-+			pins = "SD0_DATA0", "SD0_DATA1", "SD0_DATA2", "SD0_DATA3";
-+			power-source = <3300>;
-+		};
-+
-+		sd0_ctrl {
-+			pins = "SD0_CLK", "SD0_CMD";
-+			power-source = <3300>;
-+		};
-+
-+		sd0_mux {
-+			pinmux = <RZG2L_PORT_PINMUX(18, 0, 1)>; /* SD0_CD */
-+		};
-+	};
-+
-+	sdhi0_pins_uhs: sd0_uhs {
-+		sd0_data_uhs {
-+			pins = "SD0_DATA0", "SD0_DATA1", "SD0_DATA2", "SD0_DATA3";
-+			power-source = <1800>;
-+		};
-+
-+		sd0_ctrl_uhs {
-+			pins = "SD0_CLK", "SD0_CMD";
-+			power-source = <1800>;
-+		};
-+
-+		sd0_mux_uhs {
-+			pinmux = <RZG2L_PORT_PINMUX(18, 0, 1)>; /* SD0_CD */
-+		};
++	sound_clk_pins: sound_clk {
++		pins = "AUDIO_CLK1", "AUDIO_CLK2";
++		input-enable;
 +	};
 +};
 +
-+#if SDHI
-+&sdhi0 {
-+	pinctrl-0 = <&sdhi0_pins>;
-+	pinctrl-1 = <&sdhi0_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
+diff --git a/arch/arm64/boot/dts/renesas/rzg2lc-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg2lc-smarc-som.dtsi
+new file mode 100644
+index 000000000000..e1d7a3a689c6
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/rzg2lc-smarc-som.dtsi
+@@ -0,0 +1,76 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++/*
++ * Device Tree Source for the RZ/G2LC SMARC SOM common parts
++ *
++ * Copyright (C) 2021 Renesas Electronics Corp.
++ */
 +
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&vccq_sdhi0>;
-+	bus-width = <4>;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
-+	status = "okay";
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
++
++/ {
++	aliases {
++		ethernet0 = &eth0;
++	};
++
++	chosen {
++		bootargs = "ignore_loglevel rw root=/dev/nfs ip=on";
++	};
++
++	memory@48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0x0 0x48000000 0x0 0x38000000>;
++	};
 +};
-+#endif
 +
-+#if EMMC
-+&sdhi0 {
-+	pinctrl-0 = <&sdhi0_emmc_pins>;
-+	pinctrl-1 = <&sdhi0_emmc_pins>;
-+	pinctrl-names = "default", "state_uhs";
-+
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&reg_1p8v>;
-+	bus-width = <8>;
-+	mmc-hs200-1_8v;
-+	non-removable;
-+	fixed-emmc-driver-type = <1>;
++&eth0 {
++	pinctrl-0 = <&eth0_pins>;
++	pinctrl-names = "default";
++	phy-handle = <&phy0>;
++	phy-mode = "rgmii-id";
 +	status = "okay";
- };
-+#endif
- 
++
++	phy0: ethernet-phy@7 {
++		compatible = "ethernet-phy-id0022.1640",
++			     "ethernet-phy-ieee802.3-c22";
++		reg = <7>;
++		rxc-skew-psec = <2400>;
++		txc-skew-psec = <2400>;
++		rxdv-skew-psec = <0>;
++		txdv-skew-psec = <0>;
++		rxd0-skew-psec = <0>;
++		rxd1-skew-psec = <0>;
++		rxd2-skew-psec = <0>;
++		rxd3-skew-psec = <0>;
++		txd0-skew-psec = <0>;
++		txd1-skew-psec = <0>;
++		txd2-skew-psec = <0>;
++		txd3-skew-psec = <0>;
++	};
++};
++
++&extal_clk {
++	clock-frequency = <24000000>;
++};
++
++&pinctrl {
++	eth0_pins: eth0 {
++		pinmux = <RZG2L_PORT_PINMUX(28, 1, 1)>, /* ET0_LINKSTA */
++			 <RZG2L_PORT_PINMUX(27, 1, 1)>, /* ET0_MDC */
++			 <RZG2L_PORT_PINMUX(28, 0, 1)>, /* ET0_MDIO */
++			 <RZG2L_PORT_PINMUX(20, 0, 1)>, /* ET0_TXC */
++			 <RZG2L_PORT_PINMUX(20, 1, 1)>, /* ET0_TX_CTL */
++			 <RZG2L_PORT_PINMUX(20, 2, 1)>, /* ET0_TXD0 */
++			 <RZG2L_PORT_PINMUX(21, 0, 1)>, /* ET0_TXD1 */
++			 <RZG2L_PORT_PINMUX(21, 1, 1)>, /* ET0_TXD2 */
++			 <RZG2L_PORT_PINMUX(22, 0, 1)>, /* ET0_TXD3 */
++			 <RZG2L_PORT_PINMUX(24, 0, 1)>, /* ET0_RXC */
++			 <RZG2L_PORT_PINMUX(24, 1, 1)>, /* ET0_RX_CTL */
++			 <RZG2L_PORT_PINMUX(25, 0, 1)>, /* ET0_RXD0 */
++			 <RZG2L_PORT_PINMUX(25, 1, 1)>, /* ET0_RXD1 */
++			 <RZG2L_PORT_PINMUX(26, 0, 1)>, /* ET0_RXD2 */
++			 <RZG2L_PORT_PINMUX(26, 1, 1)>; /* ET0_RXD3 */
++	};
++};
++
 -- 
 2.25.1
 
