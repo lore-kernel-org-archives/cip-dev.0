@@ -1,138 +1,162 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08078C00140
-	for <webhook@archiver.kernel.org>; Tue,  2 Aug 2022 20:21:09 +0000 (UTC)
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com
- (EUR05-AM6-obe.outbound.protection.outlook.com [40.107.22.85])
- by mx.groups.io with SMTP id smtpd.web11.349.1659471665226639879
- for <cip-dev@lists.cip-project.org>;
- Tue, 02 Aug 2022 13:21:06 -0700
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C547C00140
+	for <webhook@archiver.kernel.org>; Tue,  2 Aug 2022 20:30:39 +0000 (UTC)
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com
+ [209.85.214.174])
+ by mx.groups.io with SMTP id smtpd.web12.545.1659472238316788530
+ for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
+ Tue, 02 Aug 2022 13:30:38 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=sGw2FOC3;
- spf=pass (domain: siemens.com, ip: 40.107.22.85,
- mailfrom: jan.kiszka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KNqmAMS4dUxUPyBpoSTXTsuQk9dtUvNP8BFR1FuI8s5Gvdo5CBHNkkMDUQh7eoidk83P7sje2Yv5Rzx0mGK8L43BOqXJZlPPcGpK2Tnb5KUSDKvhJj1fjP3H4AJ0Z4H2d7o1HERcQEKila2a2tveMsXXKpx8120T3RW6LY8SIo3txGckw1kbIsBPGO/wWbh6QSycctRf5CkUtjbEEethzwMlRV/IwIXL8cFWTN5H/SWACedPxSXjWloRkPLlDci+8GGY6k8B+lQjtBG/Iw6zPKw68p6a37NuJMirxGK0V0S7msiYCVw37xpNvdoy0lceVeptxZsu11q5dFG84xnYtg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QJPH8PZ62EJ+/6ZhbiJokn1p6tn5RYXLo6+v1wisYPg=;
- b=DexBdB79VA9iaJDmqFUFcFq8/5XKBe3yo2xv04hknRjnyN+RIk/EUfkw7wolTLFe4sUmw7pIgKel9q1rivWQ5B1b4l8a+JqQ+Bt8FMUfcwbRToCXOS//CQxUNh5mFKTMn0leb/jBUeKoHAEipiED2Hq4BuPzQZf/UGnKI+OIicMa50NaW8xixpo+HvY0rHjsr47HC7k+dTbbuhy10M1HYXXxawgLXfAkmlq9US+7HWmRqO7qXqh/tuWUlI/uvKyxmD7ZzEEua9qA41zkoiPydlJQv+dk3hRQNJovH83dZ03Exz/K9iM7AQm3yPInZ5Q8K6+Nwq6lW+BjXPdNUgMhpw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.70) smtp.rcpttodomain=lists.cip-project.org
- smtp.mailfrom=siemens.com; dmarc=pass (p=none sp=none pct=100) action=none
- header.from=siemens.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QJPH8PZ62EJ+/6ZhbiJokn1p6tn5RYXLo6+v1wisYPg=;
- b=sGw2FOC32KUXvHLIys4o7jBUWbUaZqbVG++okn9hLG+E2gn2tpoOk3XDLI3NfCbT+xwNMvl0C9UctrygKZSIZO8SkgJscQi9X+5D/jsdomtIUbz3f4tckqTNutgRGqNAplYig0yit5zNMVcbNtQtq2+A7HRz9hg841zMBPfLCfjD0VbFiPEqdQzIDygkWuir5eWp/tC6g0KfKIbrzux8+r1E1U8SNhmUQvKyw5Ly3l4oGYpJaJ6mLM/LWP+Yns9Ao3VXj9KseDNgEgrEbzE8qyAwuvFKICw9pNFmMt2DltMxJrllL06q8snvCf4KV0Eg9cckIczbwyPhPbe+/TT1hg==
-Received: from DB8PR04CA0011.eurprd04.prod.outlook.com (2603:10a6:10:110::21)
- by AS8PR10MB5041.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:340::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5504.14; Tue, 2 Aug
- 2022 20:21:02 +0000
-Received: from DB5EUR01FT106.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:10:110:cafe::45) by DB8PR04CA0011.outlook.office365.com
- (2603:10a6:10:110::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5482.16 via Frontend
- Transport; Tue, 2 Aug 2022 20:21:02 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.70)
- smtp.mailfrom=siemens.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=siemens.com;
-Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.70 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.70; helo=hybrid.siemens.com; pr=C
-Received: from hybrid.siemens.com (194.138.21.70) by
- DB5EUR01FT106.mail.protection.outlook.com (10.152.4.178) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5482.10 via Frontend Transport; Tue, 2 Aug 2022 20:21:01 +0000
-Received: from DEMCHDC89XA.ad011.siemens.net (139.25.226.103) by
- DEMCHDC9SJA.ad011.siemens.net (194.138.21.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.9; Tue, 2 Aug 2022 22:21:01 +0200
-Received: from [139.22.106.222] (139.22.106.222) by
- DEMCHDC89XA.ad011.siemens.net (139.25.226.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.9; Tue, 2 Aug 2022 22:21:00 +0200
-Message-ID: <0d94ada8-eb64-4b72-c894-c2a87f7db01a@siemens.com>
-Date: Tue, 2 Aug 2022 22:20:33 +0200
+ dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112
+ header.b=Yig84xCv;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.174,
+ mailfrom: bot@kernelci.org)
+Received: by mail-pl1-f174.google.com with SMTP id iw1so14482697plb.6
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
+ Tue, 02 Aug 2022 13:30:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=OFTTrbsm/lGZofZCC3SniyxhDKHUR4ZGJVQah34ZO7A=;
+        b=Yig84xCveUCOLp2beaIy/dgFMcn7Q2e+uJ80EH82yxDWRgDvd6LLk1QgzkxSEh1P1p
+         Uh/Kixa8opKXSMlcEioS+9MezGgucxwBqR+i/mrSCsimo4MWh+SWEvdFKrWvIutaDjID
+         /ML9uHSt870wPO7aQi6jI+sWs8wPqTdZtYYrG379VsdXNKGsAsLCN7KyLPUgPSZVi4jr
+         jwThRedKR3o1l4pGkiwuCY//Avy9xiU3SmEm8OuFbcB2TO1v7kGJXMJzcDWFrpPIwFYO
+         hD0Uj0UArPkZZXZDlHZSYrfDlVXeSgg+rUAW/PqJfjOAVvjFEVTbiNpBHtKdNrmhN0Qm
+         T53Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=OFTTrbsm/lGZofZCC3SniyxhDKHUR4ZGJVQah34ZO7A=;
+        b=Swlrl2UjO/5kscfPLJNsTDGqTBT9Q0yaUnuIgNvlUfH7DNbmWKNsHP/tsbrzJIrp/l
+         zRjZurAmA2VdzghwtfTSp7qhd3jdNhOUw8p1XKnGVkvt1Mhk6jDsjoRqz5FLa8vVTKj9
+         cGbCiqXY3ypLpbjCTf5UeNLcDzn1+P/xXQ0jQeTBO9t6Su6YVfy2txuj3gjn7iVww88X
+         COXSx/knSEStM+E2Gvze0LBysdwEcmnV6D3mzVhjshc/FeJxCMgGSIH56rsXdBr16Bpl
+         fJCDn/BgbCKIEndRu19FADn4waRcz5ErmNDroR7oB3xcJoDywaK+w09y1xCCmcBda8ka
+         V1Eg==
+X-Gm-Message-State: ACgBeo3/c6Jp81b9K9uYq7Y7MJNj9ydbJ2x1zTakCWnwjVa8RDGpVmbV
+	9Zg7bDSHJfvRdimnyylaLWW8WEul1aGGTNMz+N8=
+X-Google-Smtp-Source: 
+ AA6agR6P2UZtja15hoxqYzDL+WDCn+UlLLkjSEAgv74KylOfivQ87b/sB2GQJgpXcAriTmPiYdLKMQ==
+X-Received: by 2002:a17:902:820d:b0:16e:c853:ddd1 with SMTP id
+ x13-20020a170902820d00b0016ec853ddd1mr18805387pln.31.1659472236718;
+        Tue, 02 Aug 2022 13:30:36 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id
+ n2-20020a170902968200b0016c50179b1esm112137plp.152.2022.08.02.13.30.36
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Aug 2022 13:30:36 -0700 (PDT)
+Message-ID: <62e9896c.170a0220.7916f.0447@mx.google.com>
+Date: Tue, 02 Aug 2022 13:30:36 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Content-Language: en-US
-To: cip-dev <cip-dev@lists.cip-project.org>, Pavel Machek <pavel@denx.de>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: 4.4.302-cip70: 'struct rt5645_priv' has no member named
- 'btn_check_timer'
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [139.22.106.222]
-X-ClientProxiedBy: DEMCHDC89XA.ad011.siemens.net (139.25.226.103) To
- DEMCHDC89XA.ad011.siemens.net (139.25.226.103)
-X-TM-AS-Product-Ver: SMEX-14.0.0.3080-8.6.1018-26680.007
-X-TM-AS-Result: No-10--10.876900-8.000000
-X-TMASE-MatchedRID: ZpedOW41UV2h2Abh7nzIbW3Vq/WK81NvJ97RPj0PB2gSEYfcJF0pReEp
-	CHUsKYYG1JVSTP0E9d4gpGmJAKdhm4rCJDCJ5NCw6cOaz1Rw6AR3GG3gHRhx115hVZTm4dD8QX5
-	CVimNCmkGxrhW/sejDZ6ba/D5x6cp4vM1YF6AJbZFi+KwZZttL2YhUL5GYRbtavP8b9lJtWr6C0
-	ePs7A07YVH0dq7wY7utsl1cesvX3+KG8J9kW6rJ8xa6yp+nHdhAPbZr2AF6XHbY4t+TBhyCw==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--10.876900-8.000000
-X-TMASE-Version: SMEX-14.0.0.3080-8.6.1018-26680.007
-X-TM-SNTS-SMTP: 
- 44798BB67CBD3FF75569B4D9CB4470132F41DD856FD8E3A9B3ED9138E9F05F222000:8
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: dd6bfbc1-5204-49be-a550-08da74c484ed
-X-MS-TrafficTypeDiagnostic: AS8PR10MB5041:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	+d3JFCdbfMkqpbeQ+izDpcsnCicAt2l9pa6XY0xL/9VD16iPg83ntohE9qaxpEu56wYMURR/MvDFBPYCoFU+VeFRH+KNlFsq+k1FxTPmkW9QyzCABDNNqciD/mNk5bsVOdZMwha8imgksuE8ziTPfpGREbOx9lrQu4amC4JMfp43kuR/55X3bYPHyjGlwqCmZhu+7G0JRnpx9ZYU95KNvh1r1YvJ27UKvPe78VPh8g3A6xr/7CObv0BDzrrKT9H9KFbNhh4I8nHRyiJihSELUeAzaHiHctNTnYJmbMdJX19+OkfsK1yfJXZJesgQ+VqbVnOdT4e/x/e/8srJ6IABjkoIaBFAkBJsnQN2BhgIEpP2xDiS8pM3oH0P+HD243TRd5sRCL9g8v4Wa8/5yYzv8D8OcCIwDiy14HwxK/IxaWuEWCA0iqcOF1fYzpEw6n2hq7CWg16J26crJlJxegcrfoeDzjH/AY90DM7Nn0pFB1ZJnwWVD6rlGAR0o9/oLZmNaK/69kHmp/8VsgS214pk4MVq7uMtzivmtXiJ5bM2ZD6JGAFJr0ivxwhwmDhoWzd8ZVd6T+DQ16uAsX8p4llP81lU7jMJtcbMqkrKecOjOAdJFjULrPWbUseORf+eSgMa/2cvf7gF0iBPGuhbkH9RKHct2PlJQeils9zGh2FH0vn/zynGW3bQWniQfuzdz925p4gf602LoATROaFf4vTcq1Jl9nfQ4MDBwJTB+v+yIDSXMKJfLYEuRNQWuthmN9alhYlpt7mmnELUFm3gf5IxaXRW+FkvJjVVUhbfvz3ZYjndSU+nUG7VpZF/lniPIvofw4wYtNd9OpDbnXgkGmz+eHMmxfmZkIJE9rxDlwz+/WnN+Mx1cPNNSh5STtfLf92e
-X-Forefront-Antispam-Report: 
-	CIP:194.138.21.70;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:hybrid.siemens.com;CAT:NONE;SFS:(13230016)(4636009)(39860400002)(396003)(136003)(376002)(346002)(40470700004)(46966006)(36840700001)(186003)(16526019)(7596003)(82960400001)(40480700001)(7636003)(82310400005)(6706004)(31686004)(36756003)(356005)(110136005)(336012)(47076005)(16576012)(316002)(956004)(2616005)(478600001)(8936002)(4744005)(5660300002)(44832011)(2906002)(86362001)(36860700001)(82740400003)(26005)(70586007)(70206006)(40460700003)(31696002)(41300700001)(8676002)(6666004)(3940600001)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Aug 2022 20:21:01.8144
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 
- dd6bfbc1-5204-49be-a550-08da74c484ed
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
- TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.70];Helo=[hybrid.siemens.com]
-X-MS-Exchange-CrossTenant-AuthSource: 
-	DB5EUR01FT106.eop-EUR01.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB5041
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Tree: cip-gitlab
+X-Kernelci-Branch: ci/pavel/linux-test
+X-Kernelci-Report-Type: test
+X-Kernelci-Kernel: v5.10.131-cip13
+Subject: cip-gitlab/ci/pavel/linux-test baseline-nfs: 14 runs,
+ 3 regressions (v5.10.131-cip13)
+To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
+From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 02 Aug 2022 20:21:09 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9027
+ <cip-dev@lists.cip-project.org>; Tue, 02 Aug 2022 20:30:39 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9029
 
-Hi Pavel,
+cip-gitlab/ci/pavel/linux-test baseline-nfs: 14 runs, 3 regressions (v5.10.=
+131-cip13)
 
-we have a build-regression in 4.4.302-cip70:
+Regressions Summary
+-------------------
 
- ../sound/soc/codecs/rt5645.c: In function 'rt5645_i2c_remove':
- ../sound/soc/codecs/rt5645.c:3683:24: error: 'struct rt5645_priv' has no member named 'btn_check_timer'
-  3683 |  del_timer_sync(&rt5645->btn_check_timer);
-       |                        ^~
- make[6]: *** [../scripts/Makefile.build:280: sound/soc/codecs/rt5645.o] Error 1
+platform         | arch  | lab           | compiler | defconfig            =
+      | regressions
+-----------------+-------+---------------+----------+----------------------=
+------+------------
+rk3399-gru-kevin | arm64 | lab-collabora | gcc-10   | defconfig+arm64-chrom=
+ebook | 3          =
 
-That's related to 32ab6f27ac8264da14ff3b8dc17da1013fb5560f, a commit 
-that either does not belong into 4.4 or is missing dependencies.
 
-I guess this slipped through because the affectd driver is not in any of 
-our cip configs - but it is enabled in multi_v7_defconfig...
+  Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fpavel%2Fli=
+nux-test/kernel/v5.10.131-cip13/plan/baseline-nfs/
 
-Jan
+  Test:     baseline-nfs
+  Tree:     cip-gitlab
+  Branch:   ci/pavel/linux-test
+  Describe: v5.10.131-cip13
+  URL:      https://gitlab.com/cip-project/cip-kernel/linux-cip.git
+  SHA:      e217bcd84090afd29c7a9ab120fb3c8ff8844478 =
 
--- 
-Siemens AG, Technology
-Competence Center Embedded Linux
+
+
+Test Regressions
+---------------- =
+
+
+
+platform         | arch  | lab           | compiler | defconfig            =
+      | regressions
+-----------------+-------+---------------+----------+----------------------=
+------+------------
+rk3399-gru-kevin | arm64 | lab-collabora | gcc-10   | defconfig+arm64-chrom=
+ebook | 3          =
+
+
+  Details:     https://kernelci.org/test/plan/id/62e97de3203c33deafdaf0dd
+
+  Results:     84 PASS, 4 FAIL, 0 SKIP
+  Full config: defconfig+arm64-chromebook
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.131-cip13/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/base=
+line-nfs-rk3399-gru-kevin.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.131-cip13/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/base=
+line-nfs-rk3399-gru-kevin.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220718.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.bootrr.cros-ec-sensors-gyro0-probed: https://kernelci.org/=
+test/case/id/62e97de4203c33deafdaf120
+        failing since 84 days (last pass: v4.19.233-516-ge5e741fbfc87, firs=
+t fail: v5.10.109-cip5-384-g722204542e8a)
+
+    2022-08-02T19:41:04.916667  <8>[   93.188208] <LAVA_SIGNAL_TESTCASE TES=
+T_CASE_ID=3Dcros-ec-sensors-accel1-probed RESULT=3Dfail>
+    2022-08-02T19:41:05.951876  /lava-6951001/1/../bin/lava-test-case
+    2022-08-02T19:41:05.983316  <8>[   94.255469] <LAVA_SIGNAL_TESTCASE TES=
+T_CASE_ID=3Dcros-ec-sensors-gyro0-probed RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.cros-ec-sensors-accel1-probed: https://kernelci.org=
+/test/case/id/62e97de4203c33deafdaf121
+        failing since 84 days (last pass: v4.19.233-516-ge5e741fbfc87, firs=
+t fail: v5.10.109-cip5-384-g722204542e8a)
+
+    2022-08-02T19:41:04.885961  /lava-6951001/1/../bin/lava-test-case   =
+
+
+  * baseline-nfs.bootrr.cros-ec-sensors-accel0-probed: https://kernelci.org=
+/test/case/id/62e97de4203c33deafdaf122
+        failing since 84 days (last pass: v4.19.233-516-ge5e741fbfc87, firs=
+t fail: v5.10.109-cip5-384-g722204542e8a)
+
+    2022-08-02T19:41:02.777507  <8>[   91.049143] <LAVA_SIGNAL_TESTCASE TES=
+T_CASE_ID=3Dcros-ec-sensors-driver-present RESULT=3Dpass>
+    2022-08-02T19:41:03.811008  /lava-6951001/1/../bin/lava-test-case
+    2022-08-02T19:41:03.844478  <8>[   92.116469] <LAVA_SIGNAL_TESTCASE TES=
+T_CASE_ID=3Dcros-ec-sensors-accel0-probed RESULT=3Dfail>   =
+
+ =20
 
