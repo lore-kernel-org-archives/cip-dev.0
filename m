@@ -2,34 +2,34 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEBCDC19F2C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAACCC00140
 	for <webhook@archiver.kernel.org>; Tue,  2 Aug 2022 11:09:11 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com
- [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.4772.1659438549641555982
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com
+ [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web11.4832.1659438534534175527
  for <cip-dev@lists.cip-project.org>;
- Tue, 02 Aug 2022 04:09:09 -0700
+ Tue, 02 Aug 2022 04:09:02 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=pass (domain: bp.renesas.com, ip: 210.160.252.171,
+ spf=pass (domain: bp.renesas.com, ip: 210.160.252.172,
  mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.93,210,1654527600";
-   d="scan'208";a="128236738"
+   d="scan'208";a="130054311"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 02 Aug 2022 20:09:08 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 02 Aug 2022 20:09:02 +0900
 Received: from localhost.localdomain (unknown [10.226.92.246])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 37E37400D4CE;
-	Tue,  2 Aug 2022 20:09:06 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7AB3F400D4CE;
+	Tue,  2 Aug 2022 20:09:00 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: Pavel Machek <pavel@denx.de>
 Cc: nobuhiro1.iwamatsu@toshiba.co.jp,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 07/24] clk: renesas: r9a07g044: Update multiplier
- and divider values for PLL2/3
-Date: Tue,  2 Aug 2022 12:08:33 +0100
-Message-Id: <20220802110850.1496057-8-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 04/24] arm64: dts: renesas: rzg2lc-smarc: Enable
+ microSD on SMARC platform
+Date: Tue,  2 Aug 2022 12:08:30 +0100
+Message-Id: <20220802110850.1496057-5-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220802110850.1496057-1-biju.das.jz@bp.renesas.com>
 References: <20220802110850.1496057-1-biju.das.jz@bp.renesas.com>
@@ -39,44 +39,93 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 02 Aug 2022 11:09:11 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9004
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9001
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+commit 81a27b1f69022174567e8237d3de2534821671ba upstream.
 
-commit b289cdecc7c3e25e001cde260c882e4d9a8b0772 upstream.
+Enable the microSD card slot connected to SDHI1 on the RZ/G2LC SMARC
+platform by removing the sdhi1 override which disabled it, and by adding
+the necessary pinmux required for SDHI1.
 
-As per the HW manual (Rev.1.00 Sep, 2021) PLL2 and PLL3 should be
-1600 MHz, but with current multiplier and divider values this resulted
-to 1596 MHz.
-
-This patch updates the multiplier and divider values for PLL2 and PLL3
-so that we get the exact (1600 MHz) values.
-
-Fixes: 17f0ff3d49ff1 ("clk: renesas: Add support for R9A07G044 SoC")
-Suggested-by: Biju Das <biju.das.jz@bp.renesas.com>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://lore.kernel.org/r/20211223093223.4725-1-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Link: https://lore.kernel.org/r/20220117075130.6198-2-biju.das.jz@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a07g044-cpg.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../boot/dts/renesas/r9a07g044c2-smarc.dts    |  8 ----
+ .../dts/renesas/rzg2lc-smarc-pinfunction.dtsi | 39 +++++++++++++++++++
+ 2 files changed, 39 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
-index 79042bf46fe8..46359afef0d4 100644
---- a/drivers/clk/renesas/r9a07g044-cpg.c
-+++ b/drivers/clk/renesas/r9a07g044-cpg.c
-@@ -88,8 +88,8 @@ static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
- 	DEF_FIXED(".osc", R9A07G044_OSCCLK, CLK_EXTAL, 1, 1),
- 	DEF_FIXED(".osc_div1000", CLK_OSC_DIV1000, CLK_EXTAL, 1, 1000),
- 	DEF_SAMPLL(".pll1", CLK_PLL1, CLK_EXTAL, PLL146_CONF(0)),
--	DEF_FIXED(".pll2", CLK_PLL2, CLK_EXTAL, 133, 2),
--	DEF_FIXED(".pll3", CLK_PLL3, CLK_EXTAL, 133, 2),
-+	DEF_FIXED(".pll2", CLK_PLL2, CLK_EXTAL, 200, 3),
-+	DEF_FIXED(".pll3", CLK_PLL3, CLK_EXTAL, 200, 3),
- 	DEF_FIXED(".pll3_400", CLK_PLL3_400, CLK_PLL3, 1, 4),
- 	DEF_FIXED(".pll3_533", CLK_PLL3_533, CLK_PLL3, 1, 3),
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts b/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts
+index 728a2275ea8d..8d671111d973 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts
++++ b/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts
+@@ -81,14 +81,6 @@ &scif2 {
+ 	status = "disabled";
+ };
  
+-&sdhi1 {
+-	/delete-property/ pinctrl-0;
+-	/delete-property/ pinctrl-1;
+-	/delete-property/ pinctrl-names;
+-	/delete-property/ vmmc-supply;
+-	status = "disabled";
+-};
+-
+ &spi1 {
+ 	/delete-property/ pinctrl-0;
+ 	/delete-property/ pinctrl-names;
+diff --git a/arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi b/arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi
+index 5333a1f9a0e7..1032f6563515 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi
+@@ -17,6 +17,45 @@ scif0_pins: scif0 {
+ 			 <RZG2L_PORT_PINMUX(38, 1, 1)>;	/* RxD */
+ 	};
+ 
++	sd1-pwr-en-hog {
++		gpio-hog;
++		gpios = <RZG2L_GPIO(39, 2) GPIO_ACTIVE_HIGH>;
++		output-high;
++		line-name = "sd1_pwr_en";
++	};
++
++	sdhi1_pins: sd1 {
++		sd1_data {
++			pins = "SD1_DATA0", "SD1_DATA1", "SD1_DATA2", "SD1_DATA3";
++			power-source = <3300>;
++		};
++
++		sd1_ctrl {
++			pins = "SD1_CLK", "SD1_CMD";
++			power-source = <3300>;
++		};
++
++		sd1_mux {
++			pinmux = <RZG2L_PORT_PINMUX(19, 0, 1)>; /* SD1_CD */
++		};
++	};
++
++	sdhi1_pins_uhs: sd1_uhs {
++		sd1_data_uhs {
++			pins = "SD1_DATA0", "SD1_DATA1", "SD1_DATA2", "SD1_DATA3";
++			power-source = <1800>;
++		};
++
++		sd1_ctrl_uhs {
++			pins = "SD1_CLK", "SD1_CMD";
++			power-source = <1800>;
++		};
++
++		sd1_mux_uhs {
++			pinmux = <RZG2L_PORT_PINMUX(19, 0, 1)>; /* SD1_CD */
++		};
++	};
++
+ 	sound_clk_pins: sound_clk {
+ 		pins = "AUDIO_CLK1", "AUDIO_CLK2";
+ 		input-enable;
 -- 
 2.25.1
 
