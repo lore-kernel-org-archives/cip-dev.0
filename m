@@ -2,34 +2,34 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB36DC00140
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5469C19F2D
 	for <webhook@archiver.kernel.org>; Tue,  2 Aug 2022 11:09:51 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com
  [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.web08.4809.1659438581066216777
  for <cip-dev@lists.cip-project.org>;
- Tue, 02 Aug 2022 04:09:47 -0700
+ Tue, 02 Aug 2022 04:09:43 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
  spf=pass (domain: bp.renesas.com, ip: 210.160.252.171,
  mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.93,210,1654527600";
-   d="scan'208";a="128236821"
+   d="scan'208";a="128236812"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 02 Aug 2022 20:09:47 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 02 Aug 2022 20:09:42 +0900
 Received: from localhost.localdomain (unknown [10.226.92.246])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 9F116400D4CE;
-	Tue,  2 Aug 2022 20:09:45 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 1C5D04004934;
+	Tue,  2 Aug 2022 20:09:40 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: Pavel Machek <pavel@denx.de>
 Cc: nobuhiro1.iwamatsu@toshiba.co.jp,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 24/24] arm64: dts: renesas: rzg2lc-smarc: Enable
- SCIF1 on carrier board
-Date: Tue,  2 Aug 2022 12:08:50 +0100
-Message-Id: <20220802110850.1496057-25-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 22/24] arm64: dts: renesas: rzg2l-smarc: Add common
+ dtsi file
+Date: Tue,  2 Aug 2022 12:08:48 +0100
+Message-Id: <20220802110850.1496057-23-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220802110850.1496057-1-biju.das.jz@bp.renesas.com>
 References: <20220802110850.1496057-1-biju.das.jz@bp.renesas.com>
@@ -39,77 +39,517 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 02 Aug 2022 11:09:51 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9021
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9019
 
-commit fa00d6dc19283bee13f0390546f741293f6d2d9a upstream.
+commit 726fd781195dc99cdcb60b2678694bfa5ccd1825 upstream.
 
-SCIF1 interface is available on PMOD1 connector (CN7) on carrier board.
+RZ/{G2L,V2L} and G2LC SoC use the same carrier board, but the SoM is
+different.
 
-This patch adds pinmux and scif1 node to carrier board dtsi file for
-RZ/G2LC SMARC EVK.
+Different pin mapping is possible on SoM. For eg:- RZ/G2L SMARC EVK
+uses SCIF2, whereas RZ/G2LC uses SCIF1 for the serial interface available
+on PMOD1.
+
+This patch adds support for handling the pin mapping differences by moving
+definitions common to RZ/G2L and RZ/G2LC to a common dtsi file.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://lore.kernel.org/r/20220203170636.7747-4-biju.das.jz@bp.renesas.com
+Link: https://lore.kernel.org/r/20220203170636.7747-2-biju.das.jz@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- .../dts/renesas/rzg2lc-smarc-pinfunction.dtsi |  7 +++++
- arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi | 26 +++++++++++++++++++
- 2 files changed, 33 insertions(+)
+ .../boot/dts/renesas/r9a07g044c2-smarc.dts    |   9 +-
+ .../boot/dts/renesas/r9a07g044l2-smarc.dts    |   1 +
+ .../boot/dts/renesas/r9a07g054l2-smarc.dts    |   1 +
+ .../boot/dts/renesas/rz-smarc-common.dtsi     | 207 ++++++++++++++++++
+ arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi  | 193 ----------------
+ 5 files changed, 210 insertions(+), 201 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi
 
-diff --git a/arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi b/arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi
-index 1032f6563515..ec9e08ec0822 100644
---- a/arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi
-@@ -17,6 +17,13 @@ scif0_pins: scif0 {
- 			 <RZG2L_PORT_PINMUX(38, 1, 1)>;	/* RxD */
- 	};
- 
-+	scif1_pins: scif1 {
-+		pinmux = <RZG2L_PORT_PINMUX(40, 0, 1)>, /* TxD */
-+			 <RZG2L_PORT_PINMUX(40, 1, 1)>, /* RxD */
-+			 <RZG2L_PORT_PINMUX(41, 0, 1)>, /* CTS# */
-+			 <RZG2L_PORT_PINMUX(41, 1, 1)>; /* RTS# */
-+	};
-+
- 	sd1-pwr-en-hog {
- 		gpio-hog;
- 		gpios = <RZG2L_GPIO(39, 2) GPIO_ACTIVE_HIGH>;
-diff --git a/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
-index ca5ca7ce6692..1b59ef376296 100644
---- a/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
-@@ -34,3 +34,29 @@
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts b/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts
+index 8d671111d973..af84fd6c8a81 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts
++++ b/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts
+@@ -9,12 +9,11 @@
+ #include "r9a07g044c2.dtsi"
  #include "rzg2lc-smarc-som.dtsi"
  #include "rzg2lc-smarc-pinfunction.dtsi"
- #include "rz-smarc-common.dtsi"
+-#include "rzg2l-smarc.dtsi"
++#include "rz-smarc-common.dtsi"
+ 
+ / {
+ 	model = "Renesas SMARC EVK based on r9a07g044c2";
+ 	compatible = "renesas,smarc-evk", "renesas,r9a07g044c2", "renesas,r9a07g044";
+-
+ };
+ 
+ &canfd {
+@@ -75,12 +74,6 @@ &phyrst {
+ 	status = "disabled";
+ };
+ 
+-&scif2 {
+-	/delete-property/ pinctrl-0;
+-	/delete-property/ pinctrl-names;
+-	status = "disabled";
+-};
+-
+ &spi1 {
+ 	/delete-property/ pinctrl-0;
+ 	/delete-property/ pinctrl-names;
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g044l2-smarc.dts b/arch/arm64/boot/dts/renesas/r9a07g044l2-smarc.dts
+index 886d38886d05..bc2af6c92ccd 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g044l2-smarc.dts
++++ b/arch/arm64/boot/dts/renesas/r9a07g044l2-smarc.dts
+@@ -9,6 +9,7 @@
+ #include "r9a07g044l2.dtsi"
+ #include "rzg2l-smarc-som.dtsi"
+ #include "rzg2l-smarc-pinfunction.dtsi"
++#include "rz-smarc-common.dtsi"
+ #include "rzg2l-smarc.dtsi"
+ 
+ / {
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g054l2-smarc.dts b/arch/arm64/boot/dts/renesas/r9a07g054l2-smarc.dts
+index 39ef55bfe0c3..49d141db53f7 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g054l2-smarc.dts
++++ b/arch/arm64/boot/dts/renesas/r9a07g054l2-smarc.dts
+@@ -9,6 +9,7 @@
+ #include "r9a07g054l2.dtsi"
+ #include "rzg2l-smarc-som.dtsi"
+ #include "rzg2l-smarc-pinfunction.dtsi"
++#include "rz-smarc-common.dtsi"
+ #include "rzg2l-smarc.dtsi"
+ 
+ / {
+diff --git a/arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi b/arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi
+new file mode 100644
+index 000000000000..588117aafaca
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi
+@@ -0,0 +1,207 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++/*
++ * Device Tree Source for the RZ/{G2L,G2LC,V2L} SMARC EVK common parts
++ *
++ * Copyright (C) 2022 Renesas Electronics Corp.
++ */
 +
-+/* comment the #define statement to disable SCIF1 (SER0) on PMOD1 (CN7) */
-+#define PMOD1_SER0	1
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
++
++/*
++ * SSI-WM8978
++ *
++ * This command is required when Playback/Capture
++ *
++ *	amixer cset name='Left Input Mixer L2 Switch' on
++ *	amixer cset name='Right Input Mixer R2 Switch' on
++ *	amixer cset name='Headphone Playback Volume' 100
++ *	amixer cset name='PCM Volume' 100%
++ *	amixer cset name='Input PGA Volume' 25
++ *
++ */
 +
 +/ {
 +	aliases {
-+		serial1 = &scif1;
++		serial0 = &scif0;
++		i2c0 = &i2c0;
++		i2c1 = &i2c1;
++		i2c3 = &i2c3;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	audio_mclock: audio_mclock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <11289600>;
++	};
++
++	snd_rzg2l: sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,format = "i2s";
++		simple-audio-card,bitclock-master = <&cpu_dai>;
++		simple-audio-card,frame-master = <&cpu_dai>;
++		simple-audio-card,mclk-fs = <256>;
++
++		simple-audio-card,widgets = "Microphone", "Microphone Jack";
++		simple-audio-card,routing =
++			    "L2", "Mic Bias",
++			    "R2", "Mic Bias",
++			    "Mic Bias", "Microphone Jack";
++
++		cpu_dai: simple-audio-card,cpu {
++			sound-dai = <&ssi0>;
++		};
++
++		codec_dai: simple-audio-card,codec {
++			clocks = <&audio_mclock>;
++			sound-dai = <&wm8978>;
++		};
++	};
++
++	usb0_vbus_otg: regulator-usb0-vbus-otg {
++		compatible = "regulator-fixed";
++
++		regulator-name = "USB0_VBUS_OTG";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++	};
++
++	vccq_sdhi1: regulator-vccq-sdhi1 {
++		compatible = "regulator-gpio";
++		regulator-name = "SDHI1 VccQ";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <3300000>;
++		gpios = <&pinctrl RZG2L_GPIO(39, 1) GPIO_ACTIVE_HIGH>;
++		gpios-states = <1>;
++		states = <3300000 1>, <1800000 0>;
 +	};
 +};
 +
-+/*
-+ * To enable SCIF1 (SER0) on PMOD1 (CN7), On connector board
-+ * SW1 should be at position 2->3 so that SER0_CTS# line is activated
-+ * SW2 should be at position 2->3 so that SER0_TX line is activated
-+ * SW3 should be at position 2->3 so that SER0_RX line is activated
-+ * SW4 should be at position 2->3 so that SER0_RTS# line is activated
-+ */
-+#if (!SW_SCIF_CAN && PMOD1_SER0)
-+&scif1 {
-+	pinctrl-0 = <&scif1_pins>;
-+	pinctrl-names = "default";
++&audio_clk1{
++	clock-frequency = <11289600>;
++};
 +
-+	uart-has-rtscts;
++&audio_clk2{
++	clock-frequency = <12288000>;
++};
++
++&canfd {
++	pinctrl-0 = <&can0_pins &can1_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	channel0 {
++		status = "okay";
++	};
++
++	channel1 {
++		status = "okay";
++	};
++};
++
++&ehci0 {
++	dr_mode = "otg";
 +	status = "okay";
 +};
-+#endif
++
++&ehci1 {
++	status = "okay";
++};
++
++&hsusb {
++	dr_mode = "otg";
++	status = "okay";
++};
++
++&i2c0 {
++	pinctrl-0 = <&i2c0_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
++&i2c1 {
++	pinctrl-0 = <&i2c1_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
++&i2c3 {
++	pinctrl-0 = <&i2c3_pins>;
++	pinctrl-names = "default";
++	clock-frequency = <400000>;
++
++	status = "okay";
++
++	wm8978: codec@1a {
++		compatible = "wlf,wm8978";
++		#sound-dai-cells = <0>;
++		reg = <0x1a>;
++	};
++};
++
++&ohci0 {
++	dr_mode = "otg";
++	status = "okay";
++};
++
++&ohci1 {
++	status = "okay";
++};
++
++&phyrst {
++	status = "okay";
++};
++
++&scif0 {
++	pinctrl-0 = <&scif0_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
++&sdhi1 {
++	pinctrl-0 = <&sdhi1_pins>;
++	pinctrl-1 = <&sdhi1_pins_uhs>;
++	pinctrl-names = "default", "state_uhs";
++
++	vmmc-supply = <&reg_3p3v>;
++	vqmmc-supply = <&vccq_sdhi1>;
++	bus-width = <4>;
++	sd-uhs-sdr50;
++	sd-uhs-sdr104;
++	status = "okay";
++};
++
++&spi1 {
++	pinctrl-0 = <&spi1_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
++&ssi0 {
++	pinctrl-0 = <&ssi0_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
++&usb2_phy0 {
++	pinctrl-0 = <&usb0_pins>;
++	pinctrl-names = "default";
++
++	vbus-supply = <&usb0_vbus_otg>;
++	status = "okay";
++};
++
++&usb2_phy1 {
++	pinctrl-0 = <&usb1_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
+index 78034f36156d..33ddfd18bd56 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
+@@ -8,164 +8,13 @@
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
+ 
+-/*
+- * SSI-WM8978
+- *
+- * This command is required when Playback/Capture
+- *
+- *	amixer cset name='Left Input Mixer L2 Switch' on
+- *	amixer cset name='Right Input Mixer R2 Switch' on
+- *	amixer cset name='Headphone Playback Volume' 100
+- *	amixer cset name='PCM Volume' 100%
+- *	amixer cset name='Input PGA Volume' 25
+- *
+- */
+-
+ /* comment the #define statement to disable SCIF2 (SER0) on PMOD1 (CN7) */
+ #define PMOD1_SER0	1
+ 
+ / {
+ 	aliases {
+-		serial0 = &scif0;
+ 		serial1 = &scif2;
+-		i2c0 = &i2c0;
+-		i2c1 = &i2c1;
+-		i2c3 = &i2c3;
+-	};
+-
+-	chosen {
+-		stdout-path = "serial0:115200n8";
+-	};
+-
+-	audio_mclock: audio_mclock {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <11289600>;
+-	};
+-
+-	snd_rzg2l: sound {
+-		compatible = "simple-audio-card";
+-		simple-audio-card,format = "i2s";
+-		simple-audio-card,bitclock-master = <&cpu_dai>;
+-		simple-audio-card,frame-master = <&cpu_dai>;
+-		simple-audio-card,mclk-fs = <256>;
+-
+-		simple-audio-card,widgets = "Microphone", "Microphone Jack";
+-		simple-audio-card,routing =
+-			    "L2", "Mic Bias",
+-			    "R2", "Mic Bias",
+-			    "Mic Bias", "Microphone Jack";
+-
+-		cpu_dai: simple-audio-card,cpu {
+-			sound-dai = <&ssi0>;
+-		};
+-
+-		codec_dai: simple-audio-card,codec {
+-			clocks = <&audio_mclock>;
+-			sound-dai = <&wm8978>;
+-		};
+-	};
+-
+-	usb0_vbus_otg: regulator-usb0-vbus-otg {
+-		compatible = "regulator-fixed";
+-
+-		regulator-name = "USB0_VBUS_OTG";
+-		regulator-min-microvolt = <5000000>;
+-		regulator-max-microvolt = <5000000>;
+-	};
+-
+-	vccq_sdhi1: regulator-vccq-sdhi1 {
+-		compatible = "regulator-gpio";
+-		regulator-name = "SDHI1 VccQ";
+-		regulator-min-microvolt = <1800000>;
+-		regulator-max-microvolt = <3300000>;
+-		gpios = <&pinctrl RZG2L_GPIO(39, 1) GPIO_ACTIVE_HIGH>;
+-		gpios-states = <1>;
+-		states = <3300000 1>, <1800000 0>;
+-	};
+-};
+-
+-&audio_clk1{
+-	clock-frequency = <11289600>;
+-};
+-
+-&audio_clk2{
+-	clock-frequency = <12288000>;
+-};
+-
+-&canfd {
+-	pinctrl-0 = <&can0_pins &can1_pins>;
+-	pinctrl-names = "default";
+-	status = "okay";
+-
+-	channel0 {
+-		status = "okay";
+ 	};
+-
+-	channel1 {
+-		status = "okay";
+-	};
+-};
+-
+-&ehci0 {
+-	dr_mode = "otg";
+-	status = "okay";
+-};
+-
+-&ehci1 {
+-	status = "okay";
+-};
+-
+-&hsusb {
+-	dr_mode = "otg";
+-	status = "okay";
+-};
+-
+-&i2c0 {
+-	pinctrl-0 = <&i2c0_pins>;
+-	pinctrl-names = "default";
+-
+-	status = "okay";
+-};
+-
+-&i2c1 {
+-	pinctrl-0 = <&i2c1_pins>;
+-	pinctrl-names = "default";
+-
+-	status = "okay";
+-};
+-
+-&i2c3 {
+-	pinctrl-0 = <&i2c3_pins>;
+-	pinctrl-names = "default";
+-	clock-frequency = <400000>;
+-
+-	status = "okay";
+-
+-	wm8978: codec@1a {
+-		compatible = "wlf,wm8978";
+-		#sound-dai-cells = <0>;
+-		reg = <0x1a>;
+-	};
+-};
+-
+-&ohci0 {
+-	dr_mode = "otg";
+-	status = "okay";
+-};
+-
+-&ohci1 {
+-	status = "okay";
+-};
+-
+-&phyrst {
+-	status = "okay";
+-};
+-
+-&scif0 {
+-	pinctrl-0 = <&scif0_pins>;
+-	pinctrl-names = "default";
+-	status = "okay";
+ };
+ 
+ /*
+@@ -184,45 +33,3 @@ &scif2 {
+ 	status = "okay";
+ };
+ #endif
+-
+-&sdhi1 {
+-	pinctrl-0 = <&sdhi1_pins>;
+-	pinctrl-1 = <&sdhi1_pins_uhs>;
+-	pinctrl-names = "default", "state_uhs";
+-
+-	vmmc-supply = <&reg_3p3v>;
+-	vqmmc-supply = <&vccq_sdhi1>;
+-	bus-width = <4>;
+-	sd-uhs-sdr50;
+-	sd-uhs-sdr104;
+-	status = "okay";
+-};
+-
+-&spi1 {
+-	pinctrl-0 = <&spi1_pins>;
+-	pinctrl-names = "default";
+-
+-	status = "okay";
+-};
+-
+-&ssi0 {
+-	pinctrl-0 = <&ssi0_pins>;
+-	pinctrl-names = "default";
+-
+-	status = "okay";
+-};
+-
+-&usb2_phy0 {
+-	pinctrl-0 = <&usb0_pins>;
+-	pinctrl-names = "default";
+-
+-	vbus-supply = <&usb0_vbus_otg>;
+-	status = "okay";
+-};
+-
+-&usb2_phy1 {
+-	pinctrl-0 = <&usb1_pins>;
+-	pinctrl-names = "default";
+-
+-	status = "okay";
+-};
 -- 
 2.25.1
 
