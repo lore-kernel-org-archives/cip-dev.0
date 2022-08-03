@@ -2,71 +2,55 @@ Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98FFBC19F28
-	for <webhook@archiver.kernel.org>; Wed,  3 Aug 2022 13:51:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C161CC19F28
+	for <webhook@archiver.kernel.org>; Wed,  3 Aug 2022 14:29:03 +0000 (UTC)
 Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web10.8632.1659534654344070461
+ by mx.groups.io with SMTP id smtpd.web10.9115.1659536940210010240
  for <cip-dev@lists.cip-project.org>;
- Wed, 03 Aug 2022 06:50:55 -0700
+ Wed, 03 Aug 2022 07:29:01 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
  spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id D89091C0004; Wed,  3 Aug 2022 15:50:52 +0200 (CEST)
-Date: Wed, 3 Aug 2022 15:50:52 +0200
+	id 0D5E01C0004; Wed,  3 Aug 2022 16:28:57 +0200 (CEST)
+Date: Wed, 3 Aug 2022 16:28:56 +0200
 From: Pavel Machek <pavel@denx.de>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Pavel Machek <pavel@denx.de>,
-	"nobuhiro1.iwamatsu@toshiba.co.jp" <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	"cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-Subject: Re: [PATCH 5.10.y-cip 10/24] clk: renesas: rzg2l-cpg: Add support
- for RZ/V2L SoC
-Message-ID: <20220803135052.GB4038@duo.ucw.cz>
-References: <20220802110850.1496057-1-biju.das.jz@bp.renesas.com>
- <20220802110850.1496057-11-biju.das.jz@bp.renesas.com>
- <20220802165407.GB9523@duo.ucw.cz>
- <OS0PR01MB5922C7909AE27C0EE5B1514C869C9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: cip-dev <cip-dev@lists.cip-project.org>, Pavel Machek <pavel@denx.de>
+Subject: Re: [PATCH 4.4-cip] Revert "ASoC: rt5645: Fix errorenous cleanup
+ order"
+Message-ID: <20220803142856.GA7175@duo.ucw.cz>
+References: <ed1abfd6-0bd2-c266-53bb-bfb17f51eaf4@siemens.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="4bRzO86E/ozDv8r1"
+	protocol="application/pgp-signature"; boundary="Kj7319i9nmIyA2yE"
 Content-Disposition: inline
-In-Reply-To: 
- <OS0PR01MB5922C7909AE27C0EE5B1514C869C9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+In-Reply-To: <ed1abfd6-0bd2-c266-53bb-bfb17f51eaf4@siemens.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 03 Aug 2022 13:51:03 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9048
+ <cip-dev@lists.cip-project.org>; Wed, 03 Aug 2022 14:29:03 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9049
 
 
---4bRzO86E/ozDv8r1
+--Kj7319i9nmIyA2yE
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> > If you enable CONFIG_CLK_R9A07G044, you get g044 support but not g054
-> > support.
-> >=20
-> > If you enable CONFIG_CLK_R9A07G054, you get both g044 and g054 support,
-> > you can't disable g044.
+> From: Jan Kiszka <jan.kiszka@siemens.com>
 >=20
-> This is not true, we can disable g044 still. see rzg2l_cpg.c, there is a =
-guard
-> for CONFIG_CLK_R9A07G044.
+> This reverts commit 32ab6f27ac8264da14ff3b8dc17da1013fb5560f.
 >=20
-> In this case,We will get unused variable warning for r9a07g044_cpg_info.
+> Misplaced in 4.4 because there is no btn_check_timer in this kernel.
 >=20
-> >=20
-> > This is quite strange, but probably not a problem. For symmetry, I'd not
-> > mind conditional compilation of g044 parts;=20
->=20
-> OK, will send patch for adding guard for r9a07g044_cpg_info.
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 
-Thank you.
+Thank you. Let me apply this to -st-rc, it should get merged to -st
+after testing and should appear in next 4.4-cip.
 
 Best regards,
 								Pavel
@@ -74,15 +58,15 @@ Best regards,
 DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---4bRzO86E/ozDv8r1
+--Kj7319i9nmIyA2yE
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYup9PAAKCRAw5/Bqldv6
-8hvCAJ0S6rGnmRa2P8X2O8FKpi6PlxeFhACfeBZ9jdqJn1yK1wnYSbU7+MkRuuI=
-=8/C5
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYuqGKAAKCRAw5/Bqldv6
+8hVoAJ9WfDu1ryPE3tjQcgmLO325+yxh+QCfcymdU8jx5ZC8iEsa7OOa+kA3a+o=
+=w/s3
 -----END PGP SIGNATURE-----
 
---4bRzO86E/ozDv8r1--
+--Kj7319i9nmIyA2yE--
 
