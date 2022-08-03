@@ -2,24 +2,24 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F99AC19F2C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA96BC19F29
 	for <webhook@archiver.kernel.org>; Wed,  3 Aug 2022 16:54:19 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com
- [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.134.1659545655590408986
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com
+ [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web12.169.1659545650200364617
  for <cip-dev@lists.cip-project.org>;
- Wed, 03 Aug 2022 09:54:15 -0700
+ Wed, 03 Aug 2022 09:54:12 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=pass (domain: bp.renesas.com, ip: 210.160.252.171,
+ spf=pass (domain: bp.renesas.com, ip: 210.160.252.172,
  mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.93,214,1654527600";
-   d="scan'208";a="128394727"
+   d="scan'208";a="130216130"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 04 Aug 2022 01:54:14 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 04 Aug 2022 01:54:12 +0900
 Received: from localhost.localdomain (unknown [10.226.93.45])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id AF44340B10E9;
-	Thu,  4 Aug 2022 01:54:12 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 2A4FB40B100C;
+	Thu,  4 Aug 2022 01:54:09 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -27,10 +27,10 @@ To: cip-dev@lists.cip-project.org,
 Cc: Chris Paterson <chris.paterson2@renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 05/13] arm64: dts: renesas: r9a07g044c2-smarc:
- Enable usb2.0
-Date: Wed,  3 Aug 2022 17:53:50 +0100
-Message-Id: <20220803165358.2156150-6-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 04/13] arm64: dts: renesas: Align GPIO hog names
+ with dtschema
+Date: Wed,  3 Aug 2022 17:53:49 +0100
+Message-Id: <20220803165358.2156150-5-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220803165358.2156150-1-biju.das.jz@bp.renesas.com>
 References: <20220803165358.2156150-1-biju.das.jz@bp.renesas.com>
@@ -40,114 +40,130 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 03 Aug 2022 16:54:19 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9075
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9074
 
-commit 1889f4798c443dfd4993ba9bbbf4ed7bf801d94b upstream.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Enable usb2.0 host/device functionality on RZ/G2LC SMARC EVK
-by deleting phyrst, usb2_phy{0,1}, ehci/ohci{0,1} and hsusb
-entries from board DT, so that entries from common dtsi kick
-in and make USB2.0 functionality operational.
+commit 48d8ee5b831ec8b6dbe3b4313fed0adcd752e20b upstream.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://lore.kernel.org/r/20220302074043.21525-1-biju.das.jz@bp.renesas.com
+Dtschema expects GPIO hogs to end with a "hog" suffix.
+Also, the convention for node names is to use hyphens, not underscores.
+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/baee4b9980576ffbab24122fce7147c9cbc2ea59.1645705998.git.geert+renesas@glider.be
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- .../boot/dts/renesas/r9a07g044c2-smarc.dts    | 46 -------------------
- .../dts/renesas/rzg2lc-smarc-pinfunction.dtsi | 11 +++++
- 2 files changed, 11 insertions(+), 46 deletions(-)
+ arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi       | 2 +-
+ arch/arm64/boot/dts/renesas/hihope-common.dtsi            | 2 +-
+ arch/arm64/boot/dts/renesas/hihope-rzg2-ex-lvds.dtsi      | 2 +-
+ arch/arm64/boot/dts/renesas/r8a774c0-ek874-idk-2121wr.dts | 2 +-
+ arch/arm64/boot/dts/renesas/r9a07g054l2-smarc.dts         | 4 ++--
+ arch/arm64/boot/dts/renesas/rzg2l-smarc-pinfunction.dtsi  | 4 ++--
+ arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi | 2 +-
+ 7 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts b/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts
-index 5a5cea82a5d9..d5254b16b0b3 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts
-@@ -14,24 +14,6 @@ / {
- 	compatible = "renesas,smarc-evk", "renesas,r9a07g044c2", "renesas,r9a07g044";
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
+index 929c7910c68d..b6b6d085600a 100644
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
+@@ -77,7 +77,7 @@ &extalr_clk {
  };
  
--&ehci0 {
--	/delete-property/ pinctrl-0;
--	/delete-property/ pinctrl-names;
--	status = "disabled";
--};
--
--&ehci1 {
--	/delete-property/ pinctrl-0;
--	/delete-property/ pinctrl-names;
--	status = "disabled";
--};
--
--&hsusb {
--	/delete-property/ pinctrl-0;
--	/delete-property/ pinctrl-names;
--	status = "disabled";
--};
--
- &i2c0 {
- 	/delete-property/ pinctrl-0;
- 	/delete-property/ pinctrl-names;
-@@ -50,22 +32,6 @@ &i2c3 {
- 	status = "disabled";
+ &gpio6 {
+-	usb_hub_reset {
++	usb-hub-reset-hog {
+ 		gpio-hog;
+ 		gpios = <10 GPIO_ACTIVE_HIGH>;
+ 		output-high;
+diff --git a/arch/arm64/boot/dts/renesas/hihope-common.dtsi b/arch/arm64/boot/dts/renesas/hihope-common.dtsi
+index e8bf6f0c4c40..18f01dbb25f5 100644
+--- a/arch/arm64/boot/dts/renesas/hihope-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/hihope-common.dtsi
+@@ -140,7 +140,7 @@ &extalr_clk {
  };
  
--&ohci0 {
--	/delete-property/ pinctrl-0;
--	/delete-property/ pinctrl-names;
--	status = "disabled";
--};
--
--&ohci1 {
--	/delete-property/ pinctrl-0;
--	/delete-property/ pinctrl-names;
--	status = "disabled";
--};
--
--&phyrst {
--	status = "disabled";
--};
--
- &spi1 {
- 	/delete-property/ pinctrl-0;
- 	/delete-property/ pinctrl-names;
-@@ -77,15 +43,3 @@ &ssi0 {
- 	/delete-property/ pinctrl-names;
- 	status = "disabled";
+ &gpio6 {
+-	usb1-reset {
++	usb1-reset-hog {
+ 		gpio-hog;
+ 		gpios = <10 GPIO_ACTIVE_LOW>;
+ 		output-low;
+diff --git a/arch/arm64/boot/dts/renesas/hihope-rzg2-ex-lvds.dtsi b/arch/arm64/boot/dts/renesas/hihope-rzg2-ex-lvds.dtsi
+index 40c5e8d6d841..d66d17e34694 100644
+--- a/arch/arm64/boot/dts/renesas/hihope-rzg2-ex-lvds.dtsi
++++ b/arch/arm64/boot/dts/renesas/hihope-rzg2-ex-lvds.dtsi
+@@ -20,7 +20,7 @@ &gpio1 {
+ 	 * When GP1_20 is LOW LVDS0 is connected to the LVDS connector
+ 	 * When GP1_20 is HIGH LVDS0 is connected to the LT8918L
+ 	 */
+-	lvds-connector-en-gpio {
++	lvds-connector-en-hog {
+ 		gpio-hog;
+ 		gpios = <20 GPIO_ACTIVE_HIGH>;
+ 		output-low;
+diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-ek874-idk-2121wr.dts b/arch/arm64/boot/dts/renesas/r8a774c0-ek874-idk-2121wr.dts
+index a7b27d09f6c2..c1812d1ef06a 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774c0-ek874-idk-2121wr.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774c0-ek874-idk-2121wr.dts
+@@ -68,7 +68,7 @@ &gpio0 {
+ 	 * When GP0_17 is low LVDS[01] are connected to the LVDS connector
+ 	 * When GP0_17 is high LVDS[01] are connected to the LT8918L
+ 	 */
+-	lvds-connector-en-gpio{
++	lvds-connector-en-hog {
+ 		gpio-hog;
+ 		gpios = <17 GPIO_ACTIVE_HIGH>;
+ 		output-low;
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g054l2-smarc.dts b/arch/arm64/boot/dts/renesas/r9a07g054l2-smarc.dts
+index 49d141db53f7..fc334b4c2aa4 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g054l2-smarc.dts
++++ b/arch/arm64/boot/dts/renesas/r9a07g054l2-smarc.dts
+@@ -18,8 +18,8 @@ / {
  };
--
--&usb2_phy0 {
--	/delete-property/ pinctrl-0;
--	/delete-property/ pinctrl-names;
--	status = "disabled";
--};
--
--&usb2_phy1 {
--	/delete-property/ pinctrl-0;
--	/delete-property/ pinctrl-names;
--	status = "disabled";
--};
+ 
+ &pinctrl {
+-	/delete-node/ can0-stb;
+-	/delete-node/ can1-stb;
++	/delete-node/ can0-stb-hog;
++	/delete-node/ can1-stb-hog;
+ 	/delete-node/ gpio-sd0-pwr-en-hog;
+ 	/delete-node/ sd0-dev-sel-hog;
+ 	/delete-node/ sd1-pwr-en-hog;
+diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc-pinfunction.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-smarc-pinfunction.dtsi
+index 2ef217445f72..9085d8c76ce1 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2l-smarc-pinfunction.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc-pinfunction.dtsi
+@@ -18,7 +18,7 @@ can0_pins: can0 {
+ 	};
+ 
+ 	/* SW7 should be at position 2->3 so that GPIO8_CAN0_STB line is activated */
+-	can0-stb {
++	can0-stb-hog {
+ 		gpio-hog;
+ 		gpios = <RZG2L_GPIO(42, 2) GPIO_ACTIVE_HIGH>;
+ 		output-low;
+@@ -31,7 +31,7 @@ can1_pins: can1 {
+ 	};
+ 
+ 	/* SW8 should be at position 2->3 so that GPIO9_CAN1_STB line is activated */
+-	can1-stb {
++	can1-stb-hog {
+ 		gpio-hog;
+ 		gpios = <RZG2L_GPIO(42, 3) GPIO_ACTIVE_HIGH>;
+ 		output-low;
 diff --git a/arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi b/arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi
-index 37ff2091582e..5f5ec21e655c 100644
+index bff56d696936..37ff2091582e 100644
 --- a/arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi
 +++ b/arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi
-@@ -90,5 +90,16 @@ sound_clk_pins: sound_clk {
- 		pins = "AUDIO_CLK1", "AUDIO_CLK2";
- 		input-enable;
- 	};
-+
-+	usb0_pins: usb0 {
-+		pinmux = <RZG2L_PORT_PINMUX(4, 0, 1)>, /* VBUS */
-+			 <RZG2L_PORT_PINMUX(5, 0, 1)>, /* OVC */
-+			 <RZG2L_PORT_PINMUX(5, 1, 1)>; /* OTG_ID */
-+	};
-+
-+	usb1_pins: usb1 {
-+		pinmux = <RZG2L_PORT_PINMUX(42, 0, 1)>, /* VBUS */
-+			 <RZG2L_PORT_PINMUX(42, 1, 1)>; /* OVC */
-+	};
- };
+@@ -34,7 +34,7 @@ scif1_pins: scif1 {
  
+ #if SW_RSPI_CAN
+ 	/* SW8 should be at position 2->3 so that GPIO9_CAN1_STB line is activated */
+-	can1-stb {
++	can1-stb-hog {
+ 		gpio-hog;
+ 		gpios = <RZG2L_GPIO(44, 3) GPIO_ACTIVE_HIGH>;
+ 		output-low;
 -- 
 2.25.1
 
