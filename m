@@ -1,176 +1,303 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E869C00140
-	for <webhook@archiver.kernel.org>; Mon,  8 Aug 2022 12:47:38 +0000 (UTC)
-Received: from EUR04-DB3-obe.outbound.protection.outlook.com
- (EUR04-DB3-obe.outbound.protection.outlook.com [40.107.6.45])
- by mx.groups.io with SMTP id smtpd.web09.24680.1659962841370123959
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D0E9C19F2D
+	for <webhook@archiver.kernel.org>; Tue,  9 Aug 2022 07:51:46 +0000 (UTC)
+Received: from EUR01-HE1-obe.outbound.protection.outlook.com
+ (EUR01-HE1-obe.outbound.protection.outlook.com [40.107.13.75])
+ by mx.groups.io with SMTP id smtpd.web09.9138.1660031505180877687
  for <cip-dev@lists.cip-project.org>;
- Mon, 08 Aug 2022 05:47:22 -0700
+ Tue, 09 Aug 2022 00:51:45 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=DVet2CfP;
- spf=pass (domain: siemens.com, ip: 40.107.6.45,
- mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=iqV0Enjd;
+ spf=pass (domain: siemens.com, ip: 40.107.13.75,
+ mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IfIcfBMn9Cg+0HSnxYNyV+W6sHTRsXudT6odVPMhO4MnQZ/cDdoZLxaVEkUIAxG8GiEkypmLIvV3Oa5b8jkEAxbcJZHhQsDZkYiz/wLQ5qxAyPKWt+tw7LkyN2GDbccfmpbZu6dkHemGj27+GUliIKOAiM+FRUyTH9EsgexjHCOzNojh3FU62KYqbBPNt92GdjuUVFcoB+6cLFVuK+yYKSKSd9JS+EZJ7lbru8gDQ4lYvsCVyOcW4sHXV4lNfk2rnELMG2mCgC3d3cw4g8xAN1UU9BXEFZ5B0RHZRyvy9tuXRUz6WTY4B2ZQ4ZcDkSj24IRkNgAMlUJoVMqkE0TVWw==
+ b=Z/90kc83uy8zU7wl/wf7rqLoq184IKg2jK7QM/LInCyUDYdSWBLHMlmH1bniENqGNWO/YIgBkRtYkBroPTXJpXD1IRtOVy4sIuOqvwNV1tcVJABQFaQeTDMvqMDHfGOjHIG69r0SiHW5ekpJizLx+BnNAe59mjllSx8zziV9Mg6cJVQE8xwtmWJZ0Y2NOfMwm/UhVN4U0d9aYJSJ436e7V1kwET6/+kbigJuxAran9K9q5C12NHCQ/KjgcGfHbVElaoE4I3LLcktsWU4qDZC79PzVplOeTU3pVnFx+2xSZl9wDz6dhxG2iWnvOXUXPGv6vcSvHQsLfTgMK7uOA124g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TdAdC8snp4lr15F0j26kyBvpgpsFNkydVQKY8Hjm9pk=;
- b=T9Ow+FJBiqLy6gXpZFA78JHABD3FL+zyLTKZIdrbN5mz5CkYWz3brwR81GOmGL+TTheofAKVUQ02zet61yApjaOJyyQhhsHOdWsHh7imvxlsg4afEsJ/trN1/VnSZyl957QqUKz1OycNW2eA16Tkhgij7kKrUZfht6oN/VPQ9WX+si9L38zfOCL/EglB/29DCm32ED+5X140tFJAbFp8/O86pKDogbJp2Q4187Leal+jYWtZLAeAIP74/Y9dj4VbIH+D7EXSL5siX6cd6eWN1p9aSKvVh4AauXlt0UwK0do0bLP1Evw2A/GiKJMAQ+r/v9CgGUe1DD9hVOudkVXjUg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.72) smtp.rcpttodomain=lists.cip-project.org
- smtp.mailfrom=siemens.com; dmarc=pass (p=none sp=none pct=100) action=none
- header.from=siemens.com; dkim=none (message not signed); arc=none
+ bh=ixhc6Z/axYsf3T7OIuYFmXGORBoVyWNoaTXRZagHzh0=;
+ b=g8ILWFFyFCpoaw0/R6uP9n27ZWaArIobU0u5kVHmX4/Lgy7ValcO8f4Jr5Tai53TLNustNOj8DQ5BrR4dxhDPvCHtQrEdf9ILxChL4bHo/z2XKo+AUuKWWYXpQel6+hSnYG8ku7a2Ce4hmCIyVTAOd2wTXbpCnq8Eao+p7O9G7zpOHsXG9e3iobD4GFi6y3nMCrbi1lL6GqrE7U2Xc6dZuk9qs46076Z8D0bmEtHm9PrTzRzW9192xhtpTr7ezCNEynhhAxHDgj1qxVpkJ4eGZCc1f4JfGIFWJOF0k1zMkxBO3RB5jYGR1zeTzsxK5AT30Xh8eX0LqjJtIQ/2I591A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TdAdC8snp4lr15F0j26kyBvpgpsFNkydVQKY8Hjm9pk=;
- b=DVet2CfPoA4MzrAP+RRcIlGYEADu4HibHQoLKM25RNnZxLwdwlU0iCRP2+4C+O7GUgsOFZB9OfvoMYVvTbUCCM+CRpU8UNS5c6na2QzxHQuwWtHWCSKYYIaRQTwRyz1FOeKdxp4BEOsY9TWDrlbddyntF7G/qPlmnjmAA8/4hgvDH46RAQIOpYJI1oun5SADxjfyT3tWHp95bAr0gmS9xT7T32BlXsJYfrRaxXWZ/pAlP6oa/jWKhyacbUCfCltJ3QffCAGOJXmM1X1JLkbwVoxpx0B+Hlx8of0E+XdmeewK2fQXyPu4wOL3m/Ioh5OGsoB2+IyhggecC9EhZIynmw==
-Received: from GV3P280CA0070.SWEP280.PROD.OUTLOOK.COM (2603:10a6:150:a::25) by
- DB8PR10MB3658.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:132::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5504.14; Mon, 8 Aug 2022 12:47:18 +0000
-Received: from HE1EUR01FT076.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:150:a:cafe::c1) by GV3P280CA0070.outlook.office365.com
- (2603:10a6:150:a::25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5504.14 via Frontend
- Transport; Mon, 8 Aug 2022 12:47:17 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.72)
- smtp.mailfrom=siemens.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=siemens.com;
-Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.72 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.72; helo=hybrid.siemens.com; pr=C
-Received: from hybrid.siemens.com (194.138.21.72) by
- HE1EUR01FT076.mail.protection.outlook.com (10.152.0.231) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5504.14 via Frontend Transport; Mon, 8 Aug 2022 12:47:17 +0000
-Received: from DEMCHDC89XA.ad011.siemens.net (139.25.226.103) by
- DEMCHDC9SMA.ad011.siemens.net (194.138.21.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.9; Mon, 8 Aug 2022 14:47:16 +0200
-Received: from [167.87.44.42] (167.87.44.42) by DEMCHDC89XA.ad011.siemens.net
- (139.25.226.103) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.9; Mon, 8 Aug 2022
- 14:47:16 +0200
-Message-ID: <f91ed3c9-b811-fa42-b889-fd25f3a35825@siemens.com>
-Date: Mon, 8 Aug 2022 14:47:15 +0200
-MIME-Version: 1.0
+ bh=ixhc6Z/axYsf3T7OIuYFmXGORBoVyWNoaTXRZagHzh0=;
+ b=iqV0Enjdw93IB5my30gZKO3MtqxmXRUQQ00rWq0mmZ+jrPWZDxtWYgAHMRazfpaEwk3sjGWNx2pb6Rht/FkK2LuzMASlxPnJ0c/6Ju+ODcS9JL+paHOgLbTdkKavbGJXdkRQm6TULaLAs58CSJs4F+aKjQpts4JcXZpBlLOLE/j/akyy6YBsn4MuhCHB+B71/NBq88HHlahub9lXQjEXJsXNd8uFskiO1SoY+KtUTXLbRrRokMkY+WF7MLDPM6crjIs3KdiYxedhYyQj4zUVzrHUIFjGjwKK+U+s63eFZTjWBI/rzjLmKr3oMTyiOFlkdukBsb9cPyv0lByR0+1jsg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from PR3PR10MB4096.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:a5::7)
+ by AS1PR10MB5416.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:48d::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5504.20; Tue, 9 Aug
+ 2022 07:51:41 +0000
+Received: from PR3PR10MB4096.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::210c:7451:eac2:3c38]) by PR3PR10MB4096.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::210c:7451:eac2:3c38%5]) with mapi id 15.20.5504.020; Tue, 9 Aug 2022
+ 07:51:41 +0000
+Message-ID: <fb2b0459-a98c-9139-cfe4-a3b623119a8d@siemens.com>
+Date: Tue, 9 Aug 2022 09:51:15 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [cip-dev][isar-cip-core][PATCH] bbb_defconfig: Add missing SDHCI
- Drivers
+ Thunderbird/91.10.0
+Subject: Re: [cip-dev][isar-cip-core][PATCH v3 1/2] kas: Remove
+ efibootguard.yml
 Content-Language: en-US
-To: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>,
-	<cip-dev@lists.cip-project.org>
-References: <20220804125437.715852-1-Quirin.Gylstorff@siemens.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <20220804125437.715852-1-Quirin.Gylstorff@siemens.com>
-Content-Type: text/plain; charset="UTF-8"
+To: Jan Kiszka <jan.kiszka@siemens.com>, cip-dev@lists.cip-project.org
+References: <20220805152623.2155519-1-Quirin.Gylstorff@siemens.com>
+ <20220805152623.2155519-2-Quirin.Gylstorff@siemens.com>
+ <02b6c4fc-3b33-a7d1-8353-22002545d92e@siemens.com>
+From: Gylstorff Quirin <quirin.gylstorff@siemens.com>
+Organization: Siemens
+In-Reply-To: <02b6c4fc-3b33-a7d1-8353-22002545d92e@siemens.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.87.44.42]
-X-ClientProxiedBy: DEMCHDC89XA.ad011.siemens.net (139.25.226.103) To
- DEMCHDC89XA.ad011.siemens.net (139.25.226.103)
-X-TM-AS-Product-Ver: SMEX-14.0.0.3080-8.6.1018-26680.007
-X-TM-AS-Result: No-10--16.047000-8.000000
-X-TMASE-MatchedRID: 8xNMUprDHac5QaOxwNGfvo9bHfxDWoib6FoWuW7WfbxR5xjwgMwZ2gEP
-	JrYlsf/6WAuSz3ewb22coHkKu1u1b89Y6PkVKszs9YmJ+rCjjhEh4UgUH4JX7APZZctd3P4B9/x
-	+2nQH35ItF/hMLav4AcnfymxuFRJbPtz1AYjlRAgrTjOzG0SO0agvFkdUGY78+4Fj9EzRyxzdKR
-	Njzo2IOLcIt210bWgIYG32ZLukpVN6ipWzVkuu8IbXzhjksitpTX7PJ/OU3vKDGx/OQ1GV8t8dW
-	DYdvqmp1GcRAJRT6POOhzOa6g8KrcSRI+4OwM00YObGije149W8FQB6Aoiamq/TjdCg7/xGVaHL
-	HCyArls=
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--16.047000-8.000000
-X-TMASE-Version: SMEX-14.0.0.3080-8.6.1018-26680.007
-X-TM-SNTS-SMTP: 
- D104B70C6DC15E70311E55B06691B6C67354E81200E861BD56B4432F404B294D2000:8
-X-EOPAttributedMessage: 0
+X-ClientProxiedBy: YT1PR01CA0066.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:2e::35) To PR3PR10MB4096.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:102:a5::7)
+MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 58efaceb-8e21-4de4-4ad5-08da793c2050
-X-MS-TrafficTypeDiagnostic: DB8PR10MB3658:EE_
+X-MS-Office365-Filtering-Correlation-Id: 35246aaa-4d04-44b0-18da-08da79dbff59
+X-MS-TrafficTypeDiagnostic: AS1PR10MB5416:EE_
+X-LD-Processed: 38ae3bcd-9579-4fd4-adda-b42e1495d55a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	LL5h1nopRO2bTkWOF89pbSouHDUwYXTIk3PS8wS2GypENa5P+G5J5HaZ76yuin+RFLCiwshCRFH4vhuOR3rlfHHWOACkBWkYt2NDzWboYdkmmEtGjJqEk33kBjQoMh4fT062zS+Ai47Qs2OrkgXyu2FGV/QuaA2AsFsdSBG35M0wZkZitW7qDs6xKAfRWgXZQ3+Fx7bRecs7VMsUD2gxTM4mtYoXwKiaX/7rT+GTEow3PbARO+PjtLn4za5ATZA7KfJ+CQcBo77tEGXSn+HCV1JPehQEVCkAmM9Syp9ueBb4wV2pgG6t8SZC9+l/rqL/9cTPqbGVRCOsiMs2rH/ntFx2xGOUhQVN9qnpkd2GwLwncdbHdVX7KRuvmn72qnqNseXbNi2jIjL3dUgVF6PblNIIj4LZiGd4zLIJpBnNOinjHNzLEOdBrH+sVRYgquCF/gLzfds93Y7eQx4rVgVjvkAA3PdccZOBXLyACRiRsl7bTdSVAVcj+FdtD3BpVwgA9++a299o6l+He4H7A/hLJKY2awIh06Q8GV/kHfH5NMW78L4eN/sG3LayhYLZnNLd3k/ICkXfxUCxroj3U+z25AUbov69Dt7o9ewrtyjrKuMog8ll/WRxn3Smt+/gp5V7sMpudpDMTffs6ioOS3SCfr5fN6saZANciQ1yYGx7Arz2EQqkKPHGglb+pfgjruDPmEKWcyMOnVxwLVaMvzIIY5vDjmwtDo+oyVBI3iKOh/pr0Li35zeIMAhF3MHHbhQFZieB0YxIhf9M5BLPUQbc0x6dwyu7Bqk7QBYNWVQ4k6+qJIGN5i2fBWEfTlDo+/cFyRGj9SlKGitwzK148pDQsxYlF1nIJf3VfeamOxrCxwpjuBajBIdo87xIzg9UDM1MFR3dKyqPkMqU4XAVlD46hA==
+	YfxDQ5Ri/sWysBxe02h1XPQJRLlUm7e4u9soxoI18gYyEGbtCbqBln3UggV787YFFmvbR/fgG18ABWRa/2jB2Ok/TvHsxd752RRPDgqE6szq/4wJ5sc5RF4EahTNQ6nXnynn0IRZeq2hMUtm1LpTKp8jRUGpTDLJn83PXMaUa18BGbjpQLOUkmlyt8ndKMSf2sgzuyPJxKdPzakNqiRH/mb8oOw+KCQ65BoJNMD6VD8sgP6j/eroh58ht8fAwn7kX6o/FGR5PUqyfLSPe1bUSgPdgmwZ+6JwcvfcEQnSRA9O2YldiVdC7G9/e7z+nZgD8LZqYd8y3DnLhxeCwgV/R56gY8kBtaTDHd+XuPn2fvUJVW5w0xwNt9aVYTnYtZQHLQ+mMO3sRAZGsw12FcoqHi7jFQSgAF87jFfk6UbOJ0Ll3LXYNY7zDgJ71ny+RwfT+LSK72qwqqBYF/J+m4Mr3Q6mVTRbAEuUGteQl+4wah8bCM5bEYnxjO0P99naZVGen6DQNiADRj3SechRcfrNhaHdmSM2rxP6d4vbJvhSjjxW8wZCDOxJSHLrCzYTIFmmiIfhOqzNJel7e72wfD7wYyIKOKRdWqtURKU1yEJi8I5cBmfGzvOTXMV7qYjbyWEn90U+oOYfoChzyZWPFhCcJyohntOVT3ER1026Mmj6VzIfirdvyaltvNynIZSFjZs8SXSySwfFngAwaRs48cSDlh/JVhRyR9FYX9IIbIMn8bkfVguOAkmhGKIgruDM40y607gKYHJunfkNRLkz8LuQ4Lqw5Yh6dF7WXIju0dhihKhjMy6NriXnRchNDyy4HakPS/sR87PRc9Ay3snQaSz20A==
 X-Forefront-Antispam-Report: 
-	CIP:194.138.21.72;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230016)(4636009)(39860400002)(346002)(136003)(396003)(376002)(46966006)(40470700004)(36840700001)(8676002)(8936002)(70586007)(36756003)(70206006)(16526019)(186003)(336012)(478600001)(40460700003)(316002)(16576012)(6706004)(31696002)(5660300002)(86362001)(31686004)(110136005)(41300700001)(26005)(83380400001)(44832011)(53546011)(81166007)(2906002)(356005)(82960400001)(2616005)(82740400003)(82310400005)(956004)(47076005)(36860700001)(40480700001)(3940600001)(36900700001)(43740500002);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PR3PR10MB4096.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230016)(4636009)(376002)(396003)(39860400002)(136003)(366004)(346002)(31686004)(316002)(66946007)(66556008)(66476007)(36756003)(8676002)(31696002)(6486002)(8936002)(478600001)(5660300002)(83380400001)(86362001)(2906002)(36916002)(6506007)(38100700002)(41300700001)(6666004)(53546011)(82960400001)(2616005)(186003)(6512007)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?Si8wSHEwT3JIbGxpSGRSVG5TNWkyOFUxQ2Viayt2RFAxNGFzUEtxdXdSZDlR?=
+ =?utf-8?B?SE9WZGVMVmxTUC80NXluWGx3Y2hiMm9tbnpFeU9DVkxucWlSUFViVlZoQTFr?=
+ =?utf-8?B?WHl1QUZhNVQ5SHRIYmxrdW9SRlZraUE2YS9QN1diTDV4ZisydHpnQTdhbmxU?=
+ =?utf-8?B?bkhEMHhtQkN6RUpBZUlNY24zV2pCb1RwM3R1c2xaYkd4NWF4WXlvbWU0WUJH?=
+ =?utf-8?B?d1AxcVkremNEbjFlejNoT2Y2OGQzMVpLbnNwZGVHMWpOeHl1OG8vNnNGTllF?=
+ =?utf-8?B?cDVVZW1DZE5Qak1GbDk0YUxRbmVObHVOSmRFTG1TYklqZDk1cGpLMDJNK0Qv?=
+ =?utf-8?B?SGMzMkFhUWdEZWpLNmcyM1VIZlhUMy9mMGpuQitGV1FadC8ya2lBVUp4WXdT?=
+ =?utf-8?B?RDdzQUorQjVZRURqQm5nMUtXanliMXdMc1hNaGxRZzVmRDFPMGowTVB3bXJm?=
+ =?utf-8?B?emZ1b3VJeTB5MEljYkx1blFlNzBsVDhmUkQ5aW04TTRFWDQ5VVBpMlpBVWUr?=
+ =?utf-8?B?NC9WTzJ5UzJmYjVta3l2ODJJdU1LMjZSM0dXV045TmU3VVdMRU53VENMaytD?=
+ =?utf-8?B?MWtLZ2tDbVBkMjRaRHNtU1ljVVFTNlR2ampmVG5xalFKOFlITzBoNitBVWNS?=
+ =?utf-8?B?MWE1dFB4L1hUSUFkVUZpT1pRSkRaN28wUDBUc3dzbHhoMkx5SFBHUjVHZEVT?=
+ =?utf-8?B?WmZ3VTJLTEJmNnJMSzBrQ2p1a3Y5azhzeStkWG5rZys4TnVwTFphekdINS9Y?=
+ =?utf-8?B?UFBad1BnTStSejhuYnUyUDdJRDBMelZWWHF5dlp6bTlaMzVhV0Jkenp4b2RI?=
+ =?utf-8?B?QmZLZHlvdzN6R3ZBK2JlL2tidjVJd1hEeWFVSWV6dVpQdGJteldpaGxOZllM?=
+ =?utf-8?B?K1JvMitVN0VPNHlKcElFU3l1K0VGV2lxNDZLdFk3ekV2a0JBYm15WDRBYlg5?=
+ =?utf-8?B?Tk5RS290UzVtNnpYMWc5U0lhTk9EczRZQ1UxZm1FOHB0SEVVUWtsdDBZaXEr?=
+ =?utf-8?B?QTNsV0JEZG9JcG9XRFA1Q3d2enpGUzVQZ0hZMTR0dEpjRE5mclpGcWM5dTh6?=
+ =?utf-8?B?aG8vWUlKQnhDTFI1V2U3V2lXUk1RUVB1UU1yMkhCSk16UzR0eGlYN09hUGpF?=
+ =?utf-8?B?U2VBNm9ldUJzYi9YaVJobFpBbDlkYk5hU25tTEJMWVdPK2NsdE5JRVNFbG1V?=
+ =?utf-8?B?OGh4MmdKLysxTU1nQnMzdkk4WGsyK3kxeHBkQnBOM3B0eTlqV1JFUHBmcmJM?=
+ =?utf-8?B?QWJCZXVCZjY0b3VRNTZTbTFTZnN1MXdieVBqb0NpcG9sQ1d0dHVtdnZvV2Zo?=
+ =?utf-8?B?L2Z6L2VPOHNQT1NmTmpudmxQN2tVMVMwOWlTbmdMSWRWaXJrblJscGphOVVw?=
+ =?utf-8?B?QWZmTjNBUVdnUTl4MkhkQ253UDUwc0Y3aVFrOHF4WmZCWWpvS3pvNkJhWXJk?=
+ =?utf-8?B?Z2VtLy9rTmRGQktnN3piRENYNnJsQzc2NDdOQ1JKSGZPdU13R2ZpenBHSkN4?=
+ =?utf-8?B?OU9UbzNwUHNsMzh5WTk4SE9GVFgzV0VJa3ZMendObjNoRU1WSlgxczdVZElB?=
+ =?utf-8?B?L2lnalIwN1Z1Y3dsdlNXTEJReXdyRG1nelV3MTk0V2pGdUhtVlZTZ0tpazY3?=
+ =?utf-8?B?RUd4cnE3R05mOGpqZU5vZnVuazdiRFhSbDZFampTcUd2SVl1dWZjd3Z3NTdC?=
+ =?utf-8?B?UENPNmlleWNtWEZKSWxLZTVDS05ISHJMeFVocUFubklRM01maUJCQ3VLWnYw?=
+ =?utf-8?B?Ty96U2dtU0FTK2FrT1c4TUsyTjZoMjBNeDBOYmpLOEVJSWg4Mi9QdVI0MFZE?=
+ =?utf-8?B?Y1JkUzRvS0JvcVFLSnByMGdJOGh5c01nMmNHTDFuem5JNGRtbU9GMnplTkFn?=
+ =?utf-8?B?blB6THkrZ0RBZUZOL2UrS0ZVL3VnVFkySUIxcFBiOTRPVzFzZk5xSzdpYU9V?=
+ =?utf-8?B?cE5ISEswTVJoZFNmRzY3L2RYVTdhdjVFSGhGcFppVEQ5V0JmWFF0SWgyZHo3?=
+ =?utf-8?B?WHpFNU5EaCtnZEJ4bEx4QU9CbzhaVlFLWGJTcmVRS2R6ekYzVjltRVJnUjZk?=
+ =?utf-8?B?cUJSam1Hd1BUcitjR0grUE80MmNkWnVqbm9LZDg0RElKak1NbGUyUzM2b0Qw?=
+ =?utf-8?B?bHFocFVYUTlEbUdVZjBMQm83QW9BdnV2N1NlYktTWlhOTG9xM1dDOXAvd1dY?=
+ =?utf-8?B?aFlHQ0szbC9Vc1pId2RTQjZqWEhSZkc5endiTVhGaHFIdkhOamxBVUUzZ1Vq?=
+ =?utf-8?B?SmRqYnBvQTU1VXFZUklYdkRVTjV3PT0=?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2022 12:47:17.2540
- (UTC)
 X-MS-Exchange-CrossTenant-Network-Message-Id: 
- 58efaceb-8e21-4de4-4ad5-08da793c2050
+ 35246aaa-4d04-44b0-18da-08da79dbff59
+X-MS-Exchange-CrossTenant-AuthSource: PR3PR10MB4096.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2022 07:51:41.6892
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
- TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.72];Helo=[hybrid.siemens.com]
-X-MS-Exchange-CrossTenant-AuthSource: 
-	HE1EUR01FT076.eop-EUR01.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR10MB3658
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 
+ zt0hp0oJD4coOsfF37/QpEWZdIQa0lHzGTT+OpKdZl2faFlYzVe/0aaRMcScv6VenvDdLGmwkaNktjB0a8N4IYqJ9UCAXbsB/WcbWPh6atA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR10MB5416
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 08 Aug 2022 12:47:38 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9139
+ <cip-dev@lists.cip-project.org>; Tue, 09 Aug 2022 07:51:46 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9140
 
-On 04.08.22 14:54, Quirin Gylstorff wrote:
-> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+
+
+On 8/6/22 08:19, Jan Kiszka wrote:
+> On 05.08.22 17:26, Quirin Gylstorff wrote:
+>> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>>
+>> A build with only the option `kas/efibootguard.yml` will not succeed.
+>> Move the content to a include in the image directory and the adapt the kas
+>> files.
+>>
+>> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>> ---
+>>   conf/distro/cip-core-common.inc      |  2 +-
+>>   kas/opt/ebg-secure-boot-snakeoil.yml |  9 +++----
+>>   kas/opt/ebg-swu.yml                  |  7 ++---
+>>   kas/opt/efibootguard.yml             | 39 ----------------------------
+>>   recipes-core/images/efibootguard.inc | 28 ++++++++++++++++++++
+>>   5 files changed, 37 insertions(+), 48 deletions(-)
+>>   delete mode 100644 kas/opt/efibootguard.yml
+>>   create mode 100644 recipes-core/images/efibootguard.inc
+>>
+>> diff --git a/conf/distro/cip-core-common.inc b/conf/distro/cip-core-common.inc
+>> index 5cd1603..20a30d2 100644
+>> --- a/conf/distro/cip-core-common.inc
+>> +++ b/conf/distro/cip-core-common.inc
+>> @@ -11,4 +11,4 @@
+>>   
+>>   KERNEL_NAME ?= "cip"
+>>   
+>> -WKS_FILE ?= "${MACHINE}.wks"
+>> +WKS_FILE ??= "${MACHINE}.wks"
+>> diff --git a/kas/opt/ebg-secure-boot-snakeoil.yml b/kas/opt/ebg-secure-boot-snakeoil.yml
+>> index 2822cef..0791ea3 100644
+>> --- a/kas/opt/ebg-secure-boot-snakeoil.yml
+>> +++ b/kas/opt/ebg-secure-boot-snakeoil.yml
+>> @@ -11,16 +11,15 @@
+>>   
+>>   header:
+>>     version: 10
+>> -  includes:
+>> -   - kas/opt/efibootguard.yml
+>>   
+>>   local_conf_header:
+>> -  image-options-swupdate: |
+>> -    CIP_IMAGE_OPTIONS_append = " swupdate.inc"
+>> +  ebg_secureboot_bootloader: |
+>> +    SWUPDATE_BOOTLOADER = "efibootguard"
+>>   
+>> -  swupdate: |
+>> +  image-options-swupdate: |
+>>       IMAGE_INSTALL_append = " swupdate"
+>>       IMAGE_INSTALL_append = " swupdate-handler-roundrobin"
+>> +    CIP_IMAGE_OPTIONS_append = " swupdate.inc efibootguard.inc"
+>>   
+>>     secure-boot-image: |
+>>       IMAGE_CLASSES += "verity"
+>> diff --git a/kas/opt/ebg-swu.yml b/kas/opt/ebg-swu.yml
+>> index 5e4e771..9c50358 100644
+>> --- a/kas/opt/ebg-swu.yml
+>> +++ b/kas/opt/ebg-swu.yml
+>> @@ -12,12 +12,13 @@
+>>   header:
+>>     version: 10
+>>     includes:
+>> -   - kas/opt/efibootguard.yml
+>>      - kas/opt/swupdate.yml
+>>   
+>>   local_conf_header:
+>> +  ebg_swu_bootloader: |
+>> +    SWUPDATE_BOOTLOADER = "efibootguard"
+>> +  ebg_swu_image_options: |
+>> +    CIP_IMAGE_OPTIONS_append = " efibootguard.inc image-uuid.inc"
+>>     initramfs: |
+>>       INITRAMFS_INSTALL_append = " initramfs-abrootfs-hook"
+>>   
+>> -  image-option-uuid: |
+>> -    CIP_IMAGE_OPTIONS_append = " image-uuid.inc"
+>> diff --git a/kas/opt/efibootguard.yml b/kas/opt/efibootguard.yml
+>> deleted file mode 100644
+>> index cee9c78..0000000
+>> --- a/kas/opt/efibootguard.yml
+>> +++ /dev/null
+>> @@ -1,39 +0,0 @@
+>> -#
+>> -# CIP Core, generic profile
+>> -#
+>> -# Copyright (c) Siemens AG, 2020
+>> -#
+>> -# Authors:
+>> -#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>> -#
+>> -# SPDX-License-Identifier: MIT
+>> -#
+>> -# This kas file adds efibootguard as the bootloader to the image
+>> -
+>> -header:
+>> -  version: 10
+>> -
+>> -local_conf_header:
+>> -  efibootguard: |
+>> -    IMAGE_INSTALL_append = " efibootguard"
+>> -
+>> -  efibootguard-swupdate: |
+>> -    SWUPDATE_BOOTLOADER = "efibootguard"
+>> -
+>> -  efibootguard-wic: |
+>> -    WIC_IMAGER_INSTALL_append = " efibootguard"
+>> -    WDOG_TIMEOUT ?= "60"
+>> -    WICVARS += "WDOG_TIMEOUT KERNEL_IMAGE INITRD_IMAGE DTB_FILES"
+>> -    IMAGE_FSTYPES ?= "wic"
+>> -    WKS_FILE ?= "${MACHINE}-efibootguard.wks.in"
+>> -
+>> -  firmware-binaries: |
+>> -    # Add ovmf binaries for qemu
+>> -    IMAGER_BUILD_DEPS_append_qemu-amd64 += "ovmf-binaries"
+>> -    # not needed for Debian 11 and later
+>> -    OVERRIDES_append_qemu-amd64 = ":${BASE_DISTRO_CODENAME}"
+>> -    DISTRO_APT_SOURCES_append_qemu-amd64_buster = " conf/distro/debian-buster-backports.list"
+>> -    DISTRO_APT_PREFERENCES_append_qemu-amd64_buster = " conf/distro/preferences.ovmf-snakeoil.conf"
+>> -    # Add U-Boot for qemu
+>> -    IMAGER_BUILD_DEPS_append_qemu-arm64 += "u-boot-qemu-arm64"
+>> -    IMAGER_BUILD_DEPS_append_qemu-arm += "u-boot-qemu-arm"
+>> diff --git a/recipes-core/images/efibootguard.inc b/recipes-core/images/efibootguard.inc
+>> new file mode 100644
+>> index 0000000..d6a7db6
+>> --- /dev/null
+>> +++ b/recipes-core/images/efibootguard.inc
+>> @@ -0,0 +1,28 @@
+>> +#
+>> +# CIP Core, generic profile
+>> +#
+>> +# Copyright (c) Siemens AG, 2020
+>> +#
+>> +# Authors:
+>> +#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>> +
+>> +IMAGE_INSTALL_append = " efibootguard"
+>> +
+>> +WIC_IMAGER_INSTALL_append = " efibootguard"
+>> +WDOG_TIMEOUT ?= "60"
+>> +WICVARS += "WDOG_TIMEOUT KERNEL_IMAGE INITRD_IMAGE DTB_FILES"
+>> +WKS_FILE ?= "${MACHINE}-efibootguard.wks.in"
+>> +IMAGE_FSTYPES += "wic"
+>> +
+>> +# Add ovmf binaries for qemu
+>> +IMAGER_BUILD_DEPS_append_qemu-amd64 += "ovmf-binaries"
+>> +# not needed for Debian 11 and later
+>> +OVERRIDES_append_qemu-amd64 = ":${BASE_DISTRO_CODENAME}"
+>> +DISTRO_APT_SOURCES_append_qemu-amd64_buster = " conf/distro/debian-buster-backports.list"
+>> +DISTRO_APT_PREFERENCES_append_qemu-amd64_buster = " conf/distro/preferences.ovmf-snakeoil.conf"
+>> +# Add U-Boot for qemu
+>> +IMAGER_BUILD_DEPS_append_qemu-arm64 += "u-boot-qemu-arm64"
+>> +IMAGER_BUILD_DEPS_append_qemu-arm += "u-boot-qemu-arm"
 > 
-> To boot from SD/MMC wit kernel 5.10. new config option need to
-> be enabled.
+> This block is only for testing purposes in isar-cip-core. Therefore, it
+> was not part of any image but of a overwritable kas config section.
 > 
-> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> ---
->  recipes-kernel/linux/files/bbb_defconfig | 8 ++++++++
->  1 file changed, 8 insertions(+)
+
+Ok then I move it to kas/opt/ebg-swu.
+
+Quirin
+
+> Jan
 > 
-> diff --git a/recipes-kernel/linux/files/bbb_defconfig b/recipes-kernel/linux/files/bbb_defconfig
-> index 31e15e6..8f8f1aa 100644
-> --- a/recipes-kernel/linux/files/bbb_defconfig
-> +++ b/recipes-kernel/linux/files/bbb_defconfig
-> @@ -374,6 +374,9 @@ CONFIG_USB_CONFIGFS_F_HID=y
->  CONFIG_USB_ZERO=m
->  CONFIG_USB_G_NOKIA=m
->  CONFIG_MMC=y
-> +CONFIG_PWRSEQ_EMMC=y
 
-Not needed.
 
-> +CONFIG_MMC_BLOCK=y
 
-This can become m.
 
-> +CONFIG_MMC_BLOCK_MINORS=256
-
-Not needed for our setups.
-
->  CONFIG_SDIO_UART=y
->  CONFIG_MMC_OMAP=y
->  CONFIG_MMC_OMAP_HS=y
-> @@ -453,3 +456,8 @@ CONFIG_LIBCRC32C=y
->  CONFIG_FONTS=y
->  CONFIG_FONT_8x8=y
->  CONFIG_FONT_8x16=y
-> +CONFIG_MMC_SDHCI=m
-> +CONFIG_MMC_SDHCI_IO_ACCESSORS=y
-> +CONFIG_MMC_SDHCI_PCI=m
-
-Those two are not needed.
-
-> +CONFIG_MMC_SDHCI_OMAP=m
-> +CONFIG_MMC_SDHCI_PLTFM=m
-
-I'll submit the required changes to cip-kernel-config for 5.10.
-
-Thanks,
-Jan
-
--- 
-Siemens AG, Technology
-Competence Center Embedded Linux
 
