@@ -2,119 +2,81 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65FBDC282E7
-	for <webhook@archiver.kernel.org>; Fri, 12 Aug 2022 10:13:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A6B9C3F6B0
+	for <webhook@archiver.kernel.org>; Fri, 12 Aug 2022 10:13:45 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com
  [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web09.9106.1660299202951792196
+ by mx.groups.io with SMTP id smtpd.web12.9028.1660299221842113613
  for <cip-dev@lists.cip-project.org>;
- Fri, 12 Aug 2022 03:13:30 -0700
+ Fri, 12 Aug 2022 03:13:42 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
  spf=pass (domain: bp.renesas.com, ip: 210.160.252.172,
  mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.93,231,1654527600";
-   d="scan'208";a="131210697"
+   d="scan'208";a="131210709"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 12 Aug 2022 19:13:29 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 12 Aug 2022 19:13:41 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 875934243969;
-	Fri, 12 Aug 2022 19:13:28 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id E7704424396E;
+	Fri, 12 Aug 2022 19:13:39 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 05/11] memory: renesas-rpc-if: Simplify
- single/double data register access
-Date: Fri, 12 Aug 2022 11:13:11 +0100
-Message-Id: <20220812101317.12380-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 11/11] spi: spi-rspi: Fix PIO fallback on RZ
+ platforms
+Date: Fri, 12 Aug 2022 11:13:17 +0100
+Message-Id: <20220812101317.12380-12-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220812101317.12380-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20220812101317.12380-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 12 Aug 2022 10:13:35 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9177
+ <cip-dev@lists.cip-project.org>; Fri, 12 Aug 2022 10:13:45 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9183
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-commit 1f26a60b55aa654c73b5b9eb9eab8a7d687d429d upstream.
+commit b620aa3a7be346f04ae7789b165937615c6ee8d3 upstream.
 
-For manual write and read, factor out the common access to the first
-data register by keeping track of the current data pointer.
+RSPI IP on RZ/{A, G2L} SoC's has the same signal for both interrupt
+and DMA transfer request. Setting DMARS register for DMA transfer
+makes the signal to work as a DMA transfer request signal and
+subsequent interrupt requests to the interrupt controller
+are masked.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Link: https://lore.kernel.org/r/c3b2a8d1a69f1b1e8d1a460148406cfb83e52eb4.1649857740.git.geert+renesas@glider.be
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+PIO fallback does not work as interrupt signal is disabled.
+
+This patch fixes this issue by re-enabling the interrupts by
+calling dmaengine_synchronize().
+
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20220721143449.879257-1-biju.das.jz@bp.renesas.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/memory/renesas-rpc-if.c | 28 ++++++++--------------------
- 1 file changed, 8 insertions(+), 20 deletions(-)
+ drivers/spi/spi-rspi.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/memory/renesas-rpc-if.c b/drivers/memory/renesas-rpc-if.c
-index 7163d93a6498..54ed31b862d4 100644
---- a/drivers/memory/renesas-rpc-if.c
-+++ b/drivers/memory/renesas-rpc-if.c
-@@ -489,7 +489,7 @@ int rpcif_manual_xfer(struct rpcif *rpc)
- 	case RPCIF_DATA_OUT:
- 		while (pos < rpc->xferlen) {
- 			u32 bytes_left = rpc->xferlen - pos;
--			u32 nbytes, data[2];
-+			u32 nbytes, data[2], *p = data;
- 
- 			smcr = rpc->smcr | RPCIF_SMCR_SPIE;
- 
-@@ -503,15 +503,9 @@ int rpcif_manual_xfer(struct rpcif *rpc)
- 			rpc->xfer_size = nbytes;
- 
- 			memcpy(data, rpc->buffer + pos, nbytes);
--			if (nbytes == 8) {
--				regmap_write(rpc->regmap, RPCIF_SMWDR1,
--					     data[0]);
--				regmap_write(rpc->regmap, RPCIF_SMWDR0,
--					     data[1]);
--			} else {
--				regmap_write(rpc->regmap, RPCIF_SMWDR0,
--					     data[0]);
--			}
-+			if (nbytes == 8)
-+				regmap_write(rpc->regmap, RPCIF_SMWDR1, *p++);
-+			regmap_write(rpc->regmap, RPCIF_SMWDR0, *p);
- 
- 			regmap_write(rpc->regmap, RPCIF_SMCR, smcr);
- 			ret = wait_msg_xfer_end(rpc);
-@@ -553,7 +547,7 @@ int rpcif_manual_xfer(struct rpcif *rpc)
- 		}
- 		while (pos < rpc->xferlen) {
- 			u32 bytes_left = rpc->xferlen - pos;
--			u32 nbytes, data[2];
-+			u32 nbytes, data[2], *p = data;
- 
- 			/* nbytes may only be 1, 2, 4, or 8 */
- 			nbytes = bytes_left >= max ? max : (1 << ilog2(bytes_left));
-@@ -570,15 +564,9 @@ int rpcif_manual_xfer(struct rpcif *rpc)
- 			if (ret)
- 				goto err_out;
- 
--			if (nbytes == 8) {
--				regmap_read(rpc->regmap, RPCIF_SMRDR1,
--					    &data[0]);
--				regmap_read(rpc->regmap, RPCIF_SMRDR0,
--					    &data[1]);
--			} else {
--				regmap_read(rpc->regmap, RPCIF_SMRDR0,
--					    &data[0]);
--			}
-+			if (nbytes == 8)
-+				regmap_read(rpc->regmap, RPCIF_SMRDR1, p++);
-+			regmap_read(rpc->regmap, RPCIF_SMRDR0, p);
- 			memcpy(rpc->buffer + pos, data, nbytes);
- 
- 			pos += nbytes;
+diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
+index 7a014eeec2d0..411b1307b7fd 100644
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -613,6 +613,10 @@ static int rspi_dma_transfer(struct rspi_data *rspi, struct sg_table *tx,
+ 					       rspi->dma_callbacked, HZ);
+ 	if (ret > 0 && rspi->dma_callbacked) {
+ 		ret = 0;
++		if (tx)
++			dmaengine_synchronize(rspi->ctlr->dma_tx);
++		if (rx)
++			dmaengine_synchronize(rspi->ctlr->dma_rx);
+ 	} else {
+ 		if (!ret) {
+ 			dev_err(&rspi->ctlr->dev, "DMA timeout\n");
 -- 
 2.17.1
 
