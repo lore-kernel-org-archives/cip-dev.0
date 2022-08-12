@@ -1,75 +1,85 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2E5CC00140
-	for <webhook@archiver.kernel.org>; Fri, 12 Aug 2022 08:22:14 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web11.8371.1660292528319242665
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57321C3F6B0
+	for <webhook@archiver.kernel.org>; Fri, 12 Aug 2022 09:51:25 +0000 (UTC)
+Received: from mta-64-228.siemens.flowmailer.net
+ (mta-64-228.siemens.flowmailer.net [185.136.64.228])
+ by mx.groups.io with SMTP id smtpd.web10.8812.1660297876304775214
  for <cip-dev@lists.cip-project.org>;
- Fri, 12 Aug 2022 01:22:09 -0700
+ Fri, 12 Aug 2022 02:51:16 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing;
- spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id D44EF1C0003; Fri, 12 Aug 2022 10:22:04 +0200 (CEST)
-Date: Fri, 12 Aug 2022 10:22:04 +0200
-From: Pavel Machek <pavel@denx.de>
-To: cip-dev@lists.cip-project.org, Chris.Paterson2@renesas.com
-Subject: Root filesystem for risc-v board
-Message-ID: <20220812082204.GA16699@duo.ucw.cz>
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm2
+ header.b=Zp/o9khc;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.228,
+ mailfrom: fm-51332-20220812095113cc4d125f1a72370af8-dhu96m@rts-flowmailer.siemens.com)
+Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id
+ 20220812095113cc4d125f1a72370af8
+        for <cip-dev@lists.cip-project.org>;
+        Fri, 12 Aug 2022 11:51:14 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=Quirin.Gylstorff@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
+ bh=5cbb1r00jgIEkcNlN6fcDY8t08oC6fqngs/nGkMjYjQ=;
+ b=Zp/o9khcOTNyfP0TS+woiZr5pNSeFrrSl0tyMMOu6iIAdEnkCHtzaSDB8KwPx9SbKzvlGc
+ SZ8f3fJkvL/VbNPVodDzUyMmR03H3xlFVojDkn1nXmLp6dtqdga9eiYkuphVN1+42azKfjct
+ z9bQQ0tZJF3UyRTORAjBFnz1m1QGw=;
+From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
+To: cip-dev@lists.cip-project.org,
+	jan.kiszka@siemens.com
+Subject: [cip-dev][isar-cip-core][PATCH v5 1/3] initramfs-*-hook: Add
+ DEBIAN_CONFLICTS
+Date: Fri, 12 Aug 2022 11:51:10 +0200
+Message-Id: <20220812095112.632930-2-Quirin.Gylstorff@siemens.com>
+In-Reply-To: <20220812095112.632930-1-Quirin.Gylstorff@siemens.com>
+References: <20220812095112.632930-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="G4iJoqBmSsgzjUCe"
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 12 Aug 2022 08:22:14 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9167
+ <cip-dev@lists.cip-project.org>; Fri, 12 Aug 2022 09:51:25 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9168
 
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
---G4iJoqBmSsgzjUCe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+If both initramfs-abrootfs-hook and initramfs-verity-hook
+are installed the system will enter a reboot loop.
 
-Hi!
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+ .../initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.1.bb       | 1 +
+ .../initramfs-verity-hook/initramfs-verity-hook_0.1.bb           | 1 +
+ 2 files changed, 2 insertions(+)
 
-So... how do you get root filesystem for RISC-V board? Ideally I'd
-like to get something Debian based.
+diff --git a/recipes-initramfs/initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.1.bb b/recipes-initramfs/initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.1.bb
+index 1693e85..8b1536f 100644
+--- a/recipes-initramfs/initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.1.bb
++++ b/recipes-initramfs/initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.1.bb
+@@ -13,6 +13,7 @@
+ inherit dpkg-raw
+ 
+ DEBIAN_DEPENDS = "initramfs-tools"
++DEBIAN_CONFLICTS = "initramfs-verity-hook"
+ 
+ SRC_URI += "file://abrootfs.hook \
+             file://abrootfs.script"
+diff --git a/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.1.bb b/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.1.bb
+index 60ee8da..5998908 100644
+--- a/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.1.bb
++++ b/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.1.bb
+@@ -23,6 +23,7 @@ TEMPLATE_FILES = "verity.script.tmpl"
+ TEMPLATE_VARS += "VERITY_BEHAVIOR_ON_CORRUPTION"
+ 
+ DEBIAN_DEPENDS = "initramfs-tools, cryptsetup"
++DEBIAN_CONFLICTS = "initramfs-abrootfs-hook"
+ 
+ VERITY_IMAGE_RECIPE ?= "cip-core-image"
+ 
+-- 
+2.35.1
 
-Best I could try is debootstrap for Debian testing:
-
-sudo debootstrap --no-check-gpg --foreign --arch=3Driscv64 --keyring
-/usr/share/keyrings/debian-ports-archive-keyring.gpg
---include=3Ddebian-ports-archive-keyring unstable /some/suitable/dir
-http://deb.debian.org/debian-ports
-
-Unfortunately, I can't get debootstrap --second-stage to work (I get
-sigsegv in ldconfig, I guess testing may be too experimental?). Is it
-possible to debootstrap stable or testing distributions?
-
-I don't think CIP project provides binary images somewhere. What is
-recommended way to get a root filesystem? Is there suitable
-documentation I should follow?
-
-Thanks and best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---G4iJoqBmSsgzjUCe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYvYNrAAKCRAw5/Bqldv6
-8ttYAKCp34LHP2fe87w19vK0aEBtUF6MYwCgozkqtqpbRrdHVPBoZDGxjQyirUs=
-=c1pE
------END PGP SIGNATURE-----
-
---G4iJoqBmSsgzjUCe--
 
