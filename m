@@ -2,171 +2,550 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3F9CC25B06
-	for <webhook@archiver.kernel.org>; Sun, 14 Aug 2022 09:36:33 +0000 (UTC)
-Received: from EUR04-HE1-obe.outbound.protection.outlook.com
- (EUR04-HE1-obe.outbound.protection.outlook.com [40.107.7.78])
- by mx.groups.io with SMTP id smtpd.web09.3522.1660469785478564817
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C347AC48BE4
+	for <webhook@archiver.kernel.org>; Sun, 14 Aug 2022 12:47:44 +0000 (UTC)
+Received: from mta-64-227.siemens.flowmailer.net
+ (mta-64-227.siemens.flowmailer.net [185.136.64.227])
+ by mx.groups.io with SMTP id smtpd.web08.4615.1660481261439438652
  for <cip-dev@lists.cip-project.org>;
- Sun, 14 Aug 2022 02:36:26 -0700
+ Sun, 14 Aug 2022 05:47:41 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=qsL7bghQ;
- spf=pass (domain: siemens.com, ip: 40.107.7.78,
- mailfrom: jan.kiszka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=abDkNdtc55qhZPJxOufmLtcvGJAOkX2+2ANZONXw+ukjZ/T1rTDav63mk2PrYUc4ptSxD78PKER7B+d3PVwg07njJcpcmClBN6iAdUO1q0Rkv3+Q6MIJBxAh7YaML/JpUtxK0EggINbBoaLH9Nc9KO40V7ecOg/i0HTQzMejHtQVgVHnLivkVVMVWQqtui9x/3c7w5HXB+vfQfigvnezslqX/6zJjXneuvmA9SGuzBa1R3eccujZIXmfjMLVsAqEhX9PXOAm05IU7g4NVhp0NfzYwDIGZ+YA0z0P6KudqHJffbv4FeILtVYbgXqkE/1DZyZI03jDl7tsSrpQVwFsyA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VvZGtLTLU2dKeFnAdMj6moAvSy0TuNzvC54nrbyUqow=;
- b=bWHaaZxkr4jMSwiLgZ2nnwohj7dw5RN/rkfrinkta6vGwgD4Ru1ap8t4DqdOOQO5gT9ipFBTp7N/0rE956DRS7JqxH8nlkffXH+iDcE+zHTAIj5nDgLkbNNg0ObTE5vbNHFkZJM9jcPNK9o5dDWVxEArr0coDgOS2HUob34E4iHjKzk21JOOw5VGHTxbsER6dySfYvc7LRyD4SvbHA+0JAm2G+NOvDyEo/Cwd9ac7yafvIBH7+F0b5lGHdTaoQGWQhW3xA5bc7V3/J5jItSfwJKH0CEh45G2JNP6A79Y17OFAeDMmmc4M5jLIKdJNcPLidSUf4vJDK8i4RzSBvB++g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 194.138.21.76) smtp.rcpttodomain=lists.cip-project.org
- smtp.mailfrom=siemens.com; dmarc=fail (p=none sp=none pct=100) action=none
- header.from=siemens.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VvZGtLTLU2dKeFnAdMj6moAvSy0TuNzvC54nrbyUqow=;
- b=qsL7bghQcnh1/OE9yJ4NTrE2LgHpqArNpqE64FpMUdhyjF5AgTE6YbcBw/fcbrgo8IwG6Iv9uqvkisc930pVCLBsSzaYb9L1GwwJH7EPlgQ0Qnx8o6YIHIe0UrgD8pQ9/Sl54BHSynI6sRdErfY5ByNm6LuwBLq66sEvrcH12CkIMUVvWxZldV3vZVzHS4AK9hqV9GlS0PS6EkdX7wFyFh5CnudIrhAt4zbYvVrOhsqcCK0n7TlQ6onJQBu0y6KNyQTD8h67lyB+QQDBdnj7Xd7FrgDeTf8j+3pGu2R140x60lHXqnZtsUw8Bv9kbetnKYZuaZqRz4u15C7d0B830Q==
-Received: from AM6PR0502CA0062.eurprd05.prod.outlook.com
- (2603:10a6:20b:56::39) by VI1PR1001MB1390.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:800:e6::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5504.17; Sun, 14 Aug
- 2022 09:36:21 +0000
-Received: from VE1EUR01FT100.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:20b:56:cafe::39) by AM6PR0502CA0062.outlook.office365.com
- (2603:10a6:20b:56::39) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5525.18 via Frontend
- Transport; Sun, 14 Aug 2022 09:36:21 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 194.138.21.76)
- smtp.mailfrom=siemens.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=siemens.com;
-Received-SPF: Fail (protection.outlook.com: domain of siemens.com does not
- designate 194.138.21.76 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.76; helo=hybrid.siemens.com;
-Received: from hybrid.siemens.com (194.138.21.76) by
- VE1EUR01FT100.mail.protection.outlook.com (10.152.3.24) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5525.11 via Frontend Transport; Sun, 14 Aug 2022 09:36:20 +0000
-Received: from DEMCHDC89XA.ad011.siemens.net (139.25.226.103) by
- DEMCHDC8VSA.ad011.siemens.net (194.138.21.76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.9; Sun, 14 Aug 2022 11:36:20 +0200
-Received: from [139.21.17.200] (139.21.17.200) by
- DEMCHDC89XA.ad011.siemens.net (139.25.226.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.9; Sun, 14 Aug 2022 11:36:19 +0200
-Message-ID: <0e4afc58-75e6-ee10-5bb1-5c286768692a@siemens.com>
-Date: Sun, 14 Aug 2022 12:36:18 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [cip-dev][isar-cip-core][PATCH v5 0/3] clean up kas/opt
-Content-Language: en-US
-To: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>,
-	<cip-dev@lists.cip-project.org>
-References: <20220812095112.632930-1-Quirin.Gylstorff@siemens.com>
+ dkim=pass header.i=jan.kiszka@siemens.com header.s=fm2 header.b=NQ/XPorb;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227,
+ mailfrom: fm-294854-20220814124738f57f733308b2d346b1-gqxfx6@rts-flowmailer.siemens.com)
+Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id
+ 20220814124738f57f733308b2d346b1
+        for <cip-dev@lists.cip-project.org>;
+        Sun, 14 Aug 2022 14:47:38 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=jan.kiszka@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
+ bh=02lpBtQPvpafwsvtSP5fIx4VF4CbWkQOK9baLREbvVo=;
+ b=NQ/XPorbgsUAstofzLrz5Ea6+7Tb9mRbtgYoK5gO+/SSmA6NpOm3Ly0XWv0FVKZDvWKZKa
+ ah8e1Z7urbji31tT8SNWItNDAFHY/QnHlrgk1l11WoFmnFgSswhiYIVjBnXuSjzzbHxlPnyM
+ o1ha8/c7rbIxLcTDVoXDIhYPM6JMk=;
 From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <20220812095112.632930-1-Quirin.Gylstorff@siemens.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [139.21.17.200]
-X-ClientProxiedBy: DEMCHDC89XA.ad011.siemens.net (139.25.226.103) To
- DEMCHDC89XA.ad011.siemens.net (139.25.226.103)
-X-TM-AS-Product-Ver: SMEX-14.0.0.3080-8.6.1018-26680.007
-X-TM-AS-Result: No-10--16.936100-8.000000
-X-TMASE-MatchedRID: kxpaLTp5p645QaOxwNGfvo9bHfxDWoibNtywwIf5ksXW4Mz461fsHEKJ
-	5iyNYGPpR/IzlV+CMbaJ7cxjte/SmKVNzeXRGlTjf3m9ZmRc/ZGVuYyDbQINTseuFL5UpINxF4r
-	8H5YrEqwwUbkkPpbdyywX5/37Wt75utZareK/raVi1z02mY0EETevDqHvVdDbUYXhMajr0x4usz
-	U67KeD16MQi364g884lSG36bKvRcyNA7k11Cii69r76sIjgnDNle+q6k7Q/cwvzLls7HTfGctDH
-	w9RrCNbmyiLZetSf8nJ4y0wP1A6AAOkBnb8H8GWt7DW3B48kkHdB/CxWTRRu25FeHtsUoHurceK
-	w1R3FmspYyPWnrPBeRqx9Sz61yM46vqKJkwHnOrFhXMjdQIJpg==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--16.936100-8.000000
-X-TMASE-Version: SMEX-14.0.0.3080-8.6.1018-26680.007
-X-TM-SNTS-SMTP: 
- 85AC7988F594D1F5FD04C4B58B27428B28A079A1E3ED2A926E7EE7D5E204D84B2000:8
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3cd2b8df-1b8e-48a0-c245-08da7dd87223
-X-MS-TrafficTypeDiagnostic: VI1PR1001MB1390:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	veu1BQALW7i1bNMKubDhPDHKDO27vpe4+Ls9EEuipaoUdB8ajTRvjWcVCeJnr2ljoC50OSh7TLEkST82EHvdevH9lrH/liu2mXUqUWBI/B+5S9qRgbWyDnHkkXKCChqCNyt/+6m+/98T5/GFvcnE2rq4UqhnswQaW+u7TpLXawS+Qz5y0ASkDXuytINhbFTEksldhU19QyCG8kNFy3mC/WOmxw+uAkOVkKMKd8mNfHOYxOy8W4wN9PZ5QjXFfWD/FbnPpHvRtijwuPtLY0W44jLg+DGtLAKaR1LHSJXZwUA9bpSPyPSNcZV6GOigJ7w7u185VsC2nSssgQusjuUQLZE/v39GLCr2S8PxbTjlohquQkMvyH7Whj+zVKGD/txqFkFCMGQQ5R2o/t/+Qw6xhgSozpKtZ618JNQzYF3QnKbJ9FBl88/1gSAuiGnsl6WWzQ7YHo5F5Js+SfzzTmM+PUArMW104lNJSkZm0sWvpcRrDBt+QWJlpyFp48Rud/Shjt+0VqguJJTQrrVY3oAJ2/uALoIhAT+SxaglYnhEouGGDemf+/wst5eeJ0YA2iBzG54p8b5RZykmXUkNZnKQeh8OjSQwyrKgdl/iVIyYiOXJpKcTLKbRzjanmC9xSm+eH+gXh20PmZ621bxZFwV/YQaX8E3kpyNEH3eEMhgetm13P9eMJrgQsd2bdEJz0C2PRXODxpibZmZ+ESMJO9S6GK0MQ41cU4quMgOyY+AZGqrmzvIfUPx7X1YJPAJALB4CyQ42wsWPJUoghhJYv1rLlcLuPY8HNILHokrFEEabKuqiKvvG0hg+ZeRzxGSZn0SmvhZJ5ROa15y3PbyHoBpgtn4FRlicRRwL28VlyG34Bsoljls7tvzbpZHCLtjVP6pVjO/6Du6vshQiShmVqlQ2Zw==
-X-Forefront-Antispam-Report: 
-	CIP:194.138.21.76;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230016)(4636009)(39860400002)(136003)(346002)(376002)(396003)(46966006)(40470700004)(36840700001)(36860700001)(40460700003)(356005)(81166007)(31696002)(86362001)(82960400001)(82740400003)(316002)(6706004)(110136005)(16576012)(5660300002)(8936002)(44832011)(8676002)(70586007)(70206006)(2906002)(82310400005)(336012)(186003)(53546011)(956004)(2616005)(83380400001)(47076005)(16526019)(40480700001)(26005)(478600001)(41300700001)(36756003)(31686004)(3940600001)(43740500002)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2022 09:36:20.7161
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 
- 3cd2b8df-1b8e-48a0-c245-08da7dd87223
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
- TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.76];Helo=[hybrid.siemens.com]
-X-MS-Exchange-CrossTenant-AuthSource: 
-	VE1EUR01FT100.eop-EUR01.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR1001MB1390
+To: cip-dev@lists.cip-project.org
+Cc: Quirin Gylstorff <quirin.gylstorff@siemens.com>,
+	Shivanand.Kunijadar@toshiba-tsip.com
+Subject: [isar-cip-core][PATCH 4/4] linux-cip: Switch to bbb to
+ cip-kernel-config
+Date: Sun, 14 Aug 2022 15:47:33 +0300
+Message-Id: 
+ <e8284e11032037c166f1a84bf309f26d18348f79.1660481252.git.jan.kiszka@siemens.com>
+In-Reply-To: <cover.1660481252.git.jan.kiszka@siemens.com>
+References: <cover.1660481252.git.jan.kiszka@siemens.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-294854:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Sun, 14 Aug 2022 09:36:33 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9205
+ <cip-dev@lists.cip-project.org>; Sun, 14 Aug 2022 12:47:44 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9210
 
-On 12.08.22 12:51, Quirin Gylstorff wrote:
-> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> 
-> Remove the kas option for efibootguard as it cannot build a image.
-> Move the package installation for swupdate to the include.
-> 
-> Changes V2:
->  - Readd WICVARS(KERNEL_IMAGE INITRD_IMAGE DTB_FILES)
->  - Fix setting WKS_FILE for ebg_swu
-> 
-> Changes V3:
->  - Fix assignment of WKS_FILE
->    - use weak assignment in conf/distro/cip-core-common.inc
-> 
-> Changes V4:
->  - Move `firmware-binaries` to kas/opt/ebg-swu
->  - kas/opt/ebg-secure-boot-snakeoil now depends on ebg-swu
->  - add DEBIAN_CONFLICTS between initramfs-verity-hook and initramfs-abrootfs-hook
->    as the system stucks in a reboot loop if both are installed.
-> 
-> Changes V5:
->  - Fix set WKS_FILE in case by using default instead of weak assignment
->  - reoder patches
->  - rebase onto 29d3546 origin/next
-> 
-> 
-> Quirin Gylstorff (3):
->   initramfs-*-hook: Add DEBIAN_CONFLICTS
->   kas/opt/swupdate: Move the package installation to swupdate.inc
->   kas: Remove efibootguard.yml
-> 
->  kas/opt/ebg-secure-boot-snakeoil.yml          | 11 ++----
->  kas/opt/ebg-swu.yml                           | 18 +++++++--
->  kas/opt/efibootguard.yml                      | 39 -------------------
->  kas/opt/swupdate.yml                          |  4 --
->  recipes-core/images/efibootguard.inc          | 18 +++++++++
->  recipes-core/images/swupdate.inc              |  3 ++
->  .../initramfs-abrootfs-hook_0.1.bb            |  1 +
->  .../initramfs-verity-hook_0.1.bb              |  1 +
->  8 files changed, 41 insertions(+), 54 deletions(-)
->  delete mode 100644 kas/opt/efibootguard.yml
->  create mode 100644 recipes-core/images/efibootguard.inc
-> 
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-Thanks, applied. This time, the pipeline stayed green ;).
+With the command line fixed and [1] being merged, we can finally drop
+the private defconfig for the BeagleBone Black.
 
-Jan
+[1] https://gitlab.com/cip-project/cip-kernel/cip-kernel-config/-/merge_requests/68
 
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
+ conf/machine/bbb.conf                     |   3 +
+ recipes-kernel/linux/files/bbb_defconfig  | 455 ----------------------
+ recipes-kernel/linux/linux-cip-common.inc |   2 -
+ 3 files changed, 3 insertions(+), 457 deletions(-)
+ delete mode 100644 recipes-kernel/linux/files/bbb_defconfig
+
+diff --git a/conf/machine/bbb.conf b/conf/machine/bbb.conf
+index ea87ed8..01206cc 100644
+--- a/conf/machine/bbb.conf
++++ b/conf/machine/bbb.conf
+@@ -13,3 +13,6 @@ IMAGE_FSTYPES ?= "wic"
+ IMAGER_INSTALL += "u-boot-omap"
+ 
+ IMAGE_INSTALL += "u-boot-script"
++
++USE_CIP_KERNEL_CONFIG = "1"
++KERNEL_DEFCONFIG = "cip-kernel-config/${KERNEL_DEFCONFIG_VERSION}/arm/cip_bbb_defconfig"
+diff --git a/recipes-kernel/linux/files/bbb_defconfig b/recipes-kernel/linux/files/bbb_defconfig
+deleted file mode 100644
+index 31e15e6..0000000
+--- a/recipes-kernel/linux/files/bbb_defconfig
++++ /dev/null
+@@ -1,455 +0,0 @@
+-CONFIG_KERNEL_LZMA=y
+-CONFIG_SYSVIPC=y
+-CONFIG_POSIX_MQUEUE=y
+-CONFIG_FHANDLE=y
+-CONFIG_AUDIT=y
+-CONFIG_NO_HZ=y
+-CONFIG_HIGH_RES_TIMERS=y
+-CONFIG_BSD_PROCESS_ACCT=y
+-CONFIG_IKCONFIG=y
+-CONFIG_IKCONFIG_PROC=y
+-CONFIG_LOG_BUF_SHIFT=16
+-CONFIG_CGROUPS=y
+-CONFIG_CGROUP_FREEZER=y
+-CONFIG_CGROUP_DEVICE=y
+-CONFIG_CPUSETS=y
+-CONFIG_CGROUP_CPUACCT=y
+-CONFIG_MEMCG=y
+-CONFIG_MEMCG_SWAP=y
+-CONFIG_MEMCG_KMEM=y
+-CONFIG_CGROUP_PERF=y
+-CONFIG_CGROUP_SCHED=y
+-CONFIG_CFS_BANDWIDTH=y
+-CONFIG_RT_GROUP_SCHED=y
+-CONFIG_BLK_CGROUP=y
+-CONFIG_NAMESPACES=y
+-CONFIG_BLK_DEV_INITRD=y
+-CONFIG_EXPERT=y
+-CONFIG_SLAB=y
+-CONFIG_PROFILING=y
+-CONFIG_OPROFILE=y
+-CONFIG_KPROBES=y
+-CONFIG_MODULES=y
+-CONFIG_MODULE_FORCE_LOAD=y
+-CONFIG_MODULE_UNLOAD=y
+-CONFIG_MODULE_FORCE_UNLOAD=y
+-CONFIG_MODVERSIONS=y
+-CONFIG_MODULE_SRCVERSION_ALL=y
+-# CONFIG_BLK_DEV_BSG is not set
+-CONFIG_PARTITION_ADVANCED=y
+-CONFIG_POWER_AVS_OMAP=y
+-CONFIG_POWER_AVS_OMAP_CLASS3=y
+-CONFIG_OMAP_RESET_CLOCKS=y
+-CONFIG_OMAP_MUX_DEBUG=y
+-CONFIG_SOC_AM33XX=y
+-CONFIG_ARM_THUMBEE=y
+-CONFIG_ARM_ERRATA_411920=y
+-CONFIG_ARM_ERRATA_430973=y
+-CONFIG_SMP=y
+-CONFIG_NR_CPUS=2
+-CONFIG_CMA=y
+-CONFIG_SECCOMP=y
+-CONFIG_ZBOOT_ROM_TEXT=0x0
+-CONFIG_ZBOOT_ROM_BSS=0x0
+-CONFIG_ARM_APPENDED_DTB=y
+-CONFIG_ARM_ATAG_DTB_COMPAT=y
+-CONFIG_CMDLINE=""
+-CONFIG_KEXEC=y
+-CONFIG_CPU_FREQ=y
+-CONFIG_CPU_FREQ_STAT_DETAILS=y
+-CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
+-CONFIG_CPU_FREQ_GOV_POWERSAVE=y
+-CONFIG_CPU_FREQ_GOV_USERSPACE=y
+-CONFIG_CPU_FREQ_GOV_CONSERVATIVE=y
+-CONFIG_CPUFREQ_DT=y
+-# CONFIG_ARM_OMAP2PLUS_CPUFREQ is not set
+-CONFIG_CPU_IDLE=y
+-CONFIG_BINFMT_MISC=y
+-CONFIG_PM_DEBUG=y
+-CONFIG_NET=y
+-CONFIG_PACKET=y
+-CONFIG_UNIX=y
+-CONFIG_XFRM_USER=y
+-CONFIG_NET_KEY=y
+-CONFIG_NET_KEY_MIGRATE=y
+-CONFIG_INET=y
+-CONFIG_IP_MULTICAST=y
+-CONFIG_IP_PNP=y
+-CONFIG_IP_PNP_DHCP=y
+-CONFIG_IP_PNP_BOOTP=y
+-CONFIG_IP_PNP_RARP=y
+-# CONFIG_INET_LRO is not set
+-CONFIG_NETFILTER=y
+-CONFIG_PHONET=m
+-CONFIG_CAN=m
+-CONFIG_CAN_C_CAN=m
+-CONFIG_CAN_C_CAN_PLATFORM=m
+-CONFIG_BT=m
+-CONFIG_BT_RFCOMM=m
+-CONFIG_BT_RFCOMM_TTY=y
+-CONFIG_BT_BNEP=m
+-CONFIG_BT_BNEP_MC_FILTER=y
+-CONFIG_BT_BNEP_PROTO_FILTER=y
+-CONFIG_BT_HIDP=m
+-CONFIG_BT_HCIBTUSB=m
+-CONFIG_BT_HCIBTSDIO=m
+-CONFIG_BT_HCIUART=m
+-CONFIG_BT_HCIUART_H4=y
+-CONFIG_BT_HCIUART_BCSP=y
+-CONFIG_BT_HCIUART_LL=y
+-CONFIG_BT_HCIUART_3WIRE=y
+-CONFIG_BT_HCIBCM203X=m
+-CONFIG_BT_HCIBPA10X=m
+-CONFIG_CFG80211=m
+-CONFIG_BT_HCIBFUSB=m
+-CONFIG_BT_HCIVHCI=m
+-CONFIG_BT_MRVL=m
+-CONFIG_BT_MRVL_SDIO=m
+-CONFIG_AF_RXRPC=m
+-CONFIG_RXKAD=m
+-CONFIG_MAC80211=m
+-CONFIG_DEVTMPFS=y
+-CONFIG_DEVTMPFS_MOUNT=y
+-CONFIG_DMA_CMA=y
+-CONFIG_OMAP_OCP2SCP=y
+-CONFIG_CONNECTOR=m
+-CONFIG_MTD=y
+-CONFIG_MTD_CMDLINE_PARTS=y
+-CONFIG_MTD_BLOCK=y
+-CONFIG_MTD_OOPS=y
+-CONFIG_MTD_CFI=y
+-CONFIG_MTD_CFI_INTELEXT=y
+-CONFIG_MTD_PHYSMAP=y
+-CONFIG_MTD_PHYSMAP_OF=y
+-CONFIG_MTD_NAND=y
+-CONFIG_MTD_NAND_ECC_BCH=y
+-CONFIG_MTD_NAND_OMAP2=y
+-CONFIG_MTD_NAND_OMAP_BCH=y
+-CONFIG_MTD_ONENAND=y
+-CONFIG_MTD_ONENAND_VERIFY_WRITE=y
+-CONFIG_MTD_ONENAND_OMAP2=y
+-CONFIG_MTD_UBI=y
+-CONFIG_MTD_SPI_NOR=m
+-CONFIG_MTD_M25P80=m
+-CONFIG_BLK_DEV_LOOP=y
+-CONFIG_BLK_DEV_RAM=y
+-CONFIG_BLK_DEV_RAM_SIZE=16384
+-CONFIG_SENSORS_TSL2550=m
+-CONFIG_BMP085_I2C=m
+-CONFIG_SRAM=y
+-CONFIG_SENSORS_LIS3_I2C=m
+-CONFIG_BLK_DEV_SD=y
+-CONFIG_SCSI_SCAN_ASYNC=y
+-CONFIG_ATA=y
+-CONFIG_SATA_AHCI_PLATFORM=y
+-CONFIG_NETDEVICES=y
+-# CONFIG_NET_VENDOR_ARC is not set
+-# CONFIG_NET_CADENCE is not set
+-# CONFIG_NET_VENDOR_BROADCOM is not set
+-# CONFIG_NET_VENDOR_CIRRUS is not set
+-CONFIG_DM9000=y
+-# CONFIG_NET_VENDOR_FARADAY is not set
+-# CONFIG_NET_VENDOR_HISILICON is not set
+-# CONFIG_NET_VENDOR_INTEL is not set
+-# CONFIG_NET_VENDOR_MARVELL is not set
+-CONFIG_KS8851=y
+-CONFIG_KS8851_MLL=y
+-# CONFIG_NET_VENDOR_MICROCHIP is not set
+-# CONFIG_NET_VENDOR_NATSEMI is not set
+-# CONFIG_NET_VENDOR_QUALCOMM is not set
+-# CONFIG_NET_VENDOR_SAMSUNG is not set
+-# CONFIG_NET_VENDOR_SEEQ is not set
+-CONFIG_SMC91X=y
+-CONFIG_SMSC911X=y
+-# CONFIG_NET_VENDOR_STMICRO is not set
+-CONFIG_TI_DAVINCI_EMAC=y
+-CONFIG_TI_CPSW=y
+-CONFIG_TI_CPTS=y
+-# CONFIG_NET_VENDOR_VIA is not set
+-# CONFIG_NET_VENDOR_WIZNET is not set
+-CONFIG_AT803X_PHY=y
+-CONFIG_SMSC_PHY=y
+-CONFIG_USB_USBNET=m
+-CONFIG_USB_NET_SMSC95XX=m
+-CONFIG_USB_ALI_M5632=y
+-CONFIG_USB_AN2720=y
+-CONFIG_USB_EPSON2888=y
+-CONFIG_USB_EHCI_HCD=m
+-CONFIG_USB_OHCI_HCD=m
+-CONFIG_USB_KC2190=y
+-CONFIG_USB_CDC_PHONET=m
+-CONFIG_LIBERTAS=m
+-CONFIG_LIBERTAS_USB=m
+-CONFIG_LIBERTAS_SDIO=m
+-CONFIG_LIBERTAS_DEBUG=y
+-CONFIG_WL_TI=y
+-CONFIG_WL12XX=m
+-CONFIG_WL18XX=m
+-CONFIG_WLCORE_SPI=m
+-CONFIG_WLCORE_SDIO=m
+-CONFIG_MWIFIEX=m
+-CONFIG_MWIFIEX_SDIO=m
+-CONFIG_MWIFIEX_USB=m
+-CONFIG_INPUT_JOYDEV=m
+-CONFIG_INPUT_EVDEV=m
+-CONFIG_KEYBOARD_ATKBD=m
+-CONFIG_KEYBOARD_GPIO=m
+-CONFIG_KEYBOARD_MATRIX=m
+-CONFIG_KEYBOARD_OMAP4=m
+-CONFIG_KEYBOARD_TWL4030=m
+-# CONFIG_INPUT_MOUSE is not set
+-CONFIG_INPUT_TOUCHSCREEN=y
+-CONFIG_TOUCHSCREEN_ADS7846=m
+-CONFIG_TOUCHSCREEN_EDT_FT5X06=m
+-CONFIG_TOUCHSCREEN_PIXCIR=m
+-CONFIG_TOUCHSCREEN_TSC2005=m
+-CONFIG_TOUCHSCREEN_TSC2007=m
+-CONFIG_TOUCHSCREEN_TI_AM335X_TSC=m
+-CONFIG_INPUT_MISC=y
+-CONFIG_INPUT_TPS65218_PWRBUTTON=m
+-CONFIG_INPUT_TWL4030_PWRBUTTON=m
+-CONFIG_INPUT_PALMAS_PWRBUTTON=m
+-CONFIG_SERIO=m
+-# CONFIG_LEGACY_PTYS is not set
+-CONFIG_SERIAL_8250=y
+-CONFIG_SERIAL_8250_CONSOLE=y
+-CONFIG_SERIAL_8250_NR_UARTS=32
+-CONFIG_SERIAL_8250_RUNTIME_UARTS=6
+-CONFIG_SERIAL_8250_EXTENDED=y
+-CONFIG_SERIAL_8250_MANY_PORTS=y
+-CONFIG_SERIAL_8250_SHARE_IRQ=y
+-CONFIG_SERIAL_8250_DETECT_IRQ=y
+-CONFIG_SERIAL_8250_RSA=y
+-CONFIG_SERIAL_OF_PLATFORM=y
+-CONFIG_SERIAL_OMAP=y
+-CONFIG_SERIAL_OMAP_CONSOLE=y
+-CONFIG_I2C_CHARDEV=y
+-CONFIG_SPI=y
+-CONFIG_SPI_OMAP24XX=y
+-CONFIG_SPI_TI_QSPI=m
+-CONFIG_HSI=m
+-CONFIG_OMAP_SSI=m
+-CONFIG_NOKIA_MODEM=m
+-CONFIG_SSI_PROTOCOL=m
+-CONFIG_PINCTRL_SINGLE=y
+-CONFIG_DEBUG_GPIO=y
+-CONFIG_GPIO_SYSFS=y
+-CONFIG_GPIO_PCA953X=m
+-CONFIG_GPIO_PCF857X=y
+-CONFIG_GPIO_TWL4030=y
+-CONFIG_GPIO_PALMAS=y
+-CONFIG_W1=m
+-CONFIG_HDQ_MASTER_OMAP=m
+-CONFIG_BATTERY_BQ27XXX=m
+-CONFIG_CHARGER_ISP1704=m
+-CONFIG_CHARGER_TWL4030=m
+-CONFIG_CHARGER_BQ2415X=m
+-CONFIG_CHARGER_BQ24190=m
+-CONFIG_CHARGER_BQ24735=m
+-CONFIG_POWER_RESET=y
+-CONFIG_POWER_AVS=y
+-CONFIG_HWMON=m
+-CONFIG_SENSORS_GPIO_FAN=m
+-CONFIG_SENSORS_LM75=m
+-CONFIG_SENSORS_TMP102=m
+-CONFIG_THERMAL=m
+-CONFIG_THERMAL_GOV_FAIR_SHARE=y
+-CONFIG_THERMAL_GOV_USER_SPACE=y
+-CONFIG_CPU_THERMAL=y
+-CONFIG_TI_SOC_THERMAL=m
+-CONFIG_TI_THERMAL=y
+-CONFIG_OMAP4_THERMAL=y
+-CONFIG_OMAP5_THERMAL=y
+-CONFIG_DRA752_THERMAL=y
+-CONFIG_WATCHDOG=y
+-CONFIG_OMAP_WATCHDOG=m
+-CONFIG_TWL4030_WATCHDOG=m
+-CONFIG_MFD_PALMAS=y
+-CONFIG_MFD_TPS65217=y
+-CONFIG_MFD_TPS65218=y
+-CONFIG_MFD_TPS65910=y
+-CONFIG_MFD_TI_AM335X_TSCADC=m
+-CONFIG_TWL6040_CORE=y
+-CONFIG_REGULATOR_PALMAS=y
+-CONFIG_REGULATOR_PBIAS=y
+-CONFIG_REGULATOR_TI_ABB=y
+-CONFIG_REGULATOR_TPS62360=m
+-CONFIG_REGULATOR_TPS65023=y
+-CONFIG_REGULATOR_TPS6507X=y
+-CONFIG_REGULATOR_TPS65217=y
+-CONFIG_REGULATOR_TPS65218=y
+-CONFIG_REGULATOR_TPS65910=y
+-CONFIG_REGULATOR_TWL4030=y
+-CONFIG_FB=y
+-CONFIG_FIRMWARE_EDID=y
+-CONFIG_FB_MODE_HELPERS=y
+-CONFIG_FB_TILEBLITTING=y
+-CONFIG_OMAP2_DSS=m
+-CONFIG_OMAP5_DSS_HDMI=y
+-CONFIG_OMAP2_DSS_SDI=y
+-CONFIG_OMAP2_DSS_DSI=y
+-CONFIG_FB_OMAP2=m
+-CONFIG_DISPLAY_ENCODER_TFP410=m
+-CONFIG_DISPLAY_ENCODER_TPD12S015=m
+-CONFIG_DISPLAY_CONNECTOR_DVI=m
+-CONFIG_DISPLAY_CONNECTOR_HDMI=m
+-CONFIG_DISPLAY_CONNECTOR_ANALOG_TV=m
+-CONFIG_DISPLAY_PANEL_DPI=m
+-CONFIG_DISPLAY_PANEL_DSI_CM=m
+-CONFIG_DISPLAY_PANEL_SONY_ACX565AKM=m
+-CONFIG_DISPLAY_PANEL_LGPHILIPS_LB035Q02=m
+-CONFIG_DISPLAY_PANEL_SHARP_LS037V7DW01=m
+-CONFIG_DISPLAY_PANEL_TPO_TD028TTEC1=m
+-CONFIG_DISPLAY_PANEL_TPO_TD043MTEA1=m
+-CONFIG_DISPLAY_PANEL_NEC_NL8048HL11=m
+-CONFIG_BACKLIGHT_LCD_SUPPORT=y
+-CONFIG_LCD_CLASS_DEVICE=y
+-CONFIG_LCD_PLATFORM=y
+-CONFIG_BACKLIGHT_CLASS_DEVICE=y
+-CONFIG_BACKLIGHT_GENERIC=m
+-CONFIG_BACKLIGHT_PWM=m
+-CONFIG_BACKLIGHT_PANDORA=m
+-CONFIG_BACKLIGHT_GPIO=m
+-CONFIG_FRAMEBUFFER_CONSOLE=y
+-CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY=y
+-CONFIG_FRAMEBUFFER_CONSOLE_ROTATION=y
+-CONFIG_LOGO=y
+-CONFIG_SOUND=m
+-CONFIG_SND=m
+-CONFIG_SND_MIXER_OSS=m
+-CONFIG_SND_PCM_OSS=m
+-CONFIG_SND_VERBOSE_PRINTK=y
+-CONFIG_SND_DEBUG=y
+-CONFIG_SND_USB_AUDIO=m
+-CONFIG_SND_SOC=m
+-CONFIG_SND_EDMA_SOC=m
+-CONFIG_SND_AM33XX_SOC_EVM=m
+-CONFIG_SND_DAVINCI_SOC_MCASP=m
+-CONFIG_SND_OMAP_SOC=m
+-CONFIG_SND_OMAP_SOC_OMAP_TWL4030=m
+-CONFIG_SND_OMAP_SOC_OMAP_ABE_TWL6040=m
+-CONFIG_SND_OMAP_SOC_OMAP3_PANDORA=m
+-CONFIG_SND_SIMPLE_CARD=m
+-CONFIG_SND_SOC_TLV320AIC3X=m
+-CONFIG_HID_GENERIC=m
+-CONFIG_USB_HIDDEV=y
+-CONFIG_USB_KBD=m
+-CONFIG_USB_MOUSE=m
+-CONFIG_USB=m
+-CONFIG_USB_ANNOUNCE_NEW_DEVICES=y
+-CONFIG_USB_MON=m
+-CONFIG_USB_XHCI_HCD=m
+-CONFIG_USB_WDM=m
+-CONFIG_USB_STORAGE=m
+-CONFIG_USB_MUSB_HDRC=m
+-CONFIG_USB_MUSB_OMAP2PLUS=m
+-CONFIG_USB_MUSB_AM35X=m
+-CONFIG_USB_MUSB_DSPS=m
+-CONFIG_USB_INVENTRA_DMA=y
+-CONFIG_USB_TI_CPPI41_DMA=y
+-CONFIG_USB_DWC3=m
+-CONFIG_USB_TEST=m
+-CONFIG_AM335X_PHY_USB=y
+-CONFIG_USB_GADGET=m
+-CONFIG_USB_GADGET_DEBUG=y
+-CONFIG_USB_GADGET_DEBUG_FILES=y
+-CONFIG_USB_GADGET_DEBUG_FS=y
+-CONFIG_USB_CONFIGFS=m
+-CONFIG_USB_CONFIGFS_SERIAL=y
+-CONFIG_USB_CONFIGFS_ACM=y
+-CONFIG_USB_CONFIGFS_OBEX=y
+-CONFIG_USB_CONFIGFS_NCM=y
+-CONFIG_USB_CONFIGFS_ECM=y
+-CONFIG_USB_CONFIGFS_ECM_SUBSET=y
+-CONFIG_USB_CONFIGFS_RNDIS=y
+-CONFIG_USB_CONFIGFS_EEM=y
+-CONFIG_USB_CONFIGFS_PHONET=y
+-CONFIG_USB_CONFIGFS_MASS_STORAGE=y
+-CONFIG_USB_CONFIGFS_F_LB_SS=y
+-CONFIG_USB_CONFIGFS_F_FS=y
+-CONFIG_USB_CONFIGFS_F_UAC1=y
+-CONFIG_USB_CONFIGFS_F_UAC2=y
+-CONFIG_USB_CONFIGFS_F_MIDI=y
+-CONFIG_USB_CONFIGFS_F_HID=y
+-CONFIG_USB_ZERO=m
+-CONFIG_USB_G_NOKIA=m
+-CONFIG_MMC=y
+-CONFIG_SDIO_UART=y
+-CONFIG_MMC_OMAP=y
+-CONFIG_MMC_OMAP_HS=y
+-CONFIG_NEW_LEDS=y
+-CONFIG_LEDS_CLASS=m
+-CONFIG_LEDS_GPIO=m
+-CONFIG_LEDS_PWM=m
+-CONFIG_LEDS_TRIGGERS=y
+-CONFIG_LEDS_TRIGGER_TIMER=m
+-CONFIG_LEDS_TRIGGER_ONESHOT=m
+-CONFIG_LEDS_TRIGGER_HEARTBEAT=m
+-CONFIG_LEDS_TRIGGER_BACKLIGHT=m
+-CONFIG_LEDS_TRIGGER_CPU=y
+-CONFIG_LEDS_TRIGGER_GPIO=m
+-CONFIG_LEDS_TRIGGER_DEFAULT_ON=m
+-CONFIG_RTC_CLASS=y
+-CONFIG_RTC_DRV_DS1307=m
+-CONFIG_RTC_DRV_PALMAS=m
+-CONFIG_RTC_DRV_TWL92330=y
+-CONFIG_RTC_DRV_TWL4030=m
+-CONFIG_RTC_DRV_OMAP=m
+-CONFIG_DMADEVICES=y
+-CONFIG_TI_EDMA=y
+-CONFIG_DMA_OMAP=y
+-# CONFIG_IOMMU_SUPPORT is not set
+-CONFIG_EXTCON=m
+-CONFIG_EXTCON_USB_GPIO=m
+-CONFIG_EXTCON_PALMAS=m
+-CONFIG_TI_EMIF=m
+-CONFIG_IIO=m
+-CONFIG_TI_AM335X_ADC=m
+-CONFIG_PWM=y
+-CONFIG_PWM_TIECAP=m
+-CONFIG_PWM_TIEHRPWM=m
+-CONFIG_PWM_TWL=m
+-CONFIG_PWM_TWL_LED=m
+-CONFIG_PHY_DM816X_USB=m
+-CONFIG_OMAP_USB2=m
+-CONFIG_TI_PIPE3=y
+-CONFIG_TWL4030_USB=m
+-CONFIG_EXT2_FS=y
+-CONFIG_EXT3_FS=y
+-# CONFIG_EXT3_FS_XATTR is not set
+-CONFIG_EXT4_FS=y
+-CONFIG_FANOTIFY=y
+-CONFIG_QUOTA=y
+-CONFIG_QFMT_V2=y
+-CONFIG_AUTOFS4_FS=m
+-CONFIG_MSDOS_FS=y
+-CONFIG_VFAT_FS=y
+-CONFIG_TMPFS=y
+-CONFIG_TMPFS_POSIX_ACL=y
+-CONFIG_CONFIGFS_FS=y
+-CONFIG_UBIFS_FS=y
+-CONFIG_CRAMFS=y
+-CONFIG_NFS_FS=y
+-CONFIG_NFS_V3_ACL=y
+-CONFIG_NFS_V4=y
+-CONFIG_ROOT_NFS=y
+-CONFIG_NLS_CODEPAGE_437=y
+-CONFIG_NLS_ISO8859_1=y
+-CONFIG_PRINTK_TIME=y
+-CONFIG_DEBUG_INFO=y
+-CONFIG_MAGIC_SYSRQ=y
+-CONFIG_SCHEDSTATS=y
+-CONFIG_TIMER_STATS=y
+-CONFIG_PROVE_LOCKING=y
+-# CONFIG_DEBUG_BUGVERBOSE is not set
+-CONFIG_SECURITY=y
+-CONFIG_CRYPTO_MICHAEL_MIC=y
+-# CONFIG_CRYPTO_ANSI_CPRNG is not set
+-CONFIG_CRC_CCITT=y
+-CONFIG_CRC_T10DIF=y
+-CONFIG_CRC_ITU_T=y
+-CONFIG_CRC7=y
+-CONFIG_LIBCRC32C=y
+-CONFIG_FONTS=y
+-CONFIG_FONT_8x8=y
+-CONFIG_FONT_8x16=y
+diff --git a/recipes-kernel/linux/linux-cip-common.inc b/recipes-kernel/linux/linux-cip-common.inc
+index 8d8a8e2..15d8370 100644
+--- a/recipes-kernel/linux/linux-cip-common.inc
++++ b/recipes-kernel/linux/linux-cip-common.inc
+@@ -23,8 +23,6 @@ SRC_URI_append = " ${@ "git://gitlab.com/cip-project/cip-kernel/cip-kernel-confi
+     if d.getVar('USE_CIP_KERNEL_CONFIG') == '1' else '' \
+     }"
+ 
+-SRC_URI_append_bbb = "file://${KERNEL_DEFCONFIG}"
+-
+ SRCREV_cip-kernel-config ?= "59f7903d120e529cc26b8e5fd7b13c3bbb632e15"
+ 
+ S = "${WORKDIR}/linux-cip-${PV}"
 -- 
-Siemens AG, Technology
-Competence Center Embedded Linux
+2.35.3
+
 
