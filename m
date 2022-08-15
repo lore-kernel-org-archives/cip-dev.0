@@ -2,7 +2,7 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE003C282E7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB6A3C25B0D
 	for <webhook@archiver.kernel.org>; Mon, 15 Aug 2022 16:37:31 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com
  [210.160.252.172])
@@ -14,20 +14,21 @@ Authentication-Results: mx.groups.io;
  spf=pass (domain: bp.renesas.com, ip: 210.160.252.172,
  mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.93,238,1654527600";
-   d="scan'208";a="131488432"
+   d="scan'208";a="131488428"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 16 Aug 2022 01:37:24 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 16 Aug 2022 01:37:23 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 8373540171F7;
-	Tue, 16 Aug 2022 01:37:23 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id A577140171F7;
+	Tue, 16 Aug 2022 01:37:21 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 2/4] mmc: renesas_sdhi: Fix typo's
-Date: Mon, 15 Aug 2022 17:37:16 +0100
-Message-Id: <20220815163718.24056-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 1/4] mmc: renesas_sdhi: Get the reset handle early
+ in the probe
+Date: Mon, 15 Aug 2022 17:37:15 +0100
+Message-Id: <20220815163718.24056-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220815163718.24056-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20220815163718.24056-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -35,50 +36,55 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 15 Aug 2022 16:37:31 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9214
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9213
 
-commit 088604048b24846d1e79da4c2a73a6f3ad43edb4 upstream.
+commit 0dac1e498f8130fdacfdd5289e3a7ac87ec1b9ad upstream.
 
-Fix typo's,
-* difference -> different
-* alignment -> aligned
+In case of devm_reset_control_get_optional_exclusive() failure we returned
+directly instead of jumping to the error path to roll back initialization.
 
-While at it updated the comment to make it clear that Renesas SDHI DMAC
-needs buffers to be 128-byte aligned.
+This patch moves devm_reset_control_get_optional_exclusive() early in the
+probe so that we have the reset handle prior to initialization of the
+hardware.
 
+Fixes: b4d86f37eacb7 ("mmc: renesas_sdhi: do hard reset if possible")
 Reported-by: Pavel Machek <pavel@denx.de>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Link: https://lore.kernel.org/r/20220624181438.4355-3-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://lore.kernel.org/r/20220624181438.4355-2-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/mmc/host/renesas_sdhi_core.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index ff97f15e317c..bc6040be657b 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -179,7 +179,7 @@ renesas_sdhi_internal_dmac_dataend_dma(struct tmio_mmc_host *host) {
- }
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index d83ce6620190..ca74fe8bfd9c 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -1007,6 +1007,10 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 	if (IS_ERR(priv->clk_cd))
+ 		priv->clk_cd = NULL;
  
- /*
-- * renesas_sdhi_internal_dmac_map() will be called with two difference
-+ * renesas_sdhi_internal_dmac_map() will be called with two different
-  * sg pointers in two mmc_data by .pre_req(), but tmio host can have a single
-  * sg_ptr only. So, renesas_sdhi_internal_dmac_{un}map() should use a sg
-  * pointer in a mmc_data instead of host->sg_ptr.
-@@ -213,7 +213,7 @@ renesas_sdhi_internal_dmac_map(struct tmio_mmc_host *host,
++	priv->rstc = devm_reset_control_get_optional_exclusive(&pdev->dev, NULL);
++	if (IS_ERR(priv->rstc))
++		return PTR_ERR(priv->rstc);
++
+ 	priv->pinctrl = devm_pinctrl_get(&pdev->dev);
+ 	if (!IS_ERR(priv->pinctrl)) {
+ 		priv->pins_default = pinctrl_lookup_state(priv->pinctrl,
+@@ -1095,10 +1099,6 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 	if (ret)
+ 		goto efree;
  
- 	data->host_cookie = cookie;
- 
--	/* This DMAC cannot handle if buffer is not 128-bytes alignment */
-+	/* This DMAC needs buffers to be 128-byte aligned */
- 	if (!IS_ALIGNED(sg_dma_address(data->sg), 128)) {
- 		renesas_sdhi_internal_dmac_unmap(host, data, cookie);
- 		return false;
+-	priv->rstc = devm_reset_control_get_optional_exclusive(&pdev->dev, NULL);
+-	if (IS_ERR(priv->rstc))
+-		return PTR_ERR(priv->rstc);
+-
+ 	ver = sd_ctrl_read16(host, CTL_VERSION);
+ 	/* GEN2_SDR104 is first known SDHI to use 32bit block count */
+ 	if (ver < SDHI_VER_GEN2_SDR104 && mmc_data->max_blk_count > U16_MAX)
 -- 
 2.17.1
 
