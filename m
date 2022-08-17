@@ -2,87 +2,87 @@ Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89B66C25B0E
-	for <webhook@archiver.kernel.org>; Wed, 17 Aug 2022 00:10:01 +0000 (UTC)
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
- [209.85.214.176])
- by mx.groups.io with SMTP id smtpd.web11.22953.1660694994524268394
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E99C25B0E
+	for <webhook@archiver.kernel.org>; Wed, 17 Aug 2022 00:14:21 +0000 (UTC)
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com
+ [209.85.215.174])
+ by mx.groups.io with SMTP id smtpd.web09.23377.1660695254887060076
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Tue, 16 Aug 2022 17:09:54 -0700
+ Tue, 16 Aug 2022 17:14:15 -0700
 Authentication-Results: mx.groups.io;
  dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112
- header.b=ocMTgD/d;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.176,
+ header.b=sqs03a3I;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.215.174,
  mailfrom: bot@kernelci.org)
-Received: by mail-pl1-f176.google.com with SMTP id d16so10616187pll.11
+Received: by mail-pg1-f174.google.com with SMTP id r69so10671117pgr.2
         for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Tue, 16 Aug 2022 17:09:54 -0700 (PDT)
+ Tue, 16 Aug 2022 17:14:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20210112.gappssmtp.com; s=20210112;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:from:to:cc;
-        bh=Mc1Jdbbp/DPUffafvl4+ZL7TrBw7Dubw5XFIAu5DtLY=;
-        b=ocMTgD/db0NxThV60U3um9pBw40rM6UpebAeg4RkOHcOVF5jyg0c38sZJ9AsSW/NVZ
-         0NRm88Yp/xXMsKazwzmqJNPzvAx25Uyq0uYh79yemfXjOLW0afbHjtDR5pv2D2mHqbkm
-         cyLUnUkfgphyfUrV/WtB8nhPLprt+d/+lsQa3bo3EWr7Y0O2Dznx6H0AY5WhcJFgJ2DG
-         cNtNa47ua2g0Br3BDrSSL0Xeih63i+jVZkTOuH6OeQ61sVnDFA/JsI35a3uClF5vVL0o
-         2huIlXPZxh9wtnlJ8/j3uUHworkXoGBySTXHNsgyIGCki6p4REHtlsutagfirGTcFskP
-         6GeQ==
+        bh=59WIHkixt2oLt7Nj29SUp1fQoDvsAEe7oOqTNtcUDRE=;
+        b=sqs03a3IvN2bsx8C2AJ3cdtdQhW+ys2rZqn7B6BRkVFcaGkT4e6VrXLtd5xsydg+qc
+         fF1LnLesqYF1kyklEsi6LszN/xOGwWd+5qfjgPNRKUX0YCNWJO6btCSIVZhM1V8lc29M
+         d2d8sfY8dxaxlIjUrZTMpQ3wxl/suztT6ZieB//KAyzfBmbmzZgpoekHktNMuu/lxvuD
+         Q8tlK+tvFMNsvHm1ttV9U93dKtTwNvd21NEV83Emj9rcgiheTsS5JejjEMq5mN0oAuMN
+         9aWGsYdJcwcH7DxyJ3r6xVuKn+wG8XiGf3yEjpxPpUJ3kK7qKo6At/PXn0iAGQE0vWrr
+         KxJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:x-gm-message-state:from:to:cc;
-        bh=Mc1Jdbbp/DPUffafvl4+ZL7TrBw7Dubw5XFIAu5DtLY=;
-        b=jhbK2TrJ/pw5dLR9ZZGPh7l7yJmPbFpdgPZDvY8twpQlaYnXVUjBAKPP2O9ZOZBDPB
-         XMRCbeFBCyo9eFzV9YtpHEctV4u+NZqvR6NhnlMELU695iVroji4h/Hv7UAa0h2CUPW6
-         eO77bb0WRzCnYnG1vkwO/q7LCAg493H2zU1itRF+aJ+rEiZ7fko/qS/Lj63RDU4dxO1b
-         0+CCemoPfF0d1ons0u7K6mlxdR2Xlg1ryHtHoy7gPxitPfjjNijLyYE26jRkC/JUZKh0
-         TSGrl8inlDYZOiM/HtFDkyjyYa+2vzpUP2NhKTNoUAPpsMauIgvhO3iHhAkw8kJDWM56
-         jeww==
-X-Gm-Message-State: ACgBeo06TIGQ+zOcQfgwIhCJ1h5xIgE7El0TliE728bIEvIbGVmM7ZYm
-	UQs69V+QVnPHPEdwP73RgYai53u15ZcgGFWD
+        bh=59WIHkixt2oLt7Nj29SUp1fQoDvsAEe7oOqTNtcUDRE=;
+        b=hb2/OZ/T6lCgPD2D+pJdIfbJAokdLgz47zbrqkKGS5zVaeCyK1+NPk0Y42s3T+vHAx
+         b5QP6EQoP8LIwoZGzn5zo/BD53VHL8I90+TGoZuO3o1ZoszRtBbIAw+dekp6RmAJZZ6+
+         A9zrsXMpBiz44G013D8w7R6pdT/QFQ/95sPgjK23sk2cgS3J6DDKNTP90l8TD89K5oHd
+         PR3wBWH462mIm7G0cSFPSz9ZjBg8p4bCio5j36UfDIu9xIZedeLsTg0h3rVc1pVE7+hO
+         rAt+D5wdhvFT/Yqz54j2pS/xgn9Ip+JayGva5/1xpaeHxDSWPtdQRq8V0Ya+dJTmWYDb
+         Vcdw==
+X-Gm-Message-State: ACgBeo1HmiSPVwMU8RLdJG4q4xwyUupgEKesn3KpOXsdwovR7XqcSaxY
+	UgW8Rh01Wwd6nmZoLerVha/wyA4yN6pau/lj
 X-Google-Smtp-Source: 
- AA6agR53skmIO9O+/3f4GiW0YGMZ2goxjrbskl97y1A1IfdoOb52J5XMT2Zbk5a8LvmMhQ9DnA2ZmA==
-X-Received: by 2002:a17:902:b948:b0:172:800a:cda8 with SMTP id
- h8-20020a170902b94800b00172800acda8mr4804834pls.90.1660694993143;
-        Tue, 16 Aug 2022 17:09:53 -0700 (PDT)
+ AA6agR4aOnhoKqwLMd8VlaPbsMobw1qAjpoi7BW7MXJg7T7JYUwajw6N1ARTQH7JdZLikQs0E7BUbQ==
+X-Received: by 2002:a05:6a00:22c6:b0:52f:4d67:b370 with SMTP id
+ f6-20020a056a0022c600b0052f4d67b370mr23369763pfj.58.1660695253215;
+        Tue, 16 Aug 2022 17:14:13 -0700 (PDT)
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
         by smtp.gmail.com with ESMTPSA id
- n4-20020a170902e54400b0016dbaf3ff2esm9711675plf.22.2022.08.16.17.09.52
+ s9-20020a634509000000b0041a8f882e5bsm8077160pga.42.2022.08.16.17.14.12
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Aug 2022 17:09:52 -0700 (PDT)
-Message-ID: <62fc31d0.170a0220.fa336.0bba@mx.google.com>
-Date: Tue, 16 Aug 2022 17:09:52 -0700 (PDT)
+        Tue, 16 Aug 2022 17:14:12 -0700 (PDT)
+Message-ID: <62fc32d4.630a0220.60c83.d2c3@mx.google.com>
+Date: Tue, 16 Aug 2022 17:14:12 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-5.10.y-cip
-X-Kernelci-Tree: cip
+X-Kernelci-Branch: ci/pavel/linux-test
+X-Kernelci-Tree: cip-gitlab
 X-Kernelci-Report-Type: build
-X-Kernelci-Kernel: v5.10.131-cip13-49-g1145e9c6352e6
-Subject: cip/linux-5.10.y-cip build: 183 builds: 3 failed, 180 passed,
- 4 errors,
- 10 warnings (v5.10.131-cip13-49-g1145e9c6352e6)
-To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
- kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
+X-Kernelci-Kernel: v5.10.131-cip13-84-g5fcbe4a63ab4d
+Subject: cip-gitlab/ci/pavel/linux-test build: 176 builds: 2 failed,
+ 174 passed,
+ 4 errors, 10 warnings (v5.10.131-cip13-84-g5fcbe4a63ab4d)
+To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
 From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 17 Aug 2022 00:10:01 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9258
+ <cip-dev@lists.cip-project.org>; Wed, 17 Aug 2022 00:14:21 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9259
 
-cip/linux-5.10.y-cip build: 183 builds: 3 failed, 180 passed, 4 errors, 10 =
-warnings (v5.10.131-cip13-49-g1145e9c6352e6)
+cip-gitlab/ci/pavel/linux-test build: 176 builds: 2 failed, 174 passed, 4 e=
+rrors, 10 warnings (v5.10.131-cip13-84-g5fcbe4a63ab4d)
 
-Full Build Summary: https://kernelci.org/build/cip/branch/linux-5.10.y-cip/=
-kernel/v5.10.131-cip13-49-g1145e9c6352e6/
+Full Build Summary: https://kernelci.org/build/cip-gitlab/branch/ci%2Fpavel=
+%2Flinux-test/kernel/v5.10.131-cip13-84-g5fcbe4a63ab4d/
 
-Tree: cip
-Branch: linux-5.10.y-cip
-Git Describe: v5.10.131-cip13-49-g1145e9c6352e6
-Git Commit: 1145e9c6352e68c31b58d1035f4f1ff07b2f9c89
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+Tree: cip-gitlab
+Branch: ci/pavel/linux-test
+Git Describe: v5.10.131-cip13-84-g5fcbe4a63ab4d
+Git Commit: 5fcbe4a63ab4d3a1c958bd377c1c3c31e82f8909
+Git URL: https://gitlab.com/cip-project/cip-kernel/linux-cip.git
 Built: 7 unique architectures
 
 Build Failures Detected:
@@ -91,7 +91,6 @@ arm:
     rpc_defconfig: (gcc-10) FAIL
 
 mips:
-    ip27_defconfig: (gcc-10) FAIL
     ip28_defconfig: (gcc-10) FAIL
 
 Errors and Warnings Detected:
@@ -165,18 +164,8 @@ check will be entirely skipped.
 
 ---------------------------------------------------------------------------=
 -----
-allnoconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
 allnoconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
 ismatches
-
----------------------------------------------------------------------------=
------
-allnoconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
-mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -235,6 +224,11 @@ section mismatches
 
 ---------------------------------------------------------------------------=
 -----
+badge4_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
 bcm2835_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
 tion mismatches
 
@@ -275,11 +269,6 @@ cavium_octeon_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings=
 
 ---------------------------------------------------------------------------=
 -----
-cerfcube_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
 ci20_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
 on mismatches
 
@@ -290,8 +279,8 @@ tion mismatches
 
 ---------------------------------------------------------------------------=
 -----
-colibri_pxa270_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings=
-, 0 section mismatches
+cobalt_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -357,6 +346,11 @@ read=E2=80=99 defined but not used [-Wunused-function]
 
 ---------------------------------------------------------------------------=
 -----
+defconfig (riscv, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---------------------------------------------------------------------------=
+-----
 defconfig (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
 ismatches
 
@@ -364,16 +358,6 @@ ismatches
 -----
 defconfig+arm64-chromebook (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warn=
 ings, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-defconfig+arm64-chromebook+kselftest (arm64, gcc-10) =E2=80=94 PASS, 0 erro=
-rs, 0 warnings, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-defconfig+kselftest (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
- section mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -417,6 +401,11 @@ ezx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
 
 ---------------------------------------------------------------------------=
 -----
+footbridge_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
 fuloong2e_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
 section mismatches
 
@@ -427,12 +416,22 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
+gemini_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
 gpr_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
 n mismatches
 
 ---------------------------------------------------------------------------=
 -----
 h3600_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+h5000_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
 on mismatches
 
 ---------------------------------------------------------------------------=
@@ -493,11 +492,6 @@ ion mismatches
 ---------------------------------------------------------------------------=
 -----
 ip22_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-ip27_defconfig (mips, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 secti=
 on mismatches
 
 ---------------------------------------------------------------------------=
@@ -681,11 +675,6 @@ n mismatches
 
 ---------------------------------------------------------------------------=
 -----
-mtx1_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
 multi_v4t_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
 ection mismatches
 
@@ -701,12 +690,12 @@ ction mismatches
 
 ---------------------------------------------------------------------------=
 -----
-multi_v7_defconfig+kselftest (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warn=
-ings, 0 section mismatches
+mvebu_v5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
 
 ---------------------------------------------------------------------------=
 -----
-mvebu_v5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+mvebu_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
 ction mismatches
 
 ---------------------------------------------------------------------------=
@@ -743,11 +732,6 @@ ction mismatches
 -----
 nommu_k210_defconfig (riscv, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, =
 0 section mismatches
-
----------------------------------------------------------------------------=
------
-nsimosci_hs_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
- section mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -930,11 +914,6 @@ sb1250_swarm_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings,=
 
 ---------------------------------------------------------------------------=
 -----
-shannon_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
 shmobile_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
 ction mismatches
 
@@ -1010,23 +989,18 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
-tinyconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
-
----------------------------------------------------------------------------=
------
 tinyconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
 smatches
 
 ---------------------------------------------------------------------------=
 -----
-tinyconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
- mismatches
+tinyconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
 
 ---------------------------------------------------------------------------=
 -----
-trizeps4_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
+tinyconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -1090,18 +1064,8 @@ ection mismatches
 
 ---------------------------------------------------------------------------=
 -----
-x86_64_defconfig+kselftest (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 war=
-nings, 0 section mismatches
-
----------------------------------------------------------------------------=
------
 x86_64_defconfig+x86-chromebook (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, =
 0 warnings, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-x86_64_defconfig+x86-chromebook+kselftest (x86_64, gcc-10) =E2=80=94 PASS, =
-0 errors, 0 warnings, 0 section mismatches
 
 ---------------------------------------------------------------------------=
 -----
