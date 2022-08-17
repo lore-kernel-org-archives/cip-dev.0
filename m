@@ -1,245 +1,184 @@
-Return-Path: <webhook@kernel.org>
+Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B70D6C25B0E
-	for <webhook@archiver.kernel.org>; Wed, 17 Aug 2022 01:13:01 +0000 (UTC)
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
- [209.85.214.171])
- by mx.groups.io with SMTP id smtpd.web08.23720.1660698772127072065
- for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Tue, 16 Aug 2022 18:12:52 -0700
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BCEAC25B08
+	for <webhook@archiver.kernel.org>; Wed, 17 Aug 2022 07:28:03 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.155])
+ by mx.groups.io with SMTP id smtpd.web12.26046.1660721277546740039
+ for <cip-dev@lists.cip-project.org>;
+ Wed, 17 Aug 2022 00:27:58 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112
- header.b=3eYiBQ8Z;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.171,
- mailfrom: bot@kernelci.org)
-Received: by mail-pl1-f171.google.com with SMTP id m2so10738804pls.4
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Tue, 16 Aug 2022 18:12:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc;
-        bh=LRrxK7PR4KWhbWclx3P8bDDbJcPR0FQNYqeQX6xciXc=;
-        b=3eYiBQ8Zp0QTADxPli+5dTO/8PK5KJLgvA41QYeQxqP5EiEzS6a4s+UskzPBF3LDEr
-         EavBNEDm8Sis6OA7OmdyH9iEpODu1F3k9KWNEheuBsVB4slwfeJHZkhFG0TuTtBc0/ca
-         s7pM8TuAacEqSnqcsu7C/z+fcZdpixluRrmpwX3RV76/LFPycq9p9Hgn3mtVBfLKJM5s
-         u6hTzM1jZdRokH+0VakmyQ+KNzAk1JAJC9Z1u9H4uSXn/r0rFaJKEMiwjyAJ/5bH8/p8
-         e7JtqQ4cdb2bvfS/egEPBny+MNJPJfXTPyk2MZqX/jr9BZq4Wg8OOjNYzHSDGcnFklX2
-         aeOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc;
-        bh=LRrxK7PR4KWhbWclx3P8bDDbJcPR0FQNYqeQX6xciXc=;
-        b=sYBbYKgbrpIImAUd4QzLPgcHaJDOCF1NVb+PparTr9JlYpbwQmkKhUSckOKCPZ/eCo
-         sspL7FDWm8RbFU3lRFl0Kybm+poFg379IYNhyVB3RP12JKL++23+s1Q6GCdwLy/LMYB4
-         GB6dsqJcfb/QCq1ruhc1aSCsVlsuLoed2rS4fHFYPeb+5xgU0PR4rsRHI+OLktzsuPzx
-         M5MVq+YXt1dYJkm5/jbf5qKToGMy3htobREkYZ8N0tvD4iN4OjmtENB/Lnu/+FPNE8Yf
-         cias95vB8y3PctvSrBKpkoBZQBIlJUge9yd857Co57EzoWzeNFcXwfIBc3BeXXdB5hK+
-         ruNQ==
-X-Gm-Message-State: ACgBeo3VXherbLt40pREIrqj0Sdspt2kXQY0xeJpzr2a7qSELuyQfEwy
-	YKI6g/JesM4n/7zE2ei/lH/gVdBSWFyWeFsM
-X-Google-Smtp-Source: 
- AA6agR5zWh/09zkbn8rDxmjBJ6kZmrIAmSD0jmfWs/ndWeAbwkMmAxy8xef8qdv1140qsAPb0epYng==
-X-Received: by 2002:a17:90a:f8d3:b0:1fa:b220:1973 with SMTP id
- l19-20020a17090af8d300b001fab2201973mr1245304pjd.109.1660698771315;
-        Tue, 16 Aug 2022 18:12:51 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id
- h8-20020a17090a2ec800b001f2fa09786asm186079pjs.19.2022.08.16.18.12.50
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Aug 2022 18:12:50 -0700 (PDT)
-Message-ID: <62fc4092.170a0220.3fb94.0750@mx.google.com>
-Date: Tue, 16 Aug 2022 18:12:50 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+ dkim=missing;
+ spf=pass (domain: toshiba.co.jp, ip: 210.130.202.155, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
+Received: by mo-csw.securemx.jp (mx-mo-csw1516) id 27H7Rla5021906;
+ Wed, 17 Aug 2022 16:27:47 +0900
+X-Iguazu-Qid: 34tKIuUqqAFxg06JKK
+X-Iguazu-QSIG: v=2; s=0; t=1660721267; q=34tKIuUqqAFxg06JKK;
+ m=mb+i5NpJ0n+lCjiV5Tl8cbTDfh6sKhbEZom/5bxuQUI=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1512) id 27H7Rkl9026203
+	(version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
+	Wed, 17 Aug 2022 16:27:46 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZpYgoOQIedZVKjNVW5xuNA8GF5r2utM3DRSf1jOF3YCNYEWct328bNauXGLH34WqT8QSEjJBo6HA64B2XXVsethRghYIwB2gfQcKuQsKKfGXPQjzo7IDzICQ0UEdWxvaitfvmbA57MCblvr0D0gqb9CfrUIZ2ek3YLUt3ZfmtknvFJclk7G9AyQJNsCUg6jCkNrzMCp6MhHrLxOjIfk9bC3leIXFrzS2ptyXsLsPioieoURofm9MvqtONBL+hvARTFRNxzPwUIoHVA+WTZC3rL3qPbaOwgrWofm6bsEUoCLhsX2Ufb1ElAj9nX9ZYEG+9xMK+gl01z9fh2d12YGK8Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IH6eOhTYNXQb7dX3fAv4Y8vW4lwl+wchuvEvTSxDCHI=;
+ b=n2QTyr0pL3ft38q5Y0zNScB+mvREXfULrueYaDdVtXuWEHMcLLs7gbpifETEsTmf03qeDwC/8n+8i744grOVGUPp+xa034J6KbamknbmVENIELMiJk+nJFgqcjliA4FsUC0DvZpwSPlXsxvQfkA/6NrJ8eM2Yl2hWqB4nA8qgZbQmv5RvoaGr8pQDgYcBr82cjB4mjKAF+GK1HjxxoKJgsO8zOBfeHwbEL4rrn5SH90uk9In6GYLZSJ3kI/wUGVnFypqGXBnpZ/y1UOmPt1OE672Md0PzxRA8nLCk5KNaKsAbZZBlNs4k7Fma03g/sgrKySjOhRacGP8MfM/UoFUiA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
+ header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
+From: <nobuhiro1.iwamatsu@toshiba.co.jp>
+To: <prabhakar.mahadev-lad.rj@bp.renesas.com>, <pavel@denx.de>
+CC: <cip-dev@lists.cip-project.org>, <biju.das.jz@bp.renesas.com>
+Subject: RE: [PATCH 5.10.y-cip 0/4] Renesas SDHI/DMA/thermal driver fixes and
+ improvements
+Thread-Topic: [PATCH 5.10.y-cip 0/4] Renesas SDHI/DMA/thermal driver fixes and
+ improvements
+Thread-Index: AQHYsWWRwTxC7igFeUuVDosPyVkrGq2xajkAgAFEItA=
+Date: Wed, 17 Aug 2022 07:27:42 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <TYWPR01MB9420A171F93C36354A27F9CC926A9@TYWPR01MB9420.jpnprd01.prod.outlook.com>
+References: <20220815163718.24056-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20220816114408.GA27428@duo.ucw.cz>
+ <OSZPR01MB7019E251B422E91203D2F7FCAA6B9@OSZPR01MB7019.jpnprd01.prod.outlook.com>
+In-Reply-To: 
+ <OSZPR01MB7019E251B422E91203D2F7FCAA6B9@OSZPR01MB7019.jpnprd01.prod.outlook.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e0f091a7-00df-4dfa-a2e8-08da8021f91a
+x-ms-traffictypediagnostic: TYAPR01MB3967:EE_
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ Wfmrvw3mHIzL8mn5rH8e3JAXDkAIiJuZ9TzPntP6kxU3yhLb5AOCkQIEd4Sr2pitKfr7jwY9Mdo61/rnSW1SrgfZgcbEbu9nnAiOCt4YYSXkGKf99Jsl2HNmUvGWNI3yDuS4SWbsh8hwc64yCtFpEBnNFz8uGRio2DGbQDqmfAsU0on9aMObFcOf2UZybGpwor/CpWwT8+6lsEwgWVzuakvEKrGQ3vT84iUWXCV99FgdWrZITl+sojTqqzpNya/sQooZjt5c5aHNs5KTRIDxYlFwQ+Pk+sVVnkbkJdidrMUotln90dA3sVFolqAQ+dSZ8/ezNkMsGOjHNcp/4kD2U2fPgqrgEBsaHb4/TFyT0RgPGVB8rUJPcn08bnBwf9V5HFE1Rc3jKJClN/9rQ5RDWRZGecTsufuxW7b/K6G24b6xQrTkFIveHl4ERJmDGqFLJwYOj1Taic6In9uHL2Pgj/BtVljafOcDAPjiJVAwqr1/aA7FZWgz1o3ZhDbwc6GbsBzz/WQuiyVXDLgTazmKBY1ZEBgntaFm3EiuE5oHUcwtD+8t8rjtBh0gGQBDKvrO8jtvD5i6S4HJJUVKQudfuE957RwO3unMt1KaZGIdyIi+Gi9gzEGN//L7cs2guYtGt4bwZyQPwYZFJxip66II6ijvlqrzayyFMf7kxy6oHbI7bRpVoF3xMAh6R5wTvCayW9dFe9tbvrueoPZ8qJ2RHFcm+eQCvEsYqY0AccG+wXMKMWBZuJ6+RAPoDsOGhnTyB++9R6guXWZ66K6hZV9r42hPfZpoecdICeyy34rOxBbHApK1l0nXhU+PPb8wyZ0o
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB9420.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(396003)(366004)(39860400002)(346002)(136003)(376002)(110136005)(66946007)(2906002)(8676002)(66556008)(64756008)(66446008)(66476007)(76116006)(55016003)(6506007)(71200400001)(7696005)(33656002)(4326008)(54906003)(316002)(41300700001)(52536014)(478600001)(26005)(122000001)(38070700005)(53546011)(9686003)(86362001)(38100700002)(5660300002)(8936002)(83380400001)(186003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?eUVSLzVneXBLc05vN1cwcGl4NlN6L2tiTTZsQ2Y2NVFoT0tWZG41SkRr?=
+ =?iso-2022-jp?B?a1MwY1l6L2U0Lzlia3R2cHVmVzllaHo3MHRESHFFN1NGeHM4MDhhQkFz?=
+ =?iso-2022-jp?B?WHJDWkxmN3FXSllweEFwQXd1bDlqS0oyOEtCSVUxcTFUd3lBWDBwT2Zu?=
+ =?iso-2022-jp?B?WWxLOVBKZ1M5bmtRUnU2Q1NOd1lnN2FxajNjQnhsZ0hXcFNkdkRubmFh?=
+ =?iso-2022-jp?B?a3pXbXB1dnJLa3QrWEtvY1B6YlJnWWlTVk52WUo1QXV3RU9Vek1aelZr?=
+ =?iso-2022-jp?B?a1BxOTVlbHQwNWtKczBFcmdTSnMvNGxTbnBJSGhpbHNEc3lWWW5CREhp?=
+ =?iso-2022-jp?B?ZW81TXlTeGMrMjFzZGljRHc2YXBZK3pDdkJoMXdQL3lxNVdIdW1hNzJP?=
+ =?iso-2022-jp?B?TXAvSy80UXd0TGtHK0NLQXlVVWFPY2VpazBTc0N2MVhacmV0S0g0a1No?=
+ =?iso-2022-jp?B?aS90ZUhRY080YTI2ejRQOERYcnNoVzdTSVBCWTR3ajBBSDBsZUh3UFh1?=
+ =?iso-2022-jp?B?dzI5VlZ4WW1pRkJoVUpTdldjcS90Ui9pL3AyUm9RUU9qRElremduR1dq?=
+ =?iso-2022-jp?B?UUVWN1VrVjBWTzdvNGhyczZSWFNvSFlmeEpFbmtzOTRpSkNRRW9STUJM?=
+ =?iso-2022-jp?B?c3krcS9ZUG1JOGVPTHpQSWhkRDNWTHZMc0J3MXFPK0pxRkpGWXJPNXhy?=
+ =?iso-2022-jp?B?NVUyTSsxWXk2c01RZ0o4cGMwVXFqeEZOVzBxUkZZWGNqcGdoM0VQd0hG?=
+ =?iso-2022-jp?B?MkQ5N0xyRTlLMHVkVDlkelRnRkFYaGJFYWVtM3FNWmJpajJJLzcyQkk3?=
+ =?iso-2022-jp?B?UzJDbHY5WlU1TXR6V2VZeHlFcSs0dmFITHhDZU56ZkJtMUlHbHRqQ1dv?=
+ =?iso-2022-jp?B?c0VIM2c1dm5FNkVYYU1sWEQ5VG1vM0JzMHJhY1poeWVTMFNTMjVIa0dE?=
+ =?iso-2022-jp?B?OHN3eS9ONEZ6YWs4Uno5N2paUnlrMm0wL2FneTQzN3hlZllTV3RXZlM0?=
+ =?iso-2022-jp?B?dktpNGZKL0ludkI1N1UzSENBTE02M1ZVY2dGdW1iZkJraUEwL3NoTmJ1?=
+ =?iso-2022-jp?B?aHN2UzY1bmlFcEFzVHNSMUdZdHlLOHlQTm0vWUF6NVEzU1FRdGdjUC9S?=
+ =?iso-2022-jp?B?aFc0Q3NUT2o2bnl4ZGdmWnZydU1iVzFoS2Z2eGUreWd3M3pvMWxRYlAr?=
+ =?iso-2022-jp?B?Q3djaVBsWTVyQWVBa1lRYUJuRHovdUxRbjFOWCtPVXNMeG05ZWVVN1FM?=
+ =?iso-2022-jp?B?ajJkZHpnMnJFWFdRanQwNnFxaVk3bzdTNVdQb1NSUmdjdWt1OUJuZ1Zz?=
+ =?iso-2022-jp?B?c2pCLzEyTnNkaXdJVHhWY3RreExUSmpNSkpEY05oV09xUGtQdFlyRStw?=
+ =?iso-2022-jp?B?Qk1pZW0zMVE1NjFzOTBxUHhXcVc0b2VSREJxbml6UUp6ZjlaYmZZbGY0?=
+ =?iso-2022-jp?B?TU9yd0pDdENsM1JhUXZEUlR3cFN5QUhqdXI1Y2FmZjV5S1pvcitEZy94?=
+ =?iso-2022-jp?B?R2lvWWFIUTZJMXVGUHAxdEE4Vmc0U2pGUGprdUhhUGprand1T2UwNEJj?=
+ =?iso-2022-jp?B?Y2ZkaVoxeGY4QmtKYVV0TCtkZFlSSmRSMThKYjNHT3dsZjFSSU5rc254?=
+ =?iso-2022-jp?B?L01CTlkwSE42ZEZob0Jicmd1WnF1cUpacDRJRDlVSzl6VWp6ZGY4cHc5?=
+ =?iso-2022-jp?B?Qnl3dVlXQXBCNXptYTVwODBFTnhWZGVKdUVOSFZpRUozK2xIYm5kd09O?=
+ =?iso-2022-jp?B?b2lIVmhkdUtiVzJMNms4OGVRK3lud2JCVGY3dDZoRUNRaVExY3hXelgr?=
+ =?iso-2022-jp?B?M0FGMHhKQWM4bmdnYlBmS0w4bWJHUjZzOCtqdy9Cc2ZYNFkvYkVLMGF5?=
+ =?iso-2022-jp?B?QXlnL3ZGWEFSRG1MN05OZWVRRjhTNzJTUTNnQkRCL2xxUldWbVhzNWxQ?=
+ =?iso-2022-jp?B?ZXVTc21yeXFsYWdGbHY3dzdJUUF1RmlOSWN6NUI5U2NGOHh0cnZTRFZn?=
+ =?iso-2022-jp?B?cTZZOXZHeTBVNWEvd2JiMU03YkJNS1kzS2htNzk5bWsrVGpzWDh0MkQr?=
+ =?iso-2022-jp?B?UlcxemxNK2wzRXZFZXFqY1ZTYXg3bk0xN3U3OTM1dmp5UHlOeldnTVlJ?=
+ =?iso-2022-jp?B?SlJFTVlaMnBMRG5sMldwam9sZzEvLy96Tnk4MFRnTVM1QUl3WjJoODcy?=
+ =?iso-2022-jp?B?NWlIQmwzRE9SMmpwYm8xY1ZjdXlOMWpHWWhRTnoxOU5jeU1lS3dXa2U3?=
+ =?iso-2022-jp?B?OWZWSE5CK0lLMlNGNWdxYkJTL1FGcVVIbEpzRnl6UHM4RFZmdFlYNlhh?=
+ =?iso-2022-jp?B?amtPRENwMU5KbzI5YUtua0Fac1lNZnhqY0E9PQ==?=
+Content-Type: text/plain; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: ci/pavel/linux-test
-X-Kernelci-Tree: cip-gitlab
-X-Kernelci-Report-Type: test
-X-Kernelci-Kernel: v5.10.131-cip13-84-g5fcbe4a63ab4d
-Subject: cip-gitlab/ci/pavel/linux-test smc: 9 runs,
- 4 regressions (v5.10.131-cip13-84-g5fcbe4a63ab4d)
-To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
-From: "kernelci.org bot" <bot@kernelci.org>
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB9420.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 
+ e0f091a7-00df-4dfa-a2e8-08da8021f91a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Aug 2022 07:27:42.7582
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 
+ z4xjomy8qJHATWSDGdYU7VoHVcCFwSyUHI29QG8jzez65wsbNu7knuZ7NHJHGTZpmb9G/QwVLFZzxyRj27I0Zfp7sqyKVp/vrldGgRvnk2gQ8VIdjSVb+6gWFtQdl0di
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB3967
+X-OriginatorOrg: toshiba.co.jp
+MSSCP.TransferMailToMossAgent: 103
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 17 Aug 2022 01:13:01 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9269
+ <cip-dev@lists.cip-project.org>; Wed, 17 Aug 2022 07:28:03 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9270
 
-cip-gitlab/ci/pavel/linux-test smc: 9 runs, 4 regressions (v5.10.131-cip13-=
-84-g5fcbe4a63ab4d)
+Hi all,
 
-Regressions Summary
--------------------
+> -----Original Message-----
+> From: Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Sent: Tuesday, August 16, 2022 8:51 PM
+> To: Pavel Machek <pavel@denx.de>
+> Cc: cip-dev@lists.cip-project.org; iwamatsu nobuhiro(=1B$B4d>>=1B(B =1B$B=
+?.MN=1B(B =1B$B""#S#W#C"~#A=1B(B
+> =1B$B#C#T=1B(B) <nobuhiro1.iwamatsu@toshiba.co.jp>; Biju Das
+> <biju.das.jz@bp.renesas.com>
+> Subject: RE: [PATCH 5.10.y-cip 0/4] Renesas SDHI/DMA/thermal driver fixes
+> and improvements
+>=20
+> Hi Pavel,
+>=20
+> Thank you for the review.
+>=20
+> > -----Original Message-----
+> > From: Pavel Machek <pavel@denx.de>
+> > Sent: 16 August 2022 12:44
+> > To: Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > Cc: cip-dev@lists.cip-project.org; Nobuhiro Iwamatsu
+> > <nobuhiro1.iwamatsu@toshiba.co.jp>; Pavel Machek <pavel@denx.de>;
+> Biju
+> > Das <biju.das.jz@bp.renesas.com>
+> > Subject: Re: [PATCH 5.10.y-cip 0/4] Renesas SDHI/DMA/thermal driver
+> > fixes and improvements
+> >
+> > Hi!
+> >
+> > > This patch series backports SDHI/DMA/thermal driver fixes and
+> > > improvements.
+> > >
+> > > Note: All the patches have been cherry picked from 6.0-rc1 kernel.
+> >
+> > Series looks okay to me. I wonder if we have code using
+> > rz_dmac_device_synchronize from 4/4 in the tree?
+> >
+> RSPI uses rz_dmac_device_synchronize from 4/4, I am waiting on the patch =
+to
+> be available in -rc release. I have tested it locally hence posted it  ea=
+rlier.
+>=20
+> > I can apply the patches if they pass testing and if there are no other
+> comments.
+> >
+> Thanks.
 
-platform              | arch   | lab           | compiler | defconfig      =
-            | regressions
-----------------------+--------+---------------+----------+----------------=
-------------+------------
-qemu_arm64-virt-gicv3 | arm64  | lab-broonie   | gcc-10   | defconfig+arm64=
--chromebook | 1          =
+I also reviewed this patch series, looks good to me.
+I applied to linux-5.10.y-cip tree.
 
-qemu_arm64-virt-gicv3 | arm64  | lab-broonie   | gcc-10   | defconfig      =
-            | 1          =
+Best regards,
+  Nobuhiro
 
-qemu_arm64-virt-gicv3 | arm64  | lab-collabora | gcc-10   | defconfig+arm64=
--chromebook | 1          =
-
-qemu_x86_64           | x86_64 | lab-collabora | gcc-10   | x86_64_defconfi=
-g           | 1          =
-
-
-  Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fpavel%2Fli=
-nux-test/kernel/v5.10.131-cip13-84-g5fcbe4a63ab4d/plan/smc/
-
-  Test:     smc
-  Tree:     cip-gitlab
-  Branch:   ci/pavel/linux-test
-  Describe: v5.10.131-cip13-84-g5fcbe4a63ab4d
-  URL:      https://gitlab.com/cip-project/cip-kernel/linux-cip.git
-  SHA:      5fcbe4a63ab4d3a1c958bd377c1c3c31e82f8909 =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform              | arch   | lab           | compiler | defconfig      =
-            | regressions
-----------------------+--------+---------------+----------+----------------=
-------------+------------
-qemu_arm64-virt-gicv3 | arm64  | lab-broonie   | gcc-10   | defconfig+arm64=
--chromebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/62fc2ddadd8030bd3435565d
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.131-cip13-84-g5fcbe4a63ab4d/arm64/defconfig+arm64-chromebook/gcc-10/=
-lab-broonie/smc-qemu_arm64-virt-gicv3.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.131-cip13-84-g5fcbe4a63ab4d/arm64/defconfig+arm64-chromebook/gcc-10/=
-lab-broonie/smc-qemu_arm64-virt-gicv3.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220805.0/arm64/rootfs.cpio.gz =
-
-
-
-  * smc.login: https://kernelci.org/test/case/id/62fc2ddadd8030bd3435565e
-        failing since 98 days (last pass: v4.19.233-516-ge5e741fbfc87, firs=
-t fail: v5.10.109-cip5-384-g722204542e8a) =
-
- =
-
-
-
-platform              | arch   | lab           | compiler | defconfig      =
-            | regressions
-----------------------+--------+---------------+----------+----------------=
-------------+------------
-qemu_arm64-virt-gicv3 | arm64  | lab-broonie   | gcc-10   | defconfig      =
-            | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/62fc346b8a5c1973b535566d
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.131-cip13-84-g5fcbe4a63ab4d/arm64/defconfig/gcc-10/lab-broonie/smc-q=
-emu_arm64-virt-gicv3.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.131-cip13-84-g5fcbe4a63ab4d/arm64/defconfig/gcc-10/lab-broonie/smc-q=
-emu_arm64-virt-gicv3.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220805.0/arm64/rootfs.cpio.gz =
-
-
-
-  * smc.login: https://kernelci.org/test/case/id/62fc346b8a5c1973b535566e
-        failing since 98 days (last pass: v4.19.233-516-ge5e741fbfc87, firs=
-t fail: v5.10.109-cip5-384-g722204542e8a) =
-
- =
-
-
-
-platform              | arch   | lab           | compiler | defconfig      =
-            | regressions
-----------------------+--------+---------------+----------+----------------=
-------------+------------
-qemu_arm64-virt-gicv3 | arm64  | lab-collabora | gcc-10   | defconfig+arm64=
--chromebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/62fc2ea8cb40bbef373556bd
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.131-cip13-84-g5fcbe4a63ab4d/arm64/defconfig+arm64-chromebook/gcc-10/=
-lab-collabora/smc-qemu_arm64-virt-gicv3.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.131-cip13-84-g5fcbe4a63ab4d/arm64/defconfig+arm64-chromebook/gcc-10/=
-lab-collabora/smc-qemu_arm64-virt-gicv3.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220805.0/arm64/rootfs.cpio.gz =
-
-
-
-  * smc.login: https://kernelci.org/test/case/id/62fc2ea8cb40bbef373556be
-        failing since 98 days (last pass: v4.19.233-516-ge5e741fbfc87, firs=
-t fail: v5.10.109-cip5-384-g722204542e8a) =
-
- =
-
-
-
-platform              | arch   | lab           | compiler | defconfig      =
-            | regressions
-----------------------+--------+---------------+----------+----------------=
-------------+------------
-qemu_x86_64           | x86_64 | lab-collabora | gcc-10   | x86_64_defconfi=
-g           | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/62fc2f452eaefe7fc7355642
-
-  Results:     14 PASS, 2 FAIL, 0 SKIP
-  Full config: x86_64_defconfig
-  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.131-cip13-84-g5fcbe4a63ab4d/x86_64/x86_64_defconfig/gcc-10/lab-colla=
-bora/smc-qemu_x86_64.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.131-cip13-84-g5fcbe4a63ab4d/x86_64/x86_64_defconfig/gcc-10/lab-colla=
-bora/smc-qemu_x86_64.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220805.0/x86/rootfs.cpio.gz =
-
-
-
-  * smc.CVE-2020-0543: https://kernelci.org/test/case/id/62fc2f452eaefe7fc7=
-355644
-        new failure (last pass: v5.10.131-cip13-49-g1145e9c6352e6)
-
-    2022-08-16T23:57:28.894982  <8>[    2.380278] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3DCVE-2020-0543 RESULT=3Dfail>   =
-
- =20
 
