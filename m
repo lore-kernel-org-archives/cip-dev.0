@@ -1,173 +1,209 @@
-Return-Path: <webhook@kernel.org>
+Return-Path: <masami.ichikawa@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDE2EC32772
-	for <webhook@archiver.kernel.org>; Wed, 17 Aug 2022 12:08:14 +0000 (UTC)
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com
- [209.85.216.51])
- by mx.groups.io with SMTP id smtpd.web09.28226.1660738085800688314
- for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Wed, 17 Aug 2022 05:08:05 -0700
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25F28C3F6B0
+	for <webhook@archiver.kernel.org>; Wed, 17 Aug 2022 23:24:08 +0000 (UTC)
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com
+ [209.85.160.53])
+ by mx.groups.io with SMTP id smtpd.web11.35660.1660778642144820834
+ for <cip-dev@lists.cip-project.org>;
+ Wed, 17 Aug 2022 16:24:02 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112
- header.b=pCfKbxZz;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.216.51,
- mailfrom: bot@kernelci.org)
-Received: by mail-pj1-f51.google.com with SMTP id
- s4-20020a17090a5d0400b001fabc6bb0baso528659pji.1
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Wed, 17 Aug 2022 05:08:05 -0700 (PDT)
+ dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112
+ header.b=Etlb0wEV;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.160.53,
+ mailfrom: masami.ichikawa@miraclelinux.com)
+Received: by mail-oa1-f53.google.com with SMTP id
+ 586e51a60fabf-f2a4c51c45so17740fac.9
+        for <cip-dev@lists.cip-project.org>;
+ Wed, 17 Aug 2022 16:24:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc;
-        bh=6+dlEj8pKF435WFKP3SgYSLsKg8Ey3esgs7fZtnMbpU=;
-        b=pCfKbxZzHBR3KlVa8eMGdxvzVCefc5763kNsP2K87yvT20QOWI3Sy77GzQ7rQAmzT5
-         hasklgBCLrtjlzODscj/s9tAorahG1XCpAejV58tq0UjQ8N8UOnw6GZXKqcFwpbUaukY
-         bD0nEvXL87nob2+xYCDaZ7VEmkQZ3BhsZwz06UjBpCR4UuEVFORAahwq6buFqToTiTAW
-         36VqGxOZf2OWi3Gu7729v34h+2LOTJplaC/7VKQfSul8BIH3/Dk1pzbbOPZvR5Nv9WsV
-         r7JdaVpsOm25nBcx306fl831xgxx1+LckOegGVGrkBIZangx4myXrXUersOrsP2usgsH
-         F1XQ==
+        d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc;
+        bh=PlZfJOjaQu7BcbyITJymJG9gFqX7R2Vo/0qWbGaake8=;
+        b=Etlb0wEVO2YyfydyAAMf16Ru+X2JK47H7UjEZF/0f3BWpUUJM15zbKv8nP4be2QYS5
+         /Szl+A1DRjeYJ5LO6RH9QYoZLBUZ5s+S0OUi8FU1P/gVM0qPIGaaDYa6J4qiyGRam9bq
+         gJJVxlNJ6hbb71jAnwSQxa9lkdMHrXBRkZJ8Hw1KeQRv/g0BqfzZKevyLIXafVt/18RE
+         savS3bz+jAAina6dRPF+9ITRgutGQrLqWurr0Uys+PZ5PjYAcrdLZ0LDgnC3LD7PE90l
+         Auou3dnm4P+fyc7YoGtylREHxn+HaBQP9GlQd8KWpi2gXr6aP6WZfl+mSlQdaHSebECd
+         ivGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc;
-        bh=6+dlEj8pKF435WFKP3SgYSLsKg8Ey3esgs7fZtnMbpU=;
-        b=0c6JmrICMVDggjPKkj0gW9Rq7T+Sa3ghQbMCPaJgQTacv9k2YDF9RIdWojIte/4w4d
-         kF7wkwlZPUqx8cjcKUQWeOnG6wWgt9jRPbanNvWpbcA2A+UqCTNepHQv8FnLvT/nKO0a
-         e93CHn5bW6xJr66uAjsGOp+Gp4K6vTWJIzE3AdJm+fNmBtSCrTFdA1Of5PAUurmvmRft
-         /a19/Z4Y8lIbdPazOstPZI91iPeD4VxYbBfPC/sEXQ1b4uDpYXP5mhTcZ/T0XZwM/1qB
-         /j5UNao4SmWSLqwpqILrdbuI8iJ2LOm1NSbC0EcsVzMY4+INRVWlWbVeuMzKco41QIjM
-         rn0g==
-X-Gm-Message-State: ACgBeo2GBMRlYZaUuQxAILgoe8hJYde3dhG7ALAj+y5VNE9VLyR8yXO0
-	RWX+R9mMpxS4ZffVCREr6JwxS1S9iTV1Q5av
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc;
+        bh=PlZfJOjaQu7BcbyITJymJG9gFqX7R2Vo/0qWbGaake8=;
+        b=Mp4AGLlqOfJTIKDYx9kVKm/D7ewfsyBs9xZ3V1R5qqsvLZfkE4/sExxWHWvJ2sm16h
+         EQILY8mWAQoy+xbfRzogrwJDSEEzB0UfL+2+G1QlxIR/t4Tv6CVUqIPBzosR5gr/ZjEJ
+         WlhgYId0y2PFY8xfW0+kARZzEDYPAre21WOqW0O9NiyZQwTdiHAiNTFrDK9ZR8pJHaR6
+         1wZdo9ZFCNe8EUIXDpCdQzLf4foOAJWqjc6kmMXa9RLtT5iGooVOKHWbd5j6pe8y+fhd
+         YzaikflNyIry89rTNi9+LqZEXaL1Y0KXHhT6hBlLKHih4K4ZRL9d2/HzLkNPXYsSQ4h/
+         kTDg==
+X-Gm-Message-State: ACgBeo2SCmvkEz8dGpqOyziIduBNYBnT8zeLzlA2SYkwismMoF1haqEl
+	a/lo5Q3dybCQ4daUriO7Vbv4Agj0rBJvqwsQ4CdPezvFyd/HdA==
 X-Google-Smtp-Source: 
- AA6agR58qAPi70y5hKra/JH9XAgO5GFuwLsl4eQzklkyYSG2erXjBo8xv3UH17O02g5yZll18RKEAg==
-X-Received: by 2002:a17:902:c945:b0:16d:c318:4480 with SMTP id
- i5-20020a170902c94500b0016dc3184480mr26685934pla.147.1660738085002;
-        Wed, 17 Aug 2022 05:08:05 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id
- c7-20020a17090a1d0700b001eee8998f2esm1355550pjd.17.2022.08.17.05.08.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Aug 2022 05:08:04 -0700 (PDT)
-Message-ID: <62fcda24.170a0220.eb2e6.2303@mx.google.com>
-Date: Wed, 17 Aug 2022 05:08:04 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+ AA6agR65CU85OS7RFY6LWoQhzD+RiTrtBRVO6JAo8oAI5qlseWs6pJhzpxl8AWiD9sk4xlnQ9S93UK5g+gPuZiUBudQ=
+X-Received: by 2002:a05:6870:e313:b0:10e:757c:d388 with SMTP id
+ z19-20020a056870e31300b0010e757cd388mr129580oad.280.1660778640868; Wed, 17
+ Aug 2022 16:24:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-5.10.y-cip
-X-Kernelci-Tree: cip
-X-Kernelci-Report-Type: test
-X-Kernelci-Kernel: v5.10.131-cip13-84-g3b53e4dbd9f41
-Subject: cip/linux-5.10.y-cip kselftest-lkdtm: 3 runs,
- 2 regressions (v5.10.131-cip13-84-g3b53e4dbd9f41)
-To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
- kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
-From: "kernelci.org bot" <bot@kernelci.org>
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Thu, 18 Aug 2022 08:23:24 +0900
+Message-ID: 
+ <CAODzB9qbas0NgACadYMf7wpkRCEBeV8kQmFaNpTtL-k89Zdhwg@mail.gmail.com>
+Subject: New CVE entries this week
+To: cip-dev <cip-dev@lists.cip-project.org>
+Content-Type: text/plain; charset="UTF-8"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 17 Aug 2022 12:08:14 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9277
+ <cip-dev@lists.cip-project.org>; Wed, 17 Aug 2022 23:24:08 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9281
 
-cip/linux-5.10.y-cip kselftest-lkdtm: 3 runs, 2 regressions (v5.10.131-cip1=
-3-84-g3b53e4dbd9f41)
+Hi !
 
-Regressions Summary
--------------------
+It's this week's CVE report.
 
-platform                  | arch   | lab           | compiler | defconfig  =
-                  | regressions
---------------------------+--------+---------------+----------+------------=
-------------------+------------
-asus-C433TA-AJ0005-rammus | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-on...ok+kselftest | 1          =
+This week reported 1 new CVEs and 6 updated CVEs.
 
-asus-C523NA-A20057-coral  | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-on...ok+kselftest | 1          =
+* New CVEs
+
+CVE-2022-2503: LoadPin bypass via dm-verity table reload
+
+NIST: CVSS v3 score is not assigned.
+Google: 6.9 MEDIUM
+
+Dm-verity is used for extending root-of-trust to root filesystems.
+LoadPin builds on this property to restrict module/firmware loads to
+just the trusted root filesystem. Device-mapper table reloads
+currently allow users with root privileges to switch out the target
+with an equivalent dm-linear target and bypass verification till
+reboot. This allows root to bypass LoadPin and can be used to load
+untrusted and unverified kernel modules and firmware, which implies
+arbitrary kernel execution and persistence for peripherals that do not
+verify firmware updates.
+
+The struct target_type verity_target is defined in
+drivers/md/dm-verity.c in 4.4.302.
+
+Fixed status
+mainline: [4caae58406f8ceb741603eee460d79bacca9b1b5]
+stable/4.14: [388bc1e69663956f8cee43af3bd02bd3061d222d]
+stable/4.19: [6bff6107d1364c95109609c3fd680e6c8d7fa503]
+stable/4.9: [27798cca4e54fe9c390396c4cc655480f827bbd5]
+stable/5.10: [8df42bcd364cc3b41105215d841792aea787b133]
+stable/5.15: [69712b170237ec5979f168149cd31e851a465853]
+stable/5.18: [417c73db67ea7ad8f03dfd34c6b0bb5f54294fa9]
+stable/5.4: [fd2f7e9984850a0162bfb6948b98ffac9fb5fa58]
+
+* Updated CVEs
+
+CVE-2021-4159: bpf: Verifer, adjust_scalar_min_max_vals to always call
+update_reg_bounds()
+
+stable 5.4 was fixed this week.
+
+Fixed status
+mainline: [294f2fc6da27620a506e6c050241655459ccd6bd]
+stable/5.4: [7c1134c7da997523e2834dd516e2ddc51920699a]
+
+CVE-2022-20369: media: v4l2-mem2mem: Apply DST_QUEUE_OFF_BASE on MMAP
+buffers across ioctls
+
+stable 5.4 was fixed this week.
+
+Fixed status
+mainline: [8310ca94075e784bbb06593cd6c068ee6b6e4ca6]
+stable/5.10: [8a83731a09a5954b85b1ce49c01ff5c2a3465cb7]
+stable/5.15: [48d00e24822e4384edcee3aae03d54c1b7982eba]
+stable/5.4: [54e1abbe856020522a7952140c26a4426f01dab6]
+
+CVE-2022-26373: Post-Barrier Return Stack Buffer Predictions (PBRSB)
+
+stable 4.19, 5.10, 5.15, 5.18, and 5.4 were fixed this week.
+
+Fixed status
+mainline: [2b1299322016731d56807aa49254a5ea3080b6b3,
+ba6e31af2be96c4d0536f2152ed6f7b6c11bca47]
+stable/4.19: [b6c5011934a15762cd694e36fe74f2f2f93eac9b,
+b1c9f470fb724d3cfd6cf8fe4a70c2ec4de2e9f4]
+stable/5.10: [509c2c9fe75ea7493eebbb6bb2f711f37530ae19,
+1bea03b44ea2267988cce064f5887b01d421b28c]
+stable/5.15: [7fcd99e889c0634f8275ae7a6b06aec4a22c8715,
+5c5c77746ce1108833d1fda005598a749eaef2cb]
+stable/5.18: [0abdbbd9ae9c81615836278d787a8c8dcd576c36,
+fd2128cd778f46f5444967ed203b91120ebdda72]
+stable/5.19: [f826d0412d80348aa22274ec9884cab0950a350b,
+f6664a403f11c97929ebde920da1ec1c10438428]
+stable/5.4: [f2f41ef0352db9679bfae250d7a44b3113f3a3cc,
+b58882c69f6633dcebd66bdb38658f688aa52ec9]
+
+CVE-2022-36946: kernel panic when sending nf_queue verdict with 1-byte
+nfta_payload attribute
+
+stable/4.19 was fixed this week.
+
+Fixed status
+mainline: [99a63d36cb3ed5ca3aa6fcb64cffbeaf3b0fb164]
+stable/4.19: [f295d365b30626f82423a923695274024016380e]
+stable/5.10: [440dccd80f627e0e11ceb0429e4cdab61857d17e]
+stable/5.15: [91c11008aab0282957b8b8ccb0707d90e74cc3b9]
+stable/5.18: [883c20911d6261fc651820b63a77327b8c020264]
+stable/5.4: [52be29e8b6455788a4d0f501bd87aa679ca3ba3c]
+
+CVE-2022-2588: Linux kernel cls_route UAF
+
+The mainline, stable 5.15, 5.18, and 5.19 were fixed this week.
+
+Fixed status
+mainline: [9ad36309e2719a884f946678e0296be10f0bb4c1]
+stable/5.15: [57bbb691a93bd39d0644c5c879b354232d0e0eed]
+stable/5.18: [e832c26e7edfa2ddbd2dcdd48016d13d747de6da]
+stable/5.19: [ee3f18d90e80e79449d575fa3e7a6b775e9fc35e]
 
 
-  Details:  https://kernelci.org/test/job/cip/branch/linux-5.10.y-cip/kerne=
-l/v5.10.131-cip13-84-g3b53e4dbd9f41/plan/kselftest-lkdtm/
+CVE-2022-2586: Linux kernel nf_tables cross-table reference UAF
 
-  Test:     kselftest-lkdtm
-  Tree:     cip
-  Branch:   linux-5.10.y-cip
-  Describe: v5.10.131-cip13-84-g3b53e4dbd9f41
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.g=
-it
-  SHA:      3b53e4dbd9f41171cf639b3ba0b107f6d6f444ac =
+The mainline was fixed this week. Stable 4.9 and 4.14 were failed to
+apply 470ee20 (" netfilter: nf_tables: do not allow SET_ID to refer to
+another table ").
+The mainline, table 5.15, 5.18, and 5.19 were fixed this week.
 
+Fixed status
+mainline: [470ee20e069a6d05ae549f7d0ef2bdbcee6a81b2]
+stable/5.15: [faafd9286f1355c76fe9ac3021c280297213330e]
+stable/5.18: [f4fa03410f7c5f5bd8f90e9c11e9a8c4b526ff6f]
+stable/5.19: [0d07039397527361850c554c192e749cfc879ea9]
 
+Currently tracking CVEs
 
-Test Regressions
----------------- =
+CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
+Bluetooth Core Specifications 4.0 through 5.2
 
+There is no fix information.
 
+CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
 
-platform                  | arch   | lab           | compiler | defconfig  =
-                  | regressions
---------------------------+--------+---------------+----------+------------=
-------------------+------------
-asus-C433TA-AJ0005-rammus | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-on...ok+kselftest | 1          =
+No fix information.
 
+CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
+Provisioning Leads to MITM
 
-  Details:     https://kernelci.org/test/plan/id/62fccae19c16ef7fdf35565a
+No fix information.
 
-  Results:     37 PASS, 17 FAIL, 25 SKIP
-  Full config: x86_64_defconfig+x86-chromebook+kselftest
-  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.131=
--cip13-84-g3b53e4dbd9f41/x86_64/x86_64_defconfig+x86-chromebook+kselftest/g=
-cc-10/lab-collabora/kselftest-lkdtm-asus-C433TA-AJ0005-rammus.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.131=
--cip13-84-g3b53e4dbd9f41/x86_64/x86_64_defconfig+x86-chromebook+kselftest/g=
-cc-10/lab-collabora/kselftest-lkdtm-asus-C433TA-AJ0005-rammus.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ks=
-elftest/20220812.0/amd64/initrd.cpio.gz =
+CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
 
+No fix information.
 
+CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
 
-  * kselftest-lkdtm.lkdtm_USERCOPY_STACK_FRAME_FROM_sh: https://kernelci.or=
-g/test/case/id/62fccae19c16ef7fdf355660
-        failing since 50 days (last pass: v5.10.121-cip9, first fail: v5.10=
-.125-cip10) =
+No fix information.
 
- =
+Regards,
+-- 
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
 
-
-
-platform                  | arch   | lab           | compiler | defconfig  =
-                  | regressions
---------------------------+--------+---------------+----------+------------=
-------------------+------------
-asus-C523NA-A20057-coral  | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-on...ok+kselftest | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/62fcd1105d8d8474a8355647
-
-  Results:     37 PASS, 17 FAIL, 25 SKIP
-  Full config: x86_64_defconfig+x86-chromebook+kselftest
-  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.131=
--cip13-84-g3b53e4dbd9f41/x86_64/x86_64_defconfig+x86-chromebook+kselftest/g=
-cc-10/lab-collabora/kselftest-lkdtm-asus-C523NA-A20057-coral.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.131=
--cip13-84-g3b53e4dbd9f41/x86_64/x86_64_defconfig+x86-chromebook+kselftest/g=
-cc-10/lab-collabora/kselftest-lkdtm-asus-C523NA-A20057-coral.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ks=
-elftest/20220812.0/amd64/initrd.cpio.gz =
-
-
-
-  * kselftest-lkdtm.lkdtm_USERCOPY_STACK_FRAME_FROM_sh: https://kernelci.or=
-g/test/case/id/62fcd1105d8d8474a835564d
-        failing since 50 days (last pass: v5.10.121-cip9, first fail: v5.10=
-.125-cip10) =
-
- =20
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
 
