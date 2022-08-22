@@ -1,69 +1,81 @@
-Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 014B8C28D13
-	for <webhook@archiver.kernel.org>; Mon, 22 Aug 2022 12:34:05 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com
- [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web11.17192.1661171631811752245
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 340ABC28D13
+	for <webhook@archiver.kernel.org>; Mon, 22 Aug 2022 13:04:55 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web08.17856.1661173487748384028
  for <cip-dev@lists.cip-project.org>;
- Mon, 22 Aug 2022 05:33:52 -0700
+ Mon, 22 Aug 2022 06:04:48 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=pass (domain: bp.renesas.com, ip: 210.160.252.171,
- mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-IronPort-AV: E=Sophos;i="5.93,254,1654527600";
-   d="scan'208";a="130189797"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 22 Aug 2022 21:33:50 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id F297242296DF;
-	Mon, 22 Aug 2022 21:33:48 +0900 (JST)
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: cip-dev@lists.cip-project.org,
+ spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 7B7581C0001; Mon, 22 Aug 2022 15:04:44 +0200 (CEST)
+Date: Mon, 22 Aug 2022 15:04:43 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Pavel Machek <pavel@denx.de>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip] arm64: dts: renesas: r9a07g054l2-smarc: Correct
- SoC name in comment
-Date: Mon, 22 Aug 2022 13:33:46 +0100
-Message-Id: <20220822123346.24089-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
+	Pavel Machek <pavel@denx.de>,
+	Chris Paterson <chris.paterson2@renesas.com>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 5.10.y-cip] clk: renesas: rzg2l: Fix reset status function
+Message-ID: <20220822130443.GA16642@duo.ucw.cz>
+References: <20220822112046.1067688-1-biju.das.jz@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="tThc/1wpZn/ma/RB"
+Content-Disposition: inline
+In-Reply-To: <20220822112046.1067688-1-biju.das.jz@bp.renesas.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 22 Aug 2022 12:34:04 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9295
+ <cip-dev@lists.cip-project.org>; Mon, 22 Aug 2022 13:04:55 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9296
 
-From: Chris Paterson <chris.paterson2@renesas.com>
 
-commit d1273f541ab409242e08da6bb836bb564021274c upstream.
+--tThc/1wpZn/ma/RB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This dts is for the RZ/V2L SMARC EVK, not RZ/G2L.
+Hi!
 
-Fixes: f91c4c74796a ("arm64: dts: renesas: Add initial device tree for RZ/V2L SMARC EVK")
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-Link: https://lore.kernel.org/r/20220623103024.24222-1-chris.paterson2@renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r9a07g054l2-smarc.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> commit 02c96ed9e4cd1f47bfcd10296fec6b0b69d6b3c6 upstream.
+>=20
+> As per RZ/G2L HW(Rev.1.10) manual, reset monitor register value 0 means
+> reset signal is not applied (deassert state) and 1 means reset signal
+> is applied (assert state).
+>=20
+> reset_control_status() expects a positive value if the reset line is
+> asserted. But rzg2l_cpg_status function returns zero for asserted
+> state.
+>=20
+> This patch fixes the issue by adding double inverted logic, so that
+> reset_control_status returns a positive value if the reset line is
+> asserted.
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g054l2-smarc.dts b/arch/arm64/boot/dts/renesas/r9a07g054l2-smarc.dts
-index 4e07e1a0fb66..3d01a4cf0fbe 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g054l2-smarc.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a07g054l2-smarc.dts
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- /*
-- * Device Tree Source for the RZ/G2L SMARC EVK board
-+ * Device Tree Source for the RZ/V2L SMARC EVK board
-  *
-  * Copyright (C) 2021 Renesas Electronics Corp.
-  */
--- 
-2.17.1
+Looks ok to me. I can apply it if it passes testing and there are no
+other comments.
 
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--tThc/1wpZn/ma/RB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYwN+6wAKCRAw5/Bqldv6
+8kUhAJ43sLZpkp+c7aLN2LqNPoycVgUZ4gCgjsla/slf8Uejda2RqVPunmg0N+w=
+=iEmD
+-----END PGP SIGNATURE-----
+
+--tThc/1wpZn/ma/RB--
 
