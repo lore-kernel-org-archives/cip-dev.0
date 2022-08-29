@@ -1,174 +1,214 @@
-Return-Path: <chris.paterson2@renesas.com>
+Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 947D9ECAAD4
-	for <webhook@archiver.kernel.org>; Fri, 26 Aug 2022 11:00:35 +0000 (UTC)
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com
- (JPN01-TYC-obe.outbound.protection.outlook.com [40.107.114.115])
- by mx.groups.io with SMTP id smtpd.web08.35856.1661511629191560035
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6558ECAAA2
+	for <webhook@archiver.kernel.org>; Mon, 29 Aug 2022 05:14:13 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
+ by mx.groups.io with SMTP id smtpd.web09.67135.1661750045455121728
  for <cip-dev@lists.cip-project.org>;
- Fri, 26 Aug 2022 04:00:30 -0700
+ Sun, 28 Aug 2022 22:14:06 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@renesas.com header.s=selector1 header.b=G8HQtwYQ;
- spf=pass (domain: renesas.com, ip: 40.107.114.115,
- mailfrom: chris.paterson2@renesas.com)
+ dkim=missing;
+ spf=pass (domain: toshiba.co.jp, ip: 210.130.202.158, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
+Received: by mo-csw.securemx.jp (mx-mo-csw1116) id 27T5DreQ027306;
+ Mon, 29 Aug 2022 14:13:53 +0900
+X-Iguazu-Qid: 2wGqjFaMJGQi28EVqU
+X-Iguazu-QSIG: v=2; s=0; t=1661750033; q=2wGqjFaMJGQi28EVqU;
+ m=H2m6xrMEEylNDjtPn/EIN9QXFXMHT5tfuIP2YhnLlwQ=
+Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
+	by relay.securemx.jp (mx-mr1111) id 27T5Dpxo015009
+	(version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
+	Mon, 29 Aug 2022 14:13:51 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=iRw8XcZZwBdjrkw57a27IePoCNx0sswO1PzitnvrWdK/eIkGcT1Bj3rvCtOKEKK6pOW15r15wObpJDhwmVrV0CZsGufqAblHIvBjl0ozO+Eyhpr4gxw/q/aEvIKviiTCrxtdLvvJneE0/dntzFtxu0kDK/9NArI6xBjjcPDbkP3jny+CqkIgoIh2NL/LFHawuCnMNzLGJq25o67fVIQh8Sbl61qwwEec6vHxkXTfOqZsfJaZeS2f72bH/hzpfGt5/6P6yourVpkf7Wd/A4GJVb26OyT8t9HEzcUKhkIlbuwyqxnyZ2R6RLrDCmkh8CnrjR8v0VX53OrYF9KTOOz0Mg==
+ b=NB9KKI9+1dE9Z4GDIq7nPgv//aXQokY6awjOwcEOwk0xtW5pehMUdswgvJvUmBeMvyTGp0dfoOKMHvr96nUpZd10CXOZJnUn07P7Ij0+R1ZzwyuVx9/hG79QjuwjyE41DpimSEmWB9bMz1+jlAu5VWBLqhYafPeAVFymTH+hKV13Ujwbph6aIPxbHz3SAJ41EUjU/8TdX89NTXqtdUP6dqJ5p3lcsiWpF/EZ9E+4INIaZ7LQA1ZurHoBPVME2M3rv334XG0S26wgZzuxkiPQ39CM6LhTUfFqdK4stMEQvwUjZwpFM4pUO9DLOsQ01aObio2fV6uOUOEdlM3Xu55HFQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=No0mmr0Q98bH2PWcqYLiy223chGktiS0SksdlLrze7g=;
- b=lqsyuhefb8Sw2iYbEz1RTO0SQLv9e1GCkrtGz8XIyK5a9rYvccEQxQk63Bi7vJMZY3MxpTk2jsNAmmm4/usQBCZyAtuGX1TS8rxedHO/fQASn/rPnNlLPjYEqmLoHztbg/Zwynhyu1o6hkaxWsJriYR/H5skS3SRwC2a3imQODf7Yj9zZBRGzCO2iUgVoLT/3grAYwRriZZ+KwP7e+zmNKippbC3P4fKqVNJYl758Dus2HBBMrVKftNwwqGl8rE841l0t+hfAFRDnn3OyUyV44gHHpTu6TBC7E6J/MqQQghEgM65bJZE1vPycYg6o5y2RXV10YKnxuZsN4MzJofIqA==
+ bh=lP3SsVt0rT6DHf5DLKaup4fw7I4jExTkn5M73dQhlqM=;
+ b=S2C1cRtNM+dkBSgne+3u0Zg0+BobVtyXbdgKbbIZs7I1SRXLZ+GII3VHAf71Q7C3R9UIoYENLhAq9THgPlWrztXwLuIaFkhbSZgKxfU9AEWuhBJk0GFe6+f5xb96UenCH49siQ8MSAhks84CRGB70E/TG0HaACCuTJZURlb2zRnoVIcSSQ6AuffzcesIxw5SavzxIJdOilupVlrGqHur/rrTQqL7FKWyQS9/cpE+iBZqSMSqiJHPaBteBiqtHBPL1Hl+KzebeW28FUy8Xac0w3o+E6F7QK3d95hbDBfCwFhvO75gDPAQjY9GGp8wSHDI9x0qGYTg7vCtqWsfCLHM9w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=No0mmr0Q98bH2PWcqYLiy223chGktiS0SksdlLrze7g=;
- b=G8HQtwYQe0D+lQjIKk262wYI2Nt2LiLJxk9PbT2TuSTRyFEnUgBqcqTcm/enCV4lNyz0sXBwt/zHH20Wqo+oMNk8YxwmiTOb/61oIquLmcaEEZu41LHNJNYZElIoStCKdaQBjaaXhUoPCeRINOvowDlsb7n6Vwqo2bBzZxSQnuY=
-Received: from OSZPR01MB8124.jpnprd01.prod.outlook.com (2603:1096:604:164::6)
- by TY2PR01MB2025.jpnprd01.prod.outlook.com (2603:1096:404:b::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5546.16; Fri, 26 Aug
- 2022 11:00:25 +0000
-Received: from OSZPR01MB8124.jpnprd01.prod.outlook.com
- ([fe80::1c37:5f36:4f6:74b5]) by OSZPR01MB8124.jpnprd01.prod.outlook.com
- ([fe80::1c37:5f36:4f6:74b5%3]) with mapi id 15.20.5566.015; Fri, 26 Aug 2022
- 11:00:25 +0000
-From: Chris Paterson <Chris.Paterson2@renesas.com>
-To: Pavel Machek <pavel@denx.de>, "cip-dev@lists.cip-project.org"
-	<cip-dev@lists.cip-project.org>
-Subject: RE: Root filesystem for risc-v board
-Thread-Topic: Root filesystem for risc-v board
-Thread-Index: AQHYriSdsw/RBAkMIkCYY3rl4F8dB63BFuMg
-Date: Fri, 26 Aug 2022 11:00:24 +0000
+ smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
+ header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
+From: <nobuhiro1.iwamatsu@toshiba.co.jp>
+To: <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ <cip-dev@lists.cip-project.org>,
+        <pavel@denx.de>
+CC: <biju.das.jz@bp.renesas.com>
+Subject: RE: [PATCH 5.10.y-cip] PCI: Drop PCIE_RCAR config option
+Thread-Topic: [PATCH 5.10.y-cip] PCI: Drop PCIE_RCAR config option
+Thread-Index: AQHYtx9zAqb9yL1TAEaR46k4FGqz1a29SgewgAgTxCA=
+Date: Mon, 29 Aug 2022 05:13:48 +0000
+X-TSB-HOP2: ON
 Message-ID: 
- <OSZPR01MB8124282CE6E5A0FF01B5A650B7759@OSZPR01MB8124.jpnprd01.prod.outlook.com>
-References: <20220812082204.GA16699@duo.ucw.cz>
-In-Reply-To: <20220812082204.GA16699@duo.ucw.cz>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
+ <TYWPR01MB94208912218383B8981C322892769@TYWPR01MB9420.jpnprd01.prod.outlook.com>
+References: <20220823183729.29203-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <TYWPR01MB9420F6E288EE7FFBBB0D133892739@TYWPR01MB9420.jpnprd01.prod.outlook.com>
+In-Reply-To: 
+ <TYWPR01MB9420F6E288EE7FFBBB0D133892739@TYWPR01MB9420.jpnprd01.prod.outlook.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
+ header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ed46834e-23b5-48f3-7da0-08da87522db7
-x-ms-traffictypediagnostic: TY2PR01MB2025:EE_
+x-ms-office365-filtering-correlation-id: 9b8ede7a-ccdf-4afd-bd3b-08da897d418c
+x-ms-traffictypediagnostic: TY2PR01MB2426:EE_
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
 x-microsoft-antispam-message-info: 
- awfP5ZRSUQXhtBjmBGFA2jlG0LFQeHbAgqoeyxSYiMItKQOvVz7VDvmuEDB4RqUpRcyyALUxVSbcGYhJLU293lWz08N/SDRfhgmeNa8RUhvOPNlkdoSGpCtigwQLR5WwOSwmFtpZOPAXRHjO92GjjZOcP9BJTaryurS2OXbeX8LDcQtF2l1/odGofmnSWahM3Q7ajx0YZGuexZ/hNigKiOx89JfTAHhirGoAa0VVdayLalAtA7fHiI6Je/zZxWM4wwHQg+GGaa5QftmjgH9SlzlE/LkIx66JuEkNoXbh7tZFd/osb8RoTaKei1TcM88jkj+jdoxM3G9YZMHScHsl1z2b9y7bCqMawkv2K6/PjzRxwXOLnQXFV3jMYeOGsejpyT7FYszB3XgI9LKeOb10TyBV1/yLgFAXas8hpeqolD8mbEGn5jFQMZTyfBUrvVfb+ljHZesotFYnZUayCXpwPw0R5FKxEr1un3fFa31+lB8JUW2STGQba95biuWa2EQN87QV0SNS59UMDkXaeki4oDCWP8ygaC+5bCwXkFVvvgREveuffB/JJRkBLeMTGs3LeBaIVLXC9VJ/bxrckRPNHirlao9/JhahBMvcyYvIG1FDljPgPOiMs4SJmvKyuU0e4Hza1eOcaq4xJtiUPBZPp329isbLv3uVuCzXAEXSQ4Q/1l9k3fxgrAjkg9UMOeeVVH7XOntYsaL/sqLBwXunzdtRu7YWIIiFUBBz0qKnWwqTZTzZWczmx0EnOEEowkDV9pJM67McRvl2PsV2JSGcl9lMCr5KLTkXZJXmUFg27o2YUXpmp3kxzHMirsgiWJ32
+ 8L96PzeTDOWmVQVa/A/pns3hspq3QhCHYLvrj3d1GNRPVjB1rccSkrvmsKCe2D+W02ue98Fvqr6lomxAb2OhOEY5qFAdTiOrTZvuGuz6gOHV/sQHtndZtMUEKjw4lU2PZEhHDGhETV5+a7sDT9TWXRM3M6hzgCFs34SA7Mfpu8ty7TsLBAyqBy9rZAtNNBhJb0HPu9S2khmidsA2AGYr1j4H/Kd4G2NRTThbA3I3HRJyTIVAbUO8076pwuh+V/4nm0MUEKbSf88/HBqblX7uTJTxGTw+uTfkuqPftsdxR4FsL8wEuudDzxPP+kAl0vs+2pWI11ZF9iiILKCkQ3x69uWs7sBN9e/Rsko98SFC3kzNiBBe3Gbiccc2dWFX7tNDvc2IgnAnqwjboWTbwsCKlYOZNmF8OFIxKJ0uUa/cN55cNn+NOPTpfTgw1kwf1OWPqnW1tD3ezs0M8YjLmj1zqI8gGG9kJwiGdAdxlBplH+fRLLoFpN/gv+qzHnn7gVcHn0koejy8tPjERB7y0JTHYZZpqdbNRL4pMjUuCokFvjxhVR+nP7j2MS6gs7cHpwGS3fblitmz0PCIlIiJQgyQSYMK4Jy1c9LTp3AVNL/bOUavBBiSsSGQlc12jsXn/p4hACQl3hTS4pRZbuwXaamOCi2qby9P7MvOFfNAJEtzZVWK8CK6anfVy/OjJmp+vSYAW3zgOiiXp1gjcLpIjASU4bMR6Bfpk6/50S5rHoYUrmltLPFbFHGajKy8iPfJ0sgEa+kmyCOh6uSpY6sLY+MSNCEzX9O5uZYOyuCPSTLwVmwXeFLxesdBQ6FwZ/wJrhOfit7Ph/X7vLSP6XhJBvfIhA==
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB8124.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(39860400002)(136003)(366004)(346002)(396003)(376002)(66446008)(41300700001)(2906002)(52536014)(38070700005)(5660300002)(186003)(33656002)(38100700002)(8936002)(86362001)(122000001)(6506007)(76116006)(966005)(8676002)(26005)(478600001)(71200400001)(316002)(55016003)(110136005)(64756008)(7696005)(66476007)(9686003)(66556008)(66946007);DIR:OUT;SFP:1102;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB9420.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(39860400002)(136003)(396003)(376002)(366004)(346002)(55016003)(2906002)(4326008)(66946007)(8676002)(66476007)(64756008)(66556008)(66446008)(76116006)(110136005)(8936002)(9686003)(7696005)(53546011)(6506007)(478600001)(316002)(33656002)(26005)(71200400001)(966005)(41300700001)(86362001)(186003)(122000001)(38070700005)(83380400001)(5660300002)(52536014)(38100700002);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?Windows-1252?Q?+NzIlf8wPO2RzUAD5XXXnIdXQ1PYSJIHwU4w3yqeM9VkSoz2iEVDuN2r?=
- =?Windows-1252?Q?xE/zCjfIlVQ8Uam3PaMYj5KHvPLUJYmk/5ZSeJO4yF+CIyYZLkv5brWz?=
- =?Windows-1252?Q?vVxfhAxTWO/mzdGzeSak6UObWVmlK2AUTfjyhKq0UaF23N7XiV6G4UEf?=
- =?Windows-1252?Q?vt49rpptCR1xo0KCfcgQYzKMKZ54mioQChD9K4KOYLdHyaPQqu/Nc9jk?=
- =?Windows-1252?Q?reDXFaWn4puhMbMKWX96FrUTHqaSltR3+IZJ6TJ5eT5GTqAT1rXYevaR?=
- =?Windows-1252?Q?8Inh3w1k9KEVfI0pi9cEObxPFR/AmzMgQzE3YANsXsrcutOG4LjNrcQe?=
- =?Windows-1252?Q?eRSfRHuRu5r3OrxGVggVNHqazp/0z/m2FRKpf9J0HbIergeYI3qAFsWv?=
- =?Windows-1252?Q?dmgk9/aHsvbSYImeSADyw9OQbaAUsemhny3gEg1UlsPBYwt/1V4z0JXu?=
- =?Windows-1252?Q?4itRg+0LBnxB+Td8nF1NkTTAtosMQz9DgvGkIYqyLy4zEQa2HgSiOn69?=
- =?Windows-1252?Q?VuusgMdaBgWszBe+2se+VheMNrzpl8dY6UJZJGZL/J9QFKg6vzyUdiop?=
- =?Windows-1252?Q?ksY7aiD/KJXtZrTaU4sS6oL0sCEFL9DYoZldVlSWrqbeLsijlVUJz0uL?=
- =?Windows-1252?Q?+3SRlH/6Zs+68CVGupjpLYO9oCC+VkOK5GLVL0DWMm/nCtB0cSZM3egW?=
- =?Windows-1252?Q?de+UqB0AVURjj2rTMTrrvsXhpyDdHCI6bJrbObUTffPIgwllLL3rmjSD?=
- =?Windows-1252?Q?3rGiS1QswSK6818UmUeM65LofYosTsJhzXaFcEZ0Ndt9kTLT/bXTPSVe?=
- =?Windows-1252?Q?D/8KcDS/NROYz8uj/8DwDUNphpmn+Jr309khi1sck7Id6bhMk/SM58TF?=
- =?Windows-1252?Q?QAHNu5BXaChHc3p/Jwq0tD5TdU3o9GGoi0eChtFYXz81pBNckC65cEix?=
- =?Windows-1252?Q?TYteeI6LBHRWZ1OeI2gZLWtpH9EHcGnWZKmoEKJTaSUKlJ3orZDgJDjP?=
- =?Windows-1252?Q?g59X88eafNXwWBD7K3Js3GdNj38GaVnwAif7ZB93ahFRZp/Omz8Q0R8o?=
- =?Windows-1252?Q?sgCPQ1LdZn3IJUQ9aLk/h4ghkSIENa2GvKNweenm43iBxm5JcOJYN0VU?=
- =?Windows-1252?Q?UvBQ9HJlGWSfV6EVZNrDLbAKnrRphQGEnqpfRDLfF3ZT7+SobXF4NPj/?=
- =?Windows-1252?Q?ugm50+avT8o0XMrfOcCqHePmOYuVBd4NTleflHZcgY0o3azmPHVNpIic?=
- =?Windows-1252?Q?qYsqEvn98OMcvx1xf1qPbeweFkLLCaD6teb8gZHC9/uxJcGQfSQ+Npp5?=
- =?Windows-1252?Q?P7FGlyH01W/MnGpw6h0g+guHCcVJvQgnMaGJ4tDyS1JHBYOfZN7dvPy2?=
- =?Windows-1252?Q?R5Zku0zswuA2DDLguIOMxWWx/TJwT44CmQMAGZC2Y0IuhVLu+TVFYZBx?=
- =?Windows-1252?Q?7kmpX9wmPDw0G1H5AeFPA9gQSTFV+rZXQHxXGABK++H4FfPadVfUR5QA?=
- =?Windows-1252?Q?HpOicpG6AZ3ZHwz1+cKdK6WkgAVW7gZ0/TDX76rgRbeevK8W5wcLQqII?=
- =?Windows-1252?Q?4RU/kmoFCb014ziJFyDITNqbbMJidKNQh7tPzVbahVZ68HtBvA8C/6cj?=
- =?Windows-1252?Q?TU7rl75r9Lq5QXCUcea6boohf7UMcxKzJXMjgIx6VgbBUZDQKhsGAKFQ?=
- =?Windows-1252?Q?fj86qWlUa63nRP3LJSQcCjbK+XSPFmQvUM/9malgOgCdXU5Y75oHjA?=
- =?Windows-1252?Q?=3D=3D?=
-Content-Type: text/plain; charset="Windows-1252"
+ =?iso-2022-jp?B?Y2d3ZnU2OWo0RElKWFltMXFhK2hqMU9MZTJxT0EwYWdCVGkwOGVNL053?=
+ =?iso-2022-jp?B?cjgwY1F3eUVQN1Iyck5za0ZjRmI3empXTHppQ0JzQkxFLy9vdTBJaTNO?=
+ =?iso-2022-jp?B?VlhnenVsZXVMUElTRTVkMFlGNTdoUDMxRVJXTXZ0MGI1alRObFNYNExB?=
+ =?iso-2022-jp?B?S2FsY3UrVTEveWUyYjJSZGhLT09GakYvQnE4V2ZPWjlWdHZkcHBuSzNB?=
+ =?iso-2022-jp?B?eDMrcVVrblQ1bWg5SGZHUGRmZjdkK3RVRHV6bTJJak9TN1NUMW43THdh?=
+ =?iso-2022-jp?B?THRaVzQxWHkwaDJlMEU4M3hwTmVBdkpYdlZFTHdacmFRNGRjWFBjekQv?=
+ =?iso-2022-jp?B?dWdNcmlGUnJyczhrOXBVRnZ1Q0ZiRnA0RkdsbHM0dUlveWJUNTlWZWht?=
+ =?iso-2022-jp?B?MW9yK0pUdDE4YmdValRRNGRReWFkS0xVNjJ0RGI3Rk9DWTlOMzlMS2hB?=
+ =?iso-2022-jp?B?N0RpV0owRXNYV1AyWjFQMnUvZjcvWGd2dGdTNEtpemlCRFF2TEhYd3VB?=
+ =?iso-2022-jp?B?ZENwVGFqZ0RwUUk4ck5QTEsvK2xIUExzMGpQeklZaWpuRkt3SHYzSkZz?=
+ =?iso-2022-jp?B?ZmNSS3A4bXZkUE1xV25iQ3FmSDBFU0VVZ2hlNTI1SWQwWGhzdklnVVRC?=
+ =?iso-2022-jp?B?emtUYXJ2TTZBWWtPL01LV1FLbUM0Uzc4UlgrV29pVFVvYnBrbXVNa3dw?=
+ =?iso-2022-jp?B?M1B6NzZCZ2dnUEQyT3RLRHFrdE1kcmNMOFdpZlNBem9KTXl3OUxsb3FR?=
+ =?iso-2022-jp?B?RzdESEhzZCs1SThHVEZQdjVJU1MwMjd4N0N0VmMwNzNHVDNFV3FFQm9L?=
+ =?iso-2022-jp?B?LzY3YXhidVNzUVJUTThiYVErRWJnclBIZERoL01IbkE4TC9IMmhlbDIr?=
+ =?iso-2022-jp?B?TjAyVDR6dzNOdjhRWEl3Zmk0QmFNeElnSTNTa1IvdHdnN0xJTXRJMEk4?=
+ =?iso-2022-jp?B?MlU5cmpoN1l3WmFrbEQxdU0wMHloQzlydExONFF3UHUxbFZyNW5ZbUx1?=
+ =?iso-2022-jp?B?MUpvc1FTN2VwQWRzTlE4Tk1TV0lGWjZUUlMreVpnRVhwYlYxcnB2dEp1?=
+ =?iso-2022-jp?B?MU1GZWNvTlU1dC9Ob2VzOVlrdzgydnFPQzVIeUNFRGFIVU53SkkrZHBl?=
+ =?iso-2022-jp?B?TTBTa3J5SUppWVl3eWY1UE85YWFwNmRZa29naG5Tc1NwSUZJazNjRlNx?=
+ =?iso-2022-jp?B?UUJDZEF0UFM0MjBLSEpnT1ZEVnVyMjRaeE5SSEVycEN3d2NXNUpNaHpM?=
+ =?iso-2022-jp?B?b1g4ZkNhUnlYT3luWVh4OEVnUW5mNDRzUGFLclJOWUxKN1VBeUR1Q1k4?=
+ =?iso-2022-jp?B?eWVzR1dIR0lqQWhGelJnMm9wQzlBN2l3ZzVUQ3dmbWREdEdUT0J5aG42?=
+ =?iso-2022-jp?B?eml0bURHU1cyNmN2RlVWWW95ME93d285cGNIQ0psVmJCTFVSWHF1aVRq?=
+ =?iso-2022-jp?B?akZkdzg0TlU3Z2hRcGwyOFVOWFJzVnVEZis2SFNocytQbWRRSVNNOUVB?=
+ =?iso-2022-jp?B?aU1YMWs5ZkhLWU83MVVMRDVNbWhCOUpXZ2lEbjlySk0xVjdWazYzekVC?=
+ =?iso-2022-jp?B?Nzh1R1k4ZEwraUI3RXdtbkRtWUhWeTJlOUFINzRnZDR1Y1lDbWRoTWU3?=
+ =?iso-2022-jp?B?L3hocjNPWHhUV1NDMStXR1YwYkkrWnphTEhnRWpKSVZ1K3Nxcm8xWllT?=
+ =?iso-2022-jp?B?ZDNwQjI5QkUwRHdhWWFheGQ1eGFWQ3RYZkl1V0RGeU1tUW9qVmJQVDhH?=
+ =?iso-2022-jp?B?d09zMy96ZmgwRE5vVVVJSHJlRWFLYzdUWjVqYnlvZm5nZGNYQkVuN2Ur?=
+ =?iso-2022-jp?B?MUhTblFCSGhSQythaU53SGtJS3RZbU5QVlBYZ09WRGRNU3A2bUR6SnhQ?=
+ =?iso-2022-jp?B?aEptSUt5SWZiRlplS2VITDl6OHFaMy9kN0ZYdzhQTWE5Q0xqMG5kSWZY?=
+ =?iso-2022-jp?B?QXMzcUU3R1BhWnQ0ZEpxSXJHdjZLNlBDaU8wZ0R3ckY4TWZzQ294bTQw?=
+ =?iso-2022-jp?B?OW5IZkcwV0Y1SXRtZ3YyaEdpQ2tkbTd3eHZGSTNnbGxFNCt3RjJMcGNP?=
+ =?iso-2022-jp?B?NU92MFp3OHpxdTNmRng5R20vV0luWnc2NTNiZmtRaFZ2ejdoTGpXdzU4?=
+ =?iso-2022-jp?B?c2wxK0tUZEloR2NjaEQzQVkvOFFzVnQ2OGdWbkFwQWExWklUbmJSaHcx?=
+ =?iso-2022-jp?B?T1hHVThJM2NEY0hNS0M0endhK0p1aFJ2YWZDOWpRSGkwek90ckM1aUpY?=
+ =?iso-2022-jp?B?anpPWTgvY2MvMGJWTFVvbUhvemFINlVLVWlYaTB1OUtNR1dkTURmUjFn?=
+ =?iso-2022-jp?B?MnJWVnJKeVlqTk43cERZRlNLWCtFNFhyQlE9PQ==?=
+Content-Type: text/plain; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB8124.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB9420.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-Network-Message-Id: 
- ed46834e-23b5-48f3-7da0-08da87522db7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Aug 2022 11:00:25.0258
+ 9b8ede7a-ccdf-4afd-bd3b-08da897d418c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Aug 2022 05:13:48.9850
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
 X-MS-Exchange-CrossTenant-userprincipalname: 
- aYWEa+sB+n95bbMKnOHfQdm5+i9GlYU3loJMacIPjnX93K9MCCB3+I3tjmp95uHQa8K0rNnR4VdLj80du8zzwomddWZ8g7zKiNOB0nphuQc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB2025
+ La3fT6wnRA/Q7/x1/WnYTDk3tXYykzMh7E+3qs5GUVNHx2dbfzmUAFZ4wL50wy7gFQZqdHflVFyDZiuYx+FPC9aINhyJoBF2ThVT30A2jTs5gYrdWRJ+Mwf4T+0azM2S
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB2426
+X-OriginatorOrg: toshiba.co.jp
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 26 Aug 2022 11:00:35 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9320
+ <cip-dev@lists.cip-project.org>; Mon, 29 Aug 2022 05:14:13 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9321
 
-Hello Pavel,
+Hi all,
 
-Apologies for the slow reply, I've been away.
-
-> From: Pavel Machek <pavel@denx.de>
-> Sent: 12 August 2022 09:22
+> -----Original Message-----
+> From: iwamatsu nobuhiro(=1B$B4d>>=1B(B =1B$B?.MN=1B(B =1B$B""#S#W#C"~#A#C=
+#T=1B(B)
+> Sent: Wednesday, August 24, 2022 10:55 AM
+> To: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>;
+> cip-dev@lists.cip-project.org; Pavel Machek <pavel@denx.de>
+> Cc: Biju Das <biju.das.jz@bp.renesas.com>
+> Subject: RE: [PATCH 5.10.y-cip] PCI: Drop PCIE_RCAR config option
 >=20
-> Hi!
+> Hi all,
 >=20
-> So... how do you get root filesystem for RISC-V board? Ideally I'd
-> like to get something Debian based.
-
-Renesas' official BSP (v1.0) is Yocto/Poky based and is available on their =
-website:
-https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-=
-mpus/rzfive-risc-v-general-purpose-microprocessors-risc-v-cpu-core-andes-ax=
-45mp-single-10-ghz-2ch-gigabit-ethernet
-
-But it's in source code form, so it would need building as per the included=
- documentation.
-
+> > -----Original Message-----
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > Sent: Wednesday, August 24, 2022 3:37 AM
+> > To: cip-dev@lists.cip-project.org; iwamatsu nobuhiro(=1B$B4d>>=1B(B =1B=
+$B?.MN=1B(B =1B$B""#S#W#C"~=1B(B
+> =1B$B#A=1B(B
+> > =1B$B#C#T=1B(B) <nobuhiro1.iwamatsu@toshiba.co.jp>; Pavel Machek
+> <pavel@denx.de>
+> > Cc: Biju Das <biju.das.jz@bp.renesas.com>
+> > Subject: [PATCH 5.10.y-cip] PCI: Drop PCIE_RCAR config option
+> >
+> > commit ff591f7490cffef49c022e802b64499edb6137b6 upstream.
+> >
+> > All the defconfig files have replaced PCIE_RCAR config option with
+> > PCIE_RCAR_HOST config option which built the same driver, so we can
+> > now safely drop PCIE_RCAR config option.
+> >
+> > Link:
+> > https://lore.kernel.org/r/20201229170848.18482-1-prabhakar.mahadev-lad
+> > .rj
+> > @bp.renesas.com
+> > Signed-off-by: Lad Prabhakar
+> <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Signed-off-by: Lad Prabhakar
+> <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > Note:
+> > - All the defconfig files have been updated to use PCIE_RCAR_HOST
+> > - MR has been issued for cip-kernel-config [0] [0]
+> > https://gitlab.com/cip-project/cip-kernel/cip-kernel-config/-/merge_re
+> > ques
+> > ts/70
+> > ---
+> >  drivers/pci/controller/Kconfig | 9 ---------
+> >  1 file changed, 9 deletions(-)
+> >
+> > diff --git a/drivers/pci/controller/Kconfig
+> > b/drivers/pci/controller/Kconfig index 64e2f5e379aa..0d98d8dd448b
+> > 100644
+> > --- a/drivers/pci/controller/Kconfig
+> > +++ b/drivers/pci/controller/Kconfig
+> > @@ -55,15 +55,6 @@ config PCI_RCAR_GEN2
+> >  	  There are 3 internal PCI controllers available with a single
+> >  	  built-in EHCI/OHCI host controller present on each one.
+> >
+> > -config PCIE_RCAR
+> > -	bool "Renesas R-Car PCIe controller"
+> > -	depends on ARCH_RENESAS || COMPILE_TEST
+> > -	depends on PCI_MSI_IRQ_DOMAIN
+> > -	select PCIE_RCAR_HOST
+> > -	help
+> > -	  Say Y here if you want PCIe controller support on R-Car SoCs.
+> > -	  This option will be removed after arm64 defconfig is updated.
+> > -
+> >  config PCIE_RCAR_HOST
+> >  	bool "Renesas R-Car PCIe host controller"
+> >  	depends on ARCH_RENESAS || COMPILE_TEST
+> > --
+> > 2.17.1
 >=20
-> Best I could try is debootstrap for Debian testing:
->=20
-> sudo debootstrap --no-check-gpg --foreign --arch=3Driscv64 --keyring
-> /usr/share/keyrings/debian-ports-archive-keyring.gpg
-> --include=3Ddebian-ports-archive-keyring unstable /some/suitable/dir
-> http://deb.debian.org/debian-ports
->=20
-> Unfortunately, I can't get debootstrap --second-stage to work (I get
-> sigsegv in ldconfig, I guess testing may be too experimental?). Is it
-> possible to debootstrap stable or testing distributions?
->=20
-> I don't think CIP project provides binary images somewhere. What is
-> recommended way to get a root filesystem? Is there suitable
-> documentation I should follow?
+> LGTM. If there are no other comments, I can apply this.
+> Test pilpeline:
+>   https://gitlab.com/cip-project/cip-kernel/linux-cip/-/pipelines/6210980=
+21
 
-This document describes the build process for the Yocto BSP:
-https://www.renesas.com/us/en/document/mas/release-note-rzfive-board-suppor=
-t-package-v10
+Applied to 5.10.y-cip tree.
 
-We'll have to work out with CIP how we want to support CIP-Core on the RZ/F=
-ive, given the current lack of official risc-v support in Debian.
-Something we can discuss in next week's extended TSC.
+Best regards,
+  Nobuhiro
 
-Kind regards, Chris
 
->=20
-> Thanks and best regards,
-> 								Pavel
-> --
-> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
