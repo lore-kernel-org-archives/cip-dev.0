@@ -1,18 +1,18 @@
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web08.12708.1661871585467884349
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web10.12176.1661869338901959922
  for <cip-dev@lists.cip-project.org>;
- Tue, 30 Aug 2022 07:59:45 -0700
+ Tue, 30 Aug 2022 07:22:19 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.93,275,1654527600"; 
-   d="scan'208";a="131103702"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 30 Aug 2022 23:59:43 +0900
+   d="scan'208";a="133104450"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 30 Aug 2022 23:22:17 +0900
 Received: from localhost.localdomain (unknown [10.226.92.122])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id B923540065A1;
-	Tue, 30 Aug 2022 23:59:40 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id D7BD8439A389;
+	Tue, 30 Aug 2022 23:22:14 +0900 (JST)
 From: "Biju Das" <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -20,9 +20,9 @@ To: cip-dev@lists.cip-project.org,
 Cc: Chris Paterson <chris.paterson2@renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 4.19.y-cip] drm: rcar-du: Fix Alpha blending issue on Gen3
-Date: Tue, 30 Aug 2022 15:59:38 +0100
-Message-Id: <20220830145938.1326295-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip] drm: rcar-du: Fix Alpha blending issue on Gen3
+Date: Tue, 30 Aug 2022 15:22:12 +0100
+Message-Id: <20220830142212.1269865-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -60,10 +60,10 @@ Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
  1 file changed, 12 insertions(+)
 
 diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-index c20f7ed48c8d..366b4de7f055 100644
+index a0021fc25b27..151efd25b554 100644
 --- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
 +++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-@@ -514,6 +514,18 @@ static void rcar_du_plane_setup_format_gen3(struct rcar_du_group *rgrp,
+@@ -510,6 +510,18 @@ static void rcar_du_plane_setup_format_gen3(struct rcar_du_group *rgrp,
  
  	rcar_du_plane_write(rgrp, index, PnDDCR4,
  			    state->format->edf | PnDDCR4_CODE);
