@@ -2,24 +2,24 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7875BECAAD1
-	for <webhook@archiver.kernel.org>; Wed, 31 Aug 2022 16:38:17 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com
- [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web12.1120.1661963894079421089
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 972FDECAAD3
+	for <webhook@archiver.kernel.org>; Wed, 31 Aug 2022 16:46:57 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com
+ [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web10.1222.1661964414524061620
  for <cip-dev@lists.cip-project.org>;
- Wed, 31 Aug 2022 09:38:14 -0700
+ Wed, 31 Aug 2022 09:46:54 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=pass (domain: bp.renesas.com, ip: 210.160.252.172,
+ spf=pass (domain: bp.renesas.com, ip: 210.160.252.171,
  mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.93,278,1654527600";
-   d="scan'208";a="133250221"
+   d="scan'208";a="131240471"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 01 Sep 2022 01:38:13 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 01 Sep 2022 01:46:53 +0900
 Received: from localhost.localdomain (unknown [10.226.92.133])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id CD23F402172B;
-	Thu,  1 Sep 2022 01:38:09 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 76B0840457CA;
+	Thu,  1 Sep 2022 01:46:51 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -27,51 +27,230 @@ To: cip-dev@lists.cip-project.org,
 Cc: Chris Paterson <chris.paterson2@renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 10/10] dt-bindings: net: renesas,etheravb: Document
- RZ/G2UL SoC
-Date: Wed, 31 Aug 2022 17:37:35 +0100
-Message-Id: <20220831163735.2112470-11-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 01/26] dt-bindings: clock: Add R9A07G043 CPG Clock
+ and Reset Definitions
+Date: Wed, 31 Aug 2022 17:46:20 +0100
+Message-Id: <20220831164645.2134258-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220831163735.2112470-1-biju.das.jz@bp.renesas.com>
-References: <20220831163735.2112470-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20220831164645.2134258-1-biju.das.jz@bp.renesas.com>
+References: <20220831164645.2134258-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 31 Aug 2022 16:38:17 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9359
+ <cip-dev@lists.cip-project.org>; Wed, 31 Aug 2022 16:46:57 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9361
 
-commit 5e2e8cc9dd3314e2cf2814d19d0aaa4c983b1d3d upstream.
+commit eb2789785428e2dbc3d5f413b16c67ff90d828c1 upstream.
 
-Document Gigabit Ethernet IP found on RZ/G2UL SoC. Gigabit Ethernet
-Interface is identical to one found on the RZ/G2L SoC. No driver changes
-are required as generic compatible string "renesas,rzg2l-gbeth" will be
-used as a fallback.
+Define RZ/G2UL (R9A07G043U) Clock Pulse Generator Core Clock and module
+clock outputs, as listed in Table 7.1.4.2 ("Clock List r0.51") and also
+add Reset definitions referring to registers CPG_RST_* in Section 7.2.3
+("Register configuration") of the RZ/G2UL Hardware User's Manual (Rev.
+0.51, Nov. 2021).
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Link: https://lore.kernel.org/r/20220402073037.23947-3-biju.das.jz@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/net/renesas,etheravb.yaml | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/dt-bindings/clock/r9a07g043-cpg.h | 184 ++++++++++++++++++++++
+ 1 file changed, 184 insertions(+)
+ create mode 100644 include/dt-bindings/clock/r9a07g043-cpg.h
 
-diff --git a/Documentation/devicetree/bindings/net/renesas,etheravb.yaml b/Documentation/devicetree/bindings/net/renesas,etheravb.yaml
-index 80197259afa8..86c3252971c8 100644
---- a/Documentation/devicetree/bindings/net/renesas,etheravb.yaml
-+++ b/Documentation/devicetree/bindings/net/renesas,etheravb.yaml
-@@ -44,9 +44,10 @@ properties:
- 
-       - items:
-           - enum:
-+              - renesas,r9a07g043-gbeth # RZ/G2UL
-               - renesas,r9a07g044-gbeth # RZ/G2{L,LC}
-               - renesas,r9a07g054-gbeth # RZ/V2L
--          - const: renesas,rzg2l-gbeth  # RZ/{G2L,V2L} family
-+          - const: renesas,rzg2l-gbeth  # RZ/{G2L,G2UL,V2L} family
- 
-   reg: true
- 
+diff --git a/include/dt-bindings/clock/r9a07g043-cpg.h b/include/dt-bindings/clock/r9a07g043-cpg.h
+new file mode 100644
+index 000000000000..27e232733096
+--- /dev/null
++++ b/include/dt-bindings/clock/r9a07g043-cpg.h
+@@ -0,0 +1,184 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++ *
++ * Copyright (C) 2022 Renesas Electronics Corp.
++ */
++#ifndef __DT_BINDINGS_CLOCK_R9A07G043_CPG_H__
++#define __DT_BINDINGS_CLOCK_R9A07G043_CPG_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* R9A07G043 CPG Core Clocks */
++#define R9A07G043_CLK_I			0
++#define R9A07G043_CLK_I2		1
++#define R9A07G043_CLK_S0		2
++#define R9A07G043_CLK_SPI0		3
++#define R9A07G043_CLK_SPI1		4
++#define R9A07G043_CLK_SD0		5
++#define R9A07G043_CLK_SD1		6
++#define R9A07G043_CLK_M0		7
++#define R9A07G043_CLK_M2		8
++#define R9A07G043_CLK_M3		9
++#define R9A07G043_CLK_HP		10
++#define R9A07G043_CLK_TSU		11
++#define R9A07G043_CLK_ZT		12
++#define R9A07G043_CLK_P0		13
++#define R9A07G043_CLK_P1		14
++#define R9A07G043_CLK_P2		15
++#define R9A07G043_CLK_AT		16
++#define R9A07G043_OSCCLK		17
++#define R9A07G043_CLK_P0_DIV2		18
++
++/* R9A07G043 Module Clocks */
++#define R9A07G043_CA55_SCLK		0	/* RZ/G2UL Only */
++#define R9A07G043_CA55_PCLK		1	/* RZ/G2UL Only */
++#define R9A07G043_CA55_ATCLK		2	/* RZ/G2UL Only */
++#define R9A07G043_CA55_GICCLK		3	/* RZ/G2UL Only */
++#define R9A07G043_CA55_PERICLK		4	/* RZ/G2UL Only */
++#define R9A07G043_CA55_ACLK		5	/* RZ/G2UL Only */
++#define R9A07G043_CA55_TSCLK		6	/* RZ/G2UL Only */
++#define R9A07G043_GIC600_GICCLK		7	/* RZ/G2UL Only */
++#define R9A07G043_IA55_CLK		8	/* RZ/G2UL Only */
++#define R9A07G043_IA55_PCLK		9	/* RZ/G2UL Only */
++#define R9A07G043_MHU_PCLK		10	/* RZ/G2UL Only */
++#define R9A07G043_SYC_CNT_CLK		11
++#define R9A07G043_DMAC_ACLK		12
++#define R9A07G043_DMAC_PCLK		13
++#define R9A07G043_OSTM0_PCLK		14
++#define R9A07G043_OSTM1_PCLK		15
++#define R9A07G043_OSTM2_PCLK		16
++#define R9A07G043_MTU_X_MCK_MTU3	17
++#define R9A07G043_POE3_CLKM_POE		18
++#define R9A07G043_WDT0_PCLK		19
++#define R9A07G043_WDT0_CLK		20
++#define R9A07G043_WDT2_PCLK		21	/* RZ/G2UL Only */
++#define R9A07G043_WDT2_CLK		22	/* RZ/G2UL Only */
++#define R9A07G043_SPI_CLK2		23
++#define R9A07G043_SPI_CLK		24
++#define R9A07G043_SDHI0_IMCLK		25
++#define R9A07G043_SDHI0_IMCLK2		26
++#define R9A07G043_SDHI0_CLK_HS		27
++#define R9A07G043_SDHI0_ACLK		28
++#define R9A07G043_SDHI1_IMCLK		29
++#define R9A07G043_SDHI1_IMCLK2		30
++#define R9A07G043_SDHI1_CLK_HS		31
++#define R9A07G043_SDHI1_ACLK		32
++#define R9A07G043_ISU_ACLK		33	/* RZ/G2UL Only */
++#define R9A07G043_ISU_PCLK		34	/* RZ/G2UL Only */
++#define R9A07G043_CRU_SYSCLK		35	/* RZ/G2UL Only */
++#define R9A07G043_CRU_VCLK		36	/* RZ/G2UL Only */
++#define R9A07G043_CRU_PCLK		37	/* RZ/G2UL Only */
++#define R9A07G043_CRU_ACLK		38	/* RZ/G2UL Only */
++#define R9A07G043_LCDC_CLK_A		39	/* RZ/G2UL Only */
++#define R9A07G043_LCDC_CLK_P		40	/* RZ/G2UL Only */
++#define R9A07G043_LCDC_CLK_D		41	/* RZ/G2UL Only */
++#define R9A07G043_SSI0_PCLK2		42
++#define R9A07G043_SSI0_PCLK_SFR		43
++#define R9A07G043_SSI1_PCLK2		44
++#define R9A07G043_SSI1_PCLK_SFR		45
++#define R9A07G043_SSI2_PCLK2		46
++#define R9A07G043_SSI2_PCLK_SFR		47
++#define R9A07G043_SSI3_PCLK2		48
++#define R9A07G043_SSI3_PCLK_SFR		49
++#define R9A07G043_SRC_CLKP		50	/* RZ/G2UL Only */
++#define R9A07G043_USB_U2H0_HCLK		51
++#define R9A07G043_USB_U2H1_HCLK		52
++#define R9A07G043_USB_U2P_EXR_CPUCLK	53
++#define R9A07G043_USB_PCLK		54
++#define R9A07G043_ETH0_CLK_AXI		55
++#define R9A07G043_ETH0_CLK_CHI		56
++#define R9A07G043_ETH1_CLK_AXI		57
++#define R9A07G043_ETH1_CLK_CHI		58
++#define R9A07G043_I2C0_PCLK		59
++#define R9A07G043_I2C1_PCLK		60
++#define R9A07G043_I2C2_PCLK		61
++#define R9A07G043_I2C3_PCLK		62
++#define R9A07G043_SCIF0_CLK_PCK		63
++#define R9A07G043_SCIF1_CLK_PCK		64
++#define R9A07G043_SCIF2_CLK_PCK		65
++#define R9A07G043_SCIF3_CLK_PCK		66
++#define R9A07G043_SCIF4_CLK_PCK		67
++#define R9A07G043_SCI0_CLKP		68
++#define R9A07G043_SCI1_CLKP		69
++#define R9A07G043_IRDA_CLKP		70
++#define R9A07G043_RSPI0_CLKB		71
++#define R9A07G043_RSPI1_CLKB		72
++#define R9A07G043_RSPI2_CLKB		73
++#define R9A07G043_CANFD_PCLK		74
++#define R9A07G043_GPIO_HCLK		75
++#define R9A07G043_ADC_ADCLK		76
++#define R9A07G043_ADC_PCLK		77
++#define R9A07G043_TSU_PCLK		78
++
++/* R9A07G043 Resets */
++#define R9A07G043_CA55_RST_1_0		0	/* RZ/G2UL Only */
++#define R9A07G043_CA55_RST_1_1		1	/* RZ/G2UL Only */
++#define R9A07G043_CA55_RST_3_0		2	/* RZ/G2UL Only */
++#define R9A07G043_CA55_RST_3_1		3	/* RZ/G2UL Only */
++#define R9A07G043_CA55_RST_4		4	/* RZ/G2UL Only */
++#define R9A07G043_CA55_RST_5		5	/* RZ/G2UL Only */
++#define R9A07G043_CA55_RST_6		6	/* RZ/G2UL Only */
++#define R9A07G043_CA55_RST_7		7	/* RZ/G2UL Only */
++#define R9A07G043_CA55_RST_8		8	/* RZ/G2UL Only */
++#define R9A07G043_CA55_RST_9		9	/* RZ/G2UL Only */
++#define R9A07G043_CA55_RST_10		10	/* RZ/G2UL Only */
++#define R9A07G043_CA55_RST_11		11	/* RZ/G2UL Only */
++#define R9A07G043_CA55_RST_12		12	/* RZ/G2UL Only */
++#define R9A07G043_GIC600_GICRESET_N	13	/* RZ/G2UL Only */
++#define R9A07G043_GIC600_DBG_GICRESET_N	14	/* RZ/G2UL Only */
++#define R9A07G043_IA55_RESETN		15	/* RZ/G2UL Only */
++#define R9A07G043_MHU_RESETN		16	/* RZ/G2UL Only */
++#define R9A07G043_DMAC_ARESETN		17
++#define R9A07G043_DMAC_RST_ASYNC	18
++#define R9A07G043_SYC_RESETN		19
++#define R9A07G043_OSTM0_PRESETZ		20
++#define R9A07G043_OSTM1_PRESETZ		21
++#define R9A07G043_OSTM2_PRESETZ		22
++#define R9A07G043_MTU_X_PRESET_MTU3	23
++#define R9A07G043_POE3_RST_M_REG	24
++#define R9A07G043_WDT0_PRESETN		25
++#define R9A07G043_WDT2_PRESETN		26	/* RZ/G2UL Only */
++#define R9A07G043_SPI_RST		27
++#define R9A07G043_SDHI0_IXRST		28
++#define R9A07G043_SDHI1_IXRST		29
++#define R9A07G043_ISU_ARESETN		30	/* RZ/G2UL Only */
++#define R9A07G043_ISU_PRESETN		31	/* RZ/G2UL Only */
++#define R9A07G043_CRU_CMN_RSTB		32	/* RZ/G2UL Only */
++#define R9A07G043_CRU_PRESETN		33	/* RZ/G2UL Only */
++#define R9A07G043_CRU_ARESETN		34	/* RZ/G2UL Only */
++#define R9A07G043_LCDC_RESET_N		35	/* RZ/G2UL Only */
++#define R9A07G043_SSI0_RST_M2_REG	36
++#define R9A07G043_SSI1_RST_M2_REG	37
++#define R9A07G043_SSI2_RST_M2_REG	38
++#define R9A07G043_SSI3_RST_M2_REG	39
++#define R9A07G043_SRC_RST		40	/* RZ/G2UL Only */
++#define R9A07G043_USB_U2H0_HRESETN	41
++#define R9A07G043_USB_U2H1_HRESETN	42
++#define R9A07G043_USB_U2P_EXL_SYSRST	43
++#define R9A07G043_USB_PRESETN		44
++#define R9A07G043_ETH0_RST_HW_N		45
++#define R9A07G043_ETH1_RST_HW_N		46
++#define R9A07G043_I2C0_MRST		47
++#define R9A07G043_I2C1_MRST		48
++#define R9A07G043_I2C2_MRST		49
++#define R9A07G043_I2C3_MRST		50
++#define R9A07G043_SCIF0_RST_SYSTEM_N	51
++#define R9A07G043_SCIF1_RST_SYSTEM_N	52
++#define R9A07G043_SCIF2_RST_SYSTEM_N	53
++#define R9A07G043_SCIF3_RST_SYSTEM_N	54
++#define R9A07G043_SCIF4_RST_SYSTEM_N	55
++#define R9A07G043_SCI0_RST		56
++#define R9A07G043_SCI1_RST		57
++#define R9A07G043_IRDA_RST		58
++#define R9A07G043_RSPI0_RST		59
++#define R9A07G043_RSPI1_RST		60
++#define R9A07G043_RSPI2_RST		61
++#define R9A07G043_CANFD_RSTP_N		62
++#define R9A07G043_CANFD_RSTC_N		63
++#define R9A07G043_GPIO_RSTN		64
++#define R9A07G043_GPIO_PORT_RESETN	65
++#define R9A07G043_GPIO_SPARE_RESETN	66
++#define R9A07G043_ADC_PRESETN		67
++#define R9A07G043_ADC_ADRST_N		68
++#define R9A07G043_TSU_PRESETN		69
++
++#endif /* __DT_BINDINGS_CLOCK_R9A07G043_CPG_H__ */
 -- 
 2.25.1
 
