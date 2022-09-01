@@ -2,24 +2,24 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF65C67868
-	for <webhook@archiver.kernel.org>; Thu,  1 Sep 2022 08:02:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FB71C64991
+	for <webhook@archiver.kernel.org>; Thu,  1 Sep 2022 08:02:12 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com
  [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web11.9630.1662019297178432331
+ by mx.groups.io with SMTP id smtpd.web08.9635.1662019327217437000
  for <cip-dev@lists.cip-project.org>;
- Thu, 01 Sep 2022 01:01:43 -0700
+ Thu, 01 Sep 2022 01:02:07 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
  spf=pass (domain: bp.renesas.com, ip: 210.160.252.172,
  mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.93,280,1654527600";
-   d="scan'208";a="133337181"
+   d="scan'208";a="133337249"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 01 Sep 2022 17:01:42 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 01 Sep 2022 17:02:06 +0900
 Received: from localhost.localdomain (unknown [10.226.92.226])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 2573C40083EF;
-	Thu,  1 Sep 2022 17:01:39 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id F251540083EF;
+	Thu,  1 Sep 2022 17:02:03 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -27,10 +27,10 @@ To: cip-dev@lists.cip-project.org,
 Cc: Chris Paterson <chris.paterson2@renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 03/13] dt-bindings: usb: renesas,usbhs: Document
- RZ/G2UL bindings
-Date: Thu,  1 Sep 2022 09:01:18 +0100
-Message-Id: <20220901080128.2147891-4-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 11/13] dt-bindings: iio: adc: Document Renesas
+ RZ/V2L ADC
+Date: Thu,  1 Sep 2022 09:01:26 +0100
+Message-Id: <20220901080128.2147891-12-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220901080128.2147891-1-biju.das.jz@bp.renesas.com>
 References: <20220901080128.2147891-1-biju.das.jz@bp.renesas.com>
@@ -39,56 +39,40 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 01 Sep 2022 08:02:02 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9407
+ <cip-dev@lists.cip-project.org>; Thu, 01 Sep 2022 08:02:12 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9415
 
-commit 7a60fa06e80596dba5381fb018f5102ae4897658 upstream.
+commit 42763b249aaa0ec8950b433c3cbed021c9779a95 upstream.
 
-Document RZ/G2ULSoC bindings. USBHS block is identical to one
-found on RZ/A2 SoC. No driver changes are required as generic compatible
-string "renesas,rza2-usbhs" will be used as a fallback.
+Document renesas RZ/V2L ADC bindings. RZ/V2L ADC is identical to RZ/G2L
+with same number of channels.
 
-While at it, make the resets property required on RZ/{G2L,G2UL,V2L} SoC.
+While at it remove RZ/G2LC SoC from binding documentation as it does not
+support ADC.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20220425140215.186797-1-biju.das.jz@bp.renesas.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Link: https://lore.kernel.org/r/20220423131654.131390-1-biju.das.jz@bp.renesas.com
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/usb/renesas,usbhs.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml         | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/usb/renesas,usbhs.yaml b/Documentation/devicetree/bindings/usb/renesas,usbhs.yaml
-index a123a5056d74..18c301ef9698 100644
---- a/Documentation/devicetree/bindings/usb/renesas,usbhs.yaml
-+++ b/Documentation/devicetree/bindings/usb/renesas,usbhs.yaml
-@@ -19,6 +19,7 @@ properties:
-       - items:
-           - enum:
-               - renesas,usbhs-r7s9210   # RZ/A2
-+              - renesas,usbhs-r9a07g043 # RZ/G2UL
-               - renesas,usbhs-r9a07g044 # RZ/G2{L,LC}
-               - renesas,usbhs-r9a07g054 # RZ/V2L
-           - const: renesas,rza2-usbhs
-@@ -123,6 +124,7 @@ allOf:
-         compatible:
-           contains:
-             enum:
-+              - renesas,usbhs-r9a07g043
-               - renesas,usbhs-r9a07g044
-               - renesas,usbhs-r9a07g054
-     then:
-@@ -133,6 +135,8 @@ allOf:
-             - description: U2P_INT_DMA[0]
-             - description: U2P_INT_DMA[1]
-             - description: U2P_INT_DMAERR
-+      required:
-+        - resets
-     else:
-       properties:
-         interrupts:
+diff --git a/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml b/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml
+index c80201d6a716..d66c24cae1e1 100644
+--- a/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml
+@@ -19,7 +19,8 @@ properties:
+   compatible:
+     items:
+       - enum:
+-          - renesas,r9a07g044-adc   # RZ/G2{L,LC}
++          - renesas,r9a07g044-adc   # RZ/G2L
++          - renesas,r9a07g054-adc   # RZ/V2L
+       - const: renesas,rzg2l-adc
+ 
+   reg:
 -- 
 2.25.1
 
