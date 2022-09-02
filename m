@@ -1,114 +1,78 @@
-Return-Path: <biju.das.jz@bp.renesas.com>
+Return-Path: <pavel@ucw.cz>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0107FC6FA83
-	for <webhook@archiver.kernel.org>; Fri,  2 Sep 2022 09:45:39 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com
- [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web08.4682.1662111927256305315
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F313C38145
+	for <webhook@archiver.kernel.org>; Fri,  2 Sep 2022 09:51:49 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web08.4722.1662112306773130751
  for <cip-dev@lists.cip-project.org>;
- Fri, 02 Sep 2022 02:45:32 -0700
+ Fri, 02 Sep 2022 02:51:47 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing;
- spf=pass (domain: bp.renesas.com, ip: 210.160.252.172,
- mailfrom: biju.das.jz@bp.renesas.com)
-X-IronPort-AV: E=Sophos;i="5.93,283,1654527600";
-   d="scan'208";a="133482110"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 02 Sep 2022 18:45:31 +0900
-Received: from localhost.localdomain (unknown [10.226.92.155])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id B44CD400CF08;
-	Fri,  2 Sep 2022 18:45:29 +0900 (JST)
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: cip-dev@lists.cip-project.org,
+ dkim=pass header.i=@ucw.cz header.s=gen1 header.b=PIpcCK/O;
+ spf=none, err=permanent DNS error (domain: ucw.cz, ip: 46.255.230.98,
+ mailfrom: pavel@ucw.cz)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 934731C000B; Fri,  2 Sep 2022 11:51:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1662112304;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lrU2qtGwbTnlM5Ao8rFTaPBRRnbQf7/pPeiS+9KC+NA=;
+	b=PIpcCK/OxL10WENKanqiiY52IZxjRZa2sOs+/ZSSfF/+pPkIwkfB6oE+3R31pQ0RT0mXMw
+	NQa/qc0Ifx6BAhlB0LPlm2Wcq8xb9lMvNfZ/ojtmd3yJ9qMP5tYSlk/pNHMP7h8vjEWvaE
+	kEvGbGHmN7W9qhG3zZ0Kog6VtsH8jeI=
+Date: Fri, 2 Sep 2022 11:50:59 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Pavel Machek <pavel@denx.de>
-Cc: Chris Paterson <chris.paterson2@renesas.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
+	Pavel Machek <pavel@denx.de>,
+	Chris Paterson <chris.paterson2@renesas.com>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 24/25] arm64: dts: renesas: rzg2ul-smarc: Enable
- RSPI1 on carrier board
-Date: Fri,  2 Sep 2022 10:44:26 +0100
-Message-Id: <20220902094427.116227-25-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220902094427.116227-1-biju.das.jz@bp.renesas.com>
-References: <20220902094427.116227-1-biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH 5.10.y-cip 00/10] Document RZ/G2UL SOC bindings
+Message-ID: <20220902095059.GB16210@duo.ucw.cz>
+References: <20220831163735.2112470-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="LyciRD1jyfeSSjG0"
+Content-Disposition: inline
+In-Reply-To: <20220831163735.2112470-1-biju.das.jz@bp.renesas.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 02 Sep 2022 09:45:38 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9450
+ <cip-dev@lists.cip-project.org>; Fri, 02 Sep 2022 09:51:49 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9452
 
-commit ea25b1836f57e91e2432b315727fc3f3b8c92872 upstream.
 
-RSPI1 (SPI1) interface is available on PMOD0 connector (J1) on the
-carrier board.  This patch adds pinmux and spi1 nodes to the carrier
-board dtsi file and drops deleting pinctl* properties from board
-DTS file.
+--LyciRD1jyfeSSjG0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20220608173025.22792-2-biju.das.jz@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts | 6 ------
- arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi  | 7 +++++++
- arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi      | 6 ++++++
- 3 files changed, 13 insertions(+), 6 deletions(-)
+Hi!
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts b/arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts
-index 2d740bd420ca..121e55282d18 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts
-@@ -13,9 +13,3 @@ / {
- 	model = "Renesas SMARC EVK based on r9a07g043u11";
- 	compatible = "renesas,smarc-evk", "renesas,r9a07g043u11", "renesas,r9a07g043";
- };
--
--&spi1 {
--	/delete-property/ pinctrl-0;
--	/delete-property/ pinctrl-names;
--	status = "disabled";
--};
-diff --git a/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
-index a663115f5aae..19bdb52b8531 100644
---- a/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
-@@ -209,6 +209,13 @@ sd0_mux_uhs {
- 			pinmux = <RZG2L_PORT_PINMUX(0, 0, 1)>; /* SD0_CD */
- 		};
- 	};
-+
-+	spi1_pins: rspi1 {
-+		pinmux = <RZG2L_PORT_PINMUX(4, 0, 2)>, /* CK */
-+			 <RZG2L_PORT_PINMUX(4, 1, 2)>, /* MOSI */
-+			 <RZG2L_PORT_PINMUX(4, 2, 2)>, /* MISO */
-+			 <RZG2L_PORT_PINMUX(4, 3, 2)>; /* SSL */
-+	};
- };
- 
- #if (SW_SW0_DEV_SEL)
-diff --git a/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
-index 0051634d7b1c..f9835c12023e 100644
---- a/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
-@@ -51,6 +51,12 @@ &snd_rzg2l {
- 	status = "disabled";
- };
- 
-+&spi1 {
-+	/delete-property/ pinctrl-0;
-+	/delete-property/ pinctrl-names;
-+	status = "disabled";
-+};
-+
- &ssi1 {
- 	/delete-property/ pinctrl-0;
- 	/delete-property/ pinctrl-names;
--- 
-2.25.1
+> This patch series aims to document various IP's present in
+> RZ/G2UL SoC.
 
+This series looks okay to me.
+
+Best regards,
+								Pavel
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
+
+--LyciRD1jyfeSSjG0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYxHSAwAKCRAw5/Bqldv6
+8gUyAJ90BMpL397MBfjL0Fn69mqVMWYGLQCfcOZRjtGwRd3cL1uR7nc4uIYW/JY=
+=HtZp
+-----END PGP SIGNATURE-----
+
+--LyciRD1jyfeSSjG0--
 
