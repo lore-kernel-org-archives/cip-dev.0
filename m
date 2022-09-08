@@ -1,183 +1,141 @@
-Return-Path: <masami.ichikawa@miraclelinux.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3105C38145
-	for <webhook@archiver.kernel.org>; Wed,  7 Sep 2022 23:07:55 +0000 (UTC)
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com
- [209.85.160.42])
- by mx.groups.io with SMTP id smtpd.web08.2438.1662592060337621663
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44170C38145
+	for <webhook@archiver.kernel.org>; Thu,  8 Sep 2022 06:03:39 +0000 (UTC)
+Received: from EUR04-HE1-obe.outbound.protection.outlook.com
+ (EUR04-HE1-obe.outbound.protection.outlook.com [40.107.7.44])
+ by mx.groups.io with SMTP id smtpd.web08.2109.1662617014610368775
  for <cip-dev@lists.cip-project.org>;
- Wed, 07 Sep 2022 16:07:41 -0700
+ Wed, 07 Sep 2022 23:03:35 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112
- header.b=XoqAexsA;
- spf=pass (domain: miraclelinux.com, ip: 209.85.160.42,
- mailfrom: masami.ichikawa@miraclelinux.com)
-Received: by mail-oa1-f42.google.com with SMTP id
- 586e51a60fabf-1278a61bd57so21286001fac.7
-        for <cip-dev@lists.cip-project.org>;
- Wed, 07 Sep 2022 16:07:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date;
-        bh=GHXpz+tjjA+TiVtwtat9DPOa2lLdmdedIo+GTp0+A7U=;
-        b=XoqAexsAG5YH8KIwZMa+6VWh21BrpAC9uq198L9XC2egYetH4uXG6ZpZRe2Kt9F/pI
-         h6gDLNEsqUVr6hwvYGsdl3jBvh2Lv0pAJcljN+uysdEzhM28WpLn6o44+Dz62GNMkuRc
-         Ca86bu6vImR0GNn0YM3qGNaca3IL7j/xwVOIqkLqwrKAJQ1W4bqzl8Qb6tB/gYPp/W6d
-         A7liNQ6cx0HI2A3AoCgMw0dNF+pstawINIJDVKkslxRNGp0uZenVeWI/fmioUB3Q3LU0
-         3RWSbNbEC3WMzrEW0+Hkgz7dsvxS7wr7TFuRXp95uFPoxsXtO4Deih/uDgCfUDlxh/oZ
-         uhhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date;
-        bh=GHXpz+tjjA+TiVtwtat9DPOa2lLdmdedIo+GTp0+A7U=;
-        b=QaF+TY7uR8OSlUSR0qrwajQh28W4prp3+PbJnzU+Vo9P1+BJgf0d4bRa3fhxtZOIHn
-         23RTBNJc4oMe/aZw6CNoR0pnUpE0W5QoJqki3YDxyWmTUwmh24dy16XdwfA7MsMxu0zU
-         XL4/lfEA6uQ8CAP5TzgJM+tFiobUMEgBjvDo9qmRm1WwzK1dUeKDGtuR4ZA/59Yviy1E
-         WwonsyGFwX2u9KQ6lPJLGPWO2Kw5Zkylq9lNedKrwV7gIFjAqDMIyIOSIn4T6gybiFVz
-         NCYbprE785ZM4n+e6L1QrUM1fGdRh09Q/SndzFE5XtHlsLt0ahABOv9jff8ceQCPraxU
-         Kgdw==
-X-Gm-Message-State: ACgBeo1ve1uXM1D8H2udk+6bwi40dXNUfGCGKYKZ5T1nmKo7EYRxmLXB
-	rzcFcbKrQ8nQr3N5jryT03WueqySDVHLWCnMzH2VjjKMYaALIA==
-X-Google-Smtp-Source: 
- AA6agR48e7d7WU7gm5ZxntQNFzuO+KXFUcKi60/dBiIpocSUaQI6LmkGlEettEMjq4vzMwiso/ov16cpVZ8ZFRSeaa4=
-X-Received: by 2002:a05:6870:e409:b0:127:d330:c941 with SMTP id
- n9-20020a056870e40900b00127d330c941mr392383oag.280.1662592059222; Wed, 07 Sep
- 2022 16:07:39 -0700 (PDT)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=BdIlAPLH;
+ spf=pass (domain: siemens.com, ip: 40.107.7.44,
+ mailfrom: jan.kiszka@siemens.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ImjLVcJ9v0oDugQnzGr0qVztes+qxwoPvSDKKRxfUhsJf/blFzXKwRB6qOuU5y68TNtIKa7El4Q4dIU9E0QPz4UtIzTGCEwnqvJH84C+iW2gX/+CFtjCvIGbl4cBQZvsAOap3TdaEtlckB4lM16apyzZCq7yD14zOFs80T9k23ohXsEKlFyW1hX4dmL7fQcedXH7Iku1laPI1oFQ1N8qrqZCLfNcaQG1DTP1/LzkyotKoM38NCcm4JHvHGZFII9XPfyBWHP9qZvqbTEnFxdDgKbtaFiDs1ascWpbAI/v+myO3vna89Cc38o1zTOzj1R+MgqRtFYZDGi/qSS7f6helw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1qqF7wpm1xwWGHNs/agch7wC5gBvQHUVqXlwdIdziko=;
+ b=YiU9VuJnFRYrjulKTRmw88zUFVUYaEgQL5EftHRMei/7jinsr8oKEqnOYbw6oj/zxV1Lo1Hth3m/JE/HW+n1eJbKc0rdy1Ob6zq2ATvIPlon8xl38Q/+3kD+uHz5cV51Mq8tTFyR6RWJDXIscQFH7R/bEUB56GEyCU0Fux8giF0SKd13SNAZPyvt+yKKWdtK4N0msO+1DYwZfZz5D8td5VvJBkll/TdqZ7CTeVCMRB7rxORbrINbjuTc29MH0JBRlAYBNe9O1ZLDq3TMQoMIf701SpAlNOIAwrBvV/FgQ4cR0jZsDF+y5MYzpgvqPz4qti45jTGRug3A3Lsy2ft+Aw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 194.138.21.76) smtp.rcpttodomain=lists.cip-project.org
+ smtp.mailfrom=siemens.com; dmarc=pass (p=none sp=none pct=100) action=none
+ header.from=siemens.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1qqF7wpm1xwWGHNs/agch7wC5gBvQHUVqXlwdIdziko=;
+ b=BdIlAPLH5axlGJjxVA3n/KYHIqTf0j4yCwBGDEUaaHtBM3Mlb4J/+U2KayejEB79XQLz4nViJ/nCUSDctc6kbWRcp4MTDpUGcHfjty1/MaM2juuMonVjts7YeCINqrQWrjnHEHsOLyiC7+8jw0VZcTPdxCQpN7Xt6LFX0SdELri59JYqgSNfARRYGS662kmhmtM+f+sbjCZVbxoHLJCg3ivt14blYk6oANKBBlocfDiHVF+95mnAtm2RhcNRGDjGLtIm12PIHYLJMrgTc9gJGUxphrTx/fsF/rz2k0QseqaUxhdGldIDjSQrmAFJsoTJsmqakimnYEOeyS99PYpfBA==
+Received: from FR3P281CA0100.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:a1::18)
+ by DB9PR10MB5161.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:331::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5588.10; Thu, 8 Sep
+ 2022 06:03:30 +0000
+Received: from VE1EUR01FT059.eop-EUR01.prod.protection.outlook.com
+ (2603:10a6:d10:a1:cafe::32) by FR3P281CA0100.outlook.office365.com
+ (2603:10a6:d10:a1::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5612.14 via Frontend
+ Transport; Thu, 8 Sep 2022 06:03:30 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.76)
+ smtp.mailfrom=siemens.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=siemens.com;
+Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
+ 194.138.21.76 as permitted sender) receiver=protection.outlook.com;
+ client-ip=194.138.21.76; helo=hybrid.siemens.com; pr=C
+Received: from hybrid.siemens.com (194.138.21.76) by
+ VE1EUR01FT059.mail.protection.outlook.com (10.152.3.127) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5612.13 via Frontend Transport; Thu, 8 Sep 2022 06:03:30 +0000
+Received: from DEMCHDC89XA.ad011.siemens.net (139.25.226.103) by
+ DEMCHDC8VSA.ad011.siemens.net (194.138.21.76) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.12; Thu, 8 Sep 2022 08:03:29 +0200
+Received: from [139.21.16.183] (139.21.16.183) by
+ DEMCHDC89XA.ad011.siemens.net (139.25.226.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.12; Thu, 8 Sep 2022 08:03:29 +0200
+Message-ID: <dfa182c7-be02-5d53-4e65-ec9f48f2a6f2@siemens.com>
+Date: Thu, 8 Sep 2022 08:03:28 +0200
 MIME-Version: 1.0
-From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Date: Thu, 8 Sep 2022 08:07:03 +0900
-Message-ID: 
- <CAODzB9p4Rns_2VSk6HMn8RDZpswp1GRCNxnP7o2MWPDnZjereA@mail.gmail.com>
-Subject: New CVE entries this week
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Subject: CIP IRC weekly meeting today on libera.chat
 To: cip-dev <cip-dev@lists.cip-project.org>
+Content-Language: en-US
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [139.21.16.183]
+X-ClientProxiedBy: DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) To
+ DEMCHDC89XA.ad011.siemens.net (139.25.226.103)
+X-TM-AS-Product-Ver: SMEX-14.0.0.3080-8.6.1018-26680.007
+X-TM-AS-Result: No-10--18.697300-8.000000
+X-TMASE-MatchedRID: vIFHZ/uiyj9UexHo4vWu8JBmg1zv+iLiePOjK4lyDHhlyUAXnYRaSF+B
+	oH4JnCIGZ++q5oZWwp8oqL1chlV2xfbjZLhs5ua57qEZpoAUsFTispvMxPAIBU6PG3UB9o6G9pL
+	nYtQ99xJLpCLN4NR43oc/Zw06wyFfWExFuTDNuJXwgTN5hsYOwKDRSBS1ZYGL+L2GsArAgtp1Nv
+	bGpMw/nt9zZd3pUn7KDjzqIHW5M3lGW+hnAtX4ijSczs5lmzuE5UcZtwNsCro5f9Xw/xqKXZwhk
+	tVkBBrQxq9PbUOwsP9QSFbL1bvQAbxAi7jPoeEQftwZ3X11IV0=
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--18.697300-8.000000
+X-TMASE-Version: SMEX-14.0.0.3080-8.6.1018-26680.007
+X-TM-SNTS-SMTP: 
+ 986BBB4371FE87C1E513694D5269AA8C69A2C4829E7F72E58C20E764D19D979A2000:8
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: VE1EUR01FT059:EE_|DB9PR10MB5161:EE_
+X-MS-Office365-Filtering-Correlation-Id: 66adf753-53df-43c9-2217-08da915fdaaf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	MuJjBADP6m0tks7PN6z3e0NI8ERWO5o1GPDipXV8pspHs+36w2mJ7DE/DTLsT7lPWLGMmjTzvUBzmIZ9YNSR7jiYew90if8iw2n4ZqC7z7c7b4jx9rm17Es+1On/+UYWVE0yBo28Bfj/dFMn6HIayZHIa0s1C5ufTOe7rQ6Qo6J2A1MMz/x8WZIpBRIKnKaLAnTEh4HCn5e7j8QCKWcjqB/9cRbrRxF3nJoshvkdf6vD8pDyBIYzoOFMJU45aey5+zz9opi/zzkR6MVL+NvLVBufDjtD9RTkIIq2GlQFc+L9zTF6tZFnTF92p7v6BZ9sus25kxEsgyJNPU61R3JC9braMV0jCGYQI6pvg9MCTWD1CqmASxZygtdrmi4tubiADFTr7HLz0hVZWuXzT6lLMikrkKCfNSq9f7gJktvaecVniP/aYNeOlYEBT5SkVrwTmPNGP++Pw3/qI0KrttqpNQeJhONfHtHNesl/8yy0lTpr3L8Ls9+TcwBQQKX+H1Er7MJfrtmPpkVM0ralfHrQ5Fk8ahQjeJB0BvTUbREqPnEh8E8ZrtpvsSG6NZkxEf+YvWJGUKb4vTYLEB38gTEsesBj4f28DSPJPOOBkMCJazI1cQVSQ/K8c1L8AGpIbalxgBmpiQAvuhrN0bEEmyyh2iRljMj+tddPZsLCYRZZX5uwaZ1t/OakuKSpPorR5imUngYP9oJuHoSmEOOVUgCt0WpbSu0dPVm/NgqZFmgLrk1qsIe9VF8vB7GlNt60QdvIWZvBr6H2DtVnU3EE7lMbc8g1xXmzv9CK567qbByJCmdvK5pNUndeu+SWze1e6+vj7BcBo3ADWXgtc5tPFZiFKDWYQ16Jti7mYbmE0qJ5sEsTA28VSLITHVsbgBk8/0kmDWuNar1z9Adx595nuj5u2w==
+X-Forefront-Antispam-Report: 
+	CIP:194.138.21.76;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230016)(4636009)(396003)(346002)(39860400002)(136003)(376002)(40470700004)(36840700001)(46966006)(47076005)(186003)(83380400001)(2906002)(336012)(26005)(956004)(16526019)(81166007)(40480700001)(31696002)(356005)(40460700003)(82960400001)(82740400003)(86362001)(36860700001)(2616005)(4744005)(8936002)(36756003)(70586007)(44832011)(82310400005)(41300700001)(31686004)(5660300002)(478600001)(316002)(8676002)(16576012)(6916009)(966005)(70206006)(6706004)(3940600001)(36900700001)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2022 06:03:30.2552
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 
+ 66adf753-53df-43c9-2217-08da915fdaaf
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
+ TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.76];Helo=[hybrid.siemens.com]
+X-MS-Exchange-CrossTenant-AuthSource: 
+	VE1EUR01FT059.eop-EUR01.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR10MB5161
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 07 Sep 2022 23:07:55 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9472
+ <cip-dev@lists.cip-project.org>; Thu, 08 Sep 2022 06:03:39 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9473
 
-Hi !
+Hi all,
 
-It's this week's CVE report.
+Kindly be reminded to attend the weekly meeting through IRC to discuss
+technical topics with CIP kernel today. Our channel is the following:
 
-This week reported 3 new CVEs and 2 updated CVEs.
+    irc:irc.libera.chat:6667/cip
 
-* New CVEs
+The IRC meeting is scheduled to UTC (GMT) 12:00:
 
-CVE-2022-3078: lack of check after calling vzalloc() and lack of free
-after allocation in vidtv driver
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2022&month=9&day=8&hour=12&min=0&sec=0&p1=224&p2=179&p3=136&p4=37&p5=241&p6=248
 
-CVSS v3 score is 5.5 MEDIUM.
+USWest    USEast    UK        DE        TW        JP
+05:00     08:00     13:00     14:00     20:00     21:00
 
-The vidtv driver was introduced by commit f90cf60 ("media: vidtv: add
-a bridge driver") was merged in 5.10-rc1.
+Last meeting minutes:
+https://ircbot.wl.linuxfoundation.org/meetings/cip/2022/09/cip.2022-09-01-12.03.log.html
 
-There is a lack of check after calling vzalloc() and lack of free
-after allocation in drivers/media/test-drivers/vidtv/vidtv_s302m.c.
-Kernel 4.4, 4.9, 4.14, 4.19, and 5.4 are not affected.
+* Action items
+  1. Resolve/ignore failures of KernelCI on 4.4-cip - alicefm
+  2. Check cip devices on kernelci old pull request - patersonc
+* Kernel maintenance updates
+* Kernel testing
 
-No CIP member enables CONFIG_DVB_VIDTV.
-
-Fixed status
-mainline: [e6a21a14106d9718aa4f8e115b1e474888eeba44]
-stable/5.10: [663e7a72871f89f7a10cc8d7b2f17f27c64e071d]
-stable/5.15: [9dd2fd7a1f84c947561af29424c5ddcecfcf2cbe]
-
-CVE-2022-39190: 'netfilter: nf_tables: disallow binding to already bound chain
-
-CVSS v3 score is not assigned.
-
-There is a lack of input value check in nft_verdict_init of the file
-net/netfilter/nf_tables_api.c which will cause denial of service
-vulnerability. This vulnerability was introduced by commit d0e2c7d
-("netfilter: nf_tables: add NFT_CHAIN_BINDING") which was merged in
-5.9-rc1.
-
-Kernel 4.4, 4.9, 4.14, 4.19, and 5.4 are not affected.
-
-Fixed status
-mainline: [e02f0d3970404bfea385b6edb86f2d936db0ea2b]
-stable/5.10: [c08a104a8bce832f6e7a4e8d9ac091777b9982ea]
-stable/5.15: [51f192ae71c3431aa69a988449ee2fd288e57648]
-stable/5.19: [fdca693fcf26c11596e7aa1e540af2b4a5288c76]
-
-CVE-2022-39842: video: fbdev: pxa3xx-gcu: Fix integer overflow in
-pxa3xx_gcu_write
-
-CVSS v3 score is not assigned.
-
-There is an integer overflow bug in pxa3xx_gcu_write() in PXA3XX_GCU driver.
-
-All stable kernels(include 4.4) are affected by this issue.
-No CIP member enables CONFIG_PXA3XX_GCU.
-
-Fixed status
-mainline: [a09d2d00af53b43c6f11e6ab3cb58443c2cac8a7]
-
-* Updated CVEs
-
-CVE-2022-39188: unmap_mapping_range() race with munmap() on VM_PFNMAP
-mappings leads to stale TLB entry
-
-4.14, 4.19, 4.9, 5.10, 5.15, and 5.4 were fixed.
-
-Fixed status
-mainline: [b67fbebd4cf980aecbcc750e1462128bffe8ae15]
-stable/4.14: [b8a54a2a45feacbc96065e5d6b9a1cbee2aa1e9d]
-stable/4.19: [c3b1e88f14e7f442e2ddcbec94527eec84ac0ca3]
-stable/4.9: [390f33a95419f7fa1254ba6b6feeabde480732f9]
-stable/5.10: [895428ee124ad70b9763259308354877b725c31d]
-stable/5.15: [3ffb97fce282df03723995f5eed6a559d008078e]
-stable/5.4: [c9c5501e815132530d741ec9fdd22657f91656bc]
-
-CVE-2022-3028: af_key: Do not call xfrm_probe_algs in parallel
-
-4.14, 4.19, 4.9, and 5.4 were fixed.
-
-Fixed status
-mainline: [ba953a9d89a00c078b85f4b190bc1dde66fe16b5]
-stable/4.14: [f1b1b63e307478e93548f59e18bd844744b396d3]
-stable/4.19: [7dbfc8f25f22fe2a64dd808266e00c8d2661ebdd]
-stable/4.9: [e580d3201ed222c4752ced7e629ad96bc0340713]
-stable/5.10: [c5c4d4c9806dadac7bc82f9c29ef4e1b78894775]
-stable/5.15: [103bd319c0fc90f1cb013c3a508615e6df8af823]
-stable/5.19: [6901885656c029c976498290b52f67f2c251e6a0]
-stable/5.4: [8ee27a4f0f1ad36d430221842767880df6494147]
-
-Currently tracking CVEs
-
-CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
-Bluetooth Core Specifications 4.0 through 5.2
-
-There is no fix information.
-
-CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
-
-No fix information.
-
-CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
-Provisioning Leads to MITM
-
-No fix information.
-
-CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
-
-No fix information.
-
-CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
-
-No fix information.
-
-Regards,
--- 
-Masami Ichikawa
-Cybertrust Japan Co., Ltd.
-
-Email :masami.ichikawa@cybertrust.co.jp
-          :masami.ichikawa@miraclelinux.com
+Jan
 
