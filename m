@@ -1,248 +1,160 @@
-Return-Path: <masami.ichikawa@miraclelinux.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41F32C6FA82
-	for <webhook@archiver.kernel.org>; Wed, 14 Sep 2022 23:54:18 +0000 (UTC)
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com
- [209.85.210.47])
- by mx.groups.io with SMTP id smtpd.web09.4385.1663199650247537579
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 803B4C54EE9
+	for <webhook@archiver.kernel.org>; Fri, 16 Sep 2022 11:32:49 +0000 (UTC)
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com
+ (EUR05-AM6-obe.outbound.protection.outlook.com [40.107.22.49])
+ by mx.groups.io with SMTP id smtpd.web11.4871.1663327965481940748
  for <cip-dev@lists.cip-project.org>;
- Wed, 14 Sep 2022 16:54:11 -0700
+ Fri, 16 Sep 2022 04:32:46 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112
- header.b=ZoaKbpi7;
- spf=pass (domain: miraclelinux.com, ip: 209.85.210.47,
- mailfrom: masami.ichikawa@miraclelinux.com)
-Received: by mail-ot1-f47.google.com with SMTP id
- l7-20020a056830154700b0065563d564dfso11399545otp.0
-        for <cip-dev@lists.cip-project.org>;
- Wed, 14 Sep 2022 16:54:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date;
-        bh=W3FVuS9TPmoeepyX2pbZbI13bbIOteDS1FDd+ps+w90=;
-        b=ZoaKbpi7+0X6sQQFGK3V7VuzRsSHQEf6qCjQmXCrlvzKMWkKs6Fdapwqit47z/oCKQ
-         CsxjMqaWCyDRgMkLVwLbzxy2EX8z2SNWAmFHVqKmyGGEVv7VeKjS5TKeX9i2xjvA7HmL
-         k3g0jYDuWElwGNjzPOx/S2ahvO8H84Kjsu9PA5d7o4X413vua/3xqIB+LoWiySfGYC67
-         PpOdHlfzPf3jbftpxl2H3Xvz2XhVm01PA9fs6pkY4XP46O4ICWfh28srQdtYwqg2Y01n
-         KkZWcYK+/cMDlb1bYCfpTXwN2Ss6KQWuPo30DUQ+tfDkW1n1PYfUkKOsqH1u8ULieRbb
-         klpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=W3FVuS9TPmoeepyX2pbZbI13bbIOteDS1FDd+ps+w90=;
-        b=BeqbReuTvYXMcOsUzvkEdF+5FnxgBGLjGbHn3TcVYbGfqYY1+0eLiV95rcfuI6yLaz
-         RlzkPchlIRDy8UwXoccoyzEm1h9jHz8asHyebDa8MDSSljJoan1V5VxdaJsLB/0x0IuS
-         DwuK6r5nEe4hP/sV/x5U5/NInijNPN8eYAtSBs7YvMh1HUztiIu3Ggxn8vFMfBGajG+I
-         ns6dMAq1WOGL4LNOLx/iD9kRmZDAQnBl29R+2jMnJw18Sur9aTGaNvlIaXEwd0W+62fR
-         YZF9TxG5SSrOey4PoS/rjCpHzwj5CONcmJLBkId0OEoRBR53GaOaDXJ2yRwITUR5MVDB
-         ERrw==
-X-Gm-Message-State: ACgBeo1vEsJBu0uPx5EbAADhjTZJSxgibHStYLqoK7R1Qke3g1hn0s4n
-	54iTl/ntZO0n43he3R0WwdNEVfnt6SlklQjFSS6gk4yCG8Ylvg==
-X-Google-Smtp-Source: 
- AA6agR4I76Tzb9YTzWL4fFcHwUuubhJhpa659JhOS0A+mw3HUWSEhlAExRRXph10zIbMGyTARVI4lSV5AxAPhUi/aiM=
-X-Received: by 2002:a05:6830:919:b0:657:ce94:341e with SMTP id
- v25-20020a056830091900b00657ce94341emr1901191ott.96.1663199649041; Wed, 14
- Sep 2022 16:54:09 -0700 (PDT)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=zGdbHZud;
+ spf=pass (domain: siemens.com, ip: 40.107.22.49,
+ mailfrom: jan.kiszka@siemens.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gEpr8KxUJPMrSBBLnSQEm925y2R6ScHULu+7E5kRaZMmpgtaddpkYtfLUMlKb069jVVnaJYztFd99++H/8hSxpTYT4g1cJDt12bnDS5/ZAp3jj+DCwTiBTJkzWI8XloG77Ll8SW6T25o1ZxfRjum35nhdx7ckEFqgifpkozyH2NPguTFu5hHWoDwNXNlrB66OGAj+CLOO6Ig0KNdNcYMS3hOVEyq3pCALpaeIaGKsxx3qhkYhjfytcygD9w46J2B1TXUwPL0x0C1A8osiWmQ4TFCG2WPVX2JE9SyvWShzeCqo/6GSMNBdJQhQKNQzfvxQFzSY3aHBnMEl/jjWg78gQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=t7MrB3up/5eI0/x77OhDx+0IA7lSYDsOogi2qJJ+dwo=;
+ b=k6l9g6jsaRO0L+vRUd9egp41HgB//F2GxnWtoUkEgIpxr4iHrJ2iVcf5foxtOg3kbsWeJA9KGPctbLhN9NyLJQFuOLE5IIHhFQ7l+QqYRSx+vsAb558OFoZq5Qs8Z42WsZl47o6d26bTKE963pgBHLN9zl971tJnqZ1ZDV43kEyJ28IbavROMR/47MsRZK6zzZLpOXpFwHDot4AS7rW1IuRP2VbVAwg51Ek+2NKsnF0Xmh2/d1xOIQE8y8HuJeME3uk+y+THbcA5+LpMVw7ECNv1Rhr3LRwYEyfXpY0Vt5ZsUxiOb+6RJzd5/9MmlPnGeMDFixdGeKRqvC5TtGEBnA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 194.138.21.74) smtp.rcpttodomain=mentor.com smtp.mailfrom=siemens.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=siemens.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=t7MrB3up/5eI0/x77OhDx+0IA7lSYDsOogi2qJJ+dwo=;
+ b=zGdbHZudL7C3IRWH6KZB6UX5ojPTcVL0ygUI+NMBwxPubC0/1c3S46DzA9JQzAEpTndw1BdTssH6S7mg1DEKrU/5g1Y+uRGHQ4ZRjIJ5KxwYYZFrrV/1ywIfk4rQVhueb9nHqM7E0UEf60Qky7HYv3HwF4wU+c/Y/e6s7i+4eW/GbqxQS0p2pLVQ5+0Ye0CCFqBvB+daSnLFacq57+AW6FnAbRY6qD2PlPilK4BNitQ7UnfMwNgRcUi1QbLrrYiFBu3hQ2QNmEHFVBx5EYliSdWYRN4JSnadNYAXESqMPTQHCKsxVktQoLKQ9Ulv9Z66/QIQmY2t0tXBn33uFDqgXw==
+Received: from GV3P280CA0043.SWEP280.PROD.OUTLOOK.COM (2603:10a6:150:9::7) by
+ PR3PR10MB3834.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:2a::21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5632.16; Fri, 16 Sep 2022 11:32:42 +0000
+Received: from HE1EUR01FT103.eop-EUR01.prod.protection.outlook.com
+ (2603:10a6:150:9:cafe::39) by GV3P280CA0043.outlook.office365.com
+ (2603:10a6:150:9::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5632.15 via Frontend
+ Transport; Fri, 16 Sep 2022 11:32:42 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.74)
+ smtp.mailfrom=siemens.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=siemens.com;
+Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
+ 194.138.21.74 as permitted sender) receiver=protection.outlook.com;
+ client-ip=194.138.21.74; helo=hybrid.siemens.com; pr=C
+Received: from hybrid.siemens.com (194.138.21.74) by
+ HE1EUR01FT103.mail.protection.outlook.com (10.152.1.45) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5632.12 via Frontend Transport; Fri, 16 Sep 2022 11:32:42 +0000
+Received: from DEMCHDC89XA.ad011.siemens.net (139.25.226.103) by
+ DEMCHDC8VQA.ad011.siemens.net (194.138.21.74) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.12; Fri, 16 Sep 2022 13:32:41 +0200
+Received: from [167.87.16.136] (167.87.16.136) by
+ DEMCHDC89XA.ad011.siemens.net (139.25.226.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.12; Fri, 16 Sep 2022 13:32:40 +0200
+Message-ID: <b208a6e9-e23d-1e56-8b82-34af7b33a7cd@siemens.com>
+Date: Fri, 16 Sep 2022 12:32:39 +0100
 MIME-Version: 1.0
-From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Date: Thu, 15 Sep 2022 08:53:33 +0900
-Message-ID: 
- <CAODzB9qzYNymRy7DQk_qXwa-g5=sW9=O+59SkoBP3VPzkKtePA@mail.gmail.com>
-Subject: New CVE entries this week
-To: cip-dev <cip-dev@lists.cip-project.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [isar-cip-core][PATCH] Update to kas 3.1
+Content-Language: en-US
+To: Srinuvasan A <Srinuvasan_A@mentor.com>, <cip-dev@lists.cip-project.org>
+References: <20220914131247.527986-1-Srinuvasan_A@mentor.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+In-Reply-To: <20220914131247.527986-1-Srinuvasan_A@mentor.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.87.16.136]
+X-ClientProxiedBy: DEMCHDC89XA.ad011.siemens.net (139.25.226.103) To
+ DEMCHDC89XA.ad011.siemens.net (139.25.226.103)
+X-TM-AS-Product-Ver: SMEX-14.0.0.3080-8.6.1018-26680.007
+X-TM-AS-Result: No-10--17.158900-8.000000
+X-TMASE-MatchedRID: EhMq+2gclHvdDS6etHbe26x38sCrHdkHPg9yfk4YC0Zwju9EALAXQj+k
+	5IvvZ1N/B2QWi8BF5Sgs8m1alsmNjbp7747Zmtg1Ta11FrGsOjBGoymhKJvVi3/HTU/OBaTGBgA
+	+oehWZhGIXNJdL4wuiJQNdSgLxtlLTdANLWUWb5IoBEe6aSUEd45dVuh2ywvhXmFVlObh0PxBfk
+	JWKY0KaQrVgpI9tRVko8WMkQWv6iUD0yuKrQIMCIGsNX5eg/aOVnRXm1iHN1bEQdG7H66TyH4gK
+	q42LRYkLeHZhVRXSUPVyFvIkpnUDvDNss/z/qwz7lJGP7ey0YF+3BndfXUhXQ==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--17.158900-8.000000
+X-TMASE-Version: SMEX-14.0.0.3080-8.6.1018-26680.007
+X-TM-SNTS-SMTP: 
+ AECE0A0E335A371DC07EE422E53468B1833B234706EC6DC6C6BD144224F571D22000:8
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: HE1EUR01FT103:EE_|PR3PR10MB3834:EE_
+X-MS-Office365-Filtering-Correlation-Id: 44d85c06-12d7-426d-3939-08da97d72af8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	yYk8aJ7PmdRjh5PVTRP94xzcx/Pu7u3mjA7mB1A6iACutyF+nIDqkQVnz+CF2K0030Yw7adhIKDUqnf5IweIQc0rqaFpw3kNVCo/tYnEiMvqfk0KeFwndLtD+wIZilZ57jTH8RWc4/VHWmHUPWW0ouWqED4cb3vIb6eVi8zi6cWgwx6MP1FLeX5TWm77Ws6h974PXU22W+W9JuV7eVp5oBnWdZfOm0WlrJ2Y0M0MIw/ntkGbVuLqV2sHgVTl2djjkGperK7aO/vVoozyk+6qnJttxo8okl1uvmR2XrdP+djfeSIjVQmjqpeD/RkWFinY1af3/P8zmWIeusWCFuDPIVdQRXj4j9mokLc0gBD55x1AON5pvsf0WpQsg8GJKmTBRa/L9yedVNj2QjpcQYCZa8T2Jg+itV/204XxvI3dapojaiZN6twWSie3z1qrCngeL3NU6wUJx09P69spIEi6RMWbV/ZLOTXklzLaZ7bON/BXDcR0m+3aCHCtwk6uREohupSloCZQrt5IiK8wRTNrKddCCJkj3G4AXPfDtRK5Pj5eR7vHiMpsygsK9j0VlOCY8hfQzk4DuUAQ+Fvvx7ETVHxu0B6uS8wHr6sZwujLySSClBuLp4ihdlL3CdnqF5HKbALcD15iht7xLOP+QWwbUPCnKkeBxN7YPSnbxOlqThRhQ7jD5eDRmn9GIFkTiT3/hlnQPEqx05XqxYa2aJJF8opv3UgqdPSU/qyc8hCy1jaeNPe3q2AjJB9XqE/ncWernBsrfaWoQw5TlgVL0evjKVqeaqGvKMXHbKWFJMZmLNHaNROwyQcHnEM+lbTowOWVSJFlVf8y7C9J7B8hfj4G9kU2UwIHNfke0QGq7iLMApl+W2kno643eUrFgaVJvUUD3CvejyktYqPiL2s8Hj+iRg==
+X-Forefront-Antispam-Report: 
+	CIP:194.138.21.74;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:hybrid.siemens.com;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(376002)(346002)(136003)(396003)(451199015)(36840700001)(46966006)(40470700004)(5660300002)(16576012)(478600001)(966005)(82960400001)(40480700001)(8676002)(31686004)(186003)(956004)(70206006)(70586007)(26005)(2616005)(53546011)(47076005)(110136005)(31696002)(86362001)(44832011)(2906002)(6706004)(356005)(36860700001)(336012)(83380400001)(82310400005)(16526019)(41300700001)(316002)(82740400003)(84970400001)(8936002)(40460700003)(15650500001)(7636003)(7596003)(36756003)(3940600001)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2022 11:32:42.0011
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 
+ 44d85c06-12d7-426d-3939-08da97d72af8
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
+ TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.74];Helo=[hybrid.siemens.com]
+X-MS-Exchange-CrossTenant-AuthSource: 
+	HE1EUR01FT103.eop-EUR01.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR10MB3834
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 14 Sep 2022 23:54:18 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9495
+ <cip-dev@lists.cip-project.org>; Fri, 16 Sep 2022 11:32:49 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9496
 
-Hi !
+On 14.09.22 14:12, Srinuvasan A wrote:
+> From: Srinuvasan A <srinuvasan_a@mentor.com>
+> 
+> Update to kas 3.1.
+> 
+> Signed-off-by: Srinuvasan A <srinuvasan_a@mentor.com>
+> ---
+>  .gitlab-ci.yml | 2 +-
+>  README.md      | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+> index 81301e5..ce40b5d 100644
+> --- a/.gitlab-ci.yml
+> +++ b/.gitlab-ci.yml
+> @@ -1,4 +1,4 @@
+> -image: ghcr.io/siemens/kas/kas-isar:3.0.2
+> +image: ghcr.io/siemens/kas/kas-isar:3.1
+>  
+>  variables:
+>    GIT_STRATEGY: clone
+> diff --git a/README.md b/README.md
+> index ff973c5..e30ff3a 100644
+> --- a/README.md
+> +++ b/README.md
+> @@ -12,7 +12,7 @@ from scratch.
+>  
+>  Install `kas-container` from the [kas project](https://github.com/siemens/kas):
+>  
+> -    wget https://raw.githubusercontent.com/siemens/kas/3.0.2/kas-container
+> +    wget https://raw.githubusercontent.com/siemens/kas/3.1/kas-container
+>      chmod a+x kas-container
+>  
+>  Furthermore, install docker and make sure you have required permissions to
 
-It's this week's CVE report.
+Thanks, applied.
 
-This week reported 8 new CVEs and 0 updated CVEs.
+Jan
 
-* New CVEs
-
-CVE-2022-3169: Request to NVME_IOCTL_RESET and NVME_IOCTL_SUBSYS_RESET
-may cause a DOS
-
-CVSS v3 score is 5.5 MEDIUM.
-
-A denial of service flaw may occur if there is a consecutive request
-of the NVME_IOCTL_RESET and the NVME_IOCTL_SUBSYS_RESET through the
-device file of the driver, resulting in a PCIe link disconnect.
-
-This bug was reported last October to the kernel bugzilla
-(https://bugzilla.redhat.com/show_bug.cgi?id=3D2125341)  but it hasn't
-been fixed yet.
-
-Fixed status
-Not fixed yet.
-
-CVE-2022-40307: efi: capsule-loader: Fix use-after-free in efi_capsule_writ=
-e
-
-CVSS v3 score is 4.7 MEDIUM.
-
-There is a race condition that occurs between the efi_capsule_write() and
-efi_capsule_flush(). This race condition bug causes use-after-free bug.
-
-Fixed status
-mainline: [9cb636b5f6a8cc6d1b50809ec8f8d33ae0c84c95]
-
-CVE-2022-3077: A buffer overflow vulnerability was found in the Linux
-kernel Intel=E2=80=99s iSMT SMBus host controller driver
-
-CVSS v3 score is not assigned.
-
-A buffer overflow vulnerability was found in the Linux kernel Intel=E2=80=
-=99s
-iSMT SMBus host controller driver in the way it handled the
-I2C_SMBUS_BLOCK_PROC_CALL case (via the ioctl I2C_SMBUS) with
-malicious input data. This flaw could allow a local user to crash the
-system.
-
-This vulnerability was introduced by commit 5e9a97b ("i2c: ismt:
-Adding support for I2C_SMBUS_BLOCK_PROC_CALL") in 5.11-rc1.
-This commit is not backported to earlier versions so that 4.4, 4.9,
-4.14, 4.19, and 5.10 are not vulnerabile.
-
-Fixed status
-mainline: [690b2549b19563ec5ad53e5c82f6a944d910086e]
-stable/5.15: [24c6fc6e7453f64cf6cbb4218c62aafdecc16ee1]
-
-CVE-2022-36280: An out-of-bounds(OOB) memory access vulnerability was
-found in vmwgfx driver
-
-CVSS v3 score is not assigned(NIST).
-CVSS v3 score is 6.3 MEDIUM(CNA).
-
-An out-of-bounds(OOB) memory access vulnerability was found in vmwgfx
-driver in drivers/gpu/vmxgfx/vmxgfx_kms.c in GPU component in the
-Linux kernel with device file '/dev/dri/renderD128 (or Dxxx)'. This
-flaw allows a local attacker with a user account on the system to gain
-privilege, causing a denial of service(DoS).
-
-Above description said the vulnerability is in
-drivers/gpu/vmxgfx/vmxgfx_kms.c but this file doesn't exist in the
-mainline. It may be drivers/gpu/drm/vmwgfx/vmwgfx_kms.c instead.
-
-Fixed status
-Not fixed yet.
-
-CVE-2022-38096: A NULL pointer dereference vulnerability was found in
-vmwgfx driver
-
-CVSS v3 score is 5.5 MEDIUM(NIST).
-CVSS v3 score is 6.3 MEDIUM(CNA).
-
-Above description said the vulnerability is in
-drivers/gpu/vmxgfx/vmxgfx_kms.c but this file doesn't exist in the
-mainline. It may be drivers/gpu/drm/vmwgfx/vmwgfx_kms.c instead.
-
-Fixed status
-Not fixed yet.
-
-CVE-2022-38457: A use-after-free vulnerability was found int vmwgfx
-drivers driver
-
-CVSS v3 score is 5.5 MEDIUM(NIST).
-CVSS v3 score is 6.3 MEDIUM(CNA).
-
-A NULL pointer dereference vulnerability was found in vmwgfx driver in
-drivers/gpu/vmxgfx/vmxgfx_execbuf.c in GPU component of Linux kernel
-with device file '/dev/dri/renderD128 (or Dxxx)'. This flaw allows a
-local attacker with a user account on the system to gain privilege,
-causing a denial of service(DoS).
-
-Above description said the vulnerability is in
-drivers/gpu/vmxgfx/vmxgfx_execbuf.c but this file doesn't exist in the
-mainline. It may be drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c instead.
-
-Fixed status
-Not fixed yet.
-
-CVE-2022-40133: A use-after-free vulnerability was found in vmwgfx driver
-
-CVSS v3 score 5.5 MEDIUM(NIST).
-CVSS v3 score is 6.3 MEDIUM(CNA).
-
-A use-after-free(UAF) vulnerability was found in function
-'vmw_execbuf_tie_context' in drivers/gpu/vmxgfx/vmxgfx_execbuf.c in
-Linux kernel's vmwgfx driver with device file '/dev/dri/renderD128 (or
-Dxxx)'. This flaw allows a local attacker with a user account on the
-system to gain privilege, causing a denial of service(DoS).
-
-Above description said the vulnerability is in
-drivers/gpu/vmxgfx/vmxgfx_execbuf.c but this file doesn't exist in the
-mainline. It may be drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c instead.
-
-Fixed status
-Not fixed yet.
-
-CVE-2022-3202: Null Pointer Deference in jfs_evict_inode leads to
-Denial of Service
-
-CVSS v3 score is not assigned
-
-A NULL pointer dereference flaw in diFree in fs/jfs/inode.c in
-Journaled File System (JFS)in the Linux kernel. This could allow a
-local attacker to crash the system or leak kernel internal
-information.
-
-All stable kernels and cip kernels are fixed this issue.
-
-Fixed status
-mainline: [a53046291020ec41e09181396c1e829287b48d47]
-stable/4.14: [33bd243566a9b1ca94261dcc2e16c7b9e3a71c15]
-stable/4.19: [2ef74e3e0089b6615ee124e1183746974c6bb561]
-stable/4.9: [d2e45f0bc25da09efcac658d6e405115fcfa83c2]
-stable/5.10: [b9c5ac0a15f24d63b20f899072fa6dd8c93af136]
-stable/5.15: [d925b7e78b62805fcc5440d1521181c82b6f03cb]
-stable/5.4: [e19c3149a80e4fc8df298d6546640e01601f3758]
-
-* Updated CVEs
-
-No update CVEs.
-
-Fixed status
-
-Currently tracking CVEs
-
-CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
-Bluetooth Core Specifications 4.0 through 5.2
-
-There is no fix information.
-
-CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
-
-No fix information.
-
-CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
-Provisioning Leads to MITM
-
-No fix information.
-
-CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
-
-No fix information.
-
-CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
-
-No fix information.
-
-Regards,
---=20
-Masami Ichikawa
-Cybertrust Japan Co., Ltd.
-
-Email :masami.ichikawa@cybertrust.co.jp
-          :masami.ichikawa@miraclelinux.com
+-- 
+Siemens AG, Technology
+Competence Center Embedded Linux
 
