@@ -2,58 +2,57 @@ Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35332C6FA92
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33899C6FA93
 	for <webhook@archiver.kernel.org>; Tue, 27 Sep 2022 09:39:43 +0000 (UTC)
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com
- [209.85.216.48])
- by mx.groups.io with SMTP id smtpd.web12.9029.1664271574529915632
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
+ [209.85.214.176])
+ by mx.groups.io with SMTP id smtpd.web09.8911.1664271573748339428
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Tue, 27 Sep 2022 02:39:34 -0700
+ Tue, 27 Sep 2022 02:39:33 -0700
 Authentication-Results: mx.groups.io;
  dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112
- header.b=MJ6RGYOx;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.216.48,
+ header.b=YWHgbNrD;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.176,
  mailfrom: bot@kernelci.org)
-Received: by mail-pj1-f48.google.com with SMTP id
- g1-20020a17090a708100b00203c1c66ae3so9568195pjk.2
+Received: by mail-pl1-f176.google.com with SMTP id iw17so8623283plb.0
         for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Tue, 27 Sep 2022 02:39:34 -0700 (PDT)
+ Tue, 27 Sep 2022 02:39:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20210112.gappssmtp.com; s=20210112;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:from:to:cc:subject:date;
-        bh=Ss/lUAL5FVaYLAFCxuAJDjGcPUsPs9OmJ+MRnnUYLHI=;
-        b=MJ6RGYOxm0iQSoUgjZv6k2LcsC3xdI4qwVVhs8jA1LDRw3LAJnyibuFfkO7/NpAXuu
-         xCITnASTil9fT9cjV7vuVmUwCuLmLFIawoRzb1N7JZQYoGc5qpN2iXhphkNFdwigMkH+
-         OjTAmzldI+cLiVUe1WLU7o3/l4jtBx8Shmy4/tHNilOIS1PE1mUtSyoef+SFYBxgpsEo
-         6XcAsGz+pG+e95oZaNbrhOyj0IFVyVlSEM+UXgUs3/BuKdIJO93+1XRZWGR9nsZAtt78
-         fFcEQr1X4flfUkpOOyqBs6YtdsTfR2CaynCM54IoAy+ZveVaV23UxCx2fACG54J6Gj6L
-         +w8A==
+        bh=3ndzLLYfTJdnTLrZgMf8oLmI/zWwS5JuAZJ+n/Mbj0c=;
+        b=YWHgbNrD86fQiDHXHNZG0txa3+X4QlEniqFR8yufa6sI6X8+JP04hA+GEKPwoo0WD0
+         6Bmg27xBDuhBleEGZVnpSEUhNHgiAXwvazS/Xo/azQXMw/WlaFPtxxNKBc/AsHIi4ePb
+         mbbn0IVrmps3Ag3L63Oxm35i5r9hWjFOGquKCqHJjspis+QQmW0Si/9V+lgDDAbYIKhx
+         m9uq2SBCVATaySCQzJXGBdDTRxNw94KX6fU9KCVoSesg6roeH+YGHUAeMa3FrkIs91Ux
+         HvxnfYxwCyXt1qNvuDD/kQS/LhKCNBpqF6pBsQ79Cy/3ZrSDcMIF/IQAIZ8NNhjgUiz9
+         ymiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date;
-        bh=Ss/lUAL5FVaYLAFCxuAJDjGcPUsPs9OmJ+MRnnUYLHI=;
-        b=TYZRpv4mX09EL2jPyJLuka/puMaslhNU+C2gEYmC/+1u+1qsgE/a6FkojRmN0npAQp
-         2ggwWJz+JO7/3YC/xv+K9iyCWCNLga5R7R1AbF7+Ir6r+t61JFQ4bYj1k9SG0H1cmn0v
-         RjlCUscPNE+sBdm8jdMQdyRfnvdJqT9kGDYvjplthMghpnuCY83Rw9FlA12+0Rc4wMqc
-         pZcUZ/80+DgfJkCXSJqq2zK7JH0OhFyqKmvLUonWrbCF5RwFDmoXKnShvizE2/6HRo/T
-         rf0ne1a70P9twxoRxWmK++Ro2CQmACveaCO9nRed/y0oLCYgw/4Cl8jAhNXizQOBRzdw
-         Occw==
-X-Gm-Message-State: ACrzQf0FyT3I1dhZ8u51FOWUtPupLBrsfRLaNPtt1YWx1nu/o5RGBB2Q
-	LKW4aHNguyGTICN0FHiEe15dIIC7mvqHkEmK
+        bh=3ndzLLYfTJdnTLrZgMf8oLmI/zWwS5JuAZJ+n/Mbj0c=;
+        b=ESq+ozx3aZUjtZqAZfbmTeGvgSu75kSZvuGwmIWTVV/cdVI3JfOxH4/1x8NzyOwQnE
+         MPFUIZmwYXZKp+f8J8B7ZshV+vDU/PPIlqlndfhmJzbRuf+RdGzc3xhGPp2Cu5xlknZ8
+         1le/hI1Fdh931zEZfISL2+UPwkW9vKi96yOTkF/m2VoXphvwweVfRvtF4VweShaUTVjE
+         VDpLd8k7whTtcn5vD2f6qtEm403ArijDculfatQQkFyCSADlNE91harqWKMG7ViDpRMD
+         IZCpmdLlQU2a+mn6O4i1/AaBERWmdkOCSahP6jXWweDnbf0e3IDtDKqLVP9hK2bd+cJb
+         lW8Q==
+X-Gm-Message-State: ACrzQf177ce6IijygXQVEYsOT2PKwT3tOHLnJOAbJO2tF1qe47oJ7zb1
+	ZVxEmCpjUBqbjrfy8CzfYcC/rMGHnbDs2EYL
 X-Google-Smtp-Source: 
- AMsMyM4Os3XeYGmi4P13p224dz1oUMph7b1CeCow/5lU2tT7cED3mz4HnRj9NcmsZYjQtnkMsTowCA==
-X-Received: by 2002:a17:90b:33c5:b0:202:fa60:3769 with SMTP id
- lk5-20020a17090b33c500b00202fa603769mr3585357pjb.60.1664271573801;
-        Tue, 27 Sep 2022 02:39:33 -0700 (PDT)
+ AMsMyM4GrYMHobd/mICHUdtHC4qODh0dcrF5HKIufviQfQFm2Frdohq7uMELCxZZLU+buNj72oVkvw==
+X-Received: by 2002:a17:902:7795:b0:178:897e:16b2 with SMTP id
+ o21-20020a170902779500b00178897e16b2mr25333606pll.153.1664271572978;
+        Tue, 27 Sep 2022 02:39:32 -0700 (PDT)
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
         by smtp.gmail.com with ESMTPSA id
- o196-20020a62cdcd000000b0054ad9c6b70fsm1201464pfg.8.2022.09.27.02.39.33
+ f12-20020aa7968c000000b0055a5a3bda9asm1062995pfk.109.2022.09.27.02.39.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Sep 2022 02:39:33 -0700 (PDT)
-Message-ID: <6332c4d5.620a0220.89bdf.1ddc@mx.google.com>
-Date: Tue, 27 Sep 2022 02:39:33 -0700 (PDT)
+        Tue, 27 Sep 2022 02:39:32 -0700 (PDT)
+Message-ID: <6332c4d4.a70a0220.955e9.1991@mx.google.com>
+Date: Tue, 27 Sep 2022 02:39:32 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -61,8 +60,8 @@ X-Kernelci-Report-Type: test
 X-Kernelci-Kernel: v5.10.145-cip17
 X-Kernelci-Branch: linux-5.10.y-cip
 X-Kernelci-Tree: cip
-Subject: cip/linux-5.10.y-cip kselftest-lkdtm: 6 runs,
- 2 regressions (v5.10.145-cip17)
+Subject: cip/linux-5.10.y-cip kselftest-filesystems: 10 runs,
+ 1 regressions (v5.10.145-cip17)
 To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
  kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
 From: "kernelci.org bot" <bot@kernelci.org>
@@ -70,29 +69,26 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 27 Sep 2022 09:39:43 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9553
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9551
 
-cip/linux-5.10.y-cip kselftest-lkdtm: 6 runs, 2 regressions (v5.10.145-cip1=
-7)
+cip/linux-5.10.y-cip kselftest-filesystems: 10 runs, 1 regressions (v5.10.1=
+45-cip17)
 
 Regressions Summary
 -------------------
 
-platform                  | arch   | lab           | compiler | defconfig  =
-                  | regressions
---------------------------+--------+---------------+----------+------------=
-------------------+------------
-asus-C433TA-AJ0005-rammus | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-on...ok+kselftest | 1          =
-
-hp-11A-G6-EE-grunt        | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-on...ok+kselftest | 1          =
+platform                     | arch  | lab          | compiler | defconfig =
+| regressions
+-----------------------------+-------+--------------+----------+-----------=
++------------
+meson-g12b-a311d-khadas-vim3 | arm64 | lab-baylibre | gcc-10   | defconfig =
+| 1          =
 
 
   Details:  https://kernelci.org/test/job/cip/branch/linux-5.10.y-cip/kerne=
-l/v5.10.145-cip17/plan/kselftest-lkdtm/
+l/v5.10.145-cip17/plan/kselftest-filesystems/
 
-  Test:     kselftest-lkdtm
+  Test:     kselftest-filesystems
   Tree:     cip
   Branch:   linux-5.10.y-cip
   Describe: v5.10.145-cip17
@@ -107,67 +103,35 @@ Test Regressions
 
 
 
-platform                  | arch   | lab           | compiler | defconfig  =
-                  | regressions
---------------------------+--------+---------------+----------+------------=
-------------------+------------
-asus-C433TA-AJ0005-rammus | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-on...ok+kselftest | 1          =
+platform                     | arch  | lab          | compiler | defconfig =
+| regressions
+-----------------------------+-------+--------------+----------+-----------=
++------------
+meson-g12b-a311d-khadas-vim3 | arm64 | lab-baylibre | gcc-10   | defconfig =
+| 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/6332bb957d5fed786bec4ece
+  Details:     https://kernelci.org/test/plan/id/6332b64e33d222023dec4ec3
 
-  Results:     37 PASS, 17 FAIL, 25 SKIP
-  Full config: x86_64_defconfig+x86-chromebook+kselftest
-  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
   Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.145=
--cip17/x86_64/x86_64_defconfig+x86-chromebook+kselftest/gcc-10/lab-collabor=
-a/kselftest-lkdtm-asus-C433TA-AJ0005-rammus.txt
+-cip17/arm64/defconfig/gcc-10/lab-baylibre/kselftest-filesystems-meson-g12b=
+-a311d-khadas-vim3.txt
   HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.145=
--cip17/x86_64/x86_64_defconfig+x86-chromebook+kselftest/gcc-10/lab-collabor=
-a/kselftest-lkdtm-asus-C433TA-AJ0005-rammus.html
+-cip17/arm64/defconfig/gcc-10/lab-baylibre/kselftest-filesystems-meson-g12b=
+-a311d-khadas-vim3.html
   Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ks=
-elftest/20220919.0/amd64/initrd.cpio.gz =
+elftest/20220919.0/arm64/initrd.cpio.gz =
 
 
 
-  * kselftest-lkdtm.lkdtm_USERCOPY_STACK_FRAME_FROM_sh: https://kernelci.or=
-g/test/case/id/6332bb957d5fed786bec4ed4
-        failing since 91 days (last pass: v5.10.121-cip9, first fail: v5.10=
-.125-cip10) =
-
- =
-
-
-
-platform                  | arch   | lab           | compiler | defconfig  =
-                  | regressions
---------------------------+--------+---------------+----------+------------=
-------------------+------------
-hp-11A-G6-EE-grunt        | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-on...ok+kselftest | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6332bd04b684075f08ec4ea7
-
-  Results:     36 PASS, 18 FAIL, 25 SKIP
-  Full config: x86_64_defconfig+x86-chromebook+kselftest
-  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.145=
--cip17/x86_64/x86_64_defconfig+x86-chromebook+kselftest/gcc-10/lab-collabor=
-a/kselftest-lkdtm-hp-11A-G6-EE-grunt.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.145=
--cip17/x86_64/x86_64_defconfig+x86-chromebook+kselftest/gcc-10/lab-collabor=
-a/kselftest-lkdtm-hp-11A-G6-EE-grunt.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ks=
-elftest/20220919.0/amd64/initrd.cpio.gz =
-
-
-
-  * kselftest-lkdtm.lkdtm_USERCOPY_STACK_FRAME_FROM_sh: https://kernelci.or=
-g/test/case/id/6332bd04b684075f08ec4ead
-        failing since 91 days (last pass: v5.10.121-cip9, first fail: v5.10=
-.125-cip10) =
+  * kselftest-filesystems.login: https://kernelci.org/test/case/id/6332b64e=
+33d222023dec4ec4
+        failing since 40 days (last pass: v5.10.131-cip13-49-g1145e9c6352e6=
+, first fail: v5.10.131-cip13-84-g3b53e4dbd9f41) =
 
  =20
 
