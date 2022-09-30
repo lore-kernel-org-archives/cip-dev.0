@@ -2,86 +2,93 @@ Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2DBEC433FE
-	for <webhook@archiver.kernel.org>; Fri, 30 Sep 2022 08:41:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F183C433FE
+	for <webhook@archiver.kernel.org>; Fri, 30 Sep 2022 10:50:58 +0000 (UTC)
 Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web08.3556.1664527266864096158
+ by mx.groups.io with SMTP id smtpd.web09.4184.1664535052382576984
  for <cip-dev@lists.cip-project.org>;
- Fri, 30 Sep 2022 01:41:07 -0700
+ Fri, 30 Sep 2022 03:50:53 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
  spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 0287F1C0017; Fri, 30 Sep 2022 10:41:03 +0200 (CEST)
-Date: Fri, 30 Sep 2022 10:41:02 +0200
+	id 5E03C1C0017; Fri, 30 Sep 2022 12:50:49 +0200 (CEST)
+Date: Fri, 30 Sep 2022 12:50:48 +0200
 From: Pavel Machek <pavel@denx.de>
-To: nobuhiro1.iwamatsu@toshiba.co.jp
-Cc: cip-dev@lists.cip-project.org, florian.bezdeka@siemens.com,
-	pavel@denx.de, masami.ichikawa@cybertrust.co.jp,
-	jan.kiszka@siemens.com, Chris.Paterson2@renesas.com, uli@fpond.eu
-Subject: Re: [cip-dev] [ANNOUNCE] Release v4.19.259-cip82 and v5.10.145-cip17
-Message-ID: <20220930084101.GA13099@amd>
-References: 
- <TYWPR01MB9420C94EE9CFD1EF537FA50B92529@TYWPR01MB9420.jpnprd01.prod.outlook.com>
- <1f6e6c23574f42073aba6afe27386c500c44473f.camel@siemens.com>
- <20220926132359.GA21302@duo.ucw.cz>
- <TYWPR01MB9420DF3BE19B60B7CCFAA25792549@TYWPR01MB9420.jpnprd01.prod.outlook.com>
+To: Chris.Paterson2@renesas.com, cip-dev@lists.cip-project.org,
+	alice.ferrazzi@miraclelinux.com
+Subject: gitlab test failures -- job failed ... pods not found
+Message-ID: <20220930105048.GA19081@duo.ucw.cz>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="cWoXeonUoKmBZSoM"
+	protocol="application/pgp-signature"; boundary="PEIAKu/WMn1b1Hv9"
 Content-Disposition: inline
-In-Reply-To: 
- <TYWPR01MB9420DF3BE19B60B7CCFAA25792549@TYWPR01MB9420.jpnprd01.prod.outlook.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 30 Sep 2022 08:41:17 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9577
+ <cip-dev@lists.cip-project.org>; Fri, 30 Sep 2022 10:50:58 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9578
 
 
---cWoXeonUoKmBZSoM
+--PEIAKu/WMn1b1Hv9
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> > > > The linux-4.19.y-cip tree has been updated base version from
-> > > > v4.19.257 to v4.19.259, and the linux-5.10.y-cip tree has been
-> > > > updated base version from
-> > > > v5.10.140 to v5.10.145.
+I have test failures all over the place:
 
-=2E..
+-----------------
+44Creating test job
+45-----------------
+46Version: Image_ctj_zynqmp_defconfig_5.10.145-cip17-rt7_411cd76b5
+47Arch: arm64
+48Config: ctj_zynqmp_defconfig
+49Device: zynqmp-zcu102
+50Kernel: Image
+51DTB: zynqmp-zcu102-rev1.0.dtb
+52Modules: N/A
+53Test: smc
+54------------------
+55Uploading binaries
+56------------------
+58
+Uploading artifacts for failed job
+00:00
+60
+Cleaning up project directory and file based variables
+00:00
+62ERROR: Job failed (system failure): pods
+"runner-bwzp7ahx-project-2678032-concurrent-0pstk2" not found
 
-> Right, I forgot to push to repository...
-> I pushed yesterday afternoon (14:00 JST), so it is updated.
+Initially everything failed, so I resubmitted everything, then three
+succeeded but no more luck with resubmitting.
 
-I see the updates now.
+Example is
+https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/3109431179,
+I'm trying to test 5.10-rt release candidate
+https://gitlab.com/cip-project/cip-kernel/linux-cip/-/pipelines/654967302
+=2E
 
-There's good match of v5.10.145-cip17, v5.10.145-rt74, I'll likely get
-advantage of that.
+Any ideas?
 
-On 4.19 side, last -rt is Aug 13, Linux 4.19.255-rt113. I'd like
-matchig -cip release when next 4.19-rt is released.
-
-Thank you and best regards, =20
+Best regards,
 								Pavel
 --=20
 DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---cWoXeonUoKmBZSoM
+--PEIAKu/WMn1b1Hv9
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
 
-iEYEARECAAYFAmM2q50ACgkQMOfwapXb+vI7WACguuSeUVtaKXQtGS0hjEyd0aba
-exIAoMEOMoII6IUHHjT4MFO5atSxLzhB
-=kLPW
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYzbKCAAKCRAw5/Bqldv6
+8jcZAJ9Pz7kmO81W078zKuqnJOttDj95iwCcCkKMMfUesgbPQtmW1vd418BlbSc=
+=nu/D
 -----END PGP SIGNATURE-----
 
---cWoXeonUoKmBZSoM--
+--PEIAKu/WMn1b1Hv9--
 
