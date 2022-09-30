@@ -1,837 +1,185 @@
-Return-Path: <webhook@kernel.org>
+Return-Path: <chris.paterson2@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74E9EC433FE
-	for <webhook@archiver.kernel.org>; Fri, 30 Sep 2022 11:19:58 +0000 (UTC)
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com
- [209.85.216.42])
- by mx.groups.io with SMTP id smtpd.web09.4396.1664536794124634814
- for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Fri, 30 Sep 2022 04:19:54 -0700
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 878C4C433FE
+	for <webhook@archiver.kernel.org>; Fri, 30 Sep 2022 11:36:58 +0000 (UTC)
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com
+ (JPN01-OS0-obe.outbound.protection.outlook.com [40.107.113.93])
+ by mx.groups.io with SMTP id smtpd.web12.4465.1664537816739562745
+ for <cip-dev@lists.cip-project.org>;
+ Fri, 30 Sep 2022 04:36:57 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112
- header.b=f5ppFRuJ;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.216.42,
- mailfrom: bot@kernelci.org)
-Received: by mail-pj1-f42.google.com with SMTP id
- g1-20020a17090a708100b00203c1c66ae3so3950523pjk.2
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Fri, 30 Sep 2022 04:19:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date;
-        bh=RlNbODE73ztDIy2eIejdEzFPU/lo2DpWoUm94CUy+9E=;
-        b=f5ppFRuJ0LnIHSi8pLEfnRbrNntkGh+gpoOBCj9A4V4aRqH6M0TXMdQ7fhonxFk5Qs
-         LCYiPwcspQuYkV1i53nhoP9x+7DcLGrBZdzRcN0Fb9JVVH0MzfpspfkJHPbpCW9sjmhv
-         /N49c8bSYfP8F7cuYDFZZngB39fmoJaPfA69muZqCilQ0vK/SIy3huhpEFrW4h+ZuwRA
-         RcY03otmYiry+4QObguXL9HvtCSvPHOU/Y/ygptuz4ml67ACuzm6QX2CwiFkl7NLlq7T
-         B4jTYtpa1TzcDzBMcYqrGn6z07h2zSCbC/x20DAhbpbfk09YDTsLwne3GLTD/rFiYFvJ
-         1hnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date;
-        bh=RlNbODE73ztDIy2eIejdEzFPU/lo2DpWoUm94CUy+9E=;
-        b=LvcWSM4g4powZSvcN4JLBA9TFHiYn9Itm5wE8kEVx35uC7AlNKpwNjYru2d9FuWZCk
-         u9zCh3t3zzPvz+/SWgNKepcAyuA99mAMX4s1rIA0lAIg9iycKH7p+5xZlCl5lZgn+i43
-         Rd812NrhR1ST2y77iX9JPZdTJaQZI1eEWUuWKrIRAA/3ll6M5aBFWa1iQHPtDxGpKQWQ
-         por68jRB3zDvEt/cn2WwhMnYBf2xLsVwXrCtGrUUP2SKTXObZTifu69EpbN6JdgjwzAm
-         yr1aUiR0P58PZGD7F6YsW+1537N+C2DqmIv4HR3SRyC7biNFYwXp9yHknhZNcx6+7nZL
-         I+Tg==
-X-Gm-Message-State: ACrzQf1jb6cWO0Xjv0v+lpxL6r2QE7nnvXXwfoRY6OyL43XGUz6+XFj/
-	s+qMQbNNLtf7xbsTskL/Kq5UG8qiM6/z8CQXsmg=
-X-Google-Smtp-Source: 
- AMsMyM7/itCRHt61THWoB1oiBlvXiXQnIPrSqIBHfXR7Q/8JlYsX/FcVHxEFsJzVLw1qevrGJ8B2wg==
-X-Received: by 2002:a17:902:ccc2:b0:178:29e1:899e with SMTP id
- z2-20020a170902ccc200b0017829e1899emr8325205ple.114.1664536792976;
-        Fri, 30 Sep 2022 04:19:52 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id
- o9-20020a170903210900b001637529493esm1647484ple.66.2022.09.30.04.19.51
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Sep 2022 04:19:52 -0700 (PDT)
-Message-ID: <6336d0d8.170a0220.cf8da.32a1@mx.google.com>
-Date: Fri, 30 Sep 2022 04:19:52 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+ dkim=pass header.i=@renesas.com header.s=selector1 header.b=C+rYOFnZ;
+ spf=pass (domain: renesas.com, ip: 40.107.113.93,
+ mailfrom: chris.paterson2@renesas.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=itFN2HlRlxHRz+QtzepY109gtQKbRNapepdkijG79tsQjgswYxpyf5OXy3r+tnmqtFLwGyu0J1AeuvULA9DeBwjR4rNoZV687KgtTPmdOAyVcr09ZeofvBFGVoojicTM7caLnmsZZ4jZ5zpU04RT14b07qDymgCbCaEy6NtBGoGBfrgy5x/NFYZ0cWTFGpQnaSsfFU4r1levHfx+3Pkk53IWl+YMUUt/baroleR62fDELTezgoZXuPufzws8WsPaabqbezSy2JpycJBjAzwnDwzN3G56H0k1VYXbt1ClMzyZaR+/q4sTk8bdH8CEPVRULOzwlZkPh2d70M4wkUyEEQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=a434ApXwTGoBtzjW/+tIzczHAWokCrjjV4RcXc8tNS4=;
+ b=gkW3QQLLrcCwd4VL0EKaIsJ9PC2swGU7UXOcZxd7EWKIOR6x4anEaB+yM28fJthISUNm0ZJCRSmU/uNkl9QOSh0syDIDjlhsvCoSEiQ4Odod4GyRsF+6+P9YwnaPVMxPSqsWn+vLEkyEhqBeT1soACHEXgim1JZEbaDI/X9H30wkcOheP0QCcfGuS6L/ld2XPAV8BlrAWBK05Es0qsRd2bKr/zQgoT13RiU4bitAnUo77G0coYn6DN/WOyads1Z+HDlKjLSxqky0rIIF0llSBwYevr/JBQgzpEOL+W88abQKxFMxmbOs2Jwe8JM5b9Od6hgVf43Hjapzvi6WFG8uEw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=a434ApXwTGoBtzjW/+tIzczHAWokCrjjV4RcXc8tNS4=;
+ b=C+rYOFnZP1mzly8uZsMu/TsnoizPrRIHjGtDyC9rqnonPqEVBgd4ehG/mu3hcJCE8i3LuuGB0nWcrGreJaxafsyZ+EoTpXyt14XyKuaTykY0V7LQ2tB9MCLcrP4H5v8No237KpXQKIENfC8iK+jOn4qkw4hfPdyjjBvUi2tYhUU=
+Received: from TYCPR01MB10588.jpnprd01.prod.outlook.com (2603:1096:400:309::8)
+ by OSZPR01MB8670.jpnprd01.prod.outlook.com (2603:1096:604:182::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.23; Fri, 30 Sep
+ 2022 11:36:52 +0000
+Received: from TYCPR01MB10588.jpnprd01.prod.outlook.com
+ ([fe80::68d8:5e72:53f5:ea7b]) by TYCPR01MB10588.jpnprd01.prod.outlook.com
+ ([fe80::68d8:5e72:53f5:ea7b%6]) with mapi id 15.20.5676.023; Fri, 30 Sep 2022
+ 11:36:52 +0000
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: Pavel Machek <pavel@denx.de>, "cip-dev@lists.cip-project.org"
+	<cip-dev@lists.cip-project.org>, "alice.ferrazzi@miraclelinux.com"
+	<alice.ferrazzi@miraclelinux.com>, "Adler, Michael"
+	<michael.adler@siemens.com>
+Subject: RE: gitlab test failures -- job failed ... pods not found
+Thread-Topic: gitlab test failures -- job failed ... pods not found
+Thread-Index: AQHY1LqD736Cemy9y0G88cTlOE3pAK331CBw
+Date: Fri, 30 Sep 2022 11:36:52 +0000
+Message-ID: 
+ <TYCPR01MB1058887BD9BA7DE6BD1BEA1F4B7569@TYCPR01MB10588.jpnprd01.prod.outlook.com>
+References: <20220930105048.GA19081@duo.ucw.cz>
+In-Reply-To: <20220930105048.GA19081@duo.ucw.cz>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-Mentions: michael.adler@siemens.com
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYCPR01MB10588:EE_|OSZPR01MB8670:EE_
+x-ms-office365-filtering-correlation-id: 485a58c5-5fd6-41e9-fe47-08daa2d81213
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ RgvUIUUGZK2qj5MQitEQ3dfn84Hjfxx0RfEOtEAkcZowSk8Yz+DAIXErTr9pRbUvpFDTSCJZGIZJ1KWB0d2V0vQbLCDkNRegLHQBetmZb1ZP4g526srdQD8UbaCuHkromzfo5DzqTXKzP4TpTtrSxYStUTefSwpoTRkPPEZBucaxfkIIvHcdhmfm98fR6IcXF/t/3GCNrzxiRhAwjtOa9PkxOypyyagvfR67iShK46QeMbmIuZ7Rpmv1geJj85TiR/8T6yHrkb8BMthvbcTtz0TvQDtPA7dYmZW03Io0XabmbpVPpZdrHBjBn9CWgkUuoJQV86eaIEGLaRWsJKqsm10h8Fu5Hts8a5S+1fM+TfLEKZaq2kbur6rOkxCDJTIBLVCNt30ORZu5A/M85xtbDtDjRrDqdNloVlDg7L7nEiWfVdds8QqMrNiZNsn5OxHPf8j/EBMEhaE7Hiuo2YMgUMoWPL1M9euzIeKYavIFBVwI2nYbadfibl4VWeAZN9HyRjo5IUSh6OB41vt2PQ2tx3uruX3pD1pXHW/Cj8P2DR7PRy8Q4MJAuHrJSL8/INUbCFKpzLej3G5FPyJ5SvXF+axZ9fdV5nWycqzwiskJokv28J8HkIUjJoHyVP+Ykrd9vu5P+oPvpY150XUdMQIgUjhLwslJad3GMm4h4zq9UEsWaKr4AU4EK2Fv1wCQ/0B4FXzutub1hkrDWc+dlnfNG7wk3vTpXt8sPQ3AmPtFRvAmVEqNOeNcwtqPgN/vzi8wYKS9WfJwbwSuQD9q5xnUhidmJURs4HwQfzLjE9CESfn/JE+E6LsxtBOZgjmraIxRCLXAVQF6ej2TWtvVOQdLGw==
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10588.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(396003)(366004)(39860400002)(136003)(346002)(376002)(451199015)(478600001)(38070700005)(316002)(110136005)(55016003)(966005)(71200400001)(8676002)(66476007)(122000001)(33656002)(2906002)(41300700001)(66556008)(64756008)(66446008)(7696005)(66946007)(38100700002)(76116006)(6506007)(5660300002)(26005)(83380400001)(8936002)(186003)(86362001)(52536014)(9686003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?Windows-1252?Q?0Af09boTPl8mQPZuoBjAJxd0W1VGxGktBUNWjhtn9c467/2fuJTsZkUt?=
+ =?Windows-1252?Q?qDiznGtdQUXi2ZUC2l7TK093dIkHnMjdGyMj0TwxOKWMWJlyHgz4ePqT?=
+ =?Windows-1252?Q?195pxxr2j46oBY95u6LaZBssYXnN9v1vjV3RZsebGtMKmhS9N38Xf6jN?=
+ =?Windows-1252?Q?cMdiopqEawFkHkG8JqYEGk6WWZIOMT3A3ZatzrLEBOKRFoJ22A7vhVOn?=
+ =?Windows-1252?Q?pujdxJe3gWfyRZrHLwcCwr+C8mf4HbW5lr3pCueihR8mgB0WI2JT4LZV?=
+ =?Windows-1252?Q?xgroJU4MZnGpYcKJyz7VYwuSkf49Li4HBwiDgGIGwZrNmuj5zVWIBwDK?=
+ =?Windows-1252?Q?p5z+L80HSsXcOynqMbs+qRrPo9Wwvp+1ZuY3g5rozzhKTf6a3w4DlOxz?=
+ =?Windows-1252?Q?ag1AgzwJ6vZbjyZlCcbl+dhdSzEX78T+pIkAn3wg0vzglwxZVJLbtRML?=
+ =?Windows-1252?Q?AOTfciapwy8wRPOnwSubAhkyTHs5dGV3K3apzVYYlTdnX63yc8oNlCpQ?=
+ =?Windows-1252?Q?9T3rHA6+GvVsIcriKxlbScZxgsBNRW1flIauGnqZv11yaSEKQgPaJRGZ?=
+ =?Windows-1252?Q?RZFYvL8nXY5N+jNFnH9tOSmIO18uVQaeHG3CoGtPPrNCRj93ZkDwRLGQ?=
+ =?Windows-1252?Q?R+KGLCvGgQ3N2XjozgDNjWIiNBHlNmPvQZAtJijnmHhDm3lIQt3lTdi4?=
+ =?Windows-1252?Q?WnUh7hdl72X6hmUxYWCfN7qINnI6Hqc6jllt5kNMOzzuNQJCz9yoqOgu?=
+ =?Windows-1252?Q?K4T1DWmGJN9yJ4WnQtuYPD4HbFrT+9Mabk5Pe9JlsETSw4sXXGGuFsIs?=
+ =?Windows-1252?Q?BRFH0+w3yEqQNVDRCln51FvRMmN+aIaA3kwlPvGpks2CiBCbxbToj4yO?=
+ =?Windows-1252?Q?nSjtZQCMxfwhGw3pRJlODxn8V11WzFeDX53myJqoiUjTGT1OK19CaT2Z?=
+ =?Windows-1252?Q?C1afab0S0TJ3lkxDVlVMVjrUgaZeWO4FRFStcRsumgmmFp9w2lZYlk7J?=
+ =?Windows-1252?Q?RRztwjvDIPzFATLIIPw+oEfKJggZdgw4inGmToBkwiG3kuNpCl4dEU6p?=
+ =?Windows-1252?Q?mvLP/X4Z0Q2dwaDpxL8oVMUT7CTWKeW8Jo1LAfnHwJUU1fxXSkQL09L9?=
+ =?Windows-1252?Q?l9pYFvoLay4k9jqAzsZku0DIif3HAPjiFYzsGYmVZPwu8q65qTDmJdwn?=
+ =?Windows-1252?Q?XQQOlJ5pS4WsfUmOpFEZQkqzmZv/64uRNLCTgBNfaa+za/a62fSIU82l?=
+ =?Windows-1252?Q?Cn1eSMqc05HI1is0j8UndatkiIvp6as2pmQvGGZ5GxXI1PO77LTEQjZy?=
+ =?Windows-1252?Q?J/CB6nol/eTHRRJ8U5/YZ3vMf9jwLj4KIhntD3ON+wHP/yBx6o7YPbB2?=
+ =?Windows-1252?Q?sdnQ3TWqZEaU9wxe1Sw5LRI/uQba1Gq4pED3UxSWkHGFrtnNtA3++Wcu?=
+ =?Windows-1252?Q?B8ZpLh0c1dAbXaj3spAHOdiARQCwAOUCbiEBJ2J/nTXAgfF15VD1JHIU?=
+ =?Windows-1252?Q?MxL4Eb2QLTS7HeHoqn9nC2foPdflzQtDx3BqCjdupTgPoFVMVQBmtrNs?=
+ =?Windows-1252?Q?My7J8WoKuJFcdq9J2r43Gz4rrpvHoqhTGatXA3ZCnDVl3L9fnchcf/QT?=
+ =?Windows-1252?Q?PT5sSK5UCYbIbTzsJAAqIwxnApaSpiiZyNm11LzViewc/4J47mkUCD5m?=
+ =?Windows-1252?Q?jUnTU6cL34W1rVrJIAH6sY0c1WZTLRPZ0pyVDXNzjzDeMy8jLW3CfQ?=
+ =?Windows-1252?Q?=3D=3D?=
+Content-Type: text/plain; charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: test
-X-Kernelci-Kernel: v5.10.145-cip17-422-g411cd76b5afe8
-X-Kernelci-Branch: ci/pavel/linux-test
-X-Kernelci-Tree: cip-gitlab
-Subject: cip-gitlab/ci/pavel/linux-test baseline: 141 runs,
- 20 regressions (v5.10.145-cip17-422-g411cd76b5afe8)
-To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
-From: "kernelci.org bot" <bot@kernelci.org>
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10588.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 
+ 485a58c5-5fd6-41e9-fe47-08daa2d81213
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Sep 2022 11:36:52.5969
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 
+ euSM3HyY1sAF6GULbj2mUhGRNOt0yKaNDieanKXUD+DK6s/zkO1OhtsNVSpt62W2QtVJAaWZ/QjfZUI7nlIDseTHsUDLzxDtZ+7gE3pm1Y8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB8670
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 30 Sep 2022 11:19:58 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9581
-
-cip-gitlab/ci/pavel/linux-test baseline: 141 runs, 20 regressions (v5.10.14=
-5-cip17-422-g411cd76b5afe8)
-
-Regressions Summary
--------------------
-
-platform                   | arch  | lab           | compiler | defconfig  =
-                | regressions
----------------------------+-------+---------------+----------+------------=
-----------------+------------
-bcm2836-rpi-2-b            | arm   | lab-collabora | gcc-10   | multi_v7_de=
-fconfig         | 1          =
-
-imx6dl-udoo                | arm   | lab-broonie   | gcc-10   | imx_v6_v7_d=
-efconfig        | 1          =
-
-imx6dl-udoo                | arm   | lab-broonie   | gcc-10   | multi_v7_de=
-fconfig         | 1          =
-
-imx6q-udoo                 | arm   | lab-broonie   | gcc-10   | imx_v6_v7_d=
-efconfig        | 1          =
-
-imx6q-udoo                 | arm   | lab-broonie   | gcc-10   | multi_v7_de=
-fconfig         | 1          =
-
-panda                      | arm   | lab-baylibre  | gcc-10   | multi_v7_de=
-fconfig         | 1          =
-
-panda                      | arm   | lab-baylibre  | gcc-10   | omap2plus_d=
-efconfig        | 1          =
-
-qemu_arm64-virt-gicv2      | arm64 | lab-broonie   | gcc-10   | defconfig+a=
-rm64-chromebook | 1          =
-
-qemu_arm64-virt-gicv2      | arm64 | lab-broonie   | gcc-10   | defconfig  =
-                | 1          =
-
-qemu_arm64-virt-gicv2      | arm64 | lab-collabora | gcc-10   | defconfig+a=
-rm64-chromebook | 1          =
-
-qemu_arm64-virt-gicv2-uefi | arm64 | lab-broonie   | gcc-10   | defconfig+a=
-rm64-chromebook | 1          =
-
-qemu_arm64-virt-gicv2-uefi | arm64 | lab-broonie   | gcc-10   | defconfig  =
-                | 1          =
-
-qemu_arm64-virt-gicv2-uefi | arm64 | lab-collabora | gcc-10   | defconfig+a=
-rm64-chromebook | 1          =
-
-qemu_arm64-virt-gicv3      | arm64 | lab-broonie   | gcc-10   | defconfig+a=
-rm64-chromebook | 1          =
-
-qemu_arm64-virt-gicv3      | arm64 | lab-collabora | gcc-10   | defconfig+a=
-rm64-chromebook | 1          =
-
-qemu_arm64-virt-gicv3-uefi | arm64 | lab-broonie   | gcc-10   | defconfig+a=
-rm64-chromebook | 1          =
-
-qemu_arm64-virt-gicv3-uefi | arm64 | lab-collabora | gcc-10   | defconfig+a=
-rm64-chromebook | 1          =
-
-rk3288-veyron-jaq          | arm   | lab-collabora | gcc-10   | multi_v7_de=
-fconfig         | 1          =
-
-zynqmp-zcu102              | arm64 | lab-cip       | gcc-10   | defconfig+a=
-rm64-chromebook | 1          =
-
-zynqmp-zcu102              | arm64 | lab-cip       | gcc-10   | defconfig  =
-                | 1          =
-
-
-  Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fpavel%2Fli=
-nux-test/kernel/v5.10.145-cip17-422-g411cd76b5afe8/plan/baseline/
-
-  Test:     baseline
-  Tree:     cip-gitlab
-  Branch:   ci/pavel/linux-test
-  Describe: v5.10.145-cip17-422-g411cd76b5afe8
-  URL:      https://gitlab.com/cip-project/cip-kernel/linux-cip.git
-  SHA:      411cd76b5afe81569858976d0e9819ab48717fcb =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform                   | arch  | lab           | compiler | defconfig  =
-                | regressions
----------------------------+-------+---------------+----------+------------=
-----------------+------------
-bcm2836-rpi-2-b            | arm   | lab-collabora | gcc-10   | multi_v7_de=
-fconfig         | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6336c7b82e288014feec4eb4
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm/multi_v7_defconfig/gcc-10/lab-colla=
-bora/baseline-bcm2836-rpi-2-b.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm/multi_v7_defconfig/gcc-10/lab-colla=
-bora/baseline-bcm2836-rpi-2-b.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220919.0/armel/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/6336c7b82e288014feec4=
-eb5
-        failing since 142 days (last pass: v4.19.233-516-ge5e741fbfc87, fir=
-st fail: v5.10.109-cip5-384-g722204542e8a) =
-
- =
-
-
-
-platform                   | arch  | lab           | compiler | defconfig  =
-                | regressions
----------------------------+-------+---------------+----------+------------=
-----------------+------------
-imx6dl-udoo                | arm   | lab-broonie   | gcc-10   | imx_v6_v7_d=
-efconfig        | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6336cbbd5e5ad7457dec4efe
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: imx_v6_v7_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm/imx_v6_v7_defconfig/gcc-10/lab-broo=
-nie/baseline-imx6dl-udoo.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm/imx_v6_v7_defconfig/gcc-10/lab-broo=
-nie/baseline-imx6dl-udoo.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220919.0/armel/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/6336cbbd5e5ad7457dec4=
-eff
-        new failure (last pass: v4.4-st20-231-g7349cef09ddd2) =
-
- =
-
-
-
-platform                   | arch  | lab           | compiler | defconfig  =
-                | regressions
----------------------------+-------+---------------+----------+------------=
-----------------+------------
-imx6dl-udoo                | arm   | lab-broonie   | gcc-10   | multi_v7_de=
-fconfig         | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6336c7bf38307eb56aec4eb0
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm/multi_v7_defconfig/gcc-10/lab-broon=
-ie/baseline-imx6dl-udoo.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm/multi_v7_defconfig/gcc-10/lab-broon=
-ie/baseline-imx6dl-udoo.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220919.0/armel/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/6336c7bf38307eb56aec4=
-eb1
-        new failure (last pass: v4.4-st20-231-g7349cef09ddd2) =
-
- =
-
-
-
-platform                   | arch  | lab           | compiler | defconfig  =
-                | regressions
----------------------------+-------+---------------+----------+------------=
-----------------+------------
-imx6q-udoo                 | arm   | lab-broonie   | gcc-10   | imx_v6_v7_d=
-efconfig        | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6336cbbb5e5ad7457dec4efb
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: imx_v6_v7_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm/imx_v6_v7_defconfig/gcc-10/lab-broo=
-nie/baseline-imx6q-udoo.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm/imx_v6_v7_defconfig/gcc-10/lab-broo=
-nie/baseline-imx6q-udoo.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220919.0/armel/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/6336cbbb5e5ad7457dec4=
-efc
-        new failure (last pass: v4.4-st20-231-g7349cef09ddd2) =
-
- =
-
-
-
-platform                   | arch  | lab           | compiler | defconfig  =
-                | regressions
----------------------------+-------+---------------+----------+------------=
-----------------+------------
-imx6q-udoo                 | arm   | lab-broonie   | gcc-10   | multi_v7_de=
-fconfig         | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6336c7c02e288014feec4ee5
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm/multi_v7_defconfig/gcc-10/lab-broon=
-ie/baseline-imx6q-udoo.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm/multi_v7_defconfig/gcc-10/lab-broon=
-ie/baseline-imx6q-udoo.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220919.0/armel/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/6336c7c02e288014feec4=
-ee6
-        new failure (last pass: v4.4-st20-231-g7349cef09ddd2) =
-
- =
-
-
-
-platform                   | arch  | lab           | compiler | defconfig  =
-                | regressions
----------------------------+-------+---------------+----------+------------=
-----------------+------------
-panda                      | arm   | lab-baylibre  | gcc-10   | multi_v7_de=
-fconfig         | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6336ca27675c862a80ec4ed1
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm/multi_v7_defconfig/gcc-10/lab-bayli=
-bre/baseline-panda.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm/multi_v7_defconfig/gcc-10/lab-bayli=
-bre/baseline-panda.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220919.0/armel/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/6336ca27675c862a80ec4=
-ed2
-        new failure (last pass: v5.10.131-cip13-84-g5fcbe4a63ab4d) =
-
- =
-
-
-
-platform                   | arch  | lab           | compiler | defconfig  =
-                | regressions
----------------------------+-------+---------------+----------+------------=
-----------------+------------
-panda                      | arm   | lab-baylibre  | gcc-10   | omap2plus_d=
-efconfig        | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6336c83377055d9a7aec4ef1
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: omap2plus_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm/omap2plus_defconfig/gcc-10/lab-bayl=
-ibre/baseline-panda.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm/omap2plus_defconfig/gcc-10/lab-bayl=
-ibre/baseline-panda.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220919.0/armel/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/6336c83377055d9a7aec4=
-ef2
-        new failure (last pass: v5.10.131-cip13-84-g5fcbe4a63ab4d) =
-
- =
-
-
-
-platform                   | arch  | lab           | compiler | defconfig  =
-                | regressions
----------------------------+-------+---------------+----------+------------=
-----------------+------------
-qemu_arm64-virt-gicv2      | arm64 | lab-broonie   | gcc-10   | defconfig+a=
-rm64-chromebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6336cf03016c6cba8cec4ecc
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm64/defconfig+arm64-chromebook/gcc-10=
-/lab-broonie/baseline-qemu_arm64-virt-gicv2.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm64/defconfig+arm64-chromebook/gcc-10=
-/lab-broonie/baseline-qemu_arm64-virt-gicv2.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220919.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/6336cf03016c6cba8cec4=
-ecd
-        failing since 142 days (last pass: v4.19.233-516-ge5e741fbfc87, fir=
-st fail: v5.10.109-cip5-384-g722204542e8a) =
-
- =
-
-
-
-platform                   | arch  | lab           | compiler | defconfig  =
-                | regressions
----------------------------+-------+---------------+----------+------------=
-----------------+------------
-qemu_arm64-virt-gicv2      | arm64 | lab-broonie   | gcc-10   | defconfig  =
-                | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6336d06b6b10b1f8eaec4f01
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm64/defconfig/gcc-10/lab-broonie/base=
-line-qemu_arm64-virt-gicv2.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm64/defconfig/gcc-10/lab-broonie/base=
-line-qemu_arm64-virt-gicv2.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220919.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/6336d06b6b10b1f8eaec4=
-f02
-        failing since 142 days (last pass: v4.19.233-516-ge5e741fbfc87, fir=
-st fail: v5.10.109-cip5-384-g722204542e8a) =
-
- =
-
-
-
-platform                   | arch  | lab           | compiler | defconfig  =
-                | regressions
----------------------------+-------+---------------+----------+------------=
-----------------+------------
-qemu_arm64-virt-gicv2      | arm64 | lab-collabora | gcc-10   | defconfig+a=
-rm64-chromebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6336c98f0828963fe3ec4eab
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm64/defconfig+arm64-chromebook/gcc-10=
-/lab-collabora/baseline-qemu_arm64-virt-gicv2.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm64/defconfig+arm64-chromebook/gcc-10=
-/lab-collabora/baseline-qemu_arm64-virt-gicv2.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220919.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/6336c98f0828963fe3ec4=
-eac
-        failing since 142 days (last pass: v4.19.233-516-ge5e741fbfc87, fir=
-st fail: v5.10.109-cip5-384-g722204542e8a) =
-
- =
-
-
-
-platform                   | arch  | lab           | compiler | defconfig  =
-                | regressions
----------------------------+-------+---------------+----------+------------=
-----------------+------------
-qemu_arm64-virt-gicv2-uefi | arm64 | lab-broonie   | gcc-10   | defconfig+a=
-rm64-chromebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6336d0430e39903941ec4eaf
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm64/defconfig+arm64-chromebook/gcc-10=
-/lab-broonie/baseline-qemu_arm64-virt-gicv2-uefi.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm64/defconfig+arm64-chromebook/gcc-10=
-/lab-broonie/baseline-qemu_arm64-virt-gicv2-uefi.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220919.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/6336d0430e39903941ec4=
-eb0
-        failing since 142 days (last pass: v4.19.233-516-ge5e741fbfc87, fir=
-st fail: v5.10.109-cip5-384-g722204542e8a) =
-
- =
-
-
-
-platform                   | arch  | lab           | compiler | defconfig  =
-                | regressions
----------------------------+-------+---------------+----------+------------=
-----------------+------------
-qemu_arm64-virt-gicv2-uefi | arm64 | lab-broonie   | gcc-10   | defconfig  =
-                | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6336d07fc160320a20ec4eb7
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm64/defconfig/gcc-10/lab-broonie/base=
-line-qemu_arm64-virt-gicv2-uefi.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm64/defconfig/gcc-10/lab-broonie/base=
-line-qemu_arm64-virt-gicv2-uefi.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220919.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/6336d07fc160320a20ec4=
-eb8
-        failing since 142 days (last pass: v4.19.233-516-ge5e741fbfc87, fir=
-st fail: v5.10.109-cip5-384-g722204542e8a) =
-
- =
-
-
-
-platform                   | arch  | lab           | compiler | defconfig  =
-                | regressions
----------------------------+-------+---------------+----------+------------=
-----------------+------------
-qemu_arm64-virt-gicv2-uefi | arm64 | lab-collabora | gcc-10   | defconfig+a=
-rm64-chromebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6336c9b16af512a7f0ec4ec3
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm64/defconfig+arm64-chromebook/gcc-10=
-/lab-collabora/baseline-qemu_arm64-virt-gicv2-uefi.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm64/defconfig+arm64-chromebook/gcc-10=
-/lab-collabora/baseline-qemu_arm64-virt-gicv2-uefi.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220919.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/6336c9b16af512a7f0ec4=
-ec4
-        failing since 142 days (last pass: v4.19.233-516-ge5e741fbfc87, fir=
-st fail: v5.10.109-cip5-384-g722204542e8a) =
-
- =
-
-
-
-platform                   | arch  | lab           | compiler | defconfig  =
-                | regressions
----------------------------+-------+---------------+----------+------------=
-----------------+------------
-qemu_arm64-virt-gicv3      | arm64 | lab-broonie   | gcc-10   | defconfig+a=
-rm64-chromebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6336cedb93e5de97c1ec4ebb
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm64/defconfig+arm64-chromebook/gcc-10=
-/lab-broonie/baseline-qemu_arm64-virt-gicv3.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm64/defconfig+arm64-chromebook/gcc-10=
-/lab-broonie/baseline-qemu_arm64-virt-gicv3.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220919.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/6336cedb93e5de97c1ec4=
-ebc
-        failing since 142 days (last pass: v4.19.233-516-ge5e741fbfc87, fir=
-st fail: v5.10.109-cip5-384-g722204542e8a) =
-
- =
-
-
-
-platform                   | arch  | lab           | compiler | defconfig  =
-                | regressions
----------------------------+-------+---------------+----------+------------=
-----------------+------------
-qemu_arm64-virt-gicv3      | arm64 | lab-collabora | gcc-10   | defconfig+a=
-rm64-chromebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6336c97a239b8b6c5cec4ea6
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm64/defconfig+arm64-chromebook/gcc-10=
-/lab-collabora/baseline-qemu_arm64-virt-gicv3.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm64/defconfig+arm64-chromebook/gcc-10=
-/lab-collabora/baseline-qemu_arm64-virt-gicv3.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220919.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/6336c97a239b8b6c5cec4=
-ea7
-        failing since 142 days (last pass: v4.19.233-516-ge5e741fbfc87, fir=
-st fail: v5.10.109-cip5-384-g722204542e8a) =
-
- =
-
-
-
-platform                   | arch  | lab           | compiler | defconfig  =
-                | regressions
----------------------------+-------+---------------+----------+------------=
-----------------+------------
-qemu_arm64-virt-gicv3-uefi | arm64 | lab-broonie   | gcc-10   | defconfig+a=
-rm64-chromebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6336cf17016c6cba8cec4f11
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm64/defconfig+arm64-chromebook/gcc-10=
-/lab-broonie/baseline-qemu_arm64-virt-gicv3-uefi.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm64/defconfig+arm64-chromebook/gcc-10=
-/lab-broonie/baseline-qemu_arm64-virt-gicv3-uefi.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220919.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/6336cf17016c6cba8cec4=
-f12
-        failing since 142 days (last pass: v4.19.233-516-ge5e741fbfc87, fir=
-st fail: v5.10.109-cip5-384-g722204542e8a) =
-
- =
-
-
-
-platform                   | arch  | lab           | compiler | defconfig  =
-                | regressions
----------------------------+-------+---------------+----------+------------=
-----------------+------------
-qemu_arm64-virt-gicv3-uefi | arm64 | lab-collabora | gcc-10   | defconfig+a=
-rm64-chromebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6336c9b06af512a7f0ec4ec0
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm64/defconfig+arm64-chromebook/gcc-10=
-/lab-collabora/baseline-qemu_arm64-virt-gicv3-uefi.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm64/defconfig+arm64-chromebook/gcc-10=
-/lab-collabora/baseline-qemu_arm64-virt-gicv3-uefi.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220919.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/6336c9b06af512a7f0ec4=
-ec1
-        failing since 142 days (last pass: v4.19.233-516-ge5e741fbfc87, fir=
-st fail: v5.10.109-cip5-384-g722204542e8a) =
-
- =
-
-
-
-platform                   | arch  | lab           | compiler | defconfig  =
-                | regressions
----------------------------+-------+---------------+----------+------------=
-----------------+------------
-rk3288-veyron-jaq          | arm   | lab-collabora | gcc-10   | multi_v7_de=
-fconfig         | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6336cf394402100617ec4ebf
-
-  Results:     67 PASS, 4 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm/multi_v7_defconfig/gcc-10/lab-colla=
-bora/baseline-rk3288-veyron-jaq.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm/multi_v7_defconfig/gcc-10/lab-colla=
-bora/baseline-rk3288-veyron-jaq.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220919.0/armel/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.dwmmc_rockchip-sdmmc-probed: https://kernelci.org/test/=
-case/id/6336cf394402100617ec4ed7
-        new failure (last pass: v4.4-st20-231-g7349cef09ddd2)
-
-    2022-09-30T11:12:32.813758  /lava-7459479/1/../bin/lava-test-case
-    2022-09-30T11:12:32.829147  <8>[   20.371047] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Ddwmmc_rockchip-sdmmc-probed RESULT=3Dfail>   =
-
- =
-
-
-
-platform                   | arch  | lab           | compiler | defconfig  =
-                | regressions
----------------------------+-------+---------------+----------+------------=
-----------------+------------
-zynqmp-zcu102              | arm64 | lab-cip       | gcc-10   | defconfig+a=
-rm64-chromebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6336c83d924b9bac0eec4eb1
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm64/defconfig+arm64-chromebook/gcc-10=
-/lab-cip/baseline-zynqmp-zcu102.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm64/defconfig+arm64-chromebook/gcc-10=
-/lab-cip/baseline-zynqmp-zcu102.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220919.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/6336c83d924b9bac0eec4=
-eb2
-        failing since 142 days (last pass: v4.19.233-516-ge5e741fbfc87, fir=
-st fail: v5.10.109-cip5-384-g722204542e8a) =
-
- =
-
-
-
-platform                   | arch  | lab           | compiler | defconfig  =
-                | regressions
----------------------------+-------+---------------+----------+------------=
-----------------+------------
-zynqmp-zcu102              | arm64 | lab-cip       | gcc-10   | defconfig  =
-                | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6336c9a56af512a7f0ec4ebd
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm64/defconfig/gcc-10/lab-cip/baseline=
--zynqmp-zcu102.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.145-cip17-422-g411cd76b5afe8/arm64/defconfig/gcc-10/lab-cip/baseline=
--zynqmp-zcu102.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220919.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/6336c9a56af512a7f0ec4=
-ebe
-        failing since 142 days (last pass: v4.19.233-516-ge5e741fbfc87, fir=
-st fail: v5.10.109-cip5-384-g722204542e8a) =
-
- =20
+ <cip-dev@lists.cip-project.org>; Fri, 30 Sep 2022 11:36:58 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9582
+
+Hello Pavel,
+
+> From: Pavel Machek <pavel@denx.de>
+> Sent: 30 September 2022 11:51
+>=20
+> Hi!
+>=20
+> I have test failures all over the place:
+>=20
+> -----------------
+> 44Creating test job
+> 45-----------------
+> 46Version: Image_ctj_zynqmp_defconfig_5.10.145-cip17-rt7_411cd76b5
+> 47Arch: arm64
+> 48Config: ctj_zynqmp_defconfig
+> 49Device: zynqmp-zcu102
+> 50Kernel: Image
+> 51DTB: zynqmp-zcu102-rev1.0.dtb
+> 52Modules: N/A
+> 53Test: smc
+> 54------------------
+> 55Uploading binaries
+> 56------------------
+> 58
+> Uploading artifacts for failed job
+> 00:00
+> 60
+> Cleaning up project directory and file based variables
+> 00:00
+> 62ERROR: Job failed (system failure): pods
+> "runner-bwzp7ahx-project-2678032-concurrent-0pstk2" not found
+>=20
+> Initially everything failed, so I resubmitted everything, then three
+> succeeded but no more luck with resubmitting.
+
+Thank you for reporting.
+We recently upgraded the gitlab runner versions, but that was last week so =
+it's a bit strange we're seeing issues now.
+I've resubmitted a few of the jobs and as you say, some seem to work, other=
+s don't.
+
+@Adler, Michael, could you take a look when you get a chance? Could this be=
+ caused by the recent upgrade?
+
+Thanks, Chris
+
+
+>=20
+> Example is
+> https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/3109431179,
+> I'm trying to test 5.10-rt release candidate
+> https://gitlab.com/cip-project/cip-kernel/linux-cip/-/pipelines/654967302
+> .
+>=20
+> Any ideas?
+>=20
+> Best regards,
+> 								Pavel
+> --
+> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
