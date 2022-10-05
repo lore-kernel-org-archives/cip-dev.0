@@ -2,73 +2,68 @@ Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 795E5C433FE
-	for <webhook@archiver.kernel.org>; Wed,  5 Oct 2022 18:21:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D931C433F5
+	for <webhook@archiver.kernel.org>; Wed,  5 Oct 2022 18:26:07 +0000 (UTC)
 Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web11.1633.1664994116233990878
+ by mx.groups.io with SMTP id smtpd.web08.1498.1664994365303390531
  for <cip-dev@lists.cip-project.org>;
- Wed, 05 Oct 2022 11:21:57 -0700
+ Wed, 05 Oct 2022 11:26:06 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
  spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 654B41C0017; Wed,  5 Oct 2022 20:21:52 +0200 (CEST)
-Date: Wed, 5 Oct 2022 20:21:51 +0200
+	id C7B4D1C0017; Wed,  5 Oct 2022 20:26:03 +0200 (CEST)
+Date: Wed, 5 Oct 2022 20:26:03 +0200
 From: Pavel Machek <pavel@denx.de>
 To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Chris Paterson <Chris.Paterson2@renesas.com>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Hung Tran <hung.tran.jy@renesas.com>, Pavel Machek <pavel@denx.de>,
-	cip-dev <cip-dev@lists.cip-project.org>
-Subject: Re: Preparing isar-cip-core for RZ/Five
-Message-ID: <20221005182151.GA16437@duo.ucw.cz>
-References: <e47b7bf2-aa3b-3132-e9ba-dec7a747edd4@siemens.com>
- <TYCPR01MB105880E900B643CD41841600FB75B9@TYCPR01MB10588.jpnprd01.prod.outlook.com>
- <d97fd149-c1b6-c4b5-cf36-4306881c228b@siemens.com>
- <38ce5ead-f7b8-e8f0-52a3-dff81f0f5045@siemens.com>
- <964bc8ff-9118-77b9-118f-6b979cedbb8b@siemens.com>
- <b6504b75-d609-d46b-55fb-3fd2b00780c7@siemens.com>
+Cc: Pavel Machek <pavel@denx.de>, chris.paterson2@renesas.com,
+	cip-dev@lists.cip-project.org
+Subject: Re: Realtime support for 5.10 on RISC-V -- not there
+Message-ID: <20221005182603.GB16437@duo.ucw.cz>
+References: <20220902095754.GA18026@duo.ucw.cz>
+ <19ae27fc-592e-e3a7-09ce-c258e2e42970@siemens.com>
+ <d6824d9f-6416-6d78-545e-a9b425cc1b20@siemens.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ibTvN161/egqYuK8"
+	protocol="application/pgp-signature"; boundary="Y7xTucakfITjPcLV"
 Content-Disposition: inline
-In-Reply-To: <b6504b75-d609-d46b-55fb-3fd2b00780c7@siemens.com>
+In-Reply-To: <d6824d9f-6416-6d78-545e-a9b425cc1b20@siemens.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 05 Oct 2022 18:21:57 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9651
+ <cip-dev@lists.cip-project.org>; Wed, 05 Oct 2022 18:26:07 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9652
 
 
---ibTvN161/egqYuK8
+--Y7xTucakfITjPcLV
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> > But due to the weird U-Boot setup, I had to add some hacks, rather than
-> > a proper boot process.
+> >> I do not think we can or want to support realtime on RISC-V at the
+> >> moment.
+> >=20
+> > In fact, we couldn't realistically commit to such a non-existing feature
+> > /wrt long-term support.
+> >=20
+> > If there is interest in enabling this, we can start a development effort
+> > in upstream. But if that could then be backportable only to the next CIP
+> > kernel, would even be open.
+> >=20
 >=20
-> https://gitlab.com/cip-project/cip-core/isar-cip-core/-/commits/wip/rzfive
+> http://lists.infradead.org/pipermail/linux-riscv/2022-August/018823.html
 >=20
-> Test by flashing the image to an SD-Card switching to SD booting on the=
-=20
-> module.
->=20
-> Maybe we can find a better solution for the boot procedure before moving=
-=20
-> forward with this.
->=20
-> Anyway, now we have a real distribution on this board. Pavel, can you=20
-> re-check what you observed, if those issues persist with Debian?
+> Maybe there is a chance to have this in 6.1-rt so that 6.1-cip-rt can
+> pick it up.
 
-I believe I was running Debian; two versions and Ubuntu, IIRC :-).
+Yes, that can happen. Plus, the patches are surprisingly small, so
+maybe -stable-rt tree picks them up even if they miss 6.1.
 
-Can you check if ldconfig and gcc work for you? That were the
-roadblocks I was hitting. If they do, I'll be interested in details of
-your setup.
+OTOH maybe if would be good to have feedback "is someone using -rt on
+riscv, and if so, on what hardware"?
 
 Best regards,
 								Pavel
@@ -76,15 +71,15 @@ Best regards,
 DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---ibTvN161/egqYuK8
+--Y7xTucakfITjPcLV
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYz3LPwAKCRAw5/Bqldv6
-8grcAKCHy5u+u9tS1fOUHGQzn+GNlrW5gwCfTLaS1KLzyp1v7yv0O+V/UfSdk2k=
-=u7yi
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYz3MOwAKCRAw5/Bqldv6
+8lYqAJ41wShbfY4254DLOAvhZwlZ8ZhHDgCgovv3B8UkIEXL4sEDeUxzHA1e3vI=
+=zfgQ
 -----END PGP SIGNATURE-----
 
---ibTvN161/egqYuK8--
+--Y7xTucakfITjPcLV--
 
