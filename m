@@ -1,196 +1,173 @@
-Return-Path: <biju.das.jz@bp.renesas.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 324E4C433FE
-	for <webhook@archiver.kernel.org>; Wed,  5 Oct 2022 05:43:23 +0000 (UTC)
-Received: from JPN01-OS0-obe.outbound.protection.outlook.com
- (JPN01-OS0-obe.outbound.protection.outlook.com [40.107.113.126])
- by mx.groups.io with SMTP id smtpd.web11.20411.1664948588630450595
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D316C433FE
+	for <webhook@archiver.kernel.org>; Wed,  5 Oct 2022 05:46:03 +0000 (UTC)
+Received: from EUR04-VI1-obe.outbound.protection.outlook.com
+ (EUR04-VI1-obe.outbound.protection.outlook.com [40.107.8.43])
+ by mx.groups.io with SMTP id smtpd.web11.20426.1664948758451586831
  for <cip-dev@lists.cip-project.org>;
- Tue, 04 Oct 2022 22:43:09 -0700
+ Tue, 04 Oct 2022 22:45:59 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bp.renesas.com header.s=selector1 header.b=sdRJRZFq;
- spf=pass (domain: bp.renesas.com, ip: 40.107.113.126,
- mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=kx6wkQle;
+ spf=pass (domain: siemens.com, ip: 40.107.8.43,
+ mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TIBwCpXjGOXyz/+cNp47CbKQ+IoeOQZP/A6Xgs291FZZpb9kUv/G6ZrqtWrDRCer28Sfv17fWdo+mGzgwNde/d2sImorZntcEIXr+in+1jc5uqRzCXOL0nrhLQ7l3iq1V5Cl+KSKYqQT2LT60dQI5zbPVQhLa/qPPKFJH1IIkf7yz3D9YabovELE5zTTpgMi5G0YxlxqDTIBQ7phqXKLWgLzt8nETVdy95hVlxIUWdbkkrZXqGCkpXhhXsMOhR35rRn3z6V823mL4fM2ADzlduJUT0brcRyc9wDHJw+EwCxaSa4VGHeDmBAk2NVvfW7K9OUvpROBLwFGSRY8f9XXww==
+ b=FzxiJfyGlhSVgG1mFldQi/Zzy8nLRzqNPV/aM7FDzynrAF0QcgfkLNYGLozhU8HGTtBnehcwrRAVAaQVtZcG70r3VyFU/xoBuJZ15difu5/NHV97nDOnWR+vXmqOO2/X+dwBP3YxGzh+OqLzJBrX6EeD1w872hUr1o2RVgue7HeSP8ZcJLt4ACH9kfDzrRvWIarxXQPGcEb9kqXYUtHm2NnWBFBTOwRJdRrYw4jHz6VPUjI01CL23B6yOs81alc6wMrmpdIj2NG5Z9m/bZe9bQm0H6v3Vy14/TkcBL+sMqLfxl9+WvJv08W3Lek5GpIQMRFaWPckae9Xn62Qa8jOsQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4FjX/NRF48s90D2/NNSoklNjNCKVgqTSlbzcyxJkPyw=;
- b=cn4BWl9x8/RUjs2x3w60rJ7jZDIM29Oyuk3Gc7d/g1r/eiAj6jkFBg/y6mIgwIXAbzjnOVNG3OAILt8U8tnJFxKPpOH5DlSPbx8QFGEjp8ovD8x3ZyK5gJT2fZUGOzDnI9Xv5sS2F4PfLgtDR3Pn7DiYQHdx/0c8kWdpFLlttMu7iR6O1CEV3qqL2ynugKZF4S19K3yOXnsA9XeYmwWKlct/DQmsCNYm19MO9+uM/8DFs/Sb60fOWb+HZdYHTz38g1VR9bbyYruuylBC74O9nq4H0evNU3P9DK3eqZbvhj8qhIDrktv4xSZcenTzPpi3qdRS2cgfIxAwz9NInUZpEg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
+ bh=rWq8yawTcghp8wvz8cO7eA8uKutc8ZtzGfW5IqfsjVk=;
+ b=Fp0i/FlYomngHgulQGv6C/LDt9dHpsLUPaaeH/HdjyAoDDTnli64X372PsFTAzI2wEuHOw/dXukaM+AC3k7EYNs19XBSPVA7vBDVJtTSc4Fnc6sRDINjs6V+4x80t+qvgphmWZQVU6ZleFxxnAJUPWW1Wr2W/FlFqaScyjQ8/EwuOykwxvhpj5AFgSxP5vlKyeaDYKAS15XE7uQvIg3mAvGoDz6dqHsgy5VZteAMxY6VjV37fJ1FRVGlv6dkoRJ3/HzzTEpPhdf/JEBgzydNJ5g1ZE13/LXvis3w+/Ox4y7+3E1q/yAnbjuiryqhPsh7xEG7jGIPvlWcBRxqOkX0lQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 194.138.21.74) smtp.rcpttodomain=bp.renesas.com smtp.mailfrom=siemens.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=siemens.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4FjX/NRF48s90D2/NNSoklNjNCKVgqTSlbzcyxJkPyw=;
- b=sdRJRZFqdy8lOQmkmMjz/zIhY8Tf4OU7Xl+K0GvGeerSgYLMZWvsSLZhoOSXoBbBo7capx6QRJWX8NGn5mB1KMejp4x/BR2GqajTTmqkw+PBcYDyYjf5UCvMNheel+hZaCnFsWtg/5dW4nHar6z/zRuE0G6rUhpZB52PnYFLnIo=
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
- by TYWPR01MB10820.jpnprd01.prod.outlook.com (2603:1096:400:2a4::13) with
+ bh=rWq8yawTcghp8wvz8cO7eA8uKutc8ZtzGfW5IqfsjVk=;
+ b=kx6wkQleCOQKdbZvTKIcFoKDkCv9j0qkiTKVOpOybK8f8GW1ON6KpDEsFWoOHw0ZL6SN7LBCahUO43hcdkleq1se9EhJQgfMBlUgkH2QNPXGdEIa4pdkZPUZ3yz5jO85DkzU7nklPMzXF7gk+GlxMxXO3UCrtnwTUP8TqXs3gdDfiYPUSulRw61PwH/x/IUuSl+5e5Jmg3nv6PElWg9dG+M3G9M2XP3X6ZtKW8qRomHcfQjJJQILlQ7/q/QbN+kglIaRON6xaEoAa8srh4hq4n3r7yUoez5XVC+WMXTI4wzpVeGMtxSJZ6k47JD77NC0RDsStosPm63Cp92h5i1Uyg==
+Received: from AM6P194CA0083.EURP194.PROD.OUTLOOK.COM (2603:10a6:209:8f::24)
+ by GV2PR10MB6550.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:b1::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.32; Wed, 5 Oct
- 2022 05:43:04 +0000
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::73a6:588d:1198:7262]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::73a6:588d:1198:7262%9]) with mapi id 15.20.5676.032; Wed, 5 Oct 2022
- 05:43:04 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>, Chris
- Paterson <Chris.Paterson2@renesas.com>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>, Hung Tran
-	<hung.tran.jy@renesas.com>
-Subject: RE: [cip-dev] Preparing isar-cip-core for RZ/Five
-Thread-Topic: [cip-dev] Preparing isar-cip-core for RZ/Five
-Thread-Index: AQHY11cLD+nXUF1J/U+2DDdWjsMwZ639GkiAgAC5FYCAALwKAIAAu2yA
-Date: Wed, 5 Oct 2022 05:43:04 +0000
-Message-ID: 
- <OS0PR01MB59229290D693DD8AF95876A6865D9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.19; Wed, 5 Oct
+ 2022 05:45:55 +0000
+Received: from VE1EUR01FT086.eop-EUR01.prod.protection.outlook.com
+ (2603:10a6:209:8f:cafe::f7) by AM6P194CA0083.outlook.office365.com
+ (2603:10a6:209:8f::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.26 via Frontend
+ Transport; Wed, 5 Oct 2022 05:45:54 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.74)
+ smtp.mailfrom=siemens.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=siemens.com;
+Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
+ 194.138.21.74 as permitted sender) receiver=protection.outlook.com;
+ client-ip=194.138.21.74; helo=hybrid.siemens.com; pr=C
+Received: from hybrid.siemens.com (194.138.21.74) by
+ VE1EUR01FT086.mail.protection.outlook.com (10.152.2.143) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5709.10 via Frontend Transport; Wed, 5 Oct 2022 05:45:54 +0000
+Received: from DEMCHDC89XA.ad011.siemens.net (139.25.226.103) by
+ DEMCHDC8VQA.ad011.siemens.net (194.138.21.74) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.12; Wed, 5 Oct 2022 07:45:54 +0200
+Received: from [139.21.17.164] (139.21.17.164) by
+ DEMCHDC89XA.ad011.siemens.net (139.25.226.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.12; Wed, 5 Oct 2022 07:45:53 +0200
+Message-ID: <f266c9b2-3e44-5b22-d2e9-5728b9eadb73@siemens.com>
+Date: Wed, 5 Oct 2022 07:45:52 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.0
+Subject: Re: Preparing isar-cip-core for RZ/Five
+Content-Language: en-US
+To: Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, "Chris
+ Paterson" <Chris.Paterson2@renesas.com>, Hung Tran <hung.tran.jy@renesas.com>
+CC: cip-dev <cip-dev@lists.cip-project.org>
 References: <e47b7bf2-aa3b-3132-e9ba-dec7a747edd4@siemens.com>
  <TYCPR01MB105880E900B643CD41841600FB75B9@TYCPR01MB10588.jpnprd01.prod.outlook.com>
- <d97fd149-c1b6-c4b5-cf36-4306881c228b@siemens.com>
- <38ce5ead-f7b8-e8f0-52a3-dff81f0f5045@siemens.com>
-In-Reply-To: <38ce5ead-f7b8-e8f0-52a3-dff81f0f5045@siemens.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS0PR01MB5922:EE_|TYWPR01MB10820:EE_
-x-ms-office365-filtering-correlation-id: 3a4964d4-f106-4272-e612-08daa6947950
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- w+N4RRT89DTlAtSVwCTkrhD2bcga4DifayU0aLzE/SS+6jQnzaNcsaRwpxVsxn66mJQyC7DnB7WgdSbVPWkU2kiACcYNXIuqlZ7saSb9i5nsIcj5QB9vXDSlH/og2Wkl5JgByWafcBGVxDRkbiaToxwcuoKGn56Zui3Q4B4uzklyaybN3zPHgwtXSCnMXjDc5h5Uvp7T6h1HyFKaicF71Wmw9z0QG78qXk7nDqwVcWl0oC3NYor+Ihsxl63zSn3yTQc0lgGcIOQhkIsPxCdX53cG8gGWJN10PnlKIcWk/vdQQTKIthQZIJQ68s/4eorxxoLNIoYRU8zGkYxt85Q3YATmt1MVwTMnxHjE195SNan47fR8sP8+MnXZ2BRJIJHuD80U7bcqk25S18zf6+fCZ4c1q4pgIMdKuirZMkfBbScL2xWlj8g5ZntYyFGto9N00xCg+QrJ1MGZ6HBElJdj9drns/MCIwQuVALQKBWVEtsnU0pi1e5oGWImozRaksfcBw+MUgl6IUspYAkBWnhKbBNVh2rmaNYpO6jdxYD2zPiPpNvlAx33nsp7JFQR5BBys/r8AqIxdWgFogz7FhGjPMOtPP8fozu878P0mDIGlNy8vxVG2xaM40PZatjJMlxXkFhzbVsz+/v8/gT2QK/QrXe7B+KJxA+XFR08eK3dNB/8PhD/mXF2i14OcNocZ8K/nMw/AA4Vwrk62LN2fDQuRNX9yX+1hO+nqNXHrOW/YfK8aSUwEwXNSYaspSvxS+NNyzFxCT8+gFAMJ/vGvm35ug==
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(376002)(346002)(39860400002)(396003)(366004)(136003)(451199015)(110136005)(478600001)(316002)(71200400001)(66476007)(66946007)(66899015)(64756008)(76116006)(8676002)(66556008)(66446008)(9686003)(26005)(5660300002)(41300700001)(52536014)(53546011)(186003)(2906002)(7696005)(6506007)(122000001)(38070700005)(8936002)(33656002)(38100700002)(86362001)(55016003);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?PYqcLSYsmvZo5V7iKyGjV52qgWn9K25WnGgVx7Hy5TRHf+amIzlFlht/8w8V?=
- =?us-ascii?Q?Bn6jt0QRBuXEeC+jvTIr5h2+246mdlq74/v6uUqN+QquaFmuY4m3NybewT+X?=
- =?us-ascii?Q?mPrHIBM5SLSkDT6ZN9z31QsbGbUcz23sSKol3Lp7MQ1Lbzz3Y2YNh7v0KIpY?=
- =?us-ascii?Q?lFaC1ACxNnrfDl2TDiqx7z9Gx2UaTA5l28SJC0qgzfWfh7Pu9AmEbDMJ6R0+?=
- =?us-ascii?Q?h1rrJx9YlvKkriIbIsPzyCKTwZGr6jfwJEA4QhXtweSzVDEra7+QMgAq7btk?=
- =?us-ascii?Q?gvQHHeAYH6Rsrpfu3naVl859RDaRf1uclN0pKivpUVXGNqZaErYnKriSMsKn?=
- =?us-ascii?Q?nKXFMrgTE7bJCqTFinkrsWyd462QX3F7o6/O9ELCi/qfB+558yrpkPzUjAdV?=
- =?us-ascii?Q?6l+zyhG5tmPpnYudG3BMGc6vRNuud+gyzN73aRbtp9qIVgDy29PMcPtY4j1v?=
- =?us-ascii?Q?9CPtYFYgbpeOCVRHud7pYVm1c9izDkDKqTpDfWWZnr3qWOKL62SamDmi86WI?=
- =?us-ascii?Q?Oh/Hns5GDWmJMQUYmmmv1ds9q/ZrduKTgiDnSJqOHhNCGcZCmkyywo+pAo9E?=
- =?us-ascii?Q?0Jq8ha6GqZ8SQ//B8i17LdEKF7A39G0NQK2PLsmi57HXs3j2dXBD/WliE8gE?=
- =?us-ascii?Q?cctj8gFDt2FlI6HUXNyvOct2HAbtxtdwSW/IHlH/qy0D9KBYwDue74x9DeGb?=
- =?us-ascii?Q?5z14paI9vMJhcVNl9AAaknyWUOrC04G483NyB2K/LWOvQuOLVZU6T28wQ5SI?=
- =?us-ascii?Q?cgjlytB4PScIbb69gXMZXIZZkpM9JqPGO4Y3wT3VT+z2jE2kloGv1o0xFIsL?=
- =?us-ascii?Q?hJJ/EwL8MQ50uEHv6pEvzyUoLjjhE4ruc7zOACNLEYPT9RGCr7Iwf8MdQ/QL?=
- =?us-ascii?Q?DjNJceCQ6vLQQsBo++lVVt7FsBH7ks9I9qDwOYWXph6e9lsl451eSXesgGZw?=
- =?us-ascii?Q?3rWwevoUJToLFEF76ydMJRDTQhCEQcNACNIlqmDDPp2smPsg0XhpnfWJzaXW?=
- =?us-ascii?Q?uuY3c+Q4ZpVDsr1f/uj3UTE4Ysr18Dm83xTjn3Jz/8YRRFWO/p0SBl/0bPnr?=
- =?us-ascii?Q?QNb6/7zq5c8SZtLyZj9YEMn+JbbFsNC9z17ASacMIKOoJUpBmsWzlklN+vQQ?=
- =?us-ascii?Q?vu/sJXjODp/mSeKfmFTgu9HZsr6ozU5RdiAHEaEFrrUqaEoxtpZcfERpiX9o?=
- =?us-ascii?Q?9dcGfPqW59XtYtiyB5cJ3UYb9NWQQyaYBz1zVQMieLruv6PzNqkaqQJv/VUQ?=
- =?us-ascii?Q?Pl1rvDW2Iua3yj+HjBizNtL92+z03TalFezxlhsg3Hc0wZf7PzpyCToLnpvO?=
- =?us-ascii?Q?noOxiyIuOhLzq0mjrTqUNPZ59/46+9H4WEKh/+KiFzqXphSoX5ywPuMvp1E5?=
- =?us-ascii?Q?3W7Vmrdu2oIxZOYsxaZy6pnktJimoJ3T9WRVygPxz3JecA9CVkXuTT6Z0dyC?=
- =?us-ascii?Q?R8Sw36DCX2k3K3jh/nDUoypoq0OGVWRcMIv65Q+Lu/t5548bNmDVjKwE1Vqy?=
- =?us-ascii?Q?J8F5YoaQ9ENCwf7oIShq8VsWx5R0E6eLJyBeZfgG+tsxIXXtXOuMuGZuhImw?=
- =?us-ascii?Q?jPCYBNHlE02n/niQRoopmSsyQ35ahyrd0hjgXX+8ezrKOkTZ2A4itPqPsNYZ?=
- =?us-ascii?Q?iw=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 
- 3a4964d4-f106-4272-e612-08daa6947950
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Oct 2022 05:43:04.6437
+ <OSZPR01MB7019EC85B41F057AEB79E630AA5A9@OSZPR01MB7019.jpnprd01.prod.outlook.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+In-Reply-To: 
+ <OSZPR01MB7019EC85B41F057AEB79E630AA5A9@OSZPR01MB7019.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [139.21.17.164]
+X-ClientProxiedBy: DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) To
+ DEMCHDC89XA.ad011.siemens.net (139.25.226.103)
+X-TM-AS-Product-Ver: SMEX-14.0.0.3080-8.6.1018-26680.007
+X-TM-AS-Result: No-10--13.070400-8.000000
+X-TMASE-MatchedRID: XYZjbEcsSe45QaOxwNGfvo9bHfxDWoib1xQ2OgXti5UT0vQc28rNUf6u
+	GOfv9tMUdcfU63y8xPCtqpWWtMaf8L4vrFmOaS1ERgrhz8k0sVeZlYl0tsn/4yqwx8x+s5lF4oS
+	d18bdmwJ1+BANR76ZZ+majo/5OlNgzY3Y/giFSEgiH7ygf4M2w2efQAfaVEc5fTWvG3pXL4RZoq
+	85oEW2FHc925yOJXmFiUAxXFIExAFKkAU17gNQnu+lWejEHPhXE7UB2zKfFgAdixvFJ6E5yC6My
+	Pq4TWG5tsxVqq1TeAWSLvAQjXykCkGPbm3tak5+kZOl7WKIImrvXOvQVlExsHAruZnjhopu+gD2
+	vYtOFhgqtq5d3cxkNRvNkDaN+tImtxpFoMA/yRNmehfoLwUSx+tZFPs3zYdmuWVT0Lgsedw=
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--13.070400-8.000000
+X-TMASE-Version: SMEX-14.0.0.3080-8.6.1018-26680.007
+X-TM-SNTS-SMTP: 
+ D470FE4729C3A17BB61627C96F60F00A4D8B4EA5C5036EFB133F8EB05E5654302000:8
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: VE1EUR01FT086:EE_|GV2PR10MB6550:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2090ff6a-c75b-462e-e1b4-08daa694de80
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	kUsX1qtggBDcG8V+r/diP8UfCONLR7waFA7y+SPh8GbfX5zTx5WvISop0zzRAcj8ivxqPSTjzVlVYhJ4hxQkMh/4YwwC3CoN0ezDrsnVe/O2SsggCv9Wigq7b4j4kzgsl0roa2AsSwc+b/e8NkWlschZaEQWI0MEg9MXTj5QtgwCizJqrnwRYvfMkUWhc9Ro3cNA+yWtlB+S3H8jyDnn3RThyU446ZQ9ywf7pG9JgFmidXE31fXDV/UZFD0Anr3AY4vPXjqFaVXMDWcKavdF7Fl7+UO20IW9fQGEcAZGXOt6vpEUzIeHC0V4Afum4bAdKj3CcLC6IkX+ZqzzUwDJbgdiGKT2qN4HhvtzddbgUlpTvMjmAECkF/OK06guXWk6EYvV7k7+1fAq9ALdpypWxyI4WP37nJC8SM60PXSowYQIa2bxZuB6yrxMUOGziU5sj/NQGMl3zF6Y4uL60K7C5SvPK5MTIWkKcJm05F6S12ZC+toGwq/YeBnTTXB6J6BUZ+0ba86VeJSTgIRu1gmH7BXQ8yUgEpchQUIudIp/5PvquzfuxCu0GUt1LLMUTwP47twR2Oks4s+jMBskbsRpDERljiYEkYQmx6lz2Yg1A3xWBpY/Vjh6hq8Gh7k7YAlMsXR8Rs2nV6Om//VT3rpn07EwZYFJfNNhO8/spBN33D8JOlVZ7NrVcTPq0MJnlx5XDH/YHCt8dFsydosaf1s8Tt7SA+iYGRBW6aNXXD6Mlk22o4vzcZDrehX6/M53ouTf0H8SV5viHwEYV9tzDoINlF2fGj5qE+2cEmEP+yo5GQ0sKMyU7EC0m9TRvIVWYk51bfOBmdsz6BzUJrZlk+jfVg==
+X-Forefront-Antispam-Report: 
+	CIP:194.138.21.74;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:hybrid.siemens.com;CAT:NONE;SFS:(13230022)(4636009)(136003)(376002)(396003)(346002)(39860400002)(451199015)(36840700001)(46966006)(40470700004)(16526019)(7636003)(7596003)(40480700001)(356005)(82960400001)(82740400003)(110136005)(40460700003)(31696002)(82310400005)(36756003)(86362001)(41300700001)(53546011)(4326008)(5660300002)(70206006)(70586007)(8936002)(44832011)(26005)(478600001)(16576012)(8676002)(316002)(6706004)(36860700001)(956004)(2616005)(336012)(2906002)(47076005)(83380400001)(186003)(31686004)(3940600001)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Oct 2022 05:45:54.4080
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 
- 2RV0vJRHOmL+zJ2DaXJvEmtKDb6cvDuGDEdAynHvQ1zq4+rnfw5TT8NjwErDR3Plvze4mEiLpBr6LvMWonIL8yuIsXy8y3vxmJPaMB94kcU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB10820
+X-MS-Exchange-CrossTenant-Network-Message-Id: 
+ 2090ff6a-c75b-462e-e1b4-08daa694de80
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
+ TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.74];Helo=[hybrid.siemens.com]
+X-MS-Exchange-CrossTenant-AuthSource: 
+	VE1EUR01FT086.eop-EUR01.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR10MB6550
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 05 Oct 2022 05:43:23 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9641
+ <cip-dev@lists.cip-project.org>; Wed, 05 Oct 2022 05:46:03 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9642
 
-> Subject: Re: [cip-dev] Preparing isar-cip-core for RZ/Five
->=20
-> On 04.10.22 09:15, Jan Kiszka wrote:
-> > On 03.10.22 22:12, Chris Paterson wrote:
-> >> Hello Jan,
-> >>
-> >>> From: Jan Kiszka <jan.kiszka@siemens.com>
-> >>> Sent: 03 October 2022 19:36
-> >>>
-> >>> Hi Chris,
-> >>>
-> >>> after getting qemu-riscv64 ready (patches will come tomorrow), I
-> >>> also
-> >>
-> >> Huzzah
-> >>
-> >>> had a quick look at the RZ/Five eval board you shared with us. But
-> >>> that raised a couple of questions, maybe you can help:
-> >>
-> >> I can try :)
-> >>
-> >>>
-> >>>  - Why is the default U-Boot hard-wired to a very special boot
-> mode? I'm
-> >>>    missing standard distro boot - which would include UEFI as
-> well.
-> >>
-> >> Good question.
-> >> @Prabhakar Mahadev Lad or @Hung Tran, could you help answer this?
-> >>
-> >>>
-> >>>  - Where is the U-Boot tree (upstream support is apparently
-> missing)?
-> >>>    I'm still trying to understand the instructions how to replace
-> it in
-> >>>    QSPI, but first I need a fixable source tree.
-> >>
-> >> The Yocto BSP is here:
-> >>
-> >>
-> >> You're obviously welcome to fork/fixup as you like.
-> >>
-> >
-> > How is the upstreaming status here? For UEFI, a U-Boot from this
-> year
-> > is needed.
-> >
-> >>>
-> >>>  - Where is the kernel tree (also no upstream support yet)?
-> >>
-> >> Kernel tree used by the current BSP is here:
-> >>
- >>
-> >> Upstreaming is still in progress.
-> >> We're having some fun sharing things between arm64 and riscv, but
-> we're getting there.
-> >> I'm hoping we'll have something bootable in v6.2.
-> >>
-> >
-> > I see - over 700 patches for 5.10-cip...
+On 05.10.22 00:30, Prabhakar Mahadev Lad wrote:
+> Hi Jan,
+> 
+>> -----Original Message-----
+>> From: Chris Paterson <Chris.Paterson2@renesas.com>
+>> Sent: 03 October 2022 21:13
+>> To: Jan Kiszka <jan.kiszka@siemens.com>; Prabhakar Mahadev Lad
+>> <prabhakar.mahadev-lad.rj@bp.renesas.com>; Hung Tran
+>> <hung.tran.jy@renesas.com>
+>> Cc: cip-dev <cip-dev@lists.cip-project.org>
+>> Subject: RE: Preparing isar-cip-core for RZ/Five
+>>
+>> Hello Jan,
+>>
+>>> From: Jan Kiszka <jan.kiszka@siemens.com>
+>>> Sent: 03 October 2022 19:36
+>>>
+>>> Hi Chris,
+>>>
+>>> after getting qemu-riscv64 ready (patches will come tomorrow), I
+>> also
+>>
+>> Huzzah
+>>
+>>> had a quick look at the RZ/Five eval board you shared with us. But
+>>> that raised a couple of questions, maybe you can help:
+>>
+>> I can try :)
+>>
+>>>
+>>>  - Why is the default U-Boot hard-wired to a very special boot mode?
+>> I'm
+>>>    missing standard distro boot - which would include UEFI as well.
+>>
+> Its just that we used the standard configs which we use for BSP releases. Looking at the u-boot code enabling distro boot should be straight forward as EFI is supported on RISC-V
+> 
 
-RZ/Five and RZ/G2UL share same drivers except CPU, IRQ and Cache.
+Exactly - that's why I don't understand that you are not doing it
+already. The default setup should be generic, easily extensible. But now
+your users need to compile an own firmware and flash it, just to have a
+standard boot procedure. And you won't be SystemReady this way as well.
 
-Already RZ/G2UL full support is available in 5.10-cip and we are going to r=
-euse
-the SoC and board dtsi from RZ/G2UL for RZ/Five.
+Jan
 
-So once, if we mainline CPU, IRQ and Cache and backport to 5.10-cip
-We will have full support for 5.10-cip.
+-- 
+Siemens AG, Technology
+Competence Center Embedded Linux
 
-Cheers,
-Biju
 
