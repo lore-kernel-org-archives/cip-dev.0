@@ -1,253 +1,169 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <chris.paterson2@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E01D9C433FE
-	for <webhook@archiver.kernel.org>; Thu,  6 Oct 2022 07:26:26 +0000 (UTC)
-Received: from EUR01-VE1-obe.outbound.protection.outlook.com
- (EUR01-VE1-obe.outbound.protection.outlook.com [40.107.14.47])
- by mx.groups.io with SMTP id smtpd.web12.3046.1665041177134421952
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3577BC433F5
+	for <webhook@archiver.kernel.org>; Thu,  6 Oct 2022 11:36:48 +0000 (UTC)
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com
+ (JPN01-OS0-obe.outbound.protection.outlook.com [40.107.113.94])
+ by mx.groups.io with SMTP id smtpd.web08.4666.1665056206421883368
  for <cip-dev@lists.cip-project.org>;
- Thu, 06 Oct 2022 00:26:18 -0700
+ Thu, 06 Oct 2022 04:36:47 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=tnTQM5+M;
- spf=pass (domain: siemens.com, ip: 40.107.14.47,
- mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@renesas.com header.s=selector1 header.b=GrXXgJbW;
+ spf=pass (domain: renesas.com, ip: 40.107.113.94,
+ mailfrom: chris.paterson2@renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bsiPlVRNw/1wGF/uuSTYIb+yKhUEZv6Td6K6WGCOzJoFGKRtJDZYu1vt8EN0mdItRkhammW17ego2vkm5AWLi1XP7Dh8m2ngbKgWESgnjqfZg8J+0ejrVudmr6YVQJoFpYivmZjkXsRV8h9AqjrZ5Nbr4xO2KatcbdCLWEz52F1UOgL8QeYQJO/gbKWGvhT/I7yGxjvehioobJeOKgkrIKhe6Oy1tLiO8ikP22MTrW1o4aDsiunzoXgj1Lpc2PVugkO4N5iNIZlyOuqEGHh4dVKSodhKRuWn7NYI5HXm5B6KtKZgpd8ouuozAvqVTSun9gd5pK0xhFvapX6//YTtwA==
+ b=WrY7uZcAdntGgTRDkdpKP96lbQiJZTKy4ARDRlhlZu2sz+zfd3SKnXMGoADgIoy+RIHDv1lkzc2Q1Da1VEfyWrOA6fOnAaQ8p0j82go1ar7EufTly230nhgfvbI2xklfmIKeVY4ghYUnmJFAi5ut1mb7/UULbiPmUQeDlYcMjwmAasG27Rxl3sC0999uQyMs5FPPDS2VZdD22Xt0u4tauD+XH4Hr7CHDrke4oUyLM+SPpRlUrdAxV3c1IR0+FZjhUBWTw7Z5EdnQ7Kbdotyfj9V7gaLAxK/vkxUlWVnROvMcg/kqUH7uNO5NlQN+pHoqGkn44ghuA7ruT4DySgT1Mg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ePVqT5AGHrnrfuP8aQrWOl6jFyK+o69/5rJHPzCDJiY=;
- b=du8TFBEsrhxeWetezdW9PRyUTTndAAzAzkP1qRwXvjV1TWb3oJNqo90FiPgfcEgX8uL42zPHQnQyB9AgE68Uf/k8s/pumq8i9Pgr4V2dzdnqCBOsUYCCon8NbBq5Ked56TQiP7vs3BesEsQotKOSS6OuYoxDsNNU+PGsrlRGNj6Ip4kEUmiamHerCkEhKhsxh0Ib3mQJNRiI8BjKunvYYM5DPB1KaH46O60F6aX2yFnUnJ7/LY8OtoKA3jA7YJHHeqERIHZIau/PAUKtQQK0Mzi4Lb74p52ukwd4QcVO5FGZDc5iOndn/x4m9yY+OfqGK0VJnimaRvtdcOkl6Rz8LA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.75) smtp.rcpttodomain=bp.renesas.com smtp.mailfrom=siemens.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=siemens.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
+ bh=r/evt1HPD+/ZMz8zcKlzNF+OUF9pAdEWeoFqT7NRHLg=;
+ b=bf2zq893SFaQ7TihGzxLumJOXJUUuFRU3ecNDS5VhWsrjmSPaqvBENUuZWQPY28yqzbqjmVuPo7/EP9jd9Xf/8+m1tlxiQWiSKVvP5NB8SOwt/usJzy6r1ZpndOHzBFElGqQXBr5CYe+36issy4O3AVOCWKi7mvqsXAEOp4WPiW8WGLxOZmW6w3DjC5IstG7K0Oc0oNm4Jzb2HTpFlb8wKHcZas2QUkGj3AsQuNW4Ho9fXA12LM4ihyJcQ19a38QyRELbN7pFGHKlpZt67gV8ThCOrJkJbaGS3r8li/uZSejkuOOKtQ1ZeB75BQvX+UbKFLjO2ptRYXzYHNPZy5Xzg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ePVqT5AGHrnrfuP8aQrWOl6jFyK+o69/5rJHPzCDJiY=;
- b=tnTQM5+MYQmYMb9ZK7d1zsda6eeGR9JHlSTGi61elff75JlIbBSjzD1qHFAc8XsU30CiB5AzkNCZfXP4H50bZUD87Q+ehnfNtW6rBFaTGCnWC2pNAq3MTncrKJK4TnA8gQay0tADQGm7oCirWPxMowrhB7alyFV4DnzttD1IMTRrtaifqPqkPc+YO68BMGcbnm/gGOXCVjxjFdKlwP3IDRA6sifSUvH059MtTu9XPB49xyQyhMaIcGnKvVpIqIDkrR/vODSFd6u5xKGd3MbnWy2ljxod8ChZad0OZ4RzU+dKHoindX+bbBCxKleLeV8rASfuRPp7LMT0KDZcAbUcCQ==
-Received: from AM6P193CA0038.EURP193.PROD.OUTLOOK.COM (2603:10a6:209:8e::15)
- by GV2PR10MB6429.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:b2::8) with
+ bh=r/evt1HPD+/ZMz8zcKlzNF+OUF9pAdEWeoFqT7NRHLg=;
+ b=GrXXgJbWeZ5RhPCfPoN0lq21XSeqSvazCgsBNgHh0C+3EO0seP6Mw24LcVXK1AAaVq34LXUGCTSt3/+PZchFpDc/T1e/L/7TtrA7hhFyMUP8i494PcKPUIynBFbFqJNWsGpCS5xio7pK5e2Ka2wwxb54vz4gNLxRZx/5uvLR6M0=
+Received: from TYCPR01MB10588.jpnprd01.prod.outlook.com (2603:1096:400:309::8)
+ by OS3PR01MB8460.jpnprd01.prod.outlook.com (2603:1096:604:197::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.24; Thu, 6 Oct
- 2022 07:26:13 +0000
-Received: from VE1EUR01FT054.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:209:8e:cafe::d5) by AM6P193CA0038.outlook.office365.com
- (2603:10a6:209:8e::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.32 via Frontend
- Transport; Thu, 6 Oct 2022 07:26:13 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.75)
- smtp.mailfrom=siemens.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=siemens.com;
-Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.75 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.75; helo=hybrid.siemens.com; pr=C
-Received: from hybrid.siemens.com (194.138.21.75) by
- VE1EUR01FT054.mail.protection.outlook.com (10.152.2.169) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5709.10 via Frontend Transport; Thu, 6 Oct 2022 07:26:12 +0000
-Received: from DEMCHDC89XA.ad011.siemens.net (139.25.226.103) by
- DEMCHDC8VRA.ad011.siemens.net (194.138.21.75) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.12; Thu, 6 Oct 2022 09:26:12 +0200
-Received: from [139.22.132.91] (139.22.132.91) by
- DEMCHDC89XA.ad011.siemens.net (139.25.226.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.12; Thu, 6 Oct 2022 09:26:11 +0200
-Message-ID: <361ca4a1-cd1d-2ffb-4b62-1f1a6e049bf6@siemens.com>
-Date: Thu, 6 Oct 2022 09:26:10 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: Preparing isar-cip-core for RZ/Five
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.36; Thu, 6 Oct
+ 2022 11:36:42 +0000
+Received: from TYCPR01MB10588.jpnprd01.prod.outlook.com
+ ([fe80::f7f4:7059:2c92:75ab]) by TYCPR01MB10588.jpnprd01.prod.outlook.com
+ ([fe80::f7f4:7059:2c92:75ab%6]) with mapi id 15.20.5676.036; Thu, 6 Oct 2022
+ 11:36:40 +0000
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: Pavel Machek <pavel@denx.de>, Jan Kiszka <jan.kiszka@siemens.com>
+CC: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
+Subject: RE: Realtime support for 5.10 on RISC-V -- not there
+Thread-Topic: Realtime support for 5.10 on RISC-V -- not there
+Thread-Index: AQHYvrJ/c4GsPcTNx0mmAqpz9XEiZK3MOF6AgDNG3ACAANM6gIABHlnA
+Date: Thu, 6 Oct 2022 11:36:40 +0000
+Message-ID: 
+ <TYCPR01MB10588BCF13B39AC8C98D0E886B75C9@TYCPR01MB10588.jpnprd01.prod.outlook.com>
+References: <20220902095754.GA18026@duo.ucw.cz>
+ <19ae27fc-592e-e3a7-09ce-c258e2e42970@siemens.com>
+ <d6824d9f-6416-6d78-545e-a9b425cc1b20@siemens.com>
+ <20221005182603.GB16437@duo.ucw.cz>
+In-Reply-To: <20221005182603.GB16437@duo.ucw.cz>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-To: Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, "Pavel
- Machek" <pavel@denx.de>, Chris Paterson <Chris.Paterson2@renesas.com>, "Hung
- Tran" <hung.tran.jy@renesas.com>
-CC: cip-dev <cip-dev@lists.cip-project.org>
-References: <e47b7bf2-aa3b-3132-e9ba-dec7a747edd4@siemens.com>
- <TYCPR01MB105880E900B643CD41841600FB75B9@TYCPR01MB10588.jpnprd01.prod.outlook.com>
- <d97fd149-c1b6-c4b5-cf36-4306881c228b@siemens.com>
- <38ce5ead-f7b8-e8f0-52a3-dff81f0f5045@siemens.com>
- <964bc8ff-9118-77b9-118f-6b979cedbb8b@siemens.com>
- <b6504b75-d609-d46b-55fb-3fd2b00780c7@siemens.com>
- <20221005182151.GA16437@duo.ucw.cz>
- <d9228cb9-e1de-dbdf-930a-ec35fbae4d3f@siemens.com>
- <dffd60b3-a074-c62d-bb6e-ae9c268195b7@siemens.com>
- <OSZPR01MB701920EE0FC4FC6B7FAEF37AAA5C9@OSZPR01MB7019.jpnprd01.prod.outlook.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: 
- <OSZPR01MB701920EE0FC4FC6B7FAEF37AAA5C9@OSZPR01MB7019.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [139.22.132.91]
-X-ClientProxiedBy: DEMCHDC8A0A.ad011.siemens.net (139.25.226.106) To
- DEMCHDC89XA.ad011.siemens.net (139.25.226.103)
-X-TM-AS-Product-Ver: SMEX-14.0.0.3080-8.6.1018-26680.007
-X-TM-AS-Result: No-10--15.140500-8.000000
-X-TMASE-MatchedRID: fd9c05JWinA5QaOxwNGfvo9bHfxDWoib1xQ2OgXti5UT0vQc28rNUf6u
-	GOfv9tMUtXl9IxEPXOoS5LnfGo4vrSCXC32XlLoPl2SZRvRWU3oZqwjVzzmd1p1U1lojafr/jok
-	Mbd75JAooYw/JH0PMsjxTJjE+nPo21ClGHEoQe0Xw78bL10OTJKRxb5HXXW4zw4LlAWtyEiUj9+
-	iycgC4IM07ZorZdLCAGyQB1oR95Ao9FmfB5h3P+ti8PtI5hTclSOMJ2vAKCWD+xRIVoKNMvAGo1
-	vhC/pWj1R/ptYWR8C6ffYZLd4eHV0QD9vOU9UhOq3USk769Wfv9WTVChOPp5v86OKweA/McVa3v
-	Vo6qkMMhnmSpmb/95dPLnr6G+Iy7je0iRmKtYnn1wPpfVw5S7Rntnm3pEHIprMcMK3Nm8dm8ATk
-	xRboyZtTGF35SmL4UpbL8RVIDsB0BgSFJD62vr2rKvcc8pGgFXOFTT+immjZ+J3gtIe0gA9qEDf
-	kP9tYEBaq8VaDdeDqHzS+w/xzBDrQKLhvag+W1LxxHBMdDc7oy7wvC8Uc6Hfbta0OAYFzyrixtt
-	RG+E/P9Wn8yUrAKBqPFjJEFr+olA9Mriq0CDAgBi3kqJOK62QtuKBGekqUpI/NGWt0UYPAgaZ3W
-	MPU0R95yQty19sPosUFi2WCBb1otJQ4zDGn4xrc6cJ4uYUQo
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--15.140500-8.000000
-X-TMASE-Version: SMEX-14.0.0.3080-8.6.1018-26680.007
-X-TM-SNTS-SMTP: 
- 11E31DC57530FCC56FFACAC60F1D6716C1B620476C79DAAD78807D5F68DC1A792000:8
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: VE1EUR01FT054:EE_|GV2PR10MB6429:EE_
-X-MS-Office365-Filtering-Correlation-Id: 59335baa-a7e2-4e19-b6b3-08daa76c0c2e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	MMqRWHiuTHAeHAuijwXUasMnJPkhJMinHVBP2VrQzuxoBZcNEUhbmQnzEERJ4EcWJpBhnPQ0O9EtThembZQKZV43b4NiZcik42PRHQ6+0lk3glQ9UwMInaRWQ6flw8sFyQ088UIckGmUOtz4vOFM+z+X22OsaWd8sFNawvZWTr0gVtTg59Vx9yV4dmKz7qRdPGDJr/liGGmwnrz9DbYYxMNGBFWDcx1aGpIy8cobPuM6V8HGLC1DrGxwgi4M/4c+kUExdkNXcVeikB6ClZCwiewTpYgzS7J6FZpDWUDkurkRQijL9RlXAG+atZLqMtnNaIClKg1tvW2d4Vep0RtIcfZF4yio4u1wK2YbCBpk08Myl/v8Sfb22jGQOXe/qiIqkrIdGkpGqosYduOnpocTh4QjLi11TOmTRTv9WympFbQYEP2SR9734II9CWMpBL+19IlgCg8wGFWB0Ozl6ixe5KFX5d+JUwHuHssDZMzDhf06zuhTH7ncb8xWkKLmjvjIDIph7JpQLu5jsmgWV7+9MNbURcsR1DzyueYAkcacJxbEgP44Qft4n3cY3GCLwYqy/M1zJSVcRZybrsgSDP4/5stXxp/EecKdoa3mwPXGjylTODQB70yZX7bx0ToYByMtXxgEwWg2dAMDhGuEKRhtgaZoNO3G2Hq8MX49OORd9LBHzA5rj0ADrU3NLQuEK3RGs+YhnIBR5QiYjUppBnPLESh+YoMtLcFFTSJIwyi0/ytfMYgEhf9JsaX7gggkrn3vR258LtAkqX/hrymQN1rJUa5upmBY7nI48sK5L72hZL3tug6eb8w/mP+348WlnUqZq57bH2i7cvgk9kcABqpYDB6uWfum0pB/mwXIyIoVJPfGh02c99V8OLEV0nlSOS7rIznKScF5qV0vvUOb8FCdbQ==
-X-Forefront-Antispam-Report: 
-	CIP:194.138.21.75;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230022)(4636009)(396003)(39860400002)(136003)(346002)(376002)(451199015)(36840700001)(46966006)(40470700004)(40460700003)(83380400001)(26005)(47076005)(956004)(336012)(36756003)(2906002)(16526019)(2616005)(186003)(31686004)(356005)(81166007)(40480700001)(82960400001)(82740400003)(53546011)(36860700001)(31696002)(86362001)(316002)(110136005)(16576012)(8936002)(6706004)(478600001)(44832011)(4326008)(70206006)(8676002)(82310400005)(41300700001)(966005)(70586007)(5660300002)(3940600001)(36900700001)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2022 07:26:12.8572
- (UTC)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYCPR01MB10588:EE_|OS3PR01MB8460:EE_
+x-ms-office365-filtering-correlation-id: a3e84cc4-a9ec-4c40-f58f-08daa78f0967
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ 63MfpXY4MxlHJlVV5ump47Gc/B9IdO1kWXSn7XUmUv6TztaYfcQUEGX2QIKHl/M2UOH+1GPx5zS91PZPn6Mz1nTaj25djpd15Xt1WFFTw56xlEUSSJvTFmM1cmuVgEDy9MS55QqJktPHRIZ899negcRBBOGtEU5kE6D3TS5Xd38RWSPlW2f1NhwWQJCGuu5b1/Ac33GhlDkZZJe/sh7+ijjdPW1VtqH9bwYul7vO7XinnUUsGudwEQVpdNrNjIjeG9ofpyU0QUcdN6qe/xUaau1byN3dnm0EATYWclXjft/MgjGg4iWnQq0hQMikiFoyQt6y4FNP/w1A3MgqDEkUmdQHSnzeZYriXGANPc83DmAEtp4Qk1pAx6CH/wmePx4td7MbN53O+2rnqoh7eoM1cykynt90Lmm6vs9vZEQAZp3wO28OTcZqiM19rNIQjqex+AfsFfIUeOEgoKKXyMnloy2V0Zbll6BdfGQ25YT4UYcmHtnY/zPN3fp6eBFDV/cJ+218yerd+oPba0wXVcb9Ganj6lojE7T3DBLk0e7GKJ1TAcDlZOl9wHCOF6LQfrHa4XeCj40PN4KKf/oyqGJX82qj2TLScwVJ0cj5QnpzGvD6H3XrajVPVxaUuzybWiuNvKGKjuGaWMgAfYuvgE7s4V4WpxVNJZs1/W0OSfbyfYCqxtemJUYypPH+t9YPZ5pKCVHVPdRohQCX0DxXL6sGrGjv62k2Dm9BPi6yw6BaRGYdVEG25EjAXwOHpIu7P7v3s3usP8bukErMNJ+JaUg6K/m7HNXCJsiks6/uphWvMHE=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10588.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(366004)(39860400002)(376002)(396003)(136003)(346002)(451199015)(86362001)(122000001)(52536014)(110136005)(478600001)(2906002)(316002)(38070700005)(186003)(38100700002)(76116006)(9686003)(26005)(4326008)(8936002)(66946007)(64756008)(66446008)(66476007)(66556008)(8676002)(5660300002)(33656002)(966005)(71200400001)(41300700001)(7696005)(6506007)(55016003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?Windows-1252?Q?ygbzArfaYlXwZzrXoQnlzXXXXKGbNQ8fEtVgjETsQ7etHBNuj8Yr3Wvf?=
+ =?Windows-1252?Q?kxr/2k8KWmUX8h2r/Riu5qpKIt6SWLei0wAGRULaF5LnbUJtRV94Uw26?=
+ =?Windows-1252?Q?c2Z+rrBdLoW6or0Zix4EwBdMYM8a53OzBuIB4rF9d1CsHCmywpDp85Re?=
+ =?Windows-1252?Q?CljwxqEHTgRF4z6ijKY0t+IoHs60usmqorf7ucOz010dh2S8+/EvdCRm?=
+ =?Windows-1252?Q?5gNEmQiNKXBbKlk12lYVVfN/nCcBjCZHzgXYfbr0X6mDiAWuvp4/annV?=
+ =?Windows-1252?Q?5ZFpPwEyYLS33ZVfjSMSXk1L5DUmjRYbOybFF+tHi3fZU0cKNZDTFfpQ?=
+ =?Windows-1252?Q?K08S3nujV1og3uUUseEU7Wq6NCahvWru2SIreeoI5ZTvPgECC+VP65si?=
+ =?Windows-1252?Q?II9hKq8CTX326Q11vbQpDfnEA8bb7X5WYs4q3NH+WCxasJ/cXii+UqVg?=
+ =?Windows-1252?Q?ADJV/Y4XBb1vSBQfMlSP2r9o3DwPevv2KL8aUmoxyt623+VyFGBuY4hO?=
+ =?Windows-1252?Q?wOpkxoML9gjk0tPOuiDLBv4sTN23rP29AHL0GY5EkcNdVKlo2VrYZAFG?=
+ =?Windows-1252?Q?b65RLOvTPp7GlBkgeZyu9a5K7dqgNZ0KF9Ex3OCSAabHDQGQ3mdqXkEw?=
+ =?Windows-1252?Q?Si4AOphO6dGSrhqRer0BIN+z5mzrEGO2cMtnIxY+3TiRIKQIhKaChvT1?=
+ =?Windows-1252?Q?IKUqSwFDT8/UVEW4pUdYnvdUcvV0as3QWObTQc3rtJx++kjp7czq/YWr?=
+ =?Windows-1252?Q?fEwk9T18wT9Vo7mcBFnG3RIIsDi6CqQnflr2RuklOUsgJuK37sCi0Gd5?=
+ =?Windows-1252?Q?O3tnUuu/rEbwOESwXqtQfBDYXJ69RLjnClYhJZd0jhfC3OFxtAJTdbjj?=
+ =?Windows-1252?Q?Ic1cKYMVoU+hIJ+V9oWMVcpjyQ1zKPmUK/MiuCJEljtTDz2WxvQ2TVYT?=
+ =?Windows-1252?Q?yUdnidQ+cLi7ybrA4LZ3GbffR+d8zpFSKe8nORa6Dq4FxQlEOz1P0H9H?=
+ =?Windows-1252?Q?+idX/EOwyw3tbVackfc+FnTvSGHK9nF8P2GJzmjl2bK2gfo9JlYPV6Jc?=
+ =?Windows-1252?Q?3CfXXoe2L1dvJipumPt0OhVrpv0qKhshEYFi9iIY19NMb6giJncaph/I?=
+ =?Windows-1252?Q?FbpOmZpMQ7TzV4iJvvXuOR8LZXb6ALcqQHzHd9VdoVMX+qfLPF7ufO4d?=
+ =?Windows-1252?Q?ayzJNylD45sDkwg7iKOprCNbgNzkvJKKd1/XthFq4YPpZa7JKAI7xp8J?=
+ =?Windows-1252?Q?EhjE9cQ9akblz7ghjv4sAv/TZzCjbfPom2dLLN9sGVEIRKeC8sVA3Y7v?=
+ =?Windows-1252?Q?7beq7d8rN8uBXcYdLVQ9jumd5VySG5GgwYzU+uYdEeWqbAXk4QUqfTeh?=
+ =?Windows-1252?Q?sxYrNUAAhdjFS9VGRbwWnvnYUZpRnOz5CBWFjgrF47ngSn/xi9eLJNq7?=
+ =?Windows-1252?Q?Zjjod7WplfqaWAoCcpSi0Ddi922dkpNNsejHeoZPLjLu67Ka4mUNDNW6?=
+ =?Windows-1252?Q?LtfiJipXwyU+PVeheUegyfmlHM9yuhcZF6YVp0jwm82eot4gMoKxzb/f?=
+ =?Windows-1252?Q?jCbcuKSV2NwmZuIfgNlh/gH+Lw91ZbvWy0Pv4JeastUc+c3eoYZIZcPA?=
+ =?Windows-1252?Q?Ge+8x6TJRynh2hkXoopJcXdmSn00ipKMCYO/Nz/Kk42nW+Es0DnPr+Pt?=
+ =?Windows-1252?Q?nFIG9bSmi9H6RVG4csmuPcgl5OxpSIDYVu6h0uo01NyY1cwUNwPCOw?=
+ =?Windows-1252?Q?=3D=3D?=
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10588.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-Network-Message-Id: 
- 59335baa-a7e2-4e19-b6b3-08daa76c0c2e
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
- TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.75];Helo=[hybrid.siemens.com]
-X-MS-Exchange-CrossTenant-AuthSource: 
-	VE1EUR01FT054.eop-EUR01.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR10MB6429
+ a3e84cc4-a9ec-4c40-f58f-08daa78f0967
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Oct 2022 11:36:40.6004
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 
+ un18GBTQ3bGknwh/t0s51B/AzWQZDqXBko5O7IWr1iK9IrVaCgiNqrzq3KitzT80YswI6BorynWTwHGBwvS5xZcsPjszdcF80APCbM5M9C0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB8460
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 06 Oct 2022 07:26:26 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9659
+ <cip-dev@lists.cip-project.org>; Thu, 06 Oct 2022 11:36:48 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9660
 
-On 06.10.22 09:08, Prabhakar Mahadev Lad wrote:
-> Hi Jan,
-> 
->> -----Original Message-----
->> From: Jan Kiszka <jan.kiszka@siemens.com>
->> Sent: 06 October 2022 07:50
->> To: Pavel Machek <pavel@denx.de>; Chris Paterson
->> <Chris.Paterson2@renesas.com>; Prabhakar Mahadev Lad
->> <prabhakar.mahadev-lad.rj@bp.renesas.com>; Hung Tran
->> <hung.tran.jy@renesas.com>
->> Cc: cip-dev <cip-dev@lists.cip-project.org>
->> Subject: Re: Preparing isar-cip-core for RZ/Five
->>
->> On 06.10.22 08:29, Jan Kiszka wrote:
->>> On 05.10.22 20:21, Pavel Machek wrote:
->>>> Hi!
->>>>
->>>>>> But due to the weird U-Boot setup, I had to add some hacks,
->> rather
->>>>>> than a proper boot process.
->>>>>
->>>>>
->> https://gi
->>>>> tlab.com%2Fcip-project%2Fcip-core%2Fisar-cip-core%2F-
->> %2Fcommits%2Fwi
->>>>> p%2Frzfive&amp;data=05%7C01%7Cprabhakar.mahadev-
->> lad.rj%40bp.renesas.
->>>>>
->> com%7Cc8b33a1b0332467e04ce08daa7670053%7C53d82571da1947e49cb4625a166
->>>>>
->> a4a2a%7C0%7C0%7C638006358079991069%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiM
->>>>>
->> C4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%
->>>>>
->> 7C%7C&amp;sdata=I2ajBytTSsUvSHp5wmkA1rgVz83rW%2B6aHGby1O2tyog%3D&amp
->>>>> ;reserved=0
->>>>>
->>>>> Test by flashing the image to an SD-Card switching to SD booting
->> on
->>>>> the module.
->>>>>
->>>>> Maybe we can find a better solution for the boot procedure before
->>>>> moving forward with this.
->>>>>
->>>>> Anyway, now we have a real distribution on this board. Pavel, can
->>>>> you re-check what you observed, if those issues persist with
->> Debian?
->>>>
->>>> I believe I was running Debian; two versions and Ubuntu, IIRC :-).
->>>>
->>>> Can you check if ldconfig and gcc work for you? That were the
->>>> roadblocks I was hitting. If they do, I'll be interested in details
->>>> of your setup.
->>>>
->>>
->>> Hmm, seems the issue persists:
->>>
->>> root@demo:~# ldconfig
->>> Illegal instruction
->>>
->>> [  297.146728] ldconfig[497]: unhandled signal 4 code 0x1 at
->>> 0x00000000000380c8 in ldconfig[10000+83000] [  297.146768] CPU: 0
->> PID:
->>> 497 Comm: ldconfig Not tainted 5.10.83-cip1-riscv-renesas #1 [
->>> 297.146775] epc: 00000000000380c8 ra : 0000000000015382 sp :
->>> 0000003fffe01c10 [  297.146782]  gp : 0000000000099da8 tp :
->>> 0000003fda772800 t0 : 0000003fda7787c0 [  297.146788]  t1 :
->>> 0000003fda8065a8 t2 : 0000002acbbda7a0 s0 : 0000002afa2ec890 [
->>> 297.146794]  s1 : 0000000000000001 a0 : 0000003fffe01d18 a1 :
->>> 0000000000000001 [  297.146800]  a2 : 0000003fffe01c88 a3 :
->>> 0000000000000000 a4 : 0000003fffe01d18 [  297.146806]  a5 :
->>> 000000000009736e a6 : 0000003fffe01c80 a7 : 00000000000000dd [
->>> 297.146812]  s2 : 0000003fffe01c88 s3 : 0000000000000000 s4 :
->>> 0000000000000000 [  297.146819]  s5 : 00000000000105a4 s6 :
->>> 000000000009e670 s7 : 0000002afa2ec850 [  297.146824]  s8 :
->>> 0000002afa2ec710 s9 : 0000000000000000 s10: 0000002acbbe39c8 [
->>> 297.146830]  s11: 0000002acbbe3938 t3 : 0000002acbaf2610 t4 :
->>> 00000000000925a8 [  297.146835]  t5 : 0000000000000004 t6 :
->>> 0000000000000000 [  297.146842] status: 0000000200004020 badaddr:
->>> 00000000a01253cf cause: 0000000000000002
->>>
->>> (gdb) disassemble $pc,+0x10
->>> Dump of assembler code from 0x380c8 to 0x380d8:
->>> => 0x00000000000380c8:  auipc   a2,0x66
->>>    0x00000000000380cc:  addi    a2,a2,2000 # 0x9e898
->>>    0x00000000000380d0:  sd      a0,0(a2)
->>>    0x00000000000380d2:  mv      a5,sp
->>>    0x00000000000380d4:  addi    a4,sp,416
->>>    0x00000000000380d6:  sd      zero,0(a5)
->>> End of assembler dump.
->>>
->>> Do we have any instruction set restrictions that prevents the usage
->> of
->>> distros on this CPU? Under QEMU, we come along here as well and
->>> execute this without problems. Some infamous Intel CPU comes to my
->>> mind at this point - hope, history does not repeat here....
->>>
->>
->> auipc was introduced with ISA 2.0, around 2019 - please don't tell me
->> we are on 1.0 here.
->>
-> I have seen similar issue with yocto dunfell release, If I go higher up to kirkstone release I see there is patch 
-> add-riscv-support.patch [0] (I haven't tried this release yet though).
-> 
-> [0] https://git.openembedded.org/openembedded-core/tree/meta/recipes-core/glibc/ldconfig-native-2.12.1?h=kirkstone
-> 
+Hello Pavel,
 
-I doubt that something that fundamental wouldn't be in the Debian
-package as well. And it works fine over QEMU.
+> From: Pavel Machek <pavel@denx.de>
+> Sent: 05 October 2022 19:26
+>=20
+> Hi!
+>=20
+> > >> I do not think we can or want to support realtime on RISC-V at the
+> > >> moment.
+> > >
+> > > In fact, we couldn't realistically commit to such a non-existing feat=
+ure
+> > > /wrt long-term support.
+> > >
+> > > If there is interest in enabling this, we can start a development eff=
+ort
+> > > in upstream. But if that could then be backportable only to the next =
+CIP
+> > > kernel, would even be open.
+> > >
+> >
+> > http://lists.infradead.org/pipermail/linux-riscv/2022-August/018823.htm=
+l
+> >
+> > Maybe there is a chance to have this in 6.1-rt so that 6.1-cip-rt can
+> > pick it up.
+>=20
+> Yes, that can happen. Plus, the patches are surprisingly small, so
+> maybe -stable-rt tree picks them up even if they miss 6.1.
+>=20
+> OTOH maybe if would be good to have feedback "is someone using -rt on
+> riscv, and if so, on what hardware"?
 
-Jan
+We're not currently using- rt with our RZ/Five risc-v SoC.
+However, if CIP started supporting it we would integrate it into our BSP,
+as we have done with our other (Arm) products based on the CIP kernel.
 
--- 
-Siemens AG, Technology
-Competence Center Embedded Linux
+Kind regards, Chris
 
+>=20
+> Best regards,
+> 								Pavel
+> --
+> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
