@@ -1,303 +1,139 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <chris.paterson2@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F01FBC433F5
-	for <webhook@archiver.kernel.org>; Fri,  7 Oct 2022 13:10:54 +0000 (UTC)
-Received: from EUR01-VE1-obe.outbound.protection.outlook.com
- (EUR01-VE1-obe.outbound.protection.outlook.com [40.107.14.58])
- by mx.groups.io with SMTP id smtpd.web10.4167.1665148252956964099
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C846DC4332F
+	for <webhook@archiver.kernel.org>; Fri,  7 Oct 2022 21:17:43 +0000 (UTC)
+Received: from JPN01-TYC-obe.outbound.protection.outlook.com
+ (JPN01-TYC-obe.outbound.protection.outlook.com [40.107.114.92])
+ by mx.groups.io with SMTP id smtpd.web10.108.1665177459114718895
  for <cip-dev@lists.cip-project.org>;
- Fri, 07 Oct 2022 06:10:54 -0700
+ Fri, 07 Oct 2022 14:17:40 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=uOQK/eU9;
- spf=pass (domain: siemens.com, ip: 40.107.14.58,
- mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@renesas.com header.s=selector1 header.b=RroHgK9c;
+ spf=pass (domain: renesas.com, ip: 40.107.114.92,
+ mailfrom: chris.paterson2@renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=T3pvw3EKfgdBt314p9PxZM+iQ6OqWQvUF1YJIlIS9AaVAsW3KQ/4iUjj+TuBbxVYPHBQwGWb+SaKEjW/9eDxjUvl5UaR4vFaHsjlNpjFD57b4TtxizDdwYqOmRbxCRHbwrbZeAPobeW9ti7iwfTuGk0WdauZBlwmK1qbfac3eDIXZkD2UBbVewXc83cAokRkf9SJZUDCynDzOHZFK4uAsLK453hWs0ynq0Dk24pYJ0hIyW8/9jUZF0Xrf+8zxcDyFpgZNuGwua0kOiTq5R0JiEJZRXHyeb+6DdD8k/u11IHrWscqiwlf2TJU559PlyTKiqALxCSg0yDF/dqSv3Ke6g==
+ b=GqyFNhLSqUqYGxjj2ul2abvRDyIx4Y4yLsB8ewbqgPC81h0IIKxQp0hRIVhdccdlfJ+Ac7m7gqA6anEkL031/EcHYwx5f8edfItuoamhWojNec0b5cjG8dncKWwe2foeC6FFRU3P553O7PfBqYZJr5cB/5W7NF/TrGrrVfYIFIU7PYPp+5wjNBqebIiUFkA+fC2D6WxrudRlDmpfXjjhoU+wHxoaxJqIMtiV23zMZu3Od/fYBynGDl3SeNTzyMdVy05viblCDNgVQk5ZnO04Hy6NtJne+xlTuXb7k/rYp0cJvijUj3xeR+WeBsMtdzYT0GJm9mOdq1rLyKnDvdwQzw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IC46LTg32Z8PMrkMDrvDIdAyH/P95i9QV6g6uFzZyzk=;
- b=OI3F7udi76Ax95HPlb8gA0Sv1vGgUMboPDPu1QSQGUrAzgYjrGtF3S6doHC7hLV8ubKoHnl8/QNr+JDydH45XELsVG7pfK+1mYjTa+BG+sF/HLKynVEdpX54mi2EHCK/FhCv4s/nZYiLzCl97bvBRsRZf6BFBpi/+omG73nvXFE7CdY3kUcKj4irnu8KnFAdCfj2pijNbxhNvP3TjN9Bmpmjf1CY1i2q54awC7tKZYGfpwf0998ydN7NFbZAHrVgrPjTMBaH2fA1mb/XBtF+x5E7Jm+hCSblvtjhLCoGwxUlRLZjUcP3VurmcJSbfpJEuuPPaESPjgzZtk75jXj2+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 194.138.21.76) smtp.rcpttodomain=lists.cip-project.org
- smtp.mailfrom=siemens.com; dmarc=fail (p=none sp=none pct=100) action=none
- header.from=siemens.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
+ bh=R79wNE5zzAE0St555Yg8pk+afN+KxWdXoBPPAN13C5E=;
+ b=S4tGQ5mS/j7HuXSuH0rnFj/svJDiUjbW49yjn7bAI6/Q9J+SxjzC+5lK1wbnu3oWSffQx/Ubp39cXYG3zoo9vM6ivFBwhUX5yaC6gflV3wyGDHdWcEnH6mslXBiz0AjirZ4hpiY1IDjiAveILQSiuqJCWhnbCP4MK2v756xOVRFAzf99uh4lX6FUJ2cizj5tFQc4EL3KF0jZE1VXZAuBDVYcfsVt4vw2ZXhELfgHbXp3XPFEu4dsnnU2yMKhdljVm1w9VN2YaEYJP/xJQX0Hoc24aI5zq57GRtLI1eSKjCrkSlwEhF7Z0MotMTuvz2+7gsa32HlKFT7Kdkll2Pd/eg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IC46LTg32Z8PMrkMDrvDIdAyH/P95i9QV6g6uFzZyzk=;
- b=uOQK/eU9Hy7DuWge3ccLhkz5/Bfnk3HE7ngeBjPHzm5H015yPDFGdzwxb7hlBB/g+VcgRd5D5MdY4sOSEgUr+EFVNsTbJmJKf27yCBZHZ5j2PrJ1/W3+/TImh/iBEop6kimulI0xu4QRZwXC2dZFLd3Y+Z6AaGQxWzxSBU3YJFoDZyXhUup7kSTJtv8R8XLM5cxPkbISGg2hib2K7/EracMeDqfPt8hMaRxTFnVRqvI2aeShdo9z0xVYYwxj+SEVfE6gbiudMterM+C2RSn6xKNVxeT88VRmO1CvV4NoiJTzt2qd0ZlLd1PdpphmhNiwkVI89+CNG5lhcjsn1xoHNQ==
-Received: from DB6PR07CA0193.eurprd07.prod.outlook.com (2603:10a6:6:42::23) by
- DB4PR10MB7015.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:3f5::16) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5676.28; Fri, 7 Oct 2022 13:10:49 +0000
-Received: from DB5EUR01FT055.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:6:42:cafe::73) by DB6PR07CA0193.outlook.office365.com
- (2603:10a6:6:42::23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5709.10 via Frontend
- Transport; Fri, 7 Oct 2022 13:10:49 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 194.138.21.76)
- smtp.mailfrom=siemens.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=siemens.com;
-Received-SPF: Fail (protection.outlook.com: domain of siemens.com does not
- designate 194.138.21.76 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.76; helo=hybrid.siemens.com;
-Received: from hybrid.siemens.com (194.138.21.76) by
- DB5EUR01FT055.mail.protection.outlook.com (10.152.5.250) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5709.10 via Frontend Transport; Fri, 7 Oct 2022 13:10:49 +0000
-Received: from DEMCHDC89XA.ad011.siemens.net (139.25.226.103) by
- DEMCHDC8VSA.ad011.siemens.net (194.138.21.76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.12; Fri, 7 Oct 2022 15:10:47 +0200
-Received: from [139.22.132.91] (139.22.132.91) by
- DEMCHDC89XA.ad011.siemens.net (139.25.226.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.12; Fri, 7 Oct 2022 15:10:47 +0200
-Message-ID: <d45e2189-c68e-c87b-f1dc-83164c69adc4@siemens.com>
-Date: Fri, 7 Oct 2022 15:10:46 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: [isar-cip-core][PATCH 1/1] use qualified path for
- CIP_IMAGE_OPTIONS
-Content-Language: en-US
-To: "Moessbauer, Felix (T CED SES-DE)" <felix.moessbauer@siemens.com>,
-	"Gylstorff, Quirin (T CED SES-DE)" <quirin.gylstorff@siemens.com>
+ bh=R79wNE5zzAE0St555Yg8pk+afN+KxWdXoBPPAN13C5E=;
+ b=RroHgK9cJawkSBADuq7db0LEVK7Athv9wHOX52qYGLaG7KmuaAhGvYylUXncd8IXAdM7vkWT6dxiRADYC0I3XsndUhUV6OOd09EmO/chNZrTW9bYZEgOmTSbVIHsk+wJTfZKCeyr1efC4USmjMh1cGXy+RmDl/Ryt6K5NWvXVms=
+Received: from TYCPR01MB10588.jpnprd01.prod.outlook.com (2603:1096:400:309::8)
+ by OS3PR01MB10201.jpnprd01.prod.outlook.com (2603:1096:604:1e4::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5709.15; Fri, 7 Oct
+ 2022 21:17:34 +0000
+Received: from TYCPR01MB10588.jpnprd01.prod.outlook.com
+ ([fe80::f7f4:7059:2c92:75ab]) by TYCPR01MB10588.jpnprd01.prod.outlook.com
+ ([fe80::f7f4:7059:2c92:75ab%7]) with mapi id 15.20.5709.015; Fri, 7 Oct 2022
+ 21:17:34 +0000
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: "jan.kiszka@siemens.com" <jan.kiszka@siemens.com>, "pavel@denx.de"
+	<pavel@denx.de>, "nobuhiro1.iwamatsu@toshiba.co.jp"
+	<nobuhiro1.iwamatsu@toshiba.co.jp>, Ulrich Hecht <uli@fpond.eu>
 CC: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-References: <20221001045257.441816-1-felix.moessbauer@siemens.com>
- <56f5db40-c995-fc9c-24e3-07fa642443d0@siemens.com>
- <AM9PR10MB486962A4EB295F82550CE2BA895F9@AM9PR10MB4869.EURPRD10.PROD.OUTLOOK.COM>
- <fd47b229-9803-4298-43bf-9924dbd6aa7e@siemens.com>
- <AM9PR10MB4869AFE16C8761F01E5A7C0C895F9@AM9PR10MB4869.EURPRD10.PROD.OUTLOOK.COM>
- <237f4c8f-8f86-bbe2-9c62-d86bc2b1a431@siemens.com>
- <AM9PR10MB4869C618E2D6FDD8C617C101895F9@AM9PR10MB4869.EURPRD10.PROD.OUTLOOK.COM>
- <55fb96d5-6fe9-b8f0-8649-f0c153ffd315@siemens.com>
- <AM9PR10MB4869009D33386D7F7304BA7A895F9@AM9PR10MB4869.EURPRD10.PROD.OUTLOOK.COM>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: 
- <AM9PR10MB4869009D33386D7F7304BA7A895F9@AM9PR10MB4869.EURPRD10.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [139.22.132.91]
-X-ClientProxiedBy: DEMCHDC8WAA.ad011.siemens.net (139.25.226.104) To
- DEMCHDC89XA.ad011.siemens.net (139.25.226.103)
-X-TM-AS-Product-Ver: SMEX-14.0.0.3080-8.6.1018-26680.007
-X-TM-AS-Result: No-10--13.435800-8.000000
-X-TMASE-MatchedRID: gyGNsBFpAAw5QaOxwNGfvo9bHfxDWoibO5k/PxBAvv4HRzaQbsazqDgK
-	qxRKlpUbUekjLrC3lTBHH7AyeolMkaVNzeXRGlTjYVoDTlX4T0x6DufCa1wWBz2LVJD+obB7yiK
-	gKtIyB4r3Ru3JrjJxKEAc6DyoS2rIxdMDEDSgbA9RbTg1djx4TYaw96TXEsdWx64UvlSkg3GYaF
-	4S+PMBO759Yrw3aQCH9lijtp+uizzWR6KNG5ytC91z8PUBYrV+nvp70Y6l9Aok3NzXU7fmeoxyU
-	RzEbAdAzwO4AjhpI8g2sX5RAPlmCFiQTyESKwbI4Z3fuWes6vn9zlA2W6E9MBiA/AMvBVJEFASP
-	1FmBuxZ7FqIgbQAcyLeiFqkxIdu24PkIhwvBc3q+L7W2wcUVqxHQbVLgwnYMzNIobH2DzGEO4jf
-	a+nI3P8pQtXSznVsC6s5IQlEERpcASbyTkLMA9AhxhtZnDtnzRr1EVP8UqhPC0TXpqtexIiRoeP
-	M4oGMVLX3qyf3ewG9osGAa+U7xDCd98RJY6NO8mZ1qYuQJVbvXznxnKDOSE1tTO+xodboGAZn/4
-	A9db2RQKAQSutQYXGccffIoo2t1Yoko88aFBbZzrbszF3s2ealGv9OFH1+eUt2416ob94jBnL3A
-	aGm9oxc4pb4OJgr2Bp7pikS0dkRQTWqzQfgfXION5IW+F5xoLEsdSh2aJpQItCy6ZX/lLzz3MFP
-	wQ6W5gCOzL6v7C+dXjnF5s6t3kivn27+DO/kwtTOrxEGQm4Zw1ghGV72CB54CIKY/Hg3AtOt1of
-	VlaoLUHQeTVDUrItRnEQCUU+jzjoczmuoPCq2iKCTqpxKzcfWcZZ+0yliE98g/2Hxj2MWxMOB2V
-	GKdU81kr2y/dCk+
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--13.435800-8.000000
-X-TMASE-Version: SMEX-14.0.0.3080-8.6.1018-26680.007
-X-TM-SNTS-SMTP: 
- BA764B2A1782BEF75B86D70964D43A6AE6798E6F03901B9B222213A9CF5A50A72000:8
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB5EUR01FT055:EE_|DB4PR10MB7015:EE_
-X-MS-Office365-Filtering-Correlation-Id: 986b9014-16de-4fa4-abd7-08daa8655ae9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	5Myl4o73RZD31ILgMUPk/itg1C2/NsnE1OHKjNV2JnPz9Rt1niBgu2fL1WGwA5HFBdBOuDnRlcBCUTVBA+ZFQrWRb3MIURHIYL/Jh+UGUrEH3q5LNnEmq4VdsdoiOUvKPhpr/Ehv3Ita1FNaTOhwZvAJcNd1MV+yyfCH7X5067xoROzEg1/hSlchqcd9iWiLOGMkdgQlD/SFUTPGloHdP69bYntQN5myCu4I6FVZ/MAo07gM3NrE9wccOhVamZsNwJaAgkjI7yML4Yz725VsM9F3pauRromOldacTTcatYkb7I6Si92YIehRxeRqTRyiMvK5JqoQT+eiIqKXuzm1XHchjy+YeOAMc6xytCQl8l34pMBASyrCTcrAQLOg2aNAeQCrAOqJwmI9M/O/Ezkjd9zvVO5egv3adUTwjGfxjTXP4K6d5sTe76qGhzFOMWdC5mRRchJgb8KlZKBAsbXzA7skdsutoJI0J+LuXiXPTH3kY2L2e4nXe6VAW6F6vCYmZ6/GJZWmusQwXVO4CTitnY83sln2Xsz8455666rkNNopKZf1d4GIXRXvgYpc2YQk6uVzKUfm8Jz1VdVcPSzeYvm9qWLq67mwIcXzk0HCcXbmIDPQvkxpaxwTRrsld6Oqt7jcxXOym6FKx3iH1GN75GS7+5v+0ZFdkr8mcoG39lAnkKZnlAVGfaJOhnt5t4k5oDGTZYoIYLcyVnJMQf5jKBnW4ckE3cKV6SZBEfFSkUK70Xuk75ZhGr1oEV60Eu00g5nvyvemdPN5jnO9+/Rqo+zsXnMC9I2XeuX+DZ3JqCmAOdNtzXwzIp/Z70TGxyW9rOYsMDiGVOWJVHxToKqqoHNDhwWBP3LFqDmHZKfPpf8=
-X-Forefront-Antispam-Report: 
-	CIP:194.138.21.76;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(376002)(346002)(396003)(136003)(451199015)(36840700001)(46966006)(40470700004)(316002)(956004)(186003)(16526019)(83380400001)(336012)(2616005)(81166007)(82740400003)(82960400001)(47076005)(44832011)(36860700001)(478600001)(5660300002)(41300700001)(2906002)(82310400005)(356005)(8936002)(40460700003)(40480700001)(70586007)(53546011)(26005)(6706004)(16576012)(4326008)(70206006)(8676002)(110136005)(6636002)(36756003)(31686004)(86362001)(31696002)(3940600001)(36900700001)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2022 13:10:49.5991
- (UTC)
+Subject: linux-cip-ci: risc-v build support
+Thread-Topic: linux-cip-ci: risc-v build support
+Thread-Index: AdjakZ25SCnHA75BRHaLkmlwBK2OLg==
+Date: Fri, 7 Oct 2022 21:17:34 +0000
+Message-ID: 
+ <TYCPR01MB1058868A328ACC0B62A05E2AFB75F9@TYCPR01MB10588.jpnprd01.prod.outlook.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYCPR01MB10588:EE_|OS3PR01MB10201:EE_
+x-ms-office365-filtering-correlation-id: 5e323ae3-39f6-465b-0bdf-08daa8a95a28
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ SD5F07rGTruAyeDOq1sJfd+jTnLVJtOQVPUXqPVBVW3r/y4JOE7Mg/+OtTHOhiYsF1Y03e757rzVxATo00dRp4Q0eMODdAA66btjaAliPlc2Wp2ke6rgxVxR5i9T+J3a+dNhrnfuhMSvn4TF267t+VOPd6BV1n+urohcKB+QnpQBKmfOCOc8vZ6Zyuvvxg50xsgJ/AD4T2nk7TVozwWL2M34Yr3KtWNC8wOj6p4WT8XB0KVRqj9LE2UfQT19MdLBdZtxY3aSk+U83MTofcb2nomS8l7Tfu2bRXD817deLwAPUg0Mye+42uGh0uZWudt+uAWRoh2ExmY/zBoze3xx9RQZNggPeFA6b1forKoG8vwDbqIbYHDjntMo4KoGfFgZ3FG78CL877x5MFtlQ/bGchJDL4v2+NQBkwbA5oIeO9qgvX47JBW+EUCoYLeeWU5eLbw1LT3vC5MveXKOOA0pMQXwoZhtaslimwGVRJxU6OwcM+Yj1EKibmsTfWVILJdZAgW0Vs4a8u6+J8kFzRUZxZ0cuCaNl43ZNxYNJkPn2Nz3QcNnHDjQ3AJb8jqPdEGtBdjitJtznejrbSyKWNii37soJa9RbcZoRUV2s2FT4fAYx0KNPJEE1SEVChpknmMn2dlHpnY03l1NrraSS733BHNBxmKgeHopj40TpV7sjZSkpeikTT9GHIDgX3ECrgI4PMhDMQ1XM4Mm9qgpVEsqfNvF0VQneDiVgNsI2PK2oDlcEUIVWTADDp7CbgZY3P329pBA1aB3a33aJE7AiYFfaUeigcQHj/dQr5CxZ3hSNYf9LV4SuXMQ3HM0vz7Cia6LrkU/bHxY2iQ0f+vhCoiRNA==
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10588.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(366004)(39860400002)(136003)(346002)(376002)(396003)(451199015)(66899015)(2906002)(316002)(33656002)(4744005)(4326008)(8676002)(64756008)(66446008)(66476007)(66556008)(66946007)(76116006)(86362001)(478600001)(110136005)(5660300002)(41300700001)(52536014)(8936002)(71200400001)(966005)(6506007)(7696005)(186003)(83380400001)(38070700005)(122000001)(26005)(9686003)(38100700002)(55016003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-8859-1?Q?mpUl9YWOoBXBA8rB3haTyMy1sY3it2IjR6wUUx8yTqo/LZ5/wYGYcPYgIN?=
+ =?iso-8859-1?Q?k1mOFOv5YtqVDj5wPdIUfC1cQw/PF6nZF1S0CxX+5AmV8DSrxMjWM9Y3hL?=
+ =?iso-8859-1?Q?m73mkxDNjwKi8ufG3Mly4A/OlhBkYAfJZJ1dgzsJA4Th7NH2zkMGXb5A3o?=
+ =?iso-8859-1?Q?pqMXDBr9rU34+GZTGZvCgXV60EXrflZGD2CR9OBsqX2zVeNIkXXSnpgLPx?=
+ =?iso-8859-1?Q?+VFwnQ2/5I4Il0MKIMwWGIlprHl1R5I1u7pCJrDBNN32FL9A8gYebHsOay?=
+ =?iso-8859-1?Q?QJbheG1gKi+vE2jQgw8z7cDeeKc2JpA98rOcNa8ItE7DRuZfpojAz/RdXi?=
+ =?iso-8859-1?Q?6lso95Q7Hn3ptpQfXPs8nyiGcsaHAfQMqW5BQp5ASHGWeJHQ2527bWebkD?=
+ =?iso-8859-1?Q?wsDT9M/MM1zeEQeF0CixxQzhre01bS6NKk8GKUMXtuKystzAXZ0lmj8tfT?=
+ =?iso-8859-1?Q?gnD6z9jCqL1y2NClJJ9ym4N4C+8D3iLLk1BGoGYlAVUVFR12As0WLVrJav?=
+ =?iso-8859-1?Q?5u6ZkgqWCIN7DfeyJrnOzbCH+bXP+BLKehK/hE9GKNF8/rMRuuiR0GAX1Y?=
+ =?iso-8859-1?Q?OL+jGOg8e3iPipXZBxCDUwYL4h/ZIPnq/wdI4L2LZcxmVWZ4JKPEEU/V6T?=
+ =?iso-8859-1?Q?YXtxXCtq0DeoOYRT2tDaIoI2fddSoxyxsbk//WS0ySQtF0iAk9IxwtJEtM?=
+ =?iso-8859-1?Q?33iv1v0vELwurkmWRpiED+3SHu7mmA8guIju9JSvl1Y9C3KQ9mq0XHIogU?=
+ =?iso-8859-1?Q?8An+ENSiW2tV6KOMm+4oNawiy5yR7ucrDKOFOtEvlJXLfa+A6sNHD6rvxw?=
+ =?iso-8859-1?Q?PR0SKWtQ36qQs/4uXgVbdDw6fmyzkbYVMblsfPz1zL16LtYxogFNhkvCZz?=
+ =?iso-8859-1?Q?pl99dbWFUiZmoYfUZL/Snz40x1gP2na/Kp/gqCr41wlCASqet4eeRBMYOL?=
+ =?iso-8859-1?Q?luSvbsCLFyUB5E8H6olCeFj5wy4vG3O4Ph9mgtz/ARMWZ4Vonp1jCvlKk0?=
+ =?iso-8859-1?Q?n7QhpsufkrCIyQLCQ6s6hFGCIkFV8Jk7t5QIZXOJCXXWTIb6xkraa/iMXO?=
+ =?iso-8859-1?Q?HQ3rIwgyykP6pi9GGkDCOqDMaGZ/JxgZAQBanuhnOXHKnItYsKwFkgaOo8?=
+ =?iso-8859-1?Q?aJv1Far5prlJwUF03yhzqBNHWY/8pa+Ssd5dP8ijvP/pMbqHIWijCJuw8/?=
+ =?iso-8859-1?Q?/U9fpDJkEfckpqi8n1qUQ/Qj1fyV0Sg45TQgAU0qa/2oOdNmTlGsd0sFQi?=
+ =?iso-8859-1?Q?QKPY6zipB3eFoECU/etyWgU6pNZNkt2cw+BP8eKUicsFDw4f64hg7qMHLq?=
+ =?iso-8859-1?Q?RO16LTxgqYl8O88K0lzqDkX2uzXzELekTLIQ0gd+TOAihGk3jg48qs6dz9?=
+ =?iso-8859-1?Q?XoWQaLqhAewfAma7gA//V606RzPdaAYM7lh59Qtop7M8wEXfHfouxINsM7?=
+ =?iso-8859-1?Q?rJblwZVFzUMq20uVRPNKBM1o0GVxlx2DLe9JnOqIjAAw3mKLQ7NYrJwljW?=
+ =?iso-8859-1?Q?Rs8uBrW9NKwFEJcIMHmuJF6gMqw4pfb1dA6kOChFeuW8rfuiqkTfk/rSBk?=
+ =?iso-8859-1?Q?HdaufnVpNATbyL303ofti5j3Mkd8z799r557CFCxASZgiDXcd7dfz3EsOM?=
+ =?iso-8859-1?Q?nwrDOI4IoGGUNUPaKsZPw6hVRiEOPqXuIbd3mGS8OoU+EhJeRIQK1u2g?=
+ =?iso-8859-1?Q?=3D=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10588.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-Network-Message-Id: 
- 986b9014-16de-4fa4-abd7-08daa8655ae9
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
- TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.76];Helo=[hybrid.siemens.com]
-X-MS-Exchange-CrossTenant-AuthSource: 
-	DB5EUR01FT055.eop-EUR01.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB4PR10MB7015
+ 5e323ae3-39f6-465b-0bdf-08daa8a95a28
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Oct 2022 21:17:34.1547
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 
+ zxqjKKzEGfD4CH5ZfC9LEX8LBvIyPlFpCD2VDBv8RWnVNQYgfKugj5kEqh56zg6mgF3uCmIPGM0VH4Y2Zt7+FZDxLVP06bRtfoNQ5WoTfYw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB10201
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 07 Oct 2022 13:10:54 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9694
+ <cip-dev@lists.cip-project.org>; Fri, 07 Oct 2022 21:17:43 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9696
 
-On 07.10.22 15:07, Moessbauer, Felix (T CED SES-DE) wrote:
->>>>>>>> On 10/1/22 06:52, Felix Moessbauer wrote:
->>>>>>>>> When using the cip-core layer in another layer that has a
->>>>>>>>> slightly different directory structure, bitbake is not able to
->>>>>>>>> resolve the included files.
->>>>>>>>>
->>>>>>>>> To fix this, we simply add the full path to the file so bitbake
->>>>>>>>> is able to locate it independent of the downstream layer configuration.
->>>>>>>>>
->>>>>>>>> Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
->>>>>>>>> ---
->>>>>>>>>   kas/opt/ebg-swu.yml  | 2 +-
->>>>>>>>>   kas/opt/swupdate.yml | 2 +-
->>>>>>>>>   2 files changed, 2 insertions(+), 2 deletions(-)
->>>>>>>>>
->>>>>>>>> diff --git a/kas/opt/ebg-swu.yml b/kas/opt/ebg-swu.yml index
->>>>>>>>> 8b3ffec..78227f1 100644
->>>>>>>>> --- a/kas/opt/ebg-swu.yml
->>>>>>>>> +++ b/kas/opt/ebg-swu.yml
->>>>>>>>> @@ -20,7 +20,7 @@ local_conf_header:
->>>>>>>>>       SWUPDATE_BOOTLOADER = "efibootguard"
->>>>>>>>>       IMAGE_INSTALL_remove = "u-boot-script"
->>>>>>>>>     ebg_swu_image_options: |
->>>>>>>>> -    CIP_IMAGE_OPTIONS_append = " efibootguard.inc image-uuid.inc"
->>>>>>>>> +    CIP_IMAGE_OPTIONS_append = "
->>>>>>>>> + recipes-core/images/efibootguard.inc
->>>>>>>> recipes-core/images/image-uuid.inc"
->>>>>>>>>     initramfs: |
->>>>>>>>>       INITRAMFS_INSTALL_append = " initramfs-abrootfs-hook"
->>>>>>>>>     firmware-binaries: |
->>>>>>>>> diff --git a/kas/opt/swupdate.yml b/kas/opt/swupdate.yml index
->>>>>>>>> 8ba03c9..e32ce20 100644
->>>>>>>>> --- a/kas/opt/swupdate.yml
->>>>>>>>> +++ b/kas/opt/swupdate.yml
->>>>>>>>> @@ -16,7 +16,7 @@ header:
->>>>>>>>>
->>>>>>>>>   local_conf_header:
->>>>>>>>>     image-option-swupdate: |
->>>>>>>>> -    CIP_IMAGE_OPTIONS_append = " swupdate.inc"
->>>>>>>>> +    CIP_IMAGE_OPTIONS_append = " recipes-
->> core/images/swupdate.inc"
->>>>>>>>>
->>>>>>>>>     wic-swu: |
->>>>>>>>>       IMAGE_CLASSES += "squashfs"
->>>>>>>>
->>>>>>>> It would be nice if we could write the options without the full
->>>>>>>> path
->>>> necessary.
->>>>>>>
->>>>>>> Hi Quirin,
->>>>>>>
->>>>>>> This unfortunately does not work, as the options are passed to an
->>>>>>> "include" or
->>>>>> "require" bitbake keyword.
->>>>>>> And by that, we have to comply with the logic of the keyword.
->>>>>>> Or do I miss something, @Jan?
->>>>>>
->>>>>> I suppose the key question is whether you are consuming
->>>>>> CIP_IMAGE_OPTIONS in your own image recipe or via
->>>>>> cip-core/recipes-core/images/cip-core-
->>>>>> image.bb. The latter should work - or are we simply missing a
->>>>>
->>>>> I just consume the CIP_IMAGE_OPTIONS in my image, as the
->>>>> cip-core-image
->>>> also contains "customization", which I do not need in my image.
->>>>> Maybe these should be carved out as well.
->>>>
->>>> Everyone needs customizations in their images - just overload it.
->>>
->>> I dislike the <VAR>_remove pattern that has already spread across layers as
->> upstream layers (including ISAR itself) tend to mix up infrastructure and
->> examples.
->>
->> Nope, I meant implement your own customization recipe - which is what you
->> will do anyway.
->>
->>> And please don't dictate how a downstream user does it's customization.
->>
->> I have seen no layer so far that does not have a customization package.
->>
->>> From a base image, I would never expect to bring any customizations or
->> examples.
->>> If that is the case, I simply don't use it as a base but copy the pattern (which
->> breaks the build here).
->>
->> Anyway, we can define a cip-core-image-base and make the cip-core-image the
->> usable one for cip-core itself (demo, testing etc.). That would also allow to push
->> some parameters out of kas-cip.yml, which is ugly anyway.
-> 
-> Yes, I agree. Setting bb includes via kas felt somehow strange to me.
-> 
->>
->>>
->>>>
->>>>>
->>>>> And whatever ends up in CIP_IMAGE_OPTIONS should be "standalone",
->>>> meaning it should always contain full paths to avoid name conflicts
->>>> with recipes in the downstream layer.
->>>>
->>>> CIP_IMAGE_OPTIONS were so far designed for cip images, that's why it
->>>> has "CIP_IMAGE" in its name.
->>>
->>> Fine, but is CIP a pattern database that users should copy from or a layer to be
->> included?
->>> I vote for the layer and inheritance approach instead of the database.
->>>
->>>>
->>>>> And there should be a bold statement in the docs that downstream
->>>>> layers shall
->>>> use "requires" for including CIP_IMAGE_OPTIONS as missed includes
->>>> lead to weird errors in later steps when assembling the image.
->>>>
->>>> That is that nasty bitbake syntax again - we should fix
->>>> cip-core-image to use "require", rather than misleading "include", to avoid
->> spreading that mistake.
->>>> (And swupdate_2021.11-1+debian-gbp.bb should be fixed as
->>>> well...)
->>>
->>> I don't know if "requires <nothing>" works, but if that works then please
->> switch.
->>>
->>
->> Yes, works equally well.
->>
->>>>
->>>> But the key question remains if we should convert "CIP_IMAGE_OPTIONS"
->>>> to a generic "IMAGE_OPTIONS". I'm not yet sure at which level to do
->>>> the cut and suggest the reuse. Before tuning details, it's likely the
->>>> right time to rethink the overall concept (which I postponed so far).
->>>
->>> IMHO, CIP_IMAGE_OPTIONS is fine as IMAGE_OPTIONS is too generic.
->>> Downstream layers (basically leaves of the inheritance tree) might already use
->> that variable and this might conflict.
->>>
->>> Why not simply fix this include before rethinking the overall concept?
->>> The CIP core layer is pretty easy to integrate into downstream layers, except
->> for this nasty detail.
->>
->> Nope, it's not yet. We have too many ways to consume cip-core downstream
->> already, and that makes me unhappy. I was hoping that things naturally fit, but
->> the way you picked things up showed that they don't.
->>
->> Are you also using the kas option files as-they-are then?
-> 
-> Yes, via includes.
-> But this part is actually not trivial, as you have to include the files in the correct order and play around with the weak assignments, order of layer.conf, local.conf and machine.conf.
-> And unfortunately you cannot patch kas files with kas, so I was not able to patch the paths to the includes.
-> Instead I had to work around by using the following pattern (which is extremely ugly):
-> CIP_IMAGE_OPTIONS_remove = "efibootguard.inc image-uuid.inc swupdate.inc"
-> CIP_IMAGE_OPTIONS_append = " recipes-core/images/efibootguard.inc recipes-core/images
-> 
-> Maybe all that is an antipattern and I should have simply used bitbake to include the recipes directly instead of re-using the kas files from cip.
-> IMO there is too much logic in the kas files which should be shifted to the recipes and toggled via BB variables.
-> But that's something which should be stated in the docs.
+Hello all,
 
-Yes, that's also why I was not using the kas files themselves in
-meta-iot2050. But that one is also not on the latest isar-cip-core
-version yet, so not fully comparable here.
+I've fixed the CI issues we were having when building containers now.
 
-Jan
+So I could test my MR to add risc-v build support [0].
+At the moment I've added a test job that builds the linux-5.10.y-cip kernel=
+ with the risc-v defconfig, and it seems to be working fine [1].
+Builds are using the Debian bullseye gcc-riscv64-linux-gnu toolchain.
 
--- 
-Siemens AG, Technology
-Competence Center Embedded Linux
+Please let me know (ideally in the MR) if you have any feedback before I me=
+rge.
+
+[0] https://gitlab.com/cip-project/cip-testing/linux-cip-ci/-/merge_request=
+s/58
+[1] https://gitlab.com/cip-project/cip-testing/linux-cip-ci/-/jobs/31442973=
+26
+
+Thanks, Chris
 
 
