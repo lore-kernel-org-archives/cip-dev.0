@@ -1,304 +1,163 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <michael.adler@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C89C433F5
-	for <webhook@archiver.kernel.org>; Fri,  7 Oct 2022 11:51:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8842DC43219
+	for <webhook@archiver.kernel.org>; Fri,  7 Oct 2022 11:56:24 +0000 (UTC)
 Received: from EUR04-HE1-obe.outbound.protection.outlook.com
- (EUR04-HE1-obe.outbound.protection.outlook.com [40.107.7.83])
- by mx.groups.io with SMTP id smtpd.web09.3518.1665143462721232594
+ (EUR04-HE1-obe.outbound.protection.outlook.com [40.107.7.40])
+ by mx.groups.io with SMTP id smtpd.web09.3562.1665143778162527499
  for <cip-dev@lists.cip-project.org>;
- Fri, 07 Oct 2022 04:51:04 -0700
+ Fri, 07 Oct 2022 04:56:19 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=pL3ijXyw;
- spf=pass (domain: siemens.com, ip: 40.107.7.83,
- mailfrom: jan.kiszka@siemens.com)
+ dkim=fail reason="body hash did not verify" header.i=@siemens.com
+ header.s=selector2 header.b=jDJJTzJH;
+ spf=pass (domain: siemens.com, ip: 40.107.7.40,
+ mailfrom: michael.adler@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Yxw/yuc3/MFRQVSikVL+a/O/cU8C4ldra7ckRwATSuT4WbxxBE4K7Vr/VXd4Y0ANg+he82id/3BjYt9SpCw5W6zpgVRfA+lyK+zd1f5BTAZLghpUXc3iqjGhdJArkVAE5ekxIlZLleia/uVJCgQH1jooyx9hTgvMIJMzlMBcKPMBgQJGhmiJ6scDv78oyA1AY2EcSvvVcqrb52uakIXvTEypQTK3F2JfWQCQ35/RHulDAQKoTHxdrHjADQOAqRveevsXjIbyP2txheUx+kTO5Zt7I4U6OBRmV/uSqW2CWLtFXx7NirNNj80mK3JlSWAFi+P4XjfRGbH99Tq2BnDVxQ==
+ b=aPIbmSAxs2RVzNsGjc9teGb0yksOzdTZo5deLLgwlP2xJP2hy8vblK7IJ7gbwGlVnbm9wfGii829d/9AsnJRHnJNLY6a0jDF4vcy19OZpCm7lG9Ay/7PnCP44ggni925h18NRA3lEsaG0aVWHhvKnBai4B+Ptoz46zQxwFBrt8lOLzXXHNiz4Pa+lSdZPSP3vMe2lfcvxxGMZuio61FKBgIvD3gQVWrKC+9l/sx/Vuj2aCvFPongQVZ9dE61YTjO174gqpnuvCtEmnqPoT70VhMVvmx6I4Zjq6uopLNGbowhD31WveISm0kKHdA6SMyC8u0GlbYLI+rVF8snV0TlEg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/g5hr0JHQr8wsmUog9GC3HzlutuCMqYYsUMD2Tru7Tw=;
- b=l1htYMGHarDKvt3Lu55ZsP4zrvx+C6U4Ei6D0uVTdRZE1sUWspmn2ibNn75lmOL7p9+AwwNwONg7EZF4/Jblq9/iFW4ws885tDrW2FMQw316ziYP+CygTtn8BPNCJdX0OUOP7xD+8l75f3cVjaRotSngJGuCw1nnJMNsEs6s4wonsT31QHVGmyNWEbpoGyaf43j9eP0Q+9ma66UVwbKHTKpoWFJhQlfcflcYrYbxHK3VsGMoLgst61vdmsAKdXIcL7WMN9vWgZmjel/IqB7/1UYKdw0CGFzFyPWOO6LjnzPhs3e+HKWaSMCunLYImiysTi89sagP4YPiLD/EMJyyoA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.74) smtp.rcpttodomain=lists.cip-project.org
- smtp.mailfrom=siemens.com; dmarc=pass (p=none sp=none pct=100) action=none
- header.from=siemens.com; dkim=none (message not signed); arc=none
+ bh=t/subM4zzNyPnEYEPmrAvqU192h0R0LS4g8hmIHsL64=;
+ b=YhRFPpvtdeGUklOVDO1TVhEWx4Yl8WJ2UYwDk14cveBOPiy2cgMp3i81DnW9CGtPM7QR0cFyNxP3/+CvWypcEYYqQzhXHPMM4jomJuaJscM+tvkWCqIbB0lS5sgcAYja0tGSiWXidy6gphW97Nki8iQyVsWoxdHcatOPia2HsMq6ektIo6LkHdcJJ2QIreyWkQknU5AlvHo09pJHtPC3EgGyvWBdw1qfFruTBmu4c9i+pJopLxzpTRETgLyGySblB/2W1JK1snSYiECmfZbTQMktSde6xoY66NQHc6U5tckob/IHZ4gIeNvze61+o+w2LQbB+vs5tFhKGk9T3y3xGQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/g5hr0JHQr8wsmUog9GC3HzlutuCMqYYsUMD2Tru7Tw=;
- b=pL3ijXywg6yaHfEZKaoBFWmTOxh0N75+dxs4t1WrsyMNT7Ga6QqwKW4bOOk+ZWc69mhVq4SV9ezRoiPHUL4Yk0D4f4Y/mi3ascISdBh/riD5jvCVOeO34P6grXMzjDnUBIa5ZH3pBFlBz3u/iuugkiphXwY7JHE/C0FzEMclZ/6yWwx8SBP3P0f/TKpRgFaJjaNtg2xwljG3f/PerEqe56krgruVWnUJDkkjHXyInRQHBe3R6K+Sb0x+RAC/Bmg2Qh7VxuO8zIjjQplKQne5bxIx+Vk02zRXMHSjv2P5G8EPkvCnnXirpivFkHHI6Er3TEpKPJmpb0JcN6f/LOgDgw==
-Received: from DB6PR0301CA0101.eurprd03.prod.outlook.com (2603:10a6:6:30::48)
- by PAVPR10MB7403.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:31f::19) with
+ bh=t/subM4zzNyPnEYEPmrAvqU192h0R0LS4g8hmIHsL64=;
+ b=jDJJTzJHKXQqwsL7GEgeTzDIYNiOjTd/7Biw9Ma84YiBipE1uJFDCX4u2eNUIWah5MJa+TNwTq0+RGZ1LOb6Dd8tWxgoKUDY0BdFdjgEjyUXrcHoIEXbb3tJI4ZlCsKUPTQ8bCK9mT68UC5qvddahgzRjsMI3UpslDLAI0hfLR5BPVm44ievjS9wxMuO9b+RYTmPcsDbwzKzezviVXHDCvdNbpwHHMvJtGkN4M4j2bichDo4yPs+i4n23whXifTN1j/s2kN9gmXo7tlm9TYMS3Vi9XlD2s9cttZSXd2G1tdnnb69zMeUO/4YpVr3mZBQr7+qESXlGZKOib5vsEvqGg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from PAXPR10MB4734.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:12e::15)
+ by GV2PR10MB6718.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:b6::22) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.23; Fri, 7 Oct
- 2022 11:50:58 +0000
-Received: from DB5EUR01FT045.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:6:30:cafe::2c) by DB6PR0301CA0101.outlook.office365.com
- (2603:10a6:6:30::48) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5654.26 via Frontend
- Transport; Fri, 7 Oct 2022 11:50:58 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.74)
- smtp.mailfrom=siemens.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=siemens.com;
-Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.74 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.74; helo=hybrid.siemens.com; pr=C
-Received: from hybrid.siemens.com (194.138.21.74) by
- DB5EUR01FT045.mail.protection.outlook.com (10.152.4.180) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5709.10 via Frontend Transport; Fri, 7 Oct 2022 11:50:58 +0000
-Received: from DEMCHDC89XA.ad011.siemens.net (139.25.226.103) by
- DEMCHDC8VQA.ad011.siemens.net (194.138.21.74) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.12; Fri, 7 Oct 2022 13:50:57 +0200
-Received: from [139.22.132.91] (139.22.132.91) by
- DEMCHDC89XA.ad011.siemens.net (139.25.226.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.12; Fri, 7 Oct 2022 13:50:56 +0200
-Message-ID: <55fb96d5-6fe9-b8f0-8649-f0c153ffd315@siemens.com>
-Date: Fri, 7 Oct 2022 13:50:54 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: [isar-cip-core][PATCH 1/1] use qualified path for
- CIP_IMAGE_OPTIONS
-Content-Language: en-US
-To: "Moessbauer, Felix (T CED SES-DE)" <felix.moessbauer@siemens.com>,
-	"Gylstorff, Quirin (T CED SES-DE)" <quirin.gylstorff@siemens.com>
-CC: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-References: <20221001045257.441816-1-felix.moessbauer@siemens.com>
- <56f5db40-c995-fc9c-24e3-07fa642443d0@siemens.com>
- <AM9PR10MB486962A4EB295F82550CE2BA895F9@AM9PR10MB4869.EURPRD10.PROD.OUTLOOK.COM>
- <fd47b229-9803-4298-43bf-9924dbd6aa7e@siemens.com>
- <AM9PR10MB4869AFE16C8761F01E5A7C0C895F9@AM9PR10MB4869.EURPRD10.PROD.OUTLOOK.COM>
- <237f4c8f-8f86-bbe2-9c62-d86bc2b1a431@siemens.com>
- <AM9PR10MB4869C618E2D6FDD8C617C101895F9@AM9PR10MB4869.EURPRD10.PROD.OUTLOOK.COM>
-From: Jan Kiszka <jan.kiszka@siemens.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.24; Fri, 7 Oct
+ 2022 11:56:14 +0000
+Received: from PAXPR10MB4734.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::ac6b:22b8:6b19:8ce3]) by PAXPR10MB4734.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::ac6b:22b8:6b19:8ce3%6]) with mapi id 15.20.5676.032; Fri, 7 Oct 2022
+ 11:56:14 +0000
+Date: Fri, 7 Oct 2022 13:56:10 +0200
+From: Michael Adler <michael.adler@siemens.com>
+To: Chris Paterson <Chris.Paterson2@renesas.com>
+CC: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	Pavel Machek <pavel@denx.de>,
+	"alice.ferrazzi@miraclelinux.com" <alice.ferrazzi@miraclelinux.com>
+Subject: Re: [cip-dev] gitlab test failures -- job failed ... pods not found
+Message-ID: <20221007115610.b6pno7i7rslwqeji@backstein>
+References: <20220930105048.GA19081@duo.ucw.cz>
+ <1719A05389EC9CB2.16804@lists.cip-project.org>
+ <TYCPR01MB105888A4C268DD3DE0F5481C9B7569@TYCPR01MB10588.jpnprd01.prod.outlook.com>
+ <20221004075301.etgur4dyb5dtrcct@backstein>
+ <20221006115033.GB21855@duo.ucw.cz>
+ <20221007065754.fysie7e4j2bvrvck@backstein>
+ <TYCPR01MB105886D9FCFBCD0D2338B3037B75F9@TYCPR01MB10588.jpnprd01.prod.outlook.com>
+ <20221007092700.itoos26inn2uz3gt@backstein>
+ <171BBFEDD39FD303.15379@lists.cip-project.org>
+ <TYCPR01MB10588FE1F7EC3378E1C42AA22B75F9@TYCPR01MB10588.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 In-Reply-To: 
- <AM9PR10MB4869C618E2D6FDD8C617C101895F9@AM9PR10MB4869.EURPRD10.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [139.22.132.91]
-X-ClientProxiedBy: DEMCHDC8WAA.ad011.siemens.net (139.25.226.104) To
- DEMCHDC89XA.ad011.siemens.net (139.25.226.103)
-X-TM-AS-Product-Ver: SMEX-14.0.0.3080-8.6.1018-26680.007
-X-TM-AS-Result: No-10--18.722900-8.000000
-X-TMASE-MatchedRID: 2hWRz9pwX005QaOxwNGfvo9bHfxDWoib1xQ2OgXti5VTL5B6BWU2DXg9
-	csuuqcCgfhcIM0AFu8DZTAEszxrPVNDqDhdAJf7mMz3hfWINayt2+9t+1OwlJwdHNpBuxrOoOAq
-	rFEqWlRtR6SMusLeVMEcfsDJ6iUyRpU3N5dEaVONhWgNOVfhPTHoO58JrXBYHPYtUkP6hsHvKIq
-	Aq0jIHivdG7cmuMnEoQBzoPKhLasjF0wMQNKBsD40k3VSs/x5W6FoWuW7WfbznBcjWg41W4FdEE
-	mf6TRVBTJDyHMXec/bG819xxWXqwJqKgfLdQv5CxKmwTS15I7PE678vw19TDw1ZJPghvOynEqfa
-	6mOo3hLtX9Gt3sULEj/21AwfBazEC4OeH1pk+kq0ApT6ZEBmEgTf0tSmYPmnN2lv+25ekmdzmB7
-	1otxffC5SnAtH4tjpzKACX7I5tE7vzFEn8ElXn/RiXwPA6YLBGnqsZ8sRr2KRgPzABkqxIGpiq4
-	KsutXCyPRAwD/3abbD0zVOu+RJh6vwoPy4UoLIsPAy0Qg+1LkDpmiSD/gHb2TJXSYk53OhT5ysQ
-	Dj6eFkqqwCLMi+DvA0hMgLyaDPsFRlxiF1eFJss2HGkJe4cXoir9MqcjAA9JmbrB1j4Xwr4h+uI
-	7dxXxNbeAkxuakSW3dRQwMbAzBN0R/I0f0ywrdJ1eSkdVNzz6JRmxKGXF5XQfyKEYQc1R/z7lvs
-	CT1L8JvSvlpvK74Hjo+A3552ljSvn27+DO/kwtTOrxEGQm4Zw1ghGV72CB54CIKY/Hg3AtOt1of
-	VlaoLUHQeTVDUrIhzhYvkmN3zwjaPj0W1qn0Q7AFczfjr/7Do83XUpo2Iw3dnLgslEKPYWkjL4X
-	MvlAJINGVjmH1GKaRT6FShqOME=
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--18.722900-8.000000
-X-TMASE-Version: SMEX-14.0.0.3080-8.6.1018-26680.007
-X-TM-SNTS-SMTP: 
- EDFDAF0E396177DF191B8C2970DC5B75A9673E43B236CE4CDF076CBBA83BFA662000:8
-X-EOPAttributedMessage: 0
+ <TYCPR01MB10588FE1F7EC3378E1C42AA22B75F9@TYCPR01MB10588.jpnprd01.prod.outlook.com>
+X-ClientProxiedBy: ZR0P278CA0031.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:1c::18) To PAXPR10MB4734.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:102:12e::15)
+MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB5EUR01FT045:EE_|PAVPR10MB7403:EE_
-X-MS-Office365-Filtering-Correlation-Id: 886549df-94f1-4219-714a-08daa85a331b
+X-MS-TrafficTypeDiagnostic: PAXPR10MB4734:EE_|GV2PR10MB6718:EE_
+X-MS-Office365-Filtering-Correlation-Id: f7d598dd-cf09-453c-7039-08daa85aef8b
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	wMiS0ot1i/6bGSyuOda+YDtJq+00c07bcLfFLsuyveISvU4UTfXrp7KDfdZJEyCYpAYHoAv3DfbdU6uGY4uYwFgFi7b3+MS5AcjwFPVDdVDWPhFZXNM7b8VG/55vqS7VXMkKxJtNe9ETVFxaJjhkBPXGntvPwH7VwmxXEy943SJ2Pmsf1lUQw0rRZ9IQp2que2mY15B/5b60IsdMaf5NeaTd7um6Zi+Lh2fed6iWGkE/holnHb5JBsz4cLn4lEQTqwM3UJr+pZIFeZFqsa3fRzwFWQ8kWIicO09fP7SOeu2EX44uyUCZqF1Tgbc6WFJDZuI+ocQEmoZgAShTwgdmnB4XUIaiQ1JOLLCP4l9FJYskZF4BQgWJCNd9KDzN4tGMvKhxl1mrKZi9v/R6cgJSfJSLe0HaC3eOQhISNJjbjV4wgXzFcKsoEwMqbTgwq3+MA692w5T3G9Ug9mOmr8kMe6qREQhHGY9O/F3HKvVap/GCdtsr/tCSjTeofNqufxqX8tyeUaMEMkb22l71SIMyXsE30lse1qonDXV+6CbQiPOpisg8FeR1fht6N/PaoKGC5cUu0pAYPK91bHd2x2ALIJGeZ6begZcCU5OLD8YSd8BzxR2U30gEBJxKhLKuSpZM4byRr0maulQ3/8banOifUGtM33zRMpNSgxs/kSjb390wx21FPJ4Dgaa2spEgXFDhn+nHfLUOdQKciz6iXI8hGyPHtS+5YhJwi5NHsyvlmhhmXMOxCQHe4gKQbqXspTbvmW2GGPNiTR5H2ckwcxyOgMe9dkg9tSoI2LDJwqZFaDla3/AlBJpvO3zHf/kWcZzkUuS5f0SGC+xSFETESd7Ifg==
+	fp86NuQaCOG19vpwJTDBmvksUA4eQNAas56ectGaPP0bqPmInSp3E7sSKT9ewbAUtD/GYS6byYnKPkncd+voVQxgIK03Z4dLu1f0ZObRyORvmmhphtUj7TvQcQJZ+tLCiogBiab+JeFkvQNmlGODyomy8oN7cRy/hAXnCP2117bP4Gl+3FdMwL1Y6L8O4caFDF1BSOp/joOxfKngtwafgAE7RJjcas7W+ewG/K9IWDswedNQX6FyQvFqbZoS7KTX7JkCIy46IcpNTKRPiTr4o9GLs44970RaL7RULjKBvKJA6331OeMNdmt47EJsWyxVxWHwOSDma9Phcxz3VuU4bd7axX8QS5EaaTD/eMDJw3Dx+z4CDUmU6A/yzyNh+fkh6ySjS2zAwONYGQmqcEYzkTYrkgO+v6z4pBqdiqCQGxR30y4bt6AoCmuQZP2i46klxMaKYA8S7CTZmvglWa/7PkImAIfZ92zd3dCz3c9xKbZ2aonshDf/2DQh3SP+byyknMWdtgLZLC/vSb+TSjHM938hWCYNpY6JaqrAiH0FxrmSWM0qwepWtCWs0LYZmax2HSFX85Z3DteCwxgqKuJG8jT+Jz/70SSCp2ZlH1kQI6C4mh2hiRSqqwAEeQWepyKStdkOwumoUtHcPQ9ivdeO7XjIh7d5aKl4wIMr0yg0/4HeEye1UJvHW9Pf/90NG7n7rqSZcZsorvA3xuO/Wsm7iGTQcM31JMxjG17PIvQPD14=
 X-Forefront-Antispam-Report: 
-	CIP:194.138.21.74;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:hybrid.siemens.com;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(376002)(346002)(136003)(396003)(451199015)(36840700001)(40470700004)(46966006)(2906002)(31686004)(8936002)(5660300002)(6706004)(316002)(16576012)(8676002)(70206006)(36860700001)(70586007)(4326008)(110136005)(82310400005)(86362001)(36756003)(336012)(6636002)(41300700001)(31696002)(53546011)(47076005)(83380400001)(478600001)(82960400001)(956004)(16526019)(2616005)(26005)(40480700001)(44832011)(356005)(7596003)(40460700003)(82740400003)(7636003)(186003)(3940600001)(43740500002);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR10MB4734.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230022)(4636009)(7916004)(396003)(366004)(39860400002)(346002)(136003)(376002)(451199015)(54906003)(26005)(82960400001)(44832011)(86362001)(38100700002)(1076003)(186003)(83380400001)(6506007)(6666004)(9686003)(478600001)(6486002)(6512007)(6916009)(316002)(4326008)(8676002)(66946007)(66476007)(66556008)(2906002)(33716001)(8936002)(5660300002)(41300700001)(966005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?HjqWPMS33UTxZOJ0qPtVZdBmbpvsUnCZNfd4tW3Qm0vX6E8AfnyrhFLjQN5Z?=
+ =?us-ascii?Q?MeBctkrBqY8z6ulNi6wur/+K/hhMcRoNqorIROLMp83ayHJytn8xRHRntysv?=
+ =?us-ascii?Q?szqXVfK35ss6e0EzJnhwHhEZEpksFKPMPy3wuaCq831D8Rt3knN40CifYRzY?=
+ =?us-ascii?Q?8d+tq9ojpL4X+7AIPA6mRxDeoVLemRjilEkZsj3z7x8lcvWxSC3pRHoRQVSW?=
+ =?us-ascii?Q?GatrhkjeOvdLItrDaI8ctg53o9WQUlYHIYJDB3b9jdYfC+aO/dtBH2gX6pZJ?=
+ =?us-ascii?Q?Uaf0N+SNoco/5unBuZtNYMW2LKx0KusAZQ7Z/HEkDi66WexeVVvfnODGeLJE?=
+ =?us-ascii?Q?Ga1GMpcrqG+mQ5Rjec5wJrU9IDFx4Ujyz85oDB8/x74eb8a/YeP3q81z/x/C?=
+ =?us-ascii?Q?s0STlODCEAvre4tNydaEteWsTAEeFiPCZ132N9uBg5FGf02f+q6U0C3lTb4W?=
+ =?us-ascii?Q?HMuJjJ7DAyNuszdfYeESuJg7PQB2IHXWyK3U/vfsFipUbDH4PLd+c/tXlYl8?=
+ =?us-ascii?Q?KgyVhDmZxgiRYqXNhVFFCVgCrkK/SxUOw/8aTDjCncGEucBuUQftnRSYe3Zh?=
+ =?us-ascii?Q?U3PosHXHN0ATQjfFiltxYZDH1LAcZDvXacOgZAT8+UCsVWbqEeAG7fM68VpL?=
+ =?us-ascii?Q?kupRLeGjyFfoKSbMmgmlwylrb1/Xsvo0l8Qeux2tbfU9amigf0tTkucYshe0?=
+ =?us-ascii?Q?4lwF7jwejsTMchf285Ul6JzzNXnEEBlkAqPn8jz/twHSL4mzAJWx6/dvlibC?=
+ =?us-ascii?Q?5kkMI/bzwX1Y2rw8MdRCmVvsJo37APpfmpVcyRPfnhn7CjBIMuDmoeW6AmLD?=
+ =?us-ascii?Q?dZriQqVL0eI5jAwRAuUh8gIl7lZQ5Wr0Xz9P5UGkzupFKtH1Io8jqMy7L588?=
+ =?us-ascii?Q?skADLesxMzQnarSoWEZHu5M52e5AVKxBaIWQBnJkEYwleRwHL3+R7c2opq0j?=
+ =?us-ascii?Q?4mBe5k6D0RJPn2eJhbivyJ/z/cgWl2HLPS8pxkjPcdAXV4lKgencqTk6mEz/?=
+ =?us-ascii?Q?kye5VMd6kxF6d4ELoKp5xbACXcTLvQ6o/N16Ga108kpPP3PGNWUdWGYxlNvp?=
+ =?us-ascii?Q?sgGFLBk3RFicNK0Q9rmfNIlgvtLYtEiPAaaGZ8Wl4sRyIAwVGL/2stria9va?=
+ =?us-ascii?Q?ORpod2PNAquW2QmhvxdOJCGa2LDgkYnrhHgx8dOQInaxEZJQNv1Oq1dlU4mZ?=
+ =?us-ascii?Q?GgHuHFRkFkCqnGLAASSWtwX1c4JnTcxeKU6g1MhU+plPkZ/cQ08vtTgrz3AQ?=
+ =?us-ascii?Q?CDOW1GjaDWpe3o6vU8VIBLisCd4WvLSYnJv/DhwXehCN/aA62w65qc6VIPv2?=
+ =?us-ascii?Q?BHr8+r3lnXY1LlvzAJMrYb21JvI1zs8YTdMTBUCGSgMNrif7tfrIxWSpAS4E?=
+ =?us-ascii?Q?xluDFkmTDZ4CYnzbcjqFI9q3D7MiW/QwhHUmTqbf26W06anAxNYhIAG3xdkj?=
+ =?us-ascii?Q?nrNqdAjI2AGYmdJ8JbF3P01KlCawFvmPsLx8PKH4Sh6ElJ+6nvbbqzY/LhXH?=
+ =?us-ascii?Q?OrSUWENRRWnDEYcMeX4cm+Oov+tXvWqSgajMOGB1V/AkmXpn2z5pSxKP6mXe?=
+ =?us-ascii?Q?5+GSNae2PtQlBwjqXfUrfCuWMS63080z5JldX0JLURP1xHfso/jtOmMUBSuM?=
+ =?us-ascii?Q?Gw=3D=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2022 11:50:58.3524
- (UTC)
 X-MS-Exchange-CrossTenant-Network-Message-Id: 
- 886549df-94f1-4219-714a-08daa85a331b
+ f7d598dd-cf09-453c-7039-08daa85aef8b
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR10MB4734.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2022 11:56:14.7168
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
- TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.74];Helo=[hybrid.siemens.com]
-X-MS-Exchange-CrossTenant-AuthSource: 
-	DB5EUR01FT045.eop-EUR01.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAVPR10MB7403
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 
+ XvvaQfQSqHLZAFuZksmVhztqNbHC97hcnNiP8Xakz+qK6aupY+c+co6z3o//70PUgMid69uBNHD7t5smfXuWAKm8zCGV+/X6l+HqbU4LVko=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR10MB6718
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 07 Oct 2022 11:51:04 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9686
+ <cip-dev@lists.cip-project.org>; Fri, 07 Oct 2022 11:56:24 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9687
 
-On 07.10.22 13:25, Moessbauer, Felix (T CED SES-DE) wrote:
->> -----Original Message-----
->> From: Kiszka, Jan (T CED) <jan.kiszka@siemens.com>
->> Sent: Friday, October 7, 2022 6:29 PM
->> To: Moessbauer, Felix (T CED SES-DE) <felix.moessbauer@siemens.com>;
->> Gylstorff, Quirin (T CED SES-DE) <quirin.gylstorff@siemens.com>
->> Cc: cip-dev@lists.cip-project.org
->> Subject: Re: [isar-cip-core][PATCH 1/1] use qualified path for
->> CIP_IMAGE_OPTIONS
->>
->> On 07.10.22 11:40, Moessbauer, Felix (T CED SES-DE) wrote:
->>>> -----Original Message-----
->>>> From: Kiszka, Jan (T CED) <jan.kiszka@siemens.com>
->>>> Sent: Friday, October 7, 2022 5:11 PM
->>>> To: Moessbauer, Felix (T CED SES-DE) <felix.moessbauer@siemens.com>;
->>>> Gylstorff, Quirin (T CED SES-DE) <quirin.gylstorff@siemens.com>
->>>> Cc: cip-dev@lists.cip-project.org
->>>> Subject: Re: [isar-cip-core][PATCH 1/1] use qualified path for
->>>> CIP_IMAGE_OPTIONS
->>>>
->>>> On 07.10.22 10:53, Moessbauer, Felix (T CED SES-DE) wrote:
->>>>>> -----Original Message-----
->>>>>> From: Gylstorff, Quirin (T CED SES-DE)
->>>>>> <quirin.gylstorff@siemens.com>
->>>>>> Sent: Friday, October 7, 2022 4:08 PM
->>>>>> To: Moessbauer, Felix (T CED SES-DE)
->>>>>> <felix.moessbauer@siemens.com>;
->>>>>> cip- dev@lists.cip-project.org; Kiszka, Jan (T CED)
->>>>>> <jan.kiszka@siemens.com>
->>>>>> Subject: Re: [isar-cip-core][PATCH 1/1] use qualified path for
->>>>>> CIP_IMAGE_OPTIONS
->>>>>>
->>>>>>
->>>>>>
->>>>>> On 10/1/22 06:52, Felix Moessbauer wrote:
->>>>>>> When using the cip-core layer in another layer that has a slightly
->>>>>>> different directory structure, bitbake is not able to resolve the
->>>>>>> included files.
->>>>>>>
->>>>>>> To fix this, we simply add the full path to the file so bitbake is
->>>>>>> able to locate it independent of the downstream layer configuration.
->>>>>>>
->>>>>>> Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
->>>>>>> ---
->>>>>>>   kas/opt/ebg-swu.yml  | 2 +-
->>>>>>>   kas/opt/swupdate.yml | 2 +-
->>>>>>>   2 files changed, 2 insertions(+), 2 deletions(-)
->>>>>>>
->>>>>>> diff --git a/kas/opt/ebg-swu.yml b/kas/opt/ebg-swu.yml index
->>>>>>> 8b3ffec..78227f1 100644
->>>>>>> --- a/kas/opt/ebg-swu.yml
->>>>>>> +++ b/kas/opt/ebg-swu.yml
->>>>>>> @@ -20,7 +20,7 @@ local_conf_header:
->>>>>>>       SWUPDATE_BOOTLOADER = "efibootguard"
->>>>>>>       IMAGE_INSTALL_remove = "u-boot-script"
->>>>>>>     ebg_swu_image_options: |
->>>>>>> -    CIP_IMAGE_OPTIONS_append = " efibootguard.inc image-uuid.inc"
->>>>>>> +    CIP_IMAGE_OPTIONS_append = "
->>>>>>> + recipes-core/images/efibootguard.inc
->>>>>> recipes-core/images/image-uuid.inc"
->>>>>>>     initramfs: |
->>>>>>>       INITRAMFS_INSTALL_append = " initramfs-abrootfs-hook"
->>>>>>>     firmware-binaries: |
->>>>>>> diff --git a/kas/opt/swupdate.yml b/kas/opt/swupdate.yml index
->>>>>>> 8ba03c9..e32ce20 100644
->>>>>>> --- a/kas/opt/swupdate.yml
->>>>>>> +++ b/kas/opt/swupdate.yml
->>>>>>> @@ -16,7 +16,7 @@ header:
->>>>>>>
->>>>>>>   local_conf_header:
->>>>>>>     image-option-swupdate: |
->>>>>>> -    CIP_IMAGE_OPTIONS_append = " swupdate.inc"
->>>>>>> +    CIP_IMAGE_OPTIONS_append = " recipes-core/images/swupdate.inc"
->>>>>>>
->>>>>>>     wic-swu: |
->>>>>>>       IMAGE_CLASSES += "squashfs"
->>>>>>
->>>>>> It would be nice if we could write the options without the full path
->> necessary.
->>>>>
->>>>> Hi Quirin,
->>>>>
->>>>> This unfortunately does not work, as the options are passed to an
->>>>> "include" or
->>>> "require" bitbake keyword.
->>>>> And by that, we have to comply with the logic of the keyword.
->>>>> Or do I miss something, @Jan?
->>>>
->>>> I suppose the key question is whether you are consuming
->>>> CIP_IMAGE_OPTIONS in your own image recipe or via
->>>> cip-core/recipes-core/images/cip-core-
->>>> image.bb. The latter should work - or are we simply missing a
->>>
->>> I just consume the CIP_IMAGE_OPTIONS in my image, as the cip-core-image
->> also contains "customization", which I do not need in my image.
->>> Maybe these should be carved out as well.
->>
->> Everyone needs customizations in their images - just overload it.
-> 
-> I dislike the <VAR>_remove pattern that has already spread across layers as upstream layers (including ISAR itself) tend to mix up infrastructure and examples.
 
-Nope, I meant implement your own customization recipe - which is what
-you will do anyway.
+> And indeed it seems to work fine:
+> https://gitlab.com/cip-project/cip-testing/linux-cip-ci/-/jobs/3141334688
 
-> And please don't dictate how a downstream user does it's customization.
+Good! Using shared runners saves us money as well. Is the performance good =
+enough? If that's the case, I'd suggest to
+use them permanently.
 
-I have seen no layer so far that does not have a customization package.
+> Working version from above is gitlab-runner 15.4.0~beta.5.gdefc7017 (defc=
+7017).
 
-> From a base image, I would never expect to bring any customizations or examples.
-> If that is the case, I simply don't use it as a base but copy the pattern (which breaks the build here).
+Hmm, that's a bit older than the latest released version (tag v15.4.0). I w=
+onder why they haven't upgraded from beta 5 to the
+final version? Seems kinda odd, I would have guessed that Gitlab does CI/CD=
+. Anyhow, I have upgraded to the officially
+released version (and will purge the 15.2.0 runners once they are idle). Co=
+uld you give this another try, Chris?
 
-Anyway, we can define a cip-core-image-base and make the cip-core-image
-the usable one for cip-core itself (demo, testing etc.). That would also
-allow to push some parameters out of kas-cip.yml, which is ugly anyway.
+Kind Regards,
+  Michael
 
-> 
->>
->>>
->>> And whatever ends up in CIP_IMAGE_OPTIONS should be "standalone",
->> meaning it should always contain full paths to avoid name conflicts with recipes
->> in the downstream layer.
->>
->> CIP_IMAGE_OPTIONS were so far designed for cip images, that's why it has
->> "CIP_IMAGE" in its name.
-> 
-> Fine, but is CIP a pattern database that users should copy from or a layer to be included?
-> I vote for the layer and inheritance approach instead of the database.
-> 
->>
->>> And there should be a bold statement in the docs that downstream layers shall
->> use "requires" for including CIP_IMAGE_OPTIONS as missed includes lead to
->> weird errors in later steps when assembling the image.
->>
->> That is that nasty bitbake syntax again - we should fix cip-core-image to use
->> "require", rather than misleading "include", to avoid spreading that mistake.
->> (And swupdate_2021.11-1+debian-gbp.bb should be fixed as
->> well...)
-> 
-> I don't know if "requires <nothing>" works, but if that works then please switch.
-> 
+--=20
+Michael Adler
 
-Yes, works equally well.
+Siemens AG
+T CED SES-DE
+Otto-Hahn-Ring 6
+81739 M=FCnchen, Deutschland
 
->>
->> But the key question remains if we should convert "CIP_IMAGE_OPTIONS" to a
->> generic "IMAGE_OPTIONS". I'm not yet sure at which level to do the cut and
->> suggest the reuse. Before tuning details, it's likely the right time to rethink the
->> overall concept (which I postponed so far).
-> 
-> IMHO, CIP_IMAGE_OPTIONS is fine as IMAGE_OPTIONS is too generic.
-> Downstream layers (basically leaves of the inheritance tree) might already use that variable and this might conflict.
-> 
-> Why not simply fix this include before rethinking the overall concept?
-> The CIP core layer is pretty easy to integrate into downstream layers, except for this nasty detail.
-
-Nope, it's not yet. We have too many ways to consume cip-core downstream
-already, and that makes me unhappy. I was hoping that things naturally
-fit, but the way you picked things up showed that they don't.
-
-Are you also using the kas option files as-they-are then?
-
-Jan
-
--- 
-Siemens AG, Technology
-Competence Center Embedded Linux
-
+Siemens Aktiengesellschaft: Vorsitzender des Aufsichtsrats: Jim Hagemann Sn=
+abe; Vorstand: Roland Busch, Vorsitzender; Klaus Helmrich, Cedrik Neike, Ma=
+tthias Rebellius, Ralf P. Thomas, Judith Wiese; Sitz der Gesellschaft: Berl=
+in und M=FCnchen, Deutschland; Registergericht: Berlin-Charlottenburg, HRB =
+12300, M=FCnchen, HRB 6684; WEEE-Reg.-Nr. DE 23691322
 
