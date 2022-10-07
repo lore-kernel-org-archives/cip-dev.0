@@ -2,53 +2,53 @@ Return-Path: <chris.paterson2@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C78F5C433F5
-	for <webhook@archiver.kernel.org>; Fri,  7 Oct 2022 09:38:43 +0000 (UTC)
-Received: from JPN01-OS0-obe.outbound.protection.outlook.com
- (JPN01-OS0-obe.outbound.protection.outlook.com [40.107.113.120])
- by mx.groups.io with SMTP id smtpd.web11.2663.1665135514059237490
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED423C433FE
+	for <webhook@archiver.kernel.org>; Fri,  7 Oct 2022 10:01:13 +0000 (UTC)
+Received: from JPN01-TYC-obe.outbound.protection.outlook.com
+ (JPN01-TYC-obe.outbound.protection.outlook.com [40.107.114.128])
+ by mx.groups.io with SMTP id smtpd.web11.2790.1665136870976583529
  for <cip-dev@lists.cip-project.org>;
- Fri, 07 Oct 2022 02:38:35 -0700
+ Fri, 07 Oct 2022 03:01:11 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@renesas.com header.s=selector1 header.b=Tt7MldwI;
- spf=pass (domain: renesas.com, ip: 40.107.113.120,
+ dkim=pass header.i=@renesas.com header.s=selector1 header.b=g6S2jBca;
+ spf=pass (domain: renesas.com, ip: 40.107.114.128,
  mailfrom: chris.paterson2@renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kRYy9tX9EPeQcEaTox1yV4f8XuINYRmi428ISdIgx1jDpyn4UwU88g44U17sli2BJQ7/Suz7VMcvMAI5tJwioWIcz52tVIjgXdcLNYbl7+aq/StAxa7o6mQ5nVkIpiScm0kIieIZ4on5JIoYB6NtkbI95VH9JZjmBEX9yoTXHybhNlNOTDZpG4gsWJAb99E+CZTyKPz2zhNR/lXaB1tzksB+4sgKKaesSo0KNjKyZ/J3l1BmOOjZJ4QG52Q42P2gMTMM8q2cigeQg+BNJAt73LdF5DoVJA4DO0kQE0uLD12bgdiomswlpWovF+ydz5G1TaolHNz/3oLcs1E5WLKtqw==
+ b=NAfviKhmqEPlBuR+/Krc4eFP/m7H7zJYZGxe5/nJeS2ExpHmWpGQPV56ghQA7iJyEvXscLY7KuPER7+Q2vweFvQobU5NCrugX3NJpJBDyQXLrbtdFFbP3NMum7TzMPZCeqx7eNM3oq9qEjlE76800TUJ1bB/LcAFYBQ8arYKj9cN/EMK+eWzvrbj9M6d9v5V7sWuWPwv3h+BL4zM4fpqsj85Rah63DfgmZnomxMAC4MafsV65QxQBDEoyVbYgOQ1tbaENMaTkYGCk7JhLX6RmldWyLO9Z7Z25rlBynJwe7PhGXj0WRj1XqbhDElP6odqlSUXTRAXuPfqugv0ljSkIw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aIGXmyThsqX8Q5bPkR2wMrxflKhcGi2f8Z6e+LMYwLA=;
- b=llKof8H+YlcMzM6fqGtV+/XjI+JWNJdHBcx9393I87F877gbfWW93x8TDA0RYu5WXZj7656iQHySEtsJVfdwAv1hpFGXeB7FetNFpZ03l3JgY8aGPec8K8rOGJkpuV3Q3mD+0Hry5ohYrequ19sBFFv5fLOCJH2iT+IIS1hYOB6QP9IwY3PX4+Wqf6ng2ZqMGq3l2smahcA9v60pMtT7mCxa4O/7KZLHBrFH9+V3r/gh9st/AH2dQt1Vx4Mj5sQPVOzxTACWZONzM6xJYLd5ZknH41eWcbj0T5Fky85n3sedeG2yrsQ5vCD0rRfNRoJYeRiHdu2rBxTCyTWUQwZZ6g==
+ bh=wCvPKNih56k833an+St+cHTKFG1ibCXGlg1WjsTXDGM=;
+ b=HDN2lq20/d7ueg5v4FRloGlFTgs31TAS3401jlmTjZAOnL12b6h03m7L7Bbq0+OzRz88i695DOBxC1qGtjslCa5yxXjecKz3sNMiQL/bzVG6Fo6Rzg0bvW+19TnHbZF3CMQYgLMSN+ZEYzK6roeWFaYs15Awyw3fHY0uV7V7/YRhC9rRt1YaJWcMpKTKw6EEZ1wq4w7E52xNXVkldeX0gFx3XZm38IkNE85UfgN0WpCuIT7RY12ak2++x5RW0ZHGzRLp146RJsrnELd4SFAP3FlVAVYLAm3WkvCWfJ/nzVJoo989RihCWAxE+tMHdBygYtYKow48W4elFilIzlJzag==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
  dkim=pass header.d=renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aIGXmyThsqX8Q5bPkR2wMrxflKhcGi2f8Z6e+LMYwLA=;
- b=Tt7MldwI8r/ZXQePZWuHqew8p3cAgtmamOt/z1ff4h9olvhWpdPh/XUX3MEbliHnaBj7WO3agWvH8muy25zZIy4Ud++4b3N0XpgcUTOGEJY1aUeeYld/ZVC9gFA9m5AUdWogIhRRSidD66ARmCb3UGhPnJv+K/MMNRpKE0bb1bc=
+ bh=wCvPKNih56k833an+St+cHTKFG1ibCXGlg1WjsTXDGM=;
+ b=g6S2jBcaPyJRwkfaMNGmjjUbG1jq5pqhgq1KjAFwMbgslmwdqU+vgoJQGLCIvgYK5Y+4FnsQ9FuvNa2jGPurtDRld7rge7JDQ/btr0cyUpfXd05jPhCuRcj5yWJZeaLDLQAMNDy1QTubEL0/UYD/nv+UF1I/XcIwN2O2fmFrVzk=
 Received: from TYCPR01MB10588.jpnprd01.prod.outlook.com (2603:1096:400:309::8)
- by TYAPR01MB6060.jpnprd01.prod.outlook.com (2603:1096:402:34::8) with
+ by TY3PR01MB10015.jpnprd01.prod.outlook.com (2603:1096:400:1dc::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.32; Fri, 7 Oct
- 2022 09:38:30 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.34; Fri, 7 Oct
+ 2022 10:01:06 +0000
 Received: from TYCPR01MB10588.jpnprd01.prod.outlook.com
  ([fe80::f7f4:7059:2c92:75ab]) by TYCPR01MB10588.jpnprd01.prod.outlook.com
  ([fe80::f7f4:7059:2c92:75ab%6]) with mapi id 15.20.5676.039; Fri, 7 Oct 2022
- 09:38:30 +0000
+ 10:01:06 +0000
 From: Chris Paterson <Chris.Paterson2@renesas.com>
-To: Michael Adler <michael.adler@siemens.com>
-CC: Pavel Machek <pavel@denx.de>, "cip-dev@lists.cip-project.org"
-	<cip-dev@lists.cip-project.org>, "alice.ferrazzi@miraclelinux.com"
+To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>, Michael
+ Adler <michael.adler@siemens.com>
+CC: Pavel Machek <pavel@denx.de>, "alice.ferrazzi@miraclelinux.com"
 	<alice.ferrazzi@miraclelinux.com>
 Subject: RE: [cip-dev] gitlab test failures -- job failed ... pods not found
 Thread-Topic: [cip-dev] gitlab test failures -- job failed ... pods not found
 Thread-Index: 
- AQHY1LqD736Cemy9y0G88cTlOE3pAK331CBwgAAI/2CABgYSgIADZwiAgAFAkACAABeR8IAAEhgAgAABeBA=
-Date: Fri, 7 Oct 2022 09:38:30 +0000
+ AQHY1LqD736Cemy9y0G88cTlOE3pAK331CBwgAAI/2CABgYSgIADZwiAgAFAkACAABeR8IAAEhgAgAABeBCAAAahYA==
+Date: Fri, 7 Oct 2022 10:01:06 +0000
 Message-ID: 
- <TYCPR01MB10588E92EA6072E454DE9C603B75F9@TYCPR01MB10588.jpnprd01.prod.outlook.com>
+ <TYCPR01MB10588FE1F7EC3378E1C42AA22B75F9@TYCPR01MB10588.jpnprd01.prod.outlook.com>
 References: <20220930105048.GA19081@duo.ucw.cz>
  <1719A05389EC9CB2.16804@lists.cip-project.org>
  <TYCPR01MB105888A4C268DD3DE0F5481C9B7569@TYCPR01MB10588.jpnprd01.prod.outlook.com>
@@ -57,7 +57,8 @@ References: <20220930105048.GA19081@duo.ucw.cz>
  <20221007065754.fysie7e4j2bvrvck@backstein>
  <TYCPR01MB105886D9FCFBCD0D2338B3037B75F9@TYCPR01MB10588.jpnprd01.prod.outlook.com>
  <20221007092700.itoos26inn2uz3gt@backstein>
-In-Reply-To: <20221007092700.itoos26inn2uz3gt@backstein>
+ <171BBFEDD39FD303.15379@lists.cip-project.org>
+In-Reply-To: <171BBFEDD39FD303.15379@lists.cip-project.org>
 Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -65,46 +66,46 @@ X-MS-TNEF-Correlator:
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=renesas.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYCPR01MB10588:EE_|TYAPR01MB6060:EE_
-x-ms-office365-filtering-correlation-id: eca0468d-93b3-4997-7d09-08daa847b186
+x-ms-traffictypediagnostic: TYCPR01MB10588:EE_|TY3PR01MB10015:EE_
+x-ms-office365-filtering-correlation-id: ed979c05-68b9-43bd-5eb8-08daa84ada0b
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
 x-microsoft-antispam-message-info: 
- uC0Fz8RoeYU7bDeB0jtdWsG0skQqd0kv3jyM+Fdd9F7jOrL8dRHVMA/PyEHvFrzlWR7XMKOaii5citcgPUKnqhKR5bu+AOL1xcrRJV9PSoVXikhVw5jkDWuJCkpJqBendz0Zj/vwoAJZfrRyc795I+6d+sEFVJ+M2otDZ3w0qzKLE1eFRkbEexy3uCtScDILqk8m5/ZctedxVT4yDiMMHOLfrKrHBD6i5JCgKD8Fmb/T9/piUoE0UOIuYkVm0saNfbtKq/wHUybQJucCDYuP56XCzHj7fHiW8i/0ba6GMBdBzRfVzMwY1L9xM4sq+8/XxzBQerd94T78hO7m+LaF6Eyp6XCIFmKBtKY2rT3EvXsV2gZ5NA8OpeTVsx+t5plLl97ldxAmR/Vuy/F4pciafNCrl9IZoIUQ8ceiGLB3N4yQGzyBk0nm7kKmr0XyLO/718VOK65GBrhlBo9YBTN1ayLkX+6FPyOe6EmhI7XTvErBpnPqH+XuGGym7Scp73LQGV9oURikiOuBQIKxy44JAPlxAiLgRcWr0cz7/zOSuTyd2l02Zr1JT+LuJzcaSLyvvvXck57wA4JMRCPxYqgHhZ9ItTfCg1rGJXXYty3QEoVqcPKG++sNkS3VSgvbSfyQdRYF9mhZkMJVSPFX6zNlLmOfyWA6iIW9WmQT7FJ44qH9JfYy4uO1YrwnLqA4TyolYV500mui0DUco/B5xjNIZLXSV36ndQEhqzGDf5Z9VF5YPhbIvCJ0/jjukW8HHQw+x/jbR/s8TxYlRdKQPMg4vA==
+ ZoIhBI5utG4yyIZn11609iFI5cJ/Yx1Covy8sbYAqXPjglDbo7smg2m3YtjBLs9/JzZFQYtFsbG6j8zsy9cZXonD9U3pIptAJKHmD5XjrUJL8IrUJ+Z6qak2SJ1JBRq6cfeIfJ+V7K/gzAFec3vHzcxAX500z1HR6Nuv0hcjXU19ox0NjAKu2coyitbbN6w4xGFPcMg0NJNU+nGUeTIXotu4z0YRxX39uyguxNJHIdO4SLtQKZLqWDCi7A5zKrHhDegzoM1nhQr7BxFTvaHjzA08rL6/wJvN+G9c5ODo1i94plvnltbrsgpF4PC0Y34z34BjJcsnZ5UfwYzcZd52FqGgTHlUzZSEKvNKbbrgJIgUS7oI5YfFfY1ICgWmyCzboYHTaI5/hiT6sCbvRK0LcTO7t23hs25OY/Jv9hxKAN0V7ylyN7tEzLO+j7Pq1XsZcdeFrwhUymQ2Wod4EcJdghuT2b/vOzXQXFHxgHLL0neehUUkQixdxOV2aZhS5T1TEarc70kfM2QYad/jE0VqJzNQ7O+k8yZxJrrwua8r+NR9/ANpEtnYS/0eDZb+36WYJA7NuKiJVeMLiJiwPpqLdg75EtZQdv2603TkH3TSRzdA9b47EJyPrjSQILR3Abfp+eAir2LbEze6HbJnF6TbKiAw+A3mnOa9FEdrzi/M6EDT9Rl7OYdVkXPbq7mFg5aqbnFkD8eCZsV4kDqHssZmvBVxj5LXEMiEFo/RGGfqqB3izHzZRNdQSb75cD6BgJeQlETdROSkfEJfVAtawahNyckvw0J9IuuklVOxG6zx4PA=
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10588.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(366004)(376002)(39860400002)(346002)(396003)(136003)(451199015)(2906002)(52536014)(6916009)(5660300002)(54906003)(8676002)(33656002)(66946007)(76116006)(86362001)(38070700005)(41300700001)(66476007)(64756008)(4326008)(8936002)(66446008)(71200400001)(66556008)(26005)(316002)(186003)(38100700002)(7696005)(9686003)(6506007)(55016003)(478600001)(122000001);DIR:OUT;SFP:1102;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10588.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(136003)(346002)(376002)(39860400002)(396003)(366004)(451199015)(966005)(55016003)(26005)(7696005)(9686003)(6506007)(122000001)(38100700002)(186003)(8936002)(33656002)(38070700005)(5660300002)(52536014)(2906002)(86362001)(41300700001)(66476007)(71200400001)(76116006)(66446008)(66946007)(316002)(4326008)(110136005)(8676002)(64756008)(54906003)(478600001)(66556008);DIR:OUT;SFP:1102;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?Windows-1252?Q?lpR+tcS8jChr+S+F9Pd4zrYPhyO8VpgflDJBeu87bw0WupFEB/fB48G8?=
- =?Windows-1252?Q?lJdTzJG3F9grwaHppPM+uSEdx8FMxMGvcHI5mpfsaDCiSeg5NOSdoCyk?=
- =?Windows-1252?Q?E83y0nAZSfkRvK60UaqogqXPoh7Jsc4B1T+GBN65bSIHPLXrLmjHKJDq?=
- =?Windows-1252?Q?cZrFiFSgIVJLzvqD+uXsDtJDtd9XQ1C7IML7UE6rcUJ5VBkeJii8It6W?=
- =?Windows-1252?Q?xjf2v6UpRcn9SSivtkEHIglM711mdWfUWQcJRHQuGsjxSq/kn4YmYK8T?=
- =?Windows-1252?Q?Z4YesOR0KUGj6e20KXM7crqGNPJiyADuYXRZZjs1EyIheMdmvYkOTo3b?=
- =?Windows-1252?Q?z8AnRphOOLiAX8SSrkyLdXGc0NHebXTAmhYPQVQCgLLz57+RBIo9j6xX?=
- =?Windows-1252?Q?NzKDpAwmVkO5LM4djG6i/FjQByC4jEa3L1EyghR5c+qW/4zjx8Dj7BfR?=
- =?Windows-1252?Q?Of7NEHz/ckZsOUGTWFGtFId0iJoR5jDFdX2y1t8vOOX2JzGb/va1aGAr?=
- =?Windows-1252?Q?BPG8kObpufDVLFk+cx9gRWhqG6eC7BU32eQT741wRf/OaqkDobhPq1Og?=
- =?Windows-1252?Q?hbSGRsIvnIWA+EUWn582bFaX2DlaEjbU70IL5Fhie281R5HBUFlYY3fe?=
- =?Windows-1252?Q?/RAVjrJx9YDEOY4IhMEeiHEHlwacT7pRF7PqfMC4keA3ZVVeF+uovf6i?=
- =?Windows-1252?Q?c/XRIvBZIDwxwrt4X0RlHsNOkGeib9XSOT7H1nc4xdq+bUJ/SYh4kx72?=
- =?Windows-1252?Q?r5F35YXm8gHwr3rSn1pWWTc/1sAE9BKYGQirrGqwBOMbWNCRpVhA6LEx?=
- =?Windows-1252?Q?tUfVjqYlMNZb0iJtDxKuoS3JdocQz1/UiFTacqVaCLncWLF2yFMpnKEw?=
- =?Windows-1252?Q?pSkn4U3E1dzHBpTy9wPNYDJWQZCYxc9EV0FdSoYXbuLjQ8z/8Aofgba9?=
- =?Windows-1252?Q?f8xhLwfe4RXdsmRRLU9B6bAklGR+jzW3dWpEt7pM181Y7eTIq92bLz1f?=
- =?Windows-1252?Q?1u4gcgKw5IMzKN4ivGtMhlhwexjveiVxA8mXIecHKNCh6Rb3460kgNMv?=
- =?Windows-1252?Q?o1tivBSBcFylPo4kmfoUrmTALVSFdoypjbayJ+QIXKnThGCo8MZqhMgJ?=
- =?Windows-1252?Q?kFDjEpoiMzRZSoXipD1Gg27PVuHsiokziizfLbxFK6j/mlhgwNYFg7Ha?=
- =?Windows-1252?Q?Ev0VoecV4E18GKqHVdTkdfetbrFaSU7+rCoHUB+gYFO5TGtLGD7FIjiQ?=
- =?Windows-1252?Q?hkNPbFYdeHofx9Favu5TzODYxiHnWN7W2oMT3RC2Y+c+UbT4v+255n0V?=
- =?Windows-1252?Q?HHPuKhg4S2M7Qwy2HCNsY+24bboa445HDbpU7+1NVGO3vm5Q2/Bl7BEx?=
- =?Windows-1252?Q?bScTA2C1b1wId4PheMwakE3Kh4JUxbAV2K1/o0VAn8ewntxOXt3sIwhD?=
- =?Windows-1252?Q?imYVJPi0+u0zaxKL1iu+YHtNEpnkz11ZC3d1q+YjJRT6swhrLE5v368I?=
- =?Windows-1252?Q?JwB2e6BKXuQbeIs2TCRZKrjdcIwm5ZLc9DBOXIVDmNKHbdO+64dd9d3/?=
- =?Windows-1252?Q?Q6pX/AWF2UsdPkAGHN490WHVxqwHcHmR2Nyi/jnjcg5qHeWtikxRAm85?=
- =?Windows-1252?Q?L8TekkO48R2lavPvAf5IOCgmqYlSWRdaAsqMe1LfNNLCbPHFudfIPjI5?=
- =?Windows-1252?Q?UK9h4XBPoxaoGx//EhYdn+nQxmfPvfA07izRtlXfb0MQfthL1hZCmQ?=
+ =?Windows-1252?Q?smghQmeNA/910fKlBuzVXhRX0Tb/NRVFSUqIO4sg+YRa64pVD9fCb40l?=
+ =?Windows-1252?Q?6M4icuHg1P2cgIUpnvQH8Py8vtR3w6iaT3DBjGd5izlDCQ+IOVVA2Q0R?=
+ =?Windows-1252?Q?fjEhitDc60sEG6cjeqtN7WAJPMBQxyvQgVQCzUIVTYp+wWdZQi7mbkDr?=
+ =?Windows-1252?Q?Vd6PphdnICgmosHS6eMEkgbQl5j6l7F0xsSED3U3G3xQAZ+C3ioPzYyM?=
+ =?Windows-1252?Q?O5PgdKK/7fPGQ0CTn4fk4y7k+L9Lc38Q94sm2r5sG4CO9o/1N32HZKDE?=
+ =?Windows-1252?Q?F2eDGWvZdlkRcvqr+LBuvWOoblxmbPE58FDwf9/gobob2x2TlKOsdAh2?=
+ =?Windows-1252?Q?b2ktu6b3lGTcZT4xijHNJMAHZdLuyZ98c29muH9DOJOZfsHhquWNUwZW?=
+ =?Windows-1252?Q?+YPHT3evXsubRBQbYc0/jNQjViwKHaInv3bYoS11E3o3sYET8NrJdKpf?=
+ =?Windows-1252?Q?LtsWHtpVeDqjUllqVrjzGb3NBsUbbp1qeoJc4yDmCFnbJBpbip10ZIf2?=
+ =?Windows-1252?Q?vKg3wYOObCb5FuXyAzbaSrYwFiXizMggxgstMPiPmzceJX6jzlH5sxXZ?=
+ =?Windows-1252?Q?IC1c86DDssXIk2pHIU91+9u2y96wL6SUWy2J55xzHouqvghiZ0nAqnF5?=
+ =?Windows-1252?Q?pgtaNuPm40Elt9rJYehmPJ4W5n2ysO55VLgZBx4Yn4yKLN+xiYr7wx9B?=
+ =?Windows-1252?Q?g+k3hpaw/GVfJnahEifsBuGdm+kmXla4PUznFtKmNc2MayrUssDyfGwq?=
+ =?Windows-1252?Q?DMaBGwJDE0Dyqx+uiDRcp68G+rUyrQgJVxZO9L3tVuWVkW8Yhy21SCvL?=
+ =?Windows-1252?Q?uptw3It6tUipt/wy9VmBl29ufgw/U2a9g1JN0P8wQF7Tf6jXMb4lMKZF?=
+ =?Windows-1252?Q?a3hOOFabj6bTonSxH5rY4eJ1+xa0dgrdU/TwY8VCKzsoGbBvp+yU+BXi?=
+ =?Windows-1252?Q?fB7hiPfyHCE5G7ckovW9yAKMOLQT3doBhMtvJxZ+/w2mk9wOkOgqBUKh?=
+ =?Windows-1252?Q?Pa1ysPQBLOleJOHlYA7VxF4dziDRDCRVYucnREvLiNw45RYlmILTa0Gf?=
+ =?Windows-1252?Q?zg4vLUHBnjdAHvjnEOGALowitlpB85F843vGgm2nl3J5GNs9Hzdh1K7U?=
+ =?Windows-1252?Q?thzz2oHr6SWfbjOSR9ADMZa3+sin3U7P0OIv1tDCU7uYL+mDHqL2sj/8?=
+ =?Windows-1252?Q?/9uEDrWzqyobbBFxpkaWtkmHVqHG4nMeBXhnzWZU0KYhjoV2ZILk1gKt?=
+ =?Windows-1252?Q?GOAYjh80DTYBfaRVex58StRPVoOCCPTUitpIn7ex6Y3q2Ef4pCORgDXr?=
+ =?Windows-1252?Q?OV607T1oknSB3wNyVQvZ/Wz9O3oM82JCjtoEmwpMv93eBV554gQqCISn?=
+ =?Windows-1252?Q?uk0++VdTxEWv8WfNpF/DAcu8kX7ekVN+7+e+h9Nr19o3l13LO0yDBiVH?=
+ =?Windows-1252?Q?e9/j7/6hnmwAw8o5hkll1Jggj/jyTiCJB8uuVyx9jeYy23Hw+Zbe/GX2?=
+ =?Windows-1252?Q?9YMzPZRSoyw8B3YUeedQsOhw3UhjWloalf1xx7lefP1JIVftBew8vnpH?=
+ =?Windows-1252?Q?baRZdzseGWoCjFsno7ZxaxfHC2p6APvVgiIRGOOnrHlb2Y3bAP9X0HOg?=
+ =?Windows-1252?Q?f65B8FrB+vTKm1ov7Y7v//Z96k/uwD4+itJf86jhnyP2tyfCmTLsgXeT?=
+ =?Windows-1252?Q?hOvNe2+kq9d0dLzLaXr9Tv+ivJMnocI0sBzGYWfhBmMv0agSE7k/tg?=
  =?Windows-1252?Q?=3D=3D?=
 Content-Type: text/plain; charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
@@ -113,64 +114,84 @@ X-OriginatorOrg: renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10588.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-Network-Message-Id: 
- eca0468d-93b3-4997-7d09-08daa847b186
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Oct 2022 09:38:30.0247
+ ed979c05-68b9-43bd-5eb8-08daa84ada0b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Oct 2022 10:01:06.5414
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
 X-MS-Exchange-CrossTenant-userprincipalname: 
- FeFfUZ+FN+7T3nsX7MeGBeqpmmMakSJPLAk/boZZXEvl3ElYFWTfU+b5RFN5es2aV3AOful7RPQPqaU7UkIR/kxl00oQyYLuNY0H4buveW8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB6060
+ EO6slzW1m/52MbAiXciDSWA2yr2QNyyL829jaO8ODmiM0fOHmtxvEYjDaa+gPHyBYyjo40irtiz1IwN2H5PmecBonsFSwIuIOum6TpiDgpo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB10015
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 07 Oct 2022 09:38:43 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9674
+ <cip-dev@lists.cip-project.org>; Fri, 07 Oct 2022 10:01:13 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9675
 
-Hello,
-
-> From: Michael Adler <michael.adler@siemens.com>
-> Sent: 07 October 2022 10:27
+> From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On
+> Behalf Of Chris Paterson via lists.cip-project.org
+> Sent: 07 October 2022 10:39
 >=20
-> > We need to find some sort of solution for building our CI build contain=
-ers.
+> Hello,
 >=20
-> Why not use the shared runners provided by Gitlab? Apparently, there's
-> even a dind capable runner (tag gitlab-org-docker).
+> > From: Michael Adler <michael.adler@siemens.com>
+> > Sent: 07 October 2022 10:27
+> >
+> > > We need to find some sort of solution for building our CI build conta=
+iners.
+> >
+> > Why not use the shared runners provided by Gitlab? Apparently, there's
+> > even a dind capable runner (tag gitlab-org-docker).
+>=20
+> Yea I was actually just looking into that :)
 
-Yea I was actually just looking into that :)
+And indeed it seems to work fine:
+https://gitlab.com/cip-project/cip-testing/linux-cip-ci/-/jobs/3141334688
 
-> If the Gitlab runners work, the next step would be to make sure we are us=
-ing
-> the same version as Gitlab.
-> Since we're back to using the exact same versions as in the previous clus=
-ter
-> (which did work for us!), my guess is that
-> the culprit is outside of our cluster, e.g. Gitlab or (less likely) kanik=
-o.
-
-Agreed.
-
-Thanks, Chris
+I haven't tested a complete pipeline yet, but alas I need to go offline for=
+ most the day now.
+I'll look again this evening.
 
 >=20
-> Kind Regards,
->   Michael
+> > If the Gitlab runners work, the next step would be to make sure we are
+> using
+> > the same version as Gitlab.
+
+Working version from above is gitlab-runner 15.4.0~beta.5.gdefc7017 (defc70=
+17).
+
+Kind regards, Chris
+
+> > Since we're back to using the exact same versions as in the previous cl=
+uster
+> > (which did work for us!), my guess is that
+> > the culprit is outside of our cluster, e.g. Gitlab or (less likely) kan=
+iko.
 >=20
-> --
-> Michael Adler
+> Agreed.
 >=20
-> Siemens AG
-> T CED SES-DE
-> Otto-Hahn-Ring 6
-> 81739 M=FCnchen, Deutschland
+> Thanks, Chris
 >=20
-> Siemens Aktiengesellschaft: Vorsitzender des Aufsichtsrats: Jim Hagemann
-> Snabe; Vorstand: Roland Busch, Vorsitzender; Klaus Helmrich, Cedrik Neike=
-,
-> Matthias Rebellius, Ralf P. Thomas, Judith Wiese; Sitz der Gesellschaft: =
-Berlin
-> und M=FCnchen, Deutschland; Registergericht: Berlin-Charlottenburg, HRB
-> 12300, M=FCnchen, HRB 6684; WEEE-Reg.-Nr. DE 23691322
+> >
+> > Kind Regards,
+> >   Michael
+> >
+> > --
+> > Michael Adler
+> >
+> > Siemens AG
+> > T CED SES-DE
+> > Otto-Hahn-Ring 6
+> > 81739 M=FCnchen, Deutschland
+> >
+> > Siemens Aktiengesellschaft: Vorsitzender des Aufsichtsrats: Jim Hageman=
+n
+> > Snabe; Vorstand: Roland Busch, Vorsitzender; Klaus Helmrich, Cedrik
+> Neike,
+> > Matthias Rebellius, Ralf P. Thomas, Judith Wiese; Sitz der Gesellschaft=
+:
+> Berlin
+> > und M=FCnchen, Deutschland; Registergericht: Berlin-Charlottenburg, HRB
+> > 12300, M=FCnchen, HRB 6684; WEEE-Reg.-Nr. DE 23691322
 
