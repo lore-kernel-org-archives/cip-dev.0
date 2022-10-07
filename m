@@ -2,85 +2,122 @@ Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0099DC433F5
-	for <webhook@archiver.kernel.org>; Fri,  7 Oct 2022 10:15:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B535C433FE
+	for <webhook@archiver.kernel.org>; Fri,  7 Oct 2022 10:19:44 +0000 (UTC)
 Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web11.2883.1665137733779605887
+ by mx.groups.io with SMTP id smtpd.web08.2758.1665137975002150469
  for <cip-dev@lists.cip-project.org>;
- Fri, 07 Oct 2022 03:15:34 -0700
+ Fri, 07 Oct 2022 03:19:35 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
  spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 7D19B1C0026; Fri,  7 Oct 2022 12:15:30 +0200 (CEST)
-Date: Fri, 7 Oct 2022 12:15:29 +0200
+	id E122D1C0026; Fri,  7 Oct 2022 12:19:32 +0200 (CEST)
+Date: Fri, 7 Oct 2022 12:19:32 +0200
 From: Pavel Machek <pavel@denx.de>
-To: Michael Adler <michael.adler@siemens.com>
+To: Jan Kiszka <jan.kiszka@siemens.com>
 Cc: Pavel Machek <pavel@denx.de>,
 	Chris Paterson <Chris.Paterson2@renesas.com>,
-	"cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	"alice.ferrazzi@miraclelinux.com" <alice.ferrazzi@miraclelinux.com>
-Subject: Re: [cip-dev] gitlab test failures -- job failed ... pods not found
-Message-ID: <20221007101529.GA25429@duo.ucw.cz>
-References: <20220930105048.GA19081@duo.ucw.cz>
- <1719A05389EC9CB2.16804@lists.cip-project.org>
- <TYCPR01MB105888A4C268DD3DE0F5481C9B7569@TYCPR01MB10588.jpnprd01.prod.outlook.com>
- <20221004075301.etgur4dyb5dtrcct@backstein>
- <20221006115033.GB21855@duo.ucw.cz>
- <20221007065754.fysie7e4j2bvrvck@backstein>
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Hung Tran <hung.tran.jy@renesas.com>,
+	cip-dev <cip-dev@lists.cip-project.org>
+Subject: Re: ldconfig segfault on RZ/Five was Re: Preparing isar-cip-core for
+ RZ/Five
+Message-ID: <20221007101932.GB25429@duo.ucw.cz>
+References: <38ce5ead-f7b8-e8f0-52a3-dff81f0f5045@siemens.com>
+ <964bc8ff-9118-77b9-118f-6b979cedbb8b@siemens.com>
+ <b6504b75-d609-d46b-55fb-3fd2b00780c7@siemens.com>
+ <20221005182151.GA16437@duo.ucw.cz>
+ <d9228cb9-e1de-dbdf-930a-ec35fbae4d3f@siemens.com>
+ <20221006114326.GA21855@duo.ucw.cz>
+ <4d6db8d8-3d96-6969-f551-baa94f865fa3@siemens.com>
+ <20221006220740.GA7670@duo.ucw.cz>
+ <20221006223251.GB7670@duo.ucw.cz>
+ <95aed7d4-b775-7273-9478-b0d9ca77938c@siemens.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="pWyiEgJYm5f9v55/"
+	protocol="application/pgp-signature"; boundary="f2QGlHpHGjS2mn6Y"
 Content-Disposition: inline
-In-Reply-To: <20221007065754.fysie7e4j2bvrvck@backstein>
+In-Reply-To: <95aed7d4-b775-7273-9478-b0d9ca77938c@siemens.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 07 Oct 2022 10:15:43 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9676
+ <cip-dev@lists.cip-project.org>; Fri, 07 Oct 2022 10:19:44 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9677
 
 
---pWyiEgJYm5f9v55/
+--f2QGlHpHGjS2mn6Y
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> > Still there, I'd say:
+> >>> I tried, but installation fails - illegal instruction.
+> >>
+> >> Yeah, ldconfig is needed for installation. But I get a segfaulting gcc
+> >> binary.
 > >=20
-> > https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/3123103311
+> > It crashes rather soon after startup, so I was able to trace complete
+> > path.
+> >=20
+> >> But I do have slightly different results then you (I think; I'm far
+> >> from risc-v expert). I did a breakpoint:
+> >>
+> >> Breakpoint 1, 0x00000000000385d4 in ?? ()
+> >=20
+> > I believe it should not end at 0x00000000000385d4 at all. The
+> > 0x000000000001537e jal instruction should end up calling 0x3806a
+> > AFAICT, but it calls 0x385d4 instead. It happens during
+> > single-stepping, so it should not be anything subtle.
+> >=20
+> > (gdb) disassemble $pc,+0x20
+> > Dump of assembler code from 0x1537c to 0x1539c:
+> > =3D> 0x000000000001537c:  mv      a0,a4
+> >    0x000000000001537e:  jal     ra,0x3806a
+> >    0x0000000000015382:  auipc   a5,0x8a
+> >    0x0000000000015386:  addi    a5,a5,1342 # 0x9f8c0
+> >    0x000000000001538a:  ld      a4,0(a5)
+> >    0x000000000001538c:  beqz    a4,0x153f0
+> >    0x000000000001538e:  jal     ra,0x38abe
+> >    0x0000000000015392:  ld      a0,0(s6)
+> >    0x0000000000015396:  auipc   s7,0x85
+> >    0x000000000001539a:  ld      s7,-406(s7) # 0x9a200
+> > End of assembler dump.
+> > (gdb)
+> > (gdb) stepi
+> > 0x000000000001537e in ?? ()
+> > (gdb)
+> >=20
+> > Program received signal SIGILL, Illegal instruction.
+> > 0x00000000000385d4 in ?? ()
+> > (gdb)
 >=20
-> Ok, I have restored our previous cluster (v9). Please try again and tell =
-me if the problem still persists. If it does,
-> then I'd blame Gitlab I/O otherwise it could be a regression somewhere in=
- the K8s stack - in that case, our best bet
-> might be to sit it out.
+> Did you try to compare the call trace to QEMU, where we divert?
 
-It may be a bit better.
+Yes, that's possible way forward, but it will require some
+considerable setup on my side.
 
-https://gitlab.com/cip-project/cip-kernel/linux-cip/-/pipelines/660868595
+If you have QEMU ready... objdump tells you ldconfig's entrypoint,
+=66rom that point you can just stepi. In less than 200 steps, you should
+have sigill... and complete steps that lead to it.
 
-Still see bbb failure, but that's different one:
-
-https://lava.ciplatform.org/scheduler/job/756260
-
-Thanks,
-									Pavel
+Best regards,
+								Pavel
 --=20
 DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---pWyiEgJYm5f9v55/
+--f2QGlHpHGjS2mn6Y
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYz/8QQAKCRAw5/Bqldv6
-8l+6AKCfkN0IrgvNhNc0jpSosYTJHUALggCgtAC2+/hW5w/0tbk1KNdRDNwUy3o=
-=my62
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYz/9NAAKCRAw5/Bqldv6
+8lRiAJ0VKfUjiIYHuTal6yIL9G0crybykwCfc/oQ8SWKcgwmnBPO4fsB3gBAYLw=
+=1Ry5
 -----END PGP SIGNATURE-----
 
---pWyiEgJYm5f9v55/--
+--f2QGlHpHGjS2mn6Y--
 
