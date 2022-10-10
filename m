@@ -1,73 +1,114 @@
-Return-Path: <sai.sathujoda@toshiba-tsip.com>
+Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7043C433F5
-	for <webhook@archiver.kernel.org>; Mon, 10 Oct 2022 07:02:52 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.156])
- by mx.groups.io with SMTP id smtpd.web10.3622.1665385362897430266
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6043C433FE
+	for <webhook@archiver.kernel.org>; Mon, 10 Oct 2022 17:38:46 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com
+ [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web08.679.1665423518555652608
  for <cip-dev@lists.cip-project.org>;
- Mon, 10 Oct 2022 00:02:43 -0700
+ Mon, 10 Oct 2022 10:38:39 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing;
- spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.156,
- mailfrom: sai.sathujoda@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1114) id 29A72e8c006208;
- Mon, 10 Oct 2022 16:02:40 +0900
-X-Iguazu-Qid: 2wHHOH6CCgO9mKelGa
-X-Iguazu-QSIG: v=2; s=0; t=1665385360; q=2wHHOH6CCgO9mKelGa;
- m=1Z/9aElWlkoQWm4DKhkMulDbnqg++hatf9Q8z2Cn7RU=
-Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
-	by relay.securemx.jp (mx-mr1113) id 29A72dNq026528
-	(version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
-	Mon, 10 Oct 2022 16:02:40 +0900
-From: Sai.Sathujoda@toshiba-tsip.com
-To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
-Cc: Sai <Sai.Sathujoda@toshiba-tsip.com>, dinesh.kumar@toshiba-tsip.com,
-        kazuhiro3.hayashi@toshiba.co.jp
-Subject: [isar-cip-core 3/3] start-efishell.sh : Use default OVMF files with
- '4M' size
-Date: Mon, 10 Oct 2022 12:32:32 +0530
-X-TSB-HOP2: ON
-Message-Id: <20221010070232.10478-4-Sai.Sathujoda@toshiba-tsip.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20221010070232.10478-1-Sai.Sathujoda@toshiba-tsip.com>
-References: <20221010070232.10478-1-Sai.Sathujoda@toshiba-tsip.com>
+ spf=pass (domain: bp.renesas.com, ip: 210.160.252.171,
+ mailfrom: biju.das.jz@bp.renesas.com)
+X-IronPort-AV: E=Sophos;i="5.95,173,1661785200";
+   d="scan'208";a="136038264"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 11 Oct 2022 02:38:36 +0900
+Received: from localhost.localdomain (unknown [10.226.92.95])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3909740AA567;
+	Tue, 11 Oct 2022 02:38:34 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Pavel Machek <pavel@denx.de>
+Cc: Chris Paterson <chris.paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip] ASoC: sh: rz-ssi: Improve error handling in
+ rz_ssi_probe() error path
+Date: Mon, 10 Oct 2022 18:38:33 +0100
+Message-Id: <20221010173833.1375381-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 10 Oct 2022 07:02:34.0888 (UTC)
- FILETIME=[462AA080:01D8DC76]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 10 Oct 2022 07:02:52 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9705
+ <cip-dev@lists.cip-project.org>; Mon, 10 Oct 2022 17:38:46 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9706
 
-From: Sai <Sai.Sathujoda@toshiba-tsip.com>
+commit c75ed9f54ce8d349fee557f2b471a4d637ed2a6b upstream.
 
-Make changes in the OVMF keys to be in sync with changes made
-in da0ff6630c7f6e48fc82b3766a04992bee7fcafe
+We usually do cleanup in reverse order of init. Currently in case of
+error rz_ssi_release_dma_channels() done in the reverse order. This
+patch improves error handling in rz_ssi_probe() error path.
 
-Signed-off-by: Sai <Sai.Sathujoda@toshiba-tsip.com>
+While at it, use "goto cleanup" style to reduce code duplication.
+
+Reported-by: Pavel Machek <pavel@denx.de>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Link: https://lore.kernel.org/r/20220728092612.38858-1-biju.das.jz@bp.renesas.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- scripts/start-efishell.sh | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/sh/rz-ssi.c | 26 +++++++++++++++-----------
+ 1 file changed, 15 insertions(+), 11 deletions(-)
 
-diff --git a/scripts/start-efishell.sh b/scripts/start-efishell.sh
-index 0831f83..980b9cc 100755
---- a/scripts/start-efishell.sh
-+++ b/scripts/start-efishell.sh
-@@ -1,6 +1,6 @@
- #!/bin/sh
--ovmf_code=${OVMF_CODE:-/usr/share/OVMF/OVMF_CODE.secboot.fd}
--ovmf_vars=${OVMF_VARS:-./OVMF_VARS.fd}
-+ovmf_code=${OVMF_CODE:-/usr/share/OVMF/OVMF_CODE_4M.secboot.fd}
-+ovmf_vars=${OVMF_VARS:-./OVMF_VARS_4M.fd}
- DISK=$1
- qemu-system-x86_64 -enable-kvm -M q35 -nographic \
-                    -cpu host,hv_relaxed,hv_vapic,hv-spinlocks=0xfff -smp 2 -m 2G -no-hpet \
+diff --git a/sound/soc/sh/rz-ssi.c b/sound/soc/sh/rz-ssi.c
+index ae57c7aa580e..4901a660ffc5 100644
+--- a/sound/soc/sh/rz-ssi.c
++++ b/sound/soc/sh/rz-ssi.c
+@@ -1016,32 +1016,36 @@ static int rz_ssi_probe(struct platform_device *pdev)
+ 
+ 	ssi->rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
+ 	if (IS_ERR(ssi->rstc)) {
+-		rz_ssi_release_dma_channels(ssi);
+-		return PTR_ERR(ssi->rstc);
++		ret = PTR_ERR(ssi->rstc);
++		goto err_reset;
+ 	}
+ 
+ 	reset_control_deassert(ssi->rstc);
+ 	pm_runtime_enable(&pdev->dev);
+ 	ret = pm_runtime_resume_and_get(&pdev->dev);
+ 	if (ret < 0) {
+-		rz_ssi_release_dma_channels(ssi);
+-		pm_runtime_disable(ssi->dev);
+-		reset_control_assert(ssi->rstc);
+-		return dev_err_probe(ssi->dev, ret, "pm_runtime_resume_and_get failed\n");
++		dev_err(&pdev->dev, "pm_runtime_resume_and_get failed\n");
++		goto err_pm;
+ 	}
+ 
+ 	ret = devm_snd_soc_register_component(&pdev->dev, &rz_ssi_soc_component,
+ 					      rz_ssi_soc_dai,
+ 					      ARRAY_SIZE(rz_ssi_soc_dai));
+ 	if (ret < 0) {
+-		rz_ssi_release_dma_channels(ssi);
+-
+-		pm_runtime_put(ssi->dev);
+-		pm_runtime_disable(ssi->dev);
+-		reset_control_assert(ssi->rstc);
+ 		dev_err(&pdev->dev, "failed to register snd component\n");
++		goto err_snd_soc;
+ 	}
+ 
++	return 0;
++
++err_snd_soc:
++	pm_runtime_put(ssi->dev);
++err_pm:
++	pm_runtime_disable(ssi->dev);
++	reset_control_assert(ssi->rstc);
++err_reset:
++	rz_ssi_release_dma_channels(ssi);
++
+ 	return ret;
+ }
+ 
 -- 
-2.20.1
-
+2.25.1
 
 
