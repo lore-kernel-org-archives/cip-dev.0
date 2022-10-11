@@ -1,66 +1,62 @@
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
- by mx.groups.io with SMTP id smtpd.web11.18436.1665569293760706027
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+ by mx.groups.io with SMTP id smtpd.web08.13064.1665523945923529698
  for <cip-dev@lists.cip-project.org>;
- Wed, 12 Oct 2022 03:08:14 -0700
+ Tue, 11 Oct 2022 14:32:26 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=felix.moessbauer@siemens.com header.s=fm1 header.b=ESt0htsL;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-72506-20221012100811394cf4af91c6d34a7b-89ytoa@rts-flowmailer.siemens.com)
-Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20221012100811394cf4af91c6d34a7b
-        for <cip-dev@lists.cip-project.org>;
-        Wed, 12 Oct 2022 12:08:11 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=felix.moessbauer@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=rOOoxzW+tB/eJQCkRcDk1+5FA+OWq0sbHYM3he06YPc=;
- b=ESt0htsLQMgOGPDqBsuUWU+QwgfCgprp5WOrL5mVmItBYuXiKGJcOKR0H/oeBxBxk+JDof
- Xi/ibGKJLg0Y1C8HZm45iBs4GCkUz6LUBe6Y7fKFeO1OJ85nUH8QDPou3hz9LwpV0quDTo5Y
- egbxxYFudMQjBz9IAOw0yoUCJ+myI=;
-From: Felix Moessbauer <felix.moessbauer@siemens.com>
+ dkim=pass header.i=@linuxfoundation.org header.s=google header.b=WjJ0yrKb;
+ spf=pass (domain: linuxfoundation.org, ip: 209.85.160.171, mailfrom: konstantin@linuxfoundation.org)
+Received: by mail-qt1-f171.google.com with SMTP id a24so1571215qto.10
+        for <cip-dev@lists.cip-project.org>; Tue, 11 Oct 2022 14:32:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UqLkop0RAYBDppvX+eiM3Wkp20pEZk1YQbaObW8HJ4o=;
+        b=WjJ0yrKbQ3XzXGhuPuMPvQaT0fRt42bBO1sOm2KNrAe5oNUs6/tvSeywr5dp+SeY33
+         jWvvsAXJrfWqPMEnIAS1SE56qUt6AIzALNoGFaqHw0DJl3Ckl52rw2P4d/z+xpqWI2Vs
+         7Ih3+HDL2PRUMQ/CiNt7D62rteE3EgaAR+1wY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UqLkop0RAYBDppvX+eiM3Wkp20pEZk1YQbaObW8HJ4o=;
+        b=w5AU0Q27ZPyYx7/97rSUZy8KHgg+we0CwS5fMO4YyKrvirjdeGObPRjq0VNUdUbvzi
+         XFoBLzCCGXJEZeI5fBaTOhzlhzWgC2ruZQ8fnZqXB/QimtyfUOt/s5lKvtRkJ3FGgpJB
+         SxLItNAc+mqHGe3Z24O+kF+kQCA8pD7Alt0cd+oeaLjyLFsCw78i85rTT5nW7qWfrNLS
+         DK4h1u6wC9NCc3ZaSxzDt/GUWfMvgJsb06xGY8UWjwBSWPeBCSvboADHC0KRbFsBNtrK
+         jprMfkfCYA4Jc809d+/dJnQuNF5OwkoZvG1bLmTTybU7/Ig0QnQF2GB4YNMf9DJMUK3g
+         gIBQ==
+X-Gm-Message-State: ACrzQf0uRT7TJzlwM27CoFoc1Q9fwHz70n259GQG8TBLOI4QtFbvvWKo
+	0+vECcfOJQl3LCGhUbBIaQGcNlZ1WqrY2A==
+X-Google-Smtp-Source: AMsMyM4CQ67iAjAa0ID6WGOMdMuFQ+FLSXiRiIpmJelNxBVFijnjhEydgxc9Lk/RMTxkCGRGITFc5Q==
+X-Received: by 2002:a05:622a:551:b0:35d:5237:1781 with SMTP id m17-20020a05622a055100b0035d52371781mr21119055qtx.566.1665523944839;
+        Tue, 11 Oct 2022 14:32:24 -0700 (PDT)
+Return-Path: <konstantin@linuxfoundation.org>
+Received: from meerkat.local (bras-base-mtrlpq5031w-grc-33-142-113-79-147.dsl.bell.ca. [142.113.79.147])
+        by smtp.gmail.com with ESMTPSA id u5-20020a05620a454500b006b640efe6dasm13575849qkp.132.2022.10.11.14.32.23
+        for <cip-dev@lists.cip-project.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Oct 2022 14:32:24 -0700 (PDT)
+Date: Tue, 11 Oct 2022 17:32:22 -0400
+From: "Konstantin Ryabitsev" <konstantin@linuxfoundation.org>
 To: cip-dev@lists.cip-project.org
-Cc: jan.kiszka@siemens.com,
-	quirin.gylstorff@siemens.com,
-	pluto.svc.chengdu.cn@siemens.com,
-	Felix Moessbauer <felix.moessbauer@siemens.com>
-Subject: [isar-cip-core][PATCH 3/3] activate nodoc profile for swupdate build
-Date: Wed, 12 Oct 2022 12:06:41 +0200
-Message-Id: <20221012100641.2986740-4-felix.moessbauer@siemens.com>
-In-Reply-To: <20221012100641.2986740-1-felix.moessbauer@siemens.com>
-References: <20221012100641.2986740-1-felix.moessbauer@siemens.com>
+Subject: Re: Troubleshooting missing lore messages
+Message-ID: <20221011213222.bdkip4nhqfz6xkjg@meerkat.local>
+References: <20221011210911.2ufn3yqpg43habc4@meerkat.local>
 MIME-Version: 1.0
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-72506:519-21489:flowmailer
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20221011210911.2ufn3yqpg43habc4@meerkat.local>
+Content-Disposition: inline
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 List-Id: <cip-dev.lists.cip-project.org>
 
-This patch enables the nodoc debian build profile for swupdate.
-By that, the overall download and build time is drastically reduced.
-It also helps when building behind proxies that sometimes have issues
-with large pagets like texlive-extra.
+On Tue, Oct 11, 2022 at 05:09:11PM -0400, Konstantin Ryabitsev wrote:
+> I apologize for the noise.
 
-Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
----
- recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb | 4 ++++
- 1 file changed, 4 insertions(+)
+Following up and keeping all the noise in the same thread.
 
-diff --git a/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb b/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb
-index 7bcf015..a81c521 100644
---- a/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb
-+++ b/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb
-@@ -12,6 +12,10 @@ inherit dpkg-gbp
- 
- require swupdate.inc
- 
-+
-+DEB_BUILD_PROFILES += "nodoc"
-+DEB_BUILD_OPTIONS += "nodoc"
-+
- SRC_URI = "git://salsa.debian.org/debian/swupdate.git;protocol=https;branch=debian/master"
- SRCREV ="344548c816b555c58ec199f31e45703897d23fb5"
- 
--- 
-2.30.2
-
+-K
 
