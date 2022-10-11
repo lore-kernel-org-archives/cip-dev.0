@@ -1,76 +1,56 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D275C433F5
-	for <webhook@archiver.kernel.org>; Tue, 11 Oct 2022 20:15:43 +0000 (UTC)
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com
- (EUR05-DB8-obe.outbound.protection.outlook.com [40.107.20.63])
- by mx.groups.io with SMTP id smtpd.web11.12387.1665519333994637035
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9276EC433F5
+	for <webhook@archiver.kernel.org>; Tue, 11 Oct 2022 20:49:03 +0000 (UTC)
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com
+ (JPN01-OS0-obe.outbound.protection.outlook.com [40.107.113.99])
+ by mx.groups.io with SMTP id smtpd.web09.12850.1665521341167895054
  for <cip-dev@lists.cip-project.org>;
- Tue, 11 Oct 2022 13:15:34 -0700
+ Tue, 11 Oct 2022 13:49:02 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=PDprg8xR;
- spf=pass (domain: siemens.com, ip: 40.107.20.63,
- mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@bp.renesas.com header.s=selector1 header.b=WtycVKu2;
+ spf=pass (domain: bp.renesas.com, ip: 40.107.113.99,
+ mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=V8uyjehH7rBsJy0aVqgc3TZRTTvqrwbabZRjL+tdutv/sgeKO1v7TbqbwP4lZaPA27Ja0vg1R/8gvr+b2NXOUOC7CjPFwDJhDYrXvAW762HbEUeBXaMCQHUnFkWDfK9M1RKEp648BCqUZFZHha3/TSro+9JOlz8+al4GfL+p4hFQJMOGeM4XQlrVays6RAtcdEetNPAeL2EmjmbwY/dUdjbCkhqEZBgGBgRhOK/DdNzHhFV3O33v0MSWKSMEh5qbdYD2BzsKHnFpDI3qDV/QeG5Bfz2JBDekwoEMuivogaPpRN0jLB4k/I71vKinQFo9zpGG8yvLQemE6ZjetYXxwg==
+ b=WkyS0jnVGHNqQS1FE6wLY/Pvog+A95ir6wZ1sPEuwABryDmc6T/aio48skbPWrWTmJuP+1/dKlf5tzFhVPmNeSEm1HZn5Kj0NqIdkDq1a6C3sFBMkQcgZoFfOsxbqlzAlSPI8evYUHu+JD5j7ApFj63+JQKJWhyufZNu9hc8OA/wTJTvZztzsEYvt6IvqNc/V5KWDEUyXtmygA/YxivDTbVGc8ot+6ciHFvAra82vWZaN3n/4tqL4L4eURVXokZ6G8Bq0w1Sbc+Dh7m3zaPZUC4sPLHowPb4zgkDfNg698KASrYAl9nJnrYeYhrWdswntQsOegCGbSzKcGtT3MwgXg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=J+2K+umy+DzWCdWaSUZJdh3eE5d7VRuWwkvLyuAuNKs=;
- b=NIoSR/qVKwgF44kk5jtjd7ERquGk2lOrZ6UHV1UxhYYsB4YTjJT/KBy4/TipxC2tmkvSX0O57iYGlnDxWB2vh0Ib3ALS5llHJNWKrNwhGZ+CKF2tsQRhHVyOx09OnFBIHbeneYKUec5rxJ99TlNfLVcLpjz4FO9ctP/G/jLUN4XKooEWEpuTojF+5gQdBPOqQZeaa+3maiW4lA682bLD+6QE11KgEJElAfHS+TPyotBKhlhZYCpHD65+93TF8Lu5FpSunrxjJG2GKRKt2U2B0JyXzqA2heF2SwHyQZQbYnJx/h5EL6eaiJ+yLvLAdl/94Ng9Va1ZVNVWSTlvVaPtXQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.76) smtp.rcpttodomain=lists.cip-project.org
- smtp.mailfrom=siemens.com; dmarc=pass (p=none sp=none pct=100) action=none
- header.from=siemens.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
+ bh=2pOa/mp3PYzFCmDpnfV7mQnt/1gFPaW6Oa1sAkhA2t4=;
+ b=JDYqTk8AEhBTw7+cxbMLBPv5sjm92S8GR3QI8mrlk5Hzd5SRM93mnH9LBWA/Ir19D3Oegp1aaxNtDDrJBDlLSHRL17VK/8JpnSLZ+HlEP3wyAUxdlF6L+n1TyqyNLv58gBBm8Ob5/EWwxtFtevxDN7+chVGnctHT3+9oBfDX/iMILZnLAJE4V9F+yv7AWMEHDdUuMVIA7z+7IL/sHPiUcCGA/em4I8jFCqxsnnQloirLy6zomXp042OVbBfPr1ctRALFmZNImWFoXbmU8FiCDIsTDtl6kFAcZsvQEcZmP+ax+7rbC9huyn5TBYrKUhnFrq44zdvRhcphrcx0gt1UlA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=J+2K+umy+DzWCdWaSUZJdh3eE5d7VRuWwkvLyuAuNKs=;
- b=PDprg8xRBEMcqzksN5E0cZfAhK57v89UxrsMCOFgYaxrbdOtajBFdheFpyTrhNjaFmFOzGNw7YjCFI9Boo9uZX0au1ta0f465nAIH3z4dw5IIw9f/BWTQSOxLN0OC/tfLu66Zaukg2Z5sTzDjGTzbLAc93mKxlXYCxaiWw3ggc/4MbolnOuKGz0BLr1y1lhDndwVgSdHqdN295nZd8aW7PHcfkDyAT8ZDjMd9rmgULO0fd2XcJfdQQLU7LJUUAUlyZz2LGpIdoRccsL3Bdrys92CBjZ8gGcGqbZeuqIlFOdH2lc82bmT3GTdbYRp/mluIvyr5d+0g7O+5pjf8P9/wQ==
-Received: from GV3P280CA0054.SWEP280.PROD.OUTLOOK.COM (2603:10a6:150:9::24) by
- AS4PR10MB5442.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:4bd::13) with
+ bh=2pOa/mp3PYzFCmDpnfV7mQnt/1gFPaW6Oa1sAkhA2t4=;
+ b=WtycVKu2Hsy3R7Za+x3yYcl2wsjNoK87MbOdtED+CHaAMXAgFjW/OlvgBhwktyb3GGw4Mu/oiBdIU3C80LAIv8eVH/fvNriNNNfAZwprBrKiQ1DpOyr0hzP4XnXpMa/qVD+qf41LkUr25FGZMcsbPzH5jJaQ/P3YEP2YDozP59U=
+Received: from OSZPR01MB7019.jpnprd01.prod.outlook.com (2603:1096:604:13c::8)
+ by TYCPR01MB5583.jpnprd01.prod.outlook.com (2603:1096:400:40::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.40; Tue, 11 Oct
- 2022 20:15:31 +0000
-Received: from HE1EUR01FT024.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:150:9:cafe::29) by GV3P280CA0054.outlook.office365.com
- (2603:10a6:150:9::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5709.21 via Frontend
- Transport; Tue, 11 Oct 2022 20:15:31 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.76)
- smtp.mailfrom=siemens.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=siemens.com;
-Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.76 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.76; helo=hybrid.siemens.com; pr=C
-Received: from hybrid.siemens.com (194.138.21.76) by
- HE1EUR01FT024.mail.protection.outlook.com (10.152.0.164) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5709.10 via Frontend Transport; Tue, 11 Oct 2022 20:15:30 +0000
-Received: from DEMCHDC89XA.ad011.siemens.net (139.25.226.103) by
- DEMCHDC8VSA.ad011.siemens.net (194.138.21.76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.12; Tue, 11 Oct 2022 22:15:28 +0200
-Received: from [139.21.18.118] (139.21.18.118) by
- DEMCHDC89XA.ad011.siemens.net (139.25.226.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.12; Tue, 11 Oct 2022 22:15:27 +0200
-Message-ID: <e93e0736-cb18-f42f-9c22-e9825b82cc5c@siemens.com>
-Date: Tue, 11 Oct 2022 22:15:26 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-Subject: Re: [cip-dev] ldconfig segfault on RZ/Five was Re: Preparing
- isar-cip-core for RZ/Five
-Content-Language: en-US
-To: Florian Bezdeka <florian.bezdeka@siemens.com>,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5709.21; Tue, 11 Oct
+ 2022 20:48:57 +0000
+Received: from OSZPR01MB7019.jpnprd01.prod.outlook.com
+ ([fe80::a920:4b7e:5340:eb0f]) by OSZPR01MB7019.jpnprd01.prod.outlook.com
+ ([fe80::a920:4b7e:5340:eb0f%7]) with mapi id 15.20.5709.021; Tue, 11 Oct 2022
+ 20:48:57 +0000
+From: Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Jan Kiszka <jan.kiszka@siemens.com>, Florian Bezdeka
+	<florian.bezdeka@siemens.com>, "cip-dev@lists.cip-project.org"
 	<cip-dev@lists.cip-project.org>, Chris Paterson
-	<Chris.Paterson2@renesas.com>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>, Hung Tran
-	<hung.tran.jy@renesas.com>
+	<Chris.Paterson2@renesas.com>, Hung Tran <hung.tran.jy@renesas.com>
 CC: Pavel Machek <pavel@denx.de>
+Subject: RE: [cip-dev] ldconfig segfault on RZ/Five was Re: Preparing
+ isar-cip-core for RZ/Five
+Thread-Topic: [cip-dev] ldconfig segfault on RZ/Five was Re: Preparing
+ isar-cip-core for RZ/Five
+Thread-Index: AQHY3aJ1UOfjjk+7D0K/pBqB70He+q4JoSEAgAAJDPA=
+Date: Tue, 11 Oct 2022 20:48:57 +0000
+Message-ID: 
+ <OSZPR01MB7019765C0F247A3854D4380EAA239@OSZPR01MB7019.jpnprd01.prod.outlook.com>
 References: <38ce5ead-f7b8-e8f0-52a3-dff81f0f5045@siemens.com>
  <964bc8ff-9118-77b9-118f-6b979cedbb8b@siemens.com>
  <b6504b75-d609-d46b-55fb-3fd2b00780c7@siemens.com>
@@ -87,147 +67,188 @@ References: <38ce5ead-f7b8-e8f0-52a3-dff81f0f5045@siemens.com>
  <d0ace49c-29a7-baf8-ba7b-bc385df68492@siemens.com>
  <OS0PR01MB59225BD41E0A32CBD136C68386239@OS0PR01MB5922.jpnprd01.prod.outlook.com>
  <af98d87b-b1cb-9123-fd61-c0e06004b7c4@siemens.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <af98d87b-b1cb-9123-fd61-c0e06004b7c4@siemens.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [139.21.18.118]
-X-ClientProxiedBy: DEMCHDC8WAA.ad011.siemens.net (139.25.226.104) To
- DEMCHDC89XA.ad011.siemens.net (139.25.226.103)
-X-TM-AS-Product-Ver: SMEX-14.0.0.3080-8.6.1018-26680.007
-X-TM-AS-Result: No-10--19.512400-8.000000
-X-TMASE-MatchedRID: tvpRZv6Yx1Y5QaOxwNGfvo9bHfxDWoibWi7t2dR1S0aVUcz8XpiS9DZl
-	Y6a4lRLZwJa/c39cf5Z5a5jlCfYvEssa/vtKhbyFYUsdgbbgf666LacOIlEHv6JVTu7sjgg1nrr
-	V5UnUVY0nXBZmkoVhSQFfgVTicugFzlUnZ/pDQ2eh/o4FZ060+RDmAkR0f0rqJNzc11O35noO9z
-	+P2gwiBTtctZCezmMoyyjsfD8e79IFGPl7f2/94cRHVbsXvW+Ixile9V7rDZVLQaU8f2RHciDiV
-	mfWTJMNUsOUOXBaFw2oVB4D3nL7ijjZYh7kebJ3nArk+q2OwUsZ1VI1DVL4ZZ1U1lojafr/AQ8m
-	tiWx//pjjMm9SMavFXW7HSPhvJoSQiL76oEZoLq9aUis95CJVq88naeSWWBZpKSqN+Z3dp47F3Z
-	cdQmMK/754++Cp0gqQks1KHhBIF0T14JAeJ7ZoqdMya3b6yFKle+q6k7Q/cwvzLls7HTfGa85fL
-	DYlgpSmyiLZetSf8nJ4y0wP1A6AKEwgORH8p/AjaPj0W1qn0SQZS2ujCtcuA==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--19.512400-8.000000
-X-TMASE-Version: SMEX-14.0.0.3080-8.6.1018-26680.007
-X-TM-SNTS-SMTP: 
- 5E3D5E8575D2BCD0DB6C000BE487F3AF7AFC88EFE2CCBBBFF7954EC210EB8D932000:8
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HE1EUR01FT024:EE_|AS4PR10MB5442:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7b08ca9a-92b4-47e5-1894-08daabc5586d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	1kqgPS48c5ILsRI+lP4e5WT9JP0g+4CWVTu0WVNzCkjb4wulyuoPkm79Q/u4RO0hTevT5mMUdA8irw991qVkleJ/jRAernU+RtpzFZswJyjq9q/mLZ48ZziMCW8cWudyxPeEH2KXbXi08X7V1wBCXB4+hh0WCcUS62H432zkHiZHVy7aIviIkpweEyf3U/27VjEfH9u/EUQZwMKORda9btyfRHcsYvUgcfj+NjaXKQaS4vJlbNlYotWYpHMIAKgoHTpVuYIVsaPKR7SaixzTx2rpBiOnRA9z1IWztk2IiT+poI79mvnSiibQV/uFv3QOsbr789BbrEElLlA1BI7+K1xU7+LqiCQsXnK3vMXEnJi3Nv18Z4M4iJUEqZzkZ5E9TBxPzzm9nyT438xCBlL3D0t8UcZQJgaooqEK45oTkS+9zW+mGVY2YGqlDCT1kiZMydPUsbvbrm453WgECHov10ANdcLhA1NsHXR52/V5GxG75rOoh/LM4sAK/HkWYpqRgzv7puVmOmRMzEbLlq5/+Ksxw/ZBXZluhRZxC42K0wfWQUAwGVUueISKQCGa5qes/VGOlbszZxRvfk+irHhxKZDotyGUlqv/1PKKFYWjhYztquK574yg7lw1QW14QkaoXKlj43qzdjeVJeB8FedteZUq4sSP1KLcG0oKVjyhbzEZSeLsLZlUgMepCvJsXFW1T+OKPcljaJMhb3DNUKW/+EecdrmtyCUDxs9AUpxdYZ1d5wpQQJKBsZOe8Bw0A4VSdilyx0aGj6Cztn+25iMsVWH+ZyjFDxL10kcfomeowYvTJ9I2LWI4X3sQ9CUzt22VnKCHKrMWy9O2KnRwIBtKitK/rxTiMdWnsbBL3DAarKO/kExXkX7kgyLBa27LCLwh2ivIhqblHvAKOeZYCZis5w==
-X-Forefront-Antispam-Report: 
-	CIP:194.138.21.76;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230022)(4636009)(396003)(376002)(39860400002)(136003)(346002)(451199015)(36840700001)(46966006)(40470700004)(16526019)(31686004)(40460700003)(47076005)(83380400001)(186003)(336012)(16576012)(41300700001)(8936002)(53546011)(36860700001)(82960400001)(36756003)(82740400003)(956004)(2906002)(316002)(2616005)(26005)(356005)(478600001)(4326008)(40480700001)(5660300002)(966005)(110136005)(86362001)(44832011)(8676002)(31696002)(81166007)(6706004)(82310400005)(70586007)(70206006)(3940600001)(43740500002)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Oct 2022 20:15:30.5860
- (UTC)
+ <e93e0736-cb18-f42f-9c22-e9825b82cc5c@siemens.com>
+In-Reply-To: <e93e0736-cb18-f42f-9c22-e9825b82cc5c@siemens.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OSZPR01MB7019:EE_|TYCPR01MB5583:EE_
+x-ms-office365-filtering-correlation-id: 8f4106c3-7119-47b6-1ebc-08daabca0456
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ oG8JS4poUJwl+UfB9OYKASozxI0CDthi9rbwc+jnkASnDA7a3ucUx5IzyDE3w0v0SN7wuQFfGgrOJP4yjLQ+Xrh5qwd+zBExqfZw1RSGC883KPRCRRRWd6JhnBcHYlRK7dM5+7vaCvDIHqay7Adp2CIz/Pc4XT8KytXLm/C3i6MZDzsNg4LSiHdegUaDrHRswYsH53NSPnbNX2CzE3etSVpY5hfWDkirJlej7OWEs6Cyi9rHQCCpDolNJqf/f5q2yuu7LrkBX7I19c8cRiuK6meWQP+FfXBL82CY8VY3bmnZuTLLbAZICYmyn5cL0S6eV0AyHI8jNUZc4dr2yRTYTsuk3VyKBhYMPfil+PHOThpDX4lF+xb68EhnswITHPTZZ81GZdsFJgExUhgP7tcOhcKFD5q+nGusDmoRN4YO2r8pei8jwaDaX7L9gY8v3YWaXmWmTJ/33X0C3WEtSCgoLTTl7fIS9hgzu/VmL4wafgHP0joBifYgSoanOiASTBczy3PfczlWSGFGIhVC7zm57AmI5YDnrT0BPhv+4O3VEBRX7lkv3B6bK25/hbiQZgbwvS4agphyUyi1gwozVE6XXPVeBzvW8jfXaiFvI4X+9G4EpYDnu87/O28rL1INvYhmnhzhFuhA093uL1IanvAI5TFAssdeUvANPHryrFDZOVP0m4cgIAGinSxxLY7Ey+Q+gxUziAwm0cWQkdfIPUh5JYy5P82Erfyr+reKzEO+Ljb9b0O3KOOZlptpuI77wcH3PDu3wCHVIDXbcx5d+Q1lsD5BVjDFf69CWYdrjKJHxIA=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB7019.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(396003)(39860400002)(136003)(376002)(346002)(366004)(451199015)(83380400001)(33656002)(86362001)(110136005)(9686003)(38070700005)(38100700002)(64756008)(66946007)(66556008)(66476007)(66446008)(41300700001)(2906002)(122000001)(52536014)(8936002)(4326008)(8676002)(5660300002)(55016003)(76116006)(316002)(71200400001)(186003)(26005)(53546011)(7696005)(6506007)(478600001)(966005)(45080400002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?us-ascii?Q?lBsf/cO+msYBsuunUUPOmObTpS7zYQ9a1tbiKiMRojjnvcw1LsiCRj8AgtxT?=
+ =?us-ascii?Q?QNrG/FdSHYSsZIHhLBICDTfZRiObISRQgpbe+HXDS+5nKVCnEFj7UuNK6yR/?=
+ =?us-ascii?Q?Xgry7yu5KF04D4cuVhF17KxxitUTv/rpIOJtM382BBFYXNx3CgM11Izw7J8i?=
+ =?us-ascii?Q?YrGy6tYL3YE8vlnwJZX33ngkE3l3afOHQXFVSbZclWohkFWfLwNJ+nJivq9J?=
+ =?us-ascii?Q?JdFN+U7Q4H1qEm29HiVCeIcbyQLA1WABabMiGv39hiIhqozoOkW4R4oy4omk?=
+ =?us-ascii?Q?caQmtfzXB9SjDK8+Xpjqg12ko2KfKaX7UaWkb98xdpCp+0dIXCB0ICt1Zeiw?=
+ =?us-ascii?Q?7l0AVckTM7MlU+T49RoGHV9hrF+0x80LHkB+9+KG6ZRcBjod8S/ebCKdkooW?=
+ =?us-ascii?Q?2TLq4VJv9DMrnQFBDB3W2oQ+HQK1cnv5l+Z2thCDxK7MknMpjm3+WdS1K3VF?=
+ =?us-ascii?Q?ZhfrJUnPLJSmHmWfL7c4AqTnVC9cF7iVnOqKzR5wA02B3Ys65XaupFABQvRl?=
+ =?us-ascii?Q?KG8ocqd9wctfyfrF5RLEcacRj793rttjQ3rcie+AmqXOwzybFa/tAzHjSeMK?=
+ =?us-ascii?Q?JKWo7nKn3R2GOZdflFAIxm6x5964zxbvEJT7hs6f/Rq+S8fPWRBaJr5lhJrn?=
+ =?us-ascii?Q?95v7NYVrULclwkn2ujZ+3xQrE82CwSvVyJHhycVNTe+U49MHbU+Rq1/fJuJA?=
+ =?us-ascii?Q?hydq9yoUca3F+NSBSiZkoSyBb9GmXoITK7+JU+3mdUjRTaGMCQzKeqToWyuD?=
+ =?us-ascii?Q?Rqedy553y9PwQFHR0w1vIJzoa3V67+l+PbQ0YP2MiH6Vxgzr2lRdiruw6XOO?=
+ =?us-ascii?Q?+KIrFqOsezXtl5UQCiUQ0cpvSzK9pOkeRGKVe1dokmnRXLpsnC4O0HOZh1CF?=
+ =?us-ascii?Q?3b3GNMapV627vb0/K3P+QszJdHDmvky3GtJPmTfYb7untASM8ITo5UKTaVH+?=
+ =?us-ascii?Q?twKbpqIjMA9JQtF8IPd3thd3ULkeJA6RgOoNDG8g4HJtbn0rSkDSfLCjFD62?=
+ =?us-ascii?Q?7CBJ1AHZQPBH6a7q60QtBIgQtVLh41L34Ytpw/1Bd7kN1DejF9ZN9rpmVbpj?=
+ =?us-ascii?Q?szvk6zdaTLtqQ90lXoDSL2j43qI1sOLFSOw2hH6asjxCrbjZHad9Q6Gfhl8l?=
+ =?us-ascii?Q?ccb+gGmBhORgltuYsb/CLf3x5GT5Fn1CNDlR8CthuZkOfg83hSlm6RXY/PFQ?=
+ =?us-ascii?Q?9hMkWQLF5dFIqs3/JOgL9ERewdJFRFXVGFteTcSXP/TKUdpSpor2A+OhK3uV?=
+ =?us-ascii?Q?AfaN3nF7YmLy82pADGOAKz4lhMb0FKmMdza6FYkcT2NGJ6lLQWU9ZjGo6wZ1?=
+ =?us-ascii?Q?kGzTmt8qSV5Rc/Uu25E64L4w2SYhXb6DSlLeXAilMoAJx2rK/rEuMyOUFjm0?=
+ =?us-ascii?Q?XYxUzIoj/9maQJNWh6UMxHjTlJOgpYvvb2d1xFEuyEEZowJV9N4eIfmtZ1h3?=
+ =?us-ascii?Q?x0zN1RNLd8HxZbnkr9yu/bsaWUb+B5yfodaZkEx0bSZJQ4sxygHDXFmthezV?=
+ =?us-ascii?Q?P4m/EjXJ+EDdccPB3Tcn9cpCjdC40Yh8CvzCKbPVfLO3cdwABZFZWcVC1olH?=
+ =?us-ascii?Q?WzkCpeOaWu8p11iEHDPoAUopQ00CYYbLzfbd3X7TMAMl7bz/fhgBj7UnHkWR?=
+ =?us-ascii?Q?PxKc+QW+KucqKwMCVpAfe8I=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB7019.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-Network-Message-Id: 
- 7b08ca9a-92b4-47e5-1894-08daabc5586d
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: 
- TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.76];Helo=[hybrid.siemens.com]
-X-MS-Exchange-CrossTenant-AuthSource: 
-	HE1EUR01FT024.eop-EUR01.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR10MB5442
+ 8f4106c3-7119-47b6-1ebc-08daabca0456
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Oct 2022 20:48:57.0529
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 
+ 49Ps3cu8Qxj6HktfWDGO2++glLljZBDjt9qOpSIE8MtFtCj752VHamZqms8v+p6IPnFx6OVLF2JObspQIRboJs4m/2gpKlvumWJTcDctuwUUnV5oxFCPuDKQ48EsJNua
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB5583
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 11 Oct 2022 20:15:43 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9731
+ <cip-dev@lists.cip-project.org>; Tue, 11 Oct 2022 20:49:03 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9732
 
-On 11.10.22 20:51, Florian Bezdeka wrote:
-> On 11.10.22 12:34, Biju Das via lists.cip-project.org wrote:
->>> Subject: Re: RE: [cip-dev] ldconfig segfault on RZ/Five was Re:
->>> Preparing isar-cip-core for RZ/Five
->>>
->>> On 09.10.22 10:42, Biju Das wrote:
->>>>> Subject: Re: [cip-dev] ldconfig segfault on RZ/Five was Re:
->>> Preparing
->>>>> isar-cip-core for RZ/Five
->>>>>
->>>>> On 08.10.22 10:27, Jan Kiszka wrote:
->>>>>> On 07.10.22 12:19, Pavel Machek wrote:
->>>>>>> Hi!
->>>>>>>
->>>>>>>>>>> I tried, but installation fails - illegal instruction.
->>>>>>>>>>
->>>>>>>>>> Yeah, ldconfig is needed for installation. But I get a
->>>>> segfaulting
->>>>>>>>>> gcc binary.
->>>>>>>>>
->>>>>>>>> It crashes rather soon after startup, so I was able to trace
->>>>>>>>> complete path.
->>>>>>>>>
->>>>>>>>>> But I do have slightly different results then you (I think;
->>> I'm
->>>>>>>>>> far from risc-v expert). I did a breakpoint:
->>>>>>>>>>
->>>>>>>>>> Breakpoint 1, 0x00000000000385d4 in ?? ()
->>>>>>>>>
->>>>>>>>> I believe it should not end at 0x00000000000385d4 at all. The
->>>>>>>>> 0x000000000001537e jal instruction should end up calling
->>> 0x3806a
->>>>>>>>> AFAICT, but it calls 0x385d4 instead. It happens during
->>>>>>>>> single-stepping, so it should not be anything subtle.
->>>>>>>>>
->>>>>>>>> (gdb) disassemble $pc,+0x20
->>>>>>>>> Dump of assembler code from 0x1537c to 0x1539c:
->>>>>>>>> => 0x000000000001537c:  mv      a0,a4
->>>>>>>>>    0x000000000001537e:  jal     ra,0x3806a
->>>>>>>>>    0x0000000000015382:  auipc   a5,0x8a
->>>>>>>>>    0x0000000000015386:  addi    a5,a5,1342 # 0x9f8c0
->>>>>>>>>    0x000000000001538a:  ld      a4,0(a5)
->>>>>>>>>    0x000000000001538c:  beqz    a4,0x153f0
->>>>>>>>>    0x000000000001538e:  jal     ra,0x38abe
->>>>>>>>>    0x0000000000015392:  ld      a0,0(s6)
->>>>>>>>>    0x0000000000015396:  auipc   s7,0x85
->>>>>>>>>    0x000000000001539a:  ld      s7,-406(s7) # 0x9a200
->>>>>>>>> End of assembler dump.
->>>>>>>>> (gdb)
->>>>>>>>> (gdb) stepi
->>>>>>>>> 0x000000000001537e in ?? ()
->>>>>>>>> (gdb)
->>>>>>>>>
->>>>>>>>> Program received signal SIGILL, Illegal instruction.
->>>>>>>>> 0x00000000000385d4 in ?? ()
->>>>>>>>> (gdb)
->>>>>>>>
->>>>>>>> Did you try to compare the call trace to QEMU, where we divert?
->>>>>>>
->>>>>>> Yes, that's possible way forward, but it will require some
->>>>>>> considerable setup on my side.
->>>>>>>
->>>>>>> If you have QEMU ready... objdump tells you ldconfig's
->>> entrypoint,
->>>>>>> from that point you can just stepi. In less than 200 steps, you
->>>>>>> should have sigill... and complete steps that lead to it.
->>>>>>>
->>>>>>
->>>>>> I've updated sid-ports (dropped the snapshot pinning), and now I'm
->>>>>> getting a page fault on the instruction before the one that was
->>>>>> causing SIGILL before:
-> 
-> In case the requested page is a page with PROT_WRITE only (no PROT_READ) 
-> it might be related to
-> https://lore.kernel.org/linux-riscv/20220915193702.2201018-1-abrestic@rivosinc.com/
-> 
-> AFAIR all stable branches have that problem currently.
-> 
+Hi Jan,
 
-Nice idea. I quickly hacked that on top of the rzfive kernel, but it
-didn't change the picture, unfortunately.
+> -----Original Message-----
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+> Sent: 11 October 2022 21:15
+> To: Florian Bezdeka <florian.bezdeka@siemens.com>; cip-dev@lists.cip-proj=
+ect.org; Chris Paterson
+> <Chris.Paterson2@renesas.com>; Prabhakar Mahadev Lad <prabhakar.mahadev-l=
+ad.rj@bp.renesas.com>; Hung
+> Tran <hung.tran.jy@renesas.com>
+> Cc: Pavel Machek <pavel@denx.de>
+> Subject: Re: [cip-dev] ldconfig segfault on RZ/Five was Re: Preparing isa=
+r-cip-core for RZ/Five
+>=20
+> On 11.10.22 20:51, Florian Bezdeka wrote:
+> > On 11.10.22 12:34, Biju Das via lists.cip-project.org wrote:
+> >>> Subject: Re: RE: [cip-dev] ldconfig segfault on RZ/Five was Re:
+> >>> Preparing isar-cip-core for RZ/Five
+> >>>
+> >>> On 09.10.22 10:42, Biju Das wrote:
+> >>>>> Subject: Re: [cip-dev] ldconfig segfault on RZ/Five was Re:
+> >>> Preparing
+> >>>>> isar-cip-core for RZ/Five
+> >>>>>
+> >>>>> On 08.10.22 10:27, Jan Kiszka wrote:
+> >>>>>> On 07.10.22 12:19, Pavel Machek wrote:
+> >>>>>>> Hi!
+> >>>>>>>
+> >>>>>>>>>>> I tried, but installation fails - illegal instruction.
+> >>>>>>>>>>
+> >>>>>>>>>> Yeah, ldconfig is needed for installation. But I get a
+> >>>>> segfaulting
+> >>>>>>>>>> gcc binary.
+> >>>>>>>>>
+> >>>>>>>>> It crashes rather soon after startup, so I was able to trace
+> >>>>>>>>> complete path.
+> >>>>>>>>>
+> >>>>>>>>>> But I do have slightly different results then you (I think;
+> >>> I'm
+> >>>>>>>>>> far from risc-v expert). I did a breakpoint:
+> >>>>>>>>>>
+> >>>>>>>>>> Breakpoint 1, 0x00000000000385d4 in ?? ()
+> >>>>>>>>>
+> >>>>>>>>> I believe it should not end at 0x00000000000385d4 at all. The
+> >>>>>>>>> 0x000000000001537e jal instruction should end up calling
+> >>> 0x3806a
+> >>>>>>>>> AFAICT, but it calls 0x385d4 instead. It happens during
+> >>>>>>>>> single-stepping, so it should not be anything subtle.
+> >>>>>>>>>
+> >>>>>>>>> (gdb) disassemble $pc,+0x20
+> >>>>>>>>> Dump of assembler code from 0x1537c to 0x1539c:
+> >>>>>>>>> =3D> 0x000000000001537c:  mv      a0,a4
+> >>>>>>>>>    0x000000000001537e:  jal     ra,0x3806a
+> >>>>>>>>>    0x0000000000015382:  auipc   a5,0x8a
+> >>>>>>>>>    0x0000000000015386:  addi    a5,a5,1342 # 0x9f8c0
+> >>>>>>>>>    0x000000000001538a:  ld      a4,0(a5)
+> >>>>>>>>>    0x000000000001538c:  beqz    a4,0x153f0
+> >>>>>>>>>    0x000000000001538e:  jal     ra,0x38abe
+> >>>>>>>>>    0x0000000000015392:  ld      a0,0(s6)
+> >>>>>>>>>    0x0000000000015396:  auipc   s7,0x85
+> >>>>>>>>>    0x000000000001539a:  ld      s7,-406(s7) # 0x9a200
+> >>>>>>>>> End of assembler dump.
+> >>>>>>>>> (gdb)
+> >>>>>>>>> (gdb) stepi
+> >>>>>>>>> 0x000000000001537e in ?? ()
+> >>>>>>>>> (gdb)
+> >>>>>>>>>
+> >>>>>>>>> Program received signal SIGILL, Illegal instruction.
+> >>>>>>>>> 0x00000000000385d4 in ?? ()
+> >>>>>>>>> (gdb)
+> >>>>>>>>
+> >>>>>>>> Did you try to compare the call trace to QEMU, where we divert?
+> >>>>>>>
+> >>>>>>> Yes, that's possible way forward, but it will require some
+> >>>>>>> considerable setup on my side.
+> >>>>>>>
+> >>>>>>> If you have QEMU ready... objdump tells you ldconfig's
+> >>> entrypoint,
+> >>>>>>> from that point you can just stepi. In less than 200 steps, you
+> >>>>>>> should have sigill... and complete steps that lead to it.
+> >>>>>>>
+> >>>>>>
+> >>>>>> I've updated sid-ports (dropped the snapshot pinning), and now
+> >>>>>> I'm getting a page fault on the instruction before the one that
+> >>>>>> was causing SIGILL before:
+> >
+> > In case the requested page is a page with PROT_WRITE only (no
+> > PROT_READ) it might be related to
+> > https://jpn01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Flor=
+e
+> > .kernel.org%2Flinux-riscv%2F20220915193702.2201018-1-abrestic%40rivosi
+> > nc.com%2F&amp;data=3D05%7C01%7Cprabhakar.mahadev-lad.rj%40bp.renesas.co=
+m
+> > %7C4efefe2d9ed148944efd08daabc55ab5%7C53d82571da1947e49cb4625a166a4a2a
+> > %7C0%7C0%7C638011161361337108%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAw
+> > MDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&amp
+> > ;sdata=3DmsPQCy0siXTQOmhj7gAtCK1zSQChGNg%2B2KcmAhQvH4k%3D&amp;reserved=
+=3D0
+> >
+> > AFAIR all stable branches have that problem currently.
+> >
+>=20
+> Nice idea. I quickly hacked that on top of the rzfive kernel, but it didn=
+'t change the picture,
+> unfortunately.
+>=20
+Thanks for the quick test.
 
-That said, being able to test linus/master would be very valuable here.
+> That said, being able to test linus/master would be very valuable here.
+>=20
+I will test this on top of v6.0 and update the results.
 
-Jan
-
--- 
-Siemens AG, Technology
-Competence Center Embedded Linux
-
+Cheers,
+Prabhakar
 
