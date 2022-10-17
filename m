@@ -1,157 +1,468 @@
-Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
+Return-Path: <sarath_pt@mentor.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6380C4332F
-	for <webhook@archiver.kernel.org>; Fri, 14 Oct 2022 22:29:31 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.156])
- by mx.groups.io with SMTP id smtpd.web12.13627.1665786567924372794
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0F33C433FE
+	for <webhook@archiver.kernel.org>; Mon, 17 Oct 2022 07:04:01 +0000 (UTC)
+Received: from esa4.mentor.iphmx.com (esa4.mentor.iphmx.com [68.232.137.252])
+ by mx.groups.io with SMTP id smtpd.web12.38214.1665990236982874572
  for <cip-dev@lists.cip-project.org>;
- Fri, 14 Oct 2022 15:29:28 -0700
+ Mon, 17 Oct 2022 00:03:57 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=pass (domain: toshiba.co.jp, ip: 210.130.202.156, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
-Received: by mo-csw.securemx.jp (mx-mo-csw1114) id 29EMT2hr017945; Sat, 15 Oct 2022 07:29:02 +0900
-X-Iguazu-Qid: 2wHHOH6CCoHRCfYnfF
-X-Iguazu-QSIG: v=2; s=0; t=1665786542; q=2wHHOH6CCoHRCfYnfF; m=aJOm7LR49n5qmQCn9X/B5/EKHE/Tl6UlY6KHADNZ7lY=
-Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
-	by relay.securemx.jp (mx-mr1110) id 29EMSwaA040570
-	(version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
-	Sat, 15 Oct 2022 07:28:59 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Q3vz2QqX6mC+WCHts7Q7INMxJuW/y4PfcYAEnDt4JhsXN5bBgyfClc7Sptn5lTkOmofPCvyxQazorsy5pg6n0qUCsjCJdzWSMxz5NWKx81GnuHjS7rF0/45nSNeKOmaXv5rIABgsSZ5B20WmJMpVFBZs54I+tP+ht6WXmjMvRUAZAlKfvkhqEWpVEqRZsERVCNHxK+o0Cp69MWvmwMMwO62rYKgnmk0QyzyvQGu+5BbDr42HxhviRbxFtYuHV8cO8PiEwgn9UWfRFr+GEXU/QH8Ysa95Yt2mx19jQYedfs1PDmHw2LRizBwJhX8baO6YyMwq5KoWhRIol/1ooOXwbA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=55eNUEQvTAgdKCqdrn7aMydXiCE4NwprGYcM7I2GpuI=;
- b=LQaqCDz6q+GG2wynJarkVGJ1xondM2vyS6k2aiYiMqpTNjeKwnBngoZ3qubfWafyb2ZEmPb8k25+6Dw6HZOXSwwI7eXi4gOcG3NpKMBJeswaLIvzI5NTWJ6huZ0HY0HW6zadgrZAF8LjybKT8tJ/N4kyNykp7bKPX4KIPp1hNz3qMqgQwRluCMLLTjipyp+EqOtVtmOo3SQFxPjSl+/L7+4CFafu+njb1P6sk/n/UfFg5zsqidxGaK/AVVSRd+9XI9pvmDvoS2eH0YsS8qI1xv4Bkb/eSP0xdXmi9fUnuWXU7UjSiJQR2W6MqRkzeJAChnE4YLSvbDE91W9qdTVu3Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
- header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
-From: <nobuhiro1.iwamatsu@toshiba.co.jp>
-To: <cip-dev@lists.cip-project.org>
-CC: <pavel@denx.de>, <jan.kiszka@siemens.com>, <uli@fpond.eu>,
-        <masami.ichikawa@cybertrust.co.jp>, <Chris.Paterson2@renesas.com>
-Subject: [ANNOUNCE] Release v4.19.261-cip83 and v5.10.147-cip18
-Thread-Topic: [ANNOUNCE] Release v4.19.261-cip83 and v5.10.147-cip18
-Thread-Index: AdjgHABDV343IeBsREWVIUCihmChrg==
-Date: Fri, 14 Oct 2022 22:28:56 +0000
-X-TSB-HOP2: ON
-Message-ID: <TYWPR01MB94204E2856B049BB2E108A4392249@TYWPR01MB9420.jpnprd01.prod.outlook.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
+ dkim=missing; spf=pass (domain: mentor.com, ip: 68.232.137.252, mailfrom: sarath_pt@mentor.com)
+X-IronPort-AV: E=Sophos;i="5.95,190,1661846400"; 
+   d="scan'208,217";a="84859264"
+Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
+  by esa4.mentor.iphmx.com with ESMTP; 16 Oct 2022 23:03:51 -0800
+IronPort-SDR: TvAO3RpjNyQOvtNgrToB2SdBVr2Mw+5BIRPJwjQ3cXVMnzUZXnKvLym56EriUp2Ls+CXtReR1i
+ iy+edoveb4wZfBg02ydSvNiqUfnOU7D4cJcwhk34JSViVzV+/kDbRbZpeTyMJoIS95SFLV1Vxc
+ vMNDcpioYgJjmeNjGthwm3WFNgAAozL48qNkYzEJSE4G3aH2EmHT+TX6wjO/PD3h77EUdWbPkS
+ q36ItAyckU6q+slgD2INPJzw94J/FoQGT16bKD+ARkT0JOBH1q3VWOq19sDPTHybcBNXzGdVLS
+ b2Y=
+From: "P T, Sarath" <Sarath_PT@mentor.com>
+To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
+Subject: Tests run on CIP-LAVA platform
+Thread-Topic: Tests run on CIP-LAVA platform
+Thread-Index: Adjh9pXyvPJeWbcCTVG87YJuWZoCXg==
+Date: Mon, 17 Oct 2022 07:03:48 +0000
+Message-ID: <47d0ac6c735c4251abb3602a43b20d77@mentor.com>
+Accept-Language: en-US
+Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYWPR01MB9420:EE_|OSZPR01MB8815:EE_
-x-ms-office365-filtering-correlation-id: 25bee173-2f95-43a4-02f9-08daae337b8f
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: qJM6XpXSdrI10jFdxQG38yVEZyKE1kY6K1tbynLmdj2e5CAeQ4A9IKKvet+xDBmq2yWrkOyuWi27tVV34UIfON+h/QQ+q14+RNqOW4peJxXBjCwnbLjg8B2gLVr3au9NScZ206aPOz0EzmMeMoLKTK9v5fYumF5583SXCm0+UnMBd/pAoYDoKNEWqd9sSgVH4UhjEGQwW3WL8YmXLPmti7tr2zxSm40rHTycOtHM/kI1nVd6Zm8mYxaSeD7umQieDqUzSnJKFjWLcrPNrU+OWUQYdqzSelkB7ZId0iOwzvgMUuM/lGJtTPsFheWwDGtBNtGAoai2pV+Foe7YgwXs7m4LhCrJ/EM+fsZ/bCHU6tN4HUiMOQfA4ZHVci4MiY9S6domG81OEdcEcjT9KkYs6Kd4Ig0V8OHJaWG6g8hmYkE0JCJUKkDR3vevZIaozSbVvzJlyg64sorfQ7n7tUE2Qn2Nd088yRU7RZ0kDCxE0XTXIlOobvl0rMWP7vPTFsyrJJkFacl7frLf2pbzMM5wblDzBZzYvm3rAzjcqyN+jGvDhMp+jepaHJ0nk4gZdn5LKTNx8shDTgd/HJGcyEksyXHfHPJZntD7WZ6fUrxZ++oBGkngAliN1ePcjQaUoOW81sV6rYheP9Zf549beE6oBgOWvpVaMEJiPmxev6DZA9PVx1a5t5pbnW6VdWxYwXxGwAsQaJAEI34IC2Q4EfGCwRniaxi6iJ1njhWoS+GZYrWAo3Y8m250Xh444HmPzC9itG+4fPo1pbPOiofWdA387th6f4ukjvIj3+i+uni65aY=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB9420.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(376002)(136003)(39860400002)(396003)(366004)(346002)(451199015)(9686003)(6506007)(7696005)(26005)(55236004)(83380400001)(2906002)(5660300002)(186003)(55016003)(54906003)(6916009)(316002)(966005)(71200400001)(478600001)(41300700001)(8936002)(52536014)(8676002)(66446008)(66476007)(66556008)(66946007)(76116006)(4326008)(64756008)(86362001)(33656002)(122000001)(38100700002)(38070700005);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-2022-jp?B?bWNkenBVSmFMcFRUczBrb2w5OWc2WVQ3N0RWdktTRU5XMFBYQ2FaRWZW?=
- =?iso-2022-jp?B?d2wwYWtFWEoyc3lnUmhiZkhNWVVVcTF4UDJ3Ky85V3RIWFZGTkhMMld3?=
- =?iso-2022-jp?B?RTlidXpzUXd0MGdEZUJEYi9MdERtYXhuUm1PMmlsWUdZZjVqdjFCL0ZX?=
- =?iso-2022-jp?B?aUt1QnZuOWh2TkJ6NmpLT0NFU0FidW5qeDJtY2N0dTVOd29Zb0ZHM1lp?=
- =?iso-2022-jp?B?aC9zOWd0QWhrRVFKV1hacnliM1V4d0NDZEJCZ2xWUVd3d1dEWUlXTnM5?=
- =?iso-2022-jp?B?UmRjWmxtME1oMlBHRDlzM3NRWFdsTnpsNytLYjNKWURGMHJtVEJ1TDh4?=
- =?iso-2022-jp?B?QWJGWDJqVjh5UnVqNFZLQkduUDJPTG1ZQkV2UFRYa3pZZFB5ejVjc3hD?=
- =?iso-2022-jp?B?UW1ETk5nUVgrc3VzUk5PS3VHdnVaUEN2VUNScDRTdXErb3NFT1BBd1JE?=
- =?iso-2022-jp?B?SkJIUEo3SWt4aDVjcEpyM2dyLzcwN0Q2cE1Pc1pCVTI3UURCcTJaTndt?=
- =?iso-2022-jp?B?NkhUR2lRSHh4TEpLSjUrN1pWTVo4amRUNDZ0ZVUxUjJtNkZsdkNBMTUw?=
- =?iso-2022-jp?B?RFd4VFZwbmhNdHAyVGJJTkZwaERnS1VVMnNSbmJaT3dWL0dYejBKWnpm?=
- =?iso-2022-jp?B?SHM3eEQ1b25kMzhiaHgrQTF1U2krbEVsR1Rsakp1d0JWZmFyTVpMM3hv?=
- =?iso-2022-jp?B?bkhydnVubkJ5L3dUY0VIbDNuU3JsNDhHclBFVmxwOHA4eU95d2FjZnhw?=
- =?iso-2022-jp?B?MXQ3U0FyVHgvblV6SXRMYmxhQnFzUXJSRy9ZN3h1RHhUOVpXZmhzeUhi?=
- =?iso-2022-jp?B?eEZVVHNIWjNselRNYmdPWXVDUmpFT2xMVkN3cXd1VFNFZVFCTFZwVDkx?=
- =?iso-2022-jp?B?TlZoSVVSQmVMZlMvelBwL080QVN5VXpEVjVaa2pIcGkrVXpSREVWZVlX?=
- =?iso-2022-jp?B?Q0VsTlVLYUR6blprR2Z1ZXI5N0tnSjVEd3lxa09ySnl6YzlMWWdqMXlp?=
- =?iso-2022-jp?B?aVR2cmkraWYxbmg2NDlBTW9BSHBlY0dDY2NxTFBNbjM0RkNnY2p3NVNx?=
- =?iso-2022-jp?B?MkRvbjlxSGFSMWphcHZXMU81MFM4aHBhZDJCWkR5cnhrZENKODVoUnhP?=
- =?iso-2022-jp?B?T1lNZTV3NTZLaXJGVkNITldCbnJYcGVVcklsRlpGbE9VOUlBWDEwa2xx?=
- =?iso-2022-jp?B?NXkwME5ZdElBalQwY2dERFJ3SkV6Zm0zcDlYRGY1ZlhCNzhwL1F5MHRh?=
- =?iso-2022-jp?B?ZFcxV1pXOUl0dXVxWStpREJtY3l3T215NmllMCszeE5tNitXaDFjejNV?=
- =?iso-2022-jp?B?LzArQmxzM0o2Zkt4eXRjNElqMlBuSWdmY3o1VUF5L1hjNkpjeU1HWVFr?=
- =?iso-2022-jp?B?cFk3UlJObnJZdW5YTThFd1BNOXQ1NWNkNXZ0RnFoZGJiWWFLNCtXKzg0?=
- =?iso-2022-jp?B?V2F4czBXYlNEYlFxcnluelI4bjZ2V0czZkVaNWNlbkdWNlRDRGhZZDRn?=
- =?iso-2022-jp?B?WE9TVUNJczhWbXU3elhjUzd6cGQ1U2EySS9CM0lSaXBtcWNwYVltTkFV?=
- =?iso-2022-jp?B?Z01URDk0ZzVKRjFBNkJWZmNaUlFqNS93ZzNIZDNWVnd6MFNJS3B4OUVw?=
- =?iso-2022-jp?B?bHY2STBUM3RxRUUra3J1SDUwWDVsRW5zYk5USFpjb2N2QmVUTmpId010?=
- =?iso-2022-jp?B?REt0OUY5NlF6R1RZS0lBdy9LLzJEemo3Sk51TjYrY2hXMXF1djlQZzFB?=
- =?iso-2022-jp?B?M21OcysvZ2tFOGlPaUtTdzczOVEzTGdTQVhycnAvUWtrc3loakVZZXFK?=
- =?iso-2022-jp?B?ZGk2MkJFOXM0RldsVlpQRlBnMkNuZEJQTWEwd3FIdE04b1cyY2lQbVZr?=
- =?iso-2022-jp?B?NEhVNktyOTd5UEpVZTdkUlpVckRZbWpvcGM1WVp4d3pDZVhIZXgzVGM2?=
- =?iso-2022-jp?B?YWh0bW9RZDZNWkFWdWcvdGowZDJNbTRuSmcyMHI3YlhLUm1JWGtkdDE4?=
- =?iso-2022-jp?B?QlhyVFpaeEJnNjhxNUthVDFIdjJlY2VWdm1oWlN3OEFKbXBHaXJFSUV0?=
- =?iso-2022-jp?B?QmhZVXh6QnVHdExRY3pyRlZMMmEzR0F3TGNmb2RCdGZMaS9TUC9LTnZX?=
- =?iso-2022-jp?B?bTVSUlRQYkRwZkZxaFcxaUZ1czRYbjZoV1crYU9YZTdUd092ZkFwMi9B?=
- =?iso-2022-jp?B?c210eG9FeGVQWnNESkQ4bkg1ZWpMdndXNFBhZ3BHRlJHdDYzakU4WFRS?=
- =?iso-2022-jp?B?VE05SzF2YWwwSU5Ydm5aajF5RHVaQ04xM2FwL0RXNlgxZ2FnWHh6YVFF?=
- =?iso-2022-jp?B?dFI2dGtaWnVIajJmMFk0V21nUXFoOFBnZ2c9PQ==?=
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+x-originating-ip: [147.34.91.1]
+Content-Type: multipart/alternative;
+	boundary="_000_47d0ac6c735c4251abb3602a43b20d77mentorcom_"
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB9420.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 25bee173-2f95-43a4-02f9-08daae337b8f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Oct 2022 22:28:56.5569
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Ox+ohRt5uZcsDkcYGoZWzRbgWT3vZtkxOctF0xxIHzpt6y1IXz+DwwPYDoIQPOJ6dWx1qc/EqDyigHxRXt/MqXiMBsc35A6xLDfj5NaWD4Iyunj8ir9/TaQdDQ/QZisB
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB8815
-X-OriginatorOrg: toshiba.co.jp
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 14 Oct 2022 22:29:31 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9765
+ <cip-dev@lists.cip-project.org>; Mon, 17 Oct 2022 07:04:01 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9766
 
-Hi,
+--_000_47d0ac6c735c4251abb3602a43b20d77mentorcom_
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 
-CIP kernel team has released Linux kernel v4.19.261-cip83 and v5.10.147-cip=
-18.
-The linux-4.19.y-cip tree has been updated base version from v4.19.259 to v=
-4.19.261,
-and the linux-5.10.y-cip tree has been updated base version from v5.10.145 =
-to v5.10.147.
+Hi Team,
 
-You can get this release via the git tree at:
-
-  v4.19.261-cip83:
-    repository:
-      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch:
-      linux-4.19.y-cip
-    commit hash:
-      34b3125bdd71113063c74c32f4ecfbbb122dff57
-    Fixed CVEs:
-      CVE-2022-39842: video: fbdev: pxa3xx-gcu: Fix integer overflow in pxa=
-3xx_gcu_write
-    added commits:
-      CIP: Bump version suffix to -cip83 after merge from stable
-
-  v5.10.147-cip18:
-    repository:
-      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch:
-      linux-5.10.y-cip
-    commit hash:
-      ef9425de71e3d6cd46470415b2648f2244057840
-    Fixed CVEs:
-      CVE-2022-0171: KVM: SEV: add cache flush to solve SEV cache incoheren=
-cy issues
-      CVE-2021-4037: xfs: fix up non-directory creation in SGID directories
-    added commits:
-      CIP: Bump version suffix to -cip18 after merge from stable
-      ASoC: sh: rz-ssi: Improve error handling in rz_ssi_probe() error path
-
-Best regards,
-   Nobuhiro
+I could able to see there are few tests are running in the CIP LAVA platfor=
+m. I am showing the list below what all LAVA tests are running in the CIP L=
+AVA platform.
 
 
+Test-case
+
+CIP LAVA job link
+
+Status
+
+Comments
+
+
+i)                 spectre-meltdown-checker-test
+
+https://lava.ciplatform.org/scheduler/job/686074
+
+Not run
+
+Reason of failure
+
+./spectre-meltdown-checker.sh: Permission denied.
+
+
+ii)               hackbench
+
+https://lava.ciplatform.org/results/634343
+
+PASS
+
+
+
+
+iii)             cyclictest
+
+https://lava.ciplatform.org/results/634097
+
+SKIP
+
+Reason of failure
+
+$ ./cyclictest.sh -D 2m -p 98 -i 1000 -t 1 -a 0 -h '' -w '' this command is=
+ giving "/usr/bin/cyclictest: unrecognized option" error
+
+
+iv)              cyclicdeadline
+
+https://lava.ciplatform.org/results/633692
+
+Not run
+
+Reason of failure
+
+
+while executing cyclicdeadline.sh getting an error like
+
+/usr/bin/cyclicdeadline: invalid option -- 'q'
+
+
+
+Is there any specific reason why few test-cases are running through LAVA ?
+
+
+Regards
+
+Sarath P T
+
+
+--_000_47d0ac6c735c4251abb3602a43b20d77mentorcom_
+Content-Type: text/html; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
+osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
+//www.w3.org/TR/REC-html40">
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
+>
+<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
+<style><!--
+/* Font Definitions */
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+@font-face
+	{font-family:-apple-system;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	font-size:11.0pt;
+	font-family:"Calibri",sans-serif;
+	mso-fareast-language:EN-US;}
+a:link, span.MsoHyperlink
+	{mso-style-priority:99;
+	color:#0563C1;
+	text-decoration:underline;}
+a:visited, span.MsoHyperlinkFollowed
+	{mso-style-priority:99;
+	color:#954F72;
+	text-decoration:underline;}
+p
+	{mso-style-priority:99;
+	mso-margin-top-alt:auto;
+	margin-right:0cm;
+	mso-margin-bottom-alt:auto;
+	margin-left:0cm;
+	font-size:12.0pt;
+	font-family:"Times New Roman",serif;}
+p.MsoListParagraph, li.MsoListParagraph, div.MsoListParagraph
+	{mso-style-priority:34;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:36.0pt;
+	margin-bottom:.0001pt;
+	font-size:11.0pt;
+	font-family:"Calibri",sans-serif;
+	mso-fareast-language:EN-US;}
+span.EmailStyle17
+	{mso-style-type:personal-compose;
+	font-family:"Calibri",sans-serif;
+	color:windowtext;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	font-family:"Calibri",sans-serif;
+	mso-fareast-language:EN-US;}
+@page WordSection1
+	{size:612.0pt 792.0pt;
+	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
+div.WordSection1
+	{page:WordSection1;}
+/* List Definitions */
+@list l0
+	{mso-list-id:2048095819;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1634539996 1474486544 1074331673 1074331675 1074331=
+663 1074331673 1074331675 1074331663 1074331673 1074331675;}
+@list l0:level1
+	{mso-level-number-format:roman-lower;
+	mso-level-text:"%1\)";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	margin-left:54.0pt;
+	text-indent:-36.0pt;
+	mso-ansi-font-size:10.5pt;
+	font-family:-apple-system;
+	color:#172B4D;}
+@list l0:level2
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l0:level3
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l0:level4
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l0:level5
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l0:level6
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l0:level7
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l0:level8
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l0:level9
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+ol
+	{margin-bottom:0cm;}
+ul
+	{margin-bottom:0cm;}
+--></style><!--[if gte mso 9]><xml>
+<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
+</xml><![endif]--><!--[if gte mso 9]><xml>
+<o:shapelayout v:ext=3D"edit">
+<o:idmap v:ext=3D"edit" data=3D"1" />
+</o:shapelayout></xml><![endif]-->
+</head>
+<body lang=3D"EN-IN" link=3D"#0563C1" vlink=3D"#954F72">
+<div class=3D"WordSection1">
+<p class=3D"MsoNormal">Hi Team,<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">I could able to see there are few tests are running =
+in the CIP LAVA platform. I am showing the list below what all LAVA tests a=
+re running in the CIP LAVA platform.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
+=3D"0" style=3D"border-collapse:collapse">
+<tbody>
+<tr>
+<td width=3D"170" valign=3D"top" style=3D"width:116.85pt;border:solid windo=
+wtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt">
+<p class=3D"MsoNormal"><strong><span style=3D"font-size:10.5pt;font-family:=
+-apple-system;color:#172B4D;letter-spacing:-.05pt;background:#F4F5F7">Test-=
+case</span></strong><o:p></o:p></p>
+</td>
+<td width=3D"306" valign=3D"top" style=3D"width:116.85pt;border:solid windo=
+wtext 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt">
+<p class=3D"MsoNormal"><strong><span style=3D"font-size:10.5pt;font-family:=
+-apple-system;color:#172B4D;letter-spacing:-.05pt;background:#F4F5F7">CIP L=
+AVA job link</span></strong><o:p></o:p></p>
+</td>
+<td width=3D"53" valign=3D"top" style=3D"width:116.9pt;border:solid windowt=
+ext 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt">
+<p class=3D"MsoNormal"><strong><span style=3D"font-size:10.5pt;font-family:=
+-apple-system;color:#172B4D;letter-spacing:-.05pt;background:#F4F5F7">Statu=
+s</span></strong><o:p></o:p></p>
+</td>
+<td width=3D"158" valign=3D"top" style=3D"width:116.9pt;border:solid window=
+text 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt">
+<p class=3D"MsoNormal"><strong><span style=3D"font-size:10.5pt;font-family:=
+-apple-system;color:#172B4D;letter-spacing:-.05pt;background:#F4F5F7">Comme=
+nts</span></strong><o:p></o:p></p>
+</td>
+</tr>
+<tr>
+<td width=3D"170" valign=3D"top" style=3D"width:116.85pt;border:solid windo=
+wtext 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt">
+<p class=3D"MsoListParagraph" style=3D"margin-left:54.0pt;text-indent:-36.0=
+pt;mso-list:l0 level1 lfo1">
+<![if !supportLists]><span style=3D"font-size:10.5pt;font-family:-apple-sys=
+tem;color:#172B4D"><span style=3D"mso-list:Ignore">i)<span style=3D"font:7.=
+0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span style=3D"font-size:10.5pt;font-family:=
+-apple-system;color:#172B4D;letter-spacing:-.05pt;background:white">spectre=
+-meltdown-checker-test</span><o:p></o:p></p>
+</td>
+<td width=3D"306" valign=3D"top" style=3D"width:116.85pt;border-top:none;bo=
+rder-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid wind=
+owtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt">
+<p class=3D"MsoNormal"><a href=3D"https://lava.ciplatform.org/scheduler/job=
+/686074">https://lava.ciplatform.org/scheduler/job/686074</a><o:p></o:p></p=
+>
+</td>
+<td width=3D"53" valign=3D"top" style=3D"width:116.9pt;border-top:none;bord=
+er-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid window=
+text 1.0pt;padding:0cm 5.4pt 0cm 5.4pt">
+<p class=3D"MsoNormal">Not run<o:p></o:p></p>
+</td>
+<td width=3D"158" valign=3D"top" style=3D"width:116.9pt;border-top:none;bor=
+der-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windo=
+wtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt">
+<p class=3D"MsoNormal"><strong><span style=3D"font-size:10.5pt;font-family:=
+-apple-system;color:#C00000;letter-spacing:-.05pt;background:white;font-wei=
+ght:normal">Reason of failure
+<o:p></o:p></span></strong></p>
+<p class=3D"MsoNormal"><b><span style=3D"font-size:10.5pt;font-family:-appl=
+e-system;color:#172B4D;letter-spacing:-.05pt;background:white"><br>
+<strong><span style=3D"font-family:-apple-system">./spectre-meltdown-checke=
+r.sh</span></strong></span></b><span style=3D"font-size:10.5pt;font-family:=
+-apple-system;color:#172B4D;letter-spacing:-.05pt;background:white">: Permi=
+ssion denied.</span><o:p></o:p></p>
+</td>
+</tr>
+<tr>
+<td width=3D"170" valign=3D"top" style=3D"width:116.85pt;border:solid windo=
+wtext 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt">
+<p class=3D"MsoListParagraph" style=3D"margin-left:54.0pt;text-indent:-36.0=
+pt;mso-list:l0 level1 lfo1">
+<![if !supportLists]><span style=3D"font-size:10.5pt;font-family:-apple-sys=
+tem;color:#172B4D"><span style=3D"mso-list:Ignore">ii)<span style=3D"font:7=
+.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span style=3D"font-size:10.5pt;font-family:=
+-apple-system;color:#172B4D;letter-spacing:-.05pt;background:white">hackben=
+ch</span><o:p></o:p></p>
+</td>
+<td width=3D"306" valign=3D"top" style=3D"width:116.85pt;border-top:none;bo=
+rder-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid wind=
+owtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt">
+<p class=3D"MsoNormal"><a href=3D"https://lava.ciplatform.org/results/63434=
+3">https://lava.ciplatform.org/results/634343</a><o:p></o:p></p>
+</td>
+<td width=3D"53" valign=3D"top" style=3D"width:116.9pt;border-top:none;bord=
+er-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid window=
+text 1.0pt;padding:0cm 5.4pt 0cm 5.4pt">
+<p class=3D"MsoNormal">PASS<o:p></o:p></p>
+</td>
+<td width=3D"158" valign=3D"top" style=3D"width:116.9pt;border-top:none;bor=
+der-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windo=
+wtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt">
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+</td>
+</tr>
+<tr>
+<td width=3D"170" valign=3D"top" style=3D"width:116.85pt;border:solid windo=
+wtext 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt">
+<p class=3D"MsoListParagraph" style=3D"margin-left:54.0pt;text-indent:-36.0=
+pt;mso-list:l0 level1 lfo1">
+<![if !supportLists]><span style=3D"font-size:10.5pt;font-family:-apple-sys=
+tem;color:#172B4D"><span style=3D"mso-list:Ignore">iii)<span style=3D"font:=
+7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span style=3D"font-size:10.5pt;font-family:=
+-apple-system;color:#172B4D;letter-spacing:-.05pt;background:white">cyclict=
+est</span><o:p></o:p></p>
+</td>
+<td width=3D"306" valign=3D"top" style=3D"width:116.85pt;border-top:none;bo=
+rder-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid wind=
+owtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt">
+<p class=3D"MsoNormal"><a href=3D"https://lava.ciplatform.org/results/63409=
+7">https://lava.ciplatform.org/results/634097</a><o:p></o:p></p>
+</td>
+<td width=3D"53" valign=3D"top" style=3D"width:116.9pt;border-top:none;bord=
+er-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid window=
+text 1.0pt;padding:0cm 5.4pt 0cm 5.4pt">
+<p class=3D"MsoNormal">SKIP<o:p></o:p></p>
+</td>
+<td width=3D"158" valign=3D"top" style=3D"width:116.9pt;border-top:none;bor=
+der-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windo=
+wtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt">
+<p class=3D"MsoNormal"><strong><span style=3D"font-size:10.5pt;font-family:=
+-apple-system;color:#C00000;letter-spacing:-.05pt;background:white;font-wei=
+ght:normal">Reason of failure
+<o:p></o:p></span></strong></p>
+<p class=3D"MsoNormal"><span style=3D"color:#172B4D"><o:p>&nbsp;</o:p></spa=
+n></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:10.5pt;font-family:-apple-s=
+ystem;color:#172B4D;letter-spacing:-.05pt;background:white">$<strong><span =
+style=3D"font-family:-apple-system"> ./cyclictest.sh -D 2m -p 98 -i 1000 -t=
+ 1 -a 0 -h '' -w ''</span></strong> this
+ command is giving <strong><span style=3D"font-family:-apple-system">&#8220=
+;/usr/bin/cyclictest: unrecognized option&#8221;
+</span></strong>error</span><o:p></o:p></p>
+</td>
+</tr>
+<tr>
+<td width=3D"170" valign=3D"top" style=3D"width:116.85pt;border:solid windo=
+wtext 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt">
+<p class=3D"MsoListParagraph" align=3D"right" style=3D"margin-left:54.0pt;t=
+ext-align:right;text-indent:-36.0pt;mso-list:l0 level1 lfo1">
+<![if !supportLists]><span style=3D"font-size:10.5pt;font-family:-apple-sys=
+tem;color:#172B4D"><span style=3D"mso-list:Ignore">iv)<span style=3D"font:7=
+.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span style=3D"font-size:10.5pt;font-family:=
+-apple-system;color:#172B4D;letter-spacing:-.05pt;background:white">cyclicd=
+eadline</span><o:p></o:p></p>
+</td>
+<td width=3D"306" valign=3D"top" style=3D"width:116.85pt;border-top:none;bo=
+rder-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid wind=
+owtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt">
+<p class=3D"MsoNormal"><a href=3D"https://lava.ciplatform.org/results/63369=
+2">https://lava.ciplatform.org/results/633692</a><o:p></o:p></p>
+</td>
+<td width=3D"53" valign=3D"top" style=3D"width:116.9pt;border-top:none;bord=
+er-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid window=
+text 1.0pt;padding:0cm 5.4pt 0cm 5.4pt">
+<p class=3D"MsoNormal">Not run<o:p></o:p></p>
+</td>
+<td width=3D"158" valign=3D"top" style=3D"width:116.9pt;border-top:none;bor=
+der-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windo=
+wtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt">
+<p class=3D"MsoNormal"><strong><span style=3D"font-size:10.5pt;font-family:=
+-apple-system;color:#C00000;letter-spacing:-.05pt;background:white;font-wei=
+ght:normal">Reason of failure
+<o:p></o:p></span></strong></p>
+<p style=3D"margin:0cm;margin-bottom:.0001pt;background:white"><span style=
+=3D"font-size:10.5pt;font-family:-apple-system;color:#172B4D;letter-spacing=
+:-.05pt"><br>
+<br>
+while executing <strong><span style=3D"font-family:-apple-system">cyclicdea=
+dline.sh</span></strong> getting an error like</span><span style=3D"color:#=
+172B4D"><o:p></o:p></span></p>
+<p style=3D"background:white;margin:0.75rem 0px 0px;box-sizing: border-box;=
+font-variant-ligatures: normal;font-variant-caps: normal;orphans: 2;white-s=
+pace:pre-wrap;widows: 2;-webkit-text-stroke-width: 0px;text-decoration-thic=
+kness: initial;text-decoration-style: initial;text-decoration-color: initia=
+l;word-spacing:0px">
+<strong><span style=3D"font-size:10.5pt;font-family:-apple-system;color:#17=
+2B4D;letter-spacing:-.05pt">/usr/bin/cyclicdeadline: invalid option -- 'q'<=
+/span></strong><span style=3D"font-size:10.5pt;font-family:-apple-system;co=
+lor:#172B4D;letter-spacing:-.05pt"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-bottom:12.0pt">Is there any specific=
+ reason why few test-cases are running through LAVA ?
+<br>
+<br>
+<br>
+Regards <br>
+<br>
+Sarath P T <o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+</div>
+</body>
+</html>
+
+--_000_47d0ac6c735c4251abb3602a43b20d77mentorcom_--
 
