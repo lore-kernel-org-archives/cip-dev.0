@@ -2,47 +2,69 @@ Return-Path: <sarath_pt@mentor.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0F33C433FE
-	for <webhook@archiver.kernel.org>; Mon, 17 Oct 2022 07:04:01 +0000 (UTC)
-Received: from esa4.mentor.iphmx.com (esa4.mentor.iphmx.com [68.232.137.252])
- by mx.groups.io with SMTP id smtpd.web12.38214.1665990236982874572
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E89C433FE
+	for <webhook@archiver.kernel.org>; Mon, 17 Oct 2022 13:01:33 +0000 (UTC)
+Received: from esa3.mentor.iphmx.com (esa3.mentor.iphmx.com [68.232.137.180])
+ by mx.groups.io with SMTP id smtpd.web08.40462.1666011691397465159
  for <cip-dev@lists.cip-project.org>;
- Mon, 17 Oct 2022 00:03:57 -0700
+ Mon, 17 Oct 2022 06:01:31 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=pass (domain: mentor.com, ip: 68.232.137.252, mailfrom: sarath_pt@mentor.com)
-X-IronPort-AV: E=Sophos;i="5.95,190,1661846400"; 
-   d="scan'208,217";a="84859264"
+ dkim=missing; spf=pass (domain: mentor.com, ip: 68.232.137.180, mailfrom: sarath_pt@mentor.com)
+X-IronPort-AV: E=Sophos;i="5.95,191,1661846400"; 
+   d="scan'208,217";a="84709955"
 Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
-  by esa4.mentor.iphmx.com with ESMTP; 16 Oct 2022 23:03:51 -0800
-IronPort-SDR: TvAO3RpjNyQOvtNgrToB2SdBVr2Mw+5BIRPJwjQ3cXVMnzUZXnKvLym56EriUp2Ls+CXtReR1i
- iy+edoveb4wZfBg02ydSvNiqUfnOU7D4cJcwhk34JSViVzV+/kDbRbZpeTyMJoIS95SFLV1Vxc
- vMNDcpioYgJjmeNjGthwm3WFNgAAozL48qNkYzEJSE4G3aH2EmHT+TX6wjO/PD3h77EUdWbPkS
- q36ItAyckU6q+slgD2INPJzw94J/FoQGT16bKD+ARkT0JOBH1q3VWOq19sDPTHybcBNXzGdVLS
- b2Y=
+  by esa3.mentor.iphmx.com with ESMTP; 17 Oct 2022 05:01:09 -0800
+IronPort-SDR: pPhlqfCNZKUk2GraZjrwGUM5Be28UDNbrUCfQ8snN5eL8EIDnoR9PtOknacGGV2GqnUPrKcg44
+ DPs6wGjwA/lNW2YqgsyAx0RKjVbuOBP7fYOVokpeZzd9IeWgrq5Nq9fD4zBTyMx7IzfIzj1rDk
+ O2jFF/KCPHB9jSntXOGoJvV2NLHneUNIERQ1ZHDlHY4ng15EAY5+D68gH2VbWlm1cYDnoYhoBK
+ zrrq+oLEUXLxIN+MK3jFxoI+I1TAf6qvTpEaKKlLQgY+7stnV1ya+F7mOdBihFr3lLVczBERps
+ WTs=
 From: "P T, Sarath" <Sarath_PT@mentor.com>
 To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-Subject: Tests run on CIP-LAVA platform
+Subject: RE: Tests run on CIP-LAVA platform
 Thread-Topic: Tests run on CIP-LAVA platform
-Thread-Index: Adjh9pXyvPJeWbcCTVG87YJuWZoCXg==
-Date: Mon, 17 Oct 2022 07:03:48 +0000
-Message-ID: <47d0ac6c735c4251abb3602a43b20d77@mentor.com>
+Thread-Index: Adjh9pXyvPJeWbcCTVG87YJuWZoCXgALVGaA
+Date: Mon, 17 Oct 2022 13:01:04 +0000
+Message-ID: <6f438000c8004b20b927ac2d992238dd@mentor.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [147.34.91.1]
 Content-Type: multipart/alternative;
-	boundary="_000_47d0ac6c735c4251abb3602a43b20d77mentorcom_"
+	boundary="_000_6f438000c8004b20b927ac2d992238ddmentorcom_"
 MIME-Version: 1.0
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 17 Oct 2022 07:04:01 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9766
+ <cip-dev@lists.cip-project.org>; Mon, 17 Oct 2022 13:01:33 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9767
 
---_000_47d0ac6c735c4251abb3602a43b20d77mentorcom_
+--_000_6f438000c8004b20b927ac2d992238ddmentorcom_
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
+
+Hi Team ,
+
+I can see in Linaro/test-definitions (https://github.com/Linaro/test-defini=
+tions/tree/master/automated/linux) there are 123 test-suites are present bu=
+t only 4 test-suites are running on cip lava ?
+
+Few more queries I am having regarding this.
+      i)   Is CIP  running the full QA of Linaro/test-definitions test-suit=
+es in any other platform ?
+      ii)  All of the tests which has been run in the LAVA CIP platform is =
+2mins duration. Is there a particular reason for choosing these much durati=
+on of tests ?
+
+Regards
+Sarath P T
+
+
+From: P T, Sarath
+Sent: 17 October 2022 12:34
+To: 'cip-dev@lists.cip-project.org' <cip-dev@lists.cip-project.org>
+Subject: Tests run on CIP-LAVA platform
 
 Hi Team,
 
@@ -115,7 +137,7 @@ Regards
 Sarath P T
 
 
---_000_47d0ac6c735c4251abb3602a43b20d77mentorcom_
+--_000_6f438000c8004b20b927ac2d992238ddmentorcom_
 Content-Type: text/html; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 
@@ -170,14 +192,17 @@ p.MsoListParagraph, li.MsoListParagraph, div.MsoListParagraph
 	font-size:11.0pt;
 	font-family:"Calibri",sans-serif;
 	mso-fareast-language:EN-US;}
-span.EmailStyle17
-	{mso-style-type:personal-compose;
+span.EmailStyle19
+	{mso-style-type:personal;
 	font-family:"Calibri",sans-serif;
 	color:windowtext;}
+span.EmailStyle21
+	{mso-style-type:personal-reply;
+	font-family:"Calibri",sans-serif;
+	color:#1F497D;}
 .MsoChpDefault
 	{mso-style-type:export-only;
-	font-family:"Calibri",sans-serif;
-	mso-fareast-language:EN-US;}
+	font-size:10.0pt;}
 @page WordSection1
 	{size:612.0pt 792.0pt;
 	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
@@ -185,20 +210,14 @@ div.WordSection1
 	{page:WordSection1;}
 /* List Definitions */
 @list l0
-	{mso-list-id:2048095819;
+	{mso-list-id:571349227;
 	mso-list-type:hybrid;
-	mso-list-template-ids:-1634539996 1474486544 1074331673 1074331675 1074331=
-663 1074331673 1074331675 1074331663 1074331673 1074331675;}
+	mso-list-template-ids:1799420930 1074331663 1074331673 1074331675 10743316=
+63 1074331673 1074331675 1074331663 1074331673 1074331675;}
 @list l0:level1
-	{mso-level-number-format:roman-lower;
-	mso-level-text:"%1\)";
-	mso-level-tab-stop:none;
+	{mso-level-tab-stop:none;
 	mso-level-number-position:left;
-	margin-left:54.0pt;
-	text-indent:-36.0pt;
-	mso-ansi-font-size:10.5pt;
-	font-family:-apple-system;
-	color:#172B4D;}
+	text-indent:-18.0pt;}
 @list l0:level2
 	{mso-level-number-format:alpha-lower;
 	mso-level-tab-stop:none;
@@ -237,6 +256,203 @@ div.WordSection1
 	mso-level-tab-stop:none;
 	mso-level-number-position:right;
 	text-indent:-9.0pt;}
+@list l1
+	{mso-list-id:880089531;
+	mso-list-type:hybrid;
+	mso-list-template-ids:985673192 1074331663 1074331673 1074331675 107433166=
+3 1074331673 1074331675 1074331663 1074331673 1074331675;}
+@list l1:level1
+	{mso-level-start-at:3;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l1:level2
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l1:level3
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l1:level4
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l1:level5
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l1:level6
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l1:level7
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l1:level8
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l1:level9
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l2
+	{mso-list-id:1418867105;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-2115962418 1074331663 1074331673 1074331675 1074331=
+663 1074331673 1074331675 1074331663 1074331673 1074331675;}
+@list l2:level1
+	{mso-level-start-at:3;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l2:level2
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l2:level3
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l2:level4
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l2:level5
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l2:level6
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l2:level7
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l2:level8
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l2:level9
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l3
+	{mso-list-id:2048095819;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1634539996 1474486544 1074331673 1074331675 1074331=
+663 1074331673 1074331675 1074331663 1074331673 1074331675;}
+@list l3:level1
+	{mso-level-number-format:roman-lower;
+	mso-level-text:"%1\)";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	margin-left:54.0pt;
+	text-indent:-36.0pt;
+	mso-ansi-font-size:10.5pt;
+	font-family:-apple-system;
+	color:#172B4D;}
+@list l3:level2
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l3:level3
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l3:level4
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l3:level5
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l3:level6
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l3:level7
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l3:level8
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l3:level9
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l4
+	{mso-list-id:2074110938;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1106091848 1074331663 1074331673 1074331675 1074331=
+663 1074331673 1074331675 1074331663 1074331673 1074331675;}
+@list l4:level1
+	{mso-level-start-at:3;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l4:level2
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l4:level3
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l4:level4
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l4:level5
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l4:level6
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l4:level7
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l4:level8
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l4:level9
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
 ol
 	{margin-bottom:0cm;}
 ul
@@ -250,6 +466,50 @@ ul
 </head>
 <body lang=3D"EN-IN" link=3D"#0563C1" vlink=3D"#954F72">
 <div class=3D"WordSection1">
+<p class=3D"MsoNormal">Hi Team ,<span style=3D"color:#1F497D"><br>
+<br>
+</span><span style=3D"font-family:-apple-system;color:#242424;background:wh=
+ite">I can see in Linaro/test-definitions (</span><a href=3D"https://github=
+.com/Linaro/test-definitions/tree/master/automated/linux" target=3D"_blank"=
+ title=3D"https://github.com/Linaro/test-definitions/tree/master/automated/=
+linux"><span style=3D"font-size:10.5pt;font-family:-apple-system;color:#4F5=
+2B2;background:white;text-decoration:none">https://github.com/Linaro/test-d=
+efinitions/tree/master/automated/linux</span></a><span style=3D"font-family=
+:-apple-system;color:#242424;background:white">)
+ there are 123 test-suites are present but only 4 test-suites are running o=
+n cip lava ?</span><span style=3D"color:#1F497D"><br>
+<br>
+</span>Few more queries I am having regarding this.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i)&nbsp;&nbsp;&nbsp;Is CIP&nbsp;&nbsp;r=
+unning the full QA of Linaro/test-definitions test-suites in any other plat=
+form ?
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii)&nbsp;&nbsp;All of the tests which h=
+as been run in the LAVA CIP platform is 2mins duration.
+<span style=3D"font-family:-apple-system;color:#242424;background:white">Is=
+ there a particular reason for choosing these much duration of tests ?</spa=
+n><span style=3D"color:#1F497D">
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D"><br>
+</span>Regards<br>
+Sarath P T<span style=3D"color:#1F497D"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D"><br>
+<br>
+<o:p></o:p></span></p>
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"mso-fareast-languag=
+e:EN-IN">From:</span></b><span lang=3D"EN-US" style=3D"mso-fareast-language=
+:EN-IN"> P T, Sarath
+<br>
+<b>Sent:</b> 17 October 2022 12:34<br>
+<b>To:</b> 'cip-dev@lists.cip-project.org' &lt;cip-dev@lists.cip-project.or=
+g&gt;<br>
+<b>Subject:</b> Tests run on CIP-LAVA platform<o:p></o:p></span></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
 <p class=3D"MsoNormal">Hi Team,<o:p></o:p></p>
 <p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
 <p class=3D"MsoNormal">I could able to see there are few tests are running =
@@ -290,7 +550,7 @@ nts</span></strong><o:p></o:p></p>
 <td width=3D"170" valign=3D"top" style=3D"width:116.85pt;border:solid windo=
 wtext 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt">
 <p class=3D"MsoListParagraph" style=3D"margin-left:54.0pt;text-indent:-36.0=
-pt;mso-list:l0 level1 lfo1">
+pt;mso-list:l3 level1 lfo2">
 <![if !supportLists]><span style=3D"font-size:10.5pt;font-family:-apple-sys=
 tem;color:#172B4D"><span style=3D"mso-list:Ignore">i)<span style=3D"font:7.=
 0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
@@ -330,7 +590,7 @@ ssion denied.</span><o:p></o:p></p>
 <td width=3D"170" valign=3D"top" style=3D"width:116.85pt;border:solid windo=
 wtext 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt">
 <p class=3D"MsoListParagraph" style=3D"margin-left:54.0pt;text-indent:-36.0=
-pt;mso-list:l0 level1 lfo1">
+pt;mso-list:l3 level1 lfo2">
 <![if !supportLists]><span style=3D"font-size:10.5pt;font-family:-apple-sys=
 tem;color:#172B4D"><span style=3D"mso-list:Ignore">ii)<span style=3D"font:7=
 .0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
@@ -360,7 +620,7 @@ wtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt">
 <td width=3D"170" valign=3D"top" style=3D"width:116.85pt;border:solid windo=
 wtext 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt">
 <p class=3D"MsoListParagraph" style=3D"margin-left:54.0pt;text-indent:-36.0=
-pt;mso-list:l0 level1 lfo1">
+pt;mso-list:l3 level1 lfo2">
 <![if !supportLists]><span style=3D"font-size:10.5pt;font-family:-apple-sys=
 tem;color:#172B4D"><span style=3D"mso-list:Ignore">iii)<span style=3D"font:=
 7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
@@ -402,7 +662,7 @@ style=3D"font-family:-apple-system"> ./cyclictest.sh -D 2m -p 98 -i 1000 -t=
 <td width=3D"170" valign=3D"top" style=3D"width:116.85pt;border:solid windo=
 wtext 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt">
 <p class=3D"MsoListParagraph" align=3D"right" style=3D"margin-left:54.0pt;t=
-ext-align:right;text-indent:-36.0pt;mso-list:l0 level1 lfo1">
+ext-align:right;text-indent:-36.0pt;mso-list:l3 level1 lfo2">
 <![if !supportLists]><span style=3D"font-size:10.5pt;font-family:-apple-sys=
 tem;color:#172B4D"><span style=3D"mso-list:Ignore">iv)<span style=3D"font:7=
 .0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
@@ -464,5 +724,5 @@ Sarath P T <o:p></o:p></p>
 </body>
 </html>
 
---_000_47d0ac6c735c4251abb3602a43b20d77mentorcom_--
+--_000_6f438000c8004b20b927ac2d992238ddmentorcom_--
 
