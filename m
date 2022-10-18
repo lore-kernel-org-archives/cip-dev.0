@@ -1,728 +1,156 @@
-Return-Path: <sarath_pt@mentor.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E89C433FE
-	for <webhook@archiver.kernel.org>; Mon, 17 Oct 2022 13:01:33 +0000 (UTC)
-Received: from esa3.mentor.iphmx.com (esa3.mentor.iphmx.com [68.232.137.180])
- by mx.groups.io with SMTP id smtpd.web08.40462.1666011691397465159
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49BD6C433FE
+	for <webhook@archiver.kernel.org>; Tue, 18 Oct 2022 05:05:38 +0000 (UTC)
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (EUR05-AM6-obe.outbound.protection.outlook.com [40.107.22.79])
+ by mx.groups.io with SMTP id smtpd.web12.3529.1666069533654865800
  for <cip-dev@lists.cip-project.org>;
- Mon, 17 Oct 2022 06:01:31 -0700
+ Mon, 17 Oct 2022 22:05:34 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=pass (domain: mentor.com, ip: 68.232.137.180, mailfrom: sarath_pt@mentor.com)
-X-IronPort-AV: E=Sophos;i="5.95,191,1661846400"; 
-   d="scan'208,217";a="84709955"
-Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
-  by esa3.mentor.iphmx.com with ESMTP; 17 Oct 2022 05:01:09 -0800
-IronPort-SDR: pPhlqfCNZKUk2GraZjrwGUM5Be28UDNbrUCfQ8snN5eL8EIDnoR9PtOknacGGV2GqnUPrKcg44
- DPs6wGjwA/lNW2YqgsyAx0RKjVbuOBP7fYOVokpeZzd9IeWgrq5Nq9fD4zBTyMx7IzfIzj1rDk
- O2jFF/KCPHB9jSntXOGoJvV2NLHneUNIERQ1ZHDlHY4ng15EAY5+D68gH2VbWlm1cYDnoYhoBK
- zrrq+oLEUXLxIN+MK3jFxoI+I1TAf6qvTpEaKKlLQgY+7stnV1ya+F7mOdBihFr3lLVczBERps
- WTs=
-From: "P T, Sarath" <Sarath_PT@mentor.com>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-Subject: RE: Tests run on CIP-LAVA platform
-Thread-Topic: Tests run on CIP-LAVA platform
-Thread-Index: Adjh9pXyvPJeWbcCTVG87YJuWZoCXgALVGaA
-Date: Mon, 17 Oct 2022 13:01:04 +0000
-Message-ID: <6f438000c8004b20b927ac2d992238dd@mentor.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [147.34.91.1]
-Content-Type: multipart/alternative;
-	boundary="_000_6f438000c8004b20b927ac2d992238ddmentorcom_"
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=oRObNLWa;
+ spf=pass (domain: siemens.com, ip: 40.107.22.79, mailfrom: jan.kiszka@siemens.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=g3j6XYSdxiPwbwptmY+x6rNxuyuZ5BV+5kb5cs0LP5t3mosB9Spo31akeZ0hLSsekcgX53dqCdPJapcX6ObYVdssMOGJghfKPDEhqlwtNPyQ5IM89iHvd6DNmnRjVyhk5Qd7uD3d7H636Un2I4X4S7Ie8kM4rWDgl122HpqByYzmO6r6PUDhRzGwKV+KawmldBORiQCWTwT2ivCubqEMZS74ZhjPqybBSTI0X+p3j9XdjdX56sAsvY07h8vJAie6h2YtCFSq7Wz0ozBRZg3VaW8H/ziiq9i90A//6WtUDgRhHPMi3zqdXIjgCUIqNP01nAPpNtbppNI0OeTSRY2faA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=t4gMW2zM3tC5Rp5g7h0L4QYgg9EYgCNe9ycTs8CoRqg=;
+ b=SysnLvPuEMhqCda4GitqVUQgIRYZ4W3+hnDC7TCKP+0AXKyQYIEuRztKNO0EQV5ORi3NwTk/828yHSEgQYfZLx3/1PvLnF4MDwvYzEiUzaId3AjM8j9UWDnm1ekbN/3gFZuB3T8cXvkG+1c3nClYN08d6l/eubXsXjaWl0DBotio1IN/wGOchaHKOBy1Q1N8hp+2TeNJT/MHpiEcflInzoFnUWF7T8zmKQeAg3ib5ycp2K4rG2dvf9SN1bOdVZ1uQNqkXDujmcqjHuJHD+AOikGhV5nbCArIoHqd594iyb4YX7bDRV3eA32bztx3KMiKbtOQO8+rjdrFVp8FqF6fNw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 194.138.21.74) smtp.rcpttodomain=ilbers.de smtp.mailfrom=siemens.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=siemens.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=t4gMW2zM3tC5Rp5g7h0L4QYgg9EYgCNe9ycTs8CoRqg=;
+ b=oRObNLWaVpE3Qy1T4PI6PQm0W1u8QGDdhS+vyTU+CJXfNpVqmmSJNL7I/MlXs57+Ti7yAVeoi1XiDnKQsWujO6AdZKVDOnAsUNeplYbVXZuosvJ4jeMzfsNVS/B3h15raWRDGKOK6Y/XiIdtp89eC9xAt53PC51TxNLO1vK+/0fvyluh5xhv7kSiZxXkAerbYtpNV8BDb5r/THKsv5KrRscNaZl3vZ/V0s7yJ+jb34Q2H96t33dxQKixeKOmJIMlTjO4lMQVhV3NhdLaIYHP2Wlsbz8fdpx6AcrW7ge4j3xuZOt0RuWtwGqzXj3UpEERiiZcXvO1tbNthpvbYwFDKQ==
+Received: from DU2PR04CA0064.eurprd04.prod.outlook.com (2603:10a6:10:232::9)
+ by GV1PR10MB6148.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:97::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5709.15; Tue, 18 Oct
+ 2022 05:05:31 +0000
+Received: from DB5EUR01FT080.eop-EUR01.prod.protection.outlook.com
+ (2603:10a6:10:232:cafe::f) by DU2PR04CA0064.outlook.office365.com
+ (2603:10a6:10:232::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.26 via Frontend
+ Transport; Tue, 18 Oct 2022 05:05:30 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.74)
+ smtp.mailfrom=siemens.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=siemens.com;
+Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
+ 194.138.21.74 as permitted sender) receiver=protection.outlook.com;
+ client-ip=194.138.21.74; helo=hybrid.siemens.com; pr=C
+Received: from hybrid.siemens.com (194.138.21.74) by
+ DB5EUR01FT080.mail.protection.outlook.com (10.152.5.234) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5723.20 via Frontend Transport; Tue, 18 Oct 2022 05:05:30 +0000
+Received: from DEMCHDC89XA.ad011.siemens.net (139.25.226.103) by
+ DEMCHDC8VQA.ad011.siemens.net (194.138.21.74) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.12; Tue, 18 Oct 2022 07:05:29 +0200
+Received: from [167.87.52.112] (167.87.52.112) by
+ DEMCHDC89XA.ad011.siemens.net (139.25.226.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.12; Tue, 18 Oct 2022 07:05:28 +0200
+Message-ID: <124d9128-63b4-d0ef-5cf9-7931a017e0c6@siemens.com>
+Date: Tue, 18 Oct 2022 07:05:25 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.0
+Subject: Re: [isar-cip-core][PATCH] Fix mount options passed to systemd unit
+Content-Language: en-US
+From: Jan Kiszka <jan.kiszka@siemens.com>
+To: Uladzimir Bely <ubely@ilbers.de>, <cip-dev@lists.cip-project.org>, "Quirin
+ Gylstorff" <quirin.gylstorff@siemens.com>
+References: <20221012111919.8911-1-ubely@ilbers.de>
+ <34c6d0ba-bfe4-7b9a-d564-b7de58af8453@siemens.com>
+In-Reply-To: <34c6d0ba-bfe4-7b9a-d564-b7de58af8453@siemens.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.87.52.112]
+X-ClientProxiedBy: DEMCHDC8WAA.ad011.siemens.net (139.25.226.104) To
+ DEMCHDC89XA.ad011.siemens.net (139.25.226.103)
+X-TM-AS-Product-Ver: SMEX-14.0.0.3080-8.6.1018-26680.007
+X-TM-AS-Result: No-10--17.020400-8.000000
+X-TMASE-MatchedRID: EhMq+2gclHs5QaOxwNGfvo9bHfxDWoibdBh3bZKhFc3BLypRtAo4yET0
+	lGtfbK/pBph69XjMbdlTHuQZZKa8u63aC25avUuavWpUlhrjisYHDvjr7OxGkI61Z+HJnvsO87Q
+	rIQgH3y3PskTe0JV4n8i2pXmywZhRB2FcE7H+4RbJ/qoyWwJuecvXTWPjYDe9bl4CKqupkMr0VP
+	vT0zx0mKfub87GOZij8P7ohAxHFTni8zVgXoAltkWL4rBlm20vt7DW3B48kkHdB/CxWTRRu25Fe
+	HtsUoHuvd1sHcGLnkd7EHB987Bsyfw1BCelX3tXPu/RG47BZxFYKVgm72vjJg==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--17.020400-8.000000
+X-TMASE-Version: SMEX-14.0.0.3080-8.6.1018-26680.007
+X-TM-SNTS-SMTP: A48B5C68853C168CE21E4F472F6AA06E667CE37600E77459AF3BF108129FCDF42000:8
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB5EUR01FT080:EE_|GV1PR10MB6148:EE_
+X-MS-Office365-Filtering-Correlation-Id: a61c967e-2193-499b-c204-08dab0c66117
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	o+nLk3TkzvcTQePwJv52pQW9yVCA48azvIYD/oJU3cOlJluMT7Hmuj4+UoT55LeUvi4N3YI0iKl9C2cFiB0xZw/Kn99do/WX2yqVox6PFmD4VSbcM86l1A2Oqy79GI2abjWgndoOfXHdxX1y4zI96tKAU6NpqZOLzGDkqCTrlWdfjnYuTo20RiQ7BXy4/kCL+X5b7DPoHfkc1wS0MHpRmQK0A4YxnddWCeGnVrlmhSgnUUbq14BbGTkhgSG3n16YuDQ5DJH5Y1JgOMVwi1DExwLxPeNBsmAkuueD8HJEU1PFdQ74YcHTYYqfpiNykUVtEvXxVHtgid0sI3c/pmw6DL6v4y+pfN3uz7tvzeKoc4q8aJdHhmqzfTKd2F8eSBCBP+PY2UAyh3/RrPKtYds5a59zhZ/5GMVK6RMkMy5OlsyPOUe+SMRNp/qHjeeRe0hmzzYO8A6uoWgwTGuofVkAsseblKHzZsn4iXUbF2qWY/edL/6bETC/OKRrCWrt2l2RUWDiPzDyTCcs3Et703LmWxup3VPOBEJDJddWLhZgw3RvBbUTJqCfGk3UZB+DdVt0+xfx27GwrgetNV0L+Ybojl61YJ0RwbRk/ZJoPLd7iYLrVvoIgVpKSMjYptvaTfnUXYBKLAHOXtuO8sTmvn0hPJhr7Nas+TrX5PNUUgf8g+5BkukLPkmnWVxPumJlDKZie8cQGfBTR0ce3PvWERMhY9mshi63dPOlujOseQ6rsvfjR4EGASsItD7qqOj51cwU4GfVmPx0I26d5rRLXM4cH/PbuDV1CFINUXXWlTlItCfLkFsEOrdjasjJ5o9FmqjQNVU6UB75+Sn5ro1SdkVLR73gwaXV0pKNmHPw4MUeuQvjKyCwSeyTC2eaG7N7qhy4MU9h8GpBT6FdtMDCYqUWfg==
+X-Forefront-Antispam-Report: 
+	CIP:194.138.21.74;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:hybrid.siemens.com;CAT:NONE;SFS:(13230022)(4636009)(376002)(346002)(136003)(396003)(39860400002)(451199015)(36840700001)(46966006)(40470700004)(16526019)(7636003)(41300700001)(86362001)(82740400003)(356005)(40460700003)(34020700004)(7596003)(316002)(2906002)(31696002)(16576012)(478600001)(36756003)(966005)(36860700001)(6636002)(70586007)(8936002)(82310400005)(110136005)(70206006)(6706004)(53546011)(82960400001)(956004)(8676002)(6666004)(2616005)(336012)(40480700001)(5660300002)(44832011)(47076005)(26005)(83380400001)(31686004)(186003)(3940600001)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2022 05:05:30.4525
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a61c967e-2193-499b-c204-08dab0c66117
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.74];Helo=[hybrid.siemens.com]
+X-MS-Exchange-CrossTenant-AuthSource: 
+	DB5EUR01FT080.eop-EUR01.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR10MB6148
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 17 Oct 2022 13:01:33 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9767
+ <cip-dev@lists.cip-project.org>; Tue, 18 Oct 2022 05:05:38 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9768
 
---_000_6f438000c8004b20b927ac2d992238ddmentorcom_
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+On 12.10.22 13:34, Jan Kiszka wrote:
+> On 12.10.22 13:19, Uladzimir Bely wrote:
+>> Mount unit template used wrong variable name for mount options.
+>> This resulted in empty `Options` value used for /tmp mounting.
+>>
+>> Signed-off-by: Uladzimir Bely <ubely@ilbers.de>
+>> ---
+>>  recipes-core/tmp-fs/files/tmp.mount.tmpl | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/recipes-core/tmp-fs/files/tmp.mount.tmpl b/recipes-core/tmp-fs/files/tmp.mount.tmpl
+>> index fcb2f3e..be5e663 100644
+>> --- a/recipes-core/tmp-fs/files/tmp.mount.tmpl
+>> +++ b/recipes-core/tmp-fs/files/tmp.mount.tmpl
+>> @@ -5,7 +5,7 @@ Description=Create /tmp
+>>  What=tmpfs
+>>  Where=/tmp
+>>  Type=tmpfs
+>> -Options=${TMP_OPTIONS}
+>> +Options=${TMP_FS_OPTIONS}
+>>  
+>>  [Install]
+>>  WantedBy=local-fs.target
+> 
+> Thanks, applied.
+> 
+> Jan
+> 
 
-Hi Team ,
+Need to drop it again for now as the current value of TMP_FS_OPTIONS in
+the recipe is not ready for use. See also
+https://gitlab.com/cip-project/cip-core/isar-cip-core/-/issues/44. We
+need a working default. And likely also a weak assigning of that.
 
-I can see in Linaro/test-definitions (https://github.com/Linaro/test-defini=
-tions/tree/master/automated/linux) there are 123 test-suites are present bu=
-t only 4 test-suites are running on cip lava ?
+Jan
 
-Few more queries I am having regarding this.
-      i)   Is CIP  running the full QA of Linaro/test-definitions test-suit=
-es in any other platform ?
-      ii)  All of the tests which has been run in the LAVA CIP platform is =
-2mins duration. Is there a particular reason for choosing these much durati=
-on of tests ?
+-- 
+Siemens AG, Technology
+Competence Center Embedded Linux
 
-Regards
-Sarath P T
-
-
-From: P T, Sarath
-Sent: 17 October 2022 12:34
-To: 'cip-dev@lists.cip-project.org' <cip-dev@lists.cip-project.org>
-Subject: Tests run on CIP-LAVA platform
-
-Hi Team,
-
-I could able to see there are few tests are running in the CIP LAVA platfor=
-m. I am showing the list below what all LAVA tests are running in the CIP L=
-AVA platform.
-
-
-Test-case
-
-CIP LAVA job link
-
-Status
-
-Comments
-
-
-i)                 spectre-meltdown-checker-test
-
-https://lava.ciplatform.org/scheduler/job/686074
-
-Not run
-
-Reason of failure
-
-./spectre-meltdown-checker.sh: Permission denied.
-
-
-ii)               hackbench
-
-https://lava.ciplatform.org/results/634343
-
-PASS
-
-
-
-
-iii)             cyclictest
-
-https://lava.ciplatform.org/results/634097
-
-SKIP
-
-Reason of failure
-
-$ ./cyclictest.sh -D 2m -p 98 -i 1000 -t 1 -a 0 -h '' -w '' this command is=
- giving "/usr/bin/cyclictest: unrecognized option" error
-
-
-iv)              cyclicdeadline
-
-https://lava.ciplatform.org/results/633692
-
-Not run
-
-Reason of failure
-
-
-while executing cyclicdeadline.sh getting an error like
-
-/usr/bin/cyclicdeadline: invalid option -- 'q'
-
-
-
-Is there any specific reason why few test-cases are running through LAVA ?
-
-
-Regards
-
-Sarath P T
-
-
---_000_6f438000c8004b20b927ac2d992238ddmentorcom_
-Content-Type: text/html; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-
-<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
-osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
-xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
-//www.w3.org/TR/REC-html40">
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
->
-<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
-<style><!--
-/* Font Definitions */
-@font-face
-	{font-family:"Cambria Math";
-	panose-1:2 4 5 3 5 4 6 3 2 4;}
-@font-face
-	{font-family:Calibri;
-	panose-1:2 15 5 2 2 2 4 3 2 4;}
-@font-face
-	{font-family:-apple-system;}
-/* Style Definitions */
-p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{margin:0cm;
-	margin-bottom:.0001pt;
-	font-size:11.0pt;
-	font-family:"Calibri",sans-serif;
-	mso-fareast-language:EN-US;}
-a:link, span.MsoHyperlink
-	{mso-style-priority:99;
-	color:#0563C1;
-	text-decoration:underline;}
-a:visited, span.MsoHyperlinkFollowed
-	{mso-style-priority:99;
-	color:#954F72;
-	text-decoration:underline;}
-p
-	{mso-style-priority:99;
-	mso-margin-top-alt:auto;
-	margin-right:0cm;
-	mso-margin-bottom-alt:auto;
-	margin-left:0cm;
-	font-size:12.0pt;
-	font-family:"Times New Roman",serif;}
-p.MsoListParagraph, li.MsoListParagraph, div.MsoListParagraph
-	{mso-style-priority:34;
-	margin-top:0cm;
-	margin-right:0cm;
-	margin-bottom:0cm;
-	margin-left:36.0pt;
-	margin-bottom:.0001pt;
-	font-size:11.0pt;
-	font-family:"Calibri",sans-serif;
-	mso-fareast-language:EN-US;}
-span.EmailStyle19
-	{mso-style-type:personal;
-	font-family:"Calibri",sans-serif;
-	color:windowtext;}
-span.EmailStyle21
-	{mso-style-type:personal-reply;
-	font-family:"Calibri",sans-serif;
-	color:#1F497D;}
-.MsoChpDefault
-	{mso-style-type:export-only;
-	font-size:10.0pt;}
-@page WordSection1
-	{size:612.0pt 792.0pt;
-	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
-div.WordSection1
-	{page:WordSection1;}
-/* List Definitions */
-@list l0
-	{mso-list-id:571349227;
-	mso-list-type:hybrid;
-	mso-list-template-ids:1799420930 1074331663 1074331673 1074331675 10743316=
-63 1074331673 1074331675 1074331663 1074331673 1074331675;}
-@list l0:level1
-	{mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l0:level2
-	{mso-level-number-format:alpha-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l0:level3
-	{mso-level-number-format:roman-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:right;
-	text-indent:-9.0pt;}
-@list l0:level4
-	{mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l0:level5
-	{mso-level-number-format:alpha-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l0:level6
-	{mso-level-number-format:roman-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:right;
-	text-indent:-9.0pt;}
-@list l0:level7
-	{mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l0:level8
-	{mso-level-number-format:alpha-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l0:level9
-	{mso-level-number-format:roman-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:right;
-	text-indent:-9.0pt;}
-@list l1
-	{mso-list-id:880089531;
-	mso-list-type:hybrid;
-	mso-list-template-ids:985673192 1074331663 1074331673 1074331675 107433166=
-3 1074331673 1074331675 1074331663 1074331673 1074331675;}
-@list l1:level1
-	{mso-level-start-at:3;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l1:level2
-	{mso-level-number-format:alpha-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l1:level3
-	{mso-level-number-format:roman-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:right;
-	text-indent:-9.0pt;}
-@list l1:level4
-	{mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l1:level5
-	{mso-level-number-format:alpha-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l1:level6
-	{mso-level-number-format:roman-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:right;
-	text-indent:-9.0pt;}
-@list l1:level7
-	{mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l1:level8
-	{mso-level-number-format:alpha-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l1:level9
-	{mso-level-number-format:roman-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:right;
-	text-indent:-9.0pt;}
-@list l2
-	{mso-list-id:1418867105;
-	mso-list-type:hybrid;
-	mso-list-template-ids:-2115962418 1074331663 1074331673 1074331675 1074331=
-663 1074331673 1074331675 1074331663 1074331673 1074331675;}
-@list l2:level1
-	{mso-level-start-at:3;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l2:level2
-	{mso-level-number-format:alpha-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l2:level3
-	{mso-level-number-format:roman-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:right;
-	text-indent:-9.0pt;}
-@list l2:level4
-	{mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l2:level5
-	{mso-level-number-format:alpha-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l2:level6
-	{mso-level-number-format:roman-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:right;
-	text-indent:-9.0pt;}
-@list l2:level7
-	{mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l2:level8
-	{mso-level-number-format:alpha-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l2:level9
-	{mso-level-number-format:roman-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:right;
-	text-indent:-9.0pt;}
-@list l3
-	{mso-list-id:2048095819;
-	mso-list-type:hybrid;
-	mso-list-template-ids:-1634539996 1474486544 1074331673 1074331675 1074331=
-663 1074331673 1074331675 1074331663 1074331673 1074331675;}
-@list l3:level1
-	{mso-level-number-format:roman-lower;
-	mso-level-text:"%1\)";
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	margin-left:54.0pt;
-	text-indent:-36.0pt;
-	mso-ansi-font-size:10.5pt;
-	font-family:-apple-system;
-	color:#172B4D;}
-@list l3:level2
-	{mso-level-number-format:alpha-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l3:level3
-	{mso-level-number-format:roman-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:right;
-	text-indent:-9.0pt;}
-@list l3:level4
-	{mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l3:level5
-	{mso-level-number-format:alpha-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l3:level6
-	{mso-level-number-format:roman-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:right;
-	text-indent:-9.0pt;}
-@list l3:level7
-	{mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l3:level8
-	{mso-level-number-format:alpha-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l3:level9
-	{mso-level-number-format:roman-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:right;
-	text-indent:-9.0pt;}
-@list l4
-	{mso-list-id:2074110938;
-	mso-list-type:hybrid;
-	mso-list-template-ids:-1106091848 1074331663 1074331673 1074331675 1074331=
-663 1074331673 1074331675 1074331663 1074331673 1074331675;}
-@list l4:level1
-	{mso-level-start-at:3;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l4:level2
-	{mso-level-number-format:alpha-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l4:level3
-	{mso-level-number-format:roman-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:right;
-	text-indent:-9.0pt;}
-@list l4:level4
-	{mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l4:level5
-	{mso-level-number-format:alpha-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l4:level6
-	{mso-level-number-format:roman-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:right;
-	text-indent:-9.0pt;}
-@list l4:level7
-	{mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l4:level8
-	{mso-level-number-format:alpha-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;}
-@list l4:level9
-	{mso-level-number-format:roman-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:right;
-	text-indent:-9.0pt;}
-ol
-	{margin-bottom:0cm;}
-ul
-	{margin-bottom:0cm;}
---></style><!--[if gte mso 9]><xml>
-<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
-</xml><![endif]--><!--[if gte mso 9]><xml>
-<o:shapelayout v:ext=3D"edit">
-<o:idmap v:ext=3D"edit" data=3D"1" />
-</o:shapelayout></xml><![endif]-->
-</head>
-<body lang=3D"EN-IN" link=3D"#0563C1" vlink=3D"#954F72">
-<div class=3D"WordSection1">
-<p class=3D"MsoNormal">Hi Team ,<span style=3D"color:#1F497D"><br>
-<br>
-</span><span style=3D"font-family:-apple-system;color:#242424;background:wh=
-ite">I can see in Linaro/test-definitions (</span><a href=3D"https://github=
-.com/Linaro/test-definitions/tree/master/automated/linux" target=3D"_blank"=
- title=3D"https://github.com/Linaro/test-definitions/tree/master/automated/=
-linux"><span style=3D"font-size:10.5pt;font-family:-apple-system;color:#4F5=
-2B2;background:white;text-decoration:none">https://github.com/Linaro/test-d=
-efinitions/tree/master/automated/linux</span></a><span style=3D"font-family=
-:-apple-system;color:#242424;background:white">)
- there are 123 test-suites are present but only 4 test-suites are running o=
-n cip lava ?</span><span style=3D"color:#1F497D"><br>
-<br>
-</span>Few more queries I am having regarding this.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i)&nbsp;&nbsp;&nbsp;Is CIP&nbsp;&nbsp;r=
-unning the full QA of Linaro/test-definitions test-suites in any other plat=
-form ?
-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii)&nbsp;&nbsp;All of the tests which h=
-as been run in the LAVA CIP platform is 2mins duration.
-<span style=3D"font-family:-apple-system;color:#242424;background:white">Is=
- there a particular reason for choosing these much duration of tests ?</spa=
-n><span style=3D"color:#1F497D">
-<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"color:#1F497D"><br>
-</span>Regards<br>
-Sarath P T<span style=3D"color:#1F497D"><o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"color:#1F497D"><br>
-<br>
-<o:p></o:p></span></p>
-<div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
-0cm 0cm">
-<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"mso-fareast-languag=
-e:EN-IN">From:</span></b><span lang=3D"EN-US" style=3D"mso-fareast-language=
-:EN-IN"> P T, Sarath
-<br>
-<b>Sent:</b> 17 October 2022 12:34<br>
-<b>To:</b> 'cip-dev@lists.cip-project.org' &lt;cip-dev@lists.cip-project.or=
-g&gt;<br>
-<b>Subject:</b> Tests run on CIP-LAVA platform<o:p></o:p></span></p>
-</div>
-</div>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Hi Team,<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">I could able to see there are few tests are running =
-in the CIP LAVA platform. I am showing the list below what all LAVA tests a=
-re running in the CIP LAVA platform.<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
-=3D"0" style=3D"border-collapse:collapse">
-<tbody>
-<tr>
-<td width=3D"170" valign=3D"top" style=3D"width:116.85pt;border:solid windo=
-wtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt">
-<p class=3D"MsoNormal"><strong><span style=3D"font-size:10.5pt;font-family:=
--apple-system;color:#172B4D;letter-spacing:-.05pt;background:#F4F5F7">Test-=
-case</span></strong><o:p></o:p></p>
-</td>
-<td width=3D"306" valign=3D"top" style=3D"width:116.85pt;border:solid windo=
-wtext 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt">
-<p class=3D"MsoNormal"><strong><span style=3D"font-size:10.5pt;font-family:=
--apple-system;color:#172B4D;letter-spacing:-.05pt;background:#F4F5F7">CIP L=
-AVA job link</span></strong><o:p></o:p></p>
-</td>
-<td width=3D"53" valign=3D"top" style=3D"width:116.9pt;border:solid windowt=
-ext 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt">
-<p class=3D"MsoNormal"><strong><span style=3D"font-size:10.5pt;font-family:=
--apple-system;color:#172B4D;letter-spacing:-.05pt;background:#F4F5F7">Statu=
-s</span></strong><o:p></o:p></p>
-</td>
-<td width=3D"158" valign=3D"top" style=3D"width:116.9pt;border:solid window=
-text 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt">
-<p class=3D"MsoNormal"><strong><span style=3D"font-size:10.5pt;font-family:=
--apple-system;color:#172B4D;letter-spacing:-.05pt;background:#F4F5F7">Comme=
-nts</span></strong><o:p></o:p></p>
-</td>
-</tr>
-<tr>
-<td width=3D"170" valign=3D"top" style=3D"width:116.85pt;border:solid windo=
-wtext 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt">
-<p class=3D"MsoListParagraph" style=3D"margin-left:54.0pt;text-indent:-36.0=
-pt;mso-list:l3 level1 lfo2">
-<![if !supportLists]><span style=3D"font-size:10.5pt;font-family:-apple-sys=
-tem;color:#172B4D"><span style=3D"mso-list:Ignore">i)<span style=3D"font:7.=
-0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span><![endif]><span style=3D"font-size:10.5pt;font-family:=
--apple-system;color:#172B4D;letter-spacing:-.05pt;background:white">spectre=
--meltdown-checker-test</span><o:p></o:p></p>
-</td>
-<td width=3D"306" valign=3D"top" style=3D"width:116.85pt;border-top:none;bo=
-rder-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid wind=
-owtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt">
-<p class=3D"MsoNormal"><a href=3D"https://lava.ciplatform.org/scheduler/job=
-/686074">https://lava.ciplatform.org/scheduler/job/686074</a><o:p></o:p></p=
->
-</td>
-<td width=3D"53" valign=3D"top" style=3D"width:116.9pt;border-top:none;bord=
-er-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid window=
-text 1.0pt;padding:0cm 5.4pt 0cm 5.4pt">
-<p class=3D"MsoNormal">Not run<o:p></o:p></p>
-</td>
-<td width=3D"158" valign=3D"top" style=3D"width:116.9pt;border-top:none;bor=
-der-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windo=
-wtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt">
-<p class=3D"MsoNormal"><strong><span style=3D"font-size:10.5pt;font-family:=
--apple-system;color:#C00000;letter-spacing:-.05pt;background:white;font-wei=
-ght:normal">Reason of failure
-<o:p></o:p></span></strong></p>
-<p class=3D"MsoNormal"><b><span style=3D"font-size:10.5pt;font-family:-appl=
-e-system;color:#172B4D;letter-spacing:-.05pt;background:white"><br>
-<strong><span style=3D"font-family:-apple-system">./spectre-meltdown-checke=
-r.sh</span></strong></span></b><span style=3D"font-size:10.5pt;font-family:=
--apple-system;color:#172B4D;letter-spacing:-.05pt;background:white">: Permi=
-ssion denied.</span><o:p></o:p></p>
-</td>
-</tr>
-<tr>
-<td width=3D"170" valign=3D"top" style=3D"width:116.85pt;border:solid windo=
-wtext 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt">
-<p class=3D"MsoListParagraph" style=3D"margin-left:54.0pt;text-indent:-36.0=
-pt;mso-list:l3 level1 lfo2">
-<![if !supportLists]><span style=3D"font-size:10.5pt;font-family:-apple-sys=
-tem;color:#172B4D"><span style=3D"mso-list:Ignore">ii)<span style=3D"font:7=
-.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span><![endif]><span style=3D"font-size:10.5pt;font-family:=
--apple-system;color:#172B4D;letter-spacing:-.05pt;background:white">hackben=
-ch</span><o:p></o:p></p>
-</td>
-<td width=3D"306" valign=3D"top" style=3D"width:116.85pt;border-top:none;bo=
-rder-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid wind=
-owtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt">
-<p class=3D"MsoNormal"><a href=3D"https://lava.ciplatform.org/results/63434=
-3">https://lava.ciplatform.org/results/634343</a><o:p></o:p></p>
-</td>
-<td width=3D"53" valign=3D"top" style=3D"width:116.9pt;border-top:none;bord=
-er-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid window=
-text 1.0pt;padding:0cm 5.4pt 0cm 5.4pt">
-<p class=3D"MsoNormal">PASS<o:p></o:p></p>
-</td>
-<td width=3D"158" valign=3D"top" style=3D"width:116.9pt;border-top:none;bor=
-der-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windo=
-wtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt">
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-</td>
-</tr>
-<tr>
-<td width=3D"170" valign=3D"top" style=3D"width:116.85pt;border:solid windo=
-wtext 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt">
-<p class=3D"MsoListParagraph" style=3D"margin-left:54.0pt;text-indent:-36.0=
-pt;mso-list:l3 level1 lfo2">
-<![if !supportLists]><span style=3D"font-size:10.5pt;font-family:-apple-sys=
-tem;color:#172B4D"><span style=3D"mso-list:Ignore">iii)<span style=3D"font:=
-7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
-p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span><![endif]><span style=3D"font-size:10.5pt;font-family:=
--apple-system;color:#172B4D;letter-spacing:-.05pt;background:white">cyclict=
-est</span><o:p></o:p></p>
-</td>
-<td width=3D"306" valign=3D"top" style=3D"width:116.85pt;border-top:none;bo=
-rder-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid wind=
-owtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt">
-<p class=3D"MsoNormal"><a href=3D"https://lava.ciplatform.org/results/63409=
-7">https://lava.ciplatform.org/results/634097</a><o:p></o:p></p>
-</td>
-<td width=3D"53" valign=3D"top" style=3D"width:116.9pt;border-top:none;bord=
-er-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid window=
-text 1.0pt;padding:0cm 5.4pt 0cm 5.4pt">
-<p class=3D"MsoNormal">SKIP<o:p></o:p></p>
-</td>
-<td width=3D"158" valign=3D"top" style=3D"width:116.9pt;border-top:none;bor=
-der-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windo=
-wtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt">
-<p class=3D"MsoNormal"><strong><span style=3D"font-size:10.5pt;font-family:=
--apple-system;color:#C00000;letter-spacing:-.05pt;background:white;font-wei=
-ght:normal">Reason of failure
-<o:p></o:p></span></strong></p>
-<p class=3D"MsoNormal"><span style=3D"color:#172B4D"><o:p>&nbsp;</o:p></spa=
-n></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:10.5pt;font-family:-apple-s=
-ystem;color:#172B4D;letter-spacing:-.05pt;background:white">$<strong><span =
-style=3D"font-family:-apple-system"> ./cyclictest.sh -D 2m -p 98 -i 1000 -t=
- 1 -a 0 -h '' -w ''</span></strong> this
- command is giving <strong><span style=3D"font-family:-apple-system">&#8220=
-;/usr/bin/cyclictest: unrecognized option&#8221;
-</span></strong>error</span><o:p></o:p></p>
-</td>
-</tr>
-<tr>
-<td width=3D"170" valign=3D"top" style=3D"width:116.85pt;border:solid windo=
-wtext 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt">
-<p class=3D"MsoListParagraph" align=3D"right" style=3D"margin-left:54.0pt;t=
-ext-align:right;text-indent:-36.0pt;mso-list:l3 level1 lfo2">
-<![if !supportLists]><span style=3D"font-size:10.5pt;font-family:-apple-sys=
-tem;color:#172B4D"><span style=3D"mso-list:Ignore">iv)<span style=3D"font:7=
-.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span><![endif]><span style=3D"font-size:10.5pt;font-family:=
--apple-system;color:#172B4D;letter-spacing:-.05pt;background:white">cyclicd=
-eadline</span><o:p></o:p></p>
-</td>
-<td width=3D"306" valign=3D"top" style=3D"width:116.85pt;border-top:none;bo=
-rder-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid wind=
-owtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt">
-<p class=3D"MsoNormal"><a href=3D"https://lava.ciplatform.org/results/63369=
-2">https://lava.ciplatform.org/results/633692</a><o:p></o:p></p>
-</td>
-<td width=3D"53" valign=3D"top" style=3D"width:116.9pt;border-top:none;bord=
-er-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid window=
-text 1.0pt;padding:0cm 5.4pt 0cm 5.4pt">
-<p class=3D"MsoNormal">Not run<o:p></o:p></p>
-</td>
-<td width=3D"158" valign=3D"top" style=3D"width:116.9pt;border-top:none;bor=
-der-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windo=
-wtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt">
-<p class=3D"MsoNormal"><strong><span style=3D"font-size:10.5pt;font-family:=
--apple-system;color:#C00000;letter-spacing:-.05pt;background:white;font-wei=
-ght:normal">Reason of failure
-<o:p></o:p></span></strong></p>
-<p style=3D"margin:0cm;margin-bottom:.0001pt;background:white"><span style=
-=3D"font-size:10.5pt;font-family:-apple-system;color:#172B4D;letter-spacing=
-:-.05pt"><br>
-<br>
-while executing <strong><span style=3D"font-family:-apple-system">cyclicdea=
-dline.sh</span></strong> getting an error like</span><span style=3D"color:#=
-172B4D"><o:p></o:p></span></p>
-<p style=3D"background:white;margin:0.75rem 0px 0px;box-sizing: border-box;=
-font-variant-ligatures: normal;font-variant-caps: normal;orphans: 2;white-s=
-pace:pre-wrap;widows: 2;-webkit-text-stroke-width: 0px;text-decoration-thic=
-kness: initial;text-decoration-style: initial;text-decoration-color: initia=
-l;word-spacing:0px">
-<strong><span style=3D"font-size:10.5pt;font-family:-apple-system;color:#17=
-2B4D;letter-spacing:-.05pt">/usr/bin/cyclicdeadline: invalid option -- 'q'<=
-/span></strong><span style=3D"font-size:10.5pt;font-family:-apple-system;co=
-lor:#172B4D;letter-spacing:-.05pt"><o:p></o:p></span></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-</td>
-</tr>
-</tbody>
-</table>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal" style=3D"margin-bottom:12.0pt">Is there any specific=
- reason why few test-cases are running through LAVA ?
-<br>
-<br>
-<br>
-Regards <br>
-<br>
-Sarath P T <o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-</div>
-</body>
-</html>
-
---_000_6f438000c8004b20b927ac2d992238ddmentorcom_--
 
