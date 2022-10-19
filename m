@@ -2,143 +2,136 @@ Return-Path: <sven.schultschik@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFC75C4332F
-	for <webhook@archiver.kernel.org>; Wed, 19 Oct 2022 09:22:41 +0000 (UTC)
-Received: from EUR04-VI1-obe.outbound.protection.outlook.com (EUR04-VI1-obe.outbound.protection.outlook.com [40.107.8.85])
- by mx.groups.io with SMTP id smtpd.web12.5881.1666171354036525480
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD434C433FE
+	for <webhook@archiver.kernel.org>; Wed, 19 Oct 2022 09:22:51 +0000 (UTC)
+Received: from EUR02-VE1-obe.outbound.protection.outlook.com (EUR02-VE1-obe.outbound.protection.outlook.com [40.107.2.89])
+ by mx.groups.io with SMTP id smtpd.web09.5844.1666171362978657059
  for <cip-dev@lists.cip-project.org>;
- Wed, 19 Oct 2022 02:22:34 -0700
+ Wed, 19 Oct 2022 02:22:43 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=n932iX8C;
- spf=pass (domain: siemens.com, ip: 40.107.8.85, mailfrom: sven.schultschik@siemens.com)
+ dkim=fail reason="body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=HEWUbAEq;
+ spf=pass (domain: siemens.com, ip: 40.107.2.89, mailfrom: sven.schultschik@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Oppy93iXO0HR4JIPP3+aMC9QP7A9Fuo15h8hM1mUs8oK/4asvBvCRvgUdoE1mWoV/E6645eNzhD7uCx8dl/3qNKQrnZ/fjVHs/m13oQ75UDG+W5ZWEt8ZSLeAqToZLMN+VT01mEB6pCOkWreSz0Dpdjt7JxN2fRbi41mW7fGetSfZuA4nx2paw4td8XoO8PPwmI2yoTHFUGqWJdjAQIjgrVqU5xFzWNslVEgCzOE036tISIuINfRaS7LpH87xGf50/DJ/9C1PEZ552sR6hKMyM4WwOVBiQchNulI32zjU1RnCU7/TFB8Kga/WjZA/a65b5dU9ERMfdC5XPwY0RujwQ==
+ b=Ho8y7pD3kpt7FVMmFx7/nHhBj7Ndg+BTB6iGJmwkOkimhC51Pn6eLf0yWmn+2BdDX8wtdq2cubkMdGrVFqwfVukz3QrTjJa6ftMPYWmTiJ9VCSAqMP/KRcR+RC4/Q28tLWmr6lxjrelKOc2SnRMkPKn+Yg+WVw0d1pW92NX+ZQt1tsBIEomtLQBPCkgoQCuK91QrhlPKfkfbdBvQ0pAl8cZ49sCyOFdKduEfMIW05QGucFP2DfT6pIV+hDS8GhIjnJjk8xK/cXPjvgxzqWKl2MFUXbvp9DwBOzCQ5IFqVnka6TOEpNyqbwQk+wwQo8G92w5/Jxhy/BMw1bxFXXDWjQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=reWrLijoqm7tHKQoUIM4VDBkk2N/FcX9+PxS8fbvo0g=;
- b=T0/Z3seCnmKMckPQ2PDqxGVjFcAs2+WrBUDBTCeRlJb99JfcAuc5sg/RvrTDWYyV1mm6i6hUgdtxbdSbwYQdgsc2GbjpFaW8/zg5z9U8OClSzCl/xDBZKmdeOTIUc0uPzlNkh3/2lYnbH69eT3ZwWnXV/uouuAQcnZGt+bJcez+EsIs+v4DevrFF7HWs/aRLjZnOpVRmcfTk+ccJ9Xirle6V+qQaRacHVzqG/eDgr/Reoon36LEtB8FvKH+5dS+VYeJMBNLHq2w+03m2JOWDwWfHNlLPjLvm08qp045BU3EXFDLkQdJN/951tOi5vCl5r2WhgB6KVlV/35IkdZjWXg==
+ bh=p6BLZa1QtdIvgZOrIj+zfhKXHIGsSSeE5LjDIGIpm3I=;
+ b=jRK8Lltj+09VsbUFITHn8iHpEXAwrntvCbzhQ6PUG2R6BhZ5OzrKqQUdwzO3o8bpe9N3j/SuxCxkaU4B5081BfxzPhWfzCHc+io0psspvVRvJLVIFUxGSnOBnQo0/cVIs6fufC+WuDsKiOdB5DuOQF3Y6bZEbbb8eToUNhLknB8A3E9Efskb36v3KqL9eTd9VC37CZQATbd1vnhcT1K3MkJkkR/ZBzJNccir4Sb2Hv7O2cs3BedpSdY2rOZfgERo9pVMSKHlGlFppifK+a7OOaNHfcA6ff+tjzACAl/ilOrSG197nsSFaghCvQdj91BB2czHeVT6qDWJukAnnpB4eQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=reWrLijoqm7tHKQoUIM4VDBkk2N/FcX9+PxS8fbvo0g=;
- b=n932iX8C5VxOZM7HYdyW/pKAlOs564pitDJUuc19ALe24rbVx3VOBauFe0L+yalVAqOoNKMPRE7jSuMHDioPSJ4TFk3QCcybKG9FzvCLS2iYRgjCnMNxZFd/PtMLpCrb452UfvuZjZLgV2Da9nYO27NxMpGckTYy9ptgqEF3Z2VG6rebI72p7mA5wH7cI9eFk4h3pFdtovTVOy9LThuxiRIiCCMqD88mpVxDsiqWbF4uoun5lTPofbisdI2bLz7Hioi0ZlkpxXck0U7lthZKq+7UzTJ0mWo1V+6q81IiqXDPf205JwPiliKJyTqeiBbng8v9DW80Cv1k6dV/UugDgA==
+ bh=p6BLZa1QtdIvgZOrIj+zfhKXHIGsSSeE5LjDIGIpm3I=;
+ b=HEWUbAEqB1qmfTwbe1+PTTpvmYDBPJEVWKN2Tdb2K70Ab23qjIkg6J3LQzFyVUm6hLLxT6mZdMaL/okVSyXxJ4SwbNDHT1gyTj4r2BjwQuik2kC139tccoHMq1pdF81BSVsnZoLCVSg5ewdDkqmHWuMIg+MGL7hPWQmLeg3DD/a6Lp41nNyhXqvvsosvMOgItJ6WEr5cxteIA7LF5Bst7/AFeXhvcMm5m7vZmGXJClWccVbQfWriwlEpjfj28sDUKPgJGUsH7QXKi6qPuzdG9geHhAvkbSFc9APuGn4111v5p7iLzSSE/eq7+KspOYcuXWVlA0k/bUghEP6NU6JaVA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from PAXPR10MB5037.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:210::11)
- by GV1PR10MB5867.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:56::15) with
+ by DU0PR10MB5873.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:3bb::10) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.34; Wed, 19 Oct
- 2022 09:22:30 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.29; Wed, 19 Oct
+ 2022 09:22:40 +0000
 Received: from PAXPR10MB5037.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8f3:9a82:c9ed:6a3f]) by PAXPR10MB5037.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8f3:9a82:c9ed:6a3f%7]) with mapi id 15.20.5723.033; Wed, 19 Oct 2022
- 09:22:29 +0000
+ 09:22:40 +0000
 From: sven.schultschik@siemens.com
 To: cip-dev@lists.cip-project.org
 CC: jan.kiszka@siemens.com,
 	Sven Schultschik <sven.schultschik@siemens.com>
-Subject: [isar-cip-core][PATCH 2/7] add recipe for for edk2
-Date: Wed, 19 Oct 2022 11:21:12 +0200
-Message-ID: <20221019092117.5291-2-sven.schultschik@siemens.com>
+Subject: [isar-cip-core][PATCH 3/7] add recipe for trusted firmware a qemu arm64
+Date: Wed, 19 Oct 2022 11:21:13 +0200
+Message-ID: <20221019092117.5291-3-sven.schultschik@siemens.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20221019092117.5291-1-sven.schultschik@siemens.com>
 References: <20221019092117.5291-1-sven.schultschik@siemens.com>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
-X-ClientProxiedBy: AM6P195CA0047.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:209:87::24) To PAXPR10MB5037.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: AM5PR0101CA0005.eurprd01.prod.exchangelabs.com
+ (2603:10a6:206:16::18) To PAXPR10MB5037.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:102:210::11)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR10MB5037:EE_|GV1PR10MB5867:EE_
-X-MS-Office365-Filtering-Correlation-Id: 36cd49e7-935b-4ac9-49be-08dab1b37218
+X-MS-TrafficTypeDiagnostic: PAXPR10MB5037:EE_|DU0PR10MB5873:EE_
+X-MS-Office365-Filtering-Correlation-Id: d0466877-36dc-4ac7-80b4-08dab1b37828
 X-LD-Processed: 38ae3bcd-9579-4fd4-adda-b42e1495d55a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	qdAwnj4dwF5dYy0goxUOunTptlkxVLWnXZ6lv+OGU5qjkWkHAN4Mj/Erg4mInq7+bMPEIRx5V8sTUbSuNgOlqcuDF29XE3/N67+is48X8Xwr6BI164OlBilG/lJuCY3PyOYPPVgLeaV8qbkRCMolDDlyGASKrnNbuViPQP+Tw6OMS0HgCqiniUN0jmrcQ1XGL3BkOV26jB6Nr+8ClRpy0L2s20Sb3Zz26UilWMvlC8oun56pu27PsKJK6I99crWO5ri48zstd9f/vV+2Sa9HzHuR1MXeOaV0r/RQ25kWUHgoRQAW+e7uXQhVaLytksePN/MuY44eQSdspZQ80WJkyE2XG80PUZZIKECi5FmP9kCEBFRXDpao3Yr7wzZ4tLIa9fg2fJZhQbYAopVc8U/Hyr01Ommpcnn5BKecqdLV3U4Y7tlmGGgM6MQkiP538o6pa82BL6cxnk7vk8zYfnFg0aBN2ZWfdrgQ2P1JXl7F/pFKmTCpkOtRCKKywkYcofL65qQOD+7bzLw85ZCviDVbZW+wSnW+mRe8Cwh8Uqb6qkWPIBqZ7n2HL+hr1t6tQwh1BQ+6inLVg5qjpIlN4VWnV3oKxGvLuONQFrsJ8nJNbaGGr1mSLIrSos82J9YHYyN27p4M0syEJUpqu0u0qoyfdHwuqhLsHMDMIdjT7p7+ZWHG7xxqCDloco3RHNvzHICWyxHKTUCvYzrT3Zt8tvMdz7Cro7dGjYOUivu6YWXnquwDpsaBCeR0ArCLFVUapfwCYOidvTSgXU6nyspZQfAcUw==
+	HhjEsiNItdZjFBVYVMfFmypRU9RQnvAHHXJv6Js0T+93VhUOVGjZ4lIDX4319n8RPp6KWRLnEeSVJzJMUG8hKdacxKE/6ZPSm6q7FffnZQO41XGZseqEsBuOXLzrku+3IsEOxDM8Sh0YqKz/5k9carD5XH3x4WRFEzK8LaCpfEQJesbHIG2MRfL1H5P4GpwfjchJzZrcbBSF6qs06jDjyhX4NQniAfN732N0LhJD8UDS95+gNdH7h2me/gz73dm4CcDRYpXle9RYETmqes96+ZnB5PhmkGZo28O51CCuP5bE5GZ4G+IbtZzITQC9huMqnLp8Ji2emdVTjSLe78Z7HaALCYaHDIbg08rgLF5SYI1rlm/vh+huQWCxETd7rq+p3Z8Hr90fHbCxTcpuD5qeDdxl7FYVPRfpELejhWAfOicOEUCxxCL6jgnHZRtDxyWBaKb/QPfI/Vtl5AvKMQPLy8hmdlMk+GWTWBz7+Wx8VUi9BEuWO7ztbI56148LSc9Qgtm5U3ZysexxhUDLNQuy5FY+0IXezs4wnpBjv+fDtqTMM1y5H8sVd5O8RmzGJ6+N7wAeSVekpiYr/clNiO03Mevplddqnzv3W2Om22Vk94uflFj0bsQO7bbO4zlAIm7MheeeHb60WkS/vGd+PpULjD75PxcEr4c2o6S2AHQVSDgV+HzqsflvqRkFuBINBuVVKojx2q8KXiFDbCtMb6NLBJj8bdA3L8LTKHq7eE69lXM=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR10MB5037.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230022)(4636009)(136003)(376002)(346002)(396003)(39860400002)(366004)(451199015)(41300700001)(8936002)(26005)(82960400001)(9686003)(6512007)(36756003)(38100700002)(186003)(1076003)(2906002)(2616005)(5660300002)(83380400001)(478600001)(66946007)(66556008)(66476007)(8676002)(4326008)(107886003)(6666004)(6506007)(86362001)(316002)(966005)(6486002)(6916009);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR10MB5037.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230022)(4636009)(396003)(346002)(136003)(39860400002)(366004)(376002)(451199015)(36756003)(86362001)(2906002)(82960400001)(5660300002)(38100700002)(2616005)(6486002)(186003)(1076003)(316002)(66946007)(66556008)(6512007)(66476007)(9686003)(6506007)(478600001)(8676002)(6916009)(26005)(4326008)(41300700001)(8936002)(107886003)(6666004);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?vplcKXiGXjMlgAy5UuaMfMtuGz3i0lEFC8rRMvV4Vm8ZsT4SGww1w5xGWFJG?=
- =?us-ascii?Q?eMcU81JByleJShRNvNEkFgNlJk7ThAdSZjdw9FxQVCeRbULjJXlh+07Eo1j9?=
- =?us-ascii?Q?Qnr876ajHFBJm8EkXqUm55zBMrrcww8NquDmJrW5+Loff1Fi2IUYiJiZDODe?=
- =?us-ascii?Q?pNlt3jyCUrwyeJy5Q68/eLOq3b0QJPJUkprkOuA4ynkade4VrTtX44rEnH9+?=
- =?us-ascii?Q?UFeCRXzr69H2YtRPryAD2T9QxuCA9+0T58cS+nW1Du0kAVWkHe3VBdMUpeFT?=
- =?us-ascii?Q?qEGYcO0cXQemb4IolyhGXLyiV+4yxPr24lbxvS6lUF1xcI+5g56CTv+PeQRM?=
- =?us-ascii?Q?J4m2NNDdDmsQnFFTilBc45wdkA6HbJqLa2Wu2ouDmrstCeNit+R5hqfhmfK2?=
- =?us-ascii?Q?cC5sTF0KXgbJhF2+r5JbET68rs4g8Mglamz9CfXTbgQiWQj8dBS8PqPDe74B?=
- =?us-ascii?Q?UoirFNTzPxiEh6nS/kn9KCM1pIYv5iRfVqtSGLjjlVf1FsKsFEYYfobMMCz4?=
- =?us-ascii?Q?SUvCmIiHwLPa5nEu74AEdTpZ41LoB8e/xwM2XN9mx2AToixCZDwouyI6Fhm1?=
- =?us-ascii?Q?9MZFH1gCzo7ydk8Y+tgRneveVPKLmlnGJDsl/c84035xbfV4R/BFPDTfQ0gQ?=
- =?us-ascii?Q?faPJCdFKMEiDIZivBIRXNr6jNRwo5EkwPoInOd5YO+ERoN7NbTiBvtFxAXqq?=
- =?us-ascii?Q?ptWTEknxmCRWIbadBX9iHddDJ5pN7ni2Mg80HtlNFTytIVCLTSXqUuVGnnnN?=
- =?us-ascii?Q?EPzkil8Puf3v4WPZsoGyPf1fG1TGQl3oqc8sghDnvFgpBKuNec8zBSV2+Qos?=
- =?us-ascii?Q?+0/6rQX5et2O7zO7nP4LcZt1C9oPCFQmqc10wKGzNyNIahcCbnnINuG31KCP?=
- =?us-ascii?Q?nvTM+kZdKUfFJ97LC89LMbjq6okqbPggbBTMTuzr9bu3Q6gXb+LHIZowSukn?=
- =?us-ascii?Q?OFAZKRD4Ae4sAudvvfU1DoGtzM5ymIKSD9ZuYBSCSC3aSF5nlJ6DMRu144l6?=
- =?us-ascii?Q?6nnfn+gZhnbrki0lFh3J/C+0npZpzAtEOI9CE5dYwwCKlJPIJCF4bXkkt1eV?=
- =?us-ascii?Q?BiDLGgJ33qaW3/bujKgPwYw9iw8eNP3qSrzATKJjjjg6m70EZuuI7gj9XOPe?=
- =?us-ascii?Q?MmFCFbRzYLQNWwpoLLFNMZJnLFD5chZCOf1deSVfph7sl7jHheZeDrEXvJEo?=
- =?us-ascii?Q?04ey8LwPcVKIUQEPRyYfxKiJYPDBln7c01AFNWNyixma1mYvg4izfqyHsQsW?=
- =?us-ascii?Q?tJsL5XmVHCzEeK2MrlW/vQvZxT+TFbQbi0URqlFeZsSPdj+9v4dOhjIz+fVp?=
- =?us-ascii?Q?f6satUreeznyV8zl9d9ULY8mO6HH2wUjD2sO9MBdCNVbObIioQpK+l7d+BQv?=
- =?us-ascii?Q?KUlBbJkriwNWlRxQTjwwEP03r/0z4Pkgd2GFA28NOrhCxSgVBdAvfEsJNZ3c?=
- =?us-ascii?Q?tHYDduBFgxjYmyQ//1X4oPEL9FMYN8Shz2ZtS6bXCAiGMJ/aqEkKwf9eneYP?=
- =?us-ascii?Q?PQ0QfBOUJ+b9yFXBLXczefe5kGYQrvAvll+i5UYo4HgTOuWs/hEOusM3QclU?=
- =?us-ascii?Q?XNFmO6DsBtiv0FAKwNuhr0m7P2Ly0pNZ2hPuL9LA0Uwc/ItNPG704m0YV/4Q?=
- =?us-ascii?Q?tw=3D=3D?=
+	=?us-ascii?Q?mOI8d+YVqrX8j4i0UB2Sh8CQ/2gTEdEHdxOmk3Q8XUqLlXB3YWGUM7aM6i0y?=
+ =?us-ascii?Q?ZDk/LBZPsTCoUaYBk/GWCBKDlRmZw0+YDjjH/opy48gAsnYC/2sSZa7bsPVk?=
+ =?us-ascii?Q?b2GWHzS8/YQ9CLENlU1Tdz5LlLFqY77cgQGprnYEHrMthKAOpGErXscgVnmo?=
+ =?us-ascii?Q?sWLmGmUhMAY9Y2H02yufmaBBDAC5tg1OkGeAMOh/ZRh7smmF2TR23LoNo210?=
+ =?us-ascii?Q?NGrZtgSl/K+ywFrrV2EAZnjKdNjsqbkbmLmwiLcJ3P+/uwA2VAdGXazW8yPJ?=
+ =?us-ascii?Q?pRBE5H4UCtfuhVkC+x5AMqHYsyM806dOCBffR0sMJpyPxpmTULFxerw0otsf?=
+ =?us-ascii?Q?06qIEQVPMZf8MWKwYf4CHhsF0+nuih56+pabNl+EcxlPut5vis47oThb1SG/?=
+ =?us-ascii?Q?2vtcyC6QRqY1Gtf5h6NcMmNvfDyY5dRftaWyTuNU7q3eE6SdTbMZoBqXxqsW?=
+ =?us-ascii?Q?1EqfVaYPj1zIaZHfKiGxV7Q9eT5rlTm5nsyUPd5b5d6k1lDuz95+uSLtu0VY?=
+ =?us-ascii?Q?H5kmoA4CzbFWKaRPJyOxHuHBVqAdBRFj9/g9OLKuRPyi+3WYntGrQmb6DlVF?=
+ =?us-ascii?Q?e5SMnpps0mhYrIibgfnKf/REVl8+5xc559FehePEwOjyduApMOVwpb5QX8vg?=
+ =?us-ascii?Q?+8m4Mix8fa3TeiV7l3HSHLpCwYkTiZ11Yw+Ly1R7vICuiI/JEkwFLHmhryQS?=
+ =?us-ascii?Q?kMnc+JGgsJM6sI28n/+IA99FPQ77fKYYk6/ohawDu5DtaByCYZz9+x+7e09n?=
+ =?us-ascii?Q?20xXwMIRMPxTupO4MUUTE8BN7ug/0KZTc1JeZbjOrf9KuWM/kmEJtk0KxZpf?=
+ =?us-ascii?Q?g+dc9G2fNzDVuqCGiFKf7brxw/hcouPbDfBlskOmJhsO31SLpe+v2FzfEqq0?=
+ =?us-ascii?Q?u+87HVMZtrWvSymCBdGCOcuXAH7DL30TR6uW7jzxAqVovhJrhpj3Kvb97ZSG?=
+ =?us-ascii?Q?w7GXN2naOq3Y/UBI1FWvt7Gxi9aQpNKrsnnMhDTaK2IH/gHfNH5x6vmwT7xN?=
+ =?us-ascii?Q?u3xaoqO+e22J+e4cTyuvKohlEhLCThq0WiBA1CSkFP0TE3iho9XbhdqlBcBi?=
+ =?us-ascii?Q?dR/dbvVRIqQjwO9S6IQImDGnerQHr1kiJwIbr38uxKcQ0D4E8V3eYjyp3ieM?=
+ =?us-ascii?Q?QRoT+InANjd+RzTKxSWhMEayYRgxNoJBainAbeWfQS56xnUYOHwSMkDK6eoJ?=
+ =?us-ascii?Q?psMi/QOeJ9AGuP7IelggpAoHofgU8FAAuF9PYliauMDYgjoTk+Noj/nFkK55?=
+ =?us-ascii?Q?g+uALcaKONMyCQ5GHwBuOKe0vjijlG2UwycvVOSn8RDfZ+KF+4GDGRwgpjd4?=
+ =?us-ascii?Q?mPyNvd00yWfgZc6EsKXnjD1SJw5GPqO/QReGYYYVnedl6STeFMxPJ5+169Ok?=
+ =?us-ascii?Q?Af2+Wf2OyTSzm6tAndNPgag8m0B6AlHqF1ML0DiMPAggN3lgTh0eUhNeSbg9?=
+ =?us-ascii?Q?KBLKSb6FN/LFv5FXpG/lZbZ4NLNh50mGooUUQDG2mK47mLedc93KgTKICtYj?=
+ =?us-ascii?Q?g6PpnfdRVtEGFtQnC3Qr5jUXsdaF46ywjoFEZemM6Oao82DAulNaGMZAJNEo?=
+ =?us-ascii?Q?7QeZlUbGPF1p7ulNcMDtQg0jQSibl0yqkLwCWTUcs7rjwxCIGkzmf9nZyNaY?=
+ =?us-ascii?Q?BA=3D=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 36cd49e7-935b-4ac9-49be-08dab1b37218
+X-MS-Exchange-CrossTenant-Network-Message-Id: d0466877-36dc-4ac7-80b4-08dab1b37828
 X-MS-Exchange-CrossTenant-AuthSource: PAXPR10MB5037.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Oct 2022 09:22:29.9053
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Oct 2022 09:22:40.0309
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vxAVtWP1+b9neURJi9FxCXJcnvM5Ra+Rcg+G+0+OWkar3E77xLzeUhxVTcQn6I0ztLH/q509SSk9Z0Ambanw+lALiBd++guCSWui7obvw98=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR10MB5867
+X-MS-Exchange-CrossTenant-UserPrincipalName: wj6U5Txolpg5unOoLVYGdhbMpgkbBkC5BAcd+YuGpangX/k277TeU1lV/C/u/2z+RX2owNXM0Zdm6pOJQprAqHTU29kOiAApAbqBldxXGXM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB5873
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 19 Oct 2022 09:22:41 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9776
+ <cip-dev@lists.cip-project.org>; Wed, 19 Oct 2022 09:22:51 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9777
 
 From: Sven Schultschik <sven.schultschik@siemens.com>
 
-provide a recipe to create the BL32_AP_MM.fd binary by edk2 which is needed=
- for the qemu optee generation as dependencie.
+provide a recipe to generate the needed binary to start a secure boot qemu =
+with integrated optee and active RPMB replay protected memory emulation wit=
+hin u-boot
 
 Signed-off-by: Sven Schultschik <sven.schultschik@siemens.com>
 ---
- recipes-bsp/edk2/edk2_202205.bb              | 34 ++++++++++++
- recipes-bsp/edk2/files/debian/changelog.tmpl |  6 +++
- recipes-bsp/edk2/files/debian/compat         |  1 +
- recipes-bsp/edk2/files/debian/control.tmpl   | 14 +++++
- recipes-bsp/edk2/files/debian/edk2.install   |  2 +
- recipes-bsp/edk2/files/debian/rules.tmpl     | 55 ++++++++++++++++++++
- 6 files changed, 112 insertions(+)
- create mode 100644 recipes-bsp/edk2/edk2_202205.bb
- create mode 100644 recipes-bsp/edk2/files/debian/changelog.tmpl
- create mode 100644 recipes-bsp/edk2/files/debian/compat
- create mode 100644 recipes-bsp/edk2/files/debian/control.tmpl
- create mode 100644 recipes-bsp/edk2/files/debian/edk2.install
- create mode 100755 recipes-bsp/edk2/files/debian/rules.tmpl
+ .../trusted-firmware-a-qemu-arm64_2.7.0.bb    | 61 +++++++++++++++++++
+ 1 file changed, 61 insertions(+)
+ create mode 100644 recipes-bsp/trusted-firmware-a/trusted-firmware-a-qemu-=
+arm64_2.7.0.bb
 
-diff --git a/recipes-bsp/edk2/edk2_202205.bb b/recipes-bsp/edk2/edk2_202205=
-.bb
+diff --git a/recipes-bsp/trusted-firmware-a/trusted-firmware-a-qemu-arm64_2=
+.7.0.bb b/recipes-bsp/trusted-firmware-a/trusted-firmware-a-qemu-arm64_2.7.=
+0.bb
 new file mode 100644
-index 000000000..5a773bf77
+index 000000000..791089a21
 --- /dev/null
-+++ b/recipes-bsp/edk2/edk2_202205.bb
-@@ -0,0 +1,34 @@
++++ b/recipes-bsp/trusted-firmware-a/trusted-firmware-a-qemu-arm64_2.7.0.bb
+@@ -0,0 +1,61 @@
 +#
 +# CIP Core, generic profile
 +#
@@ -150,156 +143,62 @@ index 000000000..5a773bf77
 +# SPDX-License-Identifier: MIT
 +#
 +
-+HOMEPAGE =3D "https://github.com/tianocore/edk2"
++HOMEPAGE =3D "https://www.trustedfirmware.org/projects/tf-a/"
 +MAINTAINER =3D "Sven Schultschik <sven.schultschik@siemens.com>"
-+LICENSE =3D "BSD-2-Clause-Patent"
++LICENSE =3D "BSD-3-Clause"
 +
-+inherit dpkg
++require recipes-bsp/trusted-firmware-a/trusted-firmware-a-custom.inc
 +
-+SRC_URI =3D "gitsm://github.com/tianocore/edk2.git;branch=3Dmaster;protoco=
-l=3Dhttps;destsuffix=3Dgit/edk2;rev=3Dedk2-stable${PV} \
-+            git://github.com/tianocore/edk2-platforms.git;protocol=3Dhttps=
-;destsuffix=3Dgit/edk2-platforms;rev=3D3b896d1a325686de3942723c42f286090453=
-e37a \
-+            file://debian \
-+            "
++SRC_URI +=3D " \
++            git://review.trustedfirmware.org/TF-A/trusted-firmware-a;branc=
+h=3Dmaster;protocol=3Dhttps;destsuffix=3Dgit;rev=3Dv${PV} "
++
 +S =3D "${WORKDIR}/git"
 +
-+BUILD_DEPENDS   +=3D ""
++DEPENDS =3D "optee-os-${MACHINE} u-boot-qemu-arm64"
++DEBIAN_BUILD_DEPENDS   +=3D " \
++    debhelper(>=3D 11~), \
++    optee-os-${MACHINE}, \
++    u-boot-qemu-arm64, \
++    libssl-dev, "
 +
-+TEMPLATE_FILES =3D "debian/changelog.tmpl debian/control.tmpl debian/rules=
-.tmpl"
-+TEMPLATE_VARS +=3D "BUILD_DEPENDS S"
++TEEHEADER =3D "/usr/lib/optee-os/${MACHINE}/tee-header_v2.bin"
++TEEPAGER =3D "/usr/lib/optee-os/${MACHINE}/tee-pager_v2.bin"
++TEEPAGEABLE =3D "/usr/lib/optee-os/${MACHINE}/tee-pageable_v2.bin"
++BL33 =3D "/usr/lib/u-boot/${MACHINE}/u-boot.bin"
++
++TF_A_EXTRA_BUILDARGS =3D "BL32=3D${TEEHEADER} \
++        BL32_EXTRA1=3D${TEEPAGER} \
++        BL32_EXTRA2=3D${TEEPAGEABLE} \
++        BL33=3D${BL33} \
++        BL32_RAM_LOCATION=3Dtdram SPD=3Dopteed ${DEBUG} all fip"
++
++TF_A_PLATFORM =3D "qemu"
++
++TF_A_BINARIES =3D "release/bl1.bin release/fip.bin"
 +
 +ISAR_CROSS_COMPILE =3D "0"
 +
-+do_prepare_build() {
-+    cp -R ${WORKDIR}/debian ${S}
-+    deb_add_changelog
++do_deploy[dirs] =3D "${DEPLOY_DIR_IMAGE}"
++do_deploy() {
++    dpkg --fsys-tarfile "${WORKDIR}/trusted-firmware-a-${MACHINE}_${PV}_${=
+DISTRO_ARCH}.deb" | \
++        tar xOf - "./usr/lib/trusted-firmware-a/${MACHINE}/bl1.bin" \
++        > "${DEPLOY_DIR_IMAGE}/bl1.bin"
++
++    dpkg --fsys-tarfile "${WORKDIR}/trusted-firmware-a-${MACHINE}_${PV}_${=
+DISTRO_ARCH}.deb" | \
++        tar xOf - "./usr/lib/trusted-firmware-a/${MACHINE}/fip.bin" \
++        > "${DEPLOY_DIR_IMAGE}/fip.bin"
++
++    dd if=3D"${DEPLOY_DIR_IMAGE}/bl1.bin" of=3D"${DEPLOY_DIR_IMAGE}/flash.=
+bin" bs=3D4096 conv=3Dnotrunc
++    dd if=3D"${DEPLOY_DIR_IMAGE}/fip.bin" of=3D"${DEPLOY_DIR_IMAGE}/flash.=
+bin" seek=3D64 bs=3D4096 conv=3Dnotrunc
 +}
++
++addtask deploy after do_dpkg_build before do_deploy_deb
 \ No newline at end of file
-diff --git a/recipes-bsp/edk2/files/debian/changelog.tmpl b/recipes-bsp/edk=
-2/files/debian/changelog.tmpl
-new file mode 100644
-index 000000000..8d74dfe7a
---- /dev/null
-+++ b/recipes-bsp/edk2/files/debian/changelog.tmpl
-@@ -0,0 +1,6 @@
-+${PN} (${PV}) unstable; urgency=3Dmedium
-+
-+  * EDK2
-+
-+ --   =20
-+
-diff --git a/recipes-bsp/edk2/files/debian/compat b/recipes-bsp/edk2/files/=
-debian/compat
-new file mode 100644
-index 000000000..f599e28b8
---- /dev/null
-+++ b/recipes-bsp/edk2/files/debian/compat
-@@ -0,0 +1 @@
-+10
-diff --git a/recipes-bsp/edk2/files/debian/control.tmpl b/recipes-bsp/edk2/=
-files/debian/control.tmpl
-new file mode 100644
-index 000000000..1f1bad7c8
---- /dev/null
-+++ b/recipes-bsp/edk2/files/debian/control.tmpl
-@@ -0,0 +1,14 @@
-+Source: ${PN}
-+Section: base
-+Priority: optional
-+Standards-Version: 3.9.6
-+Build-Depends: ${BUILD_DEPENDS}, python3, dh-python, uuid-dev
-+Homepage: ${HOMEPAGE}
-+Maintainer: ${MAINTAINER}
-+
-+Package: ${PN}
-+Depends: ${shlibs:Depends}
-+Section: base
-+Architecture: ${DISTRO_ARCH}
-+Priority: required
-+Description: ${DESCRIPTION}
-\ No newline at end of file
-diff --git a/recipes-bsp/edk2/files/debian/edk2.install b/recipes-bsp/edk2/=
-files/debian/edk2.install
-new file mode 100644
-index 000000000..e5cadccf3
---- /dev/null
-+++ b/recipes-bsp/edk2/files/debian/edk2.install
-@@ -0,0 +1,2 @@
-+#! /usr/bin/dh-exec
-+Build/MmStandaloneRpmb/RELEASE_GCC5/FV/BL32_AP_MM.fd /usr/lib/edk2
-\ No newline at end of file
-diff --git a/recipes-bsp/edk2/files/debian/rules.tmpl b/recipes-bsp/edk2/fi=
-les/debian/rules.tmpl
-new file mode 100755
-index 000000000..11e4ae8cd
---- /dev/null
-+++ b/recipes-bsp/edk2/files/debian/rules.tmpl
-@@ -0,0 +1,55 @@
-+#!/usr/bin/make -f
-+#
-+# Copyright (c) Siemens AG, 2022
-+#
-+# SPDX-License-Identifier: MIT
-+
-+export WORKSPACE=3D$(shell pwd)
-+export PACKAGES_PATH=3D$(WORKSPACE)/edk2:$(WORKSPACE)/edk2-platforms
-+export ACTIVE_PLATFORM=3D"Platform/StandaloneMm/PlatformStandaloneMmPkg/Pl=
-atformStandaloneMmRpmb.dsc"
-+
-+# https://github.com/tianocore/edk2-platforms/blob/master/Readme.md#if-cro=
-ss-compiling
-+ifeq (arm64,$(DEB_TARGET_ARCH))
-+export TARGET_ARCH =3D 'AARCH64'
-+else ifeq ((armhf,$(DEB_TARGET_ARCH))
-+export TARGET_ARCH =3D 'ARM'
-+else ifeq ((amd64,$(DEB_TARGET_ARCH))
-+export TARGET_ARCH =3D 'X64'
-+else ifeq ((i386,$(DEB_TARGET_ARCH))
-+export TARGET_ARCH =3D 'IA32'
-+else
-+$(error DEB_TARGET_ARCH $(DEB_TARGET_ARCH) unsupported)
-+endif
-+# When cross-compiling, or building with a different version of the compil=
-er than
-+# the default `gcc`, we additionally need to inform the
-+# build command which toolchain to use. We do this by setting the environm=
-ent
-+# variable `{TOOL_CHAIN_TAG}_{TARGET_ARCH}_PREFIX` - in the case above,
-+# **GCC5_AARCH64_PREFIX**.
-+# export GCC5_AARCH64_PREFIX=3Daarch64-linux-gnu-
-+export GCC5_$(TARGET_ARCH)_PREFIX=3D$(DEB_HOST_GNU_TYPE)-
-+
-+
-+export SHELL=3D/bin/bash
-+
-+# ENV Vars which should get set by edksetup.sh
-+export PYTHON_COMMAND=3Dpython3
-+export PYTHONHASHSEED=3D1
-+export CONF_PATH=3D$(WORKSPACE)/edk2/Conf
-+export EDK_TOOLS_PATH=3D$(WORKSPACE)/edk2/BaseTools
-+export PATH=3D$(WORKSPACE)/edk2/BaseTools/Bin/Linux-$(TARGET_ARCH):$(WORKS=
-PACE)/edk2/BaseTools/BinWrappers/PosixLike::/usr/local/sbin:/usr/local/bin:=
-/usr/sbin:/usr/bin:/sbin:/bin
-+
-+override_dh_auto_build:
-+	source edk2/edksetup.sh --reconfig
-+
-+	make -C edk2/BaseTools
-+
-+	build -p $(ACTIVE_PLATFORM) -b RELEASE -a $(TARGET_ARCH) -t GCC5 -n $(she=
-ll nproc)
-+
-+override_dh_auto_install:
-+
-+override_dh_auto_test:
-+
-+override_dh_strip:
-+
-+%:
-+	dh $@ --with python3 --no-parallel
 --=20
 2.30.2
 
