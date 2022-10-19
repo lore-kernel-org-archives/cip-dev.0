@@ -1,292 +1,271 @@
-Return-Path: <sven.schultschik@siemens.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE2EC4332F
-	for <webhook@archiver.kernel.org>; Wed, 19 Oct 2022 09:23:41 +0000 (UTC)
-Received: from EUR04-DB3-obe.outbound.protection.outlook.com (EUR04-DB3-obe.outbound.protection.outlook.com [40.107.6.59])
- by mx.groups.io with SMTP id smtpd.web09.5856.1666171419636292320
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56602C433FE
+	for <webhook@archiver.kernel.org>; Wed, 19 Oct 2022 10:44:32 +0000 (UTC)
+Received: from EUR04-HE1-obe.outbound.protection.outlook.com (EUR04-HE1-obe.outbound.protection.outlook.com [40.107.7.59])
+ by mx.groups.io with SMTP id smtpd.web11.6289.1666176262327511404
  for <cip-dev@lists.cip-project.org>;
- Wed, 19 Oct 2022 02:23:40 -0700
+ Wed, 19 Oct 2022 03:44:23 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=JoM8S71l;
- spf=pass (domain: siemens.com, ip: 40.107.6.59, mailfrom: sven.schultschik@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=byZRI7ID;
+ spf=pass (domain: siemens.com, ip: 40.107.7.59, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hgIca5t76/AT55ETbCjSEAuUQSGJwf6tOAbFbzjBV0AK6cZPekRV6aAVt5QNKo4Olz7EqF4k4up8e8aTEH4JMk0JZsP6jigwfNoXL81j4TQziT9aP6S8k3BEjtusE/D72uZsKareXwl5UGKcxxL833AbP6C+OJ2wIBbmc/N3OivAejvo+YBjfmAqPHmFCYzEqjrDuGPGYNB7jNqDCQ0VmfcwVTXwo3IViUBxt7BCmFd71DoBohiBgFTLiDOal4zBmQxmajBo1S3vQ71OWoxBrc2bLh2jW51+fOYsE0Bjpg/pPwy6S318PaV3H50KnL5JjICttFqW671cq+CRB1ADrg==
+ b=ieQRQYo3Z3iZR3XfqR+bG3ewWl2ySLQ7w1hL+sPLsHWVAMQLaatO36bAzOzUe71xfe0gK90Kyof2vSmw+scO354yr7nwhEp8E0PWz61mQJHh1FclaIifYWwk202AMtEzRpWJ58qPp1FAGgLnZlTzRXYVTTP/t4i0dqB5ZSrpUTWiHIIArIbGZreoE8yFrEDyBRdZZYuDAP4b4lN4dkjVtjiSrV0AMm0El3RDDs+QOdCPOhqlx3BdU5mMGxyC9TMehGdQL26/8bfFtDBDEIoUrx7lf0AaP0sAc61mPRqhjkuV/voH5y+8Ic0tL43BfgE68E2xwbORzm/KmNnoQyPfIw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NHwVCia27qt1UB7zGmtCD00VwRR+4RHEEVrm7sedoXc=;
- b=TaVWzedkZVRt4QgfXfePNtq2/n8/GEHFNvTzZY26TkXGzs/cZYwaLX7+WJ/xbUgQO9k5h0TliE6v981FPa3o3fHDloXUyIjcsuFDuv4PYrYyfFGqB2yEGOCPkMnqVYbcPWZpbN3VZD6QzmzaJ6RjD1a+AHk2syQs1PBy5vyPx7R9PiYvzqzLlrOaS9AOcHQ2PQBTVASbrHx5vO7w/y4vchfdjYzcbsUCzhT85U+2sIucnXGBRY6QovBpaYCqcL5ChA/irxnNLZtY5Dx4Gj1QpbvLFG1Z6SGpeXGo66v7Ay9Yfnqil4cd19/Wdbx8bEhXyIdtJPvcg4nRXIeviJQJIg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
+ bh=VhuteMpLJAEFZG5Y8/of33bJ5oi3T+2594Pg5QvvxPs=;
+ b=jlRctTNhwO2L4M5rVH1HKXGFsP+RnwaYDQLjGDJMDeuUcYFHDN2Qc6NAvkN1D/rwxULnZ85mkzJpKu76Carlaj32j8F+C/+/nKcEBtwnlnPPwfxUDBxdBBpAfssZxva9FNb6rWpm8Nvj8XwfP+zWjAFTm3psEJJ3UExZFLHP1RqvweGloCCJA0YKBXIP7ka7f0kPiy4vk5O7ke2ivFW6UrKhEBioEQuZCSk3gtnzdJeB5prBdGnGCD+RFciejp+V3KvnN22Vnv/fwrdw6duDYYwGzgFXjaaNdppe5pkPXHzK0uX6MRe1SJNhoOLoak04WgVZI5QShI2gOxfYdLslbA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 194.138.21.76) smtp.rcpttodomain=lists.cip-project.org
+ smtp.mailfrom=siemens.com; dmarc=pass (p=none sp=none pct=100) action=none
+ header.from=siemens.com; dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NHwVCia27qt1UB7zGmtCD00VwRR+4RHEEVrm7sedoXc=;
- b=JoM8S71l63zqvH8lPjHiqkAK2zdBoByxbKeuCVrBcG64FHWA6m54s47HdsTzZA6EF7wSwFqnstfXJK5H96DwQbX+p8RvNS3Ekr5dGmGbraSxkc/Qza2EfHcOIJa2Hq9Emjpz4NiBPSlBrCyzoZfJKkPQ+I6TBtcg2Okj0aU7mq52wrXXRvyE5e7zeY8QHerhM7gr7440hOqKNeOWxWrsd/yEIhzvPKmNHwebxNFZHtil1rBLH8eJpVDuZ1p8gXas8S8NNkAgWX5uQXvV9gZtXR7428WmzY9/aOwe3qwWJHgfBLDAHkPObzIRB8y9a9T0y3/Ym/mF6r5LmWVcBOAuvw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from PAXPR10MB5037.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:210::11)
- by AM7PR10MB3510.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:138::23) with
+ bh=VhuteMpLJAEFZG5Y8/of33bJ5oi3T+2594Pg5QvvxPs=;
+ b=byZRI7ID2lUKyqaw4pv0FJsEFQHlcSinNC+YQL3w5OJn22W5EvDbA8urlL9eXXmyhkZ1I3xaoGSBCl+juZh8O+fCLgn77UnDQZNxdzOkOfi+5rRRL5tfLaFlJ/mRJ/1+tbSswQiTzR23ayQG3Yh72lVmHbqKS7PWwWkBeF5F0KIHfIBpldOZmYc/dx1ojgBE77U3utWkwzCdYn+PJDwKsAI8PqKYFun8sKIaJb2QWObePj62mFQYg8R+gw9M1RFdlgwjhLguLqyQEzUqgCRbgapUdci3Z5lEGKxcRVfAi4OOz3g3xi4s4ag87t+QXZ/6v9ao5VObSE1awP09dBGRCQ==
+Received: from OS6P279CA0171.NORP279.PROD.OUTLOOK.COM (2603:10a6:e10:38::18)
+ by DB9PR10MB7218.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:454::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.34; Wed, 19 Oct
- 2022 09:23:37 +0000
-Received: from PAXPR10MB5037.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8f3:9a82:c9ed:6a3f]) by PAXPR10MB5037.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8f3:9a82:c9ed:6a3f%7]) with mapi id 15.20.5723.033; Wed, 19 Oct 2022
- 09:23:37 +0000
-From: sven.schultschik@siemens.com
-To: cip-dev@lists.cip-project.org
-CC: jan.kiszka@siemens.com,
-	Sven Schultschik <sven.schultschik@siemens.com>
-Subject: [isar-cip-core][PATCH 7/7] no merge - manually instructions test secure boot
-Date: Wed, 19 Oct 2022 11:21:17 +0200
-Message-ID: <20221019092117.5291-7-sven.schultschik@siemens.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20221019092117.5291-1-sven.schultschik@siemens.com>
-References: <20221019092117.5291-1-sven.schultschik@siemens.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-X-ClientProxiedBy: AS9PR06CA0638.eurprd06.prod.outlook.com
- (2603:10a6:20b:46f::32) To PAXPR10MB5037.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:102:210::11)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.29; Wed, 19 Oct
+ 2022 10:44:19 +0000
+Received: from HE1EUR01FT014.eop-EUR01.prod.protection.outlook.com
+ (2603:10a6:e10:38:cafe::c0) by OS6P279CA0171.outlook.office365.com
+ (2603:10a6:e10:38::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.34 via Frontend
+ Transport; Wed, 19 Oct 2022 10:44:19 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.76)
+ smtp.mailfrom=siemens.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=siemens.com;
+Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
+ 194.138.21.76 as permitted sender) receiver=protection.outlook.com;
+ client-ip=194.138.21.76; helo=hybrid.siemens.com; pr=C
+Received: from hybrid.siemens.com (194.138.21.76) by
+ HE1EUR01FT014.mail.protection.outlook.com (10.152.0.156) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5746.16 via Frontend Transport; Wed, 19 Oct 2022 10:44:18 +0000
+Received: from DEMCHDC89XA.ad011.siemens.net (139.25.226.103) by
+ DEMCHDC8VSA.ad011.siemens.net (194.138.21.76) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.15; Wed, 19 Oct 2022 12:44:18 +0200
+Received: from [139.22.133.243] (139.22.133.243) by
+ DEMCHDC89XA.ad011.siemens.net (139.25.226.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.12; Wed, 19 Oct 2022 12:44:17 +0200
+Message-ID: <c020dd31-5cc6-4be8-bee1-f313e816a817@siemens.com>
+Date: Wed, 19 Oct 2022 12:44:16 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.0
+Subject: Re: [isar-cip-core][PATCH 1/7] add recipe for optee qemu arm64
+Content-Language: en-US
+To: <sven.schultschik@siemens.com>, <cip-dev@lists.cip-project.org>
+References: <20221019092117.5291-1-sven.schultschik@siemens.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+In-Reply-To: <20221019092117.5291-1-sven.schultschik@siemens.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [139.22.133.243]
+X-ClientProxiedBy: DEMCHDC8WAA.ad011.siemens.net (139.25.226.104) To
+ DEMCHDC89XA.ad011.siemens.net (139.25.226.103)
+X-TM-AS-Product-Ver: SMEX-14.0.0.3080-8.6.1018-26680.007
+X-TM-AS-Result: No-10--16.399900-8.000000
+X-TMASE-MatchedRID: J3RqQtrrI5k5QaOxwNGfvo9bHfxDWoibATaHBwVHy/1qZ6OipRp3ejlb
+	BhAKzgGf31GU/N5W5BB2DX7fiwsbtuV6Ukjo9KrLWP7S1AyiPEAsaaYlMvaOHA97mDMXdNW3AZn
+	/4A9db2Tvrj2fROADiX+YLBuR+SHBzd9D/IRLjmkQea4Si8omsgK1I3/RsWjTaDCzqDR7DPabOw
+	nwKxlhTqFIbih0s/42TxSugU04anvJvHAVwrvMvCUskOAallgBOiyyh0NN44NwGgR8fjmhmExBQ
+	tM1e2ykBO9W+Ur4NIBu5QV/9+0eKfial1lqTpQaUYB7V58oVjjMgfjGGlvykAXGi/7cli9jgcsV
+	ZH3dOCQznjnsX+epgNnoquRwHY3Bstq2oQPQBaR2w9nBs56maHZDfiFP1tnyvHKClHGjjr0BDya
+	2JbH/+qEBi7RBcbi8RDLxu3JRGrQTev6ffZr1JeF45apSJW4bAGVQK2qiF3nVsW2YGqoUtMKaBY
+	cV17jQA8FfY2Fm0lMtPdMtqK0cn+mAB8kTq9W5dBi1avXuVWyv32t0t0cTKIh/ebSxR/Hn2FA7w
+	K9mP9eUAUfla+IhaLKXWmEvaG3ECxvAgaTHFy+Rk6XtYogiau9c69BWUTGwVnRXm1iHN1bEQdG7
+	H66TyH4gKq42LRYkEWM4+A1psvxBwRbU4ptdWmFbdjngJROxlDwEMJgakml+3BndfXUhXQ==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--16.399900-8.000000
+X-TMASE-Version: SMEX-14.0.0.3080-8.6.1018-26680.007
+X-TM-SNTS-SMTP: EDEBEFD20F5A414178E8C5E777F67BB01B4E3405A105EAA8D62875E5B3374AC72000:8
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR10MB5037:EE_|AM7PR10MB3510:EE_
-X-MS-Office365-Filtering-Correlation-Id: c761993e-895b-4e08-3c9d-08dab1b39a6c
-X-LD-Processed: 38ae3bcd-9579-4fd4-adda-b42e1495d55a,ExtAddr
+X-MS-TrafficTypeDiagnostic: HE1EUR01FT014:EE_|DB9PR10MB7218:EE_
+X-MS-Office365-Filtering-Correlation-Id: 67114d47-2cfd-4f1e-9809-08dab1bee02b
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	fZyOr5q1qkMEfIX0iL5hvNZbH5Y9Ynd9hla4Wan54q50jWRa86D/xwDjgohWwtCe0mw3bB8f0V2BpPVV8h6mf0R11Ba3fFKMkN7o5TZ6fKj7UudvrL8VBj/DXLYBRDoc+IJPcZYliTUA0G7hmQstAajNc03kTvy1Ev85zWiCdQ6Wfe+ZQ4/Bfme7v1yfnmGTI4gYGRK6HIDE5JR91D2qbhQDS2LBnePwOVxO2VXA5PQyo7H9a1Jhi4RXqK2yHeJ8k+ZIGQiqgL1jNMA29LH1sW/YuDwquI4pS+ksvrm/Qa/Dc0b+SaSgNhkDE+nI8vzxgVUhR8W2EyZ+AcEsPh4twQmmImrff1WrGI+vypEu2TXIHg9QCB3W1bwZE91lixKC6UF0ohnV70DZ2oyhFP8R+FzvUnwD5tGPD16VUX01iu4hdp5B/ixj62RR+3tP/1wKGY9SiwABVtVyEXxUzmtJsN8Ug40/kQ+BoJdvqFJai9O8ECFaPd0TPDqbJ/N9xw2MFsPnal/BdsWW3utWrxxQxzi2+CA8FDmG7ARzpeX32zXrhKxLneqlFzzG5usIKSF90o8CH4Tt8GU5xwmB14E/+OWm+g6sG/zQMy/FLSY2nLBrS4oHQIbnryVp0A6uSNZIMvMVfNwdsv5wN5ZMniwRtRlLhpGOVqMIyjBjRB59+5V3AKQIPHnJe+U51Z1uuje//NZXk4F4MkxU01vt2QfsPw==
+	SNfw318rAUgvTOwWiShZRXz5+YUaElgKBD+IKhm1znJUBC/0xnuQwVBWXwMAWg/Jfylrl45tjsNleynnaokTwqLtkYx05VH3Nwo/c68uPnpH32WlI1ouzkZ6kE/vXotpRTDz8C2+U7ZNjrfQtdXfvudCzc4scRl8YV0WbmbQDe3xLI59vxUy5zoghS/2df9TIBRQVnAJZNom7QR3cVqpsoS5Fqd14aoreJp42ccs1Do08D3x8jNUoHoHnkxhUGhpU5mVA8lr/g7l0d8VwTAcBP5p0bMEcVBvyKXrAqp4p3nXQLy0tt7zbbbuLnM8BldkzTPJZghZYN0u95AjZ9sSYNmS3qQR9NoHF5ALTgSWgoErrpeMMRLb+EOGInp3tB/z/9/U6GhklHW2f9PpXwqxVLGoNHpU+FMSsnCb0QjJxXw0w/GQs71yx5cSE0xGgeC4CUjwEgALjkZAu/6Rzdfh789Q7C49o3ZIqx140WY/YY1vxLiA2liN/WSt7Obj+b4aOZPi27acXKS1qSohROEZ2T7W1f41lL960x+z2STq8T98sGqVtCTe9aL1maaTwEezoTPSQyzkX+YiQ0j/9Pxj0Hx9VBoisvdASO8QlYSdEW0q7Bebagi9ShcY6AQ8t0+Nx5OndkdXj+rzh2wwipkBTuBrlgpOz2peg3CI+cV/X9fu1d1IyhUbcv//003FVdJp17zAEnPBcDh1/qgn9BLagfFQPZjueLek7SBDfDnaFV6U7WSLgYKX457qwlRGmqfBKSCczbCuTEDOKJJcGHy+w9DUc13usv71GiwYGI73oPoyYUcqPwQPwgsTQPc8rPxqwlnkvQshNdlYhabpCz0ePp+DZ13E0pDFo/GqXIcOKpzDDulM7Ydo6ys6xAth/RbZNz0fVlwS+iJPeBNl1UJCKN7PVbUM6gi8lsmGhVHraIQ=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR10MB5037.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230022)(4636009)(376002)(39860400002)(396003)(136003)(366004)(346002)(451199015)(26005)(6512007)(9686003)(6506007)(41300700001)(86362001)(83380400001)(36756003)(6916009)(8676002)(66476007)(4326008)(66946007)(66556008)(8936002)(5660300002)(107886003)(6666004)(316002)(82960400001)(6486002)(38100700002)(2616005)(2906002)(1076003)(186003)(478600001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?3ghg0YyDR1yX1y82e9ZvIflphVTmbN8jV4S2tqmQJA90QlixECqEy0oTnpN4?=
- =?us-ascii?Q?5cPfwqfeKyW7ig8PvjnLJdPkNI0eI8+KVj/qZlE/+ePrzhaWmkO9Ah7g0aVP?=
- =?us-ascii?Q?ltI03ImkNcKPaGYitwbyHbIRbuJnYMdIO+Y/YjBetcrK2Z6rVK+WAWycicvg?=
- =?us-ascii?Q?V+y8369XWMAOYu2/5UpdsbBSk2gUSuVZBIrCDSNxp9NteCMBdrJQ4HDihhUg?=
- =?us-ascii?Q?uE7wW+LXDQXy5+IiSBDNnG/FetsvnF5425gOwOQ10W8dTgD6kCSFOa/w83+C?=
- =?us-ascii?Q?ORum4Y5jLdaLmV1N9Emm160AqjgxZQBgrx3pYSRSZ/ymVhuJxRo/cs67JBuu?=
- =?us-ascii?Q?IqdY9AIrALoRM0OvUtfdf2YcEsu50MMVmX2Dws93qVScMbf1xL1cVF+pORtH?=
- =?us-ascii?Q?Z3zAYzmbE19vuviO+AXyz09MzcLV4+boHhx5AhYqwQuXmXtx0Ifr4JFG4qkL?=
- =?us-ascii?Q?rFgxxhgAVTO+EA9Sp9Cn59qCfIbsKg9gOkL/Z0JcegrhKQMFIN3WZ3FcgmkL?=
- =?us-ascii?Q?3FyhvlgY6G3McKSahTmsMx4fY7a8a0W5Zjaos54npREugqMDniVcEEQdVlEr?=
- =?us-ascii?Q?KXcTmG8JoLJmi6xeTJl2RxUZimW9IjlOLiXsTVwIwEE6uZiDFOrhUk5A6z57?=
- =?us-ascii?Q?88i3A4kibl0VKVH8nkZQpvb9lGFcM3/aVwAeuhYYvNVoxYJkNRwaXtzGJKlj?=
- =?us-ascii?Q?j6UUeTM5aCbbT8q6j5lWGK9qav6bJM4CKOTsrdRTn6agexxKTZHumqNHjoPL?=
- =?us-ascii?Q?v66BGwUdW5Euim9IHt+eetLVvrdpT31QzGFl2mj37pZiE+RBEFtjDNK/i6Me?=
- =?us-ascii?Q?i6OI6KXuZzgngnn//98ESB0bAvd+LPJEW7NghmsDmOWHbtAlQ3wMO6x1CA3N?=
- =?us-ascii?Q?t9h3LN+mPEAAyjBReFzjJ2bhygpbiCcNHrMt6hXd3bphRV/9oBAmXI8CfS8B?=
- =?us-ascii?Q?k4XFd3bVwnVwANqhvIll6XE6hKLFxuMGzIQCZzAivcmYfaI6aPs47mB+5oNy?=
- =?us-ascii?Q?W4B7TPHrnL/LS/aikJbCctnsDxn8seZOoYeWWywrgdAgFMG7Cxffp5YBONP9?=
- =?us-ascii?Q?0gzr61XrHdxoklk8oOfvGg5hKP6a37q5WerGlX4iCPGdUC1D3AkzrnSjSSb5?=
- =?us-ascii?Q?umjx5SjJlxzzqtUGfawVvHUWbgCEhg+dJOz6NWQ7guKnbrWZvp0Pa/bXRtLI?=
- =?us-ascii?Q?SS3hEfllGYojnnGaptpnm2cz+TAhCCk8X21X09VH+sMea1Xm0AoluZOZgTiw?=
- =?us-ascii?Q?96SUVILN7Cz4qgqxAqR+XMeZqsy7BkTYt84eRqudS/2Q93Bilmy1csW7sDg4?=
- =?us-ascii?Q?fD1KVWg6HPWw202wB1GtwqgivorTQQJkn6tBesmKsaHV+rrrL5zJFbc+0by1?=
- =?us-ascii?Q?u3s4AR5iEQJFyirT127efl6Q45YyYTsZTY63nyuClc3BM2ggb3u3JGtIRs1X?=
- =?us-ascii?Q?YT5Kfo0GBQRWAinSAt8socRXkwNpmnHJqBmz5Lkg64+Alp3OuDbdzFrwyuPv?=
- =?us-ascii?Q?AAcFrUReWc7XJLctnuNmPGlESg9L9rU6qplCFJMm13leELC92ObfI3NMi/8/?=
- =?us-ascii?Q?gHW+8S4ZVh8p/Fh6stdKM27nmNls2GG74k6TA6otagXlrxMA/90ldPWqmbNL?=
- =?us-ascii?Q?+w=3D=3D?=
+	CIP:194.138.21.76;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(396003)(136003)(346002)(376002)(451199015)(46966006)(40470700004)(36840700001)(110136005)(478600001)(53546011)(6706004)(26005)(8676002)(70206006)(70586007)(44832011)(41300700001)(5660300002)(956004)(8936002)(186003)(82740400003)(82960400001)(82310400005)(336012)(316002)(2616005)(47076005)(2906002)(16576012)(83380400001)(31686004)(81166007)(31696002)(36756003)(356005)(16526019)(40460700003)(86362001)(40480700001)(36860700001)(34020700004)(3940600001)(43740500002)(36900700001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c761993e-895b-4e08-3c9d-08dab1b39a6c
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR10MB5037.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Oct 2022 09:23:37.5018
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Oct 2022 10:44:18.8264
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Network-Message-Id: 67114d47-2cfd-4f1e-9809-08dab1bee02b
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: C+AC/a4GTatYFqbsl5sa8EfH9KBP/DuJjbTx2bUjUFBsfVgkIVFr7x8EtZVHWpmtrfvPda/Pi92PFo6riKOuVJmxSgFwk2hSInzxaPZOy1E=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR10MB3510
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.76];Helo=[hybrid.siemens.com]
+X-MS-Exchange-CrossTenant-AuthSource: 
+	HE1EUR01FT014.eop-EUR01.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR10MB7218
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 19 Oct 2022 09:23:41 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9781
+ <cip-dev@lists.cip-project.org>; Wed, 19 Oct 2022 10:44:32 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9782
 
-From: Sven Schultschik <sven.schultschik@siemens.com>
+On 19.10.22 11:21, sven.schultschik@siemens.com wrote:
+> From: Sven Schultschik <sven.schultschik@siemens.com>
+> 
+> The recipe provides the possibility to create optee-os binaries for use inside of an qemu secureboot setup with edk2, rpmb, u-boot and uefi
+> 
+> Signed-off-by: Sven Schultschik <sven.schultschik@siemens.com>
+> ---
+>  .../op-tee/optee-os-qemu-arm64_3.17.0.bb      | 57 +++++++++++++++++++
+>  recipes-bsp/u-boot/files/secure-boot.cfg.tmpl |  7 +++
+>  recipes-bsp/u-boot/u-boot-common.inc          |  6 +-
+>  3 files changed, 67 insertions(+), 3 deletions(-)
+>  create mode 100644 recipes-bsp/op-tee/optee-os-qemu-arm64_3.17.0.bb
+> 
+> diff --git a/recipes-bsp/op-tee/optee-os-qemu-arm64_3.17.0.bb b/recipes-bsp/op-tee/optee-os-qemu-arm64_3.17.0.bb
+> new file mode 100644
+> index 000000000..5e60041af
+> --- /dev/null
+> +++ b/recipes-bsp/op-tee/optee-os-qemu-arm64_3.17.0.bb
+> @@ -0,0 +1,57 @@
+> +#
+> +# CIP Core, generic profile
+> +#
+> +# Copyright (c) Siemens AG, 2022
+> +#
+> +# Authors:
+> +#  Sven Schultschik <sven.schultschik@siemens.com>
+> +#
+> +# SPDX-License-Identifier: MIT
+> +#
+> +
+> +HOMEPAGE = "https://github.com/OP-TEE/optee_os"
+> +MAINTAINER = "Sven Schultschik <sven.schultschik@siemens.com>"
+> +LICENSE = "BSD-2-Clause"
+> +
+> +require recipes-bsp/optee-os/optee-os-custom.inc
+> +
+> +SRC_URI += " \
+> +            gitsm://github.com/OP-TEE/optee_os.git;branch=master;protocol=https;destsuffix=git;rev=${PV}"
 
-This patch is not ment for merge but shows how to generally test the implem=
-entation of the optee and rpmb driven secure boot qemu setup.
+Do we really need the second-class supported gitsm fetcher here? Also,
+destsuffix and rev are both redundant (they are defaults).
 
-Signed-off-by: Sven Schultschik <sven.schultschik@siemens.com>
----
- README.md                                     |  65 ++++++++++++++++++
- keys/helloworld.efi                           | Bin 0 -> 4576 bytes
- recipes-bsp/u-boot/files/secure-boot.cfg.tmpl |   2 +-
- start-qemu.sh                                 |   3 +-
- 4 files changed, 68 insertions(+), 2 deletions(-)
- create mode 100644 keys/helloworld.efi
+Oh, indention by 4 spaces would be sufficient.
 
-diff --git a/README.md b/README.md
-index e30ff3a63..36f9ebe25 100644
---- a/README.md
-+++ b/README.md
-@@ -55,6 +55,71 @@ or via bmap-tools
-=20
-     bmaptool copy build/tmp/deploy/images/bbb/cip-core-image-cip-core-bust=
-er-bbb.wic.img /dev/<medium-device>
-=20
-+## Running Secure Boot Target Images and test it
-+Create a folder named `keys` if not exist and within this folder create th=
-e signing keys and db
-+
-+```bash
-+#PK
-+openssl req -x509 -sha256 -newkey rsa:2048 -subj /CN=3DSIEMENS_TEST_PK/ -k=
-eyout PK.key -out PK.crt -nodes -days 365
-+cert-to-efi-sig-list -g 11111111-2222-3333-4444-123456789abc PK.crt PK.esl
-+sign-efi-sig-list -c PK.crt -k PK.key PK PK.esl PK.auth
-+
-+# KEK
-+openssl req -x509 -sha256 -newkey rsa:2048 -subj /CN=3DSIEMENS_TEST_KEK/ -=
-keyout KEK.key -out KEK.crt -nodes -days 365
-+cert-to-efi-sig-list -g 11111111-2222-3333-4444-123456789abc KEK.crt KEK.e=
-sl
-+sign-efi-sig-list -c PK.crt -k PK.key KEK KEK.esl KEK.auth
-+
-+# db
-+openssl req -x509 -sha256 -newkey rsa:2048 -subj /CN=3DSIEMENS_TEST_db/ -k=
-eyout db.key -out db.crt -nodes -days 365
-+cert-to-efi-sig-list -g 11111111-2222-3333-4444-123456789abc db.crt db.esl
-+sign-efi-sig-list -c KEK.crt -k KEK.key db db.esl db.auth
-+```
-+
-+Put an bootable `.efi` file in it or use the `helloworld.efi` provided and=
- sign it.
-+
-+```
-+sbsign --key db.key --cert db.crt helloworld.efi
-+```
-+
-+The `start-qemu.sh` has additional `-hdb fat:rw:keys` added with this patc=
-h to mount the `keys` folder.
-+
-+Start the qemu with following command
-+
-+```
-+FIRMWARE_BIN=3D./build/tmp/deploy/images/qemu-arm64/flash.bin ./start-qemu=
-.sh aarch64
-+```
-+
-+In this test patch there is as well the possibility added to stop in the u=
--boot. So if you see a 5 sec timer ticking press Enter to stop.
-+
-+Now add the keys to the environment my typing
-+
-+```
-+fatload virtio 1:1 ${fileaddr} PK.auth
-+setenv -e -nv -bs -rt -at -i ${fileaddr}:$filesize PK
-+fatload virtio 1:1 ${fileaddr} KEK.auth
-+setenv -e -nv -bs -rt -at -i ${fileaddr}:$filesize KEK
-+fatload virtio 1:1 ${fileaddr} db.auth
-+setenv -e -nv -bs -rt -at -i ${fileaddr}:$filesize db
-+```
-+> The address ${fileaddr}=3D40000000 depends on your DRAM setup. You can c=
-heck with `bdinfo`
-+
-+> $filesize is set by fatload
-+
-+### Boot signed efi binary
-+
-+```
-+fatload virtio 1:1 ${fileaddr} helloworld.efi.signed
-+ =20
-+bootefi ${fileaddr} ${fdtcontroladdr}
-+```
-+
-+### Try same binary but unsigned
-+This should fail with `Image not authenticated. Loading image failed`
-+```
-+fatload virtio 1:1 ${fileaddr} helloworld.efi
-+=20
-+bootefi ${fileaddr} ${fdtcontroladdr}
-+```
-=20
- ## Community Resources
-=20
-diff --git a/keys/helloworld.efi b/keys/helloworld.efi
-new file mode 100644
-index 0000000000000000000000000000000000000000..c021d94ae576271f1f472bd2e5f=
-380ed1830a2ff
-GIT binary patch
-literal 4576
-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
-F{tfI&1hD`B
+> +
+> +S = "${WORKDIR}/git"
+> +
+> +OPTEE_PLATFORM = "vexpress-qemu_armv8a"
+> +
+> +OPTEE_BINARIES = "tee-header_v2.bin \
+> +    tee-pager_v2.bin \
+> +    tee-pageable_v2.bin"
+> +
+> +DEPENDS = "edk2"
+> +DEBIAN_BUILD_DEPENDS += " ,\
+> +    debhelper(>= 11~), \
+> +    build-essential, \
 
-literal 0
-HcmV?d00001
+Redundant.
 
-diff --git a/recipes-bsp/u-boot/files/secure-boot.cfg.tmpl b/recipes-bsp/u-=
-boot/files/secure-boot.cfg.tmpl
-index 8e6428238..63d73f70a 100644
---- a/recipes-bsp/u-boot/files/secure-boot.cfg.tmpl
-+++ b/recipes-bsp/u-boot/files/secure-boot.cfg.tmpl
-@@ -1,5 +1,5 @@
- ### Secure boot config
--CONFIG_BOOTDELAY=3D-2
-+CONFIG_BOOTDELAY=3D5
- CONFIG_USE_BOOTCOMMAND=3Dy
- CONFIG_BOOTCOMMAND=3D"setenv scan_dev_for_boot 'if test -e ${devtype} ${de=
-vnum}:${distro_bootpart} efi/boot/boot${EFI_ARCH}.efi; then load ${devtype}=
- ${devnum}:${distro_bootpart} ${kernel_addr_r} efi/boot/boot${EFI_ARCH}.efi=
-; bootefi ${kernel_addr_r} ${fdtcontroladdr}; fi'; run distro_bootcmd; echo=
- 'EFI Boot failed!'; sleep 1000; reset"
- CONFIG_EFI_VARIABLES_PRESEED=3Dy
-diff --git a/start-qemu.sh b/start-qemu.sh
-index 18946a6c9..ac73d8d3b 100755
---- a/start-qemu.sh
-+++ b/start-qemu.sh
-@@ -179,7 +179,8 @@ if [ -n "${SECURE_BOOT}${SWUPDATE_BOOT}" ]; then
- 			${QEMU_PATH}${QEMU} \
- 				-drive file=3D${IMAGE_PREFIX}.wic,discard=3Dunmap,if=3Dnone,id=3Ddisk,=
-format=3Draw \
- 				-bios ${u_boot_bin} \
--				${QEMU_COMMON_OPTIONS} "$@"
-+				${QEMU_COMMON_OPTIONS} "$@" \
-+				-hdb fat:rw:keys
- 			;;
- 		*)
- 			echo "Unsupported architecture: ${arch}"
---=20
-2.30.2
+> +    cpio, \
+> +    python3-cryptography, \
+> +    python3-pycryptodome, \
+> +    python3-serial, \
+> +    device-tree-compiler, \
+> +    edk2, \
+
+Do we need Debian's edk2 here?
+
+> +    gcc-arm-linux-gnueabihf,"
+> +
+> +OPTEE_EXTRA_BUILDARGS = "CFG_STMM_PATH=/usr/lib/edk2/BL32_AP_MM.fd CFG_RPMB_FS=y \
+> +        CFG_RPMB_FS_DEV_ID=0 CFG_CORE_HEAP_SIZE=524288 CFG_RPMB_WRITE_KEY=1 \
+> +        CFG_CORE_DYN_SHM=y CFG_RPMB_TESTKEY=y \
+> +        CFG_REE_FS=n\
+> +        CFG_TEE_CORE_LOG_LEVEL=1 CFG_TEE_TA_LOG_LEVEL=1 CFG_SCTLR_ALIGNMENT_CHECK=n \
+> +        CFG_ARM64_core=y CFG_CORE_ARM64_PA_BITS=48"
+> +
+> +ISAR_CROSS_COMPILE = "0"
+
+This looks wrong, specifically as you are installing a 32-bit
+cross-compiler and calling a 64-bit one as well below.
+
+> +
+> +dpkg_runbuild_prepend() {
+> +    # $(ARCH) is the CPU architecture to be built. 
+> +    # Currently, the only supported value is arm for 32-bit or 64-bit Armv7-A or Armv8-A. 
+> +    # Please note that contrary to the Linux kernel, $(ARCH) should not be set to arm64 for 64-bit builds. 
+> +    export ARCH="arm"
+> +    export CROSS_COMPILE32=arm-linux-gnueabihf-
+> +    export CROSS_COMPILE64=aarch64-linux-gnu-
+
+That is a deprecated style, and sbuild will complain. Move into the
+rules file.
+
+> +}
+> \ No newline at end of file
+
+Please have a "newline at the end of file".
+
+> diff --git a/recipes-bsp/u-boot/files/secure-boot.cfg.tmpl b/recipes-bsp/u-boot/files/secure-boot.cfg.tmpl
+> index 956dcbfed..8e6428238 100644
+> --- a/recipes-bsp/u-boot/files/secure-boot.cfg.tmpl
+> +++ b/recipes-bsp/u-boot/files/secure-boot.cfg.tmpl
+> @@ -4,3 +4,10 @@ CONFIG_USE_BOOTCOMMAND=y
+>  CONFIG_BOOTCOMMAND="setenv scan_dev_for_boot 'if test -e ${devtype} ${devnum}:${distro_bootpart} efi/boot/boot${EFI_ARCH}.efi; then load ${devtype} ${devnum}:${distro_bootpart} ${kernel_addr_r} efi/boot/boot${EFI_ARCH}.efi; bootefi ${kernel_addr_r} ${fdtcontroladdr}; fi'; run distro_bootcmd; echo 'EFI Boot failed!'; sleep 1000; reset"
+>  CONFIG_EFI_VARIABLES_PRESEED=y
+>  CONFIG_EFI_SECURE_BOOT=y
+> +### OPTEE config
+> +CONFIG_CMD_OPTEE_RPMB=y
+> +CONFIG_MMC=y
+> +CONFIG_SUPPORT_EMMC_RPMB=y
+> +CONFIG_TEE=y
+> +CONFIG_OPTEE=y
+> +CONFIG_EFI_MM_COMM_TEE=y
+> diff --git a/recipes-bsp/u-boot/u-boot-common.inc b/recipes-bsp/u-boot/u-boot-common.inc
+> index 60f0da361..7fe4d3fad 100644
+> --- a/recipes-bsp/u-boot/u-boot-common.inc
+> +++ b/recipes-bsp/u-boot/u-boot-common.inc
+> @@ -25,12 +25,12 @@ DEBIAN_BUILD_DEPENDS += ", libssl-dev:native, libssl-dev:${DISTRO_ARCH}"
+>  
+>  DEBIAN_BUILD_DEPENDS_append_secureboot = ", \
+>      openssl, pesign, secure-boot-secrets, python3-openssl:native"
+> -DEPENDS_append_secureboot = " secure-boot-secrets"
+> +DEPENDS_append_secureboot = " secure-boot-secrets optee-os-${MACHINE}"
+
+Nope, this must go into qemu-specific U-Boot bits. We don't have
+optee-os for the rest yet.
+
+>  
+>  TEMPLATE_FILES_append_secureboot = " secure-boot.cfg.tmpl"
+>  TEMPLATE_VARS_append_secureboot = " EFI_ARCH"
+>  
+>  do_prepare_build_append_secureboot() {
+>      sed -ni '/### Secure boot config/q;p' ${S}/configs/${U_BOOT_CONFIG}
+> -    cat ${WORKDIR}/secure-boot.cfg >> ${S}/configs/${U_BOOT_CONFIG}
+> -}
+> +    cat ${WORKDIR}/secure-boot.cfg >> ${S}/configs/${U_BOOT_CONFIG}    
+> +}
+> \ No newline at end of file
+
+Spurious change. Please cross-read your diffs for such things.
+
+When you resend, I would suggest to split up the optee recipe
+introduction and the U-Boot changes.
+
+Jan
+
+-- 
+Siemens AG, Technology
+Competence Center Embedded Linux
 
 
