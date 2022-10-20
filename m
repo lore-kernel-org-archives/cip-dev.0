@@ -1,138 +1,273 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42DCCC4332F
-	for <webhook@archiver.kernel.org>; Thu, 20 Oct 2022 06:21:04 +0000 (UTC)
-Received: from EUR01-HE1-obe.outbound.protection.outlook.com (EUR01-HE1-obe.outbound.protection.outlook.com [40.107.13.88])
- by mx.groups.io with SMTP id smtpd.web11.6555.1666246856756859485
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00025C433FE
+	for <webhook@archiver.kernel.org>; Thu, 20 Oct 2022 07:58:14 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web08.7045.1666252683890196648
  for <cip-dev@lists.cip-project.org>;
- Wed, 19 Oct 2022 23:20:57 -0700
+ Thu, 20 Oct 2022 00:58:05 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=Byr+vjNq;
- spf=pass (domain: siemens.com, ip: 40.107.13.88, mailfrom: jan.kiszka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WmujL4LOUQoP6sCEFYm7c13BghQ+q1FrJPNsiLmKZ59kMAFwUO8JDiryrUegxUrzjmd4arvErJmJYs4UEheLcFLzN++bIfOSh5nG3pc6SJJ8o40lh6yrTAQqhD4z9OMAq1V8fC/i/OZ3tk5XV09GjKRNVK6k8vyfSZIvBfHKOruph+7JzK1RnDM1zdhyQFfXTHVC8CivHtZ2Q3yPA8oNwjOkq/rqULK2zAPGlCSYye1Dzust7qyoRSaLl7gvuytKXnPMDEGDh/aMHsgAkeXlXLutf/T/dvh1mWbu2Wo0PBBUGtbGF3P68cUXHFFg6nTlRibHm9/ZoLvz3FANHIyISw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wJhfH0ebCxHGG0BQqPZRCPxLBsSUQGG5zs0qyP7GmXY=;
- b=oNPr3E4ioLsBLJDbcIOnaz1T1MgRuCyAhSs+LDN9DiWgME+WE20JSt5AOxoNmOdr1E1d7G9PxCsm8CEEp5UdUySE/PBQVOfJsRiIc3TfqztI7Oa2na+5YwM7cCg5M9CXuIll2d9920wPIpkxqBlJOft4uS3n8P3wRSV+VlAnCv18PNmGPDPLtxXl0eC8HM7lhJZeI7vZIDUMZ6c/jz+kONmiYK6yY7WaTgqYcuYlk3Wsvxr6S+dNAllPyocq1aZpS5Sb4LWGWOvI845PLMz+JOCXuWIsUsemuwzFEy1IR5e3YJrAJVVhd7xK0zfpLYrm1X5+JxWNc+1cFA5wH1mWHA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.75) smtp.rcpttodomain=lists.cip-project.org
- smtp.mailfrom=siemens.com; dmarc=pass (p=none sp=none pct=100) action=none
- header.from=siemens.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wJhfH0ebCxHGG0BQqPZRCPxLBsSUQGG5zs0qyP7GmXY=;
- b=Byr+vjNqH11He70xiIPvg+MyTRCOof8nM/EkjFQTu+ESriNuczueXwJ5zHnlt2cAuwae0IHY/OuAy6zTlSfcpavo8MLrjyfGALV5QD0gdGEoSO4ObgQoVt3l85KSB7edPK2AkyT788msffusoOSt+XXx8ZkQ1IplPVFx2erIXcCZKSnU3wyJ8+aoI7nCYNuD8um0VZFhFOGnq50qP5YVFEDQpTCpAynw6j4XczN0r+/XOmuHgJemXNylp3eRoRPojiWpn39Tl0eBaiVhBCA35rWnWRgs4t9cwQZYHZmL6SnNgludh+3R4W2vm4JLhVBTlLCFDP3ue3vjO/UYmtbKXw==
-Received: from DU2PR04CA0029.eurprd04.prod.outlook.com (2603:10a6:10:3b::34)
- by DB4PR10MB7040.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:3f0::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.30; Thu, 20 Oct
- 2022 06:20:53 +0000
-Received: from DB5EUR01FT097.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:10:3b:cafe::cd) by DU2PR04CA0029.outlook.office365.com
- (2603:10a6:10:3b::34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.25 via Frontend
- Transport; Thu, 20 Oct 2022 06:20:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.75)
- smtp.mailfrom=siemens.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=siemens.com;
-Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.75 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.75; helo=hybrid.siemens.com; pr=C
-Received: from hybrid.siemens.com (194.138.21.75) by
- DB5EUR01FT097.mail.protection.outlook.com (10.152.5.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5746.16 via Frontend Transport; Thu, 20 Oct 2022 06:20:53 +0000
-Received: from DEMCHDC89XA.ad011.siemens.net (139.25.226.103) by
- DEMCHDC8VRA.ad011.siemens.net (194.138.21.75) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.15; Thu, 20 Oct 2022 08:20:52 +0200
-Received: from [139.22.107.40] (139.22.107.40) by
- DEMCHDC89XA.ad011.siemens.net (139.25.226.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.12; Thu, 20 Oct 2022 08:20:52 +0200
-Message-ID: <a4352f03-8004-f9e6-af0c-acc5f3f4f4a7@siemens.com>
-Date: Thu, 20 Oct 2022 08:20:51 +0200
+ dkim=missing; spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 1C4701C09D6; Thu, 20 Oct 2022 09:58:01 +0200 (CEST)
+Date: Thu, 20 Oct 2022 09:58:00 +0200
+From: Pavel Machek <pavel@denx.de>
+To: cip-dev@lists.cip-project.org
+Subject: Re: [cip-dev] New CVE entries this week
+Message-ID: <20221020075759.GA17249@amd>
+References: <CAODzB9q+zmEqdu1=u7JESKbqgDvkAjXaeRPXELRm7Gyg+-76FA@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.0
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: CIP IRC weekly meeting today on libera.chat
-To: cip-dev <cip-dev@lists.cip-project.org>
-Content-Language: en-US
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [139.22.107.40]
-X-ClientProxiedBy: DEMCHDC8WAA.ad011.siemens.net (139.25.226.104) To
- DEMCHDC89XA.ad011.siemens.net (139.25.226.103)
-X-TM-AS-Product-Ver: SMEX-14.0.0.3080-8.6.1018-26680.007
-X-TM-AS-Result: No-10--19.815500-8.000000
-X-TMASE-MatchedRID: 3OnHKS+pL/RUexHo4vWu8JBmg1zv+iLiePOjK4lyDHhlyUAXnYRaSF+B
-	oH4JnCIGZ++q5oZWwp8oqL1chlV2xfbjZLhs5ua57qEZpoAUsFTispvMxPAIBU6PG3UB9o6G9pL
-	nYtQ99xJLpCLN4NR43oc/Zw06wyFfWExFuTDNuJXwgTN5hsYOwKDRSBS1ZYGLqhcdnP91eXFlu8
-	AJBkPNML9u2sKFA/N0ImdkknPE0j7i8zVgXoAltkWL4rBlm20vZiFQvkZhFu1q8/xv2Um1avoLR
-	4+zsDTtAqYBE3k9Mpw=
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--19.815500-8.000000
-X-TMASE-Version: SMEX-14.0.0.3080-8.6.1018-26680.007
-X-TM-SNTS-SMTP: D3BDB366EE680A83B863EE3A372A3245E1598BB08F248FBD10703EAF5956CECC2000:8
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB5EUR01FT097:EE_|DB4PR10MB7040:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5fb173f4-6482-4f9e-2952-08dab2633d9e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	0VQEL8XliemtgnHaVQN2Mgfmby8gbjeTyKMX/G5bJCvL0nFrrcxWr635HPWZaf1mAT/L5SUbYP5nME2CS+QSb7JOAqXKajIRmp7SIJKTVflGVZuOuwOZYGT1L0vOxcPoGmaEPsvhIpvoZbEBIdm+Itl/Mxhed2z27Rio+z9fVWfCjOoP99MrVWkCWZRbHK3HGCEbwZU9hWwc3GdT5fAa16wL+3aND5CbBfdas4sytXg3AuHQUIc+Sa4UbWujhbhF5YFY2MrW9lg0vmFe8QKG6BhC2TecFFO06Qf4SaVEpezQcDAoX1Ky0ZwanQOfFqUgApgsFiDocYSUXr9KDR9X+S9HQEnD4vSnmi0l5T2oMmuIp3PVCimAwXCHA92Mosh+6ZRytPVMjtWvyEgCen9yUepVAvRTtcQVGWbluYPIxX8eUYfpZjAKx+2La6araBCMt29xGf1GWh1c8OUkpJSvnKrTAS2pMk05ifR6i/0WLLa12CqW6jyT42fqYWcUfmhxuUH3O+rRalL+ZpsO/0BoJMqtlkNLnMgWEaFZhuJoxuTgjpXTv6nWX1lGlvvUtM8FLhNV5XZJbxyCGNZyfpZOW2l5EGbHD9q5+JxY+CazazJKL78Oil5q+y7BlYyLH8On3hjDYedzNw8qnYqgUgXFg6zt0BkkuAHG6vyrLix7KmpE7NwPrR4mxvNNQBiKUE8IH2ymtXTopHGp6Vm3zb9/+mos1quf795zn7PUguagX48O9PDX1pgh+MvSp9EyE9czz7XjaurKSA5Pn2LD/ksMJUCJravpDuqyFOA+REamAMlAmjY7LZIBJjCMuX3bR+n7SifDeNf0m89bg7BJoE8/KLH5lIbBWYnHwT3B2oZ7UiZtQpzrfvKWT8RU5C10j61MJoep554Wa4ZnnUIV0p9FIAI6+37XBerIFbS7wsitqw4=
-X-Forefront-Antispam-Report: 
-	CIP:194.138.21.75;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230022)(4636009)(346002)(39860400002)(136003)(376002)(396003)(451199015)(36840700001)(40470700004)(46966006)(316002)(6916009)(186003)(956004)(40460700003)(2616005)(44832011)(16526019)(2906002)(41300700001)(36756003)(4744005)(70206006)(31696002)(5660300002)(83380400001)(16576012)(8936002)(26005)(8676002)(47076005)(86362001)(336012)(70586007)(6706004)(81166007)(82310400005)(356005)(31686004)(82960400001)(82740400003)(4001150100001)(34020700004)(40480700001)(478600001)(36860700001)(966005)(3940600001)(36900700001)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2022 06:20:53.0814
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5fb173f4-6482-4f9e-2952-08dab2633d9e
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.75];Helo=[hybrid.siemens.com]
-X-MS-Exchange-CrossTenant-AuthSource: 
-	DB5EUR01FT097.eop-EUR01.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB4PR10MB7040
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="rwEMma7ioTxnRzrJ"
+Content-Disposition: inline
+In-Reply-To: <CAODzB9q+zmEqdu1=u7JESKbqgDvkAjXaeRPXELRm7Gyg+-76FA@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 20 Oct 2022 06:21:04 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9794
+ <cip-dev@lists.cip-project.org>; Thu, 20 Oct 2022 07:58:14 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9795
 
-Hi all,
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss
-technical topics with CIP kernel today. Our channel is the following:
+--rwEMma7ioTxnRzrJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-    irc:irc.libera.chat:6667/cip
+Hi!
 
-The IRC meeting is scheduled to UTC (GMT) 12:00:
+> CVE-2022-3523: mm/memory.c: fix race when faulting a device private page
+>=20
+> CVSS v3 score is not provided(NIST).
+> CVSS v3 score is 5.3 MEDIUM(VulDB).
+>=20
+> A vulnerability was found in Linux Kernel. It has been classified as
+> problematic. Affected is an unknown function of the file mm/memory.c
+> of the component Driver Handler. The manipulation leads to use after
+> free.
+=2E..
+> This fix is based on Memory folios feature so that it cannot apply to
+> older kernels straightly.
 
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2022&month=10&day=20&hour=12&min=0&sec=0&p1=224&p2=179&p3=136&p4=37&p5=241&p6=248
+Sounds like fun, but changelog also says:
 
-USWest    USEast    UK        DE        TW        JP
-05:00     08:00     13:00     14:00     20:00     21:00
+    During normal usage it is unlikely these will cause any problems.
+    However
+        without these fixes it is possible to crash the kernel from
+    userspace.
+        These crashes can be triggered either by unloading the kernel
+    module or
+        unbinding the device from the driver prior to a userspace task
+    exiting.
 
-Last meeting minutes:
-https://ircbot.wl.linuxfoundation.org/meetings/cip/2022/10/cip.2022-10-13-12.03.log.html
+Yeah, so.. don't let untrusted users play with modules / device
+bindings. We don't do that by default.
 
-* Action items
-  1. Add qemu-riscv to cip-kernel-config - patersonc
-  2. Ask Florian to support with 4.4 kernel-ci reports - jki
-* Kernel maintenance updates
-* Kernel testing
-* AOB
+> CVE-2022-3524: tcp/udp: Fix memory leak in ipv6_renew_options().
+>=20
+> A vulnerability was found in Linux Kernel. It has been declared as
+> problematic. Affected by this vulnerability is the function
+> ipv6_renew_options of the component IPv6 Handler. The manipulation
+> leads to memory leak. The attack can be launched remotely.
+>=20
+> CVSS v3 score is 7.5 HIGH(NIST).
+> CVSS v3 score is 4.3 MEDIUM(VulDB).
+>=20
+> Kernel 4.4 is also affected by this issue. applying this fix needs to
+> modify the patch.
+>=20
+> Fixed status
+> mainline: [3c52c6bb831f6335c176a0fc7214e26f43adbd11]
 
-Jan
+Sounds like more fun.
 
+> CVE-2022-3535: net: mvpp2: fix mvpp2 debugfs leak
+>=20
+> CVSS v3 score is not provided(NIST).
+> CVSS v3 score is 3.5 LOW(VulDB).
+>=20
+> A vulnerability classified as problematic was found in Linux Kernel.
+> Affected by this vulnerability is the function mvpp2_dbgfs_port_init
+> of the file drivers/net/ethernet/marvell/mvpp2/mvpp2_debugfs.c of the
+> component mvpp2. The manipulation leads to memory leak.
+>=20
+> Introduced by commit 21da57a ("net: mvpp2: add a debugfs interface for
+> the Header Parser") in 4.19-rc1.
+> 4.4, 4.9, 4.10, and 4.19 kernels are not affected by this issue.
+
+4.19-rc1 means that 4.19 is affected, and indeed that commit is in
+4.19-stable. Due to severity of the vulnerability (very low), I don't
+think we care much.
+
+> CVE-2022-3565: mISDN: fix use-after-free bugs in l1oip timer handlers
+>=20
+> CVSS v3 score is not provided(NIST).
+> CVSS v3 score is 4.6 MEDIUM(VulDB).
+>=20
+> A vulnerability, which was classified as critical, has been found in
+> Linux Kernel. Affected by this issue is the function del_timer of the
+> file drivers/isdn/mISDN/l1oip_core.c of the component Bluetooth. The
+> manipulation leads to use after free.
+
+"Critial" -- really? mISDN does not have much to do with bluetooth. i
+don't think we care.
+
+> CVE-2022-3566: tcp: Fix data races around icsk->icsk_af_ops.
+>=20
+> CVSS v3 score is not provided(NIST).
+> CVSS v3 score is 4.6 MEDIUM(VulDB).
+>=20
+> A vulnerability, which was classified as problematic, was found in
+> Linux Kernel. This affects the function tcp_getsockopt/tcp_setsockopt
+> of the component TCP Handler. The manipulation leads to race
+> conditions.
+
+There's no race in the compile code assuming sane compiler; this is
+just READ_ONCE() annotation for the tools.
+
+I wonder if we should simply ignore anything that is "medium" or
+lower? This is not too useful. There are _lot_ of READ_ONCE
+annotations:
+
+rc-v5.10.132.list:a just a READ_ONCE annotation |dd36fc0e5 1f1be0 o: 5.10| =
+sysctl: Fix data races in proc_dointvec().
+rc-v5.10.132.list:a just a READ_ONCE annotation |3c353ca70 4762b5 o: 5.10| =
+sysctl: Fix data races in proc_douintvec().
+rc-v5.10.132.list:a just a READ_ONCE annotation |2d706aadb f613d8 o: 5.10| =
+sysctl: Fix data races in proc_dointvec_minmax().
+rc-v5.10.132.list:a just a READ_ONCE annotation |23f9db9f8 2d3b55 o: 5.10| =
+sysctl: Fix data races in proc_douintvec_minmax().
+rc-v5.10.132.list:a just a READ_ONCE annotation |3b18d2877 c31bcc o: 5.10| =
+sysctl: Fix data races in proc_doulongvec_minmax().
+rc-v5.10.132.list:a just a READ_ONCE annotation |fbb481c6c e87782 o: 5.10| =
+sysctl: Fix data races in proc_dointvec_jiffies().
+rc-v5.10.132.list:a just a READ_ONCE annotation |569565b31 47e6ab o: 5.10| =
+tcp: Fix a data-race around sysctl_tcp_max_orphans.
+rc-v5.10.132.list:a just a READ_ONCE annotation |1ffd2f3ca 3d32ed o: 4.19| =
+inetpeer: Fix data-races around sysctl.
+rc-v5.10.132.list:a just a READ_ONCE annotation |759957e29 310731 o: 4.19| =
+net: Fix data-races around sysctl_mem.
+rc-v5.10.132.list:a not a minimum fix, just a READ_ONCE annotation |2afb079=
+f1 dd44f0 o: 4.9| cipso: Fix data-races around sysctl.
+rc-v5.10.132.list:a just a READ_ONCE annotation |cc7dc7f73 48d7ee o: 4.9| i=
+cmp: Fix data-races around sysctl.
+rc-v5.10.132.list:a just a READ_ONCE annotation |ecc3b5b6d 73318c o: 5.10| =
+ipv4: Fix a data-race around sysctl_fib_sync_mem.
+rc-v5.10.132.list:a just a READ_ONCE annotation |8c0062e3d 2a4eb7 o: 4.19| =
+icmp: Fix a data-race around sysctl_icmp_ratelimit.
+rc-v5.10.132.list:a just a READ_ONCE annotation |abf7c1c68 1ebcb2 o: 4.19| =
+icmp: Fix a data-race around sysctl_icmp_ratemask.
+rc-v5.10.132.list:a not a minimum fix, just a READ_ONCE annotation |66a01e6=
+57 e49e4a o: 4.9| ipv4: Fix data-races around sysctl_ip_dynaddr.
+rc-v5.10.132.list:a just a READ_ONCE annotation |a9f8eb955 bdf00b o: 5.10| =
+nexthop: Fix data-races around nexthop_compat_mode.
+rc-v5.10.137.list:a just a READ_ONCE annotation |6a5c5b381 4915d5 o: 5.10| =
+inet: add READ_ONCE(sk->sk_bound_dev_if) in INET_MATCH()
+rc-v5.10.137.list:a just a READ_ONCE annotation, not a minimum fix |8d69424=
+fb 5d368f o: 5.10| ipv6: add READ_ONCE(sk->sk_bound_dev_if) in INET6_MATCH()
+rc-v5.10.137.list:a just a READ_ONCE annotation |1651eed8e 08a75f o: 5.10| =
+tcp: Fix data-races around sysctl_tcp_l3mdev_accept.
+rc-v5.10.140.list:a just a READ_ONCE annotation |1cf035989 027395 o: 5.10| =
+net: Fix data-races around sysctl_[rw]mem(_offset)?.
+rc-v5.10.140.list:a just a READ_ONCE annotation |c430cce0f 1227c1 o: 5.10| =
+net: Fix data-races around sysctl_[rw]mem_(max|default).
+rc-v5.10.140.list:a just a READ_ONCE annotation |0ca09591c 5dcd08 o: 5.10| =
+net: Fix data-races around netdev_max_backlog.
+rc-v5.10.140.list:a just a READ_ONCE annotation |c9a25e523 61adf4 o: 4.19| =
+net: Fix data-races around netdev_tstamp_prequeue.
+rc-v5.10.140.list:a just a READ_ONCE annotation |33a56c470 7de6d0 o: 5.10| =
+net: Fix data-races around sysctl_optmem_max.
+rc-v5.10.140.list:a just a READ_ONCE annotation |b88a8545b d2154b o: 4.9| n=
+et: Fix a data-race around sysctl_tstamp_allow_data.
+rc-v5.10.140.list:a just a READ_ONCE annotation |ff5a88e37 c42b7c o: 4.9| n=
+et: Fix a data-race around sysctl_net_busy_poll.
+rc-v5.10.140.list:a just a READ_ONCE annotation |b99764a7c e59ef3 o: 4.9| n=
+et: Fix a data-race around sysctl_net_busy_read.
+rc-v5.10.140.list:a just a READ_ONCE annotation |6d73091c1 fa45d4 o: 4.19| =
+net: Fix a data-race around netdev_budget_usecs.
+rc-v5.10.140.list:a just a READ_ONCE annotation |99e03c89b 3c9ba8 o: 4.9| n=
+et: Fix a data-race around sysctl_somaxconn.
+rc-v5.10.140-sep7.list:a just a READ_ONCE annotation |b88a8545b d2154b o: 4=
+=2E9| net: Fix a data-race around sysctl_tstamp_allow_data.
+rc-v5.10.140-sep7.list:a just a READ_ONCE annotation |ff5a88e37 c42b7c o: 4=
+=2E9| net: Fix a data-race around sysctl_net_busy_poll.
+rc-v5.10.140-sep7.list:a just a READ_ONCE annotation |b99764a7c e59ef3 o: 4=
+=2E9| net: Fix a data-race around sysctl_net_busy_read.
+rc-v5.10.140-sep7.list:a just a READ_ONCE annotation |99e03c89b 3c9ba8 o: 4=
+=2E9| net: Fix a data-race around sysctl_somaxconn.
+rc-v5.10.14X-pre.list:a just a READ_ONCE annotation 5.10 05/16] cgroup: Rem=
+ove data-race around cgrp_dfl_visible
+rc-v5.10.150.list:a just a READ_ONCE annotation |1b3ae95b2 aacd46 o: 4.9| t=
+cp: annotate data-race around tcp_md5sig_pool_populated
+
+> CVE-2022-3567: ipv6: Fix data races around sk->sk_prot.
+>=20
+> CVSS v3 score is not provided(NIST).
+> CVSS v3 score is 4.6 MEDIUM(VulDB).
+>=20
+> A vulnerability has been found in Linux Kernel and classified as
+> problematic. This vulnerability affects the function
+> inet6_stream_ops/inet6_dgram_ops of the component IPv6 Handler. The
+> manipulation leads to race conditions.
+>=20
+> According to the commit log, commit 086d490 ("ipv6: annotate some
+> data-races around sk->sk_prot") fixes a race condition bug but it was
+> not enough.
+> Therefore it seems that both commit 086d490 and 364f997 need to fix
+> this issue.
+
+This is a tiny bit more serious than usual READ_ONCE annotations,
+but...
+
+> CVE-2022-3541: eth: sp7021: fix use after free bug in
+> spl2sw_nvmem_get_mac_address
+>=20
+> CVSS v3 score is 7.8 HIGH(NIST).
+> CVSS v3 score is 5.5 MEDIUM(VulDB).
+>=20
+> A vulnerability classified as critical has been found in Linux Kernel.
+> This affects the function spl2sw_nvmem_get_mac_address of the file
+> drivers/net/ethernet/sunplus/spl2sw_driver.c of the component BPF. The
+> manipulation leads to use after free.
+
+Component BPF?
+
+> CVE-2022-3594: r8152: Rate limit overflow messages
+>=20
+> CVSS v3 score is not provided(NIST).
+> CVSS v3 score is 5.3 MEDIUM(VulDB).
+>=20
+> A vulnerability was found in Linux Kernel. It has been declared as
+> problematic. Affected by this vulnerability is the function
+> intr_callback of the file drivers/net/usb/r8152.c of the component
+> BPF. The manipulation leads to logging of excessive data. The attack
+> can be launched remotely.
+>=20
+> Fixed status
+> mainline: [93e2be344a7db169b7119de21ac1bf253b8c6907]
+
+The "attack" is writing line to syslog. Seems like every bug can get a
+CVE if someone tries.
+
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--rwEMma7ioTxnRzrJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAmNQ/4cACgkQMOfwapXb+vK7VACgpUfpFEKR5UDE94M7nFsJuwOc
+z9oAnA5th7RqB4jUWTHJ2wVX3VRgnvBR
+=Jtwu
+-----END PGP SIGNATURE-----
+
+--rwEMma7ioTxnRzrJ--
 
