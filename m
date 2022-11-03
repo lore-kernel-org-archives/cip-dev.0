@@ -1,165 +1,173 @@
-Return-Path: <biju.das.jz@bp.renesas.com>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05DFAC4332F
-	for <webhook@archiver.kernel.org>; Thu,  3 Nov 2022 08:25:51 +0000 (UTC)
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com (JPN01-TYC-obe.outbound.protection.outlook.com [40.107.114.97])
- by mx.groups.io with SMTP id smtpd.web12.17028.1667463943630189652
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04643C4332F
+	for <webhook@archiver.kernel.org>; Thu,  3 Nov 2022 08:36:51 +0000 (UTC)
+Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
+ by mx.groups.io with SMTP id smtpd.web12.17087.1667464607772600412
  for <cip-dev@lists.cip-project.org>;
- Thu, 03 Nov 2022 01:25:45 -0700
+ Thu, 03 Nov 2022 01:36:48 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bp.renesas.com header.s=selector1 header.b=k4lZZAE8;
- spf=pass (domain: bp.renesas.com, ip: 40.107.114.97, mailfrom: biju.das.jz@bp.renesas.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fEWYkOaAfW7N3E8drXAVthdyPd17o7oh6OupD2Mrw863F7vlEIMYli8dqb1NBWpiDXg+igL6PBnlBA6KjYoGIustVLdk9yEpJtQeqbQ1RZEyokGs1jtkTLxk+WVlb51WfBsB+WbwQTTSsxxhOPHrJ/g8d3HaSi3us0YbjpMVlpL4JJ89EeS1nnj/waCOjr2/rmvH12LCLk0m4onY+ff0xje3oe/NQ4Imtx+N8KR43/zCWoaPm+iz+lp24l3D0+darjPl5igp5VWIGw15V1v52NIljT38+uhK1HemRmfVqb0/9aDX+v5Cn9rbIbXyHhWMbZ1xlKjSOvDgMCavAcwYSw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=co29qJK89028oB3Odvo4uWE1NtskgTskxet1Dnq8fWA=;
- b=Q9gkktqyAP8AAc+8dTJcv96CL5+6dRZ0HC38Ej3AYp6lbRsN5AjCTZHJAtxnKXWrEsmpgH/TwDPUZBQ2oIv0OXOcVT0bIT5UXaXALXvEtQkD1vqYA6dvoSxNCFrlX/u7AjBAPNSNQ+s/aJdTsCLY25MvYzUtYDbcPITNf2hr1WPaa2UNZ0RNK7hE2AJdSvUKfTDDHZxy6bW0FD+kg3lBNJWwTydEYuVqsVDirzK+KPnF0pD8ZD4K1whCYoLUXrg6JOpOhmLegVpz62ELS29upiDKdVWqnOdt8xXVK3zUDwLcw2W1SpnXrzHnz4MMYrra0GoDnOBcW3HqEKw8x/3W2w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=co29qJK89028oB3Odvo4uWE1NtskgTskxet1Dnq8fWA=;
- b=k4lZZAE897F6jqrysi2IhR4md/gDe6Poa3O/TueRr6fSa4N2j+FuPKsXtVF9hi8lBM2p+Kpdd6npQj/VWfHs165kxGGdCisJx2RfVHgKe6b9jPtpW3fyVo7vBrp0DB/JW3PqrQTvd9liL/obZ/9HfwLVgZvqD1AbLrwjSGuM3cg=
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
- by OS0PR01MB5539.jpnprd01.prod.outlook.com (2603:1096:604:a4::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5791.20; Thu, 3 Nov
- 2022 08:25:41 +0000
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::5b24:f581:85bd:6ce2]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::5b24:f581:85bd:6ce2%3]) with mapi id 15.20.5791.022; Thu, 3 Nov 2022
- 08:25:41 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Pavel Machek <pavel@denx.de>
-CC: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>, Nobuhiro
- Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, Chris Paterson
-	<Chris.Paterson2@renesas.com>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH 5.10.y-cip] can: rcar_canfd: fix channel specific IRQ
- handling for RZ/G2L
-Thread-Topic: [PATCH 5.10.y-cip] can: rcar_canfd: fix channel specific IRQ
- handling for RZ/G2L
-Thread-Index: 
- AQHY7u2ZOICKdXoSbkOgcUmh7Q95MK4s0jAAgAAAoGCAAAPQgIAAABRQgAAEhACAAADXMA==
-Date: Thu, 3 Nov 2022 08:25:41 +0000
-Message-ID: 
- <OS0PR01MB59228C07C6EDFBD14D7E174786389@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-References: <20221102190200.1166569-1-biju.das.jz@bp.renesas.com>
- <20221103074354.GA12403@duo.ucw.cz>
- <OS0PR01MB59224E2B90A0FD095A1AC8B186389@OS0PR01MB5922.jpnprd01.prod.outlook.com>
- <20221103075947.GB12403@duo.ucw.cz>
- <OS0PR01MB5922ED582C321250F2BDB24686389@OS0PR01MB5922.jpnprd01.prod.outlook.com>
- <20221103081614.GC12403@duo.ucw.cz>
-In-Reply-To: <20221103081614.GC12403@duo.ucw.cz>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS0PR01MB5922:EE_|OS0PR01MB5539:EE_
-x-ms-office365-filtering-correlation-id: 5ee78a46-2190-4584-78e8-08dabd74fee5
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- zPzoc8BJTnmhtM3hL+IwUdiYW/cJE+nmqL3lAMY9Js2q9H84TMuvyE56PzpiraP2/x6nza9S19L+pFH+JvchfMubuEk+4PpYn7tEWBrYOus/wnJn+ywoXF0kZfVF043jWsB6dupqlLPlRa/4QidE0Z+ai75dy4QDlwhcMVJ2XxQPUh4HeN4T/g5kv4DHt/fecVUpxjqQJ1TRrn7zVQLOgihg6mFlxYlZrVZZmu8jBZDeRRW13rfZQQN2tqohiW2YEm83WD+dLbCzC2p8NjOZG+10lS78XLBfXW0yWAYW5494+k+0vofXY+yd2Nj4RGnvqhk+INGyjg9tzN8L3C7WLx4cImAUFQ4UyBQwGXPFgDbmRwewD90oc36IWFG0BFl/GuD+YbVrwvS60QGEsA/7psbMaznq/FneR7LnC1bsJYy9R3WX7bcBW7ZLUKtVh8JtfyYIIJsf4q647vD/bUizW2G+OLV3NQ9KQyNQFmAF1QaOkcwTRRUc2ePf2hrLWnFLLhPmT/i3nTcrTOdqzq/FWTph1lY8TBr72KpKWGXayDv1tMpNmW9HMFfmgBtiKxgDRn3kwv72XhalDJ8WbakI9BW4VHguvAqkOCsfzqmb/LKMQYmgEIUbVBmNSWfYMXqQlW2Vsepbfmnd6LKlGrBV0K0FtAgHKCKkqFMI47EM3KJ3dhLBJzGtq06hz50r83NOxH5Wj7BrvW2Gz4nwU0Q7PKjVAGmzSsNFm1VzrKCtS04jxZYyIG2NRMPSgvyIoKTNyGVMmBX6Irn0PAurMcyksA==
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(346002)(396003)(366004)(136003)(376002)(39860400002)(451199015)(83380400001)(86362001)(7696005)(55016003)(38070700005)(107886003)(71200400001)(2906002)(4326008)(6506007)(478600001)(38100700002)(33656002)(9686003)(26005)(122000001)(186003)(66446008)(316002)(66946007)(76116006)(66556008)(6916009)(66476007)(52536014)(54906003)(64756008)(41300700001)(8676002)(8936002)(5660300002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?YAXbz/D035Gw3qRlBS1gbK+z4oPwUKeNUuA6hTyO6CobZd7NPcx0uy9h7x1U?=
- =?us-ascii?Q?FX/EzOtN18WVFO/A2pcwOj992W//+dAr2e27/OORzXLKI2+BPXu6goTPKGnW?=
- =?us-ascii?Q?6KfrVYUKN15lyUeHKzZ/ZWGoSOdEiOWhJXXe0v/G2pIEx8cpSIHdkrCl54Zn?=
- =?us-ascii?Q?KkOY9/AKzv9M4hD9yFVd070jvsEObou4vtQnft0LLijjkP2YuF0m+J6Ixds2?=
- =?us-ascii?Q?bT39GhBE5LfwraicVaJ8r0Bvf4t+AmmoZI52EZ77xFZx7LNMdB7y+pJcZJYw?=
- =?us-ascii?Q?dVzmSq7QLNY0FVZJ3f+T0W/lmGUpUlAGOWiwNH4CcBFACUHxECtbYmWhkpF8?=
- =?us-ascii?Q?UJ9n8svMciXPc9VNTxag5ydGfChy5pf6I3173bZwLL4OSBL0oaEQ9MBqULNh?=
- =?us-ascii?Q?OUJbQgIP7SG5QaYXDzhXNyFVw96IHTc5U7MIbCC0O73hRV57sTaVubMNYke9?=
- =?us-ascii?Q?bd1UBWVsX1IfZAKUlabYxVe8QuoKYwfIqGDrgSYVayY+1fYL3yVUC/ttK2cY?=
- =?us-ascii?Q?xtQlddklpzYdZo3g0S8A3AjTeR7XQjZS1jAmYgHLqGk9SGO3f+GxSWDKYfdX?=
- =?us-ascii?Q?X2kgWgLAE8F57nwfCRSZClyqNCYOA/HYN+mI5jehzm4JNs9YiJ0Ii38ysdf7?=
- =?us-ascii?Q?YWkzNiXTef7rCvGrsM1EohPYVOjhG2KW+i0lJQL7J1O4fgeRrU5NewQisRpk?=
- =?us-ascii?Q?UKC81RefbDmKm9JrGnV2S3P72q+Os1S8ow3Sxrwg14FHnUI4X0qmLPUmQ24D?=
- =?us-ascii?Q?K9koTbyuAEMxG/t8/RHSf7dnGkxYH+fglZyNavLHoRCqZATRS+DcqpLVALdB?=
- =?us-ascii?Q?aZtx1MGDFoJnoOTopkVnf6f518+U+0MINlqvJUMtFTXnkutr6spiw742DvvM?=
- =?us-ascii?Q?Ay03swdb67CgFTODX5v1xnk1Kd+8Vpl+14348V4OFoFLKC7bfiOyu4XcTX8C?=
- =?us-ascii?Q?swr6DBnqs9SOvL3gqEN/rNDxtwR5jSF8hgVbJ6a3/dygOG7YLQCb7VgzBDGx?=
- =?us-ascii?Q?OGnDO35Z3JiZcIC9hYIgg11VYUAq8q+so6nVgb4g03FoSWV2zOzYYGC+LiIO?=
- =?us-ascii?Q?GPRCH4nDeyA7MSrcDHZ+Yl40m8KX9/VyDXBAESYyYNkD4TjANDYSVlj53GV7?=
- =?us-ascii?Q?6eKZNBQMGCf93O3zYZW6SFHTmyE0a8N89d8HOqXQl9XphETPLq7XrvZx1vj0?=
- =?us-ascii?Q?oOuv8ZBbLNV8sBhVXPURb0vToxrwKwRjHA7E7xupHh6OOUgwVz/21yxw92Mb?=
- =?us-ascii?Q?c+Vo5SOpIW9zYk20gsh+Z0hfD+Ds5WK4m+cJ86rGMJC4taBjvQFknmelZlTq?=
- =?us-ascii?Q?SNlvF73X8oqZWY5Mv6AJuYCWjNaAjHB+5cxxtKG9W5vs9bY6GHBh5XQEG/aA?=
- =?us-ascii?Q?Z3g9O1y6LdlRQ65qmMF6V0oZtiQAjGzmCiTHhOmj9jYAgM4bsq1g0bQrMnEh?=
- =?us-ascii?Q?3itBWULiO8tGwBPtv/MlBtqhTzjRzRlS27SsYNjBOQq5/lwrbtvSSR/Ge/pd?=
- =?us-ascii?Q?aLh+7PxK9gZj+Rp0XqA8Fqs7NJK6b6nyCewB/frXZ7Y7eyvGzFA/HwBqgp/r?=
- =?us-ascii?Q?3SiDNRtuuzxTqFobzpxWb0N2KZGqzi3lPGlhlbCx97nZOHenYmUvfi6o35OO?=
- =?us-ascii?Q?sw=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=YRDoo28z;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-51332-202211030836446c33d67abf99235232-kr1qep@rts-flowmailer.siemens.com)
+Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 202211030836446c33d67abf99235232
+        for <cip-dev@lists.cip-project.org>;
+        Thu, 03 Nov 2022 09:36:45 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=Quirin.Gylstorff@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+ bh=9chlefSec6JviJgnX2d5tox0ac0qlRCuHtG2FnPYuXc=;
+ b=YRDoo28zICuf8exYfr5us7ucdkPQEv2XITCHRjQ0o2hiFBskT5ED1qPLa7sZvZlvBMfOL5
+ DIBRHhXczyDIq27juoMygWyl61YFwHwNVWlivs835H8BbA+qOwieiFMJ4PCxGq6welvmZlgq
+ ss8mCk4dJvT7nXmuGvWlJzXdyVjXs=;
+From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
+To: felix.moessbauer@siemens.com,
+	jan.kiszka@siemens.com,
+	cip-dev@lists.cip-project.org
+Subject: [cip-dev][isar-cip-core][PATCH] efibootguard: Adapt installation to Debian upstream
+Date: Thu,  3 Nov 2022 09:36:43 +0100
+Message-Id: <20221103083643.14912-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5ee78a46-2190-4584-78e8-08dabd74fee5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Nov 2022 08:25:41.6497
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: x9XW8XUW636oknkW3VDsYbEPNgwpE78tNVyMS5HClSNa6ScE2LRvLWWOPElfMRBzQIp/U+qSuyDTYH8fg9W9tZgogIUQKJEzGW1djEmiCLc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS0PR01MB5539
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 03 Nov 2022 08:25:51 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9902
+ <cip-dev@lists.cip-project.org>; Thu, 03 Nov 2022 08:36:51 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9903
 
-> Subject: Re: [PATCH 5.10.y-cip] can: rcar_canfd: fix channel specific
-> IRQ handling for RZ/G2L
->=20
-> Hi!
->=20
-> > > > For eg: if ch0 IRQ is triggered you are checking for ch1 IRQ
-> > > > status
-> > > as
-> > > > well. Similarly, if ch1 IRQ is triggered, then you are checking
-> > > > ch0 IRQ status.
-> > >
-> > > Understood, but checking ch1 status on ch0 IRQ is not going to
-> cause
-> > > any problems, right?
-> >
-> > IRQ processing should be fast as possible. You are improving latency
-> > of the system by avoiding unnecessary checks and by calling an
-> unwanted function call.
-> >
-> > If it is shared IRQ, then it make sense you don't have any other
-> alternative.
-> > Since you have dedicated handler, make use of it and don't call any
-> > Unnecessary function and checks in IRQ routine.
->=20
-> I understand it is just a performance tweak. Correct me if I'm wrong.
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-Yes, performance is one thing, also it will avoid unnecessary races
-when you start handling IRQ's in both the cores.
+This allows using the Debian upstream version of efibootguard
+in place.
 
-Eg:- ch0 IRQ handler executed on core0 and ch1 IRQ handler on core 1, which
-unnecessarily calls ch0 routine. See the races in rcar_canfd_tx_done().
+Also add the new libebgenv to the installation.
+This fixes the missing library from issue #47[1].
 
-Cheers,
-Biju
+[1]: https://gitlab.com/cip-project/cip-core/isar-cip-core/-/issues/47
 
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+ recipes-bsp/efibootguard/efibootguard_0.12.bb        |  2 +-
+ .../efibootguard/files/debian/efibootguard.install   | 12 +++++-------
+ recipes-bsp/efibootguard/files/debian/rules          | 10 ++--------
+ scripts/lib/wic/plugins/source/efibootguard-boot.py  | 12 ++++++++++--
+ scripts/lib/wic/plugins/source/efibootguard-efi.py   | 12 ++++++++++--
+ 5 files changed, 28 insertions(+), 20 deletions(-)
+ mode change 100755 => 100644 recipes-bsp/efibootguard/files/debian/efibootguard.install
 
->=20
-> If there are no other comments and if testing passes I can apply the
-> patch.
+diff --git a/recipes-bsp/efibootguard/efibootguard_0.12.bb b/recipes-bsp/efibootguard/efibootguard_0.12.bb
+index 88dc2ed..721b9dc 100644
+--- a/recipes-bsp/efibootguard/efibootguard_0.12.bb
++++ b/recipes-bsp/efibootguard/efibootguard_0.12.bb
+@@ -26,7 +26,7 @@ PROVIDES = "${PN}"
+ PROVIDES += "${PN}-dev"
+ 
+ DEPENDS = "python3-shtab"
+-BUILD_DEB_DEPENDS = "dh-exec,autoconf-archive,gnu-efi,libpci-dev,check,pkg-config,python3-shtab"
++BUILD_DEB_DEPENDS = "debhelper,autoconf-archive,check,gnu-efi,libpci-dev,pkg-config,python3-shtab,zlib1g-dev"
+ BUILD_DEB_DEPENDS_append_amd64 = ",libc6-dev-i386"
+ BUILD_DEB_DEPENDS_append_i386 = ",libc6-dev-i386"
+ 
+diff --git a/recipes-bsp/efibootguard/files/debian/efibootguard.install b/recipes-bsp/efibootguard/files/debian/efibootguard.install
+old mode 100755
+new mode 100644
+index d3ea007..01cf974
+--- a/recipes-bsp/efibootguard/files/debian/efibootguard.install
++++ b/recipes-bsp/efibootguard/files/debian/efibootguard.install
+@@ -1,7 +1,5 @@
+-#!/usr/bin/dh-exec
+-bg_setenv usr/bin
+-bg_printenv usr/bin
+-tools/bg_gen_unified_kernel usr/bin
+-*.efi usr/share/efibootguard
+-completion/bash/bg_printenv.bash => usr/share/bash-completion/completions/bg_printenv
+-completion/bash/bg_setenv.bash => usr/share/bash-completion/completions/bg_setenv
++usr/bin
++usr/lib/*/efibootguard/kernel-stub*.efi
++usr/lib/*/efibootguard/efibootguard*.efi
++usr/lib/*/libebgenv.so.0*
++usr/share/efibootguard/completion
+diff --git a/recipes-bsp/efibootguard/files/debian/rules b/recipes-bsp/efibootguard/files/debian/rules
+index 82e9e0e..9c3b916 100755
+--- a/recipes-bsp/efibootguard/files/debian/rules
++++ b/recipes-bsp/efibootguard/files/debian/rules
+@@ -1,21 +1,15 @@
+ #!/usr/bin/make -f
+ export DH_VERBOSE=1
+-export DEB_BUILD_OPTIONS=hardening=-stackprotector
+-export DPKG_EXPORT_BUILDFLAGS=1
+-include /usr/share/dpkg/default.mk
++export DEB_BUILD_MAINT_OPTIONS=hardening=+all,-stackprotector
++include /usr/share/dpkg/pkg-info.mk
+ 
+ override_dh_auto_test:
+ 	# we do not run the tests; that avoids having to pull the fff submodule
+ 
+-override_dh_auto_install:
+-	# install using Debian's .install files rather than
+-	# make install in order to have a proper package split.
+-
+ override_dh_installchangelogs:
+ 	# we're not interested in changelogs
+ 
+ override_dh_installdocs:
+ 	# we're not interested in docs
+-
+ %:
+ 	dh $@ --with autoreconf
+diff --git a/scripts/lib/wic/plugins/source/efibootguard-boot.py b/scripts/lib/wic/plugins/source/efibootguard-boot.py
+index f9b232b..3d6b2d7 100644
+--- a/scripts/lib/wic/plugins/source/efibootguard-boot.py
++++ b/scripts/lib/wic/plugins/source/efibootguard-boot.py
+@@ -187,10 +187,18 @@ class EfibootguardBootPlugin(SourcePlugin):
+             "armhf": "arm",
+             "i386": "ia32"
+         }
++        distro_to_lib_arch = {
++            "amd64": "x86_64-linux-gnu",
++            "arm64": "aarch64-linux-gnu",
++            "armhf": "arm-linux-gnueabihf",
++            "i386": "i386-linux-gnu"
++        }
+         rootfs_path = rootfs_dir.get('ROOTFS_DIR')
+-        efistub = "{rootfs_path}/usr/share/efibootguard/kernel-stub{efiarch}.efi"\
++        distro_arch = get_bitbake_var("DISTRO_ARCH")
++        efistub = "{rootfs_path}/usr/lib/{libpath}/efibootguard/kernel-stub{efiarch}.efi"\
+             .format(rootfs_path=rootfs_path,
+-                    efiarch=distro_to_efi_arch[get_bitbake_var("DISTRO_ARCH")])
++                    libpath=distro_to_lib_arch[distro_arch],
++                    efiarch=distro_to_efi_arch[distro_arch])
+         uefi_kernel_name = "linux.efi"
+         uefi_kernel_file = "{deploy_dir}/{uefi_kernel_name}"\
+             .format(deploy_dir=deploy_dir, uefi_kernel_name=uefi_kernel_name)
+diff --git a/scripts/lib/wic/plugins/source/efibootguard-efi.py b/scripts/lib/wic/plugins/source/efibootguard-efi.py
+index a754ee1..2d16fe3 100644
+--- a/scripts/lib/wic/plugins/source/efibootguard-efi.py
++++ b/scripts/lib/wic/plugins/source/efibootguard-efi.py
+@@ -59,9 +59,17 @@ class EfibootguardEFIPlugin(SourcePlugin):
+             "i386": "ia32"
+         }
+ 
++        distro_to_lib_arch = {
++            "amd64": "x86_64-linux-gnu",
++            "arm64": "aarch64-linux-gnu",
++            "armhf": "arm-linux-gnueabihf",
++            "i386": "i386-linux-gnu"
++        }
++
+         distro_arch = get_bitbake_var("DISTRO_ARCH")
+-        bootloader = "/usr/share/efibootguard/efibootguard{}.efi".format(
+-            distro_to_efi_arch[distro_arch])
++        bootloader = "/usr/lib/{libpath}/efibootguard/efibootguard{efiarch}.efi".format(
++            libpath=distro_to_lib_arch[distro_arch],
++            efiarch=distro_to_efi_arch[distro_arch])
+         part_rootfs_dir = "%s/disk/%s.%s" % (cr_workdir,
+                                              part.label,
+                                              part.lineno)
+-- 
+2.35.1
+
 
