@@ -1,179 +1,243 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CCD4C433FE
-	for <webhook@archiver.kernel.org>; Mon,  7 Nov 2022 17:51:12 +0000 (UTC)
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (EUR03-VI1-obe.outbound.protection.outlook.com [40.107.103.79])
- by mx.groups.io with SMTP id smtpd.web10.1054.1667843464463446753
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B10BC433FE
+	for <webhook@archiver.kernel.org>; Tue,  8 Nov 2022 12:56:40 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web09.7659.1667912197098258360
  for <cip-dev@lists.cip-project.org>;
- Mon, 07 Nov 2022 09:51:05 -0800
+ Tue, 08 Nov 2022 04:56:37 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=wy5hpgAt;
- spf=pass (domain: siemens.com, ip: 40.107.103.79, mailfrom: jan.kiszka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HcjJvPECyAsFMTTo+F/poHK39qpPY86bjXlYhRvzmFeT/sxT+KkquwfMBEWWNITVvbABF39py7WM+qypQ0t72OU2TrT0WfNp9Dvmy7xPoRX8Ho//sDQkYWlJ9LQG8KwiOfP9pf/Co+WTXcvmBssanZT5G6GYXb82fe5fv8EHXUzaqBiTQ43PF823R8VolqM+HQs8ecLzxUhBvePf8MQmLGvP2myzvy0vME0A/+BQGInwzLx6sGV8zCr41Sb3wqOSLEySvekUgfBOPJrEobqghDVFWyXPQmwZRb0pZap3RBf9k78AQG9KwRxQk0W9hVOJWOEHxeNbnxDiv5p+cVvksQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=78b7D7XtMMvs1AdBSPls/0xEEQSD1ELKUqjkTNZEJws=;
- b=ech9K6TRZEhaOhsnSxSCPbiiRrFe7xxLfgpXkBhWVyJwzaCaJ4nQFVWqyEN4o71r7sim01rH3rxEdI6DMDfjmJ8c9jH2mEEl6nlSdrCVGYJitaXZcf9wMd4fQ542bYLDYCMjnRbmcLCkjHF1gyGK0Ybj8Fd0XLT9NPW+yPAv4uGkKWZyb2Yf9vaUOQiDk1JagaZtOs3Ro49p1521lqn2LFa0Hib3hC+38w6duuTVugOrov6C0915KfR5qvZnqDgc9yFCDca+dt4piBsjphg2z26RSMZfUY+s9SHF0P13AVPK/vn677eUFjLcK+ZyAnMeB84PXD+WT2kc1gGKnbOWLQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=78b7D7XtMMvs1AdBSPls/0xEEQSD1ELKUqjkTNZEJws=;
- b=wy5hpgAt6nNjm31BfCqp7oSFkdv+9Q++vgadnf92hSzykpILqIVpDjT/7IojWNYEn1jCHLzMF0Y9KBjX4NOTXsAVcxBcCvno+yBqRaISX4q+fJyIAa4XaT37kO5wLy9y+BWmlj6R2BXaM2HywPfXHeFvwqYB7qhV2IgCmpTIzxKaB3yo+Bq/H5V5dqXyOfOsWYqs3edSWk/q3NCjPxWkzVnFUwwVocVtbsmtq1D+zgcz+kBaSgKQFHCVU/v89bp5s4wjUFZ7/sD4g1ZCICTIRowpGO09szS3S/c0YD2FFdUQHoWOnQmIG//VjntpYQnRjp7kqneDiKGrkKyP9pEGEg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by PA4PR10MB5683.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:265::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5791.24; Mon, 7 Nov
- 2022 17:51:01 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::5d9b:b9d1:bd69:107b]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::5d9b:b9d1:bd69:107b%4]) with mapi id 15.20.5791.025; Mon, 7 Nov 2022
- 17:51:01 +0000
-Message-ID: <4cf6d301-bbf3-bdde-e4f4-fa646701c3db@siemens.com>
-Date: Mon, 7 Nov 2022 18:50:59 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: [isar-cip-core][PATCH 3/8] Include optee into u-boot
-Content-Language: en-US
-To: "Schultschik, Sven (DI PA DCP R&D 2)" <sven.schultschik@siemens.com>,
- "Su, Bao Cheng (DI FA CTR IPC CN PRC4)" <baocheng.su@siemens.com>,
- "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-References: <20221024122725.383791-1-sven.schultschik@siemens.com>
- <20221024122725.383791-4-sven.schultschik@siemens.com>
- <3d75d1509a201b658f4e5be035265ef82fa43b08.camel@siemens.com>
- <d8d40615-4e43-86ad-c947-cd3c0827e389@siemens.com>
- <PAXPR10MB5037772EDDB7F8F29463E6DB90309@PAXPR10MB5037.EURPRD10.PROD.OUTLOOK.COM>
- <4e5a1133-8b45-2d45-101c-b059a89d6251@siemens.com>
- <PAXPR10MB50370BA1C33D4D3C49939A5A903C9@PAXPR10MB5037.EURPRD10.PROD.OUTLOOK.COM>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <PAXPR10MB50370BA1C33D4D3C49939A5A903C9@PAXPR10MB5037.EURPRD10.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AS9PR06CA0542.eurprd06.prod.outlook.com
- (2603:10a6:20b:485::9) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+ dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
+X-IronPort-AV: E=Sophos;i="5.96,147,1665414000"; 
+   d="scan'208";a="141917611"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 08 Nov 2022 21:56:36 +0900
+Received: from localhost.localdomain (unknown [10.226.92.61])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 92DBE4007204;
+	Tue,  8 Nov 2022 21:56:34 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Pavel Machek <pavel@denx.de>
+Cc: Chris Paterson <chris.paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 1/3] mmc: tmio: avoid glitches when resetting
+Date: Tue,  8 Nov 2022 12:56:28 +0000
+Message-Id: <20221108125630.3853219-2-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221108125630.3853219-1-biju.das.jz@bp.renesas.com>
+References: <20221108125630.3853219-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PA4PR10MB5683:EE_
-X-MS-Office365-Filtering-Correlation-Id: 57e2c3e2-f095-452b-7c0f-08dac0e8a254
-X-LD-Processed: 38ae3bcd-9579-4fd4-adda-b42e1495d55a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	MUjnq4h5vYXiw7Ab2X54tkTHILH407QU4A6TFdXdYVhIfrHeLnVWDetkEzhh/C+JgXl5Jz0ViXPwe86IIB6sewInvZNHJRw1U0xqlW0g9wv1bZNfZFLYqKIJ4nb+kBpgee6At+kR3Rt4zF0+H4ne1MttwMwBc5E7Sa9jmpy2yGslBaCp5F67OkPcAvs+XcNFPaXVrtFanzWeXW2QEokQWjlf6Slr0a6JPFxn+91EeWIh13fUTxvOcGNy+67BKj0Et7w91Qg6oBpCs0Vksgtcb1Utc1OstAz1aOTzL2cWMJJtiT8BwIf5COIASvutvUuu+F25U3oX0BbK2A8KzHt8enj7oHaWYNHIsQhvPEXi8rR7OCqpK9G0+HTLq1Qqkrhtio9n/dqzJ78SyVepvmFc8j4nfXfU7bbSFvLBMNysptertsdX3tO/wI/WYB3F3MSHanKTkJz11tFbqUFxJegzpizecnOHpzO7GpeUoBbwQO/tG2IGczvHLAYZ56a2/6s99c+Cf3OxRuj+MSoZa/N+jyXDfoO67jW9I1X6CK40s6m2qL1uvT9E6K0w8jGsyZCG4r4SVAzAFVhsCWbKv5GT+xBZ6GXDqp7UWZxOGQGFDMVWYV19usic2E+lrSNJlnHVewnTnEJFhpehh6xujj/kfg+cix71+GFPl72Tbi18H5+46LbWAsHs7WxhyU1EmmaMAawR+5Rv//MrmX5nsMtcTdbb4j1hCIWydVuIhlNybD5htpVHI9IlrhC3kKL6HR0VASzU/sUkKeC4yObUOFJ1sn2apGBIzgO05MOkyETad6Y=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230022)(4636009)(366004)(396003)(39860400002)(136003)(346002)(376002)(451199015)(186003)(2616005)(31686004)(2906002)(36756003)(38100700002)(316002)(41300700001)(8936002)(6506007)(53546011)(26005)(6512007)(478600001)(6486002)(5660300002)(31696002)(86362001)(44832011)(8676002)(110136005)(66476007)(66556008)(82960400001)(66946007)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?UTQzaGIxcFdVdXJQM3F4NnBaT3pFRGhacTNVeVk2ZFNMUk1neVU5OHNlckUx?=
- =?utf-8?B?L3M2M2ZadElDMy9zZTZzN0QxMWRHTDdCaGU3Q29QYnFSRGdVNEM1ejhhaHUx?=
- =?utf-8?B?bjFnK0MwL1l5S1JEK3drTWpXcTJxUGhWM0xOWlFObFgxZFRJaTI4bzRqQitY?=
- =?utf-8?B?K20xS2krMHBkWENjU2ZkaURlbGRRY1o5VytRcUoyakRzd25COXdONzNJSXN5?=
- =?utf-8?B?cDE0NXl0dkR3ZGZuUnlFSUhVdXVnTWYyUDd6bkMvdlNGYzVUbDJxODMxTGRi?=
- =?utf-8?B?dGRtVWJ2b2JwUjY4eXhLc2d1TldlTDh4Qjh6Yys5endhK1FDRFBiY0U5Q2Fq?=
- =?utf-8?B?RHVxMGI1bHRXUUpYZ294VkRxUHJxNDBkWmcxaEVzU0Y1WTBiZ2VQbkZZYU96?=
- =?utf-8?B?cDN0SnUxRW13bkZEb3FmdXRDTUovTXNoV3lrdWZMMU40a2lRRWczbGVFd2VB?=
- =?utf-8?B?cjh2R3k4ZWNNZ3kwSjNjeUtrMmlDaitGQ21vWWNmdE9LVXhqOTVGSzdtZUxu?=
- =?utf-8?B?QnNsbHI0NURlUUwwOTBtMW1kdm1HZW5TYzFpclRYZmxoTUdOODhFUUIxbUhG?=
- =?utf-8?B?ZGFxbUVnNC9VU1A1SVZ1UWxibStoYnlSQnAzQ3FKTm5kZTloZHM2Z2ViWTN5?=
- =?utf-8?B?Y1JTZ2dGVnUrZStCSkhJNXdJZFBRYVJCNUZraHd0eEVzMXZVczNNRi84WERK?=
- =?utf-8?B?c2c2bEwvVlpoYTl6aDMrRWNDcXdBOVBxMnJwK0o4UVppNlJpb3R6NUM1UnA1?=
- =?utf-8?B?RHVnc3VzVFp4QmUvc2d0MXFWUUlpRGQvRjBGclhza0dGUEJabjRMS0YxbGxB?=
- =?utf-8?B?NjlLeUw3MGlPamw4TllVOStqS2JVeWJTYU9DaVVDTzR2Y0RvWW5kWis4V2FF?=
- =?utf-8?B?NEEzdnFGdTJXc3I0c0ZtYjEyZXl0cHV0SnFFT0ZsT2l3ejFPRVFwcnVheUdl?=
- =?utf-8?B?czl3RWhMZUMrNmhBaDNGRHpjbU9EMGNPck9VS2pPT2pySHQvME1JUmpxK2ZQ?=
- =?utf-8?B?RmdKQ3VSSUY3ZG5Ja0I0UnpkNUpSZnJYR0F5Q2M5WkVsWWZjUTAza2NxQnRl?=
- =?utf-8?B?UnBJU1lQL2NSbGQxeXNINGxHVmlkb0pBc2o3SHE5Q1BjOHZGd3hJbmMyWFRG?=
- =?utf-8?B?a2M0aXdlWDN6WDZRU2RsM0JSNitONzUrMUNYZHFpQWVqRlc0UWpHUHBaaHZF?=
- =?utf-8?B?VExVV0ZhQkpHU3FObVgwZFhORVlNZStCUGNRSGZsVTdPNk10QVJHY0wxbnZt?=
- =?utf-8?B?NDZZdXdMQzNGY2xLTEJVcXgrU09HUFN1SXcxZjlHMW9oZFFVVW1GQmhwbzJy?=
- =?utf-8?B?eGRXWEllLzhVcndVbGR2NTduWk8rSGpISVdzNGJKcUFCZURhNFdWS3h2NVFR?=
- =?utf-8?B?Q2xxUEF6ZU1DWDFQR1BuNGJHWnBVbnNUNkxWTXk4SzNEbTliTEd1VlM0Wjc5?=
- =?utf-8?B?aWcxU05mb3BGOGRqS2d2TUVEOVNGaWhGTWlnZVJtenhMNlVkZWdkMXBGM283?=
- =?utf-8?B?Z2xuNEFpZnZTYXVkdlNFT0FEMTZGTjc3c1haTDVEd0hUVU45Q1M2SXFXSUZO?=
- =?utf-8?B?MVk1eGpMSkF4M0FBSEwyM1I4c2VYSExWV2pNMFp6emFtdzBnNTdLTUhJc1g5?=
- =?utf-8?B?Rm96KzZSNkNkNkFVNnMwYWJCaThNQzg0UmZUSlNxQWFXU1hVakxaVVJVMm1m?=
- =?utf-8?B?UFFWVmxxM0k2OFE2OGJkdDMvVGxyODE2Y1ViYm9yRUVpV3F0M2tGTVBXSFpQ?=
- =?utf-8?B?S1FxOHFiUWlHNTVIdEkvYlRScWFCSFBCaXhiZlQ0R3E1cW1NbURPQit2elBm?=
- =?utf-8?B?RGpKZFdBUHJpam1RcHhOaTcySk14U255aWhmTHR5WGZXSWxzZEVrQU50SzN1?=
- =?utf-8?B?THd5ZWtQd0JKZVVRUmo4TnNndWJ3SStiOUFXTnYxLzY1YmFPdGlyTTBiTlh4?=
- =?utf-8?B?Y3Y1NDBabnNCQkc5NE5aRGNoeVlnTDRlUWZYUkE5RTZBT3F0b2drK3NZcitr?=
- =?utf-8?B?VHNQbjFiQzRIVVdxZnNWcW9zcFIwMmIxWE82YW1IUHQ0TzRGa2w3c1d4SVY0?=
- =?utf-8?B?azUxWHQ4SmFFRHpKQXU5QlZ1ZjRzMVQ0cjRNSmRBZjQ5Z1RpcFp4citqd0JL?=
- =?utf-8?B?emsvbWFQZFF1L0NmYWIxV1ZrNDBycTE3RitwajFNb2gvZVQ0UGwvQ2FDN0Qv?=
- =?utf-8?B?ZHc9PQ==?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 57e2c3e2-f095-452b-7c0f-08dac0e8a254
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2022 17:51:01.6143
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IuKP/LPU7CZP22ZYdcDOUBx1Fu+5jA4u1mMNXKXDMdk/hoBbmBitkAltD6mOBSGBFFEydRnMwciZm26V8BzXlw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR10MB5683
+Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 07 Nov 2022 17:51:12 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9943
+ <cip-dev@lists.cip-project.org>; Tue, 08 Nov 2022 12:56:40 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9945
 
-On 07.11.22 17:57, Schultschik, Sven (DI PA DCP R&D 2) wrote:
->>>>>
->>>>
->>>> Right. When we switch this, we also need to switch the secure boot
->>>> setup procedure so that the result remains securely booted.
->>>>
->>>> Jan
->>> Do you want to do those adjustments within this patch series or do it
->>> separately?
->>
->> Well, if we leave out enabling CONFIG_EFI_MM_COMM_TEE from this series,
->> would that leave something testable / minimally useful behind? If not, we 
->> need
->> the transition to secure boot keys in RPMB already in this series.
->>
-> 
-> If we go fully on the optee rpmb solution only with the manual test patch 8/8
-> 
-> Else we would need to provide a
-> - PK, KEK and db
-> - a u-boot script which does on every boot such things
-> fatload virtio 1:1 40000000 PK.auth
-> setenv -e -nv -bs -rt -at -i 40000000:$filesize PK
-> fatload virtio 1:1 40000000 KEK.auth
-> setenv -e -nv -bs -rt -at -i 40000000:$filesize KEK
-> fatload virtio 1:1 40000000 db.auth
-> setenv -e -nv -bs -rt -at -i 40000000:$filesize db
-> 
-> Why?
-> The secure UEFI environment is not persistent in the patched u-boot qemu 
-> setting. The RPMB in u-boot is emulated as struct in memory.
-> 
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Ouch... We need a persistent and consistent (u-boot vs. kernel) RPMB to
-actually test this with realistic scenarios, I suppose.
+commit 2e586f8a5b0ed4a525014a692923ac96f6647816 upstream.
 
-> Jan we could make a small talk if you want to discuss further steps.
-> 
+If we reset because of an error, we need to preserve values for the
+clock frequency. Otherwise, glitches may be seen on the bus.
 
-Can you summarize again here what options we have now? It seems we need
-a proper RPMB emulation rather sooner than later.
+To achieve that, we introduce a 'preserve' parameter to the reset
+function and the IP core specific reset callbacks to handle everything
+accordingly.
 
-Jan
+Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Link: https://lore.kernel.org/r/20220625131722.1397-1-wsa@kernel.org
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/mmc/host/renesas_sdhi_core.c | 27 ++++++++++++++-------------
+ drivers/mmc/host/tmio_mmc.c          |  2 +-
+ drivers/mmc/host/tmio_mmc.h          |  6 +++++-
+ drivers/mmc/host/tmio_mmc_core.c     | 28 ++++++++++++++++++++++------
+ 4 files changed, 42 insertions(+), 21 deletions(-)
 
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index ca74fe8bfd9c..120bb5860645 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -51,9 +51,6 @@
+ #define HOST_MODE_GEN3_32BIT	(HOST_MODE_GEN3_WMODE | HOST_MODE_GEN3_BUSWIDTH)
+ #define HOST_MODE_GEN3_64BIT	0
+ 
+-#define CTL_SDIF_MODE	0xe6
+-#define SDIF_MODE_HS400		BIT(0)
+-
+ #define SDHI_VER_GEN2_SDR50	0x490c
+ #define SDHI_VER_RZ_A1		0x820b
+ /* very old datasheets said 0x490c for SDR104, too. They are wrong! */
+@@ -571,21 +568,25 @@ static void renesas_sdhi_scc_reset(struct tmio_mmc_host *host, struct renesas_sd
+ }
+ 
+ /* only populated for TMIO_MMC_MIN_RCAR2 */
+-static void renesas_sdhi_reset(struct tmio_mmc_host *host)
++static void renesas_sdhi_reset(struct tmio_mmc_host *host, bool preserve)
+ {
+ 	struct renesas_sdhi *priv = host_to_priv(host);
+ 	int ret;
+ 	u16 val;
+ 
+-	if (priv->rstc) {
+-		reset_control_reset(priv->rstc);
+-		/* Unknown why but without polling reset status, it will hang */
+-		read_poll_timeout(reset_control_status, ret, ret == 0, 1, 100,
+-				  false, priv->rstc);
+-		priv->needs_adjust_hs400 = false;
+-		renesas_sdhi_set_clock(host, host->clk_cache);
+-	} else if (priv->scc_ctl) {
+-		renesas_sdhi_scc_reset(host, priv);
++	if (!preserve) {
++		if (priv->rstc) {
++			reset_control_reset(priv->rstc);
++			/* Unknown why but without polling reset status, it will hang */
++			read_poll_timeout(reset_control_status, ret, ret == 0, 1, 100,
++					  false, priv->rstc);
++			/* At least SDHI_VER_GEN2_SDR50 needs manual release of reset */
++			sd_ctrl_write16(host, CTL_RESET_SD, 0x0001);
++			priv->needs_adjust_hs400 = false;
++			renesas_sdhi_set_clock(host, host->clk_cache);
++		} else if (priv->scc_ctl) {
++			renesas_sdhi_scc_reset(host, priv);
++		}
+ 	}
+ 
+ 	if (sd_ctrl_read16(host, CTL_VERSION) >= SDHI_VER_GEN3_SD) {
+diff --git a/drivers/mmc/host/tmio_mmc.c b/drivers/mmc/host/tmio_mmc.c
+index d2d3b8df1bbe..49732054237f 100644
+--- a/drivers/mmc/host/tmio_mmc.c
++++ b/drivers/mmc/host/tmio_mmc.c
+@@ -75,7 +75,7 @@ static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
+ 	tmio_mmc_clk_start(host);
+ }
+ 
+-static void tmio_mmc_reset(struct tmio_mmc_host *host)
++static void tmio_mmc_reset(struct tmio_mmc_host *host, bool preserve)
+ {
+ 	sd_ctrl_write16(host, CTL_RESET_SDIO, 0x0000);
+ 	usleep_range(10000, 11000);
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index f936aad945ce..da63193dd45b 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -42,6 +42,7 @@
+ #define CTL_DMA_ENABLE 0xd8
+ #define CTL_RESET_SD 0xe0
+ #define CTL_VERSION 0xe2
++#define CTL_SDIF_MODE 0xe6 /* only known on R-Car 2+ */
+ 
+ /* Definitions for values the CTL_STOP_INTERNAL_ACTION register can take */
+ #define TMIO_STOP_STP		BIT(0)
+@@ -98,6 +99,9 @@
+ /* Definitions for values the CTL_DMA_ENABLE register can take */
+ #define DMA_ENABLE_DMASDRW	BIT(1)
+ 
++/* Definitions for values the CTL_SDIF_MODE register can take */
++#define SDIF_MODE_HS400		BIT(0) /* only known on R-Car 2+ */
++
+ /* Define some IRQ masks */
+ /* This is the mask used at reset by the chip */
+ #define TMIO_MASK_ALL           0x837f031d
+@@ -181,7 +185,7 @@ struct tmio_mmc_host {
+ 	int (*multi_io_quirk)(struct mmc_card *card,
+ 			      unsigned int direction, int blk_size);
+ 	int (*write16_hook)(struct tmio_mmc_host *host, int addr);
+-	void (*reset)(struct tmio_mmc_host *host);
++	void (*reset)(struct tmio_mmc_host *host, bool preserve);
+ 	bool (*check_retune)(struct tmio_mmc_host *host, struct mmc_request *mrq);
+ 	void (*fixup_request)(struct tmio_mmc_host *host, struct mmc_request *mrq);
+ 	unsigned int (*get_timeout_cycles)(struct tmio_mmc_host *host);
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 79f237d754bd..aaa7f15f2169 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -179,8 +179,17 @@ static void tmio_mmc_set_bus_width(struct tmio_mmc_host *host,
+ 	sd_ctrl_write16(host, CTL_SD_MEM_CARD_OPT, reg);
+ }
+ 
+-static void tmio_mmc_reset(struct tmio_mmc_host *host)
++static void tmio_mmc_reset(struct tmio_mmc_host *host, bool preserve)
+ {
++	u16 card_opt, clk_ctrl, sdif_mode;
++
++	if (preserve) {
++		card_opt = sd_ctrl_read16(host, CTL_SD_MEM_CARD_OPT);
++		clk_ctrl = sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL);
++		if (host->pdata->flags & TMIO_MMC_MIN_RCAR2)
++			sdif_mode = sd_ctrl_read16(host, CTL_SDIF_MODE);
++	}
++
+ 	/* FIXME - should we set stop clock reg here */
+ 	sd_ctrl_write16(host, CTL_RESET_SD, 0x0000);
+ 	usleep_range(10000, 11000);
+@@ -190,7 +199,7 @@ static void tmio_mmc_reset(struct tmio_mmc_host *host)
+ 	tmio_mmc_abort_dma(host);
+ 
+ 	if (host->reset)
+-		host->reset(host);
++		host->reset(host, preserve);
+ 
+ 	sd_ctrl_write32_as_16_and_16(host, CTL_IRQ_MASK, host->sdcard_irq_mask_all);
+ 	host->sdcard_irq_mask = host->sdcard_irq_mask_all;
+@@ -206,6 +215,13 @@ static void tmio_mmc_reset(struct tmio_mmc_host *host)
+ 		sd_ctrl_write16(host, CTL_TRANSACTION_CTL, 0x0001);
+ 	}
+ 
++	if (preserve) {
++		sd_ctrl_write16(host, CTL_SD_MEM_CARD_OPT, card_opt);
++		sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, clk_ctrl);
++		if (host->pdata->flags & TMIO_MMC_MIN_RCAR2)
++			sd_ctrl_write16(host, CTL_SDIF_MODE, sdif_mode);
++	}
++
+ 	if (host->mmc->card)
+ 		mmc_retune_needed(host->mmc);
+ }
+@@ -248,7 +264,7 @@ static void tmio_mmc_reset_work(struct work_struct *work)
+ 
+ 	spin_unlock_irqrestore(&host->lock, flags);
+ 
+-	tmio_mmc_reset(host);
++	tmio_mmc_reset(host, true);
+ 
+ 	/* Ready for new calls */
+ 	host->mrq = NULL;
+@@ -959,7 +975,7 @@ static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ 		tmio_mmc_power_off(host);
+ 		/* For R-Car Gen2+, we need to reset SDHI specific SCC */
+ 		if (host->pdata->flags & TMIO_MMC_MIN_RCAR2)
+-			tmio_mmc_reset(host);
++			tmio_mmc_reset(host, false);
+ 
+ 		host->set_clock(host, 0);
+ 		break;
+@@ -1196,7 +1212,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
+ 		_host->sdcard_irq_mask_all = TMIO_MASK_ALL;
+ 
+ 	_host->set_clock(_host, 0);
+-	tmio_mmc_reset(_host);
++	tmio_mmc_reset(_host, false);
+ 
+ 	spin_lock_init(&_host->lock);
+ 	mutex_init(&_host->ios_lock);
+@@ -1292,7 +1308,7 @@ int tmio_mmc_host_runtime_resume(struct device *dev)
+ 	struct tmio_mmc_host *host = dev_get_drvdata(dev);
+ 
+ 	tmio_mmc_clk_enable(host);
+-	tmio_mmc_reset(host);
++	tmio_mmc_reset(host, false);
+ 
+ 	if (host->clk_cache)
+ 		host->set_clock(host, host->clk_cache);
 -- 
-Siemens AG, Technology
-Competence Center Embedded Linux
+2.25.1
 
 
