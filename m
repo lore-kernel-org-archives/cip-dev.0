@@ -1,130 +1,186 @@
-Return-Path: <webhook@kernel.org>
+Return-Path: <masami.ichikawa@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F17EC433FE
-	for <webhook@archiver.kernel.org>; Wed,  9 Nov 2022 22:47:56 +0000 (UTC)
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
- by mx.groups.io with SMTP id smtpd.web09.107.1668034072167325190
- for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Wed, 09 Nov 2022 14:47:52 -0800
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3462FC433FE
+	for <webhook@archiver.kernel.org>; Wed,  9 Nov 2022 23:02:46 +0000 (UTC)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+ by mx.groups.io with SMTP id smtpd.web08.288.1668034963416771388
+ for <cip-dev@lists.cip-project.org>;
+ Wed, 09 Nov 2022 15:02:44 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=yDSZYcI7;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.216.45, mailfrom: bot@kernelci.org)
-Received: by mail-pj1-f45.google.com with SMTP id e7-20020a17090a77c700b00216928a3917so3227680pjs.4
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Wed, 09 Nov 2022 14:47:52 -0800 (PST)
+ dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112 header.b=AGwRMH4S;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.218.52, mailfrom: masami.ichikawa@miraclelinux.com)
+Received: by mail-ej1-f52.google.com with SMTP id bj12so628877ejb.13
+        for <cip-dev@lists.cip-project.org>; Wed, 09 Nov 2022 15:02:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=PXCB0PqPFhsSjHD+69CITeXqBRGoyFRVIGDawnORIyI=;
-        b=yDSZYcI7/H9+QYQv2lZVf2f3wH13Ac/NLGalifpEpI69Xd+9ox3XVWoqF27RuoTRko
-         prv6JiqvsjoAR0uUtfeY5NU05WM5zyRnJjoBF42mUKALxw0KWqyBTPg5PXWDxpx7ARyj
-         6tpgJ3q5Xf/7M4SZb7Co+vJ0zW6tok/bgZpZEQvXB7t2lLa2CTSjDHSiswaW0jd2L38/
-         NBJ1LySCnrPZT1MJ5foHfmLWRpUrETonLDGx9g559STbwIDd/K7fmLKA8D05DeAG3xbr
-         pmMphuOI3gzjjlfugiUGrWM4mIxMe132x4tChz1KGC3OtiFTiJkBH8jARwRDPMndXo1u
-         5byw==
+        d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+nBioOIWD+jCdk/2xym4qe17+IBhTI7CQQgENxkR0m4=;
+        b=AGwRMH4SfGe8TKrdT/NigELHE3LeXCQudjZtSQv/O+yAxGCpJUt0HjE77jdRpWx6NE
+         xhNSRiVgzwph2z6CteBBl4xC06k+WqF3jyDu3wGYJCmPxpcNb4nut3v/X8t658kmcIdR
+         KYLSCh8XnmuzidmSFGmg5RRzJ7gm03v0EJy8PjqN33/pZRw10F5GHo3p6sr07nh8tcca
+         4OFiMZBl5nmrkgMrADrYXVgcnHKda5EPPtJV1/xsWkYJ9GPAoIq0XIAfLfliQ2d6nSVY
+         Z5s8+ixV8p0N8TVfnuFagTGl0gi2fLsQt1MtnDwYotAEUT4bL3kr2RB4a0BaAptCPvkg
+         vyzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PXCB0PqPFhsSjHD+69CITeXqBRGoyFRVIGDawnORIyI=;
-        b=waUCNymzhhX47343OG/6xgUxLLV3uGlpXykL5auJl9SROogQ+95ZjjtNNb0MGBdkQP
-         7nUCfmyuwWRgQ7szuein0tZAe5Bk7hMQFtJQ0ujWJUQiYP8q6G4Nl50v5y+OopK7KrfP
-         66tFFXEVR7MdSeHKDJG00gSc73UlPHfAdnsl8aV5tRUCi618LUG+iWIuqsPF0W1fK0sK
-         F+UKenFbuIKb4tCXpn1a1xaHQKyEIAnxi+51fPUk1k5G/04lqdj7Un1wtJQhqOBy8TPC
-         KSoi5xedJF0LlIYC+qcDvK7QZFEQB6nYkR2Cg52w/vdDrYRoVqwUo6YcmhbfBgdhiyRd
-         D4bQ==
-X-Gm-Message-State: ACrzQf2ylCeTS8Un7dAlBw6KkcDxKaWfS8irTCxy7wSY4x1iwIP/amve
-	J9UXrG2ac3tMDk3Y/KzCxXmK2/qj2yF3YapQlVo=
-X-Google-Smtp-Source: AMsMyM53zVg+YuA2ySs0T7XAfRqbSjpGRRN8xC5CLAzLbCe9Iw6Y4Wn4y4ECc5Noky3z94vgV9nIKQ==
-X-Received: by 2002:a17:902:f691:b0:187:466a:8975 with SMTP id l17-20020a170902f69100b00187466a8975mr41265054plg.59.1668034071406;
-        Wed, 09 Nov 2022 14:47:51 -0800 (PST)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id s1-20020a170902ea0100b00174f61a7d09sm9735494plg.247.2022.11.09.14.47.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Nov 2022 14:47:51 -0800 (PST)
-Message-ID: <636c2e17.170a0220.fbf96.058d@mx.google.com>
-Date: Wed, 09 Nov 2022 14:47:51 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+nBioOIWD+jCdk/2xym4qe17+IBhTI7CQQgENxkR0m4=;
+        b=a1PZ3QY5c1t0dyd/NC/PAQxOKpl5do42Imb1d+0D3ZUBHWZae/fEN1tnB6CnT0yaD8
+         kHLLz/jH5ShBbanHAOyOEZ3aePiOPEOlGt/2ogpCBk/rGzuZflGONit5oppBYWw1MLGL
+         xK4ENKVjZTOPAzYlIDwR1rdiIZWy6svTVyJg5/EGR7HEaYiBttMuP0KudWZnBRjADPVt
+         +hLHv5Q2f2t5tgM1DTEs2E0pKup+6UhKTEo26eZS++cw0Gq/yThEUsHy8HcVA+FrGmZQ
+         6qfqJyfwIz3YYOK4lHOpme7Olehy7CkFnLAnyt1tL2DNLehUK5c0tCqkGqlHPWoQqoFf
+         X0wQ==
+X-Gm-Message-State: ACrzQf1dXLiPAUe53lVkOvdSx7HC8EB5IYCOmauy5lrMvfAfYDdm27lq
+	zuywOe3tgyXLnP71Vk4fEMR2TOBUKbGWciaIayLg5efLE51BfQ==
+X-Google-Smtp-Source: AMsMyM58hC29XU8p9h1tNbCtRQF0LfXThDQtOc/0AX0GtPcybDdvUZ1DbH9uaGBpoXia+pAgFeuw3yeGUtYW8bg8JJg=
+X-Received: by 2002:a17:907:2135:b0:7ad:b152:90f2 with SMTP id
+ qo21-20020a170907213500b007adb15290f2mr1907818ejb.345.1668034961443; Wed, 09
+ Nov 2022 15:02:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: test
-X-Kernelci-Kernel: v5.10.153-cip19-rt8
-X-Kernelci-Branch: linux-5.10.y-cip-rt
-X-Kernelci-Tree: cip
-Subject: cip/linux-5.10.y-cip-rt baseline: 216 runs,
- 1 regressions (v5.10.153-cip19-rt8)
-To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
- kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
-From: "kernelci.org bot" <bot@kernelci.org>
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Thu, 10 Nov 2022 08:02:05 +0900
+Message-ID: <CAODzB9pTzPzkeG7W6uY-E5ivktoXzv5=tQ77QnC7qNbk-h1udg@mail.gmail.com>
+Subject: New CVE entries this week
+To: cip-dev <cip-dev@lists.cip-project.org>
+Content-Type: text/plain; charset="UTF-8"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 09 Nov 2022 22:47:56 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9986
+ <cip-dev@lists.cip-project.org>; Wed, 09 Nov 2022 23:02:46 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9987
 
-cip/linux-5.10.y-cip-rt baseline: 216 runs, 1 regressions (v5.10.153-cip19-=
-rt8)
+Hi !
 
-Regressions Summary
--------------------
+It's this week's CVE report.
 
-platform              | arch | lab          | compiler | defconfig         =
-   | regressions
-----------------------+------+--------------+----------+-------------------=
----+------------
-at91-sama5d4_xplained | arm  | lab-baylibre | gcc-10   | defconfig+preempt_=
-rt | 1          =
+This week reported 3 new CVEs and 2 updated CVEs.
 
+* New CVEs
 
-  Details:  https://kernelci.org/test/job/cip/branch/linux-5.10.y-cip-rt/ke=
-rnel/v5.10.153-cip19-rt8/plan/baseline/
+CVE-2022-42895: Bluetooth: L2CAP: Fix attempting to access uninitialized memory
 
-  Test:     baseline
-  Tree:     cip
-  Branch:   linux-5.10.y-cip-rt
-  Describe: v5.10.153-cip19-rt8
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.g=
-it
-  SHA:      4b5bf35ef58ec8f9f73fd6fec577de2f6710955f =
+CVSS v3 score is not provided.
 
+An accessing uninitialized variable bug was found in
+l2cap_parse_conf_req() in net/bluetooth/l2cap_core.c
+The efs variable is on the stack. It is initialized when the type
+variable is L2CAP_CONF_EFS.
+So, if type isn't L2CAP_CONF_EFS and rfc.mode is L2CAP_MODE_ERTM, then
+accessing uninitialized variable bug occurs.
 
+It looks 4.4 is affected by this issue too.
 
-Test Regressions
----------------- =
+Fixed status
+mainline: [b1a2cd50c0357f243b7435a732b4e62ba3157a2e]
 
+CVE-2022-42896: Bluetooth: L2CAP: Fix accepting connection request for
+invalid SPSM
 
+CVSS v3 score is not provided.
 
-platform              | arch | lab          | compiler | defconfig         =
-   | regressions
-----------------------+------+--------------+----------+-------------------=
----+------------
-at91-sama5d4_xplained | arm  | lab-baylibre | gcc-10   | defconfig+preempt_=
-rt | 1          =
+There was a valid range check for SPSM. Therefore, it will accept
+connections with invalid SPSM value.
 
+It looks 4.4 is affected by this issue too.
 
-  Details:     https://kernelci.org/test/plan/id/636c22fef8ee338154e7db6d
+Fixed status
+mainline: [711f8c3fb3db61897080468586b970c87c61d9e4]
 
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+preempt_rt
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip-rt/v5.10.=
-153-cip19-rt8/arm/defconfig+preempt_rt/gcc-10/lab-baylibre/baseline-at91-sa=
-ma5d4_xplained.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip-rt/v5.10.=
-153-cip19-rt8/arm/defconfig+preempt_rt/gcc-10/lab-baylibre/baseline-at91-sa=
-ma5d4_xplained.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20221024.1/armel/rootfs.cpio.gz =
+CVE-2022-43945: A buffer overflow bug was found in nfsd
 
+CVSS v3 score is 7.5 HIGH.
 
+The Linux kernel NFSD implementation prior to versions 5.19.17 and
+6.0.2 are vulnerable to buffer overflow. NFSD tracks the number of
+pages held by each NFSD thread by combining the receive and send
+buffers of a remote procedure call (RPC) into a single array of pages.
+A client can force the send buffer to shrink by sending an RPC message
+over TCP with garbage data added at the end of the message. The RPC
+message with garbage data is still correctly formed according to the
+specification and is passed forward to handlers. Vulnerable code in
+NFSD is not expecting the oversized request and writes beyond the
+allocated buffer space.
 
-  * baseline.login: https://kernelci.org/test/case/id/636c22fef8ee338154e7d=
-b6e
-        new failure (last pass: v5.10.109-cip5-rt4) =
+nfsd3_proc_read() and nfsd_proc_read() changed to set argp->count
+value adding an extra min_t() macro.
+nfsd_init_dirlist_pages() and nfsd3_init_dirlist_pages() changed the
+process of setting buf->buflen value.
+However, 4.4, 4.19, 5.10 use different ways to set these values. So,
+even if these kernels are vulnerable, it needs a different way to fix
+them.
 
- =20
+Fixed status
+mainline: [00b4492686e0497fdb924a9d4c8f6f99377e176c,
+640f87c190e0d1b2a0fcb2ecf6d2cd53b1c41991,
+  401bc1f90874280a80b93f23be33a0e7e2d1f912,
+fa6be9cc6e80ec79892ddf08a8c10cabab9baf38]
+stable/5.15: [dc7f225090c29a5f3b9419b1af32846a201555e7,
+071a076fd1b763aa6fe478efa047e0a549ba9c22,
+  2be9331ca6061bc6ea32247266f45b8b21030244,
+75d9de25a6f833dd0701ca546ac926cabff2b5af]
+stable/6.0: [f59c74df82f6ac9d2ea4e01aa3ae7c6c4481652d,
+279274e31270c28b86feffe5e166d4088f22317b,
+  1868332032eccbab8c1878a0d918193058c0a905,
+309f29361b6bfae96936317376f1114568c5de19]
+
+* Updated CVEs
+
+CVE-2022-20369: 'media: v4l2-mem2mem: Apply DST_QUEUE_OFF_BASE on MMAP
+buffers across ioctls
+
+4.14 and 4.19 were fixed this week.
+
+Fixed status
+mainline: [8310ca94075e784bbb06593cd6c068ee6b6e4ca6]
+stable/4.14: [7339b6bdf9e084f9e83c084ccc8879b6ae80b75a]
+stable/4.19: [95c4751705f7eef0f16a245e121259857f867c4a]
+stable/5.10: [8a83731a09a5954b85b1ce49c01ff5c2a3465cb7]
+stable/5.15: [48d00e24822e4384edcee3aae03d54c1b7982eba]
+stable/5.4: [54e1abbe856020522a7952140c26a4426f01dab6]
+
+CVE-2022-3524: tcp/udp: Fix memory leak in ipv6_renew_options().
+
+5.15 and 6.0 were fixed this week.
+
+Fixed status
+mainline: [3c52c6bb831f6335c176a0fc7214e26f43adbd11]
+stable/5.15: [1401e9336bebaa6dd5a320f83bddc17619d4e3a6]
+stable/6.0: [0c5d628f1e1d049c33595693fab1b6e9baf25795]
+
+Currently tracking CVEs
+
+CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
+Bluetooth Core Specifications 4.0 through 5.2
+
+There is no fix information.
+
+CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
+
+No fix information.
+
+CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
+Provisioning Leads to MITM
+
+No fix information.
+
+CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
+
+No fix information.
+
+CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
+
+No fix information.
+
+Regards,
+-- 
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
+
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
 
