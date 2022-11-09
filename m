@@ -2,80 +2,80 @@ Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A109C4332F
-	for <webhook@archiver.kernel.org>; Wed,  9 Nov 2022 21:38:31 +0000 (UTC)
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
- by mx.groups.io with SMTP id smtpd.web09.356.1668029909485472058
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62A52C4332F
+	for <webhook@archiver.kernel.org>; Wed,  9 Nov 2022 21:39:11 +0000 (UTC)
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+ by mx.groups.io with SMTP id smtpd.web12.363.1668029939545343447
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Wed, 09 Nov 2022 13:38:29 -0800
+ Wed, 09 Nov 2022 13:38:59 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=s39UUWpN;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.173, mailfrom: bot@kernelci.org)
-Received: by mail-pl1-f173.google.com with SMTP id p21so18319941plr.7
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Wed, 09 Nov 2022 13:38:29 -0800 (PST)
+ dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=FDkRBK+m;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.174, mailfrom: bot@kernelci.org)
+Received: by mail-pl1-f174.google.com with SMTP id v17so18340746plo.1
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Wed, 09 Nov 2022 13:38:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20210112.gappssmtp.com; s=20210112;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ma4MWVJK+v1bxE7XcjvtZJFDAmAUkC0lJ1jwAu0+fhI=;
-        b=s39UUWpN1Wb+aWzsHaZRcjYRMPdFTNohdqqK1DQ1pbllPzocMH79bC4kG3NXRNC7qN
-         pmGk01ncEWsYReyuoPvr2aMoZTvUB10PtFzmyPWUufMznXP+LBRGM3aAYbixRin6TDtW
-         sb3e6ZFh1Ffgq2F8dSqts48SRpiBkUDz8H53+D8GuGoWYqeY67zQO5UmLLtQ1qC3m6D7
-         mEF4NmvqbM7CGSIxSvcResgTUAghjQQrm17YbYIceNPgVJKrsFu+DQXES8HzHKyQK4JI
-         7GKGXjecBehsWtGxhBDb3mFEqvpG+tsuOsL9nXmjN/I/CTRqA+h6AXaYbMwGhHyVI7bI
-         y+kw==
+        bh=hCqL0f8V7etXYbs7QbIv+GtpzpZAIcv9Us0CTapzVh4=;
+        b=FDkRBK+m2PDFn7iBxlqkNCI2zActQv4ieWrftG6XkDGg4T+2itaG25o49Gn3iTf2H9
+         rs6jG3dDiD9p4XY3JCbk9kwxLJA7Gl5s5yRWY7JhWaEe65zgp4rfCaiLVH2ATa2ENy0D
+         +WCyU2vhET1e8C0myafNrUi9Ow2xDOIgvOgvHCQE9M92LJuZ6LOwhRvYC777fgtdP2q7
+         hJCmGnTifmzizO1z+KXoDJE/DN+C0SEix3VT6Y0eAWPx1CXg4m+8UHM56Bt+RutCX7Le
+         MAtLb1mdC5S6do1wJ5qt7lmWs1EJnisQocpa0zBFc4cU2r7OK10MM/zY4DPzWA7ndfR2
+         KVWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ma4MWVJK+v1bxE7XcjvtZJFDAmAUkC0lJ1jwAu0+fhI=;
-        b=VMuJwPVsacruvQJ0mbJGFqYQNbXQA56coAc/oCyWqbAKtBCqWgfXwoy21jdNK2IeM2
-         3TGaFB1M+pT9cAdqoSesChJKyLARSxJjeizp9E4nSpVZK0n64obBu15pUziOBOIHNCsC
-         t+qBfbihIK5I3y0mhDbTnrxYkNDJVWLJt84p+U48nLkR3ycX5TfR1PPXUO3Up2i3F7Bl
-         x4AKjL61IMM+gvL6bJ1jD/H/RjqH25mDXvj909BlAFLDM707Z+Fv2Wo0qY9J5ZbKaTGZ
-         ugFMV8WlhxdzohGAmUAQ/ObJDCv8QPaCsRfIu69GfENHxKIaRn3mxo4ui5zO+MXk+VDt
-         CYWQ==
-X-Gm-Message-State: ACrzQf2SwnzOMhXeshNYYaxL4xaAdq8HvZvIcH1ErOXGXO2k4oTQev9O
-	Gn018lFU4k2oyYAY1ZbYrJKQtAiwkV/bMZ8FjLY=
-X-Google-Smtp-Source: AMsMyM7j2dufdObPf8URQTV/B51J02nJdAu+Zg2kcRwcLKJOxd0JdH+rbQfKytHoiLmYTYeA2sOLQA==
-X-Received: by 2002:a17:902:c106:b0:174:af35:4b90 with SMTP id 6-20020a170902c10600b00174af354b90mr1258412pli.8.1668029907840;
-        Wed, 09 Nov 2022 13:38:27 -0800 (PST)
+        bh=hCqL0f8V7etXYbs7QbIv+GtpzpZAIcv9Us0CTapzVh4=;
+        b=OWzGo+AXDYJUhth/iiT3+FAg43xg2zhQ/8wWV9QyEH0pofjhboC5M5WUaktdQIHsO0
+         ndEydS2cb19rhuQL+xTpb4nSwbTP/NZK2OFaQPLYxFhHyQapDC2LK4v82OKsS2V0Gdx3
+         3akuA1kNqlVtJubpyL/YpqY1vzx5RcxEBbS1LB93wCkhcQqfSDUugu650RBUFTX9Nc5o
+         cBn5ZL05autffKj9VM+lEKvw92nD+Xoyt/Pm71W7PdjZDVXCD5fTRexwM2TwOZVOiTFx
+         K1q84HPU1XE6cG8rVTPdDtGRaHJpOfSCToct02/6HfaBKIvVf8cBoX4//9xxwLLZVelc
+         xQzA==
+X-Gm-Message-State: ACrzQf3WZnH+AtYWkAofWYPnc0JaG3a+Pfc/Q/NuXW43Q8ZPL15xrMeB
+	lCc2ucU/fQ/1yYCtCVwRZaqC7G/igU40GijWtbI=
+X-Google-Smtp-Source: AMsMyM6yeUk1IBjhFRiAlQI7CWUNw5ZU7VX9I3lE2GCt0Kis5YSq9zROg5bT5uQvN7Pn4s8IzS2L/A==
+X-Received: by 2002:a17:902:b781:b0:186:8f1c:ba11 with SMTP id e1-20020a170902b78100b001868f1cba11mr1259072pls.90.1668029938259;
+        Wed, 09 Nov 2022 13:38:58 -0800 (PST)
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id p6-20020a170902780600b0018661d627d7sm9516637pll.59.2022.11.09.13.38.27
+        by smtp.gmail.com with ESMTPSA id z17-20020a170902ccd100b0017c19d7c89bsm9526411ple.269.2022.11.09.13.38.57
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Nov 2022 13:38:27 -0800 (PST)
-Message-ID: <636c1dd3.170a0220.ec9cc.074c@mx.google.com>
-Date: Wed, 09 Nov 2022 13:38:27 -0800 (PST)
+        Wed, 09 Nov 2022 13:38:57 -0800 (PST)
+Message-ID: <636c1df1.170a0220.1f695.02d9@mx.google.com>
+Date: Wed, 09 Nov 2022 13:38:57 -0800 (PST)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-Kernelci-Report-Type: build
-X-Kernelci-Kernel: v5.10.153-cip19-3-gc76f4e7e5c71
-X-Kernelci-Branch: linux-5.10.y-cip
-X-Kernelci-Tree: cip
-Subject: cip/linux-5.10.y-cip build: 189 builds: 3 failed, 186 passed, 4 errors,
- 9 warnings (v5.10.153-cip19-3-gc76f4e7e5c71)
-To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
- kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
+X-Kernelci-Kernel: v5.10.145-rt74-1329-ga59fc50f38f6
+X-Kernelci-Branch: ci/pavel/linux-test
+X-Kernelci-Tree: cip-gitlab
+Subject: cip-gitlab/ci/pavel/linux-test build: 185 builds: 3 failed, 182 passed,
+ 4 errors, 9 warnings (v5.10.145-rt74-1329-ga59fc50f38f6)
+To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
 From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 09 Nov 2022 21:38:31 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9967
+ <cip-dev@lists.cip-project.org>; Wed, 09 Nov 2022 21:39:11 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9968
 
-cip/linux-5.10.y-cip build: 189 builds: 3 failed, 186 passed, 4 errors, 9 w=
-arnings (v5.10.153-cip19-3-gc76f4e7e5c71)
+cip-gitlab/ci/pavel/linux-test build: 185 builds: 3 failed, 182 passed, 4 e=
+rrors, 9 warnings (v5.10.145-rt74-1329-ga59fc50f38f6)
 
-Full Build Summary: https://kernelci.org/build/cip/branch/linux-5.10.y-cip/=
-kernel/v5.10.153-cip19-3-gc76f4e7e5c71/
+Full Build Summary: https://kernelci.org/build/cip-gitlab/branch/ci%2Fpavel=
+%2Flinux-test/kernel/v5.10.145-rt74-1329-ga59fc50f38f6/
 
-Tree: cip
-Branch: linux-5.10.y-cip
-Git Describe: v5.10.153-cip19-3-gc76f4e7e5c71
-Git Commit: c76f4e7e5c7160107c9b5d8ec188f61fe326cec3
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+Tree: cip-gitlab
+Branch: ci/pavel/linux-test
+Git Describe: v5.10.145-rt74-1329-ga59fc50f38f6
+Git Commit: a59fc50f38f6208d7d36629eb501bf5191bde812
+Git URL: https://gitlab.com/cip-project/cip-kernel/linux-cip.git
 Built: 7 unique architectures
 
 Build Failures Detected:
@@ -160,13 +160,13 @@ n mismatches
 
 ---------------------------------------------------------------------------=
 -----
-allnoconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
-mismatches
+allnoconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
 
 ---------------------------------------------------------------------------=
 -----
-allnoconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
+allnoconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
+mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -369,11 +369,6 @@ ismatches
 -----
 defconfig+arm64-chromebook (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warn=
 ings, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-defconfig+kselftest (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
- section mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -712,11 +707,6 @@ ction mismatches
 
 ---------------------------------------------------------------------------=
 -----
-multi_v7_defconfig+kselftest (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warn=
-ings, 0 section mismatches
-
----------------------------------------------------------------------------=
------
 mvebu_v5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
 ction mismatches
 
@@ -1026,6 +1016,11 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
+tinyconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
 tinyconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
 ismatches
 
@@ -1033,11 +1028,6 @@ ismatches
 -----
 tinyconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
 smatches
-
----------------------------------------------------------------------------=
------
-tinyconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
- mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -1106,18 +1096,8 @@ ection mismatches
 
 ---------------------------------------------------------------------------=
 -----
-x86_64_defconfig+kselftest (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 war=
-nings, 0 section mismatches
-
----------------------------------------------------------------------------=
------
 x86_64_defconfig+x86-chromebook (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, =
 0 warnings, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-x86_64_defconfig+x86-chromebook+kselftest (x86_64, gcc-10) =E2=80=94 PASS, =
-0 errors, 0 warnings, 0 section mismatches
 
 ---------------------------------------------------------------------------=
 -----
