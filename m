@@ -1,186 +1,200 @@
-Return-Path: <masami.ichikawa@miraclelinux.com>
+Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3462FC433FE
-	for <webhook@archiver.kernel.org>; Wed,  9 Nov 2022 23:02:46 +0000 (UTC)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
- by mx.groups.io with SMTP id smtpd.web08.288.1668034963416771388
- for <cip-dev@lists.cip-project.org>;
- Wed, 09 Nov 2022 15:02:44 -0800
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F31AC433FE
+	for <webhook@archiver.kernel.org>; Wed,  9 Nov 2022 23:17:56 +0000 (UTC)
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+ by mx.groups.io with SMTP id smtpd.web08.447.1668035874255577526
+ for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
+ Wed, 09 Nov 2022 15:17:54 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112 header.b=AGwRMH4S;
- spf=pass (domain: miraclelinux.com, ip: 209.85.218.52, mailfrom: masami.ichikawa@miraclelinux.com)
-Received: by mail-ej1-f52.google.com with SMTP id bj12so628877ejb.13
-        for <cip-dev@lists.cip-project.org>; Wed, 09 Nov 2022 15:02:43 -0800 (PST)
+ dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=6E9qPJBn;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.181, mailfrom: bot@kernelci.org)
+Received: by mail-pl1-f181.google.com with SMTP id y4so119626plb.2
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Wed, 09 Nov 2022 15:17:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=+nBioOIWD+jCdk/2xym4qe17+IBhTI7CQQgENxkR0m4=;
-        b=AGwRMH4SfGe8TKrdT/NigELHE3LeXCQudjZtSQv/O+yAxGCpJUt0HjE77jdRpWx6NE
-         xhNSRiVgzwph2z6CteBBl4xC06k+WqF3jyDu3wGYJCmPxpcNb4nut3v/X8t658kmcIdR
-         KYLSCh8XnmuzidmSFGmg5RRzJ7gm03v0EJy8PjqN33/pZRw10F5GHo3p6sr07nh8tcca
-         4OFiMZBl5nmrkgMrADrYXVgcnHKda5EPPtJV1/xsWkYJ9GPAoIq0XIAfLfliQ2d6nSVY
-         Z5s8+ixV8p0N8TVfnuFagTGl0gi2fLsQt1MtnDwYotAEUT4bL3kr2RB4a0BaAptCPvkg
-         vyzg==
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=9mA9U8Z2907F6qWuB3beQjPWcxD0KGpHzY+OMNebP6A=;
+        b=6E9qPJBnTHuxvIYDUpv4faPewbWqd3Dn/EYtoQzq14MHbmj2FnYLvl4YyicC9ckNwi
+         i9m7PPxNliV+Nj6c4WkeZCC6p1347LUY0SimBg8ieh5j6xfoY8bEDgAFZIVKDRt9bilB
+         yVpWB4DjHs15cQe4WXPmBtFBYPz7nyI2lDKF4n1MD2eTDS9ksGethyAmcoUvtGtdI+9p
+         P6jwaKmd996NPPeD+mlXn1nGj2mAdKcQ1vbnfS3hs/pxt7h0y6P018mr48OmOrK46WY4
+         2LTuZnCV0RQ3k5mumR6uR4e+Jv0XWR5cZTGdbDHjJt+wq36TJoEbxnFAV56fWHncUA0n
+         7NBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+nBioOIWD+jCdk/2xym4qe17+IBhTI7CQQgENxkR0m4=;
-        b=a1PZ3QY5c1t0dyd/NC/PAQxOKpl5do42Imb1d+0D3ZUBHWZae/fEN1tnB6CnT0yaD8
-         kHLLz/jH5ShBbanHAOyOEZ3aePiOPEOlGt/2ogpCBk/rGzuZflGONit5oppBYWw1MLGL
-         xK4ENKVjZTOPAzYlIDwR1rdiIZWy6svTVyJg5/EGR7HEaYiBttMuP0KudWZnBRjADPVt
-         +hLHv5Q2f2t5tgM1DTEs2E0pKup+6UhKTEo26eZS++cw0Gq/yThEUsHy8HcVA+FrGmZQ
-         6qfqJyfwIz3YYOK4lHOpme7Olehy7CkFnLAnyt1tL2DNLehUK5c0tCqkGqlHPWoQqoFf
-         X0wQ==
-X-Gm-Message-State: ACrzQf1dXLiPAUe53lVkOvdSx7HC8EB5IYCOmauy5lrMvfAfYDdm27lq
-	zuywOe3tgyXLnP71Vk4fEMR2TOBUKbGWciaIayLg5efLE51BfQ==
-X-Google-Smtp-Source: AMsMyM58hC29XU8p9h1tNbCtRQF0LfXThDQtOc/0AX0GtPcybDdvUZ1DbH9uaGBpoXia+pAgFeuw3yeGUtYW8bg8JJg=
-X-Received: by 2002:a17:907:2135:b0:7ad:b152:90f2 with SMTP id
- qo21-20020a170907213500b007adb15290f2mr1907818ejb.345.1668034961443; Wed, 09
- Nov 2022 15:02:41 -0800 (PST)
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9mA9U8Z2907F6qWuB3beQjPWcxD0KGpHzY+OMNebP6A=;
+        b=mwYzREUU70UwgTKU/AUcgI81RkEuxn0L1es3ggwrAauuuXBZ07YFLjYtujHfBSjh3a
+         6FNL1jw7/gjtWBGrrQzk8TzKP1QfbMYhOUdeDh/ANWkj5qhC+QVBMkiDX9aUDZ6zcwsG
+         lGXCQjNcfWJV4HA8v1ntSx2lsLjXsYiDzlnZZHH1FNh2BbU2sE7JMEytoG8fuc8DMhaV
+         IWF+iZyKKi13opLTvPvUSw7UB4UVNgaKBVyRYQ19BkqiNynPAfDS8E2wYzFZMl1GxICi
+         inUi8c4wH2CuHdL3PijfPc+59z9g/UbfbYeyz3fldUgKRdBPpJXjharawuswCVa6o3au
+         Ih8g==
+X-Gm-Message-State: ACrzQf1DiEOybBXt7WhCaheQ7sPMbVA3i8YtTmvYxAPisle9omYGC94L
+	WpxqqP+CZHDRwJCiq+NlCGttE5B1TOd4A55vmKA=
+X-Google-Smtp-Source: AMsMyM5p9qotVWzGAwzZRcJExnbDeuP7+d5v8TJTw+py8DWhs/APTcPplDq/EfzR+9U9Rl0U7J/hrw==
+X-Received: by 2002:a17:902:b70c:b0:186:8bb2:de36 with SMTP id d12-20020a170902b70c00b001868bb2de36mr64639507pls.106.1668035873571;
+        Wed, 09 Nov 2022 15:17:53 -0800 (PST)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id u15-20020a170903124f00b0016d72804664sm9674707plh.205.2022.11.09.15.17.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Nov 2022 15:17:53 -0800 (PST)
+Message-ID: <636c3521.170a0220.1091b.0613@mx.google.com>
+Date: Wed, 09 Nov 2022 15:17:53 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Date: Thu, 10 Nov 2022 08:02:05 +0900
-Message-ID: <CAODzB9pTzPzkeG7W6uY-E5ivktoXzv5=tQ77QnC7qNbk-h1udg@mail.gmail.com>
-Subject: New CVE entries this week
-To: cip-dev <cip-dev@lists.cip-project.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: test
+X-Kernelci-Kernel: v5.10.153-cip19-rt8
+X-Kernelci-Branch: linux-5.10.y-cip-rt
+X-Kernelci-Tree: cip
+Subject: cip/linux-5.10.y-cip-rt ltp-mm: 8 runs,
+ 3 regressions (v5.10.153-cip19-rt8)
+To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
+ kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
+From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 09 Nov 2022 23:02:46 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9987
+ <cip-dev@lists.cip-project.org>; Wed, 09 Nov 2022 23:17:56 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9990
 
-Hi !
+cip/linux-5.10.y-cip-rt ltp-mm: 8 runs, 3 regressions (v5.10.153-cip19-rt8)
 
-It's this week's CVE report.
+Regressions Summary
+-------------------
 
-This week reported 3 new CVEs and 2 updated CVEs.
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+hp-11A-G6-EE-grunt           | x86_64 | lab-collabora | gcc-10   | defconfi=
+g+x86-chromebook     | 1          =
 
-* New CVEs
+hp-11A-G6-EE-grunt           | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...k+preempt_rt | 1          =
 
-CVE-2022-42895: Bluetooth: L2CAP: Fix attempting to access uninitialized memory
+hp-x360-12b-c...4020-octopus | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...k+preempt_rt | 1          =
 
-CVSS v3 score is not provided.
 
-An accessing uninitialized variable bug was found in
-l2cap_parse_conf_req() in net/bluetooth/l2cap_core.c
-The efs variable is on the stack. It is initialized when the type
-variable is L2CAP_CONF_EFS.
-So, if type isn't L2CAP_CONF_EFS and rfc.mode is L2CAP_MODE_ERTM, then
-accessing uninitialized variable bug occurs.
+  Details:  https://kernelci.org/test/job/cip/branch/linux-5.10.y-cip-rt/ke=
+rnel/v5.10.153-cip19-rt8/plan/ltp-mm/
 
-It looks 4.4 is affected by this issue too.
+  Test:     ltp-mm
+  Tree:     cip
+  Branch:   linux-5.10.y-cip-rt
+  Describe: v5.10.153-cip19-rt8
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.g=
+it
+  SHA:      4b5bf35ef58ec8f9f73fd6fec577de2f6710955f
 
-Fixed status
-mainline: [b1a2cd50c0357f243b7435a732b4e62ba3157a2e]
+  Test suite revisions:
+    ltp-tests
+      URL:  https://github.com/linux-test-project/ltp.git
+      SHA:  b79157c8375cfdd2abfc59f63afe8ea09eaa8c5d =
 
-CVE-2022-42896: Bluetooth: L2CAP: Fix accepting connection request for
-invalid SPSM
 
-CVSS v3 score is not provided.
 
-There was a valid range check for SPSM. Therefore, it will accept
-connections with invalid SPSM value.
+Test Regressions
+---------------- =
 
-It looks 4.4 is affected by this issue too.
 
-Fixed status
-mainline: [711f8c3fb3db61897080468586b970c87c61d9e4]
 
-CVE-2022-43945: A buffer overflow bug was found in nfsd
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+hp-11A-G6-EE-grunt           | x86_64 | lab-collabora | gcc-10   | defconfi=
+g+x86-chromebook     | 1          =
 
-CVSS v3 score is 7.5 HIGH.
 
-The Linux kernel NFSD implementation prior to versions 5.19.17 and
-6.0.2 are vulnerable to buffer overflow. NFSD tracks the number of
-pages held by each NFSD thread by combining the receive and send
-buffers of a remote procedure call (RPC) into a single array of pages.
-A client can force the send buffer to shrink by sending an RPC message
-over TCP with garbage data added at the end of the message. The RPC
-message with garbage data is still correctly formed according to the
-specification and is passed forward to handlers. Vulnerable code in
-NFSD is not expecting the oversized request and writes beyond the
-allocated buffer space.
+  Details:     https://kernelci.org/test/plan/id/636c28a0b1a74fadcee7dba5
 
-nfsd3_proc_read() and nfsd_proc_read() changed to set argp->count
-value adding an extra min_t() macro.
-nfsd_init_dirlist_pages() and nfsd3_init_dirlist_pages() changed the
-process of setting buf->buflen value.
-However, 4.4, 4.19, 5.10 use different ways to set these values. So,
-even if these kernels are vulnerable, it needs a different way to fix
-them.
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+x86-chromebook
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip-rt/v5.10.=
+153-cip19-rt8/x86_64/defconfig+x86-chromebook/gcc-10/lab-collabora/ltp-mm-h=
+p-11A-G6-EE-grunt.txt
+  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip-rt/v5.10.=
+153-cip19-rt8/x86_64/defconfig+x86-chromebook/gcc-10/lab-collabora/ltp-mm-h=
+p-11A-G6-EE-grunt.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
+p/20221024.1/amd64/initrd.cpio.gz =
 
-Fixed status
-mainline: [00b4492686e0497fdb924a9d4c8f6f99377e176c,
-640f87c190e0d1b2a0fcb2ecf6d2cd53b1c41991,
-  401bc1f90874280a80b93f23be33a0e7e2d1f912,
-fa6be9cc6e80ec79892ddf08a8c10cabab9baf38]
-stable/5.15: [dc7f225090c29a5f3b9419b1af32846a201555e7,
-071a076fd1b763aa6fe478efa047e0a549ba9c22,
-  2be9331ca6061bc6ea32247266f45b8b21030244,
-75d9de25a6f833dd0701ca546ac926cabff2b5af]
-stable/6.0: [f59c74df82f6ac9d2ea4e01aa3ae7c6c4481652d,
-279274e31270c28b86feffe5e166d4088f22317b,
-  1868332032eccbab8c1878a0d918193058c0a905,
-309f29361b6bfae96936317376f1114568c5de19]
 
-* Updated CVEs
 
-CVE-2022-20369: 'media: v4l2-mem2mem: Apply DST_QUEUE_OFF_BASE on MMAP
-buffers across ioctls
+  * ltp-mm.login: https://kernelci.org/test/case/id/636c28a0b1a74fadcee7dba6
+        new failure (last pass: v5.10.145-cip17-rt7) =
 
-4.14 and 4.19 were fixed this week.
+ =
 
-Fixed status
-mainline: [8310ca94075e784bbb06593cd6c068ee6b6e4ca6]
-stable/4.14: [7339b6bdf9e084f9e83c084ccc8879b6ae80b75a]
-stable/4.19: [95c4751705f7eef0f16a245e121259857f867c4a]
-stable/5.10: [8a83731a09a5954b85b1ce49c01ff5c2a3465cb7]
-stable/5.15: [48d00e24822e4384edcee3aae03d54c1b7982eba]
-stable/5.4: [54e1abbe856020522a7952140c26a4426f01dab6]
 
-CVE-2022-3524: tcp/udp: Fix memory leak in ipv6_renew_options().
 
-5.15 and 6.0 were fixed this week.
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+hp-11A-G6-EE-grunt           | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...k+preempt_rt | 1          =
 
-Fixed status
-mainline: [3c52c6bb831f6335c176a0fc7214e26f43adbd11]
-stable/5.15: [1401e9336bebaa6dd5a320f83bddc17619d4e3a6]
-stable/6.0: [0c5d628f1e1d049c33595693fab1b6e9baf25795]
 
-Currently tracking CVEs
+  Details:     https://kernelci.org/test/plan/id/636c28f3a0aba108a2e7db4f
 
-CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
-Bluetooth Core Specifications 4.0 through 5.2
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-chromebook+preempt_rt
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip-rt/v5.10.=
+153-cip19-rt8/x86_64/x86_64_defconfig+x86-chromebook+preempt_rt/gcc-10/lab-=
+collabora/ltp-mm-hp-11A-G6-EE-grunt.txt
+  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip-rt/v5.10.=
+153-cip19-rt8/x86_64/x86_64_defconfig+x86-chromebook+preempt_rt/gcc-10/lab-=
+collabora/ltp-mm-hp-11A-G6-EE-grunt.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
+p/20221024.1/amd64/initrd.cpio.gz =
 
-There is no fix information.
 
-CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
 
-No fix information.
+  * ltp-mm.login: https://kernelci.org/test/case/id/636c28f3a0aba108a2e7db50
+        new failure (last pass: v5.10.145-cip17-rt7) =
 
-CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
-Provisioning Leads to MITM
+ =
 
-No fix information.
 
-CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
 
-No fix information.
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+hp-x360-12b-c...4020-octopus | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...k+preempt_rt | 1          =
 
-CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
 
-No fix information.
+  Details:     https://kernelci.org/test/plan/id/636c2934232cc16a02e7db5b
 
-Regards,
--- 
-Masami Ichikawa
-Cybertrust Japan Co., Ltd.
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-chromebook+preempt_rt
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip-rt/v5.10.=
+153-cip19-rt8/x86_64/x86_64_defconfig+x86-chromebook+preempt_rt/gcc-10/lab-=
+collabora/ltp-mm-hp-x360-12b-ca0010nr-n4020-octopus.txt
+  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip-rt/v5.10.=
+153-cip19-rt8/x86_64/x86_64_defconfig+x86-chromebook+preempt_rt/gcc-10/lab-=
+collabora/ltp-mm-hp-x360-12b-ca0010nr-n4020-octopus.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
+p/20221024.1/amd64/initrd.cpio.gz =
 
-Email :masami.ichikawa@cybertrust.co.jp
-          :masami.ichikawa@miraclelinux.com
+
+
+  * ltp-mm.login: https://kernelci.org/test/case/id/636c2934232cc16a02e7db5c
+        new failure (last pass: v5.10.145-cip17-rt7) =
+
+ =20
 
