@@ -1,141 +1,105 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <srinuvasan_a@mentor.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A8EEC43217
-	for <webhook@archiver.kernel.org>; Thu, 10 Nov 2022 08:33:49 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web10.4482.1668069220633367675
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D170BC4332F
+	for <webhook@archiver.kernel.org>; Thu, 10 Nov 2022 09:21:09 +0000 (UTC)
+Received: from esa4.mentor.iphmx.com (esa4.mentor.iphmx.com [68.232.137.252])
+ by mx.groups.io with SMTP id smtpd.web11.5405.1668072059160767741
  for <cip-dev@lists.cip-project.org>;
- Thu, 10 Nov 2022 00:33:41 -0800
+ Thu, 10 Nov 2022 01:20:59 -0800
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id B7A5D1C09F3; Thu, 10 Nov 2022 09:33:36 +0100 (CET)
-Date: Thu, 10 Nov 2022 09:33:36 +0100
-From: Pavel Machek <pavel@denx.de>
-To: cip-dev@lists.cip-project.org
-Subject: Re: [cip-dev] New CVE entries this week
-Message-ID: <Y2y3YIfTzTX0FVwX@duo.ucw.cz>
-References: <CAODzB9pTzPzkeG7W6uY-E5ivktoXzv5=tQ77QnC7qNbk-h1udg@mail.gmail.com>
+ dkim=missing; spf=pass (domain: mentor.com, ip: 68.232.137.252, mailfrom: srinuvasan_a@mentor.com)
+X-IronPort-AV: E=Sophos;i="5.96,153,1665475200"; 
+   d="scan'208";a="86548480"
+Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
+  by esa4.mentor.iphmx.com with ESMTP; 10 Nov 2022 01:20:57 -0800
+IronPort-SDR: bcAhegg8YhOymMMsq/VXA4j2pAIQmV2nTkF2hY0lvHkm/fuDQMDqLLBbB/CIZIp7OkmGpdxRV3
+ x60cklcyzgpYUeaRsycoiixgXd+EM03HAqm909YGHMkkP+sU3lcxtRYTIvWs2AY+szmYDBLA7Y
+ MQzUAcRdfxWMk3LcHGHgB0OZXIeomfFi9JEr1PVUPypEJDskyUFqDPdvyaYqCN7QRoQ7eQrY1U
+ Y4E7TAh3uK5HksFwsZFu4sOWPzFue72TkypQgj6gNAUg8PEar2a+YOvn44QZBus3y7o2rCjSMl
+ 1J8=
+From: Srinuvasan A <Srinuvasan_A@mentor.com>
+To: <cip-dev@lists.cip-project.org>
+CC: <jan.kiszka@siemens.com>, Srinuvasan A <srinuvasan_a@mentor.com>
+Subject: [isar-cip-core][PATCH] linux-cip: Update cip-kernels to latest one
+Date: Thu, 10 Nov 2022 14:50:37 +0530
+Message-ID: <20221110092037.2342861-1-Srinuvasan_A@mentor.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="JWhv0RVF/jf6M9eJ"
-Content-Disposition: inline
-In-Reply-To: <CAODzB9pTzPzkeG7W6uY-E5ivktoXzv5=tQ77QnC7qNbk-h1udg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: svr-orw-mbx-14.mgc.mentorg.com (147.34.90.214) To
+ svr-orw-mbx-13.mgc.mentorg.com (147.34.90.213)
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 10 Nov 2022 08:33:49 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9994
+ <cip-dev@lists.cip-project.org>; Thu, 10 Nov 2022 09:21:09 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9995
 
+From: Srinuvasan A <srinuvasan_a@mentor.com>
 
---JWhv0RVF/jf6M9eJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Update cip-kernels to 4.19.264-cip84, 5.10.153-cip19 and 5.10.153-cip19-rt8.
 
-Hi!
+Signed-off-by: Srinuvasan A <srinuvasan_a@mentor.com>
+---
+ ...10.145-cip17-rt7.bb => linux-cip-rt_5.10.153-cip19-rt8.bb} | 4 ++--
+ ...inux-cip_4.19.259-cip82.bb => linux-cip_4.19.264-cip84.bb} | 2 +-
+ ...inux-cip_5.10.145-cip17.bb => linux-cip_5.10.153-cip19.bb} | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+ rename recipes-kernel/linux/{linux-cip-rt_5.10.145-cip17-rt7.bb => linux-cip-rt_5.10.153-cip19-rt8.bb} (60%)
+ rename recipes-kernel/linux/{linux-cip_4.19.259-cip82.bb => linux-cip_4.19.264-cip84.bb} (72%)
+ rename recipes-kernel/linux/{linux-cip_5.10.145-cip17.bb => linux-cip_5.10.153-cip19.bb} (72%)
 
-> * New CVEs
->=20
-> CVE-2022-42895: Bluetooth: L2CAP: Fix attempting to access uninitialized =
-memory
->=20
-> CVSS v3 score is not provided.
->=20
-> An accessing uninitialized variable bug was found in
-> l2cap_parse_conf_req() in net/bluetooth/l2cap_core.c
-> The efs variable is on the stack. It is initialized when the type
-> variable is L2CAP_CONF_EFS.
-> So, if type isn't L2CAP_CONF_EFS and rfc.mode is L2CAP_MODE_ERTM, then
-> accessing uninitialized variable bug occurs.
->=20
-> It looks 4.4 is affected by this issue too.
->=20
-> Fixed status
-> mainline: [b1a2cd50c0357f243b7435a732b4e62ba3157a2e]
+diff --git a/recipes-kernel/linux/linux-cip-rt_5.10.145-cip17-rt7.bb b/recipes-kernel/linux/linux-cip-rt_5.10.153-cip19-rt8.bb
+similarity index 60%
+rename from recipes-kernel/linux/linux-cip-rt_5.10.145-cip17-rt7.bb
+rename to recipes-kernel/linux/linux-cip-rt_5.10.153-cip19-rt8.bb
+index 0cb2a1d..bee0661 100644
+--- a/recipes-kernel/linux/linux-cip-rt_5.10.145-cip17-rt7.bb
++++ b/recipes-kernel/linux/linux-cip-rt_5.10.153-cip19-rt8.bb
+@@ -1,7 +1,7 @@
+ #
+ # CIP Core, generic profile
+ #
+-# Copyright (c) Siemens AG, 2021
++# Copyright (c) Siemens AG, 2021-2022
+ #
+ # Authors:
+ #  Jan Kiszka <jan.kiszka@siemens.com>
+@@ -13,4 +13,4 @@ require linux-cip-rt-common.inc
+ 
+ KERNEL_DEFCONFIG_VERSION ?= "5.10.y-cip"
+ 
+-SRC_URI[sha256sum] = "a5598f7f673b3ef819d6ed24f08d539eecb6febd11673a1d4752a1c05d4ee289"
++SRC_URI[sha256sum] = "075a95f357008133f999a037e0827f0d55fd1264b421b45548d9ab1be30df726"
+diff --git a/recipes-kernel/linux/linux-cip_4.19.259-cip82.bb b/recipes-kernel/linux/linux-cip_4.19.264-cip84.bb
+similarity index 72%
+rename from recipes-kernel/linux/linux-cip_4.19.259-cip82.bb
+rename to recipes-kernel/linux/linux-cip_4.19.264-cip84.bb
+index d728e2b..860fa84 100644
+--- a/recipes-kernel/linux/linux-cip_4.19.259-cip82.bb
++++ b/recipes-kernel/linux/linux-cip_4.19.264-cip84.bb
+@@ -13,4 +13,4 @@ require linux-cip-common.inc
+ 
+ KERNEL_DEFCONFIG_VERSION ?= "4.19.y-cip"
+ 
+-SRC_URI[sha256sum] = "b29e7d90959b29c67a0afa4432937fcc51138b519d33f24ff2ce976fbd958ffd"
++SRC_URI[sha256sum] = "2176f15e9126499e9336fdd8ac1b560d41ca2d42f96b2492fbce7e8ccf7ba31f"
+diff --git a/recipes-kernel/linux/linux-cip_5.10.145-cip17.bb b/recipes-kernel/linux/linux-cip_5.10.153-cip19.bb
+similarity index 72%
+rename from recipes-kernel/linux/linux-cip_5.10.145-cip17.bb
+rename to recipes-kernel/linux/linux-cip_5.10.153-cip19.bb
+index b4bf6b7..317dfb6 100644
+--- a/recipes-kernel/linux/linux-cip_5.10.145-cip17.bb
++++ b/recipes-kernel/linux/linux-cip_5.10.153-cip19.bb
+@@ -13,4 +13,4 @@ require linux-cip-common.inc
+ 
+ KERNEL_DEFCONFIG_VERSION ?= "5.10.y-cip"
+ 
+-SRC_URI[sha256sum] = "4594c147bdc493c7c286688542bbe65e550fb7bd58e0649ec587a2fe893ec0ee"
++SRC_URI[sha256sum] = "95bd235f131a1ab37a58dff85d4498bcc93bb189b04723923febd52d8566687b"
+-- 
+2.25.1
 
-Fix is queued for 5.10.154 and corresponding 4.9 kernel.
-
-> CVE-2022-43945: A buffer overflow bug was found in nfsd
->=20
-> CVSS v3 score is 7.5 HIGH.
->=20
-> The Linux kernel NFSD implementation prior to versions 5.19.17 and
-> 6.0.2 are vulnerable to buffer overflow. NFSD tracks the number of
-> pages held by each NFSD thread by combining the receive and send
-> buffers of a remote procedure call (RPC) into a single array of pages.
-> A client can force the send buffer to shrink by sending an RPC message
-> over TCP with garbage data added at the end of the message. The RPC
-> message with garbage data is still correctly formed according to the
-> specification and is passed forward to handlers. Vulnerable code in
-> NFSD is not expecting the oversized request and writes beyond the
-> allocated buffer space.
->=20
-> nfsd3_proc_read() and nfsd_proc_read() changed to set argp->count
-> value adding an extra min_t() macro.
-> nfsd_init_dirlist_pages() and nfsd3_init_dirlist_pages() changed the
-> process of setting buf->buflen value.
-> However, 4.4, 4.19, 5.10 use different ways to set these values. So,
-> even if these kernels are vulnerable, it needs a different way to fix
-> them.
->=20
-> Fixed status
-> mainline: [00b4492686e0497fdb924a9d4c8f6f99377e176c,
-> 640f87c190e0d1b2a0fcb2ecf6d2cd53b1c41991,
->   401bc1f90874280a80b93f23be33a0e7e2d1f912,
-> fa6be9cc6e80ec79892ddf08a8c10cabab9baf38]
-> stable/5.15: [dc7f225090c29a5f3b9419b1af32846a201555e7,
-> 071a076fd1b763aa6fe478efa047e0a549ba9c22,
->   2be9331ca6061bc6ea32247266f45b8b21030244,
-> 75d9de25a6f833dd0701ca546ac926cabff2b5af]
-> stable/6.0: [f59c74df82f6ac9d2ea4e01aa3ae7c6c4481652d,
-> 279274e31270c28b86feffe5e166d4088f22317b,
->   1868332032eccbab8c1878a0d918193058c0a905,
-> 309f29361b6bfae96936317376f1114568c5de19]
-
-Hmm. I don't see these  queued for 5.10. OTOH embedded systems are
-normally NFS clients (and only during development), not NFS servers.
-
-In 5.10.152, we fixed buffer overrun in nfsd, but that may be
-different one:
-
- |0b06ecf29 788f71 o: 5.10| NFSD: Add common helpers to decode void args an=
-d encode void results
- |78ad3a430 ebcd8e o: 5.10| NFSD: Update the NFSv2 GETATTR argument decoder=
- to use struct xdr_stream
- |8505cb6e4 8c293e o: 5.10| NFSD: Update the NFSv2 READ argument decoder to=
- use struct xdr_stream
- |827277f03 401bc1 o: 5.10| NFSD: Protect against send buffer overflow in N=
-FSv2 READ
- |4204e1a23 c1346a o: 5.10| NFSD: Replace the internals of the READ_BUF() m=
-acro
- |8bda97f4a cbd9ab o: 5.10| NFSD: Replace READ* macros in nfsd4_decode_comm=
-it()
- |21b51f620 957536 o: 5.10| NFSD: Update GETATTR3args decoder to use struct=
- xdr_stream
- |fea1935a8 be63bd o: 5.10| NFSD: Update READ3arg decoder to use struct xdr=
-_stream
- |fb4bb09fc 0cb4d2 o: 5.10| NFSD: Fix the behavior of READ near OFFSET_MAX
- |9748f4210 fa6be9 o: 5.10| NFSD: Protect against send buffer overflow in N=
-FSv3 READ
-
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---JWhv0RVF/jf6M9eJ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCY2y3YAAKCRAw5/Bqldv6
-8jHsAJ49nhrfs8mx2wBkWBvfZUlnsmLfgACfahZ1cJsmK/6iseqIoiFit6Eis5E=
-=BxYB
------END PGP SIGNATURE-----
-
---JWhv0RVF/jf6M9eJ--
 
