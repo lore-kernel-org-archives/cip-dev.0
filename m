@@ -1,109 +1,141 @@
-Return-Path: <masami.ichikawa@miraclelinux.com>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8A1BC433FE
-	for <webhook@archiver.kernel.org>; Thu, 10 Nov 2022 07:28:48 +0000 (UTC)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
- by mx.groups.io with SMTP id smtpd.web08.4209.1668065321287517479
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A8EEC43217
+	for <webhook@archiver.kernel.org>; Thu, 10 Nov 2022 08:33:49 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web10.4482.1668069220633367675
  for <cip-dev@lists.cip-project.org>;
- Wed, 09 Nov 2022 23:28:42 -0800
+ Thu, 10 Nov 2022 00:33:41 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112 header.b=Pr8+eEK6;
- spf=pass (domain: miraclelinux.com, ip: 209.85.218.45, mailfrom: masami.ichikawa@miraclelinux.com)
-Received: by mail-ej1-f45.google.com with SMTP id k2so2827829ejr.2
-        for <cip-dev@lists.cip-project.org>; Wed, 09 Nov 2022 23:28:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=X/UYWSaiMBcOUWOVlLKG8c7itdqj33pB+BR9EW3IM5U=;
-        b=Pr8+eEK6GfkYOXe9IU6SeGmEpeUPgBi7gKsuoniyCFjg1v5bBqVmdOsLJRGi2abIZm
-         GldC568s5ckCv8fNl44oWeGtB1wLvjZMBwiwlxk6LfmQYhzLZkdE6OY+GtEqdPZ+++wQ
-         LM0jwNOjATNjwdI5017GH1fTJdVC02L6Zys0u64myY1hfVneF8B80ZeNrWpYAWRXE+cL
-         uwohbvN7sJZCixM0ygs1rvPMdp+TKQ8V25+jNAYXRaVOYZErQNVFfjAEMyj/hiCSkqqf
-         W0gUl1UF0nMiMat15TX6fyqldyh7aFVzuzj+xcoY0TfJlug+lhKggphcjtJQ2EIXfvYI
-         y4xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X/UYWSaiMBcOUWOVlLKG8c7itdqj33pB+BR9EW3IM5U=;
-        b=iLMIn3vuqFaF6Q+XvMxXeI51ZkXHFf3o3avfAbAGqhCXrZAjoomCMdzkpKrPCkzoVw
-         8IKfEqEvo9nzoWOJWImi1joH4xeUcSomerIPVAecLpbh/Lgb2rIwqPCf00TlGkI07J8F
-         igWtSE4zZT4XTqd+CMiAH51NQUi+rSBQ2PGqrlMxtP31VWtYNWC78XvVP0xtH6tB4b77
-         KFTisvYRl9X5ksfghoydajp4pKB/YsL8e/guVpCYjsqysW5zKQMRiywqboOK4z2N/WiN
-         bJ/1WX/wtgLXAtLOlpnNTY3mLjxNEPAT1UNJEi+Wo5omIMmE61arDb9bjgnuMHsPFb/D
-         l8qw==
-X-Gm-Message-State: ACrzQf3044lnkXWs+8vy2u8FgcWDNb5TnDTBL3C9QnXeaTv1PZ+Wek5F
-	SAk4xFJF070a2dW76LEKOBwbgBiHpCcGIx5aPgzdYzBACkVp3w==
-X-Google-Smtp-Source: AMsMyM6KwlplpFY1Bh+MTMzfExDg0ydwz1Kl61qVshbcb076prIzSZDxryRUzEdDorPAB+2h34P1vkbTe+tIm0wHv34=
-X-Received: by 2002:a17:906:8a7c:b0:7ad:ad3a:b206 with SMTP id
- hy28-20020a1709068a7c00b007adad3ab206mr58321725ejc.345.1668065318908; Wed, 09
- Nov 2022 23:28:38 -0800 (PST)
-MIME-Version: 1.0
-References: <43e3ee09-7756-d356-df2d-d674d7da3404@siemens.com>
-In-Reply-To: <43e3ee09-7756-d356-df2d-d674d7da3404@siemens.com>
-From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Date: Thu, 10 Nov 2022 16:28:03 +0900
-Message-ID: <CAODzB9q3ahZ5gei0aeMtK6M1kUR0rU3Bqw9AR09+Nk=hbSbqdA@mail.gmail.com>
-Subject: Re: [cip-dev] CIP IRC weekly meeting today on libera.chat
+ dkim=missing; spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id B7A5D1C09F3; Thu, 10 Nov 2022 09:33:36 +0100 (CET)
+Date: Thu, 10 Nov 2022 09:33:36 +0100
+From: Pavel Machek <pavel@denx.de>
 To: cip-dev@lists.cip-project.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [cip-dev] New CVE entries this week
+Message-ID: <Y2y3YIfTzTX0FVwX@duo.ucw.cz>
+References: <CAODzB9pTzPzkeG7W6uY-E5ivktoXzv5=tQ77QnC7qNbk-h1udg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="JWhv0RVF/jf6M9eJ"
+Content-Disposition: inline
+In-Reply-To: <CAODzB9pTzPzkeG7W6uY-E5ivktoXzv5=tQ77QnC7qNbk-h1udg@mail.gmail.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 10 Nov 2022 07:28:48 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9993
+ <cip-dev@lists.cip-project.org>; Thu, 10 Nov 2022 08:33:49 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/9994
 
-Hi !
 
-On Thu, Nov 10, 2022 at 4:16 PM Jan Kiszka <jan.kiszka@siemens.com> wrote:
->
-> Hi all,
->
-> Kindly be reminded to attend the weekly meeting through IRC to discuss
-> technical topics with CIP kernel today. Our channel is the following:
->
->     irc:irc.libera.chat:6667/cip
->
-> The IRC meeting is scheduled to UTC (GMT) 12:00:
->
-> https://www.timeanddate.com/worldclock/meetingdetails.html?year=2022&month=11&day=10&hour=12&min=0&sec=0&p1=224&p2=179&p3=136&p4=37&p5=241&p6=248
->
-> USWest    USEast    UK        DE        TW        JP
-> 05:00     08:00     12:00     13:00     20:00     21:00
->
-> Last meeting minutes:
-> https://ircbot.wl.linuxfoundation.org/meetings/cip/2022/11/cip.2022-11-03-12.02.log.html
->
-> * Action items
->   1. Add qemu-riscv to cip-kernel-config - patersonc
->   2. Create MR for disabling smc test in qemu - iwamatsu
-> * Kernel maintenance updates
-> * Kernel testing
-> * AOB
->   - actively communicating deviations from the kernel release schedule
->
+--JWhv0RVF/jf6M9eJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I can't make it today, sorry.
+Hi!
 
-> Jan
->
-> -=-=-=-=-=-=-=-=-=-=-=-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#9992): https://lists.cip-project.org/g/cip-dev/message/9992
-> Mute This Topic: https://lists.cip-project.org/mt/94931535/4520416
-> Group Owner: cip-dev+owner@lists.cip-project.org
-> Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129101/4520416/1465703922/xyzzy [masami.ichikawa@miraclelinux.com]
-> -=-=-=-=-=-=-=-=-=-=-=-
->
+> * New CVEs
+>=20
+> CVE-2022-42895: Bluetooth: L2CAP: Fix attempting to access uninitialized =
+memory
+>=20
+> CVSS v3 score is not provided.
+>=20
+> An accessing uninitialized variable bug was found in
+> l2cap_parse_conf_req() in net/bluetooth/l2cap_core.c
+> The efs variable is on the stack. It is initialized when the type
+> variable is L2CAP_CONF_EFS.
+> So, if type isn't L2CAP_CONF_EFS and rfc.mode is L2CAP_MODE_ERTM, then
+> accessing uninitialized variable bug occurs.
+>=20
+> It looks 4.4 is affected by this issue too.
+>=20
+> Fixed status
+> mainline: [b1a2cd50c0357f243b7435a732b4e62ba3157a2e]
 
-Regards,
--- 
-Masami Ichikawa
-Cybertrust Japan Co., Ltd.
+Fix is queued for 5.10.154 and corresponding 4.9 kernel.
 
-Email :masami.ichikawa@cybertrust.co.jp
-          :masami.ichikawa@miraclelinux.com
+> CVE-2022-43945: A buffer overflow bug was found in nfsd
+>=20
+> CVSS v3 score is 7.5 HIGH.
+>=20
+> The Linux kernel NFSD implementation prior to versions 5.19.17 and
+> 6.0.2 are vulnerable to buffer overflow. NFSD tracks the number of
+> pages held by each NFSD thread by combining the receive and send
+> buffers of a remote procedure call (RPC) into a single array of pages.
+> A client can force the send buffer to shrink by sending an RPC message
+> over TCP with garbage data added at the end of the message. The RPC
+> message with garbage data is still correctly formed according to the
+> specification and is passed forward to handlers. Vulnerable code in
+> NFSD is not expecting the oversized request and writes beyond the
+> allocated buffer space.
+>=20
+> nfsd3_proc_read() and nfsd_proc_read() changed to set argp->count
+> value adding an extra min_t() macro.
+> nfsd_init_dirlist_pages() and nfsd3_init_dirlist_pages() changed the
+> process of setting buf->buflen value.
+> However, 4.4, 4.19, 5.10 use different ways to set these values. So,
+> even if these kernels are vulnerable, it needs a different way to fix
+> them.
+>=20
+> Fixed status
+> mainline: [00b4492686e0497fdb924a9d4c8f6f99377e176c,
+> 640f87c190e0d1b2a0fcb2ecf6d2cd53b1c41991,
+>   401bc1f90874280a80b93f23be33a0e7e2d1f912,
+> fa6be9cc6e80ec79892ddf08a8c10cabab9baf38]
+> stable/5.15: [dc7f225090c29a5f3b9419b1af32846a201555e7,
+> 071a076fd1b763aa6fe478efa047e0a549ba9c22,
+>   2be9331ca6061bc6ea32247266f45b8b21030244,
+> 75d9de25a6f833dd0701ca546ac926cabff2b5af]
+> stable/6.0: [f59c74df82f6ac9d2ea4e01aa3ae7c6c4481652d,
+> 279274e31270c28b86feffe5e166d4088f22317b,
+>   1868332032eccbab8c1878a0d918193058c0a905,
+> 309f29361b6bfae96936317376f1114568c5de19]
+
+Hmm. I don't see these  queued for 5.10. OTOH embedded systems are
+normally NFS clients (and only during development), not NFS servers.
+
+In 5.10.152, we fixed buffer overrun in nfsd, but that may be
+different one:
+
+ |0b06ecf29 788f71 o: 5.10| NFSD: Add common helpers to decode void args an=
+d encode void results
+ |78ad3a430 ebcd8e o: 5.10| NFSD: Update the NFSv2 GETATTR argument decoder=
+ to use struct xdr_stream
+ |8505cb6e4 8c293e o: 5.10| NFSD: Update the NFSv2 READ argument decoder to=
+ use struct xdr_stream
+ |827277f03 401bc1 o: 5.10| NFSD: Protect against send buffer overflow in N=
+FSv2 READ
+ |4204e1a23 c1346a o: 5.10| NFSD: Replace the internals of the READ_BUF() m=
+acro
+ |8bda97f4a cbd9ab o: 5.10| NFSD: Replace READ* macros in nfsd4_decode_comm=
+it()
+ |21b51f620 957536 o: 5.10| NFSD: Update GETATTR3args decoder to use struct=
+ xdr_stream
+ |fea1935a8 be63bd o: 5.10| NFSD: Update READ3arg decoder to use struct xdr=
+_stream
+ |fb4bb09fc 0cb4d2 o: 5.10| NFSD: Fix the behavior of READ near OFFSET_MAX
+ |9748f4210 fa6be9 o: 5.10| NFSD: Protect against send buffer overflow in N=
+FSv3 READ
+
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--JWhv0RVF/jf6M9eJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCY2y3YAAKCRAw5/Bqldv6
+8jHsAJ49nhrfs8mx2wBkWBvfZUlnsmLfgACfahZ1cJsmK/6iseqIoiFit6Eis5E=
+=BxYB
+-----END PGP SIGNATURE-----
+
+--JWhv0RVF/jf6M9eJ--
 
