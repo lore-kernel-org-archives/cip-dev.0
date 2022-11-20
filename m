@@ -1,158 +1,200 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <sven.schultschik@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 097A5C4332F
-	for <webhook@archiver.kernel.org>; Thu, 17 Nov 2022 07:14:02 +0000 (UTC)
-Received: from EUR01-HE1-obe.outbound.protection.outlook.com (EUR01-HE1-obe.outbound.protection.outlook.com [40.107.13.83])
- by mx.groups.io with SMTP id smtpd.web10.10063.1668669240810894149
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF10AC433FE
+	for <webhook@archiver.kernel.org>; Sun, 20 Nov 2022 20:48:22 +0000 (UTC)
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (EUR04-DB3-obe.outbound.protection.outlook.com [40.107.6.42])
+ by mx.groups.io with SMTP id smtpd.web10.22408.1668977298306530554
  for <cip-dev@lists.cip-project.org>;
- Wed, 16 Nov 2022 23:14:01 -0800
+ Sun, 20 Nov 2022 12:48:19 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=g93LEZOw;
- spf=pass (domain: siemens.com, ip: 40.107.13.83, mailfrom: jan.kiszka@siemens.com)
+ dkim=fail reason="body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=eLVx8JEt;
+ spf=pass (domain: siemens.com, ip: 40.107.6.42, mailfrom: sven.schultschik@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AU+k29Am6kJdgyD1nYDTpwAZrtIY2zoK3OvymxRwHR4DbgFiHDBT77VPQtW9ooMZt7eWE5FhhOrddxITccgiOneIBaBzYaFt522wUwI5y9CkTpW9Ay7E+8M9gafXvWtTLsGUyFoiQ6R1nbozxvkLeBYx1RyTeE1DFZhwkILdcskIxtQZoB14o8ZwwENJzNJdDEUTsWcoCvlVoc5jHA9P4ng++lgEK927GKdsRE41aurbuDfpN4zKFwO1AZcWV7ws/k9Jufqp/VWW2jP4+ZJ8gYnzLrIjIGKJJHdwaUje3mgcQlOnB7leB8qn5o8Ijh694wx3/ugwLxUBJDlvzX9K7g==
+ b=DCRzIf62Ri7EnmIuwO5w+WIIk4JYcMPoYqHgnGTH3ZokEqvZphX54l4brFpfDNDVU30n5BT0MdjjpmjmbqdDfSBx3uWOpIfvF0wD7VwLJYJbv/Pc8+V8HxkdKnkGSUNLMcWJIULZDWWA/oKGFmQamWOjQBosVygIHQelX8IhCQe09cTXihJVgfA5rR4iYehgBr1WHFOURwcaUv51Okvnk9z0u8tSvP69SfP/8mW/2u+/9O+r7KxMXIGHcbbKXECH6r/SbN8tcgEpUw9y8dj71KPW3pmvdJb2ht4o1s5azWdtKZDDQ6gr4E+hNenILWn3culKflpQSwtkz6SxpTgfKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Wkb0g8ZRogn16NwnEG76QwrAbU2hkww5HwP15oCGBy8=;
- b=WYc+oScVySR/XzI8bRUB2inmFEppsVyKdkZh9U5yPRL8A4JTB9okvwVGNTHl2Taov6dXSKtoPxGaKgvfbcI2c0hWnb6bCaMc91Vm0lYDM10IcsuhXII/n4MiXAK8UxNQplO8Hr3kWjbtlTtp6XILqnMjCj/FPg+OZi8aRtiXosT24dEDybmVfb+XscWxX7a2j22TAhzVY/OkLqMgKPIwn0UvdpHMbVofntg+dXCYPgI9VOyPPwKnn4haUEFCc9Rnm0qeLll2ReK28jH3r/DAOCtX8Gcri179DJ9OUQQJAveyfAg0B3DS0aIBrnPP5ZBXnxwF5VG6ImeHoVTnAFKI2g==
+ bh=agCy3Cfxo9B8eqbXLWJDceIz1tmToWIPDEt2kHRvqFM=;
+ b=MMArNrPkvrLeXKTUeWKL9W0YpKYjyMtBcwbM1nTsppxI6Ejhd4Su2z3O3UAYJGhdsAzQVRsQEWMo3btw3Bi7J7UH/tgcV4w6TbGnQ+K6qmLOFEwwK0VKObDjVSTDwoD2Grmx6GvUen5sJkpbsQEjpPvoMLN2fkzolTvdTNNQyZ/HOI5WlB6DG284HwA0AF/VF5S8a5sbQ+0e5gaW+DE4WlGOdnu3oLOiGKPZ4bFxLwUkJASseOsDIHK6Keqa7BBiTbO+pZ6emKO9InUoxMdFvbONKruAMzQzaePAkKheO+tW/ZHVmjnanwlanEuDS6ZFL9jaIxVGa2Zr79GLlbcldw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Wkb0g8ZRogn16NwnEG76QwrAbU2hkww5HwP15oCGBy8=;
- b=g93LEZOwVMLiibylOh8difzm421e2lFaL3ly89p0gs3GiuYKKrVul7b6O9YpjLCwVARE4z/W/fsF89taO7JwQRXlAQCtW5IRzLqd4/SbP1+bxR6+Tf5EipV9cKERcNxaI2z4WLCv/qb6yocCVxlou/uQ2uoTxwItnr4Zg7tbTP7CrLZzoe33AD9GNUBnvGv5CKMYZ/PBFANnMNHJKlk0PYkfVMVBgZezymLW0D+raUDguxz6qvHQSFsXG/4G7pBJ84B4wog4bdtbbSv9Qus134VBKlaC7xYKSL/V0Fxb6+udDEI8Us3QEH8o3+GIBUVfjUn65WsxyjXHcXIU53se/w==
+ bh=agCy3Cfxo9B8eqbXLWJDceIz1tmToWIPDEt2kHRvqFM=;
+ b=eLVx8JEtbHQuTAb3N74kj6QrJcKJAX98Ep++5648iFr8TaFSVPRmXdeOSCqRdnQfR41iLNnMUX/v7WQjX8/kOeqz3auOyNcQLBWMTnPuiqUtEBD8BXMQR5PLsS45GKzCWbn4ik247HUeXMG+UrycrSl0zshtT/YhZCdPAtnZokPcHjLn2YcoKUpeUAeuS58U4FLzdHKTDRrtWb9Dc38UuOBQnZfvuSy4T2zkUD5E/wTBUB3KhXwJL4N4jbiTGHu7WoozZ1fAsMk12fQ68MNdZpE4TXAF8GY0xDSz1AdDdIWL1iFyswwmmDmpsEe74uCtlUO5hX4V9xgVcTgO7nZvwA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by AM7PR10MB3654.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:141::15) with
+Received: from PAXPR10MB5037.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:210::11)
+ by DU0PR10MB7094.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:42e::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.20; Thu, 17 Nov
- 2022 07:13:57 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::2957:50e8:8ce6:124a]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::2957:50e8:8ce6:124a%9]) with mapi id 15.20.5813.020; Thu, 17 Nov 2022
- 07:13:57 +0000
-Message-ID: <6f3e462e-c9eb-1186-09dc-1358103cfe31@siemens.com>
-Date: Thu, 17 Nov 2022 08:13:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: CIP IRC weekly meeting today on libera.chat
-Content-Language: en-US
-From: Jan Kiszka <jan.kiszka@siemens.com>
-To: cip-dev <cip-dev@lists.cip-project.org>
-References: <4a37a4a2-f39b-0b31-ca09-f9f8391cd520@siemens.com>
-In-Reply-To: <4a37a4a2-f39b-0b31-ca09-f9f8391cd520@siemens.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR3P281CA0149.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:95::20) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5834.11; Sun, 20 Nov
+ 2022 20:48:15 +0000
+Received: from PAXPR10MB5037.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::955a:f715:5319:7933]) by PAXPR10MB5037.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::955a:f715:5319:7933%9]) with mapi id 15.20.5834.015; Sun, 20 Nov 2022
+ 20:48:15 +0000
+From: sven.schultschik@siemens.com
+To: cip-dev@lists.cip-project.org
+CC: jan.kiszka@siemens.com,
+	Sven Schultschik <sven.schultschik@siemens.com>
+Subject: [isar-cip-core][PATCH 0/8] Secureboot on QEMU with EDK2, OP-TEE and RPMB
+Date: Sun, 20 Nov 2022 21:47:03 +0100
+Message-ID: <20221120204711.5826-1-sven.schultschik@siemens.com>
+X-Mailer: git-send-email 2.30.2
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: FR3P281CA0139.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:95::13) To PAXPR10MB5037.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:102:210::11)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AM7PR10MB3654:EE_
-X-MS-Office365-Filtering-Correlation-Id: 37c32991-71bd-4555-8486-08dac86b4b11
+X-MS-TrafficTypeDiagnostic: PAXPR10MB5037:EE_|DU0PR10MB7094:EE_
+X-MS-Office365-Filtering-Correlation-Id: 775ab0cc-95a5-402d-8c2e-08dacb388be4
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	LpkahHePf7wevRdKiA64CHG/QlIY5js6XZV1EA30i8V6171qvc78lULZEtRP33gIY+AU7vnrVrAIScTAFghVExbPblI5htrKCVl+fsqd6EuNjSVreENoGgm4N441Bc/AaTZwdvTCTKVQZAgo1jVu2N34InVHizrZy1NonPMQNwLIydeuIlCJDwbqs59CI4izUi6AjIxAYhJhwD1F7SuWfpEfiqyAq4WjuOpsulDa+a4w65f8eaFZnpe1Uf1RN3uh8OJ0GAbxfIW3F5qSz6AvPxtJXfrT7EUSUjFdkh+9R7e7T15LVBXDiqvuYwQ+rO8aWaTONE2eQh/sqKOHqbFY0uUFJ7fN9SJ7NNw21QgVzrGgN1HmX3fBc9owtn+syxRfrCZ5/8rc7lTuHejVcixCVa5X/WM20WBRRQBGbrzjjhk6TiDvpY66TzgfUxSa6xDs+qWGs3MW7zZDKG1JfRXmPjEMHCiLe/M3HJ6hzskU47Fj/KC1ETWuT4IE83aXsHSh19jyDAwIcUbkCDv85yJnQjgQw2vEdc1yaaisav/AS6Blzrwf97NowLOlBehaucwLenN4yOSBXYc7Por3kjgaXaUdzk3GYD+J/D0asBe98N85oEW/yvF5Y1P6zFV1I/I4NP4FVihdxBi1vUWUK9X96sSxy4eCxUpBSfX4ICQ+m9sciydzPYTwxW0614ZnSsf1pisbGpyrntDxqHW7eGEGIV9XTVH/HH3ZVI+0ItgbHpQuacHF40jk7Y/97evnFThc
+	DRycMfD6lbo9qAyZiAzZflFlRYyefxEypMqfNT7LXpguqkRV1vj0Mf4c02rHTqxlJMaRuJBtf0myuQeL4ViducZPfBiFiwVmq7HCl78TzyAda8vqwoFrBytMWGWE4dcrQrGwPh87yrLJE8lazhuWKz+cHDBEjAFCRn5hrqGkp8uWQDHaQYB6sUOJT7ubu6udn0x3ErRkuIA+1iY4NS5ciw2vQ7Vk4VNa0KXIOIl3MdPf+SY0AYChwP4T2lPWEW7mh+7+QedYTTGjCD6N+z5k2SVqtKsWLgkghQHSb31w9g8J1jNGPvDxOoJ3sV7s1zpVePJnjyfHjTDB4T4C2Ff4aSkKDfyPH5pDTzD5MtZPlZMvBn/LPC7rbLV69pmcWgGGNTcNu5Yb0uKGICWCCR9xpNItHOFTd3ueRwHSib9OEmuqe7momcPB4v33vr8TjQShXpFVnM85HX93XiohpN+CPqxXpFAMBHaZ9t+87n13CplMbL9GlzdBwOnT/IvKdzRYx5hP7HB/HkVi+CozkEaQb7IfylPimB2AriemgVQzH9NO+fxYKXgZyXiNhQR0NKnijR8zWafAvGQCAz+Gw0hrSGZbGcQGVwMqbVGERuNAnTLfh0DjxeYN1LZzoERCW3y1MDNi+7SYsVmJ3X/nCZUIgw==
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230022)(4636009)(366004)(396003)(39860400002)(136003)(376002)(346002)(451199015)(83380400001)(86362001)(31696002)(6486002)(82960400001)(38100700002)(478600001)(6506007)(53546011)(66946007)(8676002)(41300700001)(6916009)(66476007)(316002)(186003)(2616005)(6512007)(26005)(66556008)(44832011)(8936002)(2906002)(5660300002)(4001150100001)(36756003)(966005)(31686004)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR10MB5037.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230022)(4636009)(136003)(366004)(396003)(346002)(39860400002)(376002)(451199015)(2906002)(26005)(83380400001)(9686003)(86362001)(4326008)(6512007)(8676002)(66556008)(66476007)(82960400001)(66946007)(38100700002)(36756003)(41300700001)(6916009)(8936002)(19627235002)(5660300002)(316002)(107886003)(55236004)(478600001)(186003)(1076003)(6486002)(6666004)(2616005)(6506007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?WVB4c0lTbmxVRHJlbGVBMnNKMGpOWUZNbFlCUk9UNUZNQnlaNGNybit6MkRh?=
- =?utf-8?B?em04dmU1V1RDc2NJTW85Q1NQbUdKci9LUDBySytoSzZOT2NHWUdtU3dGZ0Ir?=
- =?utf-8?B?K1pTVkdYRzdQMHpQMDMxbFhVL0NmbFFQaUk5dXRxMm5keGlrcGZWRVBZbDRK?=
- =?utf-8?B?Y1ViSEdKODlwN0Yxa2FTUFBpM2dNeEVjQjlWQjYvWWFsOU1kN2FsZnVxTTAy?=
- =?utf-8?B?ZW9OS1BOS09LOEREbVQwMlhpcTBmUTdUN3BQN09pRzdpaEJPZzJlVFVCYUpQ?=
- =?utf-8?B?WEF6Ymw3ZEhCRWViYk8wcVlpeXZhY2EzSFFZZ3FPMzBmUEdORzZIdkRISjBn?=
- =?utf-8?B?V0hmRzlaYXhmVzFFVG5mdFI0V2ZxbXVRUmtLekxvVUo5NDBLVzB2bnhrRFZh?=
- =?utf-8?B?bDc0eGdLVTJsbEI3Ym10SjhUTmk3RnZSMXRmL2JoZmUxRzdwajB4ekNUdVNQ?=
- =?utf-8?B?VVdHcWtrRmdpUW1RQVAwYmd0aGs5ZFhCNS9KbzNwcDhoYjV0eFc2UGFoNzJu?=
- =?utf-8?B?REdEalJHT1FhSjU3Y2Y1WDBoaEU5MEZBUFhtMlZ1QlNRR0dFOXV2MmxYYVQ3?=
- =?utf-8?B?cSsxVlpGZDNTSXQ2N2ZuQ3A1TjA4TkNVWGUvN0R4alp1dTlhaXhQNUFJczlE?=
- =?utf-8?B?ZW53OXBpU0FCOUpZalZKbWdkMDlNeWpRWlBIa2I2V2tJOURVVlZnVWJTUy9C?=
- =?utf-8?B?MmxOSVBieDJzUmVsSFROVGl4MXBDSXpiL0xRTkNGRFR0cnJpVjFMMHFaVUp3?=
- =?utf-8?B?K3dqOUFHS0R0bGJtTEFUZWpqUlk4U29aN094Q0VXMG1lZkdnRTFQQVEwYVd2?=
- =?utf-8?B?VEViR1VXbzlNQ3doTW5OcE02a0szSlErN0VpTVlWVjIxVG0xaGNCUmt5UWpD?=
- =?utf-8?B?SWhrLzVURGRKc1BtWkdMRFZKRVF5Q3BWOUg4Y2ZlNlJVOG5LVnpjTHBRY3E0?=
- =?utf-8?B?WHgyNThDb0x4Q3B2dnc4cUVFVUpvUlR1cEVIc3l6U2lWNTh2UnZCYUpGSExP?=
- =?utf-8?B?NzBGOXVtS3BTYURoWENBNkl6aXZzRW4yWlFEK2ZaVnoxUitZWERYMUhEU2hk?=
- =?utf-8?B?TlRrVnl2YUlBdEJyUTIxc3cwRXo1akhJVGlpQ3dDdnBzdVBvZENPd1ZJTDU3?=
- =?utf-8?B?VXQxWG1td2p5S1c3ZzNRUEpMVVNER0pxODhYdi9GbnN0RlczY2NFUXdGUWY2?=
- =?utf-8?B?MDNvN0ljaW9Zc0UrWjdFdVJQcEFzRUpJck1MZGR3R0M5RmRqZEs3T2lvM2pj?=
- =?utf-8?B?MlB2UWdrQTNJUm0yS3RORys3L3doUUVOdDdWL0gzenFHeTA1SXNQZjN1YXht?=
- =?utf-8?B?QndpaDB2N283dU5VMHZIMkpOK1lDc3c1cmRiRSs3dFpFdlNaSWxNL0JucjhZ?=
- =?utf-8?B?b3pzWWhsOUdybHNEWFdIRmc1NTdBUHF1ZjJwczgxK1ArQnlwRy9rWmdvVWJN?=
- =?utf-8?B?TjEyZEV5emxYREZPUWREWjRqSS9BaUFUZVFQbDdtenVNSWl3N0RVRHpVQ0ZN?=
- =?utf-8?B?QUlZbGxUV2hKNWhSMTJSNkh4UFVhZy9jZG9hS0x6RC9Rd0R6RGxrZnJTKzZD?=
- =?utf-8?B?YjBGRlJZbGZXaUMyblN3UEJpZExGelVXUnZ2VEJ1cUZ6VDczVWhSRms1clRM?=
- =?utf-8?B?bjZVQUMybnJrY3h6MFBjWk1USHEyeGRIbnNqd2hyUEZ5eWJIVUluUjBLdTNk?=
- =?utf-8?B?QURWMkF6RUIwSmFtUnY1d3ozWU8xZ2N6MS9SM3NxMTJSM3JWMitGK3Qza0pa?=
- =?utf-8?B?SnZBejRweXE2SjU3OTNPd3hpQmZHNDUyRUlYZUM2TG81S2hqcFdvZ2pCSVJs?=
- =?utf-8?B?ZEFPV3VUdjdqUnE3WDk0YlRxZnhxNDNnQXNTZm9zNFhRYTlMTkgvVXp1Ryti?=
- =?utf-8?B?S1ByREo4TThTZ3ZJRFlnTGFkOEdZZ2F4Q2w5VjVzYi9VY1JiZHJpTTZMQ241?=
- =?utf-8?B?RFJoSW5NeStMN0RZNXlmVWl2RDdOSVAvNENzNGdTVndyc1BVczFKUWxyK3Ni?=
- =?utf-8?B?REtsUWJQTkZNTlFRaVdrc0w2NDlZNXpzWTVua3pGeHE2UkoyVE9tMlNiWEta?=
- =?utf-8?B?UlhldjlPZnBxNVBVa3VUUHVNZlBEbGFSQlI2bFlnYWVlZWJ2dEw1MVNJam9N?=
- =?utf-8?Q?lfCgeWq9jJjm9i/6mVfPRIwlO?=
+	=?us-ascii?Q?TVLFvZ/IgCXhQ65qasEmIhgg7U3dq8uZQPxuNHTpTr7C9pcYSDs3M3Nxa2e+?=
+ =?us-ascii?Q?YOnMoaBVlg6M1hmwwsTxg91w3BiOi5rPH4ngZSbwR3Ej8MrHVEZ02iFqzNEj?=
+ =?us-ascii?Q?5kevwCAJCYdA+LuAASnC3h4JfAjFbEoBsqP5WePqXt1zAUGc3o6n2oLIEmE6?=
+ =?us-ascii?Q?7UwrGAXrgMTnlWQki6cXQygh13+mZidHq/cp1oYhlbr8F4nq5Y0FEepIwlNV?=
+ =?us-ascii?Q?IKH34D/DMtN/YDU2AKo2RkvxU2e+hg2hjMZHMhC3USye6XlBsoPwj+bMEk0N?=
+ =?us-ascii?Q?bC0XQaunOKcVMKWov63dOHnO0mNjTokWQBcqNH4g+BDXBORcAlW17PC43lrK?=
+ =?us-ascii?Q?QC1h0bypsOOAaylGoZbO1E37A75rN2ZcYXdHHVn5NMa5qZabyFyovFdMEu8A?=
+ =?us-ascii?Q?ZH5fDUm00salVj2dBgwR4cpye2kliNaAKKL5zvtDLznBcSnN/hfVJUCDSBFO?=
+ =?us-ascii?Q?3PUeRWzCti7Chr9EbEQqAthMrihW3g2SLRGoeQQ6ZmumJ1HHNLjcb7zwTDPv?=
+ =?us-ascii?Q?KHTneemcbf2I7suuQeHfOoPsdqjIm5tI+NAzIhi2Jxxs4dBC5ZE5FOznoWbL?=
+ =?us-ascii?Q?PMcR+OViA9DuBQGa1RAHhzxGj2YkPyzIvE8YdqAhj4++P87bWq68N8t/AkC3?=
+ =?us-ascii?Q?XMFazRL2LMofUK3QCxRhc9xRhmF35kcvnW5V7QJDOmP/YtradLDXyhYU9PAv?=
+ =?us-ascii?Q?2FIC/RdRJhn0yLIbVOQvnHqO3AY2QADgWMb+yX0rA5DDzAeNY/xKyaQpoydC?=
+ =?us-ascii?Q?w1/ANdkANy1QrzS+6mG+G0Fe9L0z7kVbxMht2K3AP+1g66kawcrGla4N+6zP?=
+ =?us-ascii?Q?GmVYrCH8VXXXKEi/Tm3OrnDicpA0cWtnNu04QnxmkyuJAInJJm6jkXT4o96R?=
+ =?us-ascii?Q?iBEbLNyQJqUOGhmOb1KHNOazfywXzP8qr2cwkheYk64eiUL/tMSO4lTaDK3F?=
+ =?us-ascii?Q?CUwwLdgk7DhlOXMLHCDdyqSeTm0OwxRpqFZyrhzcgZ2gjPZWjc24lpBlcLY3?=
+ =?us-ascii?Q?+Dal/g1V9Mj5m+DYqilnS9oboPefbSGN9TRR90uWReDsMQWZ5UdR1ZIkU3UP?=
+ =?us-ascii?Q?RLw162BbDmZkheEBVkFH+3gVnseO4Zyk6ExABSs38ydxxIKQ+lkZQehbwzes?=
+ =?us-ascii?Q?bvQk+FNM4dlJWCzqkLDsDiwnWUMF3q1kQZ0OlmBnEFAqECzdy5AmWjwKKsHX?=
+ =?us-ascii?Q?9XJ5YBpyK3l3x3hZWjE39/vivOnb+bHvRqEciB/z21hKN4UmC569MaXqi+/w?=
+ =?us-ascii?Q?8DZIqJebXtLwW61VkhNoRMQ1XbtV6hdPseNvjS9TVU56EvSknRfBgFdWGeOq?=
+ =?us-ascii?Q?sJ30H3ImT98j0m+4x2c4tSGaql87oUKxPNKid/P7lxEpS023BIdJ+XdN2p9R?=
+ =?us-ascii?Q?YsbJCQmI/YfJYsb0wu3x6edxxdDRbd/3C42b7g6+dw8q1yZcNE7OAWKRRyfq?=
+ =?us-ascii?Q?q/spZ5uEdPmzKL2QAh0tfGiYBKgsxwm84vLeyxkvdHt4p8kQ1gWxVQ1CDE3U?=
+ =?us-ascii?Q?CXjjo+bPy+9C/Dz+1UiO0H953l0m0wYGAaH7wX5xkLsAU4IItUywX59ycn2/?=
+ =?us-ascii?Q?DANPQjB3QQw7Zu4P66/54LAlpV9gToZ63o7YB2VT4z5gM8yUhrK4kZDqfVqf?=
+ =?us-ascii?Q?sg=3D=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 37c32991-71bd-4555-8486-08dac86b4b11
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 775ab0cc-95a5-402d-8c2e-08dacb388be4
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR10MB5037.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2022 07:13:57.3935
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2022 20:48:15.3214
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: v1uqM9HFOugXtOB81uMjMLRyEiwCNAXrTV1tAkoYLNJL4nVgrDSyXtyjkv+DIwfnrApiDKRXUnEs8u8tflikYQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR10MB3654
+X-MS-Exchange-CrossTenant-UserPrincipalName: ivbE8p0+sOzN6vTNj2wAAnf24UuSAaWpZ5P3CanJrcURL+fGCr1XnIjbgQzJWrl1M67dcs4NfRb6ZIyGRWFPhFrnDvJ3ypN9y1c5knnbfLQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB7094
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 17 Nov 2022 07:14:02 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10052
+ <cip-dev@lists.cip-project.org>; Sun, 20 Nov 2022 20:48:22 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10053
 
-On 17.11.22 08:10, Jan Kiszka wrote:
-> Hi all,
-> 
-> Kindly be reminded to attend the weekly meeting through IRC to discuss
-> technical topics with CIP kernel today. Our channel is the following:
-> 
->     irc:irc.libera.chat:6667/cip
-> 
-> The IRC meeting is scheduled to UTC (GMT) 12:00:
-> 
-> https://www.timeanddate.com/worldclock/meetingdetails.html?year=2022&month=11&day=17&hour=12&min=0&sec=0&p1=224&p2=179&p3=136&p4=37&p5=241&p6=248
-> 
-> USWest    USEast    UK        DE        TW        JP
-> 05:00     08:00     12:00     13:00     20:00     21:00
-> 
+From: Sven Schultschik <sven.schultschik@siemens.com>
 
-Just checking my agenda for today, and I might still be stuck in lunch
-break at the beginning of the meeting. Please start without me in that case!
+This series of patches will add recipes to build a QEMU setup
+which uses OP-TEE to use RPMB (Replay protected memory) of
+an EMMC for a secure storage. Which is used within Secureboot
+on ARM64.=20
+This secure boot solution works with a platform key (pk),
+a key exchange key (kek) and a signature database (db).
+Therefore the ebg signer, secret boot secrets and snakeoil
+keys are change to this setup.
+QEMU itself does not have an implementation of a
+virtual RPMB. Therefore a patch for u-boot is needed which
+adds this feature to u-boot, but breaks hardware
+compatibility within u-boot. The virtiual RPMB workaround
+is not persistent as well. Therfore a method to copy the keys
+to the deploy folder, mount them into the qemu and provision
+them on every boot is implemented.
+As soon as QEMU has a native persistent RPMB support included,
+the u-boot patch and the mounted keys can be removed.
 
-Jan
+Sven Schultschik (8):
+  add recipe for edk2
+  add recipe for optee qemu arm64
+  Include optee into u-boot
+  add u-boot patch for qemu to support RPMB
+  add recipe for trusted firmware a qemu arm64
+  change ebg sb signer and secrets to pk kek db
+  enhance start-qemu.sh for arm64 secure boot
+  Use of snakeoil keys for qemu use case
 
-> Last meeting minutes:
-> https://ircbot.wl.linuxfoundation.org/meetings/cip/2022/11/cip.2022-11-10-12.03.log.html
-> 
-> * Action items
->   1. Add qemu-riscv to cip-kernel-config - patersonc
->   2. Create MR for disabling smc test in qemu - iwamatsu
-> * Kernel maintenance updates
-> * Kernel release status
->   - 4.4
->   - 4.19
->   - 5.10
-> * Kernel testing
-> * AOB
-> 
-> Jan
+ kas/opt/ebg-secure-boot-snakeoil.yml          |    1 +
+ .../edk2/edk2-platformstandalonemmrpmb.inc    |   56 +
+ .../edk2-platformstandalonemmrpmb_202205.bb   |   12 +
+ recipes-bsp/edk2/files/rules.tmpl             |   61 +
+ .../op-tee/optee-os-qemu-arm64_3.17.0.bb      |   54 +
+ .../trusted-firmware-a/files/rules.tmpl       |   22 +
+ .../trusted-firmware-a-qemu-arm64_2.7.0.bb    |   62 +
+ ...hack.-Breaks-proper-hardware-support.patch | 1375 +++++++++++++++++
+ recipes-bsp/u-boot/files/secure-boot.cfg.tmpl |    9 +-
+ recipes-bsp/u-boot/u-boot-qemu-common.inc     |    9 +
+ .../files/sign_secure_image.sh                |    2 +-
+ .../secure-boot-secrets/files/KEK.auth        |  Bin 0 -> 2066 bytes
+ .../secure-boot-secrets/files/KEK.crt         |   19 +
+ .../secure-boot-secrets/files/KEK.esl         |  Bin 0 -> 839 bytes
+ .../secure-boot-secrets/files/KEK.key         |   28 +
+ .../secure-boot-secrets/files/PK.auth         |  Bin 0 -> 2064 bytes
+ .../secure-boot-secrets/files/PK.crt          |   19 +
+ .../secure-boot-secrets/files/PK.esl          |  Bin 0 -> 837 bytes
+ .../secure-boot-secrets/files/PK.key          |   28 +
+ .../files/PkKek-1-snakeoil.key                |   27 -
+ .../files/PkKek-1-snakeoil.pem                |   21 -
+ .../secure-boot-secrets/files/db.auth         |  Bin 0 -> 2067 bytes
+ .../secure-boot-secrets/files/db.crt          |   19 +
+ .../secure-boot-secrets/files/db.esl          |  Bin 0 -> 837 bytes
+ .../secure-boot-secrets/files/db.key          |   28 +
+ .../secure-boot-secrets.inc                   |   59 +-
+ .../secure-boot-snakeoil_0.1.bb               |    5 +-
+ start-qemu.sh                                 |   20 +-
+ 28 files changed, 1873 insertions(+), 63 deletions(-)
+ create mode 100644 recipes-bsp/edk2/edk2-platformstandalonemmrpmb.inc
+ create mode 100644 recipes-bsp/edk2/edk2-platformstandalonemmrpmb_202205.b=
+b
+ create mode 100755 recipes-bsp/edk2/files/rules.tmpl
+ create mode 100644 recipes-bsp/op-tee/optee-os-qemu-arm64_3.17.0.bb
+ create mode 100755 recipes-bsp/trusted-firmware-a/files/rules.tmpl
+ create mode 100644 recipes-bsp/trusted-firmware-a/trusted-firmware-a-qemu-=
+arm64_2.7.0.bb
+ create mode 100644 recipes-bsp/u-boot/files/0002-rpmb-emulation-hack.-Brea=
+ks-proper-hardware-support.patch
+ create mode 100644 recipes-devtools/secure-boot-secrets/files/KEK.auth
+ create mode 100644 recipes-devtools/secure-boot-secrets/files/KEK.crt
+ create mode 100644 recipes-devtools/secure-boot-secrets/files/KEK.esl
+ create mode 100644 recipes-devtools/secure-boot-secrets/files/KEK.key
+ create mode 100644 recipes-devtools/secure-boot-secrets/files/PK.auth
+ create mode 100644 recipes-devtools/secure-boot-secrets/files/PK.crt
+ create mode 100644 recipes-devtools/secure-boot-secrets/files/PK.esl
+ create mode 100644 recipes-devtools/secure-boot-secrets/files/PK.key
+ delete mode 100644 recipes-devtools/secure-boot-secrets/files/PkKek-1-snak=
+eoil.key
+ delete mode 100644 recipes-devtools/secure-boot-secrets/files/PkKek-1-snak=
+eoil.pem
+ create mode 100644 recipes-devtools/secure-boot-secrets/files/db.auth
+ create mode 100644 recipes-devtools/secure-boot-secrets/files/db.crt
+ create mode 100644 recipes-devtools/secure-boot-secrets/files/db.esl
+ create mode 100644 recipes-devtools/secure-boot-secrets/files/db.key
+
+--=20
+2.30.2
 
 
