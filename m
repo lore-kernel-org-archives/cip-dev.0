@@ -2,83 +2,94 @@ Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D69BC4332F
-	for <webhook@archiver.kernel.org>; Tue, 22 Nov 2022 10:57:29 +0000 (UTC)
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
- by mx.groups.io with SMTP id smtpd.web11.16061.1669114647466641722
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A35D3C433FE
+	for <webhook@archiver.kernel.org>; Tue, 22 Nov 2022 11:02:49 +0000 (UTC)
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+ by mx.groups.io with SMTP id smtpd.web10.15866.1669114960727945890
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Tue, 22 Nov 2022 02:57:27 -0800
+ Tue, 22 Nov 2022 03:02:40 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=dNvp12KZ;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.215.175, mailfrom: bot@kernelci.org)
-Received: by mail-pg1-f175.google.com with SMTP id b62so13805616pgc.0
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Tue, 22 Nov 2022 02:57:27 -0800 (PST)
+ dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=VAPXADV7;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.210.173, mailfrom: bot@kernelci.org)
+Received: by mail-pf1-f173.google.com with SMTP id d192so14080306pfd.0
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Tue, 22 Nov 2022 03:02:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20210112.gappssmtp.com; s=20210112;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=bB2jfa4tKC/3smDJUMKpX7T4P7gwPnmDTNgJBpkXpjU=;
-        b=dNvp12KZzjVdZb5EmsKWS08ov1riQD6t1+sEOJUV8XJYd5k23rkOGhbquhOy9xgdsL
-         uo6R2T4oegduZfjXtCM5Km9r0ythWIvsoK5ws7c9VfmYkztC5swPNFu5VDW622qEbiQv
-         gxABmICQ/oTHjcY62B5TChmiU2esS0RulbAv/Jfd66Y/2brBIRopU4Zl2ii/YLDVTHLW
-         eYztBWvI+HXpnn0DPS4wOxepTp679gaF8kKe0wIhLsMh4VC5ZOf1fcX/+ahDPBVFpM8u
-         cTD9zQfoUqHp4O9zvsLJWXq6t565qO1AKlyh/07lwsvacejQo7bhFGyxTFxs0/wPAgfx
-         7lUw==
+        bh=WADBWrlEJA5d1/VOLr6RnZPLcSKV4j7A9e3FA0fOohY=;
+        b=VAPXADV7hGNgOX5i55vRZqp1gA5oF3pLTV+q+bw6aFQ4II3kl7F8do6IhS+K5DS7H0
+         stjOx0H/RMu50vrWLDbab9xVncSkQy2ow6QuWRbZzsr5XX5+wbioMmxoiJdUdWgMDeDq
+         fHI2Q5RWiUHO0Jz+kyanrfXUwON9H5kPfab1Wpj+r9Q0SUErV6iMWaL38ztIn5HAgdqI
+         zBDjE3ephmiQ70M6saZJCXYE1H9i6VzWwOJE8SIXsGlrv/sEkPxcxuYFrZHHQSVcZEyi
+         w+YiXjS1PT+A6dS9A+iacyVeWCLUBFzA3YcJtWq5RCFU9J1zC2gL2whKuXKyWBGuRyP+
+         VQmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bB2jfa4tKC/3smDJUMKpX7T4P7gwPnmDTNgJBpkXpjU=;
-        b=IcZOHMyFHxU2z7zQ2TJSAfwOrfDa73uzOmNso57SdKKLcY42d4ZA1P/Dy9heroPSFg
-         RXOpS2Rb/hTEeTzRM7fCnGdSpDHUsNl4LE2ahCV/dqYBconMj4flObcrQyzRQ4RPm8MH
-         /MYFSfHxDbzU2zWHij3stDcdD0lUACCbndu2Sy1BRn32+A6W+QTPhy9UvFwr53PIeh+P
-         OmclhB4Uiw1jW6A9mdRLe2DPRR3DXvGO+l+veTFMoxNmxL1NSPSuwGxpIaD2PY99/kEE
-         VDI6w8eeR9DSpM+k8CedCuH+URKS4NZZIw3MP/xlnrGn2GYhcRounjfCJY0NW/uC7xuR
-         KXXg==
-X-Gm-Message-State: ANoB5plroddZV+cu/MMkxMT7eTiQ/DQY/Go7v5F9Y/kuo7VY/ayGa+ga
-	8grmKYd+ZfwjWVBIj1XGVytmOsyPCkgNgSQO1uY=
-X-Google-Smtp-Source: AA0mqf6Oe9quCrcj2SdEaGbimvHITDkI/js+Be4ztPzT/tu6yAEK5SQ1MwGjyZosillOqDggiR7qpw==
-X-Received: by 2002:a05:6a00:298d:b0:561:5d08:761 with SMTP id cj13-20020a056a00298d00b005615d080761mr6818145pfb.14.1669114645575;
-        Tue, 22 Nov 2022 02:57:25 -0800 (PST)
+        bh=WADBWrlEJA5d1/VOLr6RnZPLcSKV4j7A9e3FA0fOohY=;
+        b=t20e7CaQ5NSMZu0d1pVcFUFvCtdTtV8EAaNljeUHTTEKmEWevtXCLOjsFmT24i7zki
+         Ilgd2P+/dfbRFj1dBrw+OCbRzM3DSuKsHDn2mD5EXC61T1OEt6czOaUIM1Y4dF1XDjeb
+         M91qUk4P3MEqdeTtuzCPbryv859EOn7cyNFh4qbiv3W+L6/ngALNS27YDfTTL5vJdD5u
+         NeNe720q6Cd2FwvUNpCReTEXOJPWe/c5E6l92mWdL59utW1l1k7Bb/H4zxu0Q96wVTgB
+         cl9VYPIuOdnBsunqMBli2SoVUhVG1lIYwlNyuwl6eVfMMZyWYJ2JUi/Y9XkvcNg4cNBL
+         Axpg==
+X-Gm-Message-State: ANoB5pkOdxhzB2Z3mRfDPwHR/DQ5agJY5r8x2+PW4yhSgrYQERLHj4Yk
+	iqXnGDsxUcnJEzq4Ru3oSao9u5nRjN+zioikzmM=
+X-Google-Smtp-Source: AA0mqf4ZmiJfFJlw+HPwcQuVs+4w0MNQC25uHHYsrTZGevqTN3bAmid3DUD4NZuiS19g39JxVEZIUw==
+X-Received: by 2002:a63:544b:0:b0:477:6336:dddf with SMTP id e11-20020a63544b000000b004776336dddfmr4285229pgm.371.1669114957703;
+        Tue, 22 Nov 2022 03:02:37 -0800 (PST)
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id o71-20020a62cd4a000000b0056cee8af3a5sm10371633pfg.29.2022.11.22.02.57.24
+        by smtp.gmail.com with ESMTPSA id 135-20020a62178d000000b0056ba6952e40sm10410336pfx.181.2022.11.22.03.02.36
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Nov 2022 02:57:25 -0800 (PST)
-Message-ID: <637cab15.620a0220.f2104.f40d@mx.google.com>
-Date: Tue, 22 Nov 2022 02:57:25 -0800 (PST)
+        Tue, 22 Nov 2022 03:02:36 -0800 (PST)
+Message-ID: <637cac4c.620a0220.c1354.fb64@mx.google.com>
+Date: Tue, 22 Nov 2022 03:02:36 -0800 (PST)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.4.y-cip
+X-Kernelci-Branch: ci/pavel/linux-test
 X-Kernelci-Kernel: v4.4.302-cip70-236-g69445bc0d4209
 X-Kernelci-Report-Type: build
-X-Kernelci-Tree: cip
-Subject: cip/linux-4.4.y-cip build: 180 builds: 0 failed, 180 passed,
- 41 warnings (v4.4.302-cip70-236-g69445bc0d4209)
-To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
- kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
+X-Kernelci-Tree: cip-gitlab
+Subject: cip-gitlab/ci/pavel/linux-test build: 185 builds: 5 failed, 180 passed,
+ 6 errors, 41 warnings (v4.4.302-cip70-236-g69445bc0d4209)
+To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
 From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 22 Nov 2022 10:57:29 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10068
+ <cip-dev@lists.cip-project.org>; Tue, 22 Nov 2022 11:02:49 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10069
 
-cip/linux-4.4.y-cip build: 180 builds: 0 failed, 180 passed, 41 warnings (v=
-4.4.302-cip70-236-g69445bc0d4209)
+cip-gitlab/ci/pavel/linux-test build: 185 builds: 5 failed, 180 passed, 6 e=
+rrors, 41 warnings (v4.4.302-cip70-236-g69445bc0d4209)
 
-Full Build Summary: https://kernelci.org/build/cip/branch/linux-4.4.y-cip/k=
-ernel/v4.4.302-cip70-236-g69445bc0d4209/
+Full Build Summary: https://kernelci.org/build/cip-gitlab/branch/ci%2Fpavel=
+%2Flinux-test/kernel/v4.4.302-cip70-236-g69445bc0d4209/
 
-Tree: cip
-Branch: linux-4.4.y-cip
+Tree: cip-gitlab
+Branch: ci/pavel/linux-test
 Git Describe: v4.4.302-cip70-236-g69445bc0d4209
 Git Commit: 69445bc0d4209b0634d1f43657fd58f708cadf81
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+Git URL: https://gitlab.com/cip-project/cip-kernel/linux-cip.git
 Built: 5 unique architectures
 
-Warnings Detected:
+Build Failures Detected:
+
+arm:
+    rpc_defconfig: (gcc-10) FAIL
+
+mips:
+    fuloong2e_defconfig: (gcc-10) FAIL
+    ip27_defconfig: (gcc-10) FAIL
+    ip28_defconfig: (gcc-10) FAIL
+    lemote2f_defconfig: (gcc-10) FAIL
+
+Errors and Warnings Detected:
 
 arc:
 
@@ -90,6 +101,7 @@ arm:
     mxs_defconfig (gcc-10): 1 warning
     omap1_defconfig (gcc-10): 1 warning
     omap2plus_defconfig (gcc-10): 1 warning
+    rpc_defconfig (gcc-10): 2 errors
     s3c2410_defconfig (gcc-10): 1 warning
     s3c6400_defconfig (gcc-10): 2 warnings
 
@@ -97,7 +109,9 @@ i386:
     i386_defconfig (gcc-10): 4 warnings
 
 mips:
+    fuloong2e_defconfig (gcc-10): 2 errors
     ip22_defconfig (gcc-10): 1 warning
+    lemote2f_defconfig (gcc-10): 2 errors
     mtx1_defconfig (gcc-10): 3 warnings
 
 x86_64:
@@ -106,6 +120,13 @@ x86_64:
     x86_64_defconfig (gcc-10): 8 warnings
     x86_64_defconfig+x86-chromebook (gcc-10): 8 warnings
 
+Errors summary:
+
+    4    cc1: error: =E2=80=98-mloongson-mmi=E2=80=99 must be used with =E2=
+=80=98-mhard-float=E2=80=99
+    1    arm-linux-gnueabihf-gcc: error: unrecognized -march target: armv3
+    1    arm-linux-gnueabihf-gcc: error: missing argument to =E2=80=98-marc=
+h=3D=E2=80=99
 
 Warnings summary:
 
@@ -168,6 +189,11 @@ section mismatches
 
 ---------------------------------------------------------------------------=
 -----
+allnoconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---------------------------------------------------------------------------=
+-----
 allnoconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 4 warnings, 0 sectio=
 n mismatches
 
@@ -183,23 +209,18 @@ given and no register operands; using default for `btr'
 
 ---------------------------------------------------------------------------=
 -----
+allnoconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---------------------------------------------------------------------------=
+-----
 allnoconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
 mismatches
 
 ---------------------------------------------------------------------------=
 -----
-allnoconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
-
----------------------------------------------------------------------------=
------
 allnoconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
 mismatches
-
----------------------------------------------------------------------------=
------
-allnoconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -416,6 +437,17 @@ section mismatches
 
 ---------------------------------------------------------------------------=
 -----
+fuloong2e_defconfig (mips, gcc-10) =E2=80=94 FAIL, 2 errors, 0 warnings, 0 =
+section mismatches
+
+Errors:
+    cc1: error: =E2=80=98-mloongson-mmi=E2=80=99 must be used with =E2=80=
+=98-mhard-float=E2=80=99
+    cc1: error: =E2=80=98-mloongson-mmi=E2=80=99 must be used with =E2=80=
+=98-mhard-float=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
 gpr_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
 n mismatches
 
@@ -500,6 +532,16 @@ ast [-Wint-conversion]
 
 ---------------------------------------------------------------------------=
 -----
+ip27_defconfig (mips, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+ip28_defconfig (mips, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
 ip32_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
 on mismatches
 
@@ -542,6 +584,17 @@ n mismatches
 -----
 lasat_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
 ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+lemote2f_defconfig (mips, gcc-10) =E2=80=94 FAIL, 2 errors, 0 warnings, 0 s=
+ection mismatches
+
+Errors:
+    cc1: error: =E2=80=98-mloongson-mmi=E2=80=99 must be used with =E2=80=
+=98-mhard-float=E2=80=99
+    cc1: error: =E2=80=98-mloongson-mmi=E2=80=99 must be used with =E2=80=
+=98-mhard-float=E2=80=99
 
 ---------------------------------------------------------------------------=
 -----
@@ -889,6 +942,16 @@ ion mismatches
 
 ---------------------------------------------------------------------------=
 -----
+rpc_defconfig (arm, gcc-10) =E2=80=94 FAIL, 2 errors, 0 warnings, 0 section=
+ mismatches
+
+Errors:
+    arm-linux-gnueabihf-gcc: error: unrecognized -march target: armv3
+    arm-linux-gnueabihf-gcc: error: missing argument to =E2=80=98-march=3D=
+=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
 rt305x_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
 tion mismatches
 
@@ -1014,21 +1077,6 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
-tinyconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
-
----------------------------------------------------------------------------=
------
-tinyconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
-
----------------------------------------------------------------------------=
------
-tinyconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
-smatches
-
----------------------------------------------------------------------------=
------
 tinyconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 3 warnings, 0 section=
  mismatches
 
@@ -1042,8 +1090,23 @@ given and no register operands; using default for `btr'
 
 ---------------------------------------------------------------------------=
 -----
+tinyconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
+smatches
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---------------------------------------------------------------------------=
+-----
 tinyconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
 smatches
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
 
 ---------------------------------------------------------------------------=
 -----
