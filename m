@@ -1,67 +1,94 @@
-Return-Path: <uli@fpond.eu>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB7DC4332F
-	for <webhook@archiver.kernel.org>; Tue, 22 Nov 2022 00:27:46 +0000 (UTC)
-Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [81.169.146.217])
- by mx.groups.io with SMTP id smtpd.web11.7019.1669076856676275320
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56F31C4332F
+	for <webhook@archiver.kernel.org>; Tue, 22 Nov 2022 10:01:09 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web10.15007.1669111259403667462
  for <cip-dev@lists.cip-project.org>;
- Mon, 21 Nov 2022 16:27:37 -0800
+ Tue, 22 Nov 2022 02:01:00 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0002 header.b=SmIA23Le;
- spf=none, err=permanent DNS error (domain: fpond.eu, ip: 81.169.146.217, mailfrom: uli@fpond.eu)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1669076853;
-    s=strato-dkim-0002; d=fpond.eu;
-    h=Subject:References:In-Reply-To:Message-ID:To:From:Date:Cc:Date:From:
-    Subject:Sender;
-    bh=ldH5nJGjsmiO1HYpR+wnz5tYt8Xz4qZ1YVTS6cMYCvM=;
-    b=SmIA23LeN6dY0O6CGAp/YM8NjjfLbxsmgHpgJB5E2LL1Yjolo2PQVqmRs8fH2SLorg
-    /mR55ir4Ns1kXEDuJhc4//2zJsJTcKXvZ9zxf43Z975sA3hf32Ttv4wV/dKHF9lmDVi2
-    AjcHO6aD4RtGGw/dF8IA4mekTnaOptggdBXfOr4zpFA303ZQIi82NLy2SR1P0R8Ma0Tr
-    J9DznjwCefQCRjC+/dZtvurATqo2bNkHla1sg2Uylc6F+B1g0USWkTVG6k/hHpmaMjaK
-    9VKWgD6QAvG0B4DkvGBH/f9QX5prXybOtnNtOuIVb+u0/r3oyutWylKhwtmEoMMsaaqx
-    vfMw==
-Authentication-Results: strato.com;
-    dkim=none
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvv3qxio1R8fCv/x64jlM="
-X-RZG-CLASS-ID: mo00
-Received: from oxapp06-05.back.ox.d0m.de
-    by smtp-ox.front (RZmta 48.2.1 AUTH)
-    with ESMTPSA id y28384yAM0RXuir
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-	(Client did not present a certificate);
-    Tue, 22 Nov 2022 01:27:33 +0100 (CET)
-Date: Tue, 22 Nov 2022 01:27:33 +0100 (CET)
-From: Ulrich Hecht <uli@fpond.eu>
-To: cip-dev@lists.cip-project.org, Pavel Machek <pavel@denx.de>
-Message-ID: <1082906324.934329.1669076853699@webmail.strato.com>
-In-Reply-To: <Y3Ea4T2hx8Sq/CdK@duo.ucw.cz>
-References: <Y3Ea4T2hx8Sq/CdK@duo.ucw.cz>
+ dkim=missing; spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 988251C09DB; Tue, 22 Nov 2022 11:00:53 +0100 (CET)
+Date: Tue, 22 Nov 2022 11:00:53 +0100
+From: Pavel Machek <pavel@denx.de>
+To: Ulrich Hecht <uli@fpond.eu>
+Cc: cip-dev@lists.cip-project.org
 Subject: Re: [cip-dev] 4.4-st-rc updated with patches up-to 4.9.328
+Message-ID: <Y3yd1dtgnmcMKQu6@duo.ucw.cz>
+References: <Y3Ea4T2hx8Sq/CdK@duo.ucw.cz>
+ <1082906324.934329.1669076853699@webmail.strato.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v7.10.6-Rev30
-X-Originating-Client: open-xchange-appsuite
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="k/21GEn2ir6eX8tK"
+Content-Disposition: inline
+In-Reply-To: <1082906324.934329.1669076853699@webmail.strato.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 22 Nov 2022 00:27:46 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10065
+ <cip-dev@lists.cip-project.org>; Tue, 22 Nov 2022 10:01:09 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10066
 
 
-> On 11/13/2022 5:27 PM CET Pavel Machek <pavel@denx.de> wrote:
-> Results were pushed to -st-rc.
+--k/21GEn2ir6eX8tK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I have reviewed the new commits.
+Hi!
 
-"fbdev: fb_pm2fb: Avoid potential divide by zero error" has been applied twice.
+> > Results were pushed to -st-rc.
+>=20
+> I have reviewed the new commits.
+>=20
+> "fbdev: fb_pm2fb: Avoid potential divide by zero error" has been applied =
+twice.
+>=20
+> Other than that, everything looks good to me.
 
-Other than that, everything looks good to me.
+Thanks a lot for the review. And... good catch, problem seems to be in
+4.9, too. Do you want to talk to Greg to get it fixed? (I can do it,
+but this way you get the credit :-) ). It is just a bit of extra code,
+so I will not specifically fix it here. (Should mean faster 4.4
+release).
 
-CU
-Uli
+
+        if (lpitch * var->yres_virtual > info->fix.smem_len) {
+                DPRINTK("no memory for screen (%ux%ux%u)\n",
+                        var->xres, var->yres_virtual, var->bits_per_pixel);
+                return -EINVAL;
+        }
+
+	if (!var->pixclock) {
+                DPRINTK("pixclock is zero\n");
+	        return -EINVAL;
+        }
+
+        if (!var->pixclock) {
+                DPRINTK("pixclock is zero\n");
+                return -EINVAL;
+	}
+
+	if (PICOS2KHZ(var->pixclock) > PM2_MAX_PIXCLOCK) {
+
+
+Thanks and best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--k/21GEn2ir6eX8tK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCY3yd1QAKCRAw5/Bqldv6
+8lamAJ41A6CFxGmhY84yRJQVu8L3sHiuWQCfbrUXJpxt4pyog4NS2VKBzo3A/HI=
+=vC0E
+-----END PGP SIGNATURE-----
+
+--k/21GEn2ir6eX8tK--
 
