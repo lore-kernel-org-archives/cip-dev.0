@@ -2,32 +2,32 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28F8DC04FDE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34EB7C4167B
 	for <webhook@archiver.kernel.org>; Fri,  9 Dec 2022 14:58:34 +0000 (UTC)
-Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
- by mx.groups.io with SMTP id smtpd.web10.3361.1670597912293675122
+Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
+ by mx.groups.io with SMTP id smtpd.web10.3362.1670597912572927115
  for <cip-dev@lists.cip-project.org>;
  Fri, 09 Dec 2022 06:58:33 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=o7BwXqHa;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-51332-20221209145829b79c0980716c4b406a-bikecf@rts-flowmailer.siemens.com)
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20221209145829b79c0980716c4b406a
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=TQnrTVFT;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225, mailfrom: fm-51332-20221209145829784db40f0266b16117-ruiug9@rts-flowmailer.siemens.com)
+Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 20221209145829784db40f0266b16117
         for <cip-dev@lists.cip-project.org>;
-        Fri, 09 Dec 2022 15:58:30 +0100
+        Fri, 09 Dec 2022 15:58:29 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=fhGePBZsI9OWlZXpepBPy74nCvkb2pUcb1aiPEcJLo0=;
- b=o7BwXqHa8SstnZGgKgnT4KGWqX30xCij0qRtfZnoxR/g4vmF7Wb/bJD7AYgWrxFhS/lyO6
- yt9wzs/DqA7Wmb3G2lICcD6trpMuBAHiE+OvE1VhqW6vjhr8qQblyYqSFbOtlE78uykA/RKf
- q6QGSO1D617um5oVODQljTWXTZv5A=;
+ bh=b/QYV4UkerO761+B8jJS7feuEFj282lpPZfy/Dx9jAk=;
+ b=TQnrTVFTN47rVHT8Nmoq4DdhA43P2VZGcCQBsTuUfIhbo6UW+Xq8/Us2RAO4YOKLOqz39/
+ zNL5uRjT2/0OPBbuIUU9C4vnveMQyoyxyCraxr1x1LsteMySwt5XxjAPo9dEFgMxqc/wxtR9
+ MzWkSmiWqP0PHIsnzqT4J9R77A4ng=;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org,
 	felix.moessbauer@siemens.com,
 	jan.kiszka@siemens.com
-Subject: [cip-dev][isar-cip-core][PATCH v2 3/4] image_uuid: read target_image_uuid
-Date: Fri,  9 Dec 2022 15:58:26 +0100
-Message-Id: <20221209145827.1309521-4-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH v2 1/4] core/images/swupdate.inc: Move image_uuid to swupdate.inc
+Date: Fri,  9 Dec 2022 15:58:24 +0100
+Message-Id: <20221209145827.1309521-2-Quirin.Gylstorff@siemens.com>
 In-Reply-To: <20221209145827.1309521-1-Quirin.Gylstorff@siemens.com>
 References: <20221209145827.1309521-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
@@ -38,60 +38,63 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 09 Dec 2022 14:58:34 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10175
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10174
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-This writes the target_image_uuid to the Variable TARGET_IMAGE_UUID
-which can be used to validate a update against the root file system.
-
-"${@} is evaluated when the variable is expanded. Variables are expanded
-when the are used." [1]
-
-[1]: https://www.openembedded.org/pipermail/bitbake-devel/2012-April/011704.html
+Prerequisite for the changes to check the uuid.
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- classes/image_uuid.bbclass | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ kas/opt/ebg-swu.yml                |  2 +-
+ recipes-core/images/image-uuid.inc | 12 ------------
+ recipes-core/images/swupdate.inc   |  1 +
+ 3 files changed, 2 insertions(+), 13 deletions(-)
+ delete mode 100644 recipes-core/images/image-uuid.inc
 
-diff --git a/classes/image_uuid.bbclass b/classes/image_uuid.bbclass
-index 277941b..3e2e3de 100644
---- a/classes/image_uuid.bbclass
-+++ b/classes/image_uuid.bbclass
-@@ -13,6 +13,8 @@
- inherit rootfs
- inherit image
+diff --git a/kas/opt/ebg-swu.yml b/kas/opt/ebg-swu.yml
+index ce37c36..6aa411b 100644
+--- a/kas/opt/ebg-swu.yml
++++ b/kas/opt/ebg-swu.yml
+@@ -20,7 +20,7 @@ local_conf_header:
+     SWUPDATE_BOOTLOADER = "efibootguard"
+     IMAGE_INSTALL_remove = "u-boot-script"
+   ebg_swu_image_options: |
+-    CIP_IMAGE_OPTIONS_append = " efibootguard.inc image-uuid.inc"
++    CIP_IMAGE_OPTIONS_append = " efibootguard.inc"
+   initramfs: |
+     INITRAMFS_INSTALL_append = " initramfs-abrootfs-hook"
+   firmware-binaries: |
+diff --git a/recipes-core/images/image-uuid.inc b/recipes-core/images/image-uuid.inc
+deleted file mode 100644
+index 5e5a727..0000000
+--- a/recipes-core/images/image-uuid.inc
++++ /dev/null
+@@ -1,12 +0,0 @@
+-#
+-# CIP Core, generic profile
+-#
+-# Copyright (c) Siemens AG, 2022
+-#
+-# Authors:
+-#  Jan Kiszka <jan.kiszka@siemens.com>
+-#
+-# SPDX-License-Identifier: MIT
+-#
+-
+-inherit image_uuid
+diff --git a/recipes-core/images/swupdate.inc b/recipes-core/images/swupdate.inc
+index edc41a0..6cf9bb1 100644
+--- a/recipes-core/images/swupdate.inc
++++ b/recipes-core/images/swupdate.inc
+@@ -9,6 +9,7 @@
+ # SPDX-License-Identifier: MIT
+ #
  
-+# Generate the uuid from BB_TASKHASH to ensure a new
-+# hash on each rebuild
- def generate_image_uuid(d):
-     import uuid
++inherit image_uuid
+ inherit swupdate
+ inherit read-only-rootfs
  
-@@ -23,6 +25,23 @@ def generate_image_uuid(d):
- 
- IMAGE_UUID ?= "${@generate_image_uuid(d)}"
- 
-+def read_target_image_uuid(d):
-+    import os.path
-+
-+    deploy_dir = d.getVar("DEPLOY_DIR_IMAGE")
-+    image_full_name = d.getVar("IMAGE_FULLNAME")
-+    uuid_file = f"{deploy_dir}/{image_full_name}.uuid.env"
-+    if not os.path.isfile(uuid_file):
-+        return None
-+
-+    target_image_uuid = None
-+    with open(uuid_file, "r") as f:
-+       uuid_file_content = f.read()
-+       target_image_uuid = uuid_file_content.split('=')[1].strip(' \t\n\r').strip('\"')
-+    return target_image_uuid
-+
-+TARGET_IMAGE_UUID = "${@read_target_image_uuid(d)}"
-+
- do_generate_image_uuid[vardeps] += "IMAGE_UUID"
- do_generate_image_uuid[depends] = "buildchroot-target:do_build"
- do_generate_image_uuid[dirs] = "${DEPLOY_DIR_IMAGE}"
 -- 
 2.35.1
 
