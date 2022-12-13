@@ -2,21 +2,21 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E01BC10F1D
-	for <webhook@archiver.kernel.org>; Tue, 13 Dec 2022 17:23:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA1B2C4167B
+	for <webhook@archiver.kernel.org>; Tue, 13 Dec 2022 17:23:38 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.79731.1670952204464812552
+ by mx.groups.io with SMTP id smtpd.web10.79736.1670952218516071572
  for <cip-dev@lists.cip-project.org>;
- Tue, 13 Dec 2022 09:23:24 -0800
+ Tue, 13 Dec 2022 09:23:38 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.96,241,1665414000"; 
-   d="scan'208";a="143214805"
+   d="scan'208";a="143214823"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 14 Dec 2022 02:23:22 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 14 Dec 2022 02:23:38 +0900
 Received: from localhost.localdomain (unknown [10.226.93.72])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id D24AE4053D02;
-	Wed, 14 Dec 2022 02:23:20 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 077E94053D07;
+	Wed, 14 Dec 2022 02:23:35 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -24,9 +24,9 @@ To: cip-dev@lists.cip-project.org,
 Cc: Chris Paterson <chris.paterson2@renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 1/7] can: rcar_canfd: rcar_canfd_handle_global_receive(): fix IRQ storm on global FIFO receive
-Date: Tue, 13 Dec 2022 17:23:10 +0000
-Message-Id: <20221213172316.1848032-2-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 7/7] can: rcar_canfd: Add multi_channel_irqs to struct rcar_canfd_hw_info
+Date: Tue, 13 Dec 2022 17:23:16 +0000
+Message-Id: <20221213172316.1848032-8-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20221213172316.1848032-1-biju.das.jz@bp.renesas.com>
 References: <20221213172316.1848032-1-biju.das.jz@bp.renesas.com>
@@ -35,65 +35,83 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 13 Dec 2022 17:23:29 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10222
+ <cip-dev@lists.cip-project.org>; Tue, 13 Dec 2022 17:23:38 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10228
 
-commit 702de2c21eed04c67cefaaedc248ef16e5f6b293 upstream.
+commit ea6ff7792203ad6786bda75d1dabf33311c8bef4 upstream.
 
-We are seeing an IRQ storm on the global receive IRQ line under heavy
-CAN bus load conditions with both CAN channels enabled.
+RZ/G2L has separate IRQ lines for tx and error interrupt for each
+channel whereas R-Car has a combined IRQ line for all the channel
+specific tx and error interrupts.
 
-Conditions:
+Add multi_channel_irqs to struct rcar_canfd_hw_info to select the
+driver to choose between combined and separate irq registration for
+channel interrupts. This patch also removes enum rcanfd_chip_id and
+chip_id from both struct rcar_canfd_hw_info, as it is unused.
 
-The global receive IRQ line is shared between can0 and can1, either of
-the channels can trigger interrupt while the other channel's IRQ line
-is disabled (RFIE).
-
-When global a receive IRQ interrupt occurs, we mask the interrupt in
-the IRQ handler. Clearing and unmasking of the interrupt is happening
-in rx_poll(). There is a race condition where rx_poll() unmasks the
-interrupt, but the next IRQ handler does not mask the IRQ due to
-NAPIF_STATE_MISSED flag (e.g.: can0 RX FIFO interrupt is disabled and
-can1 is triggering RX interrupt, the delay in rx_poll() processing
-results in setting NAPIF_STATE_MISSED flag) leading to an IRQ storm.
-
-This patch fixes the issue by checking IRQ active and enabled before
-handling the IRQ on a particular channel.
-
-Fixes: dd3bd23eb438 ("can: rcar_canfd: Add Renesas R-Car CAN FD driver")
-Suggested-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/all/20221025155657.1426948-2-biju.das.jz@bp.renesas.com
-Cc: stable@vger.kernel.org
-[mkl: adjust commit message]
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/all/20221027082158.95895-6-biju.das.jz@bp.renesas.com
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
-[biju: removed gpriv from RCANFD_RFCC_RFIE macro]
+[biju: Removed RCar V3U related changes]
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/can/rcar/rcar_canfd.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/can/rcar/rcar_canfd.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
-index feba57833cdc..f93b44ae4121 100644
+index fa0b3de0b628..987a899d4527 100644
 --- a/drivers/net/can/rcar/rcar_canfd.c
 +++ b/drivers/net/can/rcar/rcar_canfd.c
-@@ -1106,11 +1106,13 @@ static void rcar_canfd_handle_global_receive(struct rcar_canfd_global *gpriv, u3
- {
- 	struct rcar_canfd_channel *priv = gpriv->ch[ch];
- 	u32 ridx = ch + RCANFD_RFFIFO_IDX;
--	u32 sts;
-+	u32 sts, cc;
+@@ -41,11 +41,6 @@
  
- 	/* Handle Rx interrupts */
- 	sts = rcar_canfd_read(priv->base, RCANFD_RFSTS(ridx));
--	if (likely(sts & RCANFD_RFSTS_RFIF)) {
-+	cc = rcar_canfd_read(priv->base, RCANFD_RFCC(ridx));
-+	if (likely(sts & RCANFD_RFSTS_RFIF &&
-+		   cc & RCANFD_RFCC_RFIE)) {
- 		if (napi_schedule_prep(&priv->napi)) {
- 			/* Disable Rx FIFO interrupts */
- 			rcar_canfd_clear_bit(priv->base,
+ #define RCANFD_DRV_NAME			"rcar_canfd"
+ 
+-enum rcanfd_chip_id {
+-	RENESAS_RCAR_GEN3 = 0,
+-	RENESAS_RZG2L,
+-};
+-
+ /* Global register bits */
+ 
+ /* RSCFDnCFDGRMCFG */
+@@ -495,10 +490,10 @@ enum rcar_canfd_fcanclk {
+ struct rcar_canfd_global;
+ 
+ struct rcar_canfd_hw_info {
+-	enum rcanfd_chip_id chip_id;
+ 	u8 postdiv;
+ 	/* hardware features */
+ 	unsigned shared_global_irqs:1;	/* Has shared global irqs */
++	unsigned multi_channel_irqs:1;	/* Has multiple channel irqs */
+ };
+ 
+ /* Channel priv data */
+@@ -570,14 +565,13 @@ static const struct can_bittiming_const rcar_canfd_bittiming_const = {
+ };
+ 
+ static const struct rcar_canfd_hw_info rcar_gen3_hw_info = {
+-	.chip_id = RENESAS_RCAR_GEN3,
+ 	.postdiv = 2,
+ 	.shared_global_irqs = 1,
+ };
+ 
+ static const struct rcar_canfd_hw_info rzg2l_hw_info = {
+-	.chip_id = RENESAS_RZG2L,
+ 	.postdiv = 1,
++	.multi_channel_irqs = 1,
+ };
+ 
+ /* Helper functions */
+@@ -1665,7 +1659,7 @@ static int rcar_canfd_channel_probe(struct rcar_canfd_global *gpriv, u32 ch,
+ 	priv->can.clock.freq = fcan_freq;
+ 	dev_info(&pdev->dev, "can_clk rate is %u\n", priv->can.clock.freq);
+ 
+-	if (info->chip_id == RENESAS_RZG2L) {
++	if (info->multi_channel_irqs) {
+ 		char *irq_name;
+ 		int err_irq;
+ 		int tx_irq;
 -- 
 2.25.1
 
