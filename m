@@ -2,79 +2,79 @@ Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E7BDC4332F
-	for <webhook@archiver.kernel.org>; Mon, 19 Dec 2022 22:36:19 +0000 (UTC)
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
- by mx.groups.io with SMTP id smtpd.web11.36338.1671489373621753804
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 298E4C4332F
+	for <webhook@archiver.kernel.org>; Mon, 19 Dec 2022 23:09:49 +0000 (UTC)
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+ by mx.groups.io with SMTP id smtpd.web11.37128.1671491381887735015
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Mon, 19 Dec 2022 14:36:13 -0800
+ Mon, 19 Dec 2022 15:09:42 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=2v6Se85Q;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.216.43, mailfrom: bot@kernelci.org)
-Received: by mail-pj1-f43.google.com with SMTP id fy4so10602601pjb.0
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Mon, 19 Dec 2022 14:36:13 -0800 (PST)
+ dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=dmfN6Gc7;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.210.181, mailfrom: bot@kernelci.org)
+Received: by mail-pf1-f181.google.com with SMTP id 65so7335581pfx.9
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Mon, 19 Dec 2022 15:09:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20210112.gappssmtp.com; s=20210112;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=R+5rKTjGMfOjKf4L5jpY73tHi4asEzQ5l5SZ53hSsjo=;
-        b=2v6Se85QGqQbg/aX3XP0Z8b/nSFa7NMhyYy4fuYAbMDo49dzyj3zf8e7fbxz9Mxl9o
-         8bM5nUVYolVMnskYkrh0Y67I9Ba4AOyOEkGj7PUIk98f4NPNsII0QQ3J6cvbAgTriihC
-         mzyy9VGLlvSniU7WNV7wAnC70ipUG5S5UVL6T0pstTGQcBWpeLEGuxCgjQSi04hG97Db
-         Q9Pv0/NbPhruWDlgnoTqGsBcm//K0Q59G0WkafeJUZkxovn4XeJscR0xcPByaMiHurXj
-         LZffcAOrp2jYDxJD16wZL/N3UJwL5Fxn/bN8T6kDiy30N+gMQiYp7NqLaD3NVao6xNph
-         swDw==
+        bh=koxfjdlGRBLWOwWg948lUAAnGWGK4txgos6SStUueBk=;
+        b=dmfN6Gc7IwqThFE/+R5ocWWW3AS324RltLywU8MVF7ikpuh98iV6e50ffEvWLDSyhR
+         /YcefFo935RPuHrA4mocwbx0kXY3pTqkQ/ny7C544J2UYQtqB8f3bmqFhdSHf/+GT7Vp
+         ZEvyxASNeYCjfVW6rf3naIWfqyg5f/UR00sakF29PAwMUcIk5L71Vcz8DRAlvLfQEqmW
+         fFYlfzKyTYwK0lxLprqWM7ahKtRcrWdqAubjRMmh+q7Wf5vuoZj7ltW6KmSUKjOk/R11
+         mt102suwq3eHLABIk3ES7bYNxoXVm4GG42lBZCqCFhllx0ikLVoQm7kHkiX5lJyo+ESZ
+         v2Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=R+5rKTjGMfOjKf4L5jpY73tHi4asEzQ5l5SZ53hSsjo=;
-        b=Ukk+mEoj8RGEP+anYHQ5ML0iF61iOX5G6VWzUr0v4MgcHqDkTn3FC/w3Nmk/QKCA2M
-         andZCikqWUH0l3FK9xIe31pBQatPdfeIwzvObLEkuQY3oBrX/iQyE9mt44/JHD9fADrz
-         tXm1e7qo2/17Skzks5WCJg9BycK/dHNvTiSnMy1ZwWW9ghBwcCMMQ7KC93p+ppnJGR/7
-         I991Fv0UNhPkzFrsJLkc9nTr6OrsthwYMb6TaMmKst0KS29uNKphvy1/PrUyQwfyYEyd
-         ZTbYb2XqyDjBuBzugxwNKpziyZALLmm93ajVGH+xm7rYWct+syb4HQ4179iUC9JtrlfJ
-         Spog==
-X-Gm-Message-State: AFqh2kqVtxA/Ih9DFIPDImmj3Z1VF5dP+QLS6NRpeoXMTt0nZ7yOI03G
-	mYmgaUQn4OXs08CpVICzaiw/PoagLFmFedSgCAs=
-X-Google-Smtp-Source: AMrXdXtgdeoY5L0U/IWxQx44dG9beK7ZSuaPfNqkxyzEexAGXZIoDzaPBJBgDxkXCEsJ1GfBgyU6nA==
-X-Received: by 2002:a17:902:f095:b0:191:191f:e79f with SMTP id p21-20020a170902f09500b00191191fe79fmr6005390pla.24.1671489372019;
-        Mon, 19 Dec 2022 14:36:12 -0800 (PST)
+        bh=koxfjdlGRBLWOwWg948lUAAnGWGK4txgos6SStUueBk=;
+        b=vYTQDEnpYnki3uV0X1m6RKFVmZMEwIsBG/LZnqYEMztQVuZQhz6oaWRPVyLBNdabQ1
+         V6VnG0g/rT2ZsHzcKBapHOpkzHFIUYqYu8OC463d3NS9LPQhuGSbqWJ5MMYSVqfbb6Ku
+         bI5ZqLaSqUQMjwWteBi/C9UFq14Il426seX2EorOxiUbYJZL8yV0/Y1fhwfkYjlGbpCT
+         4o9k91CT26t/5smxaspgVOEYpjGdCjcaeha4c5mZE+P3zYr86OYSsSbh0jojH2tqppee
+         ck0krZgikuAdsZzmAeyRGHlbmgtrNed6eqbw9n49WN3NFLt0d7p4yD5xEl6p8XtZjNW6
+         DYAw==
+X-Gm-Message-State: AFqh2kpGsNi1grt2G9CDYYTWi6So7m/gPtrde2OJasSD5M5YSxR36fIu
+	uyyupoo6wymE31vG0RXkMbNi9fiJy+VhPflOQM8=
+X-Google-Smtp-Source: AMrXdXuHiWc3AFN55fAvB/mlCOpBkavbu+R2IDviEqZUYQCMeswxs4ltcJxhv9fxdyHejzF0oyeTwg==
+X-Received: by 2002:a62:6105:0:b0:577:a0d:b091 with SMTP id v5-20020a626105000000b005770a0db091mr11842998pfb.14.1671491379903;
+        Mon, 19 Dec 2022 15:09:39 -0800 (PST)
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id s5-20020a656445000000b0046feca0883fsm6659327pgv.64.2022.12.19.14.36.11
+        by smtp.gmail.com with ESMTPSA id x4-20020aa79a44000000b005769cee6735sm7176060pfj.43.2022.12.19.15.09.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Dec 2022 14:36:11 -0800 (PST)
-Message-ID: <63a0e75b.650a0220.aa3d4.ad62@mx.google.com>
-Date: Mon, 19 Dec 2022 14:36:11 -0800 (PST)
+        Mon, 19 Dec 2022 15:09:39 -0800 (PST)
+Message-ID: <63a0ef33.a70a0220.b085.cb3d@mx.google.com>
+Date: Mon, 19 Dec 2022 15:09:39 -0800 (PST)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: v4.4-st20-234-g4e6ec7162c8e
+X-Kernelci-Kernel: v4.4-st20-1094-gf7138ca4b303
 X-Kernelci-Tree: cip
-X-Kernelci-Branch: linux-4.4.y-st
+X-Kernelci-Branch: linux-4.4.y-st-rt
 X-Kernelci-Report-Type: build
-Subject: cip/linux-4.4.y-st build: 186 builds: 4 failed, 182 passed, 4 errors,
- 42 warnings (v4.4-st20-234-g4e6ec7162c8e)
+Subject: cip/linux-4.4.y-st-rt build: 186 builds: 4 failed, 182 passed,
+ 4 errors, 42 warnings (v4.4-st20-1094-gf7138ca4b303)
 To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
  kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
 From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 19 Dec 2022 22:36:19 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10254
+ <cip-dev@lists.cip-project.org>; Mon, 19 Dec 2022 23:09:49 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10255
 
-cip/linux-4.4.y-st build: 186 builds: 4 failed, 182 passed, 4 errors, 42 wa=
-rnings (v4.4-st20-234-g4e6ec7162c8e)
+cip/linux-4.4.y-st-rt build: 186 builds: 4 failed, 182 passed, 4 errors, 42=
+ warnings (v4.4-st20-1094-gf7138ca4b303)
 
-Full Build Summary: https://kernelci.org/build/cip/branch/linux-4.4.y-st/ke=
-rnel/v4.4-st20-234-g4e6ec7162c8e/
+Full Build Summary: https://kernelci.org/build/cip/branch/linux-4.4.y-st-rt=
+/kernel/v4.4-st20-1094-gf7138ca4b303/
 
 Tree: cip
-Branch: linux-4.4.y-st
-Git Describe: v4.4-st20-234-g4e6ec7162c8e
-Git Commit: 4e6ec7162c8e37674a3c70e47278bc7116f0b261
+Branch: linux-4.4.y-st-rt
+Git Describe: v4.4-st20-1094-gf7138ca4b303
+Git Commit: f7138ca4b303043829949928170a00052951e149
 Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
 Built: 6 unique architectures
 
@@ -130,7 +130,7 @@ Warnings summary:
 ffix given and no register operands; using default for `btr'
     4    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic su=
 ffix given and no register operands; using default for `btr'
-    4    arch/x86/entry/entry_64.S:1642: Warning: no instruction mnemonic s=
+    4    arch/x86/entry/entry_64.S:1660: Warning: no instruction mnemonic s=
 uffix given and no register operands; using default for `sysret'
     3    ld: warning: creating DT_TEXTREL in a PIE
     3    drivers/tty/serial/samsung.c:1776:34: warning: array =E2=80=98s3c2=
@@ -184,8 +184,18 @@ section mismatches
 
 ---------------------------------------------------------------------------=
 -----
+allnoconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---------------------------------------------------------------------------=
+-----
 allnoconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
 mismatches
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -195,7 +205,7 @@ n mismatches
 Warnings:
     arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic suffix =
 given and no register operands; using default for `btr'
-    arch/x86/entry/entry_64.S:1642: Warning: no instruction mnemonic suffix=
+    arch/x86/entry/entry_64.S:1660: Warning: no instruction mnemonic suffix=
  given and no register operands; using default for `sysret'
     arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
 given and no register operands; using default for `btr'
@@ -204,18 +214,8 @@ given and no register operands; using default for `btr'
 
 ---------------------------------------------------------------------------=
 -----
-allnoconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
-
----------------------------------------------------------------------------=
------
 allnoconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
 mismatches
-
----------------------------------------------------------------------------=
------
-allnoconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -1075,16 +1075,6 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
-tinyconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
-smatches
-
----------------------------------------------------------------------------=
------
-tinyconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
-
----------------------------------------------------------------------------=
------
 tinyconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
 smatches
 
@@ -1096,14 +1086,24 @@ tinyconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 3 warnings, 0 section=
 Warnings:
     arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic suffix =
 given and no register operands; using default for `btr'
-    arch/x86/entry/entry_64.S:1642: Warning: no instruction mnemonic suffix=
+    arch/x86/entry/entry_64.S:1660: Warning: no instruction mnemonic suffix=
  given and no register operands; using default for `sysret'
     arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
 given and no register operands; using default for `btr'
 
 ---------------------------------------------------------------------------=
 -----
+tinyconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
+smatches
+
+---------------------------------------------------------------------------=
+-----
 tinyconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
 ismatches
 
 ---------------------------------------------------------------------------=
@@ -1169,7 +1169,7 @@ ection mismatches
 Warnings:
     arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic suffix =
 given and no register operands; using default for `btr'
-    arch/x86/entry/entry_64.S:1642: Warning: no instruction mnemonic suffix=
+    arch/x86/entry/entry_64.S:1660: Warning: no instruction mnemonic suffix=
  given and no register operands; using default for `sysret'
     arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
 given and no register operands; using default for `btr'
@@ -1191,7 +1191,7 @@ x86_64_defconfig+x86-chromebook (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, =
 Warnings:
     arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic suffix =
 given and no register operands; using default for `btr'
-    arch/x86/entry/entry_64.S:1642: Warning: no instruction mnemonic suffix=
+    arch/x86/entry/entry_64.S:1660: Warning: no instruction mnemonic suffix=
  given and no register operands; using default for `sysret'
     arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
 given and no register operands; using default for `btr'
