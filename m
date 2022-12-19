@@ -1,344 +1,268 @@
-Return-Path: <webhook@kernel.org>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDC21C4332F
-	for <webhook@archiver.kernel.org>; Fri, 16 Dec 2022 21:10:51 +0000 (UTC)
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
- by mx.groups.io with SMTP id smtpd.web11.6533.1671225043950285495
- for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Fri, 16 Dec 2022 13:10:44 -0800
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC5BC4332F
+	for <webhook@archiver.kernel.org>; Mon, 19 Dec 2022 13:21:26 +0000 (UTC)
+Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
+ by mx.groups.io with SMTP id smtpd.web10.21292.1671456083072276859
+ for <cip-dev@lists.cip-project.org>;
+ Mon, 19 Dec 2022 05:21:24 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=Pz2KJaWy;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.215.170, mailfrom: bot@kernelci.org)
-Received: by mail-pg1-f170.google.com with SMTP id 62so2572557pgb.13
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Fri, 16 Dec 2022 13:10:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=4gNKJMPbL/IwkLAMjXz0VZH8qeG81i5vW1gRRuOeLfE=;
-        b=Pz2KJaWyOaudbKJtCyit/vNFPgPp68mZnPSr9gIpcQgW5/ozpoyRd2oZRRJWcLsQVF
-         5Cgh4m0DcIclF+TMq1qOSG3HjXyB8hAUwoQKiwN3iNtFoDMyYasDZq5KNcxhSf8qWfbm
-         /9v6T2Q7rwqOrD6SnOS7groyZUdyrFIZXR5lsOqpyWB1KHEhuWCZ0rK8YRIU/iVmdQIq
-         2EuaAASYnCRzaXLqhD3+xhwweIm0973l0Fm5ruNH4XG0kAB1jBt6dVRMIBeeBgwA/43p
-         CzTPfgjOU3YCqaCf3A0sj7cbh7Z5is0D4rc2FuQlk47lQ28Ejli1jI6I6afeoeLoeKel
-         GWFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4gNKJMPbL/IwkLAMjXz0VZH8qeG81i5vW1gRRuOeLfE=;
-        b=tvK/Je3elQElxGunyTHultr5y7P4+nd9TYOb6qwlbVaBzNudmT8SK1mZno/QdB25HI
-         KQAeXF9loxsZIYxqtLEtgC6kyiZOtJjnaMhQYVKfZ7Ru1TM25jvSDgRO8qFiBtHEOk9B
-         sMi7ciPh3az57vyal+gDsZe1XuS0Um63OsrLcneesNWKxgvTLTBO8BOkKlL/oIyOY4a1
-         EIf03QjHwxzMJ4SkidamBFaPdfEa94n7K1BBptdXLCyV4Tjna1c8TEsotLE9gfrUPrGp
-         O8BFg/9TPnJdFAD+XCcHc01UN2YX0xMTGGqltVJ4GqopeZNqZNGxyYdWqEMG2e/lQ77e
-         d4GQ==
-X-Gm-Message-State: ANoB5pkOU3CkMB7BKtShhpfoElZ22DckKu3C3V2i32dJhtX1MHu954GR
-	8reVrqGaOmCk0TIULwGDuaPgr+lIsHRZKeU59M4=
-X-Google-Smtp-Source: AA0mqf6fDrPEMtD3uA6aKDGdakdopCCByeK4soeQu9BnFfPf+rUatLH0BX6giWSqGfAIzGYQoZhKxA==
-X-Received: by 2002:a62:1616:0:b0:577:9182:133e with SMTP id 22-20020a621616000000b005779182133emr33744630pfw.33.1671225038207;
-        Fri, 16 Dec 2022 13:10:38 -0800 (PST)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id 81-20020a621554000000b00575d6dc996bsm1897924pfv.161.2022.12.16.13.10.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Dec 2022 13:10:37 -0800 (PST)
-Message-ID: <639cdecd.620a0220.27f8e.3fc1@mx.google.com>
-Date: Fri, 16 Dec 2022 13:10:37 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=qZGdSoks;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225, mailfrom: fm-51332-202212191321196113d426f63269ec2d-1uq2hv@rts-flowmailer.siemens.com)
+Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 202212191321196113d426f63269ec2d
+        for <cip-dev@lists.cip-project.org>;
+        Mon, 19 Dec 2022 14:21:20 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=Quirin.Gylstorff@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+ bh=+y9wdL97yWKkmHzvB/p0/v5MWOG/SAnMLxwhaJfvuCU=;
+ b=qZGdSoks7udsVf5pN7SNXlLcmmE3OhQDrjUXndNoj30//gaMlZ14J5n2szqM/Hza01D2tz
+ MvDpg0O/z1VnWUmECyr72hPpM/1OBKmy2smnkSDgNAL6Ag6XfhdFPQGKU1wYgcrLNjAtUPMH
+ /9hGkWE/qCeDSdkOoUpmVZQgXuktc=;
+From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
+To: cip-dev@lists.cip-project.org,
+	felix.moessbauer@siemens.com,
+	jan.kiszka@siemens.com
+Subject: [cip-dev][isar-cip-core][RFC] Create a generic initramfs overlay
+Date: Mon, 19 Dec 2022 14:21:18 +0100
+Message-Id: <20221219132118.325050-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-5.10.y-cip
-X-Kernelci-Kernel: v5.10.158-cip22-7-g92462fd9830b
-X-Kernelci-Report-Type: test
-X-Kernelci-Tree: cip
-Subject: cip/linux-5.10.y-cip ltp-timers: 9 runs,
- 11 regressions (v5.10.158-cip22-7-g92462fd9830b)
-To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
- kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
-From: "kernelci.org bot" <bot@kernelci.org>
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 16 Dec 2022 21:10:51 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10249
+ <cip-dev@lists.cip-project.org>; Mon, 19 Dec 2022 13:21:26 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10250
+
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+
+This allows the user to generate multible overlays in a given
+location.
+
+The configuration used the following variables:
+ - INITRAMFS_OVERLAY_STORAGE_PARTITION_LABEL: Label of the partition to store the overlays
+ - INITRAMFS_OVERLAY_PATHS: space separated list of overlay directories (lower overlay directories)
+ - INITRAMFS_OVERLAY_STORAGE_PATH: path on the storage partition where the upper directory is stored
+
+e.g.:
+```
+INITRAMFS_OVERLAY_STORAGE_PARTITION_LABEL ??= "var"
+INITRAMFS_OVERLAY_PATHS ??= "etc"
+INITRAMFS_OVERLAY_STORAGE_PATH ??= "local"
+```
+This will create an overlay for `/etc` and store it in `/var/local/etc`.
+
+Closes: https://gitlab.com/cip-project/cip-core/isar-cip-core/-/issues/52
+
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+ .../cip-core-initramfs/cip-core-initramfs.bb  |  2 +-
+ .../files/etc-overlay.script                  | 36 --------------
+ .../initramfs-etc-overlay-hook_0.1.bb         | 30 ------------
+ .../files/overlay.hook}                       |  0
+ .../files/overlay.script.tmpl                 | 47 +++++++++++++++++++
+ .../initramfs-overlay-hook_0.1.bb             | 37 +++++++++++++++
+ 6 files changed, 85 insertions(+), 67 deletions(-)
+ delete mode 100644 recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.script
+ delete mode 100644 recipes-initramfs/initramfs-etc-overlay-hook/initramfs-etc-overlay-hook_0.1.bb
+ rename recipes-initramfs/{initramfs-etc-overlay-hook/files/etc-overlay.hook => initramfs-overlay-hook/files/overlay.hook} (100%)
+ create mode 100644 recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl
+ create mode 100644 recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb
+
+diff --git a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
+index 9e0ee26..860021d 100644
+--- a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
++++ b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
+@@ -12,5 +12,5 @@
+ inherit initramfs
+ 
+ INITRAMFS_INSTALL += " \
+-    initramfs-etc-overlay-hook \
++    initramfs-overlay-hook \
+     "
+diff --git a/recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.script b/recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.script
+deleted file mode 100644
+index 6e5aacd..0000000
+--- a/recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.script
++++ /dev/null
+@@ -1,36 +0,0 @@
+-#!/bin/sh
+-#
+-# CIP Core, generic profile
+-#
+-# Copyright (c) Siemens AG, 2022
+-#
+-# Authors:
+-#  Jan Kiszka <jan.kiszka@siemens.com>
+-#
+-
+-PREREQ=""
+-
+-prereqs()
+-{
+-	echo "$PREREQ"
+-}
+-
+-case $1 in
+-# get pre-requisites
+-prereqs)
+-	prereqs
+-	exit 0
+-	;;
+-esac
+-
+-. /scripts/functions
+-
+-if ! mount -t $(get_fstype /dev/disk/by-label/var) /dev/disk/by-label/var ${rootmnt}/var; then
+-	panic "Can't mount /var partition - overlay will not work!"
+-fi
+-
+-mkdir -p ${rootmnt}/var/local/etc
+-mkdir -p ${rootmnt}/var/local/.atomic
+-if ! mount -t overlay -o lowerdir=${rootmnt}/etc,upperdir=${rootmnt}/var/local/etc,workdir=${rootmnt}/var/local/.atomic overlay ${rootmnt}/etc; then
+-	panic "Can't mount overlay!"
+-fi
+diff --git a/recipes-initramfs/initramfs-etc-overlay-hook/initramfs-etc-overlay-hook_0.1.bb b/recipes-initramfs/initramfs-etc-overlay-hook/initramfs-etc-overlay-hook_0.1.bb
+deleted file mode 100644
+index 37a04ec..0000000
+--- a/recipes-initramfs/initramfs-etc-overlay-hook/initramfs-etc-overlay-hook_0.1.bb
++++ /dev/null
+@@ -1,30 +0,0 @@
+-#
+-# CIP Core, generic profile
+-#
+-# Copyright (c) Siemens AG, 2022
+-#
+-# Authors:
+-#  Jan Kiszka <jan.kiszka@siemens.com>
+-#
+-# SPDX-License-Identifier: MIT
+-#
+-
+-inherit dpkg-raw
+-
+-SRC_URI += " \
+-    file://etc-overlay.hook \
+-    file://etc-overlay.script \
+-    "
+-
+-DEBIAN_DEPENDS = "initramfs-tools"
+-
+-do_install[cleandirs] += " \
+-    ${D}/usr/share/initramfs-tools/hooks \
+-    ${D}/usr/share/initramfs-tools/scripts/local-bottom"
+-
+-do_install() {
+-    install -m 0755 "${WORKDIR}/etc-overlay.hook" \
+-        "${D}/usr/share/initramfs-tools/hooks/etc-overlay"
+-    install -m 0755 "${WORKDIR}/etc-overlay.script" \
+-        "${D}/usr/share/initramfs-tools/scripts/local-bottom/etc-overlay"
+-}
+diff --git a/recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.hook b/recipes-initramfs/initramfs-overlay-hook/files/overlay.hook
+similarity index 100%
+rename from recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.hook
+rename to recipes-initramfs/initramfs-overlay-hook/files/overlay.hook
+diff --git a/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl b/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl
+new file mode 100644
+index 0000000..7acabbe
+--- /dev/null
++++ b/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl
+@@ -0,0 +1,47 @@
++#!/bin/sh
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2022
++#
++# Authors:
++#  Jan Kiszka <jan.kiszka@siemens.com>
++#
++
++PREREQ=""
++
++prereqs()
++{
++	echo "$PREREQ"
++}
++
++case $1 in
++# get pre-requisites
++prereqs)
++	prereqs
++	exit 0
++	;;
++esac
++
++. /scripts/functions
++
++ovl_upper_dir_partition=${INITRAMFS_OVERLAY_STORAGE_PARTITION_LABEL}
++if [ -n "${INITRAMFS_OVERLAY_STORAGE_PATH}" ]; then
++    ovl_path=${rootmnt}/${ovl_upper_dir_partition}/${INITRAMFS_OVERLAY_STORAGE_PATH}
++else
++    ovl_path=${rootmnt}/${ovl_upper_dir_partition}
++fi
++
++if ! mount -t $(get_fstype /dev/disk/by-label/${ovl_upper_dir_partition}) /dev/disk/by-label/${ovl_upper_dir_partition} ${rootmnt}/${ovl_upper_dir_partition}; then
++	panic "Can't mount /${ovl_upper_dir_partition} partition - overlay will not work!"
++fi
++
++for ovl_lower_dir in ${INITRAMFS_OVERLAY_PATHS}; do
++    ovl_atomic_dir=.${ovl_lower_dir}-atomic
++
++    mkdir -p ${ovl_path}/${ovl_lower_dir}
++    mkdir -p ${ovl_path}/${ovl_atomic_dir}
++    if ! mount -t overlay -o lowerdir=${rootmnt}/${ovl_lower_dir},upperdir=${ovl_path}/${ovl_lower_dir},workdir=${ovl_path}/${ovl_atomic_dir} overlay ${rootmnt}/${ovl_lower_dir}; then
++	    panic "Can't mount overlay for '$ovl_lower_dir' !"
++    fi
++done
+diff --git a/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb b/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb
+new file mode 100644
+index 0000000..ee8635a
+--- /dev/null
++++ b/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb
+@@ -0,0 +1,37 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2022
++#
++# Authors:
++#  Jan Kiszka <jan.kiszka@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++#
++
++inherit dpkg-raw
++
++SRC_URI += " \
++    file://overlay.hook \
++    file://overlay.script.tmpl \
++    "
++
++INITRAMFS_OVERLAY_STORAGE_PARTITION_LABEL ??= "var"
++INITRAMFS_OVERLAY_PATHS ??= "etc"
++INITRAMFS_OVERLAY_STORAGE_PATH ??= "local"
++
++TEMPLATE_FILES = "overlay.script.tmpl"
++TEMPLATE_VARS += "INITRAMFS_OVERLAY_STORAGE_PARTITION_LABEL INITRAMFS_OVERLAY_STORAGE_PATH INITRAMFS_OVERLAY_PATHS"
++
++DEBIAN_DEPENDS = "initramfs-tools"
++
++do_install[cleandirs] += " \
++    ${D}/usr/share/initramfs-tools/hooks \
++    ${D}/usr/share/initramfs-tools/scripts/local-bottom"
++
++do_install() {
++    install -m 0755 "${WORKDIR}/overlay.hook" \
++        "${D}/usr/share/initramfs-tools/hooks/overlay"
++    install -m 0755 "${WORKDIR}/overlay.script" \
++        "${D}/usr/share/initramfs-tools/scripts/local-bottom/overlay"
++}
+-- 
+2.35.1
 
-cip/linux-5.10.y-cip ltp-timers: 9 runs, 11 regressions (v5.10.158-cip22-7-=
-g92462fd9830b)
-
-Regressions Summary
--------------------
-
-platform                  | arch   | lab           | compiler | defconfig  =
-                  | regressions
---------------------------+--------+---------------+----------+------------=
-------------------+------------
-asus-C433TA-AJ0005-rammus | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-on...6-chromebook | 2          =
-
-asus-C436FA-Flip-hatch    | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-on...6-chromebook | 2          =
-
-asus-C523NA-A20057-coral  | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-on...6-chromebook | 1          =
-
-hp-11A-G6-EE-grunt        | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-on...6-chromebook | 2          =
-
-r8a774a1-hihope-rzg2m-ex  | arm64  | lab-cip       | gcc-10   | defconfig+a=
-rm64-chromebook   | 2          =
-
-rk3399-gru-kevin          | arm64  | lab-collabora | gcc-10   | defconfig+a=
-rm64-chromebook   | 2          =
-
-
-  Details:  https://kernelci.org/test/job/cip/branch/linux-5.10.y-cip/kerne=
-l/v5.10.158-cip22-7-g92462fd9830b/plan/ltp-timers/
-
-  Test:     ltp-timers
-  Tree:     cip
-  Branch:   linux-5.10.y-cip
-  Describe: v5.10.158-cip22-7-g92462fd9830b
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.g=
-it
-  SHA:      92462fd9830b23227198482fe4bee42316a5694d
-
-  Test suite revisions:
-    ltp-tests
-      URL:  https://github.com/linux-test-project/ltp.git
-      SHA:  b7218b76b89d4cb8174b136fc03b46ad4b749578 =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform                  | arch   | lab           | compiler | defconfig  =
-                  | regressions
---------------------------+--------+---------------+----------+------------=
-------------------+------------
-asus-C433TA-AJ0005-rammus | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-on...6-chromebook | 2          =
-
-
-  Details:     https://kernelci.org/test/plan/id/639ccddf668086d1fe2abd07
-
-  Results:     32 PASS, 4 FAIL, 0 SKIP
-  Full config: x86_64_defconfig+x86-chromebook
-  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.158=
--cip22-7-g92462fd9830b/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-co=
-llabora/ltp-timers-asus-C433TA-AJ0005-rammus.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.158=
--cip22-7-g92462fd9830b/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-co=
-llabora/ltp-timers-asus-C433TA-AJ0005-rammus.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20221209.0/amd64/initrd.cpio.gz =
-
-
-
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/639ccddf668=
-086d1fe2abd0c
-        new failure (last pass: v5.10.158-cip22) =
-
-
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/639ccddf668=
-086d1fe2abd0c
-        new failure (last pass: v5.10.158-cip22) =
-
- =
-
-
-
-platform                  | arch   | lab           | compiler | defconfig  =
-                  | regressions
---------------------------+--------+---------------+----------+------------=
-------------------+------------
-asus-C436FA-Flip-hatch    | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-on...6-chromebook | 2          =
-
-
-  Details:     https://kernelci.org/test/plan/id/639ccd691ab433360e2abcfa
-
-  Results:     32 PASS, 4 FAIL, 0 SKIP
-  Full config: x86_64_defconfig+x86-chromebook
-  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.158=
--cip22-7-g92462fd9830b/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-co=
-llabora/ltp-timers-asus-C436FA-Flip-hatch.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.158=
--cip22-7-g92462fd9830b/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-co=
-llabora/ltp-timers-asus-C436FA-Flip-hatch.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20221209.0/amd64/initrd.cpio.gz =
-
-
-
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/639ccd691ab=
-433360e2abcff
-        failing since 20 days (last pass: v5.10.153-cip19-3-gc76f4e7e5c71, =
-first fail: v5.10.155-cip21) =
-
-
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/639ccd691ab=
-433360e2abcff
-        failing since 20 days (last pass: v5.10.153-cip19-3-gc76f4e7e5c71, =
-first fail: v5.10.155-cip21) =
-
- =
-
-
-
-platform                  | arch   | lab           | compiler | defconfig  =
-                  | regressions
---------------------------+--------+---------------+----------+------------=
-------------------+------------
-asus-C523NA-A20057-coral  | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-on...6-chromebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/639cd43f5038ebff5c2abd01
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: x86_64_defconfig+x86-chromebook
-  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.158=
--cip22-7-g92462fd9830b/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-co=
-llabora/ltp-timers-asus-C523NA-A20057-coral.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.158=
--cip22-7-g92462fd9830b/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-co=
-llabora/ltp-timers-asus-C523NA-A20057-coral.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20221209.0/amd64/initrd.cpio.gz =
-
-
-
-  * ltp-timers.login: https://kernelci.org/test/case/id/639cd43f5038ebff5c2=
-abd02
-        new failure (last pass: v5.10.158-cip22) =
-
- =
-
-
-
-platform                  | arch   | lab           | compiler | defconfig  =
-                  | regressions
---------------------------+--------+---------------+----------+------------=
-------------------+------------
-hp-11A-G6-EE-grunt        | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-on...6-chromebook | 2          =
-
-
-  Details:     https://kernelci.org/test/plan/id/639cd087e58d4c156f2abd12
-
-  Results:     32 PASS, 4 FAIL, 0 SKIP
-  Full config: x86_64_defconfig+x86-chromebook
-  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.158=
--cip22-7-g92462fd9830b/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-co=
-llabora/ltp-timers-hp-11A-G6-EE-grunt.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.158=
--cip22-7-g92462fd9830b/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-co=
-llabora/ltp-timers-hp-11A-G6-EE-grunt.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20221209.0/amd64/initrd.cpio.gz =
-
-
-
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/639cd087e58=
-d4c156f2abd17
-        failing since 42 days (last pass: v5.10.147-cip18, first fail: v5.1=
-0.147-cip18-12-gcb2b164780be) =
-
-
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/639cd087e58=
-d4c156f2abd17
-        failing since 42 days (last pass: v5.10.147-cip18, first fail: v5.1=
-0.147-cip18-12-gcb2b164780be) =
-
- =
-
-
-
-platform                  | arch   | lab           | compiler | defconfig  =
-                  | regressions
---------------------------+--------+---------------+----------+------------=
-------------------+------------
-r8a774a1-hihope-rzg2m-ex  | arm64  | lab-cip       | gcc-10   | defconfig+a=
-rm64-chromebook   | 2          =
-
-
-  Details:     https://kernelci.org/test/plan/id/639cde92489e0427e52abd4c
-
-  Results:     32 PASS, 4 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.158=
--cip22-7-g92462fd9830b/arm64/defconfig+arm64-chromebook/gcc-10/lab-cip/ltp-=
-timers-r8a774a1-hihope-rzg2m-ex.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.158=
--cip22-7-g92462fd9830b/arm64/defconfig+arm64-chromebook/gcc-10/lab-cip/ltp-=
-timers-r8a774a1-hihope-rzg2m-ex.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20221209.0/arm64/initrd.cpio.gz =
-
-
-
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/639cde92489=
-e0427e52abd57
-        failing since 6 days (last pass: v5.10.154-cip20, first fail: v5.10=
-.158-cip22) =
-
-
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/639cde92489=
-e0427e52abd57
-        failing since 6 days (last pass: v5.10.154-cip20, first fail: v5.10=
-.158-cip22) =
-
- =
-
-
-
-platform                  | arch   | lab           | compiler | defconfig  =
-                  | regressions
---------------------------+--------+---------------+----------+------------=
-------------------+------------
-rk3399-gru-kevin          | arm64  | lab-collabora | gcc-10   | defconfig+a=
-rm64-chromebook   | 2          =
-
-
-  Details:     https://kernelci.org/test/plan/id/639cd350f46ebc793f2abd12
-
-  Results:     32 PASS, 4 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.158=
--cip22-7-g92462fd9830b/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabor=
-a/ltp-timers-rk3399-gru-kevin.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.158=
--cip22-7-g92462fd9830b/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabor=
-a/ltp-timers-rk3399-gru-kevin.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20221209.0/arm64/initrd.cpio.gz =
-
-
-
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/639cd350f46=
-ebc793f2abd17
-        failing since 42 days (last pass: v5.10.147-cip18, first fail: v5.1=
-0.147-cip18-12-gcb2b164780be) =
-
-
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/639cd350f46=
-ebc793f2abd17
-        failing since 42 days (last pass: v5.10.147-cip18, first fail: v5.1=
-0.147-cip18-12-gcb2b164780be) =
-
- =20
 
