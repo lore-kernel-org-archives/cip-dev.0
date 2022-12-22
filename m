@@ -1,322 +1,144 @@
-Return-Path: <masami.ichikawa@miraclelinux.com>
+Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CDA4C4332F
-	for <webhook@archiver.kernel.org>; Wed, 21 Dec 2022 22:59:37 +0000 (UTC)
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
- by mx.groups.io with SMTP id smtpd.web10.33231.1671663566242576204
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B580C4332F
+	for <webhook@archiver.kernel.org>; Thu, 22 Dec 2022 12:11:11 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.154])
+ by mx.groups.io with SMTP id smtpd.web11.44162.1671711065518572280
  for <cip-dev@lists.cip-project.org>;
- Wed, 21 Dec 2022 14:59:27 -0800
+ Thu, 22 Dec 2022 04:11:06 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112 header.b=p6W5eLzI;
- spf=pass (domain: miraclelinux.com, ip: 209.85.210.44, mailfrom: masami.ichikawa@miraclelinux.com)
-Received: by mail-ot1-f44.google.com with SMTP id x25-20020a056830115900b00670932eff32so126320otq.3
-        for <cip-dev@lists.cip-project.org>; Wed, 21 Dec 2022 14:59:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=cDa+6gIdQm6jQ3oDbh2kkY1cyYLr4/wPBarEE3riZnk=;
-        b=p6W5eLzIZxswmbKP53orgK4C93aM4bjOCNkigBIV4xQdyJxXoFd5HMw+D5pvH5iGHQ
-         VewtRd+1+x49L8q5ZwXU/dnLb1rm3+kIsKYhiNXPba9tv/LqjVd81ZR3lYSI6uErzwAQ
-         X9JH7PNRbb1Rs7UReUnZPj72VlHM32GiFSGmY1XgSnj0VuhZjMq+mSQ50u+izAP1wQiD
-         RvCGQ7bAi/syohjoCxvE9OkYBicmsuZ/dPP5JriqPSiTbJa0cuZJLaak3nvitVk8C6TK
-         u/ZqpmtllZv5WW/sTFttpE0fXOIdW+BwZkwRawlILidYfYRH7Qta0nK9wSANIx5O3K2m
-         OdUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cDa+6gIdQm6jQ3oDbh2kkY1cyYLr4/wPBarEE3riZnk=;
-        b=fWbs1p4ivgSvWQgfjwiZGXU03GXWLbtwpM2LGQkiPEE2QRfxCdQ/VjRxASo0So6y5N
-         h7+UJ8lDVLHdXze/t6aaZsFc2XkW3u40aR71V0JF69m9dVMgdjrEBsu5CkwrWnSkIVjw
-         gkkYu1LK9xIAYQC1yOOwG+dA0ve3+JlCKv7rj/0d9MAdWVkYD7XEHIKoMOU+1C5xjIzQ
-         RFmnEDFVYNQvvqGkKZyz8/IKTzQ+aC+PI8yX49wi/sbKnRjv42pMvgop0dh1N358DcBd
-         YlUAw6P+ANvFDhRVVwiGMhbS1VT3FipLKco1KOiMCnTokCZleIAQmzVkI2Z23T9Y8JJl
-         rfkw==
-X-Gm-Message-State: AFqh2krg1/BvrjUipdyNIcPrONKKVVp6dYUgwJQ3L6f29VImyPW863jO
-	SL7mlRYq1bPpSNlUeRxZebiOZ5eGrNVyh6IOZinbqCcVcXXai1bO
-X-Google-Smtp-Source: AMrXdXuDntah8iWGfE6X3IA1S/pNStcNTDZKcWWx+7o3LHTT+3k/AzYrB1uIkjPtp/zRzqilHiRor4y7B0UYdd5NhLg=
-X-Received: by 2002:a9d:4e82:0:b0:66d:65a5:b0b3 with SMTP id
- v2-20020a9d4e82000000b0066d65a5b0b3mr255196otk.170.1671663564775; Wed, 21 Dec
- 2022 14:59:24 -0800 (PST)
+ dkim=missing; spf=pass (domain: toshiba.co.jp, ip: 210.130.202.154, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
+Received: by mo-csw.securemx.jp (mx-mo-csw1515) id 2BMCB3ge023613; Thu, 22 Dec 2022 21:11:03 +0900
+X-Iguazu-Qid: 34tKr4VoALgDOL7Pwv
+X-Iguazu-QSIG: v=2; s=0; t=1671711063; q=34tKr4VoALgDOL7Pwv; m=1RPr7kgw7OTnFIBRp0jVsE2eVr5fOX9m80y9P1bQKCI=
+Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
+	by relay.securemx.jp (mx-mr1512) id 2BMCB2YH016271
+	(version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 22 Dec 2022 21:11:03 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=SdqIA5mBf0zk8WeWUJZ1sWHZ9jCi0Q5mJaLGviH/r9m/c26DRj3vpVG7nEXGiNxNexPiUBvoMdZ7Xviyhx0+5c9GjGalg3i8ca3VAuSVrywCKrQ2iI6Cu8rzCsrg7Kc/WtAALC4OUbRcevpo6zwtA5Y1Qcgs7lmu1aBQ8Lh7HqHfqeeRsU2K56hDhKHDsq08ZnaWc9PyhwuF19deLCfKMm6uR0bs2DCXzdZhG7Xu0xvUWqyxxmgQC31cnQ8Y5auDllmYkuECw6EUETqItl66Hi2ZVz2cdK59QsWJaT1fUUNdP9/7wiwDvPpMzkbg+0kMSPeHeQ8/YEJmfPbYen7smA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4GcYJeE7g6KxZ/s4rHPi3e0DXjOyYJeivtLLMnd9Zfg=;
+ b=dMy9Svx4fyOSKNonjch51IAfi2TvOSBaeNu59wjMxY8k73kI+l5dRni8WQTUUtPBC20PLDYcvFnDrwWrFq2NvU1L45yn8AjQHkmott07UxF4BnoLIzeajAAJd/+enB6S4U4zydp7sB0cl+6olWf58YyPcHnmQIfgzTAmt8J/kBazrzMvx1axS+sA3tWESLrSXhhdAZyvxvwmU9jtYen9h7XMtgulPTSSBxLXZ8O2a0uzu16ctA21iczfsq1Pp8izj4ReMQoKjUGQsqOiI2n8/EskgIV2ikQaiGojAx0ikzQOY0cXlnAluaJlHm8OuS5OFigFLXUn+3N3rzhDDQZoRw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
+ header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
+From: <nobuhiro1.iwamatsu@toshiba.co.jp>
+To: <cip-dev@lists.cip-project.org>
+Subject: CIP IRC weekly meeting today on libera.chat
+Thread-Topic: CIP IRC weekly meeting today on libera.chat
+Thread-Index: AdkV/gs2mlqE2bVKS+O5HRiOyZBKUg==
+Date: Thu, 22 Dec 2022 12:11:00 +0000
+X-TSB-HOP2: ON
+Message-ID: <TYWPR01MB9420F4A2D9CB315449FA582192E89@TYWPR01MB9420.jpnprd01.prod.outlook.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYWPR01MB9420:EE_|TYYPR01MB7880:EE_
+x-ms-office365-filtering-correlation-id: e65f1111-cb52-4e07-03b1-08dae4159706
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: jlsKwmTuqiVKybX40n5DA35Amq+D/nBUHqZuw06aZopsDHGJmfPrAwEmuzz91K2i0Qpj5Qva8SB/CExPSUohGlOD1UkD+nLwtTI1oJKe3AwZty/eWhh26wxjLtt5Vno8mZf7hz3ATgfOqpp7iN5qpnYyUBDD6CetTDPoJUZ1Py0v4s1Gir8xn1op90rwFsCUzwpcW1nPr/B3miPYQzE7/Q6tegoli2hkP0YLf0Oyi/eMaYJ+0e0ME5xbUKJXLurzAkEjTShPGddAcfgCxg6T2OHI4eLyHpo5oHXW7j3wejxRCkbqCRL5j6g6MK93QUXePynqqClq5rF8pwxgXl28OdktagKaRqiv/GmQwQ72roFKqP9i3zrIONUDBuJ+pkr6aI0KyGCuGrLI96NytNdh1uDjFEjUuGr591f2m8HVm3z1ESdKPMvoQN+Zf3E/rFfJV6mwMCRFzmrWdULsGrP6ZZ66M4LoPqLlL42DgTK9z4jHacL1sCAG5D82cdTGPFT0kgLOvuwn/lwOvSm5Cm6mmiMf24hasYF7BrWtl+Q0ozF31SoRwYd0bLr9ZSuCOJJCZAorEnhM7+mf2Mus9AXa03koWfbd4X9cV+h4prYD3g5B8/E3y4hy/UVvCZxxg2gKH5lQ7jwZEqYmrTaaoMTWGiJXxWfEHPb7ywdLS/ZdZJfhpLRWowaY437SW+bv3/834JjN19RhUEM3aEzVP+Xh8hLcb5t3tFJtALk4Ewcwn18=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB9420.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(136003)(376002)(346002)(39860400002)(366004)(396003)(451199015)(76116006)(41300700001)(66946007)(4744005)(5660300002)(8676002)(66446008)(33656002)(64756008)(66556008)(9686003)(66476007)(8936002)(52536014)(38070700005)(6916009)(966005)(2906002)(71200400001)(478600001)(4001150100001)(316002)(55016003)(86362001)(186003)(7696005)(6506007)(26005)(83380400001)(38100700002)(122000001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-2022-jp?B?QU1BZXJMTVJONnFGcGJzeVdsczY1LytJQ2NlSTh2QkJ1WjI3ejhkaWZ1?=
+ =?iso-2022-jp?B?bm45TGdCZUkwYzBzZ2NMZ2RPM1lxQ3p4K01GeDEvY0p0M2xyeFVQVkE4?=
+ =?iso-2022-jp?B?U0lxak96cXpZcW00MW5YWmpGOUVBN2E3dTllWDNDcXYxSFp0Mm44YVRG?=
+ =?iso-2022-jp?B?RitSbHpvQytKK09UM3E2cmNTRDZqZEtFVDlSRXEvcmExTFRlYk9BL1V4?=
+ =?iso-2022-jp?B?UWVkZFJYemFnQ3A0NnhWVy95a0w4VmRPOWd5SllRSDlLSkVtU0RjazQy?=
+ =?iso-2022-jp?B?SE5yUHJGVnFqS1Z4RU5PQ1VYc3NOQ1JuWVNndnZOd1JSbk8wQlBEeWV2?=
+ =?iso-2022-jp?B?a09id2VyODA4RTZoRTdpNDJQYmlnNFlhdHZ1NnM1MjR3Qm9nOXR5VDhC?=
+ =?iso-2022-jp?B?UlA2bXFBbXJvQm4yMUM1T204YmVqVE5scjRiRUt0czYyTXNFSk1OaHRo?=
+ =?iso-2022-jp?B?QnhZT0htQ0pSU3VmazMybkZvYjQyZmlwN0JQTXVjWmlUcjJLdUdibloy?=
+ =?iso-2022-jp?B?YkVON2dxckFGRlNGN3ZaU2ZSUDFoYnZLbFNjRzZacmdRTU1OaHQwNFJG?=
+ =?iso-2022-jp?B?SVIzd1lRUU5KclFTSmNBaFdzQjIwK085emZsZDB4dGw4ajEwRStKM0pj?=
+ =?iso-2022-jp?B?c0lmMmNBNUJxYUpwSEhGN25aaTRoRnRPMHZaQURqYXhleWhDalRGK1JM?=
+ =?iso-2022-jp?B?NjNEUXM4RXNwRVlpR29tMGRFR1FHZ05xVFJ6NGVFNFJqQVpqVmZCK3p4?=
+ =?iso-2022-jp?B?ckV4YkxGc0phdHVQcUlEK3V5WXBEVG52SmhKdUFzQmtTZE1HRDJnQTJ2?=
+ =?iso-2022-jp?B?UnM4dGZjMVVBaGErbTNiYURWWVBzMGRZOEtJZlpJZWYwSWRiVEV4WGVH?=
+ =?iso-2022-jp?B?a2krcG1wVytrRHpGNzVsNGsrcnRpWXgxYjdBWXlCaGcyUDFUemZVWFk0?=
+ =?iso-2022-jp?B?eDVnUzRrOTJ4cS92Y1J1NFlvd3NadzlXb2FtdDVCZzB0dlo1elBEbnow?=
+ =?iso-2022-jp?B?a0xQMkEyTUdVSHlWSFB5N0tBNWl3TXJROUNLeDl1Q2h2SEJhOC9pWGQv?=
+ =?iso-2022-jp?B?QlBrclJUaEpyMTRhSXI5b29IVDM0VVdlZUt4QmVWMmxpU0RmNUZlbFdS?=
+ =?iso-2022-jp?B?dlJVdzRzNW9NZFVhWEZqbXRYdHRnTGl4SU1YY2sxdHNLT2RJZm0rUHB1?=
+ =?iso-2022-jp?B?aG9LUHBESHFZb0FYaVNudkRKM0g3RGpCd2NmUXlSMkI5SnZnZnZVUm1n?=
+ =?iso-2022-jp?B?c0FUd3JwZmlGSTB0ZE1OVERuaTVYbnVDSmdjNkFSak9oT1N2MnUrQXI0?=
+ =?iso-2022-jp?B?RzFubjFwcHh6QTdMRW9uMDk0Qk5LOHdWTk5MdEZjQ1NFKzNGelFaWC9n?=
+ =?iso-2022-jp?B?R3dNTDZJRWFFaFpjMlF5SmdOV21MOGs3Y00rdzgwZU5ZWis4WTRNWFEz?=
+ =?iso-2022-jp?B?b3l4SVFmMHVHVFZPanB5VUhqUW5NWGZndXk4N2orYk1wL0hBMHRQRnY3?=
+ =?iso-2022-jp?B?THhNTTY3Y2ZTYTE2UDRJUVFkWTNRY2E2VklJMy9vR1dPZWxZVHRxTnc2?=
+ =?iso-2022-jp?B?TFpSdXJVNTNRSVFDc1RrRXoxdkJTdVA0S3FUS0ZKZVhpeGRNK041T2V4?=
+ =?iso-2022-jp?B?VHduVkNtY2N2NHVUY2pnVTBvNmRXM1RiVzBTdjV2UnpYZzZ6MTdqS2Rt?=
+ =?iso-2022-jp?B?SkZ0NWozNTd3VmZhd2RLVys5ZWFPb0QyVzZNaGxIZGlEMXQyb09ESHgy?=
+ =?iso-2022-jp?B?RzFaV0J6bytBd0c0M1hxejhWd2xUaUZEb3RCTURSMHU2Ly9jK1hPY3Fj?=
+ =?iso-2022-jp?B?RGoweDhVZ0tsQURUQmFhd1cxNEFjMXQ5WVBtN0docW9xN016SVIyVnN0?=
+ =?iso-2022-jp?B?cHg4b0dXUHByQnJTZXRxZTFRS0tMRFkrb3JtNTZCQ2RVaUE5UW9WNXZh?=
+ =?iso-2022-jp?B?MTFaYVl1WWIwT1pWQ0dVeS8rbi9zK0VHREFZVHZIYUQ0Y1FVRmZ0bE9Y?=
+ =?iso-2022-jp?B?T2l0cWQ2UDdObERQRDJMcGlySGNJRStJb085SG15anI3L1duVi8zMEUz?=
+ =?iso-2022-jp?B?eitINHE5RXNtdmtjR1FvUFgxbHVZOE9sRzh6aEVxUzRsdnZkbHEwZW4r?=
+ =?iso-2022-jp?B?elFwcUMzdlpNQStYY1dTZmc0dU1Wdm1zeVp6ZlYzSnozR3g4aGlNSTls?=
+ =?iso-2022-jp?B?MnQyWkFwMU5JbVo3M0pYVlhrbUFDWnVaTXhQeVJ3UXZPTUZlcVdNeUFj?=
+ =?iso-2022-jp?B?NlFpMzNBVndQQWZmSHpKbHBmTXRKMGVHNGR3aUJaMVVIVjdkZ2UrbXc0?=
+ =?iso-2022-jp?B?R3ZHQ0IrZm9idzYyWVFLOUtubFlmU0ZGR0E9PQ==?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Date: Thu, 22 Dec 2022 07:58:48 +0900
-Message-ID: <CAODzB9phGdgNo0dOTHLyovXP7Gcj9EgR1QDHHaNrAXhBxrHQzg@mail.gmail.com>
-Subject: New CVE entries this week
-To: cip-dev <cip-dev@lists.cip-project.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB9420.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e65f1111-cb52-4e07-03b1-08dae4159706
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Dec 2022 12:11:00.5077
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 4xfyytDy+ClKwDxT6yLCQbwoaX6A8fNDsYfFpFKpGjf4gghHCNxPVQh94VE5RzfnctyrYlp/dw25sr5kSl2NrThl8D3Uc5HUmABuOqQAo824Zg9lMyzI8vPsHO2a++yr
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB7880
+X-OriginatorOrg: toshiba.co.jp
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 21 Dec 2022 22:59:37 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10262
+ <cip-dev@lists.cip-project.org>; Thu, 22 Dec 2022 12:11:11 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10263
 
-Hi !
+Hi all,
 
-It's this week's CVE report.
+Kindly be reminded to attend the weekly meeting through IRC to discuss
+technical topics with CIP kernel today. Our channel is the following:
 
-This week reported 6 new CVEs and 10 updated CVEs.
+    irc:irc.libera.chat:6667/cip
 
-* New CVEs
+The IRC meeting is scheduled to UTC (GMT) 13:00:
 
-CVE-2022-2196: KVM: VMX: Execute IBPB on emulated VM-exit when guest has IBRS
+https://www.timeanddate.com/worldclock/converter.html?iso=3D20221222T130000=
+&p1=3D224&p2=3D179&p3=3D136&p4=3D37&p5=3D241&p6=3D248
 
-CVSS v3 score is not provided
+USWest    USEast    UK        DE        TW        JP
+06:00     09:00     13:00     14:00     21:00     22:00
 
-Introduced by commit 5c911be ("KVM: nVMX: Skip IBPB when switching
-between vmcs01 and vmcs02") in 5.8-rc1.
-This commit fixes commit 15d4507 ("KVM/x86: Add IBPB support") in 4.16-rc1.
-Commit 5c911be is not backported to 4.x kernels.
+Last meeting minutes:
+https://ircbot.wl.linuxfoundation.org/meetings/cip/2022/12/cip.2022-12-15-1=
+2.02.log.html
 
-Fixed status
-mainline: [2e7eab81425ad6c875f2ed47c0ce01e78afc38a5]
+* Action items
+  1. Add qemu-riscv to cip-kernel-config - patersonc
+* Kernel maintenance updates
+* Kernel release status
+  - 4.4
+  - 4.19
+  - 5.10
+* Kernel testing
+* AOB
 
-CVE-2022-4543: KASLR Leakage Achievable even with KPTI through
-Prefetch Side-Channel
+Best regards,
+  Nobuhiro
 
-CVSS v3 score is not provided
-
-A user can get KASLR base address on Intel and AMD CPUs based system
-even if kernel enables KPTI.
-
-Fixed status
-Not fixed yet
-
-CVE-2022-47518: wifi: wilc1000: validate number of channels
-
-CVSS v3 score is not provided
-
-An issue was discovered in the Linux kernel before 6.0.11. Missing
-validation of the number of channels in
-drivers/net/wireless/microchip/wilc1000/cfg80211.c in the WILC1000
-wireless driver can trigger a heap-based buffer overflow when copying
-the list of operating channels from Wi-Fi management frames.
-
-It looks like a vulnerable function is not present on 4.4 and 4.9.
-That function is present in 5.4 and 4.19 however, this driver is
-staging driver at that time.
-Also, implementation of wilc_wfi_cfg_parse_ch_attr() in 5.4 and 4.19
-are different from newer code. It seems as if they are not affected.
-
-Fixed status
-mainline: [0cdfa9e6f0915e3d243e2393bfa8a22e12d553b0]
-stable/5.10: [3eb6b89a4e9f9e44c3170d70d8d16c3c8dc8c800]
-stable/5.15: [7aed1dd5d221dabe3fe258f13ecf5fc7df393cbb]
-stable/6.0: [6195b4838e10a557859862c4e7840dc0eafdd1cd]
-
-CVE-2022-47519: wifi: wilc1000: validate length of
-IEEE80211_P2P_ATTR_OPER_CHANNEL attribute
-
-CVSS v3 score is not provided
-
-An issue was discovered in the Linux kernel before 6.0.11. Missing
-validation of IEEE80211_P2P_ATTR_OPER_CHANNEL in
-drivers/net/wireless/microchip/wilc1000/cfg80211.c in the WILC1000
-wireless driver can trigger an out-of-bounds write when parsing the
-channel list attribute from Wi-Fi management frames.
-
-It looks like a vulnerable function is not present on 4.4 and 4.9.
-That function is present in 5.4 and 4.19 however, this driver is
-staging driver at that time.
-Also, implementation of wilc_wfi_cfg_parse_ch_attr() in 5.4 and 4.19
-are different from newer code. It seems as if they are not affected.
-
-Fixed status
-mainline: [051ae669e4505abbe05165bebf6be7922de11f41]
-stable/5.10: [905f886eae4b065656a575e8a02544045cbaadcf]
-stable/5.15: [143232cb5a4c96d69a7d90b643568665463c6191]
-stable/6.0: [c4b629c29a51344a99f279e0bc0caffd25897725]
-
-CVE-2022-47520: wifi: wilc1000: validate pairwise and authentication
-suite offsets
-
-CVSS v3 score is not provided
-
-It looks like a vulnerable function is not present in 4.x kernels.
-That function is present in 5.4 however, this driver is staging driver
-at that time.
-
-Fixed status
-mainline: [cd21d99e595ec1d8721e1058dcdd4f1f7de1d793]
-stable/5.10: [7c6535fb4d67ea37c98a1d1d24ca33dd5ec42693]
-stable/5.15: [cd9c4869710bb6e38cfae4478c23e64e91438442]
-stable/6.0: [b3ac275fe82fb2e52085dace26ab65c91b3434b8]
-
-CVE-2022-47521: wifi: wilc1000: validate length of
-IEEE80211_P2P_ATTR_CHANNEL_LIST attribute
-
-CVSS v3 score is not provided
-
-An issue was discovered in the Linux kernel before 6.0.11. Missing
-validation of IEEE80211_P2P_ATTR_CHANNEL_LIST in
-drivers/net/wireless/microchip/wilc1000/cfg80211.c in the WILC1000
-wireless driver can trigger a heap-based buffer overflow when parsing
-the operating channel attribute from Wi-Fi management frames.
-
-It looks like a vulnerable function is not present on 4.4 and 4.9.
-That function is present in 5.4 and 4.19 however, this driver is
-staging driver at that time. Also, implementation of
-wilc_wfi_cfg_parse_ch_attr() in 5.4 and 4.19 are different from newer
-code. It seems as if they are not affected.
-
-Fixed status
-mainline: [f9b62f9843c7b0afdaecabbcebf1dbba18599408]
-stable/5.10: [5a068535c0073c8402aa0755e8ef259fb98a33c5]
-stable/5.15: [e9de501cf70d2b508b2793ed3e7d5d5ceabd7a74]
-stable/6.0: [0269a353bb4bf49902c702e0b55dcab0d470f5aa]
-
-* Updated CVEs
-
-CVE-2022-3344: KVM: SVM: nested shutdown interception could lead to host crash
-
-Added 917401f ("KVM: x86: nSVM: leave nested mode on vCPU free") and
-f9697df2 ("KVM: x86: add kvm_leave_nested") to mainline.
-
-Fixed status
-mainline: [16ae56d7e0528559bf8dc9070e3bfd8ba3de80df,
-ed129ec9057f89d615ba0c81a4984a90345a1684,
-  917401f26a6af5756d89b550a8e1bd50cf42b07e,
-f9697df251438b0798780900e8b43bdb12a56d64]
-stable/5.15: [3e87cb0caa25d667a9ca2fe15fef889e43ab8f95,
-6425c590d0cc6914658a630a40b7f8226aa028c3]
-stable/6.0: [5ca2721b7d3ed4d3da6323a2ea7339f745866d83,
-d40ef0a511676bd65ca9acb295430c07af59ab85]
-
-CVE-2022-3424: misc: sgi-gru: fix use-after-free error in
-gru_set_context_option, gru_fault and gru_handle_user_call_os
-
-The mainline was fixed.
-
-Fixed status
-mainline: [643a16a0eb1d6ac23744bb6e90a00fc21148a9dc]
-
-CVE-2022-36280: An out-of-bounds(OOB) memory access vulnerability was
-found in vmwgfx driver in drivers/gpu/vmxgfx/vmxgfx_kms.c
-
-Fixed in the mainline. This bug was Introduced by commit 2ac8637
-("vmwgfx: Snoop DMA transfers with non-covering sizes") in 3.2-rc1
-
-Fixed status
-mainline: [4cf949c7fafe21e085a4ee386bb2dade9067316e]
-
-CVE-2022-41218: media: dvb-core: Fix UAF due to refcount races at releasing
-
-Fixed in the mainline.
-
-Fixed status
-mainline: [fd3d91ab1c6ab0628fe642dd570b56302c30a792]
-
-CVE-2022-4129: l2tp: missing lock when clearing sk_user_data can lead
-to NULL pointer dereference
-
-Added commit af295e8 ("l2tp: Don't sleep and disable BH under
-writer-side sk_callback_lock") to mainline.
-
-Fixed status
-mainline: [b68777d54fac21fc833ec26ea1a2a84f975ab035,
-af295e854a4e3813ffbdef26dbb6a4d6226c3ea1]
-
-CVE-2022-3545: nfp: fix use-after-free in area_cache_get()
-
-Patch was backported to 5.10, 5.15, and 5.4.
-
-Fixed status
-mainline: [02e1a114fdb71e59ee6770294166c30d437bf86a]
-stable/5.10: [eb6313c12955c58c3d3d40f086c22e44ca1c9a1b]
-stable/5.15: [9d933af8fef33c32799b9f2d3ff6bf58a63d7f24]
-stable/5.4: [3c837460f920a63165961d2b88b425703f59affb]
-
-CVE-2022-3623: mm/hugetlb: fix races when looking up a CONT-PTE/PMD
-size hugetlb page
-
-Patch was backported to 5.4.
-
-Fixed status
-mainline: [fac35ba763ed07ba93154c95ffc0c4a55023707f]
-stable/5.10: [fccee93eb20d72f5390432ecea7f8c16af88c850]
-stable/5.15: [3a44ae4afaa5318baed3c6e2959f24454e0ae4ff]
-stable/5.19: [86a913d55c89dd13ba070a87f61a493563e94b54]
-stable/5.4: [176ba4c19d1bb153aa6baaa61d586e785b7d736c]
-stable/6.0: [7c7c79dd5a388758f8dfa3de89b131d5d84f25fd]
-
-CVE-2022-3643: xen/netback: Ensure protocol headers don''t fall in the
-non-linear area
-
-Commit 7dfa764 (xen/netback: fix build warning) was added to the
-mainline and was backported to 5.10 and 5.4.
-
-Fixed status
-mainline: [ad7f402ae4f466647c3a669b8a6f3e5d4271c84a,
-7dfa764e0223a324366a2a1fc056d4d9d4e95491]
-stable/4.14: [e173cefc814dec81e9836ecc866cdba154e693cd]
-stable/4.19: [44dfdecc288b8d5932e09f5e6a597a089d5a82b2,
-5215a8c7a72c0c9d49de9450ad92464832e981af]
-stable/4.9: [1a1d9be7b36ee6cbdeb9d160038834d707256e88]
-stable/5.10: [49e07c0768dbebff672ee1834eff9680fc6277bf,
-a00444e25bbc3ff90314ebc72e9b4952b12211d9]
-stable/5.15: [0fe29bd92594a747a2561589bd452c259451929e]
-stable/5.4: [8fe1bf6f32cd5b96ddcd2a38110603fe34753e52]
-stable/6.0: [e8851d841fe4f29b613a00de45f39c80dbfdb975]
-
-CVE-2022-42896: Bluetooth: L2CAP: Fix accepting connection request for
-invalid SPSM
-
-Commit f937b75 ("Bluetooth: L2CAP: Fix l2cap_global_chan_by_psm") was
-added to the mainline.
-
-Fixed status
-mainline: [711f8c3fb3db61897080468586b970c87c61d9e4,
-f937b758a188d6fd328a81367087eddbb2fce50f]
-stable/4.14: [9f4624c42db9dd854870ccb212ddd405d8c59041]
-stable/4.19: [a2045d57e844864605d39e6cfd2237861d800f13]
-stable/4.9: [c834df40af8ec156e8c3c388a08ff7381cd90d80]
-stable/5.10: [6b6f94fb9a74dd2891f11de4e638c6202bc89476]
-stable/5.15: [81035e1201e26d57d9733ac59140a3e29befbc5a]
-stable/5.4: [0d87bb6070361e5d1d9cb391ba7ee73413bc109b]
-stable/6.0: [d7efeb93213becae13c6a12e4150ce1e07bd2c49]
-
-CVE-2022-45934: Bluetooth: L2CAP: Fix u8 overflow
-
-Patch was backported to 5.10, 5.15, and 6.0.
-
-Fixed status
-mainline: [bcd70260ef56e0aee8a4fc6cd214a419900b0765]
-stable/5.10: [f3fe6817156a2ad4b06f01afab04638a34d7c9a6]
-stable/5.15: [19a78143961a197de8502f4f29c453b913dc3c29]
-stable/6.0: [5550bbf709c323194881737fd290c4bada9e6ead]
-
-Currently tracking CVEs
-
-CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
-Bluetooth Core Specifications 4.0 through 5.2
-
-There is no fix information.
-
-CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
-
-No fix information.
-
-CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
-Provisioning Leads to MITM
-
-No fix information.
-
-CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
-
-No fix information.
-
-CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
-
-No fix information.
-
-Regards,
---
-Masami Ichikawa
-Cybertrust Japan Co., Ltd.
-
-Email :masami.ichikawa@cybertrust.co.jp
-      :masami.ichikawa@miraclelinux.com
 
