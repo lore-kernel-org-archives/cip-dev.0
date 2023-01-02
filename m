@@ -2,369 +2,203 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC42BC46467
-	for <webhook@archiver.kernel.org>; Mon,  2 Jan 2023 11:44:23 +0000 (UTC)
-Received: from EUR04-DB3-obe.outbound.protection.outlook.com (EUR04-DB3-obe.outbound.protection.outlook.com [40.107.6.62])
- by mx.groups.io with SMTP id smtpd.web10.33983.1672659861182088809
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9877C3DA7A
+	for <webhook@archiver.kernel.org>; Mon,  2 Jan 2023 17:23:35 +0000 (UTC)
+Received: from EUR01-HE1-obe.outbound.protection.outlook.com (EUR01-HE1-obe.outbound.protection.outlook.com [40.107.13.57])
+ by mx.groups.io with SMTP id smtpd.web11.40824.1672680206071338581
  for <cip-dev@lists.cip-project.org>;
- Mon, 02 Jan 2023 03:44:21 -0800
+ Mon, 02 Jan 2023 09:23:26 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=cPtMer1I;
- spf=pass (domain: siemens.com, ip: 40.107.6.62, mailfrom: jan.kiszka@siemens.com)
+ dkim=fail reason="body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=fG0QXBZX;
+ spf=pass (domain: siemens.com, ip: 40.107.13.57, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=U14TZpQIPVP4xVqT9/oAmCNEnGGgpX+p1tnd7V1XOWq5XQufuxqMBFOkkKW3xF1SCOgldIYkre3MMd0ZmTvWnG52l4CDX9Na5INPz0akqBAGzbprmS+UKLzpOFqxV8VI3D7XcZorkKQ1bk51qhQ1YX4OGY5dxWX5qo0IMS+ljwJ1AJEkGRkOjbkrFiGEtizQL5V56nYW/tqauzrG/hWyAZt/LLxq46bSS2Af9BlrpJ3MXXStubnTEQNu4N7x5TfAQXXCr6hLEZs4m8ZUcTr8uTDpkgIUuQOk2E11KdUjlFzwmLKs9oNr5moHWZF2YMK+0DMpul0egVOLvZZvZbqAIg==
+ b=Bml/VlvBNI6ShJNRgPxCyJadjp74bv0nAGbEyZXko/aYbUL1RehVhQzPnQEeLXnDje6CV125G7Iae+WvTj3jqO0WDLX13fdpMpk3hzesTyG3/OKsgBQM7uSATYUGGzChwl//tSRbtY59sv1EcjEXMIc1jzl8vI+/qE3ngi5eDsbrM9uMPmIn+j6khA4VnsKUKqGDjKXq2OofyywSf7lfHd14skIFEZ5F9oOKtbdGuU5tEykZLjSKP10TG9cq5sxgkVpW1UeWc2HfVo4H3I7expD1ZAiw1d81Zl99gOeePMInHyRP7Sm95BYcUlNtjGp17sLhSZx/3AsIRZtMbClGMw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jH8kxUl7miLHn5h9MKcSVL4l5VwR4sjU3rjlq6VLIuY=;
- b=FRKlrYzCXdYZ1+3spEGC61HtOM5diVhLZO+tb7U3vsFUCZzR8WEVQYPI35FPAYFXrhBpA72K2dfKuvEImrz7K2PQ99oqK8V2ciULcWmhH7cFlES8wXss+mO+hLP52YTzUgnuomB+6j7PFlM+9FY7jBGC+JpRvzf4HwXOZ4TmgghId2fK7nWDVlXB1shshEvndLux9H2JeaqOvJ5wKjaGf6kRofLsMxdgPxXbI1mz9mCa9v/W2QrXYoMaoU4mWxSg2kcVQXxDlUPWCQ8zNxtsJJx1M2ImttZhCpicEmtTuFnjAtkSDtVdfeOPBabcL0FbtbnTCqbJZgAKU0cTyHScOA==
+ bh=SHXeS2cUU01eyq/ztRgJPV0r763UstgvKoEQCwXQhwI=;
+ b=gVeAonmTHyClH2+mXhU6hRLjRyES+yeIFW5kOnWHaZTGTJax2LdSqfUqOmtJOUVHF9sbCiPYqjFrnwBZp/J90iobNFPqOttr5YQCNpvyNfAnnQmtJA+lRXKu+PDObltQjopFA1XOybzZB3uKlu+Ae3gct0zK7+M7I67B7nDzCbBj9DZfUctt6CuZSkZLaDvFGbbv3mFmujYjArwt+GQ2tf9qsLNxBxv9eSBZldhMDHoS+CXtFVifnSRUCiRtb1gCCfrE9xmiM+SNRukB84WXZvEfa/KSeb+peNyyQcf0Lp2vyAQtzaDMfgidTCSRM520RE/xqGGR87pN8mmEZBvEbA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jH8kxUl7miLHn5h9MKcSVL4l5VwR4sjU3rjlq6VLIuY=;
- b=cPtMer1I/ZuJ07NTakUY9LmTTxOkZ2QBGNTJ+6vaxCQV1MHtC/vWvdHwqHZH3IPtzGfPoVBimihKD12ek0UcFqLe+WSMFlvRn8MNmKys2+aM3P/OiO7zuda9gWVBeMt8pUEwKMRg7SnkuMVibGwaRDjWS63vdLF0gD4g0LCje8WMXx9IW9b8sn3EbIy/GHmmd7GFSWGnBXZ8YR4pGcJ9VqTrFlqFKg6WaNAmzSwkmPXdN9U+LJwBtynQClIdopcKuI/k0m7U3fMwYINyx0g+Tzr/HxFjGYhSrownjK4ntXOZO7oTk8qNZw7YBWl+HThl1mJy+Jsi9/d6jvQNiR0P9A==
+ bh=SHXeS2cUU01eyq/ztRgJPV0r763UstgvKoEQCwXQhwI=;
+ b=fG0QXBZX0qh5srV+jSr29pb2SW8jUGE/5YyB4MZCjyBD9uaDn8ei9phZY4G8q/2TMrl1Kzm1eiew5f47nx9AlAIHKAuG0sY87WLzV5/jd/o8csD3uMI2j7O0BuQfOPN4ADcIijXWmRdMpyLn28Ji6lWWBiVjajaOXknqHMU/4CGxCja2s2DNHaD99znYHCSdTm/6TS0IDYtujT1TDTXzfhgFUJncbG9GzP+82QJdfj96ywxIwAKetkqFTzdfhE60pthyEkQxQUcKRl9F0vtaiEXk+fcNuC6f+nNnQfLB8GtfKPtBvrY72bw66o3atiO/8lrZo6KL0g5rARMTRWH1vQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by AS8PR10MB6416.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:56a::14) with
+ by AM7PR10MB3301.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:106::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5944.19; Mon, 2 Jan
- 2023 11:44:18 +0000
+ 2023 17:23:22 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::2957:50e8:8ce6:124a]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::2957:50e8:8ce6:124a%9]) with mapi id 15.20.5944.019; Mon, 2 Jan 2023
- 11:44:18 +0000
-Message-ID: <32437820-77a9-2b43-3e31-98de4a4951ae@siemens.com>
-Date: Mon, 2 Jan 2023 12:44:15 +0100
+ 17:23:22 +0000
+Message-ID: <cc067eff-9d1e-0fc7-f0cd-8c936f930ef0@siemens.com>
+Date: Mon, 2 Jan 2023 18:23:19 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.1
-Subject: Re: [cip-dev][isar-cip-core][RFC] Create a generic initramfs overlay
+Subject: Re: [cip-dev] [isar-cip-core][PATCH 0/6] improve root home moving for
+ layers
 Content-Language: en-US
-To: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>,
- cip-dev@lists.cip-project.org, felix.moessbauer@siemens.com
-References: <20221219132118.325050-1-Quirin.Gylstorff@siemens.com>
+To: Henning Schild <henning.schild@siemens.com>
+CC: cip-dev@lists.cip-project.org, Wang Jing <wangjing@siemens.com>,
+ Gylstorff Quirin <quirin.gylstorff@siemens.com>
+References: <20221129122451.32155-1-henning.schild@siemens.com>
+ <8a8848a0-a801-78bf-e4db-162c19aa3f31@siemens.com>
+ <bee9645b-15e1-0f93-d0b5-df8974711459@siemens.com>
+ <20230102180405.6cc06e3d@md1za8fc.ad001.siemens.net>
 From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <20221219132118.325050-1-Quirin.Gylstorff@siemens.com>
+In-Reply-To: <20230102180405.6cc06e3d@md1za8fc.ad001.siemens.net>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR0P281CA0082.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:1e::21) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: FR2P281CA0145.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:98::17) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AS8PR10MB6416:EE_
-X-MS-Office365-Filtering-Correlation-Id: b031389d-6827-430a-38a4-08daecb6ae91
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AM7PR10MB3301:EE_
+X-MS-Office365-Filtering-Correlation-Id: 087fd39e-de72-4d41-5a16-08daece60c90
 X-LD-Processed: 38ae3bcd-9579-4fd4-adda-b42e1495d55a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	bmn3lPtfVmV9dqX8XQF1Bp35Bb/D0CkRpOF971WJV5JD+s89p9PqNXCFO5M4gqNTUUqhq/3lybbJmeptBEsXk7lYwxcGkDSsdqUHi09FmUkYSNZOl27PaZicRdFGnLMU2mBylSW9j5UjfGtHmj7z89ik59O8k3gA25To1NMRq659fyxPShviySQVkBsGPhpf8BZkYp7PLCk7QprwIYPFxQVboQGoc+MUSVeNUmibGs83A3loAODkJ3pRaXzsktAOP2qcFaj6rVTEktaQVS9leaQ3KzUT/JnzpuLq8PA7U9bFyF3lgGuIbUqA7T8/Q4ltQdg/js4H3I25Z94oAGqwFmfXztQPWoWWyn8jzzZGR8ASkC/4vtAADdgnqU8TcfUScFYZPVODzFU10WHWnUYeV9LmzbhRDmUlYAhoz/wz4RDBMkAHd1TEmdfWF4aETsivelj89n3R3BzsJKSLuF9b+yzAidIzev4ffRw1Hp2TQi+g2oy7xwdWYNcyuwmpZyVO3hK7IafBlAFHTFJwqWRg/BJc9dpX6ofHs+9EUNLTvGr+yxA7rASZSE24ExZ0aL/b9s3NhWar5m6UiWMxYnqQowyUUs5+bg0KIWVOE+mKczzYTQ7eZCVc2wH3ZszVYS4K28mbgikWD0goHYrKRLO3eckMebSLrL3DM5LGJ0T1Whbx/tpKEPSc2Bm6w8+1i3E3PNZTEDKxm9KXLt5UIvBxIKngulet2NV2eDBR4FP6laK2QyWyKZJrqBIetH9uGhB23447D5gphc8kmPL7Zfj2Qe9B+foAKe19TQKyJA7uCK1+YuE2T9rh7OEQZRXccxMR
+	79Rc1tBXqRNsd3GbWCxFBT+PLLyfqoJY+S60CiDPp7BOZRiATdt91X1Gkd9ZNHlh1/H9AuXu3LbUeIOsoQQOp5GPP2jNe/846AkymOXNYlE4wUdoqr7hBUlU1q69f9x3wxDuiTinCEybIclgXufZuJMfVeBRJJ4xl7k4055I8oIOlKalct+SGZIiqQC+NQGMIpRXGRvkP8dopXhDRDg2xXouN3Z4QHnYL2JkPUrd066NGqNv0ORRuCrFWBMxTw2Y8azLP9Em6zI9lc24sT7Y4WTEOveZ7suKEHIfTwvvrURn0tBf0VH/d9noY7eDy8CCwuKwunOIIP9iEWofzOu45iekKGVx6WpCX+1F1D6QtsI0hwN9Rs7z4VOTpugRMOssO43DacSNJctrZBNZ/ZQkZ441eJYP1YMSz/IxSQpYdK7MV0H8mHPbpNCxiJmjSbYy/046Pwbz/Y1N/GbaCrSO740OmWvg4YdoKm3WOCPEfEg0SkyaRW49GXbzhfyhsvGUiYqLcbKOG7kZRfeG+8+B6a54+ToxOZiL+UP64Xldj/woEkJiR+qnAjpSCxkPj9N7pPqfkncP0YY06o0C/vIt+NNZ+fp5DRTF2CKhv6DNN2DoZ5NTSqeZ4g5oql8UjhMAaM36K9zrwxk6qAlkDL0oC4Dj6JePjb3XOY6BQQQETLPNzMscgY6dKw+thl4HqNnTn3oMEg6sAwoxHv+rw4SielZ3I5vhz/aD1GdAfjR8O54Ip/7yO6E639vhntMeWx3so3Wj+rdNykmXQaJX2a/efxXtt32T43XAkF0hqBVctoGjIlg4deHrJzhRSI7Zlm4L
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230022)(4636009)(376002)(39860400002)(346002)(396003)(136003)(366004)(451199015)(44832011)(31686004)(5660300002)(316002)(41300700001)(2906002)(6636002)(8676002)(66476007)(66946007)(8936002)(66556008)(6486002)(478600001)(36756003)(53546011)(6666004)(6506007)(186003)(26005)(6512007)(2616005)(83380400001)(966005)(82960400001)(31696002)(86362001)(38100700002)(22166006)(41533002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230022)(4636009)(396003)(376002)(366004)(346002)(136003)(39860400002)(451199015)(36756003)(66556008)(66946007)(66476007)(2616005)(8676002)(4326008)(41300700001)(6636002)(316002)(37006003)(54906003)(2906002)(31696002)(86362001)(83380400001)(5660300002)(82960400001)(38100700002)(6862004)(8936002)(6486002)(6506007)(44832011)(478600001)(53546011)(6666004)(107886003)(6512007)(186003)(26005)(31686004)(966005)(22166006)(43740500002)(45980500001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?U3hNTlQ4UXhOa3lvbk80b0tjNkhEZklac2RTd1YzaXREaDdGNi8zV0VmM3Az?=
- =?utf-8?B?cHd3cllsZGp5QzJlOUdHSWVqeXAyK1F3aUhMZkRqdlY1enFWcDd6RXBqU2xH?=
- =?utf-8?B?azRaUmFDSkthT2FMdWRWa1p2UktaSjdPWTJMWnZJRElyTlRqNG15RVY2UnZQ?=
- =?utf-8?B?a0hNZTlMM2dNREhRbjY5bGxnZGVxYTQ2ejk5SzYyelNmbHJvVmR1WXZQQ0tC?=
- =?utf-8?B?NWxWNGJjYWtQM01SZXg1aDA0MVAxT2s5OFdsb3J6Q0RxUzVWdWM5anZYYUZE?=
- =?utf-8?B?VHRSSUlZWGR3NnA2d3A0Vy9pT3l1QnBKeWgwZ3dRVDByd0FyWjcwNUtwbjlC?=
- =?utf-8?B?WkUzNGNQN2VaQjM4bVpnb0puL0xDTGNvOXFkOS8wS3BkMTZ5REJxSDh5L2g2?=
- =?utf-8?B?V1hLWlZOYkcxNVJtK2MwZ01IaFp2dkJrNTZ0aDVkOGxSL0h3T3ROWDJHVzgx?=
- =?utf-8?B?VVE5NFF3TTlSQkZXb2J6ZUhiTnBBMUFsazlhYXNVL0VuaStPRmZFTW9NdlBn?=
- =?utf-8?B?Umx5b2RCOVZ4Ymx0TGdPQTcvQjQ5TFN1QXVHSk1lbnlJZzN3ZFFiakhrUkhO?=
- =?utf-8?B?WVJscFFxd1RHVG9rcG1BUjlYSkVld2RPNVpzVjNia1d0RG80WUhVNGNxTUlH?=
- =?utf-8?B?VkFhSlcxalJKcUNQdnpsc25CYXJCemtxWW9nclhldTNZd1YwQ2VpdXRhRWFy?=
- =?utf-8?B?MU45b2JHL1lVM28ybzFTcVRWTFhpQVRFYTNjSHc2STAzbFRINWJCeURlaDVp?=
- =?utf-8?B?dWg5NldsZnZON3VFQTVqb1ByWDE2WS9MT1liSm1CeTMvVnJITVJwN1pFWHhF?=
- =?utf-8?B?SHpoUldyR0cyTmFVK0lsUE41NVRIakdWcDBVSG5BUFdoeW1LMFpvTVg4ckxQ?=
- =?utf-8?B?SVVudkV2UkhMQUozd0RMSWRtRGdqUXJPOVVSZkhZMUtHajI1YWxVdDZmUjhM?=
- =?utf-8?B?WVJhZ0llNmhDbXpSM1VvLzBNVHYzNDkxeHQ2aTRMekFwenF3bjZ2UXRNUU81?=
- =?utf-8?B?cTJ2ckhadi96VDM4eTZ2Snl2U0QzNUNiNjl5ay9WLzBUcHZrV1dkUnJLdWpG?=
- =?utf-8?B?eXZFaWRRdEt6VlZURWNMVnNPK3NpNlFTd3FLWnN1U0pUZmlCNHBRMUV1eXVp?=
- =?utf-8?B?TEphdW9saGVGaFNSRmFvblpQdGFMZWlhcXY2M3hlRnVlVWRTOVo4MTdGSERM?=
- =?utf-8?B?amh4dnkyMmVCb2lxd1RZc0o4aXFMMHozRnFNb1BEMHB4NWxNZDV2R1lsRGZz?=
- =?utf-8?B?RkJzT3BxOEZYRUg2QkliZDlKZUF6OEZ6TFQzQkptZmNjbVZ5UTk1WkJQUlgy?=
- =?utf-8?B?L2wvN2wwRWt6K2FlOUFja1FWdUZ6R1BNMU1vMjR3clZTWUF1NXJ2cUFwUExY?=
- =?utf-8?B?OFpiUmhhZnJSVFVSNkwweUVicmpyREZDNDIxQ2pQR3Z0clhzKzllT2wwRGZx?=
- =?utf-8?B?MjFjMlgyNGFJb21weXhXYVZod1k3YThVdlBKREczUCs1ajdIaEVPV0NNYVJJ?=
- =?utf-8?B?OEJnbXFQcGdqdk9OVmIyV1dudmJXSE1sT2VxNzF0aHl3NHpXZi80ajVKbnFN?=
- =?utf-8?B?eFVuMWplQlQ3VlRkK3JYZjJsV0VoalRnRityTFczSVhSZjlNaG91d214TlR1?=
- =?utf-8?B?cSs1dHh3OStqU210QVFpeUs5dUExMVhhbGY1dUd6Skw4c3BiQTZFQnZMaWUz?=
- =?utf-8?B?NVBwTklvOXk0bmhJSUpKODdKaFlOVlZWTGxPM0gwcVdDRFI3ZndQSFczM1Er?=
- =?utf-8?B?RUpXbUc4blVKSUNzQy9RZjFnRUlTdzVQM242cFJVU0x3SDhuTCsvdkhzZ2d3?=
- =?utf-8?B?MEkreDNua2ZHbGVuS2NyZDVoSzQzWWNtUFJ5eUd2REM2VkdKekxaRHlhazZT?=
- =?utf-8?B?UGgrdlNoaVFseHpzR2IrdHBJRURPKzBXTU80S0RNQlF4aytxYkNYMW1lVjVm?=
- =?utf-8?B?SHZ5NWljRGF4UVJBMVFSRHNuZU1KUHNpTXVwQWRsUjdGWlJJWmJldXVtUDhx?=
- =?utf-8?B?eVFMT2R6UVE2NVdHTSsxOHFsZXVndU5zS093M2xMcWFBNmEzajhuUWV1Qkxw?=
- =?utf-8?B?TFNuUVBoWkdpU0FHVENsRU50eGhHNjNZRXB2TlV5RVlzSzJiaFhBUnZTVkpB?=
- =?utf-8?B?MmFKQ0pINmRUNnpqOWFZUThnNWtEVTNyazRBcEM3cXVtUEtJVHlCKzRZVXVz?=
- =?utf-8?B?ZkE9PQ==?=
+	=?us-ascii?Q?K4Yi5RreyVGK00w1iM1w/cpJ3x1W8J2I6ee8DyUpsxXvDMlmZPbW1c/RzTM2?=
+ =?us-ascii?Q?VmSgKL1/4SJDqGDvaemMpPBbcSa03eFy3UR2S220i7lAn6DzzslKmW/1q5B7?=
+ =?us-ascii?Q?cFCTG4uxFkv1NropkAd/EoTIIlgMYA/QF5aVp2rPYgzUvB27D9Wqp8Cn4rzM?=
+ =?us-ascii?Q?mayA0Woopl61Cg77AYnoxH1JRjeaZN6D5YqSydgyovGzC+kdgItdeSq6dQbD?=
+ =?us-ascii?Q?7jErSAPiUwbrQsQhLcJYhlVUgOZMgUMCx8XnTtAMWhXg2/6+FkChE/wF3OKv?=
+ =?us-ascii?Q?gwqIhQ0o9dW9VVpHdI1N67EYG5kh9QnC3d1JI7ocaBKsL7K1WUQIOYibHXEJ?=
+ =?us-ascii?Q?u7p5BdzVQDMBkj1jYp96H8uh1OSu4lTQcblkpBkuvolaUY5GQoBtAcs1yvRY?=
+ =?us-ascii?Q?nN0PFE+c4jONc+nvJjGAwIlolBiDTuMJa+8+QCtS+5iUz7Q/XnAc3k6R3uhQ?=
+ =?us-ascii?Q?+vpO/IF8+OQ5jBvf2U8pysDeLh1hxKxMypTdDFhTPIhvK1AJqFRmG6+rTHTs?=
+ =?us-ascii?Q?RVck1sQUJTawS9Kyp2CSz2g2Cetq6/i+n2SM1ODyxkNT+XC5riOes3/3+u3D?=
+ =?us-ascii?Q?XzkFQJ0v3IxlprXm41sVBj6PDCeN2/uYL/KSvwk8HFEAUCWIC20AV9+xCjey?=
+ =?us-ascii?Q?zRESghPtmqT5CK/FvjEzMaaz/Hx1DQGg6MgCZyjmiY+/zUewc6oL5dgc6R4w?=
+ =?us-ascii?Q?SgSDpN8sRZPP4/dglXDXumFpHUN2wWQI0U8/4zD4tc3CEcVRAa3qYBannrxf?=
+ =?us-ascii?Q?fOYld2cmRipI1D9ZOQvRTReEWNQsg2VLTXLGEuXBSVEmVV36xcdqqCd8WXPa?=
+ =?us-ascii?Q?G9j7kfVOPqGGUZ+zTcyMSqBCQYhN7lb5T3JAokvkYZ64WKZb2VYWil5jFnMv?=
+ =?us-ascii?Q?Vg82INAmld00j5PvaWqiJXOq4YEQSA13IdsNwkS0fT/kQO7WgwRZSdBYSC3d?=
+ =?us-ascii?Q?kWgxNpRzEJ36jO+Otvn8vNnNfyo0LgBhcVbihrhjDGpa+fjYLY2X5KrPD5qo?=
+ =?us-ascii?Q?FrHjNxcYmFvp5ta6/aoKeBfTpYFl5vLUdAm/Gl3w7z2IquqCh5WkNCU6smg2?=
+ =?us-ascii?Q?upa0dXLkfzA8zdUHfypnjQbXAx8QdxmFOFAzVVTeNteoguLd2z8DiDqcOUkf?=
+ =?us-ascii?Q?SuVIOUceA/rMAtO3/i6ZdWZrH6uKKN+8KWODrz1fu5L1jvhkL/IQc48WNWTP?=
+ =?us-ascii?Q?gL525oQ4XJ/MNBAFufZ8hcz4hPuJqhLTewYpT37sUKUe3TaVGmzKF8epYZ3/?=
+ =?us-ascii?Q?dPdUg8iaVp2F6nTPuAu4bVkoyY/PPx6RhWVmc1WM7VrYVOmc2Rtu+dQcLkyJ?=
+ =?us-ascii?Q?8QxjOa03aZ9ay1OREXAOhMO3lzaX8akKyqlXOJL10bQM+Fgtl26C+BOET9SV?=
+ =?us-ascii?Q?rnRQJ8guhfp23dNtPwcq0Dl1/a6m/034JG0kLFdU53kW5XOWzyb+CjEnJucZ?=
+ =?us-ascii?Q?c50uXxnCvRRMD29HxaUMR0VqGodtnZLeZKVBLKt/Tvky4GaWf7Y9W/xGM0O0?=
+ =?us-ascii?Q?28c8s9hD2mTcfP/Dfrrgb7fBh3ruatITHOXzTtMonQ0fWehVO1rRXsh/zfK/?=
+ =?us-ascii?Q?kp1wLUouDxJVZnMZOji59Obv6doO9rRAPDDJexd6gCcucTljQjrF+NPzokKM?=
+ =?us-ascii?Q?eQ=3D=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b031389d-6827-430a-38a4-08daecb6ae91
+X-MS-Exchange-CrossTenant-Network-Message-Id: 087fd39e-de72-4d41-5a16-08daece60c90
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jan 2023 11:44:18.4255
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jan 2023 17:23:22.4860
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZFYhaPd60HdXj/N5fZMIGnSJuaSMhDPpLd66tX++/WmDvXiSNq3GEsCDJOdsw7Y566jXb6yQNBu5dJxtO2tEGQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB6416
+X-MS-Exchange-CrossTenant-UserPrincipalName: fyszlT9w3hBtgBL5fQtrVvxYqBIcMbIBrs3QfJNSI+cIMyvEWqTi0UoYCGL4UsJndvkzmdBFhcU2UWGeg/aTqA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR10MB3301
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 02 Jan 2023 11:44:23 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10275
+ <cip-dev@lists.cip-project.org>; Mon, 02 Jan 2023 17:23:35 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10276
 
-On 19.12.22 14:21, Quirin Gylstorff wrote:
-> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> 
-> This allows the user to generate multible overlays in a given
+On 02.01.23 18:04, Henning Schild wrote:
+> Am Mon, 2 Jan 2023 11:42:29 +0100
+> schrieb Jan Kiszka <jan.kiszka@siemens.com>:
+>=20
+>> On 21.12.22 14:01, Gylstorff Quirin wrote:
+>>>
+>>>
+>>> On 11/29/22 13:24, Henning Schild via lists.cip-project.org wrote: =20
+>>>> The original idea was to make the rootfs home dir move and symlink
+>>>> reusable in another layer, while also playing back some findings
+>>>> from that other layer.
+>>>>
+>>>> That is p1...p4
+>>>>
+>>>> p5 and p6 are drive by findings, feel free to pick in any order i
+>>>> do not care about them too much
+>>>>
+>>>> Henning Schild (6):
+>>>> =C2=A0=C2=A0 customizations: make postinst idempotent
+>>>> =C2=A0=C2=A0 customizations: make postinst script report all potential=
+ errors
+>>>> =C2=A0=C2=A0 customizations: comment why we can not actually change ho=
+me
+>>>> easily change-root-homedir: split root home move into own package
+>>>> =C2=A0=C2=A0 kas: set clear text root password
+>>>> =C2=A0=C2=A0 CONTRIBUTING: fix note on patch prefixes
+>>>>
+>>>> =C2=A0 CONTRIBUTING.md=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +-
+>>>> =C2=A0 kas-cip.yml=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 |=C2=A0 4 ++--
+>>>> =C2=A0 .../change-root-homedir.bb=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 |=C2=A0 5 +++++
+>>>> =C2=A0 .../change-root-homedir/files/postinst=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 | 21
+>>>> +++++++++++++++++++ recipes-core/customizations/common.inc
+>>>> |=C2=A0 5 +++-- recipes-core/customizations/files/postinst=C2=A0=C2=A0=
+=C2=A0 | 10
+>>>> ++++----- 6 files changed, 37 insertions(+), 10 deletions(-)
+>>>> =C2=A0 create mode 100644
+>>>> recipes-core/change-root-homedir/change-root-homedir.bb
+>>>> =C2=A0 create mode 100644
+>>>> recipes-core/change-root-homedir/files/postinst
+>>>>
+>>>>
+>>>> =20
+>>>
+>>> Looks good to me. Tested with qemu-amd64.
+>>>
+>>> Acked-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>>>  =20
+>>
+>> Didn't hit the list and also patchwork. Please check for the reason
+>> and resubmit.
+>=20
+> Ok i will try again but i wonder how Quirin could have it when he was
+> never on To or Cc. I would not really know what to check on my side,
+> will add Jan to Cc but not Quirin and we see who gets it which way.
+>=20
 
-typo: multiple
+Seems it did actually hit the list (that's where Quirin found it) but
+not kernel.org (where I'm reading things):
 
-> location.
-> 
-> The configuration used the following variables:
->  - INITRAMFS_OVERLAY_STORAGE_PARTITION_LABEL: Label of the partition to store the overlays
->  - INITRAMFS_OVERLAY_PATHS: space separated list of overlay directories (lower overlay directories)
+https://lists.cip-project.org/g/cip-dev/topic/isar_cip_core_patch_0_6/95332=
+873?p=3D,,,20,0,0,0::recentpostdate/sticky,,,20,2,0,95332873,previd%3D16726=
+59862011165206,nextid%3D1671491382031296064&previd=3D1672659862011165206&ne=
+xtid=3D1671491382031296064
 
-"space-separated"
+vs.
 
->  - INITRAMFS_OVERLAY_STORAGE_PATH: path on the storage partition where the upper directory is stored
+https://lore.kernel.org/cip-dev/bee9645b-15e1-0f93-d0b5-df8974711459@siemen=
+s.com/T/#t
 
-Why do we need this split-up of label and path? The script actually
-considers path optional and falls back to label. Would be more
-convenient to just state INITRAMFS_OVERLAY_STORAGE_PATH = "/var/local"
-and let the script do the rest.
-
-> 
-> e.g.:
-> ```
-> INITRAMFS_OVERLAY_STORAGE_PARTITION_LABEL ??= "var"
-> INITRAMFS_OVERLAY_PATHS ??= "etc"
-
-Why not "/var" and "/etc"?
-
-> INITRAMFS_OVERLAY_STORAGE_PATH ??= "local"
-> ```
-> This will create an overlay for `/etc` and store it in `/var/local/etc`.
-> 
-> Closes: https://gitlab.com/cip-project/cip-core/isar-cip-core/-/issues/52
-> 
-> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> ---
->  .../cip-core-initramfs/cip-core-initramfs.bb  |  2 +-
->  .../files/etc-overlay.script                  | 36 --------------
->  .../initramfs-etc-overlay-hook_0.1.bb         | 30 ------------
->  .../files/overlay.hook}                       |  0
->  .../files/overlay.script.tmpl                 | 47 +++++++++++++++++++
->  .../initramfs-overlay-hook_0.1.bb             | 37 +++++++++++++++
->  6 files changed, 85 insertions(+), 67 deletions(-)
->  delete mode 100644 recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.script
->  delete mode 100644 recipes-initramfs/initramfs-etc-overlay-hook/initramfs-etc-overlay-hook_0.1.bb
->  rename recipes-initramfs/{initramfs-etc-overlay-hook/files/etc-overlay.hook => initramfs-overlay-hook/files/overlay.hook} (100%)
->  create mode 100644 recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl
->  create mode 100644 recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb
-> 
-> diff --git a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
-> index 9e0ee26..860021d 100644
-> --- a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
-> +++ b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
-> @@ -12,5 +12,5 @@
->  inherit initramfs
->  
->  INITRAMFS_INSTALL += " \
-> -    initramfs-etc-overlay-hook \
-> +    initramfs-overlay-hook \
->      "
-> diff --git a/recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.script b/recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.script
-> deleted file mode 100644
-> index 6e5aacd..0000000
-> --- a/recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.script
-> +++ /dev/null
-> @@ -1,36 +0,0 @@
-> -#!/bin/sh
-> -#
-> -# CIP Core, generic profile
-> -#
-> -# Copyright (c) Siemens AG, 2022
-> -#
-> -# Authors:
-> -#  Jan Kiszka <jan.kiszka@siemens.com>
-> -#
-> -
-> -PREREQ=""
-> -
-> -prereqs()
-> -{
-> -	echo "$PREREQ"
-> -}
-> -
-> -case $1 in
-> -# get pre-requisites
-> -prereqs)
-> -	prereqs
-> -	exit 0
-> -	;;
-> -esac
-> -
-> -. /scripts/functions
-> -
-> -if ! mount -t $(get_fstype /dev/disk/by-label/var) /dev/disk/by-label/var ${rootmnt}/var; then
-> -	panic "Can't mount /var partition - overlay will not work!"
-> -fi
-> -
-> -mkdir -p ${rootmnt}/var/local/etc
-> -mkdir -p ${rootmnt}/var/local/.atomic
-> -if ! mount -t overlay -o lowerdir=${rootmnt}/etc,upperdir=${rootmnt}/var/local/etc,workdir=${rootmnt}/var/local/.atomic overlay ${rootmnt}/etc; then
-> -	panic "Can't mount overlay!"
-> -fi
-> diff --git a/recipes-initramfs/initramfs-etc-overlay-hook/initramfs-etc-overlay-hook_0.1.bb b/recipes-initramfs/initramfs-etc-overlay-hook/initramfs-etc-overlay-hook_0.1.bb
-> deleted file mode 100644
-> index 37a04ec..0000000
-> --- a/recipes-initramfs/initramfs-etc-overlay-hook/initramfs-etc-overlay-hook_0.1.bb
-> +++ /dev/null
-> @@ -1,30 +0,0 @@
-> -#
-> -# CIP Core, generic profile
-> -#
-> -# Copyright (c) Siemens AG, 2022
-> -#
-> -# Authors:
-> -#  Jan Kiszka <jan.kiszka@siemens.com>
-> -#
-> -# SPDX-License-Identifier: MIT
-> -#
-> -
-> -inherit dpkg-raw
-> -
-> -SRC_URI += " \
-> -    file://etc-overlay.hook \
-> -    file://etc-overlay.script \
-> -    "
-> -
-> -DEBIAN_DEPENDS = "initramfs-tools"
-> -
-> -do_install[cleandirs] += " \
-> -    ${D}/usr/share/initramfs-tools/hooks \
-> -    ${D}/usr/share/initramfs-tools/scripts/local-bottom"
-> -
-> -do_install() {
-> -    install -m 0755 "${WORKDIR}/etc-overlay.hook" \
-> -        "${D}/usr/share/initramfs-tools/hooks/etc-overlay"
-> -    install -m 0755 "${WORKDIR}/etc-overlay.script" \
-> -        "${D}/usr/share/initramfs-tools/scripts/local-bottom/etc-overlay"
-> -}
-> diff --git a/recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.hook b/recipes-initramfs/initramfs-overlay-hook/files/overlay.hook
-> similarity index 100%
-> rename from recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.hook
-> rename to recipes-initramfs/initramfs-overlay-hook/files/overlay.hook
-> diff --git a/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl b/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl
-> new file mode 100644
-> index 0000000..7acabbe
-> --- /dev/null
-> +++ b/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl
-> @@ -0,0 +1,47 @@
-> +#!/bin/sh
-> +#
-> +# CIP Core, generic profile
-> +#
-> +# Copyright (c) Siemens AG, 2022
-> +#
-> +# Authors:
-> +#  Jan Kiszka <jan.kiszka@siemens.com>
-> +#
-> +
-> +PREREQ=""
-> +
-> +prereqs()
-> +{
-> +	echo "$PREREQ"
-> +}
-> +
-> +case $1 in
-> +# get pre-requisites
-> +prereqs)
-> +	prereqs
-> +	exit 0
-> +	;;
-> +esac
-> +
-> +. /scripts/functions
-> +
-> +ovl_upper_dir_partition=${INITRAMFS_OVERLAY_STORAGE_PARTITION_LABEL}
-> +if [ -n "${INITRAMFS_OVERLAY_STORAGE_PATH}" ]; then
-> +    ovl_path=${rootmnt}/${ovl_upper_dir_partition}/${INITRAMFS_OVERLAY_STORAGE_PATH}
-> +else
-> +    ovl_path=${rootmnt}/${ovl_upper_dir_partition}
-> +fi
-> +
-> +if ! mount -t $(get_fstype /dev/disk/by-label/${ovl_upper_dir_partition}) /dev/disk/by-label/${ovl_upper_dir_partition} ${rootmnt}/${ovl_upper_dir_partition}; then
-> +	panic "Can't mount /${ovl_upper_dir_partition} partition - overlay will not work!"
-> +fi
-> +
-> +for ovl_lower_dir in ${INITRAMFS_OVERLAY_PATHS}; do
-> +    ovl_atomic_dir=.${ovl_lower_dir}-atomic
-> +
-> +    mkdir -p ${ovl_path}/${ovl_lower_dir}
-> +    mkdir -p ${ovl_path}/${ovl_atomic_dir}
-> +    if ! mount -t overlay -o lowerdir=${rootmnt}/${ovl_lower_dir},upperdir=${ovl_path}/${ovl_lower_dir},workdir=${ovl_path}/${ovl_atomic_dir} overlay ${rootmnt}/${ovl_lower_dir}; then
-> +	    panic "Can't mount overlay for '$ovl_lower_dir' !"
-> +    fi
-> +done
-> diff --git a/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb b/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb
-> new file mode 100644
-> index 0000000..ee8635a
-> --- /dev/null
-> +++ b/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb
-> @@ -0,0 +1,37 @@
-> +#
-> +# CIP Core, generic profile
-> +#
-> +# Copyright (c) Siemens AG, 2022
-> +#
-> +# Authors:
-> +#  Jan Kiszka <jan.kiszka@siemens.com>
-> +#
-> +# SPDX-License-Identifier: MIT
-> +#
-> +
-> +inherit dpkg-raw
-> +
-> +SRC_URI += " \
-> +    file://overlay.hook \
-> +    file://overlay.script.tmpl \
-> +    "
-> +
-> +INITRAMFS_OVERLAY_STORAGE_PARTITION_LABEL ??= "var"
-> +INITRAMFS_OVERLAY_PATHS ??= "etc"
-> +INITRAMFS_OVERLAY_STORAGE_PATH ??= "local"
-> +
-> +TEMPLATE_FILES = "overlay.script.tmpl"
-> +TEMPLATE_VARS += "INITRAMFS_OVERLAY_STORAGE_PARTITION_LABEL INITRAMFS_OVERLAY_STORAGE_PATH INITRAMFS_OVERLAY_PATHS"
-> +
-> +DEBIAN_DEPENDS = "initramfs-tools"
-> +
-> +do_install[cleandirs] += " \
-> +    ${D}/usr/share/initramfs-tools/hooks \
-> +    ${D}/usr/share/initramfs-tools/scripts/local-bottom"
-> +
-> +do_install() {
-> +    install -m 0755 "${WORKDIR}/overlay.hook" \
-> +        "${D}/usr/share/initramfs-tools/hooks/overlay"
-> +    install -m 0755 "${WORKDIR}/overlay.script" \
-> +        "${D}/usr/share/initramfs-tools/scripts/local-bottom/overlay"
-> +}
+Sigh, this is annoying. Will open an issue with LF support again.
 
 Jan
 
--- 
+--=20
 Siemens AG, Technology
 Competence Center Embedded Linux
 
