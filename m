@@ -2,215 +2,220 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BDE3C46467
-	for <webhook@archiver.kernel.org>; Tue,  3 Jan 2023 15:06:32 +0000 (UTC)
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (EUR05-DB8-obe.outbound.protection.outlook.com [40.107.20.43])
- by mx.groups.io with SMTP id smtpd.web11.65479.1672758384173634295
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4FDCC46467
+	for <webhook@archiver.kernel.org>; Tue,  3 Jan 2023 16:54:42 +0000 (UTC)
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (EUR04-DB3-obe.outbound.protection.outlook.com [40.107.6.70])
+ by mx.groups.io with SMTP id smtpd.web10.69140.1672764874846072369
  for <cip-dev@lists.cip-project.org>;
- Tue, 03 Jan 2023 07:06:24 -0800
+ Tue, 03 Jan 2023 08:54:35 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=zVUBoKBN;
- spf=pass (domain: siemens.com, ip: 40.107.20.43, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=PDbH9P82;
+ spf=pass (domain: siemens.com, ip: 40.107.6.70, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Pct3q/of/f21morBiH3l9r7JyD6GvSEi/7S9CiA4kKP3IjbQ/BuW+p0fD6g3YspWmGVpluIvjmEWlscv2rEvv/VVCri3qvUi5TgmAZ40DfZtdeorzjwWnk+3iOgIAgZ1nY/qTRv/ZSbxSawk6Zzb96aBxfk8rYiAZ4CIiS0YtpMnR1qNNhfGRsZCaDOtRem21fJ7IOLwj+vNy3RJJ6b6zWIucOWvR0oRpW3bpTirfogl/U0RpknwP3w2etohibgkCG+EbuzOf5tJer3LJLNQIB4nvtiASkOLln1S+dchHz8Qr4KtmGw+zlPTrLABfLTzIbEpSbiXvTVERaSILa7f0g==
+ b=O+n2Ww7PXl75Fmt9lDXoVe+mfKs1n8EQtXb8d5SVLXymd1LYNd0StjECTuBYWZNRppK8xGcFuUxZX0rMcLupWaWSyqEHfr8lK37lknDICoTHRGy2cCcOjQyuXxg8sfHCU1bzTxpEtuqddBW17FR2iQmb/Wnq9OV7XrsmW5bQj8z7iQRXnq8WG2iJcrxpM2PIM9vg6eyC3etaEzuje/pX87YqZQAri9nvB0aIkMPByoZHRk4OqpukkXV64vdo1xHrDy+N+BabkjSQNI5ZY3JpkNO3SJ5DSH3LsPHzw6YJkWawTg/J/4+1TTLutt6fJ5pHIftZ+ZvxlpOaxzA9KrINTA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bBlMvcCfS2B38DjHMfDOsV2VRYpQkjgwhD7hGQgR2rM=;
- b=lxjW0fxQTNmXvokFYal0BfBo95kX4QdtNeFiYLbi48eYy8MSMjPDf3z0Gq7odDIa6lzgcrkA7mW5sleLLJFPbABjUNYP6OCuzdJ260784Fk6NKRDKDlpD40CNAOinhKB8soH+FLQLBw+NNy7KQ+IdKkQA7ipMlLskKQBTIQ+1l0dyOchxibyaJGSvbZkq43cm0JPZQ9yN4NQ9ZABO6ddqQs/wt08sEFPVyRD0Qi0N5TsrmUJTSt5Ahivv8kWcUFag9LE1gwFN8gU4uMH5eoxQqKOBe/NiHxNVdXXcInV2hsaoOvhLP9vDO2D3x8O9aPfFgP7NkDdhXN3z+Dpw3RWnQ==
+ bh=QoHXJfrvUeuDc846sskelUjoR2Zyt4BwVqd4vm7Rre8=;
+ b=jgS6gb3cldDdfGpq00Pb+5i82Py8QrsjEfwYqmhzlLGLybXKyXZyaBS6vFYAoNLHehsES6lZor/0vnFvS3ffuzD0TeibpwqMpc0A7W6rnsU+N3Ss+oxbWQbO7FRSXhkITi4gJzq1k7ida97n3RB1A7eh1pW6YoUAGcUkBcIRHjGb56j6GoG+KYLVkG3N90vKFs4r8To/6LTC3Spiyv9B/lDkwWKEpsLtJg1RPI9jabMcC1khK70eLKdDyiUXSgWfULLujlsOlnZSKqqUCbPM/0UIl3soFl7vXlqH+P/iwmOqXRMpPLyFwxYX0Tq5NCq9U/2JmduVsBflOtF9rcrlAw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bBlMvcCfS2B38DjHMfDOsV2VRYpQkjgwhD7hGQgR2rM=;
- b=zVUBoKBN1hua22iMRvSwhEFwUUymbJyriO3UHZGyy/eZ3KTTnXCXbiNMtjOIJNghpvRhZI7ncnFVPpNxbrYce7Sr/aX+4ZuOBKDNLA96P2LYkRlxZz1FincxuMiIblhpMM5OsW86vGkr2HydIt2PQStaRpnRgDtnUUHYkaBflGlDrDHGBAx/QdpDS4FUr66TMQSAq0uZpTNdaainHKRccAJ1RPqL/xA6L+j26SUVYi/FLOGj7zzE6j65/6van9qcIISx5AB56b6w4kmL/8SNfcLoAhXbTCIrzmDIMH/D+JhITCLhtmzKIiZ+c2UveT0g0KFEFfejpI0bDgYkyYYEfw==
+ bh=QoHXJfrvUeuDc846sskelUjoR2Zyt4BwVqd4vm7Rre8=;
+ b=PDbH9P82Ksne2KQi0+bhLI1kOxI/yFeBmoR62MfeJm1NUwcd1IWcSFzm/bFM5epF2T02PY024WqfYy2L7A0LOnlsqYsEygrmnaUOT9jdVO+40ES9I1FV1DTZ7pWRFGTSseZcDpCn78khAzJTT48c+hH+O4Tb8SPEeuS01iSMWTGze+gKh0WNTpRS4Cipq2uGHtATijGVTehG8ZIeNqsHXbhrgtof9/HnfQU81yfCuBxVzfU95/dlzfju9k4RLQrjSf8ccBdMR/xVON0osR/DePR9XpxNlCevrCw+guMkX/d0pWfS4jA+e0caf3TX4e1YpPQezw+r7Iz3N9E2eqeXjw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by AM0PR10MB3235.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:208:18e::22) with
+ by AS8PR10MB7133.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:61f::10) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5944.19; Tue, 3 Jan
- 2023 15:06:21 +0000
+ 2023 16:54:31 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::2957:50e8:8ce6:124a]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::2957:50e8:8ce6:124a%9]) with mapi id 15.20.5944.019; Tue, 3 Jan 2023
- 15:06:21 +0000
-Message-ID: <7e0aef08-10ba-4ff2-5b44-4245d9c3a51f@siemens.com>
-Date: Tue, 3 Jan 2023 16:06:13 +0100
+ 16:54:31 +0000
+Message-ID: <9ab8ffb5-cab6-3fe0-ae2a-df9c2e5f772d@siemens.com>
+Date: Tue, 3 Jan 2023 17:54:25 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.1
-Subject: Re: [isar-cip-core][PATCH 1/1] only copy "A" version of rootfs part
- for ab-rootfs
+Subject: Re: [isar-cip-core][PATCH 6/6] change-root-homedir: split root home
+ move into own package
 Content-Language: en-US
-To: Felix Moessbauer <felix.moessbauer@siemens.com>,
- cip-dev@lists.cip-project.org,
- Quirin Gylstorff <quirin.gylstorff@siemens.com>,
- Christian Storm <christian.storm@siemens.com>
-References: <20230103123110.358166-1-felix.moessbauer@siemens.com>
+To: Henning Schild <henning.schild@siemens.com>, cip-dev@lists.cip-project.org
+Cc: Wang Jing <wangjing@siemens.com>
+References: <20230102170818.17689-1-henning.schild@siemens.com>
+ <20230102170818.17689-7-henning.schild@siemens.com>
 From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <20230103123110.358166-1-felix.moessbauer@siemens.com>
+In-Reply-To: <20230102170818.17689-7-henning.schild@siemens.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: CH0PR04CA0071.namprd04.prod.outlook.com
- (2603:10b6:610:74::16) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: CH0PR13CA0055.namprd13.prod.outlook.com
+ (2603:10b6:610:b2::30) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AM0PR10MB3235:EE_
-X-MS-Office365-Filtering-Correlation-Id: 72a7ba0e-a1f8-4967-4edc-08daed9c12b5
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AS8PR10MB7133:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2dc25fc9-1652-44aa-7ce4-08daedab2f1e
 X-LD-Processed: 38ae3bcd-9579-4fd4-adda-b42e1495d55a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	ss56+D/P591Rws/+wJvEwTcIkYq9E/C9pdi998MpSe/I46N2yZu5aT3fP7AlK0MXDEc4EoxkHQ8gLOQy5VJXVMrhxARwc2fhHHHABxaXOCEKt4q65MgtSMIbmoec+b48SgwI53Gasw59zvNwr1fBeXgZamsXw9OZbKKFpdmX5Ot8XataRnjVWKbOi1jehC4Foi9JMIl+2vTVR8XBNzVegKHk808Etxx2C6WzYvvnObWhMxd58GN+v5P8emT2vTeJ2xgu+dvmItfJLphUiQjayzkofzpLyqSDxu58Ik5v+J0QPF5EEPOpzn7UxI7Nln5evG9MYpIBUgQrthiKGqhGdJgH6dekX/R9nLVJ/27MKNTROx3jhpSIL6HyGNFCWedq2H+7bISJjeAJoWhBSreTYuKElgM3SByVAtSLeXLZR7QbdotfUL3cpbM/qwXhZQVfSzOiMaRB9fGKCnIlR57KjUWOwUkdV+L6NA5+jDt2c4KwdUiccm+bVkXVcVvMDXj9os6wZ01c3Udpduoh6SOLILiGMrtQLLb77kHTSZgzG7/APvTIOt0q2M4Nq8TO+QefRH4U+LnyObyuUdlz+pc2iayTA74FBRN5X0etFQ6SqB/FIq0hmE1itk2eJXB05evt8vdmH9TYLtZufZUXm47NSd7RDDikddnP7qUctwf5VfplenU1uEA6yuo69HGj42V9HtAKq1gjHN2rbRCXT0clrrFRc23pFMf2V3JyOiYz/w45i19qTKfxysnhN8Y5fFM6B0GPjV+1843qGzsQ1GQKy4ZYYU9o6mJDq/Wgx/Mgigk=
+	Hh7BG/Q27+8rq5K/P6Ml8q90J8yA9cZMr5RY05U2jYeccBSusyrL3n9rmpJIDcRb0RDDjo+tfigZn6y1i7zf1kCBRxtgKtUlw0KYhr7y68U6d7ldEnu2ayKALp2ZbCJSSPZHJejOpk4lmIvTTlBG2GXRNygrotDccQl98kVlgi7NeoUHCwnEmjTGdIv0KfpVaxjgZLc2NI7dIw1Is8HHoRlqK8nttk7kxxagQGoMNx/Gq25vrtlsxGFErQ4y8mz4RUJvIwSxMChOnNn+5NcJAq57Ce/Z9pNwZugFa4M4rcqw+6dfjRKzkzPNC6JNWs+Lw2CB8hEY+Ovb6+kPQzw6Wx8k7GS6A2dfQFhphiqFPkerGp1bgWHzY7zLt42DhWMlmfkD7cEOebHwmGPoTM7HM1olELKOu0Yp5L3btLxqoXGBq6Elovge1scrZXngH5Vw9qIEC2Z26CTYHbfMhe3CRLET/AEbZ6QwH/jUFqBZ8k6ebYUBt194I9pg6A9Wzuim04shtNcFdzFXALYgz0/TZf7h3k0epigUVzHFMSO/UrpO0uK5Oa9tYi0rzZ9PY3SyKQ+UA8ij1Cb2L0CsGCw2o7TNRmKJzOV4y7f4OSTBtyKUl//YByGrzwR9KdZt4UZcNV/jfNQYYHXRF0WcAndrMHhodCmFdudyv0uANJYU/XhORv7QtQ4VbRJ8ms/Gkb0DRFQ0Bzk6MAxBfCmPoxVEvfW6OW6ewRGwADXM9HU2jbgg1CyazU/CDgAIB8+mkErZ
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230022)(4636009)(366004)(376002)(346002)(136003)(39860400002)(396003)(451199015)(5660300002)(41300700001)(316002)(8936002)(66476007)(66946007)(8676002)(66556008)(6636002)(110136005)(2906002)(44832011)(6506007)(478600001)(6512007)(6486002)(53546011)(26005)(186003)(31686004)(6666004)(31696002)(86362001)(2616005)(83380400001)(82960400001)(38100700002)(36756003)(22166006)(403724002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230022)(4636009)(366004)(39860400002)(396003)(346002)(376002)(136003)(451199015)(186003)(26005)(2616005)(6512007)(53546011)(38100700002)(82960400001)(31696002)(83380400001)(44832011)(36756003)(31686004)(86362001)(316002)(41300700001)(8936002)(5660300002)(4326008)(8676002)(66556008)(66946007)(107886003)(66476007)(6666004)(6486002)(478600001)(6506007)(2906002)(22166006)(43740500002)(45980500001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?S2JBSitRMG5SN29VQmJmR2tHaDc2NktHYTRWNyt1VUlTeXJVc1luajMvTGRr?=
- =?utf-8?B?NTB6dElyalY5eThVUG9uNWsxc1Vxd0g4ZVRoUnVISk1sTVB3ZmFTRGF6d09T?=
- =?utf-8?B?OHRKZDhUL2MwZzFySFdPWnI2R3VmQ1RnSjZNMHVXeE8rOW9VQ0ZPVUttTXBW?=
- =?utf-8?B?b0tzWUtFcVZ6N0xnYnhmMzBXcE9iZnRydTFKNitVMWlQUS8zUHBhbGtRSmhw?=
- =?utf-8?B?UlpTNlhJRWlpVmpnRHNIeHFaNVZNUEVKalhiN0cwS1FZeS9xMDNvcnRUSVBE?=
- =?utf-8?B?L2hhdjB2UUtNNVVnMjdpRkJQcS9MK2VkdmhwbnRONXdpcFhpUHc3NTZyTis0?=
- =?utf-8?B?SkxOYUVrM3hpNzFSRHBiVDd6N2tpaFlSU1daZkptZDd2SU9rMjBPbVZzRnRu?=
- =?utf-8?B?aTJaWkZDeXJZdGd2SkNpRy9ZZDlQVzlMUk5GUnY1RENlNGZoWG56bmtaSkpD?=
- =?utf-8?B?cWFxYmZ2eE02UnptOFdVK1JRd2tIRG9sc3RoZjVudmFrM2ZXcEoreWVSUG9M?=
- =?utf-8?B?b0hrUFJ3dXlmcytKOXAxSnM1ZUx2aDJlNWVuQWh5NmFsTEtSMnlWMFAxdW0v?=
- =?utf-8?B?Yk1oa0xjdFg4ZWRQczJJRkFJbnB5LzZ3ckZBaWtDSjZVMnpIRDBaVHo3N0tj?=
- =?utf-8?B?RnJ1U0F4aXBWWHBUa0JIWHVkSG43d1dPakRUVFR6ZkxGUFphQ0lhRlU5NXlK?=
- =?utf-8?B?Z0V1RWt1Q0xPb1pKV1h5dzdWZ09qM3hYbEJYT0lZZS9JaWlwTDArYmt1ekpF?=
- =?utf-8?B?dFE1MkMzSjhlYmRDSjFrcEVmSUNFbUhrcHUvb2NlQVRML0ZRMzlXMlg3dEhv?=
- =?utf-8?B?V2dDUGlyM0Z1Ri9DdWRuQ0hoeStYN1kwTHMxOExFSHd1R3NYeDFQQVpjUlBt?=
- =?utf-8?B?MWVkVDN5dzluR3V4bFhadGQwdDBFTmU0dGtiUC9oN1NOSkthRXRjMnJoRU5r?=
- =?utf-8?B?UUJuVHJhTmFNWnA1c0ZuOU5pWHU5TEh2SDYvNjJjMEE5QnZzN1FsUlN2VitZ?=
- =?utf-8?B?YVRYZXhoWFhjZmRlRjcrTnBybXZOLzlmUWR4aVBaN3hVcXE3SmJxQXNRVWtZ?=
- =?utf-8?B?M1pZcjdUMitaYTBYZEN1TmtxVHM2VFZXb09kSE9ZMjhVanFyNGdLTVQrbGpO?=
- =?utf-8?B?MzJiSlJHeDRJR2Z0V01yWk5GS1JqcXIzdnJ1QVp4NUR3bHVOZjJzN3FRb25a?=
- =?utf-8?B?emVETnhUWkJKbm9sYjhTdHRMZEN2MUxHUnZoN1RGcFlHcVpKZE4yYlU0NlNE?=
- =?utf-8?B?RWZCRG43ZVBQc3p5TVJScys5djFkNzkySHozVWhYN25IY2paa2Rvays4TG5R?=
- =?utf-8?B?VVQxeVllcElZUCtadzJFeVgzazZmN1o4V1RCWTREbjh0RnZmY29MaGZtckdv?=
- =?utf-8?B?MXE2dFZlckVON2Q2NGdPZzU4Z0xyYWtIa3FMaHNDV1dnUHZzMGo1UzFYUUJa?=
- =?utf-8?B?dnBQVk9NOThvZjlNaXlmMnF3ZU1aM3d2K1NpL0tBMnMxYi9WOVRxbW03allW?=
- =?utf-8?B?Zzc0R2cveWpFYUgyOVNuZEs5UGNOcXV4MGZFc092MXcxaVJ0RkE4ZW4xUlFU?=
- =?utf-8?B?Z2NxVDhqMGV0Tm4wRnVSMXE3WElrVjBJeXhibWNHSkdtd3BVeWhRenhzQ1h1?=
- =?utf-8?B?K29zWFpGREtGL3E5clhlUlc1VXl1NGxWalhYUm1mcTEzM1BWMGpFRVpVUmFD?=
- =?utf-8?B?TjJMQWJySjR5NGJWeDkwa1N4OU90WVhvek8xY3kydzI5c2kzTHlNN2dyeVBw?=
- =?utf-8?B?aVVyUlBpaDliQ21VdHphdkJRRzVMMC9Va3lvSFY3dklyc0t2d3FCVW5GWDRT?=
- =?utf-8?B?MjNoaHk3bGFVeHFrNEJaZmd6NmRwN2s5c3dXNzBqTHdNbGViMXZDT25VRi9p?=
- =?utf-8?B?MFpCSVhUMENXa0Z6L3BTNTlJNythQjhEaGtoMXUzajM5QkdkdWdrRWM4TDZl?=
- =?utf-8?B?V1c1L21sbzlFYUJJKy9IeVpuSm5Kc2NvejFIcjFZbWxRRXRMMmg2OGFOaG90?=
- =?utf-8?B?LzhYakJXRkl3dXJ3bDZQeUlrZ1ZYeXJja1dTckduUlBVSFJRT2pvWUhkZ2po?=
- =?utf-8?B?OW5ScWh2aGgrOENaQUhuaGV3eiszOHYrWkoxMnFOVG04OG1hOWhZRnJBMEJo?=
- =?utf-8?B?NldBRVF6Y1RXR3ZiZ3pnNGFZeGhqZk1WblRuTzlncDlOemQ1U05BczEzWmtM?=
- =?utf-8?B?UkE9PQ==?=
+	=?utf-8?B?eE56OWNzVkdUaHVNMUszb2I3TGtqVWpjcXowMlU1V0hWcFlFSlNlc2tGS1NL?=
+ =?utf-8?B?dnlaU3ozMW04WDl2dXUzYU5ScXNJWEpBM2oyL1BRNWtTTGRQZC93S1pqcUxL?=
+ =?utf-8?B?M2RGckx1UHJRUzNKM0hacm1TK0hsck5rNW9ZZkUrdkMyQUROemF0a3dnV2JE?=
+ =?utf-8?B?U2plN1d5QjVDTEhuY2tuWlJGQnQ4d2hzdFozblRlK3R2VEo3d1Fxcm9FemVH?=
+ =?utf-8?B?aFFCRlhUYnozU0czUm0xUnVubTVWYmVObld1RFprRG9YSFNra1JWWm1vTjF2?=
+ =?utf-8?B?VUpHb2FRNXRTT3FuRGJOMFc5Rm5Fell0d0lnT3crL1dldkhhOXNoWm5FNldG?=
+ =?utf-8?B?SDlnRjZlWHdJbm95NytBVERkUnVScXAvR0M1K094OGtMaVZjQWYyZnpyWDZS?=
+ =?utf-8?B?Tk5acG5zUWVYMWR0bENJTE1VNGUzM3pNcnIrQXlMMVZGSzVDdWd4c0NyeE9i?=
+ =?utf-8?B?dTE1V0twV09VOE1JSTVVTFZLcVVDZUpqTWN2a21KQ2pjd3JYOGNkbkVpTG1j?=
+ =?utf-8?B?aEc2VnlSQlVtUEtxaUpOTlo2ZXIzZkMza01UblpQQjQ5RG9oSlpJZGNFeGN3?=
+ =?utf-8?B?NXZnVEp5YWpPbWpFNFZNeFpPcGRzVDNBTXFHOFpFWXd5MWlYUC9FK1FzRkQ5?=
+ =?utf-8?B?ZHc3TCsvOTBMbk94ek5lMnB4VytKTXVkQ2VQRFdtWG9UT0JjNFgvSVl4SHdU?=
+ =?utf-8?B?VGduZnNqQWxCdUIvdzVDdDdFMHJTa2QvZVRhY09KZEthLzdacDdrZ3B1OFAv?=
+ =?utf-8?B?bEVUdXYrdkF3Tk5RY3NDdWF5UU1BZnpoWjZRejdpNWVjaW43MWFUWlBxdW5K?=
+ =?utf-8?B?MmlDbXZGQjNhRDdRL2RXRWJ0bXBpZTByQnB3SEljcjNENmV1MENrZlNLcU9w?=
+ =?utf-8?B?Q0lua1ZGMzJUNnRxbXBmOTZ5b0ltVFZGZHJwem0wMWJWQTh2MXlhQlJNSVBZ?=
+ =?utf-8?B?THorUk1yelBYOHVPTGhHeWg4UW9QeURyNytKTUgxMFZxUmMrVmdmL3JoSWdB?=
+ =?utf-8?B?MkpXK1FNNTVucDI4b3gvS3VVdnpJSmZMaXdKSFVSc3UxdjNwblI1OVZtVDQ0?=
+ =?utf-8?B?Q2pHYmpZZGxPT0tzSldkbjc3VjVxWGhKdFU5Wi9oeFJlM3RwTDZKa2ZrNFVl?=
+ =?utf-8?B?MWQ3aE10Y0NhMXdiMHlXS3pjOEdZWHAxSTMwZmw3Nm5SeGdoNjd6NkZlNjZa?=
+ =?utf-8?B?d2phclFHZ2hWNmxIRzJxRUduQ2h6YWVtZGs3VEdlMUVseC9aeVErSVpkMyti?=
+ =?utf-8?B?SXM2TFRTdk84ZGpGenpTUzhDd01qQ2F0aUh3VnlYQVlSV3dGQnpjckxsKzhj?=
+ =?utf-8?B?TzY5VE1LQ1dodXRuS3pEOVpLak5DMnQ2ckx4dDc0eFV5ZXd0cDBlbEVTQW1E?=
+ =?utf-8?B?NmdaVW1HMTRuWWN4Zmh0UGFBTjdYU1JmU1p3UEVQdnl1bnR4azVSK2ZDM010?=
+ =?utf-8?B?RWxoRU9rQTQ4TVgrMTBMdkxhNzFiSG9ERHdiU2pQcnlYUVUxdStqVzdlYWp5?=
+ =?utf-8?B?RzZoVHdhbGYwOWlnY3QwZ0E5QVIyeXdROCtGS25xTDFvRnZFT09aUCs3Ryti?=
+ =?utf-8?B?TTBsbGt1T3B6RkZqekl0cmlhSE0za0VRRnVPR2xucGVzZjZMWG1ETjRCMWZL?=
+ =?utf-8?B?eXh5eUNSMzlNcW5JYWo1ckxlQnVLLzV5dXV2TGJoYWZOa2hWWlRDQmxndkpD?=
+ =?utf-8?B?cSs5MEJ1MTgwMXJBMVgwdFJUVDhrZ0dobDJFYndvcVFkSWFvZ2NDZXpCcFZP?=
+ =?utf-8?B?cWNjUGZNbWJRdlVnMGVHSmpIRzlYT2lJL0FRRE9PV1BQWE0wVVBxYXcwRGty?=
+ =?utf-8?B?bDFxUXJ4MGZURUpkUEpQT1o5S3I4TmFkNzdEVE1CTHJ4YVcrNTFTMC9jNUJV?=
+ =?utf-8?B?bi9VT0NpQWtrQ2loa0VLYkJONnhLc05NMytpVVFFamcyVFJrU05xYnNsTDNG?=
+ =?utf-8?B?T3BPVldLZTFUTmxTMmlIRFZjYzhrNWxPeDVaQU1kK0QwSHpjYVp3enlUZGtZ?=
+ =?utf-8?B?dWxwemxyYU5rZmhrSTQ5ZWh6SDZnZlBiS1NPZjVEZFpFWHFESXdkQjErUVBM?=
+ =?utf-8?B?UW9NUHgrWGNrdUpYV1grS0ZGS1g2T1dNUFp0alROM2N1NHpFZEx4ZUd2Z0dB?=
+ =?utf-8?B?Ti9weDFhWVF0bUc1b00rMGxacnZhMDVsd3pjMStDM3ZYQXU0bmxGSklSeVhn?=
+ =?utf-8?B?VGc9PQ==?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 72a7ba0e-a1f8-4967-4edc-08daed9c12b5
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2dc25fc9-1652-44aa-7ce4-08daedab2f1e
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jan 2023 15:06:21.5131
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jan 2023 16:54:31.4095
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NOQAYDO7SJq6X832rZorMF9iptTKve19TmjUKbCWhTgzxdhpcU57g9qRpti9IEx4m0JaLUCSSF9Bet3yu+UBJA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR10MB3235
+X-MS-Exchange-CrossTenant-UserPrincipalName: JcqvFwst6YKnNdIj8idECOXZGuczorv8bTF0xxLI5qLeCe6v+3m3dCmgozO+CUC3298N3WFzcE3x1mmS35+EJA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB7133
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 03 Jan 2023 15:06:32 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10287
+ <cip-dev@lists.cip-project.org>; Tue, 03 Jan 2023 16:54:42 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10288
 
-On 03.01.23 13:31, Felix Moessbauer wrote:
-> For swupdate images, we currently copy the rootfs to both the A and the
-> B partition. However, the content of the B rootfs will never be used, as
-> the first boot always chooses the A partition. And after an swupdate
-> image update is performed, the content of the B version will be
-> overwritten.
+On 02.01.23 18:08, Henning Schild wrote:
+> Changing the homedir of root that way is required by any layer that
+> takes ro rootfs pieces from here. Making it its own package allows
+> reuse without having to take some other customizations.
 > 
-> By not copying the squashfs into the B partition, we can shrink the size
-> of the initial image by half and also cut the flashing time in half.
-> 
-> Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
+> Signed-off-by: Henning Schild <henning.schild@siemens.com>
 > ---
->  wic/bbb-efibootguard.wks.in                   | 2 +-
->  wic/qemu-amd64-efibootguard-secureboot.wks.in | 2 +-
->  wic/qemu-arm64-efibootguard-secureboot.wks.in | 2 +-
->  wic/qemu-arm64-efibootguard.wks.in            | 2 +-
->  wic/x86-efibootguard.wks.in                   | 2 +-
->  5 files changed, 5 insertions(+), 5 deletions(-)
+>  .../change-root-homedir.bb                    |  5 +++++
+>  .../change-root-homedir/files/postinst        | 21 +++++++++++++++++++
+>  recipes-core/customizations/common.inc        |  5 +++--
+>  recipes-core/customizations/files/postinst    |  8 -------
+>  4 files changed, 29 insertions(+), 10 deletions(-)
+>  create mode 100644 recipes-core/change-root-homedir/change-root-homedir.bb
+>  create mode 100644 recipes-core/change-root-homedir/files/postinst
 > 
-> diff --git a/wic/bbb-efibootguard.wks.in b/wic/bbb-efibootguard.wks.in
-> index e48cc7f..8a8de50 100644
-> --- a/wic/bbb-efibootguard.wks.in
-> +++ b/wic/bbb-efibootguard.wks.in
-> @@ -12,7 +12,7 @@ part --source rawcopy --sourceparams "file=/usr/lib/u-boot/bbb/u-boot.img" --no-
->  include ebg-sysparts.inc
->  
->  part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
-> -part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
-> +part --source empty --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
->  
->  # home and var are extra partitions
->  part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G
-> diff --git a/wic/qemu-amd64-efibootguard-secureboot.wks.in b/wic/qemu-amd64-efibootguard-secureboot.wks.in
-> index 0e298bc..ba7846c 100644
-> --- a/wic/qemu-amd64-efibootguard-secureboot.wks.in
-> +++ b/wic/qemu-amd64-efibootguard-secureboot.wks.in
-> @@ -1,7 +1,7 @@
->  include ebg-signed-sysparts.inc
->  
->  part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
-> -part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
-> +part --source empty --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
->  
->  # home and var are extra partitions
->  part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024 --size 1G
-> diff --git a/wic/qemu-arm64-efibootguard-secureboot.wks.in b/wic/qemu-arm64-efibootguard-secureboot.wks.in
-> index 3b8dadd..80a7803 100644
-> --- a/wic/qemu-arm64-efibootguard-secureboot.wks.in
-> +++ b/wic/qemu-arm64-efibootguard-secureboot.wks.in
-> @@ -1,7 +1,7 @@
->  include ebg-signed-sysparts.inc
->  
->  part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
-> -part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
-> +part --source empty --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
->  
->  # home and var are extra partitions
->  part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024 --size 1G
-> diff --git a/wic/qemu-arm64-efibootguard.wks.in b/wic/qemu-arm64-efibootguard.wks.in
-> index 9ff03e1..53ab568 100644
-> --- a/wic/qemu-arm64-efibootguard.wks.in
-> +++ b/wic/qemu-arm64-efibootguard.wks.in
-> @@ -4,7 +4,7 @@
->  include ebg-sysparts.inc
->  
->  part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
-> -part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
-> +part --source empty --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
->  
->  # home and var are extra partitions
->  part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G
-> diff --git a/wic/x86-efibootguard.wks.in b/wic/x86-efibootguard.wks.in
-> index c71253d..ed01e28 100644
-> --- a/wic/x86-efibootguard.wks.in
-> +++ b/wic/x86-efibootguard.wks.in
-> @@ -4,7 +4,7 @@
->  include ebg-sysparts.inc
->  
->  part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
-> -part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
-> +part --source empty --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
->  
->  # home and var are extra partitions
->  part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G
+> diff --git a/recipes-core/change-root-homedir/change-root-homedir.bb b/recipes-core/change-root-homedir/change-root-homedir.bb
+> new file mode 100644
+> index 000000000000..dc4631bd6b16
+> --- /dev/null
+> +++ b/recipes-core/change-root-homedir/change-root-homedir.bb
+> @@ -0,0 +1,5 @@
 
-Seems reasonable, but I might also forget right now the original idea
-behind filling both - adding more folks to this discussion.
+Missing copyright header.
+
+> +inherit dpkg-raw
+> +
+> +DESCRIPTION = "Move roots homedir to /home for read-only rootfs"
+> +
+> +SRC_URI = "file://postinst"
+> diff --git a/recipes-core/change-root-homedir/files/postinst b/recipes-core/change-root-homedir/files/postinst
+> new file mode 100644
+> index 000000000000..205ee4839e82
+> --- /dev/null
+> +++ b/recipes-core/change-root-homedir/files/postinst
+> @@ -0,0 +1,21 @@
+> +#!/bin/sh
+> +#
+> +# CIP Core, generic profile
+> +#
+> +# Copyright (c) Siemens AG, 2019
+
+Maybe update to "2019-2023" at this chance.
+
+> +#
+> +# Authors:
+> +#  Jan Kiszka <jan.kiszka@siemens.com>
+> +#
+> +# SPDX-License-Identifier: MIT
+> +#
+> +
+> +set -e
+> +
+> +# needed for read-only rootfs with writable /home
+> +if [ ! -L /root ]; then
+> +	# usermod --move-home can not be used while the target user
+> +	# has running processes, also we keep a symlink here
+> +	mv /root /home/
+> +	ln -s /home/root /root
+> +fi
+> diff --git a/recipes-core/customizations/common.inc b/recipes-core/customizations/common.inc
+> index 1124ff2d3590..24c862c32e3b 100644
+> --- a/recipes-core/customizations/common.inc
+> +++ b/recipes-core/customizations/common.inc
+> @@ -22,10 +22,11 @@ SRC_URI = " \
+>  WIRELESS_FIRMWARE_PACKAGE ?= ""
+>  INSTALL_WIRELESS_TOOLS ??= "0"
+>  
+> -DEPENDS += "sshd-regen-keys"
+> +DEPENDS += "sshd-regen-keys change-root-homedir"
+>  
+>  DEBIAN_DEPENDS = " \
+> -    ifupdown, isc-dhcp-client, net-tools, iputils-ping, ssh, sshd-regen-keys \
+> +    ifupdown, isc-dhcp-client, net-tools, iputils-ping, ssh, sshd-regen-keys, \
+> +    change-root-homedir \
+>      ${@(', iw, wireless-regdb, ' + d.getVar('WIRELESS_FIRMWARE_PACKAGE')) \
+>  	if d.getVar('INSTALL_WIRELESS_TOOLS') == '1' else ''}"
+>  
+> diff --git a/recipes-core/customizations/files/postinst b/recipes-core/customizations/files/postinst
+> index 7a0b00d98680..7e7ea3692325 100644
+> --- a/recipes-core/customizations/files/postinst
+> +++ b/recipes-core/customizations/files/postinst
+> @@ -21,11 +21,3 @@ fi
+>  HOSTNAME=demo
+>  echo "$HOSTNAME" > /etc/hostname
+>  echo "127.0.0.1 $HOSTNAME" >> /etc/hosts
+> -
+> -# needed for read-only rootfs with writable /home
+> -if [ ! -L /root ]; then
+> -	# usermod --move-home can not be used while the target user
+> -	# has running processes, also we keep a symlink here
+> -	mv /root /home/
+> -	ln -s /home/root /root
+> -fi
 
 Jan
 
