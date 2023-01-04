@@ -1,197 +1,166 @@
-Return-Path: <ncaidin@linuxfoundation.org>
+Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEA31C4332F
-	for <webhook@archiver.kernel.org>; Wed,  4 Jan 2023 12:37:12 +0000 (UTC)
-Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
- by mx.groups.io with SMTP id smtpd.web11.3112.1672801360410240668
- for <cip-dev@lists.cip-project.org>;
- Tue, 03 Jan 2023 19:02:42 -0800
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B5A8C4708E
+	for <webhook@archiver.kernel.org>; Wed,  4 Jan 2023 12:52:03 +0000 (UTC)
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+ by mx.groups.io with SMTP id smtpd.web10.11174.1672836720666131504
+ for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
+ Wed, 04 Jan 2023 04:52:00 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=felix.moessbauer@siemens.com header.s=fm1 header.b=J4RXK+rC;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225, mailfrom: fm-72506-202301040302370c30d3413053d7ca04-zw_zun@rts-flowmailer.siemens.com)
-Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 202301040302370c30d3413053d7ca04
-        for <cip-dev@lists.cip-project.org>;
-        Wed, 04 Jan 2023 04:02:37 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=felix.moessbauer@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=jwfEq99j9D1HNHIh0NS2dIB8mwiAM1/ps+fQC4RMFhc=;
- b=J4RXK+rCRcAFIRlNmZPo0/J2qOpcm60Njxtdc+zwqlmc6IRyf2tnPuGzy5YvnEmU0ufgGV
- o8n7BiH0qSvNjk9d7izXzMn2on7iMzEZpTBEHW5ayaf0P9HSEPaNlfAMYEe7ZMcPcL08+isV
- aQ3+oD2+OUWlZ0gRlNLW2Pv+dk7c8=;
-From: Felix Moessbauer <felix.moessbauer@siemens.com>
-To: cip-dev@lists.cip-project.org
-Cc: quirin.gylstorff@siemens.com,
-	tengfei.wu@siemens.com,
-	daniel.bovensiepen@siemens.com,
-	Felix Moessbauer <felix.moessbauer@siemens.com>
-Subject: [isar-cip-core][PATCH 1/1] Use global variables for abrootfs partition uuids
-Date: Wed,  4 Jan 2023 03:02:14 +0000
-Message-Id: <20230104030214.465039-1-felix.moessbauer@siemens.com>
+ dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=cGPs90dT;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.210.182, mailfrom: bot@kernelci.org)
+Received: by mail-pf1-f182.google.com with SMTP id a30so7128920pfr.6
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Wed, 04 Jan 2023 04:52:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=TwSjDMtT+cfkNhbU2ydToU8MG8Rar9fxhhuNa15+GVc=;
+        b=cGPs90dTcevm024HogApFP9jeYl4xGD/MD4IaO+Ts10JhuPoT2Ymye2c3XojXvBgMg
+         x6YEwepbfmT+c+4XYm1kicWDidV4cy3l3Dku2DlLIk/L3QsuDiaIyD/7H/5l2tngBAFK
+         dZjsmXz82Ivwxq1QsUFy6fhNlHXi/c5sozXkzZjglQ4/0db319cP+CV9fJkZHEEwXOlb
+         lJVE+Tw9s1Y7ZXVkBPqqyxPBrdTyK+vVEeDmi02/Oqnd/bt6D7qZH+DCfMkQ+gj+A4+1
+         t4NnygrxrilEL0O0tZZzA6xZvNauEk5fEjww7pNNOZae9TUBYiwsMedCy1cxxkR2gmil
+         Dqzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TwSjDMtT+cfkNhbU2ydToU8MG8Rar9fxhhuNa15+GVc=;
+        b=C6f3lBu1zm5bHk37blS2/0rqq1EP24NqaHEoaHwNOO8VpZlOqgCkS7TeOrt5kEQyQS
+         cHTXNjwj9oJrXZ+XrL1DUUmSWRMdmJRrSjZ8nmbL95JIfBoUadNFATf278desKA8Z0qi
+         gRnKUQ7WXYScj7F9FwgEgNukZcAjwV/7AYYzPcKCQI9IFZRjzO5alAcQzhxmfbb5qFnJ
+         bJIc8tgb48H1NQ0hs6dIRVNG1ZFquj6pgJMAoIPxhbAGPn/whijhEEcx8DRhJPIoI1Gx
+         2q3iMGpjakQPWyswU/She1zwm5fosQZiNxQAJpHWwEIkl4I+hA1bdOfClgGQzPobKTVA
+         SGhQ==
+X-Gm-Message-State: AFqh2kp0IhBP5o17ydqAv/xvJ1RtNjBADVrSBwsnQ0skIdCKwd0NMz8I
+	h0lGxOscynZWW1K/ACxBWntvAywfezyFOoIudfk=
+X-Google-Smtp-Source: AMrXdXu0VMSH7mCKE3WFAnN/g+YgqAhnfvVW+OrAX17t629atnU2dFFEMGU5vD//tGmmqCaf9AXmDQ==
+X-Received: by 2002:a62:6d07:0:b0:581:b3f4:21f8 with SMTP id i7-20020a626d07000000b00581b3f421f8mr21428202pfc.31.1672836719735;
+        Wed, 04 Jan 2023 04:51:59 -0800 (PST)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id d3-20020a623603000000b005775c52dbc4sm6443100pfa.167.2023.01.04.04.51.59
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Jan 2023 04:51:59 -0800 (PST)
+Message-ID: <63b5766f.620a0220.b60a1.91d2@mx.google.com>
+Date: Wed, 04 Jan 2023 04:51:59 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-72506:519-21489:flowmailer
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Kernel: v5.10.161-cip23-65-gca8c192cb189
+X-Kernelci-Tree: cip-gitlab
+X-Kernelci-Branch: ci/iwamatsu/linux-5.10.y-cip-rc
+X-Kernelci-Report-Type: test
+Subject: cip-gitlab/ci/iwamatsu/linux-5.10.y-cip-rc baseline-nfs: 38 runs,
+ 2 regressions (v5.10.161-cip23-65-gca8c192cb189)
+To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
+From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 04 Jan 2023 12:37:12 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10299
+ <cip-dev@lists.cip-project.org>; Wed, 04 Jan 2023 12:52:03 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10300
 
-This patch converts the abrootfs partition uuids to a template and adds
-two global variables to control their values. By that, the partition
-uuids used in the WIC files can be kept in sync with the uuids used in
-the sw-description file. This helps to avoid issues where the part uuids
-are inconsistent and hence the update using swupdate fails.
+cip-gitlab/ci/iwamatsu/linux-5.10.y-cip-rc baseline-nfs: 38 runs, 2 regress=
+ions (v5.10.161-cip23-65-gca8c192cb189)
 
-To help users migrate, we also add a check for the validity of the UUIDs
-added to ABROOTFS_PART_UUID_(A|B).
+Regressions Summary
+-------------------
 
-Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
----
- kas/opt/swupdate.yml                          |  2 ++
- recipes-core/images/files/sw-description.tmpl |  2 +-
- recipes-core/images/swupdate.inc              | 19 +++++++++++++++++++
- wic/bbb-efibootguard.wks.in                   |  4 ++--
- wic/qemu-amd64-efibootguard-secureboot.wks.in |  4 ++--
- wic/qemu-arm64-efibootguard-secureboot.wks.in |  4 ++--
- wic/qemu-arm64-efibootguard.wks.in            |  4 ++--
- wic/x86-efibootguard.wks.in                   |  4 ++--
- 8 files changed, 32 insertions(+), 11 deletions(-)
+platform                     | arch  | lab         | compiler | defconfig |=
+ regressions
+-----------------------------+-------+-------------+----------+-----------+=
+------------
+meson-gxl-s905x-libretech-cc | arm64 | lab-broonie | gcc-10   | defconfig |=
+ 1          =
 
-diff --git a/kas/opt/swupdate.yml b/kas/opt/swupdate.yml
-index f0d3f1b..60a4aec 100644
---- a/kas/opt/swupdate.yml
-+++ b/kas/opt/swupdate.yml
-@@ -25,3 +25,5 @@ local_conf_header:
-     WKS_FILE ?= "${MACHINE}-${SWUPDATE_BOOTLOADER}.wks.in"
-     INITRAMFS_INSTALL_append = " initramfs-squashfs-hook"
-     WIC_DEPLOY_PARTITIONS = "1"
-+    ABROOTFS_PART_UUID_A ?= "fedcba98-7654-3210-cafe-5e0710000001"
-+    ABROOTFS_PART_UUID_B ?= "fedcba98-7654-3210-cafe-5e0710000002"
-diff --git a/recipes-core/images/files/sw-description.tmpl b/recipes-core/images/files/sw-description.tmpl
-index f7105c7..05125e6 100644
---- a/recipes-core/images/files/sw-description.tmpl
-+++ b/recipes-core/images/files/sw-description.tmpl
-@@ -14,7 +14,7 @@ software =
-     name = "cip software update";
-     images: ({
-             filename = "${ROOTFS_PARTITION_NAME}";
--            device = "C:BOOT0:linux.efi->fedcba98-7654-3210-cafe-5e0710000001,C:BOOT1:linux.efi->fedcba98-7654-3210-cafe-5e0710000002";
-+            device = "C:BOOT0:linux.efi->${ABROOTFS_PART_UUID_A},C:BOOT1:linux.efi->${ABROOTFS_PART_UUID_B}";
-             type = "roundrobin";
-             compressed = "zlib";
-             filesystem = "ext4";
-diff --git a/recipes-core/images/swupdate.inc b/recipes-core/images/swupdate.inc
-index 0ba3a0e..f98082c 100644
---- a/recipes-core/images/swupdate.inc
-+++ b/recipes-core/images/swupdate.inc
-@@ -16,6 +16,11 @@ inherit read-only-rootfs
- IMAGE_INSTALL += " swupdate"
- IMAGE_INSTALL += " swupdate-handler-roundrobin"
- 
-+# The uuids correspond to the partition uuids
-+# in the wic script. Set via machine or local config.
-+ABROOTFS_PART_UUID_A ??= ""
-+ABROOTFS_PART_UUID_B ??= ""
-+
- ROOTFS_PARTITION_NAME = "${IMAGE_FULLNAME}.wic.p4.gz"
- 
- FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
-@@ -29,3 +34,17 @@ addtask do_transform_template before do_swupdate_binary after do_generate_image_
- TEMPLATE_VARS += "ROOTFS_PARTITION_NAME TARGET_IMAGE_UUID"
- 
- SWU_ADDITIONAL_FILES += "linux.efi ${ROOTFS_PARTITION_NAME}"
-+
-+python() {
-+    import uuid
-+    def is_valid(value):
-+        try:
-+            uuid.UUID(value)
-+        except ValueError:
-+            return False
-+        return True
-+
-+    for u in ['A', 'B']:
-+        if not is_valid(d.getVar('ABROOTFS_PART_UUID_' + u)):
-+            bb.fatal('ABROOTFS_PART_UUID_' + u + ' is not a valid UUID')
-+}
-diff --git a/wic/bbb-efibootguard.wks.in b/wic/bbb-efibootguard.wks.in
-index e48cc7f..a714694 100644
---- a/wic/bbb-efibootguard.wks.in
-+++ b/wic/bbb-efibootguard.wks.in
-@@ -11,8 +11,8 @@ part --source rawcopy --sourceparams "file=/usr/lib/u-boot/bbb/u-boot.img" --no-
- 
- include ebg-sysparts.inc
- 
--part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
--part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
-+part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}"
-+part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}"
- 
- # home and var are extra partitions
- part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G
-diff --git a/wic/qemu-amd64-efibootguard-secureboot.wks.in b/wic/qemu-amd64-efibootguard-secureboot.wks.in
-index 0e298bc..8305ebd 100644
---- a/wic/qemu-amd64-efibootguard-secureboot.wks.in
-+++ b/wic/qemu-amd64-efibootguard-secureboot.wks.in
-@@ -1,7 +1,7 @@
- include ebg-signed-sysparts.inc
- 
--part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
--part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
-+part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}"
-+part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}"
- 
- # home and var are extra partitions
- part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024 --size 1G
-diff --git a/wic/qemu-arm64-efibootguard-secureboot.wks.in b/wic/qemu-arm64-efibootguard-secureboot.wks.in
-index 3b8dadd..6b01443 100644
---- a/wic/qemu-arm64-efibootguard-secureboot.wks.in
-+++ b/wic/qemu-arm64-efibootguard-secureboot.wks.in
-@@ -1,7 +1,7 @@
- include ebg-signed-sysparts.inc
- 
--part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
--part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
-+part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}"
-+part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}"
- 
- # home and var are extra partitions
- part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024 --size 1G
-diff --git a/wic/qemu-arm64-efibootguard.wks.in b/wic/qemu-arm64-efibootguard.wks.in
-index 9ff03e1..bc684f3 100644
---- a/wic/qemu-arm64-efibootguard.wks.in
-+++ b/wic/qemu-arm64-efibootguard.wks.in
-@@ -3,8 +3,8 @@
- 
- include ebg-sysparts.inc
- 
--part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
--part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
-+part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}"
-+part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}"
- 
- # home and var are extra partitions
- part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G
-diff --git a/wic/x86-efibootguard.wks.in b/wic/x86-efibootguard.wks.in
-index c71253d..0604deb 100644
---- a/wic/x86-efibootguard.wks.in
-+++ b/wic/x86-efibootguard.wks.in
-@@ -3,8 +3,8 @@
- 
- include ebg-sysparts.inc
- 
--part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
--part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
-+part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}"
-+part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}"
- 
- # home and var are extra partitions
- part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G
--- 
-2.34.1
+r8a774a1-hihope-rzg2m-ex     | arm64 | lab-cip     | gcc-10   | defconfig |=
+ 1          =
 
+
+  Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fiwamatsu%2=
+Flinux-5.10.y-cip-rc/kernel/v5.10.161-cip23-65-gca8c192cb189/plan/baseline-=
+nfs/
+
+  Test:     baseline-nfs
+  Tree:     cip-gitlab
+  Branch:   ci/iwamatsu/linux-5.10.y-cip-rc
+  Describe: v5.10.161-cip23-65-gca8c192cb189
+  URL:      https://gitlab.com/cip-project/cip-kernel/linux-cip.git
+  SHA:      ca8c192cb189c6be84da2274a96e73320a638b43 =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform                     | arch  | lab         | compiler | defconfig |=
+ regressions
+-----------------------------+-------+-------------+----------+-----------+=
+------------
+meson-gxl-s905x-libretech-cc | arm64 | lab-broonie | gcc-10   | defconfig |=
+ 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/63b5707656994fb5c24eee2f
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
+.10.y-cip-rc/v5.10.161-cip23-65-gca8c192cb189/arm64/defconfig/gcc-10/lab-br=
+oonie/baseline-nfs-meson-gxl-s905x-libretech-cc.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
+.10.y-cip-rc/v5.10.161-cip23-65-gca8c192cb189/arm64/defconfig/gcc-10/lab-br=
+oonie/baseline-nfs-meson-gxl-s905x-libretech-cc.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+221230.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/63b5707656994fb5c=
+24eee30
+        new failure (last pass: v5.10.158-cip22-142-g79bb6f9db05d) =
+
+ =
+
+
+
+platform                     | arch  | lab         | compiler | defconfig |=
+ regressions
+-----------------------------+-------+-------------+----------+-----------+=
+------------
+r8a774a1-hihope-rzg2m-ex     | arm64 | lab-cip     | gcc-10   | defconfig |=
+ 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/63b57395591e6e50f74eeea2
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
+.10.y-cip-rc/v5.10.161-cip23-65-gca8c192cb189/arm64/defconfig/gcc-10/lab-ci=
+p/baseline-nfs-r8a774a1-hihope-rzg2m-ex.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
+.10.y-cip-rc/v5.10.161-cip23-65-gca8c192cb189/arm64/defconfig/gcc-10/lab-ci=
+p/baseline-nfs-r8a774a1-hihope-rzg2m-ex.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+221230.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/63b57395591e6e50f=
+74eeea3
+        new failure (last pass: v5.10.158-cip22-142-g79bb6f9db05d) =
+
+ =20
 
