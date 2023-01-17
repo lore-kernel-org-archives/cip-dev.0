@@ -1,148 +1,114 @@
-Return-Path: <christian.storm@siemens.com>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7D65C54E76
-	for <webhook@archiver.kernel.org>; Tue, 17 Jan 2023 17:04:45 +0000 (UTC)
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.63])
- by mx.groups.io with SMTP id smtpd.web10.202364.1673975080438433569
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA428C3DA78
+	for <webhook@archiver.kernel.org>; Tue, 17 Jan 2023 20:51:06 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web10.209100.1673988659168508035
  for <cip-dev@lists.cip-project.org>;
- Tue, 17 Jan 2023 09:04:41 -0800
+ Tue, 17 Jan 2023 12:50:59 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=JHc+52VP;
- spf=pass (domain: siemens.com, ip: 40.107.21.63, mailfrom: christian.storm@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OQqAY2Kh7msu/094731AHkMvAcgW+6/0NNrvN+VPplKD3D/MMhXPFIK37jNod6iY85Zn5IKtdSUBiyJMICv75dWh2XNtI6bFEZDHuKnTmBEZRTY/xdAU/kVi7G0cIpJTrIP1alQRID5XZ849F5Z9cJu98JmklTx7CrN8RMfEQc6taIKAJrzbERr5vk3YC6Zd010uEPN2IZfOWNGQImdpOzuxB9AqNl6Qe0QI5lhnZPYF2YkMWIFVVtlkJ3BnDRr0FEew3THC0UOqv5PI0xNdd30S598Ce9ZklDCNQjfy1qG7/wIfQtZDRLI2OlKfBT11oEMSu3EAoXhMDp1E87uajg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JhP7F6Rh1eta9s94brKQdY5GsDxKWKuhX+tq8Gptxrc=;
- b=ja9Njnja6uMfF53PaWyHHWn8ujZ1n4xQ+2q9UvyKeaofIZh1VtQy/Ar0clYlMcGtSY33DgTjKhulT+xy/269vH7ZYFwUrtRqr/ftDB/HatP/93E5ntifC51HOQegA5MhxiDxBwyNCjJXCV1iiI7CSvLpB+Pc9Kq5pMUfcIAE+BIjKAVPTCG8dlkE7XFPEpS9E+xFzqL9NeJopfpzPPD/93jA7RPKkWA1a6vVowsZd9Un2+cpnj5bjWsQMPfJh6N3JpQ9I5BJH7TvkI5Kta5obUEBuVD96Wq41cS3fqNDpq1Or4lVQPFk/cBG3kEba3U+03RrC8kkOP5u5qSpajRqZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JhP7F6Rh1eta9s94brKQdY5GsDxKWKuhX+tq8Gptxrc=;
- b=JHc+52VP6FPUvbeRlBA3I6IPI+SoUmRS7Qn+ZwSIzlwljOmml+BUeUvlJUGkbc1aMD4VN/bOwDDA8HLgV48mgWgt9h12RsnCTnEGpPvfqw7ocSFSadlQrsAVv19VFW9+ft3lg+xNAZBx10E0qv3W0s7ktMA7njQZd2QOwRQhI/Su9THqBs+quCUMzUGJzFrD+XFNzcv5458EWvc5JZDFWywWk8Hb0K/KGPsAmwP1RmfgVWUMCY67GI5rLCDWpWmKxXKLQmXF1johz8zXQkSkBJ41CdLm+YporvsyLLVRFmDnwMMc/LkLdrf6JWCed92xg/HllaN6LBEZJqA4Lko3Ug==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS8PR10MB7042.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:5a9::19)
- by AS8PR10MB7351.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:615::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.12; Tue, 17 Jan
- 2023 17:04:37 +0000
-Received: from AS8PR10MB7042.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::9cea:1033:958c:d92b]) by AS8PR10MB7042.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::9cea:1033:958c:d92b%6]) with mapi id 15.20.5986.023; Tue, 17 Jan 2023
- 17:04:37 +0000
-Date: Tue, 17 Jan 2023 18:04:35 +0100
-From: Christian Storm <christian.storm@siemens.com>
-To: cip-dev@lists.cip-project.org
-Subject: Re: [isar-cip-core][PATCH 1/1] only copy "A" version of rootfs part
- for ab-rootfs
-Message-ID: <20230117170435.4exyxyedtpskiejs@cosmos>
-Mail-Followup-To: cip-dev@lists.cip-project.org
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <7e0aef08-10ba-4ff2-5b44-4245d9c3a51f@siemens.com>
-X-ClientProxiedBy: FR3P281CA0085.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:1f::22) To AS8PR10MB7042.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:5a9::19)
+ dkim=missing; spf=none, err=permanent DNS error (domain: ucw.cz, ip: 46.255.230.98, mailfrom: pavel@ucw.cz)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 567101C09F6; Tue, 17 Jan 2023 21:50:55 +0100 (CET)
+Date: Tue, 17 Jan 2023 21:50:54 +0100
+From: Pavel Machek <pavel@denx.de>
+To: Ulrich Hecht <uli@fpond.eu>
+Cc: cip-dev@lists.cip-project.org
+Subject: Re: [cip-dev] 4.4 steps towards release
+Message-ID: <Y8cKLnKsp+jiHUna@duo.ucw.cz>
+References: <Y7w4dfYgh7d10IdS@duo.ucw.cz>
+ <588609118.480377.1673338487702@webmail.strato.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR10MB7042:EE_|AS8PR10MB7351:EE_
-X-MS-Office365-Filtering-Correlation-Id: 68654a9c-5d7e-4ee0-25ce-08daf8acea2c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	e7n++7SaQGD+ihcz9Pm8Oa2x/jdvZIlQksWKINE0Y7NDrjnAbxuBUdBLr9G85O3y1AnsRBCRueIDo8x5mR/YlPY/PF0H7SgJXiMHBZyl+5F2ZZ64Rik5Ghy7mL24QU73jdx4KIt5pJRiyLBsAieNnybZ9lDDZ27xQVUdy19AFoLEy2dCeGRMsB6O/zbii5vIQw5f+1kCmVQG0Y+2C4OEzjOj2caWvpH4jzOlHPIdDnZrHnb2WSr6Qj6mZ8+Y3KNrD7jqWg1nPscKBrPCRPC/Mtj18iHOVPhKSRpcRdnhRHoimjL3GF1+ffpkOU/ESv6LgC5+IFaq9LXWQn9lUnl4+5sO7Y5Vn0rKWNzXNs9yPlLbT8cw5a4NhN8RGwCg1v42XsBUlHPSWCsioK1FlA05NosOfMsvNBJ4bzDCzzVNXW03sG8ghywoQXo2KtZBp8Gd8Ee3sEiq0wPj397QgJJMJX/gzJMwLEl3bX397ms1TFv9KLiWdSUhmWDf9UaTkFYE2k9Vmkt9Am0QWySDFcUL7udL4yNnDIi10cl+mHAz4wdZd7e/kZhklcdSAA8NsU4qIIJvRUusjhDF3c8zx3Y46drlwKvQ76UIScc1kDbNT4XsCLepgUizgh9EpK1PVHsJcI5avRVgxF9eUfwzYSDEmg==
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR10MB7042.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230022)(4636009)(7916004)(39860400002)(136003)(346002)(376002)(366004)(396003)(451199015)(66556008)(86362001)(5660300002)(9686003)(66476007)(8676002)(66946007)(6916009)(8936002)(41300700001)(316002)(6486002)(44832011)(478600001)(2906002)(186003)(6506007)(6512007)(53546011)(1076003)(66574015)(33716001)(83380400001)(38100700002)(82960400001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?jO2a/3Y4wc9UqhqcmiGo0WX7N79xCCEwhJ9stslaZYh0ikAP0qNIuwnkimK4?=
- =?us-ascii?Q?BKqsJPDXkvPxzRbLqsm2aKP+0hXjUXje0ahttvSmc8JVBKHnPKGdFcLnVSFR?=
- =?us-ascii?Q?sjsRFGptt+y6n7ioz/BmeyOaKoggU3ZCqweETvDnj2ysmRGovsWJuxjqPwLO?=
- =?us-ascii?Q?hVqc9wcJAXd5kaeqZM+C7ggZRmrq0CilQGvw+vB32VCh4NAW+UFd5IyN15Yx?=
- =?us-ascii?Q?kssQkcWwRLx8Z980N/eLlEObhM+wI+JXpWcoc8KqBQ2IFbawRpiTPmI5DsVi?=
- =?us-ascii?Q?Z25UD9jfOvYAjxKnkiE2nmcVKtLjb1BCwwUeJq5L9vZ0OtJpzTacvqAyBtTR?=
- =?us-ascii?Q?KYkQthOz7BHhcfxwlRpwdXL0iOOs2t/Cl4hClejbQSNIw0zSVUqsKUuJK+Gv?=
- =?us-ascii?Q?T914VB9paBA3MOsP/PUBwWZYfy2IUt5yAZ18TW0bHm9QIF1N25wDFKSQKQ9D?=
- =?us-ascii?Q?x6U1YtVueuYHn8qwxhyPzp1SZo5wmXtFLxMsEoRebe2d+WMKbEs61ail1aAN?=
- =?us-ascii?Q?MvNXaNJrKh+pj+kLY+HSidJtT0+TB0iJbcYWHxDLZr/91lH02onjiU/oainY?=
- =?us-ascii?Q?pKYuC7LcRwLJLry5ATOH+u+UY+kF3HY5A2jYp0LPJxU4vubaOG9HE4dA7ne0?=
- =?us-ascii?Q?sIEj+pjFSNfdgmzEIM5Ir7y9HJW5OF2vC/8YgeQEvM6ptDrrxopd/cL3KO7P?=
- =?us-ascii?Q?PyGM+aoK4YwF6f8GMQaXdVEOzspWjz5y4J5/EWxyPAqjXCId6mD7DpHI5Ckd?=
- =?us-ascii?Q?7XA3N4/V0e5dtbRXSNm0f0PSFvuFg7Q1eHXM6opqORpCG/DjuDYDV9M6kLGD?=
- =?us-ascii?Q?hP4jbKUy8pQTw6pSz81RjiBXmkoPBD79HgMd1JlyHbaOuVIOXHsj7nDZqJFw?=
- =?us-ascii?Q?S/mQ2VWhhF/37TMuyuUC6u+XYmf+4AQtlZyoBNbOril/kbcBGqs2RiGRuNwH?=
- =?us-ascii?Q?tZgtDh1JkIvnxC5D6z/V4NpcXE6IpuuwN+EG2DX3GTib5ihWrZp+4fiRZ7dY?=
- =?us-ascii?Q?EppaRFHDXi8HyVpxnTvLutwdXVmEPriwr8lQYzxjKffMD/bAoF0al1UigI2W?=
- =?us-ascii?Q?9R3SaHHFbFim9geYukXEhSf99cnTPKtaYBPm6neBzJq/iJljiFjBWdRN/hDf?=
- =?us-ascii?Q?lEnlU72NfsnA3o+/hhGZ99UcYwbEgvS+A5YNbg1iOoRAjEsZMqXIjY1QaEY4?=
- =?us-ascii?Q?BDAEBp7RqQKC9SwtyNb99I7L95oltMiWga6d7elBWRy3o4Inew7Q6hYnONN8?=
- =?us-ascii?Q?3Opxaip6obWN6RHDKIyyz+UM15LgkJkGYuzhviqgdofBCdgiSs/m1K7aJV6V?=
- =?us-ascii?Q?RV9cTuVa/++CPnO4XAW5O0m1DPnzbrVplEUF6q0b1d4nweE1pJxreazhXpEa?=
- =?us-ascii?Q?wO3m8D7LwJQRYipnURlVAt2vvzwzbACswfO5Tz81HWhSOegkaSJnvHMHjkz+?=
- =?us-ascii?Q?UZai6ZiR9CvigAd4AFO8u1JBrndux/8wwpmn80T+C3q45DYgj7n2zuJIlL92?=
- =?us-ascii?Q?RLMLT5/hnLOEac4XI2k1Byeu6K1W5A3v5IDdDxoqf04Qn/8tb0UUlXLgMZuj?=
- =?us-ascii?Q?f7E8a5Mgl7x6SnCQhwKmF8f79dQYQd8EWK64eAgxDOReO69FL42eVlqwuubo?=
- =?us-ascii?Q?QWjgA0ZHx0xQsH/lgOImzyC62f37tlS1NnE+c2VXQCa7sSQUluM36Xww+C41?=
- =?us-ascii?Q?t/lHJA=3D=3D?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 68654a9c-5d7e-4ee0-25ce-08daf8acea2c
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR10MB7042.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jan 2023 17:04:37.4421
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7s+IW3sMjbkRvg7YebfDQaSrO5+JmdGJah9h7NabG6VoW7Xrb+s+inSNVokK0kO1IQ2vT2N6uQXp+e53viEIDZg4z6p33gnFgrw9Gg3P3yA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB7351
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="CfzCdnWQHYgIsrCx"
+Content-Disposition: inline
+In-Reply-To: <588609118.480377.1673338487702@webmail.strato.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 17 Jan 2023 17:04:45 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10375
+ <cip-dev@lists.cip-project.org>; Tue, 17 Jan 2023 20:51:06 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10376
 
-Hi,
 
-> On 03.01.23 13:31, Felix Moessbauer wrote:
-> > For swupdate images, we currently copy the rootfs to both the A and the
-> > B partition. However, the content of the B rootfs will never be used, a=
-s
-> > the first boot always chooses the A partition. And after an swupdate
-> > image update is performed, the content of the B version will be
-> > overwritten.
-> >=20
-> > By not copying the squashfs into the B partition, we can shrink the siz=
-e
-> > of the initial image by half and also cut the flashing time in half.
-> >=20
-> > Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
-> > ---
-> [....]
-> Seems reasonable, but I might also forget right now the original idea
-> behind filling both - adding more folks to this discussion.
+--CfzCdnWQHYgIsrCx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The original idea was to have as much redundancy as possible and be able
-to use B in case A fails =E2=80=95 given a proper deployment and ability to
-switch over, though. A and B are initially identical. So, if you don't
-need this ability, then you can save the image space occupied by a not
-used B, or sync over A to the empty B slot on, e.g., first boot, to
-save the image space but still have this redundancy, accompanied by
-a "window of vulnerability" while B is not (fully) synchronized....
+Hi!
 
-Kind regards,
-   Christian
+Thank you. I reviewed these, and they seem ok. I'd not bother
+backporting patches marked (), but they should not harm.
 
+a | b670996ca 038ee4 o  | serial: 8250: 8250_omap: Avoid RS485 RTS glitch o=
+n ->set_termios()
+() a | 8d4ceb13d e103ba o  | net: usb: qmi_wwan: add Telit 0x103a compositi=
+on
+a | 89840b12c f7e942 o  | btrfs: qgroup: fix sleep from invalid context bug=
+ in btrfs_qgroup_inherit()
+a | 2f2c59506 f0a0cc o  | nilfs2: fix NULL pointer dereference in nilfs_pal=
+loc_commit_free_entry()
+a | 02c468589 17b57b o  | arm: dts: rockchip: fix node name for hym8563 rtc
+a | 1a1d9be7b ad7f40 .+ | xen/netback: Ensure protocol headers don't fall i=
+n the non-linear area
+a | b41eab579 74e7e1 .+ | xen/netback: don't call kfree_skb() with interrup=
+ts disabled
+a | a0e661a7d c981cd o+ | mmc: sdhci: Fix voltage switch delay
+a | 4749c5cc1 45fecd .+ | gpio: amd8111: Fix PCI device reference count leak
+a | 62ae69ea7 743117 o+ | tipc: Fix potential OOB in tipc_link_proto_rcv()
+a | fbc70a04a 7dfa76 .+ | xen/netback: fix build warning
+a | cb0f2530f 16d055 o  | udf: Discard preallocation before extending file =
+with a hole
+a | eee369a46 1f3868 o  | udf: Fix extending file within last block
+a | bd1c152be 94a7ad .+ | media: vivid: fix compose size exceed boundary
+() a | c2fe0cac3 c2f292 o+ | wifi: brcmfmac: Fix error return code in brcmf=
+_sdio_download_firmware()
+a | 3f418ad65 39c1eb o+ | Bluetooth: hci_core: don't call kfree_skb() under=
+ spin_lock_irqsave()
+a | 52dc66bf4 415565 o+ | scsi: fcoe: Fix transport not deattached when fco=
+e_if_init() fails
+() a | 694bd441a 04ba54 .+ | crypto: img-hash - Fix variable dereferenced b=
+efore check 'hdev->req'
+a | 2210b22c7 02cd30 .+ | cxl: fix possible null-ptr-deref in cxl_pci_init_=
+afu|adapter()
+a | c3595370a 6a46bf o  | binfmt_misc: fix shift-out-of-bounds in check_spe=
+cial_flags
+a | 548d04953 cfd3ff .  | clk: st: Fix memory leak in st_of_quadfs_setup()
+() a | 215d58e8c 1db1f3 o  | HID: wacom: Ensure bootloader PID is usable in=
+ hidraw mode
+() a | 5f578bbe1 8508fa .  | ALSA: line6: correct midi status byte when rec=
+eiving data from podxt
+a | 887f47cf9 341097 o  | md: fix a crash in mempool_free
+
+> There are also a few fixes for previous backports that need to be reviewe=
+d:
+
+And these look okay to me, too.
+
+a > e80d1e591dbba xen/gntalloc: fix backport of "xen/gntalloc: don't use gn=
+ttab_query_foreign_access()"
+a > baf4fff4a69b7 Revert "hwmon: (sch56xx-common) Replace WDOG_ACTIVE with =
+WDOG_HW_RUNNING"
+a > a5387f2e581e5 xen/blkfront: fix backport of "xen/blkfront: don't use gn=
+ttab_query_foreign_access() for mapped status"
+
+Thanks and best regards,
+									Pavel
 --=20
-Dr. Christian Storm
-Siemens AG, Technology, T CED SES-DE
-Otto-Hahn-Ring 6, 81739 M=C3=BCnchen, Germany
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--CfzCdnWQHYgIsrCx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCY8cKLgAKCRAw5/Bqldv6
+8nS4AJ46uzL1qPlL2cIIB8mwKgsC8TfC4gCfUy/dJETKReTiOzD5sHicW9dl8u0=
+=7gju
+-----END PGP SIGNATURE-----
+
+--CfzCdnWQHYgIsrCx--
 
