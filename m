@@ -1,162 +1,324 @@
-Return-Path: <chris.paterson2@renesas.com>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFFB2C46467
-	for <webhook@archiver.kernel.org>; Mon, 16 Jan 2023 12:47:07 +0000 (UTC)
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com (JPN01-TYC-obe.outbound.protection.outlook.com [40.107.114.106])
- by mx.groups.io with SMTP id smtpd.web10.165386.1673873219614928894
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA8E9C677F1
+	for <webhook@archiver.kernel.org>; Tue, 17 Jan 2023 13:16:04 +0000 (UTC)
+Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
+ by mx.groups.io with SMTP id smtpd.web11.195729.1673961354948210789
  for <cip-dev@lists.cip-project.org>;
- Mon, 16 Jan 2023 04:47:00 -0800
+ Tue, 17 Jan 2023 05:15:57 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@renesas.com header.s=selector1 header.b=ZqWimk9e;
- spf=pass (domain: renesas.com, ip: 40.107.114.106, mailfrom: chris.paterson2@renesas.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KKvqMCZR1uudmykljb0gJ6UHEVrUzR6lInm9E6WyD7pgDoTDXsQlpoIN3GQ/03xZmT9uQeT6tHngPwjwZe5fxO9eSecn4c7WMZj4dpGEnTroqhTYX+JA/DCwxK4tjSO01Dw2c60q8ZyfWMMbXUST7UAhvPz7VovyogJteF/bDfROTJvv7yPYAio2h7XrFCccBKxJmUKfjIypnSE9rvgQW1UKct62bhsKqDweHvp6ZL+8z6SAhw38UUMgsUsG7VzyAwQ15GUCjLWh0aKZRNvUZLK8KSQ1HMAjHmW+wirFsn7NtaHOlWfib8a6Z/6W4U3NLWMfp+P+lUMyDOb0gZoMRg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Uw2M5p85jR4QYWVlTlRPdarSqEpquih0k1p2Gm+pdb4=;
- b=bx8RpkPCQumzlZ4ewXZ1nO7Cb/DNVU45oG1INwVwnZzh1Ia4ejLNL0MAWjMI5An20wQYFBpgHBNreaZszKYvhFZd9Xu8/XtBoqaNne7sE16kbeusxrgtA9u7sa1tG7oKDVXoBIuvEmrZmKZJfkMAiAaivyLv89vJkxVDJKX+E5fjSIjmNwaYXEG6akVUjhY9k0vzKV/NHKd8wpvW36pepWqL9KCPxCQnx881maLoVUuz8bC4b+WSCQXO9u/ldDoK9kOK+HeK+w+hS6Lfg7HuQR9zZm/mAKzcFM2+wk5vhtn23BX0GENGH5X46EYhEqa+nCG9LDD+eF1op5xVsjugDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Uw2M5p85jR4QYWVlTlRPdarSqEpquih0k1p2Gm+pdb4=;
- b=ZqWimk9e6G12+VX3XD9m5hBbBT14vKLRfCOJmvHz77RL28jqjtha4nSoXKXtyNBVwafWbFLagu/ZrN2Wa2Hp6QIYMEacJiLeUVCED4h3PQzSufqDMHT/ACGVPsDVgBdMpw2fc7qnG2UXPYwAOdL4W1xQKDdHrN9gT0PJH074jH8=
-Received: from TYCPR01MB10588.jpnprd01.prod.outlook.com (2603:1096:400:309::8)
- by TYCPR01MB9642.jpnprd01.prod.outlook.com (2603:1096:400:198::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5986.18; Mon, 16 Jan
- 2023 12:46:56 +0000
-Received: from TYCPR01MB10588.jpnprd01.prod.outlook.com
- ([fe80::943b:564b:b02d:f78b]) by TYCPR01MB10588.jpnprd01.prod.outlook.com
- ([fe80::943b:564b:b02d:f78b%7]) with mapi id 15.20.5986.019; Mon, 16 Jan 2023
- 12:46:56 +0000
-From: Chris Paterson <Chris.Paterson2@renesas.com>
-To: Jan Kiszka <jan.kiszka@siemens.com>, "cip-dev@lists.cip-project.org"
-	<cip-dev@lists.cip-project.org>
-Subject: RE: RE: [cip-dev] 6.1 LTS
-Thread-Topic: RE: [cip-dev] 6.1 LTS
-Thread-Index: AQHZKAKmIR1C9DY8uUGBbViY/USWrq6fs3EAgAEqk1CAABxsAIAABhrA
-Date: Mon, 16 Jan 2023 12:46:56 +0000
-Message-ID: 
- <TYCPR01MB10588119C91FFEBC87AA36208B7C19@TYCPR01MB10588.jpnprd01.prod.outlook.com>
-References: <c4648640-e690-5afb-85fc-85bb81889737@siemens.com>
- <Y8QvRNxsp0N3Sa2D@duo.ucw.cz>
- <TYCPR01MB105886142D52E992A8E3AC6A6B7C19@TYCPR01MB10588.jpnprd01.prod.outlook.com>
- <4afde947-2482-5c4b-6eca-ccd282b693c7@siemens.com>
-In-Reply-To: <4afde947-2482-5c4b-6eca-ccd282b693c7@siemens.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYCPR01MB10588:EE_|TYCPR01MB9642:EE_
-x-ms-office365-filtering-correlation-id: d098f453-981a-40a8-9aff-08daf7bfc02b
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- NxNvoBZ2OeGSLo+5/XTeClYjYWwK8+4eYCObB+2cLhxLPCea2Ub+06o7uIQZBmkG/mtJIarWqbIaTcyDM6gB9zI7B4rusnZ+/Hos9He28MoP78je1qQ3A7bfVRwzfHQEOeBZWJ3KCsRgn2I3vuaH/qoCDisuU9os9RcakDH+rAGj0XQJQ1+WdDEEat/EBADWjic5eu1b0KFJxZdQpLbZS7GxAQmw+WC7Jipm/1drmCVlljJtkFwUDNXZaM3AoAvylI6kES4pFyf9A0ENsXvJzE6PFQ94+IDCF01pHhSW9zyv6XDZdOGN3jyqIQfUHUiEOeSCEslQsMgj+AtCxCAJPEjskJTcBIYwlY4gEAwMjCLP1unl3mlNxfGjXpCqHuM/BK5PMjenHYO6j2taN6S6+gr16IpNdFhOhge3iSoAEeQHMfd/xrezWd0ln1tv1Es7ATnxaYRPz3od6WpvUglD2rPFjaQbnzYP/dSOb6Sfgs8yGtM9QqkdETdOHuIwSddp50jElRUpBLjstgSOaoBojj7Es+GO5UAsU6yaRaS17/9LXu/6rDpOpV/Q99S0dHLjm93sFjuO5mVemBi/46rLxjxa5pE32f9o8end3XGNxmM6cHATCfzwluvg3iPL9tWrnc8PCAKm9oWRV/sgoCylrBn3mg69no1jdEdMLUNI/gvZjFo5OGOlnYQSYuhTIabn8hIqPNl6MC58IiFqCA3OdQ==
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10588.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(346002)(136003)(366004)(39860400002)(396003)(376002)(451199015)(9686003)(6506007)(186003)(55016003)(76116006)(86362001)(66946007)(66446008)(38070700005)(64756008)(4744005)(5660300002)(66476007)(122000001)(66556008)(478600001)(110136005)(8676002)(38100700002)(2906002)(71200400001)(33656002)(26005)(7696005)(316002)(8936002)(41300700001)(52536014)(53546011);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?Windows-1252?Q?buwL1Ey9P5BScEYxH9croVqEmAb4gTOGeGQHNfbbEdc7pVo50s2heBk4?=
- =?Windows-1252?Q?NS87eglTKl5QlAXLCzkbHvCpqc0CgaJZiKaz9B0BpSd6OPpJ2t24W+5w?=
- =?Windows-1252?Q?61uc7hUfpog0dfGLX68PxkTwVVRjNbqGXVDi4UQ9ENCIgEbrQeIO2M+T?=
- =?Windows-1252?Q?yIv+numP8HjgzQ2VmIF2Rxfx+4u+vY0RUBXNxVKOBluKCGTTpl0fSbiS?=
- =?Windows-1252?Q?yuCu0Vqno5JgGP6kB70l+i+tYqGcQXqG3LT295XPopiIP+VFhDW/jko9?=
- =?Windows-1252?Q?eOjRFwzppEbhPimvq9xZFEwVnmjvBfISertCardr50I6m2DQvXPhzPx2?=
- =?Windows-1252?Q?z/ThhZuvik9l3iwhyDl/8Re8OKtDIAcmJQoI40IdXbqA7OXgTvZjahnE?=
- =?Windows-1252?Q?sWUKN80FU0fHmpex59g9Nvs7A6G9V0UmdPtjFoCJ7Bru24gMuxGxcees?=
- =?Windows-1252?Q?QolbWjHk5Av32L/OiXS7dJbCghABMb8i5Nu9DhIoUACojgtSCKIY6kna?=
- =?Windows-1252?Q?xs+ACdax3nyIHlsVYBo/Zj+2aMW6iEOv8l0B9xtwimeISiTyy7YAE8+B?=
- =?Windows-1252?Q?zBhsRzouPETx4LDwbYI/nPzGuBuaY3TZMpPHmT+na/1KgDo26yzVq9Mz?=
- =?Windows-1252?Q?OxSyAa+IZ7oWc8tsM2STCY81NOlosbrgV0Glntzg7T3yp32eS4v1kbmQ?=
- =?Windows-1252?Q?ausklIsGa+UyMnPCYDDi0BtchyniAoFTOSfpBSZCWeh3sFoSGqxtDv4i?=
- =?Windows-1252?Q?h8zJfP254KLpFfuDqzCLOwhncHEe/xFOmzS4Ss2xhAEwfHWxHDq+WFzl?=
- =?Windows-1252?Q?BgyW9KUiBXL74M8fNHMv34qmQqhEyLbPQ0IEHalS6TlXKzBiWE7IvDwc?=
- =?Windows-1252?Q?xOei+IyQH8jx8VyMOQfXdRlwhKKCoxRYPAS4ZyGUqtg6rHMcXaO+0VBS?=
- =?Windows-1252?Q?h+d0FkEyu6F8neP11WMgr8xsqSwR3sP9LrEUyzk/OK6HIKpDH8nAESKj?=
- =?Windows-1252?Q?vGLzPa3ig3StBy+erq3H830ijTNMBSsjyCm1M3aqgs8Cuyjgh//X0wRF?=
- =?Windows-1252?Q?WmvecXR3KBFnwBVD0bzYZlcaVkqVfD4nMjXCUjiAwApd0D+wLXQASl92?=
- =?Windows-1252?Q?yBYuf2HIjyX1oCATph93eDtiHr+wEGSW07RKwBgf/O/r/53GsfMoYTrc?=
- =?Windows-1252?Q?6XU7BN+YVdJybgB/mys22MFHMy5W66Urvl9Eul40taNSnC2DgrmiG6Af?=
- =?Windows-1252?Q?+/x1GpY9BXzwz204fvsYWOsTKVChekBSa7f30u0RfAIIvWB16TEiqkP5?=
- =?Windows-1252?Q?1NoeJ1lSEvDYu62Z9GwTSkZK7YK0nrqgUeOpbchCa451F530j7/NFb0C?=
- =?Windows-1252?Q?s2SEr5d1kgdt4Pfb72tUcSSaT/VRyKnZreR+UFaQaFz9+wODI0aMZ0F0?=
- =?Windows-1252?Q?J8UCCOveNSg711PSPLZ/3FTMiQ39gioe/Ze7uvFVNprGsLrBJkPWNqWv?=
- =?Windows-1252?Q?OcfbQHj/0sdtsgkz5SKUvelsSErCL3rzZ/THt+JQMiF3kxvFw5WXKkBL?=
- =?Windows-1252?Q?+bRx+de+IGJ2Piup89tqHqt6JGTyrjHJrQm5ZYT2d83GWNmfyBDciV97?=
- =?Windows-1252?Q?mCQtCP0zgnZ6zZIUp3ZtjeX5iO09IUa8+606xl22QpMRsdXNel7aIhCm?=
- =?Windows-1252?Q?62h80pwCgVZd8rjVwFM2hSgAYU4gFJuaVYeXsEII5zvJkF6kW3d6kQ?=
- =?Windows-1252?Q?=3D=3D?=
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=SMi4Xfhx;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-51332-20230117131551dbff47c15afc394d9b-14onwo@rts-flowmailer.siemens.com)
+Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20230117131551dbff47c15afc394d9b
+        for <cip-dev@lists.cip-project.org>;
+        Tue, 17 Jan 2023 14:15:52 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=Quirin.Gylstorff@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+ bh=WaAavweRGy3BNdAjN3a3JNnWfesMZhntPyBr1IMPRcw=;
+ b=SMi4XfhxNcSykcbiOysLX9gdkzGRg0wOcimOVlvxnSJE8J+nVFDtL2XDB/Ot/d/7AdpIkr
+ jHelgU++Aq5yNjmK/l28M2X3I0D9DJmKdGLO5jMOtXdATYpieGyKjfSHY+lSY/shTwOlb/Dj
+ hEOe+l45uIREGJZQMktZ25Q/gGwLs=;
+From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
+To: cip-dev@lists.cip-project.org,
+	felix.moessbauer@siemens.com,
+	jan.kiszka@siemens.com
+Subject: [cip-dev][isar-cip-core][PATCH v3] Create a generic initramfs overlay
+Date: Tue, 17 Jan 2023 14:15:50 +0100
+Message-Id: <20230117131550.249530-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10588.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d098f453-981a-40a8-9aff-08daf7bfc02b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2023 12:46:56.0775
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jaMSvdf03PIIUV+BvkgMEOQK31YYN5L8/Fc6qJPcM1DckVRK1oMYWiVVycw5P9tyJxTuGgn1OC1e5w8OqXhqxH2ZnqgJfnkHFSIm2jA2Kxs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB9642
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 16 Jan 2023 12:47:07 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10372
+ <cip-dev@lists.cip-project.org>; Tue, 17 Jan 2023 13:16:04 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10373
 
-> From: Jan Kiszka <jan.kiszka@siemens.com>
-> Sent: 16 January 2023 12:23
->=20
-> On 16.01.23 11:46, Chris Paterson wrote:
-> > Hello,
-> >
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-[...]
+This allows the user to generate multible overlays in a given
+location.
 
-> >> On a related note, 4.9.X was discontinued; I believe we should create
-> >> configs for 4.14 and start testing that, to help with 4.4-st
-> >> maintainance.
-> >
-> > Is there a reason not to test the release candidates for all stable ker=
-nel
-> versions?
-> > (Currently we only test LTS)
-> >
-> > Our CI will be fine with the extra workload.
-> > It would just be a case of someone checking the results and feeding it =
-back
-> to the stable mailing list.
-> >
->=20
-> Would we add value this way over existing kernel-ci runs - or don't they
-> exist?
+The configuration used the following variables:
+ - INITRAMFS_OVERLAY_STORAGE_PARTITION_LABEL: Label of the partition to store the overlays
+ - INITRAMFS_OVERLAY_PATHS: space separated list of overlay directories (lower overlay directories)
+ - INITRAMFS_OVERLAY_STORAGE_PATH: path on the storage partition where the upper directory is stored
 
-KernelCI test all stable versions I believe.
+The script tries to mount the top directory of INITRAMFS_OVERLAY_STORAGE_PATH. If the mount fails
+the boot is aborted.
 
-We have slightly different build/test coverage then KernelCI, so technicall=
-y if we build/test as well, overall coverage would be increased.
-e.g. we use the CIP kernel configurations, different compiler versions etc.
+e.g.:
+```
+INITRAMFS_OVERLAY_STORAGE_PARTITION_LABEL ??= "var"
+INITRAMFS_OVERLAY_PATHS ??= "/etc /usr/share/foo /usr/share/bar/foo"
+INITRAMFS_OVERLAY_STORAGE_PATH ??= "/var/local"
+```
+1. This will mount the partition labeled var to /var
+2. This will create  the following overlays:
 
-Chris
+```
+overlay on /etc type overlay (rw,relatime,lowerdir=/root/etc,upperdir=/root/var/local/etc,workdir=/root/var/local/.etc-atomic)
+overlay on /usr/share/foo type overlay (rw,relatime,lowerdir=/root/usr/share/foo,upperdir=/root/var/local/usr/share/foo,workdir=/root/var/local/.usr_share_foo-atomic)
+overlay on /usr/share/bar/foo type overlay (rw,relatime,lowerdir=/root/usr/share/bar/foo,upperdir=/root/var/local/usr/share/bar/foo,workdir=/root/var/local/.usr_share_bar_foo-atomic)
+```
 
->=20
-> Jan
->=20
-> --
-> Siemens AG, Technology
-> Competence Center Embedded Linux
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+Changes v2:
+ - INITRAMFS_OVERLAY_STORAGE_PATH contains the full path
+ - updated copyright
+ - formatting
+ - fix typos in commit message
+
+Changes v3:
+ - add awk to generate a unique wordir name from the full overlay path
+ - allow absolute paths in INITRAMFS_OVERLAY_PATHS
+ - ensure that subpath, e.g. `/usr/share/bar/foo` are possible in INITRAMFS_OVERLAY_PATHS
+ - adapt commit message
+
+Should we split mounting /var in a seperate hook with a build time dependency and only check if 
+INITRAMFS_OVERLAY_STORAGE_PATH is writable instead of adding the mount logic directly?
+
+ .../cip-core-initramfs/cip-core-initramfs.bb  |  4 +-
+ .../files/etc-overlay.script                  | 36 -----------
+ .../initramfs-etc-overlay-hook_0.1.bb         | 30 ----------
+ .../files/overlay.hook}                       |  1 +
+ .../files/overlay.script.tmpl                 | 60 +++++++++++++++++++
+ .../initramfs-overlay-hook_0.1.bb             | 40 +++++++++++++
+ 6 files changed, 103 insertions(+), 68 deletions(-)
+ delete mode 100644 recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.script
+ delete mode 100644 recipes-initramfs/initramfs-etc-overlay-hook/initramfs-etc-overlay-hook_0.1.bb
+ rename recipes-initramfs/{initramfs-etc-overlay-hook/files/etc-overlay.hook => initramfs-overlay-hook/files/overlay.hook} (92%)
+ create mode 100644 recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl
+ create mode 100644 recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb
+
+diff --git a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
+index 9e0ee26..2935ed8 100644
+--- a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
++++ b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
+@@ -1,7 +1,7 @@
+ #
+ # CIP Core, generic profile
+ #
+-# Copyright (c) Siemens AG, 2021
++# Copyright (c) Siemens AG, 2021 - 2023
+ #
+ # Authors:
+ #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+@@ -12,5 +12,5 @@
+ inherit initramfs
+ 
+ INITRAMFS_INSTALL += " \
+-    initramfs-etc-overlay-hook \
++    initramfs-overlay-hook \
+     "
+diff --git a/recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.script b/recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.script
+deleted file mode 100644
+index 6e5aacd..0000000
+--- a/recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.script
++++ /dev/null
+@@ -1,36 +0,0 @@
+-#!/bin/sh
+-#
+-# CIP Core, generic profile
+-#
+-# Copyright (c) Siemens AG, 2022
+-#
+-# Authors:
+-#  Jan Kiszka <jan.kiszka@siemens.com>
+-#
+-
+-PREREQ=""
+-
+-prereqs()
+-{
+-	echo "$PREREQ"
+-}
+-
+-case $1 in
+-# get pre-requisites
+-prereqs)
+-	prereqs
+-	exit 0
+-	;;
+-esac
+-
+-. /scripts/functions
+-
+-if ! mount -t $(get_fstype /dev/disk/by-label/var) /dev/disk/by-label/var ${rootmnt}/var; then
+-	panic "Can't mount /var partition - overlay will not work!"
+-fi
+-
+-mkdir -p ${rootmnt}/var/local/etc
+-mkdir -p ${rootmnt}/var/local/.atomic
+-if ! mount -t overlay -o lowerdir=${rootmnt}/etc,upperdir=${rootmnt}/var/local/etc,workdir=${rootmnt}/var/local/.atomic overlay ${rootmnt}/etc; then
+-	panic "Can't mount overlay!"
+-fi
+diff --git a/recipes-initramfs/initramfs-etc-overlay-hook/initramfs-etc-overlay-hook_0.1.bb b/recipes-initramfs/initramfs-etc-overlay-hook/initramfs-etc-overlay-hook_0.1.bb
+deleted file mode 100644
+index 37a04ec..0000000
+--- a/recipes-initramfs/initramfs-etc-overlay-hook/initramfs-etc-overlay-hook_0.1.bb
++++ /dev/null
+@@ -1,30 +0,0 @@
+-#
+-# CIP Core, generic profile
+-#
+-# Copyright (c) Siemens AG, 2022
+-#
+-# Authors:
+-#  Jan Kiszka <jan.kiszka@siemens.com>
+-#
+-# SPDX-License-Identifier: MIT
+-#
+-
+-inherit dpkg-raw
+-
+-SRC_URI += " \
+-    file://etc-overlay.hook \
+-    file://etc-overlay.script \
+-    "
+-
+-DEBIAN_DEPENDS = "initramfs-tools"
+-
+-do_install[cleandirs] += " \
+-    ${D}/usr/share/initramfs-tools/hooks \
+-    ${D}/usr/share/initramfs-tools/scripts/local-bottom"
+-
+-do_install() {
+-    install -m 0755 "${WORKDIR}/etc-overlay.hook" \
+-        "${D}/usr/share/initramfs-tools/hooks/etc-overlay"
+-    install -m 0755 "${WORKDIR}/etc-overlay.script" \
+-        "${D}/usr/share/initramfs-tools/scripts/local-bottom/etc-overlay"
+-}
+diff --git a/recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.hook b/recipes-initramfs/initramfs-overlay-hook/files/overlay.hook
+similarity index 92%
+rename from recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.hook
+rename to recipes-initramfs/initramfs-overlay-hook/files/overlay.hook
+index bfaa7b6..5bec258 100644
+--- a/recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.hook
++++ b/recipes-initramfs/initramfs-overlay-hook/files/overlay.hook
+@@ -23,3 +23,4 @@ esac
+ . /usr/share/initramfs-tools/hook-functions
+ 
+ manual_add_modules overlay
++copy_exec /usr/bin/awk
+diff --git a/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl b/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl
+new file mode 100644
+index 0000000..9cbe537
+--- /dev/null
++++ b/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl
+@@ -0,0 +1,60 @@
++#!/bin/sh
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2022-2023
++#
++# Authors:
++#  Jan Kiszka <jan.kiszka@siemens.com>
++#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
++#
++
++PREREQ=""
++
++prereqs()
++{
++	echo "$PREREQ"
++}
++
++case $1 in
++# get pre-requisites
++prereqs)
++	prereqs
++	exit 0
++	;;
++esac
++
++. /scripts/functions
++
++
++ovl_partition_label="${INITRAMFS_OVERLAY_STORAGE_PARTITION_LABEL}"
++ovl_storage_path="${INITRAMFS_OVERLAY_STORAGE_PATH}"
++ovl_lower_dirs="${INITRAMFS_OVERLAY_PATHS}"
++
++root_mount_storage=${rootmnt}${ovl_storage_path}
++
++if ! mount -t $(get_fstype /dev/disk/by-label/${ovl_partition_label}) \
++	/dev/disk/by-label/${ovl_partition_label} \
++	${rootmnt}/${ovl_partition_label}; then
++	panic "Can't mount /${ovl_partition_label} partition - overlay will not work!"
++fi
++
++for ovl_lower_dir in ${ovl_lower_dirs}; do
++	# remove the first '/' and replace all '/' with '_'
++	# on variable $ovl_lower_dir
++	work_dir_name=$(awk -v var=$ovl_lower_dir \
++		'BEGIN{subvar=substr(var,2);gsub("/","_",subvar);print subvar}')
++
++	lower_dir=${rootmnt}${ovl_lower_dir}
++	upper_dir=${root_mount_storage}${ovl_lower_dir}
++	work_dir=${root_mount_storage}/.${work_dir_name}-atomic
++
++	mkdir -p ${upper_dir}
++	mkdir -p ${work_dir}
++
++	if ! mount -t overlay \
++		-o lowerdir=${lower_dir},upperdir=${upper_dir},workdir=${work_dir} \
++		overlay ${lower_dir}; then
++		panic "Can't mount overlay for '$ovl_lower_dir' !"
++	fi
++done
+diff --git a/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb b/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb
+new file mode 100644
+index 0000000..78831ba
+--- /dev/null
++++ b/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb
+@@ -0,0 +1,40 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2022 - 2023
++#
++# Authors:
++#  Jan Kiszka <jan.kiszka@siemens.com>
++#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++#
++
++inherit dpkg-raw
++
++SRC_URI += " \
++    file://overlay.hook \
++    file://overlay.script.tmpl \
++    "
++
++INITRAMFS_OVERLAY_PATHS ??= "/etc"
++INITRAMFS_OVERLAY_STORAGE_PATH ??= "/var/local"
++INITRAMFS_OVERLAY_STORAGE_PARTITION_LABEL ??= "var"
++
++TEMPLATE_FILES = "overlay.script.tmpl"
++TEMPLATE_VARS += " INITRAMFS_OVERLAY_STORAGE_PATH \
++    INITRAMFS_OVERLAY_PATHS \
++    INITRAMFS_OVERLAY_STORAGE_PARTITION_LABEL"
++
++DEBIAN_DEPENDS = "initramfs-tools, awk, coreutils"
++
++do_install[cleandirs] += " \
++    ${D}/usr/share/initramfs-tools/hooks \
++    ${D}/usr/share/initramfs-tools/scripts/local-bottom"
++
++do_install() {
++    install -m 0755 "${WORKDIR}/overlay.hook" \
++        "${D}/usr/share/initramfs-tools/hooks/overlay"
++    install -m 0755 "${WORKDIR}/overlay.script" \
++        "${D}/usr/share/initramfs-tools/scripts/local-bottom/overlay"
++}
+-- 
+2.39.0
 
 
