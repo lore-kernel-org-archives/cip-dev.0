@@ -2,415 +2,281 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A7B3C004D4
-	for <webhook@archiver.kernel.org>; Wed, 18 Jan 2023 06:42:52 +0000 (UTC)
-Received: from EUR04-HE1-obe.outbound.protection.outlook.com (EUR04-HE1-obe.outbound.protection.outlook.com [40.107.7.44])
- by mx.groups.io with SMTP id smtpd.web11.9895.1674024168387360914
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41646C32793
+	for <webhook@archiver.kernel.org>; Wed, 18 Jan 2023 07:46:32 +0000 (UTC)
+Received: from EUR04-HE1-obe.outbound.protection.outlook.com (EUR04-HE1-obe.outbound.protection.outlook.com [40.107.7.88])
+ by mx.groups.io with SMTP id smtpd.web10.10309.1674027985530738467
  for <cip-dev@lists.cip-project.org>;
- Tue, 17 Jan 2023 22:42:49 -0800
+ Tue, 17 Jan 2023 23:46:26 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=NIIN2cyO;
- spf=pass (domain: siemens.com, ip: 40.107.7.44, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=XTZkRd3B;
+ spf=pass (domain: siemens.com, ip: 40.107.7.88, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LeGozdX6yC7awIpX0Fea+q6ZhivlgJLZfYHp+EpNImdTuKhd+7grzeB1CB9r3RL0iMcbOSB+yKmon3PuU99xkTEkRtkg4ZcZnySUfv6wk0tOIIJwj2+FpVpuhC7C3A0x/hffvzkf2CUK/A9Y9xEXGrheXvGAuun3PdyvMFIE5cdUsrDpkoIuIqa5WCZfPtYnzI316Zvwkz0acmJxPUS683qAXw2wNh2wHoMHeJ59NX4hkeykZeqzgkW4lYoekmkZF4ZepJgSJb/ZyvS1eWd/8zcSxDYpv2vTeS0J2YYn/mo350qfYvip8K9dtzASlb/nN/qHlj1CPaRdzX153/7Yxw==
+ b=m1EktGBrf/MASDlIl3hnAZo1gc2cmO+ER/R7GIjpep5y/9dVg2jSkOhxajJlypefPKr7VnkEgpBn1H+8sHnISO4CTFewf8uq+iySvwjCGfanSPdMPjHTbZWxghn4P6icDEU7Vk7UyoZG9DOWTTIcp6pTbqAaFOZAUwlgAnsGdHOpyqrB4jPE5qk9OsynLCb78J+d5VQJxMlYBU4/U4u/TXlEHUJDjy98uFha0iGTsQdVE74c9gaDkdOOHIuCuNyfQBclaeGHGnVMXA51WMAZsq03soUYHeJ954OyggxfbK45bOJdVGlcwHD5djBgJyI1NZr9jkYv5fQMhPodKQPW1A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UgY+IB8UcUWCL2m8a1F3/de1KiG5cNCdTKDJ3GV/cDk=;
- b=VJ5q1T/06bUaSbEtCF8dQJ5iB4y+LHNj9Ou+yUNdQXbMRefuFFeIxf4S8b/uXtcu/mfovDqpwwnbWGsSFtyCjK01yx5v5Zk+Z7loYLN4eOamcEARifUddRXe/fuu8S3WcZim0tOj58zgeDDwtwFGsXhZAiLEfGYWRdDQrp2cfX01G8zCK2/2st3nEvMJS9gCsC7tD1F9UKko0FE2CLjzZrKoee3PrNNl0jAca4S2WcNjqJNn3O0zT5+sNeOmCZJhkSzoE4ZlMIU+SuKXipsTURebiMpOXLcgj3sO3mEYKP28etH/epHy/R1ZAnADKbeF2rTxeJnT26TG+d40TbIixA==
+ bh=7y4mK6gZs8TIsN0P2s2gm1kCfvHeI828KSQov6dKWaM=;
+ b=iYdcDf/p4Ry9u7MgFXYN7QHxVdYlilnB0V4x+rZb8sg1UBr9QqZkf8+Z/6FyCAYy8ZHzX7um/IE20/Aw9akGA8pFNoyh+0K/WmVZxXfePGZ++qImJOYCv3EwJg4rL43DB6o6ZDUOlW1cBBEHUe7mAnDR+HVsZ++ZCVnh2f/K54JfCXRZo8iXAIXc7Wf/keAfonOG/lOJNgJcPKjF7rQxs+25AbXoc+wnZNoQ1Q54Coo7+noBGP61F1fp1lcABEKk30toe2J+up6PY0txBspiapeljCJkhaOrMpeIruon5624Phr+wdObCDbcqML9saOE367V+XJFe6EDn9h+/fzW1A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UgY+IB8UcUWCL2m8a1F3/de1KiG5cNCdTKDJ3GV/cDk=;
- b=NIIN2cyOUYPj0O/WKCLngGC2y2MfHNy8exG87Q3WraUDBAwmRc/8kUKfZP/jClH9q1KgHPyx4Lkf99/KRkx8G7csVdWkbyknkT9iFQ+BQDbdnAuTpm0oOXxGWOjq+ramgqAjy++tNdlAhTTzxhMuRcTwf5bq+caIkWkPiNqf8gCBdJOMWwo5M+6REle/sliuLPhJ6k7sQD5g911qxoKwDPkIjKCoRAwF+VUcZy4nuyRWG1nF3ZB6dE9/C80x82toJvJLyWSYncVOIHJXDZIGv+0W3N6rMr636WQfsOim0+2yw7MC4404hEHwttRiMe7tYelJDzo0fRrC3De5Ax+Zcw==
+ bh=7y4mK6gZs8TIsN0P2s2gm1kCfvHeI828KSQov6dKWaM=;
+ b=XTZkRd3BodRRVlJBpZkK0xwwTTuJMttggKMOe7XA+w9hOCFY+rnPfiJ/6Inc8TX+Q6iUlrf3PuB0a6xMcAB0fWmwCzS2vAkZIvwVl3JI0OcUGjkFFpoudbDihYxJwMvhdcQ/bq7VDlr+jSk1q9ox7BZfYYWYbP5qn7cHbD+E5q3g7ICnZTLehTiK9YbJE2XS/QVK3pdX//ry9vebJIzWIDsYh2eyOxpG7NW8rrLuy8AWIk4r9EdJUdk5++X9lSKt+kSwOxAO3dhyAJlZgpbTGBYP9F1zgU6zr5dlk7U5lvh5aGCFc6LaYLcN+gz/GjVH9bgIpda+RBCIsB5kdhAyPw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by GVXPR10MB6323.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:16::20) with
+ by DU0PR10MB6930.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:415::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5986.23; Wed, 18 Jan
- 2023 06:42:44 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.13; Wed, 18 Jan
+ 2023 07:46:21 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::784b:e95b:b855:dcc5]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::784b:e95b:b855:dcc5%7]) with mapi id 15.20.5986.019; Wed, 18 Jan 2023
- 06:42:44 +0000
-Message-ID: <0e9bcab9-cd16-4292-ea39-b4b1e7baafee@siemens.com>
-Date: Wed, 18 Jan 2023 07:42:41 +0100
+ 07:46:21 +0000
+Message-ID: <fb36037e-de6d-d167-6c11-ddcce05497a1@siemens.com>
+Date: Wed, 18 Jan 2023 08:46:18 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.1
-Subject: Re: [cip-dev][isar-cip-core][PATCH v3] Create a generic initramfs
- overlay
+Subject: Re: [isar-cip-core][PATCH v2 1/1] Use global variables for abrootfs
+ partition uuids
 Content-Language: en-US
-To: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>,
- cip-dev@lists.cip-project.org, felix.moessbauer@siemens.com
-References: <20230117131550.249530-1-Quirin.Gylstorff@siemens.com>
+To: Felix Moessbauer <felix.moessbauer@siemens.com>,
+ cip-dev@lists.cip-project.org
+Cc: quirin.gylstorff@siemens.com, tengfei.wu@siemens.com,
+ daniel.bovensiepen@siemens.com
+References: <20230105022044.1507793-1-felix.moessbauer@siemens.com>
 From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <20230117131550.249530-1-Quirin.Gylstorff@siemens.com>
+In-Reply-To: <20230105022044.1507793-1-felix.moessbauer@siemens.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR2P281CA0078.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:9a::20) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: FR2P281CA0168.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:99::17) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|GVXPR10MB6323:EE_
-X-MS-Office365-Filtering-Correlation-Id: 15caf19e-ad2f-4dba-701c-08daf91f344f
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DU0PR10MB6930:EE_
+X-MS-Office365-Filtering-Correlation-Id: 98491a40-1cad-402c-8809-08daf928174c
 X-LD-Processed: 38ae3bcd-9579-4fd4-adda-b42e1495d55a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	nr1Dyqh/4raeYZV/5gdXIUQPa1aLTAcaWL1jhMd1ICXgKNs0TvBT0zkAxR8E7PA5T2ZMKRNuUbQizK4IBxCXaMNOwWtcE1NDs+3IkXLtHNP9SSGD16y4Qrg+YUF9k6u+V++EQQsVj5Nv3QMc2FPgcpGra/k887J7k8tKeaD+IfLqVm5mGZDGHILtP4gC99ixDBX2MYPhA1obACxFWGh0U2YlhLqQVtcD54pjtsIIE+XsGxa94dS1pPbXvfFOcYH5hwmI7xiNqxopMDt4agVnKdvrcVuz1LfIyGRX7fMX8Brb0RjVsuEBlbfgzaM/181jc+7iXYKM4cVTe5pxABqdn1P3Nyimz/zv4NggzTiBGEhT+qodWv17D3m6YjGBmet4u4zZSqKLOrIPwTcwhIXJAmVfKlhx8WmlZGLx+LBRzpN7zqcwzrA7X1ccslupWJCFL47dlNVzIBsEl4tCc5uDiupv0LcvwhUqdC0LGhTv5yjvuxEtr1DkXeEIEYIIH8635309ZcO23vmmjprOWcMLRFvk5G2uzTTz4WdQbDgF1L5mywd3GhQd/H1c6yaVgE/gcyhsLqnZaYgmc9ZPwxjWoY1/NsSHsfDWGtlZYQfwUbjnlLsKUXR64Fdl3LH7LeRa+Fd3GDA/lvPGTgJY5L72LseivaIztKXc0myrBKVjUG2R3elwWNzCF9HSbxJ+MAMPE76brwJe2FX/LqozVQJoZV4fe5QZ8DseNkTDek7LoMyQhVKo+KgQmYt/WD+G7LXK
+	Mzv9jjWTeWk8RLhvrTjSLj5CV6pPLYhbGVj9++Deah4bT39T8NETMT88XO2inrEdXoOcMfEAmLIuEyUPSFWXD6jddmbvxqAxbKuI/ajYiFidWEgX/OqcoqhUYhOmaq3jtCQ3DwFqOzmTrhzFFeRy3DdBh3qcN/i8bLr1HrFkc35Fgziblh5t7OtLgqYtUwMJEikAgyBnOdpd6WSKFW9CxrlWEDd5y6IBIfliceT+tHoFWIBgdRHc6Am3kLnVZEps7FuEL+8g3836FKKz4YHC/rHFGa0bzCl3ELp4tEPUwjYioWMLhPtuSXyvle5rw63qw8bquXFKBD214CBoMg44/9Dok8e1jLwOgxzSV7vTpxVRb2HoSwxBJbwIU9SDoV9p4EsfjWIFRYrEyb3lj/liT6gDAWrHRpWxU/B8IugQX61l996HbAgdje87mAECmb5eE+4l0Ztrp2pLpDj2xgakWtzJn/1yIDNvtrf2xqbxlB9ew9oNtlOrm/wld8MY0jl1ZJFqJ8toHv3zs1n3JHiLhG206dQTKxvErRC1pPA7ufkFHin8J7LOOcL1DzjVIeXvpavNTJPcBxbcFVdOJnWccEFoU+ArFaJPHCafRiB9lr7iU+3kMLAM2QE0CwFgYL7AAVnvDcWtoY8vQCoYy1EwJut2ZKHwmdB1Gy69v90ax7xIPjBJ1a69F38GNuEPGvNsA2Ny8DWZaCh8r/FJbZSi+TTGnE5OA6PDJpCzd+rzIOcvTJImmRZWiOwI7ZTZahPyyCLZSCvBuXTWvC3SijOUsA==
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230022)(4636009)(376002)(39860400002)(396003)(366004)(136003)(346002)(451199015)(38100700002)(82960400001)(36756003)(31696002)(6486002)(86362001)(6512007)(186003)(66476007)(26005)(66556008)(478600001)(66946007)(31686004)(6636002)(2616005)(53546011)(316002)(8936002)(83380400001)(8676002)(6506007)(41300700001)(44832011)(6666004)(2906002)(5660300002)(41533002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230022)(4636009)(136003)(39860400002)(376002)(346002)(396003)(366004)(451199015)(2906002)(44832011)(31686004)(8936002)(5660300002)(66946007)(66556008)(83380400001)(66476007)(86362001)(36756003)(4326008)(8676002)(41300700001)(316002)(26005)(53546011)(6512007)(6506007)(6486002)(31696002)(186003)(82960400001)(38100700002)(2616005)(478600001)(6666004)(107886003)(403724002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?N2tVWEJ3Z0xVZHcxN2dRbnZXZEhkN3FqV1lvM0VoMDBLOFdDZ0VkaWhkUHJW?=
- =?utf-8?B?Sk51M0FHRkhUaGd4QTluajdOVE1qSTh1MVI4R09YejJ5K1A3N29UaWtBdUtO?=
- =?utf-8?B?c0d0ejFWZGpraThnZkh1dGdJOHdpTG9tbUZDcXluWlpBOGhFdDhmcmYwQ01s?=
- =?utf-8?B?eUtqVFhzaHRDWkJzOVlBT2tVU0VwTnM2aUVBam1jZ21iWlNlb0FZTzgwVTY5?=
- =?utf-8?B?bmFWb01yVGNpQW5LWk54Z2JuZTVvN0xZQkpQd0tvTXFVMUxVY0dVZ3ZISXVD?=
- =?utf-8?B?OE05aWxoZnpWaThtUWpMcVl2K0JJNlZWY2lXRlUwL2EzWjlyQ3JUeTlLNGNM?=
- =?utf-8?B?MjJnRGhyUTIvTHNaWUVBaktZQVVPYXVHYVI1UVhaN3VjYjcyd2h1cmdYZWxR?=
- =?utf-8?B?WE5EUnphRlkxeElHVGJyV3E2QW9YeGRnRU9RRjdBLzgzaFdSN2xhaytsYTBR?=
- =?utf-8?B?aVNqOFNZWk5CazgxUUdqUUp0OVdWVndrT3lwUkJCTUl4WGJGdkFSRHdSNUs5?=
- =?utf-8?B?L1BiRmJCcnBDL00xa2RaZEs0VE5MYUVKaWw5bXVZeUNFa3ROVVFqWmNwSlZJ?=
- =?utf-8?B?YWNsMUhpK1ljRzU2VVlzanZka0lKbFVGUEEvSHRnYmlJcXRiSDBkMXZTZzVP?=
- =?utf-8?B?K05oSUV2WWQvcWFDbEo0eGNaUGRQRDNuYzhTaHl3a0NobXQ5TWtVcVNUL3ZK?=
- =?utf-8?B?QnhJU0VUTU5UYTI3eXh1RmNGbmFMRGl4Umt6STJkblNjNHdSTlV6VG9pdUNP?=
- =?utf-8?B?TzhpV3NUaFo5SXVYZkhjbHV5R09CTlM1SGhyRE4wNS9MUklaSjZ4TjZhMGxo?=
- =?utf-8?B?dWdyQWhBaUlFL1NGQlROaC9jdjYrSnh6aGx5N3BJdEg3Q0MzV3Z2a3RHRFJN?=
- =?utf-8?B?ZDNQbmFSUks0ZzRPeTg1QzdPZGRERkQrblpMdXZCTnNNWXFiYzVlZVR2dXBz?=
- =?utf-8?B?NUR1c0NiaGszVTk4ZlRvTEhIOHJqVFJiTlJ3ZWRXczc3cWlja3NDZnkweVU0?=
- =?utf-8?B?Y2o2eWlzSHoyZGFML1pvem12RTBuOFh2U0cwZHhDcGE4VTNkWi9meklUUGtn?=
- =?utf-8?B?K1RiS2N3YlBwR3BzV1Fjd2xGcE9YcXZYeFhhK1V6emlvY2FicFRpMGFSZ3lv?=
- =?utf-8?B?UEkva2taQU4wR1ZiNytzb0hwSFA5R3JQV0ZIcmhNbW5rTUdkSnZVUGNMendv?=
- =?utf-8?B?T2FkNWZKOXZlVjRlR1hJU1RsMCtHNVovdjZteDk1WGhVTTk4b1hlaHA3eU8w?=
- =?utf-8?B?b3B3bU1tWjFhTm50cjJWTGZOWlIweTlwalZSd3lpWXcyYUpLN3grUFBBR0dm?=
- =?utf-8?B?K1pralRMZ2xIQlR1VC9kMGdmN1pqU1c2UGNVK1ZQbnd2VThsbENsN2VISDZG?=
- =?utf-8?B?SXRkdEl4ZE9mUk9tcDB3SWFSQjR6S0NRVjhzZU42eW9jZmxmTnNTTmF1d3Rn?=
- =?utf-8?B?YnZwcGxPYXNSQkVlK1E3V0l3Um0rWXlPaWc1VmxNWGFadWJ5c25YSGU4TURF?=
- =?utf-8?B?bC9DSEg1c3N4Ni83dTVrV0Zrc1dNUU5NRTdqUUtBK0pEMFM5UmxMRjJqN3Qy?=
- =?utf-8?B?bU5pdnZKSE95akZENE5SUEVjeHZSbVNaOUVLdWdKcExKRmN0U1puVVArYytr?=
- =?utf-8?B?ZGpFMGN2VnEvRUFDWWlPSlMvSzkwRWZFUmpFWEJCaFo1ZjhCUEFwbkd5czNK?=
- =?utf-8?B?SkFZYXdhZERJSXZHOTJ5dzhlQ2xaUjF6bll3MG9UTXkvZmlGS1QxUENkUU1U?=
- =?utf-8?B?UGRUWHBSa0RvbzdtbVg2V0hWejQxMkxnZHpGbE0wL2ROazFXOTM0bjB4UzVQ?=
- =?utf-8?B?VEd5TDZ4SVRFUDJhOVRCS1lVWEZCNytlcGQwb1VtcHNqa0VvK21Xd1ZUNkJa?=
- =?utf-8?B?VzFTV0FMMEtEQlB4dVhNbFFRRDRONk42RmszZnovckE1M0toandjNjA4bk5D?=
- =?utf-8?B?dkZ0bU5QMmQvb3Y2bEg3M0dNMkFOZHRrU21iQjI4QUErVG1TS3IyTm9MQlBU?=
- =?utf-8?B?VE94aU1NY05EcHdObm90WEtIUURWWHNsZitXWU1sc2JZNVYrVmwrRWxEL1kw?=
- =?utf-8?B?b2gwUWYrQWY5aXJ0NWhMaUxYZlUrOWYvbVdrWmwvVThpUjVhcE5LWlRST3JF?=
- =?utf-8?B?cUxJNGpUSGJ1eUZBQk9XMWx6U2o5VmxEd1UyVURCeFlUdWNndXRjRnZXK204?=
- =?utf-8?B?bnc9PQ==?=
+	=?utf-8?B?K0txM1JvTEFkajNuZFdnckZIamtIWXhjWk91U2MyR2VuVENJbkd5NFJLR1Fl?=
+ =?utf-8?B?cFF1MzF0SlBhVlJLMmU2c2RwQ1JlN3VqZWV4T1kvSndGb2JaaFI0SjUvczJ3?=
+ =?utf-8?B?UWEwem9oZy9LMWcrMVJEVmYyaS9jS1BmL21kL2tvU3JxcFlJdGkxeUxIV2ph?=
+ =?utf-8?B?dUdKVEdOZmZWNVdrT1I5dk9jN1JublRHVVd4N2IrZUhKRjdEem11ZEh6NFQy?=
+ =?utf-8?B?dnUyakx3MHhxb2k5TXNCWHF6STREY2JRQ1ZRNkp1TVBkSzQrOWlSb2FMSkUy?=
+ =?utf-8?B?Skp4bGFtVS9xZ3l5aFZaOW5tUk0zTmxZVTJHTDhHQVhSK3hieEhIcWlhQmFK?=
+ =?utf-8?B?aC94TjdNV2k0R0JQeHdlVG9LdDBZVVFMYU9aZGJ3bHpmbEdLMC9NKzVYOFZv?=
+ =?utf-8?B?OVlGWXJZOHVqbGUwK3U3b2hPdEpLSksya1Fwc200UnorZFpsK3llU3E4Rmc2?=
+ =?utf-8?B?aWJyMGVFT0lmbStod3I3TFp4K3VkSjZ6L1dkREdTWjFOdmxHUnpieVhwWnBv?=
+ =?utf-8?B?VlZEWVdYeTJESDUwbFVKZkF0OXJ3OUl0cVpJakNYWnkrRWhYSW80cG5TMVlY?=
+ =?utf-8?B?UXRVdWhOTHUzL0EzVEJHMmp0WHVHMEJ6dWZ2R0pHcEg2QjQrWDI4SDRZUFJz?=
+ =?utf-8?B?OHUzOFRxaGp6ZWZSZnBicWEzTGVzQkl6OFd3M0U5TFZLT3UrSXNudnNram9F?=
+ =?utf-8?B?aFhLVlBjdDVDRnhzSmgzcXdYZE9jZnFGNUhZTmowQllrV2F4cUUvSkdFOUdj?=
+ =?utf-8?B?TWpheUdvNDhVMzNOQVI5QWNSUmdzaTFPSDhJZjUySlY1bm01U01wdVU3OWZm?=
+ =?utf-8?B?SnZmd3pqdDkya2NTc3M3aHhOUXRWdUJyUFlpWEV3cVgwMVlGbWZwN0FwRVY0?=
+ =?utf-8?B?WVJLRTM2Nm1UUytkaGhZbkRJWDI2UThGMWxQbWE3US80OEhPejFaNlFXZWpW?=
+ =?utf-8?B?bS9zcDhjKzdNNHIzL1ExVEdvUGJRU2Q4TlFDN0R3MHFnZndTMUFUUmMzelg3?=
+ =?utf-8?B?bHRQN09kKzVscGxicUpKQ1d1YzZQK29pTUk0a2NSeU9SSUFKcmQra3hVTCtz?=
+ =?utf-8?B?b0pZaHRyQWRFeHJJMENTc05VWWtmd205M3ZmeEg5bkd4VkZ1TWpTZkxBT1BP?=
+ =?utf-8?B?QkkvdnNPaHVIMmFycG50Rnh0bU9ZQUQza2svbnRQQnhtZWsweUpVbHdOQzdh?=
+ =?utf-8?B?ekFhc0N4WmI3SmFQU055MzJVZWVSZ0NsZlpxeHduK3JZZDRBK2hjbG14Zmg1?=
+ =?utf-8?B?bDM3Tlo5K3ZyZm8vcFBsSVRxZ2VyOHVBdkFRUlhkdXNDZzM4TjlJcnk4Ym5M?=
+ =?utf-8?B?bktLSWtrZ3VJZ0lacGVWRVZKbzZEeFdIRUp1d1lsRjBlaFhBSXh5U0R4eDh6?=
+ =?utf-8?B?VXR5R292MzdaaFRWL3Bpc3BuQTE1QnFRZVZrNEF6REI0T0wva2M1d0VmMHBC?=
+ =?utf-8?B?ZzZlcVZvamhwL3JEZzhmQzJ1ek9JQTdtV0NlNWFqTDJ1cG5JeGJiNHNpekJm?=
+ =?utf-8?B?Q0pVNEIwbWloaW50SE1MelZHT1V0ZnpCVGxpUXowc0dWT0ZBVTJEdTZkTDFq?=
+ =?utf-8?B?azhOdTc2S1ZRdDBjT2UvaGMxZGxwS1VvSjNWOU14U0hUMlBpeEsyZWZhV2pR?=
+ =?utf-8?B?eXd4Mk5xZGVVYm40ZFpqcXJDbFA1Q01HakhtMFZWWjNpUjROczFpenJ4ZVJ3?=
+ =?utf-8?B?S20ydzJKRVl2TDRFK0J4UFErSHAycElwbFNGUXpWalF1ODBnOHhObGg1aHVY?=
+ =?utf-8?B?cE9tUUVoaXpoTHZidC9zZForL1F3WmU2RVRBZXhGR2JpSTlyczA1cnplNW9a?=
+ =?utf-8?B?djZDalM3ek9JYzlFMjV0WnJ4SjZHaWZtYVRiSU9laTY0RmlPU1FXRTl3bnhu?=
+ =?utf-8?B?MDNucDZ3TDIvT2FRSTZsdkRiQTFKUmZSSE9QOURZSTBySERuaTIvYTFEVlhH?=
+ =?utf-8?B?VWxENUtJVVlheFpIOU9sZFgyYm5WMGZBUUVpUFpkQXJuTXc5cnVIcS9sWThr?=
+ =?utf-8?B?ajVWdHEwQmVNNkJ5aDhaSkN1NFhjQzVXOFFIUlBHVnl6b0twNVhDZU11ZGJj?=
+ =?utf-8?B?djN1Tkthc3BpYXJYYWk1N1lEL2lpRHlnaVkzVHRlRFQvTk1ROVh3b0FtbDJk?=
+ =?utf-8?B?RnY5RW5GU1paQm5YQjZyUlJxWS9Mdi9KVmtqcXJ4YThaYnNlRkxQNjYwSGxO?=
+ =?utf-8?B?akE9PQ==?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 15caf19e-ad2f-4dba-701c-08daf91f344f
+X-MS-Exchange-CrossTenant-Network-Message-Id: 98491a40-1cad-402c-8809-08daf928174c
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jan 2023 06:42:44.4676
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jan 2023 07:46:21.2495
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ApVSEWzCZBbP15QUxbgNZdsMRw01u0YJDcM9oGbc24UegQE6ypgtOsKsMcKgrOLpADFnM0b+iL45G2Tt6qhQJA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR10MB6323
+X-MS-Exchange-CrossTenant-UserPrincipalName: HLhQe1MF5DS9cH5KeNJYom6H9FtNBRyuqX92hZdWKG9abP5J7slJ6fcpPRh0e1rMqeCPWMm+ot4MJirFOkOHFw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB6930
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 18 Jan 2023 06:42:52 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10386
+ <cip-dev@lists.cip-project.org>; Wed, 18 Jan 2023 07:46:32 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10387
 
-On 17.01.23 14:15, Quirin Gylstorff wrote:
-> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+On 05.01.23 03:20, Felix Moessbauer wrote:
+> This patch converts the abrootfs partition uuids to a template and adds
+> two global variables to control their values. By that, the partition
+> uuids used in the WIC files can be kept in sync with the uuids used in
+> the sw-description file. This helps to avoid issues where the part uuids
+> are inconsistent and hence the update using swupdate fails.
 > 
-> This allows the user to generate multible overlays in a given
-> location.
-> 
-> The configuration used the following variables:
->  - INITRAMFS_OVERLAY_STORAGE_PARTITION_LABEL: Label of the partition to store the overlays
->  - INITRAMFS_OVERLAY_PATHS: space separated list of overlay directories (lower overlay directories)
->  - INITRAMFS_OVERLAY_STORAGE_PATH: path on the storage partition where the upper directory is stored
-> 
-> The script tries to mount the top directory of INITRAMFS_OVERLAY_STORAGE_PATH. If the mount fails
-> the boot is aborted.
-> 
-> e.g.:
-> ```
-> INITRAMFS_OVERLAY_STORAGE_PARTITION_LABEL ??= "var"
-> INITRAMFS_OVERLAY_PATHS ??= "/etc /usr/share/foo /usr/share/bar/foo"
-> INITRAMFS_OVERLAY_STORAGE_PATH ??= "/var/local"
-> ```
-> 1. This will mount the partition labeled var to /var
-> 2. This will create  the following overlays:
-> 
-> ```
-> overlay on /etc type overlay (rw,relatime,lowerdir=/root/etc,upperdir=/root/var/local/etc,workdir=/root/var/local/.etc-atomic)
-> overlay on /usr/share/foo type overlay (rw,relatime,lowerdir=/root/usr/share/foo,upperdir=/root/var/local/usr/share/foo,workdir=/root/var/local/.usr_share_foo-atomic)
-> overlay on /usr/share/bar/foo type overlay (rw,relatime,lowerdir=/root/usr/share/bar/foo,upperdir=/root/var/local/usr/share/bar/foo,workdir=/root/var/local/.usr_share_bar_foo-atomic)
-> ```
-> 
-> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+> Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
 > ---
-> Changes v2:
->  - INITRAMFS_OVERLAY_STORAGE_PATH contains the full path
->  - updated copyright
->  - formatting
->  - fix typos in commit message
 > 
-> Changes v3:
->  - add awk to generate a unique wordir name from the full overlay path
->  - allow absolute paths in INITRAMFS_OVERLAY_PATHS
->  - ensure that subpath, e.g. `/usr/share/bar/foo` are possible in INITRAMFS_OVERLAY_PATHS
->  - adapt commit message
+> Changes since v1:
 > 
-> Should we split mounting /var in a seperate hook with a build time dependency and only check if 
-> INITRAMFS_OVERLAY_STORAGE_PATH is writable instead of adding the mount logic directly?
+> - fix: add ABROOTFS_PART_UUID_(A|B) to template vars for sw-description
+> - removed initialisation of variables from swupdate.inc file, as the
+>   check will catch it anyways
+> - simplified check for uuid values
 > 
->  .../cip-core-initramfs/cip-core-initramfs.bb  |  4 +-
->  .../files/etc-overlay.script                  | 36 -----------
->  .../initramfs-etc-overlay-hook_0.1.bb         | 30 ----------
->  .../files/overlay.hook}                       |  1 +
->  .../files/overlay.script.tmpl                 | 60 +++++++++++++++++++
->  .../initramfs-overlay-hook_0.1.bb             | 40 +++++++++++++
->  6 files changed, 103 insertions(+), 68 deletions(-)
->  delete mode 100644 recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.script
->  delete mode 100644 recipes-initramfs/initramfs-etc-overlay-hook/initramfs-etc-overlay-hook_0.1.bb
->  rename recipes-initramfs/{initramfs-etc-overlay-hook/files/etc-overlay.hook => initramfs-overlay-hook/files/overlay.hook} (92%)
->  create mode 100644 recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl
->  create mode 100644 recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb
+> I decided against the recommendation to move the UUID out of the swupdate.yml
+> kas file, because this would introduce yet another pattern how to handle things.
+> Downstream users are free to use a different method, but als long as CIP-Core
+> handles all globals via KAS, we should not diverge.
 > 
-> diff --git a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
-> index 9e0ee26..2935ed8 100644
-> --- a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
-> +++ b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
+> Best regards,
+> Felix
+> 
+>  kas/opt/swupdate.yml                          | 2 ++
+>  recipes-core/images/files/sw-description.tmpl | 2 +-
+>  recipes-core/images/swupdate.inc              | 8 +++++++-
+>  wic/bbb-efibootguard.wks.in                   | 4 ++--
+>  wic/qemu-amd64-efibootguard-secureboot.wks.in | 4 ++--
+>  wic/qemu-arm64-efibootguard-secureboot.wks.in | 4 ++--
+>  wic/qemu-arm64-efibootguard.wks.in            | 4 ++--
+>  wic/x86-efibootguard.wks.in                   | 4 ++--
+>  8 files changed, 20 insertions(+), 12 deletions(-)
+> 
+> diff --git a/kas/opt/swupdate.yml b/kas/opt/swupdate.yml
+> index f0d3f1b..60a4aec 100644
+> --- a/kas/opt/swupdate.yml
+> +++ b/kas/opt/swupdate.yml
+> @@ -25,3 +25,5 @@ local_conf_header:
+>      WKS_FILE ?= "${MACHINE}-${SWUPDATE_BOOTLOADER}.wks.in"
+>      INITRAMFS_INSTALL_append = " initramfs-squashfs-hook"
+>      WIC_DEPLOY_PARTITIONS = "1"
+> +    ABROOTFS_PART_UUID_A ?= "fedcba98-7654-3210-cafe-5e0710000001"
+> +    ABROOTFS_PART_UUID_B ?= "fedcba98-7654-3210-cafe-5e0710000002"
+> diff --git a/recipes-core/images/files/sw-description.tmpl b/recipes-core/images/files/sw-description.tmpl
+> index f7105c7..05125e6 100644
+> --- a/recipes-core/images/files/sw-description.tmpl
+> +++ b/recipes-core/images/files/sw-description.tmpl
+> @@ -14,7 +14,7 @@ software =
+>      name = "cip software update";
+>      images: ({
+>              filename = "${ROOTFS_PARTITION_NAME}";
+> -            device = "C:BOOT0:linux.efi->fedcba98-7654-3210-cafe-5e0710000001,C:BOOT1:linux.efi->fedcba98-7654-3210-cafe-5e0710000002";
+> +            device = "C:BOOT0:linux.efi->${ABROOTFS_PART_UUID_A},C:BOOT1:linux.efi->${ABROOTFS_PART_UUID_B}";
+>              type = "roundrobin";
+>              compressed = "zlib";
+>              filesystem = "ext4";
+> diff --git a/recipes-core/images/swupdate.inc b/recipes-core/images/swupdate.inc
+> index 0ba3a0e..9b2aedc 100644
+> --- a/recipes-core/images/swupdate.inc
+> +++ b/recipes-core/images/swupdate.inc
+> @@ -26,6 +26,12 @@ TEMPLATE_FILES += "sw-description.tmpl"
+>  do_transform_template[vardeps] += "TARGET_IMAGE_UUID"
+>  addtask do_transform_template before do_swupdate_binary after do_generate_image_uuid
+>  
+> -TEMPLATE_VARS += "ROOTFS_PARTITION_NAME TARGET_IMAGE_UUID"
+> +TEMPLATE_VARS += "ROOTFS_PARTITION_NAME TARGET_IMAGE_UUID ABROOTFS_PART_UUID_A ABROOTFS_PART_UUID_B"
+>  
+>  SWU_ADDITIONAL_FILES += "linux.efi ${ROOTFS_PARTITION_NAME}"
+> +
+> +python() {
+> +    for u in ['A', 'B']:
+> +        if not d.getVar('ABROOTFS_PART_UUID_' + u):
+> +            bb.fatal('ABROOTFS_PART_UUID_' + u + ' not set')
+> +}
+> diff --git a/wic/bbb-efibootguard.wks.in b/wic/bbb-efibootguard.wks.in
+> index e48cc7f..a714694 100644
+> --- a/wic/bbb-efibootguard.wks.in
+> +++ b/wic/bbb-efibootguard.wks.in
+> @@ -11,8 +11,8 @@ part --source rawcopy --sourceparams "file=/usr/lib/u-boot/bbb/u-boot.img" --no-
+>  
+>  include ebg-sysparts.inc
+>  
+> -part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
+> -part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
+> +part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}"
+> +part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}"
+>  
+>  # home and var are extra partitions
+>  part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G
+> diff --git a/wic/qemu-amd64-efibootguard-secureboot.wks.in b/wic/qemu-amd64-efibootguard-secureboot.wks.in
+> index 0e298bc..8305ebd 100644
+> --- a/wic/qemu-amd64-efibootguard-secureboot.wks.in
+> +++ b/wic/qemu-amd64-efibootguard-secureboot.wks.in
 > @@ -1,7 +1,7 @@
->  #
->  # CIP Core, generic profile
->  #
-> -# Copyright (c) Siemens AG, 2021
-> +# Copyright (c) Siemens AG, 2021 - 2023
->  #
->  # Authors:
->  #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> @@ -12,5 +12,5 @@
->  inherit initramfs
+>  include ebg-signed-sysparts.inc
 >  
->  INITRAMFS_INSTALL += " \
-> -    initramfs-etc-overlay-hook \
-> +    initramfs-overlay-hook \
->      "
-> diff --git a/recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.script b/recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.script
-> deleted file mode 100644
-> index 6e5aacd..0000000
-> --- a/recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.script
-> +++ /dev/null
-> @@ -1,36 +0,0 @@
-> -#!/bin/sh
-> -#
-> -# CIP Core, generic profile
-> -#
-> -# Copyright (c) Siemens AG, 2022
-> -#
-> -# Authors:
-> -#  Jan Kiszka <jan.kiszka@siemens.com>
-> -#
-> -
-> -PREREQ=""
-> -
-> -prereqs()
-> -{
-> -	echo "$PREREQ"
-> -}
-> -
-> -case $1 in
-> -# get pre-requisites
-> -prereqs)
-> -	prereqs
-> -	exit 0
-> -	;;
-> -esac
-> -
-> -. /scripts/functions
-> -
-> -if ! mount -t $(get_fstype /dev/disk/by-label/var) /dev/disk/by-label/var ${rootmnt}/var; then
-> -	panic "Can't mount /var partition - overlay will not work!"
-> -fi
-> -
-> -mkdir -p ${rootmnt}/var/local/etc
-> -mkdir -p ${rootmnt}/var/local/.atomic
-> -if ! mount -t overlay -o lowerdir=${rootmnt}/etc,upperdir=${rootmnt}/var/local/etc,workdir=${rootmnt}/var/local/.atomic overlay ${rootmnt}/etc; then
-> -	panic "Can't mount overlay!"
-> -fi
-> diff --git a/recipes-initramfs/initramfs-etc-overlay-hook/initramfs-etc-overlay-hook_0.1.bb b/recipes-initramfs/initramfs-etc-overlay-hook/initramfs-etc-overlay-hook_0.1.bb
-> deleted file mode 100644
-> index 37a04ec..0000000
-> --- a/recipes-initramfs/initramfs-etc-overlay-hook/initramfs-etc-overlay-hook_0.1.bb
-> +++ /dev/null
-> @@ -1,30 +0,0 @@
-> -#
-> -# CIP Core, generic profile
-> -#
-> -# Copyright (c) Siemens AG, 2022
-> -#
-> -# Authors:
-> -#  Jan Kiszka <jan.kiszka@siemens.com>
-> -#
-> -# SPDX-License-Identifier: MIT
-> -#
-> -
-> -inherit dpkg-raw
-> -
-> -SRC_URI += " \
-> -    file://etc-overlay.hook \
-> -    file://etc-overlay.script \
-> -    "
-> -
-> -DEBIAN_DEPENDS = "initramfs-tools"
-> -
-> -do_install[cleandirs] += " \
-> -    ${D}/usr/share/initramfs-tools/hooks \
-> -    ${D}/usr/share/initramfs-tools/scripts/local-bottom"
-> -
-> -do_install() {
-> -    install -m 0755 "${WORKDIR}/etc-overlay.hook" \
-> -        "${D}/usr/share/initramfs-tools/hooks/etc-overlay"
-> -    install -m 0755 "${WORKDIR}/etc-overlay.script" \
-> -        "${D}/usr/share/initramfs-tools/scripts/local-bottom/etc-overlay"
-> -}
-> diff --git a/recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.hook b/recipes-initramfs/initramfs-overlay-hook/files/overlay.hook
-> similarity index 92%
-> rename from recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.hook
-> rename to recipes-initramfs/initramfs-overlay-hook/files/overlay.hook
-> index bfaa7b6..5bec258 100644
-> --- a/recipes-initramfs/initramfs-etc-overlay-hook/files/etc-overlay.hook
-> +++ b/recipes-initramfs/initramfs-overlay-hook/files/overlay.hook
-> @@ -23,3 +23,4 @@ esac
->  . /usr/share/initramfs-tools/hook-functions
+> -part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
+> -part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
+> +part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}"
+> +part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}"
 >  
->  manual_add_modules overlay
-> +copy_exec /usr/bin/awk
-> diff --git a/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl b/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl
-> new file mode 100644
-> index 0000000..9cbe537
-> --- /dev/null
-> +++ b/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl
-> @@ -0,0 +1,60 @@
-> +#!/bin/sh
-> +#
-> +# CIP Core, generic profile
-> +#
-> +# Copyright (c) Siemens AG, 2022-2023
-> +#
-> +# Authors:
-> +#  Jan Kiszka <jan.kiszka@siemens.com>
-> +#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> +#
-> +
-> +PREREQ=""
-> +
-> +prereqs()
-> +{
-> +	echo "$PREREQ"
-> +}
-> +
-> +case $1 in
-> +# get pre-requisites
-> +prereqs)
-> +	prereqs
-> +	exit 0
-> +	;;
-> +esac
-> +
-> +. /scripts/functions
-> +
-> +
-> +ovl_partition_label="${INITRAMFS_OVERLAY_STORAGE_PARTITION_LABEL}"
-> +ovl_storage_path="${INITRAMFS_OVERLAY_STORAGE_PATH}"
-> +ovl_lower_dirs="${INITRAMFS_OVERLAY_PATHS}"
-> +
-> +root_mount_storage=${rootmnt}${ovl_storage_path}
-> +
-> +if ! mount -t $(get_fstype /dev/disk/by-label/${ovl_partition_label}) \
-> +	/dev/disk/by-label/${ovl_partition_label} \
-> +	${rootmnt}/${ovl_partition_label}; then
+>  # home and var are extra partitions
+>  part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024 --size 1G
+> diff --git a/wic/qemu-arm64-efibootguard-secureboot.wks.in b/wic/qemu-arm64-efibootguard-secureboot.wks.in
+> index 3b8dadd..6b01443 100644
+> --- a/wic/qemu-arm64-efibootguard-secureboot.wks.in
+> +++ b/wic/qemu-arm64-efibootguard-secureboot.wks.in
+> @@ -1,7 +1,7 @@
+>  include ebg-signed-sysparts.inc
+>  
+> -part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
+> -part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
+> +part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}"
+> +part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}"
+>  
+>  # home and var are extra partitions
+>  part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024 --size 1G
+> diff --git a/wic/qemu-arm64-efibootguard.wks.in b/wic/qemu-arm64-efibootguard.wks.in
+> index 9ff03e1..bc684f3 100644
+> --- a/wic/qemu-arm64-efibootguard.wks.in
+> +++ b/wic/qemu-arm64-efibootguard.wks.in
+> @@ -3,8 +3,8 @@
+>  
+>  include ebg-sysparts.inc
+>  
+> -part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
+> -part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
+> +part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}"
+> +part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}"
+>  
+>  # home and var are extra partitions
+>  part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G
+> diff --git a/wic/x86-efibootguard.wks.in b/wic/x86-efibootguard.wks.in
+> index c71253d..0604deb 100644
+> --- a/wic/x86-efibootguard.wks.in
+> +++ b/wic/x86-efibootguard.wks.in
+> @@ -3,8 +3,8 @@
+>  
+>  include ebg-sysparts.inc
+>  
+> -part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
+> -part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
+> +part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}"
+> +part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}"
+>  
+>  # home and var are extra partitions
+>  part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G
 
-I indented these lines a bit more to improve readability.
+Good that we have patchwork now - almost forgot this.
 
-> +	panic "Can't mount /${ovl_partition_label} partition - overlay will not work!"
-> +fi
-> +
-> +for ovl_lower_dir in ${ovl_lower_dirs}; do
-> +	# remove the first '/' and replace all '/' with '_'
-> +	# on variable $ovl_lower_dir
-> +	work_dir_name=$(awk -v var=$ovl_lower_dir \
-> +		'BEGIN{subvar=substr(var,2);gsub("/","_",subvar);print subvar}')
-> +
-> +	lower_dir=${rootmnt}${ovl_lower_dir}
-> +	upper_dir=${root_mount_storage}${ovl_lower_dir}
-> +	work_dir=${root_mount_storage}/.${work_dir_name}-atomic
-> +
-> +	mkdir -p ${upper_dir}
-> +	mkdir -p ${work_dir}
-> +
-> +	if ! mount -t overlay \
-> +		-o lowerdir=${lower_dir},upperdir=${upper_dir},workdir=${work_dir} \
-> +		overlay ${lower_dir}; then
-
-Same here.
-
-> +		panic "Can't mount overlay for '$ovl_lower_dir' !"
-> +	fi
-> +done
-> diff --git a/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb b/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb
-> new file mode 100644
-> index 0000000..78831ba
-> --- /dev/null
-> +++ b/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb
-> @@ -0,0 +1,40 @@
-> +#
-> +# CIP Core, generic profile
-> +#
-> +# Copyright (c) Siemens AG, 2022 - 2023
-> +#
-> +# Authors:
-> +#  Jan Kiszka <jan.kiszka@siemens.com>
-> +#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> +#
-> +# SPDX-License-Identifier: MIT
-> +#
-> +
-> +inherit dpkg-raw
-> +
-> +SRC_URI += " \
-> +    file://overlay.hook \
-> +    file://overlay.script.tmpl \
-> +    "
-> +
-> +INITRAMFS_OVERLAY_PATHS ??= "/etc"
-> +INITRAMFS_OVERLAY_STORAGE_PATH ??= "/var/local"
-> +INITRAMFS_OVERLAY_STORAGE_PARTITION_LABEL ??= "var"
-> +
-> +TEMPLATE_FILES = "overlay.script.tmpl"
-> +TEMPLATE_VARS += " INITRAMFS_OVERLAY_STORAGE_PATH \
-> +    INITRAMFS_OVERLAY_PATHS \
-> +    INITRAMFS_OVERLAY_STORAGE_PARTITION_LABEL"
-> +
-> +DEBIAN_DEPENDS = "initramfs-tools, awk, coreutils"
-> +
-> +do_install[cleandirs] += " \
-> +    ${D}/usr/share/initramfs-tools/hooks \
-> +    ${D}/usr/share/initramfs-tools/scripts/local-bottom"
-> +
-> +do_install() {
-> +    install -m 0755 "${WORKDIR}/overlay.hook" \
-> +        "${D}/usr/share/initramfs-tools/hooks/overlay"
-> +    install -m 0755 "${WORKDIR}/overlay.script" \
-> +        "${D}/usr/share/initramfs-tools/scripts/local-bottom/overlay"
-> +}
-
-Thanks, applied to next.
+Could you rebase over next?
 
 Jan
 
