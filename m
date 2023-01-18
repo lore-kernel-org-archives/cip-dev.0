@@ -1,114 +1,171 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <masami.ichikawa@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA428C3DA78
-	for <webhook@archiver.kernel.org>; Tue, 17 Jan 2023 20:51:06 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web10.209100.1673988659168508035
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66170C00A5A
+	for <webhook@archiver.kernel.org>; Wed, 18 Jan 2023 00:29:30 +0000 (UTC)
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+ by mx.groups.io with SMTP id smtpd.web11.3890.1674001767622885479
  for <cip-dev@lists.cip-project.org>;
- Tue, 17 Jan 2023 12:50:59 -0800
+ Tue, 17 Jan 2023 16:29:28 -0800
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=none, err=permanent DNS error (domain: ucw.cz, ip: 46.255.230.98, mailfrom: pavel@ucw.cz)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 567101C09F6; Tue, 17 Jan 2023 21:50:55 +0100 (CET)
-Date: Tue, 17 Jan 2023 21:50:54 +0100
-From: Pavel Machek <pavel@denx.de>
-To: Ulrich Hecht <uli@fpond.eu>
-Cc: cip-dev@lists.cip-project.org
-Subject: Re: [cip-dev] 4.4 steps towards release
-Message-ID: <Y8cKLnKsp+jiHUna@duo.ucw.cz>
-References: <Y7w4dfYgh7d10IdS@duo.ucw.cz>
- <588609118.480377.1673338487702@webmail.strato.com>
+ dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112 header.b=OMYCyqvb;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.160.49, mailfrom: masami.ichikawa@miraclelinux.com)
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-12c8312131fso33903214fac.4
+        for <cip-dev@lists.cip-project.org>; Tue, 17 Jan 2023 16:29:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FFfuY+2uY+EVd4vPIGOY5KOSKb4/pvgUUBfkH+gQ8YM=;
+        b=OMYCyqvbkFvp0PxprgmGrNo3AYYehmprcLkEgFm4TY611cTunCER+s87c649WpG2+N
+         D81cc53GpUyGI+ye7ZmVYTRBPuayc5FAOlxLhiVPC/swBDyPmcW3iVJqnM2P7uHwnwnc
+         488vMNcpAJdCNpDo7jUAMgGUc2Hp903HZ2g4wDZBKrVZmsT/pHH9lgLh6jM2TnlcM+WO
+         Hs9Up9yAmBeU0VHRuTb4BKlvMM+toIFmnDV177Y5xnAIkUzbb90qSCIjyRYDiDJ1PKJN
+         qi1QYYVrityKPkkpZb90TI1IMtzygHQ2X5Sxv+yOXdNdoKjHhysp/wsYjIm5cm7oE7LF
+         AsWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FFfuY+2uY+EVd4vPIGOY5KOSKb4/pvgUUBfkH+gQ8YM=;
+        b=yy8H3z36RDdhLKmEvuGkbNiBSiz2BkZXc0ox0Hl4FcE8vli9T7H11w0TzR+2XkIXSn
+         XQsxWG/tCU90lz5D2yimULh1WzF00u8qtRlqZUMaBuhTAbIpQMJEO2bhc1D6Czcu0JU4
+         7m25NBhaZAvr1yVRwd3DqfW2S9eqKSI9QyCyDffk6MEaDKs/POZZOT9J45IZssVhifkD
+         8bEYBaUFYKyCLJye4CT2eweFzp6m0zIBIz2s8/GvN+XAkbnROT5NOYjk3DgkxsqBc8wv
+         M92XE7Eq3z+VX6+M2cKH0GUUNP/wsT2zXNqiXDyPq91iIqCBnLkqb2oFF9qmumErqMEA
+         PU2A==
+X-Gm-Message-State: AFqh2ko64Wlc2LcZg/fr0HrN3dx2oGgaL8O1NHnWFbyveiSuSvof8vGF
+	0YOfyzEgd/cIsEpPEbUxuer7POeDzyfSRa6JWXg1MF538h9iTxFz
+X-Google-Smtp-Source: AMrXdXuClQVFbqEX71fWW1V4jSJQxf/BSgq8zlACFhowSVhi5PgDATfwgxzmdqw49yWwfqXqBqGAAdIx1MhbZoJFCLw=
+X-Received: by 2002:a05:6870:4513:b0:15b:8f97:237 with SMTP id
+ e19-20020a056870451300b0015b8f970237mr407465oao.58.1674001766264; Tue, 17 Jan
+ 2023 16:29:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="CfzCdnWQHYgIsrCx"
-Content-Disposition: inline
-In-Reply-To: <588609118.480377.1673338487702@webmail.strato.com>
+References: <Y8af6jlANakoFq/f@duo.ucw.cz>
+In-Reply-To: <Y8af6jlANakoFq/f@duo.ucw.cz>
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Wed, 18 Jan 2023 09:28:49 +0900
+Message-ID: <CAODzB9pYxaec7OjHFF5hiEL_65SqtfO+qfYUK5J_AAdW-YPDhg@mail.gmail.com>
+Subject: Re: [cip-dev] Good and bad ideas w.r.t. kernel and security
+To: cip-dev@lists.cip-project.org
+Content-Type: text/plain; charset="UTF-8"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 17 Jan 2023 20:51:06 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10376
+ <cip-dev@lists.cip-project.org>; Wed, 18 Jan 2023 00:29:30 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10377
 
+HI.
 
---CfzCdnWQHYgIsrCx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jan 17, 2023 at 10:17 PM Pavel Machek <pavel@denx.de> wrote:
+>
+> Good and bad ideas w.r.t. kernel and security
+>
+> Kernel tries to provide many security guarantees at different
+> levels. Still, some things are easier to guarantee than others, and
+> some security barriers are really important, while others... not so
+> much.
+>
+> Kernel should be secure against remote attackers.
+>
+>     And it reasonably is, when not, we get it fixed with high priority.
+>
+> Kernel should protect itself and other users against local, non-priviledged users.
+>
+>     Tries, but attack surface is big.
+>     People don't care about DoS attacks much.
+>     => Running untrusted code is a bad idea. Forkbomb is few characters in sh.
+>
+> Fast, out-of-order CPUs leak user data via timing side-channels. Those
+> CPUs should not process sensitive data. JITs can be used to extract the data.
+>
+>     We can try to work around the problems and apply vendor-provided
+>     workarounds, but there are likely more problems in future. Similar
+>     bugs are hidden in CPU microarchitectures, and in particular
+>     Spectre workarounds are whack-a-mole and thus incomplete.
+>
+>     Hyperthreading makes those attacks easier.
+>     => Use suitable CPUs to process sensitive data.
+>
+>     BPF is in-kernel JIT
+>     => Don't use BPF, make sure it is disabled on your configurations.
+>
+> Filesystems are complex, robustness against malformed filesystems is hard.
+>
+>     Some filesystems try to be robust against filesystems corruption,
+>     and some don't even try. Some perform checks during mount, but
+>     that means that malicious device can work around them.
+>
+>     => Don't mount untrusted filesystems. If you have to, use simple and
+>     common filesystem. VFAT might be good choice.
+>
+> Kernel should protect itself against local users with CAP_XX.
+>
+>     Yes, there's capability system, and in theory capabilities should be separated.
+>     => Don't rely on that. Noone else does.
+>
+> Some systems try to protect themselves against people with physical access.
+>
+>     Laws of physics says it is impossible, but people can still try to
+>     make it more costly for the "attacker".
+>     => Please don't rely on that.
+>
+> Coredumps are useful for debugging, but random processes leaving files in cwd
+> may not be welcome
+>
+>     Consider disabling coredumps, perhaps with RLIMIT_CORE=0.
+>
+>     Consider putting all coredumps into single directory with /proc/sys/kernel/core_pattern.
+>
+> Kernel config options for hardened kernel
+>
+> Investigate:
+>
+> CONFIG_X86_IOPL_IOPERM=y
+>
+> https://timesys.com/security/securing-your-linux-configuration-kernel-hardening/
+>
+> RETPOLINE=Y
+> DEVMEM=is not set
+> PAGE_POISONING=Y , enable withpage_poison=1
+> GCC_PLUGIN_STACKLEAK=Y
+> DEBUG_BUGVERBOSE=is not set , kind of security by obscurity, but may make attackers work harder; will also make your own debugging harder, so..
+> ARCH_HAS_ELF_RANDOMIZE=Y
+> INIT_ON_FREE_DEFAULT_ON=Y
+> INIT_ON_ALLOC_DEFAULT_ON=Y
+> DEBUG_VIRTUAL=Y
+>
+>
 
-Hi!
+Yes. Disabling  features to reduce attack surface, and/or enabling
+features to prevent/mitigate future attack in configuration file is
+important.
+Security hardened makes less debugalability but production systems
+should prioritize security first.
 
-Thank you. I reviewed these, and they seem ok. I'd not bother
-backporting patches marked (), but they should not harm.
+kconfig-hardened-check tool is helpful to check kernel configuration.
 
-a | b670996ca 038ee4 o  | serial: 8250: 8250_omap: Avoid RS485 RTS glitch o=
-n ->set_termios()
-() a | 8d4ceb13d e103ba o  | net: usb: qmi_wwan: add Telit 0x103a compositi=
-on
-a | 89840b12c f7e942 o  | btrfs: qgroup: fix sleep from invalid context bug=
- in btrfs_qgroup_inherit()
-a | 2f2c59506 f0a0cc o  | nilfs2: fix NULL pointer dereference in nilfs_pal=
-loc_commit_free_entry()
-a | 02c468589 17b57b o  | arm: dts: rockchip: fix node name for hym8563 rtc
-a | 1a1d9be7b ad7f40 .+ | xen/netback: Ensure protocol headers don't fall i=
-n the non-linear area
-a | b41eab579 74e7e1 .+ | xen/netback: don't call kfree_skb() with interrup=
-ts disabled
-a | a0e661a7d c981cd o+ | mmc: sdhci: Fix voltage switch delay
-a | 4749c5cc1 45fecd .+ | gpio: amd8111: Fix PCI device reference count leak
-a | 62ae69ea7 743117 o+ | tipc: Fix potential OOB in tipc_link_proto_rcv()
-a | fbc70a04a 7dfa76 .+ | xen/netback: fix build warning
-a | cb0f2530f 16d055 o  | udf: Discard preallocation before extending file =
-with a hole
-a | eee369a46 1f3868 o  | udf: Fix extending file within last block
-a | bd1c152be 94a7ad .+ | media: vivid: fix compose size exceed boundary
-() a | c2fe0cac3 c2f292 o+ | wifi: brcmfmac: Fix error return code in brcmf=
-_sdio_download_firmware()
-a | 3f418ad65 39c1eb o+ | Bluetooth: hci_core: don't call kfree_skb() under=
- spin_lock_irqsave()
-a | 52dc66bf4 415565 o+ | scsi: fcoe: Fix transport not deattached when fco=
-e_if_init() fails
-() a | 694bd441a 04ba54 .+ | crypto: img-hash - Fix variable dereferenced b=
-efore check 'hdev->req'
-a | 2210b22c7 02cd30 .+ | cxl: fix possible null-ptr-deref in cxl_pci_init_=
-afu|adapter()
-a | c3595370a 6a46bf o  | binfmt_misc: fix shift-out-of-bounds in check_spe=
-cial_flags
-a | 548d04953 cfd3ff .  | clk: st: Fix memory leak in st_of_quadfs_setup()
-() a | 215d58e8c 1db1f3 o  | HID: wacom: Ensure bootloader PID is usable in=
- hidraw mode
-() a | 5f578bbe1 8508fa .  | ALSA: line6: correct midi status byte when rec=
-eiving data from podxt
-a | 887f47cf9 341097 o  | md: fix a crash in mempool_free
+https://github.com/a13xp0p0v/kconfig-hardened-check
 
-> There are also a few fixes for previous backports that need to be reviewe=
-d:
+> --
+> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+>
+> -=-=-=-=-=-=-=-=-=-=-=-
+> Links: You receive all messages sent to this group.
+> View/Reply Online (#10374): https://lists.cip-project.org/g/cip-dev/message/10374
+> Mute This Topic: https://lists.cip-project.org/mt/96329245/4520416
+> Group Owner: cip-dev+owner@lists.cip-project.org
+> Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129101/4520416/1465703922/xyzzy [masami.ichikawa@miraclelinux.com]
+> -=-=-=-=-=-=-=-=-=-=-=-
+>
 
-And these look okay to me, too.
+Regards,
+-- 
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
 
-a > e80d1e591dbba xen/gntalloc: fix backport of "xen/gntalloc: don't use gn=
-ttab_query_foreign_access()"
-a > baf4fff4a69b7 Revert "hwmon: (sch56xx-common) Replace WDOG_ACTIVE with =
-WDOG_HW_RUNNING"
-a > a5387f2e581e5 xen/blkfront: fix backport of "xen/blkfront: don't use gn=
-ttab_query_foreign_access() for mapped status"
-
-Thanks and best regards,
-									Pavel
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---CfzCdnWQHYgIsrCx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCY8cKLgAKCRAw5/Bqldv6
-8nS4AJ46uzL1qPlL2cIIB8mwKgsC8TfC4gCfUy/dJETKReTiOzD5sHicW9dl8u0=
-=7gju
------END PGP SIGNATURE-----
-
---CfzCdnWQHYgIsrCx--
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
 
