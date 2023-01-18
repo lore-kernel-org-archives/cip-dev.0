@@ -2,52 +2,52 @@ Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6C4EC38147
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6C72C46467
 	for <webhook@archiver.kernel.org>; Wed, 18 Jan 2023 16:35:34 +0000 (UTC)
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
- by mx.groups.io with SMTP id smtpd.web11.20565.1674059730686451283
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+ by mx.groups.io with SMTP id smtpd.web10.20399.1674059725489225624
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Wed, 18 Jan 2023 08:35:30 -0800
+ Wed, 18 Jan 2023 08:35:25 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=yaEcJTsS;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.210.176, mailfrom: bot@kernelci.org)
-Received: by mail-pf1-f176.google.com with SMTP id c26so22196467pfp.10
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Wed, 18 Jan 2023 08:35:30 -0800 (PST)
+ dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=BJ1JO77w;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.174, mailfrom: bot@kernelci.org)
+Received: by mail-pl1-f174.google.com with SMTP id p24so37402998plw.11
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Wed, 18 Jan 2023 08:35:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20210112.gappssmtp.com; s=20210112;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=CCbN6AhWRhzhbPbyUH54eHkjkhvy7RBcdaJJB17zR0k=;
-        b=yaEcJTsSBnPu0ddQr1/mO0hVwuLjm+vRugMWnZKXyKK0o+vCG7HQsWVyOY7tIkiTQz
-         pU1G9VTD1jER8T+YqqyLiy9g/ZfovYajG4InGwcvQw6UYQH2JbNjkz9RtyxiLIhivmEY
-         pWjd6gXfaVnKJT7kRe4J6lka5wjZr2yupR3ssiGzVGZpe7ipwAe11mkzAjtz9qNyrY0c
-         R1BLelSQnpXJXHXDqA8O79mjiQTxaEAXq2Ns1wmBX/9GuXJcDXY4OLEA2OvwOh+EB2v/
-         QbbRfJIYo1cmqmoQfe152He5WiR+NeSIeUiRwopuZjUkcxLbm+1GuiQ2tu7MYNm9ECNw
-         TAOQ==
+        bh=oJwYPZ/Q02RGevS+RqwYXIdDw/lRHplkGWGr4AXhv+A=;
+        b=BJ1JO77wgHXJuaK+kRGKIvc4B7iQQrqV4YZLoZqjDY6vCiH4vwEYIgBCPtN+5Iz/k9
+         tlAsOf0M4J2+01UV6nvXlAytcfOTBpQ1/bjnhm7sfPvg0DYQQRCT95s3dmT6clqCWLDB
+         sKlWeqpfyl/gY+45fZ09EKlPILk1nAN8mXJo6vSL6uNv+pr2dTXYU8fKvSL7KV8zicPL
+         6bYFtEzQPOnOOLoiI2pu7dBYknolHLT3ABgwarL6fzvp7e0VeXdzNFLdBIw+XuXMhl0w
+         8NZGGPU6IMSX4hqZuKAz5uFNRaUu5SYWxFE2LLeR4rhpfp4EOtApva0EFnv4EUJBg+zZ
+         NXzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=CCbN6AhWRhzhbPbyUH54eHkjkhvy7RBcdaJJB17zR0k=;
-        b=oTkvDynBR8066Nku7XyZ6qtyLWOfw4ZOCrWElgGuu/BAvAmlHbACkqDMolQ2RcEcDC
-         t27lh5PBxI2p12jfGPjLoy7sffjMdBEZCFmuZRIEI3sBUgMw4yPo/I15F+3ZztIzeCFk
-         QOeq0lM17UP44eker4J+j6Wj4wDJhCO24R1Vsodk8ZLhu0Up69+e4KLeypRfNkl5BXGO
-         dy4cM1TWcVSEMxpu/b9aenGfUFmkwsVUP5xKBTVdza7rlW+mO/cRh2SAQk9PmLPdZT1w
-         xv0+gd3W50ciuIEzhNQh7qfscblHxDgMh4Jh5i7xppP+Af2twyNtPiaCpxYNuaQi6eYi
-         lvtg==
-X-Gm-Message-State: AFqh2krMU8Wu8VhRYvJGqR9rE8BAFPVVR8A7bfrLAuiDp/zOGFdX3utO
-	+WDGE4UACp8BkBB200bCPGJL5bzsod5LPP6AXTCafg==
-X-Google-Smtp-Source: AMrXdXu7rUUIxpgqTRddYHc1JGZbLxw2VPdAxXHbDn2tNk9x7L/jMkw8PXh1MUsl1/BfkJ4g202wnA==
-X-Received: by 2002:a62:fb12:0:b0:576:65f5:c60a with SMTP id x18-20020a62fb12000000b0057665f5c60amr7536317pfm.27.1674059729917;
-        Wed, 18 Jan 2023 08:35:29 -0800 (PST)
+        bh=oJwYPZ/Q02RGevS+RqwYXIdDw/lRHplkGWGr4AXhv+A=;
+        b=mwkNJ12IQPl3MeDdEZ++bV4Ibn/J5xBDRjmSImZJC1i9QqSwllR1chDxX4HA32aa1+
+         tgXRxZlWmN+iCyYPQq9XXpqtoPWXM0w1wK4g7vc3AGylk548Ms7bZOtaQFDxGeuJ/NY0
+         VhtUTxkcSfA91JRrLof6jT38zvix2XPRJBWb0Zlb3rBLShCu0YNgZaKPp8+WG5beSWiQ
+         C+uwrkKbTGbTWTMUK+wy3Nslj3y2qExJ4yUg/1qGNc28YcEegnPExApR4dYlhmpBy69H
+         /VhB5vJmpVlG8zIckkU8dbmB7mOSa05MeUEC645xX5EaHAPCAnoNnzpYiYgDqht/1Vq9
+         5Ivw==
+X-Gm-Message-State: AFqh2koHfTZnz2ZhvCa8y6VFcIVkE//0xAYWORuPMAFhJOjU3FEqYluY
+	ZYfbYIC13ylmhnEgR6tu8CtpmafYLLaqM0CL61Q+Iw==
+X-Google-Smtp-Source: AMrXdXvBLWccyeft/bXZBbnlCuR5pLT1f4Wke0teumYZIuGXm5A64Id0WExOtm3xkiNC2aZeg4gdjA==
+X-Received: by 2002:a17:902:eb88:b0:194:6921:d36a with SMTP id q8-20020a170902eb8800b001946921d36amr22493982plg.22.1674059724403;
+        Wed, 18 Jan 2023 08:35:24 -0800 (PST)
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id x186-20020a6231c3000000b0058bcb42dd1asm7917136pfx.111.2023.01.18.08.35.24
+        by smtp.gmail.com with ESMTPSA id q8-20020a170902a3c800b0017f74cab9eesm18650390plb.128.2023.01.18.08.35.23
         for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jan 2023 08:35:29 -0800 (PST)
-Message-ID: <63c81fd1.620a0220.6f495.ca8d@mx.google.com>
-Date: Wed, 18 Jan 2023 08:35:29 -0800 (PST)
+        Wed, 18 Jan 2023 08:35:24 -0800 (PST)
+Message-ID: <63c81fcc.170a0220.93708.e07e@mx.google.com>
+Date: Wed, 18 Jan 2023 08:35:24 -0800 (PST)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -55,35 +55,35 @@ X-Kernelci-Tree: cip-gitlab
 X-Kernelci-Branch: ci/iwamatsu/linux-5.10.y-cip-rc
 X-Kernelci-Kernel: v5.10.162-cip24-853-g709bb3738fde
 X-Kernelci-Report-Type: test
-Subject: cip-gitlab/ci/iwamatsu/linux-5.10.y-cip-rc kselftest-lkdtm: 4 runs,
- 1 regressions (v5.10.162-cip24-853-g709bb3738fde)
+Subject: cip-gitlab/ci/iwamatsu/linux-5.10.y-cip-rc kselftest-filesystems: 5
+ runs, 1 regressions (v5.10.162-cip24-853-g709bb3738fde)
 To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
 From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 18 Jan 2023 16:35:34 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10396
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10392
 
-cip-gitlab/ci/iwamatsu/linux-5.10.y-cip-rc kselftest-lkdtm: 4 runs, 1 regre=
-ssions (v5.10.162-cip24-853-g709bb3738fde)
+cip-gitlab/ci/iwamatsu/linux-5.10.y-cip-rc kselftest-filesystems: 5 runs, 1=
+ regressions (v5.10.162-cip24-853-g709bb3738fde)
 
 Regressions Summary
 -------------------
 
-platform                 | arch  | lab     | compiler | defconfig          =
-          | regressions
--------------------------+-------+---------+----------+--------------------=
-----------+------------
-r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip | gcc-10   | defconfig+arm...ok+=
-kselftest | 1          =
+platform                     | arch  | lab          | compiler | defconfig =
+| regressions
+-----------------------------+-------+--------------+----------+-----------=
++------------
+meson-g12b-a311d-khadas-vim3 | arm64 | lab-baylibre | gcc-10   | defconfig =
+| 1          =
 
 
   Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fiwamatsu%2=
 Flinux-5.10.y-cip-rc/kernel/v5.10.162-cip24-853-g709bb3738fde/plan/kselftes=
-t-lkdtm/
+t-filesystems/
 
-  Test:     kselftest-lkdtm
+  Test:     kselftest-filesystems
   Tree:     cip-gitlab
   Branch:   ci/iwamatsu/linux-5.10.y-cip-rc
   Describe: v5.10.162-cip24-853-g709bb3738fde
@@ -97,34 +97,35 @@ Test Regressions
 
 
 
-platform                 | arch  | lab     | compiler | defconfig          =
-          | regressions
--------------------------+-------+---------+----------+--------------------=
-----------+------------
-r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip | gcc-10   | defconfig+arm...ok+=
-kselftest | 1          =
+platform                     | arch  | lab          | compiler | defconfig =
+| regressions
+-----------------------------+-------+--------------+----------+-----------=
++------------
+meson-g12b-a311d-khadas-vim3 | arm64 | lab-baylibre | gcc-10   | defconfig =
+| 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/63c80c0ff697061a0e915ecf
+  Details:     https://kernelci.org/test/plan/id/63c80ccc36ad63059a915ed2
 
   Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook+kselftest
+  Full config: defconfig
   Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
 110)
   Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
-.10.y-cip-rc/v5.10.162-cip24-853-g709bb3738fde/arm64/defconfig+arm64-chrome=
-book+kselftest/gcc-10/lab-cip/kselftest-lkdtm-r8a774a1-hihope-rzg2m-ex.txt
+.10.y-cip-rc/v5.10.162-cip24-853-g709bb3738fde/arm64/defconfig/gcc-10/lab-b=
+aylibre/kselftest-filesystems-meson-g12b-a311d-khadas-vim3.txt
   HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
-.10.y-cip-rc/v5.10.162-cip24-853-g709bb3738fde/arm64/defconfig+arm64-chrome=
-book+kselftest/gcc-10/lab-cip/kselftest-lkdtm-r8a774a1-hihope-rzg2m-ex.html
+.10.y-cip-rc/v5.10.162-cip24-853-g709bb3738fde/arm64/defconfig/gcc-10/lab-b=
+aylibre/kselftest-filesystems-meson-g12b-a311d-khadas-vim3.html
   Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ks=
 elftest/20230114.0/arm64/initrd.cpio.gz =
 
 
 
-  * kselftest-lkdtm.login: https://kernelci.org/test/case/id/63c80c0ff69706=
-1a0e915ed0
-        new failure (last pass: v5.10.162-cip24-788-g63c30712099cf) =
+  * kselftest-filesystems.login: https://kernelci.org/test/case/id/63c80ccc=
+36ad63059a915ed3
+        failing since 139 days (last pass: v5.10.136-cip14-542-g97767707d3d=
+0, first fail: v5.10.138-cip15-90-gd4130d0ee3c7) =
 
  =20
 
