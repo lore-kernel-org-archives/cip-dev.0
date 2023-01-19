@@ -1,273 +1,157 @@
-Return-Path: <ncaidin@linuxfoundation.org>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25FEBC00A5A
-	for <webhook@archiver.kernel.org>; Thu, 19 Jan 2023 12:49:11 +0000 (UTC)
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
- by mx.groups.io with SMTP id smtpd.web11.40633.1674114685325166958
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13FFFC46467
+	for <webhook@archiver.kernel.org>; Thu, 19 Jan 2023 12:53:11 +0000 (UTC)
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.74])
+ by mx.groups.io with SMTP id smtpd.web10.44205.1674132781097510186
  for <cip-dev@lists.cip-project.org>;
- Wed, 18 Jan 2023 23:51:25 -0800
+ Thu, 19 Jan 2023 04:53:01 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20210112 header.b=oQLUvWZn;
- spf=pass (domain: gmail.com, ip: 209.85.221.54, mailfrom: error27@gmail.com)
-Received: by mail-wr1-f54.google.com with SMTP id d2so961657wrp.8
-        for <cip-dev@lists.cip-project.org>; Wed, 18 Jan 2023 23:51:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tQN5QWxxX4yeXQdGtOq7iT1lOF9ivUP2qDGMRmUaJF0=;
-        b=oQLUvWZnZryqSEUmf5lFcQYniEz+ph0XnhKvjjH2xu/cplNNTyFZTxoE2jSPJ/8AeQ
-         +k+wL1BpRK2EzMWc2LPPhzt29iXGkoJry/Gy+BymtYL2SrkX5anvrmhnbpmeQ6v4h8KX
-         5ev5k1W5xuBXkEL/LOZRjtW80yKEobsY0boJT70KvGN+3QYh6bY6BljORRmzAj6ih3ca
-         +11zaFm77sqAGAVMvCaIS/79heXTBDROzRtsSv0ov3r/Itf6lm3TQ5JbDtpNGY/pObVg
-         D7A6c8sq4qfTeWMYzlVp2TXewRmG4h9GvOXwxWS3yqeayDLRn4PghQttbQZDy7aN8c3R
-         4d3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tQN5QWxxX4yeXQdGtOq7iT1lOF9ivUP2qDGMRmUaJF0=;
-        b=N5mXJlH1ITHmd1lWQKdk8M3AH/BWK5bkg/fApzm03QPnrGZ9CUgOnQUQfDoo9VHJY8
-         XPamSZ1weTlCrwhjLI0Jr6xPi1L9jJWWb74dXL65P3+mJbIzPDq/yF6uj6Hczjt81Xoq
-         sVE2/MEzkm5XIpFXkAZjAt9R6BwcQIThHzcrrnMEeJkOupuAPg+AMHEGc0nYatzfmPR9
-         KPUKTemYhBXkMo1QZ1LtGE7rT+KxTAnKTFcoRzjjAs8QJufdxnv5wbpEQCuU54Psju4a
-         gJL3lPK9p8Am4Ee7bCr98wj3+zrDQ7xy+V3CsxwdnvWnmGexolyznh4jGQc2nV90MRKC
-         sEnA==
-X-Gm-Message-State: AFqh2kqTQx5KpOeniCMjNfFlZwHiiGoJE8o69LymKe6dJ3HyHIqWhmLU
-	GC4lnRz0b2ewGgS4aYFXvMM=
-X-Google-Smtp-Source: AMrXdXvkSI9/0Da6tjp124zwfK7gr3dT0OMaP7l2BvhrwiWfd+c+1yA02yAk7SVVxQcE2fhzQr3TPw==
-X-Received: by 2002:adf:fa88:0:b0:2bd:feb5:fb7b with SMTP id h8-20020adffa88000000b002bdfeb5fb7bmr7866955wrr.33.1674114683598;
-        Wed, 18 Jan 2023 23:51:23 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id j15-20020adfd20f000000b002be2a4b521fsm5155414wrh.45.2023.01.18.23.51.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jan 2023 23:51:22 -0800 (PST)
-Date: Thu, 19 Jan 2023 10:51:18 +0300
-From: Dan Carpenter <error27@gmail.com>
-To: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Cc: cip-dev <cip-dev@lists.cip-project.org>,
-	Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Subject: Re: New CVE entries this week
-Message-ID: <Y8j2dnYDZnw+DcEw@kili>
-References: <CAODzB9oy2nCYdfa7vzG59nQ6owAKUv+jkqD4tpufn+k8_kjuaw@mail.gmail.com>
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=aFXR0K7g;
+ spf=pass (domain: siemens.com, ip: 40.107.21.74, mailfrom: jan.kiszka@siemens.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nl7qbHYQ6jyVaHQdP9O/yU2/htGlQKGb1Wb5ZzBSt0dqVtKbN/1fb4OWb26aAWe5Ww3zje1mMyfkdTtTkEovABT5zwO6pgWeUutZY03QShVMyfbqHGgIVQhnM7u8QI7gDVPq+aISrEyr/CU+HrVAYAMSg5j4GKiFVL4Yokau5L3Tpp2k/MH9pR22bW1JgM8LDA5wgrvMhQDqs40UAV+3UIour+37OvRgDMultwXD7rLhQW2vSJTt7LvHrVG/sx3o3e7CfUlBbkK3EQGIlZJofDTFUnguEuyyNGnrvNdIvJO1up1Cy05Bnlehku3Z+J2XJEii9zWbXlCR7K9AXK0Vpw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nbsIirPM7/ceHsWlEl9tO73v6zh69EApfNkVNxIQ6xw=;
+ b=AYohmQYeL8kHNPGqa3noXa44RtCAwgQcdODtkSBJvEtbK2hXxewDc5pSrNqmn3I5XCbtwJsewVEnYRWWxS3fL7RmNInr/nK+T415ldyNRcavJpyg/HFHHKoMaJQHTIFLTw3wFIgD41popsnFYt4pQNHcc2XuWSyx4hlzeisDgpULlilussP831VOXPAmdjuwo16sq9ZcYzRNSbvAspt9e9iLyDug/wPvn+gLXeseA9Qoq0Am/gvFUHREEixmZuGfwpxm+MheZenwxiYn/Pco2kl6EtuYhdORrflntWkay15EkU9EALD7EqKYXcp+q32WE39niy26la1vHx+vbesLVg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nbsIirPM7/ceHsWlEl9tO73v6zh69EApfNkVNxIQ6xw=;
+ b=aFXR0K7g+YuDJ9KCojRUlGPIEDI4C3AOnOGpl2gpedJ4VcroZ7sD+4P+oglzlWswIhfLS8+agSHo41Ef7l7P/S4Uzbo6/lffscBMJfum0ZJ8zZW0kvMEqGtwecuu4am/E0FWEugPkp8qXTRN7Lf2tj15u4pxkiFjsMFy76KIMAXMVfBKBycZ4qg/SeKbbKrdnwkK7JMzDI2jrAw+sjBKIGqVrNqPd58u8y7dHMoHwGigLTO7DyAOTFCt9NCZvxNCgXTDG+hYJbT91vS2zK6ilhBWhDFOqLuy/AdW0F0LM6DrdCX6LGyKWC9w6JaRBUM9/3DEJ7nJnHkEH18eONxacw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by AM0PR10MB3476.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:15e::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.25; Thu, 19 Jan
+ 2023 12:52:58 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::784b:e95b:b855:dcc5]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::784b:e95b:b855:dcc5%7]) with mapi id 15.20.5986.019; Thu, 19 Jan 2023
+ 12:52:58 +0000
+Message-ID: <d7a4cb3d-a75d-e32f-4939-6606134d6d61@siemens.com>
+Date: Thu, 19 Jan 2023 13:52:55 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [cip-dev][isar-cip-core][PATCH] fixup! only copy "A" version of
+ rootfs part for ab-rootfs
+Content-Language: en-US
+To: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>,
+ felix.moessbauer@siemens.com, cip-dev@lists.cip-project.org
+References: <20230119115936.528466-1-Quirin.Gylstorff@siemens.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+In-Reply-To: <20230119115936.528466-1-Quirin.Gylstorff@siemens.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR3P281CA0043.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:4a::15) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 MIME-Version: 1.0
-In-Reply-To: <CAODzB9oy2nCYdfa7vzG59nQ6owAKUv+jkqD4tpufn+k8_kjuaw@mail.gmail.com>
-Content-Type: multipart/mixed; boundary="3VO4Cpa8YkOiSFt1"
-Content-Disposition: inline
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AM0PR10MB3476:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3032a4b3-b1e5-442d-c371-08dafa1c16ff
+X-LD-Processed: 38ae3bcd-9579-4fd4-adda-b42e1495d55a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	VHKousycwSb2VyvAMvA/dmuUKLb9kQGJibRmNWTd2A0CrGhPm9VtpsZalIQIV7Rk6Kir9Z1DSWqn0MTLrYjoXIb/QBf8OZtvJJjm311ICj/T0VYkZ6NovXaJXFSreYpVLuT6pgSLExJ/M71fut7FoPcI/uK7glFENpZ5xQ2by5xsxqIxHT6JabQ4UlRDiV648b3vARZ9boxJ39+aIV+JhAL4mcYHaJxQ8mH/f8nYzVcCa1NlWnJzpbjOfJWYUvCg2e+6kVztOhQOKNieMW8DUqx5Rb5eC8DqPYi22JfILEoLtgUM/k/m/iMhOQ4loefTapk6UIyeTQOl8or9K/35goD2ZEuYjP0CPIYy5IGubVDdrw5uE3iG7tPCJC9LuDLN0w6uY5jQq8681IYt6mtgzud9HW6ts7wrvmXCmlV8hpnqUQBvT0geX2UDVZqWcoi7oG7ekoDSMVG1X9UlIqDTAhhD4x5nwUIzO5Ccn921HADODAuzVflkkiZHrYqGrPhT1yDdMueRly33BH19VGCvSWGcKjrM+5vJKUMGyGAXr/8MEH2CCaE4webx1FKHBO7cy7V7vOiGxP/WxLjTaFQ6/Qh6Vlu3WwHDaH4L2cWdUNsWyN/Btjn/VrqTctK3LVj8A9ng9QUfgX4hG/bhBnlWcE3GtdkZXX86gXsVl3aiOFKbn98wPNfC0ng0deD/c9QQmXGPtJcFoa1buqGced+2gHr29Gdpuh8QdNZ3GeRsAjd0w3uZ+0WHp4b5S/QS4XW0b6pHUPE5KL5D0/yStEtLaA==
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(376002)(346002)(136003)(396003)(366004)(451199015)(36756003)(83380400001)(41300700001)(2616005)(8936002)(316002)(2906002)(66556008)(8676002)(66476007)(66946007)(82960400001)(38100700002)(31696002)(86362001)(44832011)(5660300002)(6666004)(53546011)(6506007)(26005)(186003)(6512007)(6486002)(478600001)(31686004)(403724002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?MFBLUi9RUUlhcjVLQ0VZN3doejJJZjlBeE1jQkFiZlcxN1hlQmpwbnd0aFRi?=
+ =?utf-8?B?Sm15c08rUjFTZURSaEowdEhtcG5XZkNLUnd1ZWx4bmVhWVdyRnljcVVyLy9F?=
+ =?utf-8?B?a1hmSUFtS3AyZDBSNVJBMEFueWtrSUZBdXExOHY1L0lYTU92YUZXVy80WFpB?=
+ =?utf-8?B?S0dsOFdQTkJCdWFPNFBGZlJwUVp0MnFEclVEai84ZUo0V0Y5Rm9aQkFaYmVD?=
+ =?utf-8?B?RFZpVnJ6QWdKT1YvcFhpN0VxY2ZxTUdWZzJGeE50a0lUWTI5aTd2ZUg1THlD?=
+ =?utf-8?B?dERvbGJnTVJBZzQ2K2xlb2dQOXFjZEJRQklaTTZxb2pRaHFrMkJqSlZZbnhs?=
+ =?utf-8?B?YWtnSVRMd3MzS1lVQ09YYkVKaHIvVnBjd3BNbDE2bzlabVFLU1FIcWtTTE0z?=
+ =?utf-8?B?ZVVHVjhuZUZFbjJucDlMT21ZeGtIWHRHa1FucndFY2RHRWNvQkVWNjVuaHZ2?=
+ =?utf-8?B?Tjk0REZhNnUzTFV4QmJFSTBZVTgyR2JBbFBvVUx5R3RxN3NucERsL3MzSjR1?=
+ =?utf-8?B?SzJxeDBCZVFKMFhiMW04dm94aWdBL3NONXBhUjJZdmZITTBtT0UzS2wvVk9L?=
+ =?utf-8?B?THJocWUzSUQ4Qy9haUJ6QnNkdzkxYXQrY1NrYnRNSzJjeldXUnVTZE9xSmlM?=
+ =?utf-8?B?c3NqcDN6ekZZeWx3RThUTm5EWnVXdXpMbXBmY2pkMG5GRWxFMy90Yk9pYmxQ?=
+ =?utf-8?B?WXllWmNWU0UranBmVFpxQUtRY1dIS3BaSytTb3A1ZERybU1oTXIvaXBmaGFM?=
+ =?utf-8?B?OE16aXlPYm9rNmxJQUJFZWJURmk1VVVPQU1scHV1R0s5VCsrVmFaU1lwSmgv?=
+ =?utf-8?B?WlAyZHNUbk5qNUlLUVQ1L282aHdPcllVbWNWc3Z5SjROYnlEM1l2ZDc0MjZ0?=
+ =?utf-8?B?c0ZRMjdYUGVJMTFKYURBWi9hNmlYVWpHdnI0QUJnZzhSbHdBUGE5Ync2RkdY?=
+ =?utf-8?B?ZDFDZUxvaWh1Z2htQkFnd2NpRGhLenl1TStqcC9QSEtRUmtiVGIrbjFibVB4?=
+ =?utf-8?B?U20relErV0tEamNqTjRTVktxMFNxMlNwYlRzdnJZcUZTQndKeGFjSTZSOCts?=
+ =?utf-8?B?MWVnaUFuWWhEakRVYWFRMlhTOXZzUkdLZkxtK2J3NitsYXg2MWVjWmVmZkxY?=
+ =?utf-8?B?YjNXNk9Oc2c0UVNydHZ0NDJzK1RtZjZOVjNha3hNRTBnL1ZyUFBzYjBJY3lX?=
+ =?utf-8?B?ZnpPTUNhOXF4bUpja2ZJcFFDc002bUovci9xOUswVEdLSGw3VmduVTl0TWR2?=
+ =?utf-8?B?T1dLM09oN1QzbU1ja2RrNmhPQXA0cUFnc1g3NnNTeWRzY0Q3TkpGdEFESXRT?=
+ =?utf-8?B?WlZwVWEwYjlKWjdISHFlc1lKV3RUY283K1htUExWUkVJYjRPck9yQ3JoMi94?=
+ =?utf-8?B?UzhjM0M0aWx0bElhYndGcGVZL0phQ2NFejFXVVo2b1RSUWVaR0QvM05xNjdj?=
+ =?utf-8?B?Szd0KzJyTW5EbFhpdUgxcXdadHB2UVI3dE1Ndk9nRTdyWGk5Y0VzYWRUdStX?=
+ =?utf-8?B?ZDJiNTF4U2VrNndXUEVmRmZYRUJwVUN3dW5TZmJUcXlYNmxaU002RG1NR1Iv?=
+ =?utf-8?B?TmFJRjBSV2NHK2FIanIxcFNyVTF3N1VabWxuMllsOXIxSVVZVUZlOHd5MTBF?=
+ =?utf-8?B?NTlmVllTL1lwVXJIc1BSZGFZWHQvMFVJRFViSjYvdEtKaFBQTllVanlKYXpl?=
+ =?utf-8?B?bDVGV3N1UTlrNEg0WjZQSGdjek9iZkxyM0FZOW5DdDNrZEdvYjZMODVvSndy?=
+ =?utf-8?B?eHFDSEZpT2Q4bTJDTmR5VGluRFBXeVR3RXlkRnNPcVNUb3dwdzc0R0tUMGdB?=
+ =?utf-8?B?MVpzbUVJbHFSQVJxUFh5cWhGS1ZEcFh1V0dlam9NQ1pKRnNtT0k0R1Fyb2gv?=
+ =?utf-8?B?S040V3VRd1hrWWhoM05FMGIyQjFhdlJ4Mk5xK2hsc3dHN2FJMzB5NmJkRktv?=
+ =?utf-8?B?elQ0dm5LZ3YyY3l4MVJUNm1jR1BOa1lKNWRXWE5najNmbERvZGY4N0dFVnJ6?=
+ =?utf-8?B?djQwTjJmeVM3SVJTUGFSWjBOakw0a0xhamVYZmltaU5CZEtqb0FhOWtuZ08v?=
+ =?utf-8?B?SFZnOCszV3lQaS9UQUhkZFc2MmgxSjBPODROcDQwcHF3MjZheDg3d2dyY1Jr?=
+ =?utf-8?B?aDVSUWJvK3ZndWRneUJnYkYya1pkTGNsWHpEMkRqbW9IbTJwdmVNOUhSZHZD?=
+ =?utf-8?B?K3c9PQ==?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3032a4b3-b1e5-442d-c371-08dafa1c16ff
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jan 2023 12:52:57.9797
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: O/XEsSPYJ+jioA4eq2OoReWG8QY0VgXCcTlTeTaPT9ZbDZu6fX1K1Z0iUV/iNTb8y4OdVFPSQKsh0DNNHihZPQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR10MB3476
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 19 Jan 2023 12:49:11 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10438
+ <cip-dev@lists.cip-project.org>; Thu, 19 Jan 2023 12:53:11 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10439
 
---3VO4Cpa8YkOiSFt1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu, Dec 15, 2022 at 12:25:18PM +0900, Masami Ichikawa wrote:
-> CVE-2022-4378: Linux kernel stack-based buffer overflow in __do_proc_dointvec
+On 19.01.23 12:59, Quirin Gylstorff wrote:
+> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 > 
-> CVSS v3 score is not provided
+> This fixes a typo introduced in 231ccb71878e8b2a2fd64b31f4b522c155930147.
 > 
-> A stack overflow bug was found in __do_proc_dointvec() which missed
-> checking on user input.
-> This bug affected all stable kernels. It seems as if 4.4 is affected too.
+> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+> ---
+>  wic/x86-efibootguard.wks.in | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Fixed status
-> mainline: [bce9332220bd677d83b19d21502776ad555a0e73,
-> e6cfaf34be9fcd1a8285a294e18986bfc41a409c]
+> diff --git a/wic/x86-efibootguard.wks.in b/wic/x86-efibootguard.wks.in
+> index b4a320e..e48ba01 100644
+> --- a/wic/x86-efibootguard.wks.in
+> +++ b/wic/x86-efibootguard.wks.in
+> @@ -7,7 +7,7 @@ part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1
+>  part --source empty --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
+>  
+>  # home and var are extra partitions
+> -part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home1 --align 1024  --size 1G
+> +part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G
+>  part /var --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var --fstype=ext4 --label var --align 1024  --size 2G
+>  part /crypt --label crypt-data --align 1024 --fstype=ext4 --size 2G
+>  
 
-One thing that we used to do at Oracle was a bi-weekly meeting where we
-would go through these lists and try to be a bit proactive about
-preventing future bugs.  For me I'm trying to use Smatch for static
-analysis.
+Thanks, folding in as the problematic commit was still in next.
 
-There are some bugs which Smatch can't identify like race conditions or
-if there is an issue with the spec.  But for a lot of bugs can be
-prevented.  So it's often an issue of 1) There isn't a Smatch check for
-that.  2) The Smatch check exists but isn't working correctly.  3) The
-Smatch check prints a warning but there are too many warning for that
-check so I can't go through them all.
+Jan
 
-First of all, why wasn't *size marked as user controlled?  It turned out
-that it comes from iov_iter_count() and that wasn't marked as user
-controlled.  Fix that:
-https://github.com/error27/smatch/commit/70ee7aa1ae8cc07767096e16fa2de68a62507a3e
+-- 
+Siemens AG, Technology
+Competence Center Embedded Linux
 
-Once that was fixed, it turned out that I did have an unpublished check
-which printed a warning.
-kernel/sysctl.c:358 proc_get_long() warn: check 'tmp[len]' for negative offsets 'len' = s32min.  extra = 's32min-21'
-
-But it turns out that warning was because of a bug.  The check was
-asking can "*size" be user controlled and what is the minimum possible
-value negative, but it should have been asking if the minimum user
-controled value is negative.
-
-Fixing the check to as about user controlled values silenced the
-warning.  The issue with that is:
-
-	left -= proc_skip_spaces(&p);
-
-Subtractions are very hard to handle correctly because you need to keep
-track of the relationships between multiple variables.  Smatch
-deliberately assumes that this subtraction cannot underflow.  Otherwise
-you end up with too many false positives...
-
-I've been sitting on this check for the past ten years without
-publishing it.  May as well attach it now and also the results.  I don't
-know why the check has __per_cpu_offset stuff or why it ignores ntohl().
-I should probably delete that and see what happens.  Going through the
-results, a bunch of false positives are cause by subtraction (which is
-complicated).  Or because Smatch doesn't understand about
-array_index_nospec() (I should fix that).
-
-Anyway, even though I wasn't able to generate a warning for this bug,
-it was still useful to have the discussion and improve Smatch.
-
-regards,
-dan carpenter
-
-
---3VO4Cpa8YkOiSFt1
-Content-Type: text/x-csrc; charset=us-ascii
-Content-Disposition: attachment; filename="check_underflow.c"
-
-/*
- * Copyright (C) 2013 Oracle.
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, see http://www.gnu.org/copyleft/gpl.txt
- */
-
-#include "smatch.h"
-#include "smatch_slist.h"
-#include "smatch_extra.h"
-
-static int my_id;
-
-int is_user_macro(struct expression *expr)
-{
-	char *macro;
-	struct range_list *rl;
-
-	macro = get_macro_name(expr->pos);
-
-	if (!macro)
-		return 0;
-	if (get_implied_rl(expr, &rl) && !is_whole_rl(rl))
-		return 0;
-	if (strcmp(macro, "ntohl") == 0)
-		return 1;
-	if (strcmp(macro, "ntohs") == 0)
-		return 1;
-	return 0;
-}
-
-static void array_check(struct expression *expr)
-{
-	struct expression *offset;
-	struct smatch_state *state;
-	struct range_list *rl;
-	sval_t min;
-	char *name, *offset_name;
-
-	expr = strip_expr(expr);
-	if (!is_array(expr))
-		return;
-	if (is_user_macro(expr))
-		return;
-
-	offset = get_array_offset(expr);
-
-	if (!get_user_rl(offset, &rl))
-		return;
-	if (!sval_is_negative(rl_min(rl)))
-		return;
-
-	state = get_state_expr(SMATCH_EXTRA, offset);
-	if (state && !estate_rl(state))
-		return;
-
-	name = expr_to_str(expr);
-	if (option_project == PROJ_KERNEL &&
-	    name &&
-	    strncmp("__per_cpu_offset", name, strlen("__per_cpu_offset")) == 0)
-		goto free_name;
-	offset_name = expr_to_str(offset);
-	sm_msg("warn: check '%s' for negative offsets '%s' = %s.  extra = '%s'", name, offset_name, sval_to_str(min), state ? state->name : "unknown");
-	free_string(offset_name);
-free_name:
-	free_string(name);
-}
-
-void check_underflow(int id)
-{
-	my_id = id;
-
-	add_hook(&array_check, OP_HOOK);
-}
-
---3VO4Cpa8YkOiSFt1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename=err-list
-
-drivers/accessibility/speakup/varhandlers.c:248 spk_set_num_var() warn: check 'var_data->u.n.out_str[val]' for negative offsets 'val' = 140405757965328.  extra = 's32min-s32max'
-drivers/acpi/nfit/core.c:488 acpi_nfit_ctl() warn: check 'acpi_desc->family_dsm_mask[family]' for negative offsets 'family' = 139892171397136.  extra = 's32min-s32max'
-drivers/gpu/drm/i915/gem/i915_gem_context.c:658 set_proto_ctx_engines_parallel_submit() warn: check 'ext->engines[n]' for negative offsets 'n' = 140477319050128.  extra = 's32min-s32max'
-drivers/gpu/drm/i915/gem/i915_gem_context.c:663 set_proto_ctx_engines_parallel_submit() warn: check 'siblings[n]' for negative offsets 'n' = 140477317644816.  extra = 's32min-s32max'
-drivers/gpu/drm/i915/gem/i915_gem_context.c:666 set_proto_ctx_engines_parallel_submit() warn: check 'siblings[n]' for negative offsets 'n' = 140477317652624.  extra = 's32min-s32max'
-drivers/gpu/drm/i915/gem/i915_gem_context.c:678 set_proto_ctx_engines_parallel_submit() warn: check 'siblings[n]' for negative offsets 'n' = 140477316505488.  extra = 's32min-s32max'
-drivers/gpu/drm/i915/gem/i915_gem_context.c:679 set_proto_ctx_engines_parallel_submit() warn: check 'siblings[n]' for negative offsets 'n' = 140477316429968.  extra = 's32min-s32max'
-drivers/gpu/drm/i915/gem/i915_gem_context.c:697 set_proto_ctx_engines_parallel_submit() warn: check 'siblings[n]' for negative offsets 'n' = 140477314564112.  extra = 's32min-s32max'
-drivers/net/ethernet/atheros/atl1e/atl1e_ethtool.c:283 atl1e_set_eeprom() warn: check 'eeprom_buff[last_dword - first_dword]' for negative offsets 'last_dword - first_dword' = 140418698139664.  extra = 'unknown'
-drivers/net/ethernet/atheros/atl1e/atl1e_ethtool.c:283 atl1e_set_eeprom() warn: check 'eeprom_buff[last_dword - first_dword]' for negative offsets 'last_dword - first_dword' = 140418698146704.  extra = 'unknown'
-drivers/net/ethernet/atheros/atlx/atl2.c:1958 atl2_set_eeprom() warn: check 'eeprom_buff[last_dword - first_dword]' for negative offsets 'last_dword - first_dword' = 139632960086160.  extra = 'unknown'
-drivers/net/ethernet/atheros/atlx/atl2.c:1958 atl2_set_eeprom() warn: check 'eeprom_buff[last_dword - first_dword]' for negative offsets 'last_dword - first_dword' = 139632960093968.  extra = 'unknown'
-drivers/net/ethernet/emulex/benet/be_ethtool.c:1311 be_set_rxfh() warn: check 'adapter->rx_obj[j]' for negative offsets 'j' = 140694977039248.  extra = 's32min-s32max'
-drivers/net/ethernet/intel/e1000/e1000_ethtool.c:506 e1000_set_eeprom() warn: check 'eeprom_buff[last_word - first_word]' for negative offsets 'last_word - first_word' = 140658616621712.  extra = 'unknown'
-drivers/net/ethernet/intel/e1000e/ethtool.c:610 e1000_set_eeprom() warn: check 'eeprom_buff[last_word - first_word]' for negative offsets 'last_word - first_word' = 140551373387920.  extra = 'unknown'
-drivers/net/ethernet/intel/igb/igb_ethtool.c:824 igb_set_eeprom() warn: check 'eeprom_buff[last_word - first_word]' for negative offsets 'last_word - first_word' = 140138690652048.  extra = 'unknown'
-drivers/net/ethernet/intel/igc/igc_ethtool.c:547 igc_ethtool_set_eeprom() warn: check 'eeprom_buff[last_word - first_word]' for negative offsets 'last_word - first_word' = 139829128802320.  extra = 'unknown'
-drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c:1077 ixgbe_set_eeprom() warn: check 'eeprom_buff[last_word - first_word]' for negative offsets 'last_word - first_word' = 140353874581776.  extra = 'unknown'
-drivers/net/ethernet/intel/ixgb/ixgb_ethtool.c:437 ixgb_set_eeprom() warn: check 'eeprom_buff[last_word - first_word]' for negative offsets 'last_word - first_word' = 140135473156368.  extra = 'unknown'
-drivers/net/usb/asix_common.c:709 asix_set_eeprom() warn: check 'eeprom_buff[last_word - first_word]' for negative offsets 'last_word - first_word' = 140650219544976.  extra = 'unknown'
-drivers/net/usb/ax88179_178a.c:601 ax88179_set_eeprom() warn: check 'eeprom_buff[last_word - first_word]' for negative offsets 'last_word - first_word' = 140521901784592.  extra = 'unknown'
-drivers/net/wireless/ath/wcn36xx/smd.c:1988 wcn36xx_smd_send_beacon() warn: check 'msg_body.beacon[tim_off + 5 + pvm_len + pad]' for negative offsets 'tim_off + 5 + pvm_len + pad' = 140733510315840.  extra = 'unknown'
-drivers/net/wireless/ath/wcn36xx/smd.c:1988 wcn36xx_smd_send_beacon() warn: check 'msg_body.beacon[tim_off + 5 + pvm_len + pad]' for negative offsets 'tim_off + 5 + pvm_len + pad' = 140733510315840.  extra = 'unknown'
-drivers/net/wireless/ath/wcn36xx/smd.c:1988 wcn36xx_smd_send_beacon() warn: check 'msg_body.beacon[tim_off + 5 + pvm_len + pad]' for negative offsets 'tim_off + 5 + pvm_len + pad' = 140733510315840.  extra = 'unknown'
-drivers/pci/endpoint/functions/pci-epf-ntb.c:2022 epf_ntb_mw1_store() warn: check 'ntb->mws_size[win_no - 1]' for negative offsets 'win_no - 1' = 140731588284720.  extra = 'unknown'
-drivers/pci/endpoint/functions/pci-epf-ntb.c:2024 epf_ntb_mw2_store() warn: check 'ntb->mws_size[win_no - 1]' for negative offsets 'win_no - 1' = 140731588284720.  extra = 'unknown'
-drivers/pci/endpoint/functions/pci-epf-ntb.c:2026 epf_ntb_mw3_store() warn: check 'ntb->mws_size[win_no - 1]' for negative offsets 'win_no - 1' = 140731588284720.  extra = 'unknown'
-drivers/pci/endpoint/functions/pci-epf-ntb.c:2028 epf_ntb_mw4_store() warn: check 'ntb->mws_size[win_no - 1]' for negative offsets 'win_no - 1' = 140731588284720.  extra = 'unknown'
-drivers/staging/rtl8192e/rtllib_rx.c:2158 rtllib_parse_info_param() warn: check 'info_element->data[3 + offset]' for negative offsets '3 + offset' = 140007844424848.  extra = 'unknown'
-drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c:1658 ieee80211_parse_info_param() warn: check 'info_element->data[3 + offset]' for negative offsets '3 + offset' = 140178157514768.  extra = 'unknown'
-fs/btrfs/send.c:8260 btrfs_ioctl_send() warn: check 'sctx->clone_roots[sctx->clone_roots_cnt++]' for negative offsets 'sctx->clone_roots_cnt' = 140002303789072.  extra = 's32min-s32max'
-fs/btrfs/send.c:8260 btrfs_ioctl_send() warn: check 'sctx->clone_roots[sctx->clone_roots_cnt++]' for negative offsets 'sctx->clone_roots_cnt' = 140002303859088.  extra = 's32min-s32max'
-net/ipv4/ip_options.c:547 ip_forward_options() warn: check 'optptr[optptr[2] - 5]' for negative offsets 'optptr[2] - 5' = 140729597154752.  extra = 'unknown'
-net/ipv4/ip_options.c:561 ip_forward_options() warn: check 'optptr[srrptr - 1]' for negative offsets 'srrptr - 1' = 139857025290384.  extra = 'unknown'
-net/ipv4/ip_options.c:567 ip_forward_options() warn: check 'optptr[srrptr - 1]' for negative offsets 'srrptr - 1' = 139857023710736.  extra = 'unknown'
-net/ipv4/ip_options.c:575 ip_forward_options() warn: check 'optptr[optptr[2] - 9]' for negative offsets 'optptr[2] - 9' = 139857021970448.  extra = 'unknown'
-net/ipv4/ip_options.c:616 ip_options_rcv_srr() warn: check 'optptr[srrptr - 1]' for negative offsets 'srrptr - 1' = 139857024107536.  extra = 'unknown'
-net/ipv4/ip_options.c:616 ip_options_rcv_srr() warn: check 'optptr[srrptr - 1]' for negative offsets 'srrptr - 1' = 139857023562768.  extra = 'unknown'
-net/ipv4/ip_options.c:616 ip_options_rcv_srr() warn: check 'optptr[srrptr - 1]' for negative offsets 'srrptr - 1' = 139857020230032.  extra = 'unknown'
-net/sctp/socket.c:7430 sctp_getsockopt_pr_assocstatus() warn: check 'asoc->abandoned_unsent[((policy >> 4) - 1)]' for negative offsets '(policy >> 4) - 1' = 139875963263760.  extra = 'unknown'
-net/sctp/socket.c:7432 sctp_getsockopt_pr_assocstatus() warn: check 'asoc->abandoned_sent[((policy >> 4) - 1)]' for negative offsets '(policy >> 4) - 1' = 139875962396944.  extra = 'unknown'
-net/sctp/socket.c:7499 sctp_getsockopt_pr_streamstatus() warn: check 'streamoute->abandoned_unsent[((policy >> 4) - 1)]' for negative offsets '(policy >> 4) - 1' = 139875959726736.  extra = 'unknown'
-net/sctp/socket.c:7501 sctp_getsockopt_pr_streamstatus() warn: check 'streamoute->abandoned_sent[((policy >> 4) - 1)]' for negative offsets '(policy >> 4) - 1' = 139875958368400.  extra = 'unknown'
-sound/soc/sof/ipc4-mtrace.c:374 sof_ipc4_priority_mask_dfs_write() warn: check 'priv->state_info.logs_priorities_mask[id]' for negative offsets 'id' = 139930792399632.  extra = 's32min-15'
-
---3VO4Cpa8YkOiSFt1--
 
