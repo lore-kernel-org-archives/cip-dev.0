@@ -1,288 +1,1811 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3272DC6379F
-	for <webhook@archiver.kernel.org>; Thu, 19 Jan 2023 12:56:21 +0000 (UTC)
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (EUR02-DB5-obe.outbound.protection.outlook.com [40.107.249.83])
- by mx.groups.io with SMTP id smtpd.web11.44512.1674132973332635252
- for <cip-dev@lists.cip-project.org>;
- Thu, 19 Jan 2023 04:56:14 -0800
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40DAFC004D4
+	for <webhook@archiver.kernel.org>; Thu, 19 Jan 2023 13:07:11 +0000 (UTC)
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+ by mx.groups.io with SMTP id smtpd.web10.44489.1674133622140962637
+ for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
+ Thu, 19 Jan 2023 05:07:02 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=IcAMYZts;
- spf=pass (domain: siemens.com, ip: 40.107.249.83, mailfrom: jan.kiszka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NNVh79i9oo46Pm/dnBAs9UbXZwco0INBuc/hOtGatjXA14kpdrMePHXUuDXvp4wj7SLGTNRcCM0WSZrLS7dQetCS8Ew1/WQrvgIRtotI1JwCdU479OBZlvLmq2GgAZ23BEHMos46NeusieDRIBxIilm1uKFqG0v5x3EhuoudGwoJ22N53X6bGrxy+wH9ywTljFfZPt9gll60VchhKiYXB0oKtKmwvcPG7yDjwV+9KfTtDdrShhYhqn2CzbrXewh6Juz9PxUinfmiGqFhw3RoMpeTz/LmLPxxQgktcsMcGsQK+NT5naJ6Hp45ANkxgAChQ3CKob8VysyjduOWICkBTw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yxsmaxuwRetzc9CM9hGXGbVpWjhvUTR0W2FOJTVX5EE=;
- b=XPkIQqgM8QhFtUdz3LTKD50FMLSVgGYdvRR6QAsUWnakHuE0HuJUkkk9H2jMZx1kijJ4HYRZX2MCPkwgUg873nRpJV7/nmAQPq/mA/XJBfaRacL6WxbDqhT3L9zxCZPfXFUnWmpyMMsTbP3bFjpPUPg3BtGG9402G5PY/9z9oQN8VZ1WSaTcVosbis6x/OJ90p6sU5ZdUj8YXt6fc7yn3l5D5zEmkfwkw1gUwkfd6J47PsXUYTbe83LtVhgxAIA74n5OqCcgDQ4nqhbc+joNBcapKH+z245NFmwpZAyqf9Q7GVlA43iuQ5QCJctu8onLO5eGnW/B4mVKvzOirANVgw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yxsmaxuwRetzc9CM9hGXGbVpWjhvUTR0W2FOJTVX5EE=;
- b=IcAMYZtssfLSr62M5uPL4NqfkPnP1US4hojOZcvw9lc+ZPvgnZeo4HZ4DE+drLCuWx5JcS4zVvBqGAq5MjJ3eGZbxJhR0uM5KfUQjrB6UHIQTytbJvS921MiUkI5zWzlfS38rKWf3/5VAPum9Wj85PRCagzQy4hspThEqZPjO09MI3PI1lBKneaNhmtgdc8EwmmgbnX7LpylykdZBrf5XFtTveCsQ5gP+pXzF46OZ2ooXlpyNxiKe2n6T3LIqimAU2oJ/WDeb+yHR6G5iey8c72jP5Rm29lI9YVGYsE4OCI57r2f9Ya9k5j6TPyin0qZC4Mq/7gcCF/X4tYFrN8HuA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by AS8PR10MB7585.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:564::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.12; Thu, 19 Jan
- 2023 12:56:10 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::784b:e95b:b855:dcc5]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::784b:e95b:b855:dcc5%7]) with mapi id 15.20.5986.019; Thu, 19 Jan 2023
- 12:56:09 +0000
-Message-ID: <f2dd42fc-6f61-de64-1f57-96d13c29a529@siemens.com>
-Date: Thu, 19 Jan 2023 13:56:07 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [isar-cip-core][PATCH v3 1/1] Use global variables for abrootfs
- partition uuids
-Content-Language: en-US
-To: Felix Moessbauer <felix.moessbauer@siemens.com>,
- cip-dev@lists.cip-project.org
-Cc: quirin.gylstorff@siemens.com, tengfei.wu@siemens.com,
- daniel.bovensiepen@siemens.com
-References: <20230118090400.1582100-1-felix.moessbauer@siemens.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <20230118090400.1582100-1-felix.moessbauer@siemens.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR2P281CA0040.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:92::7) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+ dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=VXSC3xBE;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.216.48, mailfrom: bot@kernelci.org)
+Received: by mail-pj1-f48.google.com with SMTP id s13-20020a17090a6e4d00b0022900843652so5806591pjm.1
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Thu, 19 Jan 2023 05:07:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=L7MasIp2rqO8nAF5BT7G3x9Ob6qDwyBopWApidZt1t0=;
+        b=VXSC3xBEUBYpRvNxGvmuiTEzPcaoOPilAVVM884u7hS0daF2uQoren2dZ1+Oi1NQT1
+         De2UKVjqsKZnucdtI8bNWVStZBp94xCzw6DD4GKkDx2EIoxzQFtktvzbdZ1qufX6qm6I
+         HuEU5OOVRiP42jJvolt8u/DCXRXzvieTvZM5RLd+/IEZiQmMeVMA922V/QBLxGEBWq7T
+         IVDFUMRAZURqf+ZzqAkSq95+TwDGDm/ItnE8v6SvXlRJ8tuB7z3kQkDrSbgRNFq0CqMF
+         HgzC9EsD4d667wo81oe38zWB37WQFhWRgYG64M/WJ2ePFwjnuqOnYx2I7z9UhYH1GHvN
+         XTtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L7MasIp2rqO8nAF5BT7G3x9Ob6qDwyBopWApidZt1t0=;
+        b=hAqHCtBK7Z0sC2czqSZ5yZZlsuwTJdF5HlCMfjKzenz7keEGNJPlqp0aSENEOfCWge
+         Ov67ELuYQuM+GuOACBiM9DrsKErUR5+3phWiTcE6Fetc1fyztomP326jrMREhgqfQ8Ci
+         pOtPo2ib9M4dyFfrq1xbNkUArzDkgt0c8ng27AKeIy2an7W/l/iA9bz5xT3zlZC/udWG
+         4q1UsJM7XpNh7jbH5HLoubXUKsD8pv7biRhBer4ZqQdlr2HBFRR85tih/SqRfYysP/BW
+         X1XaFnOoIDALm1kfwukS1ZPOvm3d6F9QfdB5mbpPoMLfPyGUpehLpFxJIZ/AV3Pr45hz
+         6Ecw==
+X-Gm-Message-State: AFqh2kr2XOJw5HEgV1sxvedJGCV0o9shOZP3BcrO4iVFYCQKXOJ/SpmQ
+	U29uqDro/MdHQQnGjrWPytPHBKoQiTu6XNm6gzw=
+X-Google-Smtp-Source: AMrXdXtF/GRT6T4JN2m9N/HRg9+EK6l6Y1BdDw0hTU10O6JswdlrVhVLVLFDYegNh/SfUt3hHBSrfg==
+X-Received: by 2002:a17:902:d718:b0:194:a529:9984 with SMTP id w24-20020a170902d71800b00194a5299984mr10285555ply.58.1674133620329;
+        Thu, 19 Jan 2023 05:07:00 -0800 (PST)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id q1-20020a170902dac100b0019141c79b1dsm25041611plx.254.2023.01.19.05.06.59
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Jan 2023 05:06:59 -0800 (PST)
+Message-ID: <63c94073.170a0220.6b235.90ae@mx.google.com>
+Date: Thu, 19 Jan 2023 05:06:59 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AS8PR10MB7585:EE_
-X-MS-Office365-Filtering-Correlation-Id: 72acb781-ee57-4f7f-4a1d-08dafa1c8949
-X-LD-Processed: 38ae3bcd-9579-4fd4-adda-b42e1495d55a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	Z83jcKKtxM4tctMmST6YhMz3dJjbV1+PQnJovnxTDyvz9EgXNAH7dA8TA/a6BYdkIVfUoMqsPlfkZ1xjBLV26RGh3Z1KfYsIevOTXKC6ewDCAGK9os5Z2YkBHyrMgovPknqnkt5E0qb8oJbJQCclLPlNdnPdkzaC430bN679Q9+znUBHLS8PFZleE8GQvA1UC/m0AjU0zouE0+nG2zqIkb5yqFMJ8509bG0ihPDuTh6BsgIGbuw9tTZ24vJJNWtQ7HFa2kRF0dfDYfO4SD13jrQEq2hgzjVqFwIMFRusWLjDo1j3p+1i3BCa1eVbnIjLltGj2cvQdiiyXhjQslvvSBkIpuO4nlaASh4jujLoAC+bCLz8feCaG7Xuy3UFr9DuQjwWtlySDQtsAPr5l0y/ZVnlCyxppF3dTzPphExBQAjc1LcRiMlpZ7cXL8xKcF4fouSOjJRmaHb0qHlxDUc/wfvAuOfjToB+MDNHiTItOc+ocAvt6UBunMD7GakQgT7ks9a63Ff3161yoAtRvDWUQkKMEkF1DreTcjjf+nlTMuG595/PyXHFIDf/HVn6pANU/WOxDfWKOkGK+Fe7/jQ7T9usE6eaxUgnCEiyKWp6nn2GN+eWTsfFB8RdAUF5j8/U7qDNAcRfXW7MbX7+D6qv7T33zWFRp2MqRGC2rcsAwriNMAn0ZUpsyk9d/gptuyUjpEWt8TK1RqAuTiOTnVMORWbvXpcSM3W1552/gRIRmkIBSOR1faxe2WIyoynOXxtph1tl9jFkCBu1QnuUeh0sSA==
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230022)(4636009)(376002)(346002)(136003)(366004)(39860400002)(396003)(451199015)(82960400001)(44832011)(2906002)(5660300002)(107886003)(4326008)(26005)(53546011)(41300700001)(186003)(6512007)(66556008)(83380400001)(66476007)(66946007)(6506007)(8676002)(36756003)(478600001)(8936002)(38100700002)(316002)(31686004)(2616005)(6486002)(31696002)(86362001)(403724002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?OGtmc3FFNk1rS1l1OTVVSWlIaTllNjFBQXB2anhxUXYzLzQwR3N0WDFrOXRy?=
- =?utf-8?B?ZUtkQWhUU3NoblI2dk8wU1pTVFg3V1F1aHRVN29ES0JJQ1FCeUxPTnoraTY0?=
- =?utf-8?B?bU16Zk5qMEJsRTVRSTA3YmVmV3NUajB3ZVdvcndkaDdGcjdnY0o4d0ljR0tL?=
- =?utf-8?B?cmlWaVZXYXh3c2RWOEVjbWVrRWxkVjJjWjkzaThadFd5VjV5MmIvMXdSWDJz?=
- =?utf-8?B?VFp2UFlaektBYk1NL0pKOVpZMHBFbDRtKzRzME5JUHVtNE1mSWZ3SXRkM1Nx?=
- =?utf-8?B?OTZNaW9JUUNjTm5PaldUdFB0YkNaMUJjYWZJUTNOWVdlSEVtUzEzeGZNWTJH?=
- =?utf-8?B?VThLWTByV2U2SGhRVkx6M001T1kvWERRL0dNSUN4blVnbnk0Vk5qNEJiT0dr?=
- =?utf-8?B?L1YxRjdjbTRwU0lmbXZzeTRCbFA5TzFGVis5M0I2dWwyVnlVNUJXTVI5aXZ3?=
- =?utf-8?B?SGtHRE80SjZObU9XbTdNQ0FxQTMwRTRnTlZrTWxHdDI5RFlwUzhUaEwrZkx1?=
- =?utf-8?B?Qk1IOGkyOUJFQjQ5TGtiVko4T2RaUTBxdGxTdE9vdGhDY01oK1dKbUIwN2NG?=
- =?utf-8?B?cnltaFR5QnFBbElqcDNVam9WVldEdU9hWlhxaUQ3UG15WVVnbGduYmo1bGxW?=
- =?utf-8?B?YUhWQXNlV0NWREZadi9udU1nR3B1bVhVQ2VMdTNoUDFMRHhqNHkvTURIMlBG?=
- =?utf-8?B?ZW14YTI3TXV4czllK3M4YXpkdVBtWEgyaXZqT3dkVWJONHBxMkVITUxWQWZG?=
- =?utf-8?B?bTJEVWdNSTV6cjZlY2daZXE2QmplSWxueEhuV3lhZEhsM0ppdVk0Sjk3UXY1?=
- =?utf-8?B?VHczem00cU9iZ1lrRlRCN05WbThnWm5hYkpEd0tiSTBmZXJNTXZhWnNiVDJO?=
- =?utf-8?B?YkdXZDJlTnR1bzErbjhueHZ3allLam53TUUveXI2T2RYOEI5WitqL1RJeHFn?=
- =?utf-8?B?QmdNdDhTYVF6VmFyWW40eVJ4dG45VG9QUFRJdnVyZGZwVys3Z3ZqNmpTa01j?=
- =?utf-8?B?a2p1MElML2d6M0hxMmY3NklBRzBuNk5TQ3pDY2RYb1dpYWpwL2ZoMkZsNmVm?=
- =?utf-8?B?KzBiMWxBUE9NczhOdHRUQkNqdjl3c0xuOC9haGpZS1pybFpRMytucnQwQ3ZF?=
- =?utf-8?B?bDh0c0xjMnBXQlE3ZnhlRTJMdWpQVzVxNlhQdVk5NzcrbyszZEdRZTJvUDIr?=
- =?utf-8?B?cjBtZUtSME5TcHlvOFo3SVVDaXBOaVdOaHI1Ynd5RkFoYlRvc1A3WUhKZFpw?=
- =?utf-8?B?anZwelliS01Kb1JaMTl6dDI5SUcvby9YZTErOXZDRGIxOGtWYWVvbDJxYzJ3?=
- =?utf-8?B?UUVYbmlVRmhEL3RtL2Nic2NVMGtlUmYyNmtGQ2V3VEo2UUs5S2JteVRtNFA5?=
- =?utf-8?B?d05rNktDZUtIZzRqaHVNb294c1gvK1FkTjdIelhpUnN0WlBrUjN6TEJoQ0F1?=
- =?utf-8?B?L3JvbUtwMERDbjNEdjJOTjhaNVFhTm5ndzJCY1AzWW9BK0pLNzQ4REFHaGZO?=
- =?utf-8?B?eUtud0hjVGU0cGZSdDBIMldua1FPSkFuTkNsNTdTRS81K2hUcTlpY2luNEdF?=
- =?utf-8?B?SzZQajBvQWI5N1dmYW0rcldxU0hCL2pBTzdGYkFzblViUEJBOW1seFhHK0pG?=
- =?utf-8?B?ZjlDVWdDMS9veWJNcU15ZHNZSm9YeFpCT0JPZjVYeGZGTW1jSHBwbWR2WkxK?=
- =?utf-8?B?YkVQWk1xL25QcEpja0RVckZ4Tm9SUExsamN3cVk2dDNSOEd2K1FUQUVzaGZO?=
- =?utf-8?B?TUYxWVJjdXdIdHltL2FCTElvaVFZNE9HbHpsb05xSXI4ZEoyNU5tei9ha0dD?=
- =?utf-8?B?VzZwc3NLQWhCbng3QTltNDd3Qnh5YWsxbnNRekp0QjZRSFhFM2VYTDhyck0w?=
- =?utf-8?B?UzhndmN6ZU5oNytMUFZUVG50TEFtNGVYNG5DM1pDV1ZycG5XTFo5d0NFYkhq?=
- =?utf-8?B?cmVVK0lYQWNKZHZjc1VzMFVPQnNSM0VyOHR5Y2c3ZW1EZnZlZmVwQ1MzcXBa?=
- =?utf-8?B?alM5bG5aemFpU0dUWk9QVXZBYW1hRGpKTU1lbEtJbUJTbTVEanJKUGRUeU13?=
- =?utf-8?B?WUhKSjM5eW0wWjJCK2l3ZmlrOUNnWHZ5Vjl4bEl1WUFZQ3VMb0dCNGtwamxP?=
- =?utf-8?B?L2x5U0RXVkpkZEFPTk9wOEtRcjdPOFdycjA5SkJLc2ZGSTNaL3BGMDRJdlls?=
- =?utf-8?B?aGc9PQ==?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 72acb781-ee57-4f7f-4a1d-08dafa1c8949
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jan 2023 12:56:09.6906
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9TF//FLG0ERJH7cYF9/kq2eMg12PVyceIyNObRX9IhNnZcpMHgBUkgAWeS6fbQ58jqtDda4w/4SpmJMToVwxCQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB7585
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Tree: cip-gitlab
+X-Kernelci-Branch: ci/pavel/linux-test
+X-Kernelci-Kernel: v5.10.162-929-gae713b3c4626e
+X-Kernelci-Report-Type: build
+Subject: cip-gitlab/ci/pavel/linux-test build: 192 builds: 112 failed,
+ 80 passed, 113 errors, 9 warnings (v5.10.162-929-gae713b3c4626e)
+To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
+From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 19 Jan 2023 12:56:21 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10440
+ <cip-dev@lists.cip-project.org>; Thu, 19 Jan 2023 13:07:11 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10441
 
-On 18.01.23 10:04, Felix Moessbauer wrote:
-> This patch converts the abrootfs partition uuids to a template and adds
-> two global variables to control their values. By that, the partition
-> uuids used in the WIC files can be kept in sync with the uuids used in
-> the sw-description file. This helps to avoid issues where the part uuids
-> are inconsistent and hence the update using swupdate fails.
-> 
-> Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
-> ---
-> Changes since v2:
-> 
-> - rebased against current next
-> 
-> Changes since v1:
-> 
-> - fix: add ABROOTFS_PART_UUID_(A|B) to template vars for sw-description
-> - removed initialisation of variables from swupdate.inc file, as the
->   check will catch it anyways
-> - simplified check for uuid values
-> 
-> I decided against the recommendation to move the UUID out of the swupdate.yml
-> kas file, because this would introduce yet another pattern how to handle things.
-> Downstream users are free to use a different method, but als long as CIP-Core
-> handles all globals via KAS, we should not diverge.
-> 
-> Best regards,
-> Felix
-> 
->  kas/opt/swupdate.yml                          | 2 ++
->  recipes-core/images/files/sw-description.tmpl | 2 +-
->  recipes-core/images/swupdate.inc              | 8 +++++++-
->  wic/bbb-efibootguard.wks.in                   | 4 ++--
->  wic/qemu-amd64-efibootguard-secureboot.wks.in | 4 ++--
->  wic/qemu-arm64-efibootguard-secureboot.wks.in | 4 ++--
->  wic/qemu-arm64-efibootguard.wks.in            | 4 ++--
->  wic/x86-efibootguard.wks.in                   | 4 ++--
->  8 files changed, 20 insertions(+), 12 deletions(-)
-> 
-> diff --git a/kas/opt/swupdate.yml b/kas/opt/swupdate.yml
-> index f0d3f1b..60a4aec 100644
-> --- a/kas/opt/swupdate.yml
-> +++ b/kas/opt/swupdate.yml
-> @@ -25,3 +25,5 @@ local_conf_header:
->      WKS_FILE ?= "${MACHINE}-${SWUPDATE_BOOTLOADER}.wks.in"
->      INITRAMFS_INSTALL_append = " initramfs-squashfs-hook"
->      WIC_DEPLOY_PARTITIONS = "1"
-> +    ABROOTFS_PART_UUID_A ?= "fedcba98-7654-3210-cafe-5e0710000001"
-> +    ABROOTFS_PART_UUID_B ?= "fedcba98-7654-3210-cafe-5e0710000002"
-> diff --git a/recipes-core/images/files/sw-description.tmpl b/recipes-core/images/files/sw-description.tmpl
-> index f7105c7..05125e6 100644
-> --- a/recipes-core/images/files/sw-description.tmpl
-> +++ b/recipes-core/images/files/sw-description.tmpl
-> @@ -14,7 +14,7 @@ software =
->      name = "cip software update";
->      images: ({
->              filename = "${ROOTFS_PARTITION_NAME}";
-> -            device = "C:BOOT0:linux.efi->fedcba98-7654-3210-cafe-5e0710000001,C:BOOT1:linux.efi->fedcba98-7654-3210-cafe-5e0710000002";
-> +            device = "C:BOOT0:linux.efi->${ABROOTFS_PART_UUID_A},C:BOOT1:linux.efi->${ABROOTFS_PART_UUID_B}";
->              type = "roundrobin";
->              compressed = "zlib";
->              filesystem = "ext4";
-> diff --git a/recipes-core/images/swupdate.inc b/recipes-core/images/swupdate.inc
-> index 0ba3a0e..9b2aedc 100644
-> --- a/recipes-core/images/swupdate.inc
-> +++ b/recipes-core/images/swupdate.inc
-> @@ -26,6 +26,12 @@ TEMPLATE_FILES += "sw-description.tmpl"
->  do_transform_template[vardeps] += "TARGET_IMAGE_UUID"
->  addtask do_transform_template before do_swupdate_binary after do_generate_image_uuid
->  
-> -TEMPLATE_VARS += "ROOTFS_PARTITION_NAME TARGET_IMAGE_UUID"
-> +TEMPLATE_VARS += "ROOTFS_PARTITION_NAME TARGET_IMAGE_UUID ABROOTFS_PART_UUID_A ABROOTFS_PART_UUID_B"
->  
->  SWU_ADDITIONAL_FILES += "linux.efi ${ROOTFS_PARTITION_NAME}"
-> +
-> +python() {
-> +    for u in ['A', 'B']:
-> +        if not d.getVar('ABROOTFS_PART_UUID_' + u):
-> +            bb.fatal('ABROOTFS_PART_UUID_' + u + ' not set')
-> +}
-> diff --git a/wic/bbb-efibootguard.wks.in b/wic/bbb-efibootguard.wks.in
-> index 8a8de50..bb893d4 100644
-> --- a/wic/bbb-efibootguard.wks.in
-> +++ b/wic/bbb-efibootguard.wks.in
-> @@ -11,8 +11,8 @@ part --source rawcopy --sourceparams "file=/usr/lib/u-boot/bbb/u-boot.img" --no-
->  
->  include ebg-sysparts.inc
->  
-> -part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
-> -part --source empty --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
-> +part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}"
-> +part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}"
->  
->  # home and var are extra partitions
->  part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G
-> diff --git a/wic/qemu-amd64-efibootguard-secureboot.wks.in b/wic/qemu-amd64-efibootguard-secureboot.wks.in
-> index ba7846c..5c41116 100644
-> --- a/wic/qemu-amd64-efibootguard-secureboot.wks.in
-> +++ b/wic/qemu-amd64-efibootguard-secureboot.wks.in
-> @@ -1,7 +1,7 @@
->  include ebg-signed-sysparts.inc
->  
-> -part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
-> -part --source empty --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
-> +part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}"
-> +part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}"
->  
->  # home and var are extra partitions
->  part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024 --size 1G
-> diff --git a/wic/qemu-arm64-efibootguard-secureboot.wks.in b/wic/qemu-arm64-efibootguard-secureboot.wks.in
-> index 80a7803..a58928a 100644
-> --- a/wic/qemu-arm64-efibootguard-secureboot.wks.in
-> +++ b/wic/qemu-arm64-efibootguard-secureboot.wks.in
-> @@ -1,7 +1,7 @@
->  include ebg-signed-sysparts.inc
->  
-> -part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
-> -part --source empty --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
-> +part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}"
-> +part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}"
->  
->  # home and var are extra partitions
->  part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024 --size 1G
-> diff --git a/wic/qemu-arm64-efibootguard.wks.in b/wic/qemu-arm64-efibootguard.wks.in
-> index 53ab568..bcd736e 100644
-> --- a/wic/qemu-arm64-efibootguard.wks.in
-> +++ b/wic/qemu-arm64-efibootguard.wks.in
-> @@ -3,8 +3,8 @@
->  
->  include ebg-sysparts.inc
->  
-> -part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
-> -part --source empty --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
-> +part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}"
-> +part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}"
->  
->  # home and var are extra partitions
->  part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G
-> diff --git a/wic/x86-efibootguard.wks.in b/wic/x86-efibootguard.wks.in
-> index 38f7cce..683d7a8 100644
-> --- a/wic/x86-efibootguard.wks.in
-> +++ b/wic/x86-efibootguard.wks.in
-> @@ -3,8 +3,8 @@
->  
->  include ebg-sysparts.inc
->  
-> -part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000001"
-> -part --source empty --align 1024 --fixed-size 1G --uuid "fedcba98-7654-3210-cafe-5e0710000002"
-> +part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}"
-> +part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}"
->  
->  # home and var are extra partitions
->  part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home1 --align 1024  --size 1G
+cip-gitlab/ci/pavel/linux-test build: 192 builds: 112 failed, 80 passed, 11=
+3 errors, 9 warnings (v5.10.162-929-gae713b3c4626e)
 
-Thanks, applied.
+Full Build Summary: https://kernelci.org/build/cip-gitlab/branch/ci%2Fpavel=
+%2Flinux-test/kernel/v5.10.162-929-gae713b3c4626e/
 
-Jan
+Tree: cip-gitlab
+Branch: ci/pavel/linux-test
+Git Describe: v5.10.162-929-gae713b3c4626e
+Git Commit: ae713b3c4626e7f02c44b3495f9b37717dd93ef0
+Git URL: https://gitlab.com/cip-project/cip-kernel/linux-cip.git
+Built: 7 unique architectures
 
--- 
-Siemens AG, Technology
-Competence Center Embedded Linux
+Build Failures Detected:
 
+arm64:
+    allnoconfig: (gcc-10) FAIL
+    defconfig: (gcc-10) FAIL
+    defconfig+arm64-chromebook: (gcc-10) FAIL
+    tinyconfig: (gcc-10) FAIL
+
+arm:
+    allnoconfig: (gcc-10) FAIL
+    am200epdkit_defconfig: (gcc-10) FAIL
+    aspeed_g4_defconfig: (gcc-10) FAIL
+    aspeed_g5_defconfig: (gcc-10) FAIL
+    assabet_defconfig: (gcc-10) FAIL
+    at91_dt_defconfig: (gcc-10) FAIL
+    axm55xx_defconfig: (gcc-10) FAIL
+    badge4_defconfig: (gcc-10) FAIL
+    bcm2835_defconfig: (gcc-10) FAIL
+    cerfcube_defconfig: (gcc-10) FAIL
+    clps711x_defconfig: (gcc-10) FAIL
+    cm_x300_defconfig: (gcc-10) FAIL
+    cns3420vb_defconfig: (gcc-10) FAIL
+    colibri_pxa270_defconfig: (gcc-10) FAIL
+    colibri_pxa300_defconfig: (gcc-10) FAIL
+    collie_defconfig: (gcc-10) FAIL
+    corgi_defconfig: (gcc-10) FAIL
+    davinci_all_defconfig: (gcc-10) FAIL
+    dove_defconfig: (gcc-10) FAIL
+    ebsa110_defconfig: (gcc-10) FAIL
+    efm32_defconfig: (gcc-10) FAIL
+    ep93xx_defconfig: (gcc-10) FAIL
+    eseries_pxa_defconfig: (gcc-10) FAIL
+    exynos_defconfig: (gcc-10) FAIL
+    ezx_defconfig: (gcc-10) FAIL
+    footbridge_defconfig: (gcc-10) FAIL
+    gemini_defconfig: (gcc-10) FAIL
+    h3600_defconfig: (gcc-10) FAIL
+    h5000_defconfig: (gcc-10) FAIL
+    hackkit_defconfig: (gcc-10) FAIL
+    hisi_defconfig: (gcc-10) FAIL
+    imote2_defconfig: (gcc-10) FAIL
+    imx_v4_v5_defconfig: (gcc-10) FAIL
+    imx_v6_v7_defconfig: (gcc-10) FAIL
+    integrator_defconfig: (gcc-10) FAIL
+    iop32x_defconfig: (gcc-10) FAIL
+    ixp4xx_defconfig: (gcc-10) FAIL
+    jornada720_defconfig: (gcc-10) FAIL
+    keystone_defconfig: (gcc-10) FAIL
+    lart_defconfig: (gcc-10) FAIL
+    lpc18xx_defconfig: (gcc-10) FAIL
+    lpc32xx_defconfig: (gcc-10) FAIL
+    lpd270_defconfig: (gcc-10) FAIL
+    lubbock_defconfig: (gcc-10) FAIL
+    magician_defconfig: (gcc-10) FAIL
+    mainstone_defconfig: (gcc-10) FAIL
+    milbeaut_m10v_defconfig: (gcc-10) FAIL
+    mini2440_defconfig: (gcc-10) FAIL
+    mmp2_defconfig: (gcc-10) FAIL
+    moxart_defconfig: (gcc-10) FAIL
+    mps2_defconfig: (gcc-10) FAIL
+    multi_v4t_defconfig: (gcc-10) FAIL
+    multi_v5_defconfig: (gcc-10) FAIL
+    multi_v7_defconfig: (gcc-10) FAIL
+    mv78xx0_defconfig: (gcc-10) FAIL
+    mvebu_v5_defconfig: (gcc-10) FAIL
+    mvebu_v7_defconfig: (gcc-10) FAIL
+    mxs_defconfig: (gcc-10) FAIL
+    neponset_defconfig: (gcc-10) FAIL
+    netwinder_defconfig: (gcc-10) FAIL
+    nhk8815_defconfig: (gcc-10) FAIL
+    omap1_defconfig: (gcc-10) FAIL
+    omap2plus_defconfig: (gcc-10) FAIL
+    orion5x_defconfig: (gcc-10) FAIL
+    oxnas_v6_defconfig: (gcc-10) FAIL
+    palmz72_defconfig: (gcc-10) FAIL
+    pcm027_defconfig: (gcc-10) FAIL
+    pleb_defconfig: (gcc-10) FAIL
+    prima2_defconfig: (gcc-10) FAIL
+    pxa168_defconfig: (gcc-10) FAIL
+    pxa255-idp_defconfig: (gcc-10) FAIL
+    pxa3xx_defconfig: (gcc-10) FAIL
+    pxa910_defconfig: (gcc-10) FAIL
+    pxa_defconfig: (gcc-10) FAIL
+    qcom_defconfig: (gcc-10) FAIL
+    realview_defconfig: (gcc-10) FAIL
+    rpc_defconfig: (gcc-10) FAIL
+    s3c2410_defconfig: (gcc-10) FAIL
+    s3c6400_defconfig: (gcc-10) FAIL
+    s5pv210_defconfig: (gcc-10) FAIL
+    sama5_defconfig: (gcc-10) FAIL
+    shannon_defconfig: (gcc-10) FAIL
+    shmobile_defconfig: (gcc-10) FAIL
+    simpad_defconfig: (gcc-10) FAIL
+    socfpga_defconfig: (gcc-10) FAIL
+    spear13xx_defconfig: (gcc-10) FAIL
+    spear3xx_defconfig: (gcc-10) FAIL
+    spear6xx_defconfig: (gcc-10) FAIL
+    spitz_defconfig: (gcc-10) FAIL
+    stm32_defconfig: (gcc-10) FAIL
+    sunxi_defconfig: (gcc-10) FAIL
+    tango4_defconfig: (gcc-10) FAIL
+    tct_hammer_defconfig: (gcc-10) FAIL
+    tegra_defconfig: (gcc-10) FAIL
+    tinyconfig: (gcc-10) FAIL
+    trizeps4_defconfig: (gcc-10) FAIL
+    u300_defconfig: (gcc-10) FAIL
+    u8500_defconfig: (gcc-10) FAIL
+    versatile_defconfig: (gcc-10) FAIL
+    vexpress_defconfig: (gcc-10) FAIL
+    vf610m4_defconfig: (gcc-10) FAIL
+    viper_defconfig: (gcc-10) FAIL
+    vt8500_v6_v7_defconfig: (gcc-10) FAIL
+    xcep_defconfig: (gcc-10) FAIL
+    zeus_defconfig: (gcc-10) FAIL
+    zx_defconfig: (gcc-10) FAIL
+
+mips:
+    ip27_defconfig: (gcc-10) FAIL
+    ip28_defconfig: (gcc-10) FAIL
+
+Errors and Warnings Detected:
+
+arc:
+
+arm64:
+    allnoconfig (gcc-10): 1 error
+    defconfig (gcc-10): 1 error
+    defconfig+arm64-chromebook (gcc-10): 1 error
+    tinyconfig (gcc-10): 1 error
+
+arm:
+    allnoconfig (gcc-10): 1 error
+    am200epdkit_defconfig (gcc-10): 1 error
+    aspeed_g4_defconfig (gcc-10): 1 error
+    aspeed_g5_defconfig (gcc-10): 1 error
+    assabet_defconfig (gcc-10): 1 error
+    at91_dt_defconfig (gcc-10): 1 error
+    axm55xx_defconfig (gcc-10): 1 error
+    badge4_defconfig (gcc-10): 1 error
+    bcm2835_defconfig (gcc-10): 1 error
+    cerfcube_defconfig (gcc-10): 1 error
+    clps711x_defconfig (gcc-10): 1 error
+    cm_x300_defconfig (gcc-10): 1 error
+    cns3420vb_defconfig (gcc-10): 1 error
+    colibri_pxa270_defconfig (gcc-10): 1 error
+    colibri_pxa300_defconfig (gcc-10): 1 error
+    collie_defconfig (gcc-10): 1 error
+    corgi_defconfig (gcc-10): 1 error
+    davinci_all_defconfig (gcc-10): 1 error
+    dove_defconfig (gcc-10): 1 error
+    ebsa110_defconfig (gcc-10): 1 error
+    efm32_defconfig (gcc-10): 1 error
+    ep93xx_defconfig (gcc-10): 1 error
+    eseries_pxa_defconfig (gcc-10): 1 error
+    exynos_defconfig (gcc-10): 1 error
+    ezx_defconfig (gcc-10): 1 error
+    footbridge_defconfig (gcc-10): 1 error
+    gemini_defconfig (gcc-10): 1 error
+    h3600_defconfig (gcc-10): 1 error
+    h5000_defconfig (gcc-10): 1 error
+    hackkit_defconfig (gcc-10): 1 error
+    hisi_defconfig (gcc-10): 1 error
+    imote2_defconfig (gcc-10): 1 error
+    imx_v4_v5_defconfig (gcc-10): 1 error
+    imx_v6_v7_defconfig (gcc-10): 1 error
+    integrator_defconfig (gcc-10): 1 error
+    iop32x_defconfig (gcc-10): 1 error
+    ixp4xx_defconfig (gcc-10): 1 error
+    jornada720_defconfig (gcc-10): 1 error
+    keystone_defconfig (gcc-10): 1 error
+    lart_defconfig (gcc-10): 1 error
+    lpc18xx_defconfig (gcc-10): 1 error
+    lpc32xx_defconfig (gcc-10): 1 error
+    lpd270_defconfig (gcc-10): 1 error
+    lubbock_defconfig (gcc-10): 1 error
+    magician_defconfig (gcc-10): 1 error
+    mainstone_defconfig (gcc-10): 1 error
+    milbeaut_m10v_defconfig (gcc-10): 1 error
+    mini2440_defconfig (gcc-10): 1 error
+    mmp2_defconfig (gcc-10): 1 error
+    moxart_defconfig (gcc-10): 1 error
+    mps2_defconfig (gcc-10): 1 error
+    multi_v4t_defconfig (gcc-10): 1 error
+    multi_v5_defconfig (gcc-10): 1 error
+    multi_v7_defconfig (gcc-10): 1 error
+    mv78xx0_defconfig (gcc-10): 1 error
+    mvebu_v5_defconfig (gcc-10): 1 error
+    mvebu_v7_defconfig (gcc-10): 1 error
+    mxs_defconfig (gcc-10): 1 error
+    neponset_defconfig (gcc-10): 1 error
+    netwinder_defconfig (gcc-10): 1 error
+    nhk8815_defconfig (gcc-10): 1 error
+    omap1_defconfig (gcc-10): 1 error
+    omap2plus_defconfig (gcc-10): 1 error
+    orion5x_defconfig (gcc-10): 1 error
+    oxnas_v6_defconfig (gcc-10): 1 error
+    palmz72_defconfig (gcc-10): 1 error
+    pcm027_defconfig (gcc-10): 1 error
+    pleb_defconfig (gcc-10): 1 error
+    prima2_defconfig (gcc-10): 1 error
+    pxa168_defconfig (gcc-10): 1 error
+    pxa255-idp_defconfig (gcc-10): 1 error
+    pxa3xx_defconfig (gcc-10): 1 error
+    pxa910_defconfig (gcc-10): 1 error
+    pxa_defconfig (gcc-10): 1 error
+    qcom_defconfig (gcc-10): 1 error
+    realview_defconfig (gcc-10): 1 error
+    rpc_defconfig (gcc-10): 4 errors
+    s3c2410_defconfig (gcc-10): 1 error
+    s3c6400_defconfig (gcc-10): 1 error
+    s5pv210_defconfig (gcc-10): 1 error
+    sama5_defconfig (gcc-10): 1 error
+    shannon_defconfig (gcc-10): 1 error
+    shmobile_defconfig (gcc-10): 1 error
+    simpad_defconfig (gcc-10): 1 error
+    socfpga_defconfig (gcc-10): 1 error
+    spear13xx_defconfig (gcc-10): 1 error
+    spear3xx_defconfig (gcc-10): 1 error
+    spear6xx_defconfig (gcc-10): 1 error
+    spitz_defconfig (gcc-10): 1 error
+    stm32_defconfig (gcc-10): 1 error
+    sunxi_defconfig (gcc-10): 1 error
+    tango4_defconfig (gcc-10): 1 error
+    tct_hammer_defconfig (gcc-10): 1 error
+    tegra_defconfig (gcc-10): 1 error
+    tinyconfig (gcc-10): 1 error
+    trizeps4_defconfig (gcc-10): 1 error
+    u300_defconfig (gcc-10): 1 error
+    u8500_defconfig (gcc-10): 1 error
+    versatile_defconfig (gcc-10): 1 error
+    vexpress_defconfig (gcc-10): 1 error
+    vf610m4_defconfig (gcc-10): 1 error
+    viper_defconfig (gcc-10): 1 error
+    vt8500_v6_v7_defconfig (gcc-10): 1 error
+    xcep_defconfig (gcc-10): 1 error
+    zeus_defconfig (gcc-10): 1 error
+    zx_defconfig (gcc-10): 1 error
+
+i386:
+
+mips:
+    32r2el_defconfig (gcc-10): 1 warning
+    decstation_64_defconfig (gcc-10): 1 warning
+    decstation_defconfig (gcc-10): 1 warning
+    decstation_r4k_defconfig (gcc-10): 1 warning
+    rm200_defconfig (gcc-10): 1 warning
+
+riscv:
+    rv32_defconfig (gcc-10): 4 warnings
+
+x86_64:
+
+Errors summary:
+
+    105  include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SI=
+GNAL=E2=80=99 undeclared (first use in this function)
+    4    arch/arm64/kernel/entry.S:763: Error: immediate out of range at op=
+erand 3 -- `and x2,x19,#((1<<1)|(1<<0)|(1<<2)|(1<<3)|(1<<4)|(1<<5)|(1<<6)|(=
+1<<13)|(1<<7))'
+    2    arm-linux-gnueabihf-gcc: error: unrecognized -march target: armv3m
+    2    arm-linux-gnueabihf-gcc: error: missing argument to =E2=80=98-marc=
+h=3D=E2=80=99
+
+Warnings summary:
+
+    3    kernel/rcu/tasks.h:710:13: warning: =E2=80=98show_rcu_tasks_rude_g=
+p_kthread=E2=80=99 defined but not used [-Wunused-function]
+    2    <stdin>:830:2: warning: #warning syscall fstat64 not implemented [=
+-Wcpp]
+    2    <stdin>:1127:2: warning: #warning syscall fstatat64 not implemente=
+d [-Wcpp]
+    1    drivers/block/paride/bpck.c:32: warning: "PC" redefined
+    1    WARNING: modpost: Symbol info of vmlinux is missing. Unresolved sy=
+mbol check will be entirely skipped.
+
+Section mismatches summary:
+
+    1    WARNING: modpost: vmlinux.o(___ksymtab+prom_init_numa_memory+0x0):=
+ Section mismatch in reference from the variable __ksymtab_prom_init_numa_m=
+emory to the function .init.text:prom_init_numa_memory()
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+
+Detailed per-defconfig build reports:
+
+---------------------------------------------------------------------------=
+-----
+32r2el_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
+ion mismatches
+
+Warnings:
+    WARNING: modpost: Symbol info of vmlinux is missing. Unresolved symbol =
+check will be entirely skipped.
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
+mismatches
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (arm64, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 section =
+mismatches
+
+Errors:
+    arch/arm64/kernel/entry.S:763: Error: immediate out of range at operand=
+ 3 -- `and x2,x19,#((1<<1)|(1<<0)|(1<<2)|(1<<3)|(1<<4)|(1<<5)|(1<<6)|(1<<13=
+)|(1<<7))'
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 section mi=
+smatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+am200epdkit_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 =
+section mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+ar7_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+aspeed_g4_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 se=
+ction mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+aspeed_g5_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 se=
+ction mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+assabet_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sect=
+ion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+at91_dt_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sect=
+ion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+ath25_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+ath79_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+axm55xx_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sect=
+ion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+axs103_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+axs103_smp_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+badge4_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 secti=
+on mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+bcm2835_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sect=
+ion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+bcm47xx_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+bcm63xx_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+bigsur_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+bmips_be_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+bmips_stb_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+capcella_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+cavium_octeon_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings=
+, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+cerfcube_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sec=
+tion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+ci20_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+clps711x_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sec=
+tion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+cm_x300_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sect=
+ion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+cns3420vb_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 se=
+ction mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+cobalt_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+colibri_pxa270_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings,=
+ 0 section mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+colibri_pxa300_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings,=
+ 0 section mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+collie_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 secti=
+on mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+corgi_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sectio=
+n mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+cu1000-neo_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
+ section mismatches
+
+---------------------------------------------------------------------------=
+-----
+cu1830-neo_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
+ section mismatches
+
+---------------------------------------------------------------------------=
+-----
+davinci_all_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 =
+section mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+db1xxx_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+decstation_64_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning,=
+ 0 section mismatches
+
+Warnings:
+    kernel/rcu/tasks.h:710:13: warning: =E2=80=98show_rcu_tasks_rude_gp_kth=
+read=E2=80=99 defined but not used [-Wunused-function]
+
+---------------------------------------------------------------------------=
+-----
+decstation_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 =
+section mismatches
+
+Warnings:
+    kernel/rcu/tasks.h:710:13: warning: =E2=80=98show_rcu_tasks_rude_gp_kth=
+read=E2=80=99 defined but not used [-Wunused-function]
+
+---------------------------------------------------------------------------=
+-----
+decstation_r4k_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning=
+, 0 section mismatches
+
+Warnings:
+    kernel/rcu/tasks.h:710:13: warning: =E2=80=98show_rcu_tasks_rude_gp_kth=
+read=E2=80=99 defined but not used [-Wunused-function]
+
+---------------------------------------------------------------------------=
+-----
+defconfig (arm64, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 section mi=
+smatches
+
+Errors:
+    arch/arm64/kernel/entry.S:763: Error: immediate out of range at operand=
+ 3 -- `and x2,x19,#((1<<1)|(1<<0)|(1<<2)|(1<<3)|(1<<4)|(1<<5)|(1<<6)|(1<<13=
+)|(1<<7))'
+
+---------------------------------------------------------------------------=
+-----
+defconfig (riscv, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig+arm64-chromebook (arm64, gcc-10) =E2=80=94 FAIL, 1 error, 0 warni=
+ngs, 0 section mismatches
+
+Errors:
+    arch/arm64/kernel/entry.S:763: Error: immediate out of range at operand=
+ 3 -- `and x2,x19,#((1<<1)|(1<<0)|(1<<2)|(1<<3)|(1<<4)|(1<<5)|(1<<6)|(1<<13=
+)|(1<<7))'
+
+---------------------------------------------------------------------------=
+-----
+dove_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 section=
+ mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+e55_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+ebsa110_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sect=
+ion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+efm32_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sectio=
+n mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+ep93xx_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 secti=
+on mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+eseries_pxa_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 =
+section mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+exynos_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 secti=
+on mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+ezx_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 section =
+mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+footbridge_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 s=
+ection mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+fuloong2e_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+gcw0_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+gemini_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 secti=
+on mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+gpr_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+h3600_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sectio=
+n mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+h5000_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sectio=
+n mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+hackkit_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sect=
+ion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+haps_hs_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+haps_hs_smp_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
+ section mismatches
+
+---------------------------------------------------------------------------=
+-----
+hisi_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 section=
+ mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+hsdk_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+i386_defconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+imote2_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 secti=
+on mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+imx_v4_v5_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 se=
+ction mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+imx_v6_v7_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 se=
+ction mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+integrator_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 s=
+ection mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+iop32x_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 secti=
+on mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+ip22_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+ip27_defconfig (mips, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+ip28_defconfig (mips, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+ip32_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+ixp4xx_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 secti=
+on mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+jazz_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+jmr3927_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+jornada720_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 s=
+ection mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+keystone_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sec=
+tion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+lart_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 section=
+ mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+lemote2f_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+loongson1b_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
+ section mismatches
+
+---------------------------------------------------------------------------=
+-----
+loongson1c_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
+ section mismatches
+
+---------------------------------------------------------------------------=
+-----
+loongson3_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+Section mismatches:
+    WARNING: modpost: vmlinux.o(___ksymtab+prom_init_numa_memory+0x0): Sect=
+ion mismatch in reference from the variable __ksymtab_prom_init_numa_memory=
+ to the function .init.text:prom_init_numa_memory()
+
+---------------------------------------------------------------------------=
+-----
+lpc18xx_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sect=
+ion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+lpc32xx_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sect=
+ion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+lpd270_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 secti=
+on mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+lubbock_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sect=
+ion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+magician_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sec=
+tion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+mainstone_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 se=
+ction mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+malta_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+malta_kvm_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+malta_kvm_guest_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnin=
+gs, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+malta_qemu_32r6_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnin=
+gs, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+maltaaprp_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+maltasmvp_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+maltasmvp_eva_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings=
+, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+maltaup_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+maltaup_xpa_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, =
+0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+milbeaut_m10v_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, =
+0 section mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+mini2440_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sec=
+tion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+mmp2_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 section=
+ mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+moxart_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 secti=
+on mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+mpc30x_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+mps2_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 section=
+ mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+mtx1_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v4t_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 se=
+ction mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+multi_v5_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sec=
+tion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sec=
+tion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+mv78xx0_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sect=
+ion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+mvebu_v5_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sec=
+tion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+mvebu_v7_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sec=
+tion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+mxs_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 section =
+mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+neponset_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sec=
+tion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+netwinder_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 se=
+ction mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+nhk8815_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sect=
+ion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+nlm_xlp_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+nlm_xlr_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+nommu_k210_defconfig (riscv, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, =
+0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+nsimosci_hs_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
+ section mismatches
+
+---------------------------------------------------------------------------=
+-----
+nsimosci_hs_smp_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warning=
+s, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+omap1_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sectio=
+n mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+omap2plus_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 se=
+ction mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+omega2p_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+orion5x_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sect=
+ion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+oxnas_v6_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sec=
+tion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+palmz72_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sect=
+ion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+pcm027_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 secti=
+on mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+pic32mzda_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+pistachio_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+pleb_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 section=
+ mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+prima2_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 secti=
+on mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+pxa168_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 secti=
+on mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+pxa255-idp_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 s=
+ection mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+pxa3xx_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 secti=
+on mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+pxa910_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 secti=
+on mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+pxa_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 section =
+mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+qcom_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 section=
+ mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+qi_lb60_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+rb532_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+rbtx49xx_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+realview_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sec=
+tion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+rm200_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 secti=
+on mismatches
+
+Warnings:
+    drivers/block/paride/bpck.c:32: warning: "PC" redefined
+
+---------------------------------------------------------------------------=
+-----
+rpc_defconfig (arm, gcc-10) =E2=80=94 FAIL, 4 errors, 0 warnings, 0 section=
+ mismatches
+
+Errors:
+    arm-linux-gnueabihf-gcc: error: unrecognized -march target: armv3m
+    arm-linux-gnueabihf-gcc: error: missing argument to =E2=80=98-march=3D=
+=E2=80=99
+    arm-linux-gnueabihf-gcc: error: unrecognized -march target: armv3m
+    arm-linux-gnueabihf-gcc: error: missing argument to =E2=80=98-march=3D=
+=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+rs90_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+rt305x_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+rv32_defconfig (riscv, gcc-10) =E2=80=94 PASS, 0 errors, 4 warnings, 0 sect=
+ion mismatches
+
+Warnings:
+    <stdin>:830:2: warning: #warning syscall fstat64 not implemented [-Wcpp]
+    <stdin>:1127:2: warning: #warning syscall fstatat64 not implemented [-W=
+cpp]
+    <stdin>:830:2: warning: #warning syscall fstat64 not implemented [-Wcpp]
+    <stdin>:1127:2: warning: #warning syscall fstatat64 not implemented [-W=
+cpp]
+
+---------------------------------------------------------------------------=
+-----
+s3c2410_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sect=
+ion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+s3c6400_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sect=
+ion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+s5pv210_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sect=
+ion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+sama5_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sectio=
+n mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+sb1250_swarm_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings,=
+ 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+shannon_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sect=
+ion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+shmobile_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sec=
+tion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+simpad_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 secti=
+on mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+socfpga_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sect=
+ion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+spear13xx_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 se=
+ction mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+spear3xx_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sec=
+tion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+spear6xx_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sec=
+tion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+spitz_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sectio=
+n mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+stm32_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sectio=
+n mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+sunxi_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sectio=
+n mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+tango4_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 secti=
+on mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+tb0219_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+tb0226_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+tb0287_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+tct_hammer_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 s=
+ection mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+tegra_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sectio=
+n mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (arm64, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 section m=
+ismatches
+
+Errors:
+    arch/arm64/kernel/entry.S:763: Error: immediate out of range at operand=
+ 3 -- `and x2,x19,#((1<<1)|(1<<0)|(1<<2)|(1<<3)|(1<<4)|(1<<5)|(1<<6)|(1<<13=
+)|(1<<7))'
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 section mis=
+matches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
+smatches
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---------------------------------------------------------------------------=
+-----
+trizeps4_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sec=
+tion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+u300_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 section=
+ mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+u8500_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sectio=
+n mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+vdk_hs38_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+vdk_hs38_smp_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, =
+0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+versatile_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 se=
+ction mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+vexpress_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sec=
+tion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+vf610m4_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sect=
+ion mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+viper_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 sectio=
+n mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+vocore2_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+vt8500_v6_v7_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0=
+ section mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+workpad_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig+x86-chromebook (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, =
+0 warnings, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+xcep_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 section=
+ mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+zeus_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 section=
+ mismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---------------------------------------------------------------------------=
+-----
+zx_defconfig (arm, gcc-10) =E2=80=94 FAIL, 1 error, 0 warnings, 0 section m=
+ismatches
+
+Errors:
+    include/linux/sched/signal.h:369:39: error: =E2=80=98TIF_NOTIFY_SIGNAL=
+=E2=80=99 undeclared (first use in this function)
+
+---
+For more info write to <info@kernelci.org>
 
