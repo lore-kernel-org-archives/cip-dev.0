@@ -2,280 +2,272 @@ Return-Path: <ncaidin@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 211BEC00A5A
-	for <webhook@archiver.kernel.org>; Thu, 19 Jan 2023 12:48:41 +0000 (UTC)
-Received: from EUR01-DB5-obe.outbound.protection.outlook.com (EUR01-DB5-obe.outbound.protection.outlook.com [40.107.15.53])
- by mx.groups.io with SMTP id smtpd.web10.43162.1674128901915738665
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25FEBC00A5A
+	for <webhook@archiver.kernel.org>; Thu, 19 Jan 2023 12:49:11 +0000 (UTC)
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+ by mx.groups.io with SMTP id smtpd.web11.40633.1674114685325166958
  for <cip-dev@lists.cip-project.org>;
- Thu, 19 Jan 2023 03:48:22 -0800
+ Wed, 18 Jan 2023 23:51:25 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=fg/mqtnB;
- spf=pass (domain: siemens.com, ip: 40.107.15.53, mailfrom: felix.moessbauer@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MOvfrbIoVQstQzR19SMSE4+cezAUAGrcNuALdZmpeg2q5SkbUEg2YS/6hklhw5Y+VtbSjeRCC4fCOH3FcRFEr2HpkD4P1q4wrOpzXCLRnlsIzp2hbpAgkKAnKxIrYjHcpbDg5Z47dHYSSbEdirWOexxrgbCpS1gotbxDanYE/YMx1COuKqOQh1u0u2Oqd5OzsAAk+4Ya7Mft0ltPM6OO6jvwSRSBvUtGcKP90BBTJKzMthUVANH6gWwpjyunKLwi3tqbI23zbRYRNrWxOI0obxrfimeWjcHrG+ggR7HXH0OxoWJXs+EsHy8eTjMFQhLkiFQEsQz4NRwEz9wHxypfqw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qlVzZ8r0QNA6FQ5tGeM3worBRXiR25b4nliuZ5UVs4Y=;
- b=H8evQulVhCNnptnE4Az8tI/8D6BxIIGb5C0HVLxgkWXz64gCsgld1zqoJHU5J1p315wytpredCGcTgGok4pO/jxX1Y1OHcImM1wofeM0Xgxsaf88XXuUtnxO3lSCaVUsF+5h8/BvCa/1VM2h1Qx1t+2rZfIlq3UktT31b6joVn7vYcqzdsgG9ffOxw6cuFk18BDvQVpyLqlF+fPYMqmCz7B1BrPADjkHsuq1vqNQ56PZIt0VmCPLpRSKwSerZq0e5xaPrri4gYnIYiEhB4Qces6MypMb8UIaMKAlRD3VhHEIj1LMOitq69XW48eNYcYnpdxl89svfUSiZ3J4gVoAEA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.74) smtp.rcpttodomain=lists.cip-project.org
- smtp.mailfrom=siemens.com; dmarc=pass (p=none sp=none pct=100) action=none
- header.from=siemens.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qlVzZ8r0QNA6FQ5tGeM3worBRXiR25b4nliuZ5UVs4Y=;
- b=fg/mqtnBwyN+KepyWCidRrmVz2K1oYlpOF5vXuNV92cinnFPt/nwgG/e9ex/zWTSNdUUuLKICV3pBsUyi+8bVHwVdWe85FLdFKFxd3l69ITHcIUG4b1psk1Fr8dUd5okNhIlcZ54WIiVX6hqG+FWql7Ukb7PUsayonMuem86dcwkisA9qHpm0wYIXOGBrndpg9ALcu8ipRoZ3rCS6ZtfNJ4ee8mzRDs5Sn47TDS7CuXZqHAXwHNXuRdjIKUrdFuoZKhrvP+IN3ohC4qYFWZeTSIXWIqRLCume0evkcqwKp4QKlHuSJtcKS/3oUUs+17b50qv4Jg5Hgu0K+tsaRsDEA==
-Received: from DB8PR06CA0001.eurprd06.prod.outlook.com (2603:10a6:10:100::14)
- by AM7PR10MB3237.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:106::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.13; Thu, 19 Jan
- 2023 11:48:19 +0000
-Received: from DB5EUR01FT055.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:10:100::4) by DB8PR06CA0001.outlook.office365.com
- (2603:10a6:10:100::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.24 via Frontend
- Transport; Thu, 19 Jan 2023 11:48:19 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.74)
- smtp.mailfrom=siemens.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=siemens.com;
-Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.74 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.74; helo=hybrid.siemens.com; pr=C
-Received: from hybrid.siemens.com (194.138.21.74) by
- DB5EUR01FT055.mail.protection.outlook.com (10.152.5.250) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6002.13 via Frontend Transport; Thu, 19 Jan 2023 11:48:19 +0000
-Received: from CNPEK01M06MSX.ad011.siemens.net (139.24.237.223) by
- DEMCHDC8VQA.ad011.siemens.net (194.138.21.74) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1118.20; Thu, 19 Jan 2023 12:48:17 +0100
-Received: from CNPEK01M01MSX.ad011.siemens.net (139.24.237.214) by
- CNPEK01M06MSX.ad011.siemens.net (139.24.237.223) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.16; Thu, 19 Jan 2023 19:48:15 +0800
-Received: from CNPEK01M01MSX.ad011.siemens.net ([139.24.237.214]) by
- CNPEK01M01MSX.ad011.siemens.net ([139.24.237.214]) with mapi id
- 15.01.2507.016; Thu, 19 Jan 2023 19:48:15 +0800
-From: "Moessbauer, Felix" <felix.moessbauer@siemens.com>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	"Gylstorff, Quirin" <quirin.gylstorff@siemens.com>
-CC: "Bovensiepen, Daniel (bovi)" <daniel.bovensiepen@siemens.com>, "Kiszka,
- Jan" <jan.kiszka@siemens.com>, "Wu, Teng Fei" <tengfei.wu@siemens.com>
-Subject: Re: [isar-cip-core][PATCH v3 1/1] Use global variables for abrootfs partition uuids
-Thread-Topic: [isar-cip-core][PATCH v3 1/1] Use global variables for abrootfs
- partition uuids
-Thread-Index: AQHZKxvcoxpDEk9So02/yrSm3iPlZ66lGmmAgAABEoA=
-Date: Thu, 19 Jan 2023 11:48:15 +0000
-Message-ID: <d3694608cc39ca04bda8c769c8fd8c9e814a3141.camel@siemens.com>
-References: <20230118090400.1582100-1-felix.moessbauer@siemens.com>
-	 <10d25a0c-4468-62e1-b22c-d39f8ab16964@siemens.com>
-In-Reply-To: <10d25a0c-4468-62e1-b22c-d39f8ab16964@siemens.com>
-Accept-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.38.3-1+deb11u1 
-x-originating-ip: [139.24.247.49]
+ dkim=pass header.i=@gmail.com header.s=20210112 header.b=oQLUvWZn;
+ spf=pass (domain: gmail.com, ip: 209.85.221.54, mailfrom: error27@gmail.com)
+Received: by mail-wr1-f54.google.com with SMTP id d2so961657wrp.8
+        for <cip-dev@lists.cip-project.org>; Wed, 18 Jan 2023 23:51:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tQN5QWxxX4yeXQdGtOq7iT1lOF9ivUP2qDGMRmUaJF0=;
+        b=oQLUvWZnZryqSEUmf5lFcQYniEz+ph0XnhKvjjH2xu/cplNNTyFZTxoE2jSPJ/8AeQ
+         +k+wL1BpRK2EzMWc2LPPhzt29iXGkoJry/Gy+BymtYL2SrkX5anvrmhnbpmeQ6v4h8KX
+         5ev5k1W5xuBXkEL/LOZRjtW80yKEobsY0boJT70KvGN+3QYh6bY6BljORRmzAj6ih3ca
+         +11zaFm77sqAGAVMvCaIS/79heXTBDROzRtsSv0ov3r/Itf6lm3TQ5JbDtpNGY/pObVg
+         D7A6c8sq4qfTeWMYzlVp2TXewRmG4h9GvOXwxWS3yqeayDLRn4PghQttbQZDy7aN8c3R
+         4d3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tQN5QWxxX4yeXQdGtOq7iT1lOF9ivUP2qDGMRmUaJF0=;
+        b=N5mXJlH1ITHmd1lWQKdk8M3AH/BWK5bkg/fApzm03QPnrGZ9CUgOnQUQfDoo9VHJY8
+         XPamSZ1weTlCrwhjLI0Jr6xPi1L9jJWWb74dXL65P3+mJbIzPDq/yF6uj6Hczjt81Xoq
+         sVE2/MEzkm5XIpFXkAZjAt9R6BwcQIThHzcrrnMEeJkOupuAPg+AMHEGc0nYatzfmPR9
+         KPUKTemYhBXkMo1QZ1LtGE7rT+KxTAnKTFcoRzjjAs8QJufdxnv5wbpEQCuU54Psju4a
+         gJL3lPK9p8Am4Ee7bCr98wj3+zrDQ7xy+V3CsxwdnvWnmGexolyznh4jGQc2nV90MRKC
+         sEnA==
+X-Gm-Message-State: AFqh2kqTQx5KpOeniCMjNfFlZwHiiGoJE8o69LymKe6dJ3HyHIqWhmLU
+	GC4lnRz0b2ewGgS4aYFXvMM=
+X-Google-Smtp-Source: AMrXdXvkSI9/0Da6tjp124zwfK7gr3dT0OMaP7l2BvhrwiWfd+c+1yA02yAk7SVVxQcE2fhzQr3TPw==
+X-Received: by 2002:adf:fa88:0:b0:2bd:feb5:fb7b with SMTP id h8-20020adffa88000000b002bdfeb5fb7bmr7866955wrr.33.1674114683598;
+        Wed, 18 Jan 2023 23:51:23 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id j15-20020adfd20f000000b002be2a4b521fsm5155414wrh.45.2023.01.18.23.51.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Jan 2023 23:51:22 -0800 (PST)
+Date: Thu, 19 Jan 2023 10:51:18 +0300
+From: Dan Carpenter <error27@gmail.com>
+To: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Cc: cip-dev <cip-dev@lists.cip-project.org>,
+	Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Subject: Re: New CVE entries this week
+Message-ID: <Y8j2dnYDZnw+DcEw@kili>
+References: <CAODzB9oy2nCYdfa7vzG59nQ6owAKUv+jkqD4tpufn+k8_kjuaw@mail.gmail.com>
 MIME-Version: 1.0
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB5EUR01FT055:EE_|AM7PR10MB3237:EE_
-X-MS-Office365-Filtering-Correlation-Id: e27a84c8-d9aa-4e61-0ca4-08dafa130f28
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	IW/mBEkdeWOf+gQiJC+OhWGT3k+oxICnHauW/tSRDCInPw3+Uc4qNP4h9RQI9nE4PPsmD+VXj51v5nsGKr0d5wsFqffEJFCe6oWxP3/yjCpbQciYTH9scCB/vQA6nbpmsyO+4pFH0Q0928uT5UriqvbKE4mqMNwvVTMoqyKcPlEehHKFG2yqrk8f/ehL2eI44gZB6M+RgGjRrSWEEK1GLFFptdcGC7CEwUP8VloaV/7wZa6UYFEo/is56gP2+4AP10Wri8ySXkN3d6t1BRL7sSS2VWCAxGfDyYPUIj26cxfwGydp4eVxE2jSNOQxJSjSy82MVWcRDObKn8Z0XQqP/E6aGVWoUwrt9hKAqwK0LRNEk9lpydK9BUm9wAUyt/N0CfLuCQThj4/9DrqSv0VRMTo1pmlYej0LkxdoFyaCo8WfsleA00vQPcn2uPTy3TWRqQpWlyZ8NSesrrq1rWIiNvd6mFmK+34Cm8df9fB6agBUt6iUNIHNeC/U9p0qdSnYGL6Srv/yQVOyopbM15SzE/DOWlQihx0a4pdtSB/Hxw9sfRpVoPhtKSWqU24b1cVaO0PIv6k4/XHc6GR2S4r5odsS3cH2hPv1TdJMPzW7HFJrsiIXXsCcyuBy43DR4r1nBU1TdKJnZ52QsvvT1jJos2rYK5fiXFCgp4s5YrVahs2Mq0aXqZBMRlh09BU8WbbwgFTKBdU3dwf932itYf0a97OnczfIri3T6PJ3E+SUSg8=
-X-Forefront-Antispam-Report: 
-	CIP:194.138.21.74;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:hybrid.siemens.com;CAT:NONE;SFS:(13230022)(4636009)(346002)(136003)(376002)(39860400002)(396003)(451199015)(40470700004)(46966006)(36840700001)(40480700001)(54906003)(6636002)(82740400003)(110136005)(7596003)(82960400001)(7636003)(40460700003)(316002)(36756003)(36860700001)(5660300002)(86362001)(8936002)(8676002)(4326008)(2906002)(70206006)(41300700001)(82310400005)(70586007)(26005)(107886003)(2616005)(956004)(356005)(53546011)(186003)(83380400001)(478600001)(336012)(47076005)(403724002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jan 2023 11:48:19.1208
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e27a84c8-d9aa-4e61-0ca4-08dafa130f28
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.74];Helo=[hybrid.siemens.com]
-X-MS-Exchange-CrossTenant-AuthSource: 
-	DB5EUR01FT055.eop-EUR01.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR10MB3237
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3D47E5E657E93A468160A5EBA45A2694@siemens.com>
-Content-Transfer-Encoding: base64
+In-Reply-To: <CAODzB9oy2nCYdfa7vzG59nQ6owAKUv+jkqD4tpufn+k8_kjuaw@mail.gmail.com>
+Content-Type: multipart/mixed; boundary="3VO4Cpa8YkOiSFt1"
+Content-Disposition: inline
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 19 Jan 2023 12:48:41 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10437
+ <cip-dev@lists.cip-project.org>; Thu, 19 Jan 2023 12:49:11 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10438
 
-T24gVGh1LCAyMDIzLTAxLTE5IGF0IDEyOjQ0ICswMTAwLCBHeWxzdG9yZmYgUXVpcmluIHdyb3Rl
-Og0KPiANCj4gDQo+IE9uIDEvMTgvMjMgMTA6MDQsIEZlbGl4IE1vZXNzYmF1ZXIgd3JvdGU6DQo+
-ID4gVGhpcyBwYXRjaCBjb252ZXJ0cyB0aGUgYWJyb290ZnMgcGFydGl0aW9uIHV1aWRzIHRvIGEg
-dGVtcGxhdGUgYW5kDQo+ID4gYWRkcw0KPiA+IHR3byBnbG9iYWwgdmFyaWFibGVzIHRvIGNvbnRy
-b2wgdGhlaXIgdmFsdWVzLiBCeSB0aGF0LCB0aGUNCj4gPiBwYXJ0aXRpb24NCj4gPiB1dWlkcyB1
-c2VkIGluIHRoZSBXSUMgZmlsZXMgY2FuIGJlIGtlcHQgaW4gc3luYyB3aXRoIHRoZSB1dWlkcyB1
-c2VkDQo+ID4gaW4NCj4gPiB0aGUgc3ctZGVzY3JpcHRpb24gZmlsZS4gVGhpcyBoZWxwcyB0byBh
-dm9pZCBpc3N1ZXMgd2hlcmUgdGhlIHBhcnQNCj4gPiB1dWlkcw0KPiA+IGFyZSBpbmNvbnNpc3Rl
-bnQgYW5kIGhlbmNlIHRoZSB1cGRhdGUgdXNpbmcgc3d1cGRhdGUgZmFpbHMuDQo+ID4gDQo+ID4g
-U2lnbmVkLW9mZi1ieTogRmVsaXggTW9lc3NiYXVlciA8ZmVsaXgubW9lc3NiYXVlckBzaWVtZW5z
-LmNvbT4NCj4gPiAtLS0NCj4gPiBDaGFuZ2VzIHNpbmNlIHYyOg0KPiA+IA0KPiA+IC0gcmViYXNl
-ZCBhZ2FpbnN0IGN1cnJlbnQgbmV4dA0KPiA+IA0KPiA+IENoYW5nZXMgc2luY2UgdjE6DQo+ID4g
-DQo+ID4gLSBmaXg6IGFkZCBBQlJPT1RGU19QQVJUX1VVSURfKEF8QikgdG8gdGVtcGxhdGUgdmFy
-cyBmb3Igc3ctDQo+ID4gZGVzY3JpcHRpb24NCj4gPiAtIHJlbW92ZWQgaW5pdGlhbGlzYXRpb24g
-b2YgdmFyaWFibGVzIGZyb20gc3d1cGRhdGUuaW5jIGZpbGUsIGFzDQo+ID4gdGhlDQo+ID4gwqDC
-oCBjaGVjayB3aWxsIGNhdGNoIGl0IGFueXdheXMNCj4gPiAtIHNpbXBsaWZpZWQgY2hlY2sgZm9y
-IHV1aWQgdmFsdWVzDQo+ID4gDQo+ID4gSSBkZWNpZGVkIGFnYWluc3QgdGhlIHJlY29tbWVuZGF0
-aW9uIHRvIG1vdmUgdGhlIFVVSUQgb3V0IG9mIHRoZQ0KPiA+IHN3dXBkYXRlLnltbA0KPiA+IGth
-cyBmaWxlLCBiZWNhdXNlIHRoaXMgd291bGQgaW50cm9kdWNlIHlldCBhbm90aGVyIHBhdHRlcm4g
-aG93IHRvDQo+ID4gaGFuZGxlIHRoaW5ncy4NCj4gPiBEb3duc3RyZWFtIHVzZXJzIGFyZSBmcmVl
-IHRvIHVzZSBhIGRpZmZlcmVudCBtZXRob2QsIGJ1dCBhbHMgbG9uZw0KPiA+IGFzIENJUC1Db3Jl
-DQo+ID4gaGFuZGxlcyBhbGwgZ2xvYmFscyB2aWEgS0FTLCB3ZSBzaG91bGQgbm90IGRpdmVyZ2Uu
-DQo+ID4gDQo+ID4gQmVzdCByZWdhcmRzLA0KPiA+IEZlbGl4DQo+ID4gDQo+ID4gwqAga2FzL29w
-dC9zd3VwZGF0ZS55bWzCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoCB8IDIgKysNCj4gPiDCoCByZWNpcGVzLWNvcmUvaW1hZ2VzL2ZpbGVzL3N3LWRlc2Ny
-aXB0aW9uLnRtcGwgfCAyICstDQo+ID4gwqAgcmVjaXBlcy1jb3JlL2ltYWdlcy9zd3VwZGF0ZS5p
-bmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8IDggKysrKysrKy0NCj4gPiDCoCB3aWMvYmJi
-LWVmaWJvb3RndWFyZC53a3MuaW7CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
-fCA0ICsrLS0NCj4gPiDCoCB3aWMvcWVtdS1hbWQ2NC1lZmlib290Z3VhcmQtc2VjdXJlYm9vdC53
-a3MuaW4gfCA0ICsrLS0NCj4gPiDCoCB3aWMvcWVtdS1hcm02NC1lZmlib290Z3VhcmQtc2VjdXJl
-Ym9vdC53a3MuaW4gfCA0ICsrLS0NCj4gPiDCoCB3aWMvcWVtdS1hcm02NC1lZmlib290Z3VhcmQu
-d2tzLmluwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8IDQgKystLQ0KPiA+IMKgIHdpYy94ODYtZWZp
-Ym9vdGd1YXJkLndrcy5pbsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8IDQg
-KystLQ0KPiA+IMKgIDggZmlsZXMgY2hhbmdlZCwgMjAgaW5zZXJ0aW9ucygrKSwgMTIgZGVsZXRp
-b25zKC0pDQo+ID4gDQo+ID4gZGlmZiAtLWdpdCBhL2thcy9vcHQvc3d1cGRhdGUueW1sIGIva2Fz
-L29wdC9zd3VwZGF0ZS55bWwNCj4gPiBpbmRleCBmMGQzZjFiLi42MGE0YWVjIDEwMDY0NA0KPiA+
-IC0tLSBhL2thcy9vcHQvc3d1cGRhdGUueW1sDQo+ID4gKysrIGIva2FzL29wdC9zd3VwZGF0ZS55
-bWwNCj4gPiBAQCAtMjUsMyArMjUsNSBAQCBsb2NhbF9jb25mX2hlYWRlcjoNCj4gPiDCoMKgwqDC
-oMKgIFdLU19GSUxFID89ICIke01BQ0hJTkV9LSR7U1dVUERBVEVfQk9PVExPQURFUn0ud2tzLmlu
-Ig0KPiA+IMKgwqDCoMKgwqAgSU5JVFJBTUZTX0lOU1RBTExfYXBwZW5kID0gIiBpbml0cmFtZnMt
-c3F1YXNoZnMtaG9vayINCj4gPiDCoMKgwqDCoMKgIFdJQ19ERVBMT1lfUEFSVElUSU9OUyA9ICIx
-Ig0KPiA+ICvCoMKgwqAgQUJST09URlNfUEFSVF9VVUlEX0EgPz0gImZlZGNiYTk4LTc2NTQtMzIx
-MC1jYWZlLTVlMDcxMDAwMDAwMSINCj4gPiArwqDCoMKgIEFCUk9PVEZTX1BBUlRfVVVJRF9CID89
-ICJmZWRjYmE5OC03NjU0LTMyMTAtY2FmZS01ZTA3MTAwMDAwMDIiDQo+ID4gZGlmZiAtLWdpdCBh
-L3JlY2lwZXMtY29yZS9pbWFnZXMvZmlsZXMvc3ctZGVzY3JpcHRpb24udG1wbA0KPiA+IGIvcmVj
-aXBlcy1jb3JlL2ltYWdlcy9maWxlcy9zdy1kZXNjcmlwdGlvbi50bXBsDQo+ID4gaW5kZXggZjcx
-MDVjNy4uMDUxMjVlNiAxMDA2NDQNCj4gPiAtLS0gYS9yZWNpcGVzLWNvcmUvaW1hZ2VzL2ZpbGVz
-L3N3LWRlc2NyaXB0aW9uLnRtcGwNCj4gPiArKysgYi9yZWNpcGVzLWNvcmUvaW1hZ2VzL2ZpbGVz
-L3N3LWRlc2NyaXB0aW9uLnRtcGwNCj4gPiBAQCAtMTQsNyArMTQsNyBAQCBzb2Z0d2FyZSA9DQo+
-ID4gwqDCoMKgwqDCoCBuYW1lID0gImNpcCBzb2Z0d2FyZSB1cGRhdGUiOw0KPiA+IMKgwqDCoMKg
-wqAgaW1hZ2VzOiAoew0KPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGZpbGVuYW1lID0g
-IiR7Uk9PVEZTX1BBUlRJVElPTl9OQU1FfSI7DQo+ID4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
-ZGV2aWNlID0gIkM6Qk9PVDA6bGludXguZWZpLT5mZWRjYmE5OC03NjU0LTMyMTAtY2FmZS0NCj4g
-PiA1ZTA3MTAwMDAwMDEsQzpCT09UMTpsaW51eC5lZmktPmZlZGNiYTk4LTc2NTQtMzIxMC1jYWZl
-LQ0KPiA+IDVlMDcxMDAwMDAwMiI7DQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZGV2aWNl
-ID0gIkM6Qk9PVDA6bGludXguZWZpLQ0KPiA+ID4ke0FCUk9PVEZTX1BBUlRfVVVJRF9BfSxDOkJP
-T1QxOmxpbnV4LmVmaS0NCj4gPiA+JHtBQlJPT1RGU19QQVJUX1VVSURfQn0iOw0KPiA+IMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgIHR5cGUgPSAicm91bmRyb2JpbiI7DQo+ID4gwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqAgY29tcHJlc3NlZCA9ICJ6bGliIjsNCj4gPiDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoCBmaWxlc3lzdGVtID0gImV4dDQiOw0KPiA+IGRpZmYgLS1naXQgYS9yZWNp
-cGVzLWNvcmUvaW1hZ2VzL3N3dXBkYXRlLmluYyBiL3JlY2lwZXMtDQo+ID4gY29yZS9pbWFnZXMv
-c3d1cGRhdGUuaW5jDQo+ID4gaW5kZXggMGJhM2EwZS4uOWIyYWVkYyAxMDA2NDQNCj4gPiAtLS0g
-YS9yZWNpcGVzLWNvcmUvaW1hZ2VzL3N3dXBkYXRlLmluYw0KPiA+ICsrKyBiL3JlY2lwZXMtY29y
-ZS9pbWFnZXMvc3d1cGRhdGUuaW5jDQo+ID4gQEAgLTI2LDYgKzI2LDEyIEBAIFRFTVBMQVRFX0ZJ
-TEVTICs9ICJzdy1kZXNjcmlwdGlvbi50bXBsIg0KPiA+IMKgIGRvX3RyYW5zZm9ybV90ZW1wbGF0
-ZVt2YXJkZXBzXSArPSAiVEFSR0VUX0lNQUdFX1VVSUQiDQo+ID4gwqAgYWRkdGFzayBkb190cmFu
-c2Zvcm1fdGVtcGxhdGUgYmVmb3JlIGRvX3N3dXBkYXRlX2JpbmFyeSBhZnRlcg0KPiA+IGRvX2dl
-bmVyYXRlX2ltYWdlX3V1aWQNCj4gPiDCoCANCj4gPiAtVEVNUExBVEVfVkFSUyArPSAiUk9PVEZT
-X1BBUlRJVElPTl9OQU1FIFRBUkdFVF9JTUFHRV9VVUlEIg0KPiA+ICtURU1QTEFURV9WQVJTICs9
-ICJST09URlNfUEFSVElUSU9OX05BTUUgVEFSR0VUX0lNQUdFX1VVSUQNCj4gPiBBQlJPT1RGU19Q
-QVJUX1VVSURfQSBBQlJPT1RGU19QQVJUX1VVSURfQiINCj4gPiDCoCANCj4gPiDCoCBTV1VfQURE
-SVRJT05BTF9GSUxFUyArPSAibGludXguZWZpICR7Uk9PVEZTX1BBUlRJVElPTl9OQU1FfSINCj4g
-PiArDQo+ID4gK3B5dGhvbigpIHsNCj4gPiArwqDCoMKgIGZvciB1IGluIFsnQScsICdCJ106DQo+
-ID4gK8KgwqDCoMKgwqDCoMKgIGlmIG5vdCBkLmdldFZhcignQUJST09URlNfUEFSVF9VVUlEXycg
-KyB1KToNCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBiYi5mYXRhbCgnQUJST09URlNfUEFS
-VF9VVUlEXycgKyB1ICsgJyBub3Qgc2V0JykNCj4gPiArfQ0KPiA+IGRpZmYgLS1naXQgYS93aWMv
-YmJiLWVmaWJvb3RndWFyZC53a3MuaW4gYi93aWMvYmJiLQ0KPiA+IGVmaWJvb3RndWFyZC53a3Mu
-aW4NCj4gPiBpbmRleCA4YThkZTUwLi5iYjg5M2Q0IDEwMDY0NA0KPiA+IC0tLSBhL3dpYy9iYmIt
-ZWZpYm9vdGd1YXJkLndrcy5pbg0KPiA+ICsrKyBiL3dpYy9iYmItZWZpYm9vdGd1YXJkLndrcy5p
-bg0KPiA+IEBAIC0xMSw4ICsxMSw4IEBAIHBhcnQgLS1zb3VyY2UgcmF3Y29weSAtLXNvdXJjZXBh
-cmFtcw0KPiA+ICJmaWxlPS91c3IvbGliL3UtYm9vdC9iYmIvdS1ib290LmltZyIgLS1uby0NCj4g
-PiDCoCANCj4gPiDCoCBpbmNsdWRlIGViZy1zeXNwYXJ0cy5pbmMNCj4gPiDCoCANCj4gPiAtcGFy
-dCAtLXNvdXJjZSByYXdjb3B5IC0tc291cmNlcGFyYW1zDQo+ID4gImZpbGU9JHtJTUFHRV9GVUxM
-TkFNRX0uc3F1YXNoZnMiIC0tYWxpZ24gMTAyNCAtLWZpeGVkLXNpemUgMUcgLS0NCj4gPiB1dWlk
-ICJmZWRjYmE5OC03NjU0LTMyMTAtY2FmZS01ZTA3MTAwMDAwMDEiDQo+ID4gLXBhcnQgLS1zb3Vy
-Y2UgZW1wdHkgLS1hbGlnbiAxMDI0IC0tZml4ZWQtc2l6ZSAxRyAtLXV1aWQgImZlZGNiYTk4LQ0K
-PiA+IDc2NTQtMzIxMC1jYWZlLTVlMDcxMDAwMDAwMiINCj4gPiArcGFydCAtLXNvdXJjZSByYXdj
-b3B5IC0tc291cmNlcGFyYW1zDQo+ID4gImZpbGU9JHtJTUFHRV9GVUxMTkFNRX0uc3F1YXNoZnMi
-IC0tYWxpZ24gMTAyNCAtLWZpeGVkLXNpemUgMUcgLS0NCj4gPiB1dWlkICIke0FCUk9PVEZTX1BB
-UlRfVVVJRF9BfSINCj4gPiArcGFydCAtLXNvdXJjZSBlbXB0eSAtLWFsaWduIDEwMjQgLS1maXhl
-ZC1zaXplIDFHIC0tdXVpZA0KPiA+ICIke0FCUk9PVEZTX1BBUlRfVVVJRF9CfSINCj4gPiDCoCAN
-Cj4gPiDCoCAjIGhvbWUgYW5kIHZhciBhcmUgZXh0cmEgcGFydGl0aW9ucw0KPiA+IMKgIHBhcnQg
-L2hvbWUgLS1zb3VyY2Ugcm9vdGZzIC0tcm9vdGZzLWRpcj0ke0lNQUdFX1JPT1RGU30vaG9tZSAt
-LQ0KPiA+IGZzdHlwZT1leHQ0IC0tbGFiZWwgaG9tZSAtLWFsaWduIDEwMjTCoCAtLXNpemUgMUcN
-Cj4gPiBkaWZmIC0tZ2l0IGEvd2ljL3FlbXUtYW1kNjQtZWZpYm9vdGd1YXJkLXNlY3VyZWJvb3Qu
-d2tzLmluDQo+ID4gYi93aWMvcWVtdS1hbWQ2NC1lZmlib290Z3VhcmQtc2VjdXJlYm9vdC53a3Mu
-aW4NCj4gPiBpbmRleCBiYTc4NDZjLi41YzQxMTE2IDEwMDY0NA0KPiA+IC0tLSBhL3dpYy9xZW11
-LWFtZDY0LWVmaWJvb3RndWFyZC1zZWN1cmVib290Lndrcy5pbg0KPiA+ICsrKyBiL3dpYy9xZW11
-LWFtZDY0LWVmaWJvb3RndWFyZC1zZWN1cmVib290Lndrcy5pbg0KPiA+IEBAIC0xLDcgKzEsNyBA
-QA0KPiA+IMKgIGluY2x1ZGUgZWJnLXNpZ25lZC1zeXNwYXJ0cy5pbmMNCj4gPiDCoCANCj4gPiAt
-cGFydCAtLXNvdXJjZSByYXdjb3B5IC0tc291cmNlcGFyYW1zDQo+ID4gImZpbGU9JHtJTUFHRV9G
-VUxMTkFNRX0udmVyaXR5IiAtLWFsaWduIDEwMjQgLS1maXhlZC1zaXplIDFHIC0tdXVpZA0KPiA+
-ICJmZWRjYmE5OC03NjU0LTMyMTAtY2FmZS01ZTA3MTAwMDAwMDEiDQo+ID4gLXBhcnQgLS1zb3Vy
-Y2UgZW1wdHkgLS1hbGlnbiAxMDI0IC0tZml4ZWQtc2l6ZSAxRyAtLXV1aWQgImZlZGNiYTk4LQ0K
-PiA+IDc2NTQtMzIxMC1jYWZlLTVlMDcxMDAwMDAwMiINCj4gPiArcGFydCAtLXNvdXJjZSByYXdj
-b3B5IC0tc291cmNlcGFyYW1zDQo+ID4gImZpbGU9JHtJTUFHRV9GVUxMTkFNRX0udmVyaXR5IiAt
-LWFsaWduIDEwMjQgLS1maXhlZC1zaXplIDFHIC0tdXVpZA0KPiA+ICIke0FCUk9PVEZTX1BBUlRf
-VVVJRF9BfSINCj4gPiArcGFydCAtLXNvdXJjZSBlbXB0eSAtLWFsaWduIDEwMjQgLS1maXhlZC1z
-aXplIDFHIC0tdXVpZA0KPiA+ICIke0FCUk9PVEZTX1BBUlRfVVVJRF9CfSINCj4gPiDCoCANCj4g
-PiDCoCAjIGhvbWUgYW5kIHZhciBhcmUgZXh0cmEgcGFydGl0aW9ucw0KPiA+IMKgIHBhcnQgL2hv
-bWUgLS1zb3VyY2Ugcm9vdGZzIC0tcm9vdGZzLWRpcj0ke0lNQUdFX1JPT1RGU30vaG9tZSAtLQ0K
-PiA+IGZzdHlwZT1leHQ0IC0tbGFiZWwgaG9tZSAtLWFsaWduIDEwMjQgLS1zaXplIDFHDQo+ID4g
-ZGlmZiAtLWdpdCBhL3dpYy9xZW11LWFybTY0LWVmaWJvb3RndWFyZC1zZWN1cmVib290Lndrcy5p
-bg0KPiA+IGIvd2ljL3FlbXUtYXJtNjQtZWZpYm9vdGd1YXJkLXNlY3VyZWJvb3Qud2tzLmluDQo+
-ID4gaW5kZXggODBhNzgwMy4uYTU4OTI4YSAxMDA2NDQNCj4gPiAtLS0gYS93aWMvcWVtdS1hcm02
-NC1lZmlib290Z3VhcmQtc2VjdXJlYm9vdC53a3MuaW4NCj4gPiArKysgYi93aWMvcWVtdS1hcm02
-NC1lZmlib290Z3VhcmQtc2VjdXJlYm9vdC53a3MuaW4NCj4gPiBAQCAtMSw3ICsxLDcgQEANCj4g
-PiDCoCBpbmNsdWRlIGViZy1zaWduZWQtc3lzcGFydHMuaW5jDQo+ID4gwqAgDQo+ID4gLXBhcnQg
-LS1zb3VyY2UgcmF3Y29weSAtLXNvdXJjZXBhcmFtcw0KPiA+ICJmaWxlPSR7SU1BR0VfRlVMTE5B
-TUV9LnZlcml0eSIgLS1hbGlnbiAxMDI0IC0tZml4ZWQtc2l6ZSAxRyAtLXV1aWQNCj4gPiAiZmVk
-Y2JhOTgtNzY1NC0zMjEwLWNhZmUtNWUwNzEwMDAwMDAxIg0KPiA+IC1wYXJ0IC0tc291cmNlIGVt
-cHR5IC0tYWxpZ24gMTAyNCAtLWZpeGVkLXNpemUgMUcgLS11dWlkICJmZWRjYmE5OC0NCj4gPiA3
-NjU0LTMyMTAtY2FmZS01ZTA3MTAwMDAwMDIiDQo+ID4gK3BhcnQgLS1zb3VyY2UgcmF3Y29weSAt
-LXNvdXJjZXBhcmFtcw0KPiA+ICJmaWxlPSR7SU1BR0VfRlVMTE5BTUV9LnZlcml0eSIgLS1hbGln
-biAxMDI0IC0tZml4ZWQtc2l6ZSAxRyAtLXV1aWQNCj4gPiAiJHtBQlJPT1RGU19QQVJUX1VVSURf
-QX0iDQo+ID4gK3BhcnQgLS1zb3VyY2UgZW1wdHkgLS1hbGlnbiAxMDI0IC0tZml4ZWQtc2l6ZSAx
-RyAtLXV1aWQNCj4gPiAiJHtBQlJPT1RGU19QQVJUX1VVSURfQn0iDQo+ID4gwqAgDQo+ID4gwqAg
-IyBob21lIGFuZCB2YXIgYXJlIGV4dHJhIHBhcnRpdGlvbnMNCj4gPiDCoCBwYXJ0IC9ob21lIC0t
-c291cmNlIHJvb3RmcyAtLXJvb3Rmcy1kaXI9JHtJTUFHRV9ST09URlN9L2hvbWUgLS0NCj4gPiBm
-c3R5cGU9ZXh0NCAtLWxhYmVsIGhvbWUgLS1hbGlnbiAxMDI0IC0tc2l6ZSAxRw0KPiA+IGRpZmYg
-LS1naXQgYS93aWMvcWVtdS1hcm02NC1lZmlib290Z3VhcmQud2tzLmluIGIvd2ljL3FlbXUtYXJt
-NjQtDQo+ID4gZWZpYm9vdGd1YXJkLndrcy5pbg0KPiA+IGluZGV4IDUzYWI1NjguLmJjZDczNmUg
-MTAwNjQ0DQo+ID4gLS0tIGEvd2ljL3FlbXUtYXJtNjQtZWZpYm9vdGd1YXJkLndrcy5pbg0KPiA+
-ICsrKyBiL3dpYy9xZW11LWFybTY0LWVmaWJvb3RndWFyZC53a3MuaW4NCj4gPiBAQCAtMyw4ICsz
-LDggQEANCj4gPiDCoCANCj4gPiDCoCBpbmNsdWRlIGViZy1zeXNwYXJ0cy5pbmMNCj4gPiDCoCAN
-Cj4gPiAtcGFydCAtLXNvdXJjZSByYXdjb3B5IC0tc291cmNlcGFyYW1zDQo+ID4gImZpbGU9JHtJ
-TUFHRV9GVUxMTkFNRX0uc3F1YXNoZnMiIC0tYWxpZ24gMTAyNCAtLWZpeGVkLXNpemUgMUcgLS0N
-Cj4gPiB1dWlkICJmZWRjYmE5OC03NjU0LTMyMTAtY2FmZS01ZTA3MTAwMDAwMDEiDQo+ID4gLXBh
-cnQgLS1zb3VyY2UgZW1wdHkgLS1hbGlnbiAxMDI0IC0tZml4ZWQtc2l6ZSAxRyAtLXV1aWQgImZl
-ZGNiYTk4LQ0KPiA+IDc2NTQtMzIxMC1jYWZlLTVlMDcxMDAwMDAwMiINCj4gPiArcGFydCAtLXNv
-dXJjZSByYXdjb3B5IC0tc291cmNlcGFyYW1zDQo+ID4gImZpbGU9JHtJTUFHRV9GVUxMTkFNRX0u
-c3F1YXNoZnMiIC0tYWxpZ24gMTAyNCAtLWZpeGVkLXNpemUgMUcgLS0NCj4gPiB1dWlkICIke0FC
-Uk9PVEZTX1BBUlRfVVVJRF9BfSINCj4gPiArcGFydCAtLXNvdXJjZSBlbXB0eSAtLWFsaWduIDEw
-MjQgLS1maXhlZC1zaXplIDFHIC0tdXVpZA0KPiA+ICIke0FCUk9PVEZTX1BBUlRfVVVJRF9CfSIN
-Cj4gPiDCoCANCj4gPiDCoCAjIGhvbWUgYW5kIHZhciBhcmUgZXh0cmEgcGFydGl0aW9ucw0KPiA+
-IMKgIHBhcnQgL2hvbWUgLS1zb3VyY2Ugcm9vdGZzIC0tcm9vdGZzLWRpcj0ke0lNQUdFX1JPT1RG
-U30vaG9tZSAtLQ0KPiA+IGZzdHlwZT1leHQ0IC0tbGFiZWwgaG9tZSAtLWFsaWduIDEwMjTCoCAt
-LXNpemUgMUcNCj4gPiBkaWZmIC0tZ2l0IGEvd2ljL3g4Ni1lZmlib290Z3VhcmQud2tzLmluIGIv
-d2ljL3g4Ni0NCj4gPiBlZmlib290Z3VhcmQud2tzLmluDQo+ID4gaW5kZXggMzhmN2NjZS4uNjgz
-ZDdhOCAxMDA2NDQNCj4gPiAtLS0gYS93aWMveDg2LWVmaWJvb3RndWFyZC53a3MuaW4NCj4gPiAr
-KysgYi93aWMveDg2LWVmaWJvb3RndWFyZC53a3MuaW4NCj4gPiBAQCAtMyw4ICszLDggQEANCj4g
-PiDCoCANCj4gPiDCoCBpbmNsdWRlIGViZy1zeXNwYXJ0cy5pbmMNCj4gPiDCoCANCj4gPiAtcGFy
-dCAtLXNvdXJjZSByYXdjb3B5IC0tc291cmNlcGFyYW1zDQo+ID4gImZpbGU9JHtJTUFHRV9GVUxM
-TkFNRX0uc3F1YXNoZnMiIC0tYWxpZ24gMTAyNCAtLWZpeGVkLXNpemUgMUcgLS0NCj4gPiB1dWlk
-ICJmZWRjYmE5OC03NjU0LTMyMTAtY2FmZS01ZTA3MTAwMDAwMDEiDQo+ID4gLXBhcnQgLS1zb3Vy
-Y2UgZW1wdHkgLS1hbGlnbiAxMDI0IC0tZml4ZWQtc2l6ZSAxRyAtLXV1aWQgImZlZGNiYTk4LQ0K
-PiA+IDc2NTQtMzIxMC1jYWZlLTVlMDcxMDAwMDAwMiINCj4gPiArcGFydCAtLXNvdXJjZSByYXdj
-b3B5IC0tc291cmNlcGFyYW1zDQo+ID4gImZpbGU9JHtJTUFHRV9GVUxMTkFNRX0uc3F1YXNoZnMi
-IC0tYWxpZ24gMTAyNCAtLWZpeGVkLXNpemUgMUcgLS0NCj4gPiB1dWlkICIke0FCUk9PVEZTX1BB
-UlRfVVVJRF9BfSINCj4gPiArcGFydCAtLXNvdXJjZSBlbXB0eSAtLWFsaWduIDEwMjQgLS1maXhl
-ZC1zaXplIDFHIC0tdXVpZA0KPiA+ICIke0FCUk9PVEZTX1BBUlRfVVVJRF9CfSINCj4gPiDCoCAN
-Cj4gPiDCoCAjIGhvbWUgYW5kIHZhciBhcmUgZXh0cmEgcGFydGl0aW9ucw0KPiA+IMKgIHBhcnQg
-L2hvbWUgLS1zb3VyY2Ugcm9vdGZzIC0tcm9vdGZzLWRpcj0ke0lNQUdFX1JPT1RGU30vaG9tZSAt
-LQ0KPiA+IGZzdHlwZT1leHQ0IC0tbGFiZWwgaG9tZTEgLS1hbGlnbiAxMDI0wqAgLS1zaXplIDFH
-DQo+IA0KPiBUaGlzIGxvb2tzIGxpa2UgYSB0eXBvIGluIGxhYmVsOiBob21lMQ0KDQpUcnVlLCBi
-dXQgbm90IHBhcnQgb2YgdGhpcyBwYXRjaC4NClBsZWFzZSBsZXQgdXMgZml4IGluZGl2aWR1YWxs
-eSBhbmQgbm90IGFzIHBhcnQgb2YgdGhpcyBzZXJpZXMuDQoNCkZlbGl4DQoNCj4gDQo+IFF1aXJp
-bg0KDQo=
+--3VO4Cpa8YkOiSFt1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Thu, Dec 15, 2022 at 12:25:18PM +0900, Masami Ichikawa wrote:
+> CVE-2022-4378: Linux kernel stack-based buffer overflow in __do_proc_dointvec
+> 
+> CVSS v3 score is not provided
+> 
+> A stack overflow bug was found in __do_proc_dointvec() which missed
+> checking on user input.
+> This bug affected all stable kernels. It seems as if 4.4 is affected too.
+> 
+> Fixed status
+> mainline: [bce9332220bd677d83b19d21502776ad555a0e73,
+> e6cfaf34be9fcd1a8285a294e18986bfc41a409c]
+
+One thing that we used to do at Oracle was a bi-weekly meeting where we
+would go through these lists and try to be a bit proactive about
+preventing future bugs.  For me I'm trying to use Smatch for static
+analysis.
+
+There are some bugs which Smatch can't identify like race conditions or
+if there is an issue with the spec.  But for a lot of bugs can be
+prevented.  So it's often an issue of 1) There isn't a Smatch check for
+that.  2) The Smatch check exists but isn't working correctly.  3) The
+Smatch check prints a warning but there are too many warning for that
+check so I can't go through them all.
+
+First of all, why wasn't *size marked as user controlled?  It turned out
+that it comes from iov_iter_count() and that wasn't marked as user
+controlled.  Fix that:
+https://github.com/error27/smatch/commit/70ee7aa1ae8cc07767096e16fa2de68a62507a3e
+
+Once that was fixed, it turned out that I did have an unpublished check
+which printed a warning.
+kernel/sysctl.c:358 proc_get_long() warn: check 'tmp[len]' for negative offsets 'len' = s32min.  extra = 's32min-21'
+
+But it turns out that warning was because of a bug.  The check was
+asking can "*size" be user controlled and what is the minimum possible
+value negative, but it should have been asking if the minimum user
+controled value is negative.
+
+Fixing the check to as about user controlled values silenced the
+warning.  The issue with that is:
+
+	left -= proc_skip_spaces(&p);
+
+Subtractions are very hard to handle correctly because you need to keep
+track of the relationships between multiple variables.  Smatch
+deliberately assumes that this subtraction cannot underflow.  Otherwise
+you end up with too many false positives...
+
+I've been sitting on this check for the past ten years without
+publishing it.  May as well attach it now and also the results.  I don't
+know why the check has __per_cpu_offset stuff or why it ignores ntohl().
+I should probably delete that and see what happens.  Going through the
+results, a bunch of false positives are cause by subtraction (which is
+complicated).  Or because Smatch doesn't understand about
+array_index_nospec() (I should fix that).
+
+Anyway, even though I wasn't able to generate a warning for this bug,
+it was still useful to have the discussion and improve Smatch.
+
+regards,
+dan carpenter
+
+
+--3VO4Cpa8YkOiSFt1
+Content-Type: text/x-csrc; charset=us-ascii
+Content-Disposition: attachment; filename="check_underflow.c"
+
+/*
+ * Copyright (C) 2013 Oracle.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, see http://www.gnu.org/copyleft/gpl.txt
+ */
+
+#include "smatch.h"
+#include "smatch_slist.h"
+#include "smatch_extra.h"
+
+static int my_id;
+
+int is_user_macro(struct expression *expr)
+{
+	char *macro;
+	struct range_list *rl;
+
+	macro = get_macro_name(expr->pos);
+
+	if (!macro)
+		return 0;
+	if (get_implied_rl(expr, &rl) && !is_whole_rl(rl))
+		return 0;
+	if (strcmp(macro, "ntohl") == 0)
+		return 1;
+	if (strcmp(macro, "ntohs") == 0)
+		return 1;
+	return 0;
+}
+
+static void array_check(struct expression *expr)
+{
+	struct expression *offset;
+	struct smatch_state *state;
+	struct range_list *rl;
+	sval_t min;
+	char *name, *offset_name;
+
+	expr = strip_expr(expr);
+	if (!is_array(expr))
+		return;
+	if (is_user_macro(expr))
+		return;
+
+	offset = get_array_offset(expr);
+
+	if (!get_user_rl(offset, &rl))
+		return;
+	if (!sval_is_negative(rl_min(rl)))
+		return;
+
+	state = get_state_expr(SMATCH_EXTRA, offset);
+	if (state && !estate_rl(state))
+		return;
+
+	name = expr_to_str(expr);
+	if (option_project == PROJ_KERNEL &&
+	    name &&
+	    strncmp("__per_cpu_offset", name, strlen("__per_cpu_offset")) == 0)
+		goto free_name;
+	offset_name = expr_to_str(offset);
+	sm_msg("warn: check '%s' for negative offsets '%s' = %s.  extra = '%s'", name, offset_name, sval_to_str(min), state ? state->name : "unknown");
+	free_string(offset_name);
+free_name:
+	free_string(name);
+}
+
+void check_underflow(int id)
+{
+	my_id = id;
+
+	add_hook(&array_check, OP_HOOK);
+}
+
+--3VO4Cpa8YkOiSFt1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename=err-list
+
+drivers/accessibility/speakup/varhandlers.c:248 spk_set_num_var() warn: check 'var_data->u.n.out_str[val]' for negative offsets 'val' = 140405757965328.  extra = 's32min-s32max'
+drivers/acpi/nfit/core.c:488 acpi_nfit_ctl() warn: check 'acpi_desc->family_dsm_mask[family]' for negative offsets 'family' = 139892171397136.  extra = 's32min-s32max'
+drivers/gpu/drm/i915/gem/i915_gem_context.c:658 set_proto_ctx_engines_parallel_submit() warn: check 'ext->engines[n]' for negative offsets 'n' = 140477319050128.  extra = 's32min-s32max'
+drivers/gpu/drm/i915/gem/i915_gem_context.c:663 set_proto_ctx_engines_parallel_submit() warn: check 'siblings[n]' for negative offsets 'n' = 140477317644816.  extra = 's32min-s32max'
+drivers/gpu/drm/i915/gem/i915_gem_context.c:666 set_proto_ctx_engines_parallel_submit() warn: check 'siblings[n]' for negative offsets 'n' = 140477317652624.  extra = 's32min-s32max'
+drivers/gpu/drm/i915/gem/i915_gem_context.c:678 set_proto_ctx_engines_parallel_submit() warn: check 'siblings[n]' for negative offsets 'n' = 140477316505488.  extra = 's32min-s32max'
+drivers/gpu/drm/i915/gem/i915_gem_context.c:679 set_proto_ctx_engines_parallel_submit() warn: check 'siblings[n]' for negative offsets 'n' = 140477316429968.  extra = 's32min-s32max'
+drivers/gpu/drm/i915/gem/i915_gem_context.c:697 set_proto_ctx_engines_parallel_submit() warn: check 'siblings[n]' for negative offsets 'n' = 140477314564112.  extra = 's32min-s32max'
+drivers/net/ethernet/atheros/atl1e/atl1e_ethtool.c:283 atl1e_set_eeprom() warn: check 'eeprom_buff[last_dword - first_dword]' for negative offsets 'last_dword - first_dword' = 140418698139664.  extra = 'unknown'
+drivers/net/ethernet/atheros/atl1e/atl1e_ethtool.c:283 atl1e_set_eeprom() warn: check 'eeprom_buff[last_dword - first_dword]' for negative offsets 'last_dword - first_dword' = 140418698146704.  extra = 'unknown'
+drivers/net/ethernet/atheros/atlx/atl2.c:1958 atl2_set_eeprom() warn: check 'eeprom_buff[last_dword - first_dword]' for negative offsets 'last_dword - first_dword' = 139632960086160.  extra = 'unknown'
+drivers/net/ethernet/atheros/atlx/atl2.c:1958 atl2_set_eeprom() warn: check 'eeprom_buff[last_dword - first_dword]' for negative offsets 'last_dword - first_dword' = 139632960093968.  extra = 'unknown'
+drivers/net/ethernet/emulex/benet/be_ethtool.c:1311 be_set_rxfh() warn: check 'adapter->rx_obj[j]' for negative offsets 'j' = 140694977039248.  extra = 's32min-s32max'
+drivers/net/ethernet/intel/e1000/e1000_ethtool.c:506 e1000_set_eeprom() warn: check 'eeprom_buff[last_word - first_word]' for negative offsets 'last_word - first_word' = 140658616621712.  extra = 'unknown'
+drivers/net/ethernet/intel/e1000e/ethtool.c:610 e1000_set_eeprom() warn: check 'eeprom_buff[last_word - first_word]' for negative offsets 'last_word - first_word' = 140551373387920.  extra = 'unknown'
+drivers/net/ethernet/intel/igb/igb_ethtool.c:824 igb_set_eeprom() warn: check 'eeprom_buff[last_word - first_word]' for negative offsets 'last_word - first_word' = 140138690652048.  extra = 'unknown'
+drivers/net/ethernet/intel/igc/igc_ethtool.c:547 igc_ethtool_set_eeprom() warn: check 'eeprom_buff[last_word - first_word]' for negative offsets 'last_word - first_word' = 139829128802320.  extra = 'unknown'
+drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c:1077 ixgbe_set_eeprom() warn: check 'eeprom_buff[last_word - first_word]' for negative offsets 'last_word - first_word' = 140353874581776.  extra = 'unknown'
+drivers/net/ethernet/intel/ixgb/ixgb_ethtool.c:437 ixgb_set_eeprom() warn: check 'eeprom_buff[last_word - first_word]' for negative offsets 'last_word - first_word' = 140135473156368.  extra = 'unknown'
+drivers/net/usb/asix_common.c:709 asix_set_eeprom() warn: check 'eeprom_buff[last_word - first_word]' for negative offsets 'last_word - first_word' = 140650219544976.  extra = 'unknown'
+drivers/net/usb/ax88179_178a.c:601 ax88179_set_eeprom() warn: check 'eeprom_buff[last_word - first_word]' for negative offsets 'last_word - first_word' = 140521901784592.  extra = 'unknown'
+drivers/net/wireless/ath/wcn36xx/smd.c:1988 wcn36xx_smd_send_beacon() warn: check 'msg_body.beacon[tim_off + 5 + pvm_len + pad]' for negative offsets 'tim_off + 5 + pvm_len + pad' = 140733510315840.  extra = 'unknown'
+drivers/net/wireless/ath/wcn36xx/smd.c:1988 wcn36xx_smd_send_beacon() warn: check 'msg_body.beacon[tim_off + 5 + pvm_len + pad]' for negative offsets 'tim_off + 5 + pvm_len + pad' = 140733510315840.  extra = 'unknown'
+drivers/net/wireless/ath/wcn36xx/smd.c:1988 wcn36xx_smd_send_beacon() warn: check 'msg_body.beacon[tim_off + 5 + pvm_len + pad]' for negative offsets 'tim_off + 5 + pvm_len + pad' = 140733510315840.  extra = 'unknown'
+drivers/pci/endpoint/functions/pci-epf-ntb.c:2022 epf_ntb_mw1_store() warn: check 'ntb->mws_size[win_no - 1]' for negative offsets 'win_no - 1' = 140731588284720.  extra = 'unknown'
+drivers/pci/endpoint/functions/pci-epf-ntb.c:2024 epf_ntb_mw2_store() warn: check 'ntb->mws_size[win_no - 1]' for negative offsets 'win_no - 1' = 140731588284720.  extra = 'unknown'
+drivers/pci/endpoint/functions/pci-epf-ntb.c:2026 epf_ntb_mw3_store() warn: check 'ntb->mws_size[win_no - 1]' for negative offsets 'win_no - 1' = 140731588284720.  extra = 'unknown'
+drivers/pci/endpoint/functions/pci-epf-ntb.c:2028 epf_ntb_mw4_store() warn: check 'ntb->mws_size[win_no - 1]' for negative offsets 'win_no - 1' = 140731588284720.  extra = 'unknown'
+drivers/staging/rtl8192e/rtllib_rx.c:2158 rtllib_parse_info_param() warn: check 'info_element->data[3 + offset]' for negative offsets '3 + offset' = 140007844424848.  extra = 'unknown'
+drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c:1658 ieee80211_parse_info_param() warn: check 'info_element->data[3 + offset]' for negative offsets '3 + offset' = 140178157514768.  extra = 'unknown'
+fs/btrfs/send.c:8260 btrfs_ioctl_send() warn: check 'sctx->clone_roots[sctx->clone_roots_cnt++]' for negative offsets 'sctx->clone_roots_cnt' = 140002303789072.  extra = 's32min-s32max'
+fs/btrfs/send.c:8260 btrfs_ioctl_send() warn: check 'sctx->clone_roots[sctx->clone_roots_cnt++]' for negative offsets 'sctx->clone_roots_cnt' = 140002303859088.  extra = 's32min-s32max'
+net/ipv4/ip_options.c:547 ip_forward_options() warn: check 'optptr[optptr[2] - 5]' for negative offsets 'optptr[2] - 5' = 140729597154752.  extra = 'unknown'
+net/ipv4/ip_options.c:561 ip_forward_options() warn: check 'optptr[srrptr - 1]' for negative offsets 'srrptr - 1' = 139857025290384.  extra = 'unknown'
+net/ipv4/ip_options.c:567 ip_forward_options() warn: check 'optptr[srrptr - 1]' for negative offsets 'srrptr - 1' = 139857023710736.  extra = 'unknown'
+net/ipv4/ip_options.c:575 ip_forward_options() warn: check 'optptr[optptr[2] - 9]' for negative offsets 'optptr[2] - 9' = 139857021970448.  extra = 'unknown'
+net/ipv4/ip_options.c:616 ip_options_rcv_srr() warn: check 'optptr[srrptr - 1]' for negative offsets 'srrptr - 1' = 139857024107536.  extra = 'unknown'
+net/ipv4/ip_options.c:616 ip_options_rcv_srr() warn: check 'optptr[srrptr - 1]' for negative offsets 'srrptr - 1' = 139857023562768.  extra = 'unknown'
+net/ipv4/ip_options.c:616 ip_options_rcv_srr() warn: check 'optptr[srrptr - 1]' for negative offsets 'srrptr - 1' = 139857020230032.  extra = 'unknown'
+net/sctp/socket.c:7430 sctp_getsockopt_pr_assocstatus() warn: check 'asoc->abandoned_unsent[((policy >> 4) - 1)]' for negative offsets '(policy >> 4) - 1' = 139875963263760.  extra = 'unknown'
+net/sctp/socket.c:7432 sctp_getsockopt_pr_assocstatus() warn: check 'asoc->abandoned_sent[((policy >> 4) - 1)]' for negative offsets '(policy >> 4) - 1' = 139875962396944.  extra = 'unknown'
+net/sctp/socket.c:7499 sctp_getsockopt_pr_streamstatus() warn: check 'streamoute->abandoned_unsent[((policy >> 4) - 1)]' for negative offsets '(policy >> 4) - 1' = 139875959726736.  extra = 'unknown'
+net/sctp/socket.c:7501 sctp_getsockopt_pr_streamstatus() warn: check 'streamoute->abandoned_sent[((policy >> 4) - 1)]' for negative offsets '(policy >> 4) - 1' = 139875958368400.  extra = 'unknown'
+sound/soc/sof/ipc4-mtrace.c:374 sof_ipc4_priority_mask_dfs_write() warn: check 'priv->state_info.logs_priorities_mask[id]' for negative offsets 'id' = 139930792399632.  extra = 's32min-15'
+
+--3VO4Cpa8YkOiSFt1--
 
