@@ -1,144 +1,166 @@
-Return-Path: <masami.ichikawa@miraclelinux.com>
+Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94E55C00A5A
-	for <webhook@archiver.kernel.org>; Thu, 19 Jan 2023 13:57:01 +0000 (UTC)
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
- by mx.groups.io with SMTP id smtpd.web10.45491.1674136619990754119
- for <cip-dev@lists.cip-project.org>;
- Thu, 19 Jan 2023 05:57:00 -0800
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83EB1C00A5A
+	for <webhook@archiver.kernel.org>; Thu, 19 Jan 2023 14:05:51 +0000 (UTC)
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+ by mx.groups.io with SMTP id smtpd.web11.45941.1674137147833413212
+ for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
+ Thu, 19 Jan 2023 06:05:47 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112 header.b=4czE1vgY;
- spf=pass (domain: miraclelinux.com, ip: 209.85.160.53, mailfrom: masami.ichikawa@miraclelinux.com)
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-1322d768ba7so2589740fac.5
-        for <cip-dev@lists.cip-project.org>; Thu, 19 Jan 2023 05:56:59 -0800 (PST)
+ dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=lZB03LEB;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.216.52, mailfrom: bot@kernelci.org)
+Received: by mail-pj1-f52.google.com with SMTP id a14-20020a17090a70ce00b00229a2f73c56so5930882pjm.3
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Thu, 19 Jan 2023 06:05:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6sOxTg5yFoX/h7K+1nBDf2KoEN6x5x02I29k60pJgF4=;
-        b=4czE1vgYtJWdw13E99Qrf5CNyjLbdMkrfBF3Hb/e9iiFmHar1be0AH3lF9lGq6GURF
-         Q0fikQ13a4QPL3TQFyPR6AKRi2X6dlGgSHwm9KJYE4cdNRBOBiFJjdVw/qcNOkElyNI2
-         d0NrxETGmVsFdC0bhTVMxc0B4BHN9PYXeCwdQzBzBne0Ckq2tEmLIvfQFI8tbuetVsd7
-         FYn11WMIuHU0HuavK1YiEocFVDcYZgXqAQfZKSX3OsxyWfNvhhtTKxJHVZ1tjngpgmBo
-         HkHKohw9bJNqbT9eeuUv0ixtqGjhQ1uYDue0+Z3rUC900SjazFDE4S7fYrDyuERsRtMA
-         MlKQ==
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=MPyjxqDDgkoJM7LVOaYDd4BeyF2LqPyosXKrqOEGW4g=;
+        b=lZB03LEBEnKg+ojjOZr7qSK8f2NpHkv+R8WXABYWO7ZYcDF6LAIomjiZsPaBA3toB0
+         qU5s3wZkG88BVtmDYNwdTYUYhldKuPgGHJ4t11/EzwjZFyo2NC0d/IappIslCp2FIoCF
+         kzxgB3ZlQQbOSIQaYL8LNwUBDH98QuUtmTgw+CVB+FVo6ygqTLf3l0wbtDTjkdWNOB+n
+         1hrRg4BE6et7g81cRBC7ljX/Lwroh2upBbTguG0QAgtCqqUNroWXow3kYzDkdUNwDmIX
+         VcTQEDsNJyU3+rc7HXkh098x2x4XQl1RS0ZbAqmfj/szVJILqoM1Mq1uePvEFokKIG/L
+         Ry1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6sOxTg5yFoX/h7K+1nBDf2KoEN6x5x02I29k60pJgF4=;
-        b=Nwp80v9FgtMaDVQkTPSGCrLUyguRU6DyTMV8HtPPwZ+7oKNsjI57uir6hnyJIrsiUZ
-         JHjaoYeh/nbRE6cdpctrTHeRKbAri6MpeyoW+0wVj+yPW6DXcd2IC/WgcHqRc10NcfUO
-         b6HSHDI3y5kW8kdKNUKve5078Wa8BM4e2lVmSW0uDONYQ/A529zs3vWU3S4TVNT9NmOO
-         haB5gLZeKK+d8IaKtP2P26ndPew6RD2Q6B4K9JdAeCIjevzgqdTkNufk5Rt0cRQn/G7h
-         2tckL17Q9tEmWp19nQcie4Jkvdw5rivzT/YFEB7Y23G+5V6L9F60JbVNp7xZiEna81Jn
-         xheA==
-X-Gm-Message-State: AFqh2kpVxlQFTBfU8jt3u2ZpI9+iv1BL+vgBiAYFnyWFSmRCo5idab1r
-	uyk1X+d4O/gl8b551ZQW4o7Eb0vAM8nJGwoqljs9tg==
-X-Google-Smtp-Source: AMrXdXszgwVb6liG0dcw247T7JtKyJKphzFKsunLAuGT2JlmLO//vvec/jwtJCA7zCtIjj0fxj2vIyeSuhfJAqz1eMU=
-X-Received: by 2002:a05:6870:4513:b0:15b:8f97:237 with SMTP id
- e19-20020a056870451300b0015b8f970237mr828895oao.58.1674136619192; Thu, 19 Jan
- 2023 05:56:59 -0800 (PST)
+        bh=MPyjxqDDgkoJM7LVOaYDd4BeyF2LqPyosXKrqOEGW4g=;
+        b=d8HstmV2aTVi7wBWAKLvFrIrn3T6X6jNpY/recenedI5v5FF46ZVxMOfruJya+Z0+n
+         hjr1NxXYBVVvHxx4VAjm45uv7T01M3k/key9eAJLHQH9kvKiG+BMWeaHR1PfPIkV+bxr
+         K+/eD7HeT912psef365a40fIkXCeACtZgqEWr5FEahrZaDRZNg7wMQ6rqO5agH9REB2O
+         cND8BV4xla9+FAeinBHCAEu+Aksv9Bsyq7Law+dQEp9f9oT4NR+uzH0Seiex1nKNUz85
+         C8ab1xTiQNGFss77ZiGSkEjhoId8mDFgEDdOWHq+jpA89HcAQyvCMvgT6eGWL1MfDnoz
+         uYLw==
+X-Gm-Message-State: AFqh2kraW4cKx2OG94hX049/hpxDr/XnM3uLauxDdGYSlaGFnLr3T9/8
+	Er/3y115al/m4LK+RiE41o7kWAOgs9IQ/MewnuYOig==
+X-Google-Smtp-Source: AMrXdXuIO9yi1OAURDfScu51q79glxyPTYYd4GvwdaTwzopSmg4D5iU8T0ILqf2EBGfPZKOdCyYbBA==
+X-Received: by 2002:a05:6a20:d704:b0:b8:499d:7c9b with SMTP id iz4-20020a056a20d70400b000b8499d7c9bmr11375546pzb.51.1674137146589;
+        Thu, 19 Jan 2023 06:05:46 -0800 (PST)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id a4-20020a63e844000000b004b6c3d7aa21sm13980835pgk.8.2023.01.19.06.05.46
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Jan 2023 06:05:46 -0800 (PST)
+Message-ID: <63c94e3a.630a0220.c177f.5fcf@mx.google.com>
+Date: Thu, 19 Jan 2023 06:05:46 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <CAODzB9oy2nCYdfa7vzG59nQ6owAKUv+jkqD4tpufn+k8_kjuaw@mail.gmail.com>
- <Y8j2dnYDZnw+DcEw@kili>
-In-Reply-To: <Y8j2dnYDZnw+DcEw@kili>
-From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Date: Thu, 19 Jan 2023 22:56:22 +0900
-Message-ID: <CAODzB9rHqzUTn1dmaP1j1SsiYh5UcJ5AKSjVL7PpxYE5ifRVCA@mail.gmail.com>
-Subject: Re: New CVE entries this week
-To: Dan Carpenter <error27@gmail.com>
-Cc: cip-dev <cip-dev@lists.cip-project.org>, 
-	Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Tree: cip-gitlab
+X-Kernelci-Branch: ci/pavel/linux-test
+X-Kernelci-Kernel: v5.10.162-929-gae713b3c4626e
+X-Kernelci-Report-Type: test
+Subject: cip-gitlab/ci/pavel/linux-test ltp-mm: 3 runs,
+ 2 regressions (v5.10.162-929-gae713b3c4626e)
+To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
+From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 19 Jan 2023 13:57:01 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10444
+ <cip-dev@lists.cip-project.org>; Thu, 19 Jan 2023 14:05:51 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10445
 
-Hi.
+cip-gitlab/ci/pavel/linux-test ltp-mm: 3 runs, 2 regressions (v5.10.162-929=
+-gae713b3c4626e)
 
-On Thu, Jan 19, 2023 at 4:51 PM Dan Carpenter <error27@gmail.com> wrote:
->
-> On Thu, Dec 15, 2022 at 12:25:18PM +0900, Masami Ichikawa wrote:
-> > CVE-2022-4378: Linux kernel stack-based buffer overflow in __do_proc_dointvec
-> >
-> > CVSS v3 score is not provided
-> >
-> > A stack overflow bug was found in __do_proc_dointvec() which missed
-> > checking on user input.
-> > This bug affected all stable kernels. It seems as if 4.4 is affected too.
-> >
-> > Fixed status
-> > mainline: [bce9332220bd677d83b19d21502776ad555a0e73,
-> > e6cfaf34be9fcd1a8285a294e18986bfc41a409c]
->
-> One thing that we used to do at Oracle was a bi-weekly meeting where we
-> would go through these lists and try to be a bit proactive about
-> preventing future bugs.  For me I'm trying to use Smatch for static
-> analysis.
->
-> There are some bugs which Smatch can't identify like race conditions or
-> if there is an issue with the spec.  But for a lot of bugs can be
-> prevented.  So it's often an issue of 1) There isn't a Smatch check for
-> that.  2) The Smatch check exists but isn't working correctly.  3) The
-> Smatch check prints a warning but there are too many warning for that
-> check so I can't go through them all.
->
-> First of all, why wasn't *size marked as user controlled?  It turned out
-> that it comes from iov_iter_count() and that wasn't marked as user
-> controlled.  Fix that:
-> https://github.com/error27/smatch/commit/70ee7aa1ae8cc07767096e16fa2de68a62507a3e
->
-> Once that was fixed, it turned out that I did have an unpublished check
-> which printed a warning.
-> kernel/sysctl.c:358 proc_get_long() warn: check 'tmp[len]' for negative offsets 'len' = s32min.  extra = 's32min-21'
->
-> But it turns out that warning was because of a bug.  The check was
-> asking can "*size" be user controlled and what is the minimum possible
-> value negative, but it should have been asking if the minimum user
-> controled value is negative.
->
-> Fixing the check to as about user controlled values silenced the
-> warning.  The issue with that is:
->
->         left -= proc_skip_spaces(&p);
->
-> Subtractions are very hard to handle correctly because you need to keep
-> track of the relationships between multiple variables.  Smatch
-> deliberately assumes that this subtraction cannot underflow.  Otherwise
-> you end up with too many false positives...
->
-> I've been sitting on this check for the past ten years without
-> publishing it.  May as well attach it now and also the results.  I don't
-> know why the check has __per_cpu_offset stuff or why it ignores ntohl().
-> I should probably delete that and see what happens.  Going through the
-> results, a bunch of false positives are cause by subtraction (which is
-> complicated).  Or because Smatch doesn't understand about
-> array_index_nospec() (I should fix that).
->
-> Anyway, even though I wasn't able to generate a warning for this bug,
-> it was still useful to have the discussion and improve Smatch.
->
+Regressions Summary
+-------------------
 
-Thank you for the information about Smatch. It's really helpful. I
-think it is important to learn from reported bugs then prevent future
-bugs as you did.
-I'll try to use Smatch.
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+asus-C523NA-A20057-coral     | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 1          =
 
-> regards,
-> dan carpenter
->
+hp-x360-12b-c...4020-octopus | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 1          =
 
-Regards,
--- 
-Masami Ichikawa
-Cybertrust Japan Co., Ltd.
 
-Email :masami.ichikawa@cybertrust.co.jp
-          :masami.ichikawa@miraclelinux.com
+  Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fpavel%2Fli=
+nux-test/kernel/v5.10.162-929-gae713b3c4626e/plan/ltp-mm/
+
+  Test:     ltp-mm
+  Tree:     cip-gitlab
+  Branch:   ci/pavel/linux-test
+  Describe: v5.10.162-929-gae713b3c4626e
+  URL:      https://gitlab.com/cip-project/cip-kernel/linux-cip.git
+  SHA:      ae713b3c4626e7f02c44b3495f9b37717dd93ef0
+
+  Test suite revisions:
+    ltp-tests
+      URL:  https://github.com/linux-test-project/ltp.git
+      SHA:  cf59c1fb5f7181453b16171d75654ee9a1216dde =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+asus-C523NA-A20057-coral     | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/63c94d8d616e4dbe0f915ebe
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-chromebook
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.162-929-gae713b3c4626e/x86_64/x86_64_defconfig+x86-chromebook/gcc-10=
+/lab-collabora/ltp-mm-asus-C523NA-A20057-coral.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.162-929-gae713b3c4626e/x86_64/x86_64_defconfig+x86-chromebook/gcc-10=
+/lab-collabora/ltp-mm-asus-C523NA-A20057-coral.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
+p/20230114.0/amd64/initrd.cpio.gz =
+
+
+
+  * ltp-mm.login: https://kernelci.org/test/case/id/63c94d8d616e4dbe0f915ebf
+        new failure (last pass: v4.19.269-cip88-rt28-rebase) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+hp-x360-12b-c...4020-octopus | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/63c946bf04d5b91374915ec5
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-chromebook
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.162-929-gae713b3c4626e/x86_64/x86_64_defconfig+x86-chromebook/gcc-10=
+/lab-collabora/ltp-mm-hp-x360-12b-ca0010nr-n4020-octopus.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.162-929-gae713b3c4626e/x86_64/x86_64_defconfig+x86-chromebook/gcc-10=
+/lab-collabora/ltp-mm-hp-x360-12b-ca0010nr-n4020-octopus.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
+p/20230114.0/amd64/initrd.cpio.gz =
+
+
+
+  * ltp-mm.login: https://kernelci.org/test/case/id/63c946bf04d5b91374915ec6
+        new failure (last pass: v4.19.269-cip88-rt28-rebase) =
+
+ =20
 
