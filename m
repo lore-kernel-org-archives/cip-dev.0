@@ -2,84 +2,94 @@ Return-Path: <ncaidin@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C86AEC004D4
-	for <webhook@archiver.kernel.org>; Thu, 19 Jan 2023 15:24:41 +0000 (UTC)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
- by mx.groups.io with SMTP id smtpd.web10.47947.1674141857317168435
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 537B6C004D4
+	for <webhook@archiver.kernel.org>; Thu, 19 Jan 2023 20:11:53 +0000 (UTC)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mx.groups.io with SMTP id smtpd.web11.49822.1674145126887029406
  for <cip-dev@lists.cip-project.org>;
- Thu, 19 Jan 2023 07:24:17 -0800
+ Thu, 19 Jan 2023 08:18:47 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20210112 header.b=QbFJRKct;
- spf=pass (domain: gmail.com, ip: 209.85.128.41, mailfrom: error27@gmail.com)
-Received: by mail-wm1-f41.google.com with SMTP id l8so1810480wms.3
-        for <cip-dev@lists.cip-project.org>; Thu, 19 Jan 2023 07:24:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+pkWEPRj2g8m9NnkcSpzrq1lx6deyY5rf5Yen5EQ66A=;
-        b=QbFJRKctWrzAs654sBa1ZsUVHP+s+ftZG5EBvVMUwunpFH0GkcwD2ti5PVtj88Y4lx
-         JKJOEOyz37O5y8mROHD9YXM8BjPheF3jJU/1oh4I7GVJdaB7uVuBh8aBgcP5/pDm6Lf3
-         wPdtfPUBBhXJpex+pcqocY1h9/dfcHhWeu5Yb/U5YVpILtvMjDnf/pSi7nKJiLD8mzsS
-         FwRQuHBl2c3qoFIhPl4TxcwpBZLvB+LD1fs3xHj24vRGB7Bk5yJn8lhlQNtjcZDFEHnU
-         u/6QqoYbwPcJA8l7vpPHdy6w+cc9u1LzelQGgf0IcAMHwcCB8xawAlsMQJSCOHQ96dG9
-         WMDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+pkWEPRj2g8m9NnkcSpzrq1lx6deyY5rf5Yen5EQ66A=;
-        b=VkSlZUa3NRgVQcbxoPfcPiM6BwHfdLcsfEHsA5rwPMtbX/vXr+DpTCHY2xq4Zngfcw
-         CMLq3zoz3slPZ/Y9oLIn7oOuL1g3mxf7CfJlwsTqp90/VwJr5SLray338jWlbciT7C7t
-         anaNwdwGYmgP8Lx1N3sQlrJ0gPOnHzi4PgWBooVvvXg2+TJTiTgLYOMoaOnFjQzxk+gG
-         bK90CyxP3glKBaA1T93dhjpd42oQAVF+AsyiLxzTcx2KRl6ievCqNNuRcc7hCRl6gw9S
-         A0lW9XUguJksiRmlG30kZVMN8Xjv2/4H9+CNf2MS2ylj2E6rHuwPkwQGPuGbzHomjxxL
-         JVrQ==
-X-Gm-Message-State: AFqh2krZ//3rsSQMQOTwA5vjuPkZXnfxCsH8ya3bagfCwTBEV3Bc8pfa
-	/a3tcZRd6iXWz2a3qkoSRlM=
-X-Google-Smtp-Source: AMrXdXsa+hx9kpg/KLAraKX3RQy9up79bqP8l9kUg2gIoKqvEL1yWAeeX84qDXw9ZgmGv7g0YUfjEA==
-X-Received: by 2002:a05:600c:4c21:b0:3cf:900c:de6b with SMTP id d33-20020a05600c4c2100b003cf900cde6bmr10372516wmp.15.1674141855726;
-        Thu, 19 Jan 2023 07:24:15 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id o22-20020a05600c165600b003da119d7251sm4789521wmn.21.2023.01.19.07.24.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jan 2023 07:24:15 -0800 (PST)
-Date: Thu, 19 Jan 2023 18:24:11 +0300
-From: Dan Carpenter <error27@gmail.com>
-To: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Cc: cip-dev <cip-dev@lists.cip-project.org>,
-	Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Subject: Re: New CVE entries this week
-Message-ID: <Y8lgm1a0n9kQc39o@kadam>
-References: <CAODzB9oy2nCYdfa7vzG59nQ6owAKUv+jkqD4tpufn+k8_kjuaw@mail.gmail.com>
- <Y8j2dnYDZnw+DcEw@kili>
- <CAODzB9rHqzUTn1dmaP1j1SsiYh5UcJ5AKSjVL7PpxYE5ifRVCA@mail.gmail.com>
+ dkim=pass header.i=@redhat.com header.s=mimecast20190719 header.b=YaCRFMUf;
+ spf=pass (domain: redhat.com, ip: 170.10.129.124, mailfrom: jmoyer@redhat.com)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1674145125;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qmHYjUt24sUlF/c+UMA/XCra8CJo51C7Y4xLfqoKvY0=;
+	b=YaCRFMUf9kUhlMFVcNT5ji5gRlQ362sg/y+dCbF9anYVE2wvqIUTmx7sz4fIOnbTPlccNf
+	5nTq3ok4IkekfwBs6HiwIo4E4UB8952/SLa+EOHO0Zewj5GDGDWDv0tzI07B1rnxlpWq+a
+	FOZZOHsXZj2X0s6Mfh8/5BiVgWILaYk=
+Received: from mimecast-mx02.redhat.com (66.187.233.73 [66.187.233.73]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-7-G6fLYfogOzG6HcOEitMZ7Q-1; Thu, 19 Jan 2023 11:17:42 -0500
+X-MC-Unique: G6fLYfogOzG6HcOEitMZ7Q-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+	(using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2560D3814953;
+	Thu, 19 Jan 2023 16:17:25 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id A802D492B03;
+	Thu, 19 Jan 2023 16:17:24 +0000 (UTC)
+From: Jeff Moyer <jmoyer@redhat.com>
+To: Dan Carpenter <error27@gmail.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,  Vishal Verma <vishal.l.verma@intel.com>,  Dave Jiang <dave.jiang@intel.com>,  Ira Weiny <ira.weiny@intel.com>,  "Rafael J. Wysocki" <rafael@kernel.org>,  Len Brown <lenb@kernel.org>,  nvdimm@lists.linux.dev,  linux-acpi@vger.kernel.org,  kernel-janitors@vger.kernel.org,  cip-dev <cip-dev@lists.cip-project.org>,  Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Subject: Re: [PATCH v2] ACPI: NFIT: prevent underflow in acpi_nfit_ctl()
+References: <Y8ldQn1v4r5i5WLX@kadam>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date: Thu, 19 Jan 2023 11:21:22 -0500
+In-Reply-To: <Y8ldQn1v4r5i5WLX@kadam> (Dan Carpenter's message of "Thu, 19 Jan
+	2023 18:09:54 +0300")
+Message-ID: <x49y1py5wcd.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <CAODzB9rHqzUTn1dmaP1j1SsiYh5UcJ5AKSjVL7PpxYE5ifRVCA@mail.gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
+Content-Type: text/plain
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 19 Jan 2023 15:24:41 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10449
+ <cip-dev@lists.cip-project.org>; Thu, 19 Jan 2023 20:11:53 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10450
 
-So I went through the list again and those two were the only real bugs I
-spotted.
+Dan Carpenter <error27@gmail.com> writes:
 
-The point is not really about this specific list of warnings, it's just
-the process of thinking asking how we improve going forward.  This was
-only one of the action items.  Another was why was Smatch not warning
-about missing checks for kmalloc() failure?  I have fixed this, but
-I forget what the fix was.  Also apparently I didn't publish the fix and
-the released code still does not warn.
+> The concern here would be that "family" is negative and we pass a
+> negative value to test_bit() resulting in an out of bounds read
+> and potentially a crash.
 
-Another question was the Smatch check for this is very old and it
-assumes that everything with a gfp_t flag is an allocation.  Which is
-fine.  But alloc_workqueue() doesn't take a gfp_t flag and it also needs
-to be checked for NULL so stuff like that needs to be added as well.
+I don't see how this can happen.  Do you have a particular scenario in
+mind?
 
-regards,
-dan carpenter
+-Jeff
+
+> This patch is based on static analysis and not on testing.
+>
+> Fixes: 9a7e3d7f0568 ("ACPI: NFIT: Fix input validation of bus-family")
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+> v2: add missing close parens ) in subject
+>
+>  drivers/acpi/nfit/core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+> index f1cc5ec6a3b6..da0739f04c98 100644
+> --- a/drivers/acpi/nfit/core.c
+> +++ b/drivers/acpi/nfit/core.c
+> @@ -446,10 +446,10 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
+>  	const char *cmd_name, *dimm_name;
+>  	unsigned long cmd_mask, dsm_mask;
+>  	u32 offset, fw_status = 0;
+> +	unsigned int family = 0;
+>  	acpi_handle handle;
+>  	const guid_t *guid;
+>  	int func, rc, i;
+> -	int family = 0;
+>  
+>  	if (cmd_rc)
+>  		*cmd_rc = -EINVAL;
+
 
