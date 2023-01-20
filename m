@@ -2,111 +2,103 @@ Return-Path: <ncaidin@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95DB1C05027
-	for <webhook@archiver.kernel.org>; Fri, 20 Jan 2023 14:14:18 +0000 (UTC)
-Received: from mga06.intel.com (mga06.intel.com [134.134.136.31])
- by mx.groups.io with SMTP id smtpd.web11.70152.1674204899514305526
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9761CC27C7C
+	for <webhook@archiver.kernel.org>; Fri, 20 Jan 2023 14:14:28 +0000 (UTC)
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+ by mx.groups.io with SMTP id smtpd.web10.67759.1674192131150558289
  for <cip-dev@lists.cip-project.org>;
- Fri, 20 Jan 2023 00:54:59 -0800
+ Thu, 19 Jan 2023 21:22:11 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="unable to parse pub key" header.i=@intel.com header.s=intel header.b=nyMbQQeL;
- spf=none, err=permanent DNS error (domain: linux.intel.com, ip: 134.134.136.31, mailfrom: peter.ujfalusi@linux.intel.com)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1674204899; x=1705740899;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=7oANbYIjgIDFI3cmChN7wYp6Yx10CkYP0TIkgphGYbE=;
-  b=nyMbQQeLkMbsLfhRhI2HF5gZSpXhQooDpPf8J509xcHtVBpWJ4EMYvV9
-   Bol0tYchKRsB2SFpDD6ZncRD2po4L2R4byrnPqt4dZo/zou6y7Atl4/Sc
-   tEXh+Kc8KSSvyqwiPqcr0a+0geoAkEXwKcqdUilX82p+NhfmRxD/Gun0q
-   9WMurE3Wp0QB66m+vnOqK9lhtYip4UoH2OAJyipHDh9srZKjJDo2TE2sK
-   tUHMXP1FUzfB6etYTHh85jixbHdvMDyeCKdNUhQObwK+xfYoZIZxDy9qJ
-   uze867SXId4yA0VLIUK8trUum0Bm9HL8LQGUG8/oax7FeaVbo7wATjNNS
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10595"; a="387901727"
-X-IronPort-AV: E=Sophos;i="5.97,231,1669104000"; 
-   d="scan'208";a="387901727"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2023 00:54:58 -0800
-X-IronPort-AV: E=McAfee;i="6500,9779,10595"; a="803007044"
-X-IronPort-AV: E=Sophos;i="5.97,231,1669104000"; 
-   d="scan'208";a="803007044"
-Received: from karenodx-mobl1.ger.corp.intel.com (HELO [10.252.29.156]) ([10.252.29.156])
-  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2023 00:54:54 -0800
-Message-ID: <1d14581b-60b7-6745-380f-5540bdbd7564@linux.intel.com>
-Date: Fri, 20 Jan 2023 10:55:00 +0200
+ dkim=pass header.i=@gmail.com header.s=20210112 header.b=YBIwhB60;
+ spf=pass (domain: gmail.com, ip: 209.85.128.50, mailfrom: error27@gmail.com)
+Received: by mail-wm1-f50.google.com with SMTP id d4-20020a05600c3ac400b003db1de2aef0so2839467wms.2
+        for <cip-dev@lists.cip-project.org>; Thu, 19 Jan 2023 21:22:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZPUNBOEvi+EfT+XJWJvekQT2sNWEjQ5PxX/U+WoCuzc=;
+        b=YBIwhB603yUqIdel1BN1aQ2kRRXRXqB2ePnBo3AkabEKkIGyDyo6TflF9PCi7R+hXF
+         uM7KoCMnU6bNghykefMWau8xbi8kmQEoq0eKHop8Onk0DBVr0FMBryV2/DhXMkUxVxyW
+         +25pM8oejnfFKv2WQMqpFfhuNf+U+R7cRkBTKzRS9Ng0t/RojLDy6qWw6EkKgyf4PkPT
+         B2XYSyWpzPB9g9N21dEcnHRVUJwkRPSEsgEo5PUsnNMF1+YfJkhVuxfLSEFilB4J2Mtk
+         EohULOeh+ymbakO1zDxwI+oXnMV/seI/uIkLI/7sPHX5TxRBoO190pVfz9VszRXppNYv
+         aKXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZPUNBOEvi+EfT+XJWJvekQT2sNWEjQ5PxX/U+WoCuzc=;
+        b=fDfsftlrBiIoRxBi5iaIAxewPc9xDawjoVGiKREYNqjwmBJor157qrdWsRWyIXUmzI
+         c1qdrNMndQVIhXlDH8Q7dMRXKGb7qIvoTXJw14nSJzIB8SJyqOsFChoqgz26zIPKhtuw
+         Hn0BghLHy+6NJlINAKFGQa2DuZBVvVSwZozZWlcw223RIsVB5+ZrvjZV9RxMsXfKzsMf
+         7Av7O5tCQ1h9/b1UOEy4Jno1tAb1J1kWMzdwaTBjMavbhSPjDb4YZkJAeeK9m5ckz0Qa
+         BYcO6QC+oBhLizafxadPZi+nlQ++F0+abEc/64BxSq1f62Bdd47F+4RRFEcRj742pH8O
+         F45w==
+X-Gm-Message-State: AFqh2kqDFBKhY1P5zjKWZAisr/3KtTEFFbs+aP8Xlt5z8gZZk13q9+Mz
+	GKqEkT60gwYrXYEAxRfioZY=
+X-Google-Smtp-Source: AMrXdXvzl4+RN1WjgYUz4tRPCvty5ZKlP8ibxlgMTYBueXvwytqo0rr34srYHacHIL0AlSzaowxE1A==
+X-Received: by 2002:a05:600c:3b1b:b0:3da:11d7:dba3 with SMTP id m27-20020a05600c3b1b00b003da11d7dba3mr12497450wms.5.1674192129466;
+        Thu, 19 Jan 2023 21:22:09 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id k16-20020a05600c0b5000b003db0a08694bsm1118757wmr.8.2023.01.19.21.22.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Jan 2023 21:22:09 -0800 (PST)
+Date: Fri, 20 Jan 2023 08:22:06 +0300
+From: Dan Carpenter <error27@gmail.com>
+To: Jeff Moyer <jmoyer@redhat.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, nvdimm@lists.linux.dev,
+	linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	cip-dev <cip-dev@lists.cip-project.org>,
+	Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Subject: Re: [PATCH v2] ACPI: NFIT: prevent underflow in acpi_nfit_ctl()
+Message-ID: <Y8ok/oCxzOhFDEQ+@kadam>
+References: <Y8ldQn1v4r5i5WLX@kadam>
+ <x49y1py5wcd.fsf@segfault.boston.devel.redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Firefox/102.0 Thunderbird/102.6.1
-Subject: Re: [PATCH] ASoC: SOF: ipc4-mtrace: prevent underflow in sof_ipc4_priority_mask_dfs_write()
-To: Dan Carpenter <error27@gmail.com>
-Cc: alsa-devel@alsa-project.org,
- Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
- Kai Vehmanen <kai.vehmanen@linux.intel.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Rander Wang <rander.wang@intel.com>,
- Bard Liao <yung-chuan.liao@linux.intel.com>, Takashi Iwai <tiwai@suse.com>,
- kernel-janitors@vger.kernel.org,
- Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
- Mark Brown <broonie@kernel.org>, cip-dev <cip-dev@lists.cip-project.org>,
- Daniel Baluta <daniel.baluta@nxp.com>, sound-open-firmware@alsa-project.org
-References: <Y8laruWOEwOC/dx9@kili>
-From: =?UTF-8?Q?P=c3=a9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
-In-Reply-To: <Y8laruWOEwOC/dx9@kili>
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <x49y1py5wcd.fsf@segfault.boston.devel.redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 20 Jan 2023 14:14:18 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10452
+ <cip-dev@lists.cip-project.org>; Fri, 20 Jan 2023 14:14:28 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10453
 
-
-
-On 19/01/2023 16:58, Dan Carpenter wrote:
-> The "id" comes from the user.  Change the type to unsigned to prevent
-> an array underflow.
+On Thu, Jan 19, 2023 at 11:21:22AM -0500, Jeff Moyer wrote:
+> Dan Carpenter <error27@gmail.com> writes:
 > 
-> Fixes: f4ea22f7aa75 ("ASoC: SOF: ipc4: Add support for mtrace log extraction")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-Acked-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
-
-> ---
->  sound/soc/sof/ipc4-mtrace.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
+> > The concern here would be that "family" is negative and we pass a
+> > negative value to test_bit() resulting in an out of bounds read
+> > and potentially a crash.
 > 
-> diff --git a/sound/soc/sof/ipc4-mtrace.c b/sound/soc/sof/ipc4-mtrace.c
-> index 70dea8ae706e..0ec6ef681012 100644
-> --- a/sound/soc/sof/ipc4-mtrace.c
-> +++ b/sound/soc/sof/ipc4-mtrace.c
-> @@ -344,9 +344,10 @@ static ssize_t sof_ipc4_priority_mask_dfs_write(struct file *file,
->  						size_t count, loff_t *ppos)
->  {
->  	struct sof_mtrace_priv *priv = file->private_data;
-> -	int id, ret;
-> +	unsigned int id;
->  	char *buf;
->  	u32 mask;
-> +	int ret;
->  
->  	/*
->  	 * To update Nth mask entry, write:
-> @@ -357,9 +358,9 @@ static ssize_t sof_ipc4_priority_mask_dfs_write(struct file *file,
->  	if (IS_ERR(buf))
->  		return PTR_ERR(buf);
->  
-> -	ret = sscanf(buf, "%d,0x%x", &id, &mask);
-> +	ret = sscanf(buf, "%u,0x%x", &id, &mask);
->  	if (ret != 2) {
-> -		ret = sscanf(buf, "%d,%x", &id, &mask);
-> +		ret = sscanf(buf, "%u,%x", &id, &mask);
->  		if (ret != 2) {
->  			ret = -EINVAL;
->  			goto out;
+> I don't see how this can happen.  Do you have a particular scenario in
+> mind?
+> 
 
--- 
-Péter
+This is from static analysis.  My main thinking was:
+
+1) The static checker says that this comes from the user.
+2) Every upper bounds check should have a lower bounds check.
+3) family is passed to array_index_nospec() so we must not trust it.
+
+But looking closer today here is what the checker is concerned about:
+
+	func = cmd_to_func(nfit_mem, cmd, call_pkg, &family);
+
+Assume "nfit_mem" is NULL but "call_pkg" is non NULL (user input from
+__nd_ioctl() or ars_get_status().  In that case family is unchecked user
+input.
+
+But probably, it's not possible for nfit_mem to be NULL in those caller
+functions?
+
+regards,
+dan carpenter
+
 
