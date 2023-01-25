@@ -1,135 +1,145 @@
-Return-Path: <webhook@kernel.org>
+Return-Path: <masami.ichikawa@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B7FFC27C76
-	for <webhook@archiver.kernel.org>; Wed, 25 Jan 2023 04:24:04 +0000 (UTC)
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
- by mx.groups.io with SMTP id smtpd.web10.37974.1674620637439141587
- for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Tue, 24 Jan 2023 20:23:57 -0800
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6B42C54E94
+	for <webhook@archiver.kernel.org>; Thu, 26 Jan 2023 00:00:19 +0000 (UTC)
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+ by mx.groups.io with SMTP id smtpd.web11.62312.1674691212940507181
+ for <cip-dev@lists.cip-project.org>;
+ Wed, 25 Jan 2023 16:00:13 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=NKq3DCvC;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.216.52, mailfrom: bot@kernelci.org)
-Received: by mail-pj1-f52.google.com with SMTP id nn18-20020a17090b38d200b0022bfb584987so801918pjb.2
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Tue, 24 Jan 2023 20:23:57 -0800 (PST)
+ dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112 header.b=5aCUI6gO;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.167.180, mailfrom: masami.ichikawa@miraclelinux.com)
+Received: by mail-oi1-f180.google.com with SMTP id r9so67213oig.12
+        for <cip-dev@lists.cip-project.org>; Wed, 25 Jan 2023 16:00:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=dBOZ4nJbgR5zhJPJuJi3SfO7qnY333hGyANFZcnnXyA=;
-        b=NKq3DCvCJ808B7nETfotd2kBf2wj2WW7ZmBz3KMivp6HfXmkGHsCMkWyavmonQ0xIY
-         VvtujFNdmKlCECflYU9ZWXSRCanyRw6uDehtLBb/yPRtW+T13wibesefwSWs9Rxc7oAo
-         0hrja3QaPXma2AG83pz4jb5zhbnxvHfbYl1Sx/HtfxjgqiEqrym3XCNcRGgvbkYX2d3G
-         t3VdpKJE9oNTc5P11PDnxBP1NAc6gF3tBnD/z9PBVMciNVU+0bIN5A94sjS+6/qxvlQ4
-         HSafBUpJF+9r87XDZF6TDp5N2EutMENnaM5pKRUd0CG3xKvw5oo3BTm04DR4t1QbcMW7
-         Is7w==
+        d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=SyP8rDQ28YQ8AO17NNPduZhoY+jkWGhlsPEzuqu/pUE=;
+        b=5aCUI6gOHZUD/fTvCOist7hWKc/EgvBiBKudxAybny2xudimNllE8WV3dfHRM2axgY
+         7jwJC/1gOERF6Kce2BZ7ccqsCR0I+R+UpZxkpjjcS7nRo97PCx3iTQBy2sLjTAKqiNOE
+         n7Ups8JYyAKjWzJQv59w6JF49K5nZbLuoto+PBxVdCphRYsz9vWVYZcb1CoFeXdfGtfi
+         q8PAg+fyqB8OfyrAvOuwu9L/cZGxRNzu/3Z5eOcbYjl6tXqCoOuX0kHEhUlovQ15hId6
+         Cu+AHOIvg5Mmk+fOTr++o5XR96liEqnxNkf3z9btwut4WFNZRpS2B2R2061aAIT/KV0l
+         l08w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dBOZ4nJbgR5zhJPJuJi3SfO7qnY333hGyANFZcnnXyA=;
-        b=L3VvY9yt7XdoKdvCFOphYOk7WJjoLN3BIgP7D9UccER4MjzpCA4yHAeVcLNeSloH4s
-         5DWgONIoYxXGyk9N7Q/VRJUvMaqk/ahOXjYbcDoS2+F1BWWhH++59LQFEgKcMFsq0AW0
-         T9Qmm98njGpygYIz7qdjCkQvwsgsIO/YQ52j2QmhretI5hbH0pALqBQj4DCGvQwWcNUN
-         t2aDSjQ8zY3+/iIB7DPsr9D/gqvACnt35OC8LkmEC2O6NqnbiY7EkKSKWBW7eF71lDVV
-         UPVRmlVDU7kjfj1D4YM6W8HBDj7cT2+WEskFmGDriTKYKTTFeJtzxCNflZ4Z7bNmzyAt
-         moQA==
-X-Gm-Message-State: AFqh2krIBRqsVG8GUpexazxTKmCZAz5/Puiymmqag0PgVe8vxUWBFYJR
-	FJg5w6hQoDKY4FGQP3efTbdf7fLqPeCHA4cVVQo=
-X-Google-Smtp-Source: AMrXdXs+D2x6LLMIHt5xGphPTbSrZRuWGUZbfGpH07u8kr6hVbJoFyjls5iSQ+b51FvaU6mXqrcmUw==
-X-Received: by 2002:a17:902:e5c9:b0:194:d0ad:53f0 with SMTP id u9-20020a170902e5c900b00194d0ad53f0mr28208291plf.9.1674620636278;
-        Tue, 24 Jan 2023 20:23:56 -0800 (PST)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id h6-20020a170902f54600b001769e6d4fafsm2509358plf.57.2023.01.24.20.23.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jan 2023 20:23:55 -0800 (PST)
-Message-ID: <63d0aedb.170a0220.ee0d2.50f7@mx.google.com>
-Date: Tue, 24 Jan 2023 20:23:55 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SyP8rDQ28YQ8AO17NNPduZhoY+jkWGhlsPEzuqu/pUE=;
+        b=l8iiQaEQXyr8eJhwQoybG5df64OWPqc7sUwFIqLL4fk6+l7kbIieMHdC4rJiC7WD8/
+         gKXwBc22buDYzvxiSe+lTtCzoO5PMD+2w7x7wScmaw24VqQk5hHNQ40/QISt1cDsARgJ
+         Q2K+QP/EozP4SRt9bE/ZNDU82iwzRtRZAKYj2GCBDuBNLaJ3RV0qvkzdxuv5oB43d7gt
+         c08Lj0V2l2UvJXzsyf/pbkilLzRfG7yA0mMNWrMRSuRoRgIQ1e/KUxhldoZCuVPH7/8D
+         YSigjUv6sIpoTuTcglWW9LQBS1jxIsFey2UvVpa1vcZQGhTJ2YzJdXA8dK/lpftksXV0
+         jFPw==
+X-Gm-Message-State: AFqh2kpTBAh7qV429Blj3Ctt9EbChky0iCaXYrp0Zhkb0fwDmLGQ8I9u
+	giJbGOKJOWy6+I3li+mJbSCkqrI1r3wxxpC0EO4ldieIAINZRUYB
+X-Google-Smtp-Source: AMrXdXsTSw5uyu3ec1lOXMFPCLogchlq7eaLaEG1IFQcUbbDOmor78cxcGe7W81x48UuC2uI/VPDC37hF/EpVPdPLTY=
+X-Received: by 2002:a05:6808:205:b0:35a:640c:ceb3 with SMTP id
+ l5-20020a056808020500b0035a640cceb3mr1740714oie.58.1674691211708; Wed, 25 Jan
+ 2023 16:00:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Tree: cip
-X-Kernelci-Branch: linux-4.4.y-cip
-X-Kernelci-Kernel: v4.4.302-cip71-590-g22fc523bf881
-X-Kernelci-Report-Type: test
-Subject: cip/linux-4.4.y-cip ltp-pty: 3 runs,
- 1 regressions (v4.4.302-cip71-590-g22fc523bf881)
-To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
- kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
-From: "kernelci.org bot" <bot@kernelci.org>
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Thu, 26 Jan 2023 08:59:35 +0900
+Message-ID: <CAODzB9qLr1oF15irR_ik-oOWk9WQoY7ChmfmG2Qym3b4yhrnzA@mail.gmail.com>
+Subject: New CVE entries this week
+To: cip-dev <cip-dev@lists.cip-project.org>
+Content-Type: text/plain; charset="UTF-8"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 25 Jan 2023 04:24:04 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10479
+ <cip-dev@lists.cip-project.org>; Thu, 26 Jan 2023 00:00:19 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10480
 
-cip/linux-4.4.y-cip ltp-pty: 3 runs, 1 regressions (v4.4.302-cip71-590-g22f=
-c523bf881)
+Hi !
 
-Regressions Summary
--------------------
+It's this week's CVE report.
 
-platform                 | arch   | lab           | compiler | defconfig   =
-                 | regressions
--------------------------+--------+---------------+----------+-------------=
------------------+------------
-asus-C523NA-A20057-coral | x86_64 | lab-collabora | gcc-10   | x86_64_defco=
-n...6-chromebook | 1          =
+This week reported 1 new CVEs and 2 updated CVEs.
 
+ProjectZero recently published a technique for exploiting a Null
+pointer dereference on a modern
+kernel(https://googleprojectzero.blogspot.com/2023/01/exploiting-null-dereferences-in-linux.html).
+In this article, it recommended the oops_limit feature to prevent this
+exploitation technique. The oops_limit feature has been backported to
+6.1.y (https://lore.kernel.org/stable/202301191532.AEEC765@keescook/T/#u).
+The oops_limit patches are available on 5.10
+(https://lore.kernel.org/stable/20230124193004.206841-1-ebiggers@kernel.org/)
+and 5.15 (https://lore.kernel.org/stable/20230124185110.143857-1-ebiggers@kernel.org/)
 
-  Details:  https://kernelci.org/test/job/cip/branch/linux-4.4.y-cip/kernel=
-/v4.4.302-cip71-590-g22fc523bf881/plan/ltp-pty/
+* New CVEs
 
-  Test:     ltp-pty
-  Tree:     cip
-  Branch:   linux-4.4.y-cip
-  Describe: v4.4.302-cip71-590-g22fc523bf881
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.g=
-it
-  SHA:      22fc523bf88173aa7805c4360b6581696228b140
+CVE-2023-0468: use-after-free in io_uring poll events due to race condition
 
-  Test suite revisions:
-    ltp-tests
-      URL:  https://github.com/linux-test-project/ltp.git
-      SHA:  d042c168dd037bb0128b86ee4ac4f5c526eddc7b =
+CVSS v3 score is not provided
 
+A use-after-free flaw was found in io_uring/poll.c in
+io_poll_check_events in the io_uring subcomponent in the Linux Kernel
+due to a race condition of poll_refs.
+This flaw may cause a NULL pointer dereference.
 
+This bug was introduced by commit aa43477 ("io_uring: poll rework") in 5.17-rc1.
+This commit was backported to 5.15 so 5.15 is affected. It isn't
+backported to 5.4 and 5.10.
 
-Test Regressions
----------------- =
+Fixed status
+mainline: [12ad3d2d6c5b0131a6052de91360849e3e154846,
+a26a35e9019fd70bf3cf647dcfdae87abc7bacea]
+stable/5.15: [df4b177b48516da64b988722a22d93d257dcda9a,
+4b702b7d11ce1b9d26fc6d7c5a7ef4ac1d455048]
 
+* Updated CVEs
 
+CVE-2023-0179: netfilter: nft_payload: incorrect arithmetics when
+fetching VLAN header bits
 
-platform                 | arch   | lab           | compiler | defconfig   =
-                 | regressions
--------------------------+--------+---------------+----------+-------------=
------------------+------------
-asus-C523NA-A20057-coral | x86_64 | lab-collabora | gcc-10   | x86_64_defco=
-n...6-chromebook | 1          =
+Fixed status
+mainline: [696e1a48b1a1b01edad542a1ef293665864a4dd0]
+stable/5.10: [550efeff989b041f3746118c0ddd863c39ddc1aa]
+stable/5.15: [a8acfe2c6fb99f9375a9325807a179cd8c32e6e3]
+stable/6.1: [76ef74d4a379faa451003621a84e3498044e7aa3]
 
+CVE-2022-4842: fs/ntfs3: Fix attr_punch_hole() null pointer dereference
 
-  Details:     https://kernelci.org/test/plan/id/63d098463456ff050b915ed0
+5.15 and 6.1 were fixed.
 
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: x86_64_defconfig+x86-chromebook
-  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
-  Plain log:   https://storage.kernelci.org//cip/linux-4.4.y-cip/v4.4.302-c=
-ip71-590-g22fc523bf881/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-co=
-llabora/ltp-pty-asus-C523NA-A20057-coral.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-4.4.y-cip/v4.4.302-c=
-ip71-590-g22fc523bf881/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-co=
-llabora/ltp-pty-asus-C523NA-A20057-coral.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20230120.0/amd64/initrd.cpio.gz =
+Fixed status
+mainline: [6d5c9e79b726cc473d40e9cb60976dbe8e669624]
+stable/5.15: [9cca110cf8bb0653b423dba7a7c4cc23ccf91b28]
+stable/6.1: [ff3b1a624380c14b81f4e51c48e404a45f047aab]
 
+Currently tracking CVEs
 
+CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
+Bluetooth Core Specifications 4.0 through 5.2
 
-  * ltp-pty.login: https://kernelci.org/test/case/id/63d098463456ff050b915e=
-d1
-        failing since 194 days (last pass: v4.4.302-cip69-296-g52de9431d314=
-, first fail: v4.4.302-cip69-508-gd887d54a1be6) =
+There is no fix information.
 
- =20
+CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
+
+No fix information.
+
+CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
+Provisioning Leads to MITM
+
+No fix information.
+
+CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
+
+No fix information.
+
+CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
+
+No fix information.
+
+Regards,
+-- 
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
+
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
 
