@@ -2,97 +2,85 @@ Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EAE5C54E94
-	for <webhook@archiver.kernel.org>; Wed, 25 Jan 2023 03:08:33 +0000 (UTC)
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
- by mx.groups.io with SMTP id smtpd.web10.36756.1674616109157367152
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8768C27C76
+	for <webhook@archiver.kernel.org>; Wed, 25 Jan 2023 03:25:23 +0000 (UTC)
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+ by mx.groups.io with SMTP id smtpd.web11.37118.1674617117834552994
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Tue, 24 Jan 2023 19:08:29 -0800
+ Tue, 24 Jan 2023 19:25:18 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=uMtVttmg;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.216.46, mailfrom: bot@kernelci.org)
-Received: by mail-pj1-f46.google.com with SMTP id nn18-20020a17090b38d200b0022bfb584987so681088pjb.2
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Tue, 24 Jan 2023 19:08:29 -0800 (PST)
+ dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=JGM0QG15;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.216.41, mailfrom: bot@kernelci.org)
+Received: by mail-pj1-f41.google.com with SMTP id h5-20020a17090a9c0500b0022bb85eb35dso705785pjp.3
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Tue, 24 Jan 2023 19:25:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20210112.gappssmtp.com; s=20210112;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=uLr9bKKwMFt9xYkDsZGiY5YzVaLyO8yvCJztC2tLGIs=;
-        b=uMtVttmg/wGMLY0gmsJpSRvuhGRp0fjfMKnhx2APgyn3rEY+hsWPPoUuTNq5Y/qU5T
-         MBVdXvwLQsl3oRJPMwFlBtf4fb8C49DTwsrYUI2QiVllPpYwx95GoVlQz+mtuwaFAk2o
-         lsEt3gyE/OqdOpS0Xtdcnlt+b2TUYAAMF+5jLCHS/3MFms0gRu9gRarUzcsOjhlomjcg
-         duePJWwt8lkmx64PfK/AOuzmncNbqKJJvcW+aXTqSA7LCmxAfUOI9Wo4vj9h9awhDFzV
-         8BjVcrRysEN5UrDZlrbgdWRRRB54BcMvaXXfuVM7oRkTs2PkjxsH2yUxLt0F8XJEzYcE
-         jiNQ==
+        bh=vbohofHpQjFmUf9zHMblPYzKdDtg72GQyuEfWlN0KAA=;
+        b=JGM0QG15qjjrwo9GEb8dKwSWVdQEmYQBtfcFUCG8o0TjmLAaumcGvV8qZngMbdeNvs
+         vBzLiy5LwiC2uJI5RYc8yCWYww3kY5DTWAZbogIJasCXH3MyLio5emSIn+Fwc2Ct8W9/
+         8JCNXzxX+LNUxaaQEpEeFVZlRqC3tAGp915JcHYB3MGGnE2gvm3xHSoUptUGIcMSkMFp
+         NiREriDeKXlafIc/2YfsEFGXNPf5nBnVb3Cxq6uAIYRKpJH5L+JLocCLzI4A7nRMMUVx
+         yBYFPbb1vbAdkeUntTkm9RhGM8fv9sCS4MhqIFB8XC2i32gisnmRrBlmHSboPHBcE/WM
+         cuCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=uLr9bKKwMFt9xYkDsZGiY5YzVaLyO8yvCJztC2tLGIs=;
-        b=3nXWdMLGEo77VFWebToZHXHDX99o+EkQuTHUHXhTWUJvSGXt2pnDnJHpgIdC0KBTmk
-         uQp56SL/h+3yfDMJNXQeC3O+A2CHrKUzqfP8DDy/s4bFI28eLKLoEQDCf1m3A4eP+XId
-         EfipAJKHs5I+/7oCQwXM5szoefAYi6k+/rEa9g+E59XI+Z+N0ctjFQmsIJvqOq2rluWR
-         E53vJmOqeO/WkVZLN/d8gzLYFKSDG+71Kjqr5QZvi9COjq4pYR2NMb6uaXaSv3EkbQi7
-         TG3Su92B+y0knBZhTtrdRH2R2XylQUd1PM16Llsz/eJMy2M7+ghXx1vDvmw05ZDuUcHq
-         hl7Q==
-X-Gm-Message-State: AFqh2krqBS2Dr1OTQ2ts8x126OSo6zQehDvK0frUyhgcY3wTuJhl6pzK
-	JzoprKTJ3QjIm3ixpk5mYL2+2GM3k7GKCIVZBI4=
-X-Google-Smtp-Source: AMrXdXtZqUd5Vuq2grIRXtobg2us0xhHVTe40ajounFkrgxsGvTdJjo8geTa6iRAG0PCjNW4Kuf1Tg==
-X-Received: by 2002:a17:902:db01:b0:195:efb2:6c6d with SMTP id m1-20020a170902db0100b00195efb26c6dmr20829608plx.45.1674616107476;
-        Tue, 24 Jan 2023 19:08:27 -0800 (PST)
+        bh=vbohofHpQjFmUf9zHMblPYzKdDtg72GQyuEfWlN0KAA=;
+        b=AjNLio+ACbSlNZNU2Exxn1Y82/R4LQY/Lfm6apXeDPTv7KDDnYX7RNxbmLQI8AbhD5
+         AM/UXd5bFRQAav4xx7J5d69ayH+nXCU8Fr4HxxUPw/XLjK12eTdFA6Y+5dpWkS3uPTg6
+         Rw4fIk40w6J0GAH7U3nNTAeYw/i62JZc27xuY+t2zxEdcowifv/ak2FXDYA3aF1DEKyu
+         Q4rNytlCXN8q3efo12mKB0fsoyTfZ6sVxj7qgDxtqfeTVyhBbtGsfKvxzBwflmu0PiTQ
+         HjGu4aE9Ncm+bqUww15jV6COeKIYnBUUcK2Sq6fEntUmue+I/1GF71Sz4z0ESvmEmGUK
+         IB3g==
+X-Gm-Message-State: AFqh2krga8pM8IoCKftD1vItmIi7mwsBz/5yPQJMdKZkhRsp0YPYP2VV
+	8Ga6YwtNRVZ7edOz5iPXRhbWktM0l0UeH/IR9oU=
+X-Google-Smtp-Source: AMrXdXswXuQKwehq8MeGMOKWVJDSkvjCcamX8sOuFRxx/CcvPr8G/PWowo9aAsK12dcduUs+hfoeUA==
+X-Received: by 2002:a05:6a20:d80e:b0:b8:8098:7ee5 with SMTP id iv14-20020a056a20d80e00b000b880987ee5mr32601958pzb.60.1674617116129;
+        Tue, 24 Jan 2023 19:25:16 -0800 (PST)
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id 6-20020a170902c20600b00186acb14c4asm2398727pll.67.2023.01.24.19.08.26
+        by smtp.gmail.com with ESMTPSA id 194-20020a6214cb000000b0056b9ec7e2desm2338892pfu.125.2023.01.24.19.25.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jan 2023 19:08:27 -0800 (PST)
-Message-ID: <63d09d2b.170a0220.faa08.54f8@mx.google.com>
-Date: Tue, 24 Jan 2023 19:08:27 -0800 (PST)
+        Tue, 24 Jan 2023 19:25:15 -0800 (PST)
+Message-ID: <63d0a11b.620a0220.6bc10.4963@mx.google.com>
+Date: Tue, 24 Jan 2023 19:25:15 -0800 (PST)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-Kernelci-Tree: cip
-X-Kernelci-Branch: linux-4.4.y-st
-X-Kernelci-Kernel: v4.4-st20-821-g39bdf0444b23
+X-Kernelci-Branch: linux-4.4.y-cip
+X-Kernelci-Kernel: v4.4.302-cip71-590-g22fc523bf881
 X-Kernelci-Report-Type: build
-Subject: cip/linux-4.4.y-st build: 186 builds: 4 failed, 182 passed, 4 errors,
- 42 warnings (v4.4-st20-821-g39bdf0444b23)
+Subject: cip/linux-4.4.y-cip build: 180 builds: 0 failed, 180 passed,
+ 41 warnings (v4.4.302-cip71-590-g22fc523bf881)
 To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
  kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
 From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 25 Jan 2023 03:08:33 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10472
+ <cip-dev@lists.cip-project.org>; Wed, 25 Jan 2023 03:25:23 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10473
 
-cip/linux-4.4.y-st build: 186 builds: 4 failed, 182 passed, 4 errors, 42 wa=
-rnings (v4.4-st20-821-g39bdf0444b23)
+cip/linux-4.4.y-cip build: 180 builds: 0 failed, 180 passed, 41 warnings (v=
+4.4.302-cip71-590-g22fc523bf881)
 
-Full Build Summary: https://kernelci.org/build/cip/branch/linux-4.4.y-st/ke=
-rnel/v4.4-st20-821-g39bdf0444b23/
+Full Build Summary: https://kernelci.org/build/cip/branch/linux-4.4.y-cip/k=
+ernel/v4.4.302-cip71-590-g22fc523bf881/
 
 Tree: cip
-Branch: linux-4.4.y-st
-Git Describe: v4.4-st20-821-g39bdf0444b23
-Git Commit: 39bdf0444b238ce8b92fda121bd1462a27f07a66
+Branch: linux-4.4.y-cip
+Git Describe: v4.4.302-cip71-590-g22fc523bf881
+Git Commit: 22fc523bf88173aa7805c4360b6581696228b140
 Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-Built: 6 unique architectures
+Built: 5 unique architectures
 
-Build Failures Detected:
-
-mips:
-    fuloong2e_defconfig: (gcc-10) FAIL
-    ip27_defconfig: (gcc-10) FAIL
-    ip28_defconfig: (gcc-10) FAIL
-    lemote2f_defconfig: (gcc-10) FAIL
-
-Errors and Warnings Detected:
+Warnings Detected:
 
 arc:
-
-arm64:
-    defconfig (gcc-10): 1 warning
-    defconfig+arm64-chromebook (gcc-10): 1 warning
 
 arm:
     clps711x_defconfig (gcc-10): 1 warning
@@ -101,6 +89,7 @@ arm:
     mini2440_defconfig (gcc-10): 1 warning
     mxs_defconfig (gcc-10): 1 warning
     omap1_defconfig (gcc-10): 1 warning
+    omap2plus_defconfig (gcc-10): 1 warning
     s3c2410_defconfig (gcc-10): 1 warning
     s3c6400_defconfig (gcc-10): 2 warnings
 
@@ -108,9 +97,7 @@ i386:
     i386_defconfig (gcc-10): 4 warnings
 
 mips:
-    fuloong2e_defconfig (gcc-10): 2 errors
     ip22_defconfig (gcc-10): 1 warning
-    lemote2f_defconfig (gcc-10): 2 errors
     mtx1_defconfig (gcc-10): 3 warnings
 
 x86_64:
@@ -119,10 +106,6 @@ x86_64:
     x86_64_defconfig (gcc-10): 8 warnings
     x86_64_defconfig+x86-chromebook (gcc-10): 8 warnings
 
-Errors summary:
-
-    4    cc1: error: =E2=80=98-mloongson-mmi=E2=80=99 must be used with =E2=
-=80=98-mhard-float=E2=80=99
 
 Warnings summary:
 
@@ -143,8 +126,6 @@ ection.
 741824 invokes undefined behavior [-Waggressive-loop-optimizations]
     2    ld: arch/x86/boot/compressed/head_64.o: warning: relocation in rea=
 d-only section `.head.text'
-    2    drivers/net/ethernet/apm/xgene/xgene_enet_main.c:32:36: warning: a=
-rray =E2=80=98xgene_enet_acpi_match=E2=80=99 assumed to have one element
     1    sound/pci/echoaudio/echoaudio_dsp.c:658:9: warning: iteration 1073=
 741824 invokes undefined behavior [-Waggressive-loop-optimizations]
     1    ld: arch/x86/boot/compressed/head_32.o: warning: relocation in rea=
@@ -156,6 +137,9 @@ t a cast [-Wint-conversion]
 _s3c_dt_match=E2=80=99 assumed to have one element
     1    drivers/gpio/gpio-omap.c:1161:34: warning: array =E2=80=98omap_gpi=
 o_match=E2=80=99 assumed to have one element
+    1    drivers/cpufreq/ti-cpufreq.c:250:24: warning: passing argument 1 o=
+f =E2=80=98PTR_ERR_OR_ZERO=E2=80=99 makes pointer from integer without a ca=
+st [-Wint-conversion]
     1    arch/arm/mach-mxs/mach-mxs.c:285:26: warning: duplicate =E2=80=98c=
 onst=E2=80=99 declaration specifier [-Wduplicate-decl-specifier]
     1    arch/arm/mach-lpc32xx/phy3250.c:215:36: warning: duplicate =E2=80=
@@ -199,11 +183,6 @@ given and no register operands; using default for `btr'
 
 ---------------------------------------------------------------------------=
 -----
-allnoconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
-mismatches
-
----------------------------------------------------------------------------=
------
 allnoconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
 mismatches
 
@@ -216,6 +195,11 @@ ismatches
 -----
 allnoconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
 ismatches
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
+mismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -382,24 +366,6 @@ decstation_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
 
 ---------------------------------------------------------------------------=
 -----
-defconfig (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 section mi=
-smatches
-
-Warnings:
-    drivers/net/ethernet/apm/xgene/xgene_enet_main.c:32:36: warning: array =
-=E2=80=98xgene_enet_acpi_match=E2=80=99 assumed to have one element
-
----------------------------------------------------------------------------=
------
-defconfig+arm64-chromebook (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 1 warn=
-ing, 0 section mismatches
-
-Warnings:
-    drivers/net/ethernet/apm/xgene/xgene_enet_main.c:32:36: warning: array =
-=E2=80=98xgene_enet_acpi_match=E2=80=99 assumed to have one element
-
----------------------------------------------------------------------------=
------
 dove_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
 n mismatches
 
@@ -447,17 +413,6 @@ ezx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
 -----
 footbridge_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
 section mismatches
-
----------------------------------------------------------------------------=
------
-fuloong2e_defconfig (mips, gcc-10) =E2=80=94 FAIL, 2 errors, 0 warnings, 0 =
-section mismatches
-
-Errors:
-    cc1: error: =E2=80=98-mloongson-mmi=E2=80=99 must be used with =E2=80=
-=98-mhard-float=E2=80=99
-    cc1: error: =E2=80=98-mloongson-mmi=E2=80=99 must be used with =E2=80=
-=98-mhard-float=E2=80=99
 
 ---------------------------------------------------------------------------=
 -----
@@ -545,16 +500,6 @@ ast [-Wint-conversion]
 
 ---------------------------------------------------------------------------=
 -----
-ip27_defconfig (mips, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-ip28_defconfig (mips, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
 ip32_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
 on mismatches
 
@@ -597,17 +542,6 @@ n mismatches
 -----
 lasat_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
 ion mismatches
-
----------------------------------------------------------------------------=
------
-lemote2f_defconfig (mips, gcc-10) =E2=80=94 FAIL, 2 errors, 0 warnings, 0 s=
-ection mismatches
-
-Errors:
-    cc1: error: =E2=80=98-mloongson-mmi=E2=80=99 must be used with =E2=80=
-=98-mhard-float=E2=80=99
-    cc1: error: =E2=80=98-mloongson-mmi=E2=80=99 must be used with =E2=80=
-=98-mhard-float=E2=80=99
 
 ---------------------------------------------------------------------------=
 -----
@@ -855,8 +789,13 @@ ch=E2=80=99 assumed to have one element
 
 ---------------------------------------------------------------------------=
 -----
-omap2plus_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
+omap2plus_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 se=
+ction mismatches
+
+Warnings:
+    drivers/cpufreq/ti-cpufreq.c:250:24: warning: passing argument 1 of =E2=
+=80=98PTR_ERR_OR_ZERO=E2=80=99 makes pointer from integer without a cast [-=
+Wint-conversion]
 
 ---------------------------------------------------------------------------=
 -----
@@ -1080,11 +1019,6 @@ smatches
 
 ---------------------------------------------------------------------------=
 -----
-tinyconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
-
----------------------------------------------------------------------------=
------
 tinyconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
 smatches
 
@@ -1100,6 +1034,11 @@ given and no register operands; using default for `btr'
  given and no register operands; using default for `sysret'
     arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
 given and no register operands; using default for `btr'
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
 
 ---------------------------------------------------------------------------=
 -----
