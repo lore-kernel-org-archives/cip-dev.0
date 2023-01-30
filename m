@@ -2,157 +2,219 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C4C1C54EAA
-	for <webhook@archiver.kernel.org>; Mon, 30 Jan 2023 11:02:47 +0000 (UTC)
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (EUR03-AM7-obe.outbound.protection.outlook.com [40.107.105.79])
- by mx.groups.io with SMTP id smtpd.web11.38276.1675076566528416995
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D49C54EAA
+	for <webhook@archiver.kernel.org>; Mon, 30 Jan 2023 11:34:27 +0000 (UTC)
+Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
+ by mx.groups.io with SMTP id smtpd.web11.38772.1675078456268908481
  for <cip-dev@lists.cip-project.org>;
- Mon, 30 Jan 2023 03:02:47 -0800
+ Mon, 30 Jan 2023 03:34:17 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=ytpOGLM3;
- spf=pass (domain: siemens.com, ip: 40.107.105.79, mailfrom: quirin.gylstorff@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=G4xAWfV6V3WmQ4iyxXtucpwOsKkai4EIg8zSdjzivbokB3ZOxaqZK065OZgXic0zFvHPVQHDyUqHxL0zRv4oiDDYpkZYGTMWaZqOR+Krs5q6mGJC/v+ubEC7rV1ZgSxUNMsEzsRkRgPDJjEWA/flzG2aGxKStu5jcdkQ4geig1Is+Rr0QQ2i/xRIdxZq55S0ovXMOK2ieHRipHHf7iVJ1VRp7o8Ce8iG1Mj3RIf+wZyKAAMPQNl0AKgHDCaSV1Uyha11wS7ybwNAgWEt7fH78Vq5CU515Ft5DtOoKSFGpHqxwKXgM2XTMwz8vd+9ckLN+vom0dP/C4nkC0EuCMZrqg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wr46SjBndRjLsiAl24qqNkfh673U8qB+Zulpc4bOukU=;
- b=bM3WFwEL9gm2dRaNN8+GY5WjNhZ8OQfBpPwh8W+ntSCblXZX24GHfXi+/j8DepH0lz0YZTZ8KnO0aA0x6kdjaebypdwh4poXgKrVgtEi9HsvchkrdInNI/3xEEeGh3OmTmied4kIEhJusz02ACBRB494kbOrlsa5MZInADLCZCs+VcIziSI6wab97zbxOAqfiAmk6ZCnNoi02iglA7ka0iN3IYAWBgJs2S74DcW6tcDnEzTj0dUel4I69pW/1bRGEGWCEyNkxYYr/sKeoywrYVkuiT7RBqZGf+6UeHRhSwlgyufmwPF7AyhQqSiiE4ky1tzszLoqZcy+xwmG4+UXyA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wr46SjBndRjLsiAl24qqNkfh673U8qB+Zulpc4bOukU=;
- b=ytpOGLM3U9VCpgb5SsO5tbX7IKIpGvdwpjGRPawXlvfsYNsTGTpCWxqi1aq4DmAZZI3uWEQHgffyhsVul7WPI0LjSDVdEOvU52oQI6bSU3f3dPUSiAv/T3o++JXT6tWnGG9YXF4nTlSgouQXiyucOVj3egN8zCopd7kb9n98PPmR/5On8IWl48h/g74r9J2o4WcGQcSGX/SZkx19/Qukac3hyZwO2MBvQDIdDl5gZ/OWPkGUkGPL5NDN2l41Dw7kSRc/QANwFUjrAhYwHCThoRGYGSp354OG18fbI3oalwrKI6c1QNhbxhYcbQmLNp08Ew3QqOBCvKfsoZNKBHADmQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:1f9::22)
- by PAWPR10MB7674.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:35e::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6043.33; Mon, 30 Jan
- 2023 11:02:43 +0000
-Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::793f:57e:21e9:3741]) by AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::793f:57e:21e9:3741%3]) with mapi id 15.20.6043.036; Mon, 30 Jan 2023
- 11:02:43 +0000
-Message-ID: <65f143aa-3e48-9075-357a-08087a5e922c@siemens.com>
-Date: Mon, 30 Jan 2023 12:01:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: Override of sid distro config breaks mirrors
-To: "Moessbauer, Felix (T CED INW-CN)" <felix.moessbauer@siemens.com>,
- "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-References: <0236184cd3f04ecb0a3282bdc6c8fb7eeb04ae81.camel@siemens.com>
-Content-Language: en-US, de-DE
-From: Gylstorff Quirin <quirin.gylstorff@siemens.com>
-Organization: Siemens
-In-Reply-To: <0236184cd3f04ecb0a3282bdc6c8fb7eeb04ae81.camel@siemens.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: CH0PR04CA0060.namprd04.prod.outlook.com
- (2603:10b6:610:77::35) To AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:1f9::22)
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=bOOgqCYz;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-51332-20230130113413fc61e426a9682b8264-rwpsr2@rts-flowmailer.siemens.com)
+Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20230130113413fc61e426a9682b8264
+        for <cip-dev@lists.cip-project.org>;
+        Mon, 30 Jan 2023 12:34:13 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=Quirin.Gylstorff@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+ bh=Fx9N7VblS4M95JCxWC3MdVwDGC1exYLcrKzcx7v9GPo=;
+ b=bOOgqCYzHQBysmv9Sna5F+MmVAWkUFTh5gDtkjA8JqJWixuM4roCZjcQHz4HXsWk3YaGYl
+ LdE630kJH9PRTr32Z4WmeV4sqv52JBG5Lqrj+pvr6ITRt+WLz3N8jQyrA+GTtaaOYsRcH2r0
+ tr+EqUSAoA0+gDZOoZb9gB5bQxyQk=;
+From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
+To: cip-dev@lists.cip-project.org,
+	jan.kiszka@siemens.com
+Subject: [cip-dev][isar-cip-core][PATCH] Add bookworm
+Date: Mon, 30 Jan 2023 12:34:12 +0100
+Message-Id: <20230130113412.628646-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM9PR10MB4085:EE_|PAWPR10MB7674:EE_
-X-MS-Office365-Filtering-Correlation-Id: f8da0d4b-38d0-43bb-08cf-08db02b1831e
-X-LD-Processed: 38ae3bcd-9579-4fd4-adda-b42e1495d55a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	heHo6ZT4eFqymt/3/F4C1yylFtG2iz3tfKw/M/GDlxF2TGtx3m3mL1WHDOK0LfSCo7vV05MES4DnoUzw9M9ZjIMEcA18E8NKcei4WeFYPVBaPz1vMvmxg1/AlQsOloFAComWC7Tg9BLiOxSkM4cLPXsmqV20rWmStRi10Mxw85C58FidMo5OEJ+eZ3cG7BFUpZNSgy3p30rc9l6Ll5yM2WZ0lWHGgZtNV6DqK7MXmROrx474RChF5bkG7QyhKNKEElQtcmS9xDqaArgyWa//dClTp2OsXYd5xgnYvdpclJEgxxYMqFK6EatauthTdcwyZvB7yJ6l/euUj+hw0HV1acQsnjyHlm7GmZWjKWgiN8T6wi/7JDyxYe3y0hggALtmVjCROBSjhapJpzJBN8+ywJUAknjLqVxK9eic7J/7bqXIIujPnnHCXUZQqEX4YmbcVrmhU1shPPpONwKvmB+o2aT0KV70GMUZoho33aqvvoun8CMlssJowFY9zca3RHyroqux49sJUPNPJV5O4mHNicu5INTR5bqt3Sdrpbykl06NkrWQe56dyq+8IzXZOWhYc7msed1MVRYuG5IeEqTbgJ05WTMrK1g5zmHvTWfAsrquBDTrnhUXiVNOKPvhGMSmC+M5+/y9KHXT39tO7Yy1d3pnGCNxM+3bnnkFrXXtAv+vVFIp3UXxs0jGR0Yr2rxOPUGNfFqFlttRjcjYXQZK5d5K0yJvRetX2NugfRHAZ4UCUciazzZzD4JLVmNlE2ZFqy1vhkuIze6VCrox/CiFtg==
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230025)(4636009)(39860400002)(136003)(396003)(346002)(376002)(366004)(451199018)(41300700001)(86362001)(83380400001)(2616005)(31696002)(38100700002)(316002)(36756003)(82960400001)(110136005)(66946007)(53546011)(66476007)(6506007)(8676002)(66556008)(186003)(478600001)(36916002)(966005)(6512007)(4744005)(6486002)(2906002)(31686004)(8936002)(5660300002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?VVpjenVKVXpiUW9HRHBRWTcwNkZ2cGluajd4Y0VYNGVHTjRJeVlQNDFpb2dt?=
- =?utf-8?B?NFUrN3dWaU93K1NMSFRhaHRZbGVUT0h0WkhWM2pRUElQZ20ybktrRkdvRm9u?=
- =?utf-8?B?K1VrSjRkY1BlenhPWmJEdzJ1L2tWWDVock5VZ0U5QTk1MHlSUjRrSUJieWNq?=
- =?utf-8?B?Q2I4Q3locU4yN1pnaG1JeEVXTGhOTk0xRXV4YS9pbDZhbUhPck8yZkNSUitu?=
- =?utf-8?B?TmgydGtYTFFWNHlSaWZqd0RKQVd1Y0JkbHM5ck5hZGpqdVNZQzlEdUlLaWxX?=
- =?utf-8?B?ck5KVlR4ZDF4ZUhnWTZ2dG96QzZrMHBrYnhMZExyeVhzeEN1TDVmWjVOb1JK?=
- =?utf-8?B?RTdYY3o5Qk4xM0FWTHd2aEhsNmF5bnBBYnMvRzBjcHJkWTZqNittSEtnN240?=
- =?utf-8?B?c3BlZkx4WkhrdDVEYnZaOXF5U3MzNjMrV28zZEQzSG1RcWNsRFhXQzVhSVBl?=
- =?utf-8?B?RE9mMW1SbkF0SVpNUDQwVVJrNmhJNXh3eHJtQ0NNMWpjd2g5aHo2VjlPR0VZ?=
- =?utf-8?B?RnJXUEt1d0NsZ3ZwNUtEVWpuMklHeWtkOENhcXFJMzFhcDI2ZXFLc2hpdVNY?=
- =?utf-8?B?Y2NIM0d6NGR1TjBiZkVtWkNRbnRYNHUybTBPTnFTMHd5YUduWVREaGZPVGdG?=
- =?utf-8?B?anlzVHNsNjVEM2lJZVRXZzdFYm0rbFBiNzUwUHBoVkZkVngvL25aS3A1YU5R?=
- =?utf-8?B?SDJ3OWoxRWVoeUhuNmdZbW9YK0RFNWF2ZjBaei85ODdtQk4yd0dJUHVNQzJm?=
- =?utf-8?B?RUYyK0hMOHJ5bCtsYnF2VWIwL05xU2pRakZIdzQ2LzJSUkU5cHJMbHg2c2lZ?=
- =?utf-8?B?VEU2Yk1weTZNWmxydDZtMGVSdDliMk1Zc2tXTkE3dnpDNk1mUU81eUErZ2J6?=
- =?utf-8?B?T3lickdNWjVqdkg1Y3BjMmpqRGJNdU15bnNzRTlZeG8zNXhGekY2K0xTaG1X?=
- =?utf-8?B?NHloWUpCU2s4WXFCWWVEN0ZGdUtVbzdNM2E0cERZMjFqOER2OHBWVHZuMWNp?=
- =?utf-8?B?Y3MwQVdjb05IUUVETmlyRTBhdTNidkhPTjhBeTlxaklUUlRoa1N0MzFVTTBZ?=
- =?utf-8?B?TGowWnJFUm85ZXpEZUdQNEhub00zcXdtaTQ3K1c0SEU0ZGFVOHdFUEZSYTlr?=
- =?utf-8?B?dHJQczFRZFFaU25DKzVzaE1UVm1ZUlN1bm15ZnVQNlRudDYxZW1YaTJjWURY?=
- =?utf-8?B?TmoxR3pBbXd1L1RJVWdaVkNjaTVqc25mK1ZPWW0xVTRmMUF0NHdEVkRnRVBx?=
- =?utf-8?B?Zkx3dkZFYk1WeUY0MVNva3dXM0ZCMDlPS3BtbGdHazQ3b2oxejg0cnhab1B6?=
- =?utf-8?B?RFNTSUJQTmFITDM0RzNQeVVhUUdNNHhoRkJGQklLZnpqQmVmKzIxQWRFd05t?=
- =?utf-8?B?WWlBaVJsTUY5c1JkV1ljc3M4VU9aRVlkQjVvL0lvbVFwaDgxRnVjNFVvWkFs?=
- =?utf-8?B?QzZMZjR6WVZQem9taWNpbGtCbzV6K2dPTkxSeDM0eXFFQWpPUS84cy85MGVi?=
- =?utf-8?B?QTRBbm9lUE9JTzVId1FmUEhtUHdSM3I1V0RSYXhpZkNNWEF6OFR5elhzY2dE?=
- =?utf-8?B?ZjBPcGRhWmFkbVR4cHlhWkRhZDBrb2pyYlRaNzNwSFdsamFEOWJmM05pRkww?=
- =?utf-8?B?TVJFUjZJdDNOVDlXT1V6WjBaSkpvY2g0THd3SkhDV2dYdy9yb054NnkxSkdP?=
- =?utf-8?B?NFJoTFppVHVHNXJVRHE4aG8yKzg0bGhLUjhjbmFlUlN4elJGVFlSZlp1M0pz?=
- =?utf-8?B?N3Z3WnNaV2tzY0VUS25CUEs1V0lFSk9Lc3F0bEMrOGgxNWdGdHVabEpxTFBB?=
- =?utf-8?B?Y2IvYnZCaFc0VjQ5cVZPT2NQQkZaWGord1JHclAzZ0MxeGFNVlhjRnAwbXV2?=
- =?utf-8?B?VEpVMDBpSU1kQzQ4V3kxMVlrNnZYMG9tRnc3UWpha0pFalJGTk5vYzcySWZu?=
- =?utf-8?B?aTRUTi96eUFHRVZlUlo0UXVqYURnUk5nMjdMeFlobi9SRmtORmlXMTJvVG1D?=
- =?utf-8?B?N2VkYnlYd3RiNjAzd1BEcU5WTlZjdHBRSzVBcDVaYmEwNTI4dllnc1c1Q1JY?=
- =?utf-8?B?WjVSZEJkczVoVHJpTE5hTVFjbWs4ZUJEOHF2QUszcTZJbFV0U2JwcUlGb3Iy?=
- =?utf-8?B?d1FNaWRpcDN2T1cvZFZGaU84VzROWlE1MHd0NHMzclg4QzZVc3lFK09PaTJi?=
- =?utf-8?B?Z2drZ3NPSzRFa2pQclBxNFdNVjEzVGFBSWg5UFdneFowVVFLbW1xSFNGaEZX?=
- =?utf-8?Q?2IPk9mk0+I4ccMQU+NkKNWcuEynq68/3VdBWzo9fTA=3D?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f8da0d4b-38d0-43bb-08cf-08db02b1831e
-X-MS-Exchange-CrossTenant-AuthSource: AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jan 2023 11:02:43.7821
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OF/xX5PlY5LWnk1bk1yX/z39i6bi2MTX+CrRrMpT2h2nbN/MGsnkAZlPKjxCKgF4dFLqsng6Zt+mrG04i3wmtGWoKlgPw9n32KG4bqWsb+E=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR10MB7674
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 30 Jan 2023 11:02:47 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10503
+ <cip-dev@lists.cip-project.org>; Mon, 30 Jan 2023 11:34:27 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10504
 
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
+This will add prelimitary support for the debian 12 aka bookworm.
 
-On 1/30/23 10:58, Moessbauer, Felix (T CED INW-CN) wrote:
-> Dear devs,
-> 
-> the distro "debian-sid" and "debian-sid-ports" is currently specified
-> both in ISAR and in isar-cip-core. While in ISAR standard debian
-> mirrors are used, cip-core pins that to a specific release on
-> snapshots.debian.org.
-You mean the list files, which override the list files provided by ISAR? 
-Because the only distribution in isar-cip-core is `cip-core-sid-ports`.
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+ .gitlab-ci.yml                       | 45 ++++++++++++++++++++++++++++
+ Kconfig                              |  5 ++++
+ conf/distro/cip-core-bookworm.conf   | 17 +++++++++++
+ kas/opt/bookworm.yml                 | 15 ++++++++++
+ recipes-core/images/efibootguard.inc |  6 ++--
+ recipes-core/images/swupdate.inc     |  6 +++-
+ 6 files changed, 91 insertions(+), 3 deletions(-)
+ create mode 100644 conf/distro/cip-core-bookworm.conf
+ create mode 100644 kas/opt/bookworm.yml
 
-This looks to me like a workaround to override DISTRO_APT_SOURCES
-from `conf/distro/debian-sid-ports.conf`.
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+index f7c8c88..2b9505d 100644
+--- a/.gitlab-ci.yml
++++ b/.gitlab-ci.yml
+@@ -37,6 +37,7 @@ default:
+     - if [ "${targz}" = "enable" ]; then base_yaml="${base_yaml}:kas/opt/targz-img.yml"; fi
+     - if [ "${release}" = "buster" ]; then base_yaml="${base_yaml}:kas/opt/buster.yml"; fi
+     - if [ "${release}" = "bullseye" ]; then base_yaml="${base_yaml}:kas/opt/bullseye.yml"; fi
++    - if [ "${release}" = "bookworm" ]; then base_yaml="${base_yaml}:kas/opt/bookworm.yml"; fi
+     - echo "Building ${base_yaml}"
+     - kas build ${base_yaml}
+     - if [ "${deploy}" = "enable" ]; then scripts/deploy-cip-core.sh ${release} ${target} ${extension} ${dtb} ${CI_COMMIT_REF_SLUG}; fi
+@@ -281,3 +282,47 @@ build:qemu-amd64-secure-boot-buster:
+     use_rt: disable
+     wic_targz: disable
+     deploy: disable
++
++# bookworm images
++build:simatic-ipc227e-bookworm:
++  extends:
++    - .build_base
++  variables:
++    target: simatic-ipc227e
++    release: bookworm
++
++build:bbb-bookworm:
++  extends:
++    - .build_base
++  variables:
++    target: bbb
++    dtb: am335x-boneblack.dtb
++    release: bookworm
++
++build:iwg20m-bookworm:
++  extends:
++    - .build_base
++  variables:
++    target: iwg20m
++    dtb: r8a7743-iwg20d-q7-dbcm-ca.dtb
++    release: bookworm
++
++build:hihope-rzg2m-bookworm:
++  extends:
++    - .build_base
++  variables:
++    target: hihope-rzg2m
++    dtb: r8a774a1-hihope-rzg2m-ex.dtb
++    release: bookworm
++
++build:qemu-amd64-secure-boot-bookworm:
++  extends:
++    - .build_base
++  variables:
++    base_yaml: "kas-cip.yml:kas/board/${target}.yml:kas/opt/5.10.yml"
++    release: bookworm
++    target: qemu-amd64
++    extension: ebg-secure-boot-snakeoil
++    use_rt: disable
++    wic_targz: disable
++    deploy: disable
+diff --git a/Kconfig b/Kconfig
+index cd24ce2..87056b9 100644
+--- a/Kconfig
++++ b/Kconfig
+@@ -128,6 +128,10 @@ config DEBIAN_BULLSEYE
+ 	bool "bullseye (11)"
+ 	depends on !ARCH_RISCV64
+ 
++config DEBIAN_BOOKWORM
++	bool "bookworm (12)"
++	depends on !ARCH_RISCV64
++
+ config DEBIAN_SID_PORTS
+ 	bool "sid (unstable) with unofficial ports"
+ 	depends on ARCH_RISCV64
+@@ -138,6 +142,7 @@ config KAS_INCLUDE_DEBIAN
+ 	string
+ 	default "kas/opt/buster.yml" if DEBIAN_BUSTER
+ 	default "kas/opt/bullseye.yml" if DEBIAN_BULLSEYE
++	default "kas/opt/bookworm.yml" if DEBIAN_BOOKWORM
+ 	default "kas/opt/sid-ports.yml" if DEBIAN_SID_PORTS
+ 
+ comment "Image features"
+diff --git a/conf/distro/cip-core-bookworm.conf b/conf/distro/cip-core-bookworm.conf
+new file mode 100644
+index 0000000..86c97a1
+--- /dev/null
++++ b/conf/distro/cip-core-bookworm.conf
+@@ -0,0 +1,17 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2023
++#
++# Authors:
++#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++#
++
++require conf/distro/debian-bookworm.conf
++require cip-core-common.inc
++
++PREFERRED_VERSION_efibootguard ?= "0.13.%"
++PREFERRED_VERSION_linux-cip ?= "5.10.%"
++PREFERRED_VERSION_linux-cip-rt ?= "5.10.%"
+diff --git a/kas/opt/bookworm.yml b/kas/opt/bookworm.yml
+new file mode 100644
+index 0000000..8b4431b
+--- /dev/null
++++ b/kas/opt/bookworm.yml
+@@ -0,0 +1,15 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2023
++#
++# Authors:
++#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++#
++
++header:
++  version: 12
++
++distro: cip-core-bookworm
+diff --git a/recipes-core/images/efibootguard.inc b/recipes-core/images/efibootguard.inc
+index eace4fd..d8d3a06 100644
+--- a/recipes-core/images/efibootguard.inc
++++ b/recipes-core/images/efibootguard.inc
+@@ -8,8 +8,10 @@
+ #
+ # SPDX-License-Identifier: MIT
+ #
+-
+-IMAGE_INSTALL_append = " efibootguard"
++OVERRIDES_append = ":${BASE_DISTRO_CODENAME}"
++IMAGE_PREINSTALL_append_bookworm += " efibootguard"
++IMAGE_INSTALL_append_bullseye += " efibootguard"
++IMAGE_INSTALL_append_buster += " efibootguard"
+ 
+ WIC_IMAGER_INSTALL_append = " efibootguard"
+ WDOG_TIMEOUT ?= "60"
+diff --git a/recipes-core/images/swupdate.inc b/recipes-core/images/swupdate.inc
+index 9b2aedc..a47928a 100644
+--- a/recipes-core/images/swupdate.inc
++++ b/recipes-core/images/swupdate.inc
+@@ -13,7 +13,11 @@ inherit image_uuid
+ inherit swupdate
+ inherit read-only-rootfs
+ 
+-IMAGE_INSTALL += " swupdate"
++OVERRIDES_append = ":${BASE_DISTRO_CODENAME}"
++
++IMAGE_PREINSTALL_append_bookworm += " swupdate"
++IMAGE_INSTALL_append_bullseye += " swupdate"
++IMAGE_INSTALL_append_buster += " swupdate"
+ IMAGE_INSTALL += " swupdate-handler-roundrobin"
+ 
+ ROOTFS_PARTITION_NAME = "${IMAGE_FULLNAME}.wic.p4.gz"
+-- 
+2.39.0
 
-I pushed a fix at 
-https://gitlab.com/cip-project/cip-core/isar-cip-core/-/tree/quirin/sid-lists/
-
-> 
-> This breaks use-cases where local mirrors shall be used, as these do
-> not support snapshots. Also, this "infects" other layers that actually
-> want to use sid "as-is".
-> 
-> Please consider renaming this distro to "cip-<distro>" to get rid of
-> this ambiguity.
-> 
-> Best regards,
-> Felix Moessbauer
-> Siemens AG
-Best regards
-
-Quirin
 
