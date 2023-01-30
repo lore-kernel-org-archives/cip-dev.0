@@ -1,140 +1,158 @@
-Return-Path: <webhook@kernel.org>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3876EC61D97
-	for <webhook@archiver.kernel.org>; Sun, 29 Jan 2023 23:00:24 +0000 (UTC)
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
- by mx.groups.io with SMTP id smtpd.web11.28536.1675033216850894383
- for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Sun, 29 Jan 2023 15:00:16 -0800
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C4C1C54EAA
+	for <webhook@archiver.kernel.org>; Mon, 30 Jan 2023 11:02:47 +0000 (UTC)
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (EUR03-AM7-obe.outbound.protection.outlook.com [40.107.105.79])
+ by mx.groups.io with SMTP id smtpd.web11.38276.1675076566528416995
+ for <cip-dev@lists.cip-project.org>;
+ Mon, 30 Jan 2023 03:02:47 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=PhuCX91g;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.210.174, mailfrom: bot@kernelci.org)
-Received: by mail-pf1-f174.google.com with SMTP id z3so6556185pfb.2
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Sun, 29 Jan 2023 15:00:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=f0YC16QYuI26iSEqouzNHzLfNLNpzmf4/PF2cxJjI7Q=;
-        b=PhuCX91gN1BSMGDzviIgmUfcmn/M9rHGmLBr9fYB/PISEK4HkVvLjKL7SAOMD/E5tv
-         98bAouck9ac6eNeSpK4paN+LL+jeS1T87SZPcoHuA2/wmrLmYRStCIdREL/RIlYZu92a
-         /n5IHLaZNg/FaAiLp2txpt4xDN8pEFN0N2rAKD21yvjeruc+b0xcXBcZZxhic9EthSP1
-         qf/vitomanCLCxhlAv/SCaqA3kotzHFIlt/et1rAkka22bKhuLqmYU4U+86uc5R3v/ms
-         YU8kzkrY8/nrbv6odTg5Lw1cb38J4UWsXSaF/pjcVK9y4jydaZFsdZqNzJx2VlUqFutW
-         YhzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=f0YC16QYuI26iSEqouzNHzLfNLNpzmf4/PF2cxJjI7Q=;
-        b=1YPsARZitvjLQiWLqtdPY5OHtjOLLGqA3Wpph2duT6mvNH6tO1Yxlp5lmlefkguxEO
-         u18UjIj1vmUdnCMGGRh/1OTJy3FZI24w9ACQYf8Ldut3NFnqT5aSwRyfmj0r3tMxtbkY
-         BG64iQS9h8Wb7MeYKp4xZYp1J180rR4VTuoR0IxLyiwyH0l4delH4XTAb3qnBXdrHlOE
-         fnfdrSJNJd+mjume86v+QzgKdVYWcL8tXjo46tpdqpnA/cD+W1aXiO7ZL2jyZhKxc2I7
-         CDXBgvUK7k/16gdHTCasouivvqfMjvdS1N4sSxtYPCnMNYw1KP6CdTM2UTjaGT+NwjuZ
-         pu7g==
-X-Gm-Message-State: AO0yUKU6dROhpkpHPY3P6HZno+A02izttHoO4ns9N19vPWzXWx0Vxj4j
-	o5V0WiMcdTuAf1FAcH6X0JRVkSKRL9ZhYNOO8iKIbA==
-X-Google-Smtp-Source: AK7set8/mYXoiu5eIxRcs+qTRqBTTKumH8rtPOU9plQ5mcfgkNxDFjN5Ez9MuC1aaIEzMjTF2fNuDQ==
-X-Received: by 2002:aa7:87cf:0:b0:593:b17e:ff89 with SMTP id i15-20020aa787cf000000b00593b17eff89mr3404359pfo.1.1675033216001;
-        Sun, 29 Jan 2023 15:00:16 -0800 (PST)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id h8-20020a056a00230800b0058e08796e98sm6009284pfh.196.2023.01.29.15.00.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Jan 2023 15:00:15 -0800 (PST)
-Message-ID: <63d6fa7f.050a0220.e9ed4.99c6@mx.google.com>
-Date: Sun, 29 Jan 2023 15:00:15 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=ytpOGLM3;
+ spf=pass (domain: siemens.com, ip: 40.107.105.79, mailfrom: quirin.gylstorff@siemens.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=G4xAWfV6V3WmQ4iyxXtucpwOsKkai4EIg8zSdjzivbokB3ZOxaqZK065OZgXic0zFvHPVQHDyUqHxL0zRv4oiDDYpkZYGTMWaZqOR+Krs5q6mGJC/v+ubEC7rV1ZgSxUNMsEzsRkRgPDJjEWA/flzG2aGxKStu5jcdkQ4geig1Is+Rr0QQ2i/xRIdxZq55S0ovXMOK2ieHRipHHf7iVJ1VRp7o8Ce8iG1Mj3RIf+wZyKAAMPQNl0AKgHDCaSV1Uyha11wS7ybwNAgWEt7fH78Vq5CU515Ft5DtOoKSFGpHqxwKXgM2XTMwz8vd+9ckLN+vom0dP/C4nkC0EuCMZrqg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wr46SjBndRjLsiAl24qqNkfh673U8qB+Zulpc4bOukU=;
+ b=bM3WFwEL9gm2dRaNN8+GY5WjNhZ8OQfBpPwh8W+ntSCblXZX24GHfXi+/j8DepH0lz0YZTZ8KnO0aA0x6kdjaebypdwh4poXgKrVgtEi9HsvchkrdInNI/3xEEeGh3OmTmied4kIEhJusz02ACBRB494kbOrlsa5MZInADLCZCs+VcIziSI6wab97zbxOAqfiAmk6ZCnNoi02iglA7ka0iN3IYAWBgJs2S74DcW6tcDnEzTj0dUel4I69pW/1bRGEGWCEyNkxYYr/sKeoywrYVkuiT7RBqZGf+6UeHRhSwlgyufmwPF7AyhQqSiiE4ky1tzszLoqZcy+xwmG4+UXyA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wr46SjBndRjLsiAl24qqNkfh673U8qB+Zulpc4bOukU=;
+ b=ytpOGLM3U9VCpgb5SsO5tbX7IKIpGvdwpjGRPawXlvfsYNsTGTpCWxqi1aq4DmAZZI3uWEQHgffyhsVul7WPI0LjSDVdEOvU52oQI6bSU3f3dPUSiAv/T3o++JXT6tWnGG9YXF4nTlSgouQXiyucOVj3egN8zCopd7kb9n98PPmR/5On8IWl48h/g74r9J2o4WcGQcSGX/SZkx19/Qukac3hyZwO2MBvQDIdDl5gZ/OWPkGUkGPL5NDN2l41Dw7kSRc/QANwFUjrAhYwHCThoRGYGSp354OG18fbI3oalwrKI6c1QNhbxhYcbQmLNp08Ew3QqOBCvKfsoZNKBHADmQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:1f9::22)
+ by PAWPR10MB7674.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:35e::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6043.33; Mon, 30 Jan
+ 2023 11:02:43 +0000
+Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::793f:57e:21e9:3741]) by AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::793f:57e:21e9:3741%3]) with mapi id 15.20.6043.036; Mon, 30 Jan 2023
+ 11:02:43 +0000
+Message-ID: <65f143aa-3e48-9075-357a-08087a5e922c@siemens.com>
+Date: Mon, 30 Jan 2023 12:01:42 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: Override of sid distro config breaks mirrors
+To: "Moessbauer, Felix (T CED INW-CN)" <felix.moessbauer@siemens.com>,
+ "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
+References: <0236184cd3f04ecb0a3282bdc6c8fb7eeb04ae81.camel@siemens.com>
+Content-Language: en-US, de-DE
+From: Gylstorff Quirin <quirin.gylstorff@siemens.com>
+Organization: Siemens
+In-Reply-To: <0236184cd3f04ecb0a3282bdc6c8fb7eeb04ae81.camel@siemens.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: CH0PR04CA0060.namprd04.prod.outlook.com
+ (2603:10b6:610:77::35) To AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:1f9::22)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Tree: cip
-X-Kernelci-Branch: linux-4.19.y-cip
-X-Kernelci-Kernel: v4.19.271-cip90
-X-Kernelci-Report-Type: test
-Subject: cip/linux-4.19.y-cip smc: 4 runs, 2 regressions (v4.19.271-cip90)
-To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
- kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
-From: "kernelci.org bot" <bot@kernelci.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM9PR10MB4085:EE_|PAWPR10MB7674:EE_
+X-MS-Office365-Filtering-Correlation-Id: f8da0d4b-38d0-43bb-08cf-08db02b1831e
+X-LD-Processed: 38ae3bcd-9579-4fd4-adda-b42e1495d55a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	heHo6ZT4eFqymt/3/F4C1yylFtG2iz3tfKw/M/GDlxF2TGtx3m3mL1WHDOK0LfSCo7vV05MES4DnoUzw9M9ZjIMEcA18E8NKcei4WeFYPVBaPz1vMvmxg1/AlQsOloFAComWC7Tg9BLiOxSkM4cLPXsmqV20rWmStRi10Mxw85C58FidMo5OEJ+eZ3cG7BFUpZNSgy3p30rc9l6Ll5yM2WZ0lWHGgZtNV6DqK7MXmROrx474RChF5bkG7QyhKNKEElQtcmS9xDqaArgyWa//dClTp2OsXYd5xgnYvdpclJEgxxYMqFK6EatauthTdcwyZvB7yJ6l/euUj+hw0HV1acQsnjyHlm7GmZWjKWgiN8T6wi/7JDyxYe3y0hggALtmVjCROBSjhapJpzJBN8+ywJUAknjLqVxK9eic7J/7bqXIIujPnnHCXUZQqEX4YmbcVrmhU1shPPpONwKvmB+o2aT0KV70GMUZoho33aqvvoun8CMlssJowFY9zca3RHyroqux49sJUPNPJV5O4mHNicu5INTR5bqt3Sdrpbykl06NkrWQe56dyq+8IzXZOWhYc7msed1MVRYuG5IeEqTbgJ05WTMrK1g5zmHvTWfAsrquBDTrnhUXiVNOKPvhGMSmC+M5+/y9KHXT39tO7Yy1d3pnGCNxM+3bnnkFrXXtAv+vVFIp3UXxs0jGR0Yr2rxOPUGNfFqFlttRjcjYXQZK5d5K0yJvRetX2NugfRHAZ4UCUciazzZzD4JLVmNlE2ZFqy1vhkuIze6VCrox/CiFtg==
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230025)(4636009)(39860400002)(136003)(396003)(346002)(376002)(366004)(451199018)(41300700001)(86362001)(83380400001)(2616005)(31696002)(38100700002)(316002)(36756003)(82960400001)(110136005)(66946007)(53546011)(66476007)(6506007)(8676002)(66556008)(186003)(478600001)(36916002)(966005)(6512007)(4744005)(6486002)(2906002)(31686004)(8936002)(5660300002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?VVpjenVKVXpiUW9HRHBRWTcwNkZ2cGluajd4Y0VYNGVHTjRJeVlQNDFpb2dt?=
+ =?utf-8?B?NFUrN3dWaU93K1NMSFRhaHRZbGVUT0h0WkhWM2pRUElQZ20ybktrRkdvRm9u?=
+ =?utf-8?B?K1VrSjRkY1BlenhPWmJEdzJ1L2tWWDVock5VZ0U5QTk1MHlSUjRrSUJieWNq?=
+ =?utf-8?B?Q2I4Q3locU4yN1pnaG1JeEVXTGhOTk0xRXV4YS9pbDZhbUhPck8yZkNSUitu?=
+ =?utf-8?B?TmgydGtYTFFWNHlSaWZqd0RKQVd1Y0JkbHM5ck5hZGpqdVNZQzlEdUlLaWxX?=
+ =?utf-8?B?ck5KVlR4ZDF4ZUhnWTZ2dG96QzZrMHBrYnhMZExyeVhzeEN1TDVmWjVOb1JK?=
+ =?utf-8?B?RTdYY3o5Qk4xM0FWTHd2aEhsNmF5bnBBYnMvRzBjcHJkWTZqNittSEtnN240?=
+ =?utf-8?B?c3BlZkx4WkhrdDVEYnZaOXF5U3MzNjMrV28zZEQzSG1RcWNsRFhXQzVhSVBl?=
+ =?utf-8?B?RE9mMW1SbkF0SVpNUDQwVVJrNmhJNXh3eHJtQ0NNMWpjd2g5aHo2VjlPR0VZ?=
+ =?utf-8?B?RnJXUEt1d0NsZ3ZwNUtEVWpuMklHeWtkOENhcXFJMzFhcDI2ZXFLc2hpdVNY?=
+ =?utf-8?B?Y2NIM0d6NGR1TjBiZkVtWkNRbnRYNHUybTBPTnFTMHd5YUduWVREaGZPVGdG?=
+ =?utf-8?B?anlzVHNsNjVEM2lJZVRXZzdFYm0rbFBiNzUwUHBoVkZkVngvL25aS3A1YU5R?=
+ =?utf-8?B?SDJ3OWoxRWVoeUhuNmdZbW9YK0RFNWF2ZjBaei85ODdtQk4yd0dJUHVNQzJm?=
+ =?utf-8?B?RUYyK0hMOHJ5bCtsYnF2VWIwL05xU2pRakZIdzQ2LzJSUkU5cHJMbHg2c2lZ?=
+ =?utf-8?B?VEU2Yk1weTZNWmxydDZtMGVSdDliMk1Zc2tXTkE3dnpDNk1mUU81eUErZ2J6?=
+ =?utf-8?B?T3lickdNWjVqdkg1Y3BjMmpqRGJNdU15bnNzRTlZeG8zNXhGekY2K0xTaG1X?=
+ =?utf-8?B?NHloWUpCU2s4WXFCWWVEN0ZGdUtVbzdNM2E0cERZMjFqOER2OHBWVHZuMWNp?=
+ =?utf-8?B?Y3MwQVdjb05IUUVETmlyRTBhdTNidkhPTjhBeTlxaklUUlRoa1N0MzFVTTBZ?=
+ =?utf-8?B?TGowWnJFUm85ZXpEZUdQNEhub00zcXdtaTQ3K1c0SEU0ZGFVOHdFUEZSYTlr?=
+ =?utf-8?B?dHJQczFRZFFaU25DKzVzaE1UVm1ZUlN1bm15ZnVQNlRudDYxZW1YaTJjWURY?=
+ =?utf-8?B?TmoxR3pBbXd1L1RJVWdaVkNjaTVqc25mK1ZPWW0xVTRmMUF0NHdEVkRnRVBx?=
+ =?utf-8?B?Zkx3dkZFYk1WeUY0MVNva3dXM0ZCMDlPS3BtbGdHazQ3b2oxejg0cnhab1B6?=
+ =?utf-8?B?RFNTSUJQTmFITDM0RzNQeVVhUUdNNHhoRkJGQklLZnpqQmVmKzIxQWRFd05t?=
+ =?utf-8?B?WWlBaVJsTUY5c1JkV1ljc3M4VU9aRVlkQjVvL0lvbVFwaDgxRnVjNFVvWkFs?=
+ =?utf-8?B?QzZMZjR6WVZQem9taWNpbGtCbzV6K2dPTkxSeDM0eXFFQWpPUS84cy85MGVi?=
+ =?utf-8?B?QTRBbm9lUE9JTzVId1FmUEhtUHdSM3I1V0RSYXhpZkNNWEF6OFR5elhzY2dE?=
+ =?utf-8?B?ZjBPcGRhWmFkbVR4cHlhWkRhZDBrb2pyYlRaNzNwSFdsamFEOWJmM05pRkww?=
+ =?utf-8?B?TVJFUjZJdDNOVDlXT1V6WjBaSkpvY2g0THd3SkhDV2dYdy9yb054NnkxSkdP?=
+ =?utf-8?B?NFJoTFppVHVHNXJVRHE4aG8yKzg0bGhLUjhjbmFlUlN4elJGVFlSZlp1M0pz?=
+ =?utf-8?B?N3Z3WnNaV2tzY0VUS25CUEs1V0lFSk9Lc3F0bEMrOGgxNWdGdHVabEpxTFBB?=
+ =?utf-8?B?Y2IvYnZCaFc0VjQ5cVZPT2NQQkZaWGord1JHclAzZ0MxeGFNVlhjRnAwbXV2?=
+ =?utf-8?B?VEpVMDBpSU1kQzQ4V3kxMVlrNnZYMG9tRnc3UWpha0pFalJGTk5vYzcySWZu?=
+ =?utf-8?B?aTRUTi96eUFHRVZlUlo0UXVqYURnUk5nMjdMeFlobi9SRmtORmlXMTJvVG1D?=
+ =?utf-8?B?N2VkYnlYd3RiNjAzd1BEcU5WTlZjdHBRSzVBcDVaYmEwNTI4dllnc1c1Q1JY?=
+ =?utf-8?B?WjVSZEJkczVoVHJpTE5hTVFjbWs4ZUJEOHF2QUszcTZJbFV0U2JwcUlGb3Iy?=
+ =?utf-8?B?d1FNaWRpcDN2T1cvZFZGaU84VzROWlE1MHd0NHMzclg4QzZVc3lFK09PaTJi?=
+ =?utf-8?B?Z2drZ3NPSzRFa2pQclBxNFdNVjEzVGFBSWg5UFdneFowVVFLbW1xSFNGaEZX?=
+ =?utf-8?Q?2IPk9mk0+I4ccMQU+NkKNWcuEynq68/3VdBWzo9fTA=3D?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f8da0d4b-38d0-43bb-08cf-08db02b1831e
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jan 2023 11:02:43.7821
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: OF/xX5PlY5LWnk1bk1yX/z39i6bi2MTX+CrRrMpT2h2nbN/MGsnkAZlPKjxCKgF4dFLqsng6Zt+mrG04i3wmtGWoKlgPw9n32KG4bqWsb+E=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR10MB7674
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Sun, 29 Jan 2023 23:00:24 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10501
-
-cip/linux-4.19.y-cip smc: 4 runs, 2 regressions (v4.19.271-cip90)
-
-Regressions Summary
--------------------
-
-platform                     | arch   | lab           | compiler | defconfi=
-g                    | regressions
------------------------------+--------+---------------+----------+---------=
----------------------+------------
-hp-x360-12b-c...4020-octopus | x86_64 | lab-collabora | gcc-10   | x86_64_d=
-efcon...6-chromebook | 2          =
-
-
-  Details:  https://kernelci.org/test/job/cip/branch/linux-4.19.y-cip/kerne=
-l/v4.19.271-cip90/plan/smc/
-
-  Test:     smc
-  Tree:     cip
-  Branch:   linux-4.19.y-cip
-  Describe: v4.19.271-cip90
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.g=
-it
-  SHA:      6cd0670e124d09e80f2daaf2ecb13922a603f30d =
+ <cip-dev@lists.cip-project.org>; Mon, 30 Jan 2023 11:02:47 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10503
 
 
 
-Test Regressions
----------------- =
+On 1/30/23 10:58, Moessbauer, Felix (T CED INW-CN) wrote:
+> Dear devs,
+> 
+> the distro "debian-sid" and "debian-sid-ports" is currently specified
+> both in ISAR and in isar-cip-core. While in ISAR standard debian
+> mirrors are used, cip-core pins that to a specific release on
+> snapshots.debian.org.
+You mean the list files, which override the list files provided by ISAR? 
+Because the only distribution in isar-cip-core is `cip-core-sid-ports`.
 
+This looks to me like a workaround to override DISTRO_APT_SOURCES
+from `conf/distro/debian-sid-ports.conf`.
 
+I pushed a fix at 
+https://gitlab.com/cip-project/cip-core/isar-cip-core/-/tree/quirin/sid-lists/
 
-platform                     | arch   | lab           | compiler | defconfi=
-g                    | regressions
------------------------------+--------+---------------+----------+---------=
----------------------+------------
-hp-x360-12b-c...4020-octopus | x86_64 | lab-collabora | gcc-10   | x86_64_d=
-efcon...6-chromebook | 2          =
+> 
+> This breaks use-cases where local mirrors shall be used, as these do
+> not support snapshots. Also, this "infects" other layers that actually
+> want to use sid "as-is".
+> 
+> Please consider renaming this distro to "cip-<distro>" to get rid of
+> this ambiguity.
+> 
+> Best regards,
+> Felix Moessbauer
+> Siemens AG
+Best regards
 
-
-  Details:     https://kernelci.org/test/plan/id/63d6ec2040ba8a97cf915eec
-
-  Results:     14 PASS, 2 FAIL, 0 SKIP
-  Full config: x86_64_defconfig+x86-chromebook
-  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
-  Plain log:   https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.271=
--cip90/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-collabora/smc-hp-x=
-360-12b-ca0010nr-n4020-octopus.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.271=
--cip90/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-collabora/smc-hp-x=
-360-12b-ca0010nr-n4020-octopus.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230120.0/x86/rootfs.cpio.gz =
-
-
-
-  * smc.CVE-2018-3639: https://kernelci.org/test/case/id/63d6ec2040ba8a97cf=
-915ef8
-        failing since 204 days (last pass: v4.19.249-cip76, first fail: v4.=
-19.251-cip77)
-
-    2023-01-29T21:58:48.410011  <8>[   11.832017] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3DCVE-2018-3639 RESULT=3Dfail>   =
-
-
-  * smc.CVE-2018-3640: https://kernelci.org/test/case/id/63d6ec2040ba8a97cf=
-915ef9
-        failing since 204 days (last pass: v4.19.249-cip76, first fail: v4.=
-19.251-cip77)
-
-    2023-01-29T21:58:48.400298  <8>[   11.822220] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3DCVE-2018-3640 RESULT=3Dfail>   =
-
- =20
+Quirin
 
