@@ -1,180 +1,174 @@
-Return-Path: <Shivanand.Kunijadar@toshiba-tsip.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1C27C636D3
-	for <webhook@archiver.kernel.org>; Tue, 31 Jan 2023 05:01:21 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.154])
- by mx.groups.io with SMTP id smtpd.web11.5789.1675141277467499530
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E053C38142
+	for <webhook@archiver.kernel.org>; Tue, 31 Jan 2023 07:16:32 +0000 (UTC)
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (EUR05-AM6-obe.outbound.protection.outlook.com [40.107.22.45])
+ by mx.groups.io with SMTP id smtpd.web10.6956.1675149390325632276
  for <cip-dev@lists.cip-project.org>;
- Mon, 30 Jan 2023 21:01:18 -0800
+ Mon, 30 Jan 2023 23:16:31 -0800
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.154, mailfrom: shivanand.kunijadar@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1515) id 30V51Fvd005011; Tue, 31 Jan 2023 14:01:15 +0900
-X-Iguazu-Qid: 34tMMX4CATM5LO4HBS
-X-Iguazu-QSIG: v=2; s=0; t=1675141274; q=34tMMX4CATM5LO4HBS; m=s5sFPYNinX/8yDkJmDNEp99CdbYdvan5nLwJo+tDtHI=
-Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
-	by relay.securemx.jp (mx-mr1511) id 30V51DlB021837
-	(version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
-	Tue, 31 Jan 2023 14:01:14 +0900
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=zQnV+dxy;
+ spf=pass (domain: siemens.com, ip: 40.107.22.45, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GSssrN8+T116G8LrUF4QMu4lT5EOpqWJSRfigI9BTetFsgPfaMBnP2s1mPdenTNTrw9bGjtB39Pp+INQhl+Zb1ps9NTb7TYPkPpcThHkQmGXf2ql7rxSj6Jz9ZvUBJrenworNSt41X2q7NueFUF2lPuqsEc9VO9EUes4vqCdZJtJO6++CeYiaZEXlDmffbV7o17g6qSVhLghJK99iubuELdrIQRI2di37qpOkeH2Z/mGfeRkirYpiC60/8YSPoN0S7Bbh4+VzHtUfAPVojfnZqY+TJn0XM57rrN2UPfw+//tZVIlrXT5nOPd5iPCqKFjxMXXa1qnv12wRozfilUrsA==
+ b=OvwzZeOZnlLSFiyks66jbvHrF9B/4+CxKdbsuP89v2eRSl56513LuKsCNB9VYFOo1toY0zxzhOahmgSs+wpUiL3ieXtttPeqdVAdlof0OXvtPWqPC3f9CD/0ZljMPoYSM8+AOTF/rxSxeayIhvRRKSemglCUv7YixS9wflscDRWT/qt9kr/aQOrsznuK6dXFCDGPHj7UbHUEzrkl/PefgKmNqqBtOY4tyJUBvGUGMcbsprky6zyoic59nUqyU61g/Xs8U9A00SIDtGMz+nbaupoFbmd6/cQ7Kda6BY2EAEGEGrIT5S/zqFUy+EridXDNHXnRbmhjWLr5RXmnnZTH0g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AjHH0Zc+2euRoV0PnqAj/MqQpHGCPhtBchJXx186tzA=;
- b=D2Zi4EBBpB7qDDhuasMDl9sx4DCVcmLIWqfedQyeTONyNEEd6jvvZuTrAY6jeJfcRqFKxlyIP7lPYZ1217t9/YURO9HBhdsDN0JdUU39b4Ou43ICWthn1z7/nX6qq0UxjYpPi4twBcDtd8Mh/cpgEiFUVc6oZQla7OCF23biwqSIM28Ku1qZX6bMxcds+CD+SkthnVThhuPUfhQS80ijJHqJH5sE59xP08hAqSUzdvLsZNqTX+VNtOpso51SfwT8/Gjz0X9U+gPhGd5MebtY0NTmNloU/ogmOI8QOpxsKc601e6cuR44WgUi0YLWmWWOOCwGirQMOvykaMbYk8Ks5Q==
+ bh=KlxxeoEQoUq4flWqgCXBl11uomR+tV49jiNNoOc7stI=;
+ b=f8J79BocrZYJdCiUzaurCWVAPislQhiFJuGeTtfor7Tjxe9wgSHvrTEwNKL7iHqvJOIXXS8Snl/wKB0XeajSCtatl4qQw/juk4lLc/Jn+BEs4XNaYR4TXLZYrK5e52aFkxDE+sTH6box3r5iqtt6UAb/62uma2UOfVqPNaEZR9SPCQJPUnP9udEL0sG4rfm4riNdNP5eCYH3t9O01G4ZCqvL8oIE0rDoI/rgnymwfREV6cGg43XNbmagU7Ft+gGVLV8uQlRBtcw2MpiIcU2vvjmOeBv+7Z7kwle3uoeGWOO4snJJTuw/2HcLinaKRqnNGHk9g7IOanl1UFQAnzyyCQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
- header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
-From: <Shivanand.Kunijadar@toshiba-tsip.com>
-To: <cip-dev@lists.cip-project.org>
-CC: <jan.kiszka@siemens.com>, <dinesh.kumar@toshiba-tsip.com>,
-        <Venkata.Pyla@toshiba-tsip.com>, <kazuhiro3.hayashi@toshiba.co.jp>
-Subject: RE: SWUpdate with unified-kernel using UUID in the kernel command
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KlxxeoEQoUq4flWqgCXBl11uomR+tV49jiNNoOc7stI=;
+ b=zQnV+dxy5cx+DdSEjkcjVrCcwJRnxFJSuupFm94jqvFWYhIJwMMEHuiyIpZkzmqtFfDJiyC3v6QuXc/Go2LlxJERv7Ac6RNHXXiqNfSN3YJlF2eeSZn1QhyzjexdAPK0v+5qbBK0vglleyQZkX9U1Od262ZIYMSFjf77gcv8urOaU6Vq4rqI2zdXfeHn9f5NGOrX5nCPe2G2TpBUC8OQAGRQtQ51g1neyx9I8cdJg16tsxvOmoYPP1/hRSh/+T2So0AuzL/fAo/xbxaLcACOQJzdyRJ/IgaqutSEdpbsPmmrLb/s4n3t8CWZ+O8s7kTX1ITHzqqjaDa6yzOom0i6hQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by DB3PR10MB6836.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:43d::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6043.36; Tue, 31 Jan
+ 2023 07:16:27 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::784b:e95b:b855:dcc5]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::784b:e95b:b855:dcc5%8]) with mapi id 15.20.6043.030; Tue, 31 Jan 2023
+ 07:16:27 +0000
+Message-ID: <1a63ff26-88e4-c6e9-a8d5-700b4f604b78@siemens.com>
+Date: Tue, 31 Jan 2023 08:16:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: SWUpdate with unified-kernel using UUID in the kernel command
  line
-Thread-Topic: SWUpdate with unified-kernel using UUID in the kernel command
- line
-Thread-Index: AdkyGi2hbFoAUaDFTTO9C3khO1D1owDFnkeA
-Date: Tue, 31 Jan 2023 05:01:11 +0000
-X-TSB-HOP2: ON
-Message-ID: <OS0PR01MB6147DBB5A22863BD9496E0B7C7D09@OS0PR01MB6147.jpnprd01.prod.outlook.com>
-References: <OS0PR01MB61478EAC2D405DBD1F486152C7CC9@OS0PR01MB6147.jpnprd01.prod.outlook.com>
-In-Reply-To: <OS0PR01MB61478EAC2D405DBD1F486152C7CC9@OS0PR01MB6147.jpnprd01.prod.outlook.com>
-Accept-Language: en-US
 Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS0PR01MB6147:EE_|TYCPR01MB10133:EE_
-x-ms-office365-filtering-correlation-id: e4152873-a6a5-4270-12d1-08db03482c05
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: uM1bcQppQS7ABVd0nvA/DfZw+o5ywaoKDbZQim5iHop+LK1R98Z+kjhIBHaJkZrpHwiN8C1/QN5/fFrFAG97eil4EZlQnJcUydYSgyaTIv4QRmtvChXh6168LHP63vph8Y0/whE4ws4SEj+H2EYEXCWBiDLUD/FpFp1X+Uf/lD16YdvHAlF7WLJiFesAPoawcfgnxXeIKN7sy0M3qxkZFxDobN8jZiah2vP/pFUIVP0X+2NT1tkHOGulZBkz2rxGSGOPvTvnGRt3k/Gec+x8Pu5/TVq9HceRvyQMo2kSZaijJiGQdBkiw6X2MFhKBrasG9SzQTXt45CCWkMrPtrPSluox/DS9lQrhMKtrEbEcKSO6euZrRMZFe6BIMrwnYYZDxmyMhYewAJULHNmWKL0MVXWxrqSmQoAnnrbjsD8yth6Ev+/m5y8GVHJURLIvYrlh0ZyWWoH+p8WaVCmYreYpPFw4GUXIWkPWC8qbbgmt0KQIuCIcbaBcVCbm0tD/ZDCFKPq3N9v4Oy8ZE6xW775JUkjirwtJww/KZLMn3a9tufnqWSXHSL62ZAXiN3NKvTDuGbOsNUZpM4rl2syV9Oi7PPrRApvwVUvD2CvsNu8lzP3OA2pv5qpK3A94njIf4g6PokCLX82+m3xt9BdLJX3csVF5hbb86Jd98WiGyZ1mmTAJrOQWhoAPsNxorCwYlC+YQjWG77SpguUYH98DcskBg==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB6147.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(39860400002)(396003)(376002)(366004)(136003)(346002)(451199018)(186003)(7696005)(71200400001)(107886003)(41300700001)(83380400001)(9686003)(6506007)(26005)(53546011)(478600001)(54906003)(66946007)(316002)(66556008)(76116006)(122000001)(38100700002)(64756008)(66476007)(6916009)(66446008)(8676002)(4326008)(5660300002)(55016003)(2906002)(86362001)(38070700005)(33656002)(52536014)(8936002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-2022-jp?B?VFpqaVN5U3Jxa0krUHZjNTF0Wk1mM05wSDh6elkwL2Z0UThkcm00cldR?=
- =?iso-2022-jp?B?ZFpJZFFicERUdzJKRzFNcEhRM0tLb1dlWTVpS3FCUFhSYlBlUkdSMkZ2?=
- =?iso-2022-jp?B?cG4yalRiazU5YnNkSU4ydkdvWnpXYlNERjlmbXprZitTZmhrU2FtN0hR?=
- =?iso-2022-jp?B?Zml5d2tXbFJmY1RLZHl2TEFMdVBaOFRZNGJnRWhZUnBvcElIQzFaUWVq?=
- =?iso-2022-jp?B?YzVrTXBDSVBFWHRsRjFvdmloUm5LZSszRktqQ0FvdGFjRE5yWXRsM20x?=
- =?iso-2022-jp?B?Njd2Z3RpdFNEdUFYNWIrajF0WUpORHI5Z2tqOEFEbmVwajhrV0g4SXd0?=
- =?iso-2022-jp?B?MGxrMmgxMGQ5M2VtNFhsZER2bTNPSTdHNWNwaWdSOXZpYWc0OTdZQnQv?=
- =?iso-2022-jp?B?dnRrQm5BYnVvQlhuNmxvTEh4bDRDc0cwMUg4R044VWF6WTN3WXQ3Tzdi?=
- =?iso-2022-jp?B?OUVPT3FqaStDNFFhSTdOMW8ya3FzUDVxTzgrNWxhWkVnS3BmeEpYVVl2?=
- =?iso-2022-jp?B?TlFrcXVQYTdUc1FaRHUzeSs4WUNpN1d5UkdiTXJJV3JlMVBUcG9WSnBV?=
- =?iso-2022-jp?B?SVZBSTdNb1EwVlV0c09SYUVaa25CMDkzZG0rY0FXWk41TFhYd1l6Y0FY?=
- =?iso-2022-jp?B?eS9qRDhuaDdkbFJNVTZpNXZtV2gyeVRyQ3p4RnJkeE5RbTVvdDNxZDhm?=
- =?iso-2022-jp?B?cXkreDVsMzNQR2NIYWRuK2VjVDVJdGRqRHBqRXl3cEtJMW9YQlhmQUk4?=
- =?iso-2022-jp?B?YnA3ang0enE4WWNZSW44ZFdCV1F3cVNVNUlnOFp0c1h3alFXOXpIQU5m?=
- =?iso-2022-jp?B?MGd6OHpvTlZyUUpIeC9NblE4RUMrY1VodEo5T0M1eGRZSGlXd2pjTExC?=
- =?iso-2022-jp?B?ZmRxZU1aVkp1bTA0WGtaMnlqVzg0KzlLZklPMVpuM2RGdEd3bTJJRjFv?=
- =?iso-2022-jp?B?aklXNGJwek9SQ3diNU1CVDZiYS9EWkE2RWo3dUJVTFlNc0pJMTFUaWNs?=
- =?iso-2022-jp?B?VzF5WEM5UW51Qlh4OU0vbFZRT0lIZzFYTUJwWUJiYml6NUJMRVZvc2kx?=
- =?iso-2022-jp?B?VFA5NGJLRWtiMzgvZWNzdGM4dmJsL0ltNFpqVWhaNXJtdWRocUZqdDdQ?=
- =?iso-2022-jp?B?TmE2ek1Naldtd0VMRzIyVlFoN0FEVTYwRG1LNFhVdjl6WlN1eGhlbDNU?=
- =?iso-2022-jp?B?S3dZajN0eE9tUmFUa0d1YzM2WXZoVEJBSURYc1poT3FQWG8xdUZrRFBT?=
- =?iso-2022-jp?B?WUNxcEdmdnlWazZTMVlsRW1ZOFBadW5lZll6OUh4QUZnUlQrSDgxLzI2?=
- =?iso-2022-jp?B?cWRNU0p4WC9xOWt3RnRjSWsyRjA2Z0NDRmFDYzRPVTdzanFwRndUUGZW?=
- =?iso-2022-jp?B?cTY3U0YxTncvakFSRDMxUVk1dnVqblAzbzN1UndIT0xjUU5NQzRxc3dP?=
- =?iso-2022-jp?B?ZXJIUWFNVHQyV1ljbkZCalFwdFBFeTF2b0FoY29RVHlubWZIaCtwOWY5?=
- =?iso-2022-jp?B?RGNLM1I1UkR1MnEvTUljaWtwY0I0SUtPOTMvUTRaY0M1bC8yNnBnaDNO?=
- =?iso-2022-jp?B?NHczWHhhZ2JsTWhUdDU3SkRULzJnUXJrMENjb2RDeXlEbUZ0Y3JqMEdV?=
- =?iso-2022-jp?B?bFBDQVhIeUZJMTBuSHJFY01BUzZ0YkJleERHaHJFdDNIdTVNYWNVNmdj?=
- =?iso-2022-jp?B?WlVVSTZZL0U5eVp4N1o3bzJXL0hSOGhmV21wUzZoZUk4WFZTdStqeXAv?=
- =?iso-2022-jp?B?eW9QSGtPVGRsOVF2QUkvSythRHNCbDBRY1RqWEE0eUFqOGtxRndVYWxG?=
- =?iso-2022-jp?B?WFJ6S0ZCSTVTQ0F6akVGOGJkN1dCTE9kMk00MjZ2ZEVWOUxjT0htaGNi?=
- =?iso-2022-jp?B?ZUd5UWEzMkJ3Qk1qSUtrYm9KVkI2K2ppS09JL0J4cENKdXcyd3ZlT1lZ?=
- =?iso-2022-jp?B?UjJ6SnJVZDVsTlduelBVYkFxYzhDamtvOU9rTXg3NDQ3ZGVKRXJjZ2w5?=
- =?iso-2022-jp?B?c2ZlZ1ZrY1gzb1Q2cFlkUTREaFRHbGs1REpyTXM2cS93UFdHb01NMWRz?=
- =?iso-2022-jp?B?b2tPQzdCT0VpMUhtTXdZSlNETUZUU1UweDc0Kzdpck50OU5CVHNmK0pn?=
- =?iso-2022-jp?B?OEZrbk1LQ29oeG1UcUlOTUMyMWJiNGgreUVrWUVJZVpzSDF1MmpYYzdv?=
- =?iso-2022-jp?B?eVZEQzg3cGFhM2psV0tEaWNtMVdwZmRGcWxDYnc5R0E2dEQ0Nyt4YVlW?=
- =?iso-2022-jp?B?VmxFbmhXNjFOc0RuRE9IT3ViZXpVRE0yT0hVNHhTa3g5bk1hZ0ZVWHJ2?=
- =?iso-2022-jp?B?dmhnUjMwOEpRMERLaUI5enZPa0c2NVBINkRFRGFsWDFLaGlSSUMyTThi?=
- =?iso-2022-jp?B?dlFYUEE9?=
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+To: Shivanand.Kunijadar@toshiba-tsip.com, cip-dev@lists.cip-project.org
+Cc: kazuhiro3.hayashi@toshiba.co.jp, dinesh.kumar@toshiba-tsip.com,
+ Venkata.Pyla@toshiba-tsip.com
+References: <OS0PR01MB61478EAC2D405DBD1F486152C7CC9@OS0PR01MB6147.jpnprd01.prod.outlook.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+In-Reply-To: <OS0PR01MB61478EAC2D405DBD1F486152C7CC9@OS0PR01MB6147.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR0P281CA0133.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:97::11) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DB3PR10MB6836:EE_
+X-MS-Office365-Filtering-Correlation-Id: bc62b18c-666a-4436-23d9-08db035b117e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	v5RFqwfAlhLQJy/bupGK+m+5pfL4bcUDYi3HyX4cSkKTOBq0GxJuk0WKjvQCDx64bvmqDz05Br/yKjFiNcu9RlSmjvnmzlpBSDOnBx3jFYbeuD1g88UoTYPhBl+Splcz9H74jfMtC6S4NUkixa/pgosc69a54rzEIobcVQUmovYQXDiah2WD+ETlE/jQZR5nQqCS/F23Nj1jOZJ9DJvj6656O28gRKrmx4WEDjUBbsu5vbrZIBUEd8e8d2yCUOYsPlpsiqR+kKPJWWuf/AJMMTlvOg+iAf7YMneBeikubpz5aY0T4DKCWlSfT+ugNJeM+cMzIPAhfXtFBi/3GzO5gVwot2jmU7K9kg87dMSxRipOeFzbBF1cCDVVHa0ZKR9z7SlSjOdWVEVX8C1hErzfo5ef1v2bKVWCcV40tp/PO0UaLknEaOVyQf3krsvMUnFoJleBtDi0dYh3yD7EUMKjOxsa7xFjLkENi/JIyIbnEYlT2PAfBGoSHYPVKIl5MKl5NlywvX6IHUY3+50nomBo5xstIO6SB6qPLd/fAa5HAVa8zSxSilrTEvBD+UOmr7cTRx/3O7m/EiiehEf/JrXgWRgRz6721j6RlGXp85UN+s5vTd6NeRXFNuhIyVN96ud+iosUrZjcuqbKe+h8lr7ORKwx+vGCkjrmi2WiweVyW24cFyXWNkdALHVJx5NUiH7dyqxpvrqHX3hjTJjwIqP67ptPOi0+QCw+2H/57S2dEdA=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230025)(4636009)(366004)(136003)(396003)(39860400002)(376002)(346002)(451199018)(31686004)(2906002)(5660300002)(44832011)(86362001)(82960400001)(83380400001)(8936002)(31696002)(41300700001)(36756003)(6486002)(478600001)(26005)(6512007)(186003)(6506007)(6666004)(53546011)(2616005)(4326008)(316002)(66476007)(66946007)(8676002)(66556008)(38100700002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?UkhNSytWYUFOcjVCUlp4c0J1TXk3dGJ4aG9wM3JwOHEvSGFERWNJQzF6SGo5?=
+ =?utf-8?B?ckpZUGhuV3dxWDVPbW8xaWNCQkhEZldHZXM5RHduSE04ODBhS0lvMWdmeWl3?=
+ =?utf-8?B?NS9JTlNJc2c0SXBEQnFKNjVLbUR5cVVZeThibGc1Wkh0MXBhUm9LeUd3RHNv?=
+ =?utf-8?B?Wkw0TlEray8vMEVDcmY3OXhKZDd4K21FMld6T2d5M00yVXhYRHluWkZISSsv?=
+ =?utf-8?B?MEVacGVVbTBkaVU0akNXWkZOdXpTNmdNNHVrRmEyZUQ0LzBaUzEvczBBSUlv?=
+ =?utf-8?B?by9qT1ZkcUJ5MFhnYWxKdzl4elFqUmJSMmVCRXUxTFRNTXJ4MlZjT2xDNzU2?=
+ =?utf-8?B?WDhvdHBKNjd1VEQyaGpYakJ3aUJQWGt0K1BnbVhtQzlFejZJN0JEQ2ZrcEFX?=
+ =?utf-8?B?WGc1Tklsb3REQjdZWlNTcmRiU004VHNaNlp5VjJBQmRuQlNob2RSaWtaVXNu?=
+ =?utf-8?B?d1JhcW9DMmlYWm9wTFdrcjN4M0hNeTJ5N29TeklvcGoxWDYrYk1jUFpvTG12?=
+ =?utf-8?B?ZVE3dkt0TnR0dXVrcUVZNkZ2T0tITEU2YkZxMUxOY25XeUhLQ1M2V1YwT05F?=
+ =?utf-8?B?bExJYWovdFA2U2hycERlcGVNNGtZV1gyalJaUVNtait4aGF2Q1BvL2JsbkRw?=
+ =?utf-8?B?VUYxWGxJdDlpZ3E4Y1FWTTBONDk3QVA2ckgvU2hsUUZGcld2M2hIazFLSEZQ?=
+ =?utf-8?B?U2FjZ0tRVk10QytwV094NFhVS24rNFhRR3NsN0NodGFBV1VXRFdaZ0VQWW9Q?=
+ =?utf-8?B?S1hyOWpPeEFhNFBjSzA2SC9VSkpXK2RDQTM0WFZNT0l1NzI1RjF2V05LcFVa?=
+ =?utf-8?B?RUxaQW95ekl5ZWxaWklaK1pGRUdJLzdrLzZUSFU1VjZmNTdXWXprMTBkaHhS?=
+ =?utf-8?B?RG9sRmk0RlZ0dzR1enZYbEJkbnNnLzhZcjduMHhOVm5Eanl0cDhRK1d1TXY2?=
+ =?utf-8?B?bGs2VG5sK1FOaC92WkYySXBCWm1wQmFPZ3VvOWZjQTNPWCt0aDBtamRMOTZQ?=
+ =?utf-8?B?eEVXVHM4MXNyQXFUbnJzVmJJeGZrbEVlVDV1RTJJUG5mbEFlME85NWsySWJC?=
+ =?utf-8?B?VHhIMGs4UHNGQ2RYY25KaWx5cStxVURhamtQK1dtb1BvdnRtWis2TEpsamY4?=
+ =?utf-8?B?Q2k5SlNaYUZjOGhUa0lYL0E5dlJqY0Z1Tm54c2ZGbERDSjA0UFBkMUFheTgy?=
+ =?utf-8?B?SlNIeDZMRC9IS2hxd1BucUZMRENuUVR1d1pxWFhLK3pFRllrUE5Td3A1L2Fi?=
+ =?utf-8?B?REcxdndNSFdwdzVmRHUvazlxdm41LzdzVUsrd0kwQUdtOXhDdkJLQzZ6cms1?=
+ =?utf-8?B?REhoRGN3NWU0ZlBNRzZzMThWNGFYWEtVMDhJVXB2VWJmV3oxWWZoUWl6a1Fn?=
+ =?utf-8?B?NTVZRXYzbmJKL0MwN0dnQWM3UitZY000Q1JldERKbi92L0UrTFVtbHNxcVNw?=
+ =?utf-8?B?Y2IvWTV3b1BRTXBoQmx1QThxSjJ0ZEFhQ012VlJld1pNY2tEeXNSbDN1ZDdM?=
+ =?utf-8?B?eHNDRkVsbWRLcG1wNjdnME1wMUtaMzNSb0o5S2NEeG5nZEVRMVVCNnJ0WDda?=
+ =?utf-8?B?ckYvWGxmT2phUTMwanl4ZFBJNGEybXJBanF0aHl3RS91WSszRjRTeFBHUzRn?=
+ =?utf-8?B?MHExQ3NpakZZTWVYOHd1VEJkWUFDZTJYWTIrZVFGNjk0cWp6WmRvYlNIM1l0?=
+ =?utf-8?B?bjE2SDZLWjBLRmkvTVBWWVREc2ExRHpXa3ZiRS9PaTRRaGJUUUJHZlR0b3Nx?=
+ =?utf-8?B?OXdvY29BZVlxcCtMVGxUKzdBbldVa0tlTGxPdzZhR3VONGRaTUZWVDhPYVQx?=
+ =?utf-8?B?cmlVdzFHRlE2OXhvUEcxQXpuMWtwKzIyRHFHQm11VTFsSVMxc3l0Q1E0VlUz?=
+ =?utf-8?B?YlhpYVU1QXEyYmZVV283cEFWNUJ3aTBCQkhEelFVZjVsUS9SZG15TlVWdmZh?=
+ =?utf-8?B?SzRHN0ZhVkFZWDU2ZWk5am90RjEyRmUvUmxVTDV0SmJxWUNPMjR0elh1dnFy?=
+ =?utf-8?B?Sy93ZDFpWFUzQ2I5QUwwbWFGSXhoSm1LOU55VGliVlBXdUhRUjhjbGJHanB5?=
+ =?utf-8?B?VmFIenNnUGtKcXd1Sm94UitEYXdvR2FRZU4wc2g1QnlhdHkvckRMTnhoRW9D?=
+ =?utf-8?B?N1ZoaGxrMVd4c29JTnFsRFljaDlrcjgrUHcvamJoeSswUTljZ2gyd1ZpZVdH?=
+ =?utf-8?B?ZkE9PQ==?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc62b18c-666a-4436-23d9-08db035b117e
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB6147.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e4152873-a6a5-4270-12d1-08db03482c05
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jan 2023 05:01:11.3803
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jan 2023 07:16:27.4693
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Wrds4KXAClte/DKBsA6LOSLXZNeybMrI5WK0Ast7JGzYRsj+SuO78hMcjcgH11qE6XnueytIAYExP2MalNKHcdQIpJaefNzScsNNp6ss93HIHFALneqlAvseVL9f5LDB
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB10133
-X-OriginatorOrg: toshiba-tsip.com
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jkeO0KTQ1AdSR3MnngfOFCoaHLg2wmayWS3cvL0zW1WT9JpdD/oUbgzu8GcNMNfztog2pJpd+ooY6cOka0mbvQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR10MB6836
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 31 Jan 2023 05:01:21 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10515
+ <cip-dev@lists.cip-project.org>; Tue, 31 Jan 2023 07:16:32 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10516
 
-Hi CIP-team,=20
+On 27.01.23 08:19, Shivanand.Kunijadar@toshiba-tsip.com wrote:
+> Hi CIP-team, 
+> 
+> I'm trying to use UUID in the kernel command line for selecting the boot target(rootfs) with unified-kernel image.  
+> Check the below details on how UUID is used to switch the partitions and let me know what is the advantage of the initramfs script approach over UUID?
+> 
+> * Use filesystem UUID to specify the boot target (rootfs)
 
-Any comments on this approach ?=20
-Let's discuss this topic in the today's CIP core meeting.
+We considered using filesystem UUIDs for selecting the rootfs by the UKI
+ (in the absence for dm-verity-based peering), but not all filesystems
+come with this feature. Therefore, isar-cip-core implements a mechanism
+that is independent of the filesystem type.
 
-Thanks & Regards
-Shivanand K=20
+HTH,
+Jan
 
------Original Message-----
-From: kunijadar shivanand(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting)=20
-Sent: 27 January 2023 12:50
-To: cip-dev@lists.cip-project.org
-Cc: jan.kiszka@siemens.com; 38A5323E673042E40E350B6BD8E7D4A7 <kazuhiro3.hay=
-ashi@toshiba.co.jp>; dinesh kumar(TSIP TMIEC ODG Porting) <dinesh.kumar@tos=
-hiba-tsip.com>; pyla venkata(TSIP TMIEC ODG Porting) <Venkata.Pyla@toshiba-=
-tsip.com>
-Subject: SWUpdate with unified-kernel using UUID in the kernel command line
+> * UUID is generated for each filesystem and its value changes every release.
+> * Each unified kernel image is always generated with root=UUID=(The UUID of corresponding filesystem) in its cmdline and .swu includes the pair of unified kernel and rootfs.
+> * Install the update image using raw update type (i.e. block level).
+> 
+> Example:
+> 
+> Before update, Active partition: ROOTFS-A(mmcblk1p4):
+> sudo blkid
+> /dev/mmcblk1p4: LABEL="ROOTFS1" UUID="U1" TYPE="ext4" PARTLABEL="ROOTFS1" PARTUUID="PARTUUID1"
+> /dev/mmcblk1p5: LABEL="ROOTFS2" UUID="U0" TYPE="ext4" PARTLABEL="ROOTFS2" PARTUUID="PARTUUID2"
+> 
+> While building .swu
+> .swu includes...
+> a partition image (for ROOTFS-X) which UUID is U2
+> a unified kernel which cmdline includes root=UUID=U2
+> 
+> While installing the .swu for ROOTFS-B:
+> Unified kernel is installed to BOOT-B(mmcblk1p2)
+> The partition image is installed to ROOTFS-B(mmcblk1p5)
+> 
+> After update, Active partition: ROOTFS-B(mmcblk1p5):
+> sudo blkid
+> /dev/mmcblk1p4: LABEL="ROOTFS1" UUID="U1" TYPE="ext4" PARTLABEL="ROOTFS1" PARTUUID="PARTUUID1"
+> /dev/mmcblk1p5: LABEL="ROOTFS2" UUID="U2" TYPE="ext4" PARTLABEL="ROOTFS2" PARTUUID="PARTUUID2"
+> 
+> Thanks & Regards
+> Shivanand K
+> 
 
-Hi CIP-team,=20
-
-I'm trying to use UUID in the kernel command line for selecting the boot ta=
-rget(rootfs) with unified-kernel image. =20
-Check the below details on how UUID is used to switch the partitions and le=
-t me know what is the advantage of the initramfs script approach over UUID?
-
-* Use filesystem UUID to specify the boot target (rootfs)
-* UUID is generated for each filesystem and its value changes every release=
-.
-* Each unified kernel image is always generated with root=3DUUID=3D(The UUI=
-D of corresponding filesystem) in its cmdline and .swu includes the pair of=
- unified kernel and rootfs.
-* Install the update image using raw update type (i.e. block level).
-
-Example:
-
-Before update, Active partition: ROOTFS-A(mmcblk1p4):
-sudo blkid
-/dev/mmcblk1p4: LABEL=3D"ROOTFS1" UUID=3D"U1" TYPE=3D"ext4" PARTLABEL=3D"RO=
-OTFS1" PARTUUID=3D"PARTUUID1"
-/dev/mmcblk1p5: LABEL=3D"ROOTFS2" UUID=3D"U0" TYPE=3D"ext4" PARTLABEL=3D"RO=
-OTFS2" PARTUUID=3D"PARTUUID2"
-
-While building .swu
-.swu includes...
-a partition image (for ROOTFS-X) which UUID is U2 a unified kernel which cm=
-dline includes root=3DUUID=3DU2
-
-While installing the .swu for ROOTFS-B:
-Unified kernel is installed to BOOT-B(mmcblk1p2) The partition image is ins=
-talled to ROOTFS-B(mmcblk1p5)
-
-After update, Active partition: ROOTFS-B(mmcblk1p5):
-sudo blkid
-/dev/mmcblk1p4: LABEL=3D"ROOTFS1" UUID=3D"U1" TYPE=3D"ext4" PARTLABEL=3D"RO=
-OTFS1" PARTUUID=3D"PARTUUID1"
-/dev/mmcblk1p5: LABEL=3D"ROOTFS2" UUID=3D"U2" TYPE=3D"ext4" PARTLABEL=3D"RO=
-OTFS2" PARTUUID=3D"PARTUUID2"
-
-Thanks & Regards
-Shivanand K
+-- 
+Siemens AG, Technology
+Competence Center Embedded Linux
 
 
